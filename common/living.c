@@ -221,7 +221,8 @@ char *attacks[NROFATTACKS] = {
   "physical", "magical", "fire", "electricity", "cold", "confusion",
   "acid", "drain", "weaponmagic", "ghosthit", "poison", "slow",
   "paralyze", "turn undead", "fear", "cancellation", "depletion", "death",
-  "chaos","counterspell","god power","holy power","blinding", ""
+  "chaos","counterspell","god power","holy power","blinding", "",
+  "life stealing"
 };
 
 static char *drain_msg[7] = {
