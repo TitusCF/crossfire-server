@@ -1,6 +1,12 @@
 Changes in top level CVS tree (please add your changes at the very top of
 the file):
 
+---SMALL BUGFIX--- John Cater 5/11/1999
+server/attack.c:
+- changed the logic in hit_player to attack enemy races with holy word 
+playtested
+
+
 ---BEGIN BATCH UPDATE--- DAMN 9/17/1999
 server/alchemy.c:
 - minor cleanup

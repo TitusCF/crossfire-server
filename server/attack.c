@@ -759,8 +759,8 @@ int hit_player(object *op,int dam, object *hitter, int type) {
      */
     if (type & AT_HOLYWORD) {
 	if ((!hitter->slaying || 
-	     !(op->race && strstr(hitter->slaying,op->race)) ||
-	     !(op->name && strstr(hitter->slaying,op->name))) &&
+	     (!(op->race && strstr(hitter->slaying,op->race)) &&
+	     !(op->name && strstr(hitter->slaying,op->name)))) &&
 	    (!QUERY_FLAG(op,FLAG_UNDEAD) ||
 	     (hitter->title != NULL &&
 	      (strstr(find_god(determine_god(hitter))->race,undead_name)!=NULL))))
