@@ -150,17 +150,406 @@ chance 20
 Object NONE
 end
 #
+# Weapons:
+#
+Allowed all
+chance 10
+Object Ilrya
+type 15
+value 10
+weight 80
+end
+#
+Allowed all
+chance 5
+Object Lythander
+type 15
+value 20
+luck 1
+weight 90
+end
+#
+Allowed all
+chance 5
+Object Fear
+type 15
+value 30
+attacktype 16385
+weight 90
+end
+#
+Allowed all
+chance 20
+Object Woe
+type 15
+cursed 1
+Str -1
+Con -1
+Dex -1
+Wis -1
+Int -1
+Pow -1
+Cha -1
+luck -1
+value 5
+end
+#
+Allowed all
+chance 20
+Object Mass
+type 15
+value 5
+cursed 1
+weight 300
+dam 15
+wc -3
+end
+#
+Allowed all
+chance 10
+Object Gnarg
+type 15
+value 10
+dam 12
+end
+#
+Allowed all
+chance 6
+Object Zormola
+type 15
+value 15
+weight 80
+wc 2
+end
+#
+Allowed axe,axe_2,axe_3,axe_4,axe_5,battle_axe,stoneaxe,poleaxe,morningstar,large_morningstar,nunchacu_1,nunchacu_2,hammer,mace,mace_2,lspear,spear,club,quarterstaff,big_club,stonehammer,stake,bonecrusher,mjoellnir,skullcleaver
+chance 20
+Object Gaea
+type 15
+value 50
+hp 1
+dam 11
+magic 2
+end
+#
+Allowed all
+chance 20
+Object Kragi
+type 15
+value 50
+magic 3
+Con 1
+dam 11
+end
+#
+Allowed all
+chance 6
+Object Morgul
+type 15
+value 15
+magic 3
+dam 20
+wc -3
+Str -2
+Dex -2
+Con -2
+damned 1
+end
+#
+Allowed all
+chance 5
+Object Slay Ogre
+type 15
+slaying ogre
+value 20
+magic 1
+end
+#
+Allowed all
+chance 15
+Object Valriel
+type 15
+slaying demon
+last_sp 120
+value 30
+magic 2
+msg
+  This weapon faintly glows with a
+  warm radiance that casts no shadows.
+  Just holding it gives you the
+  courage to send the most evil monsters
+  back to whatever Hell they came from.
+endmsg
+end
+#
+Allowed all
+chance 15
+Object Gorokh
+type 15
+slaying angel
+last_sp 120
+value 30
+magic 2
+msg
+  This weapon faintly glows with a
+  dark radiance that makes shadows
+  seem deeper and darker than they
+  should be.  You have a strong
+  feeling that even the mightiest
+  champions of light must fall to
+  such powerful darkness.
+endmsg
+end
+#
+Allowed all
+chance 8
+Object the Devourers
+type 15
+value 30
+attacktype 65553
+magic 1
+msg
+  This weapon radiates a bone-chilling
+  aura of otherworldly cold.
+endmsg
+end
+#
+Allowed all
+chance 3
+Object Doom
+type 15
+damned 1
+Str -5
+Con -5
+Dex -5
+Wis -5
+Int -5
+Pow -5
+Cha -5
+value 30
+magic 1
+end
+#
+Allowed all
+chance 20
+Object Crolmi
+type 15
+value 40
+magic 3
+Str 1
+weight 110
+end
+#
+Allowed all
+chance 2
+Object Great Mass
+type 15
+value 50
+damned 1
+weight 600
+dam 25
+wc -5
+end
+#
+Allowed all
+chance 2
+Object Slay Troll
+type 15
+slaying troll
+value 50
+magic 2
+end
+#
+Allowed all
+chance 2
+Object Slay Undead
+type 15
+slaying undead
+value 50
+magic 2
+msg
+  This vicious weapon is designed
+  specifically for destroying any
+  abominations that have risen from
+  their graves and making sure they
+  stay dead this time.
+endmsg
+end
+#
+Allowed all
+chance 1
+Object Slay Dragon
+type 15
+slaying dragon
+value 100
+magic 3
+end
+#
+Allowed all
+chance 1
+Object Slay Beholder
+type 15
+slaying beholder
+value 150
+protected 2
+magic 3
+end
+#
+Allowed all
+chance 10
+Object Rhyz
+type 15
+value 80
+magic 4
+Str 1
+Dex 1
+weight 90
+end
+#
+Allowed all
+chance 10
+Object Glamdri
+type 15
+value 150
+magic 4
+protected 2
+Int 1
+Pow 1
+weight 90
+end
+#
+Allowed all
+chance 5
+Object Berserkergang
+type 15
+value 15
+magic 4
+dam 30
+wc 7
+Str 7
+Dex 7
+Con 7
+Int -10
+Wis -10
+Cha -15
+protected 2
+material 256
+weight 50
+exp 3
+hp 2
+msg
+  This weapon burns with a supernatural rage:
+  its anger invests the wielder and empowers
+  him.  However, it also clouds his thoughts,
+  and drool is very unattractive.
+endmsg
+attacktype 16385
+damned 1
+end
+#
+# This item is attack type weaponmagic.  It only happens in weapons that
+# are already pretty magical (+3 or better).  Thus, while the chance
+# may look high, since there are not that many +3 or better weapons
+# created, it will not be created that often.
+#
+Allowed all
+chance 10
+Object Magic Hitting
+type 15
+magic 3
+value 20
+attacktype 256
+end
+#
+Allowed axe,axe_2,axe_3,axe_4,axe_5,battle_axe,hammer,skullcleaver,mjoellnir,bonecrusher,frost_hammer
+chance 10
+Object Mostrai
+type 15
+magic 1
+value 12
+dam 14
+weight 115
+end
+#
+#
+# Swords (subtype of weapons)
+#
+Allowed sword,sabre,scimitar,light_sword,katana_1,falchion
+chance 10
+Object Poisoning
+type 15
+value 20
+weight 80
+attacktype 1025
+end
+#
+#
+# Metal Weapons
+#
+Allowed dagger,light_sword,shortsword,shortsword_2,taifu_1,trident,axe,axe_2,axe_3,axe_4,axe_5,battle_axe,poleaxe,morningstar,large_morningstar,hammer,mace,mace_2,lspear,spear,sword,sword_2,sword_3,sabre,scimitar,katana_1,falchion,broadsword,broadsword_2
+chance 5
+Object Sorig
+type 15
+magic 1
+value 15
+weight 95
+attacktype 9
+last_sp 125
+end
+#
+Allowed dagger,axe,axe_2,axe_3,axe_4,axe_5,battle_axe,sword,sword_2,sword_3,sabre,scimitar,light_sword,katana_1,falchion,broadsword,broadsword_2,shortsword,shortsword_2,morningstar,large_morningstar,hammer,mace,mace_2,lspear,spear,poleaxe,taifu_1,trident
+chance 5
+Object Ruggilli
+type 15
+magic 1
+value 15
+weight 85
+attacktype 5
+last_sp 110
+end
+#
+*
+# Daggers (subtype of weapons)
+#
+Allowed dagger
+chance 10
+Object Poisoning
+type 15
+value 20
+weight 80
+attacktype 1025
+end
+#
+Allowed dagger
+chance 10
+Object Paralysis
+type 15
+value 30
+weight 80
+attacktype 4097
+end
+#
+Allowed dagger
+chance 10
+Object Madness
+type 15
+value 10
+weight 80
+attacktype 33
+end
+#
+#
 # Helmets
 #
-Allowed helmet
-chance 3
-Object Concentration
+Allowed helmet, crown
+chance 6
+Object Xebinon
 type 34
 value 35
-last_heal 20
+last_heal 2
 path_attuned 1024
 sp 1
-magic 1
+magic 2
 end
 #
 Allowed all
@@ -192,8 +581,8 @@ Dex 1
 end
 #
 Allowed full helmet
-chance 2
-Object Lordliness
+chance 20
+Object Valriel
 type 34
 value 50
 magic 2
@@ -266,8 +655,8 @@ damned 1
 end
 #
 Allowed all
-chance 5
-Object Uriel
+chance 10
+Object Sorig
 type 34
 value 20
 ac 1
@@ -359,310 +748,6 @@ Con 1
 Str 1
 end
 #
-# Weapons:
-#
-Allowed all
-chance 10
-Object Ilrya
-type 15
-value 10
-weight 80
-end
-#
-Allowed all
-chance 5
-Object Lythander
-type 15
-value 20
-luck 1
-weight 90
-end
-#
-Allowed all
-chance 5
-Object Fear
-type 15
-value 30
-attacktype 16385
-weight 90
-end
-#
-Allowed all
-chance 20
-Object Woe
-type 15
-cursed 1
-Str -1
-Con -1
-Dex -1
-Wis -1
-Int -1
-Pow -1
-Cha -1
-luck -1
-value 5
-end
-#
-Allowed all
-chance 20
-Object Mass
-type 15
-value 5
-cursed 1
-weight 300
-dam 15
-wc -3
-end
-#
-Allowed all
-chance 10
-Object Sanwe
-type 15
-value 10
-dam 12
-end
-#
-Allowed all
-chance 6
-Object Zormola
-type 15
-value 15
-weight 80
-wc 2
-end
-#
-Allowed all
-chance 2
-Object Gwormi
-type 15
-value 50
-hp 1
-dam 11
-magic 2
-end
-#
-Allowed all
-chance 2
-Object Kragi
-type 15
-value 50
-magic 3
-Con 1
-dam 11
-end
-#
-Allowed all
-chance 6
-Object Morgul
-type 15
-value 15
-magic 3
-dam 20
-wc -3
-Str -2
-Dex -2
-Con -2
-damned 1
-end
-#
-Allowed all
-chance 5
-Object Slay Ogre
-type 15
-slaying ogre
-value 20
-magic 1
-end
-#
-Allowed all
-chance 3
-Object Slay Demon
-type 15
-slaying demon
-value 30
-magic 2
-end
-#
-Allowed all
-chance 3
-Object Doom
-type 15
-damned 1
-Str -5
-Con -5
-Dex -5
-Wis -5
-Int -5
-Pow -5
-Cha -5
-value 30
-magic 1
-end
-#
-Allowed all
-chance 2
-Object Crolmi
-type 15
-value 40
-magic 3
-Str 1
-weight 110
-end
-#
-Allowed all
-chance 2
-Object Great Mass
-type 15
-value 50
-damned 1
-weight 600
-dam 25
-wc -5
-end
-#
-Allowed all
-chance 2
-Object Slay Troll
-type 15
-slaying troll
-value 50
-magic 2
-end
-#
-Allowed all
-chance 2
-Object Slay Undead
-type 15
-slaying undead
-value 50
-magic 2
-end
-#
-Allowed all
-chance 1
-Object Slay Dragon
-type 15
-slaying dragon
-value 100
-magic 3
-end
-#
-Allowed all
-chance 1
-Object Slay Beholder
-type 15
-slaying beholder
-value 150
-protected 2
-magic 3
-end
-#
-Allowed all
-chance 1
-Object Rhyz
-type 15
-value 80
-magic 4
-Str 1
-Dex 1
-weight 90
-end
-#
-Allowed all
-chance 1
-Object Glamdri
-type 15
-value 150
-magic 4
-protected 2
-Int 1
-Pow 1
-weight 90
-end
-#
-Allowed all
-chance 1
-Object Berserkergang
-type 15
-value 15
-magic 4
-dam 30
-wc 7
-Str 7
-Dex 7
-Con 7
-Int -10
-Wis -10
-Cha -15
-protected 2
-material 256
-weight 50
-exp 3
-hp 2
-msg
-  This weapon burns with a supernatural rage:
-  its anger invests the wielder and empowers
-  him.  However, it also clouds his thoughts,
-  and drool is very unattractive.
-endmsg
-attacktype 16385
-damned 1
-end
-#
-# This item is attack type weaponmagic.  It only happens in weapons that
-# are already pretty magical (+3 or better).  Thus, while the chance
-# may look high, since there are not that many +3 or better weapons
-# created, it will not be created that often.
-#
-Allowed all
-chance 10
-Object Magic Hitting
-type 15
-magic 3
-value 20
-attacktype 256
-end
-#
-# Daggers (subtype of weapons)
-#
-Allowed dagger
-chance 10
-Object Poisoning
-type 15
-value 20
-weight 80
-attacktype 1025
-end
-#
-Allowed dagger
-chance 10
-Object Paralysis
-type 15
-value 30
-weight 80
-attacktype 4097
-end
-#
-Allowed dagger
-chance 10
-Object Madness
-type 15
-value 10
-weight 80
-attacktype 33
-end
-#
-# Swords (subtype of weapons)
-#
-Allowed sword
-chance 10
-Object Poisoning
-type 15
-value 10
-weight 80
-attacktype 1025
-end
-#
 # Shields
 #
 Allowed all
@@ -697,8 +782,8 @@ Object Deflection
 type 33
 value 50
 magic 2
-ac 1
-weight 120
+ac 3
+weight 110
 msg
   This highly enchanted shield is
   craftfully made to give more
@@ -707,11 +792,11 @@ endmsg
 end
 #
 Allowed all
-chance 1
-Object Theodin
+chance 8
+Object Mostrai
 type 33
-value 80
-magic 2
+value 24
+magic 1
 protected 4
 end
 #
@@ -719,8 +804,10 @@ Allowed all
 chance 8
 Object Gnarg
 type 33
+magic 1
 value 12
 Cha -1
+ac 1
 armour 18
 end
 #
@@ -756,6 +843,29 @@ luck -1
 value 5
 end
 #
+#
+# Gauntlets / Gloves
+#
+Allowed gauntlets
+chance 10
+Object Sorig
+type 100
+magic 2
+armour -10
+attacktype 8
+weight 125
+value 75
+end
+#
+Allowed gloves
+chance 10
+Object Sorig
+type 100
+armour -5
+protected 8
+weight 125
+value 10
+end
 #
 # Armour
 #
@@ -797,13 +907,56 @@ Dex -1
 cursed 1
 end
 #
+Allowed plate_mail,scale_mail
+chance 6
+Object Valriel
+type 16
+value 20
+armour 12
+weight 110
+magic 1
+end
+#
+Allowed plate_mail,scale_mail
+chance 6
+Object Gorokh
+type 16
+value 15
+ac 2
+armour 11
+weight 105
+magic 1
+end
+#
+Allowed plate_mail,scale_mail,dragon_mail
+chance 6
+Object Ruggilli
+type 16
+value 55
+ac 1
+armour 12
+protected 4
+weight 90
+magic 2
+end
+#
+Allowed all
+chance 10
+Object Gaea
+type 16
+value 25
+ac 1
+armour 12
+magic 2
+end
+#
 Allowed all
 chance 6
 Object Protection
 type 16
 value 15
-ac 1
-armour 12
+ac 2
+armour 14
 magic 3
 msg
   The quality of this superb armour
@@ -1341,16 +1494,6 @@ value 5
 end
 #
 Allowed all
-chance 50
-difficulty 3
-Object minor protection
-weight 120
-type 87
-value 20
-ac 1
-end
-#
-Allowed all
 chance 5
 Object Doom
 type 87
@@ -1367,13 +1510,13 @@ magic 1
 end
 #
 Allowed all
-chance 10
+chance 50
 difficulty 3
-Object beguilement
+Object minor protection
+weight 120
 type 87
-value 100
-Cha 2
-weight 110
+value 20
+ac 1
 end
 #
 Allowed all
@@ -1395,6 +1538,16 @@ weight 130
 value 300
 ac 3
 material 256
+end
+#
+Allowed all
+chance 10
+difficulty 3
+Object beguilement
+type 87
+value 100
+Cha 2
+weight 110
 end
 #
 Allowed all
@@ -1439,6 +1592,19 @@ value 500
 weight 90
 protected 64
 material 256
+end
+#
+Allowed all
+chance 3
+difficulty 3
+Object the Devourers
+type 87
+magic 3
+value 50
+weight 50
+protected 66240
+material 0
+Cha -2
 end
 #
 Allowed all
@@ -1661,7 +1827,7 @@ end
 Allowed all
 chance 10
 difficulty 10
-Object Aetherality
+Object Aethereality
 face amulet_lif.111
 type 39
 value 3000
@@ -1776,7 +1942,7 @@ Str 80
 end
 #
 Allowed quiver
-chance 20
+chance 30
 Object Holding Arrows
 type 122
 value 100
@@ -1813,7 +1979,7 @@ end
 Allowed all
 chance 100
 difficulty 5
-Object accuracy
+Object Accuracy
 type 13
 value 5
 wc 7
@@ -1858,15 +2024,15 @@ end
 Allowed all
 chance 50
 difficulty 6
-Object paralyze
+Object Paralysis
 attacktype 4097
 type 13
 value 8
 wc 2
 food 80
 msg
-These missiles have been dipped into some
-strange liquid which stuns the enemy.
+These missiles have been soaked in some
+strange liquid which stuns the victim.
 These missiles also broken much more easily
 than normal ones.
 endmsg
@@ -1951,7 +2117,7 @@ end
 Allowed arrow
 chance 50
 difficulty 8
-Object magic
+Object Magic
 type 13
 value 10
 attacktype 2
@@ -1994,7 +2160,7 @@ end
 Allowed bolt
 chance 50
 difficulty 8
-Object piercing
+Object Piercing
 type 13
 value 7
 dam -25
@@ -2017,11 +2183,90 @@ end
 #
 Allowed all
 chance 10
-Object accuracy
+Object Accuracy
 type 14
 value 5
 weight 80
 wc 4
+end
+#
+Allowed all
+chance 10
+Object Valriel
+type 14
+magic 1
+value 15
+weight 110
+dam 20
+end
+#
+Allowed all
+chance 15
+Object Gorokh
+type 14
+magic 2
+value 15
+attacktype 65
+dam 16
+end
+#
+Allowed !crossbow
+chance 10
+Object Lythander
+type 14
+magic 1
+value 22
+weight 75
+sp 150
+wc 1
+end
+#
+Allowed crossbow
+chance 10
+Object Ruggilli
+type 14
+magic 2
+value 18
+weight 85
+sp 110
+wc 1
+attacktype 4
+end
+#
+Allowed any
+chance 12
+Object Sorig
+type 14
+magic 2
+value 20
+weight 95
+sp 125
+wc 1
+attacktype 8
+end
+#
+Allowed crossbow
+chance 5
+Object Mostrai
+type 14
+magic 3
+dam 14
+sp 75
+value 50
+attacktype 256
+end
+#
+Allowed all
+chance 10
+difficulty 5
+Object Thunder
+type 14
+value 10
+magic 2
+weight 90
+dam 15
+wc 2
+attacktype 6145
 end
 #
 Allowed all
@@ -2033,7 +2278,7 @@ wc -4
 cursed 1
 end
 #
-Allowed all
+Allowed bow
 chance 1
 difficulty 5
 Object Auriga
@@ -2472,7 +2717,7 @@ end
 #
 Allowed balm_generic
 chance 1
-Object ethrealness
+Object aethereality
 type 5
 sp 53
 value 3
@@ -2560,7 +2805,7 @@ end
 #
 Allowed potion_generic
 chance 3
-Object ethreality
+Object aethereality
 type 5
 sp 103
 value 110
@@ -2586,7 +2831,7 @@ end
 #
 Allowed potion_generic
 chance 1
-Object quickness
+Object agility
 type 5
 sp 40
 value 1
@@ -2732,7 +2977,7 @@ end
 #
 Allowed figurine_generic 
 chance 1
-Object a clinched hand
+Object a clenched hand
 type 5
 sp 91
 level -20
