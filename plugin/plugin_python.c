@@ -6995,6 +6995,7 @@ MODULEAPI CFParm* triggerEvent(CFParm* PParm)
 
     eventcode = *(int *)(PParm->Value[0]);
     printf( "PYTHON - triggerEvent:: eventcode %d\n",eventcode);
+    result = 0;
     switch(eventcode)
     {
         case EVENT_NONE:
@@ -7185,7 +7186,7 @@ MODULEAPI int HandleEvent(CFParm* PParm)
         PyFixPlayer(StackActivator[StackPosition]);
     };
     StackPosition--;
-    return StackReturn[StackPosition];
+    return StackReturn[StackPosition+1];
 };
 
 /*****************************************************************************/

@@ -542,9 +542,11 @@ CFParm* registerHook(CFParm* PParm)
 CFParm* triggerEvent(CFParm* PParm)
 {
     int eventcode;
-    int result;
+    static int result;
+
     eventcode = *(int *)(PParm->Value[0]);
     current_event= eventcode;
+    result = 0;
     switch(eventcode)
     {
         case EVENT_NONE:
@@ -688,7 +690,7 @@ int HandleEvent(CFParm* PParm)
         fix_player(StackActivator[StackPosition]);
     };
     StackPosition--;
-    return StackReturn[StackPosition];*/
+    return StackReturn[StackPosition+1];*/
     printf ("printf %s called animator->%p with file %s and options %s\n",
             PParm->Value[2]?((object *)(PParm->Value[2]))->name:"",
             PParm->Value[1],

@@ -807,6 +807,7 @@ CFParm* triggerEvent(CFParm* PParm)
     /*May help fixing some events*/
     if (eventcode != 14)
         printf ("\t[Crossfire Logger] Got event %d\n",eventcode);
+    result = 0;
     switch (eventcode){
         case EVENT_BORN:
             result=player_birth ( (object*)PParm->Value[1]);

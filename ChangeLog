@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+plugin/plugin_python.c, plugin_animator/plugin_animator.c,
+plugin_animator/plugin_animator.c: Use script return value set by
+   CFPython.SetReturnValue(): access to stack was off by one. Do not return a
+   pointer to a local variable on the stack.
 plugin/plugin_python.c, plugin_animator/plugin_animator.c: Handle all defined
    events.
 Andreas Kirschbaum 2005-01-10
