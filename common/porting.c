@@ -58,6 +58,7 @@
 #include <unistd.h>
 #endif
 
+#include <stdarg.h>
 /* Has to be after above includes so we don't redefine some values */
 #include "global.h"
 

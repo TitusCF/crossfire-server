@@ -17,6 +17,15 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+configure, configure.ac: Remove --enable-old-layout option - that is more than
+    3+ years old now.  Add --enable-dmalloc option so code can be compiled
+    with dmalloc debugging without needing to change/rebuild the configure
+    files.
+common/porting.c: Add stdarg.h to list of included files.
+include/autoconf.h.in: rebuilt, HAVE_LIBDMALLOC undef added.
+random_maps/square_spiral.c: fix bound checking value.
+MSW 2002-10-07
+
 common/item.c: Fix bug with identified potions not getting set to proper name.
 MSW 2002-10-03
 

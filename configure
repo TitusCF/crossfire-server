@@ -1006,7 +1006,7 @@ Optional Features:
   --disable-dependency-tracking Speeds up one-time builds
   --enable-dependency-tracking  Do not reject slow dependency extractors
   --disable-libtool-lock  avoid locking (might break parallel builds)
- --enable-old-layout    Use the old (0.95.3 and earlier) install layout
+ --enable-dmalloc    Use the dmalloc library if available, may prevent plugins from working
 
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
@@ -8477,12 +8477,12 @@ fi
 done
 
 
-# Check whether --enable-old-layout or --disable-old-layout was given.
-if test "${enable_old_layout+set}" = set; then
-  enableval="$enable_old_layout"
-  old_layout=yes
+# Check whether --enable-dmalloc or --disable-dmalloc was given.
+if test "${enable_dmalloc+set}" = set; then
+  enableval="$enable_dmalloc"
+  use_dmalloc=yes
 else
-  old_layout=no
+  use_dmalloc=no
 fi;
 
 # Extract the first word of "latex", so it can be a program name with args.
@@ -10861,6 +10861,67 @@ fi
 
 
 
+if eval "test x$use_dmalloc = xyes"; then
+
+echo "$as_me:$LINENO: checking for main in -ldmalloc" >&5
+echo $ECHO_N "checking for main in -ldmalloc... $ECHO_C" >&6
+if test "${ac_cv_lib_dmalloc_main+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-ldmalloc  $LIBS"
+cat >conftest.$ac_ext <<_ACEOF
+#line $LINENO "configure"
+#include "confdefs.h"
+
+
+#ifdef F77_DUMMY_MAIN
+#  ifdef __cplusplus
+     extern "C"
+#  endif
+   int F77_DUMMY_MAIN() { return 1; }
+#endif
+int
+main ()
+{
+main ();
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext conftest$ac_exeext
+if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
+  (eval $ac_link) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+         { ac_try='test -s conftest$ac_exeext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  ac_cv_lib_dmalloc_main=yes
+else
+  echo "$as_me: failed program was:" >&5
+cat conftest.$ac_ext >&5
+ac_cv_lib_dmalloc_main=no
+fi
+rm -f conftest.$ac_objext conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+echo "$as_me:$LINENO: result: $ac_cv_lib_dmalloc_main" >&5
+echo "${ECHO_T}$ac_cv_lib_dmalloc_main" >&6
+if test $ac_cv_lib_dmalloc_main = yes; then
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_LIBDMALLOC 1
+_ACEOF
+
+  LIBS="-ldmalloc $LIBS"
+
+fi
+
+else
 
 echo "$as_me:$LINENO: checking for main in -ldmalloclp" >&5
 echo $ECHO_N "checking for main in -ldmalloclp... $ECHO_C" >&6
@@ -10920,6 +10981,7 @@ _ACEOF
 
 fi
 
+fi
 
 
 
@@ -12742,23 +12804,10 @@ fi
 
 
 
-if eval "test x$old_layout = xyes"; then
-	pkgdatadir=$datadir
+pkgstatedir=$localstatedir/$PACKAGE
 
-	pkgstatedir=$localstatedir
+pkgconfdir=$sysconfdir/$PACKAGE
 
-	pkgconfdir=$datadir
-
-else
-	echo ""
-	echo "If you are upgrading an 0.95.3 or earlier release, you may want to use"
-	echo "--enable-old-layout to use the same install directories"
-	echo ""
-	pkgstatedir=$localstatedir/$PACKAGE
-
-	pkgconfdir=$sysconfdir/$PACKAGE
-
-fi
 
 
 cat >>confdefs.h <<_ACEOF
@@ -14009,7 +14058,6 @@ s,@x_includes@,$x_includes,;t t
 s,@x_libraries@,$x_libraries,;t t
 s,@no_x@,$no_x,;t t
 s,@X11LIBS@,$X11LIBS,;t t
-s,@pkgdatadir@,$pkgdatadir,;t t
 s,@pkgstatedir@,$pkgstatedir,;t t
 s,@pkgconfdir@,$pkgconfdir,;t t
 s,@HAVE_LIBDL_TRUE@,$HAVE_LIBDL_TRUE,;t t

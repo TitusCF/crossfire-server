@@ -32,8 +32,8 @@ AC_PROG_CPP
 AM_PROG_LEX
 AC_PROG_AWK
 
-AC_ARG_ENABLE(old-layout, [ --enable-old-layout    Use the old (0.95.3 and earlier) install layout],
-	old_layout=yes, old_layout=no)
+AC_ARG_ENABLE(dmalloc, [ --enable-dmalloc    Use the dmalloc library if available, may prevent plugins from working],
+	use_dmalloc=yes, use_dmalloc=no)
 
 dnl check for some other programs
 AC_PATH_PROG(LATEX, latex)
@@ -110,8 +110,11 @@ AC_CHECK_LIB(des, des_crypt)
 dnl Gros - Changed this to support some external programs that do not like dmalloc (like Python).
 dnl If you really need to make some memory debugging, uncomment the dmalloc line and comment out the dmalloclp one.
 
-AC_CHECK_LIB(dmalloclp, main)
-dnl AC_CHECK_LIB(dmalloc, main)
+if eval "test x$use_dmalloc = xyes"; then
+    AC_CHECK_LIB(dmalloc, main)
+else
+    AC_CHECK_LIB(dmalloclp, main)
+fi
 
 dnl Checks for header files.
 AC_HEADER_DIRENT
@@ -170,18 +173,8 @@ AC_SUBST(X11LIBS)
 AC_SUBST(PERL)
 AC_SUBST(BASENAME)
 
-if eval "test x$old_layout = xyes"; then
-	AC_SUBST(pkgdatadir,$datadir)
-	AC_SUBST(pkgstatedir,$localstatedir)
-	AC_SUBST(pkgconfdir,$datadir)
-else
-	echo ""
-	echo "If you are upgrading an 0.95.3 or earlier release, you may want to use"
-	echo "--enable-old-layout to use the same install directories"
-	echo ""
-	AC_SUBST(pkgstatedir,$localstatedir/$PACKAGE)
-	AC_SUBST(pkgconfdir,$sysconfdir/$PACKAGE)
-fi
+AC_SUBST(pkgstatedir,$localstatedir/$PACKAGE)
+AC_SUBST(pkgconfdir,$sysconfdir/$PACKAGE)
 
 AC_DEFINE_UNQUOTED(COMPRESS,"${COMPRESS}",[Path to the compress binary])
 AC_DEFINE_UNQUOTED(UNCOMPRESS,"${UNCOMPRESS}",[Path to the uncompress binary])

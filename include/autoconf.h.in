@@ -55,6 +55,9 @@
 /* Define to 1 if you have the `des' library (-ldes). */
 #undef HAVE_LIBDES
 
+/* Define to 1 if you have the `dmalloc' library (-ldmalloc). */
+#undef HAVE_LIBDMALLOC
+
 /* Define to 1 if you have the `dmalloclp' library (-ldmalloclp). */
 #undef HAVE_LIBDMALLOCLP
 
