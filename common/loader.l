@@ -197,6 +197,14 @@ static void check_loaded_object(object *op) {
 		op->name,
 		op->stats.hp, op->stats.maxhp);
     }
+    if ((QUERY_FLAG(op,FLAG_GENERATOR)) && QUERY_FLAG(op,FLAG_CONTENT_ON_GEN)){
+        /* Generator will duplicate it's content as part of the
+         * generation process. To do this, we must flag inventory
+         * so it remains unevaluated concerning the randomitems and
+         * the living (a demonlord shouldn't cast from inside generator!)
+         */
+        flag_inv(op,FLAG_IS_A_TEMPLATE);
+    }
 
 }
 
@@ -416,6 +424,7 @@ A	.+
 			else CLEAR_FLAG(op, FLAG_FRIENDLY);
 		    }
 ^generator{S}	    SET_OR_CLEAR_FLAG(op, FLAG_GENERATOR, IVAL);
+^use_content_on_gen{S} SET_OR_CLEAR_FLAG (op,FLAG_CONTENT_ON_GEN, IVAL);
 ^is_thrown{S}	    SET_OR_CLEAR_FLAG(op, FLAG_IS_THROWN, IVAL);
 ^auto_apply{S}	    SET_OR_CLEAR_FLAG(op, FLAG_AUTO_APPLY, IVAL);
 ^treasure{S}	    SET_OR_CLEAR_FLAG(op, FLAG_TREASURE, IVAL);
@@ -997,38 +1006,39 @@ int set_variable(object *op,char *buf) {
  * put gaps in the array that should not be processed.
  * The order matches the order of the define values in 'define.h'.
  */
-/* This is a list of pointers taht correspond to the FLAG_.. values.
+/* This is a list of pointers that correspond to the FLAG_.. values.
  * This is a simple 1:1 mapping - if FLAG_FRIENDLY is 15, then
  * the 15'th element of this array should match that name.
  * If an entry is NULL, that is a flag not to loaded/saved.
  */
 static char *flag_names[NUM_FLAGS+1] = {
 "alive", "wiz", NULL, NULL, "was_wiz", "applied", "unpaid",
-"can_use_shield", "no_pick", "walk_on", "no_pass",		/* 10 */
+"can_use_shield", "no_pick", "walk_on", "no_pass",              /* 10 */
 "is_animated", NULL, "flying", "monster", "friendly", "generator",
-"is_thrown", "auto_apply", "treasure", NULL /* flag_invis_undead */,	/* 20 */
-"see_invisible", "can_roll", "overlay_floor", "is_turnable", "walk_off",
-"fly_on", "fly_off", "is_used_up", "identified", "reflecting",	/* 30 */
+"is_thrown", "auto_apply", "treasure", NULL /*invis_undead*/,   /* 20 */
+"see_invisible", "can_roll", "overlay_floor",
+"is_turnable", "walk_off", "fly_on",
+"fly_off", "is_used_up", "identified", "reflecting",            /* 30 */
 "changing", "splitting", "hitback", "startequip",
 "blocksview", "undead", "scared", "unaggressive",
-"reflect_missile", "reflect_spell",				/* 40 */
+"reflect_missile", "reflect_spell",                             /* 40 */
 "no_magic", "no_fix_player", NULL, "tear_down", "run_away",
-"pass_thru", "can_pass_thru", "pick_up", "unique", "no_drop",	/* 50 */
- NULL, "can_cast_spell", "can_use_scroll", "can_use_range", 
-"can_use_bow",  "can_use_armour", "can_use_weapon", 
-"can_use_ring", "has_ready_range", "has_ready_bow",		/* 60 */
+"pass_thru", "can_pass_thru", "pick_up", "unique", "no_drop",   /* 50 */
+ NULL, "can_cast_spell", "can_use_scroll", "can_use_range",
+"can_use_bow",  "can_use_armour", "can_use_weapon",
+"can_use_ring", "has_ready_range", "has_ready_bow",             /* 60 */
 "xrays", NULL, "is_floor", "lifesave", "no_strength", "sleep",
-"stand_still", "random_move", "only_attack", "confused",	/* 70 */
+"stand_still", "random_move", "only_attack", "confused",        /* 70 */
  "stealth", NULL, NULL, "cursed", "damned",
 "see_anywhere", "known_magical", "known_cursed",
-"can_use_skill", "been_applied",				/* 80 */
+"can_use_skill", "been_applied",                                /* 80 */
 "has_ready_scroll", "can_use_rod", NULL,
 "can_use_horn", "make_invisible",  "inv_locked", "is_wooded",
-"is_hilly", "has_ready_skill", "has_ready_weapon",		/* 90 */
-"no_skill_ident", "is_blind", "can_see_in_dark", "is_cauldron", 
+"is_hilly", "has_ready_skill", "has_ready_weapon",              /* 90 */
+"no_skill_ident", "is_blind", "can_see_in_dark", "is_cauldron",
 "is_dust", "no_steal", "one_hit", NULL, "berserk", "neutral",	/* 100 */
 "no_attack", "no_damage", NULL, NULL, "activate_on_push",
-"activate_on_release", "is_water"				/* 104 */
+"activate_on_release", "is_water", "use_content_on_gen", NULL   /* 109 */
 };
 
 

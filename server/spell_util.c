@@ -515,7 +515,7 @@ int cast_spell(object *op,object *caster,int dir,int type,int ability,SpellTypeF
 	    success = cast_earth2dust(op,caster);
 	    break;
 
-	case SP_REGENERATION: 
+	case SP_REGENERATION:
 	case SP_BLESS:
 	case SP_CURSE:
 	case SP_HOLY_POSSESSION:
@@ -1177,7 +1177,7 @@ void check_cone_push(object *op) {
     weight_move = 1000 + 1000 * op->level;
 
     for(tmp=get_map_ob(op->map,op->x,op->y);tmp!=NULL;tmp=tmp->above)
-    { 
+    {
 	int num_sections = 1;
 
 	/* don't move parts of objects */
@@ -1573,7 +1573,7 @@ void move_golem(object *op) {
 
 	if (out_of_map(op->map,x,y)) continue;
 
-	for(victim=get_map_ob(op->map,x,y);victim;victim=victim->above) 
+	for(victim=get_map_ob(op->map,x,y);victim;victim=victim->above)
 	    if(QUERY_FLAG(victim,FLAG_ALIVE)) break;
 
 	/* We used to call will_hit_self to make sure we don't
@@ -2394,20 +2394,20 @@ void put_a_monster(object *op,char *monstername) {
      * insert multipart monsters properly
      */
     while (at!=NULL) {
-	tmp=arch_to_object(at);
-	tmp->x=op->x+freearr_x[dir]+at->clone.x;
-	tmp->y=op->y+freearr_y[dir]+at->clone.y;
-	if (head) {
-	    tmp->head=head;
-	    prev->more=tmp;
-	}
-	if (!head) head=tmp;
-	prev=tmp;
-	at=at->more;
+      tmp=arch_to_object(at);
+      tmp->x=op->x+freearr_x[dir]+at->clone.x;
+      tmp->y=op->y+freearr_y[dir]+at->clone.y;
+      if (head) {
+        tmp->head=head;
+        prev->more=tmp;
+      }
+      if (!head) head=tmp;
+      prev=tmp;
+      at=at->more;
     }
 
-    if (head->randomitems) 
-	create_treasure(head->randomitems, head, GT_INVISIBLE, op->map->difficulty,0);
+    if (HAS_RANDOM_ITEMS(head))
+      create_treasure(head->randomitems, head, GT_INVISIBLE, op->map->difficulty,0);
     insert_ob_in_map(head,op->map,op,0);
 
     /* thought it'd be cool to insert a burnout, too.*/
@@ -2416,7 +2416,7 @@ void put_a_monster(object *op,char *monstername) {
     tmp->x=op->x+freearr_x[dir];
     tmp->y=op->y+freearr_y[dir];
     insert_ob_in_map(tmp,op->map,op,0);
-    }
+  }
 }
 
 
@@ -2451,7 +2451,7 @@ void put_a_monster(object *op,char *monstername) {
 
 
 /*  shuffle_attack:  peterm */
-/*  This routine shuffles the attack of op to one of the 
+/*  This routine shuffles the attack of op to one of the
    ones in the list.  It does this at random.  It also
    chooses a face appropriate to the attack that is
    being committed by that square at the moment.  

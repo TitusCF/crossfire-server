@@ -971,7 +971,7 @@ void free_object(object *ob) {
 		tmp=op->below;
 		remove_ob(op);
 		if(QUERY_FLAG(op,FLAG_STARTEQUIP)||QUERY_FLAG(op,FLAG_NO_DROP) ||
-		   op->type==RUNE)
+		   op->type==RUNE || QUERY_FLAG(op,FLAG_IS_A_TEMPLATE))
 		free_object(op);
 		else {
 		    op->x=ob->x;
@@ -1295,6 +1295,20 @@ object *merge_ob(object *op, object *top) {
   return NULL;
 }
 
+/*
+ * same as insert_ob_in_map except it handle separate coordinates and do a clean
+ * job preparing multi-part monsters
+ */
+object *insert_ob_in_map_at(object *op, mapstruct *m, object *originator, int flag, int x, int y){
+    object* tmp;
+    if (op->head)
+        op=op->head;
+    for (tmp=op;tmp;tmp=tmp->more){
+        tmp->x=x+tmp->arch->clone.x;
+        tmp->y=y+tmp->arch->clone.y;
+    }
+    return insert_ob_in_map (op, m, originator, flag);
+}
 
 /*
  * insert_ob_in_map (op, map, originator, flag):
@@ -1306,7 +1320,7 @@ object *merge_ob(object *op, object *top) {
  * originator: Player, monster or other object that caused 'op' to be inserted
  * into 'map'.  May be NULL.
  *
- * flag is a bitmask about special things to do (or not do) when this 
+ * flag is a bitmask about special things to do (or not do) when this
  * function is called.  see the object.h file for the INS_ values.
  * Passing 0 for flag gives proper default values, so flag really only needs
  * to be set if special handling is needed.
@@ -1929,6 +1943,28 @@ object *present_arch_in_ob(archetype *at, object *op)  {
 }
 
 /*
+ * activate recursively a flag on an object inventory
+ */
+void flag_inv(object*op, int flag){
+    object *tmp;
+    if(op->inv)
+      for(tmp = op->inv; tmp != NULL; tmp = tmp->below){
+        SET_FLAG(tmp, flag);
+        flag_inv(tmp,flag);
+      }
+}/*
+ * desactivate recursively a flag on an object inventory
+ */
+void unflag_inv(object*op, int flag){
+    object *tmp;
+    if(op->inv)
+      for(tmp = op->inv; tmp != NULL; tmp = tmp->below){
+        CLEAR_FLAG(tmp, flag);
+        unflag_inv(tmp,flag);
+      }
+}
+
+/*
  * set_cheat(object) sets the cheat flag (WAS_WIZ) in the object and in
  * all it's inventory (recursively).
  * If checksums are used, a player will get set_cheat called for
@@ -1936,11 +1972,8 @@ object *present_arch_in_ob(archetype *at, object *op)  {
  */
 
 void set_cheat(object *op) {
-  object *tmp;
-  SET_FLAG(op, FLAG_WAS_WIZ);
-  if(op->inv)
-    for(tmp = op->inv; tmp != NULL; tmp = tmp->below)
-      set_cheat(tmp);
+    SET_FLAG(op, FLAG_WAS_WIZ);
+    flag_inv(op, FLAG_WAS_WIZ);
 }
 
 /*
@@ -2223,7 +2256,7 @@ int dirdiff(int dir1, int dir2) {
 int can_pick(object *who,object *item) {
   return /*QUERY_FLAG(who,FLAG_WIZ)||*/
          (item->weight>0&&!QUERY_FLAG(item,FLAG_NO_PICK)&&
-	 !QUERY_FLAG(item,FLAG_ALIVE)&&!item->invisible && 
+	 !QUERY_FLAG(item,FLAG_ALIVE)&&!item->invisible &&
           (who->type==PLAYER||item->weight<who->weight/3));
 }
 
@@ -2252,7 +2285,7 @@ object *ObjectCreateClone (object *asrc) {
             tmp->head = dst;
         }
         tmp->more = NULL;
-        if(prev) 
+        if(prev)
             prev->more = tmp;
         prev = tmp;
     }

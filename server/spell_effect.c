@@ -286,9 +286,9 @@ void polymorph_living(object *op) {
     if ((op = insert_ob_in_map (op, map, owner,0)) == NULL)
         return;
 
-    if(op->randomitems != NULL)
+    if (HAS_RANDOM_ITEMS(op))
         /* No GT_APPLY here because we'll do it manually. */
-	create_treasure(op->randomitems,op,GT_INVISIBLE,map->difficulty,0);
+	    create_treasure(op->randomitems,op,GT_INVISIBLE,map->difficulty,0);
 
     /* Apply any objects.  This limits it to the first 20 items, which
      * I guess is reasonable.

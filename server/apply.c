@@ -3151,7 +3151,7 @@ int auto_apply (object *op) {
 
   switch(op->type) {
   case SHOP_FLOOR:
-    if (op->randomitems==NULL) return 0;
+    if (!HAS_RANDOM_ITEMS(op)) return 0;
     do {
       i=10; /* let's give it 10 tries */
       while((tmp=generate_treasure(op->randomitems,
@@ -3173,9 +3173,11 @@ int auto_apply (object *op) {
     break;
 
   case TREASURE:
+    if (QUERY_FLAG(op,FLAG_IS_A_TEMPLATE))
+        return 0;
     while ((op->stats.hp--)>0)
       create_treasure(op->randomitems, op, op->map?GT_ENVIRONMENT:0,
-	op->stats.exp ? op->stats.exp : 
+	op->stats.exp ? op->stats.exp :
 	op->map == NULL ?  14: op->map->difficulty,0);
 
     /* If we generated on object and put it in this object inventory,
@@ -3214,48 +3216,48 @@ void fix_auto_apply(mapstruct *m) {
       for(tmp=get_map_ob(m,x,y);tmp!=NULL;tmp=above) {
         above=tmp->above;
 
-	if (tmp->inv) {
-	    object *invtmp, *invnext;
-	    for (invtmp=tmp->inv; invtmp != NULL; invtmp = invnext) {
-		invnext = invtmp->below;
-		if(QUERY_FLAG(invtmp,FLAG_AUTO_APPLY))
-		    auto_apply(invtmp);
-		else if(invtmp->type==TREASURE) {
-		    while ((invtmp->stats.hp--)>0)
-			create_treasure(invtmp->randomitems, invtmp, 0,
-                            m->difficulty,0);
-		}
-	    }
-	}
+        if (tmp->inv) {
+          object *invtmp, *invnext;
+          for (invtmp=tmp->inv; invtmp != NULL; invtmp = invnext) {
+            invnext = invtmp->below;
+            if(QUERY_FLAG(invtmp,FLAG_AUTO_APPLY))
+              auto_apply(invtmp);
+            else if(invtmp->type==TREASURE && HAS_RANDOM_ITEMS(invtmp)) {
+              while ((invtmp->stats.hp--)>0)
+                create_treasure(invtmp->randomitems, invtmp, 0,
+                                m->difficulty,0);
+            }
+          }
+        }
 
-	if(QUERY_FLAG(tmp,FLAG_AUTO_APPLY))
+        if(QUERY_FLAG(tmp,FLAG_AUTO_APPLY))
           auto_apply(tmp);
-        else if((tmp->type==TREASURE || (tmp->type==CONTAINER))&&tmp->randomitems) {
-	  while ((tmp->stats.hp--)>0)
+        else if((tmp->type==TREASURE || (tmp->type==CONTAINER))&&HAS_RANDOM_ITEMS(tmp)) {
+          while ((tmp->stats.hp--)>0)
             create_treasure(tmp->randomitems, tmp, 0,
                             m->difficulty,0);
-	}
-	else if(tmp->type==TIMED_GATE) {
-	  tmp->speed = 0;
-	  update_ob_speed(tmp);
-	}
-        else if(tmp && tmp->arch && tmp->type!=PLAYER && tmp->type!=TREASURE &&
-	  tmp->randomitems)
-            create_treasure(tmp->randomitems, tmp, GT_APPLY,
-                            m->difficulty,0);
+        }
+        else if(tmp->type==TIMED_GATE) {
+          tmp->speed = 0;
+          update_ob_speed(tmp);
+        }
+        else if(tmp && tmp->arch && tmp->type!=PLAYER && tmp->type!=TREASURE && HAS_RANDOM_ITEMS(tmp))
+          create_treasure(tmp->randomitems, tmp, GT_APPLY,
+                          m->difficulty,0);
       }
+  /*end of cycle through map square*/
   for(x=0;x<MAP_WIDTH(m);x++)
     for(y=0;y<MAP_HEIGHT(m);y++)
       for(tmp=get_map_ob(m,x,y);tmp!=NULL;tmp=tmp->above)
-	if (tmp->above &&
+        if (tmp->above &&
             (tmp->type == TRIGGER_BUTTON || tmp->type == TRIGGER_PEDESTAL))
-	  check_trigger (tmp, tmp->above);
+          check_trigger (tmp, tmp->above);
 }
 
 /* eat_special_food() - some food may (temporarily) alter
  * player status. We do it w/ this routine and cast_change_attr().
  * Note the dircection is set to "99"  so that cast_change_attr()
- * will only modify the user's status. We shouldnt be able to 
+ * will only modify the user's status. We shouldnt be able to
  * effect others by eating food!
  * -b.t.
  */
@@ -3265,22 +3267,22 @@ void eat_special_food(object *who, object *food) {
      * the attactkype.  This matches the order of ATNR values
      * in attack.h
      */
-    static int sp_type[NROFATTACKS] = { SP_ARMOUR, SP_PROT_MAGIC, SP_PROT_FIRE, 
-	SP_PROT_ELEC, SP_PROT_COLD, SP_PROT_CONFUSE, -1 /*acid */, 
-	SP_PROT_DRAIN, 	-1 /*weaponmagic*/, -1 /*ghosthit*/, SP_PROT_POISON, 
+    static int sp_type[NROFATTACKS] = { SP_ARMOUR, SP_PROT_MAGIC, SP_PROT_FIRE,
+	SP_PROT_ELEC, SP_PROT_COLD, SP_PROT_CONFUSE, -1 /*acid */,
+	SP_PROT_DRAIN, 	-1 /*weaponmagic*/, -1 /*ghosthit*/, SP_PROT_POISON,
 	SP_PROT_SLOW, SP_PROT_PARALYZE, -1 /* turn undead */,
 	-1 /* fear */, SP_PROT_CANCEL, SP_PROT_DEPLETE, -1 /* death*/,
 	-1 /* chaos */, -1 /*counterspell */, -1 /* godpower */,
 	-1 /*holyword */, -1 /*blind*/, -1 /*internal */ };
 
     /* matrix for stats we can increase by eating */
-    int i; 
+    int i;
     /* Declare these static so they only get initialzed once.  IT doesn't appear
      * that we are modifying these, so this works out ok.
      */
-    static int stat[] = { STR, DEX, CON, CHA }, 
+    static int stat[] = { STR, DEX, CON, CHA },
     mod_stat[] = {SP_STRENGTH, SP_DEXTERITY, SP_CONSTITUTION, SP_CHARISMA };
-  
+
     /* check if food modifies stats of the eater */
     for(i=0; i<(sizeof(stat)/sizeof(int)); i++)
 	if(get_attr_value(&food->stats, stat[i]))
@@ -3294,26 +3296,26 @@ void eat_special_food(object *who, object *food) {
 
   /* check for hp, sp change */
   if(food->stats.hp!=0) {
-     if(QUERY_FLAG(food, FLAG_CURSED)) { 
+     if(QUERY_FLAG(food, FLAG_CURSED)) {
 	strcpy(who->contr->killer,food->name);
 	hit_player(who, food->stats.hp, food, AT_POISON);
 	new_draw_info(NDI_UNIQUE, 0,who,"Eck!...that was poisonous!");
-     } else { 
-         if(food->stats.hp>0) 
+     } else {
+         if(food->stats.hp>0)
 	    new_draw_info(NDI_UNIQUE, 0,who,"You begin to feel better.");
-	 else 
+	 else
             new_draw_info(NDI_UNIQUE, 0,who,"Eck!...that was poisonous!");
   	 who->stats.hp += food->stats.hp;
      }
   }
   if(food->stats.sp!=0) {
-     if(QUERY_FLAG(food, FLAG_CURSED)) { 
+     if(QUERY_FLAG(food, FLAG_CURSED)) {
          new_draw_info(NDI_UNIQUE, 0,who,"You are drained of mana!");
-	 who->stats.sp -= food->stats.sp; 
+	 who->stats.sp -= food->stats.sp;
          if(who->stats.sp<0) who->stats.sp=0;
-     } else { 
+     } else {
          new_draw_info(NDI_UNIQUE, 0,who,"You feel a rush of magical energy!");
-	 who->stats.sp += food->stats.sp; 
+	 who->stats.sp += food->stats.sp;
 	/* place limit on max sp from food? */
      }
   }
@@ -3348,7 +3350,7 @@ void apply_lighter(object *who, object *lighter) {
 	    lighter->stats.food--;
 	  }
 
-	} else if(lighter->last_eat) { /* no charges left in lighter */ 
+	} else if(lighter->last_eat) { /* no charges left in lighter */
 	     new_draw_info_format(NDI_UNIQUE, 0,who,
 				  "You attempt to light the %s with a used up %s.",
 				  item->name, lighter->name);
@@ -3383,17 +3385,17 @@ void apply_lighter(object *who, object *lighter) {
 		 "You attempt to light the %s with the %s and fail.",item->name,lighter->name);
 	}
 
-   } else /* nothing to light */ 
+   } else /* nothing to light */
 	new_draw_info(NDI_UNIQUE, 0,who,"You need to mark a lightable object.");
 
 }
 
-/* scroll_failure()- hacked directly from spell_failure */ 
+/* scroll_failure()- hacked directly from spell_failure */
 
 void scroll_failure(object *op, int failure, int power)
-{ 
+{
     if(abs(failure/4)>power) power=abs(failure/4); /* set minimum effect */
-    
+
     if(failure<= -1&&failure > -15) {/* wonder */
 	new_draw_info(NDI_UNIQUE, 0,op,"Your spell warps!.");
 	cast_cone(op,op,0,10,SP_WOW,spellarch[SP_WOW],0);
@@ -3432,9 +3434,9 @@ void apply_changes_to_player(object *pl, object *change) {
 	    int flag_change_face=1;
 
 	    /* the following code assigns stats up to the stat max
-	     * for the race, and if the stat max is exceeded, 
-	     * tries to randomly reassign the excess stat 
-	     */ 
+	     * for the race, and if the stat max is exceeded,
+	     * tries to randomly reassign the excess stat
+	     */
 	    int i,j;
 	    for(i=0;i<7;i++) {
 		int stat=get_attr_value(stats,i);
@@ -3461,14 +3463,14 @@ void apply_changes_to_player(object *pl, object *change) {
 	    /* insert the randomitems from the change's treasurelist into
 	     * the player ref: player.c
 	     */
-	    if(change->randomitems!=NULL) 
+	    if(change->randomitems!=NULL)
 		give_initial_items(pl,change->randomitems);
 
 
 	    /* set up the face, for some races. */
 
-	    /* first, look for the force object banning 
-	     * changing the face.  Certain races never change face with class. 
+	    /* first, look for the force object banning
+	     * changing the face.  Certain races never change face with class.
 	     */
 	    for(walk=pl->inv;walk!=NULL;walk=walk->below)
 		if (!strcmp(walk->name,"NOCLASSFACECHANGE")) flag_change_face=0;

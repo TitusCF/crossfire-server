@@ -404,12 +404,17 @@ error - Your ANSI C compiler should be defining __STDC__;
 	 op->type == BRACERS || op->type == GIRDLE)
 
 #define IS_LIVE(op) \
-	(op->type == PLAYER || QUERY_FLAG(op, FLAG_MONSTER) || \
+	((op->type == PLAYER || QUERY_FLAG(op, FLAG_MONSTER) || \
 	(QUERY_FLAG(op, FLAG_ALIVE) && !QUERY_FLAG(op, FLAG_GENERATOR) && \
-	!op->type == DOOR))
+	!op->type == DOOR)) && (!QUERY_FLAG(op,FLAG_IS_A_TEMPLATE)))
 
 #define IS_ARROW(op) \
 	(op->type==ARROW || op->type==MMISSILE || op->type==BULLET)
+
+/* This return TRUE if object has still randomitems which
+ * could be expanded.
+ */
+#define HAS_RANDOM_ITEMS(op) (op->randomitems && (!QUERY_FLAG(op,FLAG_IS_A_TEMPLATE)))
 
 /* the flags */
 
@@ -520,7 +525,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define FLAG_READY_WEAPON	90 /* (Monster or Player) has a weapon readied */
 #define FLAG_NO_SKILL_IDENT	91 /* If set, item cannot be identified w/ a skill */
 #define FLAG_BLIND		92 /* If set, object cannot see (visually) */
-#define FLAG_SEE_IN_DARK	93 /* if set ob not effected by darkness */ 
+#define FLAG_SEE_IN_DARK	93 /* if set ob not effected by darkness */
 #define FLAG_IS_CAULDRON	94 /* container can make alchemical stuff */
 #define FLAG_DUST		95 /* item is a 'powder', effects throwing */
 
@@ -540,22 +545,25 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define FLAG_NEUTRAL            100 /* monster is from type neutral */
 #define FLAG_NO_ATTACK          101 /* monster don't attack */
 #define FLAG_NO_DAMAGE          102 /* monster can't be damaged */
-#define FLAG_OBJ_ORIGINAL	103 /* NEVER SET THIS.  Item was loaded by
+#define FLAG_OBJ_ORIGINAL       103 /* NEVER SET THIS.  Item was loaded by
 				     * load_original_map() */
-#define FLAG_OBJ_SAVE_ON_OVL	104 /* this object should be saved on
+#define FLAG_OBJ_SAVE_ON_OVL    104 /* this object should be saved on
 				     * the overlay, and is not subject to
 				     * decay. */
-#define FLAG_ACTIVATE_ON_PUSH	105 /* connected object is activated when 'pushed' */
+#define FLAG_ACTIVATE_ON_PUSH    105 /* connected object is activated when 'pushed' */
 #define FLAG_ACTIVATE_ON_RELEASE 106	/* connected object is activated when 'released' */
-#define FLAG_IS_WATER		107
-#define NUM_FLAGS		107 /* Should always be equal to the last
-				     * defined flag.  If you change this,
-				     * make sure you update the flag_links
-				     * in common/loader.l
-				     */
+#define FLAG_IS_WATER            107
+#define FLAG_CONTENT_ON_GEN      108
+#define FLAG_IS_A_TEMPLATE       109 /* Object has no ingame life until instanciated*/
+#define NUM_FLAGS                109 /* Should always be equal to the last
+                                      * defined flag.  If you change this,
+                                      * make sure you update the flag_links
+                                      * in common/loader.l
+                                      */
 
 /* Values can go up to 127 before the size of the flags array in the
  * object structure needs to be enlarged.
+ * So there are 18 available flags slots
  */
 
 
@@ -883,16 +891,24 @@ enum apply_flag {
 #endif /* DEFINE_H */
 
 /* Code fastening defines
- * faststrcat & faststrncat will add buf2__ at position pointed by
+ * FAST_STRCAT & FAST_STRNCAT will add buf2__ at position pointed by
  * buf__ and increment buf__ position so it will point to the end of buf__.
  * the '\0' caracter will not be put at end of buf__.
  * use preparefastcat and finishfastcat on buf__ to prepare
  * and clean up the string. (Lots faster than doing each time...)
+ * If you use them and have choice between FAST_STRCAT and FAST_STRNCAT,
+ * keep in mind FAST_STRNCAT is faster since length of second argument is
+ * kown in advance.
  */
 
  #define PREPARE_FASTCAT(buf__) buf__+strlen(buf__)
  #define FAST_STRNCAT(buf__,buf2__,size__) {memcpy (buf__,buf2__,size__);buf__+=size__;}
- /*#define FAST_STRNCAT(buf__,buf2__,size__) {memcpy (buf__,buf2__,size__);buf__+=size__;\
- if (size__!=strlen(buf2__)) printf ("Error, bad length for %s\n",buf2__);}*/
  #define FAST_STRCAT(buf__,buf2__) {memcpy (buf__,buf2__,strlen(buf2__));buf__+=strlen(buf2__);}
  #define FINISH_FASTCAT(buf__) buf__[0]='\0';
+
+ /* You may uncomment following define to check sanity of code.
+  * But use as debug only (loses all speed gained by those macros)
+  */
+/*#define FAST_STRNCAT(buf__,buf2__,size__) {memcpy (buf__,buf2__,size__);buf__+=size__;\
+ if (size__!=strlen(buf2__)) printf ("Error, bad length for %s\n",buf2__);}*/
+

@@ -83,13 +83,51 @@ void remove_door2(object *op) {
   free_object(op);
 }
 
-void generate_monster(object *gen) {
+/* Will generate a monster according to content
+ * of generator.
+ */
+void generate_monster_inv(object *gen) {
     int i;
     object *op,*head=NULL,*prev=NULL;
     archetype *at=gen->other_arch;
-
-    if(GENERATE_SPEED(gen)&&rndm(0, GENERATE_SPEED(gen)-1))
+    int qty=0;
+    /* Code below assumes the generator is on a map, as it tries
+     * to place the monster on the map.  So if the generator
+     * isn't on a map, complain and exit.
+     */
+    if (gen->map == NULL) {
+	LOG(llevError,"Generator (%s) not on a map?\n", gen->name);
 	return;
+    }
+    /*First count numer of objects in inv*/
+    for (op=gen->inv;op;op=op->below)
+        qty++;
+    if (!qty){
+        LOG(llevError,"Generator (%s) has no inventory in generate_monster_inv?\n", gen->name);
+        return;/*No inventory*/
+        }
+    qty=rndm(0,qty-1);
+    for (op=gen->inv;qty;qty--)
+        op=op->below;
+    i=find_free_spot(op->arch,gen->map,gen->x,gen->y,1,9);
+    if (i==-1)
+        return;
+    head=ObjectCreateClone(op);
+    CLEAR_FLAG(head, FLAG_IS_A_TEMPLATE);
+    unflag_inv (head,FLAG_IS_A_TEMPLATE);
+    if (rndm(0, 9))
+        generate_artifact(head, gen->map->difficulty);
+    insert_ob_in_map_at(head,gen->map,gen,0,gen->x+freearr_x[i],gen->y+freearr_y[i]);
+    if (QUERY_FLAG(head, FLAG_FREED)) return;
+    if(HAS_RANDOM_ITEMS(head))
+        create_treasure(head->randomitems,head,GT_APPLY,
+                      gen->map->difficulty,0);
+}
+
+void generate_monster_arch(object *gen) {
+    int i;
+    object *op,*head=NULL,*prev=NULL;
+    archetype *at=gen->other_arch;
 
     if(gen->other_arch==NULL) {
 	LOG(llevError,"Generator without other_arch: %s\n",gen->name);
@@ -116,7 +154,7 @@ void generate_monster(object *gen) {
 	if (rndm(0, 9)) generate_artifact(op, gen->map->difficulty);
 	insert_ob_in_map(op,gen->map,gen,0);
 	if (QUERY_FLAG(op, FLAG_FREED)) return;
-	if(op->randomitems!=NULL)
+	if(HAS_RANDOM_ITEMS(op))
 	    create_treasure(op->randomitems,op,GT_APPLY,
                       gen->map->difficulty,0);
 	if(head==NULL)
@@ -124,6 +162,17 @@ void generate_monster(object *gen) {
 	prev=op;
 	at=at->more;
     }
+}
+
+void generate_monster(object *gen) {
+
+    if(GENERATE_SPEED(gen)&&rndm(0, GENERATE_SPEED(gen)-1))
+        return;
+    if (QUERY_FLAG(gen,FLAG_CONTENT_ON_GEN))
+        return generate_monster_inv(gen);
+    else
+        return generate_monster_arch(gen);
+
 }
 
 void regenerate_rod(object *rod) {

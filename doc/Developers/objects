@@ -421,11 +421,18 @@ all the above fields will be reset to standard values.
 
 
 
-H. Generators and creature spawning (generate) (other_arch)
+H. Generators and creature spawning (generate) (other_arch) (use_content_on_gen)
 ===================================
 
-To make a monster spawn other monsters add the flags generate 1 and other_arch
-<arch> **The speed of generation is likely based on speed?**
+There are 2 types of generators in crossfire since september 2003.
+both are identified as generators by setting the flag "generate" to 1. 
+For the first type (the classical one) use "other_arch" to specify 
+archetype of object to be spawned.
+The second type allow more fine tuning on what to generate. To activate
+second type, set the flag "use_content_on_gen" to 1. Then each
+time something must be generated, it will be a copy of a randomly 
+choosen item in the generator's inventory.
+
 
 H. NPC's and their life:
 =======================

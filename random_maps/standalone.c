@@ -87,7 +87,7 @@ int auto_apply (object *op) {
 
   switch(op->type) {
   case SHOP_FLOOR:
-    if (op->randomitems==NULL) return 0;
+    if (!HAS_RANDOM_ITEMS(op)) return 0;
     do {
       i=10; /* let's give it 10 tries */
       while((tmp=generate_treasure(op->randomitems,op->stats.exp?
@@ -109,10 +109,11 @@ int auto_apply (object *op) {
     break;
 
   case TREASURE:
-    while ((op->stats.hp--)>0)
-      create_treasure(op->randomitems, op, GT_ENVIRONMENT,
-	op->stats.exp ? op->stats.exp : 
-	op->map == NULL ?  14: op->map->difficulty,0);
+    if (HAS_RANDOM_ITEMS(op))
+      while ((op->stats.hp--)>0)
+        create_treasure(op->randomitems, op, GT_ENVIRONMENT,
+    op->stats.exp ? op->stats.exp :
+    op->map == NULL ?  14: op->map->difficulty,0);
     remove_ob(op);
     free_object(op);
     break;
@@ -136,28 +137,31 @@ void fix_auto_apply(mapstruct *m) {
       for(tmp=get_map_ob(m,x,y);tmp!=NULL;tmp=above) {
         above=tmp->above;
 
-	if(QUERY_FLAG(tmp,FLAG_AUTO_APPLY))
+        if(QUERY_FLAG(tmp,FLAG_AUTO_APPLY))
           auto_apply(tmp);
         else if(tmp->type==TREASURE) {
-	  while ((tmp->stats.hp--)>0)
-            create_treasure(tmp->randomitems, tmp, 0,
-                            m->difficulty,0);
-	}
+          if (HAS_RANDOM_ITEMS(tmp))
+            while ((tmp->stats.hp--)>0)
+              create_treasure(tmp->randomitems, tmp, 0,
+                              m->difficulty,0);
+        }
         if(tmp && tmp->arch && tmp->type!=PLAYER && tmp->type!=TREASURE &&
-	   tmp->randomitems){
-	  if(tmp->type==CONTAINER) {
-	    while ((tmp->stats.hp--)>0)
-	      create_treasure(tmp->randomitems, tmp, 0,
-			      m->difficulty,0);
-	  }
-	  else create_treasure(tmp->randomitems, tmp, GT_APPLY,
-			      m->difficulty,0);
-	}
+           tmp->randomitems){
+          if(tmp->type==CONTAINER) {
+            if (HAS_RANDOM_ITEMS(tmp))
+              while ((tmp->stats.hp--)>0)
+                create_treasure(tmp->randomitems, tmp, 0,
+                                m->difficulty,0);
+          }
+          else if (HAS_RANDOM_ITEMS(tmp))
+            create_treasure(tmp->randomitems, tmp, GT_APPLY,
+                            m->difficulty,0);
+        }
       }
   for(x=0;x<MAP_WIDTH(m);x++)
     for(y=0;y<MAP_HEIGHT(m);y++)
       for(tmp=get_map_ob(m,x,y);tmp!=NULL;tmp=tmp->above)
-	if (tmp->above
+        if (tmp->above
             && (tmp->type == TRIGGER_BUTTON || tmp->type == TRIGGER_PEDESTAL))
-	  check_trigger(tmp,tmp->above);
+          check_trigger(tmp,tmp->above);
 }
