@@ -147,7 +147,7 @@ int query_cost(object *tmp, object *who, int flag) {
 
     /* Limit amount of money you can get for really great items. */
     if (flag==F_TRUE || flag==F_SELL) {
-	if (val/number>25000) {
+	if (val/number>10000) {
 	    val=8000+isqrt((int)val/number)*20;
 	    val *= number;
 	}

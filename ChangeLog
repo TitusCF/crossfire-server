@@ -17,6 +17,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/shop.c: Decrease adjustment limit for expensive items to 10000 to get a
+   continuous adjustment function. That is you will get much less when selling
+   items with a value between 800pp and 2000pp.
+Andreas Kirschbaum 2004-04-16
+
 common/map.c: Change blocked_link() to take a map parameter.  Also, change code
    in blocked_link() to assume that the caller has set up appropriate map and
    coordinates related to tiling (in all functions that currently call
