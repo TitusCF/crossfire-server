@@ -895,8 +895,11 @@ int command_drop (object *op, char *params)
 
 int command_examine (object *op, char *params)
 {
-  if (!params)
-    examine(op,op->below);
+  if (!params) {
+    object *tmp=op->below;
+    while (tmp && !LOOK_OBJ(tmp)) tmp=tmp->below;
+    if (tmp) examine(op,tmp);
+  }
   else {
     object *tmp=find_best_object_match(op,params);
     if (tmp) 

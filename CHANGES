@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 CVS changes since last release:
 
+server/c_object:  Modify examine command to only be able to examine
+   valid objects, and not whatever is on top of the space, which may be
+   insivisible.  MSW 2001-04-01
+
 include/sproto.h, server/c_wiz.c server/main.c server/player.c socket/loop.c:
 Modify leave function to take a second parameter that determines if it
 should print a message about the player leaving the game or not.  Proper
