@@ -317,7 +317,7 @@
  * knows where to find the information.
  */
 
-/*#define RECYCLE_TMP_MAPS*/
+#define RECYCLE_TMP_MAPS
 
 
 /* define RESURECTION if you want to let players bring other players
@@ -607,7 +607,9 @@
 
 /*
  * Where to send error-reports.  If you're hacking at the source, define
- * this as your mail-address.
+ * this as your mail-address.  You do not need to define this - you can
+ * leave it undefined if you don't want the information available from this
+ * and instead use some other mean (motd for example)
  */
 
 #ifndef DM_MAIL
