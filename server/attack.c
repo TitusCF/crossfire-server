@@ -1467,9 +1467,9 @@ int kill_object(object *op,int dam, object *hitter, int type)
 	    LOG(llevError,"kill_object - unable to find skill that killed monster\n");
 
 	/* We have the skill we want to credit to - now find the object this goes
-	 * to.
+	 * to.  Make sure skop is an actual skill, and not a skill tool!
 	 */
-	if (!skop && skill) {
+	if ((!skop || skop->type != SKILL) && skill) {
 	    int i;
 
 	    for (i=0; i<NUM_SKILLS; i++)
@@ -1872,50 +1872,56 @@ int hit_player(object *op,int dam, object *hitter, int type) {
 
 void poison_player(object *op, object *hitter, int dam)
 {
-  archetype *at = find_archetype("poisoning");
-  object *tmp=present_arch_in_ob(at,op);
+    archetype *at = find_archetype("poisoning");
+    object *tmp=present_arch_in_ob(at,op);
 
     if(tmp==NULL) {
-      if((tmp=arch_to_object(at))==NULL)
-        LOG(llevError,"Failed to clone arch poisoning.\n");
-      else {
-        tmp = insert_ob_in_ob(tmp,op);
-	/*  peterm:  give poisoning some teeth.  It should
-		be able to kill things better than it does:
-		damage should be dependent something--I choose to
-		do this:  if it's a monster, the damage from the
-		poisoning goes as the level of the monster/2.
-		If anything else, goes as damage. */
+	if((tmp=arch_to_object(at))==NULL)
+	    LOG(llevError,"Failed to clone arch poisoning.\n");
+	else {
+	    tmp = insert_ob_in_ob(tmp,op);
+	    /*  peterm:  give poisoning some teeth.  It should
+	     * be able to kill things better than it does:
+	     * damage should be dependent something--I choose to
+	     * do this:  if it's a monster, the damage from the
+	     * poisoning goes as the level of the monster/2.
+	     * If anything else, goes as damage. 
+	     */
 
-	if(QUERY_FLAG(hitter,FLAG_ALIVE))
-	   tmp->stats.dam += hitter->level/2;
-	 else
-	   tmp->stats.dam = dam;
+	    if(QUERY_FLAG(hitter,FLAG_ALIVE))
+		tmp->stats.dam += hitter->level/2;
+	    else
+		tmp->stats.dam = dam;
 
-	copy_owner(tmp,hitter);   /*  so we get credit for poisoning kills */
-	tmp->stats.food+=dam;  /*  more damage, longer poisoning */
+	    copy_owner(tmp,hitter);   /*  so we get credit for poisoning kills */
+	    if(hitter->skill && hitter->skill != tmp->skill) {
+		if (tmp->skill) free_string(tmp->skill);
+		tmp->skill = add_refcount(hitter->skill);
+	    }
 
-        if(op->type==PLAYER) {
-	  /* player looses stats, maximum is -10 of each */
-	  tmp->stats.Con= MAX(-(dam/4+1), -10);
-	  tmp->stats.Str= MAX(-(dam/3+2), -10);
-	  tmp->stats.Dex= MAX(-(dam/6+1), -10);
-	  tmp->stats.Int= MAX(-dam/7, -10);
-          SET_FLAG(tmp,FLAG_APPLIED);
-          fix_player(op);
-          new_draw_info(NDI_UNIQUE, 0,op,"You suddenly feel very ill.");
-        }
-	if (hitter->type == PLAYER)
-	    new_draw_info_format(NDI_UNIQUE, 0, hitter, "You poison %s.",
-		op->name);
-	else if (get_owner(hitter) != NULL && hitter->owner->type == PLAYER)
-	    new_draw_info_format(NDI_UNIQUE, 0, hitter->owner,
-		"Your %s poisons %s.", hitter->name, op->name);
-      }
-      tmp->speed_left=0;
+	    tmp->stats.food+=dam;  /*  more damage, longer poisoning */
+
+	    if(op->type==PLAYER) {
+		/* player looses stats, maximum is -10 of each */
+		tmp->stats.Con= MAX(-(dam/4+1), -10);
+		tmp->stats.Str= MAX(-(dam/3+2), -10);
+		tmp->stats.Dex= MAX(-(dam/6+1), -10);
+		tmp->stats.Int= MAX(-dam/7, -10);
+		SET_FLAG(tmp,FLAG_APPLIED);
+		fix_player(op);
+		new_draw_info(NDI_UNIQUE, 0,op,"You suddenly feel very ill.");
+	    }
+	    if (hitter->type == PLAYER)
+		new_draw_info_format(NDI_UNIQUE, 0, hitter, "You poison %s.",
+		     op->name);
+	    else if (get_owner(hitter) != NULL && hitter->owner->type == PLAYER)
+		new_draw_info_format(NDI_UNIQUE, 0, hitter->owner,
+		     "Your %s poisons %s.", hitter->name, op->name);
+	}
+	tmp->speed_left=0;
     }
     else
-      tmp->stats.food++;
+	tmp->stats.food++;
 }
 
 void slow_player(object *op,object *hitter,int dam)

@@ -535,7 +535,8 @@ int calc_skill_exp(object *who, object *op, object *skill) {
 		    lvl_mult = 1.0;
 	    }
 	} else {
-	    lvl_mult = (float) op_lvl / (float) skill->level;
+	    /* Don't divide by zero here! */
+	    lvl_mult = (float) op_lvl / (float) (skill->level?skill->level:1);
 	}
     }
  

@@ -883,8 +883,14 @@ void fix_player(object *op) {
 	/* Container objects are not meant to adjust a players, but other applied
 	 * objects need to make adjustments.
 	 * This block should handle all player specific changes 
+	 * The check for Praying is a bit of a hack - god given bonuses are put
+	 * in the praying skill, and the player should always get those.
+	 * It also means we need to put in additional checks for applied below,	
+	 * because the skill shouldn't count against body positions being used
+	 * up, etc.
 	 */
-	if(QUERY_FLAG(tmp,FLAG_APPLIED) && tmp->type!=CONTAINER && tmp->type!=CLOSE_CON) {
+	if ((QUERY_FLAG(tmp,FLAG_APPLIED) && tmp->type!=CONTAINER && tmp->type!=CLOSE_CON) ||
+	   (tmp->type == SKILL && tmp->subtype == SK_PRAYING)) {
 	    if(op->type==PLAYER) {
 		if (tmp->type == BOW) 
 		    op->contr->ranges[range_bow] = tmp;
@@ -916,8 +922,10 @@ void fix_player(object *op) {
 	    } /* if this is a player */
 
 	    /* Update slots used for items */
-	    for (i=0; i<NUM_BODY_LOCATIONS; i++)
-		op->body_used[i] += tmp->body_info[i];
+	    if (QUERY_FLAG(tmp,FLAG_APPLIED)) {
+		for (i=0; i<NUM_BODY_LOCATIONS; i++)
+		    op->body_used[i] += tmp->body_info[i];
+	    }
 
 	    if(tmp->type==SYMPTOM) {
 		speed_reduce_from_disease = tmp->last_sp / 100.0;
@@ -990,6 +998,8 @@ void fix_player(object *op) {
  		/* skills modifying the character -b.t. */ 
 		/* for all skills and skill granting objects */ 
 		case SKILL:
+		    if (!QUERY_FLAG(tmp,FLAG_APPLIED)) break;
+
 		    if (IS_COMBAT_SKILL(tmp->subtype)) wc_obj=tmp;
 
 		    if (op->chosen_skill) {
@@ -1015,8 +1025,7 @@ void fix_player(object *op) {
 
 		    if(tmp->stats.ac)
 			ac-=(tmp->stats.ac+tmp->magic);
-		    if(settings.spell_encumbrance == TRUE &&
-		       op->type==PLAYER)
+		    if(settings.spell_encumbrance == TRUE && op->type==PLAYER)
 			op->contr->encumbrance+=(int)3*tmp->weight/1000;
 		    if (op->type == PLAYER)
 			op->contr->ranges[range_skill] = op;
@@ -1066,20 +1075,21 @@ void fix_player(object *op) {
 		     * extra strength damage, this is where the code should
 		     * go.
 		     */
-        evt = find_event(tmp,EVENT_ATTACK);
-        if (evt != NULL) {
-		    if (op->current_weapon_script)
-			free_string(op->current_weapon_script);
-		    op->current_weapon_script=add_string(query_name(tmp));
-		}
-		op->current_weapon = tmp;
-		if(settings.spell_encumbrance == TRUE && op->type==PLAYER)
-		    op->contr->encumbrance+=(int)3*tmp->weight/1000;
-		break;
+		    evt = find_event(tmp,EVENT_ATTACK);
+		    if (evt != NULL) {
+			if (op->current_weapon_script)
+			    free_string(op->current_weapon_script);
+			op->current_weapon_script=add_string(query_name(tmp));
+		    }
+		    op->current_weapon = tmp;
+		    if(settings.spell_encumbrance == TRUE && op->type==PLAYER)
+			op->contr->encumbrance+=(int)3*tmp->weight/1000;
+		    break;
 
 		case ARMOUR: /* Only the best of these three are used: */
 		    if(settings.spell_encumbrance == TRUE && op->type==PLAYER)
 			op->contr->encumbrance+=(int)tmp->weight/1000;
+	
 		case BRACERS:
 		case FORCE:
 		    if(tmp->stats.wc) { 
@@ -1089,17 +1099,17 @@ void fix_player(object *op) {
 			} else
 			    wc+=tmp->stats.wc+tmp->magic;
 		    }
-		if(tmp->stats.ac) {
-		    if(best_ac<tmp->stats.ac+tmp->magic) {
-			ac+=best_ac; /* Remove last bonus */
-			best_ac=tmp->stats.ac+tmp->magic;
+		    if(tmp->stats.ac) {
+			if(best_ac<tmp->stats.ac+tmp->magic) {
+			    ac+=best_ac; /* Remove last bonus */
+			    best_ac=tmp->stats.ac+tmp->magic;
+			}
+			else /* To nullify the below effect */
+			    ac+=tmp->stats.ac+tmp->magic;
 		    }
-		    else /* To nullify the below effect */
-			ac+=tmp->stats.ac+tmp->magic;
-		}
-		if(tmp->stats.wc) wc-=(tmp->stats.wc+tmp->magic);
-		if(tmp->stats.ac) ac-=(tmp->stats.ac+tmp->magic);
-		if(ARMOUR_SPEED(tmp)&&ARMOUR_SPEED(tmp)/10.0<max)
+		    if(tmp->stats.wc) wc-=(tmp->stats.wc+tmp->magic);
+		    if(tmp->stats.ac) ac-=(tmp->stats.ac+tmp->magic);
+		    if(ARMOUR_SPEED(tmp)&&ARMOUR_SPEED(tmp)/10.0<max)
 		    max=ARMOUR_SPEED(tmp)/10.0;
 		break;
 	    } /* switch tmp->type */
@@ -1623,7 +1633,7 @@ static void add_player_exp(object *op, int exp, char *skill_name, int flag)
 
     ADD_EXP(op->stats.exp, (float) exp_to_add * (skill_obj? skill_obj->expmul:1));
     if (settings.use_permanent_experience) {
-	ADD_EXP(op->perm_exp, (float) exp_to_add * (skill_obj? skill_obj->expmul:1));
+	ADD_EXP(op->perm_exp, (float) exp_to_add * PERM_EXP_GAIN_RATIO * (skill_obj? skill_obj->expmul:1));
 	calc_perm_exp(op);
     }
 

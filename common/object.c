@@ -2452,7 +2452,7 @@ object *find_obj_by_type_subtype(object *who, int type, int subtype)
 {
     object *tmp;
 
-    for (tmp=who->inv; tmp; tmp=tmp->below);
+    for (tmp=who->inv; tmp; tmp=tmp->below)
 	if (tmp->type == type && tmp->subtype == subtype) return tmp;
 
     return NULL;

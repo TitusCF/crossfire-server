@@ -169,11 +169,11 @@ int command_cast_spell (object *op, char *params, char command)
 		    spob->skill, spob->name);
 		return 1;
 	    }
-	    op->contr->ranges[range_magic] = spob;
 		
 	    if (castnow) {
 		cast_spell(op,op,op->facing,spob,cp);
 	    } else {
+		op->contr->ranges[range_magic] = spob;
 		op->contr->shoottype = range_magic;
 		new_draw_info_format(NDI_UNIQUE, 0, op,
 			"You ready the spell %s", spob->name);

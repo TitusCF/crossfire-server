@@ -17,6 +17,31 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+
+Various bug fixes:
+common/arch.c: Fix item_matched_string() so that it only passes in the length
+   of the pssed in name in the strncasecmp(), and not the shorter of the
+   passed in string or item name.  Otherwise, if player does a 'drop wand of',
+   unidentified wands (name just wand) would match.  Similarly, if a player
+   did 'drop ringmail', unidentified rings would match, etc.
+common/living.c: Fix fix_player() to always process the praying skill with
+   respect to resistances and whatnot.  This is necessary because the
+   god give abilities are put in this skill, and those shouldn't go away
+   depending on if the skill is in use or not.  Also fix bug in add_exp
+   routines which wasn't multiplying permanent exp by PERM_EXP_GAIN_RATIO
+common/object.c: Fix find_obj_by_type_subtype() - had extraneous semicolon
+   after the for loop, so the if code that was supposed to be for each object
+   was never called and instead would crash as it would get called with tmp
+   was null.
+server/attack.c: Fix problem with kill_object() not finding proper skill -
+   it would use the skill object instead of the skill.  Fix problem of
+   poisoning not setting up proper skill name in poisoning object.
+server/c_range.c: If player is invoking a spell, don't update their
+   range_magic value.
+server/skill_util.c: Fix divide by zero problem if improperly passed
+   skill object.
+MSW 2003-10-26
+
 TRIGGER_MARKER:
 common/glue.c, common/button.c, include/define.h, funcpoint.h, libproto.h
     server/init.c:   Add trigger_marker (type #52) which is a Marker that can be

@@ -224,9 +224,9 @@ int item_matched_string(object *pl, object *op, char *name)
 	else if (!strcasecmp(cp,query_base_name(op,1))) retval=16;
 	else if (op->custom_name && !strcasecmp(cp,op->custom_name)) retval=15;
 	else if (!strncasecmp(cp,query_base_name(op,0),
-			      MIN(strlen(cp),strlen(query_base_name(op,0))))) retval=14;
+			      strlen(cp))) retval=14;
 	else if (!strncasecmp(cp,query_base_name(op,1),
-			      MIN(strlen(cp),strlen(query_base_name(op,1))))) retval=14;
+			      strlen(cp))) retval=14;
 
 	/* Do substring checks, so things like 'Str+1' will match.
 	 * retval of these should perhaps be lower - they are lower
