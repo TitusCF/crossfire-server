@@ -60,7 +60,7 @@ sp*^            ReduceSpRegen   reduces spellpoint regeneration
 
 name            Name            Name of the plague 
 msg             message         What the plague says when it strikes.
-race            those affected  races the plague strikes (* means everything) 
+race            those affected  species/race the plague strikes (* = everything) 
 level           Plague Level    General description of the plague's deadliness
 armour          Attenuation     reduction in wc per generation of disease.
                                 This builds in a self-limiting factor.
@@ -247,7 +247,7 @@ int infect_object(object *victim, object *disease) {
   }
   else
 	 {
-		if(!strstr(victim->race,disease->race))  /* Victim's not listed */
+		if(!strstr(victim->race,disease->race) && !(strstr(victim->name,disease->race)))  /* Victim's not listed */
 		  return 0;
 	 }
 
