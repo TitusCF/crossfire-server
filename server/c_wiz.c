@@ -173,37 +173,43 @@ int command_setgod(object *op, char *params)
 * This uses the banish_file in the local directory *not* the ban_file
 * The action is logged with a ! for easy searching. -tm
 */
-int command_banish (object *op, char *params)
-  {
-	  player *pl;
-	  FILE *banishfile;
-	  char  buf[MAX_BUF];
-	  
-	if (!params) {
-         new_draw_info(NDI_UNIQUE, 0,op,"Usage: banish <player>.");
-         return 1;
+int command_banish (object *op, char *params) {
+    player *pl;
+    FILE *banishfile;
+    char  buf[MAX_BUF];
+    time_t now;
+
+    if (!params) {
+	new_draw_info(NDI_UNIQUE, 0,op,"Usage: banish <player>.");
+	return 1;
     }
 	
-	pl = get_other_player_from_name(op, params);
-	if (!pl) return 1;
+    pl = get_other_player_from_name(op, params);
+    if (!pl) return 1;
 	
-	sprintf (buf, "%s/%s", settings.localdir, BANISHFILE);
+    sprintf (buf, "%s/%s", settings.localdir, BANISHFILE);
 	
     if ((banishfile = fopen(buf, "a")) == NULL) {
     	LOG (llevDebug, "Could not find file banish_file.\n");
 		new_draw_info(NDI_UNIQUE,0,op,"Could not find banish_file.");
     	return(0);
-  		}
-		
-  	fprintf(banishfile,"*@%s\n",pl->socket.host);
-	LOG (llevDebug, "! %s banned %s from IP: %s.\n", op->name, pl->ob->name, pl->socket.host);
-  	new_draw_info_format(NDI_UNIQUE | NDI_RED, 0,op,"You banish %s", pl->ob->name);
-	new_draw_info_format(NDI_UNIQUE | NDI_ALL | NDI_RED, 5, op,
-			     "%s banishes %s from the land!", op->name, pl->ob->name);
-	command_kick(op, pl->ob->name);
+    }
+    now = time(NULL);
+    /* Record this as a comment - then we don't have to worry about changing
+     * the parsing code.
+     */
+    fprintf(banishfile, "# %s (%s) banned by %s at %s\n", pl->ob->name, 
+	    pl->socket.host, op->name, ctime(&now));
+    fprintf(banishfile,"*@%s\n",pl->socket.host);
     fclose(banishfile);
-	return 1;
-  }
+
+    LOG (llevDebug, "! %s banned %s from IP: %s.\n", op->name, pl->ob->name, pl->socket.host);
+    new_draw_info_format(NDI_UNIQUE | NDI_RED, 0,op,"You banish %s", pl->ob->name);
+    new_draw_info_format(NDI_UNIQUE | NDI_ALL | NDI_RED, 5, op,
+		 "%s banishes %s from the land!", op->name, pl->ob->name);
+    command_kick(op, pl->ob->name);
+    return 1;
+}
   
 int command_kick (object *op, char *params)
 {
