@@ -85,9 +85,9 @@ int move_ob (object *op, int dir, object *originator)
     }
     if (op->will_apply&8 ) {
 	tmp_ob=get_map_ob(op->map,op->x+freearr_x[dir],op->y+freearr_y[dir]);
-	while(tmp_ob->above != NULL) {
-	    if (tmp_ob == DOOR) {
-		hit_player(tmp_ob,9998,op,AT_PHYSICAL); /* Tear down the earthwall */
+	while(tmp_ob != NULL) {
+	    if (tmp_ob->type == DOOR) {
+		hit_player(tmp_ob,9998,op,AT_PHYSICAL); /* Tear down the door */
 		return 0;
 	    }
             tmp_ob = tmp_ob->above; /* To prevent endless loop */

@@ -152,6 +152,12 @@ int attempt_steal(object* op, object* who)
 	}
     } /* for loop looking for an item */
 
+    if (!tmp) {
+	new_draw_info_format(NDI_UNIQUE, 0, who, "The %s has nothing you can steal!",
+			     query_name(op));
+	return 0;
+    }
+
     /* If you arent high enough level, you might get something BUT
      * the victim will notice your stealing attempt. Ditto if you
      * attempt to steal something heavy off them, they're bound to notice 

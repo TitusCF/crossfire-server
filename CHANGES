@@ -17,6 +17,34 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Various bugfixes:
+common/map.c:  Change so that same logic is used to determine pclose/fclose
+   that is used to determine popen/fopen - otherwise, compressed map
+   files probably don't work properly.
+common/treasure.c: Do a memset to make sure entire treasureslist is
+   set to sane values.
+lib/archetypes: Fix 'slaying' field (which determines spell name) in
+    god_spelldirect_face_of_death and god_spelldirect_finger_of_death
+server/apply.c:  Fix infinite loop if the player had cursed items
+    that needed to be unapplied to apply an item - setting up next
+    item iteration was inside if check when it shouldn't be.  Also,
+    print message to player if this is the case.
+server/monster.c: Better format some of the code for improved readability.
+    Fix indentation of can_see_enemy.  Clean up invisiblity check - may
+    have fixed a bug - old code should have worked, but wasn't very
+    readable.
+server/move.c: Fix some bad code from last checkin - didn't fix
+    the crash on no floor for door type, and instead removed
+    check type from next line by accident.
+server/player.c: Remove call for init_beforeplay - this is already
+    properly called, and re-calling it resulted in some things being
+    redone when they shouldn't be.
+server/skills.c: Add message if there is nothing to steal form the monster.
+server/spell_effect.c: Improve message when invisiblity duration is
+    maximized.
+socket/init.c: change O_NDELAY to O_NONBLOCK of fcntl.
+MSW 2002-08-25
+
 doc/Developers/objects: Update with new (better) information from
    Todd Mitchell.  Doc is more complete, and now has an index which
    should make it easier to find things.

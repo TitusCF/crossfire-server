@@ -74,10 +74,7 @@ static treasurelist *get_empty_treasurelist() {
   treasurelist *tl = (treasurelist *) malloc(sizeof(treasurelist));
   if(tl==NULL)
     fatal(OUT_OF_MEMORY);
-  tl->name=NULL;
-  tl->next=NULL;
-  tl->items=NULL;
-  tl->total_chance=0;
+  memset(tl, 0, sizeof(treasurelist));
   return tl;
 }
 

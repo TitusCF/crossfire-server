@@ -1218,7 +1218,7 @@ int new_save_map(mapstruct *m, int flag) {
 	save_objects(m, fp, fp, 0);
     }
 
-    if (m->compressed && !flag)
+    if (m->compressed && (m->unique || flag))
 	pclose(fp);
     else
 	fclose(fp);

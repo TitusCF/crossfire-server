@@ -236,9 +236,9 @@ int check_wakeup(object *op, object *enemy, rv_vector *rv) {
      * Remember we already checked to see if the monster can see in 
      * the dark. */
 
-    else if(op->map&&op->map->darkness>0&&enemy&&!enemy->invisible&&
-	    !stand_in_light(enemy)&&(!QUERY_FLAG(op,FLAG_SEE_IN_DARK)||
-	    !QUERY_FLAG(op,FLAG_SEE_INVISIBLE))) {
+    else if(op->map && op->map->darkness>0 && enemy && !enemy->invisible &&
+	    !stand_in_light(enemy) && 
+	    (!QUERY_FLAG(op,FLAG_SEE_IN_DARK) || !QUERY_FLAG(op,FLAG_SEE_INVISIBLE))) {
 		int dark = radius/(op->map->darkness);
 		radius = (dark>MIN_MON_RADIUS)?(dark+1):MIN_MON_RADIUS;
     }
@@ -1809,7 +1809,6 @@ int can_detect_enemy (object *op, object *enemy, rv_vector *rv) {
     if(enemy->invisible && (!enemy->contr || !enemy->contr->tmp_invis))
 	return 0;
 
-
     /* use this for invis also */
     hide_discovery = op->stats.Int/5;
 
@@ -1941,39 +1940,43 @@ int stand_in_light( object *op) {
  */
 
 int can_see_enemy (object *op, object *enemy) {
-  object *looker = op->head?op->head:op;
+    object *looker = op->head?op->head:op;
 
-  /* safety */
-  if(!looker||!enemy||!QUERY_FLAG(looker,FLAG_ALIVE))
-    return 0; 
+    /* safety */
+    if(!looker||!enemy||!QUERY_FLAG(looker,FLAG_ALIVE))
+	return 0; 
 
-  /* we dont give a full treatment of xrays here (shorter range than normal,
-   * see through walls). Should we change the code elsewhere to make you 
-   * blind even if you can xray? */
-  if(QUERY_FLAG(looker,FLAG_BLIND)&&
-    (!QUERY_FLAG(looker,FLAG_SEE_INVISIBLE)||QUERY_FLAG(looker,FLAG_XRAYS)))
-    return 0;
+    /* we dont give a full treatment of xrays here (shorter range than normal,
+     * see through walls). Should we change the code elsewhere to make you 
+     * blind even if you can xray? 
+     */
+    if(QUERY_FLAG(looker,FLAG_BLIND)&&
+       (!QUERY_FLAG(looker,FLAG_SEE_INVISIBLE)||QUERY_FLAG(looker,FLAG_XRAYS)))
+	    return 0;
 
-  /* checking for invisible things */
-  if(enemy->invisible) {
-  
-    /* HIDDEN ENEMY. by definition, you can't see hidden stuff! 
-     * However,if you carry any source of light, then the hidden
-     * creature is seeable (and stupid) */
-    if(has_carried_lights(enemy)) { 
-      if(enemy->hide) { 
-	make_visible(enemy);
-        new_draw_info(NDI_UNIQUE,0, enemy,
-	  "Your light reveals your hidding spot!");
-      }
-      return 1;
-    } else if (enemy->hide) return 0; 
+    /* checking for invisible things */
+    if(enemy->invisible) {
+	/* HIDDEN ENEMY. by definition, you can't see hidden stuff! 
+	 * However,if you carry any source of light, then the hidden
+	 * creature is seeable (and stupid) */
 
-    /* INVISIBLE ENEMY. */
-    if(!QUERY_FLAG(looker,FLAG_SEE_INVISIBLE) 
-       &&(is_true_undead(looker)==(QUERY_FLAG(enemy,FLAG_INVIS_UNDEAD)?1:0)))
-      return 0;
+	if(has_carried_lights(enemy)) { 
+	    if(enemy->hide) { 
+		make_visible(enemy);
+		new_draw_info(NDI_UNIQUE,0, enemy,
+			      "Your light reveals your hidding spot!");
+	    }
+	    return 1;
+	} else if (enemy->hide) return 0; 
 
+	/* Invisible enemy.  Break apart the check for invis undead/invis looker
+	 * into more simple checks - the QUERY_FLAG doesn't return 1/0 values,
+	 * and making it a conditional makes the code pretty ugly.
+	 */
+	if (!QUERY_FLAG(looker,FLAG_SEE_INVISIBLE)) {
+	    if (is_true_undead(looker) && QUERY_FLAG(enemy, FLAG_INVIS_UNDEAD)) return 0;
+	    else if (!is_true_undead(looker) && !QUERY_FLAG(enemy, FLAG_INVIS_UNDEAD)) return 0;
+	}
   } else if(looker->type==PLAYER) /* for players, a (possible) shortcut */
       if(player_can_view(looker,enemy)) return 1;
 

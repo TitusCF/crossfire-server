@@ -74,7 +74,7 @@ void InitConnection(NewSocket *ns, uint32 from)
 	if(ioctlsocket(ns->fd, FIONBIO , &temp) == -1)
 		LOG(llevError,"InitConnection:  Error on ioctlsocket.\n");
 #else 
-    if (fcntl(ns->fd, F_SETFL, O_NDELAY)==-1) {
+    if (fcntl(ns->fd, F_SETFL, O_NONBLOCK)==-1) {
 		LOG(llevError,"InitConnection:  Error on fcntl.\n");
     }
 #endif /* end win32 */

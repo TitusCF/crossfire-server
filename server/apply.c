@@ -2586,8 +2586,13 @@ int unapply_for_ob(object *who, object *op, int aflags)
 	    while ((who->body_used[i] + op->body_info[i]) < 0) {
 		tmp = get_item_from_body_location(last, i);
 		if (!tmp) {
+#if 0
+		    /* Not a bug - we'll get this if the player has cursed items
+		     * equipped.
+		     */
 		    LOG(llevError,"Can't find object using location %d (%s) on %s\n", 
 			i, body_locations[i].save_name, who->name);
+#endif
 		    return 1;
 		}
 		/* If we are just printing, we don't care about cursed status */
@@ -2597,8 +2602,16 @@ int unapply_for_ob(object *who, object *op, int aflags)
 			new_draw_info(NDI_UNIQUE, 0, who, query_name(tmp));
 		    else
 			unapply_special(who, tmp, aflags);
-		    last = tmp->below;
 		}
+		else {
+		    /* Cursed item that we can't unequip - tell the player.
+		     * Note this could be annoying if this is just one of a few,
+		     * so it may not be critical (eg, putting on a ring and you have
+		     * one cursed ring.)
+		     */
+		    new_draw_info_format(NDI_UNIQUE, 0, who, "The %s just won't come off", query_name(tmp));
+		}
+		last = tmp->below;
 	    }
 	    /* if we got here, this slot is freed up - otherwise, if it wasn't freed up, the
 	     * return in the !tmp would have kicked in.

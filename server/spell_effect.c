@@ -607,7 +607,7 @@ int cast_invisible(object *op, object *caster, int spell_type) {
     object *tmp;
 
     if(op->invisible>1000) {
-	new_draw_info(NDI_UNIQUE, 0,op,"You are already as invisible as you can get.");
+	new_draw_info(NDI_UNIQUE, 0,op,"You can not extend the duration of your invisibility any further");
 	return 0;
     }
 
@@ -634,7 +634,6 @@ int cast_invisible(object *op, object *caster, int spell_type) {
      */
     if(op->invisible>1000) op->invisible = 1000;
 	
-
     new_draw_info(NDI_UNIQUE, 0,op,"You can't see your hands!");
     update_object(op,UP_OBJ_FACE);
 

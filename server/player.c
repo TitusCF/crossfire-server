@@ -227,7 +227,7 @@ int add_player(NewSocket *ns) {
 	return 0;
     }
 
-    init_beforeplay(); /* Make sure everything is ready */
+/*    init_beforeplay(); /* Make sure everything is ready */
 
     p=get_player(NULL);
     memcpy(&p->socket, ns, sizeof(NewSocket));
