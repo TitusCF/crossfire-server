@@ -17,6 +17,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/spell_util.c: Fix cast_spell() so that failed spells (due to
+  encumberance or other penalties) still cost some random number of grace/
+  mana points.
+MSW 2004-05-10
+
 common/treasure.c: Change the loading of the artifacts file to actually
   calloc() the object - reset_object() doesn't clear all the values,
   like active_next, active_prev, so better to just do it there.

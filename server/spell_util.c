@@ -912,7 +912,7 @@ void spell_failure(object *op, int failure,int power, object *skill)
  *    parameters to a spell (eg, item to create, information for marking runes,
  *    etc.
  * returns 1 on successful cast, or 0 on error.  These values should really
- * be swapped, so that 0 is sucessful, and non zero is failure, with a code
+ * be swapped, so that 0 is successful, and non zero is failure, with a code
  * of what it failed.
  *
  * Note that this function is really a dispatch routine that calls other
@@ -1007,7 +1007,8 @@ int cast_spell(object *op, object *caster,int dir,object *spell_ob, char *string
 		if (settings.casting_time == TRUE) {
 		    op->casting_time = -1;
 		}
-		return(random_roll(1, SP_level_spellpoint_cost(caster,spell_ob, SPELL_GRACE), op, PREFER_LOW));
+		op->stats.grace -= random_roll(1, SP_level_spellpoint_cost(caster,spell_ob, SPELL_GRACE), op, PREFER_LOW);
+		return 0;
 	    } else if (spell_ob->stats.sp) {
 		int failure = random_roll(0, 199, op, PREFER_HIGH) -
 		    op->contr->encumbrance +op->level - spell_ob->level +35;
@@ -1019,7 +1020,8 @@ int cast_spell(object *op, object *caster,int dir,object *spell_ob, char *string
 			  SP_level_spellpoint_cost(caster,spell_ob, SPELL_MANA),
 			  skill);
 		    op->contr->shoottype = old_shoottype;
-		    return(random_roll(0, SP_level_spellpoint_cost(caster,spell_ob, SPELL_MANA), op, PREFER_LOW));
+		    op->stats.sp -= random_roll(0, SP_level_spellpoint_cost(caster,spell_ob, SPELL_MANA), op, PREFER_LOW);
+		    return 0;
 		}
 	    }
 	}
