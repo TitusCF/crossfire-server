@@ -9,8 +9,8 @@ The following people have CVS access:
 Mark Wedel ("cvs", mwedel@scruz.net) - core maintainer, handles patches
 	submitted by those not having CVS access, investigates bugs,
 	and future long term developement.
-Peter Mardahl <"cvs", peterm@eecs.berkeley.edu> runes, new spells, changing
-	of spell parameters, new archetypes, random maps, traps,
+Peter Mardahl <"peterm", peterm@eecs.berkeley.edu> runes, new spells, changing
+	of spell parameters, new archetypes, random maps, traps, race/class,
 	diseases, graded lighting, movers, creators, peterm/* maps 
 David Andrew Michael Noelle ("damn", dave@straylight.org)-
 	fixing things that ain't broke (and occasionally some that is)
@@ -30,7 +30,12 @@ Jan Echternach ("jec", jan.echternach@informatik.uni-rostock.de) - bug fixing
 Andreas Vogl ("red_blaze", andi.vogl@gmx.net) - bug fixing, creating maps,
               maintaining pupland. 
 
+
+
 Still active developers:
+David Hurst "dnh@hawthorn.csse.monash.edu.au" - gods rebalancing, images
+       for classes and other images, spell testing and concepts 
+
 Phil Brown (phil@bolthole.com)- Java Client
 
  The following poeple have contributed a lot to Crossfire in the past,
