@@ -94,6 +94,7 @@ static PyObject* CFSetSkillExperience(PyObject* self, PyObject* args);
 static PyObject* CFGetSkillExperience(PyObject* self, PyObject* args);
 static PyObject* CFMatchString(PyObject* self, PyObject* args);
 static PyObject* CFSetCursed(PyObject* self, PyObject* args);
+static PyObject* CFSetDamned(PyObject* self, PyObject* args);
 static PyObject* CFActivateRune(PyObject* self, PyObject* args);
 static PyObject* CFCheckTrigger(PyObject* self, PyObject* args);
 static PyObject* CFSetUnaggressive(PyObject* self, PyObject* args);
@@ -544,6 +545,19 @@ static PyObject* CFAttackTypeBlind(PyObject* self, PyObject* args);
 static PyObject* CFAttackTypeLifeStealing(PyObject* self, PyObject* args);
 static PyObject* CFAttackTypeDisease(PyObject* self, PyObject* args);
 
+static PyObject* CFEventApply(PyObject* self, PyObject* args);
+static PyObject* CFEventAttack(PyObject* self, PyObject* args);
+static PyObject* CFEventDeath(PyObject* self, PyObject* args);
+static PyObject* CFEventDrop(PyObject* self, PyObject* args);
+static PyObject* CFEventPickup(PyObject* self, PyObject* args);
+static PyObject* CFEventSay(PyObject* self, PyObject* args);
+static PyObject* CFEventStop(PyObject* self, PyObject* args);
+static PyObject* CFEventTime(PyObject* self, PyObject* args);
+static PyObject* CFEventThrow(PyObject* self, PyObject* args);
+static PyObject* CFEventTrigger(PyObject* self, PyObject* args);
+static PyObject* CFEventClose(PyObject* self, PyObject* args);
+static PyObject* CFEventTimer(PyObject* self, PyObject* args);
+
 static PyObject* CFLoadObject(PyObject* self, PyObject* args);
 static PyObject* CFSaveObject(PyObject* self, PyObject* args);
 static PyObject* CFRegisterCommand(PyObject* self, PyObject* args);
@@ -557,6 +571,9 @@ static PyObject* CFSetNextObject(PyObject* self, PyObject* args);
 static PyObject* CFCostFlagFTrue(PyObject* self, PyObject* args);
 static PyObject* CFCostFlagFBuy(PyObject* self, PyObject* args);
 static PyObject* CFCostFlagFSell(PyObject* self, PyObject* args);
+static PyObject* CFCostFlagFNoBargain(PyObject* self, PyObject* args);
+static PyObject* CFCostFlagFIdentified(PyObject* self, PyObject* args);
+static PyObject* CFCostFlagFNotCursed(PyObject* self, PyObject* args);
 static PyObject* CFGetObjectCost(PyObject* self, PyObject* args);
 static PyObject* CFGetObjectMoney(PyObject* self, PyObject* args);
 static PyObject* CFPayForItem(PyObject* self, PyObject* args);
@@ -617,6 +634,7 @@ static PyMethodDef CFPythonMethods[] =
         {"GetSkillExperience", CFGetSkillExperience, METH_VARARGS},
         {"MatchString", CFMatchString, METH_VARARGS},
         {"SetCursed", CFSetCursed, METH_VARARGS},
+        {"SetDamned", CFSetDamned, METH_VARARGS},
         {"ActivateRune", CFActivateRune, METH_VARARGS},
         {"CheckTrigger", CFCheckTrigger, METH_VARARGS},
         {"SetUnaggressive", CFSetUnaggressive, METH_VARARGS},
@@ -813,6 +831,9 @@ static PyMethodDef CFPythonMethods[] =
         {"CostFlagFTrue",CFCostFlagFTrue,METH_VARARGS},
         {"CostFlagFBuy",CFCostFlagFBuy,METH_VARARGS},
         {"CostFlagFSell",CFCostFlagFSell,METH_VARARGS},
+        {"CostFlagFNoBargain",CFCostFlagFNoBargain,METH_VARARGS},
+        {"CostFlagFIdentified",CFCostFlagFIdentified,METH_VARARGS},
+        {"CostFlagFNotCursed",CFCostFlagFNotCursed,METH_VARARGS},
         {"GetObjectCost", CFGetObjectCost,METH_VARARGS},
         {"GetObjectMoney", CFGetObjectMoney,METH_VARARGS},
         {"PayForItem",CFPayForItem,METH_VARARGS},
@@ -1096,6 +1117,19 @@ static PyMethodDef CFPythonMethods[] =
         {"AttackTypeBlind", CFAttackTypeBlind, METH_VARARGS},
         {"AttackTypeLifeStealing", CFAttackTypeLifeStealing, METH_VARARGS},
         {"AttackTypeDisease", CFAttackTypeDisease, METH_VARARGS},
+/* Event Type Wrappers */
+        {"EventApply", CFEventApply, METH_VARARGS},
+        {"EventAttack", CFEventAttack, METH_VARARGS},
+        {"EventDeath", CFEventDeath, METH_VARARGS},
+        {"EventDrop", CFEventDrop, METH_VARARGS},
+        {"EventPickup", CFEventPickup, METH_VARARGS},
+        {"EventSay", CFEventSay, METH_VARARGS},
+        {"EventStop", CFEventStop, METH_VARARGS},
+        {"EventTime", CFEventTime, METH_VARARGS},
+        {"EventThrow", CFEventThrow, METH_VARARGS},
+        {"EventTrigger", CFEventTrigger, METH_VARARGS},
+        {"EventClose", CFEventClose, METH_VARARGS},
+        {"EventTimer", CFEventTimer, METH_VARARGS},
         {NULL, NULL}
 };
 

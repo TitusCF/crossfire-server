@@ -408,6 +408,102 @@ static PyObject* CFAttackTypeDisease(PyObject* self, PyObject* args)
     return Py_BuildValue("i",val);
 };
 
+static PyObject* CFEventApply(PyObject* self, PyObject* args)
+{
+    int val = EVENT_APPLY;
+    if (!PyArg_ParseTuple(args,"",NULL))
+        return NULL;
+    return Py_BuildValue("i",val);
+}
+
+static PyObject* CFEventAttack(PyObject* self, PyObject* args)
+{
+    int val = EVENT_ATTACK;
+    if (!PyArg_ParseTuple(args,"",NULL))
+        return NULL;
+    return Py_BuildValue("i",val);
+}
+
+static PyObject* CFEventDeath(PyObject* self, PyObject* args)
+{
+    int val = EVENT_DEATH;
+    if (!PyArg_ParseTuple(args,"",NULL))
+        return NULL;
+    return Py_BuildValue("i",val);
+}
+
+static PyObject* CFEventDrop(PyObject* self, PyObject* args)
+{
+    int val = EVENT_DROP;
+    if (!PyArg_ParseTuple(args,"",NULL))
+        return NULL;
+    return Py_BuildValue("i",val);
+}
+
+static PyObject* CFEventPickup(PyObject* self, PyObject* args)
+{
+    int val = EVENT_PICKUP;
+    if (!PyArg_ParseTuple(args,"",NULL))
+        return NULL;
+    return Py_BuildValue("i",val);
+}
+
+static PyObject* CFEventSay(PyObject* self, PyObject* args)
+{
+    int val = EVENT_SAY;
+    if (!PyArg_ParseTuple(args,"",NULL))
+        return NULL;
+    return Py_BuildValue("i",val);
+}
+
+static PyObject* CFEventStop(PyObject* self, PyObject* args)
+{
+    int val = EVENT_STOP;
+    if (!PyArg_ParseTuple(args,"",NULL))
+        return NULL;
+    return Py_BuildValue("i",val);
+}
+
+static PyObject* CFEventTime(PyObject* self, PyObject* args)
+{
+    int val = EVENT_TIME;
+    if (!PyArg_ParseTuple(args,"",NULL))
+        return NULL;
+    return Py_BuildValue("i",val);
+}
+
+static PyObject* CFEventThrow(PyObject* self, PyObject* args)
+{
+    int val = EVENT_THROW;
+    if (!PyArg_ParseTuple(args,"",NULL))
+        return NULL;
+    return Py_BuildValue("i",val);
+}
+
+static PyObject* CFEventTrigger(PyObject* self, PyObject* args)
+{
+    int val = EVENT_TRIGGER;
+    if (!PyArg_ParseTuple(args,"",NULL))
+        return NULL;
+    return Py_BuildValue("i",val);
+}
+
+static PyObject* CFEventClose(PyObject* self, PyObject* args)
+{
+    int val = EVENT_CLOSE;
+    if (!PyArg_ParseTuple(args,"",NULL))
+        return NULL;
+    return Py_BuildValue("i",val);
+}
+
+static PyObject* CFEventTimer(PyObject* self, PyObject* args)
+{
+    int val = EVENT_TIMER;
+    if (!PyArg_ParseTuple(args,"",NULL))
+        return NULL;
+    return Py_BuildValue("i",val);
+}
+
 #if 0
 /* These spell numbers have no meaning with the new spell code.
  * If plugins want to deal with spells, the should really get the
@@ -2503,6 +2599,32 @@ static PyObject* CFSetCursed(PyObject* self, PyObject* args)
   };
   Py_INCREF(Py_None);
   return Py_None;
+};
+
+/*****************************************************************************/
+/* Name   : CFSetDamned                                                      */
+/* Python : CFPython.SetDamned(object,value)                                 */
+/*****************************************************************************/
+static PyObject* CFSetDamned(PyObject* self, PyObject* args)
+{
+    long whoptr;
+    int value;
+
+    if (!PyArg_ParseTuple(args,"li",&whoptr,&value))
+        return NULL;
+
+    CHECK_OBJ(whoptr);
+
+    if (value!=0)
+    {
+        SET_FLAG(WHO, FLAG_DAMNED);
+    }
+    else
+    {
+        CLEAR_FLAG(WHO, FLAG_DAMNED);
+    }
+    Py_INCREF(Py_None);
+    return Py_None;
 };
 
 /*****************************************************************************/
@@ -6829,6 +6951,42 @@ static PyObject* CFCostFlagFBuy(PyObject* self, PyObject* args)
 static PyObject* CFCostFlagFSell(PyObject* self, PyObject* args)
 {
     int flag=F_SELL;
+    if (!PyArg_ParseTuple(args,"",NULL))
+        return NULL;
+    return Py_BuildValue("i",flag);
+};
+
+/*****************************************************************************/
+/* Name   : CFCostFlagFNoBargain                                             */
+/* Python : CFPython.CostFlagFNoBargain()                                    */
+/*****************************************************************************/
+static PyObject* CFCostFlagFNoBargain(PyObject* self, PyObject* args)
+{
+    int flag=F_NO_BARGAIN;
+    if (!PyArg_ParseTuple(args,"",NULL))
+        return NULL;
+    return Py_BuildValue("i",flag);
+};
+
+/*****************************************************************************/
+/* Name   : CFCostFlagFIdentified                                            */
+/* Python : CFPython.CostFlagFIdentified()                                   */
+/*****************************************************************************/
+static PyObject* CFCostFlagFIdentified(PyObject* self, PyObject* args)
+{
+    int flag=F_IDENTIFIED;
+    if (!PyArg_ParseTuple(args,"",NULL))
+        return NULL;
+    return Py_BuildValue("i",flag);
+};
+
+/*****************************************************************************/
+/* Name   : CFCostFlagFNotCursed                                             */
+/* Python : CFPython.CostFlagFNotCursed()                                    */
+/*****************************************************************************/
+static PyObject* CFCostFlagFNotCursed(PyObject* self, PyObject* args)
+{
+    int flag=F_NOT_CURSED;
     if (!PyArg_ParseTuple(args,"",NULL))
         return NULL;
     return Py_BuildValue("i",flag);
