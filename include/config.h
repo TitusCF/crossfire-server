@@ -79,7 +79,6 @@
  * MAP_CLIENT_X, MAP_CLIENT_Y - determines max size client map will receive
  * MAX_TIME - how long an internal tick is in microseconds
  * MANY_CORES - generate core dumps on gross errors instead of continuing?
- * MULTIPLE_GODS - adds numerous gods to the game, with different powers
  * PARTY_KILL_LOG - stores party kill information
  * SECURE - Allow overriding values with run time flags?
  * WATCHDOG - allows use of an external watchdog program

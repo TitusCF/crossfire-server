@@ -42,10 +42,6 @@
 #include <sproto.h>
 #endif
 
-/* define this if you want to allow gods to assign more gifts
- * and limitations to priests */
-#define MORE_PRIEST_GIFTS
-
 static int god_gives_present (object *op, object *god, treasure *tr);
 static void follower_remove_similar_item (object *op, object *item);
 
@@ -326,7 +322,6 @@ void become_follower (object *op, object *new_god) {
 	  i==ATNR_ELECTRICITY || i==ATNR_POISON))
 	exp_obj->resist[i] = 30;
 
-#ifdef MORE_PRIEST_GIFTS
     exp_obj->stats.hp= (sint16) new_god->last_heal;
     exp_obj->stats.sp= (sint16) new_god->last_sp;
     exp_obj->stats.grace= (sint16) new_god->last_grace;
@@ -341,12 +336,10 @@ void become_follower (object *op, object *new_god) {
     update_priest_flag(new_god,exp_obj,FLAG_UNDEAD);
     update_priest_flag(new_god,exp_obj,FLAG_BLIND);
     update_priest_flag(new_god,exp_obj,FLAG_XRAYS); /* better have this if blind! */
-#endif
 
     new_draw_info_format(NDI_UNIQUE,0,op,
 	"You are bathed in %s's aura.",new_god->name);
 
-#ifdef MORE_PRIEST_GIFTS
     /* Weapon/armour use are special...handle flag toggles here as this can
      * only happen when gods are worshipped and if the new priest could
      * have used armour/weapons in the first place */
@@ -363,7 +356,6 @@ void become_follower (object *op, object *new_god) {
 	stop_using_item(op,GLOVES,1);
 	stop_using_item(op,SHIELD,1);
     }
-#endif
 
     SET_FLAG(exp_obj,FLAG_APPLIED);
     (void) change_abil(op,exp_obj);
