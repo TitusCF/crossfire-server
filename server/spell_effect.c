@@ -1180,6 +1180,7 @@ int magic_wall(object *op,object *caster,int dir,object *spell_ob) {
 	 
 	x = tmp->x+i*freearr_x[dir2]; 
 	y = tmp->y+i*freearr_y[dir2];
+	m = tmp->map;
 
 	if(!(get_map_flags(m, &m, x, y, &x, &y) & (P_OUT_OF_MAP | P_BLOCKED)) && !posblocked) {
 	    tmp2 = get_object();

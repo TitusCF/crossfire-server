@@ -291,6 +291,7 @@ int try_fit (object *op, mapstruct *m, int x, int y)
     object *tmp, *more;
     sint16 tx, ty;
     int mflags;
+    mapstruct *m2;
 
     if (op->head) 
 	op = op->head;
@@ -299,12 +300,12 @@ int try_fit (object *op, mapstruct *m, int x, int y)
 	tx = x + more->x - op->x;
 	ty = y + more->y - op->y;
 
-	mflags = get_map_flags(m, &m, tx, ty, &tx, &ty);
+	mflags = get_map_flags(m, &m2, tx, ty, &tx, &ty);
 
 	if (mflags & P_OUT_OF_MAP)
 	    return 1;
 
-	for (tmp = get_map_ob (m, tx, ty); tmp; tmp=tmp->above) {
+	for (tmp = get_map_ob (m2, tx, ty); tmp; tmp=tmp->above) {
 	    if (tmp->head == op || tmp == op)
 		continue;
 

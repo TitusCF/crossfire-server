@@ -17,6 +17,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/disease.c: fix crash when casting diseases on tiled maps.
+server/move.c: fix problem with multi-tile monsters and pass thru walls.
+server/spell_effect.c: fix magic walls sometimes appearing in wrong place.
+Andreas Kirschbaum 2004-08-20
+
 common/loader.l, loader.c: in check_loaded_object() - don't give spell
    objects inventory if we are in the arch_init phase.  When loading objects
    in common loader routine, if object doesn't have arch, set the object

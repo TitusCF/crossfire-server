@@ -232,9 +232,9 @@ object * find_symptom(object *disease) {
 /*  searches around for more victims to infect */
 int check_infection(object *disease) {
     int x,y,range, mflags;
-    mapstruct *map;
+    mapstruct *map, *map2;
     object *tmp;
-    sint16 i,j;
+    sint16 i, j, i2, j2;
 
     range = abs(disease->magic);
     if(disease->env) { 
@@ -251,9 +251,9 @@ int check_infection(object *disease) {
     if(map == NULL) return 0;
     for(i=x-range;i<x+range;i++) {
 	for(j=y-range;j<y+range;j++) {
-	    mflags = get_map_flags(map,&map, i,j, &i, &j);
+	    mflags = get_map_flags(map,&map2, i,j, &i2, &j2);
 	    if (!(mflags & P_OUT_OF_MAP) && (mflags & P_IS_ALIVE)) {
-		for(tmp=get_map_ob(map,i,j);tmp;tmp=tmp->above) {
+		for(tmp=get_map_ob(map2,i2,j2);tmp;tmp=tmp->above) {
 		    infect_object(tmp,disease,0);
 		}
 	    }
