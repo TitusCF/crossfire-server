@@ -45,7 +45,11 @@ void init_anim() {
      * it will have a default value that should be pretty obvious.
      */
     animations = malloc(10*sizeof(Animations));
-    animations[0].name=NULL;
+    /* set the name so we don't try to dereferance null.
+     * Put # at start so it will be first in alphabetical
+     * order.
+     */
+    animations[0].name=add_string("###none");
     animations[0].num_animations=1;
     animations[0].faces = malloc(sizeof(Fontindex));
     animations[0].faces[0]=0;

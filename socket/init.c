@@ -194,6 +194,11 @@ void InitConnection(NewSocket *ns, uint32 from)
      */
     ns->inbuf.len=0;
     ns->inbuf.buf=malloc(MAXSOCKBUF);
+    /* Basic initialization. Needed because we do a check in
+     * HandleClient for oldsocketmode without checking the
+     * length of data.
+     */
+    ns->inbuf.buf[0] = 0;
     memset(&ns->lastmap,0,sizeof(struct Map));
     memset(&ns->faces_sent,0,sizeof(ns->faces_sent));
     memset(&ns->anims_sent,0,sizeof(ns->anims_sent));

@@ -17,6 +17,21 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 CVS changes since last release:
 
+MSW 2001/01/23:
+Various cleanups/fixes as detected by purify:
+common/anim.c: animation[0] was given a null pointer as the name, but
+	bsearch/or comparison function will try to de-reference it.
+	Give it a unique name.
+common/loader.l: msgbuf was being used initialized in the main loading
+	function.  loader.c also regenerated.
+common/object.c: find_free functions were not checking to see if the
+	spaces they were examining were out of the map.  Added checks
+	to do so.
+server/apply.c: buf was being used initialized in the function.
+socket/init.c: input buffer needs to be initialized as we do a 
+	strncasecmp against the buffer which may not have any data in it.
+
+
 MSW 2001/01/18:
 server/skill_util.c: add change_skill_to_skill function to be used when
    we already know the skill object we want to use.  This is more efficient

@@ -2138,6 +2138,7 @@ int apply_special (object *who, object *op, int aflags)
   if(op->env!=who)
     return 1;   /* op is not in inventory */
 
+  buf[0]='\0';	    /* Needs to be initialized */
   if (QUERY_FLAG(op,FLAG_APPLIED)) {
     /* always apply, so no reason to unapply */
     if (basic_flag == AP_APPLY) return 0;

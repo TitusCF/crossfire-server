@@ -151,6 +151,7 @@ WS	[ \t]*
     int ismore=0;
 
     lex_error=0;
+    strcpy(msgbuf, "");
 
 %}
 
