@@ -19,6 +19,11 @@ else.  With this, include the file(s) that you changed.
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ------------------------------------------------------------------------------
 
+PeterM:
+  ball lightning made stronger, strikes larger area, never
+  hits player.
+  divine shock spell added.
+
 include/sproto.h:  Removed prototype of obsolete make_gravestone()
 function.
 server/apply.c:  Put back gravestone_text() function that was removed
