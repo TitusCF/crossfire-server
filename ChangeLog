@@ -17,6 +17,17 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/spell_util.c: SP_level_spellpoint_cost() - never have a spell
+  cost 0 spellpoints due to attunement or other bonuses - spell always
+  cost at least 1 sp/grace.
+server/main.c: Fix process_events() so it doesn't purge removed players
+  from the list - players get in the removed state at play again
+  prompt.
+server/apply.c: Fix fix_auto_apply() so we don't generate additional
+  spells for spellcasting objects that already have them (regression
+  from fix from 5/11 below)
+MSW 2004-05-13
+
 server/pets.c: Fix summon golem, summon pet monsters so that the summoned
    monsters are not worth any exp.  Fixes bugs were players could
    summon monsters and then kill them.
