@@ -1766,7 +1766,7 @@ trans 1
 yield 1
 skill smithery
 cauldron forge
-ingred leather armour,potion of resist draining,potion of recuperation
+ingred armour,potion of resist draining,potion of recuperation
 #
 Object Gaea
 arch ring_mail
@@ -2935,7 +2935,7 @@ exp 35000
 yield 1
 skill thaumaturgy
 cauldron thaumaturg_desk
-ingred talisman_pyromancy,ring of Fire,dragon's heart
+ingred talisman of pyromancy,ring of Fire,dragon's heart
 #
 Object Frost
 arch talisman_evocation
@@ -2945,7 +2945,7 @@ exp 35000
 yield 1
 skill thaumaturgy
 cauldron thaumaturg_desk
-ingred talisman_evocation,ring of Ice,chinese dragon's heart
+ingred talisman of evocation,ring of Ice,chinese dragon's heart
 #
 Object Elements
 arch talisman_pyromancy
@@ -2965,7 +2965,7 @@ exp 35000
 yield 1
 skill thaumaturgy
 cauldron thaumaturg_desk
-ingred talisman_sorcery,potion of intelligence,helmet of Xebinon
+ingred talisman of sorcery,potion of intelligence,helmet of Xebinon
 #
 Object Evocation
 arch talisman_evocation
@@ -2975,7 +2975,7 @@ exp 35000
 yield 1
 skill thaumaturgy
 cauldron thaumaturg_desk
-ingred talisman_evocation,3 figurine of a clenched hand,3 balm of traveling
+ingred talisman of evocation,3 figurine of a clenched hand,3 balm of traveling
 #
 # -------------------
 # Holy Symbols
