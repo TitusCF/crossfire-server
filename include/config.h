@@ -83,7 +83,6 @@
  * NO_CONE_PROPOGATE - makes cone spells stop at the first monster
  * PARTY_KILL_LOG - stores party kill information
  * SECURE - Allow overriding values with run time flags?
- * USE_LIGHTING - enable light/darkness & light sources
  * USE_SWAP_STATS - allows stat swapping for new characters
  * WATCHDOG - allows use of an external watchdog program
  *

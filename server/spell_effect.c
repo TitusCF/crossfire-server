@@ -3640,9 +3640,7 @@ int cast_nightfall ( object *op ) {
 /* cast_faery_fire() - this spell primary purpose is to light
  * up all single-space monsters on a map. Magic immune and 
  * multi-space monsters are currently not supposed to light 
- * up. If USE_LIGHTING is not defined, this spell is only
- * capable of doing minor fire damage. I hacked this out of 
- * the destruction code. -b.t.
+ * up. I hacked this out of the destruction code. -b.t.
  */
  
 int cast_faery_fire(object *op,object *caster) {
