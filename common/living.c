@@ -1363,6 +1363,9 @@ void set_dragon_name(object *pl, object *abil, object *skin) {
   int atnr=-1;  /* attacknumber of highest level */
   int level=0;  /* highest level */
   int i;
+
+  /* Perhaps do something more clever? */
+  if (!abil || !skin) return;
   
   /* first, look for the highest level */
   for(i=0; i<NROFATTACKS; i++) {

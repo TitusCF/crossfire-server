@@ -658,7 +658,7 @@ void check_login(object *op) {
     
     /* if it's a dragon player, set the correct title here */
     if (is_dragon_pl(op) && op->inv != NULL) {
-        object *tmp, *abil, *skin;
+        object *tmp, *abil=NULL, *skin=NULL;
         for (tmp=op->inv; tmp!=NULL; tmp=tmp->below) {
 	    if (tmp->type == FORCE) {
 	        if (strcmp(tmp->arch->name, "dragon_ability_force")==0)

@@ -1422,12 +1422,14 @@ void add_abilities(object *op, object *change) {
 		    evtp->next = (event *)malloc(sizeof(event));
 		}
 	    }
-
+	    evt2->next = NULL;
 	    evt2->hook = add_refcount(evt->hook);
 	    evt2->plugin = add_refcount(evt->plugin);
 
 	    if (evt->options)
 		evt2->options = add_refcount(evt->options);
+	    else
+		evt2->options = NULL;
 	}
     }
 }
