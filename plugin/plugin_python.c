@@ -6441,7 +6441,7 @@ static PyObject* CFPayAmount(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFSendCustomCommand                                              */
 /* Python : SendCustomCommand(who, 'customcommand')                          */
-/* Status : Untested                                                         */
+/* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFSendCustomCommand(PyObject* self, PyObject* args)
 {
@@ -6456,6 +6456,60 @@ static PyObject* CFSendCustomCommand(PyObject* self, PyObject* args)
     Py_INCREF(Py_None);
     return Py_None;
 };
+
+/*****************************************************************************/
+/* Name   : CFGetHumidity                                                    */
+/* Python : GetHumidity(x,y,map)                                             */
+/* Status : Place Holder.                                                    */
+/*****************************************************************************/
+/* Returns the humidity level of a given square of a map.                    */
+/*****************************************************************************/
+static PyObject* CFGetHumidity(PyObject* self, PyObject* args)
+{
+    int val=0;
+    int x, y;
+    long map; /* mapstruct pointer */
+    if (!PyArg_ParseTuple(args,"iil",&x,&y,&map))
+        return NULL;
+
+    return Py_BuildValue("i",val);
+}
+
+/*****************************************************************************/
+/* Name   : CFGetTemperature                                                 */
+/* Python : GetTemperature(x,y,map)                                          */
+/* Status : Place Holder.                                                    */
+/*****************************************************************************/
+/* Returns the temperature of a given square of a map.                       */
+/*****************************************************************************/
+static PyObject* CFGetTemperature(PyObject* self, PyObject* args)
+{
+    int val=0;
+    int x, y;
+    long map; /* mapstruct pointer */
+    if (!PyArg_ParseTuple(args,"iil",&x,&y,&map))
+        return NULL;
+
+    return Py_BuildValue("i",val);
+}
+
+/*****************************************************************************/
+/* Name   : CFGetPressure                                                    */
+/* Python : GetPressure(x,y,map)                                             */
+/* Status : Place Holder.                                                    */
+/*****************************************************************************/
+/* Returns the pressure level of a given square of a map.                    */
+/*****************************************************************************/
+static PyObject* CFGetPressure(PyObject* self, PyObject* args)
+{
+    int val=0;
+    int x, y;
+    long map; /* mapstruct pointer */
+    if (!PyArg_ParseTuple(args,"iil",&x,&y,&map))
+        return NULL;
+    
+    return Py_BuildValue("i",val);
+}
 
 /*****************************************************************************/
 /* The Plugin Management Part.                                               */

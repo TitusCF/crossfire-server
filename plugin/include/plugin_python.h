@@ -556,6 +556,9 @@ static PyObject* CFGetObjectMoney(PyObject* self, PyObject* args);
 static PyObject* CFPayForItem(PyObject* self, PyObject* args);
 static PyObject* CFPayAmount(PyObject* self, PyObject* args);
 static PyObject* CFSendCustomCommand(PyObject* self, PyObject* args);
+static PyObject* CFGetHumidity(PyObject* self, PyObject* args);
+static PyObject* CFGetTemperature(PyObject* self, PyObject* args);
+static PyObject* CFGetPressure(PyObject* self, PyObject* args);
 
 /* Those are used to handle the events. The first one is used when a player  */
 /* attacks with a "scripted" weapon. HandleEvent is used for all other events*/
@@ -798,6 +801,9 @@ static PyMethodDef CFPythonMethods[] =
         {"PayForItem",CFPayForItem,METH_VARARGS},
         {"PayAmount",CFPayAmount,METH_VARARGS},
         {"SendCustomCommand",CFSendCustomCommand,METH_VARARGS},
+        {"GetHumidity",CFGetHumidity, METH_VARARGS},
+        {"GetTemperature",CFGetTemperature, METH_VARARGS},
+        {"GetPressure",CFGetPressure, METH_VARARGS},
 /* Skills wrappers : */
         {"SkillStealing", CFSkillStealing, METH_VARARGS},
         {"SkillLockpicking", CFSkillLockpicking, METH_VARARGS},
