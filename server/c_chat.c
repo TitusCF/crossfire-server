@@ -99,7 +99,7 @@ int command_tell (object *op, char *params)
 	return 1;
     }
 
-    sprintf(buf,"%s tells you:",op->name);
+    sprintf(buf,"%s tells you: ",op->name);
     strncat(buf, msg, MAX_BUF-strlen(buf)-1);
     buf[MAX_BUF-1]=0;
 
@@ -109,11 +109,53 @@ int command_tell (object *op, char *params)
         new_draw_info(NDI_UNIQUE | NDI_ORANGE, 0, pl->ob, buf);
         sprintf(buf2, "You tell to %s: %s",name,msg);
         new_draw_info(NDI_UNIQUE | NDI_ORANGE, 0, op, buf2);
+
+        /* Update last_tell value [mids 01/14/2002] */
+        strcpy(pl->last_tell, op->name);
         return 1;
       }
     new_draw_info(NDI_UNIQUE, 0,op,"No such player.");
     return 1;
   }
+
+/* Reply to last person who told you something [mids 01/14/2002] */
+int command_reply (object *op, char *params) {
+    char buf[MAX_BUF];
+    char buf2[MAX_BUF];
+    player *pl;
+
+    if (params == NULL) {
+        new_draw_info(NDI_UNIQUE, 0, op, "Reply what?");
+        return 1;
+    }
+
+
+    if (op->contr->last_tell[0] == '\0') {
+        new_draw_info(NDI_UNIQUE, 0, op, "You can't reply to nobody.");
+        return 1;
+    }
+
+    /* Find player object of player to reply to and check if player still exists */
+    pl = find_player(op->contr->last_tell);
+
+    if (pl == NULL) {
+        new_draw_info(NDI_UNIQUE, 0, op, "You can't reply, this player left.");
+        return 1;
+    }
+
+    sprintf(buf, "%s tells you: ", op->name);
+    strncat(buf, params, MAX_BUF-strlen(buf)-1);
+    buf[MAX_BUF-1] = 0;
+
+    /* Update last_tell value */
+    strcpy(pl->last_tell, op->name);
+
+    new_draw_info(NDI_UNIQUE | NDI_ORANGE, 0, pl->ob, buf);
+    sprintf(buf2, "You tell to %s: %s", pl->ob->name, params);
+    new_draw_info(NDI_UNIQUE | NDI_ORANGE, 0, op, buf2);
+
+    return 1;
+}
 
 /*
  * This function covers basic emotions a player can have.  An emotion can be

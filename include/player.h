@@ -162,6 +162,7 @@ typedef struct pl {
   char killer[BIG_NAME];  /* Who killed this player. */
   char last_cmd;
   int peaceful;
+  char last_tell[MAX_NAME];   /* last player that told you something [mids 01/14/2002] */
 
   char write_buf[MAX_BUF];
   char input_buf[MAX_BUF];

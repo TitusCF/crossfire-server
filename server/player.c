@@ -143,6 +143,7 @@ static void get_player(player *p) {
     p->has_hit=0;
 
     p->peaceful=1;			/* default peaceful */
+    p->last_tell[0] = '\0';		/* last player that told you something [mids 01/14/2002] */
     p->do_los=1;
     p->last_weight= -1;
 #ifdef EXPLORE_MODE

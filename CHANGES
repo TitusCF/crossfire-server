@@ -17,6 +17,14 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+include/player.h include/sproto.h server/c_chat.c server/player.c:
+   New player command 'reply', replies to the last person who told you
+   something.
+server/c_wiz.c: New DM command 'teleport', lets a DM teleport next
+   to target player, it is an inverse summon.
+server/commands.c: Add hooks for 'reply' and 'teleport'.
+mids 2002-01-16
+
 TODO: updated with bugs, remove things that have been done and are no
   longer TODO's.
 configure.in, configure: Remove lib/xpmtopix.pl file form those to be

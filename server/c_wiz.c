@@ -227,6 +227,10 @@ int command_summon (object *op, char *params)
         new_draw_info(NDI_UNIQUE, 0,op,"No such player.");
         return 1;
       }
+      if (pl->ob == op) {
+        new_draw_info(NDI_UNIQUE, 0, op, "You can't summon yourself next to yourself.");
+        return 1;
+      }
       if(pl->state != ST_PLAYING) {
         new_draw_info(NDI_UNIQUE, 0,op,"That player can't be summoned right now.");
         return 1;
@@ -246,6 +250,52 @@ int command_summon (object *op, char *params)
       new_draw_info(NDI_UNIQUE, 0,op,"OK.");
       return 1;
     }
+
+/* Teleport next to target player */
+/* mids 01/16/2002 */
+int command_teleport (object *op, char *params) {
+   int i;
+   object *dummy;
+   player *pl;
+
+   if (!op)
+      return 0;
+
+   if (params==NULL) {
+      new_draw_info(NDI_UNIQUE, 0,op,"Usage: teleport <player>.");
+      return 1;
+   }
+
+   for (pl = first_player; pl != NULL; pl = pl->next) 
+      if (!strncmp(pl->ob->name, params, MAX_NAME)) 
+         break;
+   if (pl == NULL) {
+      new_draw_info(NDI_UNIQUE, 0, op, "No such player.");
+      return 1;
+   }
+   if (pl->ob == op) {
+      new_draw_info(NDI_UNIQUE, 0, op, "You can't teleport yourself next to yourself.");
+      return 1;
+   }
+   if (pl->state != ST_PLAYING) {
+      new_draw_info(NDI_UNIQUE, 0, op, "You can't teleport to that player right now.");
+      return 1;
+   }
+   i = find_free_spot(pl->ob->arch, pl->ob->map, pl->ob->x, pl->ob->y, 1, 8);
+   if (i==-1) {
+      new_draw_info(NDI_UNIQUE, 0, op, "Can not find a free spot to teleport to.");
+      return 1;
+   }
+   dummy = get_object();
+   EXIT_PATH(dummy) = add_string(pl->ob->map->path);
+   EXIT_X(dummy) = pl->ob->x + freearr_x[i];
+   EXIT_Y(dummy) = pl->ob->y + freearr_y[i];
+   enter_exit(op, dummy);
+   free_object(dummy);
+   new_draw_info(NDI_UNIQUE, 0, pl->ob, "You see a portal open.");
+   new_draw_info(NDI_UNIQUE, 0, op, "OK.");
+   return 1;
+}
 
 int command_create (object *op, char *params)
 {

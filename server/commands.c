@@ -126,6 +126,7 @@ const int CommandsSize =sizeof(Commands) / sizeof(CommArray_s);
 CommArray_s CommunicationCommands [] = {
   /* begin emotions */
   {"tell", command_tell,		0.0},
+  {"reply", command_reply,		0.0},
   {"say", command_say,			0.0},
   {"shout", command_shout,		0.0},
   {"nod", command_nod,			0.0},
@@ -233,6 +234,7 @@ CommArray_s WizCommands [] = {
   {"stats", command_stats,0.0},
   {"style_info", command_style_map_info, 0.0},	/* Costly command, so make it wiz only */
   {"summon", command_summon,0.0},
+  {"teleport", command_teleport,0.0},
   {"wizpass", command_wizpass,0.0},
   {"overlay_save", command_save_overlay, 0.0},
 };
