@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+plugin/plugin_python.c: Increase limits of values the Python script may set
+   to the ranges given by objects in the archetypes file.
+Andreas Kirschbaum 2005-02-28
+
 common/object.c, include/libproto.h: change nrof parameter of get_split_ob to
    uint32 type.
 server/c_object.c, include/sproto.h: change nrof parameter of drop_object to

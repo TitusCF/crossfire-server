@@ -596,6 +596,10 @@ static PyObject* CFSetValue(PyObject* self, PyObject* args)
         return NULL;
 
     CHECK_OBJ(whoptr);
+    if (newvalue < 0) {
+        set_exception("value must not be negative");
+        return NULL;
+    }
 
     WHO->value = newvalue;
     Py_INCREF(Py_None);
@@ -1064,11 +1068,10 @@ static PyObject* CFSetWeight(PyObject* self, PyObject* args)
         return NULL;
 
     CHECK_OBJ(whoptr);
-
-    /* I used an arbitrary bound of 32000 here */
-    if (value > 32000)
+    /* I used an arbitrary bound of 1000000000 here */
+    if (value > 1000000000)
     {
-        set_exception("weight must not exceed 32000");
+        set_exception("weight must not exceed 1000000000");
         return NULL;
     }
     else if (value < 0)
@@ -1740,9 +1743,9 @@ static PyObject* CFSetGrace(PyObject* self, PyObject* args)
         return NULL;
 
     CHECK_OBJ(whoptr);
-    if (value < -16000 || value > 16000)
+    if (value < -32000 || value > 32000)
     {
-        set_exception("value must be between -16000 and 16000");
+        set_exception("value must be between -32000 and 32000");
         return NULL;
     }
 
@@ -1850,9 +1853,9 @@ static PyObject* CFSetLastSP(PyObject* self, PyObject* args)
         return NULL;
 
     CHECK_OBJ(whoptr);
-    if (value < 0 || value > 16000)
+    if (value < 0 || value > 32000)
     {
-        set_exception("value must be between 0 and 16000");
+        set_exception("value must be between 0 and 32000");
         return NULL;
     }
 
@@ -1893,9 +1896,9 @@ static PyObject* CFSetLastGrace(PyObject* self, PyObject* args)
         return NULL;
 
     CHECK_OBJ(whoptr);
-    if (value < 0 || value > 16000)
+    if (value < 0 || value > 32000)
     {
-        set_exception("value must be between 0 and 16000");
+        set_exception("value must be between 0 and 32000");
         return NULL;
     }
 
@@ -4068,9 +4071,9 @@ static PyObject* CFSetHP(PyObject* self, PyObject* args)
         return NULL;
 
     CHECK_OBJ(whoptr);
-    if (value < 0 || value > 16000)
+    if (value < 0 || value > 32000)
     {
-        set_exception("value must be between 0 and 16000");
+        set_exception("value must be between 0 and 32000");
         return NULL;
     }
 
@@ -4123,9 +4126,9 @@ static PyObject* CFSetMaxHP(PyObject* self, PyObject* args)
         return NULL;
 
     CHECK_OBJ(whoptr);
-    if (value < 0 || value > 16000)
+    if (value < 0 || value > 32000)
     {
-        set_exception("value must be between 0 and 16000");
+        set_exception("value must be between 0 and 32000");
         return NULL;
     }
 
@@ -4148,9 +4151,9 @@ static PyObject* CFSetMaxSP(PyObject* self, PyObject* args)
         return NULL;
 
     CHECK_OBJ(whoptr);
-    if (value < 0 || value > 16000)
+    if (value < 0 || value > 32000)
     {
-        set_exception("value must be between 0 and 16000");
+        set_exception("value must be between 0 and 32000");
         return NULL;
     }
 
@@ -4203,9 +4206,9 @@ static PyObject* CFSetSP(PyObject* self, PyObject* args)
         return NULL;
 
     CHECK_OBJ(whoptr);
-    if (value < 0 || value > 16000)
+    if (value < 0 || value > 32000)
     {
-        set_exception("value must be between 0 and 16000");
+        set_exception("value must be between 0 and 32000");
         return NULL;
     }
 
