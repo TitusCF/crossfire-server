@@ -1030,7 +1030,7 @@ Object Valriel
 type 16
 value 20
 resist_physical 5
-resist_blindness 40
+resist_blind 40
 weight 110
 magic 1
 end
@@ -1080,7 +1080,7 @@ value 25
 ac 1
 hp 1
 resist_drain 30
-resist_depletion 30
+resist_deplete 30
 resist_death 30
 resist_physical 10
 magic 2
@@ -2892,7 +2892,6 @@ value 500
 Con 1
 resist_drain 30
 resist_deplete 30
-
 end
 #
 # Potions (incl. dusts, balms and figurine sub-types)  
@@ -2903,6 +2902,7 @@ end
 Allowed potion_generic
 chance 1
 Object firestorm
+face potion_fire2.111
 type 5
 value 1
 sp 1
@@ -2911,6 +2911,7 @@ end
 Allowed potion_generic
 chance 1
 Object great firestorm
+face potion_fire2.111
 type 5
 sp 2
 value 5
@@ -2919,6 +2920,7 @@ end
 Allowed potion_generic
 chance 1
 Object black fire
+face potion_fire2.111
 type 5
 sp 90
 value 8
@@ -2927,8 +2929,9 @@ end
 #
 Allowed potion_generic
 chance 1
-Object firery destruction
+Object fiery destruction
 type 5
+face potion_fire2.111
 sp 89
 value 15
 level -60
@@ -2937,6 +2940,7 @@ end
 Allowed potion_generic
 chance 1
 Object sunfire
+face potion_fire2.111
 type 5
 sp 161
 value 5
@@ -2945,6 +2949,7 @@ end
 Allowed potion_generic
 chance 1
 Object freezing
+face potion_freeze.111
 type 5
 sp 83
 value 1
@@ -2953,6 +2958,7 @@ end
 Allowed potion_generic
 chance 1
 Object fire
+face potion_fire2.111
 type 5
 value 1
 sp 82
@@ -2961,6 +2967,7 @@ end
 Allowed potion_generic
 chance 1
 Object electric shock
+face potion_shock.111.png
 type 5
 sp 5
 value 1
@@ -2979,6 +2986,7 @@ end
 Allowed potion_generic
 chance 1
 Object cure vision
+face potion_heal2.111
 type 5
 sp 163
 value 2
@@ -2987,6 +2995,7 @@ end
 Allowed potion_generic
 chance 1
 Object cure sickness
+face potion_heal2.111
 type 5
 sp 68
 value 1
@@ -2995,6 +3004,7 @@ end
 Allowed potion_generic
 chance 1
 Object cure madness
+face potion_heal2.111
 type 5
 sp 125
 value 2
@@ -3037,6 +3047,7 @@ end
 Allowed potion_generic
 chance 1
 Object resist confusion
+face potion_resist.111
 type 5
 value 1
 resist_confusion 50
@@ -3045,6 +3056,7 @@ end
 Allowed potion_generic
 chance 1
 Object resist magic
+face potion_resist.111
 type 5
 resist_magic 50
 value 3
@@ -3053,6 +3065,8 @@ end
 Allowed potion_generic
 chance 1
 Object resist draining
+face potion_resist.111
+stand_still 1
 type 5
 value 1
 resist_drain 50
@@ -3061,6 +3075,8 @@ end
 Allowed potion_generic
 chance 1
 Object resist paralysis
+face potion_resist.111
+stand_still 1
 type 5
 resist_paralyze 50
 value 1
@@ -3069,6 +3085,8 @@ end
 Allowed potion_generic
 chance 1
 Object resist poison
+face potion_resist.111
+stand_still 1
 type 5
 resist_poison 50
 value 1
@@ -3077,6 +3095,8 @@ end
 Allowed potion_generic
 chance 1
 Object resist slow
+face potion_resist.111
+stand_still 1
 type 5
 resist_slow 50
 value 1
@@ -3084,15 +3104,17 @@ end
 #
 Allowed potion_generic
 chance 1
-Object shock immunity
+Object shock resistance
 type 5
+face potion_ishock.111
 resist_electricity 90
 value 100
 end
 #
 Allowed potion_generic
 chance 1
-Object magic immunity
+Object magic resistance
+face potion_mimm.111
 type 5
 resist_magic 90
 value 150

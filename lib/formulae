@@ -490,14 +490,14 @@ ingred spectre's ectoplasm,demon's head,7 water of ruby,7 balm of aethereality
 #yield 14
 #ingred spectre's ectoplasm,demon's head,7 water of ruby,7 balm of aethereality
 # -- magic immunity (very powerful) 
-Object magic immunity
+Object magic resistance
 arch potion_generic
 chance 0
 yield 14
 ingred block of true lead,demon's icor,7 water of diamond,7 potion of resist magic
 #
 # -- electric immunity (very powerful)
-Object shock immunity
+Object shock resistance
 arch potion_generic
 chance 0
 yield 14
