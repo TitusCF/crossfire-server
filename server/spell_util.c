@@ -118,8 +118,10 @@ int path_level_mod (object *caster, int base_level, int spell_type)
 
  if (caster->path_denied & s->path)
  {
+   /* This case is not a bug, just the fact that this function is
+    * usually called BEFORE checking for path_deny. -AV
    LOG (llevError, "BUG: path_level_mod (arch %s, name %s): casting denied "
-        "spell\n", caster->arch->name, caster->name);
+   "spell\n", caster->arch->name, caster->name); */
    return 1;
  }
  new_level = base_level
@@ -1372,12 +1374,17 @@ void forklightning(object *op, object *tmp) {
   }
 }
 
-
-int reflwall(mapstruct *m,int x,int y) {
+/* reflwall - decides weither the (spell-)object sp_op will
+ * be reflected from the given mapsquare. Returns 1 if true.
+ * (Note that for living creatures there is a small chance that
+ * reflect_spell fails.)
+ */
+int reflwall(mapstruct *m,int x,int y, object *sp_op) {
   object *op;
   if(out_of_map(m,x,y)) return 0;
   for(op=get_map_ob(m,x,y);op!=NULL;op=op->above)
-    if(QUERY_FLAG(op, FLAG_REFL_SPELL))
+    if(QUERY_FLAG(op, FLAG_REFL_SPELL) && (!QUERY_FLAG(op, FLAG_ALIVE) ||
+       sp_op->type==LIGHTNING || (RANDOM()%100) < 90-sp_op->level/10))
       return 1;
   return 0;
 }
@@ -1399,7 +1406,7 @@ void move_bolt(object *op) {
     if(blocks_view(op->map,op->x+DIRX(op),op->y+DIRY(op)))
       return;
     w=wall(op->map,op->x+DIRX(op),op->y+DIRY(op));
-    r=reflwall(op->map,op->x+DIRX(op),op->y+DIRY(op));
+    r=reflwall(op->map,op->x+DIRX(op),op->y+DIRY(op), op);
     if(w&&!QUERY_FLAG(op, FLAG_REFLECTING))
       return;
     if(w||r) { /* We're about to bounce */
@@ -1757,7 +1764,8 @@ void move_fired_arch (object *op)
     op->y = new_y;
     if ((op = insert_ob_in_map (op, op->map, op)) == NULL)
         return;
-    if (reflwall (op->map, op->x, op->y)) {
+
+    if (reflwall (op->map, op->x, op->y, op)) {
         op->direction = absdir (op->direction + 4);
         update_turn_face (op);
     } else {

@@ -1140,12 +1140,21 @@ cast_change_attr(object *op,object *caster,int dir,int spell_type) {
   if(tmp==NULL) return 0;
   
   /* If we've already got a force of this type, don't add a new one. */
-  for(tmp2=tmp->inv;tmp2!=NULL;tmp2=tmp2->below) 
-    if(tmp2->type==FORCE && tmp2->value == spell_type) {
-      force=tmp2;    /* the old effect will be "refreshed" */
-      is_refresh=1;
-      new_draw_info(NDI_UNIQUE, 0, op, "You recast the spell while in effect.");
+  for(tmp2=tmp->inv; tmp2!=NULL; tmp2=tmp2->below) {
+    if (tmp2->type==FORCE) {
+      if(tmp2->value == spell_type) {
+	force=tmp2;    /* the old effect will be "refreshed" */
+	is_refresh=1;
+	new_draw_info(NDI_UNIQUE, 0, op, "You recast the spell while in effect.");
+      }
+      else if ((spell_type==SP_BLESS && tmp2->value==SP_HOLY_POSSESSION) ||
+	       (spell_type==SP_HOLY_POSSESSION && tmp2->value==SP_BLESS)) {
+	/* both bless AND holy posession are not allowed! */
+	new_draw_info(NDI_UNIQUE, 0, op,"No more blessings for you.");
+	return 0;
+      }
     }
+  }
   if(force==NULL)
     force=get_archetype("force");
   force->value = spell_type;  /* mark this force with the originating spell */
@@ -1243,11 +1252,13 @@ cast_change_attr(object *op,object *caster,int dir,int spell_type) {
 	if(god->slaying) force->slaying = add_string(god->slaying);
 
 	/* Only give out good benefits, not bad */
-	for (i=0; i<NROFATTACKS; i++)
-	    if (god->resist[i]>0) {
-	      force->resist[i] = god->resist[i];
-	      if (force->resist[i]>95) force->resist[i]=95;
-	    }
+	for (i=0; i<NROFATTACKS; i++) {
+	  if (god->resist[i]>0) {
+	    force->resist[i] = god->resist[i];
+	    if (force->resist[i]>95) force->resist[i]=95;
+	  }
+	  else force->resist[i]=0; /* adding of diff. types not allowed */
+	}
 
 	force->path_attuned|=god->path_attuned;
 	new_draw_info_format(NDI_UNIQUE, 0,tmp,
@@ -1255,8 +1266,12 @@ cast_change_attr(object *op,object *caster,int dir,int spell_type) {
     } else 
         new_draw_info(NDI_UNIQUE, 0,op,"Your blessing seems empty.");
 #endif
-    if(tmp!=op) new_draw_info_format(NDI_UNIQUE, 0,tmp,
-	"You bless %s mightily!",tmp->name);
+    if(tmp!=op && op->type==PLAYER && tmp->type==PLAYER) {
+      new_draw_info_format(NDI_UNIQUE, 0, op,
+			   "You bless %s mightily!", tmp->name);
+      new_draw_info_format(NDI_UNIQUE, 0, tmp,
+			   "%s blessed you mightily!", op->name);
+    }
     force->stats.wc += SP_level_dam_adjust(op, caster,SP_HOLY_POSSESSION); 
     force->stats.ac += SP_level_dam_adjust(op, caster,SP_HOLY_POSSESSION); 
     break; } 
@@ -1274,7 +1289,8 @@ cast_change_attr(object *op,object *caster,int dir,int spell_type) {
     } else 
         new_draw_info(NDI_UNIQUE, 0,op,"Your curse seems empty.");
 #endif
-    if(tmp!=op) new_draw_info_format(NDI_UNIQUE, 0,tmp,"You curse %s!",tmp->name);
+    if(tmp!=op && caster->type==PLAYER)
+      new_draw_info_format(NDI_UNIQUE, 0, caster, "You curse %s!",tmp->name);
     force->stats.ac -= SP_level_dam_adjust(op, caster,SP_CURSE); 
     force->stats.wc -= SP_level_dam_adjust(op, caster,SP_CURSE);
     break; } 
@@ -1285,18 +1301,23 @@ cast_change_attr(object *op,object *caster,int dir,int spell_type) {
 	int i;
 
 	/* Only give out good benefits, and put a max on it */
-	for (i=0; i<NROFATTACKS; i++)
-	    if (god->resist[i]>0) {
-		force->resist[i] = god->resist[i];
-		if (force->resist[i]>30) force->resist[i]=30;
-	    }
+	for (i=0; i<NROFATTACKS; i++) {
+	  if (god->resist[i]>0) {
+	    force->resist[i] = god->resist[i];
+	    if (force->resist[i]>30) force->resist[i]=30;
+	  }
+	  else force->resist[i]=0; /* adding of diff. types not allowed */
+	}
 	force->path_attuned|=god->path_attuned;
 	new_draw_info_format(NDI_UNIQUE, 0,tmp,
 		"You receive the blessing of %s.",god->name);
     } else 
         new_draw_info(NDI_UNIQUE, 0,op,"Your blessing seems empty.");
 #endif
-    if(tmp!=op) new_draw_info_format(NDI_UNIQUE, 0,tmp,"You bless %s.",tmp->name);
+    if(tmp!=op && op->type==PLAYER && tmp->type==PLAYER) {
+      new_draw_info_format(NDI_UNIQUE, 0, op, "You bless %s.", tmp->name);
+      new_draw_info_format(NDI_UNIQUE, 0, tmp, "%s blessed you.", op->name);
+    }
     force->stats.wc += SP_level_dam_adjust(op, caster,SP_BLESS);
     force->stats.ac += SP_level_dam_adjust(op, caster,SP_BLESS);
     break; } 
@@ -1634,7 +1655,7 @@ void move_cancellation(object *op) {
     free_object(op);
     return;
   }
-  if(reflwall(op->map,op->x,op->y)) {
+  if(reflwall(op->map,op->x,op->y, op)) {
 
     op->direction=absdir(op->direction+4);
     insert_ob_in_map(op,op->map,op);

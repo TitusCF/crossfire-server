@@ -846,12 +846,13 @@ int hit_player_attacktype(object *op, object *hitter, int dam,
 	object *tmp;
 	int flag=0;
 
-	/* Items only get corroded if your not on a battleground and your not immune. */
-	if (!op_on_battleground(op, NULL, NULL) && (op->resist[ATNR_ACID]<100)) {
+	/* Items only get corroded if you're not on a battleground and if
+         * your acid resistance is below 50%. */
+	if (!op_on_battleground(op, NULL, NULL) && (op->resist[ATNR_ACID]<50)) {
 	    for(tmp=op->inv;tmp!=NULL;tmp=tmp->below) {
 
-		if(!QUERY_FLAG(tmp,FLAG_APPLIED)||tmp->resist[ATNR_ACID]>=50) 
-		    continue;
+		if(!QUERY_FLAG(tmp,FLAG_APPLIED)||tmp->resist[ATNR_ACID]>=10) 
+		  continue;  /* >= 10% acid res. on itmes will protect these */
 
 		if(!(tmp->material&M_IRON))
 		    continue;
@@ -1496,8 +1497,8 @@ void deathstrike_player(object *op, object *hitter, int *dam)
         def_lev = 1;
     }
     atk_lev = SK_level (hitter) / 2;
-    LOG(llevDebug,"Deathstrike - attack level %d, defender level %d\n",
-	atk_lev, def_lev);
+    /* LOG(llevDebug,"Deathstrike - attack level %d, defender level %d\n",
+       atk_lev, def_lev); */
 
     if(atk_lev >= def_lev ){
 	kill_lev = RANDOM() % atk_lev;

@@ -592,12 +592,14 @@ void move_arrow(object *op) {
     if (tmp != NULL)
     {
         /* Found living object, but it is reflecting the missile.  Update
-         * as below.
+         * as below. (Note that for living creatures there is a small
+         * chance that reflect_missile fails.)
          */
-        if (QUERY_FLAG (tmp, FLAG_REFL_MISSILE))
+        if (QUERY_FLAG (tmp, FLAG_REFL_MISSILE) && (!QUERY_FLAG(tmp,
+	    FLAG_ALIVE) || (RANDOM()%100) < 90-op->level/10))
         {
             int number = op->face->number;
-
+	    
             op->direction = absdir (op->direction + 4);
             op->state = 0;
             if (GET_ANIM_ID (op)) {
