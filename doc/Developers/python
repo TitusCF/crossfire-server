@@ -82,32 +82,100 @@ CreateObjectInside()
 CheckMap()
 CheckInventory()
 CreateObject()
-CanSeeInvisible()
-CanRoll()
-CanPassThru()
-CanPickUp()
-CanCastSpell()
-CanUseScroll()
-CanUseWand()
-CanUseBow()
-CanUseArmour()
-CanUseWeapon()
-CanUseRing()
-CanUseSkill()
-CanUseRod()
-CanUseHorn()
-CanSeeInDark()
+CanSeeInvisible(object who)
+  Tests if the object "who" can see invisible things.
+  Return value: test result as an integer - 0 if and only if false.
+
+CanRoll(object who)
+  Tests if the object "who" can roll.
+  Return value: test result as an integer - 0 if and only if false.
+
+CanPassThru(object who)
+  Tests if the object "who" has the 'pass through' ability.
+  Return value: test result as an integer - 0 if and only if false.
+
+CanPickUp(object who)
+  Tests if the object "who" can be pick up stuff.
+  Return value: test result as an integer - 0 if and only if false.
+
+CanCastSpell(object who)
+  Tests if the object "who" can cast spells.
+  Return value: test result as an integer - 0 if and only if false.
+
+CanUseScroll(object who)
+  Tests if object "who" can read scrolls.
+  Return value: test result as an integer - 0 if and only if false.
+
+CanUseWand(object who)
+  Tests if object "who" can use a magical wand.
+  Return value: test result as an integer - 0 if and only if false.
+
+CanUseBow(object who)
+  Tests if object "who" can use a bow.
+  Return value: test result as an integer - 0 if and only if false.
+
+CanUseArmour(object who)
+  Tests if object "who" can wear armour.
+  Return value: test result as an integer - 0 if and only if false.
+
+CanUseWeapon(object who)
+  Tests if object "who" can use a weapon.
+  Return value: test result as an integer - 0 if and only if false.
+
+CanUseRing(object who)
+  Tests if object "who" can use rings.
+  Return value: test result as an integer - 0 if and only if false.
+
+CanUseSkill(object who)
+  Tests if object "who" can use skills.
+  Return value: test result as an integer - 0 if and only if false.
+
+CanUseRod(object who)
+  Tests if object "who" can use magical rods.
+  Return value: test result as an integer - 0 if and only if false.
+
+CanUseHorn(object who)
+  Tests if object "who" can use a horn (and other musical instruments)
+  Return value: test result as an integer - 0 if and only if false.
+
+CanSeeInDark(object who)
+  Tests if object "who" has got infravision capabilities.
+  Return value: test result as an integer - 0 if and only if false.
 
 D
 Drop()
 DirectionN()
+  Wrapper for the North direction.
+  Return value: an integer representing the direction.
+
 DirectionNE()
+  Wrapper for the North-East direction.
+  Return value: an integer representing the direction.
+
 DirectionE()
+  Wrapper for the East direction.
+  Return value: an integer representing the direction.
+
 DirectionSE()
+  Wrapper for the South-East direction.
+  Return value: an integer representing the direction.
+
 DirectionS()
+  Wrapper for the South direction.
+  Return value: an integer representing the direction.
+
 DirectionSW()
+  Wrapper for the South-West direction.
+  Return value: an integer representing the direction.
+
 DirectionW()
+  Wrapper for the West direction.
+  Return value: an integer representing the direction.
+
 DirectionNW()
+  Wrapper for the North-West direction.
+  Return value: an integer representing the direction.
+
 DoKnowSpell()
 
 E
@@ -120,44 +188,94 @@ G
 GetSkillExperience()
 GetMapPath()
 GetMapObject()
-GetMessage()
-GetGod()
-GetWeight()
+GetMessage(object who)
+  Gets the message contained in the specified object.
+  The message is what appears inside msg...endmsg tags.
+
+GetGod(object who)
+  Gets the name of the god associated with the given object.
+  Usually, this will be the god "who" is worshipping.
+
+GetWeight(object who)
+  Gets the weight of the given object.
+
 GetMap()
 GetNextObject()
 GetPreviousObject()
 GetFirstObjectOnSquare()
 GetQuantity()
-GetExperience()
-GetSpeed()
-GetFood()
-GetGrace()
+GetExperience(object who)
+  Gets the amount of experience associated with the object.
+
+GetSpeed(object who)
+  Gets the speed of the given object.
+
+GetFood(object who)
+  Gets the food level of the given object.
+
+GetGrace(object who)
+  Gets the grace amount of the given object.
+
 GetReturnValue()
 GetDirection()
-GetLastSP()
-GetLastGrace()
+GetLastSP(object who)
+  Gets the last_sp parameter value associated with the given object.
+
+GetLastGrace(object who)
+  Gets the last_grace parameter value associated with the given object.
+
 GetAttackType()
-GetDamage()
-GetName()
+GetDamage(object who)
+  Gets the amount of damage associated with the given object.
+
+GetName(object who)
+  Gets the 'clear name' of the given object.
+
 GetEventOptions()
 GetEventPlugin()
-GetType()
+GetType(object who)
+  Gets the type of a given object, as a numerical identifier.
+
 GetEventHandler()
 GetIP()
 GetInventory()
 GetInternalName()
-GetAC()
-GetCha()
-GetCon()
-GetDex()
-GetHP()
-GetInt()
-GetPow()
-GetSP()
-GetStr()
-GetWis()
-GetMaxHP()
-GetMaxSP()
+GetAC(object who)
+  Gets the Armor Class coefficient associated with the given object.
+
+GetCha(object who)
+  Gets the Charisma value of the given object.
+
+GetCon(object who)
+  Gets the Constitution value of the given object.
+
+GetDex(object who)
+  Gets the Dexterity value of the given object.
+
+GetHP(object who)
+  Gets the amount of Hit Points associated with the given object.
+
+GetInt(object who)
+  Gets the Intelligence value of the given object.
+
+GetPow(object who)
+  Gets the Power value of the given object.
+
+GetSP(object who)
+  Gets the amount of Mana possessed by the given object.
+
+GetStr(object who)
+  Gets the Strength value of the given object.
+
+GetWis(object who)
+  Gets the Wisdom value of the given object.
+
+GetMaxHP(object who)
+  Gets the Maximum amount of Hit Points the given object can get.
+
+GetMaxSP(object who)
+  Gets the Maximum amount of Mana the given object can get.
+
 GetXPos()
 GetYPos()
 
@@ -169,37 +287,123 @@ HasBeenApplied()
 
 I
 IsOutOfMap()
-IsCanBePicked()
+IsCanBePicked(object who)
+  Tests if "who" can be picked up.
+  Return value: test result as an integer - 0 if and only if false.
+
 InsertObjectInside()
-IsInvisible()
-IsAlive()
-IsWiz()
-IsApplied()
-IsUnpaid()
-IsFlying()
-IsMonster()
-IsFriendly()
-IsGenerator()
-IsThrown()
-IsTurnable()
-IsUsedUp()
-IsIdentified()
-IsSplitting()
-IsUndead()
-IsScared()
-IsUnaggressive()
+IsInvisible(object who)
+  Tests if the given object is invisible.
+  Return value: test result as an integer - 0 if and only if false.
+
+IsAlive(object who)
+  Tests if the given object is alive.
+  Return value: test result as an integer - 0 if and only if false.
+
+IsWiz(object who)
+  Tests if the given object is a DM.
+  Return value: test result as an integer - 0 if and only if false.
+
+IsApplied(object who)
+  Tests if the given object is applied.
+  Return value: test result as an integer - 0 if and only if false.
+
+IsUnpaid(object who)
+  Tests if the given object is paid.
+  Return value: test result as an integer - 0 if and only if false.
+
+IsFlying(object who)
+  Tests if the given object is flying.
+  Return value: test result as an integer - 0 if and only if false.
+
+IsMonster(object who)
+  Tests if the given object is a monster.
+  Return value: test result as an integer - 0 if and only if false.
+
+IsFriendly(object who)
+  Tests if the given object is in friendly mode.
+  Return value: test result as an integer - 0 if and only if false.
+
+IsGenerator(object who)
+  Tests if the given object is a generator.
+  Return value: test result as an integer - 0 if and only if false.
+
+IsThrown(object who)
+  Tests if the given object can be thrown.
+  Return value: test result as an integer - 0 if and only if false.
+
+IsTurnable(object who)
+  Tests if the given object is Turnable.
+  Return value: test result as an integer - 0 if and only if false.
+
+IsUsedUp(object who)
+  Tests if the given object is used up.
+  Return value: test result as an integer - 0 if and only if false.
+
+IsIdentified(object who)
+  Tests if the given object is identified.
+  Return value: test result as an integer - 0 if and only if false.
+
+IsSplitting(object who)
+  Tests if the given object can split.
+  Return value: test result as an integer - 0 if and only if false.
+
+IsUndead(object who)
+  Tests if the given object is an undead.
+  Return value: test result as an integer - 0 if and only if false.
+
+IsScared(object who)
+  Tests if the given object is scared.
+  Return value: test result as an integer - 0 if and only if false.
+
+IsUnaggressive(object who)
+  Tests if the given object is in unaggressive mode.
+  Return value: test result as an integer - 0 if and only if false.
+
 IsOfType()
-IsRunningAway()
-IsUnique()
-IsFloor()
-IsLifeSaver()
-IsSleeping()
-IsConfused()
-IsCursed()
-IsDamned()
-IsKnownMagical()
-IsKnownCursed()
-IsBlind()
+IsRunningAway(object who)
+  Tests if the given object is running away.
+  Return value: test result as an integer - 0 if and only if false.
+
+IsUnique(object who)
+  Tests if the given object is unique.
+  Return value: test result as an integer - 0 if and only if false.
+
+IsFloor(object who)
+  Tests if the given object is a floor tile.
+  Return value: test result as an integer - 0 if and only if false.
+
+IsLifeSaver(object who)
+  Tests if the given object is a LifeSaver.
+  Return value: test result as an integer - 0 if and only if false.
+
+IsSleeping(object who)
+  Tests if the given object is sleeping.
+  Return value: test result as an integer - 0 if and only if false.
+
+IsConfused(object who)
+  Tests if the given object is confused.
+  Return value: test result as an integer - 0 if and only if false.
+
+IsCursed(object who)
+  Tests if the given object is cursed.
+  Return value: test result as an integer - 0 if and only if false.
+
+IsDamned(object who)
+  Tests if the given object is damned.
+  Return value: test result as an integer - 0 if and only if false.
+
+IsKnownMagical(object who)
+  Tests if the given object is known to be a magical one.
+  Return value: test result as an integer - 0 if and only if false.
+
+IsKnownCursed(object who)
+  Tests if the given object is known to be a cursed one.
+  Return value: test result as an integer - 0 if and only if false.
+
+IsBlind(object who)
+  Tests if the given object is blind.
+  Return value: test result as an integer - 0 if and only if false.
 
 J
 K
