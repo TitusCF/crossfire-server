@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/player.c: allow to 'talk' to players with ambiguous names: use a
+   perfect match even if other partial matches exist.
+Andreas Kirschbaum 2004-08-30
+
 include/define.h
 server/shop.c
    add new flags F_IDENTIFIED and F_NOT_CURSED to query_cost() to pretend

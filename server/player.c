@@ -61,6 +61,9 @@ player* find_player_partial_name( char* plname )
         if ( strlen( pl->ob->name ) < namelen )
             continue;
 
+        if ( !strcmp( pl->ob->name, plname) )
+            return pl;
+
         if ( !strncasecmp( pl->ob->name, plname, namelen ) )
             {
             if ( found )
