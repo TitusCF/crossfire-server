@@ -446,6 +446,145 @@ char *query_base_name(object *op, int plural) {
     }
     return buf;
 }
+
+/* Break this off from describe_item - that function was way
+ * too long, making it difficult to read.  This function deals
+ * with describing the monsters & players abilities.  It should only
+ * be called with monster & player objects.  Returns a description
+ * in a static buffer.
+ */
+
+static char *describe_monster(object *op) {
+    char buf[MAX_BUF];
+    static char retbuf[VERY_BIG_BUF];
+
+    retbuf[0]='\0';
+
+    /* Note that the resolution this provides for players really isn't
+     * very good.  Any player with a speed greater than .67 will
+     * fall into the 'lightning fast movement' category.
+     */
+    if(FABS(op->speed)>MIN_ACTIVE_SPEED) {
+	switch((int)((FABS(op->speed))*15)) {
+	    case 0:
+		strcat(retbuf,"(very slow movement)");
+		break;
+	    case 1:
+		strcat(retbuf,"(slow movement)");
+		break;
+	    case 2:
+		strcat(retbuf,"(normal movement)");
+		break;
+	    case 3:
+	    case 4:
+		strcat(retbuf,"(fast movement)");
+		break;
+	    case 5:
+	    case 6:
+		strcat(retbuf,"(very fast movement)");
+		break;
+	    case 7:
+	    case 8:
+	    case 9:
+	    case 10:
+		strcat(retbuf,"(extremely fast movement)");
+		break;
+	    default:
+		strcat(retbuf,"(lightning fast movement)");
+		break;
+	}
+    }
+    if(QUERY_FLAG(op,FLAG_UNDEAD))
+	strcat(retbuf,"(undead)");
+    if(QUERY_FLAG(op,FLAG_CAN_PASS_THRU))
+	strcat(retbuf,"(pass through doors)");
+    if(QUERY_FLAG(op,FLAG_SEE_INVISIBLE))
+	strcat(retbuf,"(see invisible)");
+    if(QUERY_FLAG(op,FLAG_USE_WEAPON))
+	strcat(retbuf,"(wield weapon)");
+    if(QUERY_FLAG(op,FLAG_USE_BOW))
+	strcat(retbuf,"(archer)");
+    if(QUERY_FLAG(op,FLAG_USE_ARMOUR))
+	strcat(retbuf,"(wear armour)");
+    if(QUERY_FLAG(op,FLAG_USE_RING))
+	strcat(retbuf,"(wear ring)");
+    if(QUERY_FLAG(op,FLAG_USE_SCROLL))
+	strcat(retbuf,"(read scroll)");
+    if(QUERY_FLAG(op,FLAG_USE_WAND))
+	strcat(retbuf,"(fire wand)");
+    if(QUERY_FLAG(op,FLAG_USE_ROD))
+	strcat(retbuf,"(use rod)");
+    if(QUERY_FLAG(op,FLAG_USE_HORN))
+	strcat(retbuf,"(use horn)");
+    if(QUERY_FLAG(op,FLAG_CAN_USE_SKILL))
+	strcat(retbuf,"(skill user)");
+    if(QUERY_FLAG(op,FLAG_CAST_SPELL))
+	strcat(retbuf,"(spellcaster)");
+    if(QUERY_FLAG(op,FLAG_FRIENDLY))
+	strcat(retbuf,"(friendly)");
+    if(QUERY_FLAG(op,FLAG_UNAGGRESSIVE))
+	strcat(retbuf,"(unaggressive)");
+    if(QUERY_FLAG(op,FLAG_HITBACK))
+	strcat(retbuf,"(hitback)");
+    if(op->randomitems != NULL) {
+	treasure *t;
+	int first = 1;
+	for(t=op->randomitems->items; t != NULL; t=t->next)
+	    if(t->item && (t->item->clone.type == ABILITY)) {
+		if(first) {
+		    first = 0;
+		    strcat(retbuf,"(Spell abilities:)");
+		}
+		strcat(retbuf,"(");
+		strcat(retbuf,t->item->clone.name);
+		strcat(retbuf,")");
+	    }
+    }
+    if (op->type == PLAYER) {
+	if(op->contr->digestion) {
+	    if(op->contr->digestion!=0)
+		sprintf(buf,"(sustenance%+d)",op->contr->digestion);
+	    strcat(retbuf,buf);
+	}
+	if(op->contr->gen_grace) {
+	    sprintf(buf,"(grace%+d)",op->contr->gen_grace);
+	    strcat(retbuf,buf);
+	}
+	if(op->contr->gen_sp) {
+	    sprintf(buf,"(magic%+d)",op->contr->gen_sp);
+	    strcat(retbuf,buf);
+	}
+	if(op->contr->gen_hp) {
+	    sprintf(buf,"(regeneration%+d)",op->contr->gen_hp);
+	    strcat(retbuf,buf);
+	}
+    }
+
+    /* describe attacktypes */
+    if (is_dragon_pl(op)) {
+	/* for dragon players display the attacktypes from clawing skill
+	 * Break apart the for loop - move the comparison checking down -
+	 * this makes it more readable.
+	 */
+	object *tmp;
+	
+	for (tmp=op->inv; tmp!=NULL; tmp=tmp->below)
+	    if (tmp->type == SKILL && !strcmp(tmp->name, "clawing")) break;
+
+	if (tmp && tmp->attacktype!=0) {
+		DESCRIBE_ABILITY(retbuf, tmp->attacktype, "Claws");
+	}
+	else {
+		DESCRIBE_ABILITY(retbuf, op->attacktype, "Attacks");
+	}
+    }
+    DESCRIBE_PATH(retbuf, op->path_attuned, "Attuned");
+    DESCRIBE_PATH(retbuf, op->path_repelled, "Repelled");
+    DESCRIBE_PATH(retbuf, op->path_denied, "Denied");
+    return retbuf;
+}
+
+
 /*
  * Returns a pointer to a static buffer which contains a
  * description of the given object.
@@ -455,314 +594,257 @@ char *query_base_name(object *op, int plural) {
  * will be gained about its user will be returned.
  * If it is a player, it writes out the current abilities
  * of the player, which is usually gained by the items applied.
+ * It would be really handy to actually pass another object
+ * pointer on who is examining this object.  Then, you could reveal
+ * certain information depending on what the examiner knows, eg,
+ * wouldn't need to use the SEE_INVISIBLE flag to know it is
+ * a dragon player examining food.  Could have things like
+ * a dwarven axe, in which the full abilities are only known to
+ * dwarves, etc.
+ *
+ * This function is really much more complicated than it should
+ * be, because different objects have different meanings
+ * for the same field (eg, wands use 'food' for charges).  This
+ * means these special cases need to be worked out.
  */
 
 char *describe_item(object *op) {
-  char buf[MAX_BUF];
-  static char retbuf[VERY_BIG_BUF];
+    char buf[MAX_BUF];
+    static char retbuf[VERY_BIG_BUF];
+    int identified,i;
 
-  retbuf[0]='\0';
-  if(QUERY_FLAG(op,FLAG_MONSTER)) {
-    if(FABS(op->speed)>MIN_ACTIVE_SPEED) {
-      switch((int)((FABS(op->speed))*15)) {
-      case 0:
-        strcat(retbuf,"(very slow movement)");
-        break;
-      case 1:
-        strcat(retbuf,"(slow movement)");
-        break;
-      case 2:
-        strcat(retbuf,"(normal movement)");
-        break;
-      case 3:
-      case 4:
-        strcat(retbuf,"(fast movement)");
-        break;
-      case 5:
-      case 6:
-        strcat(retbuf,"(very fast movement)");
-        break;
-      case 7:
-      case 8:
-      case 9:
-      case 10:
-        strcat(retbuf,"(extremely fast movement)");
-        break;
-      default:
-        strcat(retbuf,"(lightning fast movement)");
-        break;
-      }
+    retbuf[0]='\0';
+    if(QUERY_FLAG(op,FLAG_MONSTER) || op->type==PLAYER) {
+	return describe_monster(op);
     }
-  } else switch(op->type) {
-    case BOW:
-    case ARROW:
-    case WAND:
-    case ROD:
-    case HORN:
-    case PLAYER:
-    case WEAPON:
-    case ARMOUR:
-    case HELMET:
-    case SHIELD:
-    case BOOTS:
-    case GLOVES:
-    case GIRDLE:
-    case BRACERS:
-    case CLOAK:
-	break;
+    /* figure this out once, instead of making multiple calls to need_identify.
+     * also makes the code easier to read.
+     */
+    if (!need_identify(op) || QUERY_FLAG(op, FLAG_IDENTIFIED)) identified = 1;
+    else identified = 0;
 
-    case FOOD:
-    case FLESH:
-    case DRINK:
-      if(!need_identify(op) || QUERY_FLAG(op,FLAG_IDENTIFIED) || QUERY_FLAG(op,FLAG_BEEN_APPLIED)) {
-	sprintf(buf,"(food+%d)", op->stats.food);
-	strcat(retbuf, buf);
-	
-	if (op->type == FLESH && op->last_eat>0 && atnr_is_dragon_enabled(op->last_eat)) {
-	  sprintf(buf, "(%s metabolism)", change_resist_msg[op->last_eat]);
-	  strcat(retbuf, buf);
-	}
-	
-	if (!QUERY_FLAG(op,FLAG_CURSED)) {
-	    if (op->stats.hp)
-		strcat(retbuf,"(heals)");
-	    if (op->stats.sp)
-		strcat(retbuf,"(spellpoint regen)");
-	}
-	else {
-	    if (op->stats.hp)
-		strcat(retbuf,"(damages)");
-	    if (op->stats.sp)
-		strcat(retbuf,"(spellpoint depletion)");
-	}
-      }
-      break;
+    switch(op->type) {
+	case BOW:
+	case ARROW:
+	case WAND:
+	case ROD:
+	case HORN:
+	case WEAPON:
+	case ARMOUR:
+	case HELMET:
+	case SHIELD:
+	case BOOTS:
+	case GLOVES:
+	case GIRDLE:
+	case BRACERS:
+	case CLOAK:
+	    break;  /* We have more information to do below this switch */
 
-
-    case SKILL:
-    case RING:
-    case AMULET:
-#ifdef FULL_RING_DESCRIPTION
-      if (op->title)
-	strcat (retbuf, ring_desc(op));
-#else
-      strcat (retbuf, ring_desc(op));
-#endif
-      return retbuf;
-
-    default:
-      return retbuf;
-    }
-  if(op->type!=PLAYER && !QUERY_FLAG(op,FLAG_MONSTER)) {
-    if(!need_identify(op) || QUERY_FLAG(op,FLAG_IDENTIFIED) || QUERY_FLAG(op,FLAG_BEEN_APPLIED)) {
-
-      int attr,val;
-
-      for (attr=0; attr<7; attr++) {
-        if ((val=get_attr_value(&(op->stats),attr))!=0) {
-          sprintf(buf, "(%s%+d)", short_stat_name[attr], val);
-          strcat(retbuf,buf);
-      	}
-      }
-
-      if(op->stats.exp) {
-        sprintf(buf,"(speed %+d)",op->stats.exp);
-        strcat(retbuf,buf);
-      }
-      switch(op->type) {
-      case BOW:
-      case ARROW:
-      case GIRDLE:
-      case HELMET:
-      case SHIELD:
-      case BOOTS:
-      case GLOVES:
-      case WEAPON:
-      case SKILL:
-      case RING:
-      case AMULET:
-      case ARMOUR:
-      case BRACERS:
-      case FORCE:
-      case CLOAK:
-        if(op->stats.wc) {
-          sprintf(buf,"(wc%+d)",op->stats.wc);
-          strcat(retbuf,buf);
-        }
-        if(op->stats.dam) {
-          sprintf(buf,"(dam%+d)",op->stats.dam);
-          strcat(retbuf,buf);
-        }
-        if(op->stats.ac) {
-          sprintf(buf,"(ac%+d)",op->stats.ac);
-          strcat(retbuf,buf);
-        }
-	if (op->type==WEAPON && op->level>0) {
-	  sprintf(buf,"(improved %d/%d)",op->last_eat,op->level);
-          strcat(retbuf,buf);
-	}
-        break;
-      default:
-        break;
-      }
-    }
-    if(!need_identify(op) || QUERY_FLAG(op,FLAG_IDENTIFIED)) {
-      switch(op->type) {
-        case ROD:  /* These use stats.sp for spell selection and stats.food */
-        case HORN: /* and stats.hp for spell-point regeneration... */
-        case BOW:
-        case ARROW:
-        case WAND:
 	case FOOD:
 	case FLESH:
 	case DRINK:
-          break;
-        default:
-          if(op->stats.food) {
-            if(op->stats.food!=0)
-              sprintf(buf,"(sustenance%+d)",op->stats.food);
-				/*            else
-								  sprintf(buf,"(hunger%+d)",op->stats.food); */
-            strcat(retbuf,buf);
-          }
-          if(op->stats.grace) {
-            sprintf(buf,"(grace%+d)",op->stats.grace);
-            strcat(retbuf,buf);
-          }
-          if(op->stats.sp) {
-            sprintf(buf,"(magic%+d)",op->stats.sp);
-            strcat(retbuf,buf);
-          }
-          if(op->stats.hp) {
-            sprintf(buf,"(regeneration%+d)",op->stats.hp);
-            strcat(retbuf,buf);
-          }
-      }
-    }
-  } else if(op->type == PLAYER) {
-    if(op->contr->digestion) {
-      if(op->contr->digestion!=0)
-        sprintf(buf,"(sustenance%+d)",op->contr->digestion);
-		/*      else
-				  sprintf(buf,"(hunger%+d)",op->contr->digestion); */
-      strcat(retbuf,buf);
-    }
-    if(op->contr->gen_grace) {
-      sprintf(buf,"(grace%+d)",op->contr->gen_grace);
-      strcat(retbuf,buf);
-    }
-    if(op->contr->gen_sp) {
-      sprintf(buf,"(magic%+d)",op->contr->gen_sp);
-      strcat(retbuf,buf);
-    }
-    if(op->contr->gen_hp) {
-      sprintf(buf,"(regeneration%+d)",op->contr->gen_hp);
-      strcat(retbuf,buf);
-    }
-  }
-  if(!need_identify(op) || QUERY_FLAG(op,FLAG_IDENTIFIED) || QUERY_FLAG(op,FLAG_BEEN_APPLIED)) {
-    if(QUERY_FLAG(op,FLAG_XRAYS))
-      strcat(retbuf,"(xray-vision)");
-    if(QUERY_FLAG(op,FLAG_FLYING))
-      strcat(retbuf,"(levitate)");
-    if(QUERY_FLAG(op,FLAG_SEE_IN_DARK))
-      strcat(retbuf,"(infravision)");
-  }
-  if(!need_identify(op) || QUERY_FLAG(op,FLAG_IDENTIFIED)) {
-    if(op->stats.luck) {
-      sprintf(buf,"(luck%+d)",op->stats.luck);
-      strcat(retbuf,buf);
-    }
-    if(QUERY_FLAG(op,FLAG_LIFESAVE))
-      strcat(retbuf,"(lifesaving)");
-    if(QUERY_FLAG(op,FLAG_REFL_SPELL))
-      strcat(retbuf,"(reflect spells)");
-    if(QUERY_FLAG(op,FLAG_REFL_MISSILE))
-      strcat(retbuf,"(reflect missiles)");
-    if(QUERY_FLAG(op,FLAG_STEALTH))
-      strcat(retbuf,"(stealth)");
-    if(op->slaying!=NULL) {
-      strcat(retbuf,"(slay ");
-      strcat(retbuf,op->slaying);
-      strcat(retbuf,")");
-    }
-  }
-  if(QUERY_FLAG(op,FLAG_MONSTER)) {
-    if(QUERY_FLAG(op,FLAG_UNDEAD))
-      strcat(retbuf,"(undead)");
-    if(QUERY_FLAG(op,FLAG_CAN_PASS_THRU))
-      strcat(retbuf,"(pass through doors)");
-    if(QUERY_FLAG(op,FLAG_SEE_INVISIBLE))
-      strcat(retbuf,"(see invisible)");
-    if(QUERY_FLAG(op,FLAG_USE_WEAPON))
-      strcat(retbuf,"(wield weapon)");
-    if(QUERY_FLAG(op,FLAG_USE_BOW))
-      strcat(retbuf,"(archer)");
-    if(QUERY_FLAG(op,FLAG_USE_ARMOUR))
-      strcat(retbuf,"(wear armour)");
-    if(QUERY_FLAG(op,FLAG_USE_RING))
-      strcat(retbuf,"(wear ring)");
-    if(QUERY_FLAG(op,FLAG_USE_SCROLL))
-      strcat(retbuf,"(read scroll)");
-    if(QUERY_FLAG(op,FLAG_USE_WAND))
-      strcat(retbuf,"(fire wand)");
-    if(QUERY_FLAG(op,FLAG_USE_ROD))
-      strcat(retbuf,"(use rod)");
-    if(QUERY_FLAG(op,FLAG_USE_HORN))
-      strcat(retbuf,"(use horn)");
-    if(QUERY_FLAG(op,FLAG_CAN_USE_SKILL))
-      strcat(retbuf,"(skill user)");
-    if(QUERY_FLAG(op,FLAG_CAST_SPELL))
-      strcat(retbuf,"(spellcaster)");
-    if(QUERY_FLAG(op,FLAG_FRIENDLY))
-      strcat(retbuf,"(friendly)");
-    if(QUERY_FLAG(op,FLAG_UNAGGRESSIVE))
-      strcat(retbuf,"(unaggressive)");
-    if(QUERY_FLAG(op,FLAG_HITBACK))
-      strcat(retbuf,"(hitback)");
-    if(op->randomitems != NULL) {
-      treasure *t;
-      int first = 1;
-      for(t=op->randomitems->items; t != NULL; t=t->next)
-        if(t->item && (t->item->clone.type == ABILITY)) {
-          if(first) {
-            first = 0;
-            strcat(retbuf,"(Spell abilities:)");
-          }
-          strcat(retbuf,"(");
-          strcat(retbuf,t->item->clone.name);
-          strcat(retbuf,")");
-        }
-    }
-  }
-  if(!need_identify(op)||QUERY_FLAG(op,FLAG_IDENTIFIED)||
-      QUERY_FLAG(op,FLAG_MONSTER)) {
-    
-      /* describe attacktypes */
-      if (is_dragon_pl(op)) {
-	/* for dragon players display the attacktypes from clawing skill */
-	object *tmp;
+	    if(identified || QUERY_FLAG(op,FLAG_BEEN_APPLIED)) {
+		sprintf(buf,"(food+%d)", op->stats.food);
+		strcat(retbuf, buf);
 	
-	for (tmp=op->inv; tmp!=NULL && !(tmp->type == SKILL &&
-	     strcmp(tmp->name, "clawing")==0); tmp=tmp->below);
+		if (op->type == FLESH && op->last_eat>0 && atnr_is_dragon_enabled(op->last_eat)) {
+		    sprintf(buf, "(%s metabolism)", change_resist_msg[op->last_eat]);
+		    strcat(retbuf, buf);
+		}
 	
-	if (tmp != NULL && tmp->attacktype!=0) {
-	  DESCRIBE_ABILITY(retbuf, tmp->attacktype, "Claws");}
-	else {
-	  DESCRIBE_ABILITY(retbuf, op->attacktype, "Attacks");}
-      }
-      else {
-	DESCRIBE_ABILITY(retbuf, op->attacktype, "Attacks");}
-      
-      /* resistance on flesh is only visible for quetzals */
-      if (op->type != FLESH || QUERY_FLAG(op, FLAG_SEE_INVISIBLE))
-          strcat(retbuf,describe_resistance(op, 0));
-      DESCRIBE_PATH(retbuf, op->path_attuned, "Attuned");
-      DESCRIBE_PATH(retbuf, op->path_repelled, "Repelled");
-      DESCRIBE_PATH(retbuf, op->path_denied, "Denied");
-  }
-  
-  return retbuf;
+		if (!QUERY_FLAG(op,FLAG_CURSED)) {
+		    if (op->stats.hp)
+			strcat(retbuf,"(heals)");
+		    if (op->stats.sp)
+			strcat(retbuf,"(spellpoint regen)");
+		}
+		else {
+		    if (op->stats.hp)
+			strcat(retbuf,"(damages)");
+		    if (op->stats.sp)
+			strcat(retbuf,"(spellpoint depletion)");
+		}
+	    }
+	    break;
+
+
+	case SKILL:
+	case RING:
+	case AMULET:
+#ifdef FULL_RING_DESCRIPTION
+	    if (op->title)
+		strcat (retbuf, ring_desc(op));
+#else
+	    strcat (retbuf, ring_desc(op));
+#endif
+	    return retbuf;
+
+	default:
+	    return retbuf;
+    }
+
+    /* Down here, we more further describe equipment type items.
+     * only describe them if they have been identified or the like.
+     */
+    if (identified || QUERY_FLAG(op,FLAG_BEEN_APPLIED)) {
+	int attr,val;
+
+	for (attr=0; attr<7; attr++) {
+	    if ((val=get_attr_value(&(op->stats),attr))!=0) {
+		sprintf(buf, "(%s%+d)", short_stat_name[attr], val);
+		strcat(retbuf,buf);
+	    }
+	}
+
+	if(op->stats.exp) {
+	    sprintf(buf,"(speed %+d)",op->stats.exp);
+	    strcat(retbuf,buf);
+	}
+
+	switch(op->type) {
+	    case BOW:
+	    case ARROW:
+	    case GIRDLE:
+	    case HELMET:
+	    case SHIELD:
+	    case BOOTS:
+	    case GLOVES:
+	    case WEAPON:
+	    case SKILL:
+	    case RING:
+	    case AMULET:
+	    case ARMOUR:
+	    case BRACERS:
+	    case FORCE:
+	    case CLOAK:
+		if(op->stats.wc) {
+		    sprintf(buf,"(wc%+d)",op->stats.wc);
+		    strcat(retbuf,buf);
+		}
+		if(op->stats.dam) {
+		    sprintf(buf,"(dam%+d)",op->stats.dam);
+		    strcat(retbuf,buf);
+		}
+		if(op->stats.ac) {
+		    sprintf(buf,"(ac%+d)",op->stats.ac);
+		    strcat(retbuf,buf);
+		}
+		if (op->type==WEAPON && op->level>0) {
+		    sprintf(buf,"(improved %d/%d)",op->last_eat,op->level);
+		    strcat(retbuf,buf);
+		}
+		break;
+
+		default:
+		    break;
+	}
+	if(QUERY_FLAG(op,FLAG_XRAYS))
+	    strcat(retbuf,"(xray-vision)");
+	if(QUERY_FLAG(op,FLAG_FLYING))
+	    strcat(retbuf,"(levitate)");
+	if(QUERY_FLAG(op,FLAG_SEE_IN_DARK))
+	    strcat(retbuf,"(infravision)");
+    } /* End if identified or applied */
+
+    /* This blocks only deals with fully identified object.
+     * it is intentional that this is not an 'else' from a above -
+     * in this way, information is added.
+      */
+    if(identified) {
+	int more_info = 0;
+
+	switch(op->type) {
+	    case ROD:  /* These use stats.sp for spell selection and stats.food */
+	    case HORN: /* and stats.hp for spell-point regeneration... */
+	    case BOW:
+	    case ARROW:
+	    case WAND:
+	    case FOOD:
+	    case FLESH:
+	    case DRINK:
+		more_info = 0;
+		break;
+
+	    /* Armor type objects */
+	    case ARMOUR:
+	    case HELMET:
+	    case SHIELD:
+	    case BOOTS:
+	    case GLOVES:
+	    case GIRDLE:
+	    case BRACERS:
+	    case CLOAK:
+		if (ARMOUR_SPEED(op)) {
+		    sprintf(buf,"(Max speed %1.2f)", ARMOUR_SPEED(op) / 10.0);
+		    strcat(retbuf, buf);
+		}
+		/* Do this in all cases - otherwise it gets confusing - does that
+		 * item have no penality, or is it not fully identified for example.
+	         */
+		sprintf(buf,"(Spell regen penalty %d)", ARMOUR_SPELLS(op));
+		strcat(retbuf, buf);
+		more_info=1;
+		break;
+
+	    case WEAPON:
+		/* Calculate it the same way fix_player does so the results
+		 * make sense.
+		 */
+		i = (WEAPON_SPEED(op)*2-op->magic)/2;
+		if (i<0) i=0;
+
+		sprintf(buf,"(weapon speed %d)", i);
+		strcat(retbuf, buf);
+		more_info=1;
+		break;
+
+	}
+	if (more_info) {
+	    if(op->stats.food) {
+		if(op->stats.food!=0)
+		    sprintf(buf,"(sustenance%+d)",op->stats.food);
+		strcat(retbuf,buf);
+	    }
+	    if(op->stats.grace) {
+		sprintf(buf,"(grace%+d)",op->stats.grace);
+		strcat(retbuf,buf);
+	    }
+	    if(op->stats.sp) {
+		sprintf(buf,"(magic%+d)",op->stats.sp);
+		strcat(retbuf,buf);
+	    }
+	    if(op->stats.hp) {
+		sprintf(buf,"(regeneration%+d)",op->stats.hp);
+		strcat(retbuf,buf);
+	    }
+	}
+
+	if(op->stats.luck) {
+	    sprintf(buf,"(luck%+d)",op->stats.luck);
+	    strcat(retbuf,buf);
+	}
+	if(QUERY_FLAG(op,FLAG_LIFESAVE))
+	    strcat(retbuf,"(lifesaving)");
+	if(QUERY_FLAG(op,FLAG_REFL_SPELL))
+	    strcat(retbuf,"(reflect spells)");
+	if(QUERY_FLAG(op,FLAG_REFL_MISSILE))
+	    strcat(retbuf,"(reflect missiles)");
+	if(QUERY_FLAG(op,FLAG_STEALTH))
+	    strcat(retbuf,"(stealth)");
+	if(op->slaying!=NULL) {
+	    sprintf(buf,"(slay %s)",op->slaying);
+	    strcat(retbuf,buf);
+	}
+	DESCRIBE_ABILITY(retbuf, op->attacktype, "Attacks");
+	/* resistance on flesh is only visible for quetzals */
+	if (op->type != FLESH || QUERY_FLAG(op, FLAG_SEE_INVISIBLE))
+	    strcat(retbuf,describe_resistance(op, 0));
+	DESCRIBE_PATH(retbuf, op->path_attuned, "Attuned");
+	DESCRIBE_PATH(retbuf, op->path_repelled, "Repelled");
+	DESCRIBE_PATH(retbuf, op->path_denied, "Denied");
+    }
+
+    return retbuf;
 }
 
 /* Return true if the item is magical.  A magical item is one that

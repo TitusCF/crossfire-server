@@ -17,6 +17,14 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+common/item.c: break out monster description into describe_monster
+   function from describe_item - the later was a really long function.
+   Reveal weapon speed for identified weapons, spell point regen
+   penalty and max speed for identified armor - this was discussed about
+   6 weeks ago.  Clean up the code to reduce the number of redundant
+   if statements and otherwise confusing code in describe_item.
+MSW 2002-06-14
+
 configure.in, configure, plugin/Makefile, plugin/Makefile.in,
    plugin/Makefile.old:  Modify the plugin module to gets its needed
    information from configure.  configure.in modified to look for Python.h and
