@@ -5,7 +5,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2000 Mark Wedel
+    Copyright (C) 2002 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -22,7 +22,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to mwedel@scruz.net
+    The authors can be reached via e-mail to crossfire-devel@real-time.com
 */
 
 /*  This file contains all the code implementing diseases,
@@ -377,7 +377,7 @@ int do_symptoms(object *disease) {
       if(disease->stats.dam != 0) {
 	int dam = disease->stats.dam;
 	/* reduce the damage, on average, 50%, and making things random. */
-	dam = random_roll(1, dam, victim, PREFER_LOW);
+	dam = random_roll(1, FABS(dam), victim, PREFER_LOW);
 	if(disease->stats.dam < 0) dam = -dam;
 	new_symptom->stats.dam = dam;
       }

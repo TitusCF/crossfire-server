@@ -17,6 +17,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/disease.c: Fix propogation of diseases with negative damage (these
+   do a percent of the creatures damage).  The new disease was getting
+   a damage rating of 1 in all cases because we were passing a negative
+   value to random_roll for the top end of the range.
+MSW 2002-07-08
+
 common/arch.c: Add 'unlocked' match for item_matched_string.
 lib/help/drop, lib/help/dropall: Help files for these commands.
 lib/Makefile.in: Update to include help commands above.
