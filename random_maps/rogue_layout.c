@@ -25,10 +25,10 @@ int surround_check(char **layout,int i,int j,int Xsize, int Ysize){
 	  4 = wall above
 	  8 = wall below */
   int surround_index = 0;
-  if((i > 0) && layout[i-1][j]!=0) surround_index |=1;
-  if((i < Xsize-1) && layout[i+1][j]!=0) surround_index |=2;
-  if((j > 0) && layout[i][j-1]!=0) surround_index |=4;
-  if((j < Ysize-1) && layout[i][j+1]!=0) surround_index |=8;
+  if((i > 0) && (layout[i-1][j]!=0&&layout[i-1][j]!='.')) surround_index +=1;
+  if((i < Xsize-1) && (layout[i+1][j]!=0&&layout[i+1][j]!='.')) surround_index +=2;
+  if((j > 0) && (layout[i][j-1]!=0&&layout[i][j-1]!='.')) surround_index +=4;
+  if((j < Ysize-1) && (layout[i][j+1]!=0&&layout[i][j+1]!='.')) surround_index +=8;
   return surround_index;
 }
 
@@ -100,13 +100,16 @@ char **roguelike_layout_gen(int xsize, int ysize, int options) {
   maze[walk->x][walk->y] = '>';
 
   /* convert all the '.' to 0, we're through with the '.' */
-  /* also, fix any 'dangling doors' */
   for(i=0;i<xsize;i++)
     for(j=0;j<ysize;j++) {
       if(maze[i][j]=='.') maze[i][j]=0;
       if(maze[i][j]=='D') {  /* remove bad door. */
         int si = surround_check(maze,i,j,xsize,ysize);
-        if(si!=3 && si!=12) maze[i][j]=0;
+        if(si!=3 && si!=12) { 
+          maze[i][j]=0;
+          /* back up and recheck any nearby doors */
+          i=0;j=0;
+        }
       }
     }
         
