@@ -666,7 +666,7 @@ msg
   the Empire Wars, charging it with their Chaotic Powers.
 endmsg
 event_attack_plugin Python
-event_attack /python/weapon_occidental_mages.py
+event_attack /python/items/weapon_occidental_mages.py
 end
 #
 #
@@ -2133,7 +2133,7 @@ msg
   the Empire Wars, charging it with their Chaotic Powers.
 endmsg
 event_apply_plugin Python
-event_apply /python/ring_occidental_mages.py
+event_apply /python/item/ring_occidental_mages.py
 end
 #
 # Horns:
