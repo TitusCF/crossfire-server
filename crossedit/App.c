@@ -69,7 +69,7 @@ ArchFlagsRec archFlags[] = {
  * 0.91.9 - moved to start of file - needed for ReadPixmaps function.
  */
 XColor exactcolor, discolor[13];
-Colormap colormap;
+Colormap colormap=NULL;
 
 
 /**********************************************************************
@@ -824,18 +824,9 @@ App AppCreate(XtAppContext appCon,
     InitializeColors(XtDisplay(self->shell));
 
     /* Default */
-    displaymode=Dm_Bitmap;
-#ifdef HAVE_LIBXPM
-    if (self->res.useColorPixmaps) displaymode=Dm_Pixmap;
-#endif
-#ifdef HAVE_LIBPNG
-    if (self->res.usePng) displaymode=Dm_Png;
-#endif
+    displaymode=Dm_Png;
+    FontSize=32;
 
-    if (displaymode==Dm_Png) 
-	FontSize=32;
-    else
-	FontSize=24;
     CnvInitialize(self->shell);
 
 
@@ -854,7 +845,8 @@ App AppCreate(XtAppContext appCon,
 	    fprintf(stderr,"Not enough space in colormap - switch colormap.\n");
 /*	    exit(1);*/
     }
-    XtVaSetValues(self->shell, XtNcolormap, colormap, NULL);
+    if (colormap)
+	XtVaSetValues(self->shell, XtNcolormap, colormap, NULL);
     AppUpdate(self);
     return self;
 }
@@ -1015,38 +1007,10 @@ void AppItemSet (App self, Edit edit,object *obj,int wallSet)
 }
 
 
-char PixelFromAlias(char *name) {
-  int i;
-  for(i=0;i<13;i++)
-    if(!strcmp(name,colorname[i][0]))
-      return discolor[i].pixel;
-  LOG(llevError,"Unknown color: %s\n",name);
-  return 0;
-}
 
 void  InitializeColors (Display *dpy)
 {
-    int i;
-    int private=0;
-
-    colormap = DefaultColormap (dpy, DefaultScreen (dpy));
-    for (i = 0; i < 13; i++) {
-	if (!XLookupColor (dpy, colormap, colorname[i][1], &exactcolor,
-	    &discolor[i])) {
-	    die ("Can't find color.");
-	}
-	if (!XAllocColor (dpy, colormap, &discolor[i])) {
-	    if (!private) {
-		LOG(llevDebug,"Switching to a private colormap.\n");
-		colormap=XCopyColormapAndFree(dpy, colormap);
-		private=1;
-		if (!XAllocColor (dpy, colormap, &discolor[i]))
-		    die ("Can't allocate colors.");
-	    }
-	    else 
-		die ("Can't allocate colors.");
-	}
-    }
+    return; /* this function does nothing anymore */
 }
 
 /*

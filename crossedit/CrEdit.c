@@ -312,51 +312,14 @@ static void SetSize(Widget w)
 /**********************************************************************
  **********************************************************************/
 
-#if defined (WIZARD_MODE)
 
 static void AnimateCursor (Widget w, int x, int y) {
-    static int old_x, old_y;
-    static Cursor wizc[4];
-    static int cursors_initialized;
+    /* Currently, this was only supported with bitmap mode.
+     * I'm sure soething clever could be done in other modes.
+     */
 
-    int xd = x - old_x;
-    int yd = y - old_y;
-    int i; 
-    
-    if (displaymode==Dm_Bitmap && XtIsRealized (w)) {	
-	if (!cursors_initialized) { 	    
-	    archetype *wizu = find_archetype ("editcursor");
-
-	    if (!wizu)
-		return ; /* $%&$&#$% */
-
-	    for (i = 0; i < 4; i++)
-		wizc[i] =  XCreatePixmapCursor 
-		    (XtDisplay(w), 
-		     pixmaps[GET_ANIMATION((&wizu->clone), i)], 
-		     pixmaps[GET_ANIMATION((&wizu->clone), (i+4))],
-		     discolor, discolor + 12, 12, 12);
-	    cursors_initialized++;
-	}
-	if (abs (xd) > abs (yd)) {
-	    if (xd < 0)
-		XDefineCursor (XtDisplay(w), XtWindow(w), wizc[3]);
-	    else
-		XDefineCursor (XtDisplay(w), XtWindow(w), wizc[1]);
-	} else {
-	    if (yd < 0)
-		XDefineCursor (XtDisplay(w), XtWindow(w), wizc[0]);
-	    else
-		XDefineCursor (XtDisplay(w), XtWindow(w), wizc[2]);
-	}
-	old_x = x;
-	old_y = y;
-    }
-    return;
 }
-#else 
-#define AnimateCursor(w,x,y)
-#endif
+
 
 
 /**********************************************************************
@@ -422,11 +385,6 @@ static void UpdatePosition (Widget w, int x, int y,Boolean inv)
 		    f=new_faces[GET_ANIMATION(op,
 			NUM_ANIMATIONS(op)/2)];
 		else f = *op->face;
-		if (inv  == True) {
-		    int tmp = f.fg;
-		    f.fg = f.bg;
-		    f.bg = tmp;
-		}
 		FaceDraw (w, self->crEdit.gc, &f, xb, yb);
 
 		if (HAS_COLOUR(w)) {
@@ -443,7 +401,7 @@ static void UpdatePosition (Widget w, int x, int y,Boolean inv)
 	}
     } else { /* Normal map drawing routine */
         New_Face *f;
-        if (displaymode==Dm_Pixmap || displaymode==Dm_Png) {
+        if (displaymode==Dm_Png) {
           f = GET_MAP_FACE(self->crEdit.map, x, y,2);
           if (f) FaceDraw (w, self->crEdit.gc, f,
                     x * self->crEdit.fontSize,
@@ -467,13 +425,7 @@ static void UpdatePosition (Widget w, int x, int y,Boolean inv)
 
 	else f = op->face;
 
-	if (inv  == True) {
-	    int tmp = f->fg;
-	    f->fg = f->bg;
-	    f->bg = tmp;
-	}
-	if (displaymode!=Dm_Pixmap || displaymode==Dm_Png ||
-	    f->number != blank_face->number)
+	if (displaymode==Dm_Png || f->number != blank_face->number)
 	    FaceDraw (w, self->crEdit.gc, f, 
 		  x * self->crEdit.fontSize, 
 		  y * self->crEdit.fontSize);

@@ -17,6 +17,44 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+This checkin for the most part removes support for xpm and xbm graphics - 
+    now the only image supported is the png.
+common/arch.c: comment out printing on warning of object having no type -
+    getting 300 meaningless messages at startup is annoying.
+common/image.c: Remove X11 color information from colorname array.  Remove
+    processing of color_fg and color_bg information from face file - only
+    use color_fg if no magicmap information is available - foreground
+    and background infoformation was only needed for bitmap graphics.
+common/loader.c, loader.l: Add elevation element, comment out some logging
+    messages that are excessive and only really relevant for people 
+    who want to fix them (really should be in the collect script
+    anyways).  Remove some unused code.
+common/map.c: add outdoor field to map structure - add support for loading
+    and saving it.
+crossedit/App.c,crossedit/CrUtil.c, crossedit/Defines.h, crossedit/crossedit.c
+    crossedit/xutil.c: Remove support for non png graphics.
+crossedit/Attr.c: Add support for elevation variable, remove code for non
+    png graphics.
+doc/map-technical: Add note about outdoor field.
+include/face.h: remove fg, bg fields from face struecture.
+include/global.h: Update colorname array definition.
+include/loader.h: Add V_ELEVATION field.
+include/map.h: Add outdoor field to map structure.
+include/newserver.h: Update types so it only loads/knows about png information.
+include/object.h: Add elevation field to object structure.
+lib/Makefile.in: Remove support for building crossfire.xpm and crossfire.xbm
+    files.
+lib/animations, lib/archetypes, lib/bmaps, lib/bmaps.paths, lib/crossfire.png,
+    lib/faces: Rebuilt.  Main difference is a few sea types, and the fact
+    that it hadn't been collected for a while.
+server/spell_effect.c: Modify dimension door so that it calls MapNewmapCmd
+    so that fog of war does not get confused.  Also, removes call to
+    draw as functions further up will do that.
+server/spell_util.c: Remove color information from attack information that
+    shuffle_attack uses.
+socket/init.c, socket/request.c: Remove support for non png images.
+MSW 2001-12-02
+
 Various minor bugfixes - 
 common/loader.c: rebuilt
 include/map.h: Change width,height,enter_x,enter_y to be 16 bit instead

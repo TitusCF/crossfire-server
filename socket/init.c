@@ -57,7 +57,7 @@
 Socket_Info socket_info;
 NewSocket *init_sockets;
 FaceInfo faces[MAXFACENUM];
-static char *face_types[FACE_TYPES] = {"xbm", "xpm", "png"};
+static char *face_types[FACE_TYPES] = {"png"};
 
 
 /* read_client_images loads all the iamge types into memory.
@@ -195,7 +195,7 @@ void InitConnection(NewSocket *ns, uint32 from)
     LOG(llevDebug, "Socket buffer size now %d bytes\n", oldbufsize);
 #endif
 
-    ns->facemode = Send_Face_Pixmap;
+    ns->facemode = Send_Face_Png;
     ns->facecache = 0;
     ns->sound = 0;
     ns->ext2 = 0;

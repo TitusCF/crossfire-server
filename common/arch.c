@@ -339,8 +339,10 @@ void first_arch_pass(FILE *fp) {
       if(prev!=NULL)
         prev->next=at;
       prev=last_more=at;
+#if 0
       if(!op->type)
           LOG(llevDebug," WARNING: Archetype %s has no type info!\n", op->arch->name);
+#endif
       
       op->quick_pos = 0; /* assume as base a single arch */
       at->clone.quick_pos = 0; /* sic */

@@ -470,19 +470,18 @@ void VersionCmd(char *buf, int len,NewSocket *ns)
 
 void SetFaceMode(char *buf, int len, NewSocket *ns)
 {
+    char tmp[256];
+
     int mask =(atoi(buf) & CF_FACE_CACHE), mode=(atoi(buf) & ~CF_FACE_CACHE);
 
     if (mode==CF_FACE_NONE) {
 	ns->facemode=Send_Face_None;
-    }
-    else if (mode==CF_FACE_BITMAP) {
-	ns->facemode=Send_Face_Bitmap;
-    } else if (mode==CF_FACE_XPM) {
-	ns->facemode=Send_Face_Pixmap;
     } else if (mode==CF_FACE_PNG) {
 	ns->facemode=Send_Face_Png;
-#ifdef ESRV_DEBUG
     } else {
+	sprintf(tmp,"drawinfo %d %s", NDI_RED,"Warning - send unsupported face mode.  Will use Png");
+	Write_String_To_Socket(ns, tmp, strlen(tmp));
+#ifdef ESRV_DEBUG
 	LOG(llevDebug,"SetFaceMode: Invalid mode from client: %d\n", mode);
 #endif
     }
@@ -816,33 +815,13 @@ void esrv_send_face(NewSocket *ns,short face_num, int nocache)
 	sl.len += strlen(new_faces[face_num].name);
 	Send_With_Handling(ns, &sl);
     }
-    else if (ns->facemode == Send_Face_Pixmap) {
-	strcpy((char*)sl.buf, "pixmap ");
-	sl.len=strlen((char*)sl.buf);
-	SockList_AddInt(&sl, face_num);
-	SockList_AddInt(&sl, faces[face_num].datalen[1]);
-	memcpy(sl.buf+sl.len, faces[face_num].data[1], faces[face_num].datalen[1]);
-	sl.len += faces[face_num].datalen[1];
-/*	LOG(llevDebug,"sending pixmap %d, len %d\n", face_num, faces[face_num].datalen);*/
-	Send_With_Handling(ns, &sl);
-    } else if (ns->facemode == Send_Face_Bitmap) {
-	strcpy((char*)sl.buf, "bitmap ");
-	sl.len=strlen((char*)sl.buf);
-	SockList_AddInt(&sl, face_num);
-	SockList_AddChar(&sl, new_faces[face_num].fg);
-	SockList_AddChar(&sl, new_faces[face_num].bg);
-	memcpy(sl.buf+sl.len, faces[face_num].data[0], faces[face_num].datalen[0]);
-	memcpy(sl.buf+sl.len, faces[face_num].data[0], 3*24);
-	sl.len += faces[face_num].datalen[0];
-	Send_With_Handling(ns, &sl);
-    }
     else if (ns->facemode == Send_Face_Png) {
 	strcpy((char*)sl.buf, "image ");
 	sl.len=strlen((char*)sl.buf);
 	SockList_AddInt(&sl, face_num);
-	SockList_AddInt(&sl, faces[face_num].datalen[2]);
-	memcpy(sl.buf+sl.len, faces[face_num].data[2], faces[face_num].datalen[2]);
-	sl.len += faces[face_num].datalen[2];
+	SockList_AddInt(&sl, faces[face_num].datalen[PNG_FACE_INDEX]);
+	memcpy(sl.buf+sl.len, faces[face_num].data[PNG_FACE_INDEX], faces[face_num].datalen[PNG_FACE_INDEX]);
+	sl.len += faces[face_num].datalen[PNG_FACE_INDEX];
 /*	LOG(llevDebug,"sending png %d, len %d\n", face_num, faces[face_num].datalen);*/
 	Send_With_Handling(ns, &sl);
     } else {

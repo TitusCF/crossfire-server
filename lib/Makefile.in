@@ -34,8 +34,7 @@ INSTALLFILES = $(srcdir)/artifacts $(srcdir)/ban_file $(srcdir)/def_help \
 	$(srcdir)/messages $(srcdir)/motd $(srcdir)/races \
 	$(srcdir)/skill_params $(srcdir)/spell_params \
 	$(srcdir)/treasures $(srcdir)/animations $(srcdir)/archetypes \
-	$(srcdir)/bmaps $(srcdir)/bmaps.paths $(srcdir)/crossfire.xpm \
-	$(srcdir)/faces $(srcdir)/crossfire.xbm $(srcdir)/crossfire.png \
+	$(srcdir)/bmaps $(srcdir)/bmaps.paths $(srcdir)/crossfire.png \
 	$(srcdir)/attackmess
 
 BININSTALL = $(srcdir)/xpmtopix.pl $(srcdir)/collect.pl $(srcdir)/util.pl
@@ -81,14 +80,8 @@ RM = @RM@
 SHELL = @BOURNE_SHELL@
 
 
-all:: archetypes bmaps.paths crossfire.xbm crossfire.xpm crossfire.png  animations
+all:: archetypes bmaps.paths crossfire.png  animations
 
-
-crossfire.xpm: bmaps.paths
-	$(srcdir)/adm/collect_images.pl -xpm
-
-crossfire.xbm: bmaps.paths
-	$(srcdir)/adm/collect_images.pl -xbm
 
 crossfire.png: bmaps.paths
 	$(srcdir)/adm/collect_images.pl -png
@@ -111,7 +104,7 @@ animations: .collect-stamp
 bmaps.paths bmaps: .collect-stamp
 	make collect
 
-install:: archetypes bmaps.paths crossfire.xbm crossfire.xpm crossfire.png animations collect.pl xpmtopix.pl util.pl
+install:: archetypes bmaps.paths crossfire.png animations collect.pl xpmtopix.pl util.pl
 	@if [ ! -d $(datadir) ]; then \
 		$(MKDIR) -p $(datadir); \
 	fi

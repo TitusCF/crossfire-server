@@ -69,26 +69,26 @@ New_Face *blank_face, *dark_faces[3], *potion_face, *empty_face;
  */
 int nroffiles = 0, nrofpixmaps=0;
 
-/* This now merges the color alias and color name table together.
- * The first entry is the color as it is referred to in objects,
- * the second is the actual screen/X11 color to use.  NUM_COLORS is now
- * defined in global.h - if adding colors, increase that value, and everything
- * else should work appropriately.
+/* the only thing this table is used for now is to
+ * translate the colorname in the magicmap field of the
+ * face into a numeric index that is then sent to the
+ * client for magic map commands.  The order of this table
+ * must match that of the NDI colors in include/newclient.h.
  */
-char *colorname[NUM_COLORS][2] = {
-{"black",	"Black"},		/* 0  */
-{"white",	"White"},		/* 1  */
-{"blue",	"Navy"},		/* 2  */
-{"red",		"Red"},			/* 3  */
-{"orange",	"Orange"},		/* 4  */
-{"light_blue",	"DodgerBlue"},		/* 5  */
-{"dark_orange",	"DarkOrange2"},		/* 6  */
-{"green",	"SeaGreen"},		/* 7  */
-{"light_green",	"DarkSeaGreen"},	/* 8  - Used for window background color */
-{"grey",	"Grey50"},		/* 9  */
-{"brown",	"Sienna"},		/* 10 */
-{"yellow",	"Gold"},		/* 11 */
-{"khaki",	"Khaki"}		/* 12 */ 
+char *colorname[NUM_COLORS] = {
+"black",		/* 0  */
+"white",		/* 1  */
+"blue",			/* 2  */
+"red",			/* 3  */
+"orange",		/* 4  */
+"light_blue",		/* 5  */
+"dark_orange",		/* 6  */
+"green",		/* 7  */
+"light_green",		/* 8  */
+"grey",			/* 9  */
+"brown",		/* 10 */
+"yellow",		/* 11 */
+"khaki"			/* 12 */ 
 };
 
 static int compar (struct bmappair *a, struct bmappair *b) {
@@ -108,7 +108,7 @@ static int compar (struct bmappair *a, struct bmappair *b) {
 char find_color(char *name) {
   int i;
   for(i=0;i<NUM_COLORS;i++)
-    if(!strcmp(name,colorname[i][0]))
+    if(!strcmp(name,colorname[i]))
       return i;
   LOG(llevError,"Unknown color: %s\n",name);
   return 0;
@@ -156,13 +156,10 @@ static void ReadFaceData()
 	else if (!strncmp(buf,"color_fg",8)) {
 	    cp = buf + 9;
 	    cp[strlen(cp)-1] = '\0';
-	    on_face->fg = find_color(cp);
-	    if (on_face->magicmap==255) on_face->magicmap=on_face->fg;
+	    if (on_face->magicmap==255) on_face->magicmap=find_color(cp);
 	}
 	else if (!strncmp(buf,"color_bg",8)) {
-	    cp = buf + 9;
-	    cp[strlen(cp)-1] = '\0';
-	    on_face->bg = find_color(cp);
+	    /* ignore it */
 	}
 	else if (!strncmp(buf,"visibility",10)) {
 	    on_face->visibility = atoi(buf + 11);
@@ -191,7 +188,7 @@ static void ReadFaceData()
 int ReadBmapNames () {
     char buf[MAX_BUF], *p, *q;
     FILE *fp;
-    int value, nrofbmaps = 0, i, fg,bg;
+    int value, nrofbmaps = 0, i;
 
     sprintf (buf,"%s/bmaps", settings.datadir);
     LOG(llevDebug,"Reading bmaps from %s...",buf);
@@ -231,13 +228,9 @@ int ReadBmapNames () {
     LOG(llevDebug,"done (got %d/%d/%d)\n",nrofpixmaps,nrofbmaps,nroffiles);
 
     new_faces = (New_Face *)malloc(sizeof(New_Face) * (nrofpixmaps+1));
-    fg = find_color ("black");
-    bg = find_color ("khaki");
     for (i = 0; i <= nrofpixmaps; i++) {
 	new_faces[i].name = "";
 	new_faces[i].number = i;
-	new_faces[i].fg = fg;
-	new_faces[i].bg = bg;
 	new_faces[i].visibility=0;
 	new_faces[i].magicmap=255;
     }
@@ -266,8 +259,6 @@ int ReadBmapNames () {
     blank_face = &new_faces[FindFace(BLANK_FACE_NAME, 0)];
     blank_look.face = blank_face;
     blank_look.flags = 0;
-    blank_face->fg = find_color ("black");
-    blank_face->bg = find_color ("khaki");
     blank_face->magicmap = find_color ("khaki") | FACE_FLOOR;
 
     empty_face = &new_faces[FindFace(EMPTY_FACE_NAME, 0)];
@@ -277,8 +268,6 @@ int ReadBmapNames () {
     dark_faces[2] = &new_faces[FindFace (DARK_FACE3_NAME,0)];
 
     potion_face  = &new_faces[FindFace(POTION_FACE_NAME,0)];
-    potion_face->fg = find_color("light_blue");
-    potion_face->bg = find_color("khaki");
 
     return nrofpixmaps;
 }

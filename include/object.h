@@ -136,7 +136,6 @@ typedef struct obj {
   uint32 hide;			/* The object is hidden, not invisible */
 
 /* lighting code uses these - b.t. */
-/*  struct oblnk *lights; */  	/* list of lights the object carries */
   signed short glow_radius;	/* indicates the glow radius of the object */
 
 /* changes made by kholland@sunlab.cit.cornell.edu */
@@ -149,7 +148,8 @@ typedef struct obj {
   unsigned char will_apply;     /* See crossfire.doc */
     uint16 animation_id;    /* An index into the animation array */
     uint8 anim_speed, last_anim; /* ticks between animation-frames */
-  living stats;
+    living stats;
+    sint32  elevation;		/* elevation of this terrain - not currently used */
 
 #ifdef CASTING_TIME
   signed short casting;         /* time left before spell goes off */

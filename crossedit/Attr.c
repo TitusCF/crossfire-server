@@ -434,7 +434,7 @@ char *allowed_variables[] = {
    "resist_slow", "resist_paralyze", "resist_turn_undead", "resist_fear",
    "resist_cancellation", "resist_deplete", "resist_death", "resist_chaos",
    "resist_counterspell", "resist_godpower", "resist_holyword",
-   "resist_blind",
+   "resist_blind", "elevation"
 
 };
 

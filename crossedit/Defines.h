@@ -70,7 +70,7 @@ XDrawImageString16(disp,win,gc,x,y,str,len)
 typedef XChar2b XChar; 
 #endif
 
-enum DisplayMode {Dm_Font, Dm_Bitmap, Dm_Pixmap, Dm_Png};
+enum DisplayMode {Dm_Png};
 
 /* Useful macro */
 #define HAS_COLOUR(widg) (PlanesOfScreen(XtScreen(widg)) > 1)

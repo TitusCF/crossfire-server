@@ -63,7 +63,7 @@ String fallback_resources[] = {
     NULL
 };
 
-enum DisplayMode displaymode=Dm_Bitmap;
+enum DisplayMode displaymode=Dm_Png;
 
 void EditDirtyAc(Widget w, XEvent * event, String * argv, Cardinal * argc) {
     debug0 ("EditDirtyAc\n");

@@ -1245,8 +1245,16 @@ int dimension_door(object *op,int dir) {
 
 	    remove_ob(op);
 	    op->x=x,op->y=y;
-	    if ((op = insert_ob_in_map(op,op->map,op,0)) != NULL)
-	        draw(op);
+	    if ((op = insert_ob_in_map(op,op->map,op,0)) != NULL) {
+		/* I believe that currently, this will always be true as
+		 * only players can use dimension door, but might as
+		 * well be safe.  comment out call to draw - the main
+		 * update loop will figure it out.
+		 */
+		if( op->type == PLAYER)
+		    MapNewmapCmd(op->contr);
+/*	        draw(op);*/
+	    }
 	    return 1;
 	}
     } else { /* Player didn't specify a distance, so lets see how far
@@ -1275,7 +1283,10 @@ int dimension_door(object *op,int dir) {
     op->x+=freearr_x[dir]*dist,op->y+=freearr_y[dir]*dist;
     if ((op = insert_ob_in_map(op,op->map,op,0)) == NULL)
         return 1;
-    draw(op);
+
+    if( op->type == PLAYER)
+	MapNewmapCmd(op->contr);
+/*    draw(op);*/
     op->speed_left= -FABS(op->speed)*5; /* Freeze them for a short while */
     return 1;
 }

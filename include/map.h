@@ -138,9 +138,6 @@ typedef struct MapSpace {
  */
 typedef struct mapdef {
     struct mapdef *next;	/* Next map, linked list */
-#if 0
-    object *where;	/* What object were used to enter this map */
-#endif
     char path[HUGE_BUF];	/* Filename of the map */
     char *tmpname;	/* Name of temporary file */
     char *name;		/* Name of map as given by its creator */
@@ -165,6 +162,7 @@ typedef struct mapdef {
     uint16 width,height;	/* Width and height of map. */
     uint16 enter_x;	/* enter_x and enter_y are default entrance location */
     uint16 enter_y;	/* on the map if none are set in the exit */
+    uint32  outdoor:1;	/* True if an outdoor map */
     oblinkpt *buttons;	/* Linked list of linked lists of buttons */
     MapSpace	*spaces;    /* Array of spaces on this map */
     char    *msg;	/* Message map creator may have left */

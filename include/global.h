@@ -126,7 +126,7 @@ typedef struct linked_char {
 
 #define NUM_COLORS		13
 
-extern char *colorname[NUM_COLORS][2];
+extern char *colorname[NUM_COLORS];
 
 extern New_Face *new_faces;
 

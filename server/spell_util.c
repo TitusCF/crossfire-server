@@ -2325,44 +2325,32 @@ void put_a_monster(object *op,char *monstername) {
 
 
 /*  Some local definitions for shuffle-attack */
-int color_array[20];
-#define black 0
-#define white 1
-#define red 2
-#define light_blue 3
-#define blue 4
-#define light_green 5
-#define green 6
-#define yellow 7
-#define khaki 8
     struct {
 	int attacktype;
 	int face;
-	int fg;
-	int bg;
     } ATTACKS[22] = {
-	{AT_PHYSICAL,0,0,12},
-	{AT_PHYSICAL,0,0,12},  /*face = explosion*/
-	{AT_PHYSICAL,0,0,12},
-	{AT_MAGIC,1,1,12},
-	{AT_MAGIC,1,1,12},   /* face = last-burnout */
-	{AT_MAGIC,1,1,12},
-	{AT_FIRE,2,3,12},
-	{AT_FIRE,2,3,12},  /* face = fire....  */
-	{AT_FIRE,2,3,12},
-	{AT_ELECTRICITY,3,11,9},
-	{AT_ELECTRICITY,3,11,9},  /* ball_lightning */
-	{AT_ELECTRICITY,3,11,9},
-	{AT_COLD,4,5,1},	
-	{AT_COLD,4,5,1},  /* face=icestorm*/
-	{AT_COLD,4,5,1},
-	{AT_CONFUSION,5,0,12},
-	{AT_POISON,7,0,12},
-	{AT_POISON,7,0,12}, /* face = acid sphere.  generator */
-	{AT_POISON,7,8,12},  /* poisoncloud face */
-	{AT_SLOW,8,0,12},
-	{AT_PARALYZE,9,11,9},
-	{AT_FEAR,10,0,12}  };
+	{AT_PHYSICAL,0},
+	{AT_PHYSICAL,0},  /*face = explosion*/
+	{AT_PHYSICAL,0},
+	{AT_MAGIC,1},
+	{AT_MAGIC,1},   /* face = last-burnout */
+	{AT_MAGIC,1},
+	{AT_FIRE,2},
+	{AT_FIRE,2},  /* face = fire....  */
+	{AT_FIRE,2},
+	{AT_ELECTRICITY,3},
+	{AT_ELECTRICITY,3},  /* ball_lightning */
+	{AT_ELECTRICITY,3},
+	{AT_COLD,4},	
+	{AT_COLD,4},  /* face=icestorm*/
+	{AT_COLD,4},
+	{AT_CONFUSION,5},
+	{AT_POISON,7},
+	{AT_POISON,7}, /* face = acid sphere.  generator */
+	{AT_POISON,7},  /* poisoncloud face */
+	{AT_SLOW,8},
+	{AT_PARALYZE,9},
+	{AT_FEAR,10}  };
 
 
 
@@ -2415,82 +2403,6 @@ void init_spell_param()
   int level;
   int spellindex;
   int spl;  /*  the spellpoint level dependency */
-
-  /* This is hokey, but this function gets called everytime.
-  I need these colors for shuffle-attack to work right, and
-  they seem to change form implementation to implemention of
-  crossfire.  So I'm making my own array here for use in
-  shuffle-attack. it's global in scope to this file.*/
-  
-  color_array[black]=find_color("black");
-  color_array[white]=find_color("white");
-  color_array[red]=find_color("red");
-  color_array[light_blue]=find_color("light_blue");
-  color_array[blue]=find_color("blue");
-  color_array[light_green]=find_color("light_green");
-  color_array[green]=find_color("green");
-  color_array[yellow]=find_color("yellow");
-  color_array[khaki]=find_color("khaki");
-
-  /*explosion--for physical*/
-  ATTACKS[0].fg=color_array[black];
-  ATTACKS[0].bg=color_array[khaki];
-  ATTACKS[1].fg=color_array[black];
-  ATTACKS[1].bg=color_array[khaki];
-  ATTACKS[2].fg=color_array[black];
-  ATTACKS[2].bg=color_array[khaki];  
-  /*magic--burnout attack */
-  ATTACKS[3].fg=color_array[light_blue];
-  ATTACKS[3].bg=color_array[khaki];
-  ATTACKS[4].fg=color_array[light_blue];
-  ATTACKS[4].bg=color_array[khaki];
-  ATTACKS[5].fg=color_array[light_blue];
-  ATTACKS[5].bg=color_array[khaki];  
-  /*fire--for fire*/
-  ATTACKS[6].fg=color_array[red];
-  ATTACKS[6].bg=color_array[khaki];
-  ATTACKS[7].fg=color_array[red];
-  ATTACKS[7].bg=color_array[khaki];
-  ATTACKS[8].fg=color_array[red];
-  ATTACKS[8].bg=color_array[khaki];  
-  /*electricity--ball lightning face */
-  ATTACKS[9].fg=color_array[yellow];
-  ATTACKS[9].bg=color_array[khaki];
-  ATTACKS[10].fg=color_array[yellow];
-  ATTACKS[10].bg=color_array[khaki];
-  ATTACKS[11].fg=color_array[yellow];
-  ATTACKS[11].bg=color_array[khaki];  
-  /*icestorm--for cold*/
-  ATTACKS[12].fg=color_array[light_blue];
-  ATTACKS[12].bg=color_array[white];
-  ATTACKS[13].fg=color_array[light_blue];
-  ATTACKS[13].bg=color_array[white];
-  ATTACKS[14].fg=color_array[light_blue];
-  ATTACKS[14].bg=color_array[white];
-  /* madness--madness*/
-  ATTACKS[15].fg=color_array[black];
-  ATTACKS[15].bg=color_array[khaki];
-
-  /* poison --  poisoncloud */
-  ATTACKS[16].fg=color_array[white];
-  ATTACKS[16].bg=color_array[light_green];
-  ATTACKS[17].fg=color_array[white];
-  ATTACKS[17].bg=color_array[light_green];
-  ATTACKS[18].fg=color_array[white];
-  ATTACKS[18].bg=color_array[light_green];
-  
-
-  /*  slow */
-  
-  ATTACKS[19].fg=color_array[black];
-  ATTACKS[19].bg=color_array[khaki];
-  /* paralize -- stars */
-  ATTACKS[20].fg=color_array[yellow];
-  ATTACKS[20].bg=color_array[khaki];  
-  /* fear */
-
-  ATTACKS[21].fg=color_array[black];
-  ATTACKS[21].bg=color_array[khaki];  
 
   sprintf(fname,"%s/spell_params",settings.datadir);
   if(! (spell_params=fopen(fname,"r")))

@@ -791,6 +791,8 @@ static int load_map_header(FILE *fp, mapstruct *m)
 	    m->fixed_resettime = atoi(value);
 	} else if (!strcmp(key,"unique")) {
 	    m->unique = atoi(value);
+	} else if (!strcmp(key,"outdoor")) {
+	    m->outdoor = atoi(value);
 	}
 	else if (!strncmp(key,"tile_path_", 10)) {
 	    int tile=atoi(key+10);
@@ -1085,6 +1087,7 @@ int new_save_map(mapstruct *m, int flag) {
     if (m->enter_y) fprintf(fp,"enter_y %d\n", m->enter_y);
     if (m->msg) fprintf(fp,"msg\n%sendmsg\n", m->msg);
     if (m->unique) fprintf(fp,"unique %d\n", m->unique);
+    if (m->outdoor) fprintf(fp,"outdoor %d\n", m->outdoor);
     /* Save any tiling information */
     for (i=0; i<4; i++)
 	if (m->tile_path[i])

@@ -46,6 +46,13 @@
 /* If you change this list (add/delete/rename), also update the list
  * in crossedit/Attr.c, around line 360.  That list is the variables
  * that can be set in crossedit for various objects.
+ * Realistically, these are not needed anymore - they were perhaps useful
+ * at one point when both the loader and saver might have used them.
+ * The only thing they are used for at all right now is some of the
+ * get_ob_diff code uses these and indexes with the V_.. fields.
+ * Most of the more recent changes just put the names write in the
+ * get_ob_diff, which then also means you odn't really need to worry
+ * about the V_ flags.
  */
 static char *variable_const[NR_OF_VARIABLES] = {
   "Object","name","race","slaying","msg","endmsg",
@@ -83,6 +90,7 @@ static char *variable_const[NR_OF_VARIABLES] = {
   "no_skill_ident","glow_radius","is_blind","can_see_in_dark",
   "is_cauldron","randomitems","is_dust", "no_steal", "one_hit","berserk",
   "weapontype","sub_type", "sub_type2","casting_speed",
+  "elevation",
 /* GROS - And those are for the new plugin system */
   "event_apply",    "event_apply_plugin",   "event_apply_options",
   "event_attack",   "event_attack_plugin",  "event_attack_options",
@@ -395,7 +403,7 @@ WS	[ \t]*
 ^no_strength{S}	    SET_OR_CLEAR_FLAG(op, FLAG_NO_STRENGTH, IVAL);
 ^sleep{S}	    {
 			SET_OR_CLEAR_FLAG(op, FLAG_SLEEP, IVAL);
-			LOG(llevDebug," Warning: Object %s has sleep set in arch.\n",op->name);
+			/*(LOG(llevDebug," Warning: Object %s has sleep set in arch.\n",op->name);*/
 		    }
 ^stand_still{S}	    SET_OR_CLEAR_FLAG(op, FLAG_STAND_STILL, IVAL);
 ^random_move{S}	    SET_OR_CLEAR_FLAG(op, FLAG_RANDOM_MOVE, IVAL);
@@ -481,6 +489,8 @@ WS	[ \t]*
 ^sub_type{S}		op->sub_type1 = (char) IVAL;
 ^sub_type2{S}		op->sub_type2 = (char) IVAL;
 ^casting_speed{S}	op->casting_speed = FVAL;
+^elevation{S}		op->elevation = IVAL;
+
 ^event_apply{S}	    {	char *yv=yval();
 
 			if (*yv=='\0') LOG(llevError,"Event (apply) without val\n");
@@ -1043,8 +1053,6 @@ int set_variable(object *op,char *buf) {
 
 /* Start of C code */
 
-char *variables[NR_OF_VARIABLES];
-
 /* This array equates the FLAG_ values with the V_ values.  Use -1 to
  * put gaps in the array that should not be processed.
  * The order matches the order of the define values in 'define.h'.
@@ -1120,9 +1128,6 @@ void save_double(char *buf,char *name,double v)
  */
 
 void init_vars() {
-  int i;
-  for(i=0;i<NR_OF_VARIABLES;i++)
-    variables[i]=add_string(variable_const[i]);
 }
 /*
  * Returns a pointer to a static string which contains all variables
@@ -1510,6 +1515,9 @@ char *get_ob_diff(object *op,object *op2) {/* I plan to optimize this heavily */
   if(op->weapontype && op->weapontype!=op2->weapontype) {
     sprintf(buf2,"weapontype %d\n",op->weapontype);
     strcat(buf,buf2);
+  }
+  if (op->elevation && op->elevation != op2->elevation) {
+    sprintf(buf2,"elevation %d\n", op->elevation);
   }
 
   for (tmp=0; tmp <= NUM_FLAGS; tmp++) {

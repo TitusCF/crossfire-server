@@ -56,6 +56,10 @@ name in the map structure.
 	unique map, or maybe a common map that is just permanent for
 	all the players.
 
+'outdoor' - if set, this is a hint that this is an outdoor map.  Currently,
+	this does not mean much, but may be used in the future
+	to take into account things like daylite and weather.
+
 tile_path_<x> - Used with map tiling.  <x> is a number, 1 is north,
 	2 is east, 3 south, 4 west.  This determines what map is tiled
 	in that direction.  See the section below for more information about

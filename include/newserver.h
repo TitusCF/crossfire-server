@@ -63,8 +63,7 @@ struct statsinfo {
  * handle some higher level functions.  fd is the actual file descriptor we
  * are using.
  */
-enum FaceSendMode { Send_Face_Pixmap, Send_Face_Bitmap, Send_Face_Png, 
-    Send_Face_None};
+enum FaceSendMode { Send_Face_Png, Send_Face_None};
 
 enum Sock_Status {Ns_Avail, Ns_Add, Ns_Dead, Ns_Old};
 
@@ -117,7 +116,9 @@ typedef struct NewSocket {
 
 
 
-#define FACE_TYPES  3
+#define FACE_TYPES  1
+
+#define PNG_FACE_INDEX	0
 
 typedef struct FaceInfo {
   char *name;   /* name of the image, including component path names (ie,

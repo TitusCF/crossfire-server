@@ -32,12 +32,11 @@
  * create a new face with that color.
  */
 typedef struct new_face_struct {
-    uint16	number;		/* This is the image id.  IT should be the */
+    uint16	number;		/* This is the image id.  It should be the */
 				/* same value as its position in the array */
-    uint8	fg, bg;
     char	*name;
     uint8	visibility;
-    uint8	magicmap;
+    uint8	magicmap;	/* Color to show this in magic map */
 } New_Face;
 
 typedef struct map_look_struct {

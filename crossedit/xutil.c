@@ -44,10 +44,6 @@
 
 #include <Defines.h>
 
-#ifdef HAVE_LIBXPM
-#include <X11/xpm.h>
-#endif
-
 
 /*
  * Converts between Fontindex and XChar2b types.
@@ -91,10 +87,7 @@ int ReadImages(Display *gdisp, Pixmap **pixmaps, Pixmap **masks,
     Colormap *cmap, enum DisplayMode type) {
 
     Window	root = RootWindow (gdisp,DefaultScreen(gdisp));
-#ifdef HAVE_LIBXPM
-    XpmAttributes xpmatribs;
-#endif
-    int		use_private_cmap=0,num, compressed, len,i, error;
+    int		use_private_cmap=0,num, compressed, len,i;
     FILE	*infile;
     char	*cp, databuf[HUGE_BUF], filename[MAX_BUF];
 #ifdef IMAGE_TIME_LOAD
@@ -105,13 +98,6 @@ int ReadImages(Display *gdisp, Pixmap **pixmaps, Pixmap **masks,
      * we create one for our own use here.
      */  
     GC	gc= XCreateGC(gdisp, root, 0, NULL);
-#ifdef HAVE_LIBXPM
-    if (*cmap) {
-	xpmatribs.valuemask = XpmColormap;
-	xpmatribs.colormap=*cmap;
-    }
-    else  xpmatribs.valuemask=0;
-#endif
 
     if (!nrofpixmaps)
 	nrofpixmaps = ReadBmapNames ();
@@ -124,7 +110,7 @@ int ReadImages(Display *gdisp, Pixmap **pixmaps, Pixmap **masks,
      */
 
     *pixmaps = (Pixmap *) malloc(sizeof(Pixmap *) * nrofpixmaps);
-    if (type==Dm_Pixmap || type==Dm_Png)
+    if (type==Dm_Png)
 	*masks = (Pixmap *) malloc(sizeof(Pixmap *) * nrofpixmaps);
 
     for (i=0; i < nrofpixmaps; i++)
@@ -132,11 +118,7 @@ int ReadImages(Display *gdisp, Pixmap **pixmaps, Pixmap **masks,
 
     LOG(llevDebug,"Building images...");
 
-    if (type==Dm_Pixmap)
-	sprintf(filename,"%s/crossfire.xpm",settings.datadir);
-    else if (type==Dm_Bitmap)
-	sprintf(filename,"%s/crossfire.xbm",settings.datadir);
-    else if (type==Dm_Png) {
+    if (type==Dm_Png) {
 	sprintf(filename,"%s/crossfire.png",settings.datadir);
 #ifdef HAVE_LIBPNG
 	init_pngx_loader(gdisp);
@@ -186,33 +168,6 @@ int ReadImages(Display *gdisp, Pixmap **pixmaps, Pixmap **masks,
 	    }
 #endif
 	}
-#ifdef HAVE_LIBXPM
-	if (type==Dm_Pixmap) {
-again:	error=XpmCreatePixmapFromBuffer(gdisp, root, databuf,
-	      &(*pixmaps)[num], &(*masks)[num], &xpmatribs);
-	    if (error!=XpmSuccess) {
-		if (error==XpmColorFailed && !use_private_cmap) {
-			LOG(llevError,"XPM could not allocate colors - trying to switch to private colormap..");
-			if (!(*cmap=XCopyColormapAndFree(gdisp, *cmap)))
-			    LOG(llevError,"Failed...\n");
-			else
-			    LOG(llevError,"Successful...\n");
-			xpmatribs.colormap=*cmap;
-			use_private_cmap=1;
-			goto again;
-		}
-		LOG(llevError,"Error creating pixmap %d, error %d.\n",num, error);
-	    }
-	} else 
-#endif
-	if (type==Dm_Bitmap) {
-	    (*pixmaps)[num] =  XCreateBitmapFromData
-		(gdisp, RootWindow (gdisp, DefaultScreen(gdisp)), databuf, 24, 24);
-	    
-	    if ((*pixmaps)[num]==0) {
-		LOG(llevError,"Warning: Cannot create Pixmap %d\n",i);
-	    }
-	}
     }
     close_and_delete(infile, compressed);
     XFreeGC(gdisp, gc);
@@ -252,73 +207,4 @@ void free_pixmaps(Display *gdisp, Pixmap *pixmaps)
 	}
     }
 }
-
-/*
- * allocate_colors() tries to get enough colors for the game-window.
- * If it fails, it tries to use a private colormap.
- * If that also fails, it return 1, indicating to the calling
- * function that black and white should be used.
- *
- * Function arguments became a bit more complicated in v0.91.5.
- * The functionality is the same, but instead of passing the player
- * structure, just pass the values that are needed.  This enables
- * the new client to use the function also.
- *
- * Original function by Tyler Van Gorder (tvangod@icst.csuchico.edu),
- * June 1, 1992
- */
-
-int allocate_colors(Display *disp, Window w, long screen_num,
-	Colormap *colormap, XColor discolor[NUM_COLORS])
-{
-  int i, tried = 0, depth=0, iscolor;
-  Status status;
-  Visual *vis;
-  XColor exactcolor;
-
-  iscolor = 1;
-  vis = DefaultVisual(disp,screen_num);
-  if (vis->class >= StaticColor) {
-    *colormap = DefaultColormap(disp,screen_num);
-    depth = DefaultDepth(disp,screen_num);
-  }
-  else {
-    *colormap=(Colormap )NULL;
-    LOG(llevError,"Switching to black and white.\n");
-    LOG(llevError,"You have a black and white terminal.\n");
-    return 0;
-  }
-try_private:
-  if (depth > 3 && iscolor) {
-    unsigned long pixels[13];
-    for (i=0; i<13; i++){
-      status = XLookupColor(disp,*colormap, colorname[i][1],&exactcolor,
-                            &discolor[i]);
-      if (!status){
-        LOG(llevError,"Can't find colour %s.\n", colorname[i]);
-        LOG(llevError,"Switching to black and white.\n");
-        iscolor = 0;
-        break;
-      }
-      status = XAllocColor(disp,*colormap,&discolor[i]);
-      if (!status) {
-        if (!tried) {
-          LOG(llevError, "Not enough colours. Trying a private colourmap.\n");
-          XFreeColors(disp, *colormap, pixels, i-1, 0);
-          *colormap = XCreateColormap(disp, w, vis, AllocNone);
-          XSetWindowColormap(disp, w, *colormap);
-          tried = 1;
-          goto try_private;
-        } else {
-          LOG(llevError, "Failed. Switching to black and white.\n");
-          iscolor = 0;
-          break;
-        }
-      }
-      pixels[i] = discolor[i].pixel;
-    }
-  }
-  return iscolor;
-}
-
 
