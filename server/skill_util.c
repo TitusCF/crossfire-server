@@ -648,22 +648,40 @@ void show_skills(object *op) {
 	    if (settings.use_permanent_experience) {
 #ifdef WIN32
 		sprintf(skills[num_skills_found++],"%slvl:%3d (xp:%I64d/%I64d/%d%%)",
-#else
-		sprintf(skills[num_skills_found++],"%slvl:%3d (xp:%lld/%lld/%d%%)",
-#endif
 			 buf,tmp->level,
 			 tmp->stats.exp,
 			 level_exp(tmp->level+1, op->expmul),
 			 clipped_percent(tmp->last_heal,tmp->stats.exp));
+#else
+		sprintf(skills[num_skills_found++],"%slvl:%3d (xp:%lld/%lld/%d%%)",
+			 buf,tmp->level,
+			 tmp->stats.exp,
+			 level_exp(tmp->level+1, op->expmul),
+			 clipped_percent(tmp->last_heal,tmp->stats.exp));
+#endif
 	    } else {
 #ifdef WIN32
 		sprintf(skills[num_skills_found++], "%slvl:%3d (xp:%I64d/%I64d)",
-#else
-		sprintf(skills[num_skills_found++], "%slvl:%3d (xp:%lld/%lld)",
-#endif
 			 buf,tmp->level,
 			 tmp->stats.exp,
 			 level_exp(tmp->level+1, op->expmul));
+#else
+		sprintf(skills[num_skills_found++], "%slvl:%3d (xp:%lld/%lld)",
+			 buf,tmp->level,
+			 tmp->stats.exp,
+			 level_exp(tmp->level+1, op->expmul));
+#endif
+	    }
+	    /* I don't know why some characters get a bunch of skills, but
+	     * it sometimes happens (maybe a leftover from bugier earlier code
+	     * and those character are still about).  In any case, lets handle
+	     * it so it doesn't crash the server - otherwise, one character may
+	     * crash the server numerous times.
+	     */
+	    if (num_skills_found >= NUM_SKILLS) {
+		new_draw_info(NDI_RED, 0, op, "Your character has too many skills.");
+		new_draw_info(NDI_RED, 0, op, "Something isn't right - contact the server admin");
+		break;
 	    }
 	}
     }

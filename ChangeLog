@@ -17,6 +17,16 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+common/object.c: change get_owner() so that it also returns no valid owner if
+   the owner is removed.  This fixes a crash if a player quits but is still
+   sitting at the play again prompt when something he owns kills something.
+server/skill_util.c: Fix show_skills() so that if the character has too many
+   skills for whatever reason, we don't crash, and instead print an error
+   to the player.
+server/spell_attack.c: Fix typo - not sure actual effect, but probably nothing
+   good. '+ +' should just have been '+'
+MSW 2004-02-12
+
 common/Makefile.am: Clean up proto - lex seems to toss some new symbols in
   now days.
 common/map.c, common/object.c, server/player.c, socket/item.c,

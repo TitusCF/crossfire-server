@@ -1681,7 +1681,7 @@ int cast_light(object *op,object *caster,object *spell, int dir) {
     }
     tmp->stats.food = spell->duration + SP_level_duration_adjust(caster,spell);
     if (tmp->glow_radius) {
-	tmp->glow_radius= spell->range + + SP_level_range_adjust(caster,spell);
+	tmp->glow_radius= spell->range + SP_level_range_adjust(caster,spell);
 	if (tmp->glow_radius > MAX_LIGHT_RADII) tmp->glow_radius = MAX_LIGHT_RADII;
     }
     tmp->x=x;

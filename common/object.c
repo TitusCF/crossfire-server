@@ -390,16 +390,23 @@ void free_all_object_data() {
  * A id-scheme is used to avoid pointing to objects which have been
  * freed and are now reused.  If this is detected, the owner is
  * set to NULL, and NULL is returned.
- * (This scheme should be changed to a refcount scheme in the future)
+ * Changed 2004-02-12 - if the player is setting at the play again
+ * prompt, he is removed, and we don't want to treat him as an owner of
+ * anything, so check removed flag.  I don't expect that this should break
+ * anything - once an object is removed, it is basically dead anyways.
  */
 
 object *get_owner(object *op) {
-  if(op->owner==NULL)
+    if(op->owner==NULL)
+	return NULL;
+
+    if (!QUERY_FLAG(op->owner,FLAG_FREED) && !QUERY_FLAG(op->owner, FLAG_REMOVED) &&
+	op->owner->count==op->ownercount)
+	return op->owner;
+
+    op->owner=NULL;
+    op->ownercount=0;
     return NULL;
-  if(!QUERY_FLAG(op->owner,FLAG_FREED) && op->owner->count==op->ownercount)
-    return op->owner;
-  op->owner=NULL,op->ownercount=0;
-  return NULL;
 }
 
 void clear_owner(object *op)
