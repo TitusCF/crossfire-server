@@ -54,7 +54,8 @@ SRCS = \
 	recipe.c\
 	shstr.c\
 	time.c\
-	treasure.c
+	treasure.c\
+	utils.c
 
 ALLFILES=loader.l $(SRCS) README Makefile.in
 

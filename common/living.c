@@ -1482,9 +1482,9 @@ void player_lvl_adj(object *who, object *op) {
 	op->level++;
 
 	if(who && (who->level < 11) && op->type!=EXPERIENCE) { 
-	    who->contr->levhp[who->level] = (int) RANDOM()%4 + (int) RANDOM()%4 + 3;
-	    who->contr->levsp[who->level] = (int) RANDOM()%3 + (int) RANDOM()%3 + 2;
-			 who->contr->levgrace[who->level]=(int)RANDOM()%2 + (int) RANDOM()%2 + 1;
+	    who->contr->levhp[who->level] = die_roll(2, 4, who, PREFER_HIGH)+1;
+	    who->contr->levsp[who->level] = die_roll(2, 3, who, PREFER_HIGH);
+	    who->contr->levgrace[who->level]=die_roll(2, 2, who, PREFER_HIGH)-1;
 	}
 
 	if(who) fix_player(who);
