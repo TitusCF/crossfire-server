@@ -474,7 +474,7 @@ static int basic_emote(object *op, char *params, int emotion)
 		case EMOTE_WAVE:
 		    sprintf(buf, "You wave goodbye to %s.", pl->ob->name);
 		    sprintf(buf2, "%s waves goodbye to you. Have a good"
-			    "journey.", op->name);
+			    " journey.", op->name);
 		    sprintf(buf3, "%s waves goodbye to %s.", op->name,
 			    pl->ob->name);
 		    break;
@@ -650,270 +650,270 @@ static int basic_emote(object *op, char *params, int emotion)
 
 int command_nod(object *op, char *params)
 {
-    basic_emote(op, params, EMOTE_NOD);
+    return(basic_emote(op, params, EMOTE_NOD));
 }
 
 int command_dance(object *op, char *params)
 {
-    basic_emote(op, params, EMOTE_DANCE);
+    return(basic_emote(op, params, EMOTE_DANCE));
 }
 
 int command_kiss(object *op, char *params)
 {
-    basic_emote(op, params, EMOTE_KISS);
+    return(basic_emote(op, params, EMOTE_KISS));
 }
 
 int command_bounce(object *op, char *params)
 {
-    basic_emote(op, params, EMOTE_BOUNCE);
+    return(basic_emote(op, params, EMOTE_BOUNCE));
 }
 
 int command_smile(object *op, char *params)
 {
-    basic_emote(op, params, EMOTE_SMILE);
+    return(basic_emote(op, params, EMOTE_SMILE));
 }
 
 int command_cackle(object *op, char *params)
 {
-    basic_emote(op, params, EMOTE_CACKLE);
+    return(basic_emote(op, params, EMOTE_CACKLE));
 }
 
 int command_laugh(object *op, char *params)
 {
-    basic_emote(op, params, EMOTE_LAUGH);
+    return(basic_emote(op, params, EMOTE_LAUGH));
 }
 
 int command_giggle(object *op, char *params)
 {
-    basic_emote(op, params, EMOTE_GIGGLE);
+    return(basic_emote(op, params, EMOTE_GIGGLE));
 }
 
 int command_shake(object *op, char *params)
 {
-    basic_emote(op, params, EMOTE_SHAKE);
+    return(basic_emote(op, params, EMOTE_SHAKE));
 }
 
 int command_puke(object *op, char *params)
 {
-    basic_emote(op, params, EMOTE_PUKE);
+    return(basic_emote(op, params, EMOTE_PUKE));
 }
 
 int command_growl(object *op, char *params)
 {
-    basic_emote(op, params, EMOTE_GROWL);
+    return(basic_emote(op, params, EMOTE_GROWL));
 }
 
 int command_scream(object *op, char *params)
 {
-    basic_emote(op, params, EMOTE_SCREAM);
+    return(basic_emote(op, params, EMOTE_SCREAM));
 }
 
 int command_sigh(object *op, char *params)
 {
-    basic_emote(op, params, EMOTE_SIGH);
+    return(basic_emote(op, params, EMOTE_SIGH));
 }
 
 int command_sulk(object *op, char *params)
 {
-    basic_emote(op, params, EMOTE_SULK);
+    return(basic_emote(op, params, EMOTE_SULK));
 }
 
 int command_hug(object *op, char *params)
 {
-    basic_emote(op, params, EMOTE_HUG);
+    return(basic_emote(op, params, EMOTE_HUG));
 }
 
 int command_cry(object *op, char *params)
 {
-    basic_emote(op, params, EMOTE_CRY);
+    return(basic_emote(op, params, EMOTE_CRY));
 }
 
 int command_poke(object *op, char *params)
 {
-    basic_emote(op, params, EMOTE_POKE);
+    return(basic_emote(op, params, EMOTE_POKE));
 }
 
 int command_accuse(object *op, char *params)
 {
-    basic_emote(op, params, EMOTE_ACCUSE);
+    return(basic_emote(op, params, EMOTE_ACCUSE));
 }
 
 int command_grin(object *op, char *params)
 {
-    basic_emote(op, params, EMOTE_GRIN);
+    return(basic_emote(op, params, EMOTE_GRIN));
 }
 
 int command_bow(object *op, char *params)
 {
-    basic_emote(op, params, EMOTE_BOW);
+    return(basic_emote(op, params, EMOTE_BOW));
 }
 
 int command_clap(object *op, char *params)
 {
-    basic_emote(op, params, EMOTE_CLAP);
+    return(basic_emote(op, params, EMOTE_CLAP));
 }
 
 int command_blush(object *op, char *params)
 {
-    basic_emote(op, params, EMOTE_BLUSH);
+    return(basic_emote(op, params, EMOTE_BLUSH));
 }
 
 int command_burp(object *op, char *params)
 {
-    basic_emote(op, params, EMOTE_BURP);
+    return(basic_emote(op, params, EMOTE_BURP));
 }
 
 int command_chuckle(object *op, char *params)
 {
-    basic_emote(op, params, EMOTE_CHUCKLE);
+    return(basic_emote(op, params, EMOTE_CHUCKLE));
 }
 
 int command_cough(object *op, char *params)
 {
-    basic_emote(op, params, EMOTE_COUGH);
+    return(basic_emote(op, params, EMOTE_COUGH));
 }
 
 int command_flip(object *op, char *params)
 {
-    basic_emote(op, params, EMOTE_FLIP);
+    return(basic_emote(op, params, EMOTE_FLIP));
 }
 
 int command_frown(object *op, char *params)
 {
-    basic_emote(op, params, EMOTE_FROWN);
+    return(basic_emote(op, params, EMOTE_FROWN));
 }
 
 int command_gasp(object *op, char *params)
 {
-    basic_emote(op, params, EMOTE_GASP);
+    return(basic_emote(op, params, EMOTE_GASP));
 }
 
 int command_glare(object *op, char *params)
 {
-    basic_emote(op, params, EMOTE_GLARE);
+    return(basic_emote(op, params, EMOTE_GLARE));
 }
 
 int command_groan(object *op, char *params)
 {
-    basic_emote(op, params, EMOTE_GROAN);
+    return(basic_emote(op, params, EMOTE_GROAN));
 }
 
 int command_hiccup(object *op, char *params)
 {
-    basic_emote(op, params, EMOTE_HICCUP);
+    return(basic_emote(op, params, EMOTE_HICCUP));
 }
 
 int command_lick(object *op, char *params)
 {
-    basic_emote(op, params, EMOTE_LICK);
+    return(basic_emote(op, params, EMOTE_LICK));
 }
 
 int command_pout(object *op, char *params)
 {
-    basic_emote(op, params, EMOTE_POUT);
+    return(basic_emote(op, params, EMOTE_POUT));
 }
 
 int command_shiver(object *op, char *params)
 {
-    basic_emote(op, params, EMOTE_SHIVER);
+    return(basic_emote(op, params, EMOTE_SHIVER));
 }
 
 int command_shrug(object *op, char *params)
 {
-    basic_emote(op, params, EMOTE_SHRUG);
+    return(basic_emote(op, params, EMOTE_SHRUG));
 }
 
 int command_slap(object *op, char *params)
 {
-    basic_emote(op, params, EMOTE_SLAP);
+    return(basic_emote(op, params, EMOTE_SLAP));
 }
 
 int command_smirk(object *op, char *params)
 {
-    basic_emote(op, params, EMOTE_SMIRK);
+    return(basic_emote(op, params, EMOTE_SMIRK));
 }
 
 int command_snap(object *op, char *params)
 {
-    basic_emote(op, params, EMOTE_SNAP);
+    return(basic_emote(op, params, EMOTE_SNAP));
 }
 
 int command_sneeze(object *op, char *params)
 {
-    basic_emote(op, params, EMOTE_SNEEZE);
+    return(basic_emote(op, params, EMOTE_SNEEZE));
 }
 
 int command_snicker(object *op, char *params)
 {
-    basic_emote(op, params, EMOTE_SNICKER);
+    return(basic_emote(op, params, EMOTE_SNICKER));
 }
 
 int command_sniff(object *op, char *params)
 {
-    basic_emote(op, params, EMOTE_SNIFF);
+    return(basic_emote(op, params, EMOTE_SNIFF));
 }
 
 int command_snore(object *op, char *params)
 {
-    basic_emote(op, params, EMOTE_SNORE);
+    return(basic_emote(op, params, EMOTE_SNORE));
 }
 
 int command_spit(object *op, char *params)
 {
-    basic_emote(op, params, EMOTE_SPIT);
+    return(basic_emote(op, params, EMOTE_SPIT));
 }
 
 int command_strut(object *op, char *params)
 {
-    basic_emote(op, params, EMOTE_STRUT);
+    return(basic_emote(op, params, EMOTE_STRUT));
 }
 
 int command_thank(object *op, char *params)
 {
-    basic_emote(op, params, EMOTE_THANK);
+    return(basic_emote(op, params, EMOTE_THANK));
 }
 
 int command_twiddle(object *op, char *params)
 {
-    basic_emote(op, params, EMOTE_TWIDDLE);
+    return(basic_emote(op, params, EMOTE_TWIDDLE));
 }
 
 int command_wave(object *op, char *params)
 {
-    basic_emote(op, params, EMOTE_WAVE);
+    return(basic_emote(op, params, EMOTE_WAVE));
 }
 
 int command_whistle(object *op, char *params)
 {
-    basic_emote(op, params, EMOTE_WHISTLE);
+    return(basic_emote(op, params, EMOTE_WHISTLE));
 }
 
 int command_wink(object *op, char *params)
 {
-    basic_emote(op, params, EMOTE_WINK);
+    return(basic_emote(op, params, EMOTE_WINK));
 }
 
 int command_yawn(object *op, char *params)
 {
-    basic_emote(op, params, EMOTE_YAWN);
+    return(basic_emote(op, params, EMOTE_YAWN));
 }
 
 int command_beg(object *op, char *params)
 {
-    basic_emote(op, params, EMOTE_BEG);
+    return(basic_emote(op, params, EMOTE_BEG));
 }
 
 int command_bleed(object *op, char *params)
 {
-    basic_emote(op, params, EMOTE_BLEED);
+    return(basic_emote(op, params, EMOTE_BLEED));
 }
 
 int command_cringe(object *op, char *params)
 {
-    basic_emote(op, params, EMOTE_CRINGE);
+    return(basic_emote(op, params, EMOTE_CRINGE));
 }
 
 int command_think(object *op, char *params)
 {
-    basic_emote(op, params, EMOTE_THINK);
+    return(basic_emote(op, params, EMOTE_THINK));
 }
