@@ -1280,7 +1280,7 @@ void move_golem(object *op) {
     char buf[MAX_BUF];
     if(op->exp_obj && op->exp_obj->stats.Wis) {
       if(op->inv) 
-	sprintf(buf,"Your snake turns back into a staff.",op->name);
+	sprintf(buf,"Your staff stops slithering around and lies still.");
       else
 	sprintf(buf,"Your %s departed this plane.",op->name);
     } else if (!strncmp(op->name,"animated ",9)) {
