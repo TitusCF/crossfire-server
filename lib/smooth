@@ -3,43 +3,55 @@ default_smoothed.111 sdefault.001
 
 #grasslike smooths
 
-grass.111 S_grass.111
-hole1.111 S_grass.111
+grass.111 grass_S.111
+hole1.111 grass_S.111
 
 # sea need to go higher with empty border for graphical reasons
 # example can be seen in town hall in scorn.
 
-sea.111 S_empty.111
-sea.112 S_empty.111
-sea.113 S_empty.111
-sea.114 S_empty.111
+sea.111 empty_S.111
+sea.112 empty_S.111
+sea.113 empty_S.111
+sea.114 empty_S.111
 
 # pictures above need to be redone but switched to existing ones
 # to prevent the ugly default 'not found' smooth picture.
 # Really need someone to draw some of them
-brush.111 S_grass.111
-tree_1.111 S_grass.111
-tree_2.111 S_grass.111
-woods_1.111 S_grass.111
-woods_2.111 S_grass.111
-woods_3.111 S_grass.111
-woods_4.111 S_grass.111
-grasspond.111 S_grass.111
-evergreens.111 S_empty.111
-evergreens_2.111 S_empty.111
+brush.111 grass_S.111
+tree_1.111 grass_S.111
+tree_2.111 grass_S.111
+woods_1.111 grass_S.111
+woods_2.111 grass_S.111
+woods_3.111 grass_S.111
+woods_4.111 grass_S.111
+grasspond.111 grass_S.111
+evergreens.111 empty_S.111
+evergreens_2.111 empty_S.111
+
+#hills
+hills.111 hills_S.111
+treed_hills.111 hills_S.111
+hillsrocky.111 hillsrocky_S.111
 
 #several mountain items
-mountain1.111 S_mountain.111
-mountain2.111 S_mountain.111
-mountain4.111 S_mountain.111
-mountain5.111 S_mountain.111
-moun_cave1.111 S_mountain.111
-moun_cave2.111 S_mountain.111
+mountain1.111 mountain_S.111
+mountain2.111 mountain_S.111
+mountain4.111 mountain_S.111
+mountain5.111 mountain_S.111
+moun_cave1.111 mountain_S.111
+moun_cave2.111 mountain_S.111
 #mountain end
 
-marsh.111 S_marsh.111
-desert.111 S_desert.111
-hills.111 S_hills.111
-steppe.111 S_steppe.111
+marsh.111 marsh_S.111
+desert.111 desert_S.111
+dunes.111 dunes_S.111
+steppe.111 steppe_S.111
+
+#Lava
+lava.111 lava_S.111
+lava.112 lava_S.112
+lava.113 lava_S.113
+lava.114 lava_S.114
+lava.115 lava_S.115
 
 #end
