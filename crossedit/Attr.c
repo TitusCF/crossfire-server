@@ -103,7 +103,7 @@ int GetType (object *tmp)
 	 case CONVERTER:
 		return T_Maker|T_Lockcode;
     case GATE:
-    case HANDLE:
+    case CF_HANDLE:
     case TIMED_GATE:
     case MAGIC_EAR:
     case TRIGGER:
