@@ -32,18 +32,144 @@ metaserver_comment Put a comment here.
 # dynamiclevel 0
 # fastclock 0
 # dm_mail your_email@addr.here
+
+# Makes death non permanent.  If enabled and you die, you lose a bunch of
+# exp, a random stat, and go back to starting town.
+# If not defined, if you die, you are dead.  If an a multiplayer server,
+# resurrection may be possible
+#
+# This option changes the game significantly one way or the other - it makes
+# adventuring right at the edge of death something more reasonable to do
+# (death still hurts here).  On the other hand, it certainly makes the
+# game a bit safer and easier.
 not_permadeth true
+
+# define resurrection if you want to let players bring other players
+# back to life via some spells.  If resurrection is undefined, then a
+# death is permanent.  NOTE: resurrection (either defined or undefined)
+# has no meaning if not_permadeth is true.
+
 resurrection false
+
+# set the following if you wish to allow players to set their title
+# and to save it on the disk.  There really isn't much reason not
+# allow players to set this.
+
 set_title true
+
+
+# Enables the 'search-item command; a method to find equipment
+# in shops.  Like set_title, probably no reason to ever disable this.
+
 search_items true
+
+# SPELL_ENCUMBRANCE -- If you're carrying a weapon or wearing heavy armour,
+# you have a chance of fumbling your spellcasting with this on.  More
+# armors/weapons, higher chance of failure.  If this is false, then
+# you can basically always cast a spell, no matter what you are wearing.
+
 spell_encumbrance true
+
+# spell_failure_effects only has meaing if spell_encumbrance is true.
+# What it does, is that when the player fails a spell, various effects
+# will happen (player is paralyzed, confused, wonder spell is cast, etc.)
+# I disabled it because I think it would make life much too hazardous
+# for low level casters.  They either need to wear light armor (which
+# means that they will get pounded on by monsters), or will get
+# confused/paralyzed/other effects often.  High level casters would
+# be mostly unaffected, since they would be casting spells that are
+# below their level.
+# Note-  it seems that you still get some failur effects even with this
+# not defined - most notably when reading scrolls and fail to read
+# them properly.
+#
+
 spell_failure_effects false
+
+# casting times for spells, if you have this defined then it takes a
+# specific amount of time for a spell to go off. You may attack or
+# be hit during this time, and this will cause you to lose the spell.
+# I commented this out on my copy - I don't like the 'double clutch'
+# needed to cast it (first direction key starts casting, the
+# next actually puts the spell into effect.)  It could perhaps
+# be changed so that the initial direction is where it goes, and it
+# is cast automatically in that direction (so only 1 key is needed.)
+# But this could be undesirable as various things move while you cast it.
+# this also slows down the rate you can cast spells considerably.
+
 casting_time false
+
+# Name of the motd file - really no reason to change this.
 motd motd
+
+# Calling this real_Wiz is probably not really good.  Something like
+# mud_wiz might be a better name.
+#
+# Basically, if real_wiz is set then the WIZ/WAS_WIZ flags for objects
+# are not set - instead, wizard created/manipulated objects appear as
+# normal objects.  This makes the wizard a little more mudlike, since
+# object manipulations will be usable for other objects.
+
 real_wiz true
+
+# Set this if you want the temporary maps to be saved and reused across
+# crossfire runs.  This can be especially useful for single player
+# servers, but even holds use for multiplayer servers - you can
+# restart a public server, and not have all the maps reset
+# The file temp_maps  is updated each time a temp map is updated.
+# Note that the file used to store this information is stored in
+# the LIB directory.  Running multiple crossfires with the same LIB
+# directory will cause serious problems, simply because in order for
+# this to really work, the filename must be constant so the next run
+# knows where to find the information.
+
 recycle_tmp_maps false
+
+# spellpoint_level_depend  --  Causes the spellpoint cost
+# of spells to vary with their power.  Spells that become very
+# powerful at high level cost more.  The damage/time of
+# characters increases though.
+
 spellpoint_level_depend true
+
+# This should only be set on private single player servers - basically,
+# it lets you wander around with no penalty if you die, but otherwise
+# doesn't give any extra powers, like the wiz has.  If in explore
+# mode, your characters score is not recorded.  However, to prevent
+# abuses, if in explore mode, no other players can join (as they
+# would not be in explore mode, so they could be abused by a player
+# in explore mode.
+
 explore_mode false
+
+# Set this to false if you don't want characters to loose a random stat when
+# they die - instead, they just get depleted.
+# Setting it to true keeps the old behaviour.  This can be
+# changed at run time via -stat_loss_on_death or +stat_loss_on_death.
+
 stat_loss_on_death false
-use_permanent_experience false
+
+# This makes repeated stat loss at lower levels more mercifull. Basically,
+# the more stats you have lost, the less likely that
+# you will lose more. Additionally, lower level characters are shown
+# a lot more mercy (there are caps on how much of a stat you can lose too).
+# On the nasty side, if you are higher level, you can lose mutiple stats
+# _at_once_ and are shown less mercy when you die. But when you're higher
+# level, it is much easier to buy back your stats with potions.
+# Turn this on if you want death-based stat loss to be more merciful
+# at low levels and more cruel at high levels.
+# Only works when stats are depleted rather than lost. This option has
+# no effect if you are using genuine stat loss.
+
 balanced_stat_loss false
+
+# This allows players to build up a small amount of 'permanent
+# experience' which reduces the effect of large experience drains, such as
+# death. This makes multiple frequent deaths less devastating, and also
+# ensures that any character will make some gradual progress even if they
+# die all of the time.
+# A nice option if your keep dying due to massive client/server lags despite
+# playing well... or you like to swim well outside of your depth. :)
+
+use_permanent_experience false
+

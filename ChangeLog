@@ -17,6 +17,19 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+common/item.c, common/utils.c, include/config.h: Add #define NEW_MATERIAL_CODE
+   and checks in the other files for this - if this is commented out
+   (default), then the new material naming code is disabled - material
+   names won't be put in the items names as shown in the inventory
+   (can still see material by examining an object), and objects that are
+   created will be created with the default material (eg, iron for
+   most armor/weapons, eg, brass, bronze, copper items won't show
+   up anymore).
+lib/settings: Add comments from the old config.h file that describes
+   what the options already does.  Having no comments in this file
+   or in config.h anymore is very unfriendly.
+MSW 2003-05-20
+
 server/player.c: Have players start at max hp/grace/sp.
 MSW 2003-04-14
 

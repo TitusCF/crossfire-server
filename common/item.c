@@ -472,6 +472,7 @@ char *query_name(object *op) {
     use_buf++;
     use_buf %=5;
 
+#ifdef NEW_MATERIAL_CODE
     if ((IS_ARMOR(op) || IS_WEAPON(op)) && op->materialname) {
 	mt = name_to_material(op->materialname);
 	if (mt) {
@@ -479,6 +480,7 @@ char *query_name(object *op) {
 	    safe_strcat(buf[use_buf], " ", &len, HUGE_BUF);
 	}
     }
+#endif
 
     safe_strcat(buf[use_buf], query_short_name(op), &len, HUGE_BUF);
 
@@ -570,6 +572,7 @@ char *query_base_name(object *op, int plural) {
     if ((IS_ARMOR(op) || IS_WEAPON(op)) && op->materialname)
 	mt = name_to_material(op->materialname);
 
+#ifdef NEW_MATERIAL_CODE
     if ((IS_ARMOR(op) || IS_WEAPON(op)) && op->materialname && mt &&
 	op->arch->clone.materialname != mt->name &&
 	!(op->material & M_SPECIAL)) {
@@ -581,12 +584,15 @@ char *query_base_name(object *op, int plural) {
 	else
 	    safe_strcat(buf, op->name_pl, &len, MAX_BUF);
     } else {
+#endif
 	if (!plural)
 	    strcpy(buf, op->name);
 	else
 	    strcpy(buf, op->name_pl);
 	len=strlen(buf);
+#ifdef NEW_MATERIAL_CODE
     }
+#endif
 
     if (op->title && QUERY_FLAG(op,FLAG_IDENTIFIED)) {
 	safe_strcat(buf, " ", &len, MAX_BUF);

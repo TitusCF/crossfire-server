@@ -267,6 +267,17 @@
 #define WATCHDOG
 #endif
 
+
+/* Enable the new material code - it needs some work.  You can
+ * enable this, and things will work, just you'll see a whole
+ * bunch more materials show up, and thus a whole bunch more materials
+ * in your inventory, and the sorting for them isn't really good.
+ */
+
+/*
+#define NEW_MATERIAL_CODE
+*/
+
 /***********************************************************************
  * SECTION 2 - Machine/Compiler specific stuff.
  *

@@ -255,8 +255,19 @@ void set_materialname(object *op, int difficulty, materialtype_t *nmt)
     if (op->materialname != NULL)
 	return;
 
+
+
     if (nmt == NULL) {
 	lmt = NULL;
+#ifndef NEW_MATERIAL_CODE
+	for (mt = materialt; mt != NULL && mt->next != NULL; mt=mt->next) {
+	    if (op->material & mt->material) {
+		lmt = mt;
+		break;
+	    }
+	}
+
+#else
 	for (mt = materialt; mt != NULL && mt->next != NULL; mt=mt->next) {
 	    if (op->material & mt->material && rndm(1, 100) <= mt->chance &&
 		difficulty >= mt->difficulty &&
@@ -266,10 +277,17 @@ void set_materialname(object *op, int difficulty, materialtype_t *nmt)
 		    break;
 	    }
 	}
+#endif
     } else {
 	lmt = nmt;
     }
+
     if (lmt != NULL) {
+#ifndef NEW_MATERIAL_CODE
+	op->materialname = add_string(lmt->name);
+	return;
+#endif
+
 	if (op->stats.dam && IS_WEAPON(op)) {
 	    op->stats.dam += lmt->damage;
 	    if (op->stats.dam < 1)
