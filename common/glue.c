@@ -54,6 +54,7 @@ type_func_ob    move_creator_func;
 type_func_ob_ob esrv_send_item_func;
 type_func_player_int esrv_del_item_func;
 type_func_int_ob_ob esrv_update_item_func;
+type_func_map	set_darkness_map_func;
 
 static char *fatalmsgs[80]={
   "Failed to allocate memory",
@@ -91,6 +92,7 @@ void init_function_pointers() {
   esrv_send_item_func = dummy_function_ob2;
   esrv_del_item_func = dummy_function_player_int;
   esrv_update_item_func = dummy_function_int_ob_ob;
+  set_darkness_map_func = dummy_function_map;
 
 }
 
@@ -220,6 +222,10 @@ void set_esrv_update_item (type_func_int_ob_ob addr) {
 
 void set_esrv_del_item(type_func_player_int addr) {
   esrv_del_item_func = addr;
+}
+
+void set_set_darkness_map(type_func_map addr) {
+  set_darkness_map_func = addr;
 }
 
 /*

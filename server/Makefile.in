@@ -67,7 +67,8 @@ SRCS = \
 	swamp.c\
 	swap.c\
 	time.c\
-	timers.c
+	timers.c\
+	weather.c
 
 ALLFILES = $(SRCS) Makefile.in
 

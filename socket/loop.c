@@ -365,6 +365,8 @@ void watchdog(void)
 }
 #endif
 
+extern unsigned long todtick;
+
 static void block_until_new_connection()
 {
 
@@ -374,14 +376,17 @@ static void block_until_new_connection()
 
     LOG(llevInfo, "Waiting for connections...\n");
 
-    cycles=0;
+    cycles=1;
     do {
 	/* Every minutes is a bit often for updates - especially if nothing is going
-	 * on.  This slows it down to every 5 minutes.
+	 * on.  This slows it down to every 6 minutes.
 	 */
-	if (cycles++ == 5) {
+	cycles++;
+	if (cycles%2 == 0)
+	    tick_the_clock();
+	if (cycles == 7) {
 	    metaserver_update();
-	    cycles=0;
+	    cycles=1;
 	}
 	FD_ZERO(&readfs);
 	FD_SET((uint32)init_sockets[0].fd, &readfs);

@@ -17,6 +17,16 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Lots of changes here.  Basically implement a night and day system, as
+well as tracking of game time.  A clockdata file is now created and
+updated by the server to increment time.  Time increases by 1 hour,
+approximately every 2 minutes of real time.  Right now this code has
+virtually no effect, but as maps are updated with outdoor settings,
+nightfall will occur automatically.  The time command has been modified
+to show the current game time, and the clock objects have been changed to
+show the game time as well.
+garbled 2001-12-18
+
 common/map.c: Fix some bugs relating to map tiling.  MSW 2001-12-16
 
 common/object.c random_maps/Makefile.in 

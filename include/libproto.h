@@ -76,6 +76,7 @@ extern void set_move_creator(type_func_ob addr);
 extern void set_esrv_send_item(type_func_ob_ob addr);
 extern void set_esrv_update_item(type_func_int_ob_ob addr);
 extern void set_esrv_del_item(type_func_player_int addr);
+extern void set_set_darkness_map(type_func_map addr);
 extern void fatal(int err);
 extern void dummy_function_int(int i);
 extern void dummy_function_int_int(int i, int j);
@@ -116,6 +117,8 @@ extern void init_objects(void);
 extern void init_defaults(void);
 extern void init_dynamic(void);
 extern void init_attackmess(void);
+extern void init_clocks(void);
+extern void write_todclock(void);
 /* item.c */
 extern char *describe_resistance(object *op, int newline);
 extern char *query_weight(object *op);

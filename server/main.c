@@ -29,6 +29,7 @@
 #include <version.h>
 #include <global.h>
 #include <object.h>
+#include <tod.h>
 
 #ifdef HAVE_DES_H
 #include <des.h>
@@ -965,6 +966,7 @@ void clean_tmp_files() {
     clean_tmp_map(m);
 #endif
   }
+  write_todclock(); /* lets just write the clock here */
 }
 
 /* clean up everything before exiting */
@@ -1087,12 +1089,17 @@ int forbid_play()
  * doing the various things.
  */
 
+extern unsigned long todtick;
+
 void do_specials() {
 
 #ifdef WATCHDOG
     if (!(pticks % 503))
 	watchdog();
 #endif
+
+    if (!(pticks % PTICKS_PER_CLOCK))
+	tick_the_clock();
 
     if (!(pticks % 509))
 	flush_old_maps();    /* Clears the tmp-files of maps which have reset */

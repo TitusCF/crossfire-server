@@ -29,7 +29,7 @@
 #include <living.h>
 #include <spells.h>
 #include <skills.h>
-
+#include <tod.h>
 
 #ifndef __CEXTRACT__
 #include <sproto.h>
@@ -2177,8 +2177,13 @@ int manual_apply (object *op, object *tmp, int aflag)
   case CLOCK:
     if (op->type == PLAYER) {
 	char buf[MAX_BUF];
-	time_t t = time(NULL);
-	strftime(buf, sizeof(buf), "Time is %I:%M %p", localtime(&t));
+	timeofday_t tod;
+
+	get_tod(&tod);
+	sprintf(buf, "It is %d minute%s past %d o'clock %s",
+	  tod.minute+1, ((tod.minute+1 < 2) ? "" : "s"),
+	  ((tod.hour % 14 == 0) ? 14 : ((tod.hour)%14)),
+	  ((tod.hour >= 14) ? "pm" : "am"));
 	play_sound_player_only(op->contr, SOUND_CLOCK,0,0);
 	new_draw_info(NDI_UNIQUE, 0,op, buf);
 	return 1;

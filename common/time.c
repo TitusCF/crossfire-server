@@ -28,6 +28,7 @@
 
 #include <global.h>
 #include <funcpoint.h>
+#include <tod.h>
 
 #ifndef WIN32 /* ---win32 exclude header */
 #include <stdio.h>
@@ -49,6 +50,46 @@ long process_min_utime = 999999999;
 long process_tot_mtime;
 long pticks;
 long process_utime_long_count;
+
+const char *season_name[] =
+{
+        "The Season of New Year",
+        "The Season of Growth",
+        "The Season of Harvest",
+        "The Season of Decay",
+        "The Season of the Blizzard",
+        "\n"
+};
+
+const char *weekdays[DAYS_PER_WEEK] = {
+   "the Day of the Moon",
+   "the Day of the Bull",
+   "the Day of the Deception",
+   "the Day of Thunder",
+   "the Day of Freedom",
+   "the day of the Great Gods",
+   "the Day of the Sun"
+};
+
+const char *month_name[MONTHS_PER_YEAR] = {
+   "Month of Winter",           /* 0 */
+   "Month of the Ice Dragon",
+   "Month of the Frost Giant",
+   "Month of Valriel",
+   "Month of Lythander",
+   "Month of the Harvest",
+   "Month of Gaea",
+   "Month of Futility",
+   "Month of the Dragon",
+   "Month of the Sun",
+   "Month of the Great Infernus",
+   "Month of Ruggilli",
+   "Month of the Dark Shades",
+   "Month of the Devourers",
+   "Month of Sorig",
+   "Month of the Ancient Darkness",
+   "Month of Gorokh"
+};
 
 /*
  * Initialise all variables used in the timing routines. 
@@ -175,10 +216,72 @@ set_max_time(long t) {
   max_time = t;
 }
 
+extern unsigned long todtick;
+
+void
+get_tod(timeofday_t *tod)
+{
+  tod->year = todtick/HOURS_PER_YEAR;
+  tod->month = todtick/HOURS_PER_MONTH;
+  tod->day = (todtick%HOURS_PER_MONTH)/DAYS_PER_MONTH;
+  tod->dayofweek = tod->day%DAYS_PER_WEEK;
+  tod->hour = todtick%HOURS_PER_DAY;
+  tod->minute = (pticks%PTICKS_PER_CLOCK)/(PTICKS_PER_CLOCK/58);
+  if (tod->minute > 58)
+     tod->minute = 58; /* it's imprecise at best anyhow */
+  tod->weekofmonth = tod->day/WEEKS_PER_MONTH;
+  if (tod->month < 3)
+    tod->season = 0;
+  else if (tod->month < 6)
+    tod->season = 1;
+  else if (tod->month < 9)
+    tod->season = 2;
+  else if (tod->month < 12)
+    tod->season = 3;
+  else
+    tod->season = 4;
+}
+
+void
+print_tod(object *op)
+{
+  timeofday_t tod;
+  char *suf;
+  int day;
+
+  get_tod(&tod);
+  sprintf(errmsg, "It is %d minute%s past %d o'clock %s, on %s",
+    tod.minute+1, ((tod.minute+1 < 2) ? "" : "s"),
+    ((tod.hour % 14 == 0) ? 14 : ((tod.hour)%14)),
+    ((tod.hour >= 14) ? "pm" : "am"),
+    weekdays[tod.dayofweek]);
+  (*draw_info_func) (NDI_UNIQUE, 0,op,errmsg);
+
+  day = tod.day + 1;
+  if (day == 1 || ((day % 10) == 1 && day > 20))
+    suf = "st";
+  else if (day == 2 || ((day % 10) == 2 && day > 20))
+    suf = "nd";
+  else if (day == 3 || ((day % 10) == 3 && day > 20))
+    suf = "rd";
+  else
+    suf = "th";
+  sprintf(errmsg, "The %d%s Day of the %s, Year %d", day, suf,
+    month_name[tod.month], tod.year+1);
+  (*draw_info_func) (NDI_UNIQUE, 0,op,errmsg);
+
+  sprintf(errmsg, "Time of Year: %s", season_name[tod.season]);
+  (*draw_info_func) (NDI_UNIQUE, 0,op,errmsg);
+}
+
 void
 time_info(object *op)
 {
   int tot = 0, maxt = 0, mint = 99999999, long_count = 0, i;
+
+  print_tod(op);
+  if (!QUERY_FLAG(op,FLAG_WIZ))
+    return;
 
   (*draw_info_func) (NDI_UNIQUE, 0,op,"Total time:");
   sprintf(errmsg,"ticks=%ld  time=%ld.%2ld",

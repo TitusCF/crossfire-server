@@ -87,6 +87,7 @@ void init_library() {
     init_archetypes();	/* Reads all archetypes from file */
     init_dynamic ();
     init_attackmess();
+    init_clocks();
 }
 
 /* init_environ initializes values from the environmental variables.
@@ -209,6 +210,56 @@ void init_dynamic () {
     }
     LOG(llevDebug,"You Need a archetype called 'map' and it have to contain start map\n");
     exit (-1);
+}
+
+unsigned long todtick;
+
+/*
+ * Write out the current time to the file so time does not
+ * reset every time the server reboots.
+ */
+
+void write_todclock()
+{
+    char filename[MAX_BUF];
+    FILE *fp;
+
+    sprintf(filename, "%s/clockdata", settings.datadir);
+    if ((fp = fopen(filename, "w")) == NULL) {
+	LOG(llevError, "Cannot open %s for writing\n", filename);
+	return;
+    }
+    fprintf(fp, "%lu", todtick);
+    fclose(fp);
+}
+
+/*
+ * Initializes the gametime and TOD counters
+ * Called by init_library().
+ */
+
+void init_clocks()
+{
+    char filename[MAX_BUF];
+    FILE *fp;
+    static int has_been_done=0;
+
+    if (has_been_done)
+        return;
+    else
+        has_been_done = 1;
+
+    sprintf(filename, "%s/clockdata", settings.datadir);
+    LOG(llevDebug, "Reading clockdata from %s...", filename);
+    if ((fp = fopen(filename, "r")) == NULL) {
+        LOG(llevError, "Can't open %s.\n", filename);
+	todtick = 0;
+	write_todclock();
+	return;
+    }
+    fscanf(fp, "%lu", &todtick);
+    LOG(llevDebug, "todtick=%lu\n", todtick);
+    fclose(fp);
 }
 
 /*

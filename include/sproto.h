@@ -803,3 +803,6 @@ void cftimer_process_timers(void);
 int cftimer_create(int id, long delay, object *ob, int mode);
 int cftimer_destroy(int id);
 int cftimer_find_free_id(void);
+/* weather.c */
+void tick_the_clock(void);
+void set_darkness_map(mapstruct *m);

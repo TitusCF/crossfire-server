@@ -666,6 +666,7 @@ void setup_library() {
   set_esrv_update_item(esrv_update_item);
 /*  set_init_blocksview_players(init_blocksview_players); */
   set_info_map(new_info_map);
+  set_set_darkness_map(set_darkness_map);
 
 }
 

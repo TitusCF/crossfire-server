@@ -75,6 +75,6 @@ extern void     (*trap_adjust_func)		(object *, int);
 extern void	(*esrv_send_item_func)		(object *, object *);
 extern void	(*esrv_del_item_func)		(player *, int);
 extern void	(*esrv_update_item_func)	(int, object *, object *);
-
+extern void	(*set_darkness_map_func)	(mapstruct *m);
 
 #endif
