@@ -74,7 +74,7 @@ int did_make_save_item(object *op, int type, object *originator) {
     if (roll == 1)
 	return FALSE;
 
-    for (number=0; number < NROFATTACKS; i++) {
+    for (number=0; number < NROFATTACKS; number++) {
 	i = 1<<number;
 	if (!(i&type))
 	    continue;
