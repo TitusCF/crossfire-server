@@ -597,7 +597,7 @@ void esrv_update_stats(player *pl)
     char buf[MAX_BUF];
     uint16 flags;
 
-    sl.buf=malloc(MAX_BUF);
+    sl.buf=malloc(MAXSOCKBUF);
     strcpy((char*)sl.buf,"stats ");
     sl.len=strlen((char*)sl.buf);
     
