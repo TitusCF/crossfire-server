@@ -851,9 +851,12 @@ int summon_monster(object *op,object *caster,int dir,archetype *at,int spellnum)
   tmp->stats.dam= SP_PARAMETERS[spellnum].bdam +
 			 2* SP_level_dam_adjust(op,caster,spellnum);
   tmp->stats.wc -= SP_level_dam_adjust(op,caster,spellnum);
-  tmp->speed += .05 * SP_level_dam_adjust(op,caster,spellnum);
-  /* limit the speed to 1 */
-  tmp->speed = MIN(tmp->speed,1);
+  if(tmp->speed < 0) tmp->speed = -tmp->speed;
+  tmp->speed += .02 * SP_level_dam_adjust(op,caster,spellnum);
+  /* limit the speed to 0.3 for non-players, 1 for players. */
+  if(op->type!=PLAYER)
+    tmp->speed = MIN(tmp->speed,0.3);
+  tmp->speed = MIN(tmp->speed, 1.0);
   if(tmp->stats.dam<0) tmp->stats.dam=127;  /*seen this go negative!*/
  /*  make experience increase in proportion to the strength of the summoned creature. */
   tmp->stats.exp *= SP_level_spellpoint_cost(op,caster,spellnum)/spells[spellnum].sp;
