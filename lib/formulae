@@ -1188,80 +1188,80 @@ Object minor protection
 arch cloak
 chance 5
 yield 1
-skill smithery
-cauldron forge
+skill woodsman
+cauldron tanbench
 ingred cloak,balm of aethereality
 #
 Object intermediate protection
 arch cloak
 chance 4
 yield 1
-skill smithery
-cauldron forge
+skill woodsman
+cauldron tanbench
 ingred cloak,ghost's ectoplasm,balm of aethereality
 #
 Object greater protection
 arch cloak
 chance 2
 yield 1
-skill smithery
-cauldron forge
+skill woodsman
+cauldron tanbench
 ingred cloak,spectre's ectoplasm,potion of aethereality
 #
 Object Insulation
 arch cloak
 chance 3
 yield 1
-skill smithery
-cauldron forge
+skill woodsman
+cauldron tanbench
 ingred cloak,3 electric dragon's steak,balm of insulation
 #
 Object Warmth
 arch cloak
 chance 3
 yield 1
-skill smithery
-cauldron forge
+skill woodsman
+cauldron tanbench
 ingred cloak,3 chinese dragon's steak,balm of insulation
 #
 Object Asbestos
 arch cloak
 chance 3
 yield 1
-skill smithery
-cauldron forge
+skill woodsman
+cauldron tanbench
 ingred cloak,3 dragon's steak,balm of insulation
 #
 Object Acid Proofing
 arch cloak
 chance 3
 yield 1
-skill smithery
-cauldron forge
+skill woodsman
+cauldron tanbench
 ingred cloak,gaelotroll's corpse,block of true lead
 #
 Object Lythander
 arch cloak
 chance 1
 yield 1
-skill smithery
-cauldron forge
+skill woodsman
+cauldron tanbench
 ingred cloak,dread's eye,holy symbol,2 potion of power
 #
 Object Gaea
 arch cloak
 chance 1
 yield 1
-skill smithery
-cauldron forge
+skill woodsman
+cauldron tanbench
 ingred cloak,balm of asbestos,balm of insulation,balm of warmth,holy symbol
 #
 Object the Magi
 arch cloak
 chance 1
 yield 1
-skill smithery
-cauldron forge
+skill woodsman
+cauldron tanbench
 ingred cloak,potion of wisdom,2 potion of power
 #
 # -------------------
@@ -1576,24 +1576,24 @@ Object Havok
 arch gloves
 chance 4
 yield 1
-skill smithery
-cauldron forge
+skill woodsman
+cauldron tanbench
 ingred gloves,ogre's corpse,bottle of philosophical oil
 #
 Object marksmanship
 arch gloves
 chance 5
 yield 1
-skill smithery
-cauldron forge
+skill woodsman
+cauldron tanbench
 ingred gloves,5 arrow of accuracy,bottle of mineral oil
 #
 Object Sorig
 arch gloves
 chance 3
 yield 1
-skill smithery
-cauldron forge
+skill woodsman
+cauldron tanbench
 ingred gloves,hill giant's hand,lightning para-elemental's residue,bottle of philosophical oil
 #
 Object the Titans
@@ -1608,8 +1608,8 @@ Object bladed steel
 arch gloves
 chance 5
 yield 1
-skill smithery
-cauldron forge
+skill woodsman
+cauldron tanbench
 ingred gloves,hill giant's hand,bottle of mineral oil
 #
 Object Sorig
@@ -2332,7 +2332,7 @@ arch mushroom_1
 chance 40
 yield 7
 skill woodsman
-cauldron oven
+cauldron stove
 ingred 7 mushroom,water of the wise
 #
 Object Magic
@@ -2340,7 +2340,7 @@ arch mushroom_2
 chance 20
 yield 7
 skill woodsman
-cauldron oven
+cauldron stove
 ingred 7 mushroom of Gourmet,potion of mystic power
 #
 Object Healing
@@ -2348,7 +2348,7 @@ arch mushroom_3
 chance 20
 yield 7
 skill woodsman
-cauldron oven
+cauldron stove
 ingred 7 mushroom of Gourmet,balm of first aid
 #
 Object Stamina
@@ -2356,7 +2356,7 @@ arch food
 chance 30
 yield 7
 skill woodsman
-cauldron oven
+cauldron stove
 ingred 7 food,potion of recuperation
 #
 Object Aelingas
@@ -2364,7 +2364,7 @@ arch waybread
 chance 30
 yield 7
 skill woodsman
-cauldron oven
+cauldron stove
 ingred 7 waybread,potion of heroism
 #
 Object Strength
@@ -2372,7 +2372,7 @@ arch mushroom_2
 chance 30
 yield 7
 skill woodsman
-cauldron oven
+cauldron stove
 ingred 7 mushroom of Gourmet,potion of might
 #
 Object Quickness
@@ -2380,7 +2380,7 @@ arch mushroom_3
 chance 30
 yield 7
 skill woodsman
-cauldron oven
+cauldron stove
 ingred 7 mushroom of Gourmet,potion of agility
 #
 Object Heat Resistance
@@ -2388,7 +2388,7 @@ arch mushroom_1
 chance 20
 yield 7
 skill woodsman
-cauldron oven
+cauldron stove
 ingred 7 mushroom of Gourmet,balm of asbestos
 #
 Object Frost Resistance
@@ -2396,7 +2396,7 @@ arch mushroom_2
 chance 20
 yield 7
 skill woodsman
-cauldron oven
+cauldron stove
 ingred 7 mushroom of Gourmet,balm of warmth
 #
 Object Bravery
@@ -2404,7 +2404,7 @@ arch mushroom_3
 chance 30
 yield 7
 skill woodsman
-cauldron oven
+cauldron stove
 ingred 7 mushroom of Gourmet,dust of fright
 #
 Object Magic Resistance
@@ -2412,7 +2412,7 @@ arch mushroom_3
 chance 20
 yield 7
 skill woodsman
-cauldron oven
+cauldron stove
 ingred 7 mushroom of Gourmet,potion of resist magic
 #
 Object Life
@@ -2420,5 +2420,5 @@ arch mushroom_3
 chance 30
 yield 7
 skill woodsman
-cauldron oven
+cauldron stove
 ingred 7 mushroom of Gourmet,potion of resist draining
