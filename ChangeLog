@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/c_party.c: actually warn party members of password change. Notify when
+   someone joins party.
+Ryo 2004-10-21
+
 plugin/plugin_python.c, plugin/include/plugin_python.h, server/plugins.c:
    Fix comments, change whitespace.
 Andreas Kirschbaum 2004-10-19

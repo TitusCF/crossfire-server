@@ -134,11 +134,14 @@ int confirm_party_password(object *op) {
 void receive_party_password(object *op, char k) {
  
   if(confirm_party_password(op) == 0) {
+    partylist* joined_party = find_party_struct( op->contr->party_number_to_join );
+    char buf[ MAX_BUF ];
     op->contr->party_number = op->contr->party_number_to_join;
     op->contr->party_number_to_join = (-1);
     new_draw_info_format(NDI_UNIQUE, 0,op,
-	"You have joined party: %s\n",find_party(op->contr->party_number
-	,firstparty));
+	"You have joined party: %s\n",joined_party->partyname);
+    snprintf( buf, MAX_BUF, "%s joins party %s", op->name, joined_party->partyname );
+    send_party_message( op, buf );
     op->contr->state = ST_PLAYING;
     return;
   }
@@ -359,9 +362,10 @@ int command_party (object *op, char *params)
     while(tmplist != NULL) {
       if(tmplist->partyid == op->contr->party_number) {
         strncpy(tmplist->passwd,params,8);
-	new_draw_info_format(NDI_UNIQUE, 0, op,
-		"The password for party %s is %s"
-                ,tmplist->partyname,tmplist->passwd);
+	    new_draw_info_format(NDI_UNIQUE, 0, op,
+		    "The password for party %s is %s", tmplist->partyname,tmplist->passwd);
+        snprintf( buf, MAX_BUF, "Password for party %s is now %s, changed by %s",
+            tmplist->partyname, tmplist->passwd, op->name );
         send_party_message(op,buf);
         return 0;
       }
@@ -420,8 +424,10 @@ int command_party (object *op, char *params)
         /* found party player wants to join */
         if(firstparty->passwd[0] == '\0') {
           op->contr->party_number = firstparty->partyid;
-	  new_draw_info_format(NDI_UNIQUE, 0, op,
-		"You have joined party: %s",firstparty->partyname);
+    	  new_draw_info_format(NDI_UNIQUE, 0, op,
+	    	"You have joined party: %s",firstparty->partyname);
+          snprintf( buf, MAX_BUF, "%s joins party %s", op->name, firstparty->partyname );
+          send_party_message( op, buf );
           return 0;
         }
         else {
@@ -442,9 +448,11 @@ int command_party (object *op, char *params)
         }
         else {
           if(tmpparty->passwd[0] == '\0') {
-	    new_draw_info_format(NDI_UNIQUE, 0, op,
-		"You have joined party: %s",tmpparty->partyname);
+            new_draw_info_format(NDI_UNIQUE, 0, op,
+		        "You have joined party: %s",tmpparty->partyname);
             op->contr->party_number = tmpparty->partyid;
+            snprintf( buf, MAX_BUF, "%s joins party %s", op->name, tmpparty->partyname );
+            send_party_message( op, buf );
             return 0;
           }
           else {
