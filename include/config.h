@@ -430,7 +430,7 @@
  * 25000 is about 8.5 MB
  */
 
-#define MAX_OBJECTS	25000
+#define MAX_OBJECTS	100000
 
 /*
  * Max objects low water mark (lwm).  If defined, the map swapping strategy
