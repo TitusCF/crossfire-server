@@ -1321,7 +1321,7 @@ int dimension_door(object *op,int dir) {
 	 * spaces that blocked the players view.
 	 */
 
-	for(dist=1; dist <= maxdist; dist++)
+	for(dist=1; dist < maxdist; dist++)
 	    if (get_map_flags(op->map, NULL, 
 	      op->x+freearr_x[dir] * dist, 
 	      op->y+freearr_y[dir] * dist,
@@ -1337,7 +1337,7 @@ int dimension_door(object *op,int dir) {
 	    if ((get_map_flags(op->map,NULL, 
 	      op->x+freearr_x[dir]*dist,
 	      op->y+freearr_y[dir]*dist,
-	      NULL, NULL) & P_BLOCKED) ==0) 
+	      NULL, NULL) & (P_BLOCKED | P_OUT_OF_MAP)) ==0) 
 		break;
 
 	if(!dist) {

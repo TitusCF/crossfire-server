@@ -1944,32 +1944,33 @@ int handle_newcs_player(object *op)
 }
 
 int save_life(object *op) {
-  object *tmp;
-  char buf[MAX_BUF];
-  if(!QUERY_FLAG(op,FLAG_LIFESAVE))
+    object *tmp;
+
+    if(!QUERY_FLAG(op,FLAG_LIFESAVE))
+	return 0;
+
+    for(tmp=op->inv;tmp!=NULL;tmp=tmp->below)
+	if(QUERY_FLAG(tmp, FLAG_APPLIED)&&QUERY_FLAG(tmp,FLAG_LIFESAVE)) {
+	    play_sound_map(op->map, op->x, op->y, SOUND_OB_EVAPORATE);
+	    new_draw_info_format(NDI_UNIQUE, 0,op,
+		"Your %s vibrates violently, then evaporates.",
+				 query_name(tmp));
+	    if (op->contr)
+		esrv_del_item(op->contr, tmp->count);
+	    remove_ob(tmp);
+	    free_object(tmp);
+	    CLEAR_FLAG(op, FLAG_LIFESAVE);
+	    if(op->stats.hp<0)
+		op->stats.hp = op->stats.maxhp;
+	    if(op->stats.food<0)
+		op->stats.food = 999;
+	    fix_player(op);
+	    return 1;
+	}
+    LOG(llevError,"Error: LIFESAVE set without applied object.\n");
+    CLEAR_FLAG(op, FLAG_LIFESAVE);
+    enter_player_savebed(op); /* bring him home. */
     return 0;
-  for(tmp=op->inv;tmp!=NULL;tmp=tmp->below)
-    if(QUERY_FLAG(tmp, FLAG_APPLIED)&&QUERY_FLAG(tmp,FLAG_LIFESAVE)) {
-      play_sound_map(op->map, op->x, op->y, SOUND_OB_EVAPORATE);
-      sprintf(buf,"Your %s vibrates violently, then evaporates.",
-	      query_name(tmp));
-      new_draw_info(NDI_UNIQUE, 0,op,buf);
-      if (op->contr)
-	esrv_del_item(op->contr, tmp->count);
-      remove_ob(tmp);
-      free_object(tmp);
-      CLEAR_FLAG(op, FLAG_LIFESAVE);
-      if(op->stats.hp<0)
-	op->stats.hp = op->stats.maxhp;
-      if(op->stats.food<0)
-	op->stats.food = 999;
-      /*enter_player_savebed(op);*/ /* bring him home. */
-      return 1;
-    }
-  LOG(llevError,"Error: LIFESAVE set without applied object.\n");
-  CLEAR_FLAG(op, FLAG_LIFESAVE);
-  enter_player_savebed(op); /* bring him home. */
-  return 0;
 }
 
 /* This goes throws the inventory and removes unpaid objects, and puts them

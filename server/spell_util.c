@@ -1120,7 +1120,7 @@ cast_cone(object *op, object *caster,int dir, int strength, int spell_type,arche
 	int x=op->x+freearr_x[absdir(dir+i)],
 	    y=op->y+freearr_y[absdir(dir+i)];
 
-	if(get_map_flags(op->map,NULL, x,y, NULL, NULL) & P_WALL)
+	if(get_map_flags(op->map,NULL, x,y, NULL, NULL) & (P_WALL | P_OUT_OF_MAP))
 	    continue;
 
 	success=1;
