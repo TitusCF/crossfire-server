@@ -138,7 +138,7 @@ int query_cost(object *tmp, object *who, int flag) {
       /* Give money based on how many charges the item could have.  Not
        * really a good method - some spells are certainly better than others.
        */
-      val=(val*tmp->stats.food)/spells[tmp->stats.sp].charges;
+      val=(val*tmp->stats.food)/MAX(1,spells[tmp->stats.sp].charges);
     else
       val/=3;
   }
