@@ -1579,6 +1579,9 @@ object* get_dm_object( player* pl, char** params, int* from )
         /* Move parameter to next item */
         while ( isdigit( **params ) )
             ( *params )++;
+        /* And skip blanks, too */
+        while ( ' ' == ( **params ) )
+            ( *params )++;
 
         /* Get item */
         ob = find_object( item_tag );
@@ -1635,6 +1638,12 @@ object* get_dm_object( player* pl, char** params, int* from )
         if ( from )
             *from = STACK_FROM_NUMBER;
         dm_stack_push( pl, pl->ob->count );
+
+        /* Skip to next token */
+        ( *params ) += 2;
+        while ( ' ' == ( **params ) )
+            ( *params )++;
+
         return pl->ob;
         }
 

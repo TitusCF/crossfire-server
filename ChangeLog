@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/c_wiz.c: Don't forget to skip blanks after reading item number or stack
+   position. Works better for commands like patch :)
+Ryo 2004-09-06
+
 common/object.c: Fix insert_ob_in_map so right coordinates and map
    value are used on GET_MAP_OB call - was using values before changes
    for tiling were applied.
