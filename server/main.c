@@ -155,8 +155,8 @@ int check_password(char *typed,char *crypted) {
 
 char *normalize_path (char *src, char *dst) {
     char *p, *q;
-    char buf[MAX_BUF];
-    static char path[MAX_BUF];
+    char buf[HUGE_BUF];
+    static char path[HUGE_BUF];
 
     /* LOG(llevDebug,"path before normalization >%s<>%s<\n", src, dst); */
 
@@ -206,7 +206,7 @@ char *normalize_path (char *src, char *dst) {
  */
 
 void enter_exit(object *op, object *exit_ob) {
-  char apartment[MAX_BUF];
+  char apartment[HUGE_BUF];
   mapstruct *oldmap, dummy_map;
   int x=0, y=0, removed=QUERY_FLAG(op,FLAG_REMOVED);
   char *newpath=NULL, *lastlevel=NULL;
@@ -228,8 +228,8 @@ void enter_exit(object *op, object *exit_ob) {
 	FILE *newmap_params;  /* give the new map its parameters */
 	newmap_params=fopen("/tmp/rmap_params","w");
 	if(newmap_params!=NULL) {
-	  char newmap_name[MAX_BUF];
-	  char oldmap_name[MAX_BUF];
+	  char newmap_name[HUGE_BUF];
+	  char oldmap_name[HUGE_BUF];
 	  int i;
 
 	  /* write the map parameters to the file. */
@@ -268,7 +268,7 @@ void enter_exit(object *op, object *exit_ob) {
 	  LOG(llevError,"Couldn't open parameter-passing file for random map.");
 	}
       }
-    if (EXIT_PATH(exit_ob)) {
+   if (EXIT_PATH(exit_ob)) {
       /* If we're already in a unique map, get the map's original path from its basename -- DAMN */
       if (exit_ob->map && exit_ob->map->path) {
 	sprintf(apartment, "%s/%s/%s/", settings.localdir, settings.playerdir, op->name);
