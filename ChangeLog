@@ -17,6 +17,18 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+common/object.c: insert_map_in_ob() - remove CAN_MERGE checks after the
+    map translation - otherwise, we can have bogus coordinates
+    that are used for GET_MAP_OB.
+random_maps/style.c: pick_random_object() - have it return null object
+    (and probably crash) instead of getting into an infinite loop.
+server/c_wiz.c: command_kick() - check FLAG_FREED of player.  Remove all
+    the broken skill/exp object granting code in command_possess() - this
+    is probably still a broken function.
+server/spell_attack.c: mood_change() - fix get_map_ob call - wasn't using
+    correct coordinate variables, resulting in crash.
+MSW 2004-06-10
+
 server/c_party.c: gsay improvements, courtesy Katia.
 Ryo 2004-06-09
 

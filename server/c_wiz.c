@@ -249,7 +249,11 @@ int command_kick (object *op, char *params)
 			     "%s is kicked out of the game.",op->name);
 	    strcpy(op->contr->killer,"left");
 	    check_score(op); /* Always check score */
-	    if (!removed) {
+	    /* not sure how the player would be freed, but did see
+	     * a crash here - if that is the case, don't save the
+	     * the player.
+	     */
+	    if (!removed && !QUERY_FLAG(op, FLAG_FREED)) {
 		(void)save_player(op,0);
 		op->map->players--;
 	    }
@@ -778,14 +782,15 @@ int command_mon_aggr (object *op, char *params)
 }
 
 /* DM can possess a monster.  Basically, this tricks the client into thinking
-   a given monster, is actually the player it controls.  This allows a DM
-   to inhabit a monster's body, and run around the game with it. */
+ * a given monster, is actually the player it controls.  This allows a DM
+ * to inhabit a monster's body, and run around the game with it.
+ * This function is severely broken - it has tons of hardcoded values,
+ */
 
 int command_possess (object *op, char *params)
 {
-    object *victim, *curinv, *nextinv, *tmp;
+    object *victim, *curinv, *nextinv;
     player *pl;
-    archetype *at;
     int i;
     char buf[MAX_BUF];
 
@@ -820,56 +825,9 @@ int command_possess (object *op, char *params)
     victim->type = PLAYER;
     SET_FLAG(victim, FLAG_WIZ);
 
-    /* exp objects */
-    at = find_archetype("experience_agility");
-    tmp = get_object();
-    copy_object(&at->clone, tmp);
-    tmp = insert_ob_in_ob(tmp, victim);
-    at = find_archetype("experience_charisma");
-    tmp = get_object();
-    copy_object(&at->clone, tmp);
-    tmp = insert_ob_in_ob(tmp, victim);
-    at = find_archetype("experience_mental");
-    tmp = get_object();
-    copy_object(&at->clone, tmp);
-    tmp = insert_ob_in_ob(tmp, victim);
-    at = find_archetype("experience_physical");
-    tmp = get_object();
-    copy_object(&at->clone, tmp);
-    tmp = insert_ob_in_ob(tmp, victim);
-    at = find_archetype("experience_power");
-    tmp = get_object();
-    copy_object(&at->clone, tmp);
-    tmp = insert_ob_in_ob(tmp, victim);
-    at = find_archetype("experience_wis");
-    tmp = get_object();
-    copy_object(&at->clone, tmp);
-    tmp = insert_ob_in_ob(tmp, victim);
-    /* need to add basic skills like melee, bows, set chosen skill */
-    at = find_archetype("skill_punching");
-    tmp = get_object();
-    copy_object(&at->clone, tmp);
-    tmp = insert_ob_in_ob(tmp, victim);
-    at = find_archetype("skill_melee_weapon");
-    tmp = get_object();
-    copy_object(&at->clone, tmp);
-    tmp = insert_ob_in_ob(tmp, victim);
-    at = find_archetype("skill_missile_weapon");
-    tmp = get_object();
-    copy_object(&at->clone, tmp);
-    tmp = insert_ob_in_ob(tmp, victim);
-    at = find_archetype("skill_use_magic_item");
-    tmp = get_object();
-    copy_object(&at->clone, tmp);
-    tmp = insert_ob_in_ob(tmp, victim);
-    at = find_archetype("skill_spellcasting");
-    tmp = get_object();
-    copy_object(&at->clone, tmp);
-    tmp = insert_ob_in_ob(tmp, victim);
-    at = find_archetype("skill_praying");
-    tmp = get_object();
-    copy_object(&at->clone, tmp);
-    tmp = insert_ob_in_ob(tmp, victim);
+    /* remove all the skill/exp granting code - that was broken.
+     */
+
     /* send the inventory to the client */
     curinv = victim->inv;
     while (curinv != NULL) {
@@ -878,6 +836,13 @@ int command_possess (object *op, char *params)
 	curinv = nextinv;
     }
     /* basic patchup */
+    /* The use of hard coded values is terrible.  Note
+     * that really, to be fair, this shouldn't get changed at
+     * all - if you are possessing a kobold, you should have the
+     * same limitations.  As it is, as more body locations are added,
+     * this will give this player more locations than perhaps
+     * they should be allowed.
+     */
     for (i=0; i<NUM_BODY_LOCATIONS; i++)
 	if (i == 1 || i == 6 || i == 8 || i == 9)
 	    victim->body_info[i] = 2;

@@ -1395,7 +1395,7 @@ int mood_change(object *op, object *caster, object *spell) {
 	    /* If there is nothing living on this space, no need to go further */
 	    if (!(mflags & P_IS_ALIVE)) continue;
 
-	    for (tmp = get_map_ob(m, x, y); tmp; tmp = tmp->above)
+	    for (tmp = get_map_ob(m, nx, ny); tmp; tmp = tmp->above)
 		if (QUERY_FLAG(tmp, FLAG_MONSTER)) break;
 
 	    /* There can be living objects that are not monsters */

@@ -1357,6 +1357,15 @@ object *insert_ob_in_map (object *op, mapstruct *m, object *originator, int flag
     }
     CLEAR_FLAG(op,FLAG_REMOVED);
 
+    /* Debugging information so you can see the last coordinates this object had */
+    op->ox=op->x;
+    op->oy=op->y;
+    x = op->x;
+    y = op->y;
+    op->map=get_map_from_coord(m, &x, &y);
+
+    /* this has to be done after we translate the coordinates.
+     */
     if(op->nrof && !(flag & INS_NO_MERGE)) {
 	for(tmp=GET_MAP_OB(m,op->x,op->y);tmp!=NULL;tmp=tmp->above)
 	    if (CAN_MERGE(op,tmp)) {
@@ -1365,12 +1374,7 @@ object *insert_ob_in_map (object *op, mapstruct *m, object *originator, int flag
 		free_object(tmp);
 	    }
     }
-    /* Debugging information so you can see the last coordinates this object had */
-    op->ox=op->x;
-    op->oy=op->y;
-    x = op->x;
-    y = op->y;
-    op->map=get_map_from_coord(m, &x, &y);
+
     /* Ideally, the caller figures this out.  However, it complicates a lot
      * of areas of callers (eg, anything that uses find_free_spot would now
      * need extra work

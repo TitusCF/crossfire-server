@@ -269,20 +269,21 @@ mapstruct *find_style(char *dirname,char *stylename,int difficulty) {
  * variables to generate tables.
  */
 object *pick_random_object(mapstruct *style) {
-    int x,y, i;
+    int x,y, limit=0;
     object *new_obj;
 
-    /* If someone makes a style map that is empty, this will loop forever,
-     * but the callers will crash if we return a null object, so either
-     * way is not good.
+    /* while returning a null object will result in a crash, that
+     * is actually preferable to an infinite loop.  That is because
+     * most servers will automatically restart in case of crash.
+     * Change the logic on getting the random space - shouldn't make
+     * any difference, but this seems clearer to me.
      */
     do {
-	i = RANDOM () % (MAP_WIDTH(style) * MAP_HEIGHT(style));
-
-	x = i / MAP_HEIGHT(style);
-	y = i % MAP_HEIGHT(style);
+	limit++;
+	x = RANDOM() % MAP_WIDTH(style);
+	y = RANDOM() % MAP_HEIGHT(style);
 	new_obj = get_map_ob(style,x,y);
-    } while (new_obj == NULL);
+    } while (new_obj == NULL && limit<1000);
     if (new_obj->head) return new_obj->head;
     else return new_obj;
 }
