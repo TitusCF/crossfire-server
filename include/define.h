@@ -606,6 +606,8 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define EXIT_LEVEL(xyz)		(xyz)->stats.food
 #define EXIT_X(xyz)		(xyz)->stats.hp
 #define EXIT_Y(xyz)		(xyz)->stats.sp
+#define EXIT_ALT_X(xyz)		(xyz)->stats.maxhp
+#define EXIT_ALT_Y(xyz)		(xyz)->stats.maxsp
 
 /* for use by the lighting code */
 #define MAX_LIGHT_RADII		4	/* max radii for 'light' object, really

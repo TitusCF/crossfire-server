@@ -3126,6 +3126,9 @@ int action_makes_visible (object *op) {
  * a player) is standing on a valid battleground-tile,
  * function returns TRUE/FALSE. If true x, y returns the battleground
  * -exit-coord. (and if x, y not NULL)
+ * 19 March 2005 - josh@woosworld.net modifed to check if the battleground also has slaying, maxhp, and maxsp set
+ * and if those are all set and the player has a marker that matches the slaying send them to a different x, y
+ * Default is to do the same as before, so only people wanting to have different points need worry about this
  */
 int op_on_battleground (object *op, int *x, int *y) {
   object *tmp;
@@ -3141,6 +3144,18 @@ int op_on_battleground (object *op, int *x, int *y) {
       if (QUERY_FLAG (tmp, FLAG_NO_PICK) &&
 	  strcmp(tmp->name, "battleground")==0 &&
 	  tmp->type == BATTLEGROUND && EXIT_X(tmp) && EXIT_Y(tmp)) {
+	    /*before we assign the exit, check if this is a teambattle*/
+	    if ( EXIT_ALT_X(tmp) && EXIT_ALT_Y(tmp) && EXIT_PATH(tmp) ){
+	        object *invtmp;
+	    	for(invtmp=op->inv; invtmp != NULL; invtmp=invtmp->below) {
+	            if(invtmp->type==FORCE && invtmp->slaying &&
+		      !strcmp(EXIT_PATH(tmp), invtmp->slaying)){
+		         if (x != NULL && y != NULL)
+		           *x=EXIT_ALT_X(tmp), *y=EXIT_ALT_Y(tmp);
+	                 return 1;
+		     }    
+	        }
+	    }    
 	    if (x != NULL && y != NULL)
 		*x=EXIT_X(tmp), *y=EXIT_Y(tmp);
 	    return 1;
