@@ -21,7 +21,7 @@
 #   along with this program; if not, write to the Free Software
 #   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #
-#   The author can be reached via e-mail to mark@pyramid.com
+#   The author can be reached via e-mail to mwedel@scruz.net
 
 # Start of configuration items
 # In theory, you should not need to change any of this - configure
@@ -45,7 +45,7 @@
 
 # EXTRA_CFLAGS
 # Any extra special options for the C compiler.
-EXTRA_CFLAGS=-Wall
+#EXTRA_CFLAGS=-Wall
 
 #
 #
