@@ -67,7 +67,7 @@ sub traverse {
 	    $im_name = "$1$2";
 	    &warn("duplicate face $im_name in ".$dir." and $faces{$im_name}")
 		if $faces{$im_name};
-	    $faces{$im_name} = $im_name;
+	    $faces{$im_name} = $dir."/".$im_name;
 
 	} elsif ( $file =~ /.*\.face$/) {	# Face information file
 	    $facesFileNum++;
