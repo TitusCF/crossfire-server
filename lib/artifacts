@@ -1141,7 +1141,7 @@ end
 #Ring of Combat
 #
 Allowed all
-chance 16
+chance 8
 Object Combat
 type 70
 face ring.117
@@ -1161,7 +1161,7 @@ end
 #Ring of Strife
 #
 Allowed all
-chance 8
+chance 4
 Object Strife
 type 70
 face ring.117
