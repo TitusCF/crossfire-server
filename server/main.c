@@ -645,7 +645,17 @@ void enter_exit(object *op, object *exit_ob) {
 		 * map.
 		 */
 		if (!newmap && !strncmp(EXIT_PATH(exit_ob),"/random/",8)) {
-		    enter_random_map(op, exit_ob);
+		    /* Maps that go down have a message set.  However, maps that go
+		     * up, don't.  If the going home has reset, there isn't much
+		     * point generating a random map, because it won't match the maps.
+		     */
+		    if (exit_ob->msg) {
+			enter_random_map(op, exit_ob);
+		    } else {
+			new_draw_info_format(NDI_UNIQUE, 0, op, "The %s is closed.", exit_ob->name);
+			return;
+		    }
+
 		    /* For exits that cause damages (like pits).  Don't know if any
 		     * random maps use this or not.
 		     */

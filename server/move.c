@@ -193,7 +193,8 @@ int teleport (object *teleporter, uint8 tele_type, object *user)
 	for(j= -5;j<6;j++) {
 	    if(i==0&&j==0)
 		continue;
-	    if(out_of_map(teleporter->map,teleporter->x+i,teleporter->y+j))
+	    /* Perhaps this should be extended to support tiled maps */
+	    if(OUT_OF_REAL_MAP(teleporter->map,teleporter->x+i,teleporter->y+j))
 		continue;
 	    other_teleporter=get_map_ob(teleporter->map,
                                   teleporter->x+i,teleporter->y+j);
@@ -214,8 +215,30 @@ int teleport (object *teleporter, uint8 tele_type, object *user)
     other_teleporter=altern[RANDOM()%nrofalt];
     k=find_free_spot(user->arch,other_teleporter->map,
                         other_teleporter->x,other_teleporter->y,1,9);
-    if (k==-1)
-	return 0;
+
+    /* if k==-1, unable to find a free spot.  If this is shop
+     * mat that the player is using, find someplace to move
+     * the player - otherwise, player can get trapped in the shops
+     * that appear in random dungeons.  We basically just make
+     * sure the space isn't no pass (eg wall), and don't care
+     * about is alive.
+     */
+    if (k==-1) {
+	if (tele_type == SHOP_MAT && user->type == PLAYER) {
+	    for (k=1; k<9; k++) {
+		if (!(get_map_flags(other_teleporter->map, NULL, 
+			other_teleporter->x + freearr_x[k],
+			other_teleporter->y + freearr_y[k], NULL,NULL) &
+		      P_NO_PASS)) break;
+	    }
+	    if (k==9) {
+		LOG(llevError,"Shop mat %s (%d, %d) is in solid rock?\n",
+		    other_teleporter->name, other_teleporter->x, other_teleporter->y);
+		return 0;
+	    }
+	}
+	else return 0;
+    }
 
     remove_ob(user);
 

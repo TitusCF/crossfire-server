@@ -1034,11 +1034,10 @@ int command_reset (object *op, char *params)
 
     if (m->in_memory == MAP_SWAPPED) {	
 	LOG(llevDebug,"Resetting map %s.\n",m->path);
-	clean_tmp_map(m);
-	if (m->tmpname) free(m->tmpname);
-	m->tmpname = NULL;
+
 	/* setting this effectively causes an immediate reload */
 	m->reset_time = 1;
+	flush_old_maps();
 	new_draw_info(NDI_UNIQUE, 0,op,"OK.");
 	if (tmp) {
 	    enter_exit(tmp, dummy);
