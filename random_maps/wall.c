@@ -124,7 +124,6 @@ void make_map_walls(mapstruct *map,char **layout, char *w_style,RMParms *RP) {
 
 	 sprintf(RP->wall_name,"%s",the_wall->arch->name);
 	 if ((cp=strchr(RP->wall_name,'_'))!=NULL) *cp=0;
-	 printf("the wall name is %s\n",RP->wall_name);
 	 for(i=0;i<RP->Xsize;i++)
 		for(j=0;j<RP->Ysize;j++) {
 		  if(layout[i][j]=='#') {
