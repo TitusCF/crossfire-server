@@ -1827,8 +1827,10 @@ from a set of squares surrounding the caster, in a given direction. */
 
 void move_swarm_spell(object *op)
 {
-    sint16 x,y;
-    int di;
+    static int cardinal_adjust[9] = { -3, -2, -1, 0, 0, 0, 1, 2, 3 };
+    static int diagonal_adjust[10] = { -3, -2, -2, -1, 0, 0, 1, 2, 2, 3 };
+    sint16 target_x, target_y, origin_x, origin_y;
+    int basedir, adjustdir;
 
     if(op->stats.hp == 0 || get_owner (op) == NULL) {
 	remove_ob(op);
@@ -1837,18 +1839,38 @@ void move_swarm_spell(object *op)
     }
     op->stats.hp--;
 
-   if(op->stats.hp)
-        di=RANDOM()%7-3;  /* get a random number of -3->3 */
-   else
-        di=0;  /* fire the last one from forward. */
-   x = op->x + freearr_x[absdir(op->direction +di)];
-   y = op->y + freearr_y[absdir(op->direction +di)];
+    basedir = op->direction;
+    if(basedir == 0) {
+        /* spray in all directions! 8) */
+        basedir = RANDOM()%8+1;
+    }
+
+    /* new offset calculation to make swarm element distribution
+       more uniform */
+    if(op->stats.hp) {
+        if(basedir & 1) { 
+            adjustdir = cardinal_adjust[RANDOM()%9];
+        } else {
+            adjustdir = diagonal_adjust[RANDOM()%10];
+        }
+    } else {
+        adjustdir = 0;  /* fire the last one from forward. */
+    }
+
+    target_x = op->x + freearr_x[absdir(basedir + adjustdir)];
+    target_y = op->y + freearr_y[absdir(basedir + adjustdir)];
+
+    /* back up one space so we can hit point-blank targets, but this
+       necessitates extra out_of_map check below */
+    origin_x = target_x - freearr_x[basedir];
+    origin_y = target_y - freearr_y[basedir];
 
    /*  for level dependence, we need to know what spell is fired.  */
    /*  that's stored in op->stats.sp  by fire_swarm  */
-   if ( ! wall (op->map, x, y))
-       fire_arch_from_position (op, op, x, y, op->direction, op->other_arch,
-                                op->stats.sp, op->magic);
+   if ( ! wall (op->map, target_x, target_y)
+        && ! out_of_map(op->map, origin_x, origin_y))
+       fire_arch_from_position (op, op, origin_x, origin_y, basedir,
+                                op->other_arch, op->stats.sp, op->magic);
 }
 
 
