@@ -2903,6 +2903,7 @@ Allowed potion_generic
 chance 1
 Object firestorm
 face potion_fire2.111
+stand_still 1
 type 5
 value 1
 sp 1
@@ -2912,6 +2913,7 @@ Allowed potion_generic
 chance 1
 Object great firestorm
 face potion_fire2.111
+stand_still 1
 type 5
 sp 2
 value 5
@@ -2921,6 +2923,7 @@ Allowed potion_generic
 chance 1
 Object black fire
 face potion_fire2.111
+stand_still 1
 type 5
 sp 90
 value 8
@@ -2932,6 +2935,7 @@ chance 1
 Object fiery destruction
 type 5
 face potion_fire2.111
+stand_still 1
 sp 89
 value 15
 level -60
@@ -2941,6 +2945,7 @@ Allowed potion_generic
 chance 1
 Object sunfire
 face potion_fire2.111
+stand_still 1
 type 5
 sp 161
 value 5
@@ -2950,6 +2955,7 @@ Allowed potion_generic
 chance 1
 Object freezing
 face potion_freeze.111
+stand_still 1
 type 5
 sp 83
 value 1
@@ -2959,6 +2965,7 @@ Allowed potion_generic
 chance 1
 Object fire
 face potion_fire2.111
+stand_still 1
 type 5
 value 1
 sp 82
@@ -2968,6 +2975,7 @@ Allowed potion_generic
 chance 1
 Object electric shock
 face potion_shock.111.png
+stand_still 1
 type 5
 sp 5
 value 1
@@ -2996,6 +3004,7 @@ Allowed potion_generic
 chance 1
 Object cure sickness
 face potion_heal2.111
+stand_still 1
 type 5
 sp 68
 value 1
@@ -3005,6 +3014,7 @@ Allowed potion_generic
 chance 1
 Object cure madness
 face potion_heal2.111
+stand_still 1
 type 5
 sp 125
 value 2
@@ -3047,6 +3057,7 @@ end
 Allowed potion_generic
 chance 1
 Object resist confusion
+stand_still 1
 face potion_resist.111
 type 5
 value 1
@@ -3057,6 +3068,7 @@ Allowed potion_generic
 chance 1
 Object resist magic
 face potion_resist.111
+stand_still 1
 type 5
 resist_magic 50
 value 3
@@ -3107,6 +3119,7 @@ chance 1
 Object shock resistance
 type 5
 face potion_ishock.111
+stand_still 1
 resist_electricity 90
 value 100
 end
@@ -3115,6 +3128,7 @@ Allowed potion_generic
 chance 1
 Object magic resistance
 face potion_mimm.111
+stand_still 1
 type 5
 resist_magic 90
 value 150
@@ -3125,6 +3139,8 @@ end
 Allowed potion_generic
 chance 1
 Object might
+face potion_util.111
+stand_still 1
 type 5
 sp 39
 value 1
@@ -3134,6 +3150,8 @@ Allowed potion_generic
 chance 1
 Object agility
 type 5
+face potion_util.111
+stand_still 1
 sp 40
 value 1
 end
@@ -3142,6 +3160,8 @@ Allowed potion_generic
 chance 1
 Object health
 type 5
+face potion_util.111
+stand_still 1
 sp 41
 value 1
 end
@@ -3215,6 +3235,8 @@ end
 Allowed potion_generic
 chance 1
 Object speed
+face potion_util.111
+stand_still 1
 type 5
 level -80
 sp 86
@@ -3224,6 +3246,8 @@ end
 Allowed potion_generic
 chance 1
 Object recuperation
+face potion_util.111
+stand_still 1
 type 5
 sp 146
 value 2
