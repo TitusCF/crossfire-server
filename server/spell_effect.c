@@ -3643,7 +3643,7 @@ void move_peacemaker(object *op) {
 
       /* make this sucker peaceful. */
       tmp->stats.dam = 0;
-      add_exp(op,tmp->stats.exp);
+      add_exp(op->owner,tmp->stats.exp);
       tmp->stats.exp=0;
       tmp->stats.sp = 0;
       tmp->stats.grace = 0;

@@ -17,7 +17,13 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 CVS changes since last release:
 
+PeterM:  
+server/spell_util.c:  fix peace so it gives experience
+common/button.c:  change the "error" to a "debug" message
+   to reduce server crashing.
+
 ------------------------------------------------------------------------------
+
 Changes for 0.98.0:
 
 server/skills.c: Modify inscription so that when inscribing cleric spells,

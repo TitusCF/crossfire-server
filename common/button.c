@@ -132,7 +132,7 @@ void update_button(object *op) {
     /* LOG(llevDebug, "update_button: %s (%d)\n", op->name, op->count); */
     for (ol = get_button_links(op); ol; ol = ol->next) {
 	if (!ol->ob || ol->ob->count != ol->id) {
-	    LOG(llevError, "Internal error in update_button (%s).\n", op->name);
+	    LOG(llevDebug, "Internal error in update_button (%s).\n", op->name);
 	    continue;
 	}
 	tmp = ol->ob;
