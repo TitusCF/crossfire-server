@@ -17,6 +17,31 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+socket/loop.c: add a setting fastclock.  This makes the server's clock run
+*really* fast.  For now, it's good for debugging purposes, but in the
+future it will allow a dm to ravage a world with weather quickly. 
+include/define.h: add FLAG_IS_WATER
+include/global.h: add fastclock to settings
+include/map.h: add water to weathermap structure
+include/sproto.h: add tons of new functions in weather.c
+common/init.c: update for FLAG_IS_WATER
+common/loader.l: update for FLAG_IS_WATER
+server/init.c: add code to read fastclock setting
+server/weather.c: Complete update, largely rewritten.  Now the world is 
+cut into a 100x100 matrix of weathermaps.  Each one of these maps is 
+computed at initial boot, and written to disk, following which, they are 
+simply read from disk at boot.  For each of the main weather types 
+(pressure, humitidy, base temperature, wind direction, wind speed) the 
+game recomputes the entire weathermap, applying smoothing algorithims, or 
+derriving each map from it's predecessor.  Weathermaps are only used if 
+you have set your dynamiclevel to 1 or greater, and, are using the bigmap 
+set.  At this time, there is still no functional change to the game, 
+bigmap, or not.
+utils/maps.c: This program will generate ppm files from each of the
+weathermaps. Mostly for debugging, but curious DM's might find it useful 
+to see the weather.
+garbled 2002-10-27
+
 server/c_chat.c: Fix some buffer overflow issues - use snprintf or
    use new_draw_info_format instead.
 lib/artifacts: Update some cloaks not to require a minimum magic level,
