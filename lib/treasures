@@ -141,16 +141,6 @@ treasureone bear_parts
   arch heart
     chance 10
   end
-treasureone dwolf_parts
-  arch hide_white
-     chance 25
-  more
-  arch liver
-     chance 15
-  more
-  arch heart
-     chance 10
-  end
 treasureone polarbear_parts
   arch hide_white
      chance 25
@@ -2191,12 +2181,6 @@ treasure ape
   list ape_parts
     chance 30
   end
-treasure dwolf
-  list dwolf_parts
-    chance 30
-  more
-  arch abil_frostbolt
- end
 treasure polarbear
   list polarbear_parts
     chance 40
@@ -3886,13 +3870,6 @@ treasure witch_chaos
 treasure giantrat
   list giantrat_parts
     chance 30
- end
-treasure hellhound
-  arch abil_burning_hands
-  more
-  arch spell_hellfire
-  more
-  arch abil_fear
  end
 treasure shadow
   arch spell_negaball
