@@ -1,3 +1,29 @@
+/*
+ * static char *rcsid_skills_c =
+ *   "$Id$";
+ */
+/*
+    CrossFire, A Multiplayer game for X-windows
+
+    Copyright (C) 1992 Frank Tore Johansen
+    Copyright (C) 2000 Mark Wedel
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+
+    The author can be reached via e-mail to mwedel@scruz.net
+*/
 
 /* Initial coding: 6 Sep 1994, Nick Williams (njw@cs.city.ac.uk) */
  
@@ -632,7 +658,12 @@ int do_skill_ident2(object *tmp,object *pl, int obj_class)
           		new_draw_info(NDI_UNIQUE, 0,pl, "The item has a story:");
           		new_draw_info(NDI_UNIQUE, 0,pl, tmp->msg);
         	    }
-		    esrv_update_item(UPD_NAME, pl, tmp);
+		    /* identify will take care of updating the item if
+		     * it is in the players inventory.  IF on map, do it
+		     * here
+		     */
+		    if (tmp->map)
+			esrv_send_item(pl, tmp);
 		  }
 	          success += calc_skill_exp(pl,tmp);
         	} else 

@@ -8,6 +8,7 @@
     CrossFire, A Multiplayer game for X-windows
 
     Copyright (C) 1992 Frank Tore Johansen
+    Copyright (C) 2000 Mark Wedel
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -23,7 +24,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to frankj@ifi.uio.no.
+    The author can be reached via e-mail to mwedel@scruz.net
 */
 
 #include <global.h>
@@ -1941,7 +1942,6 @@ int cast_identify(object *op) {
 	  new_draw_info(NDI_UNIQUE, 0,op, "The item has a story:");
 	  new_draw_info(NDI_UNIQUE, 0,op, tmp->msg);
 	}
-	esrv_send_item(op, tmp);
       }
 
       if ((random_val=RANDOM()%chance) > (chance - ++success - 2))
