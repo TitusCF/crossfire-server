@@ -238,7 +238,7 @@ int command_who (object *op, char *params)
 {
     player *pl;
     char namebuf[MAX_BUF];
-	char buf[MAX_BUF];
+    char buf[MAX_BUF];
 
     if (first_player != (player *) NULL)
 	new_draw_info(NDI_UNIQUE, 0,op,"Players:");
@@ -251,24 +251,29 @@ int command_who (object *op, char *params)
 	if (pl->state==ST_PLAYING || pl->state==ST_GET_PARTY_PASSWORD) {
 
 	    if(op == NULL || QUERY_FLAG(op, FLAG_WIZ)){
-		(void) sprintf(namebuf,"%s the %s:",pl->ob->name,
-		       (pl->own_title[0]=='\0'?pl->title:pl->own_title));
-		(void) sprintf(buf,"Level %d (@%s) [%s]%s%s%s (%d)",
-			   pl->ob->level,       
-			   pl->socket.host,
-		       pl->ob->map->path,
-		       QUERY_FLAG(pl->ob,FLAG_WIZ)?" [WIZ]":"",
-		       pl->hidden?"[HID]":"",
-		       pl->peaceful?"Peaceful":"Hostile",pl->ob->count);
-	    }else{
-		(void) sprintf(namebuf,"%s the %s:",pl->ob->name,
-		       (pl->own_title[0]=='\0'?pl->title:pl->own_title));
-		sprintf(buf,"[%s]%s%s",
-		       pl->ob->map->path,
-		       QUERY_FLAG(pl->ob,FLAG_WIZ)?" [WIZ]":"",
-		       pl->peaceful?"Peaceful":"Hostile");}
-		new_draw_info(NDI_UNIQUE, 0, op, namebuf);
-	    new_draw_info(NDI_UNIQUE, 0,op,buf);
+		(void) sprintf(namebuf,"%s the %s%s%s:",
+		    pl->ob->name,
+		    (pl->own_title[0]=='\0'?pl->title:pl->own_title),
+		    pl->peaceful?" [Peaceful]":" [Hostile]",
+		    QUERY_FLAG(pl->ob,FLAG_WIZ)?" [WIZ]":"",
+		    pl->hidden?" [HID]":"");
+		(void) sprintf(buf," Level %d [%s](@%s)(%d)",
+		    pl->ob->level,       
+		    pl->ob->map->path,
+		    pl->socket.host,
+		    pl->ob->count);
+	    }
+	    else{
+		(void) sprintf(namebuf,"%s the %s%s%s:",
+		    pl->ob->name,
+		    (pl->own_title[0]=='\0'?pl->title:pl->own_title),
+		    pl->peaceful?" [Peaceful]":" [Hostile]",
+		    QUERY_FLAG(pl->ob,FLAG_WIZ)?" [WIZ]":"");
+		(void) sprintf(buf," [%s]",
+		    pl->ob->map->path);
+	    }
+	    new_draw_info(NDI_UNIQUE, 0, op, namebuf);
+	    new_draw_info(NDI_UNIQUE, 0, op, buf);
 	}
     }
     return 1;
