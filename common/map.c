@@ -643,20 +643,6 @@ mapstruct *get_linked_map() {
     /* Gah - these should really have a zero default! */
     MAP_ENTER_X(map)=1;
     MAP_ENTER_Y(map)=1;
-#if 0
-    /* the calloc should already clear all this */
-    map->next=NULL;
-    map->path[0]='\0';
-    map->tmpname=NULL;
-    map->players=0;
-    map->timeout=0;
-    map->light = (objectlink *) NULL;
-    map->darkness = 0;
-    map->do_los=0;
-    map->map_object = NULL;
-    map->buttons = NULL;
-    map->compressed = 0;
-#endif
     return map;
 }
 
@@ -802,10 +788,10 @@ static int load_map_header(FILE *fp, mapstruct *m)
 		    tile, m->path);
 	    } else {
 		*end = 0;
-		if (m->tile_path[tile]) {
+		if (m->tile_path[tile-1]) {
 		    LOG(llevError,"load_map_header: tile location %d duplicated (%s)\n",
 			tile, m->path);
-		    free(m->tile_path[tile]);
+		    free(m->tile_path[tile-1]);
 		}
 		if (!editor) {
 		    if (check_path(value, 1)==-1) {
@@ -1200,8 +1186,10 @@ void free_map(mapstruct *m,int flag) {
     if (m->buttons)
 	free_objectlinkpt(m->buttons);
     m->buttons = NULL;
-    for (i=0; i<4; i++)
+    for (i=0; i<4; i++) {
 	if (m->tile_path[i]) FREE_AND_CLEAR(m->tile_path[i]);
+	m->tile_map[i] = NULL;
+    }
     m->in_memory = MAP_SWAPPED;
 }
 
@@ -1238,7 +1226,7 @@ void delete_map(mapstruct *m) {
      * tiling can be assymetric, we just can not look to see which
      * maps this map tiles with and clears those.
      */
-    for (tmp = first_map; tmp != m; tmp = tmp->next) {
+    for (tmp = first_map; tmp != NULL; tmp = tmp->next) {
 	if (tmp->next == m) last = tmp;
 
 	/* This should hopefully get unrolled on a decent compiler */
