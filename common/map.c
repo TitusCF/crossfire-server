@@ -818,6 +818,7 @@ static mapstruct *load_temporary_map(mapstruct *m) {
 	strcpy(buf, m->path);
 	delete_map(m);
         m = load_original_map(buf,0);
+	if(m==NULL) return NULL;
 	(*fix_auto_apply_func)(m); /* Chests which open as default */
 	return m;
     }
@@ -828,6 +829,7 @@ static mapstruct *load_temporary_map(mapstruct *m) {
 	strcpy(buf, m->path);
 	delete_map(m);
         m = load_original_map(buf,0);
+	if(m==NULL) return NULL;
 	(*fix_auto_apply_func)(m); /* Chests which open as default */
 	return m;
     }
@@ -1385,6 +1387,7 @@ mapstruct *ready_map_name(char *name, int flags) {
 	/* If in this loop, we found a temporary map, so load it up. */
 
 	m=load_temporary_map (m);
+        if(m==NULL) return NULL;
 	load_unique_objects(m);
 
 	clean_tmp_map(m);

@@ -2320,6 +2320,8 @@ void fix_auto_apply(mapstruct *m) {
   object *tmp,*above=NULL;
   int x,y;
 
+  if(m==NULL) return;
+
   for(x=0;x<m->mapx;x++)
     for(y=0;y<m->mapy;y++)
       for(tmp=get_map_ob(m,x,y);tmp!=NULL;tmp=above) {
