@@ -386,7 +386,8 @@ int trap_disarm(object *disarmer, object *trap, int risk) {
        MIN(20,trap->level-disarmer_level
 	   +5 - disarmer->stats.Dex/2))-1), disarmer, PREFER_LOW)))
         {
-            new_draw_info(NDI_UNIQUE, 0,disarmer,"You successfuly disarm it!");
+            new_draw_info_format(NDI_UNIQUE, 0,disarmer,
+                    "You successfuly disarm the %s!",trap->name);
             remove_ob(trap);
             free_object(trap);
 	    /* If it is your own trap, (or any players trap), don't you don't
@@ -398,8 +399,9 @@ int trap_disarm(object *disarmer, object *trap, int risk) {
         }
     else
         {
-            new_draw_info(NDI_UNIQUE, 0,disarmer,"You fail to disarm the trap.");
-	    if(! (random_roll(0, (MAX(2,disarmer_level-trap->level 
+            new_draw_info_format(NDI_UNIQUE, 0,disarmer,
+                    "You fail to disarm the %s.",trap->name);
+	    if(! (random_roll(0, (MAX(2,disarmer_level-trap->level
 	       + disarmer->stats.Dex/2-6))-1, disarmer, PREFER_LOW)) &&risk) {
 		new_draw_info(NDI_UNIQUE, 0,disarmer,"In fact, you set it off!");
 		spring_trap(trap,disarmer);
