@@ -958,7 +958,7 @@ int new_save_map(mapstruct *m, int flag) {
     }
 
     /* Compress if it isn't a temporary save.  Do compress if unique */
-    if (m->compressed && ((QUERY_FLAG(m->map_object, FLAG_UNIQUE) || flag)) {
+    if (m->compressed && (QUERY_FLAG(m->map_object, FLAG_UNIQUE) || flag)) {
 	char buf[MAX_BUF];
 	strcpy(buf, uncomp[m->compressed][2]);
 	strcat(buf, " > ");
