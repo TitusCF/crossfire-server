@@ -89,6 +89,24 @@ main()
 	fclose(lp);
 
 
+	sprintf(fn, "humidmap");
+	lp = fopen(fn, "r");
+	fp = fopen("humidmap.ppm", "w");
+	fprintf(fp, "P3 %d %d 255\n", 100, 100);
+	for (j=0; j < 100; j++) {
+	    for (k=0; k < 100; k++) {
+		fscanf(lp, "%d ", &map[j][k]);
+		junk = map[j][k];
+		fprintf(lp, "%d ", map[j][k]);
+		fprintf(fp, "0 0 %d ", 255-(junk*2));
+	    fprintf(fp, "\n");
+	    fscanf(lp, "\n");
+	    }
+        }
+	fclose(fp);
+	fclose(lp);
+
+
 	sprintf(fn, "temperaturemap");
 	lp = fopen(fn, "r");
 	fp = fopen("temperaturemap.ppm", "w");
