@@ -425,9 +425,9 @@ static char *book_descrpt[] =
 
 static char *mage_book_name[] =
 {
-    "grimore",
-    "grimore",
-    "grimore",
+    "grimoire",
+    "grimoire",
+    "grimoire",
     "manual",
     "tome",
     "treatise"
