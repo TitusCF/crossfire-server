@@ -17,6 +17,27 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+random_maps/exit.c
+random_maps/random_map.c
+random_maps/random_map.h
+random_maps/reader.l
+random_maps/rproto.h
+random_maps/special.c
+random_maps/wall.c
+	added fix for random maps with single arch walls, 
+	added level indicator on random map signs
+	added new parameter 'exit_on_final_map'-  see documentation
+TM 2004-08-07
+
+include/plugin.h 
+plugin/plugin_python.c 
+server/c_wiz.c
+server/plugins.c
+	add event hooks for Kick and Muzzle(toggle_shout) commands.
+    fix CFSetQuantity by changing the int to uint and remove 100000 item limit.
+    pythonplug now looks for event scripts in maps/python/events.
+TM 2004-08-02
+
 server/skills.c: xp for writing is now multiplied by skill level, to
    make it possible to level.
 Ryo 2004-07-17

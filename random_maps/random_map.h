@@ -42,7 +42,8 @@ typedef struct {
   char final_map[512];
   char exitstyle[512];
   char this_map[512];
-
+  char exit_on_final_map[512];
+	
   int Xsize;
   int Ysize;
   int expand2x;

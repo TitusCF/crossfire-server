@@ -112,9 +112,15 @@ void place_exits(mapstruct *map, char **maze,char *exitstyle,int orientation,RMP
   object *the_exit_down;        /* harder maze */
   object *the_exit_up;          /* easier maze */
   object *random_sign;          /* magic mouth saying this is a random map. */
+  char buf[512];
   int cx=-1,cy=-1;  /* location of a map center */
   int upx=-1,upy=-1;  /* location of up exit */
   int downx=-1,downy=-1;
+  int final_map_exit=1;
+ 
+  if(RP->exit_on_final_map){
+	  if(strstr(RP->exit_on_final_map,"no")) final_map_exit=0;
+    }
 
   if(orientation == 0) orientation = RANDOM() % 6 + 1;
 
@@ -204,8 +210,10 @@ void place_exits(mapstruct *map, char **maze,char *exitstyle,int orientation,RMP
         random_sign = get_archetype("sign");
         random_sign->x = the_exit_up->x+freearr_x[j];
         random_sign->y = the_exit_up->y+freearr_y[j];
-
-        random_sign->msg = add_string("This is a random map.\n");
+		  
+		sprintf(buf,"This is a random map.\nLevel: %d\n", (RP->dungeon_level)-1);
+        
+		random_sign->msg = add_string(buf);
         insert_ob_in_map(random_sign,map,NULL,0);
       }
     }
@@ -274,7 +282,7 @@ void place_exits(mapstruct *map, char **maze,char *exitstyle,int orientation,RMP
         the_exit_down->slaying = add_string(RP->final_map);
         strcpy(new_map->path,RP->final_map);
 
-	for (tmp=GET_MAP_OB(new_map,  MAP_ENTER_X(new_map), MAP_ENTER_Y(new_map)); tmp; tmp=tmp->above)
+		for (tmp=GET_MAP_OB(new_map,  MAP_ENTER_X(new_map), MAP_ENTER_Y(new_map)); tmp; tmp=tmp->above)
 	    /* Remove exit back to previous random map.  There should only be one
 	     * which is why we break out.  To try to process more than one
 	     * would require keeping a 'next' pointer, ad free_object kills tmp, which
@@ -286,6 +294,8 @@ void place_exits(mapstruct *map, char **maze,char *exitstyle,int orientation,RMP
 		break;
 	    }
 
+		if (final_map_exit == 1)
+			{
         /* setup the exit back */
         the_exit_back->slaying = add_string(map->path);
         the_exit_back->stats.hp = the_exit_down->x;
@@ -294,7 +304,9 @@ void place_exits(mapstruct *map, char **maze,char *exitstyle,int orientation,RMP
         the_exit_back->y = MAP_ENTER_Y(new_map);
 
         insert_ob_in_map(the_exit_back,new_map,NULL,0);
-	set_map_timeout(new_map);   /* So it gets swapped out */
+			}
+			
+		set_map_timeout(new_map);   /* So it gets swapped out */
       }
       else 
         the_exit_down->slaying = add_string("/!");
@@ -327,4 +339,3 @@ void unblock_exits(mapstruct *map, char **maze, RMParms *RP) {
         }
       }
 }
-        

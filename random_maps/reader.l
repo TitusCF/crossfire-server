@@ -99,7 +99,7 @@ WS	[ \t]*
 ^random_seed{S}        RP->random_seed = IVAL;
 ^treasureoptions{S}    RP->treasureoptions = IVAL;
 ^generate_treasure_now{S} RP->generate_treasure_now = IVAL;
-
+^exit_on_final_map{S} strcpy(RP->exit_on_final_map,rmap_yval());
 
 <*>(^{WS}$)|\n		{/* ignore empty lines, newlines we don't do above */}
 #.*\n			{}

@@ -564,7 +564,12 @@ void write_map_parameters_to_string(char *buf,RMParms *RP) {
     sprintf(small_buf,"final_map %s\n",RP->final_map);
     strcat(buf,small_buf);
   }
-
+  
+  if(RP->exit_on_final_map[0]) { 
+    sprintf(small_buf,"exit_on_final_map %s\n",RP->exit_on_final_map);
+    strcat(buf,small_buf);
+  }
+  
   if(RP->this_map[0]) {
     sprintf(small_buf,"origin_map %s\n",RP->this_map);
     strcat(buf,small_buf);
@@ -656,6 +661,7 @@ void write_parameters_to_string(char *buf,
                                 char *doorstyle_n,
                                 char *exitstyle_n,
                                 char *final_map_n,
+                                char *exit_on_final_map_n,
                                 char *this_map_n,
                                 int layoutoptions1_n,
                                 int layoutoptions2_n,
@@ -721,6 +727,11 @@ void write_parameters_to_string(char *buf,
     strcat(buf,small_buf);
   }
 
+  if(exit_on_final_map_n && exit_on_final_map_n[0]) {
+    sprintf(small_buf,"exit_on_final_map %s\n",exit_on_final_map_n);
+    strcat(buf,small_buf);
+  }
+  
   if(this_map_n && this_map_n[0]) {
     sprintf(small_buf,"origin_map %s\n",this_map_n);
     strcat(buf,small_buf);

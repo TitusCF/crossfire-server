@@ -180,9 +180,12 @@ will be placed at random in the maze.
   'final_map'		When dungeon_level >= dungeon_depth, another exit
 			isn't usually made.  However, if final_map is set
 			to a map's name, then an exit to this map will
-			be made.  YOU MUST PROVIDE A WAY BACK IN THE FINAL MAP:
-			the random map generator can't modify an exiting map
-			to point back to themselves yet.
+			be made.
+			
+  'exit_on_final_map'	The default action is to place an exit on
+            the final map.  When explicitly set to 'no' this will 
+			not place a return exit on the final_map.  
+			If you use this setting YOU MUST PROVIDE A WAY BACK IN THE FINAL MAP!
 
 
  Misc. Parameters:

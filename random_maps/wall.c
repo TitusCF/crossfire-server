@@ -124,15 +124,22 @@ void make_map_walls(mapstruct *map,char **layout, char *w_style,RMParms *RP) {
     if((the_wall=pick_random_object(style_map))!=NULL) {
 	int i,j;
 	char *cp;
+	int joinedwalls=0;
+	object *thiswall;
 
 	sprintf(RP->wall_name,"%s",the_wall->arch->name);
-	if ((cp=strchr(RP->wall_name,'_'))!=NULL) *cp=0;
+	if ((cp=strchr(RP->wall_name,'_'))!=NULL) {
+		*cp=0;
+		joinedwalls=1;
+	}
 
 	for(i=0;i<RP->Xsize;i++)
 	    for(j=0;j<RP->Ysize;j++) {
 		if(layout[i][j]=='#') {
-		    object *thiswall=pick_joined_wall(the_wall,layout,i,j,RP);
-
+			if(joinedwalls)
+				thiswall=pick_joined_wall(the_wall,layout,i,j,RP);
+			else
+				thiswall=arch_to_object(the_wall->arch);
 		    thiswall->x = i;
 		    thiswall->y = j;
 		    SET_FLAG(thiswall,FLAG_NO_PASS); /* make SURE it's a wall */
