@@ -192,6 +192,10 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define INORGANIC	            73	/* metals and minerals */ 
 
 #define LIGHTER		            75
+
+/* The trap_part, wall, light_source, misc_object, monster, and spawn_generator
+ * types are not used in any archetypes, and should perhaps be removed.
+ */
 #define TRAP_PART	            76	/* Needed by set traps skill -b.t. */ 
 
 #define WALL                    77 /* this is a wall. put it always in layer 1 if not set is_floor */
@@ -258,44 +262,6 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define DISEASE                 158
 #define SYMPTOM                 159
 /* END TYPE DEFINE */
-
-/* START SUB TYPE 1 DEFINE */
-/* for weapons, we should give out a warning msg when we have no sub_type1 >0 */
-#define ST1_WEAPON_NON_MELEE    1 /* people without melee_weapon can use this */
-#define ST1_WEAPON_DAGGER       2 /* daggers should count to non melee_weapons */
-#define ST1_WEAPON_SWORD        3 /* put good dagger to heavy dagger = swords */
-#define ST1_WEAPON_AXE          4
-#define ST1_WEAPON_CHAINED      5
-#define ST1_WEAPON_MACE         6
-#define ST1_WEAPON_CLUB         7
-#define ST1_WEAPON_HAMMER       8
-
-/* for armors, we should give out a warning msg when we have no sub_type1 >0 */
-#define ST1_ARMOR_CLOTHES     1 /* thats the easiest: clothes, dress, tunic */
-#define ST1_ARMOR_JACKET      2 /* thats special armored clothes, etc */
-#define ST1_ARMOR_LEATHER     3
-#define ST1_ARMOR_HARDLEATHER 4
-#define ST1_ARMOR_MITHRIL     5
-#define ST1_ARMOR_SCALE       6
-#define ST1_ARMOR_CHAIN       7
-#define ST1_ARMOR_RING        8
-#define ST1_ARMOR_LIGHTPLATE  9
-#define ST1_ARMOR_PLATEMAIL   10
-#define ST1_ARMOR_FULLPLATE   11
-
-/* END SUB TYPE 1 DEFINE */
-
-
-/* START SUB TYPE 2 DEFINE */
-/* We can use this twice: This is for the server to use.
- * I insert a "double" function for st2. Default are flags,
- * but for special types we can use other values.
- * So be sure to check the type if we not use the default values.
- * Checking st2 should be in one single routine */
-
-#define ST2_FLAG_EATABLE 1 /* if this is set, we always send the item as type "FOOD" to client */
-
-/* END SUB TYPE 2 DEFINE */
 
 /* definitions for weapontypes */
 
@@ -448,7 +414,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define FLAG_WAS_WIZ	 	4 /* Player was once a wiz */
 #define FLAG_APPLIED	 	5 /* Object is ready for use by living */
 #define FLAG_UNPAID	 	6 /* Object hasn't been paid for yet */
-#define FLAG_AN		 	7 /* Name must be prepended by "an", not "a"*/
+/*#define FLAG_AN		7  unused - Name must be prepended by "an", not "a"*/
 
 #define FLAG_NO_PICK	 	8 /* Object can't be picked up */
 #define FLAG_WALK_ON	 	9 /* Applied when it's walked upon */
@@ -492,7 +458,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define FLAG_REFL_SPELL		40 /* Spells (some) will reflect from object */
 #define FLAG_NO_MAGIC		41 /* Spells (some) can't pass this object */
 #define FLAG_NO_FIX_PLAYER	42 /* fix_player() won't be called */
-#define FLAG_NEED_IE		43 /* 1 ruby -> 2 rubies */
+/*#define FLAG_NEED_IE		43 Not used - take care of by the name_pl now 1 ruby -> 2 rubies */
 #define FLAG_TEAR_DOWN		44 /* at->faces[hp*animations/maxhp] at hit */
 #define FLAG_RUN_AWAY		45 /* Object runs away from nearest player \
 				      but can still attack at a distance */

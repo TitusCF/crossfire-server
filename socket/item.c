@@ -135,9 +135,9 @@ unsigned int query_flags (object *op)
 void esrv_draw_look(object *pl)
 {
     object *tmp, *last;
-    int flags, got_one=0,anim_speed, start_look=0, end_look=0;
+    int flags, got_one=0,anim_speed, start_look=0, end_look=0, len;
     SockList sl;
-    char buf[MAX_BUF];
+    char buf[MAX_BUF], *item_p,item_n[MAX_BUF];
 
     if (!pl->contr->socket.update_look) {
 	LOG(llevDebug,"esrv_draw_look called when update_look was not set\n");
@@ -156,7 +156,7 @@ void esrv_draw_look(object *pl)
     sl.buf=malloc(MAXSOCKBUF);
 
     Write_String_To_Socket(&pl->contr->socket, "delinv 0", strlen("delinv 0"));
-    strcpy((char*)sl.buf,"item1 ");
+    sprintf((char*)sl.buf,"item%d ", pl->contr->socket.itemcmd);
     sl.len=strlen((char*)sl.buf);
 
     SockList_AddInt(&sl, 0);
@@ -212,22 +212,17 @@ void esrv_draw_look(object *pl)
 	    SockList_AddInt(&sl, flags);
 	    SockList_AddInt(&sl, QUERY_FLAG(tmp, FLAG_NO_PICK) ? -1 : WEIGHT(tmp));
 	    SockList_AddInt(&sl, tmp->face->number);
-        if (pl->contr->socket.sc_version>=1024) {
-		int len;
-		char *item_p,item_n[MAX_BUF];
 
-		strncpy(item_n,query_base_name(tmp, 0),127);
-		item_n[127]=0;
-		len=strlen(item_n);
-		item_p=query_base_name(tmp, 1);
-		strncpy(item_n+len+1, item_p, 127);
-		item_n[254]=0;
-		len += strlen(item_n+1+len) + 1;
-		SockList_AddChar(&sl, (char ) len);
-		memcpy(sl.buf+sl.len, item_n, len);
-		sl.len += len;
-	    } else
-		add_stringlen_to_sockbuf(query_base_name(tmp,0), &sl);
+	    strncpy(item_n,query_base_name(tmp, 0),127);
+	    item_n[127]=0;
+	    len=strlen(item_n);
+	    item_p=query_base_name(tmp, 1);
+	    strncpy(item_n+len+1, item_p, 127);
+	    item_n[254]=0;
+	    len += strlen(item_n+1+len) + 1;
+	    SockList_AddChar(&sl, (char ) len);
+	    memcpy(sl.buf+sl.len, item_n, len);
+	    sl.len += len;
 
 	    SockList_AddShort(&sl,tmp->animation_id);
 	    anim_speed=0;
@@ -242,12 +237,16 @@ void esrv_draw_look(object *pl)
 	    }
 	    SockList_AddChar(&sl, (char) anim_speed);
 	    SockList_AddInt(&sl, tmp->nrof);
+
+	    if (pl->contr->socket.itemcmd == 2)
+		SockList_AddShort(&sl, tmp->client_type);
+
 	    SET_FLAG(tmp, FLAG_CLIENT_SENT);
 	    got_one++;
 
 	    if (sl.len > (MAXSOCKBUF-MAXITEMLEN)) {
 		Send_With_Handling(&pl->contr->socket, &sl);
-		strcpy((char*)sl.buf,"item1 ");
+		sprintf((char*)sl.buf,"item%d ", pl->contr->socket.itemcmd);
 		sl.len=strlen((char*)sl.buf);
 		SockList_AddInt(&sl, 0);
 		got_one=0;
@@ -263,9 +262,9 @@ void esrv_draw_look(object *pl)
 void esrv_send_inventory(object *pl, object *op)
 {
     object *tmp;
-    int flags, got_one=0, anim_speed;
+    int flags, got_one=0, anim_speed, len;
     SockList sl;
-    char item_n[MAX_BUF];
+    char item_n[MAX_BUF], *item_p;
     
     sl.buf=malloc(MAXSOCKBUF);
 
@@ -273,7 +272,7 @@ void esrv_send_inventory(object *pl, object *op)
     sl.len=strlen((char*)sl.buf);
     Send_With_Handling(&pl->contr->socket, &sl);
 
-    strcpy((char*)sl.buf,"item1 ");
+    sprintf((char*)sl.buf,"item%d ", pl->contr->socket.itemcmd);
     sl.len=strlen((char*)sl.buf);
 
     SockList_AddInt(&sl, op->count);
@@ -293,22 +292,16 @@ void esrv_send_inventory(object *pl, object *op)
 	    SockList_AddInt(&sl, QUERY_FLAG(tmp, FLAG_NO_PICK) ? -1 : WEIGHT(tmp));
 	    SockList_AddInt(&sl, tmp->face->number);
         
-	    if (pl->contr->socket.sc_version>=1024) {
-		int len;
-		char *item_p;
-
-		strncpy(item_n,query_base_name(tmp, 0),127);
-		item_n[127]=0;
-		len=strlen(item_n);
-		item_p=query_base_name(tmp, 1);
-		strncpy(item_n+len+1, item_p, 127);
-		item_n[254]=0;
-		len += strlen(item_n+1+len) + 1;
-		SockList_AddChar(&sl, (char) len);
-		memcpy(sl.buf+sl.len, item_n, len);
-		sl.len += len;
-	    } else
-		add_stringlen_to_sockbuf(query_base_name(tmp,0), &sl);
+	    strncpy(item_n,query_base_name(tmp, 0),127);
+	    item_n[127]=0;
+	    len=strlen(item_n);
+	    item_p=query_base_name(tmp, 1);
+	    strncpy(item_n+len+1, item_p, 127);
+	    item_n[254]=0;
+	    len += strlen(item_n+1+len) + 1;
+	    SockList_AddChar(&sl, (char) len);
+	    memcpy(sl.buf+sl.len, item_n, len);
+	    sl.len += len;
 
 	    SockList_AddShort(&sl,tmp->animation_id);
 	    anim_speed=0;
@@ -323,16 +316,18 @@ void esrv_send_inventory(object *pl, object *op)
 	    }
 	    SockList_AddChar(&sl, (char)anim_speed);
 	    SockList_AddInt(&sl, tmp->nrof);
+	    if (pl->contr->socket.itemcmd == 2)
+		SockList_AddShort(&sl, tmp->client_type);
 	    SET_FLAG(tmp, FLAG_CLIENT_SENT);
 	    got_one++;
 
 	    /* IT is possible for players to accumulate a huge amount of
 	     * items (especially with some of the bags out there) to
-	     * overflow the buffer.  IF so, send multiple item1 commands.
+	     * overflow the buffer.  IF so, send multiple item commands.
 	     */
 	    if (sl.len > (MAXSOCKBUF-MAXITEMLEN)) {
 		Send_With_Handling(&pl->contr->socket, &sl);
-		strcpy((char*)sl.buf,"item1 ");
+		sprintf((char*)sl.buf,"item%d ", pl->contr->socket.itemcmd);
 		sl.len=strlen((char*)sl.buf);
 		SockList_AddInt(&sl, op->count);
 		got_one=0;
@@ -392,22 +387,19 @@ void esrv_update_item(int flags, object *pl, object *op)
 	SockList_AddInt(&sl, op->face->number);
     }
     if (flags & UPD_NAME) {
-	if (pl->contr->socket.sc_version>=1024) {
-	    int len;
-	    char *item_p, item_n[MAX_BUF];
+	int len;
+	char *item_p, item_n[MAX_BUF];
 
-	    strncpy(item_n,query_base_name(op, 0),127);
-	    item_n[127]=0;
-	    len=strlen(item_n);
-	    item_p=query_base_name(op, 1);
-	    strncpy(item_n+len+1, item_p, 127);
-	    item_n[254]=0;
-	    len += strlen(item_n+1+len) + 1;
-	    SockList_AddChar(&sl, (char)len);
-	    memcpy(sl.buf+sl.len, item_n, len);
-	    sl.len += len;
-	} else
-	    add_stringlen_to_sockbuf(query_base_name(op,0), &sl);
+	strncpy(item_n,query_base_name(op, 0),127);
+	item_n[127]=0;
+	len=strlen(item_n);
+	item_p=query_base_name(op, 1);
+	strncpy(item_n+len+1, item_p, 127);
+	item_n[254]=0;
+	len += strlen(item_n+1+len) + 1;
+	SockList_AddChar(&sl, (char)len);
+	memcpy(sl.buf+sl.len, item_n, len);
+	sl.len += len;
     }
     if (flags & UPD_ANIM) 
 	    SockList_AddShort(&sl,op->animation_id);
@@ -434,9 +426,9 @@ void esrv_update_item(int flags, object *pl, object *op)
 
 void esrv_send_item(object *pl, object*op)
 {
-    int anim_speed;
+    int anim_speed, len;
     SockList sl;
-    char item_n[MAX_BUF];
+    char item_n[MAX_BUF], *item_p;
     
     /* If this is not the player object, do some more checks */
     if (op!=pl) {
@@ -454,7 +446,7 @@ void esrv_send_item(object *pl, object*op)
 
     sl.buf=malloc(MAXSOCKBUF);
 
-    strcpy((char*)sl.buf,"item1 ");
+    sprintf((char*)sl.buf,"item%d ", pl->contr->socket.itemcmd);
     sl.len=strlen((char*)sl.buf);
 
     SockList_AddInt(&sl, op->env? op->env->count:0);
@@ -470,22 +462,16 @@ void esrv_send_item(object *pl, object*op)
     SockList_AddInt(&sl, WEIGHT(op));
     SockList_AddInt(&sl, op->face->number);
     
-    if (pl->contr->socket.sc_version>=1024) {
-	int len;
-	char *item_p;
-
-	strncpy(item_n,query_base_name(op, 0),127);
-	item_n[127]=0;
-	len=strlen(item_n);
-	item_p=query_base_name(op, 1);
-	strncpy(item_n+len+1, item_p, 127);
-	item_n[254]=0;
-	len += strlen(item_n+1+len) + 1;
-	SockList_AddChar(&sl, (char)len);
-	memcpy(sl.buf+sl.len, item_n, len);
-	sl.len += len;
-    } else
-	add_stringlen_to_sockbuf(query_base_name(op,0), &sl);
+    strncpy(item_n,query_base_name(op, 0),127);
+    item_n[127]=0;
+    len=strlen(item_n);
+    item_p=query_base_name(op, 1);
+    strncpy(item_n+len+1, item_p, 127);
+    item_n[254]=0;
+    len += strlen(item_n+1+len) + 1;
+    SockList_AddChar(&sl, (char)len);
+    memcpy(sl.buf+sl.len, item_n, len);
+    sl.len += len;
 
     SockList_AddShort(&sl,op->animation_id);
     anim_speed=0;
@@ -500,6 +486,9 @@ void esrv_send_item(object *pl, object*op)
     }
     SockList_AddChar(&sl, (char)anim_speed);
     SockList_AddInt(&sl, op->nrof);
+    if (pl->contr->socket.itemcmd == 2)
+	SockList_AddShort(&sl, op->client_type);
+
     Send_With_Handling(&pl->contr->socket, &sl);
     SET_FLAG(op, FLAG_CLIENT_SENT);
     free(sl.buf);

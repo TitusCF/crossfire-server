@@ -280,9 +280,6 @@ int move_monster(object *op) {
     /* so i call it here direct again */
     if(oph->head)           /* force update the head - one arch one pic */
         oph = oph->head;
-    oph->anim_enemy_dir = -1;
-    oph->anim_moving_dir = -1;
-
     
     if (QUERY_FLAG(op, FLAG_NO_ATTACK))  /* we never ever attack */
         enemy = op->enemy = NULL;
@@ -292,7 +289,6 @@ int move_monster(object *op) {
         enemy->attacked_by = op;       /* our ptr */
         enemy->attacked_by_count = op->count; /* our tag */
         get_rangevector(oph, enemy, &rv, 0);
-        oph->anim_enemy_dir = rv.direction;
     }
     
     if(QUERY_FLAG(op, FLAG_SLEEP)||QUERY_FLAG(op, FLAG_BLIND)
@@ -1357,12 +1353,6 @@ int move_object(object *op, int dir) {
     int newy = op->y+freearr_y[dir];
     object *tmp;
 
-    /* extended animation stuff */
-    if(op->head)
-        op->head->anim_moving_dir = dir;
-    else
-        op->anim_moving_dir = dir;    
-    
     /* 0.94.2 - we need to set the direction for the new animation code.
      * it uses it to figure out face to use - I can't see it
      * breaking anything, but it might.

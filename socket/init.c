@@ -111,6 +111,7 @@ void InitConnection(NewSocket *ns, uint32 from)
     ns->mapx = 11;
     ns->mapy = 11;
     ns->newmapcmd= 0;
+    ns->itemcmd = 1;	/* Default is version item1 command*/
 
     /* we should really do some checking here - if total clients overflows
      * we need to do something more intelligent, because client id's will start

@@ -59,6 +59,7 @@ typedef struct obj {
 
 /* These get an extra add_refcount(), after having been copied by memcpy() */
   char *name;			/* The name of the object, obviously... */
+  char *name_pl;		/* The plural name of the object */
   char *title;			/* Of foo, etc */
   char *race;			/* human, goblin, dragon, etc */
   char *slaying;		/* Which race to do double damage to */
@@ -76,6 +77,7 @@ typedef struct obj {
   sint8 facing;			/* Object is oriented/facing that way. */
 
   uint8 type; 		    /* PLAYER, BULLET, etc.  See define.h */
+  uint16 client_type;		/* Public type information */
 
   sint16	resist[NROFATTACKS];	/* Resistance adjustments for attacks */
   uint32	attacktype;	/* Bitmask of attacks this object does */
@@ -94,12 +96,7 @@ typedef struct obj {
   signed short last_eat;	/* How long since we last ate */
   signed short invisible;	/* How much longer the object will be invis */
   unsigned char pick_up;        /* See crossfire.doc */
-  int anim_enemy_dir;       /* special shadow variable: show dir to targeted enemy */
-  int anim_moving_dir;      /* sic: shows moving dir or -1 when object do something else */
-  int anim_enemy_dir_last;       /* if we change facing in movement, we must test for update the anim*/
-  int anim_moving_dir_last;      /* sic:*/
-  int anim_last_facing;     /* the last direction this monster was facing */
-  int anim_last_facing_last;     /* the last direction this monster was facing backbuffer*/
+
   struct obj *owner;  /* Pointer to the object which controls this one */
                       /* Owner should not be referred to directly - */
                       /* get_owner should be used instead. */
@@ -115,25 +112,22 @@ typedef struct obj {
   tag_t ownercount;		/* What count the owner had (in case owner */
 				/* has been freed) */
   struct treasureliststruct *randomitems; /* Items to be generated */
-#if 0
-  unsigned short thrown;        /* How much further the object will fly */
-#endif
-/* Some debug variables: */
+  /* Some debug variables: */
   unsigned short run_away;	/* Monster runs away if it's hp goes below \
 				   this percentage. */
  
-/* Not commented out by ALLOW_SKILLS - to many pieces of code want this
- * information
- */
+  /* Not commented out by ALLOW_SKILLS - to many pieces of code want this
+   * information
+   */
   struct obj *chosen_skill;	/* the skill chosen to use */
   struct obj *exp_obj;		/* the exp. obj (category) assoc. w/ this object */
   uint32 hide;			/* The object is hidden, not invisible */
 
-/* lighting code uses these - b.t. */
+  /* lighting code uses these - b.t. */
   signed short glow_radius;	/* indicates the glow radius of the object */
 
-/* changes made by kholland@sunlab.cit.cornell.edu */
-/* allows different movement patterns for attackers */
+  /* changes made by kholland@sunlab.cit.cornell.edu */
+  /* allows different movement patterns for attackers */
   signed long move_status;      /* What stage in attack mode */
   unsigned short move_type;     /* What kind of attack movement */
 

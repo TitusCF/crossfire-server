@@ -51,7 +51,7 @@
  * The only thing they are used for at all right now is some of the
  * get_ob_diff code uses these and indexes with the V_.. fields.
  * Most of the more recent changes just put the names write in the
- * get_ob_diff, which then also means you odn't really need to worry
+ * get_ob_diff, which then also means you don't really need to worry
  * about the V_ flags.
  */
 static char *variable_const[NR_OF_VARIABLES] = {
@@ -215,6 +215,11 @@ WS	[ \t]*
 			if (*yv=='\0') LOG(llevError,"Name without val\n");
 			else FREE_AND_COPY(op->name, yv);
 		    }
+^name_pl{S}	    {	char *yv=yval();
+
+			if (*yv=='\0') LOG(llevError,"Name without val\n");
+			else FREE_AND_COPY(op->name_pl, yv);
+		    }
 ^race{S}	    FREE_AND_COPY(op->race,yval());
 ^slaying{S}	    FREE_AND_COPY(op->slaying, yval());
 ^inventory.*$	    LOG(llevError,"Got depreciated Inventory command?\n");
@@ -259,7 +264,25 @@ WS	[ \t]*
 			ismore=1;
 		    }
 
-^end{WS}$	    { if (ismore) return LL_MORE; else return LL_NORMAL; }
+^end{WS}$	    {	/* We do some specialized handling to handle legacy cases of
+			 * name_pl.  If the object doesn't have a name_pl, we just
+			 * use the object name - this isn't perfect (things won't be
+			 * properly pluralized), but works to that degree (5 heart is still
+			 * quite understandable).  But the case we also have to catch is
+			 * if this object is not using the normal name for the object.  In that
+			 * case, we also want to use the loaded name.  Otherwise, what happens
+			 * is that the the plural name will lose information (appear as
+			 * just 'hearts' and not 'goblins heart')
+			 */
+			if (op->arch && op->name != op->arch->name) {
+			    if (op->name_pl) free_string(op->name_pl);
+			    op->name_pl = NULL;
+			}
+			if (!op->name_pl) op->name_pl = add_string(op->name);
+
+			if (ismore) return LL_MORE; 
+			else return LL_NORMAL;
+		    }
 ^last_heal{S}	    op->last_heal = IVAL;
 ^last_sp{S}	    op->last_sp = IVAL;
 ^last_grace{S}    op->last_grace = IVAL;
@@ -312,8 +335,8 @@ WS	[ \t]*
 ^alive{S}	    SET_OR_CLEAR_FLAG(op, FLAG_ALIVE, IVAL);
 ^applied{S}	    SET_OR_CLEAR_FLAG(op, FLAG_APPLIED, IVAL);
 ^unpaid{S}	    SET_OR_CLEAR_FLAG(op, FLAG_UNPAID, IVAL);
-^need_an{S}	    SET_OR_CLEAR_FLAG(op, FLAG_AN, IVAL);
-^need_ie{S}	    SET_OR_CLEAR_FLAG(op, FLAG_NEED_IE, IVAL);
+^need_an{S}	    { /* not used - just ignore */ }
+^need_ie{S}	    { /* not used - jsut ignore */ }
 ^no_pick{S}	    SET_OR_CLEAR_FLAG(op, FLAG_NO_PICK, IVAL);
 ^no_pass{S}	    SET_OR_CLEAR_FLAG(op, FLAG_NO_PASS, IVAL);
 ^walk_on{S}	    SET_OR_CLEAR_FLAG(op, FLAG_WALK_ON, IVAL);
@@ -488,6 +511,7 @@ WS	[ \t]*
 ^weapontype{S}		op->weapontype = FVAL;
 ^casting_speed{S}	op->casting_speed = FVAL;
 ^elevation{S}		op->elevation = IVAL;
+^client_type{S}		op->client_type = IVAL;
 
 ^event_apply{S}	    {	char *yv=yval();
 
@@ -1060,7 +1084,7 @@ int flag_links[NUM_FLAGS+1][2] ={
 {FLAG_ALIVE, V_ALIVE}, {FLAG_WIZ, V_WIZ},
 {-1, -1}, {-1, -1},	/* REMOVED and FREED flags */
 {FLAG_WAS_WIZ, V_WAS_WIZ}, {FLAG_APPLIED, V_APPLIED},
-{FLAG_UNPAID, V_UNPAID}, {FLAG_AN, V_NEED_AN},
+{FLAG_UNPAID, V_UNPAID}, {-1, -1}, /* was need_an flag */
 {FLAG_NO_PICK, V_NO_PICK}, {FLAG_WALK_ON, V_WALK_ON},
 {FLAG_NO_PASS, V_NO_PASS},{FLAG_ANIMATE, V_IS_ANIMATED},
 {FLAG_SLOW_MOVE, -1}, {FLAG_FLYING, V_FLYING},
@@ -1078,7 +1102,7 @@ int flag_links[NUM_FLAGS+1][2] ={
 {FLAG_UNDEAD, V_UNDEAD}, {FLAG_SCARED, V_SCARED},
 {FLAG_UNAGGRESSIVE, V_UNAGGRESSIVE}, {FLAG_REFL_MISSILE, V_REFLECT_MISSILE},
 {FLAG_REFL_SPELL, V_REFLECT_SPELL}, {FLAG_NO_MAGIC, V_NO_MAGIC},
-{FLAG_NO_FIX_PLAYER, V_NO_FIX_PLAYER}, {FLAG_NEED_IE, V_NEED_IE}, 
+{FLAG_NO_FIX_PLAYER, V_NO_FIX_PLAYER}, {-1, -1}, /* need_ie */
 {FLAG_TEAR_DOWN, V_TEAR_DOWN}, {FLAG_RUN_AWAY, V_RUN_AWAY},
 {FLAG_PASS_THRU, V_PASS_THRU}, {FLAG_CAN_PASS_THRU, V_CAN_PASS_THRU},
 {FLAG_PICK_UP, V_PICK_UP}, {FLAG_UNIQUE, V_UNIQUE},
@@ -1144,6 +1168,10 @@ char *get_ob_diff(object *op,object *op2) {/* I plan to optimize this heavily */
   buf[0]='\0';
   if(op->name && op->name!=op2->name) {
     sprintf(buf2,"name %s\n",op->name);
+    strcat(buf,buf2);
+  }
+  if(op->name_pl && op->name_pl!=op2->name_pl) {
+    sprintf(buf2,"name_pl %s\n",op->name_pl);
     strcat(buf,buf2);
   }
   if(op->title && op->title!=op2->title) {
@@ -1516,6 +1544,11 @@ char *get_ob_diff(object *op,object *op2) {/* I plan to optimize this heavily */
   }
   if (op->elevation && op->elevation != op2->elevation) {
     sprintf(buf2,"elevation %d\n", op->elevation);
+    strcat(buf,buf2);
+  }
+  if (op->client_type && op->client_type != op2->client_type) {
+    sprintf(buf2,"client_type %d\n", op->client_type);
+    strcat(buf,buf2);
   }
 
   for (tmp=0; tmp <= NUM_FLAGS; tmp++) {

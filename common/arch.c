@@ -130,75 +130,66 @@ object *get_archetype_by_object_name(char *name) {
   */
 int item_matched_string(object *pl, object *op, char *name)
 {
-   char *cp, local_name[MAX_BUF];
-   int count,retval=0;
-   strcpy(local_name, name);	/* strtok is destructive to name */
-   for (cp=strtok(local_name,","); cp; cp=strtok(NULL,",")) {
-     while (cp[0]==' ') ++cp;	/* get rid of spaces */
-     /*	LOG(llevDebug,"Trying to match %s\n", cp);*/
-     /* All is a very generic match - low match value */
-     if (!strcmp(cp,"all")) return 1;
-     /* unpaid is a little more specific */
-     if (!strcmp(cp,"unpaid") && QUERY_FLAG(op,FLAG_UNPAID)) return 2;
-     if (!strcmp(cp,"cursed") && QUERY_FLAG(op,FLAG_KNOWN_CURSED) &&
-       (QUERY_FLAG(op,FLAG_CURSED) ||QUERY_FLAG(op,FLAG_DAMNED)))
-       return 2;
-     /* Allow for things like '100 arrows' */
-     if ((count=atoi(cp))!=0) {
-       cp=strchr(cp, ' ');
-       while (cp && cp[0]==' ') ++cp;	/* get rid of spaces */
-     }
-     else
-     {
-       if (pl->type==PLAYER)
-       {
-         count=pl->contr->count;
-       }
-       else
-       {
-         count = 0;
-       };
-     };
-     if (!cp || cp[0]=='\0' || count<0) return 0;
-     /* base name matched - not bad */
-     if (strcasecmp(cp,op->name)==0 && !count) return 4;
-     else if (count>1) {	/* Need to plurify name for proper match */
-     char newname[MAX_BUF];
-     strcpy(newname, op->name);
-     if (QUERY_FLAG(op,FLAG_NEED_IE)) {
-       char *cp1=strrchr(newname,'y');
-       if(cp1!=NULL)
-         *cp1='\0'; /* Strip the 'y' */
-       strcat(newname,"ies");
-     }
-     else strcat(newname,"s");
-     if (!strcasecmp(newname,cp)) {
-       pl->contr->count=count;	/* May not do anything */
-       return 6;
-     }
-   }
-   else if (count==1) {
-     if (!strcasecmp(op->name,cp)) {
-       pl->contr->count=count;	/* May not do anything */
-       return 6;
-     }
-   }
-   if (!strcasecmp(cp,query_name(op))) retval=20;
-   else if (!strcasecmp(cp,query_short_name(op))) retval=18;
-   else if (!strcasecmp(cp,query_base_name(op,0))) retval=16;
-   else if (!strcasecmp(cp,query_base_name(op,1))) retval=16;
-   else if (!strncasecmp(cp,query_base_name(op,0),
-     MIN(strlen(cp),strlen(query_base_name(op,0))))) retval=14;
-   else if (!strncasecmp(cp,query_base_name(op,1),
-     MIN(strlen(cp),strlen(query_base_name(op,1))))) retval=14;
-   if (retval) {
-     if (pl->type == PLAYER)
-     {
-       pl->contr->count=count;
-     };
-     return retval;
-   }
-   }
+    char *cp, local_name[MAX_BUF];
+    int count,retval=0;
+    strcpy(local_name, name);	/* strtok is destructive to name */
+
+    for (cp=strtok(local_name,","); cp; cp=strtok(NULL,",")) {
+	while (cp[0]==' ') ++cp;	/* get rid of spaces */
+
+	/*	LOG(llevDebug,"Trying to match %s\n", cp);*/
+	/* All is a very generic match - low match value */
+	if (!strcmp(cp,"all")) return 1;
+
+	/* unpaid is a little more specific */
+	if (!strcmp(cp,"unpaid") && QUERY_FLAG(op,FLAG_UNPAID)) return 2;
+	if (!strcmp(cp,"cursed") && QUERY_FLAG(op,FLAG_KNOWN_CURSED) &&
+	    (QUERY_FLAG(op,FLAG_CURSED) ||QUERY_FLAG(op,FLAG_DAMNED)))
+	    return 2;
+
+	/* Allow for things like '100 arrows' */
+	if ((count=atoi(cp))!=0) {
+	    cp=strchr(cp, ' ');
+	    while (cp && cp[0]==' ') ++cp;	/* get rid of spaces */
+	}
+	else {
+	    if (pl->type==PLAYER)
+		count=pl->contr->count;
+	    else
+		count = 0;
+	}
+
+	if (!cp || cp[0]=='\0' || count<0) return 0;
+
+	/* base name matched - not bad */
+	if (strcasecmp(cp,op->name)==0 && !count) return 4;
+
+	else if (count>1) {	/* Need to plurify name for proper match */
+	    if (strcasecmp(cp,op->name_pl)) {
+		pl->contr->count=count;	/* May not do anything */
+		return 6;
+	    }
+	}
+	else if (count==1) {
+	    if (!strcasecmp(op->name,cp)) {
+		pl->contr->count=count;	/* May not do anything */
+		return 6;
+	    }
+	}
+	if (!strcasecmp(cp,query_name(op))) retval=20;
+	else if (!strcasecmp(cp,query_short_name(op))) retval=18;
+	else if (!strcasecmp(cp,query_base_name(op,0))) retval=16;
+	else if (!strcasecmp(cp,query_base_name(op,1))) retval=16;
+	else if (!strncasecmp(cp,query_base_name(op,0),
+			      MIN(strlen(cp),strlen(query_base_name(op,0))))) retval=14;
+	else if (!strncasecmp(cp,query_base_name(op,1),
+			      MIN(strlen(cp),strlen(query_base_name(op,1))))) retval=14;
+	if (retval) {
+	    if (pl->type == PLAYER)
+		pl->contr->count=count;
+	    return retval;
+	}
+    }
    return 0;
 }
 

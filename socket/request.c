@@ -179,6 +179,18 @@ void SetUp(char *buf, int len, NewSocket *ns)
 	    strcat(cmdback, tmpbuf);
 	    /* if the client is using faceset, it knows about image2 command */
 	    ns->image2=1;
+	} else if (!strcmp(cmd,"itemcmd")) {
+	    /* Version of the item protocol command to use.  Currently,
+	     * only supported versions are 1 and 2.  Using a numeric
+	     * value will make it very easy to extend this in the future.
+	     */
+	    char tmpbuf[20];
+	    int q = atoi(param);
+	    if (q<1 || q>2) {
+		sprintf(tmpbuf,"%d", ns->itemcmd);
+	    } else  {
+		ns->itemcmd = q;
+	    }
         } else if (!strcmp(cmd,"mapsize")) {
 	    int x, y=0;
 	    char tmpbuf[MAX_BUF], *cp;
@@ -463,11 +475,17 @@ void VersionCmd(char *buf, int len,NewSocket *ns)
 	 * Add later stuff here for other clients 
 	 */
 
-	if(!strcmp(" CF DX CLIENT", cp)) /* these are old dxclients */
+	/* these are old dxclients */
+	/* Version 1024 added support for singular + plural name values - 
+	 * requiing this minimal value reduces complexity of that code, and it
+	 * has been around for a long time.
+	 */
+	if(!strcmp(" CF DX CLIENT", cp) || ns->sc_version < 1024 )
 	{
 	    sprintf(version_warning,"drawinfo %d %s", NDI_RED, "**** VERSION WARNING ****\n**** CLIENT IS TO OLD!! UPDATE THE CLIENT!! ****");
 	    Write_String_To_Socket(ns, version_warning, strlen(version_warning));
 	}
+
     }
 }
 

@@ -126,6 +126,7 @@ typedef struct NewSocket {
     uint32  can_write:1;    /* Can we write to this socket? */
     uint16  look_position;  /* start of drawing of look window */
     uint8   mapx, mapy;	    /* How large a map the client wants */
+    uint8   itemcmd;	    /* What version of the 'item' protocol command to use */
 
     /* Below here is information only relevant for old sockets */
     char    *comment;	    /* name or listen comment */

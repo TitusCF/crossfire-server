@@ -3,7 +3,26 @@ This files so far only concernes how to make archetypes,treasure and NPC's.
 The name in parantheses is the name as it should be used in the archetype
 file.
 ===========================================================================
+Names (name, name_pl)
 
+If no 'name' field is specified in the object, it will use the name from
+the 'Object' field.
+
+The 'name_pl' field is the plural name for the object.  This only needs
+to be set if there is the potential for the object to merge with others -
+for example, there is no reason for name_pl to be set for floors, buildings,
+etc, as they can not merge with other objects.  Only objects that can
+be picked up really need a name_pl value.
+
+If name_pl is not set, this name defaults to the object->name value,
+which was either explicitly set or determined from the Object field.
+
+These name values are what the player sees for the name.  As the player
+sees it, the name may have the title appended to it, and may also
+have other per type specific information added in (spell contained
+within the spellbook for example).
+
+------------------------------------------------------------------------------
 Types (type):
 
 Specified in defines.h.  It is used to group items together.  A type only
@@ -19,6 +38,193 @@ properties.
 
  When adding a type, you might also need to update crossedit/Attr.c for
 what default fields should be displayed in the attributes menu.
+
+------------------------------------------------------------------------------
+Client Types (client_type):
+
+client type information in public information communicated to the client.
+Client type differes from the type in several ways:
+
+1) It is more specific than the type information.
+2) The numbers used for client type are more logically grouped (all armor
+   related client_types are in the same range)
+3) client type is does not have a functional component in the server - it
+   only conveys information - the server does not determine what an object
+   may or may not do based on this.  At current time, the server does not
+   even look at the client_type for any information.
+4) The client_type can be used to hide the real time of an item.  Eg,
+   items of client_type poison should never be sent - client_type should 
+   instead by booze so difficult for the client to know what the item
+   really is.  similarly, special objects used in quests which appear
+   as something else (eg, a key appearing as a shovel) can use the
+   client type to have the type shown as the same category that
+   shovels would be in.
+
+The client_type list below has large gaps - this is to allow future items
+to be grouped with items of similar type (Eg, if a new weapon type,
+say two-handed is added, it should be grouped with the weapons and not
+put at the end of the table).  The entire point of the client_type information
+is to group the items together.
+
+In the list below, the number in parenthese corresponds to the number in
+define.h file.  At the top of each group of items, the range is given.  It is
+intentional in most cases to leave the first entry of a range blank - this
+gives room to place really important items of a type at the top.  Note that
+only items the player may be able to pick up actually need types.
+
+Note in most cases, the artifact type items are at the top of a group listing.
+This is done for artifact items that already have a different face/name,
+such that the player already knows they are special anyways.
+
+client_type
+Client Type	Notes
+1-49		Specials - items that should be very noticable to the player.
+1		bomb (47)
+41		power crystal (156)
+
+50-99		Containers - put near top to make things easier for the player.
+51		container (122)
+51		big containers - chests, sacks, etc.
+55		small containers (pouches)
+60		specialized containers (quivers, key rings)
+
+100-149		hand held weapons
+100		Artifact weapons (15)
+101		edged weapons (sword, scimitar, etc)
+106		axes
+121		clubs
+126		hammers
+129		maces
+136		pole arms
+141		chained weapons
+145		oddball weapons (magnify glass, stake, taifu, shovel, etc)
+
+150-199		Ranged weapons & ammo:
+150		artifact bows (14)
+151		bow (14)
+159		arrow (13)	Group ammo with firing type
+161		crossbow
+165		bolts
+
+250-399		Armor, shields, helms, etc.  Give each subtype a group
+		of 10 entries to further subdivide into.  This is basically all
+		equipable items not in another group.
+
+250-259		Bodywear (mails - 16) - ordered roughly in order of value
+250		Artifact/special
+251		Dragonmail - enough of these to warrant their own type
+252		plate mails
+253		chain mail, scale mail, & ring mail
+254		leather armor
+255		dress
+256		robes & tunics
+257		aprons
+
+260-269		Shields
+260		artifact shields (33)
+261		Shields (33)
+
+270-279		Headwear (34)
+270		artifact helmets (34)
+271		Helmets (34)
+272		turbans (34)
+273		wigs (34)
+275		eyeglasses (34)
+
+280		artifact cloaks (87)
+281		cloaks (87)
+
+290		artifact boots (99)
+291		boots (99)
+
+300		artifact gloves (100)
+301		gloves (100)
+305		gauntlets (100)
+
+310		artifact bracers (104) - god given
+311		bracers (104)
+
+321		girdle (113)
+381		amulets (39)
+390		artifact rings (70)
+391		rings (70)
+
+450-459		Skill objects - these are items that give you a skill, eg
+		lockpicks, talismens, etc.
+451		skill (43)
+461		trap parts (76)
+
+600-649		Food & alchemy related items.  Flesh items double as both
+		eatabls and used in alchemy.    Thus, we include the
+		inorganic items here so that most all the alchemy stuff
+		is located in the same general place in the inventory.
+601		Food (6)
+611		Poison (7)
+611		drink (54)
+620		Flesh item (72)
+622		corpse (157)		Used for raise dead spells
+624		flesh items, quasi food - dragon steak
+625		flesh item - heads, eyes, tongues, teeth (72)
+626		flesh item - legs, arms, hands, feet, fingers, etc.
+627		flesh item - misc - ichors, scales, hearts, livers, skin (72)
+628		flesh items - dusts
+641		inorganic - raw (73)
+642		inoranic - refined (true lead, mercury, etc)
+
+650-699		Single use spell casting items (scrolls, potions, balms)
+651		potion (5)
+652		balms, dusts (5)
+653		figurines (5)
+661		scroll (111)
+
+700-749		Ranged spell casting items
+701		rod heavy (3)
+701		rod light (3)
+711		wand (109)
+712		staff
+721		horn (35)
+
+800-849		Keys
+801		normal key (24)
+810		special key (21) (archetype)
+811-839		special keys that maps can override the value into.  In this
+		way, all the special keys for a dungeon can be given the same
+		client type so they group together.  Note that the map needs
+		to be modified to change the client_type of the keys to do this.
+
+1000-1049	Readables
+1001		mage Spellbook (85)
+1002		cleric spellbooks (85)
+1011		Armor improver (123)
+1016		weapon improver (124)	
+1021		Skill scroll (130)
+1041		Books & scrolls - information type objects (8)
+
+1100-1149	Light emitting objects & lightables
+1101		lighter (75)
+1102		torch 
+1103		colored torches
+
+2000-2049	Valuables - only real value is monetay
+2001		money (36)
+2005		gold nuggets 
+2011		gems (60) - this could be divided into more subtypes - probably better
+		for artifact gems to have a different type than worry about sorting
+		ruby, diamond, emerald, etc.
+2030		Jewelery (60) - chalice, crystball
+
+
+8000-8999	Misc - items of no specific use or can not easily be sorted.
+8001		clock (9)
+8002		furniture (15) - These can be used as weapons, but probably
+		shouldn't be.
+8003		ten kilo
+8006		bagpipe (24) - this is type key, probably shouldn't make it that obvious
+8011		gravestone (38)
+8012		boulders
+8013		pillars
+8015		flowers
+8020		ice cubes
 
 ------------------------------------------------------------------------------
 

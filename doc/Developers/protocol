@@ -376,16 +376,18 @@ C->S: mark <tag>
 
 Server updates to client:
 
-S->C: item <location><tag1><flags1><weight1><face1><name1><tag2><flags2>...
 S->C: item1 <location><tag1><flags1><weight1><face1><name1><anim1>
 	<animspeed1><nrof1><object2....>
+
+S->C: item2 <location><tag1><flags1><weight1><face1><name1><anim1>
+	<animspeed1><nrof1><type1><object2....>
 
 	Sends item information to the client.  All parameters are sent as 4
 	bytes ints.
 
 	The item1 command is an extension of the item command.  It includes
-	additional fields, and may end up depreciating the item command
-	sometime in the future.
+	additional fields.  It has replaced the item command, which is no
+	longer detailed here.
 
 	location is where the object is located (0=ground, any other value
 	means is the tag of the object (either player or container)).  This
@@ -409,12 +411,9 @@ S->C: item1 <location><tag1><flags1><weight1><face1><name1><anim1>
 	name is the name of the object.  The first byte of this field is the
 	text length of the name.  Starting at SC 1024, this name is two
 	strings, with a null seperation.  The first byte (length) is the
-	length for both of these strings.
-
-	Below here are fields/differences for the item1 command.
-
-	name:  Will not contain a string representing the number of items
-	(ten, 50, etc).  use of the nrof below will be used instead.
+	length for both of these strings.  This name information is just
+	the information of what the object is called.  It does not include
+	how many of the items there are.
 
 	anim:  This is the animation sequence id to use.  It is 2 bytes.
 	The server will send an 'anim' command for this before sending an
@@ -423,11 +422,18 @@ S->C: item1 <location><tag1><flags1><weight1><face1><name1><anim1>
 	animspeed:  How often the object should be animated.  This is 1
 	byte, and is the number of ticks that should pass between each
 	animation (a value of 1 means it should be animated every tick.)
-	1 byte limites this to once every 255 ticks - I can't see anything
+	1 byte limits this to once every 255 ticks - I can't see anything
 	being animated slower than that.
 
 	nrof:  How many objects comprise this item.  This is used for
 	the name field and calculating total weight.  It is 4 bytes.
+
+	item2 is an extension, and adds the following information:
+
+	type: A numeric type id for the item.  The only meaining of this
+	value is really for sorting - all armors will have type values
+	the same or near that each other.  The client is free to ignore
+	this.
 
 S->C: upditem <flags><tag><vals>+
 

@@ -17,6 +17,57 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Main change is the addition of name_pl and client_type to object
+structure.  The name_pl contains the proper plural name instance - fixes
+problem of '2 tooths'.  client_type is sent to the client so that client
+doesn't need to figure out sorting on its own.  Client_type is an object
+attribute, so can be modified in maps to hide the real type.
+--
+common/arch.c: item_matched_string() modified to use the name_pl field
+   when trying to match names, and not to try to make the name plural
+   itself. 
+common/item.c: query_short_name(),query_base_name() modified to
+    use name_pl instead of trying to make the name plural.
+common/loader.c, common/loader.l:  Add code to load and save the name_pl
+    value and client_type.  Add logic when object is finished loading
+    to set name_pl value to same as name or arch name if no name_pl
+    is specified - this supports old maps/characters in which the objects
+    dont have a name_pl field yet.  Disable logic for need_an and need_ie
+    flags since they are no longer needed.  Fix bug that caused
+    elevation not to get saved.
+common/object.c: Add client_type check for CAN_MERGE function.  Add
+    appropriate logice in functions to handle setting, clearing, and
+    copying of name_pl values.  Remove unused anim_... fields
+    initialization.
+doc/Developers/objects: Add information about the name_pl field and
+    client_type.
+doc/Developers/protocol: Remove item protocol command info - it has
+    been obsoleted.  Add information about item2 protocol command.
+include/define.h:  Remote ST1_* values - they were not being used.
+    comment out FLAG_AN and FLAG_NEED_IE values.
+include/newserver.h: Add itemcmd to socket structure - this is the
+    version of the item protocol command that will be sent to the client.
+include/object.h: Add name_pl and client_type field to object structure.
+    Remove unused anim_* values.
+lib/archetypes: rebuilt with new archetypes that contain client_type
+    and name_pl information.
+lib/bmaps, lib/bmaps.paths, lib/crossfire.1, lib/crossfire.0, lib/faces:
+    rebuilt.
+server/monster.c: Remove anim_ references that were not being used.
+socket/init.c: Initialize itemcmd version in the socket to 1.
+socket/item.c: Remove special handling for clients of old versions - all
+    clients now have to be at least sc_version 1024 (which has been around for
+    a long time).  This simplifies a lot of the object code that deals with
+    sending or not sending plural names to the client - now always send them.
+    Change code that sends item to client to use the item revision (currently
+    1 or 2) that the client wants.  If version 2, send along client_type
+    information.
+socket/request.c: Handle 'itemcmd' parameter in setup command.  Make
+    sure it is in proper range.  If client is very old (sc_version < 1024)
+    tell them so.
+MSW 2002-05-30
+
+
 crossedit/png.c, crossedit/xutil.c: Increase size of temporary buffers that
   are used when loading images - necessary to allow the editor to run without
   crashing.

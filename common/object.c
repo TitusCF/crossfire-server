@@ -133,7 +133,8 @@ inline int CAN_MERGE(object *ob1, object *ob2) {
 	(ob1->magic != ob2->magic) ||
 	(ob1->slaying != ob2->slaying) ||
 	(ob1->value != ob2->value) ||
-	(ob1->animation_id != ob2->animation_id)
+	(ob1->animation_id != ob2->animation_id) ||
+	(ob1->client_type != ob2->client_type)
 	) 
 	    return 0;
 
@@ -494,6 +495,7 @@ void copy_owner (object *op, object *clone)
 void reset_object(object *op) {
   int i;
   op->name = NULL;
+  op->name_pl = NULL;
   op->title = NULL;
   op->race = NULL;
   op->slaying = NULL;
@@ -518,6 +520,10 @@ void clear_object(object *op) {
   if(op->name!=NULL) {
     free_string(op->name);
     op->name=NULL;
+  }
+  if(op->name_pl!=NULL) {
+    free_string(op->name_pl);
+    op->name_pl=NULL;
   }
   if(op->title != NULL) {
     free_string(op->title);
@@ -582,12 +588,7 @@ void clear_object(object *op) {
   op->attacked_by_count= -1;
   op->type=0;
   op->casting_speed = (float)0;
-  op->anim_enemy_dir = -1;      /* control the facings 25 animations */
-  op->anim_moving_dir = -1;     /* the same for movement */
-  op->anim_enemy_dir_last = -1;
-  op->anim_moving_dir_last = -1;
-  op->anim_last_facing = 4;
-  op->anim_last_facing_last = -1;
+
   /* The object should already have been removed from the speed list
    * before this function is called
    */
@@ -609,6 +610,7 @@ void clear_object(object *op) {
   op->spellitem = NULL;
   op->animation_id=0;
   op->weapontype=0;
+  op->client_type=0;
 }
 
 /*
@@ -622,6 +624,8 @@ void copy_object(object *op2, object *op) {
 
   if(op->name!=NULL)
     free_string(op->name);
+  if(op->name_pl!=NULL)
+    free_string(op->name_pl);
   if(op->title!=NULL)
     free_string(op->title);
   if(op->race!=NULL)
@@ -639,6 +643,8 @@ void copy_object(object *op2, object *op) {
     SET_FLAG(op,FLAG_REMOVED);
   if(op->name!=NULL)
     add_refcount(op->name);
+  if(op->name_pl!=NULL)
+    add_refcount(op->name_pl);
   if(op->title!=NULL)
     add_refcount(op->title);
   if(op->race!=NULL)
@@ -716,6 +722,7 @@ object *get_object() {
     free_objects->prev=NULL;
   op->count= ++ob_count;
   op->name=NULL;
+  op->name_pl=NULL;
   op->title=NULL;
   op->race=NULL;
   op->slaying=NULL;
@@ -986,6 +993,10 @@ void free_object(object *ob) {
   if(ob->name!=NULL) {
     free_string(ob->name);
     ob->name=NULL;
+  }
+  if(ob->name_pl!=NULL) {
+    free_string(ob->name_pl);
+    ob->name_pl=NULL;
   }
   if(ob->title!=NULL) {
     free_string(ob->title);
