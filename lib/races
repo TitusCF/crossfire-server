@@ -118,6 +118,7 @@ RACE animal
 RACE bird
   generate_bird
   chicken
+  goose
   bird
 RACE reptile
   generate_serp_man
@@ -270,7 +271,7 @@ RACE consuming_fire_creatures
   !dragon
   !baby_dragon
   !big_dragon
- # this is the summoning list for the goddess Ixalovh
+# this is the summoning list for the goddess Ixalovh
 RACE chaotic_water_creatures
   !para_water
   !water_elemental
