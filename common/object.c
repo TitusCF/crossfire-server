@@ -534,7 +534,9 @@ void clear_object(object *op) {
     op->head=NULL;
     op->map=NULL;
     op->refcount=0;
-    /* What is not cleared is next, prev, active_next, active_prev, and count */
+    op->active_next = NULL;
+    op->active_prev = NULL;
+    /* What is not cleared is next, prev, and count */
 
     op->expmul=1.0;
     op->face = blank_face;

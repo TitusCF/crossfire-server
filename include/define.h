@@ -721,7 +721,7 @@ static inline void safe_strcat(char *dest, char *orig, int *curlen, int maxlen)
     strncpy(dest+*curlen, orig, maxlen-*curlen-1);
     dest[maxlen-1]=0;
     *curlen += strlen(orig);
-    if (*curlen>(maxlen-1)) *curlen=maxlen=1;
+    if (*curlen>(maxlen-1)) *curlen=maxlen-1;
 }
 
 

@@ -17,6 +17,18 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Those fixes deal with gcc3.3 infinite loop.
+Fixes (except sizeof/memset) courtesy Bernd Edler.
+---
+common/item.c: use right buffer size for safe_strcat.
+common/object.c: clear active_next and active_prev when cleaning an object.
+include/define.h: fixed *curlen=maxlen-1; instead of *curlen=maxlen=1;
+socket/init.c: initialize whole ns->inbuf.buf, instead of setting first
+   element only to 0. Also allocated with a sizeof( unsigned char ) * size,
+   in case size changes one day. And initialize some more fields.
+Ryo 2003-12-18
+
+
 Those changes deal only with warning cleaning under Windows.
 Mostly, using the right type at the right place, or doing explicit casts.
 ---

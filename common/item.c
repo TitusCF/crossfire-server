@@ -603,15 +603,15 @@ char *query_base_name(object *op, int plural) {
 	case ROD:
 	    if (QUERY_FLAG(op,FLAG_IDENTIFIED)||QUERY_FLAG(op,FLAG_BEEN_APPLIED)) {
 		if(!op->title) {
-		    safe_strcat(buf," of ", &len, HUGE_BUF);
+		    safe_strcat(buf," of ", &len, MAX_BUF);
 		    if (op->inv) 
-			safe_strcat(buf,op->inv->name, &len, HUGE_BUF);
+			safe_strcat(buf,op->inv->name, &len, MAX_BUF);
 		    else
 			LOG(llevError,"Spellbook %s lacks inventory\n", op->name);
 		}
 		if(op->type != SPELLBOOK) {
 		    sprintf(buf2, " (lvl %d)", op->level);
-		    safe_strcat(buf, buf2, &len, HUGE_BUF);
+		    safe_strcat(buf, buf2, &len, MAX_BUF);
 		}
 	    }
 	    break;

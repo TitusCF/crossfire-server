@@ -120,6 +120,8 @@ void InitConnection(NewSocket *ns, uint32 from)
     ns->itemcmd = 1;	/* Default is version item1 command*/
     ns->ext_mapinfos=0; /*extendedmapinfo datas*/
     ns->EMI_smooth=0; 
+    ns->look_position = 0;
+    ns->update_look = 0;
 
     /* we should really do some checking here - if total clients overflows
      * we need to do something more intelligent, because client id's will start
@@ -127,12 +129,12 @@ void InitConnection(NewSocket *ns, uint32 from)
      * just open and close connections could get this total up.
      */
     ns->inbuf.len=0;
-    ns->inbuf.buf=malloc(MAXSOCKBUF);
+    ns->inbuf.buf=malloc( sizeof( unsigned char ) * MAXSOCKBUF );
     /* Basic initialization. Needed because we do a check in
      * HandleClient for oldsocketmode without checking the
      * length of data.
      */
-    ns->inbuf.buf[0] = 0;
+    memset( ns->inbuf.buf, 0, sizeof( unsigned char ) * MAXSOCKBUF );
     memset(&ns->lastmap,0,sizeof(struct Map));
     memset(&ns->faces_sent,0,sizeof(ns->faces_sent));
     memset(&ns->anims_sent,0,sizeof(ns->anims_sent));
