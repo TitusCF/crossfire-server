@@ -17,9 +17,15 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+random_maps/treasure.c server/apply.c:  made containers able to
+have more than one treasure in them, made a fix to treasure.c, which would
+change the options given to it in an unintended way.  --PeterM 6/20/2000
+
+
 common/living.c: fix_player():  Bugfix: Don't reset FLAG_FLYING,
 FLAG_REFL_SPELL, FLAG_REFL_MISSILE and FLAG_SEE_IN_DARK if the archetype
 has these flags.  - Jan Echternach 6/19/2000
+
 
 random_maps/*  Numerous changes improving random maps, including
 two crash-fixes, a new type of 'special', ability to copy inventory

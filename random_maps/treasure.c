@@ -79,7 +79,7 @@ void place_treasure(mapstruct *map,char **layout, char *treasure_style,int treas
   if(treasureoptions<=0) treasureoptions=RANDOM() % (2*LAST_OPTION);
 
   /* filter out the mutually exclusive options */
-  if(treasureoptions & (RICH|SPARSE)) {
+  if((treasureoptions & RICH) &&(treasureoptions &SPARSE)) {
     if(RANDOM()%2) treasureoptions -=1; 
     else treasureoptions-=2;}
 

@@ -2341,7 +2341,7 @@ void fix_auto_apply(mapstruct *m) {
 
 	if(QUERY_FLAG(tmp,FLAG_AUTO_APPLY))
           auto_apply(tmp);
-        else if(tmp->type==TREASURE) {
+        else if((tmp->type==TREASURE || (tmp->type==CONTAINER))&&tmp->randomitems) {
 	  while ((tmp->stats.hp--)>0)
             create_treasure(tmp->randomitems, tmp, GT_INVENTORY,
                             m->difficulty,0);
