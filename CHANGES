@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 CVS changes since last release:
 
+server/monster.c: add check to was_destroyed when monster fires an
+   arrow.  Call was certainly missing, and appears to be responsible for
+   crash.  MSW 2001-04-20
+
 server/player.c: Clear op->chosen_skill when we get to the play_again
    prompt.  Otherwise, the server may try to use this later on, and it
    no longer points to a valid object, so it results in a crash.

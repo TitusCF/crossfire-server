@@ -695,6 +695,8 @@ int monster_use_horn(object *head,object *part,object *pl,int dir) {
 
 int monster_use_bow(object *head, object *part, object *pl, int dir) {
   object *bow, *arrow, *owner;
+  int tag;
+
   if(!(dir=path_to_player(part,pl,0)))
     return 0;
   if(QUERY_FLAG(head,FLAG_CONFUSED))
@@ -737,8 +739,10 @@ int monster_use_bow(object *head, object *part, object *pl, int dir) {
   SET_FLAG(arrow, FLAG_FLYING);
   SET_FLAG(arrow, FLAG_FLY_ON);
   SET_FLAG(arrow, FLAG_WALK_ON);
+  tag = arrow->count;
   insert_ob_in_map(arrow,head->map,head);
-  move_arrow(arrow);
+  if (!was_destroyed(arrow, tag))
+    move_arrow(arrow);
   return 1;
 }
 
