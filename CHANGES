@@ -17,6 +17,13 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+disease.c spell_effect.c:  peterm: 10/5/2000
+1)  Diseases moderated in power by ~1/2 and randomized.
+    Now monsters can have a mild/moderate/serious/fatal case
+    of a particular disease.
+2)  cause disease spells modified to NOT go through objects
+    spells ordinarily couldn't go through.
+
 ------------------------------------------------------------------------------
 Changes for 0.95.7:
 
