@@ -248,6 +248,7 @@ void recursive_roll(object *op,int dir,object *pusher) {
  * that can be passed through by monsters with the CAN_PASS_THRU defined.
  *
  * very new version handles also multipart objects
+ * This is currently only used for the boulder roll code.
  */
 
 int try_fit (object *op, int x, int y) 

@@ -339,9 +339,10 @@ int blocked_link(object *ob, int x, int y) {
     else m = ob->map;
 
     /* If space is currently not blocked by anything, no need to
-     * go further.  Same logic as blocked_above.
+     * go further.  Not true for players - all sorts of special
+     * things we need to do for players.
      */
-    if (! (GET_MAP_FLAGS(m, x,y) & (P_NO_PASS | P_IS_ALIVE))) return 0;
+    if (ob->type != PLAYER && ! (GET_MAP_FLAGS(m, x,y) & (P_NO_PASS | P_IS_ALIVE))) return 0;
 
 
     if(ob->head != NULL)
@@ -352,14 +353,38 @@ int blocked_link(object *ob, int x, int y) {
      * true.  If we get through the entire stack, that must mean
      * ob is blocking it, so return 0.
      */
-    for(tmp = GET_MAP_OB(m,x,y); tmp!= NULL; tmp = tmp->above)
-	if (QUERY_FLAG(tmp,FLAG_NO_PASS) || (QUERY_FLAG(tmp,FLAG_ALIVE) &&
-					     tmp->head != ob && tmp != ob))
-      	return 1;
+    for(tmp = GET_MAP_OB(m,x,y); tmp!= NULL; tmp = tmp->above) {
 
+	if (QUERY_FLAG(tmp,FLAG_NO_PASS) || (QUERY_FLAG(tmp,FLAG_ALIVE) &&
+		     tmp->head != ob && tmp != ob && tmp->type != DOOR))
+			return 1;
+
+	/* This must be before the checks below.  Code for inventory checkers. */
+	if (tmp->type==CHECK_INV && QUERY_FLAG(tmp,FLAG_NO_PASS)) {
+	    /* If last_sp is set, the player/monster needs an object,
+	     * so we check for it.  If they don't have it, they can't
+	     * pass through this space.
+	     */
+	    if (tmp->last_sp) {
+		if (check_inv_recursive(ob,tmp)==NULL)
+		    return 1;
+		else
+		    continue;
+	    } else {
+		/* In this case, the player must not have the object -
+		 * if they do, they can't pass through.
+		 */
+		if (check_inv_recursive(ob,tmp)!=NULL) /* player has object */
+		    return 1;
+		else
+		    continue;
+	    }
+	} /* if check_inv */
+    }
     return 0;
 }
 
+#if 0
 /*
  * Eneq(@csd.uu.se): This is a new version of blocked, this one handles objects
  * that can be passed through by monsters with the CAN_PASS_THRU defined.
@@ -389,27 +414,6 @@ int blocked_two(object *op, int x,int y) {
 	/* Can not pass through doors */
 	if (QUERY_FLAG(tmp,FLAG_ALIVE) && tmp->type!=DOOR) return 1;
 
-	/* This must be before the checks below.  Code for inventory checkers. */
-	if (tmp->type==CHECK_INV && QUERY_FLAG(tmp,FLAG_NO_PASS)) {
-	    /* If last_sp is set, the player/monster needs an object,
-	     * so we check for it.  If they don't have it, they can't
-	     * pass through this space.
-	     */
-	    if (tmp->last_sp) {
-		if (check_inv_recursive(op,tmp)==NULL)
-		    return 1;
-		else
-		    continue;
-	    } else {
-		/* In this case, the player must not have the object -
-		 * if they do, they can't pass through.
-		 */
-		if (check_inv_recursive(op,tmp)!=NULL) /* player has object */
-		    return 1;
-		else
-		    continue;
-	    }
-	} /* if check_inv */
 
 	/* Can't get through this space */
 	if (QUERY_FLAG(tmp,FLAG_NO_PASS) && !QUERY_FLAG(tmp,FLAG_PASS_THRU))
@@ -421,6 +425,7 @@ int blocked_two(object *op, int x,int y) {
     }
     return 0;
 }
+#endif
 
 /*
  * Returns true if the given archetype can't fit in the given spot.
@@ -590,6 +595,9 @@ void load_objects (mapstruct *m, FILE *fp, int mapflags) {
 	    insert_ob_in_map(op,m, op, INS_NO_MERGE | INS_NO_WALK_ON | INS_ABOVE_FLOOR_ONLY);
 	    op->head=prev,last_more->more=op,last_more=op;
 	    break;
+	}
+	if (mapflags & MAP_STYLE) {
+	    remove_from_active_list(op);
 	}
 	op=get_object();
         op->map = m;
@@ -1014,7 +1022,7 @@ mapstruct *load_overlay_map(char *filename, mapstruct *m) {
     strcpy(pathname, create_overlay_pathname(filename));
 
     if((fp=open_and_uncompress(pathname, 0, &comp))==NULL) {
-	LOG(llevDebug,"Can't open overlay %s\n", pathname);
+/*	LOG(llevDebug,"Can't open overlay %s\n", pathname);*/
 	return m;
     }
     

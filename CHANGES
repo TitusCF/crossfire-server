@@ -17,6 +17,38 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+More bugfixes:
+common/loader.l, loader.c: Fix up the handling with speed with respect
+   to style maps - the objects were still getting put on the active
+   list.
+common/map.c: Fix up blocked_link() to behave more like the
+   blocked_two() function - inventory checkers and door handling.
+   Comment out blocked_two since it isn't used anymore.  Modify
+   load_objects to remove objects on style maps from the active
+   list.  Remove some of the debug messages about map loading.
+common/object.c: Add remove_from_active_list() function for use
+   in map.c to remove objects from active list.
+common/porting.c: Comment out debug message if open_and_uncompress()
+   can open a file - caller of the function should print out messages,
+   and it really isn't much of an error in any case.
+include/libproto.h: rebuilt.
+random_maps/special.c: Modify place_special_exit() - this should fix
+   bug of very large treasure maps - problem was if the generated map 
+   size was too small, when generate_random_map was called, it would
+   generate a newly sized map that was much larger.  Code was also
+   re-arranged some to make it a little more readable.
+server/attack.c: Fix crash when creature may not have an owner and
+   it kills something else.
+server/move.c: comment added - no code change.
+socket/request.c: Fix off by one error in esrv_send_animation() -
+   rare condition as it only showed up when trying to send the last
+   animation (zombie) - only an issue if the player is put on top of
+   a zombie for some reason (no other space for them) - observed when
+   leaving the random dungeon in the undead church in scorn without
+   clearing out all the zombies first.
+MSW 2002-09-06
+
+
 CHANGES: Update build instructions for the plugin.
 random_maps/square_spiral.c: Fix bug that could cause the search
    function to go off the edge of the map looking for a clear space.

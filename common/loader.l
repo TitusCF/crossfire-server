@@ -284,9 +284,10 @@ A	.+
 ^last_grace{S}	    op->last_grace = IVAL;
 ^last_eat{S}	    op->last_eat = IVAL;
 ^speed{S}	    {	op->speed = FVAL;
-			if (op->speed<0) op->speed_left = op->speed_left-RANDOM()%100/100.0;
-			if (!(map_flags & MAP_STYLE)) update_ob_speed(op);
-			if ((map_flags & MAP_STYLE) && (FABS(op->speed)<=MIN_ACTIVE_SPEED)) update_ob_speed(op);
+			if (!(map_flags & MAP_STYLE)) {
+			    if (op->speed<0) op->speed_left = op->speed_left-RANDOM()%100/100.0;
+			    update_ob_speed(op);
+			}
 		    }
 ^speed_left{S}    op->speed_left = FVAL;
 ^slow_move{S}	    {	SET_SLOW_PENALTY(op,FVAL);

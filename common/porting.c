@@ -509,7 +509,8 @@ FILE *open_and_uncompress(char *name,int flag, int *compressed) {
       return fp;
     }
   }
-  LOG(llevDebug, "Can't open %s\n", name);
+  /* Let the caller print an error if it wants to */
+/*  LOG(llevDebug, "Can't open %s\n", name);*/
   return NULL;
 }
 

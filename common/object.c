@@ -759,6 +759,33 @@ void update_ob_speed(object *op) {
     }
 }
 
+/* This function removes object 'op' from the list of active
+ * objects.
+ * This should only be used for style maps or other such 
+ * reference maps where you don't want an object that isn't
+ * in play chewing up cpu time getting processed.
+ * The reverse of this is to call update_ob_speed, which
+ * will do the right thing based on the speed of the object.
+ */
+void remove_from_active_list(object *op)
+{
+    /* If not on the active list, nothing needs to be done */
+    if (!op->active_next && !op->active_prev && op!=active_objects)
+	return;
+
+    if (op->active_prev==NULL) {
+	active_objects = op->active_next;
+	if (op->active_next!=NULL)
+	    op->active_next->active_prev = NULL;
+    }
+    else {
+	op->active_prev->active_next = op->active_next;
+	if (op->active_next)
+	    op->active_next->active_prev = op->active_prev;
+    }
+    op->active_next = NULL;
+    op->active_prev = NULL;
+}
 
 /*
  * update_object() updates the array which represents the map.

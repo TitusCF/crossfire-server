@@ -1154,27 +1154,27 @@ int hit_player_attacktype(object *op, object *hitter, int dam,
 		 * you summon vampires, you get some exp.  Most of this code
 		 * below is taken directly from kill_object
 		 */
-		if (owner != hitter) {
-		    old_skill = owner->chosen_skill;
-		    owner->chosen_skill = hitter->chosen_skill;
-		    owner->exp_obj=hitter->exp_obj;
-
-		    /* Not sure if this will happen or not - I'm think it could with
-		     * summoned pets - they may use a skill and thus the chosen_skill
-		     * gets updated to something they have.
-		     */
-		    if (owner->chosen_skill && owner->chosen_skill->env != owner) {
-			LOG(llevDebug,"kill_object: chosen skill doesn't belong to owner? (%s, %s)\n",
-			    owner->chosen_skill->name, owner->name);
-			owner->chosen_skill = NULL;
-		    }
-		    if (owner->exp_obj && owner->exp_obj->env != owner) {
-			LOG(llevDebug,"kill_object: exp_obj doesn't belong to owner? (%s, %s)\n",
-			    owner->exp_obj->name, owner->name);
-			owner->exp_obj = NULL;
-		    }
-		}
 		if (owner) {
+		    if (owner != hitter) {
+			old_skill = owner->chosen_skill;
+			owner->chosen_skill = hitter->chosen_skill;
+			owner->exp_obj=hitter->exp_obj;
+
+			/* Not sure if this will happen or not - I'm think it could with
+			 * summoned pets - they may use a skill and thus the chosen_skill
+			 * gets updated to something they have.
+			 */
+			if (owner->chosen_skill && owner->chosen_skill->env != owner) {
+			    LOG(llevDebug,"kill_object: chosen skill doesn't belong to owner? (%s, %s)\n",
+				owner->chosen_skill->name, owner->name);
+			    owner->chosen_skill = NULL;
+			}
+			if (owner->exp_obj && owner->exp_obj->env != owner) {
+			    LOG(llevDebug,"kill_object: exp_obj doesn't belong to owner? (%s, %s)\n",
+				owner->exp_obj->name, owner->name);
+			    owner->exp_obj = NULL;
+			}
+		    }
 		    add_exp(owner,op->stats.exp/(rate*2));
 		    owner->chosen_skill = old_skill;
 		} else {

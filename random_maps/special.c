@@ -172,72 +172,75 @@ void place_fountain_with_specials(mapstruct *map) {
 }
 
 void place_special_exit(mapstruct * map, int hole_type,RMParms *RP) {
-  int ix,iy,i=-1;
-  char buf[HUGE_BUF];
-  mapstruct *exit_style=find_style("/styles/misc","obscure_exits",-1);
+    int ix,iy,i=-1;
+    char buf[HUGE_BUF], *style, *decor, *mon;
+    mapstruct *exit_style=find_style("/styles/misc","obscure_exits",-1);
+    int g_xsize,g_ysize;
   
-  object *the_exit=get_object();
-  if(!exit_style) return;
+    object *the_exit=get_object();
+    if(!exit_style) return;
  
-  copy_object(pick_random_object(exit_style),the_exit);
+    copy_object(pick_random_object(exit_style),the_exit);
 
-  while(i<0) {
-    ix = RANDOM() % (MAP_WIDTH(map) -2) +1;
-    iy = RANDOM() % (MAP_HEIGHT(map) -2) +1;
-    i = find_first_free_spot(the_exit->arch,map,ix,iy);
-  };
+    while(i<0) {
+	ix = RANDOM() % (MAP_WIDTH(map) -2) +1;
+	iy = RANDOM() % (MAP_HEIGHT(map) -2) +1;
+	i = find_first_free_spot(the_exit->arch,map,ix,iy);
+    }
   
-  ix += freearr_x[i];
-  iy += freearr_y[i];
-  the_exit->x = ix;
-  the_exit->y = iy;
+    ix += freearr_x[i];
+    iy += freearr_y[i];
+    the_exit->x = ix;
+    the_exit->y = iy;
 
-  if(!hole_type) hole_type = RANDOM() % NR_OF_HOLE_TYPES + 1 ;
+    if(!hole_type) hole_type = RANDOM() % NR_OF_HOLE_TYPES + 1 ;
   
-  switch(hole_type) {
-  case GLORY_HOLE:   /* treasures */
-    {
-      int g_xsize,g_ysize;
-      g_xsize = RANDOM() %3 + 4 + RP->difficulty/4;
-      g_ysize = RANDOM() %3 + 4 + RP->difficulty/4;
-      write_parameters_to_string(buf, g_xsize, g_ysize,RP->wallstyle,RP->floorstyle,"none",
-                                 "none","onion","wealth2","none",RP->exitstyle,0,0,
-                                 OPT_WALLS_ONLY,0,0,1,RP->dungeon_level,RP->dungeon_level,
-                                 RP->difficulty,RP->difficulty,-1,1,0,0,0,0);
-      the_exit->slaying = add_string("/!");
-      the_exit->msg = add_string(buf);
-      break;
-    }
-  case ORC_ZONE:  /* hole with orcs in it. */
-    {
-      int g_xsize,g_ysize;
-      g_xsize = RANDOM() %3 + 4 + RP->difficulty/4;
-      g_ysize = RANDOM() %3 + 4 + RP->difficulty/4;
-      write_parameters_to_string(buf, g_xsize, g_ysize,RP->wallstyle,RP->floorstyle,"orc",
-                                 "none","onion","wealth2","none",RP->exitstyle,0,0,
-                                 OPT_WALLS_ONLY,0,0,1,RP->dungeon_level,RP->dungeon_level,
-                                 RP->difficulty,RP->difficulty,-1,1,0,0,0,0);
-      the_exit->slaying = add_string("/!");
-      the_exit->msg = add_string(buf);
-      break;
-    }
-  case MINING_ZONE:  /* hole with orcs in it. */
-    {
-      int g_xsize,g_ysize;
-      g_xsize = RANDOM() %9 + 4 + RP->difficulty/4;
-      g_ysize = RANDOM() %9 + 4 + RP->difficulty/4;
-      write_parameters_to_string(buf, g_xsize, g_ysize,RP->wallstyle,RP->floorstyle,"none",
-                                 "none","maze","minerals2","none",RP->exitstyle,0,0,
-                                 OPT_WALLS_ONLY,0,0,1,RP->dungeon_level,RP->dungeon_level,
-                                 RP->difficulty,RP->difficulty,-1,1,0,0,0,0);
-      the_exit->slaying = add_string("/!");
-      the_exit->msg = add_string(buf);
-      break;
+    switch(hole_type) {
+	case GLORY_HOLE:   /* treasures */
+	    {
+		g_xsize = RANDOM() %3 + 4 + RP->difficulty/4;
+		g_ysize = RANDOM() %3 + 4 + RP->difficulty/4;
+		style = "onion";
+		decor = "wealth2";
+		mon = "none";
+		break;
+	    }
+
+	case ORC_ZONE:  /* hole with orcs in it. */
+	    {
+		g_xsize = RANDOM() %3 + 4 + RP->difficulty/4;
+		g_ysize = RANDOM() %3 + 4 + RP->difficulty/4;
+		style = "onion";
+		decor = "wealth2";
+		mon = "orc";
+		break;
+	    }
+
+	case MINING_ZONE:  /* hole with orcs in it. */
+	    {
+		g_xsize = RANDOM() %9 + 4 + RP->difficulty/4;
+		g_ysize = RANDOM() %9 + 4 + RP->difficulty/4;
+		style = "maze";
+		decor = "minerals2";
+		mon = "none";
+		break;
+	    }
     }
 
-		
-  }
-  insert_ob_in_map(the_exit,map,NULL,0);
+    /* Need to be at least this size, otherwise the load
+     * code will generate new size values which are too large.
+     */
+    if (g_xsize < 7) g_xsize = 7;
+    if (g_ysize < 7) g_ysize = 7;
+
+    write_parameters_to_string(buf, g_xsize, g_ysize,RP->wallstyle,RP->floorstyle,mon,
+                                 "none",style,decor,"none",RP->exitstyle,0,0,
+                                 OPT_WALLS_ONLY,0,0,1,RP->dungeon_level,RP->dungeon_level,
+                                 RP->difficulty,RP->difficulty,-1,1,0,0,0,0);
+    the_exit->slaying = add_string("/!");
+    the_exit->msg = add_string(buf);
+
+    insert_ob_in_map(the_exit,map,NULL,0);
 }
   
 		  

@@ -707,7 +707,7 @@ void esrv_send_animation(NewSocket *ns, short anim_num)
      * are added in contigous order, so if the number is in the valid
      * range, it must be a valid animation.
      */
-    if (anim_num < 0 || anim_num >= num_animations) {
+    if (anim_num < 0 || anim_num > num_animations) {
 	LOG(llevError,"esrv_send_anim (%d) out of bounds??\n",anim_num);
 	return;
     }
