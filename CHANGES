@@ -17,6 +17,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 CVS changes since last release:
 
+server/apply.c: Increase size of buf to be a HUGE_BUF to very
+long item names don't cause a stack overflow.  MSW 2001/03/20
+
 common/object.c: Modify update_position so that we don't show invisible
 players to other players.  MSW 2001/03/20
 

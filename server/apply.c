@@ -2132,7 +2132,7 @@ int apply_special (object *who, object *op, int aflags)
 { /* wear/wield */
   int basic_flag = aflags & AP_BASIC_FLAGS;
   object *tmp;
-  char buf[MAX_BUF];
+  char buf[HUGE_BUF];
   int i;
 
   if(who==NULL) {
