@@ -220,6 +220,7 @@ extern void init_vars ( void );
 extern object *insert_ob_in_map ( object *op, mapstruct *m, object *originator );
 extern void insert_ob_in_map_simple ( object *op, mapstruct *m );
 extern object *insert_ob_in_ob ( object *op, object *where );
+extern void replace_insert_ob_in_map(char *arch_string, object *op);
 extern int isqrt ( int n );
 extern int is_magical ( object *op );
 extern object *is_player_inv ( object *op );

@@ -1735,6 +1735,9 @@ void check_fired_arch (object *op)
     }
 }
 
+
+
+
 void move_fired_arch (object *op)
 {
     tag_t op_tag = op->count;
@@ -1743,12 +1746,9 @@ void move_fired_arch (object *op)
     /* peterm:  added to make comet leave a trail of burnouts 
 	it's an unadulterated hack, but the effect is cool.	*/
     if(op->stats.sp == SP_METEOR) {
-	object * tmp1=arch_to_object(find_archetype("fire_trail"));
-
-        tmp1->x = op->x; tmp1->y = op->y;
-        insert_ob_in_map(tmp1,op->map,op);
-        if (was_destroyed (op, op_tag))
-            return;
+      replace_insert_ob_in_map("fire_trail",op);
+      if (was_destroyed (op, op_tag))
+        return;
     } /* end addition.  */
 
     new_x = op->x + DIRX(op);

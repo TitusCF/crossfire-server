@@ -1556,6 +1556,31 @@ object *insert_ob_in_map (object *op, mapstruct *m, object *originator)
     return op;
 }
 
+/* this function inserts an object in the map, but if it
+   finds an object of its own type, it'll remove that one first. 
+   op is the object to insert it under:  supplies x and the map.*/
+void replace_insert_ob_in_map(char *arch_string, object *op) {
+  object *tmp;
+  object *tmp1;
+
+  /* first search for itself and remove any old instances */
+
+  for(tmp=get_map_ob(op->map,op->x,op->y); tmp!=NULL; tmp=tmp->above) {
+    if(!strcmp(tmp->arch->name,arch_string)) /* same archetype */ {
+      remove_ob(tmp);
+      free_object(tmp);
+    }
+  }
+
+  tmp1=arch_to_object(find_archetype(arch_string));
+
+  
+  tmp1->x = op->x; tmp1->y = op->y;
+  insert_ob_in_map(tmp1,op->map,op);
+
+
+}        
+
 /*
  * get_split_ob(ob,nr) splits up ob into two parts.  The part which
  * is returned contains nr objects, and the remaining parts contains
