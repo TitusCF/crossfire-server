@@ -14,9 +14,9 @@ typedef struct {
   int rtype;  /* circle or rectangular */
 } Room;
 
-int roguelike_place_room(Room *Rooms,int xsize, int ysize,int nrooms);
-void roguelike_make_rooms(Room *Rooms,char **maze, int options);
-void roguelike_link_rooms(Room *Rooms,char **maze,int xsize,int ysize);
+static int roguelike_place_room(Room *Rooms,int xsize, int ysize,int nrooms);
+static void roguelike_make_rooms(Room *Rooms,char **maze, int options);
+static void roguelike_link_rooms(Room *Rooms,char **maze,int xsize,int ysize);
 
 /* actually make the layout:  we work by a reduction process:
    first we make everything a well, then we remove areas to make rooms */
@@ -95,7 +95,7 @@ char **roguelike_layout_gen(int xsize, int ysize, int options) {
 
 
 
-int roguelike_place_room(Room *Rooms,int xsize, int ysize,int nrooms) {
+static int roguelike_place_room(Room *Rooms,int xsize, int ysize,int nrooms) {
 
   int tx,ty;  /* trial center locations */
   int sx,sy;  /* trial sizes */
@@ -160,7 +160,7 @@ int roguelike_place_room(Room *Rooms,int xsize, int ysize,int nrooms) {
     
 
 /* write all the rooms into the maze */
-void roguelike_make_rooms(Room *Rooms,char **maze, int options) {
+static void roguelike_make_rooms(Room *Rooms,char **maze, int options) {
   int making_circle=0;
   int i,j;
   int R;
@@ -194,7 +194,7 @@ void roguelike_make_rooms(Room *Rooms,char **maze, int options) {
 
 
 
-void roguelike_link_rooms(Room *Rooms,char **maze,int xsize,int ysize){
+static void roguelike_link_rooms(Room *Rooms,char **maze,int xsize,int ysize){
   Room *walk;
   int i,j;
   /* link each room to the previous room */

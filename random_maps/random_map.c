@@ -35,32 +35,12 @@
 #include <rproto.h>
 #include <sproto.h>
 
-#define LO_NEWFILE 2
-
-
 
 
 EXTERN FILE *logfile;
-mapstruct *generate_random_map(char *InFileName,char *OutFileName) {
-  FILE *InFile;
+mapstruct *generate_random_map(char *OutFileName, RMParms *RP) {
   char **layout;
   mapstruct *theMap;
-  RMParms *RP;
-  RP = (RMParms *) calloc(1,sizeof(RMParms));
-
-  /* set up the random numbers */
-
-  RP->Xsize=-1;
-  RP->Ysize=-1;
-
-  RP->generate_treasure_now=1;
-
-  if((InFile=fopen(InFileName,"r"))==NULL) {
-    printf("\nError:  can't open %s\n",InFileName);
-    return(0);
-  } 
-
-  load_parameters(InFile,LO_NEWFILE,RP);
 
   /* pick a random seed, or use the one from the input file */
   if(RP->random_seed == 0)    SRANDOM(time(0));
@@ -119,8 +99,6 @@ mapstruct *generate_random_map(char *InFileName,char *OutFileName) {
   if(RP->generate_treasure_now)
     fix_auto_apply(theMap);
 
-
-  fclose(InFile);
   /*  fclose(OutFile); */
   /*new_save_map(theMap,1);*/
   return theMap;

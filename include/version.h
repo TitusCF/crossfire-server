@@ -27,7 +27,7 @@
 */
 
 #ifdef MAKE
-#define Version "0.95.8-CVS"
+#define Version "0.95.8-CVS-exit"
 #else
-#define VERSION "0.95.8-CVS"
+#define VERSION "0.95.8-CVS-exit"
 #endif

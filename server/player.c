@@ -1440,14 +1440,6 @@ int move_player(object *op,int dir) {
  */
 int handle_newcs_player(object *op)
 {
-    if(op->contr->state == ST_PLAYING && op->contr->loading != NULL) {
-	if(op->contr->loading->in_memory == MAP_IN_MEMORY) {
-	    LOG(llevDebug,"In handle player, entering map\n");
-	    enter_map(op);
-	}
-	else
-	    return 0;
-    }
     if(op->invisible&&!(QUERY_FLAG(op,FLAG_MAKE_INVIS))) {
 	op->invisible--;
 	if(!op->invisible) make_visible(op);

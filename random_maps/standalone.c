@@ -26,6 +26,7 @@
     The author can be reached via e-mail to mwedel@scruz.net
 */
 
+#define LO_NEWFILE 2
 
 /* the main routine for making a standalone version. */
 
@@ -40,6 +41,9 @@
 int main(int argc, char *argv[]) {
   char InFileName[1024],OutFileName[1024];
   mapstruct *newMap;
+  RMParms rp;
+  FILE *fp;
+
   if(argc < 3) {
     printf("\nUsage:  %s inputfile outputfile\n",argv[0]);
     exit(0);
@@ -55,7 +59,17 @@ int main(int argc, char *argv[]) {
   init_readable();
 
   init_gods();
-  newMap = generate_random_map(InFileName,OutFileName);
+  memset(&rp, 0, sizeof(RMParms));
+  rp.generate_treasure_now=1;
+  rp.Xsize=-1;
+  rp.Ysize=-1;
+  if ((fp=fopen(InFileName, "r"))==NULL) {
+    fprintf(stderr,"\nError: can not open %s\n", InFileName);
+    exit(1);
+  }
+  load_parameters(fp, LO_NEWFILE, &rp);
+  fclose(fp);
+  newMap = generate_random_map(OutFileName, &rp);
   new_save_map(newMap,1); 
   exit(0);
 }

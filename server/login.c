@@ -737,6 +737,7 @@ void check_login(object *op) {
     new_draw_info_format(NDI_UNIQUE | NDI_ALL, 5, NULL, 
 	     "%s has entered the game.",pl->ob->name);
 
+#if 0
     if(pl->loading == NULL) {
 	if(!out_of_map(op->map,x,y))
 	    op->x=x, op->y=y;
@@ -746,6 +747,7 @@ void check_login(object *op) {
                   op->map->path);
 	pl->removed = 0; /* Pl. will be inserted when map is loaded */
     }
+#endif
     op->contr->socket.update_look=1;
     LOG(llevDebug,"Checksums: %x %x\n",
                 checksum,calculate_checksum(filename,1));

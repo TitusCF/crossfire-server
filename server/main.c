@@ -162,7 +162,8 @@ int check_password(char *typed,char *crypted) {
   return !strcmp(crypt_string(typed,crypted),crypted);
 }
 
-char *normalize_path (char *src, char *dst) {
+
+static char *normalize_path (char *src, char *dst) {
     char *p, *q;
     char buf[HUGE_BUF];
     static char path[HUGE_BUF];
@@ -208,336 +209,306 @@ char *normalize_path (char *src, char *dst) {
     return (path);
 }
 
-/* Tries to move 'op' to exit_ob.  op is the character or monster that is
- * using the exit, where exit_ob is the exit object (boat, door, teleporter,
- * etc.)  if exit_ob is null, then op->maplevel contains that map to
- * move the object to (and use default map coordiantes
+/*
+ *  enter_map():  Moves the player and pets from current map (if any) to
+ * new map.  map, x, y must be set.  map is the map we are moving the
+ * player to - it could be the map he just came from if the load failed for
+ * whatever reason.  If default map coordinates are to be used, then
+ * the function that calls this should figure them out.
  */
+static void enter_map(object *op, mapstruct *newmap, int x, int y) {
+    mapstruct *oldmap = op->map;
 
-void enter_exit(object *op, object *exit_ob) {
-  char apartment[HUGE_BUF];
-  mapstruct *oldmap, dummy_map;
-  int x=0, y=0, removed=QUERY_FLAG(op,FLAG_REMOVED);
-  char *newpath=NULL, *lastlevel=NULL;
-  int last_x = op->x, last_y = op->y, unique=0;
-
-  dummy_map.pending = (objectlink *) NULL;
-  dummy_map.in_memory = MAP_LOADING;
-  *apartment='\0';
-
-  /* First, lets figure out what map the player is going to go to */
-  if (exit_ob) {
-    x=EXIT_X(exit_ob);
-    y=EXIT_Y(exit_ob);
-
-    /* check to see if we make a randomly generated map */
-    if(EXIT_PATH(exit_ob)&&EXIT_PATH(exit_ob)[1]=='!') 
-      {
-	mapstruct *new_map;
-	FILE *newmap_params;  /* give the new map its parameters */
-	newmap_params=fopen("/tmp/rmap_params","w");
-	if(newmap_params!=NULL) {
-	  char newmap_name[HUGE_BUF];
-	  char oldmap_name[HUGE_BUF];
-	  int i;
-	  static int reference_number = 0;
-
-	  /* write the map parameters to the file. */
-	  fprintf(newmap_params,"%s",exit_ob->msg);
-
-	  /* provide for returning to where we came from. */
-	  fprintf(newmap_params,"origin_map %s\n",op->map->path);
-	  fprintf(newmap_params,"origin_x %d\n",exit_ob->x);
-	  fprintf(newmap_params,"origin_y %d\n",exit_ob->y);
-	  /* cause there to be treasure. */
-	  fprintf(newmap_params,"generate_treasure_now 1\n");
-	  fclose(newmap_params);
-
-	  /* change the old map path into a single token */
-	  strcpy(oldmap_name,op->map->path);
-	  for(i=0;i<strlen(oldmap_name);i++) {
-	    if(oldmap_name[i]=='/' || oldmap_name[i]=='.') oldmap_name[i]='_';
-	  }
-
-	  /* pick a new pathname for the new map:  it is of the form
-	   * oldmapname_x_y with underscores instead of '/' and '.', with
-	   * the entrance coordinates tacked on. */
-	  /*sprintf(newmap_name,"/random/%s_%d_%d",oldmap_name,exit_ob->x,exit_ob->y);*/
-	  sprintf(newmap_name,"/random/%016d",reference_number++);
-
-	  /* now to generate the actual map. */
-	  new_map=(mapstruct *)generate_random_map("/tmp/rmap_params",newmap_name);
-
-	  /* set the hp,sp,path of the exit for the new */
-	  if(new_map) {
-	    x=exit_ob->stats.hp = new_map->map_object->stats.hp;	
-	    y=exit_ob->stats.sp = new_map->map_object->stats.sp;
-	    exit_ob->slaying = add_string(newmap_name);
-	  }
-	}
-	else {
-	  LOG(llevError,"Couldn't open parameter-passing file for random map.");
-	}
-      }
-   if (EXIT_PATH(exit_ob)) {
-      /* If we're already in a unique map, get the map's original path from its basename -- DAMN */
-      if (exit_ob->map && exit_ob->map->path) {
-	sprintf(apartment, "%s/%s/%s/", settings.localdir, settings.playerdir, op->name);
-	if (!strncmp(exit_ob->map->path, apartment, strlen(apartment))) {
-	  char *t;
-	  LOG(llevDebug,"%s is leaving unique map %s.\n", op->name, exit_ob->map->path);
-	  if((t = strrchr(exit_ob->map->path,'/'))) {
-	    t++;
-	    strcpy(apartment, t);
-	  } else { /* This "shouldn't" happen. */
-	    LOG(llevError,"Pathless unique map: '%s'?\n", exit_ob->map->path);
-	    strcpy(apartment, exit_ob->map->path);
-	  }
-	  while((t = strchr(apartment,'_'))) t[0] = '/';
-	  newpath = normalize_path (apartment, EXIT_PATH(exit_ob));
-	} else {
-	  newpath = normalize_path (exit_ob->map->path, EXIT_PATH(exit_ob));
-	}
-      } else {
-	newpath = normalize_path (exit_ob->map->path, EXIT_PATH(exit_ob));
-      }
-    } else {
-      if (EXIT_LEVEL(exit_ob) > 0)
-	LOG(llevError,"Number Map levels are no longer supported\n");
-      return;
-    }
-  } else
-    if(op->contr) newpath = op->contr->maplevel;
-
-  /* If no map path has been found yet, just keep the player on the
-   * map he is on right now
-   */
-  if(!newpath)
-    newpath = op->map->path;
-
-  /* If the exit is marked unique, this is a special 'apartment' map -
-   * a unique one for each player.
-   */
-
-  if (op->type==PLAYER && exit_ob && QUERY_FLAG(exit_ob, FLAG_UNIQUE)) {
-    sprintf(apartment, "%s/%s/%s/%s", settings.localdir,
-	    settings.playerdir, op->name, clean_path(newpath));
-
-    /* If we already have a unique map for the player, use it.
-     * Otherwise, we fall through below where
-     * depending on values where it checks for the original map again
-     */
-    if (check_path(apartment,0)!= -1) {
-      newpath = apartment;
-      unique=1;
-    }
-  }
-
-  /* If under nonstandard name, it means the map is unique 
-   * If its not unique, and it hasn't been loaded, see if the map actually
-   * exists.
-   */
-  if (check_path(newpath, 0) != - 1) {
-    unique=1;
-  } else if (!unique && !has_been_loaded(newpath) && (check_path(newpath,1)==-1)) {
-    if(op->type == PLAYER)
-      new_draw_info_format(NDI_UNIQUE, 0,op, "The %s is closed.", newpath);
-    return;
-  }
-
-  /* Clear the player's count, and reset direction */
-  if(op->type == PLAYER) {
-    op->direction=0;
-    op->contr->count=0;
-    op->contr->count_left=0;
-  }
-  /* For exits that cause damages (like pits) */
-  if(exit_ob && exit_ob->stats.dam && op->type==PLAYER)
-    hit_player(op,exit_ob->stats.dam,exit_ob,exit_ob->attacktype);
-
-  /* Keep track of the map the player is on right now */
-  oldmap=op->map;
-
-  /* When logging in, the object is already removed.  If that is
-   * not the case, then the following is used */
-  if(!removed) {
-    remove_ob(op);
-
-    lastlevel = oldmap->path;
-    op->map = NULL;
-
-    /* If we are changing maps, do some extra logic.  In theory,
-     * if the player is going to the same map, we could do this much
-     * simply and just update the player x,y
-     */
-    if(strcmp (newpath, oldmap->path)) {
-      /* Remove any golems */
-      if(op->type == PLAYER && op->contr->golem != NULL) {
-	remove_friendly_object(op->contr->golem);
-	remove_ob(op->contr->golem);
-	free_object(op->contr->golem);
-	op->contr->golem=NULL;
-      }
-
-      /* This stuff should probably be moved to ready_map: */
-      op->map = &dummy_map;
+    /* If the player is changing maps, we need to do some special things */
+    if (oldmap && oldmap != newmap) {
+	oldmap->players--;
+	if (oldmap->players <= 0) { /* can be less than zero due to errors in tracking this */
 
 #if MAP_MAXTIMEOUT
-      oldmap->timeout = MAP_TIMEOUT(oldmap);
-      /* Do MINTIMEOUT first, so that MAXTIMEOUT is used if that is
-       * lower than the min value.
-       */
+	    oldmap->timeout = MAP_TIMEOUT(oldmap);
+	    /* Do MINTIMEOUT first, so that MAXTIMEOUT is used if that is
+	     * lower than the min value.
+	     */
 #if MAP_MINTIMEOUT
-      if (oldmap->timeout < MAP_MINTIMEOUT) {
-	oldmap->timeout = MAP_MINTIMEOUT;
-      }
+	    if (oldmap->timeout < MAP_MINTIMEOUT) {
+		oldmap->timeout = MAP_MINTIMEOUT;
+	    }
 #endif
-      if (oldmap->timeout > MAP_MAXTIMEOUT) {
-	oldmap->timeout = MAP_MAXTIMEOUT;
-      }
-      /* Swap out the oldest map if low on mem */
-      swap_below_max (newpath);
+	    if (oldmap->timeout > MAP_MAXTIMEOUT) {
+		oldmap->timeout = MAP_MAXTIMEOUT;
+	    }
+	}
+	/* Swap out the oldest map if low on mem */
+	swap_below_max (EXIT_PATH(newmap->map_object));
 #else
       /* save out the map */
       swap_map(oldmap);
 #endif /* MAP_MAXTIMEOUT */
     }
-    oldmap->players--;
-  }
 
-  /* If a unique loaded, see if its in memory, and use it.
-   * otherwise, load it up.
-   */
-  if (exit_ob && QUERY_FLAG(exit_ob, FLAG_UNIQUE)) {
-    op->map=has_been_loaded(apartment);
-    if (!op->map || 
-	(op->map->in_memory!=MAP_LOADING && op->map->in_memory!=MAP_IN_MEMORY))
-	op->map = ready_map_name(newpath,(unique?MAP_PLAYER_UNIQUE:0));
-  } else {
-    /* Do any processing to get the map loaded and ready */
-    op->map = ready_map_name(newpath,(unique?MAP_PLAYER_UNIQUE:0));
-  }
-
-  /* Did the load fail for some reason?  If so, put the player back on the
-   * map they came from and remove the exit that pointed the player to
-   * the bad map.
-   */
-  if (op->map==NULL) { /* Something went wrong, try to go back */
-    int x2,y2;
-    object *enc;
-
-    LOG(llevError,"Error, couldn't open map %s.\n", newpath);
-    op->map = ready_map_name (lastlevel, 0);
-    x = last_x;
-    y = last_y;
-    LOG(llevDebug, "Trying to remove all entries to the map.\n");
-
-    for (x2 = (-2); x2 < 3; x2++) {
-      for (y2 = (-2); y2 < 3; y2++) {
-	if (out_of_map(op->map, x2 + op->x, y2 + op->y))
-	  continue;
-	enc = get_map_ob(op->map, x2 + op->x, y2 + op->y);
-	if (!enc)
-	  continue;
-	if (enc->type != ENCOUNTER || enc->slaying == NULL ||
-	    strcmp(enc->slaying, newpath))
-	  continue;
-	free_string(enc->slaying);
-	enc->slaying = (char *) NULL;
-      }
+    if (out_of_map(newmap, x, y)) {
+	LOG(llevError,"enter_map: supplied coordinates are not within the map! (%s: %d, %d)\n",
+	    newmap->path, x, y);
+	x=EXIT_X(op->map->map_object);
+	y=EXIT_Y(op->map->map_object);
     }
-  }
-  /* If we got the map we wanted and it is UNIQUE, we need to update
-   * it so it gets saved in the right place.  Set unique so that
-   * when we save it, it knows to save it in the right place
-   * If the map is already in ram, this is redundant, but not a big
-   * problem.
-   */
-  else if (exit_ob && QUERY_FLAG(exit_ob, FLAG_UNIQUE)) {
-    strcpy(op->map->path, apartment);
-    SET_FLAG(op->map->map_object, FLAG_UNIQUE);
-  }
-	    
-  op->map->players++;
-
-  /* If objects are being updated while the map is loading, things like
-   * pets will be put into the players map, pending element.  That is
-   * really just the dummy_map.  Since the map has actually loaded now,
-   * we want to append that list to the 'real' loaded maps pending
-   * list -- MSW
-   */
-  if(dummy_map.pending != (objectlink *) NULL) {
-    objectlink *obl;
-
-    for(obl = op->map->pending; obl!= NULL && obl->next != NULL; 
-	obl=obl->next);
-    if(obl == NULL)
-      op->map->pending = dummy_map.pending;
-    else
-      obl->next = dummy_map.pending;
-  }
-
-  if (op->type == PLAYER) {
-    op->contr->loading = op->map;
-    op->contr->new_x = x;
-    op->contr->new_y = y;
-    op->contr->removed = removed;
-  }
-  op->map->timeout = 0;
-
+    /* try to find a spot for the player */
+    if (arch_blocked(op->arch, newmap, x, y)) {	/* First choice blocked */
+	/* We try to find a spot for the player, starting closest in.
+	 * We could use find_first_free_spot, but that doesn't randomize it at all,
+	 * So for example, if the north space is free, you would always end up there even
+	 * if other spaces around are available.
+	 * Note that for the second and third calls, we could start at a position other
+	 * than one, but then we could end up on the other side of walls and so forth.
+	 */
+	int i = find_free_spot(op->arch,newmap, x, y, 1, SIZEOFFREE1+1);
+	if (i==-1) {
+	    i = find_free_spot(op->arch,newmap, x, y, 1, SIZEOFFREE2+1);
+	    if (i==-1)
+		i = find_free_spot(op->arch,newmap, x, y, 1, SIZEOFFREE+1);
+	}
+	if (i != -1 ) {
+	    x += freearr_x[i];
+	    y += freearr_y[i];
+	} else {
+	    /* not much we can do in this case. */
+	    LOG(llevInfo,"enter_map: Could not find free spot for player - will dump on top of object (%s: %d, %d)\n",
+		newmap->path, x , y);
+	}
+    } /* end if looking for free spot */
+	
 #ifdef USE_LIGHTING
-  if(op->lights||op->glow_radius>0) remove_carried_lights(op,oldmap);
+    if(op->lights||op->glow_radius>0) remove_carried_lights(op,oldmap);
 #endif
-  enter_map(op);
-}
 
-/*
- *  enter_map():  handles the final stages of entering a new map.
- */
+    /* If it is a player login, he has yet to be inserted anyplace.
+     * otherwise, we need to deal with removing the playe here.
+     */
+    if(!QUERY_FLAG(op, FLAG_REMOVED))
+	remove_ob(op);
 
-void enter_map(object *op) {
-  op->map = op->contr->loading;
-  op->contr->loading = NULL;
-  if((op->contr->new_x || op->contr->new_y) &&
-     !out_of_map(op->map,op->contr->new_x,op->contr->new_y))
-    op->x = op->contr->new_x, op->y = op->contr->new_y;
-  else {
-    int i = find_free_spot(op->arch,op->map,
-                           EXIT_X(op->map->map_object),
-			   EXIT_Y(op->map->map_object),1,9);
-    /* If no free spot, put on preset destination */
-    if (i==-1) i=0;
-    op->x = EXIT_X(op->map->map_object) + freearr_x[i];
-    op->y = EXIT_Y(op->map->map_object) + freearr_y[i];
-    if (out_of_map (op->map, op->x, op->y)) {
-	LOG (llevDebug, "Broken map: Start position is out of map (%s)!\n",
-	     op->map->path);
-	op->x = 0;
-	op->y = 0;
-    }
-  }
-  if(!op->contr->removed) {
+    /* remove_ob clears these so they must be reset after the remove_ob call */
+    op->x = x;
+    op->y = y;
+    op->map = newmap;
     SET_FLAG(op, FLAG_NO_APPLY);
     insert_ob_in_map(op,op->map,NULL);
     CLEAR_FLAG(op, FLAG_NO_APPLY);
-  }
-  op->enemy = NULL;
-#if 0
-  op->contr->drawn[5][5].number = 0;
-  /*
-   * draw_colorpix routine cannot find out, if the background of player has
-   * changed, and would not redraw player...
-   */
-#endif
+
+    newmap->players++;
+    newmap->timeout=0;
+    op->enemy = NULL;
+
+    if (op->contr) {
+	strcpy(op->contr->maplevel, newmap->path);
+	op->contr->count=0;
+	op->contr->count_left=0;
+    }
+
 #ifdef USE_LIGHTING
-  if(op->lights) add_carried_lights(op);
+    if(op->lights) add_carried_lights(op);
 #endif
-  enter_pending_objects(op->map);
+    /* Update any golems */
+    if(op->type == PLAYER && op->contr->golem != NULL) {
+	int i = find_free_spot(op->arch,newmap, x, y, 1, SIZEOFFREE+1);
+
+	remove_ob(op->contr->golem);
+	if (i==-1) {
+	    remove_friendly_object(op->contr->golem);
+	    free_object(op->contr->golem);
+	    op->contr->golem=NULL;
+	}
+	else {
+	    op->contr->golem->map = newmap;
+	    op->contr->golem->x = x + freearr_x[i];
+	    op->contr->golem->y = y + freearr_y[i];
+	    insert_ob_in_map(op->contr->golem, newmap, NULL);
+	    op->contr->golem->direction = find_dir_2(op->contr->golem->x - op->x, op->contr->golem->y - op->y);
+	}
+    }
+    op->direction=0;
+
+    /* since the players map is already loaded, we don't need to worry
+     * about pending objects.
+     */
+    remove_all_pets(newmap);
+}
+
+
+/* The player is trying to enter a randomly generated map.  In this case, generate the
+ * random map as needed.
+ */
+
+static void enter_random_map(object *pl, object *exit_ob)
+{
+    mapstruct *new_map;
+    char newmap_name[HUGE_BUF];
+    static int reference_number = 0;
+    RMParms rp;
+
+    memset(&rp, 0, sizeof(RMParms));
+    rp.Xsize=-1;
+    rp.Ysize=-1;
+    set_random_map_variable(&rp,exit_ob->msg);
+    rp.origin_x = exit_ob->x;
+    rp.origin_y = exit_ob->y;
+    rp.generate_treasure_now = 1;
+    strcpy(rp.origin_map, pl->map->path);
+
+    /* pick a new pathname for the new map.  Currently, we just
+     * use a static variable and increment the counter one each time.
+     */
+    sprintf(newmap_name,"/random/%016d",reference_number++);
+
+    /* now to generate the actual map. */
+    new_map=(mapstruct *)generate_random_map(newmap_name,&rp);
+
+    /* Update the exit_ob so it now points directly at the newly created
+     * random maps.  Not that it is likely to happen, but it does mean that a
+     * exit in a unique map leading to a random map will not work properly.
+     * It also means that if the created random map gets reset before
+     * the exit leading to it, that the exit will no longer work.
+     */
+    if(new_map) {
+	int x, y;
+	x=EXIT_X(exit_ob) = EXIT_X(new_map->map_object);
+	y=EXIT_Y(exit_ob) = EXIT_Y(new_map->map_object);
+	EXIT_PATH(exit_ob) = add_string(newmap_name);
+	EXIT_PATH(new_map->map_object) = add_string(newmap_name);
+	enter_map(pl, new_map, 	x, y);
+    }
+}
+
+
+/* Code to enter/detect a character entering a unique map.
+ */
+static void enter_unique_map(object *op, object *exit_ob)
+{
+    char apartment[HUGE_BUF];
+    mapstruct	*newmap;
+
+    sprintf(apartment, "%s/%s/%s/%s", settings.localdir,
+	    settings.playerdir, op->name, clean_path(EXIT_PATH(exit_ob)));
+
+    newmap = ready_map_name(apartment, MAP_PLAYER_UNIQUE);
+    if (!newmap) {
+	/* If here, that map is not in memory, in /tmp, or in the players
+	 * directory, so we need to load the original for the player.
+	 */
+	newmap = load_original_map(create_pathname(EXIT_PATH(exit_ob)), MAP_PLAYER_UNIQUE);
+	if (newmap) fix_auto_apply(newmap);
+    }
+
+    if (newmap) {
+	strcpy(newmap->path, apartment);
+	SET_FLAG(newmap->map_object, FLAG_UNIQUE);
+	enter_map(op, newmap, EXIT_X(exit_ob), EXIT_Y(exit_ob));
+    } else {
+	new_draw_info_format(NDI_UNIQUE, 0, op, "The %s is closed.", exit_ob->name);
+	/* Perhaps not critical, but I would think that the unique maps
+	 * should be new enough this does not happen.  This also creates
+	 * a strange situation where some players could perhaps have visited
+	 * such a map before it was removed, so they have the private
+	 * map, but other players can't get it anymore.
+	 */
+	LOG(llevDebug,"enter_unique_map: Exit %s (%d,%d) on map %s is leads no where.\n",
+		    exit_ob->name, exit_ob->x, exit_ob->y, exit_ob->map->path);
+    }
+	
+}
+
+
+/* Tries to move 'op' to exit_ob.  op is the character or monster that is
+ * using the exit, where exit_ob is the exit object (boat, door, teleporter,
+ * etc.)  if exit_ob is null, then op->contr->maplevel contains that map to
+ * move the object to.  This is used when loading the player.
+ *
+ * Largely redone by MSW 2001-01-21 - this function was overly complex
+ * and had some obscure bugs.
+ */
+
+void enter_exit(object *op, object *exit_ob) {
+
+
+    /* It may be nice to support other creatures moving across
+     * exits, but right now a lot of the code looks at op->contr,
+     * so thta is an RFE.
+     */
+    if (op->type != PLAYER) return;
+
+    /* First, lets figure out what map the player is going to go to */
+    if (exit_ob) {
+	/* check to see if we make a randomly generated map */
+	if(EXIT_PATH(exit_ob)&&EXIT_PATH(exit_ob)[1]=='!') {
+	    enter_random_map(op, exit_ob);
+	}
+	else if (QUERY_FLAG(exit_ob, FLAG_UNIQUE)) {
+	    enter_unique_map(op, exit_ob);
+	} else {
+	    int x=EXIT_X(exit_ob), y=EXIT_Y(exit_ob);
+	    /* 'Normal' exits that do not do anything special
+	     * Simple enough we don't need another routine for it.
+	     */
+	    mapstruct	*newmap;
+
+	    newmap = ready_map_name(normalize_path(exit_ob->map->path, EXIT_PATH(exit_ob)), 0);
+	    /* This supports the old behaviour, but it really should not be used.
+	     * I will note for example that with this method, it is impossible to
+	     * set 0,0 destination coordinates.  Really, if we want to support
+	     * using the new maps default coordinates, the exit ob should use
+	     * something like -1, -1 so it is clear to do that.
+	     */
+	    if (x==0 && y==0) {
+		x=EXIT_X(newmap->map_object);
+		y=EXIT_Y(newmap->map_object);
+		LOG(llevDebug,"enter_exit: Exit %s (%d,%d) on map %s is 0 destination coordinates\n",
+		    exit_ob->name, exit_ob->x, exit_ob->y, exit_ob->map->path);
+	    }
+	    if (newmap) 
+		enter_map(op, newmap, x, y);
+	    else
+		new_draw_info_format(NDI_UNIQUE, 0, op, "The %s is closed.", exit_ob->name);
+	}
+	/* For exits that cause damages (like pits) */
+	if(exit_ob->stats.dam && op->type==PLAYER)
+	    hit_player(op,exit_ob->stats.dam,exit_ob,exit_ob->attacktype);
+    } else {
+	int flags = 0;
+	mapstruct *newmap;
+
+
+	/* Hypothetically, I guess its possible that a standard map matches
+	 * the localdir, but that seems pretty unlikely - unlikely enough that
+	 * I'm not going to attempt to try to deal with that possibility.
+	 * We use the fact that when a player saves on a unique map, it prepends
+	 * the localdir to that name.  So its an easy way to see of the map is
+	 * unique or not.
+	 */
+	if (!strncmp(op->contr->maplevel, settings.localdir, strlen(settings.localdir)))
+	    flags = MAP_PLAYER_UNIQUE;
+
+	/* newmap returns the map (if already loaded), or loads it for
+	 * us.
+	 */
+	newmap = ready_map_name(op->contr->maplevel, flags);
+	if (!newmap) {
+	    LOG(llevError,"enter_exit: Pathname to map does not exist! (%s)\n", op->contr->maplevel);
+	    newmap = ready_map_name(EMERGENCY_MAPPATH, 0);
+	    /* If we can't load the emergency map, something is probably really
+	     * screwed up, so bail out now.
+	     */
+	    if (!newmap) {
+		LOG(llevError,"enter_exit: could not load emergency map? Fata error\n");
+		abort();
+	    }
+	}
+	enter_map(op, newmap, op->x, op->y);
+    }
 }
 
 /*
  * process_active_maps(): Works like process_events(), but it only
- * processes maps which are loaded and readied.
+ * processes maps which a player is on.
  * It will check that it isn't called too often, and abort
  * if time since last call is less than MAX_TIME.
  *
@@ -546,24 +517,18 @@ void enter_map(object *op) {
 void process_active_maps() {
   mapstruct *map;
 
-#if 0
-  /* Even in single player mode, it is nice to still be able to do stuff
-   * while a map is saving.
-   */
-  if(first_player==NULL || first_player->next==NULL)
-    return; /* No point in the following in one-player mode */
-#endif
 
-/*
- * If enough time has elapsed, do some work.
- */
-  if(enough_elapsed_time())
-    for(map=first_map;map!=NULL;map=map->next)
-      if(map->in_memory == MAP_IN_MEMORY) {
-        if(players_on_map(map)==0)
-          continue;
-        process_events(map);
-      }
+    /*
+     * If enough time has elapsed, do some work.
+     */
+    if(enough_elapsed_time()) {
+	for(map=first_map;map!=NULL;map=map->next) {
+	    if(map->in_memory == MAP_IN_MEMORY) {
+		if(players_on_map(map))
+		    process_events(map);
+	    }
+	}
+    }
 }
 
 /* process_players1 and process_players2 do all the player related stuff.
@@ -908,13 +873,6 @@ void do_specials() {
       fix_luck();
 }
 
-/*
- * last_time is when the last tick was executed.
- * We don't need to know the timezone since we're only interested in
- * the delta time since the last 'tick' .
- */
-extern struct timeval last_time;
-struct timezone dummy_timezone;
 
 int main(int argc,char **argv)
 {

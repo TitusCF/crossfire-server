@@ -134,6 +134,8 @@ void terminate_all_pets(object *owner) {
  * process of entering a new map when this is called.
  * Thus the map isn't loaded yet, and we have to remove
  * the pet...
+ * Interesting enough, we don't use the passed map structure in
+ * this function.
  */
 
 void remove_all_pets(mapstruct *map) {
@@ -191,7 +193,7 @@ void follow_owner(object *ob, object *owner) {
     return;
   }
   dir = find_free_spot(ob->arch, owner->map,
-                       owner->x, owner->y, 1, SIZEOFFREE);
+                       owner->x, owner->y, 1, SIZEOFFREE+1);
   if (dir==-1) {
     LOG(llevMonster,"No space for pet to follow, freeing %s.\n",ob->name);
     return; /* Will be freed since it's removed */
@@ -202,7 +204,7 @@ void follow_owner(object *ob, object *owner) {
   }
   insert_ob_in_map(ob, owner->map, NULL);
   if (owner->type == PLAYER) /* Uh, I hope this is always true... */
-    new_draw_info(NDI_UNIQUE, 0,ob->owner, "Your pet magically appears next to you");
+    new_draw_info(NDI_UNIQUE, 0,owner, "Your pet magically appears next to you");
   return;
 }
 

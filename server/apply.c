@@ -1259,9 +1259,12 @@ void move_apply (object *trap, object *victim, object *originator)
 
   case EXIT:
     if (victim->type == PLAYER && EXIT_PATH (trap)) {
-      if (trap->msg)
-	  new_draw_info (NDI_NAVY, 0, victim, trap->msg);
-      enter_exit (victim, trap);
+	/* Basically, don't show exits leading to random maps the
+	 * players output.
+	 */
+	if (trap->msg && strncmp(EXIT_PATH(trap),"/!",2) && strncmp(EXIT_PATH(trap), "/random/", 8))
+	    new_draw_info (NDI_NAVY, 0, victim, trap->msg);
+	enter_exit (victim, trap);
     }
     goto leave;
 
@@ -1866,9 +1869,10 @@ int manual_apply (object *op, object *tmp, int aflag)
       new_draw_info_format(NDI_UNIQUE, 0, op, 
 	"The %s is closed.",query_name(tmp));
     } else {
-      if (tmp->msg)
-	  new_draw_info(NDI_NAVY, 0, op, tmp->msg);
-      enter_exit(op,tmp);
+	/* Don't display messages for random maps. */
+	if (tmp->msg && strncmp(EXIT_PATH(tmp),"/!",2) && strncmp(EXIT_PATH(tmp), "/random/", 8))
+	    new_draw_info (NDI_NAVY, 0, op, tmp->msg);
+	enter_exit(op,tmp);
     }
     return 1;
 

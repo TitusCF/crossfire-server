@@ -35,17 +35,6 @@
 #include <random_map.h>
 
 
-/* All the variable names.  Each entry should correspond to the 
- * V_ vlaue in loader.h (that is, the 20'th value in this array should
- * correspond to the 20'th V_(value) in loader.h)  The V_??? get
- * used as indexes into this array.
- */
-
-/* If you change this list (add/delete/rename), also update the list
- * in crossedit/Attr.c, around line 360.  That list is the variables
- * that can be set in crossedit for various objects.
- */
-
 #define YY_DECL int rmap_lex_read(RMParms *RP)
 
 static char *rmap_yval();
@@ -168,3 +157,19 @@ int load_parameters(FILE *fp, int bufstate,RMParms *RP) {
     return retval;
 }
 
+
+/* This takes a buffer, scans it for variables, and sets those variables
+ * as appropriate in op.
+ *
+ * This function appears to be used in only 2 places - in crossedit to
+ * override values and in c_wiz to mutate values.
+ */
+int set_random_map_variable(RMParms *rp,char *buf) {
+    YY_BUFFER_STATE  yybufstate;
+    int retval;
+
+    yybufstate=yy_scan_string(buf);
+    retval=rmap_lex_read(rp);
+    yy_delete_buffer(yybufstate);
+    return retval;
+}
