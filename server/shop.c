@@ -599,10 +599,6 @@ void add_shop_item(object *tmp, shopinv *items, int *numitems, int *numallocated
 {
     char buf[MAX_BUF];
 
-    if (*numitems==*numallocated) {
-	items=realloc(items, sizeof(shopinv)*(*numallocated+10));
-	*numallocated+=10;
-    }
     /* clear unpaid flag so that doesn't come up in query
      * string.  We clear nrof so that we can better sort
      * the object names.
@@ -622,14 +618,17 @@ void add_shop_item(object *tmp, shopinv *items, int *numitems, int *numallocated
 	    sprintf(buf,"%s %s",query_base_name(tmp,0),describe_item(tmp));
 	    items[*numitems].item_sort = strdup_local(buf);
 	    sprintf(buf,"%s %s",query_name(tmp),describe_item(tmp));
-	    items[*numitems++].item_real = strdup_local(buf);
+	    items[*numitems].item_real = strdup_local(buf);
+	    (*numitems)++;
 	    break;
 
 	default:
 	    items[*numitems].item_sort = strdup_local(query_base_name(tmp, 0));
-	    items[*numitems++].item_real = strdup_local(query_name(tmp));
+	    items[*numitems].item_real = strdup_local(query_name(tmp));
+	    (*numitems)++;
 	    break;
     }
+    SET_FLAG(tmp, FLAG_UNPAID);
 }
 
 void shop_listing(object *op)
@@ -657,6 +656,10 @@ void shop_listing(object *op)
 
 		while (stack) {
 		    if (QUERY_FLAG(stack, FLAG_UNPAID)) {
+			if (numitems==numallocated) {
+			    items=realloc(items, sizeof(shopinv)*(numallocated+10));
+			    numallocated+=10;
+			}
 			add_shop_item(stack, items, &numitems, &numallocated);
 		    }
 		    stack = stack->above;
