@@ -149,9 +149,6 @@ static void get_player(player *p) {
     p->nrofknownspells=0;
     p->chosen_spell = -1;
     p->ob->chosen_skill = NULL;
-#ifdef LINKED_SKILL_LIST
-    p->ob->sk_list = NULL;
-#endif
     if(QUERY_FLAG(op,FLAG_READY_SKILL))
         CLEAR_FLAG(op,FLAG_READY_SKILL); 
     p->socket.update_look=0;

@@ -113,14 +113,6 @@ void free_player(player *pl) {
 
 object *find_skill(object *op, int skillnr) {
     object *tmp, *skill1=NULL;
-#ifdef LINKED_SKILL_LIST
-  objectlink *obl;
-
-  if(op->sk_list!=NULL) {   /* use fast method */ 
-     for(obl=op->sk_list;obl;obl=obl->next) 
-         if(obl->id==skillnr&&obl->ob) return obl->ob;
-  } 
-#endif
 
     /* *sigh*; we didnt find it. Perhaps because the skill we requested
      * is an unapplied tool. Lets search entire inventory */

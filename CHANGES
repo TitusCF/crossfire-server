@@ -18,6 +18,20 @@ else.  With this, include the file(s) that you changed.
 
 Changes for CVS:
 
+common/object.c, common/player.c, include/object.h, server/skill_util.c:
+      Remove the unused LINKED_SKILL code.
+common/Makefile.in: Use cproto to make prototypes - cextract fails for
+   some reason and now seems unsupported.  Cproto generates a bunch
+   of warnings, but does do the job.
+common/arch.c,server/apply.c, server/main.c, server/monster.c: cleanup some
+     compile warnings (unusued variables, returns without value
+doc/playbook/Makefile.in: Create proper dependencies for files.
+doc/playbook/treas2-extract: Add player_force to value to ignore.
+doc/spoiler-html/spoiler.html: rebuilt
+server/skill_util.c: Remove the unused LINKED_SKILL code.  Prevent
+   characters that have meditation skill from learning melee weapon skill.
+MSW 2001-06-28
+
 doc/Protocol: Add 'darkness' setup option documentation.
 include/newserver.h: add darkness element to socket structure.
 include/script.h,server/script.c: remove static declaration from script.h,

@@ -1352,12 +1352,12 @@ int talk_to_npc(object *op, object *npc, char *txt) {
   if(npc->script_say != NULL)
   {
     guile_call_event(op, npc, NULL, 0, txt,0,0,npc->script_say, SCRIPT_FIX_ALL);
-    return;
-  };
+    return 0;
+  }
   if (npc->script_str_say !=NULL)
   {
     guile_call_event_str(op,npc,NULL,0,txt,0,0,npc->script_str_say, SCRIPT_FIX_ALL);
-  };
+  }
 
   if(npc->msg == NULL || *npc->msg != '@')
     return 0;

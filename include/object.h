@@ -55,7 +55,6 @@ typedef struct obj {
 
   tag_t		count;         /* Which nr. of object created this is. */
   uint16	refcount;	/* How many objects points to this object */
-  struct oblnk *sk_list;	/* Pointer to linked list of skill objects for this ob*/
 
 /* These get an extra add_refcount(), after having been copied by memcpy() */
   char *name;			/* The name of the object, obviously... */

@@ -412,7 +412,7 @@ static int attack_ob_simple (object *op, object *hitter, int base_dam,
         {
                 if (guile_use_weapon_script(hitter, op, base_dam, base_wc))
                 {
-                        return;
+                        return 0;
                 };
         };
     };
@@ -1012,10 +1012,7 @@ int kill_object(object *op,int dam, object *hitter, int type)
 {
     char buf[MAX_BUF];
     object *old_hitter=NULL; /* this is used in case of servant monsters */
-    int maxdam=0,ndam,attacktype=1,attacknum,magic=(type & AT_MAGIC);
-    int body_attack = op && op->head;   /* Did we hit op's head? */
-    int simple_attack;
-    tag_t op_tag, hitter_tag;
+    int maxdam=0;
     int battleg=0;    /* true if op standing on battleground */
     int killed_script_rtn = 0;
     object *owner=NULL;
@@ -1025,218 +1022,198 @@ int kill_object(object *op,int dam, object *hitter, int type)
     {
         killed_script_rtn = guile_call_event(hitter, op ,NULL, type, NULL, 0,0, op->script_death, SCRIPT_FIX_ALL);
         if (killed_script_rtn)
-                return;
+                return 0;
     }
-   else
-    {
-        if (op->script_str_death!=NULL)
+    else {
+	if (op->script_str_death!=NULL)
         {
                 killed_script_rtn = guile_call_event_str(hitter, op ,NULL, type, NULL, 0,0, op->script_str_death, SCRIPT_FIX_ALL);
                 if (killed_script_rtn)
-                        return;
-        };
-    };
+                        return 0;
+        }
+    }
 
-/* Object has been killed.  Lets clean it up */
-if (op->stats.hp<0) {
-    maxdam+=op->stats.hp+1;
+    /* Object has been killed.  Lets clean it up */
+    if (op->stats.hp<0) {
+	maxdam+=op->stats.hp+1;
 
-    if(QUERY_FLAG(op,FLAG_BLOCKSVIEW))
-        update_all_los(op->map); /* makes sure los will be recalculated */
+	if(QUERY_FLAG(op,FLAG_BLOCKSVIEW))
+	    update_all_los(op->map); /* makes sure los will be recalculated */
 
-    if(op->type==DOOR)
-    {
-        op->speed = 0.1;
-        update_ob_speed(op);
-        op->speed_left= -0.05;
-        return maxdam;
-    };
-    if(QUERY_FLAG (op, FLAG_FRIENDLY) && op->type != PLAYER)
-    {
-        remove_friendly_object(op);
-        if (get_owner (op) != NULL && op->owner->type == PLAYER)
+	if(op->type==DOOR) {
+	    op->speed = 0.1;
+	    update_ob_speed(op);
+	    op->speed_left= -0.05;
+	    return maxdam;	    
+	}
+	if(QUERY_FLAG (op, FLAG_FRIENDLY) && op->type != PLAYER) {
+	    remove_friendly_object(op);
+	    if (get_owner (op) != NULL && op->owner->type == PLAYER)
                 op->owner->contr->golem=NULL;
-        else
+	    else
                 LOG (llevError, "BUG: hit_player(): Encountered golem "
                 "without owner.\n");
-        remove_ob(op);
-        free_object(op);
-        return maxdam;
-    };
+	    remove_ob(op);
+	    free_object(op);
+	    return maxdam;
+	}
 
-/* Now lets start dealing with experience we get for killing something */
+	/* Now lets start dealing with experience we get for killing something */
 
-    owner=get_owner(hitter);
-    if(owner==NULL)
-        owner=hitter;
+	owner=get_owner(hitter);
+	if(owner==NULL)
+	    owner=hitter;
 
-/* is the victim (op) standing on battleground? */
-    if (op_on_battleground(op, NULL, NULL)) battleg=1;
+	/* is the victim (op) standing on battleground? */
+	if (op_on_battleground(op, NULL, NULL)) battleg=1;
 
-/* Player killed something */
-    if(owner->type==PLAYER)
-    {
-        Log_Kill(owner->name,
+	/* Player killed something */
+	if(owner->type==PLAYER) {
+	    Log_Kill(owner->name,
                 query_name(op),op->type,
                 (owner!=hitter) ? query_name(hitter) : NULL,
                 (owner!=hitter) ? hitter->type : 0);
 
-        /* This appears to be doing primitive filtering to only
-         * display the more interesting monsters.
-         */
-        if ( owner->level/2<op->level || op->stats.exp>1000)
-        {
-                if(owner!=hitter)
-                {
-                        (void) sprintf(buf,"You killed %s with %s.",query_name(op)
-                                ,query_name(hitter));
-                        old_hitter = hitter;
-                        owner->exp_obj=hitter->exp_obj;
-                }
-                else
-                {
-                        (void) sprintf(buf,"You killed %s.",query_name(op));
-                }
+	    /* This appears to be doing primitive filtering to only
+	     * display the more interesting monsters.
+	     */
+	    if ( owner->level/2<op->level || op->stats.exp>1000) {
+                if(owner!=hitter) {
+		    (void) sprintf(buf,"You killed %s with %s.",query_name(op)
+				   ,query_name(hitter));
+		    old_hitter = hitter;
+		    owner->exp_obj=hitter->exp_obj;
+		}
+                else {
+		    (void) sprintf(buf,"You killed %s.",query_name(op));
+		}
                 play_sound_map(owner->map, owner->x, owner->y, SOUND_PLAYER_KILLS);
                 new_draw_info(NDI_BLACK, 0,owner,buf);
-        }/* message should be displayed */
+	    } /* message should be displayed */
 
-        /* If a player kills another player with melee, not on
-         * battleground, the "killer" looses 1 luck. Since this is
-         * not reversible, it's actually quite a pain IMHO. -AV */
-        if(op->type == PLAYER && hitter != op && !battleg)
+	    /* If a player kills another player with melee, not on
+	     * battleground, the "killer" looses 1 luck. Since this is
+	     * not reversible, it's actually quite a pain IMHO. -AV 
+	     */
+	    if(op->type == PLAYER && hitter != op && !battleg)
                 change_luck(hitter, -1);
-    } /* was a player that hit this creature */
+	} /* was a player that hit this creature */
 
-/* Pet killed something. */
-    if(get_owner(hitter)!=NULL)
-    {
-        (void) sprintf(buf,"%s killed %s with %s%s.",hitter->owner->name,
+	/* Pet killed something. */
+	if(get_owner(hitter)!=NULL) {
+	    (void) sprintf(buf,"%s killed %s with %s%s.",hitter->owner->name,
                 query_name(op),query_name(hitter), battleg? " (duel)":"");
-        old_hitter = hitter;
-        owner->exp_obj=hitter->exp_obj;
-        hitter=hitter->owner;
-    }
-    else
-        (void) sprintf(buf,"%s killed %s%s.",hitter->name,op->name,
+	    old_hitter = hitter;
+	    owner->exp_obj=hitter->exp_obj;
+	    hitter=hitter->owner;
+	}
+	else
+	    (void) sprintf(buf,"%s killed %s%s.",hitter->name,op->name,
                 battleg? " (duel)":"");
 
-/* If you didn't kill yourself, and your not the wizard */
-    if(hitter!=op&&!QUERY_FLAG(op, FLAG_WAS_WIZ))
-    {
-        int exp=op->stats.exp;
+	/* If you didn't kill yourself, and your not the wizard */
+	if(hitter!=op&&!QUERY_FLAG(op, FLAG_WAS_WIZ)) {
+	    int exp=op->stats.exp;
 
-        if(!settings.simple_exp && hitter->level>op->level)
+	    if(!settings.simple_exp && hitter->level>op->level)
                 exp=(exp*(op->level+1))/MAX(hitter->level+1, 1);
 
-/* new exp system in here. Try to insure the right skill is modifying gained exp */
-        if(hitter->type==PLAYER && !old_hitter)
+	    /* new exp system in here. Try to insure the right skill is modifying gained exp */
+	    if(hitter->type==PLAYER && !old_hitter)
                 exp = calc_skill_exp(hitter,op);
-        /* case for attack spells, summoned monsters killing */
-        if (old_hitter && hitter->type==PLAYER) {
+	    /* case for attack spells, summoned monsters killing */
+	    if (old_hitter && hitter->type==PLAYER) {
                 object *old_skill = hitter->chosen_skill;
 
-        hitter->chosen_skill=old_hitter->chosen_skill;
-        exp = calc_skill_exp(hitter,op);
-        hitter->chosen_skill = old_skill;
-    };
+		hitter->chosen_skill=old_hitter->chosen_skill;
+		exp = calc_skill_exp(hitter,op);
+		hitter->chosen_skill = old_skill;
+	    }
 
-/* Really don't give much experience for killing other players */
-    if (op->type==PLAYER)
-    {
-        if (battleg)
-        {
-                new_draw_info(NDI_UNIQUE, 0,hitter, "Your foe has fallen!");
-                new_draw_info(NDI_UNIQUE, 0,hitter, "VICTORY!!!");
-        }
-        else
-                exp = MIN(5000000, MAX(0, exp/10));
-    }
+	    /* Really don't give much experience for killing other players */
+	    if (op->type==PLAYER) {
+		if (battleg) {
+		    new_draw_info(NDI_UNIQUE, 0,hitter, "Your foe has fallen!");
+		    new_draw_info(NDI_UNIQUE, 0,hitter, "VICTORY!!!");
+		}
+		else
+		    exp = MIN(5000000, MAX(0, exp/10));
+	    }
 
-/* Don't know why this is set this way - doesn't make
- * sense to just divide everything by two for no reason.
- */
-    if (!settings.simple_exp)
-        exp=exp/2;
+	    /* Don't know why this is set this way - doesn't make
+	     * sense to just divide everything by two for no reason.
+	     */
 
-/* if op is standing on "battleground" (arena), no way to gain
- * exp by killing him */
-    if (battleg) exp = 0;
-    if(hitter->type!=PLAYER || hitter->contr->party_number<=0)
-    {
-        add_exp(hitter,exp);
-    }
-    else
-    {
-        int shares=0,count=0;
-        player *pl;
-        int no=hitter->contr->party_number;
+	    if (!settings.simple_exp)
+		exp=exp/2;
+
+	    /* if op is standing on "battleground" (arena), no way to gain
+	     * exp by killing him 
+	     */
+	    if (battleg) exp = 0;
+	    if(hitter->type!=PLAYER || hitter->contr->party_number<=0) {
+		add_exp(hitter,exp);
+	    }
+	    else {
+		int shares=0,count=0;
+		player *pl;
+		int no=hitter->contr->party_number;
 #ifdef PARTY_KILL_LOG
-        add_kill_to_party(no,query_name(hitter),query_name(op),exp);
+		add_kill_to_party(no,query_name(hitter),query_name(op),exp);
 #endif
-        for(pl=first_player;pl!=NULL;pl=pl->next)
-        {
-                if(pl->ob->contr->party_number==no && (pl->ob->map == hitter->map))
-                {
-                        count++;
+		for(pl=first_player;pl!=NULL;pl=pl->next) {
+		    if(pl->ob->contr->party_number==no && (pl->ob->map == hitter->map)) {
+			count++;
                         shares+=(pl->ob->level+4);
-                }
-        }
-        if(count==1 || shares>exp)
-                add_exp(hitter,exp);
-        else
-        {
-                int share=exp/shares,given=0,nexp;
-                for(pl=first_player;pl!=NULL;pl=pl->next)
-                {
+		    }
+		}
+		if(count==1 || shares>exp)
+		    add_exp(hitter,exp);
+		else {
+		    int share=exp/shares,given=0,nexp;
+		    for(pl=first_player;pl!=NULL;pl=pl->next) {
                         if(pl->ob->contr->party_number==no && (pl->ob->map == hitter->map))
                         {
                                 nexp=(pl->ob->level+4)*share;
                                 add_exp(pl->ob,nexp);
                                 given+=nexp;
                         }
-                }
-                exp-=given;
-                add_exp(hitter,exp); /* give any remainder to the player */
-        }
-    }
-}
-    if(op->type!=PLAYER)
-    {
-        new_draw_info(NDI_ALL, 10, NULL, buf);
-        if(QUERY_FLAG(op,FLAG_FRIENDLY))
-        {
-                object *owner = get_owner(op);
-                if(owner!= NULL && owner->type == PLAYER)
-                {
-                        sprintf(buf,"Your pet, the %s, is killed by %s.",
+		    }
+		    exp-=given;
+		    add_exp(hitter,exp); /* give any remainder to the player */
+		}
+	    }
+	}
+	if(op->type!=PLAYER) {
+	    new_draw_info(NDI_ALL, 10, NULL, buf);
+	    if(QUERY_FLAG(op,FLAG_FRIENDLY)) {
+		object *owner = get_owner(op);
+                if(owner!= NULL && owner->type == PLAYER) {
+		    sprintf(buf,"Your pet, the %s, is killed by %s.",
                                 op->name,hitter->name);
-                        play_sound_player_only(owner->contr, SOUND_PET_IS_KILLED,0,0);
-                        new_draw_info(NDI_UNIQUE, 0,owner,buf);
-                }
+		    play_sound_player_only(owner->contr, SOUND_PET_IS_KILLED,0,0);
+		    new_draw_info(NDI_UNIQUE, 0,owner,buf);
+		}
                 remove_friendly_object(op);
-        }
-        remove_ob(op);
-        free_object(op);
-    }
-/* Player has been killed! */
-    else
-    {
-        new_draw_info(NDI_ALL, 1, NULL, buf);
-        if(hitter->type==PLAYER)
-        {
+	    }
+	    remove_ob(op);
+	    free_object(op);
+	}
+	/* Player has been killed! */
+	else {
+	    new_draw_info(NDI_ALL, 1, NULL, buf);
+	    if(hitter->type==PLAYER) {
                 sprintf(buf,"%s the %s",hitter->name,hitter->contr->title);
                 strncpy(op->contr->killer,buf,BIG_NAME);
-        }
-        else
-        {
-                strncpy(op->contr->killer,hitter->name,BIG_NAME);
+	    }
+	    else {
+		strncpy(op->contr->killer,hitter->name,BIG_NAME);
                 op->contr->killer[BIG_NAME-1]='\0';
-        }
-    };
-};
+	    }
+	}
+    }
     return -1;
-};
+}
 
 /* This isn't used just for players, but in fact most objects.
  * op is the object to be hit, dam is the amount of damage, hitter
@@ -1249,13 +1226,10 @@ if (op->stats.hp<0) {
    * which needs new attacktype AT_HOLYWORD to work . b.t. */
 
 int hit_player(object *op,int dam, object *hitter, int type) {
-    char buf[MAX_BUF];
-    object *old_hitter=NULL; /* this is used in case of servant monsters */
     int maxdam=0,ndam,attacktype=1,attacknum,magic=(type & AT_MAGIC);
     int body_attack = op && op->head;   /* Did we hit op's head? */
     int simple_attack;
     tag_t op_tag, hitter_tag;
-    int battleg=0;    /* true if op standing on battleground */
     int rtn_kill = 0;
 
     if (get_attack_mode (&op, &hitter, &simple_attack))

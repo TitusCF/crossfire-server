@@ -542,7 +542,6 @@ void clear_object(object *op) {
   op->other_arch=NULL;
   op->enemy=NULL;
   op->contr = NULL;
-  op->sk_list = NULL;
   op->weight=0,op->carrying=0,op->weight_limit=0;
   op->anim_speed=0;
   op->level=0;

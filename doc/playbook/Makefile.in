@@ -107,19 +107,19 @@ sp_item.tex: handbutt.tex gatedoor.tex pit.tex br_wall.tex fr_wall.tex dir_spin.
 characters.ps items.ps:
 	touch $@
 
-cauldron.tex:
+cauldron.tex: items sorter
 	egrep -e "^122 " items | grep "cauldron" | $(AWK) -F'&' 	-f generic-extract | sort > cauldron.tex
 
-guild.tex:
+guild.tex: items sorter
 	egrep -e "^66 " items | grep "guild" | $(AWK) -F'&' 	-f generic-extract | sort > guild.tex
 
-holysymbol.tex:
+holysymbol.tex: items sorter
 	egrep -e "^43 " items | grep "holy" | $(AWK) -F'&' 	-f generic-extract | sort > holysymbol.tex
 
-lockpicks.tex:
+lockpicks.tex: items sorter
 	egrep -e "^43 " items | grep "lockpicks" | $(AWK) -F'&' 	-f generic-extract | sort > lockpicks.tex
 
-potion.tex:
+potion.tex: items sorter
 	egrep -e "^5 " items | grep "potiongen" | $(AWK) -F'&' 	-f generic-extract | sort > potion.tex
 
 runeblast.tex: items sorter
@@ -143,10 +143,10 @@ runemark.tex: items sorter
 runeshock.tex: items sorter
 	egrep -e "^154 " items | grep "rune-shock." | 	$(AWK) -F'&' -f generic-extract | sort > runeshock.tex
 
-shops.tex:
+shops.tex: items sorter
 	egrep -e "^66 " items | grep "store" | $(AWK) -F'&' 	-f generic-extract | sort > shops.tex
 
-talisman.tex:
+talisman.tex: items sorter
 	egrep -e "^43 " items | grep "talisman" | $(AWK) -F'&' 	-f generic-extract | sort > talisman.tex
 
 altar.tex: items sorter

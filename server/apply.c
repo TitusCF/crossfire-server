@@ -1955,7 +1955,7 @@ extern void apply_poison (object *op, object *tmp)
  *   0: player or monster can't apply objects of that type
  *   2: objects of that type can't be applied if not in inventory
  *   1: has been applied, or there was an error applying the object
-
+ *
  * op is the object that is causing object to be applied, tmp is the object
  * being applied.
  *
@@ -1978,12 +1978,12 @@ int manual_apply (object *op, object *tmp, int aflag)
   if (tmp->script_apply!=NULL)
   {
     rtn_script = guile_call_event(op,tmp, NULL, aflag, NULL,0,0,tmp->script_apply, SCRIPT_FIX_ALL);
-    if (rtn_script!=0) return;
+    if (rtn_script!=0) return 1;
   };
   if (tmp->script_str_apply!=NULL)
   {
     rtn_script = guile_call_event_str(op,tmp, NULL, aflag, NULL,0,0,tmp->script_str_apply, SCRIPT_FIX_ALL);
-    if (rtn_script!=0) return;
+    if (rtn_script!=0) return 1;
   };
 
   switch (tmp->type)

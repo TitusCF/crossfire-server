@@ -824,42 +824,9 @@ void unlink_skill(object *skillop) {
 	LOG(llevError,"Error: unlink_skill() called for non-player!\n");
 	return;
   }
-
-#ifdef LINKED_SKILL_LIST
-  if(remove_skill_from_list(op,skillop))
-#endif
-      skillop->exp_obj = NULL;
+  skillop->exp_obj = NULL;
 }
 
-int remove_skill_from_list(object *op, object *skillop) {
-  objectlink *obl=op->sk_list,*first,*prev=NULL,*nxt;
-
-  if(!skillop) return 0;
- 
-  prev=first=obl;
-  while(obl) {
-     nxt = obl->next ? obl->next: NULL;
-     if(obl->id==skillop->stats.sp) {
-          if(obl==first) {
-              op->sk_list = nxt;
-              nxt = (nxt&&nxt->next) ? nxt->next: NULL;
-          }
-          if(prev) prev->next = nxt;
-#if 0
-          LOG(llevDebug,"Removing skill: %s from list\n",
-                skillop->name);
-#endif
-          CFREE(obl);
-          obl = NULL;
-          return 1;
-     } else
-          prev = obl;
-     obl=nxt;
-  }   
-     
-  if(first) op->sk_list = first;
-  return 0; 
-}
 
 /* link_player_skills() - linking skills with experience objects
  * and creating a linked list of skills for later fast access.
@@ -964,14 +931,6 @@ int link_player_skills(object *pl) {
 	}
   /* Ok, create linked list and link the associated skills to exp objects */
    for(i=0;i<sk_index;i++) {
-#ifdef LINKED_SKILL_LIST
-  	objectlink *obl;
-	obl = (objectlink *) malloc(sizeof(objectlink));
-	obl->ob=sk_ob[i];
-	obl->id=sk_ob[i]->stats.sp; 
-	obl->next = pl->sk_list;
-	pl->sk_list = obl;
-#endif
         cat = skills[sk_ob[i]->stats.sp].category;
 	if(cat==EXP_NONE) continue;
  
@@ -991,16 +950,6 @@ int link_player_skills(object *pl) {
 int link_player_skill(object *pl, object *skillop) {
   object *tmp;
   int cat;
-#ifdef LINKED_SKILL_LIST
-  objectlink *obl;
-
-  /* add it to the linked list */
-  obl = (objectlink *) malloc(sizeof(objectlink));
-  obl->ob=skillop;
-  obl->id=skillop->stats.sp;
-  obl->next = pl->sk_list;
-  pl->sk_list = obl;
-#endif
 
   cat = skills[skillop->stats.sp].category; 
 
@@ -1025,31 +974,34 @@ int link_player_skill(object *pl, object *skillop) {
  
 int
 learn_skill (object *pl, object *scroll) {
-object *tmp;
-archetype *skill;
-#ifdef LINKED_SKILL_LIST
-objectlink *obl;
-#else
-object *tmp2;
-#endif
-      skill=find_archetype(scroll->slaying);
-     if(!skill)
-           return 2;
-     tmp=arch_to_object(skill);
-     if(!tmp) return 2;
+    object *tmp;
+    archetype *skill;
+    object *tmp2;
+    int has_meditation=0;
 
-/* check if player already has it */
-#ifdef LINKED_SKILL_LIST
-     for(obl=pl->sk_list;obl;obl=obl->next)
-	if(obl->ob->invisible
-	 &&(obl->ob->stats.sp==tmp->stats.sp)) return 0;
-#else /* LINKED_SKILL_LIST */ 
-     for(tmp2=pl->inv;tmp2;tmp2=tmp2->below)
-	if(tmp2->type==SKILL&&tmp2->invisible
-	 &&tmp2->stats.sp==tmp->stats.sp) return 0;
-# endif /* LINKED_SKILL_LIST */
+    skill=find_archetype(scroll->slaying);
+    if(!skill)
+	return 2;
+    tmp=arch_to_object(skill);
+    if(!tmp) return 2;
 
-     /* now a random change to learn, based on player Int */
+    /* check if player already has it */
+    for (tmp2=pl->inv;tmp2;tmp2=tmp2->below) {
+	if(tmp2->type==SKILL&&tmp2->invisible) {
+	    if  (tmp2->stats.sp==tmp->stats.sp) return 0;
+	    else if (tmp2->stats.sp == SK_MEDITATION) has_meditation=1;
+	}
+    }
+
+    /* Special check - if the player has meditation (monk), they can not
+     * learn melee weapons.  Prevents monk from getting this
+     * skill.
+     */
+    if (tmp->stats.sp == SK_MELEE_WEAPON && has_meditation) {
+	new_draw_info(NDI_UNIQUE, 0,pl,"Your knowledge of inner peace prevents you from learning about melee weapons.");
+	return 2;
+    }
+    /* now a random change to learn, based on player Int */
     if(RANDOM()%100>learn_spell[pl->stats.Int])
 	return 2; /* failure :< */
 
@@ -1091,100 +1043,78 @@ static int clipped_percent(int a, int b)
  */
  
 void show_skills(object *op) {
-  object *tmp=NULL;
-  char buf[MAX_BUF], *in;
-  int i,length,is_first;
-#ifdef LINKED_SKILL_LIST
-  objectlink *obl;
- 
-  if (!op->sk_list) {
-      new_draw_info(NDI_UNIQUE, 0,op,"You know no skills.");
-      op->chosen_skill=NULL;    /* double safety - for those who lose skills */
-      return;
-  } else {
-#endif
-      length = 31;
-      in = "";
-      if (op)
-        clear_win_info(op);
-      /* sprintf(buf,"Player Skills      Category    /lvl"); */ 
-      sprintf(buf,"Player skills by experience category");
-      new_draw_info(NDI_UNIQUE, 0,op,buf);
-#ifdef LINKED_SKILL_LIST
-  }
-#endif
+    object *tmp=NULL;
+    char buf[MAX_BUF], *in;
+    int i,length,is_first;
 
-/* print out skills by category */
-  for (i=0;i<=nrofexpcat;i++) {
-    char Special[100];
-    Special[0]='\0';
-    is_first=1;
-    if(i==nrofexpcat) i=EXP_NONE; /* skip to misc exp category */
-#ifdef LINKED_SKILL_LIST
-    for (obl=op->sk_list;obl;obl=obl->next) {
-      tmp = obl->ob;
-#else
-    for (tmp=op->inv;tmp;tmp=tmp->below) {
-      if(tmp->type!=SKILL) continue;
-#endif
-      if(skills[tmp->stats.sp].category==i
-   	&&(tmp->invisible||QUERY_FLAG(tmp,FLAG_APPLIED))) {
-	  /* header info */
-          if(is_first) {  
-            is_first=0;
-            new_draw_info(NDI_UNIQUE, 0,op," "); 
-            if(tmp->exp_obj) { 
-	      object *tmp_exp = tmp->exp_obj;
-	      int k=(length-15-strlen(tmp_exp->name)); 
-	      char tmpbuf[40];
-	      strcpy(tmpbuf,tmp_exp->name);
-	      while(k>0) {k--; strcat(tmpbuf,".");}
-              if (settings.use_permanent_experience) {
-                new_draw_info_format(NDI_UNIQUE,0,op,"%slvl:%3d (xp:%d/%d/%d%%)",
-	             tmpbuf,tmp_exp->level,
-                     tmp_exp->stats.exp,
-                     level_exp(tmp_exp->level+1, op->expmul),
-                     clipped_percent(tmp_exp->last_heal,tmp_exp->stats.exp));
-              } else {
-                new_draw_info_format(NDI_UNIQUE,0,op,"%slvl:%3d (xp:%d/%d)",
-	             tmpbuf,tmp_exp->level,
-                     tmp_exp->stats.exp,
-                     level_exp(tmp_exp->level+1, op->expmul));
-              }
-	      if (strcmp(tmp_exp->name,"physique")==0)
-		{
-		  sprintf(Special,"You can handle %d weapon improvements.",tmp_exp->level/5+5);
-		}
-	      if (strcmp(tmp_exp->name,"wisdom")==0)
-		{
-		    char *cp = determine_god(op);
+    length = 31;
+    in = "";
+    if (op)
+    clear_win_info(op);
+    /* sprintf(buf,"Player Skills      Category    /lvl"); */ 
+    sprintf(buf,"Player skills by experience category");
+    new_draw_info(NDI_UNIQUE, 0,op,buf);
 
-		    sprintf(Special,"You worship %s.", cp?cp:"no god at current time");
-		}
-            } else if(i==EXP_NONE) { 
-              new_draw_info(NDI_UNIQUE,0,op,"misc.");
-	    } 
-	  }
-
-	  /* print matched skills */
-          if((!op || QUERY_FLAG(op, FLAG_WIZ)))
-              (void) sprintf(buf,"%s%s %s (%5d)",in,
-		QUERY_FLAG(tmp,FLAG_APPLIED)?"*":"-",
-		skills[tmp->stats.sp].name,tmp->count);
-          else
-              (void) sprintf(buf,"%s%s %s",in,
-		QUERY_FLAG(tmp,FLAG_APPLIED)?"*":"-",
-		skills[tmp->stats.sp].name);
-
-          new_draw_info(NDI_UNIQUE,0,op,buf);
-      }
+    /* print out skills by category */
+    for (i=0;i<=nrofexpcat;i++) {
+	char Special[100];
+	Special[0]='\0';
+	is_first=1;
+	if(i==nrofexpcat) i=EXP_NONE; /* skip to misc exp category */
+	for (tmp=op->inv;tmp;tmp=tmp->below) {
+	    if(tmp->type!=SKILL) continue;
+	    if(skills[tmp->stats.sp].category==i
+	       &&(tmp->invisible||QUERY_FLAG(tmp,FLAG_APPLIED))) {
+		/* header info */
+		if(is_first) {  
+		    is_first=0;
+		    new_draw_info(NDI_UNIQUE, 0,op," "); 
+		    if(tmp->exp_obj) { 
+			object *tmp_exp = tmp->exp_obj;
+			int k=(length-15-strlen(tmp_exp->name)); 
+			char tmpbuf[40];
+			strcpy(tmpbuf,tmp_exp->name);
+			while(k>0) {k--; strcat(tmpbuf,".");}
+			if (settings.use_permanent_experience) {
+			    new_draw_info_format(NDI_UNIQUE,0,op,"%slvl:%3d (xp:%d/%d/%d%%)",
+						 tmpbuf,tmp_exp->level,
+						 tmp_exp->stats.exp,
+						 level_exp(tmp_exp->level+1, op->expmul),
+						 clipped_percent(tmp_exp->last_heal,tmp_exp->stats.exp));
+			} else {
+			    new_draw_info_format(NDI_UNIQUE,0,op,"%slvl:%3d (xp:%d/%d)",
+						 tmpbuf,tmp_exp->level,
+						 tmp_exp->stats.exp,
+						 level_exp(tmp_exp->level+1, op->expmul));
+			}
+			if (strcmp(tmp_exp->name,"physique")==0) {
+			    sprintf(Special,"You can handle %d weapon improvements.",tmp_exp->level/5+5);
+			}
+			if (strcmp(tmp_exp->name,"wisdom")==0) {
+			    char *cp = determine_god(op);
+			    sprintf(Special,"You worship %s.", cp?cp:"no god at current time");
+			}
+		    } else if(i==EXP_NONE) { 
+			new_draw_info(NDI_UNIQUE,0,op,"misc.");
+		    }
+		} /* is_first */
+		/* print matched skills */
+		if((!op || QUERY_FLAG(op, FLAG_WIZ)))
+		    (void) sprintf(buf,"%s%s %s (%5d)",in,
+				   QUERY_FLAG(tmp,FLAG_APPLIED)?"*":"-",
+				   skills[tmp->stats.sp].name,tmp->count);
+		else
+		    (void) sprintf(buf,"%s%s %s",in,
+				   QUERY_FLAG(tmp,FLAG_APPLIED)?"*":"-",
+				   skills[tmp->stats.sp].name);
+		new_draw_info(NDI_UNIQUE,0,op,buf);
+	    }
+	}
+	if (Special[0]!='\0') {
+	    new_draw_info(NDI_UNIQUE,0,op,Special);
+	}
     }
-    if (Special[0]!='\0')
-      {
-	new_draw_info(NDI_UNIQUE,0,op,Special);
-      }
-  }
-}    
+}
 
 /* use_skill() - similar to invoke command, it executes the skill in the 
  * direction that the user is facing. Returns false if we are unable to 

@@ -1047,7 +1047,8 @@ void do_specials() {
  */
 int main(int argc, char **argv)
 {
-  gh_enter(argc, argv, main_crossfire);
+    gh_enter(argc, argv, main_crossfire);
+    return 0;
 }
 
 /* GROS: Note that the return type had to be changed from int

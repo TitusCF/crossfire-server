@@ -52,8 +52,6 @@ int arch_init;		/* True if doing arch initialization */
  */
 archetype *find_archetype_by_object_name(char *name) {
   archetype *at;
-  unsigned long index;
-  int i = 0;
 
   if (name == NULL)
     return (archetype *) NULL;
