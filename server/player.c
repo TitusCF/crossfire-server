@@ -74,10 +74,13 @@ void display_motd(object *op) {
 }
 
 int playername_ok(char *cp) {
-  for(;*cp!='\0';cp++)
-    if(!((*cp>='a'&&*cp<='z')||(*cp>='A'&&*cp<='Z'))&&*cp!='-'&&*cp!='_')
-      return 0;
-  return 1;
+    /* Don't allow - or _ as first character in the name */
+    if (*cp == '-' || *cp == '_') return 0;
+
+    for(;*cp!='\0';cp++)
+	if(!((*cp>='a'&&*cp<='z')||(*cp>='A'&&*cp<='Z'))&&*cp!='-'&&*cp!='_')
+	    return 0;
+    return 1;
 }
 
 /* This no longer sets the player map.  Also, it now updates
