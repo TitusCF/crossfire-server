@@ -243,6 +243,7 @@ void dump_alchemy( void ) {
                 sprintf(buf,"%s",string);
              fprintf(logfile,"%-30s(%d) bookchance %3d  ",buf,formula->index,
 		formula->chance);
+             fprintf(logfile,"skill %s",formula->skill);
              fprintf(logfile,"\n");
              if (formula->ingred !=NULL) {
 		int nval=0,tval=0;
@@ -437,8 +438,8 @@ void dump_alchemy_costs (void)
 		sprintf (buf, "%s", string);
 	      else
 		sprintf (buf, "%s of %s", string, formula->title);
-	      fprintf (logfile, "\n%-40s bookchance %3d\n",
-		       buf, formula->chance);
+	      fprintf (logfile, "\n%-40s bookchance %3d  skill %s\n",
+		       buf, formula->chance, formula->skill);
 	      if (formula->ingred !=NULL)
 		{
 		  tcost = 0;
