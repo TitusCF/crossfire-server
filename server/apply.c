@@ -3330,22 +3330,24 @@ void fix_auto_apply(mapstruct *m) {
 	    for(tmp=get_map_ob(m,x,y);tmp!=NULL;tmp=above) {
 		above=tmp->above;
 
-
 		if (tmp->inv) {
 		    object *invtmp, *invnext;
 
 		    for (invtmp=tmp->inv; invtmp != NULL; invtmp = invnext) {
 			invnext = invtmp->below;
+
 			if(QUERY_FLAG(invtmp,FLAG_AUTO_APPLY))
 			    auto_apply(invtmp);
 			else if(invtmp->type==TREASURE && HAS_RANDOM_ITEMS(invtmp)) {
 			    while ((invtmp->stats.hp--)>0)
 				create_treasure(invtmp->randomitems, invtmp, 0,
 						m->difficulty,0);
+				invtmp->randomitems = NULL;
 			}
 			else if (invtmp && invtmp->arch && 
 				invtmp->type!=TREASURE &&
 				invtmp->type != SPELL && 
+				invtmp->type != CLASS &&
 				HAS_RANDOM_ITEMS(invtmp)) {
 				    create_treasure(invtmp->randomitems, invtmp, 0,
 						    m->difficulty,0);
@@ -3378,6 +3380,7 @@ void fix_auto_apply(mapstruct *m) {
 		    while ((tmp->stats.hp--)>0)
 			create_treasure(tmp->randomitems, tmp, 0,
                             m->difficulty,0);
+		    tmp->randomitems = NULL;
 		}
 		else if(tmp->type==TIMED_GATE) {
 		    tmp->speed = 0;
@@ -3391,16 +3394,11 @@ void fix_auto_apply(mapstruct *m) {
 		 * which say how many times to make the treasure.
 		 */
 		else if(tmp && tmp->arch && tmp->type!=PLAYER && tmp->type!=TREASURE &&
-		   tmp->type != SPELL && HAS_RANDOM_ITEMS(tmp)) {
+		   tmp->type != SPELL && tmp->type != PLAYER_CHANGER && tmp->type != CLASS &&
+		   HAS_RANDOM_ITEMS(tmp)) {
 		    create_treasure(tmp->randomitems, tmp, GT_APPLY,
                             m->difficulty,0);
 		    tmp->randomitems = NULL;
-		    /* Treasure has been created for all the inventory, so clear out
-		     * their treasurelists also.
-		     */
-		    for (above=tmp->inv; above; above=above->below)
-			above->randomitems=NULL;
-
 		}
 	    }
 

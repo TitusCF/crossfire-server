@@ -768,6 +768,8 @@ void fix_generated_item (object *op, object *creator, int difficulty,
 	create_treasure(op->randomitems, op,flags ,difficulty, 0);
 	if (!op->inv) LOG(llevDebug,"fix_generated_item: Unable to generate treasure for %s\n",
 			  op->name);
+	/* So the treasure doesn't get created again */
+	op->randomitems = NULL;
     }
 
     if (difficulty<1) difficulty=1;

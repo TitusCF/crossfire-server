@@ -17,6 +17,22 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Fix some bugs I introduced in my last commit.
+common/map.c: Add back in call to sum_weight that got removed when removing
+   the object checking code.
+common/treasure.c: Have fix_generated_item() blank out the randomitems
+   field after it has created treasure.
+server/apply.c: Only clear randomitems after create_treasure() - don't
+   presume it should get blanked out for other reasons - with change
+   to treasure.c above, this should be more reliable and fix starting
+   skill issue, as randomitems was getting blanked out for CLASS object.
+server/main.c: Change processing of players a little - found crash where
+   autosave was called for a removed player (map had got swapped out) -
+   don't do autosave logic if player is removed.  Move the autosave code
+   to after the players action, so that can just have a single check of
+   removed status.
+MSW 2004-10-17
+
 include/sproto.h, server/egoitem.c: Change create_artifact() to return whether
    the artifact was created.
 server/plugins.c: Change CFWCreateArtifact()/HOOK_CREATEARTIFACT to return

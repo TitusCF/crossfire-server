@@ -492,6 +492,9 @@ void load_objects (mapstruct *m, FILE *fp, int mapflags) {
 	    else
 		insert_ob_in_map(op,m,op,INS_NO_MERGE | INS_NO_WALK_ON | INS_ON_TOP);
 
+	    if (op->inv)
+		sum_weight(op);
+
 	    prev=op,last_more=op;
 	    break;
 

@@ -804,10 +804,24 @@ void process_players1(mapstruct *map)
     for(flag=1;flag!=0;) {
 	flag=0;
 	for(pl=first_player;pl!=NULL;pl=plnext) {
-
-
 	    plnext=pl->next; /* In case a player exits the game in handle_player() */
-	    if (map!=NULL && (pl->ob == NULL || pl->ob->map!=map)) continue;
+
+	    if (pl->ob == NULL) continue;
+
+	    if (map!=NULL && pl->ob->map!=map) continue;
+
+            if(pl->ob->speed_left>0) {
+		if (handle_newcs_player(pl->ob))
+		    flag=1;
+	    } /* end if player has speed left */
+
+	    /* If the player is not actively playing, don't make a
+	     * backup save - nothing to save anyway.  Plus, the
+	     * map may not longer be valid.  This can happen when the
+	     * player quits - they exist for purposes of tracking on the map,
+	     * but don't actually reside on any actual map.
+	     */
+	    if (QUERY_FLAG(pl->ob, FLAG_REMOVED)) continue;
 
 #ifdef AUTOSAVE
 	    /* check for ST_PLAYING state so that we don't try to save off when
@@ -826,14 +840,6 @@ void process_players1(mapstruct *map)
 		}
 	    }
 #endif
-            if(pl->ob == NULL) {
-                /* I take it this should never happen,
-                   but it seems to anyway :( */
-                flag = 1;
-            } else if(pl->ob->speed_left>0) {
-		if (handle_newcs_player(pl->ob))
-		    flag=1;
-	    } /* end if player has speed left */
 	} /* end of for loop for all the players */
     } /* for flag */
     for(pl=first_player;pl!=NULL;pl=pl->next) {
