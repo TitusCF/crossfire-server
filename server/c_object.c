@@ -503,28 +503,35 @@ int command_apply (object *op, char *params)
  * not need to use split_ob and stuff.
  */
 int sack_can_hold (object *pl, object *sack, object *op, int nrof) {
-    char buf[MAX_BUF];
-    buf[0] = 0;
 
-    if (! QUERY_FLAG (sack, FLAG_APPLIED))
-	sprintf (buf, "The %s is not active.", query_name(sack));
-    if (sack == op)
-	sprintf (buf, "You can't put the %s into itself.", query_name(sack));
-    if (sack->race && (sack->race != op->race || op->type == CONTAINER
-		       || (sack->stats.food && sack->stats.food != op->type)))
-	sprintf (buf, "You can put only %s into the %s.", sack->race,
-		 query_name(sack));
-    if (op->type == SPECIAL_KEY && sack->slaying && op->slaying)
-	sprintf (buf, "You don't want put the key into %s.", query_name(sack));
-    if (sack->weight_limit && sack->carrying + (nrof ? nrof : 1) * 
-	(op->weight + (op->type==CONTAINER?(op->carrying*op->stats.Str):0))
-	* (100 - sack->stats.Str) / 100  > sack->weight_limit)
-	sprintf (buf, "That won't fit in the %s!", query_name(sack));
-    if (buf[0]) {
-	if (pl)
-	    new_draw_info(NDI_UNIQUE, 0,pl, buf);
+    if (! QUERY_FLAG (sack, FLAG_APPLIED)) {
+	new_draw_info_format(NDI_UNIQUE, 0, pl, 
+	     "The %s is not active.", query_name(sack));
 	return 0;
     }
+    if (sack == op) {
+	new_draw_info_format(NDI_UNIQUE, 0, pl,
+	    "You can't put the %s into itself.", query_name(sack));
+	return 0;
+    }
+    if (sack->race && (sack->race != op->race || op->type == CONTAINER
+		       || (sack->stats.food && sack->stats.food != op->type))) {
+	new_draw_info_format(NDI_UNIQUE, 0, pl,
+	    "You can put only %s into the %s.", sack->race,  query_name(sack));
+	return 0;
+    }
+    if (op->type == SPECIAL_KEY && sack->slaying && op->slaying) {
+	new_draw_info_format(NDI_UNIQUE, 0, pl,
+	    "You can't want put the key into %s.", query_name(sack));
+	return 0;
+    }
+    if (sack->weight_limit && sack->carrying + (nrof ? nrof : 1) * 
+	(op->weight + (op->type==CONTAINER?(op->carrying*op->stats.Str):0))
+	* (100 - sack->stats.Str) / 100  > sack->weight_limit) {
+	new_draw_info_format(NDI_UNIQUE, 0, pl,
+	     "That won't fit in the %s!", query_name(sack));
+    }
+    /* All other checks pass, must be OK */
     return 1;
 }
 
