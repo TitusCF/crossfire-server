@@ -17,6 +17,16 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+------------------------------------------------------------------------------
+Changes for 0.95.6:
+
+Makefile.in: Update version to 0.95.6
+include/patchlevel.h: Update to .6 for 0.95.6 release
+common/porting.c, include/config.h, include/loader.h, include/skills.h, 
+include/spells.h, include/treasure.h, include/version.h, random_maps/style.c:
+    Update my mail address and copyright date.  Mostly committed to sync
+    up my data with the CVS repository - MSW 6/20/2000
+
 random_maps/treasure.c server/apply.c:  made containers able to
 have more than one treasure in them, made a fix to treasure.c, which would
 change the options given to it in an unintended way.  --PeterM 6/20/2000
