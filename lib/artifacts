@@ -123,8 +123,8 @@ Object Leader
 type 0
 wc 1
 ac 1
-hp 5
-maxhp 5
+hp 12
+maxhp 12
 exp 20
 level 1
 resist_physical 20
@@ -139,8 +139,8 @@ Object Leader
 type 0
 wc 1
 ac 1
-hp 5
-maxhp 5
+hp 10
+maxhp 10
 exp 20
 level 1
 resist_physical 20
@@ -155,8 +155,8 @@ Object Leader
 type 0
 wc 1
 ac 1
-hp 5
-maxhp 5
+hp 13
+maxhp 13
 exp 20
 level 1
 resist_physical 20
@@ -171,13 +171,29 @@ Object Leader
 type 0
 wc 1
 ac 1
-hp 5
-maxhp 5
+hp 15
+maxhp 15
 exp 20
 level 1
 resist_physical 20
 dam 13
 face ogre_leader.111
+stand_still 1
+end
+#
+Allowed beholder
+chance 5
+Object Leader
+type 0
+wc 5
+ac 2
+hp 15
+maxhp 5
+exp 500
+level 2
+resist_physical 40
+dam 15
+face beholder_leader.111
 stand_still 1
 end
 #
@@ -187,9 +203,9 @@ Object Chief
 type 0
 wc 2
 ac 2
-hp 10
-maxhp 10
-exp 40
+hp 20
+maxhp 20
+exp 80
 level 2
 resist_physical 30
 dam 14
@@ -203,9 +219,9 @@ Object Chief
 type 0
 wc 2
 ac 2
-hp 10
-maxhp 10
-exp 40
+hp 20
+maxhp 20
+exp 100
 level 2
 resist_physical 30
 dam 14
@@ -219,9 +235,9 @@ Object Chief
 type 0
 wc 2
 ac 2
-hp 10
-maxhp 10
-exp 40
+hp 20
+maxhp 20
+exp 100
 level 2
 resist_physical 30
 dam 14
@@ -235,17 +251,17 @@ Object Chief
 type 0
 wc 2
 ac 2
-hp 10
-maxhp 10
-exp 40
+hp 22
+maxhp 22
+exp 150
 level 2
 resist_physical 30
-dam 14
+dam 19
 face ogre_chief.111
 stand_still 1
 end
 # Just to fix probability some.
-Allowed orc,goblin,ogre,gnoll
+Allowed orc,goblin,ogre,gnoll,beholder
 chance 20
 Object NONE
 end
