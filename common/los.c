@@ -559,7 +559,8 @@ void expand_lighted_sight(object *op)
     for(x=darklevel-5; x<6-darklevel; x++)
 	for(y=darklevel-5; y<6-darklevel; y++)
 	    if(!(op->contr->blocked_los[x+op->contr->socket.mapx/2][y+op->contr->socket.mapy/2]==100))
-		op->contr->blocked_los[x+op->contr->socket.mapx/2][y+op->contr->socket.mapx/2]-= MAX(0,6 -darklevel - MAX(abs(x),abs(y))); 
+		op->contr->blocked_los[x+op->contr->socket.mapx/2][y+op->contr->socket.mapy/2]-= 
+		    MAX(0,6 -darklevel - MAX(abs(x),abs(y))); 
 }
 
 /* blinded_sight() - sets all veiwable squares to blocked except 
