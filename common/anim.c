@@ -34,7 +34,7 @@
 void free_all_anim() {
     int i;
 
-    for (i=0; i<num_animations; i++) {
+    for (i=0; i<=num_animations; i++) {
 	free_string(animations[i].name);
 	free(animations[i].faces);
     }

@@ -317,11 +317,12 @@ object *find_object_name(char *str) {
 }
 
 void free_all_object_data() {
-    object *op, *next;
 
 #if 0
+
     /* Don't clean these up, so that properly allocated but 'lost' objects
-     * still show up in memory debugging output.
+     * still show up in memory debugging output.  This is things like
+     * a function doing a get_ob, but not freeing it.
      */
     for (op=objects; op!=NULL; op=next) {
 	next=op->next;
@@ -333,10 +334,8 @@ void free_all_object_data() {
 #endif
 
 #ifdef MEMORY_DEBUG
-    /* In theory, we should do this.  In practice, it is fairly difficult
-     * because objects are created in groups of 100, and there is no record
-     * of those starting pointers.
-     */
+    object *op, *next;
+
     for (op=free_objects; op!=NULL; ) {
 	next=op->next;
 	free(op);
@@ -659,10 +658,21 @@ void expand_objects() {
 
 object *get_object() {
   object *op;
+
   if(free_objects==NULL) {
     expand_objects();
   }
   op=free_objects;
+#ifdef MEMORY_DEBUG
+  /* The idea is hopefully by doing a realloc, the memory
+   * debugging program will now use the current stack trace to
+   * report leaks.
+   */
+  op = realloc(op, sizeof(object));
+  SET_FLAG(op, FLAG_REMOVED);
+  SET_FLAG(op, FLAG_FREED);
+#endif
+
   if(!QUERY_FLAG(op,FLAG_FREED)) {
     LOG(llevError,"Fatal: Getting busy object.\n");
   }
@@ -1002,12 +1012,6 @@ void free_object(object *ob) {
       ob->next->prev=ob->prev;
   }
   
-  /* Now link it with the free_objects list: */
-  ob->prev=NULL;
-  ob->next=free_objects;
-  if(free_objects!=NULL)
-    free_objects->prev=ob;
-  free_objects=ob;
   if(ob->name!=NULL) {
     free_string(ob->name);
     ob->name=NULL;
@@ -1028,7 +1032,29 @@ void free_object(object *ob) {
     free_string(ob->msg);
     ob->msg=NULL;
   }
+
+#if 0 /* MEMORY_DEBUG*/
+    /* This is a nice idea.  Unfortunately, a lot of the code in crossfire
+     * presumes the freed_object will stick around for at least a little
+     * bit
+     */ 
+    /* this is necessary so that memory debugging programs will
+     * be able to accurately report source of malloc.  If we recycle
+     * objects, then some other area may be doing the get_object
+     * and not freeing it, but the original one that malloc'd the
+     * object will get the blame.
+     */
+    free(ob);
+#else
+  /* Now link it with the free_objects list: */
+  ob->prev=NULL;
+  ob->next=free_objects;
+  if(free_objects!=NULL)
+    free_objects->prev=ob;
+  free_objects=ob;
   nroffreeobjects++;
+#endif
+
 }
 
 /*

@@ -89,6 +89,27 @@ portability - don't assume everyone else has the same system as you do.
 is easiest to write at that second.  This basically means don't do the
 quick and ugly hack, but instead fix it properly.
 
+12) Use 4 space indentation.  While a lot of old code may have 2 space,
+the move to 4 space will make future readability easier.
+
+13)
+ /*
+  * do block
+  * comment like
+  * this
+  */
+
+  /*
+    and not
+    like this
+   */
+
+  /* if you are doing a single line comment, this method is fine */
+
+  Its much easier to spot the block comments if they all start with *, 
+  and these comments tend to be worth noticing.
+
+
 ------------------------------------------------------------------------------
 Section 3 - sending in patches:
 
