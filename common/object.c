@@ -29,11 +29,12 @@
 /* Eneq(@csd.uu.se): Added weight-modifiers in environment of objects.
    sub/add_weight will transcend the environment updating the carrying
    variable. */
-
+#include <global.h>
+#ifndef WIN32 // ---win32 exclude headers
 #include <stdio.h>
 #include <sys/types.h>
 #include <sys/uio.h>
-#include <global.h>
+#endif // win32
 #include <object.h>
 #include <funcpoint.h>
 #include <skills.h> 

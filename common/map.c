@@ -31,8 +31,9 @@
 #include <funcpoint.h>
 
 #include <loader.h>
-
+#ifndef WIN32 // ---win32 exclude header
 #include <unistd.h>
+#endif // win32
 
 extern int nrofallocobjects,nroffreeobjects;
 
@@ -161,6 +162,9 @@ static char *create_items_path (char *s) {
 
 int check_path (char *name, int prepend_dir)
 {
+#ifdef WIN32 // ***win32: check this sucker in windows style.
+	return(_access(name,0));
+#else
     char buf[MAX_BUF], *endbuf;
     struct stat statbuf;
     int mode = 0, i;
@@ -197,6 +201,7 @@ int check_path (char *name, int prepend_dir)
 	mode |= 2;
     
     return (mode);
+#endif
 }
 
 void dump_map_lights(mapstruct *m) {

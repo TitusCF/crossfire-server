@@ -194,15 +194,21 @@
  * which contains usage stats for the last X amount of time.
  * CS_LOGTIME is how often it will print out stats.
  */
+#ifndef WIN32    // ***win32 we set the following stuff in the IDE
 #define CS_LOGSTATS
+#endif
+#ifdef CS_LOGSTATS
 #define CS_LOGTIME  600
+#endif
 
 /* DEBUG generates copious amounts of output.  I tend to change the CC options
  * in the crosssite.def file if I want this.  By default, you probably
  * dont want this defined.
  */
+#ifndef WIN32			// ***win32 we set the following stuff in the IDE
 #ifndef DEBUG
 #define DEBUG
+#endif
 #endif
 
 
@@ -546,8 +552,9 @@
  * It shouldn't hurt anyone if this is defined but you don't
  * have an watchdog program.
  */
-
+#ifndef WIN32	//***win32 disable watchdog as win32 default
 #define WATCHDOG
+#endif
 
 /***********************************************************************
  * SECTION 2 - Machine/Compiler specific stuff.
@@ -670,7 +677,11 @@
  */
 
 #ifndef LOGFILE
+#ifdef WIN32
+#define LOGFILE "tmp\\cross.log"
+#else 
 #define LOGFILE "/tmp/cross.log"
+#endif
 #endif
 
 /*
@@ -816,7 +827,11 @@
  */
 
 /*#define TMPDIR "/home/hugin/a/crossfire/crossfire/tmp"*/
+#ifdef WIN32
+#define TMPDIR "tmp"
+#else
 #define TMPDIR "/tmp"
+#endif
 
 
 /* Directory to use for unique items. This is placed into the 'lib' 
@@ -846,7 +861,11 @@
  * major changes to the map.
  */
 
+#ifdef WIN32
+#define EMERGENCY_MAPPATH "\\city\\city"
+#else
 #define EMERGENCY_MAPPATH "/city/city"
+#endif
 #define EMERGENCY_X 15
 #define EMERGENCY_Y 19
 

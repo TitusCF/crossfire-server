@@ -26,8 +26,10 @@
     The author can be reached via e-mail to mwedel@scruz.net
 */
 
-#include <pwd.h>
 #include <global.h>
+#ifndef WIN32 // ---win32 remove headers
+#include <pwd.h>
+#endif
 #ifndef __CEXTRACT__
 #include <sproto.h>
 #endif

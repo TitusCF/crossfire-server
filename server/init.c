@@ -67,11 +67,13 @@ void showscoresparm(char *data) {
 void set_csport(char *val)
 { 
     settings.csport=atoi(val);
+#ifndef WIN32 // ***win32: set_csport: we remove csport error secure check here, do this later
     if (settings.csport<=0 || settings.csport>32765 ||
 	(settings.csport<1024 && getuid()!=0)) {
 	fprintf(stderr,"%d is an invalid csport number.\n",settings.csport);
 	exit(1);
     }
+#endif // win32
 }
 
 static void stat_loss_on_death_true() {settings.stat_loss_on_death = 1; }
@@ -317,8 +319,10 @@ void init(int argc, char **argv) {
 
     parse_args(argc, argv, 3);
 
+#ifndef WIN32 // ***win32: no BecomeDaemon in windows
     if (settings.daemonmode)
 	logfile = BecomeDaemon(settings.logfilename[0]=='\0'?"logfile":settings.logfilename);
+#endif
 
     init_beforeplay();
     init_ericserver();
@@ -552,10 +556,16 @@ void compile_info() {
   printf("Random encounter:\t<false>\n");
 #endif
   printf("Max_time:\t%d\n",MAX_TIME);
+
+#ifdef WIN32 // ***win32 compile_info(): remove execl...
+  printf("Logfilename:\t%s\n",settings.logfilename);
+  exit(0);
+#else
   execl("/bin/uname", "uname", "-a", NULL);
   LOG(llevError, "Opps, should't have gotten here.");
   perror("execl");
   exit(-1);
+#endif
 }
 
 /* Signal handlers: */
@@ -589,7 +599,7 @@ void rec_sigpipe(int i) {
  * be looked at later on, and maybe fix the problem that caused it to
  * dump core.  There is no reason that SIGPIPES should be fatal
  */
-#if 1
+#if 1 && !defined(WIN32) // ***win32: we don't want send SIGPIPE
   LOG(llevInfo,"\nReceived SIGPIPE, ignoring...\n");
   signal(SIGPIPE,rec_sigpipe);/* hocky-pux clears signal handlers */
 #else
@@ -621,6 +631,7 @@ void fatal_signal(int make_core, int close_sockets) {
 }
 
 void init_signals() {
+#ifndef WIN32 // init_signals() remove signals
   signal(SIGHUP,rec_sighup);
   signal(SIGINT,rec_sigint);
   signal(SIGQUIT,rec_sigquit);
@@ -630,6 +641,7 @@ void init_signals() {
   signal(SIGBUS,rec_sigbus);
 #endif
   signal(SIGTERM,rec_sigterm);
+#endif // win32
 }
 
 /*

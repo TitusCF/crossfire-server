@@ -34,12 +34,16 @@
  */
 
 
-
+#include "global.h"
+#ifdef WIN32 // ---win32 exclude headers
+#include "process.h"
+#else
 #include <ctype.h>
 #include <sys/stat.h>
 
 #include <sys/param.h>
 #include <stdio.h>
+#endif // win32
 
 #ifdef HAVE_STDLIB_H
 #include <stdlib.h>
@@ -49,7 +53,6 @@
 #include <unistd.h>
 #endif
 
-#include "global.h"
 
 static unsigned int curtmp = 0;
 

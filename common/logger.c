@@ -53,7 +53,16 @@ void LOG (LogLevel logLevel, char *format, ...)
   if (logLevel <= settings.debug)
   {
     vsprintf(buf, format, ap);
+#ifdef WIN32
+	fputs(buf, logfile);    // wrote to file or stdout
+#ifdef DEBUG				// if we have a debug version, we want see ALL output
+		fflush(logfile);    // so flush this!
+#endif
+	if(logfile != stderr)   // if was it a logfile wrote it to screen too 
+		fputs(buf, stderr); 
+#else
     fputs(buf, logfile);
+#endif
   }
   if (!exiting && !trying_emergency_save &&
       logLevel == llevError && ++nroferrors > MAX_ERRORS) {

@@ -26,12 +26,14 @@
     The author can be reached via e-mail to master@rahul.net
 */
 
-#include <stdio.h>
-#include <sys/types.h>
-#include <sys/time.h>
 #include <global.h>
 #include <funcpoint.h>
 
+#ifndef WIN32 // ---win32 exclude header
+#include <stdio.h>
+#include <sys/types.h>
+#include <sys/time.h>
+#endif // win32
 
 /*
  * Gloabal variables:

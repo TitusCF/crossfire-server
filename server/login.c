@@ -316,7 +316,7 @@ int save_player(object *op, int flag) {
   fp=fopen(tmpfilename, "w");
   if(!fp) {
     new_draw_info(NDI_UNIQUE, 0,op, "Can't open file for save.");
-    LOG(llevDebug,"Can't open file for save.");
+    LOG(llevDebug,"Can't open file for save (%s).\n",tmpfilename);
     free(tmpfilename);
     return 0;
   }

@@ -25,14 +25,17 @@
 
     The author can be reached via e-mail to mwedel@scruz.net
 */
+#include <global.h>
+
+#ifndef WIN32 //---win32 exclude unix header files
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netdb.h>
 #include <arpa/inet.h>
 
-#include <global.h>
 #include <version.h>
+#endif // end win32
 
 static int metafd=-1;
 static struct sockaddr_in sock;
@@ -44,6 +47,11 @@ static struct sockaddr_in sock;
  */
 void metaserver_init()
 {
+
+#ifdef WIN32 // ***win32 metaserver_init(): init win32 socket
+	struct hostent *hostbn;
+	int temp = 1;	
+#endif
 
     if (!settings.meta_on) {
 	metafd=-1;
@@ -60,7 +68,11 @@ void metaserver_init()
 	}
 	memcpy(&sock.sin_addr, hostbn->h_addr, hostbn->h_length);
     }
+#ifdef WIN32 // ***win32 metaserver_init(): init win32 socket
+	ioctlsocket(metafd, FIONBIO , &temp);
+#else 
     fcntl(metafd, F_SETFL, O_NONBLOCK);
+#endif
     if ((metafd=socket(AF_INET, SOCK_DGRAM, 0))==-1) {
 	LOG(llevDebug,"metaserver_init: Unable to create socket, err %d\n", errno);
 	return;
@@ -83,7 +95,16 @@ void metaserver_init()
 	    LOG(llevDebug,"metaserver_init: gethostname failed - will not report hostname\n");
 	    return;
 	}
+
+#ifdef WIN32 // ***win32 metaserver_init(): gethostbyname!
+		hostbn = gethostbyname(hostname);
+		if (hostbn != (struct hostent *) NULL) // quick hack
+			memcpy(domain, hostbn->h_addr, hostbn->h_length);
+
+		if (hostbn == (struct hostent *) NULL) {
+#else
 	if (getdomainname(domain, MAX_BUF-1)) {
+#endif // win32
 	    LOG(llevDebug,"metaserver_init: getdomainname failed - will not report hostname\n");
 	    return;
 	}
@@ -109,7 +130,11 @@ void metaserver_update()
 
     sprintf(data,"%s|%d|%s|%s", settings.meta_host, num_players, VERSION, 
 	    settings.meta_comment);
+#ifdef WIN32 // ---win32 metaserver_init(): this removes a warning 
+    if (sendto(metafd, data, strlen(data), 0, (struct sockaddr *)&sock, sizeof(sock))<0) {
+#else
     if (sendto(metafd, data, strlen(data), 0, &sock, sizeof(sock))<0) {
+#endif
 	LOG(llevDebug,"metaserver_update: sendto failed, err = %d\n", errno);
     }
 }

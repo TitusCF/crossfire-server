@@ -105,17 +105,36 @@ int SockList_ReadPacket(int fd, SockList *sl, int len)
     }
     /* We already have a partial packet */
     if (sl->len<2) {
+#ifdef WIN32 // ***WIN32 SockList_ReadPacket: change read() to recv()
+
+	stat=recv(fd, sl->buf + sl->len, 2-sl->len,0);
+
+#else
 	do {
-	    stat=read(fd, sl->buf + sl->len, 2-sl->len);
+		stat=read(fd, sl->buf + sl->len, 2-sl->len);
 	} while ((stat==-1) && (errno==EINTR));
+#endif
 	if (stat<0) {
 	    /* In non blocking mode, EAGAIN is set when there is no
 	     * data available.
 	     */
-	    if (errno!=EAGAIN && errno!=EWOULDBLOCK) {
+#ifdef WIN32 // ***WIN32 SockList_ReadPacket: error handling for win32
+	if ((stat==-1) && WSAGetLastError() !=WSAEWOULDBLOCK) {
+		if(WSAGetLastError() == WSAECONNRESET)
+			LOG(llevDebug,"Connection closed by client\n");
+		else
+		{
+			perror("ReadPacket got an error."); //***win32 <- for what is this instead of log?
+			LOG(llevDebug,"ReadPacket got error %d, returning 0\n",WSAGetLastError());
+		}
+		return -1;	// kick this user!
+	    }
+#else
+	if (errno != EAGAIN && errno !=EWOULDBLOCK) {
 		perror("ReadPacket got an error.");
 		LOG(llevDebug,"ReadPacket got error %d, returning 0\n",errno);
 	    }
+#endif
 	    return 0;	/*Error */
 	}
 	if (stat==0) return -1;
@@ -137,19 +156,42 @@ int SockList_ReadPacket(int fd, SockList *sl, int len)
 	 * closing the socket anyways, then reading this extra 100 bytes
 	 * shouldn't hurt.
 	 */
+#ifdef WIN32 // ***win32 SockList_ReadPacket: change read() to recv()
+	recv(fd, sl->buf+2, 100, 0);
+#else
 	read(fd, sl->buf+2, 100);
+#endif // end win32
+
 	/* return error so the socket is closed */
 	return -1;
     }
     do {
+#ifdef WIN32 // ***win32 SockList_ReadPacket: change read() to recv()
+	stat = recv(fd, sl->buf+ sl->len, toread, 0);
+#else
 	do {
 	    stat = read(fd, sl->buf+ sl->len, toread);
 	} while ((stat<0) && (errno==EINTR));
+#endif
 	if (stat<0) {
-	    if (errno!=EAGAIN && errno!=EWOULDBLOCK) {
+
+#ifdef WIN32 // ***win32 SockList_ReadPacket: change error handling for win32
+	if ((stat==-1) && WSAGetLastError() !=WSAEWOULDBLOCK) {
+		if(WSAGetLastError() == WSAECONNRESET)
+			LOG(llevDebug,"Connection closed by client\n");
+		else
+		{
+			perror("ReadPacket got an error.");
+			LOG(llevDebug,"ReadPacket got error %d, returning 0\n",WSAGetLastError());
+		}
+		return -1;	// kick this user!
+	    }
+#else
+	if (errno != EAGAIN && errno !=EWOULDBLOCK) {
 		perror("ReadPacket got an error.");
 		LOG(llevDebug,"ReadPacket got error %d, returning 0\n",errno);
 	    }
+#endif
 	    return 0;	/*Error */
 	}
 	if (stat==0) return -1;
@@ -231,15 +273,24 @@ void write_socket_buffer(NewSocket *ns)
 	max = SOCKETBUFSIZE - ns->outputbuffer.start;
 	if (ns->outputbuffer.len<max) max = ns->outputbuffer.len;
 
+#ifdef WIN32 // ***win32 write_socket_buffer: change write() to send()
+	amt=send(ns->fd, ns->outputbuffer.data + ns->outputbuffer.start, max,0);
+#else
 	do {
 	    amt=write(ns->fd, ns->outputbuffer.data + ns->outputbuffer.start, max);
 	} while ((amt<0) && (errno==EINTR));
-
+#endif
 
 	if (amt < 0) { /* We got an error */
-	    if (errno != EWOULDBLOCK) {
-		LOG(llevError,"New socket write failed (%d: %s).\n",
+
+#ifdef WIN32 // ***win32 write_socket_buffer: change error handling
+	if (amt == -1 && WSAGetLastError() !=WSAEWOULDBLOCK) {
+		LOG(llevError,"New socket write failed (wsb) (%d).\n", WSAGetLastError());
+#else
+	if (errno !=EWOULDBLOCK) {
+		LOG(llevError,"New socket write failed (wsb) (%d: %s).\n",
 		    errno, strerror_local(errno));
+#endif
 		ns->status=Ns_Dead;
 		return;
 	    }
@@ -282,14 +333,23 @@ void Write_To_Socket(NewSocket *ns, unsigned char *buf, int len)
     /* If we manage to write more than we wanted, take it as a bonus */
     while (len>0) {
 
+#ifdef WIN32 // ***win32 Write_To_Socket: change write() to send()
+	    amt=send(ns->fd, pos, len,0);
+#else
 	do {
 	    amt=write(ns->fd, pos, len);
 	} while ((amt<0) && (errno==EINTR));
+#endif
 
 	if (amt < 0) { /* We got an error */
-	    if (errno != EWOULDBLOCK) {
-		LOG(llevError,"New socket write failed (%d: %s).\n",
+#ifdef WIN32 // ***win32 Write_To_Socket: change error handling
+	if (amt == -1 && WSAGetLastError() !=WSAEWOULDBLOCK) {
+		LOG(llevError,"New socket write failed WTS (%d).\n",WSAGetLastError());
+#else
+	if (errno !=EWOULDBLOCK) {
+		LOG(llevError,"New socket write failed WTS (%d: %s).\n", // ---WIN32
 		    errno, strerror_local(errno));
+#endif
 		ns->status=Ns_Dead;
 		return;
 	    }
