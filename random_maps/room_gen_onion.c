@@ -59,8 +59,8 @@ options:
 2	linear doors (default is nonlinear)
 4	bottom "centered"
 8  bottom-right centered
-16	outer wall off:  i.e., no outer wall.
-32	irregularly/randomly spaced layers (default: regular)
+16	irregularly/randomly spaced layers (default: regular)
+32	outer wall off:  i.e., no outer wall.
 
 */
 
@@ -69,8 +69,9 @@ options:
 #define OPT_LINEAR    2
 #define OPT_BOTTOM_C  4
 #define OPT_BOTTOM_R  8
-#define OPT_WALL_OFF  16
-#define OPT_IRR_SPACE 32
+#define OPT_IRR_SPACE 16
+#define OPT_WALL_OFF 32  
+
 /*#define OPT_WALLS_ONLY 64*/
 
 
@@ -104,17 +105,17 @@ char **map_gen_onion(int xsize, int ysize, int option, int layers) {
   if(option == 0) {
 	 switch(RANDOM()%3) {
 	 case 0:
-		option |= 1;
+		option |= OPT_CENTERED;
 		break;
 	 case 1:
-		option |= 4;
+		option |= OPT_BOTTOM_C;
 		break;
 	 case 2:
-		option |= 8;
+		option |= OPT_BOTTOM_R;
 		break;
 	 }
-	 if(RANDOM()%2) option |=2;
-	 if(RANDOM()%2) option |=32;
+	 if(RANDOM()%2) option |=OPT_LINEAR;
+	 if(RANDOM()%2) option |=OPT_IRR_SPACE;
   }
   
   /* write the outer walls, if appropriate. */
