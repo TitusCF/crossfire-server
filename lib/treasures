@@ -4282,3 +4282,21 @@ treasure neko
   list neko_parts
     chance 99
   end
+treasure giant_worm
+  arch ability_bullet
+  more
+  arch ability_vitriol
+  more
+  arch ability_slow
+  more
+  arch eye
+  chance 30
+  no
+    arch residue
+    chance 10
+    end
+  more
+  arch gem
+  chance 60
+  nrof 75
+  end
