@@ -116,6 +116,10 @@ weather_replace_t weather_replace[] = {
     {NULL, NULL, NULL, 0},
 };
 
+/*
+ * Set the darkness level for a map.  Requires the map pointer.
+ */
+
 void set_darkness_map(mapstruct *m)
 {
     int i;
@@ -131,6 +135,11 @@ void set_darkness_map(mapstruct *m)
     for (i = 0; i <= tod.hour; i++)
 	change_map_light(m, season_timechange[tod.season][i]);
 }
+
+/*
+ * Compute the darkness level for all maps in the game.  Requires the
+ * time of day as an argument.
+ */
 
 void dawn_to_dusk(timeofday_t *tod)
 {
@@ -740,7 +749,9 @@ void read_watermap()
     fclose(fp);
 }
 
-/* initialize both humidity and elevation */
+/*
+ * initialize both humidity and elevation
+ */
 
 void init_humid_elev()
 {
@@ -997,6 +1008,12 @@ void init_rainfall()
 int wmperformstartx;
 int wmperformstarty;
 
+/*
+ * This function initializes the weather system.  It should be called once,
+ * at game startup only.
+ */
+
+
 void init_weather()
 {
     int x, y, tx, ty;
@@ -1129,13 +1146,14 @@ void perform_weather()
     fclose(fp);
 }
 
-/* perform actual effect of weather.  Should be called from perform_weather,
-   or when a map is loaded. (player enter map).  Filename is the name of
-   the map.  The map *must allready be loaded*.
-
-   This is where things like snow, herbs, earthly rototilling, etc should
-   occur.
-*/
+/*
+ * perform actual effect of weather.  Should be called from perform_weather,
+ * or when a map is loaded. (player enter map).  Filename is the name of
+ * the map.  The map *must allready be loaded*.
+ *
+ * This is where things like snow, herbs, earthly rototilling, etc should
+ * occur.
+ */
 
 void weather_effect(char *filename)
 {
@@ -1164,6 +1182,15 @@ void weather_effect(char *filename)
 
 }
 
+/*
+ * Check the current square to see if we should avoid this one for
+ * weather processing.  Must pass av and gs, which will be filled in
+ * with 1 or 0.  gs will be 1 if we found snow/rain here.  av will be
+ * 1 if we should avoid processing this tile. (don't rain on lakes)
+ * x and y are the coordinates inside the current map m.  Returns
+ * the object pointer for any snow item it found, so you can destroy/melt it
+ */
+
 object *avoid_weather(int *av, mapstruct *m, int x, int y, int *gs)
 {
     int avoid, gotsnow, i;
@@ -1188,6 +1215,13 @@ object *avoid_weather(int *av, mapstruct *m, int x, int y, int *gs)
     *av = avoid;
     return tmp;
 }
+
+/*
+ * Process snow.  m is the map we are currently processing.  wx and wy are
+ * the weathermap coordinates for the weathermap square we want to work on.
+ * filename is the pathname for the current map.  This should be called from
+ * weather_effect()
+ */
 
 void let_it_snow(mapstruct *m, int wx, int wy, char *filename)
 {
@@ -1366,6 +1400,13 @@ void let_it_snow(mapstruct *m, int wx, int wy, char *filename)
 	}
     }
 }
+
+/*
+ * Process rain.  m is the map we are currently processing.  wx and wy are
+ * the weathermap coordinates for the weathermap square we want to work on.
+ * filename is the pathname for the current map.  This should be called from
+ * weather_effect()
+ */
 
 void singing_in_the_rain(mapstruct *m, int wx, int wy, char *filename)
 {
@@ -1609,6 +1650,13 @@ char *weathermap_to_worldmap_corner(int wx, int wy, int *x, int *y, int dir)
     return(mapname);
 }
 
+/*
+ * Calculates the distance to the nearest pole. x,y are the weathermap
+ * coordinates, equator is the current location of the equator.  returns
+ * distance as an int.
+ */
+
+
 int polar_distance(int x, int y, int equator)
 {
     if ((x+y) > equator) { /* south pole */
@@ -1622,7 +1670,9 @@ int polar_distance(int x, int y, int equator)
     }
 }
 
-/* update the humidity */
+/*
+ * update the humidity for all weathermap tiles.
+ */
 
 void update_humid()
 {
@@ -1633,7 +1683,11 @@ void update_humid()
 	    weathermap[x][y].humid = humid_tile(x, y);
 }
 
-/* calculate the humidity of this tile */
+/*
+ * calculate the humidity of this tile.  x and y are the weathermap coordinates
+ * we wish to calculate humidity for. Returns the humidity of the weathermap
+ * square.
+ */
 
 int humid_tile(int x, int y)
 {
@@ -1671,7 +1725,10 @@ int humid_tile(int x, int y)
     return humid;
 }
 
-/* calculate temperature */
+/*
+ * calculate temperature of the weathermap square x,y.  Requires the current
+ * time of day in *tod.
+ */
 
 void temperature_calc(int x, int y, timeofday_t *tod)
 {
@@ -1703,9 +1760,10 @@ void temperature_calc(int x, int y, timeofday_t *tod)
 }
 
 /* Compute the real (adjusted) temperature of a given weathermap tile.
-   This takes into account the wind, base temp, sunlight, and other fun
-   things.  Seasons are automatically handled by moving the equator.
-   Elevation is partially considered in the base temp.
+ * This takes into account the wind, base temp, sunlight, and other fun
+ * things.  Seasons are automatically handled by moving the equator.
+ * Elevation is partially considered in the base temp. x and y are the
+ * weathermap coordinates.
 */
 
 int real_temperature(int x, int y)
@@ -1800,9 +1858,10 @@ void smooth_pressure()
 
 }
 
-/* perform small randomizations in the pressure map.  Then, apply the
-   smoothing algorithim.. This causes the pressure to change very slowly
-*/
+/*
+ * perform small randomizations in the pressure map.  Then, apply the
+ * smoothing algorithim.. This causes the pressure to change very slowly
+ */
 
 void perform_pressure()
 {
@@ -1833,8 +1892,9 @@ void perform_pressure()
 }
 
 
-/* is direction a similar to direction b? Find out in this exciting function
-   below. 
+/*
+ * is direction a similar to direction b? Find out in this exciting function
+ * below. Returns 1 if true, 0 for false.
  */
 
 int similar_direction(int a, int b)
@@ -1857,10 +1917,10 @@ int similar_direction(int a, int b)
 }
 
 /*
-   It doesn't really smooth it as such.  The main function of this is to
-   apply the pressuremap to the wind direction and speed.  Then, we run
-   a quick pass to update the windspeed.
-*/
+ * It doesn't really smooth it as such.  The main function of this is to
+ * apply the pressuremap to the wind direction and speed.  Then, we run
+ * a quick pass to update the windspeed.
+ */
 
 void smooth_wind()
 {
@@ -1916,6 +1976,11 @@ void smooth_wind()
 		weathermap[x][y].windspeed = 0;
 	}
 }
+
+/*
+ * Plot the gulfstream map over the wind map.  This is done after the wind,
+ * to avoid the windsmoothing scrambling the jet stream.
+ */
 
 void plot_gulfstream()
 {
@@ -1997,7 +2062,14 @@ void plot_gulfstream()
 
 }
 
-/* let the madness, begin. */
+/*
+ * let the madness, begin.
+ *
+ * This function is the one that ties everything together.  Here we loop
+ * over all the weathermaps, and compare the various conditions we have
+ * calculated up to now, to figure out what the sky conditions are for this
+ * square.
+ */
 
 void compute_sky()
 {
@@ -2089,6 +2161,10 @@ void compute_sky()
 	}
     }
 }
+
+/*
+ * Keep track of how much rain has fallen in a given weathermap square.
+ */
 
 void process_rain()
 {
