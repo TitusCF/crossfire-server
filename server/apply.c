@@ -1036,6 +1036,11 @@ int make_gravestone (object *op, object *grave)
 /* apply returns 0 if it wasn't possible to apply that object, 1
  * if the object was applied, 2 if the object is now a different
  * object.
+ *
+ * crossfire-0.95.5: Return value of apply() is currently used by
+ * apply_below() in apply.c, apply_inventory() in c_object.c and
+ * check_good_weapon()/check_good_armour() in monster.c
+ *
  */
 /* op is the object that is causing object to be applied, tmp is the object
  * being applied.
@@ -1247,9 +1252,13 @@ int apply(object *op, object *tmp, int aflag) {
     break;
   case ENCOUNTER:
 #ifdef RANDOM_ENCOUNTERS
-    random_encounter(op, tmp);
+    if (op->type == PLAYER && QUERY_FLAG (op, FLAG_IS_FLOOR))
+    {
+        random_encounter(op, tmp);
+        return 1;
+    }
 #endif
-    break;
+    return 0;
   case SHOP_MAT:
     {
       SET_FLAG(op,FLAG_NO_APPLY);
@@ -1911,6 +1920,8 @@ void apply_below(object *op) {
     for ( ; tmp!=NULL; tmp=next) {
 	next = tmp->below;
 	if (apply(op, tmp, 0)) return;
+        if (QUERY_FLAG (tmp, FLAG_IS_FLOOR))
+            return;   /* don't look below a floor */
     }
 }
 

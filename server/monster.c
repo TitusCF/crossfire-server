@@ -864,6 +864,8 @@ void monster_apply_below(object *monster) {
         apply(monster,tmp,0); 
       break;
     }
+    if (QUERY_FLAG (tmp, FLAG_IS_FLOOR))
+        break;
   }
 }
 

@@ -18,6 +18,12 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+server/apply.c, server/monster.c:  Fix in apply.c for encounter maps
+so that proper message is generated, and differentiate behaviour if it
+is a floor vs not a floor.  Also, change to both files in that apply_below
+stops at the floor object.  Patch by Jan Echternach, applied & checked in by
+Mark Wedel, 4/11/2000
+
 server/apply.c, doc/crossfire.doc:  Fix to prevent server crashes when monster
 applies poison object.  doc file is updated to include accurate information on
 values in poison object.  Patch by Jan Echternach, applied & checked in by
