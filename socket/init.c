@@ -138,7 +138,7 @@ void read_client_images()
 	    }
 	    faces[num].datalen[fileno] = len;
 	    faces[num].data[fileno] = malloc(len);
-	    if ((i=fread( faces[num].data[fileno], len, 1, infile))!=len) {
+	    if ((i=fread( faces[num].data[fileno], len, 1, infile))!=1) {
 		LOG(llevError,"read_client_images: Did not read desired amount of data, wanted %d, got %d\n%s",
 		    len, i, buf);
 		    abort();
