@@ -1,0 +1,6 @@
+*.plg
+*.ncb
+*.opt
+FullDebug
+ReleaseLog
+ReleaseQuit
