@@ -18,6 +18,9 @@ else.  With this, include the file(s) that you changed.
 
 Changes for CVS:
 
+server/disease.c: replace disease->owner check with get_owner.
+MSW 2001-05-24
+
 server/pets.c: pet_move - fix formatting to be 4 space indentation.
    if we remove the monster, free it here instead of having move_monster
    do it.  Add check for was_destroyed after first call to move_ob -

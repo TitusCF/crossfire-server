@@ -288,7 +288,7 @@ int infect_object(object *victim, object *disease, int force) {
   /* Unfortunately, set_owner does the wrong thing to the skills pointers
 	  resulting in exp going into the owners *current* chosen skill. */
 
-  if(disease->owner) {
+  if(get_owner(disease)) {
     set_owner(new_disease,disease->owner);
     new_disease->chosen_skill = disease->chosen_skill;
     new_disease->exp_obj = disease->exp_obj;
