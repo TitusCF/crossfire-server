@@ -70,7 +70,6 @@ int png_to_xpixmap(Display *display, Drawable draw, char *data, int len,
     png_structp	png_ptr=NULL;
     png_infop	info_ptr=NULL, end_info=NULL;
     png_colorp	palette;
-    FILE    *fp;
     int bit_depth, color_type, interlace_type, compression_type, filter_type,
 	red,green,blue, alpha,bpp, x,y, lred=-1, lgreen=-1,lblue=-1,
 	has_alpha=0, num_palette;
@@ -98,7 +97,6 @@ int png_to_xpixmap(Display *display, Drawable draw, char *data, int len,
     }
     if (setjmp (png_ptr->jmpbuf)) {
 	png_destroy_read_struct (&png_ptr, &info_ptr, &end_info);
-	fclose(fp);
 	return PNGX_DATA;
     }
 
