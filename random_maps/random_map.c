@@ -185,6 +185,11 @@ char **layoutgen(RMParms *RP) {
       RP->map_layout_style = SPIRAL_LAYOUT;
       if(!(RANDOM()%2)) doorify_layout(maze,RP);
       break;
+    case 4:
+      maze = roguelike_layout_gen(RP->Xsize,RP->Ysize,RP->layoutoptions1);
+      RP->map_layout_style = ROGUELIKE_LAYOUT;
+      /* no doorifying...  done already */
+        
     }
 
   maze = symmetrize_layout(maze, RP->symmetry_used,RP);

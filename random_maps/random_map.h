@@ -44,7 +44,8 @@ int load_parameters(FILE *fp, int bufstate,RMParms *RP);
 #define ONION_LAYOUT 1
 #define MAZE_LAYOUT 2
 #define SPIRAL_LAYOUT 3
-#define NROFLAYOUTS 3
+#define ROGUELIKE_LAYOUT 4
+#define NROFLAYOUTS 4
 
 #define OPT_WALLS_ONLY 64
 
