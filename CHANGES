@@ -1,6 +1,12 @@
 Changes in top level CVS tree (please add your changes at the very top of
 the file):
 
+Fix so that when picking up objects from a container, the client gets
+an update to remove the object display from the container (ie, if
+you pick up all the gold coins from a container, the total in the players
+inventory always got corrected, but the client still displayed some in the
+container even if there should not be.)  The change is in c_object.c - msw
+
 Check that hitter has a valid name before it attacks - fixes some
 crashes (attack.c) - msw
 

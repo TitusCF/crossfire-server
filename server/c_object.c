@@ -336,6 +336,12 @@ void pick_up_object (object *pl, object *op, object *tmp, int nrof)
 	else
 		esrv_send_item (pl, tmp2);
     } else {
+	/* If the object is in a container, send a delete to the client.
+	 * - we are moving all the items from the container to elsewhere,
+	 * so it needs to be deleted.
+	 */
+	if (tmp->env) 
+	    esrv_del_item (pl->contr, tmp->count);
 	remove_ob(tmp); /* Unlink it */
     }
     if(QUERY_FLAG(tmp, FLAG_UNPAID))
