@@ -63,7 +63,7 @@ RESET_LOCATION_TIME,
 "",
 0,
 "",
-0,0,0,0,0,0,0,  /* worldmap settings*/
+0,0,0,0,0,0,0,0,  /* worldmap settings*/
 EMERGENCY_MAPPATH, EMERGENCY_X, EMERGENCY_Y
 };
 
