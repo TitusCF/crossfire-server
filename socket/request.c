@@ -777,6 +777,8 @@ void esrv_new_player(player *pl, uint32 weight)
 {
     SockList	sl;
 
+    pl->last_weight = weight;
+
     sl.buf=malloc(MAXSOCKBUF);
 
     strcpy((char*)sl.buf,"player ");

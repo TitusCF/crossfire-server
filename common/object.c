@@ -1647,14 +1647,12 @@ object *decrease_ob_nr (object *op, int i)
             op->nrof -= i;
             if (tmp) {
                 (*esrv_send_item_func) (tmp, op);
-                (*esrv_update_item_func) (UPD_WEIGHT, tmp, tmp);
             }
         } else {
             remove_ob (op);
             op->nrof = 0;
             if (tmp) {
                 (*esrv_del_item_func) (tmp->contr, op->count);
-                (*esrv_update_item_func) (UPD_WEIGHT, tmp, tmp);
             }
         }
     }

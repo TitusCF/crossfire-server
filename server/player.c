@@ -206,6 +206,7 @@ static player* get_player(player *p) {
 	p->last_resist[i] = -1;
     }
     p->last_stats.exp = -1;
+    p->last_weight = (uint32)-1;
 
     p->socket.update_look=0;
     p->socket.look_position=0;
@@ -2830,7 +2831,6 @@ void fix_weight() {
     if(old == sum)
       continue;
     fix_player(pl->ob);
-    esrv_update_item(UPD_WEIGHT, pl->ob, pl->ob);
     LOG(llevDebug,"Fixed inventory in %s (%d -> %d)\n",
 	pl->ob->name, old, sum);
   }

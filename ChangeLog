@@ -17,6 +17,21 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+common/object.c
+include/define.h
+include/player.h
+include/sproto.h
+server/attack.c
+server/c_object.c
+server/player.c
+server/shop.c
+socket/item.c
+socket/loop.c
+socket/request.c: Remove explicit calls to
+    esrv_update_item(UPD_WEIGHT, pl, pl) for player objects. Instead
+    send the new weight whenever it changes.
+Andreas Kirschbaum 2004-06-13
+
 server/spell_attack.c: cast_destruction() - have it change the skill
    for the caster so that exp is properly awarded.
 common/object.c: insert_map_in_ob() - remove CAN_MERGE checks after the

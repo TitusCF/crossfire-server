@@ -631,10 +631,12 @@ static void pick_up_object (object *pl, object *op, object *tmp, int nrof)
 
     esrv_send_item (pl, tmp);
     /* These are needed to update the weight for the container we
-     * are putting the object in, and the players weight, if different.
+     * are putting the object in.
      */
-    esrv_update_item (UPD_WEIGHT, pl, op);
-    if (op!=pl) esrv_send_item (pl, pl);
+    if (op!=pl) {
+	esrv_update_item (UPD_WEIGHT, pl, op);
+	esrv_send_item (pl, pl);
+    }
 
     /* Update the container the object was in */
     if (env && env!=pl && env!=op) esrv_update_item (UPD_WEIGHT, pl, env);
@@ -893,9 +895,8 @@ void put_object_in_sack (object *op, object *sack, object *tmp, long nrof)
 	esrv_del_item (op->contr, tmp_tag);
 
     esrv_send_item (op, tmp2);
-    /* update the sacks and players weight */
+    /* update the sacks weight */
     esrv_update_item (UPD_WEIGHT, op, sack);
-    esrv_update_item (UPD_WEIGHT, op, op);
 }
 
 /*

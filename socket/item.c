@@ -54,9 +54,6 @@
  *
  ******************************************************************************/
 
-/** This is more or less stolen from the query_weight function. */
-#define WEIGHT(op) (op->nrof?op->weight:op->weight+op->carrying)
-
 /**
  * Adds string to socklist.
  *
@@ -417,8 +414,13 @@ void esrv_update_item(int flags, object *pl, object *op)
     if (flags & UPD_FLAGS)
 	SockList_AddInt(&sl, query_flags(op));
 
-    if (flags & UPD_WEIGHT)
-	SockList_AddInt(&sl, WEIGHT(op));
+    if (flags & UPD_WEIGHT) {
+	sint32 weight = WEIGHT(op);
+	SockList_AddInt(&sl, weight);
+	if (pl == op) {
+	    op->contr->last_weight = weight;
+	}
+    }
 
     if (flags & UPD_FACE) {
 	if (!pl->contr->socket.faces_sent[op->face->number])

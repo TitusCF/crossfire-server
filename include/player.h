@@ -137,6 +137,7 @@ typedef struct pl {
     float	weapon_sp;	    /* Penalties to speed when fighting w speed >ws/10*/
     float	last_weapon_sp;	    /* if diff than weapon_sp, update client */
     uint16	last_flags;	    /* fire/run on flags for last tick */
+    uint32	last_weight;	    /* Last weight as sent to client; (uint32)-1 means do not send weight */
     uint32	last_weight_limit;  /* Last weight limit transmitted to client */
     living	orig_stats;	    /* Permanent real stats of player */
     living	last_stats;	    /* Last stats as sent to client */

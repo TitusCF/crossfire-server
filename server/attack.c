@@ -192,7 +192,6 @@ void save_throw_object (object *op, int type, object *originator)
 
 		if (tmp) {
 		    esrv_del_item(tmp->contr, op->count);
-		    esrv_update_item(UPD_WEIGHT, tmp, tmp);
 		}
 	    }
 	    if ( ! QUERY_FLAG (op, FLAG_REMOVED))

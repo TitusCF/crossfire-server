@@ -36,6 +36,9 @@
 #endif
 
 
+static uint64 pay_from_container(object *pouch, uint64 to_pay);
+
+
 #define NUM_COINS 3	/* number of coin types */
 static char *coins[] = {"platinacoin", "goldcoin", "silvercoin", NULL};
 
@@ -335,13 +338,13 @@ int pay_for_amount(int to_pay,object *pl) {
     if (to_pay==0) return 1;
     if (to_pay > query_money(pl)) return 0;
 
-    to_pay = pay_from_container(NULL, pl, to_pay);
+    to_pay = pay_from_container(pl, to_pay);
 
     for (pouch=pl->inv; (pouch!=NULL) && (to_pay>0); pouch=pouch->below) {
 	if (pouch->type == CONTAINER
 	    && QUERY_FLAG(pouch, FLAG_APPLIED)
 	    && (pouch->race == NULL || strstr(pouch->race, "gold"))) {
-	    to_pay = pay_from_container(NULL, pouch, to_pay);
+	    to_pay = pay_from_container(pouch, to_pay);
 	}
     }
     fix_player(pl);
@@ -370,13 +373,13 @@ int pay_for_item(object *op,object *pl) {
     if (saved_money > 0)
       change_exp(pl,saved_money,"bargaining",SK_EXP_NONE);
 
-    to_pay = pay_from_container(op, pl, to_pay);
+    to_pay = pay_from_container(pl, to_pay);
 
     for (pouch=pl->inv; (pouch!=NULL) && (to_pay>0); pouch=pouch->below) {
 	if (pouch->type == CONTAINER
 	    && QUERY_FLAG(pouch, FLAG_APPLIED)
 	    && (pouch->race == NULL || strstr(pouch->race, "gold"))) {
-	    to_pay = pay_from_container(op, pouch, to_pay);
+	    to_pay = pay_from_container(pouch, to_pay);
 	}
     }
     if (settings.real_wiz == FALSE && QUERY_FLAG(pl, FLAG_WAS_WIZ))
@@ -393,9 +396,13 @@ int pay_for_item(object *op,object *pl) {
  * appropriately
  *
  * DAMN: This function is used for the player, then for any active
- * containers that can hold money, until the op is paid for.
+ * containers that can hold money.
+ *
+ * pouch is the container (pouch or player) to remove the coins from.
+ * to_pay is the required amount.
+ * returns the amount still missing after using "pouch".
  */
-uint64 pay_from_container(object *op, object *pouch, int to_pay) {
+static uint64 pay_from_container(object *pouch, uint64 to_pay) {
     int count, i;
     sint64 remain;
     object *tmp, *coin_objs[NUM_COINS], *next;
@@ -479,10 +486,9 @@ uint64 pay_from_container(object *op, object *pouch, int to_pay) {
 	    for (who = pouch; who && who->type!=PLAYER && who->env!=NULL; who=who->env) ;
 	    esrv_send_item(who, tmp);
 	    esrv_send_item (who, pouch);
-	    esrv_update_item (UPD_WEIGHT, who, pouch);
+	    if(who != pouch) esrv_update_item (UPD_WEIGHT, who, pouch);
 	    if (pouch->type != PLAYER) {
 		esrv_send_item (who, who);
-		esrv_update_item (UPD_WEIGHT, who, who);
 	    }
 	} else {
 	    free_object(coin_objs[i]);
@@ -613,7 +619,6 @@ void sell_item(object *op, object *pl) {
 			esrv_send_item (pl, pouch);
 			esrv_update_item (UPD_WEIGHT, pl, pouch);
 			esrv_send_item (pl, pl);
-			esrv_update_item (UPD_WEIGHT, pl, pl);
 		    }
 		}
 	    }
@@ -625,7 +630,6 @@ void sell_item(object *op, object *pl) {
 		tmp = insert_ob_in_ob(tmp, pl);
 		esrv_send_item (pl, tmp);
 		esrv_send_item (pl, pl);
-		esrv_update_item (UPD_WEIGHT, pl, pl);
 	    }
 	}
     }

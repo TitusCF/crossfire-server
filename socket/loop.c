@@ -658,6 +658,11 @@ void doeric_server()
 		 * sending them whenever they change, and probably just as useful
 		 */
 		esrv_update_stats(pl);
+		if (pl->last_weight != (uint32)-1 && pl->last_weight != WEIGHT(pl->ob)) {
+		    esrv_update_item(UPD_WEIGHT, pl->ob, pl->ob);
+		    if(pl->last_weight != WEIGHT(pl->ob))
+			LOG(llevError, "esrv_update_item(UPD_WEIGHT) did not set player weight: is %lu, should be %lu\n", (unsigned long)pl->last_weight, WEIGHT(pl->ob));
+		}
 		if (pl->ob->map && pl->ob->map->in_memory==MAP_IN_MEMORY)
 		    draw_client_map(pl->ob);
 		if (pl->socket.update_look) esrv_draw_look(pl->ob);

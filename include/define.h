@@ -892,6 +892,11 @@ enum apply_flag {
 #  endif
 #endif
 
+/* Returns the weight of the given object. Note: it does not take the number of
+ * items (nrof) into account.
+ */
+#define WEIGHT(op) (op->nrof?op->weight:op->weight+op->carrying)
+
 #endif /* DEFINE_H */
 
 /* Code fastening defines

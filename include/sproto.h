@@ -628,7 +628,6 @@ char *query_cost_string(object *tmp, object *who, int flag);
 uint64 query_money(object *op);
 int pay_for_amount(int to_pay, object *pl);
 int pay_for_item(object *op, object *pl);
-uint64 pay_from_container(object *op, object *pouch, int to_pay);
 int get_payment(object *pl, object *op);
 void sell_item(object *op, object *pl);
 void shop_listing(object *op);
