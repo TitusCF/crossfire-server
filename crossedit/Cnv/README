@@ -1,0 +1,36 @@
+DOMAIN
+	Cnv
+
+PURPOSE
+	This directory is representive to produce library for
+	general commonly used widget-modules.
+
+FILES
+	config.h	- configuration interface to main product
+			  used in both Imake and *.c-files
+	test.*		- regression test stuff
+	*.xbm		- one plane images
+
+AUTHOR
+	Petri.Heinila@lut.fi
+
+COPYRIGHT
+         Copyright (C) 1993 Petri Heinil{
+
+         This program is free software; you can redistribute it and/or modify
+         it under the terms of the GNU General Public License as published by
+         the Free Software Foundation; either version 2 of the License, or
+         (at your option) any later version.
+
+         This program is distributed in the hope that it will be useful,
+         but WITHOUT ANY WARRANTY; without even the implied warranty of
+         MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+         GNU General Public License for more details.
+
+         You should have received a copy of the GNU General Public License
+         along with this program; if not, write to the Free Software
+         Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+
+         Author can be connected by email from hevi@hilja.it.lut.fi
+	
+End of README

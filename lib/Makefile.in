@@ -1,0 +1,171 @@
+#
+# Makefile for crossfire 0.95.0 and beyond
+#
+# This file will eventually be replaced by a configure script.  But for
+# now, this simple makefile should do the job.
+#
+#   Copyright (C) 1992 Frank Tore Johansen
+#   Copyright (C) 1998 Mark Wedel
+#
+#   This program is free software; you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation; either version 2 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with this program; if not, write to the Free Software
+#   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+#
+#   The author can be reached via e-mail to mark@pyramid.com
+
+VPATH = @srcdir@
+srcdir = @srcdir@
+
+# order of these files is relevant so when new archives are made, they
+# will be extracted in this order so time information/dependencies will work
+# OK.
+INSTALLFILES = $(srcdir)/artifacts $(srcdir)/ban_file $(srcdir)/def_help \
+	$(srcdir)/dm_file $(srcdir)/forbid $(srcdir)/formulae \
+	$(srcdir)/messages $(srcdir)/motd $(srcdir)/races \
+	$(srcdir)/skill_params $(srcdir)/spell_params \
+	$(srcdir)/treasures $(srcdir)/animations $(srcdir)/archetypes \
+	$(srcdir)/bmaps $(srcdir)/bmaps.paths $(srcdir)/crossfire.xpm \
+	$(srcdir)/faces $(srcdir)/crossfire.cfb
+
+SRCS = xbmtobdf.c
+
+ALLFILES = $(SRCS) README xpmtopix.pl collect.pl util.pl \
+	Makefile.in .collect-stamp  $(INSTALLFILES)
+
+FILES_HELP = $(srcdir)/help/apply $(srcdir)/help/bind \
+	$(srcdir)/help/cast $(srcdir)/help/golem $(srcdir)/help/invoke \
+	$(srcdir)/help/keys $(srcdir)/help/mark $(srcdir)/help/melee \
+	$(srcdir)/help/mouse $(srcdir)/help/move \
+	$(srcdir)/help/name $(srcdir)/help/output \
+	$(srcdir)/help/output-count $(srcdir)/help/output-sync \
+	$(srcdir)/help/party $(srcdir)/help/pickup \
+	$(srcdir)/help/quit $(srcdir)/help/range help/save\
+	$(srcdir)/help/sort_inventory $(srcdir)/help/spells \
+	$(srcdir)/help/statistics $(srcdir)/help/take $(srcdir)/help/traps \
+	$(srcdir)/help/unbind
+
+FILES_ADM = adm/README adm/check-xpm.pl adm/dilate_xpm_files \
+	adm/fix_xpm_colors adm/make_xpm_file.pl adm/map_check \
+	adm/map_info adm/map_expand.pl adm/mapslitter.pl adm/archsearch.pl
+
+
+DEPEND = makedepend
+
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+datadir = @datadir@
+localdir = @localstatedir@
+libdir = @libdir@
+
+MKDIR = @MKDIR@
+
+INSTALL = @INSTALL@
+
+CP = @CP@
+RM = @RM@
+SHELL = @BOURNE_SHELL@
+
+
+all:: xbmtobdf archetypes bmaps.paths crossfire.cfb crossfire.xpm animations
+
+
+crossfire.xpm: bmaps.paths
+	$(srcdir)/adm/make_xpm_file.pl
+
+crossfire.cfb: bmaps.paths
+	$(RM) -f crossfire.cfb
+	./xbmtobdf -f bmaps.paths -d . -b > crossfire.cfb
+
+xbmtobdf: xbmtobdf.o
+	$(CC) -o $@ $@.o
+
+.collect-stamp:
+	touch .collect-stamp
+
+collect:
+	perl -I$(srcdir) $(srcdir)/collect.pl $(srcdir)/arch
+
+archetypes: .collect-stamp
+	make collect
+
+faces: .collect-stamp
+	make collect
+
+animations: .collect-stamp
+	make collect
+
+bmaps.paths bmaps: .collect-stamp
+	make collect
+
+install:: xbmtobdf archetypes bmaps.paths crossfire.cfb crossfire.xpm animations
+	@if [ ! -d $(datadir) ]; then \
+		$(MKDIR) -p $(datadir); \
+	fi
+	@if [ ! -d $(localdir) ]; then \
+		$(MKDIR) -p $(localdir); \
+	fi
+
+	if [ ! -d $(datadir)/help ]; then \
+		echo "Creating directory $(datadir)/help"; \
+		$(MKDIR) -p $(datadir)/help; \
+	fi;
+	@for i in $(FILES_HELP); do \
+	    echo "Installing $$i"; \
+	    $(INSTALL) $(INSTALLFLAGS) $$i $(datadir)/help; \
+	done
+	@for i in $(INSTALLFILES); do \
+	    echo "Installing $$i"; \
+	    $(INSTALL) $(INSTALLFLAGS)  $$i $(datadir); \
+	done
+	$(CP) -r ./maps/* $(datadir)/maps
+	touch $(localdir)/highscore
+
+	@for i in players unique-items; do \
+	    if [ ! -d $(localdir)/$$i ]; then \
+		echo "Creating directory $(localdir)/$$i"; \
+		$(MKDIR) -p $(localdir)/$$i; \
+	    fi; \
+	done
+
+
+
+clean::
+
+real-clean::
+	$(RM) -f archetypes bmaps .collect-stamp
+
+archive::
+	@if [ -d $(ARCHIVE)/lib ]; then set +x; \
+	else (set -x; $(MKDIR) $(ARCHIVE)/lib); fi
+	$(CP) $(ALLFILES) $(ARCHIVE)/lib
+	@if [ -d $(ARCHIVE)/lib/adm ]; then set +x; \
+	else (set -x; $(MKDIR) $(ARCHIVE)/lib/adm); fi
+	$(CP) $(FILES_ADM) $(ARCHIVE)/lib/adm
+	@if [ -d $(ARCHIVE)/lib/help ]; then set +x; \
+	else (set -x; $(MKDIR) $(ARCHIVE)/lib/help); fi
+	$(CP) $(FILES_HELP) $(ARCHIVE)/lib/help
+	@if [ -d $(ARCHIVE)/lib/maps/editor ]; then set +x; \
+	else (set -x; $(MKDIR) -p $(ARCHIVE)/lib/maps/editor); fi
+	cp -r ./maps/editor $(ARCHIVE)/lib/maps
+
+patchlist::
+	@echo Makefile.in $(PFILES) $(FILES_ADM) $(FILES_HELP) $(PFILES_MISC) > .patchlist
+
+libArch:
+	tar cvf A`perl puredate.pl`.tar arch treasures
+	gzip A`perl puredate.pl`.tar
+
+
+depend:
+	$(DEPEND) $(DEPENDFLAGS) -- $(CFLAGS) $(INCLUDES) -I../include -- $(SRCS)
+

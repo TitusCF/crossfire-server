@@ -1,0 +1,74 @@
+VPATH = @srcdir@
+srcdir = @srcdir@
+
+RM=@RM@
+
+SUBDIRS = playbook spoiler spell-docs spoiler-html playbook-html
+
+PFILES = Makefile.in Crossedit.doc PlayerStats RandomMaps.doc \
+	README RunTimeCommands Styles.doc \
+	SurvivalGuide alchemy.doc crossedit.man crossfire.doc crossfire.man \
+	crosslib.doc experience include_html.pl	mapguide \
+	mapmakers_guide_to_runes multigod programming_guide \
+	skills.doc skills_developer.doc spell_params.doc spell-paths \
+	spellcasters_guide_to_runes spells teleporter.doc xbmtobdf.man
+
+FILES = $(PFILES) handbook.ps spoiler.ps
+
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+mandir = @mandir@
+MAN1 = $(mandir)/man1
+MANSUFFIX = 1
+
+INSTALL = @INSTALL@
+
+MKDIR = @MKDIR@
+SHELL = @BOURNE_SHELL@
+
+all: spoiler.ps
+
+spoiler.ps:
+	(cd spoiler; $(MAKE) $(MFLAGS) spoiler)
+
+handbook.ps:
+	(cd playbook; $(MAK) $(MFLAGS) handbook)
+
+crosslib.doc:
+	(cd ../common; make doc)
+
+depend::
+
+clean::
+
+archive:
+	@if [ ! -d $(ARCHIVE)/doc ]; then $(MKDIR) $(ARCHIVE)/doc; fi
+	$(CP) $(FILES) $(ARCHIVE)/doc
+	@for dir in $(SUBDIRS); \
+	do \
+	    echo "making archive in $$dir..."; \
+	    $(MAKE) -C $$dir $(MFLAGS) 'MFLAGS=$(MFLAGS)' 'ARCHIVE=$(ARCHIVE)' 'VERSION=$(VERSION)' 'MKDIR=$(MKDIR)' 'CP=$(CP)' archive; \
+	done;
+
+patchlist::
+	@echo $(PFILES) > .patchlist
+
+
+DTOP=/tmp/$(ARCHIVE)-doc
+
+docarchive::
+	mkdir $(DTOP)
+	$(CP) $(FILES) $(DTOP)
+	$(CP) spoiler.ps handbook.ps $(DTOP)
+	cp -r spell-docs spoiler-html playbook-html $(DTOP)
+	(cd $(DTOP)/..; gtar cvfhz $(VERSION).doc.tar.gz `$(BASENAME) $(DTOP)`)
+	mv $(DTOP)/../$(VERSION).doc.tar.gz ./
+	$(RM) -rf $(DTOP)
+
+install::
+	@if [ ! -d $(MAN1) ]; then \
+		$(MKDIR) -p $(MAN1); \
+	fi
+	$(INSTALL) $(srcdir)/crossedit.man $(MAN1)/crossedit.$(MANSUFFIX)
+	$(INSTALL) $(srcdir)/crossfire.man $(MAN1)/crossfire.$(MANSUFFIX)
+	$(INSTALL) $(srcdir)/xbmtobdf.man $(MAN1)/xbmtobdf.$(MANSUFFIX)

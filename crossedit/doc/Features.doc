@@ -1,0 +1,22 @@
+Map
+	Load
+	Reload
+	Enter
+	Save
+	SaveAs
+	- attributes
+		(path,width,height)
+		Resize&Scroll
+		ResizeByOne(left,right,up,down)
+		ScrollByOne(left,right,up,down)
+		ChangePath
+		
+Object
+
+Procs:
+	FeedProc(Map,x,y,z)
+	Area = InsertProc(Map,Object,x,y,z)
+
+
+
+

@@ -1,0 +1,149 @@
+#
+# Makefile for crossfire 0.95.0 and beyond
+#
+# This file will eventually be replaced by a configure script.  But for
+# now, this simple makefile should do the job.
+#
+#   Copyright (C) 1992 Frank Tore Johansen
+#   Copyright (C) 1998 Mark Wedel
+#
+#   This program is free software; you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation; either version 2 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with this program; if not, write to the Free Software
+#   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+#
+#   The author can be reached via e-mail to mark@pyramid.com
+
+
+VPATH = @srcdir@
+srcdir= @srcdir@
+
+SRCS = \
+	crossedit.c \
+	Attr.c \
+	CrFace.c \
+	CrEdit.c \
+	CrList.c \
+	CrUtil.c \
+	Edit.c \
+	App.c \
+	Bitmaps.c \
+	Str.c \
+	xutil.c
+
+HDRS = \
+	CrFace.h \
+	CrFaceP.h \
+	CrEdit.h \
+	CrEditP.h \
+	CrList.h \
+	CrListP.h \
+	CrUtil.h \
+	App.h \
+	Edit.h \
+	Bitmaps.h \
+	Str.h \
+	Attr.h \
+	Crossedit.ad.h \
+	Defines.h  \
+	proto.h
+
+OBJS = $(SRCS:.c=.o)
+
+
+ALLFILES = README TODO Makefile.in Crossedit.ad Crossedit.ad.h  \
+	$(SRCS) $(HDRS)
+
+SUBDIRS = include Cnv bitmaps doc
+
+DEPEND = makedepend
+
+X11LIBS= @X_LIBS@ @X_EXTRA_LIBS@ @X11LIBS@
+
+LIBS = @LIBS@ $(X11LIBS)
+
+INCLUDES= -I@x_includes@/ $(EXTRA_INCLUDES) -I../include -I. -Iinclude \
+	-I$(srcdir)/../include -I$(srcdir) -I$(srcdir)/include \
+	-ICnv -I$(srcdir)/Cnv
+
+CFLAGS = @CFLAGS@ $(EXTRA_CFLAGS)
+
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+bindir = @bindir@
+
+INSTALL = @INSTALL@
+
+MKDIR = @MKDIR@
+CC = @CC@
+RM = @RM@
+#
+
+crossedit: $(OBJS) ../common/libcross.a Cnv/libCnv.a
+	$(RM) -f $@
+	$(CC) -o $@ $(OBJS) ../common/libcross.a $(LIBS) Cnv/libCnv.a
+
+
+../common/libcross.a:
+	(cd ../common; $(MAKE) $(MFLAGS) all)
+
+Cnv/libCnv.a:
+	(cd Cnv; $(MAKE) $(MFLAGS) all)
+
+Crossedit.ad.h: Crossedit.ad
+	-../utils/ad2c.script Crossedit.ad > Crossedit.ad.h
+
+
+depend:
+	$(DEPEND) $(DEPENDFLAGS) -- $(CFLAGS) $(INCLUDES) -I../include -Iinclude -ICnv -I. -- $(SRCS)
+	(cd Cnv; make depend)
+
+proto:
+	cextract +p -P $(INCLUDES)  \
+		-cpp-program="gcc -E -C" \
+		$(SRCS)  > proto.h.bak
+	sed -e "s/#if __STDC__/#ifdef __STDC__/" -e "s/__signed/signed/g" -e "/__inline/d" < proto.h.bak > proto.h
+	chmod 644 proto.h
+	$(RM) -f proto.h.bak
+
+archive:
+	@if [ ! -d $(ARCHIVE)/crossedit ]; then $(MKDIR) $(ARCHIVE)/crossedit; fi
+	$(CP) $(ALLFILES) $(ARCHIVE)/crossedit
+	@for dir in $(SUBDIRS); \
+	do \
+	    echo "making archive in $$dir..."; \
+	    $(MAKE) -C $$dir $(MFLAGS) 'MFLAGS=$(MFLAGS)' 'ARCHIVE=$(ARCHIVE)'  'VERSION=$(VERSION)' 'MKDIR=$(MKDIR)' 'CP=$(CP)' archive; \
+	done;
+
+clean::
+	$(RM) -f crossedit $(OBJS) Makefile.bak
+	(cd Cnv; make clean)
+
+.c.o:
+	$(CC) $(CFLAGS) $(INCLUDES) -I../include -I. -Iinclude -ICnv -c $*.c
+
+all: crossedit
+
+all:
+	(cd Cnv; make all)
+
+
+patchlist::
+	@echo $(ALLFILES) > .patchlist
+	(cd Cnv; make patchlist)
+
+
+install:: crossedit
+	@if [ ! -d ${bindir} ]; then \
+		$(MKDIR) -p ${bindir}; \
+	fi
+	$(INSTALL) crossedit ${bindir}/crossedit

@@ -1,0 +1,3681 @@
+Changes from Crossfire 0.95.2 to 0.95.3:
+
+Fixed missing god animations in the archetypes.
+
+SIMPLE_EXP option added.  From config.h:
+ * Define this if you want to use the new (0.95.3) experience system.
+ * The system has the following changes:
+ *
+ * 1) 2000 exp need for second level.  All additional levels are shifted
+ *  accordingly.
+ * 2) Your stats in your skill categories don't affect the amount of
+ *  exp you get.
+ * 3) Your level difference doesn't affect the exp you get for killing
+ *  monsters.
+ *
+ * If this commented out, you get the old system.
+ *
+ * This can also be set by using -simple-exp/+simple-exp as a run
+ * time option.
+
+
+Change treasure lists so that stat improving potions won't show up in
+shop.  They should still show up on the ramdom_potion spaces on the
+maps (may in fact be slightly more common there than before)
+
+Move socket related code out of server directory and into socket directory
+and re-arrange cod so that what is in what file makes more sense.
+
+Code from Peter Mardahl to have death result in stat depletion and
+not actual stat loss.  Setable by via STAT_LOSS_ON_DEATH option in config.h
+or -stat_loss_on_death/+stat_loss_on_death command line
+options.
+
+Patch by Peter Mardahl to change immunity spells from PATH_PROT to PATH_NULL
+- this will stop gods from giving out these spells.
+
+Patch by Peter Mardahl so that players will never fumble the reading
+of scrolls.  You only get half as much exp for reading the scrolls now
+however.
+
+Update the README file - the list of public servers was grossly out of date
+and mostly removed.  The instructions for running/playing were out of date,
+containing information for servers with the old X11 code.
+
+Change CAN_MERGE so that identified items with different been_applied 
+will merge (this is currently done by just setting the been_applied flags
+for the object in CAN_MERGE if they have been identified)
+
+Temporary fix for disease code - I was seeing endless loops in weight
+contributions because an disease object op->env points back at itself.
+In do_symptoms, we check to see if the victim matches the disease we
+are about to infect them with, and if so, don't proceed further.  The
+cause of this pointer recursion needs to be found instead of
+this current fix.
+
+Change daemon.c so that hpux systems can also use ioctl (.., TIOCTTY, ..)
+call in addition to SYSV systems.
+
+players and logs command added.  players show all current player names
+currently in use, logs show sockets that are currently listening for
+kill log information.  Add limited support for some commands from
+the socket (hiscore, logs, maps, motd, players, version, who).
+After socket has been authenticated to have valid server, shout and tell
+also available.  To switch socket into old style mode, first command
+entered should be 'oldsocketmode'.  Server code then knows not to
+prepend packet length information, so most functions work on this new
+socket without any changes.
+
+Add verify_player function to login.c (takes name and password and verifies
+they are ok - used for old socket emulation).  Also notify all
+players when a player joins the game (this must have gotten removed
+at some point).
+
+change prototype for cs_write_string to take a constant string.  In
+readpacket, have it read in 100 bytes even if length information looks
+incorrect (allows easier initial switching to oldsocketmode).  If
+the length of the input buffer is for some reason negative, call abort.
+
+Clean up nconns in socket.c - it was being increased 2 times when
+a socket was added, and decreased by 2 when a socket was removed.
+Add newline to initial version command so people telneting in for
+old socket compatibilty get something a little more presentable.
+command char pointer added to newsocket structure - used for player
+name or listener html address.  Fix in memory overrun/corruption when
+freeing the last allocated socket - it would write data beyond the allocated
+data.
+
+if new_draw_info is called to notify everyone, also notify sockets
+running in old mode if it isn't a kill log listener.
+
+Update commands.h file so that it won't declare various values if included
+multiple times - only the first time it is included will it declare the
+values.
+
+Add extern declaration for init_sockets to global.h since other functions
+now need to access them.
+
+Who command extended to also show active socket connections without a player
+attached.
+
+Kill log (watchable from socket) added.
+
+Add support to use old socket commands on the new port.
+
+Fix by Seikoh Nishita for weapons that slay multiple creatures - before
+fix, they would not slay anything (args to strstr were reversed)
+
+Don't give out exp for orating to monsters owned by another player - fixes
+abuse since 2 players could quickly orate back and forth and gets lots of
+exp.  The orate function was also cleaned up a bit to be more efficient
+(presumption is made that there is only 1 monster on any one space, so once
+we find one, there is no need to do further processing)
+
+If door is passable, print a message to the player if he tries to
+pick the lock and don't let them pick it (examples here are the
+doors which you can walk through)
+
+Fix by Seikoh Nishita that should prevent some crashes when exiting
+shops - appears that there could be circumstances when i was trying
+to referance a null pointer in an error message.
+
+Add popen_local for sgi systems - without this, sgi can only open one
+compressed map before it fails to open further compressed maps.
+
+Fix by Timo Kokkonen so that resurrection works with the new player
+save method.  This should also fix the problem that dead players when
+using PERMADEATH being able to log in after dying.
+
+Allow FORCE objects to increase digestion/hp/sp/grace regeneration.
+
+Remove style.h file, since we now have an automatically generated proto file
+from random directory source.  Also fix in makefine to use proper ar
+when creating the archive.
+
+Add 'race *' to maps/styles/misc/fountains - this fixes a crash when
+entering random maps.
+
+If use presses an incorrect key at the play again prompt, reprint the 
+play again question.
+
+Change find_free_spot to return -1 if no spot available, update calls so
+check for this return value instead of 0 (value = means current spot
+available)
+
+Change pet movement so that pets should no longer jump walls.
+
+Update configure, makefiles, and code to use proper locations of installed
+files (no longer $prefix/lib, instead $prefix/share for read only,
+and $prefix/var for read/write.
+
+When using a special key to open the door, print a message informing the
+player what key was used to open the door.
+
+Minor map cleanups/changes.  Some improper exits changed to point the
+right place, extraneous style maps removed due to new gods, other maps
+updated to replace now missing altars with their replacements.
+
+Change gate code logic so instead of using speed to determine if the object
+can move itself, we instead check the ALIVE flag (this fixes problems for
+animated objects, and is a more accurate method in any case.)
+
+Fix by S.Nishita so that containers on the ground get properly unapplied
+when player moves off them.
+
+Fix by S.Yoshioka's so that damage for cone spells is calculated properly
+as they propogate.
+
+Remove server side referances to INFOLINES and INFOCHARS, since that is now
+controlled by the client.
+
+Code cleanup to random map generator to prevent compiler warnings.  
+Also, change comparision of val == 0x1 to val-1 = null, since the
+later is more portable.
+
+added some missing newlines to log messages in the newsocket.c file.
+
+fix pickup modes some - mode 4 appeared to work ok (pickup all), but mode
+5 wasn't working right (pickup all and stop).  I have tested the modes
+with the X11 client, and they all appear to work properly.
+
+House of Healing map (with link from starting city) added by Peter Mardahl.
+
+Change player move code so you will no longer swap spaces with a pet
+monster/other friendly object is you are braced.
+
+Fix off by one error in the buffering socket buffering code - this would
+cause buffer overflows if the data being added equaled exactly the buffer
+size+1.  Similar fix when reading in packets
+
+Increase NROFATTACKS to 24 in define.h so the AT_INTERNAL attacktype
+work properly.
+
+Patch by S.Yoshioka so that godpower/holyword spells are not magical.
+
+Fix in attack.c by S.Yoshioka to call free_object instead of free for
+splitting monsters.
+
+Fix by S.Yoshioka so that magic bullet or other pure magic spells do
+damage to other parts of multisquare monsters.
+
+Fix by S.Yoshioka so that you can not get exp in other skills with cone
+spells.
+
+Fix by Seikoh Nishita so that magic walsl can not be placed on top of
+other walls/monsters.
+
+Fix by Seikoh Nishita so that we don't clear the NO_STEAL flag on 
+insert_ob_in_map - this makes singing/stealting from the same monster
+multiple times impossible.
+
+Patch by Seikoh Nishita so that boulders will roll off gates.
+
+Have server send updated weight of container when dropping all items from
+a container.
+
+New random map decore styles for new religions added.
+
+Patches from James Cameron to fix compile errors/warnings.
+
+Fix missing animations for some of the gods.
+
+Remove *.orig files from maps/picks directory.
+
+Maps updated wtih dtabb 2.60, navar_city 2.40 maps from John Cater.
+
+------------------------------------------------------------------------------
+Changes from Crossfire 0.95.1 to 0.95.2:
+
+speed_left values should not be changed when loading/saving maps with the
+editor.
+
+Map updates from Anthony Tyson and others (990128 version)
+
+Note:  I was unable to reproduce the staff to snake killing the client bug.
+If still in this client/server release, please let me know.
+
+Set player->count in esrv_move_item when picking up objects.  This fixes
+a bug introduced in 0.95.1 for the improved pickup code which only allowed
+picking up of all the objects on the ground.
+
+lifesaving items should now disappear from client inventory after they
+are used.
+
+Improve decrease_ob_nr so that items dropped on the ground will get removed
+from the players inventory if they are used up (fixes bug where you drop
+the last of some item on an altar but it would not disappear from your
+inventory)
+
+Add check to add_exp so that we don't add experience to non living creatures.
+This should fix the thrown objects getting lots of speed bug.
+
+Random map code by Peter Mardahl added.  Various changes made so it will
+compile on non gcc systems as well as non bsd systems.
+
+Another fix for pits (holes) so objects should drop through.  The fix
+in the last release made fixed a possible infinite loop, but also made
+it that once an object on the pit could not drop through, no other objects
+on the pit would drop through.  The change made will attempt to drop all
+objects through the pit, but also not run into a problem with infinite loops.
+
+Update pedestal and detector code to also match on the lockcode of the
+special keys.
+
+Change detector function to call push_button instead of update_button.
+The later would only change the state of buttons, which doesn't do much
+good when you want to open a gate.  push_button will cause gates and
+other connected objects to open.
+
+Change move_gate so that it won't roll off things like grass or other
+immovable objects.
+
+Update configure script to check for scandir function (needed by disease
+code) - if not found, then check in -lucb.
+
+Disease code from Peter Mardahl added.
+
+add break value in while loop in generate artifact message (readable.c) so
+we eventually break out if no match is found.
+
+reduce minimum supported map size in crossedit to 1x1
+
+Don't let characters be easily saved on unholy ground.  Player can't issue
+'save' command when on unholy ground, and we don't autosave if on unholy
+ground.
+
+Improve pickup code mode 6 (pickup magic item) - call is_magical to
+determine if an item is magical instead of relying on known_magical flag.
+
+If the player has a marked item in need of identifying, identify that 
+specific item first when an apply altar is used.  This allows a player
+to selective choose what to identify.
+
+Fix in apply code between server and client.  Containers on the ground
+now work properly.  Server side simplified a bit, and updated to be a bit
+more bandwidth efficient (use update item to open/close containers.)  Client
+updated to handle updating its container status via the update commands.
+
+Fix in pay_for_item in that it will not mistake kobans or other coins for
+gold coins when making change (or converting the older coins into new
+coins with the same arch but with a different value)
+
+Have player swap places with pet monster even if player no longer has peacful
+set.
+
+At confirmation when player quits, inform them that quitting will delete
+the chararacter.
+
+When a weapon is improved by the god, if it had no prior attactkype set,
+give it physical attacktype in addition to what the god gives it.
+
+By default, make new players peaceful.
+
+Fix up the fire cancellation function - it seems some of the code wasn't
+quite right (inserting in map vs setting the owner.)  The fix should 
+prevent some core dumps this could have caused.
+
+Fix for main loop in socket.c that should prevent infinite loops when
+a socket dies in some improper way.  It should now drop the connection
+properly and continue with processing.
+
+Autoconf fixes - check for canonical system, specail check for
+alpha-dec-osf to add -std1 to cflags, add check for latex, add check
+for BOURNE_SHELL (this is used in hte makefiles, as some os's will use
+the users shell, but some constructs we use require bourne type shell), 
+add check for number of args gettimeofday uses, change order when
+we create the makefiles to be proper.
+
+Use autoconf check above to get correct number of args for gettimeofday.
+
+Fix from  Anthony Thyssen for the editor - should hopefully fix problem with
+delete not deleting the correct object.
+
+Remove font displaymode from editor - since we are not distributing any
+fonts anymore, doesn't make a lot of sense to support it.
+
+When connection is lost from player, save off the character - prevents
+items being dropped on the floor or the players duplicating the items.
+However, some additional logic will need to be added to prevent players
+from saving their characters in treasure rooms.
+
+Improvements in save_player which should better prevent saves from
+happening at inopportune times (like after they have mostly exited).
+
+Add stat_loss_on_death option (yes/no if stat is subtracted when you die.)
+Default can be set in config.h, and can also be changed with run
+time flags.
+
+Add / behind -I@x_includes@ in crossedit/Makefile.in.  This should prevent
+the includes from being reset if there are no x_includes.
+
+Extend draw_look to send multiple item commands - this should only happen
+if there are a lot of items on one square.  Fix should prevent crashes/memory
+corruption in that case.
+
+------------------------------------------------------------------------------
+Changes from Crossfire 0.95.0 to 0.95.1:
+
+Fix server crash if player ran into friendly object.
+
+Strip extra spaces that may be between the command and option (ie,
+"use_skill  disarm" would result in " disarm" getting passed to the appropriate
+command function.  Some functions could deal with this, others did not,
+and it makes sense to strip them out.
+
+Send update to client to remove item from players inventory when it
+disintegrates (demon ichors for example).
+
+Change load code so that player handling on unique maps should work better
+(I believe there were various strange cases if the player saved on a
+per player unique map and that map was or was not in memory, it might not
+load the per player unique map)
+
+Removed player file lockin during login.  Extra lock files get left 
+laying around in aborted login attempts.  And in retrospect, I don't
+think it is ever really needed.
+
+Some excessive/annoying debugging messages removed.
+
+Some general cleanup in some functions that were previous setting
+automatic variables.  If the variables are none changing, we now declare
+them static, otherwise we don't set the value as the initialization 
+area - this prevents warnings with some compilers.  Some casts added for
+some functions to also prevent warning messages.
+
+Remove HAVE_SAVE_UID in config.h - no longer any code using it.
+
+In free_player, only call remove_ob on pl->ob if it is not already removed.
+This fixes crashes when a player kills there login session before 
+it is completed.
+
+Instead of calling draw_look (which causes all data on that space being
+sent to the client) each time the space changes, instead mark that we
+need to send that change, and have code higher up (top processing loop)
+send the data each tick if it needs to be send.  This should result in less
+data being sent, and is easier to process.
+
+Add flag_client_sent for debugging purposes - makes it much easier to
+trace down cases where server was sending updates without actually having
+sent the object yet.  Most all of those cases are fixed with the new draw_look
+logic mentioned above.  Add dump_object_from_tag to figure help figure out
+the objects generating messages.  dumptag command is available from within
+the game if compiled with DEBUG to use this fucntion.
+
+Pup land maps updated to version 1.3.
+
+Fixes in configure script to autodetect X11 libraries better.  Fixes
+also in Makefiles so all rules should work and all needed variables should
+now be expanded.  Add checks for a few more header files.  Makefile fixes
+also include changes so that archive is packed in proper order that it should
+not try to rebuild pregenerated files.  Master makefile now set to 
+make bzip2 archives in addition to gzip archives.
+
+Added watchdog code from Christian Stieber - periodically sends out UDP
+packets so other programs can watch for them and restart the server if it
+doesn't see them (hung or down server).
+
+Added ISQRT macro to spell_effect.c - seemed that the code was changed
+a while back but that function wasn't added.  It was only needed of
+SPELL_FAILURE_EFFECTS is compiled in as an option.
+
+Simplify checking of MAXNAMELEN in crossedite/include/Posix.h
+
+Updated list of options you get when you do -help - removed old options that
+are no longer around and added new ones.
+
+Dropping an active container will now result in all the items in the
+container being dropped, and not the container itself.  It could be argued
+this should be a client issue (client send a move for each item in the
+container).  However, dropping everything in the container should be faster
+than individually dropping (ie, you turn the container upside down), and
+client dropping them one by one would result in that many commands of the
+player being used.
+
+Change esrv_move_object to use the pick_up function instead of pick_up_object.
+The difference here is that pick_up will look for matching containers, so
+players manually picking stuff up in the client will have items go into
+active containers as appropriate.  However, this can also cause problems
+with smarter clients that really want the object to go into the players
+inventory and not a container (I don't think any will have that problem
+currently)
+
+Fix in apply for holes - return 0 if we can not move the monster through
+the hole - this prevents an infinite loop in move_hole in time.c
+
+Added internal buffering for sockets if the OS's buffers fills up.  This
+greatly improves reliability in the client.  Size of buffering is
+setable in config.h
+
+Fixed makefile dependancies - make install should now depend on the
+actual programs it plans to install.
+
+Fix some bugs in the animation code - most notable is animations with
+just 2 facings like the quetcoutal.  Changes to archetypes is to
+change the half orc to have 4 facings the quetzalcatl to have 2 facings.
+
+Fixed animations to always use the direction value for determing object
+animations.
+
+Change examine code so that if the first thing in an object message field
+is @match, don't display the message.
+
+Fix map update code that wasn't calling update_los before sending the
+map to the client.
+
+Fix from Timo Kokkonen for socket code - check to see if we got an
+interrupted system call (EINTR) on a read/write - if so, loop until it
+clears or we get a real error.  Apparantly greatly improved reliability
+of the server.
+
+------------------------------------------------------------------------------
+Changes from Crossfire 0.94.3 to 0.95.0:
+
+Added diagnostic message if you try to use a skill and it can't find a match
+
+Fix in send item command to better handle objects with a huge number of
+items in its inventory.
+
+Shop listing code simplified - send all data to the client at once instead of
+havign to store it and wait for the player to hit a keypress.
+
+Fix bug in ghosthit which would cause server to crash (patch for 0.94.3
+was released for this bug)
+
+Some general code cleanup - fixing/removing unreachable statements, removing
+unused variable.
+
+Build/configuration now done by autoconf (run ./configure).  This cleans up
+a lot of special checks throughout the program, and hopefully should be
+more portable.
+
+Cleaned up/rearranaged the include/.h files.  Prior, most all structures
+where included in structs.h.  Structures and support values now in unique
+header files (ie, player structure and support enums and like in player.h,
+object structure and support in object.h, etc.).  This doesn't change the
+working on the code, but is just easier to maintain.  global.h takes care
+of including these is the correct order.
+
+Many options now removed from config.h file.  Options removed either relate
+to X11 code/old server support or machine specific details which we can
+now pick up via autoconf.
+
+Better speed checking in update_object_speed.
+
+When improving a weapon, client should now get updated (code was updating
+the incorrect object)
+
+Improve apply below to be more bug free (that is to say, we preserve
+the pointer to the next object - I think there were cases where the
+last of an object was applied, and thus removed, but the apply function
+did not return a code specifying something was applied, so the code would
+then try to apply an object with an invalid pointer)
+
+Fix for collect.pl script to fix problem traversing directories.
+
+(note for 0.95.0, there were many large scale changes, so many of the
+entries below are more of just an overview of what changed, and not a highly
+detailed account of the changes.)
+
+Fix/improvement in player movers so that players trying to run in the
+direction they move don't move incredibly fast.  They will still seem to
+move faster (I am guessing roughly player speed + mover speed now).  I am
+not sure of the original bug, but my guess is that the mover moves the
+player to the next mover (which has a low speed).  But now the player still
+has his own action left, and moves to the next mover which has high speed,
+so wisks the player to the next mover, which has low speed, so he
+effectively moves 3 spaces in one tick when he should just move one.
+
+Changed save player method so that a directory is created for each
+player.
+
+Added per player unique maps (new apartments).  Maps from Christian
+Stieber, however the implementation is a bit different - if an exit is
+marked as unique, it will lead to a unique maps.  The unique maps are 
+stored in the new player save file directories as above.
+
+Removed all X11 support from the server code.  Change crossedit so that
+it can read in the pixmaps as they are stored in for the client/server
+support (so that only 1 copy needs to be kept).  This method of reading them
+in is slower than the montage method unfortunately.
+
+Changed socket handling.  Port 13326 has been removed from active service.
+Socket information is now part of player structure, which cleans up a lot
+of the old code which had to do with find the player that correlates to
+a socket and vice versa.
+
+Fix bug so that if invaliad variable is given to dm 'patch' command, program
+no longer crashes.
+
+Fix bug so that containers that have a huge number of items don't crash
+the server (a container needed to have more than 250 items for this to
+happen).  The real problem is containers that allow an infinite amount of
+junk to be stored in them (Lepreds bag, but this item/map isn't part of the
+standard distribution).  Even with the fix, there still becomes some point
+where problems will occur (around 2000 items, the amount of data that
+needs to be sent would exceed the size of the output buffer).  In any
+case, with that many items in place, the player will see a noticable
+performance hit when such containers are opened.
+
+Fix bug that caused the program to crash when attacking ghost or other
+creatures with ONE_HIT flag set.
+
+Print out message to player if they have old keybindings.
+
+Some map fixes by Christian Stieber - eliminate ability to bypass
+quest and typo fixed in other map.
+
+Fix so that perceive spell (off of rods/staves/scrolls) properly finds
+the god of the player.
+
+------------------------------------------------------------------------------
+Changes from Crossfire 0.94.2 to 0.94.3:
+
+Fixes to some recipes - before some had non existant ingredients.
+As part of this, a treasurelist for ogres added.
+
+archsearch.pl function added to lib/adm.  Useful little perl script that
+can do object context searches (ie, immune to X and attacktype of Y)
+
+Old loader code removed - only lex loader supported now (no bugs reported,
+so it seems to be OK)
+
+Debugging output improved in various areas to be easier to read/better
+inform what is happening.
+
+Hopeful fix in place to prevent player movers causing players to have
+-infinite in speed_left.  Fix right now is to just limit speed_left
+to -50 - I believe the real problem is that some player moves have
+speed=0.0, and it is diving by that value.
+
+Fix so that if a player dimension doors onto a player mover, he no longer
+gets stuck in an endless loop - he will now move along the movers as
+expected.
+
+When a player dies in NOT_PERMADEATH mode, clear the braced flag.
+
+In the case of spell failure, don't cast mana storm in no magic areas
+(instead, just kill the player)
+
+Only write out an updated bookarchive if data has actually changed and needs
+to be written out.
+
+Don't print out new client server usage logging if nothing has changed.
+
+Reduced power of 'loose mana' (it appears this only happens when a spell
+is failed really badly).  It seemed to me that the area of affect and
+damage could be many times deadlier than anything else out there.
+
+Hopeful bug fix for thrown objects getting very fast speed (I am unable
+to reliably reproduce this, so am not sure.)  Basically, I believe the
+problem was that set_owner was only being set for the wrapper in the
+thrown object, but it is the actual internal object that gets used at
+some point in the attack sequence.  As such, I believe that the knife,
+spear, whatever was getting the exp for the kill (exp = speed in 
+weapons).  To hopefully fix this, I have also added a set_owner call
+on the real object so when it goes to grant exp, it should find a
+valid place for it and credit the player and not the weapon.
+
+Changed spell parsing so 'of' is not needed in some complex
+spells (ie, create food or marking rune).  From kfitzner@nexus.v-wave.com
+
+Fixed bug in which you could kill multispace monsters with paralyze or
+slow attacktypes.
+
+Added ncom and comc commands to client and server.  These commands allow
+client command queing/dropping (note that server will only send a comc if it
+gets a ncom first, so old clients should still work just fine).  The
+protocol numbers increased to 1021.
+
+Added more objects to the show invisible list - hopefully the pupland
+maps should now be fully playable.
+
+RPLAY_SOUND definitions changed to RPLAY_SND - should make for cleaner
+compilations for those using that.
+
+Fixed #ifdef for NetBSD in common/time.c to use proper symbol.
+
+Fix so that counterspell should no longer kill monsters with magic
+attacktype (ie, jessys and probably others)
+
+Added debugging in deathstrike code to hopefully be able to better track
+down face of death problems.  My guess is that it is a problem with level
+comparisons.
+
+Fixed/clarified many nexted if/else statements that were ambiguous.  Now
+braces are properly in place (From Klaus Elsbernd)
+
+Hopeful bug for disappear objects when emptying bags.  I believe the
+problem was that invisible objects ended up showing up in the containers
+somehow - this by itself is not a problem.  However, the empty bag
+function calls drop with the object to drop and keeps the next value - 
+however, drop would forward past the invisible object so the calling functions
+next value is no longer accurate.  Drop function now does not skip over
+invisible objects in containers (will skip over them in player inventory) -
+it instead removes the invisible object since I believe it is garbage
+anyways.  I am not sure if this will fix the problem, but there was
+certainly some problem in the code here.
+
+Fixed bug with multipart monsters & pits.  Before, they got split into
+a few parts like a magician trick.  Now they stay in one piece.  At
+current time, the logic probably isn't great, as all that is currently checked
+for is the head of monster being on a pit - in reality, probably all the
+monster parts need to be on a pit.
+
+-m9 and -mt options added (Code from Raphakl Quinet).  Formulas have
+been fixed such that all are now creatable (none missing archetypes).  However,
+the output still shows some formulas out of balance in terms of costs.
+
+Changed AT_GHOSTHIT meaning and added ONE_HIT flag.  GHOSTHIT is now treated
+like any other attacktype (monster will not be removed just for having
+ghosthit).  ONE_HIT flag now means the monster will disappear.  This fixes
+the acid sphere deadliness (before, they did have ghosthit as an
+attacktype).  All the objects with ghosthit have been updated.  However,
+there are probably some other undead which could now have ghosthit added
+to their attacktypes since it won't cause them to disappear now.
+
+Updated the programming_guide doc.  Hopefully, it is a bit easier to read
+and a little more accurate.
+
+Improved polymorph.  Invisible objects should no longer appear.  Also improved
+so that all objects of a type would be possible results (before, it would
+be the first 80 weapons would be chosen from, or the first 80 monsters, etc.)
+Now it is unlimited.  Smarter initial selection should also result in
+a few less meltdowns from it now being able to find an acceptable object.
+Also, possible fix that could cause crashes on rare occasion (monster
+polymorphed into something else, and when inserted into the map, something
+on that space kills it)  Also, we stop processing a space once we hit the
+floor - I don't recall floor types ever changing anyways, but there could
+be other problems processing subfloor items.
+
+------------------------------------------------------------------------------
+Changes from Crossfire 0.94.1 to 0.94.2:
+
+Changed calls to send_query on server side to include the string on what
+the query is for.  This is to make clients be able to do smarter/nicer
+things when it receives a query.
+
+Bug fix in check_walk_on which would cause crashes when objects are put on
+spaces with multiple destructive forces (ie, earthwall cast on top of
+a double pool of chaos).  Once check_walk_on finds that the item has
+been freed, it stops doing any further processing on it.
+
+Animation code cleaned up.  Animations are now object properties, and not
+archetype properties (and thus can be changed in maps).  Also cleaned up so
+that the is_turning flag is removed - more complex animations available via
+the num_facings.  Below is the section from the TODO file.  Note that there
+is still potential to improve animations (many 1 frame animations could take
+advantage of the new code to have multi frame (ie, players can now have
+images for all directions, and animations for each of those) New code is in
+common/anim.c:
+  Clean up animation code and make it more general purpose (instead of
+  is_animated and is_turning flags, instead add a value that
+  states how many animations/direction there are.  For example, right
+  now the big dragon has 8 animations and 2 facings (left & right), with
+  4 animations/facing.  Something like num_facings could be added so we
+  know there is 2 facings.  For arrows, num_facings would be 8, so we
+  know that it shouldn't be animated (since there are only 8 images in its
+  animation.)  This would make the code a little cleaner, and allow better/
+  more complex animations (an object that faces 8 directions could have
+  animations for all directions, were as right now, that is not possible.)
+
+collect.pl changed to handle generation of animation file.
+
+Wipe below added to crossedit by Steven Unruh
+
+removed non NEW_HIT_PLAYER in attack.c (ie, old attack code removed)
+
+Added hitback code (looks like it was missing from the NEW_HIT_PLAYER
+code)
+
+dm commands will now be accepted from the new client (provided they
+have dm priveledges of course)
+
+Add AT_INTERNAL attacktype used only for internal calculations (ie,
+does that amount of damage).  Actual damage section of poison now
+uses this.
+
+Fix spoiler generation - don't convert monster archetype names to 
+lowercase - images generated properly for them now.  Also, fixed problem 
+with some images (dragon) being rotated when they shouldn't.
+
+Clear INV_LOCKED flag when stealing objects.
+
+Fixed couple of bugs in throw code.  First, players remaining speed
+calculation seemed incorrect.  Second, you can now specify an object
+name to throw (ie, throw ring, throw chair).  Third, the client now
+gets properly updated with the new/changed item.
+
+Make UNIQUE_ITEMS standard feature.  Removed LOCK_ITEMS as a secondary
+feature - running multiple servers against the same set of files is no
+longer supported.  Note for compatibility reasons of both methods, it will
+look for unique files starting at v00 and will write new ones with the .v00
+extensions.  If you have .v01 files, these will be read in the first time
+through (provided you also don't have a .v00), but all new files will be
+written with the .v00 extension.  Referances to ITEMS_DIR changed to
+be UNIQUE_DIR - I think that is more descriptive.  This includes 
+the environmental variable.
+
+Change ok_to_put_more to do more complete checking and also not to stop
+spells because of a monster with certain immunities being on a space.
+
+If hit_player is called with the 'tail' of a monster, it would previously
+just exit if the attacktype included slow or paralyze functions (must
+hit the head with those.)  Changed hit_player so we just remove
+the slow and paralyze, and still hit with any remaining attacktypes.
+
+change explode_object so it only hits the monster once with the bullet/
+meteor.  Previously, it called hit_map, which then hit the player, and
+then called hit_player again.  This effectively doubled the amount of damage
+caused by the bullet - it now does the correct amount of damage.  As
+best as I can tell, meteor/meteor swarm does properly damage the monster
+even if the tail was hit.
+
+Bug fix in singing so exp should now be granted the first time singing
+is used on a monster.
+
+Changed so that server can be compiled with new client/server support but
+without old (port 13326) support.  Various sections of code updated to
+work/compile in such a setting.
+
+Fixed premature freeing of map->tmpanme.  Now in delete_map instead.
+
+Added checking in free_object to see if we are called on a non removed
+object.  IF many cores is defined, will dump core here.  I believe there
+is some section of code calling free_object on a monster without calling
+remove_object, which is causing a lot of error/warning messages when it
+happens (very infrequently.)  With this test in, it should become quite easy
+to track down when it happens.
+
+Added free bsd & net bsd to those systems whose gettimeofday takes 2
+arguments (common/time.c)  -lcompat added to libraries needed for
+FreeBsd.  Include unistd.h on freebsd.  Don't include malloc.h in
+xbmtobdf.c on freebsd.
+
+Sample ban_file added to lib.  Read in of ban_file will now
+ignore lines that start with #.  Also, animations file (used for new
+animation code) included.
+
+Config file rearranged to hopefully be in better sections and easier
+to edit. NEW_IMPROVE_WEAPON and SIMPLE_PARTY_SYSTEMS removed from options -
+now always selected. NO_LOG, ONE_PLAYER_PR_UID, CHRFONT removed from
+sections - these can never be valid.  NO_ADD added to prevent players
+from adding others
+
+Server updated to send full lines of text with query commands to client
+so for clients that pop up a dialog box, they can print meaningful data
+on what the request is for.
+
+Bug fix so that you can no longer apply multiple objects of the same
+type with apply -a
+
+Give better messages when attempting to light something.
+
+New client/server statistic gathering added - will periodically dump
+usage stats to the log file.  Server will now longer crash if
+client/supposed client sends bad data - will now just close the connection
+instead.
+
+Server will not longer crash when player runs into a door.
+
+Can now longer polymorph objects into items that are invisible.
+
+Removed client directory from main archive.  Too many people thought that
+was the new client creating confusion, and I don't see a big need to have
+it around (it will go away when the X11 code is yanked from the
+server anyways0.  If you still like it, the old version of it will work just
+fine (no changes have been made to it in a very long time0
+
+Map changes:
+  color_ removed from map files.
+  library card cost decreased some.
+  oldcity maps updated to take full advantage of XPM mode..
+  Lake_Country/DA map changed - exp reduced, sp increased.
+
+------------------------------------------------------------------------------
+Changes from Crossfire 0.94.0 to 0.94.1:
+
+in artifacts file - moved some settings of difficulty before Object line.
+(difficulty after the Object line have no effect)
+
+In low level socket code, retry read/write again if we get a EWOULDBLOCK
+in addition to EAGAIN errors.  Some systems return EAGAIN, others EWOULDBLOCK
+
+Fixed possible crash in move_monsters.  I believe the problem was that
+the monster got killed by a door, and the function was not expecting
+it, and would use the invalid object.  Not sure if the code I put in will
+really fix the problem, or just migrate it to a higher level calling
+function (have not seen the crash myself)
+
+If on linux, include crypt.h in main.c
+
+Various minor memory leaks fixed.
+
+Better error message for non wiz people trying to use shutdown command.
+Shutdown command actually added to command structures and is now usuable.
+
+Internal animations changed from explicit defines to use SET_ANIMATION
+macro.  Much easier to read, and better supports client side animations.
+
+Include sounds.h/sound calls no matter what RPLAY is set to.  Only
+rplay special code is in sounds.h.  This way, client can still get sound
+information without rplay being defined.
+
+removed NPC_PROG code - not used at all - only thing there was a few
+#ifdefs setting values.
+
+Moved typedefs for function pointer stuff from structs.h to funcpoint.h.
+No outside affect on code, just makes more sense internally.
+
+Disable default selection of DEBUG_DMALLOC on crosssite.def
+
+Removed old/unused charisma bonus values from common/living.c
+
+Minor fix so that a space is properly added between item number and name.
+
+Added a lex loading routine.  Performance seems to be roughly the same,
+but ease of maintenace/readability seems better to me.  Modifications to
+loader.c should not be done - instead, they should be done to loader.l
+Loader directive flags and loader return flags added to loader.l - those
+are now used instead of arbitrary integer values.
+
+Fix c_wix.c dm goto command to set the destination object/map name.  Otherwise,
+if an invalid map was entered, the enter_exit would try to print a null
+string - some systems handle this OK, others will crash.
+
+Changed common/time.c to use GETTIMEOFDAY macro defined once at top
+of file instead of having #ifdefs throughout the file.
+
+Fix so that items of differing values will not be merged.  Also, when
+merging objects, do not clear startequip flag.
+
+Fix in doc/playbook-html so all include directives are handled properly
+with the include_html.pl script.
+
+More details printed about improved weapons (how many improvements done,
+max number of improvements.)  Also, skills will show how many improvements
+the character can handle.
+
+Bargaining skill will be auto applied when in shops.
+
+Change teleporter code so the teleporter does not have to be the first
+or second item on the space - teleporter can be any object on the space.
+
+-a, -u apply options added (always apply/unapply instead of toggling).
+Internally, apply and apply_special have been changed to take one more option
+which is this flag.
+
+Applied rings will not be merged - instead they will remain seperate.  Fixes
+problems with getting full bonuses, and also makes it easier to apply/unapply
+one item.
+
+Increased frequency of generation for strange ring (nodrain ring).  This
+should make it appear probably roughly as often as the ring of life,
+or maybe even more often.
+
+Put maximum carry limit in - beyond the limit, a character can carry no more.
+This limit is fairly high right now, but should improve playbalance and
+prevent characters from getting a negative weight or carrying so much
+stuff it takes forever to move (session appears hung to them)
+
+Added CS_STAT_WEIGHT_LIM to newclient.h, so client can know how much
+the player can handle (only used for GUI, so it can do a carry/limit
+type of thing)
+
+Title information now used in hiscore displays.
+
+Show invisible spell will now make handles visible.
+
+New server code won't crash if player does nothing when it prompts for the
+name.  Also, include necessary dummy functions so server will compile
+of ERIC_SERVER is not set.
+
+Will now search keyrings when running into special doors for matching
+keys (players can protect keys by putting them in other containers.)
+
+Change jump skill so that any spaces with FLY_ON set will affect
+the jumping player.  This prevents the character from jumping over
+player movers.
+
+In create_wall - if insertion if the initial wall fails (new all is destroyed),
+don't extend the wall.  Fixes the earthwall on top of pool of chaos which
+creates strange map problems.
+
+Map fixes:
+     Lake_Country/ebony/masterlev altar should now accept fragment
+	of chaos.
+    Put no magic areas in apartment so it should no longer be able
+	to dimension door and get keys.  
+    /city/houses/wizz.entry should now be entered at the correct position.
+    /city/misc/library - library cards are now identified, so it should
+	no longer be able to buy then sell at a profit.
+    /city/houses/wizz* maps:  removed ./ from start of some map paths -
+	causes apparant problems.
+    Lake_Country/Butakis/blacksmith - can no longer get free dragon mails
+	or other items - have to pay for them now.
+    Remove pup_land/rainbow/Lv4/\nkey (\n was an embedded newline).  Map
+	doesn't look to be needed.
+
+Archetype changes:
+
+Added blocksview to gwall so you can no longer see through them.
+
+Fixed up castle animation in bitmap mode (212/312 images needed to be swapped)
+
+Increased exp for skulls from 3500 to 5000, reduced exp of deathtrees from
+1400 to 1000.
+
+fixed typo in gauntlets which meant title was set right.
+
+aggressive 1 values changed to unagressive 0 values in some archetypes
+(no such value as agressive)
+
+------------------------------------------------------------------------------
+Changes from Crossfire 0.93.7 to 0.94.0:
+
+Added outline of future versions in the TODO file.
+
+a mana storm should now hit with godpower attacktype.
+
+The spell create_food will now create food with 0 monetary value, and
+be marked as starting equipment, so can not be dropped.
+
+Player titles with spaces should now load properly.
+
+Updated command times for use skill, ready skill, and stay commands so
+when client executes them, proper amount of time is subtracted.
+
+drop_object now preserves the freeze inv/look window, which prevents
+slowdowns when picking up a lot of objects/dropped.
+
+Added yield to water of diamond, fixed typo for dust of frost recipe.
+If a recipe doesn't have a yield, recipe should still be properly
+generated.
+
+Hiscore savefile now stores maxgrace and seperates player title from 
+player name.
+
+Option added to only swap out maps when MAX_OBJECTS is exceeded 
+(MAX_OBJECTS_LWM)
+
+Changed internal definition from SOUND_EFFECTS to RPLAY_SOUND to properly
+reflect what it actually enables (sounds for the client are always
+enabled)
+
+No longer put a 'a' for single objects.
+
+Changed ring generation so rings of power can be generated.
+
+Change can_merge so that more objects are mergable, add nrof 1 to some
+objects.
+
+Improved set_owner which can fix getting into endless loops.
+
+Change insert_ob_in_map_simple so it doesn't call check_walk_on.  fixes
+player being slowed way down when dropping objects on slow move space.
+
+Animations moved out of archetype and into seperate array.  This is necessary
+for the client as it makes a unique referance number for each animations.
+Also, in future, this would make it easier to be able to change aminations
+in objects/maps.
+
+Print out level gain messages in red so they are more noticable.
+
+Change can_pick so that invisible objects can not be picked up.
+
+Change singing so you can calm a monster multiple times - you only get
+exp once however.
+
+Change show invisible so it only makes monsters and players visible, and not
+things like magic mouths and ears.
+
+Patch so that if peaceful is set, you will not attack other players even
+if they have attacked you.
+
+Auto apply woodsman/mountaineering benefit when in the appropriate terrain.
+
+Fix get command so it takes from a container if appropriate.
+
+shutdown and kick wizard commands added.
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+Client/Server changes for 0.94.0
+
+Updated protocol version to 1010
+
+Server debugging statements in ericserver can be enabled/disabled by 
+define at top.
+
+Client can lock/unlock items on the server.
+
+Client can now look at spaces now.
+
+Send update of item to client when it is identified.
+
+Send update command to client from decrease_ob_nr to update players
+overall weight.
+
+Now send animation information to the client.
+
+Now send sound information to the client, client can send setsound
+to server to enable/disable sounds.
+
+Client side image caching fully supported.
+
+Added updates when picking up objects/dropping objects so that players
+weight and container weight is updated if necessary.  Also, if object merges,
+make sure we then send a delete of the original object that is now gone
+to the client.
+
+Update object changed to send floor animations to the client.
+
+Send update when power crystal changes speed.
+
+Send update of player object after player is loaded.
+
+Change server so that only send map update and player stats once a tick -
+should be more efficient and equally sufficient.
+
+Added LOCKED flag to item transmission command so client can no which items
+are locked.
+
+Added item1 command which superceded item command - sends more informatin.
+
+Added update command to protocol, and function in server - only sends 
+portions of an object that need to be updated.
+
+Server now properly handles repeat fire on.
+
+------------------------------------------------------------------------------
+Changes from Crossfire 0.93.6 to 0.93.7:
+
+set_god wiz command added.
+
+Changed call to 'index' to 'strchr' in commands.c - keeps with what
+the rest of the program does.
+
+Pupland archetypes and maps added (v1.2 of pupland distribution).
+
+Changed get_random_mon to be more random when a monster of a specific level
+is requested.
+
+Casting transferrance spell on another playing and having their head explode
+will no longet get the recipient of the spell exp - instead, the caster
+of the spell will get the exp for any kills.
+
+change put_a_monster function so it properly handles multi-square monsters
+(put_a_monster is called by summon_evil_monsters, at probably others)
+
+Changed alchemy so you no longer get exp for failed/random mixtures
+
+If a container on the ground that the player is using (ie opened) is 
+somehow removed, update the players view to now be the ground and not
+the container.
+
+Player titles will now be loaded properly from save files.
+
+Can no longer sing and make the same monster unagressive multiple times.
+The implementation is actually borrowing the NO_STEAL flag, which means
+you can't steal after you sing, and after a failed steal, you can't sing
+and calm it down.  Also, make sure that only the 'head' of a monster is
+sung to.
+
+Fixed up CSword_116 xpm file (too many chars on one line)
+
+Added note/option in config.h for systems lacking O_NDELAY.
+
+Fixed up some of the quests in Lake Country - can no longer just run and
+get the dragonbane or buy the armor with a lot of scales.
+
+New Client/Server changes:
+
+    changed esrv_send_face to take the client_num instead of client_id
+    (should be slightly more efficient).  This does not affect the protocol
+    in any way - it just makes the handling on the serverside more efficient.
+
+    Changed item command to calculate objects total weight before sending
+    it to the client (total weight = weight+carrying).  This is needed because
+    there are many times that the client does not know what is in the container
+    and thus can not properly calculate the weight.
+
+    Change server so it sends updates for the parent
+    items that the object is being moved from/to (ie, when removing something
+    from a sack, send an update for the sacks weight).  For the client
+    to properly handle the player being re-updated, some special handling
+    had to be added so the inventory list would be updated and so that
+    we don't try and add another player object (client search routine for
+    tags didn't look at the player)
+
+    Fixed server so it now properly updates the original item from which a
+    portion of it is being dropped.
+
+    Fixed bug in server handling which kept the -1 return code from a
+    blocked socket and decreased amount to send by that - reset to zero
+    so amount to be sent remains the same.
+
+    askface and mapredraw commands added to Protocol by Phil.
+
+    Changed load player function so it calls fix_player before sending
+    initial data to client.
+
+    Removed some printf/debug statements from pickup code for newcs in
+    player.c
+------------------------------------------------------------------------------
+
+Changes from Crossfire 0.93.5 to 0.93.6:
+
+If we fail to save a map, all objects on that map should now be properly
+deleted from memory.
+
+Fix possible crash when score is being generated if player is on
+swapped out map.
+
+Default output buffer for new clients is now 64k.
+
+Partial code in place for client side image caching.
+
+Alchemy changes from Peter & Brian.  Main change is that multiple recipes
+can be made at once.
+
+Bad grammer in messages printed out when readable object is beyond players
+comprehension.
+
+ethreality recipe commented out in formulae file.
+
+Some playbalance issues on maps fixed by Samuli Tursas.
+
+Internal handling of shop menus changed - instead of a list of objects,
+change it to an array of strings.
+
+Minor changes in porting.c to hopefully make that file compile properly on
+more systems.
+
+doc/experience updated with some more notes from Brian.
+
+CAN_MERGE changed from a macro in define.h to an inline function in
+object.c (only file it is used.).  It makes it a bit clearer, and hopefully
+a little safer.  There is an option at the top of config.h for handling
+of the INLINE function declaration.
+
+Possible fix so that altars should not be re-concecrated if god is
+set in the editor.
+
+Undead monsters can now see in the dark.
+
+Fixed bug in parse_command which would cause crashes if a socket connection
+entered a string with a ; in it.
+
+Increased string size in new_draw_info which prevents crashes/stack
+corruption when really ling strings from a socket is entered.
+
+Changed spell level/costs between invisibility and improved invis such so that
+the improved version is now a higher level and more sp.
+
+Now possible to steal from a creature more than once as long as character
+remains unseen.  Each steal attempt will become harder in any case.
+
+Remove some special player checking in get_nearest_player - I think it
+caused some crashes, and wasn't necessary (in fact, clever players could use
+it to get it such that monsters would not target them.)
+
+When characters stop levitating, call check_walk_on so they will fall
+through pits or other applicable effects.
+
+Fixed up some archetypes which could be picked up when that should be
+set (trapdoor, bullet, meteor).  The last 2 cases can not be picked up,
+but clever casting of alchemy could have nuetralized them.  collect.pl will
+now print warning if an object has walk_on set but does not have no_pick set.
+
+Added new map from Bjoern Helfesrieder to starting town (Yarin's House)
+
+Fix in item matching code that could cause core dumps.
+
+Fixed clearinfo command so that it still works even if player is using
+scroll mode (only if player issues the clearinfo command - other uses
+of clearinfo in function won't clear in scroll mode.)
+
+Improved shop listings so they are sorted by type, then sorted by name.
+
+Fixed bug in backspacing the to the front of the first line of an
+extended command - it now works properly and puts you back in normal
+command mode (this got broken in the addition of extended line input.)
+
+Player should still be able to save if they were the wizard.  However,
+wizard status will be stripped for save, but the fact they were a wizard
+will not be stripped.
+
+Imp made even wimpier by Peter M.
+
+If you set of traps, open doors, push a player, or roll a boulder,
+you now become visible.
+
+Change it so that when something/someone reads a scroll, only inform
+the other people on the map (perhaps this is still overkill?)
+
+------------------------------------------------------------------------------
+Changes from Crossfire 0.93.4 to 0.93.5:
+
+Replaced handbook make_index script with perl version.  Much faster, and
+also fixes problem with echo command doing different things on different
+systems.
+
+Minor change in crossedit such that if it is not compiled with XPM
+support, it will give an error message if run with the -xpm option.
+
+Changed code so that experience objects no longer change stats (reverses
+'fix' made in 0.92.9)  Fixes problem of characters getting extra
+stat points from the experience objcts.
+
+Fix bug that could cause infinite recursion loop in spellpath_msg.  From
+cameron@ripper.stl.dec.com (James Cameron)
+
+Fix bug in complex keybindings in which all the commands in the keybinding
+were executed that tick.  Thus, if you bound a key to north;north;north;north
+and pressed that key, you would move 4 spaces north no matter what your speed
+was.  It now works properly, and you move at proper speed (keybinding is
+copied into buffer in player structure, and removed as we go along.)  Note:
+This buffer could also be used to hold keypresses not yet processed, but
+that hasn't been done yet.
+
+Added ability to enter lines longer than the info window is wide.  This
+allows for longer keybindings or say commands.  It isn't the most
+sophisitcated thing (the extra lines show up with a 1> and 2>, etc for the
+extra lines, and we just redraw the previous line if you backspace that
+far.  After you complete the command, it does end up redrawing the entire
+command, which can take a few lines, which gives some confirmation on what
+you typed in.  This feature was added to both the standard server code
+and the new client.
+
+Change use of tempnam to tempnam_local which we supply.  Standard tempnam
+will look at the TMPDIR environmental variable, and use that to override any
+other value for the directory - this causes problems if different people
+runn the program and using the temporary maps accross runs. tempnam_local
+will not look at the TMPDIR variable, and will instead always use the value
+we pass it.  This can be changed if we were not compiled in SECURE mode by
+changing the CROSSFIRE_TMPDIR environmental variable.  Code was also changed
+so the CROSSFIRE_TMPDIR variable will not be used if compiled in SECURE mode.
+
+Fix so that you can no longer move really fast or fire really fast by using
+the mouse buttons in the game window.  Using the mouse buttons in the game
+window should now result in the same speed as using the keyboard.
+
+Patches from Peter Mardahl:
+
+    Dusts now cast as ability and not spells.  This mean that they will not
+    have magic as part of the attacktype.
+
+    Spells that are cast on oneself now ignore direction.  Thus, healing and
+    protection potions can not be cast on something next to the player using
+    the object.
+
+    Detector object added.  Similar to inventory checkers, but only
+    periodically samples what is in the space, and doesn't look at the
+    inventory, only objects actually on the map.
+
+    Creators can now cause objects they create to inherit names.  They can
+    also periodically create items.
+
+    Arch diffs: imps weakened, cold dragon spews forth cold, creator modified
+    to have default speed 0.
+
+    New FireTemple set of maps.  These have been onto the Volcano in the
+    southeast area of the continent.  The maps that were there were moved to
+    world_e2, under the crater.
+
+    Gradual light/darkness code put in place.  I fixed a few of the bugs
+    that were in peters orignal version, so it works flawlessly for both
+    server and new client.
+
+------------------------------------------------------------------------------
+Changes from Crossfire 0.93.3 to 0.93.4:
+
+Inventory checkers can now act as doors.  If no_pass is set in an
+inventory checker, player can not move onto that space unless they meet
+the match requirements.
+
+Signs that are usuable only a fixed number of times added.
+
+Fix for pedestals & buttons so they are only activated once when a player
+moves onto a space (previously, they were being activated twice.)
+
+Fix for connected objects so that they will not be sacrificed on altars.
+This fixes a case where you might want to put a check_inv and altar with
+the same sacrifice on the same space.  Before, the inventory checker would
+be sacrificed on the altar, causing the linked button list for 
+inventory checker to be corrupt.
+
+Many maps updated to look better in xpm mode or just better in general.
+
+Change in crossedit so that if you set the randomitems variable for an object,
+it only sets the value at the head of the object, and not all parts of the
+object (it would be nice to allow non head parts to have this set, but I am
+not sure how to get what part was clicked on in the editor, since it seems the
+head is passed to the function.).
+
+xpmtopix.pl script added.  Eventually, I hope this will replace the
+C version.  For now, all it is good for is to verify that the XPM images
+are using the proper colors.  Numerous XPM images were not using the proper
+colors (a lot were using brown, which is not an official color - see
+the xpm template for what is.)
+
+Cleanup of proto directive to turn __signed into signed.  Also, change
+#if __STDC__ to #ifdef __STDC__ in proto files.
+
+Fix so it should now compile if SECURE is defined.
+
+Ability to more easily added needed libraries in crosssite.def -
+Extra_Libraries option added.
+
+Assume Linux has a prototype for tempnam (at least my version does.)
+
+Many objects added, and many XPM images updated/improved.
+
+Change in new CS code - don't send the version string until after we fully
+set up the structure.
+
+Change so crossfire will compile if SAVE_HOMEDIR is set.
+
+Reverse actions of -m8 and -m9 (Believe they were doing the wrong thing
+relative to the scripts and what the docs say.)
+
+Change in hiding code and detection by monsters.
+
+------------------------------------------------------------------------------
+Changes from Crossfire 0.93.2 to 0.93.3:
+
+Added a fill below function in crossedit.  This make filling in backgrounds
+for maps much easier.  Basically, it just puts whatever object you select as
+the bottom object of the bounding box.  If the bottom object on the map
+matches the object being inserted, the object is not inserted.  As a side
+effect of some code in GetMapObjectZ, if it matches the top object, it won't
+be inserted either.  This makes things much easier to update map backgrounds
+for XPM mode.
+
+Hiding made easier for players.
+
+Stealing is made easier for players, but harder beyond the first item.
+
+Many image colored and perspective corrected David Sundqvist.  Also, several
+new objects added (specialized altars, some more indoor furniture/more
+orientations, some sliding secret doors, and new wall types.)  Barn image
+naming conventioned changed to follow what is considered proper.
+
+A few maps added by David (two temples in starting village, along with
+a mercenary recruitment building.)  Also, some maps fixed to look better
+in XPM made.
+
+Party kill option added by Rauli Ruohonen.  IT lets you see who has killed
+what recently in your party.
+
+Saving throw for objects cleaned up.  Previously, an objects immunities/
+protections were not being used correctly to determine if it made its saving
+throw (that is why icecubes could be destroyed by ice).  It is now set up
+properly.
+
+Gods will no longer improve weapons that have been enchanted by other gods
+(Or I believe by yourself.)
+
+Fix memory overrun (1 entry) when initializing values for the images.
+
+Program will not recover properly when it attempts to load a temporary
+map.  This means that load_temporary_map returns the map object to use,
+since it might change.
+
+When setting the owner of a monster, clear its ability to use skills
+
+Fix in decrease_ob_nr so it should now work on 64 bit systems.
+
+Mapguide updated with various suggestions made on the mailing list.
+
+Linux systems assumed to have at least random available (change in the config.h
+file.)
+
+'t' is now bound by default to 'ready_skill throw'
+
+missing demon types (imp, big_demon, Greater_Demon) added to the list
+of demon races.
+
+xpmtopix will print a warning if it detects and XPM file using a tab character
+in the color name - makes it easier to track possible image corruption.
+
+Check for power of improved weapons now in its own function.  Also, we
+now properly check weapon power when improving one (before, you could
+improve it one level more than you could actually use.)
+
+When a container is applied, make sure it is a player applying it before
+checking for new client/server information - otherwise an invalid pointer
+is dereference.
+
+Complex keybindings added - thus, you can bind several commands seperated
+with semicolons to one key.
+
+Fix in encounter.c so if compiled with RANDOM_ENCOUNTERS, the new
+settings structure is used for map location.
+
+Added check fot out_of_map in various places that needed them - prevents
+some more core dumps.
+
+skill identifications will now look on objects on ground in addition to
+those in the inventory.
+
+perceive self should now tell you what god you worship.
+
+map reset times on maps (temporary maps accross multiple runs) will not be
+altered if there is no map reset time.
+
+------------------------------------------------------------------------------
+Changes from Crossfire 0.93.1 to 0.93.2:
+
+New argument parsing routine - we now parse arguments in phases.  With this,
+I have moved many of the global settings into a settings structure, and 
+allowed highscores to be displayed by class/name.  The man page and -h
+option have also been updated.  Also, all the files that could
+previously be specified via environmental variables can now be specified
+with command line options.
+
+The temporary directory can now be specified via -tmpdir command line option or
+CROSSFIRE_TMPDIR environmental variable.
+
+If you cast word of recall and then save before it takes effect, it will
+no longer corrupt the character (and will in fact take effect when you
+restart).
+
+Don't let players throw starting equipment.  At the same time, don't mark
+throwable items as starting equipment - instead, just give it zero
+value.
+
+Fixed inscription - now properly writes scroll when passed no string instead
+of crashing.
+
+Artifact monsters now possible (monsters whose abilities are changed based
+on the artifacts file.)  Top of the artifacts file has more information on 
+this.  For now, I have only set up the orc, ogre, and goblin to get
+special leaders.
+
+Temp maps can be reused across multiple runs.  See config.h for more
+notes.
+
+Bug fix in inscription:  If you inscribed a scroll and already had
+one like it in your inventory, the game would crash after they
+merged.  Also, if you failed in inscribe a scroll, the game would
+also crash (object it was using to calculate experience had never been
+initialized).  For now, I just changed it to return -10*spell level
+as the exp award.
+
+Items will now be merged with other items even if one has been inventory
+locked.  This way, if you have some torches that are locked and you pick up
+some more, they will merge in instead of showing up seperately.
+
+Bug fix for saving throw on objects hit by cold.  There could be cases
+where an object being processed is no longer on the map and would cause
+a crash.
+
+Change find_first_free_space to return -1 if there are no free spaces.
+Calling function should check this and then do the 'right thing'.  This
+fixes problems with runes creating monsters on top of monsters (or
+below the player).
+
+Magic map cleanup.  Now have magicmap field in NewFace structure.  This
+field holds the color to use for magic map in low 4 bits, and various
+flags in high 4 (right now, only floor bit is used, since drawing may
+differ on bw systems with that value.)  magicmap filed is now supported
+in .arc and faces file.  collect.pl modified to automaticaly put
+magicmap into the faces file, will also copy is_floor into faces file.
+magicmap takes a color name.  This seperation allows magic map colors
+to be set independant of foreground and background colors, and simplifies
+the code a good deal.  Also, it makes new client magic map support easier.
+Now all the archetypes need to be updated (I have already done the armour,
+connect and construct directories.)
+
+Magic map for client now implemented.  Definition of protocol added to
+Protocol file.  Only limitation implementation has over direct server is
+it only flashes the position of the player who cast the spell.  This
+seems perfectly reasonable to me (use color or other attribute to know
+where other players are.)
+
+Old client (telnet front end) changed so that it no longer requires
+libcross.a.
+
+save object should do a better job if it gets an object without an
+archetype.
+
+buffer size for LOG increased - there were cases where this buffer
+was not large enough and was causing crashes (sending large amounts of
+garbage data to the socket was one way.)
+
+Load map will now reload the original map if the temporary map is for some
+reason no longer around.
+
+Fix bug where randomitems may not have been properly initialized for now
+objects (was inside an #ifdef for CASTING_TIME)
+
+strerror_local added to porting.c.  Lets up give up more reasonable
+error descriptions for certain errors.
+
+If an object is cursed, set its vulnerable values to its protected and
+immune fields, adn clear those fields.  Fixes 'problems' with finding
+cursed rings which are not really cursed (pro fire/vuln cold rings.)
+
+If trying to switch to private colormap in XPM mode, check to see if 
+we are successful.
+
+Fix crossedit so that if you have a map loaded and you then try to load
+an invalid file, it no longer crashes (now reverts back to old file)
+
+Archetype changes: Golden unicorn horn now has its own set of images.
+Editable field updated for the gods archetypes (they were showing up in all
+the menus.)  living_chaos object added (need for Brian Thomas's maps.)
+
+Update the editor/picks map so that all archetypes are included in at least
+one of the maps.  Modified the map_info script to print out unused
+archetype.
+
+New server:  Only increase buffer size of socket if it would increase
+overall size.
+
+fix in skill experience calculation to use magic field properly.
+
+Alchemy spell changed.  If there is a cauldron in area of effect, only
+do cauldron alchemy.  Otherwise, do item to gold nugget conversion.
+
+Added a few more notes/thoughts to the mapguide/
+
+------------------------------------------------------------------------------
+Changes from Crossfire 0.93.0 to 0.93.1:
+
+change race initialization functions to to fix cases where race is specified
+in race file but no race is specified in the arch it points to - before it
+would not be added to the proper race list.
+
+include handbook.ps in the standard distribution.
+
+Client server rewritten to no longer use eutl package.  Other bugfixes for
+client server: server now properly sends delete item command to client,
+client now properly adds up a containers (and hence players) weight, pixmaps
+are now supported.
+
+Snowball spells added - these are the same idea as the fireball spells. (by
+peterm)
+
+Magic wall will consume several squares now.
+
+spells array (in spellist.h) updated - was missing a spell (cure blindness).
+
+splitter.pl (by peterm) added to arch/dev directory - takes a larger xpm
+file and splits it into 24x24 chunks.
+
+icestorm and small snowball added to possible list of starting spells.
+
+Only set minimum speed of 0.01 for players.  This fixes the bug introduced
+in 0.93.0 where multisquare monsters moved too slow.
+
+Only print out a creature lost a spell if it is in fact a player.  Only
+applies for casting time.
+
+fix_me command added - basically just calls the fixme function.  Can be
+useful if you that your characters weight is for some reason incorrect.
+
+Fixed sprintf that was copying over static character data if you tried to
+form a party that already matched a name.  Also, fixed a possible buffer
+overrun situation.
+
+More memory leaks fixed by Rupert Goldie - also fix to prevent orated monsters
+from attack themselves.
+
+New xpm images for woods and some buildings by David Sundqvist.  The new
+buildings have a bit more texture and 3-d look, the new woods look a little
+bit more in scale and mesh together better.  The old images are in the
+xpm_pref directory if you prefer those.
+
+More code added to free memory when server shuts down (useful for
+trying to track down some memory leaks).
+
+------------------------------------------------------------------------------
+Changes from Crossfire 0.92.9 to 0.93.0:
+
+Minor map changes:  Some maps cleaned up to look better in XPM mode.
+Removed no magic areas from around the demilichs in lord ramsdre mansion.
+
+map_expand perl script added (located in lib/adm)
+
+Cleaned up use of externs and declarations of many structures.  Depending
+on the linker, these would not be merged into one value, and thus not be
+initialized/set properly (fixes 'mark pushed you bug').  This was a problem
+at least on SGI systems, probably others.
+
+If on a sun and not using sun's acc, assuming Stupid Sun Headers, even
+if on a Solaris system.
+
+Changed change_abil so it returns true if a value actually changed (useful
+for printint out information when apply objects like potions.)  A lot of
+return checking of this function in apply.c is removed - that checking
+now seems obsolete.
+
+Set visibility to zero at first stage initialization.
+
+Put a lower limit of 0.01 for player speed.  This still gives an action
+every 12 seconds if you pick up way too much junk.
+
+When praying at altars, have gods grant out spells only if it is a spell
+they are attuned to.
+
+Cleaned up some memory leaks, courtesy of Rupert G. Goldie.
+
+Cleaned up the cast command code.  Also, if you do something like 'cast p', it
+will now show all spells you know that start with p, instead of casting the
+first one it finds.
+
+Shift middle button in the inventory window should now mark an item.
+
+Fix button handling for look and message window so that only if it is clicked
+with the right 30 pixels do we consider it a scrollbar event (before, anything
+more than 270 from the left was considered scrollbar - works fine for
+default sizes, but if you resize, it would cause problems.
+
+If on SGI systems, don't default to using rand - it should now pick up
+lrand48 or random instead.
+
+Change spell casting such that if you aren't high enough level, it more
+obviously states it (previously it said you 'lack the skill', which can lead
+to confusion.)
+
+Fix so that the first recipe is now accessible when performing alchemies.
+
+Added many thoughts/ideas to the TODO list.
+
+Increase buffer size for examine command - some object could overflow the old
+buffer.
+
+remove no_magic from all monsters - immunity values should be used instead.
+am not sure 
+
+Made changes for strcasecmp detect - was checking as defined(sun), now is
+defined(__sun__) - this is proper and what the rest of the code uses.
+
+define MAXNAMLEN in crossedit/Posix.h - needed for ultrix systems.
+
+Made it so that boots are not always considered magical (since there are
+now many plain boots out there.)  Also, removed the always_magical function -
+is_magical should now handle it all.
+
+Allow items of type BOOK to be identified, since you can now find non
+identified readable items.
+
+Change loot_object so it doesn't remove experience objects - this way skills
+don't get removed when a player dies.
+
+------------------------------------------------------------------------------
+Changes from Crossfire 0.92.8 to 0.92.9:
+
+Make sure all skills are unapplied when changing the class.
+
+When generating a spell listing (cast with no options), display the
+level of the spell (or den if it is denied.)  Also, display mage spells
+in one batch, priest spels in another group - I think this is more
+relevant now since these are seperate exp objects and draw on different
+power sources.  Still no pause key (doing those is a real pain) - that
+is really a client issue or we should just add a scrollbar to the text
+window.
+
+Removed level 20 from artifact 'sword of Beserkgang' - was preventing
+characters from using it.
+
+Put cause many wounds spell in PATH_WOUNDING.  Book chance for holy word
+increased.
+
+Let experience objects change stats.
+
+Many debugging messages added or updated to print out more useful/
+detailed information.
+
+Changed usage and set_protocol function names in client/client.c.  This
+prevents name collision with libcross.
+
+Web site locations added to the README file.
+
+Load and save window positions even if split windows is not set.  This way,
+window posititions are lost if you run the game in non split mode (and I
+don't see any reason to discard these values.)  Also, -split can
+be used in addition to -w to get split mode.
+
+Changed check inventory objects to recursively search through containers,
+and cleaned up the code.  Also, added notes on crossfire.doc on using it,
+and made basic archetype to use.  When using inventory checkers in
+crossedit, have the attributes by default come up with connected and
+lockcode fields.
+
+Made change to unique items:  If the object is a floor and has unique items
+set, then all objects above and including the floor get saved as unique
+objects.  Also, when merging maps and freeing old unique items, make sure we
+remove them from the button links.  Made an apartment map which characters can
+buy permanent apartments and also store equipment in.  When exiting the
+program, save off all maps so the unique items get written out.
+
+Xpm fixes:  Moved floor setting from map loader to update_object.  This
+makes it so that crossedit will display the map properly in XPM mode as
+you make updates.  Also, made default visiblity 0 - this makes the double
+floor work properly.  There still seems to be some bug when pasting objects
+in the editor with respect to updates.
+
+Change made to goths taverns and tavern in lake country.  Change is so
+that some of the wimpier informants don't have really good stuff to take.
+
+Periodically write out the book archive during play, and not just when the
+program exits.
+
+Bug fix so 'drop x items' should no longer crash.  Also, 'drop 1 item'
+should now only drop 1 item of 'item', and not all of 'item'.
+
+Bug fix so 'unlock item' should now work OK.
+
+When throwing objects, clear the APPLIED flag before the throw.
+
+Prayer granting from praying at altars changed around - you will get more
+unusual prayers, and a Wisdom of 25 is not a yes/no cutoff - value of
+sucess depends on wisdom.
+
+Archetype changes:  remove no_magic flag from demon lord - I don't think
+this should be set in any monster - instead, immune should be set properly.
+Added damned flag to gates that are no magic (probably not necessary,
+but I think it makes sense.)  Added check_inv object.  Removed some
+duplicate skill types (same skill, different arch names.)
+
+Have get_pointed_target return the head of the monster if it is a multi
+part monster.
+
+Change smite and finger of death spell so they have no effect if creature
+reflects spells.
+
+Fix to prevent bug crashes with magic rune spell.
+
+Fix in spring_trap to correctly target the victim.  Also,
+fix in find_traps which prevented the gaining of experience.
+
+If character has bonus grace, display it with percieve self.  Also, load
+and store the last_grace value properly.
+
+Changes from Brians hide/attack patch:  Adjustments for attacking based
+on varying factors, monsters wake up & call for help if it, can't remain
+hidden if you attack, changes for monster detection of hidden/dark/invisible
+players, players no longer remain invisible if attacking, adjustment in
+exp for stealing, stealing and hiding chances changed based on terrain
+and other modifiers, when generating flesh items, set no_steal, give 
+chinese dragons some treasure, giants a little more gold.
+
+------------------------------------------------------------------------------
+Changes from Crossfire 0.92.7 to 0.92.8:
+
+races file changed, a bit more flexible.
+
+Additional dump flag (-m8) to dump god information.
+
+If attacktype is holyword, creature must be in slaying field of holyword.
+
+Better handling for items that remove/add protections,immunities,
+vulnerabilities. Only print changes if there is an actual change.
+
+holy power, blinding attacktypes added.
+
+Add poison to list of items that might not be identified.
+
+Two when windows are killed:  1) data is freed properly without causing
+crash now.  2) If player has saved but window is still active, will
+no longer make a save of the player.  This save would be a no-item save
+that the character had been playing.
+
+Bug fix to prevent crashes if clicking a button in the message window
+and show_Buttons not enabled.  Also, moved button handling in message
+window into its own function.
+
+Bug fix for pet monsters that should prevent cores if cycling through many
+maps very quickly.
+
+appendix for god information added to handbook (both latex and html versions.)
+
+gods2 patch applied from Brian Thomas.  The main thrust of the patch is
+to make gods objects/archetype, and not array entries in the source code.  A
+lot of code needed to be changed to support this difference.
+
+God patches so that game doesn't crash if no gods are set.
+
+Hopeful change for FreeBSD so it automatically pulls in the crypt
+library.
+
+Can no longer cast spells which are beyond your skill level.
+
+More powerful spell failures added.
+
+Can no longer read scrolls/other readable if blind.
+
+Fix bug that if a weapon had slaying, it slayed all monsters, not just
+the ones it was supposed to.
+
+Don't add the bows attacktype in when figuring out the attacktype of this
+player.  This pretty much always gave the character a physical attacktype
+in addition to everything else.
+
+Fix 'peaceful' when using buttons so it doesn't crash the game.
+
+path_to_player changed to work better on diagonals.
+
+Spell choosing by monsters a bit more intelligent.
+
+No longer get experience for disarming/finding your own traps or those
+of other players.
+
+Add NO_STEAL flag, with obvious meaning.  If a monster notices you stealing
+stuff, all his items are set to this, so nothing more can be stolen.  Flag
+is automatically cleared when items are dropped.
+
+Add run and fire messages to message (stat bar) window.
+
+Make USE_BUTTONS playable setable item instead of compile time item.
+
+Don't insert heavy (>5 kg) missile objects into player when they hit - have
+them drop to the ground instead.
+
+--
+Made more general object matching routines.  item_matched_string sees if
+an object matches a string (which can be comma seperated list of many
+things.)  find_best_object_match finds the best match in the players
+inventory.
+
+item_matched_string gets used for for matching multiple items.  It is
+used in drop, get, take, lock/unlock
+
+find_best_object_match is used for apply, examine, mark, search-items.
+
+Also changed code so that certain actions are in sync with what display
+mode is set (mostly drop.)
+--
+
+If levitating, you can now remove items from containers in your inventory
+(after all, they are levitation with you.)
+
+Clear is_changing flag if object is being thrown.
+
+Changes made to inscription code to work better.
+
+Changes mode to experience awarding for player skills.
+
+Fixes made to Peter Mardahl's dragonquest maps.
+
+Big Wizard, Belzebub, and Demon lord xpm versions colored.
+
+Minor bug fix to container in Thomas map.
+
+Some new archetypes/images for peterm/dragonquest maps.
+
+Make food creation spell more dynamic - food names/values no longer hard
+coded in.
+
+Additional demons added by Peter Mardahl
+
+Bug fix to prevent crashes with improve armor/weapon scrolls.
+
+Bug fix to prevent crossedit from crashing when exiting with edit windows
+open.
+
+Fix to prevent monsters from throwing certain good objects.
+
+Make sure praying over an altar only gets cleric spells.
+
+Increase saving throw array to correspond with max level.
+
+Monster hp/sp regeneration method changed some - more accurately tunable
+for low regeneration values.
+------------------------------------------------------------------------------
+Changes from Crossfire 0.92.6 to 0.92.7:
+
+Monsters now tend to be more agressive about firing spells.  Several
+changes - now monsters will fire along diagonals.  For multisquare monsters,
+we check to see if any part of the monster has a good shot at the player,
+not just the head.  This changes tend to make it more likely that a monster
+will cast a spell and hit other monsters (makes a pack of wyverns more
+dangerous, as many will cast spells at you.)  I am not sure if this is a bad
+thing - all it means is that you can't mix fire using creatures with
+monsters that will be damaged by fire.
+
+Let archetypes in the races file have spaces (for Arch Angel)
+
+Throwing code added - players and monsters can now throw objects.  Some
+new throwable archetypes added.  You need to add throwing_skill to any
+old players - you can run the utils/add_throw.perl <playerfile> to do this
+
+crossedit:  If a object have editable of 0, make it so it doesn't appear in
+any of the menus.
+
+Max yield added to recipes.
+
+Better checks for insert_ob_in_ob to make sure we really have a player
+before calling some of the update functions.
+
+Weight limit for custom containers is now saved.
+
+If we load an object and find it has no archetype, just drop the object.
+This shouldn't happen, but can prevent core dumps for maps with missing
+objects or players from a different version.
+
+Add 5 static buffers to query_name - it is now safe to call it a few times
+in a sprintf or the like without losing the old value.
+
+Added 'statistics' command.  Shows useful information about the
+character (none that can't be found in the docs.)  Also changed
+'skills' to show how much exp you need in each category for the next
+level.
+
+change_abil changed so that it only prints out what values/attributes
+have changed.  Ie, if you remove a ring that gives protection from
+fire, but have other fire resistance, it won't say you are more vulnerable
+to file (since you are not.)
+
+Charisma bonus/mechanism changed (again.)  Values in living.c are more
+easily/directly translated into what it means for buy/sell cost.  Curve
+also balanced out some more.  Query_cost changed so the value
+mechanism is a bit different (unfortunately, we need to multiply the value
+of objects by 4 to keep them roughly the same price as before.)
+
+Added 'mark' command.  You use this to mark objects that are used for
+other objects (ie, torches with flint & steel, weapon with improvement
+scroll, etc.)  This removes the necessity that the item you want to apply
+be the first thing in your inventory (in fact, that is no longer supported.)
+This should also make things easier for the client.
+
+Bug fix that prevents crashes on spaces which have a teleporter and sacrifice
+altar on the same space (/Lake_Country/DA).
+
+Some minor changes to lighting code, some maps also updated to
+use lighting code.
+
+Added halfling and half orc character to the game (From Brian Thomas)
+
+Changed valuation for FLESH items.  Before it was value*level of creature.
+Now it is value*sqrt(level*2).   For low level, this keeps roughly the same
+value, but for high levels, it keeps things more reasonable (drops the
+value of zombie corpses to about half previous value)
+
+Bug fix for monsters that have attacktype of ghosthit along with
+others (main fix ghasts, for Lake County, REtower/tower3, but
+this could happen for any monster.)
+
+Fix for attacks doing no damage against monsters they should.
+
+Bug fixes to readable code - should no longer core dump (At times) when
+books are created, should also be more robust and fix some other bugs.  Also,
+give more detailed messages on how many levels beyond your comprehension
+a book is.
+
+randomitems now stored in object, not archetype.  This means that treasure
+types can be changed in the map - a new archetype doesn't need to be added.
+However, the treasure to set must still be in the treasures file (or you
+can use none so treasure is not generated.)
+
+Removed color_fg and color_bg variables from game - these have long been
+obsoleted, but code to handle them has never been completely removed.
+
+Changed code so that best wc possible is +/-120 - should now prevent
+overflows.
+
+------------------------------------------------------------------------------
+Changes from Crossfire 0.92.5 to 0.92.6:
+
+If player deletes window and we can't save, delete player objects instead of 
+dumping them on the map.
+
+Make NEW_PROCESS_EVENTS standard - remove old proces code and ifdefs.
+
+Remove temporary object from cast_spell - pass along both spellcasting
+and owner objects.  Seems to fix some bugs and increase reliability (also
+is a better way to deal with it.)
+
+Change made so that converters are also knowledge about 'money' psuedotype.
+
+change spellcasting altars so they also push the button.  Fixes altars
+on some old maps.
+
+Some minor tweaks made to the artifact file - mostly clarification of names
+or setting values correctly.
+
+spellcasting skill renamed to wizardry.
+
+Fix made so that 'old' potions (strength, int, etc) use correct price.
+
+If you examine food/flesh items, you now get detailed information (food
+value, protections, etc.)
+
+Code by brian thomas so that book titles will remain constant across
+different program runs.
+
+Bug fix for crashes caused by multisquare monsters stepping on
+deadly objects.  Basically, fully insert the object, then start doing the
+check_walkon's one at a time to see if the creature dies.
+
+Brian Thomas' valley of the sisters quest added.  Additional archetypes
+and treasures added to handle this.
+
+'sort_inventory' option added (player setable.)  IF set, when items are
+picked up, they will be inserted by type, then alphabetical.  Very handy
+for scrolls and rings.
+
+Some fixes made to the kundi maps.
+
+Flesh/alchemy fixes by Brian Thomas.  Flesh type now inherit properties
+from parent creature (weight, and possibly protections/vulnerabilities are
+added).
+
+Change made for alchemy - you can't toss a bunch of junk in a cauldron and
+get a good item out unless you sucessfully use alchemy.
+
+handbook added to the doc directory (tex/postscript.)  And html version is
+also there, along with an html version to the spoiler.  Tex version of
+spoiler also fixed so it is generated properly with new Latex.
+
+
+------------------------------------------------------------------------------
+Changes from Crossfire 0.92.4 to 0.92.5:
+
+Som bug fixes made dealing with cursed improvement potions.
+
+Always let players learn spells if they are in their starting spellbook.
+
+New attack methodology put in palce.  To put in simply, if there is
+only 1 attacktype, things remain the same.  If there are multiple attacktypes,
+we cycle through them one by one, and take the one that does the best
+damage and use it.  Some attacktypes no longer do damage - they are effects
+(ie, paralyzation, slow.)  In the case of of these, the effect will always
+be applied if appropriate.  Code looks to behave pretty much the same,
+but is easier to follow.  IF new code is buggy, or you don't want it, 
+there is a define at the top of attack.c you can change.
+
+If god blesses you, lets actually remove the depletion object from the
+player inventory.
+
+Other god related fixes put in place - look to also deal with blessed
+weapons.
+
+Additional dump flag added.
+
+fix bugs with USE_BUTTONS and the peaceful button.
+
+Only allow write_rune to use objects of type RUNE
+
+Bugfix in get_pointed_target if it can't find a target - prevents endless
+loop
+
+NRSPELLPATHS set to correct value.
+
+Remove null terminator from gods array - not needed anymore.
+
+Fix savethrow array size to match maxlevel properly (was 1 short)
+
+remove damnation and remove curse now cleric spells.
+
+Fix some header code to better work on solaris 2.5
+
+Support for compilation with the dmalloc (debug malloc) package.
+
+Allow altars and related items to match objects based on type.  Use hp
+field of altar object as the type to match.
+
+Library patch by Brian Thomas.
+
+Various skill fixes by Brian Thomas.
+
+Alchemy patch by Brian Thomas.  Here is a copy of his README:
++ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + 
+        The amount of work I put into this was substantial; other than
+        new code -- I created new archetypes, revised archetypes, altered the
+        treasures file and created 2 new object types and a flag.
+
+        It therefore may be enjoyable to install this patch (incl code)
+        and *not* define ALCHEMY in define.h. In particular, this patch
+        does the following things:
+ 
+         1) more varieties of potions are available in shops.
+ 
+         2) new gems and types of food.
+ 
+         3) monsters will now leave behind body parts when you kill them.
+ 
+         4) if ALCHEMY is defined players may make potions/artifacts.
+ 
+        I have included instructions for installation in INSTALL.PATCH,
+        and a brief document for using the code (Alchemy.doc). 
+ 
+        Finally, as always, feedback is appreciated.
+ 
+                                                b.t.
+                                                thomas@astro.psu.edu
++ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + 
+
+
+
+------------------------------------------------------------------------------
+Changes from Crossfire 0.92.3 to 0.92.4:
+
+Various bug fixes to readable code.
+
+Let altars be able to cast spells.  sp field determine what spell to cast.
+
+Fix obscure bug that an arrow can be 'killed' if a monster that has hitback
+moves onto it while it is moving.  Thus would then cause problems because
+apply would try to remove the object after it had been killed.
+
+Give quetzalcoatl melee attack skill.
+
+Give experience for clawing attacks.
+
+Include literacy skill with fighter skill - this should now give all starting
+classes literacy skill.  I think it improves play balance.
+
+Don't mark a players starting money as being start equipment - otherwise
+they can't drop it on identify altars and it can get merged with money
+gained at a later date, yet still be marked as starting equipment.
+
+Bug fix in keybindings so that we check return of XKeysymToString to make
+sure we don't use a null value.  Some keyboards have keys with no names,
+and on some systems, passing a null pointer as a string causes it to crash.
+
+------------------------------------------------------------------------------
+Changes from Crossfire 0.92.2 to 0.92.3:
+
+Removed ability to use unpaid objects for sacrifices.
+
+Changed weapon improvement code to be based on skill levels (if skills
+are used.)
+
+Code in place to generate hit points by average of fighter and overall
+level - to enable this, change the #if 0 to #if 1 at around line 1040
+in common/living.c
+
+Books hack by Brian Thomas.  This mainly means that when emptry books are
+created (or are otherwise on the map), that they will be filled with some type
+of information.  Some (like monster/spells/gods/artifacts) are generated via
+the program itself.  Information from a messages file that is stored in lib
+can also be found.  Experience can be gained by reading this information.
+
+Read/write patch by Brian Thomas.  This mainly encompasses the fact that
+players can now write messages in books, that you must be literate enough (as
+determined by literacy skill level) to read various books/scrolls.  Scrolls
+are now not identified, but literacy can be used to identify them.  Players
+can still read signs even if they are not literated (needed for game balance/
+information)
+
+------------------------------------------------------------------------------
+Changes from Crossfire 0.92.1 to 0.92.2:
+
+Give artifact Gram weapon attacktype physical|confusion. Before, it was only
+confusion which would never actually damage anything.
+
+If a player dies in a shop, remove any unpaid items from his inventory and
+put them back in the map.  Only applies in NOT_PERMADEATH mode.
+
+Put in better DM security - now checks for name, password, and hostname (any
+of those can be wildcarded out) - see the lib/dm_file for some demo.  To
+supply a password for dm mode, just use dm with the password (ie, "'dm
+<fireball>")
+
+Lighting code added (with various support objects, spells, etc).  No maps
+support this yet.
+
+Don't baptize altars if we are in the editor.  Leave altars the way they
+are so that they will be baptized the crossfire loads the map instead.
+
+Allow the title of and object to be set from within crossedit.
+
+Allow individual players to set the inventory icon, now longer a compile time
+option.
+
+If we get a non critical error and do an emergency save just in case,
+then don't remove any information/objects.  This probably fixes the 
+disappearing inventory bug.
+
+------------------------------------------------------------------------------
+Changes from Crossfire 0.92.0 to 0.92.1:
+
+Improved altar sacrifice code (actually, any object type that calls
+check_altar) - treat a slaying field of 'money' as something special- don't
+care what form the money is in (see docs for more details)
+
+Improve identify table (in conjunction with altar code above) - now takes
+any type of money, won't take money if nothing needs to be identified,
+will identify as many things as money is dropped for (ie, drop 200 gold, it
+will do 10 items)
+
+In the map attributes in crossedit, you can select an option called
+"ShowWeakWalls".  If this is selected, weak walls will be shown in a partial
+teardown state - makes working with some maps much easier.
+
+New client updated to support Power and Grace stats.
+
+Magic system broken into 2 forms of magic - clerical and mage (they are
+now seperate).  Power stat also added to the game - plays into mage
+spellpoint (mana) total.  Grace also added - used for cleric spell casting.
+
+Skill system greatly expanded - different experience types with skills
+associated with them (only has meaning if you are using the skill code) - thus
+you gain experience for certain categories as you use certain skills - see
+doc/skills.doc for more info
+
+Multiple gods added (via config option in config.h) - basically, different
+gods have different enemies, and the effects cleric spells have will depend
+on this.  Altars are created for different gods.  See doc/Multigod.doc for
+more information.  Along with this, some new spells were added.
+
+ Fix a problem of some objects falling out of sight when they shouldn't.
+
+Send delete item to client if decrease_ob reduces the items nrof to 0.
+
+Weight should now be fixed up when transferring stuff to/from containers.
+
+config option called NO_AUTO_SKILL_SWITCH added - it means range type
+doesn't automatically get switched to skill type when using melee weapon.
+Main effects is that it makes it easier to switch between melee and range
+weapons (pretty much makes it like it was prior to the skill code.)
+
+Sack code cleaned up - we don't need to split an object to see if it will
+actually fit in a container - we can just say how many we want to try to
+put in.
+
+Actually put wimpy command back in (all code was there, just the link to
+call the fucntion was missing.)
+
+Increase max count from 9999 to 99,999.  Wasn't that uncommen for high level
+characters to have more than 10000 platinum coins.
+
+When invoking spells, temporarily switch the range type to range_magic -
+otherwise, a proper check for spellpoints is not done, and it then becomes
+possible to go negative.
+
+Modified crossloop so that it renames and compresses any core files created
+while it is running - very handy for debugging (note that you could easily 
+modify it to remove the core files instead.)
+
+------------------------------------------------------------------------------
+Changes from Crossfire 0.91.9 to 0.92.0:
+
+Make sure the weight a container is carrying can never go below 0.
+
+Fixed fall below code, so that objects with visibility will not fall below
+objects that otherwise blocks view.
+
+Fixed colormap problems with xpm graphics on black and white displays.
+
+ALLOW_SKILLS is now the default in the config.h file.
+
+IS_SUMMON_SPELL macro fixed (= was supposed to be ==)
+
+Artifact foods added by Brian Thomas.  These are foods that can give some
+nice benefits (stat improvements, etc), or be much nastier poisons.
+
+Bug fix made to skill selection that would otherwise cause core dumps.
+
+Bug fix made to query_cost that would cause core dumps if the alchemy spell
+was used.
+
+Fixed bug in dimension door that would cause core dumps if cast from a
+wand.
+
+find_target_for_friendly_spell fixed to use the get_owner call instead of
+referring to op->owner (get_owner should always be used.)  Fixed core dumps
+that were caused when the owner would be killed, but still have a pet
+monster (vampires as an example.)  get_owner makes checks to make sure
+the owner still exists.
+
+Only set the windows colormap if on a color display.
+
+------------------------------------------------------------------------------
+Changes from Crossfire 0.91.8 to 0.91.9:
+
+Changed some parameter names from spell to spellnum.  Some compilers don't
+like parameter names that match structure names.
+
+Alot of skill code added by Brian Thomas.
+
+Assume that Suns running solaris have strncasecmp.  Also, if using
+Xpm_Pix, assume the strcasecmp is available (the Xpm library should
+provide it.)
+
+get_player_ob function now uses the CALLOC define, instead of just
+calloc.
+
+When dropping items onto objects that blocks view, they now fall below the
+object that blocks the view.
+
+XPM mode now works with private colormaps.  It will also switch to a private
+colormap if it runs out of color during the xpm creation (works for
+crossedit also).
+
+Don't let players put starting equipment into containers.
+
+A bows weapon class (WC) is now used to determined hit probability for
+arrows.
+
+When a player dies (in NOT_PERMADEATH mode), the character is immediately
+saved.  Thus, if you die there is no advantage to crashing the server,
+hoping for a copy of your character from before you died.
+
+Set the value to 0 for arrows created with the create missile spell.
+
+When transferrance is cast excessively, don't hit the person receiving the
+spell with 9999 points of physical damage (otherwise, spell can be used to
+kill many powerful monsters.)
+
+Made some changes to make it compile properly under Solaris.
+
+Fixed bug in dropall that would cause an infinite loop if the player had
+an open container.
+
+Exits can now inflict damage on players.
+
+Fixed middle mouse button missle attack.  Now clears the fire_on flag.
+
+------------------------------------------------------------------------------
+Changes from Crossfire 0.91.7 to 0.91.8:
+
+Messages about an objects speed no longer printed to the console.
+
+When players exit maps, no longer inform all the other players.
+
+install-same and install-font directives added to lib/Imakefile - used
+if game is being installed to same font it was unpacked in.
+
+Client now supports receiving bitmaps - server does not support
+sending them, however.
+
+Max experience achievable is based on max level, not a hard coded
+value (although, at present time, max level is hardcoded to 100)
+
+insert_ob_in_ob now returns an object - needed for client/server code.
+
+check_inv function added to button.c.  Trigger will be altered depending if
+the character has a matching item (or lack of a matching item.)
+
+Option added to config.h to make it so that backup saves will save the player
+back at home, instead of the present map.  Code adapated from code sent
+by John Steven Moerk (jsm@axon.ksc.nasa.gov)
+
+Minor bug in crossedit fixed that would cause it to exit if both
+-p and -xpm is specified.  Both can now be specified - it will effectively
+ignore the -pix portion.
+
+New skills added, with corresponding code to use these skills (from Brian
+Thomas) Use of skill code is selectable in the config.h file.
+
+Two new spells: summon fog and steambolt (from Brian Thomas)
+
+Enchant armor code added (from Brian Thomas)
+
+Fixed bug in crossedit that would cause it to core dump whenever a non exit
+was selected and then the enter command run.
+
+Fixed bug in attack.c that was using info_all if CASTING_TIME was
+selected.
+
+Made it so that decrease_ob_nr will never decrease the object number below
+0.  This fixes a bug in that remove_ob would calculate a negative weight,
+and then call sub_weight with that negative value.  This ended up resulting
+in weight being added to the player instead of subtracted.
+
+------------------------------------------------------------------------------
+Changes from Crossfire 0.91.6 to 0.91.7:
+
+Item saving throw changed around - items are only invulernable to attack
+types that they are protectected or immune to.  For example, if an item is
+protected from magic, and is is by AT_FIRE | AT_MAGIC, it still needs to save
+against fire.  Before, since it was protected from magic and the attack type
+includes magic, it would not have been affected in any way.
+
+insert_ob_in_map_simple function added.  This is used in functions that what
+to examine all the objects on a space, yet insert new objects as it goes
+(polymorph).  This function will not merge objects, so traversing the stack
+will work fine.  Should fix removing removed object bugs that used to happen
+for polymorph (function should be used in other functions that do a similar
+thing)
+
+Damage field in objects is now 16 bits (signed).  Needed because some
+high level spells would do more damage than could be stored in signed
+8 bits.
+
+The 'old' client program no longer compares versions - there is no reason
+to, since the client doesn't do anything that requires an exact version
+match.
+
+Better handling of the Eutl library added - selection is now done
+in crosssite.def.
+
+Large lake faces expanded - now set up like walls, where auto join works.
+walls pick file expanded to include this image series and some other walls
+that were not previously set.
+
+Pacify spell added - code from Brian Thomas
+
+Show invisible and X-ray spell added (code by Peter Mardahl)
+
+Face data is static - that is to say the the color for any face can not be
+changed.  In order to do a face with a different color, a new face needs to
+be created (or perhaps linked to the old).  This change was made because for
+client/server communication, having a known color for each image greatly
+simplify things (also, on monochrome or XPM displays, color information
+didn't have any effect). Related changes:
+
+	1) color information is no longer stored in the archetypes file,
+	but continues to be stored in the individual .arc files.  collect.pl
+	has been modified to store this information in a faces file.
+
+	2) visibility variable added.  This is a face value, and it is meant
+	to take the place of the DOUBLE_FLOOR_PATCH.  System will work like
+	this if DOUBLE_FLOOR_PATCH is enabled:  the floor and the object
+	with the highest visibility + the top object will be drawn.
+
+	3) color can not be changed in maps - in fact, since color is now
+	stored in a different file, the color handling for objects has been
+	removed.  Note - when loading a map with crossedit, this information
+	is silently ignored.  Thus, when then saving the map, the color
+	information will be lost.  The maps should be updated with new faces
+	if this color information is imporant.  The lib/adm/map_info perl
+	program now will print out warning messages for maps that are using
+	color changes.  Also, the code in loader.c can easily be changed to
+	print out when it loads a color change (disabled because it is too
+	verbose for most uses)
+
+PLAYER_COLORS config option and code support removed - with new static face
+information above, this can not be supported in any real way.
+
+Shop buildings no longer have is_floor set.  This was a hack for the
+DOUBLE_FLOOR_PATCH for XPM mode.  However, enabling it can make it so
+objects disappear beneath the shops (due to the way maps save.)  Having
+objects not disappear is much more important (IMHO) than having things look
+just a little bit nicer for XPM mode.  Archetypes exist for it, but are in
+the dev/unused/0.91/7/mood_floor directory, since no maps presently use them
+
+Mood floors added (code by thomas@nomad.astro.psu.edu).  When activated,
+these floors can change the mode/flags of monsters (make them aggressive,
+make them unagressive, make them fall asleep, or charm them)
+
+New output mode in place - this uses a much smarter buffering method - it
+keeps track of several messages, and how often they are flushed is setable
+with the output-sync and output-flush commands (a help file does exist).
+All the various draw/write functions have been cleaned up, so that there now
+exists only 1 front end function (new_draw_info), which takes flags,
+priority, object, and the actual string.  The flags are defined in
+newclient.h, as NDI_* (in this file because client should use the color
+flags sometime in the future, and it makes sense to keep all the flags in
+one place).  Priority corresponds to the listen level that the player has
+set - the lower priority, the more likely it will be printed.
+
+Certain runes/traps now work properly (things like create bomb and magic
+draining would not work if the player is not on the same square as the rune)
+
+When a player kills a window, the players objects will be destroyed
+and not placed on the map.
+
+Scrolls, rods, wands, and staves will always be at least level 1.
+
+Beefed up demilich's.  Previously, for the experience they were worth,
+it was much to easy to kill them.  Main difference is that now their
+speed is 0.25 compared to 0.06
+
+Fixed minor bugs with player movers - if the object to be moved had a
+speed greater than 1, it was possible to avoid all affects of the mover.
+
+Objects that slay are fixed up.  Previously, only if the race matched the
+slaying type did it work.  Now, in addition, f the race of archetype name
+matches the slaying, the object will slay.  This fixes stakes, and probably
+a lot of other items that weren't slaying creatures properly.
+
+Changed some of the stat bonuses/penalties for all the classes.  All the
+'normal' races now have a net total of 0 (fireborn, wraith, and quetzalcoatl
+are not considered normal races, so their totals are unchanged.)
+
+Some of the items in the artifacts file have been fixed up - fixed
+spelling errors and errors in placement of the difficulty.
+
+------------------------------------------------------------------------------
+Changes from Crossfire 0.91.5 to 0.91.6:
+
+When player stops attacking, make sure his speed_left is not larger than his
+normal speed.  Fixes a bug where you could attack a wall, then try to attack
+in another direction, and move quite quickly for a short time, since weapon
+speed would be used for that short burst of movement.
+
+Drain attacks become attack type physical when the character reaches the
+mininum experience possible.
+
+Do not allow equipped weapons to be improved if they would make it too
+powerful for the character to use.
+
+errmsg buffer sized increased to HUGE_BUF.  Should fix some bugs that
+were causes when this was overflowed in dump_object2.
+
+SOUND_EFFECTS (if selected) is now defined when compiling all files.
+Previously, it was only set when compiling files in the server directory -
+this had the effect that the player structure was different between the
+server and common area.
+
+speed+2 items now increase speed properly.  Values in the computation were
+not being cast to floats, so a speed+2 ended up giving the same amount of
+speed as a speed+1 item.
+
+Restoration changed around.  The spell will no longer restore depleted stats
+- this can only be done with the potion.  The potion is now only generic
+restoration - specific stat restoration potions removed.  Also, perceive
+self will now tell the player what stats are drained and by how much.
+
+Reduce the amount of experience you get from killing other players to
+1/10'th what it used to be.  This should also discourage players from
+killing other players.
+
+SAVE_PLAYER removed from configurable options - it is always on.  I can't
+see why anyone wouldn't want to be able to use this, and if you really
+don't want to use it, removing the save directory would pretty much
+work.
+
+Fixed dropall command.  It wasn't dropping all items (seemed to
+stop at first locked item.)  Also, 'dropall armour' now drops
+helmets in addition to shields and armor.
+
+Fixed heroism potion.  It was casting the incorrect spell (detect curse).
+Now it casts heroism.
+
+Fixed bug that would cause remove object to try and remove object.  When
+loading maps, an object in a container in a container would not be inserted
+(this mostly happened with an object in a chest in an icecube.)  Changed
+code in load_objects to a recursive call, which can handle inventories any
+number of layers deep.
+
+Fixed bug in drop_all that would cause core dumps.
+
+------------------------------------------------------------------------------
+Changes from Crossfire 0.91.4 to 0.91.5
+
+Inventory icons are now updated properly.  Also, the inv_name and look_name
+arrays in the player structure have been redone - these are now arrays of
+function pointers and use the shared string libraries to allocated and free
+storage.  This should take less space than the fixed size arrays that were
+previously used.
+
+When buying equipment, weight is now subtracted properly from the player
+for the coins that are used.
+
+Maps can now have a fixed reset time.  This means that the map will reset
+after a set amount of time, no matter whether it is accessed or not.  Useful
+for highly used maps that really need to be reset once in a while.
+
+Bug fixed in get_ob_diff.  The difference array would get overflow,
+corrupting other data.  Many core dumps were probably caused by this.
+
+Fixed bug in legal_range routine where legal_range would only check to
+first item of type BOW in a players inventory.  This caused rotateshoottype
+to not list the bow entry if it was not the first bow equipped.
+
+Cloaks are not always turned into artifacts - normal cloaks can be found now.
+
+Charisma bonus changed around some more.  Penalties are not quite as harsh
+for very ugly characters - with the change, a character will never pay
+more than 10 times to buy something than to sell that same item.
+
+Various functions changed around and some new ones added so things will
+work properly with the new client (still under developement.)  Most notable
+changes were to common/xutil.c, with the newclient.c and newsocket.c
+files added.
+
+Unpaid items that are alchemied are now worth nothing.
+
+TWO_BYTES_FONT is now a standard.  I can't see crossfire ever going back to
+having less than 256 images.
+
+free map->tmpname when it is no longer needed (before setting it to NULL).
+this pointer is assigned from a tempnam calls, which (on Sunos 4.1.x) uses
+malloc to allocate space.  Note - if this is not true for you system, let me
+know, so I can put code in to handle this.
+
+destruction spell (from scrolls) fixed.  This was actually a problem
+in that cast_spell was not setting the owner properly.
+
+Magic mapping improved for bw systems.  This actually makes it work like
+it used to, with it doing stippling for object.
+
+Casting of director spells changed.  Placement away from characters and
+underneath characters now possible
+
+New potion type added - Improvement:  This will raise level hit point or
+spell point gain to the maximum value.  It starts at the lowest level (ie,
+first hit/spell points gained), and will raise one value to maximum.
+
+Some patches added (From Manfred Weichel, manfred.weichel@mch.sni.de) which
+should make compiles on SVR4 work properly.
+
+New artifacts (in lib/artifacts file) added.
+
+Configurable option:  cone attacks no longer propogate through monster - it
+will only hit the first row.  
+
+Remove curse/damnation changed so that it will not remove curses which
+are a higher level than the spell caster.
+
+Polymorph code changed around.  Greater chance of items being destroyed,
+value can never be greater than twice the original value, no mininum value.
+Also, now the item value and not clone value is used, so things like
+scrolls, wands, rods, etc should have the max price work correctly.  magic
+is not maintained, rather, magic*4 is used as the difficulty for creating
+the new item, with max_magic of the new item never being greater than the
+magic of the old item.  The number of objects remaining after a polymorph
+will be less than the original (10 arrows might become 8 bolts, for example.)
+
+You will no longer attack players in the group you are in by running
+into them.
+
+Titles now restored properly from save files (only makes a different if
+SET_TITLE is defined
+
+When doing a save, check the return value of fclose when writing to tmp file
+and the final file.  If either of these writes file, use the backup file
+instead (previous save file is renamed as a backup file.)  Should prevent
+problems when there are full filesystems of quotas in effect.  The character
+will not be saved, but at least an older save file exsists instead of the
+character being totally gone (like before.)  Patch from Laurent Wacrenier
+<Wacren@Gin.ObsPM.Fr>
+
+Plural names for items that have a 'of' in them is fixed/added.  This mostly
+deal with potions (so instead of potion of dexterys, you get potions of
+dexterity)  Patch from Laurent Wacrenier <Wacren@Gin.ObsPM.Fr>
+
+query_cost changed around so that value for very low priced items are now
+computed correctly.  Before, the nrof of items was multiplied in very late,
+and various divisions (for being unidentified) were done previously.  For
+low value items, this would result in a zero value.  Zero values still
+result for low priced items if you only have 1 or 2 of them, but if you
+have 80 of them, a proper value is now generated.
+
+Code to control golems (and in fact many summoned creatures) now fixed.
+Help file added about golems.  This also fixes a core dump that was caused
+when a summoned creature was around, and another scroll was used.
+
+Modified logger in common directory to no longer create a fatal error if you
+get too many minor errors in and the editor is what is being used.  Before,
+occasional errors would be reported by the editor (mostly dealing with not
+found archetypes in maps), which would eventually cause a fatal error.  This
+seemed erratic, because the editor never changes the tick, so loading one
+map might result in the fatal error because of the error total from the
+previous maps.  Also, when using the editor, having missiong archetypes
+probably should not be a fatal condition.
+
+food value can be changed in artifact file.  Food is mostly used to have
+various meanings in different objects.  The artifact file has also been
+updated about everything that is changable, and what the values mean (ie,
+docs are built into the top of the file as comments)
+
+Weapons/armor no longer 'disappear' when a class that can not use such an
+item tries to equip a group of them.  That is, if a class that could not use
+armor tried to equip 2 chain mails, one of the chain mails would disappear.
+
+------------------------------------------------------------------------------
+Changes from Crossfire 0.91.3 to 0.91.4
+
+FLAG_NO_FIX_PLAYER is set before saving the player, and cleared after the
+player is loaded.  Before, a character will full sp and hp could be save, and
+when reload, not be at full strength.  This is because fix_player was being
+called during the load process, before all the characters items had been
+loaded and equipped.  This, the maxsp and maxhp values were that of the
+character with no items.
+
+Artifacts can now pass the various spell paths to the newly created
+artifact.  The values are or'd with the previous spell path values of the
+object.
+
+The artifact file now supports objects with name NONE.  If this object is
+rolled up when trying to generate an artifact, then no artifact is
+generated. This allows for better tuning the chances of having certain
+artifacts, by just reducing the chance of having an artifact at all.  The
+'type' field of the Object in the artifact field is still required, but any
+other fields for the artifact object are not used.
+
+Crossedit fixed so that all the images do not appeared inversed when being
+used on a monochrome display.
+
+Changed common/xutil.h so that XPM mode will work on monochrome systems.  In
+fact, XPM mode should now work on all systems, previously, the load process
+tried to create a pixmap 8 bits deep.  If the X server did not support it,
+errors would result.  So while playing in XPM mode on monochrome may be
+pointless, this allows play on systems where it may have some use.
+
+libproto.h and sproto.h only check that __STDC__ is defined.  Previously,
+__STDC__ had to be nonzero, and not all compilers set this.  Also, in
+global.h, if __STDC__ is not defined, return an error.  Many compilers do not
+allow _STDC__ to be redefined.
+
+Updated changable variable in crossedit.  Now the various spell paths can
+be set in the editor.
+
+SPEED_GAME now standard compile option, and not selectable.  Having it as
+an option seemed to create more problems than bugs non speed game found.
+
+Crossfire man page updated.  xledit.man changed to crossedit.man, to
+reflect the name of the program it represents.
+
+crossfire.doc updated with more information - mostly about new objects
+added to the game.
+
+More help files.
+
+Objects with type CREATOR were added.  The objects, when applied, create
+other objects.  Documentation in crossfire.doc.
+
+Object that cast spells (rod, scrolls, wands, and horns) now have a level
+associated with them.  This level is used to determine at what level the
+spell should be cast, instead of using the owners level, which was typically
+used before (allows creation of super powerful wands/rods/horns, but having
+them be a very high level.)
+
+Bow, crossbow, bolt, and arrow code redone by Tero Haatanen.  This cleans up
+the code, and allows for magical arrows and bolts.
+
+Race can now be changed in the artifacts file.
+
+A spell of Banishment has been added.
+
+Attacktype AT_DEATH is now more potent when if against a monster that
+the item also has slayign capability against.
+
+Bug fixed to prevent players from getting infinite experience for finding
+the same trap.  Also, experience changed for disarming traps.
+
+------------------------------------------------------------------------------
+Changes from Crossfire 0.91.2 to 0.91.3
+
+Changed artifact structure so that items with a chance greater than
+255 are now possible.
+
+Object now put into icecubes when hit by a cold spell, like before.  This
+probably got messed up in the saving throw re-write, where objects had to be
+either immune or protected from cold to be put in icecubes.  In fact, the
+reverse was supposed (and now does) happen.  IF an object is
+protected/immune from cold, it is also immune from being put in an icecbub.
+
+Fixed up is_magical and need_identify routines to handle more items.  Rods,
+scrolls, and spellbooks are always considered magical in nature.  Wands and
+staves are magical if they still have charges.  Also, fixed up so that some
+of the Artifact items are now detected as being magical.
+
+If player lacks sufficient money to buy from shop, it now prints how much
+short he is in standard english string, (ie, 2 platinum 3 gold,etc), instead
+of gold.silver format (lacke 44.25 gold).
+
+Inventory drawing changed.  Should be a little more efficient, and be more
+efficient on drawing.  With auto pickup modes (that pick up more than one
+item), inventory will be drawn after all applicable items have been picked
+up, instead of after each one.
+
+Item status is printed next to item image in players inventory if
+SHOW_INV_ICON is selected in the config.h file.  It would be nice if better
+imagines were designed for the status (right now, just words are printed
+out.)
+
+When connecting to the server, a one line welcome message is printed.
+Crossclient was modified to ignore this line if it starts with 'Welcome', so
+changing it may cause problems with crossclient.
+
+Potion of restorations are now handled by means of different archetypes and
+treasure lists, instead of having special code in the program to handle
+them.
+
+If a RUNE is found in an object inventory when free_object has been called,
+remove the rune instead of dropping it to the ground.  This is so that traps
+(runes) disappear when the object they are placed on is destroyed.
+
+Doors are now trapped, and be detected & searched just like chest
+traps.
+
+Map difficulty can now be set in the map, and not be calculated at map load
+time.  Crossedit has been modified so that 'Attributes' now contains a
+difficulty field, and if set, this will be used when loading a map (it is
+stored in the level field of the map).  If this value is 0 (default), then
+the old formula for calculating the difficulty will be done.  The advantage
+of this is that map creators can now set the difficulty of the map more to
+their liking, and certainly do a better job than the program can do.
+
+Pickup by value density fixed.  The number of items is now taken into
+consideration (before it did not, so a lot of arrows would be picked up,
+because the total value divided by the weight of 1 arrow was greater than
+the pickup value.)
+
+Bug fixed in query_cost.  Before, for F_TRUE value, unless the item was
+worth more than 10,000 sp, F_SELL value would be calculated instead of the
+true value.
+
+Merge several small files in common.c into one file called porting.c.
+porting.c contains common functions that are called by crossfire.  This
+allows system dependent code by be in one file, instead of scattered
+throughout the program.
+
+-listen_port <num> command line option added.  num is the port to use for
+connections, instead of the default (13326)
+
+Instances when a variable name is the same as a structure name have been
+fixed (by changing the variable name).  On some compilers, this is a
+problem.  I can not be sure that all such cases have been fixed, as I have
+not found a way for gcc to create warnings in this situation.
+
+Random happenings when a spell fails due to encumbrance has been added.
+This option is configurable in the config.h file.
+
+Trap code added.  Chests and doors can now be trapped.  'search' and
+'disarm' commands added.  old 'search' command was changed to 'search items'
+
+Inventory locking added.  Makes it so that items can be locked in a players
+inventory, and will not be dropped when a 'dropall' command is issued.
+'inv-lock' and 'inv-unlock' commands were also added.
+
+'gsay' command added for party mode.
+
+Spellbooks can now have their slaying field set to the name of the spell
+that the spellbook is of.
+
+Debugging output disabled in crossedit.  It produced copious amounts of data
+that has little relevance except for the developers.  It can easy be turned
+back on by editing the crossedit/include/debug.h file.
+
+Artifact gems (worth lots of money) and amulets added.
+
+Invisible object now appear in crossedit.  Fixes a problem, but now makes
+use of the global 'editor' variable, making it likely it won't be obsolete
+any time soon.
+
+Artifacts (in artifacts file) can now have nrof field that will be used to
+generated the number of items instead of the treasure list.  If the nrof in
+the artifact is 0, then the standard treasure list nrof is used instead.
+
+Artifacts can now grant reflect missile and spell ability.  Also, by setting
+stand_still, the objects will not be animated.
+
+------------------------------------------------------------------------------
+Changes from Crossfire 0.91.1 to 0.91.2
+
+Some options now standard part of game (SHOP_LISTINGS, Line of Sight).  The
+config.h (for this release) contains these options, but they are commented
+out with the note they no longer do anything.
+
+Changed value pickup to pick up things based on true value, and not sell
+value.  True value is how much the item is worth without applying charisma
+bonuses.  Before, if two different characters used the same pickup mode,
+different stuff could be picked up because of charisma differences (or even
+if a character gained charisma, the same pickup mode may not work as it did
+before).  By using true value, pickup mode operates the same between all
+characters,
+
+Items of type TREASURE can now have their experience set, and this will be
+used for the difficulty of the generated treasure instead of the map
+difficulty (as was done with shops).  If experience is not set, then the map
+difficulty will instead be used (or 14 in the case of shop floors).
+
+Cure poison actually cures it, instead of reducing the duration.
+
+Don't use fseek when loading in map files.  Some systems do not support
+fseek on pipes (which are used for compressed files).  Instead, just
+set the variable with the data we read, instead of seeking back and
+re-reading it.
+
+Transferrance spell changed so that supercharging will have bad effects
+(first confuses the player, then a large fireball is created (with player
+losing all spellpoints)
+
+Poisoning made more vicious - it does more damage based on the level of the
+creature that uses it (level/2 in fact).  This makes it so that very tough
+creatures that poison someone will have the poison do serious damage.
+Also, damage caused is no longer random.
+
+ Chests can now contain multiple items.  Code changed to handle this
+properly.  Treasure is also always dropped on the floor (Even if the chest
+is in an objects inventory.)  hp field used in chests (and in fact all
+treasures) to determine how many objects to create (thus, a chest with 3 hp
+will have 3 objects created).
+
+Crossedit now draws a rectangle around the selected area.  Reversing the
+color of the images did not work in XPM mode.
+
+Have client.c include "includes.h".  includes.h sets up all the name defines
+properly (ie, __sgi__, __sun__)
+
+SP_* functions changed (by Rupert Goldie) to take an object pointer instead
+of a level value.  This makes adjustments for spell costs (via stuff like
+spell paths) easier to make, because now only the SP_* functions need to be
+changed. With the object structure, checking for known paths (or perhaps
+other things in the future) can easily be done.
+
+Bombs will now be dropped before exploding.
+
+New attack type (God Power) added.  The cleric cause wound spells use this
+attack type.
+
+Charm monster spell added.
+
+Party system re-written by Scott MacFiggen <smurf@soda.berkeley.edu>.
+Characters will now only share experience if on the same map, and other
+features were also added.
+
+Modified check_item function (used in creating weapons with the improve
+scrolls).  The objects being sacrificed do not need to be in one group (ie,
+two groups of 4 potions of dex will now be counted as 8 potions).  This only
+applies to potions, since some can be identified and others not identified.
+Also, cursed or damned items will not count towards sacrifice count
+(although, they will be consumed).
+
+Changed way cancellation works on items.  Before, if cancellation hit a
+player and the player failed the saving throws, the items got no saving
+throw versus cancellation (only if their absolute magic value was less than
+RANDOM()%6 did they survive).  Now each item gets a saving throw.  Note that
+if a container makes a saving throw, then the items inside do not need to
+make saving throws and are unaffected.
+
+A separate function did_make_save_item was split off from
+save_throw_object.  did_make_save_item justs checks to see if the item made
+its saving throw based on the tables (and any protections or immunities
+grants it an automatic save, as before) save_throw_item calls this function,
+and in addition, does the appropriate actions (burns up items, turns them
+into icecubes, calls cancellation, etc.)
+
+Saving throw method changed.  Before, each item got 5 chances to make a save
+for each item it is composed of.  Now, it gets one chance for material it is
+composed of.  Then, based on the number of saves it made, and the number
+materials it is composed of, an overall made save/failed save is
+determined.  This change is to make it easier to figure out saving throw
+values, and hopefully make adjustment easier.
+
+Saving throw tables updated.  In general, each item is +5 compared to what
+it was before.  This should hopefully make it so that items have about the
+same success rate they did before.
+
+Crossedit modified to preserve value of connected field when cut/copying and
+pasting.  Before, an object that was copied/cut would also have its
+connected field reset to 0.
+
+More XPM images colored.  Filenames for the river directory have been
+re-done, to actually make it a bit clearer of what does what.  The archetype
+names were not renamed however, to keep compatibility.
+
+World expanded.  Another row of maps was added to the southern edge.  The
+world maps were also renamed to a world_xy format, where x is a letter
+and y is a number.  This represents the x and y location of the map, making
+it easier to figure out how maps related to each other.
+
+Map spaces can prevent magic user spells, cleric spells, or both.  Before,
+an anti magic square prevented all types of spell casting.
+
+Have monsters regenerate spell points even if they don't cast a spell.
+Monsters have a 1:3 chance of casting spells, irregardless of any other
+factors.  Before, spellpoints would only be regenerated if it got past this
+check.  Also, some monsters (dragons, chinese dragons) have had their max
+spellpoint and regeneration rates increased to correspond with the higher
+cost of casting their breath weapons.
+
+Altars now will also match on the slaying field of the object being
+sacrificed.  This is similar to how keys and special doors work.  With this
+change, it is no longer required to make a unique item that then needs to be
+sacrificed (ie, the dagger, the cup, and the crown for the old city
+quests).  Instead, a cup, and crown can be used, with the slaying field set
+appropriately (unfortunately, will not work for weapons, as it will think
+that is the monster to do extra damage against.)  However, the altar code
+always did match item name, so calling it something special like 'The
+Dagger' and have the sacrifice look for that should also work.
+
+Spell encumbrance code added.  More you are carrying the higher your
+chance for failure.
+
+------------------------------------------------------------------------------
+Changes from Crossfire 0.91.0 to 0.91.1:
+
+Fixed bug in the enchant weapon code.  It was not allocing enough
+space for the string, and thus would corrupt the heap.
+
+Minor fix to spells.c.  IT was using strdup instead of strdup_local,
+which caused the compile to fail on some machines.
+
+No longer gets errors when adding a player on a map that is not
+loaded in a multi player game.  Before, process_events would see that
+the player has no object, and could get enough errors to cause the game
+to quit.  Now, it suppresses errors if it is only loading objects
+for that map.
+
+Default map difficult for treasure that is created in shops was changed from
+9 to 5.  In this way, the likelihood is higher that good items will be found
+in dungeons, not in the shops (there are very few items with difficulty
+above 9)
+
+Archetypes cleaned up.  All archetypes that were not being used in a map
+were moved to dev/unused/0.91.1.  Note:  There are still a few archetypes
+that are not used in any maps, but these are part of a collection (ie, one
+section type of a wall).  This was done really because there is no reason to
+have archetypes that are not being used to be in the official distribution.
+It could be misleading for people looking through the arch directory (ie, 'I
+thought I looked at all the maps, but never saw this monster').  Also, I
+have no problem moving these archetypes back in, once some maps actually use
+them.
+
+'grass' and 'sea' are no longer animated.  There are a few reasons for
+this:  1) The animations never really were that interesting, 2) being
+animated put them on the speed list, and being that over all, they are the
+second and third most used objects, this is a performance hit, and 3) With
+pixmap and xpm images, re-draws are only done on squared the have changed
+(really improves performance).  However, with them being animated, they
+often changed, so that more re-draws were needed.  The old archetype and
+image files are in dev/old (in arch distribution) if you actually want to
+use the animated versions.
+
+Put a limit of 70 on damage bonus for weapons.
+
+Treasure lists expanded.  The old treasure lists (in treasure.c) have been
+removed, and treasure lists added to the treasures file added to take their
+place.  The treasure file has been expanded have list transitions, and
+treasure lists in which 1 object on that list will be generated.  Archetypes
+(shop, random, and chest) updated to use the randomitems field to determine
+what treasure list to use to generate the items.  Advantages of the new
+method:  Ability to better tune treasure probabilities, re-compiling not
+necessary in order to update treasures.  the create_treasure function was
+modified to add an extra argument - this is used to keep track of how many
+times it has been called on this attempt to create a treasure.  In this way,
+infinite loops (with list transitions) are avoided.  Generate treasure
+replaced with a simpler function that calls create_treasure, and returns the
+object.  create_treasure takes a treasurelist instead of a integer
+treasurelist number, like it did before.  The crossfire.doc file has
+been updated about the new treasures file capabilities.
+
+Chests are now created with their treasure as their inventory (this mostly
+happened because of the treasure changes above).  Advantage is that when a
+chest burns up, its treasure may remain (or may be burned up).  Before, when
+a chest was burned up, its treasure inside was not created.
+
+Rolling multi-part objects should now work better (not perfect, however).
+
+Carrying an open bag with a mode that picks everything up will no longer cause
+an infinite loop.
+
+Crossedit changed to draw selected areas as a black box.  Fixes some problems
+with display in XPM mode.
+
+Fixed bug that would cause game to crash when pets were summoned.  Problem
+was an infinite recursive loop, that would then cause the system to run out
+of stack space.  Solution is to decrease the speed_left of the object before
+one of the function calls.  This makes it so that at some point, one of the
+functions will not be called.
+
+When a rune is cast, use the s->archname for the archetype name, and
+not hard coded strings.  Cured a bug with rune of transference.  Also,
+allowed several case statements to be merged.  Really, no archetype names
+should be used in spells.c, when casting spells.  The archetype name should
+be gotten from the spell structure.
+
+If a button is being updated on a map that is being saved, just return
+from the function.  Prevents errors 'object has speed but is free'
+
+Fixed bug that caused objects that got a speed_left of exactly 0 to
+be frozen.  This was because speed_left >0 to have the object be processed,
+and <0 to have speed added.  Now, speed is added if speed_left <=0.
+
+Some minor changes made to hopefully make it compile on AIX systems without
+any modifications.
+
+process_active_maps now called when a map is being loaded.  It should
+hopefully work properly, since enter_exit was modified to not use any
+static variables.  Also, process_events was modified to take a map as
+an argument, and if non null, only update objects on that map.  That makes
+process_map obsolete.  process_active_maps was also changed to still process
+even if there is only one player.
+Crossfire should let players still perform actions when a map is being
+saved.  Problem is, handling a map that is in the process of it being
+saved, and having a character enter it.  Crossfire needs to finish
+saving that map, then re-load it and insert the character.  Large changes
+to how player interact with loading & saving of maps would probably
+be needed, and probably should be done.
+
+You no longer lose luck if you kill yourself, and the player who kills another
+player now loses the luck (before, the player killed would lose luck).
+
+Now inventory display modes - unpaid, cursed, magical, nonmagical.  All pretty
+self explanatory.
+
+------------------------------------------------------------------------------
+Changes from Crossfire 0.90.5 to 0.91.0:
+
+Some new maps added to the standard distribution (Magara and some of
+the esben maps).  Magara was added as a place to depart to by ship, the
+esben maps were merged in as new buildings or towers on existing maps, not
+as a new continent.
+
+Keyboard buffering is now selectable via 'keyboard' command.  Before,
+an attempt to remove keystrokes from the X Events queue was made, but could
+not always remove all of them.  Now, it should remove all of them, or none
+of them, depending on the keyboard buffer setting.  The value will be
+saved with the player.
+
+Pickup mode value now saved and restored from the characters save files.
+
+Inventory and look window should only be re-drawn once when selling
+an item.
+
+Calls to draw_stats in common/living.c will only be made if the object
+type is a player (should prevent some warning messages)
+
+Fixed create earth wall spell so that it uses bdur as the base hit
+points of the wall (instead of bdam).  This will prevent some core dumps,
+because otherwise, the wall can have 0 hit points.
+
+Program should not core dump when person quits that game and the map he
+is on has been swapped out. (ie, person saves or quits the character,
+but the map gets swapped out before they type 'q' to the play again
+question)
+
+Word activated teleporter code added (Peter Mardahl).
+
+Who can become DM, based on their user id, can now be set in the dm_file
+(assumed to be in lib.) (Tyler Van Gorder)
+
+Tell should now work properly (Eric Mehlhaff)
+
+Cloak code added (Peter Mardahl)
+
+Objects can not grant invisibility, make_invisible variable added to
+archetype files.
+
+Added information to the crossfire.doc file (was missing several
+attack types and materials).  Added better information on what some of
+the flags do.  Noticed that will_apply 4 applied for both scrolls
+and earthwalls, now only applies to earthwalls.  To have a monster
+use scrolls, can_use_scroll should be used instead.
+
+Code added to deny users or sites from connecting.  This is to prevent
+users who intentionally crash the server to connect and start up a window,
+which they then crash the server with.  Patches from Tyler Van Gorder.
+
+Two floors will can now be drawn when using XPM mode and this options
+has been selected in config.h  This allows for towers to sit on top of
+grass to look proper.  From Gregor Schmid <schmid@fb3-s7.math.tu-berlin.de>
+
+Patches that modified 'create food' spell.  Better food (ie, waybread)
+will be created at higher levels, and the caster can also specify what
+type of food to be created.  From Peter Mardahl.
+
+Spell paths added by Rupert G. Goldie <rgg@aaii.oz.au>.  Simply put, 
+each 'spell path' contains a certain category of spells.  Objects and
+races can be attuned, repelled, or denied certain paths (objects would
+apply the the person wearing them).  Attuned allows casting of spells in
+that path at lower cost and greater efficiency, repelled paths are cast at
+a higher cost and lower efficiency, and denied paths can not be cast at all.
+Thus, a wand of small fireball that is attuned to Fire would cast more
+powerful fireballs.  A character wearing a ring that is denied the path
+of fire could not cast fire spells at all.  Right now, no items will
+be created using these features, and no characters have any of these, but
+these might be added in the future.  Look at the spell-paths file in the
+doc directory for a little more information.
+
+Pickup mode 6 (pick up magical items) will not pick up known cursed items.
+
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+Object structure and process_events changed.  Now, a separate list
+us used to keep track of active objects (objects whose speed is nonzero).
+All objects on the active list are still on the normal list, but
+process_objects only needs to go through the active_list for objects
+to process, saving a lot of time.  The cost is adding two
+pointers (active_next and active_prev) to each objects.  But the speed
+gains are well worth the minor memory cost.  the 'malloc command
+was changed to display the number of objects on the active list -
+note that there is zero memory usage for these, since these objects
+are also on the normal object list.
+
+Programming note:  Any time an objects speed is changed (doesn't
+happen too often), a call to update_ob_speed(object *) must be
+made, so that the object can be added or removed from the active
+list, as appropriate.
+
+In testing, I first ran crossfire, with process events using the
+normal object list, and printing out error messages if it found
+objects that had speed but were not in the active_list.  I cleared out
+a couple warehouses in Navar without any errors.
+
+Then, I switched to using the active_list, and printing out errors if
+it found objects on that list with zero speed.  I cleared out the
+mages tower in Navar city without any errors.
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+
+
+Selling items now works properly (it only failed to work if
+AUTO_SAVE was not set previously, and the value of the item was
+beyond a certain amount.)
+
+Look window code changed so that it does not erase the unused area 
+unless necessary.  Also, when a player moves, freeze_look is set.
+This was changed because the functions that move_ob calls update the look
+window, and the window was being updated 3 times each time the player moved.
+
+When poisoning ends, it no longer core dumps.
+
+Inventory window updated if reading an unidentified spell book and you
+already know that spell.
+
+Casting rune spells now works properly.
+
+Spells now (once again) sorted upon loading of characters.
+
+------------------------------------------------------------------------------
+Changes from Crossfire 0.90.4 to 0.90.5:
+
+Bug fixed with window titles getting their names changed. (Tero Haatanen)
+
+Container code changed around.  Containers can be locked, they can be used
+from the ground.  FLAG_CONTAINER removed, since there is already a type
+container, and bonus removed from object structure (Tero Haatanen)
+
+insert_ob_in_ob sorts objects, so items with more magic are before those
+with no magic bonuses even for unidentified.  It also uses the absolute
+value of the magic, so it should be a little more difficult to know if the
+item is cursed or not.
+
+Added unique-flag and UNIQUE_ITEMS define. All items which have unique flag
+are saved to directory .../lib/unique-items. A filename is mapname + ".v" +
+number, where number is normally 01, but if two or more server is running
+same time it can be also greater.  This feature can be used to banks and
+inns to save permanently items.  The code is one limitation: if map contains
+unique item which can be carried away from map (e.g. an unique excalibur)
+there must be at least one unique item on map which can't be carried away.
+This is because unique items are loaded from original map only if unique
+items file doesn't exit. If all unique items are carried away from map then
+they are loaded back next time when someone enters that map.  This should
+not a problem if map makers remembers this. (Tero Haatanen)
+
+Editor by Jarkko Sonninen. He added toggle button into attribute window and
+made map's reset time and timeout so that they can be configured in maps. He
+also fixed map archetype, so that map default stating coordinate is (2,2)
+like before.  This seems break a gatehouse map, where it use default value
+on map (changed 0 to 2), but it's easy to fix.
+
+Change check_walk_on (common/object.c) so it no longer calls the draw_func.
+This eliminates a problem of seeing flashes of areas that should be blocked.
+This is because the draw function it called would re-draw the game window
+before the variable to re-calculate line of set was set.  As I see it, this
+function call was not needed in any case, because this is called during the
+players movement.  After the player moves, the draw function is called from
+the process_events (now process_players1) function.  This should also
+conserver a little cpu time, and bandwidth.
+
+Coin code in shop.c changed.  Patch from Kjetil Torgrim Homme made it so
+that coin value can be changed in archetypes and the shop code should still
+work properly.  I made changes so that the number of coin types is set with
+a #define, making adding new coin types easier.
+
+AUTOSAVE, SAVE_INTERVAL, and NO_EMERGENCY_SAVE should now work properly.
+See include/config.h for more information on these options.
+
+Changed it so that updates to other maps will not be performed while
+loading a map.  This caused a bug if two players entered exits
+at the same time.  One or both of the players may end up in incorrect
+locations, all exits in that location may be closed, etc.
+
+Saving throw table expanded to handle all materials and attack
+types (Peter Mardahl)
+
+Fixes so that Turn Undead does not do physical damage (Peter Mardahl)
+
+Patch to make it impossible to prepare multiple weapons at the
+same time (Peter Mardahl)
+
+Added 'sea1' archetype.  This is the same as the sea archetype, but allows
+for walk on.  Its purpose is to use for backgrounds behind boats and similar
+objects.  Because it will probably be needed in so many places, I decided to
+make an archetype, instead of editing the variables inside crossedit for the
+object.
+
+Removed xbm_values array.  This was used to map a face number to that face
+location in memory.  Since the bmaps file is created automatically without
+any holes, this is not longer necessary.
+
+Archetype for wonder spell now in place.  This will prevent core
+dumps when  the spell is cast.
+
+Pixmaps will now be freed upon exiting Crossfire.  They will also be freed
+after emergency saves are performed.  This fixes the problem that some
+X-Terminals would not free the memory used the the pixmaps otherwise, and
+run out of memory.  This fix pertains to both -pix and -xpm mode.
+
+Patch to hopefully double death problem/core dumps with NOT_PERMADEATH
+mode.
+
+Changed the size of the temporary string that is used when loading
+messages.  For a few very long messages, 1024 bytes was not enought.
+
+Patches put in Crossedit to allow for XPM mode.  From Petri Heinil.
+
+Cleaned up the code for look window.  Now, everything agrees (ie,
+when you click on something in the look window, it is actually
+that object.)  Likewise, invisible objects are not displayed
+anywhere.  This should also fix a bug of not being able to enter
+some building by clicking the middle mouse button on them.
+
+Added help file for pickup.  Explains the 8 basic pickup modes
+plus the value-density pickup mode.
+
+Detect magic will detect magic on all items in a stack, not just the
+top object.
+
+Spells fixes (From Peter Mardahl):
+  1)  Identify modified to identify items on the ground if inventory is
+        identified.
+  2)  Detect magic spell finds magical runes and makes them more visible
+  3)  AT_CHAOS and AT_COUNTERSPELL reimplemented so that they are not
+        treated as special cases by the move_cone function
+  4)  Magical walls created by spells (firewall, frostwall, ....) are
+        fixed
+
+If a map is reset, that map is then removed from the list of map objects
+(what you see when you type 'maps ).  This way, the 'maps commands only
+displays maps that are reasonably active.  This change should also save a
+little memory.
+
+make depend now descends into crossedit/Cnv to depend there.
+
+Changed some of the colors in the xutil.c file.  This is so that it uses
+the same colors as the official colors for XPM files.  It would have been
+better to make those colors part of the official XPM colors to start
+with, but it is a bit late to do that now.  The change of the xutil.c file
+was made so that crossfire would not use quite as many entries in
+the colormap.  The change in colors should be quite minor.
+
+Two new pickup modes added - one picks up all money and gems, the other
+all magical items.
+
+Removed a lot of dead code from the various header files.  removed
+hiscore.h from distribution (wasn't declaring anything that was not
+being declared elsewhere.)
+
+
+------------------------------------------------------------------------------
+Changes from Crossfire 0.90.3 to 0.90.4:
+
+Many more XPM images now properly colored.  NOTE TO COLORERS: A few minor
+changes have been to the xpm.template file (palegreen has been replaced with
+green3, and a more medium orange has been added.)  I replaced palegreen
+because it was very close to the 'green' color already present.  And a
+medium green was lacking.  A medium orange was also lacking, so I added one
+in.
+
+New pickup modes, that can be based on value density (from
+Peter Mardahl <peterm@soda.berkeley.edu>)
+
+Spells now have a casting time. (From Matthew Zeher <matt@cs.odu.edu>)
+
+Added libproto1.h file.  This will be used for function prototypes
+are affected by certain settings (ie, SPEED_GAME).  This way, people
+should not need to run 'make proto'
+
+New XPM loading method.  Creates montage of the xpm files,
+so that not as many calls to XPM are needed.  This has reduced loading
+time to about 30% of what it was before.  Note: This done mean it takes
+some more memory at start up, as the montage has to be stored 
+temporarily.
+
+Changed charisma bonuses.  At 30 charisma, it will no longer be possible to
+buy an item, and then sell it for more than you bought it for.
+
+Graphic exposures turned off on the GC's that are used in the game window.
+Should improve performance.
+
+When a raise stat spell ends, the proper message (ie, You look ugly, you
+feel less intelligent, etc) will now be printed out.
+
+If player NOT_PERMADEATH mode, and you die, a stat will only be decreased
+one.  Before, that stat was decreased one, and the max stat was set to that
+value.  So if the player was poisoned, or a stat was lowered due to some
+other reason, that loss would become permanent.  Now, both the stat and
+orig_stat only gets decreased by one.
+
+invoke.c removed, cast_spell modified to handle what invoke.c did.
+
+Keep old shoot type if reading a scroll, instead of it being set to none.
+
+Raise stats spells should be progressively more costly (From Peter Mardahl)
+
+Should now be able to handle broken pipes without problem (ie, telnet
+session closing unexpectedly).  Made it so that listen level 0 on a socket
+means that draw_all_sockets will not write to that socket.  Crossclient uses
+this so that it does not get unexpected messages, and thinks that it failed.
+
+Added 'set font' option.  This basically unsets color pixmaps or xpm mode.
+If crossclient was run without -xpm or -pix mode, it will send this command
+to use fonts.  What this means is that set (font,pix,xpm) should set that
+display mode.  Before, the display selection it defaulted to for crossclient
+seemed unreliable at best.
+
+Fixed memory allocation problem in commands.c (it was writing to more
+bytes than it had allocated)
+
+Draw message window almost complete re-written.  In an effort to cut
+down on flashing of the the status bars. ( Niilo Neuvo <anipa@guru.magic.fi>)
+
+More bug fixes for spells (from Peter Mardahl)
+
+Fixed some bugs for compiling on the Alpha running OSF/1 1.3
+
+------------------------------------------------------------------------------
+Changes from Crossfire 0.90.2 to 0.90.3:
+
+Added -xpm command line option to crossclient.
+
+All spells should not be handled in the switch statement in spells.c
+
+Let players buy zero value items from shop.  This really shouldn't be a
+problem, the only zero value items of any use might be wands with very
+few charges.  If someone wants to buy poison or cursed items, they should
+be able to.
+
+Fix spelling error of command line argument 'detatch'.  It is now
+spelled properly (detach).
+
+Change draw_color_pix in server/xio.c.  It now draws the images to an
+intermediate pixmap, and then draws that to the screen.  May or may not be
+quicker (XSetClipOrigin only needs to be set once), but it does prevent
+flicker.  Also add two more GC's to the player struct, to make these
+operations faster.
+
+Unless XPM_PIX is defined, draw_color_pix will note be compiled in the
+code.
+
+Fixes to make it compile on both Solaris and NeXT machines (hopefully)
+
+Removed PLAYER_COLOR #ifdefs and lines they control out of login.c.  Those
+were not needed any more.
+
+Added 'mapinfo' command to valid input commands.
+
+Only have crossfire display -m as a valid command if it was compiled
+with DUMP_SWITCHES set.
+
+Changed install procedure to only copy those files necessary to playing
+into lib.  Also, don't install obsolete scripts into the bin directory
+when installing.
+-----------------------------------------------------------------------------
+Changes from Crossfire 0.90.1 to 0.90.2:
+
+Cleaned up the display from 'maps.  Now things line up nicely.  It
+doesn't print the name anymore, and truncates the path at 18 characters.
+But this doesn't make a difference for most maps, and now you can actually
+see what variables are set to what.
+
+Experience requirements changed.  Initial values from Peter, but I changed
+them to be more round numbers.
+
+Change targets in server and crossclient from ComplexProgramTarget
+to AllTarget, DependTarget, and NormalProgramTarget.  This is because
+ComplexProgramTarget expects man pages in those directories, which do
+not exist.
+
+Moved data initialization out of treasure.h and into common/treasure.h.
+In theory, no data initialization should be done in the .h files, it should
+all be done in the .c files, with the .h files declaring the appropriate
+externs.  Likewise, no .c files should have extern's for other data
+functions, they should include the appropriate .h file to get those
+externs declared.  This would fix the problem of having to go through
+the various .c files whenever one of the data structures change, to update
+all the externs made to it.  Since the compiler will check to make sure that
+the extern in the .h file and the actual declaration in the .c file are
+the same, it prevents errors of mismatched declarations (ie, having
+something like char s[40][20], which at later point gets to
+char *s[40], but some files still think it is supposed to be s[40][20].)
+
+Changed doc/Imakefile so that make install.man will actually install
+the man pages.
+
+Characters that dies who were poisoned should have the poisoning
+removed.
+
+Changes from the Berkeley Folks:
+What we've done that's in this server code that I know of:
+
+--level dependency added to many spells.
+
+--level dependency tunable on the fly by editing the spell_params
+  in the 'lib' dir and using the dm command 'spellreset'  spellpoints
+  and spell level are also changeable on the fly.
+
+--many new spells added
+--protection spells can now superimpose, as can gain stat spells.
+  repeated applications of protective or stat spells yield diminishing
+  returns.
+
+--runes added--an implementation of magical traps.  any spell may
+  go in a rune.  Read the documentation.
+
+--new spell interface.  invoke <spell> invokes that spell immediately.  Some
+spells can take parameters now.  invoke magic rune <spell>
+will store <spell> in a magic rune.  invoke  <spell> will not set the
+range spell.  cast and prepare are synonymous.
+
+--Certain spells cannot be set as range spells now--less than 10 of these.
+These are spells which no one would want to use more than once in a while,
+like magic map.
+
+--A hack to object.c in common dir which makes objects created by objects
+with owners owned by the creating object's owner.  (This allows players
+to get credit for a kill with the meteor swarm spell, which creates a
+'swarm' object, which in turn creates the meteor objects.)
+-- End of Berkeley additions.
+
+New maps and archetypes added.
+
+Crossedit can now load maps that are compressed.
+
+Add Solaris 2.x compile support.
+
+Now prints out what the scroll name was that turned to dust.
+
+Minor artifact changes (ring of ice is blue, ring of fire is red)
+
+Horn range weapon now works properly, via using the + and - keys.
+
+New input method (From Jari Vanhala <jam@modeemi.cs.tut.fi>).  Looks like
+it should now be possible to define keys to do most every command.  Made
+a few minor changes to default key file to make the present set up
+act like the previous one.
+
+Fixed triggers and magic mouth.  These devices will now open gates
+as would be expected.  The problem was that the opening routine
+expects to see the op->value of these to be one, in order to open the
+gate or whatever.  Changed routines to toggle value between 0 and 1.
+Note: As I understand, trigger handles return to their original state, but
+keep the same value.  That is, you pull the trigger handle, the handle returns
+to its original position, but gate opens.  Pull handle again, handle returns
+to same position, but gate now closes.  Or at least that is how I implemented
+the devices.
+
+Make some more changes to the is_magical routine.  Hopefully, it will now
+detect all rings and amulets that are magical.  Also, it should not
+detect monsters (or any living object) as magical.
+
+Fixed bug with Color Pixmaps (XPM).  Would try to free the pl->pixmaps
+area twice, causing core dump.  Looks like the same thing should have
+happened when using bitmaps also.  In any case, only one free(pl->pixmaps)
+is now performed.
+
+Bug fixed with XPM code, in which 'floors' would appear to be
+carried around with the player.  This is because the players pixmap did
+not change, and hence, it did not update that square.  Now fixed.
+
+Random encounter bug might now be fixed (patches from Frank)
+
+New FLAG method used.  flags in the object structure is now an array,
+and SET_FLAG, CLEAR_FLAG and QUERY_FLAG functions are now used.  This reduced
+a lot of code in common/loader.c
+
+ Fixed bug in common/object.c in expand_objects function.  Looks like
+braces were missing from for statement, so the the prev and flag fields of
+the new objects were not being set properly.
+
+ Fixed bug that could cause core dump if trying to print map message when
+no message existed. (From Tero Haatanen <Tero.Haatanen@lut.fi>)
+
+ Starting character will have uncursed, undamned and identified items
+at the start of the game. (From Tero Haatanen <Tero.Haatanen@lut.fi>)
+
+-----------------------------------------------------------------------------
+Changes from Crossfire 0.90.0 to 0.90.1:
+
+ Crossedit 0.7 was merged in with the 0.90.0 source.  This once again creates
+a common distribution.
+
+ I tried to retain the best features of both programs.  This means that
+the artifact code, and cursed/uncursed items (from CF 0.90.0) remain.
+But I also used the filepaths for fonts, elimination of omaps for
+internals use, and creation of partially processed bitmap file for
+bitmap reading.
+
+ The general patch method was to keep the cf 0.90.0, and create a diff
+file for crossedit 0.7 from crossfire 0.89.3.  These patches were then
+applied.  Many had to be implemented by hand.
+
+ There are some exceptions.  The crossedit program is almost the exact
+same thing as in the crossedit 0.7 distribution.  I made a few minor changes
+to clean up compiling, but otherwise, no serious changes were made.
+
+ The archetypes (lib/arch) structure was also taken from crossedit 0.7, as
+well as most of the archetypes themselves.  I think the breakdown makes
+things much easier to handle for changes or improvements.  NOTE: it is
+likely that directory (lib/arch) will not be in the standard distribution,
+but will instead be a separate file (to keep the size down).  The various
+files (archetypes, bmaps, font, etc.) will be created for the distribution.
+All new archetypes from cf 0.90.0 were merged into the structure, as well
+as a few minor changes in the old archetypes I noticed.
+
+ The maps are from the crossfire 0.90.0-a-maps distribution.  A few
+simple programs (in lib/adm) were used convert them to use fontpaths
+and to change some monster names that conflicted with character classes.
+Note: Because in the old format, a 'food' field was used to determine the
+map to link to, it is possible some of these fields were changed when
+they were not supposed to be.  This is because some other archetypes
+(altars for one) also use the food field.  If you notice any converted
+by mistake, please let me know.
+
+ A few minor memory leaks and other patches have also been applied.
+
+ Other specific changes to this version:
+'set' now gives better help message (like what can be set.)
+XPM code added.
+Fixed bug in 'who', which would cause a core dump if done when
+	another playing was still creating their character.
+	'who' also display the map path of the other players, and not
+	the map name.  Map names seldom seem to be set.
+The crossfire.cfb and crossfire.pix files (in lib) can be compressed.
+Fixed bug that caused core dumps when pet monsters were summoned.
+If restoring a saved game, and the map it was saved on does not exist,
+	start them on the standard starting level.
+Added option in config.h, that allows full ring and amulet descriptions
+	to be printed in inventory and look window.
+Hopefully fixed bug which caused game to dump core when player died,
+	if NOT_PERMADEATH was set on.
+Add flag HAS_MAGIC, and use that for the detect magic spell.  This way,
+	artifacts that have no magic, will still be shown as magical.
+	So will rings that change abilities, etc.  Doesn't work
+	quite perfectly, but seems to work as well as the old method.
+Fixed bug so that if it can not find a map, it just prints that
+	that exit is closed, instead of panicing.
+Have it re-draw the look window when you middle click on something (ie
+	apply) in that window.  This fixes a bug with bags/sacks, of it
+	not updating when an item is used directly from a sack.
+
+ Mark Wedel (mark@pyramid.com)

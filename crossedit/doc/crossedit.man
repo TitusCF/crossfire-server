@@ -1,0 +1,36 @@
+.TH CrossEdit 6 "September 1993"
+.SH NAME
+CrossEdit \- game world editor
+.SH SYNOPSIS
+.B crossedit
+.SH RESOURCES
+.TP 15
+mapWidth
+maximal shown map width in chars
+.TP 15
+mapHeight
+maximal shown map height in chars
+.TP 15
+usePixmaps
+to use pixmaps. Fonts are used by default.
+.TP 15
+cmdCrossfire
+command to run crossfire.
+.TP 15
+cmdReset
+command to run reset command with map in crossfire.
+.TP 15
+cmdGoto
+command to run goto command map in crossfire.
+.SH DESCRIPTION
+This manual page is under construction.
+.LP
+.SH "SEE ALSO"
+.BR X (1),
+.BR crossfire (6),
+.BR crossclient (6),
+.BR animator (6),
+.IR "X Toolkit Intrinsics \- C Language Interface",
+.IR Crossedit.ad \- resource file
+.SH AUTHORS
+Petri.Heinila\@lut.fi and Jarkko.Sonninen\@lut.fi

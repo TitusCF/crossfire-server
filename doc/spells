@@ -1,0 +1,201 @@
+	Effects of spells imbedded into potions -b.t.
+	-------------------------------------------------------------------
+
+	  These are the "empirical" results of my testing the CF 0.92.4
+	spell code. Seven main general effects, related to the way in
+	which the spell manifests, are noted:
+
+	      "360"  	Indicates that the spell is released as 
+			in a 360 degree field of effect, centered
+			on the potion user. User is uneffected. 
+
+	      "attack" 	Indicates that spell is released, centered
+			on the potion 'user'. One day, when the 
+			throwing code is fixed, the 'user' can include 
+			the target of a thrown potion.
+
+	      "self"	Similar to "attack" but no 'visual' effect
+			occurs and no others are effected.
+
+	      "golem"	A creature controled by the potion user is
+			created. 
+
+	      "create"	Makes an item in the user's square. 
+
+	      "destroy"	Destroys items/creatures surrounding the user.
+
+	      "summon" 	Summons creatures friendly to user, but not 
+			strickly controled by the user.
+
+
+	Looking at the list below, it would appear that the "golem","360"
+	and "attack" spells are most likely to work. Real problems seem 
+	to exist for casting many of the clerical spells. 
+
+	Unless otherwise noted, all spells work.
+
+
+	Sp#. SPELL		Effect		Notes
+	--------------		----------	----------------------------- 
+
+	1. sm. fireball		attack		
+	2. md. fireball		attack
+	3. lg. fireball		attack
+	4. burning hands	360
+	5. sm. lightning	attack
+	6. lg. lightning	attack
+	7. magic missile	attack		No visual effect.	
+	8. create bomb		create 		creates bomb at user's feet.
+	9. create golem	 	golem		no xp gain for golem kills.	
+	10 - 13. create 	golem			""
+	         elemental
+	14. dimension door	self		nothing happens; asks 
+						"what direction?"
+	15. create earth wall 	create		fails; asks "what direction?"
+	16. paralyze		360
+	17. icestorm		360
+	18. magic mapping	self		works fine.
+	19. turn undead		360
+ 	20. poison cloud	360?		user appears unaffected.
+	21. fear		360
+	22. wonder		360		flowers appear, other effects?
+	23. destruction		destroy		works, but says "you killed
+						<victim> with <username>" odd.
+	24. percieve self	self			 
+	25. word of recall	self		
+	26. invisibility	self		in 0.92.4 code this failed,
+						bug fixed for 0.92.5+ (?)
+	27. invis. to undead	self		as for invisibility
+	28. probe		self		bizarre. gives user weight.
+	29. large bullet	attack		fails. nothing happens.
+	30. improv. invis.	self		same as for invisibility.
+	31. holy word		360		failed, says "need to worship
+						a god". Might work if you are
+						a worshipper??
+	32. minor healing	self	  	Heals others if nearby??	
+	33. med. healing	self			""	
+	34. major healing	self		        "" 
+	35. heal		self		 	"" 
+	36. create food		create		food appears below user.
+	37. earth to dust	destroy		fails. 
+	38. armour		self		
+	39. strength		self		works fine. 
+	40. dexterity		self
+	41. constitution	self
+	42. charisma		self
+	43. create fire wall	create		fails; as create earth wall.	
+	44. create frost wall	create		fails; as above
+	45 - 53. protection	self		all work well
+		 from ?? spells
+	54. levitation		self
+	55. sm. speedball	attack		no effect.
+	56. lg. speedball	attack		no effect.
+	57. hellfire		360
+	58. dragon breath	360
+	59. lg. icestorm	360
+	60. charging		self?		fails.
+	61. polymorph		attack?		fails. nothing happens.
+	62. cancellation	attack?		fails. nothing happens.
+	63. confusion		self		works, says "hands glow red"
+	64. mass confusion	360 		
+	65. summon pet monst.	summon		works, but no text.
+	66. slow		360
+	67. regenerate sp. 	self		
+	68. cure poison		self
+	69. prot. from conf.	self		
+	70. prot. from cancel	self
+	71. prot. from deplete	self
+	72. alchemy		360		works, only adjacent sq. effected 
+	73. remove curse	self	
+	74. remove damnation	self
+	75. identify		self
+	76. detect magic	360
+	77. detect monster	360
+	78. detect evil		360
+	79. detect curse	360
+	80. heroism		self
+	81. aggravation		???		failed. 
+	82. firebolt		attack		
+	83. frostbolt		attack
+	84. shockwave 		360
+	85. colorspray		360
+	86. haste		self		failed?. effect is very small.
+	87. face of death. 	360
+	88. ball lightning	create		on users sq. attacks user?
+	89. meteor swarm	attack		very deadly.
+	90. comet		attack		deadly.
+	91. mystic fist		golem		as other golem spells.
+	92. raise dead		????		not tested
+	93. resurrection	????		not tested
+	94. reincarnation	????		not tested
+	95-103. immunity spells self
+	104. invulnerability	self		
+	105. defense		self	
+	106. rune of fire	create		fails; rune appears above user 
+	107. rune of frost	create		 ""
+	108. rune of shock	create		 ""
+	109. rune of blasting	create		 ""
+	110. rune of death	create		 "" 
+	111. rune of marking	create		 ""
+	112. build director	create		works; below user in facing dir  
+	113. create pool chaos	create		failed.
+	114. build bullet wall	create		appears on top of user;points
+						in user facing direction.
+	115. build lightn. wall	create		as build bull. wall above
+	116. build fire wall	create		as build bull. wall above
+	117. magic rune		create		failed.
+	118. rune of mag. drain	create		as other runes
+	119. anti-mag. rune	create		 ""
+	120. rune of transfer	create		 ""
+	121. transference	attack		works; can kill user
+	122. magic drain	attack		works
+	123. counterspell	360
+	124. disarm		????		works?
+	125. cure confusion	self
+	126. restoration	self
+	127. summon evil mon.	summon		failed.
+	128. counterwall	create		fails; asks "what direction?"
+	129. cause lht. wounds	attack		bizarre; req. worship a god.
+						fails to work if you do.
+	130. cause med. wounds	attack		 ""
+	131. cause ser. wounds	attack		 ""
+	132. charm monster	attack		fails
+	133. banishment		360		as "holy word"
+	134. create missile	create		creates missiles in user 
+						inventory! Works I guess.
+	135. show invisible	self		
+	136. xray vision	self		
+	137. pacify		attack		fails
+	138. summon fog		create		creates fog above user.
+	139. steambolt		attack		works; later steam surr. user.
+	140. command undead	attack		appears to fail
+	141. holy orb		attack		fails; as "holy word"
+	142. summon avatar	golem		 ""
+	143. holy possession	self		fails; get "empty blessing" msg.
+	144. bless		self		 ""
+	145. curse		self/attack	 ""
+	146. regeneration	self		
+	147. concecrate altar	????		fails; need "god to worship". In
+						that case fails too.
+	148. summon cult mon.	summon		failed; might work if right
+						god is worshiped.
+	149. cause crit. wounds	attack		failed; as other "wounds" spells
+	150. retrib. strike	attack		failed majorly! CF code thrown
+						into inf. loop. DONT USE THIS!! 
+	151. finger of death	attack		as retrib. strike!
+	152. insect plague	attack		as retrib. strike!
+	153. finger of death	attack		as retrib. strike!
+	154. call holy servnt.	golem		as summon avatar.
+	155. wall of thorns	create		fails as counterwall
+	156. staff to snake	create?		fails
+	157. light		create		fails, asks "what direction"
+	158. darkness		create		 ""
+	159. nightfall		????		
+	160. daylight		????
+	161. sunspear		attack		
+	162. faery fire		attack		user makes others glow.	
+	163. cure blindness	self
+	164. dark vision	self		
+ 
+
+

@@ -1,0 +1,155 @@
+#
+# Makefile for crossfire 0.95.0 and beyond
+#
+# This file will eventually be replaced by a configure script.  But for
+# now, this simple makefile should do the job.
+#
+#   Copyright (C) 1992 Frank Tore Johansen
+#   Copyright (C) 1998 Mark Wedel
+#
+#   This program is free software; you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation; either version 2 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with this program; if not, write to the Free Software
+#   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+#
+#   The author can be reached via e-mail to mark@pyramid.com
+
+# Start of configuration items
+# In theory, you should not need to change any of this - configure
+# will find and figure out the correct values.
+# However, if you want, you can add in extra items, or hardcode (force)
+# programs to use.  it is the @VAL@ things that get substitute by configure.
+
+# EXTRA_INCLUDES
+# Add any -I commands for extra directories to search for include
+# files.  Hopefully should not be needed in most cases.
+#
+#EXTRA_INCLUDES = -I/usr/X11R6/include
+
+# EXTRA_LIBS
+# add any extra libraries or -L options needed. 
+#EXTRA_LIBS = -lX11 -lcrypt
+
+# MFLAGS
+# Any special options you want to give to make.
+# MFLAGS=-j2
+
+# EXTRA_CFLAGS
+# Any extra special options for the C compiler.
+EXTRA_CFLAGS=-Wall
+
+#
+#
+CC=@CC@
+
+MKDIR = @MKDIR@
+CP = @CP@
+TAR = @TAR@
+RM = @RM@
+BASENAME = @BASENAME@
+
+SHELL = /bin/sh
+
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+
+NO_X = @no_x@
+
+##############################################################################
+# End of configuration options - nothing below here should need to be
+# Changed.
+#
+
+XX_EXTRA_CFLAGS = $(EXTRA_CFLAGS)
+
+VERSION = crossfire-0.95.3
+
+ARCHIVE = /tmp/$(VERSION)
+
+SUBDIRS = common random_maps socket server include lib utils doc
+
+FILES = CHANGES CREDITS DEVELOPERS DONE Makefile.in INSTALL License README \
+	TODO configure configure.in
+
+
+all::
+	@for dir in $(SUBDIRS); \
+	do \
+	    echo "making all in $$dir..."; \
+	   (cd $$dir;  $(MAKE) $(MFLAGS) 'MFLAGS=$(MFLAGS)' 'EXTRA_CFLAGS=$(XX_EXTRA_CFLAGS)' 'EXTRA_INCLUDES=$(EXTRA_INCLUDES)' 'EXTRA_LIBS=$(EXTRA_LIBS)' 'CC=$(CC)' all; ) \
+	done;
+	@if [ "X$(NO_X)" != "Xyes" ]; then \
+	    echo "making all in crossedit..."; \
+	   (cd crossedit;  $(MAKE) $(MFLAGS) 'MFLAGS=$(MFLAGS)' 'EXTRA_CFLAGS=$(XX_EXTRA_CFLAGS)' 'EXTRA_INCLUDES=$(EXTRA_INCLUDES)' 'EXTRA_LIBS=$(EXTRA_LIBS)' 'CC=$(CC)' all; ) \
+	fi
+
+
+depend::
+	@for dir in $(SUBDIRS); \
+	do \
+	    echo "making depend in $$dir..."; \
+	    (cd $$dir; $(MAKE) $(MFLAGS) 'MFLAGS=$(MFLAGS)' 'EXTRA_CFLAGS=$(XX_EXTRA_CFLAGS)' 'EXTRA_INCLUDES=$(EXTRA_INCLUDES)' 'EXTRA_LIBS=$(EXTRA_LIBS)' depend;) \
+	done;
+	@if [ "X$(NO_X)" != "Xyes" ]; then \
+	    echo "making depend in crossedit..."; \
+	   (cd crossedit;  $(MAKE) $(MFLAGS) 'MFLAGS=$(MFLAGS)' 'EXTRA_CFLAGS=$(XX_EXTRA_CFLAGS)' 'EXTRA_INCLUDES=$(EXTRA_INCLUDES)' 'EXTRA_LIBS=$(EXTRA_LIBS)' 'CC=$(CC)' depend; ) \
+	fi
+
+clean::
+	@for dir in $(SUBDIRS) crossedit; \
+	do \
+	    echo "making clean in $$dir..."; \
+	    (cd $$dir; $(MAKE) $(MFLAGS) 'MFLAGS=$(MFLAGS)' 'EXTRA_CFLAGS=($XX_EXTRA_CFLAGS)' 'EXTRA_INCLUDES=$(EXTRA_INCLUDES)' 'EXTRA_LIBS=$(EXTRA_LIBS)' clean;) \
+	done;
+
+
+install::
+	@if [ ! -d ${prefix} ]; then \
+		$(MKDIR) -p ${prefix}; \
+	fi
+	@for dir in $(SUBDIRS); \
+	do \
+	    echo "making install in $$dir..."; \
+	    (cd $$dir; $(MAKE) $(MFLAGS) 'MFLAGS=$(MFLAGS)' 'EXTRA_CFLAGS=($XX_EXTRA_CFLAGS)' 'EXTRA_INCLUDES=$(EXTRA_INCLUDES)' 'EXTRA_LIBS=$(EXTRA_LIBS)' install;) \
+	done;
+	@if [ "X$(NO_X)" != "Xyes" ]; then \
+	    echo "making install in crossedit..."; \
+	   (cd crossedit;  $(MAKE) $(MFLAGS) 'MFLAGS=$(MFLAGS)' 'EXTRA_CFLAGS=$(XX_EXTRA_CFLAGS)' 'EXTRA_INCLUDES=$(EXTRA_INCLUDES)' 'EXTRA_LIBS=$(EXTRA_LIBS)' 'CC=$(CC)' install; ) \
+	fi
+
+archive:
+	if [ ! -d $(ARCHIVE) ]; then $(MKDIR) $(ARCHIVE); fi
+	$(CP) $(FILES) $(ARCHIVE)/.
+	@for dir in $(SUBDIRS) crossedit; \
+	do \
+	    echo "making archive in $$dir..."; \
+	    (cd $$dir; $(MAKE) $(MFLAGS) 'MFLAGS=$(MFLAGS)' 'ARCHIVE=$(ARCHIVE)' 'VERSION=$(VERSION)' 'MKDIR=$(MKDIR)' 'CP=$(CP)' archive;) \
+	done;
+	(cd $(ARCHIVE)/..; \
+		$(RM) -f $(VERSION).tar; \
+		$(TAR) cvfh $(VERSION).tar `$(BASENAME) $(ARCHIVE)`; \
+	)
+	$(CP) $(ARCHIVE)/../$(VERSION).tar .
+	gzip -cv9 $(VERSION).tar > $(VERSION).tar.gz
+	bzip2 -cv --repetitive-best $(VERSION).tar > $(VERSION).tar.bz2
+	$(RM) -f $(VERSION).tar
+	$(RM) -rf $(ARCHIVE)/../$(VERSION).tgz $(ARCHIVE) 
+
+proto:
+	(cd common; make proto)
+	(cd server; make proto)
+	@if [ "X$(NO_X)" != "Xyes" ]; then \
+		(cd crossedit; make proto)
+	fi
+
+patchlist::
+	@echo $(FILES) > .patchlist

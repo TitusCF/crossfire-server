@@ -1,0 +1,209 @@
+WHAT IS CROSSFIRE?
+
+  This is a multiplayer graphical arcade and adventure game made for
+  the X-Windows environment.
+
+  It has certain flavours from other games, especially Gauntlet (TM)
+  and Nethack/Moria.
+
+  Any number of players can move around in their own window, finding
+  and using items and battle monsters.  They can choose to cooperate
+  or compete in the same "world".
+
+REQUIREMENTS
+
+  You will need UNIX, X-windows and an ANSI C compiler to compile this game.
+
+COMPILING
+
+  Crossfire has been known to compile on the following systems
+  (latest known version number of Crossfire that compiled on these
+  systems is included in parantheses):
+  o PC Compatible, with Linux 2.2 (gcc, glibc) (latest)
+  o Siemens Reliant Unix 5.44 (latest)
+  o Solaris 2.6 systems (0.95.1)
+  o Silicon Graphics, Irix  6.3 (standard cc) 0.94.0
+  o Sun4 with Solaris 2.5 (with gcc) (0.93.7)
+  o PC Compatible, with Linux 1.2.13 (0.92.4)
+  o Sun4 with SunOS 4.1.3 (0.92.2)
+  o Sun4 with Solaris 2.x (0.92.0)
+  o Sun3, SunOs 4.1.1, gcc (0.91.7)
+  o DEC300AXP-500 (Alpha with OSF1 1.3) (0.90.3)
+  o Ultrix 4.2a (0.90.1)
+  o IBM RS/6000 with AIX 1.2, X11R4 (0.90.2)
+  o HP735, HPUX, X11R5 (0.90.2)
+  o DEC 3100 and DEC 5000 with ULTRIX BSD 4.2
+  o DEC with OSF1
+  o VAX3100 with BSD 4.3
+  o IBM RT with BSD4.3
+  o HP9000-series (HP-UX) (very old versions of HP-UX might barf on stdarg.h)
+  o MIPS with RISC/os
+  o (UMIPS) 4.52 (?)
+  o AT&T system 300 with NCR UNIX SVR4 MP-RAS
+
+  It has been compiled with X11R3, X11R4, X11R5, X11R6 (the editor requires
+  X11R5 or X11R6).
+
+  To get directions on compilation, read the INSTALL file.
+
+USAGE
+
+  Crossfire runs on a client/server model.  You will also need the
+  client to play.  You can either connect to a server someone else
+  has set up, or run your own server and connect to that.  The
+  client package has information for connecting to servers.
+
+  To run your own server, you need to make the crossfire binaries and
+  install them, and then run the crossfire program.  This now creates
+  a server which you/other people can connect to.  If you plan to run
+  a long term server, you should use one of the scripts provided that
+  will re-run crossfire if it dies for some reason.
+
+MAILING LIST
+
+  There are two mailing-lists dedicated to the developement and
+  bug-testing of crossfire.  The first is for discussing bugs and
+  features, the second is for announcing new versions.
+
+  If you want to join or leave any of the lists, send mail to
+  crossfire-request@ifi.uio.no with the subject "subscribe",
+  "unsubscribe","subscribe announce" or "unsubscribe announce".
+  If you use the subject "subscribe" or "unsubscribe" you will
+  (un)subscribe to *both* lists.
+  To send messages directly to the list, mail crossfire@ifi.uio.no.
+  An archive of old messages can be found at ftp.ifi.uio.no in the
+  directory /pub/crossfire/archive, or via the www at 
+  http://archives.real-time.com/crossfire
+
+
+FTP SITES
+
+  FTP-sites where you can look for the latest versions are:
+
+    ftp://ftp.pyramid.com:/pub/crossfire (129.214.1.30)
+    ftp://ftp.ifi.uio.no:/pub/crossfire (129.240.64.44)
+    ftp://ftp.real-time.com/pub/games/crossfire (206.10.252.12)
+    ftp://ftp.cs.city.ac.uk:/pub/games/crossfire/
+    ftp://ftp.sunet.se:/pub/unix/games/crossfire (130.238.127.3)
+    ftp://ftp.cs.titech.ac.jp:/pub/games/crossfire
+    ftp://mirror.aarnet.edu.au/games/roguelike/crossfire/
+
+  Please use the one nearest to you.  ".no" and ".uk" in Europe, ".au" in
+  Australia, ".com" in USA.
+
+  If you are setting up another site, please notify me.
+
+WEB SITES:
+
+  The following web addresses have crossfire information that you may find
+  useful (Known to work as of 1-3-97):
+
+    german version:
+	http://www.fak14.uni-muenchen.de/~h729ihqu/games/crossfire.html 
+    english version:
+	http://www.fak14.uni-muenchen.de/~h729ihqu/games/crossfire-engl.html
+
+
+REPORTING BUGS
+
+  First, check the INSTALL file for common problems, and see if yours is
+  mentioned.
+
+  Crossfire is still in a developmental stage - it is hardly a finished
+  program.  As such, it is assumed that the users have had experience using
+  X11 and C programming.  If you are a novice user having problems, please
+  don't report problems unless you are absolutely sure it is crossfire that
+  is the problem.
+
+  The mailing list is where present development work and bugs are typically
+  discussed.  If you want to know what is happening with crossfire, join the
+  list and please ask there.
+
+  I will likely delete mail messages of the following sort:
+  1) Bug reports of failed installation when the installation instructions
+     were not followed.
+  2) Bug reports that contain so little information that it tells me nothing
+     more than the fact that there is a bug.
+  3) Bugs in which the solution has already been answered in the INSTALL
+     file.
+
+  When reporting bugs, make sure you include the following:
+  o What version of crossfire did you use?
+  o What type of computer did you use?
+  o What release of the operating system did it have?
+  o What windowing system are you using (Ie, openwindows, X11R6, etc)
+  o What compiler (and its version) did you use (ie, gcc, acc, etc)?
+  o Which flags did you give it?
+  o If the bug happens when compiling crossfire, send an EXACT copy of
+    the compiler line, as well as the errors it puts out.  Sending bugs
+    of the sort 'it failed with a line like ...' doesn't help any.
+  o If the bug happened while running crossfire:
+    - Include any output before to the bug.
+    - Give a description of what you did before the bug occured.  The better
+	detailed the description, the better chance I have of figuring
+	out where the bug happened, or how I can recreate the bug.
+  o If you managed to compile Crossfire, include the output of
+    "crossfire -o".
+
+  Lack of any of this information in a bug report can make that bug report
+useless.  Also, if you have a bug, make sure you are using the latest
+version.  If you report a bug that has since been fixed, you are not likely
+to get any help.
+
+  Note:  If you can not reproduce the bug, and lack the skills/knowledge
+necessary to run a debugger to find out where it crashed, chances are there
+is little I can do to help.
+
+  Note2:  I only have a sun 3 (with sunos 4.1.1 and gcc) for developement.
+As such, if you have problems compiling on some other type of systems 
+due to header files or similar system dependant things, I am not likely
+to help out that much.
+
+  Note3:  If you have core dumps, or trouble compiling on whatever system,
+and are able to give me a guest account or something similar to log onto
+your system to poke around with the code or core dump, I will likely take
+you up on your offer.  If you make such an offer, I will assume that you
+have oberyed whatever usage rules/policies are applicable for your site.
+
+  Mail the bug report to mark@pyramid.com, or crossfire-bugs@ifi.uio.no
+
+------------------------------------------------------------------------------
+SUBMITTING PATCHES:  See the doc/programming_guide file.
+
+
+PUBLIC SERVERS:
+
+As of March 25, 1999, I removed all the servers that were listed in this
+section, since I believe they were grossly out of date.  The one
+exception is the voldsboks.pvv.org since Frank just reported setting it up.
+
+voldsboks.pvv.org (3-25-1999)
+   port: 13327 (default)
+   version: 0.95.2
+
+Note that the whitestar.pyrsonal.org server is not listed, as it is likely
+to go away soon.
+
+COPYRIGHT
+
+    Don't get scared by the below, it's included just for "safety" reasons 8)
+    (Don't want anyone to start selling the game)
+
+    Copyright (C) 1994 Mark Wedel
+    Copyright (C) 1992 Frank Tore Johansen
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+
+    The author can be reached via e-mail to mark@pyramid.com

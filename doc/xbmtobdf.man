@@ -1,0 +1,96 @@
+.TH xbmtobdf 1 "15 March 1993"
+.SH NAME
+xbmtobdf - convert several xbm bitmaps into a bdf font file
+.SH SYNOPSIS
+.ft B
+xbmtobdf
+.ft
+[
+.BI "-f " mapfile
+] [
+.BI "-b " bitmaplist
+] [
+.BI "-size " fontsize
+] [
+.BI "-name " fontname
+] [
+.B -
+] [
+.I bitmaps
+]
+.SH DESCRIPTION
+.ft B
+xbmtobdf
+.ft
+is used to put a lot of X11 bitmaps into one bdf font file.
+.SH OPTIONS
+.BI "-f " mapfile
+.IP
+mapfile is used to find the correspondence between the bitmap's
+filename and where to put it in the font. A line in the mapfile begins
+with a character, then follows a TAB and a filename. The line can also
+begin with '\\' followed by a decimal number, a TAB and a filename.
+Lastly, comment lines begin with a '#'. Example mapfile:
+
+.PD .1v
+# Just a small comment
+.IP
+\32	space.xbm
+.IP
+A	latin.capital.letter.a.xbm
+.PD 1v
+
+.IP
+If no mapfile is specified,
+.B xbmtobdf
+will try to use the first character in the filename for the character in the
+font.
+
+.PP
+.BI "-b " bitmaplist
+.IP
+.I bitmaplist
+is the list of bitmaps which should be included in the font. It should be 
+equivalent to
+
+.B xbmtobdf
+.I options
+.B "` cat "
+.I bitmaplist
+.B "`"
+
+However, due to limitations in the shell, the
+.B "-b "
+switch may be needed when there are many bitmaps. The special filename "-"
+means read the bitmap list from stdin.
+
+.PP
+.BI "-size " fontsize
+.IP
+Each character in the font will be this size. fontsize should be the height 
+of the bitmap.
+
+.PP
+.BI "-name " fontname
+.IP
+Use this switch if your font should be named something other than 
+.I crossfire.
+
+.PP
+.B "-"
+.IP
+This option is used to prevent further argument parsing.
+
+.SH "SEE ALSO"
+.BR xfed (1),
+.BR bdftopcf (1)
+and
+.BR
+"Bitmap Distribution Format 2.1"
+
+.SH BUGS
+It is assumed that the bitmaps are square and all of one size, and
+that the size is a multiple of 8.
+
+.SH AUTHOR
+Kjetil T. Homme <kjetilho@ifi.uio.no>

@@ -1,0 +1,65 @@
+SRCS =	test.c CnvUtil.c CnvBrowse.c CnvNotify.c CnvMenu.c CnvFiles.c\
+	CnvPath.c CnvPrompt.c
+
+OBJS =	CnvUtil.o	CnvBrowse.o	CnvNotify.o	CnvMenu.o 	CnvFiles.o	CnvPath.o	CnvPrompt.o
+
+HDRS =	Cnv.h		config.h
+
+FILES =	excloff.xbm exclon.xbm flagoff.xbm flagon.xbm notify.xbm prompt.xbm\
+	submenu.xbm Makefile.in README
+
+OBJS = $(SRCS:.c=.o)
+
+INCLUDES= -I@x_includes@ $(EXTRA_INCLUDES) -I../include -I. -I../../include
+
+X11LIBS = 	@X11LIBS@
+LIBS = @LIBS@ $(X11LIBS)
+
+DEPEND = @DEPEND@
+
+CC = @CC@
+RM = @RM@
+
+CFLAGS = @CFLAGS@
+
+ARFLAGS = clq
+
+RANLIB = @RANLIB@
+
+all:: test
+
+depend::
+	$(DEPEND) $(DEPENDFLAGS) -- $(INCLUDES) -- $(SRCS)
+
+all:: libCnv.a
+
+libCnv.a: $(OBJS)
+	$(RM) -f $@
+	$(AR) $(ARFLAGS) $@ $(OBJS)
+	$(RANLIB) $@
+
+test : test.o $(OBJS) libCnv.a
+	$(RM) -f $@
+	$(CC) -o $@ $(LDOPTIONS) $(OBJS) $(LIBS)
+
+clean::
+	$(RM) -f test menu2
+	$(RM) -f $(OBJS)
+	$(RM) -f menu2
+	$(RM) -f libCnv.a
+
+menu2 : menu2.o $(OBJS) libCnv.a
+	$(RM) -f $@
+	$(CC) -o $@ $(LDOPTIONS) menu2.o $(OBJS) $(LIBS)
+
+archive::
+	@if [ -d $(ARCHIVE)/crossedit/Cnv ]; then set +x; \
+	else (set -x; $(MKDIR) $(ARCHIVE)/crossedit/Cnv); fi
+	$(CP) $(SRCS) $(HDRS) $(FILES) $(ARCHIVE)/crossedit/Cnv
+
+patchlist::
+	@echo $(SRCS) $(HDRS) $(FILES) > .patchlist
+
+.c.o:
+	$(CC) $(CFLAGS) $(INCLUDES) -I../include -c $*.c
+

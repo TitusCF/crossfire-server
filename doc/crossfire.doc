@@ -1,0 +1,1064 @@
+This files so far only concernes how to make archetypes,treasure and NPC's.
+
+The name in parantheses is the name as it should be used in the archetype
+file.
+===========================================================================
+
+Types (type):
+
+Specified in defines.h.  It is used to group items together.  A type only
+needs to be added for a new archetype if in some area of the program,
+it is actually used.
+
+ For example, if adding a new monster, there is no need to add a new type
+in defines.h if crossfire never checks the type element in the object
+structure for that new type.
+
+ Most types are set for items that are applied, items that have special
+properties.
+
+ When adding a type, you might also need to update crossedit/Attr.c for
+what default fields should be displayed in the attributes menu.
+
+------------------------------------------------------------------------------
+
+Attack types (attacktype):
+
+Physical	     1
+Magic		     2
+Fire		     4
+Electricity	     8
+Cold		    16
+Confusion	    32
+Acid		    64  Damages players equipment
+Drain		   128
+Weaponmagic	   256  (Special, use with care)
+Ghosthit	   512  (Attacker dissolves)
+Poison		  1024
+Slow		  2048
+Paralyze	  4096
+Turn undead	  8192  
+Fear		 16384
+Cancellation	 32768
+Depletion	 65536
+Death		131072
+Chaos		262144
+Counterspell	524288
+Godpower       1048576 (Special, only for use by priest spells)
+
+Note that one archetype can have multiple attack types by adding
+these values together.  Thus, something with an attacktype of 65
+would attack with both acid and physical.
+
+Immunity (immune), Protection (protected), and Vulnerable (vulnerable)
+also use these values.  A creature that is immune will take no damage
+from that type, a protected creature takes half damage, and a vulnerable
+creature takes double damage.
+
+A few notes:  If a creature/object is immune to magic, then it will be 
+immune to all damage from that attack, even if that attack type contains
+more than just magic.
+
+ Otherwise, a creature needs to be immune to all attack types in order
+to take no damage (thus, a creature that is immune to physical, but
+getting hit by a weapon that does physical and fire would take normal
+damage).
+
+ If an object is protected/vulnerable to just one of the attack types,
+will still take full damage.  Thus, if something is protected from physical,
+but the attack is fire and physical, the creature will still take normal
+fire damage.  Whatever attacktype that would do the most damage is used.
+
+ Note that if the attack type is physical, then damage can be reduced by the
+creatures armor.
+
+------------------------------------------------------------------------------
+
+Material types (material):
+
+Paper	  1
+Iron	  2
+Glass	  4
+Leather	  8
+Wood	 16
+Organic	 32
+Stone	 64
+Cloth	128
+Adamantite 256
+
+The objects material affects how saving throws against an object affect it.
+Thus, if paper is hit by fire, it tends to burn up, while iron does not.  You
+can look in common/living.c to see the exact values.  Note that if the material
+type is 0 (no material) or is Adamantite, the object can not be harmed in
+any way.
+
+An object can have multiple material types by adding these values together.
+------------------------------------------------------------------------------
+Pick Up specifiers (defined with pick_up)
+
+Nothing 		 1
+Wealth			 2
+Food			 4
+Weapon			 8
+Armour			16
+All but those defined	32
+All			64
+
+Note also that if can_use_armor, can_use_weapon, can_use_ring,
+can_use_wand, can_cast_spell, can_use_bow are set, then the creature
+will pick up the matching items even if the pick_up element is not
+set to pick up those items.
+
+This only applies to monsters.  The player pickup method is much different.
+
+------------------------------------------------------------------------------
+
+
+Will_apply specifiers (will_apply):
+   1    -       Handles
+   2	-	Treasure (chests)
+   4    -       Earthwall (tear down)
+   8    -       Door      (open) */
+
+------------------------------------------------------------------------------
+
+Meaning of editable field (editable):
+
+Editable sole meaning is for crossedit.  Crossedit uses editable to determine
+what menu(s) the item should appear in.  Crossfire does not use it at all.
+
+The following table/values determine what menus the archetype will appear
+in.  When looking at this table to determine what the value of editable
+should be, it is 2^(num-1).  That is to say if you want it to appear in the
+'shop' menu, it would be 2^6 and not 2^7.  By default, objects default
+to editable 1 - that is to say, they become monsters.
+
+Asterisk(*) marks groups that are really editable.
+
+ 0 (0)	None			- Internal archetypes (spells, abilities,
+				map, etc.)
+*1 (1)	Monsters		- all monsters, generators and NPC's
+*2 (2)	Exits			- all buildings, towns, teleprorts and other
+				exits
+*3 (4)	Treasures		- Normally used maps as treasures
+*4 (8)	Backgrounds		- different backgrounds (floors, woods, etc.)
+*5 (16) Gates and door		- everything that can be opened or closed 
+*6 (32) Special			- directors, spinners, firewalls 
+*7 (64) Shop			- All items needed in shops.
+*8 (128) Normal objects		- sacks, signs, gravestone, furnitures etc.
+*9 (256) False walls		- Walls that can be destroyed or
+				broken through.
+10 (512) Walls			- different walls, caves, dungeons etc.
+11 (1024) Equipments		- mainly weapons and armours
+12 (2048) Rest treasures	- foods, scrolls, potions, jewels, etc
+13 (4096) Artifacts		- Named weapons, special armors, etc
+
+An archetype can belong to several editable families, by adding the values
+together.  For example, a value of 544 (512+32) would show up in both the
+special and walls menu.
+
+------------------------------------------------------------------------------
+Damage (applies to both players and monsters)
+
+ Damage determines the amount of damage the creature does.  The form this
+damage takes it determined by the attacktype the creature has.
+
+ When determining damage, a number between 1 and the damage value is
+rolled.  Thus, even if you have a +6 damage bonus from strength, magic
+weapons, etc, a value of 1 could still be generated.  Thus, even with very
+high magical monsters or very high strength monsters, a low damage roll can
+result some of the time.
+------------------------------------------------------------------------------
+Randomitems:
+
+ This determines what treasurelist to use for generating the objects
+treasures.  For archetypes, the default is none, but for other objects
+(like those loaded in maps), it will use the same treasure list as
+the archetype it descends from unless otherwise specified.  In the case
+of objects, "none" can be be used to make no items generated.
+
+The format of treasurelists is detailed further down in this file.
+
+------------------------------------------------------------------------------
+Animations:
+
+This section will briefly try to explain how all the animation values
+(anim_speed,last_anim, FLAG_IS_TURNING and FLAG_ANIMATE work together.)
+
+In the archetype specification, there is a anim/mina sequence which lists
+faces are used for animations.  An example for the big dragon follows:
+
+anim
+dragon.171
+dragon.172
+dragon.173
+dragon.172
+dragon.131
+dragon.132
+dragon.133
+dragon.132
+mina
+
+ Anything that is animated must have such a sequence.
+
+ FLAG_ANIMATE is used to inform crossfire that this object should be constantly
+animated.  A case where an anim section as above is used but FLAG_ANIMATE
+is not set is for arrows and other objects in which the anim field
+is instead used to determine what face to draw for different facings of the
+object.
+
+FLAG_IS_TURNING is used in conjunctin with FLAG_ANIMATE.  This is a states
+that the object has 2 facings and is animated (big dragon is a case like
+this.)  The first half of the images will be used for one facing, the
+second half of the objects for the other facing.
+
+anim_speed is used to determine how often the object is animated.  IF
+anim_speed is 0, then the object is animated anytime it gets an action.
+If anim_speed is nonzero, then every anim_speed ticks, the object is
+animated (irregardless of how fast the item is)  last_anim is used internally
+only to determine how many ticks have passed since the item was last
+animated.  anim_speed is useful for objects that otherwise move very
+slowly but which need to be animated more often.  Note:  If anim_speed
+is used, the object must still have a nonzero speed for it to work.
+
+ In terms of frequency of animations, 1/anim_speed = object speed.
+Thus if an object has speed of 0.2, its anim_speed is effectively 5.
+
+------------------------------------------------------------------------------
+Meaning of certain attributes for certain items:
+
+All objects have strength, intelligence, wisdom, dexterity, constitution,
+charisma, experience, and spell points.  However, how each is used
+varies for different objects.  Here is a PARTIAL rundown:
+
+For rings, str, int, wis, dex, con and cha are modifiers to the users
+abilities.
+
+For treasures (chests, random_???), hp is the number of items that
+should be generated.  A chest with hp of 5 will generate 5 treasures,
+a random_scroll space with hp of 5 will generate 5 random scroll types (of
+which, each scroll type may number more than one - see the treasures
+file for more information.)
+
+For shop floors and treasures, exp is the difficulty to use for
+creating the treasure.  If exp is 0 (which it is by default), then the
+map difficulty is used instead.
+
+For armour, last_sp (ARMOR_SPEED) is the maximum speed that the
+character can have while wearing that armor.
+
+For armour, last_heal determines the penalty for spell point regeneration.
+
+For exits:
+slaying  = The map which the exit leads to.
+hp,sp = (x,y) of the destination on the new map.
+
+------------------------------------------------------------------------------
+SPECIAL NOTES FOR CERTAIN OBJECTS:
+------------------------------------------------------------------------------
+
+MAPS:
+
+'value' stores the timeout
+'weight' stores the reset time.  
+'level' stores the map difficulty.
+'stand_still'	If nonzero, the map reset time will not be updated
+	when someone enters/exits the map.  Thus, once the map has
+	been loaded, it will reset in 'reset time' no matter what
+	access happen.  This is useful for shops and towns, which
+	are constantly accessed, but should be reset periodically.
+
+All three of these values are used when loading the map.  Internally,
+fields in the map structure are used for some of these, or are
+assigned some of these values when they get scheduled for saving.
+
+Note that crossedit has a nice menu that lists outside values and maps
+them to the internal values - thus, you seldom need to know these unless
+you are trying to debug something.
+
+------------------------------------------------------------------------------
+DISEASES by Peter Mardahl
+
+The following describes some things about the archetype
+and implementation:
+
+Stat            Property        Definition
+
+attacktype      Attack effects  Attacktype of the disease. usu. AT_GODPOWER.
+other_arch      Creation        object created and dropped when symptom moved.
+wc+             Infectiousness  How well the plague spreads person-to-person
+magic+          Range           range of infection 
+Stats*          Disability      What stats are reduced by the disease (str con...)
+maxhp+          Persistence     How long the disease can last OUTSIDE the host. 
+value           TimeLeft        Counter for persistence 
+dam^            Damage          How much damage it does (%?). 
+maxgrace+       Duration        How long before the disease is naturally cured. 
+food            DurCount        Counter for Duration 
+
+speed           Speed           How often the disease moves. 
+last_sp^        Lethargy        Percentage of max speed--10 = 10% speed. 
+
+maxsp^          Mana deplete    Saps mana. 
+ac^             Progressiveness How the diseases increases in severity.
+last_eat*^      Deplete food    saps food if negative 
+
+exp             experience      experience awarded when plague cured 
+hp*^            ReduceRegen     reduces regeneration of disease-bearer 
+sp*^            ReduceSpRegen   reduces spellpoint regeneration 
+
+name            Name            Name of the plague 
+msg             message         What the plague says when it strikes.
+race            those affected  races the plague strikes (* means everything) 
+level           Plague Level    General description of the plague's deadliness 
+
+
+Explanations:
+* means this # should be negative to cause adverse effect.
++ means that this effect is modulated in spells by ldur
+^ means that this effect is modulated in spells by ldam
+
+attacktype is the attacktype used by the disease to smite "dam" damage with.
+
+wc/127 is the chance of someone in range catching it.
+
+magic is the range at which infection may occur.
+
+Stats are stat modifications.  These should typically be negative.
+
+maxhp is how long the disease will persist if the host dies and "drops" it,
+      in "disease moves", i.e., moves of the disease.  If negative, permanent.
+      
+
+value is the counter for maxhp, it starts at maxhp and drops...
+
+dam     if positive, it is straight damage.  if negative, a %-age.
+
+maxgrace  how long in "disease moves" the disease lasts in the host, if negative,
+          permanent until cured.
+
+food    if negative, disease is permanent.  otherwise, decreases at <speed>,
+        disease goes away at food=0, set to "maxgrace" on infection.
+
+speed is the speed of the disease, how fast "disease moves" occur.
+
+last_sp is the lethargy imposed on the player by the disease.  A lethargy
+       of "1" reduces the players speed to 1% of its normal value.
+
+maxsp how much mana is sapped per "disease move".  if negative, a %-age is
+     taken.
+
+ac  every "disease move" the severity of the symptoms are increased by
+    ac/100.  (severity = 1 + (accumlated_progression)/100)
+
+last_eat  increases food usage if negative.
+
+
+
+For SYMPTOMS:
+
+Stats            modify stats
+hp               modify regen
+value            progression counter (multiplier = value/100)
+food             modify food use (from last_eat in DISEASE)
+maxsp            suck mana ( as noted for DISEASE)
+last_sp          Lethargy
+msg              What to say
+speed            speed of movement, from DISEASE
+
+
+------------------------------------------------------------------------------
+CONVERTERS:
+
+other_arch = which archetype to convert into
+slaying    = which archetype to convert from
+sp         = how many other_arch to create
+food       = how many items are needed to convert into <sp> other_arch
+
+------------------------------------------------------------------------------
+
+BOWS & ARROWS:
+
+Missile weapons
+
+Missile weapons (type BOW) can be used to shoot missiles
+(type ARROW). The most common wepons are bows and crossbows
+but other weapons are also easy to implement (e.g. a sling).
+The following variables have the same meaning for both weapons
+and bullets:
+
+race	type of missile (indentifies weapon and missile pairs)
+dam	the basic damage
+wc	the basic wc
+magic	the magic bonus
+
+And these two used only for arrows.
+
+hp	the basic damage (internal use)
+sp	the basic wc (internal use)
+food	the breaking probability after a shot (0-100)
+
+And these two are for bows.
+
+sp		the shooting speed (% of normal speed, 1-100)
+no_strength	player's strength or monster's level doesn't affect
+		the damage done by bow.
+ 
+The other variables has their normal meanings.
+
+  
+------------------------------------------------------------------------------
+object creating objects, by peterm:
+
+What a creator is, is an object which creates another object when it is
+triggered.  The daughter object can be anything.  (yet another way other
+than runes to create surprise monsters, though runes are better for that,
+they're smarter at placing monsters)
+
+You've seen a creator demonstrated if you've solved the Tower of
+Demonology:  when you summon a demon you also get some firetrails
+
+Creator object:  an object which creates other objects.  It is usually
+invisible.
+
+other_arch      the object to create
+connected       what will trigger it (button, magic ear)
+hp              number of times to create before dissappearing
+lifesave        if 1, it will create the object every time it's triggered,
+		and never disappear
+slaying		the name the created object will bear
+level           the level the created object will have
+
+------------------------------------------------------------------------------
+Player Movers, by peterm
+
+Player movers are objects which move objects above them.  These objects
+must be alive.  They are directional, so players can be made to move in
+a pattern, and so can monsters.
+
+Motion is involuntary.  Additionally, players or monsters can be paralyzed
+so that they MUST move along a chain of movers.
+
+Multisquare monsters can be moved by movers, however enough space is required.
+
+Here is the meaning of various fields:
+
+
+attacktype:  if nonzero, paralyzes anyone it moves (so they are forced to
+	move along a chain).  Default values is 0
+
+maxsp:  the number of moves that the paralysis will rob the player of,
+        if unset, and attacktype is nonzero, this becomes 2.  By default,
+	it is zero.
+
+maxhp:  if nonzero, flying objects will be moved also (default 0)
+
+speed:  how fast a chain of these will move a player along (default -0.2)
+
+sp:  the direction--if unset (0) motion is random.
+
+level: if nonzero, players will be moved as well as monsters.  0 by default.
+
+lifesave:  whether it can be used up, meaning is opposite, it may go away
+if lifesave is set.  default is not set.
+
+hp:  if lifesave is set, the number of times (-1) it will move a player
+  (i.e., it will move someone hp+1 times before it vanishes.). default
+  0
+
+Note from Mark:  Player Movers and Directors are seperate objects, even
+though they look and act similar.  Directors only do spells/missiles,
+however, while player movers only do living creatures (depending on how it
+is set)
+
+------------------------------------------------------------------------------
+Magical Walls  --  walls that cast spells
+
+Magical walls are like other walls, except every now and then,
+they fire spells.
+
+Magical walls can contain any spell.  However, some spells do not operate
+very successfully in them.  The only way to know is to test the spell you
+want to use with a wall.
+
+Several types of magical walls are predefined for you in the archetypes, and
+can be found on a pick-map available in crossedit.
+
+If you want a magical wall which is not already defined, all you need to do
+is choose one of the predefined walls, and modify the 'dam' variable.  The
+'dam' variable contains the index of the spell.  See include/spellist.h to
+find your desired spell.
+
+Meaning of archetype fields:
+field:		Meaning:
+
+dam		spell the wall will cast
+
+sp		integer direction the wall will cast the spell.  If 0,
+		the wall will cast the spell in random direction.
+
+ac		armour class of wall
+
+exp		experience value of the wall
+
+speed		speed of the wall--you can fine-tune how fast the
+		wall will cast spells
+
+alive		1 means it can be attacked, 0 means not
+
+hp, maxhp	hit points
+
+immune		immunity OR mask
+
+type		for magical walls, this is 62
+
+other_arch	obsolete now, means nothing
+
+maxsp		has to do with turning walls.  The wall will turn
+		by 'maxsp' every time it fires, changing face.
+		To make a wall turn, it is sufficient to set this
+		to 1.  Setting it to 8 or any multiple thereof is
+		an exercise in futility.
+
+level           The level the spell will cast spells at.  Level 1
+                walls will cast spells at minimal strength.  Level 100
+                walls will cast deadly spells.
+
+
+------------------------------------------------------------------------------
+Containers:
+
+container <xxx>         :  the maximum weight the container can hold
+			  (stored internally in weight_limit)
+
+Str <xx>                :  reduces the weight of the objects in the container
+                           0 == no reduction,   100 = weightless
+
+------------------------------------------------------------------------------
+Monsters:
+
+Pow: If the creature can cast spells, this is how many spell points
+are regenerated each move.
+
+Con: Monsters regenerate this many hit points each move.  This is each
+time the monster has a move (some for Pow).  So two monsters with the
+same Con can regenerate at different rates if their speeds are different.
+
+Wis: Determines how close a player needs to be before the creature wakes
+up.  This is done as a square, for reasons of speed.  Thus, if the wisdom is
+11, any player that moves within the 11x11 square of the player will wake
+the monster up.  If the player has stealth, the size of this square is
+reduced in half plus 1.
+
+maxsp:  Maximum spellpoints for monsters
+
+SPECIAL NOTE (IMPORTANT!!!):
+The fields protected, vulnerable, immune, armour, wc and dam can be
+set in map files to customize monsters.  However, if that monster can
+be equipped with items, and actually equips some, these values will
+get reset back to those in the clone archetype (normal values.)  Thus,
+if you want to put a wizard in that does dam 50, make sure can_use_armour,
+and can_use_weapon are set back to 0.  Otherwise, when items are equipped,
+all the above fields will be reset to standard values.
+------------------------------------------------------------------------------
+Mood Floors ("Brian Thomas" <thomas@astro.psu.edu>)
+
+last_sp field is used to determine what will happen to the monster
+when the floor is activated:
+
+        (based on value that last_sp takes):
+                0:  'furious'   Makes all monsters aggressive
+                1:  'angry'     As above but pets are unaffected
+                2:  'calm'      Makes all monsters unaggressive
+                3:  'sleep'     Puts all monsters to sleep
+                4:  'charm'     Makes monster into a pet of person
+                                who triggers the square. This setting
+                                is not enabled for continous operation
+
+------------------------------------------------------------------------------
+Altars (and other objects that take sacrifices):
+
+Note: This is not quite complete documentation, but is correct as far
+as it goes (0.92.1)
+
+slaying:  What the sacrifice must match.  It either matches the archetype
+name (internal value only), object name, or slaying field of object.
+"money" is a special case - in this case, an exact name is not needed, any
+types of money will match.
+
+food:  How many objects must be sacrificed.  If slaying is money, then the
+value of the money must be greater than the food value (ie, if food=200,
+then 200 sp, 20 gp, or 4 pp will all work.)  Note that this is stored
+in a 16 bit signed value - thus the maximum is 32767.
+
+msg:  What to print when the altar is activated.
+
+connected:  A link to another object to activate.
+
+sp: Spell number to cast when activated.
+
+level:  What level to cast the spell at.
+
+hp:  If set, use hp to match to that object type.
+
+Note:  For all sacrifice types, the number to activate the altar must be in
+one object.  Thus, in the above money example, 100 sp and 10 gp would not
+work.  Likewise, if the needed sacrifice was 2 swords, 1 normal sword and 1
++1 sword would not work, even though 2 of either one would.
+
+Quick summary of the different altars:
+
+------------------------------------------------------------------------------
+Triggers
+
+TRIGGERS are slightly different than normal buttons/pedestals/whatever in
+that they reset after a short amount of time.  Thus, they can be used to
+open a door for a short amount of time.  Triggers use stats.wc as
+a temporary storage value to note activation.
+
+TRIGGER_BUTTON: if weight on the button is greater than the weight value
+for the trigger, push a trigger.
+
+TRIGGER_PEDESTAL:  IF a matching object is on top of the pedestal, then trigger
+a trigger.
+
+TRIGGER_ALTAR: Takes a sacrifice, then pushes a trigger.
+
+TRIGGER (handle):  Pushes a trigger.
+
+Note:  At one time, there was a difference between triggers and buttons - they
+were considered different types for activation.  However, now they are all
+the same - a button can push a trigger, and vice versa.  And of course,
+triggers can activate other triggers, and the same for buttons.
+
+------------------------------------------------------------------------------
+PEDESTALS:
+
+ These are sort of combo buttons & altars.  If the pedestals race matches
+the slaying of an object on top (race of player matches any player), then
+push the connected objects.  By default, pedestals match players.  They
+differ from buttons in that specific objects activate them (vs an amount of
+weight.)  They are different from altars in that the object that
+activates them does not disappear.
+------------------------------------------------------------------------------
+Inventory checkers (64)
+
+Inventory checkers passively check the players inventory to see if it
+contains some object.  Thus, you can make portals which you can't pass through
+if you contain certain objects.
+
+slaying:  Object name we are looking for.
+race: archetype name we are trying to match for.
+hp: match on object with that type value.
+last_heal: Remove object if found.
+last_sp: If set, than having that object is a match.  If 0, then not having
+  that object is a match.
+connected:  Value to to push.
+no_pass: If set, you can only pass through that space if you be allowed to
+  (depending on last_sp determines if having/not having is the match
+  criteria.)  if no_pass is 0 (default), then the inventory only acts as
+  a trigger/button.
+
+General usage notes:  Putting a check_inventory space in front of a gate with
+another on the other side works reasonably well as a control mechanism.  Note,
+however, that other people may still be able to slip by.  To get around this,
+use the no_pass to 1, and put it in the space you want to control (probably
+makes sense to put a fake door or other object there to make it a little more
+obvious what is going on.)
+------------------------------------------------------------------------------
+
+DETECTOR:  This object samples the square its in, and if it finds an object
+named in the slaying field, it toggles its connected value.  Detectors are a
+lot like pedestals - the only really difference is that they sample the
+space periodically, where as pedestals will get triggered the instant
+something is dropped.  The use for pedestals is to add some indeterminate
+time delay (indeterminate since you can never be sure at what point in its
+timing the player will actually drop something on the detector.)  Personally,
+I don't see much if any use for detectors.
+
+slaying   name of the thing the detector is to look for
+speed     time between samples
+connected connected value of detector
+sp        1 if detection sets buttons,
+          -1 if detection unsets buttons
+
+
+------------------------------------------------------------------------------
+NOTE ABOUT ALL CONNECTED ITEMS:
+
+ Whenever an object that is connected gets activated, all other objects
+with the same connected tag also gets pushed.  For some objects
+(pedestals, inventory checkers) this is likely to be meaningless.  However,
+if something like an altar is pushed in this fashion, it will no longer
+be usuable (only take one sacrifice, and being activated in this fashion
+makes it so that it looks to have been activated.)
+
+ One trick for connected objects that you want activated once:  Set your
+initial connects to a set (or multiple sets) of iron spikes that are in
+a 2x1 enclosed area.  On top of the spikes, put a boulder, and on the
+other space, put a large button that is then connected to whatever object.
+Thus, when the spikes are activated, they push the boulder to the other
+space, that then activates whatever is desired.
+
+------------------------------------------------------------------------------
+Signs:
+
+msg: what to print when applied.
+food: how many times the sign can be read.
+last_eat: how many times the sign has been read (only used internally.)
+
+If food is zero, there is no limit on how many times the sign can be read.
+
+------------------------------------------------------------------------------
+Flags & specifications: (usage: flag value)
+
+Note: the flags are case sensitive.
+G = generator. O = object.
+
+Note (961129):  These notes look correct as far as they go.  However,
+oftentimes, the real effect in game terms might be more complicated than
+list here.  As an example:  Exp value is just base - it will be further modified
+based on stats, levels, and potentially skills.
+
+Flag syntax             Value
+===========             =====
+Object  <name>          name of O, internal refs only.
+name    <name>          name of O as seen in the game.
+race    <name>          race of O, internal.
+slaying <name>          Those O's with this race receives 2x damage.
+
+other_arch <other obj>  which other O this G generates.
+More                    use between linked object defs.
+
+anim
+ .                      which bitmaps to use in animation of the O.
+ .                      If TEAR_DOWN flag is set, this contains the different
+ .                      stages of being destroyed.
+face name		Name of the face (ie, food.111)
+ .
+mina
+end                     terminates definition of this O.
+
+last_heal <no>          Internal use (for regaining hit-points)
+last_sp   <no>          Internal use (for regaining spell-points)
+last_eat  <no>          Internal use (for consuming food)
+
+speed     <no>          speed of O.  A negative number means that speed_left
+                        will be randomized when the object is loaded.
+speed_left <no>         speed of O remaining, internal.
+slow_move <no>          Slow-down factor for player walking on this O.
+face <bmap no>           bitmap first drawn for O.
+Str,Dex,Con,
+Wis,Cha,Int <no>        default ability for O.
+hp,maxhp,sp,maxsp <no>  default value for O hitpoints, spellpoints.
+maxsp                   In main.c:fire() which arrowtype to use
+                        Number equal to to the arrows type definition.
+
+exp <no>                Xp gained for killing O.
+food <no>               nutrition value for O. *DANGEROUS* as it's also
+                        used to contain internal values for non-edible
+                        objects. This should be changed in future.
+dam,wc,ac <no>          default damage, weaponclass, armorclass. 
+                        dam 0 gives a 'friendly' monster ;)
+wc                      main.c:move_gate(). Is used by gates to indicate in 
+                        which position they are.
+x,y <no>                relative coords for bmap when using large objects.
+                        x=y=0 is default, x=1 is second bmap in first row etc.
+nrof <no>               No. of O:s.  0 means that objects of this type
+                        are not to be joined/split (it's a lone object).
+level <no>              O:s level.
+direction               In which direction (1=north, 8=north-west) this O is
+                        moving (flying).  Simple schematic of the dirs:
+				812
+				7-3
+				654
+
+type <no>               the object as defined in 'defines.h'
+material <no>           the sum of materials in this O. (see materials.)
+value <no>              the value for this O.
+weight <no>             the weight for this O.
+carrying                sum of the weight of objects within this object.
+
+immune <no>             attack immunity for this O. (no dam) (see attacks)
+protected <no>          protection for this O. (1/2 dam) (weaker than immunity)
+attacktype <no>         type of attack from O. (see attacks)
+vulnerable <no>         special vulnerability of O. (2x dam) (see attacks)
+
+invisible <1>           set if O is invisible.
+magic <no>              magic modifier of O. (bracers +3 has magic 3)
+state                   internal.  Used when animating the object
+alive <1>               set if O is alive (can be attacked).
+applied                 set if object is readied/worn/etc.
+unpaid                  set if object is unpaid (internal)
+need_an <1>             object must be prepended with "an" instead of "a".
+need_ie <1>             In plural, object must be appended by "ie"
+                        instead of "y"
+
+no_pick <1>             set if O can't be taken.
+no_pass <1>             set if O can't be passed. (eg, a closed door)
+walk_on <1>             O is applied by anything walking onto it.
+walk_off <1>            O is applied by anything walking off it.
+fly_on <1>              O is applied by anything flying onto it
+fly_off <1>             O is applied by anything flying off it.
+is_animated <1>         set if O is animated.
+
+flying <1>              set if O is flying (used in fly_on/fly_off).
+monster <1>             set if O is a monster.
+friendly                Not used yet.
+generator <1>           set if O is a generator.
+auto_apply <1>          O is applied when it is loaded (for instance, some
+                        chests open automatically when the map is loaded)
+treasure <1>            not used yet.
+
+apply_once <1>          not used yet
+see_invisible <1>       set if O can see invisible player.
+can_roll <1>            set if O can be rolled.
+is_turnable <1>         set if O can be turned 'automagically'
+
+is_used_up <1>          bizarre. O is used up after created, eg an explosion.
+identified <1>          true if the item has been identified.
+reflecting <1>          set if O is reflective.
+changing <1>            set if O will change appearance.
+splitting <1>           set if O will divide.
+hitback <1>             set if O hits when being hit.
+
+blocksview <1>          set if O blocks line of sight.
+undead <1>              set if O is undead.
+scared <1>              internal (O is running away from players right now)
+unaggressive <1>        internal (not used yet)
+
+color_fg <no>           foreground color of O. Remember to set face/anim first!
+color_bg <no>           background -"-         - "" -
+reflect_missile <1>     set if O throws back missiles.
+reflect_spell <1>       set if O throws back spells (some).
+no_magic <1>            set if O totally resists magic (*use with care*)
+
+tear_down <1>           set if O can be torn down (using animations and hp).
+run_away <no %>         percentile of hp left which causes monster to flee.
+
+pass_thru <1>           set if O can be passed thru by objects <below>.
+can_pass_thru <1>       set if O can pass thru objects <above>
+pick_up <value>         Which items monster will pick up (see pickup (above))
+
+
+
+
+
+HOW TO CREATE NEW ARCHETYPES AND BITMAPS:
+
+ 0) Figure out which directory/category the object will belong to.  This
+    will determine the appropriate location for it inside the 'arch'
+    directory.  For objects with many animations or that are very large,
+    you may want to make a new subdirectory.
+ 1) create a bitmap.  It must be dividable by 24 in both height and width.
+ 2) create additional bitmaps if you want animation.
+ 3) split the bitmaps up into 24x24 bitmaps, if your bitmaps are larger.
+    (you can use the script "splitxbm" which is included below).
+ 4) If possible, also create an X Pixmap file for each bitmap.  The
+    name of each XPM file is the same as the bitmap file, with .xpm
+    appended.
+ 5) Create an archetype entry.  The file should be called
+    object.arc, where object is whatever the new object is.
+    This is by far the most complicated step.  First read "crossfire.doc" for
+    an introduction on how to create archetypes.
+    Look at other similary archetypes to see how they have been done.
+    If you only made one 24x24 bitmap, you will only need one archetype, but
+    if you made a larger bitmap which is cut down to several 24x24 bitmaps,
+    you will need to use "linked" archetypes.  How to do this is not
+    documented yet, but try to study the other linked archetypes.
+    If you have several bitmaps that should be animated, use the
+    "anim" feature described in "crossfire.doc".
+
+TREASURES:
+==========
+
+The treasures are kept in LIBDIR/treasures.  Their format is:
+
+treasure <name>
+  <item>
+  more
+  <item>
+  end
+
+Also, 'treasure' above can instead be 'treasureone'.  This means
+that only 1 item on that list will be generated.  The chance for
+all objects on that list are summed together, and one is then generated.
+
+And the format for an item is:
+
+  arch <name>
+  nrof <n (random 1 to n items generated)>
+  magic <max-magic>
+  chance <1-100%>
+  yes
+    <item>
+  no
+    <item>
+  end (or "more", if this is not the last element)
+
+If "magic" or "nrof" is omitted, it is set to 0.
+If "chance" is ommitted, it is set to 100%.
+"yes" tells what can be generated if this item was generated.
+"no" tells what can be generated if this item was not generated.
+"yes" and "no" can of course be omitted.
+
+Note: the 'no' and 'yes' fields are meaningless in treasureone
+treasurelists.
+
+Also, instead of an item, a list to transfer to can be used instead.
+The format is the same as for an object, but instead 'list <list>' is
+used instead of 'arch <name>'.
+
+For list transitions, the chance, yes and no fields have the
+same meaning.  'magic' is used to determine the difficulty required
+to transfer to the new list.
+
+If the list is of type 'treasureone', and a list transition fails,
+what happens next is determined by the 'nrof' field.  If it is zero,
+no object is generated.  If 'nrof' is one, than another attempt is
+made to generate an item (or list transition) from that treasurelist.  There
+is a maximum number of attempts that can be made.
+
+Also, a reserved list name of 'NONE' is allowed.  This means that no
+item should be generated (of relevence only on treasureone lists.)
+
+To use such a treasure, just put "randomitem <name>" into any
+archetype in the archetype-file.  Random treasure will then be generated
+whenever such a monster is generated by generator, or when a map
+containing such <monsters> is loaded for the first time.
+
+------------------------------------------------------------------------------
+NPC's and their life:
+=====================
+
+An NPC can have any combination of the following programs (flags):
+
+FLAGS: (They are checked in the following order:)
+  - sleep               (will stand still until woken)
+  - scared              (will run away)
+  - random_movement     (move randomly)
+  - friendly            (will attack enemies of the nearest player)
+  - unaggressive        (don't attack until attacked)
+  - stand_still         (don't ever move)
+
+sleep + (any)           = sleep until woken, then do any of the other things...
+neutral + random_movement = move randomly around all the time.
+neutral (alone)         = stand still until attacked, then attack and move.
+stand_still + (any)     = do anything except moveing
+
+In addition it can have run_away set to which percentage of full
+hit-points the npc will run away at.
+
+And then there is the NPC features made by Karl Holland:
+
+Set the variable attack_type to one of the below (cut from define.h):
+/*****************************************************************************/
+/* Monster Movements added by kholland@sunlab.cit.cornell.edu                 /
+/*****************************************************************************/
+/* if your monsters start acting wierd, mail me                              */
+/*****************************************************************************/
+/* the following definitions are for the attack_movement variable in monsters */
+/* if the attack_variable movement is left out of the monster archetype, or is*/
+/* set to zero                                                                */
+/* the standard mode of movement from previous versions of crossfire will be  */
+/* used. the upper four bits of movement data are not in effect when the monst*/
+/* er has an enemy. these should only be used for non agressive monsters.     */
+/* to program a monsters movement add the attack movement numbers to the movem*/
+/* ment numbers example a monster that moves in a circle until 
+                   /* attack from a distance - good for missile users only */
+#define RUNATT  2  /* run but attack if player catches up to object        */
+#define HITRUN  3  /* run to then hit player then run away cyclicly        */
+#define WAITATT 4  /* wait for player to approach then hit, move if hit    */
+#define RUSH    5  /* Rush toward player blindly, similiar to dumb monster */
+#define ALLRUN  6  /* always run never attack good for sim. of weak player */
+#define DISTHIT 7  /* attack from a distance if hit as recommended by Frank*/
+#define WAIT2   8  /* monster does not try to move towards player if far   */
+                   /* maintains comfortable distance                       */
+#define PETMOVE 16 /* if the upper four bits of move_type / attack_movement*/
+                   /* are set to this number, the monster follows a player */
+                   /* until the owner calls it back or off                 */
+                   /* player followed denoted by 0b->owner                 */
+                   /* the monster will try to attack whatever the player is*/
+                   /* attacking, and will continue to do so until the owner*/
+                   /* calls off the monster - a key command will be        */
+                   /* inserted to do so                                    */
+#define CIRCLE1 32 /* if the upper four bits of move_type / attack_movement*/
+                   /* are set to this number, the monster will move in a   */
+                   /* circle until it is attacked, or the enemy field is   */
+                   /* set, this is good for non-aggressive monsters and NPC*/ 
+#define CIRCLE2 48 /* same as above but a larger circle is used            */
+#define PACEH 64   /* The Monster will pace back and forth until attacked  */
+                   /* this is HORIZONTAL movement                          */
+#define PACEH2  80 /* the monster will pace as above but the length of the */
+                   /* pace area is longer and the monster stops before     */
+                   /* changing directions                                  */
+                   /* this is HORIZONTAL movement                          */
+#define RANDO   96 /* the monster will go in a random direction until      */
+                   /* it is stopped by an obstacle, then it chooses another*/
+                   /* direction.                                           */
+#define RANDO2 112 /* constantly move in a different random direction      */
+#define PACEV 128  /* The Monster will pace back and forth until attacked  */
+                   /* this is VERTICAL movement                            */
+#define PACEV2 144 /* the monster will pace as above but the length of the */
+                   /* pace area is longer and the monster stops before     */
+                   /* changing directions                                  */
+                   /* this is VERTICAL movement                            */
+
+The message structure in a monster can contain:
+@match <key>|<key>[...]
+  [text]
+[...]
+
+
+
+This identifies what the monster will say if talked to with a text
+which matches any keys.
+A key contaning '*' will match anything.
+
+An example of usage:
+@match hello|hi
+Welcome, good friend!
+@match bye
+Goodbye!
+@match *
+What did you say?
+
+Obviously this feature can be expanded extensively, so expect it
+to evolve till the next version.
+
+------------------------------------------------------------------------------
+Misc change description:
+
+ The following area describes various comments about various pieces of
+code.  In general, the information describes a basic idea of how things
+work.  The following may not really be necessary, but I figure that it is
+probably worth saving, and this seemed to be as good as place as any.
+
+LIGHTING CODE (by Brian Thomas):
+               - fast calculation of lighting. For players los (line- of
+		sight)is calculated from a linked list of nearby lights.
+		For monsters, no los is calculated, rather a modified
+		check_wakeup routine is used to see if they will
+		follow/attack players.  Monsters with can_see_in_dark act
+		normally in dark areas.
+                
+                - New attacktype -AT_BLIND. This is a pretty severe penalty
+		for monsters and players alike. Players cant see any square
+		but thier own, monsters can only attack/follow players who
+		are in an adjacent square. Need to make the monsters stumble
+		around when no player is near, rather than the current way
+		in which they stand around waiting to get "ace'd". Undead
+		cannot be blinded, nor should be effected by darkness. For
+		other monsters, if they have immunity to blindness or can
+		see invisible, they are uneffected by AT_BLIND attacks.
+
+                - New spells. Some magician, some clerical. They work, but
+		may need to be adjusted for playbalance. Normal spells
+		available include: "light", "darkness", "sunspear", "faery
+		fire" and "dark vision". All spells (but darkvision) work
+		(do something) whether the lighting code is used or not. 
+
+                - Modified archetypes and artifacts list to encompass changes
+		to the code from lighting. Also, some new archs instroduced,
+		namely "flint and steel" for lighting stuff on fire and
+		"torch" a source of light.
+                

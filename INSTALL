@@ -1,0 +1,169 @@
+Directions for installation:
+
+Note: Crossfire uses a great deal of floating point, and expects the syntax
+to be 'x.y'.  In some environments, the language may be dfferent, so that
+the format for floats is 'x,y' or something similar.  If this is the
+situation for you, you need to change your environment so that floats are in
+the 'x.y' format.
+
+1) You need to meet the following requirements:
+  A) 3 to 5 Megabytes of free disk space for object files (note that
+  uncompress map files will take a lot more)
+  B) A compiler that understands ANSI.
+
+  If you don't meet both these requirements, you will be unable to proceed
+  further.
+
+2) Run the 'configure' script.  You will need to supply a -prefix=path
+   for the program to install into unless you want the files in
+   /usr/games/crossfire.
+
+   By default, it will create a var, share, bin & man directory in the path
+   provided.  share, bin, and man can in theory be read-only, var needs
+   to be read/write.  There are many files in the share directory, so
+   I don't suggest it be shared with other programs.
+
+   The standard configure options can be given to specify a location
+   (--prefix=/path, --datadir=/path, --bindir, --localstatedir and --mandir).
+   are: --prefix=/usr/games/crossfire, --datadir=/usr/games/crossfire/share
+   --bindir=/usr/games/crossfire/bin, and --mandir=/usr/games/crossfire/man,
+   --localstatedir=/usr/games/crossfire/var
+
+   Note that the default bin and man directories are fairly non standard
+   and are usually not searched by the standard PATH and MANPATH
+   environmental variables.  It may be desirable to set these to a more
+   standard location.  There is no requirement that all the subdirectories
+   fall into the same overall directory structure (bin could be /usr/bin,
+   man could be /usr/local/man, datadir /usr/games/crossfire, and 
+   localstatedir could be /var/crossfire.
+
+   If you plan to run multiple crossfire servers, all directories except the
+   localstatedir can be shared between all the servers.  localstatedir
+   should be unique to each server.  This will cause each server to have
+   their own unique player files as well as highscore.  You can try using a
+   common localstatedir, but there is no guarantee it will work, and any
+   problems reported related to such a configuration are likely to be
+   ignored.
+
+   All file paths should start with '/'.  Don't use relative filepaths.
+
+   The configure step should create all the necesary makefiles.  Look
+   at the output and note any errors - if you get errors during the
+   configure stage, there is little point in going further
+
+3) Run 'make depend'.  This should prevent any inconsistent data and
+   cause proper remakes if you change the config.h file or re-run
+   configure.
+
+4) Edit include/config.h.
+   Most options should be fairly well commented.
+   The default config.h file should have pretty sane values, and you should
+   be able to use it unchanged.
+
+4a) Note that many of the perl programs assume that perl is located as
+  /usr/local/bin/perl - if it is someplace else, you will need to go through
+  and update the scripts (or probably easier is make a symlink in 
+  /usr/local/bin to where your perl is located.)  I don't believe any of
+  these scripts are run as the normal compilation & installation process,
+  so this is only a real problem if you plan to rebuild the archetypes.
+
+5) Compile the program:  type 'make'.  It should take a little while.  If
+   you get errors that abort the compile, copy them down (either using cut
+   and paste, or redirect the output of the compile to a file), and send
+   those to the bug alias (crossfire-bugs@ifi.uio.no), along with what
+   machine type & OS you are using.  Also, include the compile line with its
+   various options.  A message saying 'it failed to compile main.c' tells me
+   little, and I can not fix problems with that little detail.
+
+6) Install the program by running 'make install'
+
+7) You may want to set the uid or gid bit on the crossfire executable.
+   To do this, type either 'chmod u+s' or 'chmod g+s', with the filename
+   being the installed version of crossfire.  The highscore file and
+   player directory should have their permissions set appropriately.  This
+   is only needed if other people may be running the the executable.
+
+8) Crossfire requires maps installed into the directory specified by
+   --libdir (or the default).  Maps are a seperate distribution available on
+   the ftp server.  The maps can be unpacked directory into the location
+   specified by --libdir.  All the map files need to be readable by which
+   ever uid is running the server - if multiple people will be running
+   servers, the map permissions may need to get updated.
+
+9) You can compress/gzip all files in and below the LIBDIR.  Performance of
+   compressing various files may very.  Several files are only read during
+   startup, so compressing them will not affect game performance once running.
+
+10) It might be useful to edit "lib/motd" (MessageOfToDay) file.
+
+11) By default, the installation process assumes that only one user id
+    will actually be used to run the game, and directory and file permissions
+    are set as such.  If multiple users will run the game, permissions on
+    many files will need to be updated (lib/bookarch, lib/unique_items,
+    lib/players, lib/temp.maps, and perhaps other).
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+COMMON PROBLEMS:
+
+P) The server complains that ../lib/unique-items/??? does not exist, and
+the game crashes shortly there after.
+
+S) Just create the directory.  It should be created by the make install
+process, however, if installing by hand, it may be missing. 
+------------------------------------------------------------------------------
+P) It can't find the file stdarg.h, and thus the compile fails.
+
+S) If using gcc, stdarg.h should be installed as part of the normal
+installation (with fixincludes).  If it is missing, gcc was not installed
+correctly.
+
+It is also possible that you are using an old version of gcc that does not
+have stdarg as part of its include files.  Newer versions have this
+file.
+
+If not using gcc, stdarg.h should be provided by your vendor - if you lack
+this file, you are probably lacking an ANSI-C compiler.
+
+------------------------------------------------------------------------------
+
+P) I am using Openwindows (or perhaps other windowing system), and
+during the compiling of crossedit, it complains about it not being
+able to find some header files, like Xaw/Panner.h
+
+S) This is a problem in Openwindows 2, in which those header files
+are not included (I don't think the library is either).  The only solution
+is to upgrade to another windowing system (X11R5, X11R6, or Openwindows
+3).
+
+The other solution is just to not compile crossedit.  It is not needed
+to play the game, only to edit/create maps.  To do this, you remove
+the crossedit entry from the SUBDIRS line, and go back to stage
+3 of the make process (where you make all the Makefiles).
+
+------------------------------------------------------------------------------
+P) I can not save characters.
+
+S) 
+1) The player save directory was not created.  make install will create
+this directory, but if you did not use make install, this could be the
+problem.  You can create the directory by hand by doing
+'mkdir LIBDIR/players', where LIBDIR is the library directory
+that you set in crosssite.def
+
+2) The save directory's permissions are not set properly for the uid/gid
+that crossfire is running under.  Situtation that may have caused
+this is that 'mark' installed the program, but 'frank' is running
+the program, either at the shell prompt, or because the program
+has been chmod u+s with frank's id.
+
+------------------------------------------------------------------------------
+P) I have problems compiling on HP/UX systems.
+
+S) Use gcc - the standard cc with HP/UX apparantly will not compile
+crossfire correctly.
+
+------------------------------------------------------------------------------
+Other problems?  See the section REPORTING BUGS in the README file.  Follow
+all instructions there when submitting a bug report.  If you do not, and
+provide insufficient information for me to help out, I will likely just mail
+you back telling you to follow those instructions.

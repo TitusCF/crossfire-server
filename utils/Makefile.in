@@ -1,0 +1,49 @@
+
+FILES = Makefile.in add_throw.perl ad2c.script mktable.script \
+	config.sub config.guess \
+	 crossloop crossloop.pl flushlocks install-sh crossfire-loop.c
+
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+bindir = @bindir@
+
+INSTALL = @INSTALL@
+
+MKDIR = @MKDIR@
+SHELL = @BOURNE_SHELL@
+RM = @RM@
+
+all::
+
+depend::
+	$(DEPEND) $(DEPENDFLAGS) -- $(ALLDEFINES) $(DEPEND_DEFINES) -- $(SRCS)
+
+install:
+	@if [ ! -d $(bindir) ]; then \
+		$(MKDIR) -p $(bindir); \
+	fi
+	rm -f $(bindir)/flushlocks
+	sed s%xxxx%$(libdir)%g <flushlocks > $(bindir)/flushlocks
+	chmod 755 $(bindir)/flushlocks
+	rm -f $(bindir)/crossloop.pl
+	sed s%BINDIR%$(bindir)%g <crossloop.pl >$(bindir)/crossloop.pl
+	chmod 755 $(bindir)/crossloop.pl
+	rm -f $(C_BINDIR)/crossloop
+	sed s%BINDIR%$(bindir)%g <crossloop >$(bindir)/crossloop
+	chmod 755 $(bindir)/crossloop
+	$(INSTALL) $(INSTALLFLAGS) mktable.script $(bindir)/mktable
+	$(INSTALL) $(INSTALLFLAGS) add_throw.perl $(bindir)/add_throw
+
+depend::
+
+archive::
+	@if [ -d $(ARCHIVE)/utils ]; then set +x; \
+	else (set -x; $(MKDIR) $(ARCHIVE)/utils); fi
+	$(CP) $(FILES) $(ARCHIVE)/utils
+
+patchlist::
+	@echo $(FILES) > .patchlist
+
+clean::
+
+

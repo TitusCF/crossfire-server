@@ -1,0 +1,16 @@
+# BANFILE
+# A file which contains users or sites which are banned from playing.
+# wildcards can be used in the file.  Valid entries are put on seperate lines.
+# example entries:
+# "joeblow@*.*.abc.edu"   ban joeblow at the given site : note only works if
+#                         user is using a client, as telnet does not report
+#                         userid.
+# "*@*.*.abc.edu"         ban the entire site...works both with telnet and
+#                         client.
+#
+# Note - banning by user name should not be used - the client
+# (including the newclient) can easily be changed to use any
+# username.  Also, with the new client, numeric host id is
+# used (ie, 192.15.4.6).  So to ban sites, you need to find out their
+# numeric IP address - not hard, 'who reports this
+

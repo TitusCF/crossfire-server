@@ -1,0 +1,15 @@
+You use the cast command to
+set your range-weapon to the
+spell you want.  Example:
+'cast burning hands
+
+sets your RANGE weapon to
+'spell: burning hands'
+
+It is helpful to bind strings
+like 'cast burning hands'
+to keys.  see 'help bind'
+
+'help range 
+for more information on
+range weapons.

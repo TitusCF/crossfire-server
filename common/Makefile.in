@@ -1,0 +1,116 @@
+#
+# Makefile for crossfire 0.95.0 and beyond
+#
+# This file will eventually be replaced by a configure script.  But for
+# now, this simple makefile should do the job.
+#
+#   Copyright (C) 1992 Frank Tore Johansen
+#   Copyright (C) 1998 Mark Wedel
+#
+#   This program is free software; you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation; either version 2 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with this program; if not, write to the Free Software
+#   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+#
+#   The author can be reached via e-mail to mark@pyramid.com
+
+SHELL = @BOURNE_SHELL@
+
+VPATH = @srcdir@
+srcdir = @srcdir@
+
+SRCS = \
+	arch.c\
+	anim.c \
+	button.c\
+	exp.c\
+	friend.c\
+	glue.c\
+	holy.c\
+	info.c\
+	image.c \
+	init.c\
+	item.c\
+	links.c\
+	living.c\
+	loader.c\
+	logger.c\
+	los.c\
+	ltostr.c\
+	map.c\
+	object.c\
+	porting.c\
+	player.c\
+	re-cmp.c\
+	readable.c\
+	recipe.c\
+	shstr.c\
+	sqrt.c\
+	time.c\
+	treasure.c
+
+ALLFILES=loader.l $(SRCS) README Makefile.in
+
+OBJS = $(SRCS:.c=.o)
+
+ARFLAGS = cq
+
+AR = @AR@
+RM = @RM@
+
+RANLIB = @RANLIB@
+
+DEPEND = @DEPEND@
+FLEX = @LEX@
+
+CFLAGS = @CFLAGS@ $(EXTRA_CFLAGS)
+
+INCLUDES= $(EXTRA_INCLUDES) -I../include -I$(srcdir)/../include
+
+SED= @SED@
+
+libcross.a: $(OBJS)
+	$(RM) -f $@
+	$(AR) $(ARFLAGS) $@ $(OBJS)
+	$(RANLIB) $@
+
+depend:
+	$(DEPEND) $(DEPENDFLAGS) -- $(CFLAGS) $(INCLUDES) -- $(SRCS)
+
+# Nothing to install here
+install::
+
+
+proto:
+	cextract +Ap -P -o ../include/libproto.h.bak $(INCLUDES) \
+	-cpp-program="gcc -E -C" \
+	$(SRCS)
+	$(SED) -e "s/#if __STDC__/#ifdef __STDC__/" -e "s/__signed/signed/g" -e "/inline/d" -e "/YY_BUFFER/d" < ../include/libproto.h.bak > ../include/libproto.h
+	chmod 644 ../include/libproto.h
+	$(RM) -f ../include/libproto.h.bak
+
+archive:
+	if [ ! -d $(ARCHIVE)/common ]; then $(MKDIR) $(ARCHIVE)/common; fi
+	$(CP) $(ALLFILES) $(ARCHIVE)/common
+
+loader.c: loader.l
+	$(FLEX) -i -t loader.l > loader.c
+
+
+clean:
+	$(RM) -f $(OBJS)
+
+.c.o:
+	$(CC) $(CFLAGS) $(INCLUDES)  -c $*.c
+
+all:: libcross.a
+

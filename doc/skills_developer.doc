@@ -1,0 +1,429 @@
+
+
+	SKILLS/EXPERIENCE DOCUMENTATION for DEVELOPERS
+	----------------------------------------------
+
+	- Summary -
+
+	0. Introduction 
+
+	1. Sketch of system
+	   a. Initialization - how skills and experience are linked 
+
+	2. How to adjust skill parameters/links with experience objects
+	   a. legal values for experience category
+	   b. legal values for associated stats 
+
+	3. How to add new skills
+	   a. creation of new skill: outline of needed steps
+           b. important skills archetype values
+	   
+        4. How to reconfigure the experience categories 
+
+	5. Appendices
+	   a. glossary of terminology
+	   b. road map of likely routine calls in exp/skills code
+	   c. Known Bugs/Todo list
+
+
+
+	0. Introduction
+	---------------
+
+	When crossfire is compiled with the ALLOW_SKILLS flag defined 
+	the new skills/experience system is enabled. This system is coded 
+	with flexibility in mind so that the user may reconfigure the 
+	skills/exp code as they desire in a fairly easy way.  In this 
+	document, a discussion of issues of interest to developers is 
+	presented.
+
+	Corrections or comments on how to improve this document are 
+	welcome. 
+			
+				-b.t. (thomas@astro.psu.edu) 
+				8/30/95
+
+
+
+	1. Sketch of system
+	-------------------
+
+	In the skills/experience code, players gain experience for the 
+	activities which they perform in the game ("You are what you do"). 
+	The activities a player may engage in are controlled by the skills 
+	they possess. All players start with a basic set of skills which 
+	they may expand through adventuring. While monsters do not gain
+	experience from the use of skills, they may use any skills 
+	which exist in their inventory if they have the can_use_skill 
+	flag set.
+
+	In the code, both experience and skills are objects which exist 
+	in the player/monster inventory. Both NPC/monsters and players
+	use the same skill archetypes. Not all skills are however enabled
+	for monster use. Check the Skills_players.doc for available 
+	NPC skills. 
+
+
+	   a. Initialization - how skills and experience are linked 
+
+	During initialization, the code binds skills and experience 
+	objects according to their shared stats (see link_skills_to_exp() 
+	in skill_util.c). The skills[] array (in skillist.h) is used by 
+	the code to initialize the default parameters of the skills 
+	objects. After initialization, the code realigns the bindings and 
+	skill parameters according to any entries in the skill_params file 
+	(see below, and read_skill_param() in skill_util.c). If no skill 
+	is entered in the skill_params file, the default binding is used. 
+
+
+
+	2. How to adjust skill parameters/links with experience objects
+	---------------------------------------------------------------
+
+	Alteration of the skill_params file (in the lib directory) will 
+	change the default skills parameters (without recompiling the 
+	game). Each entry has the following format (for example):
+
+	<skill name>
+	int int  int float  int int int
+
+	An example entry:
+
+	set traps
+	2 5   3 2.0   5 1 99
+
+	Skill name is *not* changeable by the skill_params file, in fact
+	it appears in the file only to identify the skill for which 
+	the skill_params file will alter the parameters.  In order, the 
+	parameters which are changeable are the numerical values below
+	the skill name:
+
+	-associated experience category, see below for value (int)  
+	-time to use the skill, in ticks (int)
+	-base experience to award for successful use (int) 
+	-level experience modifier (see calc_skill_exp()) (float)	
+	-primary stat of skill, see below (int) 
+	-secondary stat of skill, see below (int) 
+	-tertiary stat of skill, see below (int) 
+	
+
+	   a. legal values for experience category 
+
+	Numerical values of the experience categories is shown by using 
+	the 'crossfire -m5' command. Release code has "7" experience 
+	objects. A dump of the release code shows:
+
+  exper_catgry 	 str 	 dex 	 con 	 wis 	 cha 	 int 	 pow 
+  0-agility 	 0 	 1 	 0 	 0 	 0 	 0 	 0 
+  1-personality  0 	 0 	 0 	 0 	 1 	 0 	 0 
+  2-mental 	 0 	 0 	 0 	 0 	 0 	 1 	 0 
+  3-physique 	 1 	 0 	 1 	 0 	 0 	 0 	 0 
+  4-magic 	 0 	 0 	 0 	 0 	 0 	 0 	 1 
+  5-wisdom 	 0 	 0 	 0 	 1 	 0 	 0 	 0 
+
+	For example, the value for the "agility" experience object is 
+	'0'. The seventh experience category (not listed) is the "none" 
+	category.  It always has the value of the last listed experience 
+	category plus one (in the above case, the "none" experience 
+	category is value '6'). In the skill_params file, setting the 
+	experience category to the value for the "none" experience object 
+	will make that skill a miscellaneous skill. 
+ 
+
+	   b. legal values for associated stats 
+
+	The associated stats of a skill may be altered by inputing the
+	value of the new stat (as given in living.h) : 
+
+	 #define STR 0
+	 #define DEX 1
+	 #define CON 2
+	 #define WIS 3
+	 #define CHA 4
+	 #define INT 5
+	 #define POW 6
+	 #define NO_STAT 99    
+
+	In the above example (set traps), the associated skills are set
+	to:
+
+	-primary stat => Intelligence
+	-secondary stat => Dexterity 
+	-tertiary stat => no stat
+
+
+
+	3. How to add new skills
+	-------------------------
+
+	Adding a new skill to CF is not overly difficult, it is little 
+	more difficult than adding new archetypes and a spell to the game. 
+
+
+           a. creation of new skill: outline of needed steps
+
+	A number of steps are required to create a new skill. Below I 
+	outline the steps need to add a learned skill to the game. Note 
+	that in order to add a new skill you will need to acquire the 
+	appropriate CF archetype tarfile (crossfire-0.??.?.arch.tar.gz).  
+
+	1) Edit a new skills archetype. See below for appropriate para-
+	   meters.  If you desire the skill to be a skill tool, edit a 
+	   "face" for the new skill. If you want to have the skill to be 
+	   learned via a skill scroll, edit a skillscroll for the skill. 
+	   Place the new archetype(s) in the lib/arch/skills directory. 
+	   Remember to name your new skill appropriately (ie skill_<new 
+	   skill name>). 
+
+	2) Edit include files. Add a table entry for the skill in 
+	   skillist.h. Add an index entry for the skill to skills.h. Bump 
+	   up the value of NROFSKILLS in define.h by one.
+
+	3) Edit skill_util.c. Add an entry for the skill in do_skill() (so 
+	   that it may be used as a "long-range attack"). If the new skill 
+	   is a hth attack take a look at the attack_hth_skills[] table in 
+	   do_skill_attack() -- where does the hth attack rank? The most 
+	   useful attacks should occur earlier in the table. 
+
+	4) Create the skill code. If you created a hth attack, you probably 
+	   can get away with just using attack_hth. For other skills, put
+	   the skill code in skills.c. If your new skill is to be an 
+	   "associated" skill, then make sure that it returns the value of 
+	   calc_skill_exp(). 
+
+	5) Edit treasures/artifacts file as needed (esp. if your skill will
+	   become one of the starting skills, or will show up in shops.) 
+
+
+           b. important skills archetype values
+
+        Several parameters must be present/set correctly in the skill 
+	archetypes or the new skill will not function properly. 
+
+	All skills must have: 
+	  - "type" set to the value of SKILL in define.h  
+	  - value of "sp" must equal table entry in skills.h
+
+	Learned skills must have:
+	  - "invisible" and "no_drop" set to "1"
+
+	Skill tools must have:
+	  - "face" set to archetype that displays the face. 
+	  - "weight" and "value" set to reasonable values.
+ 
+	Skill scrolls must have:
+	  - "type" set to value of SKILLSCROLL in define.h
+	  - "identified", "material", "nrof" set to "1" 
+	  - "weight" and "value" set to reasonable values.
+ 	  - "slaying" value set to the *archetype* name of the skill that 
+		will be learned from reading the scroll.
+ 
+	Skills that will do damage (ie hth attacks) require:
+	  - value of "dam" and "last_sp" set reasonably.
+
+	There are in addition a number of other parameters that may be set
+	in skills (and have effect in the game). Take a look at 
+	fix_player() in common/living.c and skill archs for more info.
+
+ 
+
+        4. How to reconfigure the experience categories 
+	-----------------------------------------------
+
+	The experience system is fairly flexible in the number of allowed
+	kinds of experience. As each type of experience requires at least
+	1 unique stat, the maximum number of experience objects is 8 (incl.
+	the "none" category). Because the code in fix_player() currently 
+	requires that the "cleric experience object" (used for advancing
+	grace) and the "wizard experience object" (use of advancing the 
+	amount of mana) are required to be different, the minimum number of 
+	experience objects is 3 (incl. the "none" experience object).
+	Release skill/exp code has 7 experience objects enabled: physique
+	(STR,CON), mental (INT), magic (POW), agility (DEX), wisdom (WIS),
+	personality (CHA), and none (NULL). 
+
+	To reconfigure the experience system, all that is needed is to edit
+	the stat values of the experience archetypes in lib/arch/skills. 
+
+	There are a couple of things that should be watched out for when 
+	reconfiguring:
+
+		1- you will need to set once each of the stats in the 
+		experience objects. (ex Cha 1 must occur in one of the exp 
+		archetypes). 
+
+		2- No 2 experience archs may both have the same stat set. 
+		(ex. "Str 1" set in two or more exp. archs is bad news)
+
+		3- "Pow 1" and "Wis 1" must occur in different experience 
+		archetypes. (Remember the requirement that wiz and cleric
+		experience objects have to be different).
+
+
+	Compile the new archs, and install the new fonts. Take a look at your
+	new alignment by using the 'crossfire -m5' command. Make sure all
+	associated skills have an experience category.(!)
+
+
+
+	5. Appendices
+	-------------
+
+
+	   a. glossary of terminology
+
+		associated skill  -- This is the term for a skill which can 
+				     generate experience when used. 
+				     Associated skills are linked (or 
+				     'associated') with one kind of 
+				     experience category.
+
+		associated stat	  -- this is one of the stats associated with
+				     a particular skill (see skills[] array). 
+				     The code uses these during initialization 
+			      	     to determine the default bindings of 
+				     skills to experience categories, and 
+				     during play to know which player stats 
+				     will alter the experience gained by using 
+				     a particular skill.
+
+		experience category  This is one type of experience that it is 
+				     possible for players to accumulate in the
+				     game. 
+
+		experience object -- This is an invisible object. Each 
+				     experience object represents a different 
+				     "experience category".  Experience of a 
+				     player in a particular experience 
+				     category is recorded in a unique 
+				     experience object which the player has 
+				     in their inventory.
+	
+		learned skill	  -- This is a skill which is represented by 
+				     an invisible skill object in the player 
+				     inventory.
+
+		miscellaneous skill  This skill does not generate experience 
+				     when it is used. Skill objects which 
+				     represent miscellaneous skills are un-
+				     linked (not 'associated') to any
+				     experience category. 
+ 
+		skill object	  -- This may be either an invisible or 
+				     visible object carried in the player or
+				     monster inventory. If the skill object is 
+				     visible is is called a "tool" or "skill 
+				     tool". If the skill object is invisible 
+				     it is called a "learned skill". Players 
+				     may pickup/drop skill tools. Each skill 
+				     object represents a unique skill.  Each 
+				     skill object in the player inventory 
+				     which represents an "associated skill" 
+				     is linked to a unique experience object 
+				     in the player inventory. Skill objects 
+				     which represent "miscellaneous" skills 
+				     remain unlinked to any experience 
+				     object.
+
+		skill tool	  -- This is a skill which is represented by 
+				     a visible object in the player 
+				     inventory. This object may be picked up
+				     or dropped by the player.	
+
+
+	   b. road map of likely routine calls in exp/skills code
+
+	In "road maps", horizontal branches are called first, then vertical.
+	Note that not all routines may always be called (nor are all 
+	functions shown).
+
+	Player using a readied skill 
+	----------------------------
+	fire() -> check_skill_to_fire() -> change_skill() -> chan_abil() 
+	   |
+	   v
+ 	do_skill() -> "skill fctn" -> calc_skill_exp() -> stat_mod_exp() 
+	    |			             
+  	    v			             
+	add_exp()
+		  
+	Player changing skill via "use_skill" command 
+	---------------------------------------------
+	change_skill() -> chan_abil() 
+
+	Player using a magic item (rod, wand, horn)
+	-------------------------------------------
+	
+	fire() -> check_skill_to_fire() -> change_skill()
+	   |
+	   v
+	cast_spell()
+	
+	Player running into a creature (and makes attack)
+	-------------------------------------------------
+
+	move_player_attack() 
+		|
+		v
+	skill_attack() -> do_skill_attack() -> hth_damage() 
+				 |
+				 v
+			    attack_ob() -> add_exp() 
+
+	Player applies a skill tool
+	---------------------------
+
+	apply() -> change_skill() -> chan_abil()
+
+	Player readies an item that requires a skill to use (melee weapon,
+	missile weapon, wand, rod, horn)
+	-----------------------------------------------------------------
+
+	apply() or apply_special() -> check_skill_to_apply()
+		|
+		v
+	   change_skill() -> chan_abil()
+
+
+
+	   c. Known Bugs/Todo list (some of which concerned w/ 2 magic
+	system) 
+
+	A minor unusual bugs I know about:
+
+	- kills made by summoned pet monsters send experience to the 
+	player's correct experience object (and modified correctly
+	because set_owner() is now working right). BUT-If a summoned monster
+	should ever pickup a skill tool, and apply it, then exp from 
+	that monster will no longer go to the player. I suppose I could
+	fix this by preventing all "owned" creatures from using skill
+	tools.
+
+	- if a skill name is misspelled in skill_params file the program 
+	will fail to load (heh, crash that is :). This should have been 
+	taken care of in lookup_skill_by_name() but it apparently isnt. 
+
+
+	Several things might make the exp/skills code better.
+
+	== add a spell patch for the cause wounds spells (right now its
+	   PATH_NULL).
+
+	== creation of a "throwing skill" - allow players and NPC's to use
+
+	== creation of a "set traps skill" - this would allow players to 
+	   "create" traps anywhere as long as they have the skill and traps
+	   components (new archs) which should be able to acquire from 
+	   disarming traps and find in "specialty" shops for sale.
+ 
+	== more priest spells (that kill stuff, gain priest exp).
+
+	== creation of a invisible "skills container" for player skills.
+	   currently the code just whips through the entire non-container
+	   inventory of the player to search for skills (cf change_skill()
+	   routine in skill_util.c). This seems to be kinda inefficient when
+	   a player is carrying around massive amounts of crap.
+
+	== Add exotic weapons attacks in attack_melee_weapon(). For example,
+	   a 'disarming' attack for player using Sai.
+	

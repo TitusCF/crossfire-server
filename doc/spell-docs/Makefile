@@ -1,0 +1,21 @@
+# Generated automatically from Makefile.in by configure.
+
+DOCFILES = README prayer-list.ps spell-info.ps spell-list.ps \
+	spell-summary.ps tome-of-magic.ps prayer-list.txt spell-info.txt \
+	spell-summary.ps tome-of-magic.txt Makefile.in
+
+install::
+
+depend::
+
+clean::
+
+all::
+
+archive::
+	@if [ ! -d $(ARCHIVE)/doc/spell-docs ]; then $(MKDIR) $(ARCHIVE)/doc/spell-docs ; fi
+	$(CP) Makefile $(DOCFILES) $(ARCHIVE)/doc/spell-docs
+
+patchlist::
+	echo $(DOCFILES) > .patchlist
+

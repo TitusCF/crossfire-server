@@ -1,0 +1,22 @@
+/* 'recipe' and 'recipelist' are used by the alchemy code */
+typedef struct recipestruct {
+        char *title;      /* distinguishing name of product */
+        char *arch_name;   /* the archetype of the final product made */
+        int chance;       /* chance that recipe for this item will appear
+                           * in an alchemical grimore */
+	int index;	  /* an index value derived from formula ingredients */
+	int transmute;	  /* if defined, one of the formula ingredients is
+			   * used as the basis for the product object */
+	int yield;        /*  The maximum number of items produced by the recipe */
+        linked_char *ingred;    /* comma delimited list of ingredients */
+        struct recipestruct *next;
+} recipe;
+
+typedef struct recipeliststruct {
+        int total_chance;
+        int number;			/* number of recipes in this list */ 
+        struct recipestruct *items;	/* pointer to first recipe in this list */ 
+	struct recipeliststruct *next; 	/* pointer to next recipe list */ 
+} recipelist;
+
+

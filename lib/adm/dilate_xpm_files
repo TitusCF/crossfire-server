@@ -1,0 +1,81 @@
+#!/usr/local/bin/perl
+# -*- Perl -*-
+# usage: dilate [-t<number>] file1 [..filen]
+# 
+# filenames are colored crossfire xpm-files.
+# -t option sets the minimum amount of pixels around needed to set the pixel.
+#    default is 1.
+
+@dirx = ( 0, 1, 1, 1, 0, -1, -1, -1);
+@diry = ( -1, -1, 0, 1, 1, 1, 0, -1);
+
+$th = 1;
+if ($ARGV[0] =~ /-t(.*)/) {    
+    shift;    
+    $th = $1 ? $1 : shift;
+}
+
+print "$th\n";
+
+while ($face = shift) {
+    print ">$face<\n";
+    open (FA, "<$face") || warn "aargh";
+    open (OR, ">pah") || die "aargh";
+    $changed = 0;
+    @m = ();
+    while ($_ = <FA>) {
+        if (/"(\d+)\s+(\d+)\s+(\d+)\s+(\d+)"/) {
+            $cols = $3 + 1;
+            print OR "\"$1 $2 $cols $4\",\n";
+            next;
+        }
+        if (/\/\*\s*colors\s*\*\//) {
+            print OR "/* colors */\n";
+            print OR "\"       s None  c None\",\n";
+            $count = 0;
+            while (($_ = <FA>) && /"(.) (.) (.*)",/) {
+                print "$1 $2 $3\n";
+                $colors[$count++] = $1;
+                print OR $_;
+            }
+        }
+        if (/\/\*\s*pixels\s*\*\//) {
+            print OR "/* pixels */\n";
+            $count = 0;
+            while (($_ = <FA>) && /"(........................)"(.*)/) { 
+                $save[$count] = $2;
+                print "$1, ***$save[$count]***\n";
+                $arr[$count++] = $1;
+                push (@m, split ('', $1));
+                last if ($2 ne ",");
+            }
+            die "illegal count $count" if ($count != 24);
+            foreach $y (0..23) {
+                $row = "";
+                foreach $x (0..23) {                
+                    if ($m[$x + $y * 24] eq $colors[0]) {
+                        $row .= $colors[0];
+                        next;
+                    }
+                    $sum = 0;
+                    foreach $i (0..7) {
+                        $nx = $x + $dirx[$i];
+                        $ny = $y + $diry[$i];
+                        $sum++ if ($nx >= 0 && $nx < 24 && $ny >= 0 && $ny < 24 &&
+                                   $m[$nx + $ny * 24] eq $colors[0]);
+                    }
+                    #print "$x $y $sum\n";
+                    $row .= ($sum >= $th) ? $colors[1] : " ";
+                }
+                print ">$row<\n";
+                print OR "\"$row\"$save[$y]\n";
+            }
+            next;
+        }
+        print OR $_;
+    }
+    close (FA);
+    close (OR);
+    unlink ("$face");
+    rename ("pah", "$face") || die "rename";
+}

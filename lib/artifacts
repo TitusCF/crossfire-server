@@ -1,0 +1,2887 @@
+# List of artifact modifiers 
+# 
+# Note:  
+#	Attributes (str, dex, etc) are modifiers to the previous 
+#	value - positive will increase it by that much, negative 
+#	will decrease it.  
+# 
+#	cursed and damned flags will make the object cursed/damned.  
+#	no way to remove cursed/damnedness right now.  If the 
+#	object is cursed, the present magic value will become
+#	negative (ie, a +1 sword will become -1 cursed.)  
+# 
+#	immune, protected, vulnerable, path_attuned, path_denied, 
+#	path_repelled values are OR'd to existing values.  
+# 
+#	luck,exp, wc and ac  increase the value by that amount (which means 
+#	a negative value will decrease the value)
+# 
+#	lifesave, reflect_spell, reflect_missile, stealth, xrays, 
+#	and make_invisible invisible sets the appropriate value 
+#	in the new artifact.  No way to remove these abilities.  
+# 
+#	if stand_still is set, the object will not be animated 
+#	(useful if giving an artifact a new image when the object
+#	it is being created from is animated.  
+# 
+#	nrof is the number of object to be created.  A range 
+#	of 1-nrof of objects will be created.  If 0, then the 
+#	default number will be used instead.
+#
+#	hp, maxhp, sp, maxsp, food, level have this:  If the value is
+#	positive, it is increased by that amount.  If negative, the
+#	artifact is created with that value absolute (ie, hp -5
+#	will create and artifact with hp value of 5)
+#
+#	armour and dam:  If negative, absolute value is used (as in
+#	hp, maxhp, etc above).  If positive, it acts as a percentage
+#	in increments of 10 (a value of 10 has the normal value, 5
+#	would be half normal, 20 twice, etc.
+#
+#	weight, last_sp, last_heal is in percent (200% would
+#	be twice normal, 50% half of normal).  Negative values
+#	work the same as armour and dam.
+#
+#	'value' is a multiplier to the previous value (value 10
+#	means the object is worth 10 times normal)
+#
+#	the 'material', 'attacktype', 'slaying', and 'msg' elements will
+#	replace exiting values.
+#
+#	magic is the mininum magic for an item to become that artifact.
+#
+#	If the value is not described above, changing it probably is
+#	not supported.
+#
+# This file has been changed around in 0.91.1 to allow better
+# control of probability and creation conditions.
+#
+# Allowed is followed with a comma seperated list of items that
+# that artifact is allowed for.  a ! can precede the object name,
+# to mean that the object is allowed for all objects except those with
+# that name.  The name will be matched to either the normal item
+# name, or the name of the archetype.
+#
+# After the 'Allowed <whatever>' field, a 'chance <value>' field
+# follows.  This is how likely the item is to be created.  It is relative
+# to other objects of the same type.  What happens is that all of the
+# artifacts with the same type are put on 1 list, and their chance
+# field is summed together.  Then, when an artifact is created,
+# a roll is made based on that sum, and the appropriate artifact
+# is chosen.  If the item being transformed can not turn into that
+# artifact (magic bonus, difficulty (see below), or just not 'Allowed'), 
+# it will be re-rolled, attempting to make an artifact again.  The number
+# of re-rolls attempted is determined in the treasure.c file.  IT is,
+# by default, 1.
+#
+# 'difficulty <value>' can also be included before the 'Object <name>'
+# field.  If set, the difficulty must be greater or equal to that
+# value in order to the object to be created.  This can make it so that
+# some items are never created on easy maps.
+#
+# Note that the above mentioned fields (chance, difficulty) must be set
+# before the Object command - if they are placed between the Object and
+# End commands, they will have no affect.
+#
+# Because of these changes, general artifact types are no longer allowed.
+# This is for a few reasons: 1) With no type, it would not be possible
+# to know what lists to put it on.  If it put it on all lists
+# presently existing, then the order of this file would become relevant,
+# 2) Since chance is now a a field, and different items types have
+# different total chances, using a generic chance value could have
+# unexpected results.
+#
+# Various notes:
+# chance is meaningless if there is only 1 artifact of a certain
+# type.  It will always be generated, no matter what the chance
+# is set to.  As such, if adding an artifact for a new type,
+# make sure there are at least two, unless you always want
+# that specific one to be generated.
+#
+# running crossfire with -m3 creates a nice list of this
+# table.  Good for debugging if you seem to have problems with
+# some entry.
+#
+# Try to keep common types of items together.  For example, keep
+# all helmets types together, all weapon types, etc.  From there,
+# try to group by subtype (plate mails, leathers, chains, crowns,
+# etc.)  This just makes it easier to find stuff.  From their, it
+# might be nice to keep them in chance order, but most aren't in
+# that right now.
+#
+# Monsters
+# Note: Only generated monsters are affected (just like items) - monsters
+# already on the map are not affected.  Also, many of the values (exp, hp,
+# maxhp) are fixed addition values, so if creating generic types (like the
+# Leader and Chief types), you what to keep the Allowed monsters at roughly
+# the same power.
+# As of now, 1:10 monsters can become artifact monsters.  This is set in
+# time.c
+Allowed orc,ogre,goblin
+chance 10
+Object Leader
+type 0
+wc 1
+ac 1
+hp 5
+maxhp 5
+exp 20
+level 1
+armour 20
+dam 13
+end
+#
+Allowed orc,ogre,goblin
+chance 2
+Object Chief
+type 0
+wc 2
+ac 2
+hp 10
+maxhp 10
+exp 40
+level 2
+armour 30
+dam 14
+end
+# Just to fix probability some.
+Allowed orc,ogre,goblin
+chance 20
+Object NONE
+end
+#
+# Helmets
+#
+Allowed helmet
+chance 3
+Object Concentration
+type 34
+value 35
+last_heal 20
+path_attuned 1024
+sp 1
+magic 1
+end
+#
+Allowed all
+chance 1
+Object Blindness
+type 34 
+is_blind 1
+magic 1
+cursed 1
+end
+#
+Allowed full helmet,helmet
+chance 1
+Object Dark Vision
+type 34
+can_see_in_dark 1
+value 10
+end
+#
+Allowed full helmet,helmet
+chance 1
+Object Might
+type 34
+value 500
+magic 2
+Str 1
+Con 1
+Dex 1
+end
+#
+Allowed full helmet
+chance 2
+Object Lordliness
+type 34
+value 50
+magic 2
+Wis 1
+Cha 1
+end
+#
+Allowed full helmet
+chance 4
+Object Argoth
+type 34
+value 25
+magic 1
+ac 1
+Cha 1
+protected 4
+armour 12
+msg
+  Argoth was an ancient dwarven city
+  in a mountain which was infested with
+  dragons. The dwarves specialized in
+  equipment which helped them survive their
+  environment.
+endmsg
+end
+#
+Allowed !crown
+chance 10
+Object Ilrya
+type 34
+value 10
+weight 80
+end
+#
+Allowed !crown
+chance 5
+Object Lythander
+type 34
+value 20
+luck 1
+weight 90
+end
+#
+Allowed !crown
+chance 20
+Object Mass
+type 34
+value 5
+cursed 1
+weight 400
+end
+#
+Allowed !crown
+chance 2
+Object Great Mass
+type 34
+value 50
+damned 1
+weight 1000
+end
+#
+Allowed all
+chance 6
+Object Stupidity
+type 34
+value 15
+magic 1
+Int -10
+damned 1
+end
+#
+Allowed all
+chance 5
+Object Uriel
+type 34
+value 20
+ac 1
+magic 1
+armour 12
+protected 8
+end
+#
+Allowed all
+chance 3
+Object Doom
+type 34
+damned 1
+Str -5
+Con -5
+Dex -5
+Wis -5
+Int -5
+Pow -5
+Cha -5
+value 30
+magic 1
+end
+#
+Allowed all
+chance 20
+Object Woe
+type 34
+cursed 1
+Str -1
+Con -1
+Dex -1
+Wis -1
+Int -1
+Pow -1
+Cha -1
+luck -1
+value 5
+end
+#
+# Crowns start here (subset of helmets )
+#
+Allowed crown
+chance 1
+Object the Magi
+type 34
+value 500
+sp 2
+Int 2
+Pow 2
+end
+#
+Allowed crown
+chance 1
+Object Fire
+type 34
+value 100
+protected 4
+path_attuned 2
+path_repelled 4
+end
+#
+Allowed crown
+chance 10
+Object Lordliness
+magic 2
+type 34
+value 10
+Cha 2
+end
+#
+Allowed crown
+chance 6
+Object Rulership
+type 34
+value 15
+magic 3
+Cha 1
+Wis 1
+end
+#
+Allowed crown
+chance 4
+Object Might
+type 34
+value 25
+magic 3
+Con 1
+Str 1
+end
+#
+# Weapons:
+#
+Allowed all
+chance 10
+Object Ilrya
+type 15
+value 10
+weight 80
+end
+#
+Allowed all
+chance 5
+Object Lythander
+type 15
+value 20
+luck 1
+weight 90
+end
+#
+Allowed all
+chance 5
+Object Fear
+type 15
+value 30
+attacktype 16385
+weight 90
+end
+#
+Allowed all
+chance 20
+Object Woe
+type 15
+cursed 1
+Str -1
+Con -1
+Dex -1
+Wis -1
+Int -1
+Pow -1
+Cha -1
+luck -1
+value 5
+end
+#
+Allowed all
+chance 20
+Object Mass
+type 15
+value 5
+cursed 1
+weight 300
+dam 15
+wc -3
+end
+#
+Allowed all
+chance 10
+Object Sanwe
+type 15
+value 10
+dam 12
+end
+#
+Allowed all
+chance 6
+Object Zormola
+type 15
+value 15
+weight 80
+wc 2
+end
+#
+Allowed all
+chance 2
+Object Gwormi
+type 15
+value 50
+hp 1
+dam 11
+magic 2
+end
+#
+Allowed all
+chance 2
+Object Kragi
+type 15
+value 50
+magic 3
+Con 1
+dam 11
+end
+#
+Allowed all
+chance 6
+Object Morgul
+type 15
+value 15
+magic 3
+dam 20
+wc -3
+Str -2
+Dex -2
+Con -2
+damned 1
+end
+#
+Allowed all
+chance 5
+Object Slay Ogre
+type 15
+slaying ogre
+value 20
+magic 1
+end
+#
+Allowed all
+chance 3
+Object Slay Demon
+type 15
+slaying demon
+value 30
+magic 2
+end
+#
+Allowed all
+chance 3
+Object Doom
+type 15
+damned 1
+Str -5
+Con -5
+Dex -5
+Wis -5
+Int -5
+Pow -5
+Cha -5
+value 30
+magic 1
+end
+#
+Allowed all
+chance 2
+Object Crolmi
+type 15
+value 40
+magic 3
+Str 1
+weight 110
+end
+#
+Allowed all
+chance 2
+Object Great Mass
+type 15
+value 50
+damned 1
+weight 600
+dam 25
+wc -5
+end
+#
+Allowed all
+chance 2
+Object Slay Troll
+type 15
+slaying troll
+value 50
+magic 2
+end
+#
+Allowed all
+chance 2
+Object Slay Undead
+type 15
+slaying undead
+value 50
+magic 2
+end
+#
+Allowed all
+chance 1
+Object Slay Dragon
+type 15
+slaying dragon
+value 100
+magic 3
+end
+#
+Allowed all
+chance 1
+Object Slay Beholder
+type 15
+slaying beholder
+value 150
+protected 2
+magic 3
+end
+#
+Allowed all
+chance 1
+Object Rhyz
+type 15
+value 80
+magic 4
+Str 1
+Dex 1
+weight 90
+end
+#
+Allowed all
+chance 1
+Object Glamdri
+type 15
+value 150
+magic 4
+protected 2
+Int 1
+Pow 1
+weight 90
+end
+#
+Allowed all
+chance 1
+Object Berserkergang
+type 15
+value 15
+magic 4
+dam 30
+wc 7
+Str 7
+Dex 7
+Con 7
+Int -10
+Wis -10
+Cha -15
+protected 2
+material 256
+weight 50
+exp 3
+hp 2
+msg
+  This weapon burns with a supernatural rage:
+  its anger invests the wielder and empowers
+  him.  However, it also clouds his thoughts,
+  and drool is very unattractive.
+endmsg
+attacktype 16385
+damned 1
+end
+#
+# This item is attack type weaponmagic.  It only happens in weapons that
+# are already pretty magical (+3 or better).  Thus, while the chance
+# may look high, since there are not that many +3 or better weapons
+# created, it will not be created that often.
+#
+Allowed all
+chance 10
+Object Magic Hitting
+type 15
+magic 3
+value 20
+attacktype 256
+end
+#
+# Daggers (subtype of weapons)
+#
+Allowed dagger
+chance 10
+Object Poisoning
+type 15
+value 20
+weight 80
+attacktype 1025
+end
+#
+Allowed dagger
+chance 10
+Object Paralysis
+type 15
+value 30
+weight 80
+attacktype 4097
+end
+#
+Allowed dagger
+chance 10
+Object Madness
+type 15
+value 10
+weight 80
+attacktype 33
+end
+#
+# Swords (subtype of weapons)
+#
+Allowed sword
+chance 10
+Object Poisoning
+type 15
+value 10
+weight 80
+attacktype 1025
+end
+#
+# Shields
+#
+Allowed all
+chance 10
+Object Ilrya
+type 33
+value 10
+weight 80 
+end
+#
+Allowed all
+chance 20
+Object Mass
+type 33
+value 5
+cursed 1
+weight 400
+end
+#
+Allowed all
+chance 2
+Object Great Mass
+type 33
+value 50
+damned 1
+weight 1000
+end
+#
+Allowed all
+chance 2
+Object Deflection
+type 33
+value 50
+magic 2
+ac 1
+weight 120
+msg
+  This highly enchanted shield is
+  craftfully made to give more
+  protection than usual.
+endmsg
+end
+#
+Allowed all
+chance 1
+Object Theodin
+type 33
+value 80
+magic 2
+protected 4
+end
+#
+Allowed all
+chance 8
+Object Gnarg
+type 33
+value 12
+Cha -1
+armour 18
+end
+#
+Allowed all
+chance 3
+Object Doom
+type 33
+damned 1
+Str -5
+Con -5
+Dex -5
+Wis -5
+Int -5
+Pow -5
+Cha -5
+value 30
+magic 1
+end
+#
+Allowed all
+chance 20
+Object Woe
+type 33
+cursed 1
+Str -1
+Con -1
+Dex -1
+Wis -1
+Int -1
+Pow -1
+Cha -1
+luck -1
+value 5
+end
+#
+#
+# Armour
+#
+Allowed all
+chance 10
+Object Ilrya
+type 16
+value 10
+weight 80
+msg
+  This armour is made of lighter and more expensive material.
+endmsg
+end
+#
+Allowed all
+chance 20
+Object Mass
+type 16
+value 5
+cursed 1
+weight 300
+end
+#
+Allowed all
+chance 2
+Object Great Mass
+type 16
+value 50
+damned 1
+weight 1000
+end
+#
+Allowed all
+chance 6
+Object Clumsiness
+type 16
+value 15
+Dex -1
+cursed 1
+end
+#
+Allowed all
+chance 6
+Object Protection
+type 16
+value 15
+ac 1
+armour 12
+magic 3
+msg
+  The quality of this superb armour
+  is extreme; it gives much more
+  protection than any made today.
+  It is very old, probably from some
+  lost civilization who had much
+  better skills, but it doesn't look
+  worn at all.  It is obviously highly
+  enchanted.
+endmsg
+end
+#
+Allowed all
+chance 6
+Object Berwean
+type 16
+value 15
+ac -1
+armour 8
+last_sp 150
+exp 1
+weight 70
+msg
+  This armour is made of very light and
+  expensive material.  As a result you
+  can move much faster in it, but it gives
+  a bit worse protection than normal armour.
+endmsg
+end
+#
+Allowed all
+chance 3
+Object Doom
+type 16
+damned 1
+Str -5
+Con -5
+Dex -5
+Wis -5
+Int -5
+Pow -5
+Cha -5
+value 30
+magic 1
+end
+#
+Allowed all
+chance 20
+Object Woe
+type 16
+cursed 1
+Str -1
+Con -1
+Dex -1
+Wis -1
+Int -1
+Pow -1
+Cha -1
+luck -1
+value 5
+end
+#
+Allowed plate_mail
+chance 1
+Object Power
+type 16
+value 150
+magic 4
+Str 1
+protected 4
+weight 200
+last_sp 5
+armour 13
+ac 1
+msg
+  This extremely unique platemail was made
+  for the line of dwarven kings in one of the 
+  ancient northern kingdoms from which nothing has
+  been heard of during the latter centuries.
+  Due to magic, it will fit creatures of any size.
+  It is highly enchanted, increasing the strength of the 
+  wearer and protecting against fire.  
+  Unfortunately it is also very heavy, limiting speed somewhat.
+endmsg
+end
+#
+Allowed plate_mail
+chance 5
+Object Prowess
+type 16
+armour -60
+weight 250
+ac 1
+Str 2
+Dex 2
+Int -5
+Pow -5
+value 100
+msg
+  This very heavy armour gives protection
+  greater than normal object.  It is created
+  for fighters - the high weight and fact it
+  clouds the mind makes it unsuitable for
+  mages.  It increases the wearers strength and
+  dexterity, making them even more fearsome in
+  battle.
+endmsg
+end
+#
+Allowed leather_armour,mithril_chainmail
+chance 10
+Object Irial
+type 16
+value 10
+Cha 1
+msg
+  This armour, which is of elven origin,
+  is beautifully decorated with ancient emblems.
+endmsg
+end
+#
+# Robes (subtype of armor)
+#
+Allowed robe
+chance 10
+Object Displacement
+type 16
+value 100
+ac 3
+msg
+  This robe blurs the vision of those trying
+  attack, making you more difficult to hit.
+endmsg
+end
+#
+Allowed robe
+chance 10
+Object metal weave
+type 16
+value 100
+weight 150
+armour 15
+ac 3
+msg
+  This magical robe is somehow woven of
+  metal fibers.
+endmsg
+end
+#
+# Rings
+#
+Allowed all
+chance 33
+Object Ice
+face ring.117
+#color_fg light_blue
+type 70
+value 30
+protected 16
+path_attuned 4
+msg
+  This elemental ring is one of those made at 
+  the Guild of Magicks by the powerful wizards 
+  who survived the ancient war of the elementals.
+  The wielder is surrounded by a thin, almost 
+  invisible, globe of warmth; which protects 
+  against cold.  It also grants its holder 
+  greater control of cold spells.
+endmsg
+end
+#
+Allowed all
+chance 28
+Object Fire
+face ring.117
+#color_fg red
+type 70
+value 35
+protected 4
+path_attuned 2
+msg
+  This elemental ring is one of those 
+  made at the Guild of Magicks by the 
+  powerful wizards who survived the 
+  ancient war of the elementals.
+  The wielder is surrounded by a thin, 
+  almost invisible, globe of coolness; 
+  which protects against heat.  It also
+  grants the holder greater facility 
+  with fire spells.
+endmsg
+end
+#
+Allowed all
+chance 40
+Object Storm
+face ring.117
+type 70
+value 25
+protected 8
+path_attuned 8
+msg
+  This elemental ring is one of those made 
+  at the Guild of Magicks by the powerful 
+  wizards who survived the ancient war 
+  of the elementals.  The wielder is 
+  surrounded by a thin, almost invisible, 
+  grid of force; which protects against 
+  electricity.  It also gives facility
+  with electricity spells.
+endmsg
+end
+#
+Allowed all
+chance 13
+Object Magic
+face ring.117
+type 70
+value 80
+sp 1
+Pow 1
+protected 2
+msg
+  Most highlevel wizards receive one of 
+  these from their guild when they become 
+  its leader.
+endmsg
+end
+#
+Allowed all
+chance 7
+Object Ancient Magic
+face ring.117
+type 70
+value 150
+sp 2
+Int 1
+Pow 1
+protected 2
+end
+#
+Allowed all
+chance 4
+Object High Magic
+face ring.117
+type 70
+value 250
+sp 2
+Int 2
+Pow 2
+protected 2
+end
+#
+#  Slaying balrog--aint no such thing as a balrog yet, but.. when there is...
+#  Mithrandir's magic ring--gives power according to the ability of the user
+#
+Allowed all
+chance 1
+Object Mithrandir
+slaying Balrog
+face ring.117
+type 70
+value 350
+sp 2
+Int 1
+Pow 1
+protected 6
+path_attuned 2
+end
+#
+#  Galadriel's magic ring.  She used it for the protection and healing
+#  of her land in Lord of the Rings
+#
+Allowed all
+chance 1
+Object Adamant
+face ring.117
+type 70
+value 450
+sp 2
+Int 2
+Pow 2
+protected 2
+immune 128
+path_attuned 257
+end
+#
+#  Elrond's magic ring.  It was the greatest of the three rings.
+#
+Allowed all
+chance 1
+Object Elrond
+face ring.117
+type 70
+value 550
+sp 3
+Int 3
+Pow 3
+protected 2
+immune 65664
+path_attuned 259
+end
+#
+#  The One Ring to rule them all
+#
+Allowed all
+chance 1
+difficulty 6
+Object Ruling
+face ring.117
+type 70
+value 750
+sp 5
+Int 3
+Pow 3
+Wis 2
+Con -2
+Cha -2
+msg
+  One Ring to rule them all,
+  One Ring to find them,
+  One Ring to bring them all
+  and in the darkness bind them.
+endmsg
+make_invisible 1
+protected 2
+vulnerable 640
+path_attuned 606
+path_repelled 257
+end
+#
+Allowed all
+chance 40
+Object Acid
+face ring.117
+type 70
+value 25
+protected 64
+armour -20
+msg
+  This elemental ring is one of those 
+  made at the Guild of Magicks by the 
+  powerful wizards who survived the 
+  ancient war of the elementals.
+  The wielder is surrounded by a thin, 
+  almost invisible, globe of base liquid;
+  which protects against acid.  It also 
+  gives a fair protection against normal attacks.
+endmsg
+end
+#
+Allowed all
+chance 17
+Object Free Action
+face ring.117
+type 70
+value 60
+immune 6144
+protected 16416
+end
+#
+Allowed all
+chance 13
+Object Life
+face ring.117
+type 70
+value 80
+immune 65664
+hp 2
+msg
+  This semi-elemental ring is one of those
+  made at the Guild of Magicks by the powerful
+  wizards who survived the ancient war of the elementals.
+  The wielder is surrounded by a thin, almost 
+  invisible, globe of positive energy; which 
+  makes the wielder immune from life draining.
+  It also grants an unnatural vitality.
+endmsg
+end
+#
+Allowed all
+chance 50
+Object Halvor
+face ring.117
+type 70
+value 20
+Str 1
+protected 4096
+end
+#
+Allowed all
+chance 25
+Object Yordan
+face ring.117
+type 70
+value 40
+wc 2
+Dex 1
+end
+#
+Allowed all
+chance 25
+Object Extremity
+face ring.117
+type 70
+value 40
+wc 2
+Str 2
+Dex 2
+Con -5
+Int -3
+Wis -3
+Pow -5
+damned 1
+end
+#
+Allowed all
+chance 33
+Object Doom
+face ring.117
+type 70
+damned 1
+Str -5
+Con -5
+Dex -5
+Wis -5
+Int -5
+Pow -5
+Cha -5
+value 30
+end
+#
+Allowed all
+chance 200
+Object Woe
+type 70
+face ring.117
+cursed 1
+Str -1
+Con -1
+Dex -1
+Wis -1
+Int -1
+Pow -1
+Cha -1
+luck -1
+value 5
+end
+#
+# Horns:
+#
+Allowed all
+chance 17
+Object Plenty
+face horn2.111
+type 35
+sp -36
+hp -30
+maxhp -30
+value 6
+end
+#
+Allowed all
+chance 10
+Object Fire
+type 35
+sp -82
+hp -40
+maxhp -40
+value 10
+end
+#
+Allowed all
+chance 10
+Object Frost
+type 35
+sp -83
+hp -40
+maxhp -40
+value 10
+end
+#
+Allowed all
+chance 33
+Object Aggravation
+type 35
+sp -81
+hp -10
+maxhp -10
+value 3
+cursed 1
+end
+#
+Allowed all
+chance 20
+Object Fools
+type 35
+sp -81
+hp -10
+maxhp -10
+value 5
+luck -2
+Int -2
+damned 1
+end
+#
+Allowed all
+chance 3
+Object Eorlingas
+type 35
+sp -82
+hp -100
+maxhp -100
+value 40
+Cha 1
+end
+#
+# Cloaks
+#
+Allowed all
+chance 200
+Object Woe
+type 87
+cursed 1
+Str -1
+Con -1
+Dex -1
+Wis -1
+Int -1
+Pow -1
+Cha -1
+luck -1
+value 5
+end
+#
+Allowed all
+chance 50
+difficulty 3
+Object minor protection
+weight 120
+type 87
+value 20
+ac 1
+end
+#
+Allowed all
+chance 5
+Object Doom
+type 87
+damned 1
+Str -5
+Con -5
+Dex -5
+Wis -5
+Int -5
+Pow -5
+Cha -5
+value 30
+magic 1
+end
+#
+Allowed all
+chance 10
+difficulty 3
+Object beguilement
+type 87
+value 100
+Cha 2
+weight 110
+end
+#
+Allowed all
+chance 10
+difficulty 5
+Object intermediate protection
+weight 125
+type 87
+value 100
+ac 2
+end
+#
+Allowed all
+chance 3
+difficulty 7
+Object greater protection
+type 87
+weight 130
+value 300
+ac 3
+material 256
+end
+#
+Allowed all
+chance 3
+difficulty 3
+Object Protection from Fire
+type 87
+weight 135
+value 400
+protected 4
+material 256
+end
+#
+Allowed all
+chance 3
+difficulty 3
+Object Warmth
+type 87
+weight 140
+value 350
+protected 16
+material 256
+end
+#
+Allowed all
+chance 3
+difficulty 3
+Object Insulation
+type 87
+weight 140
+value 350
+protected 8
+material 256
+end
+#
+Allowed all
+chance 2
+difficulty 3
+Object Acid Proofing
+type 87
+value 500
+weight 90
+protected 64
+material 256
+end
+#
+Allowed all
+chance 1
+difficulty 7
+Object the Underworld
+type 87
+value 1000
+immune 66240
+protected 4192
+weight 150
+material 256
+Cha -4
+end
+#
+Allowed all
+chance 1
+difficulty 20
+Object Invisibility
+type 87
+value 1000
+weight 130
+material 256
+Str -10
+Dex -10
+Con -10
+msg
+  This cloak sucks vitality from the 
+  wearer in order to maintain his
+  invisibility.
+endmsg
+make_invisible 1
+end
+#
+#
+#Artifact gems!
+#
+Allowed diamond
+chance 60
+Object great value
+face pretty_crystal.111
+stand_still 1
+value 10
+type 60
+weight 110
+end
+#
+Allowed diamond
+chance 20
+difficulty 3
+Object exceptional beauty
+face pretty_crystal.111
+value 100
+stand_still 1
+type 60
+weight 130
+nrof 4
+end
+#
+Allowed diamond
+chance 5
+difficulty 5
+Object flawless beauty
+face pretty_crystal.111
+value 1000
+stand_still 1
+type 60
+weight 200
+nrof 4
+end
+#
+Allowed ruby
+chance 60
+Object great value
+face pretty_ruby.111
+stand_still 1
+value 10
+type 60
+weight 110
+end
+#
+Allowed ruby
+chance 20
+difficulty 3
+Object exceptional beauty
+face pretty_ruby.111
+value 100
+stand_still 1
+type 60
+weight 130
+nrof 4
+end
+#
+Allowed ruby
+chance 5
+difficulty 5
+Object flawless beauty
+face pretty_ruby.111
+value 1000
+stand_still 1
+type 60
+weight 200
+nrof 4
+end
+#
+Allowed sapphire
+chance 60
+Object great value
+face pretty_sapphire.111
+stand_still 1
+value 10
+type 60
+weight 110
+end
+# 
+Allowed sapphire
+chance 20
+difficulty 3
+Object exceptional beauty
+face pretty_sapphire.111
+value 100
+stand_still 1
+type 60
+weight 130
+nrof 4
+end
+#
+Allowed sapphire
+chance 5
+difficulty 5
+Object flawless beauty
+face pretty_sapphire.111
+value 1000
+stand_still 1
+type 60
+weight 200
+nrof 4
+end
+#
+Allowed emerald
+chance 60
+Object great value
+face pretty_emerald.111
+stand_still 1
+value 10
+type 60
+weight 110
+end
+# 
+Allowed emerald
+chance 20
+difficulty 3
+Object exceptional beauty
+face pretty_emerald.111
+value 100
+stand_still 1
+type 60
+weight 130
+nrof 4
+end
+#
+Allowed emerald
+chance 5
+difficulty 5
+Object flawless beauty
+face pretty_emerald.111
+value 1000
+stand_still 1
+type 60
+weight 200
+nrof 4
+end
+#
+#
+#Amulets!
+#
+Allowed all
+chance 255
+difficulty 5
+Object Shielding
+face amulet_lif.111
+armour -20
+type 39
+value 20
+end
+#
+Allowed all
+chance 100
+difficulty 6
+Object Empowerment
+face amulet_lif.111
+type 39
+value 40
+sp 2
+end
+#
+Allowed all
+chance 255
+difficulty 6
+Object Sorrow
+face amulet_lif.111
+type 39
+value 0
+cursed 1
+vulnerable 2
+end
+#
+Allowed all
+chance 50
+difficulty 4
+Object Calling Death
+face amulet_lif.111
+type 39
+value 0
+damned 1
+cursed 1
+vulnerable 127
+end
+#
+Allowed all
+chance 10
+difficulty 10
+Object Aetherality
+face amulet_lif.111
+type 39
+value 3000
+protected 1
+end
+#
+Allowed all
+chance 10
+difficulty 10
+Object Power
+type 39
+face amulet_lif.111
+sp 7
+value 4000
+end
+#
+Allowed all
+chance 75
+difficulty 7
+Object Deflection
+reflect_spell 1
+face amulet_lif.111
+reflect_missile 1
+ac 2
+armour 10
+type 39
+value 1000
+end
+#
+Allowed all
+chance 50
+difficulty 7
+Object the Shielded Mind
+face amulet_lif.111
+type 39
+immune 20512
+value 1000
+end
+#
+Allowed all
+chance 40
+difficulty 5
+Object Free Action
+face amulet_lif.111
+type 39
+value 300
+immune 6144
+protected 16416
+end
+#
+Allowed all
+chance 5
+difficulty 9
+Object the Magi
+face amulet_lif.111
+type 39
+sp 5
+Int 2
+Pow 2
+value 5000
+protected 2
+reflect_spell 1
+end
+#
+Allowed all
+chance 30
+difficulty 9
+Object Holiness
+face amulet_lif.111
+type 39
+Wis 3
+value 300
+path_attuned 385
+end
+#
+Allowed all
+chance 60
+difficulty 9
+Object Unholiness
+face amulet_lif.111
+type 39
+value 10
+path_repelled 257
+path_attuned 192
+damned 1
+cursed 1
+end
+#
+Allowed all
+chance 1
+difficulty 9
+Object Destruction
+face amulet_lif.111
+type 39
+value 800
+path_repelled 256
+path_attuned 542
+path_denied 2048
+end
+#
+# Containers (the following is hack to get a quiver for bolts also)
+# It would be better that it would be possible to define object 
+# NONE also, and not use the fixed probability.
+#
+Allowed quiver
+chance 100
+Object Holding Bolts
+type 122
+value 100
+race crossbow bolts
+Str 80
+end
+#
+Allowed quiver
+chance 20
+Object Holding Arrows
+type 122
+value 100
+Str 80
+end
+#
+Allowed !quiver,!cauldron
+chance 100
+Object Holding
+type 122
+value 100
+Str 50
+end
+#
+Allowed bag
+chance 10
+difficulty 7
+Object Great Holding
+type 122
+value 100
+Str 75
+end
+#
+# Arrows/Missiles
+#
+Allowed all
+chance 250
+Object inaccuracy
+type 13
+wc -7
+cursed 1
+end
+#
+Allowed all
+chance 100
+difficulty 5
+Object accuracy
+type 13
+value 5
+wc 7
+dam -8
+food 50
+end
+#
+Allowed all
+chance 100
+Object Fire
+attacktype 4
+type 13
+value 5
+end
+#
+Allowed all
+chance 100
+Object Frost
+attacktype 16
+type 13
+value 5
+end
+#
+Allowed all
+chance 100
+difficulty 6
+Object Poison
+attacktype 1025
+type 13
+value 5
+magic 1
+end
+#
+Allowed all
+chance 100
+Object Lightning
+attacktype 8
+type 13
+value 5
+end
+#
+Allowed all
+chance 50
+difficulty 6
+Object paralyze
+attacktype 4097
+type 13
+value 8
+wc 2
+food 80
+msg
+These missiles have been dipped into some
+strange liquid which stuns the enemy.
+These missiles also broken much more easily
+than normal ones.
+endmsg
+end
+#
+Allowed all
+chance 20
+Object Assassinating Trolls
+slaying troll
+attacktype 131072
+msg
+  These missiles are inscribed with 
+  powerful runes for the bane of 
+  trolls.  A scratch from one of
+  these arrows could smite one dead.
+endmsg
+type 13
+value 500
+wc 7
+dam -20
+food 100
+nrof 10
+level 40
+end
+#
+Allowed all
+chance 20
+difficulty 5
+Object Assassinating Dragons
+slaying dragon
+attacktype 131072
+msg
+  These missiles are inscribed with 
+  powerful runes for the bane of 
+  dragons.  A scratch from one of
+  these arrows could smite one dead.
+endmsg
+type 13
+value 1000
+wc 7
+dam -20
+food 100
+nrof 10
+immune 4
+level 50
+end
+#
+Allowed all
+chance 20
+difficulty 5
+Object Blessedness
+slaying undead,demon
+msg
+  These missiles are invested 
+  with a great holiness so that
+  even a scratch might banish 
+  an undead creature or a demon
+  back to the hell from which it
+  came.
+endmsg
+attacktype 131072
+type 13
+value 500
+wc 7
+dam -20
+food 70
+nrof 10
+level 50
+end
+#
+Allowed arrow
+chance 100
+difficulty 5
+Object Slay Dragon
+type 13
+value 5
+slaying dragon
+dam -12
+food 10
+end
+#
+Allowed arrow
+chance 50
+difficulty 8
+Object magic
+type 13
+value 10
+attacktype 2
+dam -20
+wc 6
+msg
+These magical arrows are very powerful weapon.
+endmsg
+food 90
+end
+#
+Allowed bolt
+chance 1
+difficulty 5
+Object Demon Slaying
+type 13
+value 5
+slaying demon
+magic 4
+dam 12
+food 10
+msg
+  This powerful bolt can rip
+  right through any demon it
+  is shot at, but it tends to
+  break very easily.
+endmsg
+end
+#
+Allowed bolt
+chance 100
+difficulty 5
+Object silver head
+type 13
+value 5
+slaying vampire
+attacktype 2
+end
+#
+Allowed bolt
+chance 50
+difficulty 8
+Object piercing
+type 13
+value 7
+dam -25
+wc 6
+weight 150
+food 10
+end
+#
+Allowed bolt
+chance 10
+Object Adamantite
+type 13
+value 10
+weight 90
+material 256
+food 10
+end
+#
+# Bows
+#
+Allowed all
+chance 10
+Object accuracy
+type 14
+value 5
+weight 80
+wc 4
+end
+#
+Allowed all
+chance 40
+Object inaccuracy
+type 14
+value 5
+wc -4
+cursed 1
+end
+#
+Allowed all
+chance 1
+difficulty 5
+Object Auriga
+type 14
+weight 80
+msg
+  This magical bow shoots with
+  such force that the arrows 
+  sometimes fly right through 
+  the target.
+endmsg
+value 100
+wc 5
+dam -25
+end
+#
+Allowed bow
+chance 5
+Object wizard
+type 14
+value 5
+dam -7
+msg
+This bow is magically enchanted
+so that archer's strength doesn't
+affect damage made by it.
+endmsg
+no_strength 1
+end
+#
+#
+# SKILLS
+#
+Allowed lockpicks
+chance 100
+Object quality
+type 43
+value 5
+Dex 1
+end
+#
+Allowed lockpicks
+chance 30
+Object high quality
+type 43
+value 10
+Dex 3
+end
+#
+# talismans - 
+#
+Allowed talisman
+chance 50
+Object Fire
+type 43
+value 3
+path_attuned 2
+path_denied 4
+end
+#
+Allowed talisman
+chance 50
+Object Frost
+type 43
+value 3
+path_attuned 4
+path_denied 2
+end
+#
+Allowed talisman
+chance 80
+Object Missles
+type 43
+value 5
+path_attuned 16
+end
+#
+Allowed talisman
+chance 40
+Object Unified Mind
+type 43
+value 7
+path_attuned 1056
+Int 3
+end
+#
+Allowed talisman
+chance 20
+difficulty 10
+Object Evocation
+type 43
+value 9
+path_attuned 6208
+end
+#
+Allowed talisman
+chance 20
+difficulty 10
+Object Elements
+type 43
+value 9
+path_attuned 14
+end
+#
+Allowed talisman
+chance 3
+difficulty 13
+Object Wizardry
+type 43
+value 25
+path_attuned 28286
+Pow 1
+end
+#
+# holy symbols
+#
+Allowed holy_symbol
+chance 80
+difficulty 5
+Object Probity
+type 43
+value 5
+path_attuned 257
+path_repelled 128
+path_denied 0
+end
+#
+Allowed holy_symbol
+chance 10
+difficulty 5
+Object Great Virtue
+type 43
+value 25
+path_attuned 8640
+Wis 2
+end
+#
+Allowed holy_symbol
+chance 50
+difficulty 5
+Object Calling
+type 43
+value 5
+path_attuned 64
+path_repelled 256
+end
+#
+# DRINK.
+#
+Allowed water
+chance 90
+Object the wise
+type 54
+food 1
+value 10
+end
+#
+Allowed water
+chance 15
+difficulty 3
+Object emerald
+type 54
+food 1
+value 58
+end
+#
+Allowed water
+chance 13
+difficulty 5
+Object sapphire
+type 54
+food 1
+value 67
+end
+#
+Allowed water
+chance 8
+difficulty 5
+Object ruby
+type 54
+food 1
+value 76
+end
+#
+Allowed water
+chance 3
+difficulty 8
+Object diamond
+type 54
+food 1
+value 191
+end
+#
+#
+# FOOD. Types of food which can effect player status
+#
+# Note: an item is cursed, the effect is generally reversed!
+#
+Allowed !waybread
+chance 200
+Object Poison
+type 6
+food 10
+hp -50
+cursed 1
+end
+#
+Allowed !waybread
+chance 20
+Object Hideous Poison
+type 6
+food 10
+hp -100
+Str -1
+Con -1
+Dex -1
+Cha -1
+cursed 1
+end
+#
+Allowed mushroom_1, mushroom_2, mushroom_3
+chance 150
+Object Gourmet
+type 6
+value 200
+food 250
+end
+#
+Allowed mushroom_1, mushroom_2, mushroom_3
+chance 5
+Object Magic
+type 6
+value 80
+sp 100
+end
+#
+# note the cursed status here!, this mushroom drains mana
+#
+Allowed mushroom_1, mushroom_2, mushroom_3
+chance 15
+Object Magic
+type 6
+value 80
+cursed 1
+sp 100
+end
+#
+Allowed mushroom_1, mushroom_2, mushroom_3
+chance 20
+Object Healing
+type 6
+value 40
+hp 50
+end
+#
+Allowed food, mushroom_1, mushroom_2
+chance 15
+Object Stamina
+type 6
+value 30
+Con 1
+end
+#
+Allowed waybread
+chance 100
+Object Aelingas
+type 6
+value 10
+Str 1
+Con 1
+end
+#
+Allowed mushroom_2, mushroom_3
+chance 15
+Object Strength
+type 6
+value 30
+Str 1
+end
+#
+Allowed mushroom_1, mushroom_3
+chance 15
+Object Quickness
+type 6
+value 30
+Dex 1
+end
+#
+Allowed mushroom_1
+chance 100
+Object Heat Resistance
+type 6
+value 30
+protected 4
+end
+#
+Allowed mushroom_2
+chance 100
+Object Frost Resistance
+type 6
+value 30
+protected 16
+end
+#
+Allowed mushroom_1, mushroom_2, mushroom_3
+chance 10
+Object Bravery
+type 6
+value 100
+protected 16384
+end
+#
+Allowed mushroom_3
+chance 90
+Object Magic Resistance
+type 6
+value 40
+protected 2
+end
+#
+Allowed mushroom_2, mushroom_3
+chance 5
+Object Life
+type 6
+value 500
+Con 1
+protected 65664
+end
+#
+# Potions (incl. dusts, balms and figurine sub-types)  
+#
+#
+# - attack potions
+#
+Allowed potion_generic
+chance 1
+Object firestorm
+type 5
+value 1
+sp 1
+end
+#
+Allowed potion_generic
+chance 1
+Object great firestorm
+type 5
+sp 2
+value 5
+end
+#
+Allowed potion_generic
+chance 1
+Object black fire
+type 5
+sp 90
+value 8
+level -30
+end
+#
+Allowed potion_generic
+chance 1
+Object firery destruction
+type 5
+sp 89
+value 15
+level -60
+end
+#
+Allowed potion_generic
+chance 1
+Object sunfire
+type 5
+sp 161
+value 5
+end
+#
+Allowed potion_generic
+chance 1
+Object freezing
+type 5
+sp 83
+value 1
+end
+#
+Allowed potion_generic
+chance 1
+Object fire
+type 5
+value 1
+sp 82
+end
+#
+Allowed potion_generic
+chance 1
+Object electric shock
+type 5
+sp 5
+value 1
+end
+#
+# - curative potions
+#
+Allowed balm_generic
+chance 1
+Object first aid
+type 5
+value 1
+sp 32
+end
+#
+Allowed potion_generic
+chance 1
+Object cure vision
+type 5
+sp 163
+value 2
+end
+#
+Allowed potion_generic
+chance 1
+Object cure sickness
+type 5
+sp 68
+value 1
+end
+#
+Allowed potion_generic
+chance 1
+Object cure madness
+type 5
+sp 125
+value 2
+end
+#
+# - protective potions
+#
+Allowed balm_generic
+chance 1
+Object ethrealness
+type 5
+sp 53
+value 3
+end
+#
+Allowed balm_generic
+chance 1
+Object asbestos
+type 5
+sp 47
+value 1
+end
+#
+Allowed balm_generic
+chance 1
+Object insulation
+type 5
+sp 46
+value 1
+end
+#
+Allowed balm_generic
+chance 1
+Object warmth
+type 5
+sp 45
+value 1
+end
+#
+Allowed potion_generic
+chance 1
+Object resist confusion
+type 5
+value 1
+sp 69
+end
+#
+Allowed potion_generic
+chance 1
+Object resist magic
+type 5
+sp 52
+value 3
+end
+#
+Allowed potion_generic
+chance 1
+Object resist draining
+type 5
+value 1
+sp 51
+end
+#
+Allowed potion_generic
+chance 1
+Object resist paralysis
+type 5
+sp 50
+value 1
+end
+#
+Allowed potion_generic
+chance 1
+Object resist poison
+type 5
+sp 48
+value 1
+end
+#
+Allowed potion_generic
+chance 1
+Object resist slow
+type 5
+sp 49
+value 1
+end
+#
+Allowed potion_generic
+chance 1
+Object shock immunity
+type 5
+sp 96
+value 100
+end
+#
+Allowed potion_generic
+chance 3
+Object ethreality
+type 5
+sp 103
+value 110
+end
+#
+Allowed potion_generic
+chance 1
+Object magic immunity
+type 5
+sp 102
+value 150
+end
+#
+# - stat potions
+#
+Allowed potion_generic
+chance 1
+Object strength
+type 5
+sp 39
+value 1
+end
+#
+Allowed potion_generic
+chance 1
+Object quickness
+type 5
+sp 40
+value 1
+end
+#
+Allowed potion_generic
+chance 1
+Object health
+type 5
+sp 41
+value 1
+end
+#
+Allowed balm_generic
+chance 1
+Object beauty
+type 5
+sp 42
+value 4
+end
+#
+# - misc. potions and balms
+#
+Allowed balm_generic
+chance 1
+Object flying
+type 5
+value 1
+sp 54
+end
+#
+Allowed balm_generic
+chance 1
+Object serpent
+type 5
+value 1
+sp 156
+end
+#
+Allowed balm_generic
+chance 1
+Object invisible to undead
+type 5
+sp 27
+value 1
+end
+#
+Allowed balm_generic
+chance 1
+Object transparency
+type 5
+sp 30
+value 1
+end
+#
+Allowed balm_generic
+chance 1
+Object traveling
+type 5
+value 1
+sp 25
+end
+#
+Allowed potion_generic
+chance 1
+Object self knowledge
+type 5
+value 1
+sp 24
+end
+#
+Allowed potion_generic
+chance 1
+Object mystic power
+type 5
+sp 121
+value 8
+end
+#
+Allowed potion_generic
+chance 1
+Object speed
+type 5
+level -80
+sp 86
+value 15
+end
+#
+Allowed potion_generic
+chance 1
+Object recuperation
+type 5
+sp 146
+value 2
+end
+#
+# - figurines- these summon stuff
+#
+Allowed figurine_generic
+chance 1
+Object clay
+type 5
+sp 9
+value 1
+level -20
+end
+#
+Allowed figurine_generic
+chance 1
+Object stone
+type 5
+sp 11
+level -20
+value 1
+end
+#
+Allowed figurine_generic 
+chance 1
+Object whirlwind
+type 5
+sp 13
+level -20
+value 1
+end
+#
+Allowed figurine_generic 
+chance 1
+Object a great wave
+type 5
+sp 12
+level -20
+value 1
+end
+#
+Allowed figurine_generic 
+chance 1
+Object a flame
+type 5
+sp 10
+value 1
+level -20
+end
+#
+Allowed figurine_generic 
+chance 1
+Object a clinched hand
+type 5
+sp 91
+level -20
+value 1
+end
+#
+# Dusts. 
+#
+# - 360 deg effect
+#
+Allowed dust_generic
+chance 1
+Object stasis
+type 5
+value 1
+sp 16
+end
+#
+Allowed dust_generic
+chance 1
+Object frost
+type 5
+sp 17
+value 1
+end
+#
+Allowed dust_generic
+chance 1
+Object fright
+type 5
+value 1
+sp 20
+end
+#
+Allowed dust_generic
+chance 1
+Object concussion
+type 5
+sp 84
+value 6
+end
+#
+#Allowed dust_generic
+#chance 1
+#Object Necrocritis
+#type 5
+#sp 87
+#level -20
+#value 20
+#end
+#
+Allowed dust_generic
+chance 1
+Object repelling undead
+type 5
+sp 19
+level -30
+value 1
+end
+#
+Allowed dust_generic
+chance 1
+Object madness
+type 5
+sp 64
+value 2
+end
+#
+Allowed dust_generic
+chance 1
+Object ignition
+type 5
+sp 4
+value 2
+end
+#
+Allowed dust_generic
+chance 1
+Object conflagration
+type 5
+sp 57
+value 4
+end
+#
+Allowed dust_generic
+chance 1
+Object countermagic
+type 5
+sp 123
+level -30
+value 1
+end
+#
+# dusts w/ provide detection
+#
+Allowed dust_generic
+chance 1
+Object clairvoyance
+type 5
+sp 18
+value 2
+end
+#
+Allowed dust_generic
+chance 1
+Object Ibn Gahzi
+type 5
+sp 135
+level -20
+value 8
+end
+#
+Allowed dust_generic
+chance 1
+Object show enchantment
+type 5
+sp 76
+value 1
+end
+#
+Allowed dust_generic
+chance 1
+Object night vision
+type 5
+value 1
+sp 164
+end
+#
+Allowed dust_generic
+chance 1
+Object piercing vision
+type 5
+sp 136
+value 6
+end
+#
+Allowed dust_generic
+chance 1
+Object clinging glow
+type 5
+sp 162
+value 1
+end
+#
+Allowed dust_generic
+chance 1
+Object Biren's mist
+type 5
+sp 138
+value 1
+end
+#

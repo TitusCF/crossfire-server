@@ -1,0 +1,353 @@
+/*
+ * Command parser
+ */
+
+#include <global.h>
+#include <commands.h>
+#include <sproto.h>
+#include <ctype.h>
+
+/* Added times to all the commands.  However, this was quickly done,
+ * and probably needs more refinements.  All socket and DM commands
+ * take 0 time.
+ */
+
+/*
+ * Normal game commands
+ */
+CommArray_s Commands[] = {
+  {"save", command_save,	0.0},
+
+  {"sound", command_sound,	0.0},
+  {"party", command_party,	0.0},
+  {"gsay", command_gsay,	1.0},
+
+#ifdef DEBUG
+  {"sstable", command_sstable,	0.0},
+  {"dumptag", dump_object_from_tag, 0.0},
+#endif
+#ifdef DEBUG_MALLOC_LEVEL
+  {"verify", command_malloc_verify,0.0},
+#endif
+  {"apply", command_apply,	1.0},	/* should be variable */
+  {"archs", command_archs,	0.0},
+  {"bell", command_bell,	0.0},
+  {"berzerk", command_berzerk,	0.0},
+  {"brace", command_brace,	0.0},
+  {"cast", command_cast,	0.2},	/* Is this right? */
+  {"disarm", command_disarm,	1.0},
+  {"dm", command_dm,		0.0},
+  {"drop", command_drop,	1.0},
+  {"dropall", command_dropall,	1.0},
+  {"examine", command_examine,	0.5},
+  {"fix_me", command_fix_me,	0.0},
+  {"get", command_take,		1.0},
+  {"help", command_help,	0.0},
+  {"hiscore", command_hiscore,	0.0},
+  {"inventory", command_inventory,0.0},
+  {"invoke", command_invoke,	1.0},
+  {"last", command_last,	0.0},
+  {"listen", command_listen,	0.0},
+  {"logs", command_logs,	0.0},
+  {"malloc", command_malloc,	0.0},
+  {"maps", command_maps,	0.0},
+  {"mapinfo", command_mapinfo,	0.0},
+  {"mark", command_mark,	0.0},
+  {"motd", command_motd,	0.0},
+  {"output-sync", command_output_sync,	0.0},
+  {"output-count", command_output_count,0.0},
+  {"peaceful", command_peaceful,0.0},
+  {"pickup", command_pickup,	1.0},
+  {"players", command_players,	0.0},
+  {"prepare", command_prepare,	1.0},
+  {"quit", command_quit,	0.0},
+  {"rotateshoottype", command_rotateshoottype,	0.0},
+  {"rotatespells", command_rotatespells,	0.0},
+  {"say", command_say,		0.0},
+  {"shout", command_shout,	0.0},
+  {"shutdown", command_shutdown, 0.0},
+#ifdef ALLOW_SKILLS
+  {"skills", command_skills,	0.0},	/* shows player list of skills */
+  {"use_skill", command_uskill, 1.0},
+  {"ready_skill", command_rskill, 1.0},
+#endif
+  {"search",command_search,	1.0},
+#ifdef SEARCH_ITEMS
+  {"search-items", command_search_items,	0.0},
+#endif
+  {"statistics", command_statistics,	0.0},
+  {"strength", command_strength,	0.0},
+  {"strings", command_strings,	0.0},
+  {"take", command_take,	1.0},
+  {"tell", command_tell,	0.0},
+  {"throw", command_throw,	1.0},
+  {"time", command_time,	0.0},
+#ifdef SET_TITLE
+  {"title", command_title,	0.0},
+#endif
+  {"version", command_version,	0.0},
+  {"wimpy", command_wimpy,	0.0},
+  {"who", command_who,		0.0},
+
+  {"stay", command_stay,	1.0}, /* 1.0 because it is used when using a
+				       *  skill on yourself */
+  {"north", command_north,	1.0},
+  {"east", command_east,	1.0},
+  {"south", command_south,	1.0},
+  {"west", command_west,	1.0},
+  {"northeast", command_northeast,	1.0},
+  {"southeast", command_southeast,	1.0},
+  {"southwest", command_southwest,	1.0},
+  {"northwest", command_northwest,	1.0},
+};
+
+const int CommandsSize =sizeof(Commands) / sizeof(CommArray_s);
+
+CommArray_s NewServerCommands [] = {
+  {"run", command_run, 1.0},
+  {"run_stop", command_run_stop, 0.0},
+  {"fire", command_fire, 1.0},
+  {"fire_stop", command_fire_stop, 0.0}
+};
+
+const int NewServerCommandSize = sizeof(NewServerCommands)/ sizeof(CommArray_s);
+
+/*
+ * Wizard commands (for both)
+ */
+CommArray_s WizCommands [] = {
+  {"abil", command_abil,0.0},
+  {"addexp", command_addexp,0.0},
+  {"create", command_create,0.0},
+  {"debug", command_debug,0.0},
+  {"dump", command_dump,0.0},
+  {"dumpbelow", command_dumpbelow,0.0},
+  {"dumpfriendlyobjects", command_dumpfriendlyobjects,0.0},
+  {"dumplights", command_dumplights,0.0},
+  {"dumpallarchetypes", command_dumpallarchetypes,0.0},
+  {"dumpallmaps", command_dumpallmaps,0.0},
+  {"dumpallobjects", command_dumpallobjects,0.0},
+  {"dumpmap", command_dumpmap,0.0},
+  {"free", command_free,0.0},
+  {"goto", command_goto,0.0},
+  {"invisible", command_invisible,0.0},
+  {"kick", command_kick, 0.0},
+  {"nodm", command_nowiz,0.0},
+  {"nowiz", command_nowiz,0.0},
+  {"patch", command_patch,0.0},
+  {"printlos", command_printlos,0.0},
+  {"remove", command_remove,0.0},
+  {"reset", command_reset,0.0},
+  {"set_god", command_setgod, 0.0},
+  {"speed", command_speed,0.0},
+  {"spellreset", command_spell_reset,0.0},
+  {"ssdumptable", command_ssdumptable,0.0},
+  {"stats", command_stats,0.0},
+  {"summon", command_summon,0.0},
+  {"wizpass", command_wizpass,0.0},
+};
+const int WizCommandsSize =sizeof(WizCommands) / sizeof(CommArray_s);
+
+/* Socket commands - these should really do nothing more than output things
+ * to the various players/sockets.
+ */
+CommArray_s Socket_Commands[] = {
+  {"hiscore", command_hiscore,	0.0},
+  {"logs", command_logs,	0.0},
+  {"maps", command_maps,	0.0},
+  {"motd", command_motd,	0.0},
+  {"players", command_players,	0.0},
+  {"version", command_version,	0.0},
+  {"who", command_who,		0.0},
+};
+
+const int Socket_CommandsSize =sizeof(Socket_Commands) / sizeof(CommArray_s);
+
+
+/* Socket commands - these should really do nothing more than output things
+ * to the various players/sockets.
+ */
+CommArray_s Socket2_Commands[] = {
+  {"shout", command_shout,	0.0},
+  {"tell", command_tell,	0.0},
+};
+
+const int Socket2_CommandsSize =sizeof(Socket2_Commands) / sizeof(CommArray_s);
+
+
+
+static int compare_A(const void *a, const void *b)
+{
+  return strcmp(((CommArray_s *)a)->name, ((CommArray_s *)b)->name);
+}
+
+void init_commands()
+{
+  qsort((char *)Commands, CommandsSize, sizeof(CommArray_s), compare_A);
+  qsort((char *)WizCommands, WizCommandsSize, sizeof(CommArray_s), compare_A);
+  qsort((char *)NewServerCommands, NewServerCommandSize, sizeof(CommArray_s), compare_A);
+}
+
+#ifndef tolower
+#define tolower(C)	(((C) >= 'A' && (C) <= 'Z')? (C) - 'A' + 'a': (C))
+#endif
+
+
+CommFunc find_oldsocket_command(char *cmd)
+{
+  CommArray_s *asp, dummy;
+  char *cp;
+
+  for (cp=cmd; *cp; cp++) {
+    *cp =tolower(*cp);
+  }
+
+  dummy.name =cmd;
+  asp =(CommArray_s *)bsearch((void *)&dummy,
+			      (void *)Socket_Commands, Socket_CommandsSize,
+			      sizeof(CommArray_s), compare_A);
+  if (asp)
+    return asp->func;
+  return NULL;
+}
+
+CommFunc find_oldsocket_command2(char *cmd)
+{
+  CommArray_s *asp, dummy;
+  char *cp;
+
+  for (cp=cmd; *cp; cp++) {
+    *cp =tolower(*cp);
+  }
+
+  dummy.name =cmd;
+  asp =(CommArray_s *)bsearch((void *)&dummy,
+			      (void *)Socket2_Commands, Socket2_CommandsSize,
+			      sizeof(CommArray_s), compare_A);
+  if (asp)
+    return asp->func;
+  return NULL;
+}
+
+static CommFunc find_command(char *cmd)
+{
+  CommArray_s *asp, dummy;
+  char *cp;
+
+  for (cp=cmd; *cp; cp++)
+    *cp =tolower(*cp);
+
+  dummy.name =cmd;
+  asp =(CommArray_s *)bsearch((void *)&dummy,
+			      (void *)Commands, CommandsSize,
+			      sizeof(CommArray_s), compare_A);
+  if (asp)
+    return asp->func;
+  return NULL;
+}
+
+static CommFunc find_wizcommand(char *cmd)
+{
+  CommArray_s *asp, dummy;
+  char *cp;
+
+  for (cp=cmd; *cp; cp++)
+    *cp =tolower(*cp);
+
+  dummy.name =cmd;
+  asp =(CommArray_s *)bsearch((void *)&dummy,
+			      (void *)WizCommands, WizCommandsSize,
+			      sizeof(CommArray_s), compare_A);
+  if (asp)
+    return asp->func;
+  return NULL;
+}
+
+
+/*
+ * parse_string may be called from a player in the game or from a socket
+ * (op is NULL if it's a socket).
+ * It returnes 1 if it recognized the command, otherwise 0.
+ * Actually return value is used as can-repeat -flag
+ */
+
+int parse_string(object *op, char *str)
+{
+    CommFunc f;
+    char *cp;
+
+#ifdef INPUT_DEBUG
+    LOG(llevDebug, "Command: '%s'\n", str);
+#endif
+
+    /*
+     * No arguments?
+     */
+    if (!(cp=strchr(str, ' '))) {
+	if ((f=find_command(str)))
+	    return f(op, NULL);
+	if (QUERY_FLAG(op,FLAG_WIZ) && (f=find_wizcommand(str)))
+	    return f(op, NULL);
+
+	if(op) {
+	    new_draw_info(NDI_UNIQUE, 0,op, "Unknown command.  Try help.");
+	}
+	return 0;
+    }
+
+    /*
+     * Command with some arguments
+     */
+
+    *(cp++) ='\0';
+    /* Clear all spaces from the start of the optional argument */
+    while (*cp==' ') cp++;
+
+    if ((f=find_command(str)))
+	return f(op, cp);
+    if (QUERY_FLAG(op, FLAG_WIZ) && (f=find_wizcommand(str)))
+	return f(op, cp);
+
+    if(op) {
+	new_draw_info(NDI_UNIQUE, 0,op, "Unknown command.  Try help.");
+    }
+    return 0;
+}
+
+
+/*  this function handles splitting up a ; separated
+ *  compound command into sub-commands:  it is recursive. 
+ */
+int parse_command(object *op, char *str) {
+  char *tmp,*tmp2;
+  int i;
+  /* if it's a keybinding command, ignore semicolons */
+  if(strstr(str,"bind")) return parse_string(op,str);
+
+  /* If on a socket, you can not do complex commands. */
+  if(op && (tmp=strchr(str,';'))!=NULL)  /* we've found a ';' do the 1st and recurse */
+	 {
+	    char buf[MAX_BUF];
+		/* copy 1st command into buf */
+		/* Even if tmp2 points the the input_buf, this should still
+		 * be safe operation.
+		 */
+		for(i=0,tmp2=str;tmp2!=tmp;i++,tmp2++) 
+		    buf[i]= (*tmp2);
+		buf[i]='\0'; /* null terminate the copy*/
+		strncpy(op->contr->input_buf,tmp2+1, MAX_BUF);
+		op->contr->input_buf[MAX_BUF-1]=0;
+		parse_string(op,buf);
+	 }
+  else {
+	/* We need to set the input_buf to 0 so clear any complex keybinding
+	 * there might be.  However, str can be a pointer to input_buf in
+	 * the case of a complex keybinding.  So first we process the command,
+	 * clear the buffer, and then return the value.
+	 */
+	i=parse_string(op,str);
+	if (op) op->contr->input_buf[0]=0;
+	return i;
+  }
+  return 0;
+}

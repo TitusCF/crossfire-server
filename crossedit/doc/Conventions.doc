@@ -1,0 +1,31 @@
+
++-----------------+
+| Outer           |
+| +-------------+ |
+| | Inner       | |
+| | +---------+ | |
+| | | Message | | |
+| | +---------+ | |
+| +-------------+ |
++-----------------+
+
+==> member: OuterInnerMessage(OuterInner self,...)
+
+structure:
+	typedef struct OuterInner {
+	    ...
+	} *OuterInner;
+
+messages:
+	self = OuterInnerCreate(...)
+	OuterInnerDestroy(OuterInner self)
+
+	self = OuterInnerCopy(OuterInner self)
+	OuterInnerUpdate(self)
+
+self:
+	self is pointer to current package, which is managed. 
+
+### end of Conventions.doc ###
+
+

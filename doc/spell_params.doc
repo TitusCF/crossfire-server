@@ -1,0 +1,96 @@
+
+This document explains how to reset certain spell parameters,
+such as damage and duration, and the level dependencies of the above.
+
+You may either change the compiled-in defaults, defined in spellist.h,
+or the file lib/spell_params, which is read upon server initialization or
+read upon the dm executing 'spellreset'.
+
+
+Fundamental definitions:
+level --  spell level
+sp    --  the spellpoints the spell costs
+bdam  --  usually the damage the spell does
+bdur  --  the duration or range of the spell
+ldam  --  how many levels above the min. level to cast the spell to gain
+	  1pt of damage
+ldur  --  how many levels above the min. level to gain one point of duration
+spl   --  How many levels it takes for the spellpoint cost of the spell to double
+
+This is the format of the file:
+
+<spell name>
+<level> <sp> <bdam> <bdur> <ldam> <bdur> <spl>
+<spell name>
+<level> <sp> <bdam> <bdur> <ldam> <bdur> <spl>
+...
+
+Spells not in the parameter file use the compiled in defaults
+in spellist.h
+
+sp_level_strength_adjust = MAX(0, (caster's level - spell level) / ldur) )
+sp_level_dam_adjust = MAX(0, (caster's level- spell level)/ ldam) )
+
+Examples:  if ldam=3 for small fireball, a 4th level character's fireball's
+will do 1pt more damage per turn than a 1st level character's fireball.
+
+
+
+Special cases and exceptions
+
+cone spells:  bdur = duration of cone
+	      
+fireballs:  bdur ==  radius of explosion.
+
+lightnings:  bdur == length of bolt?
+
+bomb:  bdur == radius of explosion.
+
+destruction:  bdur = range of damage
+	      damage = bdam + int(caster)
+
+turn undead:  duration ==  bdur + wisdom bonus
+
+fear:  duration == bdur + cha bonus
+
+holy_word  duration==bdur + turn bonus
+
+summoning spells:  ldur:  how many levels needed to give the monster an
+			additional 10hp
+		   ldam:  how many levels needed to give the monster's dam
+			additional 2hp/attack
+		  bdam:  base damage done by monster
+		  bdur:  base hp of monster
+
+earthwall:  hp ==  bdam + sp_level_strength * 10
+
+firewall:  duration= bdur + 5*sp_level_strength_adjust
+frostwall:  ""
+counterwall:  ""
+pool of chaos: ""
+
+invisibility:
+duration = bdur + ldam * sp_level_strength_adjust
+
+earth_to_dust:  range = bdur + sp_level_strength_adjust
+
+strength, dexterity, constitution, charisma,  
+armour, all protection and immunity spells, levitate
+
+  duration = 500 server_clicks + 50*sp_level_strength_adjust
+
+cancellation:  no level dependence hacked in
+
+confusion:  none
+
+mass confusion:  duration = bdur + sp_level_strength_adjust
+
+meteor swarm:  sp_level_strength_adjust=# additional comets
+
+
+build [whatever]:
+	hp = bdam + 5*sp_level_dam_adjust
+	duration = bdur + 5*sp_level_strength_adjust
+
+create food :  bdam = base food value creatable with this spell
+	       ldam = food value += 50*SP_level_dam_adjust

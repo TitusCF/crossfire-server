@@ -1,0 +1,763 @@
+# 
+# Herein lie the formulae for alchemical products.
+# 
+# The code is designed so that any fancy combination
+# of objects may be combined to comprise a formula. Because
+# the code only requests that the 'names' (see def below) 
+# of cauldron ingredients match those listed in the formula
+# you can use *anything* found in the game as a possible 
+# ingredient. Legal names include both obj->name and a 
+# title field, if it exists. Therefore, it *is* legal to use
+# an artifact like "cloak of protection" as an ingredient.
+#
+# Definitions of fields:
+#
+#  "Object" This is the title of the formula. In
+#	    conjunction with a value in "arch" these
+#	    are used to lookup artifacts from the 
+#	    artifacts file (ie. <arch> of <title>).
+#	    If you want to just create the arch w/o
+#	    making it an artifact, designate the 
+#	    object field as "NONE".
+#
+#  "chance" is how likely a formula is to appear in 
+#	    an alchemical grimore. Chance of 0 indicates
+#	    the formula never appears.
+#
+#  "arch"   indicates the possible archetype that may
+# 	    be used to generate the item. 
+#
+#  "ingred" is a comma delimited list of ingredients
+#	    that are needed to create the item. Each
+#	    alchemical formula *should* be unique! but
+#	    note that this is not required. Values of
+# 	    ingredients must be the object names. Prepend
+#	    an integer value to denote the number of that
+#	    ingredient ("1" is not needed for single 
+#	    ingredients). Note that the ordering of the 
+#	    ingredients is *not* important. 
+#
+#  "yield"  is the theoretical possible maximum # of 
+#	    items the recipe can generate.
+#           It is fundamentally useful for balancing 
+#	    reward/effort for these recipes.  One intention
+#           is to enforce conservation of mass by means
+#           of this #.
+#
+#  "trans"  defaults to '0' and is not explicitly needed. 
+#	    If you define it to any value (ie '1') then
+#	    one of the ingredients will be used as the base
+#	    arch for the product. Obviously, the ingredient
+#	    so used *must* have the same archetype as the
+#	    product so don't be a fool and leave out a 
+#	    common archetype ingredient!! See bolt of Dragon 
+#	    slaying for an example of a transmution formula. 
+#
+# IMPORTANT NOTE ---->
+#	    It is not enough to construct ad-hoc lists of 
+#	    ingredients to make a formula. Playbalance will
+#	    be adversely effected if you make a formula for 
+#	    a powerfull artifact (potion of stat raising, for
+#	    example) that is common, and/or easy to assemble
+#	    the ingredients, and/or has few ingredients. Thus, 
+#	    here are some general guidelines for making formulae:
+#
+#		1) no fewer than 2 ingredients
+#		2) at least one ingredient needs to be found
+#		   in the dungeon, or is rarely appearing in shop.
+#		3) more ingredients for more powerfull stuff.
+#		4) more 'expensive' ingredients for more powerfull
+#		   stuff. 'expensive' here means its harder to get,
+#		   more costly to buy, rarer to find.
+#		5) Run crossfire with the -m9 switch to check your formula -
+#		   It does some sanity checking and price checking
+# 
+#
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+#		F O R M U L A E  B E G I N 
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+#
+# --------------
+# Basic formulae - these formulae make some of the most often used
+#		   ingredients.
+# --------------
+#
+# true lead
+Object NONE
+arch true_lead
+yield 2
+chance 5
+ingred lead,pile of philosophical salt,bottle of philosophical oil,pile of philosophical sulphur,pile of philosophical phosphorus
+#
+# fixed mercury
+Object NONE
+arch fix_mercury
+yield 2
+chance 5
+ingred mercury,pile of philosophical salt,bottle of philosophical oil,pile of philosophical sulphur,pile of philosophical phosphorus
+#
+# mercury
+Object NONE
+arch mercury
+chance 10
+ingred 3 pile of cinnabar
+#
+# philosophical salt
+Object NONE
+arch phil_salt
+chance 10
+yield 7
+ingred 7 pile of salt
+#
+# philosophical sulphur
+Object NONE
+arch phil_sulphur
+chance 10
+yield 7
+ingred 7 pile of sulphur
+#
+# philosophical phosphorus
+Object NONE
+arch phil_phosphorus
+chance 10
+yield 7
+ingred 7 pile of phosphorus
+#
+# philosophical oil
+Object NONE
+arch phil_oil
+chance 9
+yield 7
+ingred 7 bottle of mineral oil
+#
+# water of the wise
+Object the wise
+arch water
+chance 30
+yield 7
+ingred 7 water
+#
+# water of diamond
+Object diamond
+arch water
+chance 30
+yield 1
+ingred water of the wise,3 diamond
+#
+# water of ruby
+Object ruby
+arch water
+chance 35
+ingred 3 ruby,water of the wise
+#
+# water of sapphire 
+Object sapphire
+arch water
+chance 40
+ingred 3 sapphire,water of the wise
+#
+# water of emerald 
+Object emerald
+arch water
+chance 40
+ingred 3 emerald,water of the wise
+#
+#
+# -------------- 
+# Potions     -- incl. balms, figurines, and dusts 
+# --------------
+#
+#  -- Balms of protection. Since balm is rubbed on, I made only 
+#     protections vs. things that 'physically' must touch you.
+#     Other protections are in potions.
+#
+# -- balms of protection --
+#
+# -- fire prot.
+Object asbestos
+arch balm_generic
+chance 25
+ingred 3 dragon scale,water of the wise
+#
+# -- cold prot.
+Object warmth
+arch balm_generic
+chance 25
+ingred chinese dragon's steak,water of the wise,icecube
+#
+# -- elect prot.
+Object insulation
+arch balm_generic
+chance 25
+ingred electric dragon's steak,water of the wise,2 key
+#
+# -- phys. prot.
+Object ethrealness
+arch balm_generic
+chance 28
+ingred 3 ghost's ectoplasm,water of emerald
+#
+# -- misc. balms -- 
+#
+# -- word of recall
+Object traveling
+arch balm_generic
+chance 2
+yield 3
+ingred faerie dragon's wing,3 xan's wing,3 pixie's wings,3 water of sapphire
+#
+# -- invisible
+Object transparency
+arch balm_generic
+chance 8
+ingred ghost's ectoplasm,water of emerald,3 onion
+#
+# -- invisible to undead
+Object invisible to undead
+arch balm_generic
+chance 15
+ingred zombie's corpse,graveyard dirt
+#
+# -- minor heal
+Object first aid
+arch balm_generic
+chance 27
+ingred water of the wise,mandrake root
+#
+# -- levitation
+Object flying
+arch balm_generic
+chance 20
+ingred 2 giant bat's wing,water of the wise
+#
+# -- serpent to snake (you rub it on your staff!)
+# currently buggy. lets comment it out
+# Object serpent
+# arch balm_generic
+# chance 12
+# ingred snake's skin,bottle of philosophical oil
+#
+#  Figurines -- these devices should only summon 'golems'; never any
+#	        other effects.
+#
+#  -- summon golem
+Object clay
+arch figurine_generic
+chance 8
+ingred 3 graveyard dirt,water of the wise
+#
+#  -- summon air elem
+Object whirlwind
+arch figurine_generic
+chance 7
+yield 4
+ingred air para-elemental's residue,7 pile of gypsum,bottle of philosophical oil
+#
+#  -- summon earth elem
+Object stone
+arch figurine_generic
+chance 5
+yield 4
+ingred earth para-elemental's residue,7 pile of pyrite,bottle of philosophical oil
+#
+#  -- summon water elem
+Object a great wave
+arch figurine_generic
+chance 4
+yield 4
+ingred water para-elemental's residue,7 water,bottle of philosophical oil
+#
+#  -- summon fire elem
+Object a flame
+arch figurine_generic
+chance 3
+yield 4
+ingred fire para-elemental's residue,7 pile of sulphur,bottle of philosophical oil
+#
+#  -- mystic fist
+Object a clinched hand
+arch figurine_generic
+chance 1
+yield 7
+ingred figurine of clay,hill giant's hand,bottle of philosophical oil
+#
+#  Dusts -- these either allow 360 deg 'attacks' or effect some kind of 
+#	    detection.
+#
+# -- dusts w/ 360 effect -- 
+#
+# -- paralyze
+Object stasis
+arch dust_generic
+chance 15
+ingred mountain stone,goblin's liver
+#
+# -- mass confusion
+Object madness
+arch dust_generic
+chance 15
+yield 2
+ingred madman's corpse,2 water of the wise
+#
+# -- burning hands
+Object ignition
+arch dust_generic
+chance 19
+yield 4
+ingred water of diamond,pile of salt,pile of phosphorus,pile of sulphur
+#
+# -- hellfire 
+Object conflagration
+arch dust_generic
+chance 5
+yield 4
+ingred water of diamond,pile of philosophical salt,pile of philosophical phosphorus,pile of philosophical sulphur
+#
+# -- counterspell
+Object countermagic
+arch dust_generic
+chance 23
+yield 4
+ingred lead,lead,pile of philosophical phosphorus
+#
+# -- icestorm
+Object frost
+arch dust_generic
+chance 18
+yield 4
+ingred icecube,icecube,icecube,water of diamond
+#
+# -- shockwave 
+Object concussion
+arch dust_generic
+chance 8
+yield 2
+ingred dust of conflagration,dust of ignition
+#
+# -- fear 
+Object fright
+arch dust_generic
+chance 16
+yield 2
+ingred orc's heart,water of the wise
+# 
+# -- turn undead
+Object repelling undead
+arch dust_generic
+chance 11
+yield 6
+ingred pile of salt,graveyard dirt
+# 
+# -- face of death -- this is potent stuff!!
+# unfortuneately its currently buggy :<
+#Object Necrocritis
+#arch dust_generic
+#chance 0
+#ingred 3 graveyard dirt,vampire's heart,zombie corpse,lich dust
+# 
+# -- dusts of detection --
+#
+# -- magic mapping
+Object clairvoyance
+arch dust_generic
+chance 14
+yield 6
+ingred 2 beholdereye,water of sapphire
+#
+# -- show invisible
+Object Ibn Gahzi
+arch dust_generic
+chance 3
+yield 5
+ingred 3 pile of gypsum,dread's eye,water of emerald
+#
+# -- detect magic
+Object show enchantment
+arch dust_generic
+chance 38
+yield 5
+ingred pixie dust,pile of pyrite
+#
+# -- dark vision
+Object night vision
+arch dust_generic
+chance 17
+yield 10
+ingred beholdereye,3 carrots,water of the wise
+#
+# -- xray
+Object piercing vision
+arch dust_generic
+chance 11
+yield 10
+ingred water of sapphire,7 carrots
+#
+# -- faery fire
+Object clinging glow
+arch dust_generic
+chance 21
+yield 10
+ingred pile of pyrite,3 pixie dust,water of the wise
+#
+# -- fog, ok, ok. Not a detection spell. Not 360. But where else
+#    to put it? And after all the work I put in this game,
+#	can't I name an artifact after a favorite character? :) 
+#    -- b.t.
+Object Biren's mist
+arch dust_generic
+chance 6
+yield 3
+ingred water of the wise,icecube,booze
+#
+#    Potions -- these give 'non-contact' protections, have
+#	        attack effects on the 'drinker' (or one it is 
+#		thrown at ;), give immunities, give cures and 
+#	  	have the more powerfull	misc. effects.
+#
+# -- stat enchancing potions. (temporary, allowing players to make
+#    permantent stat raising items is a playbalance no no I think).  
+#
+# -- strength spell
+Object strength
+arch potion_generic
+chance 18
+ingred 3 water of the wise,ogre's arm,pile of philosophical salt
+#
+# -- dex spell
+Object quickness
+arch potion_generic
+chance 18
+yield 7
+ingred 3 water of the wise,raas's icor,pile of philosophical salt
+#
+# -- con spell
+Object health
+arch potion_generic
+chance 17
+yield 7
+ingred 3 water of the wise,small troll's liver,pile of philosophical salt
+#
+# -- cha spell (gets rid of wrinkles, better as balm! :) 
+Object beauty
+arch balm_generic
+chance 5
+yield 7
+ingred woman's head,3 mint sprig,water of the wise
+#
+# -- heroism
+Object NONE
+arch potion_heroism
+chance 11
+yield 8
+ingred ogre's heart,3 water of the wise,pile of philosophical salt,pirate's heart
+#
+# -- immunity potions, these are separate archs each already --
+#    Note the 0 chance--these formulae are quest items.
+#
+# -- fire immune
+Object NONE
+arch potion_cold
+chance 1
+yield 10
+ingred fire para-elemental's residue,3 balm of asbestos,dragon's steak,7 water of ruby
+#
+# -- cold immune
+Object NONE
+arch potion_fire
+chance 1
+yield 10
+ingred ice para-elemental's residue,3 balm of warmth,chinese dragon's steak,7 water of ruby
+#
+# -- guess what this is.... 
+Object NONE
+arch potion_invulnerability
+chance 0
+yield 4
+ingred spectre's ectoplasm,demon's head,7 water of ruby,7 balm of ethrealness
+
+#
+#  -- protection/immunity potions for potion_gen
+#
+# -- physical immunity (very powerful) 
+# this potion is repeated in prior recipe. 
+#Object ethreality
+# arch potion_generic
+#chance 0
+#yield 14
+#ingred spectre's ectoplasm,demon's head,7 water of ruby,7 balm of ethrealness
+# -- magic immunity (very powerful) 
+Object magic immunity
+arch potion_generic
+chance 0
+yield 14
+ingred block of true lead,demon's icor,7 water of diamond,7 potion of resist magic
+#
+# -- electric immunity (very powerful)
+Object shock immunity
+arch potion_generic
+chance 0
+yield 14
+ingred lightning para-elemental's residue,block of fixed mercury,titan's head,7 water of ruby
+#
+# -- prot from magic
+Object resist magic
+arch potion_generic
+chance 25
+yield 2
+ingred water of ruby,beholder's tongue,mandrake root
+#
+# -- prot from confusion
+Object resist confusion
+arch potion_generic
+chance 22
+ingred madman's head,beholdereye,water of ruby
+#
+# -- prot from draining 
+Object resist draining
+arch potion_generic
+chance 21
+yield 10
+ingred wight's corpse,water of ruby,graveyard dirt
+#
+# -- prot from paralysis 
+Object resist paralysis
+arch potion_generic
+chance 24
+yield 10
+ingred mercury,water of ruby,cunning gnome's corpse
+#
+# -- prot from slow
+Object resist slow
+arch potion_generic
+chance 24
+yield 10
+ingred water of ruby,2 xan's wing
+#
+# -- prot from poison
+Object resist poison
+arch potion_generic
+chance 20
+yield 10
+ingred scorpion's stinger,water of ruby,clover
+#
+# -- curative potions
+#
+# -- cure blindness
+Object cure vision
+arch potion_generic
+chance 15
+yield 5
+ingred man's eye,carrots,balm of first aid
+#
+# -- cure poison 
+Object cure sickness
+arch potion_generic
+chance 16
+yield 5
+ingred snake's skin,apple,balm of first aid
+#
+# -- cure confusion
+Object cure madness
+arch potion_generic
+chance 17
+yield 9
+ingred madman's head,apple,balm of first aid
+#
+#  -- potions casting other magic,  dedicated archs first, then potion_gen
+#
+# -- sp regen. Recipe #1 
+Object NONE
+arch potion_magic
+chance 0
+yield 5
+ingred 3 potion of mystic power,block of fixed mercury,water of diamond
+#
+# -- sp regen. Recipe #2
+Object NONE
+arch potion_magic
+chance 0
+yield 4
+ingred potion of mystic power,mushroom of Magic,water of diamond
+#
+# -- restoration
+Object NONE
+arch potion_restoration
+chance 7
+yield 5
+ingred unicorn horn,3 booze
+#
+# -- healing recipe #1
+Object NONE
+arch potion_heal
+chance 4
+yield 4
+ingred potion of restoration,mushroom of Healing,red rose
+#
+# -- healing recipe #2
+Object NONE
+arch potion_heal
+chance 2
+yield 5
+ingred unicorn horn,3 balm of first aid,3 red rose
+# 
+# -- regeneration
+Object recuperation
+arch potion_generic
+chance 9
+yield 7
+ingred troll's liver,water of the wise,3 booze
+#
+# -- haste
+Object speed
+arch potion_generic
+chance 1
+yield 4
+ingred pixie's wings,raas's icor,water of diamond
+#
+# -- transfer
+Object mystic power
+arch potion_generic
+chance 8
+yield 6
+ingred 3 water of diamond,sphinx's head,clover
+#
+# -- perceive self
+Object self knowledge
+arch potion_generic
+chance 20
+yield 3
+ingred sage's head,water of the wise
+#
+# -- attack potions. Drinker/target is effected adversely
+#
+# -- sm. lightning
+Object electric shock
+arch potion_generic
+chance 4
+yield 3
+ingred lightning para-elemental's residue,water of diamond
+#
+# -- firebolt
+Object fire
+arch potion_generic
+chance 4
+yield 3
+ingred fire para-elemental's residue,water of ruby
+#
+# -- frostbolt
+Object freezing
+arch potion_generic
+chance 4
+yield 3
+ingred ice para-elemental's residue,water of sapphire
+#
+# -- sunbolt
+Object sunfire
+arch potion_generic
+chance 4
+yield 3
+ingred lava para-elemental's residue,water of diamond
+#
+# -- comet 
+Object black fire
+arch potion_generic
+chance 2
+yield 5
+ingred potion of fire,potion of sunfire,water of diamond
+#
+# -- meteor storm, very powerful. Quest formula. 
+Object firery destruction
+arch potion_generic
+chance 0
+yield 6
+ingred potion of black fire,water of diamond,water of ruby,water of sapphire,water of emerald
+#
+# -- s. fireball
+Object firestorm
+arch potion_generic
+chance 12
+yield 7
+ingred dust of ignition,3 booze,bottle of philosophical oil
+#
+# -- m. fireball
+Object great firestorm
+arch potion_generic
+chance 4
+yield 7
+ingred dust of conflagration,3 booze,bottle of philosophical oil
+#
+#
+# ------------------- 
+# Missile weapons
+# ------------------- 
+#
+Object Slay Dragon
+arch arrow
+chance 3
+trans 1
+yield 20
+ingred 20 arrow,dragon's claw
+#
+Object Slay Dragon
+arch bolt
+chance 4
+trans 1
+yield 20
+ingred 20 bolt,dragon's claw
+#
+#
+Object Assassinating Dragons
+arch bolt
+chance 0
+yield 20
+trans 1
+ingred 20 bolt,dragon's heart,lich dust,water of emerald,demon's icor,scorpion's stinger
+#
+#
+Object Assassinating Dragons
+arch arrow
+chance 0
+yield 20
+trans 1
+ingred 20 arrow,dragon's heart,lich dust,water of emerald,demon's icor,scorpion's stinger
+#
+Object Assassinating Trolls
+arch bolt
+chance 0
+trans 1
+yield 30
+ingred 30 bolt,troll's heart,demon's icor,scorpion's stinger
+#
+#
+Object Assassinating Trolls
+arch arrow
+chance 0
+yield 30
+trans 1
+ingred 30 arrow,troll's heart,demon's icor,scorpion's stinger
+#
+#
+Object Blessedness
+arch bolt
+chance 0
+trans 1
+yield 20
+ingred 20 bolt,3 unicorn horn,2 water of sapphire,clover
+#
+#
+Object Blessedness
+arch arrow
+chance 0
+trans 1
+yield 20
+ingred 20 arrow,3 unicorn horn,2 water of sapphire,clover,white rose
+#
+# -------------------
+# Amulets
+# -------------------
+#
+#Object Shielding
+#arch amulet_lifesave
+#chance 0
+#ingred holy symbol,string,3 holy water,white rose
+#

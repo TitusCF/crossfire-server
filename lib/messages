@@ -1,0 +1,129 @@
+#
+# Message file for books  
+#
+# Message entries contained in this file will  
+# appear randomly in readable objects like books, scrolls
+# and such (op->type==BOOK).
+#
+# To add an entry: 
+# ---------------
+# Start all entries w/ MSG and end with ENDMSG. The body of 
+# the text between these 2 words will be the message.
+#
+# When designing messages please keep in mind: 
+# -------------------------------------------
+#    1) Message length shouldn't exceed the maximum
+# buffer size for books (you'll generate a warning message
+# if you do this). Check the file include/read.h for the 
+# current message size limit (BOOK_BUF).
+#    2) Text has to fit into the player message window.
+# Don't design lines at lengths of 40 or more, or it will
+# wrap around to the next line. Long lines will appear 
+# differently to the player than as presented in this file. 
+#
+#
+#
+MSG
+
+ <undecipherable text>
+ENDMSG
+#
+#
+MSG
+"In the mountains north-east of the great 
+city we found it at last--the hidden 
+fortress of Barad-Dur. What treasures 
+could lie in it I do not know for our 
+party never gained its way past the 
+entryway. Skulls, pixies, and a horrible 
+creature I hesitate to name decimated my 
+friends and I." 
+ENDMSG
+#
+#
+MSG
+In ancient times past the great fortress 
+of Ang was raised on the western shore. 
+Many inhabitants it has had, but the last
+known was the most unusual. A titan of 
+rare power is said to live in Ang now.
+There he serves as guardian of an arti-
+fact of unusual might.
+ENDMSG
+#
+#
+MSG
+Many have ventured into the northern 
+country. Up beyond the mountains, alone
+in the wastes lies a vast domain of 
+mines that delve deep into the earth. 
+Know that these tunnels and shafts are
+quite perilous; for only once in recent
+times have I heard of an expedition
+returning from them.
+ENDMSG
+#
+#
+MSG
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~
+~~~~~~~~~
+~~~~~~~~~              ^^^^^^^^^^^^^ 
+~~~~~~~~X==========   ^  %%%%%%^%^^^^^
+~~~~~~~ santo	  =     %%%%%%%%%%%%%%
+~~~~~~~	dominion  =      %%%The%%%%%%%
+~~~~~~	^^        =      %%%%%%%%%%%%%
+~~~~~~	^^        =      %%Great%%%%%%
+~~~~~~^	^         =       %%%%%%%%%%%%
+~~~~~~X===============================
+~~~~~~ Scorn  ^^^  =      %%%%%%%%%%%%
+~~~~~	     ^^^^  =  %% %%Forest%%%%%
+~~~          ^^^   =    %%%%%%%%%%%%%%
+~~~           ^^^  =    %%%%%%%%%%%%%%
+~~~         ^^   ===     %%%%%%%%%%%%%
+~~~              X Brest 
+~~~~           ~~~~~ 
+~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+----------Map of Western World--------
+ENDMSG
+#
+#
+MSG
+...and then did the Alchemist agree to
+make me my potion. First he called to 
+his grimm servants who hauld forth a 
+great iron cauldron. Into this black 
+device did he deposit his ingredients
+and, opening his spell book for refer-
+ence, then did he cast his spell of 
+alchemy therepon the cauldron. 
+
+  Greatly did the tub shake and move!
+I thought that the Alchemist had broke
+his device, but he chuckled at my ig-
+norance. Into the cauldron did he reach
+an brought forth a filled bottle of 
+golden amber fluid...
+ENDMSG
+#
+#
+MSG
+  Know that there are 4 principle 
+philosophical ingredients. In order,
+they are:
+
+   - philosophical salt
+   - philosophical sulphur
+   - philosophical phosphorus
+   - philosophical oil
+
+  The great alchemist has often said that 
+all living things are made of these
+ingredients. Proper combination of
+these with other base objects can
+often create potions of power and
+might.
+ENDMSG
+#

@@ -1,0 +1,582 @@
+/*
+ * static char *rcsid_button_c =
+ *   "$Id$";
+ */
+
+/*
+    CrossFire, A Multiplayer game for X-windows
+
+    Copyright (C) 1992 Frank Tore Johansen
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+
+    The author can be reached via e-mail to frankj@ifi.uio.no.
+*/
+
+#include <global.h>
+#include <funcpoint.h>
+
+/*
+ * This code is no longer highly inefficient 8)
+ */
+
+/*
+ * Push the specified object.  This can affect other buttons/gates/handles
+ * altars/pedestals/holes in the whole map.
+ * Changed the routine to loop through _all_ objects.
+ * Better hurry with that linked list...
+ */
+
+void push_button(object *op) {
+  object *tmp;
+  objectlink *ol;
+
+/*   LOG(llevDebug, "push_button: %s (%d)\n", op->name, op->count); */
+  for (ol = get_button_links(op); ol; ol = ol->next) {
+    if (!ol->ob || ol->ob->count != ol->id) {
+      LOG(llevError, "Internal error in push_button (%s).\n", op->name);
+      continue;
+    }
+    /* a button link object can become freed when the map is saving.  As
+     * a map is saved, objects are removed and freed, and if an object is
+     * on top of a button, this function is eventually called.  If a map
+     * is getting moved out of memory, the status of buttons and levers
+     * probably isn't important - it will get sorted out when the map is
+     * re-loaded.  As such, just exit this function if that is the case.
+     */
+    
+    if (QUERY_FLAG(ol->ob, FLAG_FREED)) return;
+    tmp = ol->ob;
+    switch(tmp->type) {
+    case GATE:
+    case HOLE:
+      tmp->value=tmp->stats.maxsp?!op->value:op->value;
+      tmp->speed=0.5;
+      update_ob_speed(tmp);
+      break;
+    case HANDLE:
+	SET_ANIMATION(tmp, (tmp->value=tmp->stats.maxsp?!op->value:op->value));
+	update_object(tmp);
+	break;
+    case SIGN:
+	if (tmp->stats.food && ++tmp->last_eat>tmp->stats.food) {
+	    (*info_map_func)(NDI_UNIQUE | NDI_NAVY,tmp->map,	
+			    "Nothing is written on it.");
+	} else {
+	    (*info_map_func)(NDI_UNIQUE | NDI_NAVY,tmp->map,tmp->msg);
+	}
+	break;
+    case ALTAR:
+	tmp->value = 1;
+	SET_ANIMATION(tmp, tmp->value);
+	update_object(tmp);
+	break;
+    case BUTTON:
+    case PEDESTAL:
+	tmp->value=op->value;
+	SET_ANIMATION(tmp, tmp->value);
+	update_object(tmp);
+	break;
+    case MOOD_FLOOR:
+	do_mood_floor(tmp, op);
+	break;
+    case TIMED_GATE:
+	tmp->speed = tmp->arch->clone.speed;
+	update_ob_speed(tmp);  /* original values */
+        tmp->value = tmp->arch->clone.value;
+        tmp->stats.sp = 1;
+        tmp->stats.hp = tmp->stats.maxhp;
+        break;
+    case DIRECTOR:
+    case FIREWALL:
+        if ((tmp->stats.sp += tmp->stats.maxsp) > 8) /* next direction */
+          tmp->stats.sp = ((tmp->stats.sp-1)%8)+1;
+        animate_turning(tmp);
+        break;
+    case TELEPORTER:
+	(*move_teleporter_func)(tmp);
+	break;
+    case CREATOR:
+	(*move_creator_func)(tmp);
+	break;
+    }
+  }
+}
+
+/*
+ * Updates everything connected with the button op.
+ * After changing the state of a button, this function must be called
+ * to make sure that all gates and other buttons connected to the
+ * button reacts to the (eventual) change of state.
+ */
+
+void update_button(object *op) {
+    object *ab,*tmp;
+    int tot,any_down=0, old_value=op->value;
+    objectlink *ol;
+
+    /* LOG(llevDebug, "update_button: %s (%d)\n", op->name, op->count); */
+    for (ol = get_button_links(op); ol; ol = ol->next) {
+	if (!ol->ob || ol->ob->count != ol->id) {
+	    LOG(llevError, "Internal error in update_button (%s).\n", op->name);
+	    continue;
+	}
+	tmp = ol->ob;
+	if (tmp->type==BUTTON) {
+	    for(ab=tmp->above,tot=0;ab!=NULL;ab=ab->above)
+		if(!QUERY_FLAG(ab,FLAG_FLYING)) /* Why was nrof removed? */
+		    tot+=ab->weight*(ab->nrof?ab->nrof:1)+ab->carrying;
+	    tmp->value=(tot>=tmp->weight)?1:0;
+	    if(tmp->value)
+		any_down=1;
+	} else if (tmp->type == PEDESTAL) {
+	    tmp->value = 0;
+	    for(ab=tmp->above; ab!=NULL; ab=ab->above) {
+		if(ab->head!=NULL)
+		    ab=ab->head;
+		if ( (!QUERY_FLAG(ab,FLAG_FLYING) || 
+		      QUERY_FLAG(tmp,FLAG_FLY_ON)) &&
+		     (ab->race==tmp->slaying ||
+		      ((ab->type==SPECIAL_KEY) && (ab->slaying==tmp->slaying)) || 
+		      (!strcmp (tmp->slaying, "player") && 
+		       ab->type == PLAYER)))
+			    tmp->value = 1;
+	    }
+	    if(tmp->value)
+		any_down=1;
+	}
+    }
+    if(any_down) /* If any other buttons were down, force this to remain down */
+	op->value=1;
+
+    /* If this button hasn't changed, don't do anything */
+    if (op->value != old_value) {
+	SET_ANIMATION(op, op->value);
+	update_object(op);
+	push_button(op); /* Make all other buttons the same */
+    }
+}
+
+/*
+ * Updates every button on the map (by calling update_button() for them).
+ */
+
+void update_buttons(mapstruct *m) {
+  objectlink *ol;
+  oblinkpt *obp;
+  for (obp = m->buttons; obp; obp = obp->next)
+    for (ol = obp->link; ol; ol = ol->next) {
+      if (!ol->ob || ol->ob->count != ol->id) {
+        LOG(llevError, "Internal error in update_button (%s (%dx%d):%d, connected %d ).\n",
+	    ol->ob?ol->ob->name:"null",
+	    ol->ob?ol->ob->x:-1,
+	    ol->ob?ol->ob->y:-1,
+	    ol->id,
+	    obp->value);
+        continue;
+      }
+      if (ol->ob->type==BUTTON || ol->ob->type==PEDESTAL)
+      {
+        update_button(ol->ob);
+        break;
+      }
+    }
+}
+
+void use_trigger(object *op) 
+{
+
+    /* Toggle value */
+    op->value = !op->value;
+    push_button(op);
+}
+
+/*
+ * Note: animate_object should be used instead of this,
+ * but it can't handle animations in the 8 directions
+ */
+
+void animate_turning(object *op) /* only one part objects */
+{
+    if (++op->state >= NUM_ANIMATIONS(op)/8)
+      op->state=0; 
+    SET_ANIMATION(op, (op->stats.sp-1) * NUM_ANIMATIONS(op) / 8 + 
+		  op->state);
+    update_object(op);
+}
+
+#define ARCH_SACRIFICE(xyz) ((xyz)->slaying)
+#define NROF_SACRIFICE(xyz) ((xyz)->stats.food)
+
+/* Returns that object if it meets the sacrifice needs of the altar.
+ * If no object meets the needs, return NULL.
+ * Function put in (0.92.1) so that identify altars won't grab money
+ * unnecessarily - we can see if there is sufficient money, see if something
+ * needs to be identified, and then remove money if needed. (via check_altar)
+ * Check_altar uses this function also.
+ * 0.93.4: Linked objects (ie, objects that are connected) can not be
+ * sacrificed.  This fixes a bug of trying to put multiple altars/related
+ * objects on the same space that take the same sacrifice.
+ */
+ 
+object *check_altar_sacrifice(object *altar)
+{
+  object *op;
+
+  for (op=altar->above; op; op=op->above)
+    if (!QUERY_FLAG(op,FLAG_ALIVE) && !QUERY_FLAG(op,FLAG_IS_LINKED) &&
+	op->type != PLAYER) {
+      if ((ARCH_SACRIFICE(altar) == op->arch->name  ||
+          ARCH_SACRIFICE(altar) == op->name ||
+	  ARCH_SACRIFICE(altar) == op->slaying) 
+	  && NROF_SACRIFICE(altar) <= (op->nrof?op->nrof:1))
+		return op;
+      if (!strcmp(ARCH_SACRIFICE(altar), "money") &&
+	  op->type==MONEY && op->nrof*op->value>=NROF_SACRIFICE(altar))
+		return op;
+    }
+    return NULL;
+}
+
+
+/*
+ * check_altar checks if sacrifice was accepted and removes sacrificed
+ * objects. If sacrifice was succeed return 1 else 0  Might be better to
+ * call check_altar_sacrifice (above) than depend on the return value,
+ * since check_altar will remove the sacrifice also.
+ *
+ * Don't really like the name of this functin, operate_altar might be better -
+ * we aren't really checking it, since it will remove the sacrifice
+ */
+
+int check_altar (object *altar)
+{
+  object *op;
+
+  if (!altar->slaying || altar->value)
+    return 0;
+
+  op=check_altar_sacrifice(altar);
+  if (!op)
+    return 0;
+
+  /* get_altar_sacrifice should have already verified that enough money
+   * has been dropped.
+   */
+  if (!strcmp(ARCH_SACRIFICE(altar), "money")) {
+	int number=NROF_SACRIFICE(altar)/op->value;
+
+	/* Round up any sacrifices.  Altars don't make change either */
+	if (NROF_SACRIFICE(altar)%op->value) number++;
+	decrease_ob_nr (op, number);
+  }
+  else
+    decrease_ob_nr (op, NROF_SACRIFICE(altar));
+ 
+  for (op = get_map_ob(altar->map,altar->x,altar->y);
+       op && op->type != PLAYER; op=op->above);
+  if (op && altar->msg)
+    (*info_map_func) (NDI_BLACK, op->map, altar->msg);
+  return 1;
+}
+
+void trigger_move (object *op, int state) /* 1 down and 0 up */
+{
+    op->stats.wc = state;
+    SET_ANIMATION(op,op->stats.wc);
+    update_object(op);
+    if (state) {
+
+	/* Push button now does it all. */
+	use_trigger(op);
+
+	op->speed =  op->arch->clone.speed;
+	update_ob_speed(op);
+	op->speed_left = -1;
+    } else {
+	op->speed = 0;
+	update_ob_speed(op);
+    }
+}
+
+void check_trigger (object *op) {
+  object *tmp;
+  int push = 0, tot = 0;
+
+  switch (op->type) {
+    case TRIGGER_BUTTON:
+    if (op->weight > 0) {
+        for(tmp=op->above; tmp; tmp=tmp->above)
+          if(!QUERY_FLAG(tmp,FLAG_FLYING))
+	    tot += tmp->weight * (tmp->nrof ? tmp->nrof : 1) + tmp->carrying;
+          if (tot >= op->weight)
+            push = 1;
+          if (!push || op->stats.wc == 0)
+	    trigger_move (op, push);
+    }
+    return;
+
+    case TRIGGER_PEDESTAL:
+        for(tmp=op->above; tmp; tmp=tmp->above) {
+          if(tmp->head!=NULL)
+            tmp=tmp->head;
+          if ( (!QUERY_FLAG(tmp,FLAG_FLYING) || QUERY_FLAG(op,FLAG_FLY_ON))
+	     && (tmp->race==op->slaying ||
+             (!strcmp (op->slaying, "player") && tmp->type == PLAYER)))
+                push = 1;
+	}
+        if (!push || op->stats.wc == 0)
+          trigger_move(op, push);
+        return;
+    case TRIGGER_ALTAR:
+        if (op->stats.wc  == 0)
+          trigger_move (op,  op->speed == 0 ? check_altar(op) : 0);
+	  return;
+
+    case TRIGGER:
+        if (op->stats.wc == 0)   /* handle-trigger */
+            trigger_move (op, op->speed == 0 ? 1 : 0);
+	return;
+
+    default:
+	LOG(llevDebug, "Unknown trigger type: %s (%d)\n", op->name, op->type);
+	
+  }
+}
+
+void add_button_link(object *button, mapstruct *map, int connected) {
+  oblinkpt *obp;
+  objectlink *ol = get_objectlink();
+
+  if (!map) {
+    LOG(llevError, "Tried to add button-link without map.\n");
+    return;
+  }
+/*  LOG(llevDebug,"adding button %s (%d)\n", button->name, connected);*/
+
+  SET_FLAG(button,FLAG_IS_LINKED);
+
+  ol->ob = button;
+  ol->id = button->count;
+
+  for (obp = map->buttons; obp && obp->value != connected; obp = obp->next);
+
+  if (obp) {
+    ol->next = obp->link;
+    obp->link = ol;
+  } else {
+    obp = get_objectlinkpt();
+    obp->value = connected;
+
+    obp->next = map->buttons;
+    map->buttons = obp;
+    obp->link = ol;
+  }
+}
+
+/*
+ * Remove the object from the linked lists of buttons in the map.
+ * This is only needed by editors.
+ */
+
+void remove_button_link(object *op) {
+  oblinkpt *obp;
+  objectlink **olp, *ol;
+
+  if (op->map == NULL) {
+    LOG(llevError, "remove_button_link() in object without map.\n");
+    return;
+  }
+  if (!QUERY_FLAG(op,FLAG_IS_LINKED)) {
+    LOG(llevError, "remove_button_linked() in unlinked object.\n");
+    return;
+  }
+  for (obp = op->map->buttons; obp; obp = obp->next)
+    for (olp = &obp->link; (ol = *olp); olp = &ol->next)
+      if (ol->ob == op) {
+/*        LOG(llevDebug, "Removed link %d in button %s and map %s.\n",
+           obp->value, op->name, op->map->path);
+*/
+        *olp = ol->next;
+        free(ol);
+        return;
+      }
+  LOG(llevError, "remove_button_linked(): couldn't find object.\n");
+  CLEAR_FLAG(op,FLAG_IS_LINKED);
+}
+  
+/*
+ * Return the first objectlink in the objects linked to this one
+ */
+
+objectlink *get_button_links(object *button) {
+  oblinkpt *obp;
+  objectlink *ol;
+
+  if (!button->map)
+    return NULL;
+  for (obp = button->map->buttons; obp; obp = obp->next)
+    for (ol = obp->link; ol; ol = ol->next)
+      if (ol->ob == button && ol->id == button->count)
+        return obp->link;
+  return NULL;
+}
+
+/*
+ * Made as a separate function to increase efficiency
+ */
+
+int get_button_value(object *button) {
+  oblinkpt *obp;
+  objectlink *ol;
+
+  if (!button->map)
+    return 0;
+  for (obp = button->map->buttons; obp; obp = obp->next)
+    for (ol = obp->link; ol; ol = ol->next)
+      if (ol->ob == button && ol->id == button->count)
+        return obp->value;
+  return 0;
+}
+
+/* This routine makes monsters who are  
+ * standing on the 'mood floor' change their
+ * disposition if it is different.  
+ * If floor is to be triggered must have
+ * a speed of zero (default is 1 for all
+ * but the charm floor type).
+ * by b.t. thomas@nomad.astro.psu.edu
+ */
+ 
+void do_mood_floor(object *op, object *op2) {
+        object *tmp;
+        object *tmp2;
+
+        for(tmp=get_map_ob(op->map,op->x,op->y);
+                tmp&&!QUERY_FLAG(tmp,FLAG_MONSTER);tmp=tmp->above)  
+        	if(tmp->above==NULL) break;
+
+        if(tmp->type==PLAYER) return;
+
+	switch(op->last_sp) { 
+	  case 0:			/* furious--make all monsters mad */ 
+		if(QUERY_FLAG(tmp, FLAG_UNAGGRESSIVE))
+			CLEAR_FLAG(tmp, FLAG_UNAGGRESSIVE);
+		if(QUERY_FLAG(tmp, FLAG_FRIENDLY)) { 
+			tmp->owner = 0;
+			CLEAR_FLAG(tmp, FLAG_FRIENDLY);
+			tmp->move_type = 0;
+		}
+		break;
+	  case 1: 			/* angry -- get neutral monsters mad */	 
+        	if(QUERY_FLAG(tmp, FLAG_UNAGGRESSIVE)&&
+		   !QUERY_FLAG(tmp, FLAG_FRIENDLY))	
+            		CLEAR_FLAG(tmp, FLAG_UNAGGRESSIVE);
+		break;
+	  case 2:			/* calm -- pacify unfriendly monsters */ 
+        	if(!QUERY_FLAG(tmp, FLAG_UNAGGRESSIVE)) 
+			SET_FLAG(tmp, FLAG_UNAGGRESSIVE);		
+		break;
+	  case 3:			/* make all monsters fall asleep */ 
+		if(!QUERY_FLAG(tmp, FLAG_SLEEP))
+		    SET_FLAG(tmp, FLAG_SLEEP);
+		break;
+	  case 4:			/* charm all monsters */
+
+		if(op == op2) break; 	     /* only if 'connected' */ 
+		
+		for(tmp2=get_map_ob(op2->map,op2->x,op2->y); /* finding an owner */ 
+                   tmp2->type!=PLAYER;tmp2=tmp2->above)	
+                	if(tmp2->above==NULL) break;
+		
+		set_owner(tmp,tmp2);
+		SET_FLAG(tmp,FLAG_MONSTER);
+		tmp->stats.exp = 0;
+		SET_FLAG(tmp, FLAG_FRIENDLY);
+		tmp->move_type = PETMOVE;
+		break;		
+
+	  default:
+		break;
+
+	}
+        return;
+}
+
+/* this function returns the object it matches, or NULL if non.
+ * It will descend through containers to find the object.
+ *		slaying = match object slaying flag
+ * 		race = match object archetype name flag
+ *		hp = match object type (excpt type '0'== PLAYER)
+ */
+
+object * check_inv_recursive(object *op, object *trig)
+{
+    object *tmp,*ret=NULL;
+
+    for(tmp=op->inv; tmp; tmp=tmp->below) {
+	if (tmp->inv) {
+	    ret=check_inv_recursive(tmp, trig);
+	    if (ret) return ret;
+	}
+	else if((trig->stats.hp && tmp->type == trig->stats.hp) 
+		|| tmp->slaying == trig->slaying 
+		|| tmp->arch->name == trig->race) 
+		    return tmp;
+    }
+    return NULL;
+}
+
+/* check_inv(), a function to search the inventory, 
+ * of a player and then based on a set of conditions,
+ * the square will activate connected items. 
+ * Monsters can't trigger this square (for now)
+ * Values are:	last_sp = 1/0 obj/no obj triggers 
+ * 		last_heal = 1/0  remove/dont remove obj if triggered
+ * -b.t. (thomas@nomad.astro.psu.edu 
+ */
+
+void check_inv (object *op, object *trig) {
+object *match;
+
+    if(op->type != PLAYER) return;
+    match = check_inv_recursive(op,trig);
+    if (match && trig->last_sp) {
+	if(trig->last_heal) 
+	    decrease_ob(match);
+	use_trigger(trig);
+    }
+    else if (!match && !trig->last_sp)
+	use_trigger(trig);
+}
+
+
+/* This does a minimal check of the button link consistency for object
+ * map.  All it really does it much sure the object id link that is set
+ * matches what the object has.
+ */
+void verify_button_links(mapstruct *map) {
+    oblinkpt *obp;
+    objectlink *ol;
+
+    if (!map) return;
+
+    for (obp = map->buttons; obp; obp = obp->next) {
+	for (ol=obp->link; ol; ol=ol->next) {
+	    if (ol->id!=ol->ob->count)
+	        LOG(llevError,"verify_button_links: object %s on list is corrupt (%d!=%d)\n",ol->ob->name, ol->id, ol->ob->count);
+	}
+    }
+}

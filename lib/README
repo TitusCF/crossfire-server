@@ -1,0 +1,47 @@
+If you only have the "archetypes" and "treasures" files, you should fetch
+some map-files by ftp.
+A sample of map-files can be found by anonymous ftp to ftp.ifi.uio.no
+in the file "/pub/crossfire/crossfire-<version>.maps.tar.Z".
+Remember to fetch a version of maps which matches this version of crossfire.
+If you fetch that file, just replace this lib-directory with the
+lib-directory inside the tar-file.
+
+Any files in this directory can be compressed if you want to save space.
+It is adviced, though, that the "maps" file is not compressed, since
+it is accessed often.
+
+Some info on the different files:
+---------------------------------
+
+The "archetypes" file contains lots of generalized objects which makes it
+easier for the program to use similar items over and over again.  This
+file is created from the archetypes in the arch directory.
+
+The "treasures" file contains all kinds of randomized treasure, to be used when
+an archetype is generated from the "archetypes" file.
+
+The file "highscore", of course, contains the highscores...
+
+The "motd" file contains any messages to the players as they start the game.
+You can define where you want to place it in the file config.h.
+
+The "shutdown" file, if it is here, gives the contents as a message to
+the players, then stops the game.  In effect, the presence of this
+file will stop new players from entering the game.
+
+The "forbid" file, if it is here, gives info on which times of the game
+it is allowed to play crossfire.  Read "config.h" in the source directory
+for instructions on how to set up such a file.
+
+The directory "players", if it is here, contains saved players.  You can
+define where you want this directory to be in the file config.h.
+
+The directory "adm", if it is here, contains administrive scripts and their
+log-files.  (Check the ADMDIR variable in the Imakefile if it's not here.)
+
+crossfire.pix is where the color pixmaps (XPM) files are stored.
+It is in one file for faster reading.  Compressing this file with
+gnuzip reduces from about 1500 K to about 122K (yes, less than 10%
+of the size).  This is a very good file to keep compressed if you
+use color pixmaps, as it is only used when adding a new player who desires
+to use the color pixmap features.

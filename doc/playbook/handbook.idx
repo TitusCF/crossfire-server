@@ -1,0 +1,224 @@
+\indexentry{beginning players}{1}
+\indexentry{mailing lists}{2}
+\indexentry{FTP sites}{3}
+\indexentry{characters}{4}
+\indexentry{characters, attributes}{4}
+\indexentry{stats}{4}
+\indexentry{characters, stats}{4}
+\indexentry{stats, primary}{4}
+\indexentry{STR}{4}
+\indexentry{CON}{4}
+\indexentry{DEX}{4}
+\indexentry{INT}{4}
+\indexentry{WIS}{4}
+\indexentry{CHA}{4}
+\indexentry{POW}{4}
+\indexentry{strength}{4}
+\indexentry{dexterity}{4}
+\indexentry{constitution}{4}
+\indexentry{power}{4}
+\indexentry{intelligence}{4}
+\indexentry{wisdom}{4}
+\indexentry{charisma}{4}
+\indexentry{potions}{4}
+\indexentry{weapons}{4}
+\indexentry{armour}{4}
+\indexentry{rings}{4}
+\indexentry{stats, limits}{5}
+\indexentry{stats, primary}{5}
+\indexentry{scrolls}{5}
+\indexentry{spells}{5}
+\indexentry{stats, secondary}{5}
+\indexentry{score}{5}
+\indexentry{experience}{5}
+\indexentry{level, overall}{6}
+\indexentry{level}{6}
+\indexentry{stats, Hp}{6}
+\indexentry{hit points}{6}
+\indexentry{stats, mana}{6}
+\indexentry{mana}{6}
+\indexentry{Sp}{6}
+\indexentry{Gr}{6}
+\indexentry{stats, grace}{6}
+\indexentry{grace}{6}
+\indexentry{weapon class}{6}
+\indexentry{stats, Wc}{6}
+\indexentry{Wc}{6}
+\indexentry{damage}{6}
+\indexentry{stats, Dam}{6}
+\indexentry{Dam}{6}
+\indexentry{stats, Ac}{6}
+\indexentry{armour class}{6}
+\indexentry{Ac}{6}
+\indexentry{armour}{6}
+\indexentry{stats, Arm}{6}
+\indexentry{stats, speed}{6}
+\indexentry{speed}{6}
+\indexentry{stats, weapon speed}{7}
+\indexentry{weapon speed}{7}
+\indexentry{characters, classes}{7}
+\indexentry{Ac}{7}
+\indexentry{stats, Ac}{7}
+\indexentry{stats, Dam}{7}
+\indexentry{Dam}{7}
+\indexentry{Fireborn}{7}
+\indexentry{Monk}{7}
+\indexentry{characters, classes}{8}
+\indexentry{equipment, starting}{8}
+\indexentry{skills, starting}{9}
+\indexentry{Quetzalcoatl}{10}
+\indexentry{Wraith}{10}
+\indexentry{characters, generation}{10}
+\indexentry{How to do simple stuff}{12}
+\indexentry{commands, movement}{12}
+\indexentry{movement}{12}
+\indexentry{combat}{12}
+\indexentry{running}{12}
+\indexentry{commands, pickup}{12}
+\indexentry{picking up items}{12}
+\indexentry{commands, apply}{13}
+\indexentry{commands, fire}{13}
+\indexentry{bows}{13}
+\indexentry{wands}{13}
+\indexentry{rods}{13}
+\indexentry{horns}{13}
+\indexentry{commands, apply}{13}
+\indexentry{entering buildings}{13}
+\indexentry{movement}{13}
+\indexentry{commands, ready\_skill}{13}
+\indexentry{skills, how to use}{13}
+\indexentry{spells, how to use}{13}
+\indexentry{commands, cast}{13}
+\indexentry{talisman}{13}
+\indexentry{holy symbol}{13}
+\indexentry{commands, quit}{14}
+\indexentry{commands, save}{14}
+\indexentry{quitting}{14}
+\indexentry{saving}{14}
+\indexentry{commands, say}{14}
+\indexentry{commands, \"}{14}
+\indexentry{NPC}{14}
+\indexentry{talking}{14}
+\indexentry{signs}{14}
+\indexentry{handles}{14}
+\indexentry{buttons}{14}
+\indexentry{doors}{14}
+\indexentry{gates}{14}
+\indexentry{pits}{15}
+\indexentry{walls}{15}
+\indexentry{spinners}{15}
+\indexentry{directors}{15}
+\indexentry{combat}{15}
+\indexentry{attacktypes}{15}
+\indexentry{slaying}{15}
+\indexentry{Dam}{15}
+\indexentry{Wc}{15}
+\indexentry{Ac}{15}
+\indexentry{experience}{16}
+\indexentry{experience, categories}{16}
+\indexentry{level, overall}{16}
+\indexentry{level}{16}
+\indexentry{stats, secondary}{17}
+\indexentry{level, overall}{17}
+\indexentry{Wc}{17}
+\indexentry{stats, Wc}{17}
+\indexentry{thaco}{17}
+\indexentry{stats, weapon speed}{17}
+\indexentry{weapon speed}{17}
+\indexentry{weapon factor}{17}
+\indexentry{stats, Dam}{17}
+\indexentry{damage}{17}
+\indexentry{stats, Ac}{18}
+\indexentry{Ac}{18}
+\indexentry{level, overall}{18}
+\indexentry{hit points}{18}
+\indexentry{stats, Hp}{18}
+\indexentry{mana}{18}
+\indexentry{stats, mana}{18}
+\indexentry{stats, grace}{19}
+\indexentry{grace}{19}
+\indexentry{meta-command}{19}
+\indexentry{commands, meta}{19}
+\indexentry{binding}{19}
+\indexentry{unbinding}{19}
+\indexentry{commands, bind}{19}
+\indexentry{commands, unbind}{19}
+\indexentry{picking up items}{20}
+\indexentry{commands, pickup}{20}
+\indexentry{commands, invoke}{20}
+\indexentry{commands, shout}{20}
+\indexentry{commands, who}{20}
+\indexentry{commands, tell}{20}
+\indexentry{party system}{20}
+\indexentry{commands, party}{20}
+\indexentry{magic}{22}
+\indexentry{magic, system}{22}
+\indexentry{\wizardry\}{22}
+\indexentry{\divinemagic\}{22}
+\indexentry{spells}{22}
+\indexentry{prayers}{22}
+\indexentry{\incantation s}{22}
+\indexentry{encumbrance}{22}
+\indexentry{spells, how to learn}{22}
+\indexentry{spells}{22}
+\indexentry{magic, paths}{23}
+\indexentry{magic, paths}{23}
+\indexentry{cults}{24}
+\indexentry{altars}{24}
+\indexentry{gods}{24}
+\indexentry{\divinemagic\}{24}
+\indexentry{magic, gods}{24}
+\indexentry{gods, worship}{24}
+\indexentry{cults}{24}
+\indexentry{prayers}{25}
+\indexentry{alchemy}{26}
+\indexentry{magic, alchemy}{26}
+\indexentry{\wizardry\}{26}
+\indexentry{magic, rune}{26}
+\indexentry{\wizardry\}{26}
+\indexentry{runes}{26}
+\indexentry{runes, types}{27}
+\indexentry{runes, disarming}{27}
+\indexentry{runes, usage}{27}
+\indexentry{skills}{29}
+\indexentry{experience}{29}
+\indexentry{skills, description}{29}
+\indexentry{skills, gaining experience}{29}
+\indexentry{experience}{29}
+\indexentry{skills, associated}{29}
+\indexentry{skills, miscellaneous}{29}
+\indexentry{skills, restrictions}{29}
+\indexentry{skills, list}{30}
+\indexentry{skills, associated}{30}
+\indexentry{experience, categories}{30}
+\indexentry{skills, miscellaneous}{30}
+\indexentry{skills, stat multipliers}{31}
+\indexentry{skills, how to use}{32}
+\indexentry{skills, learning}{33}
+\indexentry{skills, tools}{33}
+\indexentry{equipment, value}{34}
+\indexentry{shopping}{34}
+\indexentry{gems}{34}
+\indexentry{stealing from shops}{34}
+\indexentry{books}{34}
+\indexentry{scrolls}{35}
+\indexentry{potions}{35}
+\indexentry{wands}{35}
+\indexentry{rods}{35}
+\indexentry{horns}{35}
+\indexentry{rings}{35}
+\indexentry{food}{35}
+\indexentry{flesh}{35}
+\indexentry{armour}{36}
+\indexentry{weapons}{36}
+\indexentry{artifacts}{36}
+\indexentry{equipment, encumbrance}{36}
+\indexentry{encumbrance}{36}
+\indexentry{equipment, magic}{36}
+\indexentry{enchantment, armour}{36}
+\indexentry{armour}{36}
+\indexentry{enchantment, weapons}{37}
+\indexentry{weapons}{37}
+\indexentry{beginning players}{38}
+\indexentry{skills, description}{42}
+\indexentry{gods, description}{45}

@@ -1,0 +1,14 @@
+Apply applies an object.
+
+If no options are given, it applies
+an object you are standing on.
+
+If an object name is given, it
+will apply/unapply that object (toggle)
+
+Extra options to apply:
+-a: Always applies the object
+-u: Always unapplies the object.
+
+ These two options disable the
+toggling feature.
