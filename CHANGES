@@ -18,6 +18,9 @@ else.  With this, include the file(s) that you changed.
 
 Changes for CVS:
 
+server/spell_util.c: Fix typo in polymorph code (when enabled in config.h)
+MSW 2001-05-24
+
 server/disease.c: replace disease->owner check with get_owner.
 MSW 2001-05-24
 

@@ -572,7 +572,7 @@ if (item == spellNormal && !ability ){
     new_draw_info(NDI_UNIQUE, 0,op,"The spell fizzles");
     success = 0;
 #else
-    success = 0 = cast_polymorph(op,dir);
+    success = cast_polymorph(op,dir);
 #endif
     break;
   case SP_CHARGING:
