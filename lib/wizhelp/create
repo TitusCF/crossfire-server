@@ -20,7 +20,7 @@ requires a value also be specified.
 Multipart values such as for an
 item name must be quoted.
 
-Example: create 5 +1 longsword
+Example: create 5 +1 sword
 name "Spiffy Sword" face
 chicken.171
 
