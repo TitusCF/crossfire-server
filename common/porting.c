@@ -34,8 +34,7 @@
  */
 
 
-#include "global.h"
-#ifdef WIN32 // ---win32 exclude headers
+#ifdef WIN32
 #include "process.h"
 #else
 #include <ctype.h>
@@ -43,7 +42,10 @@
 
 #include <sys/param.h>
 #include <stdio.h>
-#endif // win32
+#endif
+
+/* Need to pull in the HAVE_... values somehow */
+#include <autoconf.h>
 
 #ifdef HAVE_STDLIB_H
 #include <stdlib.h>
@@ -53,6 +55,8 @@
 #include <unistd.h>
 #endif
 
+/* Has to be after above includes so we don't redefine some values */
+#include "global.h"
 
 static unsigned int curtmp = 0;
 

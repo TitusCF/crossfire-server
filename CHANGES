@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 CVS changes since last release:
 
+common/porting.c: Fix compile warnings/bugs introduced by Win32 changes.
+server/time.c: Modify move_player_mover so that it determines direction
+   of the mover and then process accordingly, as well as formatting
+   changes.
 server/c_object.c: modify examine so that it properly shows info about
     magic bullet spell books.  MSW 2001-04-05
 

@@ -822,49 +822,53 @@ void move_firechest(object *op) {
 
 */
 void move_player_mover(object *op) {
-  object *victim, *nextmover;
+    object *victim, *nextmover;
+    int dir = op->stats.sp;
 
-  for(victim=get_map_ob(op->map,op->x,op->y); victim !=NULL; victim=victim->above)
-    if(QUERY_FLAG(victim, FLAG_ALIVE)&& (!(QUERY_FLAG(victim,FLAG_FLYING))||op->stats.maxhp))
-      {
+    /* Determine direction now for random movers so we do the right thing */
+    if (!dir) dir=(RANDOM()%8)+1;
 
-      if(QUERY_FLAG(op,FLAG_LIFESAVE)&&op->stats.hp--<0) {
-	remove_ob(op);
-	free_object(op);
-	return;
-      }
+    for(victim=get_map_ob(op->map,op->x,op->y); victim !=NULL; victim=victim->above) {
+	if(QUERY_FLAG(victim, FLAG_ALIVE)&& (!(QUERY_FLAG(victim,FLAG_FLYING))||op->stats.maxhp)) {
 
-      for(nextmover=get_map_ob(op->map,op->x+freearr_x[op->stats.sp],op->y+freearr_y[op->stats.sp]); nextmover !=NULL; nextmover=nextmover->above) {
-	if(nextmover->type == PLAYERMOVER) 
-	   { nextmover->speed_left=-.99;}
-	if(QUERY_FLAG(nextmover,FLAG_ALIVE)) {
-	  op->speed_left=-1.1;  /* wait until the next thing gets out of the way */
-	}
-      }
-
-      if(victim->type==PLAYER) { 
-	/*  only level >=1 movers move people */
-	    if(op->level) {
-		/* Following is a bit of hack.  We need to make sure it
-		 * is cleared, otherwise the player will get stuck in
-		 * place.  This can happen if the player used a spell to
-		 * get to this space.
-		 */
-		victim->contr->fire_on=0;
-		victim->speed_left=-FABS(victim->speed);
-		move_player(victim, op->stats.sp?op->stats.sp:(RANDOM()%8)+1);
+	    if(QUERY_FLAG(op,FLAG_LIFESAVE)&&op->stats.hp--<0) {
+		remove_ob(op);
+		free_object(op);
+		return;
 	    }
-	    else return;
-      }
-      else move_object(victim,op->stats.sp?op->stats.sp:(RANDOM()%8)+1);
 
-      if(!op->stats.maxsp&&op->attacktype) op->stats.maxsp=2.0;
+	    for(nextmover=get_map_ob(op->map,op->x+freearr_x[dir],op->y+freearr_y[dir]); nextmover !=NULL; nextmover=nextmover->above) {
+		if(nextmover->type == PLAYERMOVER) 
+		    nextmover->speed_left=-.99;
+		if(QUERY_FLAG(nextmover,FLAG_ALIVE)) {
+		    op->speed_left=-1.1;  /* wait until the next thing gets out of the way */
+		}
+	    }
 
-      if(op->attacktype)  /* flag to paralyze the player */
-        victim->speed_left= -FABS(op->stats.maxsp*victim->speed/op->speed);
-      }
+	    if(victim->type==PLAYER) { 
+		/*  only level >=1 movers move people */
+		if(op->level) {
+		    /* Following is a bit of hack.  We need to make sure it
+		     * is cleared, otherwise the player will get stuck in
+		     * place.  This can happen if the player used a spell to
+		     * get to this space.
+		     */
+		    victim->contr->fire_on=0;
+		    victim->speed_left=-FABS(victim->speed);
+		    move_player(victim, dir);
+		}
+		else return;
+	    }
+	    else move_object(victim,dir);
 
+	    if(!op->stats.maxsp&&op->attacktype) op->stats.maxsp=2.0;
+
+	    if(op->attacktype)  /* flag to paralyze the player */
+		victim->speed_left= -FABS(op->stats.maxsp*victim->speed/op->speed);
+	}
+    }
 }
+
 
 /*  move_creator (by peterm) 
   it has the creator object create it's other_arch right on top of it.
