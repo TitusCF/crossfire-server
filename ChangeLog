@@ -17,6 +17,17 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Those fixes make DMs more 'stealthy' (when hiding/unhiding).
+Also use yet unused colors for player join/leave, and DM join/leave.
+This way those messages appear in a different window in split window
+mode, to make the messages easier to spot.
+server/apply.c: change color for player leave message.
+server/c_misc.c: let DMs see hidden DMs.
+server/c_wiz.c: make DMs more stealthy.
+server/login.c: change color for player joining message.
+server/main.c: change color for player joining/exiting message.
+Ryo 2004-03-12
+
 common/item.c: Fixed calc_item_power() to return valid item power for
    items with high enchantments.
 Andreas Kirschbaum 2004-03-07

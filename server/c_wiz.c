@@ -102,17 +102,21 @@ int command_hide(object *op, char *params)
 {
     if (op->contr->hidden) {
         op->contr->hidden=0;
+        op->invisible=1;
         new_draw_info(NDI_UNIQUE, 0,op, "You are no longer hidden from other players");
-	op->map->players++;
-	new_draw_info_format(NDI_UNIQUE | NDI_ALL, 5, NULL,
-             "%s has entered the game.",op->name);
-    }
+	    op->map->players++;
+	    new_draw_info_format(NDI_UNIQUE | NDI_ALL | NDI_DK_ORANGE, 5, NULL,
+            "%s has entered the game.",op->name);
+        new_draw_info(NDI_UNIQUE | NDI_ALL | NDI_LT_GREEN, 1, NULL,
+            "The Dungeon Master has arrived!");    }
     else {
         op->contr->hidden=1;
         new_draw_info(NDI_UNIQUE, 0,op, "Other players will no longer see you.");
-	op->map->players--;
-	new_draw_info_format(NDI_UNIQUE | NDI_ALL, 5, NULL,
-             "%s left the game.",op->name);
+	    op->map->players--;
+        new_draw_info(NDI_UNIQUE | NDI_ALL | NDI_LT_GREEN, 1, NULL,
+	        "The Dungeon Master is gone..");
+	    new_draw_info_format(NDI_UNIQUE | NDI_ALL | NDI_DK_ORANGE, 5, NULL,
+            "%s left the game.",op->name);
     }
     return 1;
 }
@@ -446,7 +450,8 @@ int command_teleport (object *op, char *params) {
    EXIT_Y(dummy) = pl->ob->y + freearr_y[i];
    enter_exit(op, dummy);
    free_object(dummy);
-   new_draw_info(NDI_UNIQUE, 0, pl->ob, "You see a portal open.");
+   if (!op->contr->hidden)
+      new_draw_info(NDI_UNIQUE, 0, pl->ob, "You see a portal open.");
    new_draw_info(NDI_UNIQUE, 0, op, "OK.");
    return 1;
 }
@@ -1159,7 +1164,7 @@ int command_nowiz (object *op, char *params) /* 'noadm' is alias */
      if (settings.real_wiz == TRUE)
 	 CLEAR_FLAG(op, FLAG_WAS_WIZ);
     op->contr->hidden=0;
-     new_draw_info(NDI_UNIQUE | NDI_ALL, 1, NULL,
+     new_draw_info(NDI_UNIQUE | NDI_ALL | NDI_LT_GREEN, 1, NULL,
 	"The Dungeon Master is gone..");
      return 1;
   }
@@ -1215,7 +1220,7 @@ int command_dm (object *op, char *params)
       SET_FLAG(op, FLAG_WAS_WIZ);
       SET_FLAG(op, FLAG_WIZPASS);
       new_draw_info(NDI_UNIQUE, 0,op, "Ok, you are the Dungeon Master!");
-      new_draw_info(NDI_UNIQUE | NDI_ALL, 1, NULL,
+      new_draw_info(NDI_UNIQUE | NDI_ALL | NDI_LT_GREEN, 1, NULL,
   	"The Dungeon Master has arrived!");
       SET_FLAG(op, FLAG_FLYING);
       clear_los(op);

@@ -245,18 +245,19 @@ int command_who (object *op, char *params)
     for(pl=first_player;pl!=NULL;pl=pl->next) {
 	if(pl->ob->map == NULL)
 	    continue;
-	if (pl->hidden) continue;
+	if (pl->hidden && !QUERY_FLAG(op, FLAG_WIZ)) continue;
 
 	if (pl->state==ST_PLAYING || pl->state==ST_GET_PARTY_PASSWORD) {
 
 	    if(op == NULL || QUERY_FLAG(op, FLAG_WIZ))
-		(void) sprintf(buf,"%s the level %d %s (@%s) [%s]%s%s (%d)",
+		(void) sprintf(buf,"%s the level %d %s (@%s) [%s]%s%s%s (%d)",
 		       pl->ob->name,
 		       pl->ob->level,
 		       (pl->own_title[0]=='\0'?pl->title:pl->own_title),
 		       pl->socket.host,
 		       pl->ob->map->path,
 		       QUERY_FLAG(pl->ob,FLAG_WIZ)?" [WIZ]":"",
+		       pl->hidden?"[HID]":"",
 		       pl->peaceful?"Peaceful":"Hostile",pl->ob->count);
 	    else
 		(void) sprintf(buf,"%s the %s [%s]%s%s",pl->ob->name,

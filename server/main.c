@@ -140,7 +140,7 @@ void start_info(object *op) {
   new_draw_info(NDI_UNIQUE, 0,op,buf);
   new_draw_info(NDI_UNIQUE, 0,op,"Press `?' for help");
   new_draw_info(NDI_UNIQUE, 0,op," ");
-  new_draw_info_format(NDI_UNIQUE | NDI_ALL, 5, op,
+  new_draw_info_format(NDI_UNIQUE | NDI_ALL | NDI_DK_ORANGE, 5, op,
 	"%s entered the game.",op->name);
   if(!op->contr->name_changed) {
     new_draw_info(NDI_UNIQUE, 0,op,"Note that you must set your name with the name");
@@ -1061,7 +1061,7 @@ void leave(player *pl, int draw_exit) {
 	}
 	pl->ob->type = DEAD_OBJECT; /* To avoid problems with inventory window */
     }
-  if (pl!=NULL && draw_exit) new_draw_info(NDI_UNIQUE | NDI_ALL, 5, NULL, buf);
+  if (pl!=NULL && draw_exit) new_draw_info(NDI_UNIQUE | NDI_ALL | NDI_DK_ORANGE, 5, NULL, buf);
 }
 
 int forbid_play()

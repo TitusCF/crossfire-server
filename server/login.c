@@ -673,7 +673,7 @@ void check_login(object *op) {
     }
     
     new_draw_info(NDI_UNIQUE, 0,op,"Welcome Back!");
-    new_draw_info_format(NDI_UNIQUE | NDI_ALL, 5, NULL,
+    new_draw_info_format(NDI_UNIQUE | NDI_ALL | NDI_DK_ORANGE, 5, NULL,
 	     "%s has entered the game.",pl->ob->name);
     /* GROS : Here we handle the LOGIN global event */
     evtid = EVENT_LOGIN;

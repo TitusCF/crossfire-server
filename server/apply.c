@@ -2006,7 +2006,7 @@ static void apply_savebed (object *pl)
     }
     remove_ob(pl);
     pl->direction=0;
-    new_draw_info_format(NDI_UNIQUE | NDI_ALL, 5, pl,
+    new_draw_info_format(NDI_UNIQUE | NDI_ALL | NDI_DK_ORANGE, 5, pl,
 	"%s leaves the game.",pl->name);
     
     /* update respawn position */
