@@ -76,6 +76,7 @@ const int season_tempchange[HOURS_PER_DAY] = {
 weather_avoids_t weather_avoids[] = {
     {"snow", 1, NULL},
     {"snow2", 1, NULL},
+    {"snow3", 1, NULL},
     {"snow4", 1, NULL},
     {"snow5", 1, NULL},
     {"mountain1_snow", 1, NULL},
@@ -247,8 +248,6 @@ weather_grow_t weather_tile[] = {
 #define RED   0
 #define GREEN 1
 #define BLUE  2
-
-sint8 real_temp[WEATHERMAPTILESX][WEATHERMAPTILESY];
 
 /* Colours used for wind directions.
  * winddir is the directoin wind is coming from.
@@ -1374,9 +1373,9 @@ void weather_effect(char *filename)
 	let_it_snow(m, wx, wy, filename);
 	singing_in_the_rain(m, wx, wy, filename);
 	}
-    if (settings.dynamiclevel >= 4) {
+    /*    if (settings.dynamiclevel >= 4) {
 	    feather_map(m, wx, wy, filename);
-    }
+	    }*/
     if (settings.dynamiclevel >= 3) {
 	plant_a_garden(m, wx, wy, filename);
     }
@@ -1465,14 +1464,33 @@ void calculate_temperature(mapstruct *m, int wx, int wy){
 void let_it_snow(mapstruct *m, int wx, int wy, char *filename)
 {
     int x, y, i;
+    int nx, ny, j, d;
     int avoid, two, temp, sky, gotsnow, found, nodstk;
     char *doublestack, *doublestack2;
     object *ob, *tmp, *oldsnow, *topfloor;
     archetype *at;
 
-    for (x=0; x < settings.worldmaptilesizex; x++) {
-	for (y=0; y < settings.worldmaptilesizey; y++) {
-	    (void)worldmap_to_weathermap(x, y, &wx, &wy, /*filename*/ m);
+    for (nx=0; nx < settings.worldmaptilesizex; nx++) {
+	for (ny=0; ny < settings.worldmaptilesizey; ny++) {
+	    /* jitter factor */
+	    if (rndm(0, 2) > 0) {
+		x=y=d=-1;
+		while (OUT_OF_REAL_MAP(m, x, y)) {
+		    d++;
+		    j=rndm(1, 8);
+		    x = nx + freearr_x[j] * (rndm(0, 1) + rndm(0, 1) + rndm (0, 1) +1);
+		    y = ny + freearr_y[j] * (rndm(0, 1) + rndm(0, 1) + rndm (0, 1) +1);
+		    if (d > 15) {
+			x = nx;
+			y = ny;
+		    }
+		}
+	    } else {
+		x = nx;
+		y = ny;
+	    }
+	    /* we use the unjittered coordinates */
+	    (void)worldmap_to_weathermap(nx, ny, &wx, &wy, /*filename*/ m);
 	    ob = NULL;
 	    at = NULL;
 	    /* this will definately need tuning */
@@ -1664,14 +1682,33 @@ void let_it_snow(mapstruct *m, int wx, int wy, char *filename)
 void singing_in_the_rain(mapstruct *m, int wx, int wy, char *filename)
 {
     int x, y, i;
+    int nx, ny, d, j;
     int avoid, two, temp, sky, gotsnow, found, nodstk;
     object *ob, *tmp, *oldsnow, *topfloor;
     char *doublestack, *doublestack2;
     archetype *at;
 
-    for (x=0; x < settings.worldmaptilesizex; x++) {
-	for (y=0; y < settings.worldmaptilesizey; y++) {
-	    (void)worldmap_to_weathermap(x, y, &wx, &wy, /*filename*/m);
+    for (nx=0; nx < settings.worldmaptilesizex; nx++) {
+	for (ny=0; ny < settings.worldmaptilesizey; ny++) {
+	    /* jitter factor */
+	    if (rndm(0, 2) > 0) {
+		x=y=d=-1;
+		while (OUT_OF_REAL_MAP(m, x, y)) {
+		    d++;
+		    j=rndm(1, 8);
+		    x = nx + freearr_x[j] * (rndm(0, 1) + rndm(0, 1) + rndm (0, 1) +1);
+		    y = ny + freearr_y[j] * (rndm(0, 1) + rndm(0, 1) + rndm (0, 1) +1);
+		    if (d > 15) {
+			x = nx;
+			y = ny;
+		    }
+		}
+	    } else {
+		x = nx;
+		y = ny;
+	    }
+	    /* we use the unjittered coordinates */
+	    (void)worldmap_to_weathermap(nx, ny, &wx, &wy, /*filename*/m);
 	    ob = NULL;
 	    at = NULL;
 	    avoid = 0;
@@ -1964,14 +2001,33 @@ void plant_a_garden(mapstruct *m, int wx, int wy, char *filename)
 void change_the_world(mapstruct *m, int wx, int wy, char *filename)
 {
     int x, y, i;
+    int nx, ny, j, d;
     int avoid, two, temp, sky, gotsnow, found, days;
     object *ob, *tmp, *doublestack;
     archetype *at, *dat;
 
     days = todtick / HOURS_PER_DAY;
-    for (x=0; x < settings.worldmaptilesizex; x++) {
-	for (y=0; y < settings.worldmaptilesizey; y++) {
-	    (void)worldmap_to_weathermap(x, y, &wx, &wy, /*filename*/m);
+    for (nx=0; nx < settings.worldmaptilesizex; nx++) {
+	for (ny=0; ny < settings.worldmaptilesizey; ny++) {
+	    /* jitter factor */
+	    if (rndm(0, 2) > 0) {
+		x=y=d=-1;
+		while (OUT_OF_REAL_MAP(m, x, y)) {
+		    d++;
+		    j=rndm(1, 8);
+		    x = nx + freearr_x[j] * (rndm(0, 1) + rndm(0, 1) + rndm (0, 1) +1);
+		    y = ny + freearr_y[j] * (rndm(0, 1) + rndm(0, 1) + rndm (0, 1) +1);
+		    if (d > 15) {
+			x = nx;
+			y = ny;
+		    }
+		}
+	    } else {
+		x = nx;
+		y = ny;
+	    }
+	    /* we use the unjittered coordinates */
+	    (void)worldmap_to_weathermap(nx, ny, &wx, &wy, /*filename*/m);
 	    ob = NULL;
 	    at = NULL;
 	    dat = NULL;
@@ -2935,7 +2991,8 @@ void write_weather_images()
 	for (x=0; x < WEATHERMAPTILESX; x++) {
 	    uint32 dir = skies[weathermap[x][y].sky];
 	    pixels[3 * x + (0 * WEATHERMAPTILESX * 3 + BLUE)]  = (uint8) ((weathermap[x][y].humid - min[6]) * scale[6]);
-	    pixels[3 * x + (1 * WEATHERMAPTILESX * 3 + RED)]   = (uint8) ((real_temp[x][y]  - min[7]) * scale[7]);
+	    /*pixels[3 * x + (1 * WEATHERMAPTILESX * 3 + RED)]   = (uint8) ((real_temp[x][y]  - min[7]) * scale[7]);*/
+	    pixels[3 * x + (1 * WEATHERMAPTILESX * 3 + RED)]   = 1;
 	    pixels[3 * x + (2 * WEATHERMAPTILESX * 3 + RED)]   = (uint8) ((dir & 0x00FF0000) >> 16);
 	    pixels[3 * x + (2 * WEATHERMAPTILESX * 3 + GREEN)] = (uint8) ((dir & 0x0000FF00) >> 8);
 	    pixels[3 * x + (2 * WEATHERMAPTILESX * 3 + BLUE)]  = (uint8) ((dir & 0x000000FF));
