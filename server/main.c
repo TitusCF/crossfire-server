@@ -867,6 +867,7 @@ void do_specials() {
   flush_old_maps();    /* Clears the tmp-files of maps which have reset */
   if(!(special2%5)) {
     fix_weight();        /* Hack to fix weightproblems caused by bugs */
+    metaserver_update();    /* 2500 ticks is about 5 minutes */
     if (!(special2%25))
       fix_luck();
   }

@@ -135,9 +135,8 @@ unsigned int query_flags (object *op)
 void esrv_draw_look(object *pl)
 {
     object *tmp, *last;
-    int flags, got_one=0,len,anim_speed;
+    int flags, got_one=0,anim_speed;
     SockList sl;
-    char *buf;
 
     if (!pl->contr->socket.update_look) {
 	LOG(llevDebug,"esrv_draw_look called when update_look was not set\n");
@@ -233,9 +232,9 @@ void esrv_draw_look(object *pl)
 void esrv_send_inventory(object *pl, object *op)
 {
     object *tmp;
-    int flags, got_one=0, anim_speed,len;
+    int flags, got_one=0, anim_speed;
     SockList sl;
-    char *buf, item_n[MAX_BUF];
+    char item_n[MAX_BUF];
     
     sl.buf=malloc(MAXSOCKBUF);
 
@@ -322,7 +321,6 @@ void esrv_send_inventory(object *pl, object *op)
 void esrv_update_item(int flags, object *pl, object *op)
 {
     SockList sl;
-    char *buf;
 
     /* If we have a request to send the player item, skip a few checks. */
     if (op!=pl) {
@@ -405,9 +403,9 @@ void esrv_update_item(int flags, object *pl, object *op)
 
 void esrv_send_item(object *pl, object*op)
 {
-    int anim_speed,len;
+    int anim_speed;
     SockList sl;
-    char *buf, item_n[MAX_BUF];
+    char item_n[MAX_BUF];
     
     /* If this is not the player object, do some more checks */
     if (op!=pl) {

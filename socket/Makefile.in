@@ -34,6 +34,7 @@ SRCS = \
 	item.c\
 	loop.c \
 	lowlevel.c\
+	metaserver.c\
 	request.c\
 	sounds.c
 

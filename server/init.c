@@ -210,6 +210,78 @@ static void parse_args(int argc, char *argv[], int pass)
     }
 }
 
+/* This loads the settings file.  There could be debate whether this should
+ * be here or in the common directory - but since only the server needs this
+ * information, having it here probably makes more sense.
+ */
+static void load_settings()
+{
+    char buf[MAX_BUF],*cp;
+    int	has_val,comp;
+    FILE    *fp;
+
+    sprintf(buf,"%s/settings",settings.datadir);
+    /* We don't require a settings file at current time, but down the road,
+     * there will probably be so many values that not having a settings file
+     * will not be a good thing.
+     */
+    if ((fp = open_and_uncompress(buf, 0, &comp)) == NULL) {
+	LOG(llevError,"Warning: No settings file found\n");
+	return;
+    }
+    while (fgets(buf, MAX_BUF-1, fp) != NULL) {
+	if (buf[0] == '#') continue;
+	/* eliminate newline */
+	if ((cp=strrchr(buf,'\n'))!=NULL) *cp='\0';
+
+	/* Skip over empty lines */
+	if (buf[0] == 0) continue;
+
+	/* Skip all the spaces and set them to nulls.  If not space,
+	 * set cp to "" to make strcpy's and the like easier down below.
+	 */
+	if ((cp = strchr(buf,' '))!=NULL) {
+	    while (*cp==' ') *cp++=0;
+	    has_val=1;
+	} else {
+	    cp="";
+	    has_val=0;
+	}
+
+	if (!strcasecmp(buf,"metaserver_notification")) {
+	    if (!strcasecmp(cp,"on") || !strcasecmp(cp,"true")) {
+		settings.meta_on=TRUE;
+	    } else if (!strcasecmp(cp,"off") || !strcasecmp(cp,"false")) {
+		settings.meta_on=FALSE;
+	    } else {
+		LOG(llevError,"load_settings: Unkown value for metaserver_notification: %s\n",
+		    cp);
+	    }
+	} else if (!strcasecmp(buf,"metaserver_server")) {
+	    if (has_val) strcpy(settings.meta_server, cp);
+	    else 
+		LOG(llevError,"load_settings: metaserver_server must have a value.\n");
+	} else if (!strcasecmp(buf,"metaserver_host")) {
+	    if (has_val) strcpy(settings.meta_host, cp);
+	    else 
+		LOG(llevError,"load_settings: metaserver_host must have a value.\n");
+	} else if (!strcasecmp(buf,"metaserver_port")) {
+	    int port = atoi(cp);
+
+	    if (port<1 || port>65535)
+		LOG(llevError,"load_settings: metaserver_port must be between 1 and 65535, %d is invalid\n",
+		    port);
+	    else settings.meta_port = port;
+	} else if (!strcasecmp(buf,"metaserver_comment")) {
+	    strcpy(settings.meta_comment, cp);
+	} else {
+	    LOG(llevError,"Unknown value in settings file: %s\n", buf);
+	}
+    }
+    close_and_delete(fp, comp);
+}
+
+
 /*
  * init() is called only once, when starting the program.
  */
@@ -225,6 +297,7 @@ void init(int argc, char **argv) {
 				 * LibDir in this pass would be reasonable*/
 
     init_library();	/* Must be called early */
+    load_settings();	/* Load the settings file */
     parse_args(argc, argv, 2);
     fprintf(logfile,"Welcome to CrossFire, v%s%s\n",VERSION,PATCH);
     fprintf(logfile,"Copyright (C) 1994 Mark Wedel.\n");
@@ -249,6 +322,7 @@ void init(int argc, char **argv) {
 
     init_beforeplay();
     init_ericserver();
+    metaserver_init();
     reset_sleep();
     init_done=1;
 }

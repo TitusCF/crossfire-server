@@ -357,29 +357,31 @@ void watchdog(void)
 static void block_until_new_connection()
 {
 
-#ifdef WATCHDOG
     struct timeval Timeout;
     fd_set readfs;
+    int cycles;
 
     LOG(llevInfo, "Waiting for connections...\n");
 
+    cycles=0;
     do {
+	/* Every minutes is a bit often for updates - especially if nothing is going
+	 * on.  This slows it down to every 5 minutes.
+	 */
+	if (cycles++ == 5) {
+	    metaserver_update();
+	    cycles=0;
+	}
 	FD_ZERO(&readfs);
 	FD_SET(init_sockets[0].fd, &readfs);
 	Timeout.tv_sec=60;
 	Timeout.tv_usec=0;
+#ifdef WATCHDOG
 	watchdog();
+#endif
 	}
     while (select(socket_info.max_filedescriptor, &readfs, NULL, NULL, &Timeout)==0);
-#else
-    fd_set readfs;
 
-    LOG(llevInfo, "Waiting for connections...\n");
-
-    FD_ZERO(&readfs);
-    FD_SET(init_sockets[0].fd, &readfs);
-    (void) select(socket_info.max_filedescriptor, &readfs, NULL, NULL, NULL);
-#endif
     reset_sleep(); /* Or the game would go too fast */
 }
 

@@ -16,6 +16,23 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+metaserver update:
+common/init.c: Add meta_ fields to settings structure initialization.
+include/global.h: Add meta_ fields to settings structure.
+include/sockproto.h: Updated for new meta_ functions.
+lib/Makefile.in: Have it install settings file.
+lib/settings: Default settings file with some metaserver default value.s
+server/init.c: Add load_settings file.  Add call to metaserver_init.
+server/main.c: Add call to metaserver_update in do_specials.
+socket/Makefile.in: Add metaserver.c to list of files.
+socket/metaserver.c:  File that deals with metaserver related data.
+socket/item.c: Remove some unused variables.  Unrelated to metaserver changes.
+socket/loop.c: Add calls to metaserver_update in block_until_new)connection.  Change
+	function so that if there are no active players, it still timeouts and
+	does metaserver update.  Basically changed to do it the way the
+	WATCHDOG code did it.
+End of metaserver update.  MSW 2000-11-13
+
 server/player.c:  removed unused tmp2 variable from move_player_attack.
 modify depletion in kill_player so the maximum depletion for a stat is -50.  This
 should preven stat wrapping from -126 to 127.  MSW 2000-11-08

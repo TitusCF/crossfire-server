@@ -125,6 +125,10 @@ install:: archetypes bmaps.paths crossfire.xbm crossfire.xpm crossfire.png  anim
 	    $(INSTALL) $(INSTALLFLAGS)  $$i $(datadir); \
 	done
 
+	@if [ ! -f $(datadir)/settings ]; then \
+		$(INSTALL) $(INSTALLFLAGS) settings $(datadir); \
+	fi
+
 	touch $(localdir)/highscore
 	touch $(localdir)/bookarch
 	touch $(localdir)/temp.maps

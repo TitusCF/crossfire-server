@@ -281,6 +281,15 @@ typedef struct Settings {
     uint8   use_permanent_experience; /* If true, players can gain perm exp */
     uint8   balanced_stat_loss; /* If true, Death stat depletion based on level etc */
     uint8   simple_exp;	    /* If true, use the simple experience system */
+
+    /* The meta_ is information for the metaserver.  These are set in 
+     * the lib/settings file.
+     */
+    uint8   meta_on:1;		    /* True if we should send updates */
+    char    meta_server[MAX_BUF];   /* Hostname/ip addr of the metaserver */
+    char    meta_host[MAX_BUF];	    /* Hostname of this host */
+    uint16  meta_port;		    /* Port number to use for updates */
+    char    meta_comment[MAX_BUF];  /* Comment we send to the metaserver */
 } Settings;
 
 extern Settings settings;
