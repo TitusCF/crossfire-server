@@ -3002,15 +3002,16 @@ int cast_consecrate(object *op) {
     }
  
     for(tmp=op->below;tmp;tmp=tmp->below) {
+	if(QUERY_FLAG(tmp,FLAG_IS_FLOOR)) break;
         if(tmp->type==HOLY_ALTAR) {
-	    if(QUERY_FLAG(tmp,FLAG_IS_FLOOR)) break;
 
 	    /* We use SK_level here instead of path_level mod because I think
 	     * all the gods should give equal chance of re-consecrating altars
 	     */
 	    if(tmp->level > SK_level(op)) {
 		new_draw_info_format(NDI_UNIQUE, 0,op,
-		    "You are not poweful enough to reconsecrate the altar of %s", tmp->title);
+		    "You are not poweful enough to reconsecrate the %s", tmp->name);
+		return 0;
 	    } else {
 	    /* If we got here, we are consecrating an altar */
 		if(tmp->name)	free_string(tmp->name);

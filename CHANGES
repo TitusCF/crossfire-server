@@ -17,6 +17,14 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 CVS changes since last release:
 
+MSW 2001/03/06:
+server/spell_effect.c: Fix message when consecration fails - use the ob->name
+    field and not the ob->title field.  Also fix broken logic that checked
+    for the floor.
+server/init.c: Related to 3-4 change which changed the default name of
+    the logfile to "" so we know to use stderr.  This doesn't work for
+    daemon mode, so if the name is "", we use the default logfile instead.
+
 MSW 2001/03/04:
 TODO: add re-connecting player to new client if client logs in with
     right name/password.

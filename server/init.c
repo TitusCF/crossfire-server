@@ -318,7 +318,7 @@ void init(int argc, char **argv) {
     parse_args(argc, argv, 3);
 
     if (settings.daemonmode)
-	logfile = BecomeDaemon(settings.logfilename);
+	logfile = BecomeDaemon(settings.logfilename[0]=='\0'?"logfile":settings.logfilename);
 
     init_beforeplay();
     init_ericserver();
