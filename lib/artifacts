@@ -117,7 +117,7 @@
 # the same power.
 # As of now, 1:10 monsters can become artifact monsters.  This is set in
 # time.c
-Allowed orc,ogre,goblin
+Allowed orc
 chance 10
 Object Leader
 type 0
@@ -129,9 +129,59 @@ exp 20
 level 1
 resist_physical 20
 dam 13
+face orc_leader.111
+stand_still 1
 end
 #
-Allowed orc,ogre,goblin
+Allowed goblin
+chance 10
+Object Leader
+type 0
+wc 1
+ac 1
+hp 5
+maxhp 5
+exp 20
+level 1
+resist_physical 20
+dam 13
+face goblin_leader.111
+stand_still 1
+end
+#
+Allowed gnoll
+chance 10
+Object Leader
+type 0
+wc 1
+ac 1
+hp 5
+maxhp 5
+exp 20
+level 1
+resist_physical 20
+dam 13
+face gnoll_leader.111
+stand_still 1
+end
+#
+Allowed ogre
+chance 10
+Object Leader
+type 0
+wc 1
+ac 1
+hp 5
+maxhp 5
+exp 20
+level 1
+resist_physical 20
+dam 13
+face ogre_leader.111
+stand_still 1
+end
+#
+Allowed orc
 chance 2
 Object Chief
 type 0
@@ -143,12 +193,64 @@ exp 40
 level 2
 resist_physical 30
 dam 14
+face orc_chief.111
+stand_still 1
+end
+#
+Allowed goblin
+chance 2
+Object Chief
+type 0
+wc 2
+ac 2
+hp 10
+maxhp 10
+exp 40
+level 2
+resist_physical 30
+dam 14
+face goblin_chief.111
+stand_still 1
+end
+#
+Allowed gnoll
+chance 2
+Object Chief
+type 0
+wc 2
+ac 2
+hp 10
+maxhp 10
+exp 40
+level 2
+resist_physical 30
+dam 14
+face gnoll_chief.111
+stand_still 1
+end
+#
+Allowed ogre
+chance 2
+Object Chief
+type 0
+wc 2
+ac 2
+hp 10
+maxhp 10
+exp 40
+level 2
+resist_physical 30
+dam 14
+face ogre_chief.111
+stand_still 1
 end
 # Just to fix probability some.
-Allowed orc,ogre,goblin
+Allowed orc,goblin,ogre,gnoll
 chance 20
 Object NONE
 end
+
+
 #
 # Weapons:
 #
