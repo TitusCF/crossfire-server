@@ -1052,14 +1052,31 @@ void  InitializeColors (Display *dpy)
 Edit AppEditInsert(App self,String path,EditType type)
 {
     Edit edit;
+    Edit editor;
     char buf[BUFSIZ];
 
     /*** check if exist ***/
-    if(has_been_loaded (path)) {
-	sprintf(buf,"%s aready in memory",path);
-	CnvNotify(buf,"Continue",NULL);
-	return NULL;
-    }
+    /* Dragon Master */
+    for(editor = self->edit; editor; editor = editor->next)
+      if(!strcmp(editor->emap->path, path)) {
+	/*** save, if modified ***/
+	if (editor->modified) {
+	  switch (CnvNotify ("Map modified, discard changes?",
+			     "OK","Save Changes","Cancel",NULL)) {
+	    case 1:
+	      EditLoad(editor);
+	      break;
+	    case 2:
+	      EditSave(editor);
+	      break;
+	    default:
+	      break;
+	  }
+	}
+	XRaiseWindow(editor->app->display, XtWindow(editor->shell));
+	return editor;
+      }
+
     /*** create new one ***/
     if((edit = EditCreate(self,type,path)) == NULL) {
 	return NULL;

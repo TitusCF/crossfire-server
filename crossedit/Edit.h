@@ -58,6 +58,7 @@ extern Edit EditCreate ( App app, EditType type, String path );
 extern void EditDestroy ( Edit self );
 extern void EditUpdate ( Edit self );
 extern EditReturn EditSave ( Edit self );
+extern EditReturn EditLoad ( Edit self );
 extern void EditPerformFill ( Edit self, int x, int y );
 extern void EditPerformFillBelow ( Edit self, int x, int y );
 extern void EditFillRectangle ( Edit self, XRectangle rec );

@@ -1398,6 +1398,19 @@ EditReturn EditSave(Edit self)
 }
 
 /*
+ * member: load map from file
+ * self   : pointer to current Edit structure
+ * return : status
+ */
+EditReturn EditLoad(Edit self)
+{
+  if(Load(self, self->emap->path))
+    return EditOk;
+  else
+    return EditError;
+}
+
+/*
  * member: make fill
  * x,y   : point to start fill
  */
