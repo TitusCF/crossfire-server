@@ -4732,10 +4732,9 @@ treasure giant_worm
     end
   more
   arch gem
-  chance 60
-  nrof 75
+    chance 60
+    nrof 75
   end
-
 treasure skree
   arch ability_fear
   more
@@ -4744,7 +4743,7 @@ treasure skree
   arch ability_slow
   more
   list skree_bits
-end
+  end
 treasure skree_bits
   arch skreeclaw
     chance 40
