@@ -17,6 +17,9 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+lib/archetypes:  Update to keep in sync with arch tree.  Changes to
+about a dozen arch's to remove the 'a' in their name.  MSW 6/27/2000
+
 server/c_object.c: Fix command_drop which was doing incorrect check for
 invisible object - it was supposed to skip over them and only do visible
 objects, instead it was doing the reverse.  Fixes the 'drop command.
