@@ -1367,7 +1367,11 @@ void move_player_attack(object *op, int dir)
 }
 
 int move_player(object *op,int dir) {
+#ifdef ENABLE_PLAYER_ANIMATION_8
+	int pick;
+#else
     int face = dir ? (dir - 1) / 2 : -1, pick;
+#endif
 
     if(op->map == NULL || op->map->in_memory != MAP_IN_MEMORY)
 	return 0;
@@ -1394,8 +1398,12 @@ int move_player(object *op,int dir) {
 	op->direction=0;
     }
 
+#ifdef ENABLE_PLAYER_ANIMATION_8
+	SET_ANIMATION(op,dir%8);
+#else
     if(face != -1)
 	SET_ANIMATION(op,face);
+#endif
     update_object(op);
 
     return 0;
@@ -2258,4 +2266,5 @@ int op_on_battleground (object *op, int *x, int *y) {
   /* If we got here, did not find a battleground */
   return 0;
 }
+
 
