@@ -1544,7 +1544,7 @@ void move_golem(object *op) {
 	    if(victim->race&&op->race&&strstr(op->race,victim->race)) {
 		if(op->owner) new_draw_info_format(NDI_UNIQUE, 0,op->owner,
 			"%s avoids damaging %s.",op->name,victim->name);
-	    } else if (op->exp_obj && op->exp_obj->stats.Wis
+	    } else if (op->exp_obj 
 		       && victim == op->owner) {
 		if(op->owner) new_draw_info_format(NDI_UNIQUE, 0,op->owner,
 				"%s avoids damaging you.",op->name);
@@ -1554,7 +1554,7 @@ void move_golem(object *op) {
 		 * creature we are attacking, attack_ob seems more
 		 * appropriate.
 		 */
-		
+
 		attack_ob(victim,op);
 /*		hit_map(tmp,op->direction,op->attacktype);*/
 		made_attack=1;
