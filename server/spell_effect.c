@@ -3135,7 +3135,7 @@ int summon_cult_monsters(object *op, int old_dir) {
 		    SET_FLAG(tmp, FLAG_NO_DROP);
 	}
 	dir = absdir(dir + 1);
-	if (arch_blocked(head->arch,op->map, op->x + freearr_x[dir],
+	if (arch_blocked(mon->arch,op->map, op->x + freearr_x[dir],
 		op->y + freearr_y[dir])) {
 
 	    if (i < number) {

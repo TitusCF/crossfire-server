@@ -17,6 +17,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/spell_effect.c: Fix bug in summon_cult_monster that would result
+in crash if monster was killed when inserted.  MSW 2002-02-10
+
 common/map.c: load_map_header: If the map message is empty, don't copy
     uninitialized data as the message.  This fixes various crashes.
 lib/Makefile.in: Remove the adm/*xpm* utilities, as they are no longer
