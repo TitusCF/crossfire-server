@@ -1,25 +1,25 @@
 # Microsoft Developer Studio Project File - Name="plugin_python" - Package Owner=<4>
 # Microsoft Developer Studio Generated Build File, Format Version 6.00
-# ** NICHT BEARBEITEN **
+# ** DO NOT EDIT **
 
 # TARGTYPE "Win32 (x86) Dynamic-Link Library" 0x0102
 
 CFG=plugin_python - Win32 FullDebug
-!MESSAGE Dies ist kein gültiges Makefile. Zum Erstellen dieses Projekts mit NMAKE
-!MESSAGE verwenden Sie den Befehl "Makefile exportieren" und führen Sie den Befehl
+!MESSAGE This is not a valid makefile. To build this project using NMAKE,
+!MESSAGE use the Export Makefile command and run
 !MESSAGE 
 !MESSAGE NMAKE /f "plugin_python.mak".
 !MESSAGE 
-!MESSAGE Sie können beim Ausführen von NMAKE eine Konfiguration angeben
-!MESSAGE durch Definieren des Makros CFG in der Befehlszeile. Zum Beispiel:
+!MESSAGE You can specify a configuration when running NMAKE
+!MESSAGE by defining the macro CFG on the command line. For example:
 !MESSAGE 
 !MESSAGE NMAKE /f "plugin_python.mak" CFG="plugin_python - Win32 FullDebug"
 !MESSAGE 
-!MESSAGE Für die Konfiguration stehen zur Auswahl:
+!MESSAGE Possible choices for configuration are:
 !MESSAGE 
-!MESSAGE "plugin_python - Win32 FullDebug" (basierend auf  "Win32 (x86) Dynamic-Link Library")
-!MESSAGE "plugin_python - Win32 ReleaseQuit" (basierend auf  "Win32 (x86) Dynamic-Link Library")
-!MESSAGE "plugin_python - Win32 ReleaseLog" (basierend auf  "Win32 (x86) Dynamic-Link Library")
+!MESSAGE "plugin_python - Win32 FullDebug" (based on "Win32 (x86) Dynamic-Link Library")
+!MESSAGE "plugin_python - Win32 ReleaseQuit" (based on "Win32 (x86) Dynamic-Link Library")
+!MESSAGE "plugin_python - Win32 ReleaseLog" (based on "Win32 (x86) Dynamic-Link Library")
 !MESSAGE 
 
 # Begin Project
@@ -103,7 +103,7 @@ PostBuild_Cmds=copy ReleaseQuit\plugin_python.dll ..\..\share\plugins\*.*
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MT /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "PLUGIN_PYTHON_EXPORTS" /YX /FD /c
-# ADD CPP /nologo /MD /W3 /GX /O2 /I "..\..\include" /I "..\..\plugin\include" /I "d:\python21\include" /D "_WINDOWS" /D "_USRDLL" /D "PYTHON_PLUGIN_EXPORTS" /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "DEBUG_MOVEATTACK" /YX"plugin.pch" /FD /c
+# ADD CPP /nologo /MD /W3 /GX /O2 /I "..\..\include" /I "..\..\plugin\include" /I "d:\python21\include" /D "_WINDOWS" /D "_USRDLL" /D "PYTHON_PLUGIN_EXPORTS" /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "DEBUG_MOVEATTACK" /FR /YX"plugin.pch" /FD /c
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x407 /d "NDEBUG"

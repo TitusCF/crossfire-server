@@ -1,9 +1,14 @@
-Release notes for Crossfire Server (Windows), July 31th, 2004
---------------------------------------------------------------
+Release notes for Crossfire Server (Windows), November 29th, 2004
+------------------------------------------------------------------
 
-This is version 1.6.1 of the server.
-It fixes the 'not getting any money when selling items' bug, and others
-(introducing new bugs probably :))
+This is version 1.6.1 (snapshot) of the server.
+
+Warning: this is not an official version, just a snapshot from current CVS.
+This snapshot is to let Windows users who can't compile from source benefit
+some new CVS stuff without waiting for next official release.
+
+The version means that it's a snapshot made after the official 1.6.1 release.
+Thus this version is at least equivalent to the 1.6.1 one.
 
 --------------------------------------------------------------
 
@@ -45,6 +50,9 @@ to Windows newline. It will NOT work if conversion occurs.
 Move'em to share/maps of where you installed Crossfire Server.
 (if you picked 'maps-bigworld', rename the directory to 'maps')
 
+
+WARNING: server has only been tested with 'bigworld' maps. Small world
+maps are not supported anymore.
 
 Known issues
 ------------

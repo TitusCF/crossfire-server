@@ -1,7 +1,7 @@
 !include "MUI.nsh"
 
 ;Title Of Your Application
-Name "Crossfire Server 1.6.1"
+Name "Crossfire Server (snapshot 2004-11-29)"
 
 ;Do A CRC Check
 CRCCheck On
@@ -43,6 +43,7 @@ Section "Crossfire Server (required)" cf
   SetOverwrite IfNewer
   File "ReleaseLog\crossfire32.exe"
   File "Release_notes.txt"
+  File /oname=Changelog.rtf "..\changelog"
   SetOutPath $INSTDIR\share
   File "..\lib\archetypes"
   File "..\lib\artifacts"
@@ -95,6 +96,7 @@ Section "Menu Shortcuts" menus
   CreateDirectory "$SMPROGRAMS\Crossfire Server"
   CreateShortCut "$SMPROGRAMS\Crossfire Server\Crossfire Server.lnk" "$INSTDIR\crossfire32.exe" "" "$INSTDIR\crossfire32.exe" 0
   CreateShortCut "$SMPROGRAMS\Crossfire Server\Release notes.lnk" "$INSTDIR\Release_notes.txt"
+  CreateShortCut "$SMPROGRAMS\Crossfire Server\Changelog.lnk" "$INSTDIR\Changelog.rtf"
   CreateShortCut "$SMPROGRAMS\Crossfire Server\Uninstall.lnk" "$INSTDIR\uninst.exe" "" "$INSTDIR\uninst.exe" 0
 SectionEnd
 
@@ -104,6 +106,7 @@ Section "un.Crossfire Server" un_cf
   SectionIn RO
   ;Delete Files
   Delete "$INSTDIR\crossfire32.exe"
+  Delete "$INSTDIR\Changelog.rtf"
   Delete "$INSTDIR\Share\plugins\python21.dll"
   Delete "$INSTDIR\Release_notes.txt"
   Delete "$INSTDIR\Share\treasures"
@@ -139,6 +142,11 @@ Section "un.Crossfire Server" un_cf
   
   ;Remove 'temp' directory
   rmdir /r "$INSTDIR\tmp"
+  
+  ;Remove some data files
+  Delete "$INSTDIR\Var\clockdata"
+  Delete "$INSTDIR\Var\crossfire.log"
+  Delete "$INSTDIR\Var\crossfiremail"
 
   ;Delete Start Menu Shortcuts
   RmDir /r "$SMPROGRAMS\Crossfire Server"
