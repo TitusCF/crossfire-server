@@ -34,10 +34,10 @@ case "$1" in
 	sleep 1
     done
     echo
-    start-stop-daemon --start --chuid nobody:games --verbose --exec $DAEMON -- -detach
+    start-stop-daemon --start --chuid games:games --verbose --exec $DAEMON -- -detach
     ;;
   start)
-    start-stop-daemon --start --chuid nobody:games --verbose --exec $DAEMON -- -detach
+    start-stop-daemon --start --chuid games:games --verbose --exec $DAEMON -- -detach
     ;;
   stop)
     start-stop-daemon --stop --verbose --exec $DAEMON

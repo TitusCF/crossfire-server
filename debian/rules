@@ -52,11 +52,11 @@ clean-patched:
 
 patch: patch-stamp
 patch-stamp:
-	dpatch apply-all
+	dpatch apply-all --verbose
 	touch patch-stamp
 
 unpatch:
-	dpatch deapply-all
+	dpatch deapply-all --verbose
 	rm -rf patch-stamp debian/patched
 
 install: 
@@ -78,6 +78,10 @@ install: build
 	$(MAKE) -C utils uninstall-nodist_binSCRIPTS  DESTDIR=$(CURDIR)/debian/crossfire-server
 
 	$(MAKE) -C crossedit install DESTDIR=$(CURDIR)/debian/crossfire-edit 
+
+	chown -R games.games debian/crossfire-server/var/games/crossfire
+	chmod 2755 debian/crossfire-server/var/games/crossfire
+	install -D -m775 -o root -g games -d debian/crossfire-server/var/log/crossfire
 
 	dh_install
 
@@ -118,6 +122,7 @@ binary-arch: build install
 	dh_installdebconf -pcrossfire-server -Pdebian/crossfire-server
 	dh_shlibdeps -pcrossfire-server -Pdebian/crossfire-server
 	dh_shlibdeps -pcrossfire-edit -Pdebian/crossfire-edit
+
 	dh_gencontrol -pcrossfire-server -Pdebian/crossfire-server
 	dh_gencontrol -pcrossfire-edit -Pdebian/crossfire-edit
 	dh_md5sums -pcrossfire-server -Pdebian/crossfire-server
