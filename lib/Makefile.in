@@ -124,7 +124,6 @@ install:: archetypes bmaps.paths crossfire.xbm crossfire.xpm crossfire.png  anim
 	    echo "Installing $$i"; \
 	    $(INSTALL) $(INSTALLFLAGS)  $$i $(datadir); \
 	done
-	$(CP) -r ./maps $(datadir)
 
 	touch $(localdir)/highscore
 	touch $(localdir)/bookarch
