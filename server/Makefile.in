@@ -80,6 +80,8 @@ CFLAGS = @CFLAGS@ $(EXTRA_CFLAGS)
 
 INCLUDES= $(EXTRA_INCLUDES) -I../include -I$(srcdir)/../include
 
+LDFLAGS = @LDFLAGS@
+
 LIBS = @LIBS@ $(EXTRA_LIBS)
 
 SHELL = @BOURNE_SHELL@
@@ -96,7 +98,7 @@ RM = @RM@
 
 crossfire: $(OBJS) $(LOCAL_LIBRARIES)
 	$(RM) -f $@
-	$(CC) -o $@ $(OBJS) $(LOCAL_LIBRARIES) $(LIBS) 
+	$(CC) $(LDFLAGS) -o $@ $(OBJS) $(LOCAL_LIBRARIES) $(LIBS) 
 
 
 ../common/libcross.a:
