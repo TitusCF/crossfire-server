@@ -807,16 +807,20 @@ int check_good_armour(object *who, object *item) {
 
 void monster_check_pickup(object *monster) {
   object *tmp,*next;
-#if 0
-  object *outofdate;
-#endif
+  int next_tag;
+
   for(tmp=monster->below;tmp!=NULL;tmp=next) {
     next=tmp->below;
+    if (next) next_tag = next->count;
     if (monster_can_pick(monster,tmp)) {
       remove_ob(tmp);
       tmp = insert_ob_in_ob(tmp,monster);
       (void) monster_check_apply(monster,tmp);
     }
+    /* We could try to re-establish the cycling, of the space, but probably
+     * not a big deal to just bail out.
+     */
+    if (next && was_destroyed(next, next_tag)) return;
   }
 }
 

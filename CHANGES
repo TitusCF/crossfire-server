@@ -17,6 +17,15 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 CVS changes since last release:
 
+socket/item.c: Modify look_at to not stop when it finds the first invisible
+   object.
+server/monster.c: Modify  monster_check_pickup to check to see if the
+   next object got destroyed.  I'm not sure the exact way this happens,
+   but I've seen one crash where this did happen - I'm guess some
+   function further down in the monster_check_apply look may call
+   this or destroy the item.
+MSW 2001-05-01
+
 common/object.c: Add clear_owner function.
 include/libproto.h: rebuild.
 server/player.c: Modify op_on_battleground to look for battleground

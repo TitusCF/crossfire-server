@@ -645,52 +645,57 @@ void MarkItem(uint8 *data, int len,player *pl)
  *   Tero.Haatanen@lut.fi ]
  */
 void look_at(object *op,int dx,int dy) {
-  object *tmp;
-  char buf[MAX_BUF];
-  int flag=0;
+    object *tmp;
+    int flag=0;
 
-  if (out_of_map(op->map, op->x+dx, op->y+dy)) return;
-  if(op->above!=NULL) {
-    SET_FLAG (op, FLAG_NO_APPLY);
-    remove_ob(op);
-    insert_ob_in_map(op,op->map,NULL);
-    CLEAR_FLAG (op, FLAG_NO_APPLY);
-  }
-  if(dx||dy) 
-    for(tmp=get_map_ob(op->map,op->x+dx,op->y+dy);tmp!=NULL&&tmp->above!=NULL;
-      tmp=tmp->above);
-  else
-    tmp=op->below;
-  while(tmp && (QUERY_FLAG(op, FLAG_WIZ) ||(!tmp->invisible && tmp!=op))) {
-    if(!flag) {
-      if(dx||dy)
-        new_draw_info(NDI_UNIQUE, 0,op,"There you see:");
-      else {
-        clear_win_info(op);
-        new_draw_info(NDI_UNIQUE, 0,op,"You see:");
-      }
-      flag=1;
+    if (out_of_map(op->map, op->x+dx, op->y+dy)) return;
+    /* put player back on top */
+    if(op->above!=NULL) {
+	SET_FLAG (op, FLAG_NO_APPLY);
+	remove_ob(op);
+	insert_ob_in_map(op,op->map,NULL);
+	CLEAR_FLAG (op, FLAG_NO_APPLY);
     }
-    if(QUERY_FLAG(op, FLAG_WIZ))
-      (void) sprintf(buf,"- %s (%d).",query_name(tmp),tmp->count);
+    /* find top object to process from */
+    if(dx||dy) 
+	for(tmp=get_map_ob(op->map,op->x+dx,op->y+dy);tmp!=NULL&&tmp->above!=NULL;
+	    tmp=tmp->above);
     else
-      (void) sprintf(buf,"- %s.",query_name(tmp));
-    new_draw_info(NDI_UNIQUE, 0,op,buf);
-    if((tmp->inv!=NULL || (tmp->head && tmp->head->inv)) && 
-       ( (!dx&&!dy) || tmp->type != CONTAINER || QUERY_FLAG(op, FLAG_WIZ)
-/* added some cases here -b.t. */
-	|| !(tmp->type) || tmp->type!=FLESH ))
-      inventory(op,tmp->head==NULL?tmp:tmp->head);
-    if(QUERY_FLAG(tmp, FLAG_IS_FLOOR)&&!QUERY_FLAG(op, FLAG_WIZ))	/* don't continue under the floor */
-      break;
-    tmp=tmp->below;
-  }
-  if(!flag) {
-    if(dx||dy)
-      new_draw_info(NDI_UNIQUE, 0,op,"You see nothing there.");
-    else
-      new_draw_info(NDI_UNIQUE, 0,op,"You see nothing.");
-  }
+	tmp=op->below;
+
+    for ( ; tmp != NULL; tmp=tmp->below ) {
+	 if (tmp->invisible && !QUERY_FLAG(op, FLAG_WIZ)) continue;
+
+	 if(!flag) {
+	    if(dx||dy)
+		new_draw_info(NDI_UNIQUE, 0,op,"There you see:");
+	    else {
+		clear_win_info(op);
+		new_draw_info(NDI_UNIQUE, 0,op,"You see:");
+	    }
+	    flag=1;
+	 }
+
+	 if (QUERY_FLAG(op, FLAG_WIZ))
+	    new_draw_info_format(NDI_UNIQUE,0, op, "- %s (%d).",query_name(tmp),tmp->count);
+	 else
+	    new_draw_info_format(NDI_UNIQUE,0, op, "- %s.",query_name(tmp));
+
+	 if((tmp->inv!=NULL || (tmp->head && tmp->head->inv)) && 
+	    ( (!dx&&!dy) || tmp->type != CONTAINER || QUERY_FLAG(op, FLAG_WIZ)
+	     || !(tmp->type) || tmp->type!=FLESH ))
+	    inventory(op,tmp->head==NULL?tmp:tmp->head);
+
+	 if(QUERY_FLAG(tmp, FLAG_IS_FLOOR)&&!QUERY_FLAG(op, FLAG_WIZ))	/* don't continue under the floor */
+	    break;
+    }
+
+    if(!flag) {
+	if(dx||dy)
+	    new_draw_info(NDI_UNIQUE, 0,op,"You see nothing there.");
+	else
+	    new_draw_info(NDI_UNIQUE, 0,op,"You see nothing.");
+    }
 }
 
 
