@@ -216,7 +216,6 @@ int add_player(NewSocket *ns) {
     player *p;
     char *defname = "nobody";
 
-
     /* Check for banned players and sites.  usename is no longer accurate,
      * (can't get it over sockets), so all we really have to go on is
      * the host.
@@ -603,13 +602,14 @@ int receive_play_again(object *op, char key)
 	op = pl->ob;
 	add_friendly_object(op);
 	op->contr->password[0]='~';
-	if(op->name!=NULL)
-	    free_string(op->name);
+	FREE_AND_CLEAR(op->name);
+	FREE_AND_CLEAR(op->name_pl);
+
 	/* Lets put a space in here */
 	new_draw_info(NDI_UNIQUE, 0, op, "\n");
 	get_name(op);
-	op->name = name;
-	add_refcount(op->name);
+	op->name = add_string(name);
+	op->name_pl = add_string(name);
 	set_first_map(op);
     } else {
 	/* user pressed something else so just ask again... */
@@ -923,6 +923,8 @@ int key_change_class(object *op, char key)
       op->stats = op->contr->orig_stats;
       free_string (op->name);
       op->name = name;
+      free_string(op->name_pl);
+      op->name_pl = add_string(name);
       op->x = x;
       op->y = y;
       SET_ANIMATION(op, 2);    /* So player faces south */
@@ -1705,13 +1707,22 @@ void move_player_attack(object *op, int dir)
 	    if(op->contr->tmp_invis||op->hide) make_visible(op);
 	    return;
 	}
-    
+
+	/* in certain circumstances, you shouldn't attack friendly
+	 * creatures.  Note that if you are braced, you can't push
+	 * someone, but put it inside this loop so that you won't
+	 * attack them either.
+	 */
 	if ((tmp->type==PLAYER || tmp->enemy != op) &&
 	    (tmp->type==PLAYER || QUERY_FLAG(tmp,FLAG_UNAGGRESSIVE)
 	     || QUERY_FLAG(tmp, FLAG_FRIENDLY)) && (op->contr->peaceful
-		&& !op_on_battleground(op, NULL, NULL)) && (!op->contr->braced)) {
-	    play_sound_map(op->map, op->x, op->y, SOUND_PUSH_PLAYER);
-	    (void) push_ob(tmp,dir,op);
+		&& !op_on_battleground(op, NULL, NULL))) {
+	    if (!op->contr->braced) {
+		play_sound_map(op->map, op->x, op->y, SOUND_PUSH_PLAYER);
+		(void) push_ob(tmp,dir,op);
+	    } else {
+		new_draw_info(0, 0,op,"You withhold your attack");
+	    }
 	    if(op->contr->tmp_invis||op->hide) make_visible(op);
 	}
 

@@ -1011,7 +1011,7 @@ static inline int update_space(SockList *sl, NewSocket *ns, mapstruct  *mp, int 
     ob = head;
     if (!ob) ob = GET_MAP_FACE_OBJ(mp, mx, my, layer);
 
-    /* If ther eis no object for this space, or if the face for the object
+    /* If there is no object for this space, or if the face for the object
      * is the blank face, set the face number to zero.
      * else if we have the stored head object for this space, that takes
      * precedence over the other object for this space.
@@ -1317,8 +1317,18 @@ void draw_client_map1(object *pl)
 		if (update_space(&sl, &pl->contr->socket, m, nx, ny, ax, ay, 1))
 		    mask |= 0x2;
 
+
+		if(nx == pl->x && ny == pl->y && pl->invisible & (pl->invisible < 50 ? 4 : 1)) {
+		    if (pl->contr->socket.lastmap.cells[ax][ay].faces[0] != pl->face->number) {
+			pl->contr->socket.lastmap.cells[ax][ay].faces[0] = pl->face->number;
+			mask |= 0x1;
+			if (pl->contr->socket.faces_sent[pl->face->number] == 0)
+			    esrv_send_face(&pl->contr->socket, pl->face->number, 0);
+			SockList_AddShort(&sl, pl->face->number);
+		    }
+		}
 		/* Top face */
-		if (update_space(&sl, &pl->contr->socket, m, nx, ny, ax, ay, 0))
+		else if (update_space(&sl, &pl->contr->socket, m, nx, ny, ax, ay, 0))
 		    mask |= 0x1;
 
 		/* Check to see if we are in fact sending anything for this

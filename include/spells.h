@@ -198,8 +198,10 @@ enum spellnrs {
   SP_FORKED_LIGHTNING,   SP_POISON_FOG,     SP_FLAME_AURA,            /* 195 */
   SP_VITRIOL,          SP_VITRIOL_SPLASH,
   
-  SP_IRONWOOD_SKIN,     SP_WRATHFUL_EYE, SP_TOWN_PORTAL,                             /* 200 */
-  SP_MISSILE_SWARM,     SP_CAUSE_RABIES
+  SP_IRONWOOD_SKIN,     SP_WRATHFUL_EYE, SP_TOWN_PORTAL,		/* 200 */
+  SP_MISSILE_SWARM,     SP_CAUSE_RABIES,
+
+  SP_GLYPH								/* 205 */
 
 };
 

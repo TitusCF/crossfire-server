@@ -3792,9 +3792,16 @@ int cast_cause_disease(object *op, object *caster, int dir, archetype *disease_a
 		  disease->stats.exp = 0;
 		  disease->level = op->level;
 		  
-		  /* Try to get the experience into the correct category */
-		  if(op->chosen_skill && op->chosen_skill->exp_obj)
-			 disease->exp_obj = op->chosen_skill->exp_obj;
+		  /* Try to get the experience into the correct category.
+		   * Need to set chosen_skill for it to work when cast from a 
+		   * glyph - I'm not sure why this works when not cast as
+		   * glyphs - the same code in attack.c that uses the chosen_skill
+		   * would seem to get used.
+		   */
+		  if(op->chosen_skill && op->chosen_skill->exp_obj) {
+			disease->exp_obj = op->chosen_skill->exp_obj;
+			disease->chosen_skill = op->chosen_skill;
+		  }
 
 		  /*do level adjustments */
 		  if(disease->stats.wc)
@@ -3855,10 +3862,10 @@ int cast_cause_disease(object *op, object *caster, int dir, archetype *disease_a
 		  free_object(disease);
 	    }
 	/* no more infecting through walls. */
-	if(blocked(op->map,x,y)) return 0;
+	if(blocked(op->map,x,y)) return 1;
     }
     new_draw_info(NDI_UNIQUE,0,op,"No one caught anything!");
-    return 0;
+    return 1;
 }
 
 

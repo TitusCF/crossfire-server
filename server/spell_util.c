@@ -176,24 +176,19 @@ int cast_spell(object *op,object *caster,int dir,int type,int ability,SpellTypeF
 	 if( spells[type].onself) dir = 0;
   }
 
-  if(!(QUERY_FLAG(op, FLAG_WIZ))&&
-	  (op->type==PLAYER)&&
-	  (op->contr->shoottype==range_magic)&&
-     (item!=spellPotion)&& 
-     (!(IS_SUMMON_SPELL(type)&&op->contr->golem!=NULL)))
-  {
-	if(!spells[type].cleric&& op->stats.sp<SP_level_spellpoint_cost(op,caster,type))
-	{
-	  new_draw_info(NDI_UNIQUE, 0,op,"You don't have enough mana.");
-	  return 0;
+  if(!(QUERY_FLAG(op, FLAG_WIZ))&& (op->type==PLAYER) && (op->contr->shoottype==range_magic) &&
+     (item!=spellPotion)&&  (!(IS_SUMMON_SPELL(type)&&op->contr->golem!=NULL))) {
+	if( !spells[type].cleric && op->stats.sp<SP_level_spellpoint_cost(op,caster,type)) {
+		new_draw_info(NDI_UNIQUE, 0,op,"You don't have enough mana.");
+		return 0;
 	}
-	if(spells[type].cleric&&op->stats.grace<SP_level_spellpoint_cost(op,caster,type))
+	else if(spells[type].cleric && op->stats.grace<SP_level_spellpoint_cost(op,caster,type))
 	{
 	  /* it's possible for grace to go negative */
 	  /* Fine - let grace go negative, but how negative it is should really
 	   * put a limit on things - in the old method, chance was the same
 	   * no matter how negative it was.
-	   *Instead of subtracting 10 from the roll, add in grace (which is
+	   * Instead of subtracting 10 from the roll, add in grace (which is
 	   * negative).  This puts a real limit on things.
 	   */
 	  if(random_roll(0, op->stats.Wis-1, op, PREFER_HIGH) + op->stats.grace -
@@ -669,29 +664,10 @@ if (item == spellNormal && !ability ){
     }
     break;
   case SP_RUNE_MAGIC:
-    { int total_sp_cost, spellinrune;
-      spellinrune=look_up_spell_by_name(op,stringarg);
-      if(spellinrune!=-1) {
-      total_sp_cost=SP_level_spellpoint_cost(op,caster,spellinrune)
-			+spells[spellinrune].sp;
-	if(op->stats.sp<total_sp_cost) {
-	  new_draw_info(NDI_UNIQUE, 0,op,"Not enough spellpoints.");
-#ifdef CASTING_TIME
-	  /* free the spell arg */
-	  if(stringarg) {free(stringarg);stringarg=NULL; };
-#endif
-	  return 0;
-	}
-	success=write_rune(op,dir,spellinrune,caster->level,stringarg);
-	return (success ? total_sp_cost : 0);
-      }
-#ifdef CASTING_TIME
-	  /* free the spell arg */
-	  if(stringarg) {free(stringarg);stringarg=NULL; };
-#endif
-      return 0;
-    }
+  case SP_GLYPH:
+    return cast_generic_rune(op, caster, dir, stringarg, type);
     break;
+
   case SP_RUNE_MARK:
     if(caster->type == PLAYER)
       success=write_rune(op,dir,0,-2,stringarg);

@@ -81,6 +81,7 @@ typedef void (*func_uint8_int_pl)(char*, int, player *);
 struct PlCmdMapping {
     char *cmdname;
     func_uint8_int_pl cmdproc;
+    uint8   flag;
 };
 
 /*
@@ -91,18 +92,20 @@ struct PlCmdMapping {
  * unsigned (pretty much needs to be for binary data), however, most
  * of these treat it only as strings, so it makes things easier
  * to cast it here instead of a bunch of times in the function itself.
+ * flag is 1 if the player must be in the playing state to issue the
+ * command, 0 if they can issue it at any time.
  */
 static struct PlCmdMapping plcommands[] = {
-    { "examine",	ExamineCmd },
-    { "apply",		ApplyCmd },
-    { "move",		MoveCmd },
-    { "reply",		ReplyCmd},
-    { "command",	PlayerCmd},
-    { "ncom",		(func_uint8_int_pl)NewPlayerCmd},
-    { "lookat",		LookAt},
-    { "mapredraw",	MapRedrawCmd},	/* Added: phil */
-    { "lock",		(func_uint8_int_pl)LockItem},
-    { "mark",		(func_uint8_int_pl)MarkItem},
+    { "examine",	ExamineCmd,	1},
+    { "apply",		ApplyCmd,	1},
+    { "move",		MoveCmd,	1},
+    { "reply",		ReplyCmd,	0},
+    { "command",	PlayerCmd,	1},
+    { "ncom",		(func_uint8_int_pl)NewPlayerCmd, 1},
+    { "lookat",		LookAt,		1},
+    { "lock",		(func_uint8_int_pl)LockItem,	1},
+    { "mark",		(func_uint8_int_pl)MarkItem,	1},
+    { "mapredraw",	MapRedrawCmd,	0},	/* Added: phil */
     { NULL, NULL}	/* terminator */
 };
 
@@ -345,10 +348,17 @@ void HandleClient(NewSocket *ns, player *pl)
 		return;
 	    }
 	}
-	/* Only valid players can use these commands */
+	/* Player must be in the playing state or the flag on the
+	 * the command must be zero for the user to use the command -
+	 * otherwise, a player cam save, be in the play_again state, and
+	 * the map they were on getsswapped out, yet things that try to look
+	 * at the map causes a crash.  If the command is valid, but
+	 * one they can't use, we still swallow it up.
+	 */
 	if (pl) for (i=0; plcommands[i].cmdname !=NULL; i++) {
 	    if (strcmp((char*)ns->inbuf.buf+2,plcommands[i].cmdname)==0) {
-		plcommands[i].cmdproc((char*)data,len,pl);
+		if (pl->state == ST_PLAYING || plcommands[i].flag == 0)
+		    plcommands[i].cmdproc((char*)data,len,pl);
 		ns->inbuf.len=0;
 		return;
 	    }

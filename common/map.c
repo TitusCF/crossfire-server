@@ -1388,7 +1388,6 @@ mapstruct *ready_map_name(char *name, int flags) {
 
     /* Map is good to go, so just return it */
     if (m && (m->in_memory == MAP_LOADING || m->in_memory == MAP_IN_MEMORY)) {
-	(*set_darkness_map_func)(m);
 	return m;
     }
 
@@ -1458,7 +1457,8 @@ mapstruct *ready_map_name(char *name, int flags) {
     decay_objects(m); /* start the decay */
     /* In case other objects press some buttons down */
     update_buttons(m);
-    (*set_darkness_map_func)(m);
+    if (m->outdoor)
+	(*set_darkness_map_func)(m);
     return m;
 }
 
@@ -1540,8 +1540,8 @@ void free_all_maps()
 }
 
 /* change_map_light() - used to change map light level (darkness)
- * up or down by *1*. This fctn is not designed to change by
- * more than that!  Returns true if successful. -b.t. 
+ * up or down. Returns true if successful.   It should now be
+ * possible to change a value by more than 1.
  * Move this from los.c to map.c since this is more related
  * to maps than los.
  */
@@ -1549,26 +1549,30 @@ void free_all_maps()
 int change_map_light(mapstruct *m, int change) {
     int new_level = m->darkness + change;
  
-    if(new_level<=0) {
-	m->darkness = 0;
+    /* Nothing to do */
+    if(!change || (new_level <= 0 && m->darkness == 0) || 
+       (new_level >= MAX_DARKNESS && m->darkness >=MAX_DARKNESS)) {
         return 0;
     }
- 
-    if(new_level>MAX_DARKNESS) return 0;
- 
-    if(change) {
-	/* inform all players on the map */
-	if (change>0) 
-	    (info_map_func)(NDI_BLACK, m,"It becomes darker.");
-	else
-	    (info_map_func)(NDI_BLACK, m,"It becomes brighter.");
 
-	m->darkness=new_level;
-	/* All clients need to get re-updated for the change */
-	update_all_map_los(m);
-	return 1;
-    }
-    return 0;
+    /* inform all players on the map */
+    if (change>0) 
+	(info_map_func)(NDI_BLACK, m,"It becomes darker.");
+    else
+	(info_map_func)(NDI_BLACK, m,"It becomes brighter.");
+
+    /* Do extra checking.  since m->darkness is a unsigned value,
+     * we need to be extra careful about negative values.
+     * In general, the checks below are only needed if change
+     * is not +/-1
+     */
+    if (new_level < 0) m->darkness = 0;
+    else if (new_level >=MAX_DARKNESS) m->darkness = MAX_DARKNESS;
+    else m->darkness=new_level;
+
+    /* All clients need to get re-updated for the change */
+    update_all_map_los(m);
+    return 1;
 }
 
 

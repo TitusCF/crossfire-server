@@ -419,3 +419,38 @@ void trap_adjust(object *trap, int difficulty)
   if(trap->attacktype & AT_DEATH) trap->stats.dam = 127;
 
 }
+
+/* Should this be here or in spell_effect.c?  I guess this is a bit
+ * more appropriate.  op is the caster, stringarg is the parameter,
+ * type is the spell number - SP_GLYPH or SP_RUNE_MAGIC
+ */
+int cast_generic_rune(object *op, object *caster, int dir, char *stringarg, int type)
+{
+    int total_sp_cost=0, spellinrune;
+
+    spellinrune=look_up_spell_by_name(op,stringarg);
+    if (spellinrune == -1) {
+	new_draw_info_format(NDI_UNIQUE, 0,op,"Could not find a spell by name of %s", stringarg);
+
+    /* can only put cleric spells in glyphs, only mage spells in magic runes */
+    } else if (spells[spellinrune].cleric != spells[type].cleric) {
+	new_draw_info_format(NDI_UNIQUE, 0,op,"You can't make a %s of %s", spells[type].name,
+		      spells[spellinrune].name);
+    } else {
+	/* Everything checks out.  Note that since grace can go negative, we don't
+	 * have any special check for that.
+	 */
+	total_sp_cost=SP_level_spellpoint_cost(op,caster,spellinrune) + spells[spellinrune].sp;
+	if(type == SP_RUNE_MAGIC && op->stats.sp<total_sp_cost) {
+	    new_draw_info(NDI_UNIQUE, 0,op,"Not enough spellpoints.");
+	    total_sp_cost = 0;
+	} else {
+	    write_rune(op,dir,spellinrune,caster->level,stringarg);
+	}
+    }
+#ifdef CASTING_TIME
+    /* free the spell arg */
+    if(stringarg) {free(stringarg);stringarg=NULL; };
+#endif
+    return total_sp_cost;
+}

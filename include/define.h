@@ -345,7 +345,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 
 #define NRSPELLPATHS	20
 
-#define NROFREALSPELLS	205	/* Number of different spells */
+#define NROFREALSPELLS	206	/* Number of different spells */
 
 #define NROFSKILLS  33  /* match to the number of elements in skills[] array */
 

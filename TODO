@@ -15,6 +15,10 @@ light source does not illuminate the same space multiple times.
 ------------------------------------------------------------------------------
 Future feature requests
 
+- Further control on what players can do on maps/spaces.  For example,
+  prohibit players from shouting, attacking others, issuing tell,
+  etc.
+
 - Change inscription - instead of looking at range field of the player,
   have the spell to be inscribed part of the inscription command, eg
   'inscribe scroll of identify'.

@@ -452,8 +452,12 @@ PATH_TURNING,"holy_orb",},
 {"missile swarm",		7,  6,  0,  3, 0, 0, 1,  1, 0, 0, 0,
    PATH_MISSILE,"magic_missile"}, 
 {"cause rabies",            12, 120, 0, 10, 0, 0,  0,  1, 0, 1, 0,
- PATH_WOUNDING,"rabies"}
+ PATH_WOUNDING,"rabies"},
+{"glyph",                  12, 5,   0, 30, 0, 0, 1,  0, 0, 1, 0,
+ PATH_CREATE, "generic_rune",},
 };
+/* name,lvl,sp,charges,time,scrolls[nr,chance],book-chance,rng,defensive,cleric,self
+   path, other arch*/
 
 /*  peterm:  the following defines the parameters for all the
 spells. 

@@ -17,6 +17,35 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Various bug fixes, add glyph spell:
+TODO: Updated
+common/map.c: Fix change_map_light() - if darkness was reduced to zero,
+   it wouldn't properly notify the players or update the maps they are
+   on.  Also, make it more robust to handle changes by more than one.
+include/define.h: Increase NROFREALSPELLS
+include/spellist.h: Add glyph spell.
+include/spells.h: Add SP_GLYPH entry.
+server/attack.c: Fix up kill_object() - it has had some many various
+   additions that it was difficult to follow the logic.  It should also now
+   do better check on skill objects when awarding experience.
+server/player.c: Add some checks/addition to properly deal with freeing the
+   name_pl in the player object.  Fix it so that if you are braced, you
+   still won't attack friendly creatures.
+server/rune.c: Add cast_generic_rune() to handle the glyph and rune spell.
+server/spell_effect.c: Fix up some pointers in cast_cause_disease() -
+   needed so that it works properly when embedded in a glyph.  Have it
+   return 1 even if no one caught anything - you still cast the spell, so
+   you should lose the grace for it.
+server/spell_util.c: Fix some formatting.  Break out the code dealing
+   with rune into cast_generic_rune()
+socket/loop.c: Add flag to player command mapping, and update structure -
+   if flag is set, command can only be issued when player is in play,
+   and not when waiting at the quit or login prompt - fixes crashes where
+   players could wait for the map to get swapped out (after quitting), and
+   then looking at a space.
+socket/request.c: Fix map2cmd so that invisible players are drawn.
+MSW 2002-07-24
+
 Add dm command 'freeze' which freezes a player from doing anything for some
 amount of time.
 include/sproto.h: rebuilt.
