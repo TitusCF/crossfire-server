@@ -969,7 +969,6 @@ CFParm* CFWLoadObject(CFParm* PParm)
 
     CFP = (CFParm*)(malloc(sizeof(CFParm)));
     val = load_object_str((char *)(PParm->Value[0]));
-    LOG(llevDebug,"CFWLoadObject: %s\n",query_name(val));
     CFP->Value[0] = (void *)(val);
     return CFP;
 };

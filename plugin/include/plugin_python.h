@@ -175,8 +175,8 @@ static PyObject* CFCreatePlayerInfo(PyObject* self, PyObject* args);
 static PyObject* CFGetPlayerInfo(PyObject* self, PyObject* args);
 static PyObject* CFGetNextPlayerInfo(PyObject* self, PyObject* args);
 
-static PyObject* CFCheckInvisibleInside(PyObject* self, PyObject* args);
-static PyObject* CFCreateInvisibleInside(PyObject* self, PyObject* args);
+static PyObject* CFCheckInvisibleObjectInside(PyObject* self, PyObject* args);
+static PyObject* CFCreateInvisibleObjectInside(PyObject* self, PyObject* args);
 static PyObject* CFCreateObjectInside(PyObject* self, PyObject* args);
 static PyObject* CFCheckMap(PyObject* self, PyObject* args);
 static PyObject* CFCheckInventory(PyObject* self, PyObject* args);
@@ -278,7 +278,7 @@ static PyObject* CFGetIP(PyObject* self, PyObject* args);
 static PyObject* CFGetInventory(PyObject* self, PyObject* args);
 static PyObject* CFGetInternalName(PyObject* self, PyObject* args);
 static PyObject* CFSetVariable(PyObject* self, PyObject* args);
-static PyObject* CFDecreaseObjectNR(PyObject* self, PyObject* args);
+static PyObject* CFDecreaseObjectNr(PyObject* self, PyObject* args);
 
 /* Skill id wrappers */
 static PyObject* CFSkillStealing(PyObject* self, PyObject* args);
@@ -687,8 +687,8 @@ static PyMethodDef CFPythonMethods[] =
         {"GetPlayerInfo",CFGetPlayerInfo,METH_VARARGS},
         {"GetNextPlayerInfo",CFGetNextPlayerInfo,METH_VARARGS},
 
-        {"CheckInvisibleObjectInside",CFCheckInvisibleInside,METH_VARARGS},
-        {"CreateInvisibleObjectInside",CFCreateInvisibleInside,METH_VARARGS},
+        {"CheckInvisibleObjectInside",CFCheckInvisibleObjectInside,METH_VARARGS},
+        {"CreateInvisibleObjectInside",CFCreateInvisibleObjectInside,METH_VARARGS},
         {"CreateObjectInside",CFCreateObjectInside,METH_VARARGS},
         {"CheckMap",CFCheckMap,METH_VARARGS},
         {"CheckArchInventory",CFCheckArchInventory,METH_VARARGS},
@@ -829,7 +829,7 @@ static PyMethodDef CFPythonMethods[] =
         {"GetWC", CFGetWC, METH_VARARGS},
         {"SetWC", CFSetWC, METH_VARARGS},
         {"SetVariable", CFSetVariable, METH_VARARGS},
-        {"DecreaseObjectNr", CFDecreaseObjectNR, METH_VARARGS},
+        {"DecreaseObjectNr", CFDecreaseObjectNr, METH_VARARGS},
 /* Skills wrappers : */
         {"SkillStealing", CFSkillStealing, METH_VARARGS},
         {"SkillLockpicking", CFSkillLockpicking, METH_VARARGS},

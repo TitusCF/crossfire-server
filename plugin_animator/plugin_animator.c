@@ -712,9 +712,8 @@ CFParm* removePlugin(CFParm* PParm)
 /*****************************************************************************/
 CFParm* getPluginProperty(CFParm* PParm)
 {
-    double dblval = 0.0;
     static float val = 1.0;
-    int i;
+
     if (PParm!=NULL)
     {
         if(!strcmp((char *)(PParm->Value[0]),"command?"))

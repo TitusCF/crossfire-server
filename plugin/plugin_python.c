@@ -2751,7 +2751,7 @@ static PyObject* CFSetGod(PyObject* self, PyObject* args)
     tmp = (object *)(CFR0->Value[0]);
     PyFreeMemory( CFR0 );
 
-    if (tmp == NULL) 
+    if (tmp == NULL)
     {
         set_exception("illegal god name %s", txt);
         return NULL;
@@ -2820,13 +2820,8 @@ static PyObject* CFReadyMap(PyObject* self, PyObject* args)
     val = 0;
     GCFP.Value[0] = (void *)(mapname);
     GCFP.Value[1] = (void *)(&val);
-    printf( "Ready to call readymapname with %s %i\n",
-        (char *)(GCFP.Value[0]),
-        *(int *)(GCFP.Value[1])
-    );
     CFR = (PlugHooks[HOOK_READYMAPNAME])(&GCFP);
     mymap = (mapstruct *)(CFR->Value[0]);
-    printf( "Map file is %s\n",mymap->path);
     PyFreeMemory( CFR );
 
     return Py_BuildValue("l",(long)(mymap));
@@ -2936,7 +2931,6 @@ static PyObject* CFGetWeight(PyObject* self, PyObject* args)
 
     CHECK_OBJ(whoptr);
 
-    printf( "GetWeight: requested target is %s\n", query_name(WHO));
     return Py_BuildValue("l",WHO->weight);
 };
 
@@ -3071,7 +3065,6 @@ static PyObject* CFGetFirstObjectOnSquare(PyObject* self, PyObject* args)
     GCFP.Value[2] = (void *)(&y);
     CFR = (PlugHooks[HOOK_GETMAPOBJECT])(&GCFP);
     val = (object *)(CFR->Value[0]);
-    printf( "First object is known by %s\n",query_name(val));
     PyFreeMemory( CFR );
 
     return Py_BuildValue("l",(long)(val));
@@ -3332,24 +3325,21 @@ static PyObject* CFWhatIsMessage(PyObject* self, PyObject* args)
 /*****************************************************************************/
 static PyObject* CFSay(PyObject* self, PyObject* args)
 {
-    object *who;
-    long obptr;
+    long whoptr;
     char *message;
     char *buf;
     int val;
 
-    if (!PyArg_ParseTuple(args,"ls",&obptr,&message))
+    if (!PyArg_ParseTuple(args,"ls",&whoptr,&message))
         return NULL;
 
-    CHECK_OBJ(obptr);
+    CHECK_OBJ(whoptr);
 
-    who = (object *)(obptr);
-
-    buf = (char *)(malloc(sizeof(char)*(strlen(message)+strlen(query_name(who))+20)));
-    sprintf(buf, "%s says: %s", query_name(who),message);
+    buf = (char *)(malloc(sizeof(char)*(strlen(message)+strlen(query_name(WHO))+20)));
+    sprintf(buf, "%s says: %s", query_name(WHO),message);
     val = NDI_NAVY|NDI_UNIQUE;
     GCFP.Value[0] = (void *)(&val);
-    GCFP.Value[1] = (void *)(who->map);
+    GCFP.Value[1] = (void *)(WHO->map);
     GCFP.Value[2] = (void *)(buf);
     (PlugHooks[HOOK_NEWINFOMAP])(&GCFP);
 
@@ -3871,7 +3861,7 @@ static PyObject* CFFixObject(PyObject* self, PyObject* args)
 
     CHECK_OBJ(whoptr);
 
-    fix_player(WHO);
+    PyFixPlayer(WHO);
     Py_INCREF(Py_None);
     return Py_None;
 };
@@ -4275,17 +4265,17 @@ static PyObject* CFForgetSpell(PyObject* self, PyObject* args)
 /*****************************************************************************/
 static PyObject* CFAcquireSpell(PyObject* self, PyObject* args)
 {
-    long whoptr, spell;
+    long whoptr, spellptr;
     int i = 0;
 
-    if (!PyArg_ParseTuple(args,"ll",&whoptr,&spell))
+    if (!PyArg_ParseTuple(args,"ll",&whoptr,&spellptr))
         return NULL;
 
     CHECK_OBJ(whoptr);
-    CHECK_OBJ(spell);
+    CHECK_OBJ(spellptr);
 
     GCFP.Value[0] = (void *)(WHO);
-    GCFP.Value[1] = (void *)(spell);
+    GCFP.Value[1] = (void *)(spellptr);
     GCFP.Value[2] = (void *)(&i);
     (PlugHooks[HOOK_LEARNSPELL])(&GCFP);
 
@@ -4320,11 +4310,11 @@ static PyObject* CFDoKnowSpell(PyObject* self, PyObject* args)
 };
 
 /*****************************************************************************/
-/* Name   : CFCheckInvisibleInside                                           */
+/* Name   : CFCheckInvisibleObjectInside                                     */
 /* Python : CFPython.CheckInvisibleObjectInside(object,string)               */
 /* Status : Untested                                                         */
 /*****************************************************************************/
-static PyObject* CFCheckInvisibleInside(PyObject* self, PyObject* args)
+static PyObject* CFCheckInvisibleObjectInside(PyObject* self, PyObject* args)
 {
     int whoptr;
     char *id;
@@ -4444,19 +4434,17 @@ static PyObject* CFCreatePlayerInfo(PyObject* self, PyObject* args)
 /*****************************************************************************/
 static PyObject* CFGetPlayerInfo(PyObject* self, PyObject* args)
 {
-    long whereptr;
+    long whoptr;
     char *name;
-    object *walk, *who;
+    object *walk;
 
-    if (!PyArg_ParseTuple(args,"ls",&whereptr,&name))
+    if (!PyArg_ParseTuple(args,"ls",&whoptr,&name))
         return NULL;
 
-    CHECK_OBJ(whereptr);
-
-    who = (object *)(whereptr);
+    CHECK_OBJ(whoptr);
 
     /* get the first linked player_info arch in this inventory */
-    for(walk=who->inv;walk!=NULL;walk=walk->below)
+    for(walk=WHO->inv;walk!=NULL;walk=walk->below)
     {
         if (!strcmp(walk->arch->name,"player_info") && !strcmp(walk->name,name))
             return Py_BuildValue("l",(long)(walk));
@@ -4499,11 +4487,11 @@ static PyObject* CFGetNextPlayerInfo(PyObject* self, PyObject* args)
 
 
 /*****************************************************************************/
-/* Name   : CFCreateInvisibleInside                                          */
+/* Name   : CFCreateInvisibleObjectInside                                    */
 /* Python : CFPython.CreateInvisibleObjectInside(object,string)              */
 /* Status : Untested                                                         */
 /*****************************************************************************/
-static PyObject* CFCreateInvisibleInside(PyObject* self, PyObject* args)
+static PyObject* CFCreateInvisibleObjectInside(PyObject* self, PyObject* args)
 {
     long whereptr;
     char* txt;
@@ -5087,14 +5075,12 @@ static PyObject* CFIsUsedUp(PyObject* self, PyObject* args)
 static PyObject* CFIsIdentified(PyObject* self, PyObject* args)
 {
     long whoptr;
-    int retval;
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
 
     CHECK_OBJ(whoptr);
 
-    retval = QUERY_FLAG(WHO,FLAG_IDENTIFIED);
-    return Py_BuildValue("i",retval);
+    return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_IDENTIFIED));
 };
 
 /*****************************************************************************/
@@ -6090,7 +6076,7 @@ static PyObject* CFSetCha(PyObject* self, PyObject* args)
     {
         WHO->contr->orig_stats.Cha = value;
     };
-    fix_player(WHO);
+    PyFixPlayer(WHO);
     Py_INCREF(Py_None);
     return Py_None;
 };
@@ -6120,7 +6106,7 @@ static PyObject* CFSetCon(PyObject* self, PyObject* args)
     {
         WHO->contr->orig_stats.Con = value;
     };
-    fix_player(WHO);
+    PyFixPlayer(WHO);
     Py_INCREF(Py_None);
     return Py_None;
 };
@@ -6150,7 +6136,7 @@ static PyObject* CFSetDex(PyObject* self, PyObject* args)
     {
         WHO->contr->orig_stats.Dex = value;
     };
-    fix_player(WHO);
+    PyFixPlayer(WHO);
     Py_INCREF(Py_None);
     return Py_None;
 };
@@ -6205,7 +6191,7 @@ static PyObject* CFSetInt(PyObject* self, PyObject* args)
     {
         WHO->contr->orig_stats.Int = value;
     };
-    fix_player(WHO);
+    PyFixPlayer(WHO);
     Py_INCREF(Py_None);
     return Py_None;
 };
@@ -6285,7 +6271,7 @@ static PyObject* CFSetPow(PyObject* self, PyObject* args)
     {
         WHO->contr->orig_stats.Pow = value;
     };
-    fix_player(WHO);
+    PyFixPlayer(WHO);
     Py_INCREF(Py_None);
     return Py_None;
 };
@@ -6340,7 +6326,7 @@ static PyObject* CFSetStr(PyObject* self, PyObject* args)
     {
         WHO->contr->orig_stats.Str = value;
     };
-    fix_player(WHO);
+    PyFixPlayer(WHO);
     Py_INCREF(Py_None);
     return Py_None;
 };
@@ -6370,7 +6356,7 @@ static PyObject* CFSetWis(PyObject* self, PyObject* args)
     {
         WHO->contr->orig_stats.Wis = value;
     };
-    fix_player(WHO);
+    PyFixPlayer(WHO);
     Py_INCREF(Py_None);
     return Py_None;
 };
@@ -6443,18 +6429,13 @@ static PyObject* CFIsOfType(PyObject* self, PyObject* args)
 {
     int type;
     long whoptr;
-    int value;
 
     if (!PyArg_ParseTuple(args,"li",&whoptr,&type))
         return NULL;
 
     CHECK_OBJ(whoptr);
 
-    if (WHO->type==type)
-        value = 1;
-    else
-        value = 0;
-    return Py_BuildValue("i",value);
+    return Py_BuildValue("i",WHO->type == type);
 };
 
 /*****************************************************************************/
@@ -6698,7 +6679,6 @@ static PyObject* CFSaveObject(PyObject* self, PyObject* args)
 static PyObject* CFGetIP(PyObject* self, PyObject* args)
 {
     long whoptr;
-    char *result;
 
     if (!PyArg_ParseTuple(args, "l",&whoptr))
         return NULL;
@@ -6711,8 +6691,7 @@ static PyObject* CFGetIP(PyObject* self, PyObject* args)
         return Py_None;
     }
 
-    result = WHO->contr->socket.host;
-    return Py_BuildValue("s",result);
+    return Py_BuildValue("s",WHO->contr->socket.host);
 };
 
 /*****************************************************************************/
@@ -6745,7 +6724,7 @@ static PyObject* CFGetInternalName(PyObject* self, PyObject* args)
 
     CHECK_OBJ(whoptr);
 
-    return Py_BuildValue("s",WHO->name);
+    return Py_BuildValue("s",WHO->name != NULL ? WHO->name : "");
 };
 
 /*****************************************************************************/
@@ -7052,11 +7031,11 @@ static PyObject* CFSetVariable(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name    : CFDecreaseObjectNR                                              */
-/* Python  : CFPython.DecreaseObjectNR(object,value)                         */
+/* Name    : CFDecreaseObjectNr                                              */
+/* Python  : CFPython.DecreaseObjectNr(object,value)                         */
 /* Status  : Unknown                                                         */
 /*****************************************************************************/
-static PyObject* CFDecreaseObjectNR(PyObject* self, PyObject* args)
+static PyObject* CFDecreaseObjectNr(PyObject* self, PyObject* args)
 {
     long whoptr;
     int val;
@@ -7256,12 +7235,15 @@ MODULEAPI CFParm* triggerEvent(CFParm* PParm)
 MODULEAPI int HandleGlobalEvent(CFParm* PParm)
 {
     FILE* Scriptfile;
+    char *scriptname;
+    char *filename;
 
     if (!allocate_stack())
     {
         return 0;
     };
 
+    scriptname = NULL;
     switch(*(int *)(PParm->Value[0]))
     {
         case EVENT_CRASH:
@@ -7269,133 +7251,66 @@ MODULEAPI int HandleGlobalEvent(CFParm* PParm)
             break;
         case EVENT_BORN:
             StackActivator[StackPosition] = (object *)(PParm->Value[1]);
-            /*printf( "Event BORN generated by %s\n",query_name(StackActivator[StackPosition])); */
-            Scriptfile = fopen(create_pathname("python/events/python_born.py"),"r");
-            if (Scriptfile != NULL)
-            {
-                PyRun_SimpleFile(Scriptfile,create_pathname("python/events/python_born.py"));
-                fclose(Scriptfile);
-            }
+            scriptname = "python/events/python_born.py";
             break;
         case EVENT_LOGIN:
             StackActivator[StackPosition] = ((player *)(PParm->Value[1]))->ob;
             StackWho[StackPosition] = ((player *)(PParm->Value[1]))->ob;
             StackText[StackPosition] = (char *)(PParm->Value[2]);
-            /*printf( "Event LOGIN generated by %s\n",query_name(StackActivator[StackPosition])); */
-            /*printf( "IP is %s\n", (char *)(PParm->Value[2])); */
-            Scriptfile = fopen(create_pathname("python/events/python_login.py"),"r");
-            if (Scriptfile != NULL)
-            {
-                PyRun_SimpleFile(
-                    Scriptfile,create_pathname("python/events/python_login.py"));
-                fclose(Scriptfile);
-            }
+            scriptname = "python/events/python_login.py";
             break;
         case EVENT_LOGOUT:
             StackActivator[StackPosition] = ((player *)(PParm->Value[1]))->ob;
             StackWho[StackPosition] = ((player *)(PParm->Value[1]))->ob;
             StackText[StackPosition] = (char *)(PParm->Value[2]);
-            /*printf( "Event LOGOUT generated by %s\n",query_name(StackActivator[StackPosition])); */
-            Scriptfile = fopen(create_pathname("python/events/python_logout.py"),"r");
-            if (Scriptfile != NULL)
-            {
-                PyRun_SimpleFile(Scriptfile,create_pathname("python/events/python_logout.py"));
-                fclose(Scriptfile);
-            }
+            scriptname = "python/events/python_logout.py";
             break;
         case EVENT_REMOVE:
             StackActivator[StackPosition] = (object *)(PParm->Value[1]);
-            /*printf( "Event REMOVE generated by %s\n",query_name(StackActivator[StackPosition])); */
-
-            Scriptfile = fopen(create_pathname("python/events/python_remove.py"),"r");
-            if (Scriptfile != NULL)
-            {
-                PyRun_SimpleFile(Scriptfile,create_pathname("python/events/python_remove.py"));
-                fclose(Scriptfile);
-            }
+            scriptname = "python/events/python_remove.py";
             break;
         case EVENT_SHOUT:
             StackActivator[StackPosition] = (object *)(PParm->Value[1]);
             StackText[StackPosition] = (char *)(PParm->Value[2]);
-            /*printf( "Event SHOUT generated by %s\n",query_name(StackActivator[StackPosition])); */
-
-            /*printf( "Message shout is %s\n",StackText[StackPosition]); */
-            Scriptfile = fopen(create_pathname("python/events/python_shout.py"),"r");
-            if (Scriptfile != NULL)
-            {
-                PyRun_SimpleFile(Scriptfile, create_pathname("python/events/python_shout.py"));
-                fclose(Scriptfile);
-            }
+            scriptname = "python/events/python_shout.py";
             break;
         case EVENT_MUZZLE:
             StackActivator[StackPosition] = (object *)(PParm->Value[1]);
             StackText[StackPosition] = (char *)(PParm->Value[2]);
-            /*printf( "Event MUZZLE generated by %s\n",query_name(StackActivator[StackPosition])); */
-
-            /*printf( "Message shout is %s\n",StackText[StackPosition]); */
-            Scriptfile = fopen(create_pathname("python/events/python_muzzle.py"),"r");
-            if (Scriptfile != NULL)
-            {
-                PyRun_SimpleFile(Scriptfile, create_pathname("python/events/python_muzzle.py"));
-                fclose(Scriptfile);
-            }
+            scriptname = "python/events/python_muzzle.py";
             break;
         case EVENT_KICK:
             StackActivator[StackPosition] = (object *)(PParm->Value[1]);
             StackText[StackPosition] = (char *)(PParm->Value[2]);
-            /*printf( "Event KICK generated by %s\n",query_name(StackActivator[StackPosition])); */
-
-            /*printf( "Message shout is %s\n",StackText[StackPosition]); */
-            Scriptfile = fopen(create_pathname("python/events/python_kick.py"),"r");
-            if (Scriptfile != NULL)
-            {
-                PyRun_SimpleFile(Scriptfile, create_pathname("python/events/python_kick.py"));
-                fclose(Scriptfile);
-            }
+            scriptname = "python/events/python_kick.py";
             break;
         case EVENT_MAPENTER:
             StackActivator[StackPosition] = (object *)(PParm->Value[1]);
-            /*printf( "Event MAPENTER generated by %s\n",query_name(StackActivator[StackPosition])); */
-
-            Scriptfile = fopen(create_pathname("python/events/python_mapenter.py"),"r");
-            if (Scriptfile != NULL)
-            {
-                PyRun_SimpleFile(Scriptfile, create_pathname("python/events/python_mapenter.py"));
-                fclose(Scriptfile);
-            }
+            scriptname = "python/events/python_mapenter.py";
             break;
         case EVENT_MAPLEAVE:
             StackActivator[StackPosition] = (object *)(PParm->Value[1]);
-            /*printf( "Event MAPLEAVE generated by %s\n",query_name(StackActivator[StackPosition])); */
-
-            Scriptfile = fopen(create_pathname("python/events/python_mapleave.py"),"r");
-            if (Scriptfile != NULL)
-            {
-                PyRun_SimpleFile(Scriptfile, create_pathname("python/events/python_mapleave.py"));
-                fclose(Scriptfile);
-            }
+            scriptname = "python/events/python_mapleave.py";
             break;
         case EVENT_CLOCK:
-            /* printf( "Event CLOCK generated\n"); */
-            Scriptfile = fopen(create_pathname("python/events/python_clock.py"),"r");
-            if (Scriptfile != NULL)
-            {
-                PyRun_SimpleFile(Scriptfile, create_pathname("python/events/python_clock.py"));
-                fclose(Scriptfile);
-            }
+            scriptname = "python/events/python_clock.py";
             break;
         case EVENT_MAPRESET:
             StackText[StackPosition] = (char *)(PParm->Value[1]);/* Map name/path */
-            printf( "Event MAPRESET generated by %s\n", StackText[StackPosition]);
-
-            Scriptfile = fopen(create_pathname("python/events/python_mapreset.py"),"r");
-            if (Scriptfile != NULL)
-            {
-                PyRun_SimpleFile(Scriptfile, create_pathname("python/events/python_mapreset.py"));
-                fclose(Scriptfile);
-            }
+            scriptname = "python/events/python_mapreset.py";
             break;
     };
+
+    if (scriptname != NULL) {
+        filename = create_pathname(scriptname);
+
+        Scriptfile = fopen(filename,"r");
+        if (Scriptfile != NULL) {
+            PyRun_SimpleFile(Scriptfile, filename);
+            fclose(Scriptfile);
+        }
+    }
+
     StackPosition--;
     return 0;
 };
@@ -7652,7 +7567,7 @@ MODULEAPI void initCFPython()
         PyObject *m, *d;
         int i;
         FILE *scriptfile;
-        const char *scriptname;
+        const char *filename;
 
         printf( "PYTHON - Start initCFPython.\n");
 
@@ -7669,11 +7584,11 @@ MODULEAPI void initCFPython()
 
         if (allocate_stack())
         {
-            scriptname = create_pathname("python/events/python_init.py");
-            scriptfile = fopen(scriptname, "r");
+            filename = create_pathname("python/events/python_init.py");
+            scriptfile = fopen(filename, "r");
             if (scriptfile != NULL)
             {
-                PyRun_SimpleFile(scriptfile, scriptname);
+                PyRun_SimpleFile(scriptfile, filename);
                 fclose(scriptfile);
             }
             StackPosition--;
