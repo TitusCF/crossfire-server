@@ -1997,12 +1997,17 @@ int stand_near_hostile( object *who ) {
   else friendly = QUERY_FLAG(who,FLAG_FRIENDLY);
 
   /* search adjacent squares */
-  for(i=1;i<9;i++)
-    for(tmp=get_map_ob(who->map,who->x+freearr_x[i],who->y+freearr_y[i]);tmp;tmp=tmp->above) 
-      if((player||friendly)
-          &&QUERY_FLAG(tmp,FLAG_MONSTER)&&!QUERY_FLAG(tmp,FLAG_UNAGGRESSIVE)) 
-        return 1;
-      else if(tmp->type==PLAYER) return 1;
+  for(i=1;i<9;i++) {
+    if (out_of_map(who->map, who->x+freearr_x[i],who->y+freearr_y[i])) continue;
+    for(tmp=get_map_ob(who->map,who->x+freearr_x[i],who->y+freearr_y[i]);
+	tmp;tmp=tmp->above) {
+	
+	if((player||friendly)
+	   &&QUERY_FLAG(tmp,FLAG_MONSTER)&&!QUERY_FLAG(tmp,FLAG_UNAGGRESSIVE)) 
+	    return 1;
+	else if(tmp->type==PLAYER) return 1;
+    }
+  }
 
   return 0;
 }
