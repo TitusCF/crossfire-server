@@ -714,7 +714,7 @@ SCM Script_typeButton()
 
 SCM Script_typeHandle()
 {
-        return gh_int2scm(HANDLE);
+        return gh_int2scm(CF_HANDLE);
 };
 
 SCM Script_typeHole()
