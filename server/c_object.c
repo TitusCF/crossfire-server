@@ -957,9 +957,9 @@ void drop_object (object *op, object *tmp, long nrof)
         CFP.Value[0] = &k;
         CFP.Value[1] = op;
         CFP.Value[2] = tmp;
-        CFP.Value[3] = &nrof;
+        CFP.Value[3] = NULL;
         CFP.Value[4] = NULL;
-        CFP.Value[5] = &m;
+        CFP.Value[5] = &nrof;
         CFP.Value[6] = &m;
         CFP.Value[7] = &m;
         CFP.Value[8] = &l;
