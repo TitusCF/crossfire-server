@@ -1,3 +1,14 @@
+crossfire (1.5.0-1) unstable; urgency=low
+
+  * New upstream release
+  * Patched upstream release for Bug #167844
+  * Patched upstream release for Bug #168524
+  * Patched upstream release for Bug #57744
+  * Patched upstream release for Wishlist #205773
+  * Patched upstream release for Wishlist #207129
+
+ -- Bob Tanner <tanner@real-time.com>  Tue, 04 Feb 2004 02:32:00 -0600
+
 crossfire (1.4.0-4) unstable; urgency=low
 
   * update utils/config.{sub,guess} too. God dagnabit,
