@@ -6,6 +6,7 @@ crossfire (1.5.0-1) unstable; urgency=low
   * Patched upstream release for Bug #57744
   * Patched upstream release for Wishlist #205773
   * Patched upstream release for Wishlist #207129
+  * Fixed several lintian warnings about missing manpages
 
  -- Bob Tanner <tanner@real-time.com>  Tue, 04 Feb 2004 02:32:00 -0600
 
