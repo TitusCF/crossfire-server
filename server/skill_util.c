@@ -1000,6 +1000,22 @@ object *tmp2;
     return 1;
 }
 
+/* Gives a percentage clipped to 0% -> 100% of a/b. */
+/* Probably belongs in some global utils-type file? */
+static int clipped_percent(int a, int b)
+{
+  int rv;
+
+  rv = (a*100)/b;
+
+  if (rv < 0)
+    return 0;
+  else if (rv > 100)
+    return 100;
+  
+  return rv;
+}
+
 /* show_skills() - Meant to allow players to examine
  * their current skill list. b.t. (thomas@nomad.astro.psu.edu)
  * I have now added capability to show assoc. experience objects too.
@@ -1060,9 +1076,18 @@ void show_skills(object *op) {
 	      char tmpbuf[40];
 	      strcpy(tmpbuf,tmp_exp->name);
 	      while(k>0) {k--; strcat(tmpbuf,".");}
-              new_draw_info_format(NDI_UNIQUE,0,op,"%slvl:%3d (xp:%d/%d)",
-		tmpbuf,tmp_exp->level,tmp_exp->stats.exp,
-		level_exp(tmp_exp->level+1, op->expmul));
+              if (settings.use_permanent_experience) {
+                new_draw_info_format(NDI_UNIQUE,0,op,"%slvl:%3d (xp:%d/%d/%d%%)",
+	             tmpbuf,tmp_exp->level,
+                     tmp_exp->stats.exp,
+                     level_exp(tmp_exp->level+1, op->expmul),
+                     clipped_percent(tmp_exp->last_heal,tmp_exp->stats.exp));
+              } else {
+                new_draw_info_format(NDI_UNIQUE,0,op,"%slvl:%3d (xp:%d/%d)",
+	             tmpbuf,tmp_exp->level,
+                     tmp_exp->stats.exp,
+                     level_exp(tmp_exp->level+1, op->expmul));
+              }
 	      if (strcmp(tmp_exp->name,"physique")==0)
 		{
 		  sprintf(Special,"You can handle %d weapon improvements.",tmp_exp->level/5+5);

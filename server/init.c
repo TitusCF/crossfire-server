@@ -6,7 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 1992 Mark Wedel
+    Copyright (C) 2000 Mark Wedel
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -23,7 +23,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to master@rahul.net
+    The author can be reached via e-mail to mwedel@scruz.net
 */
 
 #include <global.h>
@@ -76,6 +76,12 @@ void set_csport(char *val)
 
 static void stat_loss_on_death_true() {settings.stat_loss_on_death = 1; }
 static void stat_loss_on_death_false() {settings.stat_loss_on_death = 0; }
+
+static void use_permanent_experience_true() {settings.use_permanent_experience = 1; }
+static void use_permanent_experience_false() {settings.use_permanent_experience = 0; }
+
+static void balanced_stat_loss_true() {settings.balanced_stat_loss = 1; }
+static void balanced_stat_loss_false() {settings.balanced_stat_loss = 0; }
 
 static void simple_exp_true() {settings.simple_exp = 1; }
 static void simple_exp_false() {settings.simple_exp = 0; }
@@ -152,6 +158,10 @@ struct Command_Line_Options options[] = {
 {"+simple_exp", 0, 3, simple_exp_false},
 {"-stat_loss_on_death", 0, 3, stat_loss_on_death_true},
 {"+stat_loss_on_death", 0, 3, stat_loss_on_death_false},
+{"-balanced_stat_loss", 0, 3, balanced_stat_loss_true},
+{"+balanced_stat_loss", 0, 3, balanced_stat_loss_false},
+{"-use_permanent_experience", 0, 3, use_permanent_experience_true},
+{"+use_permanent_experience", 0, 3, use_permanent_experience_false}
 };
 
 
@@ -265,8 +275,12 @@ void help() {
     printf(" -o          Prints out info on what was defined at compile time.\n");
     printf(" -s          Display the high-score list.\n");
     printf(" -score <name or class> Displays all high scores with matching name/class.\n");
-    printf(" -stat_loss_on_death - if set, player loses stat when they die");
-    printf(" +stat_loss_on_death - if set, player does not lose a stat when they die");
+    printf(" -stat_loss_on_death - if set, player loses stat when they die\n");
+    printf(" +stat_loss_on_death - if set, player does not lose a stat when they die\n");
+    printf(" -use_permanent_experience - if set, player may gain permanent experience\n");
+    printf(" +use_permanent_experience - if set, player does not gain permanent experience\n");
+    printf(" -balanced_stat_loss - if set, death stat depletion is balanced by level etc\n");
+    printf(" +balanced_stat_loss - if set, ordinary death stat depletion is used\n");
     printf(" -v          Print version and contributors.\n");
 
 #ifndef SECURE

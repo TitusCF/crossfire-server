@@ -17,6 +17,15 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+include/config.h, include/global.h, common/init.c, common/living.c,
+server/init.c, server/player.c, server/skill_util.c: Add permanent
+experience and balanced stat loss features (code by Garth Denley).
+Permanent experience make some experience in the skills permanent.  Balance
+stat loss makes stat loss less likely/costly at low level and more costly
+at higher levels.  These features are by default off, but can be turned
+on either in the config.h file or via command line options.  Code checked
+in by MSW 8/1/2000
+
 server/time.c:  Update the change_object function such that if the object
 is in a players inventory, send a delete & send_item for the object that
 has changed (the delete + send_item is necessary due to the ways objects

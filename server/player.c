@@ -38,7 +38,6 @@
 #include <skills.h>
 #include <newclient.h>
 
-
 void display_motd(object *op) {
 #ifdef MOTD
   char buf[MAX_BUF];
@@ -1597,7 +1596,12 @@ void kill_player(object *op)
     int x,y,i;
     mapstruct *map;  /*  this is for resurrection */
     object *tmp;
-
+    int z;
+    int num_stats_lose;
+    int lost_a_stat;
+    int lose_this_stat;
+    int this_stat;
+    
     if(save_life(op))
 	return;
 
@@ -1640,33 +1644,93 @@ void kill_player(object *op)
      * make it depletion.  This bunch of code deals with that aspect	
      * of death.
      */
-    if (settings.stat_loss_on_death) {
-	/* Pick a random stat and take a point off it.  Tell the player
-	 * what he lost.
-	 */
-	i = RANDOM() % 7; 
-	change_attr_value(&(op->stats), i,-1);
-	check_stat_bounds(&(op->stats));
-	change_attr_value(&(op->contr->orig_stats), i,-1);
-	check_stat_bounds(&(op->contr->orig_stats));
-	new_draw_info(NDI_UNIQUE, 0,op, lose_msg[i]);
+
+    if (settings.balanced_stat_loss) {
+        /* If stat loss is permanent, lose one stat only. */
+        /* Lower level chars don't lose as many stats because they suffer more
+           if they do. */
+        /* Higher level characters can afford things such as potions of
+           restoration, or better, stat potions. So we slug them that little
+           bit harder. */
+        /* GD */
+        if (settings.stat_loss_on_death)
+            num_stats_lose = 1;
+        else
+            num_stats_lose = 1 + op->level/BALSL_NUMBER_LOSSES_RATIO;
     } else {
-	/* deplete a stat */
-	archetype *deparch=find_archetype("depletion");
-	object *dep;
-
-	i = RANDOM() % 7;
-	dep = present_arch_in_ob(deparch,op);
-	if(!dep) {
-	    dep = arch_to_object(deparch);
-	    insert_ob_in_ob(dep, op);
-	}
-	change_attr_value(&(dep->stats), i,-1);
-	SET_FLAG(dep, FLAG_APPLIED);
-	new_draw_info(NDI_UNIQUE, 0,op, lose_msg[i]);
-	fix_player(op);
+        num_stats_lose = 1;
     }
+    lost_a_stat = 0;
 
+    for (z=0; z<num_stats_lose; z++) {
+        if (settings.stat_loss_on_death) {
+	    /* Pick a random stat and take a point off it.  Tell the player
+	     * what he lost.
+	     */
+            i = RANDOM() % 7; 
+            change_attr_value(&(op->stats), i,-1);
+            check_stat_bounds(&(op->stats));
+            change_attr_value(&(op->contr->orig_stats), i,-1);
+            check_stat_bounds(&(op->contr->orig_stats));
+            new_draw_info(NDI_UNIQUE, 0,op, lose_msg[i]);
+            lost_a_stat = 1;
+        } else {
+            /* deplete a stat */
+            archetype *deparch=find_archetype("depletion");
+            object *dep;
+            
+            i = RANDOM() % 7;
+            dep = present_arch_in_ob(deparch,op);
+            if(!dep) {
+	        dep = arch_to_object(deparch);
+	        insert_ob_in_ob(dep, op);
+            }
+            lose_this_stat = 1;
+            if (settings.balanced_stat_loss) {
+                /* GD */
+                /* Get the stat that we're about to deplete. */
+                this_stat = get_attr_value(&(dep->stats), i);
+                if (this_stat < 0) {
+                    int loss_chance = 1 + op->level/BALSL_LOSS_CHANCE_RATIO;
+                    int keep_chance = this_stat * this_stat;
+                    /* Yes, I am paranoid. Sue me. */
+                    if (keep_chance < 1)
+                        keep_chance = 1;
+
+                    /* There is a maximum depletion total per level. */
+                    if (this_stat < -1 - op->level/BALSL_MAX_LOSS_RATIO) {
+                        lose_this_stat = 0;
+                    /* Take loss chance vs keep chance to see if we retain the stat. */
+                    } else {
+                        if ((RANDOM() % (loss_chance + keep_chance)) < keep_chance)
+                            lose_this_stat = 0;
+                        /* LOG(llevDebug, "Determining stat loss. Stat: %d Keep: %d Lose: %d Result: %s.\n",
+                             this_stat, keep_chance, loss_chance,
+                             lose_this_stat?"LOSE":"KEEP"); */
+                    }
+                }
+            }
+            
+            if (lose_this_stat) {
+                change_attr_value(&(dep->stats), i, -1);
+                SET_FLAG(dep, FLAG_APPLIED);
+                new_draw_info(NDI_UNIQUE, 0,op, lose_msg[i]);
+                fix_player(op);
+                lost_a_stat = 1;
+            }
+        }
+    }
+    /* If no stat lost, tell the player. */
+    if (!lost_a_stat)
+    {
+        /* determine_god() seems to not work sometimes... why is this?
+           Should I be using something else? GD */
+        char *god = determine_god(op);
+        if (god && (strcmp(god, "none")))
+            new_draw_info_format(NDI_UNIQUE, 0, op, "For a brief moment you feel the holy presence of %s protecting you.", god);
+        else
+            new_draw_info(NDI_UNIQUE, 0, op, "For a brief moment you feel a holy presence protecting you.");
+    }
 
     /* Put a gravestone up where the character 'almost' died.  List the
      * exp loss on the stone.

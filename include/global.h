@@ -278,6 +278,8 @@ typedef struct Settings {
     char    *uniquedir;	    /* directory for the unique items */
     char    *tmpdir;	    /* Directory to use for temporary files */
     uint8   stat_loss_on_death;	/* If true, chars lose a random stat when they die */
+    uint8   use_permanent_experience; /* If true, players can gain perm exp */
+    uint8   balanced_stat_loss; /* If true, Death stat depletion based on level etc */
     uint8   simple_exp;	    /* If true, use the simple experience system */
 } Settings;
 

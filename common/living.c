@@ -29,7 +29,6 @@
 #include <global.h>
 #include <funcpoint.h>
 
-
 static int con_bonus[MAX_STAT + 1]={
   -6,-5,-4,-3,-2,-1,-1,0,0,0,0,1,2,3,4,5,6,7,8,9,10,12,14,16,18,20,
   22,25,30,40,50
@@ -1588,10 +1587,59 @@ void player_lvl_adj(object *who, object *op) {
 /* adjust_exp() - make sure that we don't exceed max or min set on
  * experience
  */
- 
+
 int adjust_exp(object *op, int exp) {
     int max_exp = MAX_EXPERIENCE;
 
+    if (settings.use_permanent_experience) {
+        /* Permanent experience code. Blame me if any problems. :) */
+        /* This code _only_ affects experience objects. */
+        /* GD */
+        if (op->type == EXPERIENCE) {
+            int p_exp_min;
+            int p_exp_gain;
+            int max_loss;
+
+            /* The following fields are used: */
+            /* stats.exp: Current exp in experience object. */
+            /* last_heal: Permanent experience earnt. */
+            
+            /* Ensure that our permanent experience minimum is met. */
+            p_exp_min = (int)(PERM_EXP_MINIMUM_RATIO * (float)(op->stats.exp));
+            /*LOG(llevError, "Experience minimum check: %d p-min %d p-curr %d curr.\n", p_exp_min, op->last_heal, op->stats.exp);*/
+            if (op->last_heal < p_exp_min)
+                op->last_heal = p_exp_min;
+
+            /* Experience gain: We get a ratio of the gain as permanent experience. */
+            if (exp > 0) {
+                p_exp_gain = (int)(PERM_EXP_GAIN_RATIO * exp);
+                op->last_heal += p_exp_gain;
+                /* Cap permanent experience. */
+                if (op->last_heal > MAX_EXP_IN_OBJ)
+                    op->last_heal = MAX_EXP_IN_OBJ;
+                /*LOG(llevError, "Gaining %d experience results in %d permanent exp (now %d).\n", exp, p_exp_gain, op->last_heal); */
+            }
+
+            /* Experience loss: Our permanent experience affects this. */
+            if (exp < 0) {
+              /*LOG(llevError, "Experience loss of %d from %d (%d perm).\n",
+                   -exp, op->stats.exp, op->last_heal); */
+                if (op->stats.exp <= op->last_heal) {
+                    /* Cripes. Less experience than permanent experience.
+                       No experience loss. */
+                    max_loss = 0;
+                    exp = 0;
+                } else {
+                    /* Max loss is a ratio of temporary experience (curr-perm). */
+                    max_loss = (int)(PERM_EXP_MAX_LOSS_RATIO * (float)(op->stats.exp - op->last_heal));
+                    if (exp < -max_loss)
+                        exp = -max_loss;
+                }
+                /* LOG(llevError, "Decided on a loss of %d.\n", -exp); */
+            }
+        }
+    }
+    
     op->stats.exp += exp;
     if(op->stats.exp < 0) {
 	exp -= op->stats.exp;

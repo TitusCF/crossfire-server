@@ -84,6 +84,7 @@
  * Short list of features, and what to search for:
  * ALCHEMY - enables alchemy code
  * ALLOW_SKILLS - enables skills code.
+ * BALANCED_STAT_LOSS - Based death stat depletion on level etc?
  * CASTING_TIME - makes spells take time to cast
  * CS_LOGSTATS - log various new client/server data.
  * DEBUG - more verbose message logging?
@@ -106,6 +107,7 @@
  * SPELL_* - various spell related options
  * STAT_LOSS_ON_DEATH - toggle between stat loss or stat depletion
  * USE_LIGHTING - enable light/darkness & light sources
+ * USE_PERMANENT_EXPERIENCE - allow players to accumulate permanent experience?
  * USE_SWAP_STATS - allows stat swapping for new characters
  * WATCHDOG - allows use of an external watchdog program
  *
@@ -133,6 +135,43 @@
 #define ALLOW_SKILLS
 
 
+
+/* Use balanced stat loss code?
+ * This code is a little more merciful with repeated stat loss at lower
+ * levels. Basically, the more stats you have lost, the less likely that
+ * you will lose more. Additionally, lower level characters are shown
+ * a lot more mercy (there are caps on how much of a stat you can lose too).
+ * On the nasty side, if you are higher level, you can lose mutiple stats
+ * _at_once_ and are shown less mercy when you die. But when you're higher
+ * level, it is much easier to buy back your stats with potions.
+ * Turn this on if you want death-based stat loss to be more merciful
+ * at low levels and more cruel at high levels.
+ * Only works when stats are depleted rather than lost. This option has
+ * no effect if you are using genuine stat loss.
+ *
+ * The BALSL_.. values control this behaviour.
+ * BALSL_NUMBER_LOSSES_RATIO determines the number of stats to lose.
+ * the character level is divided by that value, and that is how many
+ * stats are lost.
+ *
+ * BALSL_MAX_LOSS_RATIO puts the upper limit on depletion of a stat - 
+ * basically, level/max_loss_ratio is the most a stat can be depleted.
+ *
+ * BALSL_LOSS_CHANCE_RATIO controls how likely it is a stat is depleted.
+ * The chance not to lose a stat is 
+ * depleteness^2 / (depletedness^2+ level/ratio).
+ * ie, if the stats current depleted value is 2 and the character is level
+ * 15, the chance not to lose the stat is 4/(4+3) or 4/7.  The higher the
+ * level, the more likely it is a stat can get really depleted, but
+ * this gets more offset as the stat gets more depleted.
+ * 
+ */
+/* GD */
+
+#define BALANCED_STAT_LOSS FALSE
+#define BALSL_LOSS_CHANCE_RATIO    4
+#define BALSL_NUMBER_LOSSES_RATIO  6
+#define BALSL_MAX_LOSS_RATIO       2
 
 /* casting times for spells, if you have this defined then it takes a
  * specific amount of time for a spell to go off. You may attack or
@@ -449,6 +488,41 @@
 
 #define USE_LIGHTING
 
+/* Use permanent experience code?
+ * This code allows players to build up a small amount of 'permanent
+ * experience' which reduces the effect of large experience drains, such as
+ * death. This makes multiple frequent deaths less devastating, and also
+ * ensures that any character will make some gradual progress even if they
+ * die all of the time.
+ * A nice option if your keep dying due to massive client/server lags despite
+ * playing well... or you like to swim well outside of your depth. :)
+ *
+ * The PERM_EXP values adjust the behaviour of this option - if
+ * USE_PERMAMENT_EXPERIENCE if off, these values have no meaning.  If it
+ * is on, the minimum ratio is the minimum amount of permanent exp relative
+ * to the total exp in the skill (ie, at a default of .25, if you had 100
+ * experience, at least 25 of it would be permanent).  The gain ratio
+ * is how much of experienced experience goes to the permanent value.
+ * This does not detract from total exp gain (ie, if you gained 100 exp,
+ * 100 would go to the skill total and 10 to the permanent value).
+ * the loss ratio is the maximum amount of experience that can be lost
+ * in any one hit - this is calculated as total exp - perm exp * loss ratio.
+ *
+ * A few thoughts on these default value (by MSW)
+ * gain ratio is pretty much meaningless until exp has been lost, as until
+ * that poin, the minimum ratio will be used.
+ * It is also impossible for the exp to actually be reduced to the permanent
+ * exp ratio - since the loss ratio is .5, it will just get closer and
+ * closer.  However, after about half a dozen hits, pretty much all the
+ * exp that can be lost has been lost, and after that, only minor loss
+ * will occur.
+ */
+/* GD */
+
+#define USE_PERMANENT_EXPERIENCE FALSE
+#define PERM_EXP_MINIMUM_RATIO        0.25f
+#define PERM_EXP_GAIN_RATIO           0.10f
+#define PERM_EXP_MAX_LOSS_RATIO       0.50f
 
 /*
  * SWAP_STATS is fixed now - rgg.
@@ -929,7 +1003,4 @@
  */
 
 /*#define BACKUP_SAVE_AT_HOME*/
-
-
-
 
