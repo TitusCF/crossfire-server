@@ -832,6 +832,7 @@ void cftimer_process_timers(void);
 int cftimer_create(int id, long delay, object *ob, int mode);
 int cftimer_destroy(int id);
 int cftimer_find_free_id(void);
+void cftimer_process_event(object* ob);
 /* weather.c */
 void set_darkness_map(mapstruct *m);
 void dawn_to_dusk(timeofday_t *tod);

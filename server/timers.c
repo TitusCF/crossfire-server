@@ -18,6 +18,7 @@ void cftimer_process_timers(void)
             {
             /* Call object timer event */
                 timers_table[i].mode = TIMER_MODE_DEAD;
+                cftimer_process_event(timers_table[i].ob);
             }
         }
         else if (timers_table[i].mode == TIMER_MODE_SECONDS)
@@ -26,8 +27,38 @@ void cftimer_process_timers(void)
             {
             /* Call object timer event */
                 timers_table[i].mode = TIMER_MODE_DEAD;
+                cftimer_process_event(timers_table[i].ob);
             }
         }
+    }
+}
+
+/*****************************************************************************/
+/* Triggers the EVENT_TIMER of the given object                              */
+/*****************************************************************************/
+void cftimer_process_event(object* ob)
+{
+    CFParm CFP;
+    int k, l, m;
+
+    if (ob->event_plugin[EVENT_TIMER] != NULL)
+    {
+        k = EVENT_TIMER;
+        l = SCRIPT_FIX_ALL;
+        m = 0;
+        CFP.Value[0] = &k;
+        CFP.Value[1] = ob;
+        CFP.Value[2] = NULL;
+        CFP.Value[3] = NULL;
+        CFP.Value[4] = NULL;
+        CFP.Value[5] = &m;
+        CFP.Value[6] = &m;
+        CFP.Value[7] = &m;
+        CFP.Value[8] = &l;
+        CFP.Value[9] = ob->event_hook[k];
+        CFP.Value[10]= ob->event_options[k];
+        if (findPlugin(ob->event_plugin[k])>=0)
+            ((PlugList[findPlugin(ob->event_plugin[k])].eventfunc) (&CFP));
     }
 }
 
