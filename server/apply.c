@@ -2932,7 +2932,7 @@ int apply_special (object *who, object *op, int aflags)
     }
 	
     if (who->type == PLAYER && op->item_power && 
-	(op->item_power + who->item_power) > (settings.item_power_factor * who->level)) {
+	(op->item_power + who->contr->item_power) > (settings.item_power_factor * who->level)) {
 	new_draw_info(NDI_UNIQUE, 0, who, "Equipping that combined with other items would consume your soul!");
 	return 1;
     }
