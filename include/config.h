@@ -130,18 +130,25 @@
 #define BALSL_NUMBER_LOSSES_RATIO  6
 #define BALSL_MAX_LOSS_RATIO       2
 
-/* casting times for spells, if you have this defined then it takes a
- * specific amount of time for a spell to go off. You may attack or
- * be hit during this time, and this will cause you to lose the spell.
- * I commented this out on my copy - I don't like the 'double clutch'
- * needed to cast it (first direction key starts casting, the
- * next actually puts the spell into effect.)  It could perhaps
- * be changed so that the initial direction is where it goes, and it
- * is cast automatically in that direction (so only 1 key is needed.)
- * But this could be undesirable as various things move while you cast it.
- */
 
+/* Don't edit these values.  They are configured in lib/settings.  These are
+   Simply the defaults. */
+
+#define SET_TITLE TRUE
+#define SIMPLE_EXP TRUE
+#define SPELLPOINT_LEVEL_DEPEND TRUE
+#define SPELL_ENCUMBRANCE TRUE
+#define SPELL_FAILURE_EFFECTS FALSE
+#define REAL_WIZ TRUE
+#define RECYCLE_TMP_MAPS FALSE
+#define RESURRECTION FALSE
+#define SEARCH_ITEMS TRUE
+#define NOT_PERMADETH TRUE
+#define EXPLORE_MODE FALSE
 #define CASTING_TIME FALSE
+
+/* you can edit the ones below */
+
 
 /* CS_LOGSTATS will cause the server to log various usage stats
  * (number of connections, amount of data sent, amount of data received,
@@ -166,23 +173,6 @@
 #define DEBUG
 #endif
 #endif
-
-
-/* if EXPLORE_MODE is defined, it allows players to enter explore mode,
- * where they can not die.  Unlike other games (nethack for instance) explore
- * modes, the only thing Crossfire explore mode does is prevent death.
- * Characters in explore mode will not be able to go on the scoreboard.  Also,
- * once explore mode is entered, there is no return.  Explore mode can
- * only be entered if the person doing so is the only player in the
- * game, and once done, that person can not add new players to the
- * game.  To get into explore mode, type 'explore
- * Explore mode code added by Mark Wedel (mark@pyramid.com)
- * It's a good idea to turn off EXPLORE_MODE if you will only be running
- * on server, since it would block new players.
- */
-
-#define EXPLORE_MODE FALSE
-
 
 /* FULL_RING_DESCRIPTION has crossfire prints out the abilities of
  * rings or amulets in the appropriate windows.  So instead of just
@@ -264,21 +254,6 @@
  */
 #define NO_POLYMORPH
 
-/* NOT_PERMADEATH by Charles Henrich (henrich@crh.cl.msu.edu), April 9, 1993
- *
- * Makes death non permanent.  If enabled and you die, you lose a bunch of
- * exp, a random stat, and go back to starting town.
- * If not defined, if you die, you are dead.  If an a multiplayer server,
- * resurrection may be possible
- *
- * This option changes the game significantly one way or the other - it makes
- * adventuring right at the edge of death something more reasonable to do
- * (death still hurts here).  On the other hand, it certainly makes the
- * game a bit safer and easier.
- */
-
-#define NOT_PERMADETH TRUE
-
 
 /* This determine how many entries are stored in the kill log.  You
  * can see this information with the 'party kills' command.  More entries
@@ -288,58 +263,6 @@
 /*
 #define PARTY_KILL_LOG 20
 */
-
-/* Calling this REAL_WIZ is probably not really good.  Something like
- * MUD_WIZ might be a better name.
- *
- * Basically, if REAL_WIZ is define then the WIZ/WAS_WIZ flags for objects
- * are not set - instead, wizard created/manipulated objects appear as
- * normal objects.  This makes the wizard a little more mudlike, since
- * object manipulations will be usable for other objects.
- */
-
-#define REAL_WIZ TRUE
-
-
-/*
- * Set this if you want the temporary maps to be saved and reused across
- * crossfire runs.  This can be especially useful for single player
- * servers, but even holds use for multiplayer servers.  The file used
- * is updated each time a temp map is updated.
- * Note that the file used to store this information is stored in
- * the LIB directory.  Running multiple crossfires with the same LIB
- * directory will cause serious problems, simply because in order for
- * this to really work, the filename must be constant so the next run
- * knows where to find the information.
- */
-
-#define RECYCLE_TMP_MAPS FALSE
-
-
-/* define RESURECTION if you want to let players bring other players
- * back to life via some spells.  If RESURRECTION is undefined, then a
- * death is permanent.  NOTE: RESURRECTION (either defined or undefined)
- * has no meaning if NOT_PERMADEATH is defined.  SAVE_PLAYER also needs
- * to be defined for this to have any use
- */
-
-#define RESURRECTION FALSE
-
-
-/*
- * Enables the 'search-item command; a method to find equipment
- * in shops. 
- * This is somewhat useful is FULL_RING_DESCRIPTION is enabled (above.)
- * It matches by substrings of the name of the item as it appears in
- * the look window.  Therefor, if FULL_RING_DESCRIPTION is not enabled,
- * you can never match by ring abilities, as these are then not
- * displayed in the look window.
- * Seems like it now works, and doesn't cause the game to hang.
- * 0.94.2 - I think this really should be a client issue - after all, the
- * client has all the info the player does.
- */
-
-#define SEARCH_ITEMS TRUE
 
 
 /*
@@ -361,66 +284,6 @@
 #define SECURE
 */
 
-/*
- * Define the following if you wish to allow players to set their title
- * and to save it on the disk
- * 0.94.2 - this will probably become a default option sometime unless
- * someone has a good reason why it shouldn't
- */
-
-#define SET_TITLE TRUE
-
-/*
- * Set to true if you want to use the new (0.95.3) experience system.
- * The system has the following changes:
- *
- * 1) Your stats in your skill categories don't affect the amount of
- *  exp you get.
- * 2) Your level difference doesn't affect the exp you get for killing
- *  monsters.
- *
- * If this is set to FALSE out, you get the old system.
- *
- * This can also be set by using -simple-exp/+simple-exp as a run
- * time option, or update the settings file
- */
-
-#define SIMPLE_EXP TRUE
-
-/*  SPELLPOINT_LEVEL_DEPEND  --  Causes the spellpoint cost
- *  of spells to vary with their power.  Spells that become very
- *  powerful at high level cost more.  The damage/time of
- *  characters increases though.
- */
-
-#define SPELLPOINT_LEVEL_DEPEND TRUE
-
-
-/* SPELL_ENCUMBRANCE -- If you're carrying a weapon or wearing heavy armour,
-  you have a chance of fumbling your spellcasting with this on.  Formula is:
-  encumbrance = 3*weapon_weight + armour_weight
-
-  failure if roll from 1-200 is less than encumbrance + sp->level -
-  op->level - 35
-*/
-
-#define SPELL_ENCUMBRANCE TRUE
-
-/* SPELL_FAILURE_EFFECTS only has meaing if SPELL_ENCUMBRANCE is defined.
- * What it does, is that when the player fails a spell, various effects
- * will happen (player is paralyzed, confused, wonder spell is cast, etc.)
- * I disabled it because I think it would make life much too hazardous
- * for low level casters.  They either need to wear light armor (which
- * means that they will get pounded on by monsters), or will get
- * confused/paralyzed/other effects often.  High level casters would
- * be mostly unaffected, since they would be casting spells that are
- * below their level.
- * Note-  it seems that you still get some failur effects even with this
- * not defined - most notably when reading scrolls and fail to read
- * them properly.
- */
-
-#define SPELL_FAILURE_EFFECTS FALSE
 
 
 /* Set this to FALSE if you don't want characters to loose a random stat when
