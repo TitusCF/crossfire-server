@@ -910,15 +910,6 @@ int command_peaceful (object *op, char *params)
       return 1;
     }
 
-int command_berzerk (object *op, char *params)
-{
-      if((op->contr->berzerk=!op->contr->berzerk))
-        new_draw_info(NDI_UNIQUE, 0,op,"Berzerk is enabled.");
-      else
-        new_draw_info(NDI_UNIQUE, 0,op,"Berzerk is disabled.");
-      return 1;
-    }
-
 int command_strength (object *op, char *params)
 {
       int i;

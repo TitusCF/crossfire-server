@@ -123,7 +123,6 @@ int add_player(NewSocket *ns) {
     display_motd(p->ob);
 #endif
     p->peaceful=1;
-    p->berzerk=0;
     p->own_title[0]='\0';
     get_name(p->ob);
     return 0;
@@ -179,7 +178,6 @@ object *get_player(player *p, mapstruct *m) {
     p->prev_cmd=' ';
     p->prev_fire_on=0;
     p->mode=0;
-    p->berzerk=1;
     p->idle=0;
 #ifdef AUTOSAVE
     p->last_save_tick = 9999999;

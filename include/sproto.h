@@ -266,7 +266,6 @@ extern int command_title ( object *op, char *params );
 extern int command_save ( object *op, char *params );
 extern int command_search_items ( object *op, char *params );
 extern int command_peaceful ( object *op, char *params );
-extern int command_berzerk ( object *op, char *params );
 extern int command_strength ( object *op, char *params );
 extern int command_pickup ( object *op, char *params );
 extern int command_wimpy ( object *op, char *params );

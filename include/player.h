@@ -82,7 +82,6 @@ typedef struct pl {
   signed char gen_hp;         /* Bonuses to regeneration speed of hp */
   signed char gen_sp;         /* Bonuses to regeneration speed of sp */
   signed char gen_grace;      /* Bonuses to regeneration speed of grace */
-  uint8 berzerk;      /* Affects usage of CTRL-direction */
   uint32 braced:1;          /* Will not move if braced, only attack */
   uint32 tmp_invis:1;       /* Will invis go away when we attack ? */
   uint32 do_los:1;	      /* If true, update_los() in draw(), and clear */

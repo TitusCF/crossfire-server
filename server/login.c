@@ -342,7 +342,6 @@ int save_player(object *op, int flag) {
   fprintf(fp,"listening %d\n",pl->listening);
   fprintf(fp,"spell %d\n",pl->chosen_spell);
   fprintf(fp,"shoottype %d\n",pl->shoottype);
-  fprintf(fp,"berzerk %d\n",pl->berzerk);
   fprintf(fp,"peaceful %d\n",pl->peaceful);
   fprintf(fp,"digestion %d\n",pl->digestion);
   fprintf(fp,"pickup %d\n", pl->mode);
@@ -591,8 +590,6 @@ void check_login(object *op) {
           pl->chosen_spell=value;
         else if (!strcmp(buf,"listening"))
           pl->listening=value;
-        else if (!strcmp(buf,"berzerk"))
-          pl->berzerk=value;
         else if (!strcmp(buf,"peaceful"))
           pl->peaceful=value;
         else if (!strcmp(buf,"digestion"))

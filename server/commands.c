@@ -32,7 +32,6 @@ CommArray_s Commands[] = {
   {"apply", command_apply,	1.0},	/* should be variable */
   {"archs", command_archs,	0.0},
   {"bell", command_bell,	0.0},
-  {"berzerk", command_berzerk,	0.0},
   {"brace", command_brace,	0.0},
   {"cast", command_cast,	0.2},	/* Is this right? */
   {"disarm", command_disarm,	1.0},
