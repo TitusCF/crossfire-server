@@ -1712,6 +1712,7 @@ static void apply_treasure (object *op, object *tmp)
 
 static void apply_food (object *op, object *tmp)
 {
+  int capacity_remaining;
     if(op->type!=PLAYER)
       op->stats.hp=op->stats.maxhp;
     else {
@@ -1731,9 +1732,13 @@ static void apply_food (object *op, object *tmp)
             sprintf(buf,"The %s tasted %s",tmp->name,
 		tmp->type==FLESH?"terrible!":"good.");
 
-        new_draw_info(NDI_UNIQUE, 0,op,buf); 
+        new_draw_info(NDI_UNIQUE, 0,op,buf);
+	capacity_remaining = 999 - op->stats.food;
         op->stats.food+=tmp->stats.food;
-        op->stats.hp+=tmp->stats.food/50;
+	if(capacity_remaining < tmp->stats.food)
+	    op->stats.hp += capacity_remaining / 50;
+	else
+	  op->stats.hp+=tmp->stats.food/50;
         if(op->stats.hp>op->stats.maxhp)
           op->stats.hp=op->stats.maxhp;
 	if (op->stats.food > 999)
