@@ -1318,11 +1318,7 @@ object *find_throw_ob( object *op, char *request ) {
           "The %s sticks to your hand!",query_name(tmp));
         tmp = NULL;
       } else {
-        tag_t tag = tmp->count;
-        player_apply (op, tmp, AP_UNAPPLY, 0);
-        if (was_destroyed (tmp, tag)) {
-          tmp = NULL;
-        } else if (QUERY_FLAG (tmp, FLAG_APPLIED)) {
+        if (apply_special (op, tmp, AP_UNAPPLY | AP_NO_MERGE)) {
           LOG (llevError, "BUG: find_throw_ob(): couldn't unapply\n");
           tmp = NULL;
         }

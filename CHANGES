@@ -26,6 +26,32 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+common/loader.l:  Fix handling of objects with no animation.  Fixes server
+crash if object's archetype has an animation, but object doesn't.
+- Jan Echternach 6/9/2000
+
+common/loader.l: get_ob_diff():  Bugfix: Issue a "is_animated 0" line
+if the object has an animation, but doesn't have FLAG_ANIMATE.
+- Jan Echternach 6/9/2000
+
+server/apply.c: manual_apply() and monster_apply_special():  Don't check
+for FLAG_UNPAID if object is applied.  This should make the code more
+robust if an unpaid item get's applied accidently.
+- Jan Echternach 6/9/2000
+
+server/apply.c: apply_special():  New optional flags AP_NO_MERGE and
+AP_IGNORE_CURSE.  - Jan Echternach 6/9/2000
+
+server/monster.c: find_mon_throw_ob(); server/skills.c: find_throw_ob():
+Bugfix:  Use AP_NO_MERGE flag to prevent unapplied object be merged with
+other objects.  - Jan Echternach 6/9/2000
+
+server/spell_effect.c: animate_weapon:  Bugfixes: Correctly unapply
+weapon.  Don't set FLAG_APPLIED directly on weapon in golem, but use
+apply_special().  Don't call esrv_send_item() when caster is not a player
+(fixes server crash if monster casts this spell).
+- Jan Echternach 6/9/2000
+
 common/button.c: do_mood_floor():  Bugfixes: Only players can have pets.
 Call add_friendly_object() for friendly monsters.
 - Jan Echternach 6/8/2000

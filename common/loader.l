@@ -181,8 +181,13 @@ WS	[ \t]*
 
 ^other_arch{S}        op->other_arch=find_archetype(yval());
 ^animation{S}	    {	
-			op->animation_id = find_animation(yval());
-			SET_FLAG(op,FLAG_ANIMATE);
+			if (strcmp (yval(), "NONE") == 0) {
+			    op->animation_id = 0;
+			    CLEAR_FLAG (op, FLAG_ANIMATE);
+			} else {
+			    op->animation_id = find_animation (yval());
+			    SET_FLAG (op, FLAG_ANIMATE);
+			}
 		    }
 
 ^more{WS}$	    { /* We need to record that this is a multipart object,
@@ -619,8 +624,16 @@ char *get_ob_diff(object *op,object *op2) {/* I plan to optimize this heavily */
       strcat(buf,buf2);
   }
   if (op->animation_id != op2->animation_id) {
-    sprintf(buf2,"animation %s\n", animations[GET_ANIM_ID(op)].name);
-    strcat(buf, buf2);
+    if (op->animation_id) {
+      sprintf(buf2,"animation %s\n", animations[GET_ANIM_ID(op)].name);
+      if ( ! QUERY_FLAG (op, FLAG_ANIMATE)) {
+        strcat (buf, buf2);
+        sprintf (buf2, "is_animated 0\n");
+      }
+    } else {
+      sprintf (buf2, "animation NONE\n");
+    }
+    strcat (buf, buf2);
   }
   if(op->stats.Str!=op2->stats.Str)
     save_long(buf,variable_const[V_STR],op->stats.Str);

@@ -3056,7 +3056,8 @@ int animate_weapon(object *op,object *caster,int dir, archetype *at, int spellnu
     op->contr->golem=tmp;
     op->contr->shoottype=range_scroll;
   } else {
-  /* if uncursed and animated by a pet(???), make the golem a pet */
+  /* If spell is cast by a pet, and the weapon is not cursed, make the animated
+   * weapon a pet. */
     if(QUERY_FLAG(op, FLAG_FRIENDLY)
        && !QUERY_FLAG(weapon,FLAG_CURSED)
        && !QUERY_FLAG(weapon,FLAG_DAMNED)){
@@ -3073,18 +3074,24 @@ int animate_weapon(object *op,object *caster,int dir, archetype *at, int spellnu
   }
 
   /* ok, tailor the golem's characteristics based on the weapon */
-  tmp->stats.Str += weapon->stats.Str;
-  tmp->stats.Dex += weapon->stats.Dex;
-  tmp->stats.Con += weapon->stats.Con;
-  tmp->stats.Int += weapon->stats.Int;
-  tmp->stats.Wis += weapon->stats.Wis;
-  tmp->stats.Pow += weapon->stats.Pow;
-  tmp->stats.Cha += weapon->stats.Cha;
-  LOG(llevDebug, "animate_weapon: Str:%d  Dex:%d  Con:%d  Int:%d  Wis:%d  Pow:%d  Cha:%d.\n",
-      tmp->stats.Str, tmp->stats.Dex, tmp->stats.Con, tmp->stats.Int, tmp->stats.Wis, tmp->stats.Pow, tmp->stats.Cha);
+  if (spellnum == SP_STAFF_TO_SNAKE || spellnum == SP_ANIMATE_WEAPON) {
+    if (apply_special (op, weapon,
+                       AP_UNAPPLY | AP_IGNORE_CURSE | AP_NO_MERGE))
+    {
+      LOG (llevError, "BUG: animate_weapon(): can't unapply weapon\n");
+      return 0;
+    }
+    remove_ob (weapon);
+    insert_ob_in_ob (weapon, tmp);
+    if (op->type == PLAYER)
+      esrv_send_item(op, weapon);
+    SET_FLAG (tmp, FLAG_USE_WEAPON);
+    if (apply_special (tmp, weapon, AP_APPLY))
+      LOG (llevError, "BUG: animate_weapon(): golem can't apply weapon\n");
+  }
+
   /* modify weapon's animated wc */
   tmp->stats.wc = tmp->stats.wc
-    - weapon->stats.wc
     - SP_level_dam_adjust(op,caster,spellnum)
     - 5 * weapon->stats.Dex
     - 2 * weapon->stats.Str
@@ -3108,15 +3115,8 @@ int animate_weapon(object *op,object *caster,int dir, archetype *at, int spellnu
   if(tmp->stats.dam<0) tmp->stats.dam=127;
   LOG(llevDebug,"animate_weapon: wc:%d  hp:%d  dam:%d.\n", tmp->stats.wc, tmp->stats.hp, tmp->stats.dam);
   /* attacktype */
-  if (weapon->attacktype) {
-    tmp->attacktype = weapon->attacktype;
-  } else {
+  if ( ! tmp->attacktype)
     tmp->attacktype = AT_PHYSICAL;
-  }
-  /* Set weapon's protection according to material and protected attribute */
-  tmp->protected = weapon->protected;
-  /* Set vulnerability according to weapon's material and vulnerability attribute */
-  tmp->vulnerable = weapon->vulnerable;
   for(i=0; i<NROFMATERIALS; i++)
     for(j=0; j<NROFATTACKS; j++)
       if(weapon->material & (1<<i)) {
@@ -3138,12 +3138,8 @@ int animate_weapon(object *op,object *caster,int dir, archetype *at, int spellnu
     }
   }
   tmp->armour = 100 - (int)((100.0-(float)tmp->armour)/(30.0-2.0*(a>14?14.0:(float)a)));
-  /* If the weapon has a Slaying list, so does the golem */
-  if (tmp->slaying) {
-    free_string (tmp->slaying);
-    tmp->slaying = NULL;
-  }
-  if(weapon->slaying) tmp->slaying = add_string(weapon->slaying);
+  LOG (llevDebug, "animate_weapon: slaying %s\n",
+       tmp->slaying ? tmp->slaying : "nothing");
 
   /* Determine golem's speed */
   tmp->speed = ((weapon->last_sp>0.1)?weapon->last_sp:0.1) -
@@ -3163,26 +3159,13 @@ int animate_weapon(object *op,object *caster,int dir, archetype *at, int spellnu
   switch(spellnum) {
 
   case SP_STAFF_TO_SNAKE:
-    /* now, remove object from op inv, insert into golem */
-    remove_ob(weapon);
-    /*    apply_special(op, weapon, AP_UNAPPLY);*/
-    insert_ob_in_ob(weapon,tmp);
-    fix_player(op);
-    esrv_send_item(op, weapon);
     new_draw_info(NDI_UNIQUE, 0,op,"Your staff becomes a serpent and leaps to the ground!");
     break;
 
   case SP_ANIMATE_WEAPON:
-    /* now, remove object from op inv, insert into golem */
-    remove_ob(weapon);
-    /*    apply_special(op, weapon, AP_UNAPPLY);*/
-    insert_ob_in_ob(weapon,tmp);
-    fix_player(op);
-    esrv_send_item(op, weapon);
-
     new_draw_info_format(NDI_UNIQUE, 0,op,"Your %s flies from your hand and hovers in mid-air!", weapon->name);
-    if(tmp->name) free_string(tmp->name);
     sprintf(buf, "animated %s", weapon->name);
+    if(tmp->name) free_string(tmp->name);
     tmp->name = add_string(buf);
 
     tmp->face = weapon->face;
@@ -3196,7 +3179,6 @@ int animate_weapon(object *op,object *caster,int dir, archetype *at, int spellnu
       CLEAR_FLAG(tmp,FLAG_ANIMATE); 
     }
     update_ob_speed(tmp);
-    SET_FLAG(weapon,FLAG_APPLIED); /* so it can take acid damage */
     break;
 
   case SP_DANCING_SWORD:

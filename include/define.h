@@ -710,8 +710,19 @@ static inline void safe_strcat(char *dest, char *orig, int *curlen, int maxlen)
       safe_strcat(retbuf,")", len, maxlen); \
     }
 
-#define AP_APPLY		1
-#define AP_UNAPPLY		2
+/* Flags for apply_special() */
+enum apply_flag {
+  /* Basic flags, always use one of these */
+	AP_NULL			= 0,
+	AP_APPLY		= 1,
+	AP_UNAPPLY		= 2,
+
+        AP_BASIC_FLAGS		= 15,
+
+  /* Optional flags, for bitwise or with a basic flag */
+        AP_NO_MERGE		= 16,
+	AP_IGNORE_CURSE		= 32,
+};
 
 /* Cut off point of when an object is put on the active list or not */
 #define MIN_ACTIVE_SPEED	0.00001

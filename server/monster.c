@@ -1410,7 +1410,7 @@ object *find_mon_throw_ob( object *op ) {
   if ( ! tmp)
     tmp = heaviest;
   if (tmp && QUERY_FLAG (tmp, FLAG_APPLIED)) {
-    if (monster_apply_special (op, tmp, AP_UNAPPLY)) {
+    if (apply_special (op, tmp, AP_UNAPPLY | AP_NO_MERGE)) {
       LOG (llevError, "BUG: find_mon_throw_ob(): couldn't unapply\n");
       tmp = NULL;
     }

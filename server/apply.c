@@ -1654,7 +1654,7 @@ extern void apply_poison (object *op, object *tmp)
 
 int manual_apply (object *op, object *tmp, int aflag)
 {
-  if (QUERY_FLAG (tmp, FLAG_UNPAID)) {
+  if (QUERY_FLAG (tmp, FLAG_UNPAID) && ! QUERY_FLAG (tmp, FLAG_APPLIED)) {
     if (op->type == PLAYER) {
       new_draw_info (NDI_UNIQUE, 0, op, "You should pay for it first.");
       return 1;
@@ -1936,12 +1936,20 @@ void player_apply_below (object *pl)
 
 /* who is the object using the object.
  * op is the object they are using.
- * aflags is special flags (0 - normal/toggel, 1=always apply, 2=always unapply
- * (see define.h, AP_* values)
+ * aflags is special flags (0 - normal/toggle, AP_APPLY=always apply,
+ * AP_UNAPPLY=always unapply).
+ *
+ * Optional flags:
+ *   AP_NO_MERGE: don't merge an unapplied object with other objects
+ *   AP_IGNORE_CURSE: unapply cursed items
+ *
+ * Usage example:  apply_special (who, op, AP_UNAPPLY | AP_IGNORE_CURSE)
  *
  * apply_special() doesn't check for unpaid items.
  */
-int apply_special(object *who,object *op, int aflags) { /* wear/wield */
+int apply_special (object *who, object *op, int aflags)
+{ /* wear/wield */
+  int basic_flag = aflags & AP_BASIC_FLAGS;
   object *tmp;
   char buf[MAX_BUF];
   int i;
@@ -1955,10 +1963,11 @@ int apply_special(object *who,object *op, int aflags) { /* wear/wield */
   if(op->env!=who)
     return 1;   /* op is not in inventory */
 
-  if(QUERY_FLAG(op,FLAG_APPLIED)) {
+  if (QUERY_FLAG(op,FLAG_APPLIED)) {
     /* always apply, so no reason to unapply */
-    if (aflags == AP_APPLY) return 0;
-    if (QUERY_FLAG(op, FLAG_CURSED) || QUERY_FLAG(op, FLAG_DAMNED))
+    if (basic_flag == AP_APPLY) return 0;
+    if ( ! (aflags & AP_IGNORE_CURSE)
+        && (QUERY_FLAG(op, FLAG_CURSED) || QUERY_FLAG(op, FLAG_DAMNED)))
     {
       new_draw_info_format(NDI_UNIQUE, 0, who,
 	"No matter how hard you try, you just can't\nremove %s.",
@@ -2040,20 +2049,23 @@ int apply_special(object *who,object *op, int aflags) { /* wear/wield */
     }
     if (buf[0] != '\0')
       new_draw_info(NDI_UNIQUE, 0,who,buf);
-    del_tag = op->count;
-    tmp=merge_ob(op,NULL);
     fix_player(who);
-    if(who->type==PLAYER) {
-	  if (tmp) {  /* it was merged */
-              esrv_del_item (who->contr, del_tag);
-	      op = tmp;
-	  }
-          esrv_send_item(who, op);
+
+    if ( ! (aflags & AP_NO_MERGE)) {
+        tag_t del_tag = op->count;
+        tmp = merge_ob (op, NULL);
+        if (who->type == PLAYER) {
+            if (tmp) {  /* it was merged */
+                esrv_del_item (who->contr, del_tag);
+                op = tmp;
+            }
+            esrv_send_item (who, op);
+        }
     }
 
     return 0;
   }
-  if (aflags == AP_UNAPPLY) return 0;
+  if (basic_flag == AP_UNAPPLY) return 0;
   i=0;
   /* This goes through and checks to see if the player already has something
    * of that type applied - if so, unapply it.
@@ -2229,7 +2241,7 @@ int apply_special(object *who,object *op, int aflags) { /* wear/wield */
 
 int monster_apply_special (object *who, object *op, int aflags)
 {
-  if (QUERY_FLAG (op, FLAG_UNPAID))
+  if (QUERY_FLAG (op, FLAG_UNPAID) && ! QUERY_FLAG (op, FLAG_APPLIED))
     return 1;
   return apply_special (who, op, aflags);
 }

@@ -205,7 +205,7 @@ int command_apply (object *op, char *params)
     return 0;
   }
   else {
-    int aflag=0;
+    enum apply_flag aflag = 0;
     object *inv;
 
     while (*params==' ') params++;
@@ -525,14 +525,9 @@ void put_object_in_sack (object *op, object *sack, object *tmp, long nrof)
     if (! sack_can_hold (op, sack, tmp,(nrof?nrof:tmp->nrof)))
       return;
 
-    /* Small hack to avoid autojoining in apply_special(): */
     if(QUERY_FLAG(tmp, FLAG_APPLIED)) {
-      int nrof = tmp->nrof, a;
-      tmp->nrof = 0;
-      a = apply_special(op,tmp,0);
-      tmp->nrof = nrof;
-      if (a)
-	  return;
+      if (apply_special (op, tmp, AP_UNAPPLY | AP_NO_MERGE))
+          return;
     }
 
     /* we want to put some portion of the item into the container */
@@ -593,14 +588,9 @@ void drop_object (object *op, object *tmp, long nrof)
       return;
     }
 
-    /* Small hack to avoid autojoining in apply_special(): */
     if(QUERY_FLAG(tmp, FLAG_APPLIED)) {
-      int nrof = tmp->nrof,a;
-      tmp->nrof = 0;
-      a = apply_special (op, tmp,0);
-      tmp->nrof = nrof;
-      if (a)		/* can't unapply it */
-	  return;
+      if (apply_special (op, tmp, AP_UNAPPLY | AP_NO_MERGE))
+          return;		/* can't unapply it */
     }
 
     /* We are only dropping some of the items.  We split the current objec
