@@ -17,6 +17,8 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+common/map.c: Fix some bugs relating to map tiling.  MSW 2001-12-16
+
 common/object.c random_maps/Makefile.in 
   server/c_wiz.c server/player.c server/plugins.c server/timers.c 
   socket/request.c: Most of the changes are to just fix compiling warnings
