@@ -782,6 +782,13 @@ if (item == spellNormal && !ability ){
   case SP_TOWN_PORTAL:
     success= cast_create_town_portal (op,caster,dir);
     break;
+  case SP_MISSILE_SWARM: {
+    success = 1;
+    fire_swarm(op, caster, dir, spellarch[type], SP_M_MISSILE,
+	die_roll(3, 3, op, PREFER_HIGH) +
+	    SP_level_strength_adjust(op,caster, type), 0);
+    break;
+  }
   }
 
   play_sound_map(op->map, op->x, op->y, SOUND_CAST_SPELL_0 + type);

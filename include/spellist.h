@@ -448,7 +448,9 @@ PATH_TURNING,"holy_orb",},
 {"wrathful eye",	 5, 30,  0, 20, 0, 0,  0,  1, 0, 1, 0,
    PATH_SELF, "wrathful_eye",},
 {"town portal",	        8, 30, 0, 10, 0, 0,  1,  0, 0, 0, 1,
- PATH_TELE, "perm_magic_portal",}
+ PATH_TELE, "perm_magic_portal",},
+{"missile swarm",		7,  6,  0,  3, 0, 0, 1,  1, 0, 0, 0,
+   PATH_MISSILE,"magic_missile"} 
 };
 
 /*  peterm:  the following defines the parameters for all the
@@ -674,6 +676,7 @@ spell_parameters SP_PARAMETERS[NROFREALSPELLS] =
 {   0,      0,      5,      4,		6},	/*ironwood skin*/
 {   20,      5,    3,      5,		7},	/*wrathful eye*/
 {	0,	5,	3,	5,	0},	/*town portal*/
+{   0,      0,      0,      4,		12},	/*missile swarm*/
 };
 
 char *spellpathnames[NRSPELLPATHS] = {
