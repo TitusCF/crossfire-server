@@ -334,9 +334,20 @@ int move_monster(object *op) {
 		if(monster_use_bow(op,part,enemy,dir))
 		    return 0;
 	}
-    }
+    } /* for processing of all parts */
     part = get_nearest_part(op,enemy);
+
+    /* I'm not really sure if we need to re-do the direction calculation
+     * again - we did it above.  However, part may differe than the
+     * direction above, so this may be necessary.
+     */
     dir=find_dir_2(part->x-enemy->x,part->y-enemy->y);
+    if(QUERY_FLAG(op, FLAG_SCARED) || QUERY_FLAG(op,FLAG_RUN_AWAY))
+	dir=absdir(dir+4);
+
+    if(QUERY_FLAG(op,FLAG_CONFUSED))
+	dir = absdir(dir + RANDOM()%3 + RANDOM()%3 - 2);
+
     if ((op->move_type & LO4) && !QUERY_FLAG(op, FLAG_SCARED)) {
 	switch (op->move_type & LO4) {
 	    case DISTATT:

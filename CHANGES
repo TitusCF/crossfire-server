@@ -17,6 +17,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 CVS changes since last release:
 
+server/monster.c: Properly alter direction monster moves if they are
+feared or confused.  It was properly altering direction when monsters
+were using range attacks, but not if they were just wanting to move.
+MSW 2001-04-12
+
 common/living.c: Don't use the last_heal object in experience objects as 
    sp regen penalty.  This should fix the problem of inconsistent sp regen
    rates - last_heal is used in experience objects if the permanent experience
