@@ -315,6 +315,7 @@ extern void set_max_time ( long t );
 extern void set_monster_check_apply ( type_func_ob_ob addr );
 extern void set_move_creator ( type_func_ob addr );
 extern void set_move_teleporter ( type_func_ob addr );
+extern void set_move_firewall ( type_func_ob addr );
 extern void set_owner ( object *op, object *owner );
 extern void copy_owner ( object *op, object *clone );
 extern void set_process_active_maps ( type_func_void addr );

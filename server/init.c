@@ -560,6 +560,7 @@ void setup_library() {
   set_draw(draw);
   set_monster_check_apply(monster_check_apply);
   set_move_teleporter(move_teleporter);
+  set_move_firewall(move_firewall);
   set_move_creator(move_creator);
   set_trap_adjust(trap_adjust);
   set_esrv_send_item(esrv_send_item);
