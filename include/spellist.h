@@ -417,7 +417,7 @@ PATH_TURNING,"holy_orb",},
 {"animate weapon",	       7, 25, 0, 10, 0, 0,  4,  0, 0, 0, 0,
    PATH_TELE, "dancingsword", },
 {"cause cold",                  2, 10, 5, 10, 3, 2,  5,  1, 0, 1, 0,   /* 187 */
- PATH_WOUNDING,"cold"}
+ PATH_WOUNDING,"disease_cold"}
 
 };
 
