@@ -54,17 +54,24 @@ prefix = @prefix@
 exec_prefix = @exec_prefix@
 bindir = @bindir@
 
-all : plugin_python.so.0.1
+PLUGIN_TARGET = @PLUGIN_TARGET@
+
+all : $(PLUGIN_TARGET)
 
 clean:
-	$(RM) -f *.o core plugin_python.so.0.1 Makefile.bak
+	$(RM) -f *.o core $(PLUGIN_TARGET) Makefile.bak
 
+# Sites may or may not have the necessary support to compile the plugin.
+# as such, if plugin target is set, then we install, otherwise 
+# we don't do anything.
 install:
 	@if [ ! -d $(CROSSFIRE_PATH)/plugins ]; then \
 	    echo "Creating directory $(CROSSFIRE_PATH)/plugins"; \
 	    $(MKDIR) -p $(CROSSFIRE_PATH)/plugins; \
 	fi
-	$(INSTALL) plugin_python.so.0.1 $(CROSSFIRE_PATH)/plugins
+	@if [ "X$(PLUGIN_TARGET)" != "X" ]; then \
+		$(INSTALL) plugin_python.so.0.1 $(CROSSFIRE_PATH)/plugins; \
+	fi
 
 plugin_python.so.0.1: $(OBJS) ../common/libcross.a
 	$(CC) $(CFLAGS) $(LDFLAGS) $(EXTRA_LDFLAGS) $(OBJS) ../common/libcross.a $(LIBS) $(PYTHON_LIB) -o plugin_python.so.0.1

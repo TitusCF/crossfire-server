@@ -156,11 +156,13 @@ PYTHON_LIB=`echo /usr/lib/python*/config/libpython*.a`
 if test ! -f $PYTHON_LIB ; then
     echo "no"
     PYTHON_LIB=""
+    PLUGIN_TARGET=""
 else
     dnl the following libs are only used with the python plugin.
     echo "yes"
     AC_CHECK_LIB(pthread, main,  PY_LIBS="$PY_LIBS -lpthread", , $PY_LIBS )
     AC_CHECK_LIB(util, main,  PY_LIBS="$PY_LIBS -lutil", , $PY_LIBS )
+    PLUGIN_TARGET="plugin_python.so.0.1"
 fi
 
 
@@ -222,6 +224,7 @@ AC_SUBST(X11LIBS)
 AC_SUBST(PERL)
 AC_SUBST(PYTHON_LIB)
 AC_SUBST(PY_LIBS)
+AC_SUBST(PLUGIN_TARGET)
 
 dnl Do the evals because most of these are made up of sub variables and
 dnl we don't want the include to have something like

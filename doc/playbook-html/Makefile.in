@@ -90,7 +90,6 @@ skills.html: in_equip skills-extract
 	$(AWK) -v eqitems=in_equip -f skills-extract 	../../lib/treasures > skills.html
 
 chap3.html: chap3.shtml bows.html br_wall.html dir_spin.html foodone.html 	fr_wall.html gatedoor.html guild.html handbutt.html 	holysymbol.html horns.html keys.html pit.html potions.html 	rods.html savebed.html scrolls.html sign.html corpse.html 	talisman.html wands.html levels.html gravestone.html
-
 	../include_html.pl chap3.shtml chap3.html
 
 bows.html: items generic-extract
@@ -165,7 +164,6 @@ corpse.html: items sorter
 	egrep -e "^157 " items | $(AWK) -F'&' -f generic-extract | sort > corpse.html
 
 chap4.html: chap4.shtml spellpath.html altar.html cauldron.html 	runefire.html runefrost.html runeblast.html runeshock.html	 runedeath.html  runegen.html runemark.html
-
 	../include_html.pl chap4.shtml chap4.html
 
 spellpath.html:
@@ -214,7 +212,6 @@ lockpicks.html: items sorter
 	egrep -e "^43 " items | grep "lockpicks" | 	$(AWK) -F'&' -f generic-extract | sort > lockpicks.html
 
 chap6.html: chap6.shtml shop.html shopmat.html money.html books.html 	scrolls.html potions.html wands.html rods.html horns.html 	rings.html food.html flesh.html potion.html
-
 	../include_html.pl chap6.shtml chap6.html
 
 shop.html: items sorter
