@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/player.c: In flee_player(), make sure the enemy to the player is
+   on an actual map - fixes crashes.
+MSW 2004-04-06
+
 common/potion.c: Fix up change_abil() to more properly deal with potions -
    characters could get 0 stat values.  Also, messages were not being properly
    displayed.  Patch is slightly modified from one sent in by Bernd Edler.

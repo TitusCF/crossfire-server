@@ -1019,6 +1019,17 @@ void flee_player(object *op) {
 	CLEAR_FLAG(op, FLAG_SCARED);
 	return;
     }
+
+    /* Seen some crashes here.  Since we don't store an
+     * op->enemy_count, it is possible that something destroys the
+     * actual enemy, and the object is recycled.
+     */
+    if (op->enemy->map == NULL) {
+	CLEAR_FLAG(op, FLAG_SCARED);
+	op->enemy=NULL;
+	return;
+    }
+
     if(!(random_roll(0, 4, op, PREFER_LOW)) && did_make_save(op, op->level, 0)) {
 	op->enemy=NULL;
 	CLEAR_FLAG(op, FLAG_SCARED);
