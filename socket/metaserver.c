@@ -27,7 +27,7 @@
 */
 #include <global.h>
 
-#ifndef WIN32 //---win32 exclude unix header files
+#ifndef WIN32 /* ---win32 exclude unix header files */
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -35,7 +35,7 @@
 #include <arpa/inet.h>
 
 #include <version.h>
-#endif // end win32
+#endif /* end win32 */
 
 static int metafd=-1;
 static struct sockaddr_in sock;
@@ -48,7 +48,7 @@ static struct sockaddr_in sock;
 void metaserver_init()
 {
 
-#ifdef WIN32 // ***win32 metaserver_init(): init win32 socket
+#ifdef WIN32 /* ***win32 metaserver_init(): init win32 socket */
 	struct hostent *hostbn;
 	int temp = 1;	
 #endif
@@ -68,7 +68,7 @@ void metaserver_init()
 	}
 	memcpy(&sock.sin_addr, hostbn->h_addr, hostbn->h_length);
     }
-#ifdef WIN32 // ***win32 metaserver_init(): init win32 socket
+#ifdef WIN32 /* ***win32 metaserver_init(): init win32 socket */
 	ioctlsocket(metafd, FIONBIO , &temp);
 #else 
     fcntl(metafd, F_SETFL, O_NONBLOCK);
@@ -96,15 +96,15 @@ void metaserver_init()
 	    return;
 	}
 
-#ifdef WIN32 // ***win32 metaserver_init(): gethostbyname!
+#ifdef WIN32 /* ***win32 metaserver_init(): gethostbyname! */
 		hostbn = gethostbyname(hostname);
-		if (hostbn != (struct hostent *) NULL) // quick hack
+		if (hostbn != (struct hostent *) NULL) /* quick hack */
 			memcpy(domain, hostbn->h_addr, hostbn->h_length);
 
 		if (hostbn == (struct hostent *) NULL) {
 #else
 	if (getdomainname(domain, MAX_BUF-1)) {
-#endif // win32
+#endif /* win32 */
 	    LOG(llevDebug,"metaserver_init: getdomainname failed - will not report hostname\n");
 	    return;
 	}
@@ -130,7 +130,7 @@ void metaserver_update()
 
     sprintf(data,"%s|%d|%s|%s", settings.meta_host, num_players, VERSION, 
 	    settings.meta_comment);
-#ifdef WIN32 // ---win32 metaserver_init(): this removes a warning 
+#ifdef WIN32 /* ---win32 metaserver_init(): this removes a warning  */
     if (sendto(metafd, data, strlen(data), 0, (struct sockaddr *)&sock, sizeof(sock))<0) {
 #else
     if (sendto(metafd, data, strlen(data), 0, &sock, sizeof(sock))<0) {

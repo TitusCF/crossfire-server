@@ -11,18 +11,18 @@
  */ 
 
 #include <global.h>
-#ifndef WIN32 // ---win32 : remove unix headers
+#ifndef WIN32 /* ---win32 : remove unix headers */
 #include <sys/ioctl.h>
-#endif // win32
+#endif /* win32 */
 #ifdef hpux
 #include <sys/ptyio.h>
 #endif
 
-#ifndef WIN32 // ---win32 : remove unix headers
+#ifndef WIN32 /* ---win32 : remove unix headers */
 #include <errno.h>
 #include <stdio.h>
 #include <sys/file.h>
-#endif // win32
+#endif /* win32 */
 
 int checkbanned(char *login, char *host)
 {

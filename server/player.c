@@ -27,7 +27,7 @@
 */
 
 #include <global.h>
-#ifndef WIN32 // ---win32 remove headers
+#ifndef WIN32 /* ---win32 remove headers */
 #include <pwd.h>
 #endif
 #ifndef __CEXTRACT__

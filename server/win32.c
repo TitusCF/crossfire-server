@@ -50,7 +50,6 @@ struct itimerval {
 */
 int gettimeofday(struct timeval *time_Info, struct timezone *timezone_Info)
 {
-//	_int64 mstimer, freq;
 	/* Get the time, if they want it */
 	if (time_Info != NULL) {
 		time_Info->tv_sec = time(NULL);

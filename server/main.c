@@ -148,7 +148,7 @@ void start_info(object *op) {
 }
 
 char *crypt_string(char *str, char *salt) {
-#ifndef WIN32 // ***win32 crypt_string:: We don't need this anymore since server/client fork
+#ifndef WIN32 /* ***win32 crypt_string:: We don't need this anymore since server/client fork */
   static char *c=
     "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789./";
   char s[2];
@@ -163,7 +163,7 @@ char *crypt_string(char *str, char *salt) {
 #else
   return (char*)crypt(str,s);
 #endif
-#endif // win32
+#endif /* win32 */
   return(str);
 }
 
@@ -1037,7 +1037,7 @@ void do_specials() {
 int main(int argc,char **argv)
 {
 
-#ifdef WIN32
+#ifdef WIN32 /* ---win32 this sets the win32 from 0d0a to 0a handling */
 	_fmode = _O_BINARY ;
 #endif
 

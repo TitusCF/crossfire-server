@@ -47,7 +47,7 @@
 error - Your ANSI C compiler should be defining __STDC__;
 #endif
 
-#ifndef WIN32 //---win32 exclude unix configuration part
+#ifndef WIN32 /* ---win32 exclude unix configuration part */
 #include <autoconf.h>
 #endif
 

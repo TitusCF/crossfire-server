@@ -54,7 +54,11 @@
 #endif
 
 /* Include this first, because it lets us know what we are missing */
+#ifdef WIN32 /* ---win32 exclude this, config comes from VC ide */
+#include "win32.h"
+#else
 #include <autoconf.h>
+#endif
 
 #include <stdio.h>
 #include <string.h>

@@ -29,11 +29,11 @@
 #include <global.h>
 #include <funcpoint.h>
 
-#ifndef WIN32 // ---win32 exclude header
+#ifndef WIN32 /* ---win32 exclude header */
 #include <stdio.h>
 #include <sys/types.h>
 #include <sys/time.h>
-#endif // win32
+#endif /* win32 */
 
 /*
  * Gloabal variables:

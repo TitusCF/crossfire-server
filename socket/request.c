@@ -61,13 +61,13 @@
 /* This block is basically taken from socket.c - I assume if it works there,
  * it should work here.
  */
-#ifndef WIN32 // ---win32 exclude unix headers
+#ifndef WIN32 /* ---win32 exclude unix headers */
 #include <sys/types.h>
 #include <sys/time.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netdb.h>
-#endif // win32
+#endif /* win32 */
 
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>

@@ -37,13 +37,13 @@
 #ifndef __CEXTRACT__
 #include <sproto.h>
 #endif
-#ifndef WIN32 //---win32 exclude include files
+#ifndef WIN32 /* ---win32 exclude include files */
 #include <sys/types.h>
 #include <sys/time.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netdb.h>
-#endif // win32
+#endif /* win32 */
 
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
@@ -168,7 +168,7 @@ void InitConnection(NewSocket *ns, uint32 from)
     int oldbufsize;
     int buflen=sizeof(int);
 
-#ifdef WIN32 // ***WIN32 SOCKET: init win32 non blocking socket
+#ifdef WIN32 /* ***WIN32 SOCKET: init win32 non blocking socket */
 	int temp = 1;	
 
 	if(ioctlsocket(ns->fd, FIONBIO , &temp) == -1)
@@ -177,7 +177,7 @@ void InitConnection(NewSocket *ns, uint32 from)
     if (fcntl(ns->fd, F_SETFL, O_NDELAY)==-1) {
 		LOG(llevError,"InitConnection:  Error on fcntl.\n");
     }
-#endif // end win32
+#endif /* end win32 */
 
     if (getsockopt(ns->fd,SOL_SOCKET,SO_SNDBUF, (char*)&oldbufsize, &buflen)==-1)
 	oldbufsize=0;
@@ -246,14 +246,14 @@ void init_ericserver()
     struct protoent  *protox;
     struct linger linger_opt;
 
-#ifdef WIN32 // ***win32  -  we init a windows socket
+#ifdef WIN32 /* ***win32  -  we init a windows socket */
 	WSADATA w;
 
-	socket_info.max_filedescriptor = 1;	// used in select, ignored in winsockets
-	WSAStartup (0x0101,&w);				// this setup all socket stuuf
-	// ill include no error tests here, winsocket 1.1 should always work
-	// except some old win95 versions without tcp/ip stack
-#else	// non windows
+	socket_info.max_filedescriptor = 1;	/* used in select, ignored in winsockets */
+	WSAStartup (0x0101,&w);				/* this setup all socket stuff */
+	/* ill include no error tests here, winsocket 1.1 should always work */
+	/* except some old win95 versions without tcp/ip stack */
+#else	/* non windows */
 
 #ifdef HAVE_SYSCONF
   socket_info.max_filedescriptor = sysconf(_SC_OPEN_MAX);
@@ -264,7 +264,7 @@ void init_ericserver()
   "Unable to find usable function to get max filedescriptors";
 #  endif
 #endif
-#endif // win32
+#endif /* win32 */
 
     socket_info.timeout.tv_sec = 0;
     socket_info.timeout.tv_usec = 0;
@@ -310,7 +310,7 @@ void init_ericserver()
  */
 #if defined(__osf__) || defined(hpux) || defined(sgi) || defined(NeXT) || \
         defined(__sun__) || defined(linux) || defined(SVR4) || defined(__FreeBSD__) || \
-	defined(__OpenBSD__) || defined(WIN32) // ---win32 add this here
+	defined(__OpenBSD__) || defined(WIN32) /* ---win32 add this here */
     {
 	char tmp =1;
 
@@ -329,23 +329,23 @@ void init_ericserver()
     if (bind(init_sockets[0].fd,(struct sockaddr *)&insock,sizeof(insock)) == (-1)) {
 	perror("error on bind command");
 	LOG(llevError,"error on bind command\n");
-#ifdef WIN32 // ***win32: close() -> closesocket()
+#ifdef WIN32 /* ***win32: close() -> closesocket() */
 	shutdown(init_sockets[0].fd,SD_BOTH);
 	closesocket(init_sockets[0].fd);
 #else
 	close(init_sockets[0].fd);
-#endif // win32
+#endif /* win32 */
 	exit(-1);
     }
     if (listen(init_sockets[0].fd,5) == (-1))  {
 	perror("error on listen");
 	LOG(llevError,"error on listen\n");
-#ifdef WIN32 // ***win32: close() -> closesocket()
+#ifdef WIN32 /* ***win32: close() -> closesocket() */
 	shutdown(init_sockets[0].fd,SD_BOTH);
 	closesocket(init_sockets[0].fd);
 #else
 	close(init_sockets[0].fd);
-#endif // win32
+#endif /* win32 */
 	exit(-1);
     }
     init_sockets[0].status=Ns_Add;
@@ -383,12 +383,12 @@ void free_all_ericserver()
 
 void free_newsocket(NewSocket *ns)
 {
-#ifdef WIN32 // ***win32: closesocket in windows style 
+#ifdef WIN32 /* ***win32: closesocket in windows style */
 	shutdown(ns->fd,SD_BOTH);
     if (closesocket(ns->fd)) {
 #else
     if (close(ns->fd)) {
-#endif // win32
+#endif /* win32 */
 
 #ifdef ESRV_DEBUG
 	LOG(llevDebug,"Error closing socket %d\n", ns->fd);

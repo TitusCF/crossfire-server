@@ -16,13 +16,13 @@ a wall.
 #include <global.h>
 #include <time.h>
 
-#ifdef WIN32 // ---win32: removes a make_wall warning, modul miss prototyp 
+#ifdef WIN32 /* ---win32: removes a make_wall warning, modul miss prototyp */
 #include <maze_gen.h>
 #include <room_gen.h>
 #include <random_map.h>
 #include <rproto.h>
 #include <sproto.h>
-#endif // win32
+#endif /* win32 */
 
 #if 0
 

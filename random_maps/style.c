@@ -29,12 +29,12 @@
 
 #include <global.h>
 #include <random_map.h>
-#ifndef WIN32 // ---win32 exclude headers
+#ifndef WIN32 /* ---win32 exclude headers */
 #include <dirent.h>
 #include <sys/stat.h>
 #include <unistd.h>
 #include "../include/autoconf.h"
-#endif // win32
+#endif /* win32 */
 #ifndef HAVE_SCANDIR
 
 /* The scandir is grabbed from the gnulibc and modified slightly to remove

@@ -38,13 +38,13 @@
 #include <sockproto.h>
 #endif
 
-#ifndef WIN32 // ---win32 exclude unix headers
+#ifndef WIN32 /* ---win32 exclude unix headers */
 #include <sys/types.h>
 #include <sys/time.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netdb.h>
-#endif // end win32
+#endif /* end win32 */
 
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
@@ -127,7 +127,7 @@ void Handle_Oldsocket(NewSocket *ns)
      * or no more characters to read.
      */
     do {
-#ifdef WIN32 // ***win32: change oldsocket read() to recv()
+#ifdef WIN32 /* ***win32: change oldsocket read() to recv() */
 		stat = recv(ns->fd, ns->inbuf.buf + ns->inbuf.len, 1,0);
 
 	if (stat==-1 && WSAGetLastError() !=WSAEWOULDBLOCK) {
