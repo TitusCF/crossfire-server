@@ -26,13 +26,13 @@ INSTALL = @INSTALL@
 MKDIR = @MKDIR@
 SHELL = @BOURNE_SHELL@
 
-all: spoiler.ps
+all: spoiler.ps handbook.ps
 
 spoiler.ps:
 	(cd spoiler; $(MAKE) $(MFLAGS) spoiler)
 
 handbook.ps:
-	(cd playbook; $(MAK) $(MFLAGS) handbook)
+	(cd playbook; $(MAKE) $(MFLAGS) handbook)
 
 crosslib.doc:
 	(cd ../common; make doc)
