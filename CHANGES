@@ -16,6 +16,12 @@ changes' is much more useful than 'misc edits' or 'code cleanup'.
 small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+lib/adm/map_info, lib/adm/map_check:  Update to use new layout of installed
+files (share/crossfire), know about random exits (it doesn't do any checking
+to make sure the values are sane, which it probably should, but at least it
+won't complain about them), update to use /usr/bin/perl.  MSW 7/25/2000
+
 server/resurrection.c
 include/spellist.h:  PeterM:  fixed a few unintended things about
 resurrection:  experience removal was wrong, spellpoints/levels

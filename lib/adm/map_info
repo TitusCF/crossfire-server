@@ -1,4 +1,4 @@
-#!/usr/local/bin/perl
+#!/usr/bin/perl
 #
 # This program is meant to use check crossfire (version 0.90.?) maps.
 # Program wanderers through mapfiles and reports all objects that 
@@ -13,11 +13,13 @@
 # are not connected.  This can be annoying at times, since many maps use
 # these objects for decorations.
 $CONNECTED = 0;
-$LIB   = "/home/hugin/a/crossfire/crossfire/lib";
+$LIB   = "/home/hugin/a/crossfire/cf-installroot/share/crossfire";
 $ARCH  = "$LIB/archetypes";
 $FACES  = "$LIB/faces";
 $ANIM  = "$LIB/animations";
 $MAPS  = "$LIB/maps";
+# Set VERBOSE=1 if you want more output
+$VERBOSE=0;
 
 if (! $ARGV[0]) {
     print "Usage: wanderer.pl map-directory ... > output.log\n";
@@ -117,18 +119,29 @@ sub readmap {
 	print "Error: file $file isn't mapfile.\n";
 	return;
     }
-    print "Testing $file, ";
-    print /^name (.+)$/ ? $1 : "No mapname";
-    print ", size [", /^x (\d+)$/ ? $1 : 16;
-    print ",", /^y (\d+)/ ? $1 : 16, "]";
-
-    if (! /^msg$/) {
-	print ", No message\n";
-    } elsif (/(\w+@\S+)/) {
-	print ", $1\n";
-    } else {
-	print ", Unknown\n";
+    if ($VERBOSE) {
+	    print "Testing $file, ";
+	    print /^name (.+)$/ ? $1 : "No mapname";
+	    print ", size [", /^x (\d+)$/ ? $1 : 16;
+	    print ",", /^y (\d+)/ ? $1 : 16, "]";
+    
+	    if (! /^msg$/) {
+		print ", No message\n";
+	    } elsif (/(\w+@\S+)/) {
+		print ", $1\n";
+	    } else {
+		print ", Unknown\n";
+	    }
+	    $printmap=0;
     }
+    else {
+	$name=  /^name (.+)$/ ? $1 : "No mapname";
+	$x=  /^x (\d+)$/ ? $1 : 16;
+	$y= /^y (\d+)/ ? $1 : 16;
+	$mapname="Map $file, $name, size [$x, $y]\n" ;
+	$printmap=1;
+    }
+
 
     while (<IN>) {
 	if (($m = (@_ = /^arch \S+\s*$/g)) > 1) {
@@ -145,6 +158,7 @@ sub readmap {
 		} elsif (/^end$/) {
 		    &check_obj ("$inv$_");
 		} else {
+		    if ($printmap) { print "$mapname"; $printmap=0;}
 		    print "  Error: Corrupted map file $file.\nSegment:\n$_\nLine: $.\n";
 		}
 	    } 
@@ -152,6 +166,7 @@ sub readmap {
 	} elsif (/^More$/ || $m == 1) {
 	    &check_obj ($_);
 	} else {
+	    if ($printmap) { print "$mapname"; $printmap=0;}
 	    print "  Error: Corrupted map file $file.\nSegment:\n$_\nLine: $.\n"; 
 	}
     }
@@ -167,12 +182,14 @@ sub check_obj {
 
     if (! $arches{$1} && $last ne $1) {
 	$last = $1;
+	if ($printmap) { print "$mapname"; $printmap=0;}
 	print "  Error: Object $last is not defined in archetypes file ($x,$y), arch=$arch\n"; 
 	$missing{$last}++;
     } elsif ($ex{$1}) {
 	&examine_exit ($_);
     } elsif ($tele{$1}) {
 	if (/^food -?\d+$/) {
+	    if ($printmap) { print "$mapname"; $printmap=0;}
 	    print "  Error: Teleport $1 has food field.\n";
 	}
 	else {
@@ -180,9 +197,13 @@ sub check_obj {
 	}
     } elsif ($conn{$1} && ! /^connected -?\d+$/) {
 	$last = $1;
-	print "  Warning: Object $last has not been connected, $x,$y\n" if ($CONNECTED);
+	if ($CONNECTED) {
+	    if ($printmap) { print "$mapname"; $printmap=0;}
+	    print "  Warning: Object $last has not been connected, $x,$y\n"
+	}
     } elsif ($players{$1} && $last ne $1 && ! /^type / ) {
 	$last = $1;
+	if ($printmap) { print "$mapname"; $printmap=0;}
 	print "  Error: Player $last found in the map.\n";
     } elsif ($1 eq "scroll" && ! /^msg$/) {
 	$last = $1;
@@ -197,13 +218,20 @@ sub check_obj {
     $objects{$1}++;
     if (/^color_fg (\S+)$/ || /^color_bg (\S+)$/) {
 	$last = $arch;
+	if ($printmap) { print "$mapname"; $printmap=0;}
 	print "  Warning:  Object ".$arch." is setting color ($1), $x,$y\n";
     }
     if (/^animation (\S+)$/) {
-	print "Error: Object $arch is using an unknown animation $1\n" if (! $anim{$1});
+	if (! $anim{$1}) {
+	    if ($printmap) { print "$mapname"; $printmap=0;}
+	    print "Error: Object $arch is using an unknown animation $1\n"
+	}
     }
     if (/^face (\S+)$/) {
-	print "Error: Object $arch is using an unknown face $1\n" if (! $faces{$1});
+	if (! $faces{$1}) {
+	    if ($printmap) { print "$mapname"; $printmap=0;}
+	    print "Error: Object $arch is using an unknown face $1\n"
+	}
     }
 }
 
@@ -233,18 +261,21 @@ sub examine_exit {
 
     if (/^food (-?\d+)$/) {
 	# old style exits, doesn't work with crossfire 0.90-1
+	if ($printmap) { print "$mapname"; $printmap=0;}
 	print  " Error: ", &obj_name($_), " ($x1,$y1) -> ", 
 	      "Old style level [$1] ($x,$y)\n";
     } elsif (! defined ($to)) {
 #	print "  Closed: ", &obj_name($_), " ($x1,$y1)\n";
     } else {
 	# These are currently used be crossfire
+	return if ($to eq "/!");
 	if ($to =~ m!^/!) {
 	    $cdir = "$MAPS";
 	} else {
 	    ($cdir) = $file =~ m!(.*/)!;
 	}
 	if (! -f "$cdir$to") {
+	    if ($printmap) { print "$mapname"; $printmap=0;}
 	    print "  Missing: ", &obj_name($_), " ($x1,$y1) -> $to ($x,$y)\n";
 	} else {
 #	    print "  OK: ", &obj_name($_), " ($x1,$y1) -> $to ($x,$y)\n";
@@ -258,7 +289,7 @@ sub maplist {
 
     opendir (DIR , $dir) || die "Can't open directory : $dir\n";
     while ($file = readdir (DIR)) {
-	next if ($file eq "." || $file eq "..");
+	next if ($file eq "." || $file eq ".." || $file eq "CVS");
 	$file = "$dir/$file";
 	push (@dirs, $file) if (-d $file);
 	push (@maps, $file) if (-f $file);

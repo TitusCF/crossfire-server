@@ -1,4 +1,4 @@
-#!/usr/local/bin/perl
+#!/usr/bin/perl
 #
 # (C) Copyright Markus Weber, 1994. All rights reserved.
 #     Permission is granted to use, copy, and modify for non-commercial use.
@@ -9,11 +9,11 @@
 # archdb=pathname-of-archetype-database		*** not used ***
 #	default	./ARCHDB .{dir,pag}
 # archetypes=pathname-of-archetypes-file
-#	default	$cfdir/lib/archetypes
+#	default	$cfdir/share/crossfire/archetypes
 # cfdir=pathname-to-crossfire-installation
 #	default /opt/cf0901	(hardcoded)
 # mapdir=pathname-of-map-directory
-#	default $cfdir/lib/maps
+#	default $cfdir/share/crossfire/maps
 # start-map=map-path-of-starting map
 #	default (init in archetypes)
 
@@ -24,7 +24,7 @@ $debug = 1;
 #	ARGUMENT PROCESSING
 #
 # preset options
-$cfdir = "/home/hugin/a/crossfire/cftest";
+$cfdir = "/home/hugin/a/crossfire/cf-installroot";
 
 # loop thru arg vector
 while (@ARGV) {
@@ -56,8 +56,8 @@ while (@ARGV) {
 }
 
 # post-process
-$mapdir = "$cfdir/lib/maps" unless defined($mapdir);
-$archetypes = "$cfdir/lib/archetypes" unless defined($archetypes);
+$mapdir = "$cfdir/share/crossfire/maps" unless defined($mapdir);
+$archetypes = "$cfdir/share/crossfire/archetypes" unless defined($archetypes);
 print STDERR "DBG: archetypes=$archetypes\n" if $debug > 5;
 print STDERR "DBG: archdb=$archdb\n" if $debug > 5;
 print STDERR "DBG: mapdir=$mapdir\n" if $debug > 5;
@@ -335,7 +335,7 @@ print "FATAL: map $map, line $lines, bad archetype: $arch ($rx, $ry)\n";
 		# this is check 4, finally.
 		# if exit map can't be opened, complain and continue
 		#
-		if ( ! (-r "$mapdir$exit") ) {
+		if ( (! -r "$mapdir$exit")  && ( $exit ne "/!") ) {
 #print STDERR "ERROR: map $map, arch $arch, line $lines, no such exit $exit\n";
 print "ERROR: map $map, arch $arch, line $lines, no such exit $exit ($rx, $ry, to $x, $y)\n";
 			next;
