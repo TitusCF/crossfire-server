@@ -189,7 +189,7 @@ int resurrect_player(object *op,char *playername,int rspell)
   static char *races[]= { "barbarian","cleric", "elf","human","mage","ninja","priest",
 			"swashbuckler","thief","viking","warrior","wizard" };
 
-  long int exp;
+  sint64 exp;
   int Con;
 
 /*  set up our paths/strings...  */
@@ -228,7 +228,7 @@ int resurrect_player(object *op,char *playername,int rspell)
     {	fgets(buf,255,deadplayer);
 	sscanf(buf,"%s",buf2);
 	if( ! (strcmp(buf2,"exp"))) {
-	    sscanf(buf,"%s %ld",buf2,&exp);
+	    sscanf(buf,"%s %lld",buf2,&exp);
 	    switch(rspell) {
 		case SP_RAISE_DEAD:
 		exp-=exp/5;
