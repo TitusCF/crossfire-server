@@ -243,8 +243,9 @@ void follow_owner(object *ob, object *owner) {
 
 void pet_move(object * ob)
 {
-    int dir,tag;
+    int dir,tag, dx, dy;
     object *ob2, *owner;
+    mapstruct *m;
 
     /* Check to see if player pulled out */
     if ((owner = get_owner(ob)) == NULL) {
@@ -276,8 +277,12 @@ void pet_move(object * ob)
 
 	for(part = ob; part != NULL; part = part->more)
 	{
-	    for (ob2 = get_map_ob(part->map, part->x + freearr_x[dir],
-				  part->y + freearr_y[dir]); ob2 != NULL; ob2 = ob2->above)
+	    dx = part->x + freearr_x[dir];
+	    dy = part->y + freearr_y[dir];
+	    m = get_map_from_coord(part->map, &dx, &dy);
+	    if (!m) continue;
+
+	    for (ob2 = get_map_ob(m, dx, dy); ob2 != NULL; ob2 = ob2->above)
 	    {
 		object *new_ob;
 		new_ob = ob2->head?ob2->head:ob2;

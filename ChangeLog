@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/pet.c:  Add check to pet_move() to make sure the space we are
+   checking is within the map, and handle map tiling.
+MSW 2002-09-23
+
 Various updates:
 NOTE - You need to install the updated archetypes (included below)
    if you run this code without the updated archs, you will likely find
