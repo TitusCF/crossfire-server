@@ -600,6 +600,8 @@ void check_login(object *op) {
 	/* Remove confkeys, pushkey support - very old */
     } /* End of loop loading the character file */
     leave_map(op);
+    op->speed=0;
+    update_ob_speed(op);
     reset_object(op);
     op->contr = pl;
     pl->ob = op;

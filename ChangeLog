@@ -17,6 +17,18 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+common/object.c: Set op->events=NULL in reset_object(), and move the
+   clearing of the op->events structure to be before the memset in
+   clear_object() - this was otherwise resulting in a memory leak,
+   as memset would clear the pointer without actually freeing the data.
+server/attack.c: Fix indentation of hit_map(), modify it so that attacks
+   won't destroy items with no_pass set.
+server/login.c: set op->speed=0, call update_ob_speed() before calling
+   reset_object() - fixes problem with players not moving with recent
+   changes to initting the active lists to NULL.
+msw 2003-12-20
+
+
 server/skills.c: changed NDI_UNIQUE to NDI_BLACK for the meditation
    message (so that messages can correctly be grouped, also makes it
    coherent with praying).

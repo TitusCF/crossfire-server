@@ -486,6 +486,7 @@ void reset_object(object *op) {
     op->materialname = NULL;
     op->lore = NULL;
     op->current_weapon_script = NULL;
+    op->events=NULL;
     clear_object(op);
 }
 /*
@@ -511,39 +512,6 @@ void clear_object(object *op) {
     if (op->lore!=NULL)	    FREE_AND_CLEAR_STR(op->lore);
     if (op->materialname!= NULL) FREE_AND_CLEAR_STR(op->materialname);
 
-
-    /* Using this memset is a lot easier (and probably faster)
-     * than explicitly clearing the fields.
-     */
-    memset((void*)((char*)op + offsetof(object, name)),
-		   0, sizeof(object)-offsetof(object, name));
-     /* Below here, we clear things that are not done by the memset,
-     * or set default values that are not zero.
-     */
-
-    /* This is more or less true */
-    SET_FLAG(op, FLAG_REMOVED);
-
-    op->contr = NULL;
-    op->below=NULL;
-    op->above=NULL;
-    op->inv=NULL;
-    op->container=NULL;
-    op->env=NULL;
-    op->more=NULL;
-    op->head=NULL;
-    op->map=NULL;
-    op->refcount=0;
-    op->active_next = NULL;
-    op->active_prev = NULL;
-    /* What is not cleared is next, prev, and count */
-
-    op->expmul=1.0;
-    op->face = blank_face;
-    op->attacked_by_count= -1;
-    if (settings.casting_time)
-	op->casting_time = -1;
-
     /* Clean the events list */
     while (op->events != NULL)
     {
@@ -567,6 +535,37 @@ void clear_object(object *op) {
         else
             op->events = NULL;
     }
+
+
+    memset((void*)((char*)op + offsetof(object, name)),
+		   0, sizeof(object)-offsetof(object, name));
+    /* Below here, we clear things that are not done by the memset,
+     * or set default values that are not zero.
+     */
+    /* This is more or less true */
+    SET_FLAG(op, FLAG_REMOVED);
+
+
+    op->contr = NULL;
+    op->below=NULL;
+    op->above=NULL;
+    op->inv=NULL;
+    op->container=NULL;
+    op->env=NULL;
+    op->more=NULL;
+    op->head=NULL;
+    op->map=NULL;
+    op->refcount=0;
+    op->active_next = NULL;
+    op->active_prev = NULL;
+    /* What is not cleared is next, prev, and count */
+
+    op->expmul=1.0;
+    op->face = blank_face;
+    op->attacked_by_count= -1;
+    if (settings.casting_time)
+	op->casting_time = -1;
+
 }
 
 /*

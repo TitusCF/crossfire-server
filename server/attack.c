@@ -233,101 +233,122 @@ void save_throw_object (object *op, int type, object *originator)
     }
 }
 
+/* Object op is hitting the map.
+ * op is going in direction 'dir'
+ * type is the attacktype of the object.
+ * returns 1 if it hits something, 0 otherwise.
+ */
+
 int hit_map(object *op,int dir,int type) {
-  object *tmp, *next;
-  mapstruct *map;
-  sint16 x, y;
-  int retflag=0;  /* added this flag..  will return 1 if it hits a monster */
-  tag_t op_tag, next_tag=0;
+    object *tmp, *next;
+    mapstruct *map;
+    sint16 x, y;
+    int retflag=0;  /* added this flag..  will return 1 if it hits a monster */
 
-  if (QUERY_FLAG (op, FLAG_FREED)) {
-    LOG (llevError, "BUG: hit_map(): free object\n");
-    return 0;
-  }
+    tag_t op_tag, next_tag=0;
 
-  if (QUERY_FLAG (op, FLAG_REMOVED) || op->env != NULL) {
-    LOG (llevError, "BUG: hit_map(): hitter (arch %s, name %s) not on a map\n",
-         op->arch->name, op->name);
-    return 0;
-  }
-
-  if (op->head) op=op->head;
-
-  op_tag = op->count;
-
-  if ( ! op->map) {
-    LOG (llevError,"BUG: hit_map(): %s has no map", op->name);
-    return 0;
-  }
-  map = op->map;
-  x = op->x + freearr_x[dir];
-  y = op->y + freearr_y[dir];
-  if (get_map_flags(map, &map, x, y, &x, &y) & P_OUT_OF_MAP)
-      return 0;
-
- /* peterm:  a few special cases for special attacktypes --counterspell
-        must be out here because it strikes things which are not alive*/
-  if(type&AT_COUNTERSPELL) {
-    counterspell(op,dir);  /* see newspells.c */
-    if(!(type & ~(AT_COUNTERSPELL|AT_MAGIC))){
-	return 0;  /* we're done, no other attacks */
-    }
-    type &= ~AT_COUNTERSPELL;
-  }
-
-  if(type & AT_CHAOS){
-    shuffle_attack(op,1);  /*1 flag tells it to change the face */
-    update_object(op,UP_OBJ_FACE);
-    type &= ~AT_CHAOS;
-  }
-
-  next = get_map_ob (map, x, y);
-  if (next)
-    next_tag = next->count;
-  while (next)
-  {
-    if (was_destroyed (next, next_tag)) {
-      /* There may still be objects that were above 'next', but there is no
-       * simple way to find out short of copying all object references and
-       * tags into a temporary array before we start processing the first
-       * object.  That's why we just abort.
-       *
-       * This happens whenever attack spells (like fire) hit a pile
-       * of objects. This is not a bug - nor an error. The errormessage
-       * below was spamming the logs for absolutely no reason.
-       */
-      /* LOG (llevDebug, "hit_map(): next object destroyed\n"); */
-      break;
-    }
-    tmp = next;
-    next = tmp->above;
-    if (next)
-      next_tag = next->count;
-
-    if (QUERY_FLAG (tmp, FLAG_FREED)) {
-	LOG (llevError, "BUG: hit_map(): found freed object\n");
-	break;
+    if (QUERY_FLAG (op, FLAG_FREED)) {
+	LOG (llevError, "BUG: hit_map(): free object\n");
+	return 0;
     }
 
-    /* Something could have happened to 'tmp' while 'tmp->below' was processed.
-     * For example, 'tmp' was put in an icecube.
-     * This is one of the few cases where on_same_map should not be used.
+    if (QUERY_FLAG (op, FLAG_REMOVED) || op->env != NULL) {
+	LOG (llevError, "BUG: hit_map(): hitter (arch %s, name %s) not on a map\n",
+	     op->arch->name, op->name);
+	return 0;
+    }
+
+    if ( ! op->map) {
+	LOG (llevError,"BUG: hit_map(): %s has no map", op->name);
+	return 0;
+    }
+
+    if (op->head) op=op->head;
+
+    op_tag = op->count;
+
+    map = op->map;
+    x = op->x + freearr_x[dir];
+    y = op->y + freearr_y[dir];
+    if (get_map_flags(map, &map, x, y, &x, &y) & P_OUT_OF_MAP)
+	return 0;
+
+    /* peterm:  a few special cases for special attacktypes --counterspell
+     * must be out here because it strikes things which are not alive
      */
-    if (tmp->map != map || tmp->x != x || tmp->y != y)
-      continue;
 
-    if (QUERY_FLAG (tmp, FLAG_ALIVE)) {
-      hit_player(tmp,op->stats.dam,op,type);
-      retflag |=1;
-      if (was_destroyed (op, op_tag))
-        break;
-    } else if ((tmp->material || tmp->materialname) && op->stats.dam > 0) {
-      save_throw_object(tmp,type,op);
-      if (was_destroyed (op, op_tag))
-        break;
+    if (type & AT_COUNTERSPELL) {
+	counterspell(op,dir);  /* see spell_effect.c */
+
+	/* If the only attacktype is counterspell or magic, don't need
+	 * to do any further processing.
+	 */
+	if(!(type & ~(AT_COUNTERSPELL|AT_MAGIC))){
+	    return 0;
+	}
+	type &= ~AT_COUNTERSPELL;
     }
-  }
-  return 0;
+
+    if(type & AT_CHAOS){
+	shuffle_attack(op,1);  /*1 flag tells it to change the face */
+	update_object(op,UP_OBJ_FACE);
+	type &= ~AT_CHAOS;
+    }
+
+    next = get_map_ob (map, x, y);
+    if (next)
+	next_tag = next->count;
+
+    while (next) {
+	if (was_destroyed (next, next_tag)) {
+	    /* There may still be objects that were above 'next', but there is no
+	     * simple way to find out short of copying all object references and
+	     * tags into a temporary array before we start processing the first
+	     * object.  That's why we just abort.
+	     *
+	     * This happens whenever attack spells (like fire) hit a pile
+	     * of objects. This is not a bug - nor an error. The errormessage
+	     * below was spamming the logs for absolutely no reason.
+	     */
+	    /* LOG (llevDebug, "hit_map(): next object destroyed\n"); */
+	    break;
+	}
+	tmp = next;
+	next = tmp->above;
+	if (next)
+	    next_tag = next->count;
+
+	if (QUERY_FLAG (tmp, FLAG_FREED)) {
+	    LOG (llevError, "BUG: hit_map(): found freed object\n");
+	    break;
+	}
+
+	/* Something could have happened to 'tmp' while 'tmp->below' was processed.
+	 * For example, 'tmp' was put in an icecube.
+	 * This is one of the few cases where on_same_map should not be used.
+	 */
+	if (tmp->map != map || tmp->x != x || tmp->y != y)
+	    continue;
+
+	if (QUERY_FLAG (tmp, FLAG_ALIVE)) {
+	    hit_player(tmp,op->stats.dam,op,type);
+	    retflag |=1;
+	    if (was_destroyed (op, op_tag))
+		break;
+	} 
+	/* Here we are potentially destroying an object.  If the object has
+	 * NO_PASS set, it is also immune - you can't destroy walls.  Note 
+	 * that weak walls have is_alive set, which prevent objects from
+	 * passing over/through them.
+	 */
+	else if ((tmp->material || tmp->materialname) && op->stats.dam > 0 &&
+		   !QUERY_FLAG(tmp, FLAG_NO_PASS)) {
+	    save_throw_object(tmp,type,op);
+	    if (was_destroyed (op, op_tag))
+		break;
+	}
+    }
+    return 0;
 }
 
 void attack_message(int dam, int type, object *op, object *hitter) {
