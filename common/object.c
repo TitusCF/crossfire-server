@@ -571,58 +571,81 @@ void clear_object(object *op) {
 /*
  * copy object first frees everything allocated by the second object,
  * and then copies the contends of the first object into the second
- * object, allocating what needs to be allocated.
+ * object, allocating what needs to be allocated.  Basically, any
+ * data that is malloc'd needs to be re-malloc/copied.  Otherwise,
+ * if the first object is freed, the pointers in the new object
+ * will point at garbage.
  */
 
 void copy_object(object *op2, object *op) {
-  int is_freed=QUERY_FLAG(op,FLAG_FREED),is_removed=QUERY_FLAG(op,FLAG_REMOVED);
+    int is_freed=QUERY_FLAG(op,FLAG_FREED),is_removed=QUERY_FLAG(op,FLAG_REMOVED);
+    event *evt, *evt2, *evt_new;
 
-  if(op->name!=NULL)
-    free_string(op->name);
-  if(op->name_pl!=NULL)
-    free_string(op->name_pl);
-  if(op->title!=NULL)
-    free_string(op->title);
-  if(op->race!=NULL)
-    free_string(op->race);
-  if(op->slaying!=NULL)
-    free_string(op->slaying);
-  if(op->skill!=NULL)
-    free_string(op->skill);
-  if(op->lore!=NULL)
-    free_string(op->lore);
-  if(op->msg!=NULL)
-    free_string(op->msg);
-  if (op->materialname != NULL)
-      free_string(op->materialname);
-  (void) memcpy((void *)((char *) op +offsetof(object,name)),
+    if(op->name!=NULL)			free_string(op->name);
+    if(op->name_pl!=NULL)		free_string(op->name_pl);
+    if(op->title!=NULL)			free_string(op->title);
+    if(op->race!=NULL)			free_string(op->race);
+    if(op->slaying!=NULL)		free_string(op->slaying);
+    if(op->skill!=NULL)			free_string(op->skill);
+    if(op->msg!=NULL)			free_string(op->msg);
+    if(op->lore!=NULL)			free_string(op->lore);
+    if(op->materialname != NULL)	free_string(op->materialname);
+    if(op->custom_name != NULL)		free_string(op->custom_name);
+
+    /* Basically, same code as from clear_object() */
+    for (evt = op->events; evt; evt=evt2) {
+	evt2 = evt->next;
+
+	if (evt->hook != NULL) FREE_AND_CLEAR_STR(evt->hook);
+	if (evt->plugin != NULL) FREE_AND_CLEAR_STR(evt->plugin);
+	if (evt->options != NULL) FREE_AND_CLEAR_STR(evt->options);
+
+	free(evt);
+    }
+    op->events = NULL;
+
+    (void) memcpy((void *)((char *) op +offsetof(object,name)),
                 (void *)((char *) op2+offsetof(object,name)),
                 sizeof(object)-offsetof(object, name));
-  if(is_freed)
-    SET_FLAG(op,FLAG_FREED);
-  if(is_removed)
-    SET_FLAG(op,FLAG_REMOVED);
-  if(op->name!=NULL)
-    add_refcount(op->name);
-  if(op->name_pl!=NULL)
-    add_refcount(op->name_pl);
-  if(op->title!=NULL)
-    add_refcount(op->title);
-  if(op->race!=NULL)
-    add_refcount(op->race);
-  if(op->slaying!=NULL)
-    add_refcount(op->slaying);
-  if(op->skill!=NULL)
-    add_refcount(op->skill);
-  if(op->lore!=NULL)
-    add_refcount(op->lore);
-  if(op->msg!=NULL)
-    add_refcount(op->msg);
-  if (op->materialname != NULL)
-      add_refcount(op->materialname);
-  if((op2->speed<0) && !editor)
-    op->speed_left=op2->speed_left-RANDOM()%200/100.0;
-  update_ob_speed(op);
+
+    if(is_freed)	    SET_FLAG(op,FLAG_FREED);
+    if(is_removed)	    SET_FLAG(op,FLAG_REMOVED);
+    if(op->name!=NULL)	    add_refcount(op->name);
+    if(op->name_pl!=NULL)   add_refcount(op->name_pl);
+    if(op->title!=NULL)	    add_refcount(op->title);
+    if(op->race!=NULL)	    add_refcount(op->race);
+    if(op->slaying!=NULL)   add_refcount(op->slaying);
+    if(op->skill!=NULL)	    add_refcount(op->skill);
+    if(op->lore!=NULL)	    add_refcount(op->lore);
+    if(op->msg!=NULL)	    add_refcount(op->msg);
+    if(op->custom_name!=NULL)	    add_refcount(op->custom_name);
+    if (op->materialname != NULL)   add_refcount(op->materialname);
+
+    if((op2->speed<0) && !editor)
+	op->speed_left=op2->speed_left-RANDOM()%200/100.0;
+
+    /* Copy over event information */
+    evt2 = NULL;
+    for (evt = op2->events; evt; evt=evt->next) {
+	evt_new = malloc(sizeof(event));
+	memcpy(evt_new, evt, sizeof(event));
+	if (evt_new->hook)  add_refcount(evt_new->hook);
+	if (evt_new->plugin)  add_refcount(evt_new->plugin);
+	if (evt_new->options)  add_refcount(evt_new->options);
+
+	/* Try to be a little clever here, and store away the
+	 * last event we copied, so that its simpler to update the
+	 * pointer.
+	 */
+	if (evt2)
+	    evt2->next = evt_new;
+	else
+	    op->events = evt2;
+
+	evt2 = evt_new;
+    }
+	
+    update_ob_speed(op);
 }
 
 /*
