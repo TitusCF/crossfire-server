@@ -2132,233 +2132,6 @@ static PyObject* CFSpellWrathfullEye(PyObject* self, PyObject* args)
     return Py_BuildValue("i",val);
 };
 #endif
-/*****************************************************************************/
-/* Wrappers for Skill Numbers                                                */
-/*****************************************************************************/
-static PyObject* CFSkillStealing(PyObject* self, PyObject* args)
-{
-    int val = SK_STEALING;
-    if (!PyArg_ParseTuple(args,"",NULL))
-        return NULL;
-    return Py_BuildValue("i",val);
-};
-static PyObject* CFSkillLockpicking(PyObject* self, PyObject* args)
-{
-    int val = SK_LOCKPICKING;
-    if (!PyArg_ParseTuple(args,"",NULL))
-        return NULL;
-    return Py_BuildValue("i",val);
-};
-static PyObject* CFSkillHiding(PyObject* self, PyObject* args)
-{
-    int val = SK_HIDING;
-    if (!PyArg_ParseTuple(args,"",NULL))
-        return NULL;
-    return Py_BuildValue("i",val);
-};
-static PyObject* CFSkillSmithery(PyObject* self, PyObject* args)
-{
-    int val = SK_SMITHERY;
-    if (!PyArg_ParseTuple(args,"",NULL))
-        return NULL;
-    return Py_BuildValue("i",val);
-};
-static PyObject* CFSkillBowyer(PyObject* self, PyObject* args)
-{
-    int val = SK_BOWYER;
-    if (!PyArg_ParseTuple(args,"",NULL))
-        return NULL;
-    return Py_BuildValue("i",val);
-};
-static PyObject* CFSkillJeweler(PyObject* self, PyObject* args)
-{
-    int val = SK_JEWELER;
-    if (!PyArg_ParseTuple(args,"",NULL))
-        return NULL;
-    return Py_BuildValue("i",val);
-};
-static PyObject* CFSkillAlchemy(PyObject* self, PyObject* args)
-{
-    int val = SK_ALCHEMY;
-    if (!PyArg_ParseTuple(args,"",NULL))
-        return NULL;
-    return Py_BuildValue("i",val);
-};
-static PyObject* CFSkillThaumaturgy(PyObject* self, PyObject* args)
-{
-    int val = SK_THAUMATURGY;
-    if (!PyArg_ParseTuple(args,"",NULL))
-        return NULL;
-    return Py_BuildValue("i",val);
-};
-static PyObject* CFSkillLiteracy(PyObject* self, PyObject* args)
-{
-    int val = SK_LITERACY;
-    if (!PyArg_ParseTuple(args,"",NULL))
-        return NULL;
-    return Py_BuildValue("i",val);
-};
-static PyObject* CFSkillBargaining(PyObject* self, PyObject* args)
-{
-    int val = SK_BARGAINING;
-    if (!PyArg_ParseTuple(args,"",NULL))
-        return NULL;
-    return Py_BuildValue("i",val);
-};
-static PyObject* CFSkillJumping(PyObject* self, PyObject* args)
-{
-    int val = SK_JUMPING;
-    if (!PyArg_ParseTuple(args,"",NULL))
-        return NULL;
-    return Py_BuildValue("i",val);
-};
-static PyObject* CFSkillSenseMagic(PyObject* self, PyObject* args)
-{
-    int val = SK_DET_MAGIC;
-    if (!PyArg_ParseTuple(args,"",NULL))
-        return NULL;
-    return Py_BuildValue("i",val);
-};
-static PyObject* CFSkillOratory(PyObject* self, PyObject* args)
-{
-    int val = SK_ORATORY;
-    if (!PyArg_ParseTuple(args,"",NULL))
-        return NULL;
-    return Py_BuildValue("i",val);
-};
-static PyObject* CFSkillSinging(PyObject* self, PyObject* args)
-{
-    int val = SK_SINGING;
-    if (!PyArg_ParseTuple(args,"",NULL))
-        return NULL;
-    return Py_BuildValue("i",val);
-};
-static PyObject* CFSkillDetectCurse(PyObject* self, PyObject* args)
-{
-    int val = SK_DET_CURSE;
-    if (!PyArg_ParseTuple(args,"",NULL))
-        return NULL;
-    return Py_BuildValue("i",val);
-};
-static PyObject* CFSkillFindTraps(PyObject* self, PyObject* args)
-{
-    int val = SK_FIND_TRAPS;
-    if (!PyArg_ParseTuple(args,"",NULL))
-        return NULL;
-    return Py_BuildValue("i",val);
-};
-static PyObject* CFSkillMeditation(PyObject* self, PyObject* args)
-{
-    int val = SK_MEDITATION;
-    if (!PyArg_ParseTuple(args,"",NULL))
-        return NULL;
-    return Py_BuildValue("i",val);
-};
-static PyObject* CFSkillBoxing(PyObject* self, PyObject* args)
-{
-    int val = SK_PUNCHING;
-    if (!PyArg_ParseTuple(args,"",NULL))
-        return NULL;
-    return Py_BuildValue("i",val);
-};
-static PyObject* CFSkillFlameTouch(PyObject* self, PyObject* args)
-{
-    int val = SK_FLAME_TOUCH;
-    if (!PyArg_ParseTuple(args,"",NULL))
-        return NULL;
-    return Py_BuildValue("i",val);
-};
-static PyObject* CFSkillKarate(PyObject* self, PyObject* args)
-{
-    int val = SK_KARATE;
-    if (!PyArg_ParseTuple(args,"",NULL))
-        return NULL;
-    return Py_BuildValue("i",val);
-};
-static PyObject* CFSkillClimbing(PyObject* self, PyObject* args)
-{
-    int val = SK_CLIMBING;
-    if (!PyArg_ParseTuple(args,"",NULL))
-        return NULL;
-    return Py_BuildValue("i",val);
-};
-static PyObject* CFSkillWoodsman(PyObject* self, PyObject* args)
-{
-    int val = SK_WOODSMAN;
-    if (!PyArg_ParseTuple(args,"",NULL))
-        return NULL;
-    return Py_BuildValue("i",val);
-};
-static PyObject* CFSkillInscription(PyObject* self, PyObject* args)
-{
-    int val = SK_INSCRIPTION;
-    if (!PyArg_ParseTuple(args,"",NULL))
-        return NULL;
-    return Py_BuildValue("i",val);
-};
-static PyObject* CFSkillMeleeWeapons(PyObject* self, PyObject* args)
-{
-    int val = SK_ONE_HANDED_WEAPON;
-    if (!PyArg_ParseTuple(args,"",NULL))
-        return NULL;
-    return Py_BuildValue("i",val);
-};
-static PyObject* CFSkillThrowing(PyObject* self, PyObject* args)
-{
-    int val = SK_THROWING;
-    if (!PyArg_ParseTuple(args,"",NULL))
-        return NULL;
-    return Py_BuildValue("i",val);
-};
-static PyObject* CFSkillEvocation(PyObject* self, PyObject* args)
-{
-    int val = SK_EVOCATION;
-    if (!PyArg_ParseTuple(args,"",NULL))
-        return NULL;
-    return Py_BuildValue("i",val);
-};
-static PyObject* CFSkillRemoveTraps(PyObject* self, PyObject* args)
-{
-    int val = SK_DISARM_TRAPS;
-    if (!PyArg_ParseTuple(args,"",NULL))
-        return NULL;
-    return Py_BuildValue("i",val);
-};
-static PyObject* CFSkillSetTraps(PyObject* self, PyObject* args)
-{
-    int val = SK_SET_TRAP;
-    if (!PyArg_ParseTuple(args,"",NULL))
-        return NULL;
-    return Py_BuildValue("i",val);
-};
-static PyObject* CFSkillUseMagicItem(PyObject* self, PyObject* args)
-{
-    int val = SK_USE_MAGIC_ITEM;
-    if (!PyArg_ParseTuple(args,"",NULL))
-        return NULL;
-    return Py_BuildValue("i",val);
-};
-static PyObject* CFSkillPraying(PyObject* self, PyObject* args)
-{
-    int val = SK_PRAYING;
-    if (!PyArg_ParseTuple(args,"",NULL))
-        return NULL;
-    return Py_BuildValue("i",val);
-};
-static PyObject* CFSkillClawing(PyObject* self, PyObject* args)
-{
-    int val = SK_CLAWING;
-    if (!PyArg_ParseTuple(args,"",NULL))
-        return NULL;
-    return Py_BuildValue("i",val);
-};
-static PyObject* CFSkillLevitation(PyObject* self, PyObject* args)
-{
-    int val = SK_LEVITATION;
-    if (!PyArg_ParseTuple(args,"",NULL))
-        return NULL;
-    return Py_BuildValue("i",val);
-};
 
 /*****************************************************************************/
 /* Stalingrad: XML Support Subsection starts here                            */
@@ -2477,7 +2250,7 @@ static PyObject* CFGetValue(PyObject* self, PyObject* args)
 
 /*****************************************************************************/
 /* Name   : CFSetSkillExperience                                             */
-/* Python : CFPython.SetSkillExperience(object,skillid,value)                */
+/* Python : CFPython.SetSkillExperience(object,skill,value)                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFSetSkillExperience(PyObject* self, PyObject* args)
@@ -2485,11 +2258,12 @@ static PyObject* CFSetSkillExperience(PyObject* self, PyObject* args)
     object *tmp;
 
     long whoptr;
-    int skill, value2;
+    char *skill;
+    int value2;
     sint64 value;
     sint64 currentxp;
 
-    if (!PyArg_ParseTuple(args,"liL",&whoptr,&skill,&value))
+    if (!PyArg_ParseTuple(args,"lsL",&whoptr,&skill,&value))
         return NULL;
 
     CHECK_OBJ(whoptr);
@@ -2501,14 +2275,12 @@ static PyObject* CFSetSkillExperience(PyObject* self, PyObject* args)
     /* Browse the inventory of object to find a matching skill. */
     for (tmp=WHO->inv;tmp;tmp=tmp->below)
     {
-        if(tmp->type==SKILL && tmp->subtype==skill) {
+        if(tmp->type==SKILL && strcmp(tmp->skill, skill) == 0) {
             currentxp = tmp->stats.exp;
-            /* Don't know how this will react if negative value
-             * passed to add_exp */
             GCFP.Value[0] = (void *)(WHO);
             value = value - currentxp;
             GCFP.Value[1] = (void *)(&value);
-            GCFP.Value[2] = (void *)(tmp->skill);
+            GCFP.Value[2] = (void *)(skill);
             value2 = SK_EXP_ADD_SKILL;
             GCFP.Value[3] = (void *)(&value2);
             (PlugHooks[HOOK_ADDEXP])(&GCFP);
@@ -2530,10 +2302,10 @@ static PyObject* CFSetSkillExperience(PyObject* self, PyObject* args)
 static PyObject* CFGetSkillExperience(PyObject* self, PyObject* args)
 {
     object *tmp;
-    int skill;
+    char *skill;
     long whoptr;
 
-    if (!PyArg_ParseTuple(args,"li",&whoptr,&skill))
+    if (!PyArg_ParseTuple(args,"ls",&whoptr,&skill))
         return NULL;
 
     CHECK_OBJ(whoptr);
@@ -2541,7 +2313,7 @@ static PyObject* CFGetSkillExperience(PyObject* self, PyObject* args)
     /* Browse the inventory of object to find a matching skill. */
     for (tmp=WHO->inv;tmp;tmp=tmp->below)
     {
-        if(tmp->type==SKILL && tmp->subtype==skill) {
+        if(tmp->type==SKILL && strcmp(tmp->skill, skill) == 0) {
             return Py_BuildValue("L",(sint64)(tmp->stats.exp));
         }
     }

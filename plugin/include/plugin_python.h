@@ -270,39 +270,6 @@ static PyObject* CFGetInternalName(PyObject* self, PyObject* args);
 static PyObject* CFSetVariable(PyObject* self, PyObject* args);
 static PyObject* CFDecreaseObjectNr(PyObject* self, PyObject* args);
 
-/* Skill id wrappers */
-static PyObject* CFSkillStealing(PyObject* self, PyObject* args);
-static PyObject* CFSkillLockpicking(PyObject* self, PyObject* args);
-static PyObject* CFSkillHiding(PyObject* self, PyObject* args);
-static PyObject* CFSkillSmithery(PyObject* self, PyObject* args);
-static PyObject* CFSkillBowyer(PyObject* self, PyObject* args);
-static PyObject* CFSkillJeweler(PyObject* self, PyObject* args);
-static PyObject* CFSkillAlchemy(PyObject* self, PyObject* args);
-static PyObject* CFSkillThaumaturgy(PyObject* self, PyObject* args);
-static PyObject* CFSkillLiteracy(PyObject* self, PyObject* args);
-static PyObject* CFSkillBargaining(PyObject* self, PyObject* args);
-static PyObject* CFSkillJumping(PyObject* self, PyObject* args);
-static PyObject* CFSkillSenseMagic(PyObject* self, PyObject* args);
-static PyObject* CFSkillOratory(PyObject* self, PyObject* args);
-static PyObject* CFSkillSinging(PyObject* self, PyObject* args);
-static PyObject* CFSkillDetectCurse(PyObject* self, PyObject* args);
-static PyObject* CFSkillFindTraps(PyObject* self, PyObject* args);
-static PyObject* CFSkillMeditation(PyObject* self, PyObject* args);
-static PyObject* CFSkillBoxing(PyObject* self, PyObject* args);
-static PyObject* CFSkillFlameTouch(PyObject* self, PyObject* args);
-static PyObject* CFSkillKarate(PyObject* self, PyObject* args);
-static PyObject* CFSkillClimbing(PyObject* self, PyObject* args);
-static PyObject* CFSkillWoodsman(PyObject* self, PyObject* args);
-static PyObject* CFSkillInscription(PyObject* self, PyObject* args);
-static PyObject* CFSkillMeleeWeapons(PyObject* self, PyObject* args);
-static PyObject* CFSkillThrowing(PyObject* self, PyObject* args);
-/*static PyObject* CFSkillSpellCasting(PyObject* self, PyObject* args);*/
-static PyObject* CFSkillRemoveTraps(PyObject* self, PyObject* args);
-static PyObject* CFSkillSetTraps(PyObject* self, PyObject* args);
-static PyObject* CFSkillUseMagicItem(PyObject* self, PyObject* args);
-static PyObject* CFSkillPraying(PyObject* self, PyObject* args);
-static PyObject* CFSkillClawing(PyObject* self, PyObject* args);
-static PyObject* CFSkillLevitation(PyObject* self, PyObject* args);
 #if 0
 /* Spell id wrappers */
 static PyObject* CFSpellBullet(PyObject* self, PyObject* args);
@@ -827,39 +794,6 @@ static PyMethodDef CFPythonMethods[] =
         {"SetWC", CFSetWC, METH_VARARGS},
         {"SetVariable", CFSetVariable, METH_VARARGS},
         {"DecreaseObjectNr", CFDecreaseObjectNr, METH_VARARGS},
-/* Skills wrappers : */
-        {"SkillStealing", CFSkillStealing, METH_VARARGS},
-        {"SkillLockpicking", CFSkillLockpicking, METH_VARARGS},
-        {"SkillHiding", CFSkillHiding, METH_VARARGS},
-        {"SkillSmithery", CFSkillSmithery, METH_VARARGS},
-        {"SkillBowyer", CFSkillBowyer, METH_VARARGS},
-        {"SkillJeweler", CFSkillJeweler, METH_VARARGS},
-        {"SkillAlchemy", CFSkillAlchemy, METH_VARARGS},
-        {"SkillThaumaturgy", CFSkillThaumaturgy, METH_VARARGS},
-        {"SkillLiteracy", CFSkillLiteracy, METH_VARARGS},
-        {"SkillBargaining", CFSkillBargaining, METH_VARARGS},
-        {"SkillJumping", CFSkillJumping, METH_VARARGS},
-        {"SkillSenseMagic", CFSkillSenseMagic, METH_VARARGS},
-        {"SkillOratory", CFSkillOratory, METH_VARARGS},
-        {"SkillSinging", CFSkillSinging, METH_VARARGS},
-        {"SkillSenseCurse", CFSkillDetectCurse, METH_VARARGS},
-        {"SkillFindTraps", CFSkillFindTraps, METH_VARARGS},
-        {"SkillMeditation", CFSkillMeditation, METH_VARARGS},
-        {"SkillBoxing", CFSkillBoxing, METH_VARARGS},
-        {"SkillFlameTouch", CFSkillFlameTouch, METH_VARARGS},
-        {"SkillKarate", CFSkillKarate, METH_VARARGS},
-        {"SkillClimbing", CFSkillClimbing, METH_VARARGS},
-        {"SkillWoodsman", CFSkillWoodsman, METH_VARARGS},
-        {"SkillInscription", CFSkillInscription, METH_VARARGS},
-        {"SkillMeleeWeapons", CFSkillMeleeWeapons, METH_VARARGS},
-        {"SkillThrowing", CFSkillThrowing, METH_VARARGS},
-/*        {"SkillSpellcasting", CFSkillSpellCasting, METH_VARARGS},*/
-        {"SkillRemoveTraps", CFSkillRemoveTraps, METH_VARARGS},
-        {"SkillSetTraps", CFSkillSetTraps, METH_VARARGS},
-        {"SkillUseMagicItem", CFSkillUseMagicItem, METH_VARARGS},
-        {"SkillPraying", CFSkillPraying, METH_VARARGS},
-        {"SkillClawing", CFSkillClawing, METH_VARARGS},
-        {"SkillLevitation", CFSkillLevitation, METH_VARARGS},
 #if 0
 /* Spells wrappers */
         {"SpellBullet", CFSpellBullet, METH_VARARGS},
