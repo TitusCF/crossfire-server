@@ -31,53 +31,6 @@
 #include <sproto.h>
 #endif
 
-void add_pending_object(object *ob, mapstruct *map) {
-  objectlink *obl;
-
-  if(ob->arch == NULL) {
-    LOG(llevError,"Can't add pending object without arch: %s\n",ob->name);
-    return;
-  }
-  LOG(llevDebug,"Adding pending object %s to %s\n",ob->name,map->path);
-  obl = (objectlink *) malloc(sizeof(objectlink));
-  ob->speed = 0;
-  update_ob_speed(ob);
-
-  obl->ob = ob;
-  obl->next = map->pending;
-  map->pending=obl;
-}
-
-void enter_pending_objects(mapstruct *map) {
-  objectlink *obl, *next;
-  object *owner;
-
-  if(map->in_memory != MAP_IN_MEMORY) {
-    LOG(llevError,"Can't enter pending objects: map not in memory.\n");
-    return;
-  }
-  for(obl = map->pending; obl!= NULL; obl = next) {
-    next = obl->next;
-    LOG(llevDebug,"Entering pending %s in %s\n",obl->ob->name,map->path);
-    if(obl->ob->type == PLAYER) {
-      fix_player(obl->ob);
-      insert_ob_in_map(obl->ob,map,NULL);
-    }
-    if (obl->ob->arch != NULL && obl->ob->type != PLAYER) {
-	obl->ob->speed = obl->ob->arch->clone.speed;
-	update_ob_speed(obl->ob);
-    }
-    if((owner = get_owner(obl->ob)) != NULL)
-      follow_owner(obl->ob,owner);
-    if(QUERY_FLAG(obl->ob, FLAG_REMOVED)) {
-      LOG(llevDebug,"follow_owner didn't help.\n");
-      insert_ob_in_map(obl->ob,map,NULL);
-    }
-    free(obl);
-  }
-  map->pending = NULL;
-}
-
 object *get_pet_enemy(object * pet){
   object         *owner, *tmp;
   int             i;
@@ -147,32 +100,14 @@ void remove_all_pets(mapstruct *map) {
     if(obl->ob->type != PLAYER && QUERY_FLAG(obl->ob,FLAG_FRIENDLY) &&
        (owner = get_owner(obl->ob)) != NULL && owner->map != obl->ob->map)
     {
-      if(owner->map == NULL || owner->map->in_memory != MAP_IN_MEMORY) {
-        object *ob = obl->ob;
-	/* a bit of a hack, but necessary.  IF a player is cycling through many
-	 * maps very quickly, it is possible that a monster can be caught in
-	 * limbo (being transferred to some other map.)  This should fix
-	 * that problem.
-	 */
-	if (!QUERY_FLAG(ob, FLAG_REMOVED)) {
-          remove_ob(ob);
+	/* follow owner checks map status for us */
+	follow_owner(obl->ob,owner);
+	if(QUERY_FLAG(obl->ob, FLAG_REMOVED) && FABS(obl->ob->speed) > MIN_ACTIVE_SPEED) {
+	    object *ob = obl->ob;
+	    LOG(llevMonster,"(pet failed to follow)");
+	    remove_friendly_object(ob);
+	    free_object(ob);
 	}
-        if(owner->map != NULL) {
-          add_pending_object(ob, owner->map);
-          continue;
-        }
-        LOG(llevMonster,"(pet no map)..");
-        remove_friendly_object(ob);
-        free_object(ob);
-        continue;
-      }
-      follow_owner(obl->ob,owner);
-      if(QUERY_FLAG(obl->ob, FLAG_REMOVED) && FABS(obl->ob->speed) > MIN_ACTIVE_SPEED) {
-        object *ob = obl->ob;
-        LOG(llevMonster,"(pet failed to follow)");
-        remove_friendly_object(ob);
-        free_object(ob);
-      }
     }
   }
 }
@@ -188,8 +123,7 @@ void follow_owner(object *ob, object *owner) {
     return;
   }
   if(owner->map->in_memory != MAP_IN_MEMORY) {
-    LOG(llevMonster,"Map loading, adding pending object (%s).\n",ob->name);
-    add_pending_object(ob,owner->map);
+    LOG(llevError,"Owner of the pet not on a map in memory!?\n");
     return;
   }
   dir = find_free_spot(ob->arch, owner->map,

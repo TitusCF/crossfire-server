@@ -101,6 +101,7 @@ re_cmp(char *str, char *regexp) {
 	    case rep_once_or_more:
 		if (matched == False)
 		    return NULL;
+
 		if (re_cmp_step(str+1, regexp, 0, 1))
 		    return str;
 		break;
@@ -134,12 +135,13 @@ re_cmp(char *str, char *regexp) {
 	if (re_cmp_step(str+1, next_regexp, 1, 0))
 	    return str;
     }
+#if 0
     do {
 	++str;
 	if (re_cmp_step(str, regexp, 0, 0))
 	    return str;
     } while (*str);
-
+#endif
     return NULL;
 }
 

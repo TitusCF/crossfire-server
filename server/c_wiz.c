@@ -626,65 +626,62 @@ int command_reset (object *op, char *params)
     mapstruct *m;
     object *dummy = NULL, *tmp = NULL;
 
-  if (params == NULL) {
-      new_draw_info(NDI_UNIQUE, 0,op,"Reset what map [name]?");
-      return 1;	
+    if (params == NULL) {
+	new_draw_info(NDI_UNIQUE, 0,op,"Reset what map [name]?");
+	return 1;	
     }
-  if (strcmp(params, ".") == 0)
-    params = op->map->path;
-  m = has_been_loaded(params);
+    if (strcmp(params, ".") == 0)
+	params = op->map->path;
+    m = has_been_loaded(params);
     if (m==NULL) {
-      new_draw_info(NDI_UNIQUE, 0,op,"No such map.");
-      return 1;	
+	new_draw_info(NDI_UNIQUE, 0,op,"No such map.");
+	return 1;	
     }
 
     if (m->in_memory != MAP_SWAPPED) {
-      player *pl;
-
 	if(m->in_memory != MAP_IN_MEMORY) {
 	    LOG(llevError,"Tried to swap out map which was not in memory.\n");
 	    return 0;
 	}
-	for(pl=first_player;pl!=NULL;pl=pl->next)
-	    if(pl->ob == NULL || (!(QUERY_FLAG(pl->ob,FLAG_REMOVED)) && pl->ob->map == m)) {
-		if (QUERY_FLAG(pl->ob,FLAG_WIZ)) {
-		    /* does not work if there are several dms in same map */
-		    tmp = pl->ob;
-		    dummy=get_object();
-		    dummy->map = m;
-		    EXIT_X(dummy) = tmp->x;
-		    EXIT_Y(dummy) = tmp->y;
-	  EXIT_PATH(dummy) = add_string (params);
-		    remove_ob (tmp);
-		} else
-		    break;
-	    }
+	/* Only attempt to remove the player that is doing the reset, and not other
+	 * players or wiz's.
+	 */
+	if (op->map == m ) {
+	    dummy=get_object();
+	    dummy->map = m;
+	    EXIT_X(dummy) = tmp->x;
+	    EXIT_Y(dummy) = tmp->y;
+	    EXIT_PATH(dummy) = add_string(op->map->path);
+	    remove_ob(op);
+	    tmp=op;
+	}
 	swap_map(m);
-      }
+    }
 
-      if (m->in_memory == MAP_SWAPPED) {	
+
+    if (m->in_memory == MAP_SWAPPED) {	
 	LOG(llevDebug,"Resetting map %s.\n",m->path);
 	clean_tmp_map(m);
 	if (m->tmpname) free(m->tmpname);
 	m->tmpname = NULL;
 	m->reset_time = 0;
-	
+	new_draw_info(NDI_UNIQUE, 0,op,"OK.");
 	if (tmp) {
 	    enter_exit(tmp, dummy);
-	    /* sigh - enter exit does not insert object 
-	       if it is removed */
-	    SET_FLAG(tmp, FLAG_NO_APPLY);
-	    insert_ob_in_map(tmp,tmp->map,NULL);
-	    CLEAR_FLAG(tmp, FLAG_NO_APPLY);
 	    free_object(dummy);
 	}
-
-      new_draw_info(NDI_UNIQUE, 0,op,"OK.");
-      return 1;	      
+	return 1;
+    } else {
+	/* Need to re-insert player if swap failed for some reason */
+	if (tmp) {
+	    insert_ob_in_map(op, m, NULL);
+	    free_object(dummy);
+	}
+	new_draw_info(NDI_UNIQUE, 0,op,"Reset failed, couldn't swap map.\n");
+	new_draw_info(NDI_UNIQUE, 0,op,"Probably another player is on the map\n");
+	return 1;
     }
-    new_draw_info(NDI_UNIQUE, 0,op,"Reset failed, couldn't swap map.\n");
-    return 1;
-  }
+}
 
 int command_nowiz (object *op, char *params) /* 'noadm' is alias */
 {

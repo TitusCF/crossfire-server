@@ -83,7 +83,6 @@ typedef struct mapdef {
   MapLook *floor2;
   object **map_ob;	/* What object lies on the floor */
   uint16 difficulty;	/* What level the player should be to play here */
-  objectlink *pending;  /* Objects waiting for the map to be loaded */
 
   /* lighting code uses these */
   uint32 do_los:1;	/* True if line of sight needs to be recalculated for 

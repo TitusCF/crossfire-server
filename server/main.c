@@ -446,20 +446,37 @@ static void enter_unique_map(object *op, object *exit_ob)
     } else { /* relative directory */
 	char reldir[HUGE_BUF], tmpc[HUGE_BUF], *cp;
 
-	strcpy(reldir, unclean_path(exit_ob->map->path));
+	if (QUERY_FLAG(exit_ob->map->map_object, FLAG_UNIQUE)) {
 
-	/* Need to copy this over, as clean_path only has one static return buffer */
-	strcpy(tmpc, clean_path(reldir));
-	/* Remove final component, if any */ 
-	if ((cp=strrchr(tmpc, '_'))!=NULL) *cp=0;
+	    strcpy(reldir, unclean_path(exit_ob->map->path));
 
-	sprintf(apartment, "%s/%s/%s/%s_%s", settings.localdir,
-	    settings.playerdir, op->name, tmpc,
-	    clean_path(EXIT_PATH(exit_ob)));
-	newmap = ready_map_name(apartment, MAP_PLAYER_UNIQUE);
-	if (!newmap) {
-	    newmap = load_original_map(create_pathname(normalize_path(reldir, EXIT_PATH(exit_ob))), MAP_PLAYER_UNIQUE);
-	    if (newmap) fix_auto_apply(newmap);
+	    /* Need to copy this over, as clean_path only has one static return buffer */
+	    strcpy(tmpc, clean_path(reldir));
+	    /* Remove final component, if any */ 
+	    if ((cp=strrchr(tmpc, '_'))!=NULL) *cp=0;
+
+	    sprintf(apartment, "%s/%s/%s/%s_%s", settings.localdir,
+		    settings.playerdir, op->name, tmpc,
+		    clean_path(EXIT_PATH(exit_ob)));
+
+	    newmap = ready_map_name(apartment, MAP_PLAYER_UNIQUE);
+	    if (!newmap) {
+		newmap = load_original_map(create_pathname(normalize_path(reldir, EXIT_PATH(exit_ob))), MAP_PLAYER_UNIQUE);
+		if (newmap) fix_auto_apply(newmap);
+	    }
+	}
+	else {
+	    /* The exit is unique, but the map we are coming from is not unique.  So
+	     * use the basic logic - don't need to demangle the path name
+	     */
+	    sprintf(apartment, "%s/%s/%s/%s", settings.localdir,
+		    settings.playerdir, op->name, 
+		    clean_path(normalize_path(exit_ob->map->path, EXIT_PATH(exit_ob))));
+	    newmap = ready_map_name(apartment, MAP_PLAYER_UNIQUE);
+	    if (!newmap) {
+		newmap = ready_map_name(normalize_path(exit_ob->map->path, EXIT_PATH(exit_ob)), 0);
+		if (newmap) fix_auto_apply(newmap);
+	    }
 	}
     }
 

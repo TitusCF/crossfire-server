@@ -1214,7 +1214,6 @@ mapstruct *get_linked_map(char *path) {
   map->light = (objectlink *) NULL;
   map->darkness = 0;
   map->do_los=0;
-  map->pending = (objectlink *) NULL;
   map->map_object = NULL;
   map->buttons = NULL;
   map->compressed = 0;

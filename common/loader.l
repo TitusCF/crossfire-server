@@ -92,6 +92,7 @@ static char *variable_const[NR_OF_VARIABLES] = {
 static char *yval();
 
 static int lex_error;
+static char msgbuf[HUGE_BUF];
 
 #define FREE_AND_COPY(sv,nv) { if (sv) free_string(sv); sv=add_string(nv); }
 #define SET_OR_CLEAR_FLAG(op, flag, val) \
@@ -147,11 +148,9 @@ WS	[ \t]*
 
 %{
 /* Declare some local variables */
-    char msgbuf[HUGE_BUF];
     int ismore=0;
 
     lex_error=0;
-    strcpy(msgbuf, "");
 
 %}
 
@@ -199,6 +198,7 @@ WS	[ \t]*
 			    tmp->arch = find_archetype(yval());
 			    if (tmp->arch!=NULL) 
 				copy_object(&tmp->arch->clone,tmp);
+			    strcpy(msgbuf, "");
 			    lex_load(tmp, map_flags);
 			    insert_ob_in_ob(tmp,op);
 			}
@@ -516,6 +516,7 @@ int load_object(FILE *fp, object *op, int bufstate, int map_flags) {
     int retval;
     char inbuf[MAX_BUF];
 
+    strcpy(msgbuf, "");
     if (bufstate==LO_NEWFILE || bufstate==LO_NOREAD) {
 /*	LOG(llevDebug,"Switching lex buffers\n");*/
 	yy_delete_buffer(YY_CURRENT_BUFFER);
@@ -550,6 +551,7 @@ int set_variable(object *op,char *buf) {
     YY_BUFFER_STATE  yybufstate,yycurbuf=YY_CURRENT_BUFFER;
     int retval;
 
+    strcpy(msgbuf, "");
     yy_push_state(INITIAL);
     yybufstate=yy_scan_string(buf);
     retval=lex_load(op,0);

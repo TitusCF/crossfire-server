@@ -2016,7 +2016,7 @@ void loot_object(object *op) { /* Grab and destroy some treasure */
 
   for(tmp=op->inv;tmp!=NULL;tmp=next) {
     next=tmp->below;
-    if (tmp->type==EXPERIENCE) continue;
+    if (tmp->type==EXPERIENCE || tmp->invisible) continue;
     remove_ob(tmp);
     tmp->x=op->x,tmp->y=op->y;
     if (tmp->type == CONTAINER) { /* empty container to ground */

@@ -17,6 +17,44 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 CVS changes since last release:
 
+MSW 2001/02/22:
+TODO: Add some items, remove some others, remove outline of future versions,
+    since it was out of date.
+common/loader.l,loader.c: Declare msgbuf a static outside the lex_load function.
+    lex_load was otherwise clearing it each time it was called, which resulted
+    in empty messages for the random artifacts (since the call lex_load one
+    line at a time).  Instead, we just zero this at start of load_object.
+    Original reason of this change was due to purify errors - as I look at the
+    code, it appears even before these changes that it was clearing the buffer
+    properly.
+common/map.c: removing pending field from map objects.
+common/re-cmp.c: Comment out some code which was resulting in too many
+    false compares.
+include/config.h: increase default for MAX_OBJECTS.  6000 is a bit small
+    on current systems.
+include/map.h: Remove pending field from map structure.
+random_maps/treasure.c: Increase size of doorlist.  Fixes crash, in that
+    if a random map could place 8 doors around the treasure, the list
+    was not terminated, so the problem would eventually try to read/dereference
+    random memory after the array.
+server/c_misc.c: Remove pending field from maps, so remove functions
+    and other places that referred to it (like the maps command)
+server/c_wiz.c: fix up wiz map reset command.  Not really tested, but
+    old code had some definate problems just from visual inspection.
+server/main.c: Further fix for unique exits - relative paths to unique maps
+    from non unique maps should now work.
+server/monster.c: Various fixes - one is that should get more reliable distance
+    values for multipart monsters.  Second, modify dist_att to calculate from
+    closest part of monster, and not the head of the monster.
+server/pets.c: Remove code dealing with pending objects.
+server/player.c: Don't remove invisible objects in players inventory when
+    playing with permadeath mode.
+server/spell_util.c: If you try to cast denied spell, it no longer costs any
+    spellpoints.
+socket/item.c: Fix bug where it was using 'item' protocol command instead of
+    'item1'
+End of MSW 2001/02/22 checkin.
+
 ------------------------------------------------------------------------------
 Changes for 0.96.0:
 

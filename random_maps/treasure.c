@@ -546,7 +546,7 @@ object ** surround_by_doors(mapstruct *map,int x,int y,int opts) {
   char *doors[2];
   object **doorlist;
   int ndoors_made=0;
-  doorlist = (object **) calloc(sizeof(object *),8);
+  doorlist = (object **) calloc(9, sizeof(object *)); /* 9 doors so we can hold termination null */
 
   /* this is a list we pick from, for horizontal and vertical doors */
   if(opts&DOORED) {

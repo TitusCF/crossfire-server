@@ -216,7 +216,7 @@ void esrv_draw_look(object *pl)
 
 	    if (sl.len > (MAXSOCKBUF-MAXITEMLEN)) {
 		Send_With_Handling(&pl->contr->socket, &sl);
-		strcpy((char*)sl.buf,"item ");
+		strcpy((char*)sl.buf,"item1 ");
 		sl.len=strlen((char*)sl.buf);
 		SockList_AddInt(&sl, 0);
 		got_one=0;

@@ -1,33 +1,42 @@
 
 General outline of future versions:
 
-0.94.0: complete client/server implementation (done)
-0.94.x: Various refinements/fixes for the cs stuff above.
-0.95.0: Remove all X11 dependant code - only client/server play supported
-	at that time.
-0.96.0: Redone object structure to remove overlapping meanings of some fields.
-
-0.99.0: Start refining crossfire to be stable and balanced for 1.0 release.
-	This means the only changes here would likely to be bufixes, and not
-	new features.
 1.0: First true public release - fully stable, and very well balanced.
+Post 1.0 outline, with the goal for a 2.0 release:
+1.1 -> 1.5: Make the big changes that will result in the biggest bunch
+    of new bugs.  Things I think about are map tiling, increased
+    viewable playing area, and object cleanup.  Small changes can also
+    go in these releases, but the idea is get the big stuff in early
+    so there is more time to find the bugs and get it working
+    (some will also require new clients or support within the client)
+1.6 -> 1.8: See what is still on the TODO list and other ideas, and decide
+    if they should get in by 2.0 or wait for 3.0
+1.9 -> 2.0: Releases for balancing and finding bugs - no new features,
+    and bug fixes should be well thought out.
 
 Various bits, in no particular order.  This is far from a complete list -
 however it keeps growing as various problems are discovered that
 don't have an easy fix.
 
-Current bugs (As of 0.95.3):
-
-Server can crash when a player with lots of pet monsters enters a map
-without space for them.  I played around a little with this, and it seems
-the server does the right thing in freeing objects it can't place, so there
-must be something a bit more to this.  However, the entire map enter/exit
-and pet move for following players really needs to be redone (maybe 0.96
-or so).
-
 ------------------------------------------------------------------------------
 Future feature requests
 
+- Generalize the code better - split between 'rules' and 'engine'.  The engine
+  would be the aspect of loading/saving objects, dealing with maps, and
+  basic object support (exits, levers, etc - things useful for any working
+  system). The 'rules' would be the more general genre of the game -
+  a science fiction game would have a different set of rules than the
+  fantasy game.  And even the same genre may have a different ruleset
+  (ie, adding new skills).  This is sort of like the current server/common
+  split, but goes a bit more than that - the engine would be able to compile
+  into an executable with the addition of some basic stub functions,
+  but playing as such would really just amount to a ghost moving accross
+  a world which time is pretty much stopped (as monsters would be in the
+  rules side, and not engine).
+- Changing the stat generation system - instead of roll based, give some
+  number of points.  This makes it easier for players to choose what they
+  want to play - otherwise, I think some clients will be written that will
+  do this for the players in any case.
 - Change draw_info so that server tells client what type of message it is
   instead of the color.  Client can then decide what color to draw it
   or other special handling.
@@ -43,7 +52,8 @@ Future feature requests
 - Add flag to make price of objects not affected by charisma or other
   abilities.  This should act like gems do right now (pay 1.03, receive
   0.97).  In this way, gems don't have to be hardcoded, and other items
-  could be similarly set.
+  could be similarly set.  Nuggets should be added to this list - its possible
+  to make small amounts of money alchemy silver and then selling the nuggets.
 - Add/change door handling - make them more real life - they stick around,
   can be opened, closed, different keys for different doors, etc.  This
   sort of mimics the gate behaviour, except keys may need to open them, etc.
@@ -173,6 +183,10 @@ Future feature requests
   Support for services (ie, receive item, give different item, or advice)
   Allow for automated movement (ie, guards could do patrols, etc).  Both
   relative direction and absolute coordinates should be supported.
+- Related to above:  In communication remains the same (keyword matches),
+  highlite the keywords or in some way make them more noticable so players
+  can know to use them.  This is no worse than many commercial games which
+  give you just a few choices to choose from to continue a conversation.
 - Statues turning into golems when activated (like doors).
 - IDEA: Make spells be objects.  One object for each spell you know.  Same
   system for the monsters.  For now let the objects be invisible.
@@ -241,33 +255,3 @@ add a lot to the game (IMO).
 - Ability to have pixmaps set in maps or otherwise be able to load images
   without having to rebuild the default images.
 
-------------------------------------------------------------------------------
- Things that are now client issues:
-
-- Ability to transfer a singular item directly from a container to the
-  floor (definately a client issue)
-- Use X-resources more extensively (colors, etc)
-- made pickup command more intelligent - you should be able to use
-     words or more generic terms for things you want to pickup up.
-- better inventory handling - ability to hide items from normal inventory view,
-  or perhaps allow some user defined settings for showing inventory (maybe
-  via keywords.)
-
- Things that should perhaps be removed - my comments are included.
-
-- make (more) DOCS! (or even keep the present docs up to date) - I think the
-  docs are reasonably good now - at least from a player perspective.  For
-  map designers and progammers, things should be cleaned up some.
-- A flag so that when an object burns it becomes other_arch (random chance?)
-  (is there really much use for this)?
-- Add a ring of warning/ spell of warning, which compares your level
-  with the level of the most high-level monster on the current map. (is this
-  really an accurate test?)
-- Some of the older bullet walls don't work, but new ones are OK.  Need to
-  find a map that has the old ones to track this down. (This may have
-  been fixed on 0.93.1 with the object spellcasting fix)
-- Clean up object structure, so dead objects (walls, floors, etc) don't use
-  as much space (with the amount of memory in systems now days, I wonder how
-  important this is - even if we do manage to reduce space usage to about
-  half it is, that only amounts to a savings of about 1.5 megs if there are
-  10,000 objects in use.)

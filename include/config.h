@@ -730,10 +730,11 @@
  * on how many to define.  If it is too low, maps just get swapped out
  * immediately, causing a performance hit.  If it is too high, the program
  * consumes more memory.  If you have gobs of free memory, a high number
- * might not be a bad idea.  Each object is around 300 bytes right now.
+ * might not be a bad idea.  Each object is around 350 bytes right now.
+ * 25000 is about 8.5 MB
  */
 
-#define MAX_OBJECTS	6000
+#define MAX_OBJECTS	25000
 
 /*
  * Max objects low water mark (lwm).  If defined, the map swapping strategy

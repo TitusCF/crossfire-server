@@ -239,7 +239,7 @@ int cast_spell(object *op,object *caster,int dir,int type,int ability,SpellTypeF
   if (caster->path_denied & s->path) {
     new_draw_info(NDI_UNIQUE, 0,op, "You are unable to cast that spell.");
     if(op->type==PLAYER) op->contr->count_left=0;
-    return RANDOM()%(s->sp)+1;
+    return 0;
   }
   /* If it is an ability, assume that the designer of the archetype knows
    * what they are doing.

@@ -303,12 +303,7 @@ int move_monster(object *op) {
 	strcpy(op->name,enemy->name);
     }
 
-#define NEW_MON_ATTACK
-#ifndef NEW_MON_ATTACK
-    part = get_nearest_part(op,enemy);
-#else
     for (part=op; part!=NULL; part=part->more) {
-#endif
 	dir=find_dir_2(part->x-enemy->x,part->y-enemy->y);
 
 	if(QUERY_FLAG(op, FLAG_SCARED) || QUERY_FLAG(op,FLAG_RUN_AWAY))
@@ -339,10 +334,9 @@ int move_monster(object *op) {
 		if(monster_use_bow(op,part,enemy,dir))
 		    return 0;
 	}
-#ifdef NEW_MON_ATTACK
     }
     part = get_nearest_part(op,enemy);
-#endif
+    dir=find_dir_2(part->x-enemy->x,part->y-enemy->y);
     if ((op->move_type & LO4) && !QUERY_FLAG(op, FLAG_SCARED)) {
 	switch (op->move_type & LO4) {
 	    case DISTATT:
@@ -1017,7 +1011,7 @@ int dist_att (int dir , object *ob, object *enemy, object *part) {
   int dist;
   if (can_hit(part,enemy))
     return dir;
-  dist = distance (ob,enemy);
+  dist = distance (part,enemy);
   if (dist < 10)
     return absdir(dir+4);
   else if (dist>81) {

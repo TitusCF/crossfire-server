@@ -44,9 +44,9 @@ void map_info(object *op) {
   new_draw_info_format(NDI_UNIQUE, 0, op,
 	"Current time is: %02ld:%02ld:%02ld.",
 	  (sec%86400)/3600,(sec%3600)/60,sec%60);
-  new_draw_info(NDI_UNIQUE, 0,op,"Path               Pl PlM IM   TO Dif Pen Reset");
+  new_draw_info(NDI_UNIQUE, 0,op,"Path               Pl PlM IM   TO Dif Reset");
 #else
-  new_draw_info(NDI_UNIQUE, 0,op,"Pl Pl-M IM   TO Dif Pen");
+  new_draw_info(NDI_UNIQUE, 0,op,"Pl Pl-M IM   TO Dif");
 #endif
   for(m=first_map;m!=NULL;m=m->next) {
 #ifndef MAP_RESET
@@ -57,13 +57,13 @@ void map_info(object *op) {
     if (strlen(m->path)<=18) strcpy(map_path, m->path);
     else strcpy(map_path, m->path + strlen(m->path) - 18);
 #ifndef MAP_RESET
-      sprintf(buf,"%-18.18s %2ld %2d   %1ld %4ld %2ld  %2d",
+      sprintf(buf,"%-18.18s %2ld %2d   %1ld %4ld %2ld",
               map_path, m->players,players_on_map(m),m->in_memory,m->timeout,
-              m->difficulty, count_pending(m));
+              m->difficulty);
 #else
-      sprintf(buf,"%-18.18s %2d %2d   %1d %4d %2d  %2d %02ld:%02ld:%02ld",
+      sprintf(buf,"%-18.18s %2d %2d   %1d %4d %2d  %02ld:%02ld:%02ld",
               map_path, m->players,players_on_map(m),
-              m->in_memory,m->timeout,m->difficulty, count_pending(m),
+              m->in_memory,m->timeout,m->difficulty,
               (m->reset_time%86400)/3600,(m->reset_time%3600)/60,
               m->reset_time%60);
 #endif
@@ -184,14 +184,6 @@ void malloc_info(object *op) {
   new_draw_info(NDI_UNIQUE, 0,op,errmsg);
 }
 
-int count_pending(mapstruct *map) {
-  objectlink *obl;
-  int i;
-
-  for(i=0, obl = map->pending; obl != NULL; obl = obl->next)
-    i++;
-  return i;
-}
 
 void current_map_info(object *op) {
     mapstruct *m = op->map;
