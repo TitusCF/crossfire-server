@@ -7,10 +7,9 @@ System requirements:
     If your don't have them, you must download them from crossfire repository
  -> an ODBC library and its developpement header (sql.h, sqlext.h, sqltypes.h)
  -> A database and it's ODBC driver
-    note: At the time i'm writing those line only postgersql is
-          suported within the web interface. But it does not hurt
-          installing the plugin without web interface so it only
-          gather informations about players.
+    note: At the time i'm writing those line only postgersql and
+          MySql are suported within the web interface because php
+          seems to have trouble accessing database using ODBC 
  -> web server
  -> php with libgd support
     (libgd is used to support pictures creation within php)
