@@ -52,6 +52,7 @@ extern int obj_count_in_map ( mapstruct *map, int x, int y );
 extern void put_decor ( mapstruct *map, char **maze, char *decorstyle, int decor_option, RMParms *RP );
 extern void find_in_layout ( int mode, char target, int *fx, int *fy, char **layout, RMParms *RP );
 extern void place_exits ( mapstruct *map, char **maze, char *exitstyle, int orientation, RMParms *RP );
+extern void unblock_exits(mapstruct *map, char **maze, RMParms *RP);
 extern int wall_blocked ( mapstruct *m, int x, int y );
 extern void place_treasure ( mapstruct *map, char **layout, char *treasure_style, int treasureoptions, RMParms *RP );
 extern object * place_chest ( int treasureoptions, int x, int y, mapstruct *map, mapstruct *style_map, int n_treasures, RMParms *RP );

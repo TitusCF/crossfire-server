@@ -208,6 +208,8 @@ void place_exits(mapstruct *map, char **maze,char *exitstyle,int orientation,RMP
         insert_ob_in_map(random_sign,map,NULL);
       }
     }
+    /* Block the exit so things don't get dumped on top of it. */
+    SET_FLAG(the_exit_up,FLAG_NO_PASS);
     insert_ob_in_map(the_exit_up,map,NULL);
     maze[the_exit_up->x][the_exit_up->y]='<';
     /* set the starting x,y for this map */
@@ -270,14 +272,52 @@ void place_exits(mapstruct *map, char **maze,char *exitstyle,int orientation,RMP
         the_exit_back->stats.sp = the_exit_down->y;
         the_exit_back->x = EXIT_X(new_map->map_object);
         the_exit_back->y = EXIT_Y(new_map->map_object);
+
+        /* Block the exit so things don't get dumped on top of it. */
+        SET_FLAG(the_exit_back,FLAG_NO_PASS);
         insert_ob_in_map(the_exit_back,new_map,NULL);
 	set_map_timeout(new_map);   /* So it gets swapped out */
       }
-      else
+      else 
         the_exit_down->slaying = add_string("/!");
+      /* Block the exit so things don't get dumped on top of it. */
+      SET_FLAG(the_exit_down,FLAG_NO_PASS);
       insert_ob_in_map(the_exit_down,map,NULL);
       maze[the_exit_down->x][the_exit_down->y]='>';
     }
   }     
     
 }
+
+
+
+/* this function unblocks the exits.  We blocked them to
+   keep things from being dumped on them during the other
+   phases of random map generation. */
+void unblock_exits(mapstruct *map, char **maze, RMParms *RP) {
+  int i=1,j=1;
+  object *walk;
+  
+  /* clear the down exit */
+  find_in_layout(1,'>',&i,&j,maze,RP);
+  if(i!=-1)  /* found the down exit */
+    for(walk=get_map_ob(map,i,j);walk!=NULL;walk=walk->above) {
+      if(QUERY_FLAG(walk,FLAG_NO_PASS)) {
+        CLEAR_FLAG(walk,FLAG_NO_PASS);
+        update_object(walk);
+      }
+    }
+  
+  
+  /* clear the up exit */
+  find_in_layout(1,'<',&i,&j,maze,RP);
+  if(i!=-1)  /* found the down exit */
+    for(walk=get_map_ob(map,i,j);walk!=NULL;walk=walk->above) {
+      if(QUERY_FLAG(walk,FLAG_NO_PASS)) {
+        CLEAR_FLAG(walk,FLAG_NO_PASS);
+        update_object(walk);
+      }
+    }
+
+}
+

@@ -99,6 +99,7 @@ mapstruct *generate_random_map(char *OutFileName, RMParms *RP) {
   if(RP->generate_treasure_now)
     fix_auto_apply(theMap);
 
+  unblock_exits(theMap,layout,RP);
   /*  fclose(OutFile); */
   /*new_save_map(theMap,1);*/
   return theMap;
