@@ -2854,6 +2854,26 @@ treasure demilich
   arch gem  
   nrof 10
   end
+treasure monk_class_items
+  list basic_skills
+  more
+  arch skill_missile_weapon
+  more
+  arch skill_meditation
+  more
+  arch skill_karate
+  more
+  arch skill_sense_magic
+  more
+  arch robe
+  more
+  arch r_sack
+  more
+  arch sandals
+  arch skill_praying
+  more
+  arch skill_sense_curse
+  end
 treasure monk
   list basic_skills
   more
@@ -2871,6 +2891,15 @@ treasure monk
   more
   arch sandals
   end
+treasure troll_player_items
+  arch troll_player_force
+  end
+treasure gnome_player_items
+  arch skill_praying
+  end
+treasure dwarf_player_items
+  arch skill_smithery
+  end
 treasure dwarf
   list fighter_skills
   more
@@ -2884,6 +2913,9 @@ treasure dwarf
   more
   arch skill_smithery
   end
+treasure half_orc_player_items
+  arch skill_stealing
+  end
 treasure pl_half_orc
   list fighter_skills
   more
@@ -2896,6 +2928,11 @@ treasure pl_half_orc
   arch sack
   more
   arch skill_stealing
+  end
+treasure halfling_player
+  arch skill_stealing
+  more
+  arch skill_hide
   end
 treasure halfling
   list fighter_skills
@@ -2919,6 +2956,24 @@ treasure pl_troll
   more
   arch sack
   end
+treasure elf_player_items
+  arch elf_player_force
+  more
+  arch bow
+    magic 2
+  more
+  arch arrow
+    magic 3
+    nrof 100
+  more
+  arch quiver
+  more
+  arch skill_bowyer
+  more
+  arch skill_woodsman
+  more
+  arch skill_missile_weapon
+  end
 treasure elf
   list fighter_skills
   more
@@ -2936,6 +2991,9 @@ treasure elf
   arch arrow
   nrof 50
   end
+treasure human_player
+  list random_knowledge
+  end
 treasure human
   list fighter_skills
   more
@@ -2950,6 +3008,23 @@ treasure human
   arch sack
   more
   arch cloak
+  end
+treasure ninja_class_items
+  list fighter_skills
+  more
+  arch skill_jumping
+  more
+  arch skill_hide
+  more
+  arch nunchacu_1
+  more
+  arch leather_armour
+  more
+  arch bag
+  more
+  arch cloak
+  more
+  arch skill_karate
   end
 treasure ninja
   list fighter_skills
@@ -2966,6 +3041,36 @@ treasure ninja
   more
   arch cloak
   end
+treasure warrior_class_items
+  list fighter_skills
+  more
+  arch sword
+  more
+  arch chain_mail
+  more
+  arch shield
+  more
+  arch sack
+  end
+treasure paladin_class_items
+  list fighter_skills
+  more
+  arch broadsword
+  more
+  arch plate_mail
+  more
+  arch high_shield
+  more
+  arch full_helmet
+  more
+  arch cleric_book
+  more
+  arch paladin_holy_symbol
+  more
+  arch skill_oratory
+  more
+  arch sack
+  end
 treasure warrior
   list fighter_skills
   more
@@ -2979,6 +3084,106 @@ treasure warrior
   more
   arch sack
   end
+treasure sorcerer_class_items
+  list basic_skills
+  more
+  arch skill_spellcasting
+  more
+  arch book
+  more
+  arch book
+  more
+  arch book
+  more
+  arch skill_sense_magic
+  more
+  arch skill_thaumaturgy
+  more
+  arch sorcerer_hat
+  more
+  arch robe
+  end
+treasure evoker_class_items
+  list basic_skills
+  more
+  arch skill_melee_weapon
+  more
+  arch talisman_evoker
+  more
+  arch robe
+  more
+  arch book
+  more
+  arch book
+  more
+  arch shortsword
+  more
+  arch staff
+  end
+treasure alchemist_class_items
+  list basic_skills
+  more
+  arch skill_melee_weapon
+  more
+  arch talisman_alchemist
+  more
+  arch skill_alchemy
+  more
+  arch skill_thaumaturgy
+  more
+  arch cauldron
+  more
+  arch robe
+  more
+  arch book
+  more
+  arch book
+  more
+  arch dagger
+  end
+treasure summoner_class_items
+  list basic_skills
+  more
+  arch skill_melee_weapon
+  more
+  arch skill_praying
+  more
+  arch talisman_summoner
+  more
+  arch robe
+  more
+  arch book
+  more
+  arch book
+  more
+  arch shortsword
+  end
+treasure wizard_class_items
+  list wizard_skills
+  more
+  arch robe
+  more
+  arch cleric_book
+  more
+  arch book
+  more
+  arch book
+  more
+  arch dagger
+  end
+treasure devotee_class_items
+  list wizard_skills
+  more
+  arch robe
+  more
+  arch cleric_book
+  more
+  arch cleric_book
+  more
+  arch book
+  more
+  arch dagger
+  end
 treasure wizard
   list wizard_skills
   more
@@ -2989,6 +3194,11 @@ treasure wizard
   arch book
   more
   arch dagger
+  end
+treasure wraith_player_items
+  arch wraith_player_force
+  more
+  arch no_class_face_change
   end
 treasure cleric
   list fighter_skills
@@ -3005,6 +3215,35 @@ treasure cleric
   more
   arch small_shield
   end
+treasure barbarian_class_items
+  arch skill_melee_weapon
+  more
+  arch skill_missile_weapon
+  more
+  arch skill_throwing
+  more
+  arch skill_find_traps
+  more
+  arch skill_remove_trap
+  more
+  arch skill_use_magic_item
+  more
+  arch leather_armour
+  more
+  arch mace
+  more
+  arch skill_climbing
+  more
+  arch skill_woodsman
+  more
+  arch horned_helmet
+  more
+  arch sack
+  more
+  arch round_shield
+  more
+  arch high_boots
+  end
 treasure barbarian
   list fighter_skills
   more
@@ -3020,6 +3259,25 @@ treasure barbarian
   more
   arch sack
   end
+treasure priest_class_items
+  list basic_skills
+  more
+  arch skill_praying
+  more
+  arch skill_melee_weapon
+  more
+  arch robe
+  more
+  arch quarterstaff
+  more
+  arch cleric_book
+  more
+  arch cleric_book
+  more
+  arch skill_sense_curse
+  more
+  arch amulet
+  end
 treasure priest
   list wizard_skills
   more
@@ -3032,6 +3290,19 @@ treasure priest
   arch cleric_book
   more
   arch amulet
+  end
+treasure warlock_class_items
+  list fighter_skills
+  more
+  arch talisman
+  more
+  arch light_sword
+  more
+  arch leather_armour
+  more
+  arch book
+  more
+  arch book
   end
 treasure mage
   list fighter_skills
@@ -3046,6 +3317,9 @@ treasure mage
   more
   arch book
   end
+treasure northman_player_items
+  arch bighorned_helmet
+end
 treasure viking
   list fighter_skills
   more
@@ -3058,6 +3332,21 @@ treasure viking
   arch small_shield
   more
   arch bighorned_helmet
+  end
+treasure swashbuckler_class_items
+  list fighter_skills
+  more
+  arch light_sword
+  more
+  arch skill_stealing
+  more
+  arch skill_singing
+  more
+  arch dagger
+  more
+  arch amulet
+  more
+  arch sack
   end
 treasure swashbuckler
   list fighter_skills
@@ -3074,6 +3363,21 @@ treasure swashbuckler
   more
   arch sack
   end
+treasure thief_class_items
+  list fighter_skills
+  more
+  arch cloak
+  more
+  arch shortsword
+  more
+  arch skill_stealing
+  more
+  arch lockpicks
+  more
+  arch sack
+  more
+  arch leather_armour
+  end
 treasure thief
   list fighter_skills
   more
@@ -3088,6 +3392,31 @@ treasure thief
   arch leather_armour
   more
   arch sack
+  end
+treasure fireborn_player_items
+  arch skill_levitate
+  more
+  arch fireborn_player_force
+  more
+  arch skill_flame_touch
+  more
+  arch skill_spellcasting
+  more
+  arch skill_praying
+  more
+  arch no_class_face_change
+  more
+  arch ring
+  magic 5
+  more
+  arch power_crystal
+  more
+  arch amulet
+  magic 3
+  more
+  arch book
+  more
+  arch cleric_book
   end
 treasure fireborn
   arch skill_levitate
@@ -3117,6 +3446,17 @@ treasure fireborn
   arch book
   more
   arch book
+  end
+treasure quetzalcoatl_player_items
+  arch skill_levitate
+  more
+  arch skill_clawing
+  more
+  arch ability_fire
+  more
+  arch no_class_face_change
+  more
+  arch skill_spellcasting
   end
 treasure quetzalcoatl
   arch skill_levitate
