@@ -325,7 +325,7 @@ static void pick_up_object (object *pl, object *op, object *tmp, int nrof)
 	}
     }
     if(QUERY_FLAG(tmp, FLAG_UNPAID))
-	(void) sprintf(buf,"The %s will cost you %s.", query_name(tmp),
+	(void) sprintf(buf,"%s will cost you %s.", query_name(tmp),
 		query_cost_string(tmp,pl,F_BUY));
     else
 	(void) sprintf(buf,"You pick up the %s.", query_name(tmp));
@@ -1142,7 +1142,7 @@ void examine(object *op, object *tmp) {
 
     if(tmp->value&&!QUERY_FLAG(tmp, FLAG_STARTEQUIP)) {
 	if(QUERY_FLAG(tmp, FLAG_UNPAID))
-	    sprintf(buf,"The %s would cost you %s.",
+	    sprintf(buf,"%s would cost you %s.",
 		    tmp->nrof>1?"They":"It",query_cost_string(tmp,op,F_BUY));
 	else
 	    sprintf(buf,"You would get %s for the %s.",
