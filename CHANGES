@@ -15,6 +15,11 @@ changes' is much more useful than 'misc edits' or 'code cleanup'.
 small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
+PeterM:  2000/11/17
+define.h spells.h spellist.h spell_util.c spell_effect.c:
+  windstorm spell implemented.
+attack.c:  saving throw behavior modified.  Items take a bit
+of DAM to destroy now instead of being destroyed with 1hp attacks.
 
 MSW: 2000/11/16:
 socket/metaserver.c: Add #ifdef MSG_DONTWAIT into metaserver.c for systems 
