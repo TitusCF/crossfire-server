@@ -131,7 +131,7 @@ int write_rune(object *op,int dir,int inspell,int level,char *runename) {
 	level=0;
 	tmp=get_archetype("rune_mark"); /* this is a rune of marking */
 	at=NULL;
-	tmp->msg = add_string((runename?runename:"There is no message"));
+	tmp->msg = add_string((runename?runename:"There is no message\n"));
       }
     if(at) tmp=get_archetype(runename);
     tmp->stats.Cha = op->level/2;  /* the invisibility parameter */
@@ -140,8 +140,7 @@ int write_rune(object *op,int dir,int inspell,int level,char *runename) {
     tmp->map = op->map;
     tmp->direction=dir;  /* where any spell will go upon detonation */
     tmp->level=SK_level(op);  /* what level to cast the spell at */
-    /*if(inspell||tmp->stats.dam) set_owner(tmp,op);*/ /* runes without need no owner */
-    set_owner(tmp,op);
+    if(inspell||tmp->stats.dam) set_owner(tmp,op); /* runes without need no owner */
     insert_ob_in_map(tmp,op->map,op);
     return 1;
 
