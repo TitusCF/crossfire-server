@@ -147,18 +147,20 @@ int command_tell (object *op, char *params)
 
     snprintf(buf,MAX_BUF-1, "%s tells you: %s",op->name, msg);
 
-    for(pl=first_player;pl!=NULL;pl=pl->next)
-	if(strncasecmp(pl->ob->name,name,MAX_NAME)==0) {
+    pl = find_player_partial_name( name );
 
+    if ( pl )
+        {
 	    new_draw_info(NDI_UNIQUE | NDI_ORANGE, 0, pl->ob, buf);
 	    new_draw_info_format(NDI_UNIQUE | NDI_ORANGE, 0, op, 
-			     "You tell %s: %s", name, msg);
+			     "You tell %s: %s", pl->ob->name, msg);
 
 	    /* Update last_tell value [mids 01/14/2002] */
 	    strcpy(pl->last_tell, op->name);
 	    return 1;
-	}
-    new_draw_info(NDI_UNIQUE, 0,op,"No such player.");
+        }
+
+    new_draw_info(NDI_UNIQUE, 0,op,"No such player or ambiguous name.");
     return 1;
 }
 

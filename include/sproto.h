@@ -474,6 +474,7 @@ object *choose_cult_monster(object *pl, object *god, int summon_level);
 int summon_object(object *op, object *caster, object *spell_ob, int dir);
 /* player.c */
 player *find_player(char *plname);
+player* find_player_partial_name( char* plname );
 void display_motd(object *op);
 int playername_ok(char *cp);
 int add_player(NewSocket *ns);
@@ -587,6 +588,8 @@ CFParm *CFWCommunicate(CFParm *PParm);
 CFParm *CFWFindBestObjectMatch(CFParm *PParm);
 CFParm *CFWApplyBelow(CFParm *PParm);
 CFParm *CFWFreeObject(CFParm *PParm);
+CFParm *CFWFreeMemory(CFParm *PParm);
+CFParm *CFWFixPlayer(CFParm *PParm);
 CFParm *CFWObjectCreateClone(CFParm *PParm);
 CFParm *CFWSetVariable(CFParm *PParm);
 CFParm *CFWDecreaseObjectNR(CFParm *PParm);

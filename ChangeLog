@@ -17,6 +17,25 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+common/living.c: Win32 compilation fix (levels is sint64, not uint64)
+include/plugin.h: new hooks for free & fix_player. Required for Win32.
+include/plugproto.h: new prototypes for CFWFreeMemory and CFWFixPlayer,
+   wrappers for free( ) and fix_player( ). Required for Win32.
+include/sproto.h: added prototypes for new plugin hooks and improved tell
+   command helper.
+plugin/plugin_python.c: wrap calls to fix_player, free and free_object
+   with plugin ones when memory allocated by CF's main exe. Required for
+   Win32 to work correctly.
+server/c_chat.c: improved 'tell' command to accept first letters of player
+   name only, case-insensitive. If 2+ players match, returns with a failure
+   message.
+server/player.c: new function find_player_partial_name. Returns player whose
+   beginning of name matches specified string, NULL if more than one matches.
+   Fix move_player to check specified direction's validity.
+server/plugins.c: added wrappers for free( ) and fix_player( ). Required for
+   Win32 compatibility.
+Ryo 2003-11-07
+
 common/treasure.c, doc/Developers/spells: Fix generation of rods so they have
    enough charges to cast the spells.  Update documentation on what maxhp for
    the archetype of rods means.

@@ -51,6 +51,27 @@ player *find_player(char *plname)
   return NULL;
 }
 
+player* find_player_partial_name( char* plname )
+    {
+    player* pl;
+    player* found = NULL;
+    size_t namelen = strlen( plname );
+    for ( pl = first_player; pl != NULL; pl = pl->next )
+        {
+        if ( strlen( pl->ob->name ) < namelen )
+            continue;
+
+        if ( !strncasecmp( pl->ob->name, plname, namelen ) )
+            {
+            if ( found )
+                return NULL;
+
+            found = pl;
+            }
+        }
+    return found;
+    }
+
 void display_motd(object *op) {
     char buf[MAX_BUF];
     FILE *fp;
@@ -1990,6 +2011,13 @@ int move_player(object *op,int dir) {
 
     if(op->map == NULL || op->map->in_memory != MAP_IN_MEMORY)
 	return 0;
+
+    /* Sanity check: make sure dir is valid */
+    if ( ( dir < 0 ) || ( dir >= 9 ) )
+        {
+        LOG( llevError, "move_player: invalid direction %d\n", dir);
+        return 0;
+        }
 
     /* peterm:  added following line */
     if(QUERY_FLAG(op,FLAG_CONFUSED) && dir)

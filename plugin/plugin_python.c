@@ -45,6 +45,35 @@
 #define MODULEAPI
 #endif
 
+/****************************************/
+/* Utility functions                    */
+/* Mostly added for Win32 compatibility */
+/****************************************/
+
+/* wrapper for free_object */
+static void PyFreeObject( object* ob )
+    {
+    CFParm lCFR;
+    lCFR.Value[ 0 ] = ob;
+    PlugHooks[ HOOK_FREEOBJECT ]( &lCFR );
+    }
+
+/* wrapper for free */
+static void PyFreeMemory( CFParm* CFR )
+    {
+    CFParm lCFR;
+    lCFR.Value[ 0 ] = CFR;
+    PlugHooks[ HOOK_FREEMEMORY ]( &lCFR );
+    }
+
+/* wrapper for fix_player */
+static void PyFixPlayer( object* pl )
+    {
+    CFParm lCFR;
+    lCFR.Value[ 0 ] = pl;
+    PlugHooks[ HOOK_FIXPLAYER ]( &lCFR );
+    }
+
 /*****************************************************************************/
 /* And now the big part - The implementation of CFPython functions in C.     */
 /* All comments for those functions have the following entries:              */
@@ -2209,7 +2238,7 @@ static PyObject* CFSetSkillExperience(PyObject* self, PyObject* args)
     long whoptr;
     int skill, value2;
     uint64 value;
-    int currentxp;
+    uint64 currentxp;
 
     if (!PyArg_ParseTuple(args,"lil",&whoptr,&skill,&value))
         return NULL;
@@ -2417,7 +2446,7 @@ static PyObject* CFCastAbility(PyObject* self, PyObject* args)
     GCFP.Value[6] = (void *)(op);
     GCFP.Value[7] = (void *)(&typeoffire);
     CFR = (PlugHooks[HOOK_CASTSPELL])(&GCFP);
-    free(CFR);
+    PyFreeMemory( CFR );
     Py_INCREF(Py_None);
 #endif 
     return Py_None;
@@ -2523,7 +2552,7 @@ static PyObject* CFGetGod(PyObject* self, PyObject* args)
     GCFP.Value[0] = (void *)(WHO);
     CFR = (PlugHooks[HOOK_DETERMINEGOD])(&GCFP);
     value = (char *)(CFR->Value[0]);
-    free(CFR);
+    PyFreeMemory( CFR );
     return Py_BuildValue("s",value);
 };
 
@@ -2555,14 +2584,14 @@ static PyObject* CFSetGod(PyObject* self, PyObject* args)
     GCFP0.Value[0] = (char *)(txt);
     CFR0 = (PlugHooks[HOOK_FINDGOD])(&GCFP0);
     tmp = (object *)(CFR0->Value[0]);
-    free(CFR0);
+    PyFreeMemory( CFR0 );
     GCFP2.Value[1] = (void *)(tmp);
 
     CFR = (PlugHooks[HOOK_CMDRSKILL])(&GCFP1);
     value = *(int *)(CFR->Value[0]);
     if (value)
         (PlugHooks[HOOK_BECOMEFOLLOWER])(&GCFP2);
-    free(CFR);
+    PyFreeMemory( CFR );
     free_string(prayname);
     Py_INCREF(Py_None);
     return Py_None;
@@ -2626,7 +2655,7 @@ static PyObject* CFReadyMap(PyObject* self, PyObject* args)
     CFR = (PlugHooks[HOOK_READYMAPNAME])(&GCFP);
     mymap = (mapstruct *)(CFR->Value[0]);
     printf( "Map file is %s\n",mymap->path);
-    free(CFR);
+    PyFreeMemory( CFR );
     return Py_BuildValue("l",(long)(mymap));
 };
 
@@ -2664,7 +2693,7 @@ static PyObject* CFTeleport(PyObject* self, PyObject* args)
         GCFP.Value[2] = NULL;
         GCFP.Value[3] = (void *)(&val);
         /*insert_ob_in_map(WHO,(mapstruct *)(where),NULL,0); */
-        free((PlugHooks[HOOK_INSERTOBJECTINMAP])(&GCFP));
+        PyFreeMemory( (PlugHooks[HOOK_INSERTOBJECTINMAP])(&GCFP) );
     };
 
     Py_INCREF(Py_None);
@@ -2857,7 +2886,7 @@ static PyObject* CFGetFirstObjectOnSquare(PyObject* self, PyObject* args)
     CFR = (PlugHooks[HOOK_GETMAPOBJECT])(&GCFP);
     val = (object *)(CFR->Value[0]);
     printf( "First object is known by %s\n",query_name(val));
-    free(CFR);
+    PyFreeMemory( CFR );
     return Py_BuildValue("l",(long)(val));
 };
 
@@ -2966,7 +2995,7 @@ static PyObject* CFFindPlayer(PyObject* self, PyObject* args)
     GCFP.Value[0] = (void *)(txt);
     CFR = (PlugHooks[HOOK_FINDPLAYER])(&GCFP);
     foundpl = (player *)(CFR->Value[0]);
-    free(CFR);
+    PyFreeMemory( CFR );
 
     if (foundpl!=NULL)
         foundob = foundpl->ob;
@@ -2997,7 +3026,7 @@ static PyObject* CFApply(PyObject* self, PyObject* args)
     GCFP.Value[2] = (void *)(&flags);
     CFR = (PlugHooks[HOOK_MANUALAPPLY])(&GCFP);
     retval = *(int *)(CFR->Value[0]);
-    free(CFR);
+    PyFreeMemory( CFR );
     return Py_BuildValue("i",retval);
 };
 
@@ -3020,7 +3049,7 @@ static PyObject* CFDrop(PyObject* self, PyObject* args)
     GCFP.Value[1] = (void *)(name);
     CFR = (PlugHooks[HOOK_CMDDROP])(&GCFP);
 /*    command_drop(WHO,name); */
-    free(CFR);
+    PyFreeMemory( CFR );
     Py_INCREF(Py_None);
     return Py_None;
 };
@@ -3044,7 +3073,7 @@ static PyObject* CFTake(PyObject* self, PyObject* args)
     GCFP.Value[1] = (void *)(name);
     CFR = (PlugHooks[HOOK_CMDTAKE])(&GCFP);
     /* command_take(WHO,name); */
-    free(CFR);
+    PyFreeMemory( CFR );
     Py_INCREF(Py_None);
     return Py_None;
 };
@@ -3638,7 +3667,7 @@ static PyObject* CFSetFace(PyObject* self, PyObject* args)
     GCFP.Value[0] = (void *)(txt);
     CFR = (PlugHooks[HOOK_FINDANIMATION])(&GCFP);
     WHO->animation_id = *(int *)(CFR->Value[0]);
-    free(CFR);
+    PyFreeMemory( CFR );
 
     GCFP.Value[0] = (void *)(WHO);
     GCFP.Value[1] = (void *)(&val);
@@ -3805,7 +3834,7 @@ static PyObject* CFKillObject(PyObject* self, PyObject* args)
         GCFP.Value[3] = (void *)(&ktype);
 
         CFR = (PlugHooks[HOOK_KILLOBJECT])(&GCFP);
-        free(CFR);
+        PyFreeMemory( CFR );
         /*kill_object(killed,1,killer, type); */
     };
 
@@ -3986,7 +4015,7 @@ static PyObject* CFCastSpell(PyObject* self, PyObject* args)
     /*cast_spell(WHO, WHO, dir, spell, */
     /*    1,spellNormal, op); */
 
-    free(CFR);
+    PyFreeMemory( CFR );
     Py_INCREF(Py_None);
     return Py_None;
 };
@@ -4056,7 +4085,7 @@ static PyObject* CFDoKnowSpell(PyObject* self, PyObject* args)
     GCFP.Value[1] = (void *)(spell);
     CFR = (PlugHooks[HOOK_CHECKFORSPELL])(&GCFP);
     ob = (object *)(CFR->Value[0]);
-    free(CFR);
+    PyFreeMemory( CFR );
     return Py_BuildValue("l",(long)ob);
 };
 
@@ -4111,8 +4140,8 @@ static PyObject* CFCreatePlayerForce(PyObject* self, PyObject* args)
     
     /*myob = get_archetype("player_force"); */
     myob = (object *)(CFR->Value[0]);
-    free(CFR);
-    
+    PyFreeMemory( CFR );    
+
     if(!myob)
     {
         printf("Python WARNING:: CreatePlayerForce: Can't find archtype 'player_force'\n");
@@ -4158,7 +4187,7 @@ static PyObject* CFCreatePlayerInfo(PyObject* self, PyObject* args)
     
     /*myob = get_archetype("player_info"); */
     myob = (object *)(CFR->Value[0]);
-    free(CFR);
+    PyFreeMemory( CFR );
     
     
     if(!myob)
@@ -4267,7 +4296,7 @@ static PyObject* CFCreateInvisibleInside(PyObject* self, PyObject* args)
 
     /*myob = get_archetype("force"); */
     myob = (object *)(CFR->Value[0]);
-    free(CFR);
+    PyFreeMemory( CFR );
 
     if(!myob)
     {
@@ -4314,14 +4343,15 @@ static PyObject* CFCreateObjectInside(PyObject* self, PyObject* args)
     GCFP.Value[0] = (void *)(txt);
     CFR = (PlugHooks[HOOK_GETARCHBYOBJNAME])(&GCFP);
     myob = (object *)(CFR->Value[0]);
-    free(CFR);
+    PyFreeMemory( CFR );
 
     if (!strncmp(query_name(myob), "singluarity",11))
     {
-        free_object(myob);
+        PyFreeObject( myob );
+        GCFP.Value[0] = (void *)(txt);
         CFR = (PlugHooks[HOOK_GETARCHETYPE])(&GCFP);
         myob = (object *)(CFR->Value[0]);
-        free(CFR);
+        PyFreeMemory( CFR );
     }
     else
     {
@@ -4341,7 +4371,7 @@ static PyObject* CFCreateObjectInside(PyObject* self, PyObject* args)
                     /*test = create_artifact(myob,tmpname); */
                     CFR = (PlugHooks[HOOK_CREATEARTIFACT])(&GCFP);
                     test = (object *)(CFR->Value[0]);
-                    free(CFR);
+                    PyFreeMemory( CFR );
                 }
                 else
                 {
@@ -4571,16 +4601,16 @@ static PyObject* CFCreateObject(PyObject* self, PyObject* args)
     GCFP.Value[0] = (void *)(txt);
     CFR = (PlugHooks[HOOK_GETARCHBYOBJNAME])(&GCFP);
     myob = (object *)(CFR->Value[0]);
-    free(CFR);
+    PyFreeMemory( CFR );
 
     if (!strncmp(query_name(myob), "singluarity",11))
     {
-        free_object(myob);
+        PyFreeObject( myob );
         /*myob = get_archetype(txt); */
         GCFP.Value[0] = (void *)(txt);
         CFR = (PlugHooks[HOOK_GETARCHETYPE])(&GCFP);
         myob = (object *)(CFR->Value[0]);
-        free(CFR);
+        PyFreeMemory( CFR );
     }
     else
     {
@@ -4600,7 +4630,7 @@ static PyObject* CFCreateObject(PyObject* self, PyObject* args)
                     CFR = (PlugHooks[HOOK_CREATEARTIFACT])(&GCFP);
                     /*test = create_artifact(myob,tmpname); */
                     test = (object *)(CFR->Value[0]);
-                    free(CFR);
+                    PyFreeMemory( CFR );
                 }
                 else
                 {
@@ -4619,7 +4649,7 @@ static PyObject* CFCreateObject(PyObject* self, PyObject* args)
     /*myob = insert_ob_in_map(myob, map ,NULL,0); */
     CFR = (PlugHooks[HOOK_INSERTOBJECTINMAP])(&GCFP);
     myob = (object *)(CFR->Value[0]);
-    free(CFR);
+    PyFreeMemory( CFR );
     return Py_BuildValue("l",(long)(myob));
 };
 
@@ -4631,7 +4661,7 @@ static PyObject* CFCreateObject(PyObject* self, PyObject* args)
 
 static PyObject* CFRemoveObject(PyObject* self, PyObject* args)
 {
-    long whoptr;
+    void* whoptr;
     object* myob;
 
     if (!PyArg_ParseTuple(args,"l",&whoptr))
@@ -4650,7 +4680,7 @@ static PyObject* CFRemoveObject(PyObject* self, PyObject* args)
 /*    esrv_send_inventory(guile_current_activator[guile_stack_position], */
 /*guile_current_activator[guile_stack_position]); */
     };
-    free_object(myob);
+    PyFreeObject( whoptr );
     Py_INCREF(Py_None);
     return Py_None;
 };
@@ -5619,7 +5649,6 @@ static PyObject* CFSetPosition(PyObject* self, PyObject* args)
 {
     int x, y, k;
     long whoptr;
-    CFParm* CFR;
     k = 0;
 
     if (!PyArg_ParseTuple(args,"l(ii)",&whoptr,&x,&y))
@@ -5635,7 +5664,6 @@ static PyObject* CFSetPosition(PyObject* self, PyObject* args)
 
 /*  transfer_ob(WHO, gh_scm2int(X), gh_scm2int(Y), 0, NULL); */
 
-    free(&CFR);
     Py_INCREF(Py_None);
     return Py_None;
 };
@@ -5661,7 +5689,7 @@ static PyObject* CFSetNickname(PyObject* self, PyObject* args)
         GCFP.Value[0] = (void *)(WHO);
         GCFP.Value[1] = (void *)(newnick);
         CFR = (PlugHooks[HOOK_CMDTITLE])(&GCFP);
-        free(CFR);
+        PyFreeMemory( CFR );
     }
     else
     {
@@ -6262,7 +6290,7 @@ static PyObject* CFLoadObject(PyObject* self, PyObject* args)
     GCFP.Value[0] = (void *)(dumpob);
     CFR = (PlugHooks[HOOK_LOADOBJECT])(&GCFP);
     whoptr = (object *)(CFR->Value[0]);
-    free(CFR);
+    PyFreeMemory( CFR );
 
     return Py_BuildValue("l",(long)(whoptr));
 };
@@ -6284,7 +6312,7 @@ static PyObject* CFSaveObject(PyObject* self, PyObject* args)
     GCFP.Value[0] = (void *)(WHO);
     CFR = (PlugHooks[HOOK_DUMPOBJECT])(&GCFP);
     result = (char *)(CFR->Value[0]);
-    free(CFR);
+    PyFreeMemory( CFR );
 
     return Py_BuildValue("s",result);
 };
@@ -6450,7 +6478,7 @@ static PyObject* CFGetObjectCost(PyObject* self, PyObject* args)
     GCFP.Value[2] = (void *)(&flag);
     CFR = (PlugHooks[HOOK_QUERYCOST])(&GCFP);
     cost=*(int*)(CFR->Value[0]);
-    free (CFR);
+    PyFreeMemory( CFR );
     return Py_BuildValue("i",cost);
 };
 
@@ -6471,7 +6499,7 @@ static PyObject* CFGetObjectMoney(PyObject* self, PyObject* args)
     GCFP.Value[0] = (void *)(WHO);
     CFR = (PlugHooks[HOOK_QUERYMONEY])(&GCFP);
     amount=*(int*)(CFR->Value[0]);
-    free (CFR);
+    PyFreeMemory( CFR );
     return Py_BuildValue("i",amount);
 };
 
@@ -6494,7 +6522,7 @@ static PyObject* CFPayForItem(PyObject* self, PyObject* args)
     GCFP.Value[1] = (void *)(WHO);
     CFR = (PlugHooks[HOOK_PAYFORITEM])(&GCFP);
     val=*(int*)(CFR->Value[0]);
-    free (CFR);
+    PyFreeMemory( CFR );
     return Py_BuildValue("i",val);
 };
 
@@ -6517,7 +6545,7 @@ static PyObject* CFPayAmount(PyObject* self, PyObject* args)
     GCFP.Value[1] = (void *)(WHO);
     CFR = (PlugHooks[HOOK_PAYFORAMOUNT])(&GCFP);
     val=*(int*)(CFR->Value[0]);
-    free (CFR);
+    PyFreeMemory( CFR );
     return Py_BuildValue("i",val);
 };
 
@@ -6626,7 +6654,7 @@ static PyObject* CFDecreaseObjectNR(PyObject* self, PyObject* args)
     GCFP.Value[1] = (void *)(val);
     CFR = (PlugHooks[HOOK_DECREASEOBJECTNR])(&GCFP);
     retptr=*(long*)(CFR->Value[0]);
-    free (CFR);
+    PyFreeMemory( CFR );
     return Py_BuildValue("l",retptr);
 }
 
@@ -6929,15 +6957,15 @@ MODULEAPI int HandleEvent(CFParm* PParm)
     if (StackParm4[StackPosition] == SCRIPT_FIX_ALL)
     {
         if (StackOther[StackPosition] != NULL)
-            fix_player(StackOther[StackPosition]);
+            PyFixPlayer(StackOther[StackPosition]);
         if (StackWho[StackPosition] != NULL)
-            fix_player(StackWho[StackPosition]);
+            PyFixPlayer(StackWho[StackPosition]);
         if (StackActivator[StackPosition] != NULL)
-            fix_player(StackActivator[StackPosition]);
+            PyFixPlayer(StackActivator[StackPosition]);
     }
     else if (StackParm4[StackPosition] == SCRIPT_FIX_ACTIVATOR)
     {
-        fix_player(StackActivator[StackPosition]);
+        PyFixPlayer(StackActivator[StackPosition]);
     };
     StackPosition--;
     return StackReturn[StackPosition];
