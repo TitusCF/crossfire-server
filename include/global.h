@@ -281,6 +281,7 @@ typedef struct Settings {
     uint8   daemonmode;     /* If true, detach and become daemon */
     int	    argc;	    /* parameters that were passed to the program */
     char    **argv;	    /* Only used by xio.c, so will go away at some time */
+    char    *confdir;	    /* configuration files */
     char    *datadir;	    /* read only data files */
     char    *localdir;	    /* read/write data files */
     char    *playerdir;	    /* Where the player files are */

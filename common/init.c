@@ -48,6 +48,7 @@ CSPORT,				/* Client/server port */
 0, NULL, 0,    /* dumpvalues, dumparg, daemonmode */
 0, /* argc */
 NULL, /* argv */
+CONFDIR,
 DATADIR, 
 LOCALDIR,
 PLAYERDIR, MAPDIR, ARCHETYPES,TREASURES, 

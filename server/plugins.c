@@ -134,7 +134,7 @@ void initPlugins(void)
     char buf2[MAX_BUF];
 
     LOG(llevInfo,"Now initializing plugins\n");
-    strcpy(buf,DATADIR);
+    strcpy(buf,LIBDIR);
     strcat(buf,"/plugins/");
     LOG(llevInfo,"Plugins directory is %s\n",buf);
 
@@ -433,12 +433,12 @@ extern int alphasort( struct dirent **a, struct dirent **b);
 void initPlugins(void)
 {
         struct dirent **namelist=NULL;
-        int n;
+        int n,l;
         char buf[MAX_BUF];
         char buf2[MAX_BUF];
 
         LOG(llevInfo,"Initializing plugins :\n");
-        strcpy(buf,DATADIR);
+        strcpy(buf,LIBDIR);
         strcat(buf,"/plugins/");
         n = scandir(buf, &namelist, 0, alphasort);
         if (n < 0)
@@ -446,9 +446,10 @@ void initPlugins(void)
         else
             while(n--)
             {
-                if (strcmp(namelist[n]->d_name,".."))
-                {
-                    if (strcmp(namelist[n]->d_name,"."))
+		l=strlen(namelist[n]->d_name);
+		if (l>strlen(PLUGIN_SUFFIX))
+		{
+		    if (!strcmp(namelist[n]->d_name+l-strlen(PLUGIN_SUFFIX),PLUGIN_SUFFIX))
                     {
                         strcpy(buf2,buf);
                         strcat(buf2,namelist[n]->d_name);

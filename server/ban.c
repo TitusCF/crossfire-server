@@ -34,7 +34,7 @@ int checkbanned(char *login, char *host)
   int           num1;
   int   Hits=0;                 /* Hits==2 means we're banned */
 
-  sprintf (buf, "%s/%s", settings.datadir, BANFILE);
+  sprintf (buf, "%s/%s", settings.confdir, BANFILE);
   if ((bannedfile = fopen(buf, "r")) == NULL) {
     LOG (llevDebug, "Could not find file Banned file.\n");
     return(0);

@@ -929,7 +929,7 @@ static int checkdm(object *op, char *pl_name, char *pl_passwd, char *pl_host)
   *pl_name=op->name?op->name:"*";
 #endif
 
-  sprintf (buf, "%s/%s", settings.datadir, DMFILE);
+  sprintf (buf, "%s/%s", settings.confdir, DMFILE);
   if ((dmfile = fopen(buf, "r")) == NULL) {
     LOG (llevDebug, "Could not find DM file.\n");
     return(0);
@@ -1046,7 +1046,7 @@ int command_loadplugin(object *op, char *params)
 {
     char buf[MAX_BUF];
 
-    strcpy(buf,DATADIR);
+    strcpy(buf,LIBDIR);
     strcat(buf,"/plugins/");
     strcat(buf,params);
     printf("Requested plugin file is %s\n", buf);

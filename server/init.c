@@ -54,6 +54,7 @@ void set_dumpmon9() {settings.dumpvalues=9; }
 void set_dumpmont(char *name) {settings.dumpvalues=10; settings.dumparg=name; }
 void set_daemon() {settings.daemonmode=1; }
 void set_datadir(char *path) { settings.datadir=path; }
+void set_confdir(char *path) { settings.confdir=path; }
 void set_localdir(char *path) { settings.localdir=path; }
 void set_mapdir(char *path) { settings.mapdir=path; }
 void set_archetypes(char *path) { settings.archetypes=path; }
@@ -125,6 +126,7 @@ struct Command_Line_Options options[] = {
 {"-mon", 0, 1, set_mondebug},
 #ifndef SECURE
 {"-data",1,1, set_datadir},
+{"-conf",1,1, set_confdir},
 {"-local",1,1, set_localdir},
 {"-maps", 1, 1, set_mapdir},
 {"-arch", 1, 1, set_archetypes},
@@ -225,7 +227,7 @@ static void load_settings()
     int	has_val,comp;
     FILE    *fp;
 
-    sprintf(buf,"%s/settings",settings.datadir);
+    sprintf(buf,"%s/settings",settings.confdir);
     /* We don't require a settings file at current time, but down the road,
      * there will probably be so many values that not having a settings file
      * will not be a good thing.
@@ -504,7 +506,7 @@ void init_startup() {
   int comp;
 
 #ifdef SHUTDOWN_FILE
-  sprintf(buf,"%s/%s",settings.datadir,SHUTDOWN_FILE);
+  sprintf(buf,"%s/%s",settings.confdir,SHUTDOWN_FILE);
   if ((fp = open_and_uncompress(buf, 0, &comp)) != NULL) {
     while (fgets(buf, MAX_BUF-1, fp) != NULL)
       printf("%s", buf);
@@ -558,15 +560,15 @@ void compile_info() {
   printf("Datadir:\t\t%s\n",settings.datadir);
   printf("Localdir:\t\t%s\n",settings.localdir);
 #ifdef PERM_FILE
-  printf("Perm file:\t<LIB>/%s\n",PERM_FILE);
+  printf("Perm file:\t<ETC>/%s\n",PERM_FILE);
 #endif
 #ifdef SHUTDOWN_FILE
-  printf("Shutdown file:\t<LIB>/%s\n",SHUTDOWN_FILE);
+  printf("Shutdown file:\t<ETC>/%s\n",SHUTDOWN_FILE);
 #endif
   printf("Save player:\t<true>\n");
   printf("Save mode:\t%4.4o\n",SAVE_MODE);
-  printf("Playerdir:\t<LIB>/%s\n",settings.playerdir);
-  printf("Itemsdir:\t<LIB>/%s\n", settings.uniquedir);
+  printf("Playerdir:\t<VAR>/%s\n",settings.playerdir);
+  printf("Itemsdir:\t<VAR>/%s\n", settings.uniquedir);
 #ifdef USE_CHECKSUM
   printf("Use checksum:\t<true>\n");
 #else

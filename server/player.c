@@ -57,7 +57,7 @@ void display_motd(object *op) {
   FILE *fp;
   int comp;
 
-  sprintf(buf,"%s/%s",settings.datadir,MOTD);
+  sprintf(buf,"%s/%s",settings.confdir,MOTD);
   if((fp=open_and_uncompress(buf,0,&comp))==NULL) {
     return;
   }

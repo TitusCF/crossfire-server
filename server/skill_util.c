@@ -555,7 +555,7 @@ void read_skill_params () {
   int cat,bexp,time,stat1,stat2,stat3,skillindex;
   float lexp;
  
-  sprintf(fname,"%s/%s",settings.datadir,"skill_params");
+  sprintf(fname,"%s/%s",settings.confdir,"skill_params");
   LOG(llevDebug,"Reading skill_params from %s...",fname);
   if(! (skill_params=fopen(fname,"r")))
     {

@@ -1,4 +1,4 @@
-#!@PERL@
+#!/usr/bin/perl
 $crossname = "/madhatter/bin/crossfire";
 $playerdir = "/madhatter/lib/X11/crossfire/players";
 $logcount = 0;

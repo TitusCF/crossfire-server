@@ -27,7 +27,7 @@ BEGIN {
 	}
 	close(crosscmd);
 	for(i=1;i<=god;i++) {
-	  printf("<table border=1 cellpadding=3 width=100%><tr><th width=20%>%s</th><td>%s</td></tr>\n", name[i], capitalize(desc[i]));
+	  printf("<table border=1 cellpadding=3 width=100%%><tr><th width=20%%>%s</th><td>%s</td></tr>\n", name[i], capitalize(desc[i]));
 	  if(enemy[i]) 		printf("<tr><td>Enemy cult:</td><td>%s</td></tr>\n", enemy[i]);
 	  # if(servant[i])	printf("<tr><td>Servant:</td><td>%s</td></tr>\n ", servant[i]);
 	  if(aligned[i]) 	prt_var("<tr><td>Aligned race(s):",aligned[i],",",3);

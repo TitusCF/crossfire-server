@@ -1053,7 +1053,7 @@ int forbid_play()
     clock = time (NULL);
     tm = (struct tm *) localtime (&clock);
 
-    sprintf (buf, "%s/%s", settings.datadir, PERM_FILE);
+    sprintf (buf, "%s/%s", settings.confdir, PERM_FILE);
     if ((fp = open_and_uncompress(buf, 0, &comp)) == NULL)
 	return 0;
 

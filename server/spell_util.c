@@ -2364,7 +2364,7 @@ void init_spell_param()
   int spellindex;
   int spl;  /*  the spellpoint level dependency */
 
-  sprintf(fname,"%s/spell_params",settings.datadir);
+  sprintf(fname,"%s/spell_params",settings.confdir);
   if(! (spell_params=fopen(fname,"r")))
     {
 	perror(fname);

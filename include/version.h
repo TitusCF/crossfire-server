@@ -26,8 +26,11 @@
     The authors can be reached via e-mail at crossfire-devel@real-time.com
 */
 
+/* This file is not needed any more. Version is set by autoconf/automake */
+#if 0
 #ifdef MAKE
 #define Version "1.3.0"
 #else
 #define VERSION "1.3.0"
+#endif
 #endif

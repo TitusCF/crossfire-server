@@ -756,7 +756,7 @@
  * If you want to have a Message Of The Day file, define MOTD to be
  * the file with the message.  If the file doesn't exist or if it
  * is empty, no message will be displayed.
- * (It resides in the LIBDIR directory)
+ * (It resides in the CONFDIR directory)
  */
 
 #ifndef MOTD
@@ -765,7 +765,7 @@
 
 /*
  * You can restrict playing in certain times by creating a PERMIT_FILE
- * in LIBDIR. See teh sample for usabe notes.
+ * in CONFDIR. See the sample for usage notes.
  */
 
 #define PERM_FILE "forbid"
@@ -774,7 +774,7 @@
  * If you want to take the game down while installing new versions, or
  * for other reasons, put a message into the SHUTDOWN_FILE file.
  * Remember to delete it when you open the game again.
- * (It resides in the LIBDIR directory)
+ * (It resides in the CONFDIR directory)
  */
 
 #ifndef SHUTDOWN_FILE
