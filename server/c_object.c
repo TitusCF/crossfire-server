@@ -1517,6 +1517,9 @@ void examine(object *op, object *tmp) {
     if(QUERY_FLAG(tmp, FLAG_MONSTER))
 	examine_monster(op,tmp);
    
+    /* Is this item buildable? */
+    if ( QUERY_FLAG( tmp, FLAG_IS_BUILDABLE ) )
+        new_draw_info( NDI_UNIQUE, 0, op, "This is a buildable item." );
 
     /* Does the object have a message?  Don't show message for all object
      * types - especially if the first entry is a match

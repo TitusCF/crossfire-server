@@ -352,6 +352,10 @@ void rangetostring(object *pl,char *obuf)
 		    pl->chosen_skill->name : "none");
 	    break;
 
+    case range_builder:
+        sprintf( obuf, "Builder: %s", query_base_name( pl->contr->ranges[ range_builder ], 0 ) );
+        break;
+
 	default:
 	    strcpy(obuf,"Range: illegal");
     }

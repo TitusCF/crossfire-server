@@ -1736,6 +1736,9 @@ void fire(object *op,int dir) {
 	    }
 	    (void) do_skill(op,op,op->chosen_skill,dir,NULL);
 	    return;
+    case range_builder:
+        apply_map_builder( op, dir );
+        return;
 	default:
 	    new_draw_info(NDI_UNIQUE, 0,op,"Illegal shoot type.");
 	    return;

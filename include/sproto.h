@@ -66,6 +66,8 @@ int adj_attackroll(object *hitter, object *target);
 int is_aimed_missile(object *op);
 /* ban.c */
 int checkbanned(char *login, char *host);
+/* build_map.c */
+void apply_map_builder( object* op, int dir );
 /* c_chat.c */
 int command_say(object *op, char *params);
 int command_me(object *op, char *params);

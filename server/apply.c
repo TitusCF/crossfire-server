@@ -2297,6 +2297,7 @@ int manual_apply (object *op, object *tmp, int aflag)
   case SKILL:
   case BOW:
   case LAMP:
+  case BUILDER:
     if (tmp->env != op)
       return 2;   /* not in inventory */
     (void) apply_special (op, tmp, aflag);
@@ -2561,6 +2562,12 @@ static int unapply_special (object *who, object *op, int aflags)
 		    CLEAR_FLAG(who, FLAG_READY_RANGE);
 	    }
 	    break;
+
+    case BUILDER:
+	    new_draw_info_format(NDI_UNIQUE, 0, who, "You unready %s.",query_name(op));
+        who->contr->shoottype = range_none;
+        who->contr->ranges[ range_builder ] = NULL;
+        break;
 
 	default:
 	    new_draw_info_format(NDI_UNIQUE, 0, who, "You unapply %s.",query_name(op));
@@ -3097,6 +3104,14 @@ int apply_special (object *who, object *op, int aflags)
 		    SET_FLAG (who, FLAG_READY_RANGE);
 	    }
 	    break;
+
+    case BUILDER:
+        if ( who->contr->ranges[ range_builder ] )
+            unapply_special( who, who->contr->ranges[ range_builder ], 0 );
+        who->contr->shoottype = range_builder;
+        who->contr->ranges[ range_builder ] = op;
+        new_draw_info_format( NDI_UNIQUE, 0, who, "You ready your %s.", query_name( op ) );
+        break;
 
 	default:
 	    new_draw_info_format(NDI_UNIQUE, 0, who, "You apply %s.",query_name(op));

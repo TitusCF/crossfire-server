@@ -31,6 +31,7 @@ crossfire_SOURCES = \
 	apply.c\
 	attack.c\
 	ban.c\
+	build_map.c\
 	c_chat.c\
 	c_misc.c\
 	c_move.c\

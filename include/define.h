@@ -278,7 +278,19 @@ error - Your ANSI C compiler should be defining __STDC__;
 
 #define DISEASE			    158
 #define SYMPTOM			    159
+
+#define BUILDER            160 /* Generic item builder, see subtypes */
+#define MATERIAL            161 /* Material for building */
 /* END TYPE DEFINE */
+
+/* Subtypes for BUILDER */
+#define ST_BD_BUILD    1 /* Builds an item */
+#define ST_BD_REMOVE     2 /* Removes an item */
+
+/* Subtypes for MATERIAL */
+#define ST_MAT_FLOOR    1 /* Floor */
+#define ST_MAT_WALL     2 /* Wall */
+#define ST_MAT_ITEM     3 /* All other items, including doors & such */
 
 /* definitions for weapontypes */
 
@@ -544,7 +556,8 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define FLAG_IS_WATER            107
 #define FLAG_CONTENT_ON_GEN      108
 #define FLAG_IS_A_TEMPLATE       109 /* Object has no ingame life until instanciated*/
-#define NUM_FLAGS                109 /* Should always be equal to the last
+#define FLAG_IS_BUILDABLE        110 /* Can build on item */
+#define NUM_FLAGS                110 /* Should always be equal to the last
                                       * defined flag.  If you change this,
                                       * make sure you update the flag_links
                                       * in common/loader.l
@@ -558,7 +571,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 
 #define NROFNEWOBJS(xyz)	((xyz)->stats.food)
 
-#define SLOW_PENALTY(xyz)	((xyz)->stats.exp)/1000.0
+#define SLOW_PENALTY(xyz)   ((xyz)->stats.exp)/1000.0
 #define SET_SLOW_PENALTY(xyz,fl)	(xyz)->stats.exp=(fl)*1000
 #define SET_GENERATE_TYPE(xyz,va)	(xyz)->stats.sp=(va)
 #define GENERATE_TYPE(xyz)	((xyz)->stats.sp)

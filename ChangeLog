@@ -17,6 +17,25 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Added map-building code. This lets players change unique maps,
+    adding & removing walls, doors, stuff like that.
+	New item types BUILDER & MATERIAL. New item flag FLAG_IS_BUILDABLE.
+	New range attack (builder).
+----
+Changelog: change prescribed date format to be coherent with usage :)
+common/loader.l: added 'is_buildable' flag.
+include/define.h: added defines for item types & subtypes, and item flag.
+include/player.h: new range type 'builder'.
+include/spropo.h: new function apply_map_builder.
+server/apply.c: handle new range type.
+server/build_map.c: new file, handles all build-related code.
+server/c_object.c: added 'buildable item' to examine function.
+server/Makefile.am: added build_map.c to compilation.
+server/player.c: handle new range type.
+socket/info.c: handle new range type.
+Ryo 2004-01-18
+
+
 Fix a crash related to plugin hooks
 common/object.c: clear_object(): object's event's hook/plugin/options
     are initialized with FREE_AND_COPY, so they are shared strings.

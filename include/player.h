@@ -45,7 +45,8 @@ typedef enum rangetype {
     range_misc	    = 3, 
     range_golem     = 4,
     range_skill	    = 5,
-    range_size	    = 6
+    range_builder   = 6,
+    range_size	    = 7
 } rangetype;
 
 typedef enum _bowtype {

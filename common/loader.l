@@ -861,6 +861,7 @@ A	.+
 ^range_modifier{S}	op->range_modifier = IVAL;
 ^dam_modifier{S}	op->dam_modifier = IVAL;
 ^duration_modifier{S}	op->duration_modifier = IVAL;
+^is_buildable{S}	SET_OR_CLEAR_FLAG( op, FLAG_IS_BUILDABLE, IVAL );
 
 ^event_apply{S}	    {
     char *yv=yval();
@@ -1310,7 +1311,7 @@ static char *flag_names[NUM_FLAGS+1] = {
 "no_skill_ident", "is_blind", "can_see_in_dark", "is_cauldron",
 "is_dust", "no_steal", "one_hit", NULL, "berserk", "neutral",	/* 100 */
 "no_attack", "no_damage", NULL, NULL, "activate_on_push",
-"activate_on_release", "is_water", "use_content_on_gen", NULL   /* 109 */
+"activate_on_release", "is_water", "use_content_on_gen", NULL, "is_buildable"   /* 110 */
 };
 
 
