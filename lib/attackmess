@@ -538,7 +538,7 @@ TYPE:17
 9=
 9=pounds on the
 15=kick at the
-15= ,wearing at the hinges
+15=, wearing at the hinges
 15= pounds on the
 20=pummel the
 20=
@@ -553,5 +553,9 @@ TYPE:17
 150=
 150= wipes out the
 200=demolish bits of the
-200= ,indeed how is it still standing?
+200=, indeed how is it still standing?
 200= demolishes the
+9999=command the
+9999= to open with all the force at your command
+9999=charges head first at the
+
