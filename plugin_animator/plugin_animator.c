@@ -30,6 +30,30 @@ int StackReturn[MAX_RECURSIVE_CALL];
 int current_event= EVENT_NONE;
 CFanimation *first_animation=NULL;
 
+/* Allocate and clear a stack entry. Returns 0 if no space left.
+ */
+static int allocate_stack(void)
+{
+    if (StackPosition >= MAX_RECURSIVE_CALL-1)
+    {
+        printf("PYTHON - Can't execute script - No space left of stack\n");
+        return 0;
+    }
+
+    StackPosition++;
+    StackActivator[StackPosition] = NULL;
+    StackWho[StackPosition] = NULL;
+    StackOther[StackPosition] = NULL;
+    StackText[StackPosition] = NULL;
+    StackParm1[StackPosition] = 0;
+    StackParm2[StackPosition] = 0;
+    StackParm3[StackPosition] = 0;
+    StackParm4[StackPosition] = 0;
+    StackReturn[StackPosition] = 0;
+
+    return 1;
+}
+
 int stubfunc (object* op, char* params)
 {
     return 1;
@@ -562,13 +586,10 @@ CFParm* triggerEvent(CFParm* PParm)
 /*****************************************************************************/
 int HandleGlobalEvent(CFParm* PParm)
 {
-    if (StackPosition == MAX_RECURSIVE_CALL)
+    if (!allocate_stack())
     {
-        printf("Can't execute script - No space left of stack\n");
         return 0;
     };
-
-    StackPosition++;
 
     switch(*(int *)(PParm->Value[0]))
     {
@@ -617,12 +638,11 @@ int HandleGlobalEvent(CFParm* PParm)
 /*****************************************************************************/
 int HandleEvent(CFParm* PParm)
 {
-  /*  if (StackPosition == MAX_RECURSIVE_CALL)
+  /*  if (!allocate_stack())
     {
-        printf("PLUGIN - Can't execute script - No space left of stack\n");
         return 0;
     };
-    StackPosition++;
+
     StackActivator[StackPosition]   = (object *)(PParm->Value[1]);
     StackWho[StackPosition]         = (object *)(PParm->Value[2]);
     StackOther[StackPosition]       = (object *)(PParm->Value[3]);

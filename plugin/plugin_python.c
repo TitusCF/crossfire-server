@@ -165,6 +165,30 @@ static object *create_object(char *name)
     return ob;
 }
 
+/* Allocate and clear a stack entry. Returns 0 if no space left.
+ */
+static int allocate_stack(void)
+{
+    if (StackPosition >= MAX_RECURSIVE_CALL-1)
+    {
+        printf("PYTHON - Can't execute script - No space left of stack\n");
+        return 0;
+    }
+
+    StackPosition++;
+    StackActivator[StackPosition] = NULL;
+    StackWho[StackPosition] = NULL;
+    StackOther[StackPosition] = NULL;
+    StackText[StackPosition] = NULL;
+    StackParm1[StackPosition] = 0;
+    StackParm2[StackPosition] = 0;
+    StackParm3[StackPosition] = 0;
+    StackParm4[StackPosition] = 0;
+    StackReturn[StackPosition] = 0;
+
+    return 1;
+}
+
 /*****************************************************************************/
 /* And now the big part - The implementation of CFPython functions in C.     */
 /* All comments for those functions have the following entries:              */
@@ -6660,13 +6684,10 @@ MODULEAPI int HandleGlobalEvent(CFParm* PParm)
 {
     FILE* Scriptfile;
 
-    if (StackPosition == MAX_RECURSIVE_CALL)
+    if (!allocate_stack())
     {
-        printf( "Can't execute script - No space left of stack\n");
         return 0;
     };
-
-    StackPosition++;
 
     switch(*(int *)(PParm->Value[0]))
     {
@@ -6816,12 +6837,11 @@ MODULEAPI int HandleEvent(CFParm* PParm)
 #ifdef PYTHON_DEBUG
     printf( "PYTHON - HandleEvent:: got script file >%s<\n",(char *)(PParm->Value[9]));
 #endif
-    if (StackPosition == MAX_RECURSIVE_CALL)
+    if (!allocate_stack())
     {
-        printf( "PYTHON - Can't execute script - No space left of stack\n");
         return 0;
     };
-    StackPosition++;
+
     StackActivator[StackPosition]   = (object *)(PParm->Value[1]);
     StackWho[StackPosition]         = (object *)(PParm->Value[2]);
     StackOther[StackPosition]       = (object *)(PParm->Value[3]);
@@ -6836,6 +6856,7 @@ MODULEAPI int HandleEvent(CFParm* PParm)
     if (Scriptfile == NULL)
     {
         printf( "PYTHON - The Script file %s can't be opened\n",(char *)(PParm->Value[9]));
+        StackPosition--;
         return 0;
     };
     PyRun_SimpleFile(Scriptfile, create_pathname((char *)(PParm->Value[9])));
@@ -6941,12 +6962,11 @@ MODULEAPI int cmd_customPython(object *op, char *params)
 #ifdef PYTHON_DEBUG
     printf( "PYTHON - cmd_customPython called:: script file: %s\n",CustomCommand[NextCustomCommand].script);
 #endif
-    if (StackPosition == MAX_RECURSIVE_CALL)
+    if (!allocate_stack())
     {
-        printf( "PYTHON - Can't execute script - No space left of stack\n");
         return 0;
     };
-    StackPosition++;
+
     StackActivator[StackPosition]   = op;
     StackWho[StackPosition]         = op;
     StackOther[StackPosition]       = op;
@@ -6956,6 +6976,7 @@ MODULEAPI int cmd_customPython(object *op, char *params)
     if (Scriptfile == NULL)
     {
         printf( "PYTHON - The Script file %s can't be opened\n",CustomCommand[NextCustomCommand].script);
+        StackPosition--;
         return 0;
     };
     PyRun_SimpleFile(Scriptfile, create_pathname(CustomCommand[NextCustomCommand].script));
@@ -7073,13 +7094,15 @@ MODULEAPI void initCFPython()
             CustomCommand[i].speed  = 0.0;
         };
 
-        StackPosition++;
-        scriptname = create_pathname("python/events/python_init.py");
-        scriptfile = fopen(scriptname, "r");
-        if (scriptfile != NULL)
+        if (allocate_stack())
         {
+            scriptname = create_pathname("python/events/python_init.py");
+            scriptfile = fopen(scriptname, "r");
+            if (scriptfile != NULL)
+            {
                 PyRun_SimpleFile(scriptfile, scriptname);
                 fclose(scriptfile);
+            }
+            StackPosition--;
         }
-        StackPosition--;
 };

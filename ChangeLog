@@ -17,6 +17,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+plugin/plugin_python.c, plugin_animator/plugin_animator.c: Make sure all
+   fields on the stack are initialized. Prevent stack overflow: check was one
+   off, causing a buffer overflow. Decrement stack pointer in error case.
+Andreas Kirschbaum 2005-01-06.
+
 common/regexp.c: Fixed couple flaws in regexp handling.  First, there was an
    off by one error in the handling of matches (if the match was for example
    eureca, player could just say eurec, and it would treat that as a valid
