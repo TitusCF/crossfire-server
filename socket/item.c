@@ -62,7 +62,7 @@ inline void add_stringlen_to_sockbuf(char *buf, SockList *sl)
 
     len=strlen(buf);
     if (len>255) len=255;
-    SockList_AddChar(sl, len);
+    SockList_AddChar(sl, (char) len);
     strncpy((char*)sl->buf+sl->len, buf,len);
     sl->len += len;
 }
@@ -223,7 +223,7 @@ void esrv_draw_look(object *pl)
 		strncpy(item_n+len+1, item_p, 127);
 		item_n[254]=0;
 		len += strlen(item_n+1+len) + 1;
-		SockList_AddChar(&sl, len);
+		SockList_AddChar(&sl, (char ) len);
 		memcpy(sl.buf+sl.len, item_n, len);
 		sl.len += len;
 	    } else
@@ -236,11 +236,11 @@ void esrv_draw_look(object *pl)
 		else {
 		    if (FABS(tmp->speed)<0.001) anim_speed=255;
 		    else if (FABS(tmp->speed)>=1.0) anim_speed=1;
-		    else anim_speed = (1.0/FABS(tmp->speed));
+		    else anim_speed = (int) (1.0/FABS(tmp->speed));
 		}
 		if (anim_speed>255) anim_speed=255;
 	    }
-	    SockList_AddChar(&sl, anim_speed);
+	    SockList_AddChar(&sl, (char) anim_speed);
 	    SockList_AddInt(&sl, tmp->nrof);
 	    SET_FLAG(tmp, FLAG_CLIENT_SENT);
 	    got_one++;
@@ -304,7 +304,7 @@ void esrv_send_inventory(object *pl, object *op)
 		strncpy(item_n+len+1, item_p, 127);
 		item_n[254]=0;
 		len += strlen(item_n+1+len) + 1;
-		SockList_AddChar(&sl, len);
+		SockList_AddChar(&sl, (char) len);
 		memcpy(sl.buf+sl.len, item_n, len);
 		sl.len += len;
 	    } else
@@ -317,11 +317,11 @@ void esrv_send_inventory(object *pl, object *op)
 		else {
 		    if (FABS(tmp->speed)<0.001) anim_speed=255;
 		    else if (FABS(tmp->speed)>=1.0) anim_speed=1;
-		    else anim_speed = (1.0/FABS(tmp->speed));
+		    else anim_speed = (int) (1.0/FABS(tmp->speed));
 		}
 		if (anim_speed>255) anim_speed=255;
 	    }
-	    SockList_AddChar(&sl, anim_speed);
+	    SockList_AddChar(&sl, (char)anim_speed);
 	    SockList_AddInt(&sl, tmp->nrof);
 	    SET_FLAG(tmp, FLAG_CLIENT_SENT);
 	    got_one++;
@@ -374,7 +374,7 @@ void esrv_update_item(int flags, object *pl, object *op)
     strcpy((char*)sl.buf,"upditem ");
     sl.len=strlen((char*)sl.buf);
 
-    SockList_AddChar(&sl, flags);
+    SockList_AddChar(&sl, (char) flags);
     SockList_AddInt(&sl, op->count);
 
     if (flags & UPD_LOCATION)
@@ -403,7 +403,7 @@ void esrv_update_item(int flags, object *pl, object *op)
 	    strncpy(item_n+len+1, item_p, 127);
 	    item_n[254]=0;
 	    len += strlen(item_n+1+len) + 1;
-	    SockList_AddChar(&sl, len);
+	    SockList_AddChar(&sl, (char)len);
 	    memcpy(sl.buf+sl.len, item_n, len);
 	    sl.len += len;
 	} else
@@ -419,11 +419,11 @@ void esrv_update_item(int flags, object *pl, object *op)
 	    else {
 		if (FABS(op->speed)<0.001) anim_speed=255;
 		else if (FABS(op->speed)>=1.0) anim_speed=1;
-		else anim_speed = (1.0/FABS(op->speed));
+		else anim_speed = (int) (1.0/FABS(op->speed));
 	    }
 	    if (anim_speed>255) anim_speed=255;
 	}
-	SockList_AddChar(&sl, anim_speed);
+	SockList_AddChar(&sl, (char)anim_speed);
     }
     if (flags & UPD_NROF)
 	    SockList_AddInt(&sl, op->nrof);
@@ -481,7 +481,7 @@ void esrv_send_item(object *pl, object*op)
 	strncpy(item_n+len+1, item_p, 127);
 	item_n[254]=0;
 	len += strlen(item_n+1+len) + 1;
-	SockList_AddChar(&sl, len);
+	SockList_AddChar(&sl, (char)len);
 	memcpy(sl.buf+sl.len, item_n, len);
 	sl.len += len;
     } else
@@ -494,11 +494,11 @@ void esrv_send_item(object *pl, object*op)
         else {
 	    if (FABS(op->speed)<0.001) anim_speed=255;
             else if (FABS(op->speed)>=1.0) anim_speed=1;
-            else anim_speed = (1.0/FABS(op->speed));
+            else anim_speed = (int) (1.0/FABS(op->speed));
 	}
         if (anim_speed>255) anim_speed=255;
     }
-    SockList_AddChar(&sl, anim_speed);
+    SockList_AddChar(&sl, (char)anim_speed);
     SockList_AddInt(&sl, op->nrof);
     Send_With_Handling(&pl->contr->socket, &sl);
     SET_FLAG(op, FLAG_CLIENT_SENT);
@@ -534,7 +534,7 @@ void esrv_del_item(player *pl, int tag)
  * pointer, or null if it can't be found.
  */
 
-object *esrv_get_ob_from_count(object *pl, long count)
+object *esrv_get_ob_from_count(object *pl, tag_t count)
 {
     object *op, *tmp;
 
@@ -720,7 +720,7 @@ void LookAt(char *buf, int len,player *pl)
 
 /* Move an object to a new lcoation */
 
-void esrv_move_object (object *pl, long to, long tag, long nrof)
+void esrv_move_object (object *pl, tag_t to, tag_t tag, long nrof)
 {
     object *op, *env;
 

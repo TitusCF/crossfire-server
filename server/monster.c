@@ -177,7 +177,7 @@ int check_wakeup(object *op, object *enemy, rv_vector *rv) {
     /* enemy should already be on this map, so don't really need to check
      * for that.
      */
-    if (rv->distance < QUERY_FLAG(enemy, FLAG_STEALTH)?(radius/2)+1:radius) {
+    if (rv->distance <  (QUERY_FLAG(enemy, FLAG_STEALTH)?(radius/2)+1:(int)radius)) {
 	CLEAR_FLAG(op,FLAG_SLEEP);
 	return 1;
     }
@@ -570,7 +570,7 @@ int monster_cast_spell(object *head, object *part,object *pl,int dir, rv_vector 
 
 
     /* If we cast a spell, only use up casting_time speed */
-    head->speed_left+=1.0 - spells[sp_typ].time/20.0*FABS(head->speed); 
+    head->speed_left+=(float)1.0 - spells[sp_typ].time/(float)20.0*(float)FABS(head->speed); 
 
     head->stats.sp-=SP_level_spellpoint_cost(head,head,sp_typ);
     /* choose the spell the monster will cast next */
@@ -1023,7 +1023,7 @@ void monster_check_apply(object *mon, object *item) {
         /* &32 reverses behaviour. See global.h */
         if(!QUERY_FLAG(item,FLAG_APPLIED))
           manual_apply(mon,item,0);
-        if (item->type==BOW&&present_in_ob(item->stats.maxsp,mon)!=NULL)
+        if (item->type==BOW&&present_in_ob((unsigned char)item->stats.maxsp,mon)!=NULL)
 	  SET_FLAG(mon, FLAG_READY_BOW);
     }
     return;
@@ -1056,16 +1056,13 @@ void npc_call_help(object *op) {
 }
 
 int dist_att (int dir , object *ob, object *enemy, object *part, rv_vector *rv) {
-  int dist;
 
     if (can_hit(part,enemy,rv))
 	return dir;
     if (rv->distance < 10)
 	return absdir(dir+4);
-    /* This was 81 below?  That seems outragously far - I'm thinking that was
-     * a typo and it shoud be 18
-     */
-    else if (dist>18) {
+
+    else if (rv->distance>18) {
 	return dir;
     }
     return 0;
@@ -1861,7 +1858,7 @@ int can_see_enemy (object *op, object *enemy) {
 
     /* INVISIBLE ENEMY. */
     if(!QUERY_FLAG(looker,FLAG_SEE_INVISIBLE)
-      &&(is_true_undead(looker)==QUERY_FLAG(enemy,FLAG_UNDEAD)))
+      &&(is_true_undead(looker)==(int)(QUERY_FLAG(enemy,FLAG_UNDEAD))))
       return 0;
 
   } else if(looker->type==PLAYER) /* for players, a (possible) shortcut */

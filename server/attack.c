@@ -518,9 +518,7 @@ static int attack_ob_simple (object *op, object *hitter, int base_dam,
 	int base_wc)
 {
     int simple_attack, roll, dam=0;
-    char buf[MAX_BUF];
     uint32 type;
-    att_msg *msg;
     char *op_name = NULL;
     tag_t op_tag, hitter_tag;
 

@@ -1,3 +1,4 @@
+
 /*
  * static char *rcsid_move_c =
  *    "$Id$";

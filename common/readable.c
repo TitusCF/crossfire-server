@@ -1437,7 +1437,7 @@ artifact_msg (int level, int booksize)
 	      sprintf (buf, "%s The %s of %s", buf, name, art->item->name);
 
 	  /* chance of finding */
-	  chance = 100 * ((float) art->chance / al->total_chance);
+	  chance = (int) ((float)100 * ((float) art->chance / (float)al->total_chance));
 	  if (chance >= 20)
 	      sprintf (sbuf, "an uncommon");
 	  else if (chance >= 10)
@@ -1516,7 +1516,7 @@ spellpath_msg (int level, int booksize)
      */
     do
       {
-	  if ((spells[i].books || prayers) && spells[i].cleric == prayers
+	  if ((spells[i].books || prayers) && spells[i].cleric == (unsigned int) prayers
 	      && (pnum & spells[i].path))
 	    {
 		/* book level determines max spell level to show 
@@ -1907,7 +1907,7 @@ god_info_msg (int level, int booksize)
 	      strcat (retbuf, buf);
 	  level--;
       }
-    if (strlen (retbuf) == introlen)
+    if (strlen (retbuf) == (size_t) introlen)
       {				/* we got no information beyond the preamble! */
 	  strcat (retbuf, " [Unfortunately the rest of the information is\n");
 	  strcat (retbuf, "  hopelessly garbled!]\n ---\n");

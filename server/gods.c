@@ -54,7 +54,7 @@ int lookup_god_by_name(char *name) {
   if(name&&strcmp(name,"none")) { 
     godlink *gl;
     for(gl=first_god;gl;gl=gl->next)
-      if(!strncmp(name,gl->name,MIN(strlen(gl->name),nmlen)))
+      if(!strncmp(name,gl->name,MIN((signed int)strlen(gl->name),nmlen)))
 	break;
     if(gl) godnr=gl->id;
   }
@@ -168,7 +168,7 @@ void pray_at_altar(object *pl, object *altar) {
 	/* whether we will be successfull in defecting or not -
 	 * we lose experience from the clerical experience obj */
 
-	loss = 0.1 * (float) pl->chosen_skill->exp_obj->stats.exp;
+	loss = (int)(0.1 * (double) pl->chosen_skill->exp_obj->stats.exp);
 	if(loss)
 	  lose_priest_exp(pl, random_roll(0, loss*angry-1, pl, PREFER_LOW));
  
@@ -766,9 +766,9 @@ void god_intervention (object *op, object *god)
         if (item->type == BOOK && item->invisible
             && strcmp (item->name, "restore spellpoints") == 0)
         {
-            int max = op->stats.maxsp * (item->stats.maxsp / 100.0);
+            int max = (int)((double)op->stats.maxsp * ((double)item->stats.maxsp / 100.0));
             /* Restore to 50 .. 100%, if sp < 50% */
-            int new_sp = random_roll(1000, 1999, op, PREFER_HIGH) / 2000.0 * max;
+            int new_sp = (int)((double)random_roll(1000, 1999, op, PREFER_HIGH) / 2000.0 * (double)max);
             if (op->stats.sp >= max / 2)
                 continue;
             new_draw_info (NDI_UNIQUE, 0, op, "A blue lightning strikes "
@@ -921,7 +921,7 @@ int god_examines_priest (object *op, object *god) {
     int loss = 10000000;
     int angry = abs(reaction);
     if(op->chosen_skill->exp_obj)
-      loss = 0.05 * (float) op->chosen_skill->exp_obj->stats.exp;
+      loss = (int)(0.05 * (double) op->chosen_skill->exp_obj->stats.exp);
     lose_priest_exp(op, random_roll(0, loss*angry-1, op, PREFER_LOW));
     if(random_roll(0, angry, op, PREFER_LOW))
       cast_mana_storm(op,SK_level(op)+(angry*3));

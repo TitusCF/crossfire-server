@@ -37,7 +37,7 @@
 /*   P r o t o t y p e s
  */
 char *re_cmp(char *, char *);
-static Boolean re_cmp_step(char *, char *, int, int);
+static Boolean re_cmp_step(char *, char *, unsigned int, int);
 static void re_init(void);
 static Boolean re_match_token(uchar, selection *);
 static char *re_get_token(selection *, char *);
@@ -151,7 +151,7 @@ re_cmp(char *str, char *regexp) {
  */
 
 static Boolean
-re_cmp_step(char *str, char *regexp, int slot, int matches) {
+re_cmp_step(char *str, char *regexp, unsigned int slot, int matches) {
     /* str	- string to match
      * regexp	- pattern
      * slot	- number of the token which under consideration

@@ -384,7 +384,7 @@ static void block_until_new_connection()
 	    cycles=0;
 	}
 	FD_ZERO(&readfs);
-	FD_SET(init_sockets[0].fd, &readfs);
+	FD_SET((uint32)init_sockets[0].fd, &readfs);
 	Timeout.tv_sec=60;
 	Timeout.tv_usec=0;
 #ifdef WATCHDOG
@@ -426,9 +426,9 @@ void doeric_server()
 	    init_sockets[i].status = Ns_Avail;
 	    socket_info.nconns--;
 	} else if (init_sockets[i].status != Ns_Avail){
-	    FD_SET(init_sockets[i].fd, &tmp_read);
-	    FD_SET(init_sockets[i].fd, &tmp_write);
-	    FD_SET(init_sockets[i].fd, &tmp_exceptions);
+	    FD_SET((uint32)init_sockets[i].fd, &tmp_read);
+	    FD_SET((uint32)init_sockets[i].fd, &tmp_write);
+	    FD_SET((uint32)init_sockets[i].fd, &tmp_exceptions);
 	}
     }
 
@@ -449,9 +449,9 @@ void doeric_server()
 	    pl=npl;
 	}
 	else {
-	    FD_SET(pl->socket.fd, &tmp_read);
-	    FD_SET(pl->socket.fd, &tmp_write);
-	    FD_SET(pl->socket.fd, &tmp_exceptions);
+	    FD_SET((uint32)pl->socket.fd, &tmp_read);
+	    FD_SET((uint32)pl->socket.fd, &tmp_write);
+	    FD_SET((uint32)pl->socket.fd, &tmp_exceptions);
 	    pl=pl->next;
 	}
     }
