@@ -916,6 +916,7 @@ void cleanup()
     write_book_archive();
 #ifdef MEMORY_DEBUG
     free_all_maps();
+    free_style_maps();
     free_all_object_data();
     free_all_archs();
     free_all_treasures();

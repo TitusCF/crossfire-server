@@ -287,5 +287,20 @@ object *pick_random_object(mapstruct *style) {
     else return new_obj;
 }
 				
-			 
-  
+
+void free_style_maps()			 
+{
+    mapstruct *next;
+    int  style_maps=0;
+
+    /* delete_map will try to free it from the linked list,
+     * but won't find it, so we need to do it ourselves
+     */
+    while (styles) {
+	next = styles->next;
+	delete_map(styles);
+	styles=next;
+	style_maps++;
+    }
+    LOG(llevDebug,"free_style_maps: Freed %d maps\n", style_maps);
+}
