@@ -2277,6 +2277,7 @@ int manual_apply (object *op, object *tmp, int aflag)
   case HORN:
   case SKILL:
   case BOW:
+  case LAMP:
     if (tmp->env != op)
       return 2;   /* not in inventory */
     (void) apply_special (op, tmp, aflag);
@@ -2448,6 +2449,8 @@ void player_apply_below (object *pl)
  */
 static int unapply_special (object *who, object *op, int aflags)
 {
+    object *tmp2;
+
     CLEAR_FLAG(op, FLAG_APPLIED);
     switch(op->type) {
 	case WEAPON:
@@ -2497,7 +2500,33 @@ static int unapply_special (object *who, object *op, int aflags)
 	    new_draw_info_format(NDI_UNIQUE, 0, who, "You unwear %s.",query_name(op));
 	    (void) change_abil (who,op);
 	    break;
-
+        case LAMP:
+	    new_draw_info_format(NDI_UNIQUE, 0, who, "You turn off your %s.",
+				 op->name);
+	    tmp2 = arch_to_object(op->other_arch);
+	    tmp2->x = op->x;
+	    tmp2->y = op->y;
+	    tmp2->map = op->map;
+	    tmp2->below = op->below;
+	    tmp2->above = op->above;
+	    tmp2->stats.food = op->stats.food;
+	    CLEAR_FLAG(tmp2, FLAG_APPLIED);
+	    if (who->type == PLAYER)
+		esrv_del_item(who->contr, (tag_t)op->count);
+	    remove_ob(op);
+	    free_object(op);
+	    insert_ob_in_ob(tmp2, who);
+	    fix_player(who);
+	    if (QUERY_FLAG(op, FLAG_CURSED) || QUERY_FLAG(op, FLAG_DAMNED)) {
+		if (who->type == PLAYER) {
+		    new_draw_info(NDI_UNIQUE, 0,who, "Oops, it feels deadly cold!");
+		    SET_FLAG(tmp2, FLAG_KNOWN_CURSED);
+		}
+	    }
+	    if(who->type==PLAYER)
+		esrv_send_item(who, tmp2);
+	    return 1; /* otherwise, an attempt to drop causes problems */
+	    break;
 	case BOW:
 	case WAND:
 	case ROD:
@@ -2795,7 +2824,7 @@ int can_apply_object(object *who, object *op)
 int apply_special (object *who, object *op, int aflags)
 {
     int basic_flag = aflags & AP_BASIC_FLAGS;
-    object *tmp;
+    object *tmp, *tmp2;
     int i;
 
     if(who==NULL) {
@@ -2915,7 +2944,45 @@ int apply_special (object *who, object *op, int aflags)
 	    new_draw_info_format(NDI_UNIQUE, 0, who, "You wear %s.",query_name(op));
 	    (void) change_abil (who,op);
 	    break;
-
+        case LAMP:
+	    if (op->stats.food < 1) {
+		new_draw_info_format(NDI_UNIQUE, 0, who, "Your %s is out of"
+				     " fuel!", op->name);
+		return 1;
+	    }
+	    new_draw_info_format(NDI_UNIQUE, 0, who, "You turn on your %s.",
+				 op->name);
+	    tmp2 = arch_to_object(op->other_arch);
+	    tmp2->x = op->x;
+	    tmp2->y = op->y;
+	    tmp2->map = op->map;
+	    tmp2->below = op->below;
+	    tmp2->above = op->above;
+	    tmp2->stats.food = op->stats.food;
+	    SET_FLAG(tmp2, FLAG_APPLIED);
+	    if (tmp == NULL) {
+		if (who->type == PLAYER)
+		    esrv_del_item(who->contr, (tag_t)op->count);
+		remove_ob(op);
+		free_object(op);
+	    } else {
+		if (who->type == PLAYER)
+		    esrv_del_item(who->contr, (tag_t)tmp->count);
+		remove_ob(tmp);
+		free_object(tmp);
+	    }
+	    insert_ob_in_ob(tmp2, who);
+	    fix_player(who);
+	    if (QUERY_FLAG(op, FLAG_CURSED) || QUERY_FLAG(op, FLAG_DAMNED)) {
+		if (who->type == PLAYER) {
+		    new_draw_info(NDI_UNIQUE, 0,who, "Oops, it feels deadly cold!");
+		    SET_FLAG(tmp2, FLAG_KNOWN_CURSED);
+		}
+	    }
+	    if(who->type==PLAYER)
+		esrv_send_item(who, tmp2);
+	    return 0;
+	    break;
 	/* this part is needed for skill-tools */ 
 	case SKILL:
 	    if (who->chosen_skill) {

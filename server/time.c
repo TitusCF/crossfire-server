@@ -769,6 +769,8 @@ void change_object(object *op) { /* Doesn`t handle linked objs yet */
   remove_ob(op);
   for(i=0;i<NROFNEWOBJS(op);i++) {
     tmp=arch_to_object(op->other_arch);
+    if (op->type == LAMP)
+	  tmp->stats.food = op->stats.food-1;
     tmp->stats.hp=op->stats.hp; /* The only variable it keeps. */
     if(env) {
         tmp->x=env->x,tmp->y=env->y;
