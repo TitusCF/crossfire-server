@@ -1176,9 +1176,8 @@ int hit_player_attacktype(object *op, object *hitter, int dam,
 		    if (op->type != PLAYER || hitter->type != PLAYER) 
 			add_exp(hitter,op->stats.exp/(rate*2));
 		}
-		if (hitter->type != PLAYER)
-		    add_exp(op,-op->stats.exp/rate);
-	    }
+		add_exp(op,-op->stats.exp/rate);
+	    } 
 	    dam = 1;	/* Drain is an effect.  Still return 1 - otherwise, if you have pure
 			 * drain attack, you won't know that you are actually sucking out EXP,
 			 * as the messages will say you missed
