@@ -156,7 +156,7 @@ void send_party_message(object *op,char *msg)
   int no=op->contr->party_number;
   for(pl=first_player;pl!=NULL;pl=pl->next)
     if(pl->ob->contr->party_number==no && pl->ob!=op)
-	new_draw_info(NDI_UNIQUE, NDI_WHITE, pl->ob, msg);
+	new_draw_info(NDI_WHITE, 0, pl->ob, msg);
 }
 
 int command_gsay(object *op, char *params)
@@ -255,17 +255,18 @@ int command_party (object *op, char *params)
 #endif /* PARTY_KILL_LOG */
   if(strncmp(params, "say ", 4)==0)
     {
-          if(op->contr->party_number<=0)
+         if(op->contr->party_number<=0)
             {
               new_draw_info(NDI_UNIQUE, 0,op,"You are not a member of any party.");
               return 1;
             }
-      params += 4;
-      sprintf(buf, "%s says: %s", op->name, params);
-          send_party_message(op,buf);
-          new_draw_info(NDI_UNIQUE, 0,op,"Ok.");
-          return 1;
-        }
+         params += 4;
+         currentparty = find_party(op->contr->party_number,firstparty);
+         snprintf(buf,MAX_BUF-1, "[%s] %s says: %s", currentparty, op->name, params);
+         send_party_message(op,buf);
+         new_draw_info_format(NDI_WHITE, 0,op,"[%s] You say: %s", currentparty, params);
+         return 1;
+    }
 
   if(strncmp(params, "form ",5) == 0) {
 

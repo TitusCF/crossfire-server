@@ -17,6 +17,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/c_party.c: gsay improvements, courtesy Katia.
+Ryo 2004-06-09
+
 server/commands.c: Disable 'possess', that crashes server.
 server/monster.c: Make monsters use wands/horns/... again. Also make'em
    ignore DMs all the time (even when not invisible).
