@@ -6,7 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2001 Mark Wedel
+    Copyright (C) 2001 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -23,7 +23,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to mwedel@scruz.net
+    The authors can be reached via e-mail at crossfire-devel@real-time.com
 */
 
 #include <global.h>
@@ -254,20 +254,38 @@ void place_exits(mapstruct *map, char **maze,char *exitstyle,int orientation,RMP
       /* the identifier for making a random map. */
       if(RP->dungeon_level >= RP->dungeon_depth && RP->final_map[0]!=0) {
         mapstruct *new_map;
+        object *the_exit_back = arch_to_object(the_exit_up->arch), *tmp;
+#if 0
+	/* I'm not sure if there was any reason to change the path to the
+	 * map other than to maybe make it more descriptive in the 'maps'
+	 * command.  But changing the map name makes life more complicated,
+	 * (has_been_loaded needs to use the new name)
+	 */
+
         char new_map_name[MAX_BUF];
-        object *the_exit_back = arch_to_object(the_exit_up->arch);
         /* give the final map a name */
         sprintf(new_map_name,"%sfinal_map",RP->final_map);
         /* set the exit down. */
-        the_exit_down->slaying = add_string(new_map_name);
+#endif
         /* load it */
-        if( (new_map=has_been_loaded(RP->final_map)) == NULL)
-          new_map = load_original_map(RP->final_map,0);
-        /* leave if we couldn't find it. */
-        if(new_map==NULL) return;
-        /* fix the treasures in the map. */
-        fix_auto_apply(new_map);
-        strcpy(new_map->path,new_map_name);
+        if((new_map=ready_map_name(RP->final_map,0)) == NULL) 
+	    return;
+
+        the_exit_down->slaying = add_string(RP->final_map);
+        strcpy(new_map->path,RP->final_map);
+
+	for (tmp=GET_MAP_OB(new_map,  MAP_ENTER_X(new_map), MAP_ENTER_Y(new_map)); tmp; tmp=tmp->above)
+	    /* Remove exit back to previous random map.  There should only be one
+	     * which is why we break out.  To try to process more than one
+	     * would require keeping a 'next' pointer, ad free_object kills tmp, which
+	     * breaks the for loop.
+	     */
+	    if (tmp->type == EXIT && !strncmp(EXIT_PATH(tmp),"/random/", 8)) {
+		remove_ob(tmp);
+		free_object(tmp);
+		break;
+	    }
+
         /* setup the exit back */
         the_exit_back->slaying = add_string(map->path);
         the_exit_back->stats.hp = the_exit_down->x;
@@ -285,7 +303,7 @@ void place_exits(mapstruct *map, char **maze,char *exitstyle,int orientation,RMP
       insert_ob_in_map(the_exit_down,map,NULL,0);
       maze[the_exit_down->x][the_exit_down->y]='>';
     }
-  }     
+  }
     
 }
 

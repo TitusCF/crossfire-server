@@ -6,7 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2000 Mark Wedel
+    Copyright (C) 2001 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -23,7 +23,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to mwedel@scruz.net
+    The authors can be reached via e-mail at crossfire-devel@real-time.com
 */
 
 /* Eneq(@csd.uu.se): Added weight-modifiers in environment of objects.
@@ -1362,8 +1362,9 @@ object *insert_ob_in_map (object *op, mapstruct *m, object *originator, int flag
 	 * We take simple approach - instead of dumping it below the object that
 	 * blocks the view, we just dump it right above the floor.  Saves 
 	 * us the effort of trying to find the object that blocks the view.
+	 * If INS_ON_TOP is used, don't do this processing
          */
-        if (blocks_view(op->map, op->x, op->y) && 
+        if (!(flag & INS_ON_TOP) && blocks_view(op->map, op->x, op->y) && 
 	   (op->face && !op->face->visibility)) {
 	    top = floor;
 	}

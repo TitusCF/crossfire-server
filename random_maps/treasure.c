@@ -6,7 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2001 Mark Wedel
+    Copyright (C) 2001 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -23,7 +23,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to mwedel@scruz.net
+    The authors can be reached via e-mail at crossfire-devel@real-time.com
 */
 
 /*  placing treasure in maps, where appropriate.  */
@@ -234,7 +234,7 @@ object * place_chest(int treasureoptions,int x, int y,mapstruct *map, mapstruct 
 
   if((treasureoptions & KEYREQUIRED)&&n_treasures>1) {
     char keybuf[256];
-    sprintf(keybuf,"%d",RANDOM());
+    sprintf(keybuf,"%d",(int)RANDOM());
     the_chest->slaying = add_string(keybuf);
     keyplace(map,x,y,keybuf,PASS_DOORS,1,RP);
   }
@@ -691,7 +691,7 @@ void lock_and_hide_doors(object **doorlist,mapstruct *map,int opts,RMParms *RP) 
       free_object(door);
       doorlist[i]=new_door;
       insert_ob_in_map(new_door,map,NULL,0);
-      sprintf(keybuf,"%d",RANDOM());
+      sprintf(keybuf,"%d",(int)RANDOM());
       new_door->slaying = add_string(keybuf);
       keyplace(map,new_door->x,new_door->y,keybuf,NO_PASS_DOORS,2,RP);
     }

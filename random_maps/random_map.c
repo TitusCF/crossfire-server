@@ -6,7 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 1994 Mark Wedel
+    Copyright (C) 2001 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -23,7 +23,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to mark@pyramid.com
+    The authors can be reached via e-mail at crossfire-devel@real-time.com
 */
 
 #include <time.h>
@@ -130,8 +130,9 @@ char **layoutgen(RMParms *RP) {
   }
   else
     {
-      if(RP->Xsize<6) RP->Xsize = 15 + RANDOM()%25;
-      if(RP->Ysize<6) RP->Ysize = 15 + RANDOM()%25;
+	/* Has to be at least 7 for square spirals to work */
+	if(RP->Xsize<7) RP->Xsize = 15 + RANDOM()%25;
+	if(RP->Ysize<7) RP->Ysize = 15 + RANDOM()%25;
     }
   
   if(RP->symmetry == RANDOM_SYM) {

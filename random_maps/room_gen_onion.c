@@ -6,7 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 1994 Mark Wedel
+    Copyright (C) 2001 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -23,7 +23,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to mark@pyramid.com
+    The authors can be reached via e-mail at crossfire-devel@real-time.com
 */
 
 
@@ -52,28 +52,7 @@ centered, linear onion        bottom/right centered, nonlinear
 #                       #     #   #   #  #    #       #
 #########################     #########################
 
-
-options:
-0	Pick random options below
-1	"centered"
-2	linear doors (default is nonlinear)
-4	bottom "centered"
-8  bottom-right centered
-16	irregularly/randomly spaced layers (default: regular)
-32	outer wall off:  i.e., no outer wall.
-
 */
-
-#define OPT_RANDOM    0
-#define OPT_CENTERED  1
-#define OPT_LINEAR    2
-#define OPT_BOTTOM_C  4
-#define OPT_BOTTOM_R  8
-#define OPT_IRR_SPACE 16
-#define OPT_WALL_OFF 32
-#define OPT_NO_DOORS 256 /* Place walls insead of doors.  Produces broken map. */  
-
-/*#define OPT_WALLS_ONLY 64*/
 
 
 int *free_x_list;

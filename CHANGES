@@ -18,6 +18,32 @@ else.  With this, include the file(s) that you changed.
 
 Changes for CVS:
 
+common/map.c: Add INS_ON_TOP flag to insert_ob_in_map calls to preserve
+   stacking order.  Modify update_position to generate map spaces with
+   more proper order.
+common/object.c: Modify insert_ob_in_map so that it preserves stacking
+   if INS_ON_TOP is set.
+crossedit/CrEdit.c: Add missing code that would draw third face on a space.
+include/object.h: Add INS_ON_TOP flag/define.
+random_maps/exit.c: Modify code so that if the random maps leading to
+   a special map are reset, they will properly link in with an already loaded
+   final map (and update exit from final map back up) as needed.  Also fix
+   bug in that if the final map has been reset, a new one will now be properly
+   loaded.
+random_maps/random_map.c:Update minimum size to be 7 (up from 6) - fixes
+   bug which caused crashes when square_spiral maps of 6x6 would fail to
+   generate.
+random_maps/random_map.h,random_maps/room_gen_onion.c: move OPT_values from
+   room_gen_onion to random_map.h since the square_spiral code uses them.
+random_maps/square_spiral.c: Update call to map_gen_onion to use
+   OPT_.. values instead of constant integer.
+random_maps/treasure.c: Add some casts to sprintf statements to eliminate
+   some compiler warnings.
+server/main.c: Modify enter_exit code such that a random map has
+   reset, we generate a new random map.  This can happen when the random_map
+   resets before the map that leads to them resets.
+MSW 2001-10-06
+
 Add a new command category called communications commands.  Place tell, 
 shout and say in here.  Also create emotion functions.  These functions 
 have no real effect on the game, but make communications between players 

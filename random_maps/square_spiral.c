@@ -1,3 +1,30 @@
+/*
+ * static char *rcsid_map_c =
+ *   "$Id$";
+ */
+
+/*
+    CrossFire, A Multiplayer game for X-windows
+
+    Copyright (C) 2001 Mark Wedel & Crossfire Development Team
+    Copyright (C) 1992 Frank Tore Johansen
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+
+    The authors can be reached via e-mail at crossfire-devel@real-time.com
+*/
 
 
 /* peterm@langmuir.eecs.berkeley.edu:  this function generates a random
@@ -53,7 +80,7 @@ char **make_square_spiral_layout(int xsize, int ysize,int options) {
   int tx,ty;
 
   /* generate and allocate a doorless, centered onion */
-  char **maze = map_gen_onion(xsize,ysize,257,0);
+  char **maze = map_gen_onion(xsize,ysize,OPT_CENTERED | OPT_NO_DOORS,0);
 
   /* find the layout center.  */
   for(i=0;i<xsize;i++)

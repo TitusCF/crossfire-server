@@ -6,7 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2000 Mark Wedel
+    Copyright (C) 2001 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -23,7 +23,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to mwedel@scruz.net
+    The authors can be reached via e-mail at crossfire-devel@real-time.com
 */
 
 #include <version.h>
@@ -596,6 +596,18 @@ void enter_exit(object *op, object *exit_ob) {
 	    mapstruct	*newmap;
 	    if (exit_ob->map) {
 		newmap = ready_map_name(normalize_path(exit_ob->map->path, EXIT_PATH(exit_ob)), 0);
+		/* Random map was previously generated, but is no longer about.  Lets generate a new
+		 * map.
+		 */
+		if (!newmap && !strncmp(EXIT_PATH(exit_ob),"/random/",8)) {
+		    enter_random_map(op, exit_ob);
+		    /* For exits that cause damages (like pits).  Don't know if any
+		     * random maps use this or not.
+		     */
+		    if(exit_ob->stats.dam && op->type==PLAYER)
+			hit_player(op,exit_ob->stats.dam,exit_ob,exit_ob->attacktype);
+		    return;
+		}
 	    } else {
 		/* For word of recall and other force objects
 		 * They contain the full pathname of the map to go back to,

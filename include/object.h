@@ -6,7 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2001 Mark Wedel
+    Copyright (C) 2001 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -23,7 +23,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to mwedel@scruz.net
+    The authors can be reached via e-mail at crossfire-devel@real-time.com
 */
 
 #ifndef OBJECT_H
@@ -239,5 +239,10 @@ extern int nroffreeobjects;
 #define INS_NO_MERGE		0x0001
 #define INS_ABOVE_FLOOR_ONLY	0x0002
 #define INS_NO_WALK_ON		0x0004
+/* Always put object on top.  Generally only needed when loading files
+ * from disk and ordering needs to be preserved.  Note that INS_ABOVE_FLOOR_ONLY
+ * and INS_ON_TOP are really mutually exclusive.
+ */
+#define INS_ON_TOP		0x0008
 
 #endif
