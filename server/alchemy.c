@@ -98,8 +98,7 @@ void attempt_do_alchemy(object *caster, object *cauldron) {
     int numb, ability=1;
     int formula=0;
     float ave_chance;
-    object *item;
-    int skillno;
+    object *item, *skop;
 
     if (caster->type!=PLAYER)
 	return; /* only players for now */ 
@@ -128,7 +127,7 @@ void attempt_do_alchemy(object *caster, object *cauldron) {
 			rp->arch_name, formula/rp->index);
 #endif
 		attempt_recipe(caster, cauldron, ability, rp, formula/rp->index);
-	    }else LOG(llevDebug, "WIZ couldnt find formula for ingredients.\n"); 
+	    } else LOG(llevDebug, "WIZ couldnt find formula for ingredients.\n"); 
 	    return;
 	} /* End of WIZ alchemy */
 
@@ -140,29 +139,19 @@ void attempt_do_alchemy(object *caster, object *cauldron) {
 	    ave_chance = fl->total_chance/(float)fl->number;
 	    /* the caster gets an increase in ability based on thier skill lvl */
 	    if (rp->skill != NULL) {
-		skillno = lookup_skill_by_name(rp->skill);
-		if (skillno < 0) { /* invalid skill */
-		    LOG(llevDebug, "Recipie %s has invalid skill %s\n",
-			rp->title, rp->skill);
-		    return;
-		}
-		if (caster->chosen_skill->stats.sp == skillno) {
-		    ability+=SK_level(caster)*((4.0 + cauldron->magic)/4.0);
-#ifdef ALCHEMY_DEBUG
-		    LOG(llevDebug, "Got alchemy ability lvl = %d\n", ability);
-#endif
+		skop = find_skill_by_name(caster, rp->skill);
+		if (!skop) {
+		    new_draw_info(NDI_UNIQUE, 0, caster, "You do not have the proper skill for this recipe");
 		} else {
-		    new_draw_info(NDI_UNIQUE, 0, caster, "You did not use the "
-				  "proper skill for this recipe.");
-		    /*return;*/
+		    ability+=skop->level*((4.0 + cauldron->magic)/4.0);
 		}
 	    } else {
-		LOG(llevDebug, "Recipie %s has NULL skill!\n", rp->title);
+		LOG(llevDebug, "Recipe %s has NULL skill!\n", rp->title);
 		return;
 	    }
 
 	    if (rp->cauldron == NULL) {
-		LOG(llevDebug, "Recipie %s has NULL cauldron!\n", rp->title);
+		LOG(llevDebug, "Recipe %s has NULL cauldron!\n", rp->title);
 		return;
 	    }
 
@@ -181,7 +170,7 @@ void attempt_do_alchemy(object *caster, object *cauldron) {
 
 		/* roll the dice */
 		if ((float)(random_roll(0, 101, caster, PREFER_LOW)) <= 100.0 * success_chance) {
-		    add_exp(caster, rp->exp);
+		    change_exp(caster, rp->exp, rp->skill, SK_EXP_NONE);
 		    return;
 		}
 	    }
@@ -248,7 +237,7 @@ int numb_ob_inside (object *op) {
  
 object * attempt_recipe(object *caster, object *cauldron, int ability, recipe *rp, int nbatches) { 
 
-    object *item=NULL;
+    object *item=NULL, *skop;
     /* this should be passed to this fctn, not effiecent cpu use this way */
     int batches=abs(nbatches);
 
@@ -259,8 +248,9 @@ object * attempt_recipe(object *caster, object *cauldron, int ability, recipe *r
 	return 0;
     }
 
-    /* did the caster use the right skill? */
-    if (caster->chosen_skill->stats.sp != lookup_skill_by_name(rp->skill))
+    skop = find_skill_by_name(caster, rp->skill);
+    /* does the caster have the skill? */
+    if (!skop)
 	return 0;
 
     /* code required for this recipe, search the caster */
@@ -392,194 +382,189 @@ object * find_transmution_ob ( object *first_ingred, recipe *rp) {
  */
  
 void alchemy_failure_effect(object *op,object *cauldron,recipe *rp,int danger) {
-  int level=0;
+    int level=0;
  
-  if(!op || !cauldron) return; 
+    if(!op || !cauldron) return; 
 
-  if(danger>1) level=random_roll(1, danger, op, PREFER_LOW);
+    if(danger>1) level=random_roll(1, danger, op, PREFER_LOW);
 
 #ifdef ALCHEMY_DEBUG
-  LOG(llevDebug,"Alchemy_failure_effect(): using level=%d\n",level); 
+    LOG(llevDebug,"Alchemy_failure_effect(): using level=%d\n",level); 
 #endif
 
-  /* possible outcomes based on level */
-  if(level<25) { 		      	/* INGREDIENTS USED/SLAGGED */
-      object *item=NULL;
+    /* possible outcomes based on level */
+    if(level<25) { 		      	/* INGREDIENTS USED/SLAGGED */
+	object *item=NULL;
  
-      if(rndm(0, 2)) {  /* slag created */
-        object *tmp=cauldron->inv;
-        int weight=0;
-	uint16 material=M_STONE;
+	if(rndm(0, 2)) {  /* slag created */
+	    object *tmp=cauldron->inv;
+	    int weight=0;
+	    uint16 material=M_STONE;
 
-        while(tmp) { /* slag has coadded ingredient properties */
-	   weight+=tmp->weight; 
-	   if(!(material&tmp->material)) 
-		material=material|tmp->material; 
-	   tmp=tmp->below;
-        }
-        tmp = get_archetype("rock");
-        tmp->weight=weight;
-        tmp->value=0;
-	tmp->material=material;
-	tmp->materialname = add_string("stone");
-	free_string(tmp->name);
-	tmp->name=add_string("slag");
-	if (tmp->name_pl) free_string(tmp->name_pl);
-	tmp->name_pl=add_string("slags");
-        item=insert_ob_in_ob(tmp,cauldron);
-	CLEAR_FLAG(tmp,FLAG_CAN_ROLL);
-	CLEAR_FLAG(tmp,FLAG_NO_PICK);
-	CLEAR_FLAG(tmp,FLAG_NO_PASS);
-      } 
-      remove_contents(cauldron->inv,item);
-      new_draw_info_format(NDI_UNIQUE,0,op, 
-	"The %s %s.",cauldron->name,cauldron_sound());
-      return;
-  } else if (level< 40) {                	/* MAKE TAINTED ITEM */
-      object *tmp=NULL;
+	    while(tmp) { /* slag has coadded ingredient properties */
+		weight+=tmp->weight; 
+		if(!(material&tmp->material)) 
+		    material |= tmp->material; 
+		tmp=tmp->below;
+	    }
+	    tmp = get_archetype("rock");
+	    tmp->weight=weight;
+	    tmp->value=0;
+	    tmp->material=material;
+	    tmp->materialname = add_string("stone");
+	    free_string(tmp->name);
+	    tmp->name=add_string("slag");
+	    if (tmp->name_pl) free_string(tmp->name_pl);
+	    tmp->name_pl=add_string("slags");
+	    item=insert_ob_in_ob(tmp,cauldron);
+	    CLEAR_FLAG(tmp,FLAG_CAN_ROLL);
+	    CLEAR_FLAG(tmp,FLAG_NO_PICK);
+	    CLEAR_FLAG(tmp,FLAG_NO_PASS);
+	}
+	remove_contents(cauldron->inv,item);
+	new_draw_info_format(NDI_UNIQUE,0,op, 
+		     "The %s %s.",cauldron->name,cauldron_sound());
+	return;
+    } else if (level< 40) {                	/* MAKE TAINTED ITEM */
+	object *tmp=NULL;
 
-      if (!rp) 
+	if (!rp) 
 	   if((rp=get_random_recipe((recipelist *) NULL))==NULL) 
 	      	return;
 
-      if((tmp=attempt_recipe(op,cauldron,1,rp,-1))) { 
-           if(!QUERY_FLAG(tmp,FLAG_CURSED)) /* curse it */
+	if((tmp=attempt_recipe(op,cauldron,1,rp,-1))) { 
+	    if(!QUERY_FLAG(tmp,FLAG_CURSED)) /* curse it */
 	   	SET_FLAG(tmp,FLAG_CURSED);
 
-	    /* special stuff for consumables */
-           if(tmp->type==POTION||tmp->type==FOOD) {
-            	if(tmp->stats.sp && rndm(0 ,1)) /* drains magic */
-			tmp->stats.sp = SP_REGENERATE_SPELLPOINTS;
-		else 
-		 	tmp->stats.sp = 0; /* so it can drain stats */ 
-            	if(rndm(0, 1)) { 		/* poisonous */
-			tmp->type=FOOD; 
-			tmp->stats.hp=random_roll(0, 149, op, PREFER_LOW);
-	    	}
-           }
-
+	    /* the apply code for potions already deals with cursed
+	     * potions, so any code here is basically ignored.
+	     */
+	    if(tmp->type==FOOD) {
+		tmp->stats.hp=random_roll(0, 149, op, PREFER_LOW);
+	    }
 	   tmp->value = 0; /* unsaleable item */
  
        	   /* change stats downward */
  	   do {
            	change_attr_value(&tmp->stats,rndm(0, 6),-1*(rndm(1, 3)));
            } while (rndm(0, 2));
-      }  
-      return;
+	}
+	return;
+    } if(level==40) {                  		/* MAKE RANDOM RECIPE */
+	recipelist *fl;
+	int numb=numb_ob_inside(cauldron);
 
-  } if(level==40) {                  		/* MAKE RANDOM RECIPE */
-      recipelist *fl;
-      int numb=numb_ob_inside(cauldron);
+	fl=get_formulalist(numb-1); /* take a lower recipe list */ 
+	if(fl &&(rp=get_random_recipe(fl)))
+	    /* even though random, don't grant user any EXP for it */
+	    (void) attempt_recipe(op,cauldron,1,rp,-1);
+	else 
+	    alchemy_failure_effect(op,cauldron,rp,level-1);
+	return;
 
-      fl=get_formulalist(numb-1); /* take a lower recipe list */ 
-      if(fl &&(rp=get_random_recipe(fl)))
-	  /* even though random, don't grant user any EXP for it */
-          (void) attempt_recipe(op,cauldron,1,rp,-1);
-      else 
-	  alchemy_failure_effect(op,cauldron,rp,level-1);
-      return;
+    } else if (level<45) {                	/* INFURIATE NPC's */
+	/* this is kind of kludgy I know...*/
+	cauldron->enemy=op;
+	npc_call_help(cauldron);
+	cauldron->enemy=NULL;
 
-  } else if (level<45) {                	/* INFURIATE NPC's */
-       /* this is kind of kludgy I know...*/
-      cauldron->enemy=op;
-      npc_call_help(cauldron);
-      cauldron->enemy=NULL;
+	alchemy_failure_effect(op,cauldron,rp,level-5);
+	return;
+    } else if (level<50) {               		/* MINOR EXPLOSION/FIREBALL */
+	object *tmp;
+	remove_contents(cauldron->inv,NULL);
+	switch(rndm(0, 2)) {
+	    case 0: 
+		tmp=get_archetype("bomb");
+		tmp->stats.dam=random_roll(1, level, op, PREFER_LOW);
+		tmp->stats.hp=random_roll(1, level, op, PREFER_LOW);
+		new_draw_info_format(NDI_UNIQUE,0,op,"The %s creates a bomb!",
+				     cauldron->name);
+		break; 
 
-      alchemy_failure_effect(op,cauldron,rp,level-5);
-      return;
+	    default:
+		tmp=get_archetype("fireball");
+		tmp->stats.dam=random_roll(1, level, op, PREFER_LOW)/5+1;
+		tmp->stats.hp=random_roll(1, level, op, PREFER_LOW)/10+2;
+		new_draw_info_format(NDI_UNIQUE,0,op,"The %s erupts in flame!",
+				     cauldron->name);
+		break;
+	}
+	tmp->x=cauldron->x,tmp->y=cauldron->y;
+	insert_ob_in_map(tmp,op->map,NULL,0);
+	return;
 
-  } else if (level<50) {               		/* MINOR EXPLOSION/FIREBALL */
-      object *tmp;
-      remove_contents(cauldron->inv,NULL);
-      switch(rndm(0, 2)) {
-	case 0: 
-           tmp=get_archetype("bomb");
-  	   tmp->stats.dam=random_roll(1, level, op, PREFER_LOW);
-  	   tmp->stats.hp=random_roll(1, level, op, PREFER_LOW);
-      	   new_draw_info_format(NDI_UNIQUE,0,op,"The %s creates a bomb!",
-		cauldron->name);
-	   break; 
-	default:
-           tmp=get_archetype("fireball");
-  	   tmp->stats.dam=random_roll(1, level, op, PREFER_LOW)/5+1;
-  	   tmp->stats.hp=random_roll(1, level, op, PREFER_LOW)/10+2;
-      	   new_draw_info_format(NDI_UNIQUE,0,op,"The %s erupts in flame!",
-		cauldron->name);
-	   break;
-      }
-      tmp->x=cauldron->x,tmp->y=cauldron->y;
-      insert_ob_in_map(tmp,op->map,NULL,0);
-      return;
+    } else if (level<60) {                	/* CREATE MONSTER */
+	new_draw_info_format(NDI_UNIQUE,0,op, 
+			     "The %s %s.",cauldron->name,cauldron_sound());
+	remove_contents(cauldron->inv,NULL);
+	return;
+    } else if (level<80) {                	/* MAJOR FIRE */
+	object *fb = get_archetype(SP_MED_FIREBALL);
+	remove_contents(cauldron->inv,NULL);
+	fire_arch_from_position(cauldron, cauldron,cauldron->x, cauldron->y,
+	    0, fb);
+	free_object(fb);
+	new_draw_info_format(NDI_UNIQUE,0,op,"The %s erupts in flame!",
+			     cauldron->name);
+	return;
 
-  } else if (level<60) {                	/* CREATE MONSTER */
-      new_draw_info_format(NDI_UNIQUE,0,op, 
-	"The %s %s.",cauldron->name,cauldron_sound());
-      remove_contents(cauldron->inv,NULL);
-      return;
-
-  } else if (level<80) {                	/* MAJOR FIRE */
-      remove_contents(cauldron->inv,NULL);
-      fire_arch (cauldron, cauldron,0, spellarch[SP_L_FIREBALL], SP_L_FIREBALL, 0);
-      new_draw_info_format(NDI_UNIQUE,0,op,"The %s erupts in flame!",
-		cauldron->name);
-      return;
-
-  } else if (level<100) {               	/* WHAMMY the CAULDRON */
-      if(!QUERY_FLAG(cauldron,FLAG_CURSED))
-        SET_FLAG(cauldron,FLAG_CURSED);
-      else cauldron->magic--;
-      cauldron->magic -= random_roll(0, 4, op, PREFER_LOW);
-      if(rndm(0, 1)) {
-        remove_contents(cauldron->inv,NULL);
-        new_draw_info_format(NDI_UNIQUE,0,op,
-	   "Your %s turns darker then makes a gulping sound!",
-           cauldron->name);
-      } else
-        new_draw_info_format(NDI_UNIQUE,0,op,
+    } else if (level<100) {               	/* WHAMMY the CAULDRON */
+	if(!QUERY_FLAG(cauldron,FLAG_CURSED))
+	    SET_FLAG(cauldron,FLAG_CURSED);
+	else cauldron->magic--;
+	cauldron->magic -= random_roll(0, 4, op, PREFER_LOW);
+	if(rndm(0, 1)) {
+	    remove_contents(cauldron->inv,NULL);
+	    new_draw_info_format(NDI_UNIQUE,0,op,
+		 "Your %s turns darker then makes a gulping sound!",
+		 cauldron->name);
+	} else
+	    new_draw_info_format(NDI_UNIQUE,0,op,
 		"Your %s becomes darker.",cauldron->name);
-      return;
+	return;
 
-  } else if (level<110) {               	/* SUMMON EVIL MONSTERS */
-      object *tmp=get_random_mon(level/5);
+    } else if (level<110) {               	/* SUMMON EVIL MONSTERS */
+	object *tmp=get_random_mon(level/5);
 
-      remove_contents(cauldron->inv,NULL);
-      if(!tmp) 
-	alchemy_failure_effect(op,cauldron,rp,level);
-      else if(summon_hostile_monsters(cauldron,
-	      random_roll(1, 10, op, PREFER_LOW), tmp->arch->name))
-  	 new_draw_info_format(NDI_UNIQUE, 0,op,
-	    "The %s %s and then pours forth monsters!",
-	    cauldron->name,cauldron_sound());
-      return;
+	remove_contents(cauldron->inv,NULL);
+	if(!tmp) 
+	    alchemy_failure_effect(op,cauldron,rp,level);
+	else if(summon_hostile_monsters(cauldron, random_roll(1, 10, op, PREFER_LOW), tmp->arch->name))
+	    new_draw_info_format(NDI_UNIQUE, 0,op,
+		 "The %s %s and then pours forth monsters!",
+		 cauldron->name,cauldron_sound());
+	return;
 
-  } else if (level<150) {               	/* COMBO EFFECT */
-      int roll = rndm(1, 3);
-      while(roll) {
-	alchemy_failure_effect(op,cauldron,rp,level-39);
-	roll--;
-      }
-      return;
-  } else if (level==151) {              	/* CREATE RANDOM ARTIFACT */
-      object *tmp;
+    } else if (level<150) {               	/* COMBO EFFECT */
+	int roll = rndm(1, 3);
+	while(roll) {
+	    alchemy_failure_effect(op,cauldron,rp,level-39);
+	    roll--;
+	}
+	return;
+    } else if (level==151) {              	/* CREATE RANDOM ARTIFACT */
+	object *tmp;
 	/* this is meant to be better than prior possiblity, 
 	 * in this one, we allow *any* valid alchemy artifact
   	 * to be made (rather than only those on the given
 	 * formulalist) */
-      if(!rp) rp=get_random_recipe((recipelist *) NULL);
-      if(rp && (tmp=get_archetype(rp->arch_name))) { 
-         generate_artifact(tmp,random_roll(1, op->level/2+1, op, PREFER_HIGH)+1);
-	 if((tmp=insert_ob_in_ob(tmp,cauldron))) { 
-	    remove_contents(cauldron->inv,tmp);
-  	    new_draw_info_format(NDI_UNIQUE, 0,op,
-		"The %s %s.",cauldron->name,cauldron_sound());
-	 }
-      }
-      return;
+	if(!rp) rp=get_random_recipe((recipelist *) NULL);
+	if(rp && (tmp=get_archetype(rp->arch_name))) { 
+	    generate_artifact(tmp,random_roll(1, op->level/2+1, op, PREFER_HIGH)+1);
+	    if((tmp=insert_ob_in_ob(tmp,cauldron))) { 
+		remove_contents(cauldron->inv,tmp);
+		new_draw_info_format(NDI_UNIQUE, 0,op,
+				     "The %s %s.",cauldron->name,cauldron_sound());
+	    }
+	}
+	return;
   } else {               	/* MANA STORM - watch out!! */
-      new_draw_info(NDI_UNIQUE,0,op,"You unwisely release potent forces!");
-      remove_contents (cauldron->inv,NULL);
-      cast_mana_storm(op,level);
-      return;
+	object *tmp = get_archetype(LOOSE_MANA);
+	new_draw_info(NDI_UNIQUE,0,op,"You unwisely release potent forces!");
+	remove_contents (cauldron->inv,NULL);
+	cast_magic_storm(op,tmp, level);
+	return;
   }
 }
 
@@ -621,8 +606,7 @@ int calc_alch_danger(object *caster,object *cauldron, recipe *rp) {
    int danger=0,nrofi=0; 
  
     /* Knowing alchemy skill reduces yer risk */
-/*   if(caster->chosen_skill&&caster->chosen_skill->stats.sp==SK_ALCHEMY) */
-   danger -= SK_level(caster);
+   danger -= caster->chosen_skill?caster->chosen_skill->level:caster->level;
 
    /* better cauldrons reduce risk */
    danger -= cauldron->magic;

@@ -30,7 +30,6 @@
 #ifndef __CEXTRACT__
 #include <sproto.h>
 #endif
-#include <version.h>
 #include <spells.h>
 
 static partylist * firstparty=NULL; /* Keeps track of first party in list */

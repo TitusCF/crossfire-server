@@ -31,7 +31,6 @@
 #ifndef __CEXTRACT__
 #include <sproto.h>
 #endif
-#include <version.h>
 
 /* global weathermap */
 weathermap_t **weathermap;
@@ -584,6 +583,13 @@ static void load_settings()
 		LOG(llevError,"load_settings: Unkown value for simple_exp: %s\n",
 		    cp);
 	    }
+	} else if (!strcasecmp(buf, "item_power_factor")) {
+	    float tmp = atof(cp);
+	    if (tmp < 0)
+		LOG(llevError, "load_settings: item_power_factor must be a postive number (%f < 0)\n",
+		    tmp);
+	    else
+		settings.item_power_factor = tmp;
 	} else if (!strcasecmp(buf, "set_friendly_fire")) {
 	    int val = atoi(cp);
 
@@ -634,6 +640,7 @@ void init(int argc, char **argv) {
     setup_library();	/* Set up callback function pointers */
     init_commands();	/* Sort command tables */
     read_map_log();	/* Load up the old temp map files */
+    init_skills();
 
     parse_args(argc, argv, 3);
 
@@ -702,7 +709,6 @@ void init_beforeplay() {
   init_gods();	/* init linked list of gods from archs*/ 
   init_readable();	/* inits useful arrays for readable texts */
   init_formulae();  /* If not called before, reads formulae from file */
-  init_new_exp_system();    /* If not called before, inits experience system */
 
   switch(settings.dumpvalues) {
   case 1:
@@ -718,7 +724,6 @@ void init_beforeplay() {
     dump_spells();
     exit(0);
   case 5:
-    dump_skills();
     exit(0);
   case 6:
     dump_races();

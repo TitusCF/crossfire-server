@@ -797,9 +797,6 @@ void esrv_move_object (object *pl, tag_t to, tag_t tag, long nrof)
 	  pl->name, to);
       return;
     }
-#if 0
-    printf ("Sacks name was '%s'.\n", env->name);
-#endif
     /* put_object_in_sack presumes that necessary sanity checking
      * has already been done (eg, it can be picked up and fits in
      * in a sack, so check for those things.  We should also check

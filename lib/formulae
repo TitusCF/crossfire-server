@@ -308,7 +308,7 @@ ingred 3 ghost's ectoplasm,water of emerald
 # -- misc. balms -- 
 #
 # -- word of recall
-Object traveling
+Object return home
 arch balm_generic
 chance 2
 diff 12
@@ -359,7 +359,7 @@ cauldron cauldron
 ingred 2 giant bat's wing,water of the wise
 #
 # -- serpent to snake (you rub it on your staff!)
-Object serpent
+Object the serpent
 arch balm_generic
 chance 12
 diff 12
@@ -571,7 +571,7 @@ cauldron cauldron
 ingred 2 beholdereye,water of sapphire
 #
 # -- show invisible
-Object Ibn Gahzi
+Object revealing
 arch dust_generic
 chance 3
 diff 9
@@ -662,7 +662,7 @@ cauldron cauldron
 ingred skull's tongue,zombie's corpse,graveyard dirt
 #
 # -- light
-Object visibility
+Object brightness
 arch dust_generic
 chance 24
 diff 12
@@ -726,7 +726,7 @@ ingred water of sapphire,dust of frost,bottle of philosophical oil
 #    permantent stat raising items is a playbalance no no I think).  
 #
 # -- strength spell
-Object might
+Object strength
 arch potion_generic
 chance 18
 diff 16
@@ -747,7 +747,7 @@ cauldron cauldron
 ingred 3 water of the wise,pixie dust,pile of philosophical salt
 #
 # -- con spell
-Object health
+Object fortitude
 arch potion_generic
 chance 17
 diff 16
@@ -918,7 +918,7 @@ cauldron cauldron
 ingred man's eye,carrots,balm of first aid
 #
 # -- cure poison 
-Object cure sickness
+Object cure poison
 arch potion_generic
 chance 16
 diff 12
@@ -1041,7 +1041,7 @@ cauldron cauldron
 ingred sage's head,water of the wise
 #
 # -- cure disease
-Object cure illness
+Object cure disease
 arch potion_generic
 chance 20
 diff 5
@@ -2917,27 +2917,27 @@ ingred unicorn horn,3 dust of ignition,potion of mystic power
 # -------------------
 #
 Object Fire
-arch talisman
+arch talisman_pyromancy
 chance 5
 diff 25
 exp 35000
 yield 1
 skill thaumaturgy
 cauldron thaumaturg_desk
-ingred talisman,ring of Fire,dragon's heart
+ingred talisman_pyromancy,ring of Fire,dragon's heart
 #
 Object Frost
-arch talisman
+arch talisman_evocation
 chance 5
 diff 25
 exp 35000
 yield 1
 skill thaumaturgy
 cauldron thaumaturg_desk
-ingred talisman,ring of Ice,chinese dragon's heart
+ingred talisman_evocation,ring of Ice,chinese dragon's heart
 #
 Object Elements
-arch talisman
+arch talisman_pyromancy
 chance 2
 diff 35
 exp 75000
@@ -2947,24 +2947,24 @@ cauldron thaumaturg_desk
 ingred talisman of Fire,talisman of Frost,3 electric dragon's steak,3 diamond of flawless beauty
 #
 Object Unified Mind
-arch talisman
+arch talisman_sorcery
 chance 10
 diff 25
 exp 35000
 yield 1
 skill thaumaturgy
 cauldron thaumaturg_desk
-ingred talisman,potion of intelligence,helmet of Xebinon
+ingred talisman_sorcery,potion of intelligence,helmet of Xebinon
 #
 Object Evocation
-arch talisman
+arch talisman_evocation
 chance 3
 diff 25
 exp 35000
 yield 1
 skill thaumaturgy
 cauldron thaumaturg_desk
-ingred talisman,3 figurine of a clenched hand,3 balm of traveling
+ingred talisman_evocation,3 figurine of a clenched hand,3 balm of traveling
 #
 # -------------------
 # Holy Symbols

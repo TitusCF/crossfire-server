@@ -1007,10 +1007,14 @@ The steps for adding a body location is as follows:
 4) recompile
 5) create some items that use these new locations.
 
-Note that the code itself sees all this as abstract - it doesn't know
-what goes in what location, or even what each location is called.  In
-fact, the location logic could even be done dynamically by a file.
-
+Note that most the code itself sees all this as abstract - it doesn't know
+what goes in what location, or even what each location is called.
+However, a few bits do care - the skill stuff checks to see if you have
+any arms free - thus, BODY_ARMS is defined so we know if the player
+does or does not.  The alternative to this would be to have the
+skill stuff do a strcmp, but then we are defining the name - easier
+to just presume that the location won't change in teh body_locations
+table - there is no reason that it should.
 
 I. Meaning of certain attributes for certain items:
 ====================================================

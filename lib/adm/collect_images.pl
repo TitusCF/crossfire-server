@@ -70,7 +70,7 @@ while(<BMAPS>) {
     $file = $2;
     $file1 = $3;
 
-    print "$num $file\n" if ($num % 50) == 0 ;
+    print "$num $file\n" if ($num % 500) == 0 ;
     # This probably isn't the most efficient way to do this if a 
     # large number of images are added, as we try to open each
     # instance.

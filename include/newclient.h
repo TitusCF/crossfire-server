@@ -98,7 +98,7 @@
 #define CS_STAT_MAXGRACE	24
 #define CS_STAT_FLAGS	25
 #define CS_STAT_WEIGHT_LIM	26
-#define CS_STAT_EXT_TITLE 27
+#define CS_STAT_EXP64	28
 
 /* Start & end of resistances, inclusive. */
 #define CS_STAT_RESIST_START	100
@@ -137,6 +137,15 @@
 #define CS_STAT_SKILLEXP_MALEVEL 127
 #define CS_STAT_SKILLEXP_WISDOM 128
 #define CS_STAT_SKILLEXP_WILEVEL 129
+
+/* CS_STAT_SKILLINFO is used as the starting index point.  Skill number->name
+ * map is generated dynamically for the client, so a bunch of entries will
+ * be used here.  CS_NUM_SKILLS does not match how many skills there really
+ * are - instead, it is used as a range of values so that the client
+ * can have some idea how many skill categories there may be.
+ */
+#define CS_STAT_SKILLINFO   140
+#define CS_NUM_SKILLS	     50
 
 /* These are used with CS_STAT_FLAGS above to communicate S->C what the
  * server thinks the fireon & runon states are.

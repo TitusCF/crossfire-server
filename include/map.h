@@ -133,7 +133,7 @@
 #define P_BLOCKSVIEW	0x01
 #define P_NO_MAGIC      0x02	/* Spells (some) can't pass this object */
 #define P_NO_PASS       0x04	/* Nothing can pass (wall() is true) */
-#define P_PASS_THRU     0x08	/* */
+/*#define P_PASS_THRU     0x08	*//* */
 #define P_IS_ALIVE      0x10	/* something alive is on this space */
 #define P_NO_CLERIC     0x20	/* no clerical spells cast here */
 #define P_NEED_UPDATE	0x40	/* this space is out of date */

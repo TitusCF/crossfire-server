@@ -167,11 +167,6 @@ static player* get_player(player *p) {
     strncpy(p->title,op->arch->clone.name,MAX_NAME);
     op->race = add_string (op->arch->clone.race);
 
-    /* Would be better of '0' was not a defined spell */
-    for(i=0;i<NROFREALSPELLS;i++)
-	p->known_spells[i]= -1;
-
-    p->chosen_spell = -1;
     CLEAR_FLAG(op,FLAG_READY_SKILL); 
 
     /* we need to clear these to -1 and not zero - otherwise,
@@ -179,14 +174,13 @@ static player* get_player(player *p) {
      * send new values to the client, as things like exp start
      * at zero.
      */
-    for (i=0; i < MAX_EXP_CAT; i++) {
+    for (i=0; i < NUM_SKILLS; i++) {
 	p->last_skill_exp[i] = -1;
-	p->last_skill_level[i] = -1;
+	p->last_skill_ob[i] = NULL;
     }
     for (i=0; i < NROFATTACKS; i++) {
 	p->last_resist[i] = -1;
     }
-    p->last_skill_index = -1;
     p->last_stats.exp = -1;
 
     p->socket.update_look=0;
@@ -468,17 +462,6 @@ int path_to_player(object *mon, object *pl,int mindiff) {
 
 void give_initial_items(object *pl,treasurelist *items) {
     object *op,*next=NULL;
-    /* Lets at least use the SP_ values here and not just numbers, like 0, 1, ... */
-
-    int start_spells[] = {SP_BULLET, SP_S_FIREBALL, SP_BURNING_HANDS,
-	SP_S_LIGHTNING, SP_M_MISSILE ,SP_ICESTORM, SP_S_SNOWSTORM};
-    int nrof_start_spells = sizeof start_spells / sizeof start_spells[0];
-
-    int start_prayers[] = {SP_TURN_UNDEAD, SP_HOLY_WORD, SP_MINOR_HEAL,
-	SP_CAUSE_LIGHT};
-    int nrof_start_prayers = sizeof start_prayers / sizeof start_prayers[0];
-    int idx;
-
 
     if(pl->randomitems!=NULL)
 	create_treasure(items,pl,GT_STARTEQUIP | GT_ONLY_GOOD,1,0);
@@ -487,12 +470,14 @@ void give_initial_items(object *pl,treasurelist *items) {
 	next = op->below;
 	
 	/* Forces get applied per default, unless they have the
-           flag "neutral" set. Sorry but I can't think of a better way */
+         * flag "neutral" set. Sorry but I can't think of a better way 
+	 */
   	if(op->type==FORCE && !QUERY_FLAG(op, FLAG_NEUTRAL))
-	  { SET_FLAG(op,FLAG_APPLIED);};
+	    SET_FLAG(op,FLAG_APPLIED);
 	
 	/* we never give weapons/armour if these cannot be used
-           by this player due to race restrictions */
+         * by this player due to race restrictions 
+	 */
 	if (pl->type == PLAYER) {
 	  if ((!QUERY_FLAG(pl, FLAG_USE_ARMOUR) &&
 	      (op->type == ARMOUR || op->type == BOOTS ||
@@ -505,31 +490,33 @@ void give_initial_items(object *pl,treasurelist *items) {
 	    continue;
 	  }
 	}
-	
-  	if(op->type==SPELLBOOK) { /* fix spells for first level spells */
-	    if (strcmp (op->arch->name, "cleric_book") == 0) {
-		if (nrof_start_prayers <= 0) {
-		    remove_ob (op);
-		    free_object (op);
-		    continue;
-		}
-		idx = RANDOM() % nrof_start_prayers;
-		op->stats.sp = start_prayers[idx];
-		/* This makes sure the character does not get duplicate spells */
-		start_prayers[idx] = start_prayers[nrof_start_prayers - 1];
-		nrof_start_prayers--;
-	    } else {
-		if (nrof_start_spells <= 0) {
-		    remove_ob (op);
-		    free_object (op);
-		    continue;
-		}
-		idx = RANDOM() % nrof_start_spells;
-		op->stats.sp = start_spells[idx];
-		start_spells[idx] = start_spells[nrof_start_spells - 1];
-		nrof_start_spells--;
+
+	/* This really needs to be better - we should really give
+	 * a substitute spellbook.  The problem is that we don't really
+	 * have a good idea what to replace it with (need something like
+	 * a first level treasurelist for each skill.)
+	 * remove duplicate skills also
+	 */
+  	if(op->type==SPELLBOOK || op->type == SKILL) {
+	    object *tmp;
+
+	    for (tmp=op->below; tmp; tmp=tmp->below)
+		if (tmp->type == op->type && tmp->name == op->name) break;
+
+	    if (tmp) {
+		remove_ob(op);
+		free_object(op);
+		LOG(llevError,"give_initial_items: Removing duplicate object %s\n",
+		    tmp->name);
+		continue;
 	    }
+	    if (op->nrof > 1) op->nrof = 1;
 	}
+
+	if (op->type == SPELLBOOK && op->inv) {
+	    CLEAR_FLAG(op->inv, FLAG_STARTEQUIP);
+	}
+
 	/* Give starting characters identified, uncursed, and undamned
 	 * items.  Just don't identify gold or silver, or it won't be
 	 * merged properly.
@@ -539,13 +526,20 @@ void give_initial_items(object *pl,treasurelist *items) {
 	    CLEAR_FLAG(op, FLAG_CURSED);
 	    CLEAR_FLAG(op, FLAG_DAMNED);
 	}
-	if(op->type==ABILITY)  {
-	    pl->contr->known_spells[pl->contr->nrofknownspells++]=op->stats.sp;
+	if(op->type==SPELL)  {
 	    remove_ob(op);
 	    free_object(op);
             continue;
 	}
+	if(op->type==SKILL)  {
+	    SET_FLAG(op, FLAG_CAN_USE_SKILL);
+	    op->stats.exp = 0;
+	    op->level = 1;
+	}
     } /* for loop of objects in player inv */
+
+    /* Need to set up the skill pointers */
+    link_player_skills(pl);
 }
 
 void get_name(object *op) {
@@ -892,9 +886,8 @@ int key_change_class(object *op, char key)
 #endif
 	start_info(op);
 	CLEAR_FLAG(op, FLAG_WIZ);
-	(void) init_player_exp(op);
 	give_initial_items(op,op->randomitems);
-	(void) link_player_skills(op);
+	link_player_skills(op);
 	esrv_send_inventory(op, op);
 	return 0;
     }
@@ -1376,16 +1369,15 @@ object *pick_arrow_target(object *op, char *type, int dir)
 {
     object *tmp = NULL;
     mapstruct *m;
-    int i, mflags, found, number, dex;
+    int i, mflags, found, number;
     sint16 x, y;
 
     if (op->map == NULL)
 	return find_arrow(op, type);
 
     /* do a dex check */
-    dex = get_skill_stat1(op) ? get_skill_stat1(op) : 10;
     number = (die_roll(2, 40, op, PREFER_LOW)-2)/2;
-    if (number > (dex + SK_level(op)))
+    if (number > (op->stats.Dex + (op->chosen_skill?op->chosen_skill->level:op->level)))
 	return find_arrow(op, type);
 
     m = op->map;
@@ -1457,7 +1449,7 @@ int fire_bow(object *op, object *part, object *arrow, int dir, int wc_mod,
 	    return 0;
 	}
     }
-    if( !bow->race ) {
+    if( !bow->race || !bow->skill) {
 	new_draw_info_format(NDI_UNIQUE, 0, op, "Your %s is broken.", bow->name);
 	return 0;
     }
@@ -1504,6 +1496,8 @@ int fire_bow(object *op, object *part, object *arrow, int dir, int wc_mod,
 	return 0;
     }
     set_owner(arrow, op);
+    if (arrow->skill) free_string(arrow->skill);
+    arrow->skill = add_refcount(bow->skill);
 
     arrow->direction=dir;
     arrow->x = sx;
@@ -1542,11 +1536,12 @@ int fire_bow(object *op, object *part, object *arrow, int dir, int wc_mod,
 
 
     if (op->type == PLAYER) {
-	arrow->stats.wc = 20 - bow->magic - arrow->magic - SK_level(op) -
+	arrow->stats.wc = 20 - bow->magic - arrow->magic - 
+	    (op->chosen_skill?op->chosen_skill->level:op->level) -
 	    dex_bonus[op->stats.Dex] - thaco_bonus[op->stats.Str] -
 	    arrow->stats.wc - bow->stats.wc + wc_mod;
 
-	arrow->level = SK_level (op);
+	arrow->level = op->chosen_skill?op->chosen_skill->level:op->level;
     } else {
 	arrow->stats.wc= op->stats.wc - bow->magic - arrow->magic -
 	    arrow->stats.wc + wc_mod;
@@ -1628,6 +1623,10 @@ void fire_misc_object(object *op, int dir)
     }
 
     item = op->contr->ranges[range_misc];
+    if (!item->inv) {
+	LOG(llevError,"Object %s lacks a spell\n", item->name);
+	return;
+    }
     if (item->type == WAND) {
 	if(item->stats.food<=0) {
 	    play_sound_player_only(op->contr, SOUND_WAND_POOF,0,0);
@@ -1635,7 +1634,7 @@ void fire_misc_object(object *op, int dir)
 	    return;
 	}
     } else if (item->type == ROD || item->type==HORN) {
-	if(item->stats.hp<spells[item->stats.sp].sp) {
+	if(item->stats.hp<MAX(item->inv->stats.sp, item->inv->stats.grace)) {
 	    play_sound_player_only(op->contr, SOUND_WAND_POOF,0,0);
 	    if (item->type== ROD)
 		new_draw_info_format(NDI_UNIQUE, 0,op,
@@ -1647,7 +1646,7 @@ void fire_misc_object(object *op, int dir)
 	}
     }
 
-    if(cast_spell(op,item,dir,item->stats.sp,0,spellMisc,NULL)) {
+    if(cast_spell(op,item,dir,item->inv,NULL)) {
 	SET_FLAG(op, FLAG_BEEN_APPLIED); /* You now know something about it */
 	if (item->type == WAND) {
 	    if (!(--item->stats.food)) {
@@ -1668,20 +1667,13 @@ void fire_misc_object(object *op, int dir)
     }
 }
 
+/* Received a fire command for the player - go and do it.
+ */
 void fire(object *op,int dir) {
     int spellcost=0;
 
     /* check for loss of invisiblity/hide */
     if (action_makes_visible(op)) make_visible(op);
-
-    /* a check for players, make sure things are groovy. This routine
-     * will change the skill of the player as appropriate in order to
-     * fire whatever is requested. In the case of spells (range_magic)
-     * it handles whether cleric or mage spell is requested to be cast. 
-     * -b.t. 
-     */ 
-    if(op->type==PLAYER) 
-	if(!check_skill_to_fire(op)) return;
 
     switch(op->contr->shoottype) {
 	case range_none:
@@ -1692,13 +1684,7 @@ void fire(object *op,int dir) {
 	    return;
 
 	case range_magic: /* Casting spells */
-	    op->contr->shoottype= range_magic;
-	    spellcost=cast_spell(op,op,dir,op->contr->chosen_spell,0,spellNormal,NULL);
-
-	    if(spells[op->contr->chosen_spell].cleric)
-		op->stats.grace-=spellcost;
-	    else
-		op->stats.sp-=spellcost;
+	    spellcost=cast_spell(op,op,dir,op->contr->ranges[range_magic],NULL);
 	    return;
 
 	case range_misc:
@@ -1706,12 +1692,14 @@ void fire(object *op,int dir) {
 	    return;
 
 	case range_golem: /* Control summoned monsters from scrolls */
-	    if(op->contr->golem==NULL) {
+	    if(op->contr->ranges[range_golem]==NULL || 
+	       op->contr->golem_count != op->contr->ranges[range_golem]->count) {
+		op->contr->ranges[range_golem] = NULL;
 		op->contr->shoottype=range_none;
-		op->contr->chosen_spell= -1;
+		op->contr->golem_count = 0;
 	    }
 	    else 
-		control_golem(op->contr->golem, dir);
+		control_golem(op->contr->ranges[range_golem], dir);
 	    return;
 
 	case range_skill:
@@ -1720,7 +1708,7 @@ void fire(object *op,int dir) {
 		    new_draw_info(NDI_UNIQUE, 0,op,"You have no applicable skill to use.");
 		return;
 	    }
-	    (void) do_skill(op,op,dir,NULL);
+	    (void) do_skill(op,op,op->chosen_skill,dir,NULL);
 	    return;
 	default:
 	    new_draw_info(NDI_UNIQUE, 0,op,"Illegal shoot type.");
@@ -1971,14 +1959,14 @@ void move_player_attack(object *op, int dir)
 
 	    op->contr->has_hit = 1; /* The last action was to hit, so use weapon_sp */
 
-	    skill_attack(mon, op, 0, NULL);
+	    skill_attack(mon, op, 0, NULL, NULL);
 	    /* If attacking another player, that player gets automatic
 	     * hitback, and doesn't loose luck either.
 	     */
 	    if (mon->type == PLAYER && mon->stats.hp >= 0 && !mon->contr->has_hit) {
 		short luck = mon->stats.luck;
 		mon->contr->has_hit = 1;
-		skill_attack(op, mon, 0, NULL);
+		skill_attack(op, mon, 0, NULL, NULL);
 		mon->stats.luck = luck;
 	    }
 	    if(action_makes_visible(op)) make_visible(op);
@@ -2051,10 +2039,10 @@ int handle_newcs_player(object *op)
      * destroys the golem looks correct, and it doesn't always happen, so
      * put this in a a workaround to clean up the golem pointer.
      */
-    if (op->contr->golem && 
-	((op->contr->golem_count != op->contr->golem->count) || 
-	 QUERY_FLAG(op->contr->golem, FLAG_REMOVED))) {
-	op->contr->golem = NULL;
+    if (op->contr->ranges[range_golem] && 
+	((op->contr->golem_count != op->contr->ranges[range_golem]->count) || 
+	 QUERY_FLAG(op->contr->ranges[range_golem], FLAG_REMOVED))) {
+	op->contr->ranges[range_golem] = NULL;
 	op->contr->golem_count = 0;
     }
 
@@ -2216,7 +2204,7 @@ void do_some_living(object *op) {
     }
 
     /* Regenerate Spell Points */
-    if(op->contr->golem==NULL&&--op->last_sp<0) {
+    if(op->contr->ranges[range_golem]==NULL && --op->last_sp<0) {
       gen_sp = gen_sp * 10 / (op->contr->gen_sp_armour < 10? 10 : op->contr->gen_sp_armour);
       if(op->stats.sp<op->stats.maxsp) {
 	op->stats.sp++;
@@ -2345,7 +2333,6 @@ void kill_player(object *op)
     char buf[MAX_BUF];
     int x,y,i;
     mapstruct *map;  /*  this is for resurrection */
-    object *tmp;
     int z;
     int num_stats_lose;
     int lost_a_stat;
@@ -2354,47 +2341,65 @@ void kill_player(object *op)
     int killed_script_rtn; /* GROS: For script return value */
     CFParm CFP;
     int evtid;
+    archetype *at;
+    object *tmp;
     event *evt;
+
     if(save_life(op))
 	return;
+
 
     /* If player dies on BATTLEGROUND, no stat/exp loss! For Combat-Arenas
      * in cities ONLY!!! It is very important that this doesn't get abused.
      * Look at op_on_battleground() for more info       --AndreasV
      */
     if (op_on_battleground(op, &x, &y)) {
-      new_draw_info(NDI_UNIQUE | NDI_NAVY, 0,op,
+	new_draw_info(NDI_UNIQUE | NDI_NAVY, 0,op,
 		    "You have been defeated in combat!");
-      new_draw_info(NDI_UNIQUE | NDI_NAVY, 0,op,
+	new_draw_info(NDI_UNIQUE | NDI_NAVY, 0,op,
 		    "Local medics have saved your life...");
+      
+	/* restore player */
+	at = find_archetype("poisoning");
+        tmp=present_arch_in_ob(at,op);
+	if (tmp) {
+	    remove_ob(tmp);
+	    free_object(tmp);
+	    new_draw_info(NDI_UNIQUE, 0,op, "Your body feels cleansed");
+	}
 
-      /* restore player */
-      cast_heal(op, 0, SP_CURE_POISON);
-      cast_heal(op, 0, SP_CURE_CONFUSION);
-      cure_disease(op,0);  /* remove any disease */
-      op->stats.hp=op->stats.maxhp;
-      if (op->stats.food<=0) op->stats.food=999;
+	at = find_archetype("confusion");
+        tmp=present_arch_in_ob(at,op);
+	if (tmp) {
+	    remove_ob(tmp);
+	    free_object(tmp);
+            new_draw_info(NDI_UNIQUE, 0,tmp, "Your mind feels clearer");
+	}
 
-      /* create a bodypart-trophy to make the winner happy */
-      tmp=arch_to_object(find_archetype("finger"));
-      if (tmp != NULL) {
-	sprintf(buf,"%s's finger",op->name);
-	tmp->name = add_string(buf);
-	sprintf(buf,"  This finger has been cut off %s\n"
+	cure_disease(op,0);  /* remove any disease */
+	op->stats.hp=op->stats.maxhp;
+	if (op->stats.food<=0) op->stats.food=999;
+      
+	/* create a bodypart-trophy to make the winner happy */
+	tmp=arch_to_object(find_archetype("finger"));
+	if (tmp != NULL) {
+	    sprintf(buf,"%s's finger",op->name);
+	    tmp->name = add_string(buf);
+	    sprintf(buf,"  This finger has been cut off %s\n"
 	            "  the %s, when he was defeated at\n  level %d by %s.\n",
 	        op->name, op->contr->title, (int)(op->level),
 	        op->contr->killer);
-	tmp->msg=add_string(buf);
-	tmp->value=0, tmp->material=0, tmp->type=0;
-	tmp->materialname = NULL;
-	tmp->x = op->x, tmp->y = op->y;
-	insert_ob_in_map(tmp,op->map,op,0);
-      }
-
-      /* teleport defeated player to new destination*/
-      transfer_ob(op, x, y, 0, NULL);
-      op->contr->braced=0;
-      return;
+	    tmp->msg=add_string(buf);
+	    tmp->value=0, tmp->material=0, tmp->type=0;
+	    tmp->materialname = NULL;
+	    tmp->x = op->x, tmp->y = op->y;
+	    insert_ob_in_map(tmp,op->map,op,0);
+	}
+      
+	/* teleport defeated player to new destination*/
+	transfer_ob(op, x, y, 0, NULL);
+	op->contr->braced=0;
+	return;
     }
 /* GROS: Handle for plugin death event */
   if ((evt = find_event(op, EVENT_DEATH)) != NULL)
@@ -2593,8 +2598,22 @@ void kill_player(object *op)
 	/**************************************/
 
 	/* remove any poisoning and confusion the character may be suffering.*/
-	cast_heal(op, 0, SP_CURE_POISON);
-	cast_heal(op, 0, SP_CURE_CONFUSION);
+	/* restore player */
+	at = find_archetype("poisoning");
+        tmp=present_arch_in_ob(at,op);
+	if (tmp) {
+	    remove_ob(tmp);
+	    free_object(tmp);
+	    new_draw_info(NDI_UNIQUE, 0,op, "Your body feels cleansed");
+	}
+
+	at = find_archetype("confusion");
+        tmp=present_arch_in_ob(at,op);
+	if (tmp) {
+	    remove_ob(tmp);
+	    free_object(tmp);
+            new_draw_info(NDI_UNIQUE, 0,tmp, "Your mind feels clearer");
+	}
 	cure_disease(op,0);  /* remove any disease */
 	
 	/*add_exp(op, (op->stats.exp * -0.20)); */
@@ -2645,11 +2664,12 @@ void kill_player(object *op)
 	    op->contr->own_title[0]='\0';
 	new_draw_info(NDI_UNIQUE|NDI_ALL, 0,NULL, buf);
 	check_score(op);
-	if(op->contr->golem!=NULL) {
-	    remove_friendly_object(op->contr->golem);
-	    remove_ob(op->contr->golem);
-	    free_object(op->contr->golem);
-	    op->contr->golem=NULL;
+	if(op->contr->ranges[range_golem]!=NULL) {
+	    remove_friendly_object(op->contr->ranges[range_golem]);
+	    remove_ob(op->contr->ranges[range_golem]);
+	    free_object(op->contr->ranges[range_golem]);
+	    op->contr->ranges[range_golem]=NULL;
+	    op->contr->golem_count=0;
 	}
 	loot_object(op); /* Remove some of the items for good */
 	remove_ob(op);
@@ -2754,38 +2774,39 @@ void fix_luck() {
 }
 
 
-/* cast_dust() - handles op throwing objects of type 'DUST' */
+/* cast_dust() - handles op throwing objects of type 'DUST'.
+ * This is much simpler in the new spell code - we basically
+ * just treat this as any other spell casting object.
+ */
  
 void cast_dust (object *op, object *throw_ob, int dir) {
-  archetype *arch = find_archetype(spells[throw_ob->stats.sp].archname);
+    object *skop, *spob;
  
-  /* casting POTION 'dusts' is really a use_magic_item skill */
-  if(op->type==PLAYER&&throw_ob->type==POTION
-	&&!change_skill(op,SK_USE_MAGIC_ITEM)) {
-      LOG(llevError,"Player %s lacks critical skill use_magic_item!\n",
+    skop = find_skill_by_name(op, throw_ob->skill);
+
+    /* casting POTION 'dusts' is really a use_magic_item skill */
+    if(op->type==PLAYER && throw_ob->type==POTION && !skop) {
+	LOG(llevError,"Player %s lacks critical skill use_magic_item!\n",
                 op->name);
-      return;
-  }
+	return;
+    }
+    spob = throw_ob->inv;
+    if (op->type==PLAYER && spob)
+	new_draw_info_format(NDI_UNIQUE, 0,op,"You cast %s.",spob->name);
+
+    cast_spell(op, throw_ob, dir, spob, NULL);
  
-  if(throw_ob->type==POTION&&arch!= NULL)
-    cast_cone(op,throw_ob,dir,10,throw_ob->stats.sp,arch,1);
-  else if((arch=find_archetype("dust_effect"))!=NULL) { /* dust_effect */
-    cast_cone(op,throw_ob,dir,1,0,arch,0);
-  } else /* problem occured! */ 
-    LOG(llevError,"cast_dust() can't find an archetype to use!\n");
- 
-  if (op->type==PLAYER&&arch)
-    new_draw_info_format(NDI_UNIQUE, 0,op,"You cast %s.",query_name(throw_ob));
-  if(!QUERY_FLAG(throw_ob,FLAG_REMOVED)) remove_ob(throw_ob);
-  free_object(throw_ob);
+    if(!QUERY_FLAG(throw_ob,FLAG_REMOVED)) remove_ob(throw_ob);
+    free_object(throw_ob);
 }
 
 void make_visible (object *op) {
     op->hide = 0;
     op->invisible = 0;
-    if(op->type==PLAYER) 
-      op->contr->tmp_invis = 0;
-    CLEAR_FLAG(op, FLAG_INVIS_UNDEAD);
+    if(op->type==PLAYER) {
+	op->contr->tmp_invis = 0;
+	if (op->contr->invis_race) FREE_AND_CLEAR_STR(op->contr->invis_race);
+    }
     update_object(op,UP_OBJ_FACE);
 }
 
@@ -2843,24 +2864,30 @@ int hideability(object *ob) {
 
 void do_hidden_move (object *op) {
     int hide=0, num=random_roll(0, 19, op, PREFER_LOW);
-    
+    object *skop;
+
     if(!op || !op->map) return;
 
     /* its *extremely* hard to run and sneak/hide at the same time! */
     if(op->type==PLAYER && op->contr->run_on) {
-      if(num >= SK_level(op)) {
-        new_draw_info(NDI_UNIQUE,0,op,"You ran too much! You are no longer hidden!");
-        make_visible(op);
-        return;
-      } else num += 20;
+	skop = find_obj_by_type_subtype(op, SKILL, SK_HIDING);
+
+	if(!skop || num >= skop->level) {
+	    new_draw_info(NDI_UNIQUE,0,op,"You ran too much! You are no longer hidden!");
+	    make_visible(op);
+	    return;
+	} else num += 20;
     }
     num += op->map->difficulty;
     hide=hideability(op); /* modify by terrain hidden level */
     num -= hide;
-    if((op->type==PLAYER&&hide<-10) || ((op->invisible-=num)<=0)) {
-      make_visible(op);
-      if(op->type==PLAYER) new_draw_info(NDI_UNIQUE, 0,op,
-          "You moved out of hiding! You are visible!");
+    if((op->type==PLAYER && hide<-10) || ((op->invisible-=num)<=0)) {
+	make_visible(op);
+	if(op->type==PLAYER) new_draw_info(NDI_UNIQUE, 0,op,
+		   "You moved out of hiding! You are visible!");
+    }
+    else if (op->type == PLAYER && skop) {
+	change_exp(op, calc_skill_exp(op, NULL, skop), skop->skill, 0);
     }
 }
 
@@ -2949,20 +2976,19 @@ int player_can_view (object *pl,object *op) {
  */
 int action_makes_visible (object *op) {
 
-  if(op->invisible && QUERY_FLAG(op,FLAG_ALIVE)) {
-    if(QUERY_FLAG(op,FLAG_MAKE_INVIS)) 
-      return 0; 
-    else if(op->hide || (op->contr&&op->contr->tmp_invis)) { 
-      new_draw_info_format(NDI_UNIQUE, 0,op,"You become %s!",op->hide?"unhidden":"visible");
-      return 1; 
-    } else if(op->contr && !op->contr->shoottype==range_magic) { 
-	  /* improved invis is lost EXCEPT for case of casting of magic */
-          new_draw_info(NDI_UNIQUE, 0,op,"Your invisibility spell is broken!");
-          return 1;
-    }
-  }
+    if(op->invisible && QUERY_FLAG(op,FLAG_ALIVE)) {
+	if(QUERY_FLAG(op,FLAG_MAKE_INVIS)) 
+	    return 0; 
 
-  return 0;
+	if (op->contr && op->contr->tmp_invis == 0) return 0;
+
+	/* If monsters, they should become visible */
+	if(op->hide || !op->contr || (op->contr && op->contr->tmp_invis)) { 
+	    new_draw_info_format(NDI_UNIQUE, 0,op,"You become %s!",op->hide?"unhidden":"visible");
+	    return 1; 
+	}
+    }
+    return 0;
 }
 
 /* op_on_battleground - checks if the given object op (usually
@@ -3004,114 +3030,112 @@ int op_on_battleground (object *op, int *x, int *y) {
  *      int level          ability level
  */
 void dragon_ability_gain(object *who, int atnr, int level) {
-  treasurelist *trlist = NULL;   /* treasurelist */
-  treasure *tr;                  /* treasure */
-  object *tmp;                   /* tmp. object */
-  object *item;                  /* treasure object */
-  char buf[MAX_BUF];             /* tmp. string buffer */
-  int i=0, j=0;
+    treasurelist *trlist = NULL;    /* treasurelist */
+    treasure *tr;		    /* treasure */
+    object *tmp,*skop;		    /* tmp. object */
+    object *item;		    /* treasure object */
+    char buf[MAX_BUF];		    /* tmp. string buffer */
+    int i=0, j=0;
   
-  /* get the appropriate treasurelist */
-  if (atnr == ATNR_FIRE)
-    trlist = find_treasurelist("dragon_ability_fire");
-  else if (atnr == ATNR_COLD)
-    trlist = find_treasurelist("dragon_ability_cold");
-  else if (atnr == ATNR_ELECTRICITY)
-    trlist = find_treasurelist("dragon_ability_elec");
-  else if (atnr == ATNR_POISON)
-    trlist = find_treasurelist("dragon_ability_poison");
+    /* get the appropriate treasurelist */
+    if (atnr == ATNR_FIRE)
+	trlist = find_treasurelist("dragon_ability_fire");
+    else if (atnr == ATNR_COLD)
+	trlist = find_treasurelist("dragon_ability_cold");
+    else if (atnr == ATNR_ELECTRICITY)
+	trlist = find_treasurelist("dragon_ability_elec");
+    else if (atnr == ATNR_POISON)
+	trlist = find_treasurelist("dragon_ability_poison");
   
-  if (trlist == NULL || who->type != PLAYER)
-    return;
+    if (trlist == NULL || who->type != PLAYER)
+	return;
   
-  for (i=0, tr = trlist->items; tr != NULL && i<level-1;
-       tr = tr->next, i++);
+    for (i=0, tr = trlist->items; tr != NULL && i<level-1;
+	 tr = tr->next, i++);
   
-  if (tr == NULL || tr->item == NULL) {
-    /* printf("-> no more treasure for %s\n", change_resist_msg[atnr]); */
-    return;
-  }
-  
-  /* everything seems okay - now bring on the gift: */
-  item = &(tr->item->clone);
-  
-  /* grant direct spell */
-  if (item->type == SPELLBOOK) {
-    int spell = look_up_spell_name (item->slaying);
-    if (spell<0 || check_spell_known (who, spell))
-      return;
-    if (item->invisible) {
-      sprintf(buf, "You gained the ability of %s", spells[spell].name);
-      new_draw_info(NDI_UNIQUE|NDI_BLUE, 0, who, buf);
-      do_learn_spell (who, spell, 0);
-      return;
+    if (tr == NULL || tr->item == NULL) {
+	/* printf("-> no more treasure for %s\n", change_resist_msg[atnr]); */
+	return;
     }
-  }
-  else if (item->type == SKILL) {
-    if (strcmp(item->title, "clawing") == 0 &&
-	change_skill (who, lookup_skill_by_name("clawing"))) {
-      /* adding new attacktypes to the clawing skill */
-      tmp = who->chosen_skill; /* clawing skill object */
+  
+    /* everything seems okay - now bring on the gift: */
+    item = &(tr->item->clone);
+  
+    /* grant direct spell */
+    if (item->type == SPELLBOOK) {
+	if (check_spell_known (who, item->inv->name))
+	    return;
+	if (item->invisible) {
+	    new_draw_info_format(NDI_UNIQUE|NDI_BLUE, 0, who, "You gained the ability of %s", item->inv->name);
+	    do_learn_spell (who, item->inv, 0);
+	    return;
+	}
+    }
+    else if (item->type == SKILL) {
+	if (item->subtype == SK_CLAWING && (skop=find_skill_by_name(who, item->skill))!=NULL) {
+
+	    /* should this perhaps be (skop->attackyp & item->attacktype)!=item->attacktype ...
+	     * in this way, if the player is missing any of the attacktypes, he gets
+	     * them.  As it is now, if the player has any that match the granted skill,
+	     * but not all of them, he gets nothing.
+	     */
+	    if (!(skop->attacktype & item->attacktype)) {
+		/* always add physical if there's none */
+		if (skop->attacktype == 0) skop->attacktype = AT_PHYSICAL;
+	
+		/* we add the new attacktype to the clawing ability */
+		skop->attacktype |= item->attacktype;
+	
+		if (item->msg != NULL)
+		    new_draw_info(NDI_UNIQUE|NDI_BLUE, 0, who, item->msg);
+	    }
+	}
+    }
+    else if (item->type == FORCE) {
+	/* forces in the treasurelist can alter the player's stats */
+	object *skin;
+	/* first get the dragon skin force */
+	for (skin=who->inv; skin!=NULL && strcmp(skin->arch->name, "dragon_skin_force")!=0;
+	     skin=skin->below);
+	if (skin == NULL) return;
+    
+	/* adding new spellpath attunements */
+	if (item->path_attuned > 0 && !(skin->path_attuned & item->path_attuned)) {
+	    skin->path_attuned |= item->path_attuned; /* add attunement to skin */
       
-      if (tmp->type == SKILL && strcmp(tmp->name, "clawing")==0
-	  && !(tmp->attacktype & item->attacktype)) {
-	/* always add physical if there's none */
-	if (tmp->attacktype == 0) tmp->attacktype = AT_PHYSICAL;
-	
-	/* we add the new attacktype to the clawing ability */
-	tmp->attacktype += item->attacktype;
-	
+	    /* print message */
+	    sprintf(buf, "You feel attuned to ");
+	    for(i=0, j=0; i<NRSPELLPATHS; i++) {
+		if(item->path_attuned & (1<<i)) {
+		    if (j) 
+			strcat(buf," and ");
+		    else 
+			j = 1; 
+		    strcat(buf, spellpathnames[i]);
+		}
+	    }
+	    strcat(buf,".");
+	    new_draw_info(NDI_UNIQUE|NDI_BLUE, 0, who, buf);
+	}
+    
+	/* evtl. adding flags: */
+	if(QUERY_FLAG(item, FLAG_XRAYS))
+	    SET_FLAG(skin, FLAG_XRAYS);
+	if(QUERY_FLAG(item, FLAG_STEALTH))
+	    SET_FLAG(skin, FLAG_STEALTH);
+	if(QUERY_FLAG(item, FLAG_SEE_IN_DARK))
+	    SET_FLAG(skin, FLAG_SEE_IN_DARK);
+    
+	/* print message if there is one */
 	if (item->msg != NULL)
-	  new_draw_info(NDI_UNIQUE|NDI_BLUE, 0, who, item->msg);
-      }
+	    new_draw_info(NDI_UNIQUE|NDI_BLUE, 0, who, item->msg);
     }
-  }
-  else if (item->type == FORCE) {
-    /* forces in the treasurelist can alter the player's stats */
-    object *skin;
-    /* first get the dragon skin force */
-    for (skin=who->inv; skin!=NULL && strcmp(skin->arch->name, "dragon_skin_force")!=0;
-	 skin=skin->below);
-    if (skin == NULL) return;
-    
-    /* adding new spellpath attunements */
-    if (item->path_attuned > 0 && !(skin->path_attuned & item->path_attuned)) {
-      skin->path_attuned += item->path_attuned; /* add attunement to skin */
-      
-      /* print message */
-      sprintf(buf, "You feel attuned to ");
-      for(i=0, j=0; i<NRSPELLPATHS; i++) {
-        if(item->path_attuned & (1<<i)) {
-	  if (j) 
-            strcat(buf," and ");
-          else 
-            j = 1; 
-          strcat(buf, spellpathnames[i]);
-        }
-      }
-      strcat(buf,".");
-      new_draw_info(NDI_UNIQUE|NDI_BLUE, 0, who, buf);
+    else {
+	/* generate misc. treasure */
+	tmp = arch_to_object (tr->item);
+	new_draw_info_format(NDI_UNIQUE|NDI_BLUE, 0, who, "You gained %s", query_short_name(tmp));
+	tmp = insert_ob_in_ob (tmp, who);
+	if (who->type == PLAYER)
+	    esrv_send_item(who, tmp);
     }
-    
-    /* evtl. adding flags: */
-    if(QUERY_FLAG(item, FLAG_XRAYS))
-      SET_FLAG(skin, FLAG_XRAYS);
-    if(QUERY_FLAG(item, FLAG_STEALTH))
-      SET_FLAG(skin, FLAG_STEALTH);
-    if(QUERY_FLAG(item, FLAG_SEE_IN_DARK))
-      SET_FLAG(skin, FLAG_SEE_IN_DARK);
-    
-    /* print message if there is one */
-    if (item->msg != NULL)
-      new_draw_info(NDI_UNIQUE|NDI_BLUE, 0, who, item->msg);
-  }
-  else {
-    /* generate misc. treasure */
-    tmp = arch_to_object (tr->item);
-    sprintf(buf, "You gained %s", query_short_name(tmp));
-    new_draw_info(NDI_UNIQUE|NDI_BLUE, 0, who, buf);
-    tmp = insert_ob_in_ob (tmp, who);
-    if (who->type == PLAYER)
-      esrv_send_item(who, tmp);
-  }
 }

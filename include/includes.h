@@ -29,12 +29,6 @@
 #ifndef INCLUDES_H
 #define INCLUDES_H
 
-#define ASSERT(x)
-
-#if 0
-#define ASSERT(x) if (!(x)) { kill(getpid(),11);}
-#endif
-
 #if defined(osf1) && !defined(__osf__)
 #  define	__osf__
 #endif

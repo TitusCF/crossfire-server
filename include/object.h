@@ -31,6 +31,7 @@
 
 typedef uint32 tag_t;
 #define NUM_BODY_LOCATIONS	12
+#define BODY_ARMS		1
 
 /* See common/item.c */
 
@@ -113,6 +114,7 @@ typedef struct obj {
     char	*race;		/* human, goblin, dragon, etc */
     char	*slaying;	/* Which race to do double damage to */
 				/* If this is an exit, this is the filename */
+    char	*skill;		/* Name of the skill this object uses/grants */
     char	*msg;		/* If this is a book/sign/magic mouth/etc */
     char	*lore;		/* Obscure information about this object, */
 				/* To get put into books and the like. */
@@ -121,7 +123,6 @@ typedef struct obj {
     sint16	ox,oy;		/* For debugging: Where it was last inserted */
     float	speed;		/* The overall speed of this object */
     float	speed_left;	/* How much speed is left to spend this round */
-    float	casting_speed;	/* casting speed - used to fine tune monster casting */
     uint32	nrof;		/* How many of the objects */
     New_Face	*face;		/* Face with colors */
     sint8	direction;	/* Means the object is moving that way. */
@@ -159,11 +160,12 @@ typedef struct obj {
     sint32	carrying;	/* How much weight this object contains */
     sint16	glow_radius;	/* indicates the glow radius of the object */
     living	stats;		/* Str, Con, Dex, etc */
+    sint64	perm_exp;	/* Permanent exp */
     char	*current_weapon_script;  /* The script of the currently used weapon. Executed */
 				/* each time the object attacks something */
     struct obj	*current_weapon;   /* Pointer to the weapon currently used */
     uint32	weapontype;	/* type of weapon */
-    uint32  tooltype; /* type of tool or build facility */
+    uint32	tooltype;	/* type of tool or build facility */
     sint8	body_info[NUM_BODY_LOCATIONS];	/* body info as loaded from the file */
     sint8	body_used[NUM_BODY_LOCATIONS];	/* Calculated value based on items equipped */
 				/* See the doc/Developers/objects for more info about body locations */
@@ -180,7 +182,6 @@ typedef struct obj {
     struct treasureliststruct *randomitems; /* Items to be generated */
     uint16	run_away;	/* Monster runs away if it's hp goes below this percentage. */
     struct obj	*chosen_skill;	/* the skill chosen to use */
-    struct obj	*exp_obj;	/* the exp. obj (category) assoc. w/ this object */
     uint32	hide;		/* The object is hidden, not invisible */
     /* changes made by kholland@sunlab.cit.cornell.edu */
     /* allows different movement patterns for attackers */
@@ -190,12 +191,20 @@ typedef struct obj {
     struct obj	*spellitem;	/* Spell ability monster is choosing to use */
     double	expmul;		/* needed experience = (calc_exp*expmul) - means some */
 				/* races/classes can need less/more exp to gain levels */
-    sint16	casting;         /* time left before spell goes off */
-    uint16	spell_state;
+
+    /* Spell related information, may be useful elsewhere
+     * Note that other fields are used - these files are basically
+     * only used in spells.
+     */
+    sint16	duration;	/* How long the spell lasts */
+    uint8	duration_modifier; /* how level modifies duration */
+    sint16	casting_time;	/* time left before spell goes off */
+    struct obj	*spell;		/* Spell that was being cast */
     uint16	start_holding;
-    struct spell_struct *spell;
-    uint32	spelltype;
     char	*spellarg;
+    uint8	dam_modifier;	/* How going up in level effects damage */
+    sint8	range;		/* Range of the spell */
+    uint8	range_modifier;	/* How going up in level effects range  */
 
     /* Following are values used by any object */
     struct archt *arch;         /* Pointer to archetype */
@@ -205,12 +214,8 @@ typedef struct obj {
     uint16	animation_id;	/* An index into the animation array */
     uint8	anim_speed;	/* ticks between animation-frames */
     uint8	last_anim;	/* last sequence used to draw face */
-    sint32  elevation;		/* elevation of this terrain - not currently used */
-    uint8   smoothlevel;    /* how to smooth this square around*/
-
-    //char	*event_hook[30];    /* GROS - extensions for scripting events */
-    //char	*event_plugin[30];
-    //char	*event_options[30];
+    sint32	elevation;	/* elevation of this terrain - not currently used */
+    uint8	smoothlevel;    /* how to smooth this square around*/
     event   *events;
 
     char  *custom_name; /* Custom name assigned by player */

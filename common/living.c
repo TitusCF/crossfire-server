@@ -29,10 +29,17 @@
 #include <global.h>
 #include <funcpoint.h>
 
+/* Handy little macro that adds exp and keeps it within bounds.  Since
+ * we are now using 64 bit values, I'm not all concerned about overflow issues
+ * with exptotal wrapping.  exptotal is typically op->exp, or op->perm_exp
+ */
+#define ADD_EXP(exptotal, exp) {exptotal += exp; if (exptotal > MAX_EXPERIENCE) exptotal = MAX_EXPERIENCE; }
+
 static int con_bonus[MAX_STAT + 1]={
   -6,-5,-4,-3,-2,-1,-1,0,0,0,0,1,2,3,4,5,6,7,8,9,10,12,14,16,18,20,
   22,25,30,40,50
 };
+
 /* changed the name of this to "sp_bonus" from "int_bonus" 
  * because Pow can now be the stat that controls spellpoint
  * advancement. -b.t.
@@ -751,7 +758,7 @@ void fix_player(object *op) {
     int weapon_weight=0,weapon_speed=0;
     int best_wc=0, best_ac=0, wc=0, ac=0;
     int prot[NROFATTACKS], vuln[NROFATTACKS], potion_resist[NROFATTACKS];
-    object *grace_obj=NULL,*mana_obj=NULL,*hp_obj=NULL,*wc_obj=NULL,*tmp;
+    object *grace_obj=NULL,*mana_obj=NULL,*wc_obj=NULL,*tmp;
 
     /* First task is to clear all the values back to their original values */
     if(op->type==PLAYER) {
@@ -760,8 +767,6 @@ void fix_player(object *op) {
 	}
 	if (settings.spell_encumbrance == TRUE)
 	    op->contr->encumbrance=0;
-	if(op->chosen_skill&&op->chosen_skill->exp_obj)
-	    op->chosen_skill->level=op->chosen_skill->exp_obj->level;
 
         op->attacktype=0;
 	op->contr->digestion = 0;
@@ -770,8 +775,15 @@ void fix_player(object *op) {
 	op->contr->gen_grace = 0;
 	op->contr->gen_sp_armour = 10;
 	op->contr->item_power = 0;
-	for (i=0; i < range_size; i++)
-	    op->contr->ranges[i] = NULL;
+
+	/* Don't clobber all the range_ values.  range_golem otherwise
+	 * gets reset for no good reason, and we don't want to reset
+	 * range_magic (what spell is readied).  These three below
+	 * well get filled in based on what the player has equipped.
+	 */
+	op->contr->ranges[range_bow] = NULL;
+	op->contr->ranges[range_misc] = NULL;
+	op->contr->ranges[range_skill] = NULL;
     }
     memcpy(op->body_used, op->body_info, sizeof(op->body_info));
 
@@ -802,6 +814,7 @@ void fix_player(object *op) {
     op->path_repelled=op->arch->clone.path_repelled;
     op->path_denied=op->arch->clone.path_denied;
     op->glow_radius=op->arch->clone.glow_radius;
+    op->chosen_skill = NULL;
 
     /* initializing resistances from the values in player/monster's
      * archetype clone
@@ -854,64 +867,52 @@ void fix_player(object *op) {
 	    continue;
 	}
 
+	/* For some things, we don't care what is equipped */
+	if (tmp->type == SKILL) {
+	    /* Want to take the highest skill here. */
+	    if (IS_MANA_SKILL(tmp->subtype)) {
+		if (!mana_obj) mana_obj=tmp;
+		else if (tmp->level > mana_obj->level) mana_obj = tmp;
+	    }
+	    if (IS_GRACE_SKILL(tmp->subtype)) {
+		if (!grace_obj) grace_obj=tmp;
+		else if (tmp->level > grace_obj->level) grace_obj = tmp;
+	    }
+	}
+
 	/* Container objects are not meant to adjust a players, but other applied
 	 * objects need to make adjustments.
 	 * This block should handle all player specific changes 
 	 */
 	if(QUERY_FLAG(tmp,FLAG_APPLIED) && tmp->type!=CONTAINER && tmp->type!=CLOSE_CON) {
 	    if(op->type==PLAYER) {
-		/* EXPERIENCE objects. What we are doing here is looking for "relevant" 
-		 * experience objects. Some of these will be used to calculate 
-		 * level-based changes in player status. For expample, the 
-		 * experience object which has exp_obj->stats.Str set controls the 
-		 * wc bonus of the player. -b.t.
-		 * This code is sort of odd, in that we only set the pointer if
-		 * it hasn't already been set.  It seems to me that it is either a bug
-		 * that a player may have multiple of these, or we should
-		 * be choosing the best ones.
-		 */
-		if (tmp->type == EXPERIENCE) {
-		    if (tmp->stats.Str && !wc_obj) 
-			wc_obj = tmp;
-		    if (tmp->stats.Con && !hp_obj) 
-			hp_obj = tmp;
-		    if (tmp->stats.Pow && !mana_obj)  /* for spellpoint determ */ 
-			mana_obj = tmp;
-		    if (tmp->stats.Wis && !grace_obj)
-			grace_obj = tmp; 
-		}
 		if (tmp->type == BOW) 
 		    op->contr->ranges[range_bow] = tmp;
 
 		if (tmp->type == WAND || tmp->type == ROD || tmp->type==HORN) 
 		    op->contr->ranges[range_misc] = tmp;
 
-		/* Other expereience objects have bogus stat info as shown above, we
-		 * don't want to use those adjustments.
-		 */
-		if (tmp->type != EXPERIENCE || !strcmp(tmp->arch->name, "experience_wis")) {
-		    for(i=0;i<NUM_STATS;i++)
-			change_attr_value(&(op->stats),i,get_attr_value(&(tmp->stats),i));
+		for(i=0;i<NUM_STATS;i++)
+		    change_attr_value(&(op->stats),i,get_attr_value(&(tmp->stats),i));
 
-		    /* these are the items that currently can change digestion, regeneration,
-		     * spell point recovery and mana point recovery.  Seems sort of an arbitary
-		     * list, but other items store other info into stats array. 
-		     */
-		    if ((tmp->type == EXPERIENCE)  || (tmp->type == WEAPON) ||
-			(tmp->type == ARMOUR)   || (tmp->type == HELMET) ||
-			(tmp->type == SHIELD)   || (tmp->type == RING) ||
-			(tmp->type == BOOTS)    || (tmp->type == GLOVES) ||
-			(tmp->type == AMULET )  || (tmp->type == GIRDLE) ||
-			(tmp->type == BRACERS ) || (tmp->type == CLOAK) ||
-			(tmp->type == DISEASE)  || (tmp->type == FORCE)) {
+		/* these are the items that currently can change digestion, regeneration,
+		 * spell point recovery and mana point recovery.  Seems sort of an arbitary
+		 * list, but other items store other info into stats array. 
+		 */
+		if ((tmp->type == EXPERIENCE)  || (tmp->type == WEAPON) ||
+		    (tmp->type == ARMOUR)   || (tmp->type == HELMET) ||
+		    (tmp->type == SHIELD)   || (tmp->type == RING) ||
+		    (tmp->type == BOOTS)    || (tmp->type == GLOVES) ||
+		    (tmp->type == AMULET )  || (tmp->type == GIRDLE) ||
+		    (tmp->type == BRACERS ) || (tmp->type == CLOAK) ||
+		    (tmp->type == DISEASE)  || (tmp->type == FORCE)) {
 			op->contr->digestion    += tmp->stats.food;
 			op->contr->gen_hp       += tmp->stats.hp;
 			op->contr->gen_sp       += tmp->stats.sp;
 			op->contr->gen_grace    += tmp->stats.grace;
 			op->contr->gen_sp_armour+= tmp->gen_sp_armour;
 			op->contr->item_power	+= tmp->item_power;
-		    }
-		} /* If this not an experience object */
+		}
 	    } /* if this is a player */
 
 	    /* Update slots used for items */
@@ -977,7 +978,7 @@ void fix_player(object *op) {
 		    max=1;
 	    }
 
-	    if(tmp->stats.exp && tmp->type!=EXPERIENCE) {
+	    if(tmp->stats.exp && tmp->type!=SKILL) {
 		if(tmp->stats.exp > 0) {
 		    added_speed+=(float)tmp->stats.exp/3.0;
 		    bonus_speed+=1.0+(float)tmp->stats.exp/3.0;
@@ -989,31 +990,47 @@ void fix_player(object *op) {
  		/* skills modifying the character -b.t. */ 
 		/* for all skills and skill granting objects */ 
 		case SKILL:
-		    if(tmp==op->chosen_skill) { 
-			if(tmp->stats.dam>0) { 	/* skill is a 'weapon' */ 
-			    if(!QUERY_FLAG(op,FLAG_READY_WEAPON)) 
-				weapon_speed = (int) WEAPON_SPEED(tmp);
-			    if(weapon_speed<0) weapon_speed = 0;
-			    weapon_weight=tmp->weight;
-			    op->stats.dam+=tmp->stats.dam*(1 + (op->chosen_skill->level/9));
-			    if(tmp->magic) op->stats.dam += tmp->magic;
-			}
-			if(tmp->stats.wc)
-			    wc-=(tmp->stats.wc+tmp->magic);
+		    if (IS_COMBAT_SKILL(tmp->subtype)) wc_obj=tmp;
 
-			if(tmp->slaying!=NULL) {
-			    if (op->slaying != NULL)
-				free_string (op->slaying);
-			    add_refcount(op->slaying = tmp->slaying);
-			}
-
-			if(tmp->stats.ac)
-			    ac-=(tmp->stats.ac+tmp->magic);
-			if(settings.spell_encumbrance == TRUE &&
-			   op->type==PLAYER)
-			    op->contr->encumbrance+=(int)3*tmp->weight/1000;
+		    if (op->chosen_skill) {
+			LOG(llevDebug, "fix_player, op %s has multiple skills applied\n", op->name);
 		    }
+		    op->chosen_skill = tmp;
+		    if(tmp->stats.dam>0) { 	/* skill is a 'weapon' */ 
+			if(!QUERY_FLAG(op,FLAG_READY_WEAPON)) 
+			    weapon_speed = (int) WEAPON_SPEED(tmp);
+			if(weapon_speed<0) weapon_speed = 0;
+			weapon_weight=tmp->weight;
+			op->stats.dam+=tmp->stats.dam*(1 + (op->chosen_skill->level/9));
+			if(tmp->magic) op->stats.dam += tmp->magic;
+		    }
+		    if(tmp->stats.wc)
+			wc-=(tmp->stats.wc+tmp->magic);
+
+		    if(tmp->slaying!=NULL) {
+			if (op->slaying != NULL)
+			    free_string (op->slaying);
+			add_refcount(op->slaying = tmp->slaying);
+		    }
+
+		    if(tmp->stats.ac)
+			ac-=(tmp->stats.ac+tmp->magic);
+		    if(settings.spell_encumbrance == TRUE &&
+		       op->type==PLAYER)
+			op->contr->encumbrance+=(int)3*tmp->weight/1000;
+		    if (op->type == PLAYER)
+			op->contr->ranges[range_skill] = op;
 		    break;
+
+		case SKILL_TOOL:
+		    if (op->chosen_skill) {
+			LOG(llevDebug, "fix_player, op %s has multiple skills applied\n", op->name);
+		    }
+		    op->chosen_skill = tmp;
+		    if (op->type == PLAYER)
+			op->contr->ranges[range_skill] = op;
+		    break;
+
 		case SHIELD:
 		    if(settings.spell_encumbrance == TRUE && op->type==PLAYER)
 			op->contr->encumbrance+=(int)tmp->weight/2000;
@@ -1111,7 +1128,6 @@ void fix_player(object *op) {
 	int pl_level;
 
 	check_stat_bounds(&(op->stats));
-	if(!hp_obj) hp_obj = op; /* happens when skills are not used */ 
 	pl_level=op->level;
 
 	if(pl_level<1) pl_level=1; /* safety, we should always get 1 levels worth of hp! */ 
@@ -1142,23 +1158,33 @@ void fix_player(object *op) {
 	/* following happen when skills system is not used */
 	if(!mana_obj) mana_obj = op;
 	if(!grace_obj) grace_obj = op;
-
 	 /* set maxsp */
 	if(!mana_obj || !mana_obj->level || op->type!=PLAYER) mana_obj = op;
 
-	for(i=1,op->stats.maxsp=0;i<=mana_obj->level&&i<=10;i++) {
-	    j=op->contr->levsp[i]+sp_bonus[op->stats.Pow]/2;
-	    if((i%2) && (sp_bonus[op->stats.Pow]%2)) {
-		if (sp_bonus[op->stats.Pow]>0)
-		    j++;
-		else
-		    j--;
-	    }
-	    op->stats.maxsp+=j>1?j:1;
-	}
-	for(i=11;i<=mana_obj->level;i++)
-	    op->stats.maxsp+=2;
+	if (mana_obj == op && op->type == PLAYER) {
+	    op->stats.maxsp = 1;
+	} else {
+	    sp_tmp=0.0;
+	    for(i=1;i<=mana_obj->level&&i<=10;i++) {
+		float stmp;
 
+		/* Got some extra bonus at first level */
+		if(i<2) {
+		    stmp = op->contr->levsp[i] +((2.0 * (float)sp_bonus[op->stats.Pow] + 
+			   (float)sp_bonus[op->stats.Int])/6.0); 
+		} else {
+		    stmp=(float)op->contr->levsp[i]
+			+(2.0 * (float)sp_bonus[op->stats.Pow] + 
+			  (float)sp_bonus[op->stats.Int])/12.0;
+		}
+		if (stmp<1.0) stmp=1.0;
+		sp_tmp+=stmp;
+	    }
+	    op->stats.maxsp=(int)sp_tmp;
+
+	    for(i=11;i<=mana_obj->level;i++)
+		op->stats.maxsp+=2;
+	}
 	/* Characters can get their sp supercharged via rune of transferrance */
 	if(op->stats.sp>op->stats.maxsp*2)
 	    op->stats.sp=op->stats.maxsp*2;
@@ -1166,37 +1192,37 @@ void fix_player(object *op) {
 	/* set maxgrace, notice 3-4 lines below it depends on both Wis and Pow */
 	if(!grace_obj || !grace_obj->level || op->type!=PLAYER) grace_obj = op;
 
-	/* store grace in a float - this way, the divisions below don't create
-	 * big jumps when you go from level to level - with int's, it then
-	 * becomes big jumps when the sums of the bonuses jump to the next
-	 * step of 8 - with floats, even fractional ones are useful.
-	 */
-	sp_tmp=0.0;
-	for(i=1,op->stats.maxgrace=0;i<=grace_obj->level&&i<=10;i++) {
-	    float grace_tmp=0.0;
+	if (grace_obj == op && op->type == PLAYER) {
+	    op->stats.maxgrace = 1;
+	} else {
+	    /* store grace in a float - this way, the divisions below don't create
+	     * big jumps when you go from level to level - with int's, it then
+	     * becomes big jumps when the sums of the bonuses jump to the next
+	     * step of 8 - with floats, even fractional ones are useful.
+	     */
+	    sp_tmp=0.0;
+	    for(i=1,op->stats.maxgrace=0;i<=grace_obj->level&&i<=10;i++) {
+		float grace_tmp=0.0;
 
-	    /* Got some extra bonus at first level */
-	    if(i<2) {
-		grace_tmp += 1.0+(((float)grace_bonus[op->stats.Pow] + 
-				   (float)grace_bonus[op->stats.Wis])/4.0); 
-	    } else {
-		grace_tmp=(float)op->contr->levgrace[i]
-		    +((float)grace_bonus[op->stats.Pow] + 
-		      (float)grace_bonus[op->stats.Wis])/8.0;
+		/* Got some extra bonus at first level */
+		if(i<2) {
+		    grace_tmp = op->contr->levgrace[i]+(((float)grace_bonus[op->stats.Pow] + 
+			   2.0 * (float)grace_bonus[op->stats.Wis])/6.0); 
+		} else {
+		    grace_tmp=(float)op->contr->levgrace[i]
+			+((float)grace_bonus[op->stats.Pow] + 
+			  2.0 * (float)grace_bonus[op->stats.Wis])/12.0;
+		}
+		if (grace_tmp<1.0) grace_tmp=1.0;
+		sp_tmp+=grace_tmp;
 	    }
-	    if (grace_tmp<1.0) grace_tmp=1.0;
-	    sp_tmp+=grace_tmp;
+	    op->stats.maxgrace=(int)sp_tmp;
+
+	    /* two grace points per level after 11 */
+	    for(i=11;i<=grace_obj->level;i++)
+		op->stats.maxgrace+=2;
 	}
-	op->stats.maxgrace=(int)sp_tmp;
-
-	/* two grace points per level after 11 */
-	for(i=11;i<=grace_obj->level;i++)
-	    op->stats.maxgrace+=2;
-
-	/* I'll also allow grace to be larger than the maximum, for who am I
-	 * to put limits on the whims of the gods?  I omit any fix for overlarge
-	 * grace--PeterM */
-
+	/* No limit on grace vs maxgrace */
 
 	if(op->contr->braced) {
 	    ac+=2;
@@ -1431,9 +1457,38 @@ void dragon_level_gain(object *who) {
   set_dragon_name(who, abil, skin);
 }
 
+/* Handy function - given the skill name skill_name, we find the skill
+ * archetype/object, set appropriate values, and insert it into
+ * the object (op) that is passed.
+ * We return the skill - this makes it easier for calling functions that
+ * want to do something with it immediately.
+ */
+object *give_skill_by_name(object *op, char *skill_name)
+{
+    object *skill_obj;
+
+    skill_obj = get_archetype_by_skill_name(skill_name, SKILL);
+    if (!skill_obj) {
+	LOG(llevError, "add_player_exp: couldn't find skill %s\n", skill_name);
+	return NULL;
+    }
+    /* clear the flag - exp goes into this bucket, but player
+     * still doesn't know it.
+     */
+    CLEAR_FLAG(skill_obj, FLAG_CAN_USE_SKILL);
+    skill_obj->stats.exp = 0;
+    skill_obj->level = 1;
+    insert_ob_in_ob(skill_obj, op);
+    return skill_obj;
+}
+
+
 /* player_lvl_adj() - for the new exp system. we are concerned with
  * whether the player gets more hp, sp and new levels.
- * -b.t.
+ * Note this this function should only be called for players.  Monstes
+ * don't really gain levels
+ * who is the player, op is what we are checking to gain the level
+ * (eg, skill)
  */
 void player_lvl_adj(object *who, object *op) {
     char buf[MAX_BUF];
@@ -1447,23 +1502,26 @@ void player_lvl_adj(object *who, object *op) {
 	if (op != NULL && op == who && op->stats.exp > 1 && is_dragon_pl(who))
 	  dragon_level_gain(who);
 	
-	if(who && (who->level < 11) && op->type!=EXPERIENCE) { 
+	if(who && (who->level < 11) && who->type==PLAYER) { 
 	    who->contr->levhp[who->level] = die_roll(2, 4, who, PREFER_HIGH)+1;
 	    who->contr->levsp[who->level] = die_roll(2, 3, who, PREFER_HIGH);
 	    who->contr->levgrace[who->level]=die_roll(2, 2, who, PREFER_HIGH)-1;
 	}
 
 	if(who) fix_player(who);
-	if(op->level>1 && op->type==EXPERIENCE) {
-	    sprintf(buf,"You are now level %d in %s based skills.",op->level,op->name);
+	if(op->level>1) {
+	    if (op->type!=PLAYER)
+		sprintf(buf,"You are now level %d in the %s skill.",op->level,op->name);
+	    else
+		sprintf(buf,"You are now level %d.",op->level);
 	    if(who) (*draw_info_func)(NDI_UNIQUE|NDI_RED, 0, who,buf);
 	}
 	player_lvl_adj(who,op); /* To increase more levels */
     } else if (op->level>1 && op->stats.exp<level_exp(op->level,op->expmul)) {
 	op->level--;
 	if(who) fix_player(who);
-	if(op->type==EXPERIENCE) {
-	    sprintf(buf,"You are now level %d in %s based skills.",op->level,op->name);
+	if(op->type!=PLAYER) {
+	    sprintf(buf,"You are now level %d in the %s skill.",op->level,op->name);
 	    if(who) (*draw_info_func)(NDI_UNIQUE|NDI_RED, 0, who,buf);
 	}
 	player_lvl_adj(who,op); /* To decrease more levels */
@@ -1483,91 +1541,101 @@ sint64 level_exp(int level,double expmul) {
     return expmul * levels[level];
 }
 
-/* Ensure that the permanent experience requirements in an exp object are met. */
-/* GD */
+/*
+ * Ensure that the permanent experience requirements in an exp object are met.
+ * This really just checks 'op to make sure the perm_exp value is within
+ * proper range.  Note that the checking of what is passed through
+ * has been reduced.  Since there is now a proper field for perm_exp,
+ * this can now work on a much larger set of objects.
+ */
 void calc_perm_exp(object *op)
 {
     int p_exp_min;
-
-    /* Sanity checks. */
-    if (op->type != EXPERIENCE) {
-        LOG(llevError, "calc_minimum_perm_exp called on a non-experience object!");
-        return;
-    }
-    if (!(settings.use_permanent_experience)) {
-        LOG(llevError, "calc_minimum_perm_exp called whilst permanent experience disabled!");
-        return;
-    }
-
-    /* The following fields are used: */
-    /* stats.exp: Current exp in experience object. */
-    /* last_heal: Permanent experience earnt. */
     
     /* Ensure that our permanent experience minimum is met. */
     p_exp_min = (int)(PERM_EXP_MINIMUM_RATIO * (float)(op->stats.exp));
-    /*LOG(llevError, "Experience minimum check: %d p-min %d p-curr %d curr.\n", p_exp_min, op->last_heal, op->stats.exp);*/
-    if (op->last_heal < p_exp_min)
-        op->last_heal = p_exp_min;
+
+    if (op->perm_exp < p_exp_min)
+        op->perm_exp = p_exp_min;
 
     /* Cap permanent experience. */
-    if (op->last_heal < 0)
-        op->last_heal = 0;
-    else if (op->last_heal > MAX_EXPERIENCE)
-        op->last_heal = MAX_EXPERIENCE;
+    if (op->perm_exp < 0)
+        op->perm_exp = 0;
+    else if (op->perm_exp > MAX_EXPERIENCE)
+        op->perm_exp = MAX_EXPERIENCE;
 }
 
 
 /* Add experience to a player - exp should only be positive.
  * Updates permanent exp for the skill we are adding to.
+ * skill_name is the skill to add exp to.  Skill name can be
+ *   NULL, in which case exp increases the players general
+ *   total, but not any particular skill.
+ * flag is what to do if the player doesn't have the skill:
  */
 
-static void add_player_exp(object *op, int exp)
+static void add_player_exp(object *op, int exp, char *skill_name, int flag)
 {
-    object *exp_ob=NULL;
-    sint64 limit;
+    object *skill_obj=NULL;
+    sint64 limit, exp_to_add;
+    int i;
 
-    if(!op->chosen_skill) { 
-	LOG(llevError,"add_exp() called for %s w/ no ready skill.\n",op->name);
-	return;
-    } else if(!op->exp_obj && !op->chosen_skill->exp_obj) { 
-	/* This shouldn't be an error - killing monsters via scrolls
-	 * will get here, because use_magic skill doesn't give exp -
-	 * this means things like rods and scrolls.
-	 */
-	LOG(llevDebug,"add_exp() called for skill w/o exp obj (%s), .\n", 
-	    op->chosen_skill->name);
-	return;
-    }
+    /* prevents some forms of abuse. */
+    if(op->contr->braced) exp=exp/5;
 
-    /* if op->exp_obj is set, then the player has killed with an 
-     * animated object cf. fireball 
+    /* Try to find the matching skill.
+     * We do a shortcut/time saving mechanism first - see if it matches
+     * chosen_skill.  This means we don't need to search through
+     * the players inventory.
      */
-    if(op->exp_obj)  
-	exp_ob = op->exp_obj;
-    else
-	exp_ob = op->chosen_skill->exp_obj; 
+    if (skill_name) {
+	if (op->chosen_skill && op->chosen_skill->type == SKILL &&
+	   !strcmp(skill_name, op->chosen_skill->skill))
+	    skill_obj = op->chosen_skill;
+	else {
+	    for (i=0; i<NUM_SKILLS; i++)
+		if (op->contr->last_skill_ob[i] && 
+		  !strcmp(op->contr->last_skill_ob[i]->skill, skill_name)) {
+		    skill_obj = op->contr->last_skill_ob[i];
+		    break;
+		}
+
+	    /* Player doesn't have the skill.  Check to see what to do, and give
+	     * it to the player if necessary
+	     */
+	    if (!skill_obj) {
+		if (flag == SK_EXP_NONE) return;
+		else if (flag == SK_EXP_ADD_SKILL)
+		    give_skill_by_name(op, skill_name);
+	    }
+	}
+    }
 
     /* Basically, you can never gain more experience in one shot
      * than half what you need to gain for next level.
      */
-    if(exp_ob->level < settings.max_level) { 
-	limit=(levels[exp_ob->level+1]-levels[exp_ob->level])/2;
-	if (exp > limit) exp=limit;
-    } else { /* there is no going any higher! */ 
-	return;
+    exp_to_add = exp;
+    limit=(levels[op->level+1]-levels[op->level])/2;
+    if (exp_to_add > limit) exp_to_add=limit;
+
+    ADD_EXP(op->stats.exp, (float) exp_to_add * (skill_obj? skill_obj->expmul:1));
+    if (settings.use_permanent_experience) {
+	ADD_EXP(op->perm_exp, (float) exp_to_add * (skill_obj? skill_obj->expmul:1));
+	calc_perm_exp(op);
     }
 
-    /* prevents some forms of abuse */
-    if(op->type==PLAYER && op->contr->braced) exp=exp/5;
-
-    op->stats.exp += exp;
-    exp_ob->stats.exp += exp;
-    if (settings.use_permanent_experience && exp_ob->type == EXPERIENCE) {
-	calc_perm_exp(exp_ob);
-	exp_ob->last_heal += exp * PERM_EXP_GAIN_RATIO;
+    player_lvl_adj(op,NULL);
+    if (skill_obj) {
+	exp_to_add = exp;
+	limit=(levels[skill_obj->level+1]-levels[skill_obj->level])/2;
+	if (exp_to_add > limit) exp_to_add=limit;
+	ADD_EXP(skill_obj->stats.exp, exp_to_add);
+	if (settings.use_permanent_experience) {
+	    skill_obj->perm_exp += exp_to_add * PERM_EXP_GAIN_RATIO;
+	    calc_perm_exp(skill_obj);
+	}
+	player_lvl_adj(op,skill_obj);
     }
-    player_lvl_adj(op,NULL);   
-    player_lvl_adj(op,exp_ob);   
 }
 
 /* This function checks to make sure that object 'op' can
@@ -1583,33 +1651,10 @@ int check_exp_loss(object *op, int exp)
     int del_exp;
 
     if (exp > op->stats.exp) exp = op->stats.exp;
-    if (settings.use_permanent_experience && op->type == SKILL) {
-	del_exp = (op->stats.exp - op->last_heal) * PERM_EXP_MAX_LOSS_RATIO;
+    if (settings.use_permanent_experience) {
+	del_exp = (op->stats.exp - op->perm_exp) * PERM_EXP_MAX_LOSS_RATIO;
 	if (del_exp < 0) del_exp = 0;
 	if (exp > del_exp) exp=del_exp;
-    }
-    return exp;
-}
-
-/* returns the amount of exp we can add to this object.
- * All this really checks is that we don't go above MAX_EXPERIENCE
- */
-int check_exp_add(object *op, int exp)
-{
-    object *pl;
-
-    /* In the case of an exp object, we need to find the
-     * parent object.
-     */
-    for (pl=op; pl->env != NULL; pl=pl->env) ;
-
-    /* reset exp to max allowed value.  We subtract from
-     * MAX_EXPERIENCE to prevent overflows.  If the player somehow has
-     * more than max exp, just return.
-     */
-    if (exp > 0 && (pl->stats.exp > (MAX_EXPERIENCE - exp))) {
-	exp = MAX_EXPERIENCE - pl->stats.exp;
-	if (exp < 0) exp=0;
     }
     return exp;
 }
@@ -1617,11 +1662,14 @@ int check_exp_add(object *op, int exp)
 int check_exp_adjust(object *op, int exp)
 {
     if (exp<0) return check_exp_loss(op, exp);
-    return check_exp_add(op, exp);
+    else return MIN(exp, MAX_EXPERIENCE - op->stats.exp);
 }
 
 
-/* Subtracts experience from player.  This subtracts a portion from all
+/* Subtracts experience from player.
+ * if skill is set and flag == SK_SUBTRACT_SKILL_EXP, then we
+ * only subtract from the matching skill.  Otherwise,
+ * this subtracts a portion from all
  * skills the player has.  Eg, if we figure the player is losing 10%
  * of his total exp, what happens is he loses 10% from all his skills.
  * Note that if permanent exp is used, player may not in fact lose
@@ -1630,39 +1678,47 @@ int check_exp_adjust(object *op, int exp)
  * exp is the amount of exp to subtract - thus, it should be
  * a postive number.
  */
-static void subtract_player_exp(object *op, int exp)
+static void subtract_player_exp(object *op, int exp, char *skill, int flag)
 {
     float fraction = (float) exp/(float) op->stats.exp;
     object *tmp;
-    int total_loss = 0, del_exp;
+    int del_exp;
 
     for(tmp=op->inv;tmp;tmp=tmp->below)
-	if(tmp->type==EXPERIENCE && tmp->stats.exp) { 
-	    del_exp = check_exp_loss(tmp, tmp->stats.exp * fraction);
-
-	    tmp->stats.exp -= del_exp;
-	    total_loss += del_exp;
-	    player_lvl_adj(op, tmp);
+	if(tmp->type==SKILL && tmp->stats.exp) { 
+	    if (flag == SK_SUBTRACT_SKILL_EXP && skill && !strcmp(tmp->skill, skill)) {
+		del_exp = check_exp_loss(tmp, exp);
+		tmp->stats.exp -= del_exp;
+		player_lvl_adj(op, tmp);
+	    } else if (flag != SK_SUBTRACT_SKILL_EXP) {
+		/* only want to process other skills if we are not trying
+		 * to match a specific skill.
+		 */
+		del_exp = check_exp_loss(tmp, tmp->stats.exp * fraction);
+		tmp->stats.exp -= del_exp;
+		player_lvl_adj(op, tmp);
+	    }
 	}
 
-    op->stats.exp -= total_loss;
+    op->stats.exp -= exp;
     player_lvl_adj(op,NULL); 
 }
 
 
 
-/* add_exp() - changes experience to a player/monster.  This
+/* change_exp() - changes experience to a player/monster.  This
  * does bounds checking to make sure we don't overflow the max exp.
- * Note that this function is misnamed - it really should be
- * modify_exp or the like, because exp can be negative, in which
- * case the player/monster loses exp.
+ *
  * The exp passed is typically not modified much by this function -
  * it is assumed the caller has modified the exp as needed.
- * rewritten by Mark Wedel as this was a really hodgepodge of
- * code.
+ * skill_name is the skill that should get the exp added.
+ * flag is what to do if player doesn't have the skill.
+ * these last two values are only used for players.
  */
  
-void add_exp(object *op, int exp) {
+void change_exp(object *op, int exp, char *skill_name, int flag) {
+    uint64  exp_to_add = exp;
+    
 
 #ifdef EXP_DEBUG
     LOG(llevDebug,"add_exp() called for %s, exp = %lld\n",query_name(op),exp); 
@@ -1683,9 +1739,9 @@ void add_exp(object *op, int exp) {
      * MAX_EXPERIENCE to prevent overflows.  If the player somehow has
      * more than max exp, just return.
      */
-    if (exp > 0 && ( op->stats.exp > (MAX_EXPERIENCE - exp))) {
-	exp = MAX_EXPERIENCE - op->stats.exp;
-	if (exp < 0) return;
+    if (exp_to_add > 0 && ( op->stats.exp > (MAX_EXPERIENCE - exp_to_add))) {
+	exp_to_add = MAX_EXPERIENCE - op->stats.exp;
+	if (exp_to_add < 0) return;
     }
 
     /* Monsters are easy - we just adjust their exp - we   
@@ -1696,20 +1752,19 @@ void add_exp(object *op, int exp) {
     if(op->type != PLAYER) {
 	/* Sanity check */
 	if (!QUERY_FLAG(op, FLAG_ALIVE)) return;
-	op->stats.exp += exp;
+	op->stats.exp += exp_to_add;
     }
     else {				/* Players only */ 
 	if(exp>0) 
-	    add_player_exp(op, exp);
+	    add_player_exp(op, exp, skill_name, flag);
 	else
-	    subtract_player_exp(op, FABS(exp));
+	    /* note that when you lose exp, it doesn't go against
+	     * a particular skill, so we don't need to pass that
+	     * along.
+	     */
+	    subtract_player_exp(op, FABS(exp), skill_name, flag);
 
     }
-    /* Reset players experience object pointer - From old code -
-     * not really sure why this should be done - probably to
-     * prevent abuses of it pointing to the wrong thing.
-     */
-    op->exp_obj = NULL;
 }
 
 /* Applies a death penalty experience.  20% or 3 levels, whichever is
@@ -1718,12 +1773,12 @@ void add_exp(object *op, int exp) {
 
 void apply_death_exp_penalty(object *op) {
     object *tmp;
-    int del_exp=0, loss;
-    int loss_20p;  /* 20 percent experience loss */
-    int loss_3l;   /* 3 level experience loss */
+    sint64 loss;
+    sint64 loss_20p;  /* 20 percent experience loss */
+    sint64 loss_3l;   /* 3 level experience loss */
 
     for(tmp=op->inv;tmp;tmp=tmp->below)
-	if(tmp->type==EXPERIENCE && tmp->stats.exp) { 
+	if(tmp->type==SKILL && tmp->stats.exp) { 
 
 	    loss_20p = tmp->stats.exp * 0.20;
 	    loss_3l = tmp->stats.exp - levels[MAX(0,tmp->level -3)];
@@ -1735,16 +1790,18 @@ void apply_death_exp_penalty(object *op) {
 	     */
 	    if (loss_3l < 0) loss_3l = 0;
 
-	    if(loss_3l < loss_20p) 
-		loss = check_exp_loss(tmp, loss_3l);
-	    else
-		loss = check_exp_loss(tmp, loss_20p);
+	    loss = check_exp_loss(tmp, MIN(loss_3l, loss_20p));
 
 	    tmp->stats.exp -= loss;
-	    del_exp += loss;
 	    player_lvl_adj(op,tmp);
 	}
-    op->stats.exp -= del_exp;
+
+    loss_20p = op->stats.exp * 0.20;
+    loss_3l = op->stats.exp - levels[MAX(0,op->level -3)];
+    if (loss_3l < 0) loss_3l = 0;
+    loss = check_exp_loss(op, MIN(loss_3l, loss_20p));
+
+    op->stats.exp -= loss;
     player_lvl_adj(op,NULL);
 }
 

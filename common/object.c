@@ -98,6 +98,20 @@ inline int CAN_MERGE(object *ob1, object *ob2) {
     if (!QUERY_FLAG(ob1,FLAG_ANIMATE) && FABS((ob1)->speed) > MIN_ACTIVE_SPEED)
 	return 0;
 
+    /* This is really a spellbook check - really, we should
+     * check all objects in the inventory.
+     */
+    if (ob1->inv || ob2->inv) {
+	/* if one object has inventory but the other doesn't, not equiv */
+	if ((ob1->inv && !ob2->inv) || (ob2->inv && !ob1->inv)) return 0;
+
+	/* Now check to see if the two inventory objects could merge */
+	if (!CAN_MERGE(ob1->inv, ob2->inv)) return 0;
+
+	/* inventory ok - still need to check rest of this object to see
+	 * if it is valid.
+	 */
+    }
 
     /* If the objects have been identified, set the BEEN_APPLIED flag.
      * This is to the comparison of the flags below will be OK.  We
@@ -131,6 +145,7 @@ inline int CAN_MERGE(object *ob1, object *ob2) {
 	(ob1->attacktype != ob2->attacktype) ||
 	(ob1->magic != ob2->magic) ||
 	(ob1->slaying != ob2->slaying) ||
+	(ob1->skill != ob2->skill) ||
 	(ob1->value != ob2->value) ||
 	(ob1->animation_id != ob2->animation_id) ||
 	(ob1->client_type != ob2->client_type) ||
@@ -399,15 +414,16 @@ void clear_owner(object *op)
 }
 
 
-/*
- * Sets the owner of the first object to the second object.
- * Also checkpoints a backup id-scheme which detects freeing (and reusage)
- * of the owner object.
- * See also get_owner()
- */
 
-static void set_owner_simple (object *op, object *owner)
+/*
+ * Sets the owner and sets the skill and exp pointers to owner's current
+ * skill and experience objects.
+ */
+void set_owner (object *op, object *owner)
 {
+    if(owner==NULL||op==NULL)
+	return;
+
     /* next line added to allow objects which own objects */ 
     /* Add a check for ownercounts in here, as I got into an endless loop
      * with the fireball owning a poison cloud which then owned the
@@ -427,39 +443,7 @@ static void set_owner_simple (object *op, object *owner)
 
     op->ownercount=owner->count;
     owner->refcount++;
-}
 
-static void set_skill_pointers (object *op, object *chosen_skill,
-	object *exp_obj)
-{
-    op->chosen_skill = chosen_skill;
-    op->exp_obj = exp_obj;
-
-    /* unfortunately, we can't allow summoned monsters skill use
-     * because we will need the chosen_skill field to pick the
-     * right skill/stat modifiers for calc_skill_exp(). See
-     * hit_player() in server/attack.c -b.t.
-     */
-    CLEAR_FLAG (op, FLAG_CAN_USE_SKILL);
-    CLEAR_FLAG (op, FLAG_READY_SKILL);
-}
-
-
-/*
- * Sets the owner and sets the skill and exp pointers to owner's current
- * skill and experience objects.
- */
-void set_owner (object *op, object *owner)
-{
-    if(owner==NULL||op==NULL)
-	return;
-    set_owner_simple (op, owner);
-
-    if (owner->type == PLAYER && owner->chosen_skill)
-        set_skill_pointers (op, owner->chosen_skill,
-                            owner->chosen_skill->exp_obj);
-    else if (op->type != PLAYER)
-	CLEAR_FLAG (op, FLAG_READY_SKILL);
 }
 
 /* Set the owner to clone's current owner and set the skill and experience
@@ -482,12 +466,8 @@ void copy_owner (object *op, object *clone)
 	if (clone->type == PLAYER) owner=clone;
 	else return;
     }
-    set_owner_simple (op, owner);
+    set_owner(op, owner);
 
-    if (clone->chosen_skill)
-        set_skill_pointers (op, clone->chosen_skill, clone->exp_obj);
-    else if (op->type != PLAYER)
-	CLEAR_FLAG (op, FLAG_READY_SKILL);
 }
 
 /*
@@ -501,6 +481,7 @@ void reset_object(object *op) {
     op->title = NULL;
     op->race = NULL;
     op->slaying = NULL;
+    op->skill = NULL;
     op->msg = NULL;
     op->materialname = NULL;
     op->lore = NULL;
@@ -525,6 +506,7 @@ void clear_object(object *op) {
     if (op->title != NULL)  FREE_AND_CLEAR_STR(op->title);
     if (op->race!=NULL)	    FREE_AND_CLEAR_STR(op->race);
     if (op->slaying!=NULL)  FREE_AND_CLEAR_STR(op->slaying);
+    if (op->skill!=NULL)    FREE_AND_CLEAR_STR(op->skill);
     if (op->msg!=NULL)	    FREE_AND_CLEAR_STR(op->msg);
     if (op->lore!=NULL)	    FREE_AND_CLEAR_STR(op->lore);
     if (op->materialname!= NULL) FREE_AND_CLEAR_STR(op->materialname);
@@ -557,8 +539,9 @@ void clear_object(object *op) {
     op->expmul=1.0;
     op->face = blank_face;
     op->attacked_by_count= -1;
-    if (settings.casting_time == TRUE)
-	op->casting = -1;
+    if (settings.casting_time)
+	op->casting_time = -1;
+
     /* Clean the events list */
     while (op->events != NULL)
     {
@@ -582,7 +565,6 @@ void clear_object(object *op) {
         else
             op->events = NULL;
     }
-
 }
 
 /*
@@ -604,6 +586,8 @@ void copy_object(object *op2, object *op) {
     free_string(op->race);
   if(op->slaying!=NULL)
     free_string(op->slaying);
+  if(op->skill!=NULL)
+    free_string(op->skill);
   if(op->lore!=NULL)
     free_string(op->lore);
   if(op->msg!=NULL)
@@ -627,6 +611,8 @@ void copy_object(object *op2, object *op) {
     add_refcount(op->race);
   if(op->slaying!=NULL)
     add_refcount(op->slaying);
+  if(op->skill!=NULL)
+    add_refcount(op->skill);
   if(op->lore!=NULL)
     add_refcount(op->lore);
   if(op->msg!=NULL)
@@ -706,6 +692,7 @@ object *get_object() {
   op->title=NULL;
   op->race=NULL;
   op->slaying=NULL;
+  op->skill = NULL;
   op->lore=NULL;
   op->msg=NULL;
   op->materialname=NULL;
@@ -841,7 +828,7 @@ void remove_from_active_list(object *op)
  */
 
 void update_object(object *op, int action) {
-    int update_now, flags;
+    int update_now=0, flags;
     
     if (op == NULL) {
         /* this should never happen */
@@ -886,24 +873,12 @@ void update_object(object *op, int action) {
 
         if (QUERY_FLAG(op, FLAG_ALIVE) && !(flags & P_IS_ALIVE))
             update_now=1;
-
-    } else if (action == UP_OBJ_REMOVE) {
-        if (QUERY_FLAG(op, FLAG_BLOCKSVIEW) && (flags & P_BLOCKSVIEW))
-            update_now=1;
-
-        if (QUERY_FLAG(op, FLAG_NO_MAGIC) && (flags & P_NO_MAGIC))
-            update_now=1;
-
-        if (QUERY_FLAG(op, FLAG_DAMNED) && (flags & P_NO_CLERIC))
-            update_now=1;
-
-        if (QUERY_FLAG(op, FLAG_NO_PASS) && (flags & P_NO_PASS))
-            update_now=1;
-
-        if (QUERY_FLAG(op, FLAG_ALIVE) && (flags & P_IS_ALIVE))
-            update_now=1;
-
-    } else if (action == UP_OBJ_CHANGE) {
+    } 
+    /* if the object is being removed, we can't make intelligent
+     * decisions, because remove_ob can't really pass the object
+     * that is being removed.
+     */
+    else if (action == UP_OBJ_CHANGE || action == UP_OBJ_REMOVE) {
 	update_now=1;
     } else if (action == UP_OBJ_FACE) {
 	/* Nothing to do for that case */
@@ -1006,6 +981,7 @@ void free_object(object *ob) {
     if(ob->title!=NULL)	    FREE_AND_CLEAR_STR(ob->title);
     if(ob->race!=NULL)	    FREE_AND_CLEAR_STR(ob->race);
     if(ob->slaying!=NULL)   FREE_AND_CLEAR_STR(ob->slaying);
+    if(ob->skill!=NULL)	    FREE_AND_CLEAR_STR(ob->skill);
     if(ob->lore!=NULL)	    FREE_AND_CLEAR_STR(ob->lore);
     if(ob->msg!=NULL)	    FREE_AND_CLEAR_STR(ob->msg);
     if(ob->materialname!=NULL) FREE_AND_CLEAR_STR(ob->materialname);
@@ -1597,6 +1573,16 @@ object *get_split_ob(object *orig_ob,int nr) {
 	}
     }
     newob->nrof=nr;
+
+    /* Need to preserve spell information for multiple objects, eg,
+     * books.
+     */
+    if (orig_ob->inv && orig_ob->inv->type == SPELL) {
+	object *tmp = get_object();
+	copy_object(orig_ob->inv, tmp);
+	insert_ob_in_ob(tmp, newob);
+    }
+
     return newob;
 }
 
@@ -1929,6 +1915,31 @@ object *present_in_ob(unsigned char type,object *op) {
 }
 
 /*
+ * present_in_ob (type, str, object) searches for any objects with
+ * a matching type & name variable in the inventory of the given object.
+ * The first matching object is returned, or NULL if none.
+ * This is mostly used by spell effect code, so that we only
+ * have one spell effect at a time.
+ * type can be used to narrow the search - if type is set,
+ * the type must also match.  -1 can be passed for the type,
+ * in which case the type does not need to pass.
+ * str is the string to match against.  Note that we match against
+ * the object name, not the archetype name.  this is so that the
+ * spell code can use one object type (force), but change it's name
+ * to be unique.
+ */
+
+object *present_in_ob_by_name(int type, char *str,object *op) {
+    object *tmp;
+
+    for(tmp=op->inv; tmp!=NULL; tmp=tmp->below) {
+	if ((type==-1 || tmp->type==type) && (!strcmp(str, tmp->name)))
+	    return tmp;
+    }
+    return NULL;
+}
+
+/*
  * present_arch_in_ob(archetype, object) searches for any objects with
  * a matching archetype in the inventory of the given object.
  * The first matching object is returned, or NULL if none.
@@ -2242,6 +2253,97 @@ int dirdiff(int dir1, int dir2) {
   return d;
 }
 
+/* peterm:
+ * do LOS stuff for ball lightning.  Go after the closest VISIBLE monster.
+ * Basically, this is a table of directions, and what directions
+ * one could go to go back to us.  Eg, entry 15 below is 4, 14, 16.
+ * This basically means that if direction is 15, then it could either go
+ * direction 4, 14, or 16 to get back to where we are.
+ * Moved from spell_util.c to object.c with the other related direction
+ * functions.
+ */
+
+int reduction_dir[SIZEOFFREE][3] = {
+  {0,0,0}, /* 0 */ 
+  {0,0,0}, /* 1 */
+  {0,0,0}, /* 2 */
+  {0,0,0}, /* 3 */
+  {0,0,0}, /* 4 */
+  {0,0,0}, /* 5 */
+  {0,0,0}, /* 6 */
+  {0,0,0}, /* 7 */
+  {0,0,0}, /* 8 */
+  {8,1,2}, /* 9 */
+  {1,2,-1}, /* 10 */
+  {2,10,12}, /* 11 */
+  {2,3,-1}, /* 12 */
+  {2,3,4}, /* 13 */
+  {3,4,-1}, /* 14 */
+  {4,14,16}, /* 15 */
+  {5,4,-1}, /* 16 */
+  {4,5,6}, /* 17 */
+  {6,5,-1}, /* 18 */
+  {6,20,18}, /* 19 */
+  {7,6,-1}, /* 20 */
+  {6,7,8}, /* 21 */
+  {7,8,-1}, /* 22 */
+  {8,22,24}, /* 23 */
+  {8,1,-1}, /* 24 */
+  {24,9,10}, /* 25 */
+  {9,10,-1}, /* 26 */
+  {10,11,-1}, /* 27 */
+  {27,11,29}, /* 28 */
+  {11,12,-1}, /* 29 */
+  {12,13,-1}, /* 30 */
+  {12,13,14}, /* 31 */
+  {13,14,-1}, /* 32 */
+  {14,15,-1}, /* 33 */
+  {33,15,35}, /* 34 */
+  {16,15,-1}, /* 35 */
+  {17,16,-1}, /* 36 */
+  {18,17,16}, /* 37 */
+  {18,17,-1}, /* 38 */
+  {18,19,-1}, /* 39 */
+  {41,19,39}, /* 40 */
+  {19,20,-1}, /* 41 */
+  {20,21,-1}, /* 42 */
+  {20,21,22}, /* 43 */
+  {21,22,-1}, /* 44 */
+  {23,22,-1}, /* 45 */
+  {45,47,23}, /* 46 */
+  {23,24,-1}, /* 47 */
+  {24,9,-1}}; /* 48 */
+
+/* Recursive routine to step back and see if we can
+ * find a path to that monster that we found.  If not,
+ * we don't bother going toward it.  Returns 1 if we
+ * can see a direct way to get it
+ * Modified to be map tile aware -.MSW
+ */
+ 
+
+int can_see_monsterP(mapstruct *m, int x, int y,int dir) {
+    sint16 dx, dy;
+    int mflags;
+
+    if(dir<0) return 0;  /* exit condition:  invalid direction */
+
+    dx = x + freearr_x[dir];
+    dy = y + freearr_y[dir];
+
+    mflags = get_map_flags(m, &m, dx, dy, &dx, &dy);
+
+    if (mflags & (P_OUT_OF_MAP | P_WALL)) return 0;
+
+    /* yes, can see. */
+    if(dir < 9) return 1;
+    return can_see_monsterP(m, x, y, reduction_dir[dir][0]) |
+	can_see_monsterP(m,x,y, reduction_dir[dir][1]) |
+	can_see_monsterP(m,x,y, reduction_dir[dir][2]);
+}
+  
+  
+	
 /*
  * can_pick(picker, item): finds out if an object is possible to be
  * picked up by the picker.  Returnes 1 if it can be
@@ -2297,6 +2399,7 @@ object *ObjectCreateClone (object *asrc) {
     return dst;
 }
 
+/* return true if the object was destroyed, 0 otherwise */
 int was_destroyed (object *op, tag_t old_tag)
 {
     /* checking for FLAG_FREED isn't necessary, but makes this function more
@@ -2310,6 +2413,7 @@ int was_destroyed (object *op, tag_t old_tag)
 /* but it was simple to make and allows reusing the load_object function.    */
 /* Remember not to use load_object_str in a time-critical situation.         */
 /* Also remember that multiparts objects are not supported for now.          */
+
 object* load_object_str(char *obstr)
 {
     object *op;
@@ -2340,4 +2444,17 @@ object* load_object_str(char *obstr)
     return op;
 }
 
-/*** end of object.c ***/
+/* This returns the first object in who's inventory that
+ * has the same type and subtype match.
+ * returns NULL if no match.
+ */
+object *find_obj_by_type_subtype(object *who, int type, int subtype)
+{
+    object *tmp;
+
+    for (tmp=who->inv; tmp; tmp=tmp->below);
+	if (tmp->type == type && tmp->subtype == subtype) return tmp;
+
+    return NULL;
+}
+

@@ -111,22 +111,22 @@ typedef struct NewSocket {
     char    *host;	    /* Which host it is connected from (ip address)*/
     Buffer  outputbuffer;   /* For undeliverable data */
     uint32  facecache:1;    /* If true, client is caching images */
-    uint8   faceset;	    /* Set the client is using, default 0 */
     uint32  sent_scroll:1;
     uint32  ext2:1;         /* enables the new sdl client/server stuff */
     uint32  ext_title_flag;  /* if 1, we should generate and send a new ext_title update */
     uint32  sound:1;	    /* does the client want sound */
-    uint32  skillexp:1;	    /* does the client want skill exp data - MT*/
-    enum MapMode mapmode;   /* Type of map commands the client wants. */
+    uint32  exp64:1;	    /* Client wants 64 bit exp data, as well as skill data */
     uint32  newmapcmd:1;    /* Send newmap command when entering new map SMACFIGGEN*/
     uint32  darkness:1;	    /* True if client wants darkness information */
     uint32  image2:1;	    /* Client wants image2/face2 commands */
-    uint32  cs_version, sc_version; /* versions of the client */
     uint32  update_look:1;  /* If true, we need to send the look window */
     uint32  can_write:1;    /* Can we write to this socket? */
+    uint32  cs_version, sc_version; /* versions of the client */
+    enum MapMode mapmode;   /* Type of map commands the client wants. */
     uint16  look_position;  /* start of drawing of look window */
     uint8   mapx, mapy;	    /* How large a map the client wants */
     uint8   itemcmd;	    /* What version of the 'item' protocol command to use */
+    uint8   faceset;	    /* Set the client is using, default 0 */
     uint32  ext_mapinfos:1;  /* If true client accept additionnal info on maps*/
     /* Below are flags for extedend infos to pass to client 
      * with S->C mapextended command */

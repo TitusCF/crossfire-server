@@ -6,7 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2002 Mark Wedel & Crossfire Development Team
+    Copyright (C) 2003 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -25,6 +25,8 @@
 
     The authors can be reached via e-mail at crossfire-devel@real-time.com
 */
+
+/* This file is best viewed with a window width of about 100 character */
 
 /* This file is really too large.  With all the .h files
  * around, this file should be better split between them - things
@@ -67,6 +69,16 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define MAX(x,y) ((x)>(y)?(x):(y))
 #endif
 
+/* MAX3 is basically like MAX, but instead does 3 values. */
+#ifndef MAX3
+#define MAX3(x,y, z) (MAX(x, MAX(y,z)))
+#endif
+
+/* MIN3 is basically like MIN, but instead does 3 values. */
+#ifndef MIN3
+#define MIN3(x,y, z) (MIN(x, MIN(y,z)))
+#endif
+
 #define MAX_STAT		30	/* The maximum legal value of any stat */
 #define MIN_STAT		1	/* The minimum legal value of any stat */
 
@@ -102,19 +114,19 @@ error - Your ANSI C compiler should be defining __STDC__;
 /* type 0 will be undefined and shows a non valid type information */
 
 #define PLAYER		            1
-#define BULLET		            2
-#define ROD		                3
+/*#define BULLET		    2 */ 
+#define ROD		            3
 #define TREASURE	            4
 #define POTION		            5
 #define FOOD		            6
 #define POISON		            7
 #define BOOK		            8
 #define CLOCK		            9
-#define FBULLET		            10
-#define FBALL		            11
+/*#define FBULLET		    10 */
+/*#define FBALL		            11 */
 #define LIGHTNING	            12
 #define ARROW		            13
-#define BOW		                14
+#define BOW		            14
 #define WEAPON		            15
 #define ARMOUR		            16
 #define PEDESTAL	            17
@@ -122,56 +134,57 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define CONFUSION	            19
 #define LOCKED_DOOR	            20
 #define SPECIAL_KEY	            21
-#define MAP		                22
+#define MAP		            22
 #define DOOR		            23
-#define KEY		                24
-#define MMISSILE	            25
+#define KEY		            24
+/*#define MMISSILE	            25 */
 #define TIMED_GATE	            26
 #define TRIGGER		            27
 #define GRIMREAPER	            28
 #define MAGIC_EAR	            29
-#define TRIGGER_BUTTON	        30
-#define TRIGGER_ALTAR	        31
-#define TRIGGER_PEDESTAL        32
+#define TRIGGER_BUTTON		    30
+#define TRIGGER_ALTAR		    31
+#define TRIGGER_PEDESTAL	    32
 #define SHIELD		            33
 #define HELMET		            34
 #define HORN		            35
 #define MONEY		            36
-#define CLASS                   37  /* object for applying character class modifications to someone */
+#define CLASS			    37  /* object for applying character class modifications to someone */
 #define GRAVESTONE	            38
 #define AMULET		            39
 #define PLAYERMOVER	            40
 #define TELEPORTER	            41
 #define CREATOR		            42
-#define SKILL		            43	/* Skills are similar to abilites, but
-				                     * not related to spells.  by njw@cs.city.ac.u */
-#define EXPERIENCE	            44	/* An experience 'object'. Needed for multi-exp/skills
-				                     * hack. -b.t. thomas@astro.psu.edu */
+#define SKILL		            43	/* also see SKILL_TOOL (74) below */
+#define EXPERIENCE	            44	/* This is basically obsolete now.  It used to contain */
+					/* experience for broad skill categories.  This value */
+					/* is now automatically converteed at load time. */
 #define EARTHWALL	            45
 #define GOLEM		            46
-#define BOMB		            47
+/*#define BOMB		            47 */
 #define THROWN_OBJ	            48
 #define BLINDNESS	            49
-#define GOD		                50
+#define GOD		            50
 
-/*  peterm:  detector is an object which notices the presense of
-	 another object and is triggered like buttons.  */
-#define DETECTOR	            51
-#define SPEEDBALL	            52
+#define DETECTOR	            51	/* peterm:  detector is an object */
+					/* which notices the presense of */
+					/* another object and is triggered */
+					/* like buttons.  */
+/*#define SPEEDBALL	            52*/
 #define DEAD_OBJECT	            53
 #define DRINK		            54
-#define MARKER                  55 /* inserts an invisible, weightless
-			                        force into a player with a specified string. */
+#define MARKER			    55	/* inserts an invisible, weightless */
+					/* force into a player with a specified string. */
 #define HOLY_ALTAR	            56
-#define PLAYER_CHANGER          57
-#define BATTLEGROUND            58      /* battleground, by Andreas Vogl */
+#define PLAYER_CHANGER		    57
+#define BATTLEGROUND		    58      /* battleground, by Andreas Vogl */
 
-#define PEACEMAKER              59  /* Object owned by a player which can convert
-			                           a monster into a peaceful being incapable of attack.  */
-#define GEM		                60
-#define FIRECHEST	            61
+#define PEACEMAKER		    59	/* Object owned by a player which can convert */
+					/* a monster into a peaceful being incapable of attack.  */
+#define GEM		            60
+/*#define FIRECHEST	            61*/    /* FIRECHEST folded into FIREWALL */
 #define FIREWALL	            62
-#define ANVIL                   63
+#define ANVIL			    63
 #define CHECK_INV	            64	/* by b.t. thomas@nomad.astro.psu.edu */
 #define MOOD_FLOOR	            65	/* by b.t. thomas@nomad.astro.psu.edu
 				                     * values of last_sp set how to change:
@@ -185,12 +198,10 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define SHOP_FLOOR	            68
 #define SHOP_MAT	            69
 #define RING		            70
-
-#define FLOOR                   71 /* this is a floor tile -> native layer 0 */
-
+#define FLOOR			    71	/* this is a floor tile -> native layer 0 */
 #define FLESH		            72	/* animal 'body parts' -b.t. */
 #define INORGANIC	            73	/* metals and minerals */ 
-
+#define SKILL_TOOL		    74	/* Allows the use of a skill */
 #define LIGHTER		            75
 
 /* The trap_part, wall, light_source, misc_object, monster, and spawn_generator
@@ -198,36 +209,37 @@ error - Your ANSI C compiler should be defining __STDC__;
  */
 #define TRAP_PART	            76	/* Needed by set traps skill -b.t. */ 
 
-#define WALL                    77 /* this is a wall. put it always in layer 1 if not set is_floor */
-#define LIGHT_SOURCE            78 /* torches, lamps, etc. */
-#define MISC_OBJECT             79 /* misc. objects are for objects without a function
+#define WALL			    77 /* this is a wall. put it always in layer 1 if not set is_floor */
+#define LIGHT_SOURCE		    78 /* torches, lamps, etc. */
+#define MISC_OBJECT		    79 /* misc. objects are for objects without a function
                                       in the engine. Like statues, clocks, chairs,...
                                       If perhaps we create a function where we can sit
                                       on chairs, we create a new type and remove all
                                       chairs from here. */
-#define MONSTER                 80 /* yes, thats a real, living creature */
-#define SPAWN_GENERATOR         81 /* a spawn point or monster generator object */
-#define LAMP			82 /* a lamp */
-#define DUPLICATOR		83 /* duplicator/multiplier object */
-#define TOOL			84 /* a tool for building objects */
+#define MONSTER			    80 /* yes, thats a real, living creature */
+#define SPAWN_GENERATOR		    81 /* a spawn point or monster generator object */
+#define LAMP			    82 /* a lamp */
+#define DUPLICATOR		    83 /* duplicator/multiplier object */
+#define TOOL			    84 /* a tool for building objects */
 #define SPELLBOOK	            85
-#define BUILDFAC		86 /* facilities for building objects */
+#define BUILDFAC		    86 /* facilities for building objects */
 #define CLOAK		            87
-#define CONE		            88
-#define AURA                    89  /* aura spell object */
+/*#define CONE		            88 */
+/*#define AURA			    89  *//* aura spell object */
 
 #define SPINNER		            90
 #define GATE		            91
 #define BUTTON		            92
-#define CF_HANDLE		        93
+#define CF_HANDLE		    93
 #define HOLE		            94
 #define TRAPDOOR	            95
-#define WORD_OF_RECALL	        96
-#define PARAIMAGE	            97
+/*#define WORD_OF_RECALL	    96 */
+/*#define PARAIMAGE	            97 */
 #define SIGN		            98
 #define BOOTS		            99
 #define GLOVES		            100
-
+#define SPELL			    101
+#define SPELL_EFFECT		    102
 #define CONVERTER	            103
 #define BRACERS		            104
 #define POISONING	            105
@@ -235,35 +247,36 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define POISONCLOUD	            107
 #define FIREHOLES	            108
 #define WAND		            109
-#define ABILITY		            110
+/*#define ABILITY		    110*/
 #define SCROLL		            111
 #define DIRECTOR	            112
 #define GIRDLE		            113
 #define FORCE		            114
-#define POTION_EFFECT           115    /* a force, holding the effect of a potion */
+#define POTION_EFFECT		    115    /* a force, holding the effect of a potion */
+
 #define CLOSE_CON	            121    /* Eneq(@csd.uu.se): Id for close_container archetype. */
 #define CONTAINER	            122
-#define ARMOUR_IMPROVER         123
-#define WEAPON_IMPROVER         124
+#define ARMOUR_IMPROVER		    123
+#define WEAPON_IMPROVER		    124
 
 /* unused: 125 - 129
  * type 125 was MONEY_CHANGER
  */
 #define SKILLSCROLL	            130	/* can add a skill to player's inventory -bt.*/
 #define DEEP_SWAMP	            138
-#define IDENTIFY_ALTAR	        139
-#define CANCELLATION	        141
+#define IDENTIFY_ALTAR		    139
+/*#define CANCELLATION		    141*/ /* not used with new spell code */
 #define MENU		            150 /* Mark Wedel (mark@pyramid.com) Shop inventories */
-#define BALL_LIGHTNING          151 /* peterm:  ball lightning and color spray */
-#define SWARM_SPELL             153
-#define RUNE                    154
-#define TRAP					155
+/*#define BALL_LIGHTNING		    151 */ /* peterm:  ball lightning and color spray */
+/*#define SWARM_SPELL		    153*/
+#define RUNE			    154
+#define TRAP			    155
 
-#define POWER_CRYSTAL           156
-#define CORPSE                  157
+#define POWER_CRYSTAL		    156
+#define CORPSE			    157
 
-#define DISEASE                 158
-#define SYMPTOM                 159
+#define DISEASE			    158
+#define SYMPTOM			    159
 /* END TYPE DEFINE */
 
 /* definitions for weapontypes */
@@ -328,34 +341,6 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define SIZEOFFREE2 24
 #define SIZEOFFREE 49
 
-#define PATH_NULL	0x00000000      /* 0 */
-#define PATH_PROT	0x00000001      /* 1 */
-#define PATH_FIRE	0x00000002      /* 2 */
-#define PATH_FROST	0x00000004   /* 4 */
-#define PATH_ELEC	0x00000008      /* 8 */
-#define PATH_MISSILE	0x00000010   /* 16 */
-#define PATH_SELF	0x00000020      /* 32 */
-#define PATH_SUMMON	0x00000040   /* 64 */
-#define PATH_ABJURE	0x00000080  /* 128 */
-#define PATH_RESTORE	0x00000100  /* 256 */
-#define PATH_DETONATE	0x00000200  /* 512 */
-#define PATH_MIND	0x00000400    /* 1024 */
-#define PATH_CREATE	0x00000800   /* 2048 */
-#define PATH_TELE	0x00001000     /* 4096 */
-#define PATH_INFO	0x00002000     /* 8192 */
-#define PATH_TRANSMUTE	0x00004000   /* 16384 */
-#define PATH_TRANSFER	0x00008000  /*  32768 */
-#define PATH_TURNING	0x00010000  /* 65536 */
-#define PATH_WOUNDING	0x00020000  /* 131072 */
-#define PATH_DEATH	0x00040000  /* 262144 */
-#define PATH_LIGHT	0x00080000  /* 524288 */
-
-#define NRSPELLPATHS	20
-
-#define NROFREALSPELLS	206	/* Number of different spells */
-
-#define NROFSKILLS  33  /* match to the number of elements in skills[] array */
-
 #define NROF_SOUNDS (23 + NROFREALSPELLS) /* Number of sounds */
 
 /* Flag structure now changed.
@@ -410,7 +395,9 @@ error - Your ANSI C compiler should be defining __STDC__;
 	!op->type == DOOR)) && (!QUERY_FLAG(op,FLAG_IS_A_TEMPLATE)))
 
 #define IS_ARROW(op) \
-	(op->type==ARROW || op->type==MMISSILE || op->type==BULLET)
+	(op->type==ARROW || \
+	(op->type==SPELL_EFFECT && \
+	     (op->subtype == SP_BULLET || op->subtype == SP_MAGIC_MISSILE)))
 
 /* This return TRUE if object has still randomitems which
  * could be expanded.
@@ -441,7 +428,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define FLAG_IS_THROWN		17 /* Object is designed to be thrown. */
 #define FLAG_AUTO_APPLY		18 /* Will be applied when created */
 #define FLAG_TREASURE		19 /* Will generate treasure when applied */
-#define FLAG_INVIS_UNDEAD	20 /* Player is invisible to undead */
+/*#define FLAG_INVIS_UNDEAD	20 *//* Player is invisible to undead */
 #define FLAG_SEE_INVISIBLE 	21 /* Will see invisible player */
 #define FLAG_CAN_ROLL		22 /* Object can be rolled */
 #define FLAG_OVERLAY_FLOOR	23 /* Object is an overlay floor */
@@ -450,7 +437,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define FLAG_FLY_ON		26 /* As WALK_ON, but only with FLAG_FLYING */
 #define FLAG_FLY_OFF		27 /* As WALK_OFF, but only with FLAG_FLYING */
 #define FLAG_IS_USED_UP		28 /* When (--food<0) the object will exit */
-#define FLAG_IDENTIFIED		29 /* Not implemented yet */
+#define FLAG_IDENTIFIED		29 /* Player knows full info about item */
 #define FLAG_REFLECTING		30 /* Object reflects from walls (lightning) */
 #define FLAG_CHANGING		31 /* Changes to other_arch when anim is done*/
 
@@ -528,7 +515,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define FLAG_BLIND		92 /* If set, object cannot see (visually) */
 #define FLAG_SEE_IN_DARK	93 /* if set ob not effected by darkness */
 #define FLAG_IS_CAULDRON	94 /* container can make alchemical stuff */
-#define FLAG_DUST		95 /* item is a 'powder', effects throwing */
+/*#define FLAG_DUST		95 *//* item is a 'powder', effects throwing */
 
 /* Start of values in flags[3] */
 #define FLAG_NO_STEAL		96 /* Item can't be stolen */

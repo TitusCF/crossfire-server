@@ -55,9 +55,6 @@ Future feature requests
   bolt range 6' or the like, in which case it goes 6 spaces before the
   lightning actually starts.
 
-- Move exp rewards you get for alchemy from being calculated by the program
-  to being an attribute of the formula.
-
 - Refine blocking of spaces - instead of 'blocks all or nothing', ability
   to block walking but not flying, block swimming (for future expansion
   of oceans).  Also, add different LOS blocking for differing conditions -
@@ -106,8 +103,6 @@ Future feature requests
 - Change draw_info so that server tells client what type of message it is
   instead of the color.  Client can then decide what color to draw it
   or other special handling.
-- Better handling of saved characters on potentially better maps.  The save
-  can either have been caused via disconnection or autosave.
 - Change code so that objects 'spill over' to other spaces if too many
   get piled in one space.
 - More/better maps.  Add more quest maps or maps to take advantage of
@@ -124,7 +119,7 @@ Future feature requests
   can be opened, closed, different keys for different doors, etc.  This
   sort of mimics the gate behaviour, except keys may need to open them, etc.
 
-- Added armor quality, with armor being damaged as it is used.  Add repair
+- Add armor quality, with armor being damaged as it is used.  Add repair
   shops to go with this.  Uncertain if people really like this idea or not
   Further notes from mailing list: 
   Item has current quality rating -  different items have different max
@@ -163,23 +158,10 @@ Future feature requests
     it looses exp?
 - Fix map loading/saving so it can do it over several ticks for smoother
   performance (maybe thread it?)
-- Clean up skills table so that the basic skill information is dynamically
-  generated when the program runs, and not compiled in values.
 - Add adjustments to objects that adjusts chance of skill success.
   Eg, objects the player use may adjust the characters effective level in
   using a skill.  Likewise, objects/monsters could have resistances to
   certain skills (eg, skill_resist values).
-- Clean up party code with respect to experience/skills.  Currently,
-  other party members can get exp in whatever they want and let another
-  party member do the killing.
-
-- With above, a general cleanup of skill experience for the player needs to
-  be redone - there are too many ways where players can shuffle exp into
-  the skill they want.  The problem is really the spells since the player
-  can change exp category after the spell has been cast.  But I could also
-  see problems with pet monsters and the like.  Probably some extra
-  field for spell effects which mark which spell category they are from
-  needs to be added.
 
 - Delete oldest swapped map in case the TMPDIR disk fills up while
   swapping out a map.  To do this, detection of error on save would need
@@ -204,15 +186,7 @@ Future feature requests
   affect things).  To do this, a terrain type value probably needs to be added,
   and this acts a bitmask.  Thus, transports compare bitmasks to see if
   travel through that is allowed.
-- Make an object type/subtype setup.  Thus, the object type might be a
-  monsters, with a subtype as grimreaper.  Or type equipment, with subtypes
-  of armor, weapon, boots, etc. This probably would clean up things a bit,
-  and make more logical sense.  However, this is a major change and would
-  require a bit of work.
-  Probably instead of making a type/subtype, just make sure that no objects
-  re-use fields in non intuitive fashion - instead, add enough fields
-  to the object structure that object of a specific type uses it appropriately.
-  This increases memory footprint, but that probably isn't much an issue now.
+
 - Change identification handling.  Possible idea is to have different levels
   of identification, with low level only showing basic information, and high
   level showing full detail.  Skill identification should basically use this,
@@ -279,6 +253,10 @@ Future feature requests
   used that same info, it'd also get that apply and destroy behaviour).  This
   is probably good enough - one could make individual sound information
   sequences for the individual parts if those were needed.
+
+- Make the elevation of terrain adjust line of sight.  If on the tallest
+  mountain, you would be able to see over neighboring mountains and not 
+  get your view blocked.
 
 Secondary features:
 

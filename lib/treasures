@@ -154,24 +154,24 @@ treasure Sorig
   arch god_enchant_weapon_medium
     chance 50
   more
-arch god_grace_limit_low
-more
+  arch god_grace_limit_low
+  more
   arch god_spelldirect_divine_shock
     chance 20
   more
   arch god_spelldirect_forked_lightning
     chance 20
   more
-arch god_grace_limit_medium
-more
+  arch god_grace_limit_medium
+  more
   arch god_spelldirect_cause_critical_wounds
   more
   arch god_spelldirect_windstorm
   more
   arch god_spelldirect_cause_many_wounds
   more
-arch god_grace_limit_high
-more
+  arch god_grace_limit_high
+  more
   arch mithril_ar_ele_sorig
     chance 2
 end
@@ -441,58 +441,6 @@ treasure dragon_ability_poison
   arch spelldirect_poison_cloud
   more
   arch poison_clawing
-end
-##############################################################
-#
-# Pet Monsters -
-#
-treasure mage_pet_monster
-  arch bat
-    nrof 2
-  more
-  arch spider
-    nrof 1
-  more
-  arch stalker
-    nrof 1
-  more
-  arch beholder
-    nrof 2
-  more
-  arch dark_elf
-    nrof 3
-end
-treasure altern_pet_monster
-  arch bird
-    nrof 1
-  more
-  arch pixie
-    nrof 1
-  more
-  arch skeleton
-    nrof 2
-  more
-  arch skull
-    nrof 1
-  more
-  arch vampire
-    nrof 1
-end
-treasure priest_pet_monster
-  arch bee
-    nrof 3
-  more
-  arch killer_bee
-    nrof 2
-  more
-  arch devil
-    nrof 2
-  more
-  arch angel
-    nrof 2
-  more
-  arch panther
-    nrof 5
 end
 ##############################################################
 #
@@ -811,8 +759,9 @@ treasureone chest_items
   list random_scroll
     chance 5
   end
-#  skill scrolls --bt
-#  better scrolls are harder to find 
+# skill scrolls
+# better scrolls are harder to find 
+# ordered by skill names
 treasureone random_knowledge
   arch scroll_alchemy
     chance 10
@@ -820,21 +769,29 @@ treasureone random_knowledge
   arch scroll_bargaining
     chance 5
   more
-  arch scroll_punching
+  arch scroll_bowyer
+    chance 10
+  more
+# clawing is not something you can learn
+  arch scroll_climbing
+    chance 10
+  more
+  arch scroll_disarm_traps
+    chance 10
+  more
+  arch scroll_evocation
     chance 5
+  more
+  arch scroll_find_traps
+    chance 10
+  more
+# flame touch is not something you can learn
+  arch scroll_hiding
+    chance 9
   more
 #   the inscription skill is only available as a pen  
   arch stylus	
     chance 10
-  more
-  arch scroll_bowyer
-    chance 10
-  more
-  arch scroll_climbing
-    chance 10
-  more
-  arch scroll_hiding
-    chance 9
   more
   arch scroll_jewelry
     chance 10
@@ -843,22 +800,34 @@ treasureone random_knowledge
     chance 10
   more
   arch scroll_karate
+    chance 8
+  more
+# levitation is not something to be learned
+  arch scroll_literacy
+    chance 15
+  more
+# not knowledge per se, but is a random skill
+  arch lockpicks
+    chance 8
+  more
+# meditation can not be learned
+  arch scroll_missile_weap
+    chance 15
+  more
+  arch scroll_one_handed_weapons
     chance 10
   more
   arch scroll_oratory
     chance 5
   more
-  arch scroll_literacy
+  arch scroll_praying
     chance 15
   more
-  arch scroll_missile_weap
-    chance 25
+  arch scroll_punching
+    chance 5
   more
-  arch scroll_melee_weap
-    chance 10
-  more
-  arch scroll_praying
-    chance 18
+  arch scroll_pyromancy
+    chance 5
   more
   arch scroll_sense_curse
     chance 5
@@ -866,21 +835,30 @@ treasureone random_knowledge
   arch scroll_sense_mag
     chance 5
   more
+# set traps is disabled
   arch scroll_singing
     chance 5
   more
   arch scroll_smithing
-    chance 3
+    chance 5
   more
-  arch scroll_spellcasting
+  arch scroll_sorcery
     chance 5
   more
   arch scroll_stealing
     chance 9
   more
+  arch scroll_summoning
+    chance 5
+  more
   arch scroll_thaumaturgy
     chance 9
   more
+# throwing is a native ability
+  arch scroll_two_handed_weapons
+    chance 10
+  more
+# use magic is a native ability
   arch scroll_woodsman
     chance 10
   end
@@ -1227,13 +1205,16 @@ treasureone random_special
   arch wand
     chance 15
   more
+  arch staff
+    chance 5
+  more
   arch holy_symbol
     chance 3
   more
   arch ring
     chance 5
   more
-  arch book
+  list random_books
     chance 5
   more
   arch emerald
@@ -1466,48 +1447,6 @@ treasureone random_gem
     chance 5
     nrof 4
   end
-# All players will start with these skills
-# -- only skills critical to being able to
-# play should go here. -b.t.
-treasure basic_skills
-  arch skill_throwing
-  more
-  arch skill_find_traps
-  more
-  arch skill_remove_trap
-  more
-  arch skill_use_magic_item
-  more
-  arch skill_literacy
-  end
-# basic set for fighter players
-treasure fighter_skills
-  arch skill_melee_weapon
-  more
-  arch skill_missile_weapon
-  more
-  list basic_skills
-  end
-# basic set for talisman spellcasting players
-treasure mage_skills
-  arch talisman
-  end
-# basic set for multi-spellcasting players
-treasure wizard_skills
-  arch skill_melee_weapon
-  more
-  arch skill_praying
-  more
-  list spell_skills
-  more
-  list basic_skills
-  end
-treasure spell_skills
-  arch skill_spellcasting
-  end
-treasure prayer_skills
-  arch skill_praying
-  end
 treasureone starting_wealth
   arch goldcoin
     nrof 120
@@ -1589,7 +1528,7 @@ treasureone random_alchemy
     chance 3
     magic 5
   more
-  arch book
+  list random_books
     chance 10
   more
   arch scroll_alchemy
@@ -2094,11 +2033,14 @@ treasureone list14
   arch ring
     chance 10
   more
-  arch book
+  list random_books
     chance 10
   more
   arch wand
     chance 10
+  more
+  arch staff
+    chance 5
   more
   arch rod_light
     chance 5
@@ -2256,12 +2198,15 @@ treasure random_amulet
   arch amulet
     chance 98
     no
-      arch talisman
+      list talisman
     end
   end
 treasureone random_wands
   arch wand
     chance 95
+  more
+  arch staff
+    chance 30
   more
   arch rod_light
     chance 5
@@ -2285,17 +2230,27 @@ treasureone shop_light
   arch lantern2_unlit
     chance 5
   end
-treasure random_books
-  arch book
-    chance 55
-    no
-      arch cleric_book
-        chance 60
-        no
-          list random_read
-        end
-      end
-    end
+# for shop
+treasureone random_books
+  arch cleric_book
+     chance 20
+  more
+  arch evoker_book
+     chance 15
+  more
+  arch pyro_book
+     chance 15
+  more
+  arch sorcerer_book
+     chance 15
+  more
+  arch summoner_book
+     chance 15
+  more
+    list random_read
+    chance 5
+  end
+#
 treasureone random_read
   arch tome
     chance 45
@@ -2498,10 +2453,10 @@ treasureone random_spells
   arch wand
     chance 10
   more
-  arch book
+  arch staff
     chance 5
   more
-  arch cleric_book
+  list random_books
     chance 5
   end
 treasureone random_talisman
@@ -2511,7 +2466,7 @@ treasureone random_talisman
   arch amulet
     chance 30
   more
-  arch talisman
+  list talisman
     chance 5
   more
   list list9
@@ -2555,7 +2510,7 @@ treasure poor_old
     nrof 6
     end
   more
-  arch sword_3
+  arch sword_4
   magic 1
   chance 5
   no
@@ -2588,13 +2543,10 @@ treasure angel
 treasure archangel
   list rich_old
   more
-  arch ability_wrathful_eye
+  arch spell_wrathful_eye
+    nrof 3
   more
-  arch ability_wrathful_eye
-  more
-  arch ability_wrathful_eye
-  more
-  arch ability_paralyze
+  arch spell_paralyze
 end
 treasure raas
   arch icor
@@ -2612,7 +2564,9 @@ treasure fiend
   list demon_parts
     chance 40
   more
-  arch ability_fire
+  arch abil_burning_hands
+  more
+  arch abil_medium_fireball
   end
 treasure sphinx
   list standard_old
@@ -2650,7 +2604,7 @@ treasure dwolf
   list dwolf_parts
     chance 30
   more
-  arch ability_frostbolt
+  arch abil_frostbolt
  end
 treasure polarbear
   list polarbear_parts
@@ -2792,6 +2746,9 @@ treasure standard_old
   arch wand
   chance 2
   more
+  arch staff
+  chance 1
+  more
   arch ring
   chance 2
   more
@@ -2831,7 +2788,7 @@ treasure rich_old
         magic 4
         chance 40
         no
-          arch sword_3
+          arch sword_4
           magic 4
           chance 60
           end
@@ -2864,6 +2821,9 @@ treasure rich_old
   arch wand
   chance 10
   more
+  arch staff
+  chance 2
+  more
   arch rod_light
   chance 2
   no
@@ -2871,7 +2831,7 @@ treasure rich_old
     chance 1
     end
   more
-  arch book
+  list random_books
   chance 10
   more
   arch ring
@@ -2886,13 +2846,13 @@ treasure rich_old
 treasure conjurer
   arch skill_literacy
   more
-  arch ability_summon_fire
+  arch spell_summon_fire_elemental
   more
-  arch ability_summon_air
+  arch spell_summon_air_elemental
   more
-  arch ability_summon_water
+  arch spell_summon_water_elemental
   more
-  arch ability_summon_earth
+  arch spell_summon_earth_elemental
   more
   arch cloak
     chance 60
@@ -2904,7 +2864,7 @@ treasure snake
     chance 3
   end
 treasure sage
-  list book
+  list random_books
   more
   arch skill_literacy
   more
@@ -2939,10 +2899,6 @@ treasure pixie
       chance 20
     end
   end
-treasure wand
-  arch wand
-  chance 4
-  end
 treasure rod
   arch rod_light
   chance 2
@@ -2950,10 +2906,6 @@ treasure rod
     arch rod_heavy
     chance 1
     end
-  end
-treasure book
-  arch book
-  chance 5
   end
 treasure ring
   arch ring
@@ -3058,17 +3010,18 @@ treasure giant_old
 treasure titan
   arch head
   more
-  arch ability_paralyze
+  arch spell_paralyze
   more
-  arch ability_fear
+  arch abil_fear
+    nrof 2
   more
-  arch ability_fear
+  arch spell_sm_lightning
+    nrof 2
   more
-  arch ability_lightning
+  arch spell_large_lightning
+    nrof 2
   more
-  arch ability_lightning
-  more
-  arch ability_slow
+  arch abil_slow
   more
   arch bow
   more
@@ -3087,7 +3040,7 @@ treasure titan
   chance 50
   end
 treasure belzebub
-  arch ability_petsummoning
+  arch spell_summon_pet_monster
   more
   arch ring_mail
   magic 4
@@ -3109,29 +3062,35 @@ treasure beholder_big
   arch big_eye
     chance 85
   more
-  arch ability_paralyze
+  arch spell_paralyze
   more
-  arch ability_fear
+  arch abil_fear
   more
-  arch ability_poison
+  arch abil_poison_cloud
   more
-  arch ability_lightning
+  arch spell_sm_lightning
   more
-  arch ability_coldspell
+  arch spell_large_lightning
   more
-  arch ability_firespell
+  arch abil_large_icestorm
   more
-  arch ability_missile
+  arch abil_icestorm
   more
-  arch ability_bullet
+  arch spell_burning_hands
   more
-  arch ability_speedball
+  arch spell_medium_fireball
   more
-  arch ability_mass_confusion
+  arch spell_magic_missile
   more
-  arch ability_slow
+  arch spell_magic_bullet
   more
-  arch ability_cancellation
+  arch spell_small_speedball
+  more
+  arch spell_mass_confusion
+  more
+  arch abil_slow
+  more
+  arch spell_cancellation
 #  more
 #  arch beholdereye
   end
@@ -3139,31 +3098,38 @@ treasure beholder
   list beholder_parts
     chance 20
   more
-  arch ability_paralyze
+  arch spell_paralyze
   chance 50
   more
-  arch ability_fear
+  arch abil_fear
   chance 75
   more
-  arch ability_poison
+  arch abil_poison_cloud
   chance 50
   more
-  arch ability_lightning
+  arch spell_sm_lightning
   more
-  arch ability_coldspell
+  arch spell_large_lightning
+  more
+  arch abil_large_icestorm
   chance 25
   more
-  arch ability_firespell
+  arch abil_icestorm
+  chance 25
   more
-  arch ability_missile
+  arch spell_burning_hands
   more
-  arch ability_bullet
+  arch spell_medium_fireball
   more
-  arch ability_speedball
+  arch spell_magic_missile
   more
-  arch ability_mass_confusion
+  arch spell_magic_bullet
   more
-  arch ability_slow
+  arch spell_small_speedball
+  more
+  arch spell_mass_confusion
+  more
+  arch abil_slow
   more
   arch gem
   nrof 1
@@ -3173,54 +3139,69 @@ treasure skull
   list skull_parts
     chance 20
   more
-  arch ability_paralyze
+  arch spell_paralyze
   chance 50
   more
-  arch ability_fear
+  arch abil_fear
   chance 75
   more
-  arch ability_poison
+  arch abil_poison_cloud
   chance 50
   more
-  arch ability_lightning
+  arch spell_sm_lightning
   more
-  arch ability_coldspell
+  arch spell_large_lightning
+  more
+  arch abil_large_icestorm
   chance 25
   more
-  arch ability_firespell
+  arch abil_icestorm
+  chance 25
   more
-  arch ability_missile
+  arch spell_burning_hands
   more
-  arch ability_bullet
+  arch spell_medium_fireball
   more
-  arch ability_speedball
+  arch spell_magic_missile
   more
-  arch ability_mass_confusion
+  arch spell_magic_bullet
   more
-  arch ability_slow
+  arch spell_small_speedball
+  more
+  arch spell_mass_confusion
+  more
+  arch abil_slow
   more
   arch gem
   nrof 1
   chance 10
   end
 treasure demonlord
-  arch ability_hellfire
+  arch spell_hellfire
   more
-  arch ability_fear
+  arch abil_burning_hands
   more
-  arch ability_lightning
+  arch abil_fear
   more
-  arch ability_missile
+  arch spell_sm_lightning
   more
-  arch ability_paralyze
+  arch spell_large_lightning
+  more
+  arch spell_magic_missile
+  more
+  arch spell_paralyze
   end
 treasure wyvern
   list dragon_parts
     chance 80
   more
-  arch ability_wyvern
+  arch abil_burning_hands
+    nrof 3
   more
-  arch ability_fear
+  arch abil_medium_fireball
+    nrof 3
+  more
+  arch abil_fear
 #  more
 #  arch dragon_steak
 #  chance 90
@@ -3240,15 +3221,15 @@ treasure chinese
 #  nrof 2
 #  chance 90
 #  more
-  arch ability_cold
+  arch abil_icestorm
+    nrof 3
   more
-  arch ability_cold
+  arch abil_large_icestorm
+    nrof 3
   more
-  arch ability_cold
+  arch abil_fear
   more
-  arch ability_fear
-  more
-  arch ability_poison
+  arch abil_poison_cloud
   more
   arch gem
     chance 10
@@ -3290,15 +3271,19 @@ treasure dragon
 #  nrof 3
 #  chance 90
 #  more
-  arch ability_dragon
+  arch spell_dragonbreath
+    nrof 5
   more
-  arch ability_fear
+  arch abil_fear
   more
 #  arch dragon_scale
 #  more
   arch wand
   more
   arch wand
+  chance 50
+  more
+  arch staff
   chance 50
   more
   arch rod_light
@@ -3370,7 +3355,7 @@ treasure orc
     nrof 6
     end
   more
-  arch sword_3
+  arch sword_4
   magic 1
   chance 5
   no
@@ -3409,24 +3394,21 @@ treasure grave
   arch gravedirt
   end
 treasure vampire
-  arch ability_fear
+  arch abil_fear
+    nrof 3
   more
-  arch ability_fear
+  arch abil_slow
   more
-  arch ability_fear
-  more
-  arch ability_slow
-  more
-  arch ability_paralyze
+  arch spell_paralyze
   more
   arch heart
     chance 50
   more
   arch cloak
   more
-  arch book
+  list random_books
   more
-  arch book
+  list random_books
   chance 50
   more
   arch ring
@@ -3436,89 +3418,103 @@ treasure vampire
   chance 50
   end
 treasure minor_djinn
-  arch ability_paralyze
+  arch spell_paralyze
   more
-  arch ability_fear
+  arch abil_fear
   more
-  arch ability_maj_heal
+  arch spell_major_healing
   more
-  arch ability_forced_dance
+  arch spell_sm_lightning
   more
-  arch ability_lightning
+  arch spell_large_lightning
   more
-  arch ability_cold
-  chance 50
+  arch abil_large_icestorm
+    chance 50
   no
-    arch ability_fire
+    arch abil_burning_hands
+    more
+    arch abil_medium_fireball
     end
   more
-  arch ability_summon_fire
+  arch spell_summon_fire_elemental
   chance 50
   no
-    arch ability_summon_water
+    arch spell_summon_water_elemental
     end
   more
-  arch ability_summon_earth
+  arch spell_summon_earth_elemental
   chance 50
   no
-    arch ability_summon_air
+    arch spell_summon_air_elemental
     end
   more
-  arch ability_slow
+  arch abil_slow
   end
 treasure djinn
-  arch ability_paralyze
+  arch spell_paralyze
   more
-  arch ability_maj_heal
+  arch spell_major_healing
   more
-  arch ability_fear
+  arch abil_fear
   more
-  arch ability_forced_dance
+  arch spell_sm_lightning
   more
-  arch ability_lightning
+  arch spell_large_lightning
   more
-  arch ability_coldspell
+  arch abil_large_icestorm
   more
-  arch ability_cold
+  arch abil_icestorm
   more
-  arch ability_hellfire
+  arch abil_icestorm
   more
-  arch ability_summon_fire
+  arch abil_large_icestorm
   more
-  arch ability_summon_water
+  arch abil_burning_hands
   more
-  arch ability_summon_earth
+  arch spell_hellfire
   more
-  arch ability_summon_air
+  arch spell_summon_fire_elemental
   more
-  arch ability_slow
+  arch spell_summon_water_elemental
+  more
+  arch spell_summon_earth_elemental
+  more
+  arch spell_summon_air_elemental
+  more
+  arch abil_slow
   more
   arch rod_heavy
   end
 treasure big_wizard
-  arch ability_paralyze
+  arch spell_paralyze
   more
-  arch ability_fear
+  arch abil_fear
   more
-  arch ability_poison
+  arch abil_poison_cloud
   more
-  arch ability_lightning
+  arch spell_sm_lightning
   more
-  arch ability_coldspell
+  arch spell_large_lightning
   more
-  arch ability_firespell
+  arch abil_large_icestorm
   more
-  arch ability_missile
+  arch abil_icestorm
   more
-  arch ability_bullet
+  arch spell_burning_hands
   more
-  arch ability_slow
+  arch spell_medium_fireball
   more
-  arch book
+  arch spell_magic_missile
   more
-  arch book
+  arch spell_magic_bullet
   more
-  arch book
+  arch abil_slow
+  more
+  list random_books
+  more
+  list random_books
+  more
+  list random_books
   more
   arch wand
   more
@@ -3527,6 +3523,8 @@ treasure big_wizard
   arch wand
   more
   arch wand
+  more
+  arch staff
   more
   arch rod_light
   more
@@ -3559,24 +3557,74 @@ treasure big_wizard
   arch cloak
   end
 treasure pyromaniac
-  arch ability_bomb
+  arch spell_create_bomb
   end
 treasure demilich
   arch insanity
   more
-  arch ability_paralyze
+  arch spell_paralyze
   more
-  arch ability_fear
+  arch abil_fear
   more
-  arch ability_poison
+  arch abil_poison_cloud
   more
-  arch ability_coldspell
+  arch abil_large_icestorm
   more
-  arch ability_mass_confusion
+  arch abil_icestorm
+  more
+  arch spell_mass_confusion
   more
   arch gem  
   nrof 1
   end
+##############################################################################
+# start of starting equipment for players.
+#
+# All players will start with these skills
+# -- only skills critical to being able to
+# play should go here. -b.t.
+treasure basic_skills
+  arch skill_throwing
+  more
+  arch skill_find_traps
+  more
+  arch skill_remove_trap
+  more
+  arch skill_use_magic_item
+  more
+  arch skill_literacy
+  more
+  arch skill_punching
+  end
+# basic set for fighter players
+treasure fighter_skills
+  arch skill_one_handed_weapon
+  more
+  arch skill_two_handed_weapon
+  more
+  arch skill_missile_weapon
+  more
+  list basic_skills
+  end
+# basic set for talisman spellcasting players
+treasure mage_skills
+  arch talisman_sorcery
+  end
+# basic set for multi-spellcasting players
+# Note that removed the spell skill form here,
+# since many things should start with this package,
+# but spell might be different.
+treasure wizard_skills
+  arch skill_one_handed_weapon
+  more
+  arch skill_praying
+  more
+  list basic_skills
+  end
+treasure prayer_skills
+  arch skill_praying
+  end
+#
 treasure monk_class_items
   list basic_skills
   more
@@ -3672,7 +3720,9 @@ treasure halfling
 treasure pl_troll
   arch skill_clawing
   more
-  arch skill_melee_weapon
+  arch skill_one_handed_weapon
+  more
+  arch skill_two_handed_weapon
   more
   list basic_skills
   more
@@ -3817,15 +3867,15 @@ treasure warrior
 treasure sorcerer_class_items
   list basic_skills
   more
-  arch skill_spellcasting
+  arch skill_sorcery
   more
   arch guide_wizard
   more
-  arch book
+  arch sorcerer_book_l1
   more
-  arch book
+  arch sorcerer_book_l1
   more
-  arch book
+  arch sorcerer_book_l1
   more
   arch skill_sense_magic
   more
@@ -3838,15 +3888,15 @@ treasure sorcerer_class_items
 treasure evoker_class_items
   list basic_skills
   more
-  arch skill_melee_weapon
+  arch skill_one_handed_weapon
   more
   arch talisman_evoker
   more
   arch robe
   more
-  arch book
+  arch evoker_book_l1
   more
-  arch book
+  arch evoker_book_l1
   more
   arch shortsword
   more
@@ -3855,7 +3905,7 @@ treasure evoker_class_items
 treasure alchemist_class_items
   list basic_skills
   more
-  arch skill_melee_weapon
+  arch skill_one_handed_weapon
   more
   arch talisman_alchemist
   more
@@ -3863,7 +3913,7 @@ treasure alchemist_class_items
   more
   arch skill_thaumaturgy
   more
-  arch ability_alchemy
+  arch spell_alchemy
   more
   arch guide_alchemy
   more
@@ -3871,16 +3921,16 @@ treasure alchemist_class_items
   more
   arch robe
   more
-  arch book
+  arch evoker_book_l1
   more
-  arch book
+  arch sorcerer_book_l1
   more
   arch dagger
   end
 treasure summoner_class_items
   list basic_skills
   more
-  arch skill_melee_weapon
+  arch skill_one_handed_weapon
   more
   arch skill_praying
   more
@@ -3890,50 +3940,56 @@ treasure summoner_class_items
   more
   arch robe
   more
-  arch book
+  arch summoner_book_l1
   more
-  arch book
+  arch summoner_book_l1
   more
   arch shortsword
   end
 treasure wizard_class_items
   list wizard_skills
   more
+  arch skill_sorcery
+  more
   arch guide_wizard
   more
   arch robe
   more
-  arch cleric_book
+  arch sorcerer_book_l1
   more
-  arch book
+  arch sorcerer_book_l1
   more
-  arch book
+  arch sorcerer_book_l1
   more
   arch dagger
   end
 treasure devotee_class_items
   list wizard_skills
   more
+  arch skill_evocation
+  more
   arch guide_priest
   more
   arch robe
   more
-  arch cleric_book
+  arch cleric_book_l1
   more
-  arch cleric_book
+  arch evoker_book_l1
   more
-  arch book
+  arch evoker_book_l1
   more
   arch dagger
   end
 treasure wizard
   list wizard_skills
   more
+  arch skill_sorcery
+  more
   arch robe
   more
-  arch book
+  arch sorcerer_book_l1
   more
-  arch book
+  arch sorcerer_book_l1
   more
   arch dagger
   end
@@ -3953,12 +4009,14 @@ treasure cleric
   more
   arch skill_oratory
   more
-  arch cleric_book
+  arch cleric_book_l1
   more
   arch small_shield
   end
 treasure barbarian_class_items
-  arch skill_melee_weapon
+  arch skill_one_handed_weapon
+  more
+  arch skill_two_handed_weapon
   more
   arch skill_missile_weapon
   more
@@ -4008,7 +4066,9 @@ treasure priest_class_items
   more
   arch skill_praying
   more
-  arch skill_melee_weapon
+  arch skill_one_handed_weapon
+  more
+  arch skill_two_handed_weapon
   more
   arch guide_priest
   more
@@ -4016,9 +4076,9 @@ treasure priest_class_items
   more
   arch quarterstaff
   more
-  arch cleric_book
+  arch cleric_book_l1
   more
-  arch cleric_book
+  arch cleric_book_l1
   more
   arch skill_sense_curse
   more
@@ -4027,28 +4087,30 @@ treasure priest_class_items
 treasure priest
   list wizard_skills
   more
+  arch skill_evocation
+  more
   arch robe
   more
   arch quarterstaff
   more
-  arch cleric_book
+  arch cleric_book_l1
   more
-  arch cleric_book
+  arch cleric_book_l1
   more
   arch amulet
   end
 treasure warlock_class_items
   list fighter_skills
   more
-  arch talisman
+  arch talisman_evocation
   more
   arch light_sword
   more
   arch leather_armour
   more
-  arch book
+  arch evoker_book_l1
   more
-  arch book
+  arch evoker_book_l1
   end
 treasure mage
   list fighter_skills
@@ -4059,9 +4121,9 @@ treasure mage
   more
   arch quarterstaff
   more
-  arch book
+  arch sorcerer_book_l1
   more
-  arch book
+  arch evoker_book_l1
   end
 treasure northman_player_items
   arch bighorned_helmet
@@ -4146,7 +4208,7 @@ treasure fireborn_player_items
   more
   arch skill_flame_touch
   more
-  arch skill_spellcasting
+  arch skill_pyromancy
   more
   arch skill_praying
   more
@@ -4160,9 +4222,9 @@ treasure fireborn_player_items
   arch amulet
   magic 3
   more
-  arch book
+  arch pyro_book_l1
   more
-  arch cleric_book
+  arch cleric_book_l1
   end
 treasure fireborn
   arch skill_levitate
@@ -4173,7 +4235,7 @@ treasure fireborn
   more
   arch skill_flame_touch
   more
-  list spell_skills
+  arch skill_pyromancy
   more
   arch skill_praying
   more
@@ -4185,24 +4247,26 @@ treasure fireborn
   arch amulet
   magic 3
   more
-  arch cleric_book
+  arch cleric_book_l1
   more
-  arch book
+  arch pyro_book_l1
   more
-  arch book
+  arch pyro_book_l1
   more
-  arch book
+  arch pyro_book_l1
   end
 treasure quetzalcoatl_player_items
   arch skill_levitate
   more
   arch skill_clawing
   more
-  arch ability_fire
+  arch abil_burning_hands
+  more
+  arch abil_medium_fireball
   more
   arch no_class_face_change
   more
-  arch skill_spellcasting
+  arch skill_pyromancy
   end
 treasure dragon_player_items
   arch dragon_skin_force
@@ -4215,16 +4279,20 @@ treasure dragon_player_items
   more
   arch skill_woodsman
   more
-  arch ability_fire
+  arch abil_burning_hands
+  more
+  arch abil_medium_fireball
   more
   arch no_class_face_change
   more
-  arch skill_spellcasting
+  arch skill_evocation
   end
 treasure quetzalcoatl
   arch skill_levitate
   more
-  arch skill_melee_weapon
+  arch skill_one_handed_weapon
+  more
+  arch skill_two_handed_weapon
   more
   arch skill_missile_weapon
   more
@@ -4232,22 +4300,24 @@ treasure quetzalcoatl
   more
   list basic_skills
   more
-  list spell_skills
+  arch skill_pyromancy
   more
-  arch book
+  arch pyro_book_l1
   more
-  arch book
+  arch pyro_book
   more
-  arch ability_fire
+  arch abil_burning_hands
+  more
+  arch abil_medium_fireball
   end
 treasure acdc
-  arch ability_fear
+  arch abil_fear
   more
-  arch ability_lightning
+  arch spell_sm_lightning
+    nrof 3
   more
-  arch ability_lightning
-  more
-  arch ability_lightning
+  arch spell_large_lightning
+    nrof 3
   more
   arch dragon_steak
   nrof 2
@@ -4256,6 +4326,9 @@ treasure acdc
   arch dragon_scale
   more
   arch wand
+  more
+  arch staff
+  chance 50
   more
   arch wand
   chance 50
@@ -4303,7 +4376,7 @@ treasure acdc
   magic 3
   end
 treasure avatar
-  arch ability_petsummoning
+  arch spell_summon_pet_monster
   more
   arch cloak
   chance 50
@@ -4339,15 +4412,15 @@ treasure spectre
   list lich_old
   end
 treasure banshee
-  arch ability_paralyze
+  arch spell_paralyze
   more
-  arch ability_fear
+  arch abil_fear
   more
-  arch ability_paralyze
+  arch spell_paralyze
   more
   arch skill_clawing
   more
-  arch ability_cause_med_wound
+  arch spell_cause_medium_wounds
   more
   arch ring
   chance 50
@@ -4375,17 +4448,19 @@ treasure lich
   list lich_old
   end
 treasure lich_old
-  arch ability_paralyze
+  arch spell_paralyze
   more
-  arch ability_fear
+  arch abil_fear
   more
-  arch ability_petsummoning
+  arch spell_summon_pet_monster
   more
-  arch ability_bullet
+  arch spell_magic_bullet
   more
-  arch ability_coldspell
+  arch abil_large_icestorm
   more
-  arch sword_3
+  arch abil_icestorm
+  more
+  arch sword_2
   chance 90
   magic 5
   more
@@ -4416,9 +4491,12 @@ treasure lich_old
   arch wand
   chance 80
   more
-  arch book
+  arch staff
+  chance 20
   more
-  arch book
+  list random_books
+  more
+  list random_books
   chance 70
   more
   arch ring
@@ -4457,24 +4535,18 @@ treasure suprise
     end
   end
 treasure spark
-  arch ability_lightning
+  arch spell_sm_lightning
+    nrof 6
   more
-  arch ability_lightning
-  more
-  arch ability_lightning
-  more
-  arch ability_lightning
-  more
-  arch ability_lightning
-  more
-  arch ability_lightning
-#  more
-#  arch ability_ball
+  arch spell_large_lightning
+    nrof 6
   end
 treasure cold_dragon
-  arch ability_cold
+  arch abil_icestorm
+    nrof 2
   more
-  arch ability_cold
+  arch abil_large_icestorm
+   nrof 2
   end
 treasure gdwar_guard
   arch axe_5
@@ -4507,9 +4579,9 @@ treasure ldwar_guard
   nrof 1
   end
 treasure DK
-  arch ability_paralyze
+  arch spell_paralyze
   more
-  arch ability_speedball
+  arch spell_small_speedball
   more
   arch plate_mail
   more
@@ -4553,17 +4625,22 @@ treasure Cwyvern
   list dragon_parts
     chance 70
   more
-  arch ability_fear
+  arch abil_fear
   more
-  arch ability_dragon
+  arch spell_dragonbreath
+    nrof 5
   more
-  arch ability_cold
+  arch abil_icestorm
   more
-  arch ability_lightning
+  arch abil_large_icestorm
   more
-  arch ability_poison
+  arch spell_sm_lightning
   more
-  arch ability_pool_chaos
+  arch spell_large_lightning
+  more
+  arch abil_poison_cloud
+  more
+  arch spell_create_pool_of_chaos
   more
   arch gem
     nrof 40
@@ -4579,11 +4656,13 @@ treasure Cwyvern
     chance 30
   end
 treasure EDK
-  arch ability_fire
+  arch abil_burning_hands
   more
-  arch ability_paralyze
+  arch abil_medium_fireball
   more
-  arch ability_fear
+  arch spell_paralyze
+  more
+  arch abil_fear
   more
   arch plate_mail
   more
@@ -4591,7 +4670,7 @@ treasure EDK
   more
   arch ring
   more
-  arch book
+  list random_books
   more
   arch ring
   more
@@ -4625,7 +4704,10 @@ treasure EDK
     end
   end
 treasure fire_serpent
-  arch ability_fire
+  arch abil_burning_hands
+  chance 50
+  more
+  arch abil_medium_fireball
   chance 50
   end
 treasure serpent
@@ -4662,37 +4744,42 @@ treasure serp_priest
   arch dagger
   magic 3
   more
-  arch book
+  list random_books
   chance 50
   more
-  arch book
+  list random_books
   more
-  arch wand
+  arch staff
   chance 80
   more
   arch rod_light
   chance 30
   more
-  arch ability_fire
+  arch abil_burning_hands
   chance 20
   more
-  arch ability_paralyze
+  arch abil_medium_fireball
+  chance 20
+  more
+  arch spell_paralyze
   chance 80
   more
-  arch ability_fear
+  arch abil_fear
   more
-  arch ability_lightning
+  arch spell_sm_lightning
   more
-  arch ability_pool_chaos
+  arch spell_large_lightning
+  more
+  arch spell_create_pool_of_chaos
   chance 20
   more
-  arch ability_missile
+  arch spell_magic_missile
   chance 20
   end
 treasure lamia
-  arch ability_paralyze
+  arch spell_paralyze
   more
-  arch ability_fear
+  arch abil_fear
   more
   arch ability_spit_acid
   more
@@ -4723,6 +4810,9 @@ treasure lamia
   arch wand
   chance 50
   more
+  arch staff
+  chance 30
+  more
   arch wand
   chance 50
   more
@@ -4750,13 +4840,15 @@ treasure cyclops
   nrof 40
   end
 treasure Balrog
-  arch ability_paralyze
+  arch spell_paralyze
   more
-  arch ability_fear
+  arch abil_fear
   more
-  arch ability_fire
+  arch abil_burning_hands
   more
-  arch ability_summon_fire
+  arch abil_medium_fireball
+  more
+  arch spell_summon_fire_elemental
   more
   arch ring
   chance 90
@@ -4769,10 +4861,12 @@ treasure Balrog
   arch firebrand
   end
 treasure imp
-  arch ability_fire
+  arch abil_burning_hands
+  more
+  arch abil_medium_fireball
   end
 treasure liv_chaos
-  arch ability_pool_chaos
+  arch spell_create_pool_of_chaos
   end
 treasure lokanth
   list standard
@@ -4783,7 +4877,9 @@ treasure broo
   list goblin_parts
     chance 40
   more
-  arch skill_melee_weapon
+  arch skill_one_handed_weapon
+  more
+  arch skill_two_handed_weapon
   more
   arch club
   chance 40
@@ -4918,13 +5014,13 @@ treasure a_priest
   list human_parts
     chance 20
   more
-  arch ability_paralyze
+  arch spell_paralyze
   more
-  arch ability_cause_med_wound
+  arch spell_cause_medium_wounds
   more
-  arch ability_petsummoning
+  arch spell_summon_pet_monster
   more
-  arch ability_missile
+  arch spell_magic_missile
   more
   arch robe
   more
@@ -4933,13 +5029,13 @@ treasure a_priest
 treasure holy_priest
   list human_parts
   more
-  arch ability_paralyze
+  arch spell_paralyze
   more
-  arch ability_cause_ser_wound
+  arch spell_cause_heavy_wounds
   more
-  arch ability_petsummoning
+  arch spell_summon_pet_monster
   more
-  arch ability_missile
+  arch spell_magic_missile
   more
   arch robe
   more
@@ -4962,37 +5058,37 @@ treasure c_m_priest
   arch staff
   magic 1
   more
-  arch book
+  list random_books
   chance 50
   more
-  arch book
+  list random_books
   chance 50
   more
-  arch wand
+  arch staff
   chance 30
   more
-  arch ability_paralyze
+  arch spell_paralyze
   chance 50
   no
-    arch ability_petsummoning
+    arch spell_summon_pet_monster
     end
   more
-  arch ability_poison
+  arch abil_poison_cloud
   chance 50
   more
-  arch ability_paralyze
+  arch spell_paralyze
   chance 20
   no
-    arch ability_fear
+    arch abil_fear
     end
   more
-  arch ability_missile
+  arch spell_magic_missile
   chance 20
   no
-    arch ability_cause_med_wound
+    arch spell_cause_medium_wounds
     end
   more
-  arch ability_pool_chaos
+  arch spell_create_pool_of_chaos
   chance 20
   end
 treasure c_priest
@@ -5001,12 +5097,12 @@ treasure c_priest
   arch staff
   magic 3
   more
-  arch book
+  arch cleric_book
   chance 50
   more
-  arch book
+  arch cleric_book
   more
-  arch wand
+  arch staff
   chance 80
   more
   arch rod_light
@@ -5016,23 +5112,25 @@ treasure c_priest
     chance 30
     end
   more
-  arch ability_paralyze
+  arch spell_paralyze
   more
-  arch ability_petsummoning
+  arch spell_summon_pet_monster
   more
-  arch ability_poison
+  arch abil_poison_cloud
   more
-  arch ability_paralyze
+  arch spell_paralyze
   more
-  arch ability_fear
+  arch abil_fear
   more
-  arch ability_hellfire
+  arch abil_burning_hands
+  more
+  arch spell_hellfire
   chance 20
   no
-    arch ability_cause_ser_wound
+    arch spell_cause_heavy_wounds
     end
   more
-  arch ability_pool_chaos
+  arch spell_create_pool_of_chaos
   chance 80
   end
 treasure c_knight
@@ -5063,7 +5161,7 @@ treasure c_knight
   chance 20
   end
 treasure byakie
-  arch ability_fear
+  arch abil_fear
   end
 treasure gargoyle
   list melee_weapons
@@ -5078,11 +5176,13 @@ treasure neko
     chance 99
   end
 treasure witch_fire
-  arch ability_fire
+  arch abil_burning_hands
   more
-  arch ability_fire_wall
+  arch abil_medium_fireball
   more
-  arch ability_summon_fire
+  arch abil_create_fire_wall
+  more
+  arch spell_summon_fire_elemental
  end
 treasure witch_earth
   arch skill_throwing
@@ -5097,72 +5197,79 @@ treasure witch_earth
      nrof 2
      end
   more
-  arch ability_fear
+  arch abil_fear
   more
-  arch ability_thorn_wall
+  arch spell_wall_of_thorns
   more
-  arch ability_summon_earth
+  arch spell_summon_earth_elemental
  end
 treasure witch_air
-  arch ability_lightning
+  arch spell_sm_lightning
   more
-  arch ability_poison
+  arch spell_large_lightning
   more
-  arch ability_wind
+  arch abil_poison_cloud
   more
-  arch ability_summon_air
+  arch spell_windstorm
+  more
+  arch spell_summon_air_elemental
  end
 treasure witch_water
-  arch ability_cold
+  arch abil_icestorm
   more
-  arch ability_fog
+  arch abil_large_icestorm
   more
-  arch ability_slow
+  arch spell_summon_fog
+  more
+  arch abil_slow
    more
-  arch ability_frost_wall
+  arch abil_create_frost_wall
   more
-  arch ability_summon_water
+  arch spell_summon_water_elemental
  end
 treasure witch_chaos
-  arch ability_color
+  arch spell_color_spray
   more
-  arch ability_b_lightning
+  arch abil_ball_lightning
+    nrof 3
   more
-  arch ability_pool_chaos
+  arch spell_create_pool_of_chaos
   more
-  arch ability_summon_water
+  arch spell_summon_water_elemental
   more
-  arch ability_summon_air
+  arch spell_summon_air_elemental
   more
-  arch ability_summon_earth
+  arch spell_summon_earth_elemental
   more
-  arch ability_summon_fire
+  arch spell_summon_fire_elemental
   end
 treasure giantrat
   list giantrat_parts
     chance 30
  end
 treasure hellhound
-  arch ability_hellfire
+  arch abil_burning_hands
   more
-  arch ability_fear
+  arch spell_hellfire
+  more
+  arch abil_fear
  end
 treasure shadow
-  arch ability_cancellation
+  arch spell_cancellation
   more
-  arch ability_invisible
+  arch spell_invisible
  end
 treasure s_wyvern
-  arch ability_cancellation
+  arch spell_cancellation
   more
-  arch ability_invisible
+  arch spell_invisible
  end
 treasure giant_worm
-  arch ability_bullet
+  arch spell_magic_bullet
   more
-  arch ability_vitriol
+  arch spell_vitriol
   more
-  arch ability_slow
+  arch abil_slow
   more
   arch eye
   chance 30
@@ -5176,11 +5283,11 @@ treasure giant_worm
     nrof 7
   end
 treasure skree
-  arch ability_fear
+  arch abil_fear
   more
-  arch ability_paralyze
+  arch spell_paralyze
   more
-  arch ability_slow
+  arch abil_slow
   more
   list skree_bits
   end
@@ -5196,9 +5303,9 @@ treasure skree_bits
 treasure skeletalmage
   list standard_old
   more
-  arch ability_fear
+  arch abil_fear
   more
-  arch ability_frostbolt
+  arch abil_frostbolt
     chance 67
 end
 treasure behemoth

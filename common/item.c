@@ -120,14 +120,14 @@ materialtype material[NROFMATERIALS] = {
  * wear whatever they want with no worries.  Perhaps having the steep
  * curve is good (maybe even steeper), but allowing players to
  * have 2 * level instead.  Ideally, top level characters should only be
- * able to use 2-3 of the most power items.
+ * able to use 2-3 of the most powerful items.
  * note that this table is only really used for program generated items -
  * custom objects can use whatever they want.
  */
 static int enc_to_item_power[21] = {
 0, 0, 1, 2, 3, 4,    /* 5 */
 5, 7, 9, 11, 13,    /* 10 */
-16, 18, 21, 24, 27, /* 15 */
+15, 18, 21, 24, 27, /* 15 */
 30, 35, 40, 45, 50  /* 20 */
 };
 
@@ -205,10 +205,12 @@ int calc_item_power(object *op, int flag)
     if(QUERY_FLAG(op,FLAG_SEE_IN_DARK))	    enc += 1;
     if(QUERY_FLAG(op,FLAG_MAKE_INVIS))	    enc += 1;
 
+#if 0
     if (enc > 20) {
 	LOG(llevDebug,"calc_item_power got %d enchantments for %s\n", enc, op->name?op->name:"(null)");
 	enc = 20;
     }
+#endif
     /* Items only have a positive power rating */
     if (enc < 0) enc = 0;
 
@@ -400,35 +402,24 @@ char *query_short_name(object *op)
     }
 
     switch(op->type) {
-      case SPELLBOOK:
-	if (QUERY_FLAG(op,FLAG_IDENTIFIED)||QUERY_FLAG(op,FLAG_BEEN_APPLIED)) {
-	    if(!op->title) {
-		safe_strcat(buf," of ", &len, HUGE_BUF);
-		if(op->slaying) safe_strcat(buf,op->slaying, &len, HUGE_BUF);
-		else
-		  safe_strcat(buf,spells[op->stats.sp].name, &len, HUGE_BUF);
+	case SPELLBOOK:
+	case SCROLL:
+	case WAND:
+	case ROD:
+	    if (QUERY_FLAG(op,FLAG_IDENTIFIED)||QUERY_FLAG(op,FLAG_BEEN_APPLIED)) {
+		if(!op->title) {
+		    safe_strcat(buf," of ", &len, HUGE_BUF);
+		    if (op->inv) 
+			safe_strcat(buf,op->inv->name, &len, HUGE_BUF);
+		    else
+			LOG(llevError,"Spellbook %s lacks inventory\n", op->name);
+		}
 		if(op->type != SPELLBOOK) {
 		    sprintf(buf2, " (lvl %d)", op->level);
 		    safe_strcat(buf, buf2, &len, HUGE_BUF);
 		}
 	    }
-	}
-	
-	break;
-      case SCROLL:
-      case WAND:
-      case ROD:
-	if (QUERY_FLAG(op,FLAG_IDENTIFIED)||QUERY_FLAG(op,FLAG_BEEN_APPLIED)) {
-	    if(!op->title) {
-		safe_strcat(buf," of ", &len, HUGE_BUF);
-		safe_strcat(buf,spells[op->stats.sp].name, &len, HUGE_BUF);
-		if(op->type != SPELLBOOK) {
-		    sprintf(buf2, " (lvl %d)", op->level);
-		    safe_strcat(buf, buf2, &len, HUGE_BUF);
-		}
-	    }
-	}
-	break;
+	    break;
 
       case SKILL:
       case AMULET:
@@ -508,9 +499,15 @@ char *query_name(object *op) {
     if (QUERY_FLAG(op,FLAG_KNOWN_MAGICAL) && !QUERY_FLAG(op,FLAG_IDENTIFIED))
 	safe_strcat(buf[use_buf], " (magic)", &len, HUGE_BUF);
 
+#if 0
+    /* item_power will be returned in desribe_item - it shouldn't really
+     * be returned in the name.
+     */
     if(op->item_power)
 	sprintf(buf[use_buf]+strlen(buf[use_buf]), "(item_power %+d)",
 	    op->item_power);
+
+#endif
 
     if (QUERY_FLAG(op,FLAG_APPLIED)) {
 	switch(op->type) {
@@ -559,7 +556,7 @@ char *query_name(object *op) {
  * If plural is set, we generate the plural name of this.
  */
 char *query_base_name(object *op, int plural) {
-    static char buf[MAX_BUF];
+    static char buf[MAX_BUF], buf2[MAX_BUF];
     int len;
     materialtype_t *mt;
 
@@ -600,31 +597,25 @@ char *query_base_name(object *op, int plural) {
     }
 
     switch(op->type) {
-      case SPELLBOOK:
-	if (QUERY_FLAG(op,FLAG_IDENTIFIED)||QUERY_FLAG(op,FLAG_BEEN_APPLIED)) {
-	    if(!op->title) {
-		safe_strcat(buf," of ", &len, MAX_BUF);
-		if(op->slaying) safe_strcat(buf,op->slaying, &len, MAX_BUF);
-		else
-		  safe_strcat(buf,spells[op->stats.sp].name, &len, MAX_BUF);
-		if(op->type != SPELLBOOK) 
-		    sprintf(buf+strlen(buf), " (lvl %d)", op->level);
+	case SPELLBOOK:
+	case SCROLL:
+	case WAND:
+	case ROD:
+	    if (QUERY_FLAG(op,FLAG_IDENTIFIED)||QUERY_FLAG(op,FLAG_BEEN_APPLIED)) {
+		if(!op->title) {
+		    safe_strcat(buf," of ", &len, HUGE_BUF);
+		    if (op->inv) 
+			safe_strcat(buf,op->inv->name, &len, HUGE_BUF);
+		    else
+			LOG(llevError,"Spellbook %s lacks inventory\n", op->name);
+		}
+		if(op->type != SPELLBOOK) {
+		    sprintf(buf2, " (lvl %d)", op->level);
+		    safe_strcat(buf, buf2, &len, HUGE_BUF);
+		}
 	    }
-	}
-	break;
+	    break;
 
-      case SCROLL:
-      case WAND:
-      case ROD:
-	if (QUERY_FLAG(op,FLAG_IDENTIFIED)||QUERY_FLAG(op,FLAG_BEEN_APPLIED)) {
-	    if(!op->title) {
-		safe_strcat(buf," of ", &len, MAX_BUF);
-		safe_strcat(buf,spells[op->stats.sp].name, &len, MAX_BUF);
-		if(op->type != SPELLBOOK)
-		    sprintf(buf+strlen(buf), " (lvl %d)", op->level);
-	    }
-	}
-	break;
 
       case SKILL:
       case AMULET:
@@ -727,7 +718,7 @@ static char *describe_monster(object *op) {
 	treasure *t;
 	int first = 1;
 	for(t=op->randomitems->items; t != NULL; t=t->next)
-	    if(t->item && (t->item->clone.type == ABILITY)) {
+	    if(t->item && (t->item->clone.type == SPELL)) {
 		if(first) {
 		    first = 0;
 		    strcat(retbuf,"(Spell abilities:)");
@@ -883,6 +874,10 @@ char *describe_item(object *op, object *owner) {
 	case SKILL:
 	case RING:
 	case AMULET:
+	    if(op->item_power) {
+		sprintf(buf,"(item_power %+d)",op->item_power);
+		strcat(retbuf,buf);
+	    }
 	    if (op->title)
 		strcat (retbuf, ring_desc(op));
 	    return retbuf;
@@ -1141,108 +1136,89 @@ int is_magical(object *op) {
  */
 
 int need_identify(object *op) {
-  switch(op->type) {
-  case RING:
-  case WAND:
-  case ROD:
-  case HORN:
-  case SCROLL:
-  case SKILL:
-  case SKILLSCROLL:
-  case SPELLBOOK:
-  case FOOD:
-  case POTION:
-  case BOW:
-  case ARROW:
-  case WEAPON:
-  case ARMOUR:
-  case SHIELD:
-  case HELMET:
-  case AMULET:
-  case BOOTS:
-  case GLOVES:
-  case BRACERS:
-  case GIRDLE:
-  case CONTAINER:
-  case DRINK:
-  case FLESH:
-  case INORGANIC:
-  case CLOSE_CON:
-  case CLOAK:
-  case GEM:
-  case POWER_CRYSTAL:
-  case POISON:
-  case BOOK:
-    return 1;
-  }
-/* Try to track down some stuff that may show up here.  Thus, the
- * archetype file can be updated, and this function removed.
- */
+    switch(op->type) {
+	case RING:
+	case WAND:
+	case ROD:
+	case HORN:
+	case SCROLL:
+	case SKILL:
+	case SKILLSCROLL:
+	case SPELLBOOK:
+	case FOOD:
+	case POTION:
+	case BOW:
+	case ARROW:
+	case WEAPON:
+	case ARMOUR:
+	case SHIELD:
+	case HELMET:
+	case AMULET:
+	case BOOTS:
+	case GLOVES:
+	case BRACERS:
+	case GIRDLE:
+	case CONTAINER:
+	case DRINK:
+	case FLESH:
+	case INORGANIC:
+	case CLOSE_CON:
+	case CLOAK:
+	case GEM:
+	case POWER_CRYSTAL:
+	case POISON:
+	case BOOK:
+	case SKILL_TOOL:
+	    return 1;
+    }
+    /* Try to track down some stuff that may show up here.  Thus, the
+     * archetype file can be updated, and this function removed.
+     */
 #if 0
-  LOG(llevDebug,"need_identify: %s does not need to be id'd\n", op->name);
+    LOG(llevDebug,"need_identify: %s does not need to be id'd\n", op->name);
 #endif
-  return 0;
+    return 0;
 }
 
-
-/* 
- *  Return the number of the spell that whose name passes the pasesed string
- *  argument.   Return -1 if no such spell name match is found.
- */
-int look_up_spell_name( char * spname ){
-   register int i;
-   for(i=0;i< NROFREALSPELLS;i++){
-      if( strcmp(spname, spells[i].name) == 0) return i;
-   }
-   return -1;
-}
 
 /*
  * Supposed to fix face-values as well here, but later.
  */
 
 void identify(object *op) {
-  object *pl;
+    object *pl;
 
-  SET_FLAG(op,FLAG_IDENTIFIED);
-  CLEAR_FLAG(op, FLAG_KNOWN_MAGICAL);
-  CLEAR_FLAG(op, FLAG_NO_SKILL_IDENT);
+    SET_FLAG(op,FLAG_IDENTIFIED);
+    CLEAR_FLAG(op, FLAG_KNOWN_MAGICAL);
+    CLEAR_FLAG(op, FLAG_NO_SKILL_IDENT);
 
-/*
- * We want autojoining of equal objects:
- */
-  if (QUERY_FLAG(op,FLAG_CURSED) || QUERY_FLAG(op,FLAG_DAMNED))
-    SET_FLAG(op,FLAG_KNOWN_CURSED);
+    /*
+     * We want autojoining of equal objects:
+     */
+    if (QUERY_FLAG(op,FLAG_CURSED) || QUERY_FLAG(op,FLAG_DAMNED))
+	SET_FLAG(op,FLAG_KNOWN_CURSED);
 
-  if (op->type == POTION && op->arch != (archetype *) NULL) {
-      free_string(op->name);
-      op->name = add_refcount(op->arch->clone.name);
-      free_string(op->name_pl);
-      op->name_pl = add_refcount(op->arch->clone.name_pl);
-  } else if( op->type == SPELLBOOK && op->slaying != NULL){
-       if((op->stats.sp = look_up_spell_name( op->slaying )) <0 ){
-	  char buf[256];
-          op->stats.sp = -1;  
-          sprintf(buf, "Spell forumla for %s", op->slaying);
-	  if(op->name != NULL) 
-		free_string(op->name);
-	  op->name = add_string(buf);
-       } else {
-         /* clear op->slaying since we no longer need it */
-         free_string(op->slaying);
-         op->slaying=NULL;
-       }
-  }
+    if (op->type == POTION) {
+	if (op->inv) {
+	    if (op->title) free_string(op->title);
+	    op->title = add_refcount(op->inv->name);
+	} else if (op->arch) {
+	    free_string(op->name);
+	    op->name = add_refcount(op->arch->clone.name);
+	    free_string(op->name_pl);
+	    op->name_pl = add_refcount(op->arch->clone.name_pl);
+	}
+    }
 
-  if (op->map) /* The shop identifies items before they hit the ground */
-    /* I don't think identification will change anything but face */
-    update_object(op,UP_OBJ_FACE);
-  else {
-    pl = is_player_inv(op->env);
-    if (pl)
-	/* A lot of the values can change from an update - might as well send
-	 * it all.
-	 */
-	esrv_send_item_func(pl, op);
-  }
+    /* If the object is on a map, make sure we update its face */
+    if (op->map)
+	update_object(op,UP_OBJ_FACE);
+    else {
+	pl = is_player_inv(op->env);
+	if (pl)
+	    /* A lot of the values can change from an update - might as well send
+	     * it all.
+	     */
+	    esrv_send_item_func(pl, op);
+    }
 }

@@ -523,6 +523,10 @@ install-data-local: archetypes crossfire.0 faces animations collect.pl util.pl
 	done
 # Special case above because the name we install to is different
 # than the name of the file
+	if [ ! -d $(DESTDIR)$(pkgdatadir)/$$i ]; then \
+		echo "Creating directory $(pkgdatadir)/$$i"; \
+		$(mkinstalldirs) $(DESTDIR)$(pkgdatadir)/$$i; \
+	fi; \
 	$(INSTALL_DATA) $(srcdir)/treasures.bld $(DESTDIR)$(pkgdatadir)/treasures
 
 # Uninstall unchanged config/var files so make distcheck is happy

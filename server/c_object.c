@@ -116,6 +116,8 @@ static object *find_best_apply_object_match(object *pl, char *params, enum apply
  */
 
 int command_build (object *pl, char *params) {
+    return 0;
+#if 0
     object *marked, *facility, *tool, *newobj, *tmp;
     archetype *at;
     int skillnr, obpow, number, bonus, mneed, nrof, magic, i, nummade, found;
@@ -124,8 +126,11 @@ int command_build (object *pl, char *params) {
     materialtype_t *mt;
 
     /* NOTE THIS FUNCTION IS CURRENTLY DISABLED */
-    return 0;
 
+/*    Given this is currently disabled, I'm not going to bother updating
+ * it with the new skill system.  IT really needs to get the skill object
+ * pointer in a better fashion than it is currently doing.
+ */
     if (!params) {
 	new_draw_info(NDI_UNIQUE, 0, pl, "Usage:build [nr] [+magic] <object>");
 	return 0;
@@ -186,7 +191,7 @@ int command_build (object *pl, char *params) {
 	return 0;
     }
 
-    if (!change_skill(pl, skillnr)) {
+    if (!change_skill(pl, skillnr, 0)) {
 	new_draw_info(NDI_UNIQUE, 0, pl,
 	    "You lack the needed skill to make that item.");
 	return 0;
@@ -398,6 +403,7 @@ int command_build (object *pl, char *params) {
     if (skills[skillnr].category != EXP_NONE)
 	add_exp(pl, obpow*nummade);
     return 1;
+#endif
 }
 
 
@@ -411,19 +417,50 @@ int command_uskill ( object *pl, char *params) {
 }
 
 int command_rskill ( object *pl, char *params) {
-   int skillno;
+    object *skill;
 
-   if (!params) {
-        new_draw_info(NDI_UNIQUE, 0, pl, "Usage: ready_skill <skill name>");
-        return 0;
-   }
-   skillno=lookup_skill_by_name(params);
-   if (skillno==-1) {
-	new_draw_info_format(NDI_UNIQUE, 0, pl, "Couldn't find the skill %s", params);
+    if (!params) {
+	new_draw_info(NDI_UNIQUE, 0, pl, "Usage: ready_skill <skill name>");
 	return 0;
-   }
-   return change_skill(pl,skillno);
+    }
+    skill = find_skill_by_name(pl, params);
+
+    if (!skill) {
+	new_draw_info_format(NDI_UNIQUE, 0, pl, "You have no knowledge of the skill %s", params);
+	return 0;
+    }
+    return change_skill(pl,skill, 0);
 }
+
+
+/* These functions (command_search, command_disarm) are really juse wrappers for
+ * things like 'use_skill ...').  In fact, they should really be obsoleted
+ * and replaced with those.
+ */
+int command_search (object *op, char *params) {
+    return command_uskill(op, skill_names[SK_FIND_TRAPS]);
+}
+
+int command_disarm (object *op, char *params) {
+    return command_uskill(op, skill_names[SK_DISARM_TRAPS]);
+}
+
+
+/* A little special because we do want to pass the full params along
+ * as it includes the object to throw.
+ */  
+int command_throw (object *op, char *params)
+{
+    object *skop;
+
+    skop = find_skill_by_name(op, skill_names[SK_THROWING]);
+    if (skop) return do_skill(op, op, skop, op->facing,params);
+    else {
+	new_draw_info(NDI_UNIQUE, 0, op, "You have no knowledge of the skill throwing.");
+    }
+    return 0;
+}
+
 
 int command_apply (object *op, char *params)
 {
@@ -1397,20 +1434,17 @@ void examine(object *op, object *tmp) {
 
     switch(tmp->type) {
 	case SPELLBOOK:
-	    if(QUERY_FLAG(tmp, FLAG_IDENTIFIED) && tmp->stats.sp >= 0 && tmp->stats.sp <= NROFREALSPELLS ) {
-		if(!strcmp(tmp->arch->name,"cleric_book"))
-		    sprintf(buf,"%s is a %d level prayer.",
-			    spells[tmp->stats.sp].name,spells[tmp->stats.sp].level);
-		else
-		    sprintf(buf,"%s is a %d level spell.",
-			    spells[tmp->stats.sp].name,spells[tmp->stats.sp].level);
+	    if(QUERY_FLAG(tmp, FLAG_IDENTIFIED) && tmp->inv ) {
+		sprintf(buf,"%s is a %d level %s spell",
+			tmp->inv->name, tmp->inv->level,
+			tmp->inv->skill);
 	    }
-	break;
+	    break;
 
 	case BOOK:
 	    if(tmp->msg!=NULL)
 		strcpy(buf,"Something is written in it.");
-	break;
+	    break;
 
 	case CONTAINER:
 	    if(tmp->race!=NULL) {
@@ -1786,7 +1820,7 @@ int command_rename_item(object *op, char *params)
     /* Now let's find the new name */
     if(!strncmp(params,"to ",3)) {
       params+=3;
-      while(' '==params) params++;
+      while(' '==*params) params++;
       if('<'!=*params) {
         new_draw_info(NDI_UNIQUE,0,op,"Syntax error, expecting < at start of new name!");
         return 1;

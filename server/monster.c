@@ -33,20 +33,6 @@
 #include <skills.h>
 #endif
 
-#if 0
-/*
- * When parsing a message-struct, the msglang struct is used
- * to contain the values.
- * This struct will be expanded as new features are added.
- * When things are stable, it will be parsed only once.
- */
-
-typedef struct _msglang {
-    char **messages;	/* An array of messages */
-    char ***keywords;	/* For each message, an array of strings to match */
-} msglang;
-
-#endif
 
 #define MIN_MON_RADIUS 3 /* minimum monster detection radius */
 
@@ -641,11 +627,11 @@ int move_monster(object *op) {
         if(QUERY_FLAG(op,FLAG_RUN_AWAY))
         {
 	    part->stats.wc+=10;
-	    (void)skill_attack(enemy,part,0,NULL);
+	    (void)skill_attack(enemy,part,0,NULL, NULL);
 	    part->stats.wc-=10;
 	}
         else
-            (void)skill_attack(enemy,part,0,NULL);
+            (void)skill_attack(enemy,part,0,NULL, NULL);
     } /* if monster is in attack range */
 
     if(QUERY_FLAG(part,FLAG_FREED))    /* Might be freed by ghost-attack or hit-back */
@@ -659,7 +645,6 @@ int move_monster(object *op) {
     }
     return 0;
 }
-
 int can_hit(object *ob1,object *ob2, rv_vector *rv) {
     object *more;
     rv_vector rv1;
@@ -687,22 +672,30 @@ int can_hit(object *ob1,object *ob2, rv_vector *rv) {
  * in fact cast the spell (sp dependencies and what not.)  That is because
  * this function is also sued to see if the monster should use spell items
  * (rod/horn/wand/scroll).
+ * Note that there are certainly other offensive spells that could be
+ * included, but I decided to leave out the spells that may kill more
+ * monsters than players (eg, disease).
+ *
+ * This could be a lot smarter - if there are few monsters around,
+ * then disease might not be as bad. Likewise, if the monster is damaged,
+ * the right type of healing spell could be useful.
  */
-static int monster_should_cast_spell(object *monster, int sp)
+
+static int monster_should_cast_spell(object *monster, object *spell_ob)
 {
-    /* Not 'useful' spells. */
-    if (spells[sp].path&(PATH_INFO|PATH_TRANSMUTE|PATH_TRANSFER|PATH_LIGHT)) return 0;
+    if (spell_ob->subtype == SP_BOLT || spell_ob->subtype == SP_BULLET ||
+	spell_ob->subtype == SP_EXPLOSION || spell_ob->subtype == SP_CONE ||
+	spell_ob->subtype == SP_BOMB || spell_ob->subtype == SP_SMITE ||
+	spell_ob->subtype == SP_MAGIC_MISSILE || spell_ob->subtype == SP_SUMMON_GOLEM ||
+	spell_ob->subtype == SP_MAGIC_WALL || spell_ob->subtype == SP_SUMMON_MONSTER ||
+	spell_ob->subtype == SP_MOVING_BALL || spell_ob->subtype == SP_SWARM ||
+	spell_ob->subtype == SP_INVISIBLE)
 
-    /* We should really put a check in for PATH_RESTORE - if the monster has nothing
-     * wrong with it, no reason for it to cast one of those.  But 'wrong with it'
-     * is a very broad term.
-     */
+	return 1;
 
-    /* Presumably useful. */
-    if (spells[sp].onself) return 2;
-    return 1;
-
+    return 0;
 }
+
 
 #define MAX_KNOWN_SPELLS 20
 
@@ -711,35 +704,39 @@ static int monster_should_cast_spell(object *monster, int sp)
  * wizard spells, as the check is against sp, and not grace.
  * can mosnters know cleric spells?
  */
-
 object *monster_choose_random_spell(object *monster) {
     object *altern[MAX_KNOWN_SPELLS];
     object *tmp;
-    int i=0,j;
+    int i=0;
 
     for(tmp=monster->inv;tmp!=NULL;tmp=tmp->below)
-	if(tmp->type==ABILITY||tmp->type==SPELLBOOK) {
-	    /*  Check and see if it's actually a useful spell */
-	    if (monster_should_cast_spell(monster, tmp->stats.sp)) {
-		if(tmp->stats.maxsp)
-		    for(j=0;i<MAX_KNOWN_SPELLS&&j<tmp->stats.maxsp;j++)
-			altern[i++]=tmp;
-		else
-		    altern[i++]=tmp;
+	if (tmp->type==SPELLBOOK || tmp->type==SPELL) {
+	    /* Check and see if it's actually a useful spell.
+	     * If its a spellbook, the spell is actually the inventory item.
+	     * if it is a spell, then it is just the object itself.
+	     */
+	    if (monster_should_cast_spell(monster, (tmp->type==SPELLBOOK)?tmp->inv:tmp)) {
+		altern[i++]=tmp;
 		if(i==MAX_KNOWN_SPELLS)
 		    break;
 	    }
 	}
-
     if(!i)
 	return NULL;
     return altern[RANDOM()%i];
 }
 
+/* This checks to see if the monster should cast a spell/ability.
+ * it returns true if the monster casts a spell, 0 if he doesn't.
+ * head is the head of the monster.
+ * part is the part of the monster we are checking against.
+ * pl is the target.
+ * dir is the direction to case.
+ * rv is the vector which describes where the enemy is.
+ */
+
 int monster_cast_spell(object *head, object *part,object *pl,int dir, rv_vector *rv) {
     object *spell_item;
-    spell *sp;
-    int sp_typ, ability;
     object *owner;
     rv_vector	rv1;
 
@@ -762,49 +759,47 @@ int monster_cast_spell(object *head, object *part,object *pl,int dir, rv_vector 
     if(QUERY_FLAG(head,FLAG_CONFUSED))
 	dir = absdir(dir + RANDOM()%3 + RANDOM()%3 - 2);
 
-    /*  If the monster hasn't already chosen a spell, choose one */
+    /* If the monster hasn't already chosen a spell, choose one
+     * I'm not sure if it really make sense to pre-select spells (events
+     * could be different by the time the monster goes again).
+     */
     if(head->spellitem==NULL) {
 	if((spell_item=monster_choose_random_spell(head))==NULL) {
 	    LOG(llevMonster,"Turned off spells in %s\n",head->name);
 	    CLEAR_FLAG(head, FLAG_CAST_SPELL); /* Will be turned on when picking up book */
 	    return 0;
 	}
+	if (spell_item->type == SPELLBOOK) {
+	    spell_item=spell_item->inv;
+	    if (spell_item->inv) {
+		LOG(llevError,"spellbook %s does contain a spell?", spell_item->name);
+	    } else
+		spell_item=spell_item->inv;
+	}
     }
     else
 	spell_item=head->spellitem; 
 
+    if (!spell_item) return 0;
 
-    if(spell_item->stats.hp) {
-	/* Alternate long-range spell: check how far away enemy is */
-	if(rv->distance>6)
-	    sp_typ=spell_item->stats.hp;
-	else
-	    sp_typ=spell_item->stats.sp;
-    } else
-	sp_typ=spell_item->stats.sp;
-
-    if((sp=find_spell(sp_typ))==NULL) {
-	LOG(llevError,"Warning: Couldn't find spell in item.\n");
-	return 0;
-    }
-    if (sp->onself) /* Spell should be cast on caster (ie, heal, strength) */
+    /* Best guess this is a defensive/healing spell */
+    if (spell_item->range<=1 || spell_item->stats.dam < 0)
 	dir = 0;
   
     /* Monster doesn't have enough spell-points */
-    if(head->stats.sp<SP_level_spellpoint_cost(head,head,sp_typ))
+    if(head->stats.sp<SP_level_spellpoint_cost(head,spell_item, SPELL_MANA))
 	return 0;
 
-    ability = (spell_item->type==ABILITY && !(spell_item->attacktype&AT_MAGIC));
+    if(head->stats.grace<SP_level_spellpoint_cost(head,spell_item, SPELL_GRACE))
+	return 0;
 
-    /* If we cast a spell, only use up casting_time speed */
-    head->speed_left+=(float)1.0 - (float) spells[sp_typ].time/(float)20.0*(float)FABS(head->speed); 
+    head->stats.sp-=SP_level_spellpoint_cost(head,spell_item, SPELL_MANA);
+    head->stats.grace-=SP_level_spellpoint_cost(head,spell_item, SPELL_GRACE);
 
-    head->stats.sp-=SP_level_spellpoint_cost(head,head,sp_typ);
-    /* choose the spell the monster will cast next */
-    /* choose the next spell to cast */
-    head->spellitem = monster_choose_random_spell(head);
+    /* set this to null, so next time monster will choose something different */
+    head->spellitem = NULL;
     
-    return cast_spell(part,part,dir,sp_typ,ability, spellNormal,NULL);
+    return cast_spell(part,part,dir, spell_item, NULL);
 }
 
 
@@ -833,7 +828,7 @@ int monster_use_scroll(object *head, object *part,object *pl,int dir, rv_vector 
 	dir = absdir(dir + RANDOM()%3 + RANDOM()%3 - 2);
 
     for (scroll=head->inv; scroll; scroll=scroll->below)
-	if (scroll->type == SCROLL && monster_should_cast_spell(head, scroll->stats.sp)) break;
+	if (scroll->type == SCROLL && monster_should_cast_spell(head, scroll->inv)) break;
 
     /* Used up all his scrolls, so nothing do to */
     if (!scroll) {
@@ -841,7 +836,8 @@ int monster_use_scroll(object *head, object *part,object *pl,int dir, rv_vector 
 	return 0;
     }
 
-    if (spells[scroll->stats.sp].onself) /* Spell should be cast on caster (ie, heal, strength) */
+    /* Spell should be cast on caster (ie, heal, strength) */
+    if (scroll->inv->range==0)
 	dir = 0;
 
     apply_scroll(part, scroll, dir);
@@ -893,7 +889,7 @@ int monster_use_skill(object *head, object *part, object *pl,int dir) {
 	return 0;
     }
     /* use skill */
-    return do_skill(head, part,dir,NULL);
+    return do_skill(head, part, head->chosen_skill,dir,NULL);
 }
 
 /* Monster will use a ranged spell attack. */
@@ -923,6 +919,10 @@ int monster_use_range(object *head,object *part,object *pl,int dir) {
 	CLEAR_FLAG(head, FLAG_READY_RANGE);
 	return 0;
     }
+    if (!wand->inv) {
+	LOG(llevError,"Wand %s lacks spell\n", wand->name);
+	return 0;
+    }
     if (wand->type == WAND) {
 	if(wand->stats.food<=0) {
 	    manual_apply(head,wand,0);
@@ -937,15 +937,15 @@ int monster_use_range(object *head,object *part,object *pl,int dir) {
 	}
     }
     else {
-	if(wand->stats.hp<spells[wand->stats.sp].sp)
+	if(wand->stats.hp<MAX(wand->inv->stats.sp, wand->inv->stats.grace))
 	    return 0; /* Not recharged enough yet */
     }
 
     /* Spell should be cast on caster (ie, heal, strength) */
-    if (spells[wand->stats.sp].onself)
+    if (wand->inv->range==0)
 	dir = 0;
 
-    if(cast_spell(part,wand,dir,wand->stats.sp,0,spellMisc,NULL)) {
+    if(cast_spell(part,wand,dir,wand->inv,NULL)) {
 	if (wand->type==WAND)
 	    wand->stats.food--;
 	return 1;
@@ -1238,7 +1238,7 @@ void monster_check_apply(object *mon, object *item) {
     /* Eating food gets hp back */
     else if (item->type == FOOD && mon->will_apply & WILL_APPLY_FOOD) flag=1;
     else if (item->type == SCROLL && QUERY_FLAG(mon, FLAG_USE_SCROLL)) {
-	if (monster_should_cast_spell(mon, item->stats.sp))
+	if (monster_should_cast_spell(mon, item->inv))
 	    SET_FLAG(mon, FLAG_READY_SCROLL);
 	/* Don't use it right now */
 	return;
@@ -1458,150 +1458,6 @@ void check_doors(object *op, int x, int y) {
 	}
     }
 }
-
-#if 0 
-static void free_messages(msglang *msgs) {
-  int messages, keywords;
-
-  if (!msgs)
-    return;
-  for(messages = 0; msgs->messages[messages]; messages++) {
-    if(msgs->keywords[messages]) {
-      for(keywords = 0; msgs->keywords[messages][keywords]; keywords++)
-        free(msgs->keywords[messages][keywords]);
-      free(msgs->keywords[messages]);
-    }
-    free(msgs->messages[messages]);
-  }
-  free(msgs->messages);
-  free(msgs->keywords);
-  free(msgs);
-}
-
-static msglang *parse_message(char *msg) {
-  msglang *msgs;
-  int nrofmsgs, msgnr, i;
-  char *cp, *line, *last;
-  char *buf = strdup_local(msg);
-
-  /* First find out how many messages there are.  A @ for each. */
-  for (nrofmsgs = 0, cp = buf; *cp; cp++)
-    if (*cp == '@')
-      nrofmsgs++;
-  if (!nrofmsgs)
-    return NULL;
-
-  msgs = (msglang *) malloc(sizeof(msglang));
-  msgs->messages = (char **) malloc(sizeof(char *) * (nrofmsgs + 1));
-  msgs->keywords = (char ***) malloc(sizeof(char **) * (nrofmsgs + 1));
-  for(i=0; i<=nrofmsgs; i++) {
-    msgs->messages[i] = NULL;
-    msgs->keywords[i] = NULL;
-  }
-
-  for (last = NULL, cp = buf, msgnr = 0;*cp; cp++)
-    if (*cp == '@') {
-      int nrofkeywords, keywordnr;
-      *cp = '\0'; cp++;
-      if(last != NULL)
-        msgs->messages[msgnr++] = strdup_local(last);
-      if(strncmp(cp,"match",5)) {
-        LOG(llevError,"Unsupported command in message.\n");
-        free(buf);
-        return NULL;
-      }
-      for(line = cp + 6, nrofkeywords = 0; *line != '\n' && *line; line++)
-        if(*line == '|')
-          nrofkeywords++;
-      if(line > cp + 6)
-        nrofkeywords++;
-      if(nrofkeywords < 1) {
-        LOG(llevError,"Too few keywords in message.\n");
-        free(buf);
-        free_messages(msgs);
-        return NULL;
-      }
-      msgs->keywords[msgnr] = (char **) malloc(sizeof(char **) * (nrofkeywords +1));
-      msgs->keywords[msgnr][nrofkeywords] = NULL;
-      last = cp + 6;
-      cp = strchr(cp,'\n');
-      if(cp != NULL)
-        cp++;
-      for(line = last, keywordnr = 0;line<cp && *line;line++)
-        if(*line == '\n' || *line == '|') {
-          *line = '\0';
-          if (last != line)
-            msgs->keywords[msgnr][keywordnr++] = strdup_local(last);
-	  else {
-	        if (keywordnr<nrofkeywords)
-		{
-		   /* Whoops, Either got || or |\n in @match. Not good */
-		   msgs->keywords[msgnr][keywordnr++] = strdup_local("xxxx");
-		   /* We need to set the string to something sensible to    *
-		    * prevent crashes later. Unfortunately, we can't set to *
-		    * NULL, as that's used to terminate the for loop in     *
-		    * talk_to_npc.  Using xxxx should also help map         *
-		    * developers track down the problem cases.              */
-		   LOG (llevError, "Tried to set a zero length message in parse_message\n");
-		   /* I think this is a error worth reporting at a reasonably *
-		    * high level. When logging gets redone, this should       *
-		    * be something like MAP_ERROR, or whatever gets put in    *
-		    * place. */
-		   if (keywordnr>1)
-			   /* This is purely addtional information, should *
-			    * only be gieb if asked */
-			   LOG(llevDebug, "Msgnr %d, after keyword %s\n",msgnr+1,msgs->keywords[msgnr][keywordnr-2]);
-		   else
-			   LOG(llevDebug, "Msgnr %d, first keyword\n",msgnr+1);
-		}
-	  }
-          last = line + 1;
-        }
-	  /*
-	   * your eyes aren't decieving you, this is code repetition.  However,
-	   * the above code doesn't catch the case where line<cp going into the
-	   * for loop, skipping the above code completely, and leaving undefined
-           * data in the keywords array.  This patches it up and solves a crash
-	   * bug.  garbled 2001-10-20
-	   */
-	  if (keywordnr < nrofkeywords) {
-		  LOG(llevError, "Map developer screwed up match statement"
-		      " in parse_message\n");
-		   if (keywordnr>1)
-			   /* This is purely addtional information, should *
-			    * only be gieb if asked */
-			   LOG(llevDebug, "Msgnr %d, after keyword %s\n", msgnr+1,
-				   msgs->keywords[msgnr][keywordnr-2]);
-		   else
-			   LOG(llevDebug, "Msgnr %d, first keyword\n",msgnr+1);
-#if 0
-/* Removed this block - according to the compiler, this has no effect,
- * and looking at the if statement above, the certainly appears to be the
- * case.
- */
-	      for(keywordnr; keywordnr <= nrofkeywords; keywordnr++)
-		      msgs->keywords[msgnr][keywordnr] = strdup_local("xxxx");
-#endif
-	  }
-      last = cp;
-    }
-  if(last != NULL)
-    msgs->messages[msgnr++] = strdup_local(last);
-  free(buf);
-  return msgs;
-}
-
-static void dump_messages(msglang *msgs) {
-  int messages, keywords;
-  for(messages = 0; msgs->messages[messages]; messages++) {
-    LOG(llevDebug, "@match ");
-    for(keywords = 0; msgs->keywords[messages][keywords]; keywords++)
-      LOG(llevDebug, "%s ",msgs->keywords[messages][keywords]);
-    LOG(llevDebug, "\n%s\n",msgs->messages[messages]);
-  }
-}
-
-#endif
 
 /* This replaces all the msglang stuff about which seems to be a lot of
  * unneeded complication - since the setup of that data is never re-used
@@ -2013,9 +1869,11 @@ int stand_in_light( object *op) {
     return 0;
 }
 
+
 /* assuming no walls/barriers, lets check to see if its *possible* 
  * to see an enemy. Note, "detection" is different from "seeing".
  * See can_detect_enemy() for more details. -b.t.
+ * return 0 if can't be seen, 1 if can be
  */
 
 int can_see_enemy (object *op, object *enemy) {
@@ -2052,8 +1910,7 @@ int can_see_enemy (object *op, object *enemy) {
 	 * and making it a conditional makes the code pretty ugly.
 	 */
 	if (!QUERY_FLAG(looker,FLAG_SEE_INVISIBLE)) {
-	    if (is_true_undead(looker) && QUERY_FLAG(enemy, FLAG_INVIS_UNDEAD)) return 0;
-	    else if (!is_true_undead(looker) && !QUERY_FLAG(enemy, FLAG_INVIS_UNDEAD)) return 0;
+	    if (makes_invisible_to(enemy, looker)) return 0;
 	}
   } else if(looker->type==PLAYER) /* for players, a (possible) shortcut */
       if(player_can_view(looker,enemy)) return 1;
@@ -2074,3 +1931,4 @@ int can_see_enemy (object *op, object *enemy) {
 
   return 1;
 }
+

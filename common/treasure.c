@@ -41,7 +41,6 @@
  
 #include <global.h>
 #include <treasure.h>
-#include <spellist.h>
 #include <funcpoint.h>
 #include <loader.h>
 
@@ -102,51 +101,55 @@ static treasure *get_empty_treasure() {
  * into an internal treasure structure (very linked lists)
  */
 
-static treasure *load_treasure(FILE *fp) {
-  char buf[MAX_BUF], *cp, variable[MAX_BUF];
-  treasure *t=get_empty_treasure();
-  int value;
+static treasure *load_treasure(FILE *fp, int *line) {
+    char buf[MAX_BUF], *cp, variable[MAX_BUF];
+    treasure *t=get_empty_treasure();
+    int value;
 
-  nroftreasures++;
-  while(fgets(buf,MAX_BUF,fp)!=NULL) {
-    if(*buf=='#')
-      continue;
-    if((cp=strchr(buf,'\n'))!=NULL)
-      *cp='\0';
-    cp=buf;
-    while(*cp==' ') /* Skip blanks */
-      cp++;
-    if(sscanf(cp,"arch %s",variable)) {
-      if((t->item=find_archetype(variable))==NULL)
-        LOG(llevError,"Treasure lacks archetype: %s\n",variable);
-    }else if (sscanf(cp, "list %s", variable))
-        t->name = add_string(variable);
-    else if (sscanf(cp, "change_name %s", variable))
-      t->change_arch.name = add_string(variable);
-    else if (sscanf(cp, "change_title %s", variable))
-        t->change_arch.title = add_string(variable);
-    else if (sscanf(cp, "change_slaying %s", variable))
-        t->change_arch.slaying = add_string(variable);
-    else if(sscanf(cp,"chance %d",&value))
-      t->chance=(uint8) value;
-    else if(sscanf(cp,"nrof %d",&value))
-        t->nrof=(uint16) value;
-    else if(sscanf(cp,"magic %d",&value))
-      t->magic=(uint8) value;
-    else if(!strcmp(cp,"yes"))
-      t->next_yes=load_treasure(fp);
-    else if(!strcmp(cp,"no"))
-      t->next_no=load_treasure(fp);
-    else if(!strcmp(cp,"end"))
-      return t;
-    else if(!strcmp(cp,"more")) {
-      t->next=load_treasure(fp);
-      return t;
-    } else
-      LOG(llevError,"Unknown treasure-command: '%s', last entry %s\n",cp,t->name?t->name:"null");
-  }
-  LOG(llevError,"treasure lacks 'end'.\n");
-  return t;
+    nroftreasures++;
+    while(fgets(buf,MAX_BUF,fp)!=NULL) {
+	(*line)++;
+
+	if(*buf=='#')
+	    continue;
+	if((cp=strchr(buf,'\n'))!=NULL)
+	    *cp='\0';
+	cp=buf;
+	while(isspace(*cp)) /* Skip blanks */
+	    cp++;
+
+	if(sscanf(cp,"arch %s",variable)) {
+	    if((t->item=find_archetype(variable))==NULL)
+		LOG(llevError,"Treasure lacks archetype: %s\n",variable);
+	} else if (sscanf(cp, "list %s", variable))
+	    t->name = add_string(variable);
+	else if (sscanf(cp, "change_name %s", variable))
+	    t->change_arch.name = add_string(variable);
+	else if (sscanf(cp, "change_title %s", variable))
+	    t->change_arch.title = add_string(variable);
+	else if (sscanf(cp, "change_slaying %s", variable))
+	    t->change_arch.slaying = add_string(variable);
+	else if(sscanf(cp,"chance %d",&value))
+	    t->chance=(uint8) value;
+	else if(sscanf(cp,"nrof %d",&value))
+	    t->nrof=(uint16) value;
+	else if(sscanf(cp,"magic %d",&value))
+	    t->magic=(uint8) value;
+	else if(!strcmp(cp,"yes"))
+	    t->next_yes=load_treasure(fp, line);
+	else if(!strcmp(cp,"no"))
+	    t->next_no=load_treasure(fp, line);
+	else if(!strcmp(cp,"end"))
+	    return t;
+	else if(!strcmp(cp,"more")) {
+	    t->next=load_treasure(fp, line);
+	    return t;
+	} else
+	    LOG(llevError,"Unknown treasure-command: '%s', last entry %s, line %d\n",
+		cp,t->name?t->name:"null", *line);
+    }
+    LOG(llevError,"treasure lacks 'end'.\n");
+    return t;
 }
 
 #ifdef TREASURE_DEBUG
@@ -175,61 +178,61 @@ static void check_treasurelist(treasure *t, treasurelist *tl)
  */
 
 void load_treasures() {
-  FILE *fp;
-  char filename[MAX_BUF], buf[MAX_BUF], name[MAX_BUF];
-  treasurelist *previous=NULL;
-  treasure *t;
-  int comp;
+    FILE *fp;
+    char filename[MAX_BUF], buf[MAX_BUF], name[MAX_BUF];
+    treasurelist *previous=NULL;
+    treasure *t;
+    int comp, line=0;
 
-  sprintf(filename,"%s/%s",settings.datadir,settings.treasures);
-  if((fp=open_and_uncompress(filename,0,&comp))==NULL) {
-    LOG(llevError,"Can't open treasure file.\n");
-    return;
-  }
-  while(fgets(buf,MAX_BUF,fp)!=NULL) {
-      if(*buf=='#')
-      continue;
-    if(sscanf(buf,"treasureone %s\n",name) || sscanf(buf,"treasure %s\n",name)) {
-      treasurelist *tl=get_empty_treasurelist();
-      tl->name=add_string(name);
-      if(previous==NULL)
-        first_treasurelist=tl;
-      else
-        previous->next=tl;
-      previous=tl;
-      tl->items=load_treasure(fp);
-      /* This is a one of the many items on the list should be generated.
-       * Add up the chance total, and check to make sure the yes & no
-       * fields of the treasures are not being used.
-       */
-      if (!strncmp(buf,"treasureone",11)) {
-	for (t=tl->items; t!=NULL; t=t->next) {
+    sprintf(filename,"%s/%s",settings.datadir,settings.treasures);
+    if((fp=open_and_uncompress(filename,0,&comp))==NULL) {
+	LOG(llevError,"Can't open treasure file.\n");
+	return;
+    }
+    while(fgets(buf,MAX_BUF,fp)!=NULL) {
+	line++;
+	if(*buf=='#')
+	    continue;
+
+	if(sscanf(buf,"treasureone %s\n",name) || sscanf(buf,"treasure %s\n",name)) {
+	    treasurelist *tl=get_empty_treasurelist();
+	    tl->name=add_string(name);
+	    if(previous==NULL)
+		first_treasurelist=tl;
+	    else
+		previous->next=tl;
+	    previous=tl;
+	    tl->items=load_treasure(fp, &line);
+
+	    /* This is a one of the many items on the list should be generated.
+	     * Add up the chance total, and check to make sure the yes & no
+	     * fields of the treasures are not being used.
+	     */
+	    if (!strncmp(buf,"treasureone",11)) {
+		for (t=tl->items; t!=NULL; t=t->next) {
 #ifdef TREASURE_DEBUG
-	  if (t->next_yes || t->next_no) {
-	    LOG(llevError,"Treasure %s is one item, but on treasure %s\n",
-		tl->name, t->item ? t->item->name : t->name);
-	    LOG(llevError,"  the next_yes or next_no field is set");
-	  }
+		    if (t->next_yes || t->next_no) {
+			LOG(llevError,"Treasure %s is one item, but on treasure %s\n",
+			    tl->name, t->item ? t->item->name : t->name);
+			LOG(llevError,"  the next_yes or next_no field is set");
+		    }
 #endif
-	  tl->total_chance += t->chance;
-	}
-#if 0
-        LOG(llevDebug, "Total chance for list %s is %d\n", tl->name, tl->total_chance);
-#endif
-      }
-    } else
-      LOG(llevError,"Treasure-list didn't understand: %s\n",buf);
-  }
-  close_and_delete(fp, comp);
+		    tl->total_chance += t->chance;
+		}
+	    }
+	} else
+	    LOG(llevError,"Treasure-list didn't understand: %s, line %d\n",buf, line);
+    }
+    close_and_delete(fp, comp);
 
 #ifdef TREASURE_DEBUG
-/* Perform some checks on how valid the treasure data actually is.
- * verify that list transitions work (ie, the list that it is supposed
- * to transition to exists).  Also, verify that at least the name
- * or archetype is set for each treasure element.
- */
-  for (previous=first_treasurelist; previous!=NULL; previous=previous->next)
-    check_treasurelist(previous->items, previous);
+    /* Perform some checks on how valid the treasure data actually is.
+     * verify that list transitions work (ie, the list that it is supposed
+     * to transition to exists).  Also, verify that at least the name
+     * or archetype is set for each treasure element.
+     */
+    for (previous=first_treasurelist; previous!=NULL; previous=previous->next)
+	check_treasurelist(previous->items, previous);
 #endif
 }
 
@@ -274,7 +277,12 @@ static void put_treasure (object *op, object *creator, int flags)
 {
     object *tmp;
 
-    if (flags & GT_ENVIRONMENT) {
+    /* Bit of a hack - spells should never be put onto the map.  The entire
+     * treasure stuff is a problem - there is no clear idea of knowing
+     * this is the original object, or if this is an object that should be created
+     * by another object.
+     */
+    if (flags & GT_ENVIRONMENT && op->type != SPELL) {
         op->x = creator->x;
         op->y = creator->y;
 	SET_FLAG(op, FLAG_OBJ_ORIGINAL);
@@ -351,7 +359,10 @@ void create_one_treasure(treasurelist *tl, object *op, int flag, int difficulty,
     int value = RANDOM() % tl->total_chance;
     treasure *t;
 
-    if (tries++>100) return;
+    if (tries++>100) {
+	LOG(llevDebug,"create_one_treasure: tries exceeded 100, returning without making treasure\n");
+	return;
+    }
     for (t=tl->items; t!=NULL; t=t->next) {
 	value -= t->chance;
 	if (value<0) break;
@@ -372,7 +383,7 @@ void create_one_treasure(treasurelist *tl, object *op, int flag, int difficulty,
     }
     if(t->item->clone.invisible != 0 || flag != GT_INVISIBLE) {
 	object *tmp=arch_to_object(t->item);
-        if(t->nrof&&tmp->nrof<=1)
+        if(t->nrof && tmp->nrof<=1)
           tmp->nrof = RANDOM()%((int) t->nrof) + 1;
         fix_generated_item (tmp, op, difficulty, t->magic, flag);
         change_treasure(t, tmp);        
@@ -391,7 +402,10 @@ void create_treasure(treasurelist *t, object *op, int flag, int difficulty,
 	int tries)
 {
 
-    if (tries++>100) return;
+    if (tries++>100) {
+	LOG(llevDebug,"createtreasure: tries exceeded 100, returning without making treasure\n");
+	return;
+    }
     if (t->total_chance) 
 	create_one_treasure(t, op, flag,difficulty, tries);
     else
@@ -463,33 +477,43 @@ static int difftomagic_list[DIFFLEVELS][MAXMAGIC+1] =
   {  0, 0, 0, 0,100}, /*31*/
 };
 
+
 /* calculate the appropriate level for wands staves and scrolls.  If
-   retmult is 1, return the multiplier, not the level, for computing value */
+ * retmult is 1, return the multiplier, not the level, for computing value 
+ * This code presumes that op has had its spell object created (in op->inv)
+ */
 
 int level_for_item(object *op, int difficulty, int retmult)
 {
     int level, mult, olevel;
 
     mult = 0;
-    level = spells[op->stats.sp].level;
-    if (SP_PARAMETERS[op->stats.sp].ldam != 0)
-	mult = SP_PARAMETERS[op->stats.sp].ldam;
-    if (SP_PARAMETERS[op->stats.sp].ldur > SP_PARAMETERS[op->stats.sp].ldam &&
-	SP_PARAMETERS[op->stats.sp].ldur != 0)
-	mult = SP_PARAMETERS[op->stats.sp].ldur;
+    if (!op->inv) {
+	LOG(llevError,"level_for_item: Object %s has no inventory!\n", op->name);
+	return 0;
+    }
+    level = op->inv->level;
+
+    /* Basically, we set mult to the lowest spell increase attribute that is
+     * not zero - zero's mean no modification is done, so we don't want those.
+     * given we want non zero results, we can't just use a few MIN's here.
+     */
+    mult = op->inv->dam_modifier;
+    if (op->inv->range_modifier && (op->inv->range_modifier<mult || mult == 0))
+	mult = op->inv->range_modifier;
+    if (op->inv->duration_modifier && (op->inv->duration_modifier < mult || mult==0))
+	mult = op->inv->duration_modifier;
+
     if (mult == 0)
 	mult = 5;
 
     if (retmult)
 	return mult;
 
-    if (difficulty * mult > 100)
-	difficulty = 100/mult;
-    olevel = mult * rndm(1, difficulty);
+    olevel = mult * rndm(0, difficulty) + level;
+    if (olevel > MAXLEVEL) olevel = MAXLEVEL;
 
-    if (olevel > level)
-	return olevel;
-    return level;
+    return olevel;
 }
 
 /*
@@ -731,7 +755,7 @@ int get_magic(int diff) {
 void fix_generated_item (object *op, object *creator, int difficulty,
                          int max_magic, int flags)
 {
-    int was_magic = op->magic, num_enchantments=0, save_item_power, mult;
+    int was_magic = op->magic, num_enchantments=0, save_item_power;
 
     if(!creator||creator->type==op->type) creator=op; /*safety & to prevent polymorphed
 							* objects giving attributes */ 
@@ -739,6 +763,12 @@ void fix_generated_item (object *op, object *creator, int difficulty,
     /* If we make an artifact, this information will be destroyed */
     save_item_power = op->item_power;
     op->item_power = 0;
+
+    if (op->randomitems && op->type != SPELL) {
+	create_treasure(op->randomitems, op,flags ,difficulty, 0);
+	if (!op->inv) LOG(llevDebug,"fix_generated_item: Unable to generate treasure for %s\n",
+			  op->name);
+    }
 
     if (difficulty<1) difficulty=1;
     if (op->arch == crown_arch) {
@@ -803,22 +833,20 @@ void fix_generated_item (object *op, object *creator, int difficulty,
 	    case POTION: {
 		int too_many_tries=0,is_special=0;
 
-		while(!(is_special=special_potion(op)) && !op->stats.sp) {
+		while(!(is_special=special_potion(op)) && !op->inv) {
 		    generate_artifact(op,difficulty);
 		    if(too_many_tries++ > 10) break;
 		}
-		if(!is_special) { 
-		    int nrof_potion=spells[op->stats.sp].scrolls-RANDOM()%3;
-		    /* these 'potions' have been generated as artifacts 
-		     * and therefore need a few adjustments 
-		     */ 
-		    /* give fewer potions than scrolls */
-		    if(nrof_potion>0)
-			op->nrof=RANDOM()%(nrof_potion)+1;
+		if (op->inv) { 
 		    /* value multiplier is same as for scrolls */
-		    op->value=(op->value*spells[op->stats.sp].level)/
-			(spells[op->stats.sp].level+4);
+		    op->value=(op->value*op->inv->value);
+		    op->level = op->inv->level/2+ RANDOM()%difficulty + RANDOM()%difficulty;
+		} else {
+		    FREE_AND_COPY(op->name, "potion");
+		    FREE_AND_COPY(op->name_pl, "potions");
 		}
+		if ( ! (flags & GT_ONLY_GOOD) && RANDOM() % 2)
+		    SET_FLAG(op, FLAG_CURSED);
 		break; 		
 	    }
 
@@ -887,74 +915,55 @@ void fix_generated_item (object *op, object *creator, int difficulty,
 		break;
 
 	    case SPELLBOOK:
-		if (op->slaying && (op->stats.sp = look_up_spell_name (op->slaying)) >= 0) {
-		    free_string (op->slaying);
-		    op->slaying = NULL;
-		}
-		else if(!strcmp(op->arch->name,"cleric_book")) 
-		    do { 
-			op->stats.sp=RANDOM()%NROFREALSPELLS;
-		    } while((RANDOM()%10>=spells[op->stats.sp].books) || !spells[op->stats.sp].cleric);
-		else do {
-		    op->stats.sp=RANDOM()%NROFREALSPELLS;
-		} while((RANDOM()%10>=spells[op->stats.sp].books) || spells[op->stats.sp].cleric);
-
-		op->value=(op->value*spells[op->stats.sp].level)/(spells[op->stats.sp].level+4);
-		change_book(op,-1);
-
+		op->value=op->value* op->inv->value;
 		/* add exp so learning gives xp */
-		op->level = spells[op->stats.sp].level;
+		op->level = op->inv->level;
 		op->stats.exp = op->value;
 		break;
 
 	    case WAND:
-		do 
-		    op->stats.sp=rndm(0, NROFREALSPELLS-1);
-		while (!spells[op->stats.sp].charges|| spells[op->stats.sp].level>DICESPELL);
-
-		if (spells[op->stats.sp].cleric) {
-		    /* Make the wand into a staff */
-		    short i = op->stats.sp;
-		    if (staff_arch == NULL)
-			staff_arch = find_archetype("staff");
-		    copy_object(&staff_arch->clone, op);
-		    op->stats.sp = i;
+		/* nrof in the treasure list is number of charges,
+		 * not number of wands.  So copy that into food (charges),
+		 * and reset nrof.
+		 */
+		op->stats.food=op->inv->nrof;
+		op->nrof=1;
+		/* If the spell changes by level, choose a random level
+		 * for it, and adjust price.  If the spell doesn't
+		 * change by level, just set the wand to the level of
+		 * the spell, and value calculation is simpler.
+		 */
+		if (op->inv->duration_modifier || op->inv->dam_modifier ||
+		  op->inv->range_modifier) {
+		    op->level = level_for_item(op, difficulty, 0);
+		    op->value= op->value* op->inv->value * (op->level +50)/ 
+			(op->inv->level + 50);
 		}
-		op->stats.food=rndm(1, spells[op->stats.sp].charges);
-		op->level = level_for_item(op, difficulty, 0);
-		mult = level_for_item(op, difficulty, 1);
-		op->value += ((op->level - spells[op->stats.sp].level)/mult) *
-		    (op->value/(20/mult));
+		else {
+		    op->level = op->inv->level;
+		    op->value = op->value * op->inv->value;
+		}
 		break;
 
 	    case ROD:
 		if (op->stats.maxhp)
 		    op->stats.maxhp += rndm(0, op->stats.maxhp-1);
 		op->stats.hp = op->stats.maxhp;
-		do
-		    op->stats.sp = rndm(0, NROFREALSPELLS-1);
-		while (!spells[op->stats.sp].charges||
-		       spells[op->stats.sp].sp > op->stats.maxhp ||
-		       spells[op->stats.sp].level>DICESPELL);
-		mult = level_for_item(op, difficulty, 1);
 		op->level = level_for_item(op, difficulty, 0);
-		op->value += ((op->level - spells[op->stats.sp].level)/mult *
-			      op->stats.hp) * (op->value/(20/mult));
+		/* Add 50 to both level an divisor to keep prices a little more
+		 * reasonable.  Otherwise, a high level version of a low level
+		 * spell can be worth tons a money (eg, level 20 rod, level 2 spell =
+		 * 10 time multiplier).  This way, the value are a bit more reasonable.
+		 */
+		op->value= op->value * op->inv->value * (op->level +50) / (op->inv->level + 50);
 		break;
 
 	    case SCROLL:
-		do
-		    op->stats.sp=rndm(0, NROFREALSPELLS-1);
-		while (!spells[op->stats.sp].scrolls || spells[op->stats.sp].scroll_chance<=RANDOM()%10);
-
-		op->nrof=rndm(1, spells[op->stats.sp].scrolls);
-		mult = level_for_item(op, difficulty, 1);
 		op->level = level_for_item(op, difficulty, 0);
-		op->value += ((op->level - spells[op->stats.sp].level)/mult) *
-		    (op->value/(20/mult));
-
+		op->value= op->value * op->inv->value * (op->level +50) / (op->inv->level + 50);
 		/* add exp so reading them properly gives xp */ 
 		op->stats.exp = op->value/5;
+		op->nrof = op->inv->nrof;
 		break;
 
 	    case RUNE:
@@ -965,16 +974,6 @@ void fix_generated_item (object *op, object *creator, int difficulty,
 		(*trap_adjust_func)(op,difficulty);
 		break;
 	} /* switch type */
-
-    if (op->type == POTION && special_potion(op)) {
-	/*if(op->face==blank_face) op->face = potion_face;*/
-	FREE_AND_COPY(op->name, "potion");
-	FREE_AND_COPY(op->name_pl, "potions");
-
-	op->level = spells[op->stats.sp].level/2+ RANDOM()%difficulty + RANDOM()%difficulty;
-	if ( ! (flags & GT_ONLY_GOOD) && RANDOM() % 2)
-	    SET_FLAG(op, FLAG_CURSED);
-    }
 
     if (flags & GT_STARTEQUIP) {
 	if (op->nrof < 2 && op->type != CONTAINER
@@ -1149,88 +1148,89 @@ void dump_monster_treasure (char *name)
  */
 
 void init_artifacts() {
-  static int has_been_inited=0;
-  FILE *fp;
-  char filename[MAX_BUF], buf[MAX_BUF], *cp, *next;
-  artifact *art=NULL;
-  linked_char *tmp;
-  int value, comp;
-  artifactlist *al;
+    static int has_been_inited=0;
+    FILE *fp;
+    char filename[MAX_BUF], buf[MAX_BUF], *cp, *next;
+    artifact *art=NULL;
+    linked_char *tmp;
+    int value, comp;
+    artifactlist *al;
 
-  if (has_been_inited) return;
-  else has_been_inited = 1;
+    if (has_been_inited) return;
+    else has_been_inited = 1;
 
-  sprintf(filename, "%s/artifacts", settings.datadir);
-  LOG(llevDebug, "Reading artifacts from %s...",filename);
-  if ((fp = open_and_uncompress(filename, 0, &comp)) == NULL) {
-    LOG(llevError, "Can't open %s.\n", filename);
-    return;
-  }
+    sprintf(filename, "%s/artifacts", settings.datadir);
+    LOG(llevDebug, "Reading artifacts from %s...",filename);
+    if ((fp = open_and_uncompress(filename, 0, &comp)) == NULL) {
+	LOG(llevError, "Can't open %s.\n", filename);
+	return;
+    }
 
-  while (fgets(buf, MAX_BUF, fp)!=NULL) {
-    if (*buf=='#') continue;
-    if((cp=strchr(buf,'\n'))!=NULL)
-      *cp='\0';
-    cp=buf;
-    while(*cp==' ') /* Skip blanks */
-      cp++;
+    while (fgets(buf, MAX_BUF, fp)!=NULL) {
+	if (*buf=='#') continue;
+	if((cp=strchr(buf,'\n'))!=NULL)
+	    *cp='\0';
+	cp=buf;
+	while(*cp==' ') /* Skip blanks */
+	    cp++;
  
-    if (!strncmp(cp, "Allowed", 7)) {
-      art=get_empty_artifact();
+	if (!strncmp(cp, "Allowed", 7)) {
+	    art=get_empty_artifact();
 
-      nrofartifacts++;
-      cp = strchr(cp,' ') + 1;
-      if (!strcmp(cp,"all")) continue;
-      do {
-	nrofallowedstr++;
-	if ((next=strchr(cp, ','))!=NULL)
-	  *(next++) = '\0';
-	tmp = (linked_char*) malloc(sizeof(linked_char));
-	tmp->name = add_string(cp);
-	tmp->next = art->allowed;
-	art->allowed = tmp;
-      } while ((cp=next)!=NULL);
-    }
-    else if (sscanf(cp, "chance %d", &value))
-	art->chance = (uint16) value;
-    else if (sscanf(cp, "difficulty %d", &value))
-	art->difficulty = (uint8) value;
-    else if (!strncmp(cp, "Object",6)) {
-	art->item = (object *) malloc(sizeof(object));
-	reset_object(art->item);
-        if (!load_object(fp, art->item,LO_LINEMODE,0))
-	   LOG(llevError,"Init_Artifacts: Could not load object.\n");
-	art->item->name = add_string((strchr(cp, ' ')+1));
-	al=find_artifactlist(art->item->type);
-	if (al==NULL) {
-	  al = get_empty_artifactlist();
-	  al->type = art->item->type;
-	  al->next = first_artifactlist;
-	  first_artifactlist = al;
+	    nrofartifacts++;
+	    cp = strchr(cp,' ') + 1;
+	    if (!strcmp(cp,"all")) continue;
+
+	    do {
+		nrofallowedstr++;
+		if ((next=strchr(cp, ','))!=NULL)
+		    *(next++) = '\0';
+		tmp = (linked_char*) malloc(sizeof(linked_char));
+		tmp->name = add_string(cp);
+		tmp->next = art->allowed;
+		art->allowed = tmp;
+		} while ((cp=next)!=NULL);
 	}
-	art->next = al->items;
-	al->items = art;
+	else if (sscanf(cp, "chance %d", &value))
+	    art->chance = (uint16) value;
+	else if (sscanf(cp, "difficulty %d", &value))
+	    art->difficulty = (uint8) value;
+	else if (!strncmp(cp, "Object",6)) {
+	    art->item = (object *) malloc(sizeof(object));
+	    reset_object(art->item);
+	    if (!load_object(fp, art->item,LO_LINEMODE,0))
+		LOG(llevError,"Init_Artifacts: Could not load object.\n");
+	    art->item->name = add_string((strchr(cp, ' ')+1));
+	    al=find_artifactlist(art->item->type);
+	    if (al==NULL) {
+		al = get_empty_artifactlist();
+		al->type = art->item->type;
+		al->next = first_artifactlist;
+		first_artifactlist = al;
+	    }
+	    art->next = al->items;
+	    al->items = art;
+	}
+	else
+	    LOG(llevError,"Unkown input in artifact file: %s\n", buf);
     }
-    else
-	LOG(llevError,"Unkown input in artifact file: %s\n", buf);
-  }
 
-  close_and_delete(fp, comp);
+    close_and_delete(fp, comp);
 
-  for (al=first_artifactlist; al!=NULL; al=al->next) {
-    for (art=al->items; art!=NULL; art=art->next) {
-      if (!art->chance)
-	LOG(llevError,"Warning: artifact with no chance: %s\n", art->item->name);
-      else
-	al->total_chance += art->chance;
-    }
+    for (al=first_artifactlist; al!=NULL; al=al->next) {
+	for (art=al->items; art!=NULL; art=art->next) {
+	    if (!art->chance)
+		LOG(llevError,"Warning: artifact with no chance: %s\n", art->item->name);
+	    else
+	    al->total_chance += art->chance;
+	}
 #if 0
-    LOG(llevDebug,"Artifact list type %d has %d total chance\n",
-	al->type, al->total_chance);
+	LOG(llevDebug,"Artifact list type %d has %d total chance\n",
+	    al->type, al->total_chance);
 #endif
-  }
+    }
 
-  LOG(llevDebug,"done.\n");
+    LOG(llevDebug,"done.\n");
 }
 
 
@@ -1240,209 +1240,196 @@ void init_artifacts() {
  */
 
 void add_abilities(object *op, object *change) {
-  int i,j, tmp;
-  if (change->face != blank_face) {
+    int i,j, tmp;
+    if (change->face != blank_face) {
 #ifdef TREASURE_VERBOSE
-    LOG(llevDebug, "FACE: %d\n", change->face->number);
+	LOG(llevDebug, "FACE: %d\n", change->face->number);
 #endif
-    op->face = change->face;
-  }
-  for (i = 0; i < 7; i++)
-    change_attr_value(&(op->stats), i, get_attr_value(&(change->stats), i));
-  if (QUERY_FLAG(change,FLAG_CURSED))
-    SET_FLAG(op, FLAG_CURSED);
-  if (QUERY_FLAG(change,FLAG_DAMNED))
-    SET_FLAG(op, FLAG_DAMNED);
-  if ((QUERY_FLAG(change,FLAG_CURSED) || QUERY_FLAG(change,FLAG_DAMNED))
+	op->face = change->face;
+    }
+    for (i = 0; i < 7; i++)
+	change_attr_value(&(op->stats), i, get_attr_value(&(change->stats), i));
+
+    op->attacktype |= change->attacktype;
+    op->path_attuned |= change->path_attuned;
+    op->path_repelled |= change->path_repelled;
+    op->path_denied |= change->path_denied;
+    op->stats.luck += change->stats.luck;
+
+    if (QUERY_FLAG(change,FLAG_CURSED))	    SET_FLAG(op, FLAG_CURSED);
+    if (QUERY_FLAG(change,FLAG_DAMNED))	    SET_FLAG(op, FLAG_DAMNED);
+    if ((QUERY_FLAG(change,FLAG_CURSED) || QUERY_FLAG(change,FLAG_DAMNED))
 	 && op->magic > 0)
-    set_abs_magic(op, -op->magic);
-  op->attacktype |= change->attacktype;
-  op->path_attuned |= change->path_attuned;
-  op->path_repelled |= change->path_repelled;
-  op->path_denied |= change->path_denied;
-  op->stats.luck += change->stats.luck;
-  if (QUERY_FLAG(change,FLAG_LIFESAVE))
-    SET_FLAG(op,FLAG_LIFESAVE);
-  if (QUERY_FLAG(change,FLAG_REFL_SPELL))
-    SET_FLAG(op,FLAG_REFL_SPELL);
-  if (QUERY_FLAG(change,FLAG_STEALTH))
-    SET_FLAG(op,FLAG_STEALTH);
-  if (QUERY_FLAG(change,FLAG_FLYING))
-    SET_FLAG(op,FLAG_FLYING);
-  if (QUERY_FLAG(change,FLAG_XRAYS))
-    SET_FLAG(op,FLAG_XRAYS);
-  if (QUERY_FLAG(change,FLAG_BLIND))
-    SET_FLAG(op,FLAG_BLIND);
-  if (QUERY_FLAG(change,FLAG_SEE_IN_DARK))
-    SET_FLAG(op,FLAG_SEE_IN_DARK);
-  if (QUERY_FLAG(change,FLAG_REFL_MISSILE))
-    SET_FLAG(op,FLAG_REFL_MISSILE);
-  if (QUERY_FLAG(change,FLAG_MAKE_INVIS))
-    SET_FLAG(op,FLAG_MAKE_INVIS);
-  if (QUERY_FLAG(change,FLAG_STAND_STILL)) {
-    CLEAR_FLAG(op,FLAG_ANIMATE);
-    /*op->speed = 0.0; */  /* why was this done? */
-    /* It was done so certain artifacts would join. */
-    if(!QUERY_FLAG(op,FLAG_ALIVE)) op->speed = 0.0;
-    update_ob_speed(op);
-  }
-  if(change->nrof) op->nrof=RANDOM()%((int) change->nrof) + 1;
-  op->stats.exp += change->stats.exp; /* Speed modifier */
-  op->stats.wc  += change->stats.wc;
-  op->stats.ac  += change->stats.ac;
-  if (change->stats.hp < 0)
-     op->stats.hp = -change->stats.hp;
-  else
-    op->stats.hp  += change->stats.hp;
-  if (change->stats.maxhp < 0)
-    op->stats.maxhp = -change->stats.maxhp;
-  else
-    op->stats.maxhp += change->stats.maxhp;
-  if (change->stats.sp < 0)
-    op->stats.sp = -change->stats.sp;
-  else
-    op->stats.sp  += change->stats.sp;
-  if (change->stats.maxsp < 0)
-    op->stats.maxsp = -change->stats.maxsp;
-  else
-    op->stats.maxsp  += change->stats.maxsp;
-  if (change->stats.food < 0)
-    op->stats.food = -(change->stats.food);
-  else
-    op->stats.food += change->stats.food;
-  if (change->level < 0)
-    op->level = -(change->level);
-  else
-    op->level += change->level;
+	set_abs_magic(op, -op->magic);
 
-  if (change->gen_sp_armour < 0)
-    op->gen_sp_armour = -(change->gen_sp_armour);
-  else
-    op->gen_sp_armour = (op->gen_sp_armour * (change->gen_sp_armour)) / 100;
+    if (QUERY_FLAG(change,FLAG_LIFESAVE))	SET_FLAG(op,FLAG_LIFESAVE);
+    if (QUERY_FLAG(change,FLAG_REFL_SPELL))	SET_FLAG(op,FLAG_REFL_SPELL);
+    if (QUERY_FLAG(change,FLAG_STEALTH))	SET_FLAG(op,FLAG_STEALTH);
+    if (QUERY_FLAG(change,FLAG_FLYING))		SET_FLAG(op,FLAG_FLYING);
+    if (QUERY_FLAG(change,FLAG_XRAYS))		SET_FLAG(op,FLAG_XRAYS);
+    if (QUERY_FLAG(change,FLAG_BLIND))		SET_FLAG(op,FLAG_BLIND);
+    if (QUERY_FLAG(change,FLAG_SEE_IN_DARK))    SET_FLAG(op,FLAG_SEE_IN_DARK);
+    if (QUERY_FLAG(change,FLAG_REFL_MISSILE))	SET_FLAG(op,FLAG_REFL_MISSILE);
+    if (QUERY_FLAG(change,FLAG_MAKE_INVIS))     SET_FLAG(op,FLAG_MAKE_INVIS);
 
-  op->item_power = change->item_power;
-
-  for (i=0; i<NROFATTACKS; i++) {
-    if (change->resist[i]) {
-	op->resist[i] += change->resist[i];
+    if (QUERY_FLAG(change,FLAG_STAND_STILL)) {
+	CLEAR_FLAG(op,FLAG_ANIMATE);
+	/* so artifacts will join */
+	if(!QUERY_FLAG(op,FLAG_ALIVE)) op->speed = 0.0;
+	update_ob_speed(op);
     }
-  }
-  if (change->stats.dam) {
-    if (change->stats.dam < 0)
-      op->stats.dam = (-change->stats.dam);
-    else if (op->stats.dam) {
-      tmp = (signed char) (((int)op->stats.dam * (int)change->stats.dam)/10);
-      if (tmp == op->stats.dam) {
-        if (change->stats.dam < 10)
-          op->stats.dam--;
-        else
-          op->stats.dam++;
-      }
-      else
-        op->stats.dam = tmp;
-    }
-  }
-  if (change->weight) {
-    if (change->weight < 0)
-      op->weight = (-change->weight);
+    if(change->nrof) op->nrof=RANDOM()%((int) change->nrof) + 1;
+    op->stats.exp += change->stats.exp; /* Speed modifier */
+    op->stats.wc  += change->stats.wc;
+    op->stats.ac  += change->stats.ac;
+
+    if (change->other_arch) op->other_arch = change->other_arch;
+
+    if (change->stats.hp < 0)
+	op->stats.hp = -change->stats.hp;
     else
-      op->weight = (op->weight    * (change->weight)) / 100;
-  }
-  if (change->last_sp) {
-    if (change->last_sp < 0)
-      op->last_sp = (-change->last_sp);
+	op->stats.hp  += change->stats.hp;
+    if (change->stats.maxhp < 0)
+	op->stats.maxhp = -change->stats.maxhp;
     else
-      op->last_sp = (signed char) (((int)op->last_sp * (int)change->last_sp) / (int) 100);
-  }
-  if (change->gen_sp_armour) {
+	op->stats.maxhp += change->stats.maxhp;
+    if (change->stats.sp < 0)
+	op->stats.sp = -change->stats.sp;
+    else
+	op->stats.sp  += change->stats.sp;
+    if (change->stats.maxsp < 0)
+	op->stats.maxsp = -change->stats.maxsp;
+    else
+	op->stats.maxsp  += change->stats.maxsp;
+    if (change->stats.food < 0)
+	op->stats.food = -(change->stats.food);
+    else
+	op->stats.food += change->stats.food;
+    if (change->level < 0)
+	op->level = -(change->level);
+    else
+	op->level += change->level;
+
     if (change->gen_sp_armour < 0)
-      op->gen_sp_armour = (-change->gen_sp_armour);
+	op->gen_sp_armour = -(change->gen_sp_armour);
     else
-      op->gen_sp_armour = (signed char) (((int)op->gen_sp_armour * ((int)change->gen_sp_armour))
-                      / (int)100);
-  }
-  op->value *= change->value;
+	op->gen_sp_armour = (op->gen_sp_armour * (change->gen_sp_armour)) / 100;
 
-  if(change->material)  op->material = change->material;
+    op->item_power = change->item_power;
 
-  if (change->materialname) {
-    if (op->materialname)
-       free_string(op->materialname);
-    op->materialname = add_refcount(change->materialname);
-  }
-
-  if (change->slaying) {
-    if (op->slaying)
-      free_string(op->slaying);
-    op->slaying = add_refcount(change->slaying);
-  }
-  if (change->race) {
-    if (op->race)
-      free_string(op->race);
-    op->race = add_refcount(change->race);
-  }
-  if (change->msg) {
-    if (op->msg)
-      free_string(op->msg);
-    op->msg = add_refcount(change->msg);
-  }
-  /* GROS: Added support for event_... in artifact file */
-  for(j=0;j<20;j++)
-  {
-    event *evt;
-    event *evt2;
-    event *evtn;
-    event *evtp;
-
-    evt = find_event(change,j);
-    evt2= find_event(op,j);
-
-    if ((evt) && (evt->hook))
-    {
-        if ((evt2)&&(evt2->hook))
-        {
-            free_string(evt2->hook);
-            free_string(evt2->plugin);
-            free_string(evt2->options);
-            evtp = NULL;
-            evtn = evt2->next;
-            if (evt2 == op->events)
-            {
-                free(evt2);
-                op->events = evtn;
-            }
-            else
-            {
-                evtp = op->events;
-                while (evtp->next != evt2)
-                    evtp = evtp->next;
-                free(evt2);
-                evtp->next = evtn;
-            }
-        }
-        else if (evt2 == NULL)
-        {
-            if (op->events == NULL)
-            {
-                evt2 = (event *)malloc(sizeof(event));
-                op->events = evt2;
-            }
-            else
-            {
-                evtp = op->events;
-                while (evtp->next != NULL)
-                    evtp = evtp->next;
-                evtp->next = (event *)malloc(sizeof(event));
-            }
-        }
-
-        evt2->hook = add_refcount(evt->hook);
-        evt2->plugin = add_refcount(evt->plugin);
-
-        if (evt->options)
-            evt2->options = add_refcount(evt->options);
+    for (i=0; i<NROFATTACKS; i++) {
+	if (change->resist[i]) {
+	    op->resist[i] += change->resist[i];
+	}
     }
-  }
+    if (change->stats.dam) {
+	if (change->stats.dam < 0)
+	    op->stats.dam = (-change->stats.dam);
+	else if (op->stats.dam) {
+	    tmp = (signed char) (((int)op->stats.dam * (int)change->stats.dam)/10);
+	    if (tmp == op->stats.dam) {
+		if (change->stats.dam < 10)
+		    op->stats.dam--;
+		else
+		    op->stats.dam++;
+	    }
+	    else
+		op->stats.dam = tmp;
+	}
+    }
+    if (change->weight) {
+	if (change->weight < 0)
+	    op->weight = (-change->weight);
+	else
+	    op->weight = (op->weight    * (change->weight)) / 100;
+    }
+    if (change->last_sp) {
+	if (change->last_sp < 0)
+	    op->last_sp = (-change->last_sp);
+	else
+	    op->last_sp = (signed char) (((int)op->last_sp * (int)change->last_sp) / (int) 100);
+    }
+    if (change->gen_sp_armour) {
+	if (change->gen_sp_armour < 0)
+	    op->gen_sp_armour = (-change->gen_sp_armour);
+	else
+	    op->gen_sp_armour = (signed char) (((int)op->gen_sp_armour * ((int)change->gen_sp_armour))
+                      / (int)100);
+    }
+    op->value *= change->value;
+
+    if(change->material)  op->material = change->material;
+
+    if (change->materialname) {
+	if (op->materialname)
+	    free_string(op->materialname);
+	op->materialname = add_refcount(change->materialname);
+    }
+
+    if (change->slaying) {
+	if (op->slaying)
+	    free_string(op->slaying);
+	op->slaying = add_refcount(change->slaying);
+    }
+    if (change->race) {
+	if (op->race)
+	    free_string(op->race);
+	op->race = add_refcount(change->race);
+    }
+    if (change->msg) {
+	if (op->msg)
+	    free_string(op->msg);
+	op->msg = add_refcount(change->msg);
+    }
+    /* GROS: Added support for event_... in artifact file */
+    for(j=0;j<20;j++) {
+	event *evt;
+	event *evt2;
+	event *evtn;
+	event *evtp;
+
+	evt = find_event(change,j);
+	evt2= find_event(op,j);
+
+	if ((evt) && (evt->hook)) {
+	    if ((evt2)&&(evt2->hook)) {
+		free_string(evt2->hook);
+		free_string(evt2->plugin);
+		free_string(evt2->options);
+		evtp = NULL;
+		evtn = evt2->next;
+		if (evt2 == op->events) {
+		    free(evt2);
+		    op->events = evtn;
+		}
+		else {
+		    evtp = op->events;
+		    while (evtp->next != evt2)
+			evtp = evtp->next;
+		    free(evt2);
+		    evtp->next = evtn;
+		}
+	    }
+	    else if (evt2 == NULL) {
+		if (op->events == NULL) {
+		    evt2 = (event *)malloc(sizeof(event));
+		    op->events = evt2;
+		}
+		else {
+		    evtp = op->events;
+		    while (evtp->next != NULL)
+			evtp = evtp->next;
+		    evtp->next = (event *)malloc(sizeof(event));
+		}
+	    }
+
+	    evt2->hook = add_refcount(evt->hook);
+	    evt2->plugin = add_refcount(evt->plugin);
+
+	    if (evt->options)
+		evt2->options = add_refcount(evt->options);
+	}
+    }
 }
 
 static int legal_artifact_combination(object *op, artifact *art) {
@@ -1675,3 +1662,4 @@ treasurelist *tl, *next;
     }
     free_artifactlist(first_artifactlist);
 }
+

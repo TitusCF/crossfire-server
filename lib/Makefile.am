@@ -31,8 +31,7 @@ dist_pkgdata_DATA = artifacts def_help formulae  messages races smooth\
 	animations archetypes  bmaps  crossfire.0 \
 	crossfire.1 faces attackmess image_info materials
 
-CONF_FILES = settings motd dm_file forbid ban_file skill_params  \
-	spell_params exp_table 
+CONF_FILES = settings motd dm_file forbid ban_file exp_table 
 VAR_FILES = highscore banish_file bookarch temp.maps clockdata
 EXTRA_DIST = README .collect-stamp $(CONF_FILES) treasures treasures.bld
 
@@ -131,6 +130,10 @@ install-data-local: archetypes crossfire.0 faces animations collect.pl util.pl
 	done
 # Special case above because the name we install to is different
 # than the name of the file
+	if [ ! -d $(DESTDIR)$(pkgdatadir)/$$i ]; then \
+		echo "Creating directory $(pkgdatadir)/$$i"; \
+		$(mkinstalldirs) $(DESTDIR)$(pkgdatadir)/$$i; \
+	fi; \
 	$(INSTALL_DATA) $(srcdir)/treasures.bld $(DESTDIR)$(pkgdatadir)/treasures
 
 

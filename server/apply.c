@@ -113,39 +113,40 @@ int apply_potion(object *op, object *tmp)
         identify(tmp);
     }
 
-    /* only players get this */
-    if (op->type==PLAYER&&(tmp->attacktype & AT_DEPLETE)) { /* Potion of restoration */
-      object *depl;
-      archetype *at;
+    /* Potion of restoration - only for players */
+    if (op->type==PLAYER&&(tmp->attacktype & AT_DEPLETE)) {
+	object *depl;
+	archetype *at;
 
-      if (QUERY_FLAG(tmp, FLAG_CURSED) || QUERY_FLAG(tmp, FLAG_DAMNED)) {
-	drain_stat(op);
-        fix_player(op);
-        decrease_ob(tmp);
-        return 1;
-      }
-      if ((at = find_archetype("depletion"))==NULL) {
-	LOG(llevError,"Could not find archetype depletion");
-	return 0;
-      }
-      depl = present_arch_in_ob(at, op);
-      if (depl!=NULL) {
-        for (i = 0; i < 7; i++)
-          if (get_attr_value(&depl->stats, i)) {
-            new_draw_info(NDI_UNIQUE,0,op, restore_msg[i]);
-          }
-	remove_ob(depl);
-	free_object(depl);
-        fix_player(op);
-      }
-      else
-        new_draw_info(NDI_UNIQUE,0,op, "You feel a great loss...");
+	if (QUERY_FLAG(tmp, FLAG_CURSED) || QUERY_FLAG(tmp, FLAG_DAMNED)) {
+	    drain_stat(op);
+	    fix_player(op);
+	    decrease_ob(tmp);
+	    return 1;
+	}
+	if ((at = find_archetype("depletion"))==NULL) {
+	    LOG(llevError,"Could not find archetype depletion");
+	    return 0;
+	}
+	depl = present_arch_in_ob(at, op);
+	if (depl!=NULL) {
+	    for (i = 0; i < 7; i++)
+		if (get_attr_value(&depl->stats, i)) {
+		    new_draw_info(NDI_UNIQUE,0,op, restore_msg[i]);
+		}
+	    remove_ob(depl);
+	    free_object(depl);
+	    fix_player(op);
+	}
+	else
+	    new_draw_info(NDI_UNIQUE,0,op, "You potion had no effect.");
 
-      decrease_ob(tmp);
-      return 1;
+	decrease_ob(tmp);
+	return 1;
     }
-    /* only players get this */
-    if(op->type==PLAYER&&tmp->attacktype&AT_GODPOWER) {    /* improvement potion */
+
+    /* improvement potion - only for players */
+    if(op->type==PLAYER&&tmp->attacktype&AT_GODPOWER) {
 
 	for(i=1;i<MIN(11,op->level);i++) {
 	    if (QUERY_FLAG(tmp,FLAG_CURSED) || QUERY_FLAG(tmp,FLAG_DAMNED)) {
@@ -163,20 +164,20 @@ int apply_potion(object *op, object *tmp)
 		}
 	    }
 	    else {
-			 if(op->contr->levhp[i]<9) { 
-				 op->contr->levhp[i]=9;
-				 break;
-			 }
-			 if(op->contr->levsp[i]<6) { 
-				 op->contr->levsp[i]=6;
-				 break;
-			 }
-			 if(op->contr->levgrace[i]<3) {
-				 op->contr->levgrace[i]=3;
-				 break;
-			 }
-		 }
-	 }
+		if(op->contr->levhp[i]<9) { 
+		    op->contr->levhp[i]=9;
+		    break;
+		}
+		if(op->contr->levsp[i]<6) { 
+		    op->contr->levsp[i]=6;
+		    break;
+		}
+		if(op->contr->levgrace[i]<3) {
+		    op->contr->levgrace[i]=3;
+		    break;
+		}
+	    }
+	}
 	/* Just makes checking easier */
 	if (i<MIN(11, op->level)) got_one=1;
 	if (!QUERY_FLAG(tmp,FLAG_CURSED) && !QUERY_FLAG(tmp,FLAG_DAMNED)) {
@@ -203,18 +204,29 @@ int apply_potion(object *op, object *tmp)
 
 
     /* A potion that casts a spell.  Healing, restore spellpoint (power potion)
-     * and heroism all fit into this category.
+     * and heroism all fit into this category.  Given the spell object code,
+     * there is no limit to the number of spells that potions can be cast,
+     * but direction is problematic to try and imbue fireball potions for example.
      */
-    if (tmp->stats.sp) {
-      if(QUERY_FLAG(tmp, FLAG_CURSED) || QUERY_FLAG(tmp, FLAG_DAMNED)) {
-        new_draw_info(NDI_UNIQUE,0,op, "Yech!  Your lungs are on fire!");
-        cast_spell(op,tmp, 0, 3, 1, spellPotion,NULL);
-      } else
-        cast_spell(op,tmp, op->facing, tmp->stats.sp, 1, spellPotion,NULL);
-      decrease_ob(tmp);
-      /* if youre dead, no point in doing this... */
-      if(!QUERY_FLAG(op,FLAG_REMOVED)) fix_player(op);
-      return 1;
+    if (tmp->inv) {
+	if(QUERY_FLAG(tmp, FLAG_CURSED) || QUERY_FLAG(tmp, FLAG_DAMNED)) {
+	    object *fball;
+
+	    new_draw_info(NDI_UNIQUE,0,op, "Yech!  Your lungs are on fire!");
+            /* Explodes a fireball centered at player */
+            fball = get_archetype(EXPLODING_FIREBALL);
+            fball->dam_modifier=random_roll(1, op->level, op, PREFER_LOW)/5+1;
+            fball->stats.maxhp=random_roll(1, op->level, op, PREFER_LOW)/10+2;
+            fball->x = op->x;
+            fball->y = op->y;
+            insert_ob_in_map(fball, op->map, NULL, 0);
+	} else
+	    cast_spell(op,tmp, op->facing, tmp->inv, NULL);
+
+	decrease_ob(tmp);
+	/* if youre dead, no point in doing this... */
+	if(!QUERY_FLAG(op,FLAG_REMOVED)) fix_player(op);
+	return 1;
     }
 
     /* Deal with protection potions */
@@ -247,14 +259,13 @@ int apply_potion(object *op, object *tmp)
 
     /* Only thing left are the stat potions */
     if(op->type==PLAYER) { /* only for players */
-      if((QUERY_FLAG(tmp, FLAG_CURSED) || QUERY_FLAG(tmp, FLAG_DAMNED)) 
-	  && tmp->value!=0)
-	CLEAR_FLAG(tmp, FLAG_APPLIED);
-      else
-	SET_FLAG(tmp, FLAG_APPLIED);
-      if(!change_abil(op,tmp))
-        new_draw_info(NDI_UNIQUE,0,op,"Nothing happened.");
-     }
+	if((QUERY_FLAG(tmp, FLAG_CURSED) || QUERY_FLAG(tmp, FLAG_DAMNED)) && tmp->value!=0)
+	    CLEAR_FLAG(tmp, FLAG_APPLIED);
+	else
+	    SET_FLAG(tmp, FLAG_APPLIED);
+	if(!change_abil(op,tmp))
+	    new_draw_info(NDI_UNIQUE,0,op,"Nothing happened.");
+    }
 
     /* CLEAR_FLAG is so that if the character has other potions
      * that were grouped with the one consumed, his
@@ -985,32 +996,31 @@ int esrv_apply_container (object *op, object *sack)
  */
 static int apply_altar (object *altar, object *sacrifice, object *originator)
 {
-  /* Only players can make sacrifices on spell casting altars. */
-  if (altar->stats.sp && ( ! originator || originator->type != PLAYER))
-    return 0;
-  if (operate_altar (altar, &sacrifice))
-  {
-    /* Simple check.  Unfortunately, it means you can't cast magic bullet
-     * with an altar.  We call it a Potion - altars are stationary - it
-     * is up to map designers to use them properly.
-     */
-    if (altar->stats.sp)
-    {
-      new_draw_info_format (NDI_BLACK, 0, originator, "The altar casts %s.",
-                            spells[altar->stats.sp].name);
-      cast_spell (originator, altar, 0, altar->stats.sp, 0, spellPotion, NULL);
-      /* If it is connected, push the button.  Fixes some problems with
-       * old maps.
-       */
-      push_button (altar);
+    /* Only players can make sacrifices on spell casting altars. */
+    if (altar->inv && ( ! originator || originator->type != PLAYER))
+	return 0;
+
+    if (operate_altar (altar, &sacrifice)) {
+	/* Simple check.  Unfortunately, it means you can't cast magic bullet
+	 * with an altar.  We call it a Potion - altars are stationary - it
+	 * is up to map designers to use them properly.
+	 */
+	if (altar->inv && altar->inv->type==SPELL) {
+	    new_draw_info_format (NDI_BLACK, 0, originator, "The altar casts %s.",
+				  altar->inv->name);
+	    cast_spell (originator, altar, 0, altar->inv, NULL);
+	    /* If it is connected, push the button.  Fixes some problems with
+	     * old maps.
+	     */
+/*	    push_button (altar);*/
+	} else {
+	    altar->value = 1;  /* works only once */
+	    push_button (altar);
+	}
+	return sacrifice == NULL;
     } else {
-      altar->value = 1;  /* works only once */
-      push_button (altar);
+	return 0;
     }
-    return sacrifice == NULL;
-  } else {
-    return 0;
-  }
 }
 
 
@@ -1216,17 +1226,6 @@ void move_apply (object *trap, object *victim, object *originator)
     apply_altar (trap, victim, originator);
     goto leave;
 
-  case MMISSILE:
-    if (QUERY_FLAG (victim, FLAG_ALIVE)) {
-      tag_t trap_tag = trap->count;
-      hit_player (victim, trap->stats.dam, trap, AT_MAGIC);
-      if ( ! was_destroyed (trap, trap_tag)) {
-          remove_ob (trap);
-          free_object (trap);
-      }
-    }
-    goto leave;
-
   case THROWN_OBJ:
     if (trap->inv == NULL)
       goto leave;
@@ -1242,28 +1241,10 @@ void move_apply (object *trap, object *victim, object *originator)
       hit_with_arrow (trap, victim);
     goto leave;
 
-  case CANCELLATION:
-  case BALL_LIGHTNING:
-    if (QUERY_FLAG (victim, FLAG_ALIVE))
-      hit_player (victim, trap->stats.dam, trap, trap->attacktype);
-    else if (victim->material || victim->materialname)
-      save_throw_object (victim, trap->attacktype, trap);
-    goto leave;
 
-  case CONE:
-    if(QUERY_FLAG(victim, FLAG_ALIVE)&&trap->speed) {
-      uint32 attacktype = trap->attacktype & ~AT_COUNTERSPELL;
-      if (attacktype)
-        hit_player(victim,trap->stats.dam,trap,attacktype);
-    }
-    goto leave;
-
-  case FBULLET:
-  case BULLET:
-    if (QUERY_FLAG (victim, FLAG_NO_PASS)
-        || QUERY_FLAG (victim, FLAG_ALIVE))
-      check_fired_arch (trap);
-    goto leave;
+    case SPELL_EFFECT:
+	apply_spell_effect(trap, victim);
+	goto leave;
 
   case TRAPDOOR:
     {
@@ -1384,6 +1365,7 @@ void move_apply (object *trap, object *victim, object *originator)
 static void apply_book (object *op, object *tmp)
 {
     int lev_diff;
+    object *skill_ob;
     event *evt;
 
     if(QUERY_FLAG(op, FLAG_BLIND)&&!QUERY_FLAG(op,FLAG_WIZ)) {
@@ -1397,31 +1379,32 @@ static void apply_book (object *op, object *tmp)
     }
 
     /* need a literacy skill to read stuff! */
-    if ( ! change_skill(op,SK_LITERACY)) {
-      new_draw_info(NDI_UNIQUE, 0,op,
-	"You are unable to decipher the strange symbols.");
-      return;
+    skill_ob = find_skill_by_name(op, tmp->skill);
+    if ( ! skill_ob) {
+	new_draw_info(NDI_UNIQUE, 0,op,
+		      "You are unable to decipher the strange symbols.");
+	return;
     }
-    lev_diff = tmp->level - (SK_level(op) + 5);
-    if ( ! QUERY_FLAG (op, FLAG_WIZ) && lev_diff > 0)
-    {
-      if (lev_diff < 2)
-	new_draw_info(NDI_UNIQUE, 0,op,"This book is just barely beyond your comprehension.");
-      else if (lev_diff < 3)
-	new_draw_info(NDI_UNIQUE, 0,op,"This book is slightly beyond your comprehension.");
-      else if (lev_diff < 5)
-	new_draw_info(NDI_UNIQUE, 0,op,"This book is beyond your comprehension.");
-      else if (lev_diff < 8)
-	new_draw_info(NDI_UNIQUE, 0,op,"This book is quite a bit beyond your comprehension.");
-      else if (lev_diff < 15)
-	new_draw_info(NDI_UNIQUE, 0,op,"This book is way beyond your comprehension.");
-      else
-	new_draw_info(NDI_UNIQUE, 0,op,"This book is totally beyond your comprehension.");
-      return;
+    lev_diff = tmp->level - (skill_ob->level + 5);
+    if ( ! QUERY_FLAG (op, FLAG_WIZ) && lev_diff > 0) {
+	if (lev_diff < 2)
+	    new_draw_info(NDI_UNIQUE, 0,op,"This book is just barely beyond your comprehension.");
+	else if (lev_diff < 3)
+	    new_draw_info(NDI_UNIQUE, 0,op,"This book is slightly beyond your comprehension.");
+	else if (lev_diff < 5)
+	    new_draw_info(NDI_UNIQUE, 0,op,"This book is beyond your comprehension.");
+	else if (lev_diff < 8)
+	    new_draw_info(NDI_UNIQUE, 0,op,"This book is quite a bit beyond your comprehension.");
+	else if (lev_diff < 15)
+	    new_draw_info(NDI_UNIQUE, 0,op,"This book is way beyond your comprehension.");
+	else
+	    new_draw_info(NDI_UNIQUE, 0,op,"This book is totally beyond your comprehension.");
+	return;
     }
 
     new_draw_info_format (NDI_UNIQUE, 0, op,
                           "You open the %s and start reading.", tmp->name);
+
     /* GROS: Handle for plugin trigger event */
     if ((evt = find_event(tmp, EVENT_APPLY)) != NULL)
     {
@@ -1449,7 +1432,7 @@ static void apply_book (object *op, object *tmp)
 
     /* gain xp from reading */
     if(!QUERY_FLAG(tmp,FLAG_NO_SKILL_IDENT)) { /* only if not read before */
-      int exp_gain=calc_skill_exp(op,tmp);
+	int exp_gain=calc_skill_exp(op,tmp, skill_ob);
       if(!QUERY_FLAG(tmp,FLAG_IDENTIFIED)) {
         /*exp_gain *= 2; because they just identified it too */
         SET_FLAG(tmp,FLAG_IDENTIFIED);
@@ -1457,36 +1440,36 @@ static void apply_book (object *op, object *tmp)
         if(tmp->env) esrv_update_item(UPD_FLAGS|UPD_NAME, op,tmp);
         else op->contr->socket.update_look=1;
       }
-      add_exp(op,exp_gain);
+      change_exp(op,exp_gain, skill_ob->skill, 0);
       SET_FLAG(tmp,FLAG_NO_SKILL_IDENT); /* so no more xp gained from this book */
     }
 }
 
+/* op is the person learning the skill, tmp is the skill scroll object */
+
 
 static void apply_skillscroll (object *op, object *tmp)
 {
-  switch ((int) learn_skill (op, tmp))
-  {
-    case 0:
-      new_draw_info(NDI_UNIQUE, 0,op,"You already possess the knowledge ");
-      new_draw_info_format(NDI_UNIQUE, 0,op,"held within the %s.\n",query_name(tmp));
-      return;
+    switch ((int) learn_skill (op, tmp)) {
+	case 0:
+	    new_draw_info(NDI_UNIQUE, 0,op,"You already possess the knowledge ");
+	    new_draw_info_format(NDI_UNIQUE, 0,op,"held within the %s.\n",query_name(tmp));
+	    return;
 
-    case 1:
-      new_draw_info_format(NDI_UNIQUE, 0,op,"You succeed in learning %s",
-      skills[tmp->stats.sp].name);
-      new_draw_info_format(NDI_UNIQUE, 0, op,
-          "Type 'bind ready_skill %s",skills[tmp->stats.sp].name);
-      new_draw_info(NDI_UNIQUE, 0,op,"to store the skill in a key.");
-      fix_player(op); /* to immediately link new skill to exp object */
-      decrease_ob(tmp);
-      return;
+	case 1:
+	    new_draw_info_format(NDI_UNIQUE, 0,op,"You succeed in learning %s",
+			 tmp->name);
+	    new_draw_info_format(NDI_UNIQUE, 0, op,
+			 "Type 'bind ready_skill %s",tmp->name);
+	    new_draw_info(NDI_UNIQUE, 0,op,"to store the skill in a key.");
+	    decrease_ob(tmp);
+	    return;
 
-    default:
-      new_draw_info_format(NDI_UNIQUE,0,op,
-          "You fail to learn the knowledge of the %s.\n",query_name(tmp));
-      decrease_ob(tmp);
-      return;
+	default:
+	    new_draw_info_format(NDI_UNIQUE,0,op,
+		    "You fail to learn the knowledge of the %s.\n",query_name(tmp));
+	    decrease_ob(tmp);
+	    return;
     }
 }
 
@@ -1496,42 +1479,42 @@ static void apply_skillscroll (object *op, object *tmp)
  * prayers are special.
  */
 
-static object *find_special_prayer_mark (object *op, int spell)
+static object *find_special_prayer_mark (object *op, char *spell)
 {
     object *tmp;
 
     for (tmp = op->inv; tmp; tmp = tmp->below)
         if (tmp->type == FORCE && tmp->slaying
-            && strcmp (tmp->slaying, "special prayer") == 0
-            && tmp->stats.sp == spell)
+            && !strcmp (tmp->slaying, "special prayer")
+            && !strcmp(tmp->name, spell))
             return tmp;
     return 0;
 }
 
-static void insert_special_prayer_mark (object *op, int spell)
+static void insert_special_prayer_mark (object *op, char *spell)
 {
     object *force = get_archetype ("force");
     force->speed = 0;
     update_ob_speed (force);
     force->slaying = add_string ("special prayer");
-    force->stats.sp = spell;
+    if (force->name) free_string(force->name);
+    force->name = add_string(spell);
     insert_ob_in_ob (force, op);
 }
 
-extern void do_learn_spell (object *op, int spell, int special_prayer)
+void do_learn_spell (object *op, object *spell, int special_prayer)
 {
-    object *tmp = find_special_prayer_mark (op, spell);
+    object *tmp = find_special_prayer_mark (op, spell->name);
 
     if (op->type != PLAYER) {
-        LOG (llevError, "BUG: do_forget_spell(): not a player\n");
+        LOG (llevError, "BUG: do_learn_spell(): not a player\n");
         return;
     }
 
     /* Upgrade special prayers to normal prayers */
-    if (check_spell_known (op, spell)) {
+    if (check_spell_known (op, spell->name)) {
         if (special_prayer || ! tmp) {
-            LOG (llevError, "BUG: do_learn_spell(): spell already known, but "
-             "can't upgrade it\n");
+            LOG (llevError, "BUG: do_learn_spell(): spell already known, but can't upgrade it\n");
             return;
         }
         remove_ob (tmp);
@@ -1541,99 +1524,102 @@ extern void do_learn_spell (object *op, int spell, int special_prayer)
 
     /* Learn new spell/prayer */
     if (tmp) {
-        LOG (llevError, "BUG: do_learn_spell(): spell unknown, but special "
-             "prayer mark present\n");
+        LOG (llevError, "BUG: do_learn_spell(): spell unknown, but special prayer mark present\n");
         remove_ob (tmp);
         free_object (tmp);
     }
     play_sound_player_only (op->contr, SOUND_LEARN_SPELL, 0, 0);
-    op->contr->known_spells[op->contr->nrofknownspells++] = spell;
-    if (op->contr->nrofknownspells == 1)
-        op->contr->chosen_spell = spell;
+    tmp = get_object();
+    copy_object(spell, tmp);
+    insert_ob_in_ob(tmp, op);
     
     /* For godgiven spells the player gets a reminder-mark inserted,
-       that this spell must be removed on changing cults! */
-    if (special_prayer)
-      insert_special_prayer_mark (op, spell);
+     * that this spell must be removed on changing cults! 
+     */
+    if (special_prayer) {
+	insert_special_prayer_mark (op, spell->name);
+	SET_FLAG(tmp, FLAG_STARTEQUIP);
+    }
 
     new_draw_info_format (NDI_UNIQUE, 0, op, 
-            "Type 'bind cast %s", spells[spell].name);
+            "Type 'bind cast %s", spell->name);
     new_draw_info (NDI_UNIQUE, 0, op, "to store the spell in a key.");
 }
 
-extern void do_forget_spell (object *op, int spell)
+void do_forget_spell (object *op, char *spell)
 {
-    object *tmp;
-    int i;
+    object *tmp, *spob;
 
     if (op->type != PLAYER) {
         LOG (llevError, "BUG: do_forget_spell(): not a player\n");
         return;
     }
-    if ( ! check_spell_known (op, spell)) {
+    if ( (spob=check_spell_known (op, spell)) == NULL) {
         LOG (llevError, "BUG: do_forget_spell(): spell not known\n");
         return;
     }
     
     new_draw_info_format (NDI_UNIQUE|NDI_NAVY, 0, op,
-			  "You lose knowledge of %s.", spells[spell].name);
+			  "You lose knowledge of %s.", spell);
 
     tmp = find_special_prayer_mark (op, spell);
     if (tmp) {
         remove_ob (tmp);
         free_object (tmp);
     }
-
-    for (i = 0; i < op->contr->nrofknownspells; i++)
-    {
-        if (op->contr->known_spells[i] == spell) {
-            op->contr->known_spells[i] =
-                    op->contr->known_spells[--op->contr->nrofknownspells];
-            return;
-        }
-    }
-    LOG (llevError, "BUG: do_forget_spell(): couldn't find spell\n");
+    remove_ob(spob);
+    free_object(spob);
 }
 
 static void apply_spellbook (object *op, object *tmp)
 {
+    object *skop, *spell, *spell_skill;
+
     if(QUERY_FLAG(op, FLAG_BLIND)&&!QUERY_FLAG(op,FLAG_WIZ)) {
-      new_draw_info(NDI_UNIQUE, 0,op,"You are unable to read while blind.");
-      return;
+	new_draw_info(NDI_UNIQUE, 0,op,"You are unable to read while blind.");
+	return;
     }
 
     /* artifact_spellbooks have 'slaying' field point to a spell name,
-    ** instead of having their spell stored in stats.sp.  We should update
-    ** stats->sp to point to that spell */
+     * instead of having their spell stored in stats.sp.  These are
+     * legacy spellbooks
+     */
  
     if(tmp->slaying != NULL) {
-       if((tmp->stats.sp = look_up_spell_name(tmp->slaying)) <0 ){
-	  tmp->stats.sp = -1; 
-	  new_draw_info_format(NDI_UNIQUE, 0, op,
+	spell=arch_to_object(find_archetype_by_object_name(tmp->slaying));
+	if (!spell) {
+	    new_draw_info_format(NDI_UNIQUE, 0, op,
 		"The book's formula for %s is incomplete", tmp->slaying);
-	  return;
-       }
-       /* now clear tmp->slaying since we no longer need it */
-       free_string(tmp->slaying);
-       tmp->slaying=NULL;
-    }
+	    return;
+	}
+	else
+	    insert_ob_in_ob(spell, tmp);
+	free_string(tmp->slaying);
+	tmp->slaying=NULL;
+    } 
+
+    skop = find_skill_by_name(op, tmp->skill);
 
     /* need a literacy skill to learn spells. Also, having a literacy level
      * lower than the spell will make learning the spell more difficult */
-    if ( ! change_skill(op,SK_LITERACY)) {
-      new_draw_info(NDI_UNIQUE, 0,op,"You can't read! Your attempt fails.");
-      return;
+    if ( !skop) {
+	new_draw_info(NDI_UNIQUE, 0,op,"You can't read! Your attempt fails.");
+	return;
     }
-    if(tmp->stats.sp < 0 || tmp->stats.sp > NROFREALSPELLS
-        || spells[tmp->stats.sp].level>(SK_level(op)+10)) {
-      new_draw_info(NDI_UNIQUE, 0,op,"You are unable to decipher the strange symbols.");
-      return;
+
+    spell = tmp->inv;
+    if (!spell) {
+	LOG(llevError,"apply_spellbook: Book %s has no spell in it!\n", tmp->name);
+	new_draw_info(NDI_UNIQUE, 0,op,"The spellbook symbols make no sense.");
+    }
+    if (spell->level > (skop->level+10)) {
+	new_draw_info(NDI_UNIQUE, 0,op,"You are unable to decipher the strange symbols.");
+	return;
     } 
 
     new_draw_info_format(NDI_UNIQUE, 0, op, 
 	"The spellbook contains the %s level spell %s.",
-            get_levelnumber(spells[tmp->stats.sp].level),
-            spells[tmp->stats.sp].name);
+            get_levelnumber(spell->level), spell->name);
 
     if (!QUERY_FLAG(tmp, FLAG_IDENTIFIED)) {
 	identify(tmp);
@@ -1643,19 +1629,38 @@ static void apply_spellbook (object *op, object *tmp)
 	    op->contr->socket.update_look=1;
     }
 
-    if (check_spell_known (op, tmp->stats.sp) && (tmp->stats.Wis ||
-        find_special_prayer_mark (op, tmp->stats.sp) == NULL))
-    {
+    /* I removed the check for special_prayer_mark here - it didn't make
+     * a lot of sense - special prayers are not found in spellbooks, and
+     * if the player doesn't know the spell, doesn't make a lot of sense that
+     * they would have a special prayer mark.
+     */
+    if (check_spell_known (op, spell->name)) {
 	new_draw_info(NDI_UNIQUE, 0,op,"You already know that spell.\n");
 	return;
     }
 
-    /* I changed spell learning in 3 ways:
+    if (spell->skill) {
+	spell_skill = find_skill_by_name(op, spell->skill);
+	if (!spell_skill) {
+	    new_draw_info_format(NDI_UNIQUE, 0, op, 
+				 "You lack the skill %s to use this spell",
+				 spell->skill);
+	    return;
+	}
+	if (spell_skill->level < spell->level) {
+	    new_draw_info_format(NDI_UNIQUE, 0, op, 
+				 "You need to be level %d in %s to learn this spell.",
+				 spell->level, spell->skill);
+	    return;
+	}
+    }
+
+    /* Logic as follows
      *
      *  1- MU spells use Int to learn, Cleric spells use Wisdom
      *
-     *  2- The learner's level (in skills sytem level==literacy level; if no 
-     *     skills level == overall level) impacts the chances of spell learning. 
+     *  2- The learner's skill level in literacy adjusts the chance to learn
+     *     a spell.
      *
      *  3 -Automatically fail to learn if you read while confused
      * 
@@ -1663,20 +1668,21 @@ static void apply_spellbook (object *op, object *tmp)
      * literacy rate very useful!  -b.t. 
      */ 
     if(QUERY_FLAG(op,FLAG_CONFUSED)) { 
-      new_draw_info(NDI_UNIQUE,0,op,"In your confused state you flub the wording of the text!");
-      /* this needs to be a - number [garbled] */
-      scroll_failure(op, 0 - random_roll(0, spells[tmp->stats.sp].level, op, PREFER_LOW), spells[tmp->stats.sp].sp);
-    } else if(QUERY_FLAG(tmp,FLAG_STARTEQUIP) || random_roll(0, 149, op, PREFER_LOW)-(2*SK_level(op)) <
-	learn_spell[spells[tmp->stats.sp].cleric ? op->stats.Wis : op->stats.Int]) {
-      new_draw_info(NDI_UNIQUE, 0,op,"You succeed in learning the spell!");
-      do_learn_spell (op, tmp->stats.sp, 0);
+	new_draw_info(NDI_UNIQUE,0,op,"In your confused state you flub the wording of the text!");
+	scroll_failure(op, 0 - random_roll(0, spell->level, op, PREFER_LOW), MAX(spell->stats.sp, spell->stats.grace));
+    } else if(QUERY_FLAG(tmp,FLAG_STARTEQUIP) || 
+	(random_roll(0, 100, op, PREFER_LOW)-(5*skop->level)) <
+	      learn_spell[spell->stats.grace ? op->stats.Wis : op->stats.Int]) {
 
-      /* xp gain to literacy for spell learning */
-      if ( ! QUERY_FLAG (tmp, FLAG_STARTEQUIP))
-        add_exp(op,calc_skill_exp(op,tmp));
+	new_draw_info(NDI_UNIQUE, 0,op,"You succeed in learning the spell!");
+	do_learn_spell (op, spell, 0);
+
+	/* xp gain to literacy for spell learning */
+	if ( ! QUERY_FLAG (tmp, FLAG_STARTEQUIP))
+	    change_exp(op,calc_skill_exp(op,tmp,skop), skop->skill, 0);
     } else {
-      play_sound_player_only(op->contr, SOUND_FUMBLE_SPELL,0,0);
-      new_draw_info(NDI_UNIQUE, 0,op,"You fail to learn the spell.\n");
+	play_sound_player_only(op->contr, SOUND_FUMBLE_SPELL,0,0);
+	new_draw_info(NDI_UNIQUE, 0,op,"You fail to learn the spell.\n");
     }
     decrease_ob(tmp);
 }
@@ -1684,19 +1690,17 @@ static void apply_spellbook (object *op, object *tmp)
 
 void apply_scroll (object *op, object *tmp, int dir)
 {
-    int scroll_spell=tmp->stats.sp, old_spell=0;
-    rangetype old_shoot=range_none;
-    char buf[MAX_BUF];
+    object *skop;
 
     if(QUERY_FLAG(op, FLAG_BLIND)&&!QUERY_FLAG(op,FLAG_WIZ)) {
-      new_draw_info(NDI_UNIQUE, 0,op, "You are unable to read while blind.");
-      return;
+	new_draw_info(NDI_UNIQUE, 0,op, "You are unable to read while blind.");
+	return;
     }
 
     if (!QUERY_FLAG(tmp, FLAG_IDENTIFIED)) 
 	identify(tmp);
 
-    if( scroll_spell < 0 || scroll_spell >= NROFREALSPELLS) {
+    if (!tmp->inv || tmp->inv->type != SPELL) {
         new_draw_info (NDI_UNIQUE, 0, op,
                        "The scroll just doesn't make sense!");
         return;
@@ -1706,47 +1710,27 @@ void apply_scroll (object *op, object *tmp, int dir)
 	/* players need a literacy skill to read stuff! */
 	int exp_gain=0;
 
-        if ( ! change_skill(op,SK_LITERACY)) {
-          new_draw_info(NDI_UNIQUE, 0,op,
-            "You are unable to decipher the strange symbols.");
-          return;
+	/* hard code literacy - tmp->skill points to where the exp
+	 * should go for anything killed by the spell.
+	 */
+	skop = find_skill_by_name(op, skill_names[SK_LITERACY]);
+
+        if ( ! skop) {
+	    new_draw_info(NDI_UNIQUE, 0,op,
+		  "You are unable to decipher the strange symbols.");
+	    return;
         } 
 
-	/* We give exp for reading the scroll.  I reduced this (0.95.3) to
-	 * give half as much since there is no longer any risk.  Even this
-	 * could be excessive.
-	 */
-	if((exp_gain = calc_skill_exp(op,tmp)))
-	    add_exp(op,exp_gain/2);
-
-
-        /* Now, call here so the right skill is readied -- literacy 
-	 * isnt necesarily connected to the exp obj to which the xp 
-	 * will go (for kills made by the magic of the scroll) 
-	 */ 
-        SET_FLAG(tmp,FLAG_APPLIED);
-        (void) check_skill_to_apply(op,tmp);
-        CLEAR_FLAG(tmp,FLAG_APPLIED);
-        old_shoot= op->contr->shoottype;
-        old_spell = op->contr->chosen_spell;
-        op->contr->shoottype=range_golem;
-        op->contr->chosen_spell = scroll_spell;
+	if((exp_gain = calc_skill_exp(op,tmp, skop)))
+	    change_exp(op,exp_gain, skop->skill, 0);
     }
 
     new_draw_info_format(NDI_BLACK, 0, op,
-        "The scroll of %s turns to dust.", spells[tmp->stats.sp].name);
+		     "The scroll of %s turns to dust.", tmp->inv->name);
 
-    /* Not sure if there is a reason to inform everyone on the map of this, but whatever */
-    sprintf(buf, "%s reads a scroll of %s.",op->name,spells[tmp->stats.sp].name);
-    new_info_map(NDI_ORANGE, op->map, buf);
 
-    cast_spell(op,tmp,dir,scroll_spell,0,spellScroll,NULL);
+    cast_spell(op,tmp,dir,tmp->inv, NULL);
     decrease_ob(tmp);
-
-    if(op->type==PLAYER && op->contr->golem==NULL) {
-        op->contr->shoottype=old_shoot;
-	op->contr->chosen_spell = old_spell;
-    }
 }
 
 /* Applies a treasure object - by default, chest.  op
@@ -2269,9 +2253,6 @@ int manual_apply (object *op, object *tmp, int aflag)
     return 1;
 
   case POTION:
-    SET_FLAG(tmp,FLAG_APPLIED);
-    (void) check_skill_to_apply(op,tmp);
-    CLEAR_FLAG(tmp,FLAG_APPLIED);
     (void) apply_potion(op, tmp);
     return 1;
 
@@ -2490,29 +2471,29 @@ static int unapply_special (object *who, object *op, int aflags)
 	    new_draw_info_format(NDI_UNIQUE, 0, who, "You unwield %s.",query_name(op));
 
 	    (void) change_abil (who,op);
-	    /* 'unready' melee weapons skill if it is current skill */
-	    (void) check_skill_to_apply(who,op);
 	    if(QUERY_FLAG(who,FLAG_READY_WEAPON))
 		CLEAR_FLAG(who,FLAG_READY_WEAPON);
 	    /* GROS: update the current_weapon_script field (used with script_attack for weapons) */
 	    who->current_weapon_script = NULL;
 	    who->current_weapon = NULL;
+	    clear_skill(who);
 	    break;
 
 	case SKILL:         /* allows objects to impart skills */
+	case SKILL_TOOL:
 	    if (op != who->chosen_skill) {
 		LOG (llevError, "BUG: apply_special(): applied skill is not a chosen skill\n");
 	    }
 	    if (who->type==PLAYER) {
-		who->contr->shoottype = range_none;
+		if (who->contr->shoottype == range_skill)
+		    who->contr->shoottype = range_none;
 		if ( ! op->invisible) {
-		    /* its a tool, need to unlink it */
-		    unlink_skill (op);
 		    new_draw_info_format (NDI_UNIQUE, 0, who,
                                     "You stop using the %s.", query_name(op));
+		} else {
 		    new_draw_info_format (NDI_UNIQUE, 0, who,
                                     "You can no longer use the skill: %s.",
-                                    skills[op->stats.sp].name);
+                                    op->skill);
 		}
 	    }
 	    (void) change_abil (who, op);
@@ -2564,7 +2545,7 @@ static int unapply_special (object *who, object *op, int aflags)
 	case WAND:
 	case ROD:
 	case HORN:
-	    (void) check_skill_to_apply(who,op);
+	    clear_skill(who);
 	    new_draw_info_format(NDI_UNIQUE, 0, who, "You unready %s.",query_name(op));
 	    if(who->type==PLAYER) {
 		who->contr->shoottype = range_none;
@@ -2868,7 +2849,7 @@ int can_apply_object(object *who, object *op)
 int apply_special (object *who, object *op, int aflags)
 {
     int basic_flag = aflags & AP_BASIC_FLAGS;
-    object *tmp, *tmp2;
+    object *tmp, *tmp2, *skop=NULL;
     event *evt;
     int i;
 
@@ -2899,8 +2880,6 @@ int apply_special (object *who, object *op, int aflags)
 
     i = can_apply_object(who, op);
 
-    /* Somewhere around here the item_power check should be done */
-
     /* Can't just apply this object.  Lets see what not and what to do */
     if (i) {
 	if (i & CAN_APPLY_NEVER) {
@@ -2926,6 +2905,26 @@ int apply_special (object *who, object *op, int aflags)
 	    }
 	}
     }
+    if (op->skill && op->type != SKILL && op->type != SKILL_TOOL) {
+	skop=find_skill_by_name(who, op->skill);
+	if (!skop) {
+	    new_draw_info_format(NDI_UNIQUE, 0, who, "You need the %s skill to use this item!", op->skill);
+	    return 1;
+	} else {
+	    /* While experience will be credited properly, we want to change the
+	     * skill so that the dam and wc get updated 
+	     */
+	    change_skill(who, skop, 0);
+	}
+    }
+	
+    if (who->type == PLAYER && op->item_power && 
+	(op->item_power + who->item_power) > (settings.item_power_factor * who->level)) {
+	new_draw_info(NDI_UNIQUE, 0, who, "Equipping that combined with other items would consume your soul!");
+	return 1;
+    }
+	
+
     /* Ok.  We are now at the state where we can apply the new object.
      * Note that we don't have the checks for can_use_...
      * below - that is already taken care of by can_apply_object. 
@@ -2957,9 +2956,7 @@ int apply_special (object *who, object *op, int aflags)
 	    }
 	    SET_FLAG(op, FLAG_APPLIED);
 
-	    /* check for melee weapons skill, alter player status.
-	    * Note that we need to call this *before* change_abil */
-	    if(!check_skill_to_apply(who,op)) return 1;
+	    if (skop) change_skill(who, skop, 1);
 	    if(!QUERY_FLAG(who,FLAG_READY_WEAPON))
 		SET_FLAG(who, FLAG_READY_WEAPON);
 
@@ -2998,11 +2995,6 @@ int apply_special (object *who, object *op, int aflags)
 	    new_draw_info_format(NDI_UNIQUE, 0, who, "You turn on your %s.",
 				 op->name);
 	    tmp2 = arch_to_object(op->other_arch);
-	    tmp2->x = op->x;
-	    tmp2->y = op->y;
-	    tmp2->map = op->map;
-	    tmp2->below = op->below;
-	    tmp2->above = op->above;
 	    tmp2->stats.food = op->stats.food;
 	    SET_FLAG(tmp2, FLAG_APPLIED);
 	    if (tmp == NULL) {
@@ -3028,29 +3020,27 @@ int apply_special (object *who, object *op, int aflags)
 		esrv_send_item(who, tmp2);
 	    return 0;
 	    break;
+
 	/* this part is needed for skill-tools */ 
 	case SKILL:
+	case SKILL_TOOL:
 	    if (who->chosen_skill) {
 		LOG (llevError, "BUG: apply_special(): can't apply two skills\n");
 		return 1;
 	    }
 	    if (who->type == PLAYER) {
 		who->contr->shoottype = range_skill;
-		    if ( ! op->invisible) {
-			/* for tools */
-			if (op->exp_obj)
-			    LOG (llevError, "BUG: apply_special(SKILL): found unapplied tool with experience object (%s)\n", op->name);
-			else
-			    (void) link_player_skill (who, op);
-			new_draw_info_format (NDI_UNIQUE, 0, who, "You ready %s.",
+		who->contr->ranges[range_skill] = op;
+		if ( ! op->invisible) {
+		    new_draw_info_format (NDI_UNIQUE, 0, who, "You ready %s.",
                                   query_name (op));
-			new_draw_info_format (NDI_UNIQUE, 0, who,
-                                  "You can now use the skill: %s.",
-                                  skills[op->stats.sp].name);
-		    } else {
-			new_draw_info_format (NDI_UNIQUE, 0, who, "Readied skill: %s.",
-                                  skills[op->stats.sp].name);
-		    }
+		    new_draw_info_format (NDI_UNIQUE, 0, who,
+			      "You can now use the skill: %s.",
+				op->skill);
+		} else {
+		    new_draw_info_format (NDI_UNIQUE, 0, who, "Readied skill: %s.",
+				      op->skill? op->skill:op->name);
+		}
 	    }
 	    SET_FLAG (op, FLAG_APPLIED);
 	    (void) change_abil (who, op);
@@ -3080,7 +3070,7 @@ int apply_special (object *who, object *op, int aflags)
 	case HORN:
 	    /* check for skill, alter player status */ 
 	    SET_FLAG(op, FLAG_APPLIED);
-	    if(!check_skill_to_apply(who,op)) return 1;
+	    if (skop) change_skill(who, skop, 0);
 	    new_draw_info_format (NDI_UNIQUE, 0, who, "You ready %s.", query_name(op));
 
 	    if(who->type==PLAYER) {
@@ -3147,57 +3137,55 @@ int monster_apply_special (object *who, object *op, int aflags)
 
 
 int auto_apply (object *op) {
-  object *tmp = NULL;
-  int i;
+    object *tmp = NULL;
+    int i;
 
-  switch(op->type) {
-  case SHOP_FLOOR:
-    if (!HAS_RANDOM_ITEMS(op)) return 0;
-    do {
-      i=10; /* let's give it 10 tries */
-      while((tmp=generate_treasure(op->randomitems,
-	op->stats.exp?op->stats.exp:MAX(op->map->difficulty, 5)))==NULL&&--i);
-      if(tmp==NULL)
-	  return 0;
-      if(QUERY_FLAG(tmp, FLAG_CURSED) || QUERY_FLAG(tmp, FLAG_DAMNED))
-      {
-        free_object(tmp);
-        tmp = NULL;
-      }
-    } while(!tmp);
+    switch(op->type) {
+	case SHOP_FLOOR:
+	    if (!HAS_RANDOM_ITEMS(op)) return 0;
+	    do {
+		i=10; /* let's give it 10 tries */
+		while((tmp=generate_treasure(op->randomitems,
+					     op->stats.exp?op->stats.exp:MAX(op->map->difficulty, 5)))==NULL&&--i);
+		if(tmp==NULL)
+		    return 0;
+		if(QUERY_FLAG(tmp, FLAG_CURSED) || QUERY_FLAG(tmp, FLAG_DAMNED)) {
+		    free_object(tmp);
+		    tmp = NULL;
+		}
+	    } while(!tmp);
+	    tmp->x=op->x;
+	    tmp->y=op->y;
+	    SET_FLAG(tmp,FLAG_UNPAID);
+	    insert_ob_in_map(tmp,op->map,NULL,0);
+	    CLEAR_FLAG(op,FLAG_AUTO_APPLY);
+	    identify(tmp);
+	    break;
 
-    tmp->x=op->x,tmp->y=op->y;
-    SET_FLAG(tmp,FLAG_UNPAID);
-    insert_ob_in_map(tmp,op->map,NULL,0);
-    CLEAR_FLAG(op,FLAG_AUTO_APPLY);
-    identify(tmp);
-    break;
+	case TREASURE:
+	    if (QUERY_FLAG(op,FLAG_IS_A_TEMPLATE))
+		return 0;
+	    while ((op->stats.hp--)>0)
+		create_treasure(op->randomitems, op, op->map?GT_ENVIRONMENT:0,
+				op->stats.exp ? op->stats.exp : 
+				op->map == NULL ?  14: op->map->difficulty,0);
 
-  case TREASURE:
-    if (QUERY_FLAG(op,FLAG_IS_A_TEMPLATE))
-        return 0;
-    while ((op->stats.hp--)>0)
-      create_treasure(op->randomitems, op, op->map?GT_ENVIRONMENT:0,
-	op->stats.exp ? op->stats.exp :
-	op->map == NULL ?  14: op->map->difficulty,0);
-
-    /* If we generated on object and put it in this object inventory,
-     * move it to the parent object as the current object is about
-     * to disappear.  An example of this item is the random_* stuff
-     * that is put inside other objects.
-     */
-    if (op->inv) {
-	tmp=op->inv;
-	remove_ob(tmp);
-	if (op->env) insert_ob_in_ob(tmp, op->env);
-	else free_object(tmp);
+	    /* If we generated on object and put it in this object inventory,
+	     * move it to the parent object as the current object is about
+	     * to disappear.  An example of this item is the random_* stuff
+	     * that is put inside other objects.
+	     */
+	    if (op->inv) {
+		tmp=op->inv;
+		remove_ob(tmp);
+		if (op->env) insert_ob_in_ob(tmp, op->env);
+		else free_object(tmp);
+	    }
+	    remove_ob(op);
+	    free_object(op);
+	    break;
     }
-    remove_ob(op);
-    free_object(op);
-    break;
-  }
-
-  return tmp ? 1 : 0;
+    return tmp ? 1 : 0;
 }
 
 /* fix_auto_apply goes through the entire map (only the first time
@@ -3207,119 +3195,122 @@ int auto_apply (object *op) {
  */
 
 void fix_auto_apply(mapstruct *m) {
-  object *tmp,*above=NULL;
-  int x,y;
+    object *tmp,*above=NULL;
+    int x,y;
 
-  if(m==NULL) return;
+    if(m==NULL) return;
 
-  for(x=0;x<MAP_WIDTH(m);x++)
-    for(y=0;y<MAP_HEIGHT(m);y++)
-      for(tmp=get_map_ob(m,x,y);tmp!=NULL;tmp=above) {
-        above=tmp->above;
+    for(x=0;x<MAP_WIDTH(m);x++)
+	for(y=0;y<MAP_HEIGHT(m);y++)
+	    for(tmp=get_map_ob(m,x,y);tmp!=NULL;tmp=above) {
+		above=tmp->above;
 
-        if (tmp->inv) {
-          object *invtmp, *invnext;
-          for (invtmp=tmp->inv; invtmp != NULL; invtmp = invnext) {
-            invnext = invtmp->below;
-            if(QUERY_FLAG(invtmp,FLAG_AUTO_APPLY))
-              auto_apply(invtmp);
-            else if(invtmp->type==TREASURE && HAS_RANDOM_ITEMS(invtmp)) {
-              while ((invtmp->stats.hp--)>0)
-                create_treasure(invtmp->randomitems, invtmp, 0,
-                                m->difficulty,0);
-            }
-          }
-        }
+		if (tmp->inv) {
+		    object *invtmp, *invnext;
 
-        if(QUERY_FLAG(tmp,FLAG_AUTO_APPLY))
-          auto_apply(tmp);
-        else if((tmp->type==TREASURE || (tmp->type==CONTAINER))&&HAS_RANDOM_ITEMS(tmp)) {
-          while ((tmp->stats.hp--)>0)
-            create_treasure(tmp->randomitems, tmp, 0,
+		    for (invtmp=tmp->inv; invtmp != NULL; invtmp = invnext) {
+			invnext = invtmp->below;
+			if(QUERY_FLAG(invtmp,FLAG_AUTO_APPLY))
+			    auto_apply(invtmp);
+			else if(invtmp->type==TREASURE && HAS_RANDOM_ITEMS(invtmp)) {
+			    while ((invtmp->stats.hp--)>0)
+				create_treasure(invtmp->randomitems, invtmp, 0,
+						m->difficulty,0);
+			}
+		    }
+		}
+
+		if(QUERY_FLAG(tmp,FLAG_AUTO_APPLY))
+		    auto_apply(tmp);
+		else if((tmp->type==TREASURE || (tmp->type==CONTAINER))&& HAS_RANDOM_ITEMS(tmp)) {
+		    while ((tmp->stats.hp--)>0)
+			create_treasure(tmp->randomitems, tmp, 0,
                             m->difficulty,0);
-        }
-        else if(tmp->type==TIMED_GATE) {
-          tmp->speed = 0;
-          update_ob_speed(tmp);
-        }
-        else if(tmp && tmp->arch && tmp->type!=PLAYER && tmp->type!=TREASURE && HAS_RANDOM_ITEMS(tmp))
-          create_treasure(tmp->randomitems, tmp, GT_APPLY,
-                          m->difficulty,0);
-      }
-  /*end of cycle through map square*/
-  for(x=0;x<MAP_WIDTH(m);x++)
-    for(y=0;y<MAP_HEIGHT(m);y++)
-      for(tmp=get_map_ob(m,x,y);tmp!=NULL;tmp=tmp->above)
-        if (tmp->above &&
-            (tmp->type == TRIGGER_BUTTON || tmp->type == TRIGGER_PEDESTAL))
-          check_trigger (tmp, tmp->above);
+		}
+		else if(tmp->type==TIMED_GATE) {
+		    tmp->speed = 0;
+		    update_ob_speed(tmp);
+		}
+		else if(tmp && tmp->arch && tmp->type!=PLAYER && tmp->type!=TREASURE &&
+		   tmp->type != SPELL && HAS_RANDOM_ITEMS(tmp))
+		    create_treasure(tmp->randomitems, tmp, GT_APPLY,
+                            m->difficulty,0);
+	    }
+
+    for(x=0;x<MAP_WIDTH(m);x++)
+	for(y=0;y<MAP_HEIGHT(m);y++)
+	    for(tmp=get_map_ob(m,x,y);tmp!=NULL;tmp=tmp->above)
+		if (tmp->above &&
+		    (tmp->type == TRIGGER_BUTTON || tmp->type == TRIGGER_PEDESTAL))
+			check_trigger (tmp, tmp->above);
 }
 
 /* eat_special_food() - some food may (temporarily) alter
- * player status. We do it w/ this routine and cast_change_attr().
- * Note the dircection is set to "99"  so that cast_change_attr()
- * will only modify the user's status. We shouldnt be able to
- * effect others by eating food!
- * -b.t.
+ * player status.  This used to call cast_change_attr(), but
+ * that doesn't work with the new spell code.  Since we know what
+ * the food changes, just grab a force and use that instead.
  */
 
 void eat_special_food(object *who, object *food) {
-    /* Corresponding spell to cast to get protection to
-     * the attactkype.  This matches the order of ATNR values
-     * in attack.h
-     */
-    static int sp_type[NROFATTACKS] = { SP_ARMOUR, SP_PROT_MAGIC, SP_PROT_FIRE,
-	SP_PROT_ELEC, SP_PROT_COLD, SP_PROT_CONFUSE, -1 /*acid */,
-	SP_PROT_DRAIN, 	-1 /*weaponmagic*/, -1 /*ghosthit*/, SP_PROT_POISON,
-	SP_PROT_SLOW, SP_PROT_PARALYZE, -1 /* turn undead */,
-	-1 /* fear */, SP_PROT_CANCEL, SP_PROT_DEPLETE, -1 /* death*/,
-	-1 /* chaos */, -1 /*counterspell */, -1 /* godpower */,
-	-1 /*holyword */, -1 /*blind*/, -1 /*internal */ };
+    object *force;
+    int i, did_one=0, k; 
 
-    /* matrix for stats we can increase by eating */
-    int i;
-    /* Declare these static so they only get initialzed once.  IT doesn't appear
-     * that we are modifying these, so this works out ok.
-     */
-    static int stat[] = { STR, DEX, CON, CHA },
-    mod_stat[] = {SP_STRENGTH, SP_DEXTERITY, SP_CONSTITUTION, SP_CHARISMA };
+    force = get_archetype(FORCE_NAME);
 
-    /* check if food modifies stats of the eater */
-    for(i=0; i<(sizeof(stat)/sizeof(int)); i++)
-	if(get_attr_value(&food->stats, stat[i]))
-          cast_change_attr(who,who,99,mod_stat[i]);
+    for (i=0; i < NUM_STATS; i++) {
+	k = get_attr_value(&food->stats, i);
+	if (k) {
+	    set_attr_value(&force->stats, i, k);
+	    did_one = 1;
+	}
+    }
 
     /* check if we can protect the eater */
     for (i=0; i<NROFATTACKS; i++) {
-	if (food->resist[i]>0 && sp_type[i]!=-1)
-	    cast_change_attr(who,who,99,sp_type[i]);
+	if (food->resist[i]>0) {
+	    force->resist[i] = food->resist[i] / 2;
+	    did_one = 1;
+	}
+    }
+    if (did_one) {
+	force->speed = 0.1;
+	update_ob_speed(force);
+	/* bigger morsel of food = longer effect time */
+	force->stats.food = food->stats.food / 5;
+	SET_FLAG(force, FLAG_IS_USED_UP);   
+	SET_FLAG(force, FLAG_APPLIED);
+	change_abil(who, force);
+	insert_ob_in_ob(force, who);
+    } else {
+	free_object(force);
     }
 
-  /* check for hp, sp change */
-  if(food->stats.hp!=0) {
-     if(QUERY_FLAG(food, FLAG_CURSED)) {
-	strcpy(who->contr->killer,food->name);
-	hit_player(who, food->stats.hp, food, AT_POISON);
-	new_draw_info(NDI_UNIQUE, 0,who,"Eck!...that was poisonous!");
-     } else {
-         if(food->stats.hp>0)
-	    new_draw_info(NDI_UNIQUE, 0,who,"You begin to feel better.");
-	 else
-            new_draw_info(NDI_UNIQUE, 0,who,"Eck!...that was poisonous!");
-  	 who->stats.hp += food->stats.hp;
-     }
-  }
-  if(food->stats.sp!=0) {
-     if(QUERY_FLAG(food, FLAG_CURSED)) {
-         new_draw_info(NDI_UNIQUE, 0,who,"You are drained of mana!");
-	 who->stats.sp -= food->stats.sp;
-         if(who->stats.sp<0) who->stats.sp=0;
-     } else {
-         new_draw_info(NDI_UNIQUE, 0,who,"You feel a rush of magical energy!");
-	 who->stats.sp += food->stats.sp;
-	/* place limit on max sp from food? */
-     }
-  }
+    /* check for hp, sp change */
+    if(food->stats.hp!=0) {
+	if(QUERY_FLAG(food, FLAG_CURSED)) { 
+	    strcpy(who->contr->killer,food->name);
+	    hit_player(who, food->stats.hp, food, AT_POISON);
+	    new_draw_info(NDI_UNIQUE, 0,who,"Eck!...that was poisonous!");
+	} else { 
+	    if(food->stats.hp>0) 
+		new_draw_info(NDI_UNIQUE, 0,who,"You begin to feel better.");
+	    else 
+		new_draw_info(NDI_UNIQUE, 0,who,"Eck!...that was poisonous!");
+	    who->stats.hp += food->stats.hp;
+	}
+    }
+    if(food->stats.sp!=0) {
+	if(QUERY_FLAG(food, FLAG_CURSED)) { 
+	    new_draw_info(NDI_UNIQUE, 0,who,"You are drained of mana!");
+	    who->stats.sp -= food->stats.sp; 
+	    if(who->stats.sp<0) who->stats.sp=0;
+	    } else { 
+		new_draw_info(NDI_UNIQUE, 0,who,"You feel a rush of magical energy!");
+		who->stats.sp += food->stats.sp; 
+		/* place limit on max sp from food? */
+	    }
+    }
+    fix_player(who);
 }
 
 
@@ -3399,7 +3390,10 @@ void scroll_failure(object *op, int failure, int power)
 
     if(failure<= -1&&failure > -15) {/* wonder */
 	new_draw_info(NDI_UNIQUE, 0,op,"Your spell warps!.");
-	cast_cone(op,op,0,10,SP_WOW,spellarch[SP_WOW],0);
+	object *tmp;
+	tmp=get_archetype(SPELL_WONDER);
+	cast_wonder(op, op, 0, tmp);
+	free_object(tmp);
     } else if (failure <= -15&&failure > -35) {/* drain mana */
 	new_draw_info(NDI_UNIQUE, 0,op,"Your mana is drained!.");
 	op->stats.sp -= random_roll(0, power-1, op, PREFER_LOW);
@@ -3416,8 +3410,11 @@ void scroll_failure(object *op, int failure, int power)
 	    new_draw_info(NDI_UNIQUE, 0,op,"The magic recoils on you!");
 	    blind_player(op,op,power);
 	} else if (failure <= -80) {/* blast the immediate area */
+	    object *tmp;
+	    tmp=get_archetype(LOOSE_MANA);
+	    cast_magic_storm(op,tmp, power);
 	    new_draw_info(NDI_UNIQUE, 0,op,"You unlease uncontrolled mana!");
-	    cast_mana_storm(op,power);
+	    free_object(tmp);
 	}
     }
 }

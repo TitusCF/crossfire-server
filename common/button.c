@@ -593,8 +593,10 @@ void do_mood_floor(object *op, object *op2) {
 			 * dereference a null value
 			 */
 			if (tmp->type == GOLEM && tmp->owner && tmp->owner->type==PLAYER &&
-			    tmp->owner->contr->golem==tmp)
-				tmp->owner->contr->golem=NULL;
+			    tmp->owner->contr->ranges[range_golem]==tmp) {
+				tmp->owner->contr->ranges[range_golem]=NULL;
+				tmp->owner->contr->golem_count = 0;
+			}
 			tmp->owner = 0;
 		}
 		break;

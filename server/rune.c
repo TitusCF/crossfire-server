@@ -6,7 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2002 Mark Wedel & Crossfire Development Team
+    Copyright (C) 2003 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -31,35 +31,33 @@
 #include <sproto.h>
 #endif
 #include <spells.h>
-#include <errno.h>
-#ifdef sequent
-/* stoopid sequent includes don't do this like they should */
-extern char * sys_errlist[];
-extern int sys_nerr;
+
+
+#ifndef sqr
+#define sqr(x) ((x)*(x))
 #endif
 
-extern object *objects;
 
 /*  peterm:  
-    write_rune:
-    op:  rune writer
-    dir:  orientation of rune, direction rune's contained spell will
-	    be cast in, if applicable
-    inspell:  the spell index of the spell in the rune (if any)
-    level:  level of casting of the rune
-    runename:  name of the rune or message displayed by the rune for
-		a rune of marking 
+ *  write_rune:
+ *  op:  rune writer
+ *  skop: skill object used for casting this rune
+ *  dir:  orientation of rune, direction rune's contained spell will
+ *	    be cast in, if applicable
+ *  inspell: spell object to put into the rune, can be null if doing
+ *    a marking rune.
+ *  level:  level of casting of the rune
+ *  runename:  name of the rune or message displayed by the rune for
+ *		a rune of marking 
+ */
 
-*/
-
-int write_rune(object *op,int dir,int inspell,int level,char *runename) { 
-    object *tmp;
-    archetype *at=NULL;
+int write_rune(object *op,object *caster, object *spell, int dir,char *runename) { 
+    object *tmp, *rune_spell, *rune;
     char buf[MAX_BUF];
     mapstruct *m;
     sint16 nx,ny;
 
-      if(!dir) {
+    if(!dir) {
 	dir=1;
     } 
 
@@ -73,102 +71,99 @@ int write_rune(object *op,int dir,int inspell,int level,char *runename) {
     }
     for(tmp=get_map_ob(m,nx,ny);tmp!=NULL;tmp=tmp->above)
 	if(tmp->type==RUNE) break;
+
     if(tmp){
-#if 0
-	new_draw_info(NDI_UNIQUE, 0,op,"You only succeed in strengthening that rune.");
-	tmp->stats.hp++;
-	return 1;
-#endif
       new_draw_info(NDI_UNIQUE, 0,op,"You can't write a rune there.");
       return 0;
     }
-    if(inspell) {  /* can't have runes of small fireball!!!  */
-	if(inspell==-1) { new_draw_info(NDI_UNIQUE, 0,op,"You can't make a rune containing");
-			  new_draw_info(NDI_UNIQUE, 0,op,"a spell you don't know.  (idiot!)");
-			  return 0;
-	}
-	at=find_archetype(runename);
 
-	/* What it compares to should probably be expanded.  But basically,
-	 * creating a rune of sword should not be allowed. */
-	if (at && at->clone.type!=RUNE) {
-	     new_draw_info_format(NDI_UNIQUE, 0, op,
-		"You can't make a rune of %s", runename);
-		return 0;
-	}
-        /* next it attempts to look up a rune_archetype for this spell
-		by doing some string manipulations */
-	if(!at) {
-		char insp[MAX_BUF];
-		int i;
-		strcpy(insp,spells[inspell].name);
-		for(i=0;i<strlen(insp);i++)
-			if(insp[i]==' ') insp[i]='_';
-		sprintf(buf,"%s%s","rune_",insp);
-		at=find_archetype(buf);
-	}
-		
-	if(!at) tmp=get_archetype("generic_rune");
-	else
-	tmp=arch_to_object(at);
-
-	tmp->stats.sp=inspell; /* the spell it contains */
-
-	sprintf(buf,"You set off a rune of %s",spells[inspell].name);
-	tmp->msg=add_string(buf); 
-	at=NULL;
-
-
-	/*  the at=find_archetye(runename) is neccessary because
-	 * tmp=get_archetype returns a singulirity, not a null,
-	 * when it cannot find the archetype.
-	 * note: if some smartass
-	 * cast rune of marking, and gives the exact name
-	 * of a powerful rune, it won't do him any good,
-	 *  because a rune of marking will have level 0
-	 * and will thus never detonate. 
+    if (spell->other_arch) {
+	rune_spell = arch_to_object(spell->other_arch);
+    } else {
+	/* Player specified spell.  The player has to know the spell, so
+	 * lets just look through the players inventory see if they know it
+	 * use the item_matched_string for our typical matching method.
 	 */
-    } else if (level==-2 || (at=find_archetype(runename))==NULL) {
-	char rune[HUGE_BUF];
+	int bestmatch = 0, ms;
 
-	level=0;
-	tmp=get_archetype("rune_mark"); /* this is a rune of marking */
-	at=NULL;
-	if (runename) {
-	    if (strcasestr_local(runename, "endmsg")) {
-		new_draw_info_format(NDI_UNIQUE, 0, op,
-		     "Trying to cheat are we?", runename);
-		LOG(llevInfo,"write_rune: player %s tried to write bogus rune\n", op->name);
-		return 0;
-	    }
-	    strncpy(rune, runename, HUGE_BUF-2);
-	    rune[HUGE_BUF-2] = 0;
-	    strcat(rune, "\n");
-	} else {
-	    /* Not totally efficient, but keeps code simpler */
-	    strcpy(rune, "There is no message\n");
+	if (!runename || *runename == 0) {
+	    new_draw_info(NDI_UNIQUE, 0, op, "Write a rune of what?");
+	    return 0;
 	}
-	tmp->msg = add_string(rune);
+
+	rune_spell=NULL;
+	for (tmp=op->inv; tmp; tmp=tmp->below) {
+	    if (tmp->type == SPELL) {
+		ms = item_matched_string(op, tmp, runename);
+		if (ms > bestmatch) {
+		    ms = bestmatch;
+		    rune_spell = tmp;
+		}
+	    }
+	}
+	if (!rune_spell) {
+	    new_draw_info_format(NDI_UNIQUE, 0, op, "You don't know any spell named %s",
+				 runename);
+	    return 0;
+	}
+	if (rune_spell->skill != spell->skill) {
+	    new_draw_info_format(NDI_UNIQUE, 0, op, "You can't cast %s with %s",
+				 rune_spell->name, spell->name);
+	    return 0;
+	}
+	if (caster->path_denied & spell->path_attuned) {
+	    new_draw_info_format(NDI_UNIQUE, 0,op, "%s belongs to a spell path denied to you.",
+				 rune_spell->name);
+	    return 0;
+	}
+	if (caster_level(caster, rune_spell) < rune_spell->level) {
+	    new_draw_info_format(NDI_UNIQUE, 0,op, "%s is beyond your ability to cast!",
+				 rune_spell->name);
+	    return 0;
+	}
+        if (SP_level_spellpoint_cost(caster, rune_spell, SPELL_MANA) >  op->stats.sp) {
+	    new_draw_info(NDI_UNIQUE, 0,op,"You don't have enough mana.");
+	    return 0;
+	}
+        if (SP_level_spellpoint_cost(caster, rune_spell, SPELL_GRACE) >  op->stats.grace) {
+	    new_draw_info(NDI_UNIQUE, 0,op,"You don't have enough grace.");
+	    return 0;
+	}
+	op->stats.grace -= SP_level_spellpoint_cost(caster, rune_spell, SPELL_GRACE);
+	op->stats.sp -= SP_level_spellpoint_cost(caster, rune_spell, SPELL_MANA);
     }
-    if(at) tmp=get_archetype(runename);
-    tmp->stats.Cha = op->level/2;  /* the invisibility parameter */
-    tmp->x=nx;
-    tmp->y=ny;
-    tmp->map = m;
-    tmp->direction=dir;  /* where any spell will go upon detonation */
-    tmp->level=SK_level(op);  /* what level to cast the spell at */
-    if(inspell||tmp->stats.dam) set_owner(tmp,op); /* runes without need no owner */
-    insert_ob_in_map(tmp,m,op,0);
+    /* already proper rune.  Note this should only be the case if other_arch was set */
+    if (rune_spell->type == RUNE) {
+	rune = rune_spell;
+    } else {
+	rune = get_archetype(GENERIC_RUNE);
+	sprintf(buf,"You set off a rune of %s",rune_spell->name);
+	rune->msg=add_string(buf);
+	tmp = get_object();
+	copy_object(rune_spell, tmp);
+	insert_ob_in_ob(tmp, rune);
+	if (spell->face != blank_face)
+	    rune->face = spell->face;
+    }
+    rune->level = caster_level(caster, spell);
+    rune->stats.Cha = rune->level/2;  /* the invisibility parameter */
+    rune->x=nx;
+    rune->y=ny;
+    rune->map = m;
+    rune->direction=dir;  /* where any spell will go upon detonation */
+    set_owner(rune,op); /* runes without need no owner */
+    set_spell_skill(op, caster, spell, rune);
+    insert_ob_in_map(rune,m,op,0);
     return 1;
 
 }
+
 
 
 /*  move_rune:  peterm
   comments on runes:
     rune->level	    :	    level at which rune will cast its spell.
     rune->hp	    :	    number of detonations before rune goes away
-    rune->sp	    :	    index of the spell the rune casts
     rune->msg	    :	    message the rune displays when it goes off
     rune->direction :	    direction it will cast a spell in
     rune->dam	    :	    damage the rune will do if it doesn't cast spells
@@ -181,21 +176,20 @@ void move_rune(object *op) {
     int det=0;
     if(!op->level) {return;}  /* runes of level zero cannot detonate. */
     det=op->invisible;
-    if(!(rndm(0, MAX(1,(op->stats.Cha))-1)))
-	{
+    if(!(rndm(0, MAX(1,(op->stats.Cha))-1))) {
 	op->invisible=0;
 	op->speed_left-=1;
-	}
+    }
     else
 	op->invisible=1;
     if(op->invisible!=det)
-    update_object(op,UP_OBJ_FACE);
+	update_object(op,UP_OBJ_FACE);
 }
 
 
 /*  peterm: rune_attack
-
-  function handles those runes which detonate but do not cast spells.  */
+ * function handles those runes which detonate but do not cast spells.  
+ */
 
 
 void rune_attack(object *op,object *victim)
@@ -219,72 +213,77 @@ void rune_attack(object *op,object *victim)
 }
 
 /*  This function generalizes attacks by runes/traps.  This ought to make
-    it possible for runes to attack from the inventory, 
-    it'll spring the trap on the victim.  */
-   
+ *  it possible for runes to attack from the inventory, 
+ *  it'll spring the trap on the victim.
+ */
 void spring_trap(object *trap,object *victim)
-{  int spell_in_rune;
-   object *env;
-   tag_t trap_tag = trap->count;
+{
+    object *env;
+    tag_t trap_tag = trap->count;
 
-  /* Prevent recursion */
-  if (trap->stats.hp <= 0)
-    return;
- 
-  if (QUERY_FLAG(trap,FLAG_IS_LINKED))
+    /* Prevent recursion */
+    if (trap->stats.hp <= 0)
+	return;
+
+    if (QUERY_FLAG(trap,FLAG_IS_LINKED))
 	  use_trigger(trap);
-  
-  /*  get the spell number from the name in the slaying field, and set
-      that as the spell to be cast. */
-  if ((spell_in_rune = look_up_spell_by_name (NULL, trap->slaying)) != -1)
-    trap->stats.sp=spell_in_rune;
 
-  /* Only living objects can trigger runes that don't cast spells, as
-   * doing direct damage to a non-living object doesn't work anyway.
-   * Typical example is an arrow attacking a door.
-   */
-  if ( ! QUERY_FLAG (victim, FLAG_ALIVE) && ! trap->stats.sp)
-    return;
+    /* Only living objects can trigger runes that don't cast spells, as
+     * doing direct damage to a non-living object doesn't work anyway.
+     * Typical example is an arrow attacking a door.
+     */
+    if ( ! QUERY_FLAG (victim, FLAG_ALIVE) && !trap->inv && !trap->other_arch)
+	return;
 
-  trap->stats.hp--;  /*decrement detcount */
-  if(victim) if(victim->type==PLAYER) new_draw_info(NDI_UNIQUE, 0,victim,trap->msg);
-  /*  Flash an image of the trap on the map so the poor sod
-   *   knows what hit him.  */
-  for (env = trap; env->env != NULL; env = env->env)
-    ;
-  trap_show(trap,env);  
+    trap->stats.hp--;  /*decrement detcount */
 
-  if ( ! trap->stats.sp)
-  {
-    rune_attack(trap,victim); 
-    if (was_destroyed (trap, trap_tag))
-      return;
-  }
-  else
-  {
-    /* This is necessary if the trap is inside something else */
-    remove_ob(trap);
-    trap->x=victim->x;trap->y=victim->y;
-    insert_ob_in_map(trap,victim->map,trap,0);
-    if (was_destroyed (trap, trap_tag))
-      return;
-    cast_spell(trap,trap,trap->direction,trap->stats.sp,1,spellNormal,NULL);
-  }
+    if(victim && victim->type==PLAYER) 
+	new_draw_info(NDI_UNIQUE, 0,victim,trap->msg);
 
-  if (trap->stats.hp <= 0) {
-    trap->type=98;  /* make the trap impotent */
-    trap->stats.food=20;  /* make it stick around until its spells are gone */
-    SET_FLAG(trap,FLAG_IS_USED_UP);
-  }
+    /*  Flash an image of the trap on the map so the poor sod
+     *   knows what hit him.  
+     */
+    for (env = trap; env->env != NULL; env = env->env) ;
+    trap_show(trap,env);  
+
+    /* Only if it is a spell do we proceed here */
+    if ((trap->inv && trap->inv->type == SPELL) ||
+	(trap->other_arch && trap->other_arch->clone.type == SPELL)) {
+	object *spell;
+	/* This is necessary if the trap is inside something else */
+	remove_ob(trap);
+	trap->x=victim->x;
+	trap->y=victim->y;
+	insert_ob_in_map(trap,victim->map,trap,0);
+	if (was_destroyed (trap, trap_tag))
+	    return;
+
+	if (trap->inv)
+	    cast_spell(trap,trap,trap->direction,trap->inv,NULL);
+	else {
+	    spell = arch_to_object(trap->other_arch);
+	    cast_spell(trap,trap,trap->direction,spell,NULL);
+	    free_object(spell);
+	}
+    } else {
+	rune_attack(trap,victim); 
+	if (was_destroyed (trap, trap_tag))
+	    return;
+    }
+
+    if (trap->stats.hp <= 0) {
+	trap->type=SIGN;  /* make the trap impotent */
+	trap->stats.food=20;  /* make it stick around until its spells are gone */
+	SET_FLAG(trap,FLAG_IS_USED_UP);
+    }
 }
 
-/*  dispel_rune:  by peterm  
+/* dispel_rune:  by peterm  
  * dispels the target rune, depending on the level of the actor
  * and the level of the rune  risk flag, if true, means that there is
  * a chance that the trap/rune will detonate 
  */
-
-int dispel_rune(object *op,int dir,int risk)
+int dispel_rune(object *op,object *caster, object *spell, object *skill, int dir)
 {
     object *tmp,*tmp2;
     int searchflag = 1, mflags;
@@ -336,27 +335,23 @@ int dispel_rune(object *op,int dir,int risk)
 	new_draw_info(NDI_UNIQUE, 0,op,"There's nothing there!");
 	return 0;
     }
-    trap_disarm(op,tmp,risk);
+    trap_disarm(op,tmp,0, skill);
     return 1;
 	
 }
 
 int trap_see(object *op,object *trap) {
-  char buf[MAX_BUF];
-  int chance;
+    int chance;
 
-  chance = random_roll(0, 99, op, PREFER_HIGH);;
+    chance = random_roll(0, 99, op, PREFER_HIGH);;
   
-  /*  decide if we see the rune or not */
-  if((trap->stats.Cha==1) || (chance >
-        MIN(95,MAX(5,((int)((float) (op->map->difficulty 
-	+ trap->level + trap->stats.Cha-op->level)/10.0 * 50.0))))))
-  {
-      sprintf(buf,"You spot a %s!",trap->name);
-      new_draw_info(NDI_UNIQUE, 0,op,buf);
-      return 1;
-  }
-  return 0;
+    /*  decide if we see the rune or not */
+    if((trap->stats.Cha==1) || (chance > MIN(95,MAX(5,((int)((float) (op->map->difficulty 
+	+ trap->level + trap->stats.Cha-op->level)/10.0 * 50.0)))))) {
+	new_draw_info_format(NDI_UNIQUE, 0,op,"You spot a %s!",trap->name);
+	return 1;
+    }
+    return 0;
 }
 
 int trap_show(object *trap, object *where) {
@@ -371,22 +366,17 @@ int trap_show(object *trap, object *where) {
 
 }
 
-#ifndef sqr
-#define sqr(x) ((x)*(x))
-#endif
-int trap_disarm(object *disarmer, object *trap, int risk) {
 
-  int trapworth;  /* need to compute the experience worth of the trap
+int trap_disarm(object *disarmer, object *trap, int risk, object *skill) {
+    int trapworth;  /* need to compute the experience worth of the trap
                      before we kill it */
-  int disarmer_level = SK_level (disarmer);
 
-  /* this formula awards a more reasonable amount of exp */
-  trapworth =  MAX(1,trap->level)  * disarmer->map->difficulty *
-	sqr(MAX(trap->stats.dam,spells[trap->stats.sp].sp)) /
-	disarmer_level;
+    /* this formula awards a more reasonable amount of exp */
+    trapworth =  MAX(1,trap->level)  * disarmer->map->difficulty *
+	sqr(MAX(trap->stats.dam,trap->inv?trap->inv->level:1)) /
+	skill->level;
 
-    if(!(random_roll(0, (MAX(2,
-       MIN(20,trap->level-disarmer_level
+    if(!(random_roll(0, (MAX(2, MIN(20,trap->level-skill->level
 	   +5 - disarmer->stats.Dex/2))-1), disarmer, PREFER_LOW)))
         {
             new_draw_info_format(NDI_UNIQUE, 0,disarmer,
@@ -404,7 +394,7 @@ int trap_disarm(object *disarmer, object *trap, int risk) {
         {
             new_draw_info_format(NDI_UNIQUE, 0,disarmer,
                     "You fail to disarm the %s.",trap->name);
-	    if(! (random_roll(0, (MAX(2,disarmer_level-trap->level
+	    if(! (random_roll(0, (MAX(2,skill->level-trap->level 
 	       + disarmer->stats.Dex/2-6))-1, disarmer, PREFER_LOW)) &&risk) {
 		new_draw_info(NDI_UNIQUE, 0,disarmer,"In fact, you set it off!");
 		spring_trap(trap,disarmer);
@@ -415,77 +405,40 @@ int trap_disarm(object *disarmer, object *trap, int risk) {
 
 
 /*  traps need to be adjusted for the difficulty of the map.  The
-default traps are too strong for wimpy level 1 players, and 
-unthreatening to anyone of high level */
-
-void trap_adjust(object *trap, int difficulty)
-{ int i;
-  /*  first we set the sp value of the trap if it has a spell in it. */
-  if(trap->slaying) {
-	trap->stats.sp = look_up_spell_name(trap->slaying);
-	trap->stats.dam = 0;
-  }
-  if(trap->stats.sp ==-1) trap->stats.sp = 0;
-
-  /* now we set the trap level to match the difficulty of the level */
-  /* the formula below will give a level from 1 to (2*difficulty) with */
-  /* a peak probability at difficulty */
-
-  trap->level = MAX(1, rndm(0, difficulty-1) + rndm(0, difficulty-1));
-
-  /* set the hiddenness of the trap, similar formula to above */
-  trap->stats.Cha = rndm(0, 19) + rndm(0, difficulty-1) + rndm(0, difficulty-1);
-
-  /* set the damage of the trap if it's not a spellcasting trap 
-	we get 0-4 pts of damage per level of difficulty of the map in
-        the trap*/
-
-  if(trap->stats.sp == 0) {
-	trap->stats.dam = 0;
-	for(i=0;i<difficulty;i++) trap->stats.dam+=rndm(0, 4);
-  }
-    
-
-  /*  the poison trap special case */
-  if(trap->attacktype & AT_POISON)
-      trap->stats.dam = MAX(1, rndm(0, difficulty-1));  
-
-  /*  so we get an appropriate amnt of exp for AT_DEATH traps */
-  if(trap->attacktype & AT_DEATH) trap->stats.dam = 127;
-
-}
-
-/* Should this be here or in spell_effect.c?  I guess this is a bit
- * more appropriate.  op is the caster, stringarg is the parameter,
- * type is the spell number - SP_GLYPH or SP_RUNE_MAGIC
+ * default traps are too strong for wimpy level 1 players, and 
+ * unthreatening to anyone of high level 
  */
-int cast_generic_rune(object *op, object *caster, int dir, char *stringarg, int type)
-{
-    int total_sp_cost=0, spellinrune;
 
-    spellinrune=look_up_spell_by_name(op,stringarg);
-    if (spellinrune == -1) {
-	new_draw_info_format(NDI_UNIQUE, 0,op,"Could not find a spell by name of %s", stringarg);
+void trap_adjust(object *trap, int difficulty) {
+    int i;
 
-    /* can only put cleric spells in glyphs, only mage spells in magic runes */
-    } else if (spells[spellinrune].cleric != spells[type].cleric) {
-	new_draw_info_format(NDI_UNIQUE, 0,op,"You can't make a %s of %s", spells[type].name,
-		      spells[spellinrune].name);
-    } else {
-	/* Everything checks out.  Note that since grace can go negative, we don't
-	 * have any special check for that.
+    /* now we set the trap level to match the difficulty of the level
+     * the formula below will give a level from 1 to (2*difficulty) with 
+     * a peak probability at difficulty 
+     */
+
+    trap->level = MAX(1, rndm(0, difficulty-1) + rndm(0, difficulty-1));
+
+    /* set the hiddenness of the trap, similar formula to above */
+    trap->stats.Cha = rndm(0, 19) + rndm(0, difficulty-1) + rndm(0, difficulty-1);
+
+	if (!trap->other_arch && !trap->inv) {
+	/* set the damage of the trap.
+	 * we get 0-4 pts of damage per level of difficulty of the map in
+	 * the trap
 	 */
-	total_sp_cost=SP_level_spellpoint_cost(op,caster,spellinrune) + spells[spellinrune].sp;
-	if(type == SP_RUNE_MAGIC && op->stats.sp<total_sp_cost) {
-	    new_draw_info(NDI_UNIQUE, 0,op,"Not enough spellpoints.");
-	    total_sp_cost = 0;
-	} else {
-	    write_rune(op,dir,spellinrune,caster->level,stringarg);
-	}
+
+	trap->stats.dam = 0;
+	for(i=0;i<difficulty;i++) 
+	    trap->stats.dam+=rndm(0, 4);
+    
+	/*  the poison trap special case */
+	if(trap->attacktype & AT_POISON)
+	    trap->stats.dam = MAX(1, rndm(0, difficulty-1));  
+
+	/*  so we get an appropriate amnt of exp for AT_DEATH traps */
+	if(trap->attacktype & AT_DEATH) trap->stats.dam = 127;
     }
-    /* free the spell arg */
-    if (stringarg && settings.casting_time == TRUE) {
-	free(stringarg);stringarg=NULL;
-    }
-    return total_sp_cost;
+
 }
+

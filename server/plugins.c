@@ -772,11 +772,8 @@ CFParm* CFWSpringTrap(CFParm* PParm)
 /* 0 - op;                                                                   */
 /* 1 - caster;                                                               */
 /* 2 - direction;                                                            */
-/* 3 - type of casting;                                                      */
-/* 4 - is it an ability or a wizard spell ?                                  */
-/* 5 - spelltype;                                                            */
-/* 6 - optional args;                                                        */
-/* 7 - type of firing;                                                       */
+/* 3 - spell object                                                          */
+/* 4 - optional args;                                                        */
 /*                                                                           */
 /*****************************************************************************/
 CFParm* CFWCastSpell(CFParm* PParm)
@@ -784,12 +781,10 @@ CFParm* CFWCastSpell(CFParm* PParm)
     static int val;
     CFParm *CFP;
     CFP = (CFParm*)(malloc(sizeof(CFParm)));
-/*int cast_spell(object *op, object *caster, int dir, int type, int ability, */
-/*SpellTypeFrom item, char *stringarg); */
+    /* int cast_spell(object *op, object *caster,int dir,object *spell_ob, char *stringarg)*/
     val = cast_spell((object *)(PParm->Value[0]),(object *)(PParm->Value[1]),
-        *(int *)(PParm->Value[2]),*(int *)(PParm->Value[3]),
-        *(int *)(PParm->Value[4]),*(SpellTypeFrom *)(PParm->Value[5]),
-        (char *)(PParm->Value[6])/*,*(int *) (PParm->Value[7])*/);
+        *(int*)(PParm->Value[2]), (object*)(PParm->Value[3]),
+        (char *)(PParm->Value[4]));
     CFP->Value[0] = (void *)(&val);
     return CFP;
 };
@@ -1009,7 +1004,7 @@ CFParm* CFWDoForgetSpell(CFParm* PParm)
 {
     do_forget_spell(
         (object *)(PParm->Value[0]),
-        *(int *)(PParm->Value[1])
+        (char *)(PParm->Value[1])
     );
     return NULL;
 };
@@ -1025,7 +1020,7 @@ CFParm* CFWDoLearnSpell(CFParm* PParm)
 {
     do_learn_spell(
         (object *)(PParm->Value[0]),
-        *(int *)(PParm->Value[1]),
+        (object *)(PParm->Value[1]),
         *(int *)(PParm->Value[2])
     );
     return NULL;
@@ -1040,13 +1035,14 @@ CFParm* CFWDoLearnSpell(CFParm* PParm)
 CFParm* CFWCheckSpellKnown(CFParm* PParm)
 {
     CFParm *CFP;
-    static int val;
+    static object *val;
+
     CFP = (CFParm*)(malloc(sizeof(CFParm)));
     val = check_spell_known(
         (object *)(PParm->Value[0]),
-        *(int *)(PParm->Value[1])
+        (char *)(PParm->Value[1])
         );
-    CFP->Value[0] = &val;
+    CFP->Value[0] = val;
     return CFP;
 };
 
@@ -1210,12 +1206,16 @@ CFParm* CFWReadyMapName(CFParm* PParm)
 /*****************************************************************************/
 /* 0 - object to increase experience of.                                     */
 /* 1 - amount of experience to add.                                          */
+/* 2 - skill name to add it to						     */
+/* 3 - flags for this							     */
 /*****************************************************************************/
 CFParm* CFWAddExp(CFParm* PParm)
 {
-    add_exp(
+    change_exp(
         (object *)(PParm->Value[0]),
-        *(int *)(PParm->Value[1])
+        *(int *)(PParm->Value[1]), 
+	(char*)(PParm->Value[2]),
+	*(int *)(PParm->Value[3])
     );
     return(PParm);
 };

@@ -10,7 +10,6 @@
 #ifndef TIMERS_H_
 #define TIMERS_H_
 
-#include <version.h>
 #include <global.h>
 #include <object.h>
 

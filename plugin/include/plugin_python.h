@@ -306,13 +306,14 @@ static PyObject* CFSkillWoodsman(PyObject* self, PyObject* args);
 static PyObject* CFSkillInscription(PyObject* self, PyObject* args);
 static PyObject* CFSkillMeleeWeapons(PyObject* self, PyObject* args);
 static PyObject* CFSkillThrowing(PyObject* self, PyObject* args);
-static PyObject* CFSkillSpellCasting(PyObject* self, PyObject* args);
+/*static PyObject* CFSkillSpellCasting(PyObject* self, PyObject* args);*/
 static PyObject* CFSkillRemoveTraps(PyObject* self, PyObject* args);
 static PyObject* CFSkillSetTraps(PyObject* self, PyObject* args);
 static PyObject* CFSkillUseMagicItem(PyObject* self, PyObject* args);
 static PyObject* CFSkillPraying(PyObject* self, PyObject* args);
 static PyObject* CFSkillClawing(PyObject* self, PyObject* args);
 static PyObject* CFSkillLevitation(PyObject* self, PyObject* args);
+#if 0
 /* Spell id wrappers */
 static PyObject* CFSpellBullet(PyObject* self, PyObject* args);
 static PyObject* CFSpellSmallFireball(PyObject* self, PyObject* args);
@@ -516,6 +517,7 @@ static PyObject* CFSpellVitriol(PyObject* self, PyObject* args);
 static PyObject* CFSpellVitriolSplash(PyObject* self, PyObject* args);
 static PyObject* CFSpellIronwoodSkin(PyObject* self, PyObject* args);
 static PyObject* CFSpellWrathfullEye(PyObject* self, PyObject* args);
+#endif
 static PyObject* CFAttackTypePhysical(PyObject* self, PyObject* args);
 static PyObject* CFAttackTypeMagic(PyObject* self, PyObject* args);
 static PyObject* CFAttackTypeFire(PyObject* self, PyObject* args);
@@ -854,13 +856,14 @@ static PyMethodDef CFPythonMethods[] =
         {"SkillInscription", CFSkillInscription, METH_VARARGS},
         {"SkillMeleeWeapons", CFSkillMeleeWeapons, METH_VARARGS},
         {"SkillThrowing", CFSkillThrowing, METH_VARARGS},
-        {"SkillSpellcasting", CFSkillSpellCasting, METH_VARARGS},
+/*        {"SkillSpellcasting", CFSkillSpellCasting, METH_VARARGS},*/
         {"SkillRemoveTraps", CFSkillRemoveTraps, METH_VARARGS},
         {"SkillSetTraps", CFSkillSetTraps, METH_VARARGS},
         {"SkillUseMagicItem", CFSkillUseMagicItem, METH_VARARGS},
         {"SkillPraying", CFSkillPraying, METH_VARARGS},
         {"SkillClawing", CFSkillClawing, METH_VARARGS},
         {"SkillLevitation", CFSkillLevitation, METH_VARARGS},
+#if 0
 /* Spells wrappers */
         {"SpellBullet", CFSpellBullet, METH_VARARGS},
         {"SpellSmallFireball", CFSpellSmallFireball, METH_VARARGS},
@@ -1064,6 +1067,7 @@ static PyMethodDef CFPythonMethods[] =
         {"SpellVitriolSplash", CFSpellVitriolSplash, METH_VARARGS},
         {"SpellIronwoodSkin", CFSpellIronwoodSkin, METH_VARARGS},
         {"SpellWrathfullEye", CFSpellWrathfullEye, METH_VARARGS},
+#endif
 /* Attack Types Wrappers */
         {"AttackTypePhysical", CFAttackTypePhysical, METH_VARARGS},
         {"AttackTypeMagic", CFAttackTypeMagic, METH_VARARGS},

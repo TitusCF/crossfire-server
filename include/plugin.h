@@ -28,7 +28,6 @@
 #define MODULEAPI
 #endif
 
-#include <version.h>
 #include <global.h>
 #include <object.h>
 

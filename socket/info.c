@@ -290,8 +290,8 @@ void rangetostring(object *pl,char *obuf)
 
 	case range_magic:
 	    if (settings.casting_time == TRUE) {
-		if (pl->casting > -1) {
-		    if (pl->casting == 0)
+		if (pl->casting_time > -1) {
+		    if (pl->casting_time == 0)
 			sprintf(obuf,"Range: Holding spell (%s)",
 				pl->spell->name);
 		    else
@@ -299,10 +299,10 @@ void rangetostring(object *pl,char *obuf)
 				pl->spell->name);
 		} else
 		    sprintf(obuf,"Range: spell (%s)", 
-			    spells[pl->contr->chosen_spell].name);
+			    pl->contr->ranges[range_magic]->name);
 	    } else
 		sprintf(obuf,"Range: spell (%s)", 
-			spells[pl->contr->chosen_spell].name);
+			pl->contr->ranges[range_magic]->name);
 	    break;
 
 	case range_misc:
@@ -315,8 +315,8 @@ void rangetostring(object *pl,char *obuf)
 	 * the player does not have a golem, reset some things.
 	 */
 	case range_golem:
-	    if (pl->contr->golem!=NULL)
-		sprintf(obuf,"Range: golem (%s)",pl->contr->golem->name);
+	    if (pl->contr->ranges[range_golem]!=NULL)
+		sprintf(obuf,"Range: golem (%s)",pl->contr->ranges[range_golem]->name);
 	    else {
 		pl->contr->shoottype = range_none;
 		strcpy(obuf,"Range: nothing");
@@ -325,7 +325,7 @@ void rangetostring(object *pl,char *obuf)
 
 	case range_skill:
 	    sprintf(obuf,"Skill: %s", pl->chosen_skill!=NULL ?
-		    skills[pl->chosen_skill->stats.sp].name : "none");
+		    pl->chosen_skill->name : "none");
 	    break;
 
 	default:
@@ -447,7 +447,7 @@ void magic_mapping_mark(object *pl, char *map_mark, int strength)
  * Mark Wedel
  */
 
-void draw_map(object *pl) 
+void draw_magic_map(object *pl) 
 {
     int x,y;
     char *map_mark = (char *) calloc(MAGIC_MAP_SIZE*MAGIC_MAP_SIZE, 1);

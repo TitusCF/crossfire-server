@@ -206,6 +206,7 @@ crossfire_SOURCES = \
 	shop.c\
 	skills.c\
 	skill_util.c\
+	spell_attack.c\
 	spell_effect.c\
 	spell_util.c\
 	swamp.c\
@@ -244,9 +245,10 @@ am_crossfire_OBJECTS = alchemy.$(OBJEXT) apply.$(OBJEXT) \
 	monster.$(OBJEXT) move.$(OBJEXT) pets.$(OBJEXT) \
 	player.$(OBJEXT) plugins.$(OBJEXT) resurrection.$(OBJEXT) \
 	rune.$(OBJEXT) shop.$(OBJEXT) skills.$(OBJEXT) \
-	skill_util.$(OBJEXT) spell_effect.$(OBJEXT) \
-	spell_util.$(OBJEXT) swamp.$(OBJEXT) swap.$(OBJEXT) \
-	time.$(OBJEXT) timers.$(OBJEXT) weather.$(OBJEXT)
+	skill_util.$(OBJEXT) spell_attack.$(OBJEXT) \
+	spell_effect.$(OBJEXT) spell_util.$(OBJEXT) swamp.$(OBJEXT) \
+	swap.$(OBJEXT) time.$(OBJEXT) timers.$(OBJEXT) \
+	weather.$(OBJEXT)
 crossfire_OBJECTS = $(am_crossfire_OBJECTS)
 @HAVE_LIBDL_TRUE@crossfire_DEPENDENCIES = ../common/libcross.a \
 @HAVE_LIBDL_TRUE@	../random_maps/librandom_map.a \
@@ -273,7 +275,8 @@ am__depfiles_maybe = depfiles
 @AMDEP_TRUE@	./$(DEPDIR)/player.Po ./$(DEPDIR)/plugins.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/resurrection.Po ./$(DEPDIR)/rune.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/shop.Po ./$(DEPDIR)/skill_util.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/skills.Po ./$(DEPDIR)/spell_effect.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/skills.Po ./$(DEPDIR)/spell_attack.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/spell_effect.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/spell_util.Po ./$(DEPDIR)/swamp.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/swap.Po ./$(DEPDIR)/time.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/timers.Po ./$(DEPDIR)/weather.Po
@@ -367,6 +370,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/shop.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/skill_util.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/skills.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/spell_attack.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/spell_effect.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/spell_util.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/swamp.Po@am__quote@

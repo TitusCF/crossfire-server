@@ -6,7 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2001 Mark Wedel & Crossfire Development Team
+    Copyright (C) 2001-2003 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -26,7 +26,6 @@
     The authors can be reached via e-mail at crossfire-devel@real-time.com
 */
 
-#include <version.h>
 #include <global.h>
 #include <object.h>
 #include <tod.h>
@@ -363,24 +362,28 @@ static void enter_map(object *op, mapstruct *newmap, int x, int y) {
     }
 
     /* Update any golems */
-    if(op->type == PLAYER && op->contr->golem != NULL) {
-	int i = find_free_spot(op->contr->golem->arch,newmap, x, y, 1, SIZEOFFREE+1);
+    if(op->type == PLAYER && op->contr->ranges[range_golem] != NULL) {
+	int i = find_free_spot(op->contr->ranges[range_golem]->arch,newmap,
+			       x, y, 1, SIZEOFFREE+1);
 
-	remove_ob(op->contr->golem);
+	remove_ob(op->contr->ranges[range_golem]);
 	if (i==-1) {
-	    remove_friendly_object(op->contr->golem);
-	    free_object(op->contr->golem);
-	    op->contr->golem=NULL;
+	    remove_friendly_object(op->contr->ranges[range_golem]);
+	    free_object(op->contr->ranges[range_golem]);
+	    op->contr->ranges[range_golem]=NULL;
+	    op->contr->golem_count=0;
 	}
 	else {
 	    object *tmp;
-	    for (tmp=op->contr->golem; tmp!=NULL; tmp=tmp->more) {
+	    for (tmp=op->contr->ranges[range_golem]; tmp!=NULL; tmp=tmp->more) {
 		tmp->x = x + freearr_x[i]+ (tmp->arch==NULL?0:tmp->arch->clone.x);
 		tmp->y = y + freearr_y[i]+ (tmp->arch==NULL?0:tmp->arch->clone.y);
 		tmp->map = newmap;
 	    }
-	    insert_ob_in_map(op->contr->golem, newmap, NULL,0);
-	    op->contr->golem->direction = find_dir_2(op->x - op->contr->golem->x, op->y - op->contr->golem->y);
+	    insert_ob_in_map(op->contr->ranges[range_golem], newmap, NULL,0);
+	    op->contr->ranges[range_golem]->direction = 
+		find_dir_2(op->x - op->contr->ranges[range_golem]->x, 
+			   op->y - op->contr->ranges[range_golem]->y);
 	}
     }
     op->direction=0;
@@ -831,14 +834,13 @@ void process_players1(mapstruct *map)
 	if (map!=NULL && (pl->ob == NULL || pl->ob->map!=map))
 	    continue;
 	if (settings.casting_time == TRUE) {
-	    if (pl->ob->casting > 0){
-		pl->ob->casting--;
+	    if (pl->ob->casting_time > 0){
+		pl->ob->casting_time--;
 		pl->ob->start_holding = 1;
 	    }
 	    /* set spell_state so we can update the range in stats field */
-	    if ((pl->ob->casting == 0) && (pl->ob->start_holding ==1)){
+	    if ((pl->ob->casting_time == 0) && (pl->ob->start_holding ==1)){
 		pl->ob->start_holding = 0;
-		pl->ob->spell_state = 1;
 	    }
 	}
 	do_some_living(pl->ob);
@@ -957,8 +959,8 @@ void process_events (mapstruct *map)
 	    if (was_destroyed (op, tag))
 		continue;
 	}
-	if (settings.casting_time == TRUE && op->casting > 0)
-	    op->casting--;
+	if (settings.casting_time == TRUE && op->casting_time > 0)
+	    op->casting_time--;
 	if (op->speed_left <= 0)
 	    op->speed_left += FABS (op->speed);
     }

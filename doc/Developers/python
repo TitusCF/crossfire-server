@@ -37,8 +37,10 @@ object: A crossfire object. (In fact, it is a long).
 string: A character string.
 
 A
-AcquireSpell(object who, int spellid)
-  Makes "who" learn the spell identified by its spellid.
+AcquireSpell(object who, object *spell)
+  Makes "who" learn the spell identified by its spellobject.
+  special_prayer is denotes if this is a special prayer type spell
+  which should be removed when the player changes god
   Wrappers for all crossfire spellids are available under CFPython.
   Does not return a value.
 
@@ -67,10 +69,11 @@ CheckTrigger(object who, object what)
   Makes "who" test trigger "what".
   Does not return a value.
 
-CastSpell(object who, int spellid, int direction, string options)
-  Makes "who" casts a spell, identified by its id, into one direction and with
-  eventually some options (like "create food booze").
-  Does not return a value.
+CastSpell(object who, object spellob, int direction, string options)
+  Makes "who" casts a spell, identified by its spell object, into one
+  direction and with eventually some options (like "create food booze").  Does
+  not return a value.  Note that before spellob, this functions
+  second parameter was an integere for spelltype.
 
 CheckInvisibleObjectInside(object who, string id)
   Checks for the existence of an invisible object named "id" inside object
@@ -176,13 +179,18 @@ DirectionNW()
   Wrapper for the North-West direction.
   Return value: an integer representing the direction.
 
-DoKnowSpell()
+DoKnowSpell(object *who, char *spell)
+   Checks to see if 'who' knows the spell by the name of 'spell'.
+   returns the spell object if they do, null if they don't.
 
 E
 F
 FindPlayer()
 FixObject()
-ForgetSpell()
+
+ForgetSpell(object *who, char *spell)
+   Causes who to forget the spell named 'spell'.  who must be a player.
+
 
 G
 

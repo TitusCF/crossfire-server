@@ -101,7 +101,7 @@ void InitConnection(NewSocket *ns, uint32 from)
     ns->sound = 0;
     ns->ext2 = 0;
     ns->ext_title_flag = 1;
-    ns->skillexp = 0;
+    ns->exp64 = 0;
     ns->mapmode = Map0Cmd;
     ns->darkness = 1;
     ns->status = Ns_Add;

@@ -20,9 +20,11 @@ metaserver_server crossfire.real-time.com
 metaserver_host put.your.hostname.here
 metaserver_port 13326
 metaserver_comment Put a comment here.
+
 # values for the new big worldmap, and weather. Only use if you are using the
 # new bigmap.
 #
+
 worldmapstartx 100
 worldmapstarty 100
 worldmaptilesx 30
@@ -31,6 +33,18 @@ worldmaptilesizex 50
 worldmaptilesizey 50
 dynamiclevel 1
 fastclock 1
+
+# item_power_factor is the relation of how the players equipped item_power
+# total relates to there overall level.  If 1.0, then sum of the characters
+# equipped item's item_power can not be greater than their overall level.
+# if 2.0, then that sum can not exceed twice the character overall level.
+# by setting this to a high enough value, you can effectively disable
+# the item_power code.
+
+item_power_factor 1.0
+
+# See notes for most of thse in include/config.h
+
 # dm_mail your_email@addr.here
 
 # Makes death non permanent.  If enabled and you die, you lose a bunch of

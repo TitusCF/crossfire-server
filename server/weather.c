@@ -35,9 +35,6 @@
 #include <sproto.h>
 #endif
 
-static void spin_globe(void);
-static void write_weather_images(void);
-
 extern unsigned long todtick;
 extern weathermap_t **weathermap;
 

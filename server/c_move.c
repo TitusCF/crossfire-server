@@ -98,34 +98,3 @@ int command_stay (object *op, char *params)
 }
 
 
-/*  peterm:  command_search finds runes.  It uses:
-           trap_see uses various rules to determine whether
-                   the trap is seen or not.  It informs op if
-                   a trap is found.
-	   trap_show(object *trap, object *where) briefly shows up the trap, 
-	    as if it detonated.  This is just to inform the player of where the trap
-            is:  it might be hidden underneath something.
-  It searches both around the player--9 squares counting the one he's on
-  and the inventories of all the objects around him for traps.  (Including his own!!  Hmmm.)
-
-*/
-
-int command_search (object *op, char *params) {  
-   if(!change_skill(op,SK_FIND_TRAPS))
-        return 0;
-   else {
-        int success = do_skill(op,op,0,NULL);
-        return success;
-   }
-}
-
-int command_disarm (object *op, char *params) {
-   if(!change_skill(op,SK_REMOVE_TRAP)) 
-        return 0;
-   else {
-        int success = do_skill(op,op,0,NULL); 
-        return success;
-   }
-}
-
-  

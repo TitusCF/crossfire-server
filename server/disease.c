@@ -264,10 +264,10 @@ int check_infection(object *disease) {
 
 
 /*  check to see if an object is infectable:
-	 objects with immunity aren't infectable.
-	 objects already infected aren't infectable.
-	 dead objects aren't infectable.
-	 undead objects are infectible only if specifically named.
+ *	 objects with immunity aren't infectable.
+ *	 objects already infected aren't infectable.
+ *	 dead objects aren't infectable.
+ *	 undead objects are infectible only if specifically named.
 */
 int infect_object(object *victim, object *disease, int force) {
     object *tmp;
@@ -317,23 +317,21 @@ int infect_object(object *victim, object *disease, int force) {
 
     if(get_owner(disease)) {
 	set_owner(new_disease,disease->owner);
-	new_disease->chosen_skill = disease->chosen_skill;
-	new_disease->exp_obj = disease->exp_obj;
+
+	/* Only need to update skill if different */
+	if (new_disease->skill != disease->skill) {
+	    if (new_disease->skill) free_string(new_disease->skill); 
+	    if (disease->skill) new_disease->skill = add_refcount(disease->skill);
+	}
     }
     else {  /* for diseases which are passed by hitting, set owner and praying skill*/
 	if(disease->env && disease->env->type==PLAYER) {
 	    object *player = disease->env;
 
-	    new_disease->chosen_skill = find_skill(player,SK_PRAYING);
-
-	    /* Not all players have praying.  A side effect here is that
-	     * players can infect others with diseases they get from traps,
-	     * but that is not likely a big deal.
+	    set_owner(new_disease,player);
+	    /* the skill pointer for these diseases should already be set up -
+	     * hardcoding in 'praying' is not the right approach.
 	     */
-	    if (new_disease->chosen_skill) {
-		set_owner(new_disease,player);
-		new_disease->exp_obj = new_disease->chosen_skill->exp_obj;
-	    }
 	}
     }
 
@@ -368,117 +366,121 @@ causes symptoms, and modifies existing symptoms in the case of
 existing diseases.  */
 
 int do_symptoms(object *disease) {
-  object *symptom;
-  object *victim;
-  object *tmp;
-  victim = disease->env;
-  /* This is a quick hack - for whatever reason, disease->env will point
-   * back to disease, causing endless loops.  Why this happens really needs
-   * to be found, but this should at least prevent the infinite loops.
-   */
-  if(victim == NULL || victim==disease) 
-    return 0;/* no-one to inflict symptoms on */
-  symptom = find_symptom(disease);
-  if(symptom==NULL) /* no symptom?  need to generate one! */
-    {
-      object *new_symptom;
-      /* first check and see if the carrier of the disease
-	 is immune.  If so, no symptoms!  */
-      if(!is_susceptible_to_disease(victim, disease)) return 0;
+    object *symptom;
+    object *victim;
+    object *tmp;
+    victim = disease->env;
 
-      /* check for an actual immunity */
+    /* This is a quick hack - for whatever reason, disease->env will point
+     * back to disease, causing endless loops.  Why this happens really needs
+     * to be found, but this should at least prevent the infinite loops.
+     */
 
-      /* do an immunity check */
-      if(victim->head) tmp = victim->head->inv;
-      else tmp = victim->inv;
+    if(victim == NULL || victim==disease) 
+	return 0;/* no-one to inflict symptoms on */
 
-      for(/* tmp initialized in if, above */;tmp;tmp=tmp->below) {
-	if(tmp->type == SIGN)  /* possibly an immunity, or diseased*/
-	  if(!strcmp(tmp->name,disease->name) && tmp->level >= disease->level)
-	    return 0;  /*Immune! */
-      }
+    symptom = find_symptom(disease);
+    if(symptom==NULL) {
+	/* no symptom?  need to generate one! */
+	object *new_symptom;
+
+	/* first check and see if the carrier of the disease is immune.  If so, no symptoms!  */
+	if(!is_susceptible_to_disease(victim, disease)) return 0;
+
+	/* check for an actual immunity */
+	/* do an immunity check */
+	if(victim->head) tmp = victim->head->inv;
+	else tmp = victim->inv;
+
+	for(/* tmp initialized in if, above */;tmp;tmp=tmp->below) {
+	    if(tmp->type == SIGN)  /* possibly an immunity, or diseased*/
+		if(!strcmp(tmp->name,disease->name) && tmp->level >= disease->level)
+		    return 0;  /*Immune! */
+	}
 		
-      new_symptom = get_archetype("symptom");
+	new_symptom = get_archetype("symptom");
 
-      /* Something special done with dam.  We want diseases to be more
-	 random in what they'll kill, so we'll make the damage they
-	 do random, note, this has a weird effect with progressive diseases.*/
-      if(disease->stats.dam != 0) {
-	int dam = disease->stats.dam;
-	/* reduce the damage, on average, 50%, and making things random. */
-	dam = random_roll(1, FABS(dam), victim, PREFER_LOW);
-	if(disease->stats.dam < 0) dam = -dam;
-	new_symptom->stats.dam = dam;
-      }
+	/* Something special done with dam.  We want diseases to be more
+	 * random in what they'll kill, so we'll make the damage they
+	 * do random, note, this has a weird effect with progressive diseases.
+	 */
+	if(disease->stats.dam != 0) {
+	    int dam = disease->stats.dam;
 
+	    /* reduce the damage, on average, 50%, and making things random. */
+
+	    dam = random_roll(1, FABS(dam), victim, PREFER_LOW);
+	    if(disease->stats.dam < 0) dam = -dam;
+	    new_symptom->stats.dam = dam;
+	}
 
  
-      new_symptom->stats.maxsp = disease->stats.maxsp; 
-      new_symptom->stats.food = new_symptom->stats.maxgrace;
+	new_symptom->stats.maxsp = disease->stats.maxsp; 
+	new_symptom->stats.food = new_symptom->stats.maxgrace;
 
-      FREE_AND_COPY(new_symptom->name, disease->name);
-      FREE_AND_COPY(new_symptom->name_pl, disease->name);
-      new_symptom->level = disease->level;
-      new_symptom->speed = disease->speed;
-      new_symptom->value = 0;
-      new_symptom->stats.Str =disease->stats.Str;
-      new_symptom->stats.Dex = disease->stats.Dex;
-      new_symptom->stats.Con = disease->stats.Con;
-      new_symptom->stats.Wis = disease->stats.Wis;
-      new_symptom->stats.Int = disease->stats.Int;
-      new_symptom->stats.Pow = disease->stats.Pow;
-      new_symptom->stats.Cha = disease->stats.Cha;
-      new_symptom->stats.sp  = disease->stats.sp;
-      new_symptom->stats.food =disease->last_eat;
-      new_symptom->stats.maxsp = disease->stats.maxsp;
-      new_symptom->last_sp = disease->last_sp;
-      new_symptom->stats.exp = 0;
-      new_symptom->stats.hp = disease->stats.hp;
-      new_symptom->msg = add_string(disease->msg);
-      new_symptom->attacktype = disease->attacktype;
-      new_symptom->other_arch = disease->other_arch;
+	FREE_AND_COPY(new_symptom->name, disease->name);
+	FREE_AND_COPY(new_symptom->name_pl, disease->name);
+	new_symptom->level = disease->level;
+	new_symptom->speed = disease->speed;
+	new_symptom->value = 0;
+	new_symptom->stats.Str =disease->stats.Str;
+	new_symptom->stats.Dex = disease->stats.Dex;
+	new_symptom->stats.Con = disease->stats.Con;
+	new_symptom->stats.Wis = disease->stats.Wis;
+	new_symptom->stats.Int = disease->stats.Int;
+	new_symptom->stats.Pow = disease->stats.Pow;
+	new_symptom->stats.Cha = disease->stats.Cha;
+	new_symptom->stats.sp  = disease->stats.sp;
+	new_symptom->stats.food =disease->last_eat;
+	new_symptom->stats.maxsp = disease->stats.maxsp;
+	new_symptom->last_sp = disease->last_sp;
+	new_symptom->stats.exp = 0;
+	new_symptom->stats.hp = disease->stats.hp;
+	new_symptom->msg = add_string(disease->msg);
+	new_symptom->attacktype = disease->attacktype;
+	new_symptom->other_arch = disease->other_arch;
 
-      set_owner(new_symptom,disease->owner);
-      /* Unfortunately, set_owner does the wrong thing to the skills pointers
-	 resulting in exp going into the owners *current* chosen skill. */
-      new_symptom->chosen_skill = disease->chosen_skill;
-      new_symptom->exp_obj = disease->exp_obj;
-		
-
-      CLEAR_FLAG(new_symptom,FLAG_NO_PASS);
-      insert_ob_in_ob(new_symptom,victim);
-      return 1;
+	set_owner(new_symptom,disease->owner);
+	if (new_symptom->skill != disease->skill) {
+	    if (new_symptom->skill) free_string(new_symptom->skill);
+	    if (disease->skill) new_symptom->skill = add_refcount(disease->skill);
+	}
+	CLEAR_FLAG(new_symptom,FLAG_NO_PASS);
+	insert_ob_in_ob(new_symptom,victim);
+	return 1;
     }
   
-  /* now deal with progressing diseases:  we increase the debility
-     caused by the symptoms.  */
+    /* now deal with progressing diseases:  we increase the debility
+     * caused by the symptoms.
+     */
 
-  if(disease->stats.ac!=0) {
-    float scale;
-    symptom->value += disease->stats.ac;
-    scale = 1.0 + symptom->value/100.0;
-    /* now rescale all the debilities */
-    symptom->stats.Str = (int) (scale*disease->stats.Str);
-    symptom->stats.Dex = (int) (scale*disease->stats.Dex);
-    symptom->stats.Con = (int) (scale*disease->stats.Con);
-    symptom->stats.Wis = (int) (scale*disease->stats.Wis);
-    symptom->stats.Int = (int) (scale*disease->stats.Int);
-    symptom->stats.Pow = (int) (scale*disease->stats.Pow);
-    symptom->stats.Cha = (int) (scale*disease->stats.Cha);
-    symptom->stats.dam = (int) (scale*disease->stats.dam);
-    symptom->stats.sp = (int)  (scale*disease->stats.sp);
-    symptom->stats.food = (int)  (scale*disease->last_eat);
-    symptom->stats.maxsp = (int)  (scale*disease->stats.maxsp);
-    symptom->last_sp = (int)  (scale*disease->last_sp);
-    symptom->stats.exp = 0;
-    symptom->stats.hp = (int) (scale*disease->stats.hp);
-    symptom->msg = add_string(disease->msg);
-    symptom->attacktype = disease->attacktype;
-    symptom->other_arch = disease->other_arch;
-  }
-  SET_FLAG(symptom,FLAG_APPLIED);
-  fix_player(victim);
-  return 1;
+    if(disease->stats.ac!=0) {
+	float scale;
+
+	symptom->value += disease->stats.ac;
+	scale = 1.0 + symptom->value/100.0;
+	/* now rescale all the debilities */
+	symptom->stats.Str = (int) (scale*disease->stats.Str);
+	symptom->stats.Dex = (int) (scale*disease->stats.Dex);
+	symptom->stats.Con = (int) (scale*disease->stats.Con);
+	symptom->stats.Wis = (int) (scale*disease->stats.Wis);
+	symptom->stats.Int = (int) (scale*disease->stats.Int);
+	symptom->stats.Pow = (int) (scale*disease->stats.Pow);
+	symptom->stats.Cha = (int) (scale*disease->stats.Cha);
+	symptom->stats.dam = (int) (scale*disease->stats.dam);
+	symptom->stats.sp = (int)  (scale*disease->stats.sp);
+	symptom->stats.food = (int)  (scale*disease->last_eat);
+	symptom->stats.maxsp = (int)  (scale*disease->stats.maxsp);
+	symptom->last_sp = (int)  (scale*disease->last_sp);
+	symptom->stats.exp = 0;
+	symptom->stats.hp = (int) (scale*disease->stats.hp);
+	symptom->msg = add_string(disease->msg);
+	symptom->attacktype = disease->attacktype;
+	symptom->other_arch = disease->other_arch;
+    }
+    SET_FLAG(symptom,FLAG_APPLIED);
+    fix_player(victim);
+    return 1;
 }
 
 
@@ -594,7 +596,8 @@ int cure_disease(object *sufferer,object *caster) {
 		    remove_symptoms(disease);
 		    remove_ob(disease);
 		    cure=1;
-		    if(caster) add_exp(caster,disease->stats.exp);
+		    if(caster) change_exp(caster,disease->stats.exp, 
+					  caster->chosen_skill?caster->chosen_skill->skill:NULL, 0);
 		    free_object(disease);
 	    }
 	}

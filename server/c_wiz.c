@@ -37,7 +37,6 @@
 #ifndef __CEXTRACT__
 #include <sproto.h>
 #endif
-#include <version.h>
 #include <spells.h>
 #include <treasure.h>
 #include <skills.h>
@@ -93,9 +92,10 @@ int command_loadtest(object *op, char *params){
 	for (x=0; x<settings.worldmaptilesx; x++)
 	for (y=0; y<settings.worldmaptilesy; y++){
 		sprintf (buf,"/world/world_%d_%d",x+settings.worldmapstartx,y+settings.worldmapstarty);
-		//new_draw_info_format(NDI_UNIQUE, 0, op,"going to %s",buf);
+		/*new_draw_info_format(NDI_UNIQUE, 0, op,"going to %s",buf);*/
 		command_goto (op, buf);
 	}
+	return 0;
 }
 
 int command_hide(object *op, char *params)
@@ -134,7 +134,7 @@ static object *find_object_both(char *params)
  */
 int command_setgod(object *op, char *params)
 {
-    object *ob;
+    object *ob, *god;
     char    *str;
 
     if (!params || !(str=strchr(params,' '))) {
@@ -154,16 +154,12 @@ int command_setgod(object *op, char *params)
     	new_draw_info_format(NDI_UNIQUE,0,op,"%s is not a player - can not change its god",ob->name);
     	return 1;
     }
-    change_skill(ob,SK_PRAYING);
-    if(!ob->chosen_skill||ob->chosen_skill->stats.sp!=SK_PRAYING) {
-    	new_draw_info_format(NDI_UNIQUE,0,op,"%s doesn't have praying skill.",ob->name);
-    	return 1;
-    }
-    if(find_god(str)==NULL) {
+    god = find_god(str);
+    if(god==NULL) {
     	new_draw_info_format(NDI_UNIQUE,0,op,"No such god %s.",str);
     	return 1;
     }
-    become_follower(ob,find_god(str));
+    become_follower(ob,god);
     return 1;
 }
 
@@ -819,32 +815,26 @@ int command_possess (object *op, char *params)
     tmp = get_object();
     copy_object(&at->clone, tmp);
     tmp = insert_ob_in_ob(tmp, victim);
-    (void)link_player_skill(victim, tmp);
     at = find_archetype("skill_melee_weapon");
     tmp = get_object();
     copy_object(&at->clone, tmp);
     tmp = insert_ob_in_ob(tmp, victim);
-    (void)link_player_skill(victim, tmp);
     at = find_archetype("skill_missile_weapon");
     tmp = get_object();
     copy_object(&at->clone, tmp);
     tmp = insert_ob_in_ob(tmp, victim);
-    (void)link_player_skill(victim, tmp);
     at = find_archetype("skill_use_magic_item");
     tmp = get_object();
     copy_object(&at->clone, tmp);
     tmp = insert_ob_in_ob(tmp, victim);
-    (void)link_player_skill(victim, tmp);
     at = find_archetype("skill_spellcasting");
     tmp = get_object();
     copy_object(&at->clone, tmp);
     tmp = insert_ob_in_ob(tmp, victim);
-    (void)link_player_skill(victim, tmp);
     at = find_archetype("skill_praying");
     tmp = get_object();
     copy_object(&at->clone, tmp);
     tmp = insert_ob_in_ob(tmp, victim);
-    (void)link_player_skill(victim, tmp);
     /* send the inventory to the client */
     curinv = victim->inv;
     while (curinv != NULL) {
@@ -933,47 +923,50 @@ int command_free (object *op, char *params)
     return 1;
   }
 
+/* This adds exp to a player.  We now allow adding to a specific skill.
+ */
 int command_addexp (object *op, char *params)
 {
-    char buf[MAX_BUF];
-    int i;
-    object *exp_ob,*skill;
+    char buf[MAX_BUF], skill[MAX_BUF];
+    int i, q;
+    object *skillob=NULL;
     player *pl;
 
-  if(params==NULL || sscanf(params, "%s %d", buf, &i)!=2) {
-       new_draw_info(NDI_UNIQUE, 0,op,"Usage: addexp [who] [how much].");
-       return 1;
+    if(params==NULL || ((q=sscanf(params, "%s %d", buf, &i))<2)) {
+	new_draw_info(NDI_UNIQUE, 0,op,"Usage: addexp [who] [how much].");
+	return 1;
     }
+
     for(pl=first_player;pl!=NULL;pl=pl->next) 
-      if(!strncmp(pl->ob->name,buf,MAX_NAME)) 
-        break;
+	if(!strncmp(pl->ob->name,buf,MAX_NAME)) 
+	    break;
+
     if(pl==NULL) {
-      new_draw_info(NDI_UNIQUE, 0,op,"No such player.");
-      return 1;
+	new_draw_info(NDI_UNIQUE, 0,op,"No such player.");
+	return 1;
     }
 
-    /* In new system: for dm adding experience to a player, only can 
-     * add exp if we satisfy the following: 
-     * 1) there is an associated skill readied by the player 
-     * 2) added exp doesnt result in exp_ob->stats.exp>MAX_EXP_IN_OBJ 
-     */
-
-    if((skill = pl->ob->chosen_skill) && ((exp_ob = pl->ob->chosen_skill->exp_obj)
-       || link_player_skill(pl->ob, skill))) { 
-	i = check_exp_adjust(exp_ob,i);
-	exp_ob->stats.exp += i;
-	player_lvl_adj(pl->ob, exp_ob);
-    } else {
-      new_draw_info(NDI_UNIQUE, 0,op,"Can't find needed experience object.");
-      new_draw_info(NDI_UNIQUE, 0,op,"Player has no associated skill readied.");
-      return 1;
+    if (q >= 3) {
+	skillob = find_skill_by_name(pl->ob, skill);
+	if (!skillob) {
+	    new_draw_info_format(NDI_UNIQUE, 0,op,"Unable to find skill %s in %s", skill, buf);
+	    return 1;
+	}
+	i = check_exp_adjust(skillob,i);
+	skillob->stats.exp += i;
+	calc_perm_exp(skillob);
+	player_lvl_adj(pl->ob, skillob);
     }
+
+
     pl->ob->stats.exp += i;
+    calc_perm_exp(pl->ob);
     player_lvl_adj(pl->ob, NULL);
+
     if (settings.real_wiz == FALSE)
 	SET_FLAG(pl->ob, FLAG_WAS_WIZ);
     return 1;
-  }
+}
 
 int command_speed (object *op, char *params)
 {
@@ -1240,17 +1233,19 @@ int command_invisible (object *op, char *params)
 static int command_learn_spell_or_prayer (object *op, char *params,
                                           int special_prayer)
 {
-    int spell;
+    object *tmp;
 
     if (op->contr == NULL || params == NULL)
         return 0;
 
-    if ((spell = look_up_spell_name (params)) <= 0) {
-        new_draw_info (NDI_UNIQUE, 0, op, "Unknown spell.");
-        return 1;
+    tmp = get_archetype(params);
+    if (!tmp) {
+	new_draw_info_format(NDI_UNIQUE, 0, op,
+		"Could not find a spell by name of %s\n", params);
+	return 0;
     }
-
-    do_learn_spell (op, spell, special_prayer);
+    do_learn_spell (op, tmp, special_prayer);
+    free_object(tmp);
     return 1;
 }
 
@@ -1266,17 +1261,10 @@ int command_learn_special_prayer (object *op, char *params)
 
 int command_forget_spell (object *op, char *params)
 {
-    int spell;
-
     if (op->contr == NULL || params == NULL)
         return 0;
 
-    if ((spell = look_up_spell_name (params)) <= 0) {
-        new_draw_info (NDI_UNIQUE, 0, op, "Unknown spell.");
-        return 1;
-    }
-
-    do_forget_spell (op, spell);
+    do_forget_spell (op, params);
     return 1;
 }
 /* GROS */

@@ -6,7 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2002 Mark Wedel & Crossfire Development Team
+    Copyright (C) 2002-2003 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -29,198 +29,136 @@
 #ifndef SPELLS_H
 #define SPELLS_H
 
-extern Fontindex fbface[];
-extern Fontindex lface[];
-extern Fontindex  mmface[];
-extern int turn_bonus[];
-extern int fear_bonus[];
-extern int cleric_chance[];
+#define PATH_NULL	0x00000000      /* 0 */
+#define PATH_PROT	0x00000001      /* 1 */
+#define PATH_FIRE	0x00000002      /* 2 */
+#define PATH_FROST	0x00000004	/* 4 */
+#define PATH_ELEC	0x00000008      /* 8 */
+#define PATH_MISSILE	0x00000010	/* 16 */
+#define PATH_SELF	0x00000020      /* 32 */
+#define PATH_SUMMON	0x00000040	/* 64 */
+#define PATH_ABJURE	0x00000080	/* 128 */
+#define PATH_RESTORE	0x00000100	/* 256 */
+#define PATH_DETONATE	0x00000200	/* 512 */
+#define PATH_MIND	0x00000400	/* 1024 */
+#define PATH_CREATE	0x00000800	/* 2048 */
+#define PATH_TELE	0x00001000	/* 4096 */
+#define PATH_INFO	0x00002000	/* 8192 */
+#define PATH_TRANSMUTE	0x00004000	/* 16384 */
+#define PATH_TRANSFER	0x00008000	/*  32768 */
+#define PATH_TURNING	0x00010000	/* 65536 */
+#define PATH_WOUNDING	0x00020000	/* 131072 */
+#define PATH_DEATH	0x00040000	/* 262144 */
+#define PATH_LIGHT	0x00080000	/* 524288 */
 
-typedef struct spell_struct {
-  char name[BIG_NAME];
-  short level;           /* Level required to cast this spell */
-  short sp;              /* Spellpoint-cost to cast it */
-  short charges;         /* If it can be used in wands, max # of charges */
-  float time;            /* How many ticks it takes to cast the spell */
-  short scrolls;         /* If it can be used from scrolls, max # of scrolls */
-  short scroll_chance;   /* 1-10 probability of finding this as scroll */
-  short books;           /* 1-10 probability of finding this as spellbook */
-  unsigned range:1;      /* True if this is a range attack spell */
-  unsigned defensive:1;  /* True if it is a defensive spell */
-  unsigned cleric:1;     /* True if it is a cleric-spell (wis-chance failure)*/
-  unsigned onself:1;     /* Should monsters cast this spell on themselves */
-  uint32 path;           /* Path this spell belongs to */
-  char *archname;	 /* Pointer to archetype used by spell */
-} spell;
+#define PATH_SP_MULT(op,spell) (((op->path_attuned & spell->path_attuned) ? 0.8 : 1) * \
+				((op->path_repelled & spell->path_attuned) ? 1.25 : 1))
 
-typedef struct
-{
-  sint16 bdam;  /*  base damage  */
-  sint16 bdur;  /*  base duration  */
-  sint16 ldam;  /*  damage adjustment for level  */
-  sint16 ldur;  /*  duration adjustment for level  */
-  sint16 spl;	/*  number of levels to increase cost by multiples of base */
-} spell_parameters;
+#define NRSPELLPATHS	20
+extern char *spellpathnames[NRSPELLPATHS];
 
-extern spell spells[NROFREALSPELLS];
+/* The only place this is really used is to allocate an array
+ * when printing out the spells the player knows. 
+ */
+#define NROFREALSPELLS	1024
 
-/* When adding new spells, don't insert into the middle of the list - 
- * add to the end of the list.  Some archetypes and treasures require
- * the spell numbers to be as they are.
+/* this is passed to SP_level_spellpoint_cost to determine
+ * what to check.  These values are also used in other places
+ * when we want to pass into a function if it is a cleric spell
+ * or a wizard (mana) spell.
+ */
+#define SPELL_MANA	0x1
+#define SPELL_GRACE	0x2
+#define SPELL_HIGHEST	0x3
+
+/* This is the subtype for the spells.  Start at 1 so that
+ * it is easy to see 0 as an uninitialized value.
+ * Note that for some spells, subtype pretty accurately
+ * describes the entire spell (SP_DETECT_MAGIC).  But for other, the subtype
+ * may not really say much (eg, SP_BOLT), and it is other
+ * fields within the object which really determines its properties.
+ * No effort is made to match these new numbers with the old ones,
+ * and given there is not a 1:1 mapping, you can't do that anyways.
  */
 
-enum spellnrs {
-  SP_BULLET,		SP_S_FIREBALL,		SP_M_FIREBALL,		/*0*/
-  SP_L_FIREBALL,	SP_BURNING_HANDS,
+#define SP_RAISE_DEAD	    1
+#define SP_RUNE		    2
+#define SP_MAKE_MARK	    3
+#define SP_BOLT		    4
+#define SP_BULLET	    5
+#define SP_EXPLOSION	    6
+#define SP_CONE		    7
+#define SP_BOMB		    8
+#define SP_WONDER	    9
+#define SP_SMITE	    10
+#define SP_MAGIC_MISSILE    11
+#define SP_SUMMON_GOLEM	    12
+#define SP_DIMENSION_DOOR   13
+#define SP_MAGIC_MAPPING    14
+#define SP_MAGIC_WALL	    15
+#define SP_DESTRUCTION	    16
+#define SP_PERCEIVE_SELF    17
+#define SP_WORD_OF_RECALL   18
+#define SP_INVISIBLE	    19
+#define SP_PROBE	    20
+#define SP_HEALING	    21
+#define SP_CREATE_FOOD	    22
+#define SP_EARTH_TO_DUST    23
+#define SP_CHANGE_ABILITY   24
+#define SP_BLESS	    25
+#define SP_CURSE	    26
+#define SP_SUMMON_MONSTER   27
+#define SP_CHARGING	    28
+#define SP_POLYMORPH	    29
+#define SP_ALCHEMY	    30
+#define SP_REMOVE_CURSE	    31
+#define SP_IDENTIFY	    32
+#define SP_DETECTION	    33
+#define SP_MOOD_CHANGE	    34
+#define SP_MOVING_BALL	    35
+#define SP_SWARM	    36
+#define SP_CHANGE_MANA	    37
+#define SP_DISPEL_RUNE	    38
+#define SP_CREATE_MISSILE   39
+#define SP_CONSECRATE	    40
+#define SP_ANIMATE_WEAPON   41
+#define SP_LIGHT	    42
+#define SP_CHANGE_MAP_LIGHT 43
+#define SP_FAERY_FIRE	    44
+#define SP_CAUSE_DISEASE    45
+#define SP_AURA		    46
+#define SP_TOWN_PORTAL	    47
 
-  SP_S_LIGHTNING,	SP_L_LIGHTNING,		SP_M_MISSILE,		/*5*/
-  SP_BOMB,		SP_GOLEM,
+/* Potion subtypes */
+#define POT_SPELL	    1
+#define POT_DUST	    2
+#define POT_FIGURINE	    3
+#define POT_BALM	    4
 
-  SP_FIRE_ELEM,		SP_EARTH_ELEM,		SP_WATER_ELEM,		/*10*/
-  SP_AIR_ELEM,		SP_D_DOOR,	     
+/* This is for the force subtypes */
+#define FORCE_CONFUSION		1
+#define FORCE_CHANGE_ABILITY	2
 
-  SP_EARTH_WALL,	SP_PARALYZE,		SP_ICESTORM,		/*15*/
-  SP_MAGIC_MAPPING,	SP_TURN_UNDEAD,
+#define PATH_TIME_MULT(op,spell) (((op->path_attuned & spell->path_attuned) ? 0.8 : 1) * \
+				((op->path_repelled & spell->path_attuned) ? 1.25 : 1))
 
-  SP_FEAR,		SP_POISON_CLOUD,	SP_WOW,			/*20*/
-  SP_DESTRUCTION,	SP_PERCEIVE,	     
-
-  SP_WOR,		SP_INVIS,		SP_INVIS_UNDEAD,	/*25*/
-  SP_PROBE,		SP_LARGE_BULLET,	     
-
-  SP_IMPROVED_INVIS,	SP_HOLY_WORD,		SP_MINOR_HEAL,		/*30*/
-  SP_MED_HEAL,		SP_MAJOR_HEAL,
-
-  SP_HEAL,		SP_CREATE_FOOD,		SP_EARTH_DUST,		/*35*/
-  SP_ARMOUR,		SP_STRENGTH,
-
-  SP_DEXTERITY,		SP_CONSTITUTION,	SP_CHARISMA,		/*40*/
-  SP_FIRE_WALL,		SP_FROST_WALL,
-
-  SP_PROT_COLD,		SP_PROT_ELEC,		SP_PROT_FIRE,		/*45*/
-  SP_PROT_POISON,	SP_PROT_SLOW,
-
-  SP_PROT_PARALYZE,	SP_PROT_DRAIN,		SP_PROT_MAGIC,		/*50*/
-  SP_PROT_ATTACK,	SP_LEVITATE,
-
-  SP_SMALL_SPEEDBALL,	SP_LARGE_SPEEDBALL,	SP_HELLFIRE,		/*55*/
-  SP_FIREBREATH,	SP_LARGE_ICESTORM,
-
-  SP_CHARGING,		SP_POLYMORPH,		SP_CANCELLATION,	/*60*/
-  SP_CONFUSION,		SP_MASS_CONFUSION,
-
-  SP_PET,		SP_SLOW,		SP_REGENERATE_SPELLPOINTS,/*65*/
-  SP_CURE_POISON,	SP_PROT_CONFUSE,
-
-  SP_PROT_CANCEL,	SP_PROT_DEPLETE,	SP_ALCHEMY,		/*70*/
-  SP_REMOVE_CURSE,	SP_REMOVE_DAMNATION,	
-
-  SP_IDENTIFY,		SP_DETECT_MAGIC,	SP_DETECT_MONSTER,	/*75*/
-  SP_DETECT_EVIL,	SP_DETECT_CURSE,	
-
-  SP_HEROISM,		SP_AGGRAVATION,		SP_FIREBOLT,		/*80*/
-  SP_FROSTBOLT,		SP_SHOCKWAVE,
-
-  SP_COLOR_SPRAY,	SP_HASTE,		SP_FACE_OF_DEATH,	/*85*/
-  SP_BALL_LIGHTNING,	SP_METEOR_SWARM,
-
-  SP_METEOR,		SP_MYSTIC_FIST,		SP_RAISE_DEAD,		/*90*/
-  SP_RESURRECTION,	SP_REINCARNATION,     
-
-/* mlee's spells*/	
-
-  SP_IMMUNE_COLD,	SP_IMMUNE_ELEC,		SP_IMMUNE_FIRE,		/*95*/
-  SP_IMMUNE_POISON,	SP_IMMUNE_SLOW,
-
-
-  SP_IMMUNE_PARALYZE,	SP_IMMUNE_DRAIN,	SP_IMMUNE_MAGIC,	/*100*/
-  SP_IMMUNE_ATTACK,	SP_INVULNERABILITY,
-
-  SP_PROTECTION,							/*105*/
-        /*Some more new spells by peterm */
-			SP_RUNE_FIRE,		SP_RUNE_FROST,		
-  SP_RUNE_SHOCK,	SP_RUNE_BLAST,
-
-  SP_RUNE_DEATH,	SP_RUNE_MARK,		SP_BUILD_DIRECTOR,	/*110*/
-  SP_CHAOS_POOL,	SP_BUILD_BWALL,
-
-  SP_BUILD_LWALL,	SP_BUILD_FWALL,		SP_RUNE_MAGIC,		/*115*/
-  SP_RUNE_DRAINSP,	SP_RUNE_ANTIMAGIC,
-
-  SP_RUNE_TRANSFER,	SP_TRANSFER,		SP_MAGIC_DRAIN,		/*120*/
-  SP_COUNTER_SPELL,	SP_DISPEL_RUNE,
-
-  SP_CURE_CONFUSION,	SP_RESTORATION,		SP_SUMMON_EVIL_MONST,	/*125*/
-  SP_COUNTERWALL,	SP_CAUSE_LIGHT,
-
-  SP_CAUSE_MEDIUM,	SP_CAUSE_HEAVY,		SP_CHARM,		/*130*/
-  SP_BANISHMENT,	SP_CREATE_MISSILE,
-
-  SP_SHOW_INVIS,	SP_XRAY,		SP_PACIFY,		/*135*/
-  SP_SUMMON_FOG,	SP_STEAMBOLT,
-
-  /* lots of new cleric spells,many need MULTIPLE_GODS defined to be
-   * very usefull - b.t. */
-  SP_COMMAND_UNDEAD,	SP_HOLY_ORB,		SP_SUMMON_AVATAR,	/*140*/
-  SP_HOLY_POSSESSION,	SP_BLESS,		
-
-  SP_CURSE,		SP_REGENERATION,	SP_CONSECRATE,		/*145*/
-  SP_SUMMON_CULT,	SP_CAUSE_CRITICAL, 
-
-  SP_HOLY_WRATH,	SP_RETRIBUTION,		SP_FINGER_DEATH,	/*150*/
-  SP_INSECT_PLAGUE,	SP_HOLY_SERVANT,
-  
-  SP_WALL_OF_THORNS,	SP_STAFF_TO_SNAKE,	SP_LIGHT,		/*155*/
-  SP_DARKNESS,		SP_NIGHTFALL,
-
-  SP_DAYLIGHT,		SP_SUNSPEAR,		SP_FAERY_FIRE,		/*160*/
-  SP_CURE_BLINDNESS,	SP_DARK_VISION,
-
-  SP_BULLET_SWARM,	SP_BULLET_STORM,	SP_CAUSE_MANY,		/*165*/
-  SP_S_SNOWSTORM,	SP_M_SNOWSTORM,
-
-  SP_L_SNOWSTORM,	SP_CURE_DISEASE,	SP_CAUSE_EBOLA,		/*170*/
-  SP_CAUSE_FLU,		SP_CAUSE_PLAGUE,
-
-  SP_CAUSE_LEPROSY,	SP_CAUSE_SMALLPOX,	SP_CAUSE_PNEUMONIC_PLAGUE,/*175*/
-  SP_CAUSE_ANTHRAX,	SP_CAUSE_TYPHOID,
-
-  SP_MANA_BLAST,	SP_S_MANABALL,		SP_M_MANABALL,		/*180*/
-  SP_L_MANABALL,	SP_MANA_BOLT,
-
-  SP_DANCING_SWORD,	SP_ANIMATE_WEAPON, SP_CAUSE_COLD,              /* 185 */
-  SP_DIVINE_SHOCK,      SP_WINDSTORM,
-
-  /* the below NIY */
-  SP_SANCTUARY,         SP_PEACE,          SP_SPIDERWEB,             /* 190 */
-  SP_CONFLICT,          SP_RAGE,
-
-  SP_FORKED_LIGHTNING,   SP_POISON_FOG,     SP_FLAME_AURA,            /* 195 */
-  SP_VITRIOL,          SP_VITRIOL_SPLASH,
-  
-  SP_IRONWOOD_SKIN,     SP_WRATHFUL_EYE, SP_TOWN_PORTAL,		/* 200 */
-  SP_MISSILE_SWARM,     SP_CAUSE_RABIES,
-
-  SP_GLYPH								/* 205 */
-
-};
-
-#define IS_SUMMON_SPELL(spell) (((spell) > SP_BOMB && (spell) < SP_D_DOOR) \
-	|| ((spell) == SP_MYSTIC_FIST) || ((spell) == SP_SUMMON_AVATAR) \
-	|| ((spell) == SP_HOLY_SERVANT))
-
-#define PATH_SP_MULT(op,spell) (((op->path_attuned & s->path) ? 0.8 : 1) * \
-				((op->path_repelled & s->path) ? 1.25 : 1))
-#define PATH_TIME_MULT(op,spell) (((op->path_attuned & s->path) ? 0.8 : 1) * \
-				((op->path_repelled & s->path) ? 1.25 : 1))
-
-extern spell_parameters SP_PARAMETERS[];
-extern char *spellpathnames[NRSPELLPATHS];
-extern archetype *spellarch[NROFREALSPELLS];
-
-typedef enum SpellTypeFrom {
-  spellNormal, spellMisc /* rod/horn/wand */, spellScroll, spellPotion
-} SpellTypeFrom;
-
+/* These are some hard coded values that are used within the code
+ * for spell failure effects or pieces of spells.  Rather
+ * then hardcode the names, use defines so it is easier to
+ * update if necessary.
+ */
+#define SP_MED_FIREBALL	"spell_medium_fireball"
+#define LOOSE_MANA	"loose_magic"
+#define SPELL_WONDER	"spell_wonder"
+#define GOD_POWER	"god_power"
+#define SPLINT		"splint"	/* for bombs */
+#define SWARM_SPELL	"swarm_spell"
+#define GENERIC_RUNE	"generic_rune"
+#define HOLY_POSSESSION	"spell_holy_possession"
+#define FORCE_NAME	"force"		/* instead of it being hardcoded */
+/* This is used for fumbles - this arch is all set up to do
+ * the right just by inserting it
+ */
+#define EXPLODING_FIREBALL  "exploding_fireball"
 
 #endif

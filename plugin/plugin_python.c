@@ -232,6 +232,14 @@ static PyObject* CFAttackTypeBlind(PyObject* self, PyObject* args)
   return Py_BuildValue("i",val);
 };
 
+#if 0
+/* These spell numbers have no meaning with the new spell code.
+ * If plugins want to deal with spells, the should really get the
+ * spell object names.  I'd say that having the scripts hard code
+ * the names in ("spell_magic_bullet") is perfectly fine, as the archetype
+ * names shouldn't change.
+ */
+
 /*****************************************************************************/
 /* Wrappers for Spell numbers.                                               */
 /*****************************************************************************/
@@ -1851,7 +1859,7 @@ static PyObject* CFSpellWrathfullEye(PyObject* self, PyObject* args)
         return NULL;
     return Py_BuildValue("i",val);
 };
-
+#endif
 /*****************************************************************************/
 /* Wrappers for Skill Numbers                                                */
 /*****************************************************************************/
@@ -1878,7 +1886,7 @@ static PyObject* CFSkillHiding(PyObject* self, PyObject* args)
 };
 static PyObject* CFSkillSmithery(PyObject* self, PyObject* args)
 {
-    int val = SK_SMITH;
+    int val = SK_SMITHERY;
     if (!PyArg_ParseTuple(args,"",NULL))
         return NULL;
     return Py_BuildValue("i",val);
@@ -1948,7 +1956,7 @@ static PyObject* CFSkillOratory(PyObject* self, PyObject* args)
 };
 static PyObject* CFSkillSinging(PyObject* self, PyObject* args)
 {
-    int val = SK_MUSIC;
+    int val = SK_SINGING;
     if (!PyArg_ParseTuple(args,"",NULL))
         return NULL;
     return Py_BuildValue("i",val);
@@ -1976,7 +1984,7 @@ static PyObject* CFSkillMeditation(PyObject* self, PyObject* args)
 };
 static PyObject* CFSkillBoxing(PyObject* self, PyObject* args)
 {
-    int val = SK_BOXING;
+    int val = SK_PUNCHING;
     if (!PyArg_ParseTuple(args,"",NULL))
         return NULL;
     return Py_BuildValue("i",val);
@@ -2018,7 +2026,7 @@ static PyObject* CFSkillInscription(PyObject* self, PyObject* args)
 };
 static PyObject* CFSkillMeleeWeapons(PyObject* self, PyObject* args)
 {
-    int val = SK_MELEE_WEAPON;
+    int val = SK_ONE_HANDED_WEAPON;
     if (!PyArg_ParseTuple(args,"",NULL))
         return NULL;
     return Py_BuildValue("i",val);
@@ -2030,16 +2038,16 @@ static PyObject* CFSkillThrowing(PyObject* self, PyObject* args)
         return NULL;
     return Py_BuildValue("i",val);
 };
-static PyObject* CFSkillSpellCasting(PyObject* self, PyObject* args)
+static PyObject* CFSkillEvocation(PyObject* self, PyObject* args)
 {
-    int val = SK_SPELL_CASTING;
+    int val = SK_EVOCATION;
     if (!PyArg_ParseTuple(args,"",NULL))
         return NULL;
     return Py_BuildValue("i",val);
 };
 static PyObject* CFSkillRemoveTraps(PyObject* self, PyObject* args)
 {
-    int val = SK_REMOVE_TRAP;
+    int val = SK_DISARM_TRAPS;
     if (!PyArg_ParseTuple(args,"",NULL))
         return NULL;
     return Py_BuildValue("i",val);
@@ -2197,12 +2205,10 @@ static PyObject* CFGetValue(PyObject* self, PyObject* args)
 static PyObject* CFSetSkillExperience(PyObject* self, PyObject* args)
 {
     object *tmp;
-    object *oldchosen;
 
     long whoptr;
-
-    int skill;
-    long value;
+    int skill, value2;
+    uint64 value;
     int currentxp;
 
     if (!PyArg_ParseTuple(args,"lil",&whoptr,&skill,&value))
@@ -2211,22 +2217,19 @@ static PyObject* CFSetSkillExperience(PyObject* self, PyObject* args)
     /* Browse the inventory of object to find a matching skill. */
     for (tmp=WHO->inv;tmp;tmp=tmp->below)
     {
-        if(tmp->type!=SKILL) continue;
-        if(tmp->stats.sp!=skill) continue;
-
-        if (tmp->exp_obj)
-        {
-            oldchosen = WHO->chosen_skill;
-            WHO->chosen_skill = tmp;
-            currentxp = tmp->exp_obj->stats.exp;
+        if(tmp->type==SKILL && tmp->subtype==skill) {
+            currentxp = tmp->stats.exp;
             /* Don't know how this will react if negative value
-            * passed to add_exp */
+             * passed to add_exp */
             /*add_exp(WHO, value-currentxp);*/
             GCFP.Value[0] = (void *)(WHO);
             value = value - currentxp;
             GCFP.Value[1] = (void *)(&value);
+            GCFP.Value[2] = (void *)(tmp->skill);
+	    value2 = 0;
+            GCFP.Value[3] = (void *)(&value);
+
             (PlugHooks[HOOK_ADDEXP])(&GCFP);
-            WHO->chosen_skill = oldchosen;
             Py_INCREF(Py_None);
             return Py_None;
         };
@@ -2252,13 +2255,10 @@ static PyObject* CFGetSkillExperience(PyObject* self, PyObject* args)
     /* Browse the inventory of object to find a matching skill. */
     for (tmp=WHO->inv;tmp;tmp=tmp->below)
     {
-        if(tmp->type!=SKILL) continue;
-        if(tmp->stats.sp!=skill) continue;
-        if (tmp->exp_obj)
-        {
-            return Py_BuildValue("l",(long)(tmp->exp_obj->stats.exp));
-        };
-    };
+        if(tmp->type==SKILL && tmp->subtype==skill) {
+            return Py_BuildValue("l",(long)(tmp->stats.exp));
+        }
+    }
     return NULL;
 };
 
@@ -2390,6 +2390,12 @@ static PyObject* CFSetUnaggressive(PyObject* self, PyObject* args)
 
 static PyObject* CFCastAbility(PyObject* self, PyObject* args)
 {
+#if 0
+    /* This needs to get fixed up for new spell system.
+     * spell should not be an object pointer.
+     * also, a pointer to the caster (in addition to owner) is
+     * probably in order.
+     */
     long whoptr;
     int spell;
     int dir;
@@ -2413,6 +2419,7 @@ static PyObject* CFCastAbility(PyObject* self, PyObject* args)
     CFR = (PlugHooks[HOOK_CASTSPELL])(&GCFP);
     free(CFR);
     Py_INCREF(Py_None);
+#endif 
     return Py_None;
 };
 
@@ -3956,31 +3963,25 @@ static PyObject* CFDirectionNW(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   :                                                                  */
 /* Python :                                                                  */
-/* Status : Untested                                                                */
+/* Status : Untested                                                         */
 /*****************************************************************************/
 
 static PyObject* CFCastSpell(PyObject* self, PyObject* args)
 {
-    long whoptr;
-    int spell;
+    long whoptr, spellptr;
     int dir;
     char* op;
     CFParm* CFR;
-    int parm=0;
-    int parm2 = spellNormal;
-    int typeoffire = FIRE_DIRECTIONAL;
 
-    if (!PyArg_ParseTuple(args,"liis",&whoptr,&spell,&dir,&op))
+    if (!PyArg_ParseTuple(args,"llis",&whoptr,&spellptr,&dir,&op))
         return NULL;
 
     GCFP.Value[0] = (void *)(WHO);
     GCFP.Value[1] = (void *)(WHO);
     GCFP.Value[2] = (void *)(&dir);
-    GCFP.Value[3] = (void *)(&spell);
-    GCFP.Value[4] = (void *)(&parm);
-    GCFP.Value[5] = (void *)(&parm2);
-    GCFP.Value[6] = (void *)(op);
-    GCFP.Value[7] = (void *)(&typeoffire);
+    GCFP.Value[3] = (void *)((object*)spellptr);
+    GCFP.Value[4] = (void *)(op);
+
     CFR = (PlugHooks[HOOK_CASTSPELL])(&GCFP);
     /*cast_spell(WHO, WHO, dir, spell, */
     /*    1,spellNormal, op); */
@@ -4005,7 +4006,7 @@ static PyObject* CFForgetSpell(PyObject* self, PyObject* args)
         return NULL;
 
     GCFP.Value[0] = (void *)(WHO);
-    GCFP.Value[1] = (void *)(&spell);
+    GCFP.Value[1] = (void *)(object*)(spell);
     (PlugHooks[HOOK_FORGETSPELL])(&GCFP);
 
     Py_INCREF(Py_None);
@@ -4020,11 +4021,10 @@ static PyObject* CFForgetSpell(PyObject* self, PyObject* args)
 
 static PyObject* CFAcquireSpell(PyObject* self, PyObject* args)
 {
-    long whoptr;
-    int spell;
+    long whoptr, spell;
     int i = 0;
 
-    if (!PyArg_ParseTuple(args,"li",&whoptr,&spell))
+    if (!PyArg_ParseTuple(args,"ll",&whoptr,&spell))
         return NULL;
 
     GCFP.Value[0] = (void *)(WHO);
@@ -4044,20 +4044,20 @@ static PyObject* CFAcquireSpell(PyObject* self, PyObject* args)
 
 static PyObject* CFDoKnowSpell(PyObject* self, PyObject* args)
 {
-    int spell;
+    char *spell;
     long whoptr;
     CFParm* CFR;
-    int value;
+    object *ob;
 
-    if (!PyArg_ParseTuple(args,"li",&whoptr,&spell))
+    if (!PyArg_ParseTuple(args,"ls",&whoptr,&spell))
         return NULL;
 
     GCFP.Value[0] = (void *)(WHO);
-    GCFP.Value[1] = (void *)(&spell);
+    GCFP.Value[1] = (void *)(spell);
     CFR = (PlugHooks[HOOK_CHECKFORSPELL])(&GCFP);
-    value = *(int *)(CFR->Value[0]);
+    ob = (object *)(CFR->Value[0]);
     free(CFR);
-    return Py_BuildValue("i",value);
+    return Py_BuildValue("l",(long)ob);
 };
 
 /*****************************************************************************/

@@ -137,13 +137,6 @@ re_cmp(char *str, char *regexp) {
 	if (re_cmp_step(str+1, next_regexp, 1, 0))
 	    return str;
     }
-#if 0
-    do {
-	++str;
-	if (re_cmp_step(str, regexp, 0, 0))
-	    return str;
-    } while (*str);
-#endif
     return NULL;
 }
 

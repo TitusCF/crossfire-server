@@ -6,7 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2002 Mark Wedel & Crossfire Development Team
+    Copyright (C) 2003 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -26,124 +26,117 @@
     The authors can be reached via e-mail at crossfire-devel@real-time.com
 */
 
-/*
- * First written 6 Sep 1994, Nick Williams (njw@cs.city.ac.uk)
- *
- * Initially, I was going to do this as spells, but there is so much
- * crap associated with spells (using sp, time to cast, might happen
- * as WONDER, etc) that I decided it was time to implement skills.  A
- * skill at the moment is merely a "flag" which is placed into the
- * player. The idea is that it will develop into having a rating,
- * which can be improved by practice.  A player could potentially
- * "learn" any number of skills, however this would be dependent on
- * their intelligence.  Perhaps skills should also record when they
- * were learnt, and their "rating" should decay as time goes by,
- * making characters have to either practice their skills, or re-learn
- * them.  BTW: Some skills should be dependent on having
- * tools... e.g. lockpicking would work much better if the player is
- * using a lockpick.
+
+/* This list is just a subtype <-> skill (code wise) in the 
+ * server translation.  In theory, the processing of the different
+ * skills could be done via strncmp
+ * This list doesn't really try to identify what the skills do.
+ * The order of this list has no special meaning.  0 is not used
+ * to denote improperly set objects.
  */
 
-/* Modification March 3 1995 - skills are expanded from stealing to
- * include another 14 skills. + skill code generalized. Some player
- * classes now may start with skills. -b.t. (thomas@nomad.astro.psu.edu) 
+#define SK_LOCKPICKING		1
+#define SK_HIDING		2
+#define SK_SMITHERY		3
+#define SK_BOWYER		4
+#define SK_JEWELER		5
+#define SK_ALCHEMY		6
+#define SK_STEALING		7
+#define SK_LITERACY		8
+#define SK_BARGAINING		9
+#define SK_JUMPING		10
+#define SK_DET_MAGIC		11
+#define SK_ORATORY		12
+#define SK_SINGING		13
+#define SK_DET_CURSE		14
+#define SK_FIND_TRAPS		15
+#define SK_MEDITATION		16
+#define SK_PUNCHING		17
+#define SK_FLAME_TOUCH		18
+#define SK_KARATE		19
+#define SK_CLIMBING		20
+#define SK_WOODSMAN		21
+#define SK_INSCRIPTION		22
+#define SK_ONE_HANDED_WEAPON	23
+#define SK_MISSILE_WEAPON	24
+#define SK_THROWING		25
+#define SK_USE_MAGIC_ITEM	26
+#define SK_DISARM_TRAPS		27
+#define SK_SET_TRAP		28
+#define SK_THAUMATURGY		29
+#define SK_PRAYING		30
+#define	SK_CLAWING		31
+#define SK_LEVITATION		32
+#define SK_SUMMONING		33
+#define SK_PYROMANCY		34
+#define SK_EVOCATION		35
+#define SK_SORCERY		36
+#define SK_TWO_HANDED_WEAPON	37
+
+/* This is the highest number skill in the table +1
+ * This is used to store pointers to the actual skills -
+ * to make life easier, we use the value above as index,
+ * eg, SK_EVOCATION (35) will be in last_skills[35].
+ */
+#define NUM_SKILLS		38
+
+
+/* This is used in the exp functions - basically what to do if
+ * the player doesn't have the skill he should get exp in.
  */
 
-/* Modification April 21 1995 - more skills added, detect magic - detect
- * curse to woodsman - b.t. (thomas@nomad.astro.psu.edu)
- */ 
+#define SK_EXP_ADD_SKILL	0   /* Give the player the skill */
+#define SK_EXP_TOTAL		1   /* Give player exp to total, no skill */
+#define SK_EXP_NONE		2   /* Player gets nothing */
+#define SK_SUBTRACT_SKILL_EXP	3   /* Used when removing exp */
 
-/* Modification May/June 1995 - 
- *  HTH skills to allow hitting while moving. 
- *  Modified the bargaining skill to allow incremental CHA increase (based on level)
- *  Added the inscription skill, finished play-testing meditation skill.
- *  - b.t. (thomas@astro.psu.edu)
- */ 
+#define USING_SKILL(op, skill)  ((op)->chosen_skill && (op)->chosen_skill->subtype == skill)
 
-/* Modification June/July 1995 - 
- *  1- Expansion of the skills code to fit within a scheme of multiple categories 
- *  of experience. Henceforth, 2 categories of skills will exist: "associated"
- *  skills which are associated with one of the categories of experience, and
- *  "miscellaneous" skills, which are not related to any experience category.
- *  2- Moved the attacking and spellcasting player activities into skills. 
- *  Now have "hand weapons" "missile weapons" "throwing" and "spellcasting". 
- *  see doc/??? for details on this system.
- *  - b.t.  
+/* This macro is used in fix_player() to define if this is a sill
+ * that should be used to calculate wc's and the like.
  */
+#define IS_COMBAT_SKILL(num) \
+    ((num==SK_PUNCHING) || (num==SK_FLAME_TOUCH) || (num==SK_KARATE) || \
+     (num==SK_ONE_HANDED_WEAPON) || (num==SK_MISSILE_WEAPON) || \
+     (num==SK_THROWING) || (num==SK_CLAWING) || (num==SK_TWO_HANDED_WEAPON))
 
-/* define this if you want to have player skills stored for 
- * faster access from a linked list. If skill tools are heavily used
- * calls to malloc from this code can actually make performance worse. 
- * -b.t. */
+/* Like IS_COMBAT_SKILL above, but instead this is used to determine
+ * how many mana points the player has.
+ */
+#define IS_MANA_SKILL(num) \
+    ((num==SK_SORCERY) || (num==SK_EVOCATION) || \
+     (num==SK_PYROMANCY) || (num==SK_SUMMONING))
 
-/* #define LINKED_SKILL_LIST */
+/* Currently only one of these, but put the define here to make
+ * it easier to expand it in the future */
+#define IS_GRACE_SKILL(num) \
+    (num==SK_PRAYING)
 
-enum skillnrs { 
-    /* 0 */
-    SK_STEALING,		/* steal from other players/NPCs */
-    SK_LOCKPICKING,		/* open doors without having to bash them */
-    SK_HIDING, 			/* player can hide from monsters */
-    SK_SMITH,			/* can auto-ident arms/armour */
-    SK_BOWYER,			/* can auto-ident bows/x-bow/arrows/bolts */
-    /* 5 */
-    SK_JEWELER,			/* can auto-identify gems */
-    SK_ALCHEMY,			/* can auto-identify potions/amulets/containers */
-    SK_THAUMATURGY,		/* can auto-identify staffs/rods/wands */
-    SK_LITERACY,		/* can auto-identify scrolls/books */
-    SK_BARGAINING,		/* sells equip at Cha + level-based bonus (30 max) */
-    /* 10 */
-    SK_JUMPING, 		/* player may 'hop' over 1-2 spaces */ 
-    SK_DET_MAGIC, 		/* player may sense magic in handled items */ 
-    SK_ORATORY,			/* player may charm unaggressive monsters */ 
-    SK_MUSIC, 			/* Player may pacify hostile monsters once */ 
-    SK_DET_CURSE, 		/* player may sense cursed items in inventory */ 
-    /* 15 */
-    SK_FIND_TRAPS,		/* player can find traps better */ 
-    SK_MEDITATION,		/* player can regain sp/hp at a faster rate */ 
-    SK_BOXING,			/* can attack hand-to-hand, see attack_hth() */ 
-    SK_FLAME_TOUCH,		/* player attack for fireborn characters */ 
-    SK_KARATE,			/* can attack hand-to-hand, see attack_hth() */ 
-    /* 20 */
-    SK_CLIMBING,		/* player moves quickly over hills/mountains  */ 
-    SK_WOODSMAN,		/* player moves quickly through jungle/forest */ 
-    SK_INSCRIPTION, 		/* player may write spell scrolls */ 
-    SK_MELEE_WEAPON,		/* player can attack with melee weapons */ 
-    SK_MISSILE_WEAPON,		/* player can attack with missile weapons */ 
-    /* 25 */
-    SK_THROWING,		/* player can throw items */ 
-    SK_SPELL_CASTING,		/* player can cast magic spells */ 
-    SK_REMOVE_TRAP, 		/* player can disarm traps */ 
-    SK_SET_TRAP, 		/* player can set traps - not implemented */ 
-    SK_USE_MAGIC_ITEM, 		/* player use wands/horns/rods */ 
-    /* 30 */
-    SK_PRAYING,			/* player can cast cleric spells, regen grace points */ 
-    SK_CLAWING,			/* player attack for troll, dragon characters */ 
-	 SK_LEVITATION       /* skill for players who can fly. */
- 
-/* Here follows a list of others which could be implemented, but are
- * not */
-#if 0
-    SK_ARCHERY,			/* extra skill at using bows */
-    SK_SWORDSMANSHIP,		/* extra skill with swords */
-    SK_HERBLORE,		/* can auto-identify herbs,spell components */
-#endif
+
+
+extern char *skill_names[NUM_SKILLS];
+
+#ifdef WANT_UNARMED_SKILLS
+/* Table of unarmed attack skills.  Terminated by -1.  This
+ * is also the list that we should try to use skills when
+ * automatically applying one for the player.
+ * Note it is hardcoded in the skill_util.c that dragons always
+ * want clawing if possible.
+ * included in a #ifdef so we don't get bunches of warnings about
+ * unused values.  it is located here instead of a .c file to make
+ * updates easier and put it in a more central place - it shouldn't
+ * change very often, but it make sense to have it with the enumerated
+ * skill numbers above.
+ */
+static uint8 unarmed_skills[] = {
+SK_KARATE,
+SK_CLAWING,
+SK_FLAME_TOUCH,
+SK_PUNCHING,
+-1
 };
 
-typedef struct skill_struct {
-      char *name;       /* how to describe it to the player */
-      short category;   /* the experience category to which this skill belongs */
-      short time;       /* base number of ticks it takes to use the skill */
-      long bexp;        /* base exp gain for this skill */
-      float lexp;       /* level multiplier of exp gain for using this skill */
-      short stat1;      /* primary stat effecting use of this skill */
-      short stat2;      /* secondary stat for this skill */
-      short stat3;      /* tertiary stat for this skill */
-} skill;
+/* Just in case one file includes this more than once */
+#undef WANT_UNARMED_SKILLS
 
-
-extern skill skills[];
-
-/* yet more convenience macros. */
-
-#define USING_SKILL(op, skill) \
-	((op)->chosen_skill && (op)->chosen_skill->stats.sp == skill)
+#endif

@@ -69,6 +69,19 @@ void SockList_AddInt(SockList *sl, uint32 data)
     sl->buf[sl->len++] = data & 0xff;
 }
 
+void SockList_AddInt64(SockList *sl, uint64 data)
+{
+    sl->buf[sl->len++]= (data>>56)&0xff;
+    sl->buf[sl->len++]= (data>>48)&0xff;
+    sl->buf[sl->len++]= (data>>40)&0xff;
+    sl->buf[sl->len++]= (data>>32)&0xff;
+
+    sl->buf[sl->len++]= (data>>24)&0xff;
+    sl->buf[sl->len++]= (data>>16)&0xff;
+    sl->buf[sl->len++]= (data>>8)&0xff;
+    sl->buf[sl->len++] = data & 0xff;
+}
+
 /* Basically does the reverse of SockList_AddInt, but on
  * strings instead.  Same for the GetShort, but for 16 bits.
  */

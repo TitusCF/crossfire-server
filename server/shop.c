@@ -127,18 +127,15 @@ int query_cost(object *tmp, object *who, int flag) {
 	   */
           val/=(1-tmp->magic);
      }
-#if 0 /* cha_bonus now takes this into account */
-  if (flag==F_BUY)
-    val*=6; /* For charisma 25, the price is now x1.5 */
-#endif
+
   if (tmp->type==WAND) {
-    if (QUERY_FLAG(tmp, FLAG_IDENTIFIED) || !need_identify(tmp))
-      /* Give money based on how many charges the item could have.  Not
-       * really a good method - some spells are certainly better than others.
-       */
-      val=(val*tmp->stats.food)/MAX(1,spells[tmp->stats.sp].charges);
-    else
-      val/=3;
+	/* Value of the wand is multiplied by the number of
+	 * charges.  the treasure code already sets up the value
+	 */
+	if (QUERY_FLAG(tmp, FLAG_IDENTIFIED) || !need_identify(tmp))
+	    val=(val*tmp->stats.food) / 50;
+	else /* if not identified, presume one charge */
+	    val/=50;
   }
 
   /* Limit amount of money you can get for really great items. */

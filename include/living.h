@@ -46,7 +46,6 @@
 #define NO_STAT_VAL 99    /* needed by skills code -b.t. */
 
 extern char *attacks[NROFATTACKS];
-extern char *spellpathnames[NRSPELLPATHS];
 
 extern float cha_bonus[MAX_STAT + 1];
 extern int dex_bonus[MAX_STAT + 1];
@@ -64,6 +63,8 @@ extern char *short_stat_name[NUM_STATS];
 extern char *lose_msg[NUM_STATS];
 extern float speed_bonus[MAX_STAT + 1];
 extern int weight_limit[MAX_STAT + 1];
+extern int cleric_chance[MAX_STAT + 1];
+extern int fear_bonus[MAX_STAT + 1];
 
 typedef struct liv { /* Mostly used by "alive" objects */
   sint8		Str,Dex,Con,Wis,Cha,Int,Pow;

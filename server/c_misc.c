@@ -93,12 +93,6 @@ int command_body(object *op, char *params)
 }
 
 
-int command_spell_reset(object *op, char *params)
-{
-	init_spell_param();
-	return 1;
-}
-
 int command_motd(object *op, char *params)
 {
 	display_motd(op);
@@ -178,10 +172,7 @@ void malloc_info(object *op) {
   sprintf(errmsg,"%4d animations:      %8d",anims,i=(anims*sizeof(Fontindex)));
   new_draw_info(NDI_UNIQUE, 0,op,errmsg);
   sum_alloc+=i; sum_used+=i;
-  sprintf(errmsg,"%4d spells:          %8d",NROFREALSPELLS,
-          i=(NROFREALSPELLS*sizeof(spell)));
-  new_draw_info(NDI_UNIQUE, 0,op,errmsg);
-  sum_alloc+=i; sum_used+=i;
+
   sprintf(errmsg,"%4d treasurelists    %8d",tlnr,i=(tlnr*sizeof(treasurelist)));
   new_draw_info(NDI_UNIQUE, 0,op,errmsg);
   sum_alloc+=i; sum_used+=i;

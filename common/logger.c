@@ -70,10 +70,6 @@ void LOG (LogLevel logLevel, char *format, ...)
     exiting = 1;
     if (!trying_emergency_save)
       (*emergency_save_func) (0);
-#if 0
-    if (!editor)
-	fatal(TOO_MANY_ERRORS);
-#endif
   }
   va_end(ap);
 }

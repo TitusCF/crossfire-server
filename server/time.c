@@ -88,8 +88,8 @@ void remove_door2(object *op) {
  */
 void generate_monster_inv(object *gen) {
     int i;
-    object *op,*head=NULL,*prev=NULL;
-    archetype *at=gen->other_arch;
+    object *op,*head=NULL;
+
     int qty=0;
     /* Code below assumes the generator is on a map, as it tries
      * to place the monster on the map.  So if the generator
@@ -175,29 +175,25 @@ void generate_monster(object *gen) {
 
 }
 
-void regenerate_rod(object *rod) {
-  if(++rod->stats.food > rod->stats.hp/10 || rod->type == HORN) {
-    rod->stats.food = 0;
-    if (rod->stats.hp < rod->stats.maxhp) {
-      rod->stats.hp += 1 + rod->stats.maxhp/10;
-      if (rod->stats.hp > rod->stats.maxhp)
-        rod->stats.hp = rod->stats.maxhp;
-      fix_rod_speed(rod);
-    }
-  }
-}
-
 void remove_force(object *op) {
-  if(op->env==NULL) {
+    if (--op->duration > 0) return;
+
+    switch (op->subtype) {
+	case FORCE_CONFUSION:
+	    if(op->env!=NULL) {
+		CLEAR_FLAG(op->env, FLAG_CONFUSED);
+		new_draw_info(NDI_UNIQUE, 0,op->env, "You regain your senses.\n");
+	    }
+
+	default:
+	    if(op->env!=NULL) {
+		CLEAR_FLAG(op, FLAG_APPLIED);
+		change_abil(op->env,op);
+		fix_player(op->env);
+	    }
+    }
     remove_ob(op);
     free_object(op);
-    return;
-  }
-  CLEAR_FLAG(op, FLAG_APPLIED);
-  change_abil(op->env,op);
-  fix_player(op->env);
-  remove_ob(op);
-  free_object(op);
 }
 
 void remove_blindness(object *op) {
@@ -210,32 +206,6 @@ void remove_blindness(object *op) {
   }
   remove_ob(op);
   free_object(op);
-}
-
-void remove_confusion(object *op) {
-  if(--op->stats.food > 0)
-    return;
-  if(op->env!=NULL) {
-    CLEAR_FLAG(op->env, FLAG_CONFUSED);
-    new_draw_info(NDI_UNIQUE, 0,op->env, "You regain your senses.\n");
-  }
-  remove_ob(op);
-  free_object(op);
-}
-
-void execute_wor(object *op) {
-    object *wor=op;
-    while(op!=NULL&&op->type!=PLAYER)
-	op=op->env;
-
-    if(op!=NULL) {
-	if (get_map_flags(op->map, NULL, op->x, op->y, NULL, NULL) & P_NO_CLERIC)
-	    new_draw_info(NDI_UNIQUE, 0,op,"You feel something fizzle inside you.");
-	else
-	    enter_exit(op,wor);
-    }
-    remove_ob(wor);
-    free_object(wor);
 }
 
 void poison_more(object *op) {
@@ -550,13 +520,6 @@ object *stop_item (object *op)
             op = fix_stopped_arrow (op);
         return op;
 
-    case CONE:
-        if (op->speed < MIN_ACTIVE_SPEED) {
-            return op;
-        } else {
-            return NULL;
-	}
-
     default:
         return op;
     }
@@ -597,12 +560,18 @@ object *fix_stopped_arrow (object *op)
     op->stats.dam= op->stats.hp;
     op->attacktype = op->stats.grace;
     if (op->slaying != NULL)
-	free_string (op->slaying);
+	FREE_AND_CLEAR_STR(op->slaying);
+
+    if (op->skill != NULL)
+	FREE_AND_CLEAR_STR(op->skill);
+
     if (op->spellarg != NULL) {
 	op->slaying = add_string(op->spellarg);
 	free(op->spellarg);
+	op->spellarg = NULL;
     } else
 	op->slaying = NULL;
+
     /* Reset these to zero, so that CAN_MERGE will work properly */
     op->spellarg = NULL;
     op->stats.sp = 0;
@@ -1045,7 +1014,6 @@ void move_player_changer(object *op) {
 	player=op->above;
 	for(walk=op->inv;walk!=NULL;walk=walk->below)
 	  apply_changes_to_player(player,walk);
-	link_player_skills(op->above);
 	esrv_send_inventory(op->above,op->above);
 	esrv_update_item(UPD_FACE, op->above, op->above);
 	
@@ -1068,22 +1036,25 @@ void move_player_changer(object *op) {
    }
 }
 
-/*  peterm:  firewalls generalized to be able to shoot any type
-    of spell at all.  the stats.dam field of a firewall object
-    contains it's spelltype.      The direction of the wall is stored
-    in op->stats.sp.  maxsp also has some meaning, i'm not sure what.
-    walls can have hp, so they can be torn down. */
+/* firewalls fire other spells.
+ * The direction of the wall is stored in op->stats.sp.
+ * walls can have hp, so they can be torn down.
+ */
 void move_firewall(object *op) {
-  if ( ! op->map)
-    return;   /* dm has created a firewall in his inventory */
-  cast_spell(op,op,op->stats.sp?op->stats.sp:rndm(1, 8),op->stats.dam,
-	1,spellNormal,NULL);
-}
+    object *spell;
 
-void move_firechest(object *op) {
-  if ( ! op->map)
-    return;   /* dm has created a firechest in his inventory */
-  fire_a_ball(op,rndm(1, 8),7);
+    if ( ! op->map)
+	return;   /* dm has created a firewall in his inventory */
+
+    spell = op->inv;
+    if (!spell || spell->type != SPELL) spell=&op->other_arch->clone;
+    if (!spell) {
+	LOG(llevError,"move_firewall: no spell specified (%s, %s, %d, %d)\n",
+	    op->name, op->map->name, op->x, op->y);
+	return;
+    }
+
+    cast_spell(op,op,op->stats.sp?op->stats.sp:rndm(1, 8),spell, NULL);
 }
 
 
@@ -1269,199 +1240,191 @@ void move_marker(object *op) {
 }
  
 int process_object(object *op) {
+    event *evt;
 
-  event *evt;
+    if(QUERY_FLAG(op, FLAG_MONSTER))
+	if(move_monster(op) || QUERY_FLAG(op, FLAG_FREED)) 
+	    return 1;
 
-  if(QUERY_FLAG(op, FLAG_MONSTER))
-    if(move_monster(op) || QUERY_FLAG(op, FLAG_FREED))
-      return 1;
+    if(QUERY_FLAG(op, FLAG_ANIMATE) && op->anim_speed==0) {
+	if (op->type == PLAYER)
+	    animate_object(op, op->facing);
+	else
+	    animate_object(op, op->direction);
 
-  if(QUERY_FLAG(op, FLAG_ANIMATE) && op->anim_speed==0) {
-    if (op->type == PLAYER)
-	animate_object(op, op->facing);
-    else
-	animate_object(op, op->direction);
-    if (QUERY_FLAG(op, FLAG_SEE_ANYWHERE))
-      make_sure_seen(op);
-  }
-  if(QUERY_FLAG(op, FLAG_CHANGING)&&!op->state) {
-    change_object(op);
-    return 1;
-  }
-  if(QUERY_FLAG(op, FLAG_GENERATOR))
-    generate_monster(op);
-  if(QUERY_FLAG(op, FLAG_IS_USED_UP)&&--op->stats.food<=0) {
-    if(QUERY_FLAG(op, FLAG_APPLIED))
-      remove_force(op);
-    else {
-	/* IF necessary, delete the item from the players inventory */
-	object *pl=is_player_inv(op);
-	if (pl)
-	    esrv_del_item(pl->contr, op->count);
-      remove_ob(op);
-      if (QUERY_FLAG(op, FLAG_SEE_ANYWHERE))
-        make_sure_not_seen(op);
-      free_object(op);
+	if (QUERY_FLAG(op, FLAG_SEE_ANYWHERE))
+	    make_sure_seen(op);
     }
-    return 1;
-  }
-  /* GROS: Handle for plugin time event */
-  if ((evt = find_event(op, EVENT_TIME)) != NULL)
-  {
-    CFParm CFP;
-    int k, l, m;
-    k = EVENT_TIME;
-    l = SCRIPT_FIX_NOTHING;
-    m = 0;
-    CFP.Value[0] = &k;
-    CFP.Value[1] = NULL;
-    CFP.Value[2] = op;
-    CFP.Value[3] = NULL;
-    CFP.Value[4] = NULL;
-    CFP.Value[5] = &m;
-    CFP.Value[6] = &m;
-    CFP.Value[7] = &m;
-    CFP.Value[8] = &l;
-    CFP.Value[9] = evt->hook;
-    CFP.Value[10]= evt->options;
-    if (findPlugin(evt->plugin)>=0)
-        ((PlugList[findPlugin(evt->plugin)].eventfunc) (&CFP));
-  }
-  switch(op->type) {
-  case ROD:
-  case HORN:
-    regenerate_rod(op);
-    return 1;
-  case FORCE:
-  case POTION_EFFECT:
-    remove_force(op);
-    return 1;
-  case BLINDNESS:
-    remove_blindness(op);
-    return 0;
-  case CONFUSION:
-    remove_confusion(op);
-    return 0;
-  case POISONING:
-    poison_more(op);
-    return 0;
-  case DISEASE:
-	 move_disease(op);
-	 return 0;
-  case SYMPTOM:
-	 move_symptom(op);
-	 return 0;
-  case WORD_OF_RECALL:
-    execute_wor(op);
-    return 0;
-  case BULLET:
-    move_fired_arch(op);
-    return 0;
-  case MMISSILE:
-    move_missile(op);
-    return 0;
-  case THROWN_OBJ:
-  case ARROW:
-    move_arrow(op);
-    return 0;
-  case FBULLET:
-    move_fired_arch(op);
-    return 0;
-  case FBALL:
-  case POISONCLOUD:
-    explosion(op);
-    return 0;
-  case LIGHTNING: /* It now moves twice as fast */
-    move_bolt(op);
-    return 0;
-  case CONE:
-    move_cone(op);
-    return 0;
-  case DOOR:
-    remove_door(op);
-    return 0;
-  case LOCKED_DOOR:
-    remove_door2(op);
-    return 0;
-  case TELEPORTER:
-    move_teleporter(op);
-    return 0;
-  case BOMB:
-    animate_bomb(op);
-    return 0;
-  case GOLEM:
-    move_golem(op);
-    return 0;
-  case EARTHWALL:
-    hit_player(op, 2, op, AT_PHYSICAL);
-    return 0;
-  case FIREWALL:
-    move_firewall(op);
-    if (op->stats.maxsp)
-      animate_turning(op);
-    return 0;
-  case FIRECHEST:
-    move_firechest(op);
-    return 0;
-  case MOOD_FLOOR:
-    do_mood_floor(op, op);
-    return 0;
-  case GATE:
-    move_gate(op);
-    return 0;
-  case TIMED_GATE:
-    move_timed_gate(op);
-    return 0;
-  case TRIGGER:
-  case TRIGGER_BUTTON:
-  case TRIGGER_PEDESTAL:
-  case TRIGGER_ALTAR:
-    animate_trigger(op);
-    return 0;
-  case DETECTOR:
-	 move_detector(op);
-  case DIRECTOR:
-    if (op->stats.maxsp)
-      animate_turning(op);
-    return 0;
-  case HOLE:
-    move_hole(op);
-    return 0;
-  case DEEP_SWAMP:
-    move_deep_swamp(op);
-    return 0;
-  case CANCELLATION:
-    move_cancellation(op);
-    return 0;
-  case BALL_LIGHTNING:
-    move_ball_lightning(op);
-    return 0;
-  case SWARM_SPELL:
-    move_swarm_spell(op);
-    return 0;
-  case RUNE:
-  case TRAP:
-    move_rune(op);
-    return 0;
-  case PLAYERMOVER:
-    move_player_mover(op);
-    return 0;
-  case CREATOR:
-    move_creator(op);
-    return 0;
-  case MARKER:
-    move_marker(op);
-    return 0;
-  case PLAYER_CHANGER:
-    move_player_changer(op);
-    return 0;
-  case AURA:
-    move_aura(op);
-    return 0;
-  case PEACEMAKER:
-    move_peacemaker(op);
-    return 0;
-  }
+    if(QUERY_FLAG(op, FLAG_CHANGING)&&!op->state) {
+	change_object(op);
+	return 1;
+    }
+    if(QUERY_FLAG(op, FLAG_GENERATOR))
+	generate_monster(op);
 
-  return 0;
+    if(QUERY_FLAG(op, FLAG_IS_USED_UP)&&--op->stats.food<=0) {
+	if(QUERY_FLAG(op, FLAG_APPLIED))
+	    remove_force(op);
+	else {
+	    /* IF necessary, delete the item from the players inventory */
+	    object *pl=is_player_inv(op);
+	    if (pl)
+		esrv_del_item(pl->contr, op->count);
+	    remove_ob(op);
+	    if (QUERY_FLAG(op, FLAG_SEE_ANYWHERE))
+		make_sure_not_seen(op);
+	    free_object(op);
+	}
+	return 1;
+    }
+    /* GROS: Handle for plugin time event */
+    if ((evt = find_event(op, EVENT_TIME)) != NULL)
+    {
+	CFParm CFP;
+	int k, l, m;
+	k = EVENT_TIME;
+	l = SCRIPT_FIX_NOTHING;
+	m = 0;
+	CFP.Value[0] = &k;
+	CFP.Value[1] = NULL;
+	CFP.Value[2] = op;
+	CFP.Value[3] = NULL;
+	CFP.Value[4] = NULL;
+	CFP.Value[5] = &m;
+	CFP.Value[6] = &m;
+	CFP.Value[7] = &m;
+	CFP.Value[8] = &l;
+	CFP.Value[9] = evt->hook;
+	CFP.Value[10]= evt->options;
+	if (findPlugin(evt->plugin)>=0)
+	    ((PlugList[findPlugin(evt->plugin)].eventfunc) (&CFP));
+    }
+    switch(op->type) {
+	case SPELL_EFFECT:
+	    move_spell_effect(op);
+	    return 1;
+
+	case ROD:
+	case HORN:
+	    regenerate_rod(op);
+	    return 1;
+
+	case FORCE:
+	case POTION_EFFECT:
+	    remove_force(op);
+	    return 1;
+
+	case BLINDNESS:
+	    remove_blindness(op);
+	    return 0;
+
+	case POISONING:
+	    poison_more(op);
+	    return 0;
+
+	case DISEASE:
+	    move_disease(op);
+	    return 0;
+
+	case SYMPTOM:
+	    move_symptom(op);
+	    return 0;
+
+	case THROWN_OBJ:
+	case ARROW:
+	    move_arrow(op);
+	    return 0;
+
+	case LIGHTNING: /* It now moves twice as fast */
+	    move_bolt(op);
+	    return 0;
+
+	case DOOR:
+	    remove_door(op);
+	    return 0;
+
+	case LOCKED_DOOR:
+	    remove_door2(op);
+	    return 0;
+
+	case TELEPORTER:
+	    move_teleporter(op);
+	    return 0;
+
+	case GOLEM:
+	    move_golem(op);
+	    return 0;
+
+	case EARTHWALL:
+	    hit_player(op, 2, op, AT_PHYSICAL);
+	    return 0;
+
+	case FIREWALL:
+	    move_firewall(op);
+	    if (op->stats.maxsp)
+		animate_turning(op);
+	    return 0;
+
+	case MOOD_FLOOR:
+	    do_mood_floor(op, op);
+	    return 0;
+
+	case GATE:
+	    move_gate(op);
+	    return 0;
+
+	case TIMED_GATE:
+	    move_timed_gate(op);
+	    return 0;
+
+	case TRIGGER:
+	case TRIGGER_BUTTON:
+	case TRIGGER_PEDESTAL:
+	case TRIGGER_ALTAR:
+	    animate_trigger(op);
+	    return 0;
+
+	case DETECTOR:
+	    move_detector(op);
+
+	case DIRECTOR:
+	    if (op->stats.maxsp)
+		animate_turning(op);
+	    return 0;
+
+	case HOLE:
+	    move_hole(op);
+	    return 0;
+
+	case DEEP_SWAMP:
+	    move_deep_swamp(op);
+	    return 0;
+
+	case RUNE:
+	case TRAP:
+	    move_rune(op);
+	    return 0;
+
+	case PLAYERMOVER:
+	    move_player_mover(op);
+	    return 0;
+
+	case CREATOR:
+	    move_creator(op);
+	    return 0;
+
+	case MARKER:
+	    move_marker(op);
+	    return 0;
+
+	case PLAYER_CHANGER:
+	    move_player_changer(op);
+	    return 0;
+
+	case PEACEMAKER:
+	    move_peacemaker(op);
+	    return 0;
+    }
+
+    return 0;
 }

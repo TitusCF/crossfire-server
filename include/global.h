@@ -80,18 +80,7 @@ error do not know how to get a 64 bit value on this system.
 error correct and send mail to crossfire-devel on how to do this
 #endif
 
-#endif // WIN32
-
-
-/* global stuff used by new skill/experience system -b.t.
- * Needed before player.h
- */
-#define MAX_EXP_CAT 7 		/* This should be => # of exp obj in the game 
-				 * remember to include the "NULL" exp object  
-			         * EXP_NONE as part of the overall tally. 
-				 */
-#define EXP_NONE (MAX_EXP_CAT - 1)  /* "NULL" exp. object. This is the last 
-				     * experience obj always.*/ 
+#endif
 
 /* This blob, in this order, is needed to actually define maps */
 #include "face.h"
@@ -103,6 +92,8 @@ error correct and send mail to crossfire-devel on how to do this
 #include "map.h"
 #include "tod.h"
 
+#include "skills.h"
+
 /* Pull in the socket structure - used in the player structure */
 #include "newserver.h"
 
@@ -113,6 +104,7 @@ error correct and send mail to crossfire-devel on how to do this
 #include "treasure.h"
 
 #include "commands.h"
+
 
 /*
  * So far only used when dealing with artifacts.
@@ -192,9 +184,6 @@ EXTERN int exiting;			/* True if the game is about to exit */
 EXTERN long nroftreasures;		/* Only used in malloc_info() */
 EXTERN long nrofartifacts;		/* Only used in malloc_info() */
 EXTERN long nrofallowedstr;		/* Only used in malloc_info() */
-
-EXTERN short nrofexpcat;	/* Current number of experience categories in the game */
-EXTERN object *exp_cat[MAX_EXP_CAT];	/* Array of experience objects in the game */ 
 
 EXTERN archetype *empty_archetype;	/* Nice to have fast access to it */
 EXTERN archetype *map_archeytpe;
@@ -356,6 +345,7 @@ typedef struct Settings {
     uint16  emergency_x, emergency_y;	/* coordinates to use on that map */
 
     sint16  max_level;		    /* This is read out of exp_table */
+    float   item_power_factor;	    /* See note in setings file */
 } Settings;
 
 extern Settings settings;

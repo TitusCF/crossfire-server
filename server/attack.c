@@ -42,6 +42,35 @@ typedef struct att_msg_str {
 
 /*#define ATTACK_DEBUG*/
 
+/* cancels object *op.  Cancellation basically means an object loses
+ * its magical benefits.
+ */
+void cancellation(object *op)
+{
+    object *tmp;
+   
+    if (QUERY_FLAG (op, FLAG_ALIVE) || op->type == CONTAINER  || op->type == THROWN_OBJ) {
+	/* Recur through the inventory */
+	for(tmp=op->inv;tmp!=NULL;tmp=tmp->below)
+	if (!did_make_save_item(tmp, AT_CANCELLATION,op))
+	    cancellation(tmp);
+    }
+    else if(FABS(op->magic)<=(rndm(0, 5))) {
+	/* Nullify this object. This code could probably be more complete */
+	/* in what abilities it should cancel */
+	op->magic=0;
+	CLEAR_FLAG(op, FLAG_DAMNED);
+	CLEAR_FLAG(op, FLAG_CURSED);
+	CLEAR_FLAG(op, FLAG_KNOWN_MAGICAL);
+	CLEAR_FLAG(op, FLAG_KNOWN_CURSED);
+	if (op->env && op->env->type == PLAYER) {
+	    esrv_send_item (op->env, op);
+	}
+    }
+}
+
+
+
 /* did_make_save_item just checks to make sure the item actually
  * made its saving throw based on the tables.  It does not take
  * any further action (like destroying the item).
@@ -192,9 +221,10 @@ void save_throw_object (object *op, int type, object *originator)
         if (op == NULL)
             return;
         if ((tmp = present_arch(at,op->map,op->x,op->y)) == NULL) {
-          tmp = arch_to_object(at);
-          tmp->x=op->x,tmp->y=op->y;
-          insert_ob_in_map(tmp,op->map,originator,0);
+	    tmp = arch_to_object(at);
+	    tmp->x=op->x,tmp->y=op->y;
+	    SET_SLOW_PENALTY(tmp, 0);
+	    insert_ob_in_map(tmp,op->map,originator,0);
         }
         if ( ! QUERY_FLAG (op, FLAG_REMOVED))
             remove_ob(op);
@@ -367,7 +397,7 @@ void attack_message(int dam, int type, object *op, object *hitter) {
 		  found++;
 		  break;
 	      }
-	} else if (USING_SKILL(hitter, SK_BOXING)) {
+	} else if (USING_SKILL(hitter, SK_PUNCHING)) {
           for (i=0; i < MAXATTACKMESS && attack_mess[ATM_PUNCH][i].level != -1;
 	       i++)
 	      if (dam < attack_mess[ATM_PUNCH][i].level) {
@@ -501,8 +531,10 @@ void attack_message(int dam, int type, object *op, object *hitter) {
 	new_draw_info(NDI_BLACK, 0, hitter, buf);
     } else if(get_owner(hitter)!=NULL&&hitter->owner->type==PLAYER) {
       /* look for stacked spells and start reducing the message chances */
-        if (hitter->type == FBALL || hitter->type == FBULLET ||
-	    hitter->type == CONE) {
+        if (hitter->type == SPELL_EFFECT && 
+	    (hitter->subtype == SP_EXPLOSION ||
+	     hitter->subtype == SP_BULLET ||
+	     hitter->subtype == SP_CONE)) {
 	   i=4;
 	   map = hitter->map;
 	   if (out_of_map(map, hitter->x, hitter->y))
@@ -510,8 +542,9 @@ void attack_message(int dam, int type, object *op, object *hitter) {
 	   next = get_map_ob(map, hitter->x, hitter->y);
 	   if (next)
 	       while(next) {
-		   if (next->type == FBALL || next->type == FBULLET ||
-		       next->type == CONE)
+		   if (next->type == SPELL_EFFECT && 
+		       (next->subtype == SP_EXPLOSION || next->subtype==SP_BULLET ||
+		       next->subtype == SP_CONE))
 		       i*=3;
 		   tmp = next;
 		   next = tmp->above;
@@ -673,15 +706,13 @@ static int attack_ob_simple (object *op, object *hitter, int base_dam,
     if(roll==20 || op->stats.ac>=base_wc-roll) {
 	int hitdam = base_dam;
 	if (settings.casting_time == TRUE) {
-	    if ((hitter->type == PLAYER)&&(hitter->casting > -1)){
-		hitter->casting = -1;
-		hitter->spell_state = 1;
+	    if ((hitter->type == PLAYER)&&(hitter->casting_time > -1)){
+		hitter->casting_time = -1;
 		new_draw_info(NDI_UNIQUE, 0,hitter,"You attacked and lost "
 		    "your spell!");
 	    }
-	    if ((op->casting > -1)&&(hitdam > 0)){
-		op->casting = -1;
-		op->spell_state = 1;
+	    if ((op->casting_time > -1)&&(hitdam > 0)){
+		op->casting_time = -1;
 		if (op->type == PLAYER)  {
 		    new_draw_info(NDI_UNIQUE, 0,op,"You were hit and lost "
 			"your spell!");
@@ -1161,41 +1192,21 @@ int hit_player_attacktype(object *op, object *hitter, int dam,
 	     * Move the wiz check up here - before, the hitter wouldn't gain exp
 	     * exp, but the wiz would still lose exp!  If drainee is a wiz,
 	     * nothing happens.
+	     * Try to credit the owner.  We try to display player -> player drain
+	     * attacks, hence all the != PLAYER checks.
 	     */
 	    if (!op_on_battleground(hitter, NULL, NULL) && !QUERY_FLAG(op,FLAG_WAS_WIZ)) {
-		object *owner = get_owner(hitter), *old_skill;
+		object *owner = get_owner(hitter);
 
-		/* Try to find the owner of the thing doing the drain - thus, if
-		 * you summon vampires, you get some exp.  Most of this code
-		 * below is taken directly from kill_object
-		 */
 		if (owner && owner != hitter) {
-		    old_skill = owner->chosen_skill;
-		    owner->chosen_skill = hitter->chosen_skill;
-		    owner->exp_obj=hitter->exp_obj;
-
-		    /* Not sure if this will happen or not - I'm think it could with
-		     * summoned pets - they may use a skill and thus the chosen_skill
-		     * gets updated to something they have.
-		     */
-		    if (owner->chosen_skill && owner->chosen_skill->env != owner) {
-			LOG(llevDebug,"kill_object: chosen skill doesn't belong to owner? (%s, %s)\n",
-			    owner->chosen_skill->name, owner->name);
-			owner->chosen_skill = NULL;
-		    }
-		    if (owner->exp_obj && owner->exp_obj->env != owner) {
-			LOG(llevDebug,"kill_object: exp_obj doesn't belong to owner? (%s, %s)\n",
-			    owner->exp_obj->name, owner->name);
-			owner->exp_obj = NULL;
-		    }
-		    if (op->type != PLAYER || owner->type != PLAYER) 
-			add_exp(owner,op->stats.exp/(rate*2));
-		    owner->chosen_skill = old_skill;
-		} else {
-		    if (op->type != PLAYER || hitter->type != PLAYER) 
-			add_exp(hitter,op->stats.exp/(rate*2));
+		    if (op->type != PLAYER || owner->type != PLAYER)
+			change_exp(owner, op->stats.exp/(rate*2), 
+				      hitter->chosen_skill? hitter->chosen_skill->skill:NULL, SK_EXP_TOTAL);
+		} else if (op->type != PLAYER || hitter->type != PLAYER) {
+		    change_exp(hitter, op->stats.exp/(rate*2), 
+			      hitter->chosen_skill->skill, 0);
 		}
-		add_exp(op,-op->stats.exp/rate);
+		change_exp(op,-op->stats.exp/rate, NULL, 0);
 	    } 
 	    dam = 1;	/* Drain is an effect.  Still return 1 - otherwise, if you have pure
 			 * drain attack, you won't know that you are actually sucking out EXP,
@@ -1305,13 +1316,14 @@ int hit_player_attacktype(object *op, object *hitter, int dam,
  */
 int kill_object(object *op,int dam, object *hitter, int type)
 {
-    char buf[MAX_BUF];
+    char buf[MAX_BUF], *skill;
     int maxdam=0;
     int battleg=0;    /* true if op standing on battleground */
     int killed_script_rtn = 0;
-    object *owner=NULL, *old_skill;
+    object *owner=NULL;
     int evtid;
     CFParm CFP;
+    object *skop=NULL;
     event *evt;
 
     if (op->stats.hp>=0)
@@ -1342,7 +1354,7 @@ int kill_object(object *op,int dam, object *hitter, int type)
             killed_script_rtn = *(int *)(CFR->Value[0]);
             if (killed_script_rtn)
                 return 0;
-        };
+        }
     }
     /* GROS: Handle for the global kill event */
     evtid = EVENT_GKILL;
@@ -1367,8 +1379,11 @@ int kill_object(object *op,int dam, object *hitter, int type)
     }
     if(QUERY_FLAG (op, FLAG_FRIENDLY) && op->type != PLAYER) {
 	remove_friendly_object(op);
-	if (get_owner (op) != NULL && op->owner->type == PLAYER)
-	    op->owner->contr->golem=NULL;
+	if (get_owner (op) != NULL && op->owner->type == PLAYER && 
+	    op->owner->contr->ranges[range_golem] == op) {
+	    op->owner->contr->ranges[range_golem]=NULL;
+	    op->owner->contr->golem_count=0;
+	}
 	else
 	    LOG (llevError, "BUG: hit_player(): Encountered golem without owner.\n");
 
@@ -1415,7 +1430,7 @@ int kill_object(object *op,int dam, object *hitter, int type)
 	 */
 	if ( owner->level < op->level * 2|| op->stats.exp>1000) {
 	    if(owner!=hitter) {
-		new_draw_info_format(NDI_BLACK, 0, owner, 
+		new_draw_info_format(NDI_BLACK, 0, owner,
 			"You killed %s with %s.",query_name(op),
 			 query_name(hitter));
 	    }
@@ -1437,6 +1452,33 @@ int kill_object(object *op,int dam, object *hitter, int type)
 	 */
 	if(op->type == PLAYER && hitter != op && !battleg)
 	    change_luck(owner, -1);
+
+	/* This code below deals with finding the appropriate skill
+	 * to credit exp to.  This is a bit problematic - we should
+         * probably never really have to look at current_weapon->skill
+	 */
+	if (hitter->skill && hitter->type!=PLAYER) skill = hitter->skill;
+	else if (owner->chosen_skill) {
+	    skill = owner->chosen_skill->skill;
+	    skop = owner->chosen_skill;
+	}
+	else if (QUERY_FLAG(owner, FLAG_READY_WEAPON)) skill=owner->current_weapon->skill;
+	else 
+	    LOG(llevError,"kill_object - unable to find skill that killed monster\n");
+
+	/* We have the skill we want to credit to - now find the object this goes
+	 * to.
+	 */
+	if (!skop && skill) {
+	    int i;
+
+	    for (i=0; i<NUM_SKILLS; i++)
+                if (owner->contr->last_skill_ob[i] &&
+		  !strcmp(owner->contr->last_skill_ob[i]->skill, skill)) {
+		    skop = owner->contr->last_skill_ob[i];
+		    break;
+		}
+	}
     } /* Was it a player that hit somethign */
 
 
@@ -1444,43 +1486,23 @@ int kill_object(object *op,int dam, object *hitter, int type)
     if(owner != hitter ) {
 	(void) sprintf(buf,"%s killed %s with %s%s.",owner->name,
 	       query_name(op),query_name(hitter), battleg? " (duel)":"");
-	owner->exp_obj=hitter->exp_obj;
     }
-    else
+    else {
 	(void) sprintf(buf,"%s killed %s%s.",hitter->name,op->name,
 	       battleg? " (duel)":"");
+    }
+    /* These may have been set in the player code section above */
+    if (!skop) skop = hitter->chosen_skill;
+    if (!skill && skop) skill=skop->skill;
 
     new_draw_info(NDI_ALL, op->type==PLAYER?1:10, NULL, buf);
 
+
     /* If you didn't kill yourself, and your not the wizard */
-    if(hitter!=op&&!QUERY_FLAG(op, FLAG_WAS_WIZ)) {
-	int exp=op->stats.exp;
+    if(hitter!=op && !QUERY_FLAG(op, FLAG_WAS_WIZ)) {
+	int exp;
 
-	if(!settings.simple_exp && hitter->level>op->level)
-	    exp=(exp*(op->level+1))/MAX(hitter->level+1, 1);
-
-	if (owner != hitter) {
-	    old_skill = owner->chosen_skill;
-	    owner->chosen_skill = hitter->chosen_skill;
-	    owner->exp_obj=hitter->exp_obj;
-
-	    /* Not sure if this will happen or not - I'm think it could with
-	     * summoned pets - they may use a skill and thus the chosen_skill
-	     * gets updated to something they have.
-	     */
-	    if (owner->chosen_skill && owner->chosen_skill->env != owner) {
-		LOG(llevDebug,"kill_object: chosen skill doesn't belong to owner? (%s, %s)\n",
-		    owner->chosen_skill->name, owner->name);
-		owner->chosen_skill = NULL;
-	    }
-	    if (owner->exp_obj && owner->exp_obj->env != owner) {
-		LOG(llevDebug,"kill_object: exp_obj doesn't belong to owner? (%s, %s)\n",
-		    owner->exp_obj->name, owner->name);
-		owner->exp_obj = NULL;
-	    }
-	}
-
-	exp = calc_skill_exp(owner,op);
+	exp = calc_skill_exp(owner,op, skop);
 
 	/* Really don't give much experience for killing other players */
 	if (op->type==PLAYER) {
@@ -1505,7 +1527,7 @@ int kill_object(object *op,int dam, object *hitter, int type)
 	if (battleg) exp = 0;
 
 	if(owner->type!=PLAYER || owner->contr->party_number<=0) {
-	    add_exp(owner,exp);
+	    change_exp(owner,exp, skill, 0);
 	}
 	else {
 	    int shares=0,count=0;
@@ -1523,23 +1545,21 @@ int kill_object(object *op,int dam, object *hitter, int type)
 		}
 	    }
 	    if(count==1 || shares>exp)
-		add_exp(owner,exp);
+		change_exp(owner,exp, skill, SK_EXP_TOTAL);
 	    else {
 		int share=exp/shares,given=0,nexp;
 		for(pl=first_player;pl!=NULL;pl=pl->next) {
 		    if(pl->ob->contr->party_number==no && on_same_map(pl->ob, owner)) {
 			nexp=(pl->ob->level+4)*share;
-			add_exp(pl->ob,nexp);
+			change_exp(pl->ob,nexp, skop->skill, SK_EXP_TOTAL);
 			given+=nexp;
 		    }
 		}
 		exp-=given;
-		add_exp(owner,exp); /* give any remainder to the player */
+		/* give any remainder to the player */
+		change_exp(owner,exp, skill, SK_EXP_ADD_SKILL);
 	    }
 	} /* else part of a party */
-
-	/* set this back after we have added the experience */
-	if (owner != hitter) owner->chosen_skill = old_skill;
 
     } /* end if person didn't kill himself */
 
@@ -1579,31 +1599,28 @@ int kill_object(object *op,int dam, object *hitter, int type)
  */
 
 int friendly_fire(object *op, object *hitter){
-	object *owner;
-	int friendlyfire;
+    object *owner;
+    int friendlyfire;
 	
-	if (hitter->head) hitter=hitter->head;
+    if (hitter->head) hitter=hitter->head;
 
-	friendlyfire	= 0;
+    friendlyfire = 0;
 	
-		if(op->type == PLAYER){
+    if(op->type == PLAYER) {
 			
-			if(hitter->type == PLAYER && hitter->contr->peaceful == 1)
-				return 1;
+	if(hitter->type == PLAYER && hitter->contr->peaceful == 1)
+	    return 1;
 		    
-			if(owner = get_owner(hitter)){
-				if(owner->type == PLAYER && owner->contr->peaceful == 1)
-					friendlyfire = 2;
-			}
+	if((owner = get_owner(hitter))!=NULL) {
+	    if(owner->type == PLAYER && owner->contr->peaceful == 1)
+		friendlyfire = 2;
+	}
 			
-			if(hitter->type == CONE || hitter->type == FBALL  || hitter->type == FIREWALL
-				|| hitter->type == SWARM_SPELL || hitter->type == POISONCLOUD 
-				|| hitter->type == POISONING || hitter->type == DISEASE || hitter->type == RUNE)
-				
-				friendlyfire = 0;			
-	   }
-	
-	return friendlyfire;
+	if (hitter->type == SPELL || hitter->type == POISONING || 
+	    hitter->type == DISEASE || hitter->type == RUNE)
+	    friendlyfire = 0;			
+    }
+    return friendlyfire;
 }
 
 
@@ -1923,21 +1940,26 @@ void confuse_player(object *op, object *hitter, int dam)
     object *tmp;
     int maxduration;
     
-    tmp = present_in_ob(CONFUSION,op);
+    tmp = present_in_ob_by_name(FORCE,"confusion", op);
     if(!tmp) {
-      tmp = get_archetype("confusion");
-      tmp = insert_ob_in_ob(tmp,op);
+	tmp = get_archetype("force");
+	tmp = insert_ob_in_ob(tmp,op);
     }
     
     /* Duration added per hit and max. duration of confusion both depend
-       on the player's resistance */
-    tmp->stats.food += MAX(1, 5*(100-op->resist[ATNR_CONFUSION])/100);
+     *  on the player's resistance 
+     */
+    tmp->speed = 0.05;
+    tmp->subtype = FORCE_CONFUSION;
+    tmp->duration = 8 + MAX(1, 5*(100-op->resist[ATNR_CONFUSION])/100);
+    if (tmp->name) free_string(tmp->name);
+    tmp->name = add_string("confusion");
     maxduration = MAX(2, 30*(100-op->resist[ATNR_CONFUSION])/100);
-    if( tmp->stats.food > maxduration)
-      tmp->stats.food = maxduration;
+    if( tmp->duration > maxduration)
+	tmp->duration = maxduration;
     
     if(op->type == PLAYER && !QUERY_FLAG(op,FLAG_CONFUSED))
-      new_draw_info(NDI_UNIQUE, 0,op,"You suddenly feel very confused!");
+	new_draw_info(NDI_UNIQUE, 0,op,"You suddenly feel very confused!");
     SET_FLAG(op, FLAG_CONFUSED);
 }
 
@@ -2006,11 +2028,12 @@ void paralyze_player(object *op, object *hitter, int dam)
 }
 
 
-/* Attempts to kill 'op'.  hitter is the attack object, dam i
+/* Attempts to kill 'op'.  hitter is the attack object, dam is
  * the computed damaged.
  */
 void deathstrike_player(object *op, object *hitter, int *dam) 
-{    /*  The intention of a death attack is to kill outright things
+{
+    /*  The intention of a death attack is to kill outright things
     **  that are a lot weaker than the attacker, have a chance of killing
     **  things somewhat weaker than the caster, and no chance of
     **  killing something equal or stronger than the attacker.
@@ -2030,7 +2053,7 @@ void deathstrike_player(object *op, object *hitter, int *dam)
              op->arch->name, op->name);
         def_lev = 1;
     }
-    atk_lev = SK_level (hitter) / 2;
+    atk_lev = (hitter->chosen_skill?hitter->chosen_skill->level:hitter->level) / 2;
     /* LOG(llevDebug,"Deathstrike - attack level %d, defender level %d\n",
        atk_lev, def_lev); */
 
@@ -2161,9 +2184,16 @@ int adj_attackroll (object *hitter, object *target) {
 /* determine if the object is an 'aimed' missile */
 int is_aimed_missile ( object *op) {
 
-  if(op&&QUERY_FLAG(op,FLAG_FLYING)&& 
-     (op->type==ARROW||op->type==THROWN_OBJ
-       ||op->type==FBULLET||op->type==FBALL)) 
-    return 1;
-  return 0;
-}
+    /* I broke what used to be one big if into a few nested
+     * ones so that figuring out the logic is at least possible.
+     */
+    if (op && QUERY_FLAG(op,FLAG_FLYING)) {
+	if (op->type==ARROW || op->type==THROWN_OBJ)
+	    return 1;
+	else if (op->type==SPELL_EFFECT && (op->subtype == SP_BULLET ||
+	      op->subtype == SP_EXPLOSION))
+	    return 1;
+    }
+    return 0;
+} 
+

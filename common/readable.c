@@ -450,25 +450,6 @@ static char *book_descrpt[] =
 };
 
 
-
-static char *mage_book_name[] =
-{
-    "grimoire",     /* Level 1   */
-    "grimoire",     /* Level 2-3 */
-    "manual",       /* Level 4-5 */
-    "tome",         /* Level 6-7 */
-    "treatise"      /* Level 8+  */
-};
-
-static char *priest_book_name[] =
-{
-    "hymnal",       /* Level 1   */
-    "prayerbook",   /* Level 2-3 */
-    "prayerbook",   /* Level 4-5 */
-    "sacred text",  /* Level 6-7 */
-    "testament"     /* Level 8+  */
-};
-
 static int max_titles[6] =
 {
     ((sizeof (light_book_name) / sizeof (char *)) + (sizeof (heavy_book_name) / sizeof (char *))) * (sizeof (book_author) / sizeof (char *)),
@@ -909,10 +890,6 @@ new_text_name (object *book, int msgtype)
 	  break;
       case 6:			/*msg file */
       default:
-#if 0
-	  nbr = sizeof (book_name) / sizeof (char *);
-	  strcpy (name, book_name[RANDOM () % nbr]);
-#endif
 	  if (book->weight > 2000)
 	    {			/* based on weight */
 		nbr = sizeof (heavy_book_name) / sizeof (char *);
@@ -1048,7 +1025,6 @@ void
 change_book (object *book, int msgtype)
 {
     int     nbr = sizeof (book_descrpt) / sizeof (char *);
-    char    name[MAX_BUF];
 
     switch (book->type)
       {
@@ -1154,28 +1130,7 @@ change_book (object *book, int msgtype)
 		}
 	      break;
 	  }
-      case SPELLBOOK:		/* depends on mage/clerical */
-	  if (!strcmp (book->arch->name, "cleric_book"))
-	    {
-		int level;
-		level=spells[book->stats.sp].level/2;
-		nbr = sizeof (priest_book_name) / sizeof (char *);
-		if (level>(nbr-1)) level=nbr-1;
-		strcpy (name, priest_book_name[level]);
-	    }
-	  else
-	    {
-		int level;
 
-		level=spells[book->stats.sp].level/2;
-		nbr = sizeof (mage_book_name) / sizeof (char *);
-		if (level>(nbr-1)) level=nbr-1;
-		strcpy (name, mage_book_name[level]);
-	    }
-	  if (book->name)
-	      free_string (book->name);
-	  book->name = add_string (name);
-	  break;
       default:
 	  LOG (llevError, "change_book_name() called w/ illegal obj type.\n");
 	  return;
@@ -1497,65 +1452,50 @@ spellpath_msg (int level, int booksize)
     static char retbuf[BOOK_BUF];
     char    tmpbuf[BOOK_BUF];
     int     path = RANDOM () % NRSPELLPATHS, prayers = RANDOM () % 2;
-    int     i = 0, did_first_sp = 0;
+    int     did_first_sp = 0;
     uint32  pnum = (path == -1) ? PATH_NULL : spellpathdef[path];
+    archetype *at;
 
     /* Preamble */
     sprintf (retbuf, "Herein are detailed the names of %s\n",
-	     !(prayers) ? "incantations" : "prayers");
+	     prayers ? "prayers": "incantations");
+
     if (path == -1)
 	strcat (retbuf, "having no known spell path.\n");
     else
 	sprintf (retbuf, "%sbelonging to the path of %s:\n", retbuf,
 		 spellpathnames[path]);
 
-    /* Now go through the entire list of spells. Add appropriate spells
-     * in our message buffer 
-     */
-    do
-      {
-	  if ((spells[i].books || prayers) && spells[i].cleric == prayers
-	      && (pnum & spells[i].path))
-	    {
-		/* book level determines max spell level to show 
-		 * thus higher level books are more comprehensive */
-		if (spells[i].level > (level * 8))
-		  {
-		      i++;
-		      continue;
-		  }
-		strcpy (tmpbuf, spells[i].name);
+    for (at=first_archetype; at != NULL; at=at->next) {
+	/* Determine if this is an appropriate spell.  Must
+	 * be of matching path, must be of appropriate type (prayer
+	 * or not), and must be within the valid level range.
+	 */
+	if (at->clone.type == SPELL && at->clone.path_attuned & pnum &&
+	    ((at->clone.stats.grace && prayers) || (at->clone.stats.sp && !prayers)) &&
+	    (at->clone.level < (level * 8))) {
+		strcpy (tmpbuf, at->clone.name);
 
 		if (book_overflow (retbuf, tmpbuf, booksize))
 		    break;
-		else
-		  {
-		      if (did_first_sp)
-			  strcat (retbuf, ",\n");
-		      did_first_sp = 1;
-		      strcat (retbuf, tmpbuf);
-		  }
+		else {
+		    if (did_first_sp)
+			strcat (retbuf, ",\n");
+		    did_first_sp = 1;
+			strcat (retbuf, tmpbuf);
+		}
 	    }
-	  i++;
-      }
-    while (i < NROFREALSPELLS);
-
+    }
     /* Geez, no spells were generated. */
-    if (!did_first_sp)
-      {
-	  if (RANDOM () % 4)	/* usually, lets make a recursive call... */
-	      spellpath_msg (level, booksize);
-	  else	/* give up, cause knowning no spells exist for path is info too. */
-	      strcat (retbuf, "\n - no known spells exist -\n");
-      }
-    else
-      {
-#ifdef BOOK_MSG_DEBUG
-	  LOG (llevDebug, "\n spellpath_msg() created strng: %d\n", strlen (retbuf));
-	  fprintf (logfile, " MADE THIS: path=%d pray=%d\n%s\n", path, prayers, retbuf);
-#endif
-	  strcat (retbuf, "\n");
-      }
+    if (!did_first_sp) {
+	if (RANDOM () % 4)	/* usually, lets make a recursive call... */
+	    spellpath_msg (level, booksize);
+	else	/* give up, cause knowing no spells exist for path is info too. */
+	    strcat (retbuf, "\n - no known spells exist -\n");
+    }
+    else {
+	strcat (retbuf, "\n");
+    }
     return retbuf;
 }
 

@@ -95,7 +95,6 @@ CommArray_s Commands[] = {
   {"rename", command_rename_item,  0.0},
   {"resistances", command_resistances,	0.0},
   {"rotateshoottype", command_rotateshoottype,	0.0},
-  {"rotatespells", command_rotatespells,	0.0},
   {"shutdown", command_shutdown, 0.0},
   {"skills", command_skills,	0.0},	/* shows player list of skills */
   {"use_skill", command_uskill, 1.0},
@@ -241,7 +240,6 @@ CommArray_s WizCommands [] = {
   {"reset", command_reset,0.0},
   {"set_god", command_setgod, 0.0},
   {"speed", command_speed,0.0},
-  {"spellreset", command_spell_reset,0.0},
   {"ssdumptable", command_ssdumptable,0.0},
   {"stats", command_stats,0.0},
   {"style_info", command_style_map_info, 0.0},	/* Costly command, so make it wiz only */

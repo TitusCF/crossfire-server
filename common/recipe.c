@@ -495,15 +495,6 @@ void dump_alchemy_costs (void)
 	     num_errors);
 }
 
-#if 0
-recipe *get_first_recipe() {
-  recipelist *fl=formulalist;
-  recipe *formula=fl->items;
-
-  return formula;
-}
-#endif
-
 char * ingred_name (char *name) {
   char *cp=name;
  

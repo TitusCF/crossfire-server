@@ -22,60 +22,64 @@ void walk_on_deep_swamp (object *op, object *victim)
 
 void move_deep_swamp (object *op)
 {
-  object *above = op->above;
-  object *nabove;
+    object *above = op->above;
+    object *nabove;
 
-  while(above) {
-    nabove = above->above;
-    if (above->type == PLAYER && 
-	!QUERY_FLAG(above, FLAG_FLYING) &&
-	above->stats.hp >= 0) {
+    while(above) {
+	nabove = above->above;
+	if (above->type == PLAYER && !QUERY_FLAG(above, FLAG_FLYING) && above->stats.hp >= 0) {
+	    if (op->stats.food < 1) {
+		LOG (llevDebug, "move_deep_swamp(): player is here, but state is "
+		     "%d\n", op->stats.food);
+		op->stats.food = 1;
+	    }
 
-      if (op->stats.food < 1) {
-        LOG (llevDebug, "move_deep_swamp(): player is here, but state is "
-             "%d\n", op->stats.food);
-        op->stats.food = 1;
-      }
-      switch(op->stats.food) {
-	case 1:
-	  if (rndm(0, 2) == 0) {
-	    new_draw_info(NDI_UNIQUE, 0,above, "You are down to your waist in the wet swamp.");
-	    op->stats.food = 2;
-	    above->speed_left -= SLOW_PENALTY(op);
-	  }
-	  break;
-	case 2:
-	  if (rndm(0, 2) == 0) {
-	    new_draw_info(NDI_UNIQUE, 0,above, "You are down to your NECK in the dangerous swamp.");
-	    op->stats.food = 3;
-	    strcpy(above->contr->killer,"drowning in a swamp");
-	    above->stats.hp--;
-	    above->speed_left -= SLOW_PENALTY(op);
-	  }
-	  break;
-	case 3:
-	  if (rndm(0, 4) == 0) {
-	    /* player is ready to drown - only woodsman skill can save him */
-	    if (rndm(0, 4) == 0 || !change_skill(above, lookup_skill_by_name("woodsman"))) {
-	      op->stats.food = 0;
-	      new_draw_info_format(NDI_UNIQUE | NDI_ALL, 1, NULL,
-		"%s disappeared into a swamp.",above->name);
-	      strcpy(above->contr->killer,"drowning in a swamp");
+	    switch(op->stats.food) {
+		case 1:
+		    if (rndm(0, 2) == 0) {
+			new_draw_info(NDI_UNIQUE, 0,above, 
+				      "You are down to your waist in the wet swamp.");
+			op->stats.food = 2;
+			above->speed_left -= SLOW_PENALTY(op);
+		    }
+		    break;
+
+		case 2:
+		    if (rndm(0, 2) == 0) {
+			new_draw_info(NDI_UNIQUE | NDI_RED, 0,above,
+			      "You are down to your NECK in the dangerous swamp.");
+			op->stats.food = 3;
+			strcpy(above->contr->killer,"drowning in a swamp");
+			above->stats.hp--;
+			above->speed_left -= SLOW_PENALTY(op);
+		    }
+		    break;
+
+		case 3:
+		    if (rndm(0, 4) == 0) {
+			object *woodsman = find_obj_by_type_subtype(above, SKILL, SK_WOODSMAN);
+
+			/* player is ready to drown - only woodsman skill can save him */
+			if (!woodsman) {
+			    op->stats.food = 0;
+			    new_draw_info_format(NDI_UNIQUE | NDI_ALL, 1, NULL,
+					 "%s disappeared into a swamp.",above->name);
+			    strcpy(above->contr->killer,"drowning in a swamp");
 	      
-	      above->stats.hp = -1;
-	      kill_player(above); /* player dies in the swamp */
+			    above->stats.hp = -1;
+			    kill_player(above); /* player dies in the swamp */
+			}
+			else {
+			    op->stats.food = 2;
+			    new_draw_info(NDI_UNIQUE, 0,above, 
+				  "You almost drowned in the swamp! You survived due to your woodsman skill.");
+			}
+		    }
+		    break;
 	    }
-	    else {
-	      op->stats.food = 2;
-	      new_draw_info(NDI_UNIQUE, 0,above, "You almost drowned in the swamp! You");
-	      new_draw_info(NDI_UNIQUE, 0,above, "survived due to your woodsman skill.");
-	    }
-	  }
-	break;
-      }
-    } else if (!QUERY_FLAG(above, FLAG_ALIVE)) {
-      if (rndm(0, 2) == 0) decrease_ob(above);
+	} else if (!QUERY_FLAG(above, FLAG_ALIVE)) {
+	    if (rndm(0, 2) == 0) decrease_ob(above);
+	}
+	above = nabove;
     }
-    above = nabove;
-  }
 }

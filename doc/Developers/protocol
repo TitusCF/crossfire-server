@@ -474,13 +474,24 @@ S->C: stats <stat1><val1><stat2><val2>...
 	stats.  All values are binary.  that <stat> values are listed in the
 	newclient.h file.  All the values sent are 16 bits with these
 	exceptions:  
-	-experience (including skill experieince), weight limit:
+	-weight limit:
 		data is 32 bits.  
 	-speed, weapon_sp is converted to an int first by multiply by
 		FLOAT_MULTI (as defined innewclient.h) and then sent as 
 		32 bits.  
 	-range, title are sent as strings with their length preceded.  The
 		length is 1 byte.
+	-experience: If the client uses the 'exp64' setup flag, this is sent
+	 as 64 bit data, otherwise, 32 bit data (with appropriate loss of
+	 information.  To make tracking of this easier, a different stat
+	 type is used for 64 bit data (CS_STAT_EXP64) compared to 32 bit -
+	 thus, the client can know what to do based on stat type.  However,
+	 for the run of the session, either CS_STAT_EXP64 of CS_STAT_EXP will
+	 get used, never both.
+
+	-skill experience:  this is only set if exp64 is set.  This is sent
+	 as the skill level, followed by the skill exp (thus, 9 bytes + 
+	 the stat type byte)
 
 ******************************************************************************
 COMMANDS RELATING TO IMAGE INFORMATION TRANSMISSION
@@ -916,9 +927,20 @@ S->C: setup <option1> <value1> <option2> <value2>
 
 	The following options are supported:
 
-	sound, sexp (send skill experience).
-	    Set to true if the client wants to get sent this information,
-	    false otherwise.  These are integers in string form (0/1).
+	sound
+	    Set to true if the client wants to get sent sound information.
+	    This is an integer in string form (0/1).
+
+	exp64: If true, client can handle the 64 bit exp values that
+	    are now used.  Otherwise, values are sent as 32 bit.  Setting
+	    this flag also means that skill exp will be sent, and it will
+	    be sent in revised method as described in the stats command.
+	    Value is an integer in string format.
+
+	sexp (send skill experience):
+	    Obsolete - was used to denote that client wanted skill exp
+	    sent.  Under revised skill system, this info just doesn't
+	    exist anymore in the same form.
 
 	map1cmd: parameter is an integer in string form like above.
 	   this requests the server to use/not use the map1 protocol
@@ -1121,6 +1143,22 @@ S->C: replyinfo <info_type>[options]<data>
 	request should always do the right thing with the
 	returned information.
 
+    skill_info (no parameters)
+	This returns the skill number to skill name mappings.  In this
+	way, new skills can be added in the server, and the client 
+	can use this new skill information with no changes to the code.
+
+	All data below is in text format.  Format is:
+
+	stat number:skill name
+
+	Where stat number is the number that will be used to send
+	that skill information.  Example:
+	141:lockpicking
+	142:hiding
+	143:smithery
+
+	
 	
 
 	

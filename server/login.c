@@ -34,7 +34,6 @@
 #include <loader.h>
 #include <define.h>
 
-extern spell spells[NROFREALSPELLS];
 extern void sub_weight (object *, signed long);
 extern void add_weight (object *, signed long);
 extern long pticks;
@@ -277,7 +276,6 @@ int save_player(object *op, int flag) {
   fprintf(fp,"gen_sp %d\n",pl->gen_sp);
   fprintf(fp,"gen_grace %d\n",pl->gen_grace);
   fprintf(fp,"listening %d\n",pl->listening);
-  fprintf(fp,"spell %d\n",pl->chosen_spell);
   fprintf(fp,"shoottype %d\n",pl->shoottype);
   fprintf(fp,"bowtype %d\n",pl->bowtype);
   fprintf(fp,"petmode %d\n",pl->petmode);
@@ -322,8 +320,6 @@ int save_player(object *op, int flag) {
     fprintf(fp,"%d\n",pl->levsp[i]);
 	 fprintf(fp,"%d\n",pl->levgrace[i]);
   }
-  for(i=0;i<pl->nrofknownspells;i++)
-    fprintf(fp,"known_spell %s\n",spells[pl->known_spells[i]].name);
   fprintf(fp,"endplst\n");
 
   SET_FLAG(op, FLAG_NO_FIX_PLAYER);
@@ -402,19 +398,6 @@ void copy_file(char *filename, FILE *fpout) {
     fputs(buf,fpout);
   fclose(fp);
 }
-
-#if 1
-static int spell_sort(const void *a1,const void *a2)
-{
-  return strcmp(spells[(int)*(sint16 *)a1].name,spells[(int)*(sint16 *)a2].name);
-}
-#else
-static int spell_sort(const char *a1,const char *a2)
-{
-   fprintf(stderr, "spell1=%d, spell2=%d\n", *(sint16*)a1, *(sint16*)a2);
-  return strcmp(spells[(int )*a1].name,spells[(int )*a2].name);
-}
-#endif
 
 
 void check_login(object *op) {
@@ -526,8 +509,6 @@ void check_login(object *op) {
 	    pl->gen_sp=value;
         else if (!strcmp(buf,"gen_grace"))
 	    pl->gen_grace=value;
-        else if (!strcmp(buf,"spell"))
-	    pl->chosen_spell=value;
         else if (!strcmp(buf,"listening"))
 	    pl->listening=value;
         else if (!strcmp(buf,"peaceful"))
@@ -599,6 +580,10 @@ void check_login(object *op) {
 	 * objects.
 	 */
 	} else if (!strcmp(buf,"known_spell")) {
+#if 0
+	    /* Logic is left here in case someone wants to try
+	     * and write code to update to spell objects.
+	     */
 	    char *cp=strchr(bufall,'\n');
 	    *cp='\0';
 	    cp=strchr(bufall,' ');
@@ -610,6 +595,7 @@ void check_login(object *op) {
 		}
 	    if(i==NROFREALSPELLS)
 		LOG(llevDebug, "Error: unknown spell (%s)\n",cp);
+#endif
 	}
 	/* Remove confkeys, pushkey support - very old */
     } /* End of loop loading the character file */
@@ -663,9 +649,7 @@ void check_login(object *op) {
      * Moved ahead of the esrv functions, so proper weights will be
      * sent to the client.
      */
-
-    (void) init_player_exp(op);
-    (void) link_player_skills(op);
+    link_player_skills(op);
 
     if ( ! legal_range (op, op->contr->shoottype))
         op->contr->shoottype = range_none;
@@ -715,12 +699,6 @@ void check_login(object *op) {
      */
     esrv_new_player(op->contr,op->weight+op->carrying);
     esrv_send_inventory(op, op);
-
-    /* This seems to compile without warnings now.  Don't know if it works
-     * on SGI's or not, however.
-     */
-    qsort((void *)pl->known_spells,pl->nrofknownspells,
-	sizeof(pl->known_spells[0]),(int (*)())spell_sort);
 
     CLEAR_FLAG(op, FLAG_FRIENDLY);
 

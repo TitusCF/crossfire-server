@@ -9,8 +9,6 @@
 #include <sproto.h>
 #include <sounds.h>
 
-int volume_table[NROF_SOUNDS];
-
 /* This is only used for new client/server sound.  If the sound source
  * on the map is farther away than this, we don't sent it to the client.
  */

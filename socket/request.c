@@ -95,7 +95,9 @@ short atnr_cs_stat[NROFATTACKS] = {CS_STAT_RES_PHYS,
     -1 /* Chaos */, -1 /* Counterspell */,
     -1 /* Godpower */, CS_STAT_RES_HOLYWORD,
     CS_STAT_RES_BLIND, 
-    -1 /* Internal */, -1 /* life stealing */
+    -1, /* Internal */
+    -1, /* life stealing */
+    -1 /* Disease - not fully done yet */
 };
 
 /* This is the Setup cmd - easy first implementation */
@@ -144,8 +146,8 @@ void SetUp(char *buf, int len, NewSocket *ns)
 	    ns->ext2 = atoi(param);
 	    strcat(cmdback, param);
 	}
-	else if (!strcmp(cmd,"sexp")) {
-	    ns->skillexp = atoi(param);
+	else if (!strcmp(cmd,"exp64")) {
+	    ns->exp64 = atoi(param);
 	    strcat(cmdback, param);
 	} else if (!strcmp(cmd,"darkness")) {
 	    ns->darkness = atoi(param);
@@ -184,10 +186,12 @@ void SetUp(char *buf, int len, NewSocket *ns)
 	    char tmpbuf[20];
 	    int q = atoi(param);
 	    if (q<1 || q>2) {
-		sprintf(tmpbuf,"%d", ns->itemcmd);
+		strcpy(tmpbuf,"FALSE");
 	    } else  {
 		ns->itemcmd = q;
+		sprintf(tmpbuf,"%d", ns->itemcmd);
 	    }
+	    strcat(cmdback, tmpbuf);
         } else if (!strcmp(cmd,"mapsize")) {
 	    int x, y=0;
 	    char tmpbuf[MAX_BUF], *cp;
@@ -631,6 +635,12 @@ void send_query(NewSocket *ns, uint8 flags, char *text)
 
 /* Sends the stats to the client - only sends them if they have changed */
 
+#define AddIfInt64(Old,New,Type) if (Old != New) {\
+			Old = New; \
+			SockList_AddChar(&sl, Type); \
+			SockList_AddInt64(&sl, New); \
+		       }
+
 #define AddIfInt(Old,New,Type) if (Old != New) {\
 			Old = New; \
 			SockList_AddChar(&sl, Type); \
@@ -690,15 +700,27 @@ void esrv_update_stats(player *pl)
         AddIfShort(pl->last_stats.Con, pl->ob->stats.Con, CS_STAT_CON);
         AddIfShort(pl->last_stats.Cha, pl->ob->stats.Cha, CS_STAT_CHA);
     }
-    if(pl->last_stats.exp != pl->ob->stats.exp && pl->socket.skillexp) 
-    {
+    if(pl->socket.exp64) {
 	int s;
-	for(s=0;s<pl->last_skill_index;s++) {
-	    AddIfInt(pl->last_skill_exp[s],pl->last_skill_ob[s]->stats.exp , pl->last_skill_id[s]);
-	    AddIfShort(pl->last_skill_level[s],pl->last_skill_ob[s]->level , pl->last_skill_id[s]+1);
+	for(s=0;s<NUM_SKILLS;s++) {
+	    if (pl->last_skill_ob[s] && 
+		pl->last_skill_exp[s] != pl->last_skill_ob[s]->stats.exp) {
+
+		/* Always send along the level if exp changes.  This is only
+		 * 1 extra byte, but keeps processing simpler.
+		 */
+		SockList_AddChar(&sl, s + CS_STAT_SKILLINFO);
+		SockList_AddChar(&sl, pl->last_skill_ob[s]->level);
+		SockList_AddInt64(&sl, pl->last_skill_ob[s]->stats.exp);
+		pl->last_skill_exp[s] =  pl->last_skill_ob[s]->stats.exp;
+	    }
 	}
     }
-    AddIfInt(pl->last_stats.exp, pl->ob->stats.exp, CS_STAT_EXP);
+    if (pl->socket.exp64) {
+	AddIfInt64(pl->last_stats.exp, pl->ob->stats.exp, CS_STAT_EXP64);
+    } else {
+	AddIfInt(pl->last_stats.exp, pl->ob->stats.exp, CS_STAT_EXP);
+    }
     AddIfShort(pl->last_level, pl->ob->level, CS_STAT_LEVEL);
     AddIfShort(pl->last_stats.wc, pl->ob->stats.wc, CS_STAT_WC);
     AddIfShort(pl->last_stats.ac, pl->ob->stats.ac, CS_STAT_AC);
@@ -1731,3 +1753,25 @@ void send_plugin_custom_message(object *pl, char *buf)
     cs_write_string(&pl->contr->socket,buf,strlen(buf));
 }
 
+/* This sends the skill number to name mapping.  We ignore
+ * the params - we always send the same info no matter what.
+  */
+void send_skill_info(NewSocket *ns, char *params)
+{
+    SockList sl;
+    int i;
+
+    sl.buf = malloc(MAXSOCKBUF);
+    strcpy(sl.buf,"replyinfo skill_info\n");
+    for (i=1; i< NUM_SKILLS; i++) {
+	sprintf(sl.buf + strlen(sl.buf), "%d:%s\n", i + CS_STAT_SKILLINFO,
+		skill_names[i]);
+    }
+    sl.len = strlen(sl.buf);
+    if (sl.len > MAXSOCKBUF) {
+	LOG(llevError,"Buffer overflow in send_skill_info!\n");
+	fatal(0);
+    }
+    Send_With_Handling(ns, &sl);
+    free(sl.buf);
+}

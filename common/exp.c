@@ -135,13 +135,12 @@ int new_exp(object *ob) {
  */
 
 int has_ability(object *ob) {
-  object *tmp;
+    object *tmp;
 
-  for(tmp=ob->inv;tmp!=NULL;tmp=tmp->below)
-    if(tmp->type==ABILITY||tmp->type==SPELLBOOK) 
-      return TRUE;
-
-  return FALSE;
+    for(tmp=ob->inv;tmp!=NULL;tmp=tmp->below)
+	if(tmp->type==SPELL||tmp->type==SPELLBOOK) 
+	    return TRUE;
+    return FALSE;
 }
 
 /* This loads the experience table from the exp_table

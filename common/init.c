@@ -31,7 +31,7 @@
 #include <global.h>
 #include <object.h>
 
-/* You unforunately need to looking in include/structs.h to see what these
+/* You unforunately need to looking in include/global.h to see what these
  * correspond to.
  */
 struct Settings settings = {
@@ -79,7 +79,35 @@ MOTD,
 "",
 0,0,0,0,0,0,0,0,  /* worldmap settings*/
 EMERGENCY_MAPPATH, EMERGENCY_X, EMERGENCY_Y,
-0
+0,
+1.0
+};
+
+/* perhaps not the best place for this, but needs to be
+ * in some file in the common area so that standalone
+ * programs, like the random map generator, can be built.
+ */
+char *spellpathnames[NRSPELLPATHS] = {
+ "Protection",
+ "Fire",
+ "Frost",
+ "Electricity",
+ "Missiles",
+ "Self",
+ "Summoning",
+ "Abjuration",
+ "Restoration",
+ "Detonation",
+ "Mind",
+ "Creation",
+ "Teleportation",
+ "Information",
+ "Transmutation",
+ "Transferrence",
+ "Turning",
+ "Wounding",
+ "Death",
+ "Light"
 };
 
 

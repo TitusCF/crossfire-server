@@ -330,7 +330,7 @@ value 30
 attacktype 16385
 resist_fear 100
 weight 90
-item_power 1
+item_power 2
 end
 #
 Allowed all
@@ -587,7 +587,7 @@ resist_magic 30
 Int 1
 Pow 1
 weight 90
-item_power 3
+item_power 5
 end
 #
 Allowed all
@@ -1043,7 +1043,7 @@ msg
   on you that this must be one of the
   most prized shields of all the lands.
 endmsg
-item_power 20
+item_power 25
 end
 #
 Allowed all
@@ -1280,7 +1280,7 @@ resist_deplete 30
 resist_death 30
 resist_physical 10
 magic 2
-item_power 4
+item_power 5
 end
 #
 Allowed all
@@ -1375,7 +1375,7 @@ msg
   wearer and protecting against fire.  
   Unfortunately it is also very heavy, limiting speed somewhat.
 endmsg
-item_power 3
+item_power 4
 end
 #
 Allowed plate_mail
@@ -1698,7 +1698,7 @@ Pow 2
 resist_magic 30
 resist_drain 100
 path_attuned 257
-item_power 12
+item_power 15
 end
 #
 #  Elrond's magic ring.  It was the greatest of the three rings.
@@ -1717,7 +1717,7 @@ resist_magic 30
 resist_drain 100
 resist_deplete 100
 path_attuned 259
-item_power 14
+item_power 25
 end
 #
 #  The One Ring to rule them all
@@ -1898,7 +1898,7 @@ Wis 2
 Pow 2
 resist_drain 100
 grace 2
-item_power 12
+item_power 14
 end
 #
 # Ring of the Death Priest
@@ -1920,7 +1920,7 @@ can_see_in_dark 1
 Wis 3
 Pow 2
 grace 3
-item_power 12
+item_power 20
 end
 #
 # Ring of the Saint
@@ -1942,7 +1942,7 @@ resist_ghosthit 100
 Wis 3
 Pow 2
 grace 2
-item_power 15
+item_power 25
 end
 #
 # Ring of Miracles
@@ -1964,7 +1964,7 @@ Wis 3
 Pow 3
 material 256
 grace 3
-item_power 10
+item_power 30
 end
 #
 #
@@ -2000,7 +2000,7 @@ resist_slow 100
 resist_paralyze 100
 resist_confusion 30
 resist_fear 30
-item_power 10
+item_power 11
 end
 #
 Allowed all
@@ -2021,7 +2021,7 @@ msg
   makes the wielder immune from life draining.
   It also grants an unnatural vitality.
 endmsg
-item_power 8
+item_power 9
 end
 #
 Allowed all
@@ -2118,17 +2118,17 @@ Object Plenty
 face horn2.111
 type 35
 level -20
-sp -36
 hp -30
 maxhp -30
 value 25
+other_arch spell_create_food
 end
 #
 Allowed all
 chance 10
 Object Fire
 type 35
-sp -82
+other_arch spell_firebolt
 hp -40
 maxhp -40
 value 10
@@ -2138,7 +2138,7 @@ Allowed all
 chance 10
 Object Frost
 type 35
-sp -83
+other_arch spell_frostbolt
 hp -40
 maxhp -40
 value 10
@@ -2148,7 +2148,7 @@ Allowed all
 chance 33
 Object Aggravation
 type 35
-sp -81
+other_arch spell_aggravation
 hp -10
 maxhp -10
 value 3
@@ -2159,7 +2159,7 @@ Allowed all
 chance 20
 Object Fools
 type 35
-sp -81
+other_arch spell_aggravation
 hp -10
 maxhp -10
 value 5
@@ -2172,7 +2172,7 @@ Allowed all
 chance 3
 Object Eorlingas
 type 35
-sp -82
+other_arch spell_firebolt
 hp -100
 maxhp -100
 value 40
@@ -2501,7 +2501,7 @@ materialname astolare
 Cha -4
 face cloak_black.111
 stand_still 1
-item_power 10
+item_power 19
 end
 #
 Allowed all
@@ -2798,6 +2798,8 @@ face amulet_lif.111
 food 15
 type 39
 value 20
+# item power calculation is skewed because of
+# the high food value above
 item_power 4
 end
 #
@@ -2892,7 +2894,7 @@ resist_confusion 100
 resist_paralyze 100
 resist_fear 100
 value 1000
-item_power 10
+item_power 14
 end
 #
 Allowed all
@@ -2923,7 +2925,7 @@ Pow 2
 value 5000
 resist_magic 30
 reflect_spell 1
-item_power 10
+item_power 12
 end
 #
 Allowed all
@@ -3386,7 +3388,7 @@ end
 Allowed talisman
 chance 50
 Object Fire
-type 43
+type 74
 material 256
 value 3
 path_attuned 2
@@ -3396,7 +3398,7 @@ end
 Allowed talisman
 chance 50
 Object Frost
-type 43
+type 74
 material 256
 value 3
 path_attuned 4
@@ -3406,7 +3408,7 @@ end
 Allowed talisman
 chance 80
 Object Missiles
-type 43
+type 74
 material 256
 value 5
 path_attuned 16
@@ -3415,7 +3417,7 @@ end
 Allowed talisman
 chance 40
 Object Unified Mind
-type 43
+type 74
 material 256
 value 7
 path_attuned 1056
@@ -3427,7 +3429,7 @@ Allowed talisman
 chance 20
 difficulty 10
 Object Evocation
-type 43
+type 74
 material 256
 value 9
 path_attuned 6208
@@ -3438,7 +3440,7 @@ Allowed talisman
 chance 20
 difficulty 10
 Object Elements
-type 43
+type 74
 material 256
 value 9
 path_attuned 14
@@ -3449,7 +3451,7 @@ Allowed talisman
 chance 3
 difficulty 13
 Object Wizardry
-type 43
+type 74
 material 256
 value 25
 path_attuned 28286
@@ -3463,7 +3465,7 @@ Allowed holy_symbol
 chance 80
 difficulty 5
 Object Probity
-type 43
+type 74
 material 256
 value 5
 path_attuned 257
@@ -3476,7 +3478,7 @@ Allowed holy_symbol
 chance 10
 difficulty 5
 Object Great Virtue
-type 43
+type 74
 material 256
 value 25
 path_attuned 8640
@@ -3488,7 +3490,7 @@ Allowed holy_symbol
 chance 10
 difficulty 5
 Object The Dark Path
-type 43
+type 74
 material 256
 value 25
 path_attuned 393216
@@ -3500,7 +3502,7 @@ Allowed holy_symbol
 chance 10
 difficulty 5
 Object Turning
-type 43
+type 74
 material 256
 value 25
 path_attuned 65536
@@ -3511,7 +3513,7 @@ Allowed holy_symbol
 chance 50
 difficulty 5
 Object Calling
-type 43
+type 74
 material 256
 value 5
 path_attuned 64
@@ -3721,7 +3723,7 @@ face potion_fire2.111
 stand_still 1
 type 5
 value 1
-sp 1
+other_arch spell_small_fireball
 end
 #
 Allowed potion_generic
@@ -3730,7 +3732,7 @@ Object great firestorm
 face potion_fire2.111
 stand_still 1
 type 5
-sp 2
+other_arch spell_medium_fireball
 value 5
 end
 #
@@ -3740,7 +3742,7 @@ Object black fire
 face potion_fire2.111
 stand_still 1
 type 5
-sp 90
+other_arch spell_comet
 value 8
 level -30
 end
@@ -3751,7 +3753,7 @@ Object fiery destruction
 type 5
 face potion_fire2.111
 stand_still 1
-sp 89
+other_arch spell_meteor_swarm
 value 15
 level -60
 end
@@ -3762,7 +3764,7 @@ Object sunfire
 face potion_fire2.111
 stand_still 1
 type 5
-sp 161
+other_arch spell_sunspear
 value 5
 end
 #
@@ -3772,7 +3774,7 @@ Object freezing
 face potion_freeze.111
 stand_still 1
 type 5
-sp 83
+other_arch spell_frostbolt
 value 1
 end
 #
@@ -3782,8 +3784,8 @@ Object fire
 face potion_fire2.111
 stand_still 1
 type 5
+other_arch spell_firebolt
 value 1
-sp 82
 end
 #
 Allowed potion_generic
@@ -3792,7 +3794,7 @@ Object electric shock
 face potion_shock.111
 stand_still 1
 type 5
-sp 5
+other_arch spell_sm_lightning
 value 1
 end
 #
@@ -3802,7 +3804,7 @@ chance 1
 Object noxious fumes
 stand_still 1
 type 5
-sp 21
+other_arch spell_poison_cloud
 value 1
 end
 #
@@ -3812,7 +3814,7 @@ chance 1
 Object lasting shock
 stand_still 1
 type 5
-sp 88
+other_arch spell_ball_lightning
 value 15
 end
 #
@@ -3822,7 +3824,7 @@ chance 1
 Object Rainbow Wave
 stand_still 1
 type 5
-sp 85
+other_arch spell_color_spray
 value 20
 end
 #
@@ -3833,7 +3835,7 @@ chance 1
 Object first aid
 type 5
 value 1
-sp 32
+other_arch spell_minor_healing
 end
 #
 Allowed potion_generic
@@ -3841,17 +3843,17 @@ chance 1
 Object cure vision
 face potion_heal2.111
 type 5
-sp 163
+other_arch spell_cure_blindness
 value 2
 end
 #
 Allowed potion_generic
 chance 1
-Object cure sickness
+Object cure poison
 face potion_heal2.111
 stand_still 1
 type 5
-sp 68
+other_arch spell_cure_poison
 value 1
 end
 #
@@ -3861,16 +3863,16 @@ Object cure madness
 face potion_heal2.111
 stand_still 1
 type 5
-sp 125
+other_arch spell_cure_confusion
 value 2
 end
 #
 Allowed potion_generic
 chance 1
-Object cure illness
+Object cure disease
 stand_still 1
 type 5
-sp 171
+other_arch spell_cure_disease
 value 3
 end
 #
@@ -3992,11 +3994,11 @@ end
 #
 Allowed potion_generic
 chance 1
-Object might
+Object strength
 face potion_util.111
 stand_still 1
 type 5
-sp 39
+other_arch spell_strength
 value 1
 end
 #
@@ -4006,17 +4008,17 @@ Object agility
 type 5
 face potion_util.111
 stand_still 1
-sp 40
+other_arch spell_dexterity
 value 1
 end
 #
 Allowed potion_generic
 chance 1
-Object health
+Object fortitude
 type 5
 face potion_util.111
 stand_still 1
-sp 41
+other_arch spell_constitution
 value 1
 end
 #
@@ -4024,7 +4026,7 @@ Allowed balm_generic
 chance 1
 Object beauty
 type 5
-sp 42
+other_arch spell_charisma
 value 4
 end
 #
@@ -4035,22 +4037,22 @@ chance 1
 Object flying
 type 5
 value 1
-sp 54
+other_arch spell_levitate
 end
 #
 Allowed balm_generic
 chance 1
-Object serpent
+Object the serpent
 type 5
 value 1
-sp 156
+other_arch spell_staff_to_snake
 end
 #
 Allowed balm_generic
 chance 1
 Object invisible to undead
 type 5
-sp 27
+other_arch spell_invisible_to_undead
 value 1
 end
 #
@@ -4058,16 +4060,16 @@ Allowed balm_generic
 chance 1
 Object transparency
 type 5
-sp 30
+other_arch spell_improved_invisibility
 value 1
 end
 #
 Allowed balm_generic
 chance 1
-Object traveling
+Object return home
 type 5
 value 1
-sp 25
+other_arch spell_word_of_recall
 end
 #
 Allowed potion_generic
@@ -4076,7 +4078,7 @@ Object self knowledge
 face potion_util.111
 type 5
 value 1
-sp 24
+other_arch spell_perceive_self
 end
 #
 Allowed potion_generic
@@ -4084,7 +4086,7 @@ chance 1
 Object mystic power
 face potion_util.111
 type 5
-sp 121
+other_arch spell_transference
 value 8
 end
 #
@@ -4095,7 +4097,7 @@ face potion_util.111
 stand_still 1
 type 5
 level -80
-sp 86
+other_arch spell_haste
 value 15
 end
 #
@@ -4105,7 +4107,7 @@ Object recuperation
 face potion_util.111
 stand_still 1
 type 5
-sp 146
+other_arch spell_regeneration
 value 2
 end
 #
@@ -4115,7 +4117,7 @@ Allowed figurine_generic
 chance 1
 Object clay
 type 5
-sp 9
+other_arch spell_summon_golem
 value 1
 level -20
 end
@@ -4124,7 +4126,7 @@ Allowed figurine_generic
 chance 1
 Object stone
 type 5
-sp 11
+other_arch spell_summon_earth_elemental
 level -20
 value 1
 end
@@ -4133,7 +4135,7 @@ Allowed figurine_generic
 chance 1
 Object whirlwind
 type 5
-sp 13
+other_arch spell_summon_air_elemental
 level -20
 value 1
 end
@@ -4142,7 +4144,7 @@ Allowed figurine_generic
 chance 1
 Object a great wave
 type 5
-sp 12
+other_arch spell_summon_water_elemental
 level -20
 value 1
 end
@@ -4151,7 +4153,7 @@ Allowed figurine_generic
 chance 1
 Object a flame
 type 5
-sp 10
+other_arch spell_summon_fire_elemental
 value 1
 level -20
 end
@@ -4160,7 +4162,7 @@ Allowed figurine_generic
 chance 1
 Object a clenched hand
 type 5
-sp 91
+other_arch spell_mystic_fist
 level -20
 value 1
 end
@@ -4174,14 +4176,14 @@ chance 1
 Object stasis
 type 5
 value 1
-sp 16
+other_arch spell_paralyze
 end
 #
 Allowed dust_generic
 chance 1
 Object frost
 type 5
-sp 17
+other_arch spell_icestorm
 value 1
 end
 #
@@ -4190,14 +4192,14 @@ chance 1
 Object fright
 type 5
 value 1
-sp 20
+other_arch spell_fear
 end
 #
 Allowed dust_generic
 chance 1
 Object concussion
 type 5
-sp 84
+other_arch spell_shockwave
 value 6
 end
 #
@@ -4205,7 +4207,7 @@ end
 #chance 1
 #Object Necrocritis
 #type 5
-#sp 87
+#other_arch spell_face_of_death
 #level -20
 #value 20
 #end
@@ -4214,7 +4216,7 @@ Allowed dust_generic
 chance 1
 Object repelling undead
 type 5
-sp 19
+other_arch spell_turn_undead
 level -30
 value 1
 end
@@ -4223,7 +4225,7 @@ Allowed dust_generic
 chance 1
 Object madness
 type 5
-sp 64
+other_arch spell_mass_confusion
 value 2
 end
 #
@@ -4231,7 +4233,7 @@ Allowed dust_generic
 chance 1
 Object ignition
 type 5
-sp 4
+other_arch spell_burning_hands
 value 2
 end
 #
@@ -4239,7 +4241,7 @@ Allowed dust_generic
 chance 1
 Object conflagration
 type 5
-sp 57
+other_arch spell_hellfire
 value 4
 end
 #
@@ -4247,7 +4249,7 @@ Allowed dust_generic
 chance 1
 Object countermagic
 type 5
-sp 123
+other_arch spell_counterspell
 level -30
 value 1
 end
@@ -4256,7 +4258,7 @@ Allowed dust_generic
 chance 1
 Object the Dead
 type 5
-sp 140
+other_arch spell_command_undead
 level -30
 value 1
 end
@@ -4266,7 +4268,7 @@ Allowed dust_generic
 chance 1
 Object consuming wrath
 type 5
-sp 180
+other_arch spell_mana_blast
 value 3
 end
 #
@@ -4275,7 +4277,7 @@ Allowed dust_generic
 chance 1
 Object encompassing rage
 type 5
-sp 182
+other_arch spell_medium_manaball
 value 6
 end
 #
@@ -4284,7 +4286,7 @@ Allowed dust_generic
 chance 1
 Object blizzards
 type 5
-sp 169
+other_arch spell_medium_snowstorm
 value 4
 end
 #
@@ -4294,15 +4296,15 @@ Allowed dust_generic
 chance 1
 Object clairvoyance
 type 5
-sp 18
+other_arch spell_magic_mapping
 value 2
 end
 #
 Allowed dust_generic
 chance 1
-Object Ibn Gahzi
+Object revealing
 type 5
-sp 135
+other_arch spell_show_invisible
 level -20
 value 8
 end
@@ -4311,7 +4313,7 @@ Allowed dust_generic
 chance 1
 Object show enchantment
 type 5
-sp 76
+other_arch spell_detect_magic
 value 1
 end
 #
@@ -4320,14 +4322,14 @@ chance 1
 Object night vision
 type 5
 value 1
-sp 164
+other_arch spell_dark_vision
 end
 #
 Allowed dust_generic
 chance 1
 Object piercing vision
 type 5
-sp 136
+other_arch spell_xray
 value 6
 end
 #
@@ -4335,7 +4337,7 @@ Allowed dust_generic
 chance 1
 Object clinging glow
 type 5
-sp 162
+other_arch spell_faery_fire
 value 1
 end
 #
@@ -4343,7 +4345,7 @@ Allowed dust_generic
 chance 1
 Object Biren's mist
 type 5
-sp 138
+other_arch spell_summon_fog
 value 1
 end
 #
@@ -4352,9 +4354,9 @@ end
 # -- light
 Allowed dust_generic
 chance 1
-Object visibility
+Object brightness
 type 5
-sp 157
+other_arch spell_light
 level -20
 value 1
 end
@@ -4364,7 +4366,7 @@ Allowed dust_generic
 chance 1
 Object impenatrability
 type 5
-sp 158
+other_arch spell_darkness
 level -20
 value 1
 end

@@ -95,17 +95,15 @@ typedef struct pl {
     sint16	new_x,new_y;	    /* After entering a map being loaded */
     char	savebed_map[MAX_BUF];  /* map where player will respawn after death */
     sint16	bed_x, bed_y;	    /* x,y - coordinates of respawn (savebed) */
-    sint16	known_spells[NROFREALSPELLS]; /* Spells known by the player */
-    uint16	nrofknownspells;    /* Index in the above array */
     rangetype	shoottype;	    /* Which range-attack is being used by player */
     bowtype_t   bowtype;	    /* which firemode? */
     petmode_t   petmode;	    /* which petmode? */
     object	*ranges[range_size];/* object for each range.  Set up in fix player.  Note */
 				    /* That not all are used, it is just nice to map this 1:1 */
 				    /* With the range names */
+    uint32	golem_count;	    /* To track the golem */
     usekeytype	usekeys;	    /* Method for finding keys for doors */
     unapplymode	unapply;	    /* Method for auto unapply */
-    sint16	chosen_spell;	    /* Type of readied spell */
     uint32	count;		    /* Any numbers typed before a command */
     uint32	mode;		    /* Mode of player for pickup. */
 
@@ -123,6 +121,7 @@ typedef struct pl {
     uint32	known_spell:1;	    /* True if you know the spell of the wand */
     uint32	braced:1;	    /* Will not move if braced, only attack */
     uint32	tmp_invis:1;	    /* Will invis go away when we attack ? */
+    char	*invis_race;	    /* What race invisible to? */
     uint32	do_los:1;	    /* If true, need to call update_los() in draw(), and clear */
     uint32	fire_on:1;	    /* Player should fire object, not move */
     uint32	run_on:1;	    /* Player should keep moving in dir until run is off */
@@ -133,19 +132,13 @@ typedef struct pl {
     uint32	explore:1;	    /* if True, player is in explore mode */
 	uint32  no_shout:1;		/* if True, player is *not* able to use shout command */
 
-    sint32	last_skill_index;   /* this is init from init_player_exp() */
-    object	*last_skill_ob[MAX_EXP_CAT];	/* the exp object */
-    sint32	last_skill_exp[MAX_EXP_CAT];	/* shadow register. if != exp. obj update client */
-    sint32	last_skill_level[MAX_EXP_CAT];	/* same for level */
-    sint32	last_skill_id[MAX_EXP_CAT];	/* Thats the CS_STATS_ id for client STATS cmd*/
-
+    object	*last_skill_ob[NUM_SKILLS];	/* the exp object */
+    sint64	last_skill_exp[NUM_SKILLS];	/* shadow register. if != exp. obj update client */
 
     float	weapon_sp;	    /* Penalties to speed when fighting w speed >ws/10*/
     float	last_weapon_sp;	    /* if diff than weapon_sp, update client */
     uint16	last_flags;	    /* fire/run on flags for last tick */
     uint32	last_weight_limit;  /* Last weight limit transmitted to client */
-    object	*golem;		    /* Which golem is controlled */
-    uint32	golem_count;	    /* To track the golem */
     living	orig_stats;	    /* Permanent real stats of player */
     living	last_stats;	    /* Last stats as sent to client */
     float	last_speed;	    /* Last speed as sent to client */

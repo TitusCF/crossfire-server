@@ -68,10 +68,10 @@ if (!$archonly) {
     # We still support the old consolidated treasure information
     # so copy it over.
     open(TREASURES,">".$treasures) || &die("cannot open ".$treasures);
-    print TREASURES "
+    print TREASURES "#
 # Do not modify this file - any changes will get overwritten.
 # instead, modify the treasures file or the .trs file in the
-# arch directory.\n
+# arch directory.\n#
 ";
 
     open(TR, "<treasures");

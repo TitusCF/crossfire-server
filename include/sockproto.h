@@ -19,7 +19,7 @@ void clear_win_info(object *op);
 void rangetostring(object *pl, char *obuf);
 void set_title(object *pl, char *buf);
 void magic_mapping_mark(object *pl, char *map_mark, int strength);
-void draw_map(object *pl);
+void draw_magic_map(object *pl);
 void Log_Kill(const char *Who, const char *What, int WhatType, const char *With, int WithType);
 /* init.c */
 void InitConnection(NewSocket *ns, uint32 from);
@@ -53,6 +53,7 @@ void SockList_Init(SockList *sl);
 void SockList_AddChar(SockList *sl, char c);
 void SockList_AddShort(SockList *sl, uint16 data);
 void SockList_AddInt(SockList *sl, uint32 data);
+void SockList_AddInt64(SockList *sl, uint64 data);
 int GetInt_String(unsigned char *data);
 short GetShort_String(unsigned char *data);
 int SockList_ReadPacket(int fd, SockList *sl, int len);
@@ -87,6 +88,7 @@ void draw_client_map1(object *pl);
 void draw_client_map(object *pl);
 void esrv_map_scroll(NewSocket *ns, int dx, int dy);
 void send_plugin_custom_message(object *pl, char *buf);
+void send_skill_info(NewSocket *ns, char *params);
 /* sounds.c */
 void play_sound_player_only(player *pl, int soundnum, int x, int y);
 void play_sound_map(mapstruct *map, int x, int y, int sound_num);

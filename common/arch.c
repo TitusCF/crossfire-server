@@ -39,6 +39,14 @@ int arch_cmp=0;		/* How many strcmp's */
 int arch_search=0;	/* How many searches */
 int arch_init;		/* True if doing arch initialization */
 
+/* The naming of these functions is really poor - they are all
+ * pretty much named '.._arch_...', but they may more may not
+ * return archetypes.  Some make the arch_to_object call, and thus
+ * return an object.  Perhaps those should be called 'archob' functions
+ * to denote they return an object derived from the archetype.
+ * MSW 2003-04-29
+ */
+
 /**
  * GROS -  This function retrieves an archetype given the name that appears
  * during the game (for example, "writing pen" instead of "stylus").
@@ -51,17 +59,53 @@ int arch_init;		/* True if doing arch initialization */
  * - the archetype found or null if nothing was found.
  */
 archetype *find_archetype_by_object_name(char *name) {
-  archetype *at;
+    archetype *at;
 
-  if (name == NULL)
-    return (archetype *) NULL;
+    if (name == NULL)
+	return (archetype *) NULL;
 
-  for(at = first_archetype;at!=NULL;at=at->next)
-  {
-        if (!strcmp(at->clone.name, name))
-                return at;
-  };
-  return NULL;
+    for(at = first_archetype;at!=NULL;at=at->next) {
+	if (!strcmp(at->clone.name, name))
+		return at;
+    }
+    return NULL;
+}
+
+/* This is a lot like the above function.  Instead, we are trying to match
+ * the arch->skill values.  type is the type of object to match
+ * against (eg, to only match against skills or only skill objects for example).
+ * If type is -1, ew don't match on type.
+ */
+object *get_archetype_by_skill_name(char *skill, int type) {
+    archetype *at;
+
+    if (skill == NULL)
+	return NULL;
+
+    for(at = first_archetype;at!=NULL;at=at->next) {
+	if ( ((type == -1) || (type == at->clone.type)) &&
+	     (!strcmp(at->clone.skill, skill)))
+		return arch_to_object(at);
+    }
+    return NULL;
+}
+
+/* similiar to above - this returns the first archetype
+ * that matches both the type and subtype.  type and subtype
+ * can be -1 to say ignore, but in this case, the match it does
+ * may not be very useful.  This function is most useful when
+ * subtypes are known to be unique for a particular type
+ * (eg, skills)
+ */
+archetype *get_archetype_by_type_subtype(int type, int subtype) {
+    archetype *at;
+
+    for(at = first_archetype;at!=NULL;at=at->next) {
+	if ( ((type == -1) || (type == at->clone.type)) &&
+	     (subtype == -1 || subtype == at->clone.subtype))
+		return at;
+    }
+    return NULL;
 }
 
 /**
@@ -437,7 +481,7 @@ void second_arch_pass(FILE *fp) {
       if(at!=NULL) {
         treasurelist *tl=find_treasurelist(argument);
         if(tl==NULL)
-          LOG(llevError,"Failed to link treasure to arch: %s\n",variable);
+          LOG(llevError,"Failed to link treasure to arch (%s): %s\n",at->name, argument);
         else
           at->clone.randomitems=tl;
       }

@@ -703,6 +703,9 @@
  * on how the player exited the game.  But if the elapsed time is greater than
  * the value below, player will always get returned to savebed location
  * location.
+ * 
+ * Set to one hour as default
  */
 
-#define RESET_LOCATION_TIME	0
+#define RESET_LOCATION_TIME	3600
+

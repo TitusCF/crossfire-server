@@ -58,6 +58,7 @@ crossfire_SOURCES = \
 	shop.c\
 	skills.c\
 	skill_util.c\
+	spell_attack.c\
 	spell_effect.c\
 	spell_util.c\
 	swamp.c\

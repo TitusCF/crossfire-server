@@ -35,7 +35,6 @@
 #include <netdb.h>
 #include <arpa/inet.h>
 
-#include <version.h>
 #endif /* end win32 */
 
 static int metafd=-1;
@@ -80,15 +79,7 @@ void metaserver_init()
     }
     sock.sin_family = AF_INET;
     sock.sin_port = htons(settings.meta_port);
-#if 0
-    /* Freebsd seems to have a problem in that the sendto in metaserver_update will
-     * fail on a connected socket.  So don't connect the socket.
-     * Solaris has the same problem, so for now just disable this.
-     */
-    if (connect(metafd, &sock, sizeof(sock))<0) {
-	LOG(llevDebug,"metaserver_init: Unable to connect to metaserver, err %d\n", errno);
-    }
-#endif
+
     /* No hostname specified, so lets try to figure one out */
     if (settings.meta_host[0]==0) {
 	char hostname[MAX_BUF], domain[MAX_BUF];

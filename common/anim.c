@@ -202,9 +202,13 @@ void animate_object(object *op, int dir) {
 
     if(op->face==blank_face)
 	op->invisible=1;
-#if 1
-    /* Anyone know what this code here is for?  MSW 980503 */
-    else if(QUERY_FLAG((&op->arch->clone),FLAG_ALIVE)) {
+
+    /* This block covers monsters (eg, pixies) which are supposed to
+     * cycle from visible to invisible and back to being visible.
+     * as such, disable it for players, as then players would become
+     * visible.
+     */
+    else if(op->type != PLAYER && QUERY_FLAG((&op->arch->clone),FLAG_ALIVE)) {
 	if(op->face->number==0) {
 	    op->invisible=1;
 	    CLEAR_FLAG(op, FLAG_ALIVE);
@@ -213,7 +217,7 @@ void animate_object(object *op, int dir) {
 	    SET_FLAG(op, FLAG_ALIVE);
 	}
     }
-#endif
+
     if(op->more)
 	animate_object(op->more, dir);
 
