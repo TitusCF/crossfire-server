@@ -127,7 +127,7 @@ object *find_skill(object *op, int skillnr) {
      * is an unapplied tool. Lets search entire inventory */
     for (tmp=op->inv;tmp;tmp=tmp->below) {
 	if(tmp->type==SKILL&&tmp->stats.sp==skillnr) {
-	    if (tmp->invisible) return tmp;
+	    if (!tmp->invisible) return tmp;
 	    else skill1=tmp;
 	}
     }
