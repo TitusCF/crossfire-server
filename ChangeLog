@@ -17,6 +17,28 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+common/object.c: Change CAN_MERGE() from an inline function, since
+   it calls itself and inline functions are not supposed to do that.
+   Update type check in insert_ob_in_map() to check against defined
+   type (EXIT) instead of hardcoded integer value (66).
+crossedit/xutil.c:  Update to just include Defines.h, which then includes
+   all the other necessary files, including global.h.
+include/global.h: Add #ifdef checks for the UINT*_MAX types, as some
+   systems already define these values, which results in a redefinition
+   error.  Also fix up // style comment.
+include/shstr.h: Include proper cast in TOPBIT definition.
+server/main.c: Don't display 'xyz left the game' messages if the player
+   is only at the get name or get password prompt.  Prevents possible
+   spoofing of that message.
+server/player.c: Clean up formatting of check_pick() function.  If player
+   is using newpickup to pick up booze, also pick up poison unless
+   they know it is cursed.
+socket/request.c: AskSmooth() - change buffer type to uint8 so that
+   it matches what the SockList structure wants.
+utils/scores.pl.in: Use skill_praying to find players god, and not the
+   deprecated experience_wis object.
+MSW 2005-01-23
+
 aclocal.m4, configure: Add check for python 2.4.
 common/re-cmp.c: Fix improper comparison *(str+1) instead of str+1
 server/login.c: don't allow null names.

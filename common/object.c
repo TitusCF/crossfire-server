@@ -85,7 +85,7 @@ int freedir[SIZEOFFREE]= {
  * check weight
  */
 
-inline int CAN_MERGE(object *ob1, object *ob2) {
+int CAN_MERGE(object *ob1, object *ob2) {
 
     /* A couple quicksanity checks */
     if ((ob1 == ob2) || (ob1->type != ob2->type)) return 0;
@@ -1451,7 +1451,7 @@ object *insert_ob_in_map (object *op, mapstruct *m, object *originator, int flag
 		(get_map_flags(op->map, NULL, op->x, op->y, NULL, NULL) & P_BLOCKSVIEW) && 
 		(op->face && !op->face->visibility)) {
 		for (last=top; last != floor; last=last->below)
- 		    if (QUERY_FLAG(last, FLAG_BLOCKSVIEW)&&(last->type != 66)) break;
+ 		    if (QUERY_FLAG(last, FLAG_BLOCKSVIEW)&&(last->type != EXIT)) break;
 		/* Check to see i we found the object that blocks view,
 		 * and make sure we have a below pointer for it so that
 		 * we can get inserted below this one, which requires we

@@ -232,7 +232,7 @@ sub parse_file($) {
 	  $state=4 if(/^arch/ || /^end/);
 	  next;
       } elsif($state==4) {
-	  next unless(/^arch experience_wis/);
+	  next unless(/^arch skill_praying/);
 	  $state=5;
 	  next;
       } elsif($state==5) {

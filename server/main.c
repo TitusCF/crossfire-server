@@ -1109,7 +1109,9 @@ void leave(player *pl, int draw_exit) {
     * inconsistencies by showing that they have left the game 
     */
     if (!(QUERY_FLAG(pl->ob,FLAG_WIZ) && pl->ob->contr->hidden) && 
-        (pl!=NULL && draw_exit)) new_draw_info(NDI_UNIQUE | NDI_ALL | NDI_DK_ORANGE, 5, NULL, buf);
+        (pl!=NULL && draw_exit) && 
+	   (pl->state != ST_GET_NAME && pl->state!=ST_GET_PASSWORD && pl->state != ST_CONFIRM_PASSWORD)) 
+	    new_draw_info(NDI_UNIQUE | NDI_ALL | NDI_DK_ORANGE, 5, NULL, buf);
 }
 
 int forbid_play()

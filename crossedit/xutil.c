@@ -30,7 +30,7 @@
 #include <autoconf.h>
 /* Stupid pngconf.h file has a check to see if _SETJMP_H is
  * already defined, and if so, it generates a compilation error.
- * I have no idea what they were thinking - wasn't th point of those
+ * I have no idea what they were thinking - wasn't the point of those
  * defines so that you didn't need to worry about order or including
  * the same file multiple times?
  */
@@ -38,12 +38,9 @@
 #include "png.c"
 #endif
 
-#include <global.h>
+#include <Defines.h>
 #include <funcpoint.h>
 #include <loader.h>
-
-#include <Defines.h>
-
 
 /*
  * Converts between Fontindex and XChar2b types.

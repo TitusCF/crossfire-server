@@ -316,10 +316,11 @@ void ToggleExtendedInfos (char *buf, int len, NewSocket *ns){
   */
 void AskSmooth (char *buf, int len, NewSocket *ns){
      char* defaultsmooth="default_smoothed.111";
-     char reply[MAX_BUF];
+     uint8 reply[MAX_BUF];
      SockList sl;
      uint16 smoothface;
      uint16 facenbr;
+
      facenbr=atoi (buf);
      if ((!FindSmooth (facenbr, &smoothface)) &&
          (!FindSmooth ( ( uint16 )FindFace(defaultsmooth,0), &smoothface))

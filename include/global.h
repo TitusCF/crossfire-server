@@ -53,15 +53,27 @@
 
  
 typedef unsigned int	uint32;
+
+#ifndef UINT32_MAX
 #define UINT32_MAX	4294967295U
+#endif
+
 typedef signed int	sint32;
 #define SINT32_MAX	2147483647
+
 typedef unsigned short	uint16;
+#ifndef UINT16_MAX
 #define UINT16_MAX	65535
+#endif
+
 typedef signed short	sint16;
 #define SINT16_MAX	32767
+
 typedef unsigned char	uint8;
+#ifndef UINT8_MAX
 #define UINT8_MAX	255
+#endif
+
 typedef signed char	sint8;
 #define SINT8_MAX	127
 
@@ -80,7 +92,7 @@ typedef signed __int64		sint64;
 #pragma warning( disable: 4244 ) /* conversion from 'xxx' to 'yyy', possible loss of data */
 #pragma warning( disable: 4305 ) /* initializing float f = 0.05; instead of f = 0.05f; */
 
-#else // WIN32
+#else /* WIN32 */
 
 #if SIZEOF_LONG == 8
 typedef unsigned long	    uint64;

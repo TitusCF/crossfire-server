@@ -48,7 +48,7 @@ static struct statistics {
 #define GATHER(n)
 #endif /* SS_STATISTICS */
 
-#define TOPBIT	(1 << (sizeof(REFCOUNT_TYPE) * CHAR_BIT - 1))
+#define TOPBIT	((unsigned REFCOUNT_TYPE) 1 << (sizeof(REFCOUNT_TYPE) * CHAR_BIT - 1))
 
 #define PADDING	((2 * sizeof(long) - sizeof(REFCOUNT_TYPE)) % sizeof(long)) + 1
 

@@ -1099,43 +1099,41 @@ int check_pick(object *op) {
       continue;
     }
 
-    /* high bit set?  We're using the new autopickup model */
-    if(!(op->contr->mode & PU_NEWMODE))
-    { 
-    switch (op->contr->mode) {
-	case 0:	return 1;	/* don't pick up */
-	case 1: pick_up (op, tmp);
+    /* high not bit set?  We're using the old autopickup model */
+    if(!(op->contr->mode & PU_NEWMODE)) {
+	switch (op->contr->mode) {
+	    case 0:	return 1;	/* don't pick up */
+	    case 1: pick_up (op, tmp);
 		return 1;
-	case 2: pick_up (op, tmp);
+	    case 2: pick_up (op, tmp);
 		return 0;
-	case 3: return 0;	/* stop before pickup */
-	case 4: pick_up (op, tmp);
+	    case 3: return 0;	/* stop before pickup */
+	    case 4: pick_up (op, tmp);
 		break;
-	case 5: pick_up (op, tmp);
+	    case 5: pick_up (op, tmp);
 		stop = 1;
 		break;
-	case 6:
+	    case 6:
 		if (QUERY_FLAG (tmp, FLAG_KNOWN_MAGICAL) &&
 		    ! QUERY_FLAG(tmp, FLAG_KNOWN_CURSED))
 		  pick_up(op, tmp);
 		break;
 
-	case 7:
+	    case 7:
 		if (tmp->type == MONEY || tmp->type == GEM)
 		  pick_up(op, tmp);
 		break;
 
-	default:
+	    default:
 		/* use value density */
 		if ( ! QUERY_FLAG (tmp, FLAG_UNPAID)
 		    && (query_cost (tmp, op, F_TRUE) * 100
 		        / (tmp->weight * MAX (tmp->nrof, 1)))
                        >= op->contr->mode)
 		  pick_up(op,tmp);
+	}
     }
-    } /* old model */
-    else
-    {
+    else { /* old model */
       /* NEW pickup handling */
       if(op->contr->mode & PU_DEBUG)
       {
@@ -1194,11 +1192,15 @@ int check_pick(object *op) {
        * meaning if any test passes, the item gets picked up. */
 
       /* if mode is set to pick nothing up, return */
+
       if(op->contr->mode & PU_NOTHING) return 1;
+
       /* if mode is set to stop when encountering objects, return */
       /* take STOP before INHIBIT since it doesn't actually pick
        * anything up */
+
       if(op->contr->mode & PU_STOP) return 0;
+
       /* useful for going into stores and not losing your settings... */
       /* and for battles wher you don't want to get loaded down while
        * fighting */
@@ -1213,8 +1215,9 @@ int check_pick(object *op) {
 	if (tmp->type == FOOD)
 	{ pick_up(op, tmp); if(0)fprintf(stderr,"FOOD\n"); continue; }
       if(op->contr->mode & PU_DRINK)
-	if (tmp->type == DRINK)
+	if (tmp->type == DRINK || (tmp->type == POISON && !QUERY_FLAG(tmp, FLAG_KNOWN_CURSED)))
 	{ pick_up(op, tmp); if(0)fprintf(stderr,"DRINK\n"); continue; }
+
       if(op->contr->mode & PU_POTION)
 	if (tmp->type == POTION)
 	{ pick_up(op, tmp); if(0)fprintf(stderr,"POTION\n"); continue; }
