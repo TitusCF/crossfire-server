@@ -1417,14 +1417,34 @@ int mood_change(object *op, object *caster, object *spell) {
 		for (at=0; at < NROFATTACKS; at++)
 		    if (spell->attacktype & (1 << at))
 			if (best_at == -1 || head->resist[at] > head->resist[best_at]) best_at = at;
+
+            if (best_at == -1) at=0;
+	        else {
+		        if (head->resist[best_at] == 100) continue;
+		        else at = head->resist[best_at] / 5;
+	        }
+	        at -= level / 5;
+	        if (did_make_save(head, head->level, at)) continue;
 	    }
-	    if (best_at == -1) at=0;
-	    else {
-		if (head->resist[best_at] == 100) continue;
-		else at = head->resist[best_at] / 5;
-	    }
-	    at -= level / 5;
-	    if (did_make_save(head, head->level, at)) continue;
+        else    /* spell->attacktype */
+            /*
+                Spell has no attacktype (charm & such), so we'll have a specific saving:
+                 * if spell level < monster level, no go
+                 * else, chance of effect = 20 + min( 50, 2 * ( spell level - monster level ) )
+
+                The chance will then be in the range [20-70] percent, not too bad.
+
+                This is required to fix the 'charm monster' abuse, where a player level 1 can
+                charm a level 125 monster...
+
+                Ryo, august 14th
+            */
+            {
+            if ( head->level > level ) continue;
+            if ( random_roll( 0, 100, caster, PREFER_LOW ) >= ( 20 + MIN( 50, 2 * ( level - head->level ) ) ) )
+                // Failed, no effect
+                continue;
+            }
 
 	    /* Done with saving throw.  Now start effecting the monster */
 
