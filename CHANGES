@@ -18,6 +18,26 @@ else.  With this, include the file(s) that you changed.
 
 Changes for CVS:
 
+Add a new command category called communications commands.  Place tell, 
+shout and say in here.  Also create emotion functions.  These functions 
+have no real effect on the game, but make communications between players 
+more colorful and fun.  They are mostly fluff.  Included with this patch 
+are two new convenience functions, new_info_map_except, and 
+new_info_map_except2, which allow the programmer to write to an entire 
+map, except for certain individuals.
+
+garbled 2001-09-27
+
+Add complete processing code for luck.  This new code removes all 
+previous instances of luck, and adds a few new convenience utilities.  
+Now, every die roll in the game is affected by luck in some small way.  
+This causes luck to be an intangible benefit to the player, without 
+totally unbalancing the game.  The new functions are random_roll, 
+die_roll, and rndm, which should be used in place of RANDOM() whenever
+possible.
+
+garbled 2001-09-26
+
 This checkin mainly fixes multipart teleporters - they should now
 work properly.  Also a minor fix to make the new pickup code work.
 server/apply.c: apply_shop_mat rewritten to be more 'presentable'.

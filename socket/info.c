@@ -217,6 +217,38 @@ void new_draw_info_format(int flags, int pri,object *pl, char *format, ...)
     new_draw_info(flags, pri, pl, buf);
 }
 
+/*
+ * write to everyone on the map *except* op.  This is useful for emotions.
+ */
+
+void new_info_map_except(int color, mapstruct *map, object *op, char *str) {
+    player *pl;
+
+    for(pl = first_player; pl != NULL; pl = pl->next)
+	if(pl->ob != NULL && pl->ob->map == map && pl->ob != op) {
+	    new_draw_info(color, 0, pl->ob, str);
+	}
+}
+
+/*
+ * write to everyone on the map except op1 and op2
+ */
+
+void new_info_map_except2(int color, mapstruct *map, object *op1, object *op2,
+			  char *str) {
+    player *pl;
+
+    for(pl = first_player; pl != NULL; pl = pl->next)
+	if(pl->ob != NULL && pl->ob->map == map
+	   && pl->ob != op1 && pl->ob != op2) {
+	    new_draw_info(color, 0, pl->ob, str);
+	}
+}
+
+/*
+ * write to everyone on the current map
+ */
+
 void new_info_map(int color, mapstruct *map, char *str) {
     player *pl;
 

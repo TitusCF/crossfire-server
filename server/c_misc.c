@@ -696,6 +696,11 @@ static void show_commands(object *op, int what)
     size =WizCommandsSize;
     new_draw_info(NDI_UNIQUE, 0,op, "      Wiz commands:");
     break;
+  case 2:
+    ap= CommunicationCommands;
+    size= CommunicationCommandSize;
+    new_draw_info(NDI_UNIQUE, 0, op, "      Communication commands:");
+    break;
   default:
     ap =Commands;
     size =CommandsSize;
@@ -767,6 +772,7 @@ int command_help (object *op, char *params)
    */
   if (!strcmp(params, "commands")) {
     show_commands(op, 0);
+    show_commands(op, 2); /* show comm commands */
     if (QUERY_FLAG(op, FLAG_WIZ))
       show_commands(op, 1);
     return 0;

@@ -88,8 +88,6 @@ CommArray_s Commands[] = {
   {"resistances", command_resistances,	0.0},
   {"rotateshoottype", command_rotateshoottype,	0.0},
   {"rotatespells", command_rotatespells,	0.0},
-  {"say", command_say,		0.0},
-  {"shout", command_shout,	0.0},
   {"shutdown", command_shutdown, 0.0},
   {"skills", command_skills,	0.0},	/* shows player list of skills */
   {"use_skill", command_uskill, 1.0},
@@ -101,7 +99,6 @@ CommArray_s Commands[] = {
   {"statistics", command_statistics,	0.0},
   {"strings", command_strings,	0.0},
   {"take", command_take,	1.0},
-  {"tell", command_tell,	0.0},
   {"throw", command_throw,	1.0},
   {"time", command_time,	0.0},
 #ifdef SET_TITLE
@@ -125,6 +122,69 @@ CommArray_s Commands[] = {
 };
 
 const int CommandsSize =sizeof(Commands) / sizeof(CommArray_s);
+
+CommArray_s CommunicationCommands [] = {
+  /* begin emotions */
+  {"tell", command_tell,		0.0},
+  {"say", command_say,			0.0},
+  {"shout", command_shout,		0.0},
+  {"nod", command_nod,			0.0},
+  {"dance", command_dance,		0.0},
+  {"kiss", command_kiss,		0.0},
+  {"bounce", command_bounce,		0.0},
+  {"smile", command_smile,		0.0},
+  {"cackle", command_cackle,		0.0},
+  {"laugh", command_laugh,		0.0},
+  {"giggle", command_giggle,		0.0},
+  {"shake", command_shake,		0.0},
+  {"puke", command_puke,		0.0},
+  {"growl", command_growl,		0.0},
+  {"scream", command_scream,		0.0},
+  {"sigh", command_sigh,		0.0},
+  {"sulk", command_sulk,		0.0},
+  {"hug", command_hug,			0.0},
+  {"cry", command_cry,			0.0},
+  {"poke", command_poke,		0.0},
+  {"accuse", command_accuse,		0.0},
+  {"grin", command_grin,		0.0},
+  {"bow", command_bow,			0.0},
+  {"clap", command_clap,		0.0},
+  {"blush", command_blush,		0.0},
+  {"burp", command_burp,		0.0},
+  {"chuckle", command_chuckle,		0.0},
+  {"cough", command_cough,		0.0},
+  {"flip", command_flip,		0.0},
+  {"frown", command_frown,		0.0},
+  {"gasp", command_gasp,		0.0},
+  {"glare", command_glare,		0.0},
+  {"groan", command_groan,		0.0},
+  {"hiccup", command_hiccup,		0.0},
+  {"lick", command_lick,		0.0},
+  {"pout", command_pout,		0.0},
+  {"shiver", command_shiver,		0.0},
+  {"shrug", command_shrug,		0.0},
+  {"slap", command_slap,		0.0},
+  {"smirk", command_smirk,		0.0},
+  {"snap", command_snap,		0.0},
+  {"sneeze", command_sneeze,		0.0},
+  {"snicker", command_snicker,		0.0},
+  {"sniff", command_sniff,		0.0},
+  {"snore", command_snore,		0.0},
+  {"spit", command_spit,		0.0},
+  {"strut", command_strut,		0.0},
+  {"thank", command_thank,		0.0},
+  {"twiddle", command_twiddle,		0.0},
+  {"wave", command_wave,		0.0},
+  {"whistle", command_whistle,		0.0},
+  {"wink", command_wink,		0.0},
+  {"yawn", command_yawn,		0.0},
+  {"beg", command_beg,			0.0},
+  {"bleed", command_bleed,		0.0},
+  {"cringe", command_cringe,		0.0},
+  {"think", command_think,		0.0},
+};
+
+const int CommunicationCommandSize = sizeof(CommunicationCommands)/ sizeof(CommArray_s);
 
 CommArray_s NewServerCommands [] = {
   {"run", command_run, 1.0},
@@ -210,6 +270,7 @@ static int compare_A(const void *a, const void *b)
 void init_commands()
 {
   qsort((char *)Commands, CommandsSize, sizeof(CommArray_s), compare_A);
+  qsort((char *)CommunicationCommands, CommunicationCommandSize, sizeof(CommArray_s), compare_A);
   qsort((char *)WizCommands, WizCommandsSize, sizeof(CommArray_s), compare_A);
   qsort((char *)NewServerCommands, NewServerCommandSize, sizeof(CommArray_s), compare_A);
 }
@@ -267,9 +328,20 @@ static CommFunc find_command(char *cmd)
   asp =(CommArray_s *)bsearch((void *)&dummy,
 			      (void *)Commands, CommandsSize,
 			      sizeof(CommArray_s), compare_A);
+  printf("Getting asp for command string %s\n", cmd);
   if (asp)
     return asp->func;
-  return NULL;
+  else
+  {
+    printf("Now we are here\n");
+    asp =(CommArray_s *)bsearch((void *)&dummy,
+      (void *)CommunicationCommands, CommunicationCommandSize,
+      sizeof(CommArray_s), compare_A);
+    if (asp)
+      return asp->func;
+    else
+      return NULL;
+  };
 }
 
 static CommFunc find_wizcommand(char *cmd)

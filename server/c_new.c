@@ -78,7 +78,8 @@ int execute_newserver_command(object *pl, char *command)
 		NewServerCommandSize);
     if (!csp)
 	csp = find_command_element(command, Commands, CommandsSize);
-
+    if (!csp)
+        csp = find_command_element(command, CommunicationCommands, CommunicationCommandSize);
     if (!csp && QUERY_FLAG(pl, FLAG_WIZ))
 	csp = find_command_element(command, WizCommands, WizCommandsSize);
 
