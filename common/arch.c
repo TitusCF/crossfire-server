@@ -277,12 +277,12 @@ void load_archetypes() {
     clear_archetable();
     LOG(llevDebug," arch-pass 1...");
 #if TIME_ARCH_LOAD
-    gettimeofday(&tv1, NULL);
+	GETTIMEOFDAY(&tv1);
 #endif
     first_arch_pass(fp);
 #if TIME_ARCH_LOAD
     { int sec, usec;
-	gettimeofday(&tv2, NULL);
+	GETTIMEOFDAY(&tv2);
 	sec = tv2.tv_sec - tv1.tv_sec;
 	usec = tv2.tv_usec - tv1.tv_usec;
 	if (usec<0) { usec +=1000000; sec--;}
