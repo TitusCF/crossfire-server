@@ -18,6 +18,15 @@ else.  With this, include the file(s) that you changed.
 Changes for CVS:
 
 
+Add weapontypes to the game.  These are currently used for nothing other
+than messages, which are not fully written yet. Players should not see them
+appear yet.
+Fix the bug where you opened a door with a key and saw "You ."
+Fix a bug in the PLUGIN code where current_weapon wasn't set when the
+player loaded from savefile.
+Take the setting of current_weapon out of #ifdef PLUGIN
+garbled 2001-10-31
+
 server/spell_util.c: Add out_of_map check to can_see_monsterP.  Fixes
   crash when casting ball lightning/divine shock (and likely other events)
   on maps not surrounded by walls.  MSW 2001-10-07
