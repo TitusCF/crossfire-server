@@ -17,6 +17,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+utils/player_dl.html utils/player_dl.pl.in: New files - scripts for allowing
+   character directories to be downloaded over the web.
+configure.ac: Add check for 'tar', so that we can put it in the script above.
+Makefile.in (All of them): Changed because TAR variable propogated to them.
+MSW 2003-09-30
+
 server/time.c: Real change is to add a missing call to fix_player - without
    this new players would be getting messed up maxsp/maxgrace values.  Cleaned
    up formatting in move_player_changer() while doing the other change.

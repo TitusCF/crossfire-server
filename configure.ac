@@ -39,6 +39,7 @@ dnl check for some other programs
 AC_PATH_PROG(LATEX, latex)
 AC_PATH_PROG(GZIP, gzip)
 AC_PATH_PROG(GUNZIP, gunzip)
+AC_PATH_PROG(TAR, tar)
 AC_PATH_PROG(PERL, perl)
 AC_PATH_PROG(BASENAME, basename)
 
@@ -216,6 +217,6 @@ AC_OUTPUT([Makefile
 	lib/Makefile random_maps/Makefile socket/Makefile server/Makefile 
 	include/Makefile utils/Makefile lib/checkarch.pl
 	lib/collect.pl utils/add_throw.perl utils/crossloop.tmpl utils/crossloop.pl.tmpl
-	utils/metaserver.pl utils/crossloop.web utils/scores.pl
+	utils/metaserver.pl utils/crossloop.web utils/scores.pl utils/player_dl.pl
 	common/Makefile plugin/Makefile devel/Makefile
 	 ])

@@ -95,6 +95,7 @@ PY_INCLUDES = @PY_INCLUDES@
 PY_LIBS = @PY_LIBS@
 RANLIB = @RANLIB@
 STRIP = @STRIP@
+TAR = @TAR@
 UNCOMPRESS = @UNCOMPRESS@
 VERSION = @VERSION@
 X11LIBS = @X11LIBS@
@@ -111,11 +112,11 @@ pkgstatedir = @pkgstatedir@
 x_includes = @x_includes@
 x_libraries = @x_libraries@
 
-nodist_bin_SCRIPTS = crossloop.pl crossloop 
+nodist_bin_SCRIPTS = crossloop.pl crossloop player_dl.pl
 dist_bin_SCRIPTS = crossloop.web
 nodist_pkglib_SCRIPTS = 
 dist_pkglib_SCRIPTS = mktable.script add_throw.perl metaserver.pl
-dist_noinst_SCRIPTS = ad2c.script mktable.script
+dist_noinst_SCRIPTS = ad2c.script mktable.script player_dl.html
 
 EXTRA_DIST = 
 
@@ -126,7 +127,7 @@ subdir = utils
 mkinstalldirs = $(SHELL) $(top_srcdir)/utils/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/include/autoconf.h
 CONFIG_CLEAN_FILES = add_throw.perl crossloop.tmpl crossloop.pl.tmpl \
-	metaserver.pl crossloop.web scores.pl
+	metaserver.pl crossloop.web scores.pl player_dl.pl
 SCRIPTS = $(dist_bin_SCRIPTS) $(dist_noinst_SCRIPTS) \
 	$(dist_pkglib_SCRIPTS) $(nodist_bin_SCRIPTS) \
 	$(nodist_pkglib_SCRIPTS)
@@ -136,7 +137,8 @@ DIST_COMMON = $(dist_bin_SCRIPTS) $(dist_noinst_SCRIPTS) \
 	$(dist_pkglib_SCRIPTS) Makefile.am Makefile.in \
 	add_throw.perl.in config.guess config.sub crossloop.pl.tmpl.in \
 	crossloop.tmpl.in crossloop.web.in depcomp install-sh ltmain.sh \
-	metaserver.pl.in missing mkinstalldirs scores.pl.in
+	metaserver.pl.in missing mkinstalldirs player_dl.pl.in \
+	scores.pl.in
 all: all-am
 
 .SUFFIXES:
@@ -156,6 +158,8 @@ metaserver.pl: $(top_builddir)/config.status metaserver.pl.in
 crossloop.web: $(top_builddir)/config.status crossloop.web.in
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
 scores.pl: $(top_builddir)/config.status scores.pl.in
+	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
+player_dl.pl: $(top_builddir)/config.status player_dl.pl.in
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
 dist_binSCRIPT_INSTALL = $(INSTALL_SCRIPT)
 install-dist_binSCRIPTS: $(dist_bin_SCRIPTS)
