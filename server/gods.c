@@ -370,6 +370,12 @@ void become_follower (object *op, object *new_god) {
     check_special_prayers (op, new_god);
 }
 
+/* op is the player.
+ * exp_obj is the widsom experience.
+ * flag is the flag to check against.
+ * string is the string to print out.
+ */
+
 int worship_forbids_use (object *op, object *exp_obj, uint32 flag, char *string) {
 
   if(QUERY_FLAG(&op->arch->clone,flag))
@@ -402,13 +408,21 @@ void stop_using_item ( object *op, int type, int number ) {
  */
 
 void update_priest_flag (object *god, object *exp_ob, uint32 flag) {
-/* GROS - Corrected here the 'god flowers' bug. */
       if(QUERY_FLAG(god,flag)&&!QUERY_FLAG(exp_ob,flag))
           SET_FLAG(exp_ob,flag);
       else if(QUERY_FLAG(exp_ob,flag)&&!QUERY_FLAG(god,flag))
       {
-        if (!(QUERY_FLAG(&(exp_ob->arch->clone),flag)))
-                CLEAR_FLAG(exp_ob,flag);
+	/*  When this is called with the exp_ob set to the player,
+	 * this check is broken, because most all players arch
+	 * allow use of weapons.  I'm not actually sure why this
+	 * check is here - I guess if you had a case where the
+	 * value in the archetype (wisdom) should over ride the restrictions
+	 * the god places on it, this may make sense.  But I don't think
+	 * there is any case like that.
+	 */
+	 
+/*        if (!(QUERY_FLAG(&(exp_ob->arch->clone),flag)))*/
+	CLEAR_FLAG(exp_ob,flag);
       };
 }
 

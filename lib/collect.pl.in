@@ -2,6 +2,16 @@
 
 require "util.pl";
 
+if ($#ARGV != 0 || ($ARGV[0] =~ m/^--?[hH](elp)?$/)){
+    die ("\nUSAGE: perl collect.pl  ARCHDIR\n".
+        "\nWhere ARCHDIR is the directory where you stored the ".
+        "raw archetypes.\n".
+        "This script will then create these files:\n".
+        "archetypes,bmaps,bmaps.paths,faces,animations.\n"
+    )
+}
+
+
 $root = $ARGV[0];
 $archetypes = "archetypes";
 $bmaps = "bmaps";

@@ -119,7 +119,7 @@ int ReadImages(Display *gdisp, Pixmap **pixmaps, Pixmap **masks,
     LOG(llevDebug,"Building images...");
 
     if (type==Dm_Png) {
-	sprintf(filename,"%s/crossfire.png",settings.datadir);
+	sprintf(filename,"%s/crossfire.0",settings.datadir);
 #ifdef HAVE_LIBPNG
 	init_pngx_loader(gdisp);
 #endif

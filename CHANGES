@@ -17,6 +17,14 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+crossedit/xutil.c: Update to use name of png file.
+lib/archetypes: collected - pl_dragon arch changed a while back, with no
+    new collect.
+lib/collect.pl.in: Add some notes about usage if no option is given or
+    if --help is given.
+server/gods.c: Fix that resulted in weapon/armor restrictions not working.
+MSW 2002-04-23
+
 Various minor bugfixes.  Note the changes may appear larger than they
 really are due to formatting/indentation changes.  Run diff -w to
 supress those:
