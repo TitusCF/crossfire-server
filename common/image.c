@@ -6,7 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 1994 Mark Wedel
+    Copyright (C) 2000 Mark Wedel
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -23,7 +23,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The maintainer of this code can be reached at master@rahul.net
+    The maintainer of this code can be reached at mwedel@scruz.net
 */
 
 
@@ -54,13 +54,8 @@ MapLook blank_look;
 /* Following can just as easily be pointers, but 
  * it is easier to keep them like this.
  */
-New_Face *blank_face, *blocked_face, *stipple1_face, *stipple2_face;
-New_Face *dark_faces[3];
-New_Face *potion_face;
+New_Face *blank_face, *dark_faces[3], *potion_face;
 
-
-New_Face *inv_curse_face, *inv_damn_face, *inv_equip_face, *inv_lock_face,
-	 *inv_magic_face, *inv_unpaid_face;
 
 /* nroffiles is the actual number of bitmaps defined.
  * nrofpixmaps is the higest numbers bitmap that is loaded.  With
@@ -275,28 +270,13 @@ int ReadBmapNames () {
     blank_face->bg = find_color ("khaki");
     blank_face->magicmap = find_color ("khaki") | FACE_FLOOR;
 
-	 dark_faces[0] = &new_faces[FindFace (DARK_FACE1_NAME,0)];
-	 dark_faces[1] = &new_faces[FindFace (DARK_FACE2_NAME,0)];
-	 dark_faces[2] = &new_faces[FindFace (DARK_FACE3_NAME,0)];
+    dark_faces[0] = &new_faces[FindFace (DARK_FACE1_NAME,0)];
+    dark_faces[1] = &new_faces[FindFace (DARK_FACE2_NAME,0)];
+    dark_faces[2] = &new_faces[FindFace (DARK_FACE3_NAME,0)];
 
-    blocked_face = &new_faces[FindFace (BLOCKED_FACE_NAME,0)];
-    blocked_face->fg = find_color ("black");
-    blocked_face->bg = find_color ("black");
-    stipple1_face = &new_faces[FindFace (STIPPLE1_FACE_NAME,0)];
-    stipple1_face->fg = find_color ("white");
-    stipple1_face->bg = find_color ("black");
-    stipple2_face = &new_faces[FindFace (STIPPLE2_FACE_NAME,0)];
-    stipple2_face->fg = find_color ("white");
-    stipple2_face->bg = find_color ("black");
     potion_face  = &new_faces[FindFace(POTION_FACE_NAME,0)];
     potion_face->fg = find_color("light_blue");
     potion_face->bg = find_color("khaki");
-    inv_curse_face = &new_faces[FindFace(INV_CURSE_FACE_NAME,0)];
-    inv_damn_face = &new_faces[FindFace(INV_DAMN_FACE_NAME,0)];
-    inv_equip_face = &new_faces[FindFace(INV_EQUIP_FACE_NAME,0)];
-    inv_lock_face = &new_faces[FindFace(INV_LOCK_FACE_NAME,0)];
-    inv_magic_face = &new_faces[FindFace(INV_MAGIC_FACE_NAME,0)];
-    inv_unpaid_face = &new_faces[FindFace(INV_UNPAID_FACE_NAME,0)];
 
     return nrofpixmaps;
 }

@@ -6,6 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
+    Copyright (C) 2000 Mark Wedel
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -22,7 +23,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to mark@pyramid.com.
+    The author can be reached via e-mail to mwedel@scruz.net
 */
 
 #ifndef GLOBAL_H
@@ -195,14 +196,9 @@ extern int freearr_x[SIZEOFFREE], freearr_y[SIZEOFFREE];
 extern int maxfree[SIZEOFFREE], freedir[SIZEOFFREE];
 
 extern New_Face *blank_face;
-extern New_Face *blocked_face;
 extern New_Face *dark_faces[];
-extern New_Face *stipple1_face;
-extern New_Face *stipple2_face;
 extern New_Face *potion_face;
 extern MapLook blank_look;
-extern New_Face *inv_curse_face, *inv_damn_face, *inv_equip_face, *inv_lock_face,
-         *inv_magic_face, *inv_unpaid_face;
 
 
 extern long max_time;	/* loop time */

@@ -622,18 +622,7 @@
 #define ST_GET_PARTY_PASSWORD 10
 
 #define BLANK_FACE_NAME "blank.111"
-#define BLOCKED_FACE_NAME "blocked.111"
-#define STIPPLE1_FACE_NAME "stipple.111"
-#define STIPPLE2_FACE_NAME "stipple.112"
 #define POTION_FACE_NAME	"potiongen.111" 
-
-#define INV_CURSE_FACE_NAME	"inv-curse.111"
-#define INV_DAMN_FACE_NAME	"inv-damn.111"
-#define INV_EQUIP_FACE_NAME	"inv-equip.111"
-#define INV_LOCK_FACE_NAME	"inv-lock.111"
-#define INV_MAGIC_FACE_NAME	"inv-magic.111"
-#define INV_UNPAID_FACE_NAME	"inv-unpaid.111"
-
 #define DARK_FACE1_NAME		"dark1.111"
 #define DARK_FACE2_NAME		"dark2.111"
 #define DARK_FACE3_NAME		"dark3.111"
