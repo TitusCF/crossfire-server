@@ -237,7 +237,11 @@ void init_ericserver()
         defined(__sun__) || defined(linux) || defined(SVR4) || defined(__FreeBSD__) || \
 	defined(__OpenBSD__) || defined(WIN32) /* ---win32 add this here */
     {
+#ifdef WIN32
+    char tmp = 1;
+#else
 	int tmp =1;
+#endif
 
 	if(setsockopt(init_sockets[0].fd,SOL_SOCKET,SO_REUSEADDR, &tmp, sizeof(tmp))) {
 	    perror("error on setsockopt REUSEADDR");

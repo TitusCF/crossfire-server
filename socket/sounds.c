@@ -26,9 +26,9 @@
 /**
  * Plays a sound for specified player only
  */
-void play_sound_player_only(player *pl, int soundnum,  int x, int y)
+void play_sound_player_only(player *pl, short soundnum,  sint8 x, sint8 y)
 {
-    int soundtype;
+    char soundtype;
     SockList sl;
 
     if (!pl->socket.sound) return;
@@ -53,7 +53,7 @@ void play_sound_player_only(player *pl, int soundnum,  int x, int y)
 #define POW2(x) ((x) * (x))
 
 /** Plays some sound on map at x,y.  */
-void play_sound_map(mapstruct *map, int x, int y, int sound_num)
+void play_sound_map(mapstruct *map, int x, int y, short sound_num)
 {
     player *pl;
 
@@ -67,7 +67,7 @@ void play_sound_map(mapstruct *map, int x, int y, int sound_num)
 	    int distance=isqrt(POW2(pl->ob->x - x) + POW2(pl->ob->y - y));
 
 	    if (distance<=MAX_SOUND_DISTANCE) {
-		play_sound_player_only(pl, sound_num, x-pl->ob->x, y-pl->ob->y);
+		play_sound_player_only(pl, sound_num, ( sint8 )( x-pl->ob->x ), ( sint8 )( y-pl->ob->y ));
 	    }
 	}
     }

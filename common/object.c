@@ -55,10 +55,10 @@ object *free_objects;      /* Pointer to the list of unused objects */
 object *active_objects;	/* List of active objects that need to be processed */
 
 
-int freearr_x[SIZEOFFREE]=
+short freearr_x[SIZEOFFREE]=
   {0,0,1,1,1,0,-1,-1,-1,0,1,2,2,2,2,2,1,0,-1,-2,-2,-2,-2,-2,-1,
    0,1,2,3,3,3,3,3,3,3,2,1,0,-1,-2,-3,-3,-3,-3,-3,-3,-3,-2,-1};
-int freearr_y[SIZEOFFREE]=
+short freearr_y[SIZEOFFREE]=
   {0,-1,-1,0,1,1,1,0,-1,-2,-2,-2,-1,0,1,2,2,2,2,2,1,0,-1,-2,-2,
    -3,-3,-3,-3,-2,-1,0,1,2,3,3,3,3,3,3,3,2,1,0,-1,-2,-3,-3,-3};
 int maxfree[SIZEOFFREE]=

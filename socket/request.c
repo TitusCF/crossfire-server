@@ -319,10 +319,10 @@ void AskSmooth (char *buf, int len, NewSocket *ns){
      char reply[MAX_BUF];
      SockList sl;
      uint16 smoothface;
-     int facenbr;
+     uint16 facenbr;
      facenbr=atoi (buf);
      if ((!FindSmooth (facenbr, &smoothface)) &&
-         (!FindSmooth (FindFace(defaultsmooth,0), &smoothface))
+         (!FindSmooth ( ( uint16 )FindFace(defaultsmooth,0), &smoothface))
         )
 
          LOG(llevError,"could not findsmooth for %d. Neither default (%s)\n",facenbr,defaultsmooth);
@@ -392,7 +392,8 @@ void PlayerCmd(char *buf, int len, player *pl)
  */
 void NewPlayerCmd(uint8 *buf, int len, player *pl)
 {
-    int packet, time,repeat;
+    int time,repeat;
+    short packet;
     char    command[MAX_BUF];
     SockList sl;
 
@@ -443,7 +444,7 @@ void NewPlayerCmd(uint8 *buf, int len, player *pl)
     SockList_AddShort(&sl,packet);
     if (FABS(pl->ob->speed) < 0.001) time=MAX_TIME * 100;
     else
-	time = MAX_TIME/ FABS(pl->ob->speed);
+	time = ( int )( MAX_TIME/ FABS(pl->ob->speed) );
     SockList_AddInt(&sl,time);
     Send_With_Handling(&pl->socket, &sl);
 }
@@ -670,7 +671,7 @@ void send_query(NewSocket *ns, uint8 flags, char *text)
 			if (Old) free(Old);\
 	                Old = strdup_local(New);\
 			SockList_AddChar(&sl, Type); \
-			SockList_AddChar(&sl, strlen(New)); \
+			SockList_AddChar(&sl, ( char )strlen(New)); \
 			strcpy((char*)sl.buf + sl.len, New); \
 			sl.len += strlen(New); \
 			}
@@ -708,7 +709,7 @@ void esrv_update_stats(player *pl)
         AddIfShort(pl->last_stats.Cha, pl->ob->stats.Cha, CS_STAT_CHA);
     }
     if(pl->socket.exp64) {
-	int s;
+	char s;
 	for(s=0;s<NUM_SKILLS;s++) {
 	    if (pl->last_skill_ob[s] && 
 		pl->last_skill_exp[s] != pl->last_skill_ob[s]->stats.exp) {
@@ -716,8 +717,8 @@ void esrv_update_stats(player *pl)
 		/* Always send along the level if exp changes.  This is only
 		 * 1 extra byte, but keeps processing simpler.
 		 */
-		SockList_AddChar(&sl, s + CS_STAT_SKILLINFO);
-		SockList_AddChar(&sl, pl->last_skill_ob[s]->level);
+		SockList_AddChar(&sl, ( char )( s + CS_STAT_SKILLINFO ));
+		SockList_AddChar(&sl, ( char )pl->last_skill_ob[s]->level);
 		SockList_AddInt64(&sl, pl->last_skill_ob[s]->stats.exp);
 		pl->last_skill_exp[s] =  pl->last_skill_ob[s]->stats.exp;
 	    }
@@ -726,16 +727,16 @@ void esrv_update_stats(player *pl)
     if (pl->socket.exp64) {
 	AddIfInt64(pl->last_stats.exp, pl->ob->stats.exp, CS_STAT_EXP64);
     } else {
-	AddIfInt(pl->last_stats.exp, pl->ob->stats.exp, CS_STAT_EXP);
+	AddIfInt(pl->last_stats.exp, ( int )pl->ob->stats.exp, CS_STAT_EXP);
     }
-    AddIfShort(pl->last_level, pl->ob->level, CS_STAT_LEVEL);
+    AddIfShort(pl->last_level, ( char )pl->ob->level, CS_STAT_LEVEL);
     AddIfShort(pl->last_stats.wc, pl->ob->stats.wc, CS_STAT_WC);
     AddIfShort(pl->last_stats.ac, pl->ob->stats.ac, CS_STAT_AC);
     AddIfShort(pl->last_stats.dam, pl->ob->stats.dam, CS_STAT_DAM);
     AddIfFloat(pl->last_speed, pl->ob->speed, CS_STAT_SPEED);
     AddIfShort(pl->last_stats.food, pl->ob->stats.food, CS_STAT_FOOD);
     AddIfFloat(pl->last_weapon_sp, pl->weapon_sp, CS_STAT_WEAP_SP);
-    AddIfInt(pl->last_weight_limit, weight_limit[pl->ob->stats.Str], CS_STAT_WEIGHT_LIM);
+    AddIfInt( ( sint32 )pl->last_weight_limit, weight_limit[pl->ob->stats.Str], CS_STAT_WEIGHT_LIM);
     flags=0;
     if (pl->fire_on) flags |=SF_FIREON;
     if (pl->run_on) flags |= SF_RUNON;
@@ -749,7 +750,7 @@ void esrv_update_stats(player *pl)
 	for (i=0; i<NROFATTACKS; i++) {
 	    /* Skip ones we won't send */
 	    if (atnr_cs_stat[i]==-1) continue;
-	    AddIfShort(pl->last_resist[i], pl->ob->resist[i], atnr_cs_stat[i]);
+	    AddIfShort(pl->last_resist[i], pl->ob->resist[i], ( char )atnr_cs_stat[i]);
 	}
     }
  
@@ -784,7 +785,7 @@ void esrv_new_player(player *pl, uint32 weight)
     SockList_AddInt(&sl, weight);
     SockList_AddInt(&sl, pl->ob->face->number);
 
-    SockList_AddChar(&sl, strlen(pl->ob->name));
+    SockList_AddChar(&sl, ( char )strlen(pl->ob->name));
     strcpy((char*)sl.buf+sl.len, pl->ob->name);
     sl.len += strlen(pl->ob->name);
        
@@ -948,7 +949,7 @@ static uint8 *compactlayer(NewSocket *ns, unsigned char *cur, int numlayers,
 	    /* Now, we back the redundant data into 1 byte xy pairings */
 	    for(y=x;y<layers[k].count;y++) {
 		if (layers[k].lcells[y].face == face) {
-		    *cur = layers[k].lcells[y].xy;
+		    *cur = ( uint8 )layers[k].lcells[y].xy;
 		    cur++;
 		    layers[k].lcells[y].face = -1;
 		}
@@ -980,7 +981,7 @@ static void esrv_map_doneredraw(NewSocket *ns, struct Map *newmap)
 
 /*    LOG(llevDebug, "Sending map command.\n");*/
 
-    if (sl.len>strlen("map ") || ns->sent_scroll) {
+    if (sl.len>( int )strlen("map ") || ns->sent_scroll) {
 	/* All of this is just accounting stuff */
 	if (tframes>100) {
 	    tframes = tbytes = 0;
@@ -1089,7 +1090,7 @@ static inline int check_head(SockList *sl, NewSocket *ns, int ax, int ay, int la
 static inline int update_space(SockList *sl, NewSocket *ns, mapstruct  *mp, int mx, int my, int sx, int sy, int layer)
 {
     object *ob, *head;
-    int face_num;
+    uint16 face_num;
     int bx, by,i;
 
     /* If there is a multipart object stored away, treat that as more important.
@@ -1364,7 +1365,8 @@ void draw_client_map1(object *pl)
     int estartlen, eoldlen;
     SockList sl;
     SockList esl; /*For extended Map info*/
-    uint16  mask,emask,eentrysize;
+    uint16  mask,emask;
+    uint8 eentrysize;
     uint16  ewhatstart,ewhatflag;
     uint8   extendedinfos;
     mapstruct *m;

@@ -325,7 +325,7 @@ void SendFaceCmd(char *buff, int len, NewSocket *ns)
 void esrv_send_face(NewSocket *ns,short face_num, int nocache)
 {
     SockList sl;
-    int fallback;
+    char fallback;
 
     if (face_num < 0 || face_num >= nrofpixmaps) {
 	LOG(llevError,"esrv_send_face (%d) out of bounds??\n",face_num);
@@ -414,7 +414,9 @@ void send_image_info(NewSocket *ns, char *params)
  */
 void send_image_sums(NewSocket *ns, char *params)
 {
-    int start, stop, qq,i;
+    int start, stop;
+    short i;
+    char qq;
     char *cp, buf[MAX_BUF];
     SockList sl;
 
@@ -443,7 +445,7 @@ void send_image_sums(NewSocket *ns, char *params)
 	SockList_AddChar(&sl, qq);
 
 	qq = strlen(new_faces[i].name);
-	SockList_AddChar(&sl, qq + 1);
+	SockList_AddChar(&sl, ( char )( qq + 1 ));
 	strcpy(sl.buf + sl.len, new_faces[i].name);
 	sl.len += qq;
 	SockList_AddChar(&sl, 0);

@@ -17,6 +17,23 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Those changes deal only with warning cleaning under Windows.
+Mostly, using the right type at the right place, or doing explicit casts.
+---
+common/object.c: changed free_arr_[xy] to short[] instead of int[].
+include/global.h: changed free_arr_[xy] to short[] instead of int[].
+   Changed Windows-specific comments to C-style comments, not C++-style.
+include/sockproto.h: play_sound_player_only takes sint8, not int, for
+   coordinates. play_sound_map takes a short for the sound number.
+socket/image.c: some type fixing, explicit casts.
+socket/init.c: Windows-specific type fixing.
+socket/lowlevel.c: explicit casts to char for SockList_AddInt64
+socket/request.c: fixed types to match function parameters, or added
+   explicit casts when needed.
+socket/sound.c: play_sound_player_only takes sint8, not int, for
+   coordinates. play_sound_map takes a short for the sound number.
+Ryo 2003-12-14
+
 server/rune.c: Fix it so that players won't be hit by traps if they are
     not next to them when set off (firing arrows at a door for example).
 server/spell_util.c: Fix spell_failure() to properly damage player if they

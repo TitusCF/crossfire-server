@@ -60,12 +60,15 @@ typedef signed char	sint8;
 typedef unsigned short Fontindex;
 
 #ifdef WIN32
-// Python plugin stuff defines SIZEOF_LONG_LONG as 8, and besides __int64 is a 64b type on MSVC...
-// So let's force the typedef
+/* Python plugin stuff defines SIZEOF_LONG_LONG as 8, and besides __int64 is a 64b type on MSVC...
+ * So let's force the typedef */
 typedef unsigned __int64	uint64;
 typedef signed __int64		sint64;
-// Needed for experience
+/* Needed for experience */
 #define atoll	_atoi64
+
+/* To reduce number of warnings */
+#pragma warning( disable: 4305 ) /* initializing float f = 0.05; instead of f = 0.05f; */
 
 #else // WIN32
 
@@ -215,7 +218,7 @@ EXTERN int num_animations,animations_allocated, bmaps_checksum;
 #define NUM_ANIMATIONS(ob) (animations[ob->animation_id].num_animations)
 #define NUM_FACINGS(ob) (animations[ob->animation_id].facings)
 
-extern int freearr_x[SIZEOFFREE], freearr_y[SIZEOFFREE];
+extern short freearr_x[SIZEOFFREE], freearr_y[SIZEOFFREE];
 extern int maxfree[SIZEOFFREE], freedir[SIZEOFFREE];
 extern int rightof_x[9], rightof_y[9];
 extern int leftof_x[9], leftof_y[9];

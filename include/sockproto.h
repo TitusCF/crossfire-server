@@ -90,5 +90,5 @@ void esrv_map_scroll(NewSocket *ns, int dx, int dy);
 void send_plugin_custom_message(object *pl, char *buf);
 void send_skill_info(NewSocket *ns, char *params);
 /* sounds.c */
-void play_sound_player_only(player *pl, int soundnum, int x, int y);
-void play_sound_map(mapstruct *map, int x, int y, int sound_num);
+void play_sound_player_only(player *pl, short soundnum, sint8 x, sint8 y);
+void play_sound_map(mapstruct *map, int x, int y, short sound_num);
