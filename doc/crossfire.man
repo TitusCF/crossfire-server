@@ -1,389 +1,106 @@
-.\"$Id$
-.TH crossfire 0.93.1 "January 5, 1997"
+.TH crossfire 6 0.95.4 "" "CrossFire Game Server Manual"
+
 .SH NAME
-CrossFire - multiplayer adventure and arcade game for X-windows
+CrossFire \- a multiplayer adventure and arcade game server
+
 .SH SYNOPSIS
-.B crossfire
-[-<options>][-display display]...
+crossfire [-<options>]
+
 .SH DESCRIPTION
+.B CrossFire
+is a multiplayer graphical arcade and adventure game, which has certain
+flavours from other games, especially
+.B Gauntlet (TM), NetHack, Moria, Angband,
+and
+.B Ragnarok.
+Any number of players can move around in their own window, finding and using
+items and battling monsters.  They can choose to cooperate or compete in the
+same world.
 .PP
-.I CrossFire
-is a multiplayer graphical arcade and adventure game made for the X-Window
-environment.
-It has certain flavours from other games, especially Gauntlet (TM) and
-Nethack/Moria.
-Any number of players can move around in their own window, picking up / using
-items and battle monsters.  The players all do battle in the same world,
-and can communicate with each other (even fight with each other).
-The goal of the game is to survive and to have FUN.
+.B CrossFire
+runs as a client/server model. You will also need one of the clients to
+play. With them you can either connect to a server s.o. else has set up, or
+run your own server and connect to that. At now clients exit for the
+X-Windows, GTK, Java, and Windows NT environment.
+
 .SH OPTIONS
 .TP
-.B -arch <filename>
-Sets the archetypes file name.  The library directory is prepended to
-this name.  See FILES below for more information.
-.TP
-.B -b
-Use black & white colors even if you have a color display.  Note that if you
-are using XPM mode, I believe you will still get color images even with this
-flag.
-.TP
-.B -chrfont <fontname>
-use fontname instead of the normal crossfire font.  This is a compile time
-option and may not be available in your version.
-.TP
 .B -csport <port number>
-Specifies the port that should be used for the new client/server code.  This
-is a compile time option
+Specifies the port to that should be used for the client/server
+connection.
 .TP
-.B -d, +d
--d causes it to print out some debugging messages.  +d disables debugging
-messgaes.  See -mon below for even more debugging messages.
+.B -d
+Turns on some debugging.
+.TP
+.B +d
+Turns off debugging. Useful if DEBUG was defined at compile time.
 .TP
 .B -detach
-This will cause crossfire to detach from the tty.  It is only an option
-if SERVER code was compiled in.
-.TP
-.B -display <display>
-Open a window on the specified display.  Multiple display options can
-be given to open on numerous displays.  This option can also be of use
-if -l is given.
-.TP
-.B -f
-Crossfire will only flush, and not attempt to synchronize all windows.
-This means that the game will crash if someone kills their window, but
-the game will not lock if someone freezes their window.
-This option is recommended if the game seems to be slow due to many
-participating players.
-.TP
-.B -fontdir <directory>
-Sets the font directory location.  See FILES section below for more details.
+This will run the server as a demon.
 .TP
 .B -h
-Prints out usage of flags.
-.TP
-.B -l
-Removes the local player (whatever the DISPLAY environment variable is set to)
-from the list of players
-.TP
-.B -lib <directory>
-Sets the library directory location.  See FILES section below for more details.
-.TP
-.B -listen_port
-Specifies the port the server should listen to.
+Prints out a list of server options.
 .TP
 .B -log <file>
-Specifies a file to send output to.  Only has meaning if -detatch is specified.
-.TP
-.B -m -m2 -m3 -m4 -m5 -m6 -m7 -m8
- -m dumps out monster statistics.
- -m2 dumps out abilities.
- -m3 dumps out artifact information
- -m4 dumps out spell information.
- -m5 dumps out skill information.
- -m6 dumps out race information.
- -m7 dumps out alchemy information.
- -m8 dumps out more alchemy information.
-
-Note that only one of these can be given, as crossfire exits after it dumps
-out the information.  These flags are typically used by the spoiler and
-other scripts to always get up to date values - as such, not all of them
-are in the most human parseable form.
-.TP
-.B -maps <directory>
-Sets the maps directory name.  The library path is prepended to this
-name.  See FILES section below for more details.
+Specifies a file to send output to.  Only has meaning if
+.B -detach
+is specified.
 .TP
 .B -mon
-Turns on monster-debugging.  This means that all messages that the game
-gives to the monsters is written to standard error.
+Turns on monster-debugging.
 .TP
 .B -o
 Prints out info on what was defined at compile time.
 .TP
-.B -p
-Crossfire won't try to fix the fontpath if it can't find the fonts it needs.
-.TP
-.B -pix
-Crossfire will use only pixmaps instead of fonts.
-Note that if this switch is not given, and crossfire fails to set the
-font, it will try using pixmaps anyway.
-.TP
-.B -playerdir <directory>
-Sets the player directory name.  The library path is prepended to this
-name.  See FILES section below for more details.
-.TP
 .B -s
 Displays the highscore list.
 .TP
-.B -score <name or class>
-Displays all highscores with a matching name or class.
-.TP
-.B -server
-Puts crossfire into server mode.  This means that the program will not
-try to open up a window on a display, but instead wait for connections.
-.TP
-.B -split
-Makes splitwindow default (see the resource for information).  This used
-to be the -w option
-.TP
-.B -tmpdir <directory>
-Specifies a directory to use for temporary storage (mostly swapped
-out maps.)  See FILES below for more information.
-.TP
-.B -treasures <filename>
-Sets the treasures file name.  The library directory is prepended to
-this name.  See FILES below for more information.
-.TP
-.B -uniquedir <directory>
-Sets the unique item directory name.  The library directory is prepended to
-this name.  See FILES below for more information.
+.B -score <name | class>
+Displays all highscores with matching name or class.
 .TP
 .B -v
-Prints out version, authors and contributors.
-.TP
-.B -xpm
-Uses X Pixmaps (XPM) files instead of fonts or bitmap files.  They look
-nicer, but the game will take longer to start up, and may be slower.  This
-is also a compile time option.
-.SH RESOURCES
-.TP
-.B name
-Specifies which name your character will start with in Crossfire.
-You have to choose a name, either this way or with the "name" command, if
-you want to enter the highscore list.
-.TP
-.B peaceful
-You can turn this mode on or off with the strings "on"/"off".  Default
-is on.  If the mode is turned on, you will push other players instead of
-attacking them when you run into them.  The mode can also be toggled
-inside the game with the "'peaceful" command.
-.TP
-.B berzerk
-If this mode is on, the player won't stop in front of a monster if you
-hit CTRL + direction.  Instead s/he will continue fighting the monsters
-until a wall is met.  Default is ON.
-.TP
-.B wimpy
-The argument to this resource sets your wimpy percentage.  When your
-hit-points get below this percentage, you flee in panic from your
-enemies.  Default is 25%.
-.TP
-.B scroll
-Default is off.  If scroll is turned on, the text window will scroll
-instead of wrapping.  The mode can also be toggled inside the game
-with the "'scroll" command.
-Please note that the scroll-option is buggy.
-.TP
-.B splitwindow
-Default is off (unless switch -split is given).  If this is turned on, all
-windows will be under the control of the window manager.  That is, they
-can be placed in any order, and some can be resized.
-.TP
-.B pixmap
-Default is off (unless switch -pix is given).  If this is turned on,
-crossfire will not try to set your fontpath, but instead use pixmaps.
-Note that crossfire will try pixmaps if it fails to set the fontpath.
-.SH PLAYING
-When you have rolled your stats and chosen a profession, you can
-type `?' at any time to get information about the different keys.
+Prints out version and contributors.
 .PP
-The apply command (bound to key `a') is used for several things, like
-wearing, removing, wielding, unwielding, drinking, eating, etc.
-If you hold down Shift while pressing `A', you will apply the
-object below you.  This is the only way to enter a house.
-.PP
-In addition to the direct commands which are bound to different keys, you
-can also type more complex commands by pressing the '-key first.
-To get more information about these, try typing "'help".
-.PP
-Your goal is to gain experience, find treasure, explore and have fun.
-You do this by figuring out puzzles in maps, killing monsters and
-destroying generators.  You loose by dying.
-.PP
-There are two ways of dying, one is to loose all hit-points
-(usually fighting monsters), the other is to starve to death.
-Remember to eat when hungry.
-.SH MOUSE CONTROL
-You can do several things by using only the mouse.  In the inventory-window,
-you can examine, apply and drop things by clicking the different mouse-buttons.
-In the look-window you can do mostly the same, except you pick up items instead
-of dropping them when you click the right mouse button.  In both windows
-you can move the scrollbar in different ways by clicking the different
-mouse-button on it (but only if there are more items than can be displayed
-in the window).  In the graphical window, you can click at places with
-the left button to find out what is there, or with the right button
-to move in that general direction.
+The following options are only available if DUMP_SWITCHES was defined at
+compile time. You can only use one of them without any other option.
+.TP
+.B -m
+Dumps out suggested experience for all monsters.
+.TP
+.B -m2
+Dumps out abilities.
+.TP
+.B -m3
+Dumps out artifact information.
+.TP
+.B -m4
+Dumps out spell information.
+.TP
+.B -m5
+Dumps out skill information.
+.TP
+.B -m6
+Dumps out race information.
+.TP
+.B -m7
+Dumps out alchemy information.
+.TP
+.B -m8
+Dumps out gods information.
+.TP
+.B -m9
+Dumps out more alchemy information.
+.TP
+.B -mt <name>
+Dumps out a list of treasures for a monster.
 
-.SH FILES
+.SH SEE ALSO
+.B cfclient(6)
 
-This is a list of some of the files used by crossfire.  Many of these can be
-altered using the -lib, -fontdir, -playerdir, -maps, -arch, -treasures, and
--uniquedir options, or using environmental variables.  These values have
-defaults that are compiled on, and can only be changed at runtime if the
-game was not compiled with SECURE defined.
-
-In the case where both an environmental and command line option is given
-for the same file, the command line option is used.
-
-.TP
-.B FONTDIR
-This is where the crossfire font is stored.  It can be changed with the
-environmtal variable CROSSFIRE_FONTDIR or with -fontdir.  If an incorrect
-path is given, crossfire will use pixmaps instead.
-.TP
-.B LIBDIR
-This is typically the key directory, and is where most of the files reside.
-Its default value is determined at compile time.  The environmental
-variable CROSSFIRE_LIBDIR and -lib can be used to change this value.
-.TP
-.B TMPDIR
-This directory is used to store temporary maps that are swapped out
-of memory.  It can be changed with CROSSFIRE_TMPDIR environmental
-variable or the -tmpdir option.
-.TP
-.B LIBDIR/archetypes
-Global objects which can be inherited are stored here.  The environmental
-variable CROSSFIRE_ARCHETYPES and -arch can be used to change this name.
-Note that LIBDIR is always prepended to the given name.
-.TP
-.B LIBDIR/artifacts
-Rules and abilities for turning normal item into special artifact items.  At
-present time, there is no way to change this at runtime.
-.TP
-.B LIBDIR/ban_file
-File for banning certain sites.  It can not be changed at present time.
-.TP
-.B LIBDIR/forbid
-If the game is closed due to working hours, information is in this file.
-IT can not be changed at present time.
-.TP
-.B LIBDIR/maps
-Files and subdirectories containing the map files.  The environmental
-variable CROSSFIRE_MAPDIR and -maps can be used to change this.  LIBDIR
-is always prepended to the value given.
-.TP
-.B LIBDIR/motd
-Message of the day, is written to players when theey start the game.  A
-different file can not presently be specified at runtime.
-.TP
-.B LIBDIR/players
-This is a directory where the save files are stored (unless compiled
-with SAVE_HOMEDIR).  It can be changed with the environmental variable 
-CROSSFIRE_PLAYERDIR or the -playerdir option.  LIBDIR is always
-prepended.
-.TP
-.B LIBDIR/treasures
-Linked lists of random treasure (& abilities!) which can be given to different
-monsters are kept here.  The environmental variable CROSSFIRE_TREASURES and
--treasures option can be used to override this value.  LIBDIR
-is always prepended.
-.TP
-.B LIBDIR/unique-items
-
-This directory is used for unique item code (compile time option.)  It can
-be changed with the environmental variable CROSSFIRE_ITEMSDIR or -uniquedir.
-LIBDIR is always prepended.
-
-.SH MAILING LIST
-There are two mailing-lists dedicated to the developement and
-bug-testing of crossfire.  The first is for discussing bugs and
-features, the second is for announcing new versions.
-.PP
-If you want to join or leave any of the lists, send mail to
-crossfire-request@ifi.uio.no with the subject "subscribe",
-"unsubscribe","subscribe announce" or "unsubscribe announce".
-If you use the subject "subscribe" or "unsubscribe" you will
-(un)subscribe to *both* lists.
-To send messages directly to the list, mail crossfire@ifi.uio.no.
-An archive of old messages can be found at the ftp-sites (see below).
-in the file crossfire.mail.Z
-.SH FTP
-The official ftp-sites where you can look for the latest versions are:
-.PP
-    ra.pyramid.com: /pub/crossfire (129.214.1.102)
-    ftp.ifi.uio.no:/pub/crossfire (129.240.64.4)
-    ftp.real-time.com/pub/games/crossfire (206.10.252.12)
-    ftp.cs.city.ac.uk:/pub/games/crossfire/ (138.40.92.3)
-    ftp.sunet.se:/pub/unix/games/crossfire (130.238.127.3)
-    ftp.cs.titech.ac.jp:/pub/games/crossfire (131.112.90.201)
-.PP
-Please use the one nearest to you.  ".no",".uk" and ".se" from Europe,
-".au" from Australia
-and ".com" from USA.
-If anyone sets up other sites, please notify me.
 .SH BUGS
-If the game looks very chaotic, it is probably because you are using
-a font belonging to a previous version instead of the one supplied
-with this version.
-.PP
-Please let me know about any bugs you find in the game.  I know there are
-plenty of them, and some are mentioned on the TODO file which is supplied
-with the game.
+Please read the REPORTING BUGS section in
+.I README.
+
 .SH AUTHOR
-Copyright (C) 1994,1996,1997 Mark Wedel (mark@pyramid.com)
-.PP
-Copyright (C) 1992 Frank Tore Johansen (frankj@ifi.uio.no)
-.PP
-Authors and contributors to this program (source):
-.LP
-.RS
-.ft B
-.nf
-mark@pyramid.com (Mark Wedel)
-frankj@ifi.uio.no (Frank Tore Johansen)
-kjetilho@ifi.uio.no (Kjetil Torgrim Homme)
-tvangod@ecst.csuchico.edu (Tyler Van Gorder)
-elmroth@cd.chalmers.se (Tony Elmroth)
-dougal.scott@fcit.monasu.edu.au (Dougal Scott)
-wchuang@athena.mit.edu (William)
-ftww@cs.su.oz.au (Geoff Bailey)
-jorgens@flipper.pvv.unit.no (Kjetil Wiekhorst J\(/orgensen)
-c.blackwood@rdt.monash.edu.au (Cameron Blackwood)
-jtraub+@cmu.edu (Joseph L. Traub)
-rgg@aaii.oz.au (Rupert G. Goldie)
-eanders+@cmu.edu (Eric A. Anderson)
-eneq@Prag.DoCS.UU.SE (Rickard Eneqvist)
-Jarkko.Sonninen@lut.fi (Jarkko Sonninen)
-kholland@sunlab.cit.cornell.du (Karl Holland)
-vick@bern.docs.uu.se (Mikael Lundgren)
-mol@meryl.csd.uu.se (Mikael Olsson)
-haatanen@cc.lut.fi (Tero Haatanen)
-ylitalo@student.docs.uu.se (Lasse Ylitalo)
-anipa@pulmunen.cs.tut.fi (Niilo Neuvo)
-mta@modeemi.cs.tut.fi (Markku J{rvinen)
-meunier@inf.enst.fr (Sylvain Meunier)
-jfosback@darmok.uoregon.edu (Jason Fosback)
-cedman@capitalist.princeton.edu (Carl Edman)
-henrich@crh.cl.msu.edu (Charles Henrich)
-schmid@fb3-s7.math.tu-berlin.de (Gregor Schmid)
-quinet@montefiore.ulg.ac.be (Raphael Quinet)
-jam@modeemi.cs.tut.fi (Jari Vanhala)
-kivinen@joker.cs.hut.fi (Tero Kivinen)
-peterm@soda.berkeley.edu (Peter Mardahl)
-matt@cs.odu.edu (Matthew Zeher)
-srt@sun-dimas.aero.org (Scott R. Turner)
-smurf@soda.berkeley.edu (Scott MacFiggen)
-tpeland@utu.fi (Tero Jyri Michael Pelander)
-raytrace@soda.berkeley.edu (Rachel Yotter)
-huma@netcom.com (Ben Fennema)
-njw@cs.city.ac.uk (Nick Williams)
-Wacren@Gin.ObsPM.Fr (Laurent Wacrenier)
-
-.ft R
-.RE
-.LP
-.\" This program is free software; you can redistribute it and/or modify
-.\" it under the terms of the GNU General Public License as published by
-.\" the Free Software Foundation; either version 2 of the License, or
-.\" (at your option) any later version.
-
-.\" This program is distributed in the hope that it will be useful,
-.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
-.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-.\" GNU General Public License for more details.
-
-.\" You should have received a copy of the GNU General Public License
-.\" along with this program; if not, write to the Free Software
-.\" Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-
-.\" The author can be reached via e-mail to frankj@ifi.uio.no.
+ (C) 1994 Mark Wedel (mwedel@scruznet.com)
+ (C) 1992 Frank Tore Johansen (frankj@ifi.uio.no)
