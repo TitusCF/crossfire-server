@@ -774,7 +774,8 @@ void update_object(object *op) {
 	 * not normally animated (ie, buttons) and not invisible, mark this
 	 * space to be updated.
 	 */
-	if (player && player!=op && op->speed<MIN_ACTIVE_SPEED && !op->invisible) {
+	if (player && player!=op && op->speed<MIN_ACTIVE_SPEED && !op->invisible &&
+	    op->animation_id) {
 	    for (tmp=op; tmp!=NULL; tmp=tmp->above)
 		if (QUERY_FLAG(tmp,FLAG_IS_FLOOR) && !tmp->invisible) break;
 
