@@ -672,6 +672,63 @@ treasureone random_special
   arch potion_heroism
     chance 5
   end
+treasureone random_coin
+  arch goldcoin
+    chance 5
+    nrof 50
+  more
+  arch goldcoin
+    chance 5
+    nrof 100
+  more
+  arch goldcoin
+    chance 5
+    nrof 150
+  more
+  arch goldcoin
+    chance 5
+    nrof 200
+  more
+  arch goldcoin
+    chance 5
+    nrof 250
+  more
+  arch silvercoin
+    chance 5
+    nrof 250
+  more
+  arch silvercoin
+    chance 5
+    nrof 500
+  more
+  arch silvercoin
+    chance 5
+    nrof 750
+  more
+  arch silvercoin
+    chance 5
+    nrof 1000
+  more
+  arch silvercoin
+    chance 5
+    nrof 1500
+  more
+  arch platinacoin
+    chance 5
+    nrof 10
+  more
+  arch platinacoin
+    chance 5
+    nrof 20
+  more
+  arch platinacoin
+    chance 5
+    nrof 40
+  more
+  arch platinacoin
+    chance 5
+    nrof 60
+end
 treasureone random_wealth
   arch goldcoin
     chance 5

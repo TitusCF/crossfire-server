@@ -419,6 +419,8 @@ void add_button_link(object *button, mapstruct *map, int connected) {
     LOG(llevError, "Tried to add button-link without map.\n");
     return;
   }
+  button->protected = connected;  /* peterm:  I need this so I can rebuild 
+											a connected map from a template map. */
 /*  LOG(llevDebug,"adding button %s (%d)\n", button->name, connected);*/
 
   SET_FLAG(button,FLAG_IS_LINKED);
