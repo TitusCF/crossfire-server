@@ -17,6 +17,20 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+More bug fixes:
+common/item.c: Add missing braces - was resulting in some items getting
+    display like 'gauntlets of strength (Str+1)(Str+1).
+include/map.h: Add MAGIC_MAP definitions to the file.
+server/shop.c: Put back in code that uses magic_mapping_mark to determine
+    what items to display in inventory.  Update for new one magic mapping
+    code stores information away.
+server/spell_util.c: Add missing P_OUT_OF_FLAG check, which resulted
+   in crashes.
+socket/info.c: Move MAGIC_MAP definations to map.h.  Add check for
+    P_OUT_OF_MAP.  Remove code that stops on P_NO_MAGIC - with that
+    it wouldn't search the shops.
+MSW 2003-01-16
+
 server/move.c: fix try_to_fit and roll_ob to work properly on tiled maps.
 Also some performance improvements to those functions.
 MSW 2003-01-12

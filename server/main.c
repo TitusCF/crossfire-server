@@ -497,9 +497,20 @@ static void enter_random_map(object *pl, object *exit_ob)
      * Take the last component (after the last slash) to give
      * shorter names without bogus slashes.
      */
-    cp = strrchr(rp.final_map[0]? rp.final_map:rp.origin_map, '/');
-    if (!cp)
-	cp = rp.final_map[0]? rp.final_map:rp.origin_map;
+    if (rp.final_map[0]) {
+	cp = strrchr(rp.final_map, '/');
+	if (!cp) cp = rp.final_map;
+    } else {
+	char buf[HUGE_BUF];
+
+	cp = strrchr(rp.origin_map, '/');
+	if (!cp) cp = rp.origin_map;
+	/* Need to strip of any trailing digits, if it has them */
+	strcpy(buf, cp);
+	while (isdigit(buf[strlen(buf) - 1]))
+	    buf[strlen(buf) - 1] = 0;
+	cp = buf;
+    }
 
     sprintf(newmap_name,"/random/%s%04d",cp+1, reference_number++);
 
