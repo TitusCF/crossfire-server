@@ -1,6 +1,18 @@
 Changes in top level CVS tree (please add your changes at the very top of
 the file):
 
+fireborns changed to have Pow stat bonus instead of Wis
+stat bonus.  --PeterM
+
+Some problems in the random map code fixed: specificially,
+  1)  fountains no longer attempted placement outside map
+  2)  Ignore files/dirs named CVS when looking for styles.
+
+I changed a few of the maps to have exits to random maps.
+I made one random house in Scorn, one random exit in the Hall of Bones
+to an undead maze, another exit to a random map in the hole SE of
+Scorn, and one in the bottom of the Tower of the Stars. --PeterM
+
 Update lib/Makefile.in to create empty bookarch and temp.maps files as
 part of install process. - msw
 
