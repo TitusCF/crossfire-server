@@ -17,6 +17,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/rune.c: Modify dispel_rune function (called from disarm spell)
+   to erase marking runes.  While at it, fix it so that it does the right
+   thing with respect to tiled maps.
+MSW 2003-02-17
+
 include/sproto.h, server/move.c:  Modify try_fit() to take mapstruct parameter
    for which map we are trying to fit this on - fixes problems with rolling
    boulders accross map (only function that currently uses this).

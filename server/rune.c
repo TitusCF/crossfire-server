@@ -276,37 +276,64 @@ void spring_trap(object *trap,object *victim)
 }
 
 /*  dispel_rune:  by peterm  
-    dispels the target rune, depending on the level of the actor
-and the level of the rune  risk flag, if true, means that there is
-a chance that the trap/rune will detonate */
+ * dispels the target rune, depending on the level of the actor
+ * and the level of the rune  risk flag, if true, means that there is
+ * a chance that the trap/rune will detonate 
+ */
 
 int dispel_rune(object *op,int dir,int risk)
 {
-  object *tmp,*tmp2;
-  int searchflag = 1;
-   if(out_of_map(op->map,op->x+freearr_x[dir],op->y+freearr_y[dir])) return 0;
-   for(tmp=get_map_ob(op->map,op->x+freearr_x[dir],op->y+freearr_y[dir]);
-        tmp!=NULL;  tmp=tmp->above) 
-	{
-	  if(tmp->type==RUNE) break;
-		/* now search tmp's inventory for traps */
-	  for(tmp2=tmp->inv;tmp2!=NULL;tmp2=tmp2->below) {
-		if(tmp2->type==RUNE) { 
-			tmp=tmp2;
-			searchflag=0;
-			break;
-		}
-	  }
-	  if(!searchflag) break;
+    object *tmp,*tmp2;
+    int searchflag = 1, mflags;
+    sint16 x,y;
+    mapstruct *m;
+
+    x = op->x+freearr_x[dir];
+    y = op->y+freearr_y[dir];
+    m = op->map;
+
+    mflags = get_map_flags(m, &m, x, y, &x, &y);
+
+    /* Should we perhaps not allow player to disable traps if a monster/
+     * player is standing on top? 
+     */
+    if (mflags & P_OUT_OF_MAP) {
+	new_draw_info(NDI_UNIQUE, 0,op,"There's no trap there!");
+    }
+
+    for(tmp=get_map_ob(m,x, y); tmp!=NULL;  tmp=tmp->above)  {
+	if(tmp->type==RUNE) break;
+
+	/* we could put a probability chance here, but since nothing happens
+	 * if you fail, no point on that.  I suppose we could do a level
+	 * comparison so low level players can't erase high level players runes.
+	 */
+	if (tmp->type == SIGN && !strcmp(tmp->arch->name,"rune_mark")) {
+	    remove_ob(tmp);
+	    new_draw_info(NDI_UNIQUE, 0,op,"You wipe out the rune of marking!");
+	    return 1;
 	}
+
+	/* now search tmp's inventory for traps
+	 * This is for chests, where the rune is in the chests inventory.
+	 */
+	for(tmp2=tmp->inv;tmp2!=NULL;tmp2=tmp2->below) {
+	    if(tmp2->type==RUNE) { 
+		tmp=tmp2;
+		searchflag=0;
+		break;
+	    }
+	}
+	if(!searchflag) break;
+    }
 		
-  if(tmp==NULL)               /*no rune there. */
-    {
+    /* no rune there. */
+    if(tmp==NULL) {
 	new_draw_info(NDI_UNIQUE, 0,op,"There's no trap there!");
 	return 0;
     }
-  trap_disarm(op,tmp,risk);
-  return 1;
+    trap_disarm(op,tmp,risk);
+    return 1;
 	
 }
 
