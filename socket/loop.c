@@ -258,7 +258,7 @@ void HandleClient(NewSocket *ns, player *pl)
 	/* If it is a player, and they don't have any speed left, we
 	 * return, and will read in the data when they do have time.
          */
-	if (pl && pl->state==ST_PLAYING && pl->ob->speed_left < 0) {
+	if (pl && pl->state==ST_PLAYING && pl->ob != NULL && pl->ob->speed_left < 0) {
 	    return;
 	}
 	    
