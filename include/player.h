@@ -25,6 +25,12 @@
     The author can be reached via e-mail to mark@pyramid.com.
 */
 
+/* This is for the player struct 
+ * Origin of MAX_EXP_CAT is global.h, i don't want change this
+ * !! Be sure this is NEVER small than MAX_EXP_CAT 
+ */
+#define LAST_MAX_EXP_CAT 7 	
+
 #define NUM_OUTPUT_BUFS	5
 typedef struct {
   char *buf;			/* Actual string pointer */
@@ -101,6 +107,16 @@ typedef struct pl {
 #ifdef EXPLORE_MODE
   uint32 explore:1;         /* if True, player is in explore mode */
 #endif
+
+#ifdef ALLOW_SKILLS	  	       /* last_skill_ob links direct to exp. objects */
+  sint32  last_skill_index;	       /* this is init from init_player_exp() */
+  object *last_skill_ob[LAST_MAX_EXP_CAT];  /* the exp object */
+  sint32  last_skill_exp[LAST_MAX_EXP_CAT]; /* shadow register. if != exp. obj update client */
+  sint32  last_skill_level[LAST_MAX_EXP_CAT]; /* same for level */
+  sint32  last_skill_id[LAST_MAX_EXP_CAT]; /* Thats the CS_STATS_ id for client STATS cmd*/
+#endif
+
+
   unsigned char state;
   unsigned char listening; /* Which priority will be used in info_all */
 
