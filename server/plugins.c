@@ -60,40 +60,29 @@ int PlugNR = 0;
 /*****************************************************************************/
 CommArray_s *find_plugin_command(char *cmd, object *op)
 {
-    CFParm* CmdParm;
+    CFParm CmdParm;
     CFParm* RTNValue;
     int i;
     char cmdchar[10];
-    CommArray_s *RTNCmd;
+    static CommArray_s RTNCmd;
 
     strcpy(cmdchar,"command?");
-    /* Why do a malloc/free?  Would be a lot faster to just declare
-     * it as a non pointer.
-     */
-    CmdParm = (CFParm *)(malloc(sizeof(CFParm)));
-    CmdParm->Value[0] = cmdchar;
-    CmdParm->Value[1] = cmd;
-    CmdParm->Value[2] = op;
+    CmdParm.Value[0] = cmdchar;
+    CmdParm.Value[1] = cmd;
+    CmdParm.Value[2] = op;
 
     for(i=0;i<PlugNR;i++)
     {
-        RTNValue = PlugList[i].propfunc(CmdParm);
+        RTNValue = (PlugList[i].propfunc(&CmdParm));
         if (RTNValue!=NULL)
         {
-	    RTNCmd = (CommArray_s *)(malloc(sizeof(CommArray_s)));
-            RTNCmd->name = (char *)(RTNValue->Value[0]);
-            RTNCmd->func = (CommFunc)(RTNValue->Value[1]);
-            RTNCmd->time = *(float *)(RTNValue->Value[2]);
-	    /* Note that this is a memory leak here also, because the
-	     * caller doesn't free this data.  Probably better to
-	     * make RTNCmd a static - that will work unless this function
-	     * needs to be recursive or crossfire becomes threaded
-	     */
-	    free(CmdParm);
-            return RTNCmd;
+            RTNCmd.name = (char *)(RTNValue->Value[0]);
+            RTNCmd.func = (CommFunc)(RTNValue->Value[1]);
+            RTNCmd.time = *(float *)(RTNValue->Value[2]);
+            printf("RTNCMD: name %s, time %d\n", RTNCmd.name, RTNCmd.time);
+            return &RTNCmd;
         };
     };
-    free(CmdParm);
     return NULL;
 };
 
