@@ -856,3 +856,5 @@ int humid_tile(int x, int y);
 int similar_direction(int a, int b);
 char *weathermap_to_worldmap_corner(int wx, int wy, int *x, int *y, int dir);
 void plot_gulfstream(void);
+int worldmap_to_weathermap(int x, int y, int *wx, int *wy, char *filename);
+int real_temperature(int x, int y);

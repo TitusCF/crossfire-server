@@ -74,6 +74,12 @@ const int season_timechange[5][HOURS_PER_DAY] = {
 	1, 1, 1, 1, 1, 0}
 };
 
+const int season_tempchange[HOURS_PER_DAY] = {
+/* 0  1   2  3  4  5  6  7  8  9  10 11 12 13 14 1  2  3  4  5   6   7
+	8    9  10  11  12  13 */
+   0, 0,  0, 0, 0, 0, 0, -1, -1, -1, -1, -1, -1, -1, -1, 0, 0, 0, 0, 0, 1, 1,
+	1, 1, 1, 1, 1, 1};
+
 void set_darkness_map(mapstruct *m)
 {
     int i;
@@ -992,6 +998,41 @@ void perform_weather()
     fclose(fp);
 }
 
+/* provide wx and wy. Will fill in with weathermap coordinates.  Requires
+   the current mapname (must be a worldmap), and your coordinates on the
+   map.  returns -1 if you give it something it can't figure out. 0 normally.
+*/
+
+int worldmap_to_weathermap(int x, int y, int *wx, int *wy, char *filename)
+{
+    int spwtx, spwty;
+    int fx, fy;
+    int nx, ny;
+
+    spwtx = (settings.worldmaptilesx * settings.worldmaptilesizex) / WEATHERMAPTILESX;
+    spwty = (settings.worldmaptilesy * settings.worldmaptilesizey) / WEATHERMAPTILESY;
+
+    fx = -1;
+    fy = -1;
+    sscanf(filename, "world/world_%d_%d", &fx, &fy);
+    if (fx > settings.worldmapstartx + settings.worldmaptilesx ||
+	fx < settings.worldmapstartx)
+	return -1;
+    if (fy > settings.worldmapstarty + settings.worldmaptilesy ||
+	fy < settings.worldmapstarty)
+	return -1;
+    fx -= settings.worldmapstartx;
+    fy -= settings.worldmapstarty;
+    
+    nx = fx * settings.worldmaptilesizex + x;
+    ny = fy * settings.worldmaptilesizey + y;
+
+    *wx = nx/spwtx;
+    *wy = ny/spwty;
+
+    return 0;
+}
+
 /* provide x and y.  Will fill in with the requested corner of the real
  * world map, given the current weathermap section.  dir selects which
  * corner to return.  Valid values are 2 4 6 8 for the corners.  return
@@ -1124,6 +1165,38 @@ void temperature_calc(int x, int y, timeofday_t *tod)
     weathermap[x][y].temp -= elev;
 }
 
+/* Compute the real (adjusted) temperature of a given weathermap tile.
+   This takes into account the wind, base temp, sunlight, and other fun
+   things.  Seasons are automatically handled by moving the equator.
+   Elevation is considered in the base temp.
+*/
+
+int real_temperature(int x, int y)
+{
+    int i, temp;
+    timeofday_t tod;
+
+    /* adjust for time of day */
+    temp = weathermap[x][y].temp;
+    get_tod(&tod);
+    for (i = HOURS_PER_DAY/2; i < HOURS_PER_DAY; i++) {
+	temp += season_tempchange[i];
+	/* high amounts of water has a buffering effect on the temp */
+	if (weathermap[x][y].water > 33)
+	    i++;
+    }
+    for (i = 0; i <= tod.hour; i++) {
+	temp += season_tempchange[i];
+	if (weathermap[x][y].water > 33)
+	    i++;
+    }
+
+    /* windchill */
+    for (i=0; i < weathermap[x][y].windspeed; i+=i)
+	temp--;
+
+    return temp;
+}
 
 /* this code simply smooths the pressure map */
 
