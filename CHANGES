@@ -17,6 +17,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 CVS changes since last release:
 
+MSW 2001/03/15:
+server/spell_effect.c: Add physical attacktype when casting holy possession.
+    Otherwise, characters who use karate end up not being able to damaage
+     anything.
+
 MSW 2001/03/09:
 crossedit/App.c: Move the loading of images to later in the editor
     startup state.  In this way, the client can allocate the colors it

@@ -1269,7 +1269,7 @@ cast_change_attr(object *op,object *caster,int dir,int spell_type) {
     int i;
 
     if(god) {
-	force->attacktype|=god->attacktype;
+	force->attacktype|=god->attacktype | AT_PHYSICAL;
 	if(god->slaying) force->slaying = add_string(god->slaying);
 
 	/* Only give out good benefits, not bad */
