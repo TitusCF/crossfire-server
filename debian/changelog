@@ -1,4 +1,4 @@
-crossfire (1.5.0.0.20040315-1) unstable; urgency=low
+crossfire (1.5.0.0.20040317-1) unstable; urgency=low
 
   * Patched upstream release for Bug #232336
   * Patches upstream release for Bug #232421
