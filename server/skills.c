@@ -790,10 +790,11 @@ int singing(object *pl, int dir, object *skill) {
 	if (mflags & P_OUT_OF_MAP) continue;
 	if (!(mflags & P_IS_ALIVE)) continue;
 
-	for(tmp=get_map_ob(m, x, y); tmp;tmp=tmp->above)
+	for(tmp=get_map_ob(m, x, y); tmp;tmp=tmp->above) {
 	    if(QUERY_FLAG(tmp,FLAG_MONSTER)) break;
 	    /* can't affect players */
             if(tmp->type==PLAYER) break;
+	}
 
 	/* Whole bunch of checks to see if this is a type of monster that would
 	 * listen to singing.
