@@ -73,7 +73,7 @@ MAILING LIST
   To send messages directly to the list, mail crossfire@ifi.uio.no.
   An archive of old messages can be found at ftp.ifi.uio.no in the
   directory /pub/crossfire/archive, or via the www at 
-  http://archives.real-time.com/crossfire
+  http://www.real-time.com/maillists/rte/crossfire
 
 
 FTP SITES
@@ -87,6 +87,11 @@ FTP SITES
     ftp://ftp.sunet.se:/pub/unix/games/crossfire (130.238.127.3)
     ftp://ftp.cs.titech.ac.jp:/pub/games/crossfire
     ftp://mirror.aarnet.edu.au/games/roguelike/crossfire/
+
+    If you are looking for a windows/NT client, look at:
+	    ftp://ftp.ifi.uio.no:/pub/crossfire/incoming (129.240.64.44)
+    for a file called cfcXXXX.zip (XXXX are numbers representing the version -
+    get the latest)
 
   Please use the one nearest to you.  ".no" and ".uk" in Europe, ".au" in
   Australia, ".com" in USA.
