@@ -35,6 +35,9 @@
 #include <sproto.h>
 #endif
 
+static void spin_globe(void);
+static void write_weather_images(void);
+
 extern unsigned long todtick;
 extern weathermap_t **weathermap;
 
@@ -238,6 +241,55 @@ weather_grow_t weather_tile[] = {
     {NULL, NULL, 1, 0.0, 0.0, 0, 0, 0, 0, 0, 0}
 };
 
+/* This stuff is for creating the images. */
+
+/* Colour offsets into pixel array. */
+#define RED   0
+#define GREEN 1
+#define BLUE  2
+
+sint8 real_temp[WEATHERMAPTILESX][WEATHERMAPTILESY];
+
+/* Colours used for wind directions.
+ * winddir is the directoin wind is coming from.
+ *   812  456
+ *   7 3  3 7
+ *   654  218
+ */
+const uint32 directions[] = {
+    0x0000FFFF, /* south */
+    0x000000FF, /* south west */
+    0x00FF00FF, /* west */
+    0x00FFFFFF, /* north west */
+    0x00000000, /* north */
+    0x00FF0000, /* north east */
+    0x00FFFF00, /* east */
+    0x0000FF00  /* south east */
+};
+
+/* Colours used for weather types. */
+const uint32 skies[] = {
+    0x000000FF, /* SKY_CLEAR         0 */
+    0x000000BD, /* SKY_LIGHTCLOUD    1 */
+    0x0000007E, /* SKY_OVERCAST      2 */
+    0x0000FF00, /* SKY_LIGHT_RAIN    3 */
+    0x0000BD00, /* SKY_RAIN          4 */
+    0x00007E00, /* SKY_HEAVY_RAIN    5 */
+    0x00FFFF00, /* SKY_HURRICANE     6 */
+/* wierd weather 7-12 */
+    0x00FF0000, /* SKY_FOG           7 */
+    0x00FF00FF, /* SKY_HAIL          8 */
+    0x00000000,
+    0x00000000,
+    0x00000000,
+    0x00000000,
+/* snow */
+    0x003F3F3F, /* SKY_LIGHT_SNOW    13 */
+    0x007E7E7E, /* SKY_SNOW          14 */
+    0x00BDBDBD, /* SKY_HEAVY_SNOW    15 */
+    0x00FFFFFF  /* SKY_BLIZZARD      16 */
+};
+
 
 /*
  * Set the darkness level for a map.  Requires the map pointer.
@@ -304,8 +356,8 @@ void tick_the_clock()
 	    write_windspeedmap();
 	if (todtick%24 == 0)
 	    write_humidmap();
-	if (todtick%25 == 0)
-	    write_elevmap();
+/*	if (todtick%25 == 0)
+	    write_elevmap(); */
 	if (todtick%26 == 0)
 	    write_temperaturemap();
 	if (todtick%27 == 0)
@@ -330,6 +382,10 @@ void tick_the_clock()
     }
     /* perform_weather must follow calculators */
     perform_weather();
+	if (settings.dynamiclevel > 0) {
+		write_weather_images();
+		spin_globe();
+	}
 }
 
 /*
@@ -475,7 +531,7 @@ void read_winddirmap()
 {
     char filename[MAX_BUF];
     FILE *fp;
-    int x, y;
+    int x, y, d;
 
     sprintf(filename, "%s/winddirmap", settings.localdir);
     LOG(llevDebug, "Reading wind direction data from %s...", filename);
@@ -488,13 +544,14 @@ void read_winddirmap()
 	return;
     }
     for (x=0; x < WEATHERMAPTILESX; x++) {
-	for (y=0; y < WEATHERMAPTILESY; y++) {
-	    fscanf(fp, "%c ", &weathermap[x][y].winddir);
+	  for (y=0; y < WEATHERMAPTILESY; y++) {
+		fscanf(fp, "%d ", &d);
+	    weathermap[x][y].winddir = d;
 	    if (weathermap[x][y].winddir < 1 ||
 		weathermap[x][y].winddir > 8)
 		weathermap[x][y].winddir = rndm(1, 8);
-	}
-	fscanf(fp, "\n");
+	  }
+	  fscanf(fp, "\n");
     }
     LOG(llevDebug, "Done.\n");
     fclose(fp);
@@ -525,7 +582,7 @@ void read_windspeedmap()
 {
     char filename[MAX_BUF];
     FILE *fp;
-    int x, y;
+    int x, y, d;
 
     sprintf(filename, "%s/windspeedmap", settings.localdir);
     LOG(llevDebug, "Reading wind speed data from %s...", filename);
@@ -538,12 +595,13 @@ void read_windspeedmap()
 	return;
     }
     for (x=0; x < WEATHERMAPTILESX; x++) {
-	for (y=0; y < WEATHERMAPTILESY; y++) {
-	    fscanf(fp, "%c ", &weathermap[x][y].windspeed);
+	  for (y=0; y < WEATHERMAPTILESY; y++) {
+		fscanf(fp, "%d ", &d);
+	    weathermap[x][y].windspeed = d;
 	    if (weathermap[x][y].windspeed < 0 ||
 		weathermap[x][y].windspeed > 120)
 		weathermap[x][y].windspeed = rndm(1, 30);
-	}
+	  }
 	fscanf(fp, "\n");
     }
     LOG(llevDebug, "Done.\n");
@@ -750,7 +808,7 @@ void read_humidmap()
 {
     char filename[MAX_BUF];
     FILE *fp;
-    int x, y;
+    int x, y, d;
 
     sprintf(filename, "%s/humidmap", settings.localdir);
     LOG(llevDebug, "Reading humidity data from %s...", filename);
@@ -765,13 +823,14 @@ void read_humidmap()
 	return;
     }
     for (x=0; x < WEATHERMAPTILESX; x++) {
-	for (y=0; y < WEATHERMAPTILESY; y++) {
-	    fscanf(fp, "%c ", &weathermap[x][y].humid);
+	  for (y=0; y < WEATHERMAPTILESY; y++) {
+		fscanf(fp, "%d ", &d);
+	    weathermap[x][y].humid = d;
 	    if (weathermap[x][y].humid < 0 ||
 		weathermap[x][y].humid > 100)
 		weathermap[x][y].humid = rndm(0, 100);
-	}
-	fscanf(fp, "\n");
+	  }
+	  fscanf(fp, "\n");
     }
     LOG(llevDebug, "Done.\n");
     fclose(fp);
@@ -850,7 +909,7 @@ void read_watermap()
 {
     char filename[MAX_BUF];
     FILE *fp;
-    int x, y;
+    int x, y, d;
 
     sprintf(filename, "%s/watermap", settings.localdir);
     LOG(llevDebug, "Reading water data from %s...", filename);
@@ -861,12 +920,13 @@ void read_watermap()
 	return;
     }
     for (x=0; x < WEATHERMAPTILESX; x++) {
-	for (y=0; y < WEATHERMAPTILESY; y++) {
-	    fscanf(fp, "%c ", &weathermap[x][y].water);
+	  for (y=0; y < WEATHERMAPTILESY; y++) {
+		fscanf(fp, "%d ", &d);
+	    weathermap[x][y].water = d;
 	    if (weathermap[x][y].water > 100)
 		weathermap[x][y].water = rndm(0, 100);
-	}
-	fscanf(fp, "\n");
+	  }
+	  fscanf(fp, "\n");
     }
     LOG(llevDebug, "Done.\n");
     fclose(fp);
@@ -1638,28 +1698,30 @@ void singing_in_the_rain(mapstruct *m, int wx, int wy, char *filename)
 		    case 0: at = find_archetype("rain1"); break;
 		    case 1: at = find_archetype("rain2"); break;
 		    default: at = NULL;
-		    }}
+		    }
+		}
 		if (sky >= SKY_HEAVY_RAIN && sky <= SKY_HURRICANE){
 		    switch (rndm(0, SKY_HAIL-sky)) {
 		    case 0: at = find_archetype("rain3"); break;
 		    case 1: at = find_archetype("rain4"); break;
 		    case 2: at = find_archetype("rain5"); break;
 		    default: at = NULL;
-		    }}
-		    /* the bottom floor of scorn is not IS_FLOOR */
-		    topfloor=NULL;
-		    for (tmp=GET_MAP_OB(m, x, y); tmp;
-			 topfloor = tmp,tmp = tmp->above) {
-			if (strcmp(tmp->arch->name, "dungeon_magic") != 0)
-			    if (!QUERY_FLAG(tmp, FLAG_IS_FLOOR))
-				break;
 		    }
-		    /* topfloor should now be the topmost IS_FLOOR=1 */
-		    if (topfloor == NULL)
-			continue;
-		    if (tmp != NULL)
-			nodstk++;
-		    /* something is wrong with that sector. just skip it */
+		}
+		/* the bottom floor of scorn is not IS_FLOOR */
+		topfloor=NULL;
+		for (tmp=GET_MAP_OB(m, x, y); tmp;
+		     topfloor = tmp,tmp = tmp->above) {
+		    if (strcmp(tmp->arch->name, "dungeon_magic") != 0)
+			if (!QUERY_FLAG(tmp, FLAG_IS_FLOOR))
+			    break;
+		}
+		/* topfloor should now be the topmost IS_FLOOR=1 */
+		if (topfloor == NULL)
+		    continue;
+		if (tmp != NULL)
+		    nodstk++;
+		/* something is wrong with that sector. just skip it */
 		found = 0;
 		for (i=0; weather_replace[i].tile != NULL; i++) {
 		    if (weather_replace[i].arch_or_name == 1) {
@@ -2490,15 +2552,17 @@ void smooth_wind()
 
 	    /* if the wind is strong, the pressure won't decay it completely */
 	    if (weathermap[x][y].windspeed > 5 &&
-		!similar_direction(weathermap[x][y].winddir, find_dir_2(dx, dy))) {
-		weathermap[x][y].windspeed -= 2;
+		    !similar_direction(weathermap[x][y].winddir, find_dir_2(dx, dy))) {
+			weathermap[x][y].windspeed -= 2 * 2;
 	    } else {
-		weathermap[x][y].winddir = find_dir_2(dx, dy);
-		weathermap[x][y].windspeed = weathermap[x][y].pressure -
-		    weathermap[x+dx][y+dy].pressure;
+			weathermap[x][y].winddir = find_dir_2(dx, dy);
+			weathermap[x][y].windspeed = (weathermap[x][y].pressure -
+		    weathermap[x+dx][y+dy].pressure) * WIND_FACTOR;
 	    }
+		/* Add in sea breezes. */
+		weathermap[x][y].windspeed += weathermap[x][y].water / 4;
 	    if (weathermap[x][y].windspeed < 0)
-		weathermap[x][y].windspeed = 0;
+			weathermap[x][y].windspeed = 0;
 	}
 
     /*  now, lets crank on the speed.  When surrounding tiles all have
@@ -2727,4 +2791,165 @@ void process_rain()
 		weathermap[x][y].rainfall += rain;
 	    }
 	}
+}
+
+/*
+ * The world spinning drags the weather with it.
+ * The equator is diagonal, and the poles are 45 degrees from north /south.
+ * What the hell, lets spin the planet backwards.
+ */
+
+void spin_globe()
+{
+	int x, y;
+	int buffer_humid;
+	int buffer_sky;
+
+	for (y=0; y < WEATHERMAPTILESY; y++) {
+		buffer_humid = weathermap[0][y].humid;
+		buffer_sky = weathermap[0][y].sky;
+		for (x=0; x < (WEATHERMAPTILESX - 1); x++) {
+			weathermap[x][y].humid = weathermap[x + 1][y].humid;
+			weathermap[x][y].sky = weathermap[x + 1][y].sky;
+		}
+		weathermap[WEATHERMAPTILESX - 1][y].humid = buffer_humid;
+		weathermap[WEATHERMAPTILESX - 1][y].sky = buffer_sky;
+	}
+}
+
+/*
+ * Dump all the weather data as an image.
+ * Writes two other files that are useful for creating animations and web pages.
+ */
+
+void write_weather_images()
+{
+    char filename[MAX_BUF];
+    FILE *fp;
+    int x, y;
+    sint32 min[10], max[10], avgrain, avgwind, realmaxwind;
+    double scale[10], realscalewind;
+    uint8 pixels[3 * 3 * WEATHERMAPTILESX];
+    long long total_rainfall = 0;
+    long long total_wind = 0;
+
+    min[0] = 0;            max[0] = 100;
+    min[1] = 0;            max[1] = 0;
+    min[2] = 0;            max[2] = 0;
+    min[3] = PRESSURE_MIN; max[3] = PRESSURE_MAX;
+    min[4] = 0;            max[4] = 0;
+    min[5] = 1;            max[5] = 8;
+    min[6] = 0;            max[6] = 100;
+    min[7] = -45;          max[7] = 45;
+    min[8] = 0;            max[8] = 16;
+    min[9] = 0;            max[9] = 0;
+    for (x=0; x < WEATHERMAPTILESX; x++) {
+	for (y=0; y < WEATHERMAPTILESY; y++) {
+/*	    min[0] = MIN(min[0], weathermap[x][y].water); */
+	    min[1] = MIN(min[1], weathermap[x][y].avgelev);
+	    min[2] = MIN(min[2], weathermap[x][y].rainfall);
+/*	    min[3] = MIN(min[3], weathermap[x][y].pressure); */
+	    min[4] = MIN(min[4], weathermap[x][y].windspeed);
+/*	    min[5] = MIN(min[5], weathermap[x][y].winddir); */
+/*	    min[6] = MIN(min[6], weathermap[x][y].humid); */
+/*	    min[7] = MIN(min[7], real_temp[x][y]); */
+/*	    min[8] = MIN(min[8], weathermap[x][y].sky); */
+/*	    min[9] = MIN(min[9], weathermap[x][y].darkness); */
+
+/*	    max[0] = MAX(max[0], weathermap[x][y].water); */
+	    max[1] = MAX(max[1], weathermap[x][y].avgelev);
+	    max[2] = MAX(max[2], weathermap[x][y].rainfall);
+/*	    max[3] = MAX(max[3], weathermap[x][y].pressure); */
+	    max[4] = MAX(max[4], weathermap[x][y].windspeed);
+/*	    max[5] = MAX(max[5], weathermap[x][y].winddir); */
+/*	    max[6] = MAX(max[6], weathermap[x][y].humid); */
+/*	    max[7] = MAX(max[7], real_temp[x][y]); */
+/*	    max[8] = MAX(max[8], weathermap[x][y].sky); */
+/*	    max[9] = MAX(max[9], weathermap[x][y].darkness); */
+	    total_rainfall += weathermap[x][y].rainfall;
+	    total_wind += weathermap[x][y].windspeed;
+	}
+    }
+    avgrain = total_rainfall / (WEATHERMAPTILESX * WEATHERMAPTILESY);
+    avgwind = (total_wind    / (WEATHERMAPTILESX * WEATHERMAPTILESY) * 1.5);
+    max[2] = avgrain - 1;
+    realscalewind = 255.0l / (max[4] - min[4]);
+    realmaxwind = max[4];
+    max[4] = avgwind - 1;
+    for (x=0; x < 10; x++)
+	scale[x] = 255.0l / (max[x] - min[x]);
+
+    sprintf(filename, "%s/weather.ppm", settings.localdir);
+    if ((fp = fopen(filename, "w")) == NULL) {
+	LOG(llevError, "Cannot open %s for writing\n", filename);
+	return;
+    }
+    fprintf(fp, "P6\n%d %d\n", 3 * WEATHERMAPTILESX, 3 * WEATHERMAPTILESY);
+    fprintf(fp, "255\n");
+    for (y=0; y < WEATHERMAPTILESY; y++) {
+        for (x=0; x < (3 * 3 * WEATHERMAPTILESX); x++)
+	    pixels[x] = 0;
+	for (x=0; x < WEATHERMAPTILESX; x++) {
+	    pixels[3 * x + (0 * WEATHERMAPTILESX * 3 + BLUE)] = (uint8) ((weathermap[x][y].water    - min[0]) * scale[0]);
+	    if (weathermap[x][y].avgelev >= 0)
+		pixels[3 * x + (1 * WEATHERMAPTILESX * 3 + GREEN)] = (uint8) ((weathermap[x][y].avgelev  - min[1]) * scale[1]);
+	    else
+		pixels[3 * x + (1 * WEATHERMAPTILESX * 3 + BLUE)] = (uint8) ((weathermap[x][y].avgelev  - min[1]) * scale[1]);
+	    if (weathermap[x][y].rainfall >= avgrain)  /* rainfall is rather spikey, this gives us more detail. */
+		pixels[3 * x + (2 * WEATHERMAPTILESX * 3 + RED)] = 255;
+	    else
+		pixels[3 * x + (2 * WEATHERMAPTILESX * 3 + BLUE)] = (uint8) ((weathermap[x][y].rainfall - min[2]) * scale[2]);
+	}
+	fwrite(pixels, sizeof(uint8), (3 * 3 * WEATHERMAPTILESX), fp);
+    }
+    for (y=0; y < WEATHERMAPTILESY; y++) {
+	for (x=0; x < WEATHERMAPTILESX; x++) {
+	    uint32 dir = directions[weathermap[x][y].winddir - 1];
+	    uint32 speed = weathermap[x][y].windspeed;
+	    uint8 pressure = (weathermap[x][y].pressure - min[3]) * scale[3];
+	    pixels[3 * x + (0 * WEATHERMAPTILESX * 3 + RED)]   = pressure;
+	    pixels[3 * x + (0 * WEATHERMAPTILESX * 3 + GREEN)] = pressure;
+	    pixels[3 * x + (0 * WEATHERMAPTILESX * 3 + BLUE)]  = pressure;
+	    if (speed < avgwind) {
+		speed = (speed - min[4]) * scale[4];
+		pixels[3 * x + (1 * WEATHERMAPTILESX * 3 + RED)] = speed;
+		pixels[3 * x + (1 * WEATHERMAPTILESX * 3 + GREEN)] = speed;
+		pixels[3 * x + (1 * WEATHERMAPTILESX * 3 + BLUE)]  = speed;
+	    } else {
+		speed = (speed - realmaxwind) * realscalewind;
+//		if (speed < 100)
+//		    speed = 100;
+		pixels[3 * x + (1 * WEATHERMAPTILESX * 3 + RED)]   = speed;
+		pixels[3 * x + (1 * WEATHERMAPTILESX * 3 + GREEN)] = 0;
+		pixels[3 * x + (1 * WEATHERMAPTILESX * 3 + BLUE)]  = 0;
+	    }
+	    pixels[3 * x + (2 * WEATHERMAPTILESX * 3 + RED)]   = (uint8) ((dir & 0x00FF0000) >> 16);
+	    pixels[3 * x + (2 * WEATHERMAPTILESX * 3 + GREEN)] = (uint8) ((dir & 0x0000FF00) >> 8);
+	    pixels[3 * x + (2 * WEATHERMAPTILESX * 3 + BLUE)]  = (uint8) ((dir & 0x000000FF));
+	}
+	fwrite(pixels, sizeof(uint8), (3 * 3 * WEATHERMAPTILESX), fp);
+    }
+    for (y=0; y < WEATHERMAPTILESY; y++) {
+        for (x=0; x < (3 * 3 * WEATHERMAPTILESX); x++)
+	    pixels[x] = 0;
+	for (x=0; x < WEATHERMAPTILESX; x++) {
+	    uint32 dir = skies[weathermap[x][y].sky];
+	    pixels[3 * x + (0 * WEATHERMAPTILESX * 3 + BLUE)]  = (uint8) ((weathermap[x][y].humid - min[6]) * scale[6]);
+	    pixels[3 * x + (1 * WEATHERMAPTILESX * 3 + RED)]   = (uint8) ((real_temp[x][y]  - min[7]) * scale[7]);
+	    pixels[3 * x + (2 * WEATHERMAPTILESX * 3 + RED)]   = (uint8) ((dir & 0x00FF0000) >> 16);
+	    pixels[3 * x + (2 * WEATHERMAPTILESX * 3 + GREEN)] = (uint8) ((dir & 0x0000FF00) >> 8);
+	    pixels[3 * x + (2 * WEATHERMAPTILESX * 3 + BLUE)]  = (uint8) ((dir & 0x000000FF));
+
+	}
+	fwrite(pixels, sizeof(uint8), (3 * 3 * WEATHERMAPTILESX), fp);
+    }
+    fclose(fp);
+
+    sprintf(filename, "%s/todtick", settings.localdir);
+    if ((fp = fopen(filename, "w")) == NULL) {
+	LOG(llevError, "Cannot open %s for writing\n", filename);
+	return;
+    }
+    fprintf(fp, "%lu", todtick);
+    fclose(fp);
 }
