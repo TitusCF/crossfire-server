@@ -3,7 +3,7 @@ Section: games
 Priority: optional
 Maintainer: Jaakko Niemi <liiwi@debian.org>
 Standards-Version: 3.5.2
-Build-Depends: debhelper (>= 4.1.16), libxaw7-dev, xlibs-dev, xutils, flex
+Build-Depends: debhelper (>= 4.1.16), libxaw7-dev, xlibs-dev, xutils, flex, automake1.6
 
 Package: crossfire-server
 Architecture: any
@@ -19,6 +19,8 @@ Description: Server for Crossfire Games
  Any number of players can move around in their own window, finding
  and using items and battle monsters.  They can choose to cooperate
  or compete in the same "world".
+ .
+ Homepage: http://crossfire.real-time.com/
 
 Package: crossfire-edit
 Architecture: any
@@ -33,6 +35,8 @@ Description: Map editor for the Crossfire Gameset
  Any number of players can move around in their own window, finding
  and using items and battle monsters.  They can choose to cooperate
  or compete in the same "world".
+ .
+ Homepage: http://crossfire.real-time.com/
 
 Package: crossfire-doc
 Section: doc
@@ -40,3 +44,5 @@ Architecture: all
 Description: Documentation for Crossfire
  This is the document package for crossfire.  It has information for
  both server and client.
+ .
+ Homepage: http://crossfire.real-time.com/

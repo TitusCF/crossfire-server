@@ -1,7 +1,7 @@
 #!/usr/bin/make -f
 
 # Uncomment this to turn on verbose mode.
-#export DH_VERBOSE=1
+export DH_VERBOSE=1
 
 LIB_DIR = var/games/crossfire
 DATADIR = usr/share/games/crossfire
@@ -27,13 +27,13 @@ build-stamp:
 clean:
 	dh_testdir
 	-rm -f build-stamp install-stamp
-	-rm -rf debian/server
-	-rm -rf debian/doc
+	-rm -rf debian/crossfire-server
 	-rm -rf debian/crossfire-doc
-	-rm -rf debian/edit
+	-rm -rf debian/crossfire-edit
 
 	# Add here commands to clean up after the build process.
 	-$(MAKE) clean
+	-$(MAKE) distclean
 	-rm -r -f Makefile
 	-find -name "Makefile" -print0 | xargs -0r rm 
 	-rm config.cache
@@ -51,139 +51,74 @@ clean:
 
 	dh_clean
 
-install: install-stamp
-install-stamp: build-stamp
+install: 
+install: build
 	dh_testdir
+	dh_testroot
 	dh_clean -k
+	dh_installdirs
 
-	#install configuration files
-	install -m 755 -o root -g games -d debian/server/etc/crossfire/
-	install -m 644 -o root -g games lib/settings debian/server/etc/crossfire/settings
-	install -m 644 -o root -g games lib/motd debian/server/etc/crossfire/motd
-	install -m 644 -o root -g games lib/dm_file debian/server/etc/crossfire/dm_file
-	install -m 644 -o root -g games lib/forbid debian/server/etc/crossfire/forbid
-	install -m 644 -o root -g games lib/ban_file debian/server/etc/crossfire/ban_file
-	install -m 644 -o root -g games lib/skill_params debian/server/etc/crossfire/skill_params
-	install -m 644 -o root -g games lib/spell_params debian/server/etc/crossfire/spell_params
-	install -m 644 -o root -g games lib/exp_table debian/server/etc/crossfire/exp_table
+	$(MAKE) -C common install DESTDIR=$(CURDIR)/debian/crossfire-server 
+	$(MAKE) -C random_maps install DESTDIR=$(CURDIR)/debian/crossfire-server 
+	$(MAKE) -C socket install DESTDIR=$(CURDIR)/debian/crossfire-server 
+	$(MAKE) -C server install DESTDIR=$(CURDIR)/debian/crossfire-server 
+	$(MAKE) -C include install DESTDIR=$(CURDIR)/debian/crossfire-server 
+	$(MAKE) -C lib install DESTDIR=$(CURDIR)/debian/crossfire-server 
+	$(MAKE) -C utils install DESTDIR=$(CURDIR)/debian/crossfire-server 
+	$(MAKE) -C plugin install DESTDIR=$(CURDIR)/debian/crossfire-server 
+	$(MAKE) -C devel install DESTDIR=$(CURDIR)/debian/crossfire-server 
+	$(MAKE) -C utils uninstall-nodist_binSCRIPTS  DESTDIR=$(CURDIR)/debian/crossfire-server
 
-	#install data files
-	install -m 755 -o root -g root -d debian/server/var/log
-	install -m 775 -o root -g games -d debian/server/var/log/crossfire
-	install -m 755 -o root -g root -d debian/server/usr/share/lintian/overrides/
-	install -m 755 -o root -g games -d debian/server/var/games/
-	install -m 775 -o root -g games -d debian/server/$(LIB_DIR)
-	install -m 770 -o root -g games -d debian/server/$(LIB_DIR)/players
-	install -m 770 -o root -g games -d debian/server/$(LIB_DIR)/unique-items
-	install -m 770 -o root -g games -d debian/server/$(LIB_DIR)/tmp
-	install -m 755 -o root -g games -d debian/server/$(DATADIR)/help
-	install -m 644 -o root -g games lib/animations debian/server/$(DATADIR)/animations
-	install -m 644 -o root -g games lib/archetypes debian/server/$(DATADIR)/archetypes
-	install -m 644 -o root -g games lib/artifacts debian/server/$(DATADIR)/artifacts
-#	install -m 644 -o root -g games lib/ban_file debian/server/$(DATADIR)/ban_file
-	install -m 644 -o root -g games lib/bmaps debian/server/$(DATADIR)/bmaps
-	install -m 644 -o root -g games lib/bmaps.paths debian/server/$(DATADIR)/bmaps.paths
-#	install -m 644 -o root -g games lib/crossfire.xpm debian/server/$(DATADIR)/crossfire.xpm
-#	install -m 644 -o root -g games lib/crossfire.xbm debian/server/$(DATADIR)/crossfire.xbm
-#	install -m 644 -o root -g games lib/crossfire.png debian/server/$(DATADIR)/crossfire.png
-	install -m 644 -o root -g games lib/def_help debian/server/$(DATADIR)/def_help
-#	install -m 644 -o root -g games lib/dm_file debian/server/$(DATADIR)/dm_file
-	install -m 644 -o root -g games lib/faces debian/server/$(DATADIR)/faces
-#	install -m 644 -o root -g games lib/forbid debian/server/$(DATADIR)/forbid
-	install -m 644 -o root -g games lib/formulae debian/server/$(DATADIR)/formulae
-	install -m 644 -o root -g games lib/messages debian/server/$(DATADIR)/messages
-#	install -m 644 -o root -g games lib/motd debian/server/$(DATADIR)/motd
-	install -m 644 -o root -g games lib/races debian/server/$(DATADIR)/races
-#	install -m 644 -o root -g games lib/skill_params debian/server/$(DATADIR)/skill_params
-#	install -m 644 -o root -g games lib/spell_params debian/server/$(DATADIR)/spell_params
-	install -m 644 -o root -g games lib/treasures debian/server/$(DATADIR)/treasures
-	install -m 644 -o root -g games lib/help/* debian/server/$(DATADIR)/help
-	install -m 644 -o root -g games lib/image_info debian/server/$(DATADIR)/image_info	
-	install -m 644 -o root -g games lib/attackmess debian/server/$(DATADIR)/attackmess
-	install -m 644 -o root -g games lib/crossfire.0 debian/server/$(DATADIR)/crossfire.0
-	install -m 644 -o root -g games lib/crossfire.1 debian/server/$(DATADIR)/crossfire.1
-	touch debian/server/$(LIB_DIR)/highscore
-	chmod 664 debian/server/$(LIB_DIR)/highscore
-	chown root.games debian/server/$(LIB_DIR)/highscore
+	$(MAKE) -C crossedit install DESTDIR=$(CURDIR)/debian/crossfire-edit 
 
-	#install server files
-#	install -d debian/server/usr/sbin
-	install -d debian/server/usr/games
-	install -d debian/server/usr/share/man/man1
-	install -d debian/server/usr/share/doc/crossfire-server
-	install -m 2755 -o root -g games server/crossfire debian/server/usr/games/crossfire
-	install -m 644 doc/crossfire.man debian/server/usr/share/man/man1/crossfire.1
-	install -m 644 debian/copyright debian/server/usr/share/doc/crossfire-server/copyright
-	install -m 644 debian/override.Lintian debian/server/usr/share/lintian/overrides/crossfire-server
-	install -m 644 README debian/server/usr/share/doc/crossfire-server/README
-	install -m 644 TODO debian/server/usr/share/doc/crossfire-server/TODO
-	install -m 644 ChangeLog debian/server/usr/share/doc/crossfire-server/changelog
-	install -m 644 NEWS debian/server/usr/share/doc/crossfire-server/NEWS
-	#install -m 644 CREDITS debian/server/usr/share/doc/crossfire-server/CREDITS
-	install -m 644 DEVELOPERS debian/server/usr/share/doc/crossfire-server/DEVELOPERS
-
-	#install editor files
-	install -d debian/edit/usr/sbin
-	install -d debian/edit/usr/share/man/man1
-	install -d debian/edit/usr/share/doc/crossfire-edit
-	install -m 755 crossedit/crossedit debian/edit/usr/sbin/crossedit
-	install -m 644 crossedit/README debian/edit/usr/share/doc/crossfire-edit/README
-	install -m 644 crossedit/TODO debian/edit/usr/share/doc/crossfire-edit/TODO
-	install -m 644 debian/copyright debian/edit/usr/share/doc/crossfire-edit/copyright
-	install -m 644 crossedit/doc/crossedit.man debian/edit/usr/share/man/man1/crossedit.1
-
-	#install doc files
-	install -d debian/doc/usr/share/doc/crossfire-doc/playbook-html/fig/
-	install -m 644 debian/copyright debian/doc/usr/share/doc/crossfire-doc/copyright
-	dh_installdocs -pcrossfire-doc -Pdebian/doc
-	set -e ; for foo in appC chap2 chap3 chap4 chap5 chap6 handbook ; do \
-	install -m 644 doc/playbook-html/$$foo.shtml debian/doc/usr/share/doc/crossfire-doc/playbook-html/$$foo.html ; done
-	install -p -D doc/playbook-html/fig/* debian/doc/usr/share/doc/crossfire-doc/playbook-html/fig/
-	install -m 644 doc/playbook-html/*.html debian/doc/usr/share/doc/crossfire-doc/playbook-html/
-	touch install-stamp
+	dh_install
 
 # Build architecture-independent files here.
 binary-indep: build install
 	dh_testdir -i
 #	dh_installmenu -i
 	dh_installdocs -i
-	dh_installchangelogs -i -Pdebian/doc
-	dh_compress -i -Pdebian/doc
-	dh_fixperms -i -Pdebian/doc
-#	dh_suidregister -i -Pdebian/doc
-	dh_installdeb -i -Pdebian/doc
-	dh_gencontrol -i -Pdebian/doc
-	dh_md5sums -i -Pdebian/doc
-	dh_builddeb -i -Pdebian/doc
+	dh_installchangelogs -i 
+	dh_compress -i 
+	dh_fixperms -i 
+#	dh_suidregister -i 
+	dh_installdeb -i
+	dh_gencontrol -i
+	dh_md5sums -i 
+	dh_builddeb -i
 
 # Build architecture-dependent files here.
 binary-arch: build install
 	dh_testdir -a
+	dh_testroot
 #	dh_installmenu -a
-	dh_installinit -pcrossfire-server -Pdebian/server
-	dh_installdocs -pcrossfire-server -Pdebian/server
-	dh_installdocs -pcrossfire-edit -Pdebian/edit
-#	dh_installdocs -pcrossfire-doc -Pdebian/doc
-	dh_installchangelogs -pcrossfire-server -Pdebian/server
-	dh_installchangelogs -pcrossfire-edit -Pdebian/edit
-	dh_strip -pcrossfire-server -Pdebian/server
-	dh_strip -pcrossfire-edit -Pdebian/edit
-	dh_compress -pcrossfire-server -Pdebian/server
-	dh_compress -pcrossfire-edit -Pdebian/edit
-	dh_installdeb -pcrossfire-server -Pdebian/server
-	dh_installdeb -pcrossfire-edit -Pdebian/edit
-	dh_installdebconf -pcrossfire-server -Pdebian/server
-	dh_shlibdeps -pcrossfire-server -Pdebian/server
-	dh_shlibdeps -pcrossfire-edit -Pdebian/edit
-	dh_gencontrol -pcrossfire-server -Pdebian/server
-	dh_gencontrol -pcrossfire-edit -Pdebian/edit
-	dh_md5sums -pcrossfire-server -Pdebian/server
-	dh_md5sums -pcrossfire-edit -Pdebian/edit
-	dh_builddeb -pcrossfire-server -Pdebian/server
-	dh_builddeb -pcrossfire-edit -Pdebian/edit
+	dh_installinit -pcrossfire-server -Pdebian/crossfire-server
+	dh_installdocs -pcrossfire-server -Pdebian/crossfire-server
+	dh_installdocs -pcrossfire-edit -Pdebian/crossfire-edit
+	dh_installman -pcrossfire-server -Pdebian/crossfire-server doc/crossfire.man
+	dh_installman -pcrossfire-server -Pdebian/crossfire-server doc/crossfire-config.man
+	dh_installman -pcrossfire-server -Pdebian/crossfire-server doc/crossloop.web.man
+	dh_installman -pcrossfire-edit -Pdebian/crossfire-edit doc/crossedit.man
+	dh_installchangelogs -pcrossfire-server -Pdebian/crossfire-server
+	dh_installchangelogs -pcrossfire-edit -Pdebian/crossfire-edit
+	dh_strip -pcrossfire-server -Pdebian/crossfire-server
+	dh_strip -pcrossfire-edit -Pdebian/crossfire-edit
+	dh_compress -pcrossfire-server -Pdebian/crossfire-server
+	dh_compress -pcrossfire-edit -Pdebian/crossfire-edit
+	dh_installdeb -pcrossfire-server -Pdebian/crossfire-server
+	dh_installdeb -pcrossfire-edit -Pdebian/crossfire-edit
+	dh_installdebconf -pcrossfire-server -Pdebian/crossfire-server
+	dh_shlibdeps -pcrossfire-server -Pdebian/crossfire-server
+	dh_shlibdeps -pcrossfire-edit -Pdebian/crossfire-edit
+	dh_gencontrol -pcrossfire-server -Pdebian/crossfire-server
+	dh_gencontrol -pcrossfire-edit -Pdebian/crossfire-edit
+	dh_md5sums -pcrossfire-server -Pdebian/crossfire-server
+	dh_md5sums -pcrossfire-edit -Pdebian/crossfire-edit
+	dh_builddeb -pcrossfire-server -Pdebian/crossfire-server
+	dh_builddeb -pcrossfire-edit -Pdebian/crossfire-edit
 
 source diff:                                                                  
 	@echo >&2 'source and diff are obsolete - use dpkg-source -b'; false
 
 binary: binary-indep binary-arch
-.PHONY: build clean binary-indep binary-arch binary
+.PHONY: build clean binary-indep binary-arch binary install
