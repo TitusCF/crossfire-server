@@ -941,7 +941,7 @@ void clean_tmp_files() {
 #ifdef RECYCLE_TMP_MAPS
 	swap_map(m);
 #else
-	new_save_map(m, 2); /* note we save here into a overlay map */
+	new_save_map(m, 0); /* note we save here into a overlay map */
     clean_tmp_map(m);
 #endif
   }
