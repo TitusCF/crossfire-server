@@ -42,6 +42,46 @@ int command_say (object *op, char *params)
     return 0;
 }
 
+int command_cointoss(object *op, char *params)
+{
+    char buf[MAX_BUF];
+    char buf2[MAX_BUF];
+    int i;
+
+    i = rndm(1, 2);
+    if (i == 1) {
+	snprintf(buf, MAX_BUF-1, "%s flips a coin.... Heads!", op->name);
+	snprintf(buf2, MAX_BUF-1, "You flip a coin.... Heads!");
+    } else {
+	snprintf(buf, MAX_BUF-1, "%s flips a coin.... Tails!", op->name);
+	snprintf(buf2, MAX_BUF-1, "You flip a coin.... Tails!");
+    }
+    new_draw_info(NDI_UNIQUE, 0, op, buf2);
+    new_info_map_except(NDI_WHITE, op->map, op, buf);
+}
+
+char *orcknuckle[7] = {"none", "beholder", "ghost", "knight",
+		       "princess", "dragon", "orc"};
+
+int command_orcknuckle(object *op, char *params)
+{
+    char buf[MAX_BUF];
+    char buf2[MAX_BUF];
+    int i, j, k, l;
+
+    i = rndm(1, 5);
+    j = rndm(1, 5);
+    k = rndm(1, 5);
+    l = rndm(1, 6);
+
+    snprintf(buf2, MAX_BUF-1, "%s rolls %s, %s, %s, %s!", op->name,
+	orcknuckle[i], orcknuckle[j], orcknuckle[k], orcknuckle[l]);
+    snprintf(buf, MAX_BUF-1, "You roll %s, %s, %s, %s!",
+	orcknuckle[i], orcknuckle[j], orcknuckle[k], orcknuckle[l]);
+    new_draw_info(NDI_UNIQUE, 0, op, buf);
+    new_info_map_except(NDI_WHITE, op->map, op, buf2);
+}
+
 int command_shout (object *op, char *params)
 {
     int evtid;
