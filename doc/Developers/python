@@ -72,7 +72,7 @@ CastSpell(object who, int spellid, int direction, string options)
   eventually some options (like "create food booze").
   Does not return a value.
 
-CheckInvisibleInside(object who, string id)
+CheckInvisibleObjectInside(object who, string id)
   Checks for the existence of an invisible object named "id" inside object
   "who".
   Return value: The object found, if any.
