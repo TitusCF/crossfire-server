@@ -330,7 +330,7 @@ int blocked_link(object *ob, int x, int y) {
      * true.  If we get through the entire stack, that must mean
      * ob is blocking it, so return 0.
      */
-    for(tmp = GET_MAP_OB(m,x,y); tmp!= NULL; tmp = tmp->above) {
+    for(tmp = GET_MAP_OB(m,sx,sy); tmp!= NULL; tmp = tmp->above) {
 
 	/* This must be before the checks below.  Code for inventory checkers. */
 	if (tmp->type==CHECK_INV && QUERY_FLAG(tmp,FLAG_NO_PASS)) {
