@@ -157,6 +157,7 @@ void decay_objects(mapstruct *m)
 		   QUERY_FLAG(op, FLAG_OBJ_ORIGINAL) ||
 		   QUERY_FLAG(op, FLAG_OBJ_SAVE_ON_OVL) ||
 		   QUERY_FLAG(op, FLAG_UNIQUE) ||
+		   QUERY_FLAG(op, FLAG_OVERLAY_FLOOR) ||
 		   QUERY_FLAG(op, FLAG_UNPAID) || IS_LIVE(op))
 		    continue;
 		/* otherwise, we decay and destroy */
@@ -190,7 +191,8 @@ void decay_objects(mapstruct *m)
 		    if (op->material & M_ICE && MAP_TEMP(m) > 32)
 			destroy = 1;
 		}
-		if (destroy) {
+		/* adjust overall chance below */
+		if (destroy && rndm(0, 1)) {
 		    remove_ob(op);
 		    free_object(op);
 		}

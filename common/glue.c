@@ -56,6 +56,7 @@ type_func_player_int esrv_del_item_func;
 type_func_int_ob_ob esrv_update_item_func;
 type_func_map	set_darkness_map_func;
 type_func_dragon_gain dragon_gain_func;
+type_func_char  weather_effect_func;
 
 static char *fatalmsgs[80]={
   "Failed to allocate memory",
@@ -95,6 +96,7 @@ void init_function_pointers() {
   esrv_update_item_func = dummy_function_int_ob_ob;
   set_darkness_map_func = dummy_function_map;
   dragon_gain_func = dummy_function_dragongain;
+  weather_effect_func = dummy_function_char;
 }
 
 /*
@@ -233,6 +235,10 @@ void set_dragon_gain_func(type_func_dragon_gain addr) {
   dragon_gain_func = addr;
 }
 
+void set_weather_effect_func(type_func_char addr) {
+  weather_effect_func = addr;
+}
+
 /*
  * fatal() is meant to be called whenever a fatal signal is intercepted.
  * It will call the emergency_save and the clean_tmp_files functions.
@@ -305,5 +311,7 @@ void dummy_move_apply_func (object *ob, object *ob2, object *ob3) {
 void dummy_function_dragongain (object *ob, int a1, int a2) {
 }
 
-#endif
+void dummy_function_char (char *filename) {
+}
 
+#endif

@@ -1473,6 +1473,8 @@ mapstruct *ready_map_name(char *name, int flags) {
     update_buttons(m);
     if (m->outdoor)
 	(*set_darkness_map_func)(m);
+    /* run the weather over this map */
+    (*weather_effect_func)(name);
     return m;
 }
 
