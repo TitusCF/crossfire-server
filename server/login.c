@@ -783,5 +783,14 @@ void check_login(object *op) {
      */
     qsort((void *)pl->known_spells,pl->nrofknownspells,
 	sizeof(pl->known_spells[0]),(int (*)())spell_sort);
+
+    /* the following block of code adds any lights that
+       are in the players inventory initially to the map. */
+    { object *tmp;
+    for(tmp=op->inv;tmp!=NULL;tmp=tmp->below) {
+      if(tmp->glow_radius) add_light_to_list(tmp,op);
+    }
+    }
+
     return;
 }
