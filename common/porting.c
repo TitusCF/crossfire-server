@@ -491,7 +491,7 @@ char *uncomp[NROF_COMPRESS_METHODS][3] = {
  * be changed in the config file.)
  */
 
-FILE *open_and_uncompress(char *name,int flag, int *compressed) {
+FILE *open_and_uncompress(const char *name,int flag, int *compressed) {
   FILE *fp;
   char buf[MAX_BUF],buf2[MAX_BUF], *bufend;
   int try_once = 0;
