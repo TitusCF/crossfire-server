@@ -103,6 +103,14 @@ mapstruct *generate_random_map(char *OutFileName, RMParms *RP) {
   unblock_exits(theMap,layout,RP);
   /*  fclose(OutFile); */
   /*new_save_map(theMap,1);*/
+
+  /*free the layout */
+  { int i;
+    for(i=0;i<RP->Xsize;i++)
+      free(layout[i]);
+    free(layout);
+  }
+  
   return theMap;
 }
 
