@@ -294,7 +294,7 @@ extern char *tempnam_local(char *dir, char *pfx);
 extern void remove_directory(const char *path);
 extern char *strdup_local(char *str);
 extern long strtol_local(register char *str, char **ptr, register int base);
-extern char *strcasestr_local(const char *s, char *find);
+extern char *strcasestr_local(const char *s, const char *find);
 extern char *strerror_local(int errnum);
 extern int isqrt(int n);
 extern char *ltostr10(signed long n);

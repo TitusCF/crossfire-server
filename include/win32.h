@@ -133,5 +133,5 @@ extern DIR *opendir(const char *);
 extern struct dirent *readdir(DIR *);
 extern int closedir(DIR *);
 extern void rewinddir(DIR *);
-extern int strncasecmp(char *s1, char *s2, int n);
-extern int strcasecmp(char *s1, char*s2);
+extern int strncasecmp(const char *s1, const char *s2, int n);
+extern int strcasecmp(const char *s1, const char*s2);

@@ -285,7 +285,7 @@ long strtol_local(str, ptr, base)
 
 /* This seems to be lacking on some system */
 #if !defined(HAVE_STRNCASECMP)
-int strncasecmp(char *s1, char *s2, int n)
+int strncasecmp(const char *s1, const char *s2, int n)
 {
   register int c1, c2;
 
@@ -305,7 +305,7 @@ int strncasecmp(char *s1, char *s2, int n)
 #endif
 
 #if !defined(HAVE_STRCASECMP)
-int strcasecmp(char *s1, char*s2)
+int strcasecmp(const char *s1, const char*s2)
 {
   register int c1, c2;
 
@@ -323,7 +323,7 @@ int strcasecmp(char *s1, char*s2)
 }
 #endif
 
-char *strcasestr_local(const char *s, char *find)
+char *strcasestr_local(const char *s, const char *find)
 {
     char c, sc;
     size_t len;
