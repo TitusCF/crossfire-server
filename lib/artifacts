@@ -2416,6 +2416,25 @@ Wis 2
 end
 #
 Allowed holy_symbol
+chance 10
+difficulty 5
+Object The Dark Path
+type 43
+value 25
+path_attuned 393216
+path_denied 256
+end
+#
+Allowed holy_symbol
+chance 10
+difficulty 5
+Object Turning
+type 43
+value 25
+path_attuned 65536
+end
+#
+Allowed holy_symbol
 chance 50
 difficulty 5
 Object Calling
