@@ -3389,8 +3389,9 @@ void scroll_failure(object *op, int failure, int power)
     if(abs(failure/4)>power) power=abs(failure/4); /* set minimum effect */
 
     if(failure<= -1&&failure > -15) {/* wonder */
-	new_draw_info(NDI_UNIQUE, 0,op,"Your spell warps!.");
 	object *tmp;
+
+	new_draw_info(NDI_UNIQUE, 0,op,"Your spell warps!.");
 	tmp=get_archetype(SPELL_WONDER);
 	cast_wonder(op, op, 0, tmp);
 	free_object(tmp);
