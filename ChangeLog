@@ -17,6 +17,29 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+common/map.c: Change blocked_link() to take a map parameter.  Also, change code
+   in blocked_link() to assume that the caller has set up appropriate map and
+   coordinates related to tiling (in all functions that currently call
+   blocked_link, this is the case)
+include/libproto.h: Rebuilt.
+server/move.c, server/player.c: update call to blocked_link to include the map.
+MSW 2004-04-15
+
+common/object.c: Change CAN_MERGE() so that it compares the stats structure of
+  the objects being merged.  Fixes problems of rings improperly merging with
+  other rings that have different stat values.
+server/monster.c: Modify check_earthwalls() and check_doors() to take a
+  map structure as an option parameter, and use that structure when
+  calling get_map_ob.  Fixes a crash in cases where earthwalls/doors
+  were at the edge of a tiled map, and creature was on other map moving into
+  it.
+server/move.c: Change move_ob() to adjust coordinates for tiling, and
+  pass in these adjusted coordinages (and map) to the check_() functions
+  in monster.c
+random_maps/treasure.c: Apply patch by Andreas Kirschbaum so that it does
+  more work in trying to place keys on maps.
+MSW 2004-04-13
+
 common/living.c: Patch by Bernd Edler to remove cap on exp for players.
 MSW 2004-04-09
 

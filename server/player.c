@@ -408,7 +408,7 @@ int path_to_player(object *mon, object *pl,int mindiff) {
 	mflags = get_map_flags(m, &m, x, y, &x, &y);
 
 	/* Space is blocked - try changing direction a little */
-	if ((mflags & (P_BLOCKED | P_OUT_OF_MAP)) && (m == mon->map && blocked_link(mon, x, y))) {
+	if ((mflags & (P_BLOCKED | P_OUT_OF_MAP)) && (m == mon->map && blocked_link(mon, m, x, y))) {
 	    /* recalculate direction from last good location.  Possible
 	     * we were not traversing ideal location before.
 	     */
@@ -449,7 +449,7 @@ int path_to_player(object *mon, object *pl,int mindiff) {
 		    m = lastmap;
 		    mflags = get_map_flags(m, &m, x, y, &x, &y);
 		    if (!(mflags & (P_OUT_OF_MAP | P_BLOCKED)) &&
-			(m == mon->map && blocked_link(mon, x, y))) break;
+			(m == mon->map && blocked_link(mon, m, x, y))) break;
 		}
 		/* go through entire loop without finding a valid
 		 * sidestep to take - thus, no valid path.

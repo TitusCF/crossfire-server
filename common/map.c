@@ -256,23 +256,27 @@ int get_map_flags(mapstruct *oldmap, mapstruct **newmap, sint16 x, sint16 y, sin
  * to block it from moving there.
  * Returns TRUE if the space is blocked by something other than the
  * monster.
+ * m, x, y are the target map/coordinates - needed for map tiling.
+ * the coordinates & map passed in should have been updated for tiling
+ * by the caller.
  */
 
-int blocked_link(object *ob, int x, int y) {
+int blocked_link(object *ob, mapstruct *m, int sx, int sy) {
     object *tmp;
-    mapstruct	*m;
-    sint16  sx, sy;
     int mflags;
 
-    sx = x;
-    sy = y;
-    m = ob->map;
-
-    mflags = get_map_flags(m, &m, sx, sy, &sx, &sy);
-
-    if (mflags & P_OUT_OF_MAP)
+    /* Make sure the coordinates are valid - they should be, as caller should
+     * have already checked this.
+     */
+    if (OUT_OF_REAL_MAP(m, sx, sy)) {
+	LOG(llevError,"blocked_link: Past map, x, y coordinates outside of map\n");
 	return 1;
+    }
 
+    /* Save some cycles - instead of calling get_map_flags(), just get the value
+     * directly.
+     */
+    mflags = m->spaces[sx + m->width * sy].flags;
 
     /* If space is currently not blocked by anything, no need to
      * go further.  Not true for players - all sorts of special

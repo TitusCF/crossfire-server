@@ -69,17 +69,18 @@ int move_ob (object *op, int dir, object *originator)
 	return 0;
     }
 
-    /* Is this space blocked?  Players with wizpass are immune to
-     * this condition.
-     */
-    if(blocked_link(op, newx, newy) &&
-       !QUERY_FLAG(op, FLAG_WIZPASS))
-	return 0;
-
     /* If the space the player is trying to is out of the map,
      * bail now - we know it can't work.
      */
     if (mflags & P_OUT_OF_MAP) return 0;
+
+
+    /* Is this space blocked?  Players with wizpass are immune to
+     * this condition.
+     */
+    if(blocked_link(op, m, newx, newy) &&
+       !QUERY_FLAG(op, FLAG_WIZPASS))
+	return 0;
 
     /* 0.94.2 - we need to set the direction for the new animation code.
      * it uses it to figure out face to use - I can't see it
