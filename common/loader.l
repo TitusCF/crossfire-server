@@ -1113,7 +1113,8 @@ static genericname plgoptions[13]=
  */
 
 
-static int eol_size=strlen("\n");
+/*static int eol_size=strlen("\n");*/
+static int eol_size=sizeof("\n")-1; /*Substract 1 to suppress terminal 0*/
 #define ADD_STRINGLINE_ENTRY(buf__,entryname__,entryvalue__,entrysize__){\
     FAST_STRNCAT(buf__,entryname__,entrysize__);\
     FAST_STRCAT(buf__,entryvalue__);\
