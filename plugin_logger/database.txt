@@ -1,3 +1,7 @@
+NOTE: Under MySQL, you should declare the mappath field of the map_visits table and
+the name field of the creature_death table as UNIQUE ones. Not doing so will result
+in duplicated entries in the logger lists.
+
          List of relations
       Name      | Type  |   Owner   
 ----------------+-------+-----------
