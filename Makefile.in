@@ -79,7 +79,7 @@ ARCHIVE = /tmp/$(VERSION)
 
 SUBDIRS = common random_maps socket server include lib utils doc
 
-FILES = CHANGES CREDITS DEVELOPERS DONE Makefile.in INSTALL License README \
+FILES = CHANGES CREDITS DEVELOPERS Makefile.in INSTALL License README \
 	TODO configure configure.in
 
 
