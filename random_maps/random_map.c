@@ -80,7 +80,8 @@ mapstruct *generate_random_map(char *InFileName,char *OutFileName) {
 
   /*  rotate the layout randomly */
   layout=rotate_layout(layout,RANDOM()%4,RP);
-  /*  { int i,j;
+#ifdef RMAP_DEBUG
+ { int i,j;
   for(i=0;i<RP->Xsize;i++) {
     for(j=0;j<RP->Ysize;j++) {
       if(layout[i][j]==0) layout[i][j]=' ';
@@ -88,7 +89,8 @@ mapstruct *generate_random_map(char *InFileName,char *OutFileName) {
       if(layout[i][j]==' ') layout[i][j]=0;
     }
     printf("\n");
-    }}*/
+    }}
+#endif
   /* allocate the map and set the floor */
   theMap = make_map_floor(layout,RP->floorstyle,RP); 
 
@@ -168,6 +170,12 @@ char **layoutgen(RMParms *RP) {
     if(!(RANDOM()%2)) doorify_layout(maze,RP);
   }
 
+  if(strstr(RP->layoutstyle,"rogue")) {
+    maze = roguelike_layout_gen(RP->Xsize,RP->Ysize,RP->layoutoptions1);
+    RP->map_layout_style = ROGUELIKE_LAYOUT;
+    /* no doorification */
+  }
+
   if(maze == 0) /* unknown or unspecified layout type, pick one at random */
     switch(RANDOM()%NROFLAYOUTS) {
     case 0:
@@ -185,11 +193,11 @@ char **layoutgen(RMParms *RP) {
       RP->map_layout_style = SPIRAL_LAYOUT;
       if(!(RANDOM()%2)) doorify_layout(maze,RP);
       break;
-    case 4:
+    case 3:
       maze = roguelike_layout_gen(RP->Xsize,RP->Ysize,RP->layoutoptions1);
       RP->map_layout_style = ROGUELIKE_LAYOUT;
       /* no doorifying...  done already */
-        
+      break;
     }
 
   maze = symmetrize_layout(maze, RP->symmetry_used,RP);
@@ -245,9 +253,14 @@ char **symmetrize_layout(char **maze, int sym,RMParms *RP) {
   for(i=0;i<Xsize_orig;i++)
     free(maze[i]);
   free(maze);
-  /* reconnected disjointed spirals */
+  /* reconnect disjointed spirals */
   if(RP->map_layout_style==SPIRAL_LAYOUT) 
     connect_spirals(RP->Xsize,RP->Ysize,sym,sym_maze);
+  /* reconnect disjointed nethackmazes:  the routine for
+   spirals will do the trick?*/
+  if(RP->map_layout_style==ROGUELIKE_LAYOUT) 
+    connect_spirals(RP->Xsize,RP->Ysize,sym,sym_maze);
+  
   return sym_maze;
 }
 

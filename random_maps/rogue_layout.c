@@ -39,9 +39,9 @@ char **roguelike_layout_gen(int xsize, int ysize, int options) {
      less than 3x that then hollow things out, stick in
      a stairsup and stairs down, and exit */
 
-  if(xsize < 15 || ysize < 15) {
+  if(xsize < 11 || ysize < 11) {
     for(i=1;i<xsize-1;i++)
-      for(i=j;i<ysize-1;j++)
+      for(j=1;j<ysize-1;j++)
         maze[i][j]=0;
     maze[i/2][j/2]='>';
     maze[i/2][j/2+1]='<';
@@ -59,7 +59,17 @@ char **roguelike_layout_gen(int xsize, int ysize, int options) {
     if(!roguelike_place_room(Rooms,xsize,ysize,nrooms)) tries++;
     else i++;
   }
-
+  
+  if(i==0) { /* no can do! */
+    for(i=1;i<xsize-1;i++)
+      for(j=1;j<ysize-1;j++)
+        maze[i][j]=0;
+    maze[i/2][j/2]='>';
+    maze[i/2][j/2+1]='<';
+    return maze;
+  }
+    
+  
   /* erase the areas occupied by the rooms */
   roguelike_make_rooms(Rooms,maze,options);
 
@@ -73,6 +83,11 @@ char **roguelike_layout_gen(int xsize, int ysize, int options) {
   /* back up one */
   walk--;
   maze[walk->x][walk->y] = '>';
+
+  /* convert all the '.' to 0, we're through witht he '.' */
+  for(i=0;i<xsize;i++)
+    for(j=0;j<ysize;j++)
+      if(maze[i][j]=='.') maze[i][j]=0;
   
 
   return maze;
@@ -276,7 +291,4 @@ void roguelike_link_rooms(Room *Rooms,char **maze,int xsize,int ysize){
     }
 
   }
-  for(i=0;i<xsize;i++)
-    for(j=0;j<ysize;j++)
-      if(maze[i][j]=='.') maze[i][j]=0;
 }

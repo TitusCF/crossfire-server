@@ -102,6 +102,7 @@ extern void place_specials_in_map ( mapstruct *map, char **layout,RMParms *RP );
 extern int select_regular_files ( const struct dirent *the_entry );
 extern mapstruct *find_style ( char *dirname, char *stylename, int difficulty );
 extern object *pick_random_object ( mapstruct *style );
+extern char **roguelike_layout_gen(int xsize, int ysize, int options);
 
 #endif /* __STDC__ */
 #endif /* __CEXTRACT__ */
