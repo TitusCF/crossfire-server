@@ -390,7 +390,7 @@ void read_pressuremap()
     }
     for (x=0; x < WEATHERMAPTILESX; x++) {
 	for (y=0; y < WEATHERMAPTILESY; y++) {
-	    fscanf(fp, "%d ", &weathermap[x][y].pressure);
+	    fscanf(fp, "%hd ", &weathermap[x][y].pressure);
 	    if (weathermap[x][y].pressure < 960 ||
 		weathermap[x][y].pressure > 1040)
 		weathermap[x][y].pressure = rndm(960, 1040);
@@ -474,7 +474,7 @@ void read_winddirmap()
     }
     for (x=0; x < WEATHERMAPTILESX; x++) {
 	for (y=0; y < WEATHERMAPTILESY; y++) {
-	    fscanf(fp, "%d ", &weathermap[x][y].winddir);
+	    fscanf(fp, "%c ", &weathermap[x][y].winddir);
 	    if (weathermap[x][y].winddir < 1 ||
 		weathermap[x][y].winddir > 8)
 		weathermap[x][y].winddir = rndm(1, 8);
@@ -524,7 +524,7 @@ void read_windspeedmap()
     }
     for (x=0; x < WEATHERMAPTILESX; x++) {
 	for (y=0; y < WEATHERMAPTILESY; y++) {
-	    fscanf(fp, "%d ", &weathermap[x][y].windspeed);
+	    fscanf(fp, "%c ", &weathermap[x][y].windspeed);
 	    if (weathermap[x][y].windspeed < 0 ||
 		weathermap[x][y].windspeed > 120)
 		weathermap[x][y].windspeed = rndm(1, 30);
@@ -751,7 +751,7 @@ void read_humidmap()
     }
     for (x=0; x < WEATHERMAPTILESX; x++) {
 	for (y=0; y < WEATHERMAPTILESY; y++) {
-	    fscanf(fp, "%d ", &weathermap[x][y].humid);
+	    fscanf(fp, "%c ", &weathermap[x][y].humid);
 	    if (weathermap[x][y].humid < 0 ||
 		weathermap[x][y].humid > 100)
 		weathermap[x][y].humid = rndm(0, 100);
@@ -847,7 +847,7 @@ void read_watermap()
     }
     for (x=0; x < WEATHERMAPTILESX; x++) {
 	for (y=0; y < WEATHERMAPTILESY; y++) {
-	    fscanf(fp, "%d ", &weathermap[x][y].water);
+	    fscanf(fp, "%c ", &weathermap[x][y].water);
 	    if (weathermap[x][y].water > 100)
 		weathermap[x][y].water = rndm(0, 100);
 	}
@@ -863,8 +863,8 @@ void read_watermap()
 
 void init_humid_elev()
 {
-    int x, y, tx, ty, nx, ny, ax, ay, j, k;
-    int spwtx, spwty, dir;
+    int x, y, tx, ty, nx, ny, ax, ay, j;
+    int spwtx, spwty;
     char *mapname;
     long int elev;
     int water, space;
@@ -1016,7 +1016,7 @@ void read_temperaturemap()
     }
     for (x=0; x < WEATHERMAPTILESX; x++) {
 	for (y=0; y < WEATHERMAPTILESY; y++) {
-	    fscanf(fp, "%d ", &weathermap[x][y].temp);
+	    fscanf(fp, "%hd ", &weathermap[x][y].temp);
 	    if (weathermap[x][y].temp < -30 ||
 		weathermap[x][y].temp > 60)
 		weathermap[x][y].temp = rndm(-10, 40);
@@ -1124,13 +1124,9 @@ int wmperformstarty;
 
 void init_weather()
 {
-    int x, y, tx, ty;
-    int i, j;
-    int water;
-    long int tmp;
+    int y, tx, ty;
     char filename[MAX_BUF];
     FILE *fp;
-    mapstruct *m;
 
     /* all this stuff needs to be set, otherwise this function will cause
      * chaos and destruction.
@@ -1789,13 +1785,14 @@ void plant_a_garden(mapstruct *m, int wx, int wy, char *filename)
 		    /* we look up through two tiles for a matching tile */
 		    if (weather_grow[i].tile != NULL) {
 			if (strcmp(GET_MAP_OB(m, x, y)->arch->name,
-				weather_grow[i].tile) != 0)
+				   weather_grow[i].tile) != 0) {
 			    if (GET_MAP_OB(m, x, y)->above != NULL) {
 				if (strcmp(GET_MAP_OB(m, x, y)->above->arch->name,
 					   weather_grow[i].tile) != 0)
 				    continue;
 			    } else
 				continue;
+			}
 		    }
 		    if ((float)weathermap[wx][wy].rainfall/days < weather_grow[i].rfmin ||
 			(float)weathermap[wx][wy].rainfall/days > weather_grow[i].rfmax)
@@ -1954,9 +1951,8 @@ void change_the_world(mapstruct *m, int wx, int wy, char *filename)
 void feather_map(mapstruct *m, int wx, int wy, char *filename)
 {
     int x, y, i, nx, ny, j;
-    int avoid, two, temp, sky, gotsnow, found, nodstk;
+    int avoid, two, gotsnow, nodstk;
     object *ob, *tmp, *oldsnow, *topfloor, *ntmp, *ntopfloor;
-    char *doublestack, *doublestack2;
     archetype *at;
 
     for (x=0; x < settings.worldmaptilesizex; x++) {
