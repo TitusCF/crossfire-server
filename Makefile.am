@@ -1,5 +1,5 @@
 
-SUBDIRS = common random_maps socket server include lib utils doc plugin crossedit
+SUBDIRS = common random_maps socket server include lib utils doc plugin crossedit devel
 
 EXTRA_DIST = AUTHORS ChangeLog COPYING DEVELOPERS autogen.sh run_win32.bat
 

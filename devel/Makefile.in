@@ -14,13 +14,40 @@
 
 @SET_MAKE@
 
+#
+# Makefile for crossfire 0.95.0 and beyond
+#
+# This file will eventually be replaced by a configure script.  But for
+# now, this simple makefile should do the job.
+#
+#   Copyright (C) 1992 Frank Tore Johansen
+#   Copyright (C) 2001 Mark Wedel
+#
+#   This program is free software; you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation; either version 2 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with this program; if not, write to the Free Software
+#   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+#
+#   The author can be reached via e-mail to mwedel@scruz.net
+
+#   Makefile.am for crossfire-config          (tchize@mailandnews.com)
+
 srcdir = @srcdir@
 top_srcdir = @top_srcdir@
 VPATH = @srcdir@
 pkgdatadir = $(datadir)/@PACKAGE@
 pkglibdir = $(libdir)/@PACKAGE@
 pkgincludedir = $(includedir)/@PACKAGE@
-top_builddir = ../..
+top_builddir = ..
 
 am__cd = CDPATH="$${ZSH_VERSION+.}$(PATH_SEPARATOR)" && cd
 INSTALL = @INSTALL@
@@ -147,45 +174,33 @@ target_alias = @target_alias@
 x_includes = @x_includes@
 x_libraries = @x_libraries@
 
-noinst_LIBRARIES = libCnv.a
-libCnv_a_SOURCES = CnvUtil.c CnvBrowse.c CnvNotify.c CnvMenu.c CnvFiles.c\
-	CnvPath.c CnvPrompt.c Cnv.h config.h
+bin_PROGRAMS = crossfire-config
+
+crossfire_config_SOURCES = \
+	devel.c
 
 
-EXTRA_DIST = excloff.xbm exclon.xbm flagoff.xbm flagon.xbm notify.xbm prompt.xbm\
-	submenu.xbm Makefile.in README
+AM_CPPFLAGS = -I$(top_srcdir)/include -DDATADIR=\"$(pkgdatadir)\" -DCONFDIR=\"$(pkgconfdir)\" \
+	      -DLIBDIR=\"$(pkglibdir)\" -DLOCALDIR=\"$(pkgstatedir)\" \
+	      -DPLUGIN_SUFFIX=\".so\"
 
-
-AM_CPPFLAGS = -I$(srcdir)/../include -I$(top_srcdir)/include
-
-EXTRA_PROGRAMS = test 
-test_SOURCES = test.c
-test_LDADD = libCnv.a $(X11LIBS)
-subdir = crossedit/Cnv
+subdir = devel
 mkinstalldirs = $(SHELL) $(top_srcdir)/utils/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/include/autoconf.h
 CONFIG_CLEAN_FILES =
-LIBRARIES = $(noinst_LIBRARIES)
+bin_PROGRAMS = crossfire-config$(EXEEXT)
+PROGRAMS = $(bin_PROGRAMS)
 
-libCnv_a_AR = $(AR) cru
-libCnv_a_LIBADD =
-am_libCnv_a_OBJECTS = CnvUtil.$(OBJEXT) CnvBrowse.$(OBJEXT) \
-	CnvNotify.$(OBJEXT) CnvMenu.$(OBJEXT) CnvFiles.$(OBJEXT) \
-	CnvPath.$(OBJEXT) CnvPrompt.$(OBJEXT)
-libCnv_a_OBJECTS = $(am_libCnv_a_OBJECTS)
-EXTRA_PROGRAMS = test$(EXEEXT)
-am_test_OBJECTS = test.$(OBJEXT)
-test_OBJECTS = $(am_test_OBJECTS)
-test_DEPENDENCIES = libCnv.a
-test_LDFLAGS =
+am_crossfire_config_OBJECTS = devel.$(OBJEXT)
+crossfire_config_OBJECTS = $(am_crossfire_config_OBJECTS)
+crossfire_config_LDADD = $(LDADD)
+crossfire_config_DEPENDENCIES =
+crossfire_config_LDFLAGS =
 
 DEFAULT_INCLUDES =  -I. -I$(srcdir) -I$(top_builddir)/include
 depcomp = $(SHELL) $(top_srcdir)/utils/depcomp
 am__depfiles_maybe = depfiles
-@AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/CnvBrowse.Po ./$(DEPDIR)/CnvFiles.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/CnvMenu.Po ./$(DEPDIR)/CnvNotify.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/CnvPath.Po ./$(DEPDIR)/CnvPrompt.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/CnvUtil.Po ./$(DEPDIR)/test.Po
+@AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/devel.Po
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) \
@@ -193,9 +208,9 @@ LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) \
 CCLD = $(CC)
 LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
 	$(AM_LDFLAGS) $(LDFLAGS) -o $@
-DIST_SOURCES = $(libCnv_a_SOURCES) $(test_SOURCES)
-DIST_COMMON = README Makefile.am Makefile.in
-SOURCES = $(libCnv_a_SOURCES) $(test_SOURCES)
+DIST_SOURCES = $(crossfire_config_SOURCES)
+DIST_COMMON = Makefile.am Makefile.in
+SOURCES = $(crossfire_config_SOURCES)
 
 all: all-am
 
@@ -203,21 +218,41 @@ all: all-am
 .SUFFIXES: .c .lo .o .obj
 $(srcdir)/Makefile.in:  Makefile.am  $(top_srcdir)/configure.ac $(ACLOCAL_M4)
 	cd $(top_srcdir) && \
-	  $(AUTOMAKE) --gnu  crossedit/Cnv/Makefile
+	  $(AUTOMAKE) --gnu  devel/Makefile
 Makefile:  $(srcdir)/Makefile.in  $(top_builddir)/config.status
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@ $(am__depfiles_maybe)
+binPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
+install-binPROGRAMS: $(bin_PROGRAMS)
+	@$(NORMAL_INSTALL)
+	$(mkinstalldirs) $(DESTDIR)$(bindir)
+	@list='$(bin_PROGRAMS)'; for p in $$list; do \
+	  p1=`echo $$p|sed 's/$(EXEEXT)$$//'`; \
+	  if test -f $$p \
+	     || test -f $$p1 \
+	  ; then \
+	    f=`echo "$$p1" | sed 's,^.*/,,;$(transform);s/$$/$(EXEEXT)/'`; \
+	   echo " $(INSTALL_PROGRAM_ENV) $(LIBTOOL) --mode=install $(binPROGRAMS_INSTALL) $$p $(DESTDIR)$(bindir)/$$f"; \
+	   $(INSTALL_PROGRAM_ENV) $(LIBTOOL) --mode=install $(binPROGRAMS_INSTALL) $$p $(DESTDIR)$(bindir)/$$f || exit 1; \
+	  else :; fi; \
+	done
 
-AR = ar
+uninstall-binPROGRAMS:
+	@$(NORMAL_UNINSTALL)
+	@list='$(bin_PROGRAMS)'; for p in $$list; do \
+	  f=`echo "$$p" | sed 's,^.*/,,;s/$(EXEEXT)$$//;$(transform);s/$$/$(EXEEXT)/'`; \
+	  echo " rm -f $(DESTDIR)$(bindir)/$$f"; \
+	  rm -f $(DESTDIR)$(bindir)/$$f; \
+	done
 
-clean-noinstLIBRARIES:
-	-test -z "$(noinst_LIBRARIES)" || rm -f $(noinst_LIBRARIES)
-libCnv.a: $(libCnv_a_OBJECTS) $(libCnv_a_DEPENDENCIES) 
-	-rm -f libCnv.a
-	$(libCnv_a_AR) libCnv.a $(libCnv_a_OBJECTS) $(libCnv_a_LIBADD)
-	$(RANLIB) libCnv.a
-test$(EXEEXT): $(test_OBJECTS) $(test_DEPENDENCIES) 
-	@rm -f test$(EXEEXT)
-	$(LINK) $(test_LDFLAGS) $(test_OBJECTS) $(test_LDADD) $(LIBS)
+clean-binPROGRAMS:
+	@list='$(bin_PROGRAMS)'; for p in $$list; do \
+	  f=`echo $$p|sed 's/$(EXEEXT)$$//'`; \
+	  echo " rm -f $$p $$f"; \
+	  rm -f $$p $$f ; \
+	done
+crossfire-config$(EXEEXT): $(crossfire_config_OBJECTS) $(crossfire_config_DEPENDENCIES) 
+	@rm -f crossfire-config$(EXEEXT)
+	$(LINK) $(crossfire_config_LDFLAGS) $(crossfire_config_OBJECTS) $(crossfire_config_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT) core *.core
@@ -225,14 +260,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CnvBrowse.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CnvFiles.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CnvMenu.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CnvNotify.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CnvPath.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CnvPrompt.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CnvUtil.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/devel.Po@am__quote@
 
 distclean-depend:
 	-rm -rf ./$(DEPDIR)
@@ -335,7 +363,7 @@ distclean-tags:
 	-rm -f TAGS ID GTAGS GRTAGS GSYMS GPATH tags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 
-top_distdir = ../..
+top_distdir = ..
 distdir = $(top_distdir)/$(PACKAGE)-$(VERSION)
 
 distdir: $(DISTFILES)
@@ -367,9 +395,10 @@ distdir: $(DISTFILES)
 	done
 check-am: all-am
 check: check-am
-all-am: Makefile $(LIBRARIES)
+all-am: Makefile $(PROGRAMS)
 
 installdirs:
+	$(mkinstalldirs) $(DESTDIR)$(bindir)
 
 install: install-am
 install-exec: install-exec-am
@@ -397,8 +426,7 @@ maintainer-clean-generic:
 	@echo "it deletes files that may require special tools to rebuild."
 clean: clean-am
 
-clean-am: clean-generic clean-libtool clean-noinstLIBRARIES \
-	mostlyclean-am
+clean-am: clean-binPROGRAMS clean-generic clean-libtool mostlyclean-am
 
 distclean: distclean-am
 
@@ -415,7 +443,7 @@ info-am:
 
 install-data-am:
 
-install-exec-am:
+install-exec-am: install-binPROGRAMS
 
 install-info: install-info-am
 
@@ -440,20 +468,29 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-info-am
+uninstall-am: uninstall-binPROGRAMS uninstall-info-am
 
-.PHONY: CTAGS GTAGS all all-am check check-am clean clean-generic \
-	clean-libtool clean-noinstLIBRARIES ctags distclean \
-	distclean-compile distclean-depend distclean-generic \
-	distclean-libtool distclean-tags distdir dvi dvi-am info \
-	info-am install install-am install-data install-data-am \
+.PHONY: CTAGS GTAGS all all-am check check-am clean clean-binPROGRAMS \
+	clean-generic clean-libtool ctags distclean distclean-compile \
+	distclean-depend distclean-generic distclean-libtool \
+	distclean-tags distdir dvi dvi-am info info-am install \
+	install-am install-binPROGRAMS install-data install-data-am \
 	install-exec install-exec-am install-info install-info-am \
 	install-man install-strip installcheck installcheck-am \
 	installdirs maintainer-clean maintainer-clean-generic \
 	mostlyclean mostlyclean-compile mostlyclean-generic \
 	mostlyclean-libtool pdf pdf-am ps ps-am tags uninstall \
-	uninstall-am uninstall-info-am
+	uninstall-am uninstall-binPROGRAMS uninstall-info-am
 
+
+#Perhaps should uncomment to be sure crossfire has been compiled but.... Why?
+#crossfire_config_LDADD = ../common/libcross.a
+#../common/libcross.a:
+#	( cd ../common ; make libcross.a )
+
+# Check if everything is installed as it should
+#installcheck-local:
+#	$(bindir)/crossfire -o
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:

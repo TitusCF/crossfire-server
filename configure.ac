@@ -213,5 +213,5 @@ AC_OUTPUT([Makefile
 	include/Makefile utils/Makefile lib/checkarch.pl
 	lib/collect.pl utils/add_throw.perl utils/crossloop.tmpl utils/crossloop.pl.tmpl
 	utils/metaserver.pl utils/crossloop.web
-	common/Makefile plugin/Makefile
+	common/Makefile plugin/Makefile devel/Makefile
 	 ])
