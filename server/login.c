@@ -684,7 +684,7 @@ void check_login(object *op) {
     op->contr = pl;
     pl->ob = op;
     /* this loads the standard objects values. */
-    load_object(fp, op, LO_NEWFILE);
+    load_object(fp, op, LO_NEWFILE,0);
     close_and_delete(fp, comp);
 
     CLEAR_FLAG(op, FLAG_NO_FIX_PLAYER);

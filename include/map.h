@@ -53,6 +53,7 @@
 #define MAP_FLUSH	    0x1
 #define MAP_PLAYER_UNIQUE   0x2
 #define MAP_BLOCK	    0x4
+#define MAP_STYLE	    0x8
 
 /* Values for in_memory below.  Should probably be an enumerations */
 #define MAP_IN_MEMORY 1

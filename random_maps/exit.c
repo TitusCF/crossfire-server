@@ -271,6 +271,7 @@ void place_exits(mapstruct *map, char **maze,char *exitstyle,int orientation,RMP
         the_exit_back->x = EXIT_X(new_map->map_object);
         the_exit_back->y = EXIT_Y(new_map->map_object);
         insert_ob_in_map(the_exit_back,new_map,NULL);
+	set_map_timeout(new_map);   /* So it gets swapped out */
       }
       else
         the_exit_down->slaying = add_string("/!");

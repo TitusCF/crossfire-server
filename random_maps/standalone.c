@@ -74,6 +74,7 @@ int main(int argc, char *argv[]) {
   exit(0);
 }
 
+void set_map_timeout() {}   /* doesn't need to do anything */
 
 #include <global.h>
 

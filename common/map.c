@@ -560,23 +560,17 @@ void fix_container(object *container)
 /*
  * Loads (ands parses) the objects into a given map from the specified
  * file pointer.
- * If block is true, the game will be blocked until all objects have
- * been loaded (this is needed to avoid certain critical regions).
+ * mapflags is the same as we get with load_original_map
  */
 
-void load_objects (mapstruct *m, FILE *fp, int block) {
+void load_objects (mapstruct *m, FILE *fp, int mapflags) {
     int i;
-#if defined(PROCESS_WHILE_LOADING) && CHECK_ACTIVE_MAPS
-    int  j = 0;
-#endif
-
     object *op, *prev=NULL,*last_more=NULL;
-/*    MapLook	maplook;*/
 
     op=get_object();
     op->map = m; /* To handle buttons correctly */
 
-    while((i=load_object(fp,op,LO_REPEAT))) {
+    while((i=load_object(fp,op,LO_REPEAT, mapflags))) {
 	/* if the archetype for the object is null, means that we
 	 * got an invalid object.  Don't do anythign with it - the game
 	 * or editor will not be able to do anything with it either.
@@ -586,66 +580,20 @@ void load_objects (mapstruct *m, FILE *fp, int block) {
 		LOG(llevDebug,"Discarded object %s - invalid archetype.\n",op->name);
 	    continue;
 	}
-#if 0
-	/* this hack allows for 'unused' altars (see below) to have a 
- 	 * random god (see the 'god table' in god.c) associated w/ it -b.t. 
-	 */
-#ifdef MULTIPLE_GODS
-	if(op->type==ALTAR && !op->value && !editor && !op->stats.sp)
-	   if(baptize_altar(op))
-		LOG(llevDebug,"Baptized altar to %s\n",op->title);
-#endif
-#endif
 	switch(i) {
 	  case LL_NORMAL:
 	    insert_ob_in_map_simple(op,m);
-#if 1
 	    if (op->inv) sum_weight(op);
-#else
-	    if (op->inv) fix_container(op);
-#endif
 	    prev=op,last_more=op;
 	    break;
-#if 0	/* internal inventories should be handled by load routine */
-	  case 2:
-	    op = insert_ob_in_ob(op,prev);
-	    break;
-#endif
+
 	  case LL_MORE:
 	    insert_ob_in_map_simple(op,m);
 	    op->head=prev,last_more->more=op,last_more=op;
 	    break;
 	}
-
-	/* Small hack to set the floor object for the maps.  This
-	 * increases the performance for color pixmaps, as not the floor
-	 * and top object are easily accessible.  Before, it had to
-	 * search through the objects for the map space to find the
-	 * floor.
-	 *
-	 * This should probably be someplace else, but I could not
-	 * figure out the set_map_ob function, which then calls the
-	 * set_map function, in where the floor is determined.
-	 * I am also assuming that the floor can not change.  As such,
-	 * the floor only needs to be determined once.
-	 * Mark Wedel (master@rahul.net)
-	 */
-#if 0
-	if (QUERY_FLAG(op,FLAG_IS_FLOOR)) {
-		maplook.face = op->face;
-		maplook.flags = 0;
-		m->floor[op->x+ m->mapx*op->y] = maplook;
-	}
-#endif
 	op=get_object();
         op->map = m;
-#if defined(PROCESS_WHILE_LOADING) && CHECK_ACTIVE_MAPS
-	if(!block && j++>CHECK_ACTIVE_MAPS) {
-	    j=0;
-	    /* We don't want to freeze the whole game too long */
-	    (*process_active_maps_func)(); 
-	}
-#endif
     }
     free_object(op);
 }
@@ -653,9 +601,6 @@ void load_objects (mapstruct *m, FILE *fp, int block) {
 void save_objects (mapstruct *m, FILE *fp, FILE *fp2) {
     int i, j = 0,unique=0;
     object *op, *tmp, *otmp;
-#if 0 /*defined(PROCESS_WHILE_LOADING) && CHECK_ACTIVE_MAPS*/
-    int  elapsed = 0;
-#endif
     /* first pass - save one-part objects */
     for(i = 0; i < m->mapx; i++)
 	for (j = 0; j < m->mapy; j++) {
@@ -679,18 +624,6 @@ void save_objects (mapstruct *m, FILE *fp, FILE *fp2) {
 		else
 		    save_object(fp, op, 3);
 
-/* Would be nice to let players still do stuff while a map is saving.
- * The problem is, having a player enter a map that is in the process
- * of being saved.  The maps needs to finish saving, and then be
- * re-loaded.
- */
-#if 0 /*defined(PROCESS_WHILE_LOADING) && CHECK_ACTIVE_MAPS*/
-	      if(elapsed++>CHECK_ACTIVE_MAPS) {
-		elapsed=0;
-		/* We don't want to freeze the whole game too long */
-		(*process_active_maps_func)(); 
-	      }
-#endif
 	    }
 	}
     /* second pass - save multi-part objects */
@@ -725,13 +658,6 @@ void save_objects (mapstruct *m, FILE *fp, FILE *fp2) {
 			save_object(fp, tmp, 3);
 		    }
 		}
-#if 0 /*defined(PROCESS_WHILE_LOADING) && CHECK_ACTIVE_MAPS*/
-	      if(elapsed++>CHECK_ACTIVE_MAPS) {
-		elapsed=0;
-		/* We don't want to freeze the whole game too long */
-		(*process_active_maps_func)(); 
-	      }
-#endif
 	    }
 	}
 }
@@ -743,6 +669,8 @@ void save_objects (mapstruct *m, FILE *fp, FILE *fp2) {
  * flags correspond to those in map.h.  Main ones used are
  * MAP_PLAYER_UNIQUE, in which case we don't do any name changes, and
  * MAP_BLOCK, in which case we block on this load.
+ * MAP_STYLE: style map - don't add active objects, don't add to server
+ *		managed map list.
  */
 
 mapstruct *load_original_map(char *filename, int flags) {
@@ -752,7 +680,7 @@ mapstruct *load_original_map(char *filename, int flags) {
     int comp;
     char pathname[MAX_BUF];
     
-    LOG(llevDebug, "load_original_map: %s\n", filename);
+    LOG(llevDebug, "load_original_map: %s (%x)\n", filename,flags);
     if (flags & MAP_PLAYER_UNIQUE) 
 	strcpy(pathname, filename);
     else
@@ -766,7 +694,7 @@ mapstruct *load_original_map(char *filename, int flags) {
         
     op = get_object();
 
-    if (!load_object(fp, op,LO_NEWFILE) || op->type != MAP) {
+    if (!load_object(fp, op,LO_NEWFILE, flags) || op->type != MAP) {
 	LOG(llevError,"Error in map (%s) - map object not found\n", filename);
         close_and_delete(fp, comp);
 	return (NULL);
@@ -790,7 +718,7 @@ mapstruct *load_original_map(char *filename, int flags) {
     op->map = m;
 
     m->in_memory=MAP_LOADING;
-    load_objects (m, fp, (flags & MAP_BLOCK?1:0));
+    load_objects (m, fp, flags & (MAP_BLOCK|MAP_STYLE));
     close_and_delete(fp, comp);
     m->in_memory=MAP_IN_MEMORY;
     m->difficulty=calculate_difficulty(m);
@@ -836,7 +764,7 @@ static mapstruct *load_temporary_map(mapstruct *m) {
     
     op = get_object();
 
-    load_object(fp,op,LO_NEWFILE);
+    load_object(fp,op,LO_NEWFILE,0);
     if (op->arch == NULL || op->type != MAP) {
 	LOG(llevError,"Error in temporary map '%s'\n", m->path);
         m = load_original_map(m->path,0);
@@ -916,7 +844,7 @@ static void load_unique_objects(mapstruct *m) {
     m->in_memory=MAP_LOADING;
     if (m->tmpname == NULL)    /* if we have loaded unique items from */
       delete_unique_items(m); /* original map before, don't duplicate them */
-    load_object(fp, NULL, LO_NOREAD);
+    load_object(fp, NULL, LO_NOREAD,0);
     load_objects (m, fp, 0);
     close_and_delete(fp, comp);
     m->in_memory=MAP_IN_MEMORY;

@@ -17,6 +17,45 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 CVS changes since last release:
 
+MSW 2001/01/11:
+Other than various general cleanups, the main change this code does is
+that style maps (for random maps) get loaded special now - they objects
+they contain are not put on the active list, and they use a private map
+list so they do not appear in the output of the 'maps command.
+common/arch.c, common/treasure.c,server/login.c: Update calls to load_object
+common/loaderl.l,loader.c: Update lex_load to take an optional flags option.
+    This is currently only used so that the loader can decide if it should
+    call update_ob_speedto put objects on the active list or not.
+    Calls to lex_load updated.  load_object modified to take another option
+common.map.c: remove PROCESS_WHILE_LOADING and CHECK_ACTIVE_MAPS ifdefs.
+    update calls to load_object.  Remove some dead code.
+include/config.h: Remove CHECK_ACTIVE_MAPS and PROCESS_WHILE_LOADING flags.
+    Those options did not work, and in all likelihood, this would be done
+    via threading now days and not what code was there.
+include/libproto.h, sproto.h: updated or various function changes.
+include/map.h: Add MAP_STYLE flag.
+random_maps/exit.c: Call set_map_timeout after we load the final map
+    so it will get swapped out.
+random_maps/standalone.c: Add dummy set_map_timeout function so it compiles.
+random_maps/style.c: Add load_style_map function which does the job of
+    actually checking to see if a style map is in memory, and if not,
+    loads it up.  Updates the pointers so it appears on a map style map list
+    and not the general map list.
+server/main.c: create set_map_timeout function that deals with setting the
+    map timeouts.  Fix bug so server doesn't crash if two players kill each
+    other on hall of selection.
+server/monster.c remove dead code.
+socket/loop.c: If realloc fails, catch it and exit with meaningful
+    error message.
+End of MSW 2001/02/11 checkin.
+
+MSW 2001/02/08:
+server/login.c:Fix that would prevent maps from getting swapped out properly -
+we would try to swap out a map the player is in the process of leaving - move
+swap out code until after we have moved the player to the new map.  MSW
+2001-02-08
+
+
 MSW 2001/02/06:
 common/porting.c: relocate clean_path from this file to server/main.c
 server/main.c: relocate clean_path from porting.c.  Add unclean_path.

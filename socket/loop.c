@@ -475,6 +475,7 @@ void doeric_server()
 	/* If this is the case, all sockets currently in used */
 	if (socket_info.allocated_sockets <= socket_info.nconns) {
 	    init_sockets = realloc(init_sockets,sizeof(NewSocket)*(socket_info.nconns+1));
+	    if (!init_sockets) fatal(OUT_OF_MEMORY);
 	    newsocknum = socket_info.allocated_sockets;
 	    socket_info.allocated_sockets++;
 	    init_sockets[newsocknum].status = Ns_Avail;

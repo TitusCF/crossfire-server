@@ -113,7 +113,6 @@ object *find_enemy(object *npc) {
 
 int check_wakeup(object *op, object *enemy) {
   int radius = op->stats.Wis>MIN_MON_RADIUS?op->stats.Wis:MIN_MON_RADIUS;
-  objectlink *ol;
 
   /* blinded monsters can only find nearby objects to attack */
   if(QUERY_FLAG(op, FLAG_BLIND) && !QUERY_FLAG(op, FLAG_SEE_INVISIBLE)) 
@@ -133,22 +132,6 @@ int check_wakeup(object *op, object *enemy) {
   } 
 #endif
   else if(!QUERY_FLAG(op,FLAG_SLEEP)) return 1;
-
-#if 0
-    /* We already have an enemy, so why bother going through all of this?
-     * not only is it inefficient, it seems pretty pointless.
-     */
-  for(ol=first_friendly_object;ol!=NULL;ol=ol->next)
-    if(ol->ob->map==op->map&&
-       (QUERY_FLAG(ol->ob,FLAG_STEALTH)?(abs(ol->ob->x-op->x)<radius/2+1 &&
-                         abs(ol->ob->y-op->y)<radius/2+1):
-                        (abs(ol->ob->x-op->x)<radius&&
-                         abs(ol->ob->y-op->y)<radius)))
-    {
-      CLEAR_FLAG(op,FLAG_SLEEP);
-      return 1;
-    }
-#else
     /* enemy should already be on this map, so don't really need to check
      * for that.
      */
@@ -160,7 +143,6 @@ int check_wakeup(object *op, object *enemy) {
 	    return 1;
 	}
     }
-#endif
   return 0;
 }
 

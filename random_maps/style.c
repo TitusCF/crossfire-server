@@ -158,11 +158,38 @@ isn't, and difficult is -1, it returns a random style map.
 Otherwise, it tries to match the difficulty given with a style
 file, named style_name_# where # is an integer */
 
+static mapstruct *styles=NULL;
+
+mapstruct *load_style_map(char *style_name)
+{
+    mapstruct *style_map;
+
+    /* Given a file.  See if its in memory */
+    for (style_map = styles; style_map!=NULL; style_map=style_map->next) {
+	if (!strcmp(style_name, style_map->path)) return style_map;
+    }
+    style_map = load_original_map(style_name,MAP_STYLE);
+    /* Remove it from gloabl list, put it on our local list */
+    if (style_map) {
+	mapstruct *tmp;
+
+	if (style_map == first_map)
+	    first_map = style_map->next;
+	else {
+	    for (tmp = first_map; tmp && tmp->next != style_map; tmp = tmp->next);
+	    if(tmp)
+		tmp->next = style_map->next;
+	}
+	style_map->next = styles;
+	styles = style_map;
+    }
+    return style_map;
+}
 
 mapstruct *find_style(char *dirname,char *stylename,int difficulty) {
   char style_file_path[256];
   char style_file_full_path[256];
-  mapstruct *style_map = 0;
+  mapstruct *style_map = NULL;
   struct stat file_stat;
 
   
@@ -178,8 +205,8 @@ mapstruct *find_style(char *dirname,char *stylename,int difficulty) {
 
 
   if(! (S_ISDIR(file_stat.st_mode))) {
-    if( (style_map=has_been_loaded(style_file_path)) == NULL)
-      style_map = load_original_map(style_file_path,0);
+    style_map=load_style_map(style_file_path);
+
   }
   if(style_map == NULL)  /* maybe we were given a directory! */
     {
@@ -194,10 +221,9 @@ mapstruct *find_style(char *dirname,char *stylename,int difficulty) {
 	 if(n<=0) return 0; /* nothing to load.  Bye. */
 
 	 if(difficulty==-1) {  /* pick a random style from this dir. */
-	   strcat(style_file_path,"/");
-	   strcat(style_file_path,namelist[RANDOM()%n]->d_name);
-	   if( (style_map=has_been_loaded(style_file_path)) == NULL)
-	     style_map = load_original_map(style_file_path,0);
+	    strcat(style_file_path,"/");
+	    strcat(style_file_path,namelist[RANDOM()%n]->d_name);
+	    style_map = load_style_map(style_file_path);
 	 }
 	 else {  /* find the map closest in difficulty */
 	   int min_dist=32000,min_index=-1;
@@ -221,9 +247,7 @@ mapstruct *find_style(char *dirname,char *stylename,int difficulty) {
 		 difficulty. */
 	   strcat(style_file_path,"/");
 	   strcat(style_file_path,namelist[min_index]->d_name);
-	   if( (style_map=has_been_loaded(style_file_path)) == NULL)
-	     style_map = load_original_map(style_file_path,0);
-
+	   style_map = load_style_map(style_file_path);
 
 	 }
 	

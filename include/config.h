@@ -720,43 +720,6 @@
 #define MAP_RESET
 #define MAP_MAXRESET	7200
 
-/* CHECK_ACTIVE_MAPS is in certain functions to determine how often
- * the process_active maps function should be called.  In general, a simple
- * count variable is used (ie, every CHECK_ACTIVE_MAPS objects loaded/saved
- * or pixmaps built, call the function.  The process_maps function will
- * return without doing any processing if not enough time has elapsed.
- * In general, a too low value for CHECK_ACTIVE_MAPS will cause some
- * loss in performance, a too high value will mean that the function is
- * not called enough, causing uneven movement.
- * If CHECK_ACTIVE_MAPS is 0, then the function is never called.
- * Also see PROCESS_WHILE_LOADING below.
- */
-
-#define CHECK_ACTIVE_MAPS 25
-
-/* This option will cause process_maps to be called while maps are
- * being loaded and saved.  This has the advantage that other
- * players (the one that did not enter a new map) can do whatever they
- * want while the map is loading, and are not frozen.  Same is true
- * when a map is being frozen.
- *
- * If you are on a sufficiently fast machine, the map loading and
- * saving time may be small enough, that the players don't notice
- * anything, so setting this might not be desirable.
- *
- * Also, there used to be bugs associated with this - players entering maps
- * to find that all the exits are closed, appearing the middle the
- * ocean as the exit a map, etc.  Hopefully, I have fixed those bugs,
- * but it is difficult to be sure.  If you set this, and find those
- * things happening, turn this option off, and please let me know.
- *
- * Apparantly, there are still some bugs associated with this option, so
- * it is better to leave commented out.
- *
- * Mark Wedel (mark@pyramid.com)
- */
-/*#define PROCESS_WHILE_LOADING*/
-
 /*
  * MAX_OBJECTS is no hard limit.  If this limit is exceeded, crossfire
  * will look for maps which are already scheldued for swapping, and

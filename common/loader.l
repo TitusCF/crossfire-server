@@ -87,7 +87,7 @@ static char *variable_const[NR_OF_VARIABLES] = {
 };
 
 
-#define YY_DECL int lex_load(object *op)
+#define YY_DECL int lex_load(object *op, int map_flags)
 
 static char *yval();
 
@@ -199,7 +199,7 @@ WS	[ \t]*
 			    tmp->arch = find_archetype(yval());
 			    if (tmp->arch!=NULL) 
 				copy_object(&tmp->arch->clone,tmp);
-			    lex_load(tmp);
+			    lex_load(tmp, map_flags);
 			    insert_ob_in_ob(tmp,op);
 			}
 			/* This is the actual archetype definition then */
@@ -233,7 +233,7 @@ WS	[ \t]*
 ^last_eat{S}	    op->last_eat = IVAL;
 ^speed{S}	    {	op->speed = FVAL;
 			if (op->speed<0) op->speed_left = op->speed_left-RANDOM()%100/100.0;
-			update_ob_speed(op);
+			if (!(map_flags & MAP_STYLE)) update_ob_speed(op);
 		    }
 ^speed_left{S}    op->speed_left = FVAL;
 ^slow_move{S}	    {	SET_SLOW_PENALTY(op,FVAL);
@@ -512,12 +512,12 @@ static char *yval()
  *
  */
 
-int load_object(FILE *fp, object *op, int bufstate) {
+int load_object(FILE *fp, object *op, int bufstate, int map_flags) {
     int retval;
     char inbuf[MAX_BUF];
 
     if (bufstate==LO_NEWFILE || bufstate==LO_NOREAD) {
-	LOG(llevDebug,"Switching lex buffers\n");
+/*	LOG(llevDebug,"Switching lex buffers\n");*/
 	yy_delete_buffer(YY_CURRENT_BUFFER);
 	yy_switch_to_buffer(yy_create_buffer(fp, YY_BUF_SIZE));
 	if (bufstate==LO_NOREAD) return LL_NORMAL;
@@ -526,7 +526,7 @@ int load_object(FILE *fp, object *op, int bufstate) {
 	YY_BUFFER_STATE  yybufstate;
 	while (fgets(inbuf, MAX_BUF-3, fp)) {
 	    yybufstate=yy_scan_string(inbuf);
-	    retval=lex_load(op);
+	    retval=lex_load(op, map_flags);
 	    yy_delete_buffer(yybufstate);
 	    if (retval==LL_NORMAL) return retval;
 	}
@@ -534,7 +534,7 @@ int load_object(FILE *fp, object *op, int bufstate) {
 	return LL_EOF;
     }
 
-    retval=lex_load(op);
+    retval=lex_load(op, map_flags);
 /*    LOG(llevDebug," load completed, object=%s\n",op->name);*/
     return retval;
 }
@@ -552,7 +552,7 @@ int set_variable(object *op,char *buf) {
 
     yy_push_state(INITIAL);
     yybufstate=yy_scan_string(buf);
-    retval=lex_load(op);
+    retval=lex_load(op,0);
     yy_switch_to_buffer(yycurbuf);
     yy_delete_buffer(yybufstate);
     yy_pop_state();

@@ -164,7 +164,7 @@ void first_arch_pass(FILE *fp) {
 
   op=get_object();
   op->arch=first_archetype=at=get_archetype_struct();
-  while((i=load_object(fp,op,first))) {
+  while((i=load_object(fp,op,first,0))) {
     first=0;
     copy_object(op,&at->clone);
     at->clone.speed_left= -0.1;

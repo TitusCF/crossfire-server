@@ -314,28 +314,31 @@ static void enter_map(object *op, mapstruct *newmap, int x, int y) {
     if (oldmap && oldmap != newmap) {
 	oldmap->players--;
 	if (oldmap->players <= 0) { /* can be less than zero due to errors in tracking this */
-
-#if MAP_MAXTIMEOUT
-	    oldmap->timeout = MAP_TIMEOUT(oldmap);
-	    /* Do MINTIMEOUT first, so that MAXTIMEOUT is used if that is
-	     * lower than the min value.
-	     */
-#if MAP_MINTIMEOUT
-	    if (oldmap->timeout < MAP_MINTIMEOUT) {
-		oldmap->timeout = MAP_MINTIMEOUT;
-	    }
-#endif
-	    if (oldmap->timeout > MAP_MAXTIMEOUT) {
-		oldmap->timeout = MAP_MAXTIMEOUT;
-	    }
+	    set_map_timeout(oldmap);
 	}
-	/* Swap out the oldest map if low on mem */
-	swap_below_max (EXIT_PATH(newmap->map_object));
-#else
-      /* save out the map */
-      swap_map(oldmap);
-#endif /* MAP_MAXTIMEOUT */
     }
+    swap_below_max (EXIT_PATH(newmap->map_object));
+}
+
+void set_map_timeout(mapstruct *oldmap)
+{
+#if MAP_MAXTIMEOUT
+    oldmap->timeout = MAP_TIMEOUT(oldmap);
+    /* Do MINTIMEOUT first, so that MAXTIMEOUT is used if that is
+     * lower than the min value.
+     */
+#if MAP_MINTIMEOUT
+    if (oldmap->timeout < MAP_MINTIMEOUT) {
+	oldmap->timeout = MAP_MINTIMEOUT;
+    }
+#endif
+    if (oldmap->timeout > MAP_MAXTIMEOUT) {
+	oldmap->timeout = MAP_MAXTIMEOUT;
+    }
+#else
+    /* save out the map */
+    swap_map(oldmap);
+#endif /* MAP_MAXTIMEOUT */
 }
 
 
@@ -534,7 +537,8 @@ void enter_exit(object *op, object *exit_ob) {
 		x=EXIT_X(newmap->map_object);
 		y=EXIT_Y(newmap->map_object);
 		LOG(llevDebug,"enter_exit: Exit %s (%d,%d) on map %s is 0 destination coordinates\n",
-		    exit_ob->name, exit_ob->x, exit_ob->y, exit_ob->map->path);
+		    exit_ob->name?exit_ob->name:"(none)", exit_ob->x, exit_ob->y, 
+		    exit_ob->map?exit_ob->map->path:"(none)");
 	    }
 	    if (newmap) 
 		enter_map(op, newmap, x, y);
