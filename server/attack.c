@@ -2054,6 +2054,10 @@ int adj_attackroll (object *hitter, object *target) {
   /* aimed missiles use the owning object's sight */
   if(is_aimed_missile(hitter)) {
     if ((attacker = get_owner(hitter))==NULL) attacker = hitter;
+    /* A player who saves but hasn't quit still could have objects
+     * owned by him - need to handle that case to avoid crashes.
+     */
+    if (QUERY_FLAG(attacker, FLAG_REMOVED)) attacker = hitter;
   }
   else if(!QUERY_FLAG(hitter,FLAG_ALIVE))
     return 0;
