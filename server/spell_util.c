@@ -1116,41 +1116,66 @@ cast_cone(object *op, object *caster,int dir, int strength, int spell_type,arche
 }
 
 /* this function checks to see if the cone pushes objects as well
-   as flies over and damages them */
+ * as flies over and damages them 
+ */
+
 void check_cone_push(object *op) {
-  object *tmp, *tmp2; /* object on the map */
-  for(tmp=get_map_ob(op->map,op->x,op->y);tmp!=NULL;tmp=tmp->above)
+    object *tmp, *tmp2; /* object on the map */
+    int weight_move;
+
+    weight_move = 1000 + 1000 * op->level;
+
+    for(tmp=get_map_ob(op->map,op->x,op->y);tmp!=NULL;tmp=tmp->above)
     { 
-      int nx,ny;
-      int weight_move;
-      int num_sections = 1;
-      /* don't move parts of objects */
-      if(tmp->head) continue;
+	int num_sections = 1;
 
-      /* don't move floors or immobile objects */
-      if(QUERY_FLAG(tmp,FLAG_IS_FLOOR)||(!QUERY_FLAG(tmp,FLAG_ALIVE)&&QUERY_FLAG(tmp,FLAG_NO_PICK))) continue;
+	/* don't move parts of objects */
+	if(tmp->head) continue;
+
+	/* don't move floors or immobile objects */
+	if(QUERY_FLAG(tmp,FLAG_IS_FLOOR)||(!QUERY_FLAG(tmp,FLAG_ALIVE)&&QUERY_FLAG(tmp,FLAG_NO_PICK))) continue;
+
+	/* count the object's sections */
+	for(tmp2 = tmp; tmp2!=NULL;tmp2=tmp2->more) num_sections++;
+
+	if(RANDOM() % weight_move > tmp->weight/num_sections) {  /* move it. */
+	    /* move_object is really for monsters, but looking at 
+	     * the move_object function, it appears that it should
+	     * also be safe for objects.
+	     * This does return if successful or not, but
+	     * I don't see us doing anything useful with that information
+	     * right now.
+	     */
+	    move_object(tmp, absdir(op->stats.sp));
+	}
+
+#if 0
+	int nx,ny;
+	/* This block of code doesn't work for multispaced monsters (or potentially
+	 * other multispaced objects).  Since we already have move_ob which will
+	 * do most of this work for us, might as well use that.
+	 */
       
-      nx = op->x + freearr_x[absdir(op->stats.sp)];
-      ny = op->y + freearr_y[absdir(op->stats.sp)];
+	nx = op->x + freearr_x[absdir(op->stats.sp)];
+	ny = op->y + freearr_y[absdir(op->stats.sp)];
 
-      /* don't try to move something someplace where it can't go */
-      if(arch_blocked(tmp->arch,op->map,nx,ny)) continue;
+	/* don't try to move something someplace where it can't go */
+	if(arch_blocked(tmp->arch,op->map,nx,ny)) continue;
       
-      /* OK, now we decide if we're going to move it */
-      /* assume a weightless thing is a spell or whatever */
-      if(tmp->weight==0) continue;
+	/* OK, now we decide if we're going to move it */
+	/* assume a weightless thing is a spell or whatever */
+	if(tmp->weight==0) continue;
 
-      weight_move = 1000 + 1000 * op->level;
-      /* count the object's sections */
-      for(tmp2 = tmp; tmp2!=NULL;tmp2=tmp2->more) num_sections++;
+	/* count the object's sections */
+	for(tmp2 = tmp; tmp2!=NULL;tmp2=tmp2->more) num_sections++;
       
-      if(RANDOM() % weight_move > tmp->weight/num_sections) {  /* move it. */
-	remove_ob(tmp);
-	tmp->x = nx;
-	tmp->y = ny;
-	insert_ob_in_map(tmp,op->map,op);
-      }
-
+	if(RANDOM() % weight_move > tmp->weight/num_sections) {  /* move it. */
+	    remove_ob(tmp);
+	    tmp->x = nx;
+	    tmp->y = ny;
+	    insert_ob_in_map(tmp,op->map,op);
+	}
+#endif
     }
 }
 

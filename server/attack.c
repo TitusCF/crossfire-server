@@ -1039,7 +1039,10 @@ int hit_player(object *op,int dam, object *hitter, int type) {
 
     if (magic) {
 	dam = dam * (100-op->resist[ATNR_MAGIC])/100;
-	if (dam == 0) return 0;
+	/* Don't do this - many attacktype are effects that don't
+	 * do damage, like deathstrike & confusion.
+	 */
+/*	if (dam == 0) return 0;*/
     }
 
     /* AT_CHAOS here is a weapon or monster.  Spells are handled by hit_map

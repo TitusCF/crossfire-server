@@ -17,6 +17,15 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 CVS changes since last release:
 
+MSW 2000/12/23:
+server/attack.c:  Don't exit hit_player function if damage is reduced to 0
+    in magical attacks.  This was preventing face of death and probably a lot
+    of effect only spells from working.
+server/spell_util.c: modify check_cone_push to use move_object to blow
+    the objects.  Before, multisquare monsters were getting sliced
+    into their individual components - move_object deals with multisquare objects
+    properly.
+
 PeterM 2000/12/18:  Re-add the conflict spell (various files)
 attack.c:  fix a bug which could easily have led to seg fault,
           and did when I was testing under efence.
