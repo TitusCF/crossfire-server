@@ -1,7 +1,7 @@
 WHAT IS CROSSFIRE?
 
   This is a multiplayer graphical arcade and adventure game made for
-  the X-Windows environment.
+  the X-Windows environment.  A windows client is also available.
 
   It has certain flavours from other games, especially Gauntlet (TM)
   and Nethack/Moria.
@@ -12,39 +12,18 @@ WHAT IS CROSSFIRE?
 
 REQUIREMENTS
 
-  You will need UNIX, X-windows and an ANSI C compiler to compile this game.
-  To run it on Windows 9x, you need Visual C++ (or some other ANSI C
+  For UNIX, X-windows and an ANSI C compiler to compile this game.
+  A window system is not needed if you don't want to compile the
+  map editor.
+
+  For Windows 9x, you need Visual C++ (or some other ANSI C
   compiler that can read ".dsw"-files).
   
 COMPILING
 
-  Crossfire has been known to compile on the following systems
-  (latest known version number of Crossfire that compiled on these
-  systems is included in parantheses):
-  o PC Compatible, with Linux 2.2 (gcc, glibc) (latest)
-  o Siemens Reliant Unix 5.44 (0.95.4)
-  o Solaris 2.6 systems (0.95.1)
-  o Silicon Graphics, Irix  6.3 (standard cc) 0.94.0
-  o Sun4 with Solaris 2.5 (with gcc) (0.93.7)
-  o PC Compatible, with Linux 1.2.13 (0.92.4)
-  o Sun4 with SunOS 4.1.3 (0.92.2)
-  o Sun4 with Solaris 2.x (0.92.0)
-  o Sun3, SunOs 4.1.1, gcc (0.91.7)
-  o DEC300AXP-500 (Alpha with OSF1 1.3) (0.90.3)
-  o Ultrix 4.2a (0.90.1)
-  o IBM RS/6000 with AIX 1.2, X11R4 (0.90.2)
-  o HP735, HPUX, X11R5 (0.90.2)
-  o DEC 3100 and DEC 5000 with ULTRIX BSD 4.2
-  o DEC with OSF1
-  o VAX3100 with BSD 4.3
-  o IBM RT with BSD4.3
-  o HP9000-series (HP-UX) (very old versions of HP-UX might barf on stdarg.h)
-  o MIPS with RISC/os
-  o (UMIPS) 4.52 (?)
-  o AT&T system 300 with NCR UNIX SVR4 MP-RAS
-
-  It has been compiled with X11R3, X11R4, X11R5, X11R6 (the editor requires
-  X11R5 or X11R6).
+  Crossfire has been known to compile on a wide variety of
+  systems.  It should compile and most all ANSI C and Posix
+  compliant systems.
 
   To get directions on compilation for UNIX/LINUX, read the INSTALL file.
   For Win9x, read INSTALL_WIN32.txt.
@@ -56,11 +35,12 @@ USAGE
   has set up, or run your own server and connect to that.  The
   client package has information for connecting to servers.
 
-  To run your own server, you need to make the crossfire binaries and
-  install them, and then run the crossfire program.  This now creates
-  a server which you/other people can connect to.  If you plan to run
-  a long term server, you should use one of the scripts provided that
-  will re-run crossfire if it dies for some reason.
+  To run your own server, you need to make the crossfire binaries and install
+  them, and then run the crossfire program.  This now creates a server which
+  you/other people can connect to.  The map files will need to get downloaded
+  and installed for the server to run properly.  If you plan to run a long
+  term server, you should use one of the scripts provided that will re-run
+  crossfire if it dies for some reason.
 
 MAILING LIST
 
@@ -80,6 +60,7 @@ FTP SITES
   FTP-sites where you can look for the latest versions are:
 
     ftp://ftp.scruz.net:/users/mwedel/public (165.227.192.254)
+    ftp://ftp.sourceforge.net:/pub/sourceforge/crossfire (64.28.67.101)
     ftp://ftp.ifi.uio.no:/pub/crossfire (129.240.64.44)
     ftp://ftp.real-time.com/pub/games/crossfire (206.10.252.12)
     ftp://ftp.cs.city.ac.uk:/pub/games/crossfire/
@@ -89,41 +70,28 @@ FTP SITES
     ftp://crossfire.futt.org//pub/crossfire
 
   Changes made since the latest release can be found at the CVS
-  repository.  You can access the nightly builds from:
-    http://langmuir.eecs.berkeley.edu/pub/peterm
-    ftp://crossfire.futt.org/pub/crossfire/cvs_snapshots/
+  repository.  Information on anonymous CVS access as 
+  the download CVS snapshots and browsing the repository can be 
+  found at:
+	http://sourceforge.net/cvs/?group_id=13833
+
 
     If you are looking for a windows/NT client, look at:
-	    ftp://ftp.ifi.uio.no:/pub/crossfire/incoming (129.240.64.44)
-    for a file called cfcXXXX.zip (XXXX are numbers representing the version -
-    get the latest)
-
-  Please use the one nearest to you.  ".no" and ".uk" in Europe, ".au" in
-  Australia, ".com" in USA.
-
-  If you are setting up another site, please notify me.
+	http://mids.student.utwente.nl/%7Emichtoen/crossfire/
 
 WEB SITES:
 
   The following web addresses have crossfire information that you may find
-  useful (Known to work as of 1-3-97):
+  useful:
 
-    german version:
-	http://www.fak14.uni-muenchen.de/~h729ihqu/games/crossfire.html 
-    english version:
-	http://www.fak14.uni-muenchen.de/~h729ihqu/games/crossfire-engl.html
+  http://crossfire.real-time.com/
+  real-time is the main crossfire site.
 
 
 REPORTING BUGS
 
   First, check the INSTALL file for common problems, and see if yours is
   mentioned.
-
-  Crossfire is still in a developmental stage - it is hardly a finished
-  program.  As such, it is assumed that the users have had experience using
-  X11 and C programming.  If you are a novice user having problems, please
-  don't report problems unless you are absolutely sure it is crossfire that
-  is the problem.
 
   The mailing list is where present development work and bugs are typically
   discussed.  If you want to know what is happening with crossfire, join the
@@ -160,20 +128,8 @@ useless.  Also, if you have a bug, make sure you are using the latest
 version.  If you report a bug that has since been fixed, you are not likely
 to get any help.
 
-  Note:  If you can not reproduce the bug, and lack the skills/knowledge
-necessary to run a debugger to find out where it crashed, chances are there
-is little I can do to help.
-
-  Note2:  I only have a sun 3 (with sunos 4.1.1 and gcc) for developement.
-As such, if you have problems compiling on some other type of systems 
-due to header files or similar system dependant things, I am not likely
-to help out that much.
-
-  Note3:  If you have core dumps, or trouble compiling on whatever system,
-and are able to give me a guest account or something similar to log onto
-your system to poke around with the code or core dump, I will likely take
-you up on your offer.  If you make such an offer, I will assume that you
-have oberyed whatever usage rules/policies are applicable for your site.
+Further debugging informatiion can be found at
+http://crossfire.real-time.com/debugging_tips.html
 
   Mail the bug report to crossfire-devel@listserv.real-time.com
 
@@ -183,26 +139,9 @@ SUBMITTING PATCHES:  See the doc/programming_guide file.
 
 PUBLIC SERVERS:
 
-As of March 25, 1999, I removed all the servers that were listed in this
-section, since I believe they were grossly out of date.  The one
-exception is the voldsboks.pvv.org since Frank just reported setting it up.
-
-crossfire.csua.berkeley.edu (8-24-2000)
-    port: 13327 (default)
-    Notes: tmp maps are not recycled.
-
-voldsboks.pvv.org (3-25-1999)
-   port: 13327 (default)
-   version: 0.95.2
-
-crossfire.oc.humbug.org.au (8-22-1999)
-   port: 13327 (default)
-   version: 0.95.5?
-   Notes: Permadeath is turned off.
-
-develop.nmdg.com (8-25-1999)
-   port: 13327 (default)
-   version: 0.95.3
+The best way to find a server to play is to run the client.  It will contact
+the metaserver and present a list to choose from.  You can also see
+a list at http://crossfire.real-time.com/metaserver/
 
 
 COPYRIGHT
