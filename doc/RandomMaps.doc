@@ -32,8 +32,7 @@ Style Parameters:
 ******************************************************************************
 
 layoutstyle <style>	(special!) Pick the layout style for the map.  Currently, 
-			"rogue", "spiral", "maze" and "onion" are allowed.  
-                        See below for more detail.
+			"rogue", "spiral", "maze", "snake", and "onion" are allowed.                        See below for more detail.
 
 floorstyle <style>	Load /styles/floorstyles/<style> and pick a random
 			floortype from that style map for the random map.
@@ -376,6 +375,53 @@ layoutoptions1:
 0  pick random room shapes (i.e., mix it up)
 1  Always use rectangular rooms
 2  Always use "circular" rooms
+
+
+Snake layouts
+***************************************************************************
+No options are available for snake layouts.
+This is a basic snake layout:
+
+
+############################
+#>                         #
+#                          #
+#                          #
+##########################D#
+#                          #
+#                          #
+#                          #
+#D##########################
+#                          #
+#                          #
+#                          #
+##########################D#
+#                          #
+#                          #
+#                          #
+#D##########################
+#                          #
+#                          #
+#                          #
+#                          #
+#                         <#
+############################
+
+This is a roomified, xy-symmetric snake layout:
+
+###################################
+#>       #     #   #     #       >#
+#        #     #   #     #        #
+##D#######     D   D     #######D##
+#        #     #   #     #        #
+#        #     #   #     #        #
+#        D     # < #     D        #
+#        #     #   #     #        #
+#        #     #   #     #        #
+##D#######     D   D     #######D##
+#        #     #   #     #        #
+#>       #     #   #     #       >#
+###################################
 
 
 ************************************************
