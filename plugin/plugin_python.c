@@ -6573,7 +6573,7 @@ static PyObject* CFSetVariable(PyObject* self, PyObject* args)
     return Py_None;
 }
 
-static PyObject* CFDecreaseObjectNR(CFParm* PParm)
+static PyObject* CFDecreaseObjectNR(PyObject* self, PyObject* args)
 {
     long whoptr;
     int val;

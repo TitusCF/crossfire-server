@@ -278,7 +278,7 @@ static PyObject* CFGetIP(PyObject* self, PyObject* args);
 static PyObject* CFGetInventory(PyObject* self, PyObject* args);
 static PyObject* CFGetInternalName(PyObject* self, PyObject* args);
 static PyObject* CFSetVariable(PyObject* self, PyObject* args);
-static PyObject* CFDecreaseObjectNR(CFParm* PParm);
+static PyObject* CFDecreaseObjectNR(PyObject* self, PyObject* args);
 
 /* Skill id wrappers */
 static PyObject* CFSkillStealing(PyObject* self, PyObject* args);
