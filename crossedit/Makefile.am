@@ -71,6 +71,6 @@ Crossedit.ad.h: Crossedit.ad
 	-../utils/ad2c.script Crossedit.ad > Crossedit.ad.h
 
 proto:	
-	cproto -e -o ../include/proto.h -I. $(CPPFLAGS) $(AM_CPPFLAGS) \
+	cproto -e -o /proto.h -I. $(CPPFLAGS) $(AM_CPPFLAGS) \
 		`echo $(SOURCES) " " | $(AWK) -v RS=" " '/.c$$/ { print }'`
-	chmod 644 ../include/proto.h
+	chmod 644 proto.h

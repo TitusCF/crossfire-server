@@ -1,7 +1,7 @@
 
 nodist_bin_SCRIPTS = crossloop.pl crossloop 
 dist_bin_SCRIPTS = crossloop.web
-nodist_pkglib_SCRIPTS = flushlocks
+nodist_pkglib_SCRIPTS = 
 dist_pkglib_SCRIPTS = mktable.script add_throw.perl metaserver.pl
 dist_noinst_SCRIPTS = ad2c.script mktable.script
 
