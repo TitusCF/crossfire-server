@@ -432,7 +432,6 @@ char *query_short_name(object *op)
       case SKILL:
       case AMULET:
       case RING:
-#ifdef FULL_RING_DESCRIPTION
 	if (!op->title) {
 	    /* If ring has a title, full description isn't so useful */ 
 	    char *s = ring_desc(op);
@@ -441,7 +440,6 @@ char *query_short_name(object *op)
 		safe_strcat(buf, s, &len, HUGE_BUF);
 	    }
 	}
-#endif
 	break;
       default:
 	if(op->magic && ((QUERY_FLAG(op,FLAG_BEEN_APPLIED) && 
@@ -594,7 +592,6 @@ char *query_base_name(object *op, int plural) {
       case SKILL:
       case AMULET:
       case RING:
-#ifdef FULL_RING_DESCRIPTION
 	if (!op->title) {
 	    /* If ring has a title, full description isn't so useful */ 
 	    char *s = ring_desc(op);
@@ -603,7 +600,6 @@ char *query_base_name(object *op, int plural) {
 		safe_strcat (buf, s, &len, MAX_BUF);
 	    }
 	}
-#endif
 	break;
       default:
 	if(op->magic && ((QUERY_FLAG(op,FLAG_BEEN_APPLIED) && 
@@ -847,12 +843,8 @@ char *describe_item(object *op, object *owner) {
 	case SKILL:
 	case RING:
 	case AMULET:
-#ifdef FULL_RING_DESCRIPTION
 	    if (op->title)
 		strcat (retbuf, ring_desc(op));
-#else
-	    strcat (retbuf, ring_desc(op));
-#endif
 	    return retbuf;
 
 	default:

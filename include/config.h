@@ -74,10 +74,8 @@
  * alphabetically.
  *
  * Short list of features, and what to search for:
- * BALANCED_STAT_LOSS - Based death stat depletion on level etc?
  * CS_LOGSTATS - log various new client/server data.
  * DEBUG - more verbose message logging?
- * FULL_RING_DESCRIPTION - makes rings abilities show in inventory window
  * MAP_CLIENT_X, MAP_CLIENT_Y - determines max size client map will receive
  * MAX_TIME - how long an internal tick is in microseconds
  * MANY_CORES - generate core dumps on gross errors instead of continuing?
@@ -85,9 +83,7 @@
  * NO_CONE_PROPOGATE - makes cone spells stop at the first monster
  * PARTY_KILL_LOG - stores party kill information
  * SECURE - Allow overriding values with run time flags?
- * STAT_LOSS_ON_DEATH - toggle between stat loss or stat depletion
  * USE_LIGHTING - enable light/darkness & light sources
- * USE_PERMANENT_EXPERIENCE - allow players to accumulate permanent experience?
  * USE_SWAP_STATS - allows stat swapping for new characters
  * WATCHDOG - allows use of an external watchdog program
  *
@@ -175,25 +171,6 @@
 #define DEBUG
 #endif
 #endif
-
-/* FULL_RING_DESCRIPTION has crossfire prints out the abilities of
- * rings or amulets in the appropriate windows.  So instead of just
- * have 'ring' get printed in your inventory, ring (Cha+1) or
- * amulet (reflect missiled), etc, will be printed out.  This also applies
- * to items laying on the ground.
- * No more information will be gathered than if you left click the
- * item (so, if the item is not identified, you will see nothing
- * except the item name.)  Tastes may vary on using this option.  It
- * can make the name excessively long, especially for unpaid items,
- * causing the (unpaid) to be cut off.  On the other hand, it can save
- * a lot of time, especially if you have several rings, or are looking
- * for one in a shop with lots of rings.
- * 0.94.2 - this will likely be removed in the not too distant future - 
- * client should really deal/emulate the short names if that is desired.
- */
-
-#define FULL_RING_DESCRIPTION
-
 
 /*
  * This option creates more core files.  In some areas, there are certain
