@@ -990,6 +990,9 @@ int command_remove (object *op, char *params)
     if ( from != STACK_FROM_STACK )
         /* Item is either stack top, or is a number thus is now stack top, let's remove it  */
         dm_stack_pop( op->contr );
+
+    /* Always work on the head - otherwise object will get in odd state */
+    if (tmp->head) tmp=tmp->head;
     remove_ob(tmp);
     return 1;
 }
@@ -1014,6 +1017,8 @@ int command_free (object *op, char *params)
         new_draw_info( NDI_UNIQUE, 0, op, "Warning, item wasn't removed." );
         remove_ob( tmp );
         }
+
+    if (tmp->head) tmp=tmp->head;
     free_object(tmp);
     return 1;
 }

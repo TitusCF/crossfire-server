@@ -17,6 +17,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/c_wiz.c: change command_free() and command_remove() to always
+  process the head of the object - doing this operations on the non head
+  will typically always cause problems.
+MSW 2005-03-19
+
 This change makes it so that the smoothing information is pushed to the client
 (if the client is using smoothing) instead of a process were we tell the
 client the smoothlevel and the client then has to request the face info for
