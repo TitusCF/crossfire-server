@@ -19,7 +19,7 @@ else.  With this, include the file(s) that you changed.
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 common/object.c:  Splitted set_owner() into set_owner_simple() and
-set_owner.  copy_owner(): New function.
+set_owner().  copy_owner(): New function.
 server/spell_util.c: explode_object(): Use copy_owner() instead of setting
 skill and experience objects manually.  Bugfix: Don't use op->owner
 directly (fixed by using the caster in call to SP_level_dam_adjust(),
