@@ -17,6 +17,20 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+common/item.c: describe_monster() - print luck when describing players (fixex
+   perceive self not showing luck)
+server/attack.c: kill_object() - don't give player exp if he kills himself -
+   compare owner against what was killed, not the hitter.
+server/pets.c: summon_object() - move breaking out for last treasurelist
+   after we set the last valid treasurelist - otherwise, the list entry for
+   the treasurelist was never used.  Change summoned creatures so that
+   the items they have are god given, and thus disappear when they
+   are killed - prevents players from summoning and then looting their pets.
+server/spell_attack.c: explode_bullet() - Get owner of the spell so that we
+   can properly tailor the explosion portion of the spell for the god
+   of the worshipper.
+MSW 2004-05-03
+
 server/shop.c: patch from Andreas Kirschbaum for Windows compilation.
 server/spell_effect.c: patch from Andreas Kirschbaum for Windows compilation.
 Ryo 2004-05-03

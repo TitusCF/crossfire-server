@@ -739,6 +739,10 @@ static char *describe_monster(object *op) {
 	    sprintf(buf,"(regeneration%+d)",op->contr->gen_hp);
 	    strcat(retbuf,buf);
 	}
+	if(op->stats.luck) {
+	    sprintf(buf,"(luck%+d)",op->stats.luck);
+	    strcat(retbuf,buf);
+	}
     }
 
     /* describe attacktypes */

@@ -363,7 +363,7 @@ void explosion(object *op) {
 void explode_bullet(object *op)
 {
     tag_t op_tag = op->count;
-    object *tmp;
+    object *tmp, *owner;
 
     if (op->other_arch == NULL) {
 	LOG (llevError, "BUG: explode_bullet(): op without other_arch\n");
@@ -405,9 +405,9 @@ void explode_bullet(object *op)
     if (tmp->skill) FREE_AND_CLEAR_STR(tmp->skill);
     if (op->skill) tmp->skill = add_refcount(op->skill);
 
-
-    if ((tmp->attacktype & AT_HOLYWORD || tmp->attacktype & AT_GODPOWER) &&
-      !tailor_god_spell(tmp, op)) {
+    owner = get_owner(op);
+    if ((tmp->attacktype & AT_HOLYWORD || tmp->attacktype & AT_GODPOWER) && owner &&
+      !tailor_god_spell(tmp, owner)) {
 	remove_ob (op);
 	free_object (op);
 	return;

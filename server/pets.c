@@ -786,8 +786,8 @@ int summon_object(object *op, object *caster, object *spell_ob, int dir)
 	 */
 	for (tr=spell_ob->randomitems->items; tr; tr=tr->next) {
 	    if (level < tr->magic) break;
-	    if (tr->next == NULL || tr->next->item == NULL) break;
 	    lasttr = tr;
+	    if (tr->next == NULL || tr->next->item == NULL) break;
 	}
 	if (!lasttr) {
 	    LOG(llevError,"Treasurelist %s did not generate a valid entry in summon_object\n",
@@ -905,7 +905,7 @@ int summon_object(object *op, object *caster, object *spell_ob, int dir)
 	head = insert_ob_in_map(head, head->map, op, 0);
 	if (head && head->randomitems) {
 	    object *tmp;
-	    create_treasure(head->randomitems, head, GT_APPLY, 6, 0);
+	    create_treasure(head->randomitems, head, GT_APPLY | GT_STARTEQUIP, 6, 0);
 	    for (tmp=head->inv; tmp; tmp=tmp->below)
 		if (!tmp->nrof) SET_FLAG(tmp, FLAG_NO_DROP);
 	}

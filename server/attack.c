@@ -1536,7 +1536,7 @@ int kill_object(object *op,int dam, object *hitter, int type)
 
 
     /* If you didn't kill yourself, and your not the wizard */
-    if(hitter!=op && !QUERY_FLAG(op, FLAG_WAS_WIZ)) {
+    if(owner!=op && !QUERY_FLAG(op, FLAG_WAS_WIZ)) {
 	int exp;
 
 	exp = calc_skill_exp(owner,op, skop);
