@@ -52,6 +52,7 @@ static void AttrReset(Attr self);
 #define T_Unique    (1<<I_Unique)
 #define T_WeightL   (1<<I_WeightL)
 #define T_Brand     (1<<I_Brand)
+#define T_Maker     (1<<I_Maker)
 
 /*** types ar Combinations ***/
 #define T_Exit      (T_Path | T_X | T_Y )
@@ -86,6 +87,7 @@ int GetType (object *tmp)
 
     switch (tmp->type) {
     case TELEPORTER:
+		return T_Connected|T_Exit;
     case EXIT:
 	return T_Exit;
     case TRAPDOOR:
@@ -95,6 +97,8 @@ int GetType (object *tmp)
     case BUTTON:
     case TRIGGER_BUTTON:
 	return T_Button;
+	 case CREATOR:
+		return T_Connected|T_Maker;
     case GATE:
     case HANDLE:
     case TIMED_GATE:
@@ -112,6 +116,7 @@ int GetType (object *tmp)
     case BOOK:
     case SIGN:
 	return T_Sign;
+	 case MARKER:
     case LOCKED_DOOR:
 	return T_Lockdoor;
     case SPECIAL_KEY:
@@ -121,7 +126,7 @@ int GetType (object *tmp)
     case DIRECTOR:
     case FIREWALL:
 	return (NUM_ANIMATIONS(tmp) > 0) 
-	    ? T_Director : T_Default;
+	    ? T_Director : T_Connected;
     case CONTAINER:
 	return T_Container;
     default:
@@ -226,6 +231,14 @@ static void getBrand (object *ob, char *str, XtPointer c) {
 	sprintf(str,NotUsed);
     else
 	sprintf(str,"%s",ob->race);
+}
+
+/*** brand ***/
+static void getMakes (object *ob, char *str, XtPointer c) {
+    if(!ob->other_arch) 
+	sprintf(str,NotUsed);
+    else
+	sprintf(str,"%s",ob->other_arch->name);
 }
 
 /*
@@ -334,6 +347,15 @@ static void putBrand (object *ob, char *str, XtPointer c) {
     }
 }
 
+static void putMakes (object *ob, char *str, XtPointer c) {
+    if(!strcmp(str,NotUsed))
+	ob->other_arch = NULL;
+    else {
+		ob->other_arch = find_archetype(str);
+    }
+}
+
+
 /**********************************************************************
  * tags
  **********************************************************************/
@@ -355,6 +377,7 @@ AttrDef AttrDescription[] = {
     {"Unique",	        TypeToggle, getUnique,		putUnique},
     {"WeightL",	        TypeString, getWeightL,		putWeightL},
     {"Brand",	        TypeString, getBrand,		putBrand},
+	 {"Makes",  TypeString, getMakes, putMakes},  /* other_arch */
     {NULL,		0,		0}
 };
 

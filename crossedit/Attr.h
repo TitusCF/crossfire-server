@@ -12,7 +12,7 @@ typedef enum {
     I_Path, I_X, I_Y, I_Weight, I_Connect, I_Hp, 
     I_Trigger, I_Sacrifice, I_Count, I_Lockcode, 
     I_Direction, I_Rotation, I_NoPick, I_Unique, 
-    I_WeightL, I_Brand
+    I_WeightL, I_Brand, I_Maker
 } AttrIndex;
 
 typedef enum _AttrType { 
