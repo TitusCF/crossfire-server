@@ -1159,7 +1159,7 @@ void dump_monster_treasure (char *name)
 void init_artifacts() {
     static int has_been_inited=0;
     FILE *fp;
-    char filename[MAX_BUF], buf[MAX_BUF], *cp, *next;
+    char filename[MAX_BUF], buf[HUGE_BUF], *cp, *next;
     artifact *art=NULL;
     linked_char *tmp;
     int value, comp;
@@ -1175,7 +1175,7 @@ void init_artifacts() {
 	return;
     }
 
-    while (fgets(buf, MAX_BUF, fp)!=NULL) {
+    while (fgets(buf, HUGE_BUF, fp)!=NULL) {
 	if (*buf=='#') continue;
 	if((cp=strchr(buf,'\n'))!=NULL)
 	    *cp='\0';
@@ -1694,4 +1694,3 @@ treasurelist *tl, *next;
     }
     free_artifactlist(first_artifactlist);
 }
-
