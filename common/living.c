@@ -6,6 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
+    Copyright (C) 2000 Mark Wedel
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -22,7 +23,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to frankj@ifi.uio.no.
+    The author can be reached via e-mail to mwedel@scruz.net
 */
 
 #include <global.h>
@@ -224,7 +225,7 @@ char *attacks[NROFATTACKS] = {
   "physical", "magical", "fire", "electricity", "cold", "confusion",
   "acid", "drain", "weaponmagic", "ghosthit", "poison", "slow",
   "paralyze", "turn undead", "fear", "cancellation", "depletion", "death",
-  "chaos","counterspell","god power","holy power","blinding"
+  "chaos","counterspell","god power","holy power","blinding", ""
 };
 
 static char *drain_msg[7] = {
