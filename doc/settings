@@ -51,3 +51,8 @@ recycle_tmp_maps	Do the same maps allways reappear?  false.  Not
 			good for multiplayer servers.
 spellpoint_level_depend	Do spell costs go up as level increases?  true
 explore_mode		Can players enter explore mode?  false
+stat_loss_on_death	if set, player loses stat when they die.  false
+use_permanent_experience	if set, player may gain permanent 
+				experience: false
+balanced_stat_loss	if set, death stat depletion is balanced by 
+			level. False

@@ -80,19 +80,6 @@ void set_csport(char *val)
 #endif /* win32 */
 }
 
-static void stat_loss_on_death_true() {settings.stat_loss_on_death = 1; }
-static void stat_loss_on_death_false() {settings.stat_loss_on_death = 0; }
-
-static void use_permanent_experience_true() {settings.use_permanent_experience = 1; }
-static void use_permanent_experience_false() {settings.use_permanent_experience = 0; }
-
-static void balanced_stat_loss_true() {settings.balanced_stat_loss = 1; }
-static void balanced_stat_loss_false() {settings.balanced_stat_loss = 0; }
-
-static void simple_exp_true() {settings.simple_exp = 1; }
-static void simple_exp_false() {settings.simple_exp = 0; }
-
-
 /* Most of this is shamelessly stolen from XSysStats.  But since that is
  * also my program, no problem.
  */
@@ -161,15 +148,7 @@ struct Command_Line_Options options[] = {
 {"-mexp", 0, 3, dump_experience},
 #endif
 {"-s", 0, 3, showscores},
-{"-score", 1, 3, showscoresparm},
-{"-simple_exp", 0, 3, simple_exp_true},
-{"+simple_exp", 0, 3, simple_exp_false},
-{"-stat_loss_on_death", 0, 3, stat_loss_on_death_true},
-{"+stat_loss_on_death", 0, 3, stat_loss_on_death_false},
-{"-balanced_stat_loss", 0, 3, balanced_stat_loss_true},
-{"+balanced_stat_loss", 0, 3, balanced_stat_loss_false},
-{"-use_permanent_experience", 0, 3, use_permanent_experience_true},
-{"+use_permanent_experience", 0, 3, use_permanent_experience_false}
+{"-score", 1, 3, showscoresparm}
 };
 
 
@@ -455,6 +434,33 @@ static void load_settings()
 		LOG(llevError, "load_settings: Unkown value for"
 		    "spellpoint_level_depend: %s\n", cp);
 	    }
+	} else if (!strcasecmp(buf, "stat_loss_on_death")) {
+	    if (!strcasecmp(cp, "on") || !strcasecmp(cp, "true")) {
+		settings.stat_loss_on_death=TRUE;
+	    } else if (!strcasecmp(cp, "off") || !strcasecmp(cp, "false")) {
+		settings.stat_loss_on_death=FALSE;
+	    } else {
+		LOG(llevError, "load_settings: Unkown value for"
+		    "stat_loss_on_death: %s\n", cp);
+	    }
+	} else if (!strcasecmp(buf, "use_permanent_experience")) {
+	    if (!strcasecmp(cp, "on") || !strcasecmp(cp, "true")) {
+		settings.use_permanent_experience=TRUE;
+	    } else if (!strcasecmp(cp, "off") || !strcasecmp(cp, "false")) {
+		settings.use_permanent_experience=FALSE;
+	    } else {
+		LOG(llevError, "load_settings: Unkown value for"
+		    "use_permanent_experience: %s\n", cp);
+	    }
+	} else if (!strcasecmp(buf, "balanced_stat_loss")) {
+	    if (!strcasecmp(cp, "on") || !strcasecmp(cp, "true")) {
+		settings.balanced_stat_loss=TRUE;
+	    } else if (!strcasecmp(cp, "off") || !strcasecmp(cp, "false")) {
+		settings.balanced_stat_loss=FALSE;
+	    } else {
+		LOG(llevError, "load_settings: Unkown value for"
+		    "balanced_stat_loss: %s\n", cp);
+	    }
 	} else if (!strcasecmp(buf,"simple_exp")) {
 	    if (!strcasecmp(cp,"on") || !strcasecmp(cp,"true")) {
 		settings.simple_exp=TRUE;
@@ -542,12 +548,6 @@ void help() {
     printf(" -o          Prints out info on what was defined at compile time.\n");
     printf(" -s          Display the high-score list.\n");
     printf(" -score <name or class> Displays all high scores with matching name/class.\n");
-    printf(" -stat_loss_on_death - if set, player loses stat when they die\n");
-    printf(" +stat_loss_on_death - if set, player does not lose a stat when they die\n");
-    printf(" -use_permanent_experience - if set, player may gain permanent experience\n");
-    printf(" +use_permanent_experience - if set, player does not gain permanent experience\n");
-    printf(" -balanced_stat_loss - if set, death stat depletion is balanced by level etc\n");
-    printf(" +balanced_stat_loss - if set, ordinary death stat depletion is used\n");
     printf(" -v          Print version and contributors.\n");
 
 #ifndef SECURE

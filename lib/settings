@@ -44,3 +44,6 @@ real_wiz true
 recycle_tmp_maps false
 spellpoint_level_depend true
 explore_mode false
+stat_loss_on_death false
+use_permanent_experience false
+balanced_stat_loss false

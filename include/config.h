@@ -125,7 +125,6 @@
  */
 /* GD */
 
-#define BALANCED_STAT_LOSS FALSE
 #define BALSL_LOSS_CHANCE_RATIO    4
 #define BALSL_NUMBER_LOSSES_RATIO  6
 #define BALSL_MAX_LOSS_RATIO       2
@@ -134,6 +133,8 @@
 /* Don't edit these values.  They are configured in lib/settings.  These are
    Simply the defaults. */
 
+#define BALANCED_STAT_LOSS FALSE
+#define USE_PERMANENT_EXPERIENCE FALSE
 #define SET_TITLE TRUE
 #define SIMPLE_EXP TRUE
 #define SPELLPOINT_LEVEL_DEPEND TRUE
@@ -145,6 +146,7 @@
 #define SEARCH_ITEMS TRUE
 #define NOT_PERMADETH TRUE
 #define EXPLORE_MODE FALSE
+#define STAT_LOSS_ON_DEATH FALSE
 #define CASTING_TIME FALSE
 
 /* you can edit the ones below */
@@ -286,17 +288,6 @@
 
 
 
-/* Set this to FALSE if you don't want characters to loose a random stat when
- * they die - instead, they just get deplete.
- * Setting it to TRUE keeps the old behaviour.  This can be
- * changed at run time via -stat_loss_on_death or +stat_loss_on_death.
- * In theory, this can be changed on a running server, but so glue code
- * in the wiz stuff would need to be added for that to happen.
- */
-
-#define STAT_LOSS_ON_DEATH FALSE
-
-
 /* Use permanent experience code?
  * This code allows players to build up a small amount of 'permanent
  * experience' which reduces the effect of large experience drains, such as
@@ -328,7 +319,6 @@
  */
 /* GD */
 
-#define USE_PERMANENT_EXPERIENCE FALSE
 #define PERM_EXP_MINIMUM_RATIO        0.25f
 #define PERM_EXP_GAIN_RATIO           0.10f
 #define PERM_EXP_MAX_LOSS_RATIO       0.50f
