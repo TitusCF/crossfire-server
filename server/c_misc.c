@@ -265,14 +265,13 @@ int command_who (object *op, char *params)
 		       pl->socket.host,
 		       pl->ob->map->path,
 		       QUERY_FLAG(pl->ob,FLAG_WIZ)?" [WIZ]":"",
-		       pl->peaceful?"P":"W",pl->ob->count);
+		       pl->peaceful?"Peaceful":"Hostile",pl->ob->count);
 	    else
-		(void) sprintf(buf,"%s the %s (@%s) [%s]%s%s",pl->ob->name,
+		(void) sprintf(buf,"%s the %s [%s]%s%s",pl->ob->name,
 		       (pl->own_title[0]=='\0'?pl->title:pl->own_title),
-		       pl->socket.host,
 		       pl->ob->map->path,
 		       QUERY_FLAG(pl->ob,FLAG_WIZ)?" [WIZ]":"",
-		       pl->peaceful?"P":"W");
+		       pl->peaceful?"Peaceful":"Hostile");
 	    new_draw_info(NDI_UNIQUE, 0,op,buf);
 	}
     }
@@ -633,7 +632,8 @@ int command_statistics(object *pl, char *params)
 	pl->contr->orig_stats.Pow, pl->stats.Pow, 20+pl->arch->clone.stats.Pow);
     new_draw_info_format(NDI_UNIQUE, 0, pl, "Cha         %2d/ %3d/%3d",
 	pl->contr->orig_stats.Cha, pl->stats.Cha, 20+pl->arch->clone.stats.Cha);
-
+    new_draw_info_format(NDI_UNIQUE, 0, pl, "\nAttack Mode: %s",pl->contr->peaceful? "Peaceful":"Hostile");
+	
    /* Can't think of anything else to print right now */
    return 0;
 }

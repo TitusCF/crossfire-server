@@ -325,6 +325,7 @@ typedef struct Settings {
     uint8   search_items;   /* search_items command */
     uint8   spell_encumbrance; /* encumbrance effects spells */
     uint8   spell_failure_effects; /* nasty backlash to spell failures */
+	uint16	set_friendly_fire;	/* Percent of damage done by peaceful player vs player damage */
     uint8   casting_time;   /* it takes awhile to cast a spell */
     uint8   real_wiz;       /* use mud-like wizards */
     uint8   recycle_tmp_maps; /* re-use tmp maps. */

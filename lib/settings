@@ -173,3 +173,9 @@ balanced_stat_loss false
 
 use_permanent_experience false
 
+# This allows reduced damage against other players when in 
+# peaceful mode.  The value is the percent of damage done
+# compared to normal.  This does not change damage done
+# by not targeted things like walls, explosions, cone spells, disease, poison...
+
+set_friendly_fire 5

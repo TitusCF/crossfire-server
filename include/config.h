@@ -132,6 +132,7 @@
 #define EXPLORE_MODE FALSE
 #define STAT_LOSS_ON_DEATH FALSE
 #define CASTING_TIME FALSE
+#define SET_FRIENDLY_FIRE 5
 
 /* you can edit the ones below */
 

@@ -1574,6 +1574,39 @@ int kill_object(object *op,int dam, object *hitter, int type)
     return maxdam;
 }
 
+/* Find out if this is friendly fire (PVP and attacker is peaceful) or not 
+ *  Returns 0 this is not friendly fire
+ */
+
+int friendly_fire(object *op, object *hitter){
+	object *owner;
+	int friendlyfire;
+	
+	if (hitter->head) hitter=hitter->head;
+
+	friendlyfire	= 0;
+	
+		if(op->type == PLAYER){
+			
+			if(hitter->type == PLAYER && hitter->contr->peaceful == 1)
+				return 1;
+		    
+			if(owner = get_owner(hitter)){
+				if(owner->type == PLAYER && owner->contr->peaceful == 1)
+					friendlyfire = 2;
+			}
+			
+			if(hitter->type == CONE || hitter->type == FBALL  || hitter->type == FIREWALL
+				|| hitter->type == SWARM_SPELL || hitter->type == POISONCLOUD 
+				|| hitter->type == POISONING || hitter->type == DISEASE || hitter->type == RUNE)
+				
+				friendlyfire = 0;			
+	   }
+	
+	return friendlyfire;
+}
+
+
 /* This isn't used just for players, but in fact most objects.
  * op is the object to be hit, dam is the amount of damage, hitter
  * is what is hitting the object, and type is the attacktype.
@@ -1591,6 +1624,7 @@ int hit_player(object *op,int dam, object *hitter, int type) {
     int simple_attack;
     tag_t op_tag, hitter_tag;
     int rtn_kill = 0;
+	int friendlyfire;
 
     if (get_attack_mode (&op, &hitter, &simple_attack))
         return 0;
@@ -1702,7 +1736,19 @@ int hit_player(object *op,int dam, object *hitter, int type) {
 	      maxdam = ndam;
 	      maxattacktype = 1<<attacknum;
 	    }
-	}
+		
+		/* if this is friendly fire then do a set % of damage only*/
+		friendlyfire = friendly_fire(op, hitter);
+		if (friendlyfire){
+			
+			maxdam = ((dam * settings.set_friendly_fire) / 100)+1;
+			
+			#ifdef ATTACK_DEBUG
+			LOG(llevDebug,"Friendly fire (type:%d setting: %d%) did %d damage dropped to %d\n",
+			friendlyfire, settings.set_friendly_fire, dam, maxdam);
+			#endif
+			}
+		}
     }
 
 #ifdef ATTACK_DEBUG
@@ -2120,5 +2166,4 @@ int is_aimed_missile ( object *op) {
        ||op->type==FBULLET||op->type==FBALL)) 
     return 1;
   return 0;
-} 
-
+}

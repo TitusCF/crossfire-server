@@ -69,6 +69,7 @@ REAL_WIZ,
 RECYCLE_TMP_MAPS,
 EXPLORE_MODE,
 SPELLPOINT_LEVEL_DEPEND,
+SET_FRIENDLY_FIRE,
 MOTD,
 "",		/* DM_MAIL */
 0,		/* This and the next 3 values are metaserver values */
@@ -411,4 +412,3 @@ void init_attackmess(){
     LOG(llevDebug, "got %d messages in %d categories.\n", total, mess+1);
     close_and_delete(fp, comp);
 }
-	    

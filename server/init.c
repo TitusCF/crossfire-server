@@ -584,6 +584,14 @@ static void load_settings()
 		LOG(llevError,"load_settings: Unkown value for simple_exp: %s\n",
 		    cp);
 	    }
+	} else if (!strcasecmp(buf, "set_friendly_fire")) {
+	    int val = atoi(cp);
+
+	    if (val < 1 || val >100)
+		LOG(llevError, "load_settings: set_friendly_fire must be between 1 an 100"
+		    ", %d is invalid\n", val);
+	    else
+		settings.set_friendly_fire = val;	
 	} else {
 	    LOG(llevError,"Unknown value in settings file: %s\n", buf);
 	}
@@ -1051,4 +1059,3 @@ racelink * find_racelink( char *name ) {
  
   return test;
 }
-

@@ -17,6 +17,14 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+friendly_fire:
+	Added friendly_fire to attack.c, called from hit_player.
+	Will put a cap on maxdam that is a percentage (1-100%) of damage (min 1)
+	based on SET_FRIENDLY_FIRE value when players attack in peaceful mode.
+	Changed who, statistics to show this setting better and added help file for peaceful.
+	It would be nice to have a indicator in the client for this as well.
+	TM - 2003-08-25
+	
 protocol/doc/code:
 	Changed the way smoothing is done. Switched the smooth 
 	command to binary mode, rebuild archetype files, added doc 
@@ -8774,4 +8782,3 @@ Fixed bug so that if it can not find a map, it just prints that
 Have it re-draw the look window when you middle click on something (ie
 	apply) in that window.  This fixes a bug with bags/sacks, of it
 	not updating when an item is used directly from a sack.
-
