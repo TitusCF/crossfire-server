@@ -54,7 +54,7 @@ sub traverse {
 	$file = $dir."/".$tfile;
 	$name = &basename($file,""); # DIR
 
-        if( -d $file && $name ne "dev" && $name ne "trashbin") {
+        if( -d $file && $name ne "dev" && $name ne "trashbin" && $name ne "CVS" ) {
 	    &traverse($file);
 	} elsif ( -d $file && ( $name eq "dev" || $name eq "trashbin" ) ) {
 # Empty directive to prevent warnings below
@@ -76,7 +76,7 @@ sub traverse {
 	} 
 	# ignore a couple of the more common 'junk' files that are not
 	# really junk.
-	elsif ($file ne "README") {
+	elsif (($name ne "README") && ($name ne "CVS")) {
 	    $trashNum++;
 	    print "Warning: $file might be a junk file\n";
 	}
