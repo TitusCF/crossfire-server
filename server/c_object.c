@@ -210,7 +210,7 @@ static void pick_up_object (object *pl, object *op, object *tmp, int nrof)
     else
         effective_weight_limit = weight_limit[MAX_STAT];
     if ((pl->weight + pl->carrying + weight) > effective_weight_limit) {
-	new_draw_info(NDI_UNIQUE, 0,pl,"That item is too heavy for you to pick up.");
+	new_draw_info(0, 0,pl,"That item is too heavy for you to pick up.");
 	return;
     }
     if (settings.real_wiz == FALSE && QUERY_FLAG(pl, FLAG_WAS_WIZ))

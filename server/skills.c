@@ -1331,13 +1331,16 @@ int remove_trap (object *op, int dir) {
    return success;
 }
 
-int skill_throw (object *op, int dir, char *params) {
-  int success = 0;
- 
-  if(op->type==PLAYER) do_throw(op,find_throw_ob(op,params),dir);
-  else do_throw(op,find_mon_throw_ob(op->head?op->head:op),dir);
- 
-  return success;
+int skill_throw (object *op, object *part, int dir, char *params) {
+
+    object *throw_ob;
+
+    if(op->type==PLAYER) 
+	throw_ob =  find_throw_ob(op,params);
+    else
+	throw_ob = find_mon_throw_ob(op);
+
+    return do_throw(op,part, throw_ob,dir);
 }
 
 /* find_throw_ob() - if we request an object, then
@@ -1426,14 +1429,11 @@ object *make_throw_ob (object *orig) {
 
 
 /* do_throw() - op throws any object toss_item. This code
- * was borrowed from fire_bow (see above), so probably these
- * two functions should be merged together since they are
- * almost the same. I left them apart for now for debugging
- * purposes, and also, so as to not screw up fire_bow()!
- * This function is useable by monsters.  -b.t.
+ * was borrowed from fire_bow (see above).
+ * Returns 1 if skill was successfully used, 0 if not
  */
 
-void do_throw(object *op, object *toss_item, int dir) {
+int do_throw(object *op, object *part, object *toss_item, int dir) {
     object *throw_ob=toss_item, *left=NULL;
     tag_t left_tag;
     int eff_str = 0,maxc,str=op->stats.Str,dam=0;
@@ -1444,13 +1444,13 @@ void do_throw(object *op, object *toss_item, int dir) {
 	if(op->type==PLAYER) {
 	    new_draw_info(NDI_UNIQUE, 0,op,"You have nothing to throw.");
 	}
-	return;
+	return 0;
     }
     if (QUERY_FLAG(throw_ob, FLAG_STARTEQUIP)) {
 	if (op->type==PLAYER) {
 	    new_draw_info(NDI_UNIQUE, 0, op, "The gods won't let you throw that.");
 	}
-	return;
+	return 0;
     }
 	
 
@@ -1475,7 +1475,7 @@ void do_throw(object *op, object *toss_item, int dir) {
     else { /* 0 or negative weight?!? Odd object, can't throw it */
 	new_draw_info_format(NDI_UNIQUE, 0,op,"You can't throw %s.\n",
 			     query_name(throw_ob)); 
-	return;
+	return 0;
     }
    
     eff_str = str * (load_factor<1.0?load_factor:1.0);
@@ -1497,12 +1497,12 @@ void do_throw(object *op, object *toss_item, int dir) {
      * have no effective throwing strength, or you threw at a wall
      */ 
     if(!dir || (eff_str <= 1) ||
-       wall(op->map,op->x+freearr_x[dir],op->y+freearr_y[dir])) {
+       wall(part->map,part->x+freearr_x[dir],part->y+freearr_y[dir])) {
 
 	/* bounces off 'wall', and drops to feet */
-	 remove_ob(throw_ob);
-	 throw_ob->x = op->x; throw_ob->y = op->y;
-	 insert_ob_in_map(throw_ob,op->map,op,0);
+	remove_ob(throw_ob);
+	throw_ob->x = part->x; throw_ob->y = part->y;
+	insert_ob_in_map(throw_ob,part->map,op,0);
 	if(op->type==PLAYER) {
 	    if(eff_str<=1) {
 		new_draw_info_format(NDI_UNIQUE, 0,op,
@@ -1516,15 +1516,15 @@ void do_throw(object *op, object *toss_item, int dir) {
 	    else
 		new_draw_info(NDI_UNIQUE, 0,op,"Something is in the way.");
 	}
-	return;
+	return 0;
     } /* if object can't be thrown */
  
     left = throw_ob; /* these are throwing objects left to the player */
     left_tag = left->count;
 
-  /* sometimes get_split_ob can't split an object (because op->nrof==0?)
-   * and returns NULL. We must use 'left' then 
-   */
+    /* sometimes get_split_ob can't split an object (because op->nrof==0?)
+     * and returns NULL. We must use 'left' then 
+     */
 
     if((throw_ob = get_split_ob(throw_ob, 1))==NULL) {
 #ifdef DEBUG_THROW
@@ -1545,7 +1545,7 @@ void do_throw(object *op, object *toss_item, int dir) {
     /* special case: throwing powdery substances like dust, dirt */
     if(QUERY_FLAG(throw_ob,FLAG_DUST)) { 
 	cast_dust(op,throw_ob,dir); 
-	return;
+	return 1;
     }
 
     /* Make a thrown object -- insert real object in a 'carrier' object.
@@ -1556,7 +1556,7 @@ void do_throw(object *op, object *toss_item, int dir) {
 	throw_ob = toss_item;
     else {
 	insert_ob_in_ob(throw_ob,op);
-	return;
+	return 0;
     }
 
     set_owner(throw_ob,op);
@@ -1564,13 +1564,10 @@ void do_throw(object *op, object *toss_item, int dir) {
      * becomes the hitter.  As such, we need to make sure that has a proper
      * owner value so exp goes to the right place.
      */
-    /*    set_owner(throw_ob,op->inv);
-	  Set thrown object's owner to first object in player's inventory???
-	  Don't you mean to set player as owner of object in throw_ob's inv?  */
     set_owner(throw_ob->inv,op);
     throw_ob->direction=dir;
-    throw_ob->x = op->x;
-    throw_ob->y = op->y;
+    throw_ob->x = part->x;
+    throw_ob->y = part->y;
 
     /* the damage bonus from the force of the throw */
     dam = str_factor * dam_bonus[eff_str];
@@ -1638,11 +1635,6 @@ void do_throw(object *op, object *toss_item, int dir) {
     if(throw_ob->stats.food>100) throw_ob->stats.food=100;
     if(throw_ob->stats.wc>30) throw_ob->stats.wc=30;
 
-    /* We shouldn't need a call to fix player just for throwing an
-     * object.
-     */
-/*    fix_player(op);*/
-
     /* how long to pause the thrower. Higher values mean less pause */
     pause_f = ((2*eff_str)/3)+20+SK_level(op);
 
@@ -1654,12 +1646,11 @@ void do_throw(object *op, object *toss_item, int dir) {
      * In short summary, a throw can take anywhere between speed 5 and
      * speed 0.5
      */
-
     op->speed_left -=  50 / pause_f;
 
     update_ob_speed(throw_ob);
     throw_ob->speed_left = 0;
-    throw_ob->map = op->map;
+    throw_ob->map = part->map;
 
     SET_FLAG(throw_ob, FLAG_FLYING);
     SET_FLAG(throw_ob, FLAG_FLY_ON);
@@ -1697,7 +1688,8 @@ void do_throw(object *op, object *toss_item, int dir) {
         throw_ob->last_sp,throw_ob->speed,throw_ob->stats.food);
     LOG(llevDebug,"inserting tossitem (%d) into map\n",throw_ob->count);
 #endif
-    insert_ob_in_map(throw_ob,op->map,op,0);
+    insert_ob_in_map(throw_ob,part->map,op,0);
     move_arrow(throw_ob);
+    return 1;
 }
 

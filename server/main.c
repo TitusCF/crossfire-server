@@ -956,13 +956,14 @@ void clean_tmp_files() {
    */
   for(m=first_map;m!=NULL;m=next) {
       next=m->next;
-      if (m->in_memory == MAP_IN_MEMORY)
-/* If we want to reuse the temp maps, swap it out (note that will also
- * update the log file.  Otherwise, save the map (mostly for unique item
- * stuff).  Note that the clean_tmp_map is called after the end of
- * the for loop but is in the #else bracket.  IF we are recycling the maps,
- * we certainly don't want the temp maps removed.
- */
+      if (m->in_memory == MAP_IN_MEMORY) {
+	/* If we want to reuse the temp maps, swap it out (note that will also
+	 * update the log file.  Otherwise, save the map (mostly for unique item
+         * stuff).  Note that the clean_tmp_map is called after the end of
+	 * the for loop but is in the #else bracket.  IF we are recycling the maps,
+         * we certainly don't want the temp maps removed.
+	 */
+
 	  /* XXX The above comment is dead wrong */
 	  if (settings.recycle_tmp_maps == TRUE)
 	      swap_map(m);
@@ -970,6 +971,7 @@ void clean_tmp_files() {
 	      new_save_map(m, 0); /* note we save here into a overlay map */
 	      clean_tmp_map(m);
 	  }
+      }
   }
   write_todclock(); /* lets just write the clock here */
 }

@@ -1042,8 +1042,17 @@ void move_player_mover(object *op) {
 
 	    if(!op->stats.maxsp&&op->attacktype) op->stats.maxsp=2.0;
 
-	    if(op->attacktype)  /* flag to paralyze the player */
+	    if(op->attacktype)  { /* flag to paralyze the player */
+
 		victim->speed_left= -FABS(op->stats.maxsp*victim->speed/op->speed);
+		/* Not sure why, but for some chars on metalforge, they
+		 * would sometimes get -inf speed_left, and from the
+		 * description, it could only happen here, so just put
+		 * a lower sanity limit.  My only guess is that the 
+		 * mover has 0 speed.
+		 */
+		if (victim->speed_left < -5.0) victim->speed_left=-5.0;
+	    }
 	}
     }
 }

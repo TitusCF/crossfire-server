@@ -466,6 +466,13 @@ int move_monster(object *op) {
 	strcpy(op->name,enemy->name);
     }
 
+    /* Calculate range information for closest body part - this
+     * is used for the 'skill' code, which isn't that smart when
+     * it comes to figuring it out - otherwise, giants throw boulders
+     * into themselves.
+     */
+    get_rangevector(op, enemy, &rv, 0);
+
     /* Move the check for scared up here - if the monster was scared,
      * we were not doing any of the logic below, so might as well save
      * a few cpu cycles.
@@ -502,7 +509,7 @@ int move_monster(object *op) {
 			return 0;
 		}
 	        if(QUERY_FLAG(op,FLAG_READY_SKILL)&&!(RANDOM()%3)) {
-		    if(monster_use_skill(op,part,enemy,dir))
+		    if(monster_use_skill(op,rv.part,enemy,rv.direction))
 			return 0;
 		}
 	        if(QUERY_FLAG(op,FLAG_READY_BOW)&&!(RANDOM()%2)) {
@@ -513,7 +520,6 @@ int move_monster(object *op) {
     } /* If not scared */
 
     
-    get_rangevector(op, enemy, &rv, 0);
     part = rv.part;
     dir=rv.direction;
 
@@ -856,7 +862,7 @@ int monster_use_skill(object *head, object *part, object *pl,int dir) {
     /* skill selection - monster will use the next unused skill.
      * well...the following scenario will allow the monster to 
      * toggle between 2 skills. One day it would be nice to make
-     * more skills available to monsters.  
+     * more skills available to monsters.
      */
  
     for(skill=head->inv;skill!=NULL;skill=skill->below)
@@ -872,7 +878,7 @@ int monster_use_skill(object *head, object *part, object *pl,int dir) {
 	return 0;
     }
     /* use skill */
-    return do_skill(head,dir,NULL);
+    return do_skill(head, part,dir,NULL);
 }
 
 /* Monster will use a ranged spell attack. */

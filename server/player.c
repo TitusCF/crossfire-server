@@ -927,11 +927,13 @@ int key_confirm_quit(object *op, char key)
     char buf[MAX_BUF];
     CFParm CFP;
     int evtid;
+
     if(key!='y'&&key!='Y'&&key!='q'&&key!='Q') {
-      op->contr->state=ST_PLAYING;
-      new_draw_info(NDI_UNIQUE, 0,op,"OK, continuing to play.");
-      return 1;
+	op->contr->state=ST_PLAYING;
+	new_draw_info(NDI_UNIQUE, 0,op,"OK, continuing to play.");
+	return 1;
     }
+
     /* GROS : Here we handle the REMOVE global event */
     evtid = EVENT_REMOVE;
     CFP.Value[0] = (void *)(&evtid);
@@ -948,10 +950,22 @@ int key_confirm_quit(object *op, char key)
     op->contr->party_number=(-1);
     if (settings.set_title == TRUE)
 	op->contr->own_title[0]='\0';
+
     if(!QUERY_FLAG(op,FLAG_WAS_WIZ)) {
-      sprintf(buf,"%s/%s/%s/%s.pl",settings.localdir,settings.playerdir,op->name,op->name);
-      if(unlink(buf)== -1 && settings.debug >= llevDebug)
-        perror("crossfire (delete character)");
+	mapstruct *mp, *next;
+
+	/* We need to hunt for any per player unique maps in memory and
+	 * get rid of them.  The trailing slash in the path is intentional,
+	 * so that players named 'Ab' won't match against players 'Abe' pathname
+	 */
+	sprintf(buf,"%s/%s/%s/", settings.localdir, settings.playerdir, op->name);
+	for (mp=first_map; mp!=NULL; mp=next) {
+	    next = mp->next;
+	    if (!strncmp(mp->path, buf, strlen(buf)))
+		delete_map(mp);
+	}
+	
+	delete_character(op->name, 1);
     }
     play_again(op);
     return 1;
@@ -1490,7 +1504,7 @@ void fire(object *op,int dir) {
 		    new_draw_info(NDI_UNIQUE, 0,op,"You have no applicable skill to use.");
 		return;
 	    }
-	    (void) do_skill(op,dir,NULL);
+	    (void) do_skill(op,op,dir,NULL);
 	    return;
 	default:
 	    new_draw_info(NDI_UNIQUE, 0,op,"Illegal shoot type.");

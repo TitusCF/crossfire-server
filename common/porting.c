@@ -117,20 +117,21 @@ void remove_directory(const char *path)
 	struct dirent *de;
 
 	for (de=readdir(dirp); de; de = readdir(dirp)) {
-	    status=stat(de->d_name, &statbuf);
-	    /* Linus actually has a type field in the dirent structure,
-	     * but that is not portable - stat should be portable
-	     */
-	    if ((status!=-1) && (S_ISDIR(statbuf.st_mode))) {
-		sprintf(buf,"%s/%s", path, de->d_name);
-		remove_directory(buf);
-		continue;
-	    }
 	    /* Don't remove '.' or '..'  In  theory we should do a better 
 	     * check for .., but the directories we are removing are fairly
 	     * limited and should not have dot files in them.
 	     */
 	    if (de->d_name[0] == '.') continue;
+
+	    /* Linux actually has a type field in the dirent structure,
+	     * but that is not portable - stat should be portable
+	     */
+	    status=stat(de->d_name, &statbuf);
+	    if ((status!=-1) && (S_ISDIR(statbuf.st_mode))) {
+		sprintf(buf,"%s/%s", path, de->d_name);
+		remove_directory(buf);
+		continue;
+	    }
 	    sprintf(buf,"%s/%s", path, de->d_name);
 	    if (unlink(buf)) {
 		LOG(llevError,"Unable to remove directory %s\n", path);
@@ -138,7 +139,7 @@ void remove_directory(const char *path)
 	}
 	closedir(dirp);
     }
-    if (unlink(path)) {
+    if (rmdir(path)) {
 	LOG(llevError,"Unable to remove directory %s\n", path);
     }
 }

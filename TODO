@@ -1,6 +1,7 @@
 Various bits, in no particular order.  This is far from a complete list -
 however it keeps growing as various problems are discovered that
-don't have an easy fix.
+don't have an easy fix.  Some of the things are put here just so my mailbox
+doesn't overflow.
 
 ------------------------------------------------------------------------------
 Known Bugs:
@@ -14,6 +15,19 @@ light source does not illuminate the same space multiple times.
 
 ------------------------------------------------------------------------------
 Future feature requests
+
+- Move exp rewards you get for alchemy from being calculated by the program
+  to being an attribute of the formula.
+
+- Refine blocking of spaces - instead of 'blocks all or nothing', ability
+  to block walking but not flying, block swimming (for future expansion
+  of oceans).  Also, add different LOS blocking for differing conditions -
+  if flying, jungles shouldn't block line of sight, but they still should
+  if your walking.  Also, add seperate blocking (pass) for monsters and
+  players, eg, block_monster and block_player.
+
+- Ability for stores to set different prices for goods (eg, remote store
+  charges more for the services it provides).
 
 - dm command 'Follow' which lets him see what a player is doing, where he
   is going, etc.

@@ -17,6 +17,60 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+TODO: Move more items from my mailbox to the TODO list.
+common/living.c: Init item_power in player to zero in fix_player() - 
+    bogus results were getting generated as it just kept getting incremented.
+common/porting.c: fix remove_directory so it works properly - checking
+    for . and .. entries too late, calling unlink instead of rmdir.
+include/sproto.h: rebuilt
+lib/animations, lib/archetypes, lib/bmaps, lib/bmaps.paths, lib/crossfire.0,
+    lib/crossfire.1, lib/faces: Rebuilt - new archs added, catch is_thrown
+    addition to thrown rock/boulder archs.
+server/c_move.c, server/c_range.c: Add another parameter to do_skill() - part, which
+    is closest part of creature to target object - current only used
+    for the throw code.  Update calls to this function to add additional
+    parameter.
+server/c_object.c: Remove the NDI_UNIQUE from the 'item is too heavy
+    to pick up' so that it won't flood the client with them if players
+    goes onto space with lots of objects.
+server/main.c: Minor cleanup to fix compiler warning about ambigous
+    if/else.
+server/monster.c: Pass closest part of monster when having it use
+    a skill so that it doesn't throw rocks into itself.  Update calls to
+    do_skill as described above.
+server/player.c: Cal delete_player() when player quits - this properly
+    cleans up any per player unique maps they have.  Also, check for
+    any such maps currently in memory, and delete those so that unique
+    maps don't get 'gifted' to the next character of the same name.
+    Update calls to do_skill as described above.
+server/shop.c: Combine items of the same name together in the output 
+    of the shop listings.  Include the number of items, remove special
+    casing of some objects so that query_base_name is used for all item
+    types.
+server/skill_util.c: Modify do_skill() to take additional param as
+    described above.  Also, have do_skill return 1 on success,
+    0 on failur to use skill, and not return exp - otherwise,
+    monster code has no idea if skill was successfully used, as throw
+    doesn't grant exp, and this caused monsters to move into the
+    object they just threw.  Update calls to do_skill as described
+    above.
+server/skills.c: Clean up skill_throw function to return meaningfull
+    value.  Also, pass along extra part of closest monster part
+    to target.  Modify do_throw to return value, use closest
+    part of body as origin point for thwon object.
+server/spell_effect.c: Use isqrt function instead of definining
+    ISQRT that used float version.  Cleans up compile warning - most 
+    likely not seen before as spell was #ifdef SPELL_ENCUMBERANCE out.
+server/time.c: Put sanity checking for players speed_left in 
+    move_player_mover() - got some reports of infinite negative speed
+    on metalforge, and this is the only place in the code where I could
+    see that happening given the description of the events.
+utils/arch2xml.py, utils/cfarches.xsl: New script (and template) by
+    Todd Mitchell.  Script can convert archs to xml, and the template
+    is usuable with mozilla to look at the output.
+MSW 2002-12-02
+
+
 common/object.c, include/object.h: Add INS_BELOW_ORIGINATOR flag to
     insert_ob_in_map - this is used for treasure chests so the
     treasure is put below the player.  Also fix insertiong of items

@@ -105,148 +105,172 @@ void find_skill_exp_name(object *pl, object *exp, int index)
 /* do_skill() - Main skills use function-similar in scope to cast_spell(). 
  * We handle all requests for skill use outside of some combat here. 
  * We require a separate routine outside of fire() so as to allow monsters 
- * to utilize skills. Success should be the amount of experience gained 
- * from the activity. Also, any skills that monster will use, will need
- * to return a positive value of success if performed correctly. Usually
- * this is handled in calc_skill_exp(). Thus failed skill use re-
- * sults in a 0, or false value of 'success'.
- *  - b.t.  thomas@astro.psu.edu
+ * to utilize skills.  Returns 1 on use of skill, otherwise 0.
+ * This is changed (2002-11-30) from the old method that returned
+ * exp - no caller needed that info, but it also prevented the callers
+ * from know if a skill was actually used, as many skills don't
+ * give any exp for their direct use (eg, throwing).
+ * It returns 0 if no skill was used.
  */
 
-int do_skill (object *op, int dir, char *string) {
-  int success=0;        /* needed for monster_skill_use() too */
-  int skill = op->chosen_skill->stats.sp;
-  int did_alc = 0;
-  int x, y;
-  object *tmp, *next;
+int do_skill (object *op, object *part, int dir, char *string) {
+    int success=0, exp=0;
+    int skill = op->chosen_skill->stats.sp;
+    int did_alc = 0;
+    int x, y;
+    object *tmp, *next;
 
     switch(skill) {
-	 case SK_LEVITATION:
-		if(QUERY_FLAG(op,FLAG_FLYING)) { 
-		  CLEAR_FLAG(op,FLAG_FLYING);
-		  new_draw_info(NDI_UNIQUE,0,op,"You come to earth.");
-		}
-		else {
-		  SET_FLAG(op,FLAG_FLYING);
-		  new_draw_info(NDI_UNIQUE,0,op,"You rise into the air!.");
-		}
-		  			 
-		break;
-      case SK_STEALING:
-        success = steal(op, dir);
-        break;
-      case SK_LOCKPICKING:
-        success = pick_lock(op, dir);
-        break;
-      case SK_HIDING:
-        success = hide(op);
-        break;
-      case SK_JUMPING:
-        success = jump(op, dir);
-        break;
-      case SK_INSCRIPTION:
-        success = write_on_item(op,string);
-        break;
-      case SK_MEDITATION:
-        meditate(op);
-        break;
-	/* note that the following 'attack' skills gain exp through hit_player() */
-      case SK_KARATE:
-        (void) attack_hth(op,dir,"karate-chopped");
-        break;
-      case SK_BOXING:
-        (void) attack_hth(op,dir,"punched");
-        break;
-      case SK_FLAME_TOUCH:
-        (void) attack_hth(op,dir,"flamed");
-        break;
-      case SK_CLAWING:
-        (void) attack_hth(op,dir,"clawed");
-        break;
-      case SK_MELEE_WEAPON:
-        (void) attack_melee_weapon(op,dir,NULL);
-        break;
-      case SK_FIND_TRAPS:
-        success = find_traps(op);
-        break;
-      case SK_MUSIC:
-        success = singing(op,dir);
-        break;
-      case SK_ORATORY:
-        success = use_oratory(op,dir);
-        break;
-      case SK_SMITH:
-      case SK_BOWYER:
-      case SK_JEWELER:
-      case SK_ALCHEMY:
-      case SK_THAUMATURGY:
-      case SK_LITERACY:
-      case SK_WOODSMAN:
-	  /* first, we try to find a cauldron, and do the alchemy thing.
-	     failing that, we go and identify stuff. */
-	  for (y=op->y-1; y <= op->y+1; y++) {
-	      for (x=op->x-1; x <= op->x+1; x++) {
-		  if (out_of_map(op->map, x, y) || wall(op->map, x, y) ||
-		      blocks_view(op->map, x, y))
-		      continue;
-		  for (tmp=get_map_ob(op->map, x, y); tmp != NULL; tmp=next) {
-		      next=tmp->above;
-		      if(QUERY_FLAG(tmp, FLAG_IS_CAULDRON)) {
-			  attempt_do_alchemy(op, tmp);
-			  did_alc=1;
-			  continue;
-		      }
-		  }
-	      }
-	  }
-	  if (did_alc == 0)
-	      success = skill_ident(op);
-	  break;
-      case SK_DET_MAGIC:
-      case SK_DET_CURSE:
-	success = skill_ident(op);
-	break;
-      case SK_REMOVE_TRAP:
-        success = remove_trap(op,dir);
-        break;
-      case SK_THROWING:
-	success = skill_throw(op,dir,string);
-	break;
+	case SK_LEVITATION:
+	    if(QUERY_FLAG(op,FLAG_FLYING)) { 
+		CLEAR_FLAG(op,FLAG_FLYING);
+		new_draw_info(NDI_UNIQUE,0,op,"You come to earth.");
+	    }
+	    else {
+		SET_FLAG(op,FLAG_FLYING);
+		new_draw_info(NDI_UNIQUE,0,op,"You rise into the air!.");
+	    }
+	    success=1;
+	    break;
 
-      case SK_SET_TRAP:
-           new_draw_info(NDI_UNIQUE, 0,op,"This skill is not currently implemented.");
-        break;
-      case SK_USE_MAGIC_ITEM:
-      case SK_MISSILE_WEAPON:
-           new_draw_info(NDI_UNIQUE, 0,op,"There is no special attack for this skill.");
-        break;
-      case SK_PRAYING:
-	success = pray(op);
-	break;
-      case SK_SPELL_CASTING:
-      case SK_CLIMBING:
-      case SK_BARGAINING:
-           new_draw_info(NDI_UNIQUE, 0,op,"This skill is already in effect.");
-        break;
-      default:
-        LOG(llevDebug,"%s attempted to use unknown skill: %d\n"
+	case SK_STEALING:
+	    exp = success = steal(op, dir);
+	    break;
+
+	case SK_LOCKPICKING:
+	    exp = success = pick_lock(op, dir);
+	    break;
+
+	case SK_HIDING:
+	    exp = success = hide(op);
+	    break;
+
+	case SK_JUMPING:
+	    success = jump(op, dir);
+	    break;
+
+	case SK_INSCRIPTION:
+	    exp = success = write_on_item(op,string);
+	    break;
+
+	case SK_MEDITATION:
+	    meditate(op);
+	    success=1;
+	    break;
+	    /* note that the following 'attack' skills gain exp through hit_player() */
+
+	case SK_KARATE:
+	    (void) attack_hth(op,dir,"karate-chopped");
+	    break;
+
+	case SK_BOXING:
+	    (void) attack_hth(op,dir,"punched");
+	    break;
+
+	case SK_FLAME_TOUCH:
+	    (void) attack_hth(op,dir,"flamed");
+	    break;
+
+	case SK_CLAWING:
+	    (void) attack_hth(op,dir,"clawed");
+	    break;
+
+	case SK_MELEE_WEAPON:
+	    (void) attack_melee_weapon(op,dir,NULL);
+	    break;
+
+	case SK_FIND_TRAPS:
+	    exp = success = find_traps(op);
+	    break;
+
+	case SK_MUSIC:
+	    exp = success = singing(op,dir);
+	    break;
+
+	case SK_ORATORY:
+	    exp = success = use_oratory(op,dir);
+	    break;
+
+	case SK_SMITH:
+	case SK_BOWYER:
+	case SK_JEWELER:
+	case SK_ALCHEMY:
+	case SK_THAUMATURGY:
+	case SK_LITERACY:
+	case SK_WOODSMAN:
+	    /* first, we try to find a cauldron, and do the alchemy thing.
+	     * failing that, we go and identify stuff. 
+	     */
+	    for (y=op->y-1; y <= op->y+1; y++) {
+		for (x=op->x-1; x <= op->x+1; x++) {
+		    if (out_of_map(op->map, x, y) || wall(op->map, x, y) ||
+			blocks_view(op->map, x, y))
+			continue;
+		    for (tmp=get_map_ob(op->map, x, y); tmp != NULL; tmp=next) {
+			next=tmp->above;
+			if(QUERY_FLAG(tmp, FLAG_IS_CAULDRON)) {
+			    attempt_do_alchemy(op, tmp);
+			    did_alc=1;
+			    continue;
+			}
+		    }
+		}
+	    }
+	    if (did_alc == 0)
+		exp = success = skill_ident(op);
+	    break;
+
+	case SK_DET_MAGIC:
+	case SK_DET_CURSE:
+	    exp = success = skill_ident(op);
+	    break;
+
+	case SK_REMOVE_TRAP:
+	    exp = success = remove_trap(op,dir);
+	    break;
+
+	case SK_THROWING:
+	    success = skill_throw(op,part,dir,string);
+	    break;
+
+	case SK_SET_TRAP:
+	    new_draw_info(NDI_UNIQUE, 0,op,"This skill is not currently implemented.");
+	    break;
+
+	case SK_USE_MAGIC_ITEM:
+	case SK_MISSILE_WEAPON:
+	    new_draw_info(NDI_UNIQUE, 0,op,"There is no special attack for this skill.");
+	    break;
+
+	case SK_PRAYING:
+	    success = pray(op);
+	    break;
+
+	case SK_SPELL_CASTING:
+	case SK_CLIMBING:
+	case SK_BARGAINING:
+	    new_draw_info(NDI_UNIQUE, 0,op,"This skill is already in effect.");
+	    break;
+
+	default:
+	    LOG(llevDebug,"%s attempted to use unknown skill: %d\n"
                 ,query_name(op), op->chosen_skill->stats.sp);
-        break;
+	    break;
     }
- 
-   /* For players we now update the speed_left from using the skill. 
-    * Monsters have no skill use time because of the random nature in 
-    * which use_monster_skill is called already simulates this. -b.t.
-    */
 
+    /* For players we now update the speed_left from using the skill. 
+     * Monsters have no skill use time because of the random nature in 
+     * which use_monster_skill is called already simulates this. -b.t.
+     */
+    
     if(op->type==PLAYER) op->speed_left -= get_skill_time(op,skill);
 
-   /* this is a good place to add experience for successfull use of skills.
-    * Note that add_exp() will figure out player/monster experience
-    * gain problems.
-    */
+    /* this is a good place to add experience for successfull use of skills.
+     * Note that add_exp() will figure out player/monster experience
+     * gain problems.
+     */
  
-    if(success&&skills[skill].category!=EXP_NONE) add_exp(op,success);
+    if(success&&skills[skill].category!=EXP_NONE) add_exp(op,exp);
             
     return success;
 }
@@ -1204,7 +1228,7 @@ int use_skill(object *op, char *string) {
 
    /* Change to the new skill, then execute it. */
    if(change_skill(op,sknum))
-	if(do_skill(op,op->facing,string)) return 1;
+	if(do_skill(op,op,op->facing,string)) return 1;
  
     return 0;
 }

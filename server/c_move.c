@@ -114,7 +114,7 @@ int command_search (object *op, char *params) {
    if(!change_skill(op,SK_FIND_TRAPS))
         return 0;
    else {
-        int success = do_skill(op,0,NULL);
+        int success = do_skill(op,op,0,NULL);
         return success;
    }
 }
@@ -123,7 +123,7 @@ int command_disarm (object *op, char *params) {
    if(!change_skill(op,SK_REMOVE_TRAP)) 
         return 0;
    else {
-        int success = do_skill(op,0,NULL); 
+        int success = do_skill(op,op,0,NULL); 
         return success;
    }
 }

@@ -366,7 +366,7 @@ int command_throw (object *op, char *params)
    if(!change_skill(op,SK_THROWING))
         return 0;
    else {
-        int success = do_skill(op,op->facing,params);
+        int success = do_skill(op,op,op->facing,params);
         return success;
    }
 }

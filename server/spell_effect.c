@@ -42,8 +42,6 @@ extern object *objects;
  * spell_failure()  handles the various effects for differing degrees
  * of failure badness.
  */
-/* Might be a better way to do this, but this should work */
-#define ISQRT(val) ((int)sqrt((double) val))
 
 void spell_failure(object *op, int failure,int power)
 {  
@@ -81,9 +79,9 @@ void spell_failure(object *op, int failure,int power)
 	    tmp->x=op->x;tmp->y=op->y;
 
 	    /* increase the area of destruction a little for more powerful spells */
-	    tmp->stats.hp+=ISQRT(power);
+	    tmp->stats.hp+=isqrt(power);
 
-	    if (power>25) tmp->stats.dam = 25 + ISQRT(power);
+	    if (power>25) tmp->stats.dam = 25 + isqrt(power);
 	    else tmp->stats.dam=power; /* nasty recoils! */
 
 	    tmp->stats.maxhp=tmp->count; /*??*/

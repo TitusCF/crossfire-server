@@ -764,6 +764,7 @@ void fix_player(object *op) {
 	op->contr->gen_sp = 0;
 	op->contr->gen_grace = 0;
 	op->contr->gen_sp_armour = 10;
+	op->contr->item_power = 0;
 	for (i=0; i < range_size; i++)
 	    op->contr->ranges[i] = NULL;
     }

@@ -624,14 +624,19 @@ static void add_shop_item(object *tmp, shopinv *items, int *numitems, int *numal
 
     CLEAR_FLAG(tmp, FLAG_UNPAID);
     items[*numitems].nrof=tmp->nrof;
+    /* Non mergable items have nrof of 0, but count them as one
+     * so the display is properly.
+     */
+    if (tmp->nrof == 0) items[*numitems].nrof++;
     items[*numitems].type=tmp->type;
 
     switch (tmp->type) {
+#if 0
+	case BOOTS:
+	case GLOVES:
 	case RING:
 	case AMULET:
 	case BRACERS:
-	case BOOTS:
-	case GLOVES:
 	case GIRDLE:
 	    sprintf(buf,"%s %s",query_base_name(tmp,0),describe_item(tmp, NULL));
 	    items[*numitems].item_sort = strdup_local(buf);
@@ -639,10 +644,11 @@ static void add_shop_item(object *tmp, shopinv *items, int *numitems, int *numal
 	    items[*numitems].item_real = strdup_local(buf);
 	    (*numitems)++;
 	    break;
+#endif
 
 	default:
 	    items[*numitems].item_sort = strdup_local(query_base_name(tmp, 0));
-	    items[*numitems].item_real = strdup_local(query_name(tmp));
+	    items[*numitems].item_real = strdup_local(query_base_name(tmp, 1));
 	    (*numitems)++;
 	    break;
     }
@@ -694,9 +700,18 @@ void shop_listing(object *op)
     qsort(items, numitems, sizeof(shopinv), (int (*)())shop_sort);
 
     for (i=0; i<numitems; i++) {
-	new_draw_info(NDI_UNIQUE, 0, op, items[i].item_real);
-	free(items[i].item_sort);
-	free(items[i].item_real);
+	/* Collapse items of the same name together */
+	if ((i+1)<numitems && !strcmp(items[i].item_real, items[i+1].item_real)) {
+	    items[i+1].nrof += items[i].nrof;
+	    free(items[i].item_sort);
+	    free(items[i].item_real);
+	} else {
+	    new_draw_info_format(NDI_UNIQUE, 0, op, "%d %s", 
+				 items[i].nrof? items[i].nrof:1,
+			 items[i].nrof==1?items[i].item_sort: items[i].item_real);
+	    free(items[i].item_sort);
+	    free(items[i].item_real);
+	}
     }
     free(items);
 }
