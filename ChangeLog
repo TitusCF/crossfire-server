@@ -17,6 +17,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/spell_attack.c: change check_cone_push function to use arch weights.
+move function up for resuability and change to check_spell_knockback
+include/sproto.h: change function name
+TM 2004-02-28
+
+
 common/image.c: removed unused variables.
 common/item.c: conditionally remove unused variables.
 common/map.c: conditionally define variables, unused under Windows.

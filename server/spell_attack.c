@@ -41,7 +41,57 @@
 #include <spells.h>
 #include <sounds.h>
 
+/* this function checks to see if a spell pushes objects as well
+ * as flies over and damages them (only used for cones for now)
+ * but moved here so it could be applied to bolts too
+ * op is the spell object.
+ */
 
+void check_spell_knockback(object *op) {
+    object *tmp, *tmp2; /* object on the map */
+    int weight_move;
+
+	if(! op->weight) { /*shouldn't happen but if cone object has no weight drop out*/
+		/*LOG (llevDebug, "DEBUG: arch weighs nothing");*/
+		return;
+	}else{
+	   weight_move = op->weight +(op->weight * op->level) / 3;
+	   /*LOG (llevDebug, "DEBUG: arch weighs %d and masses %d (%s,level %d)\n", op->weight,weight_move,op->name,op->level);*/
+	}
+	
+    for(tmp=get_map_ob(op->map,op->x,op->y);tmp!=NULL;tmp=tmp->above)
+    { 
+	int num_sections = 1;
+
+	/* don't move parts of objects */
+	if(tmp->head) continue;
+
+	/* don't move floors or immobile objects */
+	if(QUERY_FLAG(tmp,FLAG_IS_FLOOR)||(!QUERY_FLAG(tmp,FLAG_ALIVE)&&QUERY_FLAG(tmp,FLAG_NO_PICK))) continue;
+
+	/* count the object's sections */
+	for(tmp2 = tmp; tmp2!=NULL;tmp2=tmp2->more) num_sections++;
+
+	/* I'm not sure if it makes sense to divide by num_sections - bigger
+	 * objects should be harder to move, and we are moving the entire
+	 * object, not just the head, so the total weight should be relevant.
+	 */
+	
+	 /* surface area? -tm */
+	
+	if(rndm(0, weight_move-1) > tmp->weight/num_sections) {  /* move it. */
+	    /* move_object is really for monsters, but looking at 
+	     * the move_object function, it appears that it should
+	     * also be safe for objects.
+	     * This does return if successful or not, but
+	     * I don't see us doing anything useful with that information
+	     * right now.
+	     */
+	    move_object(tmp, absdir(op->stats.sp));
+	}
+
+    }
+}
 
 /***************************************************************************
  *
@@ -112,7 +162,7 @@ void move_bolt(object *op) {
 	return;
     }
     hit_map(op,0,op->attacktype);
-
+	
     if(!op->direction)
 	return;
 
@@ -580,48 +630,6 @@ int fire_bullet(object *op,object *caster,int dir,object *spob) {
  *****************************************************************************/
 
 
-/* this function checks to see if the cone pushes objects as well
- * as flies over and damages them 
- * op is the cone object.
- */
-
-void check_cone_push(object *op) {
-    object *tmp, *tmp2; /* object on the map */
-    int weight_move;
-
-    weight_move = 1000 + 1000 * op->level;
-
-    for(tmp=get_map_ob(op->map,op->x,op->y);tmp!=NULL;tmp=tmp->above)
-    { 
-	int num_sections = 1;
-
-	/* don't move parts of objects */
-	if(tmp->head) continue;
-
-	/* don't move floors or immobile objects */
-	if(QUERY_FLAG(tmp,FLAG_IS_FLOOR)||(!QUERY_FLAG(tmp,FLAG_ALIVE)&&QUERY_FLAG(tmp,FLAG_NO_PICK))) continue;
-
-	/* count the object's sections */
-	for(tmp2 = tmp; tmp2!=NULL;tmp2=tmp2->more) num_sections++;
-
-	/* I'm not sure if it makes sense to divide by num_sections - bigger
-	 * objects should be harder to move, and we are moving the entire
-	 * object, not just the head, so the total weight should be relevant.
-	 */
-	if(rndm(0, weight_move-1) > tmp->weight/num_sections) {  /* move it. */
-	    /* move_object is really for monsters, but looking at 
-	     * the move_object function, it appears that it should
-	     * also be safe for objects.
-	     * This does return if successful or not, but
-	     * I don't see us doing anything useful with that information
-	     * right now.
-	     */
-	    move_object(tmp, absdir(op->stats.sp));
-	}
-
-    }
-}
-
 /* drops an object based on what is in the cone's "other_arch" */
 void cone_drop(object *op) {
     object *new_ob = arch_to_object(op->other_arch);
@@ -677,10 +685,10 @@ void move_cone(object *op) {
     hit_map(op,0,op->attacktype);
 
     /* Check to see if we should push anything.
-     * Cones with AT_PHYSICAL push whatever is in them to some
+     * Spell objects with weight push whatever they encounter to some
      * degree.  
      */
-    if(op->attacktype & AT_PHYSICAL) check_cone_push(op);
+    if(op->weight) check_spell_knockback(op);
 
     if (was_destroyed (op, tag))
         return;

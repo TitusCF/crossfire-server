@@ -666,7 +666,7 @@ void explode_bullet(object *op);
 void check_bullet(object *op);
 void move_bullet(object *op);
 int fire_bullet(object *op, object *caster, int dir, object *spob);
-void check_cone_push(object *op);
+void check_spell_knockback(object *op);
 void cone_drop(object *op);
 void move_cone(object *op);
 int cast_cone(object *op, object *caster, int dir, object *spell);
