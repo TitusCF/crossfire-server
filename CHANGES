@@ -17,6 +17,18 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+common/map.c: load_map_header: If the map message is empty, don't copy
+    uninitialized data as the message.  This fixes various crashes.
+lib/Makefile.in: Remove the adm/*xpm* utilities, as they are no longer
+    needed or distributed.
+server/apply.c: set the player speed to zero after they use a savebed.
+    Fixes crashes with players that have constant image animation (fireborns)
+    when they apply the savebed and the map then gets swapped out.
+server/plugins.c: Fix some serious memory leaks.  Some still remain, with
+    my comments included.
+server/skills.c: Removed unused variable.
+MSW 2002-02-05
+
 include/player.h include/sproto.h server/c_chat.c server/player.c:
    New player command 'reply', replies to the last person who told you
    something.

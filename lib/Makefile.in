@@ -4,8 +4,8 @@
 # This file will eventually be replaced by a configure script.  But for
 # now, this simple makefile should do the job.
 #
+#   Copyright (C) 2001 Mark Wedel & Crossfire Development Team
 #   Copyright (C) 1992 Frank Tore Johansen
-#   Copyright (C) 2001 Mark Wedel
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 #   along with this program; if not, write to the Free Software
 #   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #
-#   The author can be reached via e-mail to mwedel@scruz.net
+#   The authors can be reached via e-mail to crossfire-devel@real-time.com
 
 VPATH = @srcdir@
 srcdir = @srcdir@
@@ -78,8 +78,7 @@ FILES_WIZHELP = $(srcdir)/wizhelp/abil $(srcdir)/wizhelp/addexp \
 	$(srcdir)/wizhelp/who $(srcdir)/wizhelp/wizhelp \
 	$(srcdir)/wizhelp/wizpass
 
-FILES_ADM = adm/README adm/check-xpm.pl adm/dilate_xpm_files \
-	adm/fix_xpm_colors adm/make_xpm_file.pl adm/map_check \
+FILES_ADM = adm/README adm/map_check \
 	adm/map_info adm/map_expand.pl adm/mapslitter.pl adm/archsearch.pl \
 	adm/collect_images.pl
 

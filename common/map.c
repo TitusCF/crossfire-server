@@ -785,7 +785,13 @@ static int load_map_header(FILE *fp, mapstruct *m)
 		    msgpos += strlen(buf);
 		}
 	    }
-	    m->msg = strdup_local(msgbuf);
+	    /* There are lots of maps that have empty messages (eg, msg/endmsg
+	     * with nothing between).  There is no reason in those cases to
+             * keep the empty message.  Also, msgbuf contains garbage data
+	     * when msgpos is zero, so copying it results in crashes
+	     */
+	    if (msgpos != 0)
+		m->msg = strdup_local(msgbuf);
 	} 
 	/* first strcmp value on these are old names supported
 	 * for compatibility reasons.  The new values (second) are
