@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+common/loader.l: Fix passed size in FAST_SAVE_LONG() - was one too long,
+   causing truncated diffs after "dam_modifier" entry.
+Andreas Kirschbaum 2004-11-15
+
 This commit adds the functionality of patch 991916, although the patch
 as submitted was used as a baseline to start from.
 include/sproto.h: rebuilt
