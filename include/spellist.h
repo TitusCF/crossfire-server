@@ -352,7 +352,7 @@ PATH_TURNING,"holy_orb",},
  PATH_SUMMON,"insect_plague",}, 
 {"call holy servant",	  	  5, 30,   0,  5, 0, 0, 3,  1, 0, 1, 0,
  PATH_SUMMON, "holy_servant",}, 
-{"wall of thorns",	  	  6, 20,   0, 5, 0, 0, 0,  1, 0, 1, 0,
+{"wall of thorns",	  	  6, 20,   0, 5, 0, 0, 0,  0, 0, 1, 0,
  PATH_CREATE, "thorns"}, 
 {"staff to snake",	  	  2, 8,   0, 5, 0, 0, 1,  1, 0, 1, 0,
  PATH_CREATE, "snake_golem"},
@@ -364,7 +364,7 @@ PATH_TURNING,"holy_orb",},
  PATH_LIGHT, NULL},
 {"daylight",            	18, 120,  0, 15, 0, 0, 0,  1, 0, 1, 0,
   PATH_LIGHT, NULL},                                            /* 160 */
-{"sunspear",                    6, 8, 35, 8, 0, 0,  1,  1, 0, 0, 0,
+{"sunspear",                    6, 8, 35, 8, 0, 0,  0,  1, 0, 1, 0,
  PATH_LIGHT, "sunspear"},
 {"faery fire",                	4, 10,  0, 15, 3, 2, 2,  1, 0, 0, 0,
  PATH_LIGHT, NULL},
@@ -654,7 +654,7 @@ spell_parameters SP_PARAMETERS[NROFREALSPELLS] =
 {	2,	20,	2,	1,	10},	/* dancing sword */     /* 185 */ 
 {	2,	20,	2,	1,	20},	/* animate weapon */
 {   0,       0,     3,      5,		10},	/*cause cold*/      
-{   1,      1,     4,      1,		4},	/*divine shock*/      
+{   1,      1,     9,      1,		9},	/*divine shock*/      
 {   0,      20,     25,      4,		8},	/*windstorm*/      
 {   0,     100,      0,      1,		20},	/*sanctuary*/    /* 190 */     
 {   0,      4,       0,      9,		36},	/*peace*/      
@@ -666,7 +666,7 @@ spell_parameters SP_PARAMETERS[NROFREALSPELLS] =
 {   6,      100,     25,      4,	20},	/*flame aura*/      
 {   100,    20,     25,      4,		6},	/*vitriol*/      
 {   40,      5,      4,      40,	10},	/*vitriol splash*/        
-{   0,      0,      5,      4,		6}	/*armour*/               
+{   0,      0,      5,      4,		6}	/*ironwood skin*/ 
 };
 
 char *spellpathnames[NRSPELLPATHS] = {
