@@ -704,17 +704,6 @@ int key_change_class(object *op, char key)
 	(void) link_player_skills(op);
 #endif
 	esrv_send_inventory(op, op);
-	{
-	  object *WoR = get_archetype("force");
-	  WoR->speed = .5;
-	  WoR->speed_left = -1;
-	  WoR->type = WORD_OF_RECALL;
-	  WoR->stats.hp = 1;
-	  EXIT_PATH(WoR) = add_string("/HallOfSelection");
-	  EXIT_X(WoR) = 1;
-	  EXIT_Y(WoR) = 1; 
-	  insert_ob_in_ob(WoR,op);
-	}
 	return 0;
     }
 
