@@ -56,6 +56,12 @@ region *get_region_by_name(char *region_name) {
     LOG(llevInfo,"Got no region or fallback for region %s.\n", region_name);
     return NULL;
 }
+
+/* This might need optimising at some point. */
+region *get_region_by_map(mapstruct *m) {
+	return get_region_by_name(get_name_of_region_for_map(m));
+}
+
 /*
  * Since we won't assume all maps have a region set properly, we need an
  * explicit check that it is, this is much nicer here than scattered throughout
@@ -70,6 +76,82 @@ char *get_name_of_region_for_map(mapstruct  *m) {
 	}
   	LOG(llevInfo,"map %s had no region and I couldn't find a fallback to use.\n", m->name);
 	return "unknown";
+}
+
+/*
+ * Tries to find a region that 'name' corresponds to.
+ * It looks, in order, for:
+ * an exact match to region name (case insensitive)
+ * an exact match to longname (case insensitive)
+ * a substring that matches to the longname (eg Kingdom)
+ * a substring that matches to the region name (eg nav)
+ * if it can find none of these it returns the first parentless region 
+ * (there should be only one of these - the top level one)
+ * If we got a NULL, then just return the top level region
+ * 
+ */
+region *get_region_from_string(char *name) {
+    region *reg;
+    char *substr;
+    sint16 i;
+    
+    if (name==NULL) {
+    	for (reg=first_region;reg->parent!=NULL;reg=reg->parent);
+    	return reg;
+    }
+    char *p = strchr(name, '\n');
+    if (p) *p = '\0';
+    for (reg=first_region;reg!=NULL;reg=reg->next)
+	if (!strcasecmp(reg->name, name)) return reg;
+    
+    for (reg=first_region;reg!=NULL;reg=reg->next)
+    	if (reg->longname != NULL) {
+	    if (!strcasecmp(reg->longname, name)) return reg;
+	}
+    
+    substr=NULL;
+    for (reg=first_region;reg!=NULL;reg=reg->next)
+    	if (reg->longname != NULL) {
+    	    substr=strstr(reg->longname, name);
+	    if (substr != NULL) return reg;
+	}
+    for (reg=first_region;reg!=NULL;reg=reg->next)
+    	if (reg->longname != NULL) { 
+	/* 
+	 * This is not a bug, we want the region that is  most identifiably a discrete 
+	 * area in the game, eg if we have 'scor', we want to return 'scorn' and not 
+	 * 'scornarena', regardless of their order on the list so we only look at those 
+	 * regions with a longname set.
+	 */
+    	    substr=strstr(reg->name, name);
+	    if (substr != NULL) return reg;
+	}
+    for (reg=first_region;reg!=NULL;reg=reg->next) { 
+    	    substr=strstr(reg->name, name);
+	    if (substr != NULL) return reg;
+    }
+    /* if we are still here, we are going to have to give up, and give the top level region */
+    for (reg=first_region;reg->parent!=NULL;reg=reg->parent);
+    return reg;
+}
+
+/* 
+ * returns 1 if the player is in the region reg, or a child region thereof
+ * otherwise returns 0
+ * if passed a NULL region returns -1
+ */
+
+int region_is_child_of_region(region *child, region *r) {
+    
+    if (r==NULL)
+    	return -1; 
+    if (child == NULL)
+	return 0;
+    if (!strcmp(child->name, r->name))
+	return 1;
+    else if(child->parent!=NULL)
+    	return region_is_child_of_region(child->parent,r);	
+    else return 0;
 }
 
 /* 

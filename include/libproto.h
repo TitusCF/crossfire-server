@@ -345,8 +345,11 @@ extern recipe *get_random_recipe(recipelist *rpl);
 extern void free_all_recipes(void);
 /* region.c */
 extern char *get_region_longname(region *r);
+extern int region_is_child_of_region(region *child, region *r);
+extern region *get_region_from_string(char *name);
 extern char *get_region_msg(region *r);
 extern region *get_region_by_name(char *region_name);
+extern region *get_region_by_map(mapstruct *m);
 extern char *get_name_of_region_for_map(mapstruct *m);
 extern void parse_regions();
 extern void init_regions();

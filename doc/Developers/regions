@@ -1,7 +1,5 @@
 Included herein is a description of the Region system, as implemented in March 2005.
 
-Revision 0.1.1 - BT Lally.
-
 If by the time you read this, this date is old, then this file may not have been kept
 up to date, either that or no relevant changes have occurred, the Changelog should help
 you determine which is the case.
@@ -153,6 +151,16 @@ extern region *get_region_by_name(char *region_name);
 	given a name returns the region with that name, or the fallback if there isn't one.
 	Used by the map loader and stuff using get_name_of_region_for_map at the moment.
 	
+extern int region_is_child_of_region(region *child, region *r);
+	1 if the child is a subregion of r
+	0 otherwise
+
+extern region *get_region_from_string(char *name);
+	tries to guess which region 'name' corresponds to
+
+extern region *get_region_by_map(mapstruct *m);
+	takes a map returns the region it is in.
+
 extern char *get_name_of_region_for_map(mapstruct *m);
 	takes a map and returns the name of the region it is in.
 	
@@ -178,10 +186,12 @@ The command mapinfo now returns the region name (not longname, but what is inclu
 
 There is a command whereami that prints the regions name and description.
 
+who can be given regions as arguments, and only show the players in that region.
+
 *****Known/suspected bugs*****
 
-Random maps probably don't get their regions set properly (haven't tried to verify this, not least
-because I am not even sure what 'properly' should be).
+Random maps probably don't get their regions set properly (though I am not quite sure what
+ 'properly' should be here).
 
 The region parser is not particularly robust, it dies if the 'endmsg' line is missing, 
 or if 'nomore' is missing, or if the 'end' line is missing. These stop the server from
@@ -192,9 +202,6 @@ starting, if it starts, it should be fine afterwards.
 short term:
 
 whereiseverybody command, showing region and the number of players there.
-
-modify who command so that PK servers can elect to show only region to other players
-(making it more challenging to hunt other players).
 
 medium term:
 

@@ -268,7 +268,8 @@ int name_cmp (chars_names *c1, chars_names *c2)
 int command_who (object *op, char *params) {
     player *pl;
     uint16 i;
-    char tmpbuf[HUGE_BUF];
+    region *reg;
+    char* format;
     int num_players = 0;
     int num_wiz = 0;
     int num_afk = 0;
@@ -285,70 +286,79 @@ int command_who (object *op, char *params) {
     	strcpy(settings.who_format, "%N_the_%t%h%d%n[%m]");
     if (!strcmp(settings.who_wiz_format,"")) 
     	strcpy(settings.who_wiz_format, "%N_the_%t%h%d%nLevel %l [%m](@%i)(%c)");
+    if (op == NULL || QUERY_FLAG(op, FLAG_WIZ))
+    	format=settings.who_wiz_format;
+    else
+    	format=settings.who_format;
 
-    for(pl=first_player;pl!=NULL;pl=pl->next) {
-	if(pl->ob->map == NULL)
+    reg=get_region_from_string(params);
+    
+    for (pl=first_player;pl!=NULL;pl=pl->next) {
+	if (pl->ob->map == NULL)
 	    continue;
 	if (pl->hidden && !QUERY_FLAG(op, FLAG_WIZ)) continue;
+	
+	if(!region_is_child_of_region(get_region_by_map(pl->ob->map),reg)) continue;
 
 	if (pl->state==ST_PLAYING || pl->state==ST_GET_PARTY_PASSWORD) {
 
 	    num_players++;
 	    chars = (chars_names *) realloc(chars, num_players*sizeof(chars_names));
-            if (chars == NULL)
-	    {
+            if (chars == NULL) {
 	        new_draw_info(NDI_UNIQUE, 0, op, "who failed - out of memory!");
                 return 0;
             } 
-	    sprintf(chars[num_players-1].namebuf, "");
+	    sprintf(chars[num_players-1].namebuf, "%s", pl->ob->name);
 	    chars[num_players-1].login_order = num_players;
 	    /*Check for WIZ's & AFK's*/
 	    if (QUERY_FLAG(pl->ob,FLAG_WIZ))
 	      num_wiz++;
 	    if (QUERY_FLAG(pl->ob,FLAG_AFK))
 	      num_afk++;
-	    if (op == NULL || QUERY_FLAG(op, FLAG_WIZ)) {
-		for (i=0;i<=strlen(settings.who_wiz_format);i++) {
-		    if (settings.who_wiz_format[i]=='%') {
-			i++;
-			get_who_escape_code_value(tmpbuf,settings.who_wiz_format[i],pl);
-			strcat(chars[num_players-1].namebuf, tmpbuf);
-		    }
-		    else if (settings.who_wiz_format[i]=='_')
-			strcat(chars[num_players-1].namebuf," "); /* allow '_' to be used in place of spaces */
-		    else {
-			sprintf(tmpbuf,"%c",settings.who_wiz_format[i]);
-			strcat(chars[num_players-1].namebuf,tmpbuf);
-		    }
-		}
-	    }
-	    else {
-		for (i=0;i<=strlen(settings.who_format);i++) {
-		    if (settings.who_format[i]=='%') {
-			i++;
-			get_who_escape_code_value(tmpbuf,settings.who_format[i],pl);
-			strcat(chars[num_players-1].namebuf, tmpbuf);
-		    }
-		    else if (settings.who_format[i]=='_')
-		    	strcat(chars[num_players-1].namebuf," "); /* allow '_' to be used in place of spaces */
-		    else {
-			sprintf(tmpbuf,"%c",settings.who_format[i]);
-			strcat(chars[num_players-1].namebuf,tmpbuf);
-		    }
-		}
-	    }	    
 	}
     }
-    if (first_player != (player *) NULL)
-    {
-      sprintf(players_str, "Total Players (%d) -- WIZ(%d) AFK(%d)", num_players, num_wiz, num_afk);
-      new_draw_info(NDI_UNIQUE, 0, op, players_str);
+    if (first_player != (player *) NULL) {
+    	if (reg == NULL) 
+            new_draw_info_format(NDI_UNIQUE, 0, op, "Total Players (%d) -- WIZ(%d) AFK(%d)", 
+      	    	num_players, num_wiz, num_afk);
+	else if (reg->longname == NULL)
+	    new_draw_info_format(NDI_UNIQUE, 0, op, "Total Players in %s (%d) -- WIZ(%d) AFK(%d)", 
+      	    	reg->name, num_players, num_wiz, num_afk);
+	else
+	    new_draw_info_format(NDI_UNIQUE, 0, op, "Total Players in %s (%d) -- WIZ(%d) AFK(%d)", 
+      	    	reg->longname, num_players, num_wiz, num_afk);
     }
     qsort (chars, num_players, sizeof(chars_names), name_cmp);
     for (i=0;i<num_players;i++)
-	new_draw_info(NDI_UNIQUE, 0, op, chars[i].namebuf);
-    free (chars);    
+	display_who_entry(op, find_player(chars[i].namebuf), format);
+    free(chars);    
     return 1;
+}
+
+/* Display a line of 'who' to op, about pl, using the formatting specified by format */
+void display_who_entry(object *op, player *pl, char *format) {
+    char tmpbuf[MAX_BUF];
+    char outbuf[MAX_BUF];
+    sint16 i;
+    outbuf[0]='\0'; /* we strcat to this, so reset it here. */
+    if (pl==NULL) {
+    	LOG(llevError,"display_who_entry(): I was passed a null player");
+	return;
+    }
+    for (i=0;i<=strlen(format);i++) {
+        if (format[i]=='%') {
+            i++;
+            get_who_escape_code_value(tmpbuf,format[i],pl);
+            strcat(outbuf, tmpbuf);
+        }
+        else if (format[i]=='_')
+            strcat(outbuf," "); /* allow '_' to be used in place of spaces */
+        else {
+            sprintf(tmpbuf,"%c",format[i]);
+            strcat(outbuf,tmpbuf);
+        }
+    }
+    new_draw_info(NDI_UNIQUE, 0, op, outbuf);
 }
 
 /* Returns the value of the escape code used in the who format specifier

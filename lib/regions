@@ -11,7 +11,7 @@ verified, though the few who have tried have taken a long time in doing so....
 endmsg
 end
 region world
-longname Somewhere in the world.
+longname The World.
 msg
 If you are seeing this, someone goofed, you should never see this message.
 endmsg
@@ -158,6 +158,13 @@ msg
 Describe Port Joesph
 endmsg
 end
+region pupland
+parent world
+longname Pupland
+msg
+Describe pupland
+endmsg
+end
 region ancientpupland
 parent pupland
 longname Pupland of Times Long Past
@@ -169,13 +176,6 @@ region nurnberg
 parent pupland
 msg
 Describe Nurnberg
-endmsg
-end
-region pupland
-parent world
-longname Pupland
-msg
-Describe pupland
 endmsg
 end
 region lonetown
