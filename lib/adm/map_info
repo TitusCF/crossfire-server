@@ -310,6 +310,7 @@ sub maplist {
     while ($file = readdir (DIR)) {
 	next if ($file eq "." || $file eq ".." || $file eq "CVS");
 	$file = "$dir/$file";
+	next if (-l $file);
 	push (@dirs, $file) if (-d $file);
 	push (@maps, $file) if (-f $file);
     }

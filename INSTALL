@@ -51,9 +51,13 @@ the 'x.y' format.
    at the output and note any errors - if you get errors during the
    configure stage, there is little point in going further
 
+   If you want the python plugin support, you will likely need to
+   add the --with-includes=/usr/include/pythonX.Y, where X.Y will vary
+   depending on the version of python installed on your system.
+
 3) Run 'make depend'.  This should prevent any inconsistent data and
    cause proper remakes if you change the config.h file or re-run
-   configure.
+   configure.  It may spew various warnings - these can be ignored.
 
 4) Edit include/config.h.
    Most options should be fairly well commented.

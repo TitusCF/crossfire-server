@@ -594,43 +594,57 @@ int probe(object *op, int dir) {
   return 1;
 }
 
+/* Makes the player or character invisible.
+ * Note the spells to 'stack', but perhaps in odd ways.
+ * the duration for all is cumulative.
+ * In terms of invis undead/normal invis, it is the last one cast that
+ * will determine if you are invisible to undead or normal monsters.
+ * For improved invis, if you cast it with a one of the others, you
+ * lose the improved part of it, and the above statement about undead/
+ * normal applies.
+ */
 int cast_invisible(object *op, object *caster, int spell_type) {
-  object *tmp;
+    object *tmp;
 
-  if(op->invisible>1000) {
-    new_draw_info(NDI_UNIQUE, 0,op,"You are already as invisible as you can get.");
-    return 0;
-  }
-  switch(spell_type) {
-  case SP_INVIS:
-    CLEAR_FLAG(op, FLAG_UNDEAD);
-    op->invisible+=SP_PARAMETERS[spell_type].bdur;  /* set the base */
-    op->invisible+=SP_PARAMETERS[spell_type].ldam *
-                  SP_level_strength_adjust(op,caster,spell_type);  /*  set the level bonus */
-    if(op->type==PLAYER)
-      op->contr->tmp_invis=1;
-    break;
-  case SP_INVIS_UNDEAD:
-    SET_FLAG(op, FLAG_UNDEAD);
-    op->invisible+=SP_PARAMETERS[spell_type].bdur;  /* set the base */
-    op->invisible+=SP_PARAMETERS[spell_type].ldam *
-                  SP_level_strength_adjust(op,caster,spell_type);  /*  set the level bonus */
+    if(op->invisible>1000) {
+	new_draw_info(NDI_UNIQUE, 0,op,"You are already as invisible as you can get.");
+	return 0;
+    }
 
-    if(op->type==PLAYER)
-      op->contr->tmp_invis=1;
-    break;
-  case SP_IMPROVED_INVIS:
+    /* Remove the switch with 90% duplicate code - just handle the differences with
+     * and if statement or two.
+     */
+    CLEAR_FLAG(op, FLAG_INVIS_UNDEAD);
     op->invisible+=SP_PARAMETERS[spell_type].bdur;  /* set the base */
     op->invisible+=SP_PARAMETERS[spell_type].ldam *
-                  SP_level_strength_adjust(op,caster,spell_type);  /*  set the level bonus */
-    break;
-  }
-  new_draw_info(NDI_UNIQUE, 0,op,"You can't see your hands!");
-  update_object(op,UP_OBJ_FACE);
-  for (tmp = objects; tmp != NULL; tmp = tmp->next)
-    if (tmp->enemy == op)
-      tmp->enemy = NULL;
-  return 1;
+	SP_level_strength_adjust(op,caster,spell_type);  /*  set the level bonus */
+
+    if (spell_type == SP_INVIS_UNDEAD) {
+	SET_FLAG(op, FLAG_INVIS_UNDEAD);
+	if(op->type==PLAYER)
+	    op->contr->tmp_invis=1;
+    } else if (spell_type == SP_INVIS) {
+	if(op->type==PLAYER)
+	    op->contr->tmp_invis=1;
+    }
+    /* Nothing special to be done for improved invis */
+
+    /* If we're to limit extending the duration above, we should
+     * make that a maximum for newly cast spells.
+     */
+    if(op->invisible>1000) op->invisible = 1000;
+	
+
+    new_draw_info(NDI_UNIQUE, 0,op,"You can't see your hands!");
+    update_object(op,UP_OBJ_FACE);
+
+    /* Only search the active objects - only these should actually do
+     * harm to the player.
+     */
+    for (tmp = active_objects; tmp != NULL; tmp = tmp->active_next)
+	if (tmp->enemy == op)
+	    tmp->enemy = NULL;
+    return 1;
 }
 
 

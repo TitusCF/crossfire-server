@@ -1779,9 +1779,11 @@ object *find_mon_throw_ob( object *op ) {
  * properly.  I also so odd code in place that checked for x distance
  * OR y distance being within some range - that seemed wrong - both should
  * be within the valid range. MSW 2001-08-05
+ * Returns 0 if enemy can not be detected, 1 if it is detected
  */
 
 int can_detect_enemy (object *op, object *enemy, rv_vector *rv) {
+    int radius = MIN_MON_RADIUS, hide_discovery;
 
     /* null detection for any of these condtions always */
     if(!op || !enemy || !op->map || !enemy->map)
@@ -1791,146 +1793,116 @@ int can_detect_enemy (object *op, object *enemy, rv_vector *rv) {
     if (!on_same_map(op, enemy))
         return 0;
 
-#if 0
-    /* this causes problems, dunno why.. */
-    /* are we trying to look through a wall? */ 
-    /* probably isn't safe for multipart maps either */
-    if(path_to_player(op->head?op->head:op,enemy,0)==0) return 0;
-#endif
-
     get_rangevector(op, enemy, rv, 0);
 
-    /* opponent is unseen? We still have a chance to find them if
-     * they are 1) standing in dark square, 2) hidden or 3) low-quality
-     * invisible (the basic invisibility spell).
+    /* simple check.  Should probably put some range checks in here. */
+    if(can_see_enemy(op,enemy)) return 1;
+
+    /* The rest of this is for monsters. Players are on their own for
+     * finding enemies!
      */
-    if(!can_see_enemy(op,enemy)) {
-	int radius = MIN_MON_RADIUS;
-	/* This is percentage change of being discovered while standing
-	 * *adjacent* to the monster */
-	int hide_discovery = enemy->hide?op->stats.Int/5:-1;
+    if(op->type==PLAYER) return 0;
 
-	/* The rest of this is for monsters. Players are on their own for
-	 * finding enemies!
-	 */
-	if(op->type==PLAYER) return 0;
+    /* Quality invisible? Bah, we wont see them w/o SEE_INVISIBLE
+     * flag (which was already checked) in can_see_enmy (). Lets get out of here 
+     */
+    if(enemy->invisible && (!enemy->contr || !enemy->contr->tmp_invis))
+	return 0;
 
-	/* Quality invisible? Bah, we wont see them w/o SEE_INVISIBLE
-	 * flag (which was already checked). Lets get out of here 
-	 */
-	if(enemy->invisible && (!enemy->contr || !enemy->contr->tmp_invis))
-	    return 0;
 
-	/* Determine Detection radii */
-	if(!enemy->hide)  /* to detect non-hidden (eg dark/invis enemy) */
-	    radius = (op->stats.Wis/5)+1>MIN_MON_RADIUS?(op->stats.Wis/5)+1:MIN_MON_RADIUS;
-	else { /* a level/INT/Dex adjustment for hiding */
-	    object *sk_hide;
-	    int bonus = (op->level/2) + (op->stats.Int/5);
+    /* use this for invis also */
+    hide_discovery = op->stats.Int/5;
 
-	    if(enemy->type==PLAYER) {
-		if((sk_hide = find_skill(enemy,SK_HIDING)))
-		    bonus -= sk_hide->level;
-		else { 
-		    LOG(llevError,"can_detect_enemy() got hidden player w/o hiding skill!");
-		    make_visible(enemy);
-		    radius=radius<MIN_MON_RADIUS?MIN_MON_RADIUS:radius;
-		}
+    /* Determine Detection radii */
+    if(!enemy->hide)  /* to detect non-hidden (eg dark/invis enemy) */
+	radius = (op->stats.Wis/5)+1>MIN_MON_RADIUS?(op->stats.Wis/5)+1:MIN_MON_RADIUS;
+    else { /* a level/INT/Dex adjustment for hiding */
+	object *sk_hide;
+	int bonus = (op->level/2) + (op->stats.Int/5);
+
+	if(enemy->type==PLAYER) {
+	    if((sk_hide = find_skill(enemy,SK_HIDING)))
+		bonus -= sk_hide->level;
+	    else { 
+		LOG(llevError,"can_detect_enemy() got hidden player w/o hiding skill!");
+		make_visible(enemy);
+		radius=radius<MIN_MON_RADIUS?MIN_MON_RADIUS:radius;
 	    }
-	    else /* enemy is not a player */
-		bonus -= enemy->level;
+	}
+	else /* enemy is not a player */
+	    bonus -= enemy->level;
 
-	    radius += bonus/5;
-	    hide_discovery += bonus*5;
-	} /* else creature has modifiers for hiding */
+	radius += bonus/5;
+	hide_discovery += bonus*5;
+    } /* else creature has modifiers for hiding */
 
-	/* Radii stealth adjustment. Only if you are stealthy 
-	 * will you be able to sneak up closer to creatures */ 
-	if(QUERY_FLAG(enemy,FLAG_STEALTH)) 
-	    radius = radius/2, hide_discovery = hide_discovery/3;
+    /* Radii stealth adjustment. Only if you are stealthy 
+    * will you be able to sneak up closer to creatures */ 
+    if(QUERY_FLAG(enemy,FLAG_STEALTH)) 
+	radius = radius/2, hide_discovery = hide_discovery/3;
 
-	/* Radii adjustment for enemy standing in the dark */ 
-	if(op->map->darkness>0 && !stand_in_light(enemy)) {
-
-	    /* on dark maps body heat can help indicate location with infravision.
-	     * There was a check for immunity for fire here (to increase radius) -
-	     * I'm not positive if that makes sense - something could be immune to fire
-	     * but not be any warmer blooded than something else.
-	     */
-	    if(QUERY_FLAG(op,FLAG_SEE_IN_DARK) && is_true_undead(enemy))
-		radius += op->map->darkness/2;
-	    else
-		radius -= op->map->darkness/2;
-
-	    /* op next to a monster (and not in complete darkness) 
-	    * the monster should have a chance to see you. */
-	    if(radius<MIN_MON_RADIUS && op->map->darkness<5 && rv->distance<=1)
-		radius = MIN_MON_RADIUS;
-	} /* if on dark map */
-
-	/* Lets not worry about monsters that have incredible detection
-	 * radii, we only need to worry here about things the player can
-	 * (potentially) see. 
-	 * Increased this from 5 to 13 - with larger map code, things that
-	 * far out are visible.  Note that the distance field in the
-	 * vector is real distance, so in theory this should be 18 to
-	 * find that.
+    /* Radii adjustment for enemy standing in the dark */ 
+    if(op->map->darkness>0 && !stand_in_light(enemy)) {
+	/* on dark maps body heat can help indicate location with infravision
+	 * undead don't have body heat, so no benefit detecting them.
 	 */
-	if(radius>10) radius = 13;
+	if(QUERY_FLAG(op,FLAG_SEE_IN_DARK) && !is_true_undead(enemy))
+	    radius += op->map->darkness/2;
+	else
+	    radius -= op->map->darkness/2;
 
-	/* Enemy in range! Now test for detection */
-	if ((int) rv->distance <= radius) {
-	    /* ah, we are within range, detected? take cases */
-	    if(!enemy->invisible) /* enemy in dark squares... are seen! */
-		return 1;
-	    else if(enemy->hide||(enemy->contr&&enemy->contr->tmp_invis)) { 
-		/* hidden or low-quality invisible */  
+	/* op next to a monster (and not in complete darkness) 
+	 * the monster should have a chance to see you. 
+	 */
+	if(radius<MIN_MON_RADIUS && op->map->darkness<5 && rv->distance<=1)
+	    radius = MIN_MON_RADIUS;
+    } /* if on dark map */
 
-		/* There is a a small chance each time we check this function 
-		 * that we can detect hidden enemy. This means the longer you stay 
-		 * near something, the greater the chance you have of being 
-		 * discovered. */
-		if(enemy->hide && (rv->distance <= 1) && (RANDOM()%100<=hide_discovery)) {
-		    make_visible(enemy);
-		    /* inform players of new status */
-		    if(enemy->type==PLAYER && player_can_view(enemy,op)) 
-			new_draw_info_format(NDI_UNIQUE,0, enemy,
-					     "You are discovered by %s!",op->name);
-		    return 1; /* detected enemy */ 
-		} /* if enemy is hiding */
+    /* Lets not worry about monsters that have incredible detection
+     * radii, we only need to worry here about things the player can
+     * (potentially) see.  This is 13, as that is the maximum size the player
+     * may have for their map - in that way, creatures at the edge will
+     * do something.  Note that the distance field in the
+     * vector is real distance, so in theory this should be 18 to
+     * find that.
+     */
+    if(radius>13) radius = 13;
 
-		/* If the hidden/tmp_invis enemy is nearby we accellerate the time of 
-		 * becoming unhidden/visible (ie as finding the enemy is easier)
-		 * In order to leave actual discovery (invisible=0 state) to
-		 * be handled above (not here) we only decrement so that 
-		 * enemy->invisible>1 is preserved. 
-		 */
-		if((enemy->invisible-=RANDOM()%(op->stats.Int+2))<1) 
-		    enemy->invisible=1;
-	    } /* enemy is hidding or invisible */
+    /* Enemy in range! Now test for detection */
+    if ((int) rv->distance <= radius) {
+	/* ah, we are within range, detected? take cases */
+	if(!enemy->invisible) /* enemy in dark squares... are seen! */
+	    return 1;
 
-	    /* MESSAGING: SO we didnt find them (wah!), we may warn a 
-	     * player that the monster is getting close to discovering them. 
-	     *
-	     * We only warn the player if: 
-	     *   1) player has los to the monster
-	     *   2) random value based on player Int value
+	/* hidden or low-quality invisible */  
+	if(enemy->hide && (rv->distance <= 1) && (RANDOM()%100<=hide_discovery)) {
+	    make_visible(enemy);
+	    /* inform players of new status */
+	    if(enemy->type==PLAYER && player_can_view(enemy,op)) 
+		new_draw_info_format(NDI_UNIQUE,0, enemy,
+					"You are discovered by %s!",op->name);
+		return 1; /* detected enemy */ 
+	}
+	else if (enemy->invisible) {
+	    /* Change this around - instead of negating the invisible, just
+	     * return true so that the mosnter that managed to detect you can
+	     * do something to you.  Decreasing the duration of invisible
+	     * doesn't make a lot of sense IMO, as a bunch of stupid creatures
+	     * can then basically negate the spell.  The spell isn't negated -
+	     * they just know where you are!
 	     */
-	    if(enemy->type==PLAYER 
-	       && (RANDOM()%(enemy->stats.Int+10)> MAX_STAT/2)
-	       && player_can_view(enemy,op)) { 
+	    if ((RANDOM() % 50) <= hide_discovery) {
+		if (enemy->type == PLAYER) {
 		    new_draw_info_format(NDI_UNIQUE,0, enemy, 
-					 "You see %s noticing your position.", query_name(op));
-	    } /* enemy is a player */
+			 "You see %s noticing your position.", query_name(op));
+		}
+		return 1;
+	    }
+	}
+    } /* within range */
 
-        return 0;
-	} /* creature is withing range */
-    } /* if creature can see its enemy */
-    /* returning 1 here suggests to me that if the enemy is visible, no matter
-     * how far away, the creature can see them.  Is that really what we want?
----------------9     */
-
-    return 1;
+    /* Wasn't detected above, so still hidden */
+    return 0;
 }
 
 /* determine if op stands in a lighted square. This is not a very
@@ -1998,8 +1970,8 @@ int can_see_enemy (object *op, object *enemy) {
     } else if (enemy->hide) return 0; 
 
     /* INVISIBLE ENEMY. */
-    if(!QUERY_FLAG(looker,FLAG_SEE_INVISIBLE)
-      &&(is_true_undead(looker)==(int)(QUERY_FLAG(enemy,FLAG_UNDEAD))))
+    if(!QUERY_FLAG(looker,FLAG_SEE_INVISIBLE) 
+       &&(is_true_undead(looker)==(QUERY_FLAG(enemy,FLAG_INVIS_UNDEAD)?1:0)))
       return 0;
 
   } else if(looker->type==PLAYER) /* for players, a (possible) shortcut */

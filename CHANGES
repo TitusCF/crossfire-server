@@ -17,6 +17,30 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Various fixes:
+INSTALL: Update with note about --with-includes configure option.
+common/loader.c, common/loader.l: Add comment about flag_invis_undead
+include/define.h: Add FLAG_INVIS_UNDEAD
+lib/adm/map_info: Modify to not follow symbolic links.
+server/monster.c: Modify can_detect_enemy to be a bit more straightforward
+   in its logic.  Also, modify detection of invisible creatures - don't
+   reduce duration, just return that the monster can detect the player.
+   There were also spurious messages about the player being seen.
+   Modify can_see_enemy to check FLAG_INVIS_UNDEAD, also fix broken
+   comparison
+server/player.c: Clear FLAG_INVIS_UNDEAD when invisibility ends.  Fix
+   action_makes_visible() - had reverse logic on FLAG_MAKE_INVIS check,
+   and a typo in the printed message.
+server/spell_effect.c: cast_invisible() to use FLAG_INVIS_UNDEAD -
+   also check for maximum duration, and only search active objects when
+   clearing enemy.
+server/weather.c: Fix off by one on comparision when intializing maps
+   darkness when loading map from disk.  In dawn_to_dusk, don't do
+   further processing if the light hasn't changed.
+MSW 2002-07-29
+
+ 
+
 Various bug fixes, add glyph spell:
 TODO: Updated
 common/map.c: Fix change_map_light() - if darkness was reduced to zero,

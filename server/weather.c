@@ -62,13 +62,18 @@ void set_darkness_map(mapstruct *m)
     m->darkness = 0;
     for (i = HOURS_PER_DAY/2; i < HOURS_PER_DAY; i++)
 	change_map_light(m, season_timechange[tod.season][i]);
-    for (i = 0; i < tod.hour; i++)
+    for (i = 0; i <= tod.hour; i++)
 	change_map_light(m, season_timechange[tod.season][i]);
 }
 
 void dawn_to_dusk(timeofday_t *tod)
 {
     mapstruct *m;
+
+    /* If the light level isn't changing, no reason to do all
+     * the work below.
+     */
+    if (season_timechange[tod->season][tod->hour] == 0) return;
 
     for(m=first_map;m!=NULL;m=m->next) {
 #ifndef MAP_RESET

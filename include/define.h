@@ -429,7 +429,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define FLAG_IS_THROWN		17 /* Object is designed to be thrown. */
 #define FLAG_AUTO_APPLY		18 /* Will be applied when created */
 #define FLAG_TREASURE		19 /* Will generate treasure when applied */
-/*#define FLAG_APPLY_ONCE	20 Unused -  Will dissapear when applied */
+#define FLAG_INVIS_UNDEAD	20 /* Player is invisible to undead */
 #define FLAG_SEE_INVISIBLE 	21 /* Will see invisible player */
 #define FLAG_CAN_ROLL		22 /* Object can be rolled */
 /* #define FLAG_PARALYZED	23 Unused -  Object is paralyzed */

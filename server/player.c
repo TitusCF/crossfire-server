@@ -2555,8 +2555,7 @@ void make_visible (object *op) {
     op->invisible = 0;
     if(op->type==PLAYER) 
       op->contr->tmp_invis = 0;
-    if(QUERY_FLAG(op, FLAG_UNDEAD)&&!is_true_undead(op)) 
-      CLEAR_FLAG(op, FLAG_UNDEAD);
+    CLEAR_FLAG(op, FLAG_INVIS_UNDEAD);
     update_object(op,UP_OBJ_FACE);
 }
 
@@ -2720,10 +2719,10 @@ int player_can_view (object *pl,object *op) {
 int action_makes_visible (object *op) {
 
   if(op->invisible && QUERY_FLAG(op,FLAG_ALIVE)) {
-    if(!QUERY_FLAG(op,FLAG_MAKE_INVIS)) 
+    if(QUERY_FLAG(op,FLAG_MAKE_INVIS)) 
       return 0; 
     else if(op->hide || (op->contr&&op->contr->tmp_invis)) { 
-      new_draw_info_format(NDI_UNIQUE, 0,op,"You become %!",op->hide?"unhidden":"visible");
+      new_draw_info_format(NDI_UNIQUE, 0,op,"You become %s!",op->hide?"unhidden":"visible");
       return 1; 
     } else if(op->contr && !op->contr->shoottype==range_magic) { 
 	  /* improved invis is lost EXCEPT for case of casting of magic */
