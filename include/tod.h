@@ -90,14 +90,15 @@ typedef struct _weather_grow {
 	char *tile; /* arch tile to grow on, NULL if anything */
 	int random; /* random factor.  min 1, higher = lower chance of 
 		     * appearance */
-	int rfmin;
-	int rfmax; /* rainfall min/max */
+	float rfmin;
+	float rfmax; /* rainfall min/max (inches/day) */
 	int humin;
 	int humax; /* humidity min/max */
 	int tempmin;
 	int tempmax; /* temp min/max */
 	int elevmin;
 	int elevmax; /* elevation min/max */
+	int season; /* 0=any or 1-5 */
 } weather_grow_t;
 
 #endif /* _TOD_H_ */
