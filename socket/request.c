@@ -1304,7 +1304,7 @@ static inline int update_smooth(SockList *sl, NewSocket *ns, mapstruct  *mp, int
     /* If there is no object for this space, or if the face for the object
      * is the blank face, set the smoothlevel to zero.
      */
-    if (!ob || ob->face == blank_face) smoothlevel=0;
+    if (!ob || ob->face == blank_face || MAP_NOSMOOTH(mp)) smoothlevel=0;
     else {
 	    smoothlevel = ob->smoothlevel;
     } /* else not already head object or blank face */

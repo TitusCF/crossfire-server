@@ -83,6 +83,7 @@
 #define MAP_SKYCOND(m)		(m)->sky
 #define MAP_WORLDPARTX(m)	(m)->wpartx
 #define MAP_WORLDPARTY(m)	(m)->wparty
+#define MAP_NOSMOOTH(m)		(m)->nosmooth
 
 /* options passed to ready_map_name and load_original_map */
 #define MAP_FLUSH	    0x1
@@ -215,6 +216,7 @@ typedef struct mapdef {
 				 * players entering/exiting map
 				 */
     uint32 unique:1;	/* if set, this is a per player unique map */
+    uint32 nosmooth:1;  /* if set the content of this map has smoothlevel=0 forced*/
     sint32 timeout;	/* swapout is set to this */
     sint32 swap_time;	/* When it reaches 0, the map will be swapped out */
     sint16 players;	/* How many plares are on this level right now */

@@ -720,6 +720,8 @@ static int load_map_header(FILE *fp, mapstruct *m)
 	    m->winddir = atoi(value);
 	} else if (!strcmp(key, "sky")) {
 	    m->sky = atoi(value);
+	} else if (!strcmp(key, "nosmooth")) {
+	    m->nosmooth = atoi(value);
 	}
 	else if (!strncmp(key,"tile_path_", 10)) {
 	    int tile=atoi(key+10);
@@ -1071,6 +1073,7 @@ int new_save_map(mapstruct *m, int flag) {
     if (m->windspeed) fprintf(fp, "windspeed %d\n", m->windspeed);
     if (m->winddir) fprintf(fp, "winddir %d\n", m->winddir);
     if (m->sky) fprintf(fp, "sky %d\n", m->sky);
+    if (m->nosmooth) fprintf(fp, "nosmooth %d\n", m->nosmooth);
 
     /* Save any tiling information, except on overlays */
     if (flag != 2)
