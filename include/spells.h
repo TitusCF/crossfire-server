@@ -189,7 +189,15 @@ enum spellnrs {
   SP_L_MANABALL,	SP_MANA_BOLT,
 
   SP_DANCING_SWORD,	SP_ANIMATE_WEAPON, SP_CAUSE_COLD,              /* 185 */
-  SP_DIVINE_SHOCK,      SP_WINDSTORM
+  SP_DIVINE_SHOCK,      SP_WINDSTORM,
+
+  /* the below NIY */
+  SP_SANCTUARY,         SP_PEACE,          SP_SPIDERWEB,             /* 190 */
+  SP_CONFLICT,          SP_RAGE,
+
+  SP_FORKED_LIGHTING,   SP_POISON_FOG,     SP_FLAME_AURA,            /* 195 */
+  SP_VITRIOL
+  
 };
 	
 #define IS_SUMMON_SPELL(spell) (((spell) > SP_BOMB && (spell) < SP_D_DOOR) \

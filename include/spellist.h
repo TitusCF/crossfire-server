@@ -421,9 +421,25 @@ PATH_TURNING,"holy_orb",},
 {"divine shock",              1, 3, 0, 10, 0, 0, 5, 1, 0, 1, 0, 
    PATH_WOUNDING,"divine_shock"},
 {"windstorm",                   3,3,  0, 10, 0, 0,  0,  1, 0, 1, 0,
- PATH_NULL, "windstorm",}
-
-
+ PATH_NULL, "windstorm",},
+{"sanctuary",                 7, 30,  0, 10,  0,  0,  0,  0,  1,  1,  1,
+   PATH_PROT,"sanctuary"},
+{"peace",                 20, 80,  0, 10,  0,  0,  0,  1,  0,  1,  0,
+   PATH_PROT,"peace"},
+{"spiderweb",              4, 10,  0, 10,  0,  0,  0,  1,  0,  1,  0,
+   PATH_CREATE,"spiderweb"},
+{"conflict",              10, 50,  0, 10,  0,  0,  0,  1,  0,  1,  0,
+   PATH_MIND, "conflict"},
+{"rage",                   1,  5,  0, 10,  0,  0,  0,  1,  0,  1,  1,
+   PATH_WOUNDING, "holy_rage"},
+{"forked lightning",       5, 15,  0, 10,  0,  0,  0,  1,  0,  1,  0,
+   PATH_ELEC, "forked_lightning"},
+{"poison fog",             5, 15,  0, 10,  0,  0,  0,  1,  0,  1,  0,
+   PATH_ELEC, "poison_fog"},
+{"flaming aura",           1,  5,  0, 10,  0,  0,  0,  0,  1,  1,  1,
+   PATH_FIRE, "flaming_aura"},
+{"vitriol",                5, 15,  0, 10,  0,  0,  0,  0,  1,  1,  1,
+   PATH_FIRE, "vitriol"}
 };
 
 /*  peterm:  the following defines the parameters for all the
@@ -634,8 +650,17 @@ spell_parameters SP_PARAMETERS[NROFREALSPELLS] =
 {	2,	20,	2,	1,	10},	/* dancing sword */     /* 185 */ 
 {	2,	20,	2,	1,	20},	/* animate weapon */
 {   0,       0,     3,      5,		10},	/*cause cold*/      
-{   1,      1,     4,      1,		3},	/*divine shock*/      
-{   0,      20,     25,      4,		6}	/*windstorm*/      
+{   1,      1,     4,      1,		8},	/*divine shock*/      
+{   0,      20,     25,      4,		8},	/*windstorm*/      
+{   0,     100,      0,      1,		20},	/*sanctuary*/    /* 190 */     
+{   0,      4,       0,      9,		36},	/*peace*/      
+{   7,      10,     5,       5,		10},	/*spiderweb*/      
+{   0,      5,      0,      10,		10},	/*conflict*/      
+{   0,       0,     5,      4,		8},	/*rage*/      
+{   10,     16,     3,      0,		24},	/*forked lightning*/      /* 195*/
+{   10,     5,     5,      4,		10},	/*poison fog*/      
+{   6,      100,     25,      4,	20},	/*flame aura*/      
+{   10,     20,     25,      4,		6}	/*vitriol*/      
 };
 
 char *spellpathnames[NRSPELLPATHS] = {

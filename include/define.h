@@ -186,6 +186,7 @@
 
 #define CLOAK		87
 #define CONE		88
+#define AURA            89  /* aura spell object */
 
 #define SPINNER		90
 #define GATE		91
@@ -306,7 +307,7 @@
 
 #define NRSPELLPATHS	20
 
-#define NROFREALSPELLS	190	/* Number of different spells */
+#define NROFREALSPELLS	199	/* Number of different spells */
 
 #define NROFSKILLS  33  /* match to the number of elements in skills[] array */
 

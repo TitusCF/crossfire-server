@@ -1095,6 +1095,9 @@ int process_object(object *op) {
   case PLAYER_CHANGER:
     move_player_changer(op);
     return 0;
+  case AURA:
+    move_aura(op);
+    return 0;
   }
 
   return 0;

@@ -781,6 +781,9 @@ if (item == spellNormal && !ability ){
   case SP_ANIMATE_WEAPON:
     success = animate_weapon(op,caster,dir,spellarch[type],type);
     break;
+  case SP_SANCTUARY:
+  case SP_FLAME_AURA:
+    success = create_aura(op,caster,spellarch[type],type,0);
   }
 
   play_sound_map(op->map, op->x, op->y, SOUND_CAST_SPELL_0 + type);
@@ -2147,6 +2150,25 @@ void fire_swarm (object *op, object *caster, int dir, archetype *swarm_type,
   insert_ob_in_map(tmp,op->map,op);
 }
 
+/* create an aura spell object and put it in the player's inventory.  */
+
+int create_aura(object *op, object *caster, archetype *aura_arch, int spell_type,
+		 int magic) 
+{
+  object *new_aura = arch_to_object(aura_arch);
+  new_aura->stats.food = SP_PARAMETERS[spell_type].bdur +
+                  10* SP_level_strength_adjust(op,caster,spell_type);
+  new_aura->stats.dam = SP_PARAMETERS[spell_type].bdam
+                  +SP_level_dam_adjust(op,caster,spell_type);
+  set_owner(new_aura,op);
+  if(magic) new_aura->attacktype|=AT_MAGIC;
+  if(new_aura->owner) {
+    new_aura->chosen_skill = op->chosen_skill;
+    if(new_aura->chosen_skill) new_aura->exp_obj = op->chosen_skill->exp_obj;
+  }
+  insert_ob_in_ob(new_aura, op);
+  return 1;
+}
 	    
 /*  look_up_spell_by_name:  peterm
     this function attempts to find the spell spname in spells[].

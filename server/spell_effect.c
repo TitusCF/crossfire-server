@@ -2361,12 +2361,12 @@ int drain_magic(object *op,int dir) {
 /*  an object of type counterspell will nullify cone objects,
     explosion objects, and anything else that |=magic.  */
 
-void counterspell(object *op)
+void counterspell(object *op,int dir)
 {
     object *tmp;
     int nflag=0;
     
-    for(tmp=get_map_ob(op->map,op->x,op->y); tmp!=NULL; tmp=tmp->above,nflag=0)
+    for(tmp=get_map_ob(op->map,op->x+freearr_x[dir],op->y+freearr_y[dir]); tmp!=NULL; tmp=tmp->above,nflag=0)
     {	  
 	/* Basially, if the object is magical and not counterspell, 
 	 * we will more or less remove the object.  Changed in 0.94.3
@@ -3434,3 +3434,61 @@ int cast_cause_disease(object *op, object *caster, int dir, archetype *disease_a
   new_draw_info(NDI_UNIQUE,0,op,"No one caught anything!");
   return 0;
 }
+
+
+
+/* move aura function.  An aura is a part of someone's inventory,
+which he carries with him, but which acts on the map immediately
+around him.
+Aura parameters:
+food:  duration counter.   
+attacktype:  aura's attacktype 
+other_arch:  archetype to drop where we attack
+
+ */
+
+void move_aura(object *aura) {
+  int i;
+  object *env;
+
+  /* no matter what we've gotta remove the aura...
+     we'll put it back if its time isn't up.  */
+  remove_ob(aura);
+
+  /* exit if we're out of gas */
+  if(aura->stats.food--< 0) {
+    free_object(aura);
+    return;
+  }
+  /* auras only exist in inventories */
+  if(aura->env == NULL || aura->env->map==NULL) {
+    free_object(aura);
+    return;
+  }
+  env = aura->env;
+  aura->x = env->x;
+  aura->y = env->y;
+
+    /* we need to jump out of the inventory for a bit
+       in order to hit the map conveniently. */
+  insert_ob_in_map(aura,env->map,aura);
+  for(i=1;i<9;i++) { 
+    hit_map(aura,i,aura->attacktype);
+    if(aura->other_arch) {
+      object *new_ob;
+      int nx, ny;
+      nx = aura->x + freearr_x[i];
+      ny = aura->y + freearr_y[i];
+      /* we're done if the "i" square next to us is full */
+      if(out_of_map(aura->map,nx,ny) ||
+	 wall(aura->map,nx,ny)) continue;
+      new_ob = arch_to_object(aura->other_arch);
+      new_ob->x = nx;
+      new_ob->y = ny;
+      insert_ob_in_map(new_ob,env->map,aura);
+    }
+  }
+}
+      
+
+  

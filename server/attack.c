@@ -218,7 +218,7 @@ int hit_map(object *op,int dir,int type) {
  /* peterm:  a few special cases for special attacktypes --counterspell
         must be out here because it strikes things which are not alive*/
   if(type&AT_COUNTERSPELL) {
-    counterspell(op);  /* see newspells.c */
+    counterspell(op,dir);  /* see newspells.c */
     if(!(type & ~(AT_COUNTERSPELL|AT_MAGIC))){
 #ifdef NO_CONE_PROPOGATE
 	return 1;
