@@ -38,6 +38,9 @@ archive:
 
 clean::
 
+distclean:: clean
+	$(RM) -f Makefile
+
 all:
 
 patchlist::

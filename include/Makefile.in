@@ -1,4 +1,5 @@
 VPATH = @srcdir@
+RM = @RM@
 
 ALL_FILES = \
 commands.h     libproto.h     patchlevel.h   sounds.h \
@@ -16,6 +17,10 @@ all::
 depend::
 
 clean::
+
+distclean:: clean
+	$(RM) -f autoconf.h
+	$(RM) -f Makefile
 
 archive::
 	@if [ -d $(ARCHIVE)/include ]; then set +x; \

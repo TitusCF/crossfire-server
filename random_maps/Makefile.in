@@ -102,6 +102,9 @@ archive:
 clean::
 	$(RM) -f random_map $(OBJS) Makefile.bak
 
+distclean:: clean
+	$(RM) -f Makefile
+
 .c.o:
 	$(CC) $(CFLAGS) $(INCLUDES) -c $*.c
 

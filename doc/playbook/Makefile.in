@@ -251,6 +251,9 @@ clean::
 	$(RM) *.ps *x*.ppm tmp.ppm work.ppm
 	$(RM) handbook.toc handbook.lot handbook.dvi handbook.log handbook.aux
 
+distclean:: 
+	$(RM) -f Makefile
+
 archive::
 	@if [ ! -d $(ARCHIVE)/doc/playbook ]; then $(MKDIR) $(ARCHIVE)/doc/playbook; fi
 	$(CP) $(FILES) $(ARCHIVE)/doc/playbook

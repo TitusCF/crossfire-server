@@ -243,6 +243,9 @@ clean::
 	$(RM) items .bmaps in_monput in_items in_spells in_stats
 	$(RM) *x*.ppm tmp.ppm work.ppm
 
+distclean::
+	$(RM) -f Makefile
+
 archive::
 	@if [ -d $(ARCHIVE)/doc/playbook-html ]; then set +x; \
 	else (set -x; $(MKDIR) $(ARCHIVE)/doc/playbook-html); fi

@@ -48,6 +48,9 @@ clean::
 	$(RM) -f menu2
 	$(RM) -f libCnv.a
 
+distclean:: clean
+	$(RM) -f Makefile
+
 menu2 : menu2.o $(OBJS) libCnv.a
 	$(RM) -f $@
 	$(CC) -o $@ $(LDOPTIONS) menu2.o $(OBJS) $(LIBS)

@@ -106,8 +106,11 @@ loader.c: loader.l
 	$(FLEX) -i -t loader.l > loader.c
 
 
-clean:
+clean::
 	$(RM) -f $(OBJS)
+
+distclean:: clean
+	$(RM) -f Makefile
 
 .c.o:
 	$(CC) $(CFLAGS) $(INCLUDES)  -c $*.c

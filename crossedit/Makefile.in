@@ -128,6 +128,14 @@ clean::
 	$(RM) -f crossedit $(OBJS) Makefile.bak
 	(cd Cnv; $(MAKE) clean)
 
+distclean:: clean
+	@for dir in $(SUBDIRS); \
+	do \
+	    (echo "making distclean in $$dir..."; \
+	    cd $$dir; $(MAKE) $(MFLAGS) 'MFLAGS=$(MFLAGS)' 'ARCHIVE=$(ARCHIVE)'  'VERSION=$(VERSION)' 'MKDIR=$(MKDIR)' 'CP=$(CP)' 'RM=$(RM)' distclean;) \
+	done;
+	$(RM) -f Makefile
+
 .c.o:
 	$(CC) $(CFLAGS) $(INCLUDES) -I../include -I. -Iinclude -ICnv -c $*.c
 

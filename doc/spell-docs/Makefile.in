@@ -9,6 +9,9 @@ depend::
 
 clean::
 
+distclean::
+	$(RM) -f Makefile
+
 all::
 
 archive::

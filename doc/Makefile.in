@@ -42,6 +42,15 @@ depend::
 
 clean::
 
+distclean:: clean
+	@for dir in $(SUBDIRS); \
+	do \
+	    (echo "making distclean in $$dir..."; \
+	    cd $$dir; $(MAKE) $(MFLAGS) 'MFLAGS=$(MFLAGS)' 'ARCHIVE=$(ARCHIVE)' 'VERSION=$(VERSION)' 'MKDIR=$(MKDIR)' 'CP=$(CP)' 'RM=$(RM)' distclean;) \
+	done;
+	$(RM) -f Makefile
+
+
 archive:
 	@if [ ! -d $(ARCHIVE)/doc ]; then $(MKDIR) $(ARCHIVE)/doc; fi
 	$(CP) $(FILES) $(ARCHIVE)/doc

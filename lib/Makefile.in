@@ -144,6 +144,10 @@ install:: archetypes bmaps.paths crossfire.xbm crossfire.xpm crossfire.png  anim
 
 
 clean::
+	$(RM) -f Makefile.bak
+
+distclean:: clean
+	$(RM) -f Makefile
 
 real-clean::
 	$(RM) -f archetypes bmaps .collect-stamp

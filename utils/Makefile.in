@@ -46,4 +46,5 @@ patchlist::
 
 clean::
 
-
+distclean:: clean
+	$(RM) -f Makefile

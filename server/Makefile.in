@@ -126,6 +126,9 @@ archive:
 clean::
 	$(RM) -f crossfire $(OBJS) Makefile.bak
 
+distclean:: clean
+	$(RM) -f Makefile
+
 .c.o:
 	$(CC) $(CFLAGS) $(INCLUDES) -c $*.c
 

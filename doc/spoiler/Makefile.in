@@ -107,6 +107,9 @@ clean::
 	$(RM) *.ps *x*.ppm tmp.ppm work.ppm
 	$(RM) spoiler.dvi spoiler.log spoiler.aux
 
+distclean::
+	$(RM) -f Makefile
+
 archive::
 	@if [ ! -d $(ARCHIVE)/doc/spoiler ]; then $(MKDIR)  $(ARCHIVE)/doc/spoiler; fi
 	$(CP) $(FILES) $(ARCHIVE)/doc/spoiler
