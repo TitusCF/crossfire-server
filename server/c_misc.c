@@ -405,7 +405,7 @@ void get_who_escape_code_value(char *return_val, const char letter, player *pl) 
 			  break;		
 	case 'r' :    strcpy(return_val,get_name_of_region_for_map(pl->ob->map));
 			  break;
-	case 'R' :    strcpy(return_val,get_region_longname(pl->ob->map->region));
+	case 'R' :    strcpy(return_val,get_region_longname(get_region_by_map(pl->ob->map)));
 			  break;
 	case 'i' :    strcpy(return_val,pl->socket.host);
 			  break;
