@@ -169,12 +169,7 @@ typedef struct pl {
 				    /* so we have to remember which party to */
 				    /* join */
     char    search_str[MAX_BUF];    /* Item we are looking for */
-#ifdef SPELL_ENCUMBRANCE
     sint16  encumbrance;	    /* How much our player is encumbered  */
-				    /* Probably would be more clever to always have the */
-				    /* calculation coded in, and just disable the part that */
-				    /* that makes it do something.  OR make it a settings value */
-#endif
     Output_Buf	outputs[NUM_OUTPUT_BUFS];   /* holds output strings to client */
     uint16	outputs_sync;	    /* How often to print, no matter what */
     uint16	outputs_count;	    /* Print if this count is exceeded */
