@@ -85,6 +85,10 @@ void attempt_do_alchemy(object *caster, object *cauldron) {
 	  change_skill(caster,SK_ALCHEMY);
           ability+=SK_level(caster)*((4.0 + cauldron->magic)/4.0);
         }
+	/* Add caster's luck to alcheky skill */
+	/* cauldron->magic multiplies luck only half as much as	*
+	 * it does Alchemy skill.  -- DAMN			*/
+	ability += caster->stats.luck*((8.0 + cauldron->magic)/8.0);
 
 #ifdef ALCHEMY_DEBUG
 	LOG(llevDebug,"Got alchemy ability lvl = %d\n",ability);
@@ -113,8 +117,6 @@ void attempt_do_alchemy(object *caster, object *cauldron) {
 	    return;
 	} /* End of WIZ alchemy */
 
-	/*  compute base chance of recipe success */
-	success_chance = 15.0 * ability / ( numb * numb * numb + 30 + 15.0*ability);
 #ifdef ALCHEMY_DEBUG
 	LOG(llevDebug,"base success chance =  %f\n",success_chance);
 #endif
@@ -125,20 +127,38 @@ void attempt_do_alchemy(object *caster, object *cauldron) {
 	if(rp)  /* if we found a recipe */
 	{
 	  float ave_chance = fl->total_chance/(float)fl->number;
-	  if(ave_chance == 0) ave_chance = 1;
-	  /* adjust the success chance by the chance from the recipe list */
-	  if(ave_chance > rp->chance)
-	    success_chance *= (rp->chance + ave_chance)/ (2.0*ave_chance);
-	  else
-	    success_chance = 1.0- ( (1.0-success_chance)*(rp->chance +ave_chance)/(2.0*rp->chance));
+	  object *item;
+
+	  /* create the object **FIRST**, then decide whether to keep it.	*/
+	  if((item=attempt_recipe(caster,cauldron,ability,rp,formula/rp->index)) != NULL) {
+	    /*  compute base chance of recipe success */
+	    success_chance = ((float)(15*ability) /
+			      (float)(15*ability + numb*item->level * (numb+item->level+formula/rp->index)));
+	    if(ave_chance == 0) ave_chance = 1;
+	    /* adjust the success chance by the chance from the recipe list	*/
+	    if(ave_chance > rp->chance)
+	      success_chance *= (rp->chance + ave_chance)/ (2.0*ave_chance);
+	    else
+	      success_chance = 1.0- ( (1.0-success_chance)*(rp->chance +ave_chance)/(2.0*rp->chance));
 
 #ifdef ALCHEMY_DEBUG
-	  LOG(llevDebug,"percent success chance =  %f\n",success_chance);
+	    LOG(llevDebug,"percent success chance =  %f\n",success_chance);
 #endif
 
-	  /* roll the dice */
-	  if(RANDOM()%100 <= 100 * success_chance) {
-	    if(attempt_recipe(caster,cauldron,ability,rp,formula/rp->index)) return;
+	    /* roll the dice */
+	    if((float)(RANDOM()%100) <= 100.0 * success_chance) {
+	      /* we learn from our experience IF we know something of the alchemical arts */
+	      if(caster->chosen_skill&&caster->chosen_skill->stats.sp==SK_ALCHEMY) { 
+		/* more exp is given for higher ingred number recipes */ 
+		int amount = numb*numb*calc_skill_exp(caster,item);
+		add_exp(caster,amount);
+		item->stats.exp=0; /* so when skill id this item, less xp is awarded */
+#ifdef EXTREME_ALCHEMY_DEBUG 
+		LOG(llevDebug,"%s gains %d experience points.\n",caster->name,amount); 
+#endif
+	      }
+	      return;
+	    }
 	  }
 	}
      }
@@ -202,7 +222,7 @@ int numb_ob_inside (object *op) {
 object * attempt_recipe(object *caster, object *cauldron,int ability, recipe *rp, int nbatches) { 
   object *item=NULL;  
   /* this should be passed to this fctn, not too effiecent cpu use this way */
-  int numb=numb_ob_inside(cauldron), batches=abs(nbatches);
+  int /*numb=numb_ob_inside(cauldron),unused?*/ batches=abs(nbatches);
 
   if(rp->keycode)  /* code required for this recipe, search the caster */
 	 { object *tmp;
@@ -221,25 +241,15 @@ object * attempt_recipe(object *caster, object *cauldron,int ability, recipe *rp
   LOG(llevDebug,"attempt_recipe(): using recipe %s\n", rp->title?rp->title:"unknown");
 #endif
 
-  if((item=make_item_from_recipe(cauldron,rp))!=NULL) { 
+  if((item=make_item_from_recipe(cauldron,rp))!=NULL) {
     remove_contents(cauldron->inv,item);
-    adjust_product(item,ability,rp->yield?(rp->yield*batches):batches); /* adj lvl, nrof on caster level */ 
+    adjust_product(item,ability,rp->yield?(rp->yield*batches):batches); /* adj lvl, nrof on caster level */
     if(!item->env && (item=insert_ob_in_ob(item,cauldron))==NULL) { 
       new_draw_info(NDI_UNIQUE, 0,caster,"Nothing happened.");
       /* new_draw_info_format(NDI_UNIQUE, 0,caster, 
             "Your spell causes the %s to explode!",cauldron->name); */
       /* kaboom_cauldron(); */ 
     } else {
-      /* we learn from our experience IF we know something of the alchemical arts */
-      if(nbatches>=0 && caster->chosen_skill&&caster->chosen_skill->stats.sp==SK_ALCHEMY) { 
-        /* more exp is given for higher ingred number recipes */ 
-        int amount = numb*numb*calc_skill_exp(caster,item);
- 	add_exp(caster,amount);
-	item->stats.exp=0; /* so when skill id this item, less xp is awarded */
-#ifdef EXTREME_ALCHEMY_DEBUG 
-        LOG(llevDebug,"%s gains %d experience points.\n",caster->name,amount); 
-#endif
-      }
       new_draw_info_format(NDI_UNIQUE, 0,caster, 
                "The %s %s.",cauldron->name,cauldron_sound());
     }   
@@ -269,7 +279,6 @@ void adjust_product(object *item,int lvl ,int yield) {
    item->stats.exp += lvl*lvl*nrof;
 
    /* item->level = (lvl+item->level)/2; avg between default and caster levels */
-   
 }
 
 
