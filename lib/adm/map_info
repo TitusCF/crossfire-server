@@ -13,21 +13,25 @@
 # are not connected.  This can be annoying at times, since many maps use
 # these objects for decorations.
 $CONNECTED = 0;
-$LIB   = "/home/hugin/a/crossfire/cf-installroot/share/crossfire";
+$LIB   = "/export/home/crossfire/cf-installroot/share/crossfire";
 $ARCH  = "$LIB/archetypes";
-$FACES  = "$LIB/faces";
+$BMAPS  = "$LIB/bmaps";
 $ANIM  = "$LIB/animations";
 $MAPS  = "$LIB/maps";
 # Set VERBOSE=1 if you want more output
 $VERBOSE=0;
+$SHOW_UNUSED = 0;
 
 if (! $ARGV[0]) {
-    print "Usage: wanderer.pl map-directory ... > output.log\n";
-    exit;
+    print "Using $MAPS are starting map directory.\n";
+    $STARTING = $MAPS;
+} else {
+    $STARTING = $ARGV[0];
 }
+    
 
 # read filenames to @maps
-chdir ($MAPS);
+chdir ($STARTING);
 while ($area = shift) {
     &maplist ($area);
 }
@@ -87,9 +91,11 @@ if (%missing) {
 
 #&print_usage();
 
-print " Unused object\n";
-foreach $a (sort(keys %arches)) {
+if ($SHOW_UNUSED) {
+    print " Unused object\n";
+    foreach $a (sort(keys %arches)) {
 	print "$a\n" if (!$objects{$a} && !$players{$a} && !$abilities{$a})
+    }
 }
 
 exit;
@@ -268,7 +274,20 @@ sub examine_exit {
 #	print "  Closed: ", &obj_name($_), " ($x1,$y1)\n";
     } else {
 	# These are currently used be crossfire
-	return if ($to eq "/!");
+	if ($to eq "/!") {	# this is a random exit - if we
+				# have a final map, make sure it
+				# exists
+	    local ($finalmap) = /^final_map (\S+)$/;
+	    if ($finalmap ne "") {
+		if ($finalmap =~ m!^/!) { $cdir = "$MAPS"; }
+		else { ($cdir) = $file =~ m!(.*/)!; }
+		if (! -f "$cdir$finalmap") {
+			if ($printmap) { print "$mapname"; $printmap=0;}
+			print "  Missing: ", &obj_name($_), " ($x1,$y1) -> $finalmap ($x,$y)\n";
+		}
+	    }
+	    return;
+	}
 	if ($to =~ m!^/!) {
 	    $cdir = "$MAPS";
 	} else {
@@ -328,11 +347,11 @@ sub archetypes {
 }
 
 sub faces {
-    open(IN, $FACES) || die ("Can't open faces file $FACES\n");
+    open(IN, $BMAPS) || die ("Can't open faces file $BMAPS\n");
     while (<IN>) {
-	if (/^face (\S+)\s*$/) {
-	    $faces{$1} = $1;
-	}
+	chomp;
+	($num, $name) = split;
+	$faces{$name} = $name;
     }
     close(IN);
 }

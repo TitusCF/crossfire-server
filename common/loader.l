@@ -123,7 +123,6 @@ static char *yval();
 static int lex_error;
 static char msgbuf[HUGE_BUF];
 
-#define FREE_AND_COPY(sv,nv) { if (sv) free_string(sv); sv=add_string(nv); }
 #define SET_OR_CLEAR_FLAG(op, flag, val) \
 	{ if (val) SET_FLAG(op, flag); else CLEAR_FLAG(op, flag); }
 
@@ -274,7 +273,7 @@ WS	[ \t]*
 			 * is that the the plural name will lose information (appear as
 			 * just 'hearts' and not 'goblins heart')
 			 */
-			if (op->arch && op->name != op->arch->name) {
+			if (op->arch && op->name != op->arch->clone.name && op->name_pl == op->arch->clone.name_pl) {
 			    if (op->name_pl) free_string(op->name_pl);
 			    op->name_pl = NULL;
 			}

@@ -17,6 +17,47 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Mostly bugfixes.  I'm not sure if this will fix the disappearing arch problem-
+none of the changes made in the original multiple name would seem to 
+cause it, so hard to say if any of these changes may fix it.
+--
+common/arch.c:  Change get_archetype_by_name to be more efficient and
+   not leak memory.  Modify code that frees all archetype data to free
+   the name_pl information.  Make sure the clone.name_pl is set to
+   NULL.  When singularites are created, set the name_pl for them.
+common/loader.l, common/loader.c: Modify code that fixes up name_pl
+   to be more correct when it fixes up name_pl for old objects.
+common/map.c: Modify load_map_header so that tile_paths will be normalized -
+   need for editor to be able to load maps that have a multipart object
+   that spans the maps.
+crossedit/Edit.c: Modify some calls of out_of_map to OUT_OF_REAL_MAP, since
+   tiling code really isn't fully in place for the editor.  Modify
+   EditPerformFill so that it actually works and doesn't crash the editor.
+include/global.h: Move FREE_AND_COPY macro from loader.l to here so that
+   all source code files can use it.
+lib/adm/map_info: Modify to actually be able to examine just a sub
+   portion of the map directories, and not all of them.  Don't always
+   show the unused objects - information isn't very interesting if only
+   a portion is being examined.  Modify the exit examining code to properly
+   deal with random maps (if there is a finalmap component, make sure
+   that does exist.)  Loade the bmaps file and not the faces file to
+   find valid faces.
+plugin/plugin_python.c: Add missing %s that described what script
+   was actually loaded.
+random_maps/special.c, server/alchemy.c, server/c_misc.c, server/gods.c,
+   server/login.c, server/player.c, server/spell_effect.c: Set up proper
+    name_pl value for code that changes the name of objects.
+server/apply.c: Use FREE_AND_COPY to set up names.  Set up proper
+   name_pl values for cases that change name.  In apply_lighter, call fix_player
+   if player is lighting an object in his inventory - necessary for the
+   players glow_radius to get updated so the change actually takes effect.
+socket/request.c: Modify esrv_map_scroll so that it properly clears cells
+   that are moving out of view - failure to do this was resulting in the
+   map1a updating these spaces with empty faces.  This was causing
+   fog of war wackiness with the client.
+MSW 2002-06-06
+  
+
 common/button.c: Fix mood floor code - before, it was changing the moods
    of all sorts of objects (luggage, itself, etc).  Now, it only
    changes objects above the floor, and only monsters.

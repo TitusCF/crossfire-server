@@ -71,24 +71,27 @@ archetype *find_archetype_by_object_name(char *name) {
  * - name: The name we're searching for (ex: "writing pen");
  * Return value:
  * - a corresponding object if found; a singularity object if not found.
+ * Note by MSW - it appears that it takes the full name and keeps
+ * shortening it until it finds a match.  I re-wrote this so that it
+ * doesn't malloc it each time - not that this function is used much,
+ * but it otherwise had a big memory leak.
  */
 object *get_archetype_by_object_name(char *name) {
-  archetype *at;
-  char *tmpname;
-  int i;
-  for(i=strlen(name); i>0;i--)
-  {
-        tmpname = (char *)(malloc(i+1));
-        strncpy(tmpname,name,i);
-        tmpname[i] = 0x0;
+    archetype *at;
+    char tmpname[MAX_BUF];
+    int i;
+
+    strncpy(tmpname,name,MAX_BUF-1);
+    tmpname[MAX_BUF-1] = 0;
+    for(i=strlen(tmpname); i>0; i--) {
+	tmpname[i] = 0;
         at = find_archetype_by_object_name(tmpname);
         if (at !=NULL)
         {
-                free(tmpname);
-                return arch_to_object(at);
-        };
-  };
-  return create_singularity(name);
+	    return arch_to_object(at);
+        }
+    }
+    return create_singularity(name);
 }
 
  /* GROS - find_best_weapon_used_match and item_matched_string moved there */
@@ -271,6 +274,7 @@ void free_all_archs()
 	else next=at->next;
 	if (at->name) free_string(at->name);
 	if (at->clone.name) free_string(at->clone.name);
+	if (at->clone.name_pl) free_string(at->clone.name_pl);
 	if (at->clone.title) free_string(at->clone.title);
 	if (at->clone.race) free_string(at->clone.race);
 	if (at->clone.slaying) free_string(at->clone.slaying);
@@ -295,6 +299,7 @@ archetype *get_archetype_struct() {
   new->name=NULL;
   new->clone.other_arch=NULL;
   new->clone.name=NULL;
+  new->clone.name_pl=NULL;
   new->clone.title=NULL;
   new->clone.race=NULL;
   new->clone.slaying=NULL;
@@ -514,6 +519,7 @@ object *create_singularity(char *name) {
   sprintf(buf,"singluarity (%s)",name);
   op = get_object();
   op->name = add_string(buf);
+  op->name_pl = add_string(buf);
   SET_FLAG(op,FLAG_NO_PICK);
   return op;
 }

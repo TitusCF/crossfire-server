@@ -1033,10 +1033,10 @@ int tailor_god_spell(object *spellop, object *caster) {
 	   free_string(spellop->title);
          spellop->title=add_string(god->name);
          if(spellop->title){
-	   char buf[MAX_BUF]; 
-	   sprintf(buf,"%s of %s",spellop->name,spellop->title);
-	   if (spellop->name) free_string(spellop->name);
-	   spellop->name=add_string(buf);
+	    char buf[MAX_BUF]; 
+	    sprintf(buf,"%s of %s",spellop->name,spellop->title);
+	    FREE_AND_COPY(spellop->name, buf);
+	    FREE_AND_COPY(spellop->name_pl, buf);
 	}
     } 
 

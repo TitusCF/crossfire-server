@@ -234,6 +234,11 @@ EXTERN char *font_graphic;
  */
 #define FREE_AND_CLEAR(xyz) {free(xyz); xyz=NULL; }
 
+/* FREE_AND_COPY is for the shared string - it is handy enough
+ * to use all over the place.
+ */
+#define FREE_AND_COPY(sv,nv) { if (sv) free_string(sv); sv=add_string(nv); }
+
 #ifdef CALLOC
 #undef CALLOC
 #endif

@@ -571,9 +571,8 @@ void check_login(object *op) {
 	new_draw_info(NDI_UNIQUE, 0,op,"Wrong Password!");
 	new_draw_info(NDI_UNIQUE, 0,op," ");
 	unlock_player(pl->ob->name);
-	if(op->name!=NULL)
-	    free_string(op->name);
-	op->name=add_string("noname");
+	FREE_AND_COPY(op->name, "noname");
+	FREE_AND_COPY(op->name_pl, "noname");
 	pl->last_value= -1;
 	get_name(op);
 	return;	    /* Once again, rest of code just loads the char */

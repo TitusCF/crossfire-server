@@ -447,7 +447,9 @@ int prepare_weapon(object *op, object *improver, object *weapon)
 	    weapon->name,sacrifice_count);
 
     sprintf(buf,"%s's %s",op->name,weapon->name);
-    weapon->name=add_string(buf);
+    free_string(weapon->name);
+    FREE_AND_COPY(weapon->name, buf);
+    FREE_AND_COPY(weapon->name_pl, buf);
     weapon->nrof=0;  /*  prevents preparing n weapons in the same
 			 slot at once! */
     decrease_ob(improver);
@@ -2986,7 +2988,7 @@ void eat_special_food(object *who, object *food) {
 
 void apply_lighter(object *who, object *lighter) {
     object *item;
-    int count,nrof;
+    int count,nrof, is_player_env=0;
     char item_name[MAX_BUF];
 
     item=find_marked_object(who);
@@ -3024,6 +3026,7 @@ void apply_lighter(object *who, object *lighter) {
 	 * some sense.
 	 */
 	strcpy(item_name, item->name);
+	if (who == is_player_inv(item)) is_player_env=1;
 
 	save_throw_object(item,AT_FIRE,who);
 	/* Change to check count and not freed, since the object pointer
@@ -3032,6 +3035,10 @@ void apply_lighter(object *who, object *lighter) {
 	if ((nrof != item->nrof ) || (count != item->count)) {
 	    new_draw_info_format(NDI_UNIQUE, 0,who,
 		 "You light the %s with the %s.",item_name,lighter->name);
+	    /* Need to update the player so that the players glow radius
+	     * gets changed.
+	     */
+	    if (is_player_env) fix_player(who);
 	} else {
 	    new_draw_info_format(NDI_UNIQUE, 0,who,
 		 "You attempt to light the %s with the %s and fail.",item->name,lighter->name);

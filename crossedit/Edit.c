@@ -165,7 +165,7 @@ int MapInsertObjectZ(mapstruct *emap,object *o,int x, int y, int z)
 int MapObjectOut (mapstruct *target, object *obj, int x, int y) {
     object *tmp;
     for(tmp = obj; tmp; tmp = tmp->more)
-        if(out_of_map(target,x + tmp->x,y + tmp->y)) return 1;
+        if(OUT_OF_REAL_MAP(target,x + tmp->x,y + tmp->y)) return 1;
     return 0;
 }
 
@@ -1576,18 +1576,14 @@ EditReturn EditLoad(Edit self)
  */
 void EditPerformFill(Edit self, int x, int y)
 {
-    if (self->emap && 
-	!out_of_map (self->emap, x, y) && 
-	!get_map_ob(self->emap, x, y) &&
-	EditInsert (self, x, y, 0)) {
-	EditPerformFill (self, x+1, y);
-	EditPerformFill (self, x+1, y+1);
-	EditPerformFill (self, x, y+1);
-	EditPerformFill (self, x-1, y+1);
-	EditPerformFill (self, x-1, y);
-	EditPerformFill (self, x-1, y-1);
-	EditPerformFill (self, x, y-1);
-	EditPerformFill (self, x+1, y-1);
+    int dx, dy;
+    if (!self->emap) return;
+
+    for (dx=x; dx< x+self->app->look.rect.width; dx++) {
+	for (dy=y; dy < y+self->app->look.rect.height; dy++) {
+	    if (!OUT_OF_REAL_MAP (self->emap, dx, dy))
+		EditInsert(self, dx, dy, 0);
+	}
     }
 }
 
@@ -1602,7 +1598,7 @@ void EditPerformFillBelow(Edit self, int x, int y)
 
     for (dx=x; dx< x+self->app->look.rect.width; dx++) {
 	for (dy=y; dy < y+self->app->look.rect.height; dy++) {
-	    if (!out_of_map (self->emap, dx, dy))
+	    if (!OUT_OF_REAL_MAP (self->emap, dx, dy))
 		EditInsert(self, dx, dy, -1);
 	}
     }

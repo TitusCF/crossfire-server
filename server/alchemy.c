@@ -399,6 +399,8 @@ void alchemy_failure_effect(object *op,object *cauldron,recipe *rp,int danger) {
 	tmp->material=material;
 	free_string(tmp->name);
 	tmp->name=add_string("slag");
+	if (tmp->name_pl) free_string(tmp->name_pl);
+	tmp->name_pl=add_string("slags");
         item=insert_ob_in_ob(tmp,cauldron);
 	CLEAR_FLAG(tmp,FLAG_CAN_ROLL);
 	CLEAR_FLAG(tmp,FLAG_NO_PICK);

@@ -845,7 +845,17 @@ static int load_map_header(FILE *fp, mapstruct *m)
 			tile, m->path);
 		    free(m->tile_path[tile-1]);
 		}
+		/* This is sort of broken.  IF we don't normalize the path,
+		 * the editor will die when it gets a multipart object that
+		 * spans map.  However, if we do this, then the tile_paths
+		 * get changed because we normalize them - the normalized paths
+		 * may not be terrible, but not ideal either.	
+		 */
+#if 0
 		if (!editor) {
+#else
+		{
+#endif
 		    if (check_path(value, 1)==-1) {
 			int i;
 			/* Need to try and normalize the path.  msgbuf is safe to use,

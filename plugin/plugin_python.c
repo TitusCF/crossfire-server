@@ -6708,7 +6708,7 @@ MODULEAPI int HandleEvent(CFParm* PParm)
     fclose(Scriptfile);
 
 #ifdef PYTHON_DEBUG
-    printf( "PYTHON - HandleEvent:: script loaded!\n",(char *)(PParm->Value[9]));
+    printf( "PYTHON - HandleEvent:: script loaded (%s)!\n",(char *)(PParm->Value[9]));
 #endif
     if (StackParm4[StackPosition] == SCRIPT_FIX_ALL)
     {

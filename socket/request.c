@@ -1491,11 +1491,20 @@ void esrv_map_scroll(NewSocket *ns,int dx,int dy)
     mx = ns->mapx;
     my = ns->mapy;
 
+    if (ns->mapmode == Map1aCmd) {
+	mx += MAX_HEAD_OFFSET;
+	my += MAX_HEAD_OFFSET;
+    }
+
     /* the x and y here are coordinates for the new map, i.e. if we moved
-     (dx,dy), newmap[x][y] = oldmap[x-dx][y-dy] */
+     * (dx,dy), newmap[x][y] = oldmap[x-dx][y-dy].  For this reason,
+     * if the destination x or y coordinate is outside the viewable
+     * area, we clear the values - otherwise, the old values
+     * are preserved, and the check_head thinks it needs to clear them.
+     */
     for(x=0; x<mx; x++) {
 	for(y=0; y<my; y++) {
-	    if (x+dx < 0 || x+dx >= mx || y+dy < 0 || y+dy >= my) {
+	    if ((x+dx) < 0 || x >= ns->mapx || (y+dy) < 0 || y >= ns->mapy) {
 		memset(&(newmap.cells[x][y]), 0, sizeof(struct MapCell));
 	    }
 	    else {

@@ -909,23 +909,22 @@ int command_sound (object *op, char *params)
 
 void receive_player_name(object *op,char k) {
 
-  unsigned int name_len=strlen(op->contr->write_buf);
-  if(name_len<=1||name_len>32) {
-    get_name(op);
-    return;
-  }
+    unsigned int name_len=strlen(op->contr->write_buf);
+    if(name_len<=1||name_len>32) {
+	get_name(op);
+	return;
+    }
   
-  if(!check_name(op->contr,op->contr->write_buf+1)) {
-      get_name(op);
-      return;
-  }
-  if(op->name!=NULL)
-    free_string(op->name);
-  op->name=add_string(op->contr->write_buf+1);
-  new_draw_info(NDI_UNIQUE, 0,op,op->contr->write_buf);
-  op->contr->last_value= -1; /* Flag: redraw all stats */
-  op->contr->name_changed=1;
-  get_password(op);
+    if(!check_name(op->contr,op->contr->write_buf+1)) {
+	get_name(op);
+	return;
+    }
+    FREE_AND_COPY(op->name, op->contr->write_buf+1);
+    FREE_AND_COPY(op->name_pl, op->contr->write_buf+1);
+    new_draw_info(NDI_UNIQUE, 0,op,op->contr->write_buf);
+    op->contr->last_value= -1; /* Flag: redraw all stats */
+    op->contr->name_changed=1;
+    get_password(op);
 }
 
 void receive_player_password(object *op,char k) {

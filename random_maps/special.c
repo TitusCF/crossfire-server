@@ -160,6 +160,7 @@ void place_fountain_with_specials(mapstruct *map) {
   SET_FLAG(potion,FLAG_NO_PICK);
   SET_FLAG(potion,FLAG_IDENTIFIED);
   potion->name=add_string("fountain");
+  potion->name_pl=add_string("fountain");
   potion->x = ix;
   potion->y = iy;
   potion->material=M_ADAMANT;

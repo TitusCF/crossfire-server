@@ -2239,7 +2239,8 @@ void kill_player(object *op)
      */
     tmp=arch_to_object(find_archetype("gravestone"));
     sprintf(buf,"%s's gravestone",op->name);
-    tmp->name=add_string(buf);
+    FREE_AND_COPY(tmp->name, buf);
+    FREE_AND_COPY(tmp->name_pl, buf);
     sprintf(buf,"RIP\nHere rests the hero %s the %s,\n"
 	        "who was killed\n"
 	        "by %s.\n",
@@ -2350,9 +2351,9 @@ void kill_player(object *op)
 #ifdef NOT_PERMADEATH
     tmp=arch_to_object(find_archetype("gravestone"));
     sprintf(buf,"%s's gravestone",op->name);
-    if (tmp->name)
-        free_string (tmp->name);
-    tmp->name=add_string(buf);
+    FREE_AND_COPY(tmp->name, buf);
+    FREE_AND_COPY(tmp->name_pl, buf);
+
     sprintf(buf,"RIP\nHere rests the hero %s the %s,\nwho was killed by %s.\n",
 	    op->name, op->contr->title, op->contr->killer);
     if (tmp->msg)
@@ -2364,9 +2365,8 @@ void kill_player(object *op)
     /*  peterm:  added to create a corpse at deathsite.  */
     tmp=arch_to_object(find_archetype("corpse_pl"));
     sprintf(buf,"%s", op->name);
-    if (tmp->name)
-	free_string (tmp->name);
-    tmp->name=add_string(buf);
+    FREE_AND_COPY(tmp->name, buf);
+    FREE_AND_COPY(tmp->name_pl, buf);
     tmp->level=op->level;
     tmp->x=x;tmp->y=y;
     if (tmp->msg)

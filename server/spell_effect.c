@@ -920,8 +920,8 @@ int perceive_self(object *op) {
    EXIT_PATH(dummy) = add_string (exitpath);
    EXIT_X(dummy)=exitx;
    EXIT_Y(dummy)=exity;
-   free_string (dummy->name);
-   dummy->name=add_string (portal_name);
+   FREE_AND_COPY(dummy->name, portal_name);
+   FREE_AND_COPY(dummy->name_pl, portal_name);
    dummy->msg=add_string (portal_message);
    CLEAR_FLAG (dummy,FLAG_WALK_ON);
    CLEAR_FLAG (dummy,FLAG_FLY_ON);
@@ -937,7 +937,7 @@ int perceive_self(object *op) {
    }
    force->slaying= add_string (PORTAL_ACTIVE_NAME);
    force->race=add_string (op->map->path);
-   force->name=add_string (portal_name);
+   FREE_AND_COPY(force->name, portal_name);
    EXIT_X(force)=dummy->x;
    EXIT_Y(force)=dummy->y;
    force->speed=0.0;
@@ -962,8 +962,8 @@ int perceive_self(object *op) {
    EXIT_PATH(dummy) = add_string (op->map->path);
    EXIT_X(dummy)=op->x;
    EXIT_Y(dummy)=op->y;
-   free_string (dummy->name);
-   dummy->name=add_string (portal_name);
+   FREE_AND_COPY(dummy->name, portal_name);
+   FREE_AND_COPY(dummy->name_pl, portal_name);
    dummy->msg=add_string (portal_message);
    CLEAR_FLAG (dummy,FLAG_WALK_ON);
    CLEAR_FLAG (dummy,FLAG_FLY_ON);
@@ -981,7 +981,7 @@ int perceive_self(object *op) {
    }
    force->slaying= add_string (PORTAL_ACTIVE_NAME);
    force->race=add_string (exitpath);
-   force->name=add_string (portal_name);
+   FREE_AND_COPY(force->name, portal_name);
    EXIT_X(force)=dummy->x;
    EXIT_Y(force)=dummy->y;
    force->speed=0.0;
@@ -3119,9 +3119,7 @@ int summon_cult_monsters(object *op, int old_dir) {
 		    sprintf(buf,"Arch %s of %s",head->name,god->name);
 		    else
 			sprintf(buf,"%s of %s",head->name,god->name);
-
-		    free_string(otmp->name);
-		    otmp->name=add_string(buf);
+		    FREE_AND_COPY(otmp->name, buf);
 		}
 	    }
 	} /* if monster level is much less than character level */
