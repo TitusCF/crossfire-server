@@ -2237,10 +2237,10 @@ static PyObject* CFSetSkillExperience(PyObject* self, PyObject* args)
 
     long whoptr;
     int skill, value2;
-    uint64 value;
-    uint64 currentxp;
+    sint64 value;
+    sint64 currentxp;
 
-    if (!PyArg_ParseTuple(args,"lil",&whoptr,&skill,&value))
+    if (!PyArg_ParseTuple(args,"liL",&whoptr,&skill,&value))
         return NULL;
 
     /* Browse the inventory of object to find a matching skill. */
@@ -2256,7 +2256,7 @@ static PyObject* CFSetSkillExperience(PyObject* self, PyObject* args)
             GCFP.Value[1] = (void *)(&value);
             GCFP.Value[2] = (void *)(tmp->skill);
 	    value2 = 0;
-            GCFP.Value[3] = (void *)(&value);
+            GCFP.Value[3] = (void *)(&value2);
 
             (PlugHooks[HOOK_ADDEXP])(&GCFP);
             Py_INCREF(Py_None);
@@ -2285,7 +2285,7 @@ static PyObject* CFGetSkillExperience(PyObject* self, PyObject* args)
     for (tmp=WHO->inv;tmp;tmp=tmp->below)
     {
         if(tmp->type==SKILL && tmp->subtype==skill) {
-            return Py_BuildValue("l",(long)(tmp->stats.exp));
+            return Py_BuildValue("L",(long long)(tmp->stats.exp));
         }
     }
     return NULL;
@@ -2419,35 +2419,43 @@ static PyObject* CFSetUnaggressive(PyObject* self, PyObject* args)
 
 static PyObject* CFCastAbility(PyObject* self, PyObject* args)
 {
-#if 0
-    /* This needs to get fixed up for new spell system.
-     * spell should not be an object pointer.
-     * also, a pointer to the caster (in addition to owner) is
-     * probably in order.
-     */
-    long whoptr;
-    int spell;
+    long whoptr,casterptr;
+    char *spell;
+    object *spell_ob;
     int dir;
     char* op;
     CFParm* CFR;
-    int parm=1;
-    int parm2 = spellNormal;
-    int typeoffire = FIRE_DIRECTIONAL;
 
-    if (!PyArg_ParseTuple(args,"liis",&whoptr,&spell,&dir,&op))
+    if (!PyArg_ParseTuple(args,"llsis",&whoptr,&casterptr,&spell,&dir,&op))
         return NULL;
 
+    GCFP.Value[0] = spell;
+    CFR = (PlugHooks[HOOK_GETARCHETYPE])(&GCFP);
+    spell_ob = CFR->Value[0];
+    PyFreeMemory( CFR );
+    if (strncmp(query_name(spell_ob), "singluarity", 11) == 0)
+    {
+        /* spell object does not exist */
+        PyFreeObject(spell_ob);
+        return NULL;
+    }
+    if (spell_ob->type != SPELL)
+    {
+        /* not a spell */
+        PyFreeObject(spell_ob);
+        return NULL;
+    }
+
     GCFP.Value[0] = (void *)(WHO);
-    GCFP.Value[1] = (void *)(WHO);
+    GCFP.Value[1] = (void *)(casterptr);
     GCFP.Value[2] = (void *)(&dir);
-    GCFP.Value[3] = (void *)(&spell);
-    GCFP.Value[4] = (void *)(&parm);
-    GCFP.Value[5] = (void *)(&parm2);
-    GCFP.Value[6] = (void *)(op);
-    GCFP.Value[7] = (void *)(&typeoffire);
+    GCFP.Value[3] = (void *)(spell_ob);
+    GCFP.Value[4] = (void *)(op);
     CFR = (PlugHooks[HOOK_CASTSPELL])(&GCFP);
     PyFreeMemory( CFR );
-#endif
+
+    PyFreeObject(spell_ob);
+
     Py_INCREF(Py_None);
     return Py_None;
 };

@@ -17,6 +17,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+plugin/plugin_python.c, server/plugin.c, plugin_animator/animator_box.c: Fix
+   some more mismatches between plugin interface and implementation.
+   CFPython.Get/SetSkillExperience() use 64-bit exp values now.
+   CFPython.CastAbility() works again.
+Andreas Kirschbaum 2004-10-16
+
 plugin/plugin_python.c, server/plugin.c: Fix type mismatches between plugin
    interface and implementation.
 plugin/plugin_python.c, server/plugin.c: Add/remove "static" to/from some

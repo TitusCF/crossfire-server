@@ -1213,7 +1213,7 @@ CFParm* CFWAddExp(CFParm* PParm)
 {
     change_exp(
         (object *)(PParm->Value[0]),
-        *(int *)(PParm->Value[1]), 
+        *(sint64 *)(PParm->Value[1]),
 	(char*)(PParm->Value[2]),
 	*(int *)(PParm->Value[3])
     );

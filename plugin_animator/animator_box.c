@@ -364,11 +364,15 @@ long int initnotice (char* name, char* parameters, struct CFmovement_struct* mov
 int runnotice(struct CFanimation_struct* animation, long int id, void* parameters)
 {
     int val;
+    int pri;
+
     val = NDI_NAVY|NDI_UNIQUE;
+    pri = 0;
 
     GCFP.Value[0] = (&val);
-    GCFP.Value[1] = (animation->victim);
-    GCFP.Value[2] = (parameters);
+    CFGP.Value[1] = (&pri);
+    GCFP.Value[2] = (animation->victim);
+    GCFP.Value[3] = (parameters);
     (PlugHooks[HOOK_NEWDRAWINFO])(&GCFP);
     return 1;
 }
