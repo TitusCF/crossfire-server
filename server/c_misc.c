@@ -916,10 +916,12 @@ int command_sound (object *op, char *params)
 
 void receive_player_name(object *op,char k) {
 
-  if(strlen(op->contr->write_buf)<=1) {
+  unsigned int name_len=strlen(op->contr->write_buf);
+  if(name_len<=1||name_len>32) {
     get_name(op);
     return;
   }
+  
   if(!check_name(op->contr,op->contr->write_buf+1)) {
       get_name(op);
       return;
