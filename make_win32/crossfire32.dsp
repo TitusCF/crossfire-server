@@ -1252,6 +1252,10 @@ SOURCE=..\plugin\plugin_python.c
 
 # End Source File
 # End Group
+# Begin Source File
+
+SOURCE=..\server\timers.c
+# End Source File
 # End Group
 # Begin Group "Header-Dateien"
 
