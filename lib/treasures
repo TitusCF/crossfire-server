@@ -2225,6 +2225,13 @@ treasureone random_wands
 treasure shop_rings
   arch ring
   end
+treasureone shop_light
+  arch flint_and_steel
+        chance 40
+  more
+  arch torch_unlit
+    chance 60
+  end
 treasure random_books
   arch book
     chance 55
