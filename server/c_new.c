@@ -69,11 +69,14 @@ int execute_newserver_command(object *pl, char *command)
     pl->contr->has_hit=0;
 
     cp=strchr(command, ' ');
-    if (cp) { 
+    if (cp) {
 	*(cp++) ='\0';
 	while (*cp==' ') cp++;
     }
 
+    csp = find_plugin_command(command);
+
+    if (!csp)
     csp = find_command_element(command, NewServerCommands,
 		NewServerCommandSize);
     if (!csp)
@@ -84,7 +87,7 @@ int execute_newserver_command(object *pl, char *command)
 	csp = find_command_element(command, WizCommands, WizCommandsSize);
 
     if (csp==NULL) {
-	    new_draw_info_format(NDI_UNIQUE, 0,pl, 
+	    new_draw_info_format(NDI_UNIQUE, 0,pl,
 		"'%s' is not a valid command.", command);
 	    return 0;
     }
