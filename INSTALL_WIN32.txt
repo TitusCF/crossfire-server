@@ -1,5 +1,13 @@
 How to Install a Crossfire Server on Windows:
 
+o Before you can compile the Crossfire source, you
+  must include a guile library for windows and a 
+  pthread libray for windows. You will find the needed libraries
+  in the download areas of CVS snapshots and/or releases.
+  This package is normally called "cf_win32_libs.zip".  
+  You have to copy the files in the package over this crossfire
+  source.
+
 o First, you need to get the latest Crossfire sourcecode.
   You need two packages from cvs: "crossfire" and "maps".
   A good site to get it is <http://www.futt.org/crossfire_html>.

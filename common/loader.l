@@ -81,6 +81,13 @@ static char *variable_const[NR_OF_VARIABLES] = {
   "is_wooded","is_hilly","has_ready_skill","has_ready_weapon",
   "no_skill_ident","glow_radius","is_blind","can_see_in_dark",
   "is_cauldron","randomitems","is_dust", "no_steal", "one_hit","berserk",
+/* GROS - These are hooks for script events */
+  "script_load","script_apply","script_say","script_trigger", "script_time",
+  "script_attack","script_drop", "script_throw", "script_stop", "script_death", "current_weapon_script",
+  "start_script_load", "start_script_apply","start_script_say","start_script_trigger","start_script_time",
+  "start_script_attack","start_script_drop","start_script_throw","start_script_stop", "start_script_death",
+  "end_script_load", "end_script_apply","end_script_say","end_script_trigger","end_script_time",
+  "end_script_attack","end_script_drop","end_script_throw","end_script_stop", "end_script_death",
 #ifdef NPC_PROG
   "npc_status","npc_program",
 #endif
@@ -93,6 +100,8 @@ static char *yval();
 
 static int lex_error;
 static char msgbuf[HUGE_BUF];
+/* GROS: To contain the script embedded inside objects */
+static char scriptbuf[HUGE_BUF];
 
 #define FREE_AND_COPY(sv,nv) { if (sv) free_string(sv); sv=add_string(nv); }
 #define SET_OR_CLEAR_FLAG(op, flag, val) \
@@ -142,6 +151,8 @@ WS	[ \t]*
 
 %x MESSAGE
 
+%x SCRIPT
+
 /* Don't have to link with -lfl with this */
 %option noyywrap
 
@@ -170,6 +181,116 @@ WS	[ \t]*
 		    }
 <MESSAGE>.*	    {strcat(msgbuf, yytext); strcat(msgbuf,"\n"); }
 
+^start_script_load{WS}$	    {	BEGIN( SCRIPT ); scriptbuf[0]='\0'; }
+<SCRIPT>^end_script{WS}$ {	BEGIN( INITIAL );
+			op->script_str_load=add_string(scriptbuf);
+			/* Just print a warning so we can be reasonably safe
+			 * about not overflowing the buffer.
+			 */
+			if (strlen(op->script_str_load) > (HUGE_BUF/2))
+			    LOG(llevDebug, "\n\tWarning script length > %d (max allowed=%d): %d\n>%.80s<\n",
+				HUGE_BUF/2, HUGE_BUF, strlen(op->script_str_load),op->script_str_load);
+		    }
+<SCRIPT>.*	    {strcat(scriptbuf, yytext); strcat(scriptbuf,"\n"); }
+
+^start_script_apply{WS}$	    {	BEGIN( SCRIPT ); scriptbuf[0]='\0'; }
+<SCRIPT>^end_script_apply{WS}$ {	BEGIN( INITIAL );
+			op->script_str_apply=add_string(scriptbuf);
+			/* Just print a warning so we can be reasonably safe
+			 * about not overflowing the buffer.
+			 */
+			if (strlen(op->script_str_apply) > (HUGE_BUF/2))
+			    LOG(llevDebug, "\n\tWarning script length > %d (max allowed=%d): %d\n>%.80s<\n",
+				HUGE_BUF/2, HUGE_BUF, strlen(op->script_str_apply),op->script_str_apply);
+		    }
+
+^start_script_say{WS}$	    {	BEGIN( SCRIPT ); scriptbuf[0]='\0'; }
+<SCRIPT>^end_script_say{WS}$ {	BEGIN( INITIAL );
+			op->script_str_say=add_string(scriptbuf);
+			/* Just print a warning so we can be reasonably safe
+			 * about not overflowing the buffer.
+			 */
+			if (strlen(op->script_str_say) > (HUGE_BUF/2))
+			    LOG(llevDebug, "\n\tWarning script length > %d (max allowed=%d): %d\n>%.80s<\n",
+				HUGE_BUF/2, HUGE_BUF, strlen(op->script_str_say),op->script_str_say);
+		    }
+
+^start_script_trigger{WS}$	    {	BEGIN( SCRIPT ); scriptbuf[0]='\0'; }
+<SCRIPT>^end_script_trigger{WS}$ {	BEGIN( INITIAL );
+			op->script_str_trigger=add_string(scriptbuf);
+			/* Just print a warning so we can be reasonably safe
+			 * about not overflowing the buffer.
+			 */
+			if (strlen(op->script_str_trigger) > (HUGE_BUF/2))
+			    LOG(llevDebug, "\n\tWarning script length > %d (max allowed=%d): %d\n>%.80s<\n",
+				HUGE_BUF/2, HUGE_BUF, strlen(op->script_str_trigger),op->script_str_trigger);
+		    }
+
+^start_script_time{WS}$	    {	BEGIN( SCRIPT ); scriptbuf[0]='\0'; }
+<SCRIPT>^end_script_time{WS}$ {	BEGIN( INITIAL );
+			op->script_str_time=add_string(scriptbuf);
+			/* Just print a warning so we can be reasonably safe
+			 * about not overflowing the buffer.
+			 */
+			if (strlen(op->script_str_time) > (HUGE_BUF/2))
+			    LOG(llevDebug, "\n\tWarning script length > %d (max allowed=%d): %d\n>%.80s<\n",
+				HUGE_BUF/2, HUGE_BUF, strlen(op->script_str_time),op->script_str_time);
+		    }
+
+^start_script_attack{WS}$	    {	BEGIN( SCRIPT ); scriptbuf[0]='\0'; }
+<SCRIPT>^end_script_attack{WS}$ {	BEGIN( INITIAL );
+			op->script_str_attack=add_string(scriptbuf);
+			/* Just print a warning so we can be reasonably safe
+			 * about not overflowing the buffer.
+			 */
+			if (strlen(op->script_str_attack) > (HUGE_BUF/2))
+			    LOG(llevDebug, "\n\tWarning script length > %d (max allowed=%d): %d\n>%.80s<\n",
+				HUGE_BUF/2, HUGE_BUF, strlen(op->script_str_attack),op->script_str_attack);
+		    }
+
+^start_script_drop{WS}$	    {	BEGIN( SCRIPT ); scriptbuf[0]='\0'; }
+<SCRIPT>^end_script_drop{WS}$ {	BEGIN( INITIAL );
+			op->script_str_drop=add_string(scriptbuf);
+			/* Just print a warning so we can be reasonably safe
+			 * about not overflowing the buffer.
+			 */
+			if (strlen(op->script_str_drop) > (HUGE_BUF/2))
+			    LOG(llevDebug, "\n\tWarning script length > %d (max allowed=%d): %d\n>%.80s<\n",
+				HUGE_BUF/2, HUGE_BUF, strlen(op->script_str_drop),op->script_str_drop);
+		    }
+
+^start_script_throw{WS}$	    {	BEGIN( SCRIPT ); scriptbuf[0]='\0'; }
+<SCRIPT>^end_script_throw{WS}$ {	BEGIN( INITIAL );
+			op->script_str_throw=add_string(scriptbuf);
+			/* Just print a warning so we can be reasonably safe
+			 * about not overflowing the buffer.
+			 */
+			if (strlen(op->script_str_throw) > (HUGE_BUF/2))
+			    LOG(llevDebug, "\n\tWarning script length > %d (max allowed=%d): %d\n>%.80s<\n",
+				HUGE_BUF/2, HUGE_BUF, strlen(op->script_str_throw),op->script_str_throw);
+		    }
+
+^start_script_stop{WS}$	    {	BEGIN( SCRIPT ); scriptbuf[0]='\0'; }
+<SCRIPT>^end_script_stop{WS}$ {	BEGIN( INITIAL );
+			op->script_str_stop=add_string(scriptbuf);
+			/* Just print a warning so we can be reasonably safe
+			 * about not overflowing the buffer.
+			 */
+			if (strlen(op->script_str_stop) > (HUGE_BUF/2))
+			    LOG(llevDebug, "\n\tWarning script length > %d (max allowed=%d): %d\n>%.80s<\n",
+				HUGE_BUF/2, HUGE_BUF, strlen(op->script_str_stop),op->script_str_stop);
+		    }
+
+^start_script_death{WS}$	    {	BEGIN( SCRIPT ); scriptbuf[0]='\0'; }
+<SCRIPT>^end_script_death{WS}$ {	BEGIN( INITIAL );
+			op->script_str_death=add_string(scriptbuf);
+			/* Just print a warning so we can be reasonably safe
+			 * about not overflowing the buffer.
+			 */
+			if (strlen(op->script_str_death) > (HUGE_BUF/2))
+			    LOG(llevDebug, "\n\tWarning script length > %d (max allowed=%d): %d\n>%.80s<\n",
+				HUGE_BUF/2, HUGE_BUF, strlen(op->script_str_death),op->script_str_death);
+		    }
 
 ^object{S}	    {	char *yv=yval();
 
@@ -200,7 +321,7 @@ WS	[ \t]*
 
 			    tmp=get_object();
 			    tmp->arch = find_archetype(yval());
-			    if (tmp->arch!=NULL) 
+			    if (tmp->arch!=NULL)
 				copy_object(&tmp->arch->clone,tmp);
 			    strcpy(msgbuf, "");
 			    lex_load(tmp, map_flags);
@@ -214,7 +335,7 @@ WS	[ \t]*
 		    }
 
 ^other_arch{S}        op->other_arch=find_archetype(yval());
-^animation{S}	    {	
+^animation{S}	    {
 			if (strcmp (yval(), "NONE") == 0) {
 			    op->animation_id = 0;
 			    CLEAR_FLAG (op, FLAG_ANIMATE);
@@ -450,6 +571,98 @@ WS	[ \t]*
 ^can_impale{S}		{ /* That these are for the new combat code */ }
 ^can_cut{S}		{ /* just ignore for now */ }
 ^can_dam_armour{S}	{ }
+^script_load{S}	    {	char *yv=yval();
+
+			if (*yv=='\0') LOG(llevError,"Script (load) without val\n");
+			else
+                                                {
+                                                        FREE_AND_COPY(op->script_load, yv);
+                                                        LOG(llevError, "Script name is:");
+                                                        LOG(llevError, op->script_load);
+                                                        LOG(llevError, "\n");
+                                                        /*guile_run(op->script_load);*/
+                                                };
+		    }
+^script_apply{S}	    {	char *yv=yval();
+
+			if (*yv=='\0') LOG(llevError,"Script (apply) without val\n");
+			else
+                                                {
+                                                        FREE_AND_COPY(op->script_apply, yv);
+                                                };
+		    }
+^script_say{S}	    {	char *yv=yval();
+
+			if (*yv=='\0') LOG(llevError,"Script (say) without val\n");
+			else
+                                                {
+                                                        FREE_AND_COPY(op->script_say, yv);
+                                                };
+		    }
+^script_drop{S}	    {	char *yv=yval();
+
+			if (*yv=='\0') LOG(llevError,"Script (drop) without val\n");
+			else
+                                                {
+                                                        FREE_AND_COPY(op->script_drop, yv);
+                                                };
+		    }
+^script_trigger{S}  {	char *yv=yval();
+
+			if (*yv=='\0') LOG(llevError,"Script (trigger) without val\n");
+			else
+                                                {
+                                                        FREE_AND_COPY(op->script_trigger, yv);
+                                                };
+		    }
+^script_time{S}	    {	char *yv=yval();
+
+			if (*yv=='\0') LOG(llevError,"Script (time) without val\n");
+			else
+                                                {
+                                                        FREE_AND_COPY(op->script_time, yv);
+                                                };
+		    }
+^script_attack{S}   {	char *yv=yval();
+
+			if (*yv=='\0') LOG(llevError,"Script (attack) without val\n");
+			else
+                                                {
+                                                        FREE_AND_COPY(op->script_attack, yv);
+                                                };
+		    }
+^script_throw{S}	    {	char *yv=yval();
+
+			if (*yv=='\0') LOG(llevError,"Script (throw) without val\n");
+			else
+                                                {
+                                                        FREE_AND_COPY(op->script_throw, yv);
+                                                };
+		    }
+^script_stop{S}	    {	char *yv=yval();
+
+			if (*yv=='\0') LOG(llevError,"Script (stop) without val\n");
+			else
+                                                {
+                                                        FREE_AND_COPY(op->script_stop, yv);
+                                                };
+		    }
+^script_death{S}	    {	char *yv=yval();
+
+			if (*yv=='\0') LOG(llevError,"Script (death) without val\n");
+			else
+                                                {
+                                                        FREE_AND_COPY(op->script_death, yv);
+                                                };
+		    }
+^current_weapon_script{S} {	char *yv=yval();
+
+			if (*yv=='\0') LOG(llevError,"Script (current weapon) without val\n");
+			else
+                                                {
+                                                        FREE_AND_COPY(op->current_weapon_script, yv);
+                                                };
+		    }
 
 <*>(^{WS}$)|\n		{/* ignore empty lines, newlines we don't do above */}
 #.*\n			{}
@@ -491,7 +704,7 @@ static char *yval()
 	    return em;
 	}
     }
-    /* Got last character before null and strip	
+    /* Got last character before null and strip
      * off tailing whitespace
      */
     for (end=cp+strlen(cp)-1; *end==' '; end--) {
@@ -527,7 +740,7 @@ int load_object(FILE *fp, object *op, int bufstate, int map_flags) {
 	yy_delete_buffer(YY_CURRENT_BUFFER);
 	yy_switch_to_buffer(yy_create_buffer(fp, YY_BUF_SIZE));
 	if (bufstate==LO_NOREAD) return LL_NORMAL;
-    } 
+    }
     if (bufstate==LO_LINEMODE) {
 	YY_BUFFER_STATE  yybufstate;
 	while (fgets(inbuf, MAX_BUF-3, fp)) {
@@ -541,6 +754,12 @@ int load_object(FILE *fp, object *op, int bufstate, int map_flags) {
     }
 
     retval=lex_load(op, map_flags);
+    if (op->current_weapon_script != NULL)
+    {
+        op->current_weapon = find_best_weapon_used_match(op, op->current_weapon_script);
+        LOG(llevDebug, "CurrentWeapon Loaded !\n");
+    };
+
 /*    LOG(llevDebug," load completed, object=%s\n",op->name);*/
     return retval;
 }
@@ -681,13 +900,63 @@ char *get_ob_diff(object *op,object *op2) {/* I plan to optimize this heavily */
     strcat(buf,op->msg);
     strcat(buf,"endmsg\n");
   }
-  if(op->other_arch!=op2->other_arch&&op->other_arch!=NULL && 
+  if(op->script_str_load && op->script_str_load!=op2->script_str_load) {
+    strcat(buf,"start_script_load\n");
+    strcat(buf,op->script_str_load);
+    strcat(buf,"end_script_load\n");
+  }
+  if(op->script_str_apply && op->script_str_apply!=op2->script_str_apply) {
+    strcat(buf,"start_script_apply\n");
+    strcat(buf,op->script_str_apply);
+    strcat(buf,"end_script_apply\n");
+  }
+  if(op->script_str_say && op->script_str_say!=op2->script_str_say) {
+    strcat(buf,"start_script_say\n");
+    strcat(buf,op->script_str_say);
+    strcat(buf,"end_script_say\n");
+  }
+  if(op->script_str_trigger && op->script_str_trigger!=op2->script_str_trigger) {
+    strcat(buf,"start_script_trigger\n");
+    strcat(buf,op->script_str_trigger);
+    strcat(buf,"end_script_trigger\n");
+  }
+  if(op->script_str_time && op->script_str_time!=op2->script_str_time) {
+    strcat(buf,"start_script_time\n");
+    strcat(buf,op->script_str_time);
+    strcat(buf,"end_script_time\n");
+  }
+  if(op->script_str_attack && op->script_str_attack!=op2->script_str_attack) {
+    strcat(buf,"start_script_attack\n");
+    strcat(buf,op->script_str_attack);
+    strcat(buf,"end_script_attack\n");
+  }
+  if(op->script_str_drop && op->script_str_drop!=op2->script_str_drop) {
+    strcat(buf,"start_script_drop\n");
+    strcat(buf,op->script_str_drop);
+    strcat(buf,"end_script_drop\n");
+  }
+  if(op->script_str_throw && op->script_str_throw!=op2->script_str_throw) {
+    strcat(buf,"start_script_throw\n");
+    strcat(buf,op->script_str_throw);
+    strcat(buf,"end_script_throw\n");
+  }
+  if(op->script_str_stop && op->script_str_stop!=op2->script_str_stop) {
+    strcat(buf,"start_script_stop\n");
+    strcat(buf,op->script_str_stop);
+    strcat(buf,"end_script_stop\n");
+  }
+  if(op->script_str_death && op->script_str_death!=op2->script_str_death) {
+    strcat(buf,"start_script_death\n");
+    strcat(buf,op->script_str_death);
+    strcat(buf,"end_script_death\n");
+  }
+  if(op->other_arch!=op2->other_arch&&op->other_arch!=NULL &&
      op->other_arch->name) {
     sprintf(buf2,"other_arch %s\n",op->other_arch->name);
     strcat(buf,buf2);
   }
   if(op->face!=op2->face) {
-      sprintf(buf2,"%s %s\n",variable_const[V_FACE], 
+      sprintf(buf2,"%s %s\n",variable_const[V_FACE],
 		op->face->name);
       strcat(buf,buf2);
   }
@@ -743,7 +1012,7 @@ char *get_ob_diff(object *op,object *op2) {/* I plan to optimize this heavily */
     save_long(buf,variable_const[V_WC],op->stats.wc);
   if(op->stats.ac!=op2->stats.ac)
     save_long(buf,variable_const[V_AC],op->stats.ac);
-  if(op->x!=op2->x) 
+  if(op->x!=op2->x)
     save_long(buf,variable_const[V_X],op->x);
   if(op->y!=op2->y)
     save_long(buf,variable_const[V_Y],op->y);
@@ -807,7 +1076,7 @@ char *get_ob_diff(object *op,object *op2) {/* I plan to optimize this heavily */
     save_long(buf,variable_const[V_LAST_EAT],op->last_eat);
   if(QUERY_FLAG(op,FLAG_IS_LINKED) && (tmp = get_button_value(op)))
     save_long(buf,variable_const[V_CONNECTED],tmp);
-  if(op->glow_radius!=op2->glow_radius) 
+  if(op->glow_radius!=op2->glow_radius)
     save_long(buf,variable_const[V_GLOW_RADIUS],op->glow_radius);
   if (op->randomitems!=op2->randomitems) {
     sprintf(buf2,"randomitems %s\n",(op->randomitems?op->randomitems->name:"none"));
@@ -836,18 +1105,64 @@ char *get_ob_diff(object *op,object *op2) {/* I plan to optimize this heavily */
   if (op->will_apply!=op2->will_apply)
     save_long(buf,variable_const[V_WILL_APPLY],op->will_apply);
 
+/* GROS: Handle the various scripting event flags */
+  if (op->script_load!=op2->script_load){
+    sprintf(buf2,"script_load %s\n",(op->script_load));
+    strcat(buf,buf2);
+  };
+  if (op->script_apply!=op2->script_apply){
+    sprintf(buf2,"script_apply %s\n",(op->script_apply));
+    strcat(buf,buf2);
+  };
+  if (op->script_say!=op2->script_say){
+    sprintf(buf2,"script_say %s\n",(op->script_say));
+    strcat(buf,buf2);
+  };
+  if (op->script_time!=op2->script_time){
+    sprintf(buf2,"script_time %s\n",(op->script_time));
+    strcat(buf,buf2);
+  };
+  if (op->script_trigger!=op2->script_trigger){
+    sprintf(buf2,"script_trigger %s\n",(op->script_trigger));
+    strcat(buf,buf2);
+  };
+  if (op->script_attack!=op2->script_attack){
+    sprintf(buf2,"script_attack %s\n",(op->script_attack));
+    strcat(buf,buf2);
+  };
+  if (op->script_drop!=op2->script_drop){
+    sprintf(buf2,"script_drop %s\n",(op->script_drop));
+    strcat(buf,buf2);
+  };
+  if (op->script_throw!=op2->script_throw){
+    sprintf(buf2,"script_throw %s\n",(op->script_throw));
+    strcat(buf,buf2);
+  };
+  if (op->script_stop!=op2->script_stop){
+    sprintf(buf2,"script_stop %s\n",(op->script_stop));
+    strcat(buf,buf2);
+  };
+  if (op->script_death!=op2->script_death){
+    sprintf(buf2,"script_death %s\n",(op->script_death));
+    strcat(buf,buf2);
+  };
+  if (op->current_weapon_script!=op2->current_weapon_script){
+    sprintf(buf2,"current_weapon_script %s\n",(op->current_weapon_script));
+    strcat(buf,buf2);
+  };
+
 /* Mol(@meryl.csd.uu.se) 921108  Handle can_apply */
   if (op->can_apply!=op2->can_apply)
     save_long(buf,variable_const[V_CAN_APPLY],op->can_apply);
 
   for (tmp=0; tmp <= NUM_FLAGS; tmp++) {
-    if ((flag_links[tmp][0]!=-1) && (QUERY_FLAG(op, flag_links[tmp][0]) != 
+    if ((flag_links[tmp][0]!=-1) && (QUERY_FLAG(op, flag_links[tmp][0]) !=
 	QUERY_FLAG(op2, flag_links[tmp][0]))) {
 	    if (flag_links[tmp][0]==FLAG_SLOW_MOVE) {
 		sprintf(buf2,"%s %f\n",variable_const[V_SLOW_MOVE],SLOW_PENALTY(op));
 		strcat(buf,buf2);
 	    }
-	    else 
+	    else
 	        BUFADD(QUERY_FLAG(op, flag_links[tmp][0]), flag_links[tmp][1]);
 	}
   }

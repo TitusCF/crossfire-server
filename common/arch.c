@@ -38,6 +38,172 @@ static archetype *arch_table[ARCHTABLE];
 int arch_cmp=0;		/* How many strcmp's */
 int arch_search=0;	/* How many searches */
 int arch_init;		/* True if doing arch initialization */
+
+/**
+ * GROS -  This function retrieves an archetype given the name that appears
+ * during the game (for example, "writing pen" instead of "stylus").
+ * It does not use the hashtable system, but browse the whole archlist each time.
+ * I suggest not to use it unless you really need it because of performance issue.
+ * It is currently used by scripting extensions (create-object).
+ * Params:
+ * - name: the name we're searching for (ex: "writing pen");
+ * Return value:
+ * - the archetype found or null if nothing was found.
+ */
+archetype *find_archetype_by_object_name(char *name) {
+  archetype *at;
+  unsigned long index;
+  int i = 0;
+
+  if (name == NULL)
+    return (archetype *) NULL;
+
+  for(at = first_archetype;at!=NULL;at=at->next)
+  {
+        if (!strcmp(at->clone.name, name))
+                return at;
+  };
+  return NULL;
+}
+
+/**
+ * GROS - this returns a new object given the name that appears during the game
+ * (for example, "writing pen" instead of "stylus").
+ * Params:
+ * - name: The name we're searching for (ex: "writing pen");
+ * Return value:
+ * - a corresponding object if found; a singularity object if not found.
+ */
+object *get_archetype_by_object_name(char *name) {
+  archetype *at;
+  char *tmpname;
+  int i;
+  for(i=strlen(name); i>0;i--)
+  {
+        tmpname = (char *)(malloc(i+1));
+        strncpy(tmpname,name,i);
+        tmpname[i] = 0x0;
+        at = find_archetype_by_object_name(tmpname);
+        if (at !=NULL)
+        {
+                free(tmpname);
+                return arch_to_object(at);
+        };
+  };
+  return create_singularity(name);
+}
+
+ /* GROS - find_best_weapon_used_match and item_matched_string moved there */
+ object *find_best_weapon_used_match(object *pl, char *params)
+ {
+   object *tmp, *best=NULL;
+   int match_val=0,tmpmatch;
+
+   for (tmp=pl->inv; tmp; tmp=tmp->below) {
+     if (tmp->invisible) continue;
+     if ((tmpmatch=item_matched_string(pl, tmp, params))>match_val)
+     {
+       if ((QUERY_FLAG(tmp, FLAG_APPLIED))&&(tmp->type==WEAPON))
+       {
+         match_val=tmpmatch;
+         best=tmp;
+       };
+     }
+   }
+   return best;
+ }
+
+ /* This is a subset of the parse_id command.  Basically, name can be
+  * a string seperated lists of things to match, with certain keywords.
+  * pl is the player (only needed to set count properly)
+  * op is the item we are trying to match.  Calling function takes care
+  * of what action might need to be done and if it is valid
+  * (pickup, drop, etc.)  Return NONZERO if we have a match.  A higher
+  * value means a better match.  0 means no match.
+  *
+  * Brief outline of the procedure:
+  * We take apart the name variable into the individual components.
+  * cases for 'all' and unpaid are pretty obvious.
+  * Next, we check for a count (either specified in name, or in the
+  * player object.)
+  * If count is 1, make a quick check on the name.
+  * IF count is >1, we need to make plural name.  Return if match.
+  * Last, make a check on the full name.
+  */
+int item_matched_string(object *pl, object *op, char *name)
+{
+   char *cp, local_name[MAX_BUF];
+   int count,retval=0;
+   strcpy(local_name, name);	/* strtok is destructive to name */
+   for (cp=strtok(local_name,","); cp; cp=strtok(NULL,",")) {
+     while (cp[0]==' ') ++cp;	/* get rid of spaces */
+     /*	LOG(llevDebug,"Trying to match %s\n", cp);*/
+     /* All is a very generic match - low match value */
+     if (!strcmp(cp,"all")) return 1;
+     /* unpaid is a little more specific */
+     if (!strcmp(cp,"unpaid") && QUERY_FLAG(op,FLAG_UNPAID)) return 2;
+     if (!strcmp(cp,"cursed") && QUERY_FLAG(op,FLAG_KNOWN_CURSED) &&
+       (QUERY_FLAG(op,FLAG_CURSED) ||QUERY_FLAG(op,FLAG_DAMNED)))
+       return 2;
+     /* Allow for things like '100 arrows' */
+     if ((count=atoi(cp))!=0) {
+       cp=strchr(cp, ' ');
+       while (cp && cp[0]==' ') ++cp;	/* get rid of spaces */
+     }
+     else
+     {
+       if (pl->type==PLAYER)
+       {
+         count=pl->contr->count;
+       }
+       else
+       {
+         count = 0;
+       };
+     };
+     if (!cp || cp[0]=='\0' || count<0) return 0;
+     /* base name matched - not bad */
+     if (strcasecmp(cp,op->name)==0 && !count) return 4;
+     else if (count>1) {	/* Need to plurify name for proper match */
+     char newname[MAX_BUF];
+     strcpy(newname, op->name);
+     if (QUERY_FLAG(op,FLAG_NEED_IE)) {
+       char *cp1=strrchr(newname,'y');
+       if(cp1!=NULL)
+         *cp1='\0'; /* Strip the 'y' */
+       strcat(newname,"ies");
+     }
+     else strcat(newname,"s");
+     if (!strcasecmp(newname,cp)) {
+       pl->contr->count=count;	/* May not do anything */
+       return 6;
+     }
+   }
+   else if (count==1) {
+     if (!strcasecmp(op->name,cp)) {
+       pl->contr->count=count;	/* May not do anything */
+       return 6;
+     }
+   }
+   if (!strcasecmp(cp,query_name(op))) retval=20;
+   else if (!strcasecmp(cp,query_short_name(op))) retval=18;
+   else if (!strcasecmp(cp,query_base_name(op,0))) retval=16;
+   else if (!strcasecmp(cp,query_base_name(op,1))) retval=16;
+   else if (!strncasecmp(cp,query_base_name(op,0),
+     MIN(strlen(cp),strlen(query_base_name(op,0))))) retval=14;
+   else if (!strncasecmp(cp,query_base_name(op,1),
+     MIN(strlen(cp),strlen(query_base_name(op,1))))) retval=14;
+   if (retval) {
+     if (pl->type == PLAYER)
+     {
+       pl->contr->count=count;
+     };
+     return retval;
+   }
+   }
+   return 0;
+}
+
 /*
  * Initialises the internal linked list of archetypes (read from file).
  * Then the global "empty_archetype" pointer is initialised.

@@ -1172,7 +1172,7 @@ void add_abilities(object *op, object *change) {
   if (QUERY_FLAG(change,FLAG_REFL_MISSILE))
     SET_FLAG(op,FLAG_REFL_MISSILE);
   if (QUERY_FLAG(change,FLAG_MAKE_INVIS))
-    SET_FLAG(op,FLAG_MAKE_INVIS);	
+    SET_FLAG(op,FLAG_MAKE_INVIS);
   if (QUERY_FLAG(change,FLAG_STAND_STILL)) {
     CLEAR_FLAG(op,FLAG_ANIMATE);
     /*op->speed = 0.0; */  /* why was this done? */
@@ -1186,7 +1186,7 @@ void add_abilities(object *op, object *change) {
   op->stats.ac  += change->stats.ac;
   if (change->stats.hp < 0)
      op->stats.hp = -change->stats.hp;
-  else 
+  else
     op->stats.hp  += change->stats.hp;
   if (change->stats.maxhp < 0)
     op->stats.maxhp = -change->stats.maxhp;
@@ -1209,7 +1209,7 @@ void add_abilities(object *op, object *change) {
   else
     op->level += change->level;
 
-  
+
   for (i=0; i<NROFATTACKS; i++) {
     if (change->resist[i]) {
 	op->resist[i] += change->resist[i];
@@ -1267,6 +1267,42 @@ void add_abilities(object *op, object *change) {
     if (op->msg)
       free_string(op->msg);
     op->msg = add_refcount(change->msg);
+  }
+  /* GROS: Added support for script_... in artifact file */
+  if (change->script_attack) {
+    if (op->script_attack)
+      free_string(op->script_attack);
+    op->script_attack = add_refcount(change->script_attack);
+  }
+  if (change->script_apply) {
+    if (op->script_apply)
+      free_string(op->script_apply);
+    op->script_apply = add_refcount(change->script_apply);
+  }
+  if (change->script_drop) {
+    if (op->script_drop)
+      free_string(op->script_drop);
+    op->script_drop = add_refcount(change->script_drop);
+  }
+  if (change->script_say) {
+    if (op->script_say)
+      free_string(op->script_say);
+    op->script_say = add_refcount(change->script_say);
+  }
+  if (change->script_trigger) {
+    if (op->script_trigger)
+      free_string(op->script_trigger);
+    op->script_trigger = add_refcount(change->script_trigger);
+  }
+  if (change->script_time) {
+    if (op->script_time)
+      free_string(op->script_time);
+    op->script_time = add_refcount(change->script_time);
+  }
+  if (change->script_throw) {
+    if (op->script_throw)
+      free_string(op->script_throw);
+    op->script_throw = add_refcount(change->script_throw);
   }
 
 }

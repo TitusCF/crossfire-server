@@ -36,7 +36,7 @@
 #EXTRA_INCLUDES = -I/usr/X11R6/include
 
 # EXTRA_LIBS
-# add any extra libraries or -L options needed. 
+# add any extra libraries or -L options needed.
 #EXTRA_LIBS = -lX11 -lcrypt
 
 # MFLAGS
@@ -46,6 +46,10 @@
 # EXTRA_CFLAGS
 # Any extra special options for the C compiler.
 #EXTRA_CFLAGS=-Wall
+
+#Gros: Extra flags and includes for Guile Interpreter support
+EXTRA_CFLAGS=@GUILE_CFLAGS@
+EXTRA_LIBS=@GUILE_LDFLAGS@
 
 #
 #
