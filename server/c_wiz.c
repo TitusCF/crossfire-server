@@ -1247,7 +1247,7 @@ static int checkdm(object *op, char *pl_name, char *pl_passwd, char *pl_host)
 int do_wizard_dm( object* op, char* params, int silent )
     {
     if ( !op->contr )
-        return;
+        return 0;
 
     if ( QUERY_FLAG( op, FLAG_WIZ ) )
         {
