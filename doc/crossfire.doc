@@ -1104,6 +1104,13 @@ the follower wants more of it he has to go back to an altar of his
 god.  He can't pray an hour over an altar and then go fighting with a
 hundred potions of restoration.
 
+Other invisible items:
+
+If the follower doesn't already have it this item, gives it, similar
+to visible items.  Except, it ALWAYS gives it, upon conversion.
+And on conversion to another religion, it is ALWAYS removed.
+Signs and forces and skills may not be given/taken this way.
+
 ------------------------------------------------------------------------------
 NPC's and their life:
 =====================
