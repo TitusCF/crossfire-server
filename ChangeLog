@@ -17,6 +17,8 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/apply.c: apply_savebed() - make call to terminate_all pets before
+   call to remove_ob() so that pets are properly removed.
 common/item.c, server/c_object.c: Fix code so that skill tools (talismans,
   holy symbols, etc) are properly describe.  Clean up formatting of long_desc()
 MSW 2004-04-25
