@@ -704,8 +704,11 @@ void change_luck(object *op, int value) {
        * note that if we adjusted it with it is -1/1, that check above
        * for 0 luck will happen, resulting in error.
        */
-      if (RANDOM()%(FABS(tmp->stats.luck)) > RANDOM()%30)
-        tmp->stats.luck += tmp->stats.luck>0?-1:1;
+      if (RANDOM()%(FABS(tmp->stats.luck)) > RANDOM()%30) {
+        int diff = tmp->stats.luck>0?-1:1;
+        op->stats.luck += diff;
+        tmp->stats.luck += diff;
+      }
     }
   }
 }
