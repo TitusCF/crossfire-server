@@ -83,6 +83,9 @@ install: build
 	chmod 2755 debian/crossfire-server/var/games/crossfire
 	install -D -m775 -o root -g games -d debian/crossfire-server/var/log/crossfire
 
+	install -D -m755 -o root -g root -d debian/crossfire-server/etc/logrotate.d/
+	install -m644 logrotate.d debian/crossfire-server/etc/logrotate.d/crossfire-server
+
 	dh_install
 
 # Build architecture-independent files here.
