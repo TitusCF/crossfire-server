@@ -144,55 +144,63 @@ void follow_owner(object *ob, object *owner) {
 
 void pet_move(object * ob)
 {
-  int dir;
-  object *ob2, *owner;
+    int dir,tag;
+    object *ob2, *owner;
 
-  /* Check to see if player pulled out */
-  if ((owner = get_owner(ob)) == NULL) {
-    remove_ob(ob); /* Will be freed when returning */
-    LOG(llevMonster, "Pet: no owner, leaving.\n");
-    return;
-  }
-
-  /* move monster into the owners map if not in the same map */
-  if (ob->map != owner->map) {
-    follow_owner(ob, owner);
-    return;
-  }
-  /* Calculate Direction */
-  dir = find_dir_2(ob->x - ob->owner->x, ob->y - ob->owner->y);
-  ob->direction = dir;
-
-  if (!(move_ob(ob, dir,ob))) {
-    object *part;
-    for(part = ob; part != NULL; part = part->more)
-    {
-      for (ob2 = get_map_ob(part->map, part->x + freearr_x[dir],
-           part->y + freearr_y[dir]); ob2 != NULL; ob2 = ob2->above)
-      {
-        object *new_ob;
-        new_ob = ob2->head?ob2->head:ob2;
-        if(new_ob == ob)
-          break;
-        if (new_ob == ob->owner)
-          return;
-        if (get_owner(new_ob) == ob->owner)
-          break;
-        if (QUERY_FLAG(new_ob,FLAG_ALIVE) && !QUERY_FLAG(ob,FLAG_UNAGGRESSIVE)
-		&& !QUERY_FLAG(new_ob,FLAG_UNAGGRESSIVE) &&
-            !QUERY_FLAG(new_ob,FLAG_FRIENDLY)) {
-          ob->enemy = new_ob;
-          if(new_ob->enemy == NULL)
-            new_ob->enemy = ob;
-          return;
-        } else if (new_ob->type == PLAYER) {
-          new_draw_info(NDI_UNIQUE, 0,new_ob, "You stand in the way of someones pet.");
-          return;
-        }
-      }
+    /* Check to see if player pulled out */
+    if ((owner = get_owner(ob)) == NULL) {
+	remove_ob(ob); /* Will be freed when returning */
+	remove_friendly_object(ob);
+	free_object(ob);
+	LOG(llevMonster, "Pet: no owner, leaving.\n");
+	return;
     }
-    dir = absdir(dir + 4 - (RANDOM() %5) - (RANDOM()%5));
-    (void) move_ob(ob, dir, ob);
-  }
-  return;
+
+    /* move monster into the owners map if not in the same map */
+    if (ob->map != owner->map) {
+	follow_owner(ob, owner);
+	return;
+    }
+    /* Calculate Direction */
+    dir = find_dir_2(ob->x - ob->owner->x, ob->y - ob->owner->y);
+    ob->direction = dir;
+
+    tag = ob->count;
+    if (!(move_ob(ob, dir,ob))) {
+	object *part;
+
+	/* the failed move_ob above may destroy the pet, so check here */
+	if (was_destroyed(ob, tag)) return;
+
+	for(part = ob; part != NULL; part = part->more)
+	{
+	    for (ob2 = get_map_ob(part->map, part->x + freearr_x[dir],
+				  part->y + freearr_y[dir]); ob2 != NULL; ob2 = ob2->above)
+	    {
+		object *new_ob;
+		new_ob = ob2->head?ob2->head:ob2;
+		if(new_ob == ob)
+		    break;
+		if (new_ob == ob->owner)
+		    return;
+		if (get_owner(new_ob) == ob->owner)
+		    break;
+		if (QUERY_FLAG(new_ob,FLAG_ALIVE) && !QUERY_FLAG(ob,FLAG_UNAGGRESSIVE)
+		    && !QUERY_FLAG(new_ob,FLAG_UNAGGRESSIVE) &&
+		    !QUERY_FLAG(new_ob,FLAG_FRIENDLY)) {
+
+		    ob->enemy = new_ob;
+		    if(new_ob->enemy == NULL)
+			new_ob->enemy = ob;
+			return;
+		} else if (new_ob->type == PLAYER) {
+		    new_draw_info(NDI_UNIQUE, 0,new_ob, "You stand in the way of someones pet.");
+		    return;
+		}
+	    }
+	}
+	dir = absdir(dir + 4 - (RANDOM() %5) - (RANDOM()%5));
+	(void) move_ob(ob, dir, ob);
+    }
+    return;
 }

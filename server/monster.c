@@ -242,11 +242,6 @@ int move_monster(object *op) {
 	    switch (op->move_type & HI4) {
 		case (PETMOVE):
 		    pet_move (op);
-		    if(QUERY_FLAG(op, FLAG_REMOVED)) {
-			remove_friendly_object(op);
-			free_object(op);
-			return 1;
-		    }
 		    break;
 		case (CIRCLE1):
 		    circ1_move (op);

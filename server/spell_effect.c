@@ -1582,6 +1582,8 @@ int summon_pet(object *op, int dir, SpellTypeFrom item) {
       prev = tmp;
     }
     head->direction = dir;
+    /* Some monsters are sleeping by default - clear that */
+    CLEAR_FLAG(head, FLAG_SLEEP);
     head = insert_ob_in_map (head, op->map, op);
     if (head != NULL && head->randomitems != NULL) {
       object *tmp;
