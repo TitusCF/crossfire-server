@@ -1754,7 +1754,7 @@ cast_change_attr(object *op,object *caster,int dir,int spell_type) {
 int summon_pet(object *op, int dir, SpellTypeFrom item) {
     int level, number, i;
     treasurelist *trlist = NULL;
-    treasure *tr, *prevtr = NULL;
+    treasure *tr = NULL;
 
     level = ((op->head?op->head->level:SK_level(op)) / 4);
 
@@ -1773,20 +1773,20 @@ int summon_pet(object *op, int dir, SpellTypeFrom item) {
     if (trlist == NULL)
 	return 0;
 
-    for (i=0, tr=trlist->items; tr != NULL && i < level-1;
-	prevtr = tr, tr = tr->next, i++);
+    for (i=0, tr=trlist->items; tr != NULL && i < level && 
+	     tr->next != NULL && tr->next->item != NULL; tr = tr->next, i++);
     
-    if(prevtr == NULL || prevtr->item == NULL) {
+    if(tr == NULL || tr->item == NULL) {
 	LOG(llevError,"Treasurelist Found NULL in summon_pet_monster()\n");
 	return 0;
     }
 
-    number = prevtr->nrof;
+    number = tr->nrof;
 
     if (!dir)
-	dir = find_free_spot(prevtr->item, op->map, op->x, op->y, 1, SIZEOFFREE);
+	dir = find_free_spot(tr->item, op->map, op->x, op->y, 1, SIZEOFFREE);
 
-    if ((dir==-1) || arch_blocked(prevtr->item, op->map, 
+    if ((dir==-1) || arch_blocked(tr->item, op->map, 
 	op->x + freearr_x[dir], op->y+freearr_y[dir])) {
 	new_draw_info(NDI_UNIQUE, 0, op, "There is something in the way.");
 	return 0;
@@ -1795,12 +1795,12 @@ int summon_pet(object *op, int dir, SpellTypeFrom item) {
 	archetype *atmp;
 	object *prev = NULL, *head = NULL; /* We want to summon dragons *grin* */
 
-	for(atmp = prevtr->item; atmp!=NULL; atmp = atmp->more) {
+	for(atmp = tr->item; atmp!=NULL; atmp = atmp->more) {
 	    object *tmp;
 	    tmp = arch_to_object(atmp);
 
 	    /* if this is the head, set owner/friendly as needed */
-	    if (atmp == prevtr->item) {
+	    if (atmp == tr->item) {
 		set_owner(tmp, op);
 		SET_FLAG(tmp, FLAG_MONSTER);
 		if (op->type == PLAYER) {
@@ -1844,7 +1844,7 @@ int summon_pet(object *op, int dir, SpellTypeFrom item) {
 		    SET_FLAG(tmp, FLAG_NO_DROP);
 	}
 	dir = absdir(dir + 1);
-	if (arch_blocked(prevtr->item, op->map, op->x + freearr_x[dir], op->y + freearr_y[dir])) {
+	if (arch_blocked(tr->item, op->map, op->x + freearr_x[dir], op->y + freearr_y[dir])) {
 	    if (i < number) {
 		new_draw_info(NDI_UNIQUE, 0,op, "There is something in the way,");
 		new_draw_info(NDI_UNIQUE, 0,op, "no more pets for this casting.");
