@@ -227,13 +227,13 @@ int resurrect_player(object *op,char *playername,int rspell)
 	    sscanf(buf,"%s %ld",buf2,&exp);
 	    switch(rspell) {
 		case SP_RAISE_DEAD:
-		exp-=exp/20;
+		exp-=exp/5;
 		break;
 		case SP_RESURRECTION:
 		exp-=exp/10;
 		break;
 		case SP_REINCARNATION:
-		exp-=exp/5;
+		exp-=exp/20;
 		break;
 	    }
 	    sprintf(buf,"exp %ld\n",exp);

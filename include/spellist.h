@@ -214,11 +214,11 @@ spell spells[NROFREALSPELLS]={
  PATH_MISSILE, NULL,},							/* 90 */
 {"mystic fist",                  5,10,  0, 15, 0, 0,  1,  1, 0, 0, 0,
  PATH_SUMMON, "mystic_fist",}, 
-{"raise dead",                  10,50,  0, 60, 0, 0,  0,  1, 0, 1, 0,
+{"raise dead",                  10,150,  0, 60, 0, 0,  0,  1, 0, 1, 0,
  PATH_RESTORE, "enchantment",},
-{"resurrection",                25,250, 0, 180, 0, 0,  0,  0, 0, 1, 0,
+{"resurrection",                20,250, 0, 180, 0, 0,  0,  0, 0, 1, 0,
  PATH_RESTORE, "enchantment",},
-{"reincarnation",               20,150, 0,100, 0, 0,  0,  0, 0, 1, 0,
+{"reincarnation",               25,350, 0,100, 0, 0,  0,  0, 0, 1, 0,
  PATH_RESTORE, "enchantment",},
 /* mlee - Keep these spells 0 book chance, as they are low level quest items.*/
 /* raised the grace value on some immuntity spells -b.t. */
