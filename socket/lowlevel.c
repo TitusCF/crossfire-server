@@ -306,7 +306,7 @@ void Write_To_Socket(NewSocket *ns, unsigned char *buf, int len)
 	else if (amt==0) {
 	    LOG(llevError,"Write_To_Socket: No data written out.\n");
 	}
-	len =- amt;
+	len -= amt;
 	pos += amt;
 #ifdef CS_LOGSTATS
 	cst_tot.obytes += amt;
