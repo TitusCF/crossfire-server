@@ -2010,28 +2010,34 @@ int can_see_monsterP(mapstruct *m, int x, int y,int dir) {
  * spell_find_dir(map, x, y, exclude) will search first the center square
  * then some close squares in the given map at the given coordinates for
  * live objects.
- * It will not considered the object given as exlude among possible
- * live objects.
- * It returns the direction toward the first/closest live object if finds
- * any, otherwise 0.
+ * It will not consider the object given as exlude (= caster) among possible
+ * live objects. If the caster is a player, the spell will go after
+ * monsters/generators only. If not, the spell will hunt players only.
+ * It returns the direction toward the first/closest live object if it finds
+ * any, otherwise -1.
  */
 
 int spell_find_dir(mapstruct *m, int x, int y, object *exclude) {
   int i,max=SIZEOFFREE;
   int nx,ny;
+  int owner_type=0;
   object *tmp;
+
   if (exclude && exclude->head)
     exclude = exclude->head;
-
+  if (exclude && exclude->type)
+    owner_type = exclude->type;
+  
   for(i=(RANDOM()%8)+1;i<max;i++) {
     nx = x + freearr_x[i];
     ny = y + freearr_y[i];
     if(!out_of_map(m,nx,ny)) {
       tmp=get_map_ob(m,nx,ny);
-      while(tmp!=NULL && ((!QUERY_FLAG(tmp,FLAG_MONSTER)&&
-        !QUERY_FLAG(tmp,FLAG_GENERATOR)) ||
-	(tmp == exclude || (tmp->head && tmp->head == exclude))))
-                tmp=tmp->above;
+      while(tmp!=NULL && (((owner_type==PLAYER &&
+	    !QUERY_FLAG(tmp,FLAG_MONSTER) && !QUERY_FLAG(tmp,FLAG_GENERATOR)) ||
+            (owner_type!=PLAYER && tmp->type!=PLAYER)) ||
+	    (tmp == exclude || (tmp->head && tmp->head == exclude))))
+	tmp=tmp->above;
       if(tmp!=NULL && can_see_monsterP(m,x,y,i) && !blocks_view(m,nx,ny))
         return freedir[i];
     }

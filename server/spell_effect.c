@@ -355,9 +355,10 @@ void polymorph_item(object *who, object *op) {
      */
     for(at = first_archetype ; at != NULL; at = at->next) {
 	if(at->clone.type == op->type && !at->clone.invisible && 
-	   at->clone.value < max_value &&
-	   !QUERY_FLAG(&at->clone, FLAG_NO_DROP))
-		numat++;
+	   at->clone.value > 0 && at->clone.value < max_value &&
+	   !QUERY_FLAG(&at->clone, FLAG_NO_DROP) &&
+	   !QUERY_FLAG(&at->clone, FLAG_STARTEQUIP))
+	  numat++;
     }
 
     if(!numat)
@@ -370,10 +371,11 @@ void polymorph_item(object *who, object *op) {
 	choice = RANDOM()%numat;
 	for(at = first_archetype ; at != NULL; at = at->next) {
 	    if(at->clone.type == op->type && !at->clone.invisible && 
-	       at->clone.value < max_value && 
-	       !QUERY_FLAG(&at->clone, FLAG_NO_DROP)) {
-		if (!choice) break;
-		else choice--;
+	       at->clone.value > 0 && at->clone.value < max_value && 
+	       !QUERY_FLAG(&at->clone, FLAG_NO_DROP) &&
+	       !QUERY_FLAG(&at->clone, FLAG_STARTEQUIP)) {
+	      if (!choice) break;
+	      else choice--;
 	    }
 	}
 	copy_object(&(at->clone),new_ob);
