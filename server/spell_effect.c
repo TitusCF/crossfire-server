@@ -991,12 +991,12 @@ int cast_create_town_portal (object *op, object *caster, object *spell, int dir)
 
     op_level = caster_level(caster, spell);
     if (op_level<15)
-         snprintf (portal_message,1024,"\nAir moves around you and\na huge smell of ammoniac\nrounds you as you pass\nthrough %s's portal\nPouah!\n",op->name);
+         snprintf (portal_message,1024,"\nThe air moves around you and\na huge smell of ammonia\nsurounds you as you pass\nthrough %s's tiny portal\nPouah!\n",op->name);
     else if (op_level<30)
-         snprintf (portal_message,1024,"\n%s's portal smells ozone.\nYou do a lot of movements and finally pass\nthrough the small hole in the air\n",op->name);
+         snprintf (portal_message,1024,"\n%s's portal smells of ozone.\nYou do a lot of movements and finally pass\nthrough the small hole in the air\n",op->name);
     else if (op_level<60)
-         snprintf (portal_message,1024,"\nA sort of door opens in the air in front of you,\nshowing you the path to somewhere else.\n");
-    else snprintf (portal_message,1024,"\nAs you walk on %s's portal, flowers comes\nfrom the ground around you.\nYou feel quiet.\n",op->name);
+         snprintf (portal_message,1024,"\nA shining door opens in the air in front of you,\nshowing you the path to another place.\n");
+    else snprintf (portal_message,1024,"\nAs you walk through %s's portal, flowers come out\nfrom the ground around you.\nYou feel awed.\n",op->name);
 
     /* Create a portal in front of player
      * dummy contain the portal and

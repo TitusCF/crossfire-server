@@ -2182,6 +2182,7 @@ int is_legal_2ways_exit (object* op, object *exit)
    player * pp;
    mapstruct * exitmap;
    if (exit->stats.exp!=1) return 1; /*This is not a 2 way, so it is legal*/
+   if (!has_been_loaded(EXIT_PATH(exit)) && exit->race) return 0; /* This is a reset town portal */
     /* To know if an exit has a correspondant, we look at
      * all the exits in destination and try to find one with same path as
      * the current exit's position */

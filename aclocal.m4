@@ -20,7 +20,7 @@ AC_DEFUN([CF_CHECK_PYTHON],
 	dir=""
 	AC_CHECK_HEADERS([Python.h],[cf_have_python_h=yes])
 	if test "x$cf_have_python_h" = "x"  ; then
-		for dir in /usr{,/local}/include/python{,2.4,2.3,2.2,2.1,2.0} ; do
+		for dir in /usr{,/local}/include/python{,2.3,2.2,2.1,2.0} ; do
 			AC_CHECK_HEADERS(["$dir/Python.h"],[cf_have_python_h=yes])
 			if test "x$cf_have_python_h" != "x" ; then
 				PY_INCLUDES="-I$dir"
@@ -34,7 +34,7 @@ AC_DEFUN([CF_CHECK_PYTHON],
 	if test "x$cf_have_python_h" = "xyes" ; then
 		PYTHON_LIB=""
 
-                for lib in python{,2.4,2.3,2.2,2.1,2.0} ; do
+                for lib in python{,2.3,2.2,2.1,2.0} ; do
                         AC_CHECK_LIB($lib, PyArg_ParseTuple,[PYTHON_LIB="-l$lib"])
                         if test "x$PYTHON_LIB" != "x" ; then
                                 break
