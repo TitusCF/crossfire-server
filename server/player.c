@@ -593,6 +593,7 @@ int receive_play_again(object *op, char key)
 	player *pl = op->contr;
 	char *name = op->name;
 
+	add_refcount(name);
 	remove_friendly_object(op);
 	free_object(op);
 	pl = get_player(pl);
@@ -605,7 +606,7 @@ int receive_play_again(object *op, char key)
 	/* Lets put a space in here */
 	new_draw_info(NDI_UNIQUE, 0, op, "\n");
 	get_name(op);
-	op->name = add_string(name);
+	op->name = name;		/* Alrady added a refcount above */
 	op->name_pl = add_string(name);
 	set_first_map(op);
     } else {

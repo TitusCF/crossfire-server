@@ -17,6 +17,18 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+doc/Developers/objects: Add nodes about shared strings in objects.
+server/c_misc.c: Remove check for name length - check_name takes care
+    of that for us.
+server/monster.c: store return value from get_map_flags - seen some
+    crashes traced back to this area, want to see what it returned.
+    Allow objects with no msg to still use scripts that listen.
+server/player.c: Fix potentional issue of freeing/adding players name
+    when they enter play again - seen some crashes attributed to 
+    odd names.
+MSW 2003-02-08
+
+
 More bugfixes:
 server/player.c: Fix permadeath without resurrection - wasn't deleting
     player save files as it was supposed to.  If permadeath +

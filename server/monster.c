@@ -1671,7 +1671,7 @@ static char *find_matching_message(char *msg, char *match)
  */
 void communicate(object *op, char *txt) {
     object *npc;
-    int i;
+    int i, mflags;
     sint16 x, y;
     mapstruct *mp;
 
@@ -1681,12 +1681,13 @@ void communicate(object *op, char *txt) {
 	x = op->x + freearr_x[i];
 	y = op->y + freearr_y[i];
 
-	if (get_map_flags(mp, &mp, x, y, &x, &y) & P_OUT_OF_MAP) continue;
+	mflags = get_map_flags(mp, &mp, x, y, &x, &y);
+	if (mflags & P_OUT_OF_MAP) continue;
 
 	for(npc = get_map_ob(mp,x,y); npc != NULL; npc = npc->above) {
 	    if (npc->type == MAGIC_EAR)
 		(void) talk_to_wall(npc, txt); /* Maybe exit after 1. success? */
-	    else if(flag && npc->msg)  {
+	    else if (flag)  {
 #if 0
 		if (talk_to_npc(op, npc,txt))
 		flag=0; /* Can be crowded */

@@ -52,6 +52,8 @@ Sections:
 
 8. How to Add new values
 
+9. Programming notes
+
 *******************************************************************************
 1. HOW TO CREATE NEW ARCHETYPES AND BITMAPS:
 ********************************************************************************
@@ -1878,3 +1880,38 @@ For flags:
    flag values.
 
 7) As appropriate, update the arch files and rebuild.
+
+
+*******************************************************************************
+9. PROGRAMMING NOTES
+********************************************************************************
+
+This section provides some specific programming notes about objects.  If
+you don't actually work with the C code, there is no need to read this section.
+
+Basically, all the char* pointers in the object structure use a shared
+string library.  Using shared strings saves memory and improved performance.
+
+To use the share string library, it is as simple as calling add_string(char
+*cp), where *cp is the pointer to the string you want to add.  You can pass
+defined strings also.  The function the finds the string, if it exists,
+increases the referecne count, and returns a pointer to the existing string.
+If the string does not exist in the table, it allocates space for it, copies
+the data into the space, and returns that new pointer.
+
+free_string should be called to free these strings.
+
+strdup and free should never be used on these shared strings.
+
+When copying objects, the copy_object routine should always be used.  It will
+add reference counts to the copied strings.
+
+Because shared strings will return a pointer to a string if it
+exists, one can see if the strings are equal by comparing the shared
+string address they point to.
+
+Shared string data should never be modified by any means - eg,
+strcpy(op->name, "new value") will update all the objects that use the same
+shared string as op does for its name.  Even without shared strings, this
+should never be done, because you can not be sure of the space allocation for
+op->name is long enough.
