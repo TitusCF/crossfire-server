@@ -17,6 +17,8 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+common/init.c: there's a #define LOGFILE, use it instead of hardcoded value.
+include/config.h: change default logfile path to previous value in init.c.
 server/c_wiz.c: Fix 'nodm' displaying incorrect messages, and forgetting to
    update player count on map.
 Ryo 2004-05-08

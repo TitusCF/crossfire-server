@@ -379,7 +379,7 @@
 #ifdef WIN32 /* change define path */
 #define LOGFILE "tmp\\cross.log"
 #else 
-#define LOGFILE "/tmp/cross.log"
+#define LOGFILE "/var/log/crossfire/logfile"
 #endif
 #endif
 

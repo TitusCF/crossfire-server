@@ -35,7 +35,7 @@
  * correspond to.
  */
 struct Settings settings = {
-"/var/log/crossfire/logfile",   /* Logfile */
+LOGFILE,   /* Logfile */
 CSPORT,				/* Client/server port */
 
 /* Debug level */
