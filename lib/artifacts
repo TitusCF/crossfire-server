@@ -1855,6 +1855,22 @@ stand_still 1
 end
 #
 Allowed all
+chance 2
+Object Gaea
+type 87
+weight 120
+reflect_spells 1
+hp 2
+resist_fire 10
+resist_cold 10
+resist_electricity 10
+value 2000
+material 256
+face serp_cloak.111
+stand_still 1
+end
+#
+Allowed all
 chance 50
 difficulty 3
 Object minor protection
