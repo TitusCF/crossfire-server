@@ -17,6 +17,19 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+lib/collect.pl.in: Modify it so that it will collect .trs (treasure) files and
+   build a treasures.bld from that as well as the existing treasures file.  In
+   this way, treasure information for objects can be put in the arch
+   directory.
+lib/Makefile.am, Makefile.in: Modified so that it copies over the
+   treasures.bld to treasures in the destination directory.  Have
+   the collect directive also build the images, so that a double
+   make isn't necessary.
+lib/treasures.bld: Added file - like the archetypes, this is the pre-
+   build treasure file.  Until .trs files are added, this will just
+   match the treasures file with some additional comments.
+MSW 2003-05-26
+
 common/map.c: Fix bug causing unnecessary crashes - ok for the map
     to match if the object has been removed.
 socket/loop.c: Only make call to draw_client_map() if we have a valid

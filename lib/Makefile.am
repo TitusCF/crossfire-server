@@ -28,13 +28,13 @@ pkgconfdir = @pkgconfdir@
 
 dist_noinst_SCRIPTS = collect.pl util.pl checkarch.pl
 dist_pkgdata_DATA = artifacts def_help formulae  messages races \
-	treasures animations archetypes  bmaps  crossfire.0 \
+	animations archetypes  bmaps  crossfire.0 \
 	crossfire.1 faces attackmess image_info materials
 
 CONF_FILES = settings motd dm_file forbid ban_file skill_params  \
 	spell_params exp_table 
 VAR_FILES = highscore bookarch temp.maps clockdata
-EXTRA_DIST = README .collect-stamp $(CONF_FILES)
+EXTRA_DIST = README .collect-stamp $(CONF_FILES) treasures treasures.bld
 
 helpdir=$(pkgdatadir)/help
 dist_help_DATA = help/apply help/applymode \
@@ -91,6 +91,7 @@ crossfire.0: bmaps.paths
 
 collect:
 	$(PERL) -I$(srcdir) collect.pl $(srcdir)/arch
+	$(PERL) $(srcdir)/adm/collect_images.pl -png
 
 archonly:
 	$(PERL) -I$(srcdir) collect.pl $(srcdir)/arch ARCHONLY
@@ -128,6 +129,10 @@ install-data-local: archetypes crossfire.0 faces animations collect.pl util.pl
 		$(mkinstalldirs) $(DESTDIR)$(pkgstatedir)/$$i; \
 	    fi; \
 	done
+# Special case above because the name we install to is different
+# than the name of the file
+	$(INSTALL_DATA) $(srcdir)/treasures.bld $(DESTDIR)$(pkgdatadir)/treasures
+
 
 # Uninstall unchanged config/var files so make distcheck is happy
 # but leave changed file, so no configuration/game state is lost

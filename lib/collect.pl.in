@@ -8,7 +8,7 @@ if ($#ARGV >= 0) {
 	     "\nWhere ARCHDIR is the directory where you stored the ".
 	     "raw archetypes.\n".
 	     "This script will then create these files:\n".
-	     "archetypes,bmaps,bmaps.paths,faces,animations.\n"
+	     "archetypes,bmaps,bmaps.paths,faces,treasures.bld,animations.\n"
 	)
     }
 }
@@ -28,6 +28,7 @@ $root = $ARGV[0];
 $archetypes = "archetypes";
 $bmaps = "bmaps";
 $faces = "faces";
+$treasures = "treasures.bld";
 $animations = "animations";
 $paths = $bmaps."."."paths";
 $faceExt = "\\.[a-zA-Z0-9][A-Z0-9][A-Z0-9]";
@@ -56,6 +57,26 @@ if (!$archonly) {
     open(FACES,">".$faces) || &die("cannot open ".$faces);
     &facesOut;
     close(FACES);
+
+    &info("$treasures");
+    # We still support the old consolidated treasure information
+    # so copy it over.
+    open(TREASURES,">".$treasures) || &die("cannot open ".$treasures);
+    print TREASURES "
+# Do not modify this file - any changes will get overwritten.
+# instead, modify the treasures file or the .trs file in the
+# arch directory.\n
+";
+
+    open(TR, "<treasures");
+    while (<TR>) {
+	print TREASURES $_;
+    }
+    close(TR);
+    print TREASURES "#\n# Start of collected .trs files\n#\n";
+
+    &treasuresOut;
+    close(TREASURES);
 
     &info("$animations");
     open(ANIM,">".$animations) || &die("cannot open ".$animations);
@@ -89,7 +110,6 @@ sub traverse {
 	    $archsNum++;
 	    push(@archs,$file);n
 	} elsif( $name =~ /(\S+)\.base($faceExt)\.png$/) { # FACE
-
 	    $facesNum++;
 	    $im_name = "$1$2";
 	    &warn("duplicate face $im_name in ".$dir." and $faces{$im_name}")
@@ -99,6 +119,8 @@ sub traverse {
 	} elsif ( $file =~ /.*\.face$/) {	# Face information file
 	    $facesFileNum++;
 	    push(@face_files, $file);
+	} elsif ( $file =~ /.*\.trs$/) {	# Treasure information file
+	    push(@treasure_files, $file);
 	} 
 	elsif ( $file =~ /\.png$/ || $file =~ /\.xpm$/ || $file =~ /$faceExt$/) {
 	# we cover many files we probably shouldn't, but oh well.
@@ -290,6 +312,16 @@ sub pathsOut {
     }
 }
 
+sub treasuresOut {
+    foreach $treasure (@treasure_files) {
+	open(TREAS, $treasure) || &die("cannot open ".$treasure);
+	while(<TREAS>) {
+	    print TREASURES $_;
+	}
+	close(FACE);
+    }
+}
+
 sub facesOut {
     foreach $face (@face_files) {
 	open(FACE, $face) || &die("cannot open ".$face);
@@ -381,5 +413,6 @@ sub stats {
     &info(Images.":\t".$facesNum);
     &info(Faces.":\t".$facesFileNum);
     &info(Animations.":\t".$animationsNum);
+    &info(Treasures.":\t".($#treasure_files+1));
     &info(Trash.":\t".$trashNum);
 }
