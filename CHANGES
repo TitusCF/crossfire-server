@@ -1,6 +1,14 @@
 Changes in top level CVS tree (please add your changes at the very top of
 the file):
 
+Change to save_throw_object:  If object is in players inventory and
+is destroyed, send update to client.  This can happen when trying to
+ignite something in the inventory with flint and steel - msw.
+
+In apply_lighter, do more accurate check when seeing if the attempted
+object was actually destroyed.  Also, cache the item name so that if
+it is destroyed, we have a proper name to print out. - msw
+
 fireborns changed to have Pow stat bonus instead of Wis
 stat bonus.  --PeterM
 
@@ -12,6 +20,7 @@ I changed a few of the maps to have exits to random maps.
 I made one random house in Scorn, one random exit in the Hall of Bones
 to an undead maze, another exit to a random map in the hole SE of
 Scorn, and one in the bottom of the Tower of the Stars. --PeterM
+
 
 Update lib/Makefile.in to create empty bookarch and temp.maps files as
 part of install process. - msw
