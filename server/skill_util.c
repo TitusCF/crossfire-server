@@ -858,13 +858,15 @@ int link_player_skills(object *pl) {
    for(tmp=pl->inv;tmp&&sk_index<100;tmp=tmp->below)
       if(tmp->type==EXPERIENCE) {
            exp_ob[exp_index] = tmp;
+           tmp->nrof=1; /* to handle multiple instances */
            exp_index++;
       } else if (tmp->type==SKILL) {
            /* for startup, lets unapply all skills */
            CLEAR_FLAG (tmp, FLAG_APPLIED);
            if (tmp->invisible) {
-               sk_ob[sk_index]=tmp; 
-               sk_index++;
+             tmp->nrof=1; /* to handle multiple instances */
+             sk_ob[sk_index]=tmp; 
+             sk_index++;
            }
 	   if(!strcmp(tmp->name,skills[SK_USE_MAGIC_ITEM].name)) old_file = 0;
       } 
