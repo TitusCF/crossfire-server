@@ -1591,9 +1591,7 @@ object * MapGetObjectZ (mapstruct * emap, int x, int y, int z)
 
 void free_all_maps()
 {
-    extern mapstruct *styles;
-    mapstruct *next;
-    int real_maps=0, style_maps=0;
+    int real_maps=0;
 
     while (first_map) {
 	/* I think some of the callers above before it gets here set this to be 
@@ -1603,14 +1601,5 @@ void free_all_maps()
 	delete_map(first_map);
 	real_maps++;
     }
-    /* delete_map will try to free it from the linked list,
-     * but won't find it, so we need to do it ourselves
-     */
-    while (styles) {
-	next = styles->next;
-	delete_map(styles);
-	styles=next;
-	style_maps++;
-    }
-    LOG(llevDebug,"free_all_maps: Freed %d normal maps, %d style maps\n", real_maps, style_maps);
+    LOG(llevDebug,"free_all_maps: Freed %d maps\n", real_maps);
 }
