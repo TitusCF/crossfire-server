@@ -442,7 +442,7 @@ PATH_TURNING,"holy_orb",},
    PATH_NULL/*PATH_DETONATE*/, "vitriol"},  /* not for people to cast. */
 {"vitriol splash",                5, 15,  0, 10,  0,  0,  0,  0,  1,  1,  1,
    PATH_NULL/*PATH_DETONATE*/, "vitriol_splash"},  /* not for people to cast. */
-{"ironwood skin",	 1, 8,  0, 20, 3, 2,  8,  1, 1, 1, 1,   /* 200 */
+{"ironwood skin",	 1, 8,  0, 20, 3, 2,  0,  1, 1, 1, 1,   /* 200 */
    PATH_NULL/*PATH_SELF*/, "enchantment",}
 };
 
