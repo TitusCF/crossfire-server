@@ -1382,7 +1382,7 @@ void add_abilities(object *op, object *change) {
 	op->msg = add_refcount(change->msg);
     }
     /* GROS: Added support for event_... in artifact file */
-    for(j=0;j<20;j++) {
+    for(j=0;j<NR_EVENTS;j++) {
 	event *evt;
 	event *evt2;
 	event *evtn;
@@ -1425,6 +1425,7 @@ void add_abilities(object *op, object *change) {
 	    evt2->next = NULL;
 	    evt2->hook = add_refcount(evt->hook);
 	    evt2->plugin = add_refcount(evt->plugin);
+	    evt2->type = j;
 
 	    if (evt->options)
 		evt2->options = add_refcount(evt->options);
