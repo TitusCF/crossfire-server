@@ -1729,7 +1729,8 @@ int hit_player(object *op,int dam, object *hitter, int type) {
     }
 
     if(QUERY_FLAG(op,FLAG_TEAR_DOWN)) {
-	tear_down_wall(op);
+	if (maxdam)
+	    tear_down_wall(op);
 	return maxdam;	/* nothing more to do for wall */
     }
 

@@ -34,7 +34,7 @@
 #include <sproto.h>
 #endif
 #include <living.h>
-
+#include <math.h>
 /*
  * Object id parsing functions
  */

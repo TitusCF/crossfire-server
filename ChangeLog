@@ -17,6 +17,15 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+------------------------------------------------------------------------------
+Changes for 1.5.0:
+
+*/Makefile.in, related files:  Updated for 1.5.0
+server/attack.c: Don't change weak wall image if no damage was actually done.
+server/c_object.c: Include math.h - needed for pow()
+server/spell_effect.c: fix infinite loop in town_portal
+MSW 2003-02-24
+
 common/anim.c: Fix for 8 way facing animations.
 lib/treasures: Add sheep treasures
 lib/* (rest) - rebuilt

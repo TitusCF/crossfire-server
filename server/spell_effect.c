@@ -793,9 +793,6 @@ int perceive_self(object *op) {
  */
 int cast_create_town_portal (object *op, object *caster, int dir)
 {
-    #define PORTAL_DESTINATION_NAME "Town portal destination"
-    #define PORTAL_ACTIVE_NAME "Existing town portal"
-
     object *dummy, *force, *old_force, *tmp;
     archetype *perm_portal;
     char portal_name [1024], portal_message [1024];
@@ -887,6 +884,8 @@ int cast_create_town_portal (object *op, object *caster, int dir)
 		    remove_ob (tmp);
 		    free_object (tmp);
 		    break;
+		} else {
+		    tmp = tmp->above;
 		}
 	    }
 	}
