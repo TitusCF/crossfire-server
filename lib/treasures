@@ -3044,6 +3044,8 @@ treasure ninja_class_items
   more
   arch skill_hide
   more
+  arch guide_melee
+  more
   arch nunchacu_1
   more
   arch leather_armour
@@ -3072,6 +3074,8 @@ treasure ninja
 treasure warrior_class_items
   list fighter_skills
   more
+  arch guide_melee
+  more
   arch sword
   more
   arch chain_mail
@@ -3082,6 +3086,8 @@ treasure warrior_class_items
   end
 treasure paladin_class_items
   list fighter_skills
+  more
+  arch guide_melee
   more
   arch broadsword
   more
@@ -3116,6 +3122,8 @@ treasure sorcerer_class_items
   list basic_skills
   more
   arch skill_spellcasting
+  more
+  arch guide_wizard
   more
   arch book
   more
@@ -3159,6 +3167,8 @@ treasure alchemist_class_items
   more
   arch skill_thaumaturgy
   more
+  arch guide_alchemy
+  more
   arch cauldron
   more
   arch robe
@@ -3176,6 +3186,8 @@ treasure summoner_class_items
   more
   arch skill_praying
   more
+  arch guide_summon
+  more
   arch talisman_summoner
   more
   arch robe
@@ -3189,6 +3201,8 @@ treasure summoner_class_items
 treasure wizard_class_items
   list wizard_skills
   more
+  arch guide_wizard
+  more
   arch robe
   more
   arch cleric_book
@@ -3201,6 +3215,8 @@ treasure wizard_class_items
   end
 treasure devotee_class_items
   list wizard_skills
+  more
+  arch guide_priest
   more
   arch robe
   more
@@ -3256,6 +3272,8 @@ treasure barbarian_class_items
   more
   arch skill_use_magic_item
   more
+  arch guide_melee
+  more
   arch leather_armour
   more
   arch mace
@@ -3293,6 +3311,8 @@ treasure priest_class_items
   arch skill_praying
   more
   arch skill_melee_weapon
+  more
+  arch guide_priest
   more
   arch robe
   more
