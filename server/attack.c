@@ -25,6 +25,7 @@
 */
 #include <global.h>
 #include <living.h>
+#include <material.h>
 
 #ifndef __CEXTRACT__
 #include <sproto.h>
@@ -71,7 +72,7 @@ int did_make_save_item(object *op, int type) {
   for(i=0;i<NROFMATERIALS;i++)
     if(op->material&(1<<i)) {
       materials++;
-      if(RANDOM()%20+1>=object_saves[type][i]-op->magic)
+      if(RANDOM()%20+1>=material[i].save[type]-op->magic)
 	saves++;
     }
   if (saves==materials || materials==0) return 1;
@@ -188,15 +189,14 @@ int hit_map(object *op,int dir,int type) {
 	return 0;  /* we're done, no other attacks */
 #endif
     }
-    type&= ~AT_COUNTERSPELL;
+    type &= ~AT_COUNTERSPELL;
   }
 
-  if(type&AT_CHAOS){
+  if(type & AT_CHAOS){
     shuffle_attack(op,1);  /*1 flag tells it to change the face */
     update_object(op);
     type &= ~AT_CHAOS;
   }
-
 
   for(tmp=get_map_ob(op->map,op->x+freearr_x[dir],op->y+freearr_y[dir]);
       tmp!=NULL;tmp=next)
@@ -231,7 +231,7 @@ int hit_map(object *op,int dir,int type) {
 static att_msg *attack_message(int dam) {
   static att_msg messages;
   static char buf1[MAX_BUF],buf2[MAX_BUF];
-  if(dam==-1) {
+  if(dam<0) {
     strcpy(buf1,"hit");
     buf2[0]='\0';
   } else if(dam==0) {
@@ -535,7 +535,7 @@ int hit_player_attacktype(object *op, object *hitter, int dam,
      * to worry.  However, acid is an exception, since it can still damage
      * your items.  Only include attacktypes if special processing is needed
      */
-    if (!does_slay && (op->immune & attacktype) && (attacktype!=AT_ACID)) 
+    if ((op->immune & attacktype) && !does_slay && !(attacktype & AT_ACID)) 
 	return 0;
 
     /* Keep this in order - makes things easier to find */
@@ -551,7 +551,8 @@ int hit_player_attacktype(object *op, object *hitter, int dam,
 
         if (op->speed && (QUERY_FLAG(op, FLAG_MONSTER) || op->type==PLAYER) &&
           !(RANDOM()%((attacktype&AT_SLOW?6:3))) && 
-	  (RANDOM()%20+((op->protected&attacktype)?5:1) < savethrow[op->level])) {
+	  (RANDOM()%20+1+((op->protected&attacktype)?4:0)-((op->vulnerable&attacktype)?4:0)
+	   < savethrow[op->level])) {
 	  /* Player has been hit by something */
 	    if (attacktype & AT_CONFUSION) confuse_player(op,hitter,dam);
 	    else if (attacktype & AT_POISON) poison_player(op,hitter,dam);
@@ -566,11 +567,12 @@ int hit_player_attacktype(object *op, object *hitter, int dam,
 	dam=0;	/* Confusion is an effect - doesn't damage */
     }
     else if (attacktype & AT_ACID) {
-	if (!(op->immune & AT_ACID ) && !(op->protected & AT_ACID)) {
+	if (!(op->immune & op->protected & ~op->vulnerable & AT_ACID )) {
 	    object *tmp;  /*  If someone is both immune and protected from acid, so is his stuff */
 	    int flag=0;
 	    char buf[256];
 
+	    if(op->immune & AT_ACID) dam /= 4;
 	    for(tmp=op->inv;tmp!=NULL;tmp=tmp->below) {
 		if(!QUERY_FLAG(tmp,FLAG_APPLIED)||tmp->immune&AT_ACID||
 		   (tmp->protected&AT_ACID&&RANDOM()&1))
@@ -584,18 +586,19 @@ int hit_player_attacktype(object *op, object *hitter, int dam,
 		   tmp->type==ROD||tmp->type==HORN)
 			continue; /* To avoid some strange effects */
 		/* High damage acid has better chance of corroding objects */
-		if(RANDOM()%(dam+5)>RANDOM()%40) {
+		if(RANDOM()%(dam+5)>RANDOM()%40+2*tmp->magic) {
 		    if(op->type==PLAYER) {
 			strcpy(buf,"The ");
 			strcat(buf,query_name(hitter));
 			strcat(buf,"'s acid corrodes your ");
 			strcat(buf,query_name(tmp));
 			strcat(buf,"!");
-			esrv_send_item(op, tmp);
 			new_draw_info(NDI_UNIQUE, 0,op,buf);
 			flag=1;
 		    }
 		    tmp->magic--;
+		    if(op->type==PLAYER)
+			esrv_send_item(op, tmp);
 		}
 	    }
 	    if(flag) {	/* Something was corroded */
@@ -606,7 +609,10 @@ int hit_player_attacktype(object *op, object *hitter, int dam,
 	if (op->immune & AT_ACID && !does_slay) dam=0;
     }
     else if (attacktype & AT_DRAIN) {
-	if(op->stats.exp<=((op->protected & attacktype)?100:50)) {
+      int rate = 50;
+      if(op->protected & attacktype) rate *= 2;
+      if(op->vulnerable & attacktype) rate /= 2;
+	if(op->stats.exp<=rate) {
 	    if(op->type==GOLEM)
 		dam=999; /* It's force is "sucked" away. 8) */
 	    else /* If we can't drain, lets try to do physical damage */
@@ -617,16 +623,17 @@ int hit_player_attacktype(object *op, object *hitter, int dam,
 	       RANDOM()%(op->level-hitter->level+3)>3)
 		    hitter->stats.hp++;
 	    if(!QUERY_FLAG(op,FLAG_WAS_WIZ))
-		add_exp(hitter,op->stats.exp/(100+(op->protected&attacktype)?100:0));
-	    add_exp(op,-op->stats.exp/(50+(op->protected&attacktype)?50:0));
+	      add_exp(hitter,op->stats.exp/rate/2);
+	    add_exp(op,-op->stats.exp/rate);
 	    dam=0;	/* Drain is an effect */
 	}
     /* weaponmagic, ghosthit not needed, poison, slow, paralyze handled above */
     } else if (attacktype & AT_TURN_UNDEAD) {
 	if (QUERY_FLAG(op,FLAG_UNDEAD)) {
 	    object *owner=get_owner(hitter)==NULL?hitter:get_owner(hitter);
-
-	    if(op->level<turn_bonus[owner->stats.Wis]+owner->level)
+	    /* if undead are not an enemy of your god, you turn them at half strength */
+	    if(op->level<((turn_bonus[owner->stats.Wis]+owner->level) /
+			  (strstr(find_god(determine_god(owner))->slaying,undead_name)?1:2)))
 		SET_FLAG(op, FLAG_SCARED);
 	}
 	else dam=0; /*don't damage non undead - should we damage undead? */
@@ -634,26 +641,37 @@ int hit_player_attacktype(object *op, object *hitter, int dam,
     } else if (attacktype & AT_DEATH) {
 	 deathstrike_player(op, hitter, &dam);
     } else if (attacktype & AT_CHAOS) {
-	dam=0;	/* I think this is right - Chaos attacks with other types */
-    }
-    else if (attacktype & AT_COUNTERSPELL) {
-	dam=0;	/* I don't think it is supposed to attack things */
-
+         LOG(llevError,"%s was hit by %s with non-specific chaos.\n",
+	     query_name(op),query_name(hitter));
+         dam=0;
+    } else if (attacktype & AT_COUNTERSPELL) {
+         LOG(llevError,"%s was hit by %s with counterspell attack.\n",
+	     query_name(op),query_name(hitter));
+	dam=0; /* This should never happen.  Counterspell is handled seperately
+		* and filtered out.  If this does happen, Counterspell has no
+		* effect on anything but spells, so it does no damage. */
     /* Godpower does normal effect? */
     } else if (attacktype & AT_HOLYWORD) {
-	/* Holyword only effects a limited range of creatures */
-	if (op->race && hitter->slaying && strstr(hitter->slaying,op->race)) {
-	    object *owner=get_owner(hitter)==NULL?hitter:get_owner(hitter);
+      /* Holyword only affects a limited range of creatures 		*/
+      /* Affects enemies of your god (*3 for slaying applied above)	*
+       * Affects undead even if not enemies, unless they are friends	*
+       * -- DAMN							*/
+      /*	if ((op->race != NULL && hitter->slaying != NULL && strstr(hitter->slaying,op->race) != NULL) ||
+       *	    (QUERY_FLAG(op,FLAG_UNDEAD) &&
+       *	     (hitter->title == NULL ||
+       *	      (strstr(find_god(determine_god(hitter))->race,undead_name)==NULL)))) {
+       * This has already been handled by hit_player, no need to check  *
+       * twice  -- DAMN							*/
+      object *owner=get_owner(hitter)==NULL?hitter:get_owner(hitter);
 
-	    if(op->level<turn_bonus[owner->stats.Wis]+owner->level)
-		SET_FLAG(op, FLAG_SCARED);
-	}
-	else dam=0;	/* If not one of the creatures, no effect */
+      if(op->level<owner->level+turn_bonus[owner->stats.Wis])
+	SET_FLAG(op, FLAG_SCARED);
+      /*	}
+       *	else dam=0;	If not one of the creatures, no effect */
     }
-    /* if we get here, take default case.  godpower uses this */
+    /* godpower, weaponmagic, and internal do direct damage */
     return dam;
 }
-			 
 
 /* This isn't used just for players, but in fact most objects.
  * op is the object to be hit, dam is the amount of damage, hitter
@@ -720,14 +738,32 @@ int hit_player(object *op,int dam, object *hitter, int type) {
     /* By default, if a creature is immune to magic, it is immune to any
      * attacktype that has magic as part of it.
      */
-    if ((type & AT_MAGIC) && (op->immune & AT_MAGIC)) return 0;
+    if (magic) {
+      if (op->immune & AT_MAGIC) return 0;
+      if (op->vulnerable & AT_MAGIC) dam *= 2;
+      if (op->protected & AT_MAGIC) dam /= 2;
+    }
+
+    /* AT_CHAOS here is a weapon or monster.  Spells are handled by hit_map
+     * If the attacktype still has chaos, shuffle it, then clear the Chaos bit
+     */
+    if(type & AT_CHAOS){
+      shuffle_attack(op,0);  /*0 flag tells it to not change the face */
+      update_object(op);
+      type &= ~AT_CHAOS;
+    }
 
     /* Holyword is really an attacktype modifier (like magic is).  If
      * holyword is part of an attacktype, then make sure the creature is
      * a proper match, otherwise no damage.
      */
     if (type & AT_HOLYWORD) {
-	if (!op->race || !hitter->slaying || !strstr(hitter->slaying,op->race))
+	if ((!hitter->slaying || 
+	     !(op->race && strstr(hitter->slaying,op->race)) ||
+	     !(op->name && strstr(hitter->slaying,op->name))) &&
+	    (!QUERY_FLAG(op,FLAG_UNDEAD) ||
+	     (hitter->title != NULL &&
+	      (strstr(find_god(determine_god(hitter))->race,undead_name)!=NULL))))
 	    return 0;
     }
 
@@ -770,7 +806,7 @@ int hit_player(object *op,int dam, object *hitter, int type) {
 	npc_call_help(op);
     }
 
-    if(type&AT_MAGIC && (RANDOM()%20+1)>=savethrow[op->level])
+    if(magic && (RANDOM()%20+1)>=savethrow[op->level])
 	maxdam=maxdam/2;
 
     op->stats.hp-=maxdam;
@@ -1138,7 +1174,7 @@ void deathstrike_player(object *op, object *hitter, int *dam)
     int atk_lev, def_lev, kill_lev;
 
     if(hitter->slaying) 
-	if(!( (QUERY_FLAG(op,FLAG_UNDEAD)&&strstr(hitter->slaying,"undead")) ||
+	if(!( (QUERY_FLAG(op,FLAG_UNDEAD)&&strstr(hitter->slaying,undead_name)) ||
 		(op->race&&strstr(hitter->slaying,op->race))))	return;
 
     def_lev = op->level;
