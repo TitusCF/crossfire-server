@@ -1233,6 +1233,10 @@ int check_pick(object *op) {
 	if (tmp->type == BOOK || tmp->type == SCROLL) 
 	{ pick_up(op, tmp); if(0)fprintf(stderr,"READABLES\n"); continue; }
 
+    /* wands/staves/rods/horns */
+    if (op->contr->mode & PU_MAGIC_DEVICE) 
+	if (tmp->type == WAND || tmp->type == ROD || tmp->type == HORN)
+	{ pick_up(op, tmp); if(0)fprintf(stderr,"MAGIC_DEVICE\n"); continue; }
 
       /* pick up all magical items */
       if(op->contr->mode & PU_MAGICAL)
@@ -2285,12 +2289,15 @@ void do_some_living(object *op) {
       gen_sp = gen_sp * 10 / (op->contr->gen_sp_armour < 10? 10 : op->contr->gen_sp_armour);
       if(op->stats.sp<op->stats.maxsp) {
 	op->stats.sp++;
-	op->stats.food--;
-	if(op->contr->digestion<0)
-	  op->stats.food+=op->contr->digestion;
-	else if(op->contr->digestion>0 &&
-		random_roll(0, op->contr->digestion, op, PREFER_HIGH))
-	  op->stats.food=last_food;
+ 	/* dms do not consume food */
+ 	if (!QUERY_FLAG(op,FLAG_WIZ)) {
+ 	   op->stats.food--;
+ 	   if(op->contr->digestion<0)
+ 	     op->stats.food+=op->contr->digestion;
+ 	   else if(op->contr->digestion>0 &&
+  		random_roll(0, op->contr->digestion, op, PREFER_HIGH))
+ 	     op->stats.food=last_food;
+         }
       }
       if (max_sp>1) {
 	over_sp = (gen_sp+10)/rate_sp;
@@ -2335,12 +2342,15 @@ void do_some_living(object *op) {
     if(--op->last_heal<0) {
       if(op->stats.hp<op->stats.maxhp) {
 	op->stats.hp++;
-	op->stats.food--;
-	if(op->contr->digestion<0)
-	  op->stats.food+=op->contr->digestion;
-	else if(op->contr->digestion>0 &&
-		random_roll(0, op->contr->digestion, op, PREFER_HIGH))
-	  op->stats.food=last_food;
+ 	/* dms do not consume food */
+ 	if (!QUERY_FLAG(op,FLAG_WIZ)) {
+ 	   op->stats.food--;
+ 	   if(op->contr->digestion<0)
+ 	     op->stats.food+=op->contr->digestion;
+ 	   else if(op->contr->digestion>0 &&
+ 		  random_roll(0, op->contr->digestion, op, PREFER_HIGH))
+ 	     op->stats.food=last_food;
+         }
       }
       if(max_hp>1) {
 	over_hp = (gen_hp<20 ? 30 : gen_hp+10)/rate_hp;
@@ -2364,7 +2374,8 @@ void do_some_living(object *op) {
 	op->last_eat=25*(1+bonus)/(op->contr->gen_hp+penalty+1);
       else
 	op->last_eat=25*(1+bonus)/(penalty +1);
-      op->stats.food--;
+    /* dms do not consume food */
+    if (!QUERY_FLAG(op,FLAG_WIZ)) op->stats.food--;
     }
   }
 

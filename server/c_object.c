@@ -1707,6 +1707,8 @@ NEWPICKUP:
   new_draw_info(NDI_UNIQUE, 0,op,putstring);
   sprintf(putstring,"%d READABLES",i & PU_READABLES?1:0);
   new_draw_info(NDI_UNIQUE, 0,op,putstring);
+  sprintf(putstring, "%d MAGICDEVICE", i & PU_MAGIC_DEVICE?1:0);
+  new_draw_info(NDI_UNIQUE, 0,op,putstring);
 
   new_draw_info(NDI_UNIQUE, 0,op,"");
 #endif

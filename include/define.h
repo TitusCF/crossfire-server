@@ -343,6 +343,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define PU_SPELLBOOK		0x00100000
 #define PU_SKILLSCROLL		0x00200000
 #define PU_READABLES		0x00400000
+#define PU_MAGIC_DEVICE		0x00800000
 
 
 /* Instead of using arbitrary constants for indexing the

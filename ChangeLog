@@ -17,6 +17,14 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Applied patches:
+* #1119366 (salathar): wiz food, DMs don't use food anymore.
+* #1161816 (cowboyatheart) : Add wands/staves/rods/horns to new pickup.
+include/define.h: add 'PU_MAGIC_DEVICE.
+server/c_object.c: add new flag to dump.
+server/player.c: wiz don't use food. Check for rod/wand/horn for new pickup flag.
+Ryo 2005-03-13
+
 *Makefile.in, aclocal.m4, configure, utils/config.guess, utils/config.sub,
 utils/ltmain.sh: Rebuild generated files.
 acinclude.m4: Check whether Python supports the "L" format specifier. Do not
