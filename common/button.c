@@ -138,6 +138,10 @@ void push_button(object *op) {
 	    case CREATOR:
 		(*move_creator_func)(tmp);
 		break;
+		
+		case TRIGGER_MARKER:
+		(*move_trigger_marker_func)(tmp);
+		break;
 
 	    case DUPLICATOR:
 		(*move_duplicator_func)(tmp);

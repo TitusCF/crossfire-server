@@ -17,6 +17,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+TRIGGER_MARKER:
+common/glue.c, common/button.c, include/define.h, funcpoint.h, libproto.h
+    server/init.c:   Add trigger_marker (type #52) which is a Marker that can be
+    triggered. Useful for placing forces in player when connected trigger is tripped.  
+TM 2003-10-26
+ 
 common/glue.c, common/object.c, common/player.c, include/funcpoint.h,
     server/init.c, server/monster.c, server/shop.c, server/skill_util.c:  add
     find_skill_by_number() function - this replaces find_skill.  Locate new

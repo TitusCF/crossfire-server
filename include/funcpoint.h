@@ -72,6 +72,7 @@ extern void	(*info_map_func)		(int, mapstruct *, char *);
 extern void	(*move_teleporter_func)		(object *);
 extern void	(*move_firewall_func)		(object *);
 extern void	(*move_creator_func)		(object *);
+extern void  (*move_trigger_marker_func)	(object *);
 extern void	(*move_duplicator_func)		(object *);
 extern void     (*trap_adjust_func)		(object *, int);
 extern void	(*esrv_send_item_func)		(object *, object *);

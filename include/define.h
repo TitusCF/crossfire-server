@@ -170,7 +170,8 @@ error - Your ANSI C compiler should be defining __STDC__;
 					/* which notices the presense of */
 					/* another object and is triggered */
 					/* like buttons.  */
-/*#define SPEEDBALL	            52*/
+#define TRIGGER_MARKER            52 /* inserts an invisible, weightless */
+					/* force into a player with a specified string WHEN TRIGGERED. */
 #define DEAD_OBJECT	            53
 #define DRINK		            54
 #define MARKER			    55	/* inserts an invisible, weightless */
@@ -899,4 +900,3 @@ enum apply_flag {
   */
 /*#define FAST_STRNCAT(buf__,buf2__,size__) {memcpy (buf__,buf2__,size__);buf__+=size__;\
  if (size__!=strlen(buf2__)) printf ("Error, bad length for %s\n",buf2__);}*/
-
