@@ -5,7 +5,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copryight (C) 1994 Mark Wedel
+    Copryight (C) 2000 Mark Wedel
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -22,7 +22,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to master@rahul.net
+    The author can be reached via e-mail to mwedel@scruz.net
 */
 
 #include <global.h>
@@ -684,7 +684,7 @@ static int find_spell_byname(object *op, char *params, int options)
 static void show_matching_spells(object *op, char *params, int cleric)
 {
     int i,spnum,first_match=0;
-    char lev[80];
+    char lev[80], cost[80];
 
     for (i=0; i<(QUERY_FLAG(op, FLAG_WIZ)?NROFREALSPELLS:op->contr->nrofknownspells); i++) {	
 	if (QUERY_FLAG(op,FLAG_WIZ)) spnum=i;
@@ -699,17 +699,18 @@ static void show_matching_spells(object *op, char *params, int cleric)
 		new_draw_info(NDI_UNIQUE, 0, op, "Mage spells");
 	    else
 		new_draw_info(NDI_UNIQUE, 0, op, "Priest spells");
-	    new_draw_info(NDI_UNIQUE, 0,op,"[sp] [lev] spell name");
+	    new_draw_info(NDI_UNIQUE, 0,op,"[ sp] [lev] spell name");
 	}
-	if (spells[spnum].path & op->path_denied)
+	if (spells[spnum].path & op->path_denied) {
 	    strcpy(lev,"den");
-	else
-	    sprintf(lev," %02d",spells[spnum].level);
+            strcpy(cost,"den");
+	} else {
+	    sprintf(lev,"%3d",spells[spnum].level);
+            sprintf(cost,"%3d",SP_level_spellpoint_cost(op,op,spnum));
+        }
 
-	new_draw_info_format(NDI_UNIQUE,0,op,"[%02d] [%s] %s",
-		SP_level_spellpoint_cost(op,op,spnum),
-		lev,
-		spells[spnum].name);
+	new_draw_info_format(NDI_UNIQUE,0,op,"[%s] [%s] %s",
+		cost, lev, spells[spnum].name);
     }
 }
 
