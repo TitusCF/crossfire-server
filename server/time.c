@@ -534,9 +534,11 @@ object *fix_stopped_arrow (object *op)
     update_ob_speed(op);
     op->stats.wc = op->stats.sp;
     op->stats.dam= op->stats.hp;
+    op->attacktype = op->stats.grace;
     /* Reset these to zero, so that CAN_MERGE will work properly */
     op->stats.sp = 0;
     op->stats.hp = 0;
+    op->stats.grace = 0;
     op->face=op->arch->clone.face;
     op->owner=NULL; /* So that stopped arrows will be saved */
     update_object (op,UP_OBJ_FACE);
