@@ -36,7 +36,10 @@
 #define INT 5
 #define POW 6
 
-#define NO_STAT 99    /* needed by skills code -b.t. */
+/* Changed from NO_STAT to NO_STAT_VAL to fix conlfict on
+ * AIX systems
+ */
+#define NO_STAT_VAL 99    /* needed by skills code -b.t. */
 
 extern char *attacks[NROFATTACKS];
 extern char *spellpathnames[NRSPELLPATHS];

@@ -286,7 +286,7 @@ float calc_stat_mult(object *who,int sk) {
 
 /* find relevant stats or a skill then return their weighted sum. 
  * I admit the calculation is done in a retarded way.
- * If stat1==NO_STAT this isnt an associated stat. Returns
+ * If stat1==NO_STAT_VAL this isnt an associated stat. Returns
  * zero then. -b.t. 
  */  
 
@@ -294,17 +294,17 @@ int get_weighted_skill_stat_sum ( object *who, int sk) {
    float sum;
    int number = 1;
  
-    if(skills[sk].stat1==NO_STAT) {
+    if(skills[sk].stat1==NO_STAT_VAL) {
           return 0;
     } else
          sum = get_attr_value(&(who->stats),skills[sk].stat1);
 
-    if(skills[sk].stat2!=NO_STAT) {
+    if(skills[sk].stat2!=NO_STAT_VAL) {
          sum += get_attr_value(&(who->stats),skills[sk].stat2);
          number++;
     }
 
-    if(skills[sk].stat3!=NO_STAT) {
+    if(skills[sk].stat3!=NO_STAT_VAL) {
          sum += get_attr_value(&(who->stats),skills[sk].stat3);
          number++;
     }
@@ -357,9 +357,9 @@ void dump_skills()
         skills[i].time,
         skills[i].bexp,
         skills[i].lexp,
-        skills[i].stat1!= NO_STAT ? short_stat_name[skills[i].stat1]: "---",
-        skills[i].stat2!= NO_STAT ? short_stat_name[skills[i].stat2]: "---",
-        skills[i].stat3!= NO_STAT ? short_stat_name[skills[i].stat3]: "---");
+        skills[i].stat1!= NO_STAT_VAL ? short_stat_name[skills[i].stat1]: "---",
+        skills[i].stat2!= NO_STAT_VAL ? short_stat_name[skills[i].stat2]: "---",
+        skills[i].stat3!= NO_STAT_VAL ? short_stat_name[skills[i].stat3]: "---");
       fprintf(stderr, buf); 
     }
     exit(0);
@@ -416,7 +416,7 @@ void link_skills_to_exp() {
                         skills[i].category = j;
                         continue;
         	/* failed to link, set to EXP_NONE */
-                } else if (j==nrofexpcat || skills[i].stat1 == NO_STAT) {
+                } else if (j==nrofexpcat || skills[i].stat1 == NO_STAT_VAL) {
                         skills[i].category = EXP_NONE;
                         continue;
                 }
@@ -452,7 +452,7 @@ int check_link (int stat, object *exp) {
             case CHA:
                 if(exp->stats.Cha) return 1;
                 break;
-            case NO_STAT:
+            case NO_STAT_VAL:
                 return 0;
             default:
                 LOG(llevError, "Aborting! Tried to link skill with unknown stat!\n");
@@ -1496,9 +1496,9 @@ float get_skill_time(object *op, int skillnr) {
  */
 
 int get_skill_stat1(object *op) { 
-  int stat_value = 0, stat=NO_STAT;
+  int stat_value = 0, stat=NO_STAT_VAL;
 
-  if((op->chosen_skill) && ((stat = skills[op->chosen_skill->stats.sp].stat1)!=NO_STAT) )  
+  if((op->chosen_skill) && ((stat = skills[op->chosen_skill->stats.sp].stat1)!=NO_STAT_VAL) )  
     stat_value = get_attr_value(&(op->stats),stat);
 
   return stat_value;
@@ -1509,9 +1509,9 @@ int get_skill_stat1(object *op) {
  */
 
 int get_skill_stat2(object *op) {
-  int stat_value = 0,stat = NO_STAT;
+  int stat_value = 0,stat = NO_STAT_VAL;
 
-  if((op->chosen_skill) && ((stat = skills[op->chosen_skill->stats.sp].stat2)!=NO_STAT) )  
+  if((op->chosen_skill) && ((stat = skills[op->chosen_skill->stats.sp].stat2)!=NO_STAT_VAL) )  
     stat_value = get_attr_value(&(op->stats),stat);
 
   return stat_value;
@@ -1522,9 +1522,9 @@ int get_skill_stat2(object *op) {
  */ 
  
 int get_skill_stat3(object *op) { 
-  int stat_value = 0,stat = NO_STAT; 
+  int stat_value = 0,stat = NO_STAT_VAL; 
  
-  if((op->chosen_skill) && ((stat = skills[op->chosen_skill->stats.sp].stat3)!=NO_STAT) )
+  if((op->chosen_skill) && ((stat = skills[op->chosen_skill->stats.sp].stat3)!=NO_STAT_VAL) )
     stat_value = get_attr_value(&(op->stats),stat);  
  
   return stat_value; 
