@@ -1787,6 +1787,9 @@ void set_cheat(object *op) {
  * start and stop are where to start relative to the free_arr array (1,9
  * does all 4 immediate directions).  This returns the index into the
  * array of the free spot, -1 if no spot available (dir 0 = x,y)
+ * Note - this only checks to see if there is space for the head of the
+ * object - if it is a multispace object, this should be called for all
+ * pieces.
  */
 
 int find_free_spot(archetype *at, mapstruct *m,int x,int y,int start,int stop) {
