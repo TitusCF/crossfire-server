@@ -16,6 +16,13 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+PeterM : 2000/11/14
+PeterM: Made some changes so that non-disease effects may be done without
+being labelled as a disease.  Also, fixed a bug in which we'd kill something
+and then try to insert something in the killed thing's map.
+
+
+
 metaserver update:
 common/init.c: Add meta_ fields to settings structure initialization.
 include/global.h: Add meta_ fields to settings structure.
