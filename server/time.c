@@ -169,9 +169,9 @@ void generate_monster(object *gen) {
     if(GENERATE_SPEED(gen)&&rndm(0, GENERATE_SPEED(gen)-1))
         return;
     if (QUERY_FLAG(gen,FLAG_CONTENT_ON_GEN))
-        return generate_monster_inv(gen);
+        generate_monster_inv(gen);
     else
-        return generate_monster_arch(gen);
+        generate_monster_arch(gen);
 
 }
 

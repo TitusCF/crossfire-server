@@ -68,7 +68,7 @@ int surround_flag2(char **layout,int i,int j,RMParms *RP){
 
 
 /* like surround_flag, except it checks  a map, not a layout. */
-int surround_flag3(mapstruct *map,int i,int j,RMParms *RP){
+int surround_flag3(mapstruct *map,sint16 i,sint16 j,RMParms *RP){
   /* 1 =  blocked to left,
 	  2 = blocked to right,
 	  4 = blocked above

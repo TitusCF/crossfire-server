@@ -1467,7 +1467,7 @@ int cast_change_ability(object *op,object *caster,object *spell_ob, int dir) {
     if (tmp->type == PLAYER) {
 	/* Stat adjustment spells */
 	for (i=0; i < NUM_STATS; i++) {
-	    int stat = get_attr_value(&spell_ob->stats, i), k, sm;
+	    sint8 stat = get_attr_value(&spell_ob->stats, i), k, sm;
 	    if (stat) {
 		sm=0;
 		for (k=0; k<stat; k++)
@@ -2529,7 +2529,7 @@ void move_aura(object *aura) {
     insert_ob_in_map(aura,env->map,aura,0);
 
     for(i=1;i<9;i++) { 
-	int nx, ny;
+	sint16 nx, ny;
 	nx = aura->x + freearr_x[i];
 	ny = aura->y + freearr_y[i];
 	mflags = get_map_flags(env->map, NULL, nx, ny, NULL, NULL);

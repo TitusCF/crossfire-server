@@ -2874,7 +2874,8 @@ int is_true_undead(object *op) {
  */
 
 int hideability(object *ob) {
-    int i,x,y,level=0, mflag;
+    int i,level=0, mflag;
+    sint16 x,y;
 
     if(!ob||!ob->map) return 0;
 

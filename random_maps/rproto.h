@@ -41,7 +41,7 @@ extern int set_random_map_variable ( RMParms *rp, char *buf );
 extern mapstruct *make_map_floor ( char **layout, char *floorstyle, RMParms *RP );
 extern int surround_flag ( char **layout, int i, int j, RMParms *RP );
 extern int surround_flag2 ( char **layout, int i, int j, RMParms *RP );
-extern int surround_flag3 ( mapstruct *map, int i, int j, RMParms *RP );
+extern int surround_flag3 ( mapstruct *map, sint16 i, sint16 j, RMParms *RP );
 extern int surround_flag4 ( mapstruct *map, int i, int j, RMParms *RP );
 extern void make_map_walls ( mapstruct *map, char **layout, char *w_style, RMParms *RP );
 extern object *pick_joined_wall ( object *the_wall, char **layout, int i, int j, RMParms *RP );

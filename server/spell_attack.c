@@ -275,7 +275,7 @@ void explosion(object *op) {
 
     if(op->range>0) {
 	for(i=1;i<9;i++) {
-	    int dx,dy;
+	    sint16 dx,dy;
 
 	    dx=op->x+freearr_x[i];
 	    dy=op->y+freearr_y[i];
@@ -700,7 +700,7 @@ void move_cone(object *op) {
     }
 
     for(i= -1;i<2;i++) {
-	int x=op->x+freearr_x[absdir(op->stats.sp+i)],
+	sint16 x=op->x+freearr_x[absdir(op->stats.sp+i)],
 	    y=op->y+freearr_y[absdir(op->stats.sp+i)];
 
 	if(ok_to_put_more(op->map,x,y,op,op->attacktype)) {
@@ -747,7 +747,7 @@ int cast_cone(object *op, object *caster,int dir, object *spell)
     }
 
     for(i=range_min;i<=range_max;i++) {
-	int x,y, d;
+	sint16 x,y, d;
 
 	/* We can't use absdir here, because it never returns
 	 * 0.  If this is a rune, we want to hit the person on top
@@ -909,7 +909,7 @@ int create_bomb(object *op,object *caster,int dir, object *spell) {
 
     object *tmp;
 
-    int dx=op->x+freearr_x[dir], dy=op->y+freearr_y[dir];
+    sint16 dx=op->x+freearr_x[dir], dy=op->y+freearr_y[dir];
 
     if(get_map_flags(op->map,NULL, dx,dy, NULL,NULL) & (P_OUT_OF_MAP | P_WALL)) {
 	new_draw_info(NDI_UNIQUE, 0,op,"There is something in the way.");
@@ -1460,7 +1460,8 @@ int mood_change(object *op, object *caster, object *spell) {
  */
 
 void move_ball_spell(object *op) {
-    int i,nx,ny,j,dam_save,dir, mflags;
+    int i,j,dam_save,dir, mflags;
+    sint16 nx,ny;
     object *owner;
     mapstruct *m;
 

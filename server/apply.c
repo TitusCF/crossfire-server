@@ -3165,7 +3165,7 @@ int auto_apply (object *op) {
 	    do {
 		i=10; /* let's give it 10 tries */
 		while((tmp=generate_treasure(op->randomitems,
-					     op->stats.exp?op->stats.exp:MAX(op->map->difficulty, 5)))==NULL&&--i);
+					     op->stats.exp?(int)op->stats.exp:MAX(op->map->difficulty, 5)))==NULL&&--i);
 		if(tmp==NULL)
 		    return 0;
 		if(QUERY_FLAG(tmp, FLAG_CURSED) || QUERY_FLAG(tmp, FLAG_DAMNED)) {
@@ -3186,7 +3186,7 @@ int auto_apply (object *op) {
 		return 0;
 	    while ((op->stats.hp--)>0)
 		create_treasure(op->randomitems, op, op->map?GT_ENVIRONMENT:0,
-				op->stats.exp ? op->stats.exp : 
+				op->stats.exp ? (int)op->stats.exp : 
 				op->map == NULL ?  14: op->map->difficulty,0);
 
 	    /* If we generated on object and put it in this object inventory,
@@ -3272,7 +3272,8 @@ void fix_auto_apply(mapstruct *m) {
 
 void eat_special_food(object *who, object *food) {
     object *force;
-    int i, did_one=0, k; 
+    int i, did_one=0; 
+    sint8 k;
 
     force = get_archetype(FORCE_NAME);
 
@@ -3457,7 +3458,7 @@ void apply_changes_to_player(object *pl, object *change) {
 	     */
 	    int i,j;
 	    for(i=0;i<7;i++) {
-		int stat=get_attr_value(stats,i);
+		sint8 stat=get_attr_value(stats,i);
 		int race_bonus = get_attr_value(&(pl->arch->clone.stats),i);
 		stat += get_attr_value(ns,i);
 		if(stat > 20 + race_bonus) {

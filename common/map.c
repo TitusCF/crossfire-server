@@ -341,7 +341,7 @@ int blocked_link(object *ob, int x, int y) {
  * is one map, half on another.
  */
 
-int arch_blocked(archetype *at,mapstruct *m,int x,int y) {
+int arch_blocked(archetype *at,mapstruct *m,sint16 x,sint16 y) {
     archetype *tmp;
     int flag;
 

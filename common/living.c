@@ -240,7 +240,7 @@ char *short_stat_name[NUM_STATS] = {
  */
 
 void
-set_attr_value(living *stats,int attr,signed char value) {
+set_attr_value(living *stats,int attr,sint8 value) {
   switch(attr) {
   case STR:
     stats->Str=value;
@@ -272,7 +272,7 @@ set_attr_value(living *stats,int attr,signed char value) {
  */
 
 void
-change_attr_value(living *stats,int attr,signed char value) {
+change_attr_value(living *stats,int attr,sint8 value) {
   if (value==0) return;
   switch(attr) {
   case STR:
@@ -305,7 +305,7 @@ change_attr_value(living *stats,int attr,signed char value) {
  * returns the specified stat.  See also set_attr_value().
  */
 
-signed char
+sint8
 get_attr_value(living *stats,int attr) {
   switch(attr) {
   case STR:

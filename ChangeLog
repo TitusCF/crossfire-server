@@ -17,6 +17,22 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+common/living.c: changed 'signed char' to 'sint8' for set|get|change_attr_value.
+common/map.c: map size is sint16, for arch_blocked.
+include/libproto.h: update prototypes for set|get|change_attr_value and arch_blocked.
+random_maps/rproto.h: changed prototype for surround_flag3.
+random_maps/wall.c: changed surround_flag3 to use sint16 instead of int for map
+   coordinates.
+server/apply.c: attribute values are sint8 in eat_special_food and
+   apply_changes_to_player. Some explicit casts.
+server/player.c: map coordinates are sint16, in hideability.
+server/spell_attack.c: map coordinates are sint16, not int.
+server/spell_effect.c: stats are sint8 in cast_change_ability. Map coordinates are
+   sint16 in move_aura.
+server/time.c: generate_monster doesn't return a value.
+Ryo 2004-02-27
+
+
 common/living.c: Have give_skill_by_name() update the skill pointers in the
    player object.
 server/spell_attack.c: Properly set maxhp in the cone spell - this is used
