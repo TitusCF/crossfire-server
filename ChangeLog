@@ -17,6 +17,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+include/shstr.h: Update REFCOUNT_TYPE to be an int - seems to at least fix
+   the bug of server crashing when running around the bigworld - given the
+   size of the maps, quite possible that enough objects of the same name
+   would be in memory to overflow the size size of a short.
+MSW 2002-11-19
+
 Changed a ton of #ifdefs into settings:
 convert #ifdef NOT_PERMADETH into settings.not_permadeth.
 SET_TITLE and RESURRECTION are now settings.

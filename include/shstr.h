@@ -16,7 +16,7 @@
  * (The top bit of "refcount" is used to signify that "u.array" points
  * at the array entry.)
  */
-#define REFCOUNT_TYPE short
+#define REFCOUNT_TYPE int
 
 /* The offsetof macro is part of ANSI C, but many compilers lack it, for
  * example "gcc -ansi"
