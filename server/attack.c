@@ -27,6 +27,7 @@
 #include <global.h>
 #include <living.h>
 #include <material.h>
+#include <skills.h>
 
 #ifndef __CEXTRACT__
 #include <sproto.h>
@@ -285,54 +286,147 @@ int hit_map(object *op,int dir,int type) {
 #endif
 }
 
-static att_msg *attack_message(int dam) {
-  static att_msg messages;
-  static char buf1[MAX_BUF],buf2[MAX_BUF];
-  if(dam<0) {
-    strcpy(buf1,"hit");
-    buf2[0]='\0';
-  } else if(dam==0) {
-    strcpy(buf1,"missed");
-    buf2[0]='\0';
-  } else if(dam<3) {
-    strcpy(buf1,"grazed");
-    buf2[0]='\0';
-  } else if(dam<6) {
-    strcpy(buf1,"hit");
-    buf2[0]='\0';
-  } else if(dam<9) {
-    strcpy(buf1,"hit");
-    strcpy(buf2," hard");
-  } else if(dam<12) {
-    strcpy(buf1,"hit");
-    strcpy(buf2," very hard");
-  } else if(dam<16) {
-    strcpy(buf1,"hit");
-    strcpy(buf2," extremely hard");
-  } else if(dam<20) {
-    strcpy(buf1,"crush");
-    strcpy(buf2," very hard");
-  } else if(dam<27) {
-    strcpy(buf1,"smash");
-    strcpy(buf2," with a bonecrunching sound");
-  } else if(dam<40) {
-    strcpy(buf1,"shred");
-    strcpy(buf2," to pieces");
-  } else if(dam<70) {
-    strcpy(buf1,"beat");
-    strcpy(buf2," to a pulp");
-  } else if(dam<130) {
-    strcpy(buf1,"grind");
-    strcpy(buf2," to dust");
-  } else if(dam<250) {
-    strcpy(buf1,"atomize");
-    buf2[0]='\0';
-  } else {
-    strcpy(buf1,"annihilate");
-    buf2[0]='\0';
-  }
-  messages.msg1=buf1,messages.msg2=buf2;
-  return &messages;
+void attack_message(int dam, int type, object *op, object *hitter) {
+  char buf[MAX_BUF], buf1[MAX_BUF], buf2[MAX_BUF];
+  int i, found=0;
+
+  /* put in a few special messages for some of the common attacktypes
+   *  a player might have.  For example, fire, electric, cold, etc
+   *  [garbled 20010919]
+   */
+
+    if(dam<0) {
+        sprintf(buf1, "hit %s", op->name);
+	sprintf(buf2, " hit");
+	found++;
+    } else if(dam==0) {
+        sprintf(buf1, "missed %s", op->name);
+        sprintf(buf2, " missed");
+	found++;
+    } else if (hitter->type == PLAYER  && IS_LIVE(op)) {
+        if (USING_SKILL(hitter, SK_KARATE)) {
+          for (i=0; i < MAXATTACKMESS && attack_mess[ATM_KARATE][i].level != -1;
+	       i++)
+	      if (dam < attack_mess[ATM_KARATE][i].level) {
+	          sprintf(buf1, "%s %s%s", attack_mess[ATM_KARATE][i].buf1,
+			  op->name, attack_mess[ATM_KARATE][i].buf2);
+		  sprintf(buf2, "%s", attack_mess[ATM_KARATE][i].buf3);
+		  found++;
+		  break;
+	      }
+	} else if (USING_SKILL(hitter, SK_CLAWING)) {
+          for (i=0; i < MAXATTACKMESS && attack_mess[ATM_CLAW][i].level != -1;
+	       i++)
+	      if (dam < attack_mess[ATM_CLAW][i].level) {
+	          sprintf(buf1, "%s %s%s", attack_mess[ATM_CLAW][i].buf1,
+			  op->name, attack_mess[ATM_CLAW][i].buf2);
+		  sprintf(buf2, "%s", attack_mess[ATM_CLAW][i].buf3);
+		  found++;
+		  break;
+	      }
+	} else if (USING_SKILL(hitter, SK_BOXING)) {
+          for (i=0; i < MAXATTACKMESS && attack_mess[ATM_PUNCH][i].level != -1;
+	       i++)
+	      if (dam < attack_mess[ATM_PUNCH][i].level) {
+	          sprintf(buf1, "%s %s%s", attack_mess[ATM_PUNCH][i].buf1,
+			  op->name, attack_mess[ATM_PUNCH][i].buf2);
+		  sprintf(buf2, "%s", attack_mess[ATM_PUNCH][i].buf3);
+		  found++;
+		  break;
+	      }
+	}
+    }
+    if (IS_ARROW(hitter) && (type == AT_PHYSICAL || type == AT_MAGIC) &&
+	!found) {
+        sprintf(buf1, "hit"); /* just in case */
+        for (i=0; i < MAXATTACKMESS; i++)
+	    if (dam < attack_mess[ATM_ARROW][i].level) {
+	        sprintf(buf2, "%s", attack_mess[ATM_ARROW][i].buf3);
+		break;
+	    }
+    } else if (type & AT_DRAIN && IS_LIVE(op) && !found) {
+      /* drain is first, because some items have multiple attypes */
+        for (i=0; i < MAXATTACKMESS && attack_mess[ATM_DRAIN][i].level != -1;
+	     i++)
+	    if (dam < attack_mess[ATM_DRAIN][i].level) {
+	        sprintf(buf1, "%s %s%s", attack_mess[ATM_DRAIN][i].buf1,
+			op->name, attack_mess[ATM_DRAIN][i].buf2);
+		sprintf(buf2, "%s", attack_mess[ATM_DRAIN][i].buf3);
+		break;
+	    }
+    } else if (type & AT_ELECTRICITY && IS_LIVE(op) && !found) {
+        for (i=0; i < MAXATTACKMESS && attack_mess[ATM_ELEC][i].level != -1;
+	     i++)
+	    if (dam < attack_mess[ATM_ELEC][i].level) {
+	        sprintf(buf1, "%s %s%s", attack_mess[ATM_ELEC][i].buf1,
+			op->name, attack_mess[ATM_ELEC][i].buf2);
+		sprintf(buf2, "%s", attack_mess[ATM_ELEC][i].buf3);
+		break;
+	    }
+    } else if (type & AT_COLD && IS_LIVE(op) && !found) {
+        for (i=0; i < MAXATTACKMESS && attack_mess[ATM_COLD][i].level != -1;
+	     i++)
+	    if (dam < attack_mess[ATM_COLD][i].level) {
+	        sprintf(buf1, "%s %s%s", attack_mess[ATM_COLD][i].buf1,
+			op->name, attack_mess[ATM_COLD][i].buf2);
+		sprintf(buf2, "%s", attack_mess[ATM_COLD][i].buf3);
+		break;
+	    }
+    } else if (type & AT_FIRE && !found) {
+        for (i=0; i < MAXATTACKMESS && attack_mess[ATM_FIRE][i].level != -1;
+	     i++)
+	    if (dam < attack_mess[ATM_FIRE][i].level) {
+	        sprintf(buf1, "%s %s%s", attack_mess[ATM_FIRE][i].buf1,
+			op->name, attack_mess[ATM_FIRE][i].buf2);
+		sprintf(buf2, "%s", attack_mess[ATM_FIRE][i].buf3);
+		break;
+	    }
+    } else if (!found){
+        for (i=0; i < MAXATTACKMESS && attack_mess[ATM_BASIC][i].level != -1;
+	     i++)
+	    if (dam < attack_mess[ATM_BASIC][i].level) {
+	        sprintf(buf1, "%s %s%s", attack_mess[ATM_BASIC][i].buf1,
+			op->name, attack_mess[ATM_BASIC][i].buf2);
+		sprintf(buf2, "%s", attack_mess[ATM_BASIC][i].buf3);
+		break;
+	    }
+    }
+    /* Did a player hurt another player?  Inform both! */
+    if(op->type==PLAYER&&
+       (get_owner(hitter)==NULL?hitter->type:hitter->owner->type)==PLAYER) {
+	if(get_owner(hitter)!=NULL)
+	    sprintf(buf,"%s's %s %s you.",
+              hitter->owner->name, hitter->name, buf2);
+	else {
+	    sprintf(buf,"%s%s you.",hitter->name, buf2);
+	    if (dam != 0) {
+		if (dam < 10)
+		    play_sound_player_only(op->contr, SOUND_PLAYER_IS_HIT1,0,0);
+		else if (dam < 20)
+		    play_sound_player_only(op->contr, SOUND_PLAYER_IS_HIT2,0,0);
+		else
+		    play_sound_player_only(op->contr, SOUND_PLAYER_IS_HIT3,0,0);
+	    }
+	}
+	new_draw_info(NDI_BLACK, 0,op,buf);
+    } /* end of player hitting player */
+
+    if(hitter->type==PLAYER) {
+	sprintf(buf,"You %s.",buf1);
+	if (dam != 0) {
+	    if (dam < 10)
+		play_sound_player_only(hitter->contr, SOUND_PLAYER_HITS1,0,0);
+	    else if (dam < 20)
+		play_sound_player_only(hitter->contr, SOUND_PLAYER_HITS2,0,0);
+	    else
+		play_sound_player_only(hitter->contr, SOUND_PLAYER_HITS3,0,0);
+	}
+	new_draw_info(NDI_BLACK, 0, hitter, buf);
+    } else if(get_owner(hitter)!=NULL&&hitter->owner->type==PLAYER) {
+	sprintf(buf,"Your %s%s %s.", hitter->name, buf2, op->name);
+	play_sound_map(op->map, op->x, op->y, SOUND_PLAYER_HITS4);
+	new_draw_info(NDI_BLACK, 0, hitter->owner, buf);
+    }
 }
 
 
@@ -533,45 +627,7 @@ static int attack_ob_simple (object *op, object *hitter, int base_dam,
     } /* end of if hitter hit op */
     /* if we missed, dam=0 */
 
-    msg=attack_message(dam);
-
-    /* Did a player hurt another player?  Inform both! */
-    if(op->type==PLAYER&&
-       (get_owner(hitter)==NULL?hitter->type:hitter->owner->type)==PLAYER) {
-	if(get_owner(hitter)!=NULL)
-	    sprintf(buf,"%s %ss you%s with %s.",
-              hitter->owner->name,msg->msg1,msg->msg2,hitter->name);
-	else {
-	    sprintf(buf,"%s %ss you%s.",hitter->name,msg->msg1,msg->msg2);
-	    if (dam != 0) {
-		if (dam < 10)
-		    play_sound_player_only(op->contr, SOUND_PLAYER_IS_HIT1,0,0);
-		else if (dam < 20)
-		    play_sound_player_only(op->contr, SOUND_PLAYER_IS_HIT2,0,0);
-		else
-		    play_sound_player_only(op->contr, SOUND_PLAYER_IS_HIT3,0,0);
-	    }
-	}
-	new_draw_info(NDI_BLACK, 0,op,buf);
-    } /* end of player hitting player */
-
-    if(hitter->type==PLAYER) {
-	sprintf(buf,"You %s %s%s.",msg->msg1,op_name,msg->msg2);
-	if (dam != 0) {
-	    if (dam < 10)
-		play_sound_player_only(hitter->contr, SOUND_PLAYER_HITS1,0,0);
-	    else if (dam < 20)
-		play_sound_player_only(hitter->contr, SOUND_PLAYER_HITS2,0,0);
-	    else
-		play_sound_player_only(hitter->contr, SOUND_PLAYER_HITS3,0,0);
-	}
-	new_draw_info(NDI_BLACK, 0, hitter, buf);
-    } else if(get_owner(hitter)!=NULL&&hitter->owner->type==PLAYER) {
-	sprintf(buf,"You %s %s%s with %s.",
-            msg->msg1,op_name,msg->msg2,hitter->name);
-	play_sound_map(op->map, op->x, op->y, SOUND_PLAYER_HITS4);
-	new_draw_info(NDI_BLACK, 0, hitter->owner, buf);
-    }
+    /*attack_message(dam, type, op, hitter);*/
 
     goto leave;
 
@@ -1215,7 +1271,8 @@ int kill_object(object *op,int dam, object *hitter, int type)
    * which needs new attacktype AT_HOLYWORD to work . b.t. */
 
 int hit_player(object *op,int dam, object *hitter, int type) {
-    int maxdam=0,ndam,attacktype=1,attacknum,magic=(type & AT_MAGIC);
+    int maxdam=0, ndam=0, attacktype=1, magic=(type & AT_MAGIC);
+    int maxattacktype, attacknum;
     int body_attack = op && op->head;   /* Did we hit op's head? */
     int simple_attack;
     tag_t op_tag, hitter_tag;
@@ -1308,6 +1365,7 @@ int hit_player(object *op,int dam, object *hitter, int type) {
 	    return 0;
     }
 
+    maxattacktype = type; /* initialize this to something */
     for (attacknum=0; attacknum<NROFATTACKS; attacknum++, attacktype=1<<attacknum) {
 	/* Magic isn't really a true attack type - it gets combined with other
 	 * attack types.  As such, skip it over.  However, if magic is
@@ -1322,9 +1380,16 @@ int hit_player(object *op,int dam, object *hitter, int type) {
          */
 	if (type & attacktype) {
 	    ndam=hit_player_attacktype(op,hitter,dam,attacknum,magic);
-	    maxdam=(maxdam>ndam)?maxdam:ndam;
+	    /* the >= causes us to prefer messages from special attacks, if
+	     * the damage is equal.
+	     */
+	    if (ndam >= maxdam) {
+	      maxdam = ndam;
+	      maxattacktype = 1<<attacknum;
+	    }
 	}
     }
+
 #ifdef ATTACK_DEBUG
     LOG(llevDebug,"Attacktype %d did %d damage\n", type, maxdam);
 #endif
@@ -1342,6 +1407,8 @@ int hit_player(object *op,int dam, object *hitter, int type) {
 
     if(magic && (random_roll(1, 20, op, PREFER_HIGH))>=savethrow[op->level])
 	maxdam=maxdam/2;
+
+    attack_message(maxdam, maxattacktype, op, hitter);
 
     op->stats.hp-=maxdam;
 
