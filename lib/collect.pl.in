@@ -32,6 +32,7 @@ $treasures = "treasures.bld";
 $animations = "animations";
 $paths = $bmaps."."."paths";
 $faceExt = "\\.[a-zA-Z0-9][A-Z0-9][A-Z0-9]";
+$smooths = "smooth";
 
 ### main
 &info("looking ...");
@@ -57,6 +58,11 @@ if (!$archonly) {
     open(FACES,">".$faces) || &die("cannot open ".$faces);
     &facesOut;
     close(FACES);
+
+    &info("$smooths");
+    open(SMOOTHS,">".$smooths) || &die("cannot open ".$smooths);
+    &smoothOut;
+    close(SMOOTHS);
 
     &info("$treasures");
     # We still support the old consolidated treasure information
@@ -274,6 +280,15 @@ line:	while(<ARC>) {
 	    if ($var eq "face" && ! $faces{$values[0]}) {
 		&warn($arch." is missing face ".$values[0])
 	    }
+        if ($var eq "smoothface"){
+            if ($smoothing{$values[0]} && ($smoothing{$values[0]} ne $values[1])){
+                &warn($arch." duplicate smoothface for ".$values[0].": ".$smoothing{$values[0]}." and ".$values[1]);
+            }elsif ( ($values[0] eq "") || ($values[1] eq "")){
+                    &warn ($arch." incomplete smoothface entry found: ".$values[0]." ".$values[1]);
+            }else{
+                $smoothing{$values[0]}=$values[1]
+            }
+        }
 	    print ARCH $_,"\n";
 	}
 	close(ARC);
@@ -408,6 +423,25 @@ sub animOut {
 	$animationsNum++;
     }
 }
+sub smoothOut {
+    local ($sm);
+    print SMOOTHS "##########################################################\n";
+    print SMOOTHS "# Do not touch this file.                                #\n";
+    print SMOOTHS "# It has been generated from the informations present    #\n";
+    print SMOOTHS "# in the archetype files.                                #\n";
+    print SMOOTHS "# To add new entries, simply add                         #\n";
+    print SMOOTHS "#     smoothface xxx yyy                                 #\n";
+    print SMOOTHS "# to an archetype and collect.pl will put below an entry #\n";
+    print SMOOTHS "#      xxx yyy                                           #\n";
+    print SMOOTHS "##########################################################\n\n";
+    print SMOOTHS "# default smooth. Needed for fallbacking\n";
+    print SMOOTHS "default_smoothed.111 sdefault.001\n";
+    print SMOOTHS "\n# Data extracted from arch files\n";
+    foreach $sm (sort (keys %smoothing)){
+        print SMOOTHS "$sm $smoothing{$sm}\n";
+        $smoothNum++;
+    }
+}
 
 ### print out statical information
 sub stats {
@@ -417,4 +451,5 @@ sub stats {
     &info(Animations.":\t".$animationsNum);
     &info(Treasures.":\t".($#treasure_files+1));
     &info(Trash.":\t".$trashNum);
+    &info(Smooths.":\t".$smoothNum);
 }
