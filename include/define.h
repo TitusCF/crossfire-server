@@ -576,6 +576,13 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define ARMOUR_SPELLS(xyz)	(xyz)->last_heal
 #define WEAPON_SPEED(xyz)	(xyz)->last_sp
 
+/* GET_?_FROM_DIR if used only for positional firing where dir is X and Y
+   each of them signed char, concatenated in a int16 */
+#define GET_X_FROM_DIR(dir) (signed char) (  dir & 0xFF )
+#define GET_Y_FROM_DIR(dir) (signed char) ( (dir & 0xFF00) >> 8)
+#define SET_DIR_FROM_XY(X,Y) (signed char)X + ( ((signed char)Y)<<8)
+#define FIRE_DIRECTIONAL 0
+#define FIRE_POSITIONAL  1
 
 /******************************************************************************/
 /* Monster Movements added by kholland@sunlab.cit.cornell.edu                 */
