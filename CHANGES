@@ -17,6 +17,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+lib/ban_file: Update comments to describe how it actually works.
+server/commands.c: Add some time cost to shout, say, and tell commands.  This
+   prevents abusive players from issuing huge number of these commands.
+MSW 2002-06-20
+
 doc/playbook-html/Makefile.in: Remove some superfluous blank lines
    in the file.
 configure, configure.in, plugin/Makefile.in: Modify configure script to

@@ -1,16 +1,24 @@
 # BANFILE
 # A file which contains users or sites which are banned from playing.
 # wildcards can be used in the file.  Valid entries are put on seperate lines.
-# example entries:
-# "joeblow@*.*.abc.edu"   ban joeblow at the given site : note only works if
-#                         user is using a client, as telnet does not report
-#                         userid.
-# "*@*.*.abc.edu"         ban the entire site...works both with telnet and
-#                         client.
+# For a ban to result, both the user and ip must be true.
+# Note: Crossfire does not do a ip -> dns name, so matches for the
+# second part must be by ip.
+# Note2: The user portion is currently igored - the ban check is
+# done before the user logs in.
 #
-# Note - banning by user name should not be used - the client
-# (including the newclient) can easily be changed to use any
-# username.  Also, with the new client, numeric host id is
-# used (ie, 192.15.4.6).  So to ban sites, you need to find out their
-# numeric IP address - not hard, 'who reports this
-
+# Syntax is "user@ip.address".  Note that when actually putting
+# in lines, the double quotes should be ignored.  user should
+# always be "*" for any form of banning to work.
+#
+# the ip address portion is done as a substring and not wildcard
+# match.  Some examples, and results:
+#
+# "mark@tavern.us" - won't work - mark won't match, nor would tavern.us
+#  match - must be ip address.
+# "*@10.1.31.1" - users from 10.1.31.1 will not be able to play.
+# "*@10.1.31.*" - will not work - * is not a wildcard for host matches.
+# "*@10.1.31." - will do above - every ip that has 10.1.31. will be banned.
+# "*@10.1.31" - will ban above, but would also ban things like "129.10.1.31".
+#   
+# Ip address can be determined by looking at the logs, or with the who command.

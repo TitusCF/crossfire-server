@@ -127,10 +127,10 @@ const int CommandsSize =sizeof(Commands) / sizeof(CommArray_s);
 
 CommArray_s CommunicationCommands [] = {
   /* begin emotions */
-  {"tell", command_tell,		0.0},
+  {"tell", command_tell,		0.1},
   {"reply", command_reply,		0.0},
-  {"say", command_say,			0.0},
-  {"shout", command_shout,		0.0},
+  {"say", command_say,			0.1},
+  {"shout", command_shout,		0.1},
   {"nod", command_nod,			0.0},
   {"dance", command_dance,		0.0},
   {"kiss", command_kiss,		0.0},
@@ -262,8 +262,8 @@ const int Socket_CommandsSize =sizeof(Socket_Commands) / sizeof(CommArray_s);
  * to the various players/sockets.
  */
 CommArray_s Socket2_Commands[] = {
-  {"shout", command_shout,	0.0},
-  {"tell", command_tell,	0.0},
+  {"shout", command_shout,	0.1},
+  {"tell", command_tell,	0.1},
 };
 
 const int Socket2_CommandsSize =sizeof(Socket2_Commands) / sizeof(CommArray_s);
