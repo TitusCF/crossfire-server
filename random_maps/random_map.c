@@ -179,6 +179,7 @@ char **layoutgen(RMParms *RP) {
       maze = map_gen_onion(RP->Xsize,RP->Ysize,RP->layoutoptions1,RP->layoutoptions2);
       RP->map_layout_style = ONION_LAYOUT;
       if(!(RANDOM()%3)&& !(RP->layoutoptions1 & OPT_WALLS_ONLY)) roomify_layout(maze,RP);
+      break;
     case 2:
       maze = map_gen_spiral(RP->Xsize,RP->Ysize,RP->layoutoptions1);
       RP->map_layout_style = SPIRAL_LAYOUT;
