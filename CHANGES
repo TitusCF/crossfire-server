@@ -17,6 +17,28 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+The following change basically does the following:  When the server sends an
+item name to the client, this item name is now two pieces - the first piece
+of the name is its singular form, the second piece is the plural name.  This
+now makes items in the inventory appear more proper in terms of pluralization
+and just normal English.  I did notice that the server does not know how
+to properly make 'torch' plural - it turns it into torchs.  A matching
+check in for the client has also been done.
+include/newserver.h:  Update VERSION_SC to 1024
+common/item.c: Change query_base_name to take a second option on whether
+  we should generate a plural version of the name or not.
+socket/item.c: Modify functions to use second argument on the query_base_name
+  function.  Update item commands to send two part names (singular & plural).
+  Modify esrv_send_look to use item1 protocol command instead of item command.
+server/c_object.c: Update item_matched_string to use second option to
+  query_base_name.  Modify function to check against both singular and
+  plural versions of name.
+server/shop.c: Modify shop_listing command usage in query_basename to use
+  second option.  It will also generate the singular name, but that is only
+  used on sorting, so I don't think it will generally cause any problems.
+include/libproto.h:  rebuilt because query_base_name has an addition opt.
+Mark Wedel 8/13/2000
+
 include/config.h, include/global.h, common/init.c, common/living.c,
 server/init.c, server/player.c, server/skill_util.c: Add permanent
 experience and balanced stat loss features (code by Garth Denley).

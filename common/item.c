@@ -207,8 +207,8 @@ char *query_short_name(object *op)
 	    if (buf3!=NULL) {
 		strcpy(buf2, buf3);
 		*buf3 = '\0';	/* also changes value in buf */
-		len=strlen(buf);
 	    }
+	    len=strlen(buf);
 	    if(QUERY_FLAG(op,FLAG_NEED_IE)) {
 		char *cp=strrchr(buf,'y');
 
@@ -372,9 +372,12 @@ char *query_name(object *op) {
  * call to query_base_name().   This is a lot like query_name, but we
  * don't include the item count or item status.  Used for inventory sorting
  * and sending to client.
+ * If plural is set, we generate the plural name of this.
  */
-char *query_base_name(object *op) {
+char *query_base_name(object *op, int plural) {
     static char buf[MAX_BUF];
+    char buf2[MAX_BUF];
+    int len;
 
     if(op->name == NULL)
 	return "(null)";
@@ -382,6 +385,42 @@ char *query_base_name(object *op) {
 	return op->name; /* To speed things up (or make things slower?) */
 
     strcpy(buf,op->name);
+
+    /* This code pretty much taken directly from query_short_name */
+    if (plural) {
+	char *buf3 = strstr(buf, " of ");
+	if (buf3!=NULL) {
+	    strcpy(buf2, buf3);
+	    *buf3 = '\0';   /* also changes value in buf */
+	}
+	len=strlen(buf);
+
+	if(QUERY_FLAG(op,FLAG_NEED_IE)) {
+	    char *cp=strrchr(buf,'y');
+
+	    if(cp!=NULL) {
+		*cp='\0'; /* Strip the 'y' */
+		len--;
+	    }
+	    safe_strcat(buf,"ies", &len, MAX_BUF);
+	} else if (buf[strlen(buf)-1]!='s') 
+	    /* if the item ends in 's', then adding another one is
+	     * not the way to pluralize it.  The only item where this
+	     * matters (that I know of) is bracers, as they start of
+	     * plural
+	     */
+	    safe_strcat(buf,"s", &len, MAX_BUF);
+
+	/* If buf3 is set, then this was a string that contained
+	 * something of something (potion of dexterity.)  The part before
+	 * the of gets made plural, so now we need to copy the rest
+	 * (after and including the " of "), to the buffer string.
+	 */
+	if (buf3)
+	    safe_strcat(buf, buf2, &len, MAX_BUF);
+    }
+
+
     if (op->title && QUERY_FLAG(op,FLAG_IDENTIFIED)) {
 	strcat(buf, " ");
 	strcat(buf, op->title);

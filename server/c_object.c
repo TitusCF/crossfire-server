@@ -5,6 +5,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
+    Copyright (C) 2000 Mark Wedel
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -116,9 +117,12 @@ int item_matched_string(object *pl, object *op, char *name)
 	}
 	if (!strcasecmp(cp,query_name(op))) retval=20;
 	else if (!strcasecmp(cp,query_short_name(op))) retval=18;
-	else if (!strcasecmp(cp,query_base_name(op))) retval=16;
-	else if (!strncasecmp(cp,query_base_name(op),
-		MIN(strlen(cp),strlen(query_base_name(op))))) retval=14;
+	else if (!strcasecmp(cp,query_base_name(op,0))) retval=16;
+	else if (!strcasecmp(cp,query_base_name(op,1))) retval=16;
+	else if (!strncasecmp(cp,query_base_name(op,0),
+		MIN(strlen(cp),strlen(query_base_name(op,0))))) retval=14;
+	else if (!strncasecmp(cp,query_base_name(op,1),
+		MIN(strlen(cp),strlen(query_base_name(op,1))))) retval=14;
 	if (retval) {
 	    pl->contr->count=count;
 	    return retval;

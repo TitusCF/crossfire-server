@@ -6,7 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 1994 Mark Wedel
+    Copyright (C) 2000 Mark Wedel
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -23,7 +23,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to master@rahul.net
+    The author can be reached via e-mail to mwedel@scruz.net
 
 */
 
@@ -654,14 +654,14 @@ void shop_listing(object *op)
 	    case BOOTS:
 	    case GLOVES:
 	    case GIRDLE:
-		sprintf(buf,"%s %s",query_base_name(tmp),describe_item(tmp));
+		sprintf(buf,"%s %s",query_base_name(tmp,0),describe_item(tmp));
 	        items[numitems].item_sort = strdup_local(buf);
 		sprintf(buf,"%s %s",query_name(tmp),describe_item(tmp));
 	        items[numitems++].item_real = strdup_local(buf);
 		break;
 
 	    default:
-	        items[numitems].item_sort = strdup_local(query_base_name(tmp));
+	        items[numitems].item_sort = strdup_local(query_base_name(tmp, 0));
 	        items[numitems++].item_real = strdup_local(query_name(tmp));
 		break;
 	}
