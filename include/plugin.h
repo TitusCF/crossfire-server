@@ -80,9 +80,11 @@
 #define EVENT_MAPRESET 22 /* A map is resetting.                             */
 #define EVENT_REMOVE   23 /* A Player character has been removed.            */
 #define EVENT_SHOUT    24 /* A player 'shout' something.                     */
-#define EVENT_TELL     25 /* A player 'tell' something.                      */
+#define EVENT_TELL     25 /* A player 'tell' something.						 */
+#define EVENT_MUZZLE   26 /* A player was Muzzled (no_shout set).			 */
+#define EVENT_KICK     27 /* A player was Kicked by a DM                     */
 
-#define NR_EVENTS 26
+#define NR_EVENTS 28
 
 /*****************************************************************************/
 /* Hook codes. A hook is a function pointer passed from the server to the    */

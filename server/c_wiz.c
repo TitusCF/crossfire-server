@@ -233,7 +233,9 @@ int command_banish (object *op, char *params) {
 int command_kick (object *op, char *params)
 {
     struct pl *pl;
-
+    int evtid;
+    CFParm CFP;
+	
     for(pl=first_player;pl!=NULL;pl=pl->next) 
 	if((params==NULL || !strcmp(pl->ob->name,params)) && pl->ob!=op) {
 	    object *op;
@@ -241,6 +243,14 @@ int command_kick (object *op, char *params)
 
 	    op=pl->ob;
 	    if (!QUERY_FLAG(op, FLAG_REMOVED)) {
+			
+		/* Avion : Here we handle the KICK global event */
+		evtid = EVENT_KICK;
+    	CFP.Value[0] = (void *)(&evtid);
+    	CFP.Value[1] = (void *)(op);
+    	CFP.Value[2] = (void *)(params);
+    	GlobalEvent(&CFP);
+			
 		remove_ob(op);
 		removed=1;
 	    }
@@ -261,6 +271,8 @@ int command_kick (object *op, char *params)
 	    op->map->timeout = MAP_TIMEOUT(op->map);
 #endif
 	    pl->socket.status = Ns_Dead;
+		
+		
 	}
     return 1;
 }
@@ -285,11 +297,13 @@ int command_save_overlay(object *op, char *params)
     return(1);
 } 
 /*a simple toggle for the no_shout field.
-
+AKA the MUZZLE command
 */
 int command_toggle_shout(object *op, char *params)
 {
 	player *pl;
+	int evtid;
+    CFParm CFP;
 	
 	if (!params) {
          new_draw_info(NDI_UNIQUE, 0,op,"Usage: toggle_shout <player>.");
@@ -305,6 +319,14 @@ int command_toggle_shout(object *op, char *params)
 			 "You have been muzzled by the DM!");
     new_draw_info_format(NDI_UNIQUE , 0, op,
 			 "You muzzle %s.", pl->ob->name);
+		
+		/* Avion : Here we handle the MUZZLE global event */
+		evtid = EVENT_MUZZLE;
+    	CFP.Value[0] = (void *)(&evtid);
+    	CFP.Value[1] = (void *)(pl->ob);
+    	CFP.Value[2] = (void *)(params);
+    	GlobalEvent(&CFP);
+		
 		return 1;
 	}else{
 		pl->ob->contr->no_shout = 0;

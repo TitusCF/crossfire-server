@@ -1718,7 +1718,7 @@ CFParm* UnregisterGlobalEvent(CFParm* PParm)
 
 /*****************************************************************************/
 /* When a specific global event occurs, this function is called.             */
-/* Concerns events: BORN, QUIT, LOGIN, LOGOUT, SHOUT for now.                */
+/* Concerns events: BORN, QUIT, LOGIN, LOGOUT, SHOUT, MUZZLE, KICK for now.  */
 /*****************************************************************************/
 /*                                                                           */
 /*****************************************************************************/
