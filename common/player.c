@@ -6,7 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 1994 Mark Wedel
+    Copyright (C) 2001 Mark Wedel
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -23,7 +23,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to master@rahul.net
+    The author can be reached via e-mail to mwedel@scruz.net
 */
 
 #include <global.h>
@@ -32,6 +32,8 @@
 /*
  * Returns a newly allocated and initialised and correctly
  * linked player structure.
+ * This no longer creates the ob structure within the player -
+ * parent wasn't using it anyways.
  */
 
 player *get_player_ob() {
@@ -59,10 +61,7 @@ player *get_player_ob() {
 
   new->use_pixmaps=0;
   new->color_pixmaps=0;
-  new->ob = get_object();
-  new->ob->type = PLAYER;
-  new->ob->contr = new;
-  new->ob->name = add_string("logon");
+  new->ob = NULL;
   new->shoottype = range_none;
   new->last_shoot = range_size;
   new->braced =0;

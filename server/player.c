@@ -69,93 +69,15 @@ int playername_ok(char *cp) {
   return 1;
 }
 
-/* Tries to add player on the connection passwd in ns.
- * All we can really get in this is some settings like host and display
- * mode.
+/* This no longer sets the player map.  Also, it now updates
+ * all the pointers so the caller doesn't need to do that.
+ * Caller is responsible for setting the correct map.
  */
-
-int add_player(NewSocket *ns) {
-    player *p;
-    char *defname = "nobody";
-    mapstruct *m=NULL;
-
-
-    /* Check for banned players and sites.  usename is no longer accurate,
-     * (can't get it over sockets), so all we really have to go on is
-     * the host.
-     */
-
-    if (checkbanned (defname, ns->host)){
-	fprintf (logfile, "Banned player tryed to add. [%s@%s]\n", defname, ns->host);
-	fflush (logfile);
-	return 0;
-    }
-
-    init_beforeplay(); /* Make sure everything is ready */
-
-    if(m == NULL || m->in_memory != MAP_IN_MEMORY)
-	m = ready_map_name(first_map_path,0);
-    if(m == NULL)
-	fatal(MAP_ERROR);
-    m->timeout = MAP_TIMEOUT(m); /* Just in case we fail to add the player */
-    p=get_player_ob();
-    memcpy(&p->socket, ns, sizeof(NewSocket));
-    p->socket.inbuf.len=0;
-
-    p->weapon_sp=0,p->last_weapon_sp= -1;
-    p->has_hit=0;
-
-    p->peaceful=1;			/* default peaceful */
-    p->do_los=1;
-    p->last_weight= -1;
-#ifdef EXPLORE_MODE
-    p->explore=0;
-#endif  
-
-    free_string(p->ob->name);
-    p->ob->name = NULL;
-    free_object(p->ob);
-    p->ob=get_player(p,m);
-    CLEAR_FLAG(p->ob, FLAG_FRIENDLY);
-    add_friendly_object(p->ob);
-#ifdef MOTD
-    display_motd(p->ob);
-#endif
-    p->peaceful=1;
-    p->own_title[0]='\0';
-    get_name(p->ob);
-    return 0;
-}
-
-/*
- * get_player_archetype() return next player archetype from archetype
- * list. Not very efficient routine, but used only creating new players.
- * Note: there MUST be at least one player archetype!
- */
-archetype *get_player_archetype(archetype* at)
-{
-    archetype *start = at;
-    for (;;) {
-	if (at==NULL || at->next==NULL)
-	    at=first_archetype;
-	else
-	    at=at->next;
-	if(at->clone.type==PLAYER)
-	    return at;
-	if (at == start) {
-	    LOG (llevError, "No Player achetypes\n");
-	    exit (-1);
-	}
-    }
-}
-
-
-object *get_player(player *p, mapstruct *m) {
+static void get_player(player *p) {
     object *op=arch_to_object(get_player_archetype(NULL));
     int i;
 
     p->loading = NULL;
-    op->map=m;
     p->fire_on=0,p->run_on=0;
     p->count=0;
     p->count_left=0;
@@ -172,6 +94,7 @@ object *get_player(player *p, mapstruct *m) {
     p->bed_x=0, p->bed_y=0;
     
     op->contr=p; /* this aren't yet in archetype */
+    p->ob = op;
     op->speed_left=0.5;
     op->speed=1.0;
     op->direction=5;     /* So player faces south */
@@ -201,6 +124,18 @@ object *get_player(player *p, mapstruct *m) {
     p->golem=NULL;
     p->last_used=NULL;
     p->last_used_id=0;
+
+    p->weapon_sp=0;
+    p->last_weapon_sp= -1;
+    p->has_hit=0;
+
+    p->peaceful=1;			/* default peaceful */
+    p->do_los=1;
+    p->last_weight= -1;
+#ifdef EXPLORE_MODE
+    p->explore=0;
+#endif  
+
     strncpy(p->title,op->arch->clone.name,MAX_NAME);
     op->race = add_string (op->arch->clone.race);
 
@@ -217,27 +152,83 @@ object *get_player(player *p, mapstruct *m) {
     if(QUERY_FLAG(op,FLAG_READY_SKILL))
         CLEAR_FLAG(op,FLAG_READY_SKILL); 
     p->socket.update_look=0;
-
-    /* Do this last so that all the pointers are updated */
-    if(m->in_memory != MAP_IN_MEMORY) {
-	LOG(llevError,"get_player: Map not in memory?\n");
-	p->loading = m;
-	p->new_x = 0;
-	p->new_y = 0;
-	p->removed = 0;
-	op->x=0;
-	op->y=0;
-    } else {
-	i=find_free_spot(NULL,m,EXIT_X(m->map_object),EXIT_Y(m->map_object),
-			 0,SIZEOFFREE);
-	/* If no free spot, just stuff the player wherever it says */
-	if (i==-1) i=0;
-	op->x=EXIT_X(m->map_object)+freearr_x[i];
-	op->y=EXIT_Y(m->map_object)+freearr_y[i];
-	insert_ob_in_map(op, m, op);
-    }
-    return op;
+    p->own_title[0]='\0';
 }
+
+
+/* This loads the first map an puts the player on it. */
+static void set_first_map(object *op)
+{
+    strcpy(op->contr->maplevel, first_map_path);
+    op->x = -1;
+    op->y = -1;
+    enter_exit(op, NULL);
+}
+
+/* Tries to add player on the connection passwd in ns.
+ * All we can really get in this is some settings like host and display
+ * mode.
+ */
+
+int add_player(NewSocket *ns) {
+    player *p;
+    char *defname = "nobody";
+
+
+    /* Check for banned players and sites.  usename is no longer accurate,
+     * (can't get it over sockets), so all we really have to go on is
+     * the host.
+     */
+
+    if (checkbanned (defname, ns->host)){
+	fprintf (logfile, "Banned player tryed to add. [%s@%s]\n", defname, ns->host);
+	fflush (logfile);
+	return 0;
+    }
+
+    init_beforeplay(); /* Make sure everything is ready */
+
+    p=get_player_ob();
+    get_player(p);
+    memcpy(&p->socket, ns, sizeof(NewSocket));
+    /* Needed because the socket we just copied over needs to be cleared.
+     * Note that this can result in a client reset if there is partial data
+     * on the uncoming socket.
+     */
+    p->socket.inbuf.len = 0;
+    set_first_map(p->ob);
+
+    CLEAR_FLAG(p->ob, FLAG_FRIENDLY);
+    add_friendly_object(p->ob);
+#ifdef MOTD
+    display_motd(p->ob);
+#endif
+    get_name(p->ob);
+    return 0;
+}
+
+/*
+ * get_player_archetype() return next player archetype from archetype
+ * list. Not very efficient routine, but used only creating new players.
+ * Note: there MUST be at least one player archetype!
+ */
+archetype *get_player_archetype(archetype* at)
+{
+    archetype *start = at;
+    for (;;) {
+	if (at==NULL || at->next==NULL)
+	    at=first_archetype;
+	else
+	    at=at->next;
+	if(at->clone.type==PLAYER)
+	    return at;
+	if (at == start) {
+	    LOG (llevError, "No Player achetypes\n");
+	    exit (-1);
+	}
+    }
+}
+
 
 object *get_nearest_player(object *mon) {
   object *op = NULL;
@@ -447,21 +438,23 @@ int receive_play_again(object *op, char key)
 	return 2;
     }
     else if(key=='a'||key=='A') {
-	object *tmp;
+	player *pl = op->contr;
+	char *name = op->name;
+
 	remove_friendly_object(op);
-	op->contr->ob=get_player(op->contr,op->map);
-	tmp=op->contr->ob;
-	add_friendly_object(tmp);
-	tmp->contr->password[0]='~';
-	if(tmp->name!=NULL)
-	    free_string(tmp->name);
+	free_object(op);
+	get_player(pl);
+	op = pl->ob;
+	add_friendly_object(op);
+	op->contr->password[0]='~';
+	if(op->name!=NULL)
+	    free_string(op->name);
 	/* Lets put a space in here */
 	new_draw_info(NDI_UNIQUE, 0, op, "\n");
-	get_name(tmp);
-	add_refcount(tmp->name = op->name);
-	op->type=DEAD_OBJECT;
-	free_object(op);
-	op=tmp;
+	get_name(op);
+	op->name = name;
+	add_refcount(op->name);
+	set_first_map(op);
     } else {
 	/* user pressed something else so just ask again... */
 	play_again(op);
@@ -804,12 +797,9 @@ int key_confirm_quit(object *op, char key)
       return 1;
     }
     terminate_all_pets(op);
-    remove_ob(op);
+    leave_map(op);
     op->direction=0;
     op->contr->count_left=0;
-    op->map->players--;
-    /* Just in case we fail to add the player */
-    op->map->timeout = MAP_TIMEOUT(op->map);
     new_draw_info_format(NDI_UNIQUE | NDI_ALL, 5, NULL,
 	"%s quits the game.",op->name);
 

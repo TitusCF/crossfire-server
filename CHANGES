@@ -17,6 +17,19 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 CVS changes since last release:
 
+MSW 2001/02/25: General player login cleanup.  This should fix the crash
+    when players re-roll stats too often.  So far, it also seems to
+    have the additional effect that calculated players on map now appears
+    to be correct.
+common/player.c: No longer allocate the player object structure in
+    get_player_ob (function is really misnamed).  Callers to this function
+    were not using the allocated function.
+server/login.c: Add leave_map call when player is loaded.
+server/main.c: Add leave_map function.
+server/player.c: Move get_player function to start of file - can declare
+    it static that way.  Move some initialize from add_player to get_player.
+    Add set_first_map function.  Add appropriate calls to leave_map
+    and set_first_map when players join and leaves the game.
 
 MSW 2001/02/22:
 TODO: Add some items, remove some others, remove outline of future versions,

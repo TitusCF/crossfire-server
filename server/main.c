@@ -209,6 +209,23 @@ static char *normalize_path (char *src, char *dst) {
     return (path);
 }
 
+/* All this really is is a glorified remove_object that also updates
+ * the counts on the map if needed.
+ */
+void leave_map(object *op)
+{
+    mapstruct *oldmap = op->map;
+
+    remove_ob(op);
+
+    if (oldmap) {
+	oldmap->players--;
+	if (oldmap->players <= 0) { /* can be less than zero due to errors in tracking this */
+	    set_map_timeout(oldmap);
+	}
+    }
+}
+
 /*
  *  enter_map():  Moves the player and pets from current map (if any) to
  * new map.  map, x, y must be set.  map is the map we are moving the
