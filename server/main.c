@@ -26,13 +26,17 @@
     The author can be reached via e-mail to mwedel@scruz.net
 */
 
-#ifdef HAVE_CRYPT_H
-#include <crypt.h>
-#endif
-
 #include <version.h>
 #include <global.h>
 #include <object.h>
+
+#ifdef HAVE_DES_H
+#include <des.h>
+#else
+#  ifdef HAVE_CRYPT_H
+#  include <crypt.h>
+#  endif
+#endif
 
 #ifndef __CEXTRACT__
 #include <sproto.h>
@@ -146,7 +150,11 @@ char *crypt_string(char *str, char *salt) {
   else
     s[0]= salt[0],
     s[1]= salt[1];
+#ifdef HAVE_DES_H
+  return (char*)des_crypt(str,s);
+#else
   return (char*)crypt(str,s);
+#endif
 }
 
 int check_password(char *typed,char *crypted) {

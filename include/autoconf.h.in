@@ -159,6 +159,9 @@
 /* Define if you have the <sys/ttycom.h> header file.  */
 #undef HAVE_SYS_TTYCOM_H
 
+/* Define if you have the <des.h> header file.  */
+#undef HAVE_DES_H
+
 /* Define if you have the X11 library (-lX11).  */
 #undef HAVE_LIBX11
 
