@@ -1062,11 +1062,11 @@ change_book (object *book, int msgtype)
 	      else
 		{
 		    int     numb, maxnames = max_titles[msgtype];
-		    char    old_title[MAX_BUF], old_name[MAX_BUF];
+		    char *old_title;
+		    char *old_name;
 
-		    if (book->title)
-			strcpy (old_title, book->title);
-		    strcpy(old_name, book->name);
+                    old_title = book->title ? add_string(book->title) : NULL;
+                    old_name = add_string(book->name);
 
 		    /* some pre-generated books have title already set (from
 		     * maps), also don't bother looking for unique title if
@@ -1086,6 +1086,9 @@ change_book (object *book, int msgtype)
 			  LOG (llevDebug, "titles for list %d full (%d possible).\n",
 			       msgtype, maxnames);
 #endif
+			  if (old_title != NULL)
+			      free_string(old_title);
+			  free_string(old_name);
 			  break;
 		      }
 		    /* shouldnt change map-maker books */
@@ -1119,13 +1122,24 @@ change_book (object *book, int msgtype)
 			  free_string (book->title);
 			  if (old_title!=NULL)
 			      book->title = add_string (old_title);
+
+			  if (RANDOM () % 4) {
 			  /* Lets give the book a description to individualize it some */
-			  if (RANDOM () % 4)
-			      sprintf (old_name, "%s %s", book_descrpt[RANDOM () % nbr], old_name);
-			  book->name = add_string (old_name);
+				char new_name[MAX_BUF];
+				snprintf (new_name, MAX_BUF, "%s %s", book_descrpt[RANDOM () % nbr], old_name);
+ 
+	    			book->name = add_string (new_name);
+			  } else {
+				book->name = add_string (old_name);
+			  }
 		      }
-		    else if (book->title && strlen (book->msg) > 5)	/* archive if long msg texts */
+		    else if (book->title && strlen (book->msg) > 5) {	/* archive if long msg texts */
 			add_book_to_list (book, msgtype);
+		    }
+
+		    if (old_title != NULL)
+		        free_string(old_title);
+		    free_string(old_name);
 
 		}
 	      break;
