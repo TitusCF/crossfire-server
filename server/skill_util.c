@@ -1,3 +1,30 @@
+/*
+ * static char *rcsid_skill_util_c =
+ *   "$Id$";
+ */
+/*
+    CrossFire, A Multiplayer game for X-windows
+
+    Copryight (C) 2000 Mark Wedel
+    Copyright (C) 1992 Frank Tore Johansen
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+
+    The author can be reached via e-mail to mwedel@scruz.net
+*/
+
 /* Created July 95 to separate skill utilities from actual skills -b.t. */
 
 /* Reconfigured skills code to allow linking of skills to experience
@@ -628,8 +655,8 @@ int check_skill_to_apply(object *who, object *item) {
         shoottype = range_horn;
         break;
       default:
-        LOG(llevDebug,"Warning: bad call of check_skill_to_apply()");
-        LOG(llevDebug,"No skill exists for item: %s",query_name(item));
+        LOG(llevDebug,"Warning: bad call of check_skill_to_apply()\n");
+        LOG(llevDebug,"No skill exists for item: %s\n",query_name(item));
         return 0;
     }
  
@@ -740,7 +767,7 @@ void unlink_skill(object *skillop) {
   object *op=skillop?skillop->env:NULL;
 
   if(!op||op->type!=PLAYER) { 
-	LOG(llevError,"Error: unlink_skill() called for non-player!");
+	LOG(llevError,"Error: unlink_skill() called for non-player!\n");
 	return;
   }
 
@@ -1457,15 +1484,27 @@ int hth_damage(object *target, object *pl) {
  * level.
  */
 
-int SK_level(object *op) {  
-  int level = op->head?op->head->level:op->level;
+int SK_level(object *op)
+{
+  object *head = op->head ? op->head : op;
+  int level;
 
 #ifdef ALLOW_SKILLS
-  if(op->type==PLAYER && op->chosen_skill && op->chosen_skill->level!=0) {
-	level = op->chosen_skill->level;
+  if(head->type==PLAYER && head->chosen_skill && head->chosen_skill->level!=0) {
+	level = head->chosen_skill->level;
+  } else {
+	level = head->level;
   }
+#else
+  level = head->level;
 #endif
-  if(level<=0) level = 1;	 /* safety */
+
+  if(level<=0)
+  {
+    LOG (llevError, "BUG: SK_level(arch %s, name %s): level <= 0\n",
+         op->arch->name, op->name);
+    level = 1;	 /* safety */
+  }
 
   return level;
 }
