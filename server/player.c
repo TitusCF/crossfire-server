@@ -973,6 +973,34 @@ int key_confirm_quit(object *op, char key)
     return 1;
 }
 
+void auto_heal(object *op) {
+    object *tmp;
+
+    if (op->stats.hp < 0) {
+	LOG(llevDebug, "Healing player is dead.\n");
+	return;
+    } /* 35 -> 32 */
+    if (cast_spell(op, op, 0, SP_HEAL, 0, spellNormal,NULL))
+	return;
+    else if (cast_spell(op, op, 0, SP_MAJOR_HEAL, 0, spellNormal,NULL))
+	return;
+    else if (cast_spell(op, op, 0, SP_MED_HEAL, 0, spellNormal,NULL))
+	return;
+    else if (cast_spell(op, op, 0, SP_MINOR_HEAL, 0, spellNormal,NULL))
+	return;
+    else
+	/* a potion in the main inventory? */
+	for (tmp=op->inv; tmp; tmp = tmp->below)
+	    if (tmp->type == POTION && (tmp->stats.sp == SP_HEAL ||
+		    tmp->stats.sp == SP_MAJOR_HEAL ||
+		    tmp->stats.sp == SP_MED_HEAL ||
+		    tmp->stats.sp == SP_MINOR_HEAL)) {
+		apply_potion(op, tmp);
+		break;
+	    }
+    /* I give up, sorry buddy, you die. */
+    return;
+}
 
 void flee_player(object *op) {
   int dir,diff;
@@ -1295,6 +1323,123 @@ object *find_arrow(object *op, char *type)
 }
 
 /*
+ * Similar to find_arrow, but looks for (roughly) the best arrow to use
+ * against the target.  A full test is not performed, simply a basic test
+ * of resistances.  The archer is making a quick guess at what he sees down
+ * the hall.  Failing that it does it's best to pick the highest plus arrow.
+ */
+
+object *find_better_arrow(object *op, object *target, char *type, int *better)
+{
+    object *tmp = NULL, *arrow, *ntmp;
+    int attacknum, attacktype, betterby=0, i;
+
+    if (!type)
+	return NULL;
+
+    for (arrow=op->inv; arrow; arrow=arrow->below) {
+	if (arrow->type==CONTAINER && arrow->race==type &&
+	    QUERY_FLAG(arrow, FLAG_APPLIED)) {
+	    i = 0;
+	    ntmp = find_better_arrow(arrow, target, type, &i);
+	    if (i > betterby) {
+		tmp = ntmp;
+		betterby = i;
+	    }
+	} else if (arrow->type==ARROW && arrow->race==type) {
+	    /* allways prefer assasination/slaying */
+	    if (target->race != NULL && arrow->slaying != NULL &&
+		strstr(arrow->slaying, target->race)) {
+		if (arrow->attacktype & AT_DEATH) {
+		    *better = 100;
+		    return arrow;
+		} else {
+		    tmp = arrow;
+		    betterby = (arrow->magic + arrow->stats.dam) * 2;
+		}
+	    } else {
+		for (attacknum=0; attacknum < NROFATTACKS;
+		     attacknum++, attacktype = 1<<attacknum)
+		    if (arrow->attacktype & attacktype)
+			if (target->resist[attacknum] < 0)
+			    if (((arrow->magic + arrow->stats.dam)*(100-target->resist[attacknum])/100) > betterby) {
+				tmp = arrow;
+				betterby = (arrow->magic + arrow->stats.dam)*(100-target->resist[attacknum])/100;
+			    }
+		if ((2 + arrow->magic + arrow->stats.dam) > betterby) {
+		    tmp = arrow;
+		    betterby = 2 + arrow->magic + arrow->stats.dam;
+		}
+		if (arrow->title && (1 + arrow->magic + arrow->stats.dam) > betterby) {
+		    tmp = arrow;
+		    betterby = 1 + arrow->magic + arrow->stats.dam;
+		}
+	    }
+	}
+    }
+    if (tmp == NULL && arrow == NULL)
+	return find_arrow(op, type);
+
+    *better = betterby;
+    return tmp;
+}
+
+/* looks in a given direction, finds the first valid target, and calls
+ * find_better_arrow to find a decent arrow to use.
+ * op = the shooter
+ * type = bow->race
+ * dir = fire direction
+ */
+
+object *pick_arrow_target(object *op, char *type, int dir)
+{
+    object *tmp = NULL;
+    mapstruct *m;
+    int i, mflags, found, number, dex;
+    sint16 x, y;
+
+    if (op->map == NULL)
+	return find_arrow(op, type);
+
+    /* do a dex check */
+    dex = get_skill_stat1(op) ? get_skill_stat1(op) : 10;
+    number = (die_roll(2, 40, op, PREFER_LOW)-2)/2;
+    if (number > (dex + SK_level(op)))
+	return find_arrow(op, type);
+
+    m = op->map;
+    x = op->x;
+    y = op->y;
+
+    /* find the first target */
+    for (i=0, found=0; i<20; i++) {
+	x += freearr_x[dir];
+	y += freearr_y[dir];
+	mflags = get_map_flags(m, &m, x, y, &x, &y);
+	if (mflags & P_OUT_OF_MAP || mflags & P_WALL) {
+	    tmp = NULL;
+	    break;
+	}
+	if (mflags & P_IS_ALIVE) {
+	    for (tmp = GET_MAP_OB(m, x, y); tmp; tmp=tmp->above)
+		if (QUERY_FLAG(tmp, FLAG_ALIVE)) {
+		    found++;
+		    break;
+		}
+	    if (found)
+		break;
+	}
+    }
+    if (tmp == NULL)
+	return find_arrow(op, type);
+
+    if (tmp->head)
+	tmp = tmp->head;
+
+    return find_better_arrow(op, tmp, type, &i);
+}
+
+/*
  * Creature fires a bow - op can be monster or player.  Returns 
  * 1 if bow was actually fired, 0 otherwise.
  * op is the object firing the bow.
@@ -1304,9 +1449,10 @@ object *find_arrow(object *op, char *type)
  * sx, sy are coordinates to fire arrow from - also used in some of the special
  * player fire modes.
  */
-int fire_bow(object *op, object *part, int dir, int wc_mod, int sx, int sy)
+int fire_bow(object *op, object *part, object *arrow, int dir, int wc_mod,
+             int sx, int sy)
 {
-    object *arrow = NULL, *left, *bow;
+    object *left, *bow;
     tag_t left_tag, tag;
 
     if (!dir) {
@@ -1333,14 +1479,16 @@ int fire_bow(object *op, object *part, int dir, int wc_mod, int sx, int sy)
 	return 0;
     }
 
-    if ((arrow=find_arrow(op, bow->race)) == NULL) {
-	if (op->type == PLAYER)
-	    new_draw_info_format(NDI_UNIQUE, 0, op,
-				 "You have no %s left.", bow->race);
-	/* FLAG_READY_BOW will get reset if the monsters picks up some arrows */
-	else
-	    CLEAR_FLAG(op, FLAG_READY_BOW);
-	return 0;
+    if (arrow == NULL) {
+	if ((arrow=find_arrow(op, bow->race)) == NULL) {
+	    if (op->type == PLAYER)
+		new_draw_info_format(NDI_UNIQUE, 0, op,
+		    "You have no %s left.", bow->race);
+     /* FLAG_READY_BOW will get reset if the monsters picks up some arrows */
+	    else
+		CLEAR_FLAG(op, FLAG_READY_BOW);
+	    return 0;
+	}
     }
 
     if(get_map_flags(op->map,NULL, op->x+freearr_x[dir],op->y+freearr_y[dir], NULL, NULL) &
@@ -1449,31 +1597,32 @@ int fire_bow(object *op, object *part, int dir, int wc_mod, int sx, int sy)
  */
 int player_fire_bow(object *op, int dir)
 {
-    int ret=0;
+    int ret=0, wcmod=0;
 
-    if (op->contr->bowtype >= bow_n && op->contr->bowtype <= bow_nw) {
-	int wcmod=0;
-
+    if (op->contr->bowtype == bow_bestarrow) {
+	ret = fire_bow(op, op,
+	    pick_arrow_target(op, op->contr->ranges[range_bow]->race, dir),
+	    dir, 0, op->x, op->y);
+    } else if (op->contr->bowtype >= bow_n && op->contr->bowtype <= bow_nw) {
 	if (!similar_direction(dir, op->contr->bowtype - bow_n + 1))
 	    wcmod =-1;
-	ret = fire_bow(op, op, op->contr->bowtype - bow_n + 1, wcmod, op->x, op->y);
-    }
-    else if (op->contr->bowtype == bow_threewide) {
-	ret = fire_bow(op, op, dir, 0, op->x, op->y);
-	ret |= fire_bow(op, op, dir, -5, op->x + freearr_x[absdir(dir+2)], op->y + freearr_y[absdir(dir+2)]);
-	ret |= fire_bow(op, op, dir, -5, op->x + freearr_x[absdir(dir-2)], op->y + freearr_y[absdir(dir-22)]);
+	ret = fire_bow(op, op, NULL, op->contr->bowtype - bow_n + 1, wcmod,
+	    op->x, op->y);
+    } else if (op->contr->bowtype == bow_threewide) {
+	ret = fire_bow(op, op, NULL, dir, 0, op->x, op->y);
+	ret |= fire_bow(op, op, NULL, dir, -5, op->x + freearr_x[absdir(dir+2)], op->y + freearr_y[absdir(dir+2)]);
+	ret |= fire_bow(op, op, NULL, dir, -5, op->x + freearr_x[absdir(dir-2)], op->y + freearr_y[absdir(dir-22)]);
     } else if (op->contr->bowtype == bow_spreadshot) {
-	ret |= fire_bow(op, op, dir, 0, op->x, op->y);
-	ret |= fire_bow(op, op, absdir(dir-1), -5, op->x, op->y);
-	ret |= fire_bow(op, op, absdir(dir+1), -5, op->x, op->y);
+	ret |= fire_bow(op, op, NULL, dir, 0, op->x, op->y);
+	ret |= fire_bow(op, op, NULL, absdir(dir-1), -5, op->x, op->y);
+	ret |= fire_bow(op, op, NULL, absdir(dir+1), -5, op->x, op->y);
 
     } else {
 	/* Simple case */
-	ret = fire_bow(op, op, dir, 0, op->x, op->y);
+	ret = fire_bow(op, op, NULL, dir, 0, op->x, op->y);
     }
     return ret;
 }
-
 
 
 /* Fires a misc (wand/rod/horn) object in 'dir'.

@@ -487,7 +487,7 @@ int key_confirm_quit(object *op, char key);
 void flee_player(object *op);
 int check_pick(object *op);
 object *find_arrow(object *op, char *type);
-int fire_bow(object *op, object *part, int dir, int wc_mod, int sx, int sy);
+int fire_bow(object *op, object *part, object *arrow, int dir, int wc_mod, int sx, int sy);
 int player_fire_bow(object *op, int dir);
 void fire_misc_object(object *op, int dir);
 void fire(object *op, int dir);

@@ -968,7 +968,7 @@ int monster_use_bow(object *head, object *part, object *pl, int dir) {
     }
 
     /* in server/player.c */
-    return fire_bow(head, part, dir, 0, part->x, part->y);
+    return fire_bow(head, part, NULL, dir, 0, part->x, part->y);
 
 }
 

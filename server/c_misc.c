@@ -744,7 +744,7 @@ int command_bowmode(object *op, char *params)
     static char *types[] =
 	{"normal", "threewide", "spreadshot", "firenorth",
 	 "firene", "fireeast", "firese", "firesouth",
-	 "firesw", "firewest", "firenw"};
+	 "firesw", "firewest", "firenw", "bestarrow"};
     char buf[MAX_BUF];
     int i, found;
 
@@ -754,7 +754,7 @@ int command_bowmode(object *op, char *params)
 	return 1;
     }
 
-    for (i=0,found=0; i<=bow_nw; i++) {
+    for (i=0,found=0; i<=bow_bestarrow; i++) {
 	if (!strcmp(params, types[i])) {
 	    found++;
 	    op->contr->bowtype=i;
@@ -763,7 +763,7 @@ int command_bowmode(object *op, char *params)
     }
     if (!found) {
 	sprintf(buf, "bowmode: Unknown options %s, valid options are:", params);
-	for (i=0; i<=bow_nw; i++) {
+	for (i=0; i<=bow_bestarrow; i++) {
 	    strcat(buf, " ");
 	    strcat(buf, types[i]);
 	    if (i < bow_nw)

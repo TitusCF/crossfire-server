@@ -59,7 +59,8 @@ typedef enum _bowtype {
     bow_s = 7,
     bow_sw = 8,
     bow_w = 9,
-    bow_nw = 10 /* must stay at 10 */
+    bow_nw = 10, /* must stay at 10 */
+	bow_bestarrow = 11
 } bowtype_t;
 
 typedef enum _petmode {
