@@ -152,13 +152,12 @@ void save_throw_object (object *op, int type, object *originator)
 	    free_object(op);
 	}
 	if(type&(AT_FIRE|AT_ELECTRICITY)) {
-	      op=get_archetype("burnout");
 	      if(env) {
+                op=get_archetype("burnout");
 		op->x=env->x,op->y=env->y;
                 insert_ob_in_ob(op,env);
 	      } else { 
-		op->x=x,op->y=y;
-	      	insert_ob_in_map(op,m,originator);
+                replace_insert_ob_in_map("burnout",originator);
 	      }
 	}
 	return;
