@@ -1479,7 +1479,7 @@ int cast_change_ability(object *op,object *caster,object *spell_ob, int dir) {
 		}
 		set_attr_value(&force->stats, i, sm);
 		if (!sm)
-		    new_draw_info(NDI_UNIQUE, 0,op,no_gain_msgs[stat]);
+		    new_draw_info(NDI_UNIQUE, 0,op,no_gain_msgs[i]);
 	    }
 	}
     }
