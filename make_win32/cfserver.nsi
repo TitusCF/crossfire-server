@@ -1,7 +1,7 @@
 !include "MUI.nsh"
 
 ;Title Of Your Application
-Name "Crossfire Server (snapshot 2004-11-29)"
+Name "Crossfire Server (snapshot 2005-01-08)"
 
 ;Do A CRC Check
 CRCCheck On
@@ -78,6 +78,7 @@ Section "Crossfire Server (required)" cf
   CreateDirectory $INSTDIR\var
   CreateDirectory $INSTDIR\var\players
   CreateDirectory $INSTDIR\var\unique-items
+  CreateDirectory $INSTDIR\var\datafiles
 
   ; Write the uninstall keys for Windows
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Crossfire Server" "DisplayName" "Crossfire Server (remove only)"
@@ -162,6 +163,7 @@ Section "un.Player files and unique maps data" un_pl
   MessageBox MB_YESNO|MB_ICONEXCLAMATION "Warning, this will remove all player files, and player data!$\rAre you sure?" IDNO skip
   RmDir /r "$INSTDIR\var\players"
   RmDir /r "$INSTDIR\var\unique-items"
+  RmDir /r "$INSTDIR\var\datafiles"
   skip:
 SectionEnd
 

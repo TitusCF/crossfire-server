@@ -1,5 +1,5 @@
-Release notes for Crossfire Server (Windows), November 29th, 2004
-------------------------------------------------------------------
+Release notes for Crossfire Server (Windows), January, 8th, 2005
+----------------------------------------------------------------
 
 This is version 1.6.1 (snapshot) of the server.
 
