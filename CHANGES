@@ -1,4 +1,5 @@
 
+
 Changes in top level CVS tree.  A few notes when putting entries in this
 file:
 1) Please include a date in the form mm/dd/yyyy (yes, us americans are 
@@ -16,6 +17,63 @@ changes' is much more useful than 'misc edits' or 'code cleanup'.
 small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+------------------------------------------------------------------------------
+
+Major race/class change by PeterM:
+BEGIN:
+*****************
+apply.c:  new function, apply changes to player.  If the change is a CLASS,
+player receives certain attributes from the class. 
+
+login.c:  make sure people using the old race/class archetypes in their
+player files can still use them.
+
+player.c:  
+1) give_initial_items modified for greater flexibility:  you
+can pass in a treasurelist.  
+2) Also, initial forces are applied to the player.
+3) Comment added on the stat roll function.  
+4) Word of recall into the new class-choice map (unfortunately hard-wired.) for newly-rolled players.
+5) gen_sp and gen_hp and gen_grace now allowed to go negative to slow down player
+regen.
+
+skill_util.c
+1)  Don't give out basic skills anymore.  This interferes with the class code.
+
+spell_util.c
+1)  Praying failures moderated in frequency.
+2)  Summoned creatures enhanced in wc, speed, depending on casting level.
+3)  Word of recall allowed to work in no-magic areas if a flag is set.
+
+time.c
+1)  Move player changer function added.
+2)  Marker object expiration added.
+
+living.c:  cleric fail chance array modified.
+
+map.c: bugfix for random map/recycle tmp map problem.
+
+define.h:  defines added for playerchangers and class types
+           base 10 numbers added for the spell paths.
+
+spellist.h: fixed up summoning spells a little
+
+sproto.h:  new prototypes
+
+config.h:  hate RECYCLE_TMP_MAPS, turned it off
+  
+maps/HallOfSelection:  new map for class choice.
+
+lib/treasures:  classs/race stuff heavily modified
+lib/archetypes, animation, bmaps, bmaps.paths, crossfire.png faces
+    crossfire.xbm  New faces, etc.
+
+END race/class stuff 10/16/2000
+apply.c:  bugfix for random map/recycle tmp maps interaction.  --PeterM 10/16/200
+
+include/skill* server/skill_util.c:  levitation skill added.
+9/26/2000.  --PeterM
+
 common/map.c server/apply.c:  Fix an interaction between
 RECYCLE_TMP_MAPS and random maps which would cause crashing.
 peterm: 10/12/2000
@@ -28,12 +86,17 @@ disease.c spell_effect.c:  peterm: 10/5/2000
     spells ordinarily couldn't go through.
 
 ------------------------------------------------------------------------------
+
 Changes for 0.95.7:
 
 README: Add crossfire.csua.berkeley.edu server.
 TODO: Remove entry about setable behaviour for keyrings, since that has now
 been done.
 include/patchlevel.h, Makefile.in:  Update for 0.95.7  MSW 9/20/2000
+
+lib/maps:  got rid of the stuff that was there.  Useless stuff.
+the maps dist. is the thing to use.  --PeterM
+
 
 common/living.c, server/skill_util.c:  Patches by Garth Denley:
 Fixes divide by zero crash, sets up perm exp when a new player is loaded,
