@@ -83,7 +83,7 @@ static object *find_best_apply_object_match(object *pl, char *params, enum apply
 
     for (tmp=pl->inv; tmp; tmp=tmp->below) {
 	if (tmp->invisible) continue;
-	if ((tmpmatch=item_matched_string(pl, tmp, params))>=match_val) {
+	if ((tmpmatch=item_matched_string(pl, tmp, params))>match_val) {
 	  if ((aflag==AP_APPLY) && (QUERY_FLAG(tmp,FLAG_APPLIED))) continue;
 	  if ((aflag==AP_UNAPPLY) && (!QUERY_FLAG(tmp,FLAG_APPLIED))) continue;
 	    match_val=tmpmatch;
