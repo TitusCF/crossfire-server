@@ -1,12 +1,15 @@
 Changes in top level CVS tree (please add your changes at the very top of
 the file):
 
+Update lib/Makefile.in to create empty bookarch and temp.maps files as
+part of install process. - msw
+
 Change configure.in script so that by default, files will be put in
 installdir/var/crossfire and installdir/share/crossfire instead of
 just installdir/var and installdir/share.  This allows crossfire to be
 installed more cleaning without it having its own top level directory.
 Old installation behaviour can be gained by using --enable-old-layout when
-running the configure script.
+running the configure script. - msw
 
 Patch by Carsten Pluntke that fixes a problem with unique maps not being
 properly reloaded after being swapped out (main.c) - msw

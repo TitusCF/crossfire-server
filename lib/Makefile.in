@@ -127,8 +127,11 @@ install:: xbmtobdf archetypes bmaps.paths crossfire.cfb crossfire.xpm animations
 	    echo "Installing $$i"; \
 	    $(INSTALL) $(INSTALLFLAGS)  $$i $(datadir); \
 	done
-	$(CP) -r ./maps/* $(datadir)/maps
+	$(CP) -r ./maps $(datadir)
+
 	touch $(localdir)/highscore
+	touch $(localdir)/bookarch
+	touch $(localdir)/temp.maps
 
 	@for i in players unique-items; do \
 	    if [ ! -d $(localdir)/$$i ]; then \
