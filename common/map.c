@@ -37,51 +37,6 @@
 
 extern int nrofallocobjects,nroffreeobjects;
 
-#if 0
-/* If 0 this block because I don't know if it is still needed.
- * if it is, it really should be done via autoconf now days
- * and not by specific machine checks.
- */
-
-#if defined(sgi)
-/* popen_local is defined in porting.c */
-#define popen popen_local
-#endif
-
-#if defined (MACH) || defined (NeXT) || defined (__MACH__)
-#ifndef S_ISGID
-#define S_ISGID 0002000
-#endif
-#ifndef S_IWOTH
-#define S_IWOTH 0000200
-#endif
-#ifndef S_IWGRP
-#define S_IWGRP 0000020
-#endif
-#ifndef S_IWUSR
-#define S_IWUSR 0000002
-#endif
-#ifndef S_IROTH
-#define S_IROTH 0000400
-#endif
-#ifndef S_IRGRP
-#define S_IRGRP 0000040
-#endif
-#ifndef S_IRUSR
-#define S_IRUSR 0000004
-#endif
-#endif
-#if defined(MACH) || defined(vax) || defined(ibm032) || defined(NeXT) || defined(__MACH__)
-#ifndef S_ISDIR
-#define S_ISDIR(x) (((x) & S_IFMT) == S_IFDIR)
-#endif
-#ifndef S_ISREG
-#define S_ISREG(x) (((x) & S_IFMT) == S_IFREG)
-#endif
-#endif
-#endif
-
-
 
 /*
  * Returns the mapstruct which has a name matching the given argument.
@@ -582,17 +537,6 @@ void save_objects (mapstruct *m, FILE *fp, FILE *fp2, int flag) {
 			 !QUERY_FLAG(op, FLAG_UNPAID))))
 		    	save_object(fp, op, 3);
 
-#if 0
-		for (tmp = op->more; tmp; tmp = tmp->more) {
-		    if (unique || QUERY_FLAG(op, FLAG_UNIQUE)) {
-			fprintf ( fp2, "More\n");
-			save_object( fp2 , tmp, 3);
-		    } else {
-			fprintf ( fp, "More\n");
-			save_object(fp, tmp, 3);
-		    }
-		}
-#endif
 	    } /* for this space */
 	} /* for this j */
 }
@@ -1504,6 +1448,7 @@ void free_all_maps()
  * possible to change a value by more than 1.
  * Move this from los.c to map.c since this is more related
  * to maps than los.
+ * postive values make it darker, negative make it brighter
  */
  
 int change_map_light(mapstruct *m, int change) {
@@ -1619,11 +1564,7 @@ void update_position (mapstruct *m, int x, int y) {
 	    flags |= P_NO_MAGIC;
 	if (QUERY_FLAG(tmp,FLAG_DAMNED))
 	    flags |= P_NO_CLERIC;
-#if 0
-	/* P_PASS_THRU doesn't seem to do anything so commented out for now */
-	if (QUERY_FLAG(tmp,FLAG_PASS_THRU))
-	    flags |= P_PASS_THRU;
-#endif
+
 	if (QUERY_FLAG(tmp,FLAG_BLOCKSVIEW))
 	    flags |= P_BLOCKSVIEW;
     } /* for stack of objects */
@@ -1890,7 +1831,7 @@ void get_rangevector(object *op1, object *op2, rv_vector *retval, int flags)
     }
     else if (op1->map->tile_map[3] == op2->map) {
 	retval->distance_y = op2->y - op1->y;
-	retval->distance_x = -(op1->x +(MAP_WIDTH(op2->map)- op2->y));
+	retval->distance_x = -(op1->x +(MAP_WIDTH(op2->map)- op2->x));
     }
     else if (op1->map == op2->map) {
 	retval->distance_x = op2->x - op1->x;
