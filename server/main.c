@@ -219,32 +219,6 @@ static char *normalize_path (char *src, char *dst) {
 static void enter_map(object *op, mapstruct *newmap, int x, int y) {
     mapstruct *oldmap = op->map;
 
-    /* If the player is changing maps, we need to do some special things */
-    if (oldmap && oldmap != newmap) {
-	oldmap->players--;
-	if (oldmap->players <= 0) { /* can be less than zero due to errors in tracking this */
-
-#if MAP_MAXTIMEOUT
-	    oldmap->timeout = MAP_TIMEOUT(oldmap);
-	    /* Do MINTIMEOUT first, so that MAXTIMEOUT is used if that is
-	     * lower than the min value.
-	     */
-#if MAP_MINTIMEOUT
-	    if (oldmap->timeout < MAP_MINTIMEOUT) {
-		oldmap->timeout = MAP_MINTIMEOUT;
-	    }
-#endif
-	    if (oldmap->timeout > MAP_MAXTIMEOUT) {
-		oldmap->timeout = MAP_MAXTIMEOUT;
-	    }
-	}
-	/* Swap out the oldest map if low on mem */
-	swap_below_max (EXIT_PATH(newmap->map_object));
-#else
-      /* save out the map */
-      swap_map(oldmap);
-#endif /* MAP_MAXTIMEOUT */
-    }
 
     if (out_of_map(newmap, x, y)) {
 	LOG(llevError,"enter_map: supplied coordinates are not within the map! (%s: %d, %d)\n",
@@ -332,6 +306,36 @@ static void enter_map(object *op, mapstruct *newmap, int x, int y) {
      * about pending objects.
      */
     remove_all_pets(newmap);
+
+    /* If the player is changing maps, we need to do some special things
+     * Do this after the player is on the new map - otherwise the force swap of the
+     * old map does not work.
+     */
+    if (oldmap && oldmap != newmap) {
+	oldmap->players--;
+	if (oldmap->players <= 0) { /* can be less than zero due to errors in tracking this */
+
+#if MAP_MAXTIMEOUT
+	    oldmap->timeout = MAP_TIMEOUT(oldmap);
+	    /* Do MINTIMEOUT first, so that MAXTIMEOUT is used if that is
+	     * lower than the min value.
+	     */
+#if MAP_MINTIMEOUT
+	    if (oldmap->timeout < MAP_MINTIMEOUT) {
+		oldmap->timeout = MAP_MINTIMEOUT;
+	    }
+#endif
+	    if (oldmap->timeout > MAP_MAXTIMEOUT) {
+		oldmap->timeout = MAP_MAXTIMEOUT;
+	    }
+	}
+	/* Swap out the oldest map if low on mem */
+	swap_below_max (EXIT_PATH(newmap->map_object));
+#else
+      /* save out the map */
+      swap_map(oldmap);
+#endif /* MAP_MAXTIMEOUT */
+    }
 }
 
 
