@@ -415,7 +415,8 @@ char *allowed_variables[] = {
     "is_hilly", "has_ready_skill", "has_ready_weapon", "no_skill_ident",
     "glow_radius", "is_blind", "can_see_in_dark", "is_cauldron",
     "randomitems", "is_dust", "no_steal", "one_hit","berserk",
-    "sub_type", "sub_type2","casting_speed",
+    "sub_type", "sub_type2","casting_speed", "elevation",
+    "save_on_overlay",
 /* GROS - These are hooks for script events */
     "script_load","script_apply","script_say","script_trigger", "script_time",
     "script_attack","script_drop", "script_throw", "script_stop", "script_death", "current_weapon_script",

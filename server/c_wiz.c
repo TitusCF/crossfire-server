@@ -418,11 +418,9 @@ int command_dump (object *op, char *params)
       return 1;
     }
     dump_object(tmp);
-    new_draw_info(NDI_UNIQUE, 0,op,errmsg);
+    new_draw_info(NDI_UNIQUE, 0, op, errmsg);
     if (QUERY_FLAG(tmp, FLAG_OBJ_ORIGINAL))
 	new_draw_info(NDI_UNIQUE, 0, op, "Object is marked original");
-    if (QUERY_FLAG(tmp, FLAG_OBJ_SAVE_ON_OVL))
-	new_draw_info(NDI_UNIQUE, 0, op, "Object is marked for save on overlay");
     return 1;
   }
 
