@@ -1214,7 +1214,6 @@ void move_player_attack(object *op, int dir)
   if ((op->contr->braced || !move_ob(op,dir,op)) &&
     !out_of_map(op->map,nx,ny)) {
     
-    op->contr->has_hit = 1; /* The last action was to hit, so use weapon_sp */
 
     if ((tmp=get_map_ob(op->map,nx,ny))==NULL) {
 /*	LOG(llevError,"player_move_attack: get_map_ob returns NULL, but player can not more there.\n");*/
@@ -1313,10 +1312,12 @@ void move_player_attack(object *op, int dir)
        * that party_number -1 is no party, so attacks can still happen.
        */
 
-      else 
+      else
 	if ((tmp->stats.hp>=0) && QUERY_FLAG(tmp, FLAG_ALIVE) &&
 	((tmp->type!=PLAYER || op->contr->party_number==-1 ||
 	op->contr->party_number!=tmp->contr->party_number))) {
+
+	op->contr->has_hit = 1; /* The last action was to hit, so use weapon_sp */
 
 #ifdef ALLOW_SKILLS
             skill_attack(tmp, op, 0, NULL); 

@@ -18,6 +18,10 @@ else.  With this, include the file(s) that you changed.
 CVS changes since last release:
 
 MSW 2000/12/5:
+server/player.c: Move location of where it sets the player has_hit variable
+until after we have confirmed that the player has actually attacked a monster
+and not that the space is blocked.  Fixes various problems and make
+behaviour more predictable.
 common/button.c: Do not set path_attuned when loading connected objects from within
 the editor.  This is normally done for random map code/glue logic.
 common/player.c: When trying to find a skill to use, use a native skill
