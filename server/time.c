@@ -784,7 +784,7 @@ void move_player_changer(object *op) {
 	      EXIT_PATH(op));
 	
 	enter_exit(op->above,op);
-	save_player(player, 0);
+	save_player(player, 1);
       }
       else
         return;
