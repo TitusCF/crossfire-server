@@ -2,6 +2,7 @@
 #include <global.h>
 #include <guile/gh.h>
 #include <object.h>
+#include <skills.h>
 #ifndef __CEXTRACT__
 #include <sproto.h>
 #endif
@@ -15,6 +16,43 @@
 
 void guile_init_type_functions()
 {
+  gh_new_procedure("skill-stealing", Script_skillStealing,0,0,0);
+  gh_new_procedure("skill-lockpicking", Script_skillLockpicking,0,0,0);
+  gh_new_procedure("skill-hiding", Script_skillHiding,0,0,0);
+  gh_new_procedure("skill-smithery", Script_skillSmithery,0,0,0);
+  gh_new_procedure("skill-bowyer", Script_skillBowyer,0,0,0);
+  gh_new_procedure("skill-jeweler", Script_skillJeweler,0,0,0);
+  gh_new_procedure("skill-alchemy", Script_skillAlchemy,0,0,0);
+  gh_new_procedure("skill-thaumaturgy", Script_skillThaumaturgy,0,0,0);
+  gh_new_procedure("skill-literacy", Script_skillLiteracy,0,0,0);
+  gh_new_procedure("skill-bargaining", Script_skillBargaining,0,0,0);
+  gh_new_procedure("skill-jumping", Script_skillJumping,0,0,0);
+  gh_new_procedure("skill-sense-magic", Script_skillSenseMagic,0,0,0);
+  gh_new_procedure("skill-oratory", Script_skillOratory,0,0,0);
+  gh_new_procedure("skill-singing", Script_skillSinging,0,0,0);
+  gh_new_procedure("skill-detect-curse", Script_skillDetectCurse,0,0,0);
+  gh_new_procedure("skill-find-traps", Script_skillFindTraps,0,0,0);
+  gh_new_procedure("skill-meditation", Script_skillMeditation,0,0,0);
+  gh_new_procedure("skill-boxing", Script_skillBoxing,0,0,0);
+  gh_new_procedure("skill-flame-touch", Script_skillFlameTouch,0,0,0);
+  gh_new_procedure("skill-karate", Script_skillKarate,0,0,0);
+  gh_new_procedure("skill-climbing", Script_skillClimbing,0,0,0);
+  gh_new_procedure("skill-woodsman", Script_skillWoodsman,0,0,0);
+  gh_new_procedure("skill-inscription", Script_skillInscription,0,0,0);
+  gh_new_procedure("skill-melee-weapons", Script_skillMeleeWeapons,0,0,0);
+  gh_new_procedure("skill-missile-weapons", Script_skillMissileWeapons,0,0,0);
+  gh_new_procedure("skill-throwing", Script_skillThrowing,0,0,0);
+  gh_new_procedure("skill-spell-casting", Script_skillSpellCasting,0,0,0);
+  gh_new_procedure("skill-remove-traps", Script_skillRemoveTraps,0,0,0);
+  gh_new_procedure("skill-set-traps", Script_skillSetTraps,0,0,0);
+  gh_new_procedure("skill-use-magic-item", Script_skillUseMagicItem,0,0,0);
+  gh_new_procedure("skill-praying", Script_skillPraying,0,0,0);
+  gh_new_procedure("skill-clawing", Script_skillClawing,0,0,0);
+  gh_new_procedure("skill-levitation", Script_skillLevitation,0,0,0);
+  gh_new_procedure("skill-archery", Script_skillArchery,0,0,0);
+  gh_new_procedure("skill-swordsmanship", Script_skillSwordsmanship,0,0,0);
+  gh_new_procedure("skill-herblore", Script_skillHerblore,0,0,0);
+
   gh_new_procedure("color-black", Script_colorBlack,0,0,0);
   gh_new_procedure("color-dark-blue", Script_colorDarkBlue,0,0,0);
   gh_new_procedure("color-red", Script_colorRed,0,0,0);
@@ -168,6 +206,163 @@ void guile_init_type_functions()
   gh_new_procedure("type-corpse",  Script_typeCorpse,0,0,0);
   gh_new_procedure("type-disease",  Script_typeDisease,0,0,0);
   gh_new_procedure("type-symptom",  Script_typeSymptom,0,0,0);
+};
+
+SCM Script_skillStealing()
+{
+        return gh_int2scm(SK_STEALING);
+};
+SCM Script_skillLockpicking()
+{
+        return gh_int2scm(SK_LOCKPICKING);
+};
+SCM Script_skillHiding()
+{
+        return gh_int2scm(SK_HIDING);
+};
+SCM Script_skillSmithery()
+{
+        return gh_int2scm(SK_SMITH);
+};
+SCM Script_skillBowyer()
+{
+        return gh_int2scm(SK_BOWYER);
+};
+SCM Script_skillJeweler()
+{
+        return gh_int2scm(SK_JEWELER);
+};
+SCM Script_skillAlchemy()
+{
+        return gh_int2scm(SK_ALCHEMY);
+};
+SCM Script_skillThaumaturgy()
+{
+        return gh_int2scm(SK_THAUMATURGY);
+};
+SCM Script_skillLiteracy()
+{
+        return gh_int2scm(SK_LITERACY);
+};
+SCM Script_skillBargaining()
+{
+        return gh_int2scm(SK_BARGAINING);
+};
+SCM Script_skillJumping()
+{
+        return gh_int2scm(SK_JUMPING);
+};
+SCM Script_skillSenseMagic()
+{
+        return gh_int2scm(SK_DET_MAGIC);
+};
+SCM Script_skillOratory()
+{
+        return gh_int2scm(SK_ORATORY);
+};
+SCM Script_skillSinging()
+{
+        return gh_int2scm(SK_MUSIC);
+};
+SCM Script_skillDetectCurse()
+{
+        return gh_int2scm(SK_DET_CURSE);
+};
+SCM Script_skillFindTraps()
+{
+        return gh_int2scm(SK_FIND_TRAPS);
+};
+SCM Script_skillMeditation()
+{
+        return gh_int2scm(SK_MEDITATION);
+};
+SCM Script_skillBoxing()
+{
+        return gh_int2scm(SK_BOXING);
+};
+SCM Script_skillFlameTouch()
+{
+        return gh_int2scm(SK_FLAME_TOUCH);
+};
+SCM Script_skillKarate()
+{
+        return gh_int2scm(SK_KARATE);
+};
+SCM Script_skillClimbing()
+{
+        return gh_int2scm(SK_CLIMBING);
+};
+SCM Script_skillWoodsman()
+{
+        return gh_int2scm(SK_WOODSMAN);
+};
+SCM Script_skillInscription()
+{
+        return gh_int2scm(SK_INSCRIPTION);
+};
+SCM Script_skillMeleeWeapons()
+{
+        return gh_int2scm(SK_MELEE_WEAPON);
+};
+SCM Script_skillMissileWeapons()
+{
+        return gh_int2scm(SK_MISSILE_WEAPON);
+};
+SCM Script_skillThrowing()
+{
+        return gh_int2scm(SK_THROWING);
+};
+SCM Script_skillSpellCasting()
+{
+        return gh_int2scm(SK_SPELL_CASTING);
+};
+SCM Script_skillRemoveTraps()
+{
+        return gh_int2scm(SK_REMOVE_TRAP);
+};
+SCM Script_skillSetTraps()
+{
+        return gh_int2scm(SK_SET_TRAP);
+};
+SCM Script_skillUseMagicItem()
+{
+        return gh_int2scm(SK_USE_MAGIC_ITEM);
+};
+SCM Script_skillPraying()
+{
+        return gh_int2scm(SK_PRAYING);
+};
+SCM Script_skillClawing()
+{
+        return gh_int2scm(SK_CLAWING);
+};
+SCM Script_skillLevitation()
+{
+        return gh_int2scm(SK_LEVITATION);
+};
+SCM Script_skillArchery()
+{
+#if 0
+        return gh_int2scm(SK_ARCHERY);
+#else
+        return gh_int2scm(0);
+#endif
+};
+SCM Script_skillSwordsmanship()
+{
+#if 0
+        return gh_int2scm(SK_SWORDSMANSHIP);
+#else
+        return gh_int2scm(0);
+#endif
+};
+SCM Script_skillHerblore()
+{
+#if 0
+        return gh_int2scm(SK_HERBLORE);
+#else
+        return gh_int2scm(0);
+#endif
 };
 
 SCM Script_colorBlack()

@@ -182,7 +182,7 @@ SUPPORTED SCRIPT FUNCTIONS
 The following list contains all specific Crossfire Scheme functions.
 Note that all standard Guile/Scheme functions are still supported under Crossfire-Script.
 For a complete list of standard functions, see the Guile Reference Manual.
-There are currently (491) Crossfire-specific commands and functions.
+There are currently (530) Crossfire-specific commands and functions. (I hope I didn't miscounted !)
 
 A
 (acquire-spell who what)
@@ -486,6 +486,11 @@ G
         Returns the trigger script of object who.
 (get-scriptfire-quantum)
         This keyword is reserved for future use.
+(get-skill-experience who skill_id)
+        Returns the amount of experience points in skill identified by skill_id
+        for object who.
+        Use the (skill-...) wrappers for skill_id.
+        Return value: The amount of experience or -1 if there was an error.
 (get-sp who)
         Returns the SpellPoints value of object who.
 (get-speed who)
@@ -550,6 +555,10 @@ M
 (make-invisible? who)
         Tests if object who can provide invisibility.
         Return value: boolean.
+(match-string str pattern)
+        Tests if string str matches specified pattern.
+        The system is similar to the @match system of the msg...endmsg structure.
+        Return value: #t is the string matches, #f otherwise.
 (monster? who)
         Tests if object who is a monster.
         Return value: boolean.
@@ -689,6 +698,10 @@ S
 (set-script-throw who value)
         Sets the throw script of object who to value.
         Return value: none.
+(set-skill-experience who skill_id value)
+        Sets the experience of object who in the skill skill_id to value.
+        Use the (skil-...) for skill_id value.
+        Return value: Nothing.
 (set-sp who value)
         Sets the SpellPoints value of object who to value.
         Return value: none.
@@ -711,6 +724,10 @@ S
         Sets the Unaggressive status of object who to state.
         state is a boolean.
         Return value: none.
+(skill-...)
+        Those are wrappers for the various skill codes.
+        Use them as parameters for (get-skill-experience) and (set-skill-experience).
+        Return value: Skill identifier (which is an integer).
 (sleeping? who)
         Tests if object who is sleeping.
         Return value: boolean.

@@ -57,6 +57,8 @@ void guile_init_functions()
 {
   LOG(llevInfo, "Guile-Scheme interpreter support by Gros\n");
   LOG(llevInfo, "Guile Interpreter initializing...\n");
+  gh_new_procedure("set-skill-experience", Script_setSkillExp,3,0,0);
+  gh_new_procedure("get-skill-experience", Script_getSkillExp,2,0,0);
   gh_new_procedure("match-string", Script_matchString,2,0,0);
   gh_new_procedure("set-cursed", Script_setCursed,2,0,0);
   gh_new_procedure("activate-rune", Script_activateRune,2,0,0);
@@ -486,6 +488,52 @@ object *create_artifact(object *op, char *artifactname)
         };
         return NULL;
 }
+
+SCM Script_setSkillExp(SCM who, SCM skill, SCM value)
+{
+        object *tmp;
+        object *tmp_exp;
+        object *oldchosen;
+        int currentxp;
+
+        /* Browse the inventory of object to find a matching skill. */
+        for (tmp=WHO->inv;tmp;tmp=tmp->below)
+        {
+                if(tmp->type!=SKILL) continue;
+                if(tmp->stats.sp!=gh_scm2int(skill)) continue;
+                if (tmp->exp_obj)
+                {
+                        oldchosen = WHO->chosen_skill;
+                        WHO->chosen_skill = tmp;
+                        currentxp = tmp->exp_obj->stats.exp;
+                        /* Don't know how this will react if negative value
+                         * passed to add_exp */
+                        add_exp(WHO, gh_scm2int(value)-currentxp);
+                        WHO->chosen_skill = oldchosen;
+                        return;
+                };
+        };
+        LOG(llevError, "set-skill-experience: skill not found\n");
+};
+
+SCM Script_getSkillExp(SCM who, SCM skill)
+{
+        object *tmp;
+        object *tmp_exp;
+        object *oldchosen;
+        /* Browse the inventory of object to find a matching skill. */
+        for (tmp=WHO->inv;tmp;tmp=tmp->below)
+        {
+                if(tmp->type!=SKILL) continue;
+                if(tmp->stats.sp!=gh_scm2int(skill)) continue;
+                if (tmp->exp_obj)
+                {
+                    return gh_long2scm((long)(tmp->exp_obj->stats.exp));
+                };
+        };
+        LOG(llevError, "get-skill-experience: skill not found\n");
+        return -1;
+};
 
 SCM Script_setCursed(SCM who, SCM value)
 {

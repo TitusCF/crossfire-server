@@ -29,6 +29,8 @@ void gfec_eval_string(const char *str, gfec_error_handler error_handler);
 
 /*extern SCM Script_increaseObjectCount(SCM what, SCM increment);*/
 /*extern SCM Script_decreaseObjectCount(SCM what, SCM decrement);*/
+extern SCM Script_setSkillExp(SCM who, SCM skill, SCM value);
+extern SCM Script_getSkillExp(SCM who, SCM skill);
 extern SCM Script_matchString(SCM first, SCM second);
 extern SCM Script_setCursed(SCM who, SCM value);
 extern SCM Script_activateRune(SCM who, SCM what);
@@ -221,6 +223,44 @@ extern SCM Script_whoIsActivator();
 extern SCM Script_whatMessage();
 extern SCM Script_getType(SCM who);
 extern SCM Script_isType(SCM who, SCM what);
+
+/* Crossfire skill numbers */
+extern SCM Script_skillStealing();
+extern SCM Script_skillLockpicking();
+extern SCM Script_skillHiding();
+extern SCM Script_skillSmithery();
+extern SCM Script_skillBowyer();
+extern SCM Script_skillJeweler();
+extern SCM Script_skillAlchemy();
+extern SCM Script_skillThaumaturgy();
+extern SCM Script_skillLiteracy();
+extern SCM Script_skillBargaining();
+extern SCM Script_skillJumping();
+extern SCM Script_skillSenseMagic();
+extern SCM Script_skillOratory();
+extern SCM Script_skillSinging();
+extern SCM Script_skillDetectCurse();
+extern SCM Script_skillFindTraps();
+extern SCM Script_skillMeditation();
+extern SCM Script_skillBoxing();
+extern SCM Script_skillFlameTouch();
+extern SCM Script_skillKarate();
+extern SCM Script_skillClimbing();
+extern SCM Script_skillWoodsman();
+extern SCM Script_skillInscription();
+extern SCM Script_skillMeleeWeapons();
+extern SCM Script_skillMissileWeapons();
+extern SCM Script_skillThrowing();
+extern SCM Script_skillSpellCasting();
+extern SCM Script_skillRemoveTraps();
+extern SCM Script_skillSetTraps();
+extern SCM Script_skillUseMagicItem();
+extern SCM Script_skillPraying();
+extern SCM Script_skillClawing();
+extern SCM Script_skillLevitation();
+extern SCM Script_skillArchery();
+extern SCM Script_skillSwordsmanship();
+extern SCM Script_skillHerblore();
 
 /* Crossfire Color Types */
 extern SCM Script_colorBlack();
