@@ -862,8 +862,9 @@ void fix_player(object *op) {
       if(op->type==PLAYER
 #ifdef ALLOW_SKILLS /* The meaning of stats in skill or experience objects is different -
 		     * we use them solely to link skills to experience, thus it is 
-		     * inappropriate to allow these applied objects to change stats */ 
-           && tmp->type!=EXPERIENCE 
+		     * inappropriate to allow these applied objects to change stats.
+                     * An exception is exp_wis, containing info about god-properties! */ 
+	 && (tmp->type!=EXPERIENCE || !strcmp(tmp->arch->name, "experience_wis"))
 #endif
       ) {
         for(i=0;i<7;i++)
