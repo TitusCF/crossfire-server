@@ -1,6 +1,11 @@
 Changes in top level CVS tree (please add your changes at the very top of
 the file):
 
+Remove berzerk code/variable from player structure.  The code had
+no effect - whatever functionality it once had has been removed in the
+past. - msw
+
+
 Add flag save information for FLAG_CLIENT_SENT that was otherwise
 missing (loader.l).  This fixes the disappearing archetype bug - msw
 
