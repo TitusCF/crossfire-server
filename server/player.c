@@ -1285,11 +1285,11 @@ void move_player_attack(object *op, int dir)
 	if(op->contr->tmp_invis||op->hide) make_visible(op);
 	return;
     }
-
+    
     if ((tmp->type==PLAYER || tmp->enemy != op) &&
       (tmp->type==PLAYER || QUERY_FLAG(tmp,FLAG_UNAGGRESSIVE)
-	|| QUERY_FLAG(tmp, FLAG_FRIENDLY)) &&
-	op->contr->peaceful && (!op->contr->braced)) {
+	|| QUERY_FLAG(tmp, FLAG_FRIENDLY)) && (op->contr->peaceful
+	&& !op_on_battleground(op, NULL, NULL)) && (!op->contr->braced)) {
 	  play_sound_map(op->map, op->x, op->y, SOUND_PUSH_PLAYER);
 	  (void) push_ob(tmp,dir,op);
           if(op->contr->tmp_invis||op->hide) make_visible(op);
@@ -1640,6 +1640,43 @@ void kill_player(object *op)
     
     if(save_life(op))
 	return;
+    
+    /* If player dies on BATTLEGROUND, no stat/exp loss! For Combat-Arenas
+     * in cities ONLY!!! It is very important that this doesn't get abused.
+     * Look at op_on_battleground() for more info       --AndreasV
+     */
+    if (op_on_battleground(op, &x, &y)) {
+      new_draw_info(NDI_UNIQUE | NDI_NAVY, 0,op,
+		    "You have been defeated in combat!");
+      new_draw_info(NDI_UNIQUE | NDI_NAVY, 0,op,
+		    "Local medics have saved your life...");
+      
+      /* restore player */
+      cast_heal(op, 0, SP_CURE_POISON);
+      cast_heal(op, 0, SP_CURE_CONFUSION);
+      cure_disease(op,0);  /* remove any disease */
+      op->stats.hp=op->stats.maxhp;
+      if (op->stats.food<=0) op->stats.food=999;
+      
+      /* create a bodypart-trophy to make the winner happy */
+      tmp=arch_to_object(find_archetype("finger"));
+      if (tmp != NULL) {
+	sprintf(buf,"%s's finger",op->name);
+	tmp->name = add_string(buf);
+	sprintf(buf,"  This finger has been cutt off %s\n"
+	            "  the %s, when he was defeated at\n  level %d by %s.\n",
+	        op->name, op->contr->title, (int)(op->level),
+	        op->contr->killer);
+	tmp->msg=add_string(buf);
+	tmp->value=0, tmp->material=0, tmp->type=0;
+	tmp->x = op->x, tmp->y = op->y;
+	insert_ob_in_map(tmp,op->map,op);
+      }
+      
+      /* teleport defeated player to new destination*/
+      transfer_ob(op, x, y, 0, NULL);
+      return;
+    }
 
     if(op->stats.food<0) {
 #ifdef EXPLORE_MODE
@@ -2166,6 +2203,38 @@ int action_makes_visible (object *op) {
     }
   }
 
+  return 0;
+}
+
+/* op_on_battleground - checks if the given object op (usually
+ * a player) is standing on a valid battleground-tile,
+ * function returns TRUE/FALSE. If true x, y returns the battleground
+ * -exit-coord. (and if x, y not NULL)
+ */
+int op_on_battleground (object *op, int *x, int *y) {
+  object *tmp;
+  int floor;
+  
+  /* A battleground-tile needs the following attributes to be valid:
+   * is_floor 1 (has to be the FIRST floor beneath the player's feet),
+   * name="battleground", no_pick 1, type=58 (type BATTLEGROUND)
+   * and the exit-coordinates sp/hp must both be > 0.
+   * => The intention here is to prevent abuse of the battleground-
+   * feature (like pickable or hidden battleground tiles). */
+  for (tmp=op->below, floor=0; tmp!=NULL && !floor; tmp=tmp->below) {
+    if (QUERY_FLAG (tmp, FLAG_IS_FLOOR)) {
+      if (QUERY_FLAG (tmp, FLAG_NO_PICK) &&
+	  strcmp(tmp->name, "battleground")==0 &&
+	  tmp->type == BATTLEGROUND && EXIT_X(tmp) && EXIT_Y(tmp)) {
+	if (x != NULL && y != NULL)
+	  *x=EXIT_X(tmp), *y=EXIT_Y(tmp);
+	return 1;
+      } else
+	floor++; /* onle the uppermost IS_FLOOR object is processed */
+    }
+  }
+  
+  tmp = NULL;
   return 0;
 }
 

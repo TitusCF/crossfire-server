@@ -820,7 +820,9 @@ int hit_player_attacktype(object *op, object *hitter, int dam,
 	    char buf[256];
 
 	    if(op->immune & AT_ACID) dam /= 4;
-	    for(tmp=op->inv;tmp!=NULL;tmp=tmp->below) {
+	    
+	    if (!op_on_battleground(op, NULL, NULL)) {
+	      for(tmp=op->inv;tmp!=NULL;tmp=tmp->below) {
 		if(!QUERY_FLAG(tmp,FLAG_APPLIED)||tmp->immune&AT_ACID||
 		   (tmp->protected&AT_ACID&&RANDOM()&1))
 			continue;
@@ -847,9 +849,8 @@ int hit_player_attacktype(object *op, object *hitter, int dam,
 		    if(op->type==PLAYER)
 			esrv_send_item(op, tmp);
 		}
-	    }
-	    if(flag) {	/* Something was corroded */
-		fix_player(op);
+	      }
+	      if(flag) fix_player(op); /* Something was corroded */
 	    }
 	}
 	/* Get around check up above */
@@ -869,9 +870,11 @@ int hit_player_attacktype(object *op, object *hitter, int dam,
 	       (op->level > hitter->level) &&
 	       RANDOM()%(op->level-hitter->level+3)>3)
 		    hitter->stats.hp++;
-	    if(!QUERY_FLAG(op,FLAG_WAS_WIZ))
-	      add_exp(hitter,op->stats.exp/rate/2);
-	    add_exp(op,-op->stats.exp/rate);
+	    if (!op_on_battleground(hitter, NULL, NULL)) {
+	      if(!QUERY_FLAG(op,FLAG_WAS_WIZ))
+		add_exp(hitter,op->stats.exp/rate/2);
+	      add_exp(op,-op->stats.exp/rate);
+	    }
 	    dam=0;	/* Drain is an effect */
 	}
     /* weaponmagic, ghosthit not needed, poison, slow, paralyze handled above */
@@ -942,6 +945,7 @@ int hit_player(object *op,int dam, object *hitter, int type) {
     int body_attack = op && op->head;   /* Did we hit op's head? */
     int simple_attack;
     tag_t op_tag, hitter_tag;
+    int battleg=0;    /* true if op standing on battleground */
 
     if (get_attack_mode (&op, &hitter, &simple_attack))
         return 0;
@@ -1148,12 +1152,14 @@ int hit_player(object *op,int dam, object *hitter, int type) {
 	    if(op->type == PLAYER && hitter != op)
 		 change_luck(hitter, -1);
 	} /* was a player that hit this creature */
-
-
+	
+	/* is the victim (op) standing on battleground? */
+	if (op_on_battleground(op, NULL, NULL)) battleg=1;
+	
 	/* Pet killed something. */
 	if(get_owner(hitter)!=NULL) {
-	    (void) sprintf(buf,"%s killed %s with %s.",hitter->owner->name,
-		query_name(op),query_name(hitter));
+	    (void) sprintf(buf,"%s killed %s with %s%s.",hitter->owner->name,
+		query_name(op),query_name(hitter), battleg? " (duel)":"");
 #ifdef ALLOW_SKILLS
 	    old_hitter = hitter;
 	    owner->exp_obj=hitter->exp_obj;
@@ -1161,8 +1167,9 @@ int hit_player(object *op,int dam, object *hitter, int type) {
 	    hitter=hitter->owner;
 	}
 	else
-	    (void) sprintf(buf,"%s killed %s.",hitter->name,op->name);
-
+	  (void) sprintf(buf,"%s killed %s%s.",hitter->name,op->name,
+			 battleg? " (duel)":"");
+	
 	/* If you didn't kill yourself, and your not the wizard */
 	if(hitter!=op&&!QUERY_FLAG(op, FLAG_WAS_WIZ)) {
 	    int exp=op->stats.exp;
@@ -1185,15 +1192,25 @@ int hit_player(object *op,int dam, object *hitter, int type) {
 #endif /* ALLOW_SKILLS */
 
 	    /* Really don't give much experience for killing other players */
-	    if (op->type==PLAYER)
-		exp/=10;
+	    if (op->type==PLAYER) {
+	      if (battleg) {
+		new_draw_info(NDI_UNIQUE, 0,hitter, "Your foe has fallen!");
+		new_draw_info(NDI_UNIQUE, 0,hitter, "VICTORY!!!");
+	      }
+	      else
+		exp = MIN(5000000, MAX(0, exp/10));
+	    }
 
 	    /* Don't know why this is set this way - doesn't make
 	     * sense to just divide everything by two for no reason.
 	     */
 	    if (!settings.simple_exp)
 		exp=exp/2;
-
+	    
+	    /* if op is standing on "battleground" (arena), no way to gain
+	     * exp by killing him */
+	    if (battleg) exp = 0;
+	    
 	    if(hitter->type!=PLAYER || hitter->contr->party_number<=0) {
 		add_exp(hitter,exp);
 	    } else {
