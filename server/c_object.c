@@ -248,7 +248,10 @@ int sack_can_hold (object *pl, object *sack, object *op, int nrof) {
  */
 void pick_up_object (object *pl, object *op, object *tmp, int nrof)
 {
-    char buf[MAX_BUF];
+    /* buf needs to be big (more than 256 chars) because you can get
+     * very long item names.
+     */
+    char buf[HUGE_BUF];
     object *env=tmp->env;
     uint32 weight;
 

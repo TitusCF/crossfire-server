@@ -190,6 +190,7 @@ void esrv_draw_look(object *pl)
 		item_n[127]=0;
 		len=strlen(item_n);
 		item_p=query_base_name(tmp, 1);
+		item_p[127]=0;
 		strncpy(item_n+len+1, item_p, 127);
 		item_n[254]=0;
 		len += strlen(item_p) + 1;
@@ -271,6 +272,7 @@ void esrv_send_inventory(object *pl, object *op)
 		item_n[127]=0;
 		len=strlen(item_n);
 		item_p=query_base_name(tmp, 1);
+		item_p[127]=0;
 		strncpy(item_n+len+1, item_p, 127);
 		item_n[254]=0;
 		len += strlen(item_p) + 1;
@@ -371,6 +373,7 @@ void esrv_update_item(int flags, object *pl, object *op)
 	    item_n[127]=0;
 	    len=strlen(item_n);
 	    item_p=query_base_name(op, 1);
+	    item_p[127]=0;
 	    strncpy(item_n+len+1, item_p, 127);
 	    item_n[254]=0;
 	    len += strlen(item_p) + 1;
@@ -449,6 +452,7 @@ void esrv_send_item(object *pl, object*op)
 	item_n[127]=0;
 	len=strlen(item_n);
 	item_p=query_base_name(op, 1);
+	item_p[127]=0;
 	strncpy(item_n+len+1, item_p, 127);
 	item_n[254]=0;
 	len += strlen(item_p) + 1;
