@@ -42,6 +42,39 @@
 #include <treasure.h>
 #include <skills.h>
 
+/* Enough of the DM functions seem to need this that I broke
+ * it out to a seperate function.  name is the person
+ * being saught, rq is who is looking for them.  This
+ * prints diagnostics messages, and returns the 
+ * other player, or NULL otherwise.
+ */
+static player *get_other_player_from_name(object *op, char *name)
+{
+    player *pl;
+
+    if (!name) return NULL;
+
+    for(pl=first_player;pl!=NULL;pl=pl->next) 
+	if(!strncmp(pl->ob->name, name, MAX_NAME)) 
+	    break;
+
+    if(pl==NULL) {
+	new_draw_info(NDI_UNIQUE, 0,op,"No such player.");
+	return NULL;
+    }
+
+    if (pl->ob == op) {
+	new_draw_info(NDI_UNIQUE, 0, op, "You can't do that to yourself.");
+	return NULL;
+    }
+    if(pl->state != ST_PLAYING) {
+	new_draw_info(NDI_UNIQUE, 0,op,"That player is in no state for that right now.");
+	return NULL;
+    }
+    return pl;
+}
+
+
 int command_loadtest(object *op, char *params){
 	int x,y;
 	char buf[1024];
@@ -318,40 +351,7 @@ int command_generate (object *op, char *params)
         }
       }
       return 1;
-    }
-
-
-/* Enough of the DM functions seem to need this that I broke
- * it out to a seperate function.  name is the person
- * being saught, rq is who is looking for them.  This
- * prints diagnostics messages, and returns the 
- * other player, or NULL otherwise.
- */
-static player *get_other_player_from_name(object *op, char *name)
-{
-    player *pl;
-
-    if (!name) return NULL;
-
-    for(pl=first_player;pl!=NULL;pl=pl->next) 
-	if(!strncmp(pl->ob->name, name, MAX_NAME)) 
-	    break;
-
-    if(pl==NULL) {
-	new_draw_info(NDI_UNIQUE, 0,op,"No such player.");
-	return NULL;
-    }
-
-    if (pl->ob == op) {
-	new_draw_info(NDI_UNIQUE, 0, op, "You can't do that to yourself.");
-	return NULL;
-    }
-    if(pl->state != ST_PLAYING) {
-	new_draw_info(NDI_UNIQUE, 0,op,"That player is in no state for that right now.");
-	return NULL;
-    }
-    return pl;
-}
+ }
 
 int command_freeze(object *op, char *params)
 {
