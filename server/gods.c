@@ -74,7 +74,7 @@ void pray_at_altar(object *pl, object *altar) {
   object *pl_god=find_god(determine_god(pl));
  
 #ifdef MULTIPLE_GODS
-  /* hmm. what happend depends on pl previous god, level, etc */
+  /* hmm. what happend depends on pl's current god, level, etc */
   if(!pl_god) {  /*new convert */
     become_follower(pl,altar->title);
     return;
@@ -88,10 +88,14 @@ void pray_at_altar(object *pl, object *altar) {
      /* we can super-charge grace to 2x max */
      if(pl->stats.grace<(2*pl->stats.maxgrace)) {
         pl->stats.grace+=bonus/2;
+	if(pl->stats.grace>(2*pl->stats.maxgrace)) {
+	  pl->stats.grace=(2*pl->stats.maxgrace);
+	}
      }
 
      /* Every once in a while, the god decides to checkup on their
       * follower, and may intervene to help them out. */
+     bonus += pl->stats.luck; /* -- DAMN -- */
      if((RANDOM()%500-bonus)<0) god_intervention(pl,pl_god);
  
   } else if(altar->title) { /* praying to another god! */
@@ -150,7 +154,7 @@ void become_follower (object *op, char *godname) {
 
     if(!op||!new_god) return;
     if(op->race&&new_god->slaying&&strstr(op->race,new_god->slaying)) { 
-	new_draw_info_format(NDI_UNIQUE|NDI_NAVY,0,op,"Fool! %s detest your kind!",godname);
+	new_draw_info_format(NDI_UNIQUE|NDI_NAVY,0,op,"Fool! %s detests your kind!",godname);
         if(RANDOM()%(op->level)-5>0) 
 	   cast_mana_storm(op,new_god->level+10);
 	return;
@@ -375,7 +379,7 @@ void god_intervention(object *op, object *god) {
   }
 
   /* Fix drained stats? */
-  if(!(RANDOM()%2)&&!(god->attacktype&AT_DRAIN)) {
+  if(!(RANDOM()%2)&&!(god->attacktype&(AT_DRAIN||AT_DEPLETE))) {
      object *depl;
      archetype *at;
 
@@ -408,7 +412,7 @@ void god_intervention(object *op, object *god) {
       } 
       if(god->race) {
           new_draw_info_format(NDI_UNIQUE,0,op,
-	    "You are feel a bond with all things which are %s.",
+	    "You feel a bond with all things which are %s.",
 	    god->race);
 	  return;
       } 
@@ -503,19 +507,22 @@ void god_intervention(object *op, object *god) {
     }
     spell = i;
 
-   /* The god will only teach the spell if its not against the nature
-    * of the cult, the priest is high enough in level *and* the priest
-    * doesnt already know it */
-   /* Also, there are some spells which can really disturb playbalance,
-    * to keep these out of player hands, we discard any spell which 
-    * has PATH_NULL.  
-    * (already checked in RARE_PRAYER)
-    */
-
-    if ((god->path_attuned & spells[spell].path) 
-        && !(god->path_repelled & spells[spell].path) 
-	&& spells[spell].level <= level
-	&& !check_spell_known(op,spell)) { 
+    /* The god will only teach the spell if its not against the nature
+     * of the cult, the priest is high enough in level *and* the priest
+     * doesnt already know it */
+    /* Also, there are some spells which can really disturb playbalance,
+     * to keep these out of player hands, we discard any spell which 
+     * has PATH_NULL.  
+     * (already checked in RARE_PRAYER)
+     */
+    /* Only teach spells of paths this god is attuned to.  Also check	*
+     * that the spell has no repelled or denied paths, in case any	*
+     * multi-path spells come along.  --DAMN				*/
+    if ( (god->path_attuned  & spells[spell].path) &&
+	!(god->path_repelled & spells[spell].path) &&
+	!(god->path_denied   & spells[spell].path) &&
+	 (spells[spell].level <= level) &&
+	 (!check_spell_known(op,spell)) ) { 
 
     	play_sound_player_only(op->contr, SOUND_LEARN_SPELL,0,0); 
     	new_draw_info_format(NDI_UNIQUE, 0,op,
@@ -538,13 +545,13 @@ void god_intervention(object *op, object *god) {
 
 int god_examines_priest (object *op, object *god) {
   int reaction=1;
-  object *weapon=NULL;
+  object *item=NULL;
 
-  for(weapon=op->inv;weapon;weapon=weapon->below)
-     if(weapon->type==WEAPON&&QUERY_FLAG(weapon,FLAG_APPLIED)) break;
-
-  if(weapon) 
-    reaction=god_examines_item(god,weapon)*(weapon->magic?abs(weapon->magic):1);
+  for(item=op->inv;item;item=item->below) {
+    if(QUERY_FLAG(item,FLAG_APPLIED)) {
+      reaction+=god_examines_item(god,item)*(item->magic?abs(item->magic):1);
+    }
+  }
 
   /* well, well. Looks like we screwed up. Time for god's revenge */
   if(reaction<0) { 
@@ -646,6 +653,7 @@ int tailor_god_spell(object *spellop, object *caster) {
          if(spellop->title){
 	   char buf[MAX_BUF]; 
 	   sprintf(buf,"%s of %s",spellop->name,spellop->title);
+	   if (spellop->name) free_string(spellop->name);
 	   spellop->name=add_string(buf);
 	}
     } 
