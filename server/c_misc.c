@@ -937,7 +937,8 @@ void receive_player_name(object *op,char k) {
 
 void receive_player_password(object *op,char k) {
 
-  if(strlen(op->contr->write_buf)<=1) {
+  unsigned int pwd_len=strlen(op->contr->write_buf);
+  if(pwd_len<=1||pwd_len>17) {
     unlock_player(op->name);
     get_name(op);
     return;
