@@ -140,7 +140,7 @@ int write_rune(object *op,int dir,int inspell,int level,char *runename) {
     tmp->map = op->map;
     tmp->direction=dir;  /* where any spell will go upon detonation */
     tmp->level=SK_level(op);  /* what level to cast the spell at */
-    if(inspell||tmp->stats.dam) set_owner(tmp,op); // runes withou need no owner
+    if(inspell||tmp->stats.dam) set_owner(tmp,op); /* runes without need no owner */
     insert_ob_in_map(tmp,op->map,op);
     return 1;
 
