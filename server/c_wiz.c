@@ -117,6 +117,26 @@ int command_kick (object *op, char *params)
   return 1;
 }
 
+int command_save_overlay(object *op, char *params)
+{
+    if (!op)
+	return(0);
+
+    if (op!=NULL && !QUERY_FLAG(op, FLAG_WIZ)) {
+	new_draw_info(NDI_UNIQUE, 0, op,
+	    "Sorry, you can't force an overlay save.");
+	return(1);
+    }
+    new_save_map(op->map, 2);
+    new_save_map(op->map, 0);
+    new_draw_info(NDI_UNIQUE, 0, op, "Current map has been saved as an"
+	" overlay.");
+
+    ready_map_name(op->map->path, 0);
+
+    return(1);
+} 
+
 int command_shutdown(object *op, char *params)
 {
 
@@ -399,6 +419,10 @@ int command_dump (object *op, char *params)
     }
     dump_object(tmp);
     new_draw_info(NDI_UNIQUE, 0,op,errmsg);
+    if (QUERY_FLAG(tmp, FLAG_OBJ_ORIGINAL))
+	new_draw_info(NDI_UNIQUE, 0, op, "Object is marked original");
+    if (QUERY_FLAG(tmp, FLAG_OBJ_SAVE_ON_OVL))
+	new_draw_info(NDI_UNIQUE, 0, op, "Object is marked for save on overlay");
     return 1;
   }
 

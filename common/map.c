@@ -544,7 +544,8 @@ static void link_multipart_objects(mapstruct *m)
 
 void load_objects (mapstruct *m, FILE *fp, int mapflags) {
     int i,bufstate=LO_NEWFILE;
-    object *op, *prev=NULL,*last_more=NULL;
+    int unique;
+    object *op, *prev=NULL,*last_more=NULL, *otmp, *ootmp;;
 
     op=get_object();
     op->map = m; /* To handle buttons correctly */
@@ -566,7 +567,16 @@ void load_objects (mapstruct *m, FILE *fp, int mapflags) {
 	    continue;
 	}
 
-	if (!(mapflags & MAP_OVERLAY))
+	/* check for unique items, or unique squares */
+	unique = 0;
+	for (otmp = get_map_ob(m, op->x, op->y); otmp; otmp = ootmp) {
+	    ootmp = otmp->above;
+	    if (QUERY_FLAG(otmp, FLAG_UNIQUE))
+		unique = 1;
+	}
+	if (QUERY_FLAG(op, FLAG_UNIQUE) || QUERY_FLAG(op, FLAG_OBJ_SAVE_ON_OVL))
+	    unique = 1;
+	if (!(mapflags & (MAP_OVERLAY|MAP_PLAYER_UNIQUE) || unique))
 	   SET_FLAG(op, FLAG_OBJ_ORIGINAL);
 
 	switch(i) {
@@ -1003,7 +1013,7 @@ mapstruct *load_overlay_map(char *filename, mapstruct *m) {
     /*allocate_map(m);*/
 
     m->in_memory=MAP_LOADING;
-    load_objects (m, fp, 0);
+    load_objects (m, fp, MAP_OVERLAY);
     close_and_delete(fp, comp);
     m->in_memory=MAP_IN_MEMORY;
     return m;

@@ -234,6 +234,7 @@ CommArray_s WizCommands [] = {
   {"style_info", command_style_map_info, 0.0},	/* Costly command, so make it wiz only */
   {"summon", command_summon,0.0},
   {"wizpass", command_wizpass,0.0},
+  {"overlay_save", command_save_overlay, 0.0},
 };
 const int WizCommandsSize =sizeof(WizCommands) / sizeof(CommArray_s);
 

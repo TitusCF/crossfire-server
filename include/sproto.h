@@ -234,6 +234,7 @@ int command_rotatespells(object *op, char *params);
 /* c_wiz.c */
 int command_setgod(object *op, char *params);
 int command_kick(object *op, char *params);
+int command_save_overlay(object *op, char *params);
 int command_shutdown(object *op, char *params);
 int command_goto(object *op, char *params);
 int command_generate(object *op, char *params);
