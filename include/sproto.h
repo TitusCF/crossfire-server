@@ -244,6 +244,7 @@ int command_save_overlay(object *op, char *params);
 int command_shutdown(object *op, char *params);
 int command_goto(object *op, char *params);
 int command_generate(object *op, char *params);
+int command_freeze(object *op, char *params);
 int command_summon(object *op, char *params);
 int command_teleport(object *op, char *params);
 int command_create(object *op, char *params);

@@ -17,6 +17,18 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Add dm command 'freeze' which freezes a player from doing anything for some
+amount of time.
+include/sproto.h: rebuilt.
+lib/Makefile.in: Add freeze to wizhelp files.
+lib/wizhelp/freeze: New file.
+server/c_wiz.c: Add command_freeze().  Also, break out 
+   get_other_player_from_name() - several functions need the same logic
+   of getting a player named X that is not us - making it a function
+   reduces the duplicate code.  Fix some formatting for some functions.
+server/commands.c: Add command_freeze to the dispatch table.
+MSW 2002-07-17
+
 lib/Makefile.in: add a 'archonly' directive that only collects archetypes
     and doesn't collect images.
 lib/archetypes: rebuilt for fixes made to arches.

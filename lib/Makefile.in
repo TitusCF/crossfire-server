@@ -68,6 +68,7 @@ FILES_WIZHELP = $(srcdir)/wizhelp/abil $(srcdir)/wizhelp/addexp \
 	$(srcdir)/wizhelp/dumpallmaps $(srcdir)/wizhelp/dumpallobjects \
 	$(srcdir)/wizhelp/dumpbelow $(srcdir)/wizhelp/dumpfriendlyobjects \
 	$(srcdir)/wizhelp/forget_spell $(srcdir)/wizhelp/free \
+	$(srcdir)/wizhelp/freeze \
 	$(srcdir)/wizhelp/goto $(srcdir)/wizhelp/invisible \
 	$(srcdir)/wizhelp/kick $(srcdir)/wizhelp/learn_special_prayer \
 	$(srcdir)/wizhelp/learn_spell $(srcdir)/wizhelp/nodm \

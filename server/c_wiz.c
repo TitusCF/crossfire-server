@@ -207,80 +207,120 @@ int command_generate (object *op, char *params)
       return 1;
     }
 
+
+/* Enough of the DM functions seem to need this that I broke
+ * it out to a seperate function.  name is the person
+ * being saught, rq is who is looking for them.  This
+ * prints diagnostics messages, and returns the 
+ * other player, or NULL otherwise.
+ */
+static player *get_other_player_from_name(object *op, char *name)
+{
+    player *pl;
+
+    if (!name) return NULL;
+
+    for(pl=first_player;pl!=NULL;pl=pl->next) 
+	if(!strncmp(pl->ob->name, name, MAX_NAME)) 
+	    break;
+
+    if(pl==NULL) {
+	new_draw_info(NDI_UNIQUE, 0,op,"No such player.");
+	return NULL;
+    }
+
+    if (pl->ob == op) {
+	new_draw_info(NDI_UNIQUE, 0, op, "You can't summon yourself next to yourself.");
+	return NULL;
+    }
+    if(pl->state != ST_PLAYING) {
+	new_draw_info(NDI_UNIQUE, 0,op,"That player can't be summoned right now.");
+	return NULL;
+    }
+    return pl;
+}
+
+int command_freeze(object *op, char *params)
+{
+    int ticks;
+    player *pl;
+
+    if (!params) {
+         new_draw_info(NDI_UNIQUE, 0,op,"Usage: freeze [ticks] <player>.");
+         return 1;
+    }
+
+    ticks = atoi(params);
+    if (ticks) {
+	while ((isdigit(*params) || isspace(*params)) && *params != 0) params++;
+	if (*params == 0) {
+	    new_draw_info(NDI_UNIQUE, 0,op,"Usage: freeze [ticks] <player>.");
+	    return 1;
+	}
+    } else ticks=200;
+    pl = get_other_player_from_name(op, params);
+    if (!pl) return 1;
+    new_draw_info(NDI_UNIQUE | NDI_RED, 0, pl->ob, "You have been frozen by the DM!");
+    new_draw_info_format(NDI_UNIQUE , 0, op,
+			 "You freeze %s for %d ticks", pl->ob->name, ticks);
+    pl->ob->speed_left = -(pl->ob->speed * ticks);
+    return 0;
+}
+
+
 int command_summon (object *op, char *params)
 {
-      int i;
-      object *dummy;
-  player *pl;
+    int i;
+    object *dummy;
+    player *pl;
 
-  if (!op)
-    return 0;
+    if (!op)
+	return 0;
 
-  if(params==NULL) {
+    if(params==NULL) {
          new_draw_info(NDI_UNIQUE, 0,op,"Usage: summon <player>.");
          return 1;
-      }
-      for(pl=first_player;pl!=NULL;pl=pl->next) 
-    if(!strncmp(pl->ob->name, params, MAX_NAME)) 
-          break;
-      if(pl==NULL) {
-        new_draw_info(NDI_UNIQUE, 0,op,"No such player.");
-        return 1;
-      }
-      if (pl->ob == op) {
-        new_draw_info(NDI_UNIQUE, 0, op, "You can't summon yourself next to yourself.");
-        return 1;
-      }
-      if(pl->state != ST_PLAYING) {
-        new_draw_info(NDI_UNIQUE, 0,op,"That player can't be summoned right now.");
-        return 1;
-      }
-      i=find_free_spot(op->arch,op->map,op->x,op->y,1,8);
-      if (i==-1) {
+    }
+
+    pl = get_other_player_from_name(op, params);
+    if (!pl) return 1;
+
+    i=find_free_spot(op->arch,op->map,op->x,op->y,1,8);
+    if (i==-1) {
 	new_draw_info(NDI_UNIQUE, 0, op, "Can not find a free spot to place summoned player.");
 	return 1;
-      }
-      dummy=get_object();
-      EXIT_PATH(dummy)=add_string(op->map->path);
-      EXIT_X(dummy)=op->x+freearr_x[i];
-      EXIT_Y(dummy)=op->y+freearr_y[i];
-      enter_exit(pl->ob,dummy);
-      free_object(dummy);
-      new_draw_info(NDI_UNIQUE, 0,pl->ob,"You are summoned.");
-      new_draw_info(NDI_UNIQUE, 0,op,"OK.");
-      return 1;
     }
+    dummy=get_object();
+    EXIT_PATH(dummy)=add_string(op->map->path);
+    EXIT_X(dummy)=op->x+freearr_x[i];
+    EXIT_Y(dummy)=op->y+freearr_y[i];
+    enter_exit(pl->ob,dummy);
+    free_object(dummy);
+    new_draw_info(NDI_UNIQUE, 0,pl->ob,"You are summoned.");
+    new_draw_info(NDI_UNIQUE, 0,op,"OK.");
+
+    return 1;
+}
 
 /* Teleport next to target player */
 /* mids 01/16/2002 */
+
 int command_teleport (object *op, char *params) {
    int i;
    object *dummy;
    player *pl;
 
-   if (!op)
-      return 0;
+    if (!op)
+	return 0;
 
-   if (params==NULL) {
-      new_draw_info(NDI_UNIQUE, 0,op,"Usage: teleport <player>.");
-      return 1;
-   }
+    if (params==NULL) {
+	new_draw_info(NDI_UNIQUE, 0,op,"Usage: teleport <player>.");
+	return 1;
+    }
 
-   for (pl = first_player; pl != NULL; pl = pl->next) 
-      if (!strncmp(pl->ob->name, params, MAX_NAME)) 
-         break;
-   if (pl == NULL) {
-      new_draw_info(NDI_UNIQUE, 0, op, "No such player.");
-      return 1;
-   }
-   if (pl->ob == op) {
-      new_draw_info(NDI_UNIQUE, 0, op, "You can't teleport yourself next to yourself.");
-      return 1;
-   }
-   if (pl->state != ST_PLAYING) {
-      new_draw_info(NDI_UNIQUE, 0, op, "You can't teleport to that player right now.");
-      return 1;
-   }
+    pl = get_other_player_from_name(op, params);
+    if (!pl) return 1;
+
    i = find_free_spot(pl->ob->arch, pl->ob->map, pl->ob->x, pl->ob->y, 1, 8);
    if (i==-1) {
       new_draw_info(NDI_UNIQUE, 0, op, "Can not find a free spot to teleport to.");

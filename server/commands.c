@@ -217,6 +217,7 @@ CommArray_s WizCommands [] = {
   {"dumpmap", command_dumpmap,0.0},
   {"forget_spell", command_forget_spell, 0.0},
   {"free", command_free,0.0},
+  {"freeze", command_freeze,0.0},
   {"goto", command_goto,0.0},
   {"invisible", command_invisible,0.0},
   {"kick", command_kick, 0.0},
