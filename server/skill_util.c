@@ -116,6 +116,9 @@ void find_skill_exp_name(object *pl, object *exp, int index)
 int do_skill (object *op, int dir, char *string) {
   int success=0;        /* needed for monster_skill_use() too */
   int skill = op->chosen_skill->stats.sp;
+  int did_alc = 0;
+  int x, y;
+  object *tmp, *next;
 
     switch(skill) {
 	 case SK_LEVITATION:
@@ -178,11 +181,33 @@ int do_skill (object *op, int dir, char *string) {
       case SK_ALCHEMY:
       case SK_THAUMATURGY:
       case SK_LITERACY:
+      case SK_WOODSMAN:
+	  /* first, we try to find a cauldron, and do the alchemy thing.
+	     failing that, we go and identify stuff. */
+#ifdef ALCHEMY
+	  for (y=op->y-1; y <= op->y+1; y++) {
+	      for (x=op->x-1; x <= op->x+1; x++) {
+		  if (out_of_map(op->map, x, y) || wall(op->map, x, y) ||
+		      blocks_view(op->map, x, y))
+		      continue;
+		  for (tmp=get_map_ob(op->map, x, y); tmp != NULL; tmp=next) {
+		      next=tmp->above;
+		      if(QUERY_FLAG(tmp, FLAG_IS_CAULDRON)) {
+			  attempt_do_alchemy(op, tmp);
+			  did_alc=1;
+			  continue;
+		      }
+		  }
+	      }
+	  }
+#endif
+	  if (did_alc == 0)
+	      success = skill_ident(op);
+	  break;
       case SK_DET_MAGIC:
       case SK_DET_CURSE:
-      case SK_WOODSMAN:
-        success = skill_ident(op);
-        break;
+	success = skill_ident(op);
+	break;
       case SK_REMOVE_TRAP:
         success = remove_trap(op,dir);
         break;

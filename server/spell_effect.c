@@ -2172,8 +2172,8 @@ static void update_map(object *op, int small_nuggets, int large_nuggets,
 
 int alchemy(object *op)
 {
-	int x,y,weight=0,weight_max,large_nuggets,small_nuggets,did_alc=0;
-	object *next,*tmp;
+    int x,y,weight=0,weight_max,large_nuggets,small_nuggets;
+    object *next,*tmp;
 
   if(op->type!=PLAYER)
     return 0;
@@ -2185,25 +2185,6 @@ int alchemy(object *op)
   weight_max = 100000 + 50000*SK_level(op);
   small=get_archetype("smallnugget"),
   large=get_archetype("largenugget");
-
-#ifdef ALCHEMY
-  for(y= op->y-1;y<=op->y+1;y++) {
-    for(x= op->x-1;x<=op->x+1;x++) {
-      if(out_of_map(op->map,x,y) || wall(op->map,x,y) ||
-	 blocks_view(op->map,x,y))
-        continue;
-	for(tmp=get_map_ob(op->map,x,y);tmp!=NULL;tmp=next) {
-          next=tmp->above;
-	  if(QUERY_FLAG(tmp,FLAG_IS_CAULDRON)) {
-		attempt_do_alchemy(op, tmp);
-		did_alc=1;
-		continue;
-	  }
-	}
-    }
-  }
-  if (did_alc) return 1;
-#endif
 
   for(y= op->y-1;y<=op->y+1;y++) {
     for(x= op->x-1;x<=op->x+1;x++) {

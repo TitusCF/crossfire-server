@@ -48,6 +48,8 @@ static recipe *get_empty_formula() {
   t->keycode = 0;
   t->title = NULL;
   t->arch_name = NULL;
+  t->skill = NULL;
+  t->cauldron = NULL;
   t->ingred = NULL;
   t->next=NULL;
   return t;
@@ -169,6 +171,10 @@ void init_formulae() {
     } else if (!strncmp(cp, "arch",4)) { 
         formula->arch_name = add_string(strchr(cp,' ')+1);
         (void) check_recipe(formula);
+    } else if (!strncmp(cp, "skill", 5)) {
+	formula->skill = add_string(strchr(cp, ' ')+1);
+    } else if (!strncmp(cp, "cauldron", 8)) {
+	formula->cauldron = add_string(strchr(cp, ' ')+1);
     } else
         LOG(llevError,"Unknown input in file %s: %s\n", filename, buf);
   }
@@ -247,7 +253,11 @@ void dump_alchemy( void ) {
 		}
                 fprintf(logfile,"\n");
 		if(tval!=formula->index) fprintf(logfile, "WARNING:ingredient list and formula values not equal.\n");
-             }  
+             }
+	     if (formula->skill != NULL)
+		 fprintf(logfile, "\tSkill Required: %s", formula->skill);
+	     if (formula->cauldron != NULL)
+		 fprintf(logfile, "\tCauldron: %s\n", formula->cauldron);
 	  }
 	} else 
 	   LOG(llevError,"Can't find archetype:%s for formula %s\n", string,
@@ -591,8 +601,14 @@ void free_all_recipes()
 	for (formula=fl->items; formula!=NULL; formula=next) {
 	    next=formula->next;
       
-	    if (formula->arch_name) free_string(formula->arch_name);
-	    if (formula->title) free_string(formula->title);
+	    if (formula->arch_name)
+		free_string(formula->arch_name);
+	    if (formula->title)
+		free_string(formula->title);
+	    if (formula->skill)
+		free_string(formula->skill);
+	    if (formula->cauldron)
+		free_string(formula->cauldron);
 	    for (lchar=formula->ingred; lchar; lchar=charnext) {
 		charnext=lchar->next;
 		free_string(lchar->name);

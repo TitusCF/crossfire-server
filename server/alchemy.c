@@ -105,18 +105,6 @@ void attempt_do_alchemy(object *caster, object *cauldron) {
  
      numb=numb_ob_inside(cauldron);
      if((fl=get_formulalist(numb))) {
-
-        /* the caster only gets an increase in ability 
-         * if they know alchemy skill */
-        if(find_skill(caster,SK_ALCHEMY)!=NULL) {
-	  change_skill(caster,SK_ALCHEMY);
-          ability+=SK_level(caster)*((4.0 + cauldron->magic)/4.0);
-        }
-
-#ifdef ALCHEMY_DEBUG
-	LOG(llevDebug,"Got alchemy ability lvl = %d\n",ability);
-#endif
-
         if(QUERY_FLAG(caster,FLAG_WIZ)) { 
 	    rp=fl->items;
 	    while(rp && (formula % rp->index)!=0) {
@@ -147,6 +135,38 @@ void attempt_do_alchemy(object *caster, object *cauldron) {
 	{
 	  float ave_chance = fl->total_chance/(float)fl->number;
 	  object *item;
+	  int skillno;
+
+	  /* the caster gets an increase in ability based on thier skill lvl */
+	  if (rp->skill != NULL) {
+	      skillno = lookup_skill_by_name(rp->skill);
+	      if (skillno < 0) { /* invalid skill */
+		  LOG(llevDebug, "Recipie %s has invalid skill %s\n",
+		      rp->title, rp->skill);
+		  return;
+	      }
+/*	      if(find_skill(caster, skillno) != NULL) {
+		  change_skill(caster, skillno); */
+
+	      if (caster->chosen_skill->stats.sp == skillno) {
+		  ability+=SK_level(caster)*((4.0 + cauldron->magic)/4.0);
+#ifdef ALCHEMY_DEBUG
+		  LOG(llevDebug, "Got alchemy ability lvl = %d\n", ability);
+#endif
+	      } else {
+		  new_draw_info(NDI_UNIQUE, 0, caster, "You did not use the "
+		      "proper skill for this recipe,");
+		  /*return;*/
+	      }
+	  } else {
+	      LOG(llevDebug, "Recipie %s has NULL skill!\n", rp->title);
+	      return;
+	  }
+
+	  if (rp->cauldron == NULL) {
+	      LOG(llevDebug, "Recipie %s has NULL cauldron!\n", rp->title);
+	      return;
+	  }
 
 	  /* create the object **FIRST**, then decide whether to keep it.	*/
 	  if((item=attempt_recipe(caster,cauldron,ability,rp,formula/rp->index)) != NULL) {
@@ -165,18 +185,16 @@ void attempt_do_alchemy(object *caster, object *cauldron) {
 #endif
 
 	    /* roll the dice */
-	    if((float)(random_roll(0, 99, caster, PREFER_LOW)) <= 100.0 * success_chance) {
-	      /* we learn from our experience IF we know something of the alchemical arts */
-	      if(caster->chosen_skill&&caster->chosen_skill->stats.sp==SK_ALCHEMY) { 
+	    if ((float)(random_roll(0, 99, caster, PREFER_LOW)) <= 100.0 * success_chance) {
 		/* more exp is given for higher ingred number recipes */ 
-		int amount = numb*numb*calc_skill_exp(caster,item);
-		add_exp(caster,amount);
-		item->stats.exp=0; /* so when skill id this item, less xp is awarded */
+		int amount = numb*numb*calc_skill_exp(caster, item);
+		add_exp(caster, amount);
+		/* so when skill id this item, less xp is awarded */
+		item->stats.exp=0;
 #ifdef EXTREME_ALCHEMY_DEBUG 
 		LOG(llevDebug,"%s gains %d experience points.\n",caster->name,amount); 
 #endif
-	      }
-	      return;
+	        return;
 	    }
 	  }
 	}
@@ -238,44 +256,60 @@ int numb_ob_inside (object *op) {
  * failed recipe)
  */ 
  
-object * attempt_recipe(object *caster, object *cauldron,int ability, recipe *rp, int nbatches) { 
-  object *item=NULL;  
-  /* this should be passed to this fctn, not too effiecent cpu use this way */
-  int batches=abs(nbatches);
+object * attempt_recipe(object *caster, object *cauldron, int ability, recipe *rp, int nbatches) { 
 
-  if(rp->keycode)  /* code required for this recipe, search the caster */
-	 { object *tmp;
-	 for(tmp=caster->inv;tmp!=NULL;tmp=tmp->below) {
-		if(tmp->type==FORCE && tmp->slaying && !strcmp(rp->keycode,tmp->slaying))
-		  break;
-	 }
-	 if(tmp==NULL) { /* failure--no code found */
-		new_draw_info(NDI_UNIQUE,0,caster,
-	  "You know the ingredients, but not the technique.  Go learn how to do this recipe.");
-		return 0;  
-	 }
-	 }
+    object *item=NULL;
+    /* this should be passed to this fctn, not effiecent cpu use this way */
+    int batches=abs(nbatches);
+
+    /* is the cauldron the right type? */
+    if (strcmp(rp->cauldron, cauldron->arch->name) != 0) {
+	new_draw_info(NDI_UNIQUE, 0, caster, "You are not using the proper"
+	    " facilities for this formula.");
+	return 0;
+    }
+
+    /* did the caster use the right skill? */
+    if (caster->chosen_skill->stats.sp != lookup_skill_by_name(rp->skill))
+	return 0;
+
+    /* code required for this recipe, search the caster */
+    if(rp->keycode) {
+	object *tmp;
+	for(tmp=caster->inv; tmp != NULL; tmp=tmp->below) {
+	    if(tmp->type==FORCE && tmp->slaying &&
+		!strcmp(rp->keycode, tmp->slaying))
+		break;
+	}
+	if(tmp==NULL) { /* failure--no code found */
+	    new_draw_info(NDI_UNIQUE, 0, caster, "You know the ingredients,"
+		" but not the technique.  Go learn how to do this recipe.");
+	    return 0;  
+	}
+    }
+
 #ifdef EXTREME_ALCHEMY_DEBUG
-  LOG(llevDebug,"attempt_recipe(): got %d nbatches\n",nbatches);
-  LOG(llevDebug,"attempt_recipe(): using recipe %s\n", rp->title?rp->title:"unknown");
+    LOG(llevDebug,"attempt_recipe(): got %d nbatches\n",nbatches);
+    LOG(llevDebug,"attempt_recipe(): using recipe %s\n",
+	rp->title?rp->title:"unknown");
 #endif
 
-  if((item=make_item_from_recipe(cauldron,rp))!=NULL) {
-    remove_contents(cauldron->inv,item);
-    adjust_product(item,ability,rp->yield?(rp->yield*batches):batches); /* adj lvl, nrof on caster level */
-    if(!item->env && (item=insert_ob_in_ob(item,cauldron))==NULL) { 
-      new_draw_info(NDI_UNIQUE, 0,caster,"Nothing happened.");
-      /* new_draw_info_format(NDI_UNIQUE, 0,caster, 
-            "Your spell causes the %s to explode!",cauldron->name); */
-      /* kaboom_cauldron(); */ 
-    } else {
-      new_draw_info_format(NDI_UNIQUE, 0,caster, 
-               "The %s %s.",cauldron->name,cauldron_sound());
-    }   
-  }    
- 
-  return item; 
-} 
+    if((item=make_item_from_recipe(cauldron, rp))!=NULL) {
+	remove_contents(cauldron->inv, item);
+        /* adj lvl, nrof on caster level */
+	adjust_product(item, ability, rp->yield?(rp->yield*batches):batches);
+	if(!item->env && (item=insert_ob_in_ob(item,cauldron)) == NULL) {
+	    new_draw_info(NDI_UNIQUE, 0,caster,"Nothing happened.");
+	    /* new_draw_info_format(NDI_UNIQUE, 0,caster,
+	       "Your spell causes the %s to explode!",cauldron->name); */
+	    /* kaboom_cauldron(); */
+	} else {
+	    new_draw_info_format(NDI_UNIQUE, 0,caster,
+		"The %s %s.",cauldron->name,cauldron_sound());
+	}
+    }
+    return item;
+}
 
 
 
@@ -609,8 +643,8 @@ int calc_alch_danger(object *caster,object *cauldron) {
    int danger=0,nrofi=0; 
  
     /* Knowing alchemy skill reduces yer risk */
-   if(caster->chosen_skill&&caster->chosen_skill->stats.sp==SK_ALCHEMY)
-     danger -= SK_level(caster);
+/*   if(caster->chosen_skill&&caster->chosen_skill->stats.sp==SK_ALCHEMY) */
+   danger -= SK_level(caster);
 
    /* better cauldrons reduce risk */
    danger -= cauldron->magic;
@@ -633,8 +667,11 @@ int calc_alch_danger(object *caster,object *cauldron) {
     /* Using a bad device is *majorly* stupid */
    if(QUERY_FLAG(cauldron,FLAG_CURSED)) danger +=80;
    if(QUERY_FLAG(cauldron,FLAG_DAMNED)) danger +=200;
- 
+
+#ifdef ALCHEMY_DEBUG
    LOG(llevDebug,"calc_alch_danger() returned danger=%d\n",danger);
+#endif
+
    return danger;
 }
 
