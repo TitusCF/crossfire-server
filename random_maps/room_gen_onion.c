@@ -355,7 +355,7 @@ void make_doors(char **maze, float *xlocations,float *ylocations,int layers,int 
 		  
 		}
 	 }
-	 maze[x1][y1] = '*';  /* write the door. */
+	 maze[x1][y1] = 'D';  /* write the door. */
 
   }
   /* mark the center of the maze with a C */

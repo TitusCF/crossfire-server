@@ -84,8 +84,8 @@ mapstruct *generate_random_map(char *InFileName,char *OutFileName) {
   for(i=0;i<RP->Xsize;i++) {
     for(j=0;j<RP->Ysize;j++) {
       if(layout[i][j]==0) layout[i][j]=' ';
-      if(layout[i][j]=='*') layout[i][j]='D';
       printf("%c",layout[i][j]);
+      if(layout[i][j]==' ') layout[i][j]=0;
     }
     printf("\n");
   }}
@@ -101,9 +101,9 @@ mapstruct *generate_random_map(char *InFileName,char *OutFileName) {
 
   place_exits(theMap,layout,RP->exitstyle,RP->orientation,RP);
 
-  place_monsters(theMap,RP->monsterstyle,RP->difficulty,RP);
-
   place_specials_in_map(theMap,layout,RP);
+
+  place_monsters(theMap,RP->monsterstyle,RP->difficulty,RP);
 
   /* treasures needs to have a proper difficulty set for
      the map. */
@@ -390,7 +390,7 @@ int can_make_wall(char **maze,int dx,int dy,int dir,RMParms *RP) {
 
 
 int make_wall(char **maze,int x, int y, int dir){
-  maze[x][y] = '*'; /* mark a door */
+  maze[x][y] = 'D'; /* mark a door */
   switch(dir) {
   case 0: /* horizontal */
     {
@@ -448,7 +448,7 @@ void doorify_layout(char **maze,RMParms *RP) {
     sindex= surround_flag(maze,i,j,RP);
     if(sindex == 3 || sindex == 12) /* these are possible door sindex*/
       {
-        maze[i][j] = '*';
+        maze[i][j] = 'D';
         ndoors--;
       }
     /* reduce the size of the list */

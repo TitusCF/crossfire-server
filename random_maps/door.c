@@ -42,7 +42,7 @@ void put_doors(mapstruct *the_map,char **maze , char *doorstyle, RMParms *RP) {
   hdoors = find_style(doorpath,0,-1);
   for(i=0;i<RP->Xsize;i++) 
     for(j=0;j<RP->Ysize;j++) {
-      if(maze[i][j]=='*') {
+      if(maze[i][j]=='D') {
 		  int sindex;
 		  object *this_door,*new_door;
 		  sindex = surround_flag2(maze,i,j,RP);

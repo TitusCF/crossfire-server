@@ -138,16 +138,22 @@ int find_spot_for_submap(mapstruct *map,char **layout,int *ix, int *iy,int xsize
 
 
 void place_fountain_with_specials(mapstruct *map) {
-  int ix,iy,i=-1;
+  int ix,iy,i=-1,tries=0;
   mapstruct *fountain_style=find_style("/styles/misc","fountains",-1);
   object *fountain=get_archetype("fountain");
   object *potion=get_object();
   copy_object(pick_random_object(fountain_style),potion);
-  while(i<0) {
+  while(i<0 && tries<10) {
     ix = RANDOM() % (map->mapx -2) +1;
     iy = RANDOM() % (map->mapx -2) +1;
     i = find_first_free_spot(fountain->arch,map,ix,iy);
+    tries++;
   };
+  if(i==-1) {  /* can't place fountain */
+    free_object(fountain);
+    free_object(potion);
+    return;
+  }
   ix += freearr_x[i];
   iy += freearr_y[i];
   potion->face=fountain->face;
