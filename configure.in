@@ -257,6 +257,6 @@ AC_OUTPUT(Makefile
 	lib/Makefile random_maps/Makefile socket/Makefile server/Makefile 
 	include/Makefile utils/Makefile lib/checkarch.pl
 	lib/collect.pl utils/add_throw.perl utils/crossloop utils/crossloop.pl
-	utils/metaserver.pl 
+	utils/metaserver.pl utils/crossloop.web
 	common/Makefile
 	 )

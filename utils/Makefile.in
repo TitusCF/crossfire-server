@@ -1,6 +1,6 @@
 
 FILES = Makefile.in add_throw.perl ad2c.script mktable.script \
-	config.sub config.guess \
+	config.sub config.guess crossloop.web.in \
 	flushlocks install-sh crossfire-loop.c crossloop.in \
 	add_throw.perl.in crossloop.pl.in metaserver.pl.in
 
@@ -34,6 +34,9 @@ install:
 	chmod 755 $(bindir)/crossloop
 	$(INSTALL) $(INSTALLFLAGS) mktable.script $(bindir)/mktable
 	$(INSTALL) $(INSTALLFLAGS) add_throw.perl $(bindir)/add_throw
+	@if [ ! -f $(bindir)/crossloop.web ]; then \
+		$(INSTALL) $(INSTALLFLAGS) crossloop.web $(bindir)/crossloop.web; \
+	fi
 
 depend::
 

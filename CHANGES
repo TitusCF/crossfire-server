@@ -15,7 +15,16 @@ changes' is much more useful than 'misc edits' or 'code cleanup'.
 small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
-Changes for 1.1.0:
+Changes for CVS:
+
+Add utils/crossloop.web.in script.  This script is used on metalforge -
+   it generates the backtrace file, compresses the core, and sends out
+   mail.
+configure.in, configure: Rebuilt to make the crossloop.web script.
+utils/Makefile.in: Install the crossloop.web script.  Include the
+   crossloop.web.in script when making the archive.
+utils/crossloop.web.in: New file.
+MSW 2002-04-14
 
 Update to improve image caching and faceset support in the client.
     The main change is adding the 'requestinfo image_info' and
@@ -39,6 +48,9 @@ socket/loop.c: Move the askface command from the player commands to the
     newsocket commands.  Add RequestInfo functino that determines the
     type of request and calls the specific function to deal with it.
 MSW 2002-03-25
+
+------------------------------------------------------------------------------
+Changes for 1.1.0:
 
 Updates for 1.1.0 release - pretty much all minor bug fixes, like
 compiler warning messages, invalid ANSI C constructs, missing files to
