@@ -3457,7 +3457,7 @@ face potion_resist.111
 stand_still 1
 type 5
 value 1
-resist_drain 50
+resist_drain 100
 end
 #
 Allowed potion_generic
