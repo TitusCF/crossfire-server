@@ -282,70 +282,68 @@ void clear_win_info(object *op)
 
 void rangetostring(object *pl,char *obuf)
 {
-  int chosen_spell;
+    switch(pl->contr->shoottype) {
+	case range_none:
+	    strcpy(obuf,"Range: nothing");
+	    break;
 
-  chosen_spell = (pl->contr->shoottype==range_magic)? pl->contr->chosen_spell :
-      pl->contr->chosen_item_spell;
-  switch(pl->contr->shoottype) {
-   case range_none:
-    strcpy(obuf,"Range: nothing");
-    break;
-   case range_bow: {
-     char *s;
-     object *op;
-     for (op = pl->inv; op; op=op->below)
-       if (op->type == BOW && QUERY_FLAG (op, FLAG_APPLIED))
-       break;
-     if(op==NULL) break;
-     s = query_name(op);
-#if 1                         /* Hack to remove (readied) from a bow description */
-     if (strcmp (s + strlen (s) - 10, " (readied)") == 0)
-       s[strlen (s) - 10] = 0;
-#endif
-     sprintf (obuf, "Range: %s (%s)", s, 
-            op && op->race ? op->race : "nothing");
-   }
-    break;
-   case range_magic:
-       if (settings.casting_time == TRUE) {
-	   if (pl->casting > -1) {
-	       if (pl->casting == 0)
-		   sprintf(obuf,"Range: Holding spell (%s)",
-		       pl->spell->name);
-	       else
-		   sprintf(obuf,"Range: Casting spell (%s)",
-			   pl->spell->name);
-	   } else
-	       sprintf(obuf,"Range: spell (%s)", 
-		   spells[pl->contr->chosen_spell].name);
-       } else
-	   sprintf(obuf,"Range: spell (%s)", 
-               spells[pl->contr->chosen_spell].name);
-       break;
+	case range_bow:
+	    {
+	    object *op;
 
-   case range_misc:
-    sprintf(obuf,"Range: %s", 
-	    pl->contr->ranges[range_misc]?query_base_name(pl->contr->ranges[range_misc],0): "none");
-    break;
+	    for (op = pl->inv; op; op=op->below)
+		if (op->type == BOW && QUERY_FLAG (op, FLAG_APPLIED))
+		    break;
+	    if(op==NULL) break;
 
-    /* range_scroll is only used for controlling golems.  If the
-     * the player does not have a golem, reset some things.
-     */
-   case range_golem:
-    if (pl->contr->golem!=NULL)
-      sprintf(obuf,"Range: golem (%s)",pl->contr->golem->name);
-    else {
-      pl->contr->shoottype = range_none;
-      strcpy(obuf,"Range: nothing");
+	    sprintf (obuf, "Range: %s (%s)", query_base_name(op, 0), 
+		     op->race ? op->race : "nothing");
+	    }
+	    break;
+
+	case range_magic:
+	    if (settings.casting_time == TRUE) {
+		if (pl->casting > -1) {
+		    if (pl->casting == 0)
+			sprintf(obuf,"Range: Holding spell (%s)",
+				pl->spell->name);
+		    else
+			sprintf(obuf,"Range: Casting spell (%s)",
+				pl->spell->name);
+		} else
+		    sprintf(obuf,"Range: spell (%s)", 
+			    spells[pl->contr->chosen_spell].name);
+	    } else
+		sprintf(obuf,"Range: spell (%s)", 
+			spells[pl->contr->chosen_spell].name);
+	    break;
+
+	case range_misc:
+	    sprintf(obuf,"Range: %s", 
+		    pl->contr->ranges[range_misc]?
+		    query_base_name(pl->contr->ranges[range_misc],0): "none");
+	    break;
+
+	/* range_scroll is only used for controlling golems.  If the
+	 * the player does not have a golem, reset some things.
+	 */
+	case range_golem:
+	    if (pl->contr->golem!=NULL)
+		sprintf(obuf,"Range: golem (%s)",pl->contr->golem->name);
+	    else {
+		pl->contr->shoottype = range_none;
+		strcpy(obuf,"Range: nothing");
+	    }
+	    break;
+
+	case range_skill:
+	    sprintf(obuf,"Skill: %s", pl->chosen_skill!=NULL ?
+		    skills[pl->chosen_skill->stats.sp].name : "none");
+	    break;
+
+	default:
+	    strcpy(obuf,"Range: illegal");
     }
-    break;
-   case range_skill:
-       sprintf(obuf,"Skill: %s", pl->chosen_skill!=NULL ?
-		skills[pl->chosen_skill->stats.sp].name : "none");
-    break;
-   default:
-    strcpy(obuf,"Range: illegal");
-  }
 }
 
 void set_title(object *pl,char *buf)

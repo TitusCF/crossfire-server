@@ -15,6 +15,9 @@ light source does not illuminate the same space multiple times.
 ------------------------------------------------------------------------------
 Future feature requests
 
+- dm command 'Follow' which lets him see what a player is doing, where he
+  is going, etc.
+
 - Further control on what players can do on maps/spaces.  For example,
   prohibit players from shouting, attacking others, issuing tell,
   etc.

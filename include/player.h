@@ -84,7 +84,6 @@ typedef struct pl {
     usekeytype	usekeys;	    /* Method for finding keys for doors */
     unapplymode	unapply;	    /* Method for auto unapply */
     sint16	chosen_spell;	    /* Type of readied spell */
-    sint16	chosen_item_spell;  /* Type of spell that the item fires */
     uint32	count;		    /* Any numbers typed before a command */
     uint32	mode;		    /* Mode of player for pickup. */
 

@@ -1417,7 +1417,7 @@ void fire_misc_object(object *op, int dir)
 	}
     }
 
-    if(cast_spell(op,item,dir,op->contr->chosen_item_spell,0,spellMisc,NULL)) {
+    if(cast_spell(op,item,dir,item->stats.sp,0,spellMisc,NULL)) {
 	SET_FLAG(op, FLAG_BEEN_APPLIED); /* You now know something about it */
 	if (item->type == WAND) {
 	    if (!(--item->stats.food)) {

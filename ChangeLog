@@ -17,6 +17,18 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+TODO: Updated with dm 'follow' command.
+common/loader.l: Rebuilt.
+common/map.c: Fix up some formatting - no code change.
+include/player.h, server/apply.c, server/player.c, socket/info.c: Remove
+    chosen_item_spell field - isn't needed anymore as that information
+    is determined each time player fires wand/rod/horn.  This fixes
+    those items firing magic bullets if they were equipped when player
+    saved and rejoined.  Some additional cleanup done in rangetostring() -
+    mostly formatting changes, but minor code changes.
+MSW 2002-11-29
+    
+
 include/shstr.h: Update REFCOUNT_TYPE to be an int - seems to at least fix
    the bug of server crashing when running around the bigworld - given the
    size of the maps, quite possible that enough objects of the same name
