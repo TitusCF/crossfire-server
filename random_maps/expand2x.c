@@ -9,6 +9,7 @@
  * ... (TBW)
  */
 
+#include <stdlib.h>			/* just in case */
 #include <expand2x.h>			/* use compiler to do sanity check */
 
 
