@@ -4563,7 +4563,7 @@ static PyObject* CFCreateObject(PyObject* self, PyObject* args)
         free_object(myob);
         /*myob = get_archetype(txt); */
         GCFP.Value[0] = (void *)(txt);
-        CFR = (PlugHooks[HOOK_GETARCHBYOBJNAME])(&GCFP);
+        CFR = (PlugHooks[HOOK_GETARCHETYPE])(&GCFP);
         myob = (object *)(CFR->Value[0]);
         free(CFR);
     }
