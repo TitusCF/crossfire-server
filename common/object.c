@@ -1433,7 +1433,7 @@ object *insert_ob_in_map (object *op, mapstruct *m, object *originator, int flag
          * walk on's.
          */
         for (tmp=op->more; tmp!=NULL; tmp=tmp->more)
-            if (check_walk_on (op, originator))
+            if (check_walk_on (tmp, originator))
 		return NULL;
     }
     return op;

@@ -31,115 +31,130 @@
 #include <sproto.h>
 #endif
 
+/* object op is trying to move in direction dir.
+ * originator is typically the same as op, but
+ * can be different if originator is causing op to
+ * move (originator is pushing op)
+ * returns 0 if the object is not able to move to the
+ * desired space, 1 otherwise (in which case we also 
+ * move the object accordingly
+ */
 int move_ob (object *op, int dir, object *originator)
 {
-  object *tmp=NULL;
-  object *tmp_ob=NULL;
+    object *tmp_ob=NULL;
 
-  if(op==NULL) {
-    LOG(llevError,"Trying to move NULL.\n");
-    return 0;
-  }
-
-  /* If this is a multipart object and we are dealing with the
-   * head, remove the object.  It needs to be removed, otherwise
-   * it may block itself from moving to that space (You can't
-   * move onto the tail section of the monster, and this is true
-   * even if it is your own tail
-   */
-  if(op->more!=NULL && op->head==NULL)
-    remove_ob(op);
-
-/* Vick's (vick@bern.docs.uu.se) @921108 -> If a monster can apply
- * an earthwall (or a door), then walking into it means tearing it down.
- * Note taht a player should never have will_apply set, so thus
- * the following two sections will not be used for players -
- * the routines in move_player_attack will be used instead.
- */
-
-  if (op->will_apply&4 &&
-      !out_of_map(op->map,op->x+freearr_x[dir],op->y+freearr_y[dir])) {
-
-    tmp_ob=get_map_ob(op->map,op->x+freearr_x[dir],op->y+freearr_y[dir]);
-
-    if (tmp_ob!=NULL) {
-      while(tmp_ob->above != NULL)
-        tmp_ob=tmp_ob->above;
-
-      if (tmp_ob->type == EARTHWALL)
-	hit_player(tmp_ob,5,op,AT_PHYSICAL); /* Tear down the earthwall */
+    if(op==NULL) {
+	LOG(llevError,"Trying to move NULL.\n");
+	return 0;
     }
-  }
-  if (op->will_apply&8 &&
-      !out_of_map(op->map,op->x+freearr_x[dir],op->y+freearr_y[dir])) {
+    /* If the space the player is trying to is out of the map,
+     * bail now - we know it can't work.
+     */
+    if (out_of_map(op->map,op->x+freearr_x[dir],op->y+freearr_y[dir])) return 0;
 
-    tmp_ob=get_map_ob(op->map,op->x+freearr_x[dir],op->y+freearr_y[dir]);
-    if (tmp_ob!=NULL) {
-      while(tmp_ob->above != NULL)
-        tmp_ob=tmp_ob->above;
-      if (tmp_ob->type == DOOR)
-        hit_player(tmp_ob,9999,op,AT_PHYSICAL); /* Break open the door. */
+    /* this function should now only be used on the head - it won't call itself
+     * recursively, and people calling us should pass the right part.
+     */
+    if (op->head) {
+	LOG(llevDebug,"move_ob called with non head object: %s %s (%d,%d)\n",
+	    op->head->name, op->map->name, op->x, op->y);
+	op = op->head;
     }
-  }
 
-  /* Eneq(@csd.uu.se): Use blocked_two when selecting direction.
-   * The following if statement works like this:  If WIZPASS is
-   * set, then the player is prevented from moving to that
-   * space if it is out_of_map.  If non WIZPASS, then
-   * blocked_two is called instead.
-   * This code section is for cases when an object CAN NOT move into
-   * that space.
-   */
+    /* Modified these to check for appropriate object anyplace on map
+     * not just the top (stacking is less deterministic now).
+     * also now have it return 0 on both of these cases.  The 
+     * monster may be able to move there, but hacking the door or
+     * earthwall was their action this tick.
+     * will_apply should only be set for monsters, so players should
+     * never use this code.  These could probably get collapsed into
+     * one while loop, but that won't really save much code.
+     * MSW 2001-07-19
+     */
 
-  if(QUERY_FLAG(op,FLAG_WIZPASS)?out_of_map(op->map,op->x+freearr_x[dir],
-    op->y+freearr_y[dir]):
-    blocked_two(op,op->x+freearr_x[dir],op->y+freearr_y[dir])) {
-
-    /* Re insert object if we removed it above */
-    if(op->more!=NULL && op->head==NULL)
-      insert_ob_in_map(op,op->map,originator,0);
-    return 0;
-  }
-
-  /* Following deals with situation when the object can move
-   * into the desired space.
-   */
-
-  /* this is a single parted object that needs to be removed. */
-  if(op->more==NULL && op->head==NULL)
-    remove_ob(op);
-
-  /* This handles multipart objects.  It uses recursion to
-   * make sure all the parts will fit in the new space.
-   * First, tmp is set the the next segment (op->more), with
-   * that being set to null.  Then call move_ob to see if
-   * that segment (and also all segments beyond it) can
-   * move to taht space.  IF not (!move_ob), then reset op->more.
-   * If it is the head segment, insert back to map.  Clear freeze_look
-   * if player, and return failed result.
-   */
-  if(op->more!=NULL) {
-    tmp=op->more,op->more=NULL;
-    if(!move_ob(tmp,dir,originator)) {
-      op->more=tmp;
-      if(op->head==NULL)
-        insert_ob_in_map(op,op->map,originator,0);
-      return 0;
+    if (op->will_apply&4 ) {
+	tmp_ob=get_map_ob(op->map,op->x+freearr_x[dir],op->y+freearr_y[dir]);
+	while(tmp_ob->above != NULL) {
+	    if (tmp_ob->type == EARTHWALL) {
+		hit_player(tmp_ob,5,op,AT_PHYSICAL); /* Tear down the earthwall */
+		return 0;
+	    }
+	}
     }
-    else op->more=tmp;
-  }
-  op->x+=freearr_x[dir],op->y+=freearr_y[dir];  /* Move this object */
+    if (op->will_apply&8 ) {
+	tmp_ob=get_map_ob(op->map,op->x+freearr_x[dir],op->y+freearr_y[dir]);
+	while(tmp_ob->above != NULL) {
+	    if (tmp_ob->type == DOOR) {
+		hit_player(tmp_ob,9999,op,AT_PHYSICAL); /* Tear down the earthwall */
+		return 0;
+	    }
+	}
+    }
 
-  /* If head of object (or single part object), reinsert into map. */
-  if(op->head==NULL)
-    insert_ob_in_map(op,op->map,originator,0);
 
-  if (op->type==PLAYER) {
-    esrv_map_scroll(&op->contr->socket, freearr_x[dir],freearr_y[dir]);
-    op->contr->socket.update_look=1;
-    op->contr->socket.look_position=0;
-  }
-  return 1;
+    /* Modified logic here.  Split code into one for single part objects
+     * and one for multi part objects.
+     */
+    if (op->more == NULL) {
+	/* if player does not have wizpass, and the space is blocked and
+	 * blocked two, return 0.  We make calls to both blocked and blocked_two
+	 * because we only want to call blocked_two when necessary (its a costly
+	 * operation), so if the space is not blocked (which is a very cheap 
+	 * operation), we then don't need to call blocked_two
+	 */
+	if (!QUERY_FLAG(op,FLAG_WIZPASS) && 
+	    blocked(op->map,op->x+freearr_x[dir],op->y+freearr_y[dir]) && 
+	    blocked_two(op,op->x+freearr_x[dir],op->y+freearr_y[dir])) return 0;
+
+	/* Else, move this object */
+	remove_ob(op);
+	op->x+=freearr_x[dir];
+	op->y+=freearr_y[dir];
+	insert_ob_in_map(op,op->map,originator,0);
+	/* Currently, assume that players will only be single space objects */
+	if (op->type==PLAYER) {
+	    esrv_map_scroll(&op->contr->socket, freearr_x[dir],freearr_y[dir]);
+	    op->contr->socket.update_look=1;
+	    op->contr->socket.look_position=0;
+	}
+	return 1;
+    } else {
+	/* Multipart object handling.  Its my belief that is more efficient
+	 * to call blocked_link on each space of the monster than needing
+	 * to remove the entire thing and re-insert the entire thing in a case
+	 * where it may not be able to move.  MSW 2001-07-19.
+	 * If any space is blocked by something other than the object
+	 * (which blocked_linked returns), bail out immediately.  Doesn't do
+	 * any good if 3 out of 4 spaces are available.  Note also that
+	 * some logic for single part monsters is not included here - I presume
+	 * that players (and hence wizpass) can only play single space
+	 * objects (poor assumption I know)
+	 */
+	for (tmp_ob = op; tmp_ob != NULL; tmp_ob = tmp_ob->more) {
+	    if (blocked_link(op, tmp_ob->x+freearr_x[dir],tmp_ob->y+freearr_y[dir])) return 0;
+
+	}
+	/* If we got here, it is possible to move this object.  Remove it,
+	 * update the coordinates, and re-insert it.  Note that while
+	 * remove_ob takes care of removing all parts, but we need to
+	 * insert each one by hand.  Also, insert_ob_in_map does special
+	 * processing for the head object - for this to work right,
+	 * we want to insert that last.
+	 */
+	for (tmp_ob = op->more; tmp_ob != NULL; tmp_ob = tmp_ob->more) {
+	    tmp_ob->x+=freearr_x[dir];
+	    tmp_ob->y+=freearr_y[dir];
+	    /* WALK_ON should be handled when head is inserted for all parts.
+	     * lets just make sure of that.
+	     */
+	    insert_ob_in_map(tmp_ob, op->map, originator, INS_NO_WALK_ON);
+	}
+	op->x+=freearr_x[dir];
+	op->y+=freearr_y[dir];
+	insert_ob_in_map(op, op->map, originator, INS_NO_WALK_ON);
+	return 1;
+    }
+    return 1;	/* this shouldn't be reached */
 }
 
 

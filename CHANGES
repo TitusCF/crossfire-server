@@ -18,6 +18,19 @@ else.  With this, include the file(s) that you changed.
 
 Changes for CVS:
 
+common/map.c free_map Set in_memory status to MAP_SWAPPED - fixed bugs of maps
+    not getting reset properly
+common/object.c: insert_ob_in_map - was passing wrong value to check_walk_on,
+    resulting in some things not working as expected.
+doc/Protocol: Clarify how the sending of the version command works.
+server/move.c: move_ob redone.  It should hopefully be more efficient (only'
+    remove objects after verifying they can in fact move).  IMO, code is
+    also simpler, and hopefully has fewer bugs.
+socket/init.c: InitConnection - modified to set faces_sent[0] to one
+    so that we will never send any information about face 0 to the client.
+    facecode 0 is sent in the map1 command to clear spaces/layers.
+MSW 2001-07-30
+
 Added support for the newmap cmd needed for the fog_of_war code
 in the gtk client. 
 include/newserver.h: added newmapcmd:1 to NewSocket struct

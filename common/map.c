@@ -1175,6 +1175,7 @@ void free_map(mapstruct *m,int flag) {
     m->buttons = NULL;
     for (i=0; i<4; i++)
 	if (m->tile_path[i]) FREE_AND_CLEAR(m->tile_path[i]);
+    m->in_memory = MAP_SWAPPED;
 }
 
 /*

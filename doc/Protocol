@@ -163,7 +163,9 @@ CONNECTION
 C->S: version <csval> [scval [vinfo]] 
 S->C: version <csval> [scval [vinfo]]
 	Through the version command, the client and server exchange what
-	version of the protocol they understand.
+	version of the protocol they understand.  Neither send this
+	in response to the other - they should both send this
+	shortly after a connection is established.
 
 	csval is the version level of C->S communications.
 	scval is the version level of S->C communications.

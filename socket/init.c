@@ -225,6 +225,12 @@ void InitConnection(NewSocket *ns, uint32 from)
     memset(&ns->faces_sent,0,sizeof(ns->faces_sent));
     memset(&ns->anims_sent,0,sizeof(ns->anims_sent));
     memset(&ns->stats,0,sizeof(struct statsinfo));
+    /* Do this so we don't send a face command for the client for
+     * this face.  Face 0 is sent to the client to say clear
+     * face information.
+     */
+    ns->faces_sent[0] = 1;
+
     ns->outputbuffer.start=0;
     ns->outputbuffer.len=0;
     ns->can_write=1;
