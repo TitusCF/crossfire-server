@@ -180,7 +180,7 @@ int ReadImages(Display *gdisp, Pixmap **pixmaps, Pixmap **masks,
     for (i = 0; i < nrofpixmaps; i++)
 	if ((*pixmaps)[i] == 0) {
 	    LOG(llevDebug, "Warning, pixmap %d is not defined, setting it to blank\n", i);
-	    pixmaps[i] = pixmaps[blank_face->number];
+	    (*pixmaps)[i] = (*pixmaps)[blank_face->number];
 	}
     LOG(llevDebug,"done.\n");
 #ifdef IMAGE_TIME_LOAD

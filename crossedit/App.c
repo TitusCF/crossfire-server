@@ -840,6 +840,7 @@ App AppCreate(XtAppContext appCon,
     /* I move this down here because I want all the widgets to get their
      * colors before the images hog all of them.
      */
+    colormap = DefaultColormap(self->display, DefaultScreen(self->display));
     if (ReadImages(self->display, &pixmaps, &masks, &colormap, displaymode)) {
 	    /* We really should do something better than this */
 	    fprintf(stderr,"Not enough space in colormap - switch colormap.\n");

@@ -291,7 +291,7 @@ void dump_me(object *op, char *outstr)
         strcat(outstr,"\n");
         strcat(outstr,"end\n");
     }
-};
+}
 
 /*
  * This is really verbose...Can be triggered by the P key while in DM mode.

@@ -49,7 +49,7 @@ player *find_player(char *plname)
         return pl;
   };
   return NULL;
-};
+}
 
 void display_motd(object *op) {
 #ifdef MOTD

@@ -1562,7 +1562,7 @@ void esrv_map_scroll(NewSocket *ns,int dx,int dy)
 void send_plugin_custom_message(object *pl, char *buf)
 {
     cs_write_string(&pl->contr->socket,buf,strlen(buf));
-};
+}
 
 /* sends a mapstats cmd to the players client, after the player had entered the map.
  * Cmd sends map width / map height + mapinfo string.

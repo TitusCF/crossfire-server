@@ -820,7 +820,7 @@ int command_listplugins(object *op, char *params)
 {
     displayPluginsList(op);
     return 1;
-};
+}
 /* GROS */
 /* Loads the given plugin. The DM specifies the name of the library to load  */
 /* (no pathname is needed). Do not ever attempt to load the same plugin more */
@@ -835,7 +835,7 @@ int command_loadplugin(object *op, char *params)
     printf("Requested plugin file is %s\n", buf);
     initOnePlugin(buf);
     return 1;
-};
+}
 /* GROS */
 /* Unloads the given plugin. The DM specified the ID of the library to       */
 /* unload. Note that some things may behave strangely if the correct plugins */
@@ -844,4 +844,4 @@ int command_unloadplugin(object *op, char *params)
 {
     removeOnePlugin(params);
     return 1;
-};
+}

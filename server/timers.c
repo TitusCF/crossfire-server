@@ -28,8 +28,8 @@ void cftimer_process_timers(void)
                 timers_table[i].mode = TIMER_MODE_DEAD;
             }
         }
-    };
-};
+    }
+}
 
 /*****************************************************************************/
 /* Creates a new timer.                                                      */
@@ -65,7 +65,7 @@ int cftimer_create(int id, long delay, object* ob, int mode)
     else
         timers_table[id].delay = seconds() + delay;
     return TIMER_ERR_NONE;
-};
+}
 
 /*****************************************************************************/
 /* Destroys an existing timer.                                               */
@@ -83,7 +83,7 @@ int cftimer_destroy(int id)
         return TIMER_ERR_ID;
     timers_table[id].mode = TIMER_MODE_DEAD;
     return TIMER_ERR_NONE;
-};
+}
 
 /*****************************************************************************/
 /* Finds a free ID for a new timer.                                          */
@@ -101,5 +101,5 @@ int cftimer_find_free_id(void)
             return i;
     }
     return TIMER_ERR_ID;
-};
+}
 

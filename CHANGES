@@ -17,6 +17,22 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+common/object.c random_maps/Makefile.in 
+  server/c_wiz.c server/player.c server/plugins.c server/timers.c 
+  socket/request.c: Most of the changes are to just fix compiling warnings
+  or errors so that it compiles on sparc solaris with the workshop
+  compiler (things like }; should just be }).  Declaration for alphasort
+  was missing in plugins.c.  random_maps/Makefile.in had the wrong order in
+  linking - the system library needs to be linked in after the crossfire
+  libraries.
+crossedit/App.c: Fix for running on 8 bit color - colormap was not being
+  initialized to usuable default value.
+crossedit/xutil.c: Broken code when duplicating faces for undefined
+  images.  That code should never really be used, as pixmaps currently
+  are always contiguous.
+MSW 2001-12-15
+
+
 Include mapstats cmd for extended clients (sdl iso). Cmd is needed for automaps
     ambient media infos, map name and map parameter infos. Paramter infos are used
     for "fire & forget" animation tags inside the map2 cmd (next patch).

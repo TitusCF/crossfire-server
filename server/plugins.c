@@ -419,7 +419,14 @@ void removeOnePlugin(char *id)
         PlugList[j-1] = PlugList[j];
     };
 };
+
 #else
+
+#ifndef HAVE_SCANDIR
+
+extern int alphasort( struct dirent **a, struct dirent **b);
+#endif
+
 /*****************************************************************************/
 /* UNIX Plugins initialization. Browses the plugins directory and call       */
 /* initOnePlugin for each file found.                                        */
