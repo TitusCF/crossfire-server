@@ -466,9 +466,18 @@ char *query_name(object *op) {
     static char buf[5][HUGE_BUF];
     static int use_buf=0;
     int len=0;
+    materialtype_t *mt;
 
     use_buf++;
     use_buf %=5;
+
+    if ((IS_ARMOR(op) || IS_WEAPON(op)) && op->materialname) {
+	mt = name_to_material(op->materialname);
+	if (mt) {
+	    safe_strcat(buf[use_buf], mt->description, &len, HUGE_BUF);
+	    safe_strcat(buf[use_buf], " ", &len, HUGE_BUF);
+	}
+    }
 
     safe_strcat(buf[use_buf], query_short_name(op), &len, HUGE_BUF);
 
@@ -544,6 +553,7 @@ char *query_name(object *op) {
 char *query_base_name(object *op, int plural) {
     static char buf[MAX_BUF];
     int len;
+    materialtype_t *mt;
 
     if((!plural && !op->name) || (plural && !op->name_pl))
 	return "(null)";
@@ -551,11 +561,24 @@ char *query_base_name(object *op, int plural) {
     if(!op->nrof && !op->weight && !op->title && !is_magical(op)) 
 	return op->name; /* To speed things up (or make things slower?) */
 
-    if (!plural) 
-	strcpy(buf,op->name);
-    else
-	strcpy(buf,op->name_pl);
-    len=strlen(buf);
+    if ((IS_ARMOR(op) || IS_WEAPON(op)) && op->materialname)
+	mt = name_to_material(op->materialname);
+
+    if ((IS_ARMOR(op) || IS_WEAPON(op)) && op->materialname && mt) {
+	strcpy(buf, mt->description);
+	len=strlen(buf);
+	safe_strcat(buf, " ", &len, MAX_BUF);
+	if (!plural)
+	    safe_strcat(buf, op->name, &len, MAX_BUF);
+	else
+	    safe_strcat(buf, op->name_pl, &len, MAX_BUF);
+    } else {
+	if (!plural)
+	    strcpy(buf, op->name);
+	else
+	    strcpy(buf, op->name_pl);
+	len=strlen(buf);
+    }
 
     if (op->title && QUERY_FLAG(op,FLAG_IDENTIFIED)) {
 	safe_strcat(buf, " ", &len, MAX_BUF);

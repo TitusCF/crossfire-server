@@ -247,7 +247,6 @@ void transmute_materialname(object *op, object *change)
 void set_materialname(object *op, int difficulty)
 {
     materialtype_t *mt, *lmt;
-    char tmpbuf[MAX_BUF];
     int j;
 
     if (op->materialname != NULL)
@@ -289,12 +288,6 @@ void set_materialname(object *op, int difficulty)
 	if (IS_WEAPON(op) || IS_ARMOR(op)) {
 	    op->weight = (op->weight * lmt->weight)/100;
 	    op->value = (op->value * lmt->value)/100;
-	    sprintf(tmpbuf, "%s %s", lmt->description, op->name);
-	    free_string(op->name);
-	    op->name = add_string(tmpbuf);
-	    sprintf(tmpbuf, "%s %s", lmt->description, op->name_pl);
-	    free_string(op->name_pl);
-	    op->name_pl = add_string(tmpbuf);
 	}
     }
 }

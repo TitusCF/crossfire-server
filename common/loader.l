@@ -110,6 +110,8 @@ static void set_body_info(object *op, char *params) {
  */
 static void check_loaded_object(object *op) {
     int ip;
+    char buf[MAX_BUF], *p;
+    materialtype_t *mt;
 
     /* We do some specialized handling to handle legacy cases of name_pl.
      * If the object doesn't have a name_pl, we just use the object name -
@@ -133,6 +135,22 @@ static void check_loaded_object(object *op) {
         else
             set_materialname(op, 5);
     }
+    /* back out the materialname from op->name very limited subset of obs */
+    if ((IS_WEAPON(op) || IS_ARMOR(op)) && op->name && op->materialname) {
+        mt = name_to_material(op->materialname);
+        if (mt && strstr(op->name, mt->description) &&
+	    strstr(op->name, mt->description) == op->name) {
+	    sprintf(buf, "%s", op->name);
+	    p = buf + strlen(mt->description) + 1;
+	    free_string(op->name);
+	    op->name = add_string(p);
+	    sprintf(buf, "%s", op->name_pl);
+	    p = buf + strlen(mt->description) + 1;
+	    free_string(op->name_pl);
+	    op->name_pl = add_string(p);
+	}
+    }
+
 
     /* We changed last_heal to gen_sp_armour, which is what it
      * really does for many objects.  Need to catch any in maps

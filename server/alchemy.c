@@ -201,24 +201,13 @@ int content_recipe_value (object *op) {
   char name[MAX_BUF];
   object *tmp=op->inv;
   int tval=0, formula=0;
-  materialtype_t *mt;
 
     while(tmp) {
 	tval=0;
         strcpy(name, tmp->name);
         if (tmp->title)
 	    sprintf(name, "%s %s", tmp->name, tmp->title);
-	/* strip the materialname out of the name, so alchemy works */
-	if (tmp->materialname && tmp->arch->clone.materialname == NULL &&
-	    (IS_ARMOR(tmp) || IS_WEAPON(tmp))) {
-	    mt = name_to_material(tmp->materialname);
-	    if (mt && !strncmp(mt->description, tmp->name, strlen(mt->description)))
-		tval = ((strtoint(name) - strtoint(mt->description) -
-			 strtoint(" ")) * (tmp->nrof?tmp->nrof:1));
-	    else
-		tval = (strtoint(name) * (tmp->nrof?tmp->nrof:1));
-	} else
-	    tval = (strtoint(name) * (tmp->nrof?tmp->nrof:1));
+	tval = (strtoint(name) * (tmp->nrof?tmp->nrof:1));
 #ifdef ALCHEMY_DEBUG
         LOG(llevDebug,"Got ingredient %d %s(%d)\n", tmp->nrof?tmp->nrof:1,
 		name, tval);
