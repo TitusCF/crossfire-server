@@ -269,7 +269,8 @@ static void load_materials()
 		}
 		if ((next=strchr(cp,',')) != NULL)
 		    *(next++) = '\0';
-		sscanf(cp, "%hd", &mt->save[i]);
+		sscanf(cp, "%d", &value);
+		mt->save[i] = (sint8)value;
 		cp = next;
 	    }
 	} else if (!strncmp(cp, "mods", 4)) {
@@ -281,7 +282,8 @@ static void load_materials()
 		    }
 		    if ((next=strchr(cp,',')) != NULL)
 			*(next++) = '\0';
-		    sscanf(cp, "%hd", &mt->mod[i]);
+		    sscanf(cp, "%d", &value);
+		    mt->mod[i] = (sint8)value;
 		    cp = next;
 		}
 	} else if (sscanf(cp, "chance %d\n", &value)) {
