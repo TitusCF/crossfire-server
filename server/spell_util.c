@@ -357,6 +357,9 @@ if (item == spellNormal && !ability ){
   case SP_HELLFIRE:
   case SP_POISON_CLOUD:
   case SP_M_MISSILE:
+  case SP_S_MANABALL:
+  case SP_M_MANABALL:
+  case SP_L_MANABALL:
     success = fire_arch(op,caster,dir,spellarch[type],type, !ability);
     break;
   case SP_MASS_CONFUSION:
@@ -371,6 +374,7 @@ if (item == spellNormal && !ability ){
   case SP_FIREBREATH:
   case SP_LARGE_ICESTORM:
   case SP_BANISHMENT:	
+  case SP_MANA_BLAST:
     success = cast_cone(op,caster,dir,duration,type,spellarch[type],!ability);
     break;
   case SP_TURN_UNDEAD:
@@ -393,6 +397,7 @@ if (item == spellNormal && !ability ){
   case SP_S_LIGHTNING:
   case SP_L_LIGHTNING:
   case SP_STEAMBOLT:
+  case SP_MANA_BOLT:
     success = fire_bolt(op,caster,dir,type,!ability);
     break;
   case SP_BOMB:
@@ -404,9 +409,6 @@ if (item == spellNormal && !ability ){
   case SP_EARTH_ELEM:
   case SP_AIR_ELEM:
     success = summon_monster(op,caster,dir,spellarch[type],type);
-    break;
-  case SP_STAFF_TO_SNAKE: 
-    success = staff_to_snake(op,caster,dir,spellarch[type],type);
     break;
   case SP_FINGER_DEATH: 
     success = finger_of_death(op,caster,dir);
@@ -741,16 +743,22 @@ if (item == spellNormal && !ability ){
     success = cast_create_missile(op,caster,dir,stringarg);
     break;
 
-    case SP_CAUSE_EBOLA:
-    case SP_CAUSE_FLU:
-    case SP_CAUSE_PLAGUE:
-    case SP_CAUSE_LEPROSY:
-    case SP_CAUSE_SMALLPOX:
-    case SP_CAUSE_PNEUMONIC_PLAGUE:
-    case SP_CAUSE_ANTHRAX:
-    case SP_CAUSE_TYPHOID:
-	    success = cast_cause_disease(op,caster,dir,spellarch[type],type);
-	    break;
+  case SP_CAUSE_EBOLA:
+  case SP_CAUSE_FLU:
+  case SP_CAUSE_PLAGUE:
+  case SP_CAUSE_LEPROSY:
+  case SP_CAUSE_SMALLPOX:
+  case SP_CAUSE_PNEUMONIC_PLAGUE:
+  case SP_CAUSE_ANTHRAX:
+  case SP_CAUSE_TYPHOID:
+    success = cast_cause_disease(op,caster,dir,spellarch[type],type);
+    break;
+    /* DAMN */
+  case SP_DANCING_SWORD:
+  case SP_STAFF_TO_SNAKE: 
+  case SP_ANIMATE_WEAPON:
+    success = animate_weapon(op,caster,dir,spellarch[type],type);
+    break;
   }
 
   play_sound_map(op->map, op->x, op->y, SOUND_CAST_SPELL_0 + type);
@@ -877,6 +885,9 @@ static int ok_to_put_more(mapstruct *m,int x,int y,object *op,int immune_stop) {
 	 * a player somehow gets a counterspell attacktype.
 	 */
 	if ((tmp->attacktype & AT_COUNTERSPELL) &&
+	    (tmp->type != PLAYER) && !QUERY_FLAG(tmp,FLAG_MONSTER) &&
+	    (tmp->type != WEAPON) && (tmp->type != BOW) &&
+	    (tmp->type != ARROW) && (tmp->type != GOLEM) &&
 	    (immune_stop & AT_MAGIC)) return 0;
 
 	/* This is to prevent 'out of control' spells.  Basically, this
@@ -1267,9 +1278,16 @@ void move_golem(object *op) {
   }
   if(--op->stats.hp<0) {
     char buf[MAX_BUF];
-    sprintf(buf,"Your %s dissolved.",op->name);
-    if(op->exp_obj && op->exp_obj->stats.Wis)
-        sprintf(buf,"Your %s departed this plane.",op->name);
+    if(op->exp_obj && op->exp_obj->stats.Wis) {
+      if(op->inv) 
+	sprintf(buf,"Your snake turns back into a staff.",op->name);
+      else
+	sprintf(buf,"Your %s departed this plane.",op->name);
+    } else if (!strncmp(op->name,"animated ",9)) {
+      sprintf(buf,"Your %s falls to the ground.",op->name);
+    } else {
+      sprintf(buf,"Your %s dissolved.",op->name);
+    }
     new_draw_info(NDI_UNIQUE, 0,op->owner,buf);
     remove_friendly_object(op);
     op->owner->contr->golem=NULL;
@@ -1296,7 +1314,11 @@ void move_golem(object *op) {
 	  if(victim->race&&op->race&&strstr(op->race,victim->race)) {
 	    if(op->owner) new_draw_info_format(NDI_UNIQUE, 0,op->owner,
 		    "%s avoids damaging %s.",op->name,victim->name);
-	  } else { 
+	  } else if (op->exp_obj && op->exp_obj->stats.Wis
+		     && victim == op->owner) {
+	    if(op->owner) new_draw_info_format(NDI_UNIQUE, 0,op->owner,
+		    "%s avoids damaging you.",op->name);
+	  } else {
             hit_map(tmp,op->direction,op->attacktype);
             made_attack=1;
 	  }
