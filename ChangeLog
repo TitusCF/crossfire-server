@@ -17,6 +17,25 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+bulk of this is to fix exp loss when changing gods if you have more than
+2 billion exp, removal of spells when you switch levels, and not giving you
+all new spells when you switch religions.
+--
+common/living.c: Update exp functions to be fully 64 bit aware.  Don't
+   take away from player total exp if SK_SUBTRACT_SKILL_EXP is passed in.
+common/utils.c: Add 64 bit version of random_roll(), called random_roll64()
+lib/treasures:  Make indentation consistent for some treasures.
+server/apply.c: Use the FLAG_STARTEQUIP to denote god given spells, instead
+   of using special prayer markers.  This simplifies the spell learning
+   and removal code.
+server/gods.c: Make exp loss for changing religions 64 bit compliant.
+  Fix become_follower() so that it doesn't give all the new gods special
+  spells if you switch religions.  Fix code so that it properly removes
+  all special prayers from previous god, and also print out message on what
+  spells you lost.  Don't set the prayer skill as applied in various
+  areas - this results in two skills being applied, which isn't proper.
+MSW 2003-11-09
+
 common/living.c: Win32 compilation fix (levels is sint64, not uint64)
 include/plugin.h: new hooks for free & fix_player. Required for Win32.
 include/plugproto.h: new prototypes for CFWFreeMemory and CFWFixPlayer,

@@ -248,8 +248,8 @@ treasure Gaea
   arch gaea_general_info
     chance 10
   more
-arch god_grace_limit_low
-more
+  arch god_grace_limit_low
+  more
   arch spell_spiderweb
     chance 20
   more
@@ -259,8 +259,8 @@ more
   more
   arch spell_iron_skin
   more
-arch god_grace_limit_medium
-more
+  arch god_grace_limit_medium
+  more
   arch spell_raise_dead
   more
   arch spell_remove_damnation
@@ -278,8 +278,8 @@ more
   arch glovesofsun
   chance 10
   more
-arch god_grace_limit_high
-more
+  arch god_grace_limit_high
+  more
   arch spell_reincarnation
   more
   list gaea_treasure
@@ -358,8 +358,8 @@ treasure Lythander
   arch god_enchant_weapon_medium
     chance 50
   more
-arch god_grace_limit_medium
-more
+  arch god_grace_limit_medium
+  more
   arch bow_lythander
     chance 5
   more

@@ -1509,20 +1509,9 @@ static object *find_special_prayer_mark (object *op, char *spell)
     return 0;
 }
 
-static void insert_special_prayer_mark (object *op, char *spell)
-{
-    object *force = get_archetype ("force");
-    force->speed = 0;
-    update_ob_speed (force);
-    force->slaying = add_string ("special prayer");
-    if (force->name) free_string(force->name);
-    force->name = add_string(spell);
-    insert_ob_in_ob (force, op);
-}
-
 void do_learn_spell (object *op, object *spell, int special_prayer)
 {
-    object *tmp = find_special_prayer_mark (op, spell->name);
+    object *tmp;
 
     if (op->type != PLAYER) {
         LOG (llevError, "BUG: do_learn_spell(): not a player\n");
@@ -1530,32 +1519,20 @@ void do_learn_spell (object *op, object *spell, int special_prayer)
     }
 
     /* Upgrade special prayers to normal prayers */
-    if (check_spell_known (op, spell->name)) {
-        if (special_prayer || ! tmp) {
-            LOG (llevError, "BUG: do_learn_spell(): spell already known, but can't upgrade it\n");
+    if ((tmp=check_spell_known (op, spell->name))!=NULL) {
+        if (special_prayer && !QUERY_FLAG(tmp, FLAG_STARTEQUIP)) {
+            LOG (llevError, "BUG: do_learn_spell(): spell already known, but not marked as startequip\n");
             return;
         }
-        remove_ob (tmp);
-        free_object (tmp);
         return;
     }
 
-    /* Learn new spell/prayer */
-    if (tmp) {
-        LOG (llevError, "BUG: do_learn_spell(): spell unknown, but special prayer mark present\n");
-        remove_ob (tmp);
-        free_object (tmp);
-    }
     play_sound_player_only (op->contr, SOUND_LEARN_SPELL, 0, 0);
     tmp = get_object();
     copy_object(spell, tmp);
     insert_ob_in_ob(tmp, op);
     
-    /* For godgiven spells the player gets a reminder-mark inserted,
-     * that this spell must be removed on changing cults! 
-     */
     if (special_prayer) {
-	insert_special_prayer_mark (op, spell->name);
 	SET_FLAG(tmp, FLAG_STARTEQUIP);
     }
 

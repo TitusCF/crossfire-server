@@ -79,6 +79,48 @@ int random_roll(int min, int max, object *op, int goodbad) {
 }
 
 /*
+ * This is a 64 bit version of random_roll above.  This is needed
+ * for exp loss calculations for players changing religions.
+ */
+
+sint64 random_roll64(sint64 min, sint64 max, object *op, int goodbad) {
+    sint64 omin, diff, luck, ran;
+    int base;
+
+    omin = min;
+    diff = max - min + 1;
+    ((diff > 2) ? (base = 20) : (base = 50)); /* d2 and d3 are corner cases */
+
+    if (max < 1 || diff < 1) {
+      LOG(llevError, "Calling random_roll with min=%d max=%d\n", min, max);
+      return(min); /* avoids a float exception */
+    }
+
+    /* Don't know of a portable call to get 64 bit random values.
+     * So make a call to get two 32 bit random numbers, and just to
+     * a little byteshifting.  Do make sure the first one is only
+     * 32 bit, so we don't get skewed results
+     */
+    ran = (RANDOM() & 0xffffffff) | ((sint64)RANDOM() << 32);
+
+    if (op->type != PLAYER)
+	return((ran%diff)+min);
+
+    luck = op->stats.luck;
+    if (RANDOM()%base < MIN(10, abs(luck))) {
+	/* we have a winner */
+	((luck > 0) ? (luck = 1) : (luck = -1));
+	diff -= luck;
+	if (diff < 1)
+	    return(omin); /*check again*/
+	((goodbad) ? (min += luck) : (diff));
+
+	return(MAX(omin, MIN(max, (ran%diff)+min)));
+    }
+    return((ran%diff)+min);
+}
+
+/*
  * Roll a number of dice (2d3, 4d6).  Uses op to determine luck,
  * If goodbad is non-zero, luck increases the roll, if zero, it decreases.
  * Generally, op should be the player/caster/hitter requesting the roll,

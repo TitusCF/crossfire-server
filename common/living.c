@@ -1590,7 +1590,7 @@ void calc_perm_exp(object *op)
  * flag is what to do if the player doesn't have the skill:
  */
 
-static void add_player_exp(object *op, int exp, char *skill_name, int flag)
+static void add_player_exp(object *op, sint64 exp, char *skill_name, int flag)
 {
     object *skill_obj=NULL;
     sint64 limit, exp_to_add;
@@ -1694,11 +1694,11 @@ sint64 check_exp_adjust(object *op, sint64 exp)
  * exp is the amount of exp to subtract - thus, it should be
  * a postive number.
  */
-static void subtract_player_exp(object *op, int exp, char *skill, int flag)
+static void subtract_player_exp(object *op, sint64 exp, char *skill, int flag)
 {
     float fraction = (float) exp/(float) op->stats.exp;
     object *tmp;
-    int del_exp;
+    sint64 del_exp;
 
     for(tmp=op->inv;tmp;tmp=tmp->below)
 	if(tmp->type==SKILL && tmp->stats.exp) { 
@@ -1715,9 +1715,11 @@ static void subtract_player_exp(object *op, int exp, char *skill, int flag)
 		player_lvl_adj(op, tmp);
 	    }
 	}
-
-    op->stats.exp -= exp;
-    player_lvl_adj(op,NULL); 
+    if (flag != SK_SUBTRACT_SKILL_EXP) {
+	del_exp = check_exp_loss(op, exp);
+	op->stats.exp -= del_exp;
+	player_lvl_adj(op,NULL); 
+    }
 }
 
 
@@ -1732,12 +1734,10 @@ static void subtract_player_exp(object *op, int exp, char *skill, int flag)
  * these last two values are only used for players.
  */
  
-void change_exp(object *op, int exp, char *skill_name, int flag) {
-    uint64  exp_to_add = exp;
-    
+void change_exp(object *op, sint64 exp, char *skill_name, int flag) {
 
 #ifdef EXP_DEBUG
-    LOG(llevDebug,"add_exp() called for %s, exp = %lld\n",query_name(op),exp); 
+    LOG(llevDebug,"chnage_exp() called for %s, exp = %lld\n",query_name(op),exp); 
 #endif
 
     /* safety */
@@ -1755,9 +1755,9 @@ void change_exp(object *op, int exp, char *skill_name, int flag) {
      * MAX_EXPERIENCE to prevent overflows.  If the player somehow has
      * more than max exp, just return.
      */
-    if (exp_to_add > 0 && ( op->stats.exp > (MAX_EXPERIENCE - exp_to_add))) {
-	exp_to_add = MAX_EXPERIENCE - op->stats.exp;
-	if (exp_to_add < 0) return;
+    if (exp > 0 && ( op->stats.exp > (MAX_EXPERIENCE - exp))) {
+	exp = MAX_EXPERIENCE - op->stats.exp;
+	if (exp < 0) return;
     }
 
     /* Monsters are easy - we just adjust their exp - we   
@@ -1768,7 +1768,7 @@ void change_exp(object *op, int exp, char *skill_name, int flag) {
     if(op->type != PLAYER) {
 	/* Sanity check */
 	if (!QUERY_FLAG(op, FLAG_ALIVE)) return;
-	op->stats.exp += exp_to_add;
+	op->stats.exp += exp;
     }
     else {				/* Players only */ 
 	if(exp>0) 

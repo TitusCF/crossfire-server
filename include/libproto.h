@@ -174,7 +174,7 @@ extern sint64 level_exp(int level, double expmul);
 extern void calc_perm_exp(object *op);
 extern sint64 check_exp_loss(object *op, sint64 exp);
 extern sint64 check_exp_adjust(object *op, sint64 exp);
-extern void change_exp(object *op, int exp, char *skill_name, int flag);
+extern void change_exp(object *op, sint64 exp, char *skill_name, int flag);
 extern void apply_death_exp_penalty(object *op);
 extern int did_make_save(object *op, int level, int bonus);
 /* logger.c */
@@ -394,6 +394,7 @@ extern void free_artifactlist(artifactlist *al);
 extern void free_all_treasures(void);
 /* utils.c */
 extern int random_roll(int min, int max, object *op, int goodbad);
+extern sint64 random_roll64(sint64 min, sint64 max, object *op, int goodbad);
 extern int die_roll(int num, int size, object *op, int goodbad);
 extern int rndm(int min, int max);
 extern void decay_objects(mapstruct *m);

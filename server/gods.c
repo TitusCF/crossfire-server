@@ -271,7 +271,8 @@ void pray_at_altar(object *pl, object *altar, object *skill) {
 	  god_intervention(pl,pl_god, skill);
 
     } else { /* praying to another god! */
-	int loss = 0,angry=1;
+	uint64 loss = 0;
+	int angry=1;
 
 	/* I believe the logic for detecting opposing gods was completely
 	 * broken - I think it should work now.  altar->other_arch
@@ -291,8 +292,8 @@ void pray_at_altar(object *pl, object *altar, object *skill) {
                                 "Foul Priest! %s punishes you!",pl_god->name);
 		tmp=get_archetype(LOOSE_MANA);
 		cast_magic_storm(pl,tmp, pl_god->level+20);
-	    }
-	    new_draw_info_format(NDI_UNIQUE|NDI_NAVY,0,pl,
+	    } else 
+		new_draw_info_format(NDI_UNIQUE|NDI_NAVY,0,pl,
                                 "Foolish heretic! %s is livid!",pl_god->name);
 	} else 
 	    new_draw_info_format(NDI_UNIQUE|NDI_NAVY,0,pl,
@@ -302,9 +303,9 @@ void pray_at_altar(object *pl, object *altar, object *skill) {
 	 * we lose experience from the clerical experience obj 
 	 */
 
-	loss = 0.1 * (float) skill->stats.exp;
+	loss = angry * (skill->stats.exp / 10);
 	if(loss)
-	    change_exp(pl, -random_roll(0, loss*angry-1, pl, PREFER_LOW),
+	    change_exp(pl, -random_roll64(0, loss, pl, PREFER_LOW),
 		   skill?skill->skill:"none", SK_SUBTRACT_SKILL_EXP);
 
 	/* May switch Gods, but its random chance based on our current level
@@ -374,22 +375,26 @@ static void check_special_prayers (object *op, object *god)
 void become_follower (object *op, object *new_god) {
     object *old_god = NULL;                      /* old god */
     treasure *tr;
-    object *item, *skop;
+    object *item, *skop, *next;
     int i;
     
     old_god = find_god(determine_god(op));
     
     /* take away any special god-characteristic items. */
-    for(item=op->inv;item!=NULL;item=item->below) {
-        if(QUERY_FLAG(item,FLAG_STARTEQUIP) && item->invisible) {
-	    /* remove all invisible startequip items which are
-	     *  not skill, exp or force 
-	     */
-	    if(item->type==SKILL || item->type==EXPERIENCE ||
-	       item->type==FORCE) continue;
+    for(item=op->inv;item!=NULL;item=next) {
+	next = item->below;
+	/* remove all invisible startequip items which are
+	 *  not skill, exp or force 
+ 	 */
+        if(QUERY_FLAG(item,FLAG_STARTEQUIP) && item->invisible &&
+	   (item->type != SKILL) && (item->type != EXPERIENCE) &&
+	   (item->type != FORCE)) {
+
+	    if (item->type == SPELL)
+		new_draw_info_format(NDI_UNIQUE|NDI_NAVY, 0, op,
+			"You lose knowledge of %s.", item->name);
 	    remove_ob(item);
 	    free_object(item);
-	    item=op->inv;
 	}
     }
     
@@ -417,7 +422,7 @@ void become_follower (object *op, object *new_god) {
     /* give the player any special god-characteristic-items. */
     for(tr=new_god->randomitems->items; tr!=NULL; tr = tr->next) {
       if(tr->item && tr->item->clone.invisible && tr->item->clone.type != SPELLBOOK &&
-         tr->item->clone.type != BOOK)
+         tr->item->clone.type != BOOK && tr->item->clone.type != SPELL)
         god_gives_present(op,new_god,tr); }
 
 
@@ -497,7 +502,7 @@ void become_follower (object *op, object *new_god) {
 	stop_using_item(op,SHIELD,1);
     }
 
-    SET_FLAG(skop,FLAG_APPLIED);
+/*    SET_FLAG(skop,FLAG_APPLIED);*/
     (void) change_abil(op,skop);
 
     check_special_prayers (op, new_god);
