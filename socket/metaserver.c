@@ -131,11 +131,7 @@ void metaserver_update()
     sprintf(data,"%s|%d|%s|%s|%d|%d|%ld", settings.meta_host, num_players, VERSION, 
 	    settings.meta_comment, cst_tot.ibytes, cst_tot.obytes,
 	    (long)time(NULL) - cst_tot.time_start);
-#ifdef WIN32 /* ---win32 metaserver_init(): this removes a warning  */
     if (sendto(metafd, data, strlen(data), 0, (struct sockaddr *)&sock, sizeof(sock))<0) {
-#else
-    if (sendto(metafd, data, strlen(data), 0, &sock, sizeof(sock))<0) {
-#endif
 	LOG(llevDebug,"metaserver_update: sendto failed, err = %d\n", errno);
     }
 }

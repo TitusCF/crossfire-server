@@ -97,7 +97,9 @@ crossedit: $(OBJS) ../common/libcross.a Cnv/libCnv.a
 	(cd ../common; $(MAKE) $(MFLAGS) all)
 
 Cnv/libCnv.a:
-	(cd Cnv; $(MAKE) $(MFLAGS) all)
+	(cd Cnv; $(MAKE) $(MFLAGS) 'MFLAGS=$(MFLAGS)' \
+	'EXTRA_CFLAGS=$(EXTRA_CFLAGS)' 'EXTRA_INCLUDES=$(EXTRA_INCLUDES)' \
+	'EXTRA_LIBS=$(EXTRA_LIBS)' 'CC=$(CC)' all)
 
 Crossedit.ad.h: Crossedit.ad
 	-../utils/ad2c.script Crossedit.ad > Crossedit.ad.h
