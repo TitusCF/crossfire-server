@@ -1686,17 +1686,17 @@ object *find_target_for_friendly_spell(object *op,int dir)
 
 void move_ball_lightning(object *op) {
     int i,nx,ny,tx,ty,j,dam_save;
-	 object *owner;
+    object *owner;
 	 
-	 owner = get_owner(op);
+    owner = get_owner(op);
     remove_ob(op);
 
 	 /* Only those attuned to PATH_ELEC may use ball lightning with AT_GODPOWER */
-	 if((!(owner->path_attuned & PATH_ELEC))&& (op->attacktype & AT_GODPOWER)) {
-		free_object(op);
-		new_draw_info_format(NDI_UNIQUE,0,owner,"The ball lightning dispells immediately.  Perhaps you need attunement to the spell path?");
-		return;
-	 }
+    if((!(owner->path_attuned & PATH_ELEC))&& (op->attacktype & AT_GODPOWER)) {
+      free_object(op);
+      new_draw_info_format(NDI_UNIQUE,0,owner,"The ball lightning dispells immediately.  Perhaps you need attunement to the spell path?");
+      return;
+    }
 
     nx=op->x+DIRX(op);
     ny=op->y+DIRY(op);
@@ -1722,6 +1722,7 @@ void move_ball_lightning(object *op) {
     }
     op->y=ty;
     op->x=tx;
+    insert_ob_in_map(op,op->map,op);
 	 
     dam_save = op->stats.dam;  /* save the original dam: we do halfdam on 
 											 surrounding squares */
@@ -1757,7 +1758,6 @@ void move_ball_lightning(object *op) {
       }
       op->direction=i;
     }
-    insert_ob_in_map(op,op->map,op);
 }
 
 /* peterm:
