@@ -1,8 +1,10 @@
 Changes in top level CVS tree (please add your changes at the very top of
 the file):
 
+server/gods.c  --  changing gods now costs players their special
+			prayers. --PeterM
 server/alchemy.c  --  levels less than ten no longer produce
-cursed items, but only slag or nothing.  --PeterM
+		cursed items, but only slag or nothing.  --PeterM
 server/shop.c  --  unidentified stuff is worth at most 60gp or so. 
   ---PeterM
 
