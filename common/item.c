@@ -207,12 +207,15 @@ char *query_short_name(object *op)
 	    if (buf3!=NULL) {
 		strcpy(buf2, buf3);
 		*buf3 = '\0';	/* also changes value in buf */
+		len=strlen(buf);
 	    }
 	    if(QUERY_FLAG(op,FLAG_NEED_IE)) {
 		char *cp=strrchr(buf,'y');
 
-		if(cp!=NULL)
+		if(cp!=NULL) {
 		    *cp='\0'; /* Strip the 'y' */
+		    len--;
+		}
 		safe_strcat(buf,"ies", &len, HUGE_BUF);
 	    } else if (buf[strlen(buf)-1]!='s') 
 		/* if the item ends in 's', then adding another one is 

@@ -18,6 +18,10 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+common/item.c:  Fix query_short_name - wasn't generating all item names
+properly because of changes made a few days ago - some areas manipulate
+the string being worked on and was not updating the length properly.
+
 doc/mapguide:  Fix some typos.  MSW 5/26/2000
 
 include/define.h: Add MIN_ACTIVE_SPEED value to determine what threshold
