@@ -580,6 +580,11 @@ void ApplyCmd(char *buf, int len,player *pl)
     uint32 tag = atoi(buf);
     object *op = esrv_get_ob_from_count(pl->ob, tag);
 
+    /* sort of a hack, but if the player saves and the player then manually
+     * applies a savebed (or otherwise tries to do stuff), we run into trouble.
+     */
+    if (QUERY_FLAG(pl->ob, FLAG_REMOVED)) return;
+
     /* If the high bit is set, player applied a pseudo object. */
     if (tag & 0x80000000) {
 	pl->socket.look_position = tag & 0x7fffffff;
