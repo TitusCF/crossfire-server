@@ -20,12 +20,12 @@
 #endif
 #include <../random_maps/random_map.h>
 #include <../random_maps/rproto.h>
-#include <dlfcn.h>
 
 /*****************************************************************************/
 /* This one does not exist under Win32.                                      */
 /*****************************************************************************/
 #ifndef WIN32
+#include <dlfcn.h>
 #include <dirent.h>
 #endif
 

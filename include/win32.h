@@ -3,7 +3,6 @@
  * on Windows 95/NT and set the loe level defines
  */
 
-
 #if !defined(AFX_STDAFX_H__31666CA1_2474_11D5_AE6C_F07569C10000__INCLUDED_)
 #define AFX_STDAFX_H__31666CA1_2474_11D5_AE6C_F07569C10000__INCLUDED_
 
@@ -18,7 +17,6 @@
 #include <windowsx.h>
 #include <mmsystem.h>
 #include <winsock2.h>
-
 #include <time.h>
 #include <direct.h>
 #include <math.h>
