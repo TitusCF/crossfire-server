@@ -381,6 +381,17 @@ wc 2
 item_power 2
 end
 #
+Allowed all
+chance 5
+Object Ixalovh
+type 15
+value 10
+sp 1
+grace 1
+magic 1
+item_power 1
+end
+#
 Allowed axe,axe_2,axe_3,axe_4,axe_5,battle_axe,stoneaxe,poleaxe,morningstar,large_morningstar,nunchacu_1,nunchacu_2,hammer,mace,mace_2,lspear,spear,club,quarterstaff,big_club,stonehammer,stake,bonecrusher,mjoellnir,skullcleaver
 chance 20
 Object Gaea
@@ -644,7 +655,7 @@ dam 14
 weight 115
 end
 #
-Allowed sword,sabre,scimitar,light_sword,katana_1,falchion
+Allowed sword,sabre,rapier,scimitar,light_sword,katana_1,falchion
 chance 90
 Object Occidental Mages
 type 15
@@ -661,7 +672,7 @@ end
 #
 # Swords (subtype of weapons)
 #
-Allowed sword,sabre,scimitar,light_sword,katana_1,falchion
+Allowed sword,sabre,rapier,scimitar,light_sword,katana_1,falchion
 chance 10
 Object Poisoning
 type 15
@@ -674,7 +685,7 @@ end
 #
 # Metal Weapons
 #
-Allowed dagger,light_sword,shortsword,shortsword_2,taifu_1,trident,axe,axe_2,axe_3,axe_4,axe_5,battle_axe,poleaxe,morningstar,large_morningstar,hammer,mace,mace_2,lspear,spear,sword,sword_2,sword_3,sabre,scimitar,katana_1,falchion,broadsword,broadsword_2
+Allowed dagger,light_sword,shortsword,shortsword_2,taifu_1,trident,axe,axe_2,axe_3,axe_4,axe_5,battle_axe,poleaxe,morningstar,large_morningstar,hammer,mace,mace_2,lspear,spear,sword,sword_2,sword_3,sabre,rapier,rapier,scimitar,katana_1,falchion,broadsword,broadsword_2
 chance 5
 Object Sorig
 type 15
@@ -686,7 +697,22 @@ last_sp 125
 item_power 1
 end
 #
-Allowed dagger,axe,axe_2,axe_3,axe_4,axe_5,battle_axe,sword,sword_2,sword_3,sabre,scimitar,light_sword,katana_1,falchion,broadsword,broadsword_2,shortsword,shortsword_2,morningstar,large_morningstar,hammer,mace,mace_2,lspear,spear,poleaxe,taifu_1,trident
+Allowed trident
+chance 5
+Object Ixalovh
+type 15
+magic 2
+value 20
+weight 20
+attacktype 17
+resist_fire -10
+Dex 2
+Cha -1
+Con -1
+item_power 2
+end
+#
+Allowed dagger,axe,axe_2,axe_3,axe_4,axe_5,battle_axe,sword,sword_2,sword_3,sabre,rapier,scimitar,light_sword,katana_1,falchion,broadsword,broadsword_2,shortsword,shortsword_2,morningstar,large_morningstar,hammer,mace,mace_2,lspear,spear,poleaxe,taifu_1,trident
 chance 5
 Object Ruggilli
 type 15
@@ -2166,6 +2192,21 @@ value 5
 luck -2
 Int -2
 damned 1
+end
+#
+Allowed all
+chance 5
+Object Sirens
+msg
+  This is a charming little horn.
+endmsg
+type 35
+other_arch spell_siren_call
+hp -20
+maxhp -20
+Cha 2
+Int -2
+value 30
 end
 #
 Allowed all
