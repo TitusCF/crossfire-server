@@ -6,7 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 1994 Mark Wedel
+    Copyright (C) 2000 Mark Wedel
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -23,7 +23,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to master@rahul.net
+    The author can be reached via e-mail to mwedel@scruz.net
 */
 
 #ifdef HAVE_CRYPT_H
@@ -58,7 +58,7 @@ void version(object *op) {
  */
   if (op==NULL) return;
   new_draw_info(NDI_UNIQUE, 0,op,"Authors and contributors to this program:");
-  new_draw_info(NDI_UNIQUE, 0,op,"mark@pyramid.com (Mark Wedel)");
+  new_draw_info(NDI_UNIQUE, 0,op,"mark@scruz.net (Mark Wedel)");
   new_draw_info(NDI_UNIQUE, 0,op,"frankj@ifi.uio.no (Frank Tore Johansen)");
   new_draw_info(NDI_UNIQUE, 0,op,"kjetilho@ifi.uio.no (Kjetil Torgrim Homme)");
   new_draw_info(NDI_UNIQUE, 0,op,"tvangod@ecst.csuchico.edu (Tyler Van Gorder)");
@@ -96,6 +96,7 @@ void version(object *op) {
   new_draw_info(NDI_UNIQUE, 0,op,"Wacren@Gin.ObsPM.Fr (Laurent Wacrenier)");
   new_draw_info(NDI_UNIQUE, 0,op,"thomas@astro.psu.edu (Brian Thomas)");
   new_draw_info(NDI_UNIQUE, 0,op,"jsm@axon.ksc.nasa.gov (John Steven Moerk)");
+  new_draw_info(NDI_UNIQUE, 0,op,"Peter Gardner (images)");
 }
 
 void info_keys(object *op) {

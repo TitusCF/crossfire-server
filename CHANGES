@@ -18,6 +18,38 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+CREDITS, server/main.c:  Add Peter Gardner to list of credits.
+Mark Wedel 4/4/2000
+
+server/apply.c, improve_armour():
+Maximum armour value reduced to 90.  Items can now always be improved up
+to this value.  For armour x you need level x, not level x + 1 as before.
+esrv_send_item() and fix_player() also called if only magic value was
+improved.  Patch by Jan Echternach, applied & checked in by Mark Wedel,
+4/4/2000
+
+server/attack.c, attack_message():
+More messages.  "grind to dust" is more damage than "shred to pieces".
+Patch by Jan Echternach, applied & checked in by Mark Wedel, 4/4/2000
+
+server/spell_effect.c, magic_wall():
+Fix calculation of duration of darkness spell.  Before, you could get
+huge negative speed values with high experience levels, which meant very
+short duration.
+Patch by Jan Echternach, applied & checked in by Mark Wedel, 4/4/2000
+
+server/spell_util.c:
+1) New argument of fire_swarm() to specify whether it's a magic attack.
+All swarm spells except meteor swarm are now magic (just as the
+underlying basic spell).
+2) New function fire_arch_from_position() which doesn't use the owner's
+position as the starting position of the fired arch.
+3) move_swarm_spell(): Correctly set owner and magic in call to
+fire_arch_from_position().
+4) Above changes fixes "cause many wounds" spell
+Patch by Jan Echternach, applied & checked in by Mark Wedel, 4/4/2000
+
+
 common/map.c: Change calls in file to use insert_ob_in_map simple.
 This fixes bugs with buttons not being applied correctly when the map
 is loaded - the cause is that push_button is getting called for the
