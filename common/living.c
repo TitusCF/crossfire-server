@@ -676,6 +676,8 @@ void drain_specific_stat(object *op, int deplete_stats) {
 void change_luck(object *op, int value) {
   object *tmp;
   archetype *at;
+  int new_luck;
+
   at = find_archetype("luck");
   if (!at)
     LOG(llevError, "Couldn't find archetype luck.\n");
@@ -689,22 +691,23 @@ void change_luck(object *op, int value) {
       SET_FLAG(tmp,FLAG_APPLIED);
     }
     if (value) {
+      /* Limit the luck value of the bad luck object to +/-100. This
+       * (arbitrary) value prevents overflows (both in the bad luck object and
+       * in op itself).
+       */
+      new_luck = tmp->stats.luck+value;
+      if (new_luck >= -100 && new_luck <= 100) {
       op->stats.luck+=value;
-      tmp->stats.luck+=value;
+	tmp->stats.luck = new_luck;
+      }
     } else {
       if (!tmp->stats.luck) {
-        LOG(llevDebug, "Internal error in change_luck().\n");
         return;
       }
       /* Randomly change the players luck.  Basically, we move it
        * back neutral (if greater>0, subtract, otherwise add)
-       * I believe this is supposed to be > and not >= - this means
-       * if your luck is -1/1, it won't get adjusted - only when your
-       * luck is worse can you hope for improvment.
-       * note that if we adjusted it with it is -1/1, that check above
-       * for 0 luck will happen, resulting in error.
        */
-      if (RANDOM()%(FABS(tmp->stats.luck)) > RANDOM()%30) {
+      if (RANDOM()%(FABS(tmp->stats.luck)) >= RANDOM()%30) {
         int diff = tmp->stats.luck>0?-1:1;
         op->stats.luck += diff;
         tmp->stats.luck += diff;

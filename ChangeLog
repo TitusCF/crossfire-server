@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+common/living.c: Allow luck to drop back to zero. Limit bad luck object to
+   +/-100 to prevent overflows.
+Andreas Kirschbaum 2005-03-22
+
 common/living.c: When randomly adjusting luck, change both op->stats.luck and
    the applied bad_luck object.
 server/attack.c: Do not decrease luck if a player kills himself with a spell
