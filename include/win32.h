@@ -60,6 +60,7 @@
 #define getpid() _getpid()
 #define popen(__a, __b) _popen(__a, __b)
 #define pclose(__a) _pclose(__a)
+#define vsnprintf _vsnprintf
 
 #define R_OK 6		/* for __access() */
 #define F_OK 6

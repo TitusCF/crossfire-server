@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+common/loader.c: add #ifndef for non-existant Win32 header
+include/win32.h: #define vsnprintf _vsnprintf to fix linking issue
+Ryo 2004-07-03
+
 server/skill_util.c: Fix skills command so that it properly displays
    percentage of permanent exp.
 server/time.c: Modify move_arrow() so that it removes thrown objects
