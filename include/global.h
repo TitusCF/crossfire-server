@@ -196,7 +196,7 @@ EXTERN int num_animations,animations_allocated;
 extern int freearr_x[SIZEOFFREE], freearr_y[SIZEOFFREE];
 extern int maxfree[SIZEOFFREE], freedir[SIZEOFFREE];
 
-extern New_Face *blank_face;
+extern New_Face *blank_face, *empty_face;
 extern New_Face *dark_faces[];
 extern New_Face *potion_face;
 extern MapLook blank_look;

@@ -152,6 +152,7 @@ static void get_player(player *p) {
     if(QUERY_FLAG(op,FLAG_READY_SKILL))
         CLEAR_FLAG(op,FLAG_READY_SKILL); 
     p->socket.update_look=0;
+    p->socket.look_position=0;
     p->own_title[0]='\0';
 }
 

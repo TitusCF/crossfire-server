@@ -36,6 +36,9 @@
 #define NEWSERVER_H
 #define MAXMAPCELLFACES 50
 
+#define NUM_LOOK_OBJECTS 50
+
+
 struct MapCell {
   short faces[MAXMAPCELLFACES];
   int count;
@@ -95,6 +98,7 @@ typedef struct NewSocket {
     uint32  cs_version, sc_version; /* versions of the client */
     uint32  update_look:1;  /* If true, we need to send the look window */
     uint32  can_write:1;    /* Can we write to this socket? */
+    uint16  look_position;  /* start of drawing of look window */
 
     /* Below here is information only relevant for old sockets */
     char    *comment;	    /* name or listen comment */

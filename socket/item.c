@@ -135,8 +135,9 @@ unsigned int query_flags (object *op)
 void esrv_draw_look(object *pl)
 {
     object *tmp, *last;
-    int flags, got_one=0,anim_speed;
+    int flags, got_one=0,anim_speed, start_look=0, end_look=0;
     SockList sl;
+    char buf[MAX_BUF];
 
     if (!pl->contr->socket.update_look) {
 	LOG(llevDebug,"esrv_draw_look called when update_look was not set\n");
@@ -160,6 +161,21 @@ void esrv_draw_look(object *pl)
 
     SockList_AddInt(&sl, 0);
 
+    if (!pl->contr->socket.faces_sent[empty_face->number])
+	esrv_send_face(&pl->contr->socket, empty_face->number,0);
+
+    if (pl->contr->socket.look_position) {
+	SockList_AddInt(&sl, 0x80000000 | (pl->contr->socket.look_position- NUM_LOOK_OBJECTS));
+	SockList_AddInt(&sl, 0);
+	SockList_AddInt(&sl, -1);
+	SockList_AddInt(&sl, empty_face->number);
+	sprintf(buf,"Click here to see %d previous items", NUM_LOOK_OBJECTS);
+	add_stringlen_to_sockbuf(buf, &sl);
+	SockList_AddShort(&sl,0);
+	SockList_AddChar(&sl, 0);
+	SockList_AddInt(&sl, 0);
+    }
+
     for (last=NULL; tmp!=last; tmp=tmp->below) {
 	if (QUERY_FLAG(tmp, FLAG_IS_FLOOR) && !last) {
 	    last = tmp->below;  /* assumes double floor mode */
@@ -167,6 +183,21 @@ void esrv_draw_look(object *pl)
 		last = last->below;
 	}
 	if (LOOK_OBJ(tmp)) {
+	    if (++start_look < pl->contr->socket.look_position) continue;
+	    end_look++;
+	    if (end_look > NUM_LOOK_OBJECTS) {
+		SockList_AddInt(&sl, 0x80000000 | (pl->contr->socket.look_position+ NUM_LOOK_OBJECTS));
+		SockList_AddInt(&sl, 0);
+		SockList_AddInt(&sl, -1);
+		SockList_AddInt(&sl, empty_face->number);
+		sprintf(buf,"Click here to see next group of items");
+		add_stringlen_to_sockbuf(buf, &sl);
+		SockList_AddShort(&sl,0);
+		SockList_AddChar(&sl, 0);
+		SockList_AddInt(&sl, 0);
+		break;
+	    }
+
 	    flags = query_flags (tmp);
 	    if (QUERY_FLAG(tmp, FLAG_NO_PICK))
 		flags |=  F_NOPICK;
@@ -546,8 +577,15 @@ void ExamineCmd(char *buf, int len,player *pl)
 /* Client wants to apply some object.  Lets do so. */
 void ApplyCmd(char *buf, int len,player *pl)
 {
-    long tag = atoi(buf);
+    uint32 tag = atoi(buf);
     object *op = esrv_get_ob_from_count(pl->ob, tag);
+
+    /* If the high bit is set, player applied a pseudo object. */
+    if (tag & 0x80000000) {
+	pl->socket.look_position = tag & 0x7fffffff;
+	pl->socket.update_look = 1;
+	return;
+    }
 
     if (!op) {
 	LOG(llevDebug, "Player '%s' tried apply the unknown object (%d)\n",

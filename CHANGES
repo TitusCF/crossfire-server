@@ -17,6 +17,20 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 CVS changes since last release:
 
+common/image.c, include/define.h, include/global.h: Add empty_face structure
+   and appropriate code to initialize it.  This is used for the server side
+   look selection.
+include/newserver.h: Add NUM_LOOK_OBJECTS to control number of look objects
+   to send at any one time.  add look_position field to the newsocket
+   structure.
+server/move.c: clear look position as player moves.
+server/player.c: initalize look_position element in structure.
+socket/item.c: modify esrv_draw_look to sne NUM_LOOK_OBJECTS at any one
+   time, and to also send pseudo objects that lets the player scroll up and down.
+   modify ApplyCmd so that if it detects the application of one pseudo objects
+   to adjust the look_position.
+MSW 2001-03-29
+
 common/readable.c: Name spellbooks based on level of spell, and not
     just randomly.  Patch by Preston Crow, applied by Mark Wedel 2001-03-29
 

@@ -602,6 +602,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define ST_GET_PARTY_PASSWORD 10
 
 #define BLANK_FACE_NAME "blank.111"
+#define EMPTY_FACE_NAME "empty.111"
 #define POTION_FACE_NAME	"potiongen.111" 
 #define DARK_FACE1_NAME		"dark1.111"
 #define DARK_FACE2_NAME		"dark2.111"

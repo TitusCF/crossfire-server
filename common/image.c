@@ -54,7 +54,7 @@ MapLook blank_look;
 /* Following can just as easily be pointers, but 
  * it is easier to keep them like this.
  */
-New_Face *blank_face, *dark_faces[3], *potion_face;
+New_Face *blank_face, *dark_faces[3], *potion_face, *empty_face;
 
 
 /* nroffiles is the actual number of bitmaps defined.
@@ -269,6 +269,8 @@ int ReadBmapNames () {
     blank_face->fg = find_color ("black");
     blank_face->bg = find_color ("khaki");
     blank_face->magicmap = find_color ("khaki") | FACE_FLOOR;
+
+    empty_face = &new_faces[FindFace(EMPTY_FACE_NAME, 0)];
 
     dark_faces[0] = &new_faces[FindFace (DARK_FACE1_NAME,0)];
     dark_faces[1] = &new_faces[FindFace (DARK_FACE2_NAME,0)];
