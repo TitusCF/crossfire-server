@@ -111,7 +111,7 @@ Object NONE
 arch true_lead
 yield 2
 chance 5
-diff 80
+diff 20
 exp 100000
 skill alchemy
 cauldron cauldron
@@ -122,7 +122,7 @@ Object NONE
 arch fix_mercury
 yield 2
 chance 5
-diff 80
+diff 20
 exp 100000
 skill alchemy
 cauldron cauldron
@@ -1424,6 +1424,7 @@ arch cloak
 chance 5
 diff 5
 exp 5000
+trans 1
 yield 1
 skill woodsman
 cauldron tanbench
@@ -1434,6 +1435,7 @@ arch cloak
 chance 4
 diff 10
 exp 15000
+trans 1
 yield 1
 skill woodsman
 cauldron tanbench
@@ -1444,6 +1446,7 @@ arch cloak
 chance 2
 diff 20
 exp 30000
+trans 1
 yield 1
 skill woodsman
 cauldron tanbench
@@ -1454,6 +1457,7 @@ arch cloak
 chance 3
 diff 10
 exp 10000
+trans 1
 yield 1
 skill woodsman
 cauldron tanbench
@@ -1464,6 +1468,7 @@ arch cloak
 diff 10
 exp 10000
 chance 3
+trans 1
 yield 1
 skill woodsman
 cauldron tanbench
@@ -1474,6 +1479,7 @@ arch cloak
 chance 3
 diff 10
 exp 10000
+trans 1
 yield 1
 skill woodsman
 cauldron tanbench
@@ -1484,6 +1490,7 @@ arch cloak
 chance 3
 diff 25
 exp 50000
+trans 1
 yield 1
 skill woodsman
 cauldron tanbench
@@ -1494,6 +1501,7 @@ arch cloak
 chance 1
 diff 25
 exp 50000
+trans 1
 yield 1
 skill woodsman
 cauldron tanbench
@@ -1504,6 +1512,7 @@ arch cloak
 chance 1
 yield 1
 diff 26
+trans 1
 exp 55000
 skill woodsman
 cauldron tanbench
@@ -1514,6 +1523,7 @@ arch cloak
 chance 1
 diff 26
 exp 80000
+trans 1
 yield 1
 skill woodsman
 cauldron tanbench
@@ -1528,6 +1538,7 @@ arch high_boots
 chance 5
 diff 5
 exp 10000
+trans 1
 yield 1
 skill smithery
 cauldron forge
@@ -1538,6 +1549,7 @@ arch low_boots
 chance 5
 diff 5
 exp 10000
+trans 1
 yield 1
 skill smithery
 cauldron forge
@@ -1548,6 +1560,7 @@ arch low_boots
 chance 3
 diff 10
 exp 20000
+trans 1
 yield 1
 skill smithery
 cauldron forge
@@ -1558,6 +1571,7 @@ arch elvenboots
 chance 1
 diff 10
 exp 20000
+trans 1
 yield 1
 skill smithery
 cauldron forge
@@ -1568,6 +1582,7 @@ arch levitationboots
 chance 1
 diff 20
 exp 50000
+trans 1
 yield 1
 skill smithery
 cauldron forge
@@ -1578,6 +1593,7 @@ arch low_boots
 chance 5
 diff 10
 exp 20000
+trans 1
 yield 1
 skill smithery
 cauldron forge
@@ -1588,6 +1604,7 @@ arch high_boots
 chance 5
 diff 10
 exp 20000
+trans 1
 yield 1
 skill smithery
 cauldron forge
@@ -1598,6 +1615,7 @@ arch high_boots
 chance 5
 diff 15
 exp 25000
+trans 1
 yield 1
 skill smithery
 cauldron forge
@@ -1608,6 +1626,7 @@ arch low_boots
 chance 5
 diff 15
 exp 25000
+trans 1
 yield 1
 skill smithery
 cauldron forge
@@ -1622,6 +1641,7 @@ arch scale_mail
 chance 3
 diff 12
 exp 20000
+trans 1
 yield 1
 skill smithery
 cauldron forge
@@ -1632,6 +1652,7 @@ arch plate_mail
 chance 3
 diff 12
 exp 25000
+trans 1
 yield 1
 skill smithery
 cauldron forge
@@ -1642,6 +1663,7 @@ arch scale_mail
 chance 4
 diff 15
 exp 30000
+trans 1
 yield 1
 skill smithery
 cauldron forge
@@ -1652,6 +1674,7 @@ arch plate_mail
 chance 4
 diff 18
 exp 40000
+trans 1
 yield 1
 skill smithery
 cauldron forge
@@ -1662,6 +1685,7 @@ arch scale_mail
 chance 6
 diff 25
 exp 80000
+trans 1
 yield 1
 skill smithery
 cauldron forge
@@ -1672,6 +1696,7 @@ arch plate_mail
 chance 6
 diff 30
 exp 100000
+trans 1
 yield 1
 skill smithery
 cauldron forge
@@ -1682,6 +1707,7 @@ arch plate_mail
 chance 4
 diff 10
 exp 20000
+trans 1
 yield 1
 skill smithery
 cauldron forge
@@ -1692,6 +1718,7 @@ arch mithril_chainmail
 chance 2
 diff 20
 exp 40000
+trans 1
 yield 1
 skill smithery
 cauldron forge
@@ -1702,6 +1729,7 @@ arch dragon_mail
 chance 1
 diff 30
 exp 100000
+trans 1
 yield 1
 skill smithery
 cauldron forge
@@ -1712,6 +1740,7 @@ arch scale_mail
 chance 2
 diff 25
 exp 80000
+trans 1
 yield 1
 skill smithery
 cauldron forge
@@ -1722,6 +1751,7 @@ arch leather_armour
 chance 3
 diff 15
 exp 30000
+trans 1
 yield 1
 skill smithery
 cauldron forge
@@ -1732,6 +1762,7 @@ arch ring_mail
 chance 3
 diff 12
 exp 20000
+trans 1
 yield 1
 skill smithery
 cauldron forge
@@ -1742,6 +1773,7 @@ arch chain_mail
 chance 5
 diff 20
 exp 40000
+trans 1
 yield 1
 skill smithery
 cauldron forge
@@ -1752,6 +1784,7 @@ arch ring_mail2
 chance 5
 diff 20
 exp 40000
+trans 1
 yield 1
 skill smithery
 cauldron forge
@@ -1762,6 +1795,7 @@ arch plate_mail
 chance 2
 diff 40
 exp 150000
+trans 1
 yield 1
 skill smithery
 cauldron forge
@@ -1772,6 +1806,7 @@ arch robe
 diff 20
 exp 50000
 chance 4
+trans 1
 yield 1
 skill smithery
 cauldron forge
@@ -1782,10 +1817,22 @@ arch robe
 diff 10
 exp 20000
 chance 4
+trans 1
 yield 1
 skill smithery
 cauldron forge
 ingred robe,lead,balm of aethereality
+#
+Object NONE
+arch elven_robe
+diff 40
+exp 150000
+chance 2
+trans 1
+yield 1
+skill smithery
+cauldron forge
+ingred robe,potion of dexterity,3 potion of resist confusion,clover,unicorn horn
 #
 # ------------------
 # Helmets
@@ -1796,6 +1843,7 @@ arch helmet
 chance 2
 diff 5
 exp 10000
+trans 1
 yield 1
 skill smithery
 cauldron forge
@@ -1806,6 +1854,7 @@ arch helmet
 chance 3
 diff 5
 exp 10000
+trans 1
 yield 1
 skill smithery
 cauldron forge
@@ -1816,6 +1865,7 @@ arch full_helmet
 chance 3
 diff 10
 exp 20000
+trans 1
 yield 1
 skill smithery
 cauldron forge
@@ -1826,6 +1876,7 @@ arch full_helmet
 chance 4
 diff 10
 exp 20000
+trans 1
 yield 1
 skill smithery
 cauldron forge
@@ -1836,6 +1887,7 @@ arch full_helmet
 chance 2
 diff 12
 exp 25000
+trans 1
 yield 1
 skill smithery
 cauldron forge
@@ -1846,6 +1898,7 @@ arch helmet
 chance 5
 diff 6
 exp 12000
+trans 1
 yield 1
 skill smithery
 cauldron forge
@@ -1856,6 +1909,7 @@ arch crown
 chance 3
 diff 20
 exp 40000
+trans 1
 yield 1
 skill smithery
 cauldron forge
@@ -1868,8 +1922,9 @@ ingred crown,lightning para-elemental's residue,balm of insulation,bottle of phi
 Object Deflection
 arch high_shield
 chance 5
-diff 20
-exp 50000
+diff 5
+exp 500
+trans 1
 yield 1
 skill smithery
 cauldron forge
@@ -1878,8 +1933,9 @@ ingred high shield,balm of aethereality,3 lead
 Object Mostrai
 arch small_shield
 chance 3
-diff 15
-exp 30000
+diff 7
+exp 1000
+trans 1
 yield 1
 skill smithery
 cauldron forge
@@ -1888,12 +1944,24 @@ ingred small shield,balm of asbestos,mithril crystal
 Object Mostrai
 arch high_shield
 chance 3
-diff 18
-exp 35000
+diff 7
+exp 1000
+trans 1
 yield 1
 skill smithery
 cauldron forge
 ingred high shield,balm of asbestos,mithril crystal
+#
+Object Gnarg
+arch spiked_shield
+chance 3
+diff 7
+exp 1000
+trans 1
+yield 1
+skill smithery
+cauldron forge
+ingred spiked shield,pixie dust,booze
 #
 # ------------------
 # Gauntlets / Gloves
@@ -1904,6 +1972,7 @@ arch gloves
 chance 4
 diff 5
 exp 12000
+trans 1
 yield 1
 skill woodsman
 cauldron tanbench
@@ -1912,6 +1981,7 @@ ingred gloves,ogre's corpse,bottle of philosophical oil
 Object marksmanship
 arch gloves
 chance 5
+trans 1
 yield 1
 diff 8
 exp 16000
@@ -1922,6 +1992,7 @@ ingred gloves,5 arrow of accuracy,bottle of mineral oil
 Object Sorig
 arch gloves
 chance 3
+trans 1
 yield 1
 diff 13
 exp 20000
@@ -1934,6 +2005,7 @@ arch gauntlets
 chance 3
 diff 14
 exp 22000
+trans 1
 yield 1
 skill smithery
 cauldron forge
@@ -1944,6 +2016,7 @@ arch gloves
 chance 5
 diff 10
 exp 20000
+trans 1
 yield 1
 skill woodsman
 cauldron tanbench
@@ -1954,6 +2027,7 @@ arch gauntlets
 chance 1
 diff 35
 exp 120000
+trans 1
 yield 1
 skill smithery
 cauldron forge
@@ -1966,6 +2040,7 @@ ingred gauntlets,hill giant's hand,lightning para-elemental's residue,bottle of 
 Object Auriga
 arch bow
 chance 1
+trans 1
 yield 1
 diff 15
 exp 15000
@@ -1978,6 +2053,7 @@ arch bow
 chance 3
 diff 16
 exp 16000
+trans 1
 yield 1
 skill bowyer
 cauldron workbench
@@ -1988,10 +2064,89 @@ arch crossbow
 chance 3
 diff 16
 exp 16500
+trans 1
 yield 1
 skill bowyer
 cauldron workbench
 ingred crossbow,titan's head,dust of stasis
+#
+Object Lythander
+arch longbow
+chance 5
+diff 10
+exp 10000
+trans 1
+yield 1
+skill bowyer
+cauldron workbench
+ingred long bow,4 clover,troll's liver
+#
+Object Ruggilli
+arch crossbow
+chance 4
+diff 12
+exp 11000
+trans 1
+yield 1
+skill bowyer
+cauldron workbench
+ingred crossbow,3 potion of fire,dragon's wing
+#
+Object Sorig
+arch huntersbow
+chance 5
+diff 12
+exp 11500
+trans 1
+yield 1
+skill bowyer
+cauldron workbench
+ingred hunter's bow,potion of lasting shock,lightning para-elemental's residue
+#
+Object Accuracy
+arch bow
+chance 10
+diff 3
+exp 4000
+trans 1
+yield 1
+skill bowyer
+cauldron workbench
+ingred bow,3 mushroom of Quickness,mercury
+#
+Object Valriel
+arch compositebow
+chance 9
+diff 5
+exp 6000
+trans 1
+yield 1
+skill bowyer
+cauldron workbench
+ingred composite bow,demon's head,3 dust of frost
+#
+Object Gorokh
+arch longbow
+chance 2
+diff 20
+exp 18000
+trans 1
+yield 1
+skill bowyer
+cauldron workbench
+ingred long bow,3 dust of conflagration,gaelotroll's liver,ogre's heart
+#
+Object Mostrai
+arch crossbow
+diff 18
+chance 3
+diff 18
+exp 17500
+trans 1
+yield 1
+skill bowyer
+cauldron workbench
+ingred crossbow,3 dust of consuming wrath,hill giant's heart,3 mithril crystal
 #
 # ------------------
 # Weapons
@@ -2002,6 +2157,7 @@ arch dagger
 chance 5
 diff 5
 exp 8000
+trans 1
 yield 1
 skill smithery
 cauldron forge
@@ -2012,6 +2168,7 @@ arch dagger
 chance 5
 diff 5
 exp 5000
+trans 1
 yield 1
 skill smithery
 cauldron forge
@@ -2022,6 +2179,7 @@ arch falchion
 chance 3
 diff 6
 exp 6000
+trans 1
 yield 1
 skill smithery
 cauldron forge
@@ -2032,6 +2190,7 @@ arch morningstar
 chance 5
 diff 8
 exp 10000
+trans 1
 yield 1
 skill smithery
 cauldron forge
@@ -2042,6 +2201,7 @@ arch club
 chance 5
 diff 4
 exp 5000
+trans 1
 yield 1
 skill smithery
 cauldron forge
@@ -2052,6 +2212,7 @@ arch big_club
 chance 5
 diff 5
 exp 6000
+trans 1
 yield 1
 skill smithery
 cauldron forge
@@ -2062,6 +2223,7 @@ arch sword
 chance 5
 diff 8
 exp 8000
+trans 1
 yield 1
 skill smithery
 cauldron forge
@@ -2072,6 +2234,7 @@ arch stonehammer
 chance 5
 diff 8
 exp 8000
+trans 1
 yield 1
 skill smithery
 cauldron forge
@@ -2080,6 +2243,7 @@ ingred stonehammer,3 xan's wing,bottle of philosophical oil
 Object Kragi
 arch sword
 chance 10
+trans 1
 yield 1
 diff 10
 exp 10000
@@ -2092,6 +2256,7 @@ arch hammer
 chance 10
 diff 11
 exp 12000
+trans 1
 yield 1
 skill smithery
 cauldron forge
@@ -2102,6 +2267,7 @@ arch sword
 chance 6
 diff 7
 exp 8000
+trans 1
 yield 1
 skill smithery
 cauldron forge
@@ -2112,6 +2278,7 @@ arch axe_5
 chance 6
 diff 6
 exp 7000
+trans 1
 yield 1
 skill smithery
 cauldron forge
@@ -2122,6 +2289,7 @@ arch morningstar
 chance 3
 diff 12
 exp 15000
+trans 1
 yield 1
 skill smithery
 cauldron forge
@@ -2132,6 +2300,7 @@ arch katana_1
 diff 13
 exp 16000
 chance 3
+trans 1
 yield 1
 skill smithery
 cauldron forge
@@ -2142,6 +2311,7 @@ arch broadsword
 chance 3
 diff 15
 exp 20000
+trans 1
 yield 1
 skill smithery
 cauldron forge
@@ -2152,6 +2322,7 @@ arch poleaxe
 chance 3
 diff 16
 exp 21000
+trans 1
 yield 1
 skill smithery
 cauldron forge
@@ -2162,6 +2333,7 @@ arch mace
 diff 20
 exp 32000
 chance 3
+trans 1
 yield 1
 skill smithery
 cauldron forge
@@ -2172,6 +2344,7 @@ arch nunchacu_1
 chance 3
 diff 25
 exp 43000
+trans 1
 yield 1
 skill smithery
 cauldron forge
@@ -2182,6 +2355,7 @@ arch sword
 chance 5
 diff 10
 exp 13000
+trans 1
 yield 1
 skill smithery
 cauldron forge
@@ -2192,6 +2366,7 @@ arch mace_2
 chance 5
 diff 10
 exp 13000
+trans 1
 yield 1
 skill smithery
 cauldron forge
@@ -2202,6 +2377,7 @@ arch axe
 chance 5
 yield 1
 diff 6
+trans 1
 exp 8000
 skill smithery
 cauldron forge
@@ -2212,6 +2388,7 @@ arch shortsword_2
 chance 5
 diff 5
 exp 7000
+trans 1
 yield 1
 skill smithery
 cauldron forge
@@ -2223,6 +2400,7 @@ arch skullcleaver
 chance 5
 diff 30
 exp 50000
+trans 1
 yield 1
 skill smithery
 cauldron forge
@@ -2233,6 +2411,7 @@ arch lspear
 chance 5
 diff 15
 exp 15000
+trans 1
 yield 1
 skill smithery
 cauldron forge
@@ -2243,6 +2422,7 @@ arch taifu_1
 chance 5
 diff 18
 exp 23000
+trans 1
 yield 1
 skill smithery
 cauldron forge
@@ -2253,6 +2433,7 @@ arch mace_2
 diff 20
 exp 40000
 chance 5
+trans 1
 yield 1
 skill smithery
 cauldron forge
@@ -2265,6 +2446,7 @@ arch firebrand
 chance 5
 diff 30
 exp 90000
+trans 1
 yield 1
 skill smithery
 cauldron forge
@@ -2275,6 +2457,7 @@ arch frostbrand
 chance 5
 diff 30
 exp 90000
+trans 1
 yield 1
 skill smithery
 cauldron forge
@@ -2285,6 +2468,7 @@ arch sabre
 diff 10
 exp 12000
 chance 2
+trans 1
 yield 1
 skill smithery
 cauldron forge
@@ -2295,6 +2479,7 @@ arch light_sword
 chance 2
 diff 11
 exp 13000
+trans 1
 yield 1
 skill smithery
 cauldron forge
@@ -2305,6 +2490,7 @@ arch scimitar
 chance 3
 diff 14
 exp 15000
+trans 1
 yield 1
 skill smithery
 cauldron forge
@@ -2315,6 +2501,7 @@ arch poleaxe
 chance 3
 diff 16
 exp 20000
+trans 1
 yield 1
 skill smithery
 cauldron forge
@@ -2325,6 +2512,7 @@ arch large_morningstar
 chance 3
 diff 14
 exp 17000
+trans 1
 yield 1
 skill smithery
 cauldron forge
@@ -2335,6 +2523,7 @@ arch trident
 chance 3
 diff 15
 exp 18000
+trans 1
 yield 1
 skill smithery
 cauldron forge
@@ -2345,6 +2534,7 @@ arch dagger
 chance 6
 diff 8
 exp 8000
+trans 1
 yield 1
 skill smithery
 cauldron forge
