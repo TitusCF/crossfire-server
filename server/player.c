@@ -1101,7 +1101,7 @@ void fire(object *op,int dir) {
  * into keyrings, but not other containers.
  */
 
-static object *FindKey(object *Door, object *ob)
+object *FindKey(object *Door, object *ob)
 {
     while (ob!=NULL) {
 	/* Only search/descend into keyrings.  Thus, players can 'hide'
