@@ -397,7 +397,7 @@ char *allowed_variables[] = {
     "walk_off", "fly_on", "fly_off", "flying", "monster", 
     "neutral", "no_attack", "no_damage", "friendly",
     "generator", "is_thrown", "auto_apply", "treasure", "apply_once",
-    "see_invisible", "can_roll", "is_turnable", "is_used_up",
+    "see_invisible", "can_roll", "is_turning", "is_turnable", "is_used_up",
     "identified", "reflecting", "changing", "splitting", "hitback",
     "startequip", "blocksview", "undead", "scared", "unaggressive",
     "reflect_missile", "reflect_spell", "no_magic", "wiz", "was_wiz",
@@ -415,6 +415,7 @@ char *allowed_variables[] = {
     "is_hilly", "has_ready_skill", "has_ready_weapon", "no_skill_ident",
     "glow_radius", "is_blind", "can_see_in_dark", "is_cauldron",
     "randomitems", "is_dust", "no_steal", "one_hit","berserk",
+    "sub_type", sub_type2","casting_speed",
 /* GROS - These are hooks for script events */
     "script_load","script_apply","script_say","script_trigger", "script_time",
     "script_attack","script_drop", "script_throw", "script_stop", "script_death", "current_weapon_script",

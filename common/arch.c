@@ -339,6 +339,9 @@ void first_arch_pass(FILE *fp) {
       if(prev!=NULL)
         prev->next=at;
       prev=last_more=at;
+      if(!op->type)
+          LOG(llevDebug," WARNING: Archetype %s has no type info!\n", op->arch->name);
+      
       op->quick_pos = 0; /* assume as base a single arch */
       at->clone.quick_pos = 0; /* sic */
       break;
@@ -449,7 +452,7 @@ void load_archetypes() {
 	return;
     }
     clear_archetable();
-    LOG(llevDebug," arch-pass 1...");
+    LOG(llevDebug," arch-pass 1...\n");
 #if TIME_ARCH_LOAD
 	GETTIMEOFDAY(&tv1);
 #endif

@@ -169,6 +169,11 @@ void esrv_draw_look(object *pl)
 	SockList_AddInt(&sl, 0);
 	SockList_AddInt(&sl, -1);
 	SockList_AddInt(&sl, empty_face->number);
+    if(pl->contr->socket.ext2)
+    {
+        SockList_AddChar(&sl, 0);
+        SockList_AddChar(&sl, 0);
+    }
 	sprintf(buf,"Click here to see %d previous items", NUM_LOOK_OBJECTS);
 	add_stringlen_to_sockbuf(buf, &sl);
 	SockList_AddShort(&sl,0);
@@ -190,7 +195,12 @@ void esrv_draw_look(object *pl)
 		SockList_AddInt(&sl, 0);
 		SockList_AddInt(&sl, -1);
 		SockList_AddInt(&sl, empty_face->number);
-		sprintf(buf,"Click here to see next group of items");
+        if(pl->contr->socket.ext2)
+        {
+            SockList_AddChar(&sl, 0);
+            SockList_AddChar(&sl, 0);
+        }
+        sprintf(buf,"Click here to see next group of items");
 		add_stringlen_to_sockbuf(buf, &sl);
 		SockList_AddShort(&sl,0);
 		SockList_AddChar(&sl, 0);
@@ -212,7 +222,12 @@ void esrv_draw_look(object *pl)
 	    SockList_AddInt(&sl, flags);
 	    SockList_AddInt(&sl, QUERY_FLAG(tmp, FLAG_NO_PICK) ? -1 : WEIGHT(tmp));
 	    SockList_AddInt(&sl, tmp->face->number);
-	    if (pl->contr->socket.sc_version>=1024) {
+        if(pl->contr->socket.ext2)
+        {
+            SockList_AddChar(&sl, tmp->type);
+            SockList_AddChar(&sl, tmp->sub_type1);
+        }
+        if (pl->contr->socket.sc_version>=1024) {
 		int len;
 		char *item_p,item_n[MAX_BUF];
 
@@ -292,7 +307,12 @@ void esrv_send_inventory(object *pl, object *op)
 	    SockList_AddInt(&sl, flags);
 	    SockList_AddInt(&sl, QUERY_FLAG(tmp, FLAG_NO_PICK) ? -1 : WEIGHT(tmp));
 	    SockList_AddInt(&sl, tmp->face->number);
-
+        if(pl->contr->socket.ext2)
+        {
+            SockList_AddChar(&sl, tmp->type);
+            SockList_AddChar(&sl, tmp->sub_type1);
+        }
+        
 	    if (pl->contr->socket.sc_version>=1024) {
 		int len;
 		char *item_p;
@@ -469,7 +489,12 @@ void esrv_send_item(object *pl, object*op)
     SockList_AddInt(&sl, query_flags(op));
     SockList_AddInt(&sl, WEIGHT(op));
     SockList_AddInt(&sl, op->face->number);
-
+    if(pl->contr->socket.ext2)
+    {
+        SockList_AddChar(&sl, op->type);
+        SockList_AddChar(&sl, op->sub_type1);
+    }
+    
     if (pl->contr->socket.sc_version>=1024) {
 	int len;
 	char *item_p;

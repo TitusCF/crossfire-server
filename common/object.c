@@ -578,8 +578,15 @@ void clear_object(object *op) {
   op->material=op->magic=op->state=op->type=0;
   op->face = blank_face;
 
+  op->attacked_by = NULL;
+  op->attacked_by_count= -1;
+  op->type=0;
+  op->sub_type1 = 0;
+  op->sub_type2 = 0;
+  op->casting_speed = (float)0;
   op->anim_enemy_dir = -1;
   op->anim_moving_dir = -1;
+  op->quick_pos = 255;
   /* The object should already have been removed from the speed list
    * before this function is called
    */

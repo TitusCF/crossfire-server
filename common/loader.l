@@ -82,7 +82,7 @@ static char *variable_const[NR_OF_VARIABLES] = {
   "is_wooded","is_hilly","has_ready_skill","has_ready_weapon",
   "no_skill_ident","glow_radius","is_blind","can_see_in_dark",
   "is_cauldron","randomitems","is_dust", "no_steal", "one_hit","berserk",
-  "weapontype",
+  "weapontype","sub_type", "sub_type2","casting_speed",
 /* GROS - And those are for the new plugin system */
   "event_apply",    "event_apply_plugin",   "event_apply_options",
   "event_attack",   "event_attack_plugin",  "event_attack_options",
@@ -478,6 +478,9 @@ WS	[ \t]*
 ^can_cut{S}		{ /* just ignore for now */ }
 ^can_dam_armour{S}	{ }
 ^weapontype{S}		op->weapontype = FVAL;
+^sub_type{S}		op->sub_type1 = (char) IVAL;
+^sub_type2{S}		op->sub_type2 = (char) IVAL;
+^casting_speed{S}	op->casting_speed = FVAL;
 ^event_apply{S}	    {	char *yv=yval();
 
 			if (*yv=='\0') LOG(llevError,"Event (apply) without val\n");
@@ -1584,6 +1587,8 @@ void save_object(FILE *fp,object *op, int flag) {
 
     fprintf(fp,"end\n");
 }
+
+
 
 
 
