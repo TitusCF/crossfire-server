@@ -592,12 +592,10 @@ if (item == spellNormal && !ability ){
     aggravate_monsters(op);
     success = 1;
     break;
-/* peterm: following spells added */
-  case SP_DIVINE_SHOCK:
-    success = fire_arch(op,caster,dir,find_archetype("divine_shock"),type,!ability);
-    break;
   case SP_BALL_LIGHTNING:
-    success = fire_arch(op,caster,dir,find_archetype("ball_lightning"),type,!ability);
+  case SP_DIVINE_SHOCK:
+  case SP_POISON_FOG:
+    success = fire_arch(op,caster,dir,spellarch[type],type,!ability);
     break;
   case SP_METEOR_SWARM: {
     int n;
@@ -798,12 +796,6 @@ if (item == spellNormal && !ability ){
     break;
   case SP_CONFLICT:
     success = cast_cause_conflict(op,caster,spellarch[type],type);
-    break;
-
-  case SP_POISON_FOG:
-    /* These two don't do anything yet, but putting the above in
-     * prevents compiler warnings.
-     */
     break;
   }
 
@@ -1070,6 +1062,7 @@ int fire_arch_from_position (object *op, object *caster, sint16 x, sint16 y,
     case SP_M_MISSILE:
     move_missile(tmp);
 	break;
+  case SP_POISON_FOG:
   case SP_DIVINE_SHOCK:
     case SP_BALL_LIGHTNING:
 	tmp->stats.food=SP_PARAMETERS[type].bdur +
@@ -1824,82 +1817,92 @@ object *find_target_for_friendly_spell(object *op,int dir)
 /*  ball lightning automatically seeks out a victim, if
     it sees any monsters close enough.  */
 void move_ball_lightning(object *op) {
-    int i,nx,ny,j,dam_save,dir;
-    object *owner;
+  int i,nx,ny,j,dam_save,dir;
+  object *owner;
 	 
-    owner = get_owner(op);
+  owner = get_owner(op);
 
-	 /* Only those attuned to PATH_ELEC may use ball lightning with AT_GODPOWER */
-    if(owner && (!(owner->path_attuned & PATH_ELEC))&& (op->attacktype & AT_GODPOWER)) {
-      remove_ob(op);
-      free_object(op);
-      new_draw_info_format(NDI_UNIQUE,0,owner,"The ball lightning dispells immediately.  Perhaps you need attunement to the spell path?");
-      return;
-    }
-
-    /*  the following logic makes sure that the ball
-	doesn't move into a wall, and makes
-	sure that it will move along a wall to try and
-	get at it's victim.  */
-    dir = 0;
-
-    if(!(RANDOM() %4))
-      j = RANDOM() %2;
-    else j=0;	/* ? j wasn't being assigned to anything before */
-    for(i = 1; i < 9; i++) {
-      /* i bit 0: alters sign of offset
-       * otther bits (i / 2): absolute value of offset
-       */
-
-      int offset = ((i ^ j) & 1) ? (i / 2) : - (i / 2);
-      int tmpdir = absdir (op->direction + offset);
-      nx = op->x + freearr_x[tmpdir];
-      ny = op->y + freearr_y[tmpdir];
-      if ( ! wall (op->map, nx, ny) && ! blocks_view (op->map, nx, ny)) {
-	dir = tmpdir;
-	break;
-      }
-    }
-    if (dir == 0) {
-      nx = op->x;
-      ny = op->y;
-    }
-
+  /* Only those attuned to PATH_ELEC may use ball lightning with AT_GODPOWER */
+  if(owner && (!(owner->path_attuned & PATH_ELEC))&& (op->attacktype & AT_GODPOWER)) {
     remove_ob(op);
-    op->y=ny;
-    op->x=nx;
-    insert_ob_in_map(op,op->map,op);
+    free_object(op);
+    new_draw_info_format(NDI_UNIQUE,0,owner,"The ball lightning dispells immediately.  Perhaps you need attunement to the spell path?");
+    return;
+  }
+
+  /*  the following logic makes sure that the ball
+      doesn't move into a wall, and makes
+      sure that it will move along a wall to try and
+      get at it's victim.  */
+  dir = 0;
+
+  if(!(RANDOM() %4))
+    j = RANDOM() %2;
+  else j=0;	/* ? j wasn't being assigned to anything before */
+  for(i = 1; i < 9; i++) {
+    /* i bit 0: alters sign of offset
+     * otther bits (i / 2): absolute value of offset
+     */
+
+    int offset = ((i ^ j) & 1) ? (i / 2) : - (i / 2);
+    int tmpdir = absdir (op->direction + offset);
+    nx = op->x + freearr_x[tmpdir];
+    ny = op->y + freearr_y[tmpdir];
+    if ( ! wall (op->map, nx, ny) ) {
+      dir = tmpdir;
+      break;
+    }
+  }
+  if (dir == 0) {
+    nx = op->x;
+    ny = op->y;
+  }
+
+  remove_ob(op);
+  op->y=ny;
+  op->x=nx;
+  insert_ob_in_map(op,op->map,op);
 	 
-    dam_save = op->stats.dam;  /* save the original dam: we do halfdam on 
-											 surrounding squares */
+  dam_save = op->stats.dam;  /* save the original dam: we do halfdam on 
+                                surrounding squares */
 
-    /* loop over current square and neighbors to hit. */
-    for(j=0;j<9;j++) {
-      int hx,hy;  /* hit these squares */
+  /* loop over current square and neighbors to hit. */
+  for(j=0;j<9;j++) {
+    int hx,hy;  /* hit these squares */
+    object *new_ob;
 
-      hx = nx+freearr_x[j]; hy = ny+freearr_y[j];
+    hx = nx+freearr_x[j]; hy = ny+freearr_y[j];
       
-      /* first, don't ever, ever hit the owner.  Don't hit out
-	 of the map either.*/
-      if(! (owner && owner->x==hx && owner->y==hy) && !out_of_map(op->map,hx,hy)) {
-	if(j) op->stats.dam = dam_save/2;
+    /* first, don't ever, ever hit the owner.  Don't hit out
+       of the map either.*/
+    if(! (owner && owner->x==hx && owner->y==hy) && !out_of_map(op->map,hx,hy)) {
+      if(j) op->stats.dam = dam_save/2;
 		  
-	if(blocked(op->map,hx,hy)) hit_map(op,j,op->attacktype);
-      }
-    }
-    /* restore to the center location and damage*/
-    op->stats.dam = dam_save;
-    i=spell_find_dir(op->map,op->x,op->y,get_owner(op));
+      if(blocked(op->map,hx,hy)) hit_map(op,j,op->attacktype);
 
-    if(i>=0) { /* we have a preferred direction!  */
-      /* pick another direction if the preferred dir is blocked. */
-      if(wall(op->map,nx + freearr_x[i], ny + freearr_y[i])) {
-	i+= RANDOM()%3-1;  /* -1, 0, +1 */
-	if(i==0) i=8;
-	if(i==9) i=1;
-      }
-      op->direction=i;
     }
+    if(out_of_map(op->map,hx,hy) ||
+       wall(op->map,hx,hy)) continue;
+    if(op->other_arch) { /* insert the other arch */
+      new_ob = arch_to_object(op->other_arch);
+      new_ob->x = hx;
+      new_ob->y = hy;
+      insert_ob_in_map(new_ob,op->map,op);
+    }
+  }
+  /* restore to the center location and damage*/
+  op->stats.dam = dam_save;
+  i=spell_find_dir(op->map,op->x,op->y,get_owner(op));
+
+  if(i>=0) { /* we have a preferred direction!  */
+    /* pick another direction if the preferred dir is blocked. */
+    if(wall(op->map,nx + freearr_x[i], ny + freearr_y[i])) {
+      i+= RANDOM()%3-1;  /* -1, 0, +1 */
+      if(i==0) i=8;
+      if(i==9) i=1;
+    }
+    op->direction=i;
+  }
 }
 
 
@@ -2012,7 +2015,7 @@ int spell_find_dir(mapstruct *m, int x, int y, object *exclude) {
         !QUERY_FLAG(tmp,FLAG_GENERATOR)) ||
 	(tmp == exclude || (tmp->head && tmp->head == exclude))))
                 tmp=tmp->above;
-      if(tmp!=NULL && can_see_monsterP(m,x,y,i))
+      if(tmp!=NULL && can_see_monsterP(m,x,y,i) && !blocks_view(m,x,y))
         return freedir[i];
     }
   }
