@@ -369,9 +369,6 @@ void alchemy_failure_effect(object *op,object *cauldron,recipe *rp,int danger) {
       new_draw_info_format(NDI_UNIQUE,0,op, 
 	"The %s %s.",cauldron->name,cauldron_sound());
       return;
-    /* I don't know if this is intential, but this else effectively
-     * inclues the range of 0-9 and 25-39
-     */
   } else if (level< 40) {                	/* MAKE TAINTED ITEM */
       object *tmp=NULL;
 
