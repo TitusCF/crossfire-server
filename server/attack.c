@@ -124,8 +124,16 @@ void save_throw_object(object *op, int type) {
 	if(op->nrof>1)
 	      decrease_ob_nr(op,RANDOM()%op->nrof);
 	else {
-	      remove_ob(op);
-	      free_object(op);
+	    if (op->env) {
+		object *tmp= is_player_inv(op->env);
+
+		if (tmp) {
+		    esrv_del_item(tmp->contr, op->count);
+		    esrv_update_item(UPD_WEIGHT, tmp, tmp);
+		}
+	    }
+	    remove_ob(op);
+	    free_object(op);
 	}
 	if(type&(AT_FIRE|AT_ELECTRICITY)) {
 	      op=get_archetype("burnout");
