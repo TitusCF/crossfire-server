@@ -1,0 +1,37 @@
+/* plugin_logger.c */
+void log2file(char *text2log);
+void connect_database(void);
+void close_database(void);
+int database_insert(char *query);
+void gettimestamp(char *buffer, size_t bufsize, int *precision);
+char *getuniqid(void);
+char *takescreenshoot(object *op);
+char *saveinventory(object *op, char *id);
+char *saveplayerstats(object *op, player_lvl *levels, char *inventoryfile, char *timestamp, int precision, char *key);
+char *takeplayershoot(object *op, char *timestamp, int precision);
+int player_shouts(object *op, char *shout_what);
+int player_birth(object *op);
+int player_dies(object *op, object *hitter);
+int player_login(player *pl, char *host);
+int player_logout(player *pl, char *host);
+int event_say(object *talker, object *listener, char *saywhat, char *hook, char *options);
+int event_apply(object *who, object *what, char *hook, char *options);
+CFParm *registerHook(CFParm *PParm);
+CFParm *triggerEvent(CFParm *PParm);
+CFParm *initPlugin(CFParm *PParm);
+CFParm *removePlugin(CFParm *PParm);
+void debugF(int *i);
+CFParm *postinitPlugin(CFParm *PParm);
+/* arena.c */
+int arena_player_comment(object *talker, char *saywhat, int playernumber);
+int arena_looser_comment(object *talker, char *saywhat);
+int arena_winner_comment(object *talker, char *saywhat);
+int arena_looser_leave(object *who);
+int arena_winner_leave(object *who);
+void set_arena_time(void);
+void arena_fix_last(void);
+void save_last_arena(void);
+void flush_arena(void);
+int set_arena_player(object *pl, int playernumber);
+void set_looser(object *looser);
+int trigger_arena(object *trigger, object *above, char *options);
