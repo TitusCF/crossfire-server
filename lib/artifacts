@@ -3174,7 +3174,7 @@ chance 200
 Object Poison
 type 6
 food 10
-hp -50
+hp -5
 cursed 1
 end
 #
@@ -3183,7 +3183,7 @@ chance 20
 Object Hideous Poison
 type 6
 food 10
-hp -100
+hp -25
 Str -1
 Con -1
 Dex -1
@@ -3265,7 +3265,6 @@ Object Heat Resistance
 type 6
 value 30
 resist_fire 30
-
 end
 #
 Allowed mushroom_2
@@ -3274,7 +3273,6 @@ Object Frost Resistance
 type 6
 value 30
 resist_cold 30
-
 end
 #
 Allowed mushroom_1, mushroom_2, mushroom_3
@@ -3283,7 +3281,6 @@ Object Bravery
 type 6
 value 100
 resist_fear 30
-
 end
 #
 Allowed mushroom_3
@@ -3292,7 +3289,6 @@ Object Magic Resistance
 type 6
 value 40
 resist_magic 30
-
 end
 #
 Allowed mushroom_2, mushroom_3

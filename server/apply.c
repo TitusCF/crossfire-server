@@ -1712,7 +1712,8 @@ static void apply_treasure (object *op, object *tmp)
 
 static void apply_food (object *op, object *tmp)
 {
-  int capacity_remaining;
+    int capacity_remaining;
+
     if(op->type!=PLAYER)
       op->stats.hp=op->stats.maxhp;
     else {
@@ -2586,8 +2587,9 @@ void eat_special_food(object *who, object *food) {
   /* check for hp, sp change */
   if(food->stats.hp!=0) {
      if(QUERY_FLAG(food, FLAG_CURSED)) { 
-         new_draw_info(NDI_UNIQUE, 0,who,"Eck!...that was poisonous!");
- 	 who->stats.hp -= food->stats.hp;
+	strcpy(who->contr->killer,food->name);
+	hit_player(who, food->stats.hp, food, AT_POISON);
+	new_draw_info(NDI_UNIQUE, 0,who,"Eck!...that was poisonous!");
      } else { 
          if(food->stats.hp>0) 
 	    new_draw_info(NDI_UNIQUE, 0,who,"You begin to feel better.");
