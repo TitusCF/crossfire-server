@@ -52,27 +52,25 @@ player *find_player(char *plname)
 }
 
 void display_motd(object *op) {
-#ifdef MOTD
-  char buf[MAX_BUF];
-  FILE *fp;
-  int comp;
-
-  sprintf(buf,"%s/%s",settings.confdir,MOTD);
-  if((fp=open_and_uncompress(buf,0,&comp))==NULL) {
-    return;
-  }
-  while(fgets(buf,MAX_BUF,fp)!=NULL) {
-    char *cp;
-    if(*buf=='#')
-      continue;
-    cp=strchr(buf,'\n');
-    if(cp!=NULL)
-      *cp='\0';
-    new_draw_info(NDI_UNIQUE | NDI_GREEN, 0,op,buf);
-  }
-  close_and_delete(fp, comp);
-  new_draw_info(NDI_UNIQUE, 0,op," ");
-#endif
+    char buf[MAX_BUF];
+    FILE *fp;
+    int comp;
+    
+    sprintf(buf, "%s/%s", settings.confdir, settings.motd);
+    if ((fp=open_and_uncompress(buf, 0, &comp)) == NULL) {
+	return;
+    }
+    while (fgets(buf, MAX_BUF, fp) != NULL) {
+	char *cp;
+	if( *buf == '#')
+	    continue;
+	cp=strchr(buf, '\n');
+	if (cp != NULL)
+		*cp='\0';
+	    new_draw_info(NDI_UNIQUE | NDI_GREEN, 0, op, buf);
+    }
+    close_and_delete(fp, comp);
+    new_draw_info(NDI_UNIQUE, 0, op, " ");
 }
 
 int playername_ok(char *cp) {
@@ -236,9 +234,7 @@ int add_player(NewSocket *ns) {
 
     CLEAR_FLAG(p->ob, FLAG_FRIENDLY);
     add_friendly_object(p->ob);
-#ifdef MOTD
     display_motd(p->ob);
-#endif
     get_name(p->ob);
     return 0;
 }

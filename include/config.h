@@ -612,17 +612,6 @@
 
 
 /*
- * Where to send error-reports.  If you're hacking at the source, define
- * this as your mail-address.  You do not need to define this - you can
- * leave it undefined if you don't want the information available from this
- * and instead use some other mean (motd for example)
- */
-
-#ifndef DM_MAIL
-/* #define DM_MAIL "mark@pyramid.com" */
-#endif
-
-/*
  * If you want to regenerate the spoiler.ps file, you have to recompile
  * the game with DUMP_SWITCHES defined.  If defined, it turns on the
  * -m -m2 -m3 -m4 switches.  There is probably no reason not to define
@@ -755,9 +744,7 @@
  * (It resides in the CONFDIR directory)
  */
 
-#ifndef MOTD
 #define MOTD "motd"
-#endif
 
 /*
  * You can restrict playing in certain times by creating a PERMIT_FILE

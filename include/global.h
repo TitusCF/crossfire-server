@@ -306,6 +306,8 @@ typedef struct Settings {
     uint8   recycle_tmp_maps; /* re-use tmp maps. */
     uint8   explore_mode;     /* explore mode allowed? */
     uint8   spellpoint_level_depend; /* spell costs go up with level */
+    char    motd[MAX_BUF];    /* name of the motd file */
+    char    dm_mail[MAX_BUF]; /* DM's Email address */
 
     /* The meta_ is information for the metaserver.  These are set in 
      * the lib/settings file.

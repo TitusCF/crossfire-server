@@ -269,6 +269,16 @@ static void load_settings()
 	    if (has_val) strcpy(settings.meta_server, cp);
 	    else 
 		LOG(llevError,"load_settings: metaserver_server must have a value.\n");
+	} else if (!strcasecmp(buf,"motd")) {
+	    if (has_val)
+		strcpy(settings.motd, cp);
+	    else 
+		LOG(llevError,"load_settings: motd must have a value.\n");
+	} else if (!strcasecmp(buf,"dm_mail")) {
+	    if (has_val)
+		strcpy(settings.dm_mail, cp);
+	    else 
+		LOG(llevError,"load_settings: dm_mail must have a value.\n");
 	} else if (!strcasecmp(buf,"metaserver_host")) {
 	    if (has_val) strcpy(settings.meta_host, cp);
 	    else 
@@ -484,10 +494,10 @@ void init(int argc, char **argv) {
     fprintf(logfile,"Copyright (C) 1994 Mark Wedel.\n");
     fprintf(logfile,"Copyright (C) 1992 Frank Tore Johansen.\n");
 
-#ifdef DM_MAIL
-    fprintf(logfile,"Maintained locally by: %s\n",DM_MAIL);
-    fprintf(logfile,"Questions and bugs should be mailed to above address.\n");
-#endif
+    if (strcmp(settings.dm_mail, "") != 0) {
+	fprintf(logfile,"Maintained locally by: %s\n", settings.dm_mail);
+	fprintf(logfile,"Questions and bugs should be mailed to above address.\n");
+    }
     SRANDOM(time(NULL));
 
     init_startup();	/* Write (C), check shutdown/forbid files */
@@ -709,10 +719,6 @@ void compile_info() {
   printf("Use_swap_stats:\t<true>\n");
 #else
   printf("Use_swap_stats:\t<false>\n");
-#endif
-
-#ifdef DM_MAIL
-  printf("DM mail:\t%s\n",DM_MAIL);
 #endif
 
 #ifdef X_EDITOR
