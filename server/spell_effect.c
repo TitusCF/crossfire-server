@@ -2112,13 +2112,6 @@ static void alchemy_object(object *obj, int *small_nuggets,
 	value *= 0.9;
 
     if ((obj->value>0) && rndm(0, 29)) {
-#ifdef LOSSY_ALCHEMY
-	int tmp = (value % large->value) / small->value;
-
-	*large_nuggets += value/ large->value;
-	if (tmp)
-	    *small_nuggets += rndm(1, tmp);
-#else
 	static int value_store;
 	int count;
 	value_store += value;
@@ -2129,7 +2122,6 @@ static void alchemy_object(object *obj, int *small_nuggets,
 	*small_nuggets += count;
 	value_store -= count * small->value;
 	/* LOG(llevDebug, "alchemize value %d, remainder %d\n", value, value_store); */
-#endif
     }
 
     /* Turn 25 small nuggets into 1 large nugget.  If the value
