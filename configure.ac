@@ -1,7 +1,7 @@
 dnl Process this file with autoconf to produce a configure script.
 
 AC_REVISION($Id$)
-AC_INIT([crossfire], [1.6.0], [crossfire-devel@listserv.real-time.com])
+AC_INIT([crossfire], [1.7.0], [crossfire-devel@listserv.real-time.com])
 AC_CONFIG_AUX_DIR(utils)
 AC_CONFIG_SRCDIR([server/main.c])
 AM_INIT_AUTOMAKE
@@ -103,6 +103,10 @@ AC_CHECK_LIB(Xpm, main,  AC_DEFINE(HAVE_LIBXPM,[],[Define if libXpm is available
 AC_CHECK_LIB(m, main)
 
 AC_CHECK_LIB(png, main,  AC_DEFINE(HAVE_LIBPNG,[],[Define if libpng is available]) X11LIBS="$X11LIBS -lpng", , $X11LIBS )
+
+dnl png has a dependency in some cases on libz - if we have it, can't really
+dnl be harmful to link it in.
+AC_CHECK_LIB(z, main,  AC_DEFINE(HAVE_LIBZ,[],[Define if libz is available]) X11LIBS="$X11LIBS -lz", , $X11LIBS )
 
 dnl Misc libraries.
 AC_CHECK_LIB(crypt, main)
