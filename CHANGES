@@ -18,6 +18,13 @@ else.  With this, include the file(s) that you changed.
 
 Changes for CVS:
 
+New attacktype messages for damage.  Now it gives you the message for the
+damage type you actually did.  So if you are attacking with stormbringer,
+you get electrical or drain-based messages.  Also added special messages for
+the attack-based skills like punching, karate, etc.
+
+garbled 2001-10-06
+
 common/map.c: Add INS_ON_TOP flag to insert_ob_in_map calls to preserve
    stacking order.  Modify update_position to generate map spaces with
    more proper order.
