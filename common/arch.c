@@ -324,6 +324,7 @@ void first_arch_pass(FILE *fp) {
   object *op;
   archetype *at,*prev=NULL,*last_more=NULL;
   int i,first=2;
+  int xo,yo;
 
   op=get_object();
   op->arch=first_archetype=at=get_archetype_struct();
@@ -354,10 +355,15 @@ void first_arch_pass(FILE *fp) {
           last_more->clone.more = &at->clone;
       }
       last_more=at;
-      
-      /*LOG(llevDebug,"Part object: %d,%d\n", at->clone.x,at->clone.y);*/
+  
+      xo = at->clone.x;
+      if(xo <0)
+          xo=(xo*-1)|8;
+      yo = at->clone.y;
+      if(yo <0)
+          yo=(yo*-1)|8;
+      at->clone.quick_pos = 0|(xo<<4)|yo;
       prev->clone.quick_pos = 255; /* mark head tile */
-      at->clone.quick_pos = 0|(at->clone.x<<4)|at->clone.y;
       
       break;
     }
