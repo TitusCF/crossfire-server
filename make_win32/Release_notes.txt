@@ -1,0 +1,60 @@
+Release notes for Crossfire Server (Windows), July 31th, 2004
+--------------------------------------------------------------
+
+This is version 1.6.1 of the server.
+It fixes the 'not getting any money when selling items' bug, and others
+(introducing new bugs probably :))
+
+--------------------------------------------------------------
+
+Once you have installed the server, you MUST download a map set.
+Note: this server has been tested only with 'bigworld maps'.
+
+You have three options for maps:
+
+1) Grab one of the installers for either 'smallworld maps' or 'bigworld maps'.
+
+Launch it, point to where you installed Crossfire Server, install.
+
+
+2) Grab map set from official SourceForge page.
+
+The following sets are available:
+* small world maps, http://prdownloads.sourceforge.net/crossfire/crossfire-1.5.0.maps-small.tar.gz?download
+* big world maps, at http://prdownloads.sourceforge.net/crossfire/crossfire-1.5.0.maps-big.tar.gz?download
+
+Note: you need Winzip, ZipGenius, UltimateZip or equivalent to unzip the files.
+Note: Make SURE that this tool will NOT convert Unix newline to Windows, else it will NOT work.
+
+Unzip the maps in the share/maps of where you installed Crossfire Server
+(typically C:\Program Files\Crossfire Server)
+
+
+3) Get maps from CVS
+
+This ensures you always have the latest maps.
+
+CVS instructions for Crossfire are located at
+http://sourceforge.net/cvs/?group_id=13833
+
+Fire you favorite CVS tool, and get either 'maps' or 'maps-bigworld'
+module.
+Make SURE, ABSOLUTELY SURE, that your tool will NOT convert Unix newline
+to Windows newline. It will NOT work if conversion occurs.
+
+Move'em to share/maps of where you installed Crossfire Server.
+(if you picked 'maps-bigworld', rename the directory to 'maps')
+
+
+Known issues
+------------
+* Python plugin support seems weird. Casino (Goth's tavern) work, but not mail.
+
+Troubleshooting
+---------------
+If something goes wrong, report your troubles to:
+* Crossfire's messageboard: http://www.metalforge.net/cfmb/index.php
+* Crossfire's mailing list: see http://crossfire.real-time.com for instructions on how to join it
+* #crossfire on irc.freenode.org
+
+Also check Crossfire's bugs page at http://sourceforge.net/tracker/?group_id=13833&atid=113833
