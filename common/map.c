@@ -355,10 +355,6 @@ int blocked_link(object *ob, int x, int y) {
      */
     for(tmp = GET_MAP_OB(m,x,y); tmp!= NULL; tmp = tmp->above) {
 
-	if (QUERY_FLAG(tmp,FLAG_NO_PASS) || (QUERY_FLAG(tmp,FLAG_ALIVE) &&
-		     tmp->head != ob && tmp != ob && tmp->type != DOOR))
-			return 1;
-
 	/* This must be before the checks below.  Code for inventory checkers. */
 	if (tmp->type==CHECK_INV && QUERY_FLAG(tmp,FLAG_NO_PASS)) {
 	    /* If last_sp is set, the player/monster needs an object,
@@ -380,6 +376,10 @@ int blocked_link(object *ob, int x, int y) {
 		    continue;
 	    }
 	} /* if check_inv */
+	else if (QUERY_FLAG(tmp,FLAG_NO_PASS) || (QUERY_FLAG(tmp,FLAG_ALIVE) &&
+		     tmp->head != ob && tmp != ob && tmp->type != DOOR))
+			return 1;
+
     }
     return 0;
 }

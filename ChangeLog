@@ -17,6 +17,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+common/map.c:  Fix problem with ordering in check_linked() - checking
+   for NO_PASS was before checks for inventory checkers, resulting in
+   inventory checkers that require the player to have an item not working.
+MSW 2002-09-15
+
+
 ------------------------------------------------------------------------------
 Changes for 1.4.0:
 
