@@ -998,7 +998,6 @@ void flee_player(object *op) {
     int m=1-(RANDOM()&2);
     if(move_ob(op,absdir(dir+diff*m),op)||
        (diff==0&&move_ob(op,absdir(dir-diff*m),op))) {
-      draw(op);
       return;
     }
   }

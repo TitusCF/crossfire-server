@@ -43,7 +43,6 @@ type_func_void	process_active_maps_func;
 type_func_map	update_buttons_func;
 type_func_int_int_ob_cchar	draw_info_func;
 type_move_apply_func	move_apply_func;
-type_func_ob	draw_func;
 type_func_ob_ob	monster_check_apply_func;
 type_func_void	init_blocksview_players_func;
 type_func_int_map_char	info_map_func;
@@ -84,7 +83,6 @@ void init_function_pointers() {
   update_buttons_func = dummy_function_map;
   draw_info_func = dummy_draw_info;
   move_apply_func = dummy_move_apply_func;
-  draw_func = dummy_function_ob;
   monster_check_apply_func = dummy_function_ob2;
   init_blocksview_players_func = dummy_function;
   info_map_func = dummy_function_mapstr;
@@ -169,15 +167,6 @@ void set_draw_info(type_func_int_int_ob_cchar addr) {
 
 void set_move_apply(type_move_apply_func addr) {
   move_apply_func = addr;
-}
-
-/*
- * Specify which function to call to draw on the graphic-window
- * of a player.
- */
-
-void set_draw(type_func_ob addr) {
-  draw_func = addr;
 }
 
 /*

@@ -17,6 +17,21 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+common/glue.c, include/funcpoint.h: remove draw_func() pointer - no longer
+   needed, so code that sets up pointer removed.
+lib/*: rebuilt - facings added to old player animation information.
+   ruined_temple archetype added.
+server/init.c: remove set_draw() function
+server/player.c: remove call to draw() - socket code takes care of this.
+socket/info.c: remove draw() - instead, draw_client_map() can be used,
+    as that is most the only thing draw() did anyways.
+socket/loop.c: Update draw() calls to draw_client_map()
+socket/request.c: Remove special handling for darkness==4 cases (first
+    space that is in full darkness) - this is extra complications and causes
+    display problems.  Update draw_client_map() to include the little bit
+    of logic that draw() had that this function did not have.
+MSW 2003-03-24
+
 server/spell_effect.c: Some code cleanuip to cast_change_attr - mostly
    to combine the processing of the stat improving spells together.
    The actual change to playability is that bless and holy possession

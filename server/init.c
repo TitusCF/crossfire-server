@@ -913,7 +913,6 @@ void setup_library() {
   set_update_buttons(update_buttons);
   set_draw_info(new_draw_info);
   set_move_apply(move_apply);
-  set_draw(draw);
   set_monster_check_apply(monster_check_apply);
   set_move_teleporter(move_teleporter);
   set_move_firewall(move_firewall);
@@ -923,7 +922,6 @@ void setup_library() {
   set_esrv_send_item(esrv_send_item);
   set_esrv_del_item(esrv_del_item);
   set_esrv_update_item(esrv_update_item);
-/*  set_init_blocksview_players(init_blocksview_players); */
   set_info_map(new_info_map);
   set_set_darkness_map(set_darkness_map);
   set_dragon_gain_func(dragon_ability_gain);
