@@ -29,9 +29,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/types.h>
+#include <process.h>
 
 #define __STDC__ 1      // something odd, CF want this, but don'T include it
                         // before the standard includes
+
+#define HAVE_SNPRINTF 1
+#define snprintf _snprintf
 
 #include "version.h"
 

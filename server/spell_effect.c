@@ -2110,7 +2110,7 @@ int cast_detection(object *op, int type) {
         case SP_SHOW_INVIS:
 	    /* Might there be other objects that we can make visibile? */
 	    if (tmp->invisible && (QUERY_FLAG(tmp, FLAG_MONSTER) || 
-		tmp->type==PLAYER || tmp->type==HANDLE || 
+		tmp->type==PLAYER || tmp->type==CF_HANDLE || 
 		tmp->type==TRAPDOOR || tmp->type==EXIT || tmp->type==HOLE ||
 		tmp->type==BUTTON || tmp->type==TELEPORTER ||
 		tmp->type==GATE || tmp->type==LOCKED_DOOR ||
@@ -3665,3 +3665,4 @@ int cast_cause_conflict(object *op, object *caster, archetype *spellarch,int typ
     }
   return 1;
 }
+

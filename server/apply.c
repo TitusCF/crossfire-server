@@ -1841,7 +1841,7 @@ int manual_apply (object *op, object *tmp, int aflag)
 
   switch (tmp->type)
   {
-  case HANDLE:
+  case CF_HANDLE:
     new_draw_info(NDI_UNIQUE, 0,op,"You turn the handle.");
     play_sound_map(op->map, op->x, op->y, SOUND_TURN_HANDLE);
     tmp->value=tmp->value?0:1;
@@ -2771,3 +2771,4 @@ void apply_changes_to_player(object *player, object *change) {
     
   
 }
+

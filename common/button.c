@@ -67,7 +67,7 @@ void push_button(object *op) {
       tmp->speed=0.5;
       update_ob_speed(tmp);
       break;
-    case HANDLE:
+    case CF_HANDLE:
 	SET_ANIMATION(tmp, (tmp->value=tmp->stats.maxsp?!op->value:op->value));
 	update_object(tmp);
 	break;

@@ -199,7 +199,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define SPINNER		90
 #define GATE		91
 #define BUTTON		92
-#define HANDLE		93
+#define CF_HANDLE		93
 #define HOLE		94
 #define TRAPDOOR	95
 #define WORD_OF_RECALL	96
