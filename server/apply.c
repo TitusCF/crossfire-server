@@ -130,7 +130,7 @@ int apply_potion(object *op, object *tmp)
 	    return 1;
 	}
 	if ((at = find_archetype("depletion"))==NULL) {
-	    LOG(llevError,"Could not find archetype depletion");
+	    LOG(llevError,"Could not find archetype depletion\n");
 	    return 0;
 	}
 	depl = present_arch_in_ob(at, op);

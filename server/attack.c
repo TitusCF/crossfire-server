@@ -258,7 +258,7 @@ int hit_map(object *op,int dir,int type) {
     }
 
     if ( ! op->map) {
-	LOG (llevError,"BUG: hit_map(): %s has no map", op->name);
+	LOG (llevError,"BUG: hit_map(): %s has no map\n", op->name);
 	return 0;
     }
 

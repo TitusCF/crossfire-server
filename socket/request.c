@@ -362,7 +362,7 @@ void PlayerCmd(char *buf, int len, player *pl)
 	buf=strchr(buf,' ');	/* advance beyond the numbers */
 	if (!buf) {
 #ifdef ESRV_DEBUG
-	    LOG(llevDebug,"PlayerCmd: Got count but no command.");
+	    LOG(llevDebug,"PlayerCmd: Got count but no command.\n");
 #endif
 	    return;
 	}

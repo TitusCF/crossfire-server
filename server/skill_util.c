@@ -876,7 +876,7 @@ static int do_skill_attack(object *tmp, object *op, char *string, object *skill)
 		if (op->current_weapon_script)
 		    FREE_AND_CLEAR_STR(op->current_weapon_script);
 		if (!tmp) {
-		    LOG(llevError,"Could not find applied weapon on %s",
+		    LOG(llevError,"Could not find applied weapon on %s\n",
 			op->name);
 		    op->current_weapon=NULL;
 		    return 0;

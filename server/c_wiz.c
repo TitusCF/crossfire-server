@@ -1286,7 +1286,7 @@ static int checkdm(object *op, char *pl_name, char *pl_passwd, char *pl_host)
   while(fgets(line_buf, 160, dmfile) != NULL) {
     if (line_buf[0]=='#') continue;
     if (sscanf(line_buf,"%[^:]:%[^:]:%s\n",name, passwd, host)!=3) {
-	LOG(llevError,"Warning - malformed dm file entry: %s", line_buf);
+	LOG(llevError,"Warning - malformed dm file entry: %s\n", line_buf);
     }
     else if ((!strcmp(name,"*") || (pl_name && !strcmp(pl_name, name)))
       && (!strcmp(passwd,"*") || !strcmp(passwd,pl_passwd)) &&

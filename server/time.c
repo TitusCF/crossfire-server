@@ -1047,7 +1047,7 @@ void move_player_changer(object *op) {
 	    player->contr->bed_y = EXIT_Y(op);
 	}
 	else
-	    LOG(llevDebug, "WARNING: destination '%s' in player_changer must be an absolute path!",
+	    LOG(llevDebug, "WARNING: destination '%s' in player_changer must be an absolute path!\n",
 		EXIT_PATH(op));
 	
 	enter_exit(op->above,op);

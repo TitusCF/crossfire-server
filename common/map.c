@@ -1188,7 +1188,7 @@ void free_all_objects(mapstruct *m) {
      */
     for (op=objects; op!=NULL; op=op->next) {
 	if (!QUERY_FLAG(op, FLAG_REMOVED) && op->map == m) {
-	    LOG(llevDebug,"free_all_objects: object %s still on map after it should have been freed", op->name);
+	    LOG(llevDebug,"free_all_objects: object %s still on map after it should have been freed\n", op->name);
 	    abort();
 	}
     }

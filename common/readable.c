@@ -1077,7 +1077,7 @@ change_book (object *book, int msgtype)
 
 		    if (!tl)
 		      {
-			  LOG (llevError, "change_book_name(): can't find title list");
+			  LOG (llevError, "change_book_name(): can't find title list\n");
 			  numb = 0;
 		      }
 		    else
@@ -1587,7 +1587,7 @@ void make_formula_book(object *book, int level) {
 	if ((at = find_archetype (op_name)) != (archetype *) NULL)
 	    op_name = at->clone.name;
 	else
-	    LOG (llevError, "formula_msg() can't find arch %s for formula.",
+	    LOG (llevError, "formula_msg() can't find arch %s for formula.\n",
 		   op_name);
 
 	/* item name */
@@ -1643,7 +1643,7 @@ void make_formula_book(object *book, int level) {
 	    }
 	}
 	else
-	    LOG (llevError, "formula_msg() no ingredient list for object %s of %s",
+	    LOG (llevError, "formula_msg() no ingredient list for object %s of %s\n",
 		   op_name, formula->title);
 	if (retbuf[strlen(retbuf)-1]!= '\n') strcat(retbuf, "\n");
 	if (book->msg) free_string(book->msg);

@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+common/{map.c, readable.c, treasure.c}, crossedit/Attr.c, server/{apply.c,
+attack.c, c_wiz.c, init.c, monster.c, pets.c, shop.c, skill_util.c, skills.c,
+spell_attack.c, spell_effect.c, time.c}, socket/{info.c, request.c}: Add
+   missing newline character to LOG() messages.
 common/living.c, include/living.h: Change type of weight_limit to uint32.
 socket/request.c: Remove non-portable assignment to rvalue.
 doc/{README_PLUGINS.doc, README_PYTHON.txt, plugins}, doc/Developers/{README,

@@ -53,7 +53,7 @@ void check_spell_knockback(object *op) {
 	int frictionmod=2; /*poor man's physics - multipy targets weight by this amount */
 
 	if(! op->weight) { /*shouldn't happen but if cone object has no weight drop out*/
-		/*LOG (llevDebug, "DEBUG: arch weighs nothing");*/
+		/*LOG (llevDebug, "DEBUG: arch weighs nothing\n");*/
 		return;
 	}else{
 	   weight_move = op->weight +(op->weight * op->level) / 3;

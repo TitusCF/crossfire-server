@@ -787,7 +787,7 @@ int cast_wonder(object *op, object *caster, int dir, object *spell_ob) {
 	}
 	/* Prevent inifinit recursion */
 	if (newspell->subtype == SP_WONDER) {
-	    LOG(llevError,"cast_wonder: spell returned is another wonder spell!");
+	    LOG(llevError,"cast_wonder: spell returned is another wonder spell!\n");
 	    return 0;
 	}
 	return cast_spell(op,caster,dir,newspell, NULL);

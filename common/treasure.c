@@ -214,7 +214,7 @@ void load_treasures() {
 		    if (t->next_yes || t->next_no) {
 			LOG(llevError,"Treasure %s is one item, but on treasure %s\n",
 			    tl->name, t->item ? t->item->name : t->name);
-			LOG(llevError,"  the next_yes or next_no field is set");
+			LOG(llevError,"  the next_yes or next_no field is set\n");
 		    }
 #endif
 		    tl->total_chance += t->chance;

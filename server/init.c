@@ -861,7 +861,7 @@ void compile_info() {
   exit(0);
 #else
   execl("/bin/uname", "uname", "-a", NULL);
-  LOG(llevError, "Opps, should't have gotten here.");
+  LOG(llevError, "Oops, should't have gotten here.\n");
   perror("execl");
   exit(-1);
 #endif

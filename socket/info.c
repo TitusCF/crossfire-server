@@ -57,7 +57,7 @@ static void esrv_print_msg(NewSocket *ns,int color, const char *str)
     } else {
 	snprintf(buf,HUGE_BUF, "drawinfo %d %s", color, str);
     }
-/*    LOG(llevDebug,"sending %s to socket, len=%d", buf, strlen(buf));*/
+/*    LOG(llevDebug,"sending %s to socket, len=%d\n", buf, strlen(buf));*/
     Write_String_To_Socket(ns, buf, strlen(buf));
 }
 

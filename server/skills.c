@@ -683,7 +683,7 @@ int skill_ident(object *pl, object *skill) {
 	    break;
 
 	default:
-	    LOG(llevError,"Error: bad call to skill_ident()");
+	    LOG(llevError,"Error: bad call to skill_ident()\n");
 	    return 0;
 	    break;
     }

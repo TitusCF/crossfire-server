@@ -252,7 +252,7 @@ void remove_all_pets(mapstruct *map) {
 	follow_owner(obl->ob,owner);
 	if(QUERY_FLAG(obl->ob, FLAG_REMOVED) && FABS(obl->ob->speed) > MIN_ACTIVE_SPEED) {
 	    object *ob = obl->ob;
-	    LOG(llevMonster,"(pet failed to follow)");
+	    LOG(llevMonster,"(pet failed to follow)\n");
 	    remove_friendly_object(ob);
 	    free_object(ob);
 	}

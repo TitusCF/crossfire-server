@@ -93,7 +93,7 @@ uint64 query_cost(object *tmp, object *who, int flag) {
     else {
 	if (tmp->arch != NULL) {
 	    if (flag == F_BUY) {
-		LOG(llevError, "Asking for buy-value of unidentified object.");
+		LOG(llevError, "Asking for buy-value of unidentified object.\n");
 		val = tmp->arch->clone.value * 50 * number;
 	    }
 	    else {	/* Trying to sell something, or get true value */
@@ -112,7 +112,7 @@ uint64 query_cost(object *tmp, object *who, int flag) {
 	} else { /* No archetype with this object */
 	    LOG(llevDebug,"In sell item: Have object with no archetype: %s\n", tmp->name);
 	    if (flag == F_BUY) {
-		LOG(llevError, "Asking for buy-value of unidentified object without arch.");
+		LOG(llevError, "Asking for buy-value of unidentified object without arch.\n");
 		val = number * tmp->value * 10;
 	    }
 	    else
@@ -317,7 +317,7 @@ uint64 query_money(object *op) {
     uint64 total=0;
 
     if (op->type!=PLAYER && op->type!=CONTAINER) {
-	LOG(llevError, "Query money called with non player/container");
+	LOG(llevError, "Query money called with non player/container\n");
 	return 0;
     }
     for (tmp = op->inv; tmp; tmp= tmp->below) {
@@ -455,7 +455,7 @@ static uint64 pay_from_container(object *pouch, uint64 to_pay) {
     for (i=0; i<NUM_COINS; i++)
 	if (coin_objs[i]==NULL) {
 	    at = find_archetype(coins[NUM_COINS-1-i]);
-	    if (at==NULL) LOG(llevError, "Could not find %s archetype", coins[NUM_COINS-1-i]);
+	    if (at==NULL) LOG(llevError, "Could not find %s archetype\n", coins[NUM_COINS-1-i]);
 	    coin_objs[i] = get_object();
 	    copy_object(&at->clone, coin_objs[i]);
 	    coin_objs[i]->nrof = 0;
@@ -602,7 +602,7 @@ void sell_item(object *op, object *pl) {
   
     for (count=0; coins[count]!=NULL; count++) {
 	at = find_archetype(coins[count]);
-	if (at==NULL) LOG(llevError, "Could not find %s archetype", coins[count]);
+	if (at==NULL) LOG(llevError, "Could not find %s archetype\n", coins[count]);
 	else if ((i/at->clone.value) > 0) {
 	    for ( pouch=pl->inv ; pouch ; pouch=pouch->below ) {
 		if ( pouch->type==CONTAINER && QUERY_FLAG(pouch, FLAG_APPLIED) && pouch->race && strstr(pouch->race, "gold") ) {

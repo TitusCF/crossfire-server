@@ -772,7 +772,7 @@ int monster_cast_spell(object *head, object *part,object *pl,int dir, rv_vector 
 	if (spell_item->type == SPELLBOOK) {
 	    spell_item=spell_item->inv;
 	    if (spell_item->inv) {
-		LOG(llevError,"spellbook %s does contain a spell?", spell_item->name);
+		LOG(llevError,"spellbook %s does contain a spell?\n", spell_item->name);
 	    } else
 		spell_item=spell_item->inv;
 	}
@@ -1788,7 +1788,7 @@ int can_detect_enemy (object *op, object *enemy, rv_vector *rv) {
 	    if((sk_hide = find_skill_by_number(enemy,SK_HIDING)))
 		bonus -= sk_hide->level;
 	    else { 
-		LOG(llevError,"can_detect_enemy() got hidden player w/o hiding skill!");
+		LOG(llevError,"can_detect_enemy() got hidden player w/o hiding skill!\n");
 		make_visible(enemy);
 		radius=radius<MIN_MON_RADIUS?MIN_MON_RADIUS:radius;
 	    }

@@ -185,7 +185,7 @@ static void getTrigger (object *ob, char *str, XtPointer c) {
 static void getSacrifice (object *ob, char *str, XtPointer c) {
     if(!ob->slaying || !*ob->slaying) {
 	if(!ob->arch->clone.slaying)
-	    LOG(llevError,"missing sacriface for altar");
+	    LOG(llevError,"missing sacriface for altar\n");
 	strcpy (str, ob->arch->clone.slaying);
     } else
 	strcpy (str, ob->slaying);
