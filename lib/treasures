@@ -419,6 +419,13 @@ treasureone beholder_parts
   arch tongue
     chance 10
   end
+treasureone skull_parts
+  arch tooth
+    chance 95
+more
+  arch tongue
+    chance 5
+  end
 treasureone demon_parts
   arch icor
     chance 70
@@ -2922,6 +2929,40 @@ treasure beholder
   more
   arch gem
   nrof 2
+  chance 10
+  end
+treasure skull 
+  list skull_parts
+    chance 20
+  more
+  arch ability_paralyze
+  chance 50
+  more
+  arch ability_fear
+  chance 75
+  more
+  arch ability_poison
+  chance 50
+  more
+  arch ability_lightning
+  more
+  arch ability_coldspell
+  chance 25
+  more
+  arch ability_firespell
+  more
+  arch ability_missile
+  more
+  arch ability_bullet
+  more
+  arch ability_speedball
+  more
+  arch ability_mass_confusion
+  more
+  arch ability_slow
+  more
+  arch gem
+  nrof 3
   chance 10
   end
 treasure demonlord
