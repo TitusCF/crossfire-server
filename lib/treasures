@@ -406,6 +406,9 @@ more
   more
   arch bracers_gnarg
     chance 2
+arch god_grace_limit_high
+more
+  arch god_spelldirect_cause_rabies
 end
 ##############################################################
 #
