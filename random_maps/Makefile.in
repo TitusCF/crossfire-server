@@ -66,6 +66,8 @@ INCLUDES= $(EXTRA_INCLUDES) -I../include -I.
 LIBS = -L../common -lcross @LIBS@ $(EXTRA_LIBS)
 
 SHELL = @BOURNE_SHELL@
+RANLIB = @RANLIB@
+
 
 prefix = @prefix@
 exec_prefix = @exec_prefix@
@@ -87,7 +89,7 @@ random_map: $(OBJS)
 random_map.a: $(OBJS)
 	$(RM) -f $@
 	$(AR) clq $@ $(OBJS)
-
+	$(RANLIB) $@
 
 depend:
 	$(DEPEND) $(DEPENDFLAGS) -- $(CFLAGS) $(INCLUDES) -I../include -- $(SRCS)
