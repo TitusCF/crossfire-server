@@ -99,7 +99,9 @@ INSTALL = @INSTALL@
 CP = @CP@
 RM = @RM@
 SHELL = @BOURNE_SHELL@
-
+TAR = @TAR@
+GZIP = @GZIP@
+BZIP = @BZIP@
 
 all:: archetypes bmaps.paths crossfire.0 faces animations
 
@@ -198,6 +200,13 @@ archive::
 	@if [ -d $(ARCHIVE)/lib/wizhelp ]; then set +x; \
 	else (set -x; $(MKDIR) $(ARCHIVE)/lib/wizhelp); fi
 	$(CP) $(FILES_WIZHELP) $(ARCHIVE)/lib/wizhelp
+
+# This block makes the archive of the arch directory.
+archive::
+	$(TAR) -cvh --exclude=dev --exclude=CVS -f $(VERSION)-arch.tar arch
+	$(GZIP) -cv9 $(VERSION)-arch.tar > ../$(VERSION)-arch.tar.gz
+	$(BZIP) -cv --repetitive-best $(VERSION)-arch.tar > ../$(VERSION)-arch.tar.bz2
+	$(RM) $(VERSION)-arch.tar
 
 patchlist::
 	@echo Makefile.in $(PFILES) $(FILES_ADM) $(FILES_HELP) $(PFILES_MISC) > .patchlist
