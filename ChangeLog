@@ -17,6 +17,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/c_range.c: Add check to make sure we are actually removing a
+   golem and that the object hasn't been freed/recycled and the
+   player not updated.  Fixes crashes.
+MSW 2003-04-13
+
 acinclude.m4: Update path to find python includes, since aclocal.m4 gets 
    derived from this file.
 configure.ac, configure: Add utils/scores.pl to list of files to substitute on.

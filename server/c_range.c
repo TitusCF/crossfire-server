@@ -155,9 +155,11 @@ int command_cast_spell (object *op, char *params, char command)
     }
     /* Remove control of the golem */
     if(op->contr->golem!=NULL) {
-        remove_friendly_object(op->contr->golem);
-        remove_ob(op->contr->golem);
-        free_object(op->contr->golem);
+	if (op->contr->golem_count == op->contr->golem->count) {
+	    remove_friendly_object(op->contr->golem);
+	    remove_ob(op->contr->golem);
+	    free_object(op->contr->golem);
+	}
         op->contr->golem=NULL;
     }
 
