@@ -17,6 +17,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Add lore/endlore to object structure to hold general information about objects:
+common/loader.c, common/loader.l: Add loading and saving of lore field.
+common/object.c: handle lore field for copy/free/other object operations.
+   Also, update CAN_MERGE to look at materialname also.
+doc/Developers/objects: Add notes about lore.
+include/object.h: add lore field to object.
 server/apply.c: Fix bug in that cursed weapons were not equipped/
    unequipped.
 MSW 2003-02-11

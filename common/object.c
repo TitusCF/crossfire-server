@@ -133,7 +133,9 @@ inline int CAN_MERGE(object *ob1, object *ob2) {
 	(ob1->slaying != ob2->slaying) ||
 	(ob1->value != ob2->value) ||
 	(ob1->animation_id != ob2->animation_id) ||
-	(ob1->client_type != ob2->client_type)
+	(ob1->client_type != ob2->client_type) ||
+	(ob1->materialname != ob2->materialname) ||
+	(ob1->lore != ob2->lore)
 	) 
 	    return 0;
 
@@ -492,22 +494,23 @@ void copy_owner (object *op, object *clone)
  */
 
 void reset_object(object *op) {
-  int i;
-  op->name = NULL;
-  op->name_pl = NULL;
-  op->title = NULL;
-  op->race = NULL;
-  op->slaying = NULL;
-  op->msg = NULL;
-  op->materialname = NULL;
-  for(i=0;i<30;i++)
-  {
-    op->event_hook[i] = NULL;
-    op->event_plugin[i] = NULL;
-    op->event_options[i] = NULL;
-  }  
-  op->current_weapon_script = NULL;
-  clear_object(op);
+    int i;
+
+    op->name = NULL;
+    op->name_pl = NULL;
+    op->title = NULL;
+    op->race = NULL;
+    op->slaying = NULL;
+    op->msg = NULL;
+    op->materialname = NULL;
+    op->lore = NULL;
+    for(i=0;i<30;i++) {
+	op->event_hook[i] = NULL;
+	op->event_plugin[i] = NULL;
+	op->event_options[i] = NULL;
+    }
+    op->current_weapon_script = NULL;
+    clear_object(op);
 }
 /*
  * clear_object() frees everything allocated by an object, and also
@@ -519,20 +522,15 @@ void clear_object(object *op) {
     /* the memset will clear all these values for us, but we need
      * to reduce the refcount on them.
      */
-    if(op->name!=NULL)
-	free_string(op->name);
-    if(op->name_pl!=NULL)
-	free_string(op->name_pl);
-    if(op->title != NULL)
-	free_string(op->title);
-    if(op->race!=NULL)
-	free_string(op->race);
-    if(op->slaying!=NULL)
-	free_string(op->slaying);
-    if(op->msg!=NULL)
-	free_string(op->msg);
-    if (op->materialname != NULL)
-	free_string(op->materialname);
+    if (op->name!=NULL)	    FREE_AND_CLEAR_STR(op->name);
+    if (op->name_pl!=NULL)  FREE_AND_CLEAR_STR(op->name_pl);
+    if (op->title != NULL)  FREE_AND_CLEAR_STR(op->title);
+    if (op->race!=NULL)	    FREE_AND_CLEAR_STR(op->race);
+    if (op->slaying!=NULL)  FREE_AND_CLEAR_STR(op->slaying);
+    if (op->msg!=NULL)	    FREE_AND_CLEAR_STR(op->msg);
+    if (op->lore!=NULL)	    FREE_AND_CLEAR_STR(op->lore);
+    if (op->materialname!= NULL) FREE_AND_CLEAR_STR(op->materialname);
+
 
     /* Using this memset is a lot easier (and probably faster)
      * than explicitly clearing the fields.
@@ -584,6 +582,8 @@ void copy_object(object *op2, object *op) {
     free_string(op->race);
   if(op->slaying!=NULL)
     free_string(op->slaying);
+  if(op->lore!=NULL)
+    free_string(op->lore);
   if(op->msg!=NULL)
     free_string(op->msg);
   if (op->materialname != NULL)
@@ -605,6 +605,8 @@ void copy_object(object *op2, object *op) {
     add_refcount(op->race);
   if(op->slaying!=NULL)
     add_refcount(op->slaying);
+  if(op->lore!=NULL)
+    add_refcount(op->lore);
   if(op->msg!=NULL)
     add_refcount(op->msg);
   if (op->materialname != NULL)
@@ -682,6 +684,7 @@ object *get_object() {
   op->title=NULL;
   op->race=NULL;
   op->slaying=NULL;
+  op->lore=NULL;
   op->msg=NULL;
   op->materialname=NULL;
   op->next=objects;
@@ -976,12 +979,13 @@ void free_object(object *ob) {
 	    ob->next->prev=ob->prev;
     }
   
-    if(ob->name!=NULL) FREE_AND_CLEAR_STR(ob->name);
-    if(ob->name_pl!=NULL) FREE_AND_CLEAR_STR(ob->name_pl);
-    if(ob->title!=NULL) FREE_AND_CLEAR_STR(ob->title);
-    if(ob->race!=NULL) FREE_AND_CLEAR_STR(ob->race);
-    if(ob->slaying!=NULL) FREE_AND_CLEAR_STR(ob->slaying);
-    if(ob->msg!=NULL) FREE_AND_CLEAR_STR(ob->msg);
+    if(ob->name!=NULL)	    FREE_AND_CLEAR_STR(ob->name);
+    if(ob->name_pl!=NULL)   FREE_AND_CLEAR_STR(ob->name_pl);
+    if(ob->title!=NULL)	    FREE_AND_CLEAR_STR(ob->title);
+    if(ob->race!=NULL)	    FREE_AND_CLEAR_STR(ob->race);
+    if(ob->slaying!=NULL)   FREE_AND_CLEAR_STR(ob->slaying);
+    if(ob->lore!=NULL)	    FREE_AND_CLEAR_STR(ob->lore);
+    if(ob->msg!=NULL)	    FREE_AND_CLEAR_STR(ob->msg);
     if(ob->materialname!=NULL) FREE_AND_CLEAR_STR(ob->materialname);
 
 #if 0 /* MEMORY_DEBUG*/

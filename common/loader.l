@@ -43,6 +43,7 @@ static char *yval();
 
 static int lex_error;
 static char msgbuf[HUGE_BUF];
+static char lorebuf[HUGE_BUF];
 
 #define SET_OR_CLEAR_FLAG(op, flag, val) \
 	{ if (val) SET_FLAG(op, flag); else CLEAR_FLAG(op, flag); }
@@ -209,7 +210,7 @@ WS	[ \t]*
 A	.+
 
 %x MESSAGE
-
+%x LORE
 %x SCRIPT
 
 /* Don't have to link with -lfl with this */
@@ -239,6 +240,19 @@ A	.+
 				HUGE_BUF/2, HUGE_BUF, strlen(op->msg),op->msg);
 		    }
 <MESSAGE>.*	    {strcat(msgbuf, yytext); strcat(msgbuf,"\n"); }
+
+^lore{WS}$	    {	BEGIN( LORE ); lorebuf[0]='\0'; }
+<LORE>^endlore{WS}$ {	BEGIN( INITIAL );
+			op->lore=add_string(lorebuf);
+			/* Just print a warning so we can be reasonably safe
+			 * about not overflowing the buffer.
+			 */
+			if (strlen(op->lore) > (HUGE_BUF/2))
+			    LOG(llevDebug, "\n\tWarning lore length > %d (max allowed=%d): %d\n>%.80s<\n",
+				HUGE_BUF/2, HUGE_BUF, strlen(op->lore),op->lore);
+		    }
+<LORE>.*	    {strcat(lorebuf, yytext); strcat(lorebuf,"\n"); }
+
 ^object{S}	    {	char *yv=yval();
 
 			if (*yv=='\0') {
@@ -280,6 +294,7 @@ A	.+
 			    if (tmp->arch!=NULL)
 				copy_object(&tmp->arch->clone,tmp);
 			    strcpy(msgbuf, "");
+			    strcpy(lorebuf, "");
 			    lex_load(tmp, map_flags);
 			    insert_ob_in_ob(tmp,op);
 			}
@@ -1073,6 +1088,7 @@ int load_object(FILE *fp, object *op, int bufstate, int map_flags) {
     char inbuf[MAX_BUF];
 
     strcpy(msgbuf, "");
+    strcpy(lorebuf, "");
     if (bufstate==LO_NEWFILE || bufstate==LO_NOREAD) {
 /*	LOG(llevDebug,"Switching lex buffers\n");*/
 	yy_delete_buffer(YY_CURRENT_BUFFER);
@@ -1114,6 +1130,7 @@ int set_variable(object *op,char *buf) {
     int retval;
 
     strcpy(msgbuf, "");
+    strcpy(lorebuf, "");
     yy_push_state(INITIAL);
     yybufstate=yy_scan_string(buf);
     retval=lex_load(op,0);
@@ -1218,6 +1235,11 @@ char *get_ob_diff(object *op,object *op2) {/* I plan to optimize this heavily */
     strcat(buf,"msg\n");
     strcat(buf,op->msg);
     strcat(buf,"endmsg\n");
+  }
+  if(op->lore && op->lore!=op2->lore) {
+    strcat(buf,"lore\n");
+    strcat(buf,op->lore);
+    strcat(buf,"endlore\n");
   }
   if(op->other_arch!=op2->other_arch&&op->other_arch!=NULL &&
      op->other_arch->name) {

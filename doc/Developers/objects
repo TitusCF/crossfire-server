@@ -27,6 +27,7 @@ Sections:
 	G. Item Power (item_power)
 	H. Body Location
 	I. Meaning of certain attributes for certain items:
+	J. Lore
 
 4. SPECIAL OBJECTS
 
@@ -990,6 +991,21 @@ For armour, last_heal determines the penalty for spell point regeneration.
 For exits:
 slaying  = The map which the exit leads to.
 hp,sp = (x,y) of the destination on the new map.
+
+J. Lore
+============================================================
+
+Lore is a free form text field similiar to the msg bug.  Its syntax is
+
+lore
+..
+..
+endlore
+
+while msg's meaning is dependent on the object, lore is consistent - it
+should contain background information on the object, or other somewhat general 
+details about the object.  It will be put into books, possibly used by npc's
+and other places where general knowledge should be presented.
 
 
 ******************************************************************************

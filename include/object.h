@@ -105,6 +105,8 @@ typedef struct obj {
     char	*slaying;	/* Which race to do double damage to */
 				/* If this is an exit, this is the filename */
     char	*msg;		/* If this is a book/sign/magic mouth/etc */
+    char	*lore;		/* Obscure information about this object, */
+				/* To get put into books and the like. */
 
     sint16	x,y;		/* Position in the map for this object */
     sint16	ox,oy;		/* For debugging: Where it was last inserted */
@@ -125,7 +127,7 @@ typedef struct obj {
     uint32	path_repelled;	/* Paths the object is repelled from */
     uint32	path_denied; 	/* Paths the object is denied access to */
     uint16	material;      	/* What materials this object consist of */
-	char 	*materialname;  /* specific material name */
+    char 	*materialname;  /* specific material name */
     sint8	magic;		/* Any magical bonuses to this item */
     sint8	thrownthaco;	/* How precise the throw is */
     uint8	state;          /* How the object was last drawn (animation) */
