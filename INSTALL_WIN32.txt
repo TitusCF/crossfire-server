@@ -1,0 +1,34 @@
+How to Install a Crossfire Server on Windows:
+
+o First, you need to get the latest Crossfire sourcecode.
+  You need two packages from cvs: "crossfire" and "maps".
+  A good site to get it is <http://www.futt.org/crossfire_html>.
+  You could as well download it from Sourceforge
+  directly: <https://sourceforge.net/projects/crossfire/>.
+  The third way to get it is at the official CF homepage:  
+  <http://crossfire.real-time.com/Website_Index/download.html>.
+
+o Second step, you must compile the program. You'll need
+  Visual C++ to do this (or some other ANSI C-compiler that can
+  read *.dsw files).
+  After unpacking the crossfire package, doubleclick on
+  "crossfire32.dsw", then - in Visual C++ - press <F7> to compile.
+  If you don't have an appropriate compiler you can try to get
+  the binary (crossfire32.exe file) from *somewhere*.
+
+o Now open the "crossfire" directory, and run "installwin32.bat".
+  After that, unpack the crossfire-maps into the directory
+  "crossfire/share".
+
+o Last step: Run the program "crossfire32.exe" (in the directory
+  "crossfire"). A dos-prompt should open now, showing lots of
+  weird text: the server logs.
+  You're done - the server is up and ready for connections. :-)
+
+
+If you still have troubles, write to the Crossfire mailing list:
+<crossfire-list@lists.real-time.com>. Doing so, please
+provide as much information on your problem as possible!
+Most important: Tell us exactly what version of crossfire
+you've used. If it's an old version, update first and see if
+that solves your problem.

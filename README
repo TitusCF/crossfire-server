@@ -13,7 +13,9 @@ WHAT IS CROSSFIRE?
 REQUIREMENTS
 
   You will need UNIX, X-windows and an ANSI C compiler to compile this game.
-
+  To run it on Windows 9x, you need Visual C++ (or some other ANSI C
+  compiler that can read ".dsw"-files).
+  
 COMPILING
 
   Crossfire has been known to compile on the following systems
@@ -44,7 +46,8 @@ COMPILING
   It has been compiled with X11R3, X11R4, X11R5, X11R6 (the editor requires
   X11R5 or X11R6).
 
-  To get directions on compilation, read the INSTALL file.
+  To get directions on compilation for UNIX/LINUX, read the INSTALL file.
+  For Win9x, read INSTALL_WIN32.txt.
 
 USAGE
 
