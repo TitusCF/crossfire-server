@@ -1097,21 +1097,21 @@ int humid_tile(int x, int y)
 
 void temperature_calc(int x, int y, timeofday_t *tod)
 {
-    int dist, equator, elev, eq2;
+    int dist, equator, elev, n;
     float diff, tdiff;
 
     equator = (WEATHERMAPTILESX + WEATHERMAPTILESY) / 4;
-    eq2 = (WEATHERMAPTILESX + WEATHERMAPTILESY) / 2;
     diff = (float)(EQUATOR_BASE_TEMP - POLAR_BASE_TEMP) / (float)equator;
     tdiff = (float)SEASONAL_ADJUST / ((float)MONTHS_PER_YEAR / 2.0);
-
+    equator *= 2;
+    n = 0;
     /* we essentially move the equator during the season */
     if (tod->month > (MONTHS_PER_YEAR / 2)) { /* EOY */
-        eq2 -= tod->month * tdiff;
+	n -= (tod->month * tdiff);
     } else {
-        eq2 += (MONTHS_PER_YEAR - tod->month) * tdiff;
+	n = (MONTHS_PER_YEAR - tod->month) * tdiff;
     }
-    dist = polar_distance(x, y, eq2);
+    dist = polar_distance(x-n/2, y-n/2, equator);
 
     /* now we have the base temp, unadjusted for time.  Time adjustment
        is not recorded on the map, rather, it's done JIT. */
