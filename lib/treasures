@@ -460,7 +460,6 @@ treasure mage_pet_monster
   more
   arch dark_elf
     nrof 3
-  more
 end
 treasure altern_pet_monster
   arch bird
@@ -477,7 +476,6 @@ treasure altern_pet_monster
   more
   arch vampire
     nrof 1
-  more
 end
 treasure priest_pet_monster
   arch bee
@@ -494,7 +492,6 @@ treasure priest_pet_monster
   more
   arch panther
     nrof 5
-  more
 end
 ##############################################################
 #
