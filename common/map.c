@@ -1679,7 +1679,8 @@ static mapstruct *load_and_link_tiled_map(mapstruct *orig_map, int tile_num)
     orig_map->tile_map[tile_num] = ready_map_name(orig_map->tile_path[tile_num], 0);
 
     /* need to do a strcmp here as the orig_map->path is not a shared string */
-    if (!strcmp(orig_map->tile_map[tile_num]->tile_path[dest_tile], orig_map->path))
+    if (orig_map->tile_map[tile_num]->tile_path[dest_tile] &&
+	!strcmp(orig_map->tile_map[tile_num]->tile_path[dest_tile], orig_map->path))
 	orig_map->tile_map[tile_num]->tile_map[dest_tile] = orig_map;
 
     return orig_map->tile_map[tile_num];
