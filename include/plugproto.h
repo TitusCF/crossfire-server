@@ -35,6 +35,16 @@ CFParm* CFWFindGod(CFParm* PParm);
 CFParm* CFWDumpObject(CFParm* PParm);
 CFParm* CFWLoadObject(CFParm* PParm);
 CFParm* CFWRemoveObject(CFParm* PParm);
+CFParm* CFWAddString(CFParm* PParm);
+CFParm* CFWAddRefcount(CFParm* PParm);
+CFParm* CFWFreeString(CFParm* PParm);
+CFParm* CFWGetFirstMap(CFParm* PParm);
+CFParm* CFWGetFirstPlayer(CFParm* PParm);
+CFParm* CFWGetFirstArchetype(CFParm* PParm);
+CFParm* CFWQueryCost(CFParm* PParm);
+CFParm* CFWQueryMoney(CFParm* PParm);
+CFParm* CFWPayForItem(CFParm* PParm);
+CFParm* CFWPayForAmount(CFParm* PParm);
 
 CFParm* RegisterGlobalEvent(CFParm* PParm);
 CFParm* UnregisterGlobalEvent(CFParm* PParm);

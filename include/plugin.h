@@ -48,24 +48,25 @@
 #define EVENT_THROW    9  /* Object is thrown.                               */
 #define EVENT_TRIGGER  10 /* Button pushed, lever pulled, etc.               */
 #define EVENT_CLOSE    11 /* Container closed.                               */
+#define EVENT_TIMER    12 /* Timer connected triggered it.                   */
 /*****************************************************************************/
 /* Global events. Those are never linked to a specific object.               */
 /*****************************************************************************/
-#define EVENT_BORN     12 /* A new character has been created.               */
-#define EVENT_CLOCK    13 /* Global time event.                              */
-#define EVENT_CRASH    14 /* Triggered when the server crashes. Not recursive*/
-#define EVENT_GDEATH   15 /* Global Death event                              */
-#define EVENT_GKILL    16 /* Triggered when anything got killed by anyone.   */
-#define EVENT_LOGIN    17 /* Player login.                                   */
-#define EVENT_LOGOUT   18 /* Player logout.                                  */
-#define EVENT_MAPENTER 19 /* A player entered a map.                         */
-#define EVENT_MAPLEAVE 20 /* A player left a map.                            */
-#define EVENT_MAPRESET 21 /* A map is resetting.                             */
-#define EVENT_REMOVE   22 /* A Player character has been removed.            */
-#define EVENT_SHOUT    23 /* A player 'shout' something.                     */
-#define EVENT_TELL     24 /* A player 'tell' something.                      */
+#define EVENT_BORN     13 /* A new character has been created.               */
+#define EVENT_CLOCK    14 /* Global time event.                              */
+#define EVENT_CRASH    15 /* Triggered when the server crashes. Not recursive*/
+#define EVENT_GDEATH   16 /* Global Death event                              */
+#define EVENT_GKILL    17 /* Triggered when anything got killed by anyone.   */
+#define EVENT_LOGIN    18 /* Player login.                                   */
+#define EVENT_LOGOUT   19 /* Player logout.                                  */
+#define EVENT_MAPENTER 20 /* A player entered a map.                         */
+#define EVENT_MAPLEAVE 21 /* A player left a map.                            */
+#define EVENT_MAPRESET 22 /* A map is resetting.                             */
+#define EVENT_REMOVE   23 /* A Player character has been removed.            */
+#define EVENT_SHOUT    24 /* A player 'shout' something.                     */
+#define EVENT_TELL     25 /* A player 'tell' something.                      */
 
-#define NR_EVENTS 25
+#define NR_EVENTS 26
 
 /*****************************************************************************/
 /* Hook codes. A hook is a function pointer passed from the server to the    */
@@ -113,7 +114,18 @@
 #define HOOK_DUMPOBJECT         34
 #define HOOK_LOADOBJECT         35
 #define HOOK_REMOVEOBJECT       36
-#define NR_OF_HOOKS             37
+#define HOOK_ADDSTRING          37
+#define HOOK_FREESTRING         38
+#define HOOK_ADDREFCOUNT        39
+#define HOOK_GETFIRSTMAP        40
+#define HOOK_GETFIRSTPLAYER     41
+#define HOOK_GETFIRSTARCHETYPE  42
+#define HOOK_QUERYCOST          43
+#define HOOK_QUERYMONEY         44
+#define HOOK_PAYFORITEM         45
+#define HOOK_PAYFORAMOUNT       46
+#define HOOK_NEWDRAWINFO        47
+#define NR_OF_HOOKS             48
 
 /*****************************************************************************/
 /* CFParm is the data type used to pass informations between the server and  */

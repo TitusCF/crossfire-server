@@ -514,6 +514,13 @@ static PyObject* CFGetMapHeight(PyObject* self, PyObject* args);
 static PyObject* CFGetObjectAt(PyObject* self, PyObject* args);
 static PyObject* CFSetPreviousObject(PyObject* self, PyObject* args);
 static PyObject* CFSetNextObject(PyObject* self, PyObject* args);
+static PyObject* CFCostFlagFTrue(PyObject* self, PyObject* args);
+static PyObject* CFCostFlagFBuy(PyObject* self, PyObject* args);
+static PyObject* CFCostFlagFSell(PyObject* self, PyObject* args);
+static PyObject* CFGetObjectCost(PyObject* self, PyObject* args);
+static PyObject* CFGetObjectMoney(PyObject* self, PyObject* args);
+static PyObject* CFPayForItem(PyObject* self, PyObject* args);
+static PyObject* CFPayAmount(PyObject* self, PyObject* args);
 
 /* Those are used to handle the events. The first one is used when a player  */
 /* attacks with a "scripted" weapon. HandleEvent is used for all other events*/
@@ -732,6 +739,13 @@ static PyMethodDef CFPythonMethods[] =
         {"GetObjectAt",CFGetObjectAt,METH_VARARGS},
         {"SetNextObject",CFSetNextObject,METH_VARARGS},
         {"SetPreviousObject",CFSetPreviousObject,METH_VARARGS},
+        {"CostFlagFTrue",CFCostFlagFTrue,METH_VARARGS},
+        {"CostFlagFBuy",CFCostFlagFBuy,METH_VARARGS},
+        {"CostFlagFSell",CFCostFlagFSell,METH_VARARGS},
+        {"GetObjectCost", CFGetObjectCost,METH_VARARGS},
+        {"GetObjectMoney", CFGetObjectMoney,METH_VARARGS},
+        {"PayForItem",CFPayForItem,METH_VARARGS},
+        {"PayAmount",CFPayAmount,METH_VARARGS},
 /* Skills wrappers : */
         {"SkillStealing", CFSkillStealing, METH_VARARGS},
         {"SkillLockpicking", CFSkillLockpicking, METH_VARARGS},

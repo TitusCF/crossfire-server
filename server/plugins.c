@@ -337,6 +337,39 @@ void initOnePlugin(char* pluginfile)
             case HOOK_REMOVEOBJECT:
                 HookParm->Value[1] = &CFWRemoveObject;
                 break;
+            case HOOK_ADDSTRING:
+                HookParm->Value[1] = &CFWAddString;
+                break;
+            case HOOK_ADDREFCOUNT:
+                HookParm->Value[1] = &CFWAddRefcount;
+                break;
+            case HOOK_FREESTRING:
+                HookParm->Value[1] = &CFWFreeString;
+                break;
+            case HOOK_GETFIRSTMAP:
+                HookParm->Value[1] = &CFWGetFirstMap;
+                break;
+            case HOOK_GETFIRSTPLAYER:
+                HookParm->Value[1] = &CFWGetFirstPlayer;
+                break;
+            case HOOK_GETFIRSTARCHETYPE:
+                HookParm->Value[1] = &CFWGetFirstArchetype;
+                break;
+            case HOOK_QUERYCOST:
+                HookParm->Value[1] = &CFWQueryCost;
+                break;
+            case HOOK_QUERYMONEY:
+                HookParm->Value[1] = &CFWQueryMoney;
+                break;
+            case HOOK_PAYFORITEM:
+                HookParm->Value[1] = &CFWPayForItem;
+                break;
+            case HOOK_PAYFORAMOUNT:
+                HookParm->Value[1] = &CFWPayForAmount;
+                break;
+            case HOOK_NEWDRAWINFO:
+                HookParm->Value[1] = &CFWNewDrawInfo;
+                break;
             };
             HookParm->dparm = 2044;
             PlugList[PlugNR].hookfunc(HookParm);
@@ -426,6 +459,7 @@ void removeOnePlugin(char *id)
     /* Then we copy the rest on the list back one position */
     PlugNR--;
     if (plid==31) return;
+    printf("plid=%i, PlugNR=%i\n",plid,PlugNR);
     for (j=plid+1;j<32;j++)
     {
         PlugList[j-1] = PlugList[j];
@@ -606,6 +640,39 @@ void initOnePlugin(char* pluginfile)
                         case HOOK_REMOVEOBJECT:
                             HookParm->Value[1] = &CFWRemoveObject;
                             break;
+                        case HOOK_ADDSTRING:
+                            HookParm->Value[1] = &CFWAddString;
+                            break;
+                        case HOOK_ADDREFCOUNT:
+                            HookParm->Value[1] = &CFWAddRefcount;
+                            break;
+                        case HOOK_FREESTRING:
+                            HookParm->Value[1] = &CFWFreeString;
+                            break;
+                        case HOOK_GETFIRSTMAP:
+                            HookParm->Value[1] = &CFWGetFirstMap;
+                            break;
+                        case HOOK_GETFIRSTPLAYER:
+                            HookParm->Value[1] = &CFWGetFirstPlayer;
+                            break;
+                        case HOOK_GETFIRSTARCHETYPE:
+                            HookParm->Value[1] = &CFWGetFirstArchetype;
+                            break;
+                        case HOOK_QUERYCOST:
+                            HookParm->Value[1] = &CFWQueryCost;
+                            break;
+                        case HOOK_QUERYMONEY:
+                            HookParm->Value[1] = &CFWQueryMoney;
+                            break;
+                        case HOOK_PAYFORITEM:
+                            HookParm->Value[1] = &CFWPayForItem;
+                            break;
+                        case HOOK_PAYFORAMOUNT:
+                            HookParm->Value[1] = &CFWPayForAmount;
+                            break;
+                        case HOOK_NEWDRAWINFO:
+                            HookParm->Value[1] = &CFWNewDrawInfo;
+                            break;
                     };
                     PlugList[PlugNR].hookfunc(HookParm);
                 };
@@ -692,7 +759,7 @@ CFParm* CFWSpringTrap(CFParm* PParm)
 /*****************************************************************************/
 CFParm* CFWCastSpell(CFParm* PParm)
 {
-    int val;
+    static int val;
     CFParm *CFP;
     CFP = (CFParm*)(malloc(sizeof(CFParm)));
 //int cast_spell(object *op, object *caster, int dir, int type, int ability,
@@ -713,7 +780,7 @@ CFParm* CFWCastSpell(CFParm* PParm)
 /*****************************************************************************/
 CFParm* CFWCmdRSkill(CFParm* PParm)
 {
-    int val;
+    static int val;
     CFParm *CFP;
     CFP = (CFParm*)(malloc(sizeof(CFParm)));
     val = command_rskill((object *)(PParm->Value[0]),
@@ -805,7 +872,7 @@ CFParm* CFWFindPlayer(CFParm* PParm)
 CFParm* CFWManualApply(CFParm* PParm)
 {
     CFParm *CFP;
-    int val;
+    static int val;
     CFP = (CFParm*)(malloc(sizeof(CFParm)));
     val = manual_apply((object *)(PParm->Value[0]),
         (object *)(PParm->Value[1]),*(int *)(PParm->Value[2]));
@@ -822,7 +889,7 @@ CFParm* CFWManualApply(CFParm* PParm)
 CFParm* CFWCmdDrop(CFParm* PParm)
 {
     CFParm *CFP;
-    int val;
+    static int val;
     CFP = (CFParm*)(malloc(sizeof(CFParm)));
     val = command_drop((object *)(PParm->Value[0]),(char *)(PParm->Value[1]));
     CFP->Value[0] = &val;
@@ -838,7 +905,7 @@ CFParm* CFWCmdDrop(CFParm* PParm)
 CFParm* CFWCmdTake(CFParm* PParm)
 {
     CFParm *CFP;
-    int val;
+    static int val;
     CFP = (CFParm*)(malloc(sizeof(CFParm)));
     val = command_take((object *)(PParm->Value[0]),(char *)(PParm->Value[1]));
     CFP->Value[0] = &val;
@@ -857,7 +924,7 @@ CFParm* CFWCmdTake(CFParm* PParm)
 CFParm* CFWTransferObject(CFParm* PParm)
 {
     CFParm *CFP;
-    int val;
+    static int val;
     CFP = (CFParm*)(malloc(sizeof(CFParm)));
     val = transfer_ob(
         (object *)(PParm->Value[0]),
@@ -879,7 +946,7 @@ CFParm* CFWTransferObject(CFParm* PParm)
 CFParm* CFWCmdTitle(CFParm* PParm)
 {
     CFParm *CFP;
-    int val;
+    static int val;
     CFP = (CFParm*)(malloc(sizeof(CFParm)));
     val = command_title((object *)(PParm->Value[0]),(char *)(PParm->Value[1]));
     CFP->Value[0] = &val;
@@ -897,7 +964,7 @@ CFParm* CFWCmdTitle(CFParm* PParm)
 CFParm* CFWKillObject(CFParm* PParm)
 {
     CFParm *CFP;
-    int val;
+    static int val;
     CFP = (CFParm*)(malloc(sizeof(CFParm)));
     val = kill_object(
         (object *)(PParm->Value[0]),
@@ -950,7 +1017,7 @@ CFParm* CFWDoLearnSpell(CFParm* PParm)
 CFParm* CFWCheckSpellKnown(CFParm* PParm)
 {
     CFParm *CFP;
-    int val;
+    static int val;
     CFP = (CFParm*)(malloc(sizeof(CFParm)));
     val = check_spell_known(
         (object *)(PParm->Value[0]),
@@ -1045,7 +1112,7 @@ CFParm* CFWUpdateObject(CFParm* PParm)
 CFParm* CFWFindAnimation(CFParm* PParm)
 {
     CFParm *CFP;
-    int val;
+    static int val;
     CFP = (CFParm*)(malloc(sizeof(CFParm)));
     printf("CFWFindAnimation: %s\n",(char *)(PParm->Value[0]));
     val = find_animation((char *)(PParm->Value[0]));
@@ -1205,10 +1272,147 @@ CFParm* CFWRemoveObject(CFParm* PParm)
     remove_ob((object *)(PParm->Value[0]));
     return NULL;
 };
+CFParm* CFWAddString(CFParm* PParm)
+{
+    CFParm* CFP;
+    char* val;
+    CFP = (CFParm*)(malloc(sizeof(CFParm)));
+    val = (char *)(PParm->Value[0]);
+    CFP->Value[0] = (void*) add_string (val);
+    return CFP;
+};
 
-/*CFParm* CFW(CFParm* PParm)
-CFParm* CFW(CFParm* PParm)
-CFParm* CFW(CFParm* PParm)
+CFParm* CFWAddRefcount(CFParm* PParm)
+{
+    CFParm* CFP;
+    char* val;
+    CFP = (CFParm*)(malloc(sizeof(CFParm)));
+    val = (char *)(PParm->Value[0]);
+    CFP->Value[0] = (void*) add_refcount (val);
+    return CFP;
+};
+CFParm* CFWFreeString(CFParm* PParm)
+{
+    CFParm* CFP;
+    char* val;
+    val = (char *)(PParm->Value[0]);
+    free_string (val);
+    return NULL;
+};
+
+CFParm* CFWGetFirstMap(CFParm* PParm)
+{
+    CFParm* CFP;
+    CFP = (CFParm*)(malloc(sizeof(CFParm)));
+    CFP->Value[0] = (void*)(first_map) ;
+    return CFP;
+};
+
+CFParm* CFWGetFirstPlayer(CFParm* PParm)
+{
+    CFParm* CFP;
+    CFP = (CFParm*)(malloc(sizeof(CFParm)));
+    CFP->Value[0] = (void*)(first_player) ;
+    return CFP;
+};
+
+CFParm* CFWGetFirstArchetype(CFParm* PParm)
+{
+    CFParm* CFP;
+    CFP = (CFParm*)(malloc(sizeof(CFParm)));
+    CFP->Value[0] = (void*)(first_archetype) ;
+    return CFP;
+};
+/*****************************************************************************/
+/* query_cost wrapper.                                                       */
+/*****************************************************************************/
+/* 0 - object to evaluate.                                                   */
+/* 1 - who tries to sell of buy it                                           */
+/* 2 - F_SELL F_BUY or F_TRUE                                                */
+/*****************************************************************************/
+CFParm* CFWQueryCost(CFParm* PParm)
+{
+    CFParm* CFP;
+    object* whatptr;
+    object* whoptr;
+    int flag;
+    static int val;
+    CFP = (CFParm*)(malloc(sizeof(CFParm)));
+    whatptr = (object *)(PParm->Value[0]);
+    whoptr = (object *)(PParm->Value[1]);
+    flag = *(int*)(PParm->Value[2]);
+    val=query_cost (whatptr,whoptr,flag);
+    CFP->Value[0] = (void*) &val;
+    return CFP;
+};
+
+/*****************************************************************************/
+/* query_money wrapper.                                                      */
+/*****************************************************************************/
+/* 0 - object we are looking for solvability at.                             */
+/*****************************************************************************/
+CFParm* CFWQueryMoney(CFParm* PParm)
+{
+    CFParm* CFP;
+    object* whoptr;
+    static int val;
+    CFP = (CFParm*)(malloc(sizeof(CFParm)));
+    whoptr = (object *)(PParm->Value[0]);
+    val=query_money (whoptr);
+    CFP->Value[0] = (void*) &val;
+    return CFP;
+};
+
+/*****************************************************************************/
+/* pay_for_item wrapper.                                                     */
+/*****************************************************************************/
+/* 0 - object to pay.                                                        */
+/* 1 - who tries to buy it                                                   */
+/*****************************************************************************/
+CFParm* CFWPayForItem(CFParm* PParm)
+{
+    CFParm* CFP;
+    object* whatptr;
+    object* whoptr;
+    static int val;
+    CFP = (CFParm*)(malloc(sizeof(CFParm)));
+    whatptr = (object *)(PParm->Value[0]);
+    whoptr = (object *)(PParm->Value[1]);
+    val= pay_for_item (whatptr,whoptr);
+    CFP->Value[0] = (void*) &val;
+    return CFP;
+};
+
+/*****************************************************************************/
+/* pay_for_amount wrapper.                                                   */
+/*****************************************************************************/
+/* 0 - amount to pay.                                                        */
+/* 1 - who tries to pay it                                                   */
+/*****************************************************************************/
+CFParm* CFWPayForAmount(CFParm* PParm)
+{
+    CFParm* CFP;
+    int amount;
+    object* whoptr;
+    static int val;
+    CFP = (CFParm*)(malloc(sizeof(CFParm)));
+    amount = *(int *)(PParm->Value[0]);
+    whoptr = (object *)(PParm->Value[1]);
+    val= pay_for_amount (amount,whoptr);
+    CFP->Value[0] = (void*) &val;
+    return CFP;
+};
+
+//new_draw_info(int flags, int pri, object *pl, const char *buf);
+CFParm* CFWNewDrawInfo(CFParm* PParm)
+{
+    new_draw_info(*(int *)(PParm->Value[0]),
+                  *(int *)(PParm->Value[1]),
+                  (object *)(PParm->Value[2]),
+                  (char *)(PParm->Value[3]));
+    return NULL;
+};
+/*
 CFParm* CFW(CFParm* PParm)
 CFParm* CFW(CFParm* PParm)
 CFParm* CFW(CFParm* PParm)
@@ -1229,6 +1433,7 @@ CFParm* RegisterGlobalEvent(CFParm* PParm)
 #ifdef LOG_VERBOSE
     LOG(llevDebug,"Plugin %s (%i) registered the event %i\n",(char *)(PParm->Value[1]),PNR,*(int *)(PParm->Value[0]));
 #endif
+    LOG(llevDebug,"Plugin %s (%i) registered the event %i\n",(char *)(PParm->Value[1]),PNR,*(int *)(PParm->Value[0]));
     PlugList[PNR].gevent[*(int *)(PParm->Value[0])] = 1;
     return NULL;
 };

@@ -49,7 +49,7 @@ static char *coins[] = {"platinacoin", "goldcoin", "silvercoin", NULL};
  * by charisma done at that time).  NULL could have been passed as the
  * who parameter, but then the adjustment for expensive items (>10000)
  * would not be done.
- * 
+ *
  * CF 0.91.4 - This function got changed around a bit.  Now the
  * number of object is multiplied by the value early on.  This fixes problems
  * with items worth very little.  What happened before is that various
@@ -90,7 +90,7 @@ int query_cost(object *tmp, object *who, int flag) {
         if (tmp->type == POTION)
           val = number * 1000; /* Don't want to give anything away */
         else {
-	  /* Get 2/3'rd value for applied objects, 1/3'rd for totally 
+	  /* Get 2/3'rd value for applied objects, 1/3'rd for totally
 	   * unknown objects
 	   */
 	  if (QUERY_FLAG(tmp, FLAG_BEEN_APPLIED))
@@ -151,16 +151,16 @@ int query_cost(object *tmp, object *who, int flag) {
     }
   }
 
-/* this  modification is for merchant skill 
- * now players with readied merchant skill get 
+/* this  modification is for merchant skill
+ * now players with readied merchant skill get
  * more Cha up to the limit of modified Cha = 30.
- * -b.t. thomas@nomad.astro.psu.edu 
+ * -b.t. thomas@nomad.astro.psu.edu
  */
 
-  if (who!=NULL && who->type==PLAYER) { 
+  if (who!=NULL && who->type==PLAYER) {
       float diff;
 
-      charisma = who->stats.Cha;  /* used for SK_BARGAINING modification */ 
+      charisma = who->stats.Cha;  /* used for SK_BARGAINING modification */
 
       if (find_skill(who,SK_BARGAINING)) {
 	charisma += (who->level+2)/3;
@@ -170,7 +170,7 @@ int query_cost(object *tmp, object *who, int flag) {
 	LOG(llevError,"Illegal charisma bonus, %d <=1.0", cha_bonus[charisma]);
 	diff=0.9;	/*pretty bad case */
       }
-      else 
+      else
 	/* Diff is now a float between 0 and 1 */
 	diff=(cha_bonus[charisma]-1)/(1+cha_bonus[charisma]);
 
@@ -186,10 +186,10 @@ int query_cost(object *tmp, object *who, int flag) {
       else val *=4;
   }
 
-  /* I don't understand this code...., I'm changing it to 
+  /* I don't understand this code...., I'm changing it to
 	  use 0 instead of 1000000 if we're selling*/
   if(val<0) {
-	 if(flag==F_SELL) 
+	 if(flag==F_SELL)
 		val=0;
 	 else
 		val=1000000;
@@ -292,13 +292,40 @@ int query_money(object *op) {
     for (tmp = op->inv; tmp; tmp= tmp->below) {
 	if (tmp->type==MONEY) {
 	    total += tmp->nrof * tmp->value;
-	} else if (tmp->type==CONTAINER && 
+	} else if (tmp->type==CONTAINER &&
 		   QUERY_FLAG(tmp,FLAG_APPLIED) &&
 		   (tmp->race==NULL || strstr(tmp->race,"gold"))) {
 	    total += query_money(tmp);
 	}
     }
     return total;
+}
+/* TCHIZE: This function takes the amount of money from the             *
+ * the player inventory and from it's various pouches using the         *
+ * pay_from_container function.                                         *
+ * returns 0 if not possible. 1 if success                              */
+int pay_for_amount(int to_pay,object *pl) {
+    object *pouch;
+
+    if (to_pay==0) return 1;
+    if(to_pay>query_money(pl)) return 0;
+
+    to_pay = pay_from_container(NULL, pl, to_pay);
+
+    for (pouch=pl->inv; (pouch!=NULL) && (to_pay>0); pouch=pouch->below) {
+	if (pouch->type == CONTAINER
+	    && QUERY_FLAG(pouch, FLAG_APPLIED)
+	    && (pouch->race == NULL || strstr(pouch->race, "gold"))) {
+	    to_pay = pay_from_container(NULL, pouch, to_pay);
+	}
+    }
+
+#ifndef REAL_WIZ
+    if(QUERY_FLAG(pl,FLAG_WAS_WIZ))
+      SET_FLAG(op, FLAG_WAS_WIZ);
+#endif
+    fix_player(pl);
+    return 1;
 }
 
 /* DAMN: This is now a wrapper for pay_from_container, which is 	*
@@ -331,7 +358,7 @@ int pay_for_item(object *op,object *pl) {
 }
 
 /* This pays for the item, and takes the proper amount of money off
- * the player. 
+ * the player.
  * CF 0.91.4 - this function is mostly redone in order to fix a bug
  * with weight not be subtracted properly.  We now remove and
  * insert the coin objects -  this should update the weight
@@ -446,10 +473,10 @@ int get_payment2 (object *pl, object *op) {
     if (op!=NULL&&op->inv)
         ret = get_payment2(pl, op->inv);
 
-    if (!ret) 
+    if (!ret)
         return 0;
 
-    if (op!=NULL&&op->below) 
+    if (op!=NULL&&op->below)
         ret = get_payment2 (pl, op->below);
 
     if (!ret) 

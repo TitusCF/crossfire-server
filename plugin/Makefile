@@ -36,7 +36,7 @@ CFLAGS    = $(INCLUDE) -Wall -g -fPIC
 
 LIBPYTHON = $(LIBROOT)/python$(PYTHONVER)/config/libpython$(PYTHONVER).a
 
-LDFLAGS=	-Xlinker -export-dynamic -rdynamic
+LDFLAGS=	-Xlinker -export-dynamic -rdynamic -Xlinker -Bsymbolic
 SYSLIBS=	-lm
 ALLLIBS=	$(LIBPYTHON) $(LIBS) $(SYSLIBS)
 

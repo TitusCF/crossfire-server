@@ -47,6 +47,9 @@
 /*****************************************************************************/
 /* Wrappers for attack numbers.                                              */
 /*****************************************************************************/
+#ifndef FIRE_DIRECTIONAL
+#define FIRE_DIRECTIONAL 1
+#endif
 static PyObject* CFAttackTypePhysical(PyObject* self, PyObject* args)
 {
   int val = 1;
@@ -2841,7 +2844,7 @@ static PyObject* CFGetQuantity(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFInsertObjectInside                                             */
 /* Python : CFPython.InsertObjectInside(object whereobj)                     */
-/* Status : Untested                                                         */
+/* Status : Stable                                                           */
 /*****************************************************************************/
 
 static PyObject* CFInsertObjectInside(PyObject* self, PyObject* args)
@@ -2854,7 +2857,11 @@ static PyObject* CFInsertObjectInside(PyObject* self, PyObject* args)
         return NULL;
 
     myob = WHAT;
-
+    if (!QUERY_FLAG(myob,FLAG_REMOVED))
+    {
+        GCFP.Value[0] = (void *)(myob);
+        (PlugHooks[HOOK_REMOVEOBJECT])(&GCFP);
+    }
     myob = insert_ob_in_ob(myob, WHERE);
     if (WHERE->type == PLAYER)
     {
@@ -2888,7 +2895,6 @@ static PyObject* CFFindPlayer(PyObject* self, PyObject* args)
     CFR = (PlugHooks[HOOK_FINDPLAYER])(&GCFP);
     foundpl = (player *)(CFR->Value[0]);
     free(CFR);
-    //foundpl = find_player(txt);
 
     if (foundpl!=NULL)
         foundob = foundpl->ob;
@@ -5473,16 +5479,20 @@ static PyObject* CFMessage(PyObject* self, PyObject* args)
 {
     int color = NDI_BLUE|NDI_UNIQUE;
     char *message;
-    int pos = 0;
+    int pos   = 1;
 
     if (!PyArg_ParseTuple(args,"s|i",&message,&color))
         return NULL;
 
     GCFP.Value[0] = (void *)(&color);
     GCFP.Value[1] = (void *)(&pos);
-    GCFP.Value[2] = (void *)(message);
+    GCFP.Value[2] = NULL;
+    GCFP.Value[3] = (void *)(message);
 
-    (PlugHooks[HOOK_NEWINFOMAP])(&GCFP);
+    //new_draw_info(NDI_UNIQUE | NDI_ALL | NDI_RED, 1, NULL, buf);
+
+    (PlugHooks[HOOK_NEWDRAWINFO])(&GCFP);
+    //(PlugHooks[HOOK_NEWINFOMAP])(&GCFP);
 
     Py_INCREF(Py_None);
     return Py_None;
@@ -5807,6 +5817,140 @@ static PyObject* CFRegisterCommand(PyObject* self, PyObject* args)
 };
 
 /*****************************************************************************/
+/* Name   : CFCostFlagFTrue                                                  */
+/* Python : CostFlagFTrue ()                                                 */
+/* Status : Untested                                                         */
+/*****************************************************************************/
+
+static PyObject* CFCostFlagFTrue(PyObject* self, PyObject* args)
+{
+    int flag=F_TRUE;
+    if (!PyArg_ParseTuple(args,"",NULL))
+        return NULL;
+    return Py_BuildValue("i",flag);
+};
+
+/*****************************************************************************/
+/* Name   : CFCostFlagFBuy                                                   */
+/* Python : CostFlagFBuy ()                                                  */
+/* Status : Untested                                                         */
+/*****************************************************************************/
+
+static PyObject* CFCostFlagFBuy(PyObject* self, PyObject* args)
+{
+    int flag=F_BUY;
+    if (!PyArg_ParseTuple(args,"",NULL))
+        return NULL;
+    return Py_BuildValue("i",flag);
+};
+
+/*****************************************************************************/
+/* Name   : CFCostFlagFSell                                                  */
+/* Python : CostFlagFSell ()                                                 */
+/* Status : Untested                                                         */
+/*****************************************************************************/
+
+static PyObject* CFCostFlagFSell(PyObject* self, PyObject* args)
+{
+    int flag=F_SELL;
+    if (!PyArg_ParseTuple(args,"",NULL))
+        return NULL;
+    return Py_BuildValue("i",flag);
+};
+
+/*****************************************************************************/
+/* Name   : CFGetObjectCost                                                  */
+/* Python : GetObjectCost (buyer,object,type)                                */
+/* Status : Stable                                                           */
+/*****************************************************************************/
+
+static PyObject* CFGetObjectCost(PyObject* self, PyObject* args)
+{
+    long whoptr;
+    long whatptr;
+    int flag;
+    int cost;
+    CFParm* CFR;
+    if (!PyArg_ParseTuple(args,"lli",&whoptr,&whatptr,&flag))
+        return NULL;
+    if ((!WHAT) || (!WHO)) return Py_BuildValue("i",0);
+    GCFP.Value[0] = (void *)(WHAT);
+    GCFP.Value[1] = (void *)(WHO);
+    GCFP.Value[2] = (void *)(&flag);
+    CFR = (PlugHooks[HOOK_QUERYCOST])(&GCFP);
+    cost=*(int*)(CFR->Value[0]);
+    free (CFR);
+    return Py_BuildValue("i",cost);
+};
+
+/*****************************************************************************/
+/* Name   : CFGetObjectMoney                                                 */
+/* Python : GetObjectMoney (buyer)                                           */
+/* Status : Untested                                                         */
+/*****************************************************************************/
+
+static PyObject* CFGetObjectMoney(PyObject* self, PyObject* args)
+{
+    long whoptr;
+    int amount;
+    CFParm* CFR;
+    if (!PyArg_ParseTuple(args,"l",&whoptr))
+        return NULL;
+    if (!WHO) return Py_BuildValue("i",0);
+    GCFP.Value[0] = (void *)(WHO);
+    CFR = (PlugHooks[HOOK_QUERYMONEY])(&GCFP);
+    amount=*(int*)(CFR->Value[0]);
+    free (CFR);
+    return Py_BuildValue("i",amount);
+};
+
+/*****************************************************************************/
+/* Name   : CFPayForItem                                                     */
+/* Python : PayForItem (buyer,object)                                        */
+/* Status : Untested                                                         */
+/*****************************************************************************/
+
+static PyObject* CFPayForItem(PyObject* self, PyObject* args)
+{
+    long whoptr;
+    long whatptr;
+    int val;
+    CFParm* CFR;
+    if (!PyArg_ParseTuple(args,"ll",&whoptr,&whatptr))
+        return NULL;
+    if ((!WHAT) || (!WHO)) return Py_BuildValue("i",0);
+    GCFP.Value[0] = (void *)(WHAT);
+    GCFP.Value[1] = (void *)(WHO);
+    CFR = (PlugHooks[HOOK_PAYFORITEM])(&GCFP);
+    val=*(int*)(CFR->Value[0]);
+    free (CFR);
+    return Py_BuildValue("i",val);
+};
+
+/*****************************************************************************/
+/* Name   : CFPayAmount                                                      */
+/* Python : PayAmount (buyer,value)                                          */
+/* Status : Stable                                                           */
+/*****************************************************************************/
+
+static PyObject* CFPayAmount(PyObject* self, PyObject* args)
+{
+    long whoptr;
+    int to_pay;
+    int val;
+    CFParm* CFR;
+    if (!PyArg_ParseTuple(args,"li",&whoptr,&to_pay))
+        return NULL;
+    if (!WHO) return Py_BuildValue("i",0);
+    GCFP.Value[0] = (void *)(&to_pay);
+    GCFP.Value[1] = (void *)(WHO);
+    CFR = (PlugHooks[HOOK_PAYFORAMOUNT])(&GCFP);
+    val=*(int*)(CFR->Value[0]);
+    free (CFR);
+    return Py_BuildValue("i",val);
+};
+
+/*****************************************************************************/
 /* The Plugin Management Part.                                               */
 /* Most of the functions below should exist in any CF plugin. They are used  */
 /* to glue the plugin to the server core. All functions follow the same      */
@@ -5853,7 +5997,7 @@ CFParm* triggerEvent(CFParm* PParm)
 {
     //CFParm *CFP;
     int eventcode;
-    int result;
+    static int result;
     eventcode = *(int *)(PParm->Value[0]);
     switch(eventcode)
     {
@@ -5898,8 +6042,6 @@ int HandleGlobalEvent(CFParm* PParm)
 {
     FILE* Scriptfile;
 
-    //if ((*(int *)(PParm->Value[0]))!=21) /* We don't display EVENT_CLOCK (too many) */
-    //    printf("Global event triggered for plugin Python: %i\n",*(int *)(PParm->Value[0]));
     if (StackPosition == MAX_RECURSIVE_CALL)
     {
         printf("Can't execute script - No space left of stack\n");
@@ -6167,7 +6309,7 @@ int cmd_customPython(object *op, char *params)
     PyRun_SimpleFile(Scriptfile, create_pathname(CustomCommand[NextCustomCommand].script));
     fclose(Scriptfile);
     StackPosition--;
-    return StackReturn[StackPosition];
+    return StackReturn[StackPosition+1];
 };
 
 int cmd_aboutPython(object *op, char *params)
@@ -6191,7 +6333,6 @@ int cmd_aboutPython(object *op, char *params)
 CFParm* postinitPlugin(CFParm* PParm)
 {
     int i;
-
     /* We can now register some global events if we want */
     /* We'll only register the global-only events :      */
     /* BORN, CRASH, LOGIN, LOGOUT, REMOVE, and SHOUT.    */
