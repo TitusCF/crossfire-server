@@ -368,7 +368,7 @@ int attempt_pick_lock ( object *door, object *pl)
     if (number < ((dex + bonus) - difficulty)) { 
       remove_door(door);
       success = 1;
-    } else if (door->inv && door->inv->type==RUNE) {  /* set off any traps? */ 
+    } else if (door->inv && (door->inv->type==RUNE || door->inv->type==TRAP)) {  /* set off any traps? */ 
 		spring_trap(door->inv,pl); 	       
     } 
     return success;
@@ -894,8 +894,7 @@ int singing(object *pl, int dir) {
 int find_traps (object *pl) {  
    object *tmp,*tmp2;
    int i,expsum=0;
-  /*First we search all around us for runes and traps, which are
-    all type RUNE */
+  /*First we search all around us for runes and traps*/
    for(i=0;i<9;i++) { 
         /*  Check everything in the square for trapness */
         if(out_of_map(pl->map,pl->x + freearr_x[i],pl->y + freearr_y[i])) continue;
@@ -906,7 +905,7 @@ int find_traps (object *pl) {
                 of these objects' inventory */
 
             for(tmp2=tmp->inv;tmp2!=NULL;tmp2=tmp2->below)
-                if(tmp2->type==RUNE)  
+                if(tmp2->type==RUNE || tmp2->type==TRAP)  
 		  if(trap_see(pl,tmp2)) { 
 			trap_show(tmp2,tmp); 
   			if(tmp2->stats.Cha>1) { 
@@ -919,7 +918,7 @@ int find_traps (object *pl) {
 			    tmp2->stats.Cha = 1; /* unhide the trap */ 
 			}
 		  }
-            if(tmp->type==RUNE)  
+            if(tmp->type==RUNE || tmp->type==TRAP)  
 		  if(trap_see(pl,tmp)) { 
 			trap_show(tmp,tmp); 
   			if(tmp->stats.Cha>1) {
@@ -1336,13 +1335,13 @@ int remove_trap (object *op, int dir) {
        * of these objects' inventory */
 
       for(tmp2=tmp->inv;tmp2!=NULL;tmp2=tmp2->below)
-         if(tmp2->type==RUNE&&tmp2->stats.Cha<=1) {
+         if((tmp2->type==RUNE || tmp2->type==TRAP)&&tmp2->stats.Cha<=1) {
               trap_show(tmp2,tmp);
               if(trap_disarm(op,tmp2,1) && (!tmp2->owner || tmp2->owner->type!=PLAYER))
 		   success += calc_skill_exp(op,tmp2);
          }
 
-      if(tmp->type==RUNE&&tmp->stats.Cha<=1) {
+      if((tmp->type==RUNE || tmp->type==TRAP)&&tmp->stats.Cha<=1) {
          trap_show(tmp,tmp);
          if (trap_disarm(op,tmp,1) && (!tmp->owner || tmp->owner->type!=PLAYER))
 		   success += calc_skill_exp(op,tmp);
@@ -1720,4 +1719,3 @@ int do_throw(object *op, object *part, object *toss_item, int dir) {
     move_arrow(throw_ob);
     return 1;
 }
-

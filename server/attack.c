@@ -1655,7 +1655,7 @@ int hit_player(object *op,int dam, object *hitter, int type) {
     if ( ! simple_attack && op->type == DOOR) {
         object *tmp;
         for (tmp = op->inv; tmp != NULL; tmp = tmp->below)
-            if (tmp->type == RUNE) {
+            if (tmp->type == RUNE || tmp->type == TRAP) {
                 spring_trap (tmp, hitter);
                 if (was_destroyed (hitter, hitter_tag)
                     || was_destroyed (op, op_tag)

@@ -1362,6 +1362,7 @@ void move_apply (object *trap, object *victim, object *originator)
     goto leave;
 
   case RUNE:
+  case TRAP:
     if (trap->level && QUERY_FLAG (victim, FLAG_ALIVE))
     {
         spring_trap(trap, victim);
@@ -1782,7 +1783,7 @@ static void apply_treasure (object *op, object *tmp)
 	treas->y=op->y;
 	treas = insert_ob_in_map (treas, op->map, op,INS_BELOW_ORIGINATOR);
 
-	if (treas && treas->type == RUNE && treas->level
+	if (treas && (treas->type == RUNE || treas->type == TRAP) && treas->level
 	    && QUERY_FLAG (op, FLAG_ALIVE))
 	    spring_trap (treas, op);
 	/* If either player or container was destroyed, no need to do
@@ -3493,5 +3494,3 @@ void apply_changes_to_player(object *pl, object *change) {
 	}
     }
 }
-
-

@@ -1440,6 +1440,7 @@ int process_object(object *op) {
     move_swarm_spell(op);
     return 0;
   case RUNE:
+  case TRAP:
     move_rune(op);
     return 0;
   case PLAYERMOVER:
@@ -1464,4 +1465,3 @@ int process_object(object *op) {
 
   return 0;
 }
-

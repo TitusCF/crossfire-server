@@ -971,7 +971,7 @@ void free_object(object *ob) {
 		tmp=op->below;
 		remove_ob(op);
 		if(QUERY_FLAG(op,FLAG_STARTEQUIP)||QUERY_FLAG(op,FLAG_NO_DROP) ||
-		   op->type==RUNE || QUERY_FLAG(op,FLAG_IS_A_TEMPLATE))
+		   op->type==RUNE || op->type==TRAP || QUERY_FLAG(op,FLAG_IS_A_TEMPLATE))
 		free_object(op);
 		else {
 		    op->x=ob->x;
@@ -2341,4 +2341,3 @@ object* load_object_str(char *obstr)
 }
 
 /*** end of object.c ***/
-

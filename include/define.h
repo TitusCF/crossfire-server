@@ -257,6 +257,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define BALL_LIGHTNING          151 /* peterm:  ball lightning and color spray */
 #define SWARM_SPELL             153
 #define RUNE                    154
+#define TRAP					155
 
 #define POWER_CRYSTAL           156
 #define CORPSE                  157

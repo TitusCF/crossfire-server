@@ -1824,7 +1824,7 @@ static int player_attack_door(object *op, object *door)
 
 	play_sound_map(op->map, op->x, op->y, SOUND_OPEN_DOOR);
 	if(action_makes_visible(op)) make_visible(op);
-	if(door->inv && door->inv->type ==RUNE) spring_trap(door->inv,op);
+	if(door->inv &&(door->inv->type ==RUNE || door->inv->type ==TRAP)) spring_trap(door->inv,op);
 	if (door->type == DOOR) {
 	    hit_player(door,9998,op,AT_PHYSICAL); /* Break through the door */
 	}

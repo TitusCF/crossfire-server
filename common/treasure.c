@@ -960,6 +960,10 @@ void fix_generated_item (object *op, object *creator, int difficulty,
 	    case RUNE:
 		(*trap_adjust_func)(op,difficulty);
 		break;
+		
+		case TRAP:
+		(*trap_adjust_func)(op,difficulty);
+		break;
 	} /* switch type */
 
     if (op->type == POTION && special_potion(op)) {

@@ -230,7 +230,10 @@ void spring_trap(object *trap,object *victim)
   /* Prevent recursion */
   if (trap->stats.hp <= 0)
     return;
-
+ 
+  if (QUERY_FLAG(trap,FLAG_IS_LINKED))
+	  use_trigger(trap);
+  
   /*  get the spell number from the name in the slaying field, and set
       that as the spell to be cast. */
   if ((spell_in_rune = look_up_spell_by_name (NULL, trap->slaying)) != -1)
@@ -298,11 +301,11 @@ int dispel_rune(object *op,int dir,int risk)
      * player is standing on top? 
      */
     if (mflags & P_OUT_OF_MAP) {
-	new_draw_info(NDI_UNIQUE, 0,op,"There's no trap there!");
+	new_draw_info(NDI_UNIQUE, 0,op,"There's nothing there!");
     }
 
     for(tmp=get_map_ob(m,x, y); tmp!=NULL;  tmp=tmp->above)  {
-	if(tmp->type==RUNE) break;
+	if(tmp->type==RUNE || tmp->type==TRAP) break;
 
 	/* we could put a probability chance here, but since nothing happens
 	 * if you fail, no point on that.  I suppose we could do a level
@@ -319,7 +322,7 @@ int dispel_rune(object *op,int dir,int risk)
 	 * This is for chests, where the rune is in the chests inventory.
 	 */
 	for(tmp2=tmp->inv;tmp2!=NULL;tmp2=tmp2->below) {
-	    if(tmp2->type==RUNE) { 
+	    if(tmp2->type==RUNE || tmp2->type==TRAP) { 
 		tmp=tmp2;
 		searchflag=0;
 		break;
@@ -330,7 +333,7 @@ int dispel_rune(object *op,int dir,int risk)
 		
     /* no rune there. */
     if(tmp==NULL) {
-	new_draw_info(NDI_UNIQUE, 0,op,"There's no trap there!");
+	new_draw_info(NDI_UNIQUE, 0,op,"There's nothing there!");
 	return 0;
     }
     trap_disarm(op,tmp,risk);

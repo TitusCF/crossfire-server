@@ -267,7 +267,7 @@ void recursive_roll(object *op,int dir,object *pusher) {
   }
   (void) move_ob(pusher,dir,pusher);
   new_draw_info_format(NDI_BLACK, 0, pusher,
-	"You roll the %s.",query_name(op));
+	"You move the %s.",query_name(op));
   return;
 }
 
@@ -420,7 +420,7 @@ int push_ob(object *who, int dir, object *pusher) {
 	else 
 	{
 	    new_draw_info_format(NDI_UNIQUE, 0, pusher,
-				 "You avoid to attack %s .",who->name);
+				 "You avoid attacking %s .",who->name);
 	}
     }
 

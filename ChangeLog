@@ -17,6 +17,19 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+TRAPS:
+    include/define.h 
+	common/object.c, treasure.c 
+	server/attack.c, skill_util.c, skills.c, rune.c, time.c, player.c, apply.c
+	Established new type traps distinguished from runes.  Traps are 
+	more mechanical in nature, not impacted by detect magic or counterspell
+	(maybe in future once skills are settled out more fine tuning changes in
+	detecting and disarming these too...).  Traps also can now trigger connected 
+	objects if they are detonated.  Migrated traps to new type and made
+	new generic trap archetype for more complex trapping (ye olde red shaded tile...)
+	TM -2003-09-04
+	
+	
 friendly_fire:
 	Added friendly_fire to attack.c, called from hit_player.
 	Will put a cap on maxdam that is a percentage (1-100%) of damage (min 1)
