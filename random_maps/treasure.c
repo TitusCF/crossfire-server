@@ -104,6 +104,8 @@ void place_treasure(mapstruct *map,char **layout, char *treasure_style,int treas
 	 /* map_layout_style global, and is previously set */
     switch(RP->map_layout_style) {
     case ONION_LAYOUT:
+    case SPIRAL_LAYOUT:
+    case SQUARE_SPIRAL_LAYOUT:
       {
 		  int i,j;
 		  /* search the onion for C's or '>', and put treasure there. */
@@ -125,7 +127,7 @@ void place_treasure(mapstruct *map,char **layout, char *treasure_style,int treas
 		  }
 		  break;
       }
-    case MAZE_LAYOUT:
+    default:
       {
 		  int i,j,tries;
 		  object *chest;

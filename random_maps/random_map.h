@@ -46,7 +46,8 @@ int load_parameters(FILE *fp, int bufstate,RMParms *RP);
 #define SPIRAL_LAYOUT 3
 #define ROGUELIKE_LAYOUT 4
 #define SNAKE_LAYOUT 5
-#define NROFLAYOUTS 5
+#define SQUARE_SPIRAL_LAYOUT 6
+#define NROFLAYOUTS 6
 
 #define OPT_WALLS_ONLY 64
 

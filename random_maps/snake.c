@@ -18,9 +18,6 @@ a wall.
 
 
 
-/* the outsize interface routine:  accepts sizes, returns a char
-** maze.  option is a flag for either a sparse or a full maze. Sparse
-mazes have sizable rooms. option = 1, full, 0, sparse.*/
 
 char **make_snake_layout(int xsize, int ysize,int options) {
   int i,j;

@@ -161,6 +161,13 @@ char **layoutgen(RMParms *RP) {
     
   }
 
+  if(strstr(RP->layoutstyle,"squarespiral")) {
+    maze = make_square_spiral_layout(RP->Xsize,RP->Ysize,RP->layoutoptions1);
+    RP->map_layout_style = SQUARE_SPIRAL_LAYOUT;
+    if(RANDOM()%2) roomify_layout(maze,RP);
+    
+  }
+
   if(maze == 0) /* unknown or unspecified layout type, pick one at random */
     switch(RANDOM()%NROFLAYOUTS) {
     case 0:
@@ -187,7 +194,15 @@ char **layoutgen(RMParms *RP) {
       maze = make_snake_layout(RP->Xsize,RP->Ysize,RP->layoutoptions1);
       RP->map_layout_style = SNAKE_LAYOUT;
       if(RANDOM()%2) roomify_layout(maze,RP);
+      break;
+    case 5:
+      maze = make_square_spiral_layout(RP->Xsize,RP->Ysize,RP->layoutoptions1);
+      RP->map_layout_style = SQUARE_SPIRAL_LAYOUT;
+      if(RANDOM()%2) roomify_layout(maze,RP);
+      break;
     }
+
+   
 
 
   maze = symmetrize_layout(maze, RP->symmetry_used,RP);

@@ -70,7 +70,8 @@ options:
 #define OPT_BOTTOM_C  4
 #define OPT_BOTTOM_R  8
 #define OPT_IRR_SPACE 16
-#define OPT_WALL_OFF 32  
+#define OPT_WALL_OFF 32
+#define OPT_NO_DOORS 256 /* Place walls insead of doors.  Produces broken map. */  
 
 /*#define OPT_WALLS_ONLY 64*/
 
@@ -355,14 +356,21 @@ void make_doors(char **maze, float *xlocations,float *ylocations,int layers,int 
 		  
 		}
 	 }
-	 maze[x1][y1] = 'D';  /* write the door. */
+	 if(options % OPT_NO_DOORS) 
+           maze[x1][y1] = '#';  /* no door. */
+         else
+           maze[x1][y1] = 'D'; /* write the door */
 
   }
   /* mark the center of the maze with a C */
   l = layers -1;
   x1 = (int) (xlocations[l] + xlocations[2*layers -l -1])/2;
   y1 = (int) (ylocations[l] + ylocations[2*layers -l -1])/2;
-  maze[x1][y1] = 'C'; 
+  maze[x1][y1] = 'C';
+
+  /* not needed anymore */
+  free(xlocations);
+  free(ylocations);
   
 }
 
