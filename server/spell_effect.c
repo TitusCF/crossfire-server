@@ -3469,6 +3469,7 @@ int animate_weapon(object *op,object *caster,int dir, archetype *at, int spellnu
     set_owner(tmp,op);
     op->contr->golem=tmp;
     op->contr->shoottype=range_golem;
+    op->contr->golem_count = tmp->count;
   } else {
   /* If spell is cast by a pet, and the weapon is not cursed, make the animated
    * weapon a pet. */
