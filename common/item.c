@@ -953,6 +953,7 @@ void identify(object *op) {
 
   SET_FLAG(op,FLAG_IDENTIFIED);
   CLEAR_FLAG(op, FLAG_KNOWN_MAGICAL);
+  CLEAR_FLAG(op, FLAG_NO_SKILL_IDENT);
 
 /*
  * We want autojoining of equal objects:

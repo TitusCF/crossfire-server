@@ -17,6 +17,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 CVS changes since last release:
 
+common/item.c: Modify identify function to clear the NO_SKILL_IDENT
+   flag so objects will now merge.  Also, once the object has been
+   identified, the no_skill_ident doesn't have meaning anymore.
+   MSW 2001-04-03
+
 server/c_object:  Modify examine command to only be able to examine
    valid objects, and not whatever is on top of the space, which may be
    insivisible.  MSW 2001-04-01
