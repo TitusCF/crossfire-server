@@ -17,6 +17,17 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+server/c_object.c: Fix command_drop which was doing incorrect check for
+invisible object - it was supposed to skip over them and only do visible
+objects, instead it was doing the reverse.  Fixes the 'drop command.
+MSW 6/27/2000
+
+server/input.c: Make the inventory command more robust for very long
+object names - specify a maximum number of characters we will take from
+the name.  Without this, you could get buffer overruns that cause crashes.
+No normally generated items would ever likely have names long enough to
+exploit this bug however.  MSW 6/27/2000
+
 INSTALL, README:  Update mailing address to real-time address.  MSW  6/27/2000
 
 server/login.c: Load and save usekeys value in player save file.  MSW 6/27/2000

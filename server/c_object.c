@@ -827,7 +827,7 @@ int command_drop (object *op, char *params)
 	for (tmp=op->inv; tmp; tmp=next) {
 	    next=tmp->below;
 	    if (QUERY_FLAG(tmp,FLAG_NO_DROP) || 
-		!tmp->invisible) continue;
+		tmp->invisible) continue;
 	    if (item_matched_string(op,tmp,params)) {
 		drop(op, tmp);
 		did_one=1;

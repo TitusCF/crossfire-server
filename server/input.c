@@ -330,7 +330,7 @@ void inventory(object *op,object *inv) {
       new_draw_info(NDI_UNIQUE, 0,op,"You carry nothing.");
       return;
     } else {
-      length = 30;
+      length = 28;
       in = "";
       if (op)
         clear_win_info(op);
@@ -340,7 +340,7 @@ void inventory(object *op,object *inv) {
     if (items==0) 
       return;
     else { 
-      length = 30;
+      length = 28;
       in = "  ";
     }
   }
@@ -349,10 +349,11 @@ void inventory(object *op,object *inv) {
        (inv && inv->type != CONTAINER && !QUERY_FLAG(tmp, FLAG_APPLIED))))
       continue;
     if((!op || QUERY_FLAG(op, FLAG_WIZ)))
-      (void) sprintf(buf,"%s- %-*s (%5d) %-8s", in, length, query_name(tmp),
-                     tmp->count,query_weight(tmp));
+      (void) sprintf(buf,"%s- %-*.*s (%5d) %-8s", in, length, length,
+		     query_name(tmp), tmp->count,query_weight(tmp));
     else
-      (void) sprintf(buf,"%s- %-*s %-8s", in, length+8, query_name(tmp),
+      (void) sprintf(buf,"%s- %-*.*s %-8s", in, length+8, 
+		     length+8, query_name(tmp),
                      query_weight(tmp));
     new_draw_info(NDI_UNIQUE, 0,op,buf);
   }
