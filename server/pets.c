@@ -290,7 +290,7 @@ void follow_owner(object *ob, object *owner) {
 	    tmp->map = get_map_from_coord(tmp->map, &tmp->x, &tmp->y);
 	}
     }
-    insert_ob_in_map(ob, owner->map, NULL,0);
+    insert_ob_in_map(ob, tmp->map, NULL,0);
     if (owner->type == PLAYER) /* Uh, I hope this is always true... */
 	new_draw_info(NDI_UNIQUE, 0,owner, "Your pet magically appears next to you");
     return;

@@ -298,6 +298,12 @@ static void enter_map(object *op, mapstruct *newmap, int x, int y) {
 	    newmap->path, x, y);
 	x=MAP_ENTER_X(newmap);
 	y=MAP_ENTER_Y(newmap);
+	if (out_of_map(newmap, x, y)) {
+	    LOG(llevError,"enter_map: map %s provides invalid default enter location (%d, %d) > (%d, %d)\n",
+		newmap->path, x, y, MAP_WIDTH(newmap), MAP_HEIGHT(newmap));
+	    new_draw_info(NDI_UNIQUE, 0, op, "The exit is closed");
+	    return;
+	}
     }
     /* try to find a spot for the player */
     if (arch_blocked(op->arch, newmap, x, y)) {	/* First choice blocked */

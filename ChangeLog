@@ -17,6 +17,13 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/main.c: Add extra checking for valid map coordinates after we grab
+   them from the destination map itself - if a map is broken and has
+   default enter_ coordinates outside the maps range, this previously
+   resulted in a crash.
+server/pets.c: Pass the correct map object into insert_ob_in_map().
+MSW 2004-04-03
+
 server/monster.c: fixed wiz's hidden mode not working on monsters.
 Ryo 2004-03-28
 
