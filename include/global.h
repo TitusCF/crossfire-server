@@ -213,9 +213,6 @@ EXTERN char *font_graphic;
 #include "sockproto.h"
 #endif
 
-#ifdef __hpux__ /* Must do this after including proto.h */
-#define strdup_local(str) strdup(str);
-#endif
 
 #define set_map(M,X,Y,C)	((M)->map[(X)+((M)->mapx*(Y))]=*(C))
 #define get_map(M,X,Y)		(&(M)->map[(X)+((M)->mapx*(Y))])
