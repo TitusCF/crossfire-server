@@ -17,6 +17,14 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+------------------------------------------------------------------------------
+Changes for 0.95.7:
+
+README: Add crossfire.csua.berkeley.edu server.
+TODO: Remove entry about setable behaviour for keyrings, since that has now
+been done.
+include/patchlevel.h, Makefile.in:  Update for 0.95.7  MSW 9/20/2000
+
 common/living.c, server/skill_util.c:  Patches by Garth Denley:
 Fixes divide by zero crash, sets up perm exp when a new player is loaded,
 seperates permanent exp code/calculations into another function.

@@ -30,10 +30,6 @@ Future feature requests
 
 - Better handling of saved characters on potentially better maps.  The save
   can either have been caused via disconnection or autosave.
-- Add setting so player can determine if keys get used automatically from
-  keyrings - this should probably be a general flag (search containers)
-  and also include searching for money when player leaves shops and anything
-  else that searches the player inventory for something special.
 - Change code so that objects 'spill over' to other spaces if too many
   get piled in one space.
 - More/better maps.  Add more quest maps or maps to take advantage of

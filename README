@@ -184,6 +184,10 @@ As of March 25, 1999, I removed all the servers that were listed in this
 section, since I believe they were grossly out of date.  The one
 exception is the voldsboks.pvv.org since Frank just reported setting it up.
 
+crossfire.csua.berkeley.edu (8-24-2000)
+    port: 13327 (default)
+    Notes: tmp maps are not recycled.
+
 voldsboks.pvv.org (3-25-1999)
    port: 13327 (default)
    version: 0.95.2
