@@ -77,7 +77,7 @@ void move_deep_swamp (object *op)
 		    }
 		    break;
 	    }
-	} else if (!QUERY_FLAG(above, FLAG_ALIVE)) {
+	} else if (!QUERY_FLAG(above, FLAG_ALIVE) && !QUERY_FLAG(above, FLAG_FLYING)) {
 	    if (rndm(0, 2) == 0) decrease_ob(above);
 	}
 	above = nabove;
