@@ -51,3 +51,36 @@ Rupert G. Goldie <rgg@aaii.oz.au> testing under Purify, new spells,
 	works with Peter Mardahl
 "Eric A. Anderson" <eanders+@CMU.EDU> - general bug fixing
 Michael Martin (martinm@millner.bevc.blacksburg.va.us) - Java client
+
+From: Mark Wedel <mwedel@scruz.net>
+X-Mailer: Mozilla 4.76 [en] (X11; U; Linux 2.2.14 i686)
+To: "crossfire-devel@lists.real-time.com"
+ <crossfire-devel@lists.real-time.com>
+Subject: [CF-Devel] CVS repository moved.
+Date: Thu, 22 Feb 2001 21:21:31 -0800
+
+ The cvs repository is now installed on sourceforge.
+
+ If you do not have any changes in your checked out tree, the easiest thing to
+do is just do a new checkout.  See http://sourceforge.net/cvs/?group_id=13833
+for information on setup.
+
+ If you want to reparent your tree, do the following:
+
+1) Create a /tmp/Root file with the new repository information.  The contents
+ofmine looks like:
+:ext:mwedel@cvs.crossfire.sourceforge.net:/cvsroot/crossfire
+
+ Everything but the login name (mwedel) should be the same for anyone else.
+
+2) Update all the Root entries in your cvs tree.  To do that, run
+find . -name Root -exec cp /tmp/Root {} \;
+This is best run from the the relevant directory (arch, crossfire, maps,
+client).  IF you have all those and nothing checked out in a common directory,
+you could run it from there.
+
+3) Update the repository information.  Use the perl script I provide - its
+useage is update_rp <dirname> - if run from the parent dir, it would be arch,
+crossfire, maps, client, as above.  If withing the arch, ... dirs, then just
+use.
+
