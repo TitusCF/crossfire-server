@@ -984,8 +984,6 @@ type 100
 dam 4
 wc 2
 resist_physical 8
-resist_electricity 35
-attacktype 8
 weight 125
 value 175
 end
