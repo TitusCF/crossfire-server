@@ -1262,7 +1262,7 @@ int process_object(object *op) {
 	change_object(op);
 	return 1;
     }
-    if(QUERY_FLAG(op, FLAG_GENERATOR))
+    if(QUERY_FLAG(op, FLAG_GENERATOR)&&!QUERY_FLAG(op, FLAG_FRIENDLY))
 	generate_monster(op);
 
     if(QUERY_FLAG(op, FLAG_IS_USED_UP)&&--op->stats.food<=0) {
