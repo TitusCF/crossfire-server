@@ -254,7 +254,7 @@ int command_who (object *op, char *params)
 		(void) sprintf(namebuf,"%s the %s%s%s%s:",
 		    pl->ob->name,
 		    (pl->own_title[0]=='\0'?pl->title:pl->own_title),
-		    pl->peaceful?" [Peaceful]":" [Hostile]",
+		    pl->peaceful?"":" [Hostile]",
 		    QUERY_FLAG(pl->ob,FLAG_WIZ)?" [WIZ]":"",
 		    pl->hidden?" [HID]":"");
 		(void) sprintf(buf," Level %d [%s](@%s)(%d)",
@@ -267,7 +267,7 @@ int command_who (object *op, char *params)
 		(void) sprintf(namebuf,"%s the %s%s%s:",
 		    pl->ob->name,
 		    (pl->own_title[0]=='\0'?pl->title:pl->own_title),
-		    pl->peaceful?" [Peaceful]":" [Hostile]",
+		    pl->peaceful?"":" [Hostile]",
 		    QUERY_FLAG(pl->ob,FLAG_WIZ)?" [WIZ]":"");
 		(void) sprintf(buf," [%s]",
 		    pl->ob->map->path);
