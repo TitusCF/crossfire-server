@@ -1148,9 +1148,15 @@ int write_scroll (object *pl, object *scroll) {
 		spells[chosen_spell].name);
 	return 0;
     }
-    if(spells[chosen_spell].sp>pl->stats.sp) {
+    if(spells[chosen_spell].cleric && spells[chosen_spell].sp>pl->stats.grace) {
        	new_draw_info_format(NDI_UNIQUE,0,pl,
-	     "You don't have enough spell points to write a scroll of %s."
+	     "You don't have enough grace to write a scroll of %s."
+	      ,spells[chosen_spell].name);
+	return 0;
+    }
+    else if(spells[chosen_spell].sp>pl->stats.sp) {
+       	new_draw_info_format(NDI_UNIQUE,0,pl,
+	     "You don't have enough mana to write a scroll of %s."
 	      ,spells[chosen_spell].name);
 	return 0;
     }
@@ -1170,7 +1176,12 @@ int write_scroll (object *pl, object *scroll) {
     /* ok, we are ready to try inscription */
 
     if(QUERY_FLAG(pl,FLAG_CONFUSED)) confused = 1;
-    pl->stats.sp-=spells[chosen_spell].sp; /* lose sp no matter what */ 
+
+    /* Lost mana/grace no matter what */
+    if (spells[chosen_spell].cleric)
+	pl->stats.grace-=spells[chosen_spell].sp;
+    else
+	pl->stats.sp-=spells[chosen_spell].sp;
 
     if ((RANDOM()%(spells[chosen_spell].level*4))< SK_level(pl)) {
 	newScroll = get_object();
