@@ -2447,8 +2447,8 @@ static PyObject* CFCastAbility(PyObject* self, PyObject* args)
     GCFP.Value[7] = (void *)(&typeoffire);
     CFR = (PlugHooks[HOOK_CASTSPELL])(&GCFP);
     PyFreeMemory( CFR );
+#endif
     Py_INCREF(Py_None);
-#endif 
     return Py_None;
 };
 
@@ -3194,6 +3194,7 @@ static PyObject* CFSetGender(PyObject* self, PyObject* args)
     }
 
     printf("Python Warning -> SetGender: Object %s has no gender_force!\n", query_name(who));
+    Py_INCREF(Py_None);
     return Py_None;
 };
 
@@ -3228,6 +3229,7 @@ static PyObject* CFSetRank(PyObject* self, PyObject* args)
         }            
     }
     printf("Python Warning -> SetRank: Object %s has no rank_force!\n", query_name(who));
+    Py_INCREF(Py_None);
     return Py_None;
 };
 
@@ -3264,6 +3266,7 @@ static PyObject* CFSetAlignment(PyObject* self, PyObject* args)
         }            
     }
     printf("Python Warning -> SetAlignment: Object %s has no alignment_force!\n", query_name(who));
+    Py_INCREF(Py_None);
     return Py_None;
 };
 
@@ -3301,6 +3304,7 @@ static PyObject* CFSetGuildForce(PyObject* self, PyObject* args)
         }            
     }
     printf("Python Warning -> SetGuild: Object %s has no guild_force!\n", query_name(who));
+    Py_INCREF(Py_None);
     return Py_None;
 };
 
@@ -3324,6 +3328,7 @@ static PyObject* CFGetGuildForce(PyObject* self, PyObject* args)
             return Py_BuildValue("l",(long) (walk));
     }
     printf("Python Warning -> GetGuild: Object %s has no guild_force!\n", query_name(WHO));
+    Py_INCREF(Py_None);
     return Py_None;
 };
 
@@ -4227,6 +4232,7 @@ static PyObject* CFGetPlayerInfo(PyObject* self, PyObject* args)
             return Py_BuildValue("l",(long)(walk));
     }
 
+    Py_INCREF(Py_None);
     return Py_None; /* there was non */
 };
 
@@ -4247,7 +4253,10 @@ static PyObject* CFGetNextPlayerInfo(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"ll",&whereptr,&myob))
         return NULL;
     if(!myob)
+    {
+        Py_INCREF(Py_None);
         return Py_None; /* there was non left - this should avoided in scrip */
+    }
 
     /* thats our check paramters: arch "force_info", name of this arch */
     strncpy(name, myob->name, 127); /* 127 chars should be enough for all */
@@ -4260,6 +4269,7 @@ static PyObject* CFGetNextPlayerInfo(PyObject* self, PyObject* args)
             return Py_BuildValue("l",(long)(walk));
     }
 
+    Py_INCREF(Py_None);
     return Py_None; /* there was non left */
 };
 
@@ -4432,6 +4442,7 @@ static PyObject* CFCheckArchInventory(PyObject* self, PyObject* args)
         tmp = tmp->below;
     };
 
+    Py_INCREF(Py_None);
     return Py_None; /* we don't find a arch with this arch_name in the inventory */
 };
 
@@ -4500,6 +4511,7 @@ static PyObject* CFSetName(PyObject* self, PyObject* args)
         DELETE_STRING(WHO->name);
     if(txt && strcmp(txt,""))
         WHO->name = add_string(txt);
+    Py_INCREF(Py_None);
     return Py_None;
 };
 
@@ -4534,6 +4546,7 @@ static PyObject* CFSetTitle(PyObject* self, PyObject* args)
         DELETE_STRING(WHO->title);
     if(txt && strcmp(txt,""))
         WHO->title = add_string(txt);
+    Py_INCREF(Py_None);
     return Py_None;
 };
 
@@ -4566,6 +4579,7 @@ static PyObject* CFSetSlaying(PyObject* self, PyObject* args)
         DELETE_STRING(WHO->slaying);
     if(txt && strcmp(txt,""))
         WHO->slaying = add_string(txt);
+    Py_INCREF(Py_None);
     return Py_None;
 };
 
