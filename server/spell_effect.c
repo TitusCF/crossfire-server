@@ -880,8 +880,8 @@ int perceive_self(object *op) {
    else if (op_level<30)
          snprintf (portal_message,1024,"\n%s's portal smells ozone.\nYou do a lot of movements and finally pass\nthrough the small hole in the air\n",op->name);
    else if (op_level<60)
-         snprintf (portal_message,1024,"\nA sort of door opens in the air in front of you,\nshowing you the path to somewhere else.");
-   else snprintf (portal_message,1024,"\nAs you walk on %s's portal, flowers comes\nfrom the ground around you.\nYou feel quiet.",op->name);
+         snprintf (portal_message,1024,"\nA sort of door opens in the air in front of you,\nshowing you the path to somewhere else.\n");
+   else snprintf (portal_message,1024,"\nAs you walk on %s's portal, flowers comes\nfrom the ground around you.\nYou feel quiet.\n",op->name);
    exitpath=add_string (force->name);
    exitx=EXIT_X(force);
    exity=EXIT_Y(force);
