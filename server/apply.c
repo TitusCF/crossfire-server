@@ -2244,9 +2244,21 @@ int auto_apply (object *op) {
 
   case TREASURE:
     while ((op->stats.hp--)>0)
-      create_treasure(op->randomitems, op, GT_ENVIRONMENT,
+      create_treasure(op->randomitems, op, op->map?GT_ENVIRONMENT:GT_INVENTORY,
 	op->stats.exp ? op->stats.exp : 
 	op->map == NULL ?  14: op->map->difficulty,0);
+
+    /* If we generated on object and put it in this object inventory,
+     * move it to the parent object as the current object is about
+     * to disappear.  An example of this item is the random_* stuff
+     * that is put inside other objects.
+     */
+    if (op->inv) {
+	tmp=op->inv;
+	remove_ob(tmp);
+	if (op->env) insert_ob_in_ob(tmp, op->env);
+	else free_object(tmp);
+    }
     remove_ob(op);
     free_object(op);
     break;
@@ -2269,6 +2281,20 @@ void fix_auto_apply(mapstruct *m) {
     for(y=0;y<m->mapy;y++)
       for(tmp=get_map_ob(m,x,y);tmp!=NULL;tmp=above) {
         above=tmp->above;
+
+	if (tmp->inv) {
+	    object *invtmp, *invnext;
+	    for (invtmp=tmp->inv; invtmp != NULL; invtmp = invnext) {
+		invnext = invtmp->below;
+		if(QUERY_FLAG(invtmp,FLAG_AUTO_APPLY))
+		    auto_apply(invtmp);
+		else if(invtmp->type==TREASURE) {
+		    while ((invtmp->stats.hp--)>0)
+			create_treasure(invtmp->randomitems, invtmp, GT_INVENTORY,
+                            m->difficulty,0);
+		}
+	    }
+	}
 
 	if(QUERY_FLAG(tmp,FLAG_AUTO_APPLY))
           auto_apply(tmp);

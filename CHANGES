@@ -1,6 +1,13 @@
 Changes in top level CVS tree (please add your changes at the very top of
 the file):
 
+Improve auto_apply functions so that it will create treasures (random_*
+items) inside other objects.  There is still a limit in that it will only
+look for these objects inside other top level objects - a random potion
+inside a chest inside a monster will not be processed.  But that
+should be a rare case, and nesting containers very deep has never been
+well supported in the code.  The code affects is in the apply.c file.
+
 Add Xaw to start of libraries when linking crossedit - fixes focus problem.
 File affected configure.in - msw
 
