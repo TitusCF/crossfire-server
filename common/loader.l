@@ -7,7 +7,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 1994 Mark Wedel
+    Copyright (C) 2000 Mark Wedel
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -24,7 +24,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to master@rahul.net
+    The author can be reached via e-mail to mwedel@scruz.net
 */
 
 /* Eneq(@csd.uu.se): Added weight-modifiers in environment of objects.
@@ -399,16 +399,35 @@ int yyerror(char *s)
 /* Our save file syntax is very simple, so we can use a very simple
  * processing mechanism here instead using something like bison
  * This skips over the space and returns the value, or "" if no value
- * is found.
+ * is found.  Modified 4/26/2000 to also strip spaces at end of
+ * line
  */
 static char *yval()
 {
     static char *em="";
-    char *cp;
+    char *cp,*end;
 
-    cp=strchr(yytext,' ');
-    if (cp) return cp+1;
-    else return em;
+    /* First skip over start of line, like animation or name */
+   for (cp=yytext; *cp!=' '; cp++) {
+	if (*cp=='\0') {
+	    return em;
+	}
+   }
+
+    /* Skip over whitespace */
+    for (; *cp==' '; cp++) {
+	if (*cp=='\0') {
+	    return em;
+	}
+    }
+    /* Got last character before null and strip	
+     * off tailing whitespace
+     */
+    for (end=cp+strlen(cp)-1; *end==' '; end--) {
+	if (end==cp) return em;
+	*end='\0';
+    }
+    return cp;
 }
 
 

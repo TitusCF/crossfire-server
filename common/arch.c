@@ -6,6 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
+    Copyright (C) 2000 Mark Wedel
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -22,7 +23,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to frankj@ifi.uio.no.
+    The author can be reached via e-mail to mwedel@scruz.net
 */
 
 #include <global.h>
@@ -211,9 +212,12 @@ void second_arch_pass(FILE *fp) {
     if(*buf=='#')
       continue;
     if((argument=strchr(buf,' '))!=NULL) {
-      *argument='\0',argument++;
-      if((cp=strchr(argument,'\n'))!=NULL)
-        *cp='\0';
+	*argument='\0',argument++;
+	cp = argument + strlen(argument)-1;
+	while (isspace(*cp)) {
+	    *cp='\0';
+	    cp--;
+	}
     }
     if(!strcmp("Object",variable)) {
       if((at=find_archetype(argument))==NULL)
