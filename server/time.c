@@ -51,6 +51,13 @@ void remove_door(object *op) {
       update_ob_speed(tmp);
       tmp->speed_left= -0.2;
     }
+
+  if(op->other_arch)
+  {
+      tmp=arch_to_object(op->other_arch);
+      tmp->x=op->x;tmp->y=op->y;tmp->map=op->map;tmp->level=op->level;
+      insert_ob_in_map(tmp,op->map,op,0);
+  }
   remove_ob(op);
   free_object(op);
 }
@@ -65,6 +72,12 @@ void remove_door2(object *op) {
       update_ob_speed(tmp);
       tmp->speed_left= -0.2;
     }
+  }
+  if(op->other_arch)
+  {
+      tmp=arch_to_object(op->other_arch);
+      tmp->x=op->x;tmp->y=op->y;tmp->map=op->map;tmp->level=op->level;
+      insert_ob_in_map(tmp,op->map,op,0);
   }
   remove_ob(op);
   free_object(op);
