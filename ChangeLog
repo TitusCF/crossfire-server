@@ -17,6 +17,15 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+common/loader.l, loader.c: in check_loaded_object() - don't give spell
+   objects inventory if we are in the arch_init phase.  When loading objects
+   in common loader routine, if object doesn't have arch, set the object
+   name to the arch name so that it is more meaningful than 'singularity'.
+common/map.c: If object has inventory, check to make sure the inventory
+   objects have an archetype set - if not, remove and free the object -
+   objects without archetypes causes crashes. 
+MSW 2004-08-17
+
 server/apply.c: fix_auto_apply() - add some debugging statements, as I've
    seen crashes caused by monsters with scrolls with no spells - need to
    figure out how those are showing up.

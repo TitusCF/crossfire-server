@@ -492,7 +492,22 @@ void load_objects (mapstruct *m, FILE *fp, int mapflags) {
 		insert_ob_in_map(op,m,op,INS_NO_MERGE | INS_NO_WALK_ON | INS_ABOVE_FLOOR_ONLY);
 	    else
 		insert_ob_in_map(op,m,op,INS_NO_MERGE | INS_NO_WALK_ON | INS_ON_TOP);
-	    if (op->inv) sum_weight(op);
+	    if (op->inv) {
+		object *invop, *next;
+
+		/* Clear out any objects without archetypes, as they will just cause
+		 * crashes later on.
+		 */
+		for (invop = op->inv; invop; invop=next) {
+		    next = invop->above;
+		    if (!invop->arch) {
+			LOG(llevDebug,"Discarding object without arch: %s\n", invop->name?invop->name:"(null)");
+			remove_ob(invop);
+			free_object(invop);
+		    }
+		}
+		sum_weight(op);
+	    }
 	    prev=op,last_more=op;
 	    break;
 

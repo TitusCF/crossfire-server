@@ -428,7 +428,7 @@ static void check_loaded_object(object *op) {
     if ((op->type == ROD || op->type == WAND || op->type == SCROLL || op->type == HORN
 	|| op->type == FIREWALL ||
 	  /* POTIONS and ALTARS don't always cast spells, but if they do, update them */
-	  ((op->type == POTION || op->type == ALTAR) && op->stats.sp)) && !op->inv)  {
+	  ((op->type == POTION || op->type == ALTAR) && op->stats.sp)) && !op->inv && !arch_init)  {
 	object *tmp;
 
 	/* Fireall is bizarre in that spell type was stored in dam.  Rest are 'normal'
@@ -440,7 +440,7 @@ static void check_loaded_object(object *op) {
     }
     /* spellbooks & runes use slaying.  But not to arch name, but to spell name */
 
-    if ((op->type == SPELLBOOK || op->type == RUNE) && op->slaying && !op->inv) {
+    if ((op->type == SPELLBOOK || op->type == RUNE) && op->slaying && !op->inv && !arch_init) {
 	object *tmp;
 
 	tmp = get_archetype_by_object_name(op->slaying);
@@ -561,11 +561,17 @@ A	.+
 			 */
 			if (op->arch) {
 			    object *tmp;
+			    char *yv=yval();
 
 			    tmp=get_object();
-			    tmp->arch = find_archetype(yval());
+			    tmp->arch = find_archetype(yv);
 			    if (tmp->arch!=NULL)
 				copy_object(&tmp->arch->clone,tmp);
+			    else {
+				if (tmp->name) free_string(tmp->name);
+				/* record the name of the broken object */
+				tmp->name = add_string(yv);
+			    }
 			    strcpy(msgbuf, "");
 			    strcpy(lorebuf, "");
 			    lex_load(tmp, map_flags);
