@@ -126,7 +126,7 @@ while (<>) {
     if (/^name /) {
 	$name = substr($_, 6, 999999);
     }
-    if (/^resist_([a-z]+) (\d+)/) {
+    if (/^resist_([a-z]+) (-*\d+)/) {
 	if ($1 ne "physical") {
 	    if ($2 > 0) { $n = "+$2"; } else {$n = "$2"; }
 	    if ($prot eq "") {
