@@ -1,6 +1,12 @@
 Changes in top level CVS tree (please add your changes at the very top of
 the file):
 
+Bugfix in server/main.c - enter_exit()
+  Unique maps were using their actual location as a path for moving to
+  a new map.  They need to use the location of the original map, not
+  the character's individual copy of it.  This is re-constructed from
+  the individual map's filename, which is based on the original path.
+
 Remove xbmtobdf man page - since it is run automatically and it is likely
 that people will not run it manually (and it appears to be innacruate - or
 at least imcomplete), may as well remove it.  - msw
