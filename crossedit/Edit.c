@@ -660,7 +660,7 @@ static void EnterCb (Widget w, XtPointer client, XtPointer call)
     tmp = obj;
     do {
 	obj = tmp->head ? tmp->head : tmp;
-	if (obj->type == TELEPORTER || obj->type==EXIT) {
+	if (obj->type == PLAYER_CHANGER || obj->type == TELEPORTER || obj->type==EXIT) {
 	    /*** check out if exit leads ***/
 	    if(!EXIT_PATH(obj)) {
 		CnvNotify("Exit leads nowhere",

@@ -88,6 +88,7 @@ int GetType (object *tmp)
     switch (tmp->type) {
     case TELEPORTER:
 		return T_Connected|T_Exit;
+    case PLAYER_CHANGER:
     case EXIT:
 	return T_Exit;
     case TRAPDOOR:

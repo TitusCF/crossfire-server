@@ -1053,7 +1053,7 @@ Edit AppEditInsert(App self,String path,EditType type)
     /*** check if exist ***/
     /* Dragon Master */
     for(editor = self->edit; editor; editor = editor->next)
-      if(!strcmp(editor->emap->path, path)) {
+      if(path != NULL && !strcmp(editor->emap->path, path)) {
 	/*** save, if modified ***/
 	if (editor->modified) {
 	  switch (CnvNotify ("Map modified, discard changes?",
