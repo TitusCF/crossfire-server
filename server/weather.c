@@ -708,7 +708,8 @@ void init_humid_elev()
 	    }
 	    delete_map(m);
 	    /* jesus thats confusing as all hell */
-	    weathermap[x][y].humid = water/(spwtx*spwty);
+	    printf("water %d humid %d\n", water, water*100/(spwtx*spwty));
+	    weathermap[x][y].humid = water*100/(spwtx*spwty);
 	    weathermap[x][y].avgelev = elev/(spwtx*spwty);
 	    weathermap[x][y].water = weathermap[x][y].humid;
 	}
@@ -822,6 +823,7 @@ void init_weather()
     read_pressuremap();
     read_winddirmap();
     read_windspeedmap();
+    read_watermap();
     read_humidmap();
     read_elevmap(); /* elevation must allways follow humidity */
     read_temperaturemap();
@@ -955,7 +957,7 @@ void update_humid()
 
     for (x=0; x < WEATHERMAPTILESX; x++)
 	for (y=0; y < WEATHERMAPTILESY; y++)
-	    humid_tile(x, y);
+	    weathermap[x][y].humid = humid_tile(x, y);
 }
 
 /* calculate the humidity of this tile */
@@ -985,9 +987,11 @@ int humid_tile(int x, int y)
 	if (x != WEATHERMAPTILESX)
 	    ox = x + 1;
     }
-    humid = MIN(100, (weathermap[x][y].humid + weathermap[ox][oy].humid * 2 +
-	weathermap[x][y].water + rndm(-2,2)) / 4);
 
+    humid = MIN(100, ((weathermap[x][y].humid * 2 +
+	weathermap[ox][oy].humid * weathermap[ox][oy].windspeed +
+	weathermap[x][y].water + rndm(-2, 2)) / 
+	(weathermap[ox][oy].windspeed+3)));
     return humid;
 }
 
