@@ -17,6 +17,23 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+More bugfixes:
+include/shop.h: remove _SHOP_H after endif, causing compiler warnings.
+include/skills.h: Add check to USING_SKILL to make sure chosen_skill
+   is not null.
+server/c_chat.c: Add some missing return values, resulting in compiler
+   warnings.
+server/skill_util.c: Remove unused variable.  compiler warnings again.
+server/spell_effect.c: Change dimension door so that you can't go
+   through spaces that block passsage and also block view (eg walls).
+   This goes back to the more traditional behaviour.  Remove
+   some unused variables.
+server/spell_util.c: Add missing P_OUT_OF_MAP to move_missile, resulting
+   in crashes.
+server/time.c: if generator is not on a map, don't have it generates.
+   Fixes crashes.
+MSW 2003-02-02
+
 New materialtype system for crossfire.  Based in concept on my original
 design, but rewritten from scratch to make it easily extensible.
 

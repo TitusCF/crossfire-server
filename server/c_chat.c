@@ -58,6 +58,7 @@ int command_cointoss(object *op, char *params)
     }
     new_draw_info(NDI_UNIQUE, 0, op, buf2);
     new_info_map_except(NDI_WHITE, op->map, op, buf);
+    return 0;
 }
 
 char *orcknuckle[7] = {"none", "beholder", "ghost", "knight",
@@ -80,6 +81,7 @@ int command_orcknuckle(object *op, char *params)
 	orcknuckle[i], orcknuckle[j], orcknuckle[k], orcknuckle[l]);
     new_draw_info(NDI_UNIQUE, 0, op, buf);
     new_info_map_except(NDI_WHITE, op->map, op, buf2);
+    return 0;
 }
 
 int command_shout (object *op, char *params)

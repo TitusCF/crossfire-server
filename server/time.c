@@ -84,35 +84,46 @@ void remove_door2(object *op) {
 }
 
 void generate_monster(object *gen) {
-  int i;
-  object *op,*head=NULL,*prev=NULL;
-  archetype *at=gen->other_arch;
+    int i;
+    object *op,*head=NULL,*prev=NULL;
+    archetype *at=gen->other_arch;
 
-  if(GENERATE_SPEED(gen)&&rndm(0, GENERATE_SPEED(gen)-1))
-    return;
-  if(gen->other_arch==NULL) {
-    LOG(llevError,"Generator without other_arch: %s\n",gen->name);
-    return;
-  }
-  i=find_free_spot(at,gen->map,gen->x,gen->y,1,9);
-  if (i==-1) return;
-  while(at!=NULL) {
-    op=arch_to_object(at);
-    op->x=gen->x+freearr_x[i]+at->clone.x;
-    op->y=gen->y+freearr_y[i]+at->clone.y;
-    if(head!=NULL)
-      op->head=head,prev->more=op;
-    if (rndm(0, 9)) generate_artifact(op, gen->map->difficulty);
-    insert_ob_in_map(op,gen->map,gen,0);
-    if (QUERY_FLAG(op, FLAG_FREED)) return;
-    if(op->randomitems!=NULL)
-      create_treasure(op->randomitems,op,GT_APPLY,
+    if(GENERATE_SPEED(gen)&&rndm(0, GENERATE_SPEED(gen)-1))
+	return;
+
+    if(gen->other_arch==NULL) {
+	LOG(llevError,"Generator without other_arch: %s\n",gen->name);
+	return;
+    }
+    /* Code below assumes the generator is on a map, as it tries
+     * to place the monster on the map.  So if the generator
+     * isn't on a map, complain and exit.
+     */
+    if (gen->map == NULL) {
+	LOG(llevError,"Generator (%s) not on a map?\n", gen->name);
+	return;
+    }
+    i=find_free_spot(at,gen->map,gen->x,gen->y,1,9);
+    if (i==-1) return;
+    while(at!=NULL) {
+	op=arch_to_object(at);
+	op->x=gen->x+freearr_x[i]+at->clone.x;
+	op->y=gen->y+freearr_y[i]+at->clone.y;
+
+	if(head!=NULL)
+	    op->head=head,prev->more=op;
+
+	if (rndm(0, 9)) generate_artifact(op, gen->map->difficulty);
+	insert_ob_in_map(op,gen->map,gen,0);
+	if (QUERY_FLAG(op, FLAG_FREED)) return;
+	if(op->randomitems!=NULL)
+	    create_treasure(op->randomitems,op,GT_APPLY,
                       gen->map->difficulty,0);
-    if(head==NULL)
-      head=op;
-    prev=op;
-    at=at->more;
-  }
+	if(head==NULL)
+	    head=op;
+	prev=op;
+	at=at->more;
+    }
 }
 
 void regenerate_rod(object *rod) {

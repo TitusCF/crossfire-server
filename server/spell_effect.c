@@ -1268,7 +1268,7 @@ int cast_light(object *op,object *caster,int dir) {
 }
 
 int dimension_door(object *op,int dir) {
-    int dist, maxdist;
+    int dist, maxdist, mflags;
 
     if(op->type!=PLAYER)
 	return 0;
@@ -1290,10 +1290,14 @@ int dimension_door(object *op,int dir) {
 	    return 0;
 	}
 
-	for(dist=0;dist<op->contr->count; dist++)
-	    if (get_map_flags(op->map, NULL, 
+	for(dist=0;dist<op->contr->count; dist++) {
+	    mflags = get_map_flags(op->map, NULL, 
 		op->x+freearr_x[dir]*(dist+1), op->y+freearr_y[dir]*(dist+1),
-		NULL, NULL) & (P_NO_MAGIC | P_OUT_OF_MAP)) break;
+		NULL, NULL);
+
+	    if ((mflags & (P_NO_MAGIC | P_OUT_OF_MAP)) ||
+		((mflags & P_NO_PASS) && (mflags & P_BLOCKSVIEW))) break;
+	}
 
 	if(dist<op->contr->count) {
 	    new_draw_info(NDI_UNIQUE, 0,op,"Something blocks the magic of the spell.\n");
@@ -1321,16 +1325,18 @@ int dimension_door(object *op,int dir) {
 	 * spaces that blocked the players view.
 	 */
 
-	for(dist=1; dist < maxdist; dist++)
-	    if (get_map_flags(op->map, NULL, 
-	      op->x+freearr_x[dir] * dist, 
-	      op->y+freearr_y[dir] * dist,
-	      NULL, NULL) & (P_NO_MAGIC | P_OUT_OF_MAP)) {
-		dist--;
+	for(dist=0; dist < maxdist; dist++) {
+	    mflags = get_map_flags(op->map, NULL, 
+		op->x+freearr_x[dir] * (dist+1), 
+	        op->y+freearr_y[dir] * (dist+1),
+	        NULL, NULL);
+	    if ((mflags & (P_NO_MAGIC | P_OUT_OF_MAP)) ||
+		((mflags & P_NO_PASS) && (mflags & P_BLOCKSVIEW))) {
 		break;
 	    }
+	}
 
-	/* If the destinate is blocked, keep backing up until we
+	/* If the destination is blocked, keep backing up until we
 	 * find a place for the player.
 	 */
 	for(;dist>0; dist--)
@@ -3443,7 +3449,7 @@ int finger_of_death(object *op, object *caster, int dir) {
 int animate_weapon(object *op,object *caster,int dir, archetype *at, int spellnum) {
     object *weapon, *tmp;
     char buf[MAX_BUF];
-    int a, i, j;
+    int a, i;
     sint16 x, y;
     int magic;
     mapstruct *m;

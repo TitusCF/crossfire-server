@@ -13,4 +13,4 @@ typedef struct _supplydemand {
 	struct _supplydemand *next;
 } supplydemand_t;
 
-#endif _SHOP_H_
+#endif

@@ -117,7 +117,6 @@ int do_skill (object *op, object *part, int dir, char *string) {
     int success=0, exp=0;
     int skill = op->chosen_skill->stats.sp;
     int did_alc = 0;
-    int x, y;
     object *tmp, *next;
 
     switch(skill) {

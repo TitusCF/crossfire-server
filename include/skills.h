@@ -146,4 +146,4 @@ extern skill skills[];
 /* yet more convenience macros. */
 
 #define USING_SKILL(op, skill) \
-	((op)->chosen_skill->stats.sp == skill)
+	((op)->chosen_skill && (op)->chosen_skill->stats.sp == skill)

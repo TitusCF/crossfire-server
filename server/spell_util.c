@@ -1644,7 +1644,7 @@ void move_missile(object *op) {
     }
 
     remove_ob(op);
-    if ( ! op->direction || (mflags & P_WALL)) {
+    if ( ! op->direction || (mflags & (P_WALL | P_OUT_OF_MAP))) {
 	free_object(op);
 	return;
     }
