@@ -467,6 +467,10 @@ treasureone random_armour
     magic 2
     chance 5
   more
+  arch spiked_shield
+    magic 1
+    chance 1
+  more
   arch horned_helmet
     magic 1
     chance 5
