@@ -212,6 +212,8 @@ Object Gnarg
 type 15
 value 10
 dam 12
+resist_poison 30
+Cha -1
 end
 #
 Allowed all
@@ -850,8 +852,21 @@ Allowed gauntlets
 chance 5
 Object Sorig
 type 100
-magic 2
 resist_physical 8
+resist_electricity 35
+attacktype 8
+weight 125
+value 175
+end
+#
+Allowed gloves
+chance 10
+Object Havok
+type 100
+dam 4
+wc 2
+resist_physical 8
+resist_electricity 35
 attacktype 8
 weight 125
 value 175
@@ -913,6 +928,7 @@ Object Valriel
 type 16
 value 20
 resist_physical 5
+resist_blindness 40
 weight 110
 magic 1
 end
@@ -923,7 +939,21 @@ Object Gorokh
 type 16
 value 15
 ac 2
+resist_magic 15
+resist_fear 30
 resist_physical 15
+weight 105
+magic 1
+end
+#
+Allowed plate_mail,scale_mail
+chance 6
+Object Gnarg
+type 16
+value 15
+ac 1
+resist_poison +45
+resist_magic -10
 weight 105
 magic 1
 end
@@ -936,7 +966,6 @@ value 55
 ac 1
 resist_physical 15
 resist_fire 35
-
 weight 90
 magic 2
 end
@@ -947,6 +976,10 @@ Object Gaea
 type 16
 value 25
 ac 1
+hp 1
+resist_drain 30
+resist_depletion 30
+resist_death 30
 resist_physical 10
 magic 2
 end
@@ -1036,9 +1069,8 @@ ac 1
 msg
   This extremely unique platemail was made
   for the line of dwarven kings in one of the 
-  ancient northern kingdoms from which nothing has
-  been heard of during the latter centuries.
-  Due to magic, it will fit creatures of any size.
+  vanished northern kingdoms of old.
+  Due to its magic, it will fit creatures of any size.
   It is highly enchanted, increasing the strength of the 
   wearer and protecting against fire.  
   Unfortunately it is also very heavy, limiting speed somewhat.
@@ -1059,11 +1091,11 @@ Pow -5
 value 100
 msg
   This very heavy armour gives protection
-  greater than normal object.  It is created
-  for fighters - the high weight and fact it
-  clouds the mind makes it unsuitable for
-  mages.  It increases the wearers strength and
-  dexterity, making them even more fearsome in
+  greater than normal mail.  It is created
+  for fighters - the high weight and the fact 
+  that it clouds the mind makes it unsuitable for
+  mages.  It increases the wearer's strength and
+  dexterity, making him even more fearsome in
   battle.
 endmsg
 end
@@ -1090,7 +1122,7 @@ value 100
 ac 3
 msg
   This robe blurs the vision of those trying
-  attack, making you more difficult to hit.
+  to attack, making the wearer more difficult to hit.
 endmsg
 end
 #
@@ -1117,8 +1149,8 @@ Object Thieves
 value 80
 type 70
 face ring.117
-exp 2
-Dex 2
+exp 5
+Dex 3
 stealth 1
 can_see_in_dark 1
 end
@@ -1133,6 +1165,7 @@ type 70
 value 30
 Str 1
 Con 1
+exp 2
 wc 2
 dam 2
 hp 1
@@ -1150,6 +1183,7 @@ Str 1
 Con 1
 Dex 1
 wc 2
+exp 3
 magic -1
 resist_physical 10
 resist_magic -5
@@ -1166,6 +1200,7 @@ Object Strife
 type 70
 face ring.117
 value 230
+exp 4
 Str 2
 Con 2
 Dex 2
@@ -1195,9 +1230,9 @@ Int -1
 Wis -1
 Pow -1
 magic -5
-exp 4
+exp 5
 resist_physical 30
-resist_magic -25
+resist_magic -20
 hp 3
 dam 5
 ac 2
@@ -1317,10 +1352,10 @@ Object Mithrandir
 slaying Balrog
 face ring.117
 type 70
-value 350
+value 450
 sp 2
-Int 1
-Pow 1
+Int 2
+Pow 2
 resist_magic 30
 resist_fire 20
 path_attuned 2
@@ -1335,8 +1370,8 @@ Object Adamant
 face ring.117
 type 70
 value 450
-sp 2
-Int 2
+sp 3
+Int 3
 Pow 2
 resist_magic 30
 resist_drain 100
@@ -1368,7 +1403,7 @@ difficulty 6
 Object Ruling
 face ring.117
 type 70
-value 750
+value 1750
 sp 5
 Int 3
 Pow 3
@@ -1382,6 +1417,8 @@ msg
   and in the darkness bind them.
 endmsg
 food 2
+stealth 1
+ac 6
 resist_magic 40
 resist_ghosthit -100
 path_attuned 606
@@ -1447,7 +1484,7 @@ face ring.117
 type 70
 value 20
 Str 1
-resist_paralyze 30
+resist_paralyze 100
 end
 #
 Allowed all
@@ -1457,7 +1494,8 @@ face ring.117
 type 70
 value 40
 wc 2
-Dex 1
+Dex 2
+dam 2
 end
 #
 Allowed all
@@ -1467,8 +1505,8 @@ face ring.117
 type 70
 value 40
 wc 2
-Str 2
-Dex 2
+Str 4
+Dex 4
 Con -5
 Int -3
 Wis -3
@@ -1660,7 +1698,7 @@ Object Asbestos
 type 87
 weight 135
 value 400
-resist_fire 20
+resist_fire 25
 material 256
 end
 #
@@ -1671,7 +1709,7 @@ Object Warmth
 type 87
 weight 140
 value 350
-resist_cold 20
+resist_cold 25
 material 256
 end
 #
@@ -1682,7 +1720,7 @@ Object Insulation
 type 87
 weight 140
 value 350
-resist_electricity 20
+resist_electricity 25
 material 256
 end
 #
@@ -2063,7 +2101,7 @@ Str 80
 end
 #
 Allowed quiver
-chance 30
+chance 100
 Object Holding Arrows
 type 122
 value 100
