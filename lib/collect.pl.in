@@ -196,7 +196,7 @@ sub archsOut {
 	open(ARC,$arch) || &die("cannot open ".$arch);
 	$pathto = $arch;
 	$pathto =~ s@[^/]*/@@;
-	$pathto =~ s@(.*)/.*arc@$1@;
+	$pathto =~ s@[a-z]*/(.*)/.*arc@$1@;
 line:	while(<ARC>) {
 	    chop;
 	    ($var,@values) = split;
