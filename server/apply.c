@@ -3348,10 +3348,14 @@ void fix_auto_apply(mapstruct *m) {
 		     * of maps/players already out there with items that have spells
 		     * which haven't had the randomitems set to null yet.
 		     * MSW 2004-05-13
+             *
+             * And if it's a spellbook, it's better to set randomitems to NULL too,
+             * else you get two spells in the book ^_-
+             * Ryo 2004-08-16
 		     */
 		    if (tmp->type == WAND || tmp->type == ROD || tmp->type == SCROLL ||
 			tmp->type == HORN || tmp->type == FIREWALL || tmp->type == POTION ||
-			tmp->type == ALTAR)
+			tmp->type == ALTAR || tmp->type == SPELLBOOK)
 			    tmp->randomitems = NULL;
 
 		}
