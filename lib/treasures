@@ -3090,6 +3090,8 @@ treasure thief
   arch sack
   end
 treasure fireborn
+  arch skill_levitate
+  more
   arch skill_missile_weapon
   more
   list basic_skills
@@ -3117,6 +3119,8 @@ treasure fireborn
   arch book
   end
 treasure quetzalcoatl
+  arch skill_levitate
+  more
   arch skill_melee_weapon
   more
   arch skill_missile_weapon
