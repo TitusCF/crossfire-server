@@ -2883,8 +2883,8 @@ void write_weather_images()
     sint32 min[10], max[10], avgrain, avgwind, realmaxwind;
     double scale[10], realscalewind;
     uint8 pixels[3 * 3 * WEATHERMAPTILESX];
-    long long total_rainfall = 0;
-    long long total_wind = 0;
+    sint64 total_rainfall = 0;
+    sint64 total_wind = 0;
 
     min[0] = 0;            max[0] = 100;
     min[1] = 0;            max[1] = 0;
@@ -2924,7 +2924,7 @@ void write_weather_images()
 	}
     }
     avgrain = total_rainfall / (WEATHERMAPTILESX * WEATHERMAPTILESY);
-    avgwind = (total_wind    / (WEATHERMAPTILESX * WEATHERMAPTILESY) * 1.5);
+    avgwind = (total_wind    / ((WEATHERMAPTILESX * WEATHERMAPTILESY) * 3 / 2));
     max[2] = avgrain - 1;
     realscalewind = 255.0l / (max[4] - min[4]);
     realmaxwind = max[4];
