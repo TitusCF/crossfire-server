@@ -17,6 +17,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/move.c: Fix transfer_ob so that it sends newmap command to client
+   if we're moving a playing - otherwise fog of war displays bad
+   information on the client.
+MSW 2003-02-19
+
 More bugfixes:
 server/c_wiz.c: Fix reset command - while it deleted the maps, it made things
    so that it never got removed from the map listing - instead, just let

@@ -144,23 +144,28 @@ int move_ob (object *op, int dir, object *originator)
 
 int transfer_ob (object *op, int x, int y, int randomly, object *originator)
 {
-  int i;
-  object *tmp;
+    int i;
+    object *tmp;
 
-  if (randomly)
-    i = find_free_spot (op->arch,op->map,x,y,0,SIZEOFFREE);
-  else
-    i = find_first_free_spot(op->arch,op->map,x,y);
-  if (i==-1)
-    return 0;	/* No free spot */
+    if (randomly)
+	i = find_free_spot (op->arch,op->map,x,y,0,SIZEOFFREE);
+    else
+	i = find_first_free_spot(op->arch,op->map,x,y);
 
-  if(op->head!=NULL)
-    op=op->head;
-  remove_ob(op);
-  for(tmp=op;tmp!=NULL;tmp=tmp->more)
-    tmp->x=x+freearr_x[i]+(tmp->arch==NULL?0:tmp->arch->clone.x),
-    tmp->y=y+freearr_y[i]+(tmp->arch==NULL?0:tmp->arch->clone.y);
-  return insert_ob_in_map(op,op->map,originator,0) == NULL;
+    if (i==-1)
+	return 0;	/* No free spot */
+
+    if(op->head!=NULL)
+	op=op->head;
+    remove_ob(op);
+    for(tmp=op;tmp!=NULL;tmp=tmp->more)
+	tmp->x=x+freearr_x[i]+(tmp->arch==NULL?0:tmp->arch->clone.x),
+	tmp->y=y+freearr_y[i]+(tmp->arch==NULL?0:tmp->arch->clone.y);
+
+    tmp = insert_ob_in_map(op,op->map,originator,0);
+    if (op && op->type == PLAYER) MapNewmapCmd(op->contr);
+    if (tmp) return 0;
+    else return 1;
 }
 
 /*
