@@ -97,9 +97,9 @@ object *find_nearest_living_creature(object *npc) {
 object *find_enemy(object *npc) {
   object *tmp=NULL;
   
-  if(QUERY_FLAG(npc,FLAG_BERSERK)) {
+  /*  if(QUERY_FLAG(npc,FLAG_BERSERK)) {
     return find_nearest_living_creature(npc);
-  }
+    }*/
   if ((npc->move_type & HI4) == PETMOVE)
     return get_pet_enemy(npc);
   if((tmp=get_enemy(npc))==NULL)
