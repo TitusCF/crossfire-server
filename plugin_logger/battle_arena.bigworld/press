@@ -1,0 +1,747 @@
+arch map
+reset_timeout 7200
+difficulty 1
+width 10
+height 9
+enter_x 1
+enter_y 1
+msg
+Creator: Gnat the Gnu
+Email: gnu@foo.bar
+Date: Thu Oct  4 19:18:16 2001
+endmsg
+end
+arch woodfloor
+end
+arch wwall_2_1_2
+end
+arch marble
+y 1
+end
+arch stair_up
+slaying arena
+event_apply ARENA
+event_apply_plugin crossfire_logger
+event_apply_options WINNER_LEAVE
+hp 17
+sp 31
+y 1
+end
+arch dungeon_magic
+y 1
+end
+arch woodfloor
+y 2
+end
+arch dungeon_magic
+y 2
+end
+arch statue
+y 2
+end
+arch woodfloor
+y 3
+end
+arch dungeon_magic
+y 3
+end
+arch woodfloor
+y 4
+end
+arch dungeon_magic
+y 4
+end
+arch statue2
+y 4
+end
+arch woodfloor
+y 5
+end
+arch dungeon_magic
+y 5
+end
+arch woodfloor
+y 6
+end
+arch dungeon_magic
+y 6
+end
+arch statue
+y 6
+end
+arch marble
+y 7
+end
+arch dungeon_magic
+y 7
+end
+arch woodfloor
+y 8
+end
+arch wwall_2_1_2
+y 8
+end
+arch woodfloor
+x 1
+end
+arch wwall_2_1_2
+x 1
+end
+arch marble
+x 1
+y 1
+end
+arch dungeon_magic
+x 1
+y 1
+end
+arch marble
+x 1
+y 2
+end
+arch dungeon_magic
+x 1
+y 2
+end
+arch marble
+x 1
+y 3
+end
+arch dungeon_magic
+x 1
+y 3
+end
+arch marble
+x 1
+y 4
+end
+arch dungeon_magic
+x 1
+y 4
+end
+arch marble
+x 1
+y 5
+end
+arch dungeon_magic
+x 1
+y 5
+end
+arch marble
+x 1
+y 6
+end
+arch dungeon_magic
+x 1
+y 6
+end
+arch magic_mouth
+msg
+All newspapers are there for your victory.
+Smile! It's time for interviews...
+What about taking a seat and comment your victory?
+endmsg
+x 1
+y 6
+end
+arch marble
+x 1
+y 7
+end
+arch dungeon_magic
+x 1
+y 7
+end
+arch woodfloor
+x 1
+y 8
+end
+arch wwall_2_1_2
+x 1
+y 8
+end
+arch woodfloor
+x 2
+end
+arch wwall_2_1_2
+x 2
+end
+arch woodfloor
+x 2
+y 1
+end
+arch dungeon_magic
+x 2
+y 1
+end
+arch table_4
+x 2
+y 1
+no_pass 1
+end
+arch woodfloor
+x 2
+y 2
+end
+arch dungeon_magic
+x 2
+y 2
+end
+arch table_4
+x 2
+y 2
+no_pass 1
+end
+arch woodfloor
+x 2
+y 3
+end
+arch dungeon_magic
+x 2
+y 3
+end
+arch table_4
+x 2
+y 3
+no_pass 1
+end
+arch marble
+x 2
+y 4
+end
+arch dungeon_magic
+x 2
+y 4
+end
+arch chair_2.4
+x 2
+y 4
+end
+arch woodfloor
+x 2
+y 5
+end
+arch dungeon_magic
+x 2
+y 5
+end
+arch table_4
+x 2
+y 5
+no_pass 1
+end
+arch woodfloor
+x 2
+y 6
+end
+arch dungeon_magic
+x 2
+y 6
+end
+arch table_4
+x 2
+y 6
+no_pass 1
+end
+arch woodfloor
+x 2
+y 7
+end
+arch dungeon_magic
+x 2
+y 7
+end
+arch table_4
+x 2
+y 7
+no_pass 1
+end
+arch woodfloor
+x 2
+y 8
+end
+arch wwall_2_1_2
+x 2
+y 8
+end
+arch woodfloor
+x 3
+end
+arch wwall_2_1_2
+x 3
+end
+arch woodfloor
+x 3
+y 1
+end
+arch chair_1.1
+x 3
+y 1
+end
+arch woodfloor
+x 3
+y 2
+end
+arch woodfloor
+x 3
+y 3
+end
+arch dungeon_magic
+x 3
+y 3
+end
+arch table_3
+x 3
+y 3
+no_pass 1
+end
+arch woodfloor
+x 3
+y 4
+end
+arch dungeon_magic
+x 3
+y 4
+end
+arch table_4
+x 3
+y 4
+no_pass 1
+end
+arch woodfloor
+x 3
+y 5
+end
+arch dungeon_magic
+x 3
+y 5
+end
+arch table_3
+x 3
+y 5
+no_pass 1
+end
+arch woodfloor
+x 3
+y 6
+end
+arch woodfloor
+x 3
+y 7
+end
+arch chair_1.3
+x 3
+y 7
+end
+arch woodfloor
+x 3
+y 8
+end
+arch wwall_2_1_2
+x 3
+y 8
+end
+arch woodfloor
+x 4
+end
+arch wwall_win2
+x 4
+end
+arch woodfloor
+x 4
+y 1
+end
+arch chair_1.1
+x 4
+y 1
+end
+arch woodfloor
+x 4
+y 2
+end
+arch chair_1.1
+x 4
+y 2
+end
+arch man
+name reporter
+x 4
+y 2
+end
+arch woodfloor
+x 4
+y 3
+end
+arch chair_1.2
+x 4
+y 3
+end
+arch woodfloor
+x 4
+y 4
+end
+arch chair_1.2
+x 4
+y 4
+end
+arch man
+name Reporter for ouebzine
+event_say ARENA
+event_say_plugin crossfire_logger
+event_say_options WINNER_COMMENT
+x 4
+y 4
+end
+arch woodfloor
+x 4
+y 5
+end
+arch chair_1.2
+x 4
+y 5
+end
+arch woodfloor
+x 4
+y 6
+end
+arch chair_1.2
+x 4
+y 6
+end
+arch a_priest
+name reporter
+x 4
+y 6
+end
+arch woodfloor
+x 4
+y 7
+end
+arch chair_1.3
+x 4
+y 7
+end
+arch woodfloor
+x 4
+y 8
+end
+arch wwall_win2
+x 4
+y 8
+end
+arch woodfloor
+x 5
+end
+arch wwall_2_1_2
+x 5
+end
+arch woodfloor
+x 5
+y 1
+end
+arch man
+name reporter
+x 5
+y 1
+end
+arch woodfloor
+x 5
+y 2
+end
+arch chair_1.2
+x 5
+y 2
+end
+arch woodfloor
+x 5
+y 3
+end
+arch chair_1.2
+x 5
+y 3
+end
+arch woodfloor
+x 5
+y 4
+end
+arch woodfloor
+x 5
+y 5
+end
+arch chair_1.2
+x 5
+y 5
+end
+arch woodfloor
+x 5
+y 6
+end
+arch chair_1.2
+x 5
+y 6
+end
+arch woodfloor
+x 5
+y 7
+end
+arch chair_1.2
+x 5
+y 7
+end
+arch woodfloor
+x 5
+y 8
+end
+arch wwall_2_1_2
+x 5
+y 8
+end
+arch woodfloor
+x 6
+end
+arch wwall_2_1_2
+x 6
+end
+arch woodfloor
+x 6
+y 1
+end
+arch woodfloor
+x 6
+y 2
+end
+arch chair_1.2
+x 6
+y 2
+end
+arch woodfloor
+x 6
+y 3
+end
+arch chair_1.2
+x 6
+y 3
+end
+arch woodfloor
+x 6
+y 4
+end
+arch chair_1.2
+x 6
+y 4
+end
+arch woodfloor
+x 6
+y 5
+end
+arch chair_1.2
+x 6
+y 5
+end
+arch a_priest
+name reporter
+x 6
+y 5
+end
+arch woodfloor
+x 6
+y 6
+end
+arch woodfloor
+x 6
+y 7
+end
+arch chair_1.2
+x 6
+y 7
+end
+arch woodfloor
+x 6
+y 8
+end
+arch wwall_2_1_2
+x 6
+y 8
+end
+arch woodfloor
+x 7
+end
+arch wwall_2_1_2
+x 7
+end
+arch woodfloor
+x 7
+y 1
+end
+arch clock
+x 7
+y 1
+end
+arch woodfloor
+x 7
+y 2
+end
+arch chair_1.2
+x 7
+y 2
+end
+arch woodfloor
+x 7
+y 3
+end
+arch chair_1.2
+x 7
+y 3
+end
+arch woodfloor
+x 7
+y 4
+end
+arch woodfloor
+x 7
+y 5
+end
+arch chair_1.2
+x 7
+y 5
+end
+arch woodfloor
+x 7
+y 6
+end
+arch chair_1.2
+x 7
+y 6
+end
+arch woodfloor
+x 7
+y 7
+end
+arch woodfloor
+x 7
+y 8
+end
+arch wwall_2_1_2
+x 7
+y 8
+end
+arch woodfloor
+x 8
+end
+arch wwall_2_1_2
+x 8
+end
+arch woodfloor
+x 8
+y 1
+end
+arch chair_1.2
+x 8
+y 1
+end
+arch woodfloor
+x 8
+y 2
+end
+arch chair_1.2
+x 8
+y 2
+end
+arch woodfloor
+x 8
+y 3
+end
+arch woodfloor
+x 8
+y 4
+end
+arch woodfloor
+x 8
+y 5
+end
+arch woodfloor
+x 8
+y 6
+end
+arch sign
+x 8
+y 6
+end
+arch woodfloor
+x 8
+y 7
+end
+arch woodfloor
+x 8
+y 8
+end
+arch wwall_2_1_2
+x 8
+y 8
+end
+arch woodfloor
+x 9
+end
+arch wwall_2_2_3
+x 9
+end
+arch woodfloor
+x 9
+y 1
+end
+arch wwall_2_1_1
+x 9
+y 1
+end
+arch woodfloor
+x 9
+y 2
+end
+arch wwall_win1
+x 9
+y 2
+end
+arch woodfloor
+x 9
+y 3
+end
+arch wwall_1_2
+x 9
+y 3
+end
+arch woodfloor
+x 9
+y 4
+end
+arch woodfloor
+x 9
+y 5
+end
+arch wwall_1_1
+x 9
+y 5
+end
+arch woodfloor
+x 9
+y 6
+end
+arch wwall_2_1_1
+x 9
+y 6
+end
+arch woodfloor
+x 9
+y 7
+end
+arch wwall_win1
+x 9
+y 7
+end
+arch woodfloor
+x 9
+y 8
+end
+arch wwall_2_2_4
+x 9
+y 8
+end
