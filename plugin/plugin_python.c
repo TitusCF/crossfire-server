@@ -4012,13 +4012,13 @@ static PyObject* CFCastSpell(PyObject* self, PyObject* args)
 static PyObject* CFForgetSpell(PyObject* self, PyObject* args)
 {
     long whoptr;
-    int spell;
+    char *spell;
 
-    if (!PyArg_ParseTuple(args,"li",&whoptr,&spell))
+    if (!PyArg_ParseTuple(args,"ls",&whoptr,&spell))
         return NULL;
 
     GCFP.Value[0] = (void *)(WHO);
-    GCFP.Value[1] = (void *)(object*)(spell);
+    GCFP.Value[1] = (void *)(spell);
     (PlugHooks[HOOK_FORGETSPELL])(&GCFP);
 
     Py_INCREF(Py_None);
@@ -6638,16 +6638,16 @@ static PyObject* CFDecreaseObjectNR(PyObject* self, PyObject* args)
 {
     long whoptr;
     int val;
-    long retptr;
+    object* ob;
     CFParm* CFR;
     if (!PyArg_ParseTuple(args,"li",&whoptr,&val))
         return NULL;
     GCFP.Value[0] = (void *)(WHO);
-    GCFP.Value[1] = (void *)(val);
+    GCFP.Value[1] = (void *)(&val);
     CFR = (PlugHooks[HOOK_DECREASEOBJECTNR])(&GCFP);
-    retptr=*(long*)(CFR->Value[0]);
+    ob = (object *)(CFR->Value[0]);
     PyFreeMemory( CFR );
-    return Py_BuildValue("l",retptr);
+    return Py_BuildValue("l", (long)ob);
 }
 
 static PyObject* CFGetMapDir(PyObject* self, PyObject* args)

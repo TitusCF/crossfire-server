@@ -862,7 +862,7 @@ CFParm* CFWESRVSendItem(CFParm* PParm)
         (object *)(PParm->Value[0]),
         (object *)(PParm->Value[1])
     );
-    return(PParm);
+    return(NULL);
 };
 
 /*****************************************************************************/
@@ -1217,7 +1217,7 @@ CFParm* CFWAddExp(CFParm* PParm)
 	(char*)(PParm->Value[2]),
 	*(int *)(PParm->Value[3])
     );
-    return(PParm);
+    return(NULL);
 };
 
 /*****************************************************************************/
@@ -1522,7 +1522,7 @@ CFParm* CFWSetAnimation (CFParm* PParm)
         SET_ANIMATION (op,face);
         }
     update_object(op, UP_OBJ_FACE);
-    return(PParm);
+    return(NULL);
 }
 /*****************************************************************************/
 /* communicate wrapper.                                                      */
