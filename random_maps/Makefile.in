@@ -30,6 +30,7 @@ LOCAL_LIBRARIES =
 
 SRCS =	random_map.c \
 	room_gen_onion.c \
+        room_gen_spiral.c \
 	maze_gen.c \
 	reader.c \
 	floor.c \

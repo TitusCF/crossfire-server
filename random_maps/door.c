@@ -27,6 +27,7 @@
 
 #include <global.h>
 #include <random_map.h>
+#include <rproto.h>
 
 void put_doors(mapstruct *the_map,char **maze , char *doorstyle, RMParms *RP) {
   int i,j;

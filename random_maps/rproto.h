@@ -7,6 +7,9 @@
 #ifndef __CEXTRACT__
 #ifdef __STDC__
 
+extern void connect_spirals(int xsize,int ysize,int sym, char **layout);
+extern char **map_gen_spiral(int xsize, int ysize, int option);
+
 extern mapstruct *generate_random_map ( char *InFileName, char *OutFileName );
 extern char **layoutgen (RMParms *RP );
 extern char **symmetrize_layout ( char **maze, int sym, RMParms *RP );

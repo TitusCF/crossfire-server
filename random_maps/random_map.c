@@ -80,7 +80,15 @@ mapstruct *generate_random_map(char *InFileName,char *OutFileName) {
 
   /*  rotate the layout randomly */
   layout=rotate_layout(layout,RANDOM()%4,RP);
-
+  { int i,j;
+  for(i=0;i<RP->Xsize;i++) {
+    for(j=0;j<RP->Ysize;j++) {
+      if(layout[i][j]==0) layout[i][j]=' ';
+      if(layout[i][j]=='*') layout[i][j]='D';
+      printf("%c",layout[i][j]);
+    }
+    printf("\n");
+  }}
   /* allocate the map and set the floor */
   theMap = make_map_floor(layout,RP->floorstyle,RP); 
 
@@ -109,15 +117,6 @@ mapstruct *generate_random_map(char *InFileName,char *OutFileName) {
   if(RP->generate_treasure_now)
     fix_auto_apply(theMap);
 
-  /* print a schematic of the maze */
-  /*  for(i=0;i<Xsize;i++) {
-      for(j=0;j<Ysize;j++) {
-      if(layout[i][j]==0) layout[i][j]=' ';
-      if(layout[i][j]=='*') layout[i][j]='D';
-      printf("%c",layout[i][j]);
-      }
-      printf("\n");
-      }*/
 
   fclose(InFile);
   /*  fclose(OutFile); */
@@ -163,15 +162,27 @@ char **layoutgen(RMParms *RP) {
     if(!(RANDOM()%2)) doorify_layout(maze,RP);
   }
 
+  if(strstr(RP->layoutstyle,"spiral")) {
+    maze = map_gen_spiral(RP->Xsize,RP->Ysize,RP->layoutoptions1);
+    RP->map_layout_style = SPIRAL_LAYOUT;
+    if(!(RANDOM()%2)) doorify_layout(maze,RP);
+  }
+
   if(maze == 0) /* unknown or unspecified layout type, pick one at random */
     switch(RANDOM()%NROFLAYOUTS) {
     case 0:
       maze = maze_gen(RP->Xsize,RP->Ysize,RANDOM()%2,RP);
+      RP->map_layout_style = MAZE_LAYOUT;
       if(!(RANDOM()%2)) doorify_layout(maze,RP);
       break;
     case 1:
       maze = map_gen_onion(RP->Xsize,RP->Ysize,RP->layoutoptions1,RP->layoutoptions2);
+      RP->map_layout_style = ONION_LAYOUT;
       if(!(RANDOM()%3)&& !(RP->layoutoptions1 & OPT_WALLS_ONLY)) roomify_layout(maze,RP);
+    case 2:
+      maze = map_gen_spiral(RP->Xsize,RP->Ysize,RP->layoutoptions1);
+      RP->map_layout_style = SPIRAL_LAYOUT;
+      if(!(RANDOM()%2)) doorify_layout(maze,RP);
       break;
     }
 
@@ -228,6 +239,9 @@ char **symmetrize_layout(char **maze, int sym,RMParms *RP) {
   for(i=0;i<Xsize_orig;i++)
     free(maze[i]);
   free(maze);
+  /* reconnected disjointed spirals */
+  if(RP->map_layout_style==SPIRAL_LAYOUT) 
+    connect_spirals(RP->Xsize,RP->Ysize,sym,sym_maze);
   return sym_maze;
 }
 

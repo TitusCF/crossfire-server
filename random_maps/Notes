@@ -1,0 +1,12 @@
+
+test.c is a file for testing new layouts.
+Compile it:
+cc test.c room_gen_spiral.c -I../include -lm -o test
+
+
+#  wall
+>  stairs down
+<  stairs up
+C  map center
+*  door
+d  door
