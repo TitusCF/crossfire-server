@@ -1009,7 +1009,7 @@ int perceive_self(object *op) {
    dummy->y=exity;
    dummy->stats.exp=1; /*Set as a 2 ways exit (see manual_apply & is_legal_2ways_exit funcs)*/
    dummy->race=add_string (op->name);  /*Save the owner of the portal*/
-   insert_ob_in_map(dummy,exitmap,op,0);
+   insert_ob_in_map(dummy,exitmap,op,INS_BELOW_ORIGINATOR);
    force=get_archetype("force");              /*The force*/
    if(force == NULL){
      new_draw_info(NDI_UNIQUE, 0,op,"Oops, program error!");

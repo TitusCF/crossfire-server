@@ -17,6 +17,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/skills.c: Fix jump so that it updates the clients map properly.
+server/spell_effect.c: insert town portals below the player so it
+   works better with apply.
+MSW 2003-02-20
+
 server/move.c: Fix transfer_ob so that it sends newmap command to client
    if we're moving a playing - otherwise fog of war displays bad
    information on the client.

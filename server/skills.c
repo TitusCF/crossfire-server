@@ -516,6 +516,8 @@ static int attempt_jump (object *pl, int dir, int spaces) {
 		pl->x = x;
 		pl->y = y;
 		pl->map = m;
+		if (pl->contr)
+		    esrv_map_scroll(&pl->contr->socket, dx, dy);
 		(void) stop_jump(pl,i,spaces);
 		return calc_skill_exp(pl,NULL);
 	    }
@@ -523,6 +525,8 @@ static int attempt_jump (object *pl, int dir, int spaces) {
 	pl->x = x;
 	pl->y = y;
 	pl->map = m;
+	if (pl->contr)
+	    esrv_map_scroll(&pl->contr->socket, dx, dy);
     }
     (void) stop_jump(pl,i,spaces);
     return calc_skill_exp(pl,NULL);

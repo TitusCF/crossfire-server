@@ -13,6 +13,10 @@ Make lighting not go through walls.  Maybe move it to the 'set_wall'
 function - hard to do so that it is still somewhat efficient yet the same
 light source does not illuminate the same space multiple times.
 
+If a shop is placed in a random map (special map), the objects below the
+shop wall stick around - normally not much a problem, unless it is placed
+in a glory hole (treasure level), in which case coins are now beneath the wall.
+
 ------------------------------------------------------------------------------
 Future feature requests
 
