@@ -677,11 +677,6 @@ void compile_info() {
   printf("Itemsdir:\t<VAR>/%s\n", settings.uniquedir);
   printf("Tmpdir:\t\t%s\n",settings.tmpdir);
   printf("Map max timeout:\t%d\n",MAP_MAXTIMEOUT);
-#ifdef MAP_RESET
-  printf("Map reset:\t<true>\n");
-#else
-  printf("Map reset:\t<false>\n");
-#endif
   printf("Max objects:\t%d\n",MAX_OBJECTS);
 #ifdef USE_CALLOC
   printf("Use_calloc:\t<true>\n");

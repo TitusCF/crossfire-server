@@ -402,10 +402,6 @@
 #define MAP_MINTIMEOUT  500
 
 /*
- * MAP_RESET tells whether map is reset after some time.  If it is defined,
- * the game uses weight variable of map object to tell, after how many seconds
- * the map will be reset.  If MAP_RESET is undefined, maps will never reset.
- *
  * MAP_MAXRESET is the maximum time a map can have before being reset.  It
  * will override the time value set in the map, if that time is longer than
  * MAP_MAXRESET.  This value is in seconds.  If you are low on space on the
@@ -418,7 +414,6 @@
  * in the map archetype.
  */
 
-#define MAP_RESET
 #define MAP_MAXRESET	7200
 
 /*

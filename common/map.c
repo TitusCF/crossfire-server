@@ -1770,16 +1770,10 @@ void update_position (mapstruct *m, int x, int y) {
 
 
 void set_map_reset_time(mapstruct *map) {
-#ifdef MAP_RESET
-#ifdef MAP_MAXRESET
     if (MAP_RESET_TIMEOUT(map)>MAP_MAXRESET)
         MAP_WHEN_RESET(map) = seconds() + MAP_MAXRESET;
     else
-#endif /* MAP_MAXRESET */
     MAP_WHEN_RESET(map) = seconds() + MAP_RESET_TIMEOUT (map);
-#else
-    MAP_WHEN_RESET(map) = (-1); /* Will never be reset */
-#endif
 }
 
 /* this updates the orig_map->tile_map[tile_num] value after loading

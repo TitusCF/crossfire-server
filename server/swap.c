@@ -278,7 +278,6 @@ void flush_old_maps() {
 	    m = m->next;
 	    delete_map(oldmap);
 	}
-#ifdef MAP_RESET /* No need to flush them if there are no resets */
 	else if(m->in_memory != MAP_SWAPPED || m->tmpname == NULL ||
 	   sec < m->reset_time) {
 	    m = m->next;
@@ -295,6 +294,5 @@ void flush_old_maps() {
 	m = m->next;
 	delete_map(oldmap);
 	}
-#endif
     }
 }

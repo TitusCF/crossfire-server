@@ -42,33 +42,20 @@ void map_info(object *op) {
   mapstruct *m;
   char buf[MAX_BUF], map_path[MAX_BUF];
   long sec = seconds();
-#ifdef MAP_RESET
   new_draw_info_format(NDI_UNIQUE, 0, op,
 	"Current time is: %02ld:%02ld:%02ld.",
 	  (sec%86400)/3600,(sec%3600)/60,sec%60);
   new_draw_info(NDI_UNIQUE, 0,op,"Path               Pl PlM IM   TO Dif Reset");
-#else
-  new_draw_info(NDI_UNIQUE, 0,op,"Pl Pl-M IM   TO Dif");
-#endif
   for(m=first_map;m!=NULL;m=m->next) {
-#ifndef MAP_RESET
-    if (m->in_memory == MAP_SWAPPED)
-      continue;
-#endif
+
     /* Print out the last 18 characters of the map name... */
     if (strlen(m->path)<=18) strcpy(map_path, m->path);
     else strcpy(map_path, m->path + strlen(m->path) - 18);
-#ifndef MAP_RESET
-      sprintf(buf,"%-18.18s %2ld %2d   %1ld %4ld %2ld",
-              map_path, m->players,players_on_map(m,FALSE),m->in_memory,m->timeout,
-              m->difficulty);
-#else
       sprintf(buf,"%-18.18s %2d %2d   %1d %4d %2d  %02d:%02d:%02d",
               map_path, m->players,players_on_map(m,FALSE),
               m->in_memory,m->timeout,m->difficulty,
 	      (MAP_WHEN_RESET(m)%86400)/3600,(MAP_WHEN_RESET(m)%3600)/60,
               MAP_WHEN_RESET(m)%60);
-#endif
     new_draw_info(NDI_UNIQUE, 0,op,buf);
   }
 }
