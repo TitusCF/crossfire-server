@@ -69,6 +69,8 @@ int random_roll(int min, int max, object *op, int goodbad) {
 	/* we have a winner */
 	((luck > 0) ? (luck = 1) : (luck = -1));
 	diff -= luck;
+	if (diff < 1)
+	    return(omin); /*check again*/
 	((goodbad) ? (min += luck) : (diff));
 
 	return(MAX(omin, MIN(max, (RANDOM()%diff)+min)));
@@ -105,6 +107,8 @@ int die_roll(int num, int size, object *op, int goodbad) {
 	    gotlucky++;
 	    ((luck > 0) ? (luck = 1) : (luck = -1));
 	    diff -= luck;
+	    if (diff < 1)
+		return(omin); /*check again*/
 	    ((goodbad) ? (min += luck) : (diff));
 	    total += MAX(1, MIN(size, (RANDOM()%diff)+min));
 	} else {
@@ -125,7 +129,7 @@ int rndm(int min, int max)
 {
   int diff;
 
-  diff = max - min;
+  diff = max - min + 1;
   if (max < 1 || diff < 1)
     return(min);
 
