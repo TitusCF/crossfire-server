@@ -842,6 +842,7 @@ void change_object(object *op) { /* Doesn`t handle linked objs yet */
 void move_teleporter(object *op) {
     object *tmp, *head=op;
     event *evt;
+
     /* if this is a multipart teleporter, handle the other parts
      * The check for speed isn't strictly needed - basically, if
      * there is an old multipart teleporter in which the other parts
@@ -860,38 +861,35 @@ void move_teleporter(object *op) {
     if (!tmp) return;
 
     if(EXIT_PATH(head)) {
-      if(op->above->type==PLAYER)
-      {
-        /* GROS: Handle for plugin TRIGGER event */
-        if ((evt = find_event(op, EVENT_TRIGGER)) != NULL)
-        {
-          CFParm CFP;
-          CFParm* CFR;
-          int k, l, m;
-          int rtn_script = 0;
-          m = 0;
-          k = EVENT_TRIGGER;
-          l = SCRIPT_FIX_ALL;
-          CFP.Value[0] = &k;
-          CFP.Value[1] = op;
-          CFP.Value[2] = op->above;
-          CFP.Value[3] = NULL;
-          CFP.Value[4] = NULL;
-          CFP.Value[5] = &m;
-          CFP.Value[6] = &m;
-          CFP.Value[7] = &m;
-          CFP.Value[8] = &l;
-          CFP.Value[9] = evt->hook;
-          CFP.Value[10]= evt->options;
-          if (findPlugin(evt->plugin)>=0)
-          {
-            CFR = (PlugList[findPlugin(evt->plugin)].eventfunc) (&CFP);
-            rtn_script = *(int *)(CFR->Value[0]);
-          }
-          if (rtn_script!=0) return;
-        }
-        enter_exit(op->above, head);
-      }
+	if(op->above->type==PLAYER) {
+	    /* GROS: Handle for plugin TRIGGER event */
+	    if ((evt = find_event(op, EVENT_TRIGGER)) != NULL) {
+		CFParm CFP;
+		CFParm* CFR;
+		int k, l, m;
+		int rtn_script = 0;
+		m = 0;
+		k = EVENT_TRIGGER;
+		l = SCRIPT_FIX_ALL;
+		CFP.Value[0] = &k;
+		CFP.Value[1] = op;
+		CFP.Value[2] = op->above;
+		CFP.Value[3] = NULL;
+		CFP.Value[4] = NULL;
+		CFP.Value[5] = &m;
+		CFP.Value[6] = &m;
+		CFP.Value[7] = &m;
+		CFP.Value[8] = &l;
+		CFP.Value[9] = evt->hook;
+		CFP.Value[10]= evt->options;
+		if (findPlugin(evt->plugin)>=0) {
+		    CFR = (PlugList[findPlugin(evt->plugin)].eventfunc) (&CFP);
+		    rtn_script = *(int *)(CFR->Value[0]);
+		}
+		if (rtn_script!=0) return;
+	    }
+	    enter_exit(op->above, head);
+	}
 	else
 	    /* Currently only players can transfer maps */
 	    return;
@@ -904,7 +902,7 @@ void move_teleporter(object *op) {
 	    return;
 	}
 	/* GROS: Handle for plugin TRIGGER event */
-    if ((evt = find_event(op, EVENT_TRIGGER)) != NULL)
+	if ((evt = find_event(op, EVENT_TRIGGER)) != NULL)
 	{
 		CFParm CFP;
 		CFParm* CFR;
@@ -933,39 +931,36 @@ void move_teleporter(object *op) {
 	}
 	transfer_ob(tmp,EXIT_X(head),EXIT_Y(head),0,head);
     }
-    else
-    {
-		/* Random teleporter */
-		/* GROS: Handle for plugin TRIGGER event */
-        if ((evt = find_event(op, EVENT_TRIGGER)) != NULL)
-		{
-			CFParm CFP;
-			CFParm* CFR;
-			int k, l, m;
-			int rtn_script = 0;
-			m = 0;
-			k = EVENT_TRIGGER;
-			l = SCRIPT_FIX_ALL;
-			CFP.Value[0] = &k;
-			CFP.Value[1] = op;
-			CFP.Value[2] = op->above;
-			CFP.Value[3] = NULL;
-			CFP.Value[4] = NULL;
-			CFP.Value[5] = &m;
-			CFP.Value[6] = &m;
-			CFP.Value[7] = &m;
-			CFP.Value[8] = &l;
-			CFP.Value[9] = evt->hook;
-			CFP.Value[10]= evt->options;
-			if (findPlugin(evt->plugin)>=0)
-			{
-				CFR = (PlugList[findPlugin(evt->plugin)].eventfunc) (&CFP);
-				rtn_script = *(int *)(CFR->Value[0]);
-			}
-			if (rtn_script!=0) return;
-		}
-		teleport(head, TELEPORTER, tmp);
+    else {
+	/* Random teleporter */
+	/* GROS: Handle for plugin TRIGGER event */
+        if ((evt = find_event(op, EVENT_TRIGGER)) != NULL) {
+	    CFParm CFP;
+	    CFParm* CFR;
+	    int k, l, m;
+	    int rtn_script = 0;
+	    m = 0;
+	    k = EVENT_TRIGGER;
+	    l = SCRIPT_FIX_ALL;
+	    CFP.Value[0] = &k;
+	    CFP.Value[1] = op;
+	    CFP.Value[2] = op->above;
+	    CFP.Value[3] = NULL;
+	    CFP.Value[4] = NULL;
+	    CFP.Value[5] = &m;
+	    CFP.Value[6] = &m;
+	    CFP.Value[7] = &m;
+	    CFP.Value[8] = &l;
+	    CFP.Value[9] = evt->hook;
+	    CFP.Value[10]= evt->options;
+	    if (findPlugin(evt->plugin)>=0) {
+		CFR = (PlugList[findPlugin(evt->plugin)].eventfunc) (&CFP);
+		rtn_script = *(int *)(CFR->Value[0]);
+	    }
+	    if (rtn_script!=0) return;
 	}
+	teleport(head, TELEPORTER, tmp);
+    }
 }
 
 
