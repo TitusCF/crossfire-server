@@ -2020,12 +2020,14 @@ int cast_detection(object *op, object *caster, object *spell) {
 		if (QUERY_FLAG(spell, FLAG_KNOWN_MAGICAL) && 
 		    is_magical(tmp) && !QUERY_FLAG(tmp,FLAG_KNOWN_MAGICAL)) {
 			SET_FLAG(tmp,FLAG_KNOWN_MAGICAL);
-			esrv_send_item (op, tmp);
+			if (op->type==PLAYER)
+			    esrv_send_item (op, tmp);
 		}
 		if (QUERY_FLAG(spell, FLAG_KNOWN_CURSED) && !QUERY_FLAG(tmp, FLAG_KNOWN_CURSED) &&
 		    (QUERY_FLAG(tmp, FLAG_CURSED) || QUERY_FLAG(tmp, FLAG_DAMNED))) {
 			SET_FLAG(tmp, FLAG_KNOWN_CURSED);
-			esrv_send_item (op, tmp);
+			if (op->type==PLAYER)
+			    esrv_send_item (op, tmp);
 		}
 	    } /* if item is not identified */
 	} /* for the players inventory */
