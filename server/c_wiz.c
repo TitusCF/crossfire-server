@@ -257,7 +257,7 @@ int command_freeze(object *op, char *params)
 	    new_draw_info(NDI_UNIQUE, 0,op,"Usage: freeze [ticks] <player>.");
 	    return 1;
 	}
-    } else ticks=200;
+    } else ticks=100;
     pl = get_other_player_from_name(op, params);
     if (!pl) return 1;
     new_draw_info(NDI_UNIQUE | NDI_RED, 0, pl->ob, "You have been frozen by the DM!");
