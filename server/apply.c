@@ -608,7 +608,12 @@ int improve_armour(object *op, object *improver, object *armour)
     if (armour->magic >= (op->level / 10 + 1)
         || new_armour > op->level)
     {
-        new_draw_info(NDI_UNIQUE, 0,op,"You are not yet powerfull enough");
+	int i;
+
+	i = armour->magic * op->level;
+	if (i > new_armour) new_armour=i;
+
+        new_draw_info_format(NDI_UNIQUE, 0,op,"You need to be level %d", new_armour);
         new_draw_info(NDI_UNIQUE, 0,op,"to improve this armour.");
         return 0;
     }
@@ -811,7 +816,9 @@ int apply_container (object *op, object *sack)
 }
 
 /*
- * Eneq(@csd.uu.se): Handle apply on containers.
+ * Eneq(@csd.uu.se): Handle apply on containers.  This is for containers
+ * the player has in their inventory, eg, sacks, luggages, etc.
+ *
  * Moved to own function and added many features [Tero.Haatanen@lut.fi]
  * This version is for client/server mode.
  * op is the player, sack is the container the player is opening or closing.
@@ -1711,36 +1718,51 @@ void apply_scroll (object *op, object *tmp, int dir)
     }
 }
 
-
+/* Applies a treasure object - by default, chest.  op
+ * is the person doing the applying, tmp is the treasure
+ * chest.
+ */
 static void apply_treasure (object *op, object *tmp)
 {
     object *treas;
     tag_t tmp_tag = tmp->count, op_tag = op->count;
 
-/*  Nice side effect of new treasure creation method is that the treasure
-    for the chest is done when the chest is created, and put into the chest
-    inventory.  So that when the chest burns up, the items still exist.  Also
-    prevents people fromt moving chests to more difficult maps to get better
-    treasure
-*/
+
+    /* Nice side effect of new treasure creation method is that the treasure
+     * for the chest is done when the chest is created, and put into the chest
+     * inventory.  So that when the chest burns up, the items still exist.  Also
+     * prevents people fromt moving chests to more difficult maps to get better
+     * treasure
+     */
+
     treas = tmp->inv;
     if(treas==NULL) {
-      new_draw_info(NDI_UNIQUE, 0,op,"The chest was empty.");
-      decrease_ob(tmp);
-      return;
+	new_draw_info(NDI_UNIQUE, 0,op,"The chest was empty.");
+	decrease_ob(tmp);
+	return;
     }
-    do {
-      remove_ob(treas);
-      new_draw_info_format(NDI_UNIQUE, 0, op, "You find %s in the chest.",
+    while (tmp->inv) {
+	treas = tmp->inv;
+
+	remove_ob(treas);
+	new_draw_info_format(NDI_UNIQUE, 0, op, "You find %s in the chest.",
 			   query_name(treas));
-      treas->x=op->x,treas->y=op->y;
-      treas = insert_ob_in_map (treas, op->map, op,0);
-      if (treas && treas->type == RUNE && treas->level
-          && QUERY_FLAG (op, FLAG_ALIVE))
-        spring_trap (treas, op);
-      if (was_destroyed (op, op_tag) || was_destroyed (tmp, tmp_tag))
-        break;
-    } while ((treas=tmp->inv)!=NULL);
+
+	treas->x=op->x;
+	treas->y=op->y;
+	treas = insert_ob_in_map (treas, op->map, op,INS_BELOW_ORIGINATOR);
+
+	if (treas && treas->type == RUNE && treas->level
+	    && QUERY_FLAG (op, FLAG_ALIVE))
+	    spring_trap (treas, op);
+	/* If either player or container was destroyed, no need to do
+	 * further processing.  I think this should be enclused with
+	 * spring trap above, as I don't think there is otherwise
+	 * any way for the treasure chest or player to get killed
+	 */
+	if (was_destroyed (op, op_tag) || was_destroyed (tmp, tmp_tag))
+	    break;
+    }
 
     if ( ! was_destroyed (tmp, tmp_tag) && tmp->inv == NULL)
       decrease_ob (tmp);

@@ -17,6 +17,19 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+common/object.c, include/object.h: Add INS_BELOW_ORIGINATOR flag to
+    insert_ob_in_map - this is used for treasure chests so the
+    treasure is put below the player.  Also fix insertiong of items
+    on spaces that block view - put them in proper order, and not just
+    directly above the floor
+server/apply.c: Tell player what level they need to be if they are not
+    of sufficient level to improve armor.  Modify apply_treasure to
+    use INS_BELOW_ORIGINATOR flag, clean up some of the other logic
+    in apply_treasure.
+server/c_object.c: Modify command_take to use the container inventory 
+    when doing a pickup, and not the container itself.
+MSW 2002-11-30
+
 TODO: Updated with dm 'follow' command.
 common/loader.l: Rebuilt.
 common/map.c: Fix up some formatting - no code change.

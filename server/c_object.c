@@ -365,12 +365,17 @@ void pick_up(object *op,object *alt)
 }
 
 
+/* This takes (picks up) and item.  op is the player
+ * who issued the command.  params is a string to
+ * match against the item name.  Basically, always
+ * returns zero, but that should be improved.
+ */
 int command_take (object *op, char *params)
 {
     object *tmp, *next;
 
     if (op->container) 
-	tmp=op->container;
+	tmp=op->container->inv;
     else {
 	tmp=op->above;
 	if (tmp) while (tmp->above) {
@@ -407,6 +412,10 @@ int command_take (object *op, char *params)
 	    break;
 	}
 	tmp=next;
+	/* Might as well just skip over the player immediately -
+	 * we know it can't be picked up
+	 */
+	if (tmp == op) tmp=tmp->below;
     }
     if (!params && !tmp) {
 	for (tmp=op->below; tmp!=NULL; tmp=tmp->next)
@@ -419,9 +428,6 @@ int command_take (object *op, char *params)
 	    }
 	if (!tmp) new_draw_info(NDI_UNIQUE, 0,op, "There is nothing to pick up.");
     }
-
-/* Shouldn't be needed - pick_up should update this */
-/*    draw_look(op);*/
     return 0;
 }
 

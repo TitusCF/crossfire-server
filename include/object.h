@@ -256,14 +256,31 @@ extern int nroffreeobjects;
 /* These are flags passed to insert_ob_in_map and 
  * insert_ob_in_ob.  Note that all flags may not be meaningful
  * for both functions.
+ * Most are fairly explanatory:
+ * INS_NO_MERGE: don't try to merge inserted object with ones alrady
+ *    on space.
+ * INS_ABOVE_FLOOR_ONLY: Put object immediatly above the floor.
+ * INS_NO_WALK_ON: Don't call check_walk_on against the
+ *    originator - saves cpu time if you know the inserted object
+ *    is not meaningful in terms of having an effect.
+ * INS_ON_TOP: Always put object on top.  Generally only needed when loading
+ *     files from disk and ordering needs to be preserved. 
+ * INS_BELOW_ORIGINATOR: Insert new object immediately below originator -
+ *     Use for treasure chests so the new object is the highest thing
+ *     beneath the player, but not actually above it.  Note - the
+ *     map and x,y coordinates for the object to be inserted must
+ *     match the originator.
+ *
+ * Note that INS_BELOW_ORIGINATOR, INS_ON_TOP, INS_ABOVE_FLOOR_ONLY
+ * are mutually exclusive.  The behaviour for passing more than one
+ * should be considered undefined - while you may notice what happens
+ * right now if you pass more than one, that could very well change
+ * in future revisions of the code.
  */
 #define INS_NO_MERGE		0x0001
 #define INS_ABOVE_FLOOR_ONLY	0x0002
 #define INS_NO_WALK_ON		0x0004
-/* Always put object on top.  Generally only needed when loading files
- * from disk and ordering needs to be preserved.  Note that INS_ABOVE_FLOOR_ONLY
- * and INS_ON_TOP are really mutually exclusive.
- */
 #define INS_ON_TOP		0x0008
+#define INS_BELOW_ORIGINATOR	0x0010
 
 #endif

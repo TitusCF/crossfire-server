@@ -1362,72 +1362,92 @@ object *insert_ob_in_map (object *op, mapstruct *m, object *originator, int flag
     if (!QUERY_FLAG(op, FLAG_ALIVE))
 	CLEAR_FLAG(op, FLAG_NO_STEAL);
 
-    /* If there are other objects, then */
-    if((top=GET_MAP_OB(op->map,op->x,op->y))!=NULL) {
-	object *last=NULL;
-	/*
-	 * If there are multiple objects on this space, we do some trickier handling.
-	 * We've already dealt with merging if appropriate.
-	 * Generally, we want to put the new object on top. But if
-	 * flag contains INS_ABOVE_FLOOR_ONLY, once we find the lastt
-	 * floor, we want to insert above that and no further.
-	 * Also, if there are spell objects on this space, we stop processing
-	 * once we get to them.  This reduces the need to traverse over all of 
-	 * them when adding another one - this saves quite a bit of cpu time
-	 * when lots of spells are cast in one area.  Currently, it is presumed
-	 * that flying non pickable objects are spell objects.
-	 */
+    if (flag & INS_BELOW_ORIGINATOR) {
+	if (originator->map != op->map || originator->x != op->x ||
+	    originator->y != op->y) {
+	    LOG(llevError,"insert_ob_in_map called with INS_BELOW_ORIGINATOR when originator not on same space!\n");
+	    abort();
+	}
+	op->above = originator;
+	op->below = originator->below;
+	if (op->below) op->below->above = op;
+	else SET_MAP_OB(op->map, op->x, op->y, op);
+	originator->below = op;
+    } else {
+	/* If there are other objects, then */
+	if((top=GET_MAP_OB(op->map,op->x,op->y))!=NULL) {
+	    object *last=NULL;
+	    /*
+	     * If there are multiple objects on this space, we do some trickier handling.
+	     * We've already dealt with merging if appropriate.
+	     * Generally, we want to put the new object on top. But if
+	     * flag contains INS_ABOVE_FLOOR_ONLY, once we find the last
+	     * floor, we want to insert above that and no further.
+	     * Also, if there are spell objects on this space, we stop processing
+	     * once we get to them.  This reduces the need to traverse over all of 
+	     * them when adding another one - this saves quite a bit of cpu time
+	     * when lots of spells are cast in one area.  Currently, it is presumed
+	     * that flying non pickable objects are spell objects.
+	     */
 
-	while (top != NULL) {
-	    if (QUERY_FLAG(top, FLAG_IS_FLOOR)) floor = top;
-	    if (QUERY_FLAG(top, FLAG_NO_PICK) && QUERY_FLAG(top, FLAG_FLYING)) {
-		/* We insert above top, so we want this object below this */
-		top=top->below;
-		break;
+	    while (top != NULL) {
+		if (QUERY_FLAG(top, FLAG_IS_FLOOR)) floor = top;
+		if (QUERY_FLAG(top, FLAG_NO_PICK) && QUERY_FLAG(top, FLAG_FLYING)) {
+		    /* We insert above top, so we want this object below this */
+		    top=top->below;
+		    break;
+		}
+		last = top;
+		top = top->above;
 	    }
-	    last = top;
-	    top = top->above;
-	}
-	/* Don't want top to be NULL, so set it to the last valid object */
-	top = last;
+	    /* Don't want top to be NULL, so set it to the last valid object */
+	    top = last;
 
-	/* We let update_position deal with figuring out what the space
-	 * looks like instead of lots of conditions here.
-	 * makes things faster, and effectively the same result.
+	    /* We let update_position deal with figuring out what the space
+	     * looks like instead of lots of conditions here.
+	     * makes things faster, and effectively the same result.
+	     */
+
+	    /* Have object 'fall below' other objects that block view.
+	     * If INS_ON_TOP is used, don't do this processing
+	     * Need to find the object that in fact blocks view, otherwise
+	     * stacking is a bit odd.
+	     */
+	    if (!(flag & INS_ON_TOP) && blocks_view(op->map, op->x, op->y) && 
+		(op->face && !op->face->visibility)) {
+		for (last=top; last != floor; last=last->below)
+		    if QUERY_FLAG(last, FLAG_BLOCKSVIEW) break;
+		/* Check to see i we found the object that blocks view,
+		 * and make sure we have a below pointer for it so that
+		 * we can get inserted below this one, which requires we
+		 * set top to the object below us.
+		 */
+		if (last && last->below && last != floor) top=last->below;
+	    }
+	} /* If objects on this space */
+
+	if (flag & INS_ABOVE_FLOOR_ONLY) top = floor;
+
+	/* Top is the object that our object (op) is going to get inserted above.
 	 */
 
-        /* Have object 'fall below' other objects that block view.
-	 * We take simple approach - instead of dumping it below the object that
-	 * blocks the view, we just dump it right above the floor.  Saves 
-	 * us the effort of trying to find the object that blocks the view.
-	 * If INS_ON_TOP is used, don't do this processing
-         */
-        if (!(flag & INS_ON_TOP) && blocks_view(op->map, op->x, op->y) && 
-	   (op->face && !op->face->visibility)) {
-	    top = floor;
+	/* First object on this space */
+	if (!top) {
+	    op->above = GET_MAP_OB(op->map, op->x, op->y);
+	    if (op->above) op->above->below = op;
+	    op->below = NULL;
+	    SET_MAP_OB(op->map, op->x, op->y, op);
+	} else { /* get inserted into the stack above top */
+	    op->above = top->above;
+	    if (op->above) op->above->below = op;
+	    op->below = top;
+	    top->above = op;
 	}
-    } /* If objects on this space */
-
-    if (flag & INS_ABOVE_FLOOR_ONLY) top = floor;
-
-    /* Top is the object that our object (op) is going to get inserted above.
-     */
-
-    /* First object on this space */
-    if (!top) {
-	op->above = GET_MAP_OB(op->map, op->x, op->y);
-	if (op->above) op->above->below = op;
-	op->below = NULL;
-        SET_MAP_OB(op->map, op->x, op->y, op);
-    } else { /* get inserted into the stack above top */
-	op->above = top->above;
-	if (op->above) op->above->below = op;
-	op->below = top;
-	top->above = op;
-    }
+    } /* else not INS_BELOW_ORIGINATOR */
 
     if(op->type==PLAYER)
 	op->contr->do_los=1;
+
     /* If we have a floor, we know the player, if any, will be above
      * it, so save a few ticks and start from there.
      */
