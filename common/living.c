@@ -1621,13 +1621,14 @@ int check_exp_adjust(object *op, int exp)
  * Note that if permanent exp is used, player may not in fact lose
  * as much as listed.  Eg, if player has gotten reduced to the point
  * where everything is at the minimum perm exp, he would lose nothing.
+ * exp is the amount of exp to subtract - thus, it should be
+ * a postive number.
  */
 static void subtract_player_exp(object *op, int exp)
 {
     float fraction = (float) exp/(float) op->stats.exp;
     object *tmp;
     int total_loss = 0, del_exp;
-
 
     for(tmp=op->inv;tmp;tmp=tmp->below)
 	if(tmp->type==EXPERIENCE && tmp->stats.exp) { 
@@ -1695,7 +1696,7 @@ void add_exp(object *op, int exp) {
 	if(exp>0) 
 	    add_player_exp(op, exp);
 	else
-	    subtract_player_exp(op, exp);
+	    subtract_player_exp(op, FABS(exp));
 
     }
     /* Reset players experience object pointer - From old code -
