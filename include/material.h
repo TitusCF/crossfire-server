@@ -1,6 +1,6 @@
 /*
  * static char *rcsid_material_h =
- *   "$Id";
+ *   "$Id$";
  */
 
 /*
