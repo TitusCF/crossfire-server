@@ -635,7 +635,8 @@ void write_map_parameters_to_string(char *buf,RMParms *RP) {
     strcat(buf,small_buf);
   }
   if(RP->random_seed) {
-    sprintf(small_buf,"random_seed %d\n",RP->random_seed);
+    /* Add one so that the next map is a bit different */
+    sprintf(small_buf,"random_seed %d\n",RP->random_seed + 1);
     strcat(buf,small_buf);
   }
 
@@ -785,7 +786,8 @@ void write_parameters_to_string(char *buf,
     strcat(buf,small_buf);
   }
   if(random_seed_n) {
-    sprintf(small_buf,"random_seed %d\n",random_seed_n);
+    /* Add one so that the next map is a bit different */
+    sprintf(small_buf,"random_seed %d\n",random_seed_n + 1);
     strcat(buf,small_buf);
   }
 
