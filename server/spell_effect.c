@@ -3043,6 +3043,7 @@ int animate_weapon(object *op,object *caster,int dir, archetype *at, int spellnu
   /* if animated by a player, give the player control of the golem */
   if(op->type==PLAYER) {
     CLEAR_FLAG(tmp, FLAG_MONSTER);
+    SET_FLAG(tmp, FLAG_FRIENDLY);
     tmp->stats.exp=0;
     add_friendly_object(tmp);
     tmp->type=GOLEM;

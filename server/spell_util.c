@@ -822,6 +822,7 @@ int summon_monster(object *op,object *caster,int dir,archetype *at,int spellnum)
   tmp=arch_to_object(at);
   if(op->type==PLAYER) {
     CLEAR_FLAG(tmp, FLAG_MONSTER);
+    SET_FLAG(tmp, FLAG_FRIENDLY);
     tmp->stats.exp=0;
     add_friendly_object(tmp);
     tmp->type=GOLEM;
