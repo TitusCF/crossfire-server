@@ -463,7 +463,7 @@ uninstall-am: uninstall-info-am
 proto:
 	cproto -e -o ../include/libproto.h.bak $(CPPFLAGS) $(AM_CPPFLAGS) \
 		`echo $(SOURCES) loader.c " " | $(AWK) -v RS=" " '/.c$$/ { print }'`
-	sed -e "s/__signed/signed/g" -e "/inline/d" -e "/YY_BUFFER/d" < ../include/libproto.h.bak > ../include/libproto.h
+	sed -e "s/__signed/signed/g" -e "/inline/d" -e "/YY_BUFFER/d" -e "/yy_size_t/d" < ../include/libproto.h.bak > ../include/libproto.h
 	chmod 644 ../include/libproto.h
 	rm -f ../include/libproto.h.bak
 # Tell versions [3.59,3.63) of GNU make to not export all variables.

@@ -1874,7 +1874,8 @@ static int player_attack_door(object *op, object *door)
 void move_player_attack(object *op, int dir)
 {
     object *tmp, *mon;
-    int nx=freearr_x[dir]+op->x,ny=freearr_y[dir]+op->y, on_battleground;
+    sint16 nx=freearr_x[dir]+op->x,ny=freearr_y[dir]+op->y;
+    int on_battleground;
     mapstruct *m;
 
     on_battleground = op_on_battleground(op, NULL, NULL);

@@ -227,7 +227,8 @@ void dump_all_maps() {
  */
 int get_map_flags(mapstruct *oldmap, mapstruct **newmap, sint16 x, sint16 y, sint16 *nx, sint16 *ny)
 {
-    int newx, newy, retval=0;
+    sint16 newx, newy;
+    int retval=0;
     mapstruct *mp;
 
     if (out_of_map(oldmap, x, y)) return P_OUT_OF_MAP;
@@ -1748,7 +1749,7 @@ int out_of_map(mapstruct *m, int x, int y)
  * Using this is more efficient of calling out_of_map
  * and then figuring out what the real map is
  */
-mapstruct *get_map_from_coord(mapstruct *m, int *x, int *y)
+mapstruct *get_map_from_coord(mapstruct *m, sint16 *x, sint16 *y)
 {
 
     /* Simple case - coordinates are within this local

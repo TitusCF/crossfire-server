@@ -1093,7 +1093,7 @@ void remove_ob(object *op) {
     tag_t tag;
     int check_walk_off;
     mapstruct *m;
-    int x,y;
+    sint16 x,y;
     
 
     if(QUERY_FLAG(op,FLAG_REMOVED)) {
@@ -1327,7 +1327,7 @@ object *insert_ob_in_map_at(object *op, mapstruct *m, object *originator, int fl
 object *insert_ob_in_map (object *op, mapstruct *m, object *originator, int flag)
 {
     object *tmp, *top, *floor=NULL;
-    int x,y;
+    sint16 x,y;
 
     if (QUERY_FLAG (op, FLAG_FREED)) {
 	LOG (llevError, "Trying to insert freed object!\n");

@@ -1361,7 +1361,8 @@ int getExtendedMapInfoSize(NewSocket* ns){
  */
 void draw_client_map1(object *pl)
 {
-    int x,y,ax, ay, d, nx,ny, startlen, max_x, max_y, oldlen;
+    int x,y,ax, ay, d, startlen, max_x, max_y, oldlen;
+    sint16 nx, ny;
     int estartlen, eoldlen;
     SockList sl;
     SockList esl; /*For extended Map info*/
@@ -1656,8 +1657,8 @@ void draw_client_map1(object *pl)
  */
 void draw_client_map(object *pl)
 {
-    int i,j,nx,ny; /* ax and ay goes from 0 to max-size of arrays */
-    sint16  ax, ay;
+    int i,j; 
+    sint16  ax, ay, nx, ny;/* ax and ay goes from 0 to max-size of arrays */
     New_Face	*face,*floor;
     New_Face	*floor2;
     int d, mflags;

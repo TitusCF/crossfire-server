@@ -696,7 +696,8 @@ void MarkItem(uint8 *data, int len,player *pl)
  */
 void look_at(object *op,int dx,int dy) {
     object *tmp;
-    int flag=0,x,y;
+    int flag=0;
+    sint16 x,y;
     mapstruct *m;
 
 
@@ -729,9 +730,8 @@ void look_at(object *op,int dx,int dy) {
 	 else
 	    new_draw_info_format(NDI_UNIQUE,0, op, "- %s.",query_name(tmp));
 
-	 if((tmp->inv!=NULL || (tmp->head && tmp->head->inv)) && 
-	    ( (!dx&&!dy) || tmp->type != CONTAINER || QUERY_FLAG(op, FLAG_WIZ)
-	     || !(tmp->type) || tmp->type!=FLESH ))
+	 if (((tmp->inv!=NULL || (tmp->head && tmp->head->inv)) && 
+	    (tmp->type != CONTAINER && tmp->type!=FLESH)) || QUERY_FLAG(op, FLAG_WIZ))
 	    inventory(op,tmp->head==NULL?tmp:tmp->head);
 
 	 if(QUERY_FLAG(tmp, FLAG_IS_FLOOR)&&!QUERY_FLAG(op, FLAG_WIZ))	/* don't continue under the floor */

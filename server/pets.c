@@ -261,38 +261,45 @@ void remove_all_pets(mapstruct *map) {
 }
 
 void follow_owner(object *ob, object *owner) {
-  object *tmp;
-  int dir;
+    object *tmp;
+    int dir;
 
-  if (!QUERY_FLAG(ob,FLAG_REMOVED))
-    remove_ob(ob);
-  if(owner->map == NULL) {
-    LOG(llevError,"Can't follow owner: no map.\n");
-    return;
-  }
-  if(owner->map->in_memory != MAP_IN_MEMORY) {
-    LOG(llevError,"Owner of the pet not on a map in memory!?\n");
-    return;
-  }
-  dir = find_free_spot(ob->arch, owner->map,
+    if (!QUERY_FLAG(ob,FLAG_REMOVED))
+	remove_ob(ob);
+
+    if(owner->map == NULL) {
+	LOG(llevError,"Can't follow owner: no map.\n");
+	return;
+    }
+    if(owner->map->in_memory != MAP_IN_MEMORY) {
+	LOG(llevError,"Owner of the pet not on a map in memory!?\n");
+	return;
+    }
+    dir = find_free_spot(ob->arch, owner->map,
                        owner->x, owner->y, 1, SIZEOFFREE+1);
-  if (dir==-1) {
-    LOG(llevMonster,"No space for pet to follow, freeing %s.\n",ob->name);
-    return; /* Will be freed since it's removed */
-  }
-  for(tmp=ob;tmp!=NULL;tmp=tmp->more) {
-    tmp->x = owner->x + freearr_x[dir]+(tmp->arch==NULL?0:tmp->arch->clone.x);
-    tmp->y = owner->y + freearr_y[dir]+(tmp->arch==NULL?0:tmp->arch->clone.y);
-  }
-  insert_ob_in_map(ob, owner->map, NULL,0);
-  if (owner->type == PLAYER) /* Uh, I hope this is always true... */
-    new_draw_info(NDI_UNIQUE, 0,owner, "Your pet magically appears next to you");
-  return;
+
+    if (dir==-1) {
+	LOG(llevMonster,"No space for pet to follow, freeing %s.\n",ob->name);
+	return; /* Will be freed since it's removed */
+    }
+    for(tmp=ob;tmp!=NULL;tmp=tmp->more) {
+	tmp->x = owner->x + freearr_x[dir]+(tmp->arch==NULL?0:tmp->arch->clone.x);
+	tmp->y = owner->y + freearr_y[dir]+(tmp->arch==NULL?0:tmp->arch->clone.y);
+	tmp->map = owner->map;
+	if (OUT_OF_REAL_MAP(tmp->map, tmp->x, tmp->y)) {
+	    tmp->map = get_map_from_coord(tmp->map, &tmp->x, &tmp->y);
+	}
+    }
+    insert_ob_in_map(ob, owner->map, NULL,0);
+    if (owner->type == PLAYER) /* Uh, I hope this is always true... */
+	new_draw_info(NDI_UNIQUE, 0,owner, "Your pet magically appears next to you");
+    return;
 }
 
 void pet_move(object * ob)
 {
-    int dir, tag, dx, dy, i;
+    int dir, tag, i;
+    sint16 dx, dy;
     object *ob2, *owner;
     mapstruct *m;
 

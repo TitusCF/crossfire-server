@@ -17,6 +17,19 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+common/Makefile.am: Clean up proto - lex seems to toss some new symbols in
+  now days.
+common/map.c, common/object.c, server/player.c, socket/item.c,
+   socket/request.c: change parameters of get_map_from_coord from int to
+   sint16, so the op->x,op->y can get passed directly in.  Update callers of
+   this function.
+lib/archetypes: Add damned 1 to the shop floors.
+server/pets.c: Fix problem with big (multisquare) pets following the owner
+   across tiled map boundaries.
+socket/item.c: Fix problem of players being able to see everything within
+   containers by just looking at them.
+MSW 2004-02-10
+
 common/treasure.c: add_abilities(): For potions and horns (spell casting
    objects) convert the other_arch into a spell and put into the object -
    otherwise, the spell casting object casts the wrong spell.
