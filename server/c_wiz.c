@@ -274,10 +274,10 @@ int command_kick (object *op, char *params)
 	     */
 	    if (!removed && !QUERY_FLAG(op, FLAG_FREED)) {
 		(void)save_player(op,0);
-		op->map->players--;
+		if (op->map) op->map->players--;
 	    }
 #if MAP_MAXTIMEOUT
-	    op->map->timeout = MAP_TIMEOUT(op->map);
+	    if (op->map) op->map->timeout = MAP_TIMEOUT(op->map);
 #endif
 	    pl->socket.status = Ns_Dead;
 		
@@ -516,11 +516,25 @@ int command_teleport (object *op, char *params) {
    return 1;
 }
 
+/* This function is a real mess, because we're stucking getting
+ * the entire item description in one block of text, so we just
+ * can't simply parse it - we need to look for double quotes
+ * for example.  This could actually get much simpler with just a
+ * little help from the client - if we could get line breaks, it
+ * makes parsing much easier, eg, something like:
+ * arch dragon
+ * name big nasty creature
+ * hp 5
+ * sp 30
+ * Is much easier to parse than
+ * dragon name "big nasty creature" hp 5 sp 30
+ * for example.
+ */
 int command_create (object *op, char *params)
 {
     object *tmp=NULL;
     int nrof,i, magic, set_magic = 0, set_nrof = 0, gotquote, gotspace;
-    char buf[MAX_BUF], *cp, *bp = buf, *bp2, *bp3, *bp4, *obp;
+    char buf[MAX_BUF], *cp, *bp = buf, *bp2, *bp3, *bp4, *endline;
     archetype *at, *at_spell=NULL;
     artifact *art=NULL;
 
@@ -534,6 +548,9 @@ int command_create (object *op, char *params)
         return 1;
     }
     bp = params;
+
+    /* We need to know where the line ends */
+    endline = bp + strlen(bp);
      
     if(sscanf(bp, "%d ", &nrof)) {
 	if ((bp = strchr(params, ' ')) == NULL) {
@@ -574,13 +591,36 @@ int command_create (object *op, char *params)
     }
 
     if (cp) {
-	/* Try to find a spell object for this.  Note have to use
-	 * find_archetype, and note find_archetype_by_object_name,
-	 * because teh spaces are nulled out above.
+	char spell_name[MAX_BUF], *fsp=NULL;
+
+	/* Try to find a spell object for this. Note that
+	 * we also set up spell_name which is only
+	 * the first word.  
 	 */
-	if ((at_spell=find_archetype(cp))==NULL ||
-	    at_spell->clone.type != SPELL) {
-	    
+
+	at_spell=find_archetype(cp);
+	if (!at_spell || at_spell->clone.type != SPELL)
+	    at_spell=find_archetype_by_object_name(cp);
+	if (!at_spell || at_spell->clone.type != SPELL) {
+	    strcpy(spell_name, cp);
+	    fsp=strchr(spell_name, ' ');
+	    if (fsp) {
+		*fsp=0;
+		fsp++;
+		at_spell=find_archetype(spell_name);
+
+		/* Got a spell, update the first string pointer */
+		if (at_spell && at_spell->clone.type == SPELL)
+		    bp2 = cp + strlen(spell_name) + 1;
+		else
+		    at_spell=NULL;
+	    }
+	}
+
+	/* OK - we didn't find a spell - presume the 'of'
+	 * in this case means its an artifact.
+	 */
+	if (!at_spell) {
 	    if (find_artifactlist(at->clone.type)==NULL) {
 		new_draw_info_format(NDI_UNIQUE, 0, op,
 		     "No artifact list for type %d\n", at->clone.type);
@@ -601,169 +641,159 @@ int command_create (object *op, char *params)
 		set_nrof ? nrof : 0, set_magic ? magic : 0 , bp, cp);
 	}
     } /* if cp */
+    if ((at->clone.type == ROD || at->clone.type == WAND || at->clone.type == SCROLL ||
+	at->clone.type == HORN || at->clone.type == SPELLBOOK) && !at_spell) {
+	new_draw_info_format(NDI_UNIQUE, 0, op, 
+			     "Unable to find spell %s for object that needs it, or it is of wrong type",
+			     cp);
+	return 1;
+    }
+
+    /* Rather than have two different blocks with a lot of similar code,
+     * just create one object, do all the processing, and then determine
+     * if that one object should be inserted or if we need to make copies.
+     */
+    tmp=arch_to_object(at);
+    if (settings.real_wiz == FALSE)
+	SET_FLAG(tmp, FLAG_WAS_WIZ);
+    if (set_magic)
+	set_abs_magic(tmp, magic);
+    if (art)
+	give_artifact_abilities(tmp, art->item);
+    if (need_identify(tmp)) {
+	SET_FLAG(tmp, FLAG_IDENTIFIED);
+	CLEAR_FLAG(tmp, FLAG_KNOWN_MAGICAL);
+    }
+
+    /* This entire block here tries to find variable pairings,
+     * eg, 'hp 4' or the like.  The mess here is that values
+     * can be quoted (eg "my cool sword");  So the basic logic
+     * is we want to find two spaces, but if we got a quote,
+     * any spaces there don't count.
+     */
+    while (*bp2 && bp2 <= endline) {
+	bp4 = NULL;
+	gotspace=0;
+	gotquote=0;
+	/* find the first quote */
+	for (bp3=bp2; *bp3 && gotspace < 2 && gotquote < 2; bp3++) {
+
+	    /* Found a quote - now lets find the second one */
+	    if (*bp3 == '"') {
+		*bp3 = ' ';
+		bp2 = bp3+1;	/* Update start of string */
+		bp3++;
+		gotquote++;
+		while (*bp3) {
+		    if (*bp3 == '"') {
+			*bp3 = '\0';
+			gotquote++;
+		    }
+		    else bp3++;
+		}
+	    }
+	    else if (*bp3==' ') {
+		gotspace++;
+	    }
+	}
+	/* If we got two spaces, send the second one to null.
+	 * if we've reached the end of the line, increase gotspace -
+	 * this is perfectly valid for the list entry listed.
+	 */
+	if (gotspace == 2 || gotquote == 2) {
+	    bp3--;	/* Undo the extra increment */
+	    *bp3='\0';
+	} else if (*bp3=='\0') gotspace++;
+
+	if ((gotquote && gotquote != 2) || (gotspace !=2 && gotquote!=2)) {
+	    /* Unfortunately, we've clobbered lots of values, so printing
+	     * out what we have probably isn't useful.  Break out, because
+	     * trying to recover is probably won't get anything useful
+	     * anyways, and we'd be confused about end of line pointers
+	     * anyways.
+	     */
+	    new_draw_info_format(NDI_UNIQUE, 0, op,
+		 "Malformed create line: %s", bp2);
+	    break;
+	}
+	/* bp2 should still point to the start of this line,
+	 * with bp3 pointing to the end
+	 */
+	if(set_variable(tmp, bp2) == -1)   
+	    new_draw_info_format(NDI_UNIQUE, 0, op,
+		 "Unknown variable %s", bp2);
+	else
+	    new_draw_info_format(NDI_UNIQUE, 0, op,
+		 "(%s#%d)->%s", tmp->name, tmp->count, bp2);
+	bp2 = bp3 + 1;
+    }
+
 
     if(at->clone.nrof) {
-	tmp=arch_to_object(at);
-	tmp->x=op->x,tmp->y=op->y;
-	if (set_nrof)
-	    tmp->nrof = nrof;
-	tmp->map=op->map;
-	if (settings.real_wiz == FALSE)
-	    SET_FLAG(tmp, FLAG_WAS_WIZ);
-	if (set_magic)
-	    set_abs_magic(tmp, magic);
-	if (art)
-	    give_artifact_abilities(tmp, art->item);
-        if (need_identify(tmp)) {
-	    SET_FLAG(tmp, FLAG_IDENTIFIED);
-	    CLEAR_FLAG(tmp, FLAG_KNOWN_MAGICAL);
-	}
 	if (at_spell)
 	    insert_ob_in_ob(arch_to_object(at_spell), tmp);
 
-    /* Let's put this created item on stack so dm can access it easily. */
-    dm_stack_push( op->contr, tmp->count );
+	tmp->x=op->x;
+	tmp->y=op->y;
+	if (set_nrof)
+	    tmp->nrof = nrof;
+	tmp->map=op->map;
 
-	while (*bp2) {
-	    /* find the first quote */
-	    for (bp3=bp2, gotquote=0, gotspace=0; *bp3 && gotspace < 2; bp3++) {
-		if (*bp3 == '"') {
-		    *bp3 = ' ';
-		    gotquote++;
-		    bp3++;
-		    for (bp4=bp3; *bp4; bp4++)
-			if (*bp4 == '"') {
-			    *bp4 = '\0';
-			    break;
-			}
-		    break;
-		} else if (*bp3 == ' ')
-		     gotspace++;
-            }
-	    if (!gotquote) { /* then find the second space */
-		for (bp3=bp2; *bp3; bp3++) {
-		    if (*bp3 == ' ') {
-			bp3++;
-			for (bp4=bp3; *bp4; bp4++) {
-			    if (*bp4 == ' ') {
-				*bp4 = '\0';
-				break;
-			    }
-			}
-			break;
-		    }
-		}
-	    }
-	    /* now bp3 should be the argument, and bp2 the whole command */
-	    if(set_variable(tmp, bp2) == -1)   
-		new_draw_info_format(NDI_UNIQUE, 0, op,
-		    "Unknown variable %s", bp2);
-	    else
-		new_draw_info_format(NDI_UNIQUE, 0, op,
-		    "(%s#%d)->%s=%s", tmp->name, tmp->count, bp2, bp3);
-
-	    /* This is broken, because it is possible to get here
-	     * without bp4 being set.  However, this entire block
-	     * seems pretty suspect.
-	     */
-	    if (gotquote)
-		bp2=bp4+2;
-	    else
-		bp2=bp4+1;
-	    if (obp == bp2)
-		break; /* invalid params */
-	    obp=bp2;
-	}
         tmp = insert_ob_in_ob(tmp, op);
 	esrv_send_item(op, tmp);
+
+	/* Let's put this created item on stack so dm can access it easily. */
+	dm_stack_push( op->contr, tmp->count );
+
         return 1;
-    }
-    for (i=0 ; i < (set_nrof ? nrof : 1); i++) {
-	archetype *atmp;
-	object *prev=NULL,*head=NULL;
-	for (atmp=at; atmp!=NULL; atmp=atmp->more) {
-	    tmp=arch_to_object(atmp);
-	    if (settings.real_wiz == FALSE)
-		SET_FLAG(tmp, FLAG_WAS_WIZ);
-	    if(head==NULL)
-		head=tmp;
-	    tmp->x=op->x+tmp->arch->clone.x;
-	    tmp->y=op->y+tmp->arch->clone.y;
-	    tmp->map=op->map;
-	    if (set_magic)
-		set_abs_magic(tmp, magic);
-	    if (art)
-		give_artifact_abilities(tmp, art->item);
-	    if (need_identify(tmp)) {
-		SET_FLAG(tmp, FLAG_IDENTIFIED);
-		CLEAR_FLAG(tmp, FLAG_KNOWN_MAGICAL);
+    } else {
+	for (i=0 ; i < (set_nrof ? nrof : 1); i++) {
+	    archetype *atmp;
+	    object *prev=NULL,*head=NULL, *dup;
+
+	    for (atmp=at; atmp!=NULL; atmp=atmp->more) {
+		dup=arch_to_object(atmp);
+
+		if (at_spell)
+		    insert_ob_in_ob(arch_to_object(at_spell), dup);
+
+		/* The head is what contains all the important bits,
+		 * so just copying it over should be fine.
+		 */
+		if(head==NULL) {
+		    head=dup;
+		    copy_object(tmp, dup);
+		}
+		if (settings.real_wiz == FALSE)
+		    SET_FLAG(dup, FLAG_WAS_WIZ);
+		dup->x=op->x+dup->arch->clone.x;
+		dup->y=op->y+dup->arch->clone.y;
+		dup->map=op->map;
+
+		if(head!=dup) {
+		    dup->head=head;
+		    prev->more=dup;
+		}
+		prev=dup;
 	    }
-	    if (at_spell)
-		insert_ob_in_ob(arch_to_object(at_spell), tmp);
-	    /* Note that I believe this entire block below (for finding the variables)
-	     * is completely broken here.  This is because it modifies the string it
-	     * works on. Thus, for the first object it creates, it would work OK,
-	     * but for the second, third, etc, it simply won't work because nulls have
-	     * been inserted.
+	    if (QUERY_FLAG(head, FLAG_ALIVE))
+		insert_ob_in_map(head, op->map, op, 0);
+	    else
+		head = insert_ob_in_ob(head, op);
+
+	    /* Let's put this created item on stack so dm can access it easily. */
+	    /* Wonder if we really want to push all of these, but since
+	     * things like rods have nrof 0, we want to cover those.
 	     */
-	    while (*bp2) {
-		/* find the first quote */
-		for (bp3=bp2, gotquote=0, gotspace=0; *bp3 && gotspace < 2;
-		     bp3++) {
-		    if (*bp3 == '"') {
-			*bp3 = ' ';
-			gotquote++;
-			bp3++;
-			for (bp4=bp3; *bp4; bp4++)
-			    if (*bp4 == '"') {
-				*bp4 = '\0';
-				break;
-			    }
-			break;
-		    } else if (*bp3 == ' ')
-		        gotspace++;
-                }
-		if (!gotquote) { /* then find the second space */
-		    for (bp3=bp2; *bp3; bp3++) {
-			if (*bp3 == ' ') {
-			    bp3++;
-			    for (bp4=bp3; *bp4; bp4++) {
-				if (*bp4 == ' ') {
-				    *bp4 = '\0';
-				    break;
-				}
-			    }
-			    break;
-			}
-		    }
-	        }
-	/* now bp3 should be the argument, and bp2 the whole command */
-		if(set_variable(tmp, bp2) == -1)   
-		    new_draw_info_format(NDI_UNIQUE, 0, op,
-			"Unknown variable %s", bp2);
-		else
-		    new_draw_info_format(NDI_UNIQUE, 0, op,
-			"(%s#%d)->%s=%s", tmp->name, tmp->count, bp2, bp3);
-		if (gotquote)
-		    bp2=bp4+2;
-		else
-		    bp2=bp4+1;
-		if (obp == bp2)
-		    break; /* invalid params */
-		obp=bp2;
-	    }
-	    if(head!=tmp)
-		tmp->head=head,prev->more=tmp;
-	    prev=tmp;
-	}
-        if (QUERY_FLAG(head, FLAG_ALIVE))
-	    insert_ob_in_map(head, op->map, op, 0);
-        else
-	    head = insert_ob_in_ob(head, op);
-        if (at->clone.randomitems!=NULL && !at_spell)
-	    create_treasure(at->clone.randomitems, head, GT_APPLY,
+	    dm_stack_push( op->contr, head->count );
+
+	    if (at->clone.randomitems!=NULL && !at_spell)
+		create_treasure(at->clone.randomitems, head, GT_APPLY,
                           op->map->difficulty, 0);
 	    esrv_send_item(op, head);
+	}
+	/* free the one we used to copy */
+	free_object(tmp);
     }
     return 1;
 }

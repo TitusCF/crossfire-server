@@ -17,6 +17,15 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/apply.c: fix_auto_apply() - add some debugging statements, as I've
+   seen crashes caused by monsters with scrolls with no spells - need to
+   figure out how those are showing up.
+server/c_wiz.c: command_kick() - fix occasional crashes when player isn't
+  on any map when kicked.  command_create() largely rewritten so it doesn't
+  crash the server on any malformed values passed in, add some more features
+  so it should be easier to create objects.
+MSW 2004-08-16
+
 server/apply.c: better to not create a treasure for spellbooks that already have
     something in inventory. Else you get 2 spells in the book, which then
     mutates when loading (first spell is the book's spell, and order changes every

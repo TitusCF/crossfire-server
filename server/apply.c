@@ -3382,6 +3382,13 @@ void fix_auto_apply(mapstruct *m) {
 		   tmp->type != SPELL && HAS_RANDOM_ITEMS(tmp)) {
 		    create_treasure(tmp->randomitems, tmp, GT_APPLY,
                             m->difficulty,0);
+		    /* Purely debugging - I've seen crashes in monster_should_cast_spell()
+		     * where the monster has a scroll with no inventory - need to figure
+		     * out how that is happening.  Observed that it happens on random
+		     * maps, which should be covered by this code.
+		     */
+		    if (tmp->type == SCROLL && !tmp->inv)
+			LOG(llevError,"fix_auto_apply: create treasure failed to create spell for scroll.\n");
 		    tmp->randomitems = NULL;
 		}
 	    }
