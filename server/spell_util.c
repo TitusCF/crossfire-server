@@ -394,6 +394,8 @@ if (item == spellNormal && !ability ){
   case SP_BANISHMENT:	
   case SP_MANA_BLAST:
   case SP_WINDSTORM:
+  case SP_PEACE:
+  case SP_SPIDERWEB:
     success = cast_cone(op,caster,dir,duration,type,spellarch[type],!ability);
     break;
   case SP_TURN_UNDEAD:
@@ -415,6 +417,7 @@ if (item == spellNormal && !ability ){
   case SP_FROSTBOLT:
   case SP_S_LIGHTNING:
   case SP_L_LIGHTNING:
+  case SP_FORKED_LIGHTNING:
   case SP_STEAMBOLT:
   case SP_MANA_BOLT:
     success = fire_bolt(op,caster,dir,type,!ability);
@@ -531,6 +534,7 @@ if (item == spellNormal && !ability ){
   case SP_CONFUSION:
   case SP_XRAY:
   case SP_DARK_VISION:
+  case SP_RAGE:
     success = cast_change_attr(op,caster,dir,type);
     break;
   case SP_RESTORATION:
@@ -1155,6 +1159,23 @@ void check_cone_push(object *op) {
     }
 }
 
+/* drops an object based on what is in the cone's "other_arch" */
+void cone_drop(object *op) {
+  object *new_ob = arch_to_object(op->other_arch);
+  new_ob->x = op->x;
+  new_ob->y = op->y;
+  new_ob->stats.food = op->stats.hp;
+  new_ob->level = op->level;
+  set_owner(new_ob,op->owner);
+  if(op->chosen_skill) {
+    new_ob->chosen_skill=op->chosen_skill;
+    new_ob->exp_obj = op->chosen_skill->exp_obj;
+  }
+  insert_ob_in_map(new_ob,op->map,op);
+  
+}
+
+
 void move_cone(object *op) {
     int i;
     tag_t tag;
@@ -1231,6 +1252,7 @@ void move_cone(object *op) {
 	    tmp->stats.dam = op->stats.dam;
 	    tmp->attacktype=op->attacktype;
 	    insert_ob_in_map(tmp,op->map,op);
+	    if(tmp->other_arch) { cone_drop(tmp);}
 	}
     }
 }
@@ -1414,9 +1436,9 @@ void move_bolt(object *op) {
 	/* New forking code.  Possibly create forks of this object
 			going off in other directions. */
 
-		if(RANDOM()%100< tmp->stats.Dex) {  /* stats.Dex % of forking */
-		  forklightning(op,tmp);
-		}
+      if(RANDOM()%100< tmp->stats.Dex) {  /* stats.Dex % of forking */
+	forklightning(op,tmp);
+      }
       if (tmp) {
         if ( ! tmp->stats.food) {
           tmp->stats.food = 1;

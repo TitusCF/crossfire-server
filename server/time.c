@@ -1098,6 +1098,9 @@ int process_object(object *op) {
   case AURA:
     move_aura(op);
     return 0;
+  case PEACEMAKER:
+    move_peacemaker(op);
+    return 0;
   }
 
   return 0;

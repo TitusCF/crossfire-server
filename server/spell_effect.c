@@ -1139,6 +1139,23 @@ cast_change_attr(object *op,object *caster,int dir,int spell_type) {
     We should be able to have more than one thing in force! */
   force=get_archetype("force");
   switch(spell_type) {
+  case SP_RAGE: 
+    {
+      if(tmp->type!=PLAYER)
+	break;
+      /* Str, Dex, Con */
+      cast_change_attr(op,caster,dir,SP_HEROISM);
+      /* haste */
+      cast_change_attr(op,caster,dir,SP_HASTE);
+      /* armour */
+      cast_change_attr(op,caster,dir,SP_ARMOUR);
+      /* regeneration */
+      cast_change_attr(op,caster,dir,SP_REGENERATION);
+      /* weapon class */
+      force->stats.wc += SP_level_dam_adjust(op,caster,SP_BLESS);
+
+      break;
+    }
   case SP_STRENGTH:
     if(tmp->type!=PLAYER)
       break;
@@ -1175,13 +1192,11 @@ cast_change_attr(object *op,object *caster,int dir,int spell_type) {
 
     break;
   case SP_ARMOUR: {
-   /* peterm, modified so that it uses my functions */
+   /* peterm, modified so that it uses level-depend functions */
     force->stats.ac=2+SP_level_dam_adjust(op,caster,spell_type);
     if((tmp->stats.ac-force->stats.ac)<-20) 
 	force->stats.ac=tmp->stats.ac+20;
 
-/*    if(force->stats.ac>5)
-      force->stats.ac=5;  */
     force->armour = 5+4*SP_level_dam_adjust(op,caster,spell_type);
     if (force->armour > 25)
       force->armour = 25;
@@ -1196,19 +1211,6 @@ cast_change_attr(object *op,object *caster,int dir,int spell_type) {
   case SP_HEROISM:
     if (tmp->type != PLAYER)
       break;
-/*    if (tmp->contr->orig_stats.Str > 19)
-      force->stats.Str = 1;
-    else
-      force->stats.Str = 2;
-    if (tmp->contr->orig_stats.Con > 19)
-      force->stats.Con = 1;
-    else if (tmp->contr->orig_stats.Con > 15)
-      force->stats.Con = 2;
-    else
-      force->stats.Con = 3;  */
-  /*  peterm: heroism is much more elegantly implemented by
-	having it cast stat spells for con, str, dex.  Repeated
-	castings will make you more heroic, but only up to a point */
     cast_change_attr(op,caster,dir,SP_STRENGTH);
     cast_change_attr(op,caster,dir,SP_DEXTERITY);
     cast_change_attr(op,caster,dir,SP_CONSTITUTION);
@@ -3497,3 +3499,36 @@ void move_aura(object *aura) {
       
 
   
+void move_peacemaker(object *op) {
+  object *tmp;
+  char buf[MAX_BUF];
+  for(tmp=get_map_ob(op->map,op->x,op->y);tmp!=NULL;tmp=tmp->above) {
+    int atk_lev, def_lev, kill_lev;
+    if(!QUERY_FLAG(tmp,FLAG_MONSTER)) continue;
+    if(QUERY_FLAG(tmp,FLAG_UNAGGRESSIVE)) continue;
+    if(tmp->stats.exp == 0) continue;
+    def_lev = MAX(1,tmp->level);
+    atk_lev = MAX(1,op->level);
+    if(RANDOM() % atk_lev > def_lev) {
+
+      /* make this sucker peaceful. */
+      tmp->stats.dam = 0;
+      add_exp(op,tmp->stats.exp);
+      tmp->stats.exp=0;
+      tmp->stats.sp = 0;
+      tmp->stats.grace = 0;
+      tmp->stats.Pow = 0;
+      tmp->move_type = RANDO2;
+      SET_FLAG(tmp,FLAG_UNAGGRESSIVE);
+      SET_FLAG(tmp,FLAG_RUN_AWAY);
+      SET_FLAG(tmp,FLAG_RANDOM_MOVE);
+      CLEAR_FLAG(tmp,FLAG_MONSTER);
+      if(tmp->name) {
+	sprintf(buf,"%s no longer feels like fighting.",tmp->name);
+	new_draw_info(NDI_UNIQUE,0,op->owner,buf);
+      }
+    }
+  }
+}   
+      
+    
