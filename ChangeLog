@@ -17,6 +17,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+------------------------------------------------------------------------------
+Changes for 1.4.0:
+
 server/disease.c: Change move_disease() somehwat - before, if you were
    not susceptible to a disease, it would never run its course.  Yet you
    would still get stuck with the symptoms.  there was a case on
