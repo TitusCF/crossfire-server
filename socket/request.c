@@ -588,9 +588,9 @@ void esrv_send_face(NewSocket *ns,short face_num, int nocache)
 	strcpy((char*)sl.buf, "pixmap ");
 	sl.len=strlen((char*)sl.buf);
 	SockList_AddInt(&sl, face_num);
-	SockList_AddInt(&sl, faces[face_num].datalen);
-	memcpy(sl.buf+sl.len, faces[face_num].data, faces[face_num].datalen);
-	sl.len += faces[face_num].datalen;
+	SockList_AddInt(&sl, faces[face_num].datalen[1]);
+	memcpy(sl.buf+sl.len, faces[face_num].data[1], faces[face_num].datalen[1]);
+	sl.len += faces[face_num].datalen[1];
 /*	LOG(llevDebug,"sending pixmap %d, len %d\n", face_num, faces[face_num].datalen);*/
 	Send_With_Handling(ns, &sl);
     } else if (ns->facemode == Send_Face_Bitmap) {
@@ -599,8 +599,9 @@ void esrv_send_face(NewSocket *ns,short face_num, int nocache)
 	SockList_AddInt(&sl, face_num);
 	SockList_AddChar(&sl, new_faces[face_num].fg);
 	SockList_AddChar(&sl, new_faces[face_num].bg);
-	memcpy(sl.buf+sl.len, faces[face_num].bitmapdata, 3*24);
-	sl.len += 3*24;
+	memcpy(sl.buf+sl.len, faces[face_num].data[0], faces[face_num].datalen[0]);
+	memcpy(sl.buf+sl.len, faces[face_num].data[0], 3*24);
+	sl.len += faces[face_num].datalen[0];
 	Send_With_Handling(ns, &sl);
     } else {
 	LOG(llevError,"Invalid face send mode on client_num (%d)\n",

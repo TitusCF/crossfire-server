@@ -100,13 +100,16 @@ typedef struct NewSocket {
     enum Old_Mode old_mode;
 } NewSocket;
 
+
+
+#define FACE_TYPES  3
+
 typedef struct FaceInfo {
   char *name;   /* name of the image, including component path names (ie,
                  * ./arch/system/bug.111)
                  */
-  char *data;   /* xpm data */
-  uint16 datalen;   /* length of the xpm data */
-  char bitmapdata[3*24];    /* 24x24 bitmaps always are the same size */
+  char *data[FACE_TYPES];   /* xpm data */
+  uint16 datalen[FACE_TYPES];   /* length of the xpm data */
 } FaceInfo;
 
 

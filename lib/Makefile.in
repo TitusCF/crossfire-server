@@ -35,9 +35,7 @@ INSTALLFILES = $(srcdir)/artifacts $(srcdir)/ban_file $(srcdir)/def_help \
 	$(srcdir)/skill_params $(srcdir)/spell_params \
 	$(srcdir)/treasures $(srcdir)/animations $(srcdir)/archetypes \
 	$(srcdir)/bmaps $(srcdir)/bmaps.paths $(srcdir)/crossfire.xpm \
-	$(srcdir)/faces $(srcdir)/crossfire.cfb
-
-SRCS = xbmtobdf.c
+	$(srcdir)/faces $(srcdir)/crossfire.xbm $(srcdir)/crossfire.png
 
 ALLFILES = $(SRCS) README xpmtopix.pl collect.pl util.pl \
 	Makefile.in .collect-stamp  $(INSTALLFILES)
@@ -76,18 +74,17 @@ RM = @RM@
 SHELL = @BOURNE_SHELL@
 
 
-all:: xbmtobdf archetypes bmaps.paths crossfire.cfb crossfire.xpm animations
+all:: archetypes bmaps.paths crossfire.xbm crossfire.xpm crossfire.png  animations
 
 
 crossfire.xpm: bmaps.paths
-	$(srcdir)/adm/make_xpm_file.pl
+	$(srcdir)/adm/collect_images.pl -xpm
 
-crossfire.cfb: bmaps.paths
-	$(RM) -f crossfire.cfb
-	./xbmtobdf -f bmaps.paths -d . -b > crossfire.cfb
+crossfire.xbm: bmaps.paths
+	$(srcdir)/adm/collect_images.pl -xbm
 
-xbmtobdf: xbmtobdf.o
-	$(CC) -o $@ $@.o
+crossfire.png: bmaps.paths
+	$(srcdir)/adm/collect_images.pl -png
 
 .collect-stamp:
 	touch .collect-stamp
@@ -107,7 +104,7 @@ animations: .collect-stamp
 bmaps.paths bmaps: .collect-stamp
 	make collect
 
-install:: xbmtobdf archetypes bmaps.paths crossfire.cfb crossfire.xpm animations
+install:: archetypes bmaps.paths crossfire.xbm crossfire.xpm crossfire.png  animations
 	@if [ ! -d $(datadir) ]; then \
 		$(MKDIR) -p $(datadir); \
 	fi

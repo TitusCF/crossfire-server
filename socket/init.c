@@ -7,6 +7,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
+    Copyright (C) 2000 Mark Wedel
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -23,7 +24,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to frankj@ifi.uio.no.
+    The author can be reached via e-mail to mwedel@scruz.net
 */
 
 /* socket.c mainly deals with initialization and higher level socket
@@ -55,36 +56,14 @@
 Socket_Info socket_info;
 NewSocket *init_sockets;
 FaceInfo faces[MAXFACENUM];
+static char *face_types[FACE_TYPES] = {"xbm", "xpm", "png"};
 
-/* A throway function.  it reads a line, makes sure it is null terminated,
- * and strips off the newline.  Used by readclientimages
- */
-static void readbufline(char *buf,int size,FILE *in)
-{
-  buf[0] = '\0';
-  fgets(buf,size,in);
-  buf[size-1] = '\0';
-  if (buf[0] == '\0')
-    return;
-  if (buf[strlen(buf)-1] != '\n') {
-    fprintf(stderr,"whoa, line '%s' not newline terminated??\n",buf);
-    abort();
-  }
-}
 
-/* read_client_images loads the xpm and pixmas file into memory.  This 
- * way, we can easily send them to the client.  We should really do something
+/* read_client_images loads all the iamge types into memory.
+ *  This  way, we can easily send them to the client.  We should really do something
  * better than abort on any errors - on the other hand, these are all fatal
  * to the server (can't work around them), but the abort just seems a bit
  * messy (exit would probably be better.)
- */
-
-/* Eric had set up things to use a method of malloc/realloc to always make
- * sure he had a large enough buffer - this made the code slightly more
- * complicated and harder to read.  It makes more sense to me to just
- * set up a large buffer that should be able to handle any image.  being
- * that most xpm images are less than 1K, a 10,000 byte buffer should easily
- * cover us.
  */
 
 /* Couple of notes:  We assume that the faces are in a continous block.
@@ -92,93 +71,82 @@ static void readbufline(char *buf,int size,FILE *in)
  * (If clients do image caching, it would be handy for servers to perhaps
  * use different blocks for their new images..
  */
+
+/* Function largely rewritten May 2000 to be more general purpose.
+ * The server itself does not care what the image data is - to the server,
+ * it is just data it needs to allocate.  As such, the code is written
+ * to do such.
+ */
+
 #define XPM_BUF 10000
 void read_client_images()
 {
     char filename[400];
     char buf[500];
-    char databuf[XPM_BUF],*cur;
+    char *cp;
     FILE *infile;
-    int num,len,compressed;
+    int num,len,compressed, fileno,i;
 
-    /* Read in the pixmaps file */
-    sprintf(filename,"%s/crossfire.xpm",settings.datadir);
-    if ((infile = open_and_uncompress(filename,0,&compressed))==NULL) {
-	LOG(llevError,"Unable to open %s\n", filename);
-	abort();
-    }
-    while(1) {
-	readbufline(buf,500,infile);
-	if (*buf == '\0')
-	    break;
-	if(strncmp(buf,"ESRV_XPM ",9)!=0 ||
-	   buf[14] != ' ') {
-	    fprintf(stderr,"whoa, bad esrv_xpm line; not ESRV_XPM ...\n%s",buf);
+    for (fileno=0; fileno<FACE_TYPES; fileno++) {
+	sprintf(filename,"%s/crossfire.%s",settings.datadir, face_types[fileno]);
+	LOG(llevDebug,"Loading image file %s\n", filename);
+
+	if ((infile = open_and_uncompress(filename,0,&compressed))==NULL) {
+	    LOG(llevError,"Unable to open %s\n", filename);
 	    abort();
 	}
-	num = atoi(buf+9);
-	if (num<0 || num>=MAXFACENUM) {
-	    LOG(llevError,"whoa, pixmap num %d \\not\\in 0..%d\n%s",
+	while(fgets(buf, 400, infile)!=NULL) {
+	    if(strncmp(buf,"IMAGE ",6)!=0) {
+		LOG(llevError,"read_client_images:Bad image line - not IMAGE, instead\n%s",buf);
+		abort();
+	    }
+	    num = atoi(buf+6);
+	    if (num<0 || num>=MAXFACENUM) {
+		LOG(llevError,"read_client_images: Image num %d not in 0..%d\n%s",
 		    num,MAXFACENUM,buf);
-	    abort();
-	}
-	buf[strlen(buf)-1] = '\0';
-	if (faces[num].name != NULL) {
-	    fprintf(stderr,"whoa, pixmap #%d duplicated??\n",num);
-	    abort();
-	}
-	faces[num].name = malloc(strlen(buf+15)+1);
-	strcpy(faces[num].name,buf+15);
-
-	cur = databuf;
-	/* Collect all the data for this pixmap */
-	while(1) {
-	    readbufline(buf,500,infile);
-	    if (*buf == '\0') {
-		fprintf(stderr,"whoa, pixmap #%d not terminated??\n",num);
 		abort();
 	    }
-	    if (strcmp(buf,"ESRV_XPM_END\n")==0)
-		break;
-	    len = strlen(buf);
-	    if (cur+len > databuf+XPM_BUF) {
-		LOG(llevError,"Overflow of XPM_BUF in read_client_images, image %s\n",
-		    faces[num].name);
+	    /* Skip accross the number data */
+	    for (cp=buf+6; *cp!=' '; cp++) ;
+	    len = atoi(cp);
+	    if (len==0 || len>XPM_BUF) {
+		LOG(llevError,"read_client_images: length not valid: %d\n%s",
+		    len,buf);
 		abort();
 	    }
-	    strcpy(cur,buf);
-	    cur += len;
-	}
-	/* Collected all the data, put it into the pixmap buffer */
-	faces[num].data = malloc(cur-databuf+1);
-	faces[num].datalen = cur-databuf+1;
-	memcpy(faces[num].data, databuf,cur-databuf);
-	faces[num].data[cur-databuf] = '\0';
-    }
-    close_and_delete(infile,compressed);
+	    /* First skip the space, then skip the numbers */
+	    for (cp++; *cp!=' '; cp++) ;
 
-    /* Assume bitmap information has same number as pixmap information */
-    sprintf(filename,"%s/crossfire.cfb",settings.datadir);
-    if ((infile = open_and_uncompress(filename,0,&compressed))==NULL) {
-	LOG(llevError,"Can't open %s file",filename);
-	abort();
-    }
-    for(num=0;num<MAXFACENUM;num++) {
-	if (faces[num].name == NULL)
-	    break; /* Last one -- assumes pixmaps are contiguous. */
-	if (fread(faces[num].bitmapdata, 24 * 3, 1, infile) != 1) {
-	    printf("Unable to read bitmap data for face #%d\n",num);
-	    abort();
+	    /* Skip the space in our pointer*/
+	    cp++;
+	    /* Clear the newline */
+	    buf[strlen(buf)-1] = '\0';
+	    if (fileno==0) {
+		if (faces[num].name != NULL) {
+		    LOG(llevError,"read_client_images: duplicate image %d\n%s",
+			num,buf);
+		    abort();
+		}
+		faces[num].name = strdup_local(cp);
+	    } else {
+		/* Just do a sanity check here */
+		if (strcmp(faces[num].name, cp)) {
+		    LOG(llevError,"read_client_images: image mismatch: %s!=%s\n%s",
+			faces[num].name, cp, buf);
+		    abort();
+		}
+	    }
+	    faces[num].datalen[fileno] = len;
+	    faces[num].data[fileno] = malloc(len);
+	    if ((i=fread( faces[num].data[fileno], len, 1, infile))!=len) {
+		LOG(llevError,"read_client_images: Did not read desired amount of data, wanted %d, got %d\n%s",
+		    len, i, buf);
+		    abort();
+	    }
+
 	}
+	close_and_delete(infile,compressed);
     }
-    while(num<MAXFACENUM) {
-	if (faces[num].name != NULL) {
-	    printf("Non-contiguous faces, %d sits in middle of nowhere.\n",num);
-	    abort();
-	}
-	num++;
-    }
-    close_and_delete(infile, compressed);
 }
 
 /* Initializes a connection - really, it just sets up the data structure,

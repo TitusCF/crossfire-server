@@ -18,6 +18,47 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+
+Make image files and code more generic.  This was largely done to make
+adding support for png files easier, but in reality, it means adding support
+for any new file format is now trivially easy.  Format of the image
+file is:
+IMAGE <image num> <datalen> <image name>\n
+followed by the image data.
+This allows support for binary image formats (png), but also means that
+the server doesn't need to know anything about the image format - rather
+it is all just data as far as the server is concerned.  I think this
+actuallyy loads the xpm data a little faster - it would make sense that
+it should, since it just reads all the data in with one fread instead
+of parsing it line by line waiting for the end image delimeter.
+Note:  While png images are loaded, they are currently not supported
+in the client nor will the server send them - that is the next step
+in the work, but that will require just a few minor changes to the
+server - most of those change will be in the client.
+
+crossedit/xutil.c: Merge bitmap & pixmap load routine into one called	
+    ReadImages, function modified to use above format.
+crossedit/App.c: Call ReadImages to load images.
+include/newserver.h: Change FaceInfo structure to have arrays of data
+    and datalength instead of explicity entries for pixmap vs bitmap data.
+lib/adm/make_xpm_file.pl, lib/crossfire.cfb, lib/xbmtobdf.c: Removed -
+    either note needed or replaced by new naming scheme.
+lib/adm/collect_images.pl:  Replacement/improvement of make_xpm_file.pl
+    above - this handles all image formats (xbm, xpm, png).  This is
+    also more intelligent in that it will not try to rebuild the image files
+    if there is not a valid arch directory.
+lib/crossfire.png, lib/crossfire.xbm (new files):  .png file is for png
+    images.  xbm is to keep with the new standardized naming convention used
+    and is for the bitmaps.
+lib/crossfire.xpm:  New format used in file.
+lib/Makefile.in:  Modified to collect via new script as well as new
+    directives to collect (png files).
+socket/init.c: Modified to load with the new format and data structures.
+socket/request.c: Modified to send data with the new data structures
+    provided.
+
+End of image changes, MSW 5/13/2000
+
 configure.in, configure:  Add check for perl so that we can call scripts
 properly - MSW 5/13/2000
 
