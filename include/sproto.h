@@ -817,6 +817,7 @@ void move_player_changer(object *op);
 void move_firewall(object *op);
 void move_firechest(object *op);
 void move_player_mover(object *op);
+void move_duplicator(object *op);
 void move_creator(object *op);
 void move_marker(object *op);
 int process_object(object *op);

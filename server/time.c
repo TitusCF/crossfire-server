@@ -1094,6 +1094,30 @@ void move_player_mover(object *op) {
     }
 }
 
+/*
+ * Will duplicate a specified object placed on top of it.
+ * connected: what will trigger it.
+ * level: multiplier.  0 to destroy.
+ * other_arch: the object to look for and duplicate.
+ */
+
+void move_duplicator(object *op) {
+    object *tmp;
+
+    if (op->above == NULL)
+	return;
+    for (tmp=op->above; tmp != NULL; tmp=tmp->above) {
+	if (strcmp(op->other_arch->name, tmp->arch->name) == 0) {
+	    if (op->level == 0) {
+		remove_ob(tmp);
+		free_object(tmp);
+	    } else {
+		tmp->nrof *= op->level;
+	    }
+	    break;
+	}
+    }
+}
 
 /*  move_creator (by peterm) 
   it has the creator object create it's other_arch right on top of it.

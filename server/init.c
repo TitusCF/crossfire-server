@@ -799,6 +799,7 @@ void setup_library() {
   set_move_teleporter(move_teleporter);
   set_move_firewall(move_firewall);
   set_move_creator(move_creator);
+  set_move_duplicator(move_duplicator);
   set_trap_adjust(trap_adjust);
   set_esrv_send_item(esrv_send_item);
   set_esrv_del_item(esrv_del_item);

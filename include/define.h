@@ -208,6 +208,9 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define MONSTER                 80 /* yes, thats a real, living creature */
 #define SPAWN_GENERATOR         81 /* a spawn point or monster generator object */
 #define LAMP			82 /* a lamp */
+#define DUPLICATOR		83 /* duplicator/multiplier object */
+
+
 #define SPELLBOOK	            85
 
 #define CLOAK		            87

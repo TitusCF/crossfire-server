@@ -51,6 +51,7 @@ type_func_ob	move_teleporter_func;
 type_func_ob move_firewall_func;
 type_func_ob_int  trap_adjust_func;
 type_func_ob    move_creator_func;
+type_func_ob	move_duplicator_func;
 type_func_ob_ob esrv_send_item_func;
 type_func_player_int esrv_del_item_func;
 type_func_int_ob_ob esrv_update_item_func;
@@ -91,6 +92,7 @@ void init_function_pointers() {
   move_firewall_func = dummy_function_ob;
   trap_adjust_func = dummy_function_ob_int;
   move_creator_func = dummy_function_ob;
+  move_duplicator_func = dummy_function_ob;
   esrv_send_item_func = dummy_function_ob2;
   esrv_del_item_func = dummy_function_player_int;
   esrv_update_item_func = dummy_function_int_ob_ob;
@@ -213,6 +215,10 @@ void set_trap_adjust(type_func_ob_int addr) {
 
 void set_move_creator(type_func_ob addr) {
   move_creator_func = addr;
+}
+
+void set_move_duplicator(type_func_ob addr) {
+  move_duplicator_func = addr;
 }
 
 void set_esrv_send_item (type_func_ob_ob addr) {

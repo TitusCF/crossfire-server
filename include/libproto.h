@@ -75,6 +75,7 @@ extern void set_move_teleporter(type_func_ob addr);
 extern void set_move_firewall(type_func_ob addr);
 extern void set_trap_adjust(type_func_ob_int addr);
 extern void set_move_creator(type_func_ob addr);
+extern void set_move_duplicator(type_func_ob addr);
 extern void set_esrv_send_item(type_func_ob_ob addr);
 extern void set_esrv_update_item(type_func_int_ob_ob addr);
 extern void set_esrv_del_item(type_func_player_int addr);
