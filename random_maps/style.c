@@ -111,7 +111,7 @@ scandir (dir, namelist, select, cmp)
 	if (v[i] == NULL)
 	  goto lose;
 
-	memcpy (v[i++], d, d_d->reclen);
+	memcpy (v[i++], d, d->d_reclen);
       }
 
   if (errno != 0)
