@@ -1,6 +1,9 @@
 Changes in top level CVS tree (please add your changes at the very top of
 the file):
 
+Add Xaw to start of libraries when linking crossedit - fixes focus problem.
+File affected configure.in - msw
+
 Fixed a bug in the "depletion on death" code.  The depletion
 never had any stat removal specified.  --PeterM
 
