@@ -686,7 +686,10 @@ int cast_wor(object *op, object *caster) {
   update_ob_speed(dummy);
   dummy->speed_left= -1;
   dummy->type=WORD_OF_RECALL;
-  EXIT_PATH(dummy)=add_string(first_map_path);
+  EXIT_PATH(dummy) = add_string(op->contr->savebed_map);
+  EXIT_X(dummy) = op->contr->bed_x;
+  EXIT_Y(dummy) = op->contr->bed_y;
+  
   (void) insert_ob_in_ob(dummy,op);
   new_draw_info(NDI_UNIQUE, 0,op,"You feel a force starting to build up inside you.");
   LOG(llevDebug,"Word of Recall for %s in %f ticks.\n", op->name,

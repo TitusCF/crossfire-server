@@ -1693,6 +1693,7 @@ void kill_player(object *op)
       
       /* teleport defeated player to new destination*/
       transfer_ob(op, x, y, 0, NULL);
+      op->contr->braced=0;
       return;
     }
 
