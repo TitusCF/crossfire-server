@@ -604,20 +604,23 @@ void esrv_update_stats(player *pl)
     sl.buf=malloc(MAX_BUF);
     strcpy((char*)sl.buf,"stats ");
     sl.len=strlen((char*)sl.buf);
-
-    AddIfShort(pl->last_stats.hp, pl->ob->stats.hp, CS_STAT_HP);
-    AddIfShort(pl->last_stats.maxhp, pl->ob->stats.maxhp, CS_STAT_MAXHP);
-    AddIfShort(pl->last_stats.sp, pl->ob->stats.sp, CS_STAT_SP);
-    AddIfShort(pl->last_stats.maxsp, pl->ob->stats.maxsp, CS_STAT_MAXSP);
-    AddIfShort(pl->last_stats.grace, pl->ob->stats.grace, CS_STAT_GRACE);
-    AddIfShort(pl->last_stats.maxgrace, pl->ob->stats.maxgrace, CS_STAT_MAXGRACE);
-    AddIfShort(pl->last_stats.Str, pl->ob->stats.Str, CS_STAT_STR);
-    AddIfShort(pl->last_stats.Int, pl->ob->stats.Int, CS_STAT_INT);
-    AddIfShort(pl->last_stats.Pow, pl->ob->stats.Pow, CS_STAT_POW);
-    AddIfShort(pl->last_stats.Wis, pl->ob->stats.Wis, CS_STAT_WIS);
-    AddIfShort(pl->last_stats.Dex, pl->ob->stats.Dex, CS_STAT_DEX);
-    AddIfShort(pl->last_stats.Con, pl->ob->stats.Con, CS_STAT_CON);
-    AddIfShort(pl->last_stats.Cha, pl->ob->stats.Cha, CS_STAT_CHA);
+    
+    if(pl->ob != NULL)
+    {
+        AddIfShort(pl->last_stats.hp, pl->ob->stats.hp, CS_STAT_HP);
+        AddIfShort(pl->last_stats.maxhp, pl->ob->stats.maxhp, CS_STAT_MAXHP);
+        AddIfShort(pl->last_stats.sp, pl->ob->stats.sp, CS_STAT_SP);
+        AddIfShort(pl->last_stats.maxsp, pl->ob->stats.maxsp, CS_STAT_MAXSP);
+        AddIfShort(pl->last_stats.grace, pl->ob->stats.grace, CS_STAT_GRACE);
+        AddIfShort(pl->last_stats.maxgrace, pl->ob->stats.maxgrace, CS_STAT_MAXGRACE);
+        AddIfShort(pl->last_stats.Str, pl->ob->stats.Str, CS_STAT_STR);
+        AddIfShort(pl->last_stats.Int, pl->ob->stats.Int, CS_STAT_INT);
+        AddIfShort(pl->last_stats.Pow, pl->ob->stats.Pow, CS_STAT_POW);
+        AddIfShort(pl->last_stats.Wis, pl->ob->stats.Wis, CS_STAT_WIS);
+        AddIfShort(pl->last_stats.Dex, pl->ob->stats.Dex, CS_STAT_DEX);
+        AddIfShort(pl->last_stats.Con, pl->ob->stats.Con, CS_STAT_CON);
+        AddIfShort(pl->last_stats.Cha, pl->ob->stats.Cha, CS_STAT_CHA);
+    }
     if(pl->last_stats.exp != pl->ob->stats.exp && pl->socket.skillexp) 
     {
 	int s;
