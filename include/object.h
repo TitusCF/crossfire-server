@@ -213,6 +213,8 @@ typedef struct obj {
     //char	*event_options[30];
     event   *events;
 
+    char  *custom_name; /* Custom name assigned by player */
+
 } object;
 
 typedef struct oblnk { /* Used to link together several objects */

@@ -220,10 +220,18 @@ void esrv_draw_look(object *pl)
 	    SockList_AddInt(&sl, QUERY_FLAG(tmp, FLAG_NO_PICK) ? -1 : WEIGHT(tmp));
 	    SockList_AddInt(&sl, tmp->face->number);
 
-	    strncpy(item_n,query_base_name(tmp, 0),127);
-	    item_n[127]=0;
-	    len=strlen(item_n);
-	    item_p=query_base_name(tmp, 1);
+      if (!tmp->custom_name) {
+	      strncpy(item_n,query_base_name(tmp, 0),127);
+	      item_n[127]=0;
+	      len=strlen(item_n);
+	      item_p=query_base_name(tmp, 1);
+      }
+      else {
+        strncpy(item_n,tmp->custom_name,127);
+	      item_n[127]=0;
+	      len=strlen(item_n);
+	      item_p=tmp->custom_name;
+      }
 	    strncpy(item_n+len+1, item_p, 127);
 	    item_n[254]=0;
 	    len += strlen(item_n+1+len) + 1;
@@ -299,10 +307,18 @@ void esrv_send_inventory(object *pl, object *op)
 	    SockList_AddInt(&sl, QUERY_FLAG(tmp, FLAG_NO_PICK) ? -1 : WEIGHT(tmp));
 	    SockList_AddInt(&sl, tmp->face->number);
         
-	    strncpy(item_n,query_base_name(tmp, 0),127);
-	    item_n[127]=0;
-	    len=strlen(item_n);
-	    item_p=query_base_name(tmp, 1);
+      if (!tmp->custom_name) {
+	      strncpy(item_n,query_base_name(tmp, 0),127);
+	      item_n[127]=0;
+	      len=strlen(item_n);
+	      item_p=query_base_name(tmp, 1);
+      }
+      else {
+        strncpy(item_n,tmp->custom_name,127);
+	      item_n[127]=0;
+	      len=strlen(item_n);
+	      item_p=tmp->custom_name;
+      }
 	    strncpy(item_n+len+1, item_p, 127);
 	    item_n[254]=0;
 	    len += strlen(item_n+1+len) + 1;
@@ -397,10 +413,19 @@ void esrv_update_item(int flags, object *pl, object *op)
 	int len;
 	char *item_p, item_n[MAX_BUF];
 
-	strncpy(item_n,query_base_name(op, 0),127);
-	item_n[127]=0;
-	len=strlen(item_n);
-	item_p=query_base_name(op, 1);
+  if (!op->custom_name) {
+	  strncpy(item_n,query_base_name(op, 0),127);
+	  item_n[127]=0;
+	  len=strlen(item_n);
+	  item_p=query_base_name(op, 1);
+  }
+  else {
+    strncpy(item_n,op->custom_name,127);
+	  item_n[127]=0;
+	  len=strlen(item_n);
+	  item_p=op->custom_name;
+  }
+
 	strncpy(item_n+len+1, item_p, 127);
 	item_n[254]=0;
 	len += strlen(item_n+1+len) + 1;
@@ -469,10 +494,17 @@ void esrv_send_item(object *pl, object*op)
     SockList_AddInt(&sl, WEIGHT(op));
     SockList_AddInt(&sl, op->face->number);
     
-    strncpy(item_n,query_base_name(op, 0),127);
-    item_n[127]=0;
-    len=strlen(item_n);
-    item_p=query_base_name(op, 1);
+    if(!op->custom_name) {
+      strncpy(item_n,query_base_name(op, 0),127);
+      item_n[127]=0;
+      len=strlen(item_n);
+      item_p=query_base_name(op, 1);
+    } else {
+      strncpy(item_n,op->custom_name,127);
+	    item_n[127]=0;
+	    len=strlen(item_n);
+	    item_p=op->custom_name;
+    }
     strncpy(item_n+len+1, item_p, 127);
     item_n[254]=0;
     len += strlen(item_n+1+len) + 1;

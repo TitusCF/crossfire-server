@@ -169,6 +169,11 @@ int item_matched_string(object *pl, object *op, char *name)
 
 	/* base name matched - not bad */
 	if (strcasecmp(cp,op->name)==0 && !count) return 4;
+  else if (op->custom_name && strcasecmp(cp,op->custom_name)==0) {
+    pl->contr->count=count;	/* May not do anything */
+    /* Return 5 so custom name has higher priority than normal name */
+    return 5;
+  }
 
 	else if (count>1) {	/* Need to plurify name for proper match */
 	    if (!strcasecmp(cp,op->name_pl)) {

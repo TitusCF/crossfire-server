@@ -525,6 +525,9 @@ void sell_item(object *op, object *pl) {
     LOG(llevDebug,"Object other than player tried to sell something.\n");
     return;
   }
+
+  if(op->custom_name) FREE_AND_CLEAR_STR(op->custom_name);
+
   if(!i) {
     new_draw_info_format(NDI_UNIQUE, 0, pl,
 	"We're not interested in %s.",query_name(op));

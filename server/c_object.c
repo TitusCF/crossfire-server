@@ -1386,6 +1386,15 @@ void examine(object *op, object *tmp) {
 
     new_draw_info(NDI_UNIQUE, 0,op,buf);
     buf[0]='\0';
+
+    if(tmp->custom_name) {
+      strcpy(buf,"You name it ");
+      strncat(buf, tmp->custom_name, VERY_BIG_BUF-strlen(buf)-1);
+      buf[VERY_BIG_BUF-1]=0;
+      new_draw_info(NDI_UNIQUE, 0,op,buf);
+      buf[0]='\0';
+    }
+
     switch(tmp->type) {
 	case SPELLBOOK:
 	    if(QUERY_FLAG(tmp, FLAG_IDENTIFIED) && tmp->stats.sp >= 0 && tmp->stats.sp <= NROFREALSPELLS ) {
@@ -1715,3 +1724,141 @@ int command_search_items (object *op, char *params)
       return 1;
 }
 
+/*
+ * Changing the custom name of an item
+ * 
+ * Syntax is: rename <what object> to <new name>
+ *  if '<what object>' is omitted, marked object is used
+ *  if 'to <new name>' is omitted, custom name is cleared
+ *
+ * Names are considered for all purpose having a length <=127 (max length sent to client
+ * by server) */
+
+int command_rename_item(object *op, char *params)
+{
+  char buf[VERY_BIG_BUF];
+
+  object *item=NULL;
+  char *closebrace;
+  int counter;
+
+	if (params) {
+    /* Let's skip white spaces */
+    while(' '==*params) params++;
+
+    /* Checking the first part */
+    if ('<'==*params) {
+      /* Got old name, let's get it & find appropriate matching item */
+      closebrace=strchr(params,'>');
+      if(!closebrace) {
+        new_draw_info(NDI_UNIQUE,0,op,"Syntax error!");
+        return 1;
+      }
+      /* Sanity check for buffer overruns */
+      if((closebrace-params)>127) {
+        new_draw_info(NDI_UNIQUE,0,op,"Old name too long (up to 127 characters allowed)!");
+        return 1;
+      }
+      /* Copy the old name */
+      strncpy(buf,params+1,closebrace-params-1);
+      buf[closebrace-params-1]='\0';
+
+      /* Find best matching item */
+      item=find_best_object_match(op,buf);
+      if(!item) {
+        new_draw_info(NDI_UNIQUE,0,op,"Could not find a matching item to rename.");
+        return 1;
+      }
+
+      /* Now need to move pointer to just after > */
+      params=closebrace+1;
+      while(' '==*params) params++;
+
+    } else {
+        /* Use marked item */
+        item=find_marked_object(op);
+        if(!item) {
+          new_draw_info(NDI_UNIQUE,0,op,"No marked item to rename.");
+          return 1;
+        }
+    }
+
+    /* Now let's find the new name */
+    if(!strncmp(params,"to ",3)) {
+      params+=3;
+      while(' '==params) params++;
+      if('<'!=*params) {
+        new_draw_info(NDI_UNIQUE,0,op,"Syntax error, expecting < at start of new name!");
+        return 1;
+      }
+      closebrace=strchr(params+1,'>');
+      if(!closebrace) {
+        new_draw_info(NDI_UNIQUE,0,op,"Syntax error, expecting > at end of new name!");
+        return 1;
+      }
+
+      /* Sanity check for buffer overruns */
+      if((closebrace-params)>127) {
+        new_draw_info(NDI_UNIQUE,0,op,"New name too long (up to 127 characters allowed)!");
+        return 1;
+      }
+
+      /* Copy the new name */
+      strncpy(buf,params+1,closebrace-params-1);
+      buf[closebrace-params-1]='\0';
+      
+      /* Let's check it for weird characters */
+      for(counter=0;counter<strlen(buf);counter++) {
+        if(isalnum(buf[counter])) continue;
+        if(' '==buf[counter]) continue;
+        if('\''==buf[counter]) continue;
+        if('+'==buf[counter]) continue;
+        if('_'==buf[counter]) continue;
+        if('-'==buf[counter]) continue;
+
+        /* If we come here, then the name contains an invalid character...
+        tell the player & exit */
+        new_draw_info(NDI_UNIQUE,0,op,"Invalid new name!");
+        return 1;
+      }
+
+    } else {
+      /* If param contains something, then syntax error... */
+      if(strlen(params)) {
+        new_draw_info(NDI_UNIQUE,0,op,"Syntax error, expected 'to <' after old name!");
+        return 1;
+      }
+      /* New name is empty */
+      buf[0]='\0';
+    }
+  } else {
+    /* Last case: params==NULL */
+    item=find_marked_object(op);
+    if(!item) {
+      new_draw_info(NDI_UNIQUE,0,op,"No marked item to rename.");
+      return 1;
+    }
+    buf[0]='\0';
+  }
+
+  /* Coming here, everything is fine... */
+  if(!strlen(buf)) {
+     /* Clear custom name */
+    if(item->custom_name) {
+      FREE_AND_CLEAR_STR(item->custom_name);
+
+      new_draw_info_format(NDI_UNIQUE, 0, op,"You stop calling your %s with weird names.",query_base_name(item,item->nrof>1?1:0));
+      esrv_update_item(UPD_NAME,op,item);
+    } else {
+      new_draw_info(NDI_UNIQUE,0,op,"This item has no custom name.");
+    }
+  } else {
+    /* Set custom name */
+    FREE_AND_COPY(item->custom_name,buf);
+
+    new_draw_info_format(NDI_UNIQUE, 0, op,"Your %s will now be called %s.",query_base_name(item,item->nrof>1?1:0),buf);
+    esrv_update_item(UPD_NAME,op,item);
+  }
+
+  return 1;
+}

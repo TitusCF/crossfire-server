@@ -225,6 +225,7 @@ void inventory(object *op, object *inv);
 int command_pickup(object *op, char *params);
 void set_pickup_mode(object *op, int i);
 int command_search_items(object *op, char *params);
+int command_rename_item(object *op, char *params);
 /* c_party.c */
 partylist *form_party(object *op, char *params, partylist *firstparty, partylist *lastparty);
 char *find_party(int partynumber, partylist *party);

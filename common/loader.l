@@ -285,6 +285,11 @@ A	.+
 			if (*yv=='\0') LOG(llevError,"Name without val\n");
 			else FREE_AND_COPY(op->name_pl, yv);
 		    }
+^custom_name{S}	    {	char *yv=yval();
+
+			if (*yv=='\0') LOG(llevError,"Custom name without val\n");
+			else FREE_AND_COPY(op->custom_name, yv);
+		    }
 ^race{S}	    FREE_AND_COPY(op->race,yval());
 ^slaying{S}	    FREE_AND_COPY(op->slaying, yval());
 ^inventory.*$	    LOG(llevError,"Got depreciated Inventory command?\n");
@@ -1173,6 +1178,9 @@ char *get_ob_diff(object *op,object *op2) {/* I plan to optimize this heavily */
   }
   if(op->name_pl && op->name_pl!=op2->name_pl) {
     ADD_STRINGLINE_ENTRY(fastbuf,"name_pl ",op->name_pl,8);
+  }
+  if(op->custom_name && op->custom_name!=op2->custom_name) {
+    ADD_STRINGLINE_ENTRY(fastbuf,"custom_name ",op->custom_name,12);
   }
   if(op->title && op->title!=op2->title) {
     ADD_STRINGLINE_ENTRY(fastbuf,"title ",op->title,6);

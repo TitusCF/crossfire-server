@@ -92,6 +92,7 @@ CommArray_s Commands[] = {
   {"players", command_players,	0.0},
   {"prepare", command_prepare,	1.0},
   {"quit", command_quit,	0.0},
+  {"rename", command_rename_item,  0.0},
   {"resistances", command_resistances,	0.0},
   {"rotateshoottype", command_rotateshoottype,	0.0},
   {"rotatespells", command_rotatespells,	0.0},
