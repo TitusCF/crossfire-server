@@ -15,7 +15,7 @@
 # the server, play behaviour, etc.
 # host is the name of this host as we should report it to the metaserver
 
-metaserver_notification on
+metaserver_notification off
 metaserver_server crossfire.real-time.com
 metaserver_host put.your.hostname.here
 metaserver_port 13326
