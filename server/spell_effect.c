@@ -3451,6 +3451,9 @@ void move_aura(object *aura) {
   int i;
   object *env;
 
+  /* auras belong in inventories */
+  env = aura->env;
+
   /* no matter what we've gotta remove the aura...
      we'll put it back if its time isn't up.  */
   remove_ob(aura);
@@ -3461,11 +3464,10 @@ void move_aura(object *aura) {
     return;
   }
   /* auras only exist in inventories */
-  if(aura->env == NULL || aura->env->map==NULL) {
+  if(env == NULL || env->map==NULL) {
     free_object(aura);
     return;
   }
-  env = aura->env;
   aura->x = env->x;
   aura->y = env->y;
 
@@ -3488,6 +3490,9 @@ void move_aura(object *aura) {
       insert_ob_in_map(new_ob,env->map,aura);
     }
   }
+  /* put the aura back in the player's inventory */
+  remove_ob(aura);
+  insert_ob_in_ob(aura, env);
 }
       
 

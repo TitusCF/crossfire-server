@@ -2166,6 +2166,7 @@ int create_aura(object *op, object *caster, archetype *aura_arch, int spell_type
     new_aura->chosen_skill = op->chosen_skill;
     if(new_aura->chosen_skill) new_aura->exp_obj = op->chosen_skill->exp_obj;
   }
+  new_aura->level = SK_level(caster);
   insert_ob_in_ob(new_aura, op);
   return 1;
 }
