@@ -1040,6 +1040,7 @@ int write_on_item (object *pl,char *params) {
 
 int write_note(object *pl, object *item, char *msg) {
   char buf[BOOK_BUF]; 
+  object *newBook = NULL;
 
   /* a pair of sanity checks */
   if(!item||item->type!=BOOK) return 0;
@@ -1052,19 +1053,29 @@ int write_note(object *pl, object *item, char *msg) {
   }
 
   if(!book_overflow(item->msg,msg,BOOK_BUF)) { /* add msg string to book */ 
-	if(item->msg) { 
-	  strcpy(buf,item->msg);
-	  free_string(item->msg);
-	} 
-	strcat(buf,msg);
+    if(item->msg) { 
+      strcpy(buf,item->msg);
+      free_string(item->msg);
+    } 
+    strcat(buf,msg);
     strcat(buf,"\n"); /* new msg needs a LF */ 
-	item->msg=add_string(buf); 
-	new_draw_info_format(NDI_UNIQUE,0,pl,
-	   "You write in the %s.",query_short_name(item));
-	return strlen(msg);
+    if(item->nrof > 1) {
+      newBook = get_object();
+      copy_object(item, newBook);
+      decrease_ob(item);
+      esrv_send_item(pl, item);
+      newBook->nrof = 1;
+      newBook->msg = add_string(buf); 
+      newBook = insert_ob_in_ob(newBook, pl);
+      esrv_send_item(pl, newBook);
+    } else {
+      item->msg=add_string(buf); 
+      esrv_send_item(pl, item);
+    }
+    new_draw_info_format(NDI_UNIQUE,0,pl, "You write in the %s.",query_short_name(item));
+    return strlen(msg);
   } else
-	new_draw_info_format(NDI_UNIQUE,0,pl,
-		"Your message won't fit in the %s!",query_short_name(item)); 
+    new_draw_info_format(NDI_UNIQUE,0,pl, "Your message won't fit in the %s!",query_short_name(item)); 
   return 0;
 }
 
@@ -1440,7 +1451,10 @@ void do_throw(object *op, object *toss_item, int dir) {
      * becomes the hitter.  As such, we need to make sure that has a proper
      * owner value so exp goes to the right place.
      */
-    set_owner(throw_ob,op->inv);
+    /*    set_owner(throw_ob,op->inv);
+	  Set thrown object's owner to first object in player's inventory???
+	  Don't you mean to set player as owner of object in throw_ob's inv?  */
+    set_owner(throw_ob->inv,op);
     throw_ob->direction=dir;
     throw_ob->x = op->x;
     throw_ob->y = op->y;
