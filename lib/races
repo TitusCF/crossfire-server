@@ -131,7 +131,6 @@ RACE slime
   black_pudding
 RACE unnatural
   generate_beholder
-  @fireborn
   beholder
   sphinx
   baslic
@@ -157,6 +156,7 @@ RACE fire_elemental
   para_fire
   para_lava
   fire_elemental
+  @fireborn
 RACE air_elemental
   para_air
   para_lightning
