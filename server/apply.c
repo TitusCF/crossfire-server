@@ -41,7 +41,9 @@
 /* need math lib for double-precision and pow() in dragon_eat_flesh() */
 #include <math.h>
 
-/*
+/**
+ * This handles a player dropping money on an altar to identify stuff.
+ * It'll identify marked item, if none all items up to dropped money.
  * Return value: 1 if money was destroyed, 0 if not.
  */
 static int apply_id_altar (object *money, object *altar, object *pl)
@@ -103,6 +105,9 @@ static int apply_id_altar (object *money, object *altar, object *pl)
     return money == NULL;
 }
 
+/**
+ * Handles applying a potion.
+ */
 int apply_potion(object *op, object *tmp)
 {
     int got_one=0,i;
@@ -282,6 +287,9 @@ int apply_potion(object *op, object *tmp)
  * Weapon improvement code follows
  ****************************************************************************/
 
+/**
+ * This returns the sum of nrof of item (arch name).
+ */
 int check_item(object *op,char *item)
 {
   int count=0;
@@ -305,8 +313,9 @@ int check_item(object *op,char *item)
   return count;
 }
 
-/* This object removes 'nrof' of what item->slaying says to
- * remove.  op is typically the player, which is only
+/**
+ * This removes 'nrof' of what item->slaying says to remove.
+ * op is typically the player, which is only
  * really used to determine what space to look at.
  * Modified to only eat 'nrof' of objects.
  */
@@ -333,7 +342,8 @@ static void eat_item(object *op,char *item, int nrof)
     }
 }
 
-/* This checks to see of the player (who) is sufficient level to use a weapon
+/**
+ * This checks to see of the player (who) is sufficient level to use a weapon
  * with improvs improvements (typically last_eat).  We take an int here
  * instead of the object so that the improvement code can pass along the
  * increased value to see if the object is usuable.
@@ -378,8 +388,9 @@ int check_weapon_power(object *who, int improvs)
 #endif
 }
 
-/* Returns the object count that of the number of objects found that
- * improver wants.
+/**
+ * Returns how many items of type improver->slaying there are under op.
+ * Will display a message if none found, and 1 if improver->slaying is NULL.
  */
 static int check_sacrifice(object *op,object *improver)
 {
@@ -400,6 +411,9 @@ static int check_sacrifice(object *op,object *improver)
     return count;
 }
 
+/**
+ * Actually improves the weapon, and tells user.
+ */
 int improve_weapon_stat(object *op,object *improver,object *weapon,
 			signed char *stat,int sacrifice_count,char *statname)
 {
@@ -430,7 +444,10 @@ int improve_weapon_stat(object *op,object *improver,object *weapon,
 #define IMPROVE_POW 11
 
 
-/* This does the prepare weapon scroll */
+/**
+ * This does the prepare weapon scroll.
+ * Checks for sacrifice, and so on.
+ */
 
 int prepare_weapon(object *op, object *improver, object *weapon)
 {
@@ -478,11 +495,17 @@ int prepare_weapon(object *op, object *improver, object *weapon)
 }
 
 
-/* This is the new improve weapon code */
-/* build_weapon returns 0 if it was not able to work. */
-/* #### We are hiding extra information about the weapon in the level and
-   last_eat numbers for an object.  Hopefully this won't break anything ?? 
-   level == max improve last_eat == current improve*/
+/**
+ * Does the dirty job for 'improve weapon' scroll, prepare or add something.
+ * This is the new improve weapon code.
+ * Returns 0 if it was not able to work for some reason.
+ *
+ * Checks if weapon was prepared, if enough potions on the floor, ...
+ *
+ * We are hiding extra information about the weapon in the level and
+ * last_eat numbers for an object.  Hopefully this won't break anything ?? 
+ * level == max improve last_eat == current improve
+ */
 int improve_weapon(object *op,object *improver,object *weapon)
 {
   int sacrifice_count, sacrifice_needed=0;
@@ -596,6 +619,11 @@ int improve_weapon(object *op,object *improver,object *weapon)
   return 0;
 }
 
+/**
+ * Handles the applying of improve/prepare/enchant weapon scroll.
+ * Checks a few things (not on a non-magic square, marked weapon, ...),
+ * then calls improve_weapon to do the dirty work.
+ */
 int check_improve_weapon (object *op, object *tmp)
 {
     object *otmp;
@@ -621,7 +649,17 @@ int check_improve_weapon (object *op, object *tmp)
     return 1;
 }
 
-/* this code is by b.t. (thomas@nomad.astro.psu.edu) -
+/**
+ * This code deals with the armour improvment scrolls.
+ * Change limits on improvement - let players go up to
+ * +5 no matter what level, but they are limited by item
+ * power.
+ * Try to use same improvement code as in the common/treasure.c
+ * file, so that if you make a +2 full helm, it will be just
+ * the same as one you find in a shop.
+ *
+ * deprecated comment:
+ * this code is by b.t. (thomas@nomad.astro.psu.edu) -
  * only 'enchantment' of armour is possible - improving
  * the stats of a player w/ armour as well as a weapon
  * will probably horribly unbalance the game. Magic enchanting
@@ -632,15 +670,6 @@ int check_improve_weapon (object *op, object *tmp)
  * the users level or 90)
  * Modified by MSW for partial resistance.  Only support
  * changing of physical area right now.
- */
-
-/* This code deals with the armour improvment scrolls.
- * Change limits on improvement - let players go up to
- * +5 no matter what level, but they are limited by item
- * power.
- * Try to use same improvement code as in the common/treasure.c
- * file, so that if you make a +2 full helm, it will be just
- * the same as one you find in a shop.
  */
 int improve_armour(object *op, object *improver, object *armour)
 {
@@ -749,11 +778,12 @@ int convert_item(object *item, object *converter) {
   return 1;
 }
   
-/*
- * Eneq(@csd.uu.se): Handle apply on containers. 
+/**
+ * Handle apply on containers. 
+ * By Eneq(@csd.uu.se).
  * Moved to own function and added many features [Tero.Haatanen@lut.fi]
+ * added the alchemical cauldron to the code -b.t.
  */
-/* added the alchemical cauldron to the code -b.t. */
 
 int apply_container (object *op, object *sack)
 {
@@ -866,7 +896,7 @@ int apply_container (object *op, object *sack)
     return 1;
 }
 
-/*
+/**
  * Eneq(@csd.uu.se): Handle apply on containers.  This is for containers
  * the player has in their inventory, eg, sacks, luggages, etc.
  *
@@ -1006,7 +1036,8 @@ int esrv_apply_container (object *op, object *sack)
 }
 
 
-/*
+/**
+ * Handles dropping things on altar.
  * Returns true if sacrifice was accepted.
  */
 static int apply_altar (object *altar, object *sacrifice, object *originator)
@@ -1039,7 +1070,8 @@ static int apply_altar (object *altar, object *sacrifice, object *originator)
 }
 
 
-/*
+/**
+ * Handles 'movement' of shop mats.
  * Returns 1 if 'op' was destroyed, 0 if not.
  * Largely re-written to not use nearly as many gotos, plus
  * some of this code just looked plain out of date.
@@ -1126,6 +1158,9 @@ static int apply_shop_mat (object *shop_mat, object *op)
     return rv;
 }
 
+/**
+ * Handles applying a sign.
+ */
 static void apply_sign (object *op, object *sign)
 {
     if (sign->msg == NULL) {
@@ -1162,7 +1197,8 @@ static void apply_sign (object *op, object *sign)
 }
 
 
-/* 'victim' moves onto 'trap' (trap has FLAG_WALK_ON or FLAG_FLY_ON set) or
+/**
+ * 'victim' moves onto 'trap' (trap has FLAG_WALK_ON or FLAG_FLY_ON set) or
  * 'victim' leaves 'trap' (trap has FLAG_WALK_OFF or FLAG_FLY_OFF) set.
  *
  * originator: Player, monster or other object that caused 'victim' to move
@@ -1394,7 +1430,9 @@ void move_apply (object *trap, object *victim, object *originator)
   recursion_depth--;
 }
 
-
+/**
+ * Handles reading a regular (ie not containing a spell) book.
+ */
 static void apply_book (object *op, object *tmp)
 {
     int lev_diff;
@@ -1478,9 +1516,10 @@ static void apply_book (object *op, object *tmp)
     }
 }
 
-/* op is the person learning the skill, tmp is the skill scroll object */
-
-
+/**
+ * Handles the applying of a skill scroll, calling learn_skill straight.
+ * op is the person learning the skill, tmp is the skill scroll object
+ */
 static void apply_skillscroll (object *op, object *tmp)
 {
     switch ((int) learn_skill (op, tmp)) {
@@ -1506,7 +1545,10 @@ static void apply_skillscroll (object *op, object *tmp)
     }
 }
 
-
+/**
+ * Actually makes op learn spell.
+ * Informs player of what happens.
+ */
 void do_learn_spell (object *op, object *spell, int special_prayer)
 {
     object *tmp;
@@ -1539,6 +1581,9 @@ void do_learn_spell (object *op, object *spell, int special_prayer)
     new_draw_info (NDI_UNIQUE, 0, op, "to store the spell in a key.");
 }
 
+/**
+ * Erases spell from player's inventory.
+ */
 void do_forget_spell (object *op, char *spell)
 {
     object *spob;
@@ -1558,6 +1603,11 @@ void do_forget_spell (object *op, char *spell)
     free_object(spob);
 }
 
+/**
+ * Handles player applying a spellbook.
+ * Checks whether player has knowledge of required skill, doesn't already know the spell,
+ * stuff like that. Random learning failure too.
+ */
 static void apply_spellbook (object *op, object *tmp)
 {
     object *skop, *spell, *spell_skill;
@@ -1675,7 +1725,9 @@ static void apply_spellbook (object *op, object *tmp)
     decrease_ob(tmp);
 }
 
-
+/**
+ * Handles applying a spell scroll.
+ */
 void apply_scroll (object *op, object *tmp, int dir)
 {
     object *skop;
@@ -1721,7 +1773,8 @@ void apply_scroll (object *op, object *tmp, int dir)
     decrease_ob(tmp);
 }
 
-/* Applies a treasure object - by default, chest.  op
+/**
+ * Applies a treasure object - by default, chest.  op
  * is the person doing the applying, tmp is the treasure
  * chest.
  */
@@ -1772,7 +1825,10 @@ static void apply_treasure (object *op, object *tmp)
 
 }
 
-
+/**
+ * op eats food.
+ * If player, takes care of messages and dragon special food.
+ */
 static void apply_food (object *op, object *tmp)
 {
     int capacity_remaining;
@@ -1829,7 +1885,7 @@ static void apply_food (object *op, object *tmp)
     decrease_ob(tmp);
 }
 
-/*
+/**
  * A dragon is eating some flesh. If the flesh contains resistances,
  * there is a chance for the dragon's skin to get improved.
  *
@@ -2013,7 +2069,10 @@ static void apply_savebed (object *pl)
     update_ob_speed(pl);
 }
 
-
+/**
+ * Handles applying an improve armor scroll.
+ * Does some sanity checks, then calls improve_armour.
+ */
 static void apply_armour_improver (object *op, object *tmp)
 {
     object *armor;
@@ -2058,9 +2117,8 @@ extern void apply_poison (object *op, object *tmp)
     decrease_ob(tmp);
 }
 
-/* is_legal_2ways_exit (object* op, object *exit)
- * this fonction return true if the exit
- * is not a 2 ways one or it is 2 ways, valid exit.
+/**
+ * This fonction return true if the exit is not a 2 ways one or it is 2 ways, valid exit.
  * A valid 2 way exit means:
  *   -You can come back (there is another exit at the other side)
  *   -You are
@@ -2071,7 +2129,7 @@ extern void apply_poison (object *op, object *tmp)
  * in the field exit->name cause the field exit->owner doesn't
  * survive in the swapping (in fact the whole exit doesn't survive).
  */
- int is_legal_2ways_exit (object* op, object *exit)
+int is_legal_2ways_exit (object* op, object *exit)
    {
    object * tmp;
    object * exit_owner;
@@ -2121,7 +2179,13 @@ extern void apply_poison (object *op, object *tmp)
    return 0;
    }
 
-/* Return value:
+
+/**
+ * Main apply handler.
+ *
+ * Checks for unpaid items before applying.
+ *
+ * Return value:
  *   0: player or monster can't apply objects of that type
  *   2: objects of that type can't be applied if not in inventory
  *   1: has been applied, or there was an error applying the object
@@ -2414,7 +2478,8 @@ int player_apply (object *pl, object *op, int aflag, int quiet)
     return tmp;
 }
 
-/* player_apply_below attempts to apply the object 'below' the player.
+/**
+ * player_apply_below attempts to apply the object 'below' the player.
  * If the player has an open container, we use that for below, otherwise
  * we use the ground.
  */
@@ -2452,7 +2517,10 @@ void player_apply_below (object *pl)
     }
 }
 
-/* Break this out of apply_special - this is just done
+/**
+ * Unapplies specified item.
+ * No check done on cursed/damned.
+ * Break this out of apply_special - this is just done
  * to keep the size of apply_special to a more managable size.
  */
 static int unapply_special (object *who, object *op, int aflags)
@@ -2580,7 +2648,8 @@ static int unapply_special (object *who, object *op, int aflags)
     return 0;
 }
 
-/* Returns the object that is using location 'loc'.
+/**
+ * Returns the object that is using location 'loc'.
  * Note that 'start' is the first object to start examing - we
  * then go through the below of this.  In this way, you can do
  * something like:
@@ -2608,8 +2677,9 @@ object *get_item_from_body_location(object *start, int loc)
 
 
 
-/* Object who wants to apply 'op', but can because
- * of other equipment.  This should only be called when it is known
+/**
+ * 'op' wants to apply an object, but can't because of other equipment.
+ * This should only be called when it is known
  * that there are objects to unapply.  This makes pretty heavy
  * use of get_item_from_body_location.  It makes no intelligent choice
  * on objects - rather, the first that is matched is used.
@@ -2697,7 +2767,8 @@ int unapply_for_ob(object *who, object *op, int aflags)
     return 0;
 }
 
-/* checks to see of 'who' can apply object 'op'.
+/**
+ * Checks to see if 'who' can apply object 'op'.
  * Returns 0 if apply can be done without anything special.
  * Otherwise returns a bitmask - potentially several of these may be
  * set, but largely depends on circumstance - in the future, processing
@@ -2825,7 +2896,8 @@ int can_apply_object(object *who, object *op)
 
 		
 
-/* who is the object using the object.  It can be a monster
+/**
+ * who is the object using the object.  It can be a monster
  * op is the object they are using.  op is an equipment type item,
  * eg, one which you put on and keep on for a while, and not something
  * like a potion or scroll.
@@ -3141,7 +3213,11 @@ int monster_apply_special (object *who, object *op, int aflags)
   return apply_special (who, op, aflags);
 }
 
-
+/**
+ * Map was just loaded, handle op's initialisation.
+ *
+ * Generates shop floor's item, and treasures.
+ */
 int auto_apply (object *op) {
     object *tmp = NULL;
     int i;
@@ -3194,7 +3270,8 @@ int auto_apply (object *op) {
     return tmp ? 1 : 0;
 }
 
-/* fix_auto_apply goes through the entire map (only the first time
+/**
+ * fix_auto_apply goes through the entire map (only the first time
  * when an original map is loaded) and performs special actions for
  * certain objects (most initialization of chests and creation of
  * treasures and stuff).  Calls auto_apply if appropriate.
@@ -3251,8 +3328,9 @@ void fix_auto_apply(mapstruct *m) {
 			check_trigger (tmp, tmp->above);
 }
 
-/* eat_special_food() - some food may (temporarily) alter
- * player status.  This used to call cast_change_attr(), but
+/**
+ * Handles player eating food that temporarily changes status (resistances, stats).
+ * This used to call cast_change_attr(), but
  * that doesn't work with the new spell code.  Since we know what
  * the food changes, just grab a force and use that instead.
  */
@@ -3321,7 +3399,8 @@ void eat_special_food(object *who, object *food) {
 }
 
 
-/* apply_lighter() - designed primarily to light torches/lanterns/etc.
+/**
+ * Designed primarily to light torches/lanterns/etc.
  * Also burns up burnable material too. First object in the inventory is
  * the selected object to "burn". -b.t.
  */
@@ -3389,8 +3468,10 @@ void apply_lighter(object *who, object *lighter) {
 
 }
 
-/* scroll_failure()- hacked directly from spell_failure */
-
+/**
+ * op made some mistake with a scroll, this takes care of punishment.
+ * scroll_failure()- hacked directly from spell_failure
+ */
 void scroll_failure(object *op, int failure, int power)
 {
     if(abs(failure/4)>power) power=abs(failure/4); /* set minimum effect */
