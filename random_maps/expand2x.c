@@ -50,6 +50,12 @@ char **expand2x(char **layout, int xsize, int ysize) {
     }
   }
 
+  /* Dump old layout */
+  for (i=0; i<xsize; i++) {
+    free(layout[i]);
+  }
+  free(layout);
+
   return newlayout;
 }
 
