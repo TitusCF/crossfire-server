@@ -88,6 +88,11 @@ FTP SITES
     ftp://ftp.cs.titech.ac.jp:/pub/games/crossfire
     ftp://mirror.aarnet.edu.au/games/roguelike/crossfire/
 
+  Changes made since the latest release can be found at the CVS
+  repository.  You can access the nightly builds from:
+    http://langmuir.eecs.berkeley.edu/pub/peterm
+
+
     If you are looking for a windows/NT client, look at:
 	    ftp://ftp.ifi.uio.no:/pub/crossfire/incoming (129.240.64.44)
     for a file called cfcXXXX.zip (XXXX are numbers representing the version -
