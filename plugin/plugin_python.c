@@ -3104,7 +3104,7 @@ static PyObject* CFSetGender(PyObject* self, PyObject* args)
             walk->title = add_string(gender);
 
             who->contr->socket.ext_title_flag = 1; /* demand update to client */
-            return Py_None;
+            return Py_BuildValue("l",(long) (walk));
         }            
     }
 
@@ -3139,7 +3139,7 @@ static PyObject* CFSetRank(PyObject* self, PyObject* args)
                 walk->title = add_string(rank);
             
             who->contr->socket.ext_title_flag = 1; /* demand update to client */
-            return Py_None;
+            return Py_BuildValue("l",(long) (walk));
         }            
     }
     printf("Python Warning -> SetRank: Object %s has no rank_force!\n", query_name(who));
@@ -3171,16 +3171,11 @@ static PyObject* CFSetAlignment(PyObject* self, PyObject* args)
                 DELETE_STRING(walk->title);
 
             if (!strcmp(align,"good"))
-            {
                 walk->title = add_string("the Good");
-            }
             else if (!strcmp(align,"evil"))
-            {
-                walk->title = add_string("the Evil");
-            }
-                    
+                walk->title = add_string("the Evil");                    
             who->contr->socket.ext_title_flag = 1; /* demand update to client */
-            return Py_None;
+            return Py_BuildValue("l",(long) (walk));
         }            
     }
     printf("Python Warning -> SetAlignment: Object %s has no alignment_force!\n", query_name(who));
@@ -3188,11 +3183,15 @@ static PyObject* CFSetAlignment(PyObject* self, PyObject* args)
 };
 
 /*****************************************************************************/
-/* Name   : CFSetGuild                                                       */
-/* Python : CFPython.SetGuild(object,guild_string)                           */
+/* Name   : CFSetGuildForce                                                  */
+/* Python : CFPython.SetGuildForce(object,guild_string)                      */
 /* Status : Stable                                                           */
+/* Info   : Warning: This set only the title. The guild tag is in <slaying>  */
+/*        : For test of a special guild, you must use GetGuild()             */
+/*        : For settings inside a guild script, you can use this function    */
+/*        : Because it returns the guild_force obj after setting the title   */
 /*****************************************************************************/
-static PyObject* CFSetGuild(PyObject* self, PyObject* args)
+static PyObject* CFSetGuildForce(PyObject* self, PyObject* args)
 {
     object *who, *walk;
     long obptr;
@@ -3209,14 +3208,37 @@ static PyObject* CFSetGuild(PyObject* self, PyObject* args)
             /* we find the rank of the player, now change it to new one */
             if(walk->title)
                 DELETE_STRING(walk->title);
-            if (strcmp(guild, "NOONE"))
+            if (guild && strcmp(guild, ""))
                 walk->title = add_string(guild);
             
             who->contr->socket.ext_title_flag = 1; /* demand update to client */
-            return Py_None;
+            return Py_BuildValue("l",(long) (walk));
         }            
     }
     printf("Python Warning -> SetGuild: Object %s has no guild_force!\n", query_name(who));
+    return Py_None;
+};
+
+/*****************************************************************************/
+/* Name   : CFGetGuildForce                                                  */
+/* Python : CFPython.GetGuildForce(object,guild_string)                      */
+/* Status : Stable                                                           */
+/* Info   : This gets the guild_force from a inventory (should be player?)   */
+/*****************************************************************************/
+static PyObject* CFGetGuildForce(PyObject* self, PyObject* args)
+{
+    object *walk;
+    long whoptr;
+    
+    if (!PyArg_ParseTuple(args,"l",&whoptr))
+        return NULL;
+    
+    for(walk=WHO->inv;walk!=NULL;walk=walk->below)
+    {
+        if (!strcmp(walk->name,"GUILD_FORCE") && !strcmp(walk->arch->name,"guild_force"))
+            return Py_BuildValue("l",(long) (walk));
+    }
+    printf("Python Warning -> GetGuild: Object %s has no guild_force!\n", query_name(WHO));
     return Py_None;
 };
 
@@ -4301,11 +4323,36 @@ static PyObject* CFCheckMap(PyObject* self, PyObject* args)
 };
 
 /*****************************************************************************/
+/* Name   : CFCheckArchInventory                                             */
+/* Python : CFPython.CheckArchInventory(who, 'arch_name')                    */
+/* Status : Stable                                                           */
+/* Info   : This routine search explizit for a arch_name.                    */
+/*****************************************************************************/
+static PyObject* CFCheckArchInventory(PyObject* self, PyObject* args)
+{
+    long whoptr;
+    char* whatstr;
+    object* tmp;
+    
+    if (!PyArg_ParseTuple(args,"ls",&whoptr,&whatstr))
+        return NULL;
+    tmp = WHO->inv;
+
+    while (tmp)
+    {
+        if (!strcmp(tmp->arch->name,whatstr))
+            return Py_BuildValue("l",(long)(tmp));
+        tmp = tmp->below;
+    };
+
+    return Py_None; /* we don't find a arch with this arch_name in the inventory */
+};
+
+/*****************************************************************************/
 /* Name   :                                                                  */
 /* Python :                                                                  */
-/* Status : Untested                                                                */
+/* Status : Untested                                                         */
 /*****************************************************************************/
-
 static PyObject* CFCheckInventory(PyObject* self, PyObject* args)
 {
     long whoptr;
@@ -4347,7 +4394,7 @@ static PyObject* CFGetName(PyObject* self, PyObject* args)
     long whoptr;
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
-    return Py_BuildValue("s",query_name(WHO));
+    return Py_BuildValue("s",WHO->name);
 };
 
 /*****************************************************************************/
@@ -4363,12 +4410,9 @@ static PyObject* CFSetName(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"ls",&whoptr,&txt))
         return NULL;
     if (WHO->name != NULL)
-        free_string(WHO->name);
-    if(txt)
+        DELETE_STRING(WHO->name);
+    if(txt && strcmp(txt,""))
         WHO->name = add_string(txt);
-    else
-        WHO->name = NULL;
-    Py_INCREF(Py_None);
     return Py_None;
 };
 
@@ -4400,12 +4444,9 @@ static PyObject* CFSetTitle(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"ls",&whoptr,&txt))
         return NULL;
     if (WHO->title != NULL)
-        free_string(WHO->title);
-    if(txt)
+        DELETE_STRING(WHO->title);
+    if(txt && strcmp(txt,""))
         WHO->title = add_string(txt);
-    else
-        WHO->title = NULL;
-    Py_INCREF(Py_None);
     return Py_None;
 };
 
@@ -4435,12 +4476,9 @@ static PyObject* CFSetSlaying(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"ls",&whoptr,&txt))
         return NULL;
     if (WHO->slaying != NULL)
-        free_string(WHO->slaying);
-    if(txt)
+        DELETE_STRING(WHO->slaying);
+    if(txt && strcmp(txt,""))
         WHO->slaying = add_string(txt);
-    else
-        WHO->slaying = NULL;
-    Py_INCREF(Py_None);
     return Py_None;
 };
 

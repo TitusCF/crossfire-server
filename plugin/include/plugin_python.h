@@ -80,6 +80,7 @@ static CFParm GCFP1;
 static CFParm GCFP2;
 
 /* Those are the new Python instructions, as implemented in C.               */
+static PyObject* CFCheckArchInventory(PyObject* self, PyObject* args);
 static PyObject* CFGetName(PyObject* self, PyObject* args);
 static PyObject* CFSetName(PyObject* self, PyObject* args);
 static PyObject* CFGetTitle(PyObject* self, PyObject* args);
@@ -87,6 +88,7 @@ static PyObject* CFSetTitle(PyObject* self, PyObject* args);
 static PyObject* CFGetSlaying(PyObject* self, PyObject* args);
 static PyObject* CFSetSlaying(PyObject* self, PyObject* args);
 static PyObject* CFSetMessage(PyObject* self, PyObject* args);
+
 
 static PyObject* CFSetSkillExperience(PyObject* self, PyObject* args);
 static PyObject* CFGetSkillExperience(PyObject* self, PyObject* args);
@@ -127,7 +129,8 @@ static PyObject* CFSay(PyObject* self, PyObject* args);
 static PyObject* CFSetGender(PyObject* self, PyObject* args);
 static PyObject* CFSetRank(PyObject* self, PyObject* args);
 static PyObject* CFSetAlignment(PyObject* self, PyObject* args);
-static PyObject* CFSetGuild(PyObject* self, PyObject* args);
+static PyObject* CFSetGuildForce(PyObject* self, PyObject* args);
+static PyObject* CFGetGuildForce(PyObject* self, PyObject* args);
 static PyObject* CFSetInvisible(PyObject* self, PyObject* args);
 static PyObject* CFGetExperience(PyObject* self, PyObject* args);
 static PyObject* CFGetSpeed(PyObject* self, PyObject* args);
@@ -669,6 +672,7 @@ static PyMethodDef CFPythonMethods[] =
         {"CreateInvisibleObjectInside",CFCreateInvisibleInside,METH_VARARGS},
         {"CreateObjectInside",CFCreateObjectInside,METH_VARARGS},
         {"CheckMap",CFCheckMap,METH_VARARGS},
+        {"CheckArchInventory",CFCheckArchInventory,METH_VARARGS},
         {"CheckInventory",CFCheckInventory,METH_VARARGS},
         {"CreateObject",CFCreateObject,METH_VARARGS},
         {"RemoveObject",CFRemoveObject,METH_VARARGS},
@@ -767,7 +771,8 @@ static PyMethodDef CFPythonMethods[] =
         {"SetGender", CFSetGender, METH_VARARGS},
         {"SetRank", CFSetRank, METH_VARARGS},
         {"SetAlignment", CFSetAlignment, METH_VARARGS},
-        {"SetGuild", CFSetGuild, METH_VARARGS},
+        {"SetGuildForce", CFSetGuildForce, METH_VARARGS},
+        {"GetGuildForce", CFGetGuildForce, METH_VARARGS},
         {"WhoAmI", CFWhoAmI, METH_VARARGS},
         {"WhoIsActivator", CFWhoIsActivator, METH_VARARGS},
         {"WhatIsMessage", CFWhatIsMessage, METH_VARARGS},
