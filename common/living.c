@@ -1663,7 +1663,7 @@ static void subtract_player_exp(object *op, int exp)
 void add_exp(object *op, int exp) {
 
 #ifdef EXP_DEBUG
-    LOG(llevDebug,"add_exp() called for %s, exp = %d\n",query_name(op),exp); 
+    LOG(llevDebug,"add_exp() called for %s, exp = %lld\n",query_name(op),exp); 
 #endif
 
     /* safety */

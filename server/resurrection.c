@@ -240,7 +240,7 @@ int resurrect_player(object *op,char *playername,int rspell)
 		exp-=exp/20;
 		break;
 	    }
-	    sprintf(buf,"exp %ld\n",exp);
+	    sprintf(buf,"exp %lld\n",exp);
 	}
       if(! (strcmp(buf2,"Con"))) {
 	sscanf(buf,"%s %d",buf2,&Con);	
