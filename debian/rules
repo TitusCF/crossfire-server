@@ -63,9 +63,14 @@ binary-indep:
 	cd utils && \
 	$(MAKE) install DESTDIR=$(CURDIR)/debian/tmp
 
+	# Clean up some
+	-rm -f $(CURDIR)/debian/tmp/usr/games/crossloop.pl
+	-rm -f $(CURDIR)/debian/tmp/usr/games/player_dl.pl
+
 	cd doc && \
 	$(MAKE) install DESTDIR=$(CURDIR)/debian/tmp
 
+	dh_installdocs -A
 	dh_installdocs -pcrossfire-doc
 	dh_install -i
 
