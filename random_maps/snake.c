@@ -34,6 +34,9 @@ char **make_snake_layout(int xsize, int ysize,int options) {
   for(j=0;j<ysize;j++)
     maze[0][j] = maze[xsize-1][j] = '#';
 
+  /* Bail out if the size is too small to make a snake. */
+  if(xsize < 8 || ysize < 8) return maze;
+
   /* decide snake orientation--vertical or horizontal , and
      make the walls and place the doors. */
 

@@ -130,8 +130,8 @@ char **layoutgen(RMParms *RP) {
   }
   else
     {
-      if(RP->Xsize<4) RP->Xsize = 15 + RANDOM()%25;
-      if(RP->Ysize<4) RP->Ysize = 15 + RANDOM()%25;
+      if(RP->Xsize<6) RP->Xsize = 15 + RANDOM()%25;
+      if(RP->Ysize<6) RP->Ysize = 15 + RANDOM()%25;
     }
   
   if(RP->symmetry == RANDOM_SYM) {
