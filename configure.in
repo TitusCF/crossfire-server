@@ -200,6 +200,7 @@ AC_SUBST(x_includes)
 AC_SUBST(x_libraries)
 AC_SUBST(no_x)
 AC_SUBST(X11LIBS)
+AC_SUBST(PERL)
 
 dnl Do the evals because most of these are made up of sub variables and
 dnl we don't want the include to have something like
