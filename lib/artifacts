@@ -1261,6 +1261,7 @@ end
 # Rings
 #
 # Ring of Thieves
+#
 Allowed all
 chance 20
 Object Thieves
@@ -1542,6 +1543,202 @@ resist_ghosthit -100
 path_attuned 606
 path_repelled 257
 end
+#
+# Beguilement
+#
+Allowed all
+chance 13
+Object Beguilement
+face ring.117
+type 70
+value 50
+Cha 3
+end
+#
+# Ring of the Dark Priest
+#
+Allowed all
+chance 4
+Object the Dark Priest
+face ring.117
+type 70
+value 50
+Cha -1
+path_attuned 131072
+path_repelled 256
+Wis 1
+Pow 1
+can_see_in_dark 1
+grace 1
+end
+#
+# Ring of the Healer
+#
+Allowed all
+chance 4
+Object the Healer
+face ring.117
+type 70
+value 50
+Cha 1
+lifesave 1
+path_attuned 256
+path_repelled 131072
+Wis 1
+Pow 1
+grace 1
+end
+#
+# Ring of the Paladin
+#
+Allowed all
+chance 4
+Object the Paladin
+face ring.117
+type 70
+value 50
+Cha 1
+path_attuned 65536
+path_repelled 64
+Wis 1
+Pow 1
+grace 1
+end
+#
+# Ring of the Prelate
+#
+Allowed all
+chance 7
+Object the Prelate
+face ring.117
+type 70
+value 250
+Cha 1
+path_attuned 65664
+Wis 2
+Pow 1
+grace 2
+end
+#
+# Ring of the Demon Priest
+#
+Allowed all
+chance 2
+difficulty 6
+Object the Demon Priest
+face ring.117
+type 70
+value 250
+Cha -2
+path_attuned 131136
+path_repelled 256
+resist_fire 30
+Wis 2
+Pow 2
+grace 2
+can_see_in_dark 1
+end
+#
+# Ring of Benevolence
+#
+Allowed all
+chance 2
+difficulty 6
+Object Benevolence
+face ring.117
+type 70
+value 250
+Cha 2
+path_attuned 257
+path_repelled 131072
+Wis 2
+Pow 2
+grace 2
+resist_godpower 30
+msg
+This ring is blessed by the gods who do good,
+and protects a little against the power of those who
+do harm.
+endmsg
+end
+#
+# Ring of the Crusade
+#
+Allowed all
+chance 2
+difficulty 6
+Object the Crusade
+face ring.117
+type 70
+value 250
+Cha 2
+path_attuned 65664
+Wis 2
+Pow 2
+resist_drain 100
+grace 2
+end
+#
+# Ring of the Death Priest
+#
+Allowed all
+chance 1
+difficulty 7
+Object the Death Priest
+face ring.117
+type 70
+value 400
+Cha -3
+path_attuned 393280
+path_repelled 256
+resist_death 100
+resist_fear 100
+can_see_in_dark 1
+Wis 3
+Pow 2
+grace 3
+end
+#
+# Ring of the Saint
+#
+Allowed all
+difficulty 7
+chance 1
+Object the Saint
+face ring.117
+type 70
+value 400
+Cha 3
+path_attuned 65665
+path_repelled 131072
+resist_drain 100
+resist_deplete 100
+resist_ghosthit 100
+Wis 3
+Pow 2
+grace 2
+end
+#
+# Ring of Miracles
+#
+Allowed all
+difficulty 7
+chance 1
+Object Miracles
+face ring.117
+type 70
+value 450
+Cha 3
+path_attuned 67969
+path_repelled 131072
+path_denied 262144
+resist_drain 100
+resist_deplete 100
+Wis 3
+Pow 3
+grace 3
+end
+#
 #
 Allowed all
 chance 40
@@ -1875,7 +2072,7 @@ chance 2
 Object Gaea
 type 87
 weight 120
-reflect_spells 1
+reflect_spell 1
 Str -1
 hp 2
 resist_fire 10
@@ -2205,11 +2402,19 @@ end
 #Amulets!
 #
 Allowed all
-chance 255
-difficulty 5
+chance 127
 Object Shielding
 face amulet_lif.111
 resist_physical 20
+type 39
+value 20
+end
+#
+Allowed all
+chance 127
+Object Sustenance
+face amulet_lif.111
+food 15
 type 39
 value 20
 end
