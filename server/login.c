@@ -788,7 +788,7 @@ void check_login(object *op) {
        are in the players inventory initially to the map. */
     { object *tmp;
     for(tmp=op->inv;tmp!=NULL;tmp=tmp->below) {
-      if(tmp->glow_radius) add_light_to_list(tmp,op);
+      if(tmp->glow_radius && light_not_listed(tmp)) add_light_to_list(tmp,op);
     }
     }
 
