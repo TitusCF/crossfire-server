@@ -1341,7 +1341,7 @@ int cast_curse(object *op, object *caster, object *spell_ob, int dir) {
 int mood_change(object *op, object *caster, object *spell) {
     object *tmp, *god, *head;
     int done_one, range, mflags, level, at, best_at;
-    sint16 x, y;
+    sint16 x, y, nx, ny;
     mapstruct	*m;
     char *race;
 
@@ -1367,7 +1367,9 @@ int mood_change(object *op, object *caster, object *spell) {
 
 	    done_one=0;
 	    m = op->map;
-	    mflags = get_map_flags(m, &m, x, y, &x, &y);
+	    nx = x;
+	    ny = y;
+	    mflags = get_map_flags(m, &m, x, y, &nx, &ny);
 	    if (mflags & P_OUT_OF_MAP) continue;
 
 	    /* If there is nothing living on this space, no need to go further */
@@ -1440,8 +1442,8 @@ int mood_change(object *op, object *caster, object *spell) {
 	    /* If a monster was effected, put an effect in */
 	    if (done_one && spell->other_arch) {
 		tmp = arch_to_object(spell->other_arch);
-		tmp->x = x;
-		tmp->y = y;
+		tmp->x = nx;
+		tmp->y = ny;
 		insert_ob_in_map(tmp, m, op, 0);
 	    }
 	} /* for y */
