@@ -740,7 +740,7 @@ void change_object(object *op) { /* Doesn`t handle linked objs yet */
 }
 
 void move_teleporter(object *op) {
-
+    object *telep = op;  /* teleporter object */
 
     /* Floors can't get moved.  If, skip over them. */
     while (op->above && QUERY_FLAG(op->above, FLAG_IS_FLOOR))
@@ -749,24 +749,24 @@ void move_teleporter(object *op) {
     /* If nothing above us, nothing to do */
     if (!op->above) return;
 
-    if(EXIT_PATH(op)) {
+    if(EXIT_PATH(telep)) {
 	if(op->above->type==PLAYER) 
-	    enter_exit(op->above,op);
+	    enter_exit(op->above, telep);
 	else
 	    /* Currently only players can transfer maps */
 	    return;
     }
-    else if(EXIT_X(op)||EXIT_Y(op)) {
-	if (out_of_map(op->map, EXIT_X(op), EXIT_Y(op))) {
+    else if(EXIT_X(telep)||EXIT_Y(telep)) {
+	if (out_of_map(telep->map, EXIT_X(telep), EXIT_Y(telep))) {
 	    LOG(llevError, "Removed illegal teleporter.\n");
-	    remove_ob(op);
-	    free_object(op);
+	    remove_ob(telep);
+	    free_object(telep);
 	    return;
 	}
-	transfer_ob(op->above,EXIT_X(op),EXIT_Y(op),0,op);
+	transfer_ob(op->above,EXIT_X(telep),EXIT_Y(telep),0,telep);
     } else
 	/* Random teleporter */
-	teleport(op,TELEPORTER,op);
+	teleport(op, TELEPORTER, telep);
 }
 
 
