@@ -1497,7 +1497,7 @@ void let_it_snow(mapstruct *m, int wx, int wy, char *filename)
 		    }
 		}
 	    }
-	    if (temp > 8) {
+	    if (temp > 8 && GET_MAP_OB(m, x, y) !=NULL) {
 		/* melt some snow */
 		for (tmp=GET_MAP_OB(m, x, y)->above; tmp; tmp = tmp->above) {
 		    avoid = 0;
@@ -1588,7 +1588,7 @@ void singing_in_the_rain(mapstruct *m, int wx, int wy, char *filename)
 		continue;
 	    oldsnow = avoid_weather(&avoid, m, x, y, &gotsnow, 0);
 	    if (!avoid) {
-		if (sky == SKY_LIGHT_RAIN || sky == SKY_RAIN) {
+		if (sky == SKY_LIGHT_RAIN || sky == SKY_RAIN) {		
 			switch (rndm(0, SKY_HAIL-sky)) {
 		    case 0: at = find_archetype("rain1"); break;
 		    case 1: at = find_archetype("rain2"); break;
@@ -1803,7 +1803,7 @@ void plant_a_garden(mapstruct *m, int wx, int wy, char *filename)
 		    if (rndm(1, weather_grow[i].random) != 1)
 			continue;
 		    /* we look up through two tiles for a matching tile */
-		    if (weather_grow[i].tile != NULL) {
+		    if (weather_grow[i].tile != NULL && GET_MAP_OB(m, x, y) != NULL) {
 			if (strcmp(GET_MAP_OB(m, x, y)->arch->name,
 				   weather_grow[i].tile) != 0) {
 			    if (GET_MAP_OB(m, x, y)->above != NULL) {
