@@ -1,7 +1,30 @@
 /*
- * Object (handling) commands
- *	++Jam & Anipa
+ * static char *rcsid_c_object_c =
+ *   "$Id$";
  */
+/*
+    CrossFire, A Multiplayer game for X-windows
+
+    Copyright (C) 1992 Frank Tore Johansen
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+
+    The author can be reached via e-mail to mwedel@scruz.net
+
+   Object (handling) commands
+*/
 
 #include <global.h>
 #include <loader.h>
@@ -269,7 +292,8 @@ int sack_can_hold (object *pl, object *sack, object *op, int nrof) {
 }
 
 /* Pick up commands follow */
-/* pl = player, op is the object to put tmp into, 
+/* pl = player (not always - monsters can use this now)
+ * op is the object to put tmp into, 
  * tmp is the object to pick up, nrof is the number to
  * pick up (0 means all of them)
  */
@@ -303,7 +327,7 @@ void pick_up_object (object *pl, object *op, object *tmp, int nrof)
     if(QUERY_FLAG(tmp,FLAG_WAS_WIZ) && !QUERY_FLAG(pl, FLAG_WAS_WIZ)) {
 	new_draw_info(NDI_UNIQUE, 0,pl, "The object disappears in a puff of smoke!");
 	new_draw_info(NDI_UNIQUE, 0,pl, "It must have been an illusion.");
-	esrv_del_item (pl->contr, tmp->count);
+	if (pl->type==PLAYER) esrv_del_item (pl->contr, tmp->count);
 	remove_ob(tmp);
 	free_object(tmp);
 	return;
@@ -331,16 +355,18 @@ void pick_up_object (object *pl, object *op, object *tmp, int nrof)
 	    return;
 	}
 	/* Tell a client what happened rest of objects */
-	if (QUERY_FLAG(tmp2, FLAG_REMOVED))
+	if (pl->type == PLAYER) {
+	    if (QUERY_FLAG(tmp2, FLAG_REMOVED))
 		esrv_del_item (pl->contr, tmp2->count);
-	else
+	    else
 		esrv_send_item (pl, tmp2);
+	}
     } else {
 	/* If the object is in a container, send a delete to the client.
 	 * - we are moving all the items from the container to elsewhere,
 	 * so it needs to be deleted.
 	 */
-	if (tmp->env) 
+	if (tmp->env && pl->type==PLAYER) 
 	    esrv_del_item (pl->contr, tmp->count);
 	remove_ob(tmp); /* Unlink it */
     }
@@ -352,6 +378,10 @@ void pick_up_object (object *pl, object *op, object *tmp, int nrof)
     new_draw_info(NDI_UNIQUE, 0,pl,buf);
 
     tmp = insert_ob_in_ob(tmp, op);
+
+    /* All the stuff below deals with client/server code, and is only
+     * usable by players
+     */
     if(pl->type!=PLAYER) return;
 
     esrv_send_item (pl, tmp);
