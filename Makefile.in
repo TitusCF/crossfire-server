@@ -146,6 +146,9 @@ archive:
 	$(RM) -f $(VERSION).tar
 	$(RM) -rf $(ARCHIVE)/../$(VERSION).tgz $(ARCHIVE) 
 
+docarchive:
+	cd doc; $(MAKE) $(MFLAGS) 'MFLAGS=$(MFLAGS)' 'ARCHIVE=$(ARCHIVE)' 'VERSION=$(VERSION)' 'MKDIR=$(MKDIR)' 'CP=$(CP)' docarchive
+
 proto:
 	(cd common; make proto)
 	(cd server; make proto)
