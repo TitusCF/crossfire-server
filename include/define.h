@@ -57,6 +57,9 @@ error - Your ANSI C compiler should be defining __STDC__;
 /* Decstations have trouble with fabs()... */
 #define FABS(x) (x<0?-x:x)
 
+#ifdef __NetBSD__
+#include <sys/param.h>
+#endif
 #ifndef MIN
 #define MIN(x,y) ((x)<(y)?(x):(y))
 #endif
@@ -645,6 +648,13 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define DARK_FACE1_NAME		"dark1.111"
 #define DARK_FACE2_NAME		"dark2.111"
 #define DARK_FACE3_NAME		"dark3.111"
+
+/*
+ * Defines for the luck/random functions to make things more readable
+ */
+
+#define PREFER_HIGH	1
+#define PREFER_LOW	0
 
 /* Simple function we use below to keep adding to the same string
  * but also make sure we don't overwrite that string.

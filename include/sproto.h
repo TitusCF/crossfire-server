@@ -1224,3 +1224,7 @@ void move_player_mover(object *op);
 void move_creator(object *op);
 void move_marker(object *op);
 int process_object(object *op);
+/* utils.c */
+int random_roll(int min, int max, object *op, int goodbad);
+int die_roll(int num, int size, object *op, int goodbad);
+int rndm(int min, int max);
