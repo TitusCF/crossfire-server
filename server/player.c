@@ -2073,7 +2073,10 @@ int handle_newcs_player(object *op)
     } 
     else if(op->invisible&&!(QUERY_FLAG(op,FLAG_MAKE_INVIS))) {
 	op->invisible--;
-	if(!op->invisible) make_visible(op);
+	if(!op->invisible) {
+	    make_visible(op);
+	    new_draw_info(NDI_UNIQUE, 0, op, "Your invisibility spell runs out.");
+	}
     }
 
     /* I've been seeing crashes where the golem has been destroyed, but

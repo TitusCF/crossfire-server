@@ -2298,6 +2298,7 @@ int manual_apply (object *op, object *tmp, int aflag)
   case BOW:
   case LAMP:
   case BUILDER:
+  case SKILL_TOOL:
     if (tmp->env != op)
       return 2;   /* not in inventory */
     (void) apply_special (op, tmp, aflag);
