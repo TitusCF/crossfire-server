@@ -1,3 +1,28 @@
+/*
+    CrossFire, A Multiplayer game for X-windows
+
+    Copyright (C) 2000 Mark Wedel
+    Copyright (C) 1992 Frank Tore Johansen
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+
+    The author can be reached via e-mail to mwedel@scruz.net
+*/
+/*
+    Crossfire Scripting Extensions by Gros (yann.chachkoff@mailandnews.com)
+*/
 #include <version.h>
 #include <global.h>
 #include <guile/gh.h>
@@ -530,6 +555,17 @@ SCM Script_setGod(SCM who, SCM value)
 
 SCM Script_setWeight(SCM who, SCM value)
 {
+  /* I used an arbitrary bound of 32000 here */
+  if (gh_scm2long(value) > 32000)
+  {
+    LOG(llevError,"(set-weight): Value must be lower than 32000\n");
+    return;
+  }
+  else if (gh_scm2long(value) < 0)
+  {
+    LOG(llevError,"(set-weight): Value must be greater than 0\n");
+    return;
+  };
   WHO->weight = gh_scm2long(value);
 };
 
@@ -601,6 +637,17 @@ SCM Script_getMap(SCM who)
 
 SCM Script_setQuantity(SCM what, SCM value)
 {
+ /* I used an arbitrary bound of 100k here */
+  if (gh_scm2long(value) > 100000)
+  {
+    LOG(llevError,"(set-quantity): Value must be lower than 100000\n");
+    return;
+  }
+  else if (gh_scm2long(value) < 0)
+  {
+    LOG(llevError,"(set-quantity): Value must be greater than 0\n");
+    return;
+  };
   WHAT->nrof = gh_scm2int(value);
 };
 
@@ -828,7 +875,17 @@ SCM Script_setScriptStop(SCM who, SCM value)
 
 SCM Script_setSpeed(SCM who, SCM value)
 {
-        WHO->speed = gh_scm2double(value);
+  if (gh_scm2double(value) > 9.99)
+  {
+    LOG(llevError,"(set-speed): Value must be lower than 9.99\n");
+    return;
+  }
+  else if (gh_scm2double(value) < -9.99)
+  {
+    LOG(llevError,"(set-speed): Value must be greater than -9.99\n");
+    return;
+  };
+  WHO->speed = gh_scm2double(value);
 };
 SCM Script_getSpeed(SCM who)
 {
@@ -842,7 +899,17 @@ SCM Script_getLastSP(SCM who)
 
 SCM Script_setLastSP(SCM who, SCM value)
 {
-        WHO->last_sp = gh_scm2int(value);
+  if (gh_scm2long(value) > 16000)
+  {
+    LOG(llevError,"(set-last-sp): Value must be lower than 16000\n");
+    return;
+  }
+  else if (gh_scm2long(value) < 0)
+  {
+    LOG(llevError,"(set-last-sp): Value must be greater than 0\n");
+    return;
+  };
+  WHO->last_sp = gh_scm2int(value);
 };
 
 SCM Script_getLastGP(SCM who)
@@ -852,7 +919,17 @@ SCM Script_getLastGP(SCM who)
 
 SCM Script_setLastGP(SCM who, SCM value)
 {
-        WHO->last_grace = gh_scm2int(value);
+  if (gh_scm2long(value) > 16000)
+  {
+    LOG(llevError,"(set-last-grace): Value must be lower than 16000\n");
+    return;
+  }
+  else if (gh_scm2long(value) < 0)
+  {
+    LOG(llevError,"(set-last-grace): Value must be greater than 0\n");
+    return;
+  };
+  WHO->last_grace = gh_scm2int(value);
 };
 
 SCM Script_fixObject(SCM who)
@@ -879,16 +956,35 @@ SCM Script_getAttackType(SCM who)
         return gh_long2scm(WHO->attacktype);
 };
 
+/*
+ * Sets the damage value of given object.
+ */
 SCM Script_setDamage(SCM who, SCM value)
 {
-        WHO->stats.dam = gh_scm2int(value);
+  if (gh_scm2long(value) > 120)
+  {
+    LOG(llevError,"(set-dam): Value must be lower than 120\n");
+    return;
+  }
+  else if (gh_scm2long(value) < 0)
+  {
+    LOG(llevError,"(set-dam): Value must be greater than 0\n");
+    return;
+  };
+  WHO->stats.dam = gh_scm2int(value);
 };
 
+/*
+ * Gets the damage value of given object.
+ */
 SCM Script_getDamage(SCM who)
 {
         gh_int2scm(WHO->stats.dam);
 };
 
+/*
+ * Sets the been_applied status of given object.
+ */
 SCM Script_setBeenApplied(SCM who, SCM value)
 {
   if (gh_scm2bool(value))
@@ -901,6 +997,9 @@ SCM Script_setBeenApplied(SCM who, SCM value)
   };
 };
 
+/*
+ * Sets the identified status of given object.
+ */
 SCM Script_setIdentified(SCM who, SCM value)
 {
   if (gh_scm2bool(value))
@@ -913,6 +1012,9 @@ SCM Script_setIdentified(SCM who, SCM value)
   };
 };
 
+/*
+ * Kills a given object.
+ */
 SCM Script_killObject(SCM killer, SCM killed, SCM type)
 {
   ((object *)(gh_scm2long(killed)))->speed = 0;
@@ -941,6 +1043,9 @@ SCM Script_killObject(SCM killer, SCM killed, SCM type)
   };
 };
 
+/*
+ * Various direction identifiers.
+ */
 SCM Script_directionNorth()
 {
   return gh_int2scm(1);
@@ -974,6 +1079,9 @@ SCM Script_directionNW()
   return gh_int2scm(8);
 };
 
+/*
+ * Make object 'who' cast 'spell' into the specified direction as an ability (no cost)
+ */
 SCM Script_castAbility(SCM who, SCM spell, SCM direction, SCM options)
 {
   int *length = 0;
@@ -981,7 +1089,9 @@ SCM Script_castAbility(SCM who, SCM spell, SCM direction, SCM options)
   cast_spell(WHO, WHO, gh_scm2int(direction), gh_scm2int(spell), 1,spellNormal, txt );
 };
 
-
+/*
+ * Make object 'who' cast 'spell' into the direction specified.
+ */
 SCM Script_castSpell(SCM who, SCM spell, SCM direction, SCM options)
 {
   int *length = 0;
@@ -989,21 +1099,33 @@ SCM Script_castSpell(SCM who, SCM spell, SCM direction, SCM options)
   cast_spell(WHO, WHO, gh_scm2int(direction), gh_scm2int(spell), 0,spellNormal, txt );
 };
 
+/*
+ * Make object 'who' forget spell 'spell'.
+ */
 SCM Script_forgetSpell(SCM who, SCM spell)
 {
   do_forget_spell(WHO, gh_scm2int(spell));
 };
 
+/*
+ * Make object 'who' know spell 'spell'
+ */
 SCM Script_acquireSpell(SCM who, SCM spell)
 {
   do_learn_spell(WHO, gh_scm2int(spell), 0);
 };
 
+/*
+ * Tests if the given object knows the given spell.
+ */
 SCM Script_knowSpell_p(SCM who, SCM spell)
 {
   return gh_bool2scm(check_spell_known(WHO, gh_scm2int(spell)));
 };
 
+/*
+ * Searches for a "force" object inside another one.
+ */
 SCM Script_checkInvisibleObjectInside(SCM idname, SCM who)
 {
   /* From move_marker inside time.c */
@@ -1018,7 +1140,9 @@ SCM Script_checkInvisibleObjectInside(SCM idname, SCM who)
   return gh_long2scm((long)(tmp2));
 };
 
-
+/*
+ * Seacrhes for a given archetype on a given map coordinate.
+ */
 SCM Script_checkArchetype(SCM what, SCM mapinfo, SCM x, SCM y)
 {
   int *length = 0;
@@ -1028,6 +1152,9 @@ SCM Script_checkArchetype(SCM what, SCM mapinfo, SCM x, SCM y)
   return gh_long2scm((long)(foundob));
 };
 
+/*
+ * Searches for an object inside another one.
+ */
 SCM Script_checkInventory(SCM who, SCM what)
 {
   int *length = 0;
@@ -1050,6 +1177,9 @@ SCM Script_checkInventory(SCM who, SCM what)
   return gh_long2scm((long)(foundob));
 };
 
+/*
+ * Gets the name of the given object.
+ */
 SCM Script_getName(SCM who)
 {
   return gh_str02scm(WHO->name);
@@ -1103,6 +1233,9 @@ SCM Script_createObject(SCM archname, SCM x, SCM y)
   return gh_long2scm((long)(myob));
 };
 
+/*
+ * Creates an object inside another one.
+ */
 SCM Script_createObjectInside(SCM archname, SCM where)
 {
   object *myob;
@@ -1149,6 +1282,9 @@ SCM Script_createObjectInside(SCM archname, SCM where)
   return gh_long2scm((long)(myob));
 };
 
+/*
+ * Creates an invisible "force" object inside another object.
+ */
 SCM Script_createInvisibleObjectInside(SCM idname, SCM where)
 {
   object *myob;
@@ -1164,6 +1300,9 @@ SCM Script_createInvisibleObjectInside(SCM idname, SCM where)
   return gh_long2scm((long)(myob));
 };
 
+/*
+ * Destroys an object given a pointer to it.
+ */
 SCM Script_removeObject(SCM what)
 {
   object *myob = (object *)(gh_scm2long(what));
@@ -1173,21 +1312,33 @@ SCM Script_removeObject(SCM what)
   free_object(myob);
 };
 
+/*
+ * Gets the who-is-other parameter for that script.
+ */
 SCM Script_whoIsOther()
 {
   return gh_long2scm((long)guile_current_other[guile_stack_position]);
 };
 
+/*
+ * Gets the who-am-I parameter for that script.
+ */
 SCM Script_whoAmI()
 {
   return gh_long2scm((long)guile_current_who[guile_stack_position]);
 };
 
+/*
+ * Gets the who-is-activator parameter for that script.
+ */
 SCM Script_whoIsActivator()
 {
   return gh_long2scm((long)guile_current_activator[guile_stack_position]);
 };
 
+/*
+ * Gets the message parameter for that script.
+ */
 SCM Script_whatMessage()
 {
   char buf[MAX_BUF];
@@ -1196,6 +1347,9 @@ SCM Script_whatMessage()
   return gh_str02scm(guile_current_text[guile_stack_position]);
 };
 
+/*
+ * Writes a "say" message into the crossfire log window
+ */
 SCM Script_crossfireSay(SCM who, SCM message)
 {
   int *length = 0;
@@ -1210,6 +1364,9 @@ SCM Script_crossfireSay(SCM who, SCM message)
   free(txt);
 };
 
+/*
+ * Writes a message to the crossfire log window.
+ */
 SCM Script_crossfireWrite(SCM who, SCM message, SCM color)
 {
   int *length = 0;
@@ -1233,6 +1390,9 @@ SCM Script_crossfireWrite(SCM who, SCM message, SCM color)
   free(txt);
 };
 
+/*
+ * Writes a message on the crossfire log window.
+ */
 SCM Script_crossfireMessage(SCM message, SCM color)
 {
   int *length = 0;
@@ -1253,6 +1413,9 @@ SCM Script_crossfireMessage(SCM message, SCM color)
   free(txt);
 };
 
+/*
+ * The following functions test various flags
+ */
 SCM Script_isAlive_p(SCM who)
 {
   return gh_bool2scm(QUERY_FLAG(WHO, FLAG_ALIVE));
@@ -1506,6 +1669,16 @@ SCM Script_setTitle(SCM who, SCM newname)
  */
 SCM Script_setAC(SCM who, SCM newvalue)
 {
+  if (gh_scm2long(newvalue) > 120)
+  {
+    LOG(llevError,"(set-ac): Value must be lower than 120\n");
+    return;
+  }
+  else if (gh_scm2long(newvalue) < -120)
+  {
+    LOG(llevError,"(set-ac): Value must be greater than -120\n");
+    return;
+  };
   WHO->stats.ac = gh_scm2long(newvalue);
 };
 
@@ -1570,6 +1743,16 @@ SCM Script_getMaxSP(SCM who)
  */
 SCM Script_setHP(SCM who, SCM newvalue)
 {
+  if (gh_scm2long(newvalue) > 16000)
+  {
+    LOG(llevError,"(set-hp): Value must be lower than 16000\n");
+    return;
+  }
+  else if (gh_scm2long(newvalue) < 0)
+  {
+    LOG(llevError,"(set-hp): Value must be greater than 0\n");
+    return;
+  };
   WHO->stats.hp = gh_scm2long(newvalue);
 };
 
@@ -1578,6 +1761,16 @@ SCM Script_setHP(SCM who, SCM newvalue)
  */
 SCM Script_setSP(SCM who, SCM newvalue)
 {
+  if (gh_scm2long(newvalue) > 16000)
+  {
+    LOG(llevError,"(set-sp): Value must be lower than 16000\n");
+    return;
+  }
+  else if (gh_scm2long(newvalue) < 0)
+  {
+    LOG(llevError,"(set-sp): Value must be greater than 0\n");
+    return;
+  };
   WHO->stats.sp = gh_scm2long(newvalue);
 };
 
@@ -1586,6 +1779,16 @@ SCM Script_setSP(SCM who, SCM newvalue)
  */
 SCM Script_setFP(SCM who, SCM newvalue)
 {
+  if (gh_scm2long(newvalue) > 999)
+  {
+    LOG(llevError,"(set-food): Value must be lower than 999\n");
+    return;
+  }
+  else if (gh_scm2long(newvalue) < 0)
+  {
+    LOG(llevError,"(set-food): Value must be greater than 0\n");
+    return;
+  };
   WHO->stats.food = gh_scm2long(newvalue);
 };
 
@@ -1594,6 +1797,16 @@ SCM Script_setFP(SCM who, SCM newvalue)
  */
 SCM Script_setGP(SCM who, SCM newvalue)
 {
+  if (gh_scm2long(newvalue) > 16000)
+  {
+    LOG(llevError,"(set-grace): Value must be lower than 16000\n");
+    return;
+  }
+  else if (gh_scm2long(newvalue) < 0)
+  {
+    LOG(llevError,"(set-grace): Value must be greater than 0\n");
+    return;
+  };
   WHO->stats.grace = gh_scm2long(newvalue);
 };
 
@@ -1602,6 +1815,16 @@ SCM Script_setGP(SCM who, SCM newvalue)
  */
 SCM Script_setMaxHP(SCM who, SCM newvalue)
 {
+  if (gh_scm2long(newvalue) > 16000)
+  {
+    LOG(llevError,"(set-max-hp): Value must be lower than 16000\n");
+    return;
+  }
+  else if (gh_scm2long(newvalue) < 0)
+  {
+    LOG(llevError,"(set-max-hp): Value must be greater than 0\n");
+    return;
+  };
   WHO->stats.maxhp = gh_scm2long(newvalue);
 };
 
@@ -1610,6 +1833,16 @@ SCM Script_setMaxHP(SCM who, SCM newvalue)
  */
 SCM Script_setMaxSP(SCM who, SCM newvalue)
 {
+  if (gh_scm2long(newvalue) > 16000)
+  {
+    LOG(llevError,"(set-max-sp): Value must be lower than 16000\n");
+    return;
+  }
+  else if (gh_scm2long(newvalue) < 0)
+  {
+    LOG(llevError,"(set-max-sp): Value must be greater than 0\n");
+    return;
+  };
   WHO->stats.maxsp = gh_scm2long(newvalue);
 };
 
@@ -1619,7 +1852,16 @@ SCM Script_setMaxSP(SCM who, SCM newvalue)
  */
 SCM Script_setCha(SCM who, SCM newvalue)
 {
-  char buf[MAX_BUF];
+  if (gh_scm2long(newvalue) > 30)
+  {
+    LOG(llevError,"(set-cha): Value must be lower than 31\n");
+    return;
+  }
+  else if (gh_scm2long(newvalue) < 0)
+  {
+    LOG(llevError,"(set-cha): Value must be greater than 0\n");
+    return;
+  };
   WHO->stats.Cha = gh_scm2long(newvalue);
   if (WHO->type == PLAYER)
   {
@@ -1633,6 +1875,16 @@ SCM Script_setCha(SCM who, SCM newvalue)
  */
 SCM Script_setStr(SCM who, SCM newvalue)
 {
+  if (gh_scm2long(newvalue) > 30)
+  {
+    LOG(llevError,"(set-str): Value must be lower than 31\n");
+    return;
+  }
+  else if (gh_scm2long(newvalue) < 0)
+  {
+    LOG(llevError,"(set-str): Value must be greater than 0\n");
+    return;
+  };
   WHO->stats.Str = gh_scm2long(newvalue);
   if (WHO->type == PLAYER)
   {
@@ -1646,6 +1898,16 @@ SCM Script_setStr(SCM who, SCM newvalue)
  */
 SCM Script_setDex(SCM who, SCM newvalue)
 {
+  if (gh_scm2long(newvalue) > 30)
+  {
+    LOG(llevError,"(set-dex): Value must be lower than 31\n");
+    return;
+  }
+  else if (gh_scm2long(newvalue) < 0)
+  {
+    LOG(llevError,"(set-dex): Value must be greater than 0\n");
+    return;
+  };
   WHO->stats.Dex = gh_scm2long(newvalue);
   if (WHO->type == PLAYER)
   {
@@ -1659,6 +1921,16 @@ SCM Script_setDex(SCM who, SCM newvalue)
  */
 SCM Script_setInt(SCM who, SCM newvalue)
 {
+  if (gh_scm2long(newvalue) > 30)
+  {
+    LOG(llevError,"(set-int): Value must be lower than 31\n");
+    return;
+  }
+  else if (gh_scm2long(newvalue) < 0)
+  {
+    LOG(llevError,"(set-int): Value must be greater than 0\n");
+    return;
+  };
   WHO->stats.Int = gh_scm2long(newvalue);
   if (WHO->type == PLAYER)
   {
@@ -1672,6 +1944,16 @@ SCM Script_setInt(SCM who, SCM newvalue)
  */
 SCM Script_setWis(SCM who, SCM newvalue)
 {
+  if (gh_scm2long(newvalue) > 30)
+  {
+    LOG(llevError,"(set-wis): Value must be lower than 31\n");
+    return;
+  }
+  else if (gh_scm2long(newvalue) < 0)
+  {
+    LOG(llevError,"(set-wis): Value must be greater than 0\n");
+    return;
+  };
   WHO->stats.Wis = gh_scm2long(newvalue);
   if (WHO->type == PLAYER)
   {
@@ -1685,6 +1967,16 @@ SCM Script_setWis(SCM who, SCM newvalue)
  */
 SCM Script_setPow(SCM who, SCM newvalue)
 {
+  if (gh_scm2long(newvalue) > 30)
+  {
+    LOG(llevError,"(set-pow): Value must be lower than 31\n");
+    return;
+  }
+  else if (gh_scm2long(newvalue) < 0)
+  {
+    LOG(llevError,"(set-pow): Value must be greater than 0\n");
+    return;
+  };
   WHO->stats.Pow = gh_scm2long(newvalue);
   if (WHO->type == PLAYER)
   {
@@ -1698,6 +1990,16 @@ SCM Script_setPow(SCM who, SCM newvalue)
  */
 SCM Script_setCon(SCM who, SCM newvalue)
 {
+  if (gh_scm2long(newvalue) > 30)
+  {
+    LOG(llevError,"(set-con): Value must be lower than 31\n");
+    return;
+  }
+  else if (gh_scm2long(newvalue) < 0)
+  {
+    LOG(llevError,"(set-con): Value must be greater than 0\n");
+    return;
+  };
   WHO->stats.Con = gh_scm2long(newvalue);
   if (WHO->type == PLAYER)
   {
