@@ -728,7 +728,11 @@ void process_players1(mapstruct *map)
 		}
 	    }
 #endif
-	    if(pl->ob != NULL && pl->ob->speed_left>0) {
+            if(pl->ob == NULL) {
+                /* I take it this should never happen,
+                   but it seems to anyway :( */
+                flag = 1;
+            } else if(pl->ob->speed_left>0) {
 		if (handle_newcs_player(pl->ob))
 		    flag=1;
 	    } /* end if player has speed left */
