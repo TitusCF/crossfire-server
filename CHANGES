@@ -7,11 +7,18 @@ it will also give you the option to forget, save changes, or just raise
 the window if the in memory version of that map has been modified.  Checked
 in by msw. (crossedit, App.c, Edit.c, Edit.h)
 
+Bugfix in server/apply.c - apply_container()
+  When checking for keys to locked containers, only searched player's
+  inventory, not keyrings.  Changed to use FindKey function in player.c,
+  which does search keyrings.
+  --DAMN
+
 Bugfix in server/main.c - enter_exit()
   Unique maps were using their actual location as a path for moving to
   a new map.  They need to use the location of the original map, not
   the character's individual copy of it.  This is re-constructed from
   the individual map's filename, which is based on the original path.
+  --DAMN
 
 Remove xbmtobdf man page - since it is run automatically and it is likely
 that people will not run it manually (and it appears to be innacruate - or
