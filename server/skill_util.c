@@ -1238,6 +1238,36 @@ int change_skill (object *who, int sk_index)
     return 0;
 }
 
+/* This is like change_skill above, but it is given that
+ * skill is already in who's inventory - this saves us
+ * time if the caller has already done the work for us.
+ * return 0 on success, 1 on failure.
+ */
+
+int change_skill_to_skill (object *who, object *skill)
+{
+    if (!skill) return 1;	    /* Quick sanity check */
+
+    if (who->chosen_skill == skill)
+    {
+        /* optimization for changing skill to current skill */
+        if (who->type == PLAYER)
+            who->contr->shoottype = range_skill;
+        return 0;
+    }
+
+    if (skill->env != who) {
+	LOG(llevError,"change_skill_to_skill: skill is not in players inventory\n");
+	return 1;
+    }
+
+    if (apply_special (who, skill, AP_APPLY)) {
+	LOG (llevError, "BUG: change_skill(): can't apply new skill\n");
+            return 1;
+    }
+    return 0;
+}
+
 /* attack_melee_weapon() - this handles melee weapon attacks -b.t.
  * For now we are just checking to see if we have a ready weapon here.
  * But there is a real neato possible feature of this scheme which
@@ -1384,16 +1414,16 @@ int do_skill_attack(object *tmp, object *op, char *string) {
                 tmp2=arch_to_object(skill);
 		insert_ob_in_ob(tmp2,op);
 		(void) link_player_skill(op,tmp2);
-		esrv_send_item(op, tmp2);
 	    }
 	    /* now try to ready the new skill */
-	    if(!change_skill(op,tmp2->stats.sp)) {  /* oh oh, trouble! */
+	    if(change_skill_to_skill(op,tmp2)) {  /* oh oh, trouble! */
         	LOG(llevError,"do_skill_attack() could'nt give new hth skill to %s\n",
 			op->name);
 		return 0;
-	    } 
+	    }
     }	 
 
+#if 0
    /* check if op is using a hth attack, if so modify damage */
           if(QUERY_FLAG(op,FLAG_READY_SKILL) && op->chosen_skill
              && !QUERY_FLAG(op, FLAG_READY_WEAPON))
@@ -1404,6 +1434,7 @@ int do_skill_attack(object *tmp, object *op, char *string) {
 				op->stats.dam=dam;
 			   }
 	  }
+#endif
 
    /* if we have 'ready weapon' but no 'melee weapons' skill readied
     * this will flip to that skill. This is only window dressing for

@@ -17,6 +17,20 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 CVS changes since last release:
 
+MSW 2001/01/18:
+server/skill_util.c: add change_skill_to_skill function to be used when
+   we already know the skill object we want to use.  This is more efficient
+   than change_skill which takes a skill number and then searches the
+   inventory for the object.
+   remove extra esrv_send_item from do_skill_attack - don't need to send
+   skills to player.
+   do_skill_attack: remove call to hth_damage - that function does not take
+   into account objects in the player inventory that increase damage,
+   and since that is called each attack, it is not feasible to have it
+   search the players inventory.  Instead, we just rely on damage generated
+   by fix_player - only think hth_damage did was adjust damage based on
+   level difference.
+
 PeterM 2001/01/16
 Added randomly-generated nethack-style maps to crossfire's
 random map generator.
