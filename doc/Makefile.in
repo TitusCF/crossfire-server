@@ -71,4 +71,3 @@ install::
 	fi
 	$(INSTALL) $(srcdir)/crossedit.man $(MAN1)/crossedit.$(MANSUFFIX)
 	$(INSTALL) $(srcdir)/crossfire.man $(MAN1)/crossfire.$(MANSUFFIX)
-	$(INSTALL) $(srcdir)/xbmtobdf.man $(MAN1)/xbmtobdf.$(MANSUFFIX)
