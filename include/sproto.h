@@ -258,6 +258,7 @@ int command_summon(object *op, char *params);
 int command_teleport(object *op, char *params);
 int command_create(object *op, char *params);
 int command_inventory(object *op, char *params);
+int command_toggle_shout(object *op, char *params);
 int command_skills(object *op, char *params);
 int command_dump(object *op, char *params);
 int command_mon_aggr(object *op, char *params);

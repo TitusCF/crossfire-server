@@ -131,6 +131,7 @@ typedef struct pl {
     uint32	peaceful:1;	    /* If set, won't attack friendly creatures */
     uint32	hidden:1;	    /* If True, player (DM) is hidden from view */
     uint32	explore:1;	    /* if True, player is in explore mode */
+	uint32  no_shout:1;		/* if True, player is *not* able to use shout command */
 
     sint32	last_skill_index;   /* this is init from init_player_exp() */
     object	*last_skill_ob[MAX_EXP_CAT];	/* the exp object */
@@ -210,6 +211,3 @@ typedef struct party_struct {
     sint64 total_exp;
     uint32  kills;
 } partylist;
-
-
-

@@ -180,6 +180,36 @@ int command_save_overlay(object *op, char *params)
     return(1);
 } 
 
+int command_toggle_shout(object *op, char *params)
+{
+	player *pl;
+	
+	if (!params) {
+         new_draw_info(NDI_UNIQUE, 0,op,"Usage: toggle_shout <player>.");
+         return 1;
+    }
+
+    pl = get_other_player_from_name(op, params);
+    if (!pl) return 1;
+	
+	if (pl->ob->contr->no_shout == 0){
+		pl->ob->contr->no_shout = 1;
+    new_draw_info(NDI_UNIQUE | NDI_RED, 0, pl->ob,
+			 "You have been muzzled by the DM!");
+    new_draw_info_format(NDI_UNIQUE , 0, op,
+			 "You toggle shout for %s.", pl->ob->name);
+		return 1;
+	}else{
+		pl->ob->contr->no_shout = 0;
+    new_draw_info(NDI_UNIQUE | NDI_RED, 0, pl->ob,
+			 "You are allowed to shout again.");
+    new_draw_info_format(NDI_UNIQUE , 0, op,
+			 "You toggle shout for %s.", pl->ob->name);
+		return 1;
+	}
+	
+}
+
 int command_shutdown(object *op, char *params)
 {
 
@@ -1240,4 +1270,3 @@ int command_unloadplugin(object *op, char *params)
     removeOnePlugin(params);
     return 1;
 }
-

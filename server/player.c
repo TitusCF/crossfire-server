@@ -162,6 +162,7 @@ static player* get_player(player *p) {
     p->peaceful=1;			/* default peaceful */
     p->do_los=1;
     p->explore=0;
+	p->no_shout=0;			/* default can shout */
 
     strncpy(p->title,op->arch->clone.name,MAX_NAME);
     op->race = add_string (op->arch->clone.race);
@@ -3114,5 +3115,3 @@ void dragon_ability_gain(object *who, int atnr, int level) {
       esrv_send_item(who, tmp);
   }
 }
-
-

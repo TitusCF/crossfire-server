@@ -282,6 +282,7 @@ int save_player(object *op, int flag) {
   fprintf(fp,"bowtype %d\n",pl->bowtype);
   fprintf(fp,"petmode %d\n",pl->petmode);
   fprintf(fp,"peaceful %d\n",pl->peaceful);
+  fprintf(fp,"no_shout %d\n",pl->no_shout);
   fprintf(fp,"digestion %d\n",pl->digestion);
   fprintf(fp,"pickup %d\n", pl->mode);
   fprintf(fp,"outputs_sync %d\n", pl->outputs_sync);
@@ -531,6 +532,8 @@ void check_login(object *op) {
 	    pl->listening=value;
         else if (!strcmp(buf,"peaceful"))
 	    pl->peaceful=value;
+		else if (!strcmp(buf,"no_shout"))
+		pl->no_shout=value;
         else if (!strcmp(buf,"digestion"))
 	    pl->digestion=value;
 	else if (!strcmp(buf,"pickup"))

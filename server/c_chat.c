@@ -88,7 +88,11 @@ int command_shout (object *op, char *params)
 {
     int evtid;
     CFParm CFP;
-
+	if (op->contr->no_shout == 1){
+		new_draw_info(NDI_UNIQUE, 0,op,"You are no longer allowed to shout.");
+		return 1;
+	}else{
+	
     if (params == NULL) {
 	new_draw_info(NDI_UNIQUE, 0,op,"Shout what?");
 	return 1;
@@ -102,6 +106,7 @@ int command_shout (object *op, char *params)
     CFP.Value[2] = (void *)(params);
     GlobalEvent(&CFP);
     return 1;
+	}
 }
 
 int command_tell (object *op, char *params)
