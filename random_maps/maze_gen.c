@@ -18,7 +18,7 @@ a wall.
 
 #include <stdio.h>
 #include <global.h>
-#include <random_map.h>
+/*#include <random_map.h>*/
 #include <maze_gen.h>
 #include <time.h>
 
@@ -42,7 +42,7 @@ int wall_chance;
 ** maze.  option is a flag for either a sparse or a full maze. Sparse
 mazes have sizable rooms. option = 1, full, 0, sparse.*/
 
-char **maze_gen(int xsize, int ysize,int option,RMParms *RP) {
+char **maze_gen(int xsize, int ysize,int option) {
   int i,j;
 
   /* allocate that array, set it up */

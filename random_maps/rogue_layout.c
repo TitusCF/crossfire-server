@@ -18,6 +18,21 @@ static int roguelike_place_room(Room *Rooms,int xsize, int ysize,int nrooms);
 static void roguelike_make_rooms(Room *Rooms,char **maze, int options);
 static void roguelike_link_rooms(Room *Rooms,char **maze,int xsize,int ysize);
 
+
+int surround_check(char **layout,int i,int j,int Xsize, int Ysize){
+  /* 1 = wall to left,
+	  2 = wall to right,
+	  4 = wall above
+	  8 = wall below */
+  int surround_index = 0;
+  if((i > 0) && layout[i-1][j]!=0) surround_index |=1;
+  if((i < Xsize-1) && layout[i+1][j]!=0) surround_index |=2;
+  if((j > 0) && layout[i][j-1]!=0) surround_index |=4;
+  if((j < Ysize-1) && layout[i][j+1]!=0) surround_index |=8;
+  return surround_index;
+}
+
+
 /* actually make the layout:  we work by a reduction process:
    first we make everything a well, then we remove areas to make rooms */
 
@@ -84,12 +99,17 @@ char **roguelike_layout_gen(int xsize, int ysize, int options) {
   walk--;
   maze[walk->x][walk->y] = '>';
 
-  /* convert all the '.' to 0, we're through witht he '.' */
+  /* convert all the '.' to 0, we're through with the '.' */
+  /* also, fix any 'dangling doors' */
   for(i=0;i<xsize;i++)
-    for(j=0;j<ysize;j++)
+    for(j=0;j<ysize;j++) {
       if(maze[i][j]=='.') maze[i][j]=0;
-  
-
+      if(maze[i][j]=='D') {  /* remove bad door. */
+        int si = surround_check(maze,i,j,xsize,ysize);
+        if(si!=3 && si!=12) maze[i][j]=0;
+      }
+    }
+        
   return maze;
 }
 

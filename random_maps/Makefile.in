@@ -44,7 +44,8 @@ SRCS =	random_map.c \
 	style.c  \
 	rogue_layout.c \
         snake.c \
-        square_spiral.c
+        square_spiral.c \
+	expand_2x.c
 
 ALLFILES = $(SRCS) reader.l Makefile.in maze_gen.h random_map.h room_gen.h\
 	standalone.c rproto.h

@@ -146,7 +146,7 @@ char **layoutgen(RMParms *RP) {
   }
 
   if(strstr(RP->layoutstyle,"maze")) {
-    maze = maze_gen(RP->Xsize,RP->Ysize,RP->layoutoptions1,RP);
+    maze = maze_gen(RP->Xsize,RP->Ysize,RP->layoutoptions1);
     RP->map_layout_style = MAZE_LAYOUT;
 
     if(!(RANDOM()%2)) doorify_layout(maze,RP);
@@ -181,7 +181,7 @@ char **layoutgen(RMParms *RP) {
   if(maze == 0) /* unknown or unspecified layout type, pick one at random */
     switch(RANDOM()%NROFLAYOUTS) {
     case 0:
-      maze = maze_gen(RP->Xsize,RP->Ysize,RANDOM()%2,RP);
+      maze = maze_gen(RP->Xsize,RP->Ysize,RANDOM()%2);
       RP->map_layout_style = MAZE_LAYOUT;
       if(!(RANDOM()%2)) doorify_layout(maze,RP);
       break;
