@@ -35,6 +35,7 @@
 #include <global.h>
 #include <loader.h>
 #include <newserver.h>
+#include <sproto.h>
 
 /* All the variable names.  Each entry should correspond to the 
  * V_ vlaue in loader.h (that is, the 20'th value in this array should
@@ -1230,4 +1231,5 @@ void save_object(FILE *fp,object *op, int flag) {
 
     fprintf(fp,"end\n");
 }
+
 

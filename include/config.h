@@ -1020,9 +1020,3 @@
 
 #define RESET_LOCATION_TIME	0
 
-/* To enable the full 8 direction power of player animations,
-   set this define. Be sure you have a archetypes file which all the 
-   animations.
- */
-
-/* #define ENABLE_PLAYER_ANIMATION_8 */

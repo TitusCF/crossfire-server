@@ -136,7 +136,12 @@ void SetUp(char *buf, int len, NewSocket *ns)
 	strcat(cmdback, cmd);
 	strcat(cmdback, " ");
 
-	if (!strcmp(cmd,"sound")) {
+	
+	if (!strcmp(cmd,"newanim")) {
+		ns->newanim = atoi(param);
+		strcat(cmdback, param);
+	}
+	else if (!strcmp(cmd,"sound")) {
 	    ns->sound = atoi(param);
 	    strcat(cmdback, param);
 	}
@@ -1205,4 +1210,5 @@ void esrv_map_scroll(NewSocket *ns,int dx,int dy)
     memcpy(&(ns->lastmap), &newmap,sizeof(struct Map));
     ns->sent_scroll = 1;
 }
+
 
