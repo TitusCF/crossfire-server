@@ -185,6 +185,38 @@ FixObject()
 ForgetSpell()
 
 G
+
+GetMapDirectory()
+  Returns the name of the base directory containing the Crossfire maps.
+  You need to concatenate the result with the value returned by
+  GetDataDirectory() to get an absolute path.
+
+GetUniqueDirectory()
+  Returns the name of the base directory containing the Crossfire Unique items.
+  You need to concatenate the result with the value returned by
+  GetLocalDirectory() to get an absolute path.
+
+GetTempDirectory()
+  Returns the name of the base directory containing temporary Crossfire files
+  (like swapped-out maps)
+
+GetConfigurationDirectory()
+  Returns the name of the base directory containing Crossfire configuration
+  files.
+
+GetDataDirectory()
+  Returns the name of the base directory containing the Crossfire read only data
+  files.
+
+GetLocalDirectory()
+  Returns the name of the base directory containing the Crossfire read-write
+  data files.
+
+GetPlayerDirectory()
+  Returns the name of the base directory containing the Crossfire players files.
+  You need to concatenate the result with the value returned by
+  GetLocalDirectory() to get an absolute path.
+
 GetSkillExperience()
 GetMapPath()
 GetMapObject()

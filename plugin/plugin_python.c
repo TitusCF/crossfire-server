@@ -19,6 +19,7 @@
 /* 0.1 "Ophiuchus"   - Initial Alpha release                                 */
 /* 0.5 "Stalingrad"  - Message length overflow corrected.                    */
 /* 0.6 "Kharkov"     - Message and Write correctly redefined.                */
+/* 0.7 "Koursk"      - Setting informations implemented.                     */
 /*****************************************************************************/
 /* Version: 0.6 Beta (also known as "Kharkov")                               */
 /* Contact: yann.chachkoff@mailandnews.com                                   */
@@ -6507,8 +6508,58 @@ static PyObject* CFGetPressure(PyObject* self, PyObject* args)
     long map; /* mapstruct pointer */
     if (!PyArg_ParseTuple(args,"iil",&x,&y,&map))
         return NULL;
-    
+
     return Py_BuildValue("i",val);
+}
+
+static PyObject* CFGetMapDir(PyObject* self, PyObject* args)
+{
+    long whoptr;
+    if (!PyArg_ParseTuple(args,"",NULL))
+        return NULL;
+    return Py_BuildValue("s",settings.mapdir);
+}
+static PyObject* CFGetUniqueDir(PyObject* self, PyObject* args)
+{
+    long whoptr;
+    if (!PyArg_ParseTuple(args,"",NULL))
+        return NULL;
+    return Py_BuildValue("s",settings.uniquedir);
+}
+static PyObject* CFGetTempDir(PyObject* self, PyObject* args)
+{
+    long whoptr;
+    if (!PyArg_ParseTuple(args,"",NULL))
+        return NULL;
+    return Py_BuildValue("s",settings.tmpdir);
+}
+static PyObject* CFGetConfigurationDir(PyObject* self, PyObject* args)
+{
+    long whoptr;
+    if (!PyArg_ParseTuple(args,"",NULL))
+        return NULL;
+    return Py_BuildValue("s",settings.confdir);
+}
+static PyObject* CFGetDataDir(PyObject* self, PyObject* args)
+{
+    long whoptr;
+    if (!PyArg_ParseTuple(args,"",NULL))
+        return NULL;
+    return Py_BuildValue("s",settings.datadir);
+}
+static PyObject* CFGetLocalDir(PyObject* self, PyObject* args)
+{
+    long whoptr;
+    if (!PyArg_ParseTuple(args,"",NULL))
+        return NULL;
+    return Py_BuildValue("s",settings.localdir);
+}
+static PyObject* CFGetPlayerDir(PyObject* self, PyObject* args)
+{
+    long whoptr;
+    if (!PyArg_ParseTuple(args,"",NULL))
+        return NULL;
+    return Py_BuildValue("s",settings.playerdir);
 }
 
 /*****************************************************************************/

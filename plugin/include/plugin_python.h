@@ -15,7 +15,7 @@
 /* Please note that it is still very beta - some of the functions may not    */
 /* work as expected and could even cause the server to crash.                */
 /*****************************************************************************/
-/* Version: 0.6 Beta  (also known as "Kharkov")                              */
+/* Version: 0.7 Beta  (also known as "Koursk")                               */
 /* Contact: yann.chachkoff@mailandnews.com                                   */
 /*****************************************************************************/
 /* That code is placed under the GNU General Public Licence (GPL)            */
@@ -45,7 +45,7 @@
 #endif
 
 #define PLUGIN_NAME    "Python"
-#define PLUGIN_VERSION "CFPython Plugin 0.1"
+#define PLUGIN_VERSION "CFPython Plugin 0.7 (Koursk)"
 
 /* The plugin properties and hook functions. A hook function is a pointer to */
 /* a CF function wrapper. Basically, most CF functions that could be of any  */
@@ -560,6 +560,15 @@ static PyObject* CFGetHumidity(PyObject* self, PyObject* args);
 static PyObject* CFGetTemperature(PyObject* self, PyObject* args);
 static PyObject* CFGetPressure(PyObject* self, PyObject* args);
 
+/* Setting values - datapaths */
+static PyObject* CFGetMapDir(PyObject* self, PyObject* args);
+static PyObject* CFGetUniqueDir(PyObject* self, PyObject* args);
+static PyObject* CFGetTempDir(PyObject* self, PyObject* args);
+static PyObject* CFGetConfigurationDir(PyObject* self, PyObject* args);
+static PyObject* CFGetDataDir(PyObject* self, PyObject* args);
+static PyObject* CFGetLocalDir(PyObject* self, PyObject* args);
+static PyObject* CFGetPlayerDir(PyObject* self, PyObject* args);
+
 /* Those are used to handle the events. The first one is used when a player  */
 /* attacks with a "scripted" weapon. HandleEvent is used for all other events*/
 MODULEAPI int HandleUseWeaponEvent(CFParm* CFP);
@@ -804,6 +813,13 @@ static PyMethodDef CFPythonMethods[] =
         {"GetHumidity",CFGetHumidity, METH_VARARGS},
         {"GetTemperature",CFGetTemperature, METH_VARARGS},
         {"GetPressure",CFGetPressure, METH_VARARGS},
+        {"GetMapDirectory", CFGetMapDir, METH_VARARGS},
+        {"GetUniqueDirectory", CFGetUniqueDir, METH_VARARGS},
+        {"GetTempDirectory", CFGetTempDir, METH_VARARGS},
+        {"GetConfigurationDirectory", CFGetConfigurationDir, METH_VARARGS},
+        {"GetLocalDirectory", CFGetLocalDir, METH_VARARGS},
+        {"GetPlayerDirectory", CFGetPlayerDir, METH_VARARGS},
+        {"GetDataDirectory", CFGetDataDir, METH_VARARGS},
 /* Skills wrappers : */
         {"SkillStealing", CFSkillStealing, METH_VARARGS},
         {"SkillLockpicking", CFSkillLockpicking, METH_VARARGS},
