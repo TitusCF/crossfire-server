@@ -17,6 +17,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 CVS changes since last release:
 
+include/sproto.h, server/c_wiz.c server/main.c server/player.c socket/loop.c:
+Modify leave function to take a second parameter that determines if it
+should print a message about the player leaving the game or not.  Proper
+use of this prevents duplicate XXX left the game messages.  MSW 2001-03-29
+
 common/image.c, include/define.h, include/global.h: Add empty_face structure
    and appropriate code to initialize it.  This is used for the server side
    look selection.

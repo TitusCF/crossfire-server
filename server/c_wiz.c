@@ -128,7 +128,7 @@ int command_shutdown(object *op, char *params)
     command_kick(NULL,NULL);
     while (first_player!=NULL)
     {
-	leave(first_player);
+	leave(first_player,0);
     }
     cleanup();
     /* not reached */

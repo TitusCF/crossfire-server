@@ -922,7 +922,7 @@ void cleanup()
     exit(0);
 }
 
-void leave(player *pl) {
+void leave(player *pl, int draw_exit) {
     char buf[MAX_BUF];
 
     if (pl!=NULL) {
@@ -943,7 +943,7 @@ void leave(player *pl) {
 	}
 	pl->ob->type = DEAD_OBJECT; /* To avoid problems with inventory window */
     }
-  if (pl!=NULL) new_draw_info(NDI_UNIQUE | NDI_ALL, 5, NULL, buf);
+  if (pl!=NULL && draw_exit) new_draw_info(NDI_UNIQUE | NDI_ALL, 5, NULL, buf);
 }
 
 int forbid_play()

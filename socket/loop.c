@@ -432,7 +432,7 @@ void doeric_server()
 		terminate_all_pets(pl->ob);
 		remove_ob(pl->ob);
 	    }
-	    leave(pl);
+	    leave(pl,1);
 	    final_free_player(pl);
 	    pl=npl;
 	}
@@ -544,8 +544,7 @@ void doeric_server()
 		terminate_all_pets(pl->ob);
 		remove_ob(pl->ob);
 	    }
-	    /* leave will call free_newsocket for us */
-	    leave(pl);
+	    leave(pl,1);
 	    final_free_player(pl);
 	}
 	else {
@@ -561,7 +560,7 @@ void doeric_server()
 		    terminate_all_pets(pl->ob);
 		    remove_ob(pl->ob);
 		}
-		leave(pl);
+		leave(pl,1);
 		final_free_player(pl);
 	    } else {
 

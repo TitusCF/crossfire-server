@@ -435,7 +435,7 @@ int receive_play_again(object *op, char key)
 {
     if(key=='q'||key=='Q') {
 	remove_friendly_object(op);
-	leave(op->contr);
+	leave(op->contr,0); /* ericserver will draw the message */
 	return 2;
     }
     else if(key=='a'||key=='A') {
