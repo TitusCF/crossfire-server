@@ -52,7 +52,7 @@ FILES_HELP = $(srcdir)/help/apply $(srcdir)/help/bind \
 	$(srcdir)/help/quit $(srcdir)/help/range help/save\
 	$(srcdir)/help/sort_inventory $(srcdir)/help/spells \
 	$(srcdir)/help/statistics $(srcdir)/help/take $(srcdir)/help/traps \
-	$(srcdir)/help/unbind
+	$(srcdir)/help/unbind $(srcdir)/help/usekeys
 
 FILES_ADM = adm/README adm/check-xpm.pl adm/dilate_xpm_files \
 	adm/fix_xpm_colors adm/make_xpm_file.pl adm/map_check \
