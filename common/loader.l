@@ -1111,33 +1111,29 @@ char *get_ob_diff(object *op,object *op2) {/* I plan to optimize this heavily */
       sprintf(buf2,"face %s\n",	op->face->name);
       strcat(buf,buf2);
   }
-  for(etmp=op->events;etmp!=NULL;etmp=etmp->next)
-  {
-      if (etmp2=find_event(op2,etmp->type))
-      {
-          if ((etmp->hook  != NULL) &&
-              (etmp2->hook != NULL) &&
-              (strcmp(etmp->hook, etmp2->hook)))
-          {
-              sprintf(buf2, "%s %s\n", evtnames[etmp->type],etmp->hook);
-              strcat(buf,buf2);
-          }
-          if ((etmp->plugin  != NULL) &&
-              (etmp2->plugin != NULL) &&
-              (strcmp(etmp->plugin, etmp2->plugin)))
-          {
-              sprintf(buf2, "%s_plugin %s\n", evtnames[etmp->type],etmp->plugin);
-              strcat(buf,buf2);
-          }
-          if ((etmp->options  != NULL) &&
-              (etmp2->options != NULL) &&
-              (strcmp(etmp->options, etmp2->options)))
-          {
-              sprintf(buf2, "%s_options %s\n", evtnames[etmp->type],etmp->options);
-              strcat(buf,buf2);
-          }
-      }
-  }
+    for(etmp=op->events;etmp!=NULL;etmp=etmp->next)
+    {
+        /* First we find the event for the reference object */
+        etmp2=find_event(op2, etmp->type);
+
+        if ((etmp->hook != NULL) && ((etmp2 == NULL) || (etmp2->hook == NULL) || (strcmp(etmp2->hook,etmp->hook))))
+        /* Either there's no matching event in the reference object,
+         * or the hook is different */
+        {
+            sprintf(buf2, "%s %s\n", evtnames[etmp->type],etmp->hook);
+            strcat(buf, buf2);
+        }
+        if ((etmp->plugin != NULL) && ((etmp2 == NULL) || (etmp2->hook == NULL) || (strcmp(etmp2->plugin,etmp->plugin))))
+        {
+            sprintf(buf2, "%s_plugin %s\n", evtnames[etmp->type],etmp->plugin);
+            strcat(buf, buf2);
+        }
+        if ((etmp->options != NULL) && ((etmp2 == NULL) || (etmp2->hook == NULL) || (strcmp(etmp2->options,etmp->options))))
+        {
+            sprintf(buf2, "%s_options %s\n", evtnames[etmp->type],etmp->options);
+            strcat(buf, buf2);
+        }
+    }
   if (op->animation_id != op2->animation_id) {
     if (op->animation_id) {
       sprintf(buf2,"animation %s\n", animations[GET_ANIM_ID(op)].name);
@@ -1414,7 +1410,6 @@ void insert_event(object* op, int etype, char *ehook, char *eplug, char *eoption
     evt = find_event(op,etype);
     if (evt == NULL)
     {
-        printf("The event was NULL\n");
         evt = (event *)malloc(sizeof(event));
         evt->next = NULL;
         evt->type = etype;
@@ -1423,7 +1418,6 @@ void insert_event(object* op, int etype, char *ehook, char *eplug, char *eoption
         evt->options = NULL;
         if (op->events==NULL)
         {
-            printf("This is the first event\n");
             op->events=evt;
         }
         else
