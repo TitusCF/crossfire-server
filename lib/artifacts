@@ -2974,7 +2974,7 @@ end
 Allowed potion_generic
 chance 1
 Object electric shock
-face potion_shock.111.png
+face potion_shock.111
 stand_still 1
 type 5
 sp 5
@@ -3219,6 +3219,7 @@ end
 Allowed potion_generic
 chance 1
 Object self knowledge
+face potion_util.111
 type 5
 value 1
 sp 24
@@ -3227,6 +3228,7 @@ end
 Allowed potion_generic
 chance 1
 Object mystic power
+face potion_util.111
 type 5
 sp 121
 value 8
