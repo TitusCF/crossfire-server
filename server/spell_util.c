@@ -1253,6 +1253,48 @@ void explosion(object *op) {
   }
 }
 
+
+void forklightning(object *op, object *tmp) {
+  int new_dir=1;  /* direction or -1 for left, +1 for right 0 if no new bolt */
+  int t_dir; /* stores temporary dir calculation */
+
+  /* pick a fork direction.  tmp->stats.Con is the left bias
+		     i.e., the chance in 100 of forking LEFT
+			  Should start out at 50, down to 25 for one already going left
+		     down to 0 for one going 90 degrees left off original path*/
+		  
+  if(RANDOM()%100 < tmp->stats.Con)  /* fork left */
+	 new_dir = -1;
+		  
+		  /* check the new dir for a wall and in the map*/
+  t_dir = absdir(tmp->direction + new_dir);
+  if(wall(tmp->map,tmp->x + freearr_x[t_dir],tmp->y + freearr_y[t_dir])
+	  || out_of_map(tmp->map,tmp->x + freearr_x[t_dir],tmp->y + freearr_y[t_dir]))
+	 new_dir = 0;
+
+  if(new_dir) { /* OK, we made a fork */
+	 object *new_bolt = get_object();
+	 copy_object(tmp,new_bolt);
+
+	 /* reduce chances of subsequent forking */
+	 new_bolt->stats.Dex -= 10;  
+	 tmp->stats.Dex -= 10;  /* less forks from main bolt too */
+	 new_bolt->stats.Con += 25 * new_dir; /* adjust the left bias */
+	 new_bolt->speed_left = -0.1;
+	 new_bolt->direction = t_dir;
+	 new_bolt->stats.hp++;
+	 new_bolt->x+=DIRX(new_bolt);
+	 new_bolt->y+=DIRY(new_bolt);
+	 new_bolt->stats.dam /= 2;  /* reduce daughter bolt damage */
+	 new_bolt->stats.dam++;
+	 tmp->stats.dam /= 2;  /* reduce father bolt damage */
+	 tmp->stats.dam++;
+	 new_bolt = insert_ob_in_map(new_bolt,op->map,op);
+	 update_turn_face(new_bolt);
+  }
+}
+
+
 int reflwall(mapstruct *m,int x,int y) {
   object *op;
   if(out_of_map(m,x,y)) return 0;
@@ -1321,6 +1363,13 @@ void move_bolt(object *op) {
       tmp->stats.hp++;
       tmp->x+=DIRX(tmp),tmp->y+=DIRY(tmp);
       tmp = insert_ob_in_map(tmp,op->map,op);
+
+	/* New forking code.  Possibly create forks of this object
+			going off in other directions. */
+
+		if(RANDOM()%100< tmp->stats.Dex) {  /* stats.Dex % of forking */
+		  forklightning(op,tmp);
+		}
       if (tmp) {
         if ( ! tmp->stats.food) {
           tmp->stats.food = 1;
