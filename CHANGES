@@ -17,6 +17,8 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/attack.c: Add missing check to make sure the plugin exists before
+   we try to access the plugin function.
 common/readlable.c: Fix crash caused by passing null value to mon_desc -
    check for non null was at end of { } do loop - check should be at the
    start.

@@ -624,7 +624,8 @@ static int attack_ob_simple (object *op, object *hitter, int base_dam,
                 CFP.Value[8] = &l;
                 CFP.Value[9] = hitter->current_weapon->event_hook[k];
                 CFP.Value[10]= hitter->current_weapon->event_options[k];
-                (PlugList[findPlugin(hitter->current_weapon->event_plugin[k])].eventfunc) (&CFP);
+		if (findPlugin(hitter->current_weapon->event_plugin[k])>=0)
+		    (PlugList[findPlugin(hitter->current_weapon->event_plugin[k])].eventfunc) (&CFP);
             }
         };
     };
