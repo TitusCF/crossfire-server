@@ -18,6 +18,9 @@ else.  With this, include the file(s) that you changed.
 
 Changes for CVS:
 
+random_maps/treasure.c, wall.c:  fix a problem where hidden doors
+surrounding a treasure could destroy exits.  --PeterM 5/31/2001
+
 Make ALLOW_SKILLS standard part of game (remove #ifdef's for it)
 Files affected: common/living.c common/object.c common/treasure.c
     include/config.h include/player.h server/apply.c server/attack.c
