@@ -146,7 +146,6 @@ CommArray_s WizCommands [] = {
   {"dump", command_dump,0.0},
   {"dumpbelow", command_dumpbelow,0.0},
   {"dumpfriendlyobjects", command_dumpfriendlyobjects,0.0},
-  {"dumplights", command_dumplights,0.0},
   {"dumpallarchetypes", command_dumpallarchetypes,0.0},
   {"dumpallmaps", command_dumpallmaps,0.0},
   {"dumpallobjects", command_dumpallobjects,0.0},

@@ -35,12 +35,6 @@
 #endif
 #include <sounds.h>
 
-#ifdef sequent
-/* stoopid sequent includes don't do this like they should */
-extern char * sys_errlist[];
-extern int sys_nerr;
-#endif
-
 char *range_name[range_size] = {
   "none", "bow", "magic", "wand", "rod", "scroll", "horn"
 	,"steal"
@@ -95,7 +89,7 @@ void spell_effect (int spell_type, int x, int y, mapstruct *map,
     effect->x = x;
     effect->y = y;
 
-    insert_ob_in_map(effect, map, originator);
+    insert_ob_in_map(effect, map, originator,0);
   }
 }
 
@@ -814,7 +808,7 @@ int cast_create_obj(object *op,object *caster,object *new_op, int dir)
   }
   new_op->x=op->x+freearr_x[dir];
   new_op->y=op->y+freearr_y[dir];
-  insert_ob_in_map(new_op,op->map,op);
+  insert_ob_in_map(new_op,op->map,op,0);
   return dir;
 }
 
@@ -882,7 +876,7 @@ int summon_monster(object *op,object *caster,int dir,archetype *at,int spellnum)
   tmp->speed_left= -1;
   tmp->x=op->x+freearr_x[dir],tmp->y=op->y+freearr_y[dir];
   tmp->direction=dir;
-  insert_ob_in_map(tmp,op->map,op);
+  insert_ob_in_map(tmp,op->map,op,0);
   return 1;
 }
 
@@ -985,7 +979,7 @@ int fire_bolt(object *op,object *caster,int dir,int type,int magic) {
     tmp->x=op->x,tmp->y=op->y;
     tmp->direction=absdir(tmp->direction+4);
   }
-  if ((tmp = insert_ob_in_map(tmp,op->map,op)) != NULL)
+  if ((tmp = insert_ob_in_map(tmp,op->map,op,0)) != NULL)
     move_bolt (tmp);
   return 1;
 }
@@ -1040,7 +1034,7 @@ int fire_arch_from_position (object *op, object *caster, sint16 x, sint16 y,
   if(QUERY_FLAG(tmp, FLAG_IS_TURNABLE))
     SET_ANIMATION(tmp, dir);
 
-  if ((tmp = insert_ob_in_map (tmp, op->map, op)) == NULL)
+  if ((tmp = insert_ob_in_map (tmp, op->map, op,0)) == NULL)
     return 1;
   switch(type) {
     case SP_M_MISSILE:
@@ -1103,7 +1097,7 @@ cast_cone(object *op, object *caster,int dir, int strength, int spell_type,arche
         && tmp->stats.dam)
       LOG (llevDebug, "cast_cone(): arch %s doesn't have walk_on 1 and "
            "fly_on 1\n", spell_arch->name);
-    insert_ob_in_map(tmp,op->map,op);
+    insert_ob_in_map(tmp,op->map,op,0);
     if(tmp->other_arch) cone_drop(tmp);
   }
   return success;
@@ -1167,7 +1161,7 @@ void check_cone_push(object *op) {
 	    remove_ob(tmp);
 	    tmp->x = nx;
 	    tmp->y = ny;
-	    insert_ob_in_map(tmp,op->map,op);
+	    insert_ob_in_map(tmp,op->map,op,0);
 	}
 #endif
     }
@@ -1185,7 +1179,7 @@ void cone_drop(object *op) {
     new_ob->chosen_skill=op->chosen_skill;
     new_ob->exp_obj = op->chosen_skill->exp_obj;
   }
-  insert_ob_in_map(new_ob,op->map,op);
+  insert_ob_in_map(new_ob,op->map,op,0);
   
 }
 
@@ -1265,7 +1259,7 @@ void move_cone(object *op) {
 	    tmp->stats.maxhp=op->stats.maxhp;
 	    tmp->stats.dam = op->stats.dam;
 	    tmp->attacktype=op->attacktype;
-	    insert_ob_in_map(tmp,op->map,op);
+	    insert_ob_in_map(tmp,op->map,op,0);
 	    if(tmp->other_arch) { cone_drop(tmp);}
 	}
     }
@@ -1293,7 +1287,7 @@ void fire_a_ball (object *op, int dir, int strength)
   tmp->level = op->level;
   SET_ANIMATION(tmp, dir);
   SET_FLAG(tmp, FLAG_FLYING);
-  if ((tmp = insert_ob_in_map (tmp, op->map, op)) != NULL)
+  if ((tmp = insert_ob_in_map (tmp, op->map, op,0)) != NULL)
     move_fired_arch (tmp);
 }
 
@@ -1310,7 +1304,7 @@ void explosion(object *op) {
   if(op->above!=NULL&&op->above->type!=PLAYER) {
     SET_FLAG (op, FLAG_NO_APPLY);
     remove_ob(op);
-    insert_ob_in_map(op,op->map,op);
+    insert_ob_in_map(op,op->map,op,0);
     CLEAR_FLAG (op, FLAG_NO_APPLY);
   }
   hit_map(op,0,op->attacktype);
@@ -1330,7 +1324,7 @@ void explosion(object *op) {
         tmp->stats.hp--;
         tmp->value=0;
         tmp->x=dx,tmp->y=dy;
-        insert_ob_in_map(tmp,m,op);
+        insert_ob_in_map(tmp,m,op,0);
       }
     }
   }
@@ -1372,7 +1366,7 @@ void forklightning(object *op, object *tmp) {
 	 new_bolt->stats.dam++;
 	 tmp->stats.dam /= 2;  /* reduce father bolt damage */
 	 tmp->stats.dam++;
-	 new_bolt = insert_ob_in_map(new_bolt,op->map,op);
+	 new_bolt = insert_ob_in_map(new_bolt,op->map,op,0);
 	 update_turn_face(new_bolt);
   }
 }
@@ -1440,7 +1434,7 @@ void move_bolt(object *op) {
       tmp->value=0;
       tmp->stats.hp++;
       tmp->x+=DIRX(tmp),tmp->y+=DIRY(tmp);
-      tmp = insert_ob_in_map(tmp,op->map,op);
+      tmp = insert_ob_in_map(tmp,op->map,op,0);
 
 	/* New forking code.  Possibly create forks of this object
 			going off in other directions. */
@@ -1552,7 +1546,7 @@ void move_golem(object *op) {
 	    }
 	} /* If victim */
     }
-    if(made_attack) update_object(op);
+    if(made_attack) update_object(op,UP_OBJ_FACE);
 }
 
 void control_golem(object *op,int dir) {
@@ -1599,7 +1593,7 @@ void move_missile(object *op) {
     op->direction=absdir(op->direction+((op->direction-i+8)%8<4?-1:1));
     SET_ANIMATION(op, op->direction);
   }
-  insert_ob_in_map(op,op->map,op);
+  insert_ob_in_map(op,op->map,op,0);
 }
 
 void explode_object(object *op)
@@ -1626,7 +1620,7 @@ void explode_object(object *op)
     remove_ob (op);
     op->x = env->x;
     op->y = env->y;
-    insert_ob_in_map_simple (op, env->map);
+    insert_ob_in_map(op, env->map, op, INS_NO_MERGE | INS_NO_WALK_ON);
   } else if (out_of_map (op->map, op->x, op->y)) {
      LOG (llevError, "BUG: explode_object(): op out of map\n");
      remove_ob (op);
@@ -1671,7 +1665,7 @@ void explode_object(object *op)
     CLEAR_FLAG (op, FLAG_WALK_ON);
     CLEAR_FLAG (op, FLAG_FLY_ON);
 
-    insert_ob_in_map (tmp, op->map, op);
+    insert_ob_in_map (tmp, op->map, op,0);
     break;
   }
   case CONE: 
@@ -1764,7 +1758,7 @@ void move_fired_arch (object *op)
     remove_ob (op);
     op->x = new_x;
     op->y = new_y;
-    if ((op = insert_ob_in_map (op, op->map, op)) == NULL)
+    if ((op = insert_ob_in_map (op, op->map, op,0)) == NULL)
         return;
 
     if (reflwall (op->map, op->x, op->y, op)) {
@@ -1870,7 +1864,7 @@ void move_ball_lightning(object *op) {
   remove_ob(op);
   op->y=ny;
   op->x=nx;
-  insert_ob_in_map(op,op->map,op);
+  insert_ob_in_map(op,op->map,op,0);
 	 
   dam_save = op->stats.dam;  /* save the original dam: we do halfdam on 
                                 surrounding squares */
@@ -1896,7 +1890,7 @@ void move_ball_lightning(object *op) {
       new_ob = arch_to_object(op->other_arch);
       new_ob->x = hx;
       new_ob->y = hy;
-      insert_ob_in_map(new_ob,op->map,op);
+      insert_ob_in_map(new_ob,op->map,op,0);
     }
   }
   /* restore to the center location and damage*/
@@ -2215,7 +2209,7 @@ void fire_swarm (object *op, object *caster, int dir, archetype *swarm_type,
   tmp->other_arch=swarm_type;  /* the archetype of the things to be fired*/
   tmp->direction=dir; 
   tmp->invisible=1;
-  insert_ob_in_map(tmp,op->map,op);
+  insert_ob_in_map(tmp,op->map,op,0);
 }
 
 /* create an aura spell object and put it in the player's inventory.  */
@@ -2302,14 +2296,14 @@ void put_a_monster(object *op,char *monstername) {
 
     if (head->randomitems) 
 	create_treasure(head->randomitems, head, GT_INVISIBLE, op->map->difficulty,0);
-    insert_ob_in_map(head,op->map,op);
+    insert_ob_in_map(head,op->map,op,0);
 
     /* thought it'd be cool to insert a burnout, too.*/
     tmp=get_archetype("burnout");
     tmp->map = op->map;
     tmp->x=op->x+freearr_x[dir];
     tmp->y=op->y+freearr_y[dir];
-    insert_ob_in_map(tmp,op->map,op);
+    insert_ob_in_map(tmp,op->map,op,0);
     }
 }
 
@@ -2585,7 +2579,7 @@ int cast_smite_spell (object *op, object *caster,int dir, int type) {
  
    /* ok, tell it where to be, and insert! */
    effect->x=target->x;effect->y=target->y;
-   insert_ob_in_map(effect,op->map,op);
+   insert_ob_in_map(effect,op->map,op,0);
  
    return 1;
 }

@@ -748,12 +748,12 @@ int key_change_class(object *op, char key)
       op->x = x;
       op->y = y;
       SET_ANIMATION(op, 2);    /* So player faces south */
-      insert_ob_in_map (op, op->map, op);
+      insert_ob_in_map (op, op->map, op,0);
       strncpy(op->contr->title,op->arch->clone.name,MAX_NAME);
       add_statbonus(op);
       tmp_loop=allowed_class(op);
     }
-    update_object(op);
+    update_object(op,UP_OBJ_FACE);
     esrv_update_item(UPD_FACE,op,op);
     fix_player(op);
     op->stats.hp=op->stats.maxhp;
@@ -1004,7 +1004,7 @@ static void fire_bow(object *op, int dir)
   SET_FLAG(arrow, FLAG_FLY_ON);
   SET_FLAG(arrow, FLAG_WALK_ON);
   play_sound_map(op->map, op->x, op->y, SOUND_FIRE_ARROW);
-  insert_ob_in_map(arrow,op->map,op);
+  insert_ob_in_map(arrow,op->map,op,0);
   move_arrow(arrow);
   if (was_destroyed (left, left_tag))
       esrv_del_item(op->contr, left_tag);
@@ -1364,12 +1364,12 @@ void move_player_attack(object *op, int dir)
 }
 
 int move_player(object *op,int dir) {
-	int face, pick;
+    int face, pick;
 
-	if(op->contr->socket.newanim)
-		face = dir%8;
-	else
-		face = dir ? (dir - 1) / 2 : -1;
+    if(op->contr->socket.newanim)
+	face = dir%8;
+    else
+	face = dir ? (dir - 1) / 2 : -1;
 
     if(op->map == NULL || op->map->in_memory != MAP_IN_MEMORY)
 	return 0;
@@ -1399,7 +1399,7 @@ int move_player(object *op,int dir) {
     if(face != -1)
 		SET_ANIMATION(op,face);
 
-    update_object(op);
+    update_object(op, UP_OBJ_FACE);
 
     return 0;
 }
@@ -1484,7 +1484,7 @@ void remove_unpaid_objects(object *op, object *env)
 	    remove_ob(op);
 	    op->x = env->x;
 	    op->y = env->y;
-	    insert_ob_in_map(op, env->map, NULL);
+	    insert_ob_in_map(op, env->map, NULL,0);
 	}
 	else if (op->inv) remove_unpaid_objects(op->inv, env);
 	op=next;
@@ -1691,7 +1691,7 @@ void kill_player(object *op)
 	tmp->msg=add_string(buf);
 	tmp->value=0, tmp->material=0, tmp->type=0;
 	tmp->x = op->x, tmp->y = op->y;
-	insert_ob_in_map(tmp,op->map,op);
+	insert_ob_in_map(tmp,op->map,op,0);
       }
       
       /* teleport defeated player to new destination*/
@@ -1867,7 +1867,7 @@ void kill_player(object *op)
 	        op->contr->killer);
     tmp->msg = add_string(buf);
     tmp->x=op->x,tmp->y=op->y;
-    insert_ob_in_map (tmp, op->map, NULL);
+    insert_ob_in_map (tmp, op->map, NULL,0);
 
  /**************************************/
  /*                                    */
@@ -1979,7 +1979,7 @@ void kill_player(object *op)
         free_string (tmp->msg);
     tmp->msg = add_string(buf);
     tmp->x=x,tmp->y=y;
-    insert_ob_in_map (tmp, map, NULL);
+    insert_ob_in_map (tmp, map, NULL,0);
 #else
     /*  peterm:  added to create a corpse at deathsite.  */
     tmp=arch_to_object(find_archetype("corpse_pl"));
@@ -1993,7 +1993,7 @@ void kill_player(object *op)
 	free_string(tmp->msg);
     tmp->msg = add_string (gravestone_text(op));
     SET_FLAG (tmp, FLAG_UNIQUE);
-    insert_ob_in_map (tmp, map, NULL);
+    insert_ob_in_map (tmp, map, NULL,0);
 #endif
 }
 
@@ -2018,11 +2018,11 @@ void loot_object(object *op) { /* Grab and destroy some treasure */
       if(tmp->nrof>1) {
 	tmp2=get_split_ob(tmp,1+RANDOM()%(tmp->nrof-1));
 	free_object(tmp2);
-	insert_ob_in_map(tmp,op->map,NULL);
+	insert_ob_in_map(tmp,op->map,NULL,0);
       } else
 	free_object(tmp);
     } else
-      insert_ob_in_map(tmp,op->map,NULL);
+      insert_ob_in_map(tmp,op->map,NULL,0);
   }
 }
 
@@ -2086,7 +2086,7 @@ void make_visible (object *op) {
       op->contr->tmp_invis = 0;
     if(QUERY_FLAG(op, FLAG_UNDEAD)&&!is_true_undead(op)) 
       CLEAR_FLAG(op, FLAG_UNDEAD);
-    update_object(op);
+    update_object(op,UP_OBJ_FACE);
 }
 
 int is_true_undead(object *op) {

@@ -6,6 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
+    Copyright (C) 2001 Mark Wedel
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -22,7 +23,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to frankj@ifi.uio.no.
+    The author can be reached via e-mail to mwedel@scruz.net
 */
 
 #include <global.h>
@@ -54,12 +55,13 @@ static void write_map_log()
 	if (map->in_memory != MAP_IN_MEMORY && (map->tmpname !=NULL) &&
 	    (strncmp(map->path,"/random",7))) {
 	    /* the 0 written out is a leftover from the lock number for
-	     * unique items.  Keep using it so that old temp files continue
+	     * unique items and second one is from encounter maps.
+	     * Keep using it so that old temp files continue
 	     * to work.
 	     */
-		fprintf(fp,"%s:%s:%ld:0:%d:%d:%d:%d\n", map->path, map->tmpname,
+		fprintf(fp,"%s:%s:%ld:0:0:%d:%d:%d\n", map->path, map->tmpname,
 		    (map->reset_time==-1 ? -1: map->reset_time-current_time),
-		    map->encounter, map->difficulty, map->do_los,
+		    map->difficulty, map->do_los,
 		    map->darkness);
 	}
     }
@@ -72,8 +74,7 @@ void read_map_log()
     FILE *fp;
     mapstruct *map;
     char buf[MAX_BUF],*cp,*cp1;
-    long current_time=time(NULL);
-    int encounter, do_los, darkness, lock;
+    int do_los, darkness, lock;
 
     sprintf(buf,"%s/temp.maps", settings.localdir);
     if (!(fp=fopen(buf,"r"))) {
@@ -81,7 +82,7 @@ void read_map_log()
 	return;
     }
     while (fgets(buf, MAX_BUF, fp)!=NULL) {
-	map=get_linked_map(NULL);
+	map=get_linked_map();
 	/* scanf doesn't work all that great on strings, so we break
 	 * out that manually.  strdup is used for tmpname, since other
 	 * routines will try to free that pointer.
@@ -93,18 +94,17 @@ void read_map_log()
 	*cp1++='\0';
 	map->tmpname=strdup_local(cp);
 
-	/* Lock is left over from the lock items - we just toss it now */
-	sscanf(cp1,"%ld:%d:%d:%hd:%d:%d\n",
+	/* Lock is left over from the lock items - we just toss it now.
+	 * We use it twice - second one is from encounter, but as we
+	 * don't care about the value, this works fine
+	 */
+	sscanf(cp1,"%d:%d:%d:%hd:%d:%d\n",
 		    &map->reset_time, &lock,
-		    &encounter, &map->difficulty, &do_los,
+		    &lock, &map->difficulty, &do_los,
 		    &darkness);
-	if (map->reset_time != -1)
-	    map->reset_time += current_time;
+
 	map->in_memory=MAP_SWAPPED;
 	map->darkness=darkness;
-	/* The following two are bit fields, so can't be done above */
-	map->encounter=encounter;
-	map->do_los=do_los;
     }
     fclose(fp);
 }
@@ -125,7 +125,7 @@ void swap_map(mapstruct *map) {
   remove_all_pets(map); /* Give them a chance to follow */
 
   /* Update the reset time.  Only do this is STAND_STILL is not set */
-  if (!QUERY_FLAG(map->map_object, FLAG_STAND_STILL))
+  if (!map->fixed_resettime) 
     set_map_reset_time(map);
 
   /* If it is immediate reset time, don't bother saving it - just get
@@ -161,10 +161,6 @@ void check_active_maps() {
     next = map->next;
     if(map->in_memory != MAP_IN_MEMORY)
       continue;
-    if(map->need_refresh) {
-      map->need_refresh=0;
-      refresh_map(map);
-    }
     if(!map->timeout)
       continue;
     if( --(map->timeout) > 0)

@@ -61,11 +61,11 @@ void map_info(object *op) {
               map_path, m->players,players_on_map(m),m->in_memory,m->timeout,
               m->difficulty);
 #else
-      sprintf(buf,"%-18.18s %2d %2d   %1d %4d %2d  %02ld:%02ld:%02ld",
+      sprintf(buf,"%-18.18s %2d %2d   %1d %4d %2d  %02d:%02d:%02d",
               map_path, m->players,players_on_map(m),
               m->in_memory,m->timeout,m->difficulty,
-              (m->reset_time%86400)/3600,(m->reset_time%3600)/60,
-              m->reset_time%60);
+	      (MAP_WHEN_RESET(m)%86400)/3600,(MAP_WHEN_RESET(m)%3600)/60,
+              MAP_WHEN_RESET(m)%60);
 #endif
     new_draw_info(NDI_UNIQUE, 0,op,buf);
   }
@@ -123,9 +123,10 @@ void malloc_info(object *op) {
 
   for(pl=first_player,players=0;pl!=NULL;pl=pl->next,players++);
   for(m=first_map,nrofmaps=0;m!=NULL;m=m->next,nrofmaps++)
-    if(m->in_memory == MAP_IN_MEMORY)
-      mapmem+=m->map_object->x*m->map_object->y*(sizeof(object *)+sizeof(MapLook *)*3),
-      nrm++;
+	if(m->in_memory == MAP_IN_MEMORY) {
+	    mapmem+=MAP_WIDTH(m)*MAP_HEIGHT(m)*(sizeof(object *)+sizeof(MapSpace));
+	    nrm++;
+	}
   sprintf(errmsg,"Sizeof: object=%ld  player=%ld  map=%ld",
           (long)sizeof(object),(long)sizeof(player),(long)sizeof(mapstruct));
   new_draw_info(NDI_UNIQUE, 0,op,errmsg);
@@ -192,19 +193,19 @@ void current_map_info(object *op) {
 	return;
 
     new_draw_info_format(NDI_UNIQUE, 0,op,   
-	"%s (%s)", m->map_object->name, m->path);
+	"%s (%s)", m->name, m->path);
 
     if (QUERY_FLAG(op,FLAG_WIZ)) {
 	new_draw_info_format(NDI_UNIQUE, 0, op,
 		"players:%d difficulty:%d size:%dx%d start:%dx%d timeout %ld", 
 		 m->players, m->difficulty, 
-		 m->map_object->x, m->map_object->y, 
-		 EXIT_X(m->map_object), EXIT_Y(m->map_object),
+		 MAP_WIDTH(m), MAP_HEIGHT(m), 
+		 MAP_ENTER_X(m), MAP_ENTER_Y(m),
 		 MAP_TIMEOUT(m));
 
     }
-    if (m->map_object->msg)
-	new_draw_info(NDI_UNIQUE, NDI_NAVY, op, m->map_object->msg);
+    if (m->msg)
+	new_draw_info(NDI_UNIQUE, NDI_NAVY, op, m->msg);
 }
 
 #ifdef DEBUG_MALLOC_LEVEL
@@ -374,12 +375,6 @@ int command_dumpfriendlyobjects (object *op, char *params)
 {
         dump_friendly_objects();
   return 0;
-}
-
-int command_dumplights (object *op, char *params)
-{
-	if(op) dump_map_lights(op->map);
-        return 0;
 }
 
 int command_dumpallarchetypes (object *op, char *params)
@@ -1068,9 +1063,9 @@ int command_style_map_info(object *op, char *params)
 
     for (mp = styles; mp!=NULL; mp=mp->next) {
 	maps_used++;
-	mapmem += mp->map_object->x*mp->map_object->y*(sizeof(object *)+sizeof(MapLook *)*3) + sizeof(mapstruct);
-	for (x=0; x<mp->map_object->x; x++) {
-	    for (y=0; y<mp->map_object->y; y++) {
+	mapmem += MAP_WIDTH(mp)*MAP_HEIGHT(mp)*(sizeof(object *)+sizeof(MapSpace)) + sizeof(mapstruct);
+	for (x=0; x<MAP_WIDTH(mp); x++) {
+	    for (y=0; y<MAP_HEIGHT(mp); y++) {
 		for (tmp=get_map_ob(mp, x, y); tmp!=NULL; tmp=tmp->above) 
 		    objects_used++;
 	    }

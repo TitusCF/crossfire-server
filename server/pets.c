@@ -136,7 +136,7 @@ void follow_owner(object *ob, object *owner) {
     tmp->x = owner->x + freearr_x[dir]+(tmp->arch==NULL?0:tmp->arch->clone.x);
     tmp->y = owner->y + freearr_y[dir]+(tmp->arch==NULL?0:tmp->arch->clone.y);
   }
-  insert_ob_in_map(ob, owner->map, NULL);
+  insert_ob_in_map(ob, owner->map, NULL,0);
   if (owner->type == PLAYER) /* Uh, I hope this is always true... */
     new_draw_info(NDI_UNIQUE, 0,owner, "Your pet magically appears next to you");
   return;

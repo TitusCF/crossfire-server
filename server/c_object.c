@@ -611,12 +611,12 @@ void drop_object (object *op, object *tmp, long nrof)
 
     if (op->type == PLAYER)
         esrv_del_item (op->contr, tmp->count);
-    insert_ob_in_map(tmp, op->map, op);
+    insert_ob_in_map(tmp, op->map, op,0);
 
 
     SET_FLAG (op, FLAG_NO_APPLY);
     remove_ob(op);
-    insert_ob_in_map_simple(op, op->map);
+    insert_ob_in_map(op, op->map, op, INS_NO_MERGE | INS_NO_WALK_ON);
     CLEAR_FLAG (op, FLAG_NO_APPLY);
 
     /* Call this before we update the various windows/players.  At least
@@ -631,11 +631,7 @@ void drop_object (object *op, object *tmp, long nrof)
 /*    esrv_send_item (op, tmp);*/
     /* Need to update the weight for the player */
     esrv_send_item (op, op);
-    };
-
-#ifdef USE_LIGHTING
-    if(tmp->glow_radius>0) remove_light_from_list(tmp,op);
-#endif
+    }
 }
 
 void drop(object *op, object *tmp)

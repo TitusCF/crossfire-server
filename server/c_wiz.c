@@ -339,7 +339,7 @@ int command_create (object *op, char *params)
           prev=tmp;
         }
         if (QUERY_FLAG(head,FLAG_ALIVE))
-          insert_ob_in_map(head,op->map,op);
+          insert_ob_in_map(head,op->map,op,0);
         else
           head = insert_ob_in_ob(head,op);
         if (at->clone.randomitems!=NULL)
@@ -663,7 +663,8 @@ int command_reset (object *op, char *params)
 	clean_tmp_map(m);
 	if (m->tmpname) free(m->tmpname);
 	m->tmpname = NULL;
-	m->reset_time = 0;
+	/* setting this effectively causes an immediate reload */
+	m->reset_time = 1;
 	new_draw_info(NDI_UNIQUE, 0,op,"OK.");
 	if (tmp) {
 	    enter_exit(tmp, dummy);
@@ -673,7 +674,7 @@ int command_reset (object *op, char *params)
     } else {
 	/* Need to re-insert player if swap failed for some reason */
 	if (tmp) {
-	    insert_ob_in_map(op, m, NULL);
+	    insert_ob_in_map(op, m, NULL,0);
 	    free_object(dummy);
 	}
 	new_draw_info(NDI_UNIQUE, 0,op,"Reset failed, couldn't swap map.\n");
@@ -765,7 +766,7 @@ int command_invisible (object *op, char *params)
   if (!op)
     return 0;
       op->invisible+=100;
-      update_object(op);
+      update_object(op,UP_OBJ_FACE);
       new_draw_info(NDI_UNIQUE, 0,op,"You turn invisible.");
   return 0;
 }

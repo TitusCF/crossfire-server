@@ -117,7 +117,6 @@ int check_wakeup(object *op, object *enemy) {
   /* blinded monsters can only find nearby objects to attack */
   if(QUERY_FLAG(op, FLAG_BLIND) && !QUERY_FLAG(op, FLAG_SEE_INVISIBLE)) 
 	radius = MIN_MON_RADIUS;
-#ifdef USE_LIGHTING
   /* This covers the situation where the monster is in the dark 
    * and has an enemy. If the enemy has no carried light (or isnt 
    * glowing!) then the monster has trouble finding the enemy. 
@@ -130,7 +129,6 @@ int check_wakeup(object *op, object *enemy) {
 	  int dark = radius/(op->map->darkness);
 	  radius = (dark>MIN_MON_RADIUS)?(dark+1):MIN_MON_RADIUS;
   } 
-#endif
   else if(!QUERY_FLAG(op,FLAG_SLEEP)) return 1;
     /* enemy should already be on this map, so don't really need to check
      * for that.
@@ -171,11 +169,8 @@ int move_monster(object *op) {
 
 
     if(QUERY_FLAG(op, FLAG_SLEEP)||QUERY_FLAG(op, FLAG_BLIND)
-#ifdef USE_LIGHTING  
        ||((op->map->darkness>0)&&!QUERY_FLAG(op,FLAG_SEE_IN_DARK)
-	  &&!QUERY_FLAG(op,FLAG_SEE_INVISIBLE))
-#endif
-       ) {
+	  &&!QUERY_FLAG(op,FLAG_SEE_INVISIBLE))) {
 	if(!check_wakeup(op,enemy))
 	    return 0;
     }
@@ -723,7 +718,7 @@ int monster_use_bow(object *head, object *part, object *pl, int dir) {
   SET_FLAG(arrow, FLAG_FLY_ON);
   SET_FLAG(arrow, FLAG_WALK_ON);
   tag = arrow->count;
-  insert_ob_in_map(arrow,head->map,head);
+  insert_ob_in_map(arrow,head->map,head,0);
   if (!was_destroyed(arrow, tag))
     move_arrow(arrow);
   return 1;
@@ -1209,7 +1204,7 @@ int move_object(object *op, int dir) {
     for(tmp = op; tmp != NULL; tmp = tmp->more)
 	tmp->x+=freearr_x[dir], tmp->y+=freearr_y[dir];
 
-    insert_ob_in_map(op, op->map, op);
+    insert_ob_in_map(op, op->map, op,0);
     return 1;
 }
 
@@ -1546,7 +1541,6 @@ int can_detect_enemy (object *op, object *enemy) {
     if(QUERY_FLAG(enemy,FLAG_STEALTH)) 
       radius = radius/2, hide_discovery = hide_discovery/3;
 
-#ifdef USE_LIGHTING
     /* Radii adjustment for enemy standing in the dark */ 
     if(op->map->darkness>0 && !stand_in_light(enemy)) {
 
@@ -1565,7 +1559,6 @@ int can_detect_enemy (object *op, object *enemy) {
 	if(radius<MIN_MON_RADIUS && op->map->darkness<5 && (x_dist<=1||y_dist<=1)) 
 	  radius = MIN_MON_RADIUS;
     }
-#endif
 
     /* Lets not worry about monsters that have incredible detection
      * radii, we only need to worry here about things the player can
@@ -1633,18 +1626,27 @@ int can_detect_enemy (object *op, object *enemy) {
  */
 
 int stand_in_light( object *op) {
-  objectlink *obl;
 
-  if(!op) return 0;
-  if(has_carried_lights(op)) return 1;
+    if(!op) return 0;
+    if(op->glow_radius) return 1;
 
-  if(op->map)
-    for(obl=op->map->light;obl;obl=obl->next)
-      if(obl->ob&&(!obl->ob->env&&(!obl->ob->above||obl->ob->invisible))) { 
-	int dist=isqrt(distance(op,obl->ob));
-        if(dist && dist<obl->ob->glow_radius) return 1;
-      }
-  return 0;
+    if(op->map) {
+	int x, y;
+
+	/* Check the spacs with the max light radius to see if any of them
+	 * have lights, and if the light is bright enough to illuminate
+	 * this object.  Like the los.c logic, this presumes a square
+	 * lighting area.
+	 */
+	for (x = op->x - MAX_LIGHT_RADII; x< op->x + MAX_LIGHT_RADII; x++) {
+	    for (y = op->y - MAX_LIGHT_RADII; y< op->y + MAX_LIGHT_RADII; y++) {
+		if (out_of_map(op->map, x, y)) continue;
+
+		if (GET_MAP_LIGHT(op->map, x, y) > MAX(abs(x - op->x), abs(y - op->y))) return 1;
+	    }
+	}
+    }
+    return 0;
 }
 
 /* assuming no walls/barriers, lets check to see if its *possible* 
@@ -1689,7 +1691,6 @@ int can_see_enemy (object *op, object *enemy) {
   } else if(looker->type==PLAYER) /* for players, a (possible) shortcut */
       if(player_can_view(looker,enemy)) return 1;
 
-#ifdef USE_LIGHTING
   /* ENEMY IN DARK MAP. Without infravision, the enemy is not seen 
    * unless they carry a light or stand in light. Darkness doesnt
    * inhibit the undead per se (but we should give their archs
@@ -1698,7 +1699,6 @@ int can_see_enemy (object *op, object *enemy) {
      &&(!QUERY_FLAG(looker,FLAG_SEE_IN_DARK)||
         !is_true_undead(looker)||!QUERY_FLAG(looker,FLAG_XRAYS)))
     return 0;
-#endif
 
   return 1;
 }

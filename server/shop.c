@@ -595,7 +595,7 @@ static int shop_sort(const void *a1, const void *a2)
     return strcasecmp(s1->item_sort, s2->item_sort);
 }
 
-void add_shop_item(object *tmp, shopinv *items, int *numitems, int *numallocated)
+static void add_shop_item(object *tmp, shopinv *items, int *numitems, int *numallocated)
 {
     char buf[MAX_BUF];
 
@@ -634,7 +634,7 @@ void add_shop_item(object *tmp, shopinv *items, int *numitems, int *numallocated
 void shop_listing(object *op)
 {
     int i,j,numitems=0,numallocated=0;
-    char *map_mark = (char *) malloc(op->map->map_object->x * op->map->map_object->y);
+    char *map_mark = (char *) malloc(MAP_SIZE(op->map));
     object	*stack;
     shopinv	*items;
 
@@ -643,15 +643,15 @@ void shop_listing(object *op)
 
     new_draw_info(NDI_UNIQUE, 0, op, "\nThe shop contains:");
 
-    memset(map_mark, 0, op->map->map_object->x * op->map->map_object->y);
+    memset(map_mark, 0, MAP_SIZE(op->map));
     magic_mapping_mark(op, map_mark, 3);
     items=malloc(40*sizeof(shopinv));
     numallocated=40;
 
     /* Find all the appropriate items */
-    for (i=0; i<op->map->map_object->x; i++) {
-	for (j=0; j<op->map->map_object->y; j++) {
-	    if (map_mark[i + op->map->map_object->x * j]) {
+    for (i=0; i<MAP_WIDTH(op->map); i++) {
+	for (j=0; j<MAP_HEIGHT(op->map); j++) {
+	    if (map_mark[i + MAP_WIDTH(op->map) * j]) {
 		stack  =get_map_ob(op->map,i,j);
 
 		while (stack) {

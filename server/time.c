@@ -90,7 +90,7 @@ void generate_monster(object *gen) {
     if(head!=NULL)
       op->head=head,prev->more=op;
     if (RANDOM()%10) generate_artifact(op, gen->map->difficulty);
-    insert_ob_in_map(op,gen->map,gen);
+    insert_ob_in_map(op,gen->map,gen,0);
     if (QUERY_FLAG(op, FLAG_FREED)) return;
     if(op->randomitems!=NULL)
       create_treasure(op->randomitems,op,GT_APPLY,
@@ -218,10 +218,10 @@ void move_gate(object *op) { /* 1 = going down, 0 = goind up */
 	if((int)op->stats.wc < (NUM_ANIMATIONS(op)/2+1)) {
 	    CLEAR_FLAG(op, FLAG_NO_PASS);
 	    CLEAR_FLAG(op, FLAG_BLOCKSVIEW);
-	    update_all_los(op->map);
+	    update_all_los(op->map, op->x, op->y);
 	}
 	SET_ANIMATION(op, op->stats.wc);
-	update_object(op);
+	update_object(op,UP_OBJ_CHANGE);
 	return;
     }
 
@@ -293,7 +293,7 @@ void move_gate(object *op) { /* 1 = going down, 0 = goind up */
 		    if (i!=-1) {
 			remove_ob(tmp);
 			tmp->x+=freearr_x[i],tmp->y+=freearr_y[i];
-			insert_ob_in_map(tmp,op->map,op);
+			insert_ob_in_map(tmp,op->map,op,0);
 		    }
 		}
 	    }
@@ -312,12 +312,12 @@ void move_gate(object *op) { /* 1 = going down, 0 = goind up */
 		SET_FLAG(op, FLAG_NO_PASS);    /* The coast is clear, block the way */
 		if(!op->arch->clone.stats.ac)
 		    SET_FLAG(op, FLAG_BLOCKSVIEW);
-		update_all_los(op->map);
+		update_all_los(op->map, op->x, op->y);
 	    }
 	} /* gate is halfway up */
 
 	SET_ANIMATION(op, op->stats.wc);
-	update_object(op);
+	update_object(op,UP_OBJ_CHANGE);
     } /* gate is going up */
 }
 
@@ -404,7 +404,7 @@ void animate_trigger (object *op)
     check_trigger(op,NULL);
   } else {
     SET_ANIMATION(op, op->stats.wc);
-    update_object(op);
+    update_object(op,UP_OBJ_FACE);
   }
 }
 
@@ -423,7 +423,7 @@ void move_hole(object *op) { /* 1 = opening, 0 = closing */
 	    }
 	}
 	SET_ANIMATION(op, op->stats.wc);
-	update_object(op);
+	update_object(op,UP_OBJ_FACE);
 	return;
     }
     /* We're closing */
@@ -432,7 +432,7 @@ void move_hole(object *op) { /* 1 = opening, 0 = closing */
     if((int)op->stats.wc >= NUM_ANIMATIONS(op))
 	op->stats.wc=NUM_ANIMATIONS(op)-1;
     SET_ANIMATION(op, op->stats.wc);
-    update_object(op);
+    update_object(op,UP_OBJ_FACE);
     if((unsigned char) op->stats.wc==(NUM_ANIMATIONS(op)-1)) {
 	op->speed = 0;
 	update_ob_speed(op); /* closed, let's stop */
@@ -498,7 +498,7 @@ void fix_stopped_item (object *op, mapstruct *map, object *originator)
     if (map == NULL)
         return;
     if (QUERY_FLAG (op, FLAG_REMOVED))
-        insert_ob_in_map (op, map, originator);
+        insert_ob_in_map (op, map, originator,0);
     else if (op->type == ARROW)
         merge_ob (op, NULL);   /* only some arrows actually need this */
 }
@@ -526,7 +526,7 @@ object *fix_stopped_arrow (object *op)
     op->stats.hp = 0;
     op->face=op->arch->clone.face;
     op->owner=NULL; /* So that stopped arrows will be saved */
-    update_object (op);
+    update_object (op,UP_OBJ_FACE);
     return op;
 }
 
@@ -553,7 +553,7 @@ static void stop_arrow (object *op)
 	object *payload = op->inv;
 	remove_ob (payload);
 	clear_owner(payload);
-        insert_ob_in_map (payload, op->map, payload);
+        insert_ob_in_map (payload, op->map, payload,0);
         remove_ob (op);
 	free_object (op);
     } else {
@@ -689,7 +689,7 @@ void move_arrow(object *op) {
     remove_ob (op);
     op->x = new_x;
     op->y = new_y;
-    insert_ob_in_map (op, op->map, op);
+    insert_ob_in_map (op, op->map, op,0);
 }
 
 /* This routine doesnt seem to work for "inanimate" objects that
@@ -732,7 +732,7 @@ void change_object(object *op) { /* Doesn`t handle linked objs yet */
 	    free_object(tmp);
 	else {
 	    tmp->x=op->x+freearr_x[j],tmp->y=op->y+freearr_y[j];
-	    insert_ob_in_map(tmp,op->map,op);
+	    insert_ob_in_map(tmp,op->map,op,0);
 	}
     }
   }
@@ -902,7 +902,7 @@ void move_creator(object *op) {
 	 tmp->title = add_string(op->slaying);
   }
   tmp->x=op->x;tmp->y=op->y;tmp->map=op->map;tmp->level=op->level;
-  insert_ob_in_map(tmp,op->map,op);
+  insert_ob_in_map(tmp,op->map,op,0);
 }
 
 /* move_marker --peterm@soda.csua.berkeley.edu

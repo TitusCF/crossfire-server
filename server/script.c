@@ -528,7 +528,11 @@ SCM Script_getMapPath(SCM where)
 
 SCM Script_getMapObject(SCM where)
 {
+#if 0
   return gh_long2scm((long)(((mapstruct *)(gh_scm2long(where)))->map_object));
+#else
+    return NULL;
+#endif
 };
 
 SCM Script_getMessage(SCM who)
@@ -589,7 +593,7 @@ SCM Script_teleport(SCM who, SCM where, SCM x, SCM y)
     for(tmp=WHO;tmp!=NULL;tmp=tmp->more)
       tmp->x=gh_scm2int(x)+freearr_x[k]+(tmp->arch==NULL?0:tmp->arch->clone.x),
       tmp->y=gh_scm2int(y)+freearr_y[k]+(tmp->arch==NULL?0:tmp->arch->clone.y);
-    insert_ob_in_map(WHO,(mapstruct *)(gh_scm2long(where)),NULL);
+    insert_ob_in_map(WHO,(mapstruct *)(gh_scm2long(where)),NULL,0);
   };
 };
 
@@ -943,8 +947,8 @@ SCM Script_setFace(SCM who, SCM value)
   char *txt = gh_scm2newstr(value, length);
   WHO->animation_id = find_animation(txt);
   SET_ANIMATION(WHO, WHO->direction);
-  update_object(WHO);
-};
+  update_object(WHO,UP_OBJ_FACE);
+}
 
 SCM Script_setAttackType(SCM who, SCM value)
 {
@@ -1229,7 +1233,7 @@ SCM Script_createObject(SCM archname, SCM x, SCM y)
   free(txt);
   myob->x = gh_scm2long(x);
   myob->y = gh_scm2long(y);
-  myob = insert_ob_in_map(myob, guile_current_who[guile_stack_position]->map ,NULL);
+  myob = insert_ob_in_map(myob, guile_current_who[guile_stack_position]->map ,NULL,0);
   return gh_long2scm((long)(myob));
 };
 

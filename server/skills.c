@@ -390,7 +390,7 @@ int hide(object *op) {
   
   if(attempt_hide(op)) { 
      new_draw_info(NDI_UNIQUE, 0,op,"You hide in the shadows.");
-     update_object(op);
+     update_object(op,UP_OBJ_FACE);
      return calc_skill_exp(op, NULL);
   } 
   new_draw_info(NDI_UNIQUE,0,op,"You fail to conceal yourself.");
@@ -437,7 +437,7 @@ static int stop_jump(object *pl, int dist, int spaces) {
     /* int load=dist/(pl->speed*spaces); */ 
 
     CLEAR_FLAG(pl,FLAG_FLYING);
-    insert_ob_in_map(pl,pl->map,pl);
+    insert_ob_in_map(pl,pl->map,pl,0);
     if (pl->type==PLAYER) draw(pl);  
 
     /* pl->speed_left= (int) -FABS((load*8)+1); */ 
@@ -1462,7 +1462,7 @@ void do_throw(object *op, object *toss_item, int dir) {
 	/* bounces off 'wall', and drops to feet */
 	 remove_ob(throw_ob);
 	 throw_ob->x = op->x; throw_ob->y = op->y;
-	 insert_ob_in_map(throw_ob,op->map,op);
+	 insert_ob_in_map(throw_ob,op->map,op,0);
 	if(op->type==PLAYER) {
 	    if(eff_str<=1) {
 		new_draw_info_format(NDI_UNIQUE, 0,op,
@@ -1648,7 +1648,7 @@ void do_throw(object *op, object *toss_item, int dir) {
         throw_ob->last_sp,throw_ob->speed,throw_ob->stats.food);
     LOG(llevDebug,"inserting tossitem (%d) into map\n",throw_ob->count);
 #endif
-    insert_ob_in_map(throw_ob,op->map,op);
+    insert_ob_in_map(throw_ob,op->map,op,0);
     move_arrow(throw_ob);
 }
 

@@ -6,6 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
+    Copyright (C) 2001 Mark Wedel
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -22,7 +23,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to frankj@ifi.uio.no.
+    The author can be reached via e-mail to mwedel@scruz.net
 */
 /*  the contents of this file were create solely by peterm@soda.berkeley.edu
     all of the above disclaimers apply.  */
@@ -111,7 +112,7 @@ int cast_raise_dead_spell(object *op,int dir,int spell_type, object * corpseobj)
        if(newob != NULL){
           newob->x = temp->x;
           newob->y = temp->y;
-          insert_ob_in_map( newob, temp->map, op);
+          insert_ob_in_map( newob, temp->map, op,0);
        }
 	leveldead=temp->level;
        remove_ob(temp);

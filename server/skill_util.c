@@ -1436,7 +1436,7 @@ int do_skill_attack(object *tmp, object *op, char *string) {
                  op->contr->tmp_invis=0;
                  op->invisible=0;
                  op->hide=0;
-                 update_object(op);
+                 update_object(op,UP_OBJ_FACE);
           }
  
           success = attack_ob(tmp,op);

@@ -124,7 +124,7 @@ void save_throw_object (object *op, int type, object *originator)
 			    esrv_send_item(env, op);
                    } else { 
                       op->x=x,op->y=y;
-                      insert_ob_in_map(op,m,originator);
+                      insert_ob_in_map(op,m,originator,0);
 		   }
 		}
 		return;
@@ -175,7 +175,7 @@ void save_throw_object (object *op, int type, object *originator)
         if ((tmp = present_arch(at,op->map,op->x,op->y)) == NULL) {
           tmp = arch_to_object(at);
           tmp->x=op->x,tmp->y=op->y;
-          insert_ob_in_map(tmp,op->map,originator);
+          insert_ob_in_map(tmp,op->map,originator,0);
         }
         if ( ! QUERY_FLAG (op, FLAG_REMOVED))
             remove_ob(op);
@@ -232,7 +232,7 @@ int hit_map(object *op,int dir,int type) {
 
   if(type & AT_CHAOS){
     shuffle_attack(op,1);  /*1 flag tells it to change the face */
-    update_object(op);
+    update_object(op,UP_OBJ_FACE);
     type &= ~AT_CHAOS;
   }
 
@@ -646,7 +646,7 @@ object *hit_with_arrow (object *op, object *victim)
         container = op;
         hitter = op->inv;
         remove_ob (hitter);
-        insert_ob_in_map_simple (hitter, container->map);
+        insert_ob_in_map(hitter, container->map,hitter,INS_NO_MERGE | INS_NO_WALK_ON);
         /* Note that we now have an empty THROWN_OBJ on the map.  Code that
          * might be called until this THROWN_OBJ is either reassembled or
          * removed at the end of this function must be able to deal with empty
@@ -718,7 +718,7 @@ object *hit_with_arrow (object *op, object *victim)
             remove_ob (hitter);
             hitter->x = victim_x;
             hitter->y = victim_y;
-            insert_ob_in_map (hitter, hitter->map, hitter);
+            insert_ob_in_map (hitter, hitter->map, hitter,0);
         } else {
             /* Else leave arrow where it is */
             merge_ob (hitter, NULL);
@@ -759,7 +759,7 @@ void tear_down_wall(object *op)
     else if (perc < 1)
 	perc = 1;
     SET_ANIMATION(op, perc);
-    update_object(op);
+    update_object(op,UP_OBJ_FACE);
     if(perc==NUM_ANIMATIONS(op)-1) { /* Reached the last animation */
 	if(op->face==blank_face) {
 	    /* If the last face is blank, remove the ob */
@@ -771,7 +771,7 @@ void tear_down_wall(object *op)
 
 	} else { /* The last face was not blank, leave an image */
 	    CLEAR_FLAG(op, FLAG_BLOCKSVIEW);
-	    update_all_los(op->map);
+	    update_all_los(op->map, op->x, op->y);
 	    CLEAR_FLAG(op, FLAG_NO_PASS);
 	    CLEAR_FLAG(op, FLAG_ALIVE);
 	}
@@ -1038,7 +1038,7 @@ int kill_object(object *op,int dam, object *hitter, int type)
 	maxdam+=op->stats.hp+1;
 
 	if(QUERY_FLAG(op,FLAG_BLOCKSVIEW))
-	    update_all_los(op->map); /* makes sure los will be recalculated */
+	    update_all_los(op->map,op->x, op->y); /* makes sure los will be recalculated */
 
 	if(op->type==DOOR) {
 	    op->speed = 0.1;
@@ -1298,7 +1298,7 @@ int hit_player(object *op,int dam, object *hitter, int type) {
      */
     if(type & AT_CHAOS){
       shuffle_attack(op,0);  /*0 flag tells it to not change the face */
-      update_object(op);
+      update_object(op,UP_OBJ_FACE);
       type &= ~AT_CHAOS;
     }
 
@@ -1423,7 +1423,7 @@ int hit_player(object *op,int dam, object *hitter, int type) {
 		free_object(tmp);
 	    else {
 		tmp->x=op->x+freearr_x[j],tmp->y=op->y+freearr_y[j];
-		insert_ob_in_map(tmp,op->map,NULL);
+		insert_ob_in_map(tmp,op->map,NULL,0);
 	    }
 	}
 	if(friendly)
@@ -1560,11 +1560,10 @@ void paralyze_player(object *op, object *hitter, int dam)
     if((tmp=present(PARAIMAGE,op->map,op->x,op->y))==NULL) {
 	tmp=clone_arch(PARAIMAGE);
 	tmp->x=op->x,tmp->y=op->y;
-	/* We can't use insert_ob_in_map() (which can trigger various things)
-	 * unless a lot of was_destroyed() checks are added in our callers.
-	 * But this is just a simple visual effect anyway.
+	 /*
+	 * This is for a simple visual effect anyway.
 	 */
-	insert_ob_in_map_simple(tmp,op->map);
+	insert_ob_in_map(tmp,op->map,tmp,INS_NO_MERGE | INS_NO_WALK_ON);
     }
     /* Do this as a float - otherwise, rounding might very well reduce this to 0 */
     effect = (float)dam * 3.0 * (100.0 - op->resist[ATNR_PARALYZE]) / 100;

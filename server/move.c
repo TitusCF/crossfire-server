@@ -6,7 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 1994 Mark Wedel
+    Copyright (C) 2001 Mark Wedel
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -23,7 +23,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to master@rahul.net
+    The author can be reached via e-mail to mwedel@scruz.net
 */
 
 #include <global.h>
@@ -97,7 +97,7 @@ int move_ob (object *op, int dir, object *originator)
 
     /* Re insert object if we removed it above */
     if(op->more!=NULL && op->head==NULL)
-      insert_ob_in_map(op,op->map,originator);
+      insert_ob_in_map(op,op->map,originator,0);
     return 0;
   }
 
@@ -123,7 +123,7 @@ int move_ob (object *op, int dir, object *originator)
     if(!move_ob(tmp,dir,originator)) {
       op->more=tmp;
       if(op->head==NULL)
-        insert_ob_in_map(op,op->map,originator);
+        insert_ob_in_map(op,op->map,originator,0);
       return 0;
     }
     else op->more=tmp;
@@ -132,7 +132,7 @@ int move_ob (object *op, int dir, object *originator)
 
   /* If head of object (or single part object), reinsert into map. */
   if(op->head==NULL)
-    insert_ob_in_map(op,op->map,originator);
+    insert_ob_in_map(op,op->map,originator,0);
 
   if (op->type==PLAYER) {
     esrv_map_scroll(&op->contr->socket, freearr_x[dir],freearr_y[dir]);
@@ -173,7 +173,7 @@ int transfer_ob (object *op, int x, int y, int randomly, object *originator)
   for(tmp=op;tmp!=NULL;tmp=tmp->more)
     tmp->x=x+freearr_x[i]+(tmp->arch==NULL?0:tmp->arch->clone.x),
     tmp->y=y+freearr_y[i]+(tmp->arch==NULL?0:tmp->arch->clone.y);
-  return insert_ob_in_map(op,op->map,originator) == NULL;
+  return insert_ob_in_map(op,op->map,originator,0) == NULL;
 }
 
 /*
@@ -218,7 +218,7 @@ int teleport (object *teleporter, unsigned char tele_type, object *originator)
            (tmp->arch==NULL?0:tmp->arch->clone.x),
     tmp->y=other_teleporter->y+freearr_y[k]+
            (tmp->arch==NULL?0:tmp->arch->clone.y);
-  return insert_ob_in_map(teleported,other_teleporter->map,originator) == NULL;
+  return insert_ob_in_map(teleported,other_teleporter->map,originator,0) == NULL;
 }
 
 void recursive_roll(object *op,int dir,object *pusher) {
@@ -303,7 +303,7 @@ int roll_ob(object *op,int dir, object *pusher) {
     remove_ob(op);
     for(tmp=op; tmp!=NULL; tmp=tmp->more)
 	tmp->x+=freearr_x[dir],tmp->y+=freearr_y[dir];
-    insert_ob_in_map(op,op->map,pusher);
+    insert_ob_in_map(op,op->map,pusher,0);
     return 1;
 }
 
@@ -324,8 +324,8 @@ int push_ob(object *who, int dir, object *pusher) {
     temp = pusher->y;
     pusher->y = who->y;
     who->y = temp;
-    insert_ob_in_map (who,who->map,pusher);
-    insert_ob_in_map (pusher,pusher->map,pusher);
+    insert_ob_in_map (who,who->map,pusher,0);
+    insert_ob_in_map (pusher,pusher->map,pusher,0);
     return 0;
   }
   if(QUERY_FLAG(who,FLAG_UNAGGRESSIVE) && owner != pusher)

@@ -6,6 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
+    Copyright (C) 2001 Mark Wedel
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -22,7 +23,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to frankj@ifi.uio.no.
+    The author can be reached via e-mail to mwedel@scruz.net
 */
 
 #include <global.h>
@@ -270,10 +271,10 @@ void check_score(object *op) {
     if(new_score.killer[0]=='\0')
 	strcpy(new_score.killer,"a dungeon collapse");
     new_score.exp=op->stats.exp;
-    if(op->map == NULL || op->map->map_object==NULL)
+    if(op->map == NULL)
 	*new_score.maplevel = '\0';
     else { 
-	strncpy(new_score.maplevel,op->map->map_object->name,BIG_NAME-1);
+	strncpy(new_score.maplevel,op->map->name,BIG_NAME-1);
 	new_score.maplevel[BIG_NAME-1] = '\0';
     }
     new_score.maxhp=(int) op->stats.maxhp;

@@ -150,7 +150,7 @@ int write_rune(object *op,int dir,int inspell,int level,char *runename) {
     tmp->direction=dir;  /* where any spell will go upon detonation */
     tmp->level=SK_level(op);  /* what level to cast the spell at */
     if(inspell||tmp->stats.dam) set_owner(tmp,op); /* runes without need no owner */
-    insert_ob_in_map(tmp,op->map,op);
+    insert_ob_in_map(tmp,op->map,op,0);
     return 1;
 
 }
@@ -181,7 +181,7 @@ void move_rune(object *op) {
     else
 	op->invisible=1;
     if(op->invisible!=det)
-    update_object(op);
+    update_object(op,UP_OBJ_FACE);
 }
 
 
@@ -254,7 +254,7 @@ void spring_trap(object *trap,object *victim)
     /* This is necessary if the trap is inside something else */
     remove_ob(trap);
     trap->x=victim->x;trap->y=victim->y;
-    insert_ob_in_map(trap,victim->map,trap);
+    insert_ob_in_map(trap,victim->map,trap,0);
     if (was_destroyed (trap, trap_tag))
       return;
     cast_spell(trap,trap,trap->direction,trap->stats.sp,1,spellNormal,NULL);
@@ -327,7 +327,7 @@ int trap_show(object *trap, object *where) {
     tmp2=get_archetype("runedet");
     tmp2->face=&new_faces[GET_ANIMATION(trap, 0)];
     tmp2->x=where->x;tmp2->y=where->y;tmp2->map=where->map;
-    insert_ob_in_map(tmp2,where->map,NULL);
+    insert_ob_in_map(tmp2,where->map,NULL,0);
     return 1;
 
 }

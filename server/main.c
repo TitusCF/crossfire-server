@@ -287,8 +287,8 @@ static void enter_map(object *op, mapstruct *newmap, int x, int y) {
     if (out_of_map(newmap, x, y)) {
 	LOG(llevError,"enter_map: supplied coordinates are not within the map! (%s: %d, %d)\n",
 	    newmap->path, x, y);
-	x=EXIT_X(newmap->map_object);
-	y=EXIT_Y(newmap->map_object);
+	x=MAP_ENTER_X(newmap);
+	y=MAP_ENTER_Y(newmap);
     }
     /* try to find a spot for the player */
     if (arch_blocked(op->arch, newmap, x, y)) {	/* First choice blocked */
@@ -315,9 +315,6 @@ static void enter_map(object *op, mapstruct *newmap, int x, int y) {
 	}
     } /* end if looking for free spot */
 	
-#ifdef USE_LIGHTING
-    if(op->lights||op->glow_radius>0) remove_carried_lights(op,oldmap);
-#endif
 
     /* If it is a player login, he has yet to be inserted anyplace.
      * otherwise, we need to deal with removing the playe here.
@@ -329,9 +326,7 @@ static void enter_map(object *op, mapstruct *newmap, int x, int y) {
     op->x = x;
     op->y = y;
     op->map = newmap;
-    SET_FLAG(op, FLAG_NO_APPLY);
-    insert_ob_in_map(op,op->map,NULL);
-    CLEAR_FLAG(op, FLAG_NO_APPLY);
+    insert_ob_in_map(op,op->map,NULL,INS_NO_WALK_ON);
 
     newmap->players++;
     newmap->timeout=0;
@@ -343,9 +338,6 @@ static void enter_map(object *op, mapstruct *newmap, int x, int y) {
 	op->contr->count_left=0;
     }
 
-#ifdef USE_LIGHTING
-    if(op->lights) add_carried_lights(op);
-#endif
     /* Update any golems */
     if(op->type == PLAYER && op->contr->golem != NULL) {
 	int i = find_free_spot(op->contr->golem->arch,newmap, x, y, 1, SIZEOFFREE+1);
@@ -363,7 +355,7 @@ static void enter_map(object *op, mapstruct *newmap, int x, int y) {
 		tmp->y = y + freearr_y[i]+ (tmp->arch==NULL?0:tmp->arch->clone.y);
 		tmp->map = newmap;
 	    }
-	    insert_ob_in_map(op->contr->golem, newmap, NULL);
+	    insert_ob_in_map(op->contr->golem, newmap, NULL,0);
 	    op->contr->golem->direction = find_dir_2(op->x - op->contr->golem->x, op->y - op->contr->golem->y);
 	}
     }
@@ -384,7 +376,7 @@ static void enter_map(object *op, mapstruct *newmap, int x, int y) {
 	    set_map_timeout(oldmap);
 	}
     }
-    swap_below_max (EXIT_PATH(newmap->map_object));
+    swap_below_max (newmap->path);
 }
 
 void set_map_timeout(mapstruct *oldmap)
@@ -486,10 +478,10 @@ static void enter_random_map(object *pl, object *exit_ob)
      */
     if(new_map) {
 	int x, y;
-	x=EXIT_X(exit_ob) = EXIT_X(new_map->map_object);
-	y=EXIT_Y(exit_ob) = EXIT_Y(new_map->map_object);
+	x=EXIT_X(exit_ob) = MAP_ENTER_X(new_map);
+	y=EXIT_Y(exit_ob) = MAP_ENTER_Y(new_map);
 	EXIT_PATH(exit_ob) = add_string(newmap_name);
-	EXIT_PATH(new_map->map_object) = add_string(newmap_name);
+	strcpy(new_map->path, newmap_name);
 	enter_map(pl, new_map, 	x, y);
     }
 }
@@ -513,7 +505,7 @@ static void enter_unique_map(object *op, object *exit_ob)
     } else { /* relative directory */
 	char reldir[HUGE_BUF], tmpc[HUGE_BUF], *cp;
 
-	if (QUERY_FLAG(exit_ob->map->map_object, FLAG_UNIQUE)) {
+	if (exit_ob->map->unique) {
 
 	    strcpy(reldir, unclean_path(exit_ob->map->path));
 
@@ -549,7 +541,7 @@ static void enter_unique_map(object *op, object *exit_ob)
 
     if (newmap) {
 	strcpy(newmap->path, apartment);
-	SET_FLAG(newmap->map_object, FLAG_UNIQUE);
+	newmap->unique = 1;
 	enter_map(op, newmap, EXIT_X(exit_ob), EXIT_Y(exit_ob));
     } else {
 	new_draw_info_format(NDI_UNIQUE, 0, op, "The %s is closed.", exit_ob->name);
@@ -585,7 +577,8 @@ void enter_exit(object *op, object *exit_ob) {
     if (op->type != PLAYER) return;
 
     /* First, lets figure out what map the player is going to go to */
-    if (exit_ob) {
+    if (exit_ob){ 
+
 	/* check to see if we make a randomly generated map */
 	if(EXIT_PATH(exit_ob)&&EXIT_PATH(exit_ob)[1]=='!') {
 	    enter_random_map(op, exit_ob);
@@ -623,8 +616,8 @@ void enter_exit(object *op, object *exit_ob) {
 	     * something like -1, -1 so it is clear to do that.
 	     */
 	    if (x==0 && y==0) {
-		x=EXIT_X(newmap->map_object);
-		y=EXIT_Y(newmap->map_object);
+		x=MAP_ENTER_X(newmap);
+		y=MAP_ENTER_Y(newmap);
 		LOG(llevDebug,"enter_exit: Exit %s (%d,%d) on map %s is 0 destination coordinates\n",
 		    exit_ob->name?exit_ob->name:"(none)", exit_ob->x, exit_ob->y, 
 		    exit_ob->map?exit_ob->map->path:"(none)");

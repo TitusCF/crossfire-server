@@ -549,11 +549,6 @@ void compile_info() {
 #else
   printf("Shop listings:\t<false>\n");
 #endif
-#ifdef RANDOM_ENCOUNTERS
-  printf("Random encounter:\t<true>\n");
-#else
-  printf("Random encounter:\t<false>\n");
-#endif
   printf("Max_time:\t%d\n",MAX_TIME);
 
 #ifdef WIN32 /* ***win32 compile_info(): remove execl... */

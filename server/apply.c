@@ -29,9 +29,7 @@
 #include <living.h>
 #include <spells.h>
 #include <skills.h>
-#if defined(SunArchitecture) && !(OSMajorVersion == 5)
-#include <sys/types.h>
-#endif
+
 
 #ifndef __CEXTRACT__
 #include <sproto.h>
@@ -693,7 +691,7 @@ int convert_item(object *item, object *converter) {
     SET_FLAG(item,FLAG_UNPAID);
   item->x=converter->x;
   item->y=converter->y;
-  insert_ob_in_map(item,converter->map,converter);
+  insert_ob_in_map(item,converter->map,converter,0);
   return 1;
 }
   
@@ -1039,7 +1037,7 @@ static int apply_shop_mat (object *shop_mat, object *op)
     remove_ob (op);
     op->x += freearr_x[i];
     op->y += freearr_y[i];
-    rv = insert_ob_in_map (op, op->map, shop_mat) == NULL;
+    rv = insert_ob_in_map (op, op->map, shop_mat,0) == NULL;
     goto ret;
   }
 
@@ -1110,6 +1108,7 @@ void move_apply (object *trap, object *victim, object *originator)
   }
   recursion_depth++;
 
+  if (trap->head) trap=trap->head;
   switch (trap->type)
   {
   case PLAYERMOVER:
@@ -1207,7 +1206,7 @@ void move_apply (object *trap, object *victim, object *originator)
         if(!(trap->value=(tot>trap->weight)?1:0))
           goto leave;
 	SET_ANIMATION(trap, trap->value);
-        update_object(trap);
+        update_object(trap,UP_OBJ_FACE);
       }
       for (ab = trap->above, max=100, sound_was_played = 0;
            --max && ab && ! QUERY_FLAG (ab, FLAG_FLYING); ab=ab->above)
@@ -1308,10 +1307,7 @@ void move_apply (object *trap, object *victim, object *originator)
     goto leave;
 
   case ENCOUNTER:
-#ifdef RANDOM_ENCOUNTERS
-    if (victim->type == PLAYER && QUERY_FLAG (trap, FLAG_IS_FLOOR))
-      random_encounter (victim, trap);
-#endif
+    /* may be some leftovers on this */
     goto leave;
 
   case SHOP_MAT:
@@ -1749,7 +1745,7 @@ static void apply_treasure (object *op, object *tmp)
       remove_ob(treas);
       draw_find(op,treas);
       treas->x=op->x,treas->y=op->y;
-      treas = insert_ob_in_map (treas, op->map, op);
+      treas = insert_ob_in_map (treas, op->map, op,0);
       if (treas && treas->type == RUNE && treas->level
           && QUERY_FLAG (op, FLAG_ALIVE))
         spring_trap (treas, op);
@@ -1760,13 +1756,18 @@ static void apply_treasure (object *op, object *tmp)
     if ( ! was_destroyed (tmp, tmp_tag) && tmp->inv == NULL)
       decrease_ob (tmp);
 
+#if 0
+    /* Can't rely on insert_ob_in_map to do any restacking,
+     * so lets disable this.
+     */
     if ( ! was_destroyed (op, op_tag)) {
       /* Done to re-stack map with player on top? */
       SET_FLAG (op, FLAG_NO_APPLY);
       remove_ob (op);
-      insert_ob_in_map (op, op->map, NULL);
+      insert_ob_in_map (op, op->map, NULL,0);
       CLEAR_FLAG (op, FLAG_NO_APPLY);
     }
+#endif
 }
 
 
@@ -1839,7 +1840,7 @@ static void apply_savebed (object *player)
     play_again(player);
     player->map->players--;
 #if MAP_MAXTIMEOUT 
-    player->map->timeout = MAP_TIMEOUT(player->map);
+    MAP_SWAP_TIME(player->map) = MAP_TIMEOUT(player->map);
 #endif
 }
 
@@ -1966,6 +1967,8 @@ extern void apply_poison (object *op, object *tmp)
 int manual_apply (object *op, object *tmp, int aflag)
 {
   int rtn_script;
+  if (tmp->head) tmp=tmp->head;
+
   if (QUERY_FLAG (tmp, FLAG_UNPAID) && ! QUERY_FLAG (tmp, FLAG_APPLIED)) {
     if (op->type == PLAYER) {
       new_draw_info (NDI_UNIQUE, 0, op, "You should pay for it first.");
@@ -1993,7 +1996,7 @@ int manual_apply (object *op, object *tmp, int aflag)
     play_sound_map(op->map, op->x, op->y, SOUND_TURN_HANDLE);
     tmp->value=tmp->value?0:1;
     SET_ANIMATION(tmp, tmp->value);
-    update_object(tmp);
+    update_object(tmp,UP_OBJ_FACE);
     push_button(tmp);
     return 1;
 
@@ -2605,7 +2608,7 @@ int auto_apply (object *op) {
 
     tmp->x=op->x,tmp->y=op->y;
     SET_FLAG(tmp,FLAG_UNPAID);
-    insert_ob_in_map(tmp,op->map,NULL);
+    insert_ob_in_map(tmp,op->map,NULL,0);
     CLEAR_FLAG(op,FLAG_AUTO_APPLY);
     identify(tmp);
     break;
@@ -2647,8 +2650,8 @@ void fix_auto_apply(mapstruct *m) {
 
   if(m==NULL) return;
 
-  for(x=0;x<m->map_object->x;x++)
-    for(y=0;y<m->map_object->y;y++)
+  for(x=0;x<MAP_WIDTH(m);x++)
+    for(y=0;y<MAP_HEIGHT(m);y++)
       for(tmp=get_map_ob(m,x,y);tmp!=NULL;tmp=above) {
         above=tmp->above;
 
@@ -2682,8 +2685,8 @@ void fix_auto_apply(mapstruct *m) {
             create_treasure(tmp->randomitems, tmp, GT_APPLY,
                             m->difficulty,0);
       }
-  for(x=0;x<m->map_object->x;x++)
-    for(y=0;y<m->map_object->y;y++)
+  for(x=0;x<MAP_WIDTH(m);x++)
+    for(y=0;y<MAP_HEIGHT(m);y++)
       for(tmp=get_map_ob(m,x,y);tmp!=NULL;tmp=tmp->above)
 	if (tmp->above &&
             (tmp->type == TRIGGER_BUTTON || tmp->type == TRIGGER_PEDESTAL))
@@ -2868,75 +2871,77 @@ void scroll_failure(object *op, int failure, int power)
 #endif
 }
 
-void apply_changes_to_player(object *player, object *change) {
-  int excess_stat=0;  /* if the stat goes over the maximum
+void apply_changes_to_player(object *pl, object *change) {
+    int excess_stat=0;  /* if the stat goes over the maximum
                          for the race, put the excess stat some
                          where else. */
-  switch (change->type) {
-  case CLASS: 
-    {
-      living *stats = &(player->contr->orig_stats);
-      living *ns = &(change->stats);
-      object *walk;
-      int flag_change_face=1;
 
-      /* the following code assigns stats up to the stat max
-         for the race, and if the stat max is exceeded, 
-         tries to randomly reassign the excess stat */ 
-      int i,j;
-      for(i=0;i<7;i++) {
-        int stat=get_attr_value(stats,i);
-        int race_bonus = get_attr_value(&(player->arch->clone.stats),i);
-        stat += get_attr_value(ns,i);
-        if(stat > 20 + race_bonus) {
-          excess_stat++;
-          stat = 20+race_bonus;
-        }
-        set_attr_value(stats,i,stat);
-      }
-      for(j=0;excess_stat >0 && j<100;j++)  {/* try 100 times to assign excess stats */
-        int i = RANDOM() %7;
-        int stat=get_attr_value(stats,i);
-        int race_bonus = get_attr_value(&(player->arch->clone.stats),i);
-        if(i==CHA) continue;  /* exclude cha from this */
-        if( stat < 20 + race_bonus) {
-          change_attr_value(stats,i,1);
-          excess_stat--;
-        }
-      }
+    switch (change->type) {
+	case CLASS: {
+	    living *stats = &(pl->contr->orig_stats);
+	    living *ns = &(change->stats);
+	    object *walk;
+	    int flag_change_face=1;
 
-      /* insert the randomitems from the change's treasurelist into
-	 the player ref: player.c*/
-      if(change->randomitems!=NULL) 
-	give_initial_items(player,change->randomitems);
+	    /* the following code assigns stats up to the stat max
+	     * for the race, and if the stat max is exceeded, 
+	     * tries to randomly reassign the excess stat 
+	     */ 
+	    int i,j;
+	    for(i=0;i<7;i++) {
+		int stat=get_attr_value(stats,i);
+		int race_bonus = get_attr_value(&(pl->arch->clone.stats),i);
+		stat += get_attr_value(ns,i);
+		if(stat > 20 + race_bonus) {
+		    excess_stat++;
+		    stat = 20+race_bonus;
+		}
+		set_attr_value(stats,i,stat);
+	    }
+
+	    for(j=0;excess_stat >0 && j<100;j++)  {/* try 100 times to assign excess stats */
+		int i = RANDOM() %7;
+		int stat=get_attr_value(stats,i);
+		int race_bonus = get_attr_value(&(pl->arch->clone.stats),i);
+		if(i==CHA) continue;  /* exclude cha from this */
+		if( stat < 20 + race_bonus) {
+		    change_attr_value(stats,i,1);
+		    excess_stat--;
+		}
+	    }
+
+	    /* insert the randomitems from the change's treasurelist into
+	     * the player ref: player.c
+	     */
+	    if(change->randomitems!=NULL) 
+		give_initial_items(pl,change->randomitems);
 
 
-      /* set up the face, for some races. */
+	    /* set up the face, for some races. */
 
-      /* first, look for the force object banning 
-	 changing the face.  Certain races never change face with class. */
-      for(walk=player->inv;walk!=NULL;walk=walk->below)
-	if (!strcmp(walk->name,"NOCLASSFACECHANGE")) flag_change_face=0;
+	    /* first, look for the force object banning 
+	     * changing the face.  Certain races never change face with class. 
+	     */
+	    for(walk=pl->inv;walk!=NULL;walk=walk->below)
+		if (!strcmp(walk->name,"NOCLASSFACECHANGE")) flag_change_face=0;
 
-      if(flag_change_face) {
-	player->animation_id = GET_ANIM_ID(change);
-	player->face = change->face;
+	    if(flag_change_face) {
+		pl->animation_id = GET_ANIM_ID(change);
+		pl->face = change->face;
 
-	if(QUERY_FLAG(change,FLAG_ANIMATE)) 
-	  SET_FLAG(player,FLAG_ANIMATE);
-	else
-	  CLEAR_FLAG(player,FLAG_ANIMATE);
-      }
+		if(QUERY_FLAG(change,FLAG_ANIMATE)) 
+		    SET_FLAG(pl,FLAG_ANIMATE);
+		else
+		    CLEAR_FLAG(pl,FLAG_ANIMATE);
+	    }
 
-      /* check the special case of can't use weapons */
-      /*if(QUERY_FLAG(change,FLAG_USE_WEAPON)) CLEAR_FLAG(player,FLAG_USE_WEAPON);*/
-      if(!strcmp(change->name,"monk")) CLEAR_FLAG(player,FLAG_USE_WEAPON);
+	    /* check the special case of can't use weapons */
+	    /*if(QUERY_FLAG(change,FLAG_USE_WEAPON)) CLEAR_FLAG(pl,FLAG_USE_WEAPON);*/
+	    if(!strcmp(change->name,"monk")) CLEAR_FLAG(pl,FLAG_USE_WEAPON);
 
-      break;
-
+	    break;
+	}
     }
-  }
-    
-  
 }
+
 
