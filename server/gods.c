@@ -542,7 +542,8 @@ static int god_enchants_weapon (object *op, object *god, object *tr)
     int tmp;
 
     for (weapon = op->inv; weapon; weapon = weapon->below)
-        if (weapon->type == WEAPON && QUERY_FLAG (weapon, FLAG_APPLIED))
+        if ((weapon->type == WEAPON || weapon->type == BOW)
+	    && QUERY_FLAG (weapon, FLAG_APPLIED))
             break;
     if (weapon == NULL || god_examines_item (god, weapon) <= 0)
         return 0;

@@ -535,10 +535,19 @@ object *fix_stopped_arrow (object *op)
     op->stats.wc = op->stats.sp;
     op->stats.dam= op->stats.hp;
     op->attacktype = op->stats.grace;
+    if (op->slaying != NULL)
+	free(op->slaying);
+    if (op->spellarg != NULL) {
+	op->slaying = strdup(op->spellarg);
+	free(op->spellarg);
+    } else
+	op->slaying = NULL;
     /* Reset these to zero, so that CAN_MERGE will work properly */
+    op->spellarg = NULL;
     op->stats.sp = 0;
     op->stats.hp = 0;
     op->stats.grace = 0;
+    op->level = 0;
     op->face=op->arch->clone.face;
     op->owner=NULL; /* So that stopped arrows will be saved */
     update_object (op,UP_OBJ_FACE);

@@ -1361,7 +1361,9 @@ int fire_bow(object *op, object *part, int dir)
     SET_ANIMATION(arrow,dir);
     arrow->stats.sp = arrow->stats.wc; /* save original wc and dam */
     arrow->stats.hp = arrow->stats.dam; 
-    arrow->attacktype = arrow->stats.grace;
+    arrow->stats.grace = arrow->attacktype;
+    if (arrow->slaying != NULL)
+	arrow->spellarg = strdup(arrow->slaying);
     /* Note that this was different for monsters - they got their level
      * added to the damage.  I think the strength bonus is more proper.
      */
@@ -1375,11 +1377,15 @@ int fire_bow(object *op, object *part, int dir)
 	    bow->stats.wc;
 	arrow->level = SK_level (op);
 	arrow->attacktype |= bow->attacktype;
+	if (bow->slaying != NULL)
+	    arrow->slaying = strdup(bow->slaying);
     } else {
 	arrow->stats.wc= op->stats.wc - bow->magic - arrow->magic -
 		    arrow->stats.wc;
 	arrow->level = op->level;
 	arrow->attacktype |= bow->attacktype;
+	if (bow->slaying != NULL)
+	    arrow->slaying = strdup(bow->slaying);
     }
 
     arrow->map = op->map;
