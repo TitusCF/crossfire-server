@@ -77,7 +77,7 @@ CheckInvisibleInside(object who, string id)
   "who".
   Return value: The object found, if any.
 
-CreateInvisibleInside()
+CreateInvisibleObjectInside()
 CreateObjectInside()
 CheckMap()
 CheckInventory()
