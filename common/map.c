@@ -6,7 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2001 Mark Wedel & Crossfire Development Team
+    Copyright (C) 2001-2003 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -1226,7 +1226,7 @@ void free_all_objects(mapstruct *m) {
      * this leaves more of the map data intact for better debugging.
      */
     for (op=objects; op!=NULL; op=op->next) {
-	if (op->map == m) {
+	if (!QUERY_FLAG(op, FLAG_REMOVED) && op->map == m) {
 	    LOG(llevDebug,"free_all_objects: object %s still on map after it should have been freed", op->name);
 	    abort();
 	}

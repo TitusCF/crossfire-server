@@ -7,7 +7,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2002 Mark Wedel & The Crossfire Development Team
+    Copyright (C) 2002-2003 Mark Wedel & The Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -635,7 +635,8 @@ void doeric_server()
 		 * sending them whenever they change, and probably just as useful
 		 */
 		esrv_update_stats(pl);
-		draw_client_map(pl->ob);
+		if (pl->ob->map && pl->ob->map->in_memory==MAP_IN_MEMORY)
+		    draw_client_map(pl->ob);
 		if (pl->socket.update_look) esrv_draw_look(pl->ob);
 	    }
 	}
