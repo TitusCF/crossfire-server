@@ -181,6 +181,20 @@ face ogre_leader.111
 stand_still 1
 end
 #
+Allowed skeleton
+chance 5
+Object Leader
+type 0
+hp 15
+maxhp 15
+exp 40
+level 2
+resist_physical 20
+dam 1
+face skeleton_leader.111
+stand_still 1
+end
+#
 Allowed beholder
 chance 5
 Object Leader
@@ -224,7 +238,7 @@ maxhp 20
 exp 100
 level 2
 resist_physical 30
-dam 14
+dam 13
 face goblin_chief.111
 stand_still 1
 end
@@ -260,7 +274,23 @@ dam 19
 face ogre_chief.111
 stand_still 1
 end
-# Just to fix probability some.
+#
+Allowed skeleton
+chance 2
+Object Chief
+type 0
+wc 1
+hp 10
+maxhp 15
+exp 50
+level 2
+resist_physical 40
+dam 1
+face skeleton_chief.111
+stand_still 1
+end
+#
+Just to fix probability some.
 Allowed orc,goblin,ogre,gnoll,beholder
 chance 20
 Object NONE
@@ -592,8 +622,8 @@ dam 14
 weight 115
 end
 #
-Allowed all
-chance 5
+Allowed sword,sabre,scimitar,light_sword,katana_1,falchion
+chance 90
 Object Occidental Mages
 type 15
 magic 2
@@ -1300,6 +1330,7 @@ end
 Allowed robe
 chance 10
 Object metal weave
+face metalrobe.111
 type 16
 value 100
 weight 150
