@@ -363,7 +363,6 @@ void set_title(object *pl,char *buf)
 {
   if(pl->contr->last_value==-1) {
     /* Eneq(@csd.uu.se): Let players define their own titles. */
-
     if (pl->contr->own_title[0]=='\0')
       sprintf(buf,"Player: %s the %s",pl->name,pl->contr->title);
     else

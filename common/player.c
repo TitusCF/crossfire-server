@@ -116,27 +116,40 @@ void generate_ext_title(player *pl)
     char gender[32]="";
     char prof[32]="";
     char rank[32]="";
+    char align[32]="";
     
     /* collect all information from the force objects. Just walk one time through them*/
     for(walk=pl->ob->inv;walk!=NULL;walk=walk->below)
     {
-        if (!strcmp(walk->name,"GUILD_FORCE"))
-            strcpy(prof,walk->title);
-        if (!strcmp(walk->name,"RANK_FORCE"))
+        if (!strcmp(walk->name,"GUILD_FORCE") && !strcmp(walk->arch->name,"guild_force"))
         {
-            strcpy(rank,walk->title);
-            strcat(rank," ");
+            if(walk->title)
+                strcpy(prof,walk->title);
         }
-        if (!strcmp(walk->name,"GENDER_FORCE"))
+        else if (!strcmp(walk->name,"RANK_FORCE") && !strcmp(walk->arch->name,"rank_force"))
         {
-            strcpy(gender,walk->title);
-            strcat(gender," ");
+            if(walk->title)
+            {
+                strcpy(rank,walk->title);
+                strcat(rank," ");
+            }
         }
-
+        else if (!strcmp(walk->name,"GENDER_FORCE") && !strcmp(walk->arch->name,"gender_force"))
+        {
+            if(walk->title)
+            {
+                strcpy(gender,walk->title);
+                strcat(gender," ");
+            }
+        }
+        else if (!strcmp(walk->name,"ALIGNMENT_FORCE") && !strcmp(walk->arch->name,"alignment_force"))
+        {
+            if(walk->title)
+                strcpy(align,walk->title);
+        }
     }
 
-    sprintf(pl->ext_title,"%s%s\n%s%s %s", rank, pl->ob->name, gender, pl->ob->race, prof);
-
+    sprintf(pl->ext_title,"%s%s %s\n%s%s %s", rank, pl->ob->name,align, gender, pl->ob->race, prof);
 }
 
 /* find_skill() - looks for the skill and returns a pointer to it if found */

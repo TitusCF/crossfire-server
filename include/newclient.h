@@ -98,6 +98,7 @@
 #define CS_STAT_MAXGRACE	24
 #define CS_STAT_FLAGS	25
 #define CS_STAT_WEIGHT_LIM	26
+#define CS_STAT_EXT_TITLE 27
 
 /* Start & end of resistances, inclusive. */
 #define CS_STAT_RESIST_START	100
@@ -136,8 +137,6 @@
 #define CS_STAT_SKILLEXP_MALEVEL 127
 #define CS_STAT_SKILLEXP_WISDOM 128
 #define CS_STAT_SKILLEXP_WILEVEL 129
-
-#define CS_STAT_EXT_TITLE 130
 
 /* These are used with CS_STAT_FLAGS above to communicate S->C what the
  * server thinks the fireon & runon states are.

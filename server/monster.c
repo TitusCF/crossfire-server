@@ -1553,7 +1553,8 @@ int talk_to_npc(object *op, object *npc, char *txt) {
     for(j=0; msgs->keywords[i][j]; j++)
       if(msgs->keywords[i][j][0] == '*' || re_cmp(txt,msgs->keywords[i][j])) {
         char buf[MAX_BUF];
-        sprintf(buf,"The %s says:",query_name(npc));
+        sprintf(buf,"%s says:",query_name(npc)); /* We want more unique NPCS */
+                                                 /* "The <unique name> says ...." looks bad */
 	new_info_map(NDI_NAVY|NDI_UNIQUE, npc->map,buf);
 	new_info_map(NDI_NAVY | NDI_UNIQUE, npc->map, msgs->messages[i]);
         free_messages(msgs);

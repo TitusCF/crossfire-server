@@ -3497,6 +3497,8 @@ treasure human_male
   more
   arch rank_force
   more
+  arch alignment_force
+  more
   arch guild_force
   end
 treasure human_female
@@ -3504,6 +3506,8 @@ treasure human_female
     change_title Female
   more
   arch rank_force
+  more
+  arch alignment_force
   more
   arch guild_force
   end
@@ -4863,4 +4867,3 @@ treasure skeletalmage
   arch ability_frostbolt
     chance 67
 end
-

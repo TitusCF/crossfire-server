@@ -59,6 +59,9 @@ typedef unsigned char	uint8;
 typedef signed char	sint8;
 typedef unsigned short Fontindex;
 
+#define DELETE_STRING(__str_)  free_string(__str_);__str_=NULL;
+
+
 /* global stuff used by new skill/experience system -b.t.
  * Needed before player.h
  */

@@ -643,9 +643,9 @@ void esrv_update_stats(player *pl)
 	int s;
 	for(s=0;s<pl->last_skill_index;s++)
         {
-	    AddIfInt(pl->last_skill_exp[s],pl->last_skill_ob[s]->stats.exp , pl->last_skill_id[s]);
-	    AddIfShort(pl->last_skill_level[s],pl->last_skill_ob[s]->level , pl->last_skill_id[s]+1);
-        }
+        AddIfInt(pl->last_skill_exp[s],pl->last_skill_ob[s]->stats.exp , pl->last_skill_id[s]);
+        AddIfShort(pl->last_skill_level[s],pl->last_skill_ob[s]->level , pl->last_skill_id[s]+1);
+    }
     }
     AddIfInt(pl->last_stats.exp, pl->ob->stats.exp, CS_STAT_EXP);
     AddIfShort(pl->last_level, pl->ob->level, CS_STAT_LEVEL);

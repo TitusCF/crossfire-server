@@ -1087,10 +1087,10 @@ CFParm* CFWGetArchetype(CFParm* PParm)
     /*object* get_archetype(char* name); */
     CFParm *CFP;
     object* val;
+    
     CFP = (CFParm*)(malloc(sizeof(CFParm)));
-    val = get_archetype(
-        (char *)(PParm->Value[0])
-    );
+    val = get_archetype( (char *)(PParm->Value[0]) );
+    
     CFP->Value[0] = (void *)(val);
     return CFP;
 };

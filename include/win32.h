@@ -40,8 +40,12 @@
 /* include all needed autoconfig.h defines */
 #define CS_LOGSTATS
 #define HAVE_SRAND
-#define HAVE_FCNTL_H
-#define HAVE_STDDEF_H
+#ifndef HAVE_FCNTL_H
+    #define HAVE_FCNTL_H
+#endif
+#ifndef HAVE_STDDEF_H
+    #define HAVE_STDDEF_H
+#endif
 #define GETTIMEOFDAY_TWO_ARGS
 #define MAXPATHLEN 256
 

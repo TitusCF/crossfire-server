@@ -3015,7 +3015,6 @@ static PyObject* CFIsInvisible(PyObject* self, PyObject* args)
 
 static PyObject* CFWhoAmI(PyObject* self, PyObject* args)
 {
-    printf("WhoAmI cmd triggered!\n");
     if (!PyArg_ParseTuple(args,"",NULL))
         return NULL;
     return Py_BuildValue("l",(long)(StackWho[StackPosition]));
@@ -3029,7 +3028,6 @@ static PyObject* CFWhoAmI(PyObject* self, PyObject* args)
 
 static PyObject* CFWhoIsActivator(PyObject* self, PyObject* args)
 {
-    printf("WhoIsActivator cmd triggered!\n");
     if (!PyArg_ParseTuple(args,"",NULL))
         return NULL;
     return Py_BuildValue("l",(long)(StackActivator[StackPosition]));
@@ -3062,11 +3060,9 @@ static PyObject* CFSay(PyObject* self, PyObject* args)
     char buf[MAX_BUF];
     int val;
 
-    printf("Say cmd triggered!\n");
     if (!PyArg_ParseTuple(args,"ls",&obptr,&message))
-    {
         return NULL;
-    }
+
     who = (object *)(obptr);
     
     sprintf(buf, "%s says: %s", query_name(who),message);
@@ -3081,6 +3077,149 @@ static PyObject* CFSay(PyObject* self, PyObject* args)
     Py_INCREF(Py_None);
     return Py_None;
 };
+
+/*****************************************************************************/
+/* Name   : CFSetGender                                                      */
+/* Python : CFPython.SetGender(object,gender_string)                         */
+/* Status : Stable                                                           */
+/*****************************************************************************/
+static PyObject* CFSetGender(PyObject* self, PyObject* args)
+{
+    object *who, *walk;
+    long obptr;
+    char *gender;
+    
+    if (!PyArg_ParseTuple(args,"ls",&obptr,&gender))
+        return NULL;
+
+    who = (object *)(obptr);
+    
+    for(walk=who->inv;walk!=NULL;walk=walk->below)
+    {
+        if (!strcmp(walk->name,"GENDER_FORCE") && !strcmp(walk->arch->name,"gender_force"))
+        {
+            /* we find the gender of the player, now change it to new one */
+            if(walk->title)
+                DELETE_STRING(walk->title);
+            walk->title = add_string(gender);
+
+            who->contr->socket.ext_title_flag = 1; /* demand update to client */
+            return Py_None;
+        }            
+    }
+
+    printf("Python Warning -> SetGender: Object %s has no gender_force!\n", query_name(who));
+    return Py_None;
+};
+
+/*****************************************************************************/
+/* Name   : CFSetRank                                                        */
+/* Python : CFPython.SetRank(object,rank_string)                             */
+/* Status : Stable                                                           */
+/*****************************************************************************/
+static PyObject* CFSetRank(PyObject* self, PyObject* args)
+{
+    object *who, *walk;
+    long obptr;
+    char *rank;
+    
+    if (!PyArg_ParseTuple(args,"ls",&obptr,&rank))
+        return NULL;
+
+    who = (object *)(obptr);
+    
+    for(walk=who->inv;walk!=NULL;walk=walk->below)
+    {
+        if (!strcmp(walk->name,"RANK_FORCE") && !strcmp(walk->arch->name,"rank_force"))
+        {
+            /* we find the rank of the player, now change it to new one */
+            if(walk->title)
+                DELETE_STRING(walk->title);
+            if (strcmp(rank,"Mr"))
+                walk->title = add_string(rank);
+            
+            who->contr->socket.ext_title_flag = 1; /* demand update to client */
+            return Py_None;
+        }            
+    }
+    printf("Python Warning -> SetRank: Object %s has no rank_force!\n", query_name(who));
+    return Py_None;
+};
+
+/*****************************************************************************/
+/* Name   : CFSetAlignment                                                   */
+/* Python : CFPython.SetAlignment(object,alignment_string)                   */
+/* Status : Stable                                                           */
+/*****************************************************************************/
+static PyObject* CFSetAlignment(PyObject* self, PyObject* args)
+{
+    object *who, *walk;
+    long obptr;
+    char *align;
+    
+    if (!PyArg_ParseTuple(args,"ls",&obptr,&align))
+        return NULL;
+
+    who = (object *)(obptr);
+    
+    for(walk=who->inv;walk!=NULL;walk=walk->below)
+    {
+        if (!strcmp(walk->name,"ALIGNMENT_FORCE")  && !strcmp(walk->arch->name,"alignment_force"))
+        {
+            /* we find the rank of the player, now change it to new one */
+            if(walk->title)
+                DELETE_STRING(walk->title);
+
+            if (!strcmp(align,"good"))
+            {
+                walk->title = add_string("the Good");
+            }
+            else if (!strcmp(align,"evil"))
+            {
+                walk->title = add_string("the Evil");
+            }
+                    
+            who->contr->socket.ext_title_flag = 1; /* demand update to client */
+            return Py_None;
+        }            
+    }
+    printf("Python Warning -> SetAlignment: Object %s has no alignment_force!\n", query_name(who));
+    return Py_None;
+};
+
+/*****************************************************************************/
+/* Name   : CFSetGuild                                                       */
+/* Python : CFPython.SetGuild(object,guild_string)                           */
+/* Status : Stable                                                           */
+/*****************************************************************************/
+static PyObject* CFSetGuild(PyObject* self, PyObject* args)
+{
+    object *who, *walk;
+    long obptr;
+    char *guild;
+    
+    if (!PyArg_ParseTuple(args,"ls",&obptr,&guild))
+        return NULL;
+    who = (object *)(obptr);
+    
+    for(walk=who->inv;walk!=NULL;walk=walk->below)
+    {
+        if (!strcmp(walk->name,"GUILD_FORCE") && !strcmp(walk->arch->name,"guild_force"))
+        {
+            /* we find the rank of the player, now change it to new one */
+            if(walk->title)
+                DELETE_STRING(walk->title);
+            if (strcmp(guild, "NOONE"))
+                walk->title = add_string(guild);
+            
+            who->contr->socket.ext_title_flag = 1; /* demand update to client */
+            return Py_None;
+        }            
+    }
+    printf("Python Warning -> SetGuild: Object %s has no guild_force!\n", query_name(who));
+    return Py_None;
+};
+
 
 /*****************************************************************************/
 /* Name   : CFSetInvisible                                                   */
@@ -3863,9 +4002,165 @@ static PyObject* CFCheckInvisibleInside(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   :                                                                  */
 /* Python :                                                                  */
+/* Status : Stable.                                                          */
+/* Info   : The Values of a player force will effect the player.             */
+/*****************************************************************************/
+static PyObject* CFCreatePlayerForce(PyObject* self, PyObject* args)
+{
+    long whereptr;
+    char* txt;
+    char txt2[16];
+    object *myob;
+    object *where;
+    CFParm* CFR;
+    
+    if (!PyArg_ParseTuple(args,"ls",&whereptr,&txt))
+        return NULL;
+    
+    where = (object *)(whereptr);
+    
+    strcpy(txt2,"player_force");
+    
+    GCFP.Value[0] = (void *)(txt2);
+    CFR = (PlugHooks[HOOK_GETARCHETYPE])(&GCFP);
+    
+    /*myob = get_archetype("player_force"); */
+    myob = (object *)(CFR->Value[0]);
+    free(CFR);
+    
+    if(!myob)
+    {
+        printf("Python WARNING:: CreatePlayerForce: Can't find archtype 'player_force'\n");
+        return NULL;
+    }
+    
+    /* setup the force and put it in activator */
+    myob->name = add_string(txt);
+    myob = insert_ob_in_ob(myob, where);
+
+    /*esrv_send_item((object *)(gh_scm2long(where)), myob); */
+    GCFP.Value[0] = (void *)(where);
+    GCFP.Value[1] = (void *)(myob);
+    (PlugHooks[HOOK_ESRVSENDITEM])(&GCFP);
+
+    return Py_BuildValue("l",(long)(myob));
+};
+
+/*****************************************************************************/
+/* Name   :                                                                  */
+/* Python :                                                                  */
+/* Status : Stable                                                           */
+/* Info   : The Values of a player_info object will NOT effect the player.   */
+/*****************************************************************************/
+static PyObject* CFCreatePlayerInfo(PyObject* self, PyObject* args)
+{
+    long whereptr;
+    char* txt;
+    char txt2[16];
+    object *myob;
+    object *where;
+    CFParm* CFR;
+    
+    if (!PyArg_ParseTuple(args,"ls",&whereptr,&txt))
+        return NULL;
+    
+    where = (object *)(whereptr);
+    
+    strcpy(txt2,"player_info");
+    
+    GCFP.Value[0] = (void *)(txt2);
+    CFR = (PlugHooks[HOOK_GETARCHETYPE])(&GCFP);
+    
+    /*myob = get_archetype("player_info"); */
+    myob = (object *)(CFR->Value[0]);
+    free(CFR);
+    
+    
+    if(!myob)
+    {
+        printf("Python WARNING:: CreatePlayerInfo: Cant't find archtype 'player_info'\n");
+        return NULL;
+    }
+    
+    /* setup the info and put it in activator */
+    myob->name = add_string(txt);
+    myob = insert_ob_in_ob(myob, where);
+    
+    /*esrv_send_item((object *)(gh_scm2long(where)), myob); */
+    GCFP.Value[0] = (void *)(where);
+    GCFP.Value[1] = (void *)(myob);
+    (PlugHooks[HOOK_ESRVSENDITEM])(&GCFP);
+    
+    return Py_BuildValue("l",(long)(myob));
+};
+
+/*****************************************************************************/
+/* Name   : CFGetPlayerInfo                                                  */
+/* Python : CFPython.GetPlayerInfo(who, <name_text>)                         */
+/* Status : Stable                                                           */
+/*        : player_info: get first player_info in inventory with name_text   */
+/*        :                                                                  */
+/*****************************************************************************/
+static PyObject* CFGetPlayerInfo(PyObject* self, PyObject* args)
+{
+    long whereptr;
+    char *name;
+    object *walk, *who;
+    
+    if (!PyArg_ParseTuple(args,"ls",&whereptr,&name))
+        return NULL;
+
+    who = (object *)(whereptr);
+
+    /* get the first linked player_info arch in this inventory */
+    for(walk=who->inv;walk!=NULL;walk=walk->below)
+    {
+        if (!strcmp(walk->arch->name,"player_info") &&  !strcmp(walk->name,name))
+            return Py_BuildValue("l",(long)(walk));
+    }
+
+    return Py_None; /* there was non */
+};
+
+
+/*****************************************************************************/
+/* Name   : CFGetNextPlayerInfo                                              */
+/* Python : CFPython.GetNextPlayerInfo(who, player_info)                     */
+/* Status : Stable                                                           */
+/*        : player_info: get next player_info in inventory with same name    */
+/*        :                                                                  */
+/*****************************************************************************/
+static PyObject* CFGetNextPlayerInfo(PyObject* self, PyObject* args)
+{
+    long whereptr;
+    char name[128];
+    object *myob, *walk;
+    
+    if (!PyArg_ParseTuple(args,"ll",&whereptr,&myob))
+        return NULL;
+    if(!myob)
+        return Py_None; /* there was non left - this should avoided in scrip */
+
+    /* thats our check paramters: arch "force_info", name of this arch */
+    strncpy(name, myob->name, 127); /* 127 chars should be enough for all */
+    name[63] = '\0';
+
+    /* get the next linked player_info arch in this inventory */
+    for(walk=myob->below;walk!=NULL;walk=walk->below)
+    {
+        if (!strcmp(walk->arch->name,"player_info") &&  !strcmp(walk->name,name))
+            return Py_BuildValue("l",(long)(walk));
+    }
+
+    return Py_None; /* there was non left */
+};
+
+
+/*****************************************************************************/
+/* Name   :                                                                  */
+/* Python :                                                                  */
 /* Status : Untested                                                                */
 /*****************************************************************************/
-
 static PyObject* CFCreateInvisibleInside(PyObject* self, PyObject* args)
 {
     long whereptr;
@@ -3884,10 +4179,16 @@ static PyObject* CFCreateInvisibleInside(PyObject* self, PyObject* args)
 
     GCFP.Value[0] = (void *)(txt2);
     CFR = (PlugHooks[HOOK_GETARCHETYPE])(&GCFP);
+
     /*myob = get_archetype("force"); */
     myob = (object *)(CFR->Value[0]);
     free(CFR);
 
+    if(!myob)
+    {
+        printf("Python WARNING:: CFCreateInvisibleInside: Can't find archtype 'force'\n");
+        return NULL;
+    }
     myob->speed = 0.0;
     GCFP.Value[0] = (void *)(myob);
     (PlugHooks[HOOK_UPDATESPEED])(&GCFP);
@@ -3920,7 +4221,6 @@ static PyObject* CFCreateObjectInside(PyObject* self, PyObject* args)
     char *txt;
     CFParm* CFR;
 
-printf("CreateObjectInside triggered!\n");
     if (!PyArg_ParseTuple(args,"sl",&txt, &whereptr))
         return NULL;
 
@@ -4038,7 +4338,8 @@ static PyObject* CFCheckInventory(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   :                                                                  */
 /* Python :                                                                  */
-/* Status : Untested                                                                */
+/* Status : Untested  - hm, query name should return CF name like "name (unpaid) (cursed) */
+/* and not the 'pure' name - we must test this */
 /*****************************************************************************/
 
 static PyObject* CFGetName(PyObject* self, PyObject* args)
@@ -4058,12 +4359,87 @@ static PyObject* CFSetName(PyObject* self, PyObject* args)
 {
     long whoptr;
     char *txt;
-
+    
     if (!PyArg_ParseTuple(args,"ls",&whoptr,&txt))
         return NULL;
     if (WHO->name != NULL)
         free_string(WHO->name);
-    WHO->name = add_string(txt);
+    if(txt)
+        WHO->name = add_string(txt);
+    else
+        WHO->name = NULL;
+    Py_INCREF(Py_None);
+    return Py_None;
+};
+
+/*****************************************************************************/
+/* Name   :                                                                  */
+/* Python :                                                                  */
+/* Status : Stable                                                           */
+/*****************************************************************************/
+
+static PyObject* CFGetTitle(PyObject* self, PyObject* args)
+{
+    long whoptr;
+    if (!PyArg_ParseTuple(args,"l",&whoptr))
+        return NULL;
+    return Py_BuildValue("s",WHO->title);
+};
+
+
+/*****************************************************************************/
+/* Name   : CFSetTitle                                                       */
+/* Python : CFPython.SetTitle(object, name)                                  */
+/* Status : Stable                                                           */
+/*****************************************************************************/
+static PyObject* CFSetTitle(PyObject* self, PyObject* args)
+{
+    long whoptr;
+    char *txt;
+    
+    if (!PyArg_ParseTuple(args,"ls",&whoptr,&txt))
+        return NULL;
+    if (WHO->title != NULL)
+        free_string(WHO->title);
+    if(txt)
+        WHO->title = add_string(txt);
+    else
+        WHO->title = NULL;
+    Py_INCREF(Py_None);
+    return Py_None;
+};
+
+/*****************************************************************************/
+/* Name   :                                                                  */
+/* Python :                                                                  */
+/* Status : Stable                                                           */
+/*****************************************************************************/
+static PyObject* CFGetSlaying(PyObject* self, PyObject* args)
+{
+    long whoptr;
+    if (!PyArg_ParseTuple(args,"l",&whoptr))
+        return NULL;
+    return Py_BuildValue("s",WHO->slaying);
+};
+
+/*****************************************************************************/
+/* Name   : CFSetSlaying                                                     */
+/* Python : CFPython.SetSlaying(object, name)                                */
+/* Status : Stable                                                           */
+/*****************************************************************************/
+static PyObject* CFSetSlaying(PyObject* self, PyObject* args)
+{
+    long whoptr;
+    char *txt;
+
+    if (!PyArg_ParseTuple(args,"ls",&whoptr,&txt))
+        return NULL;
+    if (WHO->slaying != NULL)
+        free_string(WHO->slaying);
+    if(txt)
+        WHO->slaying = add_string(txt);
+    else
+        WHO->slaying = NULL;
     Py_INCREF(Py_None);
     return Py_None;
 };
