@@ -336,7 +336,7 @@ uint64 query_money(object *op) {
  * pay_from_container function.
  * returns 0 if not possible. 1 if success
  */
-int pay_for_amount(int to_pay,object *pl) {
+int pay_for_amount(uint64 to_pay,object *pl) {
     object *pouch;
 
     if (to_pay==0) return 1;

@@ -17,6 +17,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+include/sproto.h, plugin/plugin_python.c, server/plugins.c, server/shop.c:
+   Use uint64 type for variables holding money. Use Python long integers to
+   pass these variables to/from the Python plugin.
+Andreas Kirschbaum 2005-01-07
+
 plugin/plugin_python.c: Check values passed in from the Python code; generate
    proper Python exceptions for invalid values.
 plugin/plugin_python.c, plugin_animator/plugin_animator.c: Make sure all

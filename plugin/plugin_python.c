@@ -6846,7 +6846,7 @@ static PyObject* CFGetObjectCost(PyObject* self, PyObject* args)
     long whoptr;
     long whatptr;
     int flag;
-    int cost;
+    uint64 cost;
     CFParm* CFR;
 
     if (!PyArg_ParseTuple(args,"lli",&whoptr,&whatptr,&flag))
@@ -6859,10 +6859,10 @@ static PyObject* CFGetObjectCost(PyObject* self, PyObject* args)
     GCFP.Value[1] = (void *)(WHO);
     GCFP.Value[2] = (void *)(&flag);
     CFR = (PlugHooks[HOOK_QUERYCOST])(&GCFP);
-    cost=*(int*)(CFR->Value[0]);
+    cost=*(uint64*)(CFR->Value[0]);
     PyFreeMemory( CFR );
 
-    return Py_BuildValue("i",cost);
+    return Py_BuildValue("L",cost);
 };
 
 /*****************************************************************************/
@@ -6873,7 +6873,7 @@ static PyObject* CFGetObjectCost(PyObject* self, PyObject* args)
 static PyObject* CFGetObjectMoney(PyObject* self, PyObject* args)
 {
     long whoptr;
-    int amount;
+    uint64 amount;
     CFParm* CFR;
 
     if (!PyArg_ParseTuple(args,"l",&whoptr))
@@ -6883,10 +6883,10 @@ static PyObject* CFGetObjectMoney(PyObject* self, PyObject* args)
 
     GCFP.Value[0] = (void *)(WHO);
     CFR = (PlugHooks[HOOK_QUERYMONEY])(&GCFP);
-    amount=*(int*)(CFR->Value[0]);
+    amount=*(uint64*)(CFR->Value[0]);
     PyFreeMemory( CFR );
 
-    return Py_BuildValue("i",amount);
+    return Py_BuildValue("L",amount);
 };
 
 /*****************************************************************************/
@@ -6924,11 +6924,11 @@ static PyObject* CFPayForItem(PyObject* self, PyObject* args)
 static PyObject* CFPayAmount(PyObject* self, PyObject* args)
 {
     long whoptr;
-    int to_pay;
+    uint64 to_pay;
     int val;
     CFParm* CFR;
 
-    if (!PyArg_ParseTuple(args,"li",&whoptr,&to_pay))
+    if (!PyArg_ParseTuple(args,"lL",&whoptr,&to_pay))
         return NULL;
 
     CHECK_OBJ(whoptr);

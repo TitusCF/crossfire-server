@@ -1074,15 +1074,11 @@ CFParm* CFWQueryCost(CFParm* PParm)
     object* whatptr;
     object* whoptr;
     int flag;
-    static int val;
+    static uint64 val;
     CFP = (CFParm*)(malloc(sizeof(CFParm)));
     whatptr = (object *)(PParm->Value[0]);
     whoptr = (object *)(PParm->Value[1]);
     flag = *(int*)(PParm->Value[2]);
-    /* This is now broken since query_cost returns 64 bit -
-     * not positive how well/what needs to be changed for the plugin
-     * to know this and act accordingly.
-     */
     val=query_cost (whatptr,whoptr,flag);
     CFP->Value[0] = (void*) &val;
     return CFP;
@@ -1097,7 +1093,7 @@ CFParm* CFWQueryMoney(CFParm* PParm)
 {
     CFParm* CFP;
     object* whoptr;
-    static int val;
+    static uint64 val;
     CFP = (CFParm*)(malloc(sizeof(CFParm)));
     whoptr = (object *)(PParm->Value[0]);
     val=query_money (whoptr);
@@ -1134,11 +1130,11 @@ CFParm* CFWPayForItem(CFParm* PParm)
 CFParm* CFWPayForAmount(CFParm* PParm)
 {
     CFParm* CFP;
-    int amount;
+    uint64 amount;
     object* whoptr;
     static int val;
     CFP = (CFParm*)(malloc(sizeof(CFParm)));
-    amount = *(int *)(PParm->Value[0]);
+    amount = *(uint64 *)(PParm->Value[0]);
     whoptr = (object *)(PParm->Value[1]);
     val= pay_for_amount (amount,whoptr);
     CFP->Value[0] = (void*) &val;
