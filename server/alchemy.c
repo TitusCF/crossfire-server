@@ -36,12 +36,13 @@
 #include <skills.h>
 #include <spells.h>
 
-/* define this for some helpful debuging information */
+/** define this for some helpful debuging information */
 #define ALCHEMY_DEBUG
 
-/* define this for loads of (marginal) debuging information */
+/** define this for loads of (marginal) debuging information */
 #define EXTREME_ALCHEMY_DEBUG
 
+/** Random cauldrons effects */
 static char *cauldron_effect [] = { 
  "vibrates briefly",
  "produces a cloud of steam",
@@ -63,15 +64,15 @@ static char *cauldron_effect [] = {
 static int is_defined_recipe(const recipe *rp, const object *cauldron, object *caster);
 
 
-/* cauldron_sound() - returns a random selection from cauldron_effect[] */
-
+/** Returns a random selection from cauldron_effect[] */
 char * cauldron_sound ( void ) {
   int size=sizeof(cauldron_effect)/sizeof(char *);
 
   return cauldron_effect[rndm(0, size-1)]; 
 }
 
-/* attempt_do_alchemy() - Main part of the ALCHEMY code. From this we call fctns
+/**
+ * Main part of the ALCHEMY code. From this we call fctns
  * that take a look at the contents of the 'cauldron' and, using these ingredients, 
  * we construct an integer formula value which is referenced (randomly) against a 
  * formula list (the formula list chosen is based on the # contents of the cauldron).
@@ -206,7 +207,8 @@ void attempt_do_alchemy(object *caster, object *cauldron) {
 	calc_alch_danger(caster, cauldron, rp));
 }
 
-/* content_recipe_value()- recipe value of the entire contents of a container.
+/**
+ * Recipe value of the entire contents of a container.
  * This appears to just generate a hash value, which I guess for now works
  * ok, but the possibility of duplicate hashes is certainly possible - msw
   */
@@ -235,7 +237,9 @@ int content_recipe_value (object *op) {
     return formula;
 }
 
-/* numb_ob_inside() */
+/**
+ * Returns total number of items in op
+ */
 
 int numb_ob_inside (object *op) {
   object *tmp=op->inv;
@@ -253,7 +257,8 @@ int numb_ob_inside (object *op) {
     return o_number;
 }
  
-/* attempt_recipe() - essentially a wrapper for make_item_from_recipe() and 
+/**
+ * Essentially a wrapper for make_item_from_recipe() and 
  * insert_ob_in_ob. If the caster has some alchemy skill, then they might
  * gain some exp from (successfull) fabrication of the product. 
  * If nbatches==-1, don't give exp for this creation (random generation/
@@ -318,8 +323,10 @@ object * attempt_recipe(object *caster, object *cauldron, int ability, recipe *r
 
 
 
-/* adjust_product() - we adjust the nrof, exp and level of the final product, based
- * on the item's default parameters, and the relevant caster skill level. */
+/**
+ * We adjust the nrof, exp and level of the final product, based
+ * on the item's default parameters, and the relevant caster skill level.
+ */
 
 void adjust_product(object *item, int lvl, int yield) {
     int nrof=1;
@@ -338,8 +345,10 @@ void adjust_product(object *item, int lvl, int yield) {
 }
 
 
-/* make_item_from_recipe()- using a list of items and a recipe to make an artifact. */
- 
+/**
+ * Using a list of items and a recipe to make an artifact.
+ */
+
 object * make_item_from_recipe(object *cauldron, recipe *rp) {
   artifact *art=NULL;
   object *item=NULL;
@@ -370,7 +379,8 @@ object * make_item_from_recipe(object *cauldron, recipe *rp) {
 }
 
 
-/* find_transmution_ob() - looks through the ingredient list, if we find a
+/**
+ * Looks through the ingredient list. If we find a
  * suitable object in it - we will use that to make the requested artifact.
  * Otherwise the code returns a 'generic' item. -b.t.
  */
@@ -399,7 +409,8 @@ object * find_transmution_ob ( object *first_ingred, recipe *rp) {
 }
 
 
-/* alchemy_failure_effect - Ouch. We didnt get the formula we wanted.
+/**
+ * Ouch. We didnt get the formula we wanted.
  * This fctn simulates the backfire effects--worse effects as the level
  * increases. If SPELL_FAILURE_EFFECTS is defined some really evil things
  * can happen to the would be alchemist. This table probably needs some
@@ -594,7 +605,8 @@ void alchemy_failure_effect(object *op,object *cauldron,recipe *rp,int danger) {
 }
 
 
-/* remove_contents() - all but object "save_item" are elimentated from
+/**
+ * All but object "save_item" are elimentated from
  * the container list. Note we have to becareful to remove the inventories
  * of objects in the cauldron inventory (ex icecube has stuff in it).  
  */
@@ -615,7 +627,8 @@ void remove_contents (object *first_ob, object *save_item) {
     }
 }
 
-/* calc_alch_danger() - "Danger" level will determine how bad the backfire
+/**
+ *"Danger" level, will determine how bad the backfire
  * could be if the user fails to concoct a recipe properly. Factors include
  * the number of ingredients, the length of the name of each ingredient,
  * the user's effective level, the user's Int and the enchantment on the
@@ -665,7 +678,8 @@ int calc_alch_danger(object *caster,object *cauldron, recipe *rp) {
    return danger;
 }
 
-/* is_defined_recipe() - determines if ingredients in a container match the
+/**
+ * Determines if ingredients in a container match the
  * proper ingredients for a recipe.
  *
  * rp is the recipe to check
