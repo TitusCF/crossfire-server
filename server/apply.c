@@ -1350,6 +1350,8 @@ void move_apply (object *trap, object *victim, object *originator)
     goto leave;
 
   case SIGN:
+    if (victim->type != PLAYER && trap->stats.food > 0)
+      return; /* monsters musn't apply magic_mouths with counters */
     apply_sign (victim, trap);
     goto leave;
 
@@ -2007,7 +2009,7 @@ int manual_apply (object *op, object *tmp, int aflag)
     }
   }
   
-  /* monsters mustn't apply random chests */
+  /* monsters mustn't apply random chests, nor magic_mouths with a counter */
   if (op->type != PLAYER && tmp->type == TREASURE)
     return 0;
   
