@@ -261,11 +261,11 @@ int steal(object* op, int dir)
 {
     object *tmp, *next;
     sint16 x, y;
+    mapstruct *m;
 
     x = op->x + freearr_x[dir];
     y = op->y + freearr_y[dir];
-    mapstruct *m;
-
+    
     if(dir == 0) {
 	/* Can't steal from ourself! */
 	return 0;

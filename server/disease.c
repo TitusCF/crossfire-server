@@ -223,8 +223,8 @@ object * find_symptom(object *disease) {
   
 /*  searches around for more victims to infect */
 int check_infection(object *disease) {
-    int x,y,range, mflags;;
-    struct mapdef *map;
+    int x,y,range, mflags;
+    mapstruct *map;
     object *tmp;
     sint16 i,j;
 
