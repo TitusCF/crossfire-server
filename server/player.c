@@ -1430,6 +1430,7 @@ void fire_misc_object(object *op, int dir)
 	if(item->stats.food<=0) {
 	    play_sound_player_only(op->contr, SOUND_WAND_POOF,0,0);
 	    new_draw_info_format(NDI_UNIQUE, 0,op,"The %s goes poof.", query_base_name(item, 0));
+	    return;
 	}
     } else if (item->type == ROD || item->type==HORN) {
 	if(item->stats.hp<spells[item->stats.sp].sp) {
