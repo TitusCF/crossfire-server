@@ -216,8 +216,8 @@ void become_follower (object *op, object *new_god) {
     /* take away any special god-characteristic items. */
     for(item=op->inv;item!=NULL;item=item->below)
       if(QUERY_FLAG(item,FLAG_STARTEQUIP) && item->invisible) {
-        if(item->type==SKILL) continue;
-        if(item->type==FORCE) continue;
+        if(item->type==SKILL || item->type==EXPERIENCE ||
+	   item->type==FORCE) continue;
         remove_ob(item);
         free_object(item);
         item=op->inv;
