@@ -17,6 +17,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/spell_effect.c: fix animate_bomb so that if the bomb is in a container,
+  it does not crash the server - the problem was that it was calling
+  drop, which would then drop it right back into the container.  also, the
+  x and y coordinates were not being properly set.
+MSW 2001-12-31
+
 This change lets the server have multiple image sets.  The client
 can then request which image set to use, and the server will use
 that image set, falling back to other sets as necessary.  I have tested

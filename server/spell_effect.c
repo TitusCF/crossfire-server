@@ -1889,28 +1889,33 @@ int create_bomb(object *op,object *caster,int dir,int spell_type,char *name) {
 }
 
 void animate_bomb(object *op) {
-  int i;
-  object *env;
-  archetype *at;
+    int i;
+    object *env;
+    archetype *at;
 
-  if(op->state!=NUM_ANIMATIONS(op)-1)
-    return;
-  at = find_archetype("splint");
-  for(env=op;env->env!=NULL;env=env->env);
-  if (op->env) {
+    if(op->state!=NUM_ANIMATIONS(op)-1)
+	return;
+    at = find_archetype("splint");
+    for(env=op;env->env!=NULL;env=env->env);
+
+    if (op->env) {
         if (env->map == NULL)
             return;
-	if (env->type==PLAYER) drop(env,op);
-	else {
-	    remove_ob(op);
-	    if ((op = insert_ob_in_map (op, env->map, op,0)) == NULL)
-                return;
-	}
-  }
-  if (at)
-    for(i=1;i<9;i++)
-      fire_arch(op,op,i,at,0,0);
-  explode_object(op);
+
+	if (env->type == PLAYER)
+	    esrv_del_item(env->contr, op->count);
+
+	remove_ob(op);
+	op->x = env->x;
+	op->y = env->y;
+	if ((op = insert_ob_in_map (op, env->map, op,0)) == NULL)
+	    return;
+    }
+    if (at)
+	for(i=1;i<9;i++)
+	    fire_arch(op,op,i,at,0,0);
+
+    explode_object(op);
 }
 
 
