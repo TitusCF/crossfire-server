@@ -802,7 +802,7 @@ int command_cast_spell (object *op, char *params, char command)
 	    rangetype orig_rangetype=op->contr->shoottype;
 	    op->contr->shoottype=range_magic;
 #ifdef ALLOW_SKILLS 
-	    if(op->type==PLAYER&&!QUERY_FLAG(op,FLAG_WIZ)) { 
+	    if(op->type==PLAYER) { 
 		 /* if we don't change to the correct spell numb,
 		  * check_skill_to_fire will be confused as to which
 		  * spell casting skill to ready for the player!
