@@ -1042,6 +1042,9 @@ ticks.
 This change in the way rods recharge now mean the speed of a rod can
 be set in a map (or elsewhere), and that change would stick.
 
+Within the archetype itself, the maxhp value determines the number of
+spells the rod can hold before it needs to recharge again.
+
 POTIONS/DUSTS:
 --------------
 potions and dusts (which were really just potions with a is_dust flag set)

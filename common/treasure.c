@@ -946,9 +946,6 @@ void fix_generated_item (object *op, object *creator, int difficulty,
 		break;
 
 	    case ROD:
-		if (op->stats.maxhp)
-		    op->stats.maxhp += rndm(0, op->stats.maxhp-1);
-		op->stats.hp = op->stats.maxhp;
 		op->level = level_for_item(op, difficulty, 0);
 		/* Add 50 to both level an divisor to keep prices a little more
 		 * reasonable.  Otherwise, a high level version of a low level
@@ -956,6 +953,13 @@ void fix_generated_item (object *op, object *creator, int difficulty,
 		 * 10 time multiplier).  This way, the value are a bit more reasonable.
 		 */
 		op->value= op->value * op->inv->value * (op->level +50) / (op->inv->level + 50);
+		/* maxhp is used to denote how many 'charges' the rod holds before */
+		if (op->stats.maxhp)
+		    op->stats.maxhp *= MAX(op->inv->stats.sp, op->inv->stats.grace);
+		else
+		    op->stats.maxhp = 2 * MAX(op->inv->stats.sp, op->inv->stats.grace);
+
+		op->stats.hp = op->stats.maxhp;
 		break;
 
 	    case SCROLL:

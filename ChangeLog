@@ -17,6 +17,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+common/treasure.c, doc/Developers/spells: Fix generation of rods so they have
+   enough charges to cast the spells.  Update documentation on what maxhp for
+   the archetype of rods means.
+MSW 2003-11-01
+
 server/player.c: Fix crash in stand_near_hostile when it is called on
   tiled maps with player near edge.
 MSW 2003-11-01
