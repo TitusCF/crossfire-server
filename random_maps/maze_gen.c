@@ -74,6 +74,11 @@ char **maze_gen(int xsize, int ysize,int option) {
     else fill_maze_sparse(maze,i,j,xsize,ysize);
   }
 
+  /* clean up our intermediate data structures. */
+  
+  free(wall_x_list);
+  free(wall_y_list);
+
   return maze;
 }
 

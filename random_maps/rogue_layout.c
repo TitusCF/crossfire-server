@@ -81,6 +81,7 @@ char **roguelike_layout_gen(int xsize, int ysize, int options) {
         maze[i][j]=0;
     maze[i/2][j/2]='>';
     maze[i/2][j/2+1]='<';
+    free(Rooms);
     return maze;
   }
     
@@ -113,6 +114,7 @@ char **roguelike_layout_gen(int xsize, int ysize, int options) {
       }
     }
         
+  free(Rooms);
   return maze;
 }
 
