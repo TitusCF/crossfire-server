@@ -6,6 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
+    Copyright (C) 2001 Mark Wedel
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -22,7 +23,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to mark@pyramid.com
+    The author can be reached via e-mail to mwedel@scruz.net
 */
 
 
@@ -76,7 +77,7 @@ void put_decor(mapstruct *map,char **maze,char *decorstyle,int decor_option,RMPa
 				this_object->y = y;
 				/* it screws things up if decor can stop people */
 				CLEAR_FLAG(this_object,FLAG_NO_PASS);
-				insert_ob_in_map(this_object,map,NULL);
+				insert_ob_in_map(this_object,map,NULL,0);
 				number_to_place--;
 			 }
 		  else failures++;
@@ -96,7 +97,7 @@ void put_decor(mapstruct *map,char **maze,char *decorstyle,int decor_option,RMPa
 				this_object->y = j;
 				/* it screws things up if decor can stop people */
 				CLEAR_FLAG(this_object,FLAG_NO_PASS);
-				insert_ob_in_map(this_object,map,NULL);
+				insert_ob_in_map(this_object,map,NULL,0);
 			 }
 		  }
 		  

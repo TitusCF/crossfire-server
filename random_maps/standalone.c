@@ -103,7 +103,7 @@ int auto_apply (object *op) {
 
     tmp->x=op->x,tmp->y=op->y;
     SET_FLAG(tmp,FLAG_UNPAID);
-    insert_ob_in_map(tmp,op->map,NULL);
+    insert_ob_in_map(tmp,op->map,NULL,0);
     CLEAR_FLAG(op,FLAG_AUTO_APPLY);
     identify(tmp);
     break;
@@ -131,8 +131,8 @@ void fix_auto_apply(mapstruct *m) {
   object *tmp,*above=NULL;
   int x,y;
 
-  for(x=0;x<m->map_object->x;x++)
-    for(y=0;y<m->map_object->y;y++)
+  for(x=0;x<MAP_WIDTH(m);x++)
+    for(y=0;y<MAP_HEIGHT(m);y++)
       for(tmp=get_map_ob(m,x,y);tmp!=NULL;tmp=above) {
         above=tmp->above;
 
@@ -154,8 +154,8 @@ void fix_auto_apply(mapstruct *m) {
 			      m->difficulty,0);
 	}
       }
-  for(x=0;x<m->map_object->x;x++)
-    for(y=0;y<m->map_object->y;y++)
+  for(x=0;x<MAP_WIDTH(m);x++)
+    for(y=0;y<MAP_HEIGHT(m);y++)
       for(tmp=get_map_ob(m,x,y);tmp!=NULL;tmp=tmp->above)
 	if (tmp->above
             && (tmp->type == TRIGGER_BUTTON || tmp->type == TRIGGER_PEDESTAL))

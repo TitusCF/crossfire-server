@@ -75,10 +75,10 @@ void include_map_in_map(mapstruct *dest_map, mapstruct *in_map,int x, int y) {
   object *new_ob;
   
   /* First, splatter everything in the dest map at the location */
-  nuke_map_region(dest_map,x,y,in_map->map_object->x,in_map->map_object->y);
+  nuke_map_region(dest_map,x,y,MAP_WIDTH(in_map),MAP_HEIGHT(in_map));
 		
-  for(i=0;i<in_map->map_object->x;i++) 
-    for(j=0;j<in_map->map_object->y;j++) {
+  for(i=0;i<MAP_WIDTH(in_map);i++) 
+    for(j=0;j<MAP_HEIGHT(in_map);j++) {
       for(tmp=get_map_ob(in_map,i,j);tmp!=NULL;tmp=tmp->above) {
         /* don't copy things with multiple squares:  must be dealt with
            specially. */
@@ -101,13 +101,13 @@ int find_spot_for_submap(mapstruct *map,char **layout,int *ix, int *iy,int xsize
   int l,m;
   /* don't even try to place a submap into a map if the big map isn't
      sufficiently large. */
-  if(2*xsize > map->map_object->x || 2*ysize > map->map_object->y) return 0;
+  if(2*xsize > MAP_WIDTH(map) || 2*ysize > MAP_HEIGHT(map)) return 0;
   
   /* search a bit for a completely free spot. */
   for(tries=0;tries<20;tries++) {
     /* pick a random location in the layout */
-    i = RANDOM() % (map->map_object->x - xsize-2)+1;
-    j = RANDOM() % (map->map_object->y - ysize-2)+1;
+    i = RANDOM() % (MAP_WIDTH(map) - xsize-2)+1;
+    j = RANDOM() % (MAP_HEIGHT(map) - ysize-2)+1;
     is_occupied=0;
     for(l=i;l<i + xsize;l++)
       for(m=j;m<j + ysize;m++)
@@ -121,8 +121,8 @@ int find_spot_for_submap(mapstruct *map,char **layout,int *ix, int *iy,int xsize
   if(is_occupied) { /* failure, try a relaxed placer. */
     /* pick a random location in the layout */
     for(tries=0;tries<10;tries++) {
-      i = RANDOM() % (map->map_object->x - xsize-2)+1;
-      j = RANDOM() % (map->map_object->y - ysize-2)+1;
+      i = RANDOM() % (MAP_WIDTH(map) - xsize-2)+1;
+      j = RANDOM() % (MAP_HEIGHT(map) - ysize-2)+1;
       is_occupied=0;
       for(l=i;l<i + xsize;l++)
         for(m=j;m<j + ysize;m++)
@@ -144,8 +144,8 @@ void place_fountain_with_specials(mapstruct *map) {
   object *potion=get_object();
   copy_object(pick_random_object(fountain_style),potion);
   while(i<0 && tries<10) {
-    ix = RANDOM() % (map->map_object->x -2) +1;
-    iy = RANDOM() % (map->map_object->x -2) +1;
+    ix = RANDOM() % (MAP_WIDTH(map) -2) +1;
+    iy = RANDOM() % (MAP_WIDTH(map) -2) +1; /* is this really supposed to be the width? */
     i = find_first_free_spot(fountain->arch,map,ix,iy);
     tries++;
   };
@@ -165,8 +165,8 @@ void place_fountain_with_specials(mapstruct *map) {
   potion->material=M_ADAMANT;
   fountain->x = ix;
   fountain->y = iy;
-  insert_ob_in_map(fountain,map,NULL);
-  insert_ob_in_map(potion,map,NULL);
+  insert_ob_in_map(fountain,map,NULL,0);
+  insert_ob_in_map(potion,map,NULL,0);
 
 }
 
@@ -181,8 +181,8 @@ void place_special_exit(mapstruct * map, int hole_type,RMParms *RP) {
   copy_object(pick_random_object(exit_style),the_exit);
 
   while(i<0) {
-    ix = RANDOM() % (map->map_object->x -2) +1;
-    iy = RANDOM() % (map->map_object->x -2) +1;
+    ix = RANDOM() % (MAP_WIDTH(map) -2) +1;
+    iy = RANDOM() % (MAP_WIDTH(map) -2) +1;	/* Is this supposed to be width? */
     i = find_first_free_spot(the_exit->arch,map,ix,iy);
   };
   
@@ -236,7 +236,7 @@ void place_special_exit(mapstruct * map, int hole_type,RMParms *RP) {
 
 		
   }
-  insert_ob_in_map(the_exit,map,NULL);
+  insert_ob_in_map(the_exit,map,NULL,0);
 }
   
 		  
@@ -254,7 +254,7 @@ void place_specials_in_map(mapstruct *map, char **layout,RMParms *RP) {
     special_map = find_style("/styles/specialmaps",0,RP->difficulty); 
     if(special_map==NULL) return;
 	 
-    if(find_spot_for_submap(map,layout,&ix,&iy,special_map->map_object->x,special_map->map_object->y)) 
+    if(find_spot_for_submap(map,layout,&ix,&iy,MAP_WIDTH(special_map),MAP_HEIGHT(special_map))) 
       include_map_in_map(map,special_map,ix,iy);
     break;
   }

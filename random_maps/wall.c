@@ -6,6 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
+    Copyright (C) 2001 Mark Wedel
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -22,7 +23,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to mark@pyramid.com
+    The author can be reached via e-mail to mwedel@scruz.net
 */
 
 
@@ -131,7 +132,7 @@ void make_map_walls(mapstruct *map,char **layout, char *w_style,RMParms *RP) {
 			 thiswall->x = i; thiswall->y = j;
 			 SET_FLAG(thiswall,FLAG_NO_PASS); /* make SURE it's a wall */
 			 wall(map,i,j);
-			 insert_ob_in_map_simple(thiswall,map);
+			 insert_ob_in_map(thiswall,map,thiswall,INS_NO_MERGE | INS_NO_WALK_ON);
 		  }
 		}
   }
@@ -334,7 +335,7 @@ object * retrofit_joined_wall(mapstruct *the_map,int i,int j,int insert_flag,RMP
       free_object(the_wall);
     }
     SET_FLAG(new_wall,FLAG_NO_PASS); /* make SURE it's a wall */
-    insert_ob_in_map_simple(new_wall,the_map);
+    insert_ob_in_map(new_wall,the_map,new_wall,INS_NO_MERGE | INS_NO_WALK_ON);
   }
   else
     nroferrors--;  /* it's OK not to find an arch. */

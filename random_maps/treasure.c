@@ -6,6 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
+    Copyright (C) 2001 Mark Wedel
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -22,7 +23,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to mark@pyramid.com
+    The author can be reached via e-mail to mwedel@scruz.net
 */
 
 /*  placing treasure in maps, where appropriate.  */
@@ -54,11 +55,9 @@
 
 int wall_blocked(mapstruct *m, int x, int y) {
   int r;
-  MapLook *f;
   if(out_of_map(m,x,y))
     return 1;
-  f = get_map(m,x,y);
-  r = f->flags & (P_NO_PASS );
+  r = GET_MAP_FLAGS(m,x,y) & (P_NO_PASS );
   return r;
 }
 
@@ -242,7 +241,7 @@ object * place_chest(int treasureoptions,int x, int y,mapstruct *map, mapstruct 
 
   /* actually place the chest. */
   the_chest->x = xl; the_chest->y = yl;
-  insert_ob_in_map(the_chest,map,NULL);
+  insert_ob_in_map(the_chest,map,NULL,0);
   return the_chest;
 }
 
@@ -258,7 +257,7 @@ object *find_closest_monster(mapstruct *map,int x,int y,RMParms *RP) {
     /* boundscheck */
     if(lx > 0 && ly > 0 && lx < RP->Xsize && ly < RP->Ysize)
       /* don't bother searching this square unless the map says life exists.*/
-      if(get_map(map,lx,ly)->flags & P_IS_ALIVE) {
+      if(GET_MAP_FLAGS(map,lx,ly) & P_IS_ALIVE) {
         object *the_monster=get_map_ob(map,lx,ly);
         for(;the_monster!=NULL&&(!QUERY_FLAG(the_monster,FLAG_MONSTER));the_monster=the_monster->above);
         if(the_monster && QUERY_FLAG(the_monster,FLAG_MONSTER))
@@ -338,7 +337,7 @@ int keyplace(mapstruct *map,int x,int y,char *keycode,int door_flag,int n_keys,R
   if(the_keymaster==NULL) {
     the_key->x = kx;
     the_key->y = ky; 
-    insert_ob_in_map(the_key,map,NULL);
+    insert_ob_in_map(the_key,map,NULL,0);
     return 1;
   }
   
@@ -369,7 +368,7 @@ object *find_monster_in_room_recursive(char **layout, mapstruct *map, int x, int
   /* check the current square for a monster.  If there is one,
      set theMonsterToFind and return it. */
   layout[x][y]=1;
-  if(get_map(map,x,y)->flags & P_IS_ALIVE) {
+  if(GET_MAP_FLAGS(map,x,y) & P_IS_ALIVE) {
     object *the_monster = get_map_ob(map,x,y);
     /* check off this point */
     for(;the_monster!=NULL&&(!QUERY_FLAG(the_monster,FLAG_ALIVE));the_monster=the_monster->above);
@@ -588,7 +587,7 @@ object ** surround_by_doors(mapstruct *map,char **layout,int x,int y,int opts) {
       new_door->x = x + freearr_x[i];
       new_door->y = y + freearr_y[i];
       remove_monsters(new_door->x,new_door->y,map);
-      insert_ob_in_map(new_door,map,NULL);
+      insert_ob_in_map(new_door,map,NULL,0);
       doorlist[ndoors_made]=new_door;
       ndoors_made++;
     }
@@ -691,7 +690,7 @@ void lock_and_hide_doors(object **doorlist,mapstruct *map,int opts,RMParms *RP) 
       remove_ob(door);
       free_object(door);
       doorlist[i]=new_door;
-      insert_ob_in_map(new_door,map,NULL);
+      insert_ob_in_map(new_door,map,NULL,0);
       sprintf(keybuf,"%d",RANDOM());
       new_door->slaying = add_string(keybuf);
       keyplace(map,new_door->x,new_door->y,keybuf,NO_PASS_DOORS,2,RP);

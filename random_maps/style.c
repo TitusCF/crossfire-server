@@ -277,10 +277,10 @@ object *pick_random_object(mapstruct *style) {
      * way is not good.
      */
     do {
-	i = RANDOM () % (style->map_object->x * style->map_object->y);
+	i = RANDOM () % (MAP_WIDTH(style) * MAP_HEIGHT(style));
 
-	x = i / style->map_object->y;
-	y = i % style->map_object->y;
+	x = i / MAP_HEIGHT(style);
+	y = i % MAP_HEIGHT(style);
 	new_obj = get_map_ob(style,x,y);
     } while (new_obj == NULL);
     if (new_obj->head) return new_obj->head;
@@ -304,3 +304,4 @@ void free_style_maps()
     }
     LOG(llevDebug,"free_style_maps: Freed %d maps\n", style_maps);
 }
+

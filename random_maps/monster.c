@@ -39,7 +39,7 @@ void	 insert_multisquare_ob_in_map(object *new_obj,mapstruct *map) {
   object *old_seg;
   object *head;
   /* first insert the head */
-  insert_ob_in_map_simple(new_obj,map);
+  insert_ob_in_map(new_obj,map,new_obj,INS_NO_MERGE | INS_NO_WALK_ON);
 
   x = new_obj->x;
   y = new_obj->y;
@@ -51,7 +51,7 @@ void	 insert_multisquare_ob_in_map(object *new_obj,mapstruct *map) {
     new_seg->x = x + at->clone.x;
     new_seg->y = y + at->clone.y;
     new_seg->map = old_seg->map;
-    insert_ob_in_map_simple(new_seg,new_seg->map);
+    insert_ob_in_map(new_seg,new_seg->map, new_seg,INS_NO_MERGE | INS_NO_WALK_ON);
     new_seg->head = head;
     old_seg->more = new_seg;
     old_seg = new_seg;
@@ -103,6 +103,6 @@ void place_monsters(mapstruct *map, char *monsterstyle, int difficulty,RMParms *
     else {
 	 failed_placements++;
     }
-    exp_per_sq=((double)1000*total_experience)/(map->map_object->x*map->map_object->y+1);
+    exp_per_sq=((double)1000*total_experience)/(MAP_WIDTH(map)*MAP_HEIGHT(map)+1);
   }
 }

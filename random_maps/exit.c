@@ -6,6 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
+    Copyright (C) 2001 Mark Wedel
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -22,7 +23,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to mark@pyramid.com
+    The author can be reached via e-mail to mwedel@scruz.net
 */
 
 #include <global.h>
@@ -205,16 +206,17 @@ void place_exits(mapstruct *map, char **maze,char *exitstyle,int orientation,RMP
         random_sign->y = the_exit_up->y+freearr_y[j];
 
         random_sign->msg = add_string("This is a random map.\n");
-        insert_ob_in_map(random_sign,map,NULL);
+        insert_ob_in_map(random_sign,map,NULL,0);
       }
     }
     /* Block the exit so things don't get dumped on top of it. */
     SET_FLAG(the_exit_up,FLAG_NO_PASS);
-    insert_ob_in_map(the_exit_up,map,NULL);
+    insert_ob_in_map(the_exit_up,map,NULL,0);
     maze[the_exit_up->x][the_exit_up->y]='<';
+
     /* set the starting x,y for this map */
-    map->map_object->stats.hp=the_exit_up->x;
-    map->map_object->stats.sp=the_exit_up->y;
+    MAP_ENTER_X(map) = the_exit_up->x;
+    MAP_ENTER_Y(map) = the_exit_up->y;
 
     /* first, look for a '>' character */
     find_in_layout(0,'>',&downx,&downy,maze,RP);
@@ -270,17 +272,17 @@ void place_exits(mapstruct *map, char **maze,char *exitstyle,int orientation,RMP
         the_exit_back->slaying = add_string(map->path);
         the_exit_back->stats.hp = the_exit_down->x;
         the_exit_back->stats.sp = the_exit_down->y;
-        the_exit_back->x = EXIT_X(new_map->map_object);
-        the_exit_back->y = EXIT_Y(new_map->map_object);
+        the_exit_back->x = MAP_ENTER_X(new_map);
+        the_exit_back->y = MAP_ENTER_Y(new_map);
 
-        insert_ob_in_map(the_exit_back,new_map,NULL);
+        insert_ob_in_map(the_exit_back,new_map,NULL,0);
 	set_map_timeout(new_map);   /* So it gets swapped out */
       }
       else 
         the_exit_down->slaying = add_string("/!");
       /* Block the exit so things don't get dumped on top of it. */
       SET_FLAG(the_exit_down,FLAG_NO_PASS);
-      insert_ob_in_map(the_exit_down,map,NULL);
+      insert_ob_in_map(the_exit_down,map,NULL,0);
       maze[the_exit_down->x][the_exit_down->y]='>';
     }
   }     
@@ -302,7 +304,7 @@ void unblock_exits(mapstruct *map, char **maze, RMParms *RP) {
         for(walk=get_map_ob(map,i,j);walk!=NULL;walk=walk->above) {
           if(QUERY_FLAG(walk,FLAG_NO_PASS) && walk->type != LOCKED_DOOR) {
             CLEAR_FLAG(walk,FLAG_NO_PASS);
-            update_object(walk);
+            update_object(walk,UP_OBJ_CHANGE);
           }
         }
       }
