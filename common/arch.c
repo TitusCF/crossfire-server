@@ -248,6 +248,8 @@ int item_matched_string(object *pl, object *op, char *name)
 	else if (strstr(query_base_name(op,1), cp)) retval = 12;
 	else if (strstr(query_base_name(op,0), cp)) retval = 12;
 	else if (strstr(query_short_name(op), cp)) retval = 12;
+	/* Check for partial custom name, but give a real low priority */
+	else if (op->custom_name && strstr(op->custom_name, cp)) retval = 3;
 
 	if (retval) {
 	    if (pl->type == PLAYER)
