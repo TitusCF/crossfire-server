@@ -473,6 +473,27 @@ void reset_object(object *op) {
   op->race = NULL;
   op->slaying = NULL;
   op->msg = NULL;
+  op->script_load = NULL;
+  op->script_apply = NULL;
+  op->script_say = NULL;
+  op->script_trigger = NULL;
+  op->script_time = NULL;
+  op->script_attack = NULL;
+  op->script_throw = NULL;
+  op->script_drop = NULL;
+  op->script_stop = NULL;
+  op->script_death = NULL;
+  op->script_str_load = NULL;
+  op->script_str_apply = NULL;
+  op->script_str_say = NULL;
+  op->script_str_trigger = NULL;
+  op->script_str_time = NULL;
+  op->script_str_attack = NULL;
+  op->script_str_throw = NULL;
+  op->script_str_drop = NULL;
+  op->script_str_stop = NULL;
+  op->script_str_death = NULL;
+  op->current_weapon_script = NULL;
   clear_object(op);
 }
 /*
