@@ -1414,13 +1414,10 @@ void remove_unpaid_objects(object *op, object *env)
 
 
 void do_some_living(object *op) {
-  char buf[MAX_BUF];
-  object *tmp;
   int last_food=op->stats.food;
   int gen_hp, gen_sp, gen_grace;
   int over_hp, over_sp, over_grace;
-  int x,y,i;  /*  these are for resurrection */
-  mapstruct *map;  /*  this is for resurrection */
+  int i;
   const int rate_hp = 1200;
   const int rate_sp = 2500;
   const int rate_grace = 2000;
@@ -1543,51 +1540,64 @@ void do_some_living(object *op) {
   while(op->stats.food<0&&op->stats.hp>0)
     op->stats.food++,op->stats.hp--;
 
-  if (!op->contr->state&&!QUERY_FLAG(op,FLAG_WIZ)&&(op->stats.hp<0||op->stats.food<0)) {
+  if (!op->contr->state&&!QUERY_FLAG(op,FLAG_WIZ)&&(op->stats.hp<0||op->stats.food<0)) 
+    kill_player(op);
+}
+
+/* If the player should die (lack of hp, food, etc), we call this.
+ * op is the player in jeopardy.  If the player can not be saved (not
+ * permadeath, no lifesave), this will take care of removing the player
+ * file.
+ */
+void kill_player(object *op)
+{
+    char buf[MAX_BUF];
+    int x,y,i;
+    mapstruct *map;  /*  this is for resurrection */
+    object *tmp;
+
     if(save_life(op))
-      return;
+	return;
+
     if(op->stats.food<0) {
 #ifdef EXPLORE_MODE
-      if (op->contr->explore) {
-      new_draw_info(NDI_UNIQUE, 0,op,"You would have starved, but you are");
-      new_draw_info(NDI_UNIQUE, 0,op,"in explore mode, so...");
-      op->stats.food=999;
-      return;
-      }
+	if (op->contr->explore) {
+	    new_draw_info(NDI_UNIQUE, 0,op,"You would have starved, but you are");
+	    new_draw_info(NDI_UNIQUE, 0,op,"in explore mode, so...");
+	    op->stats.food=999;
+	    return;
+	}
 #endif /* EXPLORE_MODE */
-      sprintf(buf,"%s starved to death.",op->name);
-      strcpy(op->contr->killer,"starvation");
+	sprintf(buf,"%s starved to death.",op->name);
+	strcpy(op->contr->killer,"starvation");
     }
-    else
+    else {
 #ifdef EXPLORE_MODE
-      if (op->contr->explore) {
-	new_draw_info(NDI_UNIQUE, 0,op,"You would have died, but you are");
-	new_draw_info(NDI_UNIQUE, 0,op,"in explore mode, so...");
-	op->stats.hp=op->stats.maxhp;
-	return;
-      }
+	if (op->contr->explore) {
+	    new_draw_info(NDI_UNIQUE, 0,op,"You would have died, but you are");
+	    new_draw_info(NDI_UNIQUE, 0,op,"in explore mode, so...");
+	    op->stats.hp=op->stats.maxhp;
+	    return;
+	}
 #endif /* EXPLORE_MODE */
-      sprintf(buf,"%s died.",op->name);
-      play_sound_player_only(op->contr, SOUND_PLAYER_DIES,0,0);
-      /*  save the map location for corpse, gravestone*/
-      x=op->x;y=op->y;map=op->map;
+	sprintf(buf,"%s died.",op->name);
+    }
+    play_sound_player_only(op->contr, SOUND_PLAYER_DIES,0,0);
+
+    /*  save the map location for corpse, gravestone*/
+    x=op->x;y=op->y;map=op->map;
 
 
 #ifdef NOT_PERMADEATH
-/****************************************************************************/
-/* Patch: NOT_PERMADEATH                Author: Charles Henrich             */
-/* Email: henrich@crh.cl.msu.edu        Date  : April 9, 1993               */
-/*                                                                          */
-/* Purpose: This patch changes death from being a permanent, very painful   */
-/*          thing, to a painful, but survivable thing.  More mudlike in     */
-/*          nature.  With this patch defined, when a player dies, they will */
-/*          permanently lose one point off of a random stat, as well as     */
-/*          losing 20% of their experience points.  Then they are whisked   */
-/*          to the start map.  Although this sounds very nice here, it is   */
-/*          still REAL painful to die, 20% of a million is alot!            */
-/*                                                                          */
-/****************************************************************************/
+    /* NOT_PERMADEATH code.  This basically brings the character back to life
+     * if they are dead - it takes some and a random stat.  See the config.h
+     * file for a little more in depth detail about this.
+     */
 
+    /* Basically two ways to go - remove a stat permanently, or just
+     * make it depletion.  This bunch of code deals with that aspect	
+     * of death.
+     */
     if (settings.stat_loss_on_death) {
 	/* Pick a random stat and take a point off it.  Tell the player
 	 * what he lost.
@@ -1599,7 +1609,7 @@ void do_some_living(object *op) {
 	check_stat_bounds(&(op->contr->orig_stats));
 	new_draw_info(NDI_UNIQUE, 0,op, lose_msg[i]);
     } else {
-	    /* deplete a stat */
+	/* deplete a stat */
 	archetype *deparch=find_archetype("depletion");
 	object *dep;
 
@@ -1616,14 +1626,9 @@ void do_some_living(object *op) {
     }
 
 
- /**************************************/
- /*                                    */
- /* Lets make up a gravestone to put   */
- /* here... We put experience lost on  */
- /* it for kicks....                   */
- /*                                    */
- /**************************************/
-
+    /* Put a gravestone up where the character 'almost' died.  List the
+     * exp loss on the stone.
+     */
     tmp=arch_to_object(find_archetype("gravestone"));
     sprintf(buf,"%s's gravestone",op->name);
     tmp->name=add_string(buf);
@@ -1763,8 +1768,8 @@ void do_some_living(object *op) {
     SET_FLAG (tmp, FLAG_UNIQUE);
     insert_ob_in_map(tmp,map);
 #endif
-  }
 }
+
 
 void loot_object(object *op) { /* Grab and destroy some treasure */
   object *tmp,*tmp2,*next;
