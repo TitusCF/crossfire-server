@@ -5,7 +5,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 1994 Mark Wedel
+    Copyright (C) 2000 Mark Wedel
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -22,7 +22,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to mark@pyramid.com
+    The author can be reached via e-mail to mwedel@scruz.net
 */
 
 #include <global.h>
@@ -603,42 +603,41 @@ int check_improve_weapon (object *op, object *tmp)
  * value (magic) of the armour can never be increased beyond
  * the level of the character / 10 -- rounding upish, nor may
  * the armour value of the piece of equipment exceed either 
- * the users level or 99)
+ * the users level or 90)
  */
  
 int improve_armour(object *op, object *improver, object *armour)
 {
-    int addarm;
+    int new_armour;
  
-    addarm = armour->armour/25 + op->level/20 + 1;
+    new_armour = armour->armour + armour->armour/25 + op->level/20 + 1;
+    if (new_armour > 90)
+        new_armour = 90;
 
-    if (armour->magic>=(op->level/10+1) || ((armour->armour + 
-		addarm) >= op->level )) {
+    if (armour->magic >= (op->level / 10 + 1)
+        || new_armour > op->level)
+    {
         new_draw_info(NDI_UNIQUE, 0,op,"You are not yet powerfull enough");
         new_draw_info(NDI_UNIQUE, 0,op,"to improve this armour.");
         return 0;
     }
 
-    if( (armour->armour + addarm) <= 99)  {
-        armour->magic++;
-	armour->armour+=addarm;
-	armour->weight+=armour->weight*0.05;
-	if (op->type == PLAYER) {
-	  esrv_send_item(op, armour);
-	  if(QUERY_FLAG(armour, FLAG_APPLIED))
-	    fix_player(op);
-	}
-        decrease_ob(improver);
-        return 1;
+    if (new_armour > armour->armour) {
+	armour->armour = new_armour;
+	armour->weight += armour->weight * 0.05;
     } else {
-        armour->magic++;
         new_draw_info(NDI_UNIQUE, 0,op,"The armour value of this equipment");
         new_draw_info(NDI_UNIQUE, 0,op,"cannot be further improved.");
-        decrease_ob(improver);
-	return 1;
     } 
-
- }
+    armour->magic++;
+    if (op->type == PLAYER) {
+        esrv_send_item(op, armour);
+        if(QUERY_FLAG(armour, FLAG_APPLIED))
+            fix_player(op);
+    }
+    decrease_ob(improver);
+    return 1;
+}
 
 
 /* archetypes don't contain any MONEY_CHANGER object,
