@@ -117,7 +117,8 @@ enum skillnrs {
     SK_USE_MAGIC_ITEM, 		/* player use wands/horns/rods */ 
     /* 30 */
     SK_PRAYING,			/* player can cast cleric spells, regen grace points */ 
-    SK_CLAWING			/* player attack for troll, dragon characters */ 
+    SK_CLAWING,			/* player attack for troll, dragon characters */ 
+	 SK_LEVITATION       /* skill for players who can fly. */
  
 /* Here follows a list of others which could be implemented, but are
  * not */

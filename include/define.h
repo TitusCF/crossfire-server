@@ -306,7 +306,7 @@
 
 #define NROFREALSPELLS	187	/* Number of different spells */
 
-#define NROFSKILLS  32  /* match to the number of elements in skills[] array */
+#define NROFSKILLS  33  /* match to the number of elements in skills[] array */
 
 #define NROF_SOUNDS (23 + NROFREALSPELLS) /* Number of sounds */
 

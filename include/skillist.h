@@ -70,7 +70,8 @@ skill skills[] = {
     { "use magic item", EXP_NONE, 0, 0, 0,   NO_STAT_VAL, NO_STAT_VAL, NO_STAT_VAL }, 
 /* 30 */
     { "praying", 	EXP_NONE, 0, 0, 0,      WIS,      POW,     INT }, 
-    { "clawing", 	EXP_NONE, 0, 0, 0,      STR,      DEX, NO_STAT_VAL }
+    { "clawing", 	EXP_NONE, 0, 0, 0,      STR,      DEX, NO_STAT_VAL },
+    { "levitation",	EXP_NONE, 0, 0, 0, NO_STAT_VAL, NO_STAT_VAL, NO_STAT_VAL }
 };
 
 
