@@ -61,11 +61,11 @@ TYPE:1
 36=
 36= sends dark waves of energy into
 46=hear a wail of despair as
-46= shudders breifly
+46= shudders briefly
 46= causes wails of despair come from deep within
 75=hear the laughter of dark gods as
 75= vibrates with pain
-75= vibrations of pain and etheral laughter haunt
+75= vibrations of pain and ethereal laughter haunt
 100=bite deeply into
 100='s soul
 100='s dark power bites deeply into
@@ -79,7 +79,7 @@ TYPE:1
 210= begs for mercy at your feet
 210= inflicts unbelievable pain upon
 9999=witness the soul of
-9999= shimmering out of the body voilently
+9999= shimmering out of the body violently
 9999= cackles as the soul begins to depart from
 #electric
 TYPE:2
@@ -118,7 +118,7 @@ TYPE:2
 170='s power causes violent spasms in
 200=are horrified by the sight of
 200= frothing madly at your feet
-200= causes uncontrollable muscle spasams in
+200= causes uncontrollable muscle spasms in
 9999=feel a violent shockwave crackling with power as
 9999= shudders with blinding arcs
 9999= sends horrible crackling power into
@@ -211,7 +211,7 @@ TYPE:5
 6= hits
 9=hit
 9= hard
-9= skilfully hits
+9= skillfully hits
 12=hit
 12= very hard
 12= deftly hits
@@ -266,7 +266,7 @@ TYPE:6
 120=
 120= launches a fury of flying fists at
 150=touch a pressure point on
-150= sending him into spasams
+150= sending him into spasms
 150= touches a pressure point on
 180=dropkick
 180=
@@ -350,15 +350,54 @@ TYPE:8
 9999=nearly shatter the skull of
 9999=
 9999= pummels
-#placeholders for now
 #slash
 TYPE:9
-3=slash
+3=cut
 3=
-3= slashes
-9999=vicously slash
-9999=
-9999= viciously slashes
+3= cuts
+6=cut
+6= hard
+6= skillfully cuts
+9=cut
+9= very hard
+9= viciously cuts
+12=slash
+12=
+12= slashes
+20=slash
+20= hard
+20= skillfully slashes
+30=slash
+30= very hard
+30= viciously slashes
+45=slash
+45= with a powerful sweep
+45= powerfully slashes
+60=lay open
+60= with a vicious swipe
+60= lays open
+80=deeply gash
+80=
+80= deeply gashes
+100= tear open
+100= with a cruel slash
+100= tears open
+130=open up deep wounds
+130= with a brutal swipe
+130= opens up deep wounds in
+160=mince
+160=
+160= minces
+190=lacerate
+190= with a gruesome hack
+190= lacerates
+230=tears a gaping wound into
+230= with a horrendous sweep
+230= tears a gaping wound into
+9999=nearly bisects
+9999= with a terrifying slash
+9999= nearly bisects
+#placeholders for now
 #pierce
 TYPE:10
 3=pierce
@@ -377,12 +416,48 @@ TYPE:11
 9999= cleaves hard
 #slice
 TYPE:12
-3=slice
+3=slit open
 3=
-3= slices
-9999=slice hard
-9999=
-9999= slices hard
+3= slits open
+6=slice
+6=
+6= slices
+9=slice
+9= hard
+9= skillfully slices
+12=slice
+12= very hard
+12= viciously slices
+20=brutally slice
+20=
+20= brutally slices
+30=cut down
+30=
+30= cuts down
+45=severs flesh
+45= with a cruel slice
+45= cruelly slices
+60=carve deeply into
+60=
+60= carves deeply into
+80=perform a wide arcing slice gashing open
+80=
+80= performs a wide arcing slice gashing open
+120=slice open
+120= with an overhead sweep
+120= slices down
+150=dissect
+150= with a series of deep slices
+150= dissects
+180=split
+180= wide open
+180= splits
+240=brutally slices
+240= with a cruel flurry of blows
+240= brutally slices
+9999=unleash a blizzard of steel on
+9999= filling the air with a mist of blood
+9999= unleashes a blizzard of steel on
 #stab
 TYPE:13
 3=stab
@@ -393,12 +468,48 @@ TYPE:13
 9999= stabs hard
 #whip
 TYPE:14
-3=whip
+3=lash
 3=
-3= whips
-9999=whip hard
-9999=
-9999= whips hard
+3= lashes
+6=lash
+6= hard
+6= viciously lash
+9=lash
+9= very hard
+9= brutally lashes
+12=whip
+12=
+12= whips
+20=whip
+20= hard
+20= viciously whips
+30=whip
+30= very hard
+30= brutally whips
+45=flog
+45=
+45= flogs
+60=flog
+60= hard
+60= viciously flogs
+75=flog
+75= very hard
+75= brutally flogs
+90=thrash
+90=
+90= thrashes
+120=leave deep welts and bruises on
+120=
+120= cruelly thrashes
+150=cruelly whip
+150= as he screams in agony
+150= causes screams of agony to emanate from
+180=tear open gaping wounds in
+180=
+180= tears open gaping wounds in
+9999=wrap your whip around
+9999= and nearly strangle him
+9999= nearly strangles
 #crush
 TYPE:15
 3=crush
