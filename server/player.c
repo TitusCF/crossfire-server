@@ -797,88 +797,83 @@ void flee_player(object *op) {
  * stop.
  */
 int check_pick(object *op) {
+  object *tmp, *next;
+  tag_t next_tag, op_tag;
+  int stop = 0;
 
-  if(QUERY_FLAG(op,FLAG_FLYING) || op->below==NULL || !can_pick(op,op->below))
+  if (QUERY_FLAG (op, FLAG_FLYING))
     return 1;
 
+  op_tag = op->count;
+
+  next = op->below;
+  if (next)
+    next_tag = next->count;
+  while (next && ! was_destroyed (next, next_tag))
+  {
+    tmp = next;
+    next = tmp->below;
+    if (next)
+      next_tag = next->count;
+
+    if (was_destroyed (op, op_tag))
+        return 0;
+
+    if ( ! can_pick (op, tmp))
+      continue;
+
 #ifdef SEARCH_ITEMS
-  if(op->contr->search_str[0]!='\0')
+    if (op->contr->search_str[0]!='\0')
     {
-      object *next,*tmp;
-      tmp=op->below;
-      while(tmp!=NULL&&can_pick(op,tmp))
-	{
-	  next=tmp->below;
-	  if(item_matched_string(op, tmp, op->contr->search_str)) {
-	    pick_up(op,tmp);
-	  }
-	  tmp=next;
-	}
+      if (item_matched_string (op, tmp, op->contr->search_str))
+        pick_up (op, tmp);
+      continue;
     }
 #endif /* SEARCH_ITEMS */
 
-
-  switch (op->contr->mode) {
+    switch (op->contr->mode) {
 	case 0:	return 1;	/* don't pick up */
 
 	case 1:
-		pick_up(op,op->below);
+		pick_up (op, tmp);
 		return 1;
 
 	case 2:
-		pick_up(op,op->below);
+		pick_up (op, tmp);
 		return 0;
 
 	case 3: return 0;	/* stop before pickup */
 
 	case 4:
+		pick_up (op, tmp);
+		break;
+
 	case 5: 
+		pick_up (op, tmp);
+		stop = 1;
+		break;
+
 	case 6:
-	case 7: {
-	    object *item,*temp;
-	    
-	    for (item = op->below; item; item=temp) {
-		temp = item->below;
-		if (can_pick(op, item)) {
-			if (op->contr->mode==6) {
-			    if (QUERY_FLAG(item, FLAG_KNOWN_MAGICAL) &&
-			      !QUERY_FLAG(item, FLAG_KNOWN_CURSED)) {
-				pick_up(op, item);
-			    }
-			}
-			else if (op->contr->mode==7) {
-			    if (item->type==MONEY || item->type==GEM) {
-				pick_up(op, item);
-			    }
-			} else {
-			    pick_up(op, item);
-			}
-		}
-		    item = temp;
-	    }
-	    if (op->contr->mode == 5) return 0;
-	    else return 1;
-	}
+		if (QUERY_FLAG (tmp, FLAG_KNOWN_MAGICAL) &&
+		    ! QUERY_FLAG(tmp, FLAG_KNOWN_CURSED))
+		  pick_up(op, tmp);
+		break;
 
-	/* use value density */
-	default: {
-	    object * item,*temp;
+	case 7:
+		if (tmp->type == MONEY || tmp->type == GEM)
+		  pick_up(op, tmp);
+		break;
 
-	    item=op->below;
-	    while(item) {
-		temp=item->below;
-		if(can_pick(op, item) && !(QUERY_FLAG(item, FLAG_UNPAID)) &&
-		 (query_cost(item,op,F_TRUE)*100/
-		    (item->weight * MAX(item->nrof,1))>= op->contr->mode) ) {
-			pick_up(op,item);
-		}
-		item=temp;
-	    }
-	    return 1;
-	}
-
+	default:
+		/* use value density */
+		if ( ! QUERY_FLAG (tmp, FLAG_UNPAID)
+		    && (query_cost (tmp, op, F_TRUE) * 100
+		        / (tmp->weight * MAX (tmp->nrof, 1)))
+                       >= op->contr->mode)
+		  pick_up(op,tmp);
+    }
   }
-  return 1; /* Statement supposedly can't be reached */
+  return ! stop;
 }
 
 /*
