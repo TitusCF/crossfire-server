@@ -1507,6 +1507,7 @@ static void apply_scroll (object *op, object *tmp)
 static void apply_treasure (object *op, object *tmp)
 {
     object *treas;
+    tag_t tmp_tag = tmp->count, op_tag = op->count;
 
 /*  Nice side effect of new treasure creation method is that the treasure
     for the chest is done when the chest is created, and put into the chest
@@ -1524,16 +1525,24 @@ static void apply_treasure (object *op, object *tmp)
       remove_ob(treas);
       draw_find(op,treas);
       treas->x=op->x,treas->y=op->y;
-      insert_ob_in_map(treas,op->map,op);
+      treas = insert_ob_in_map (treas, op->map, op);
+      if (treas && treas->type == RUNE && treas->level
+          && QUERY_FLAG (op, FLAG_ALIVE))
+        spring_trap (treas, op);
+      if (was_destroyed (op, op_tag) || was_destroyed (tmp, tmp_tag))
+        break;
     } while ((treas=tmp->inv)!=NULL);
     
-    decrease_ob(tmp);
+    if ( ! was_destroyed (tmp, tmp_tag) && tmp->inv == NULL)
+      decrease_ob (tmp);
 
-    /* Done to re-stack map with player on top? */
-    SET_FLAG (op, FLAG_NO_APPLY);
-    remove_ob(op);
-    insert_ob_in_map(op,op->map,NULL);
-    CLEAR_FLAG (op, FLAG_NO_APPLY);
+    if ( ! was_destroyed (op, op_tag)) {
+      /* Done to re-stack map with player on top? */
+      SET_FLAG (op, FLAG_NO_APPLY);
+      remove_ob (op);
+      insert_ob_in_map (op, op->map, NULL);
+      CLEAR_FLAG (op, FLAG_NO_APPLY);
+    }
 }
 
 
