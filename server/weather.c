@@ -75,15 +75,15 @@ weather_avoids_t weather_avoids[] = {
     {"snow2", 1},
     {"snow4", 1},
     {"snow5", 1},
-	{"mountain1_snow", 1},
-	{"mountain2_snow", 1},	
+    {"mountain1_snow", 1},
+    {"mountain2_snow", 1},	
     {"rain1", 1},
     {"rain2", 1},
     {"rain3", 1},
     {"rain4", 1},
     {"rain5", 1},
-	{"mountain1_rivlets", 1},
-	{"mountain2_rivlets", 1},
+    {"mountain1_rivlets", 1},
+    {"mountain2_rivlets", 1},
     {"drifts", 0},
     {"glacier", 0},
     {"cforest1", 0},
@@ -135,6 +135,7 @@ weather_replace_t weather_replace[] = {
     {"impossible_match2", "snow4", NULL, 0}, /* placeholders */
     {"impossible_match3", "snow3", NULL, 0},
     {"hills", "drifts", NULL, 0},
+    {"treed_hills", "drifts", "woods5", 1},
     {"grass", "snow", NULL, 0},
     {"sand", "snow", NULL, 0},
     {"stones", "snow2", NULL, 0},
@@ -176,7 +177,7 @@ weather_grow_t weather_grow[] = {
     {"onion", "farmland", 10, 1.0, 2.0, 30, 100, 10, 25, 100, 9999, 0},
     {"carrot", "farmland", 10, 1.0, 2.0, 30, 100, 10, 25, 100, 9999, 0},
     {"thorns", "brush", 15, 0.5, 1.3, 30, 100, 10, 25, -100, 9999, 0},
-	{"mountain_foilage", "mountain", 6, 1.0, 2.0, 25, 100, 5, 30, 0, 15999, 2},
+    {"mountain_foilage", "mountain", 6, 1.0, 2.0, 25, 100, 5, 30, 0, 15999, 2},
     {NULL, NULL, 1, 0.0, 0.0, 0, 0, 0, 0, 0, 0, 0}
 };
 
