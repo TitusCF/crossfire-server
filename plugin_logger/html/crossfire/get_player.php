@@ -39,7 +39,7 @@
     else
        return "a ".$name;
     }
-  $birthresult = @database_exec ("select moment,race,specie,path from birth where player='$playername'");
+  $birthresult = @database_exec ("select moment,race,species,path from birth where player='$playername'");
   $rowcount=@database_numrows ($birthresult);
   if ($rowcount<1){
     echo "On a unknown Day, $playername decided to come to world. ";
@@ -51,13 +51,13 @@
     $array=database_fetch_array($birthresult,0);
     $moment=database_strtotime ($array[0]);
     $race=$array[1];
-    $specie=$array[2];
+    $species=$array[2];
     $path=$array[3];
     echo "It was the ". date ("jS F Y",$moment);
     echo ", a " . date ("l",$moment) . ". ";
     echo "At ". date ("H:i:s",$moment) . " $playername ";
-    echo "opened his eyes for the first time.<BR>He was ".a_an($specie).", like his parents.";
-    echo "<BR>For those who don't know, ".a_an($specie)." is ". a_an(str_replace ("_"," ",$race)) ." creature.<P>";
+    echo "opened his eyes for the first time.<BR>He was ".a_an($species).", like his parents.";
+    echo "<BR>For those who don't know, ".a_an($species)." is ". a_an(str_replace ("_"," ",$race)) ." creature.<P>";
     if ($path!=''){
       echo "Quickly, $playername followed his own path. ";
       echo "He decided to become ".a_an($path).".<BR>";
