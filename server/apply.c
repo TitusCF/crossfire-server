@@ -341,6 +341,15 @@ static void eat_item(object *op,char *item, int nrof)
  */
 int check_weapon_power(object *who, int improvs)
 {
+/* Old code is below (commented out).  Basically, since weapons are the only
+ * object players really have any control to improve, it's a bit harsh to
+ * require high level in some combat skill, so we just use overall level.
+ */
+#if 1
+    if (((who->level/5)+5) >= improvs) return 1;
+    else return 0;
+
+#else
     int level=0;
 
     /* The skill system hands out wc and dam bonuses to fighters
@@ -366,6 +375,7 @@ int check_weapon_power(object *who, int improvs)
 	level=who->level;
 
     return (improvs <= ((level/5)+5));
+#endif
 }
 
 /* Returns the object count that of the number of objects found that

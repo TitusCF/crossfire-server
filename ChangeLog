@@ -17,6 +17,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/apply.c: fix check_weapon_power() so it operates on overall character
+  level and not skill level - this matches up what the out of skills
+  displays.
+MSW 2004-04-20
+
 common/button.c: Patch by Bernd Edler to have proper speed set for items 
   activated by buttons.
 server/apply.c: Apply the 'special prayer' marker stuff, since it wasn't
