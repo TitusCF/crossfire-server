@@ -924,9 +924,9 @@ static CnvMenuRec fileMenu[] = {
 static char * MapMessageCreate (App self) {
     char buf[MAX_BUF];
     time_t t = time(NULL);
-    sprintf (buf, "Creator: %s\nEmail: %s\nDate: %s", 
+    sprintf (buf, "Creator: %s\nEmail: %s\nDate: %s",
 	     self->res.creator,self->res.email, ctime (&t));
-    return add_string (buf);
+    return strdup_local (buf);
 }
 
 static char * MapNameCreate (String path)
@@ -939,7 +939,7 @@ static char * MapNameCreate (String path)
     i++;
     for(j = i; name[j] && name[j] != '.';j++);
     if(name[j] == '.') name[j] = 0;
-    return add_string (&name[i]);
+    return strdup_local (&name[i]);
 }
 
 /**********************************************************************
