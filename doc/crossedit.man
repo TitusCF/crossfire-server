@@ -1,13 +1,12 @@
-.\"$Id$
-.TH xledit 0.89.3 "Mar 7 1993"
+.TH crossedit 6 "Feb 04 2004" "" "CrossFire Game Server Manual"
 .SH NAME
-xledit - A map-editor for the game Crossfire.
+crossedit - A map-editor for the game Crossfire.
 .SH SYNOPSIS
-.B xledit
+.B crossedit
 [-debug] [-pix] [-e <map_level> | <height>x<width>]
 .SH DESCRIPTION
 .PP
-.I xtedit
+.I crossedit
 enables you to design maps for the game Crossfire.
 .SH OPTIONS
 .TP

@@ -1,3 +1,5 @@
+.TH crossfire-config 6 "Feb 04 2004" "" "CrossFire Game Server Manual"
+
 Little program aimed at giving information to plugin about config of the
 crossfire server.
 

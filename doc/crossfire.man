@@ -1,4 +1,4 @@
-.TH crossfire 6 0.95.4 "" "CrossFire Game Server Manual"
+.TH crossfire 6 "Feb 04 2004" "" "CrossFire Game Server Manual"
 
 .SH NAME
 CrossFire \- a multiplayer adventure and arcade game server
