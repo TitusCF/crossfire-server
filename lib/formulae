@@ -422,7 +422,7 @@ ingred water of the wise,icecube,booze
 #    permantent stat raising items is a playbalance no no I think).  
 #
 # -- strength spell
-Object strength
+Object might
 arch potion_generic
 chance 18
 ingred 3 water of the wise,ogre's arm,pile of philosophical salt

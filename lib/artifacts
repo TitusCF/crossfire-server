@@ -2578,7 +2578,7 @@ end
 #
 Allowed potion_generic
 chance 1
-Object strength
+Object might
 type 5
 sp 39
 value 1
