@@ -656,7 +656,7 @@ spell_parameters SP_PARAMETERS[NROFREALSPELLS] =
 {	2,	20,	2,	1,	10},	/* dancing sword */     /* 185 */ 
 {	2,	20,	2,	1,	20},	/* animate weapon */
 {   0,       0,     3,      5,		10},	/*cause cold*/      
-{   1,      1,     9,      3,		7},	/*divine shock*/      
+{   1,      1,     12,      5,		10},	/*divine shock*/      
 {   0,      20,     25,      4,		8},	/*windstorm*/      
 {   0,     100,      0,      1,		20},	/*sanctuary*/    /* 190 */     
 {   0,      4,       0,      9,		36},	/*peace*/      
