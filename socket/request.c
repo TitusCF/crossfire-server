@@ -549,7 +549,7 @@ void VersionCmd(char *buf, int len,NewSocket *ns)
 	 */
 	if(!strcmp(" CF DX CLIENT", cp) || ns->sc_version < 1024 )
 	{
-	    sprintf(version_warning,"drawinfo %d %s", NDI_RED, "**** VERSION WARNING ****\n**** CLIENT IS TO OLD!! UPDATE THE CLIENT!! ****");
+	    sprintf(version_warning,"drawinfo %d %s", NDI_RED, "**** VERSION WARNING ****\n**** CLIENT IS TOO OLD!! UPDATE THE CLIENT!! ****");
 	    Write_String_To_Socket(ns, version_warning, strlen(version_warning));
 	}
 
@@ -1008,7 +1008,7 @@ static inline int check_head(SockList *sl, NewSocket *ns, int ax, int ay, int la
 {
     short face_num;
 
-    if (heads[(ay * MAX_HEAD_POS + ax) * MAX_LAYERS + layer]) 
+    if (heads[(ay * MAX_HEAD_POS + ax) * MAX_LAYERS + layer])
 	face_num = heads[(ay * MAX_HEAD_POS + ax) * MAX_LAYERS + layer]->face->number;
     else
 	face_num = 0;
@@ -1223,57 +1223,15 @@ static inline int update_smooth(SockList *sl, NewSocket *ns, mapstruct  *mp, int
     ob=NULL;
     head = heads[(sy * MAX_HEAD_POS + sx) * MAX_LAYERS + layer];
 
-    /* Check to see if this head is part of the set of objects
-     * we would normally send for this space.  If so, then
-     * don't use the head value.  We need to do the check
-     * here and not when setting up the heads[] value for two reasons -
-     * 1) the heads[] values will get used even if the space is not visible.
-     * 2) its possible the head is not on the same map as a part, and I'd
-     *    rather not need to do the map translation overhead.
-     */
-    /*if (head) {
-	for (i=0; i<MAP_LAYERS; i++)
-	    if (GET_MAP_FACE_OBJ(mp, mx, my, i) &&
-		GET_MAP_FACE_OBJ(mp, mx, my, i)->face == head->face) {
-		    heads[(sy * MAX_HEAD_POS + sx) * MAX_LAYERS + layer] = NULL;
-		    head = NULL;
-		    break;
-	    }
-    }
 
-    ob = head;*/
-    if (!ob) ob = GET_MAP_FACE_OBJ(mp, mx, my, layer);
+    ob = GET_MAP_FACE_OBJ(mp, mx, my, layer);
 
     /* If there is no object for this space, or if the face for the object
-     * is the blank face, set the face number to zero.
-     * else if we have the stored head object for this space, that takes
-     * precedence over the other object for this space.
-     * otherwise, we do special head processing
+     * is the blank face, set the smoothlevel to zero.
      */
     if (!ob || ob->face == blank_face) smoothlevel=0;
     else {
-	/* if the faces for the different parts of a multipart object
-	 * are the same, we only want to send the bottom right most
-	 * portion of the object.  That info is in the tail_.. values
-	 * of the head.  Note that for the head itself, ob->head will
-	 * be null, so we only do this block if we are working on
-	 * a tail piece.
-	 */
-
-     {
-	    /* In this case, we are already at the lower right or single part object,
-	     * so nothing special
-	     */
 	    smoothlevel = ob->smoothlevel;
-
-	    /* clear out any head entries that have the same face as this one */
-	    /* useless in update_smooth
-          for (bx=0; bx<layer; bx++)
-		if (heads[(sy * MAX_HEAD_POS + sx) * MAX_LAYERS + bx] &&
-		    heads[(sy * MAX_HEAD_POS + sx) * MAX_LAYERS + bx]->face->number == face_num)
-			heads[(sy * MAX_HEAD_POS + sx) * MAX_LAYERS + bx] = NULL;
-         */      
-	}
     } /* else not already head object or blank face */
 
     /* We've gotten what face we want to use for the object.  Now see if
@@ -1294,14 +1252,14 @@ static inline int update_smooth(SockList *sl, NewSocket *ns, mapstruct  *mp, int
 /* returns the size of a data for a map square as returned by
  * mapextended. There are CLIENTMAPX*CLIENTMAPY*LAYERS entries
  * available.
- */  
+ */
 int getExtendedMapInfoSize(NewSocket* ns){
     int result=0;
     if (ns->ext_mapinfos){
         if (ns->EMI_smooth)
             result+=1; /*One byte for smoothlevel*/
     }
-    return result;        
+    return result;
 }
 /* this function uses the new map1 protocol command to send the map
  * to the client.  It is necessary because the old map command supports
@@ -1327,7 +1285,7 @@ int getExtendedMapInfoSize(NewSocket* ns){
 void draw_client_map1(object *pl)
 {
     int x,y,ax, ay, d, nx,ny, startlen, max_x, max_y, oldlen;
-    int estartlen, eoldlen;    
+    int estartlen, eoldlen;
     SockList sl;
     SockList esl; /*For extended Map info*/
     uint16  mask,emask,eentrysize;
@@ -1573,7 +1531,6 @@ void draw_client_map1(object *pl)
 		if (emask & 0xf) {
 		    esl.buf[eoldlen+1] = emask & 0xff;
 		} else {
-            /*printf ("rollbacking esl %d on %d \n",eoldlen,estartlen);*/
 		    esl.len = eoldlen;
 		}
 	    } /* else this is a viewable space */

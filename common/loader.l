@@ -1159,42 +1159,26 @@ char *get_ob_diff(object *op,object *op2) {/* I plan to optimize this heavily */
   buf[0]='\0';
   fastbuf=PREPARE_FASTCAT(buf);
   if(op->name && op->name!=op2->name) {
-    /*sprintf(buf2,"name %s\n",op->name);
-    strcat(buf,buf2);*/
     ADD_STRINGLINE_ENTRY(fastbuf,"name ",op->name,5);
   }
   if(op->name_pl && op->name_pl!=op2->name_pl) {
-    /*sprintf(buf2,"name_pl %s\n",op->name_pl);
-    strcat(buf,buf2);*/
     ADD_STRINGLINE_ENTRY(fastbuf,"name_pl ",op->name_pl,8);
   }
   if(op->title && op->title!=op2->title) {
-    /*sprintf(buf2,"title %s\n", op->title);
-    strcat(buf, buf2);*/
     ADD_STRINGLINE_ENTRY(fastbuf,"title ",op->title,6);
   }
   if(op->race && op->race!=op2->race) {
-    /*sprintf(buf2,"race %s\n",op->race);
-    strcat(buf,buf2);*/
     ADD_STRINGLINE_ENTRY(fastbuf,"race ",op->race,5);
   }
   if(op->slaying && op->slaying!=op2->slaying) {
-    /*sprintf(buf2,"slaying %s\n",op->slaying);
-    strcat(buf,buf2);*/
     ADD_STRINGLINE_ENTRY(fastbuf,"slaying ",op->slaying,8);
   }
   if(op->msg && op->msg!=op2->msg) {
-    /*strcat(buf,"msg\n");
-    strcat(buf,op->msg);
-    strcat(buf,"endmsg\n");*/
     FAST_STRNCAT(fastbuf,"msg\n",3+eol_size);
     FAST_STRCAT(fastbuf,op->msg);
     FAST_STRNCAT(fastbuf,"endmsg\n",6+eol_size);
   }
   if(op->lore && op->lore!=op2->lore) {
-    /*strcat(buf,"lore\n");
-    strcat(buf,op->lore);
-    strcat(buf,"endlore\n");*/
     FAST_STRNCAT(fastbuf,"lore\n",4+eol_size);
     FAST_STRCAT(fastbuf,op->lore);
     FAST_STRNCAT(fastbuf,"endlore\n",7+eol_size);
@@ -1202,13 +1186,9 @@ char *get_ob_diff(object *op,object *op2) {/* I plan to optimize this heavily */
   }
   if(op->other_arch!=op2->other_arch&&op->other_arch!=NULL &&
      op->other_arch->name) {
-    /*sprintf(buf2,"other_arch %s\n",op->other_arch->name);
-    strcat(buf,buf2);*/
     ADD_STRINGLINE_ENTRY(fastbuf,"other_arch ",op->other_arch->name,11);
   }
   if(op->face!=op2->face) {
-    /*sprintf(buf2,"face %s\n",	op->face->name);
-    strcat(buf,buf2);*/
     ADD_STRINGLINE_ENTRY(fastbuf,"face ",op->face->name,5);
   }
 
@@ -1220,20 +1200,15 @@ char *get_ob_diff(object *op,object *op2) {/* I plan to optimize this heavily */
       /* Either there's no matching event in the reference object,
        * or the hook is different */
       {
-          /*sprintf(buf2, "%s %s\n", evtnames[etmp->type].name,etmp->hook);
-          strcat(buf,buf2);*/
           ADD_STRINGLINE_ENTRY(fastbuf,evtnames[etmp->type].name,etmp->hook,evtnames[etmp->type].length);
       }
       if ((etmp->plugin != NULL) && ((etmp2 == NULL) || (etmp2->plugin == NULL) || (strcmp(etmp2->plugin,etmp->plugin))))
       {
-          /*sprintf(buf2, "%s_plugin %s\n", evtnames[etmp->type],etmp->plugin);
-          strcat(buf,buf2);*/
+
           ADD_STRINGLINE_ENTRY(fastbuf,plgnames[etmp->type].name,etmp->plugin,plgnames[etmp->type].length);
       }
       if ((etmp->options != NULL) && ((etmp2 == NULL) || (etmp2->options == NULL) || (strcmp(etmp2->options,etmp->options))))
       {
-          /*sprintf(buf2, "%s_options %s\n", evtnames[etmp->type],etmp->options);
-          strcat(buf,buf2);*/
           ADD_STRINGLINE_ENTRY(fastbuf,plgoptions[etmp->type].name,etmp->hook,plgoptions[etmp->type].length);
       }
 
@@ -1241,257 +1216,173 @@ char *get_ob_diff(object *op,object *op2) {/* I plan to optimize this heavily */
 
   if (op->animation_id != op2->animation_id) {
     if (op->animation_id) {
-      /*sprintf(buf2,"animation %s\n", animations[GET_ANIM_ID(op)].name);*/
       ADD_STRINGLINE_ENTRY(fastbuf,"animation ",animations[GET_ANIM_ID(op)].name,10);
       if ( ! QUERY_FLAG (op, FLAG_ANIMATE)) {
-        /*strcat (buf, buf2);
-        sprintf (buf2, "is_animated 0\n");*/
         FAST_STRNCAT(fastbuf,"is_animated 0\n",13+eol_size);
       }
     } else {
-      /*sprintf (buf2, "animation NONE\n");*/
       FAST_STRNCAT(fastbuf,"animation NONE\n",14+eol_size);
     }
-    /*strcat (buf, buf2);*/
   }
   if(op->stats.Str!=op2->stats.Str)
-    /*save_long(buf, "Str", op->stats.Str);*/
     FAST_SAVE_LONG(fastbuf,"Str ",op->stats.Str,4);
   if(op->stats.Dex!=op2->stats.Dex)
-    /*save_long(buf, "Dex", op->stats.Dex);*/
     FAST_SAVE_LONG(fastbuf,"Dex ",op->stats.Dex,4);
   if(op->stats.Con!=op2->stats.Con)
-    /*save_long(buf, "Con", op->stats.Con);*/
     FAST_SAVE_LONG(fastbuf,"Con ",op->stats.Con,4);
   if(op->stats.Wis!=op2->stats.Wis)
-    /*save_long(buf, "Wis", op->stats.Wis);*/
     FAST_SAVE_LONG(fastbuf,"Wis ",op->stats.Wis,4);
   if(op->stats.Pow!=op2->stats.Pow)
-    /*save_long(buf, "Pow", op->stats.Pow);*/
     FAST_SAVE_LONG(fastbuf,"Pow ",op->stats.Pow,4);
   if(op->stats.Cha!=op2->stats.Cha)
-    /*save_long(buf, "Cha", op->stats.Cha);*/
     FAST_SAVE_LONG(fastbuf,"Cha ",op->stats.Cha,4);
   if(op->stats.Int!=op2->stats.Int)
-    /*save_long(buf, "Int", op->stats.Int);*/
     FAST_SAVE_LONG(fastbuf,"Int ",op->stats.Int,4);
   if(op->stats.hp!=op2->stats.hp)
-    /*save_long(buf, "hp", op->stats.hp);*/
     FAST_SAVE_LONG(fastbuf,"hp ",op->stats.hp,3);
   if(op->stats.maxhp!=op2->stats.maxhp)
-    /*save_long(buf, "maxhp", op->stats.maxhp);*/
     FAST_SAVE_LONG(fastbuf,"maxhp ",op->stats.maxhp,6);
   if(op->stats.sp!=op2->stats.sp)
-    /*save_long(buf, "sp", op->stats.sp);*/
     FAST_SAVE_LONG(fastbuf,"sp ",op->stats.sp,3);
   if(op->stats.maxsp!=op2->stats.maxsp)
-    /*save_long(buf, "maxsp", op->stats.maxsp);*/
     FAST_SAVE_LONG(fastbuf,"maxsp ",op->stats.maxsp,6);
   if(op->stats.grace!=op2->stats.grace)
-    /*save_long(buf, "grace", op->stats.grace);*/
     FAST_SAVE_LONG(fastbuf,"grace ",op->stats.grace,6);
   if(op->stats.maxgrace!=op2->stats.maxgrace)
-    /*save_long(buf, "maxgrace", op->stats.maxgrace);*/
     FAST_SAVE_LONG(fastbuf,"maxgrace ",op->stats.maxgrace,9);
   if(op->stats.exp!=op2->stats.exp)
-    /*save_long_long(buf, "exp", op->stats.exp);*/
     FAST_SAVE_LONG(fastbuf,"exp ",op->stats.exp,4);
   if(op->expmul!=op2->expmul)
-    /*save_double(buf, "expmul", op->expmul);*/
     FAST_SAVE_DOUBLE(fastbuf,"expmul ",op->expmul,7);
   if(op->stats.food!=op2->stats.food)
-    /*save_long(buf, "food", op->stats.food);*/
     FAST_SAVE_LONG(fastbuf,"food ",op->stats.food,5);
   if(op->stats.dam!=op2->stats.dam)
-    /*save_long(buf, "dam", op->stats.dam);*/
     FAST_SAVE_LONG(fastbuf,"dam ",op->stats.dam,4);
   if(op->stats.luck!=op2->stats.luck)
-    /*save_long(buf, "luck", op->stats.luck);*/
     FAST_SAVE_LONG(fastbuf,"luck ",op->stats.luck,5);
   if(op->stats.wc!=op2->stats.wc)
-    /*save_long(buf, "wc", op->stats.wc);*/
     FAST_SAVE_LONG(fastbuf,"wc ",op->stats.wc,3);
   if(op->stats.ac!=op2->stats.ac)
-    /*save_long(buf, "ac", op->stats.ac);*/
     FAST_SAVE_LONG(fastbuf,"ac ",op->stats.ac,3);
   if(op->x!=op2->x)
-    /*save_long(buf, "x", op->x);*/
     FAST_SAVE_LONG(fastbuf,"x ",op->x,2);
   if(op->y!=op2->y)
-    /*save_long(buf, "y", op->y);*/
     FAST_SAVE_LONG(fastbuf,"y ",op->y,2);
   if(op->speed!=op2->speed) {
-    /*sprintf(buf2,"speed %f\n",op->speed);
-    strcat(buf,buf2);*/
     FAST_SAVE_DOUBLE(fastbuf,"speed ",op->speed,6);
   }
   if(op->speed > 0 && op->speed_left!=op2->speed_left) {
-    /*sprintf(buf2,"speed_left %f\n",op->speed_left);
-    strcat(buf,buf2);*/
     FAST_SAVE_DOUBLE(fastbuf,"speed_left ",op->speed_left,11);
   }
   if(op->move_status != op2->move_status)
-    /*save_long(buf, "move_state", op->move_status);*/
     FAST_SAVE_LONG(fastbuf,"move_state ",op->move_status,11);
   if(op->move_type != op2->move_type)
-    /*save_long(buf, "attack_movement", op->move_type);*/
     FAST_SAVE_LONG(fastbuf,"attack_movement ",op->move_type,16);
   if(op->nrof!=op2->nrof)
-    /*save_long(buf, "nrof", op->nrof);*/
     FAST_SAVE_LONG(fastbuf,"nrof ",op->nrof,5);
   if(op->level!=op2->level)
-    /*save_long(buf, "level", op->level);*/
     FAST_SAVE_LONG(fastbuf,"level ",op->level,6);
   if(op->direction!=op2->direction)
-    /*save_long(buf, "direction", op->direction);*/
     FAST_SAVE_LONG(fastbuf,"direction ",op->direction,10);
   if(op->type!=op2->type)
-    /*save_long(buf, "type", op->type);*/
     FAST_SAVE_LONG(fastbuf,"type ",op->type,5);
   if(op->subtype!=op2->subtype)
-    /*save_long(buf, "type", op->subtype);*/
     FAST_SAVE_LONG(fastbuf,"subtype ",op->subtype,2);
   if(op->attacktype!=op2->attacktype)
-    /*save_long(buf, "attacktype", op->attacktype);*/
     FAST_SAVE_LONG(fastbuf,"attacktype ",op->attacktype,11);
 
   for (tmp=0; tmp < NROFATTACKS; tmp++) {
    if (op->resist[tmp] != op2->resist[tmp]) {
-	/*sprintf(buf2,"resist_%s %d\n",resist_save[tmp], op->resist[tmp]);
-	strcat(buf,buf2);*/
-    FAST_STRNCAT(fastbuf,"resist_",7);
+	FAST_STRNCAT(fastbuf,"resist_",7);
     FAST_SAVE_LONG(fastbuf,resist_save[tmp],op->resist[tmp],strlen(resist_save[tmp]));
     }
   }
 
   if(op->path_attuned!=op2->path_attuned)
-    /*save_long(buf, "path_attuned", op->path_attuned);*/
     FAST_SAVE_LONG(fastbuf,"path_attuned ",op->path_attuned,13);
   if(op->path_repelled!=op2->path_repelled)
-    /*save_long(buf, "path_repelled", op->path_repelled);*/
     FAST_SAVE_LONG(fastbuf,"path_repelled ",op->path_repelled,14);
   if(op->path_denied!=op2->path_denied)
-    /*save_long(buf, "path_denied", op->path_denied);*/
     FAST_SAVE_LONG(fastbuf,"path_denied ",op->path_denied,12);
   if(op->material!=op2->material)
-    /*save_long(buf, "material", op->material);*/
     FAST_SAVE_LONG(fastbuf,"material ",op->material,9);
   if(op->materialname && op->materialname!=op2->materialname) {
-    /*sprintf(buf2,"materialname %s\n",op->materialname);
-    strcat(buf,buf2);*/
     ADD_STRINGLINE_ENTRY(fastbuf,"materialname ",op->materialname,13);
   }
   if(op->value!=op2->value)
-    /*save_long(buf, "value", op->value);*/
     FAST_SAVE_LONG(fastbuf,"value ",op->value,6);
   if(op->carrying!=op2->carrying)
-    /*save_long(buf, "carrying", op->carrying);*/
     FAST_SAVE_LONG(fastbuf,"carrying ",op->carrying,9);
   if(op->weight!=op2->weight)
-    /*save_long(buf, "weight", op->weight);*/
     FAST_SAVE_LONG(fastbuf,"weight ",op->weight,7);
   if(op->invisible!=op2->invisible)
-    /*save_long(buf, "invisible", op->invisible);*/
     FAST_SAVE_LONG(fastbuf,"invisible ",op->invisible,10);
   if(op->state!=op2->state)
-    /*save_long(buf, "state", op->state);*/
     FAST_SAVE_LONG(fastbuf,"state ",op->state,6);
   if(op->magic!=op2->magic)
-    /*save_long(buf, "magic", op->magic);*/
     FAST_SAVE_LONG(fastbuf,"magic ",op->magic,6);
   if(op->last_heal!=op2->last_heal)
-    /*save_long(buf, "last_heal", op->last_heal);*/
     FAST_SAVE_LONG(fastbuf,"last_heal ",op->last_heal,10);
   if(op->last_sp!=op2->last_sp)
-    /*save_long(buf, "last_sp", op->last_sp);*/
     FAST_SAVE_LONG(fastbuf,"last_sp ",op->last_sp,8);
   if(op->last_grace!=op2->last_grace)
-    /*save_long(buf, "last_grace", op->last_grace);*/
     FAST_SAVE_LONG(fastbuf,"last_grace ",op->last_grace,11);
   if(op->last_eat!=op2->last_eat)
-    /*save_long(buf, "last_eat", op->last_eat);*/
     FAST_SAVE_LONG(fastbuf,"last_eat ",op->last_eat,9);
   if(QUERY_FLAG(op,FLAG_IS_LINKED) && (tmp = get_button_value(op)))
-    /*save_long(buf, "connected", tmp);*/
     FAST_SAVE_LONG(fastbuf,"connected ",tmp,10);
   if(op->glow_radius!=op2->glow_radius)
-    /*save_long(buf, "glow_radius", op->glow_radius);*/
     FAST_SAVE_LONG(fastbuf,"glow_radius ",op->glow_radius,12);
   if (op->randomitems!=op2->randomitems) {
-    /*sprintf(buf2,"randomitems %s\n",(op->randomitems?op->randomitems->name:"none"));
-    strcat(buf,buf2);*/
     ADD_STRINGLINE_ENTRY(fastbuf,"randomitems ",(op->randomitems?op->randomitems->name:"none"),12);
   }
 #ifdef NPC_PROG
   if(op->npc_status!=op2->npc_status)
-    /*save_long(buf, "npc_status", op->npc_status);*/
     FAST_SAVE_LONG(fastbuf,"npc_status ",op->npc_status,11);
   if(op->npc_program!=op2->npc_program)
-    /*save_long(buf, "npc_program", op->npc_program);*/
     FAST_SAVE_LONG(fastbuf,"npc_program ",op->npc_program,12);
 #endif
 
 
   if(op->run_away!=op2->run_away)
-    /*save_long(buf, "run_away", op->run_away);*/
     FAST_SAVE_LONG(fastbuf,"run_away ",op->run_away,9);
   if(op->pick_up!=op2->pick_up)
-    /*save_long(buf, "pick_up", op->pick_up);*/
     FAST_SAVE_LONG(fastbuf,"pick_up ",op->pick_up,8);
   if(op->weight_limit!=op2->weight_limit)
-    /*save_long(buf, "container", op->weight_limit);*/
     FAST_SAVE_LONG(fastbuf,"container ",op->weight_limit,10);
   if (op->will_apply!=op2->will_apply)
-    /*save_long(buf, "will_apply", op->will_apply);*/
     FAST_SAVE_LONG(fastbuf,"will_apply ",op->will_apply,11);
   if(op->smoothlevel!=op2->smoothlevel)
-    /*save_long(buf, "smoothlevel", op->smoothlevel);*/
     FAST_SAVE_LONG(fastbuf,"smoothlevel ",op->smoothlevel,12);
 
   if (op->current_weapon_script!=op2->current_weapon_script){
-    /*sprintf(buf2,"current_weapon_script %s\n",(op->current_weapon_script));
-    strcat(buf,buf2);*/
     ADD_STRINGLINE_ENTRY(fastbuf,"current_weapon_script ",op->current_weapon_script,22);
   };
 
   if(op->weapontype && op->weapontype!=op2->weapontype) {
-    /*sprintf(buf2,"weapontype %d\n",op->weapontype);
-    strcat(buf,buf2);*/
     FAST_SAVE_LONG(fastbuf,"weapontype ",op->weapontype,11);
   }
   if(op->tooltype && op->tooltype!=op2->tooltype) {
-    /*sprintf(buf2,"tooltype %d\n",op->tooltype);
-    strcat(buf,buf2);*/
     FAST_SAVE_LONG(fastbuf,"tooltype ",op->tooltype,9);
   }
   if (op->elevation && op->elevation != op2->elevation) {
-    /*sprintf(buf2,"elevation %d\n", op->elevation);
-    strcat(buf,buf2);*/
     FAST_SAVE_LONG(fastbuf,"elevation ",op->elevation,10);
   }
   if (op->client_type && op->client_type != op2->client_type) {
-    /*sprintf(buf2,"client_type %d\n", op->client_type);
-    strcat(buf,buf2);*/
     FAST_SAVE_LONG(fastbuf,"client_type ",op->client_type,12);
   }
 
   if (op->item_power != op2->item_power) {
-    /*sprintf(buf2,"item_power %d\n", op->item_power);
-    strcat(buf,buf2);*/
     FAST_SAVE_LONG(fastbuf,"item_power ",op->item_power,11);
   }
 
   if (op->gen_sp_armour != op2->gen_sp_armour) {
-    /*sprintf(buf2,"gen_sp_armour %d\n", op->gen_sp_armour);
-    strcat(buf,buf2);*/
     FAST_SAVE_LONG(fastbuf,"gen_sp_armour ",op->gen_sp_armour,14);
   }
 
   for (tmp=0; tmp <= NUM_FLAGS; tmp++) {
     if (flag_names[tmp] && (QUERY_FLAG(op, tmp) != QUERY_FLAG(op2, tmp))) {
-	/*sprintf(buf2, "%s %d\n", flag_names[tmp], QUERY_FLAG(op, tmp)?1:0);
-	strcat(buf, buf2);*/
-    ADD_STRINGLINE_ENTRY(fastbuf,flag_names[tmp],QUERY_FLAG(op, tmp)?" 1":" 0",strlen(flag_names[tmp]));
+	ADD_STRINGLINE_ENTRY(fastbuf,flag_names[tmp],QUERY_FLAG(op, tmp)?" 1":" 0",strlen(flag_names[tmp]));
     }
   }
   /* The old code was buggy - it would lose custom SLOW_PENALTY if the archetype
@@ -1500,23 +1391,19 @@ char *get_ob_diff(object *op,object *op2) {/* I plan to optimize this heavily */
    */
   if (QUERY_FLAG(op, FLAG_SLOW_MOVE)) {
     if (!QUERY_FLAG(op2, FLAG_SLOW_MOVE) || SLOW_PENALTY(op) != SLOW_PENALTY(op2)) {
-	/*sprintf(buf2,"slow_move %f\n",SLOW_PENALTY(op));
-	strcat(buf,buf2);*/
-    FAST_SAVE_DOUBLE(fastbuf,"slow_move ",SLOW_PENALTY(op),10);
+	FAST_SAVE_DOUBLE(fastbuf,"slow_move ",SLOW_PENALTY(op),10);
     }
   }
 
   /* Save body locations */
   for (i=0; i<NUM_BODY_LOCATIONS; i++) {
     if (op->body_info[i] != op2->body_info[i]) {
-	/*sprintf(buf2, "%s %d\n", body_locations[i].save_name, op->body_info[i]);
-	strcat(buf, buf2);*/
-    FAST_STRCAT(fastbuf,body_locations[i].save_name);
+	FAST_STRCAT(fastbuf,body_locations[i].save_name);
     FAST_SAVE_LONG(fastbuf," ",op->body_info[i],1);
     }
   }
   FINISH_FASTCAT(fastbuf);
-  if(buf[0]=='\0')
+  if(buf[0]=='\0')/*did not cat anything...*/
     return NULL;
   return buf;
 }
