@@ -104,7 +104,6 @@ void InitConnection(NewSocket *ns, uint32 from)
     ns->skillexp = 0;
     ns->mapmode = Map0Cmd;
     ns->darkness = 1;
-    ns->newanim = 0;
     ns->status = Ns_Add;
     ns->comment = NULL;
     ns->old_mode = 0;

@@ -2,7 +2,7 @@
 extern void free_all_anim(void);
 extern void init_anim(void);
 extern int find_animation(char *name);
-extern void animate_object(object *op);
+extern void animate_object(object *op, int dir);
 /* arch.c */
 extern archetype *find_archetype_by_object_name(char *name);
 extern object *get_archetype_by_object_name(char *name);

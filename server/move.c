@@ -234,7 +234,7 @@ int teleport (object *teleporter, uint8 tele_type, object *user)
 		if (!(get_map_flags(other_teleporter->map, NULL, 
 			other_teleporter->x + freearr_x[k],
 			other_teleporter->y + freearr_y[k], NULL,NULL) &
-		      P_NO_PASS)) break;
+		      (P_NO_PASS | P_OUT_OF_MAP))) break;
 	    }
 	    if (k==9) {
 		LOG(llevError,"Shop mat %s (%d, %d) is in solid rock?\n",

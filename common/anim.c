@@ -143,12 +143,16 @@ int find_animation(char *name)
 /*
  * animate_object(object) updates the face-variable of an object.
  * If the object is the head of a multi-object, all objects are animated.
+ * op is the object to animate.
+ * dir is the direction the object is facing.  This is generally same as
+ *    op->direction, but in some cases, op->facing is used instead - the
+ *    caller has a better idea which one it really wants to be using,
+ *    so let it pass along the right one.
  */
 
-void animate_object(object *op) {
+void animate_object(object *op, int dir) {
     int max_state;  /* Max animation state object should be drawn in */
     int base_state; /* starting index # to draw from */
-    int	dir=op->direction;
 
     if(!op->animation_id || !NUM_ANIMATIONS(op)) {
 	LOG(llevError,"Object lacks animation.\n");
@@ -203,7 +207,7 @@ void animate_object(object *op) {
     }
 #endif
     if(op->more)
-	animate_object(op->more);
+	animate_object(op->more, dir);
 
     /* update_object will also recursively update all the pieces.
      * as such, we call it last, and only call it for the head

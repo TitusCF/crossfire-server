@@ -316,13 +316,13 @@ static void putLockcode (object *ob, char *str, XtPointer c) {
 /*** direction ***/
 static void putDirection (object *ob, char *str, XtPointer c) {
     ob->stats.maxsp = atoi(str);
-    animate_object (ob);
+    animate_object (ob, ob->direction);
 }
 
 /*** rotation ***/
 static void putRotation (object *ob, char *str, XtPointer c) {
     ob->stats.sp = atoi(str);
-    animate_object (ob);
+    animate_object (ob, ob->direction);
 }
 
 /*** unique ***/

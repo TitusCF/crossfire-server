@@ -1979,20 +1979,16 @@ void move_player_attack(object *op, int dir)
 }
 
 int move_player(object *op,int dir) {
-    int face, pick;
-
-    if(op->contr->socket.newanim)
-	face = dir%8;
-    else
-	face = dir ? (dir - 1) / 2 : -1;
+    int pick;
 
     if(op->map == NULL || op->map->in_memory != MAP_IN_MEMORY)
 	return 0;
 
     /* peterm:  added following line */
-    op->facing = dir;
     if(QUERY_FLAG(op,FLAG_CONFUSED) && dir)
 	dir = absdir(dir + RANDOM()%3 + RANDOM()%3 - 2);
+
+    op->facing = dir;
 
     if(op->hide) do_hidden_move(op);
 
@@ -2001,21 +1997,22 @@ int move_player(object *op,int dir) {
     }
     else move_player_attack(op,dir);
 
+    pick = check_pick(op);
+
+
     /* Add special check for newcs players and fire on - this way, the
      * server can handle repeat firing.
      */
-    pick = check_pick(op);
     if (op->contr->fire_on || (op->contr->run_on && pick!=0)) {
 	op->direction = dir;
     } else {
 	op->direction=0;
     }
-
-    if(face != -1)
-		SET_ANIMATION(op,face);
-
-    update_object(op, UP_OBJ_FACE);
-
+    /* Update how the player looks.  Use the facing, so direction may
+     * get reset to zero.  This allows for full animation capabilities
+     * for players.
+     */
+    animate_object(op, op->facing);
     return 0;
 }
 

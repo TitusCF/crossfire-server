@@ -74,10 +74,6 @@ int runturn(struct CFanimation_struct* animation, long int id, void* parameters)
     int dir=id;
     int face;
     printf ("Turning in direction %ld\n",id);
-    if(op->contr->socket.newanim)
-        face = dir%8;
-    else
-        face = dir ? (dir - 1) / 2 : -1;
     op->facing=dir;
     GCFP.Value[0]=op;
     GCFP.Value[1]=&face;

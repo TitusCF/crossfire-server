@@ -17,6 +17,23 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+common/anim.c: Pass direction to animate_object() - needed for player
+   animations as player's facing may not match direction.
+crossedit/Attr.c, server/main.c, server/time.c: Update calls to animate_object()
+include/libproto.h: rebuilt
+include/newserver.h, plugin_animator/animator_box.c, socket/init.c,
+    socket/request.c: Remove newanim field from socket structure - not needed -
+    how to animate is determined by object, not by socket.
+server/move.c: Add check to P_OUT_OF_MAP in teleport function.
+server/player.c: change move_player to call animate_object, so it gets full
+   power of functionality it supports instead of 4 way hardcode animation
+   information.
+server/spell_effect.c: When altars are consecrated, don't look to arch name
+   for first portion of name - always call them Altar of %s - fixes problem
+   where altar is special god altar that has god's name in archetype, resulting
+   in altar of .. of ...
+MSW 2003-03-18
+
 Patch for 64 bit experience total, as well as flexible number of levels.
 Basically, max level is now dynamic, set in exp_table file.  Experience
 is now a 64 bit value, so much higher totals now allowed.  To 

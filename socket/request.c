@@ -136,11 +136,7 @@ void SetUp(char *buf, int len, NewSocket *ns)
 	strcat(cmdback, " ");
 
 	
-	if (!strcmp(cmd,"newanim")) {
-	    ns->newanim = atoi(param);
-	    strcat(cmdback, param);
-	}
-	else if (!strcmp(cmd,"sound")) {
+	if (!strcmp(cmd,"sound")) {
 	    ns->sound = atoi(param);
 	    strcat(cmdback, param);
 	}

@@ -120,7 +120,6 @@ typedef struct NewSocket {
     uint32  newmapcmd:1;    /* Send newmap command when entering new map SMACFIGGEN*/
     uint32  darkness:1;	    /* True if client wants darkness information */
     uint32  image2:1;	    /* Client wants image2/face2 commands */
-    uint32  newanim:1;      /* enable the advanced animation system - MT */
     uint32  cs_version, sc_version; /* versions of the client */
     uint32  update_look:1;  /* If true, we need to send the look window */
     uint32  can_write:1;    /* Can we write to this socket? */

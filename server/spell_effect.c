@@ -3399,7 +3399,7 @@ int cast_consecrate(object *op) {
 	    } else {
 	    /* If we got here, we are consecrating an altar */
 		if(tmp->name)	free_string(tmp->name);
-		sprintf(buf,"%s of %s",tmp->arch->clone.name,god->name);
+		sprintf(buf,"Altar of %s",god->name);
 		tmp->name = add_string(buf);
 		tmp->level = SK_level(op);
 		tmp->other_arch = god->arch;
