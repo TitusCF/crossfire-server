@@ -935,8 +935,11 @@ void process_events (mapstruct *map)
 	 * is probably calling remove_ob without either an insert_ob or
 	 * free_object afterwards, leaving an object dangling.  But I'd
 	 * rather log this and continue on instead of crashing.
+	 * Don't remove players - when a player quits, the object is in
+         * sort of a limbo, of removed, but something we want to keep
+	 * around.
 	 */
-	if (QUERY_FLAG (op, FLAG_REMOVED)) {
+	if (QUERY_FLAG (op, FLAG_REMOVED) && op->type != PLAYER) {
 	    LOG (llevError, "BUG: process_events(): Removed object on list\n");
 	    dump_object(op);
 	    free_object(op);
