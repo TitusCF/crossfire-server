@@ -18,6 +18,201 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+-----------------------------------
+--- BEGIN apply() cleanup patch ---  Jan Echternach 26/5/2000
+-----------------------------------
+
+* player specific code moved from apply() to player_apply() and
+player_apply_below().
+
+* apply(): null pointer check removed
+
+* (bugfix?) print message if scroll is unusable because of invalid
+spell number
+
+* bugfix: if the altar casted a spell, the message was sent to the
+(destroyed!) sacrifice, not the player
+
+* split apply() -> move_apply() / manual_apply()
+
+* move_apply(), check_walk_on(), insert_ob_in_map() and other functions:
+New parameter 'originator' that is the object that caused another object
+to be inserted into the map.  This removes the need to look through all
+map objects above an altar to find the player who dropped the sacrifice.
+
+* always check FLAG_UNPAID in manual_apply()
+
+* don't check FLAG_UNPAID in apply_special(), new function
+monster_apply_special() which checks FLAG_UNPAID and calls apply_special()
+
+* many new functions like apply_altar() and apply_spellbook() to make
+the switch statements in move_apply() and manual_apply() shorter
+
+* changes to actual apply() code:
+
+ALTAR:
+  spell casting altars should work now if not operated by a player
+  common/button.c, operate_altar(): altar's message is sent to altar's
+    map, not player's map
+  bugfix: if sacrifice was accepted, apply() didn't tell the caller
+    that it has been destroyed
+ARROW, CONE, FBULLET, BULLET:
+  now returns 'victim destroyed' if victim was killed by the attack
+TRAPDOOR:
+  play sound only if something fell through the trapdoor
+  print trapdoor message _before_ falling into trapdoor
+TRIGGER_ALTAR (in check_trigger()):
+  don't check for sacrifices if called from animate_trigger()
+  don't call check_trigger() from fix_auto_apply() anymore (this change
+    breaks maps with altars that have their sacrifice already stored on
+    them)
+DEEP_SWAMP:
+  deep_swamp() -> walk_on_deep_swamp() / move_deep_swamp()
+  when deep_swamp() (now move_deep_swamp()) is called from
+  process_object(), assume that state (swamp->stats.food) is already 1
+EXIT:
+  removed support for multisquare players
+  don't print 'is closed' message when moving on an exit, only print this
+    message if exit is applied manually
+SIGN:
+  only increment last_eat if it hadn't reached the limit yet
+SPELLBOOK:
+  removed partial support for applying by monsters
+BOW, WAND, ROD, HORN:
+  moved code to apply_special()
+CLOCK:
+  bugfix: Monsters must not apply a clock, they would crash the server.
+POWER_CRYSTAL:
+  Bugfix? Don't call esrv_update_item() if not applied by a player.
+LIGHTER:
+  Bugfix? Just return 0 if not applied by a player.
+
+* changes to apply_special():
+
+BOW:
+  remove double check_skill_to_apply()
+ROD, HORN:
+  change message from "you apply ..." to "you ready ..."
+
+BOW: FLAG_READY_BOW is now set by apply_special(), but that seems
+redundant because monster_check_apply() also sets this flag.  Remove
+setting of this flag from apply_special() because it could have a
+more complex meaning in monster.c or remove setting of this flag from
+monster_check_apply() because such stuff should be handled in apply.c?
+FLAG_READY_BOW is also unset in apply_special() if a bow is unapplied.
+
+CONE:
+  don't multiply damage by 20
+SIGN:
+  you can hear magic mouths even if you are blind
+  however, now you can also read signs with FLAG_WALK_ON/FLAG_FLY_ON if you are
+    blind
+  (different object types or a new flag would be required)
+RUNE:
+  detonation moved from move_rune() to move_apply() -> runes will now always
+    detonate if somebody steps on them
+  allow runes with FLAG_FLY_ON
+
+completely removed GRAVE and MONEY_CHANGER
+
+common/object.c: was_destroyed(): new function
+include/object.h: new typedef tag_t
+move_apply() returns void, check_walk_on() uses was_destroyed()
+
+lib/checkarch.pl:
+  check for archetypes with walk_on, walk_off, fly_on or fly_off and without
+    a type
+  check for archetypes with type FIREWALL (type 62) and without a level
+
+* server/apply.c: Bugfix: Don't skip calls to change_skill() if wizard -
+calc_skill_exp() requires change_skill() to set the current experience object.
+
+* server/monster.c: find_mon_throw_ob():  Bugfix: Unapply applied object even
+if heaviest object was choosen.
+Bugfix: Use monster_apply_special() to unapply, clearing FLAG_APPLIED isn't
+enough. -> Should fix the "HAS_READY_BOW without bow" errors.
+* server/skills.c: find_throw_ob():  Bugfix: Use player_apply(), clearing
+FLAG_APPLIED isn't enough.
+Replace redundant check for FLAG_INV_LOCKED with error message at end of
+function if the first check failed somehow and we have choosen an object with
+FLAG_INV_LOCKED.
+make_throw_ob(): error message if object is applied
+
+* lib/checkarch.pl: check that potions (type 5, POTION) have a level
+
+* server/apply.c: apply_special(): Handle all cases of applying and unapplying
+skill objects.
+* server/apply.c: manual_apply(SKILL): Just call apply_special().
+* server/skill_util.c: change_skill(): Rewrite to simply use apply_special()
+for changing skills.
+
+* server/apply.c: apply_special(): Bugfix: Fixed return values.
+
+* server/skill_util.c: link_player_skills(): Bugfix: Don't set exp_obj for
+(visible) skill tools.
+* server/skill_util.c: link_player_skills(): Bugfix? Reset op->chosen_skill
+and FLAG_READY_SKILL because we have unapplied all skills.
+* server/input.c: legal_range(): Bugfix: range_skill is valid only if
+op->chosen_skill != NULL, not when there is some (unapplied) skill somewhere
+in the inventory.
+* server/login.c: check_login(): Bugfix: call legal_range() after
+init_player_skills() - we can't handle range_skill correctly if skills haven't
+been initialized.
+* server/login.c: check_login(): Bugfix: Check return value of legal_range(),
+and reset op->contr->shoottype to range_none if range was invalid.
+* server/login.c: check_login(): Bugfix: Don't call fix_weight() - fixing
+the weight of _all_ players isn't necessary.  Just initialize op->carrying
+directly with sum_weight() instead.  This also removes the problem of
+updating the weight of an object that hasn't been sent to the client yet.
+* server/login.c: check_login(): Bugfix: We need to call fix_player()
+(init_player_skills() needs this, and it also makes the code more robust).
+
+* server/apply.c: apply_altar(): Bugfix: Print altar's message before
+casting the spell.
+
+* server/spell_util.c: move_cone(): Use copy_owner() instead of set_owner()
+and manually correcting the skill and experience object pointers.
+* server/spell_util.c: cast_cone(): Don't set FLAG_FLYING - the archetype
+needs to have this anyway for move_cone() to work properly.  Instead, print
+error messages if FLAG_FLYING, FLAG_WALK_ON or FLAG_FLY_ON are missing.
+
+* server/apply.c: move_apply(): TRAPDOOR: Bugfix: Multiply by op->nrof when
+calculating the weight.
+
+* randommaps/standalone.c, server/apply.c: fix_auto_apply(): Bugfix: Don't
+call check_trigger() for objects of type TRIGGER.  For other trigger types,
+call check_trigger() only if there is an object above the trigger.
+This can be used to implement doors that are only open shortly after the map
+has been loaded.
+* common/button.c: check_trigger(): Many changes.  The triggers should now
+behave as described in crossfire.doc.  -> This breaks maps that rely on old
+buggy behaviour.
+
+* server/monster.c: monster_apply_below(): will_apply & 1 now also applies
+TRIGGER objects, not only HANDLE objects.  Allows an interesting solution for
+/asyvan/gate9 if there is no second player who can open the middle grate.
+
+* common/button.c: check_trigger(TRIGGER_PEDESTAL) and update_button(PEDESTAL):
+Bugfix: Handle objects with heads correctly.
+
+* server/c_object.c: drop_object() and socket/item.c: look_at(): Bugfix: If a
+player is moved on top with remove_ob()/insert_ob_in_map(), FLAG_NO_APPLY must
+be set temporarily.
+* common/object.c: remove_ob(): Bugfix: Don't call move_apply_func() if
+FLAG_NO_APPLY is set.
+
+* server/apply.c: manual_apply(): Don't call apply_special() for objects
+that are not in the inventory.  Return 2 in this case.
+* server/apply.c: player_apply_below(): Skip objects for which manual_apply()
+returned 2.
+
+* server/apply.c: apply_spellbook(): Bugfix: Don't give experience for items
+with FLAG_STARTEQUIP.
+
+---------------------------------
+--- END apply() cleanup patch ---  Jan Echternach 26/5/2000
+---------------------------------
+
 server/input.c:  modify examine_monster to use the maxhp field instead of
 the arch hp field to determine healthiness of the monster.  Also, give
 this information for all creatures, not just monsters or players.  
