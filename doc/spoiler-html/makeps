@@ -112,7 +112,7 @@ END {
 function assemble(   w, h, ppm, buff, i, j, bmap_file, ps_file) {
     bmap_file = archdir bmap[faces[0,0]] ".xpm";
     ps_file =  faces[0,0] ".gif";
-    gsub(/[_ ]/, "-", ps_file);
+#    gsub(/[_ ]/, "-", ps_file);
 
     w = xmax - xmin + 1; h = ymax - ymin + 1;
     if ((getline buff < ps_file) != -1)
