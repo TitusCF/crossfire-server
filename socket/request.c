@@ -1356,10 +1356,11 @@ void draw_client_map1(object *pl)
 
 void draw_client_map(object *pl)
 {
-    int i,j,ax,ay,nx,ny; /* ax and ay goes from 0 to max-size of arrays */
+    int i,j,nx,ny; /* ax and ay goes from 0 to max-size of arrays */
+    sint16  ax, ay;
     New_Face	*face,*floor;
     New_Face	*floor2;
-    int d;
+    int d, mflags;
     struct Map	newmap;
     mapstruct	*m;
 
@@ -1379,9 +1380,16 @@ void draw_client_map(object *pl)
         for(i = (pl->x - pl->contr->socket.mapx/2) ; i < (pl->x + (pl->contr->socket.mapx+1)/2); i++) {
 	    ax=i;
 	    ay=j;
-	    m = get_map_from_coord(pl->map, &ax, &ay);
-	    if (m && (GET_MAP_FLAGS(m,ax,ay) & P_NEED_UPDATE))
+	    m = pl->map;
+	    mflags = get_map_flags(m, &m, ax, ay, &ax, &ay);
+	    if (mflags & P_NEED_UPDATE)
 		update_position(m, ax, ay);
+	    /* If a map is visible to the player, we don't want to swap it out
+	     * just to reload it.  This should really call something like
+             * swap_map, but this is much more efficient and 'good enough'
+	     */
+	    if (mflags & P_NEW_MAP) 
+		m->timeout = 50;
 	}
     }
     /* do LOS after calls to update_position */

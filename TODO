@@ -20,6 +20,27 @@ in a glory hole (treasure level), in which case coins are now beneath the wall.
 ------------------------------------------------------------------------------
 Future feature requests
 
+- Change code so that if a player kills another player, he gets no
+  exp.  Perhaps also log number of times a player has killed another player
+  so problematic player killers can be more easily tracked.  This should
+  be pretty simple, but is mostly here because I want to re-write the
+  kill_player for the new skill code, and that should clean things up
+  up a bit to make this code easier to put in.
+
+- Allow possibility of one players magic not harming another player (should
+  probably be a flag/settings value) - given that most spells are large
+  area of effect spells, this may make cooperative adventuring easier.
+  However, this could be a little odd - if my friend it immune to my fireball,
+  shouldn't I be immune to my fireball also?  But if that is allowed, you 
+  now have the case people could cast fireballs on themselves and hit a 
+  whole bunch of surrounding monsters.  Perhaps allow this no damage 
+  attribute based on different spells, eg, it could be argued that for bolt
+  spells you'd aim it so that it doesn't hit your friend, but that same
+  claim can't be made for fireballs.  Or maybe add something like the 
+  ability of spells to not take effect to some range, eg, 'cast lightning
+  bolt range 6' or the like, in which case it goes 6 spaces before the
+  lightning actually starts.
+
 - Move exp rewards you get for alchemy from being calculated by the program
   to being an attribute of the formula.
 
@@ -28,7 +49,10 @@ Future feature requests
   of oceans).  Also, add different LOS blocking for differing conditions -
   if flying, jungles shouldn't block line of sight, but they still should
   if your walking.  Also, add seperate blocking (pass) for monsters and
-  players, eg, block_monster and block_player.
+  players, eg, block_monster and block_player.  What should probably be done
+  is make this a bitmask or the like with multiple possiblities.  If the
+  object doesn't have another bitmask set, object can't pass through.  For
+  compatiblity reasons, no_pass should set all the new no_pass_.. bits.
 
 - Ability for stores to set different prices for goods (eg, remote store
   charges more for the services it provides).
@@ -44,18 +68,11 @@ Future feature requests
   have the spell to be inscribed part of the inscription command, eg
   'inscribe scroll of identify'.
 
-- refine the NO_PASS attribute of objects - it should be possible to make
-  it so that you can't walk over some spaces, but you could fly over them.
-  There are other cases - water could perhaps require something like a
-  'water walking' skill.  What should probably be done is make this 
-  a bitmask or the like with multiple possiblities.  If the object doesn't
-  have another bitmask set, object can't pass through.  For compatiblity
-  reasons, no_pass should set all the new no_pass_.. bits.
-
 - If player tries to login with same name/password as a character currently
   active, drop the old connection and associate the player with the new 
   connection.  Useful if connection is dropped but server hasn't detected
   it yet.
+
 - Generalize the code better - split between 'rules' and 'engine'.  The engine
   would be the aspect of loading/saving objects, dealing with maps, and
   basic object support (exits, levers, etc - things useful for any working

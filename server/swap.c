@@ -73,6 +73,8 @@ void read_map_log()
     mapstruct *map;
     char buf[MAX_BUF],*cp,*cp1;
     int do_los, darkness, lock;
+    long sec =  seconds();
+
 
     sprintf(buf,"%s/temp.maps", settings.localdir);
     if (!(fp=fopen(buf,"r"))) {
@@ -101,8 +103,22 @@ void read_map_log()
 		    &lock, &map->difficulty, &do_los,
 		    &darkness);
 
+
 	map->in_memory=MAP_SWAPPED;
 	map->darkness=darkness;
+
+	/* When the reset time is saved out, it is adjusted so that
+	 * the current time is subtracted (thus, it is saved as number
+         * of seconds from current time that it should reset).  We need
+	 * to add in the current seconds for this to work right.
+	 * On metalforge, strange behavior was observed with really high
+	 * reset times - I don't know how they got to that state, 
+	 * but easy enough to do some sanity checking here.
+	 */
+	map->reset_time += sec;
+	if (map->reset_time > (sec + MAP_MAXRESET))
+	    map->reset_time = 0;
+
     }
     fclose(fp);
 }

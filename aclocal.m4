@@ -20,7 +20,7 @@ AC_DEFUN([CF_CHECK_PYTHON],
 	dir=""
 	AC_CHECK_HEADERS([Python.h],[cf_have_python_h=yes])
 	if test "x$cf_have_python_h" = "x"  ; then
-		for dir in /usr{,local}/include/python{,2.2,2.1,2.0} ; do
+		for dir in /usr{,/local}/include/python{,2.2,2.1,2.0} ; do
 			AC_CHECK_HEADERS(["$dir/Python.h"],[cf_have_python_h=yes])
 			if test "x$cf_have_python_h" != "x" ; then
 				PY_INCLUDES="-I$dir"

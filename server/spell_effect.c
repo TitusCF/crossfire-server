@@ -772,6 +772,25 @@ int perceive_self(object *op) {
 	    }
 	}
     }
+
+    if (is_dragon_pl(op))
+    {
+       /* now grab the 'dragon_ability'-force from the player's inventory */
+       for (tmp = op->inv; tmp != NULL; tmp = tmp->below) {
+         if (tmp->type == FORCE) {
+            if (strcmp(tmp->arch->name, "dragon_ability_force") == 0) {
+               if(tmp->stats.exp == 0) {
+                  sprintf(buf, "Your metabolism isn't focused on anything.");
+               } else {
+                  sprintf(buf, "Your metabolism is focused on %s.", change_resist_msg[tmp->stats.exp]);
+               }
+               new_draw_info(NDI_UNIQUE, 0,op, buf);
+               break;
+            }
+         }
+       }
+    }
+
     return 1;
 }
 
@@ -913,6 +932,8 @@ int cast_create_town_portal (object *op, object *caster, int dir)
     /* If we were unable to load (ex. random map deleted), warn player*/
     if (exitmap==NULL) {
 	new_draw_info(NDI_UNIQUE | NDI_NAVY, 0,op,"Something strange happens.\nYou can't remember where to go!?");
+	remove_ob(force);
+	free_object(force);
 	return 1;
     }
 

@@ -17,6 +17,29 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Various bug fixes.
+Makefile.am, Makefile.in: Put crossedit as the last directory, so any build
+   errors for crossedit doesn't effect anything else.
+README: Update ftp site listing.
+TODO: More things aded.
+aclocal.m4, configure: Add missing / when checking in /usr/local for
+   python headers.
+common/map.c: Add some debugging in free_all_objects that checks to make sure
+   there are not objects remaining that belong to the map just freed -
+   only active if MANY_CORES is set.
+random_maps/random_map.c: Increase minimum random map size to 10x10 - this
+   is need for square spirals to work properly I think.
+server/spell_effect.c: Have perceive self tell dragon players what they are
+   currently focused on.  Fix town portal to remove force objects from
+   players if destination is no longer available.
+server/swap.c: Reset maps reset_time when loading them in in read_map_log() -
+   this is only used if recycle temp maps is on.  Also, do sanity checking
+   on reset_time value - bogus values were observed on metalforge.
+socket/request.c: Update map timeout in draw_client_map() - in this way,
+   we don't swap out a map within a players view only to swap it back
+   in.
+MSW 2003-03-01
+
 ------------------------------------------------------------------------------
 Changes for 1.5.0:
 

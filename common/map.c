@@ -1220,6 +1220,18 @@ void free_all_objects(mapstruct *m) {
 		free_object(op);
 	    }
 	}
+#ifdef MANY_CORES
+    /* I see periodic cores on metalforge where a map has been swapped out, but apparantly
+     * an item on that map was not saved - look for that condition and die as appropriate -
+     * this leaves more of the map data intact for better debugging.
+     */
+    for (op=objects; op!=NULL; op=op->next) {
+	if (op->map == m) {
+	    LOG(llevDebug,"free_all_objects: object %s still on map after it should have been freed", op->name);
+	    abort();
+	}
+    }
+#endif
 }
 
 /*
@@ -1795,6 +1807,7 @@ mapstruct *get_map_from_coord(mapstruct *m, int *x, int *y)
     /* Simple case - coordinates are within this local
      * map.
      */
+
     if (*x>=0 && *x<MAP_WIDTH(m) && *y>=0 && *y < MAP_HEIGHT(m))
 	return m;
 
