@@ -414,7 +414,7 @@ static void enter_random_map(object *pl, object *exit_ob)
     memset(&rp, 0, sizeof(RMParms));
     rp.Xsize=-1;
     rp.Ysize=-1;
-    set_random_map_variable(&rp,exit_ob->msg);
+    if (exit_ob->msg) set_random_map_variable(&rp,exit_ob->msg);
     rp.origin_x = exit_ob->x;
     rp.origin_y = exit_ob->y;
     rp.generate_treasure_now = 1;

@@ -17,7 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 CVS changes since last release:
 
-MSW 2001/03/01:server/main.c
+MSW 2001/03/01:
+server/main.c: Modified random_map code so the server will not
+     crash if the exit object has no message (and thus variables to set
+     for the random map).
      Modified so that golems move away from player when player
      changes map.  Values were reversed before, causing the golem to move
      towards the player.
