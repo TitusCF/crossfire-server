@@ -82,6 +82,7 @@ void draw_client_map2(object *pl);
 void draw_client_map(object *pl);
 void esrv_map_scroll(NewSocket *ns, int dx, int dy);
 void send_plugin_custom_message(object *pl, char *buf);
+void send_mapstats_cmd(object *op, mapstruct *map);
 /* sounds.c */
 void play_sound_player_only(player *pl, int soundnum, int x, int y);
 void play_sound_map(mapstruct *map, int x, int y, int sound_num);

@@ -17,6 +17,14 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Include mapstats cmd for extended clients (sdl iso). Cmd is needed for automaps
+    ambient media infos, map name and map parameter infos. Paramter infos are used
+    for "fire & forget" animation tags inside the map2 cmd (next patch).
+server/main.c: include a automatic mapstats cmd every time the player enters a new map.
+    Its the "default" mapenter cmd. The script event should used for special cases.
+include/sockproto.h and socket/request.c: include the mapstats cmd function.               
+MT 2001-12-03
+
 This checkin for the most part removes support for xpm and xbm graphics - 
     now the only image supported is the png.
 common/arch.c: comment out printing on warning of object having no type -

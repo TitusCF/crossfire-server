@@ -348,6 +348,7 @@ static void enter_map(object *op, mapstruct *newmap, int x, int y) {
     GlobalEvent(&CFP);
 #endif
 
+
     newmap->players++;
     newmap->timeout=0;
     op->enemy = NULL;
@@ -390,11 +391,18 @@ static void enter_map(object *op, mapstruct *newmap, int x, int y) {
      * Do this after the player is on the new map - otherwise the force swap of the
      * old map does not work.
      */
-    if (oldmap && oldmap != newmap) {
-	oldmap->players--;
-	if (oldmap->players <= 0) { /* can be less than zero due to errors in tracking this */
-	    set_map_timeout(oldmap);
-	}
+    if (oldmap != newmap) {
+        /* we are really on a new map. tell it the client */
+        if(op->contr->socket.ext2) /* send mapstats cmd to ext2 clients */
+            send_mapstats_cmd(op, newmap); 
+ 
+        if (oldmap) /* adjust old map */
+        {
+            oldmap->players--;
+
+            if (oldmap->players <= 0) /* can be less than zero due to errors in tracking this */
+	        set_map_timeout(oldmap);
+        }
     }
     swap_below_max (newmap->path);
 

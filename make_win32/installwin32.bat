@@ -14,8 +14,6 @@ md share\help
 md share\plugins
 copy lib\*. share\*.*
 copy lib\*.path share\*.path
-copy lib\crossfire.xbm share\*.*
-copy lib\crossfire.xpm share\*.*
 copy lib\crossfire.png share\*.*
 copy lib\help\*.* share\help\*.*
 
