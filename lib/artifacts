@@ -1863,7 +1863,7 @@ type 87
 weight 120
 Pow 2
 sp 1
-resist_confuse 55
+resist_confusion 55
 value 2000
 material 256
 face serp_cloak.111
