@@ -1135,6 +1135,8 @@ Object bladed steel
 type 100
 resist_physical 10
 dam 2
+material 2
+materialname steel
 weight 125
 value 40
 end
@@ -1429,6 +1431,7 @@ Allowed robe
 chance 10
 Object metal weave
 face metalrobe.111
+material 2
 type 16
 value 100
 weight 150
@@ -2548,6 +2551,7 @@ type 99
 value 60
 weight 1000
 material 256
+materialname granite
 ac 5
 msg
   What strange boots, they look very 
@@ -2608,7 +2612,8 @@ Object of steel
 type 99
 value 50
 weight 110
-material 256
+material 2
+materialname steel
 ac 1
 resist_physical 10
 msg
@@ -3174,6 +3179,8 @@ Allowed bolt
 chance 100
 difficulty 5
 Object silver head
+material 2
+materialname silver
 type 13
 value 5
 slaying vampire

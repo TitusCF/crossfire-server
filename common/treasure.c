@@ -1361,6 +1361,9 @@ void add_abilities(object *op, object *change) {
 
   if(change->material)  op->material = change->material;
 
+  if (change->materialname)
+      op->materialname = add_string(change->materialname);
+
   if (change->slaying) {
     if (op->slaying)
       free_string(op->slaying);
