@@ -1890,7 +1890,7 @@ int cast_identify(object *op, object *caster, object *spell) {
 int cast_detection(object *op, object *caster, object *spell) {
     object *tmp, *last, *god, *detect;
     int done_one, range, mflags, floor, level;
-    sint16 x, y;
+    sint16 x, y, nx, ny;
     mapstruct	*m;
 
     /* We precompute some values here so that we don't have to keep
@@ -1904,7 +1904,7 @@ int cast_detection(object *op, object *caster, object *spell) {
 	for (y = op->y - range; y <= op->y + range; y++) {
 
 	    m = op->map;
-	    mflags = get_map_flags(m, &m, x, y, &x, &y);
+	    mflags = get_map_flags(m, &m, x, y, &nx, &ny);
 	    if (mflags & P_OUT_OF_MAP) continue;
 
 	    /* For most of the detections, we only detect objects above the
@@ -1913,7 +1913,7 @@ int cast_detection(object *op, object *caster, object *spell) {
 	     * down - that is easier than working up.
 	     */
 
-	    for (last=NULL, tmp=get_map_ob(m, x, y); tmp; tmp=tmp->above) last=tmp;
+	    for (last=NULL, tmp=get_map_ob(m, nx, ny); tmp; tmp=tmp->above) last=tmp;
 	    /* Shouldn't happen, but if there are no objects on a space, this
 	     * would happen.
 	     */
@@ -1997,8 +1997,8 @@ int cast_detection(object *op, object *caster, object *spell) {
 	     */
 	    if (done_one) {
 		object *detect_ob = arch_to_object(spell->other_arch);
-		detect_ob->x = x;
-		detect_ob->y = y;
+		detect_ob->x = nx;
+		detect_ob->y = ny;
 		/* if this is set, we want to copy the face */
 		if (done_one == 2 && detect) {
 		    detect_ob->face = detect->face;
@@ -2008,7 +2008,7 @@ int cast_detection(object *op, object *caster, object *spell) {
 		    /* by default, the detect_ob is already animated */
 		    if (!QUERY_FLAG(detect, FLAG_ANIMATE)) CLEAR_FLAG(detect_ob, FLAG_ANIMATE);
 		}
-		insert_ob_in_map(detect_ob, op->map, op,0);
+		insert_ob_in_map(detect_ob, m, op,0);
 	    }
 	} /* for processing the surrounding spaces */
 
