@@ -169,6 +169,42 @@ int check_password(char *typed,char *crypted) {
   return !strcmp(crypt_string(typed,crypted),crypted);
 }
 
+/* This is a basic little function to put the player back to his
+ * savebed.  We do some error checking - its possible that the
+ * savebed map may no longer exist, so we make sure the player
+ * goes someplace.
+ */
+void enter_player_savebed(object *op)
+{
+    mapstruct	*oldmap = op->map;
+    object  *tmp;
+
+    tmp=get_object();
+
+    EXIT_PATH(tmp) = add_string(op->contr->savebed_map);
+    EXIT_X(tmp) = op->contr->bed_x;
+    EXIT_Y(tmp) = op->contr->bed_y;
+    enter_exit(op,tmp);
+    /* If the player has not changed maps and the name does not match
+     * that of the savebed, his savebed map is gone.  Lets go back
+     * to the emergency path.  Update what the players savebed is
+     * while we're at it.
+     */
+    if (oldmap == op->map && strcmp(op->contr->savebed_map, oldmap->path)) {
+	LOG(llevDebug,"Player %s savebed location %s is invalid - going to EMERGENCY_MAPPATH\n",
+	    op->name, op->contr->savebed_map);
+	strcpy(op->contr->savebed_map, EMERGENCY_MAPPATH);
+	op->contr->bed_x = EMERGENCY_X;
+	op->contr->bed_y = EMERGENCY_Y;
+	free_string(op->contr->savebed_map);
+	EXIT_PATH(tmp) = add_string(op->contr->savebed_map);
+	EXIT_X(tmp) = op->contr->bed_x;
+	EXIT_Y(tmp) = op->contr->bed_y;
+	enter_exit(op,tmp);
+    }
+    free_object(tmp);
+}
+
 
 static char *normalize_path (char *src, char *dst) {
     char *p, *q;

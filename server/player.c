@@ -1902,15 +1902,7 @@ void kill_player(object *op)
  /*                                      */
  /****************************************/
 
-    tmp=get_object();
-
-    EXIT_PATH(tmp) = add_string(op->contr->savebed_map);
-    EXIT_X(tmp) = op->contr->bed_x;
-    EXIT_Y(tmp) = op->contr->bed_y;
-    enter_exit(op,tmp);
-
-/* commenting this out seems to fix core dumps on some systems. */
-    free_object(tmp);
+    enter_player_savebed(op);
 
  /**************************************/
  /*                                    */

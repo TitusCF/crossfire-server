@@ -108,12 +108,16 @@ static char msgbuf[HUGE_BUF];
  * Unfortunately, we will report warnings here simply because an object has
  * been modified from the arch.
  */
+#if 0	/* #if's don't work in #define macros */
 #define SET_RESIST(op, type, val) \
 	{if (op->resist[type]!=0) { \
 	    LOG(llevInfo, "object %s having multiple resistances set, type=%s, old=%d, new=%d\n", \
 		       op->name?op->name:(op->arch?op->arch->name:"unknown"), \
 					resist_plus[type], op->resist[type], val); \
 	}  op->resist[type] = val;  }
+#else
+#define SET_RESIST(op, type, val)  op->resist[type] = val;
+#endif
 
 #define IVAL	atoi(yval())
 #define FVAL	atof(yval())

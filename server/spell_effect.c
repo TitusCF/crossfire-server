@@ -689,6 +689,9 @@ int cast_wor(object *op, object *caster) {
   update_ob_speed(dummy);
   dummy->speed_left= -1;
   dummy->type=WORD_OF_RECALL;
+  /* If we could take advantage of enter_player_savebed() here, it would be
+   * nice, but until the map load fails, we can't.
+   */
   EXIT_PATH(dummy) = add_string(op->contr->savebed_map);
   EXIT_X(dummy) = op->contr->bed_x;
   EXIT_Y(dummy) = op->contr->bed_y;
