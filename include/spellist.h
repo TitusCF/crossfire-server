@@ -450,7 +450,9 @@ PATH_TURNING,"holy_orb",},
 {"town portal",	        8, 30, 0, 10, 0, 0,  1,  0, 0, 0, 1,
  PATH_TELE, "perm_magic_portal",},
 {"missile swarm",		7,  6,  0,  3, 0, 0, 1,  1, 0, 0, 0,
-   PATH_MISSILE,"magic_missile"} 
+   PATH_MISSILE,"magic_missile"}, 
+{"cause rabies",            12, 120, 0, 10, 0, 0,  0,  1, 0, 1, 0,
+ PATH_WOUNDING,"rabies"}
 };
 
 /*  peterm:  the following defines the parameters for all the
@@ -677,6 +679,7 @@ spell_parameters SP_PARAMETERS[NROFREALSPELLS] =
 {   20,      5,    3,      5,		7},	/*wrathful eye*/
 {	0,	5,	3,	5,	0},	/*town portal*/
 {   0,      0,      0,      4,		12},	/*missile swarm*/
+{   0,       0,     1,      1,		12},	/*cause rabies*/
 };
 
 char *spellpathnames[NRSPELLPATHS] = {
