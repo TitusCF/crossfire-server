@@ -168,17 +168,17 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define PEACEMAKER       59  /* Object owned by a player which can convert
 			       a monster into a peaceful being incapable of
 			       attack.  */
-#define GEM		60 
-#define FIRECHEST	61 
+#define GEM		60
+#define FIRECHEST	61
 #define FIREWALL	62
-
+#define ANVIL       63
 #define CHECK_INV	64	/* by b.t. thomas@nomad.astro.psu.edu */
-#define MOOD_FLOOR	65	/* by b.t. thomas@nomad.astro.psu.edu 
+#define MOOD_FLOOR	65	/* by b.t. thomas@nomad.astro.psu.edu
 				 * values of last_sp set how to change:
 				 * 0 = furious,	all monsters become aggressive
 				 * 1 = angry, all but friendly become aggressive
-				 * 2 = calm, all aggressive monsters calm down 
-				 * 3 = sleep, all monsters fall asleep 
+				 * 2 = calm, all aggressive monsters calm down
+				 * 3 = sleep, all monsters fall asleep
 				 * 4 = charm, monsters become pets
 				 */
 #define EXIT		66
