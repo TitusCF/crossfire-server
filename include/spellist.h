@@ -25,6 +25,9 @@
     The author can be reached via e-mail to mark@pyramid.com
 */
 
+#ifndef SPELLIST_H
+#define SPELLIST_H
+
 #include "spells.h"
 
 spell spells[NROFREALSPELLS]={
@@ -401,8 +404,21 @@ PATH_TURNING,"holy_orb",},
 {"cause anthrax",             12, 75, 0, 10, 0, 0,  0,  1, 0, 1, 0,
  PATH_WOUNDING,"anthrax"},
 {"cause typhoid",             15, 85, 0, 10, 0, 0,  0,  1, 0, 1, 0,
- PATH_WOUNDING,"typhoid"}
-
+   PATH_WOUNDING,"typhoid"},
+{"mana blast",		       8, 10, 0, 15, 0, 0,  2,  1, 0, 0, 0,
+   PATH_TRANSFER, "manablast", },					/* 180 */
+{"small manaball",	       4, 12, 0,  9, 0, 0,  3,  1, 0, 0, 0,
+   PATH_TRANSFER, "manabullet_s", },
+{"medium manaball",	       7, 20, 0, 18, 0, 0,  2,  1, 0, 0, 0,
+   PATH_TRANSFER, "manabullet_m", },
+{"large manaball",	      10, 32, 0, 27, 0, 0,  1,  1, 0, 0, 0,
+   PATH_TRANSFER, "manabullet_l", },
+{"mana bolt",		       5, 18, 0,  9, 0, 0,  2,  1, 0, 0, 0,
+   PATH_TRANSFER, "manabolt", },
+{"dancing sword",	      11, 25, 0, 10, 0, 0,  1,  0, 0, 0, 0,
+   PATH_CREATE, "dancingsword", },
+{"animate weapon",	       7, 25, 0, 10, 0, 0,  4,  0, 0, 0, 0,
+   PATH_TELE, "dancingsword", }
 };
 
 /*  peterm:  the following defines the parameters for all the
@@ -411,9 +427,11 @@ spells.
   bdur:  base duration of spell or base range
   ldam:  levels you need over the min for the spell to gain one dam
   ldur:  levels you need over the min for the spell to gain one dur
-  spl:   1/fraction increase in spellpoint cost per level a value
-         of 16 will lead to an increased spellpoint cost of 1/16
-         per level  0--> no increase
+  spl:   number of levels beyond minimum for spell point cost to
+	 increase by amount equal to base cost.  i.e. if base cost
+	 is 10 at level 2 and spl is 5, cost will increase by 2 per
+	 level.  if base cost is 5 and spl is 10, cost increases by
+	 1 every 2 levels.
     the information here is default only.  It is over-ridden by
     entries in LIBDIR/spell_params of the form.  Please
     see spell_params.doc
@@ -423,7 +441,7 @@ spells.
 spell_parameters SP_PARAMETERS[NROFREALSPELLS] =
 {
 /*  bdam    bdur    ldam    ldur	spl	spell  */
-{   10,     0,      1,      0,		6},	/*magic bullet*/         
+{   10,     0,      1,      0,		6},	/*magic bullet*/         /* 0 */
 {   8,      6,      3,      0,		24},	/*small fireball*/       
 {   8,      10,     3,      0,		24},	/*medium fireball*/      
 {   8,      14,     4,      0,		32},	/*large fireball*/       
@@ -448,7 +466,7 @@ spell_parameters SP_PARAMETERS[NROFREALSPELLS] =
 {   0,      0,      0,      0,		0},	/*wonder*/               
 {   10,     5,      3,      6,		15},	/*destruction*/ /* dam=10+int */
 {   0,      0,      0,      0,		0},	/*perceive self*/
-{   0,      0,      0,      0,		0},	/*word of recall*/       
+{   0,      5,      0,      1,		40},	/*word of recall*/       
 {   0,      300,    20,     1,		15},	/*invisible*/            
 {   0,      300,    20,     1,		15},	/*invisible to undead*/  
 {   0,      0,      0,      0,		0},	/*probe*/                
@@ -543,9 +561,9 @@ spell_parameters SP_PARAMETERS[NROFREALSPELLS] =
 {   0,      0,      0,      0,		0},	/* magic rune */
 {   0,      0,      0,      0,		0},	/* rune of magic drain */
 {   0,      0,      0,      0,		0},	/* rune of barring magic */
-{   0,      0,      0,      0,		0},	/* rune of transferrence */	/*120*/
-{   0,      0,      0,      0,		0},	/* transferrence */
-{   0,      0,      0,      0,		0},	/* magic drain */
+{   8,      0,      2,      0,		24},	/* rune of transferrence */	/*120*/
+{   8,      0,      2,      0,		20},	/* transferrence */
+{   75,     30,     2,      1,		10},	/* magic drain */
 {   0,      6,      0,      3,		18},	/* counter-spell */
 {   0,      0,      0,      0,		0},	/* dispel rune */
 {   0,      0,      0,      0,		0},	/* cure madness */
@@ -593,7 +611,7 @@ spell_parameters SP_PARAMETERS[NROFREALSPELLS] =
 {    0,      0,     0,      4,		12},	/* cause many wounds  */
 {   8,      6,      3,      0,		24},	/*small snowstorm*/       
 {   8,      10,     3,      0,		24},	/*medium snowstorm*/      
-{   8,      14,     4,      0,		32},	/*large snowstorm*/       
+{   8,      14,     4,      0,		32},	/*large snowstorm*/     /* 170 */ 
 {   0,       0,     0,      0,		0},	/*cure disease*/      
 {   0,       0,     1,      1,		24},	/*cause red death*/      
 {   0,       0,     3,      5,		10},	/*cause flu*/      
@@ -602,8 +620,14 @@ spell_parameters SP_PARAMETERS[NROFREALSPELLS] =
 {   0,       0,     1,      4,		10},	/*cause smallpox*/      
 {   0,       0,     1,      5,		24},	/*cause plague*/      
 {   0,       0,     1,      10,		10},	/*cause anthrax*/      
-{   0,       0,     1,      10,		24}	/*cause typhoid*/      
-
+{   0,       0,     1,      10,		24},	/*cause typhoid*/      
+{	4,	5,	4,	4,	9},	/* mana blast */	/* 180 */ 
+{	8,	6,	3,	0,	24},	/* small manaball */
+{	8,	10,	3,	0,	24},	/* medium manaball */
+{	8,	14,	4,	0,	32},	/* large manaball */
+{	10,	9,	3,	0,	30},	/* mana bolt */
+{	2,	20,	2,	1,	10},	/* dancing sword */     /* 185 */ 
+{	2,	20,	2,	1,	20}	/* animate weapon */
 };
 
 char *spellpathnames[NRSPELLPATHS] = {
@@ -629,3 +653,4 @@ char *spellpathnames[NRSPELLPATHS] = {
  "Light"
 };
 
+#endif
