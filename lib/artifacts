@@ -1110,6 +1110,98 @@ end
 #
 # Rings
 #
+# Ring of Thieves
+Allowed all
+chance 20
+Object Thieves
+value 80
+type 70
+face ring.117
+exp 2
+Dex 2
+stealth 1
+can_see_in_dark 1
+end
+#
+#Ring of Fighting
+#
+Allowed all
+chance 32
+Object Fighting
+face ring.117
+type 70
+value 30
+Str 1
+Con 1
+wc 2
+dam 2
+hp 1
+end
+#
+#Ring of Combat
+#
+Allowed all
+chance 16
+Object Combat
+type 70
+face ring.117
+value 130
+Str 1
+Con 1
+Dex 1
+wc 1
+magic -1
+resist_physical 10
+dam 2
+hp 1
+end
+#
+#
+#Ring of Strife
+#
+Allowed all
+chance 8
+Object Strife
+type 70
+face ring.117
+value 230
+Str 2
+Con 2
+Dex 2
+Wis -1
+Int -1
+wc 2
+magic -1
+resist_physical 20
+ac 1
+dam 3
+hp 2
+end
+#
+#Ring of War
+#
+Allowed all
+chance 2
+Object War
+face ring.117
+type 70
+value 350
+Str 3
+Con 3
+Dex 3
+Int -1
+Wis -1
+Pow -2
+magic -5
+exp 4
+resist_physical 30
+resist_magic -50
+hp 2
+wc 3
+end
+#
+#Ring of Ice
+#
 Allowed all
 chance 33
 Object Ice
