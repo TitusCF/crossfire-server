@@ -17,6 +17,14 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+common/map.c: Clean up if statement ins blocked_link() which caused warning
+   messages - broke it apart to make it a little clear.  Add check for
+   premature end of map header - make code more resilent in case of truncated
+   saved maps.  Fix saving of region name in new_save_map() - saving the
+   pointer to the region isn't what the loader is expecting, and is highly
+   non portable even if it was.
+MSW 2005-03-18
+
 Applied patch:
 * #1145089 (cavesomething): Region support.
 common/Makefile.am: add new 'region.c' file.

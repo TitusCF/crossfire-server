@@ -316,10 +316,18 @@ int blocked_link(object *ob, mapstruct *m, int sx, int sy) {
 		    continue;
 	    }
 	} /* if check_inv */
-	else if (QUERY_FLAG(tmp,FLAG_NO_PASS) || (QUERY_FLAG(tmp,FLAG_ALIVE) &&
-            tmp->head != ob && tmp != ob && tmp->type != DOOR) && 
-            !(QUERY_FLAG(tmp,FLAG_WIZ) && tmp->contr->hidden))
+	else {
+	    /* Broke apart a big nasty if into several here to make
+	     * this more readable.  first check - if the space blocks
+	     * movement, can't move here.
+	     * second - if a monster, can't move there, unles it is a 
+	     * hidden dm
+	     */
+	    if (QUERY_FLAG(tmp,FLAG_NO_PASS)) return 1;
+	    if (QUERY_FLAG(tmp,FLAG_ALIVE) && tmp->head != ob && tmp != ob && 
+		tmp->type != DOOR && !(QUERY_FLAG(tmp,FLAG_WIZ) && tmp->contr->hidden))
 			return 1;
+	}
 
     }
     return 0;
@@ -656,6 +664,12 @@ static int load_map_header(FILE *fp, mapstruct *m)
 	    while (isspace(*value)) value++;
 	    end = strchr(value, '\n');
 	}
+	if (!end) {
+	    LOG(llevError, "Error loading map header - did not find a newline - perhaps file is truncated?  Buf=%s\n",
+		buf);
+	    return 1;
+	}
+	    
 
 	/* key is the field name, value is what it should be set
 	 * to.  We've already done the work to null terminate key,
@@ -1072,7 +1086,7 @@ int new_save_map(mapstruct *m, int flag) {
      * or a difficulty value we generated when the map was first loaded
      */
     if (m->difficulty) fprintf(fp,"difficulty %d\n", m->difficulty);
-    if (m->region) fprintf(fp,"region %d\n", m->region);
+    if (m->region) fprintf(fp,"region %s\n", m->region->name);
     if (m->darkness) fprintf(fp,"darkness %d\n", m->darkness);
     if (m->width) fprintf(fp,"width %d\n", m->width);
     if (m->height) fprintf(fp,"height %d\n", m->height);
