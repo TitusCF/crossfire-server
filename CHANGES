@@ -1,6 +1,12 @@
 Changes in top level CVS tree (please add your changes at the very top of
 the file):
 
+Change by dragonm@absolut.tegris.org - improve crossedit so that if you
+try to load a map you alreay have in memory, it will raise the window - 
+it will also give you the option to forget, save changes, or just raise
+the window if the in memory version of that map has been modified.  Checked
+in by msw. (crossedit, App.c, Edit.c, Edit.h)
+
 Bugfix in server/main.c - enter_exit()
   Unique maps were using their actual location as a path for moving to
   a new map.  They need to use the location of the original map, not
