@@ -1389,6 +1389,9 @@ static genericname plgoptions[13]=
  * the different values will be taken from.  This function is
  * typically used to dump objects (op2=empty object), or to save objects
  * (op2 is the objects original archetype)
+ * Note by MSW 2003-09-22:  It's a bug that we need to pass entrysize -
+ * we should use strlen entryname instead.  Any smart compiler should
+ * optimize that out.
  */
 
 
@@ -1456,8 +1459,7 @@ char *get_ob_diff(object *op,object *op2) {/* I plan to optimize this heavily */
     ADD_STRINGLINE_ENTRY(fastbuf,"slaying ",op->slaying,8);
   }
   if(op->skill && op->skill!=op2->skill) {
-    sprintf(buf2,"skill %s\n",op->skill);
-    strcat(buf,buf2);
+    ADD_STRINGLINE_ENTRY(fastbuf,"skill ",op->skill,6);
   }
   if(op->msg && op->msg!=op2->msg) {
     FAST_STRNCAT(fastbuf,"msg\n",3+eol_size);
@@ -1536,10 +1538,17 @@ char *get_ob_diff(object *op,object *op2) {/* I plan to optimize this heavily */
     FAST_SAVE_LONG(fastbuf,"grace ",op->stats.grace,6);
   if(op->stats.maxgrace!=op2->stats.maxgrace)
     FAST_SAVE_LONG(fastbuf,"maxgrace ",op->stats.maxgrace,9);
-  if(op->stats.exp!=op2->stats.exp)
-    FAST_SAVE_LONG(fastbuf,"exp ",op->stats.exp,4);
-  if(op->perm_exp!=op2->perm_exp)
-    FAST_SAVE_LONG(fastbuf,"perm_exp ",op->perm_exp,4);
+
+  if(op->stats.exp!=op2->stats.exp) {
+    sprintf(buf2,"%lld\n", op->stats.exp);
+    ADD_STRINGLINE_ENTRY(fastbuf,"exp ", buf2, 4);
+  }
+
+  if(op->perm_exp!=op2->perm_exp) {
+    sprintf(buf2,"%lld\n", op->perm_exp);
+    ADD_STRINGLINE_ENTRY(fastbuf,"perm_exp ", buf2, 9);
+  }
+
   if(op->expmul!=op2->expmul)
     FAST_SAVE_DOUBLE(fastbuf,"expmul ",op->expmul,7);
   if(op->stats.food!=op2->stats.food)
@@ -1664,34 +1673,24 @@ char *get_ob_diff(object *op,object *op2) {/* I plan to optimize this heavily */
     FAST_SAVE_LONG(fastbuf,"item_power ",op->item_power,11);
   }
 
-  if (op->duration != op2->duration) {
-    sprintf(buf2,"duration %d\n", op->duration);
-    strcat(buf,buf2);
-  }
+    if (op->duration != op2->duration) 
+	FAST_SAVE_LONG(fastbuf,"duration ",op->duration,9);
 
-  if (op->range != op2->range) {
-    sprintf(buf2,"range %d\n", op->range);
-    strcat(buf,buf2);
-  }
+    if (op->range != op2->range) 
+	FAST_SAVE_LONG(fastbuf,"range ",op->range,6);
 
-  if (op->range_modifier != op2->range_modifier) {
-    sprintf(buf2,"range_modifier %d\n", op->range_modifier);
-    strcat(buf,buf2);
-  }
+    if (op->range_modifier != op2->range_modifier)
+	FAST_SAVE_LONG(fastbuf,"range_modifier ",op->range_modifier,15);
 
-  if (op->duration_modifier != op2->duration_modifier) {
-    sprintf(buf2,"range_modifier %d\n", op->duration_modifier);
-    strcat(buf,buf2);
-  }
+    if (op->duration_modifier != op2->duration_modifier) 
+	FAST_SAVE_LONG(fastbuf,"duration_modifier ", op->duration_modifier,19);
 
-  if (op->dam_modifier != op2->dam_modifier) {
-    sprintf(buf2,"dam_modifier %d\n", op->dam_modifier);
-    strcat(buf,buf2);
-  }
+    if (op->dam_modifier != op2->dam_modifier)
+	FAST_SAVE_LONG(fastbuf,"dam_modifier ", op->dam_modifier,14);
 
-  if (op->gen_sp_armour != op2->gen_sp_armour) {
-    FAST_SAVE_LONG(fastbuf,"gen_sp_armour ",op->gen_sp_armour,14);
-  }
+    if (op->gen_sp_armour != op2->gen_sp_armour) {
+	FAST_SAVE_LONG(fastbuf,"gen_sp_armour ",op->gen_sp_armour,14);
+    }
 
   for (tmp=0; tmp <= NUM_FLAGS; tmp++) {
     if (flag_names[tmp] && (QUERY_FLAG(op, tmp) != QUERY_FLAG(op2, tmp))) {
