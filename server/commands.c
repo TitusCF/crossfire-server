@@ -244,6 +244,7 @@ CommArray_s WizCommands [] = {
   {"set_god", command_setgod, 0.0},
   {"speed", command_speed,0.0},
   {"ssdumptable", command_ssdumptable,0.0},
+  {"stack_clear", command_stack_clear, 0.0 },
   {"stack_list", command_stack_list, 0.0},
   {"stack_pop", command_stack_pop, 0.0 },
   {"stack_push", command_stack_push, 0.0 },

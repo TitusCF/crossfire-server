@@ -1703,6 +1703,16 @@ int command_stack_list( object* op, char* params )
     }
 
 /**
+ * Empty DM item stack.
+ */
+int command_stack_clear( object* op, char* params )
+    {
+    op->contr->stack_position = 0;
+    new_draw_info( NDI_UNIQUE, 0, op, "Item stack cleared." );
+    return 0;
+    }
+
+/**
  * Get a diff of specified items.
  * Second item is compared to first, and differences displayed.
  * Note: get_ob_diff works the opposite way (first compared to 2nd),
