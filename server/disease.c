@@ -61,7 +61,9 @@ sp*^            ReduceSpRegen   reduces spellpoint regeneration
 name            Name            Name of the plague 
 msg             message         What the plague says when it strikes.
 race            those affected  races the plague strikes (* means everything) 
-level           Plague Level    General description of the plague's deadliness 
+level           Plague Level    General description of the plague's deadliness
+armour          Attenuation     reduction in wc per generation of disease.
+                                This builds in a self-limiting factor.
 
 
 Explanations:
@@ -73,7 +75,8 @@ attacktype is the attacktype used by the disease to smite "dam" damage with.
 
 wc/127 is the chance of someone in range catching it.
 
-magic is the range at which infection may occur.
+magic is the range at which infection may occur.  If negative, the range is
+NOT level dependent.
 
 Stats are stat modifications.  These should typically be negative.
 
@@ -204,7 +207,7 @@ int check_infection(object *disease) {
   struct mapdef *map;
   object *tmp;
 
-  range = disease->magic;
+  range = abs(disease->magic);
   if(disease->env) { x = disease->env->x; y = disease->env->y;map=disease->env->map;}
   else { x = disease->x; y = disease->y; map = disease->map; };
 
@@ -266,6 +269,7 @@ int infect_object(object *victim, object *disease) {
   copy_object(disease,new_disease);
   new_disease->stats.food=disease->stats.maxgrace;
   new_disease->value=disease->stats.maxhp;
+  new_disease->stats.wc -= disease->armour;  /* self-limiting factor */
   set_owner(new_disease,disease->owner);
   /* Unfortunately, set_owner does the wrong thing to the skills pointers
 	  resulting in exp going into the owners *current* chosen skill. */

@@ -3381,12 +3381,16 @@ int cast_cause_disease(object *op, object *caster, int dir, archetype *disease_a
 		  set_owner(disease,op);
 		  disease->stats.exp = 0;
 		  disease->level = op->level;
+		  
+		  /* Try to get the experience into the correct category */
+		  if(op->chosen_skill && op->chosen_skill->exp_obj)
+			 disease->exp_obj = op->chosen_skill->exp_obj;
 
 		  /*do level adjustments */
 		  if(disease->stats.wc)
 			 disease->stats.wc +=  SP_level_strength_adjust(op,caster,type)/2;
 
-		  if(disease->magic)
+		  if(disease->magic> 0)
 			 disease->magic += SP_level_strength_adjust(op,caster,type)/4;
 
 		  if(disease->stats.maxhp>0)
