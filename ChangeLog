@@ -17,6 +17,28 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/weather.c:
+More weather routines:
+
+Now the game will attempt to completely reformat the world, and modify it
+with the weather and elevation.  When dynamiclevel is set to 5 or above,    
+the game looks at each tile, and the weather conditions present in that
+tile.  It then consults a table of different terrain types, and what
+conditions they prefer to grow under.  If the conditions match the spot,    
+and there is nothing special about the spot (like a house, or a road),   
+then we drop the new tile type on the overlay map on that location.
+
+Tuning of this can be done at the top of weather.c, by changing the
+weather_tile array.
+
+Also.. add a feather_map() routine which tries to break up the blockiness
+of some of the weather effects by spreading the tiles around.
+
+This code works.. but needs tuning, and probably a little more testing.
+Some of the conditions for the various tiles really need to be looked at,    
+and fiddled with.
+garbled 2002-12-08
+
 common/exp.c: Fix bug were drain attacks added exp.
 MSW 2002-12-05
 
