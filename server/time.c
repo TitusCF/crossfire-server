@@ -693,11 +693,15 @@ void move_teleporter(object *op) {
     in op->stats.sp.  maxsp also has some meaning, i'm not sure what.
     walls can have hp, so they can be torn down. */
 void move_firewall(object *op) {
+  if ( ! op->map)
+    return;   /* dm has created a firewall in his inventory */
   cast_spell(op,op,op->stats.sp?op->stats.sp:(RANDOM()%8)+1,op->stats.dam,
 	1,spellNormal,NULL);
 }
 
 void move_firechest(object *op) {
+  if ( ! op->map)
+    return;   /* dm has created a firechest in his inventory */
   fire_a_ball(op,(RANDOM()%8)+1,7);
 }
 

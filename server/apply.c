@@ -1104,6 +1104,7 @@ void move_apply (object *trap, object *victim, object *originator)
     }
     return;
 
+  case THROWN_OBJ:
   case ARROW:
     if(QUERY_FLAG(victim, FLAG_ALIVE)&&trap->speed) {
       tag_t trap_tag = trap->count;
@@ -1119,7 +1120,15 @@ void move_apply (object *trap, object *victim, object *originator)
     }
     return;
 
-  case CONE: /* A cone in the form of a wall */
+  case CANCELLATION:
+  case BALL_LIGHTNING:
+    if (QUERY_FLAG (victim, FLAG_ALIVE))
+      hit_player (victim, trap->stats.dam, trap, trap->attacktype);
+    else if (victim->material)
+      save_throw_object (victim, trap->attacktype);
+    return;
+
+  case CONE:
     if(QUERY_FLAG(victim, FLAG_ALIVE)&&trap->speed) {
       uint32 attacktype = trap->attacktype & ~AT_COUNTERSPELL;
       if (attacktype)

@@ -1378,6 +1378,7 @@ object *make_throw_ob (object *orig) {
 
 void do_throw(object *op, object *toss_item, int dir) {
     object *throw_ob=toss_item, *left=NULL;
+    tag_t left_tag;
     int eff_str = 0,maxc,str=op->stats.Str,dam=0;
     int pause_f,weight_f=0;
     float str_factor=1.0,load_factor=1.0,item_factor=1.0;
@@ -1465,6 +1466,7 @@ void do_throw(object *op, object *toss_item, int dir) {
     } /* if object can't be thrown */
  
     left = throw_ob; /* these are throwing objects left to the player */
+    left_tag = left->count;
 
   /* sometimes get_split_ob can't split an object (because op->nrof==0?)
    * and returns NULL. We must use 'left' then 
@@ -1480,8 +1482,8 @@ void do_throw(object *op, object *toss_item, int dir) {
 	    esrv_del_item(op->contr, left->count);
     }
     else if (op->type==PLAYER) {
-	if (QUERY_FLAG(left, FLAG_FREED))
-	    esrv_del_item(op->contr, left->count);
+	if (was_destroyed (left, left_tag))
+	    esrv_del_item(op->contr, left_tag);
 	else 
 	    esrv_update_item(UPD_NROF, op, left);
     }

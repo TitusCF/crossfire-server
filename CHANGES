@@ -18,6 +18,28 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+lib/checkarch.pl:  Check for archetypes with type FIRECHEST but no level.
+- Jan Echternach 5/29/2000
+
+server/apply.c: move_apply(): Added handling of THROWN_OBJ, CANCELLATION
+and BALL_LIGHTNING.
+server/spell_effect.c: cancellation(): Traverse inventory of objects
+with type THROWN_OBJ.
+- Jan Echternach 5/29/2000
+
+server/player.c: fire_bow() and server_skills.c: do_throw(): Bugfix: Don't
+use op->count of freed objects.  Use was_destroyed() to check for freed
+objects instead of QUERY_FLAG (FLAG_FREED).  - Jan Echternach 5/29/2000
+
+server/spell_util.c: fire_a_ball(): Bugfixes: Use op->other_arch as
+the archetype to fire, not FBULLET.  (-> Firechests now cast fire balls
+again, not snowballs.)  Set level of fired archetype.  Check if object
+was destroyed after insert_ob_in_map().  - Jan Echternach 5/29/2000
+
+server/time.c: move_firewall() and move_firechest(): Do nothing if
+object has no map.  Fixes server crashes if a dm creates such a thing
+in the inventory.  - Jan Echternach 5/29/2000
+
 lib/collect.pl:  Modify so that it does not complain about png files in the
 arch directory MSW 5/28/2000
 

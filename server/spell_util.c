@@ -1173,21 +1173,30 @@ void move_cone(object *op) {
     }
 }
 
-void fire_a_ball(object *op,int dir,int strength) {
-  object *tmp=clone_arch(FBULLET);
+void fire_a_ball (object *op, int dir, int strength)
+{
+  object *tmp;
 
-  if(!dir)
-    LOG(llevError,"Tried to fire a ball without direction.\n");
+  if ( ! op->other_arch) {
+    LOG (llevError, "BUG: fire_a_ball(): no other_arch\n");
+    return;
+  }
+  if ( ! dir) {
+    LOG (llevError, "BUG: fire_a_ball(): no direction\n");
+    return;
+  }
+  tmp = arch_to_object (op->other_arch);
   set_owner(tmp,op);
   tmp->direction=dir;
   tmp->x=op->x,tmp->y=op->y;
   tmp->speed = 1;
   update_ob_speed(tmp);
   tmp->stats.hp=strength;
+  tmp->level = op->level;
   SET_ANIMATION(tmp, dir);
   SET_FLAG(tmp, FLAG_FLYING);
-  insert_ob_in_map(tmp,op->map,op);
-  move_fired_arch(tmp);
+  if ((tmp = insert_ob_in_map (tmp, op->map, op)) != NULL)
+    move_fired_arch (tmp);
 }
 
 void explosion(object *op) {

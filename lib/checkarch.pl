@@ -41,6 +41,10 @@ line:	while(<ARCH>) {
 		    &warn ("arch $arch is alive, but doesn't have level");
 		    $warnings++;
 		}
+                if ($type == 61 && $level <= 0) {
+                    &warn ("arch $arch is a FIRECHEST, but doesn't have level");
+                    $warnings++;
+                }
                 if ($type == 62 && $level <= 0) {
                     &warn ("arch $arch is a FIREWALL, but doesn't have level");
                     $warnings++;

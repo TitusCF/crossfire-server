@@ -906,6 +906,7 @@ object *find_arrow(object *op, char *type)
 static void fire_bow(object *op, int dir)
 {
   object *bow, *arrow = NULL, *left;
+  tag_t left_tag;
   for(bow=op->inv; bow; bow=bow->below)
     if(bow->type==BOW && QUERY_FLAG(bow, FLAG_APPLIED))
       break;
@@ -939,6 +940,7 @@ static void fire_bow(object *op, int dir)
 	return;
   }
   left = arrow; /* these are arrows left to the player */
+  left_tag = left->count;
   arrow = get_split_ob(arrow, 1);
   set_owner(arrow,op);
   arrow->direction=dir;
@@ -968,8 +970,8 @@ static void fire_bow(object *op, int dir)
   play_sound_map(op->map, op->x, op->y, SOUND_FIRE_ARROW);
   insert_ob_in_map(arrow,op->map,op);
   move_arrow(arrow);
-  if (QUERY_FLAG(left, FLAG_FREED))
-      esrv_del_item(op->contr, left->count);
+  if (was_destroyed (left, left_tag))
+      esrv_del_item(op->contr, left_tag);
   else
       esrv_send_item(op, left);
 }

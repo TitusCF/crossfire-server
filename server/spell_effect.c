@@ -1607,7 +1607,9 @@ void cancellation(object *op)
 {
   object *tmp;
 
-  if(QUERY_FLAG(op, FLAG_ALIVE)||op->type == CONTAINER) {
+  if (QUERY_FLAG (op, FLAG_ALIVE) || op->type == CONTAINER
+      || op->type == THROWN_OBJ)
+  {
     /* Recur through the inventory */
     for(tmp=op->inv;tmp!=NULL;tmp=tmp->below)
       if (!did_make_save_item(tmp, AT_CANCELLATION))
