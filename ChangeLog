@@ -17,6 +17,14 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+common/living.c: fix fix_player() so that character gets benefits/penalties
+   for sp/hp/grace/etc regen bonuses as related to the god they worship.
+server/player.c: dragon_ability_gain(): Modify so that character now gets
+   attacktype of new ability that they gain.  Also, add code so that
+   the characters face/animation can change (getting set to values the bonus
+   ability).
+MSW 2003-12-27
+
 common/object.c: Set op->events=NULL in reset_object(), and move the
    clearing of the op->events structure to be before the memset in
    clear_object() - this was otherwise resulting in a memory leak,

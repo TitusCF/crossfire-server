@@ -3131,7 +3131,7 @@ void dragon_ability_gain(object *who, int atnr, int level) {
 	    return;
 	}
     }
-    else if (item->type == SKILL) {
+    else if (item->type == SKILL_TOOL && item->invisible) {
 	if (item->subtype == SK_CLAWING && (skop=find_skill_by_name(who, item->skill))!=NULL) {
 
 	    /* should this perhaps be (skop->attackyp & item->attacktype)!=item->attacktype ...
@@ -3140,14 +3140,24 @@ void dragon_ability_gain(object *who, int atnr, int level) {
 	     * but not all of them, he gets nothing.
 	     */
 	    if (!(skop->attacktype & item->attacktype)) {
-		/* always add physical if there's none */
-		if (skop->attacktype == 0) skop->attacktype = AT_PHYSICAL;
-	
-		/* we add the new attacktype to the clawing ability */
+		/* Give new attacktype */
 		skop->attacktype |= item->attacktype;
+
+		/* always add physical if there's none */
+		skop->attacktype |= AT_PHYSICAL;
 	
 		if (item->msg != NULL)
 		    new_draw_info(NDI_UNIQUE|NDI_BLUE, 0, who, item->msg);
+
+		/* Give player new face */
+		if (item->animation_id) {
+		    who->face = skop->face;
+		    who->animation_id = item->animation_id;
+		    who->anim_speed = item->anim_speed;
+		    who->last_anim = 0;
+		    who->state = 0;
+		    animate_object(who, who->direction);
+		}
 	    }
 	}
     }

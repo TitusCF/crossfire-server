@@ -914,7 +914,8 @@ void fix_player(object *op) {
 		    (tmp->type == BOOTS)    || (tmp->type == GLOVES) ||
 		    (tmp->type == AMULET )  || (tmp->type == GIRDLE) ||
 		    (tmp->type == BRACERS ) || (tmp->type == CLOAK) ||
-		    (tmp->type == DISEASE)  || (tmp->type == FORCE)) {
+		    (tmp->type == DISEASE)  || (tmp->type == FORCE) ||
+		    (tmp->type == SKILL)) {
 			op->contr->digestion    += tmp->stats.food;
 			op->contr->gen_hp       += tmp->stats.hp;
 			op->contr->gen_sp       += tmp->stats.sp;
@@ -1427,50 +1428,52 @@ void set_dragon_name(object *pl, object *abil, object *skin) {
  * or change the ability-focus.
  */
 void dragon_level_gain(object *who) {
-  object *abil = NULL;    /* pointer to dragon ability force*/
-  object *skin = NULL;    /* pointer to dragon skin force*/
-  object *tmp = NULL;     /* tmp. object */
-  char buf[MAX_BUF];      /* tmp. string buffer */
+    object *abil = NULL;    /* pointer to dragon ability force*/
+    object *skin = NULL;    /* pointer to dragon skin force*/
+    object *tmp = NULL;     /* tmp. object */
+    char buf[MAX_BUF];      /* tmp. string buffer */
   
-  /* now grab the 'dragon_ability'-forces from the player's inventory */
-  for (tmp=who->inv; tmp!=NULL; tmp=tmp->below) {
-    if (tmp->type == FORCE) {
-      if (strcmp(tmp->arch->name, "dragon_ability_force")==0)
-	abil = tmp;
-      if (strcmp(tmp->arch->name, "dragon_skin_force")==0)
-	skin = tmp;
+    /* now grab the 'dragon_ability'-forces from the player's inventory */
+    for (tmp=who->inv; tmp!=NULL; tmp=tmp->below) {
+	if (tmp->type == FORCE) {
+	    if (strcmp(tmp->arch->name, "dragon_ability_force")==0)
+		abil = tmp;
+	    if (strcmp(tmp->arch->name, "dragon_skin_force")==0)
+		skin = tmp;
+	}
     }
-  }
-  /* if the force is missing -> bail out */
-  if (abil == NULL) return;
+    /* if the force is missing -> bail out */
+    if (abil == NULL) return;
   
-  /* The ability_force keeps track of maximum level ever achieved.
-     New abilties can only be gained by surpassing this max level */
-  if (who->level > abil->level) {
-    /* increase our focused ability */
-    abil->resist[abil->stats.exp]++;
+    /* The ability_force keeps track of maximum level ever achieved.
+     * New abilties can only be gained by surpassing this max level 
+     */
+    if (who->level > abil->level) {
+	/* increase our focused ability */
+	abil->resist[abil->stats.exp]++;
     
-    if (abil->resist[abil->stats.exp]>0 && abil->resist[abil->stats.exp]%5 == 0) {
-      /* time to hand out a new ability-gift */
-      (*dragon_gain_func)(who, (int)abil->stats.exp,
+
+	if (abil->resist[abil->stats.exp]>0 && abil->resist[abil->stats.exp]%5 == 0) {
+	    /* time to hand out a new ability-gift */
+	    (*dragon_gain_func)(who, (int)abil->stats.exp,
 			       (int)((1+abil->resist[abil->stats.exp])/5.));
-    }
+	}
     
-    if (abil->last_eat > 0 && atnr_is_dragon_enabled(abil->last_eat)) {
-      /* apply new ability focus */
-      sprintf(buf, "Your metabolism now focuses on %s!",
-	      change_resist_msg[abil->last_eat]);
-      (*draw_info_func)(NDI_UNIQUE|NDI_BLUE, 0, who, buf);
+	if (abil->last_eat > 0 && atnr_is_dragon_enabled(abil->last_eat)) {
+	    /* apply new ability focus */
+	    sprintf(buf, "Your metabolism now focuses on %s!",
+		    change_resist_msg[abil->last_eat]);
+	    (*draw_info_func)(NDI_UNIQUE|NDI_BLUE, 0, who, buf);
       
-      abil->stats.exp = abil->last_eat;
-      abil->last_eat = 0;
-    }
+	    abil->stats.exp = abil->last_eat;
+	    abil->last_eat = 0;
+	}
     
-    abil->level = who->level;
-  }
+	abil->level = who->level;
+    }
   
-  /* last but not least, set the new title for the dragon */
-  set_dragon_name(who, abil, skin);
+    /* last but not least, set the new title for the dragon */
+    set_dragon_name(who, abil, skin);
 }
 
 /* Handy function - given the skill name skill_name, we find the skill
