@@ -1,6 +1,13 @@
 Changes in top level CVS tree (please add your changes at the very top of
 the file):
 
+Fix in server/rune.c - if the victim of a trap/rune is not on a map
+and the object has a disease, it would crash the server.  Temporary
+fix put in to make sure there is a map, and if not, use a predefined
+difficult of 1.  I think the real issue is how can an object not on a map
+be setting a trap (in this particular bug, reported by Klaus Elsbernd,
+the victim was a thrown object) - msw
+
 Change by dragonm@absolut.tegris.org - improve crossedit so that if you
 try to load a map you alreay have in memory, it will raise the window - 
 it will also give you the option to forget, save changes, or just raise

@@ -189,19 +189,18 @@ void move_rune(object *op) {
 
 void rune_attack(object *op,object *victim)
 {
-  if(victim) {
+    if(victim) {
 	 hit_player(victim,op->stats.dam,op,op->attacktype);
 	 /*  if there's a disease in the needle, put it in the player */
 	 if(op->randomitems!=NULL) create_treasure(op->randomitems,op,GT_INVENTORY,
-															 victim->map->difficulty,0);
+		(victim->map?victim->map->difficulty:1),0);
 	 if(op->inv) {
 		object *disease=op->inv;
 		remove_ob(op->inv);
 		insert_ob_in_ob(disease,victim);
 	 }
-  }
-   else  hit_map(op,0,op->attacktype);
- 
+    }
+    else  hit_map(op,0,op->attacktype);
 }
 
 /*  This function generalizes attacks by runes/traps.  This ought to make
