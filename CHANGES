@@ -1,6 +1,215 @@
 Changes in top level CVS tree (please add your changes at the very top of
 the file):
 
+---BEGIN BATCH UPDATE--- DAMN 9/17/1999
+server/alchemy.c:
+- minor cleanup
+
+server/apply.c:
+- split multiple lighters
+
+server/attack.c:
+- vulnerability gives -4 to saving throw against non-damage attack effects
+- immunity to acid reduces the probability of corrosion
+- immunity and protection and not vulnerability to acid prevents corrosion
+- magic bonus improves item's saving throw against acid
+- vulnerability to drain doubles rate of exp loss, protection halves rate
+- holy word slaying is checked in hit_player, no need to double-check
+in hit_player_attacktype
+- prot:magic and vuln:magic affect all magical damage, not just raw magic
+- Holy Word and Turn Undead affect undead at half strength if they're not
+listed as an enemy race
+- Holy Word and Turn Undead have no effect on undead if they're listed as
+a friendly race
+- minor bugfix/cleanup
+
+server/gods.c:
+- minor bugfix/cleanup
+- luck slightly improves chance of divine intervention
+
+server/input.c:
+- fixed typo
+
+server/main.c:
+- trivial bulletproofing, probably no effect
+
+server/player.c:
+- sp regen penalty from armour calculated in fix_player instead of being
+recalculated for each spell point gained.
+
+server/shop.c:
+- payment will come from open pouches if you don't have enough in your
+top-level inventory
+- money for sold items will go into open pouches until they're full,
+then overflow into top-level inventory
+
+server/skills.c:
+- minor bugfix in throwing
+- writing in one of a stack of books seperates one book out first
+
+server/spell_effect.c:
+- generalized staff_to_snake to animate_weapon
+
+server/spell_util.c:
+- Staff to Snake, Dancing Sword, and Animate Weapon spells now all use
+animate_weapon function
+- holy golems avoid damaging their owners
+- raw mana spells
+
+common/living.c:
+- minor bugfix
+- fix_player now calculates sp regen penalty from armour
+
+common/readable.c:
+- spelling fix: grimore -> grimoire
+
+doc/crossfire.doc:
+- minor edits
+
+include/defines.h:
+- moved object type numbers to object.h
+- moved flag numbers to object.h
+- moved NROFREALSPELLS to spells.h
+- moved path numbers to spells.h
+- moved DESCRIBE_PATH macro to spells.h
+- moved ARMOUR_ and WEAPON_ macros to player.h
+- moved player state numbers to player.h
+- moved monster movement numbers to living.h
+- moved NROFSKILLS to skills.h
+
+include/global.h:
+- #defines from spells.h and material.h loaded early
+
+include/object.h:
+- now has the #defines for object type numbers
+
+include/skills.h:
+- moved NROFSKILLS here
+
+include/player.h:
+- added gen_sp_armour variable
+
+include/spellist.h:
+- added mana spells, Dancing Sword, and Animate Weapon
+
+include/spells.h:
+- moved NROFREALSPELLS here and updated it
+- now has the #defines for spell path nummbers
+- added mana spells, Dancing Sword, and Animate Weapon
+
+include/sproto.h:
+- added animate_weapon and pay_from_container prototypes
+
+include/material.h:
+- new
+
+lib/spell_params:
+- added entries for mana spells along with their fire equivalents
+
+lib/formulae:
+- minor spelling fixes to match minor spelling fixes in artifacts
+
+lib/artifacts:
+
+Weapons
+- Sanwe -> Gnarg (any weapon)
+  chance 5, value x10, magic 0, dam 120%
+
+- Lythander (any weapon)
+  chance 5, value x20, magic 0, luck +1, weight 90%
+
+- Gwormi -> Gaea (wooden weapons only)
+  chance 20, value x50, magic 2, regen +1, dam 110%
+
+- Slay Demon -> Valriel (any weapon)
+  chance 15, value x30, magic 2, weapon speed 120%, slaying demon
+
+- (new) Gorokh (any weapon)
+  chance 15, value x30, magic 2, weapon speed 120%, slaying angel
+
+- (new) the Devourers (any weapon)
+  chance 8, value x30, magic 1, attacktype: physical, cold, depletion
+
+- (new) Mostrai (axes and hammers only)
+  chance 10, value x12, magic 1, dam 140%, weight 115%
+
+- (new) Sorig (metal weapons only)
+  chance 5, value x15, magic 1, weight 95%, weapon speed 125%
+  attacktype physical, electricity
+
+- (new) Ruggilli (metal weapons only)
+  chance 5, value 15, magic 1, weight 85%, weapon speed 110%
+  attacktype physical, fire
+
+Helmets (moved to after weapons, with the rest of the armour)
+- Lordliness -> Valriel (full helm only)
+  chance 20, value x50, magic 2, Wis +1, Cha +1
+
+- Uriel -> Sorig
+  chance 10, value x20, magic 1, ac +1, armour 120%, prot electricity
+
+Shields
+- Theodin -> Mostrai
+  chance 8, value x24, magic 1, prot fire
+
+- Gnarg
+  chance 8, value x12, magic 1, ac +1, armour 180%, Cha -1
+
+Gauntlets
+- (new) Sorig (gauntlets only)
+  chance 15, value x75, magic 2, armour 10, weight 125%, attack: electricity
+
+- (new) Sorig (gloves only)
+  chance 10, value x10, magic 1, armour 5, weight 125%, prot: electricity
+
+Armour
+- (new) Valriel (plate and scale only)
+  chance 6, value x20, magic 1, armour 120%, weight 110%
+
+- (new) Gorokh (plate and scale only)
+  chance 6, value x15, magic 1, ac +2, armour 110%, weight 105%
+
+- (new) Ruggilli (plate, scale, or dragon armour)
+  chance 10, value x55, magic 3, ac +1, armour 120%, weight 90%, prot: fire
+
+- (new) Gaea
+  chance 10, value x25, magic 2, ac +1, armour 120%
+
+Cloaks
+- (lesser version of cloak of the Underworld) the Devourers
+  chance 3, difficulty 3, value x50, magic 3, weight 50%, material 0, Cha -2,
+  prot: acid, drain, ghosthit, depletion
+
+Bows
+- (new) Valriel
+  chance 10, value x15, magic 1, weight 110%, damage 200%
+
+- (new) Gorokh
+  chance 15, value x15, magic 2, damage 160%, attacktype: physical, acid
+
+- (new) Lythander (not crossbow)
+  chance 10, value x22, magic 1, weight 75%, wc +1, speed 150%
+
+- (new) Ruggilli (crossbow only)
+  chance 10, value x18, magic 2, weight 85%, wc +1, speed 110%,
+  attacktype: fire
+
+- (new) Sorig
+  chance 12, value x20, magic 2, weight 95%, wc +1, speed 125%,
+  attacktype: electricity
+
+- (new) Mostrai (crossbow only)
+  chance 5, value x50, magic 3, damage 140%, speed 75%,
+  attacktype: weaponmagic
+
+- (new) Thunder
+  chance 10, dificulty 5, value x10, magic 2, weight 90%, damage 150%, wc +2
+  attacktype: physical, slow, paralyze
+
+...and a few minor spelling fixes
+
+---END OF BATCH UPDATE--- DAMN 9/17/1999
+
 Add crossfire.oc.humbug.org.au server information to README file - msw
 
 Change compress method definitions from being determined by checks

@@ -6,6 +6,9 @@ Peter Mardahl <peterm@eecs.berkeley.edu> runes, new spells, changing
 	diseases, graded lighting, movers, creators, peterm/* maps 
 Brian Thomas (thomas@astro.psu.edu)- Skills, alchemy, altars
 Phil Brown (phil@bolthole.com)- Java Client
+David Andrew Michael Noelle ("DAMN", dave@straylight.org)-
+	fixing things that ain't broke (and occasionally some that is)
+	primarily in the server, maps, and archetypes
 
  The following poeple have contributed a lot to Crossfire in the past,
 but presently I believe they are not currently working on crossfire.
