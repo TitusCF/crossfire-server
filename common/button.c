@@ -332,7 +332,10 @@ void trigger_move (object *op, int state) /* 1 down and 0 up */
     op->stats.wc = state;
     if (state) {
 	use_trigger(op);
-	op->speed = 1.0 / op->arch->clone.stats.exp;
+	if (op->stats.exp > 0) /* check sanity  */
+		op->speed = 1.0 / op->stats.exp;
+	else
+		op->speed = 1.0;
 	update_ob_speed(op);
 	op->speed_left = -1;
     } else {

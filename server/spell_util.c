@@ -1089,9 +1089,9 @@ int cast_spell(object *op, object *caster,int dir,object *spell_ob, char *string
 	 * take two ticks.  Things that cast spells on the players
 	 * behalf (eg, altars, and whatever else) shouldn't cost
 	 * the player any time.
-	 * 
+	 * Ignore casting time for firewalls
 	 */
-	if (caster == op) {
+	if (caster == op && caster->type != FIREWALL) {
 	    op->speed_left -= spell_ob->casting_time*PATH_TIME_MULT(op,spell_ob) * FABS(op->speed);
 	    /* Other portions of the code may also decrement the speed of the player, so
 	     * put a lower limit so that the player isn't stuck here too long

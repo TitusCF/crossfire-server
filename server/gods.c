@@ -335,8 +335,10 @@ static void check_special_prayers (object *op, object *god)
     for (tmp = op->inv; tmp; tmp = next_tmp) {
         next_tmp = tmp->below;
 
-        if (tmp->type != FORCE || tmp->slaying == NULL
-            || strcmp (tmp->slaying, "special prayer") != 0)
+	/* we mark special prayers with the STARTEQUIP flag, so if it isn't
+	 * in that category, not something we need to worry about.
+	 */
+        if (tmp->type != SPELL || !QUERY_FLAG(tmp, FLAG_STARTEQUIP))
             continue;
 
         if (god->randomitems == NULL) {
@@ -352,17 +354,28 @@ static void check_special_prayers (object *op, object *god)
         for (tr = god->randomitems->items; tr; tr = tr->next)
         {
             object *item;
+
             if (tr->item == NULL)
                 continue;
             item = &tr->item->clone;
+
+	    /* Basically, see if the matching spell is granted by this god. */
 
             if (tr->item->clone.type == SPELL && tr->item->clone.name == tmp->name) {
 		remove=0;
 		break;
 	    }
 	}
-	if (remove)
-            do_forget_spell (op, tmp->name);
+	if (remove) {
+	    /* just do the work of removing the spell ourselves - we already
+	     * know that the player knows the spell
+	     */
+	    new_draw_info_format (NDI_UNIQUE|NDI_NAVY, 0, op,
+                          "You lose knowledge of %s.", tmp->name);
+	    remove_ob(tmp);
+	    free_object(tmp);
+	}
+
     }
 }
 

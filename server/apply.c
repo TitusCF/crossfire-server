@@ -1497,23 +1497,6 @@ static void apply_skillscroll (object *op, object *tmp)
 }
 
 
-/* Special prayers are granted by gods and lost when the follower decides
- * to pray to a different gods.  'Force' objects keep track of which
- * prayers are special.
- */
-
-static object *find_special_prayer_mark (object *op, char *spell)
-{
-    object *tmp;
-
-    for (tmp = op->inv; tmp; tmp = tmp->below)
-        if (tmp->type == FORCE && tmp->slaying
-            && !strcmp (tmp->slaying, "special prayer")
-            && !strcmp(tmp->name, spell))
-            return tmp;
-    return 0;
-}
-
 void do_learn_spell (object *op, object *spell, int special_prayer)
 {
     object *tmp;
@@ -1548,7 +1531,7 @@ void do_learn_spell (object *op, object *spell, int special_prayer)
 
 void do_forget_spell (object *op, char *spell)
 {
-    object *tmp, *spob;
+    object *spob;
 
     if (op->type != PLAYER) {
         LOG (llevError, "BUG: do_forget_spell(): not a player\n");
@@ -1561,12 +1544,6 @@ void do_forget_spell (object *op, char *spell)
     
     new_draw_info_format (NDI_UNIQUE|NDI_NAVY, 0, op,
 			  "You lose knowledge of %s.", spell);
-
-    tmp = find_special_prayer_mark (op, spell);
-    if (tmp) {
-        remove_ob (tmp);
-        free_object (tmp);
-    }
     remove_ob(spob);
     free_object(spob);
 }

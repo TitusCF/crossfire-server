@@ -17,6 +17,16 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+common/button.c: Patch by Bernd Edler to have proper speed set for items 
+  activated by buttons.
+server/apply.c: Apply the 'special prayer' marker stuff, since it wasn't
+  used anymore.
+server/gods.c: Check for FLAG_EQUIP on spells and not for a special prayer
+  marker to guess if a spell is a god given spell or not.
+server/spell_util.c: Patch by Bernd Edler so that firewalls are immune
+  to casting time.
+MSW 2004-04-17
+
 server/shop.c: Decrease adjustment limit for expensive items to 10000 to get a
    continuous adjustment function. That is you will get much less when selling
    items with a value between 800pp and 2000pp.
