@@ -10,7 +10,7 @@
 # The format of this table isn't very strict - the
 # code just tries to extract the numbers, so it doesn't
 # care about multiple commas, etc.  Note however that
-# the commant character (#) is only valid at the 
+# the comment character (#) is only valid at the 
 # start of the line.
 #
 # Note that I have the different tables prefixed with #A, #B,
