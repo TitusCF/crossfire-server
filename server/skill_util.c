@@ -229,7 +229,12 @@ object *find_skill_by_number(object *who, int skillno)
 
 int change_skill (object *who, object *new_skill, int flag)
 {
-    int old_range = who->contr->shoottype;
+    int old_range;
+
+    if ( who->type != PLAYER )
+        return 0;
+    
+    old_range = who->contr->shoottype;
 
     if (who->chosen_skill && who->chosen_skill == new_skill)
     {

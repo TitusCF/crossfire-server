@@ -17,6 +17,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/monster.c: Make monsters use wands/horns/... again. Also make'em
+   ignore DMs all the time (even when not invisible).
+server/skill_util.c: Fix the change_skill when called for monsters.
+Ryo 2004-06-06
+
 server/c_misc.c: Add sum_weight() call to fix_me command so that players
   weight is properly recalculated.
 server/skills.c: Fix up attempt_steal() so that it doesn't improperly

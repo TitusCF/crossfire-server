@@ -894,8 +894,10 @@ int monster_use_skill(object *head, object *part, object *pl,int dir) {
 
 /* Monster will use a ranged spell attack. */
 
-int monster_use_range(object *head,object *part,object *pl,int dir) {
+int monster_use_range(object *head,object *part,object *pl,int dir)
+    {
     object *wand, *owner;
+    int at_least_one = 0;
 
     if(!(dir=path_to_player(part,pl,0)))
 	return 0;
@@ -909,49 +911,53 @@ int monster_use_range(object *head,object *part,object *pl,int dir) {
 	dir = absdir(dir + RANDOM()%3 + RANDOM()%3 - 2);
 
     for(wand=head->inv;wand!=NULL;wand=wand->below)
-	if(QUERY_FLAG(wand,FLAG_APPLIED) &&
-	   (wand->type == WAND || wand->type == ROD || wand->type==HORN))
-		break;
+        {
+        if (wand->type == WAND)
+            {
+            /* Found a wand, let's see if it has charges left */
+            at_least_one = 1;
+	        if( wand->stats.food<=0 )
+                continue;
 
-    if(wand==NULL) {
-	LOG(llevError,"Error: Monster %s (%d) HAS_READY_RANG() without range.\n",
+            cast_spell( head, wand, dir, wand->inv, NULL );
+
+            if ( !( --wand->stats.food ) )
+                {
+		        if ( wand->arch )
+                    {
+		            CLEAR_FLAG(wand, FLAG_ANIMATE);
+		            wand->face = wand->arch->clone.face;
+		            wand->speed = 0;
+		            update_ob_speed(wand);
+		            }
+                }
+            /* Success */
+            return 1;
+            }
+        else if ( wand->type == ROD || wand->type==HORN )
+            {
+            /* Found rod/horn, let's use it if possible */
+            at_least_one = 1;
+	        if( wand->stats.hp < MAX( wand->inv->stats.sp, wand->inv->stats.grace ) )
+                continue;
+
+            cast_spell( head, wand, dir, wand->inv, NULL );
+
+	        drain_rod_charge( wand );
+
+            /* Success */
+            return 1;
+            }
+        }
+
+    if ( at_least_one )
+        return 0;
+
+    LOG(llevError,"Error: Monster %s (%d) HAS_READY_RANG() without wand/horn/rod.\n",
             head->name,head->count);
 	CLEAR_FLAG(head, FLAG_READY_RANGE);
 	return 0;
     }
-    if (!wand->inv) {
-	LOG(llevError,"Wand %s lacks spell\n", wand->name);
-	return 0;
-    }
-    if (wand->type == WAND) {
-	if(wand->stats.food<=0) {
-	    manual_apply(head,wand,0);
-	    CLEAR_FLAG(head, FLAG_READY_RANGE);
-	    if (wand->arch) {
-		CLEAR_FLAG(wand, FLAG_ANIMATE);
-		wand->face = wand->arch->clone.face;
-		wand->speed = 0;
-		update_ob_speed(wand);
-	    }
-	    return 0;
-	}
-    }
-    else {
-	if(wand->stats.hp<MAX(wand->inv->stats.sp, wand->inv->stats.grace))
-	    return 0; /* Not recharged enough yet */
-    }
-
-    /* Spell should be cast on caster (ie, heal, strength) */
-    if (wand->inv->range==0)
-	dir = 0;
-
-    if(cast_spell(part,wand,dir,wand->inv,NULL)) {
-	if (wand->type==WAND)
-	    wand->stats.food--;
-	return 1;
-    }
-    return 0;
-}
 
 int monster_use_bow(object *head, object *part, object *pl, int dir) {
     object *owner;
@@ -1246,16 +1252,40 @@ void monster_check_apply(object *mon, object *item) {
     else if (item->type == WEAPON) flag = check_good_weapon(mon,item);
     else if (IS_ARMOR(item)) flag = check_good_armour(mon,item);
     /* Should do something more, like make sure this is a better item */
-    else if (item->type == SKILL || item->type == RING || item->type==WAND ||
-	     item->type == ROD || item->type==HORN) flag=1;
+    else if (item->type == RING)
+        flag=1;
+    else if ( item->type==WAND || item->type == ROD || item->type==HORN )
+        {
+	    /* We never really 'ready' the wand/rod/horn, because that would mean the
+	    * weapon would get undone.
+	    */
+    	if (!(can_apply_object(mon, item) & CAN_APPLY_NOT_MASK))
+            {
+	        SET_FLAG(mon, FLAG_READY_RANGE);
+            SET_FLAG(item, FLAG_APPLIED);
+            }
+	    return;
+        }
     else if (item->type == BOW) {
-	/* We never really 'ready' the bow, because that would mean the
-	 * weapon would get undone.
-	 */
-	if (!(can_apply_object(mon, item) & CAN_APPLY_NOT_MASK))
-	    SET_FLAG(mon, FLAG_READY_BOW);
-	return;
-    }
+	    /* We never really 'ready' the bow, because that would mean the
+	    * weapon would get undone.
+	    */
+    	if (!(can_apply_object(mon, item) & CAN_APPLY_NOT_MASK))
+	        SET_FLAG(mon, FLAG_READY_BOW);
+	    return;
+        }
+    else if ( item->type == SKILL )
+        {
+        /*
+         * Ryo 2004-05-08
+         * skills are specials: monsters must have the 'FLAG_CAN_USE_SKILL' flag set,
+         * else they can't use the skill...
+         * Skills also don't need to get applied, so return now.
+         */
+        SET_FLAG( item, FLAG_CAN_USE_SKILL );
+        return;
+        }
+
 
     /* if we don't match one of the above types, return now.
      * can_apply_object will say that we can apply things like flesh, 
@@ -1269,7 +1299,6 @@ void monster_check_apply(object *mon, object *item) {
      * for the CAN_USE flags.
      */
     if (can_apply_object(mon, item) & CAN_APPLY_NOT_MASK) return;
-
 
     /* should only be applying this item, not unapplying it.
      * also, ignore status of curse so they can take off old armour.
@@ -1722,6 +1751,10 @@ int can_detect_enemy (object *op, object *enemy, rv_vector *rv) {
         return 0;
 
     get_rangevector(op, enemy, rv, 0);
+
+    /* Monsters always ignore the DM */
+    if ( ( op->type != PLAYER ) && QUERY_FLAG( enemy, FLAG_WIZ ) )
+        return 0;
 
     /* simple check.  Should probably put some range checks in here. */
     if(can_see_enemy(op,enemy)) return 1;
