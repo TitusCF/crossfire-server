@@ -33,6 +33,7 @@ blake_F.111 empty_S.111
 brush.111 grass_S.111
 cobblesto1.111 empty_S.111
 cobblesto2.111 empty_S.111
+darkforest.111 darkforest_S.111
 deep_sea.111 deep_sea_S.111
 deep_sea.112 deep_sea_S.112
 deep_sea.113 deep_sea_S.113
@@ -41,7 +42,7 @@ deep_swamp.111 deep_swamp_S.111
 deep_swamp.112 deep_swamp_S.112
 desert.111 desert_S.111
 dunes.111 dunes_S.111
-evergreens.111 empty_S.111
+evergreens.111 evergreens_S.111
 evergreens_1.111 empty_S.111
 farmland.111 empty_S.111
 flagstone.111 empty_S.111
@@ -78,12 +79,12 @@ shallow_sea.114 shallow_sea_S.114
 steppe.111 steppe_S.111
 stfloor.111 empty_S.111
 swamp.111 swamp_S.111
-tree_1.111 grass_S.111
-tree_2.111 grass_S.111
+tree_1.111 sgrass_S.111
+tree_2.111 sgrass_S.111
 treed_hills.111 hills_S.111
 woodfloor.111 empty_S.111
 woodfloor2.111 empty_S.111
-woods_1.111 grass_S.111
+woods_1.111 sgrass_S.111
 woods_2.111 woods_2_S.111
-woods_3.111 grass_S.111
+woods_3.111 sgrass_S.111
 woods_4.111 grass_S.111
