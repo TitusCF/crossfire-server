@@ -22,7 +22,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to mwedel@scruz.net
+    The authors can be reached via e-mail to crossfire-devel@real-time.com
 */
 #include <global.h>
 #include <living.h>
@@ -1090,16 +1090,16 @@ int hit_player_attacktype(object *op, object *hitter, int dam,
 		/* High damage acid has better chance of corroding
                    objects */
 		if(rndm(0, dam+4) >
-		   random_roll(0, 39, op, PREFER_HIGH)+2*tmp->magic) {
-		  if(op->type == PLAYER) {
-		    /* Make this more visible */
-		    new_draw_info_format(NDI_UNIQUE|NDI_RED,0, op,
+		    random_roll(0, 39, op, PREFER_HIGH)+2*tmp->magic) {
+		    if(op->type == PLAYER)
+			/* Make this more visible */
+			new_draw_info_format(NDI_UNIQUE|NDI_RED,0, op,
 				 "The %s's acid corrodes your %s!",
 				 query_name(hitter), query_name(tmp));
-		  flag = 1;
-		  tmp->magic--;
-		  if(op->type == PLAYER)
-		    esrv_send_item(op, tmp);
+		    flag = 1;
+		    tmp->magic--;
+		    if(op->type == PLAYER)
+			esrv_send_item(op, tmp);
 		}
 	    }
 	    if(flag)
@@ -1202,8 +1202,8 @@ int hit_player_attacktype(object *op, object *hitter, int dam,
 	} break;
     }
     return dam;
-    }
 }
+
 
 /* GROS: This code comes from hit_player. It has been made external to
  * allow script procedures to "kill" objects in a combat-like fashion.
