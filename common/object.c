@@ -861,6 +861,9 @@ void update_object(object *op, int action) {
     if (op->x < 0 || op->x >= MAP_WIDTH(op->map) ||
 	op->y < 0 || op->y >= MAP_HEIGHT(op->map)) {
         LOG(llevError,"update_object() called for object out of map!\n");
+#ifdef MANY_CORES
+	abort();
+#endif
 	return;
     }
     
