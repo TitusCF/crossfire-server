@@ -1553,7 +1553,7 @@ static int do_throw(object *op, object *part, object *toss_item, int dir, object
     throw_ob->stats.food = (dam/2) + (throw_ob->weight/60000);
      
     /* replace 25 with a call to clone.arch wc? messes up w/ NPC */
-    throw_ob->stats.wc = 25 - dex_bonus[op->stats.Dex?dex_bonus[op->stats.Dex]:0]
+    throw_ob->stats.wc = 25 - dex_bonus[op->stats.Dex]
 	- thaco_bonus[eff_str] - skill->level;
  
 
