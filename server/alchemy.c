@@ -117,10 +117,6 @@ void attempt_do_alchemy(object *caster, object *cauldron) {
 	    return;
 	} /* End of WIZ alchemy */
 
-#ifdef ALCHEMY_DEBUG
-	LOG(llevDebug,"base success chance =  %f\n",success_chance);
-#endif
-	   
 	/* find the recipe */
 	for(rp = fl->items;rp!=NULL && (formula % rp->index)!=0;rp=rp->next);
 
@@ -222,7 +218,7 @@ int numb_ob_inside (object *op) {
 object * attempt_recipe(object *caster, object *cauldron,int ability, recipe *rp, int nbatches) { 
   object *item=NULL;  
   /* this should be passed to this fctn, not too effiecent cpu use this way */
-  int /*numb=numb_ob_inside(cauldron),unused?*/ batches=abs(nbatches);
+  int batches=abs(nbatches);
 
   if(rp->keycode)  /* code required for this recipe, search the caster */
 	 { object *tmp;
