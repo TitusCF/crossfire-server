@@ -76,11 +76,11 @@
 #include <unistd.h>
 #endif
 
-#ifdef HAVE_SYS_TIME_H
+#ifdef HAVE_SYS_TIME_H 
 #include <sys/time.h>
 #endif
 
-#ifdef HAVE_TIME_H
+#if defined(HAVE_TIME_H) && defined(TIME_WITH_SYS_TIME)
 #include <time.h>
 #endif
 
