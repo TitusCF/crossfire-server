@@ -74,7 +74,7 @@ dist_wizhelp_DATA = wizhelp/abil wizhelp/addexp \
 	wizhelp/wizpass
 
 admdir=$(pkgdatadir)/adm
-dist_adm_DATA = adm/README adm/map_check \
+dist_adm_SCRIPTS = adm/map_check \
 	adm/map_info adm/map_expand.pl adm/mapslitter.pl adm/archsearch.pl \
 	adm/collect_images.pl
 
