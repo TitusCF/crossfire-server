@@ -38,6 +38,8 @@ function database_connect ()
             $databasehandle=pg_connect($string);
             break;
         case 2:
+            $databasehandle=mysql_connect($databasehost, $databaseuser, $databasepass);
+            mysql_select_db($databasename, $databasehandle);
             break;
     }
 }
@@ -52,7 +54,7 @@ function database_exec ($query)
         case 1:
             return pg_exec ($databasehandle,$query);
         case 2:
-            return 0;
+            return mysql_query ($query, $databasehandle); 
     }
 }
 function database_numrows ($handle)
@@ -64,7 +66,7 @@ function database_numrows ($handle)
         case 1:
             return pg_numrows ($handle);
         case 2:
-            return 0;
+            return mysql_num_rows ($handle);
     }
 }
 function database_fetch_array ($handle,$row)
@@ -76,7 +78,8 @@ function database_fetch_array ($handle,$row)
         case 1:
             return pg_fetch_row ($handle,$row);
         case 2:
-            return 0;
+            mysql_data_seek ($handle,$row);
+            return mysql_fetch_row($handle);
     }
 }
 function database_disconnect ()
@@ -90,6 +93,8 @@ function database_disconnect ()
             unset ($databasehandle);
             break;
         case 2:
+            mysql_close ($databasehandle);
+            unset ($databasehandle);
             break;
     }
 }
@@ -109,6 +114,10 @@ function database_strtotime ($datestring)
             return strtotime ($good_time);
             break;
         case 2:
+            list ($year,$month,$day,$hour,$minutes,$second)=
+                sscanf ($datestring,"%4d%2d%2d%2d%2d%2d");
+              $good_time=("$year-$month-$day $hour:$minutes:$second");
+            return strtotime ($good_time);
             break;
     }
 }
@@ -123,3 +132,4 @@ function server_active()
     return (abs($when-time())<($SERVER_PING_LATENCY*2));
 }
 ?>
+
