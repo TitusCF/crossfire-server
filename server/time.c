@@ -819,6 +819,7 @@ void move_marker(object *op) {
 			 force->speed = 0.01;
 			 force->speed_left = -op->stats.food;
 		  }
+		  update_ob_speed (force);
 		  /* put in the lock code */
 		  force->slaying = add_string(op->slaying);
 		  insert_ob_in_ob(force,tmp); 
