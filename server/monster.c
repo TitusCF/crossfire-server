@@ -264,7 +264,7 @@ int check_wakeup(object *op, object *enemy, rv_vector *rv) {
     /* enemy should already be on this map, so don't really need to check
      * for that.
      */
-    if (rv->distance < QUERY_FLAG(enemy, FLAG_STEALTH)?(radius/2)+1:radius) {
+    if (rv->distance < (QUERY_FLAG(enemy, FLAG_STEALTH)?(radius/2)+1:radius)) {
 	CLEAR_FLAG(op,FLAG_SLEEP);
 	return 1;
     }
@@ -309,11 +309,11 @@ int move_monster(object *op) {
         enemy->attacked_by_count = op->count; /* our tag */
     }
     
-    if(QUERY_FLAG(op, FLAG_SLEEP)||QUERY_FLAG(op, FLAG_BLIND)
-       ||((op->map->darkness>0)&&!QUERY_FLAG(op,FLAG_SEE_IN_DARK)
-	  &&!QUERY_FLAG(op,FLAG_SEE_INVISIBLE))) {
+    if ( QUERY_FLAG(op, FLAG_SLEEP) || QUERY_FLAG(op, FLAG_BLIND) ||
+       ((op->map->darkness>0) && !QUERY_FLAG(op,FLAG_SEE_IN_DARK) &&
+	  !QUERY_FLAG(op,FLAG_SEE_INVISIBLE))) {
 	    if(!check_wakeup(op,enemy,&rv))
-            return 0;
+		return 0;
     }
 
     /* check if monster pops out of hidden spot */

@@ -172,9 +172,9 @@ char *crypt_string(char *str, char *salt) {
 #  ifdef HAVE_LIBDES
     return (char*)des_crypt(str,s);
 #  endif
-#endif
     /* Default case - just use crypt */
     return (char*)crypt(str,s);
+#endif
 }
 
 int check_password(char *typed,char *crypted) {

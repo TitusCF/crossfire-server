@@ -17,6 +17,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/main.c: Move #endif in crypt_string to more proper place.
+server/monster.c: Fix bad if statement that may have been waking up
+    monsters when they shouldn't have been.
+MSW 2002-09-03
+
 This change mostly deals with improving behaviour of pet monstes.
 Most of the code is from K. Reinert - however, I did some code cleanup/
 fixes related to pet monsters, so it is difficult to note where
