@@ -2,7 +2,21 @@
 
 case "$1" in
     install)
-     # do nothing
+
+    # create the 'crossfire' group if it doesn't exist
+    grep ^crossfire: /etc/group >/dev/null || {
+        /usr/sbin/groupadd crossfire > /dev/null 2>&1
+    }
+
+    # create 'crossfire' user if absent
+    grep ^crossfire: /etc/passwd >/dev/null || {
+        /usr/sbin/useradd -d /var/games/crossfire -s /bin/false -g crossfire crossfire
+     }
+
+    # check for 'crossfire' user and lock the passwd
+    grep ^exim: /etc/passwd >/dev/null && {
+      /usr/bin/passwd -l crossfire > /dev/null 2>&1
+    }
      ;;
     
     upgrade)
