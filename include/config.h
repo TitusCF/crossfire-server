@@ -560,6 +560,7 @@
  */
 
 #ifdef WIN32 /* change define path city */
+
 #  define EMERGENCY_MAPPATH "\\city\\city"
 #  define EMERGENCY_X 15
 #  define EMERGENCY_Y 19
@@ -569,6 +570,16 @@
 #  define EMERGENCY_Y 19
 #endif
 
+/*  ---use these values instead for the Bigworld Maps
+#  define EMERGENCY_MAPPATH "\\world\\world_105_115"
+#  define EMERGENCY_X 5
+#  define EMERGENCY_Y 38
+#else
+#  define EMERGENCY_MAPPATH "/world/world_105_115"
+#  define EMERGENCY_X 5
+#  define EMERGENCY_Y 38
+#endif
+*/
 
 /*
  * These defines tells where, relative to LIBDIR, the maps, the map-index,
