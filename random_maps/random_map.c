@@ -48,75 +48,78 @@ void dump_layout(char **layout,RMParms *RP) {
 }
 EXTERN FILE *logfile;
 mapstruct *generate_random_map(char *OutFileName, RMParms *RP) {
-  char **layout;
-  mapstruct *theMap;
+    char **layout, buf[HUGE_BUF];
+    mapstruct *theMap;
+    int i;
 
-  /* pick a random seed, or use the one from the input file */
-  if(RP->random_seed == 0)    SRANDOM(time(0));
-  else SRANDOM(RP->random_seed);
+    /* pick a random seed, or use the one from the input file */
+    if(RP->random_seed == 0)
+	RP->random_seed=time(0);
 
-  if(RP->difficulty==0)
-    RP->difficulty = RP->dungeon_level; /* use this instead of a map difficulty  */
-  else
-    RP->difficulty_given=1;
+    SRANDOM(RP->random_seed);
 
-  if(RP->expand2x > 0) {
-      RP->Xsize /=2;
-      RP->Ysize /=2;
+    write_map_parameters_to_string(buf, RP);
+
+    if(RP->difficulty==0)
+	RP->difficulty = RP->dungeon_level; /* use this instead of a map difficulty  */
+    else
+	RP->difficulty_given=1;
+
+    if(RP->expand2x > 0) {
+	RP->Xsize /=2;
+	RP->Ysize /=2;
     }
 
-  layout = layoutgen(RP);
+    layout = layoutgen(RP);
 
-  /* increment these for the current map */
-  RP->dungeon_level+=1;
-  /* allow constant-difficulty maps. */
-  /*  difficulty+=1; */
+    /* increment these for the current map */
+    RP->dungeon_level+=1;
+    /* allow constant-difficulty maps. */
+    /*  difficulty+=1; */
 
-  /*  rotate the layout randomly */
-  layout=rotate_layout(layout,RANDOM()%4,RP);
+    /*  rotate the layout randomly */
+    layout=rotate_layout(layout,RANDOM()%4,RP);
 #ifdef RMAP_DEBUG
-  dump_layout(layout,RP);
+    dump_layout(layout,RP);
 #endif
-  /* allocate the map and set the floor */
-  theMap = make_map_floor(layout,RP->floorstyle,RP); 
 
-  /* set the name of the map. */
-  strcpy(theMap->path,OutFileName);
+    /* allocate the map and set the floor */
+    theMap = make_map_floor(layout,RP->floorstyle,RP); 
 
-  make_map_walls(theMap,layout,RP->wallstyle,RP);
+    /* set the name of the map. */
+    strcpy(theMap->path,OutFileName);
 
-  put_doors(theMap,layout,RP->doorstyle,RP);
+    make_map_walls(theMap,layout,RP->wallstyle,RP);
 
-  place_exits(theMap,layout,RP->exitstyle,RP->orientation,RP);
+    put_doors(theMap,layout,RP->doorstyle,RP);
 
-  place_specials_in_map(theMap,layout,RP);
+    place_exits(theMap,layout,RP->exitstyle,RP->orientation,RP);
 
-  place_monsters(theMap,RP->monsterstyle,RP->difficulty,RP);
+    place_specials_in_map(theMap,layout,RP);
 
-  /* treasures needs to have a proper difficulty set for
-     the map. */
-  theMap->difficulty=calculate_difficulty(theMap);
+    place_monsters(theMap,RP->monsterstyle,RP->difficulty,RP);
 
-  place_treasure(theMap,layout,RP->treasurestyle,RP->treasureoptions,RP);
+    /* treasures needs to have a proper difficulty set for the map. */
+    theMap->difficulty=calculate_difficulty(theMap);
 
-  put_decor(theMap,layout,RP->decorstyle,RP->decoroptions,RP);
+    place_treasure(theMap,layout,RP->treasurestyle,RP->treasureoptions,RP);
 
-  /* generate treasures, etc. */
-  if(RP->generate_treasure_now)
-    fix_auto_apply(theMap);
+    put_decor(theMap,layout,RP->decorstyle,RP->decoroptions,RP);
 
-  unblock_exits(theMap,layout,RP);
-  /*  fclose(OutFile); */
-  /*new_save_map(theMap,1);*/
+    /* generate treasures, etc. */
+    if(RP->generate_treasure_now)
+	fix_auto_apply(theMap);
 
-  /*free the layout */
-  { int i;
+    unblock_exits(theMap,layout,RP);
+
+    /* free the layout */
     for(i=0;i<RP->Xsize;i++)
-      free(layout[i]);
+	free(layout[i]);
     free(layout);
-  }
+
+    theMap->msg = add_string(buf);
   
-  return theMap;
+    return theMap;
 }
 
 
@@ -628,7 +631,7 @@ void write_map_parameters_to_string(char *buf,RMParms *RP) {
     strcat(buf,small_buf);
   }
   if(RP->random_seed) {
-    sprintf(small_buf,"random_seed %d\n",RP->random_seed + 1);
+    sprintf(small_buf,"random_seed %d\n",RP->random_seed);
     strcat(buf,small_buf);
   }
 
@@ -778,7 +781,7 @@ void write_parameters_to_string(char *buf,
     strcat(buf,small_buf);
   }
   if(random_seed_n) {
-    sprintf(small_buf,"random_seed %d\n",random_seed_n + 1);
+    sprintf(small_buf,"random_seed %d\n",random_seed_n);
     strcat(buf,small_buf);
   }
 

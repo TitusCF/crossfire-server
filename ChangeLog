@@ -17,6 +17,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+random_map/random_map.c: Include parameters used to make map in msg of map -
+   this can hopefully be used to debug what is really happening when bad
+   maps are made.
 server/rune.c: Modify dispel_rune function (called from disarm spell)
    to erase marking runes.  While at it, fix it so that it does the right
    thing with respect to tiled maps.
