@@ -88,7 +88,9 @@ int ReadImages(Display *gdisp, Pixmap **pixmaps, Pixmap **masks,
     Colormap *cmap, enum DisplayMode type) {
 
     Window	root = RootWindow (gdisp,DefaultScreen(gdisp));
+#ifdef HAVE_LIBXPM
     XpmAttributes xpmatribs;
+#endif
     int		use_private_cmap=0,num, compressed, len,i, error;
     FILE	*infile;
     char	*cp, databuf[HUGE_BUF], filename[MAX_BUF];
@@ -97,11 +99,13 @@ int ReadImages(Display *gdisp, Pixmap **pixmaps, Pixmap **masks,
      * we create one for our own use here.
      */  
     GC	gc= XCreateGC(gdisp, root, 0, NULL);
+#ifdef HAVE_LIBXPM
     if (*cmap) {
 	xpmatribs.valuemask = XpmColormap;
 	xpmatribs.colormap=*cmap;
     }
     else  xpmatribs.valuemask=0;
+#endif
 
     if (!nrofpixmaps)
 	nrofpixmaps = ReadBmapNames ();
@@ -172,6 +176,7 @@ int ReadImages(Display *gdisp, Pixmap **pixmaps, Pixmap **masks,
 	    }
 #endif
 	}
+#ifdef HAVE_LIBXPM
 	if (type==Dm_Pixmap) {
 again:	error=XpmCreatePixmapFromBuffer(gdisp, root, databuf,
 	      &(*pixmaps)[num], &(*masks)[num], &xpmatribs);
@@ -188,7 +193,9 @@ again:	error=XpmCreatePixmapFromBuffer(gdisp, root, databuf,
 		}
 		LOG(llevError,"Error creating pixmap %d, error %d.\n",num, error);
 	    }
-	} else if (type==Dm_Bitmap) {
+	} else 
+#endif
+	if (type==Dm_Bitmap) {
 	    (*pixmaps)[num] =  XCreateBitmapFromData
 		(gdisp, RootWindow (gdisp, DefaultScreen(gdisp)), databuf, 24, 24);
 	    
