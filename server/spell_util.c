@@ -564,7 +564,7 @@ if (item == spellNormal && !ability ){
     success = cast_speedball(op,dir,type);
     break;
   case SP_POLYMORPH:
-    success = cast_polymorph(op,dir);
+    success = 0; /*cast_polymorph(op,dir); */
     break;
   case SP_CHARGING:
     success = recharge(op);
