@@ -198,12 +198,13 @@ int command_party (object *op, char *params)
     new_draw_info(NDI_UNIQUE, 0,op,"If the party has a passwd, it will you prompt you for it.");
     new_draw_info(NDI_UNIQUE, 0,op,"For a list of current parties type: party list");
     new_draw_info(NDI_UNIQUE, 0,op,"To leave a party type: party leave");
-    new_draw_info(NDI_UNIQUE, 0,op,"To change a passwd for a party type: party passwd <password>"\
-);
+    new_draw_info(NDI_UNIQUE, 0,op,"To change a passwd for a party type: party passwd <password>");
     new_draw_info(NDI_UNIQUE, 0,op,"There is an 8 character max");
     new_draw_info(NDI_UNIQUE, 0,op,"To talk to party members type: party say <msg>");
     new_draw_info(NDI_UNIQUE, 0,op,"To see who is in your party: party who");
+#ifdef PARTY_KILL_LOG
     new_draw_info(NDI_UNIQUE, 0,op,"To see what you've killed, type: party kills");
+#endif
     return 1;
   }
 #ifdef PARTY_KILL_LOG
@@ -358,10 +359,15 @@ int command_party (object *op, char *params)
       return 1;
     }
 
+    if(strlen(params) > 8) {
+      new_draw_info(NDI_UNIQUE, 0,op,"The password must not exceed 8 characters");
+      return 1;
+    }
+
     tmplist = firstparty;
     while(tmplist != NULL) {
       if(tmplist->partyid == op->contr->party_number) {
-        strncpy(tmplist->passwd,params,8);
+        strcpy(tmplist->passwd,params);
 	    new_draw_info_format(NDI_UNIQUE, 0, op,
 		    "The password for party %s is %s", tmplist->partyname,tmplist->passwd);
         snprintf( buf, MAX_BUF, "Password for party %s is now %s, changed by %s",
@@ -471,6 +477,7 @@ int command_party (object *op, char *params)
   } /* join */
 
   new_draw_info(NDI_UNIQUE, 0,op,"To form a party type: party form <partyname>");
+  new_draw_info(NDI_UNIQUE, 0,op,"To join a party type: party join <partyname>");
   new_draw_info(NDI_UNIQUE, 0,op,"If the party has a passwd, it will you prompt you for it.");
   new_draw_info(NDI_UNIQUE, 0,op,"For a list of current parties type: party list");
   new_draw_info(NDI_UNIQUE, 0,op,"To leave a party type: party leave");
@@ -478,6 +485,9 @@ int command_party (object *op, char *params)
   new_draw_info(NDI_UNIQUE, 0,op,"There is an 8 character max");
   new_draw_info(NDI_UNIQUE, 0,op,"To talk to party members type: party say <msg>");
   new_draw_info(NDI_UNIQUE, 0,op,"To see who is in your party: party who");
+#ifdef PARTY_KILL_LOG
+  new_draw_info(NDI_UNIQUE, 0,op,"To see what you've killed, type: party kills");
+#endif
   return 1;
 }
 
