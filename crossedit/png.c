@@ -40,6 +40,7 @@
 #include <unistd.h>
 #include <png.h>
 #include <X11/Xlib.h>
+#include <X11/Xutil.h>
 
 
 /* Defines for PNG return values */
@@ -53,28 +54,201 @@
 
 static char *data_cp;
 static int data_len, data_start;
+static XImage   *ximage;
+static int rmask=0, bmask=0,gmask=0,need_color_alloc=0, rshift=16, bshift=0, gshift=8,
+    rev_rshift=0, rev_gshift=0, rev_bshift=0;
+static int colors_alloced=0, private_cmap=0, colormap_size;
+struct Pngx_Color_Values {
+    unsigned char   red, green, blue;
+    long    pixel_value;
+} *color_values;
+
+#define COLOR_FACTOR       3
+#define BRIGHTNESS_FACTOR  1
+
+/* This function is used to find the pixel and return it 
+ * to the caller.  We store what pixels we have already allocated
+ * and try to find a match against that.  The reason for this is that
+ * XAllocColor is a very slow routine. Before my optimizations,
+ * png loading took about 140 seconds, of which 60 seconds of that
+ * was in XAllocColor calls.
+ */
+long pngx_find_color(Display *display, Colormap *cmap, int red, int green, int blue)
+{
+
+    int i, closeness=0xffffff, close_entry=-1, tmpclose;
+    XColor  scolor;
+
+    for (i=0; i<colors_alloced; i++) {
+	if ((color_values[i].red == red) && (color_values[i].green == green) && 
+	    (color_values[i].blue == blue)) return color_values[i].pixel_value;
+
+	tmpclose = COLOR_FACTOR * (abs(red - color_values[i].red) +
+				   abs(green - color_values[i].green) +
+				   abs(blue - color_values[i].blue)) +
+		    BRIGHTNESS_FACTOR * abs((red + green + blue) -
+				(color_values[i].red + color_values[i].green + color_values[i].blue));
+
+	/* I already know that 8 bit is not enough to hold all the PNG colors,
+	 * so lets do some early optimization
+	 */
+	if (tmpclose < 3) return color_values[i].pixel_value;
+	if (tmpclose < closeness) {
+	    closeness = tmpclose;
+	    close_entry = i;
+	}
+    }
+
+    /* If the colormap is full, no reason to do anything more */
+    if (colors_alloced == colormap_size) 
+	return color_values[close_entry].pixel_value;
+
+
+    /* If we get here, we haven't cached the color */
+
+    scolor.red = (red << 8) + red;
+    scolor.green = (green << 8) + green;
+    scolor.blue = (blue << 8) + blue;
+
+
+again:
+    if (!XAllocColor(display, *cmap, &scolor)) {
+	if (!private_cmap) {
+	    fprintf(stderr,"Going to private colormap after %d allocs\n", colors_alloced);
+	    *cmap = XCopyColormapAndFree(display, *cmap);
+	    private_cmap=1;
+	    goto again;
+	}
+	else {
+#if 0
+	    fprintf(stderr,"Unable to allocate color %d %d %d, %d colors alloced, will use closenss value %d\n",
+		    red, green, blue, colors_alloced, closeness);
+#endif
+	    colors_alloced = colormap_size;	/* Colormap is exhausted */
+	    return color_values[close_entry].pixel_value;
+	}
+    }
+    color_values[colors_alloced].red = red;
+    color_values[colors_alloced].green = green;
+    color_values[colors_alloced].blue = blue;
+    color_values[colors_alloced].pixel_value= scolor.pixel;
+    colors_alloced++;
+    return scolor.pixel;
+}
+
+
 
 void user_read_data(png_structp png_ptr, png_bytep data, png_size_t length) {
     memcpy(data, data_cp + data_start, length);
     data_start += length;
 }
 
+int init_pngx_loader(Display *display)
+{
+    int pad,depth;
+    XVisualInfo xvinfo, *xvret;
+    Visual *visual;
+
+    depth = DefaultDepth(display, DefaultScreen(display));
+    visual = DefaultVisual(display, DefaultScreen(display));
+    xvinfo.visualid = XVisualIDFromVisual(visual);
+    xvret = XGetVisualInfo(display, VisualIDMask, &xvinfo, &pad);
+    if (pad != 1) {
+	fprintf(stderr,"XGetVisual found %d matching visuals?\n", pad);
+	return 1;
+    }
+    rmask = xvret -> red_mask;
+    gmask = xvret -> green_mask;
+    bmask = xvret -> blue_mask;
+    /* We need to figure out how many bits to shift.  Thats what this
+     * following block of code does.  We can't presume to use just
+     * 16, 8, 0 bits for RGB respectively, as if you are on 16 bit,
+     * that is not correct.  There may be a much easier way to do this -
+     * it is just bit manipulation.  Note that we want to preserver
+     * the most significant bits, so these shift values can very
+     * well be negative, in which case we need to know that -
+     * the shift operators don't work with negative values.
+     * An example is 5 bits for blue - in that case, we really
+     * want to shfit right (>>) by 3 bits.
+     */
+    rshift=0;
+    if (rmask) {
+	while (!((1 << rshift) & rmask)) rshift++;
+	while (((1 << rshift) & rmask)) rshift++;
+	rshift -= 8;
+	if (rshift < 0 ) {
+	    rev_rshift=1;
+	    rshift = -rshift;
+	}
+    }
+    gshift=0;
+    if (gmask) {
+	while (!((1 << gshift) & gmask)) gshift++;
+	while (((1 << gshift) & gmask)) gshift++;
+	gshift -= 8;
+	if (gshift < 0 ) {
+	    rev_gshift=1;
+	    gshift = -gshift;
+	}
+    }
+    bshift=0;
+    if (bmask) {
+	while (!((1 << bshift) & bmask)) bshift++;
+	while (((1 << bshift) & bmask)) bshift++;
+	bshift -= 8;
+	if (bshift < 0 ) {
+	    rev_bshift=1;
+	    bshift = -bshift;
+	}
+    }
+    
+	
+    if (xvret->class==PseudoColor) {
+	need_color_alloc=1;
+	if (xvret->colormap_size>256) {
+	    fprintf(stderr,"One a pseudocolor visual, but colormap has %d entries?\n", xvret->colormap_size);
+	}
+	color_values=malloc(sizeof(struct Pngx_Color_Values) * xvret->colormap_size);
+	colormap_size = xvret->colormap_size-1;	/* comparing # of alloced colors against this */
+    }
+    XFree(xvret);
+
+    if (depth>16) pad = 32;
+    else if (depth > 8) pad = 16;
+    else pad = 8;
+
+    ximage = XCreateImage(display, visual,
+		      depth,
+		      ZPixmap, 0, 0, 
+		      32, 32,  pad, 0);
+    if (!ximage) {
+	fprintf(stderr,"Failed to create Ximage\n");
+	return 1;
+    }
+    ximage->data = malloc(ximage->bytes_per_line * 32);
+    if (!ximage->data) {
+	fprintf(stderr,"Failed to create Ximage data\n");
+	return 1;
+    }
+    return 0;
+}
+
+
 int png_to_xpixmap(Display *display, Drawable draw, char *data, int len,
-		   Pixmap *pix, Pixmap *mask, Colormap cmap,
+		   Pixmap *pix, Pixmap *mask, Colormap *cmap,
 		   unsigned long *width, unsigned long *height)
 {
     static char *pixels=NULL;
     static int pixels_byte=0, rows_byte=0;
     static png_bytepp	rows=NULL;
-
+    
     png_structp	png_ptr=NULL;
     png_infop	info_ptr=NULL, end_info=NULL;
-    png_colorp	palette;
     int bit_depth, color_type, interlace_type, compression_type, filter_type,
-	red,green,blue, alpha,bpp, x,y, lred=-1, lgreen=-1,lblue=-1,
-	has_alpha=0, num_palette;
-    XColor  scolor;
+	red,green,blue, lastred=-1, lastgreen=-1, lastblue=-1,alpha,bpp, x,y,
+	has_alpha=0,cmask, lastcmask=-1, lastcolor=-1;
     GC	gc, gc_alpha;
+
 
     data_len=len;
     data_cp = data;
@@ -220,7 +394,6 @@ int png_to_xpixmap(Display *display, Drawable draw, char *data, int len,
 	XSetPlaneMask(display, gc_alpha, AllPlanes);
 	XSetForeground(display, gc_alpha, 1);
 	XFillRectangle(display, *mask, gc_alpha, 0, 0, *width, *height);
-	scolor.pixel=1;
 	XSetForeground(display, gc_alpha, 0);
 	has_alpha=1;
     }
@@ -229,54 +402,7 @@ int png_to_xpixmap(Display *display, Drawable draw, char *data, int len,
 	gc_alpha = None;    /* Prevent compile warnings */
     }
 
-    /* If the png image has a palette, we use the method of 
-     * cycling through the colors and drawing those points as
-     * we find them.  This is much faster than allocing the color
-     * and setting the color on the GC (it translates into a 
-     * startup time of a second or two vs 4 or 5 seconds if
-     * we use the second method).  However, not all images have
-     * palettes, so we need the backup method.
-     */
-    if (png_get_PLTE(png_ptr, info_ptr, &palette, &num_palette)) {
-	int i;
-
-	for (i=0; i<num_palette; i++) {
-	    scolor.red = (palette[i].red << 8) + palette[i].red;
-	    scolor.green = (palette[i].green << 8) + palette[i].green;
-	    scolor.blue = (palette[i].blue << 8) + palette[i].blue;
-	    if (!XAllocColor(display, cmap, &scolor)) {
-		fprintf(stderr,"Unable to allocate color %d %d %d\n",
-			     palette[i].red, palette[i].green, palette[i].blue);
-	    }
-	    XSetForeground(display, gc, scolor.pixel);
-	    for (y=0; y<*height; y++) {
-		for (x=0; x<*width; x++) {
-		    if (has_alpha) {
-			alpha = rows[y][x*bpp+3];
-			/* Transparent bit */
-			if (alpha==0) {
-				XDrawPoint(display, *mask, gc_alpha, x, y);
-			}
-		    }
-		    if ((rows[y][x*bpp] == palette[i].red) &&
-			(rows[y][x*bpp+1] == palette[i].green) &&
-			(rows[y][x*bpp+2] == palette[i].blue)) 
-			XDrawPoint(display, *pix, gc, x,y);
-		}
-	    }
-	} /* for i loop */
-    } else {
-	/* this method cycles through the image once only, setting
-	 * the color as we go along.  IT is pretty slow - probably
-	 * using many gc's and cycling through them may be faster for
-	 * the limited color images that crossfire uses (if you re-use
-	 * this code for more photo realistic images, this may not be
-	 * much different in performance).  We could get more clever by
-	 * allocating a bunch of gc's and then searching through them
-	 * for the colors so we don't need to do XAllocColor's and
-	 * XSetForegrounds.
-	 */
-      for (y=0; y<*height; y++) {
+    for (y=0; y<*height; y++) {
 	for (x=0; x<*width; x++) {
 	    red=rows[y][x*bpp];
 	    green=rows[y][x*bpp+1];
@@ -288,31 +414,32 @@ int png_to_xpixmap(Display *display, Drawable draw, char *data, int len,
 		    XDrawPoint(display, *mask, gc_alpha, x, y);
 		}
 	    }
-	    /* Only go through the color of color setting if it is
-	     * different than our last drawn color.
-	     * Note we can not compare against the values in the scolor
-	     * structure because XAllocColor can change the values
-	     * depending on the screen type.
-	     */
-	    if ( ( red != lred) ||
-		        ( green != lgreen) ||
-		        ( blue != lblue)) {
-		scolor.red = (red << 8) + red;
-		scolor.green = (green << 8) + green;
-		scolor.blue = (blue << 8) + blue;
-		lred = red;
-		lgreen=green;
-		lblue=blue;
-		if (!XAllocColor(display, cmap, &scolor)) {
-		    fprintf(stderr,"Unable to allocate color %d %d %d\n",
-			    red,green,blue);
+	    if (need_color_alloc) {
+		/* We only use cmask to avoid calling pngx_find_color repeatedly.
+		 * when the color has not changed from the last pixel.
+		 */
+		if ((lastred != red) && (lastgreen != green) && (lastblue != blue)) {
+		    lastcolor = pngx_find_color(display, cmap, red, green, blue);
+		    lastcmask = cmask;
 		}
-		XSetForeground(display, gc, scolor.pixel);
+		XPutPixel(ximage, x, y, lastcolor);
+	    } else {
+		if ((lastred != red) && (lastgreen != green) && (lastblue != blue)) {
+		    if (rev_rshift) red >>= rshift;
+		    else red <<= rshift;
+		    if (rev_gshift) green >>= gshift;
+		    else green <<= gshift;
+		    if (rev_bshift) blue >>= bshift;
+		    else blue <<= bshift;
+
+		    cmask = (red & rmask) | (green  & gmask) | (blue  & bmask);
+		}
+		XPutPixel(ximage, x, y, cmask);
 	    }
-	    XDrawPoint(display, *pix, gc, x,y);
 	}
-      }
     }
+
+    XPutImage(display, *pix, gc, ximage, 0, 0, 0, 0, 32, 32);
     if (has_alpha)
 	XFreeGC(display, gc_alpha);
     XFreeGC(display, gc);

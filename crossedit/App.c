@@ -838,12 +838,6 @@ App AppCreate(XtAppContext appCon,
 	FontSize=24;
     CnvInitialize(self->shell);
 
-    if (ReadImages(self->display, &pixmaps, &masks, &colormap, displaymode)) {
-	    /* We really should do something better than this */
-	    fprintf(stderr,"Not enough space in colormap - switch colormap.\n");
-/*	    exit(1);*/
-    }
-    XtVaSetValues(self->shell, XtNcolormap, colormap, NULL);
 
     /*** creating ***/
     sprintf(path,"%s/%s",settings.datadir,settings.mapdir);
@@ -852,6 +846,15 @@ App AppCreate(XtAppContext appCon,
     Layout(self);
     XtRealizeWidget (self->shell);
     XtRealizeWidget(self->clip->shell);
+    /* I move this down here because I want all the widgets to get their
+     * colors before the images hog all of them.
+     */
+    if (ReadImages(self->display, &pixmaps, &masks, &colormap, displaymode)) {
+	    /* We really should do something better than this */
+	    fprintf(stderr,"Not enough space in colormap - switch colormap.\n");
+/*	    exit(1);*/
+    }
+    XtVaSetValues(self->shell, XtNcolormap, colormap, NULL);
     AppUpdate(self);
     return self;
 }

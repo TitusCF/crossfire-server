@@ -84,6 +84,9 @@ XChar2b fontindex_to_XChar2b(Fontindex s)
  * can be null.
  */
 
+/* Useful when trying to optimize load time some */
+#define IMAGE_TIME_LOAD
+
 int ReadImages(Display *gdisp, Pixmap **pixmaps, Pixmap **masks,
     Colormap *cmap, enum DisplayMode type) {
 
@@ -94,6 +97,9 @@ int ReadImages(Display *gdisp, Pixmap **pixmaps, Pixmap **masks,
     int		use_private_cmap=0,num, compressed, len,i, error;
     FILE	*infile;
     char	*cp, databuf[HUGE_BUF], filename[MAX_BUF];
+#ifdef IMAGE_TIME_LOAD
+    time_t	start_time = time(NULL);
+#endif
 
     /* This function is called before the game gc's are created.  So
      * we create one for our own use here.
@@ -130,8 +136,12 @@ int ReadImages(Display *gdisp, Pixmap **pixmaps, Pixmap **masks,
 	sprintf(filename,"%s/crossfire.xpm",settings.datadir);
     else if (type==Dm_Bitmap)
 	sprintf(filename,"%s/crossfire.xbm",settings.datadir);
-    else if (type==Dm_Png)
+    else if (type==Dm_Png) {
 	sprintf(filename,"%s/crossfire.png",settings.datadir);
+#ifdef HAVE_LIBPNG
+	init_pngx_loader(gdisp);
+#endif
+    }
 
     if ((infile = open_and_uncompress(filename,0,&compressed))==NULL) {
         LOG(llevError,"Unable to open %s\n", filename);
@@ -170,7 +180,7 @@ int ReadImages(Display *gdisp, Pixmap **pixmaps, Pixmap **masks,
 #ifdef HAVE_LIBPNG
 	    unsigned long  x,y;
 	    if (png_to_xpixmap(gdisp, root, databuf, len, 
-			   &(*pixmaps)[num], &(*masks)[num], *cmap, &x, &y)) {
+			   &(*pixmaps)[num], &(*masks)[num], cmap, &x, &y)) {
 
 			LOG(llevError,"Error loading png file.\n");
 	    }
@@ -218,8 +228,10 @@ again:	error=XpmCreatePixmapFromBuffer(gdisp, root, databuf,
 	    pixmaps[i] = pixmaps[blank_face->number];
 	}
     LOG(llevDebug,"done.\n");
+#ifdef IMAGE_TIME_LOAD
+    fprintf(stderr,"Creation of images took %ld seconds\n", time(NULL) - start_time);
+#endif
     return use_private_cmap;
-    return 0;	/* Prevents some warning messages */
 }
 
 /* This frees all the pixmaps.  This not only makes for better code,

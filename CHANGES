@@ -18,6 +18,20 @@ else.  With this, include the file(s) that you changed.
 CVS changes since last release:
 
 MSW 2001/03/09:
+crossedit/App.c: Move the loading of images to later in the editor
+    startup state.  In this way, the client can allocate the colors it
+    needs for its windows before the the png images use up all the colors.
+crossedit/png.c: New png loader implementation.  New version is much
+   faster (50 times faster).  As part of this, only 8 bit displays,
+   a private colormap will be allocated, and after that gets filled
+   up, a color mapping routine will be used - this makes the png
+   images loadable on an 8 bit system in addition to the speedup.
+crossedit/xutil.c: Adding timing information for loading of images.
+   call init_pngx_loader before starting to load png images.  Pass
+   colormap to png_to_xpixmap by pointer and not value so that
+   the loader can change the colormap.
+
+AV 2001/03/09:
 common/button.c: Added new attribute to altar triggers: "last_sp 1".
     If set, the altar trigger will push the connected value only
     by dropping the sacrifice, NOT by altar reset. If unset ("last_sp 0")
