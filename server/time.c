@@ -795,22 +795,35 @@ void move_marker(object *op) {
   object *tmp,*tmp2;
   
   for(tmp=get_map_ob(op->map,op->x,op->y);tmp!=NULL;tmp=tmp->above) {
+	 
+
     if(tmp->type == PLAYER) { /* we've got someone to MARK */
+
+		/* remove an old force with a slaying field == op->name */
+      for(tmp2=tmp->inv;tmp2 !=NULL; tmp2=tmp2->below) {
+		  if(tmp2->type == FORCE && tmp2->slaying && !strcmp(tmp2->slaying,op->name)) break;
+      }
+		if(tmp2) {
+		  remove_ob(tmp2);
+		  free_object(tmp2);
+		}
+
       /* cycle through his inventory to look for the MARK we want to place */
       for(tmp2=tmp->inv;tmp2 !=NULL; tmp2=tmp2->below) {
-	if(tmp2->type == FORCE && tmp2->slaying && !strcmp(tmp2->slaying,op->slaying)) break;
+		  if(tmp2->type == FORCE && tmp2->slaying && !strcmp(tmp2->slaying,op->slaying)) break;
       }
       
       /* if we didn't find our own MARK */
       if(tmp2==NULL) {
-	object *force = get_archetype("force");
-	if(op->stats.food) {
-	  force->speed = 0.01;
-	  force->speed_left = -op->stats.food;
-	}
-	/* put in the lock code */
-	force->slaying = add_string(op->slaying);
-	insert_ob_in_ob(force,tmp);
+		  object *force = get_archetype("force");
+		  force->speed = 0;
+		  if(op->stats.food) {
+			 force->speed = 0.01;
+			 force->speed_left = -op->stats.food;
+		  }
+		  /* put in the lock code */
+		  force->slaying = add_string(op->slaying);
+		  insert_ob_in_ob(force,tmp); 
 
       }
 
