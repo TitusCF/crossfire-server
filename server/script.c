@@ -15,6 +15,7 @@
 #define WHAT ((object *)(gh_scm2long(what)))
 
 static int guile_stack_position = 0;
+static SCM gfec_catcher(void *data, SCM tag, SCM throw_args);
 
 /* Error handler */
 static void error_handler(const char *err_str)

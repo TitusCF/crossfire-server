@@ -148,6 +148,9 @@ void SetUp(char *buf, int len, NewSocket *ns)
 	else if (!strcmp(cmd,"sexp")) {
 	    ns->skillexp = atoi(param);
 	    strcat(cmdback, param);
+	} else if (!strcmp(cmd,"darkness")) {
+	    ns->darkness = atoi(param);
+	    strcat(cmdback, param);
 	} else if (!strcmp(cmd,"map1cmd")) {
 	    ns->map1cmd = atoi(param);
 	    /* if beyond this size, need to use map1cmd no matter what */
@@ -957,6 +960,17 @@ static void esrv_map_doneredraw(NewSocket *ns, struct Map *newmap)
 }
 
 
+/* Clears a map cell */
+static void map_clearcell(struct MapCell *cell)
+{
+    cell->count=-1;
+    cell->faces[0] = 0;
+    cell->faces[0] = 0;
+    cell->faces[1] = 0;
+    cell->faces[2] = 0;
+}
+
+
 /* this function uses the new map1 protocol command to send the map
  * to the client.  It is necessary because the old map command supports
  * a maximum map size of 15x15.
@@ -998,19 +1012,37 @@ void draw_client_map1(object *pl)
 	ax=0;
 	for(x=pl->x-pl->contr->socket.mapx/2;x<=pl->x+pl->contr->socket.mapx/2;x++,ax++) {
 	    d =  pl->contr->blocked_los[ax][ay];
+	    mask = (ax & 0x3f) << 10 | (ay & 0x3f) << 4;
 
 	    /* If the coordinates are not valid, or it is too dark to see,
 	     * we tell the client as such
 	     */
-	    if (out_of_map(pl->map, x, y) || d > 3) {
-		/* Was not blocked before, so we need to update client */
-		if (pl->contr->socket.lastmap.cells[ax][ay].count!=-1) {
-		    mask = (ax & 0x3f) << 10 | (ay & 0x3f) << 4;
+	    if (out_of_map(pl->map, x, y)) {
+		/* space is out of map.  Update space and clear values
+		 * if this hasn't already been done.
+		 */
+		if (pl->contr->socket.lastmap.cells[ax][ay].count != -1) {
 		    SockList_AddShort(&sl, mask);
-		    pl->contr->socket.lastmap.cells[ax][ay].count=-1;
-		    pl->contr->socket.lastmap.cells[ax][ay].faces[0] = 0;
-		    pl->contr->socket.lastmap.cells[ax][ay].faces[1] = 0;
-		    pl->contr->socket.lastmap.cells[ax][ay].faces[2] = 0;
+		    map_clearcell(&pl->contr->socket.lastmap.cells[ax][ay]);
+		}
+	    } else if ( d > 3 ) {
+		/* space is 'blocked' by darkness */
+		if (d==4 && pl->contr->socket.darkness) {
+		    /* this is the first spot where darkness becomes too dark to see.
+		     * only need to update this if it is different from what we 
+		     * last sent
+		     */
+		    if (pl->contr->socket.lastmap.cells[ax][ay].count != d) {
+			map_clearcell(&pl->contr->socket.lastmap.cells[ax][ay]);
+			SockList_AddShort(&sl, mask);
+			mask |= 8;  /* add darkness */
+			SockList_AddShort(&sl, mask);
+			SockList_AddChar(&sl, 0);
+			pl->contr->socket.lastmap.cells[ax][ay].count = d;
+		    }
+		} else if (pl->contr->socket.lastmap.cells[ax][ay].count != -1) {
+		    SockList_AddShort(&sl, mask);
+		    map_clearcell(&pl->contr->socket.lastmap.cells[ax][ay]);
 		}
 	    }
 	    else { /* this space is viewable */
@@ -1029,9 +1061,10 @@ void draw_client_map1(object *pl)
 		SockList_AddShort(&sl, mask);
 
 		/* Darkness changed */
-		if (pl->contr->socket.lastmap.cells[ax][ay].count != d) {
+		if (pl->contr->socket.lastmap.cells[ax][ay].count != d && pl->contr->socket.darkness) {
 		    pl->contr->socket.lastmap.cells[ax][ay].count = d;
 		    mask |= 0x8;    /* darkness bit */
+
 		    /* Protocol defines 255 full bright, 0 full dark.
 		     * We currently don't have that many darkness ranges,
 		     * so we current what limited values we do have.
@@ -1041,7 +1074,14 @@ void draw_client_map1(object *pl)
 		    else if (d==2) SockList_AddChar(&sl, 127);
 		    else if (d==3) SockList_AddChar(&sl, 63);
 		}
-		/* Check to see if floor face ahs changed */
+		else
+		    /* need to reset from -1 so that if it does become blocked again,
+		     * the code that deals with that can detect that it needs to tell
+		     * the client that this space is now blocked.
+		     */
+		    pl->contr->socket.lastmap.cells[ax][ay].count = d;
+
+		/* Check to see if floor face has changed */
 		face = get_map_floor(pl->map, x,y)->face;
 		if (face == blank_face) face_num1=0;
 		else face_num1 = face->number;
@@ -1080,7 +1120,10 @@ void draw_client_map1(object *pl)
 		if ((face_num1 == face_num2 && face_num1 !=0) || 
 		    (face_num2 == face_num3 && face_num2 !=0) || 
 		    (face_num1 == face_num3 && face_num1 !=0)) {
-		    fprintf(stderr,"faces match: %d %d %d\n", face_num1, face_num2, face_num3);
+		    /* This shouldn't happen - update_position should already
+		     * check for this.
+		     */
+		    LOG(llevDebug,"faces match: %d %d %d\n", face_num1, face_num2, face_num3);
 		}
 
 		/* Lets see if the mask is in fact different.  If, we need to
@@ -1165,8 +1208,8 @@ void draw_client_map(object *pl)
 			esrv_map_setbelow(&pl->contr->socket,ax,ay,
 				blank_face->number,&newmap);
 		} else { /* actually have something interesting */
-		  /* send the darkness mask, if any */
-		  if (d ) 
+		  /* send the darkness mask, if any. */
+		  if (d && pl->contr->socket.darkness) 
 		    esrv_map_setbelow(&pl->contr->socket,ax,ay,
 						  dark_faces[d-1]->number,&newmap);
 

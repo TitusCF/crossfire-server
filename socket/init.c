@@ -200,7 +200,8 @@ void InitConnection(NewSocket *ns, uint32 from)
     ns->sound = 0;
     ns->skillexp = 0;
     ns->map1cmd = 0;
-	ns->newanim = 0;
+    ns->darkness = 1;
+    ns->newanim = 0;
     ns->status = Ns_Add;
     ns->comment = NULL;
     ns->old_mode = 0;
