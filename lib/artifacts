@@ -1165,6 +1165,8 @@ end
 Allowed gloves
 chance 20
 Object oiled leather
+material 8
+materialname leather
 type 100
 resist_acid 25
 cha -4
@@ -2294,7 +2296,8 @@ Pow 1
 Wis 1
 sp 2
 value 2000
-material 256
+material 128
+materialname astolare
 face cloak_purple.111
 stand_still 1
 item_power 4
@@ -2367,7 +2370,8 @@ type 87
 weight 130
 value 300
 ac 3
-material 256
+material 128
+materialname astolare
 face cloak_white.111
 stand_still 1
 item_power 3
@@ -2394,7 +2398,8 @@ type 87
 weight 135
 value 400
 resist_fire 25
-material 256
+material 128
+materialname asbestos
 face cloak_lgrey.111
 stand_still 1
 item_power 1
@@ -2408,7 +2413,8 @@ type 87
 weight 140
 value 350
 resist_cold 25
-material 256
+material 128
+materialname wool
 face cloak_red.111
 stand_still 1
 item_power 1
@@ -2422,7 +2428,8 @@ type 87
 weight 140
 value 350
 resist_electricity 25
-material 256
+material 128
+materialname rubber
 face cloak_white.111
 stand_still 1
 item_power 1
@@ -2436,7 +2443,8 @@ type 87
 value 500
 weight 95
 resist_acid 65
-material 256
+material 128
+materialname astolare
 face cloak_black.111
 stand_still 1
 item_power 3
@@ -2452,7 +2460,8 @@ weight 50
 resist_drain 30
 resist_ghosthit 30
 resist_deplete 100
-material 0
+material 128
+materialname astolare
 Cha -2
 face cloak_black.111
 stand_still 1
@@ -2487,7 +2496,8 @@ resist_fire -10
 resist_ghosthit 90
 resist_deplete 100
 weight 150
-material 256
+material 128
+materialname astolare
 Cha -4
 face cloak_black.111
 stand_still 1
@@ -2501,7 +2511,8 @@ Object Invisibility
 type 87
 value 800
 weight 130
-material 256
+material 128
+materialname astolare
 Str -10
 Dex -10
 Con -10
@@ -2526,7 +2537,8 @@ Object Invisibility
 type 99
 value 800
 weight 60
-material 256
+material 8
+materialname dragonhide
 ac 1
 Str -10
 Dex -12
@@ -2550,7 +2562,7 @@ Object granite
 type 99
 value 60
 weight 1000
-material 256
+material 64
 materialname granite
 ac 5
 msg
@@ -2572,7 +2584,8 @@ Object mobility
 type 99
 value 50
 weight 80
-material 256
+material 8
+materialname dragonhide
 resist_confusion 25
 resist_slow 20
 resist_paralyze 20
@@ -2594,7 +2607,8 @@ Object clawing
 type 99
 value 50
 weight 120
-material 256
+material 8
+materialname dragonhide
 dam 2
 msg
   These boots have sharpened claws at the 
@@ -3206,6 +3220,7 @@ type 13
 value 10
 weight 90
 material 256
+materialname adamantium
 food 10
 end
 #
