@@ -146,7 +146,7 @@ void place_treasure(mapstruct *map,char **layout, char *treasure_style,int treas
         if(!chest) return; 
         i = chest->x; j = chest->y;
         if(treasureoptions &( DOORED|HIDDEN)) {
-          doorlist=surround_by_doors(map,i,j,treasureoptions);
+          doorlist=surround_by_doors(map,layout,i,j,treasureoptions);
           lock_and_hide_doors(doorlist,map,treasureoptions,RP);
           free(doorlist);
         }
@@ -561,7 +561,7 @@ void remove_monsters(int x,int y,mapstruct *map) {
 	 a chest.  It only goes as far as the 8 squares surrounding, and
 	 it'll remove any monsters it finds.*/
 
-object ** surround_by_doors(mapstruct *map,int x,int y,int opts) {
+object ** surround_by_doors(mapstruct *map,char **layout,int x,int y,int opts) {
   int i;
   char *doors[2];
   object **doorlist;
@@ -580,7 +580,8 @@ object ** surround_by_doors(mapstruct *map,int x,int y,int opts) {
 
   /* place doors in all the 8 adjacent unblocked squares. */
   for(i=1;i<9;i++) {
-    if(!wall_blocked(map,x+freearr_x[i],y+freearr_y[i])) {/* place a door */
+    if(!wall_blocked(map,x+freearr_x[i],y+freearr_y[i])
+       || layout[x][y]=='>') {/* place a door */
       object * new_door=get_archetype( (freearr_x[i]==0)?doors[1]:doors[0]);
       new_door->x = x + freearr_x[i];
       new_door->y = y + freearr_y[i];
