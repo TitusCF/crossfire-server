@@ -134,10 +134,10 @@ void initPlugins(void)
     char buf[MAX_BUF];
     char buf2[MAX_BUF];
 
-    printf("Now initializing plugins\n");
+    LOG(llevInfo,"Now initializing plugins\n");
     strcpy(buf,DATADIR);
     strcat(buf,"/plugins/");
-    printf("Plugins directory is %s\n",buf);
+    LOG(llevInfo,"Plugins directory is %s\n",buf);
 
     plugdir = opendir(buf);
 
@@ -151,7 +151,7 @@ void initPlugins(void)
             {
                 strcpy(buf2,buf);
                 strcat(buf2,currentfile->d_name);
-                printf("Registering plugin %s\n",currentfile->d_name);
+                LOG(llevInfo,"Registering plugin %s\n",currentfile->d_name);
                 initOnePlugin(buf2);
             }
         }
@@ -190,7 +190,7 @@ void initOnePlugin(char* pluginfile)
     {
         CFParm* InitParm;
         InitParm = PlugList[PlugNR].initfunc(NULL);
-        printf("Plugin name: %s, known as %s\n",
+        LOG(llevInfo,"Plugin name: %s, known as %s\n",
             (char *)(InitParm->Value[1]),
             (char *)(InitParm->Value[0])
             );
@@ -469,7 +469,7 @@ void removeOnePlugin(char *id)
     /* Then we copy the rest on the list back one position */
     PlugNR--;
     if (plid==31) return;
-    printf("plid=%i, PlugNR=%i\n",plid,PlugNR);
+    LOG(llevInfo,"plid=%i, PlugNR=%i\n",plid,PlugNR);
     for (j=plid+1;j<32;j++)
     {
         PlugList[j-1] = PlugList[j];
@@ -491,14 +491,14 @@ void initOnePlugin(char* pluginfile)
         CFParm* HookParm;
         if ((ptr=dlopen(pluginfile,RTLD_NOW|RTLD_GLOBAL))==NULL)
         {
-                printf("Plugin error: %s\n", dlerror());
+                LOG(llevInfo,"Plugin error: %s\n", dlerror());
                 return;
         };
         PlugList[PlugNR].libptr = ptr;
         PlugList[PlugNR].initfunc = (f_plugin)(dlsym(ptr,"initPlugin"));
         if (PlugList[PlugNR].initfunc==NULL)
         {
-                printf("Plugin init error: %s\n", dlerror());
+                LOG(llevInfo,"Plugin init error: %s\n", dlerror());
         }
         else
         {
@@ -515,10 +515,10 @@ void initOnePlugin(char* pluginfile)
         PlugList[PlugNR].eventfunc = (f_plugin)(dlsym(ptr,"triggerEvent"));
         PlugList[PlugNR].pinitfunc = (f_plugin)(dlsym(ptr,"postinitPlugin"));
         PlugList[PlugNR].propfunc = (f_plugin)(dlsym(ptr,"getPluginProperty"));
-        printf("Done\n");
+        LOG(llevInfo,"Done\n");
         if (PlugList[PlugNR].pinitfunc==NULL)
         {
-                printf("Plugin postinit error: %s\n", dlerror());
+                LOG(llevInfo,"Plugin postinit error: %s\n", dlerror());
         }
 
         for(i=0;i<NR_EVENTS;i++)
@@ -527,7 +527,7 @@ void initOnePlugin(char* pluginfile)
         };
         if (PlugList[PlugNR].hookfunc==NULL)
         {
-                printf("Plugin hook error: %s\n", dlerror());
+                LOG(llevInfo,"Plugin hook error: %s\n", dlerror());
         }
         else
         {
@@ -1132,9 +1132,9 @@ CFParm* CFWFindAnimation(CFParm* PParm)
     CFParm *CFP;
     static int val;
     CFP = (CFParm*)(malloc(sizeof(CFParm)));
-    printf("CFWFindAnimation: %s\n",(char *)(PParm->Value[0]));
+    LOG(llevInfo,"CFWFindAnimation: %s\n",(char *)(PParm->Value[0]));
     val = find_animation((char *)(PParm->Value[0]));
-    printf("Returned val: %i\n",val);
+    LOG(llevInfo,"Returned val: %i\n",val);
     CFP->Value[0] = (void *)(&val);
     return CFP;
 };

@@ -23,7 +23,21 @@
 /*****************************************************************************/
 
 /* First let's include the header file needed                                */
+
 #include <plugin_python.h>
+
+#define PYTHON_DEBUG   /* give us some general infos out */
+
+#undef MODULEAPI
+#ifdef WIN32
+#ifdef PYTHON_PLUGIN_EXPORTS
+#define MODULEAPI __declspec(dllexport)
+#else
+#define MODULEAPI __declspec(dllimport)
+#endif
+#else
+#define MODULEAPI
+#endif
 
 /*****************************************************************************/
 /* And now the big part - The implementation of CFPython functions in C.     */
@@ -2520,12 +2534,12 @@ static PyObject* CFSetWeight(PyObject* self, PyObject* args)
     /* I used an arbitrary bound of 32000 here */
     if (value > 32000)
     {
-        printf("SetWeight: Value must be lower than 32000\n");
+        printf( "SetWeight: Value must be lower than 32000\n");
         return NULL;
     }
     else if (value < 0)
     {
-        printf("(set-weight): Value must be greater than 0\n");
+        printf( "(set-weight): Value must be greater than 0\n");
         return NULL;
     };
     WHO->weight = value;
@@ -2553,14 +2567,14 @@ static PyObject* CFReadyMap(PyObject* self, PyObject* args)
     GCFP.Value[0] = (void *)(mapname);
     GCFP.Value[1] = (void *)(&val);
 
-    printf("Ready to call readymapname with %s %i\n",
+    printf( "Ready to call readymapname with %s %i\n",
         (char *)(GCFP.Value[0]),
         *(int *)(GCFP.Value[1])
     );
     //mymap = ready_map_name(mapname,0);
     CFR = (PlugHooks[HOOK_READYMAPNAME])(&GCFP);
     mymap = (mapstruct *)(CFR->Value[0]);
-    printf("Map file is %s\n",mymap->path);
+    printf( "Map file is %s\n",mymap->path);
     free(CFR);
     return Py_BuildValue("l",(long)(mymap));
 };
@@ -2657,9 +2671,10 @@ static PyObject* CFGetWeight(PyObject* self, PyObject* args)
 
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
-    printf("GetWeight: requested target is %s\n", query_name(WHO));
+    printf( "GetWeight: requested target is %s\n", query_name(WHO));
     return Py_BuildValue("l",WHO->weight);
 };
+
 
 /*****************************************************************************/
 /* Name   : CFIsCanBePicked                                                  */
@@ -2790,7 +2805,7 @@ static PyObject* CFGetFirstObjectOnSquare(PyObject* self, PyObject* args)
     GCFP.Value[2] = (void *)(&y);
     CFR = (PlugHooks[HOOK_GETMAPOBJECT])(&GCFP);
     val = (object *)(CFR->Value[0]);
-    printf("First object is known by %s\n",query_name(val));
+    printf( "First object is known by %s\n",query_name(val));
     free(CFR);
     return Py_BuildValue("l",(long)(val));
 };
@@ -2812,12 +2827,12 @@ static PyObject* CFSetQuantity(PyObject* self, PyObject* args)
     /* I used an arbitrary bound of 100k here */
     if (value > 100000)
     {
-        printf("(set-quantity): Value must be lower than 100000\n");
+        printf( "(set-quantity): Value must be lower than 100000\n");
         return NULL;
     }
     else if (value < 0)
     {
-        printf("(set-quantity): Value must be greater than 0\n");
+        printf( "(set-quantity): Value must be greater than 0\n");
         return NULL;
     };
     WHAT->nrof = value;
@@ -3000,6 +3015,7 @@ static PyObject* CFIsInvisible(PyObject* self, PyObject* args)
 
 static PyObject* CFWhoAmI(PyObject* self, PyObject* args)
 {
+    printf("WhoAmI cmd triggered!\n");
     if (!PyArg_ParseTuple(args,"",NULL))
         return NULL;
     return Py_BuildValue("l",(long)(StackWho[StackPosition]));
@@ -3013,6 +3029,7 @@ static PyObject* CFWhoAmI(PyObject* self, PyObject* args)
 
 static PyObject* CFWhoIsActivator(PyObject* self, PyObject* args)
 {
+    printf("WhoIsActivator cmd triggered!\n");
     if (!PyArg_ParseTuple(args,"",NULL))
         return NULL;
     return Py_BuildValue("l",(long)(StackActivator[StackPosition]));
@@ -3045,11 +3062,14 @@ static PyObject* CFSay(PyObject* self, PyObject* args)
     char buf[MAX_BUF];
     int val;
 
+    printf("Say cmd triggered!\n");
     if (!PyArg_ParseTuple(args,"ls",&obptr,&message))
+    {
         return NULL;
-
+    }
     who = (object *)(obptr);
-    sprintf(buf, "The %s says: %s", query_name(who),message);
+    
+    sprintf(buf, "%s says: %s", query_name(who),message);
     val = NDI_NAVY|NDI_UNIQUE;
 
     GCFP.Value[0] = (void *)(&val);
@@ -3549,7 +3569,7 @@ static PyObject* CFKillObject(PyObject* self, PyObject* args)
 
     if(QUERY_FLAG(WHAT,FLAG_REMOVED))
     {
-        printf("Warning (from KillObject): Trying to remove removed object\n");
+        printf( "Warning (from KillObject): Trying to remove removed object\n");
         return NULL;
     }
     else
@@ -3900,6 +3920,7 @@ static PyObject* CFCreateObjectInside(PyObject* self, PyObject* args)
     char *txt;
     CFParm* CFR;
 
+printf("CreateObjectInside triggered!\n");
     if (!PyArg_ParseTuple(args,"sl",&txt, &whereptr))
         return NULL;
 
@@ -5738,7 +5759,7 @@ static PyObject* CFGetIP(PyObject* self, PyObject* args)
     }
     else
     {
-        printf("PYTHON - Error - This object has no controller\n");
+        printf( "PYTHON - Error - This object has no controller\n");
         return Py_BuildValue("s","");
     };
 };
@@ -5794,7 +5815,7 @@ static PyObject* CFRegisterCommand(PyObject* self, PyObject* args)
         {
             if (!strcmp(CustomCommand[i].name,cmdname))
             {
-                printf("PYTHON - This command is already registered !\n");
+                printf( "PYTHON - This command is already registered !\n");
                 return NULL;
             }
         }
@@ -5964,7 +5985,7 @@ static PyObject* CFPayAmount(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Called whenever a Hook Function needs to be connected to the plugin.      */
 /*****************************************************************************/
-CFParm* registerHook(CFParm* PParm)
+MODULEAPI CFParm* registerHook(CFParm* PParm)
 {
     int Pos;
     f_plugin Hook;
@@ -5993,16 +6014,19 @@ CFParm* registerHook(CFParm* PParm)
 /* require more CPU time than Local Events, and are sometimes difficult to   */
 /* bind to any specific object.                                              */
 /*****************************************************************************/
-CFParm* triggerEvent(CFParm* PParm)
+MODULEAPI CFParm* triggerEvent(CFParm* PParm)
 {
-    //CFParm *CFP;
+    /*CFParm *CFP; */
     int eventcode;
     static int result;
+
+    
     eventcode = *(int *)(PParm->Value[0]);
+    printf( "PYTHON - triggerEvent:: eventcode %d\n",eventcode);
     switch(eventcode)
     {
         case EVENT_NONE:
-            printf("PYTHON - Warning - EVENT_NONE requested\n");
+            printf( "PYTHON - Warning - EVENT_NONE requested\n");
             break;
         case EVENT_ATTACK:
         case EVENT_APPLY:
@@ -6036,15 +6060,15 @@ CFParm* triggerEvent(CFParm* PParm)
 };
 
 /*****************************************************************************/
-/* Handles standard local events.                                            */
+/* Handles standard global events.                                            */
 /*****************************************************************************/
-int HandleGlobalEvent(CFParm* PParm)
+MODULEAPI int HandleGlobalEvent(CFParm* PParm)
 {
     FILE* Scriptfile;
 
     if (StackPosition == MAX_RECURSIVE_CALL)
     {
-        printf("Can't execute script - No space left of stack\n");
+        printf( "Can't execute script - No space left of stack\n");
         return 0;
     };
 
@@ -6053,11 +6077,11 @@ int HandleGlobalEvent(CFParm* PParm)
     switch(*(int *)(PParm->Value[0]))
     {
         case EVENT_CRASH:
-            printf("Unimplemented for now\n");
+            printf( "Unimplemented for now\n");
             break;
         case EVENT_BORN:
             StackActivator[StackPosition] = (object *)(PParm->Value[1]);
-            //printf("Event BORN generated by %s\n",query_name(StackActivator[StackPosition]));
+            //printf( "Event BORN generated by %s\n",query_name(StackActivator[StackPosition]));
             Scriptfile = fopen(create_pathname("python/python_born.py"),"r");
             if (Scriptfile != NULL)
             {
@@ -6069,8 +6093,8 @@ int HandleGlobalEvent(CFParm* PParm)
             StackActivator[StackPosition] = ((player *)(PParm->Value[1]))->ob;
             StackWho[StackPosition] = ((player *)(PParm->Value[1]))->ob;
             StackText[StackPosition] = (char *)(PParm->Value[2]);
-            //printf("Event LOGIN generated by %s\n",query_name(StackActivator[StackPosition]));
-            //printf("IP is %s\n", (char *)(PParm->Value[2]));
+            //printf( "Event LOGIN generated by %s\n",query_name(StackActivator[StackPosition]));
+            //printf( "IP is %s\n", (char *)(PParm->Value[2]));
             Scriptfile = fopen(create_pathname("python/python_login.py"),"r");
             if (Scriptfile != NULL)
             {
@@ -6083,7 +6107,7 @@ int HandleGlobalEvent(CFParm* PParm)
             StackActivator[StackPosition] = ((player *)(PParm->Value[1]))->ob;
             StackWho[StackPosition] = ((player *)(PParm->Value[1]))->ob;
             StackText[StackPosition] = (char *)(PParm->Value[2]);
-            //printf("Event LOGOUT generated by %s\n",query_name(StackActivator[StackPosition]));
+            //printf( "Event LOGOUT generated by %s\n",query_name(StackActivator[StackPosition]));
             Scriptfile = fopen(create_pathname("python/python_logout.py"),"r");
             if (Scriptfile != NULL)
             {
@@ -6093,7 +6117,7 @@ int HandleGlobalEvent(CFParm* PParm)
             break;
         case EVENT_REMOVE:
             StackActivator[StackPosition] = (object *)(PParm->Value[1]);
-            //printf("Event REMOVE generated by %s\n",query_name(StackActivator[StackPosition]));
+            //printf( "Event REMOVE generated by %s\n",query_name(StackActivator[StackPosition]));
 
             Scriptfile = fopen(create_pathname("python/python_remove.py"),"r");
             if (Scriptfile != NULL)
@@ -6105,9 +6129,9 @@ int HandleGlobalEvent(CFParm* PParm)
         case EVENT_SHOUT:
             StackActivator[StackPosition] = (object *)(PParm->Value[1]);
             StackText[StackPosition] = (char *)(PParm->Value[2]);
-            //printf("Event SHOUT generated by %s\n",query_name(StackActivator[StackPosition]));
+            //printf( "Event SHOUT generated by %s\n",query_name(StackActivator[StackPosition]));
 
-            //printf("Message shout is %s\n",StackText[StackPosition]);
+            //printf( "Message shout is %s\n",StackText[StackPosition]);
             Scriptfile = fopen(create_pathname("python/python_shout.py"),"r");
             if (Scriptfile != NULL)
             {
@@ -6117,7 +6141,7 @@ int HandleGlobalEvent(CFParm* PParm)
             break;
         case EVENT_MAPENTER:
             StackActivator[StackPosition] = (object *)(PParm->Value[1]);
-            //printf("Event MAPENTER generated by %s\n",query_name(StackActivator[StackPosition]));
+            //printf( "Event MAPENTER generated by %s\n",query_name(StackActivator[StackPosition]));
 
             Scriptfile = fopen(create_pathname("python/python_mapenter.py"),"r");
             if (Scriptfile != NULL)
@@ -6128,7 +6152,7 @@ int HandleGlobalEvent(CFParm* PParm)
             break;
         case EVENT_MAPLEAVE:
             StackActivator[StackPosition] = (object *)(PParm->Value[1]);
-            //printf("Event MAPLEAVE generated by %s\n",query_name(StackActivator[StackPosition]));
+            //printf( "Event MAPLEAVE generated by %s\n",query_name(StackActivator[StackPosition]));
 
             Scriptfile = fopen(create_pathname("python/python_mapleave.py"),"r");
             if (Scriptfile != NULL)
@@ -6138,7 +6162,7 @@ int HandleGlobalEvent(CFParm* PParm)
             }
             break;
         case EVENT_CLOCK:
-            //printf("Event CLOCK generated\n");
+            //printf( "Event CLOCK generated\n");
             Scriptfile = fopen(create_pathname("/python/python_clock.py"),"r");
             if (Scriptfile != NULL)
             {
@@ -6148,7 +6172,7 @@ int HandleGlobalEvent(CFParm* PParm)
             break;
         case EVENT_MAPRESET:
             StackText[StackPosition] = (char *)(PParm->Value[1]);/* Map name/path */
-            printf("Event MAPRESET generated by %s\n", StackText[StackPosition]);
+            printf( "Event MAPRESET generated by %s\n", StackText[StackPosition]);
 
             Scriptfile = fopen(create_pathname("python/python_mapreset.py"),"r");
             if (Scriptfile != NULL)
@@ -6165,12 +6189,16 @@ int HandleGlobalEvent(CFParm* PParm)
 /*****************************************************************************/
 /* Handles standard local events.                                            */
 /*****************************************************************************/
-int HandleEvent(CFParm* PParm)
+MODULEAPI int HandleEvent(CFParm* PParm)
 {
     FILE* Scriptfile;
+
+#ifdef PYTHON_DEBUG
+    printf( "PYTHON - HandleEvent:: got script file >%s<\n",(char *)(PParm->Value[9]));
+#endif
     if (StackPosition == MAX_RECURSIVE_CALL)
     {
-        printf("PYTHON - Can't execute script - No space left of stack\n");
+        printf( "PYTHON - Can't execute script - No space left of stack\n");
         return 0;
     };
     StackPosition++;
@@ -6187,11 +6215,15 @@ int HandleEvent(CFParm* PParm)
     Scriptfile = fopen(create_pathname((char *)(PParm->Value[9])),"r");
     if (Scriptfile == NULL)
     {
-        printf("PYTHON - The Script file can't be opened\n");
+        printf( "PYTHON - The Script file %s can't be opened\n",(char *)(PParm->Value[9]));
         return 0;
     };
     PyRun_SimpleFile(Scriptfile, create_pathname((char *)(PParm->Value[9])));
     fclose(Scriptfile);
+
+#ifdef PYTHON_DEBUG
+    printf( "PYTHON - HandleEvent:: script loaded!\n",(char *)(PParm->Value[9]));
+#endif
     if (StackParm4[StackPosition] == SCRIPT_FIX_ALL)
     {
         if (StackOther[StackPosition] != NULL)
@@ -6218,25 +6250,21 @@ int HandleEvent(CFParm* PParm)
 /* - The second returned value is the name "in clear" of the plugin, used for*/
 /*   information purposes.                                                   */
 /*****************************************************************************/
-CFParm* initPlugin(CFParm* PParm)
+MODULEAPI CFParm* initPlugin(CFParm* PParm)
 {
-    char buf[MAX_BUF];
-    char buf2[MAX_BUF];
-    printf("    CFPython Plugin loading.....");
+    printf("    CFPython Plugin loading.....\n");
     Py_Initialize();
     initCFPython();
-    printf("[Done]\n");
-    strcpy(buf,"Python");
-    strcpy(buf2,"Python Plugin 0.1");
-    GCFP.Value[0] = (void *)(buf);
-    GCFP.Value[1] = (void *)(buf2);
+    printf( "[Done]\n");
+    GCFP.Value[0] = (void *) add_string(PLUGIN_NAME);
+    GCFP.Value[1] = (void *) add_string(PLUGIN_VERSION);
     return &GCFP;
 };
 
 /*****************************************************************************/
 /* Used to do cleanup before killing the plugin.                             */
 /*****************************************************************************/
-CFParm* removePlugin(CFParm* PParm)
+MODULEAPI CFParm* removePlugin(CFParm* PParm)
 {
         return NULL;
 };
@@ -6244,15 +6272,16 @@ CFParm* removePlugin(CFParm* PParm)
 /*****************************************************************************/
 /* This function is called to ask various informations to the plugin.        */
 /*****************************************************************************/
-CFParm* getPluginProperty(CFParm* PParm)
+MODULEAPI CFParm* getPluginProperty(CFParm* PParm)
 {
+    
     double dblval = 0.0;
     int i;
     if (PParm!=NULL)
     {
         if(!strcmp((char *)(PParm->Value[0]),"command?"))
         {
-            if(!strcmp((char *)(PParm->Value[1]),"python"))
+            if(!strcmp((char *)(PParm->Value[1]),PLUGIN_NAME))
             {
                 GCFP.Value[0] = PParm->Value[1];
                 GCFP.Value[1] = &cmd_aboutPython;
@@ -6267,7 +6296,7 @@ CFParm* getPluginProperty(CFParm* PParm)
                     {
                         if (!strcmp(CustomCommand[i].name,(char *)(PParm->Value[1])))
                         {
-                            printf("PYTHON - Running command %s\n",CustomCommand[i].name);
+                            printf( "PYTHON - Running command %s\n",CustomCommand[i].name);
                             GCFP.Value[0] = PParm->Value[1];
                             GCFP.Value[1] = cmd_customPython;
                             GCFP.Value[2] = &(CustomCommand[i].speed);
@@ -6280,18 +6309,21 @@ CFParm* getPluginProperty(CFParm* PParm)
         }
         else
         {
-            printf("PYTHON - Unknown property tag: %s\n",(char *)(PParm->Value[0]));
+            printf( "PYTHON - Unknown property tag: %s\n",(char *)(PParm->Value[0]));
         };
     };
     return NULL;
 };
 
-int cmd_customPython(object *op, char *params)
+MODULEAPI int cmd_customPython(object *op, char *params)
 {
     FILE* Scriptfile;
+#ifdef PYTHON_DEBUG
+    printf( "PYTHON - cmd_customPython called:: script file: %s\n",CustomCommand[NextCustomCommand].script);
+#endif
     if (StackPosition == MAX_RECURSIVE_CALL)
     {
-        printf("PYTHON - Can't execute script - No space left of stack\n");
+        printf( "PYTHON - Can't execute script - No space left of stack\n");
         return 0;
     };
     StackPosition++;
@@ -6303,7 +6335,7 @@ int cmd_customPython(object *op, char *params)
     Scriptfile = fopen(create_pathname(CustomCommand[NextCustomCommand].script),"r");
     if (Scriptfile == NULL)
     {
-        printf("PYTHON - The Script file can't be opened\n");
+        printf( "PYTHON - The Script file %s can't be opened\n",CustomCommand[NextCustomCommand].script);
         return 0;
     };
     PyRun_SimpleFile(Scriptfile, create_pathname(CustomCommand[NextCustomCommand].script));
@@ -6312,12 +6344,12 @@ int cmd_customPython(object *op, char *params)
     return StackReturn[StackPosition+1];
 };
 
-int cmd_aboutPython(object *op, char *params)
+MODULEAPI int cmd_aboutPython(object *op, char *params)
 {
     int color = NDI_BLUE|NDI_UNIQUE;
     char message[1024];
 
-    strcpy(message,"CFPython Plugin version 0.1 (Pegasus)\n(C)2001 by Gros. The Plugin code is under GPL.");
+    sprintf(message,"%s (Pegasus)\n(C)2001 by Gros. The Plugin code is under GPL.",PLUGIN_VERSION);
     GCFP.Value[0] = (void *)(&color);
     GCFP.Value[1] = (void *)(op->map);
     GCFP.Value[2] = (void *)(message);
@@ -6330,7 +6362,7 @@ int cmd_aboutPython(object *op, char *params)
 /* The postinitPlugin function is called by the server when the plugin load  */
 /* is complete. It lets the opportunity to the plugin to register some events*/
 /*****************************************************************************/
-CFParm* postinitPlugin(CFParm* PParm)
+MODULEAPI CFParm* postinitPlugin(CFParm* PParm)
 {
     int i;
     /* We can now register some global events if we want */
@@ -6342,7 +6374,10 @@ CFParm* postinitPlugin(CFParm* PParm)
     /* see how useful they could be for the Python stuff.*/
     /* Registering them as local would be probably useful*/
     /* for extended logging facilities.                  */
-    GCFP.Value[1] = (void *)(add_string("Python"));
+
+    printf( "PYTHON - Start postinitPlugin.\n");
+    
+    GCFP.Value[1] = (void *)(add_string(PLUGIN_NAME));
     i = EVENT_BORN;
     GCFP.Value[0] = (void *)(&i);
     (PlugHooks[HOOK_REGISTEREVENT])(&GCFP);
@@ -6390,10 +6425,13 @@ CFParm* postinitPlugin(CFParm* PParm)
 /* Initializes the Python Interpreter.                                       */
 /*****************************************************************************/
 static PyObject* CFPythonError;
-void initCFPython()
+MODULEAPI void initCFPython()
 {
         PyObject *m, *d;
         int i;
+
+        printf( "PYTHON - Start initCFPython.\n");
+        
         m = Py_InitModule("CFPython", CFPythonMethods);
         d = PyModule_GetDict(m);
         CFPythonError = PyErr_NewException("CFPython.error",NULL,NULL);

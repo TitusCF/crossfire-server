@@ -11,6 +11,7 @@ md var\players
 md var\unique-items
 md share
 md share\help
+md share\plugins
 copy lib\*. share\*.*
 copy lib\*.path share\*.path
 copy lib\crossfire.xbm share\*.*

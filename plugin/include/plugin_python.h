@@ -26,10 +26,26 @@
 #define PLUGIN_PYTHON_H
 
 /* First the required header files - only the CF module interface and Python */
-#include <plugin.h>
 #include <Python.h>
+#include <plugin.h>
+
 /* Well, not quite only... Some constants are in skills.h too (SK_...)       */
 #include <skills.h>
+
+#undef MODULEAPI
+#ifdef WIN32
+#ifdef PYTHON_PLUGIN_EXPORTS
+#define MODULEAPI __declspec(dllexport)
+#else
+#define MODULEAPI __declspec(dllimport)
+#endif
+
+#else
+#define MODULEAPI
+#endif
+
+#define PLUGIN_NAME    "Python"
+#define PLUGIN_VERSION "CFPython Plugin 0.1"
 
 /* The plugin properties and hook functions. A hook function is a pointer to */
 /* a CF function wrapper. Basically, most CF functions that could be of any  */
@@ -50,12 +66,12 @@ f_plugin PlugHooks[1024];
 #define WHERE ((object *)(whereptr))
 
 /* The declarations for the plugin interface. Every plugin should have those.*/
-CFParm* registerHook(CFParm* PParm);
-CFParm* triggerEvent(CFParm* PParm);
-CFParm* initPlugin(CFParm* PParm);
-CFParm* postinitPlugin(CFParm* PParm);
-CFParm* removePlugin(CFParm* PParm);
-CFParm* getPluginProperty(CFParm* PParm);
+MODULEAPI CFParm* registerHook(CFParm* PParm);
+MODULEAPI CFParm* triggerEvent(CFParm* PParm);
+MODULEAPI CFParm* initPlugin(CFParm* PParm);
+MODULEAPI CFParm* postinitPlugin(CFParm* PParm);
+MODULEAPI CFParm* removePlugin(CFParm* PParm);
+MODULEAPI CFParm* getPluginProperty(CFParm* PParm);
 
 /* This one is used to cleanly pass args to the CF core */
 static CFParm GCFP;
@@ -524,11 +540,11 @@ static PyObject* CFPayAmount(PyObject* self, PyObject* args);
 
 /* Those are used to handle the events. The first one is used when a player  */
 /* attacks with a "scripted" weapon. HandleEvent is used for all other events*/
-int HandleUseWeaponEvent(CFParm* CFP);
-int HandleEvent(CFParm* CFP);
-int HandleGlobalEvent(CFParm* CFP);
+MODULEAPI int HandleUseWeaponEvent(CFParm* CFP);
+MODULEAPI int HandleEvent(CFParm* CFP);
+MODULEAPI int HandleGlobalEvent(CFParm* CFP);
 /* Called to start the Python Interpreter.                                   */
-void initCFPython();
+MODULEAPI void initCFPython();
 
 /* The execution stack. Altough it is quite rare, a script can actually      */
 /* trigger another script. The stack is used to keep track of those multiple */
@@ -1016,9 +1032,9 @@ static PyMethodDef CFPythonMethods[] =
 /*****************************************************************************/
 
 /* The "About Python" stuff. Bound to "python" command.                      */
-int cmd_aboutPython(object *op, char *params);
+MODULEAPI int cmd_aboutPython(object *op, char *params);
 /* The following one handles all custom Python command calls.                */
-int cmd_customPython(object *op, char *params);
+MODULEAPI int cmd_customPython(object *op, char *params);
 
 /* This structure is used to define one python-implemented crossfire command.*/
 typedef struct PythonCmdStruct

@@ -17,6 +17,17 @@
 #include <dlfcn.h>
 #endif
 
+#undef MODULEAPI
+#ifdef WIN32
+#ifdef PYTHON_PLUGIN_EXPORTS
+#define MODULEAPI __declspec(dllexport)
+#else
+#define MODULEAPI __declspec(dllimport)
+#endif
+#else
+#define MODULEAPI
+#endif
+
 #include <version.h>
 #include <global.h>
 #include <object.h>
@@ -196,11 +207,11 @@ typedef struct _CFPlugin
 /* registerHook      is used to transmit hook pointers from server to plugin.*/
 /* triggerEvent      is called whenever an event occurs.                     */
 /*****************************************************************************/
-extern CFParm* initPlugin(CFParm* PParm);
-extern CFParm* endPlugin(CFParm* PParm);
-extern CFParm* getPluginProperty(CFParm* PParm);
-extern CFParm* registerHook(CFParm* PParm);
-extern CFParm* triggerEvent(CFParm* PParm);
+extern MODULEAPI CFParm* initPlugin(CFParm* PParm);
+extern MODULEAPI CFParm* endPlugin(CFParm* PParm);
+extern MODULEAPI CFParm* getPluginProperty(CFParm* PParm);
+extern MODULEAPI CFParm* registerHook(CFParm* PParm);
+extern MODULEAPI CFParm* triggerEvent(CFParm* PParm);
 
 
 /* Table of all loaded plugins */
