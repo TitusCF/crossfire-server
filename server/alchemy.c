@@ -340,7 +340,7 @@ void alchemy_failure_effect(object *op,object *cauldron,recipe *rp,int danger) {
 #endif
 
   /* possible outcomes based on level */
-  if(level>10&&level<25) { 		      	/* INGREDIENTS USED/SLAGGED */
+  if(level<25) { 		      	/* INGREDIENTS USED/SLAGGED */
       object *item=NULL;
  
       if(RANDOM()%3) {  /* slag created */
