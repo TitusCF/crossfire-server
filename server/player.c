@@ -767,7 +767,7 @@ int key_change_class(object *op, char key)
     op->contr->last_value= -1;
     if (op->msg) 
 	new_draw_info(NDI_BLUE, 0, op, op->msg);
-    send_query(&op->contr->socket, CS_QUERY_SINGLECHAR,"");
+    send_query(&op->contr->socket,CS_QUERY_SINGLECHAR,"Press any key for the next race.\nPress `d' to play this race.\n");
     return 0;
 }
 
