@@ -474,16 +474,16 @@ void load_archetypes() {
   close_and_delete(fp, comp);
   fp=open_and_uncompress(filename,0,&comp);
 
-  LOG(llevDebug," loading treasure...");
+  LOG(llevDebug," loading treasure...\n");
   load_treasures();
-  LOG(llevDebug,"done\n arch-pass 2...");
+  LOG(llevDebug," done\n arch-pass 2...\n");
   second_arch_pass(fp);
-  LOG(llevDebug,"done\n");
+  LOG(llevDebug," done\n");
 #ifdef DEBUG
   check_generators();
 #endif
   close_and_delete(fp, comp);
-  LOG(llevDebug,"done\n");
+  LOG(llevDebug," done\n");
 }
 
 /*

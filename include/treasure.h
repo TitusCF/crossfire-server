@@ -71,6 +71,8 @@ enum {
 
 typedef struct _change_arch {
     char *name;              /* is != NULL, copy this over the original arch name */
+    char *title;             /* is != NULL, copy this over the original arch name */
+    char *slaying;           /* is != NULL, copy this over the original arch name */
 } _change_arch;
 
 

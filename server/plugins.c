@@ -777,8 +777,8 @@ CFParm* CFWCastSpell(CFParm* PParm)
     static int val;
     CFParm *CFP;
     CFP = (CFParm*)(malloc(sizeof(CFParm)));
-//int cast_spell(object *op, object *caster, int dir, int type, int ability,
-//SpellTypeFrom item, char *stringarg);
+/*int cast_spell(object *op, object *caster, int dir, int type, int ability, */
+/*SpellTypeFrom item, char *stringarg); */
     val = cast_spell((object *)(PParm->Value[0]),(object *)(PParm->Value[1]),
         *(int *)(PParm->Value[2]),*(int *)(PParm->Value[3]),
         *(int *)(PParm->Value[4]),*(SpellTypeFrom *)(PParm->Value[5]),
@@ -1084,7 +1084,7 @@ CFParm* CFWCreateArtifact(CFParm* PParm)
 /*****************************************************************************/
 CFParm* CFWGetArchetype(CFParm* PParm)
 {
-    //object* get_archetype(char* name);
+    /*object* get_archetype(char* name); */
     CFParm *CFP;
     object* val;
     CFP = (CFParm*)(malloc(sizeof(CFParm)));
@@ -1422,7 +1422,7 @@ CFParm* CFWPayForAmount(CFParm* PParm)
     return CFP;
 };
 
-//new_draw_info(int flags, int pri, object *pl, const char *buf);
+/*new_draw_info(int flags, int pri, object *pl, const char *buf); */
 CFParm* CFWNewDrawInfo(CFParm* PParm)
 {
     new_draw_info(*(int *)(PParm->Value[0]),
@@ -1475,7 +1475,7 @@ CFParm* CFWSendCustomCommand(CFParm* PParm)
 
 CFParm* CFWCFTimerCreate(CFParm* PParm)
 {
-//int cftimer_create(int id, long delay, object* ob, int mode)
+/*int cftimer_create(int id, long delay, object* ob, int mode) */
     CFParm* CFP;
     static int val;
     CFP = (CFParm*)(malloc(sizeof(CFParm)));
@@ -1489,7 +1489,7 @@ CFParm* CFWCFTimerCreate(CFParm* PParm)
 
 CFParm* CFWCFTimerDestroy(CFParm* PParm)
 {
-//int cftimer_destroy(int id)
+/*int cftimer_destroy(int id) */
     CFParm* CFP;
     static int val;
     CFP = (CFParm*)(malloc(sizeof(CFParm)));

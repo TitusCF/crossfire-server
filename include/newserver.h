@@ -54,7 +54,7 @@ struct Map {
 #define MAXANIMNUM  2000
 
 struct statsinfo {
-    char *range, *title;
+    char *range, *title, *ext_title;
 };
 
 
@@ -95,6 +95,8 @@ typedef struct NewSocket {
     Buffer  outputbuffer;   /* For undeliverable data */
     uint32  facecache:1;    /* IF true, client is caching images */
     uint32  sent_scroll:1;
+    uint32  ext2:1;         /* enables the new sdl client/server stuff */
+    uint32  ext_title_flag;  /* if 1, we should generate and send a new ext_title update */
     uint32  sound:1;	    /* does the client want sound */
     uint32  skillexp:1;	    /* does the client want skill exp data - MT*/
     uint32  map1cmd:1;	    /* Always use map1 protocol command */

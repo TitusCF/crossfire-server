@@ -289,6 +289,7 @@ extern void make_path_to_file(char *filename);
 /* player.c */
 extern player *get_player_ob(void);
 extern void free_player(player *pl);
+extern void generate_ext_title(player *pl);
 extern object *find_skill(object *op, int skillnr);
 /* re-cmp.c */
 extern char *re_cmp(char *str, char *regexp);

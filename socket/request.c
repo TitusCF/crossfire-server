@@ -141,11 +141,15 @@ void SetUp(char *buf, int len, NewSocket *ns)
 		ns->newanim = atoi(param);
 		strcat(cmdback, param);
 	}
-	else if (!strcmp(cmd,"sound")) {
-	    ns->sound = atoi(param);
-	    strcat(cmdback, param);
-	}
-	else if (!strcmp(cmd,"sexp")) {
+    else if (!strcmp(cmd,"sound")) {
+        ns->sound = atoi(param);
+        strcat(cmdback, param);
+    }
+    else if (!strcmp(cmd,"ext2")) {
+        ns->ext2 = atoi(param);
+        strcat(cmdback, param);
+    }
+    else if (!strcmp(cmd,"sexp")) {
 	    ns->skillexp = atoi(param);
 	    strcat(cmdback, param);
 	} else if (!strcmp(cmd,"darkness")) {
@@ -349,7 +353,6 @@ void NewPlayerCmd(uint8 *buf, int len, player *pl)
 /* This is a reply to a previous query. */
 void ReplyCmd(char *buf, int len, player *pl)
 {
-
     /* This is to synthesize how the data would be stored if it
      * was normally entered.  A bit of a hack, and should be cleaned up
      * once all the X11 code is removed from the server.
@@ -360,6 +363,10 @@ void ReplyCmd(char *buf, int len, player *pl)
      */
     sprintf(pl->write_buf,":%s", (char*)buf);
 
+    pl->socket.ext_title_flag = 2; /* funny hack: we want the class info in old title function */
+
+    /* this avoids any hacking here */
+    
     switch (pl->state) {
 	case ST_PLAYING:
 	    LOG(llevError,"Got reply message with ST_PLAYING input state\n");
@@ -377,8 +384,9 @@ void ReplyCmd(char *buf, int len, player *pl)
 	    break;
 
 	case ST_CHANGE_CLASS:
-	    key_change_class(pl->ob, buf[0]);
-	    break;
+
+        key_change_class(pl->ob, buf[0]);
+        break;
 
 	case ST_CONFIRM_QUIT:
 	    key_confirm_quit(pl->ob, buf[0]);
@@ -664,11 +672,34 @@ void esrv_update_stats(player *pl)
 	    AddIfShort(pl->last_resist[i], pl->ob->resist[i], atnr_cs_stat[i]);
 	}
     }
-
-    rangetostring(pl->ob, buf);
-    AddIfString(pl->socket.stats.range, buf, CS_STAT_RANGE);
-    set_title(pl->ob, buf);
-    AddIfString(pl->socket.stats.title, buf, CS_STAT_TITLE);
+ 
+    /* the user set title is nothing we don't use in new client.
+     * If so, pack it behind name 
+     */
+    if(pl->socket.ext2) /* for the ext2 client, we send complex title  and no range info*/
+    {
+        if(pl->socket.ext_title_flag)
+        {
+            generate_ext_title(pl);
+            AddIfString(pl->socket.stats.ext_title , pl->ext_title, CS_STAT_EXT_TITLE);
+            
+            /* ugly little sucker, but so we got the arch name in class select of the
+             * client and we don't must change above anything */
+            if(pl->socket.ext_title_flag==2)
+            {
+                set_title(pl->ob, buf);
+                AddIfString(pl->socket.stats.title, buf, CS_STAT_TITLE);
+            }
+            pl->socket.ext_title_flag = 0;
+        }
+    }
+   else /* for old clients, the normal range & title cmd */
+    {    
+       rangetostring(pl->ob, buf); /* we want use the new fire & run system in new client */
+        AddIfString(pl->socket.stats.range, buf, CS_STAT_RANGE);
+        set_title(pl->ob, buf);
+        AddIfString(pl->socket.stats.title, buf, CS_STAT_TITLE);
+   }
 
     /* Only send it away if we have some actual data */
     if (sl.len>6) {
@@ -695,9 +726,11 @@ void esrv_new_player(player *pl, uint32 weight)
     SockList_AddInt(&sl, pl->ob->count);
     SockList_AddInt(&sl, weight);
     SockList_AddInt(&sl, pl->ob->face->number);
+
     SockList_AddChar(&sl, strlen(pl->ob->name));
     strcpy((char*)sl.buf+sl.len, pl->ob->name);
     sl.len += strlen(pl->ob->name);
+       
     Send_With_Handling(&pl->socket, &sl);
     free(sl.buf);
     SET_FLAG(pl->ob, FLAG_CLIENT_SENT);
@@ -1302,7 +1335,7 @@ void draw_client_map2(object *pl)
 		    mask |= 0x4;    /* floor bit */
 		    pl->contr->socket.lastmap.cells[ax][ay].faces[0] = face_num1;
             pl->contr->socket.lastmap.cells[ax][ay].quick_pos[0] = quick_pos_1;
-            if(quick_pos_1) // if a multi arch
+            if(quick_pos_1) /* if a multi arch */
             {
                 mask |= 0x10;    /* mark ext flag as valid */
                 ext_flag |= 0x4; /* mark multi arch */
@@ -1333,7 +1366,7 @@ void draw_client_map2(object *pl)
 		    mask |= 0x2;    /* middle bit */
 		    pl->contr->socket.lastmap.cells[ax][ay].faces[1] = face_num2;
             pl->contr->socket.lastmap.cells[ax][ay].quick_pos[1] = quick_pos_2;
-            if(quick_pos_2) // if a multi arch
+            if(quick_pos_2) /* if a multi arch */
             {
                 mask |= 0x10;    /* mark ext flag as valid */
                 ext_flag |= 0x2;
@@ -1360,7 +1393,7 @@ void draw_client_map2(object *pl)
         if (pl->contr->socket.lastmap.cells[ax][ay].faces[2] != face_num3 ||
             pl->contr->socket.lastmap.cells[ax][ay].quick_pos[2] != quick_pos_3) {
 		    mask |= 0x1;    /* top bit */
-            if(quick_pos_3) // if a multi arch
+            if(quick_pos_3) /* if a multi arch */
             {
                 mask |= 0x10;    /* mark ext flag as valid */
                 ext_flag |= 0x1;

@@ -109,6 +109,36 @@ void free_player(player *pl) {
     CFREE(pl);
 }
 
+/* generate_ext_title() - get name and grap race/gender/proffesion from force objects */
+void generate_ext_title(player *pl)
+{
+    object *walk;
+    char gender[32]="";
+    char prof[32]="";
+    char rank[32]="";
+    
+    /* collect all information from the force objects. Just walk one time through them*/
+    for(walk=pl->ob->inv;walk!=NULL;walk=walk->below)
+    {
+        if (!strcmp(walk->name,"GUILD_FORCE"))
+            strcpy(prof,walk->title);
+        if (!strcmp(walk->name,"RANK_FORCE"))
+        {
+            strcpy(rank,walk->title);
+            strcat(rank," ");
+        }
+        if (!strcmp(walk->name,"GENDER_FORCE"))
+        {
+            strcpy(gender,walk->title);
+            strcat(gender," ");
+        }
+
+    }
+
+    sprintf(pl->ext_title,"%s%s\n%s%s %s", rank, pl->ob->name, gender, pl->ob->race, prof);
+
+}
+
 /* find_skill() - looks for the skill and returns a pointer to it if found */
 
 object *find_skill(object *op, int skillnr) {

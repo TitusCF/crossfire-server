@@ -799,6 +799,7 @@ int key_change_class(object *op, char key)
     int evtid;
     CFParm CFP;
 #endif
+
     if(key=='q'||key=='Q') {
       remove_ob(op);
       play_again(op);

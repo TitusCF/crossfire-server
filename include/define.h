@@ -259,6 +259,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 
 #define MAX_NAME 16
 #define BIG_NAME 32
+#define MAX_EXT_TITLE 98
 
 /* definitions for weapontypes */
 

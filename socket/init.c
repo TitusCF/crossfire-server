@@ -198,6 +198,8 @@ void InitConnection(NewSocket *ns, uint32 from)
     ns->facemode = Send_Face_Pixmap;
     ns->facecache = 0;
     ns->sound = 0;
+    ns->ext2 = 0;
+    ns->ext_title_flag = 1;
     ns->skillexp = 0;
     ns->map1cmd = 0;
     ns->map2cmd = 0;
@@ -409,8 +411,10 @@ void free_newsocket(NewSocket *ns)
     }
     if (ns->stats.range)
 	free(ns->stats.range);
+    if (ns->stats.ext_title)
+        free(ns->stats.ext_title);
     if (ns->stats.title)
-	free(ns->stats.title);
+        free(ns->stats.title);
     if (ns->comment)
 	free(ns->comment);
     free(ns->host);

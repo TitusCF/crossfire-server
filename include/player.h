@@ -119,7 +119,7 @@ typedef struct pl {
   int Swap_First;
 #endif
   
-  int use_pixmaps;	/* If set, use pixmaps instead of fonts */
+   int use_pixmaps;	/* If set, use pixmaps instead of fonts */
   int color_pixmaps;	/* if set, use color pixmaps (XPM) */
 
   object *ob;            /* The object representing the player */
@@ -147,6 +147,12 @@ typedef struct pl {
   char own_title[MAX_NAME];
   char title[MAX_NAME];
   
+/* EXT_SERVER: this string hold player description.
+ * Client must parse it.
+ * format: "<Rank> <Name>\n<Gender> <Race> <Profession>\n"
+ */
+  char ext_title[MAX_EXT_TITLE];
+
   signed char levhp[11]; /* What the player gained on that level */
   signed char levsp[11];
   signed char levgrace[11];

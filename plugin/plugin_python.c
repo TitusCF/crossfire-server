@@ -2189,7 +2189,7 @@ static PyObject* CFSetSkillExperience(PyObject* self, PyObject* args)
             currentxp = tmp->exp_obj->stats.exp;
             /* Don't know how this will react if negative value
             * passed to add_exp */
-            //add_exp(WHO, value-currentxp);
+            /*add_exp(WHO, value-currentxp);*/
             GCFP.Value[0] = (void *)(WHO);
             value = value - currentxp;
             GCFP.Value[1] = (void *)(&value);
@@ -2298,7 +2298,7 @@ static PyObject* CFActivateRune(PyObject* self, PyObject* args)
     GCFP.Value[0] = (void *)(WHAT);
     GCFP.Value[1] = (void *)(WHO);
     (PlugHooks[HOOK_SPRINGTRAP])(&GCFP);
-    //spring_trap(WHAT,WHO);
+    /*spring_trap(WHAT,WHO); */
 
     Py_INCREF(Py_None);
     return Py_None;
@@ -2571,7 +2571,7 @@ static PyObject* CFReadyMap(PyObject* self, PyObject* args)
         (char *)(GCFP.Value[0]),
         *(int *)(GCFP.Value[1])
     );
-    //mymap = ready_map_name(mapname,0);
+    /* mymap = ready_map_name(mapname,0); */
     CFR = (PlugHooks[HOOK_READYMAPNAME])(&GCFP);
     mymap = (mapstruct *)(CFR->Value[0]);
     printf( "Map file is %s\n",mymap->path);
@@ -2603,7 +2603,7 @@ static PyObject* CFTeleport(PyObject* self, PyObject* args)
         if (k==-1) return NULL;
         GCFP.Value[0] = (void *)(WHO);
         (PlugHooks[HOOK_REMOVEOBJECT])(&GCFP);
-//        remove_ob(WHO);
+/*        remove_ob(WHO); */
         for(tmp=WHO;tmp!=NULL;tmp=tmp->more)
             tmp->x=x+freearr_x[k]+(tmp->arch==NULL?0:tmp->arch->clone.x),
             tmp->y=y+freearr_y[k]+(tmp->arch==NULL?0:tmp->arch->clone.y);
@@ -2612,7 +2612,7 @@ static PyObject* CFTeleport(PyObject* self, PyObject* args)
         GCFP.Value[1] = (void *)((mapstruct *)(where));
         GCFP.Value[2] = NULL;
         GCFP.Value[3] = (void *)(&val);
-        //insert_ob_in_map(WHO,(mapstruct *)(where),NULL,0);
+        /*insert_ob_in_map(WHO,(mapstruct *)(where),NULL,0); */
         free((PlugHooks[HOOK_INSERTOBJECTINMAP])(&GCFP));
     };
 
@@ -2654,7 +2654,7 @@ static PyObject* CFPickUp(PyObject* self, PyObject* args)
     GCFP.Value[0] = (void *)(WHO);
     GCFP.Value[1] = (void *)(WHAT);
     (PlugHooks[HOOK_PICKUP])(&GCFP);
-    //pick_up(WHO,WHAT);
+    /*pick_up(WHO,WHAT); */
     Py_INCREF(Py_None);
     return Py_None;
 };
@@ -2882,7 +2882,7 @@ static PyObject* CFInsertObjectInside(PyObject* self, PyObject* args)
     {
         GCFP.Value[0] = (void *)(WHERE);
         GCFP.Value[1] = (void *)(myob);
-        //esrv_send_item(WHERE, myob);
+        /*esrv_send_item(WHERE, myob); */
         (PlugHooks[HOOK_ESRVSENDITEM])(&GCFP);
     };
     Py_INCREF(Py_None);
@@ -2962,7 +2962,7 @@ static PyObject* CFDrop(PyObject* self, PyObject* args)
     GCFP.Value[0] = (void *)(WHO);
     GCFP.Value[1] = (void *)(name);
     CFR = (PlugHooks[HOOK_CMDDROP])(&GCFP);
-//    command_drop(WHO,name);
+/*    command_drop(WHO,name); */
     free(CFR);
     Py_INCREF(Py_None);
     return Py_None;
@@ -2986,7 +2986,7 @@ static PyObject* CFTake(PyObject* self, PyObject* args)
     GCFP.Value[0] = (void *)(WHO);
     GCFP.Value[1] = (void *)(name);
     CFR = (PlugHooks[HOOK_CMDTAKE])(&GCFP);
-    //command_take(WHO,name);
+    /* command_take(WHO,name); */
     free(CFR);
     Py_INCREF(Py_None);
     return Py_None;
@@ -3410,8 +3410,8 @@ static PyObject* CFSetFace(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"ls",&whoptr,&txt))
         return NULL;
 
-    //WHO->animation_id = find_animation(txt);
-    //update_object(WHO,UP_OBJ_FACE);
+    /*WHO->animation_id = find_animation(txt); */
+    /*update_object(WHO,UP_OBJ_FACE); */
     GCFP.Value[0] = (void *)(txt);
     CFR = (PlugHooks[HOOK_FINDANIMATION])(&GCFP);
     WHO->animation_id = *(int *)(CFR->Value[0]);
@@ -3582,11 +3582,11 @@ static PyObject* CFKillObject(PyObject* self, PyObject* args)
 
         CFR = (PlugHooks[HOOK_KILLOBJECT])(&GCFP);
         free(CFR);
-        //kill_object(killed,1,killer, type);
+        /*kill_object(killed,1,killer, type); */
     };
 
-    //WHAT->script_str_death = NULL;
-    //WHAT->script_death = NULL;
+    /* WHAT->script_str_death = NULL; */
+    /* WHAT->script_death = NULL; */
     WHAT->event_hook[EVENT_DEATH] = NULL;
     WHAT->event_plugin[EVENT_DEATH] = NULL;
     WHAT->event_options[EVENT_DEATH] = NULL;
@@ -3758,8 +3758,8 @@ static PyObject* CFCastSpell(PyObject* self, PyObject* args)
     GCFP.Value[6] = (void *)(op);
     GCFP.Value[7] = (void *)(&typeoffire);
     CFR = (PlugHooks[HOOK_CASTSPELL])(&GCFP);
-    //cast_spell(WHO, WHO, dir, spell,
-    //    1,spellNormal, op);
+    /*cast_spell(WHO, WHO, dir, spell, */
+    /*    1,spellNormal, op); */
 
     free(CFR);
     Py_INCREF(Py_None);
@@ -3884,7 +3884,7 @@ static PyObject* CFCreateInvisibleInside(PyObject* self, PyObject* args)
 
     GCFP.Value[0] = (void *)(txt2);
     CFR = (PlugHooks[HOOK_GETARCHETYPE])(&GCFP);
-    //myob = get_archetype("force");
+    /*myob = get_archetype("force"); */
     myob = (object *)(CFR->Value[0]);
     free(CFR);
 
@@ -3892,13 +3892,13 @@ static PyObject* CFCreateInvisibleInside(PyObject* self, PyObject* args)
     GCFP.Value[0] = (void *)(myob);
     (PlugHooks[HOOK_UPDATESPEED])(&GCFP);
 
-    //update_ob_speed(myob);
+    /*update_ob_speed(myob); */
     myob->slaying = add_string(txt);
     myob = insert_ob_in_ob(myob, where);
 
     GCFP.Value[0] = (void *)(where);
     GCFP.Value[1] = (void *)(myob);
-  //esrv_send_item((object *)(gh_scm2long(where)), myob);
+  /*esrv_send_item((object *)(gh_scm2long(where)), myob); */
     (PlugHooks[HOOK_ESRVSENDITEM])(&GCFP);
     return Py_BuildValue("l",(long)(myob));
 };
@@ -3953,7 +3953,7 @@ printf("CreateObjectInside triggered!\n");
                     tmpname = txt + i;
                     GCFP.Value[0] = (void *)(myob);
                     GCFP.Value[1] = (void *)(tmpname);
-                    //test = create_artifact(myob,tmpname);
+                    /*test = create_artifact(myob,tmpname); */
                     CFR = (PlugHooks[HOOK_CREATEARTIFACT])(&GCFP);
                     test = (object *)(CFR->Value[0]);
                     free(CFR);
@@ -3972,7 +3972,7 @@ printf("CreateObjectInside triggered!\n");
         GCFP.Value[0] = (void *)(where);
         GCFP.Value[1] = (void *)(myob);
         (PlugHooks[HOOK_ESRVSENDITEM])(&GCFP);
-//        esrv_send_item((object *)(gh_scm2long(where)), myob);
+/*        esrv_send_item((object *)(gh_scm2long(where)), myob); */
     };
     return Py_BuildValue("l",(long)(myob));
 };
@@ -4089,8 +4089,8 @@ static PyObject* CFCreateObject(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"s(ii)|l",&txt, &x,&y,&map))
         return NULL;
 
-    //myob = get_archetype(txt);
-    //myob = get_archetype_by_object_name(txt);
+    /*myob = get_archetype(txt); */
+    /*myob = get_archetype_by_object_name(txt); */
     GCFP.Value[0] = (void *)(txt);
     CFR = (PlugHooks[HOOK_GETARCHBYOBJNAME])(&GCFP);
     myob = (object *)(CFR->Value[0]);
@@ -4099,7 +4099,7 @@ static PyObject* CFCreateObject(PyObject* self, PyObject* args)
     if (!strncmp(query_name(myob), "singluarity",11))
     {
         free_object(myob);
-        //myob = get_archetype(txt);
+        /*myob = get_archetype(txt); */
         GCFP.Value[0] = (void *)(txt);
         CFR = (PlugHooks[HOOK_GETARCHBYOBJNAME])(&GCFP);
         myob = (object *)(CFR->Value[0]);
@@ -4121,7 +4121,7 @@ static PyObject* CFCreateObject(PyObject* self, PyObject* args)
                     GCFP.Value[0] = (void *)(myob);
                     GCFP.Value[1] = (void *)(tmpname);
                     CFR = (PlugHooks[HOOK_CREATEARTIFACT])(&GCFP);
-                    //test = create_artifact(myob,tmpname);
+                    /*test = create_artifact(myob,tmpname); */
                     test = (object *)(CFR->Value[0]);
                     free(CFR);
                 }
@@ -4139,7 +4139,7 @@ static PyObject* CFCreateObject(PyObject* self, PyObject* args)
     GCFP.Value[1] = (void *)(map);
     GCFP.Value[2] = NULL;
     GCFP.Value[3] = (void *)(&val);
-    //myob = insert_ob_in_map(myob, map ,NULL,0);
+    /*myob = insert_ob_in_map(myob, map ,NULL,0); */
     CFR = (PlugHooks[HOOK_INSERTOBJECTINMAP])(&GCFP);
     myob = (object *)(CFR->Value[0]);
     free(CFR);
@@ -4163,15 +4163,15 @@ static PyObject* CFRemoveObject(PyObject* self, PyObject* args)
     myob = (object *)(whoptr);
     GCFP.Value[0] = (void *)(myob);
     (PlugHooks[HOOK_REMOVEOBJECT])(&GCFP);
-    //remove_ob(myob);
+    /*remove_ob(myob); */
 
     if (StackActivator[StackPosition]->type == PLAYER)
     {
         GCFP.Value[0] = (void *)(StackActivator[StackPosition]);
         GCFP.Value[1] = (void *)(StackActivator[StackPosition]);
         (PlugHooks[HOOK_ESRVSENDINVENTORY])(&GCFP);
-//    esrv_send_inventory(guile_current_activator[guile_stack_position],
-//guile_current_activator[guile_stack_position]);
+/*    esrv_send_inventory(guile_current_activator[guile_stack_position], */
+/*guile_current_activator[guile_stack_position]); */
     };
     free_object(myob);
     Py_INCREF(Py_None);
@@ -5143,7 +5143,7 @@ static PyObject* CFSetPosition(PyObject* self, PyObject* args)
 
     (PlugHooks[HOOK_TRANSFEROBJECT])(&GCFP);
 
-//  transfer_ob(WHO, gh_scm2int(X), gh_scm2int(Y), 0, NULL);
+/*  transfer_ob(WHO, gh_scm2int(X), gh_scm2int(Y), 0, NULL); */
 
     free(&CFR);
     Py_INCREF(Py_None);
@@ -5161,7 +5161,7 @@ static PyObject* CFSetNickname(PyObject* self, PyObject* args)
     long whoptr;
     char *newnick;
     CFParm* CFR;
-    //int val = UP_OBJ_CHANGE;
+    /*int val = UP_OBJ_CHANGE; */
 
     if (!PyArg_ParseTuple(args,"ls",&whoptr,&newnick))
         return NULL;
@@ -5510,10 +5510,10 @@ static PyObject* CFMessage(PyObject* self, PyObject* args)
     GCFP.Value[2] = NULL;
     GCFP.Value[3] = (void *)(message);
 
-    //new_draw_info(NDI_UNIQUE | NDI_ALL | NDI_RED, 1, NULL, buf);
+    /*new_draw_info(NDI_UNIQUE | NDI_ALL | NDI_RED, 1, NULL, buf); */
 
     (PlugHooks[HOOK_NEWDRAWINFO])(&GCFP);
-    //(PlugHooks[HOOK_NEWINFOMAP])(&GCFP);
+    /*(PlugHooks[HOOK_NEWINFOMAP])(&GCFP); */
 
     Py_INCREF(Py_None);
     return Py_None;
@@ -6081,7 +6081,7 @@ MODULEAPI int HandleGlobalEvent(CFParm* PParm)
             break;
         case EVENT_BORN:
             StackActivator[StackPosition] = (object *)(PParm->Value[1]);
-            //printf( "Event BORN generated by %s\n",query_name(StackActivator[StackPosition]));
+            /*printf( "Event BORN generated by %s\n",query_name(StackActivator[StackPosition])); */
             Scriptfile = fopen(create_pathname("python/python_born.py"),"r");
             if (Scriptfile != NULL)
             {
@@ -6093,8 +6093,8 @@ MODULEAPI int HandleGlobalEvent(CFParm* PParm)
             StackActivator[StackPosition] = ((player *)(PParm->Value[1]))->ob;
             StackWho[StackPosition] = ((player *)(PParm->Value[1]))->ob;
             StackText[StackPosition] = (char *)(PParm->Value[2]);
-            //printf( "Event LOGIN generated by %s\n",query_name(StackActivator[StackPosition]));
-            //printf( "IP is %s\n", (char *)(PParm->Value[2]));
+            /*printf( "Event LOGIN generated by %s\n",query_name(StackActivator[StackPosition])); */
+            /*printf( "IP is %s\n", (char *)(PParm->Value[2])); */
             Scriptfile = fopen(create_pathname("python/python_login.py"),"r");
             if (Scriptfile != NULL)
             {
@@ -6107,7 +6107,7 @@ MODULEAPI int HandleGlobalEvent(CFParm* PParm)
             StackActivator[StackPosition] = ((player *)(PParm->Value[1]))->ob;
             StackWho[StackPosition] = ((player *)(PParm->Value[1]))->ob;
             StackText[StackPosition] = (char *)(PParm->Value[2]);
-            //printf( "Event LOGOUT generated by %s\n",query_name(StackActivator[StackPosition]));
+            /*printf( "Event LOGOUT generated by %s\n",query_name(StackActivator[StackPosition])); */
             Scriptfile = fopen(create_pathname("python/python_logout.py"),"r");
             if (Scriptfile != NULL)
             {
@@ -6117,7 +6117,7 @@ MODULEAPI int HandleGlobalEvent(CFParm* PParm)
             break;
         case EVENT_REMOVE:
             StackActivator[StackPosition] = (object *)(PParm->Value[1]);
-            //printf( "Event REMOVE generated by %s\n",query_name(StackActivator[StackPosition]));
+            /*printf( "Event REMOVE generated by %s\n",query_name(StackActivator[StackPosition])); */
 
             Scriptfile = fopen(create_pathname("python/python_remove.py"),"r");
             if (Scriptfile != NULL)
@@ -6129,9 +6129,9 @@ MODULEAPI int HandleGlobalEvent(CFParm* PParm)
         case EVENT_SHOUT:
             StackActivator[StackPosition] = (object *)(PParm->Value[1]);
             StackText[StackPosition] = (char *)(PParm->Value[2]);
-            //printf( "Event SHOUT generated by %s\n",query_name(StackActivator[StackPosition]));
+            /*printf( "Event SHOUT generated by %s\n",query_name(StackActivator[StackPosition])); */
 
-            //printf( "Message shout is %s\n",StackText[StackPosition]);
+            /*printf( "Message shout is %s\n",StackText[StackPosition]); */
             Scriptfile = fopen(create_pathname("python/python_shout.py"),"r");
             if (Scriptfile != NULL)
             {
@@ -6141,7 +6141,7 @@ MODULEAPI int HandleGlobalEvent(CFParm* PParm)
             break;
         case EVENT_MAPENTER:
             StackActivator[StackPosition] = (object *)(PParm->Value[1]);
-            //printf( "Event MAPENTER generated by %s\n",query_name(StackActivator[StackPosition]));
+            /*printf( "Event MAPENTER generated by %s\n",query_name(StackActivator[StackPosition])); */
 
             Scriptfile = fopen(create_pathname("python/python_mapenter.py"),"r");
             if (Scriptfile != NULL)
@@ -6152,7 +6152,7 @@ MODULEAPI int HandleGlobalEvent(CFParm* PParm)
             break;
         case EVENT_MAPLEAVE:
             StackActivator[StackPosition] = (object *)(PParm->Value[1]);
-            //printf( "Event MAPLEAVE generated by %s\n",query_name(StackActivator[StackPosition]));
+            /*printf( "Event MAPLEAVE generated by %s\n",query_name(StackActivator[StackPosition])); */
 
             Scriptfile = fopen(create_pathname("python/python_mapleave.py"),"r");
             if (Scriptfile != NULL)
@@ -6162,7 +6162,7 @@ MODULEAPI int HandleGlobalEvent(CFParm* PParm)
             }
             break;
         case EVENT_CLOCK:
-            //printf( "Event CLOCK generated\n");
+            /* printf( "Event CLOCK generated\n"); */
             Scriptfile = fopen(create_pathname("/python/python_clock.py"),"r");
             if (Scriptfile != NULL)
             {
@@ -6211,7 +6211,7 @@ MODULEAPI int HandleEvent(CFParm* PParm)
     StackParm3[StackPosition]       = *(int *)(PParm->Value[7]);
     StackParm4[StackPosition]       = *(int *)(PParm->Value[8]);
     StackReturn[StackPosition]      = 0;
-    //RunPythonScript(scriptname);
+    /* RunPythonScript(scriptname); */
     Scriptfile = fopen(create_pathname((char *)(PParm->Value[9])),"r");
     if (Scriptfile == NULL)
     {
@@ -6410,9 +6410,9 @@ MODULEAPI CFParm* postinitPlugin(CFParm* PParm)
     GCFP.Value[0] = (void *)(&i);
     (PlugHooks[HOOK_REGISTEREVENT])(&GCFP);
 
-//    i = EVENT_CLOCK;
-//    GCFP.Value[0] = (void *)(&i);
-//    (PlugHooks[HOOK_REGISTEREVENT])(&GCFP);
+/*    i = EVENT_CLOCK; */
+/*    GCFP.Value[0] = (void *)(&i); */
+/*    (PlugHooks[HOOK_REGISTEREVENT])(&GCFP); */
 
     i = EVENT_MAPRESET;
     GCFP.Value[0] = (void *)(&i);

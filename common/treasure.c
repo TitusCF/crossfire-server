@@ -126,6 +126,10 @@ static treasure *load_treasure(FILE *fp) {
         t->name = add_string(variable);
     else if (sscanf(cp, "change_name %s", variable))
       t->change_arch.name = add_string(variable);
+    else if (sscanf(cp, "change_title %s", variable))
+        t->change_arch.title = add_string(variable);
+    else if (sscanf(cp, "change_slaying %s", variable))
+        t->change_arch.slaying = add_string(variable);
     else if(sscanf(cp,"chance %d",&value))
       t->chance=(uint8) value;
     else if(sscanf(cp,"nrof %d",&value))
@@ -186,7 +190,7 @@ void load_treasures() {
     return;
   }
   while(fgets(buf,MAX_BUF,fp)!=NULL) {
-    if(*buf=='#')
+      if(*buf=='#')
       continue;
     if(sscanf(buf,"treasureone %s\n",name) || sscanf(buf,"treasure %s\n",name)) {
       treasurelist *tl=get_empty_treasurelist();
@@ -298,7 +302,21 @@ static change_treasure(treasure *t, object *op)
             free_string(op->name);
         op->name = add_string(t->change_arch.name);
     }
+    
+    if(t->change_arch.title)
+    {
+        if(op->title)
+            free_string(op->title);
+        op->title = add_string(t->change_arch.title);
+    }
 
+    if(t->change_arch.slaying)
+    {
+        if(op->slaying)
+            free_string(op->slaying);
+        op->slaying = add_string(t->change_arch.slaying);
+    }
+    
 }
 
 void create_all_treasures(treasure *t, object *op, int flag, int difficulty, int tries) {
