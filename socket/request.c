@@ -277,7 +277,7 @@ void ToggleExtendedInfos (char *buf, int len, NewSocket *ns){
           strncpy (command,&(buf[info]),nextinfo-info);
           command[nextinfo-info]='\0';
           /* 2. Interpret info*/
-          if (!strcmp("smoothing",command)){
+          if (!strcmp("smooth",command)){
                /* Toggle smoothing*/
                ns->EMI_smooth=!ns->EMI_smooth;
           }else{
@@ -285,7 +285,7 @@ void ToggleExtendedInfos (char *buf, int len, NewSocket *ns){
           }
           /*3. Next info*/
      }
-     strcpy (cmdback,"ExtendedInfoSet");
+        strcpy (cmdback,"ExtendedInfoSet");
      if (ns->EMI_smooth){
           strcat (cmdback," ");
           strcat (cmdback,"smoothing");
@@ -298,80 +298,34 @@ void ToggleExtendedInfos (char *buf, int len, NewSocket *ns){
   * to smooth a picture number given as argument.
   * Also take care of sending those pictures to the client.
   * For information, here is where we get the smoothing inforations:
-  * - Take the facename and add '_smoothed' to it. 
+  * - Take the facename and add '_smoothed' to it.
   * - Look for that archetype and find it's animation.
   * - Use the animation elements from 0 to 8 for smoothing.
   */
-void AskSmooth (char *buf, int len, NewSocket *ns){     
+void AskSmooth (char *buf, int len, NewSocket *ns){
      char* name;
      char* defaultsmooth="default_smoothed.111";
      char smoothname[MAX_BUF];
      char reply[MAX_BUF];
+     SockList sl;
      int i;
-     int smoothed[8];
      archetype* at;
-     uint16 smoothfaces[8];   /*unsigned short int!*/  
+     uint16 smoothface;
      int facenbr;
      facenbr=atoi (buf);
-     if ((!FindSmooth (facenbr, smoothfaces)) && 
-         (!FindSmooth (FindFace(defaultsmooth,0), smoothfaces))
+     if ((!FindSmooth (facenbr, &smoothface)) &&
+         (!FindSmooth (FindFace(defaultsmooth,0), &smoothface))
         )
-    
+
          LOG(llevError,"could not findsmooth for %d. Neither default (%s)\n",facenbr,defaultsmooth);
-#if 0
-     name = FindFaceName(facenbr, NULL);
-     if (name==NULL){
-          LOG(llevError,"could not findsmooth for %d(%s). Back to default\n",facenbr);
-          
-          name=defaultsmooth;
-     }
-     strcpy (smoothname,name);
-     strcat (smoothname,"_smoothed");
-     /* A face name may have a dot in it's name. It is a bad
-      * idea to create an archetype with a dot in it's name.
-      * To do handle this, let's replace all '.' with '_'
-      */
-     for (i=0;i<strlen(smoothname);i++)
-          if (smoothname[i]=='.')
-               smoothname[i]='_';
-     at=find_archetype(smoothname);
-     if (at==NULL){
-          /* no correct smooth. Boggus client or boggus archetype definition
-           * fall back to a default smooth for security reasons.
-           * If we fail here, we have a boggus archetypes list!
-           */
-          LOG(llevError,"tried to smooth %s.\n",name);
-          LOG(llevError,"previous: %s.\n",FindFaceName(facenbr-1, NULL));
-          LOG(llevError,"next: %s.\n",FindFaceName(facenbr+1, NULL));
-          at=find_archetype("default_smoothed");
-     }
-     if (at==NULL){
-          LOG(llevError,"BOGGUS archetype file.\n");
-          LOG(llevError,"Mandatory archetype named default_smoothed not found.\n");
-          LOG(llevError,"Clients with smoothing will have LOTS of problems\n");
-          LOG(llevError,"Sending first face as default smooth sequence\n");
-          for (i=0;i<8;i++)
-               smoothfaces[i]=0;          
-          if (ns->faces_sent[0] == 0)
-               esrv_send_face(ns, 0, 0);
-     }
-     else{
-          for (i=0;i<8;i++){
-               smoothfaces[i]=GET_ANIMATION((&(at->clone)),i);  
-               if (ns->faces_sent[smoothfaces[i]] == 0)
-                    esrv_send_face(ns, smoothfaces[i], 0);
-          }
-     }
-#endif
-     for (i=0;i<8;i++){
-         if (ns->faces_sent[smoothfaces[i]] == 0)
-                    esrv_send_face(ns, smoothfaces[i], 0);
-     }
-     sprintf (reply,"smooth %d %d %d %d %d %d %d %d %d",facenbr,
-          smoothfaces[0],smoothfaces[1],smoothfaces[2],smoothfaces[3],
-          smoothfaces[4],smoothfaces[5],smoothfaces[6],smoothfaces[7]);
-     Write_String_To_Socket(ns, reply,strlen(reply));
-     
+     if (ns->faces_sent[smoothface] == 0)
+                esrv_send_face(ns, smoothface, 0);
+     sl.buf=reply;
+     strcpy((char*)sl.buf,"smooth ");
+     sl.len=strlen((char*)sl.buf);
+     SockList_AddShort(&sl, facenbr);
+     SockList_AddShort(&sl, smoothface);
+     Send_With_Handling(ns, &sl);
 }
 /* This handles the general commands from the client (ie, north, fire, cast,
  * etc.)
@@ -1243,7 +1197,7 @@ static inline int update_space(SockList *sl, NewSocket *ns, mapstruct  *mp, int 
  * except it handles update of the smoothing updates,
  * not the face updates.
  * Removes the need to replicate the same code for each layer.
- * this returns true if this smooth is now in fact different 
+ * this returns true if this smooth is now in fact different
  * than it was.
  * sl is the socklist this data is going into.
  * ns is the socket we are working on - all the info we care
@@ -1305,76 +1259,10 @@ static inline int update_smooth(SockList *sl, NewSocket *ns, mapstruct  *mp, int
 	 * be null, so we only do this block if we are working on
 	 * a tail piece.
 	 */
-#if 0
-     ///// Old code from update_Space, don't think tail interacts here
-	/* tail_x and tail_y will only be set in the head object.  If
-	 * this is the head object and these are set, we proceed
-	 * with logic to only send bottom right.  Similarly, if
-	 * this is one of the more parts but the head has those values
-	 * set, we want to do the processing.  There can be cases where
-	 * the head is not visible but one of its parts is, so we just
-	 * can always expect that ob->arch->tail_x will be true for all
-	 * object we may want to display.
-	 */
-	if ((ob->arch->tail_x || ob->arch->tail_y) ||
-	    (ob->head && (ob->head->arch->tail_x || ob->head->arch->tail_y))) {
 
-	    if (ob->head) head = ob->head;
-	    else head = ob;
-
-	    /* Basically figure out where the offset is from where we are right
-	     * now.  the ob->arch->clone.{x,y} values hold the offset that this current
-	     * piece is from the head, and the tail is where the tail is from the
-	     * head.  Note that bx and by will equal sx and sy if we are already working
-	     * on the bottom right corner.  If ob is the head, the clone values
-	     * will be zero, so the right thing will still happen.
-	     */
-	    bx = sx + head->arch->tail_x - ob->arch->clone.x;
-	    by = sy + head->arch->tail_y - ob->arch->clone.y;
-
-	    /* I don't think this can ever happen, but better to check for it just
-	     * in case.
-	     */
-	    if (bx < sx || by < sy) {
-		LOG(llevError,"update_space: bx (%d) or by (%d) is less than sx (%d) or sy (%d)\n",
-		    bx, by, sx, sy);
-	    }
-	    /* single part object, multipart object with non merged faces,
-	     * of multipart object already at lower right.
-	     */
-	    else if (bx == sx && by == sy) {
-		face_num = ob->face->number;
-
-		/* if this face matches one stored away, clear that one away.
-		 * this code relies on the fact that the map1 commands
-		 * goes from 2 down to 0.
-		 */
-		for (i=0; i<MAP_LAYERS; i++)
-		    if (heads[(sy * MAX_HEAD_POS + sx) * MAX_LAYERS + i] &&
-			heads[(sy * MAX_HEAD_POS + sx) * MAX_LAYERS + i]->face->number == face_num)
-			heads[(sy * MAX_HEAD_POS + sx) * MAX_LAYERS + i] = NULL;
-	    }
-	    else {
-		/* First, try to put the new head on the same layer.  If that is used up,
-		 * then find another layer.
-		 */
-		if (heads[(by * MAX_HEAD_POS + bx) * MAX_LAYERS + layer] == NULL ||
-		    heads[(by * MAX_HEAD_POS + bx) * MAX_LAYERS + layer] == head) {
-			heads[(by * MAX_HEAD_POS + bx) * MAX_LAYERS + layer] = head;
-		} else for (i=0; i<MAX_LAYERS; i++) {
-		    if (heads[(by * MAX_HEAD_POS + bx) * MAX_LAYERS + i] == NULL ||
-			heads[(by * MAX_HEAD_POS + bx) * MAX_LAYERS + i] == head) {
-			    heads[(by * MAX_HEAD_POS + bx) * MAX_LAYERS + i] = head;
-		    }
-		}
-		face_num = 0;	/* Don't send this object - we'll send the head later */
-	    }
-	} else {
-#else
-     { 
-#endif
+     {
 	    /* In this case, we are already at the lower right or single part object,
-	     * so nothing special 
+	     * so nothing special
 	     */
 	    smoothlevel = ob->smoothlevel;
 
@@ -1404,7 +1292,7 @@ static inline int update_smooth(SockList *sl, NewSocket *ns, mapstruct  *mp, int
     return 0;
 }
 /* returns the size of a data for a map square as returned by
- * mapextended. There are CLIENTMAPX*CLIENTMAPY*LAYERS entries 
+ * mapextended. There are CLIENTMAPX*CLIENTMAPY*LAYERS entries
  * available.
  */  
 int getExtendedMapInfoSize(NewSocket* ns){
@@ -1443,6 +1331,7 @@ void draw_client_map1(object *pl)
     SockList sl;
     SockList esl; /*For extended Map info*/
     uint16  mask,emask,eentrysize;
+    uint16  ewhatstart,ewhatflag;
     uint8   extendedinfos;
     mapstruct *m;
 
@@ -1461,10 +1350,13 @@ void draw_client_map1(object *pl)
         extendedinfos=EMI_NOREDRAW;
         if (pl->contr->socket.EMI_smooth)
             extendedinfos|=EMI_SMOOTH;
+        ewhatstart=esl.len;
+        ewhatflag=extendedinfos; /*The EMI_NOREDRAW bit
+                                   could need to be taken away*/
         SockList_AddChar(&esl, extendedinfos);
         eentrysize=getExtendedMapInfoSize(&(pl->contr->socket));
         SockList_AddChar(&esl, eentrysize);
-        estartlen = esl.len;            
+        estartlen = esl.len;
     }
     /* Init data to zero */
     memset(heads, 0, sizeof(object *) * MAX_HEAD_POS * MAX_HEAD_POS * MAX_LAYERS);
@@ -1500,7 +1392,7 @@ void draw_client_map1(object *pl)
 	    if (ax >= pl->contr->socket.mapx || ay >= pl->contr->socket.mapy) {
 		oldlen = sl.len;
         if (pl->contr->socket.ext_mapinfos){
-            SockList_AddShort(&sl, emask);
+            SockList_AddShort(&esl, emask);
         }
 
 		SockList_AddShort(&sl, mask);
@@ -1689,11 +1581,19 @@ void draw_client_map1(object *pl)
     } /* for y loop */
 
     /* Verify that we in fact do need to send this */
-    if (pl->contr->socket.ext_mapinfos)
+    if (pl->contr->socket.ext_mapinfos){
+        if (!(sl.len>startlen || pl->contr->socket.sent_scroll)){
+            /* No map data will follow, so don't say the client
+             * it doesn't need draw!
+             */
+            ewhatflag&=(~EMI_NOREDRAW);
+            esl.buf[ewhatstart+1] = ewhatflag & 0xff;
+        }
         if (esl.len>estartlen) {
-            Send_With_Handling(&pl->contr->socket, &esl);        
+            Send_With_Handling(&pl->contr->socket, &esl);
         free(esl.buf);
         }
+    }
     if (sl.len>startlen || pl->contr->socket.sent_scroll) {
 	Send_With_Handling(&pl->contr->socket, &sl);
 	pl->contr->socket.sent_scroll = 0;

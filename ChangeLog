@@ -17,6 +17,15 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+protocol/doc/code:
+	Changed the way smoothing is done. Switched the smooth 
+	command to binary mode, rebuild archetype files, added doc 
+	on smoothing, updated protocol file. 
+	Changed a the "togglemapextended smoothing" to "togglemapextended
+	smooth" to prevent problem of compatibilities with previous cvs
+	smoothing releases.
+Tchize 2003-07-08
+
 protocol: 
 	Added new command to send extended map informations to the
 	client. Mainly used for now to send smoothing informations.

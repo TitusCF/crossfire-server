@@ -578,13 +578,14 @@ C->S: askface <num>
 	on the previous set facemode to determine what facetype to send.
 	num is a plaintext integer.
 
-S->C: smooth <facenbr> <sm000> <sm001> <sm010> <sm011> <sm100> <sm101> <sm110> <sm111>
-	All parameters are space separated plain text integers.
+S->C: smooth <facenbr><smoothpic>
+	All parameters are short in in binary form (2 bytes each)
 	This command informs the client on how to smooth a face, when it will need it.
-	Following are the facenbr of the different pictures involved in the
-	smoothing algorithm. See doc on smoothing on how to use them. (TODO)
-	This info may be send automatically from server but could also be
-	requested by client using the asksmooth
+	Following are the facenbr of the picture involved in the
+	smoothing algorithm. See doc on smoothing on how to use them.
+	This info may be send automatically from server if client has
+    smoothing enabled but may also be requested by client using
+    the asksmooth command below
 C->S: asksmooth <facenbr>
 	Parameters is a plain text integer.
 	Ask server to send a smooth sequence. Server will respond with a smooth command.
@@ -794,8 +795,8 @@ C->S: toggleextendedinfos <string1> <string2> .... <stringn>
 	with the command ExtendedInfoSet telling client what actual
 	extended infos will be send to the client.
 	Valid extended infos are as follow:
-		smoothing
-			send smoothing level informations to the client.
+		smooth
+			send smoothlevel informations to the client.
 
 S->C: ExtendedInfoSet <string1> <string2> .... <stringn>
 	Tell client what actually are the extended infos server may

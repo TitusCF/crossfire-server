@@ -77,7 +77,7 @@ int nroffiles = 0, nrofpixmaps=0;
 
 struct smoothing {
     uint16 id;
-    uint16 smooth[8];
+    uint16 smooth;
 };
 
 static struct smoothing *smooth=NULL;
@@ -378,11 +378,11 @@ char* FindFaceName (int facenbr, char* error) {
     }
 }
 /* Reads the smooth file to know how to smooth datas.
- * the smooth file if made of 9 elements lines.
+ * the smooth file if made of 2 elements lines.
  * lines starting with # are comment
  * the first element of line is face to smooth
- * 8 next elements is the 8 faces used for 
- * smoothing
+ * the next element is the 16x2 faces picture
+ * used for smoothing
  */
 int ReadSmooth () {
     char buf[MAX_BUF], *p, *q;
@@ -397,16 +397,16 @@ int ReadSmooth () {
 	printf("buf = %s\n", buf);
 	exit(-1);
     }
-    
+
     /* First count how many smooth we have, so we can allocate correctly */
     while (fgets (buf, MAX_BUF, fp)!=NULL)
 	if(buf[0] != '#' && buf[0] != '\n' )
 	    smoothcount++;
     rewind(fp);
-    
+
     smooth = (struct smoothing *) malloc(sizeof(struct smoothing) * (smoothcount));
     memset (smooth, 0, sizeof (struct smoothing) * (smoothcount));
-    
+
     while(fgets (buf, MAX_BUF, fp)!=NULL) {
         if (*buf == '#')
             continue;
@@ -416,21 +416,13 @@ int ReadSmooth () {
         *p='\0';
         q=buf;
         smooth[nrofsmooth].id=FindFace(q,0);
-        for (i=0;i<8;i++){
-            q=p+1;
-            p=strchr(q,' ');
-            if ( (!p) && (i<7))
-                break;    
-            if (p)
-                *p='\0';
-            smooth[nrofsmooth].smooth[i]=FindFace(q,0);
-        }
-        if (i==8)
-            nrofsmooth++;
+        q=p+1;
+        smooth[nrofsmooth].smooth=FindFace(q,0);
+        nrofsmooth++;
     }
     fclose(fp);
 
-    LOG(llevDebug,"done (got %d)\n",nrofsmooth);
+    LOG(llevDebug,"done (got %d smooth entries)\n",nrofsmooth);
     qsort (smooth, nrofsmooth, sizeof(struct smoothing), (int (*)())compar_smooth);
     return nrofsmooth;
 }
@@ -441,14 +433,10 @@ int FindSmooth (uint16 face, uint16* smoothed) {
 
     tmp.id = face;
     bp = (struct smoothing *)bsearch 
-	(&tmp, smooth, nrofsmooth, sizeof(struct smoothing), (int (*)())compar_smooth);
-    for (i=0;i<8;i++){
-        smoothed[i]=0;
-    }
+        (&tmp, smooth, nrofsmooth, sizeof(struct smoothing), (int (*)())compar_smooth);
+    (*smoothed)=0;
     if (bp)
-        for (i=0;i<8;i++){
-            smoothed[i]=bp->smooth[i];
-        }
+         (*smoothed)=bp->smooth;
     return bp ? 1 : 0;
 }
 
