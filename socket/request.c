@@ -1009,9 +1009,9 @@ void draw_client_map1(object *pl)
      * locations.
      */
     ay=0;
-    for(y=pl->y-pl->contr->socket.mapy/2; y<=pl->y+pl->contr->socket.mapy/2;y++,ay++) {
+    for(y=pl->y-pl->contr->socket.mapy/2; y<pl->y+(pl->contr->socket.mapy+1)/2;y++,ay++) {
 	ax=0;
-	for(x=pl->x-pl->contr->socket.mapx/2;x<=pl->x+pl->contr->socket.mapx/2;x++,ax++) {
+	for(x=pl->x-pl->contr->socket.mapx/2;x<pl->x+(pl->contr->socket.mapx+1)/2;x++,ax++) {
 	    d =  pl->contr->blocked_los[ax][ay];
 	    mask = (ax & 0x3f) << 10 | (ay & 0x3f) << 4;
 
@@ -1176,8 +1176,8 @@ void draw_client_map(object *pl)
     if (pl->map->in_memory!=MAP_IN_MEMORY) return;
     memset(&newmap, 0, sizeof(struct Map));
 
-    for(j = (pl->y - pl->contr->socket.mapy/2) ; j <= (pl->y + pl->contr->socket.mapy/2); j++) {
-        for(i = (pl->x - pl->contr->socket.mapx/2) ; i <= (pl->x + pl->contr->socket.mapx/2); i++) {
+    for(j = (pl->y - pl->contr->socket.mapy/2) ; j < (pl->y + (pl->contr->socket.mapy+1)/2); j++) {
+        for(i = (pl->x - pl->contr->socket.mapx/2) ; i < (pl->x + (pl->contr->socket.mapx+1)/2); i++) {
 	    ax=i;
 	    ay=j;
 	    m = get_map_from_coord(pl->map, &ax, &ay);

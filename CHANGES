@@ -18,6 +18,10 @@ else.  With this, include the file(s) that you changed.
 
 Changes for CVS:
 
+socket/request.c: Fix bug in map1 command which resulted in it sending
+too much data with even maps.  For example, if the client requested
+a 16x16 map, the server would effectively send a 17x17 map to the client.
+MSW 2001-07-19
 
 +++
 Major redo of map code:
