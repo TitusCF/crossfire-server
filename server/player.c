@@ -240,6 +240,23 @@ object *get_nearest_player(object *mon) {
   int lastdist,tmp;
 
   for(ol=first_friendly_object,lastdist=1000;ol!=NULL;ol=ol->next) {
+    /* We shoult not find free objects on this friendly list, but it
+     * does periodically happen.  Given that, lets deal with it.
+     * While unlikely, it is possible the next object on the friendly
+     * list is also free, so encapsulate this in a while loop.
+     */
+    while (QUERY_FLAG(ol->ob, FLAG_FREED)) {
+	object *tmp=ol->ob;
+
+	/* Can't do much more other than log the fact, because the object
+	 * itself will have been cleared.
+	 */
+	LOG(llevDebug,"get_nearest_player: Found free object on friendly list\n");
+	ol = ol->next;
+	remove_friendly_object(tmp);
+	if (!ol) return op;
+    }
+
     /* Remove special check for player from this.  First, it looks to cause
      * some crashes (ol->ob->contr not set properly?), but secondly, a more
      * complicated method of state checking would be needed in any case -
@@ -247,10 +264,6 @@ object *get_nearest_player(object *mon) {
      * skip them over while waiting for confirmation.
      */
     if(!can_detect_enemy(mon,ol->ob)||ol->ob->map!=mon->map)
-#if 0
-       ||((ol->ob->invisible&&QUERY_FLAG(ol->ob,FLAG_UNDEAD)==QUERY_FLAG(mon,FLAG_UNDEAD))
-	  &&!QUERY_FLAG(mon,FLAG_SEE_INVISIBLE))||ol->ob->map!=mon->map)
-#endif
       continue;
     tmp=distance(ol->ob,mon);
     if(lastdist>tmp) {
