@@ -19,7 +19,7 @@ FILES = $(PFILES) handbook.ps spoiler.ps
 prefix = @prefix@
 exec_prefix = @exec_prefix@
 mandir = @mandir@
-MAN1 = $(mandir)/man1
+MAN1 = $(mandir)/man6
 MANSUFFIX = 6
 
 INSTALL = @INSTALL@
