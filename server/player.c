@@ -1974,7 +1974,7 @@ void move_player_attack(object *op, int dir)
 	     * the wiz.
 	     */
 	    if (mon->type == PLAYER && mon->stats.hp >= 0 && !mon->contr->has_hit &&
-		!on_battleGround && !QUERY_FLAG(mon, FLAG_WIZ)) {
+		!on_battleground && !QUERY_FLAG(mon, FLAG_WIZ)) {
 		short luck = mon->stats.luck;
 		mon->contr->has_hit = 1;
 		skill_attack(op, mon, 0, NULL, NULL);
