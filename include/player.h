@@ -68,6 +68,8 @@ typedef struct pl {
   char maplevel[MAX_BUF];     /* On which level is the player? */
   struct mapdef *loading;     /* When entering a map in progress of loading */
   int new_x,new_y;            /* After entering a map being loaded */
+  char savebed_map[MAX_BUF];  /* map where player will respawn after death */
+  int bed_x, bed_y;           /* x,y - coordinates of respawn (savebed) */
   int removed;                /* Flag telling if ob is to be inserted */
   sint16 known_spells[NROFREALSPELLS]; /* Spells known by the player */
   uint16 nrofknownspells; 	/* Index in the above array */
