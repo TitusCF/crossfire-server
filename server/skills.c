@@ -1020,7 +1020,7 @@ int write_on_item (object *pl,char *params) {
     char *string=params;
     int msgtype;
     int i;
-  
+
     if(pl->type!=PLAYER) return 0;
     if (!params) {
 	params="";
@@ -1035,16 +1035,22 @@ int write_on_item (object *pl,char *params) {
 	return 0;
     }
 
-    /* if skill name occurs at begining of the string 
-     * we have to reset pointer to miss it and trailing space(s) 
+    /* if skill name occurs at begining of the string
+     * we have to reset pointer to miss it and trailing space(s)
      */
-    if(lookup_skill_by_name(params)>=0){
+    /*
+     * GROS: Bugfix here. if you type
+     * use_skill inscription bla
+     * params will contain "bla" only, so looking for the skill name
+     * shouldn't be done anymore.
+     */
+/*  if(lookup_skill_by_name(params)>=0){
 	for(i=strcspn(string," ");i>0;i--) string++;
 	for(i=strspn(string," ");i>0;i--) string++;
     }
-
+*/
     /* if there is a message then it goes in a book and no message means
-     * write active spell into the scroll 
+     * write active spell into the scroll
      */
     msgtype = (string[0]!='\0') ? BOOK : SCROLL;
 

@@ -598,24 +598,25 @@ int lookup_skill_by_name(char *string) {
   char name[MAX_BUF];
 
   if(!string) return -1;
-  
+
   strcpy(name, string);
   nmlen=strlen(name);
 
   for (skillnr=0; skillnr<NROFSKILLS; skillnr++) {
+	if (strlen(name)>=strlen(skills[skillnr].name)) /* GROS - This is to prevent strings like "hi" to be matched as "hiding" */
 	if (!strncmp(name,skills[skillnr].name,MIN(strlen(skills[skillnr].name),
 	    nmlen))) return skillnr;
   }
   return -1;
 }
- 
+
 /* check_skill_to_fire() -  */
 
 int check_skill_to_fire(object *who) {
   int skillnr=0;
   rangetype shoottype=range_none;
 
-  if(who->type!=PLAYER) return 1; 
+  if(who->type!=PLAYER) return 1;
 
   switch((shoottype = who->contr->shoottype)) {
     case range_bow:
@@ -623,7 +624,7 @@ int check_skill_to_fire(object *who) {
        break;
     case range_none:
     case range_skill:
-       return 1; 
+       return 1;
        break;
     case range_magic:
         if(spells[who->contr->chosen_spell].cleric)
