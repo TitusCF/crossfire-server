@@ -41,7 +41,7 @@
 #define MAP_DIFFICULTY(m)	((m)->difficulty)
 #define MAP_TIMEOUT(m)		((m)->timeout)
 #define MAP_SWAP_TIME(m)	((m)->swap_time)
-
+#define MAP_OUTDOORS(m)		((m)->outdoor)
 
 /* mape darkness used to enforce the MAX_DARKNESS value.
  * but IMO, if it is beyond max value, that should be fixed
@@ -59,6 +59,12 @@
 #define MAP_ENTER_X(m)		(m)->enter_x
 #define MAP_ENTER_Y(m)		(m)->enter_y
 
+#define MAP_TEMP(m)		(m)->temp
+#define MAP_PRESSURE(m)		(m)->pressure
+#define MAP_HUMID(m)		(m)->humid
+#define MAP_WINDSPEED(m)	(m)->windspeed
+#define MAP_WINDDIRECTION(m)	(m)->winddir
+#define MAP_SKYCOND(m)		(m)->sky
 
 /* options passed to ready_map_name and load_original_map */
 #define MAP_FLUSH	    0x1
@@ -107,10 +113,9 @@
 #define P_IS_ALIVE      0x10	/* something alive is on this space */
 #define P_NO_CLERIC     0x20	/* no clerical spells cast here */
 #define P_NEED_UPDATE	0x40	/* this space is out of date */
-#define P_NO_ERROR      0x80    /* Purely temporary - if set, update_position
+#define P_NO_ERROR      0x80	/* Purely temporary - if set, update_position
                                  * does not complain if the flags are different.
                                  */
-
 
 /* Can't use MapCell as that is used in newserver.h
  * Instead of having numerous arrays that have information on a
@@ -123,10 +128,33 @@
 typedef struct MapSpace {
     object	*bottom;	/* lowest object on this space */
     New_Face	*faces[3];	/* faces for the 3 layers */
-    object	* faces_obj[3];	/* face objects for the 3 layers */
+    object	*faces_obj[3];	/* face objects for the 3 layers */
     uint8	flags;		/* flags about this space (see the P_ values above) */
     sint8	light;		/* How much light this space provides */
 } MapSpace;
+
+/*
+ * this is an overlay structure of the whole world.  It exists as a simple
+ * high level map, which doesn't contain the full data of the underlying map.
+ * in this map, only things such as weather are recorded.  By doing so, we
+ * can keep the entire world parameters in memory, and act as a whole on
+ * them at once.  We can then, in a separate loop, update the actual world
+ * with the new values we have assigned.
+ */
+
+typedef struct wmapdef {
+    char path[HUGE_BUF];	/* Filename of the map */
+    char	*tmpname;	/* Name of temporary file */
+    char 	*name;		/* Name of map as given by its creator */
+    sint16	temp;		/* base temperature of this tile (F) */
+    sint16	pressure;	/* barometric pressure (mb) */
+    sint8	humid;		/* humitidy of this tile */
+    sint8	windspeed;	/* windspeed of this tile */
+    sint8	winddir;	/* direction of wind */
+    sint8	sky;		/* sky conditions */
+    sint32	avgelev;	/* average elevation */
+    uint8 	darkness;	/* indicates level of darkness of map */
+} weathermap_t;
 
 /* In general, code should always use the macros 
  * above (or functions in map.c) to access many of the 
@@ -165,6 +193,12 @@ typedef struct mapdef {
     uint32  outdoor:1;	/* True if an outdoor map */
     oblinkpt *buttons;	/* Linked list of linked lists of buttons */
     MapSpace	*spaces;    /* Array of spaces on this map */
+    sint16	temp;	/* base temperature of this tile (F) */
+    sint16    pressure;  /* barometric pressure (mb) */
+    sint8	humid;	/* humitidy of this tile */
+    sint8     windspeed; /* windspeed of this tile */
+    sint8     winddir;   /* direction of wind */
+    sint8     sky;	/* sky conditions */
     char    *msg;	/* Message map creator may have left */
     char    *tile_path[4];  /* path to adjoining maps */
     struct mapdef *tile_map[4];	/* Next map, linked list */
