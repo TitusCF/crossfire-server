@@ -17,6 +17,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for 1.0.0:
 
+configure.in, configure: Fix png and Xpm library detection.  Suggested
+patch by Yann Chackhoff, applied by MSW 2001-05-20
+
 common/living.c: Fix AC wrapping problem - now limit ac to +/- 120.
 MSW 2001-05-12
 
