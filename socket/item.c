@@ -649,6 +649,7 @@ void look_at(object *op,int dx,int dy) {
     int flag=0;
 
     if (out_of_map(op->map, op->x+dx, op->y+dy)) return;
+#if 0
     /* put player back on top */
     if(op->above!=NULL) {
 	SET_FLAG (op, FLAG_NO_APPLY);
@@ -662,7 +663,10 @@ void look_at(object *op,int dx,int dy) {
 	    tmp=tmp->above);
     else
 	tmp=op->below;
-
+#else
+    for(tmp=get_map_ob(op->map,op->x+dx,op->y+dy);tmp!=NULL&&tmp->above!=NULL;
+	    tmp=tmp->above);
+#endif
     for ( ; tmp != NULL; tmp=tmp->below ) {
 	 if (tmp->invisible && !QUERY_FLAG(op, FLAG_WIZ)) continue;
 
