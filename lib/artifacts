@@ -33,7 +33,7 @@
 #	artifact is created with that value absolute (ie, hp -5
 #	will create and artifact with hp value of 5)
 #
-#	armour and dam:  If negative, absolute value is used (as in
+#	dam:  If negative, absolute value is used (as in
 #	hp, maxhp, etc above).  If positive, it acts as a percentage
 #	in increments of 10 (a value of 10 has the normal value, 5
 #	would be half normal, 20 twice, etc.
@@ -127,7 +127,7 @@ hp 5
 maxhp 5
 exp 20
 level 1
-armour 20
+resist_physical 20
 dam 13
 end
 #
@@ -141,7 +141,7 @@ hp 10
 maxhp 10
 exp 40
 level 2
-armour 30
+resist_physical 30
 dam 14
 end
 # Just to fix probability some.
@@ -391,7 +391,8 @@ Object Slay Beholder
 type 15
 slaying beholder
 value 150
-protected 2
+resist_magic 30
+
 magic 3
 end
 #
@@ -412,7 +413,8 @@ Object Glamdri
 type 15
 value 150
 magic 4
-protected 2
+resist_magic 30
+
 Int 1
 Pow 1
 weight 90
@@ -432,7 +434,8 @@ Con 7
 Int -10
 Wis -10
 Cha -15
-protected 2
+resist_magic 30
+
 material 256
 weight 50
 exp 3
@@ -597,8 +600,9 @@ value 25
 magic 1
 ac 1
 Cha 1
-protected 4
-armour 12
+resist_fire 30
+
+resist_physical 8
 msg
   Argoth was an ancient dwarven city
   in a mountain which was infested with
@@ -660,8 +664,9 @@ type 34
 value 20
 ac 1
 magic 1
-armour 12
-protected 8
+resist_physical 8
+resist_electricity 40
+
 end
 #
 Allowed all
@@ -713,7 +718,8 @@ chance 1
 Object Fire
 type 34
 value 100
-protected 4
+resist_fire 30
+
 path_attuned 2
 path_repelled 4
 end
@@ -796,7 +802,8 @@ Object Mostrai
 type 33
 value 24
 magic 1
-protected 4
+resist_fire 30
+
 end
 #
 Allowed all
@@ -807,7 +814,7 @@ magic 1
 value 12
 Cha -1
 ac 1
-armour 18
+resist_physical 10
 end
 #
 Allowed all
@@ -850,7 +857,7 @@ chance 10
 Object Sorig
 type 100
 magic 2
-armour -10
+resist_physical 8
 attacktype 8
 weight 125
 value 75
@@ -860,8 +867,8 @@ Allowed gloves
 chance 10
 Object Sorig
 type 100
-armour -5
-protected 8
+resist_physical 5
+resist_electricity 35
 weight 125
 value 10
 end
@@ -911,7 +918,7 @@ chance 6
 Object Valriel
 type 16
 value 20
-armour 12
+resist_physical 5
 weight 110
 magic 1
 end
@@ -922,7 +929,7 @@ Object Gorokh
 type 16
 value 15
 ac 2
-armour 11
+resist_physical 15
 weight 105
 magic 1
 end
@@ -933,8 +940,9 @@ Object Ruggilli
 type 16
 value 55
 ac 1
-armour 12
-protected 4
+resist_physical 15
+resist_fire 35
+
 weight 90
 magic 2
 end
@@ -945,7 +953,7 @@ Object Gaea
 type 16
 value 25
 ac 1
-armour 12
+resist_physical 10
 magic 2
 end
 #
@@ -955,7 +963,7 @@ Object Protection
 type 16
 value 15
 ac 2
-armour 14
+resist_physical 20
 magic 3
 msg
   The quality of this superb armour
@@ -975,7 +983,7 @@ Object Berwean
 type 16
 value 15
 ac -1
-armour 8
+resist_physical 8
 last_sp 150
 exp 1
 weight 70
@@ -1026,10 +1034,11 @@ type 16
 value 150
 magic 4
 Str 1
-protected 4
+resist_fire 30
+
 weight 200
 last_sp 5
-armour 13
+resist_physical 20
 ac 1
 msg
   This extremely unique platemail was made
@@ -1047,7 +1056,7 @@ Allowed plate_mail
 chance 5
 Object Prowess
 type 16
-armour -60
+resist_physical 30
 weight 250
 ac 1
 Str 2
@@ -1098,7 +1107,7 @@ Object metal weave
 type 16
 value 100
 weight 150
-armour 15
+resist_physical 15
 ac 3
 msg
   This magical robe is somehow woven of
@@ -1115,7 +1124,8 @@ face ring.117
 #color_fg light_blue
 type 70
 value 30
-protected 16
+resist_cold 30
+
 path_attuned 4
 msg
   This elemental ring is one of those made at 
@@ -1135,7 +1145,8 @@ face ring.117
 #color_fg red
 type 70
 value 35
-protected 4
+resist_fire 30
+
 path_attuned 2
 msg
   This elemental ring is one of those 
@@ -1156,7 +1167,8 @@ Object Storm
 face ring.117
 type 70
 value 25
-protected 8
+resist_electricity 30
+
 path_attuned 8
 msg
   This elemental ring is one of those made 
@@ -1178,7 +1190,8 @@ type 70
 value 80
 sp 1
 Pow 1
-protected 2
+resist_magic 30
+
 msg
   Most highlevel wizards receive one of 
   these from their guild when they become 
@@ -1195,7 +1208,8 @@ value 150
 sp 2
 Int 1
 Pow 1
-protected 2
+resist_magic 30
+
 end
 #
 Allowed all
@@ -1207,7 +1221,8 @@ value 250
 sp 2
 Int 2
 Pow 2
-protected 2
+resist_magic 30
+
 end
 #
 #  Slaying balrog--aint no such thing as a balrog yet, but.. when there is...
@@ -1223,7 +1238,9 @@ value 350
 sp 2
 Int 1
 Pow 1
-protected 6
+resist_magic 30
+resist_fire 30
+
 path_attuned 2
 end
 #
@@ -1239,8 +1256,10 @@ value 450
 sp 2
 Int 2
 Pow 2
-protected 2
-immune 128
+resist_magic 30
+
+resist_drain 100
+
 path_attuned 257
 end
 #
@@ -1255,8 +1274,11 @@ value 550
 sp 3
 Int 3
 Pow 3
-protected 2
-immune 65664
+resist_magic 30
+
+resist_drain 100
+resist_deplete 100
+
 path_attuned 259
 end
 #
@@ -1282,8 +1304,11 @@ msg
   and in the darkness bind them.
 endmsg
 make_invisible 1
-protected 2
-vulnerable 640
+resist_magic 30
+
+resist_drain -100
+resist_ghosthit -100
+
 path_attuned 606
 path_repelled 257
 end
@@ -1294,8 +1319,9 @@ Object Acid
 face ring.117
 type 70
 value 25
-protected 64
-armour -20
+resist_acid 30
+
+resist_physical 20
 msg
   This elemental ring is one of those 
   made at the Guild of Magicks by the 
@@ -1314,8 +1340,12 @@ Object Free Action
 face ring.117
 type 70
 value 60
-immune 6144
-protected 16416
+resist_slow 100
+resist_paralyze 100
+
+resist_confusion 30
+resist_fear 30
+
 end
 #
 Allowed all
@@ -1324,7 +1354,9 @@ Object Life
 face ring.117
 type 70
 value 80
-immune 65664
+resist_drain 100
+resist_deplete 100
+
 hp 2
 msg
   This semi-elemental ring is one of those
@@ -1344,7 +1376,8 @@ face ring.117
 type 70
 value 20
 Str 1
-protected 4096
+resist_paralyze 30
+
 end
 #
 Allowed all
@@ -1556,7 +1589,8 @@ Object Protection from Fire
 type 87
 weight 135
 value 400
-protected 4
+resist_fire 30
+
 material 256
 end
 #
@@ -1567,7 +1601,8 @@ Object Warmth
 type 87
 weight 140
 value 350
-protected 16
+resist_cold 30
+
 material 256
 end
 #
@@ -1578,7 +1613,8 @@ Object Insulation
 type 87
 weight 140
 value 350
-protected 8
+resist_electricity 30
+
 material 256
 end
 #
@@ -1589,7 +1625,8 @@ Object Acid Proofing
 type 87
 value 500
 weight 90
-protected 64
+resist_acid 30
+
 material 256
 end
 #
@@ -1601,7 +1638,11 @@ type 87
 magic 3
 value 50
 weight 50
-protected 66240
+resist_acid 30
+resist_drain 30
+resist_ghosthit 30
+resist_deplete 30
+
 material 0
 Cha -2
 end
@@ -1789,7 +1830,7 @@ chance 255
 difficulty 5
 Object Shielding
 face amulet_lif.111
-armour -20
+resist_physical 20
 type 39
 value 20
 end
@@ -1812,7 +1853,8 @@ face amulet_lif.111
 type 39
 value 0
 cursed 1
-vulnerable 2
+resist_magic -100
+
 end
 #
 Allowed all
@@ -1824,7 +1866,14 @@ type 39
 value 0
 damned 1
 cursed 1
-vulnerable 127
+resist_physical -100
+resist_magic -100
+resist_fire -100
+resist_electricity -100
+resist_cold -100
+resist_confusion -100
+resist_acid -100
+
 end
 #
 Allowed all
@@ -1834,7 +1883,8 @@ Object Aethereality
 face amulet_lif.111
 type 39
 value 3000
-protected 1
+resist_physical 50
+
 end
 #
 Allowed all
@@ -1855,7 +1905,7 @@ reflect_spell 1
 face amulet_lif.111
 reflect_missile 1
 ac 2
-armour 10
+resist_physical 30
 type 39
 value 1000
 end
@@ -1866,7 +1916,10 @@ difficulty 7
 Object the Shielded Mind
 face amulet_lif.111
 type 39
-immune 20512
+resist_confusion 100
+resist_paralyze 100
+resist_fear 100
+
 value 1000
 end
 #
@@ -1877,8 +1930,12 @@ Object Free Action
 face amulet_lif.111
 type 39
 value 300
-immune 6144
-protected 16416
+resist_slow 100
+resist_paralyze 100
+
+resist_confusion 30
+resist_fear 30
+
 end
 #
 Allowed all
@@ -1891,7 +1948,8 @@ sp 5
 Int 2
 Pow 2
 value 5000
-protected 2
+resist_magic 30
+
 reflect_spell 1
 end
 #
@@ -2079,7 +2137,8 @@ wc 7
 dam -20
 food 100
 nrof 10
-immune 4
+resist_fire 100
+
 level 50
 end
 #
@@ -2594,7 +2653,8 @@ chance 100
 Object Heat Resistance
 type 6
 value 30
-protected 4
+resist_fire 30
+
 end
 #
 Allowed mushroom_2
@@ -2602,7 +2662,8 @@ chance 100
 Object Frost Resistance
 type 6
 value 30
-protected 16
+resist_cold 30
+
 end
 #
 Allowed mushroom_1, mushroom_2, mushroom_3
@@ -2610,7 +2671,8 @@ chance 10
 Object Bravery
 type 6
 value 100
-protected 16384
+resist_fear 30
+
 end
 #
 Allowed mushroom_3
@@ -2618,7 +2680,8 @@ chance 90
 Object Magic Resistance
 type 6
 value 40
-protected 2
+resist_magic 30
+
 end
 #
 Allowed mushroom_2, mushroom_3
@@ -2627,7 +2690,9 @@ Object Life
 type 6
 value 500
 Con 1
-protected 65664
+resist_drain 30
+resist_deplete 30
+
 end
 #
 # Potions (incl. dusts, balms and figurine sub-types)  
