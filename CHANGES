@@ -17,6 +17,16 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+Modifed how firewalls worked.  They can now be triggered by
+handles as well as turned.  Ones which are turned by handles
+cannot be triggered by handles.  PeterM 6/15/2000
+
+fixes to random_maps:
+exit.c:  won't crash if named final_map doesn't exist
+room_gen_onion.c:  reordered the options more sanely
+special.c:  fixed a crash-bug:  nuke_map would nuke parts of monsters, but
+not the whole monster.  --PeterM
+
 server/skill_util.c:  Fix type in change_skill - was doing an == operation
 when it should just have been an =.  MSW 6/13/2000
 
