@@ -387,7 +387,7 @@ char* FindFaceName (int facenbr, char* error) {
 int ReadSmooth () {
     char buf[MAX_BUF], *p, *q;
     FILE *fp;
-    int value, smoothcount = 0, i;
+    int smoothcount = 0;
 
     bmaps_checksum=0;
     sprintf (buf,"%s/smooth", settings.datadir);
@@ -428,7 +428,6 @@ int ReadSmooth () {
 }
 
 int FindSmooth (uint16 face, uint16* smoothed) {
-    int i;
     struct smoothing *bp, tmp;
 
     tmp.id = face;

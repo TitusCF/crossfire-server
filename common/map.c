@@ -134,9 +134,12 @@ static char *create_items_path (char *s) {
 
 int check_path (char *name, int prepend_dir)
 {
-    char buf[MAX_BUF], *endbuf;
+    char buf[MAX_BUF];
+#ifndef WIN32
+    char *endbuf;
     struct stat statbuf;
     int mode = 0, i;
+#endif
 
     if (prepend_dir)
 	strcpy (buf, create_pathname(name));

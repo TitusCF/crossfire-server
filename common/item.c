@@ -458,7 +458,9 @@ char *query_name(object *op) {
     static char buf[5][HUGE_BUF];
     static int use_buf=0;
     int len=0;
+#ifdef NEW_MATERIAL_CODE
     materialtype_t *mt;
+#endif
 
     use_buf++;
     use_buf %=5;

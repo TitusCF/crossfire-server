@@ -68,6 +68,7 @@ typedef signed __int64		sint64;
 #define atoll	_atoi64
 
 /* To reduce number of warnings */
+#pragma warning( disable: 4244 ) /* conversion from 'xxx' to 'yyy', possible loss of data */
 #pragma warning( disable: 4305 ) /* initializing float f = 0.05; instead of f = 0.05f; */
 
 #else // WIN32
