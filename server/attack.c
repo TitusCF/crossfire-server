@@ -1478,6 +1478,7 @@ int kill_object(object *op,int dam, object *hitter, int type)
 	 * to credit exp to.  This is a bit problematic - we should
          * probably never really have to look at current_weapon->skill
 	 */
+	skill = NULL;
 	if (hitter->skill && hitter->type!=PLAYER) skill = hitter->skill;
 	else if (owner->chosen_skill) {
 	    skill = owner->chosen_skill->skill;

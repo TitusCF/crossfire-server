@@ -379,14 +379,22 @@ int push_ob(object *who, int dir, object *pusher) {
     /* TODO: allow multi arch pushing. Can't be very difficult */
     if (who->more == NULL && owner == pusher) {
 	int temp;
+	mapstruct *m;
+
 	remove_ob(who);
 	remove_ob(pusher);
 	temp = pusher->x;
 	pusher->x = who->x;
 	who->x = temp;
+
 	temp = pusher->y;
 	pusher->y = who->y;
 	who->y = temp;
+
+	m = pusher->map;
+	pusher->map = who->map;
+	who->map = m;
+
 	insert_ob_in_map (who,who->map,pusher,0);
 	insert_ob_in_map (pusher,pusher->map,pusher,0);
 

@@ -955,12 +955,14 @@ int cast_spell(object *op, object *caster,int dir,object *spell_ob, char *string
 
     /* if it is a player casting the spell, and they are really casting it
      * (vs it coming from a wand, scroll, or whatever else), do some 
-     * checks.  If its the wizard, skip the skips - wizards can do special
-     * things.  Likewise, we let monsters do special things - eg, they
+     * checks.  We let monsters do special things - eg, they
      * don't need the skill, bypass level checks, etc. The monster function
      * should take care of that.
+     * Remove the wiz check here and move it further down - some spells
+     * need to have the right skill pointer passed, so we need to
+     * at least process that code.
      */
-    if (op->type == PLAYER && op == caster && !QUERY_FLAG(op, FLAG_WIZ)) {
+    if (op->type == PLAYER && op == caster) {
 	cast_level = caster_level(caster, spell_ob);
 	if (spell_ob->skill) {
 	    skill = find_skill_by_name(op, spell_ob->skill);
@@ -969,52 +971,56 @@ int cast_spell(object *op, object *caster,int dir,object *spell_ob, char *string
 			spell_ob->skill, spell_ob->name);
 		return 0;
 	    }
-	    if (min_casting_level(op, spell_ob) > cast_level) {
+	    if (min_casting_level(op, spell_ob) > cast_level && !QUERY_FLAG(op, FLAG_WIZ)) {
 		new_draw_info(NDI_UNIQUE, 0,op, "You lack enough skill to cast that spell.");
 		return 0;
 	    }
 	}
-
-	if (SP_level_spellpoint_cost(caster, spell_ob, SPELL_MANA) &&
-	    SP_level_spellpoint_cost(caster, spell_ob, SPELL_MANA) >  op->stats.sp) {
-	    new_draw_info(NDI_UNIQUE, 0,op,"You don't have enough mana.");
-	    return 0;
-	}
-	if (SP_level_spellpoint_cost(caster,spell_ob, SPELL_GRACE) &&
-	    SP_level_spellpoint_cost(caster,spell_ob, SPELL_GRACE) >  op->stats.grace) {
-	    if(random_roll(0, op->stats.Wis-1, op, PREFER_HIGH) + op->stats.grace -
-	       10*SP_level_spellpoint_cost(caster,spell_ob, SPELL_GRACE)/op->stats.maxgrace >0) {
-		new_draw_info_format(NDI_UNIQUE, 0,op, 
-			 "%s grants your prayer, though you are unworthy.",godname);
-	    }
-	    else {
-		prayer_failure(op,op->stats.grace,SP_level_spellpoint_cost(caster,spell_ob, SPELL_GRACE));
-		new_draw_info_format(NDI_UNIQUE, 0,op,"%s ignores your prayer.",godname);
+	/* If the caster is the wiz, they don't ever fail, and don't have
+	 * to have sufficient grace/mana.
+	 */
+	if (!QUERY_FLAG(op, FLAG_WIZ)) {
+	    if (SP_level_spellpoint_cost(caster, spell_ob, SPELL_MANA) &&
+		SP_level_spellpoint_cost(caster, spell_ob, SPELL_MANA) >  op->stats.sp) {
+		new_draw_info(NDI_UNIQUE, 0,op,"You don't have enough mana.");
 		return 0;
 	    }
-	}
-
-	/* player/monster is trying to cast the spell.  might fumble it */
-	if (spell_ob->stats.grace && random_roll(0, 99, op, PREFER_HIGH) < 
-	      (spell_ob->level/(float)MAX(1,op->level) *cleric_chance[op->stats.Wis])) {
-	    play_sound_player_only(op->contr, SOUND_FUMBLE_SPELL,0,0);
-	    new_draw_info(NDI_UNIQUE, 0,op,"You fumble the spell.");
-	    if (settings.casting_time == TRUE) {
-		op->casting_time = -1;
+	    if (SP_level_spellpoint_cost(caster,spell_ob, SPELL_GRACE) &&
+		SP_level_spellpoint_cost(caster,spell_ob, SPELL_GRACE) >  op->stats.grace) {
+		if(random_roll(0, op->stats.Wis-1, op, PREFER_HIGH) + op->stats.grace -
+		   10*SP_level_spellpoint_cost(caster,spell_ob, SPELL_GRACE)/op->stats.maxgrace >0) {
+			new_draw_info_format(NDI_UNIQUE, 0,op, 
+				     "%s grants your prayer, though you are unworthy.",godname);
+		}
+		else {
+		    prayer_failure(op,op->stats.grace,SP_level_spellpoint_cost(caster,spell_ob, SPELL_GRACE));
+		    new_draw_info_format(NDI_UNIQUE, 0,op,"%s ignores your prayer.",godname);
+		    return 0;
+		}
 	    }
-	    return(random_roll(1, SP_level_spellpoint_cost(caster,spell_ob, SPELL_GRACE), op, PREFER_LOW));
-	} else if (spell_ob->stats.sp) {
-	    int failure = random_roll(0, 199, op, PREFER_HIGH) -
-		op->contr->encumbrance +op->level - spell_ob->level +35;
 
-	    if( failure < 0) {
-		new_draw_info(NDI_UNIQUE, 0,op,"You bungle the spell because you have too much heavy equipment in use.");
-		if (settings.spell_failure_effects == TRUE)
-		    spell_failure(op,failure,
+	    /* player/monster is trying to cast the spell.  might fumble it */
+	    if (spell_ob->stats.grace && random_roll(0, 99, op, PREFER_HIGH) < 
+	      (spell_ob->level/(float)MAX(1,op->level) *cleric_chance[op->stats.Wis])) {
+		play_sound_player_only(op->contr, SOUND_FUMBLE_SPELL,0,0);
+		new_draw_info(NDI_UNIQUE, 0,op,"You fumble the spell.");
+		if (settings.casting_time == TRUE) {
+		    op->casting_time = -1;
+		}
+		return(random_roll(1, SP_level_spellpoint_cost(caster,spell_ob, SPELL_GRACE), op, PREFER_LOW));
+	    } else if (spell_ob->stats.sp) {
+		int failure = random_roll(0, 199, op, PREFER_HIGH) -
+		    op->contr->encumbrance +op->level - spell_ob->level +35;
+
+		if( failure < 0) {
+		    new_draw_info(NDI_UNIQUE, 0,op,"You bungle the spell because you have too much heavy equipment in use.");
+		    if (settings.spell_failure_effects == TRUE)
+			spell_failure(op,failure,
 			  SP_level_spellpoint_cost(caster,spell_ob, SPELL_MANA),
 			  skill);
-		op->contr->shoottype = old_shoottype;
-		return(random_roll(0, SP_level_spellpoint_cost(caster,spell_ob, SPELL_MANA), op, PREFER_LOW));
+		    op->contr->shoottype = old_shoottype;
+		    return(random_roll(0, SP_level_spellpoint_cost(caster,spell_ob, SPELL_MANA), op, PREFER_LOW));
+		}
 	    }
 	}
     }

@@ -41,7 +41,11 @@ static int adj_stealchance (object *op, object *victim, int roll) {
 
     if(!op||!victim||!roll) return -1;
 
-    if(op->type==PLAYER && op->body_used[BODY_ARMS] <=0) {
+    /* Only prohibit stealing if the player does not have a free
+     * hand available and in fact does have hands.
+     */
+    if(op->type==PLAYER && op->body_used[BODY_ARMS] <=0 &&
+       op->body_info[BODY_ARMS]) {
 	new_draw_info(NDI_UNIQUE, 0,op,"But you have no free hands to steal with!");
 	roll=-1;
     }

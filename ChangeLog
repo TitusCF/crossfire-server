@@ -17,6 +17,21 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/attack.c: Add missing skill=NULL in kill_object() - can be rare
+   cases where the proper skill can't be found.
+server/move.c: Fix push_object() so that it also updates the pushers/
+   pushees map - should only happen in tiled map cases.
+server/pets.c: Fix summon_object() so that if a summon cult monsters was
+   cast, we try to find the god from the owner.  If still can't find the
+   god, just return instead of crashing.
+server/rune.c: Change trap_disarm() to call destroy_object() on the
+   trap object, so that all the trapss inventory is also destroyed
+   and not dumped on the ground.
+server/skills.c: Only players without arms to steal.
+server/spell_util.c: Change cast_spell to set up the skill pointer for the
+   caster even if the caster is the wizard.
+MSW 2004-03-22
+
 server/treasure.c: patch from Bernd Edler to enable multiple
    'allowed' lines in artifacts.
 Ryo 2004-03-12

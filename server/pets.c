@@ -799,8 +799,14 @@ int summon_object(object *op, object *caster, object *spell_ob, int dir)
 	nrof = lasttr->nrof;
 
     } else if (spell_ob->race && !strcmp(spell_ob->race,"GODCULTMON")) {
-	object *god=find_god(determine_god(op)), *mon;
+	object *god=find_god(determine_god(op)), *mon, *owner;
 	int summon_level, tries, ndir;
+
+	if (!god && ((owner=get_owner(op))!=NULL)) {
+	    god = find_god(determine_god(owner));
+	}
+	/* If we can't find a god, can't get what monster to summon */
+	if (!god) return 0;
 
 	if (!god->race) {
 	    new_draw_info_format(NDI_UNIQUE, 0,op,
