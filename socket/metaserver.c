@@ -128,8 +128,9 @@ void metaserver_update()
      */
     for (pl=first_player; pl!=NULL; pl=pl->next) num_players++;
 
-    sprintf(data,"%s|%d|%s|%s", settings.meta_host, num_players, VERSION, 
-	    settings.meta_comment);
+    sprintf(data,"%s|%d|%s|%s|%d|%d|%d", settings.meta_host, num_players, VERSION, 
+	    settings.meta_comment, cst_tot.ibytes, cst_tot.obytes,
+	    time(NULL) - cst_tot.time_start);
 #ifdef WIN32 /* ---win32 metaserver_init(): this removes a warning  */
     if (sendto(metafd, data, strlen(data), 0, (struct sockaddr *)&sock, sizeof(sock))<0) {
 #else

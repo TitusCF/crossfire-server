@@ -18,6 +18,12 @@ else.  With this, include the file(s) that you changed.
 
 Changes for CVS:
 
+doc/metaserver, doc/Makefile.in: Add metaserver file which describes
+    working of metaserver and format of data fields.
+socket/metaserver.c: Add reporting of inbytes, output bytes, and uptime in
+    seconds to notification of metaserver
+MSW 2001-05-24
+
 server/player.c
 common/living.c
 include/libproto.h:  New experience loss on death policy implemented.
