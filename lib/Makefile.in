@@ -162,9 +162,6 @@ archive::
 	@if [ -d $(ARCHIVE)/lib/help ]; then set +x; \
 	else (set -x; $(MKDIR) $(ARCHIVE)/lib/help); fi
 	$(CP) $(FILES_HELP) $(ARCHIVE)/lib/help
-	@if [ -d $(ARCHIVE)/lib/maps/editor ]; then set +x; \
-	else (set -x; $(MKDIR) -p $(ARCHIVE)/lib/maps/editor); fi
-	cp -r ./maps/editor $(ARCHIVE)/lib/maps
 
 patchlist::
 	@echo Makefile.in $(PFILES) $(FILES_ADM) $(FILES_HELP) $(PFILES_MISC) > .patchlist
