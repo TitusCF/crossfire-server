@@ -29,7 +29,7 @@ install:
 	rm -f $(bindir)/crossloop.pl
 	sed s%BINDIR%$(bindir)%g <crossloop.pl >$(bindir)/crossloop.pl
 	chmod 755 $(bindir)/crossloop.pl
-	rm -f $(C_BINDIR)/crossloop
+	rm -f $(bindir)/crossloop
 	sed s%BINDIR%$(bindir)%g <crossloop >$(bindir)/crossloop
 	chmod 755 $(bindir)/crossloop
 	$(INSTALL) $(INSTALLFLAGS) mktable.script $(bindir)/mktable
