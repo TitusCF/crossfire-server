@@ -50,7 +50,7 @@
  */
 
 int random_roll(int min, int max, object *op, int goodbad) {
-    int omin, diff, luck, base;
+    int omin, diff, luck, base, ran;
 
     omin = min;
     diff = max - min + 1;
@@ -61,8 +61,10 @@ int random_roll(int min, int max, object *op, int goodbad) {
       return(min); /* avoids a float exception */
     }
 
+    ran = RANDOM();
+
     if (op->type != PLAYER)
-	return((RANDOM()%diff)+min);
+	return((ran%diff)+min);
 
     luck = op->stats.luck;
     if (RANDOM()%base < MIN(10, abs(luck))) {
@@ -73,9 +75,9 @@ int random_roll(int min, int max, object *op, int goodbad) {
 	    return(omin); /*check again*/
 	((goodbad) ? (min += luck) : (diff));
 
-	return(MAX(omin, MIN(max, (RANDOM()%diff)+min)));
+	return(MAX(omin, MIN(max, (ran%diff)+min)));
     }
-    return((RANDOM()%diff)+min);
+    return((ran%diff)+min);
 }
 
 /*
@@ -129,7 +131,7 @@ sint64 random_roll64(sint64 min, sint64 max, object *op, int goodbad) {
  */
 
 int die_roll(int num, int size, object *op, int goodbad) {
-    int min, diff, luck, total, i, gotlucky, base;
+    int min, diff, luck, total, i, gotlucky, base, ran;
 
     diff = size;
     min = 1;
@@ -152,7 +154,8 @@ int die_roll(int num, int size, object *op, int goodbad) {
 	    if (diff < 1)
 		return(num); /*check again*/
 	    ((goodbad) ? (min += luck) : (diff));
-	    total += MAX(1, MIN(size, (RANDOM()%diff)+min));
+	    ran = RANDOM();
+	    total += MAX(1, MIN(size, (ran%diff)+min));
 	} else {
 	    total += RANDOM()%size+1;
 	}
