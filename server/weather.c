@@ -5,6 +5,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
+    Copyright (C) 2002 Tim Rightnour
     Copyright (C) 2002 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
@@ -24,6 +25,8 @@
 
     The authors can be reached via e-mail to crossfire-devel@real-time.com
 */
+
+/* This weather system was written for crossfire by Tim Rightnour */
 
 #include <global.h>
 #include <tod.h>
@@ -85,6 +88,33 @@ weather_avoids_t weather_avoids[] = {
     {"shallow_sea", 0},
     {NULL, 0}
 }; 
+
+/*
+ * The table below is used in let_it_snow() and singing_in_the_rain() to
+ * decide what type of snow/rain/etc arch to put down.  The first field is the
+ * name of the arch we want to match.  The second field is the special snow
+ * type we use to cover that arch.  The third field is the doublestack arch,
+ * NULL if none, used to stack over the snow after covering the tile.
+ * The fourth field is 1 if you want to match arch->name, 0 to match ob->name.
+ */
+
+weather_replace_t weather_replace[] = {
+    {"impossible_match", "snow", NULL, 0},
+    {"impossible_match2", "snow2", NULL, 0}, /* placeholders */
+    {"hills", "drifts", NULL, 0},
+    {"cobblestones", "snow4", NULL, 0},
+    {"cobblestones2", "snow4", NULL, 1},
+    {"stones", "snow4", NULL, 0},
+    {"flagstone", "snow4", NULL, 0},
+    {"stonefloor2", "snow4", NULL, 0},
+    {"wasteland", "glacier", NULL, 0},
+    {"evergreens", NULL, "evergreens2", 1},
+    {"evergreen", NULL, "tree5", 0},
+    {"tree", NULL, "tree3", 0},
+    {"woods", NULL, "woods4", 1},
+    {"woods_3", NULL, "woods5", 1},
+    {NULL, NULL, NULL, 0},
+};
 
 void set_darkness_map(mapstruct *m)
 {
@@ -1161,8 +1191,9 @@ object *avoid_weather(int *av, mapstruct *m, int x, int y, int *gs)
 
 void let_it_snow(mapstruct *m, int wx, int wy, char *filename)
 {
-    int x, y;
-    int avoid, two, temp, sky, gotsnow;
+    int x, y, i;
+    int avoid, two, temp, sky, gotsnow, found;
+    char *doublestack, *doublestack2;
     object *ob, *tmp, *oldsnow;
     archetype *at;
 
@@ -1182,12 +1213,32 @@ void let_it_snow(mapstruct *m, int wx, int wy, char *filename)
 	    oldsnow = avoid_weather(&avoid, m, x, y, &gotsnow);
 	    if (!avoid) {
 		if (sky >= SKY_LIGHT_SNOW && sky < SKY_HEAVY_SNOW)
-		    at = find_archetype("snow");
+		    at = find_archetype(weather_replace[0].special_snow);
 		if (sky >= SKY_HEAVY_SNOW)
-		    at = find_archetype("snow2");
-		if (!strcmp(GET_MAP_OB(m, x, y)->name, "hills") &&
-		    sky >= SKY_LIGHT_SNOW)
-		    at = find_archetype("drifts");
+		    at = find_archetype(weather_replace[1].special_snow);
+		if (sky >= SKY_LIGHT_SNOW) {
+		    found = 0;
+		    for (i=0; weather_replace[i].tile != NULL; i++) {
+			if (weather_replace[i].arch_or_name == 1) {
+			    if (!strcmp(GET_MAP_OB(m, x, y)->arch->name,
+					weather_replace[i].tile))
+				found++;
+			} else {
+			    if (!strcmp(GET_MAP_OB(m, x, y)->name,
+					weather_replace[i].tile))
+				found++;
+			}
+			if (found) {
+			    if (weather_replace[i].special_snow != NULL)
+				at = find_archetype(weather_replace[i].special_snow);
+			    if (weather_replace[i].doublestack_arch != NULL) {
+				two++;
+				doublestack = weather_replace[i].doublestack_arch;
+			    }
+			    break;
+			}
+		    }
+		}
 		/* special case scorn, where the no-magic field wrecks my
 		   logic */
 		if (GET_MAP_OB(m, x, y)->above != NULL) {
@@ -1198,35 +1249,6 @@ void let_it_snow(mapstruct *m, int wx, int wy, char *filename)
 				"cobblestones2") && sky >= SKY_LIGHT_SNOW)
 			at = find_archetype("snow4");
 		}
-		if (!strcmp(GET_MAP_OB(m, x, y)->name, "cobblestones") &&
-		    sky >= SKY_LIGHT_SNOW)
-		    at = find_archetype("snow4");
-		if (!strcmp(GET_MAP_OB(m, x, y)->arch->name, "cobblestones2") &&
-		    sky >= SKY_LIGHT_SNOW)
-		    at = find_archetype("snow4");
-		if (!strcmp(GET_MAP_OB(m, x, y)->name, "stones") &&
-		    sky >= SKY_LIGHT_SNOW)
-		    at = find_archetype("snow4");
-		if (!strcmp(GET_MAP_OB(m, x, y)->name, "flagstone") &&
-		    sky >= SKY_LIGHT_SNOW)
-		    at = find_archetype("snow4");
-		if (!strcmp(GET_MAP_OB(m, x, y)->arch->name, "stonefloor2") &&
-		    sky >= SKY_LIGHT_SNOW)
-		    at = find_archetype("snow4");
-		if (!strcmp(GET_MAP_OB(m, x, y)->name, "evergreens") &&
-		    sky >= SKY_LIGHT_SNOW)
-		    at = find_archetype("cforest1");
-		if (!strcmp(GET_MAP_OB(m, x, y)->name, "wasteland") &&
-		    sky >= SKY_LIGHT_SNOW)
-		    at = find_archetype("glacier");
-		if (!strcmp(GET_MAP_OB(m, x, y)->name, "evergreen"))
-		    two++;
-		if (!strcmp(GET_MAP_OB(m, x, y)->name, "tree"))
-		    two++;
-		if (!strcmp(GET_MAP_OB(m, x, y)->arch->name, "woods"))
-		    two++;
-		if (!strcmp(GET_MAP_OB(m, x, y)->arch->name, "woods_3"))
-		    two++;
 		if (gotsnow && at) {
 		    if (!strcmp(oldsnow->arch->name, at->name))
 			at = NULL;
@@ -1235,19 +1257,27 @@ void let_it_snow(mapstruct *m, int wx, int wy, char *filename)
 			free_object(oldsnow);
 			tmp=GET_MAP_OB(m, x, y);
 			/* clean up the trees we put over the snow */
-			if (!strcmp(tmp->name, "evergreen"))
-			    tmp = tmp->above;
-			else if (!strcmp(tmp->name, "tree"))
-			    tmp = tmp->above;
-			else if (!strcmp(tmp->arch->name, "woods"))
-			    tmp = tmp->above;
-			else if (!strcmp(tmp->arch->name, "woods_3"))
-			    tmp = tmp->above;
-			if (tmp != NULL)
-			    if (strcmp(tmp->arch->name, "tree3") == 0 ||
-				strcmp(tmp->arch->name, "tree5") == 0 ||
-				strcmp(tmp->arch->name, "woods4") == 0 ||
-				strcmp(tmp->arch->name, "woods5") == 0) {
+			found = 0;
+			doublestack2 = NULL;
+			for (i=0; weather_replace[i].tile != NULL; i++) {
+			    if (weather_replace[i].doublestack_arch == NULL)
+				continue;
+			    if (weather_replace[i].arch_or_name == 1) {
+				if (!strcmp(tmp->arch->name,
+					    weather_replace[i].tile))
+				    found++;
+			    } else {
+				if (!strcmp(tmp->name, weather_replace[i].tile))
+				    found++;
+			    }
+			    if (found) {
+				tmp = tmp->above;
+				doublestack2 = weather_replace[i].doublestack_arch;
+				break;
+			    }
+			}
+			if (tmp != NULL && doublestack2 != NULL)
+			    if (strcmp(tmp->arch->name, doublestack2) == 0) {
 				remove_ob(tmp);
 				free_object(tmp);
 			    }
@@ -1265,14 +1295,7 @@ void let_it_snow(mapstruct *m, int wx, int wy, char *filename)
 		        INS_NO_MERGE | INS_NO_WALK_ON | INS_ABOVE_FLOOR_ONLY);
 		    if (two) {
 			at = NULL;
-			if (!strcmp(GET_MAP_OB(m, x, y)->name, "evergreen"))
-			    at = find_archetype("tree5");
-			if (!strcmp(GET_MAP_OB(m, x, y)->name, "tree"))
-			    at = find_archetype("tree3");
-			if (!strcmp(GET_MAP_OB(m, x, y)->arch->name, "woods"))
-			    at = find_archetype("woods4");
-			if (!strcmp(GET_MAP_OB(m, x, y)->arch->name, "woods3"))
-			    at = find_archetype("woods5");
+			at = find_archetype(doublestack);
 			if (at != NULL) {
 			    ob = get_object();
 			    copy_object(&at->clone, ob);
@@ -1288,18 +1311,14 @@ void let_it_snow(mapstruct *m, int wx, int wy, char *filename)
 		/* melt some snow */
 		for (tmp=GET_MAP_OB(m, x, y)->above; tmp; tmp = tmp->above) {
 		    avoid = 0;
-		    if (!strcmp(tmp->name, "snow"))
-			avoid++;
-		    else if (!strcmp(tmp->arch->name, "snow2"))
-			avoid++;
-		    else if (!strcmp(tmp->arch->name, "drifts"))
-			avoid++;
-		    else if (!strcmp(tmp->arch->name, "cforest1"))
-			avoid++;
-		    else if (!strcmp(tmp->arch->name, "snow4"))
-			avoid++;
-		    else if (!strcmp(tmp->arch->name, "glacier"))
-			avoid++;
+		    for (i=0; weather_replace[i].tile != NULL; i++) {
+			if (weather_replace[i].special_snow == NULL)
+			    continue;
+			if (!strcmp(tmp->arch->name, weather_replace[i].special_snow))
+			    avoid++;
+			if (avoid)
+			    break;
+		    }
 		    if (avoid) {
 			/* replace snow with a big puddle */
 			remove_ob(tmp);
@@ -1350,9 +1369,10 @@ void let_it_snow(mapstruct *m, int wx, int wy, char *filename)
 
 void singing_in_the_rain(mapstruct *m, int wx, int wy, char *filename)
 {
-    int x, y;
-    int avoid, two, temp, sky, gotsnow;
+    int x, y, i;
+    int avoid, two, temp, sky, gotsnow, found;
     object *ob, *tmp, *oldsnow;
+    char *doublestack, *doublestack2;
     archetype *at;
 
     for (x=0; x < settings.worldmaptilesizex; x++) {
@@ -1383,14 +1403,25 @@ void singing_in_the_rain(mapstruct *m, int wx, int wy, char *filename)
 		    case 2: at = find_archetype("rain5"); break;
 		    default: at = NULL;
 		    }
-		if (!strcmp(GET_MAP_OB(m, x, y)->name, "evergreen"))
-		    two++;
-		if (!strcmp(GET_MAP_OB(m, x, y)->name, "tree"))
-		    two++;
-		if (!strcmp(GET_MAP_OB(m, x, y)->arch->name, "woods"))
-		    two++;
-		if (!strcmp(GET_MAP_OB(m, x, y)->arch->name, "woods_3"))
-		    two++;
+		found = 0;
+		for (i=0; weather_replace[i].tile != NULL; i++) {
+		    if (weather_replace[i].arch_or_name == 1) {
+			if (!strcmp(GET_MAP_OB(m, x, y)->arch->name,
+				    weather_replace[i].tile))
+			    found++;
+		    } else {
+			if (!strcmp(GET_MAP_OB(m, x, y)->name,
+				    weather_replace[i].tile))
+			    found++;
+		    }
+		    if (found) {
+			if (weather_replace[i].doublestack_arch != NULL) {
+			    two++;
+			    doublestack = weather_replace[i].doublestack_arch;
+			}
+			break;
+		    }
+		}
 		if (gotsnow && at) {
 		    if (!strcmp(oldsnow->arch->name, at->name))
 			at = NULL;
@@ -1399,19 +1430,27 @@ void singing_in_the_rain(mapstruct *m, int wx, int wy, char *filename)
 			free_object(oldsnow);
 			tmp=GET_MAP_OB(m, x, y);
 			/* clean up the trees we put over the snow */
-			if (!strcmp(tmp->name, "evergreen"))
-			    tmp = tmp->above;
-			else if (!strcmp(tmp->name, "tree"))
-			    tmp = tmp->above;
-			else if (!strcmp(tmp->arch->name, "woods"))
-			    tmp = tmp->above;
-			else if (!strcmp(tmp->arch->name, "woods_3"))
-			    tmp = tmp->above;
-			if (tmp != NULL)
-			    if (strcmp(tmp->arch->name, "tree3") == 0 ||
-				strcmp(tmp->arch->name, "tree5") == 0 ||
-				strcmp(tmp->arch->name, "woods4") == 0 ||
-				strcmp(tmp->arch->name, "woods5") == 0) {
+			found = 0;
+			doublestack2 = NULL;
+			for (i=0; weather_replace[i].tile != NULL; i++) {
+			    if (weather_replace[i].doublestack_arch == NULL)
+				continue;
+			    if (weather_replace[i].arch_or_name == 1) {
+				if (!strcmp(tmp->arch->name,
+					    weather_replace[i].tile))
+				    found++;
+			    } else {
+				if (!strcmp(tmp->name, weather_replace[i].tile))
+				    found++;
+			    }
+			    if (found) {
+				tmp = tmp->above;
+				doublestack2 = weather_replace[i].doublestack_arch;
+				break;
+			    }
+			}
+			if (tmp != NULL && doublestack2 != NULL)
+			    if (strcmp(tmp->arch->name, doublestack2) == 0) {
 				remove_ob(tmp);
 				free_object(tmp);
 			    }
@@ -1427,15 +1466,7 @@ void singing_in_the_rain(mapstruct *m, int wx, int wy, char *filename)
 		    insert_ob_in_map(ob, m, ob,
 		        INS_NO_MERGE | INS_NO_WALK_ON | INS_ABOVE_FLOOR_ONLY);
 		    if (two) {
-			at = NULL;
-			if (!strcmp(GET_MAP_OB(m, x, y)->name, "evergreen"))
-			    at = find_archetype("tree5");
-			if (!strcmp(GET_MAP_OB(m, x, y)->name, "tree"))
-			    at = find_archetype("tree3");
-			if (!strcmp(GET_MAP_OB(m, x, y)->arch->name, "woods"))
-			    at = find_archetype("woods4");
-			if (!strcmp(GET_MAP_OB(m, x, y)->arch->name, "woods3"))
-			    at = find_archetype("woods5");
+			at = find_archetype(doublestack);
 			if (at != NULL) {
 			    ob = get_object();
 			    copy_object(&at->clone, ob);
@@ -1469,19 +1500,27 @@ void singing_in_the_rain(mapstruct *m, int wx, int wy, char *filename)
 			    weathermap[wx][wy].humid++;
 			tmp=GET_MAP_OB(m, x, y);
 			/* clean up the trees we put over the rain */
-			if (!strcmp(tmp->name, "evergreen"))
-			    tmp = tmp->above;
-			else if (!strcmp(tmp->name, "tree"))
-			    tmp = tmp->above;
-			else if (!strcmp(tmp->arch->name, "woods"))
-			    tmp = tmp->above;
-			else if (!strcmp(tmp->arch->name, "woods_3"))
-			    tmp = tmp->above;
-			if (tmp != NULL)
-			    if (strcmp(tmp->arch->name, "tree3") == 0 ||
-			        strcmp(tmp->arch->name, "tree5") == 0 ||
-				strcmp(tmp->arch->name, "woods4") == 0 ||
-				strcmp(tmp->arch->name, "woods5") == 0) {
+			found = 0;
+			doublestack2 = NULL;
+			for (i=0; weather_replace[i].tile != NULL; i++) {
+			    if (weather_replace[i].doublestack_arch == NULL)
+				continue;
+			    if (weather_replace[i].arch_or_name == 1) {
+				if (!strcmp(tmp->arch->name,
+					    weather_replace[i].tile))
+				    found++;
+			    } else {
+				if (!strcmp(tmp->name, weather_replace[i].tile))
+				    found++;
+			    }
+			    if (found) {
+				tmp = tmp->above;
+				doublestack2 = weather_replace[i].doublestack_arch;
+				break;
+			    }
+			}
+			if (tmp != NULL && doublestack2 != NULL)
+			    if (strcmp(tmp->arch->name, doublestack2) == 0) {
 				remove_ob(tmp);
 				free_object(tmp);
 			    }

@@ -78,4 +78,11 @@ typedef struct _weather_avoids {
 	int snow;
 } weather_avoids_t;
 
+typedef struct _weather_replace {
+	char *tile;
+	char *special_snow;
+	char *doublestack_arch;
+	int arch_or_name;
+} weather_replace_t;
+
 #endif /* _TOD_H_ */
