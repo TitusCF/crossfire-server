@@ -399,6 +399,7 @@ if (item == spellNormal && !ability ){
   case SP_WINDSTORM:
   case SP_PEACE:
   case SP_SPIDERWEB:
+  case SP_VITRIOL_SPLASH:
     success = cast_cone(op,caster,dir,duration,type,spellarch[type],!ability);
     break;
   case SP_TURN_UNDEAD:
@@ -798,7 +799,6 @@ if (item == spellNormal && !ability ){
     break;
 
   case SP_POISON_FOG:
-  case SP_VITRIOL_SPLASH:
     /* These two don't do anything yet, but putting the above in
      * prevents compiler warnings.
      */
