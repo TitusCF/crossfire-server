@@ -170,7 +170,7 @@ void initOnePlugin(char* pluginfile)
     int i=0;
     HMODULE DLLInstance;
     void *ptr = NULL;
-    CFParm* HookParm;
+    CFParm HookParm;
 
     if ((DLLInstance = LoadLibrary(pluginfile))==NULL)
     {
@@ -219,13 +219,12 @@ void initOnePlugin(char* pluginfile)
     {
         int j;
         i = 0;
-        HookParm = (CFParm *)(malloc(sizeof(CFParm)));
-        HookParm->Value[0]=(int *)(malloc(sizeof(int)));
 
         for(j=1; j<NR_OF_HOOKS;j++)
         {
-            memcpy(HookParm->Value[0], &j, sizeof(int));
-            HookParm->Value[1] = HookList[j];
+            int tmp = j;
+            HookParm.Value[0] = &tmp;
+            HookParm.Value[1] = HookList[j];
             /*switch(j)
             {
             case HOOK_NONE:
@@ -381,10 +380,8 @@ void initOnePlugin(char* pluginfile)
 
 /*  Serious bug, fix this in all local copies */
 /*            HookParm->dparm = 2044; */
-            PlugList[PlugNR].hookfunc(HookParm);
+            PlugList[PlugNR].hookfunc(&HookParm);
         };
-        free(HookParm->Value[0]);
-        free(HookParm);
     };
     if (PlugList[PlugNR].eventfunc==NULL)
     {
@@ -495,7 +492,7 @@ void initOnePlugin(char* pluginfile)
 {
         int i=0;
         void *ptr = NULL;
-        CFParm* HookParm;
+        CFParm HookParm;
         if ((ptr=dlopen(pluginfile,RTLD_NOW|RTLD_GLOBAL))==NULL)
         {
                 LOG(llevInfo,"Plugin error: %s\n", dlerror());
@@ -540,13 +537,12 @@ void initOnePlugin(char* pluginfile)
         {
                 int j;
                 i = 0;
-                HookParm = (CFParm *)(malloc(sizeof(CFParm)));
-                HookParm->Value[0]=(int *)(malloc(sizeof(int)));
 
                 for(j=1; j<NR_OF_HOOKS;j++)
                 {
-                    memcpy(HookParm->Value[0], &j, sizeof(int));
-                    HookParm->Value[1] = HookList[j];
+                    int tmp = j;
+                    HookParm.Value[0] = &tmp;
+                    HookParm.Value[1] = HookList[j];
                     /*switch(j)
                     {
                         case HOOK_NONE:
@@ -696,10 +692,8 @@ void initOnePlugin(char* pluginfile)
                             HookParm->Value[1] = &CFWSendCustomCommand;
                             break;
                     };*/
-                    PlugList[PlugNR].hookfunc(HookParm);
+                    PlugList[PlugNR].hookfunc(&HookParm);
                 };
-                free(HookParm->Value[0]);
-                free(HookParm);
         };
         if (PlugList[PlugNR].eventfunc==NULL)
         {

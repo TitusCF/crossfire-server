@@ -17,6 +17,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/plugins.c: Remove the use of malloc() in initOnePlugin().
+Andreas Kirschbaum 2004-10-18
+
 plugin/plugin_python.c, plugin_animator/animator_box.c,
 plugin_animator/plugin_animator.c, plugin_logger/arena.c,
 plugin_logger/plugin_logger.c: Use HOOK_FREEMEMORY to free memory allocated
