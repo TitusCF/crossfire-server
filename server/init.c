@@ -304,7 +304,6 @@ void init(int argc, char **argv) {
     fprintf(logfile,"Welcome to CrossFire, v%s\n",VERSION);
     fprintf(logfile,"Copyright (C) 1994 Mark Wedel.\n");
     fprintf(logfile,"Copyright (C) 1992 Frank Tore Johansen.\n");
-    fprintf(logfile, "Warning ! This is an unofficial release !\n");
 
 #ifdef DM_MAIL
     fprintf(logfile,"Maintained locally by: %s\n",DM_MAIL);
@@ -785,7 +784,7 @@ racelink * get_racelist ( ) {
   list->nrof=0;
   list->member=get_objectlink();
   list->next=NULL;
- 
+
   return list;
 }
  
