@@ -3,7 +3,7 @@ Section: games
 Priority: optional
 Maintainer: Jaakko Niemi <liiwi@debian.org>
 Standards-Version: 3.5.2
-Build-Depends: debhelper (>= 4.1.16), libxaw7-dev, xlibs-dev, xutils, flex, automake1.6, dpatch
+Build-Depends: debhelper (>= 4.1.16), libxaw7-dev, xlibs-dev, xutils, flex, automake1.8, dpatch
 
 Package: crossfire-server
 Architecture: any
@@ -52,20 +52,6 @@ Architecture: any
 Depends: crossfire-maps (>=0.95.3), ${shlibs:Depends}, gdb, crossfire-server-common (=1.5.0-2)
 Description: Server for Crossfire Games with debug information not stripped from the binaries
  This is the server program for the crossfire client
- .
- Crossfire is a multiplayer graphical arcade and adventure game made for
- the X environment. It has certain flavours from other games, especially
- Gauntlet (TM) and Nethack/Moria. Any number of players can move around in their
- own window, finding and using items and battle monsters. They can choose to
- cooperate or compete in the same "world".
- .
- Homepage: http://crossfire.real-time.com/
-
-Package: crossfire-server-common
-Architecture: any
-Depends: ${shlibs:Depends}
-Description: Common files for the Crossfire Server
- This is the common files for the crossfire server
  .
  Crossfire is a multiplayer graphical arcade and adventure game made for
  the X environment. It has certain flavours from other games, especially

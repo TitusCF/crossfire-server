@@ -13,7 +13,7 @@ build-stamp:
 	./configure	--prefix=/$(LIB_DIR) 		\
 			--datadir=/usr/share/games 	\
 		        --bindir=/usr/games     	\
-			--mandir=/usr/share/man/man1	\
+			--mandir=/usr/share/man		\
 			--localstatedir=/var/games	\
 			--sysconfdir=/etc
 
@@ -29,28 +29,10 @@ clean-patched:
 	dh_testroot
 	-rm -f build-stamp 
 	-rm -f install-stamp
-	-rm -rf debian/crossfire-common
-	-rm -rf debian/crossfire-server-dbg
 	-rm -rf debian/crossfire-server
-	-rm -rf debian/crossfire-doc
-	-rm -rf debian/crossfire-edit
 
 	# Add here commands to clean up after the build process.
-	-$(MAKE) clean
 	-$(MAKE) distclean
-	-rm -rf Makefile
-
-	-find -name "Makefile" -print0 | xargs -0r rm 
-	-rm config.cache
-	-rm config.log
-	-rm config.status
-	-rm include/autoconf.h
-	-rm socket/socket.a
-	-rm lib/xbmtobdf.o
-	-rm common/libcross.a
-	-rm lib/xbmtobdf
-	-rm random_maps/random_map.a
-	-rm random_maps/standalone.o
 
 	dh_clean
 
@@ -63,95 +45,66 @@ unpatch:
 	dpatch deapply-all --verbose
 	rm -rf patch-stamp debian/patched
 
-common: build 
-	dh_testdir
-	dh_testroot
-	dh_clean -k
-	dh_installdirs
-
-	$(MAKE) -C common install DESTDIR=$(CURDIR)/debian/crossfire-server-common
-	$(MAKE) -C random_maps install DESTDIR=$(CURDIR)/debian/crossfire-server-common
-	$(MAKE) -C socket install DESTDIR=$(CURDIR)/debian/crossfire-server-common
-	$(MAKE) -C include install DESTDIR=$(CURDIR)/debian/crossfire-server-common
-	$(MAKE) -C lib install DESTDIR=$(CURDIR)/debian/crossfire-server-common
-	$(MAKE) -C utils install DESTDIR=$(CURDIR)/debian/crossfire-server-common
-	$(MAKE) -C plugin install DESTDIR=$(CURDIR)/debian/crossfire-server-common
-	$(MAKE) -C devel install DESTDIR=$(CURDIR)/debian/crossfire-server-common
-	$(MAKE) -C utils uninstall-nodist_binSCRIPTS  DESTDIR=$(CURDIR)/debian/crossfire-server-common
-
-	chown -R games.games $(CURDIR)/debian/crossfire-server-common/var/games/crossfire
-	chmod 2755 $(CURDIR)/debian/crossfire-server-common/var/games/crossfire
-	install -D -m775 -o root -g games -d $(CURDIR)/debian/crossfire-server-common/var/log/crossfire
-	install -D -m755 -o root -g root -d $(CURDIR)/debian/crossfire-server-common/etc/logrotate.d/
-	install -m644 $(CURDIR)/debian/logrotate.d $(CURDIR)/debian/crossfire-server-common/etc/logrotate.d/crossfire-server
-	dh_install
-
-debug: build common
-	dh_testdir
-	dh_testroot
-	dh_installdirs
-	$(MAKE) -C server install DESTDIR=$(CURDIR)/debian/crossfire-server-dbg
-	dh_install
-
-install: build debug common
-	dh_testdir
-	dh_testroot
-	dh_installdirs
-	$(MAKE) -C server install DESTDIR=$(CURDIR)/debian/crossfire-server 
-	dh_install
+install: binary-indep binary-arch
 
 # Build architecture-independent files here.
-binary-indep: build install
-	dh_testdir -i
-#	dh_installmenu -i
-	dh_installdocs -i
-	dh_installchangelogs -i 
-	dh_compress -i 
-	dh_fixperms -i 
-#	dh_suidregister -i 
-	dh_installdeb -i
-	dh_gencontrol -i
-	dh_md5sums -i 
-	dh_builddeb -i
+binary-indep: 
+	dh_testdir
+	dh_testroot
+	dh_clean -k -i
+	dh_installdirs -i
+
+	cd lib && \
+	$(MAKE) install DESTDIR=$(CURDIR)/debian/tmp
+
+	cd lib && \
+	$(MAKE) install DESTDIR=$(CURDIR)/debian/tmp
+
+	cd utils && \
+	$(MAKE) install DESTDIR=$(CURDIR)/debian/tmp
+
+	cd doc && \
+	$(MAKE) install DESTDIR=$(CURDIR)/debian/tmp
+
+	dh_installdocs -pcrossfire-doc
+	dh_install -i
 
 # Build architecture-dependent files here.
-binary-arch: build install
-	dh_testdir -a
+binary-arch: 
+	dh_testdir
 	dh_testroot
-#	dh_installmenu -a
-#
-	dh_installinit -pcrossfire-server-common -Pdebian/crossfire-server-common
-	dh_installdocs -pcrossfire-server-common -Pdebian/crossfire-server-common
-	dh_installman -pcrossfire-server-common -Pdebian/crossfire-server-common doc/crossfire.man
-	dh_installman -pcrossfire-server-common -Pdebian/crossfire-server-common doc/crossfire-config.man
-	dh_installman -pcrossfire-server-common -Pdebian/crossfire-server-common doc/crossloop.web.man
-	dh_installchangelogs -pcrossfire-server-common -Pdebian/crossfire-server-common
-	dh_compress -pcrossfire-server-common -Pdebian/crossfire-server-common
-	dh_installdeb -pcrossfire-server-common -Pdebian/crossfire-server-common
-	dh_installdebconf -pcrossfire-server-common -Pdebian/crossfire-server-common
-	dh_shlibdeps -pcrossfire-server-common -Pdebian/crossfire-server-common
-	dh_gencontrol -pcrossfire-server-common -Pdebian/crossfire-server-common
+	dh_installchangelogs
 
-	dh_md5sums -pcrossfire-server-dbg -Pdebian/crossfire-server-dbg
-	dh_builddeb -pcrossfire-server-dbg -Pdebian/crossfire-server-dbg
+	cd random_maps && \
+	$(MAKE) install DESTDIR=$(CURDIR)/debian/tmp
+	
+	cd server && \
+	$(MAKE) install DESTDIR=$(CURDIR)/debian/tmp
 
-	dh_strip -pcrossfire-server -Pdebian/crossfire-server
-	dh_md5sums -pcrossfire-server -Pdebian/crossfire-server
-	dh_builddeb -pcrossfire-server -Pdebian/crossfire-server
+	cd plugin && \
+	$(MAKE) install DESTDIR=$(CURDIR)/debian/tmp
 
-	dh_installdocs -pcrossfire-edit -Pdebian/crossfire-edit
-	dh_installchangelogs -pcrossfire-edit -Pdebian/crossfire-edit
-	dh_installman -pcrossfire-edit -Pdebian/crossfire-edit doc/crossedit.man
-	dh_compress -pcrossfire-edit -Pdebian/crossfire-edit
-	dh_installdeb -pcrossfire-edit -Pdebian/crossfire-edit
-	dh_shlibdeps -pcrossfire-edit -Pdebian/crossfire-edit
-	dh_gencontrol -pcrossfire-edit -Pdebian/crossfire-edit
-	dh_strip -pcrossfire-edit -Pdebian/crossfire-edit
-	dh_md5sums -pcrossfire-edit -Pdebian/crossfire-edit
-	dh_builddeb -pcrossfire-edit -Pdebian/crossfire-edit
+	cd devel && \
+	$(MAKE) install DESTDIR=$(CURDIR)/debian/tmp
+
+	cd crossedit && \
+	$(MAKE) install DESTDIR=$(CURDIR)/debian/tmp
+	dh_movefiles -pcrossfire-edit
+
+	dh_installlogrotate
+	dh_installinit -r -- defaults 99 01
+	dh_installman
+	dh_strip --dbg-package=crossfire-server
+	dh_compress
+	dh_fixperms
+	dh_makeshlibs -V
+	dh_installdeb
+	dh_gencontrol
+	dh_md5sums
+	dh_builddeb
 
 source diff:                                                                  
 	@echo >&2 'source and diff are obsolete - use dpkg-source -b'; false
 
 binary: binary-indep binary-arch
-.PHONY: build clean binary-indep binary-arch binary install
+.PHONY: build clean binary-indep binary-arch binary install install-indep install-arch
