@@ -594,6 +594,7 @@
 
 #define MAPDIR		"maps"
 #define ARCHETYPES	"archetypes"
+#define REGIONS	"regions"
 #define HIGHSCORE	"highscore"
 #define TREASURES	"treasures"
 #define	BANISHFILE  "banish_file"

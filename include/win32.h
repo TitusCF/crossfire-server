@@ -36,7 +36,9 @@
 #define __STDC__ 1      /* something odd, CF want this, but don'T include it */
                         /* before the standard includes */
 
+#ifndef HAVE_SNPRINTF
 #define HAVE_SNPRINTF 1
+#endif
 #define snprintf _snprintf
 
 #include "version.h"

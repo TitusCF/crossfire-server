@@ -717,6 +717,8 @@ static int load_map_header(FILE *fp, mapstruct *m)
 	    m->fixed_resettime = atoi(value);
 	} else if (!strcmp(key,"unique")) {
 	    m->unique = atoi(value);
+	} else if (!strcmp(key,"region")) {
+	    m->region = get_region_by_name(value);
 	} else if (!strcmp(key,"outdoor")) {
 	    m->outdoor = atoi(value);
 	} else if (!strcmp(key, "temp")) {
@@ -1070,6 +1072,7 @@ int new_save_map(mapstruct *m, int flag) {
      * or a difficulty value we generated when the map was first loaded
      */
     if (m->difficulty) fprintf(fp,"difficulty %d\n", m->difficulty);
+    if (m->region) fprintf(fp,"region %d\n", m->region);
     if (m->darkness) fprintf(fp,"darkness %d\n", m->darkness);
     if (m->width) fprintf(fp,"width %d\n", m->width);
     if (m->height) fprintf(fp,"height %d\n", m->height);

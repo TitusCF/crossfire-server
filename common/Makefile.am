@@ -49,6 +49,7 @@ libcross_a_SOURCES = \
 	re-cmp.c\
 	readable.c\
 	recipe.c\
+	region.c\
 	shstr.c\
 	time.c\
 	treasure.c\

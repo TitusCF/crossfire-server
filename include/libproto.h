@@ -343,6 +343,15 @@ extern int numb_ingred(char *buf);
 extern recipelist *get_random_recipelist(void);
 extern recipe *get_random_recipe(recipelist *rpl);
 extern void free_all_recipes(void);
+/* region.c */
+extern char *get_region_longname(region *r);
+extern char *get_region_msg(region *r);
+extern region *get_region_by_name(char *region_name);
+extern char *get_name_of_region_for_map(mapstruct *m);
+extern void parse_regions();
+extern void init_regions();
+extern region *get_region_struct();
+extern void assign_region_parents();
 /* shstr.c */
 extern void init_hash_table(void);
 extern char *add_string(const char *str);

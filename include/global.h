@@ -174,6 +174,7 @@ extern New_Face *new_faces;
  */
 EXTERN player *first_player;
 EXTERN mapstruct *first_map;
+EXTERN region *first_region;
 EXTERN treasurelist *first_treasurelist;
 EXTERN artifactlist *first_artifactlist;
 EXTERN archetype *first_archetype;
@@ -325,6 +326,7 @@ typedef struct Settings {
     char    *playerdir;	    /* Where the player files are */
     char    *mapdir;	    /* Where the map files are */
     char    *archetypes;    /* name of the archetypes file - libdir is prepended */
+    char    *regions;       /* name of the regions file - libdir is prepended */
     char    *treasures;	    /* location of the treasures file. */
     char    *uniquedir;	    /* directory for the unique items */
     char    *tmpdir;	    /* Directory to use for temporary files */

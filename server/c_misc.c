@@ -198,6 +198,25 @@ void malloc_info(object *op) {
   new_draw_info(NDI_UNIQUE, 0,op,errmsg);
 }
 
+/* 
+ * Pretty much identical to current map_info, but on a bigger scale 
+ * This function returns the name of the players current region, and
+ * a description of it. It is there merely for flavour text.
+ */
+void current_region_info(object *op) {
+    /* 
+     * Ok I /suppose/ I should write a seperate function for this, but it isn't
+     * going to be /that/ slow, and won't get called much
+     */
+    region *r = get_region_by_name(get_name_of_region_for_map(op->map));
+
+    if (!r)
+	return;
+	/* This should only be possible if regions are not operating on this server. */
+
+    new_draw_info_format(NDI_UNIQUE, 0,op,   
+	"You are in %s. \n %s", get_region_longname(r), get_region_msg(r));
+}
 
 void current_map_info(object *op) {
     mapstruct *m = op->map;
@@ -206,7 +225,7 @@ void current_map_info(object *op) {
 	return;
 
     new_draw_info_format(NDI_UNIQUE, 0,op,   
-	"%s (%s)", m->name, m->path);
+	"%s (%s) in %s", m->name, m->path, get_name_of_region_for_map(m));
 
     if (QUERY_FLAG(op,FLAG_WIZ)) {
 	new_draw_info_format(NDI_UNIQUE, 0, op,
@@ -306,6 +325,12 @@ int command_mapinfo (object *op, char *params)
     current_map_info(op);
     return 1;
   }
+
+int command_whereami (object *op, char *params)
+{
+    current_region_info(op);
+    return 1;
+}
 
  int command_maps (object *op, char *params)
 {

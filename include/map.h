@@ -192,6 +192,32 @@ typedef struct wmapdef {
 	sint16  realtemp;  /*  temperature at a given calculation step for this tile*/
 } weathermap_t;
 
+/*
+ * Each map is in a given region of the game world and links to a region definiton, so
+ * they have to appear here in the headers, before the mapdef
+ */
+typedef struct regiondef {
+    struct	regiondef *next; /* pointer to next region, NULL for the last one */
+    char	*name;		 /* Shortend name of the region as maps refer to it */
+    char	*parent_name;	 /* 
+    				  * So that parent and child regions can be defined in
+    				  * any order, we keep hold of the parent_name during
+				  * initialisation, and the children get assigned to their
+				  * parents later. (before runtime on the server though)
+				  * nothing outside the init code should ever use this value.
+				  */
+    struct     regiondef *parent;/* 
+    				  * Pointer to the region that is a parent of the current
+    				  * region, if a value isn't defined in the current region
+				  * we traverse this series of pointers until it is.
+				  */
+    char	*longname;	 /* Official title of the region, this might be defined
+    				  * to be the same as name*/
+    char	*msg;		 /* the description of the region */
+    sint8	fallback;	 /* whether, in the event of a region not existing,
+    				  * this should be the one we fall back on as the default */
+} region;
+
 /* In general, code should always use the macros 
  * above (or functions in map.c) to access many of the 
  * values in the map structure.  Failure to do this will
@@ -205,6 +231,9 @@ typedef struct mapdef {
     char path[HUGE_BUF];	/* Filename of the map */
     char *tmpname;	/* Name of temporary file */
     char *name;		/* Name of map as given by its creator */
+    region *region;	/* What jurisdiction in the game world this map is ruled by 
+    			 * points to the struct containing all the properties of 
+			 * the region */
     uint32 reset_time;	/* when this map should reset */
     uint32 reset_timeout;  /* How many seconds must elapse before this map
 			    * should be reset

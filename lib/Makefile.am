@@ -29,7 +29,7 @@ pkgconfdir = @pkgconfdir@
 dist_noinst_SCRIPTS = collect.pl util.pl checkarch.pl
 dist_pkgdata_DATA = artifacts def_help formulae  messages races smooth\
 	animations archetypes  bmaps bmaps.paths crossfire.0 \
-	crossfire.1 faces attackmess image_info materials
+	crossfire.1 faces attackmess image_info materials regions
 
 CONF_FILES = settings motd dm_file forbid ban_file exp_table 
 VAR_FILES = highscore banish_file bookarch temp.maps clockdata

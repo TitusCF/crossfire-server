@@ -57,6 +57,7 @@ void set_confdir(char *path) { settings.confdir=path; }
 void set_localdir(char *path) { settings.localdir=path; }
 void set_mapdir(char *path) { settings.mapdir=path; }
 void set_archetypes(char *path) { settings.archetypes=path; }
+void set_regions(char *path) { settings.regions=path; }
 void set_treasures(char *path) { settings.treasures=path; }
 void set_uniquedir(char *path) { settings.uniquedir=path; }
 void set_playerdir(char *path) { settings.playerdir=path; }
@@ -115,6 +116,7 @@ struct Command_Line_Options options[] = {
 {"-local",1,1, set_localdir},
 {"-maps", 1, 1, set_mapdir},
 {"-arch", 1, 1, set_archetypes},
+{"-regions", 1, 1, set_regions},
 {"-playerdir", 1, 1, set_playerdir},
 {"-treasures", 1, 1, set_treasures},
 {"-uniquedir", 1, 1, set_uniquedir},
@@ -717,6 +719,7 @@ void help() {
     printf(" -local      Read/write local data (hiscore, unique items, etc.)\n");
     printf(" -maps       Sets the directory for maps.\n");
     printf(" -arch       Sets the archetype file to use.\n");
+    printf(" -regions    Sets the regions file to use.\n");
     printf(" -playerdir  Sets the directory for the player files.\n");
     printf(" -treasures	 Sets the treasures file to use.\n");
     printf(" -uniquedir  Sets the unique items/maps directory.\n");
@@ -738,6 +741,7 @@ void init_beforeplay() {
   init_archetypes(); /* If not called before, reads all archetypes from file */
   init_artifacts();  /* If not called before, reads all artifacts from file */
   init_spells();     /* If not called before, links archtypes used by spells */
+  init_regions();    /* /* If not called before, reads all regions from file */
   init_archetype_pointers(); /* Setup global pointers to archetypes */
   init_races();	   /* overwrite race designations using entries in lib/races file */ 
   init_gods();	/* init linked list of gods from archs*/ 

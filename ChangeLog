@@ -17,6 +17,23 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Applied patch:
+* #1145089 (cavesomething): Region support.
+common/Makefile.am: add new 'region.c' file.
+common/init.c: add 'REGIONS' setting.
+common/map.c: add 'region' map key.
+include/config.h: add regions file default name.
+include/global.h: add 'first_region' global variable and settings.
+include/libproto.h: add region.c functions prototypes.
+include/map.h: add region structure.
+include/sproto.h: add new region-related command.
+lib/Makefile.am: add 'regions' file.
+lib/regions (new): regions definition file.
+server/c_misc.c: add region information to current_map_info. Add new 'whereami' command.
+server/commands.c: add 'whereami' command.
+server/init.c: add regions settings, and load data.
+Ryo 2005-03-15
+
 Applied patches:
 * #1119366 (salathar): wiz food, DMs don't use food anymore.
 * #1161816 (cowboyatheart) : Add wands/staves/rods/horns to new pickup.
