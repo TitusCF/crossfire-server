@@ -200,6 +200,11 @@ sub archsOut {
 line:	while(<ARC>) {
 	    chop;
 	    ($var,@values) = split;
+            if ($var eq "#"){
+                #developper comment, switch to next line
+                $commentNum++;
+                next line;
+            }
 	    if ($var eq "Object") {
 		$lface[0] = "";
 		$#lface = 0;
@@ -453,4 +458,5 @@ sub stats {
     &info(Treasures.":\t".($#treasure_files+1));
     &info(Trash.":\t".$trashNum);
     &info(Smooths.":\t".$smoothNum);
+    &info("Comment lines:\t".$commentNum);
 }
