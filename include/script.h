@@ -5,6 +5,7 @@ static SCM gfec_catcher(void *data, SCM tag, SCM throw_args);
 
 /*extern SCM Script_increaseObjectCount(SCM what, SCM increment);*/
 /*extern SCM Script_decreaseObjectCount(SCM what, SCM decrement);*/
+extern SCM Script_setCursed(SCM who, SCM value);
 extern SCM Script_activateRune(SCM who, SCM what);
 extern SCM Script_checkTrigger(SCM who, SCM what);
 extern SCM Script_setUnaggressive(SCM who, SCM value);

@@ -31,6 +31,7 @@ void guile_init_functions()
 {
   LOG(llevInfo, "Guile-Scheme interpreter support by Gros\n");
   LOG(llevInfo, "Guile Interpreter initializing...\n");
+  gh_new_procedure("set-cursed", Script_setCursed,2,0,0);
   gh_new_procedure("activate-rune", Script_activateRune,2,0,0);
   gh_new_procedure("check_trigger", Script_checkTrigger,2,0,0);
   gh_new_procedure("set-unaggressive", Script_setUnaggressive,2,0,0);
@@ -458,6 +459,18 @@ object *create_artifact(object *op, char *artifactname)
         };
         return NULL;
 }
+
+SCM Script_setCursed(SCM who, SCM value)
+{
+  if (gh_scm2bool(value))
+  {
+        SET_FLAG(WHO, FLAG_CURSED);
+  }
+  else
+  {
+        CLEAR_FLAG(WHO, FLAG_CURSED);
+  };
+};
 
 SCM Script_activateRune(SCM who, SCM what)
 {
