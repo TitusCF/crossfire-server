@@ -36,18 +36,31 @@
 
 #ifndef NEWSERVER_H
 #define NEWSERVER_H
-#define MAXMAPCELLFACES 50
+
+/* Reduce this from 50 to 5 - as it is now, there will never be more
+ * than 3 anyways.
+ */
 
 #define NUM_LOOK_OBJECTS 50
 
 struct MapCell {
-  short faces[MAXMAPCELLFACES];
-  char quick_pos[MAXMAPCELLFACES];
+  short faces[MAP_LAYERS];
+  char quick_pos[MAP_LAYERS];
   int count;
 };
 
+/* This basically defines the largest size an 
+ * archetype may be - it is used for allocation of
+ * some structures, as well as determining how far
+ * we should look for the heads of big images.
+ */
+#define MAX_HEAD_OFFSET	    6
+
+#define MAX_CLIENT_X (MAP_CLIENT_X + MAX_HEAD_OFFSET)
+#define MAX_CLIENT_Y (MAP_CLIENT_Y + MAX_HEAD_OFFSET)
+
 struct Map {
-  struct MapCell cells[MAP_CLIENT_X][MAP_CLIENT_Y];
+  struct MapCell cells[MAX_CLIENT_X][MAX_CLIENT_Y];
 };
 
 /* True max is 16383 given current map compaction method */
@@ -69,6 +82,12 @@ enum Sock_Status {Ns_Avail, Ns_Add, Ns_Dead, Ns_Old};
 
 /* Reserver 0 for neither of these being set */
 enum Old_Mode {Old_Listen=1, Old_Player=2};
+
+/* Only one map mode can actually be used, so lets make it a switch
+ * instead of having a bunch of different fields that needed to
+ * get toggled.
+ */
+enum MapMode {Map0Cmd = 0, Map1Cmd = 1, Map1aCmd=2 };
 
 /* The following is the setup for a ring buffer for storing outbut
  * data that the OS can't handle right away.
@@ -98,8 +117,7 @@ typedef struct NewSocket {
     uint32  ext_title_flag;  /* if 1, we should generate and send a new ext_title update */
     uint32  sound:1;	    /* does the client want sound */
     uint32  skillexp:1;	    /* does the client want skill exp data - MT*/
-    uint32  map1cmd:1;	    /* Always use map1 protocol command */
-    uint32  map2cmd:1;	    /* Always use map2 protocol command */
+    enum MapMode mapmode;   /* Type of map commands the client wants. */
     uint32  newmapcmd:1;    /* Send newmap command when entering new map SMACFIGGEN*/
     uint32  darkness:1;	    /* True if client wants darkness information */
     uint32  image2:1;	    /* Client wants image2/face2 commands */

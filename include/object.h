@@ -66,10 +66,6 @@ typedef struct obj {
 				/* If this is an exit, this is the filename */
 /* These variables are copied by memcpy() in copy_object(): */
   sint16 x,y;			/* Position in the map for this object */
-  unsigned char quick_pos; /* quick pos is 255 for single arch, 0 for head */
-                           /* or x/y offset packed to 4 bits */
-                           /* warning: change this when include > 15x15 monster */
-  uint32 update_tag;    /* this is used from map2 update! */ 
   sint16 ox,oy;			/* For debugging: Where it was last inserted */
   float speed;                  /* The overall speed of this object */
   float speed_left;             /* How much speed is left to spend this round */
@@ -202,7 +198,10 @@ typedef struct archt {
     struct archt *head;	    /* The main part of a linked object */
     struct archt *more;	    /* Next part of a linked object */
     object clone;	    /* An object from which to do copy_object() */
-    unsigned long editable; /* editable flags (mainly for editor) */
+    uint32 editable;	    /* editable flags (mainly for editor) */
+    sint8   tail_x, tail_y; /* Where the lower right most portion of the object is
+			     * in comparison to the head.
+			     */
 } archetype;
 
 extern object *objects;

@@ -1,4 +1,3 @@
-
 /*
  * static char *rcsid_init_c =
  *    "$Id$";
@@ -103,8 +102,7 @@ void InitConnection(NewSocket *ns, uint32 from)
     ns->ext2 = 0;
     ns->ext_title_flag = 1;
     ns->skillexp = 0;
-    ns->map1cmd = 0;
-    ns->map2cmd = 0;
+    ns->mapmode = Map0Cmd;
     ns->darkness = 1;
     ns->newanim = 0;
     ns->status = Ns_Add;
@@ -230,9 +228,9 @@ void init_ericserver()
         defined(__sun__) || defined(linux) || defined(SVR4) || defined(__FreeBSD__) || \
 	defined(__OpenBSD__) || defined(WIN32) /* ---win32 add this here */
     {
-	char tmp =1;
+	int tmp =1;
 
-	if(setsockopt(init_sockets[0].fd,SOL_SOCKET,SO_REUSEADDR, &tmp, sizeof(&tmp))) {
+	if(setsockopt(init_sockets[0].fd,SOL_SOCKET,SO_REUSEADDR, &tmp, sizeof(tmp))) {
 	    perror("error on setsockopt REUSEADDR");
 	    LOG(llevError,"error on setsockopt REUSEADDR\n");
 	}

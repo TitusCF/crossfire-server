@@ -34,6 +34,8 @@
 #ifndef MAP_H
 #define MAP_H
 
+#define MAP_LAYERS		3
+
 /* This is when the map will reset */
 #define MAP_WHEN_RESET(m)	((m)->reset_time)
 
@@ -128,8 +130,8 @@
 
 typedef struct MapSpace {
     object	*bottom;	/* lowest object on this space */
-    New_Face	*faces[3];	/* faces for the 3 layers */
-    object	*faces_obj[3];	/* face objects for the 3 layers */
+    New_Face	*faces[MAP_LAYERS];	/* faces for the 3 layers */
+    object	*faces_obj[MAP_LAYERS];	/* face objects for the 3 layers */
     uint8	flags;		/* flags about this space (see the P_ values above) */
     sint8	light;		/* How much light this space provides */
 } MapSpace;

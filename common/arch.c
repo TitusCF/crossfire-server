@@ -321,63 +321,64 @@ archetype *get_archetype_struct() {
  * of archetype-structures.
  */
 void first_arch_pass(FILE *fp) {
-  object *op;
-  archetype *at,*prev=NULL,*last_more=NULL;
-  int i,first=2;
-  int xo,yo;
+    object *op;
+    archetype *at,*head=NULL,*last_more=NULL;
+    int i,first=2;
 
-  op=get_object();
-  op->arch=first_archetype=at=get_archetype_struct();
-  while((i=load_object(fp,op,first,0))) {
-    first=0;
-    copy_object(op,&at->clone);
-    at->clone.speed_left= (float) (-0.1);
-    switch(i) {
-    case LL_NORMAL: /* A new archetype, just link it with the previous */
-      if(last_more!=NULL)
-        last_more->next=at;
-      if(prev!=NULL)
-        prev->next=at;
-      prev=last_more=at;
+    op=get_object();
+    op->arch=first_archetype=at=get_archetype_struct();
+
+    while((i=load_object(fp,op,first,0))) {
+	first=0;
+	copy_object(op,&at->clone);
+	at->clone.speed_left= (float) (-0.1);
+
+	switch(i) {
+	    case LL_NORMAL: /* A new archetype, just link it with the previous */
+		if(last_more!=NULL)
+		    last_more->next=at;
+		if(head!=NULL)
+		    head->next=at;
+		head=last_more=at;
 #if 0
-      if(!op->type)
-          LOG(llevDebug," WARNING: Archetype %s has no type info!\n", op->arch->name);
+		if(!op->type)
+		    LOG(llevDebug," WARNING: Archetype %s has no type info!\n", op->arch->name);
 #endif
-      
-      op->quick_pos = 0; /* assume as base a single arch */
-      at->clone.quick_pos = 0; /* sic */
-      break;
-#if 0
-    case 2:
-      LOG(llevError,"Error: Archetype with inventory is illegal!\n");
-      exit(-1);
-#endif
-    case LL_MORE: /* Another part of the previous archetype, link it correctly */
-      at->head=prev;
-      at->clone.head = &prev->clone;
-      if(last_more!=NULL) {
-          last_more->more=at;
-          last_more->clone.more = &at->clone;
-      }
-      last_more=at;
-  
-      xo = at->clone.x;
-      if(xo <0)
-          xo=(xo*-1)|8;
-      yo = at->clone.y;
-      if(yo <0)
-          yo=(yo*-1)|8;
-      at->clone.quick_pos = 0|(xo<<4)|yo;
-      prev->clone.quick_pos = 255; /* mark head tile */
-      
-      break;
+		at->tail_x = 0;
+		at->tail_y = 0;
+		break;
+
+	    case LL_MORE: /* Another part of the previous archetype, link it correctly */
+
+		at->head=head;
+		at->clone.head = &head->clone;
+		if(last_more!=NULL) {
+		    last_more->more=at;
+		    last_more->clone.more = &at->clone;
+		}
+		last_more=at;
+
+		/* If this multipart image is still composed of individual small
+		 * images, don't set the tail_.. values.  We can't use them anyways,
+		 * and setting these to zero makes the map sending to the client much
+		 * easier as just looking at the head, we know what to do.
+		 */
+		if (at->clone.face != head->clone.face) {
+		    head->tail_x = 0;
+		    head->tail_y = 0;
+		} else {
+		    if (at->clone.x > head->tail_x) head->tail_x = at->clone.x;
+		    if (at->clone.y > head->tail_y) head->tail_y = at->clone.y;
+		}
+		break;
+
+	}
+	at=get_archetype_struct();
+	clear_object(op);
+	op->arch=at;
     }
-    at=get_archetype_struct();
-    clear_object(op);
-    op->arch=at;
-  }
-  free(at);
-  free_object(op);
+    free(at);
+    free_object(op);
 }
 
 /*

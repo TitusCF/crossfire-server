@@ -126,16 +126,6 @@ typedef struct pl {
   object *last_used;     /* Pointer to object last picked or applied */
   long last_used_id;     /* Safety measures to be sure it's the same */
 
-
-  /* As the names suggest, these are how various aspects of the map
-   * look like.  This is basically used to compare what we last
-   * sent to the client so we only send what changed.
-   */
-  New_Face  *drawn[MAP_CLIENT_X][MAP_CLIENT_Y]; /* Last displayed */
-  New_Face  *floor[MAP_CLIENT_X][MAP_CLIENT_Y];
-  New_Face  *floor2[MAP_CLIENT_X][MAP_CLIENT_Y];
-  int	    darkmask[MAP_CLIENT_X][MAP_CLIENT_Y];
-
   /* for smaller map sizes, only the the first elements are used (ie, upper left) */
   sint8	    blocked_los[MAP_CLIENT_X][MAP_CLIENT_Y];
 

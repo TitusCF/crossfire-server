@@ -618,6 +618,7 @@ S->C: map <ecell1><ecell2>...<255>[<face1><cell1...><face2><cell2...>]
 	face use more bandwidth.
 
 S->C: map1 <coord1>[darkness1][face1a][face1b][face1c]<coord2>[darkness2][face2a]...
+S->C: map1a <coord1>[darkness1][face1a][face1b][face1c]<coord2>[darkness2][face2a]...
 
 	This is an update of the map command to support large map sizes.
 	The old map command supported a maximum map size of 15x15 -
@@ -626,6 +627,10 @@ S->C: map1 <coord1>[darkness1][face1a][face1b][face1c]<coord2>[darkness2][face2a
 	Given that this larger map now needs 2 bytes for the coordinates -
 	the same as for the images, trying to optimize one vs the other
 	does not makes much sense.
+
+	The map1a is an enhancement to the map1 command.  The 2 MSB bits
+	in the face number are used to denote other information - that
+	is detailed futher down.
 
 	All data is in standard binary form.
 
@@ -652,7 +657,6 @@ S->C: map1 <coord1>[darkness1][face1a][face1b][face1c]<coord2>[darkness2][face2a
 	itself, plus another 2 potential bytes if there is something on the
 	space.)
 
-
 	If all the flag values are 0, this then means the space is considered
 	blocked from view, and should be drawn as black.  This conserves
 	bandwidth for sending blocked spaces, which occur pretty frequently.
@@ -680,7 +684,56 @@ S->C: map1 <coord1>[darkness1][face1a][face1b][face1c]<coord2>[darkness2][face2a
 	leaves, a blank face will be sent in place of the arrow.  Blank faces
 	will be sent as face 0.
 
-	Note that this implementation is much simpler than the prior one
+	Map1a refinements:
+	The main addition to the map1a command is handling of big images.
+	Big images are those images that do not fit in one space, eg, if
+	a store is combined into 1 64x64 image, this falls into a big image.
+	The archetype/object of a big image has the same face for all the spaces.
+
+	When the server detects such an object, it only sends the face for the
+	lower right corner.  The client then needs to extrapolate where this
+	should be drawn.  By only sending the lower right, the client can much
+	more easily handle tall objects.  The sending of a big image face is
+	no different in either the map1 or map1a command.
+
+	The main difference in the map1a command is what to do when the lower
+	right corner would not normally be visible to the client (blocked,
+	darkness, or off the edge of the map).  The map1 command will just
+	not send any data - thus, even if some part is visible, it won't be sent.
+	The map1a command will send this big face for such squares even if that
+	square is not visible.  It only sends this information if some other
+	part of the object is visible (eg, top portion).  Also, for such spaces,
+	it only sends the big face number, and not any other faces that may be
+	on that space.  The map1a command will also send coordinates outside
+	the normal map size.  For example, the player selected a 25x25 map size.
+	There is a big image (3x3) whose left side is just at the edge of the
+	players map (upper corner of it at 25,18).  The server will send this
+	face at  27,20 - the lower right space of this big image.
+
+	The server tries to keep the same layer for the head as what appears
+ 	on the map.  Thus, a 2x2 store would normally be on layer 2 (with layer
+	1 being the grass, stone, whatever).  In such a case, even if the lower
+	right corner was not visible, it will send the big face at layer 2 on
+	that space.  There can be spaces in which a big image is on different
+	layers on different spaces - in that case, if the lower right is visible,
+	the layer it appears on there will be used.  Otherwise, the layer of the
+	first visible space it appears on (starting from upper left) will be used.
+
+	The server does remember the heads for out of normal map bounds.
+	However, these values are not shifted when the map scrolls.  Taking
+	the example of an image at 27,20 above, if the player moves to the
+	east, the server will send the map scroll command, send the face
+	at 26,20, and send either a clear or update for 27,20.  When the player
+	moves east again, the image is now on the normal map at 25,20, and will
+	once again get sent, and a delete for 26,20 will be sent.  Similarly,
+	if the object was a living object and was partially off the map when
+	killed, an update removing that face for the object it was standing on will
+	be sent by the server.
+		
+
+	Various notes about the map1 command:
+
+	this implementation is much simpler than the map command
 	because it now works on spaces rather than layers, and most all the
 	code also works on spaces.
 
@@ -693,93 +746,6 @@ S->C: map1 <coord1>[darkness1][face1a][face1b][face1c]<coord2>[darkness2][face2a
 	no way to say 'face xyz has disappeared'.  And in any case, to
 	support more faces will require more work on the server.
 
-S->C: map2 <coord1>[darkness1][face1a][face1b][face1c] <coord2>[ext2][darkness2][face2a][offset2a]...
-
-	This is an update of the map command to support large map sizes.
-	The old map command supported a maximum map size of 15x15 -
-	anything larger than that required a new command.
-
-	Given that this larger map now needs 2 bytes for the coordinates -
-	the same as for the images, trying to optimize one vs the other
-	does not makes much sense.
-
-	All data is in standard binary form.
-
-	the coord values are flags + x + y values.  The value itself, but
-	the data represented looks like this:
-	first 5 bits: The x coordinate
-	next 5 bits: the y coordinate
-	bits 6,7: unused
-	bit 5 (0x10): tag for extended attribute - 3 extra bytes noting the
-	    layer and offset to the head
-	last 4 bits: MSB - true if we send darkness
-		     MSB-1 - will send floor face
-		     MSB-2 - will send intermediate face
-		     MSB-3 (aka LSB) - will send top face
-
-	5 bits is enough for 31x31 maps
-
-	Through the use of this bitmasks, any and all of the following values
-	may be optional.  This allows the update of one face on the space
-	without needing to send the others (in the old map command, this is
-	not possible, so as an arrow flies over a space, the floor + arrow
-	needs to get resent - this allows just the arrow to get sent).
-	This should conserve bandwidth when spells are cast (we have an
-	extra byte for the coordinate, but save 2 bytes for the image
-	itself, plus another 2 potential bytes if there is something on the
-	space.)
-
-	If all the flag values are 0, this then means the space is considered
-	blocked from view, and should be drawn as black.  This conserves
-	bandwidth for sending blocked spaces, which occur pretty frequently.
-	Once a space is marked as block, if it re-appears within view, the 3
-	layers should be marked is blank.
-
-	For spaces that are empty, one or more of the faces will be sent as
-	blank faces (exactly how many will depend on what was on the floor
-	before - for example, if a floor disappears, then only the floor needs
-	to get updated, but if there was stuff on the floor, then that face
-	will also need to get cleared).  There may be cases where
-	transitioning from the blocked to empty space occurs, in which case
-	the client will send the floor as an empty space.
-
-	The darkness value is a single byte - 0 is pitch black, while 255 is
-	fully illuminated.  It is up to the client to figure out what it wants
-	to do with this (use masking to reduce visibility, or actually do a
-	real light reduction on the image).
-
-	the face values are 16 bit values, as before.  They will be sent
-	in MSB order of the flag (ie, floor, then intermediate, then
-	top, presuming the bit in the flag is set that says that layer
-	is being sent).  Blank faces may get sent if an object disappears -
-	in the example of the flying arrow, for the space the arrow
-	leaves, a blank face will be sent in place of the arrow.  Blank faces
-	will be sent as face 0.
-
-	if bit 5 (0x10) - ext_flag is set, then at least 1 extra byte is sent
-	after the flag - this byte contains another set of bits (with the same
-	mapping as the last 3 bits) that say if head offset information
-	is sent to the client.
-
-	The head offset is sent as a single byte, with the top 4 bits
-	being the X offset, and the bottom 4 bits being the y offset.
-	These are signed values - the offsets can be negative.  This logic
-	does impose a maximum size for multipart objects to 7x7 (presuming
-	the head is actually at one of the corners).
-
-	Data could perhaps get packed more efficiently (since there are only
-	4 darkness values supported, you can do that in 3 bits, not 8).  Images
-	would fit in 12 bits if no more than 4096 images is presumed.  Right now,
-	a full payload (darkness + all multipart images) is 16 bytes for a space
-	(128 bits).  This in theory could get backed into 72 bits (9 bytes).
-	Keeping it simple and not needing a bunch of shifts is probably worth
-	while.
-
-	A future extensions may be to use one of the currently unused flag
-	bits and send the glow radius for the space.  If the client was
-	opengl or something similar, it could then use the glow radius to
-	do better lighting effects
-	
 
 S->C: map_scroll <dx> <dy>
 	This tells the client to scroll the map dx and dy direction.  dx and

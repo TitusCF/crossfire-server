@@ -154,19 +154,18 @@ void SetUp(char *buf, int len, NewSocket *ns)
 	    ns->darkness = atoi(param);
 	    strcat(cmdback, param);
 	} else if (!strcmp(cmd,"map1cmd")) {
-	    ns->map1cmd = atoi(param);
+	    if (atoi(param)) ns->mapmode = Map1Cmd;
 	    /* if beyond this size, need to use map1cmd no matter what */
-	    if (ns->mapx>11 || ns->mapy>11) ns->map1cmd=1;
-	    strcat(cmdback, ns->map1cmd?"1":"0");
+	    if (ns->mapx>11 || ns->mapy>11) ns->mapmode = Map1Cmd;
+	    strcat(cmdback, ns->mapmode == Map1Cmd?"1":"0");
+	} else if (!strcmp(cmd,"map1acmd")) {
+	    if (atoi(param)) ns->mapmode = Map1aCmd;
+	    /* if beyond this size, need to use map1acmd no matter what */
+	    if (ns->mapx>11 || ns->mapy>11) ns->mapmode = Map1aCmd;
+	    strcat(cmdback, ns->mapmode == Map1aCmd?"1":"0");
         } else if (!strcmp(cmd,"newmapcmd")) {
             ns->newmapcmd= atoi(param);
             strcat(cmdback, param);
-        } else if (!strcmp(cmd,"map2cmd")) {
-            ns->map2cmd = atoi(param);
-            /* if beyond this size, need to use map2cmd no matter what */
-            if (ns->mapx>11 || ns->mapy>11) ns->map2cmd=1;
-            strcat(cmdback, ns->map2cmd?"1":"0");
-            if(ns->map2cmd)ns->map1cmd=0;
 	} else if (!strcmp(cmd,"facecache")) {
 	    ns->facecache = atoi(param);
             strcat(cmdback, param);
@@ -201,8 +200,10 @@ void SetUp(char *buf, int len, NewSocket *ns)
 		 */
 		sprintf(tmpbuf,"%dx%d", x,y);
 		strcat(cmdback, tmpbuf);
-		/* If beyond this size and not map2cmd used, will use map1cmd */
-		if ((x>11 || y>11) && !ns->map2cmd) ns->map1cmd=1;
+		/* If beyond this size and still using orig map command, need to
+		 * go to map1cmd.
+		 */
+		if ((x>11 || y>11) && ns->mapmode == Map0Cmd) ns->mapmode = Map1Cmd;
 	    }
 	} else {
 	    /* Didn't get a setup command we understood -
@@ -763,7 +764,7 @@ static void esrv_map_setbelow(NewSocket *ns, int x,int y,
 	    MAXFACENUM-1);
 	abort();
     }
-    if(newmap->cells[x][y].count >= MAXMAPCELLFACES) {
+    if(newmap->cells[x][y].count >= MAP_LAYERS) {
 	LOG(llevError,"Too many faces in map cell %d %d\n",x,y);
 	abort();
     }
@@ -810,9 +811,9 @@ static uint8 *compactlayer(NewSocket *ns, unsigned char *cur, int numlayers,
     int x,y,k;
     int face;
     unsigned char *fcur;
-    struct MapLayer layers[MAXMAPCELLFACES];
+    struct MapLayer layers[MAP_LAYERS];
   
-    for(k = 0;k<MAXMAPCELLFACES;k++)
+    for(k = 0;k<MAP_LAYERS;k++)
 	layers[k].count = 0;
     fcur = cur;
     for(x=0;x<ns->mapx;x++) {
@@ -880,7 +881,7 @@ static void esrv_map_doneredraw(NewSocket *ns, struct Map *newmap)
     strcpy((char*)sl.buf,"map ");
     sl.len=strlen((char*)sl.buf);
 
-    cur = compactlayer(ns,sl.buf+sl.len,MAXMAPCELLFACES,newmap);
+    cur = compactlayer(ns,sl.buf+sl.len,MAP_LAYERS,newmap);
     sl.len=cur-sl.buf;
 
 /*    LOG(llevDebug, "Sending map command.\n");*/
@@ -903,13 +904,231 @@ static void esrv_map_doneredraw(NewSocket *ns, struct Map *newmap)
 
 
 /* Clears a map cell */
-static void map_clearcell(struct MapCell *cell)
+static void map_clearcell(struct MapCell *cell, int face0, int face1, int face2, int count)
 {
-    cell->count=-1;
-    cell->faces[0] = 0;
-    cell->faces[0] = 0;
-    cell->faces[1] = 0;
-    cell->faces[2] = 0;
+    cell->count=count;
+    cell->faces[0] = face0;
+    cell->faces[1] = face1;
+    cell->faces[2] = face2;
+}
+
+#define MAX_HEAD_POS	31
+#define MAX_LAYERS	3
+
+/* Using a global really isn't a good approach, but saves the over head of
+ * allocating and deallocating such a block of data each time run through,
+ * and saves the space of allocating this in the socket object when we only
+ * need it for this cycle.  If the serve is ever threaded, this needs to be
+ * re-examined.
+ */
+
+static object  *heads[MAX_HEAD_POS * MAX_HEAD_POS * MAX_LAYERS];
+
+/* simple function - returns true of any of the heads for this
+ * space is set.  Returns 0 if all are blank - this is used
+ * for empty space checking.
+ */
+static inline int have_head(int ax, int ay) {
+
+    if (heads[(ay * MAX_HEAD_POS + ax) * MAX_LAYERS] ||
+	heads[(ay * MAX_HEAD_POS + ax) * MAX_LAYERS + 1] ||
+	heads[(ay * MAX_HEAD_POS + ax) * MAX_LAYERS + 2]) return 1;
+    return 0;
+}
+
+/* check_head is a bit simplistic version of update_space below.
+ * basically, it only checks the that the head on space ax,ay at layer
+ * needs to get sent - if so, it adds the data, sending the head
+ * if needed, and returning 1.  If this no data needs to get
+ * sent, it returns zero.
+ */
+static inline int check_head(SockList *sl, NewSocket *ns, int ax, int ay, int layer)
+{
+    short face_num;
+
+    if (heads[(ay * MAX_HEAD_POS + ax) * MAX_LAYERS + layer]) 
+	face_num = heads[(ay * MAX_HEAD_POS + ax) * MAX_LAYERS + layer]->face->number;
+    else
+	face_num = 0;
+
+    if (face_num != ns->lastmap.cells[ax][ay].faces[layer]) {
+	SockList_AddShort(sl, face_num);
+	if (face_num && ns->faces_sent[face_num] == 0)
+	    esrv_send_face(ns, face_num, 0);
+	heads[(ay * MAX_HEAD_POS + ax) * MAX_LAYERS + layer] = NULL;
+	ns->lastmap.cells[ax][ay].faces[layer] = face_num;
+	return 1;
+    }
+    /* We know, for now, that check_head is only called on blocked or otherwise
+     * out of view spaces.  So if there is no head object, clear
+     * the last look for this layer - this sort of replaces the need to
+     * call map_clearcell.
+     */
+    if (face_num ==0 && ns->lastmap.cells[ax][ay].faces[layer] != 0)
+	ns->lastmap.cells[ax][ay].faces[layer] = 0;
+
+    return 0;   /* No change */
+}
+
+/* Removes the need to replicate the same code for each layer.
+ * this returns true if this space is now in fact different than
+ * it was.
+ * sl is the socklist this data is going into.
+ * ns is the socket we are working on - all the info we care
+ * about is in this socket structure, so know need to pass the
+ * entire player object.
+ * mx and my are map coordinate offsets for map mp
+ * sx and sy are the offsets into the socket structure that
+ * holds the old values.
+ * layer is the layer to update, with 2 being the floor and 0 the
+ * top layer (this matches what the GET_MAP_FACE and GET_MAP_FACE_OBJ
+ * take.  Interesting to note that before this function, the map1 function
+ * numbers the spaces differently - I think this was a leftover from
+ * the map command, where the faces stack up.  Sinces that is no longer
+ * the case, it seems to make more sense to have these layer values
+ * actually match.
+ */
+
+static inline int update_space(SockList *sl, NewSocket *ns, mapstruct  *mp, int mx, int my, int sx, int sy, int layer)
+{
+    object *ob, *head;
+    int face_num;
+    int bx, by,i;
+
+    /* If there is a multipart object stored away, treat that as more important.
+     * If not, then do the normal processing.
+     */
+
+    head = heads[(sy * MAX_HEAD_POS + sx) * MAX_LAYERS + layer];
+
+    /* Check to see if this head is part of the set of objects
+     * we would normally send for this space.  If so, then
+     * don't use the head value.  We need to do the check
+     * here and not when setting up the heads[] value for two reasons -
+     * 1) the heads[] values will get used even if the space is not visible.
+     * 2) its possible the head is not on the same map as a part, and I'd
+     *    rather not need to do the map translation overhead.
+     */
+    if (head) {
+	for (i=0; i<MAP_LAYERS; i++)
+	    if (GET_MAP_FACE_OBJ(mp, mx, my, i) &&
+		GET_MAP_FACE_OBJ(mp, mx, my, i)->face == head->face) {
+		    heads[(sy * MAX_HEAD_POS + sx) * MAX_LAYERS + layer] = NULL;
+		    head = NULL;
+		    break;
+	    }
+    }
+
+    ob = head;
+    if (!ob) ob = GET_MAP_FACE_OBJ(mp, mx, my, layer);
+
+    /* If ther eis no object for this space, or if the face for the object
+     * is the blank face, set the face number to zero.
+     * else if we have the stored head object for this space, that takes
+     * precedence over the other object for this space.
+     * otherwise, we do special head processing
+     */
+    if (!ob || ob->face == blank_face) face_num=0;
+    else if (head){
+	/* if this is a head that had previously been stored */
+	face_num = ob->face->number;
+    } else {
+	/* if the faces for the different parts of a multipart object
+	 * are the same, we only want to send the bottom right most
+	 * portion of the object.  That info is in the tail_.. values
+	 * of the head.  Note that for the head itself, ob->head will
+	 * be null, so we only do this block if we are working on
+	 * a tail piece.
+	 */
+
+	/* tail_x and tail_y will only be set in the head object.  If
+	 * this is the head object and these are set, we proceed
+	 * with logic to only send bottom right.  Similarly, if
+	 * this is one of the more parts but the head has those values
+	 * set, we want to do the processing.  There can be cases where
+	 * the head is not visible but one of its parts is, so we just
+	 * can always expect that ob->arch->tail_x will be true for all
+	 * object we may want to display.
+	 */
+	if ((ob->arch->tail_x || ob->arch->tail_y) ||
+	    (ob->head && (ob->head->arch->tail_x || ob->head->arch->tail_y))) {
+
+	    if (ob->head) head = ob->head;
+	    else head = ob;
+
+	    /* Basically figure out where the offset is from where we are right
+	     * now.  the ob->arch->clone.{x,y} values hold the offset that this current
+	     * piece is from the head, and the tail is where the tail is from the
+	     * head.  Note that bx and by will equal sx and sy if we are already working
+	     * on the bottom right corner.  If ob is the head, the clone values
+	     * will be zero, so the right thing will still happen.
+	     */
+	    bx = sx + head->arch->tail_x - ob->arch->clone.x;
+	    by = sy + head->arch->tail_y - ob->arch->clone.y;
+
+	    /* I don't think this can ever happen, but better to check for it just
+	     * in case.
+	     */
+	    if (bx < sx || by < sy) {
+		LOG(llevError,"update_space: bx (%d) or by (%d) is less than sx (%d) or sy (%d)\n",
+		    bx, by, sx, sy);
+	    }
+	    /* single part object, multipart object with non merged faces,
+	     * of multipart object already at lower right.
+	     */
+	    else if (bx == sx && by == sy) {
+		face_num = ob->face->number;
+
+		/* if this face matches one stored away, clear that one away.
+		 * this code relies on the fact that the map1 commands
+		 * goes from 2 down to 0.
+		 */
+		for (i=0; i<MAP_LAYERS; i++)
+		    if (heads[(sy * MAX_HEAD_POS + sx) * MAX_LAYERS + i] &&
+			heads[(sy * MAX_HEAD_POS + sx) * MAX_LAYERS + i]->face->number == face_num)
+			heads[(sy * MAX_HEAD_POS + sx) * MAX_LAYERS + i] = NULL;
+	    }
+	    else {
+		/* First, try to put the new head on the same layer.  If that is used up,
+		 * then find another layer.
+		 */
+		if (heads[(by * MAX_HEAD_POS + bx) * MAX_LAYERS + layer] == NULL ||
+		    heads[(by * MAX_HEAD_POS + bx) * MAX_LAYERS + layer] == head) {
+			heads[(by * MAX_HEAD_POS + bx) * MAX_LAYERS + layer] = head;
+		} else for (i=0; i<MAX_LAYERS; i++) {
+		    if (heads[(by * MAX_HEAD_POS + bx) * MAX_LAYERS + i] == NULL ||
+			heads[(by * MAX_HEAD_POS + bx) * MAX_LAYERS + i] == head) {
+			    heads[(by * MAX_HEAD_POS + bx) * MAX_LAYERS + i] = head;
+		    }
+		}
+		face_num = 0;	/* Don't send this object - we'll send the head later */
+	    }
+	} else {
+	    /* In this case, we are already at the lower right or single part object,
+	     * so nothing special 
+	     */
+	    face_num = ob->face->number;
+
+	    /* clear out any head entries that have the same face as this one */
+	    for (bx=0; bx<layer; bx++)
+		if (heads[(sy * MAX_HEAD_POS + sx) * MAX_LAYERS + bx] &&
+		    heads[(sy * MAX_HEAD_POS + sx) * MAX_LAYERS + bx]->face->number == face_num)
+			heads[(sy * MAX_HEAD_POS + sx) * MAX_LAYERS + bx] = NULL;
+	}
+    } /* else not already head object or blank face */
+
+    /* We've gotten what face we want to use for the object.  Now see if
+     * if it has changed since we last sent it to the client.
+     */
+    if (ns->lastmap.cells[sx][sy].faces[layer] != face_num)  {
+	ns->lastmap.cells[sx][sy].faces[layer] = face_num;
+	if (ns->faces_sent[face_num] == 0)
+	    esrv_send_face(ns, face_num, 0);
+	SockList_AddShort(sl, face_num);
+	return 1;
+    }
+    /* Nothing changed */
+    return 0;
 }
 
 
@@ -936,26 +1155,70 @@ static void map_clearcell(struct MapCell *cell)
  */
 void draw_client_map1(object *pl)
 {
-    int x,y,ax, ay, d, face_num1,face_num2,face_num3, nx,ny;
+    int x,y,ax, ay, d, nx,ny, startlen, max_x, max_y, oldlen;
     SockList sl;
     uint16  mask;
-    New_Face	*face;
     mapstruct *m;
 
     sl.buf=malloc(MAXSOCKBUF);
-    strcpy((char*)sl.buf,"map1 ");
-    sl.len=strlen((char*)sl.buf);
+    if (pl->contr->socket.mapmode == Map1Cmd)
+	strcpy((char*)sl.buf,"map1 ");
+    else
+	strcpy((char*)sl.buf,"map1a ");
 
+    sl.len=strlen((char*)sl.buf);
+    startlen = sl.len;
+    /* Init data to zero */
+    memset(heads, 0, sizeof(object *) * MAX_HEAD_POS * MAX_HEAD_POS * MAX_LAYERS);
 
     /* x,y are the real map locations.  ax, ay are viewport relative
      * locations.
      */
     ay=0;
-    for(y=pl->y-pl->contr->socket.mapy/2; y<pl->y+(pl->contr->socket.mapy+1)/2;y++,ay++) {
+
+    /* We could do this logic as conditionals in the if statement,
+     * but that started to get a bit messy to look at.
+     */
+    max_x = pl->x+(pl->contr->socket.mapx+1)/2;
+    max_y = pl->y+(pl->contr->socket.mapy+1)/2;
+    if (pl->contr->socket.mapmode == Map1aCmd) {
+	max_x += MAX_HEAD_OFFSET;
+	max_y += MAX_HEAD_OFFSET;
+    }
+
+    for(y=pl->y-pl->contr->socket.mapy/2; y<max_y; y++,ay++) {
 	ax=0;
-	for(x=pl->x-pl->contr->socket.mapx/2;x<pl->x+(pl->contr->socket.mapx+1)/2;x++,ax++) {
-	    d =  pl->contr->blocked_los[ax][ay];
+	for(x=pl->x-pl->contr->socket.mapx/2;x<max_x;x++,ax++) {
+
 	    mask = (ax & 0x3f) << 10 | (ay & 0x3f) << 4;
+
+	    /* If this space is out of the normal viewable area, we only check
+	     * the heads value  ax or ay will only be greater than what
+	     * the client wants if using the map1a command - this is because
+	     * if the map1a command is not used, max_x and max_y will be
+	     * set to lower values.
+	     */
+	    if (ax >= pl->contr->socket.mapx || ay >= pl->contr->socket.mapy) {
+		oldlen = sl.len;
+
+		SockList_AddShort(&sl, mask);
+
+		if (check_head(&sl, &pl->contr->socket, ax, ay, 2))
+		    mask |= 0x4;
+		if (check_head(&sl, &pl->contr->socket, ax, ay, 1))
+		    mask |= 0x2;
+		if (check_head(&sl, &pl->contr->socket, ax, ay, 0))
+		    mask |= 0x1;
+
+		if (mask & 0xf) {
+		    sl.buf[oldlen+1] = mask & 0xff;
+		} else {
+		    sl.len = oldlen;
+		}
+		continue;   /* don't do processing below */
+	    }
+
+	    d =  pl->contr->blocked_los[ax][ay];
 
 	    /* If the coordinates are not valid, or it is too dark to see,
 	     * we tell the client as such
@@ -965,34 +1228,60 @@ void draw_client_map1(object *pl)
 	    m = get_map_from_coord(pl->map, &nx, &ny);
 	    if (!m) {
 		/* space is out of map.  Update space and clear values
-		 * if this hasn't already been done.
+		 * if this hasn't already been done.  If the space is out
+		 * of the map, it shouldn't have a head
 		 */
 		if (pl->contr->socket.lastmap.cells[ax][ay].count != -1) {
 		    SockList_AddShort(&sl, mask);
-		    map_clearcell(&pl->contr->socket.lastmap.cells[ax][ay]);
+		    map_clearcell(&pl->contr->socket.lastmap.cells[ax][ay],0,0,0,-1);
 		}
-	    } else if ( d > 3 ) {
-		/* space is 'blocked' by darkness */
-		if (d==4 && pl->contr->socket.darkness) {
-		    /* this is the first spot where darkness becomes too dark to see.
-		     * only need to update this if it is different from what we 
-		     * last sent
-		     */
-		    if (pl->contr->socket.lastmap.cells[ax][ay].count != d) {
-			map_clearcell(&pl->contr->socket.lastmap.cells[ax][ay]);
-			SockList_AddShort(&sl, mask);
-			mask |= 8;  /* add darkness */
-			SockList_AddShort(&sl, mask);
-			SockList_AddChar(&sl, 0);
-			pl->contr->socket.lastmap.cells[ax][ay].count = d;
-		    }
-		} else if (pl->contr->socket.lastmap.cells[ax][ay].count != -1) {
+	    } else if (d>3) {
+		int need_send=0, count;
+		/* This block deals with spaces that are not visible for whatever
+		 * reason.  Still may need to send the head for this space.
+		 */
+
+		oldlen = sl.len;
+		/* First thing we do is blank out this space (clear it)
+		 * if not already done.  If the client is using darkness, and
+		 * this space is at the edge, we also include the darkness.
+		 */
+		if (d==4 && pl->contr->socket.darkness && pl->contr->socket.lastmap.cells[ax][ay].count != d) {
+		    mask |= 8;
 		    SockList_AddShort(&sl, mask);
-		    map_clearcell(&pl->contr->socket.lastmap.cells[ax][ay]);
+		    SockList_AddChar(&sl, 0);
+		    count = d;
+		} else {
+		    SockList_AddShort(&sl, mask);
+		    if (pl->contr->socket.lastmap.cells[ax][ay].count != -1) need_send=1;
+		    count = -1;
 		}
-	    }
-	    else { /* this space is viewable */
-		/* Rather than try to figure out what everything that we might
+		if (pl->contr->socket.mapmode == Map1aCmd && have_head(ax, ay)) {
+		    /* Now check to see if any heads need to be sent */
+
+		    if (check_head(&sl, &pl->contr->socket, ax, ay, 2))
+			mask |= 0x4;
+		    if (check_head(&sl, &pl->contr->socket, ax, ay, 1))
+			mask |= 0x2;
+		    if (check_head(&sl, &pl->contr->socket, ax, ay, 0))
+			mask |= 0x1;
+		    pl->contr->socket.lastmap.cells[ax][ay].count = count;
+
+		} else {
+		    map_clearcell(&pl->contr->socket.lastmap.cells[ax][ay], 0, 0, 0, count);
+		}
+
+		if ((mask & 0xf) || need_send) {
+		    sl.buf[oldlen+1] = mask & 0xff;
+		} else {
+		    sl.len = oldlen;
+		}
+	    } else {
+		/* In this block, the space is visible or there are head objects
+		 * we need to send.
+		 */
+
+		 /* Rather than try to figure out what everything that we might
 		 * need to send is, then form the packet after that,
 		 * we presume that we will in fact form a packet, and update
 		 * the bits by what we do actually send.  If we send nothing,
@@ -1002,7 +1291,7 @@ void draw_client_map1(object *pl)
 		 * what if anything we need to send, setting the bits, then
 		 * doing those checks again to add the real data.
 		 */
-		int oldlen = sl.len;
+		oldlen = sl.len;
 		mask = (ax & 0x3f) << 10 | (ay & 0x3f) << 4;
 		SockList_AddShort(&sl, mask);
 
@@ -1020,320 +1309,47 @@ void draw_client_map1(object *pl)
 		    else if (d==2) SockList_AddChar(&sl, 127);
 		    else if (d==3) SockList_AddChar(&sl, 63);
 		}
-		else
+		else {
 		    /* need to reset from -1 so that if it does become blocked again,
 		     * the code that deals with that can detect that it needs to tell
 		     * the client that this space is now blocked.
 		     */
 		    pl->contr->socket.lastmap.cells[ax][ay].count = d;
-
-		/* Check to see if floor face has changed */
-		face = GET_MAP_FACE(m, nx,ny,2);
-		if (!face || face == blank_face) face_num1=0;
-		else face_num1 = face->number;
-
-		if (pl->contr->socket.lastmap.cells[ax][ay].faces[0] != face_num1) {
-		    mask |= 0x4;    /* floor bit */
-		    pl->contr->socket.lastmap.cells[ax][ay].faces[0] = face_num1;
-		    SockList_AddShort(&sl, face_num1);
-		    if (pl->contr->socket.faces_sent[face_num1] == 0)
-			esrv_send_face(&pl->contr->socket,face_num1,0);
 		}
 
-		face = GET_MAP_FACE(m, nx,ny,1);
-		if (!face || face == blank_face) face_num2=0;
-		else face_num2 = face->number;
+		/* Floor face */
+		if (update_space(&sl, &pl->contr->socket, m, nx, ny, ax, ay, 2))
+		    mask |= 0x4;
 
-		if (pl->contr->socket.lastmap.cells[ax][ay].faces[1] != face_num2) {
-		    mask |= 0x2;    /* middle bit */
-		    pl->contr->socket.lastmap.cells[ax][ay].faces[1] = face_num2;
-		    SockList_AddShort(&sl, face_num2);
-		    if (pl->contr->socket.faces_sent[face_num2] == 0)
-			esrv_send_face(&pl->contr->socket,face_num2,0);
-		}
+		/* Middle face */
+		if (update_space(&sl, &pl->contr->socket, m, nx, ny, ax, ay, 1))
+		    mask |= 0x2;
 
-		face = GET_MAP_FACE(m, nx,ny,0);
-		if (!face || face == blank_face) face_num3=0;
-		else face_num3 = face->number;
+		/* Top face */
+		if (update_space(&sl, &pl->contr->socket, m, nx, ny, ax, ay, 0))
+		    mask |= 0x1;
 
-		if (pl->contr->socket.lastmap.cells[ax][ay].faces[2] != face_num3) {
-		    mask |= 0x1;    /* top bit */
-		    pl->contr->socket.lastmap.cells[ax][ay].faces[2] = face_num3;
-		    SockList_AddShort(&sl, face_num3);
-		    if (pl->contr->socket.faces_sent[face_num3] == 0)
-			esrv_send_face(&pl->contr->socket,face_num3,0);
-		}
-		if ((face_num1 == face_num2 && face_num1 !=0) || 
-		    (face_num2 == face_num3 && face_num2 !=0) || 
-		    (face_num1 == face_num3 && face_num1 !=0)) {
-		    /* This shouldn't happen - update_position should already
-		     * check for this.
-		     */
-		    LOG(llevDebug,"faces match: %d %d %d\n", face_num1, face_num2, face_num3);
-		}
-
-		/* Lets see if the mask is in fact different.  If, we need to
-		 * update it, if not, we back it out
+		/* Check to see if we are in fact sending anything for this
+		 * space by checking the mask.  If so, update the mask.
+		 * if not, reset the len to that from before adding the mask
+		 * value, so we don't send those bits.
 		 */
 		if (mask & 0xf) {
-		    /* yep - different. Only need to update the second byte
-		     * because that is the only one that changed.
-		     */
 		    sl.buf[oldlen+1] = mask & 0xff;
 		} else {
-		    /* no change, so just reset the len */
 		    sl.len = oldlen;
 		}
-	    }
+	    } /* else this is a viewable space */
 	} /* for x loop */
     } /* for y loop */
-		    
+
     /* Verify that we in fact do need to send this */
-    if (sl.len>strlen("map1 ") || pl->contr->socket.sent_scroll) {
+    if (sl.len>startlen || pl->contr->socket.sent_scroll) {
 	Send_With_Handling(&pl->contr->socket, &sl);
 	pl->contr->socket.sent_scroll = 0;
     }
     free(sl.buf);
 }
-
-/* this is the map2 command, which sends only the head of a multi tile.  Note that
- * this doesn't actually reduce bandwdith - if a 2x2 building is say shown on a
- * map, the extended byte and offset byte, as well as the head face are sent for 3
- * of the spaces.  For the space with the actual head, no extra data is sent.
- *
- * The x/y bit size is 5. 31x31 map are real big. There should
- * not send bigger or even so big maps (game play problems & performance problems!).
- * The first of the free bits is unused, the second is used as a flag byte marker.
- * If it set, there is a byte with flags in front of the face & darkness data.
- * the first 3 bits fo the byte are used as multi head flags.
- * if set, the face layer comparing to it is the head picture of a multi arch
- * and the next 2 bytes
- * after this layer hold the x/y offset of the part tile relativ to the head.
- * Depending on the physical tile size can then the client blit & clip the picture.
- * Because we send so only 1 picture/data for a multi tile arch, we will get back the
- * overhead of bytes we send for the 1st one.
- */
-#define NO_FACE_SEND        (-1)
-#define FACE_SEND_NORMAL    0
- 
-void draw_client_map2(object *pl)
-{
-    int x,y,ax, ay, d, face_num1,face_num2,face_num3, nx,ny;
-    SockList sl;
-    uint16  mask;
-    New_Face	*face;
-    mapstruct *m;
-    object *tmp;
-    int dark, face1, face2, face3;
-    int quick_pos_1,quick_pos_2,quick_pos_3; 
-
-    sl.buf=malloc(MAXSOCKBUF);
-    strcpy((char*)sl.buf,"map2 ");
-    sl.len=strlen((char*)sl.buf);
-
-    /* x,y are the real map locations.  ax, ay are viewport relative
-     * locations.
-     */
-    ay=0;
-    for(y=pl->y-pl->contr->socket.mapy/2; y<pl->y+(pl->contr->socket.mapy+1)/2;y++,ay++) {
-	ax=0;
-	for(x=pl->x-pl->contr->socket.mapx/2;x<pl->x+(pl->contr->socket.mapx+1)/2;x++,ax++) {
-	    d =  pl->contr->blocked_los[ax][ay];
-	    mask = (ax & 0x1f) << 11 | (ay & 0x1f) << 5;
-
-	    /* If the coordinates are not valid, or it is too dark to see,
-	     * we tell the client as such
-	     */
-	    nx=x;
-	    ny=y;
-	    m = get_map_from_coord(pl->map, &nx, &ny);
-	    if (!m) {
-		/* space is out of map.  Update space and clear values
-		 * if this hasn't already been done.
-		 */
-		if (pl->contr->socket.lastmap.cells[ax][ay].count != -1) {
-		    SockList_AddShort(&sl, mask);
-		    map_clearcell(&pl->contr->socket.lastmap.cells[ax][ay]);
-		}
-	    } else if ( d > 3 ) {
-		/* space is 'blocked' by darkness */
-		if (d==4 && pl->contr->socket.darkness) {
-		    /* this is the first spot where darkness becomes too dark to see.
-		     * only need to update this if it is different from what we 
-		     * last sent
-		     */
-		    if (pl->contr->socket.lastmap.cells[ax][ay].count != d) {
-			map_clearcell(&pl->contr->socket.lastmap.cells[ax][ay]);
-			SockList_AddShort(&sl, mask);
-			mask |= 8;  /* add darkness */
-			SockList_AddShort(&sl, mask);
-			SockList_AddChar(&sl, 0);
-			pl->contr->socket.lastmap.cells[ax][ay].count = d;
-		    }
-		} else if (pl->contr->socket.lastmap.cells[ax][ay].count != -1) {
-		    SockList_AddShort(&sl, mask);
-		    map_clearcell(&pl->contr->socket.lastmap.cells[ax][ay]);
-		}
-	    }
-	    else { /* this space is viewable */
-
-		int ext_flag = 0, oldlen = sl.len;
-		dark = NO_FACE_SEND;
-		face1 = face2 = face3 = NO_FACE_SEND;
-		mask = (ax & 0x1f) << 11 | (ay & 0x1f) << 5;
-
-		/* Darkness changed */
-		if (pl->contr->socket.lastmap.cells[ax][ay].count != d && pl->contr->socket.darkness) {
-		    pl->contr->socket.lastmap.cells[ax][ay].count = d;
-		    mask |= 0x8;    /* darkness bit */
-
-		    /* Protocol defines 255 full bright, 0 full dark.
-		     * We currently don't have that many darkness ranges,
-		     * so we current what limited values we do have.
-		     */
-		    if (d==0) dark = 255;
-		    else if (d==1) dark = 191;
-		    else if (d==2) dark = 127;
-		    else if (d==3) dark = 63;
-		}
-		else
-		    /* need to reset from -1 so that if it does become blocked again,
-		     * the code that deals with that can detect that it needs to tell
-		     * the client that this space is now blocked.
-		     */
-		    pl->contr->socket.lastmap.cells[ax][ay].count = d;
-
-		/* Check to see if floor face has changed */
-		face = GET_MAP_FACE(m, nx,ny,2);
-
-		tmp = GET_MAP_FACE_OBJ(m, nx,ny,2); 
-		if(tmp)
-		{
-		    quick_pos_1=tmp->quick_pos;
-		    if(quick_pos_1 && quick_pos_1!=255)
-			face = tmp->head->face;
-		}
-		else
-		    quick_pos_1 = 0;
-		if (!face || face == blank_face) face_num1=0;
-		else face_num1 = face->number;
-
-		if (pl->contr->socket.lastmap.cells[ax][ay].faces[0] != face_num1 ||
-		    pl->contr->socket.lastmap.cells[ax][ay].quick_pos[0] != quick_pos_1) {
-            
-		    mask |= 0x4;    /* floor bit */
-		    pl->contr->socket.lastmap.cells[ax][ay].faces[0] = face_num1;
-		    pl->contr->socket.lastmap.cells[ax][ay].quick_pos[0] = quick_pos_1;
-		    if(quick_pos_1) /* if a multi arch */
-		    {
-			mask |= 0x10;    /* mark ext flag as valid */
-			ext_flag |= 0x4; /* mark multi arch */
-		    }
-
-		    face1 = FACE_SEND_NORMAL;
-		    if (pl->contr->socket.faces_sent[face_num1] == 0)
-			esrv_send_face(&pl->contr->socket,face_num1,0);
-		}
-
-		face = GET_MAP_FACE(m, nx,ny,1);
-        
-		tmp = GET_MAP_FACE_OBJ(m, nx,ny,1);
-		if(tmp)
-		{
- 		    quick_pos_2=tmp->quick_pos;
-		    if(quick_pos_2 && quick_pos_2!=255)
-			face = tmp->head->face;
-		}
-		else
-		    quick_pos_2 = 0;
-		if (!face || face == blank_face) face_num2=0;
-		else face_num2 = face->number;
-
-		if (pl->contr->socket.lastmap.cells[ax][ay].faces[1] != face_num2||
-		    pl->contr->socket.lastmap.cells[ax][ay].quick_pos[1] != quick_pos_2) {
-            
-		    mask |= 0x2;    /* middle bit */
-		    pl->contr->socket.lastmap.cells[ax][ay].faces[1] = face_num2;
-		    pl->contr->socket.lastmap.cells[ax][ay].quick_pos[1] = quick_pos_2;
-		    if(quick_pos_2) /* if a multi arch */
-		    {
-			mask |= 0x10;    /* mark ext flag as valid */
-			ext_flag |= 0x2;
-		    }
-		    face2 = FACE_SEND_NORMAL;
-		    if (pl->contr->socket.faces_sent[face_num2] == 0)
-			esrv_send_face(&pl->contr->socket,face_num2,0);
-		}
-
-		face = GET_MAP_FACE(m, nx,ny,0);
-        
-		tmp = GET_MAP_FACE_OBJ(m, nx,ny,0);
-		if(tmp)
-		{
-		    quick_pos_3=tmp->quick_pos;
-		    if(quick_pos_3 && quick_pos_3 != 255)
-			face = tmp->head->face;
-		}
-		else
-		    quick_pos_3 = 0;
-		if (!face || face == blank_face) face_num3=0;
-		else face_num3 = face->number;
-   
-		if (pl->contr->socket.lastmap.cells[ax][ay].faces[2] != face_num3 ||
-		    pl->contr->socket.lastmap.cells[ax][ay].quick_pos[2] != quick_pos_3) {
-		    mask |= 0x1;    /* top bit */
-		    if(quick_pos_3) /* if a multi arch */
-		    {
-			mask |= 0x10;    /* mark ext flag as valid */
-			ext_flag |= 0x1;
-		    }
-		    face3 = FACE_SEND_NORMAL;
-		    pl->contr->socket.lastmap.cells[ax][ay].faces[2] = face_num3;
-		    pl->contr->socket.lastmap.cells[ax][ay].quick_pos[2] = quick_pos_3;
-		    if (pl->contr->socket.faces_sent[face_num3] == 0)
-			esrv_send_face(&pl->contr->socket,face_num3,0);
-		}
-
-		SockList_AddShort(&sl, mask);
-		if(mask & 0x10) /* we have a ext. flag byte here */
-		    SockList_AddChar(&sl, ext_flag);
-		if(dark != NO_FACE_SEND)
-		    SockList_AddChar(&sl, dark);
-		if(face1 != NO_FACE_SEND)
-		{
-		    SockList_AddShort(&sl, face_num1);
-		    if(ext_flag & 0x4)
-			SockList_AddChar(&sl, quick_pos_1);
-		}
-		if(face2 != NO_FACE_SEND)
-		{
-		    SockList_AddShort(&sl, face_num2);
-		    if(ext_flag & 0x2)
-			SockList_AddChar(&sl, quick_pos_2);
-		}
-		if(face3 != NO_FACE_SEND)
-		{
-		    SockList_AddShort(&sl, face_num3);
-		    if(ext_flag & 0x1)
-			SockList_AddChar(&sl, quick_pos_3);
-		}
-
-		if (!(mask & 0x1f))
-		    sl.len = oldlen;
-
-	    } /* else viewable space */
-	} /* for x loop */
-    } /* for y loop */
-		    
-    /* Verify that we in fact do need to send this */
-    if (sl.len>strlen("map2 ") || pl->contr->socket.sent_scroll) {
-	Send_With_Handling(&pl->contr->socket, &sl);
-	pl->contr->socket.sent_scroll = 0;
-    }
-    free(sl.buf);
-}
-
-
 
 
 void draw_client_map(object *pl)
@@ -1372,19 +1388,12 @@ void draw_client_map(object *pl)
         pl->contr->do_los = 0;
     }
 
-    if (pl->contr->socket.map1cmd) {
+    if (pl->contr->socket.mapmode == Map1Cmd || pl->contr->socket.mapmode == Map1aCmd) {
         /* Big maps need a different drawing mechanism to work */
         draw_client_map1(pl);
         return;
     }
     
-    if (pl->contr->socket.map2cmd) {
-        /* Big maps need a different drawing mechanism to work */
-        /* And we want only the head of a multi arch */
-        draw_client_map2(pl);
-        return;
-    }
-
     if(pl->invisible & (pl->invisible < 50 ? 4 : 1)) {
 	esrv_map_setbelow(&pl->contr->socket,pl->contr->socket.mapx/2,
 			  pl->contr->socket.mapy/2,pl->face->number,&newmap);
@@ -1444,26 +1453,39 @@ void draw_client_map(object *pl)
 void esrv_map_scroll(NewSocket *ns,int dx,int dy)
 {
     struct Map newmap;
-    int x,y;
+    int x,y, mx, my;
     char buf[MAXSOCKBUF];
 
     sprintf(buf,"map_scroll %d %d", dx, dy);
     Write_String_To_Socket(ns, buf, strlen(buf));
+
+    /* If we are using the Map1aCmd, we may in fact send
+     * head information that is outside the viewable map.
+     * So set the mx,my to the max value we want to
+     * look for.  Removed code to do so - it caused extra
+     * complexities for the client, and probably doesn't make
+     * that much difference in bandwidth.
+     */
+    mx = ns->mapx;
+    my = ns->mapy;
+
     /* the x and y here are coordinates for the new map, i.e. if we moved
      (dx,dy), newmap[x][y] = oldmap[x-dx][y-dy] */
-    for(x=0;x<ns->mapx;x++) {
-	for(y=0;y<ns->mapy;y++) {
-	    if (x+dx < 0 || x+dx >= ns->mapx || y+dy < 0 || y+dy >= ns->mapy) {
+    for(x=0; x<mx; x++) {
+	for(y=0; y<my; y++) {
+	    if (x+dx < 0 || x+dx >= mx || y+dy < 0 || y+dy >= my) {
 		memset(&(newmap.cells[x][y]), 0, sizeof(struct MapCell));
-		continue;
 	    }
-	    memcpy(&(newmap.cells[x][y]),
+	    else {
+		memcpy(&(newmap.cells[x][y]),
 		   &(ns->lastmap.cells[x+dx][y+dy]),sizeof(struct MapCell));
+	    }
 	}
     }
     memcpy(&(ns->lastmap), &newmap,sizeof(struct Map));
     ns->sent_scroll = 1;
 }
+
 /*****************************************************************************/
 /* GROS: The following one is used to allow a plugin to send a generic cmd to*/
 /* a player. Of course, the client need to know the command to be able to    */

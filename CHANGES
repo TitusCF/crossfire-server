@@ -17,6 +17,52 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+The bulk of this commit is to modify the server to only send the lower
+rightmost part of multipart archetypes that use the same head.  This allows
+support of big images in the client.
+
+common/arch.c: Modify first_arch_pass to figure out the tail_x/y values for
+  multipart archs.  Rename the prev variable to head, as that it really what
+  it is.  Remove quick_pos info.
+common/object.c: remove quick_pos info from object.
+doc/Developers/images: Add notes about using merged images.
+doc/Developers/protocol: Add information about the map1a command, which
+  is used to for big image support.  Remove map2 documentation.
+include/map.h: Add MAP_LAYERS define instead of using hardcoded value of 3.
+include/newserver.h:  Change the MapCell to use MAP_LAYERS - saves
+  considerable memory.  Add defines for MAX_CLIENT_ map sizes.
+  Remove map1cmd, map2cmd elements from socket structure - instead use enumeration
+  of mapmode - only one map type will be used at any time by the client, so
+  no reason to have individual elements - it also makes it easier to add new
+  mapmode commands.
+include/object.h: remove quick_pos, update_tag from object structure.
+  Add tail_x, tail_y values to archetype structure.
+include/player.h: Remove some now unused values from the player structure
+  (drawn, floor, floor2, darkmask).  These have been superseded by the 
+   map cells in the socket structure for quite a while.
+include/sockproto.h: rebuilt
+server/player.c: Remove code that initialized the drawn values in the player
+  structure since they no longer exist.
+socket/init.c: Replace map1cmd, map2cmd elements in socket structure with
+  mapmode element.  Modify init_ericserver so that it properly passes an
+  int when setting the SO_REUSERADDR field.
+socket/request.c: Modify code in SetUp function to use the new mapmode
+  enumeration in the socket structure.  Add support for map1acmd setup
+  option.  Throughout map code, replace MAXMAPCELLFACES with MAP_LAYERS.
+  modify map_clearcell to take options for values to clear the cell to.
+  Add have_head, check_head, and update_space commands - used with the
+  map1 command to store and find head information.
+  draw_client_map1 modified to support map1a extensions, as well as added
+  logic for checking for heads in blocked and out of viewable map spaces.
+  Some of the code is simplified by using the update_space function, since
+  the logic for processing each layer was otherwise the same.  remove
+  draw_client_map2 function.  esrv_map_scroll has same logic - some
+  variables and code formatting changes.
+MSW 2002-05-18
+
+server/login.c, server/c_misc.c: Don't save characters with 0 experience.
+This apparantly fixes some abuses.  MSW 2002-05-18
+
 server/attack.c: Don't generate PLAYER_KILL_PLAYER messages if kill
 happened on battleground.  Also, datestamp the messages.
 MSW 2002-05-13

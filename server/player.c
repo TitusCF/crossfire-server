@@ -153,9 +153,6 @@ static void get_player(player *p) {
     strncpy(p->title,op->arch->clone.name,MAX_NAME);
     op->race = add_string (op->arch->clone.race);
 
-    (void)memset((void *)op->contr->drawn,0,
-	       sizeof(New_Face)* MAP_CLIENT_X * MAP_CLIENT_Y);
-
     for(i=0;i<NROFREALSPELLS;i++)
 	p->known_spells[i]= -1;
     p->nrofknownspells=0;

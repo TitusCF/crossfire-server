@@ -588,7 +588,6 @@ void clear_object(object *op) {
   op->anim_moving_dir_last = -1;
   op->anim_last_facing = 4;
   op->anim_last_facing_last = -1;
-  op->quick_pos = 255;
   /* The object should already have been removed from the speed list
    * before this function is called
    */
