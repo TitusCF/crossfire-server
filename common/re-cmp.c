@@ -242,13 +242,13 @@ re_match_token(uchar c, selection *sel) {
 	case sel_end:
 	    return (c == 0);
 	case sel_single:
-	    return (c == sel->u.single);
+	    return (tolower(c) == tolower(sel->u.single));
 	case sel_range:
 	    return (c >= sel->u.range.low && c <= sel->u.range.high);
 	case sel_array:
 	    return (sel->u.array[c]);
 	case sel_not_single:
-	    return (c != sel->u.single);
+	    return (tolower(c) != tolower(sel->u.single));
 	case sel_not_range:
 	    return (c < sel->u.range.low && c > sel->u.range.high);
     }

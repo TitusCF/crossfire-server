@@ -18,6 +18,12 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+common/re-cmp.c:  Add some tolower calls in the comparisons so most
+regular expressions should not be case insenstive (makes matches & says
+work better).  Note that I did not change the behaviour on range matches
+(Z-f for example), as I thought there may be side effects in that case.
+MSW 5/8/2000
+
 socket/request.c:  Add length checking to NewPlayerCmd so that if the client
 sends us a really long command, we just truncate the end of it and not
 overwrite our internal buffers causing crashes.  MSW 5/8/2000
