@@ -17,6 +17,15 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 CVS changes since last release:
 
+PeterM:  2000/12/17: Various problems fixed in
+random_maps/*.c:  endless loop removed,
+exit leading to blocked area of spiral fixed.
+
+
+PeterM:  2000/12/17: Stat max bug fixed.  
+server/apply.c
+
+
 MSW 2000/12/16:
 server/player.c: If the player race archetype has a message, print that out.
 	This allows a descriptive message about what the different races will
