@@ -3125,8 +3125,8 @@ int auto_apply (object *op) {
     if (op->randomitems==NULL) return 0;
     do {
       i=10; /* let's give it 10 tries */
-      while((tmp=generate_treasure(op->randomitems,op->stats.exp?
-		op->stats.exp:5))==NULL&&--i);
+      while((tmp=generate_treasure(op->randomitems,
+	op->stats.exp?op->stats.exp:MAX(op->map->difficulty, 5)))==NULL&&--i);
       if(tmp==NULL)
 	  return 0;
       if(QUERY_FLAG(tmp, FLAG_CURSED) || QUERY_FLAG(tmp, FLAG_DAMNED))
