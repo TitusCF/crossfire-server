@@ -17,6 +17,31 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+New materialtype system for crossfire.  Based in concept on my original
+design, but rewritten from scratch to make it easily extensible.
+
+In a nutshell:
+
+Each of the old materialtypes (metal, glass, stone, wood) are now a class
+of materials.  When an item in the game is created, if it does not have a
+specific materialname of it's own, a materialname is generated randomly
+from the matching entries in the "lib/materials" file.  This file
+contains all of the saving throws, and other material specific
+modifications for each of the expanded materials.
+
+Materials can be manually specified in the arch with the "materialname"
+directive.  Such as the gold coins, which are specified to be made of,
+you guessed it, gold.
+
+Saving throws have been slightly rewritten to use the new materialtypes,
+and a few other minor details associated with materialtypes have been
+patched up.
+
+Adding a new type of stone or wood, is as simple as adding a new entry in
+the lib/materials file.  The game will automatically start distributing
+them around randomly.
+garbled 2003-01-29
+
 Various bug fixes:
 common/item.c: If nrof of an item is 0, have it print singular name and
    not plural name.
