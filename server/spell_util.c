@@ -3,10 +3,11 @@
  *   "$Id$";
  */
 
+
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2000 Mark Wedel
+    Copyright (C) 2001 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -23,8 +24,9 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to mwedel@scruz.net
+    The authors can be reached via e-mail at crossfire-devel@real-time.com
 */
+
 
 #include <global.h>
 #include <spells.h>
@@ -1983,6 +1985,8 @@ int can_see_monsterP(mapstruct *m, int x, int y,int dir) {
 
     dx = x + freearr_x[dir];
     dy = y + freearr_y[dir];
+
+    if (out_of_map(m, dx, dy)) return 0;
 
     m = get_map_from_coord(m, &dx, &dy);
 
