@@ -332,7 +332,9 @@ void give_initial_items(object *pl,treasurelist *items) {
 	if(op->nrof<2 && op->type!=CONTAINER && op->type!=MONEY && 
 	   !QUERY_FLAG(op,FLAG_IS_THROWN))
 		SET_FLAG(op,FLAG_STARTEQUIP);
-	/* Not marked as starting equipment, so set 0 value. */
+
+        if(op->type == CONTAINER) op->value = 0; /* so you can't sell it for money*/
+        /* Not marked as starting equipment, so set 0 value. */
 	if (QUERY_FLAG(op,FLAG_IS_THROWN))
 	    op->value=0;
 	if(op->type==FORCE) { SET_FLAG(op,FLAG_APPLIED);};
