@@ -135,6 +135,8 @@ int attempt_steal(object* op, object* who)
 	if((chance=adj_stealchance(who,op,(stats_value+thief_lvl-victim_lvl)))==-1)
 	    return 0;
 	else if (roll < chance ) {
+	    if (op->type == PLAYER)
+		esrv_del_item(op->contr, tmp->count);
 	    pick_up(who, tmp);
 	    if(can_pick(who,tmp)) {
 		/* for players, play_sound: steals item */

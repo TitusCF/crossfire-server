@@ -17,6 +17,13 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 CVS changes since last release:
 
+common/map.c: set status flag on maps to MAP_SAVING so remove_ob does
+   not do extra work when we are deleting a map (ie, immediate reset)
+   from emory.
+server/skills.c: If someone is stolen from a player, send an esrv_delete_item
+   to the client so the clients inventory remains correct.
+MSW 2001-04-16
+
 common/re-cmp.c: Modify re_cmp functiion so that it properly matches
   strings not at the start 'ie, dude chain will now match against
   the chain value'. 

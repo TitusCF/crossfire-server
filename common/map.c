@@ -1140,8 +1140,13 @@ void delete_map(mapstruct *m) {
 
     if (!m)
       return;
-    if (m->in_memory == MAP_IN_MEMORY)
+    if (m->in_memory == MAP_IN_MEMORY) {
+	/* change to MAP_SAVING, even though we are not,
+	 * so that remove_ob doesn't do as much work.
+	 */
+	m->in_memory = MAP_SAVING;
 	free_map (m, 1);
+    }
     /* move this out of free_map, since tmpname can still be needed if
      * the map is swapped out.
      */
