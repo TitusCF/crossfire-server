@@ -100,8 +100,10 @@ void dump_arch(archetype *at) {
 
 void dump_all_archetypes() {
   archetype *at;
-  for(at=first_archetype;at!=NULL;at=(at->more==NULL)?at->next:at->more)
+  for(at=first_archetype;at!=NULL;at=(at->more==NULL)?at->next:at->more) {
     dump_arch(at);
+    fprintf(logfile, "%s\n", errmsg);
+  }
 }
 
 void free_all_archs()
