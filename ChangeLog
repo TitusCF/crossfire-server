@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/apply.c: Fix bug in that cursed weapons were not equipped/
+   unequipped.
+MSW 2003-02-11
+
 doc/Developers/objects: Add nodes about shared strings in objects.
 server/c_misc.c: Remove check for name length - check_name takes care
     of that for us.

@@ -2631,12 +2631,23 @@ int unapply_for_ob(object *who, object *op, int aflags)
         for (tmp=who->inv; tmp; tmp=tmp->below) {
 	    if (QUERY_FLAG(tmp, FLAG_APPLIED) && tmp->type == op->type) {
 		if ((aflags & AP_IGNORE_CURSE) ||  (aflags & AP_PRINT) ||
-		    (!(QUERY_FLAG(op, FLAG_CURSED) && !QUERY_FLAG(tmp, FLAG_DAMNED)))) {
+		    (!(QUERY_FLAG(tmp, FLAG_CURSED) && !QUERY_FLAG(tmp, FLAG_DAMNED)))) {
 		    if (aflags & AP_PRINT) 
 			new_draw_info(NDI_UNIQUE, 0, who, query_name(tmp));
 		    else
 			unapply_special(who, tmp, aflags);
 		}
+		else {
+		    /* In this case, we want to try and remove a cursed item.
+		     * While we know it won't work, we want unapply_special to
+		     * at least generate the message.
+		     */
+		    new_draw_info_format(NDI_UNIQUE, 0, who,
+				 "No matter how hard you try, you just can't\nremove %s.",
+				 query_name(tmp));
+		    return 1;
+		}
+
 	    }
 	}
     }
