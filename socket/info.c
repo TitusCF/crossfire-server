@@ -356,20 +356,6 @@ void set_title(object *pl,char *buf)
 }
 
 
-/* We set this size - this is to make magic map work properly on
- * tiled maps.  There is no requirement that this matches the
- * tiled maps size - it just seemed like a reasonable value.
- * Magic map code now always starts out putting the player in the
- * center of the map - this makes the most sense when dealing
- * with tiled maps.
- * We also figure out the magicmap color to use as we process the
- * spaces - this is more efficient as we already have up to date
- * map pointers.
- */
-
-#define MAGIC_MAP_SIZE	50
-#define MAGIC_MAP_HALF	MAGIC_MAP_SIZE/2
-
 /* Takes a player, the map_mark array and an x and y starting position.
  * pl is the player.
  * px, py are offsets from the player.
@@ -406,7 +392,10 @@ static void magic_mapping_mark_recursive(object *pl, char *map_mark, int px, int
 		if (f == blank_face)
 		    f= GET_MAP_FACE(mp, nx, ny, 2);
 
-		if (mflags & (P_BLOCKSVIEW | P_NO_MAGIC))
+		/* Should probably have P_NO_MAGIC here also, but then shops don't
+		 * work.
+		 */
+		if (mflags & P_BLOCKSVIEW)
 		    map_mark[MAGIC_MAP_HALF + x + MAGIC_MAP_SIZE* (MAGIC_MAP_HALF + y)] = FACE_WALL | (f?f->magicmap:0);
 		else {
 		    map_mark[MAGIC_MAP_HALF + x + MAGIC_MAP_SIZE* (MAGIC_MAP_HALF + y)] = FACE_FLOOR | (f?f->magicmap:0);
@@ -444,13 +433,17 @@ void magic_mapping_mark(object *pl, char *map_mark, int strength)
 	    nx = pl->x + x;
 	    ny = pl->y + y;
 	    mflags = get_map_flags(pl->map, &mp, nx, ny, &nx, &ny);
-	    f= GET_MAP_FACE(mp, nx, ny, 0);
-	    if (f == blank_face)
-		f= GET_MAP_FACE(mp, nx, ny, 1);
-	    if (f == blank_face)
-		f= GET_MAP_FACE(mp, nx, ny, 2);
+	    if (mflags & P_OUT_OF_MAP)
+		continue;
+	    else {
+		f= GET_MAP_FACE(mp, nx, ny, 0);
+		if (f == blank_face)
+		    f= GET_MAP_FACE(mp, nx, ny, 1);
+		if (f == blank_face)
+		    f= GET_MAP_FACE(mp, nx, ny, 2);
+	    }
 
-	    if (mflags &  (P_BLOCKSVIEW | P_NO_MAGIC))
+	    if (mflags & P_BLOCKSVIEW)
 		map_mark[MAGIC_MAP_HALF + x + MAGIC_MAP_SIZE* (MAGIC_MAP_HALF + y)] = FACE_WALL | (f?f->magicmap:0);
 	    else {
 		map_mark[MAGIC_MAP_HALF + x + MAGIC_MAP_SIZE* (MAGIC_MAP_HALF + y)] = FACE_FLOOR | (f?f->magicmap:0);

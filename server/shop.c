@@ -658,7 +658,8 @@ static void add_shop_item(object *tmp, shopinv *items, int *numitems, int *numal
 
 void shop_listing(object *op)
 {
-    int i,j,numitems=0,numallocated=0;
+    int i,j,numitems=0,numallocated=0, nx, ny;
+    char *map_mark = (char *) calloc(MAGIC_MAP_SIZE * MAGIC_MAP_SIZE,1);
     object	*stack;
     shopinv	*items;
 
@@ -667,25 +668,38 @@ void shop_listing(object *op)
 
     new_draw_info(NDI_UNIQUE, 0, op, "\nThe shop contains:");
 
+    magic_mapping_mark(op, map_mark, 3);
     items=malloc(40*sizeof(shopinv));
     numallocated=40;
 
     /* Find all the appropriate items */
     for (i=0; i<MAP_WIDTH(op->map); i++) {
 	for (j=0; j<MAP_HEIGHT(op->map); j++) {
-	    stack = get_map_ob(op->map, i, j);
-	    while (stack) {
-		if (QUERY_FLAG(stack, FLAG_UNPAID)) {
-		    if (numitems==numallocated) {
-			items=realloc(items, sizeof(shopinv)*(numallocated+10));
-			numallocated+=10;
+	    /* magic map code now centers the map on the object at MAGIC_MAP_HALF.
+	     *
+	     */
+	    nx = i - op->x + MAGIC_MAP_HALF;
+	    ny = j - op->y + MAGIC_MAP_HALF;
+	    /* unlikely, but really big shops could run into this issue */
+	    if (nx < 0 || ny < 0 || nx > MAGIC_MAP_SIZE || ny > MAGIC_MAP_SIZE) continue;
+
+	    if (map_mark[nx + MAGIC_MAP_SIZE * ny] & FACE_FLOOR) {
+		stack  =get_map_ob(op->map,i,j);
+
+		while (stack) {
+		    if (QUERY_FLAG(stack, FLAG_UNPAID)) {
+			if (numitems==numallocated) {
+			    items=realloc(items, sizeof(shopinv)*(numallocated+10));
+			    numallocated+=10;
+			}
+			add_shop_item(stack, items, &numitems, &numallocated);
 		    }
-		    add_shop_item(stack, items, &numitems, &numallocated);
+		    stack = stack->above;
 		}
-		stack = stack->above;
 	    }
 	}
     }
+    free(map_mark);
     if (numitems == 0) {
 	new_draw_info(NDI_UNIQUE, 0, op, "The shop is currently empty.\n");
 	free(items);

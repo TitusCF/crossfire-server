@@ -1445,7 +1445,9 @@ void move_bolt(object *op) {
 	x = op->x+DIRX(op);
 	y = op->y+DIRY(op);
 	m = op->map;
-	mflags = get_map_flags(op->map, &m, x, y, &x, &y);
+	mflags = get_map_flags(m, &m, x, y, &x, &y);
+
+	if (mflags & P_OUT_OF_MAP) return;
 
 	r=reflwall(m, x, y, op);
 	/* We are about to run into something - we may bounce */
@@ -1928,7 +1930,7 @@ void move_ball_lightning(object *op) {
 
 	nx = op->x + freearr_x[tmpdir];
 	ny = op->y + freearr_y[tmpdir];
-	if ( ! (get_map_flags(op->map, NULL, nx, ny, NULL, NULL) & P_WALL)) {
+	if ( ! (get_map_flags(op->map, NULL, nx, ny, NULL, NULL) & (P_WALL | P_OUT_OF_MAP))) {
 	    dir = tmpdir;
 	    break;
 	}

@@ -34,6 +34,20 @@
 #ifndef MAP_H
 #define MAP_H
 
+/* We set this size - this is to make magic map work properly on
+ * tiled maps.  There is no requirement that this matches the
+ * tiled maps size - it just seemed like a reasonable value.
+ * Magic map code now always starts out putting the player in the
+ * center of the map - this makes the most sense when dealing
+ * with tiled maps.
+ * We also figure out the magicmap color to use as we process the
+ * spaces - this is more efficient as we already have up to date
+ * map pointers.
+ */
+#define MAGIC_MAP_SIZE  50
+#define MAGIC_MAP_HALF  MAGIC_MAP_SIZE/2
+
+
 #define MAP_LAYERS		4
 
 /* This is when the map will reset */

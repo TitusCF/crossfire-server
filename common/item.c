@@ -955,9 +955,10 @@ char *describe_item(object *op, object *owner) {
 		    sprintf(buf,"(Max speed %1.2f)", ARMOUR_SPEED(op) / 10.0);
 		    strcat(retbuf, buf);
 		}
-		if (ARMOUR_SPELLS(op))
+		if (ARMOUR_SPELLS(op)) {
 		    sprintf(buf,"(Spell regen penalty %d)", ARMOUR_SPELLS(op));
-		strcat(retbuf, buf);
+		    strcat(retbuf, buf);
+		}
 		more_info=1;
 		break;
 
