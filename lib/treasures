@@ -2400,6 +2400,14 @@ treasure devil
   list demon_parts
     chance 40
   end
+treasure fiend
+  list rich_old
+  more
+  list demon_parts
+    chance 40
+  more
+  arch ability_fire
+  end
 treasure sphinx
   list standard_old
   more
