@@ -103,7 +103,7 @@ PostBuild_Cmds=copy Win32_FullDebug\crossfire32.exe crossfire32.exe
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MT /W3 /Gi /GX /O2 /I ".\include" /I ".\random_maps" /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /FD /c
 # SUBTRACT BASE CPP /YX /Yc /Yu
-# ADD CPP /nologo /MT /W3 /Gi /GX /O2 /I ".\include" /I ".\random_maps" /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /D "DEBUG" /FD /c
+# ADD CPP /nologo /MT /W3 /Gi /GX /O2 /I ".\include" /I ".\random_maps" /I ".\\" /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /D "DEBUG" /FD /c
 # SUBTRACT CPP /YX /Yc /Yu
 # ADD BASE RSC /l 0x407 /d "NDEBUG"
 # ADD RSC /l 0x407 /d "NDEBUG"
@@ -710,32 +710,6 @@ SOURCE=.\server\disease.c
 # Begin Source File
 
 SOURCE=.\server\egoitem.c
-
-!IF  "$(CFG)" == "crossfire32 - Win32 Release"
-
-# PROP Intermediate_Dir "Win32_Release\server"
-# ADD CPP /YX"global.h"
-
-!ELSEIF  "$(CFG)" == "crossfire32 - Win32 FullDebug"
-
-# PROP BASE Intermediate_Dir "Debug/server"
-# PROP Intermediate_Dir "Win32_FullDebug/server"
-# ADD BASE CPP /YX"global.h"
-# ADD CPP /YX"global.h"
-
-!ELSEIF  "$(CFG)" == "crossfire32 - Win32 ReleaseNormal"
-
-# PROP BASE Intermediate_Dir "Release\server"
-# PROP Intermediate_Dir "Win32_ReleaseNormal\server"
-# ADD BASE CPP /YX"global.h"
-# ADD CPP /YX"global.h"
-
-!ENDIF 
-
-# End Source File
-# Begin Source File
-
-SOURCE=.\server\encounter.c
 
 !IF  "$(CFG)" == "crossfire32 - Win32 Release"
 
@@ -2224,32 +2198,6 @@ SOURCE=.\common\los.c
 # End Source File
 # Begin Source File
 
-SOURCE=.\common\ltostr.c
-
-!IF  "$(CFG)" == "crossfire32 - Win32 Release"
-
-# PROP Intermediate_Dir "Win32_Release\common"
-# ADD CPP /YX"global.h"
-
-!ELSEIF  "$(CFG)" == "crossfire32 - Win32 FullDebug"
-
-# PROP BASE Intermediate_Dir "Debug/common"
-# PROP Intermediate_Dir "Win32_FullDebug\common"
-# ADD BASE CPP /YX"global.h"
-# ADD CPP /YX"global.h"
-
-!ELSEIF  "$(CFG)" == "crossfire32 - Win32 ReleaseNormal"
-
-# PROP BASE Intermediate_Dir "Release\common"
-# PROP Intermediate_Dir "Win32_ReleaseNormal\common"
-# ADD BASE CPP /YX"global.h"
-# ADD CPP /YX"global.h"
-
-!ENDIF 
-
-# End Source File
-# Begin Source File
-
 SOURCE=.\common\map.c
 
 !IF  "$(CFG)" == "crossfire32 - Win32 Release"
@@ -2433,32 +2381,6 @@ SOURCE=.\common\recipe.c
 # Begin Source File
 
 SOURCE=.\common\shstr.c
-
-!IF  "$(CFG)" == "crossfire32 - Win32 Release"
-
-# PROP Intermediate_Dir "Win32_Release\common"
-# ADD CPP /YX"global.h"
-
-!ELSEIF  "$(CFG)" == "crossfire32 - Win32 FullDebug"
-
-# PROP BASE Intermediate_Dir "Debug/common"
-# PROP Intermediate_Dir "Win32_FullDebug\common"
-# ADD BASE CPP /YX"global.h"
-# ADD CPP /YX"global.h"
-
-!ELSEIF  "$(CFG)" == "crossfire32 - Win32 ReleaseNormal"
-
-# PROP BASE Intermediate_Dir "Release\common"
-# PROP Intermediate_Dir "Win32_ReleaseNormal\common"
-# ADD BASE CPP /YX"global.h"
-# ADD CPP /YX"global.h"
-
-!ENDIF 
-
-# End Source File
-# Begin Source File
-
-SOURCE=.\common\sqrt.c
 
 !IF  "$(CFG)" == "crossfire32 - Win32 Release"
 
