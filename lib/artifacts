@@ -508,7 +508,6 @@ attacktype 5
 last_sp 110
 end
 #
-*
 # Daggers (subtype of weapons)
 #
 Allowed dagger
