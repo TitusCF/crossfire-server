@@ -96,6 +96,7 @@ typedef struct NewSocket {
     uint32  sent_scroll:1;
     uint32  sound:1;	    /* does the client want sound */
     uint32  skillexp:1;	    /* does the client want skill exp data - MT*/
+    uint32  map1cmd:1;	    /* Always use map1 protocol command */
     uint32  cs_version, sc_version; /* versions of the client */
     uint32  update_look:1;  /* If true, we need to send the look window */
     uint32  can_write:1;    /* Can we write to this socket? */

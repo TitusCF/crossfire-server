@@ -143,6 +143,11 @@ void SetUp(char *buf, int len, NewSocket *ns)
 	else if (!strcmp(cmd,"sexp")) {
 	    ns->skillexp = atoi(param);
 	    strcat(cmdback, param);
+	} else if (!strcmp(cmd,"map1cmd")) {
+	    ns->map1cmd = atoi(param);
+	    /* if beyond this size, need to use map1cmd no matter what */
+	    if (ns->mapx>11 || ns->mapy>11) ns->map1cmd=1;
+	    strcat(cmdback, ns->map1cmd?"1":"0");
 	} else if (!strcmp(cmd,"mapsize")) {
 	    int x, y=0;
 	    char tmpbuf[MAX_BUF], *cp;
@@ -164,6 +169,8 @@ void SetUp(char *buf, int len, NewSocket *ns)
 		 */
 		sprintf(tmpbuf,"%dx%d", x,y);
 		strcat(cmdback, tmpbuf);
+		/* If beyond this size, will use map1cmd */
+		if (x>11 || y>11) ns->map1cmd=1;
 	    }
 	} else {
 	    /* Didn't get a setup command we understood -
@@ -1122,7 +1129,7 @@ void draw_client_map(object *pl)
     if (pl->map->in_memory!=MAP_IN_MEMORY) return;
     memset(&newmap, 0, sizeof(struct Map));
 
-    if (pl->contr->socket.mapx > 15 || pl->contr->socket.mapy > 15) {
+    if (pl->contr->socket.map1cmd) {
 	/* Big maps need a different drawing mechanism to work */
 	draw_client_map1(pl);
 	return;

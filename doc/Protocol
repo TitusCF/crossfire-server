@@ -545,9 +545,10 @@ C->S: askface <num>
 MAP UPDATE COMMANDS
 
 S->C: map <ecell1><ecell2>...<255>[<face1><cell1...><face2><cell2...>]
-	Sends a map to the client.  All cell type values are stored as x*11+y.
-	Thus, we can fit the map coordinates into 1 byte.  All data here is
-	transmitted as binary data.
+	Sends a map to the client.  All cell type values are stored as 
+	x*mapy+y. Thus, we can fit the map coordinates into 1 byte up to
+	a mapsize of 11x11. (this size is limited by needing to set
+	the high bit)
 
 	<ecell1><ecell2>... is a list of cells that are empty.  This list
 	could be empty.  255 is used to mark the end of this list, whether
@@ -579,6 +580,11 @@ S->C: map <ecell1><ecell2>...<255>[<face1><cell1...><face2><cell2...>]
 	data scenario right now is roughly 1100 bytes of data sent (a very
 	unlikely scenario - it assumes 3 images per space and no redundant
 	images.
+
+	Note: The map command may get depreciated and instead replaced by
+	the map1 command below.  While the map1 command needs 2 bytes for
+	coordinates, it is smarter for other updates, so may not in
+	face use more bandwidth.
 
 S->C: map1 <coord1>[darkness1][face1a][face1b][face1c]<coord2>[darkness2][face2a]...
 
@@ -659,7 +665,8 @@ S->C: map1 <coord1>[darkness1][face1a][face1b][face1c]<coord2>[darkness2][face2a
 S->C: map_scroll <dx> <dy>
 	This tells the client to scroll the map dx and dy direction.  dx and
 	dy will typically be -1, 0, or 1, depending on how the player moved.
-	<dx> and <dy> are sent as plaintext.
+	<dx> and <dy> are sent as plaintext.  positive values are down and to
+	the right respectively, negative values are opposite.
 
 C->S: mapredraw
 	Requests that the server resend the entire map to the client -
@@ -726,6 +733,20 @@ S->C: setup <option1> <value1> <option2> <value2>
 	sound, sexp (send skill experience).
 	    Set to true if the client wants to get sent this information,
 	    false otherwise.  These are integers in string form (0/1).
+
+	map1cmd: parameter is an integer in string form like above.
+	   this requests the server to use/not use the map1 protocol
+	   command.  Note that if the map size is greater than 11 in either
+	   direction, the server will use the map1 protocol command no
+	   matter what.  This parameter can be useful if the client wants
+	   the map1 protocol command for smaller maps because of the
+	   the additional information provided.
+	   Note that the server will return the mode it will be using
+	   when it sends back the setup command, and not necessarily
+	   what the client requests.  Thus, if the mapsize is 15x15,
+	   and the client does a 'setup map1cmd 0', the server will
+	   send back a 'setup map1cmd 1' because it will still end up
+	   using the map1cmd due to the map size.
 
 	mapsize x X y
 	    Sets the map size to x X y.  Note the spaces here are only for

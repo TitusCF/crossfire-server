@@ -18,6 +18,16 @@ else.  With this, include the file(s) that you changed.
 
 Changes for CVS:
 
+doc/Protocol: update information for the mapcmd, add map1cmd to
+   section of setup commands.
+include/newserver.h,socket/init.c: add map1cmd element to socket structure that
+    determines which protocol (map,map1) will be used for sending the
+    map.
+socket/request.c:add 'map1cmd' to list of setup options.  when sending
+    the map, use the map1cmd element to determine what protocol command
+    to use to send it.
+MSW 2001-06-07
+
 server/shop.c: Fix bug that resulted in items in shop being paid,
 as well as not generating proper listing.  MSW 2001-06-06.
 
