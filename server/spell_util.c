@@ -2015,7 +2015,7 @@ int spell_find_dir(mapstruct *m, int x, int y, object *exclude) {
         !QUERY_FLAG(tmp,FLAG_GENERATOR)) ||
 	(tmp == exclude || (tmp->head && tmp->head == exclude))))
                 tmp=tmp->above;
-      if(tmp!=NULL && can_see_monsterP(m,x,y,i) && !blocks_view(m,x,y))
+      if(tmp!=NULL && can_see_monsterP(m,x,y,i) && !blocks_view(m,nx,ny))
         return freedir[i];
     }
   }
