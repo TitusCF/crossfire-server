@@ -962,7 +962,7 @@ void identify(object *op) {
     SET_FLAG(op,FLAG_KNOWN_CURSED);
 
   if (op->type == POTION && op->arch != (archetype *) NULL) {
-      op->face = op->arch->clone.face;
+    /*op->face = op->arch->clone.face; */
       free_string(op->name);
       op->name = add_refcount(op->arch->clone.name);
   } else if( op->type == SPELLBOOK && op->slaying != NULL){

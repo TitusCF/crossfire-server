@@ -858,7 +858,7 @@ void fix_generated_item (object *op, object *creator, int difficulty,
       break;
     }
   if (op->type == POTION && special_potion(op)) {
-    op->face = potion_face;
+    /*if(op->face==blank_face) op->face = potion_face;*/
     free_string(op->name);
     op->name = add_string("potion");
     op->level = spells[op->stats.sp].level/2+ RANDOM()%difficulty + RANDOM()%difficulty;
