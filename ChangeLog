@@ -17,6 +17,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+common/item.c, server/c_object.c: Fix code so that skill tools (talismans,
+  holy symbols, etc) are properly describe.  Clean up formatting of long_desc()
+MSW 2004-04-25
+
+
 Change most shop buy/sell functions to use 64 bit values.  Problem arises
 where player would sell valuable item, and if they wanted to buy them back,
 it would overflow a 32 bit value, so they could buy them back for free.

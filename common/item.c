@@ -834,6 +834,7 @@ char *describe_item(object *op, object *owner) {
 	case GIRDLE:
 	case BRACERS:
 	case CLOAK:
+	case SKILL_TOOL:
 	    break;  /* We have more information to do below this switch */
 
 	case FOOD:

@@ -1368,54 +1368,57 @@ void examine_monster(object *op,object *tmp) {
 	new_draw_info(NDI_UNIQUE, 0,op,"It looks very ill.");
 }
 
+
 /* tmp is the object being described, pl is who is examing it. */
 char *long_desc(object *tmp, object *pl) {
-  static char buf[VERY_BIG_BUF];
-  char *cp;
+    static char buf[VERY_BIG_BUF];
+    char *cp;
 
-  if(tmp==NULL)
-    return "";
-  buf[0]='\0';
-  switch(tmp->type) {
-  case RING:
-  case SKILL:
-  case WEAPON:
-  case ARMOUR:
-  case BRACERS:
-  case HELMET:
-  case SHIELD:
-  case BOOTS:
-  case GLOVES:
-  case AMULET:
-  case GIRDLE:
-  case BOW:
-  case ARROW:
-  case CLOAK:
-  case FOOD:
-  case DRINK:
-  case FLESH:
-    if(*(cp=describe_item(tmp, pl))!='\0') {
-	int len;
+    if(tmp==NULL)
+	return "";
 
-	strncpy(buf,query_name(tmp), VERY_BIG_BUF-1);
-	buf[VERY_BIG_BUF-1]=0;
-	len=strlen(buf);
-	if (len<VERY_BIG_BUF-5) {
-	    /* Since we know the length, we save a few cpu cycles by using
-	     * it instead of calling strcat */
-	    strcpy(buf+len," ");
-	    len++;
-	    strncpy(buf+len, cp, VERY_BIG_BUF-len-1);
-	    buf[VERY_BIG_BUF-1]=0;
-	}
+    buf[0]='\0';
+    switch(tmp->type) {
+	case RING:
+	case SKILL:
+	case WEAPON:
+	case ARMOUR:
+	case BRACERS:
+	case HELMET:
+	case SHIELD:
+	case BOOTS:
+	case GLOVES:
+	case AMULET:
+	case GIRDLE:
+	case BOW:
+	case ARROW:
+	case CLOAK:
+	case FOOD:
+	case DRINK:
+	case FLESH:
+	case SKILL_TOOL:
+	    if(*(cp=describe_item(tmp, pl))!='\0') {
+		int len;
+
+		strncpy(buf,query_name(tmp), VERY_BIG_BUF-1);
+		buf[VERY_BIG_BUF-1]=0;
+		len=strlen(buf);
+		if (len<VERY_BIG_BUF-5) {
+		    /* Since we know the length, we save a few cpu cycles by using
+		     * it instead of calling strcat */
+		    strcpy(buf+len," ");
+		    len++;
+		    strncpy(buf+len, cp, VERY_BIG_BUF-len-1);
+		    buf[VERY_BIG_BUF-1]=0;
+		}
+	    }
     }
-  }
-  if(buf[0]=='\0') {
+    if(buf[0]=='\0') {
 	strncpy(buf,query_name(tmp), VERY_BIG_BUF-1);
 	buf[VERY_BIG_BUF-1]=0;
-  }
+    }
 
-  return buf;
+    return buf;
 }
 
 void examine(object *op, object *tmp) {
