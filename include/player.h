@@ -93,7 +93,7 @@ typedef struct pl {
     sint8	gen_sp;		    /* Bonuses to regeneration speed of sp */
     sint8	gen_sp_armour;	    /* Penalty to sp regen from armour */
     sint8	gen_grace;	    /* Bonuses to regeneration speed of grace */
-    sint8	item_power;	    /* Total item power of objects equipped */
+    sint16	item_power;	    /* Total item power of objects equipped */
     uint8	state;		    /* Input state of the player (name, password, etc */
     uint8	listening;	    /* Which priority will be used in info_all */
     sint8	last_level;	    /* Last level we sent to client */

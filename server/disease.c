@@ -162,40 +162,39 @@ static int is_susceptible_to_disease(object *victim, object *disease)
 }
 
 int move_disease(object *disease) {
+    /*  first task is to determine if the disease is inside or outside of someone.
+     * If outside, we decrement 'hp' until we're gone. 
+     */
 
-/*  first task is to determine if the disease is inside or outside of someone.
-If outside, we decrement 'hp' until we're gone. */
-
-  if(disease->env==NULL) { /* we're outside of someone */
-    disease->value--;
-    if(disease->value==0) {
-      remove_ob(disease);
-      free_object(disease);
-      return 1;
+    if(disease->env==NULL) { /* we're outside of someone */
+	disease->value--;
+	if(disease->value==0) {
+	    remove_ob(disease);
+	    free_object(disease);
+	    return 1;
+	}
+    } else {
+	/* if we're inside a person, have the disease run its course */
+	/* negative foods denote "perpetual" diseases. */
+	if(disease->stats.food>0) {
+	    disease->stats.food--;
+	    if (disease->stats.food==0) {
+		remove_symptoms(disease);  /* remove the symptoms of this disease */
+		grant_immunity(disease);
+		remove_ob(disease);
+		free_object(disease);
+		return 1;
+	    }
+	}
     }
-  } else {
-    /* if we're inside a person, have the disease run its course */
-    /* negative foods denote "perpetual" diseases. */
-    if(disease->stats.food>0 && is_susceptible_to_disease(disease->env, disease)) {
-      disease->stats.food--;
-      if(disease->stats.food==0) {
-	remove_symptoms(disease);  /* remove the symptoms of this disease */
-	grant_immunity(disease);
-	remove_ob(disease);
-	free_object(disease);
-	return 1;
-      }
-    }
-  }
+    /*  check to see if we infect others */
+    check_infection(disease);
 
-  /*  check to see if we infect others */
-  check_infection(disease);
+    /* impose or modify the symptoms of the disease */
+    if(disease->env && is_susceptible_to_disease(disease->env, disease))
+	do_symptoms(disease);
 
-  /* impose or modify the symptoms of the disease */
-  if(disease->env)
-    do_symptoms(disease);
-
-  return 0;
+    return 0;
 }
 
 /* remove any symptoms of disease */
@@ -215,8 +214,6 @@ int remove_symptoms(object *disease) {
 /* argument is a disease */
 object * find_symptom(object *disease) {
   object *walk;
-  char symptom_name[256];
-  sprintf(symptom_name,"%s",disease->name);
 
   /* check the inventory for symptoms */
   for(walk=disease->env->inv;walk;walk = walk->below) 

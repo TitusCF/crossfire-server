@@ -17,6 +17,16 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/disease.c: Change move_disease() somehwat - before, if you were
+   not susceptible to a disease, it would never run its course.  Yet you
+   would still get stuck with the symptoms.  there was a case on
+   metalforge where a character had a symptom with no disease, and
+   had immunity, yet was still getting stuck with the symptoms.  Not sure
+   if this change will help prevent that in the future or not.
+include/player.h: Change item_power in player structure to be 16 bits -
+   8 bit values were getting overflowed.
+MSW 2002-09-14
+
 INSTALL: Update directions with new automake method.
 common/Makefile.am, common/Makefile.in: Fix code for building the libproto.h
    file - it was including loader.l and not loader.c
