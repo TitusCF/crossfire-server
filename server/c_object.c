@@ -246,14 +246,15 @@ int sack_can_hold (object *pl, object *sack, object *op, int nrof) {
  * tmp is the object to pick up, nrof is the number to
  * pick up (0 means all of them)
  */
-void pick_up_object (object *pl, object *op, object *tmp, int nrof)
+static void pick_up_object (object *pl, object *op, object *tmp, int nrof)
 {
     /* buf needs to be big (more than 256 chars) because you can get
      * very long item names.
      */
     char buf[HUGE_BUF];
     object *env=tmp->env;
-    uint32 weight;
+    uint32 weight, effective_weight_limit;
+    int tmp_nrof = tmp->nrof ? tmp->nrof : 1;
 
     /* IF the player is flying & trying to take the item out of a container 
      * that is in his inventory, let him.  tmp->env points to the container 
@@ -265,38 +266,28 @@ void pick_up_object (object *pl, object *op, object *tmp, int nrof)
 	new_draw_info(NDI_UNIQUE, 0,pl, "You are levitating, you can't reach the ground!");
 	return;
     }
-    if(!can_pick(pl,tmp)) {
-	if (tmp->name!=NULL) {
-	    sprintf(buf,"You can't pick up a %s", tmp->name);
-	    new_draw_info(NDI_UNIQUE, 0,pl, buf);
-	}
-	else
-	    new_draw_info(NDI_UNIQUE, 0,pl,"You can't take that!");
-	return;
-    }
     if (QUERY_FLAG (tmp, FLAG_NO_DROP))
 	return;
     if(QUERY_FLAG(tmp,FLAG_WAS_WIZ) && !QUERY_FLAG(pl, FLAG_WAS_WIZ)) {
 	new_draw_info(NDI_UNIQUE, 0,pl, "The object disappears in a puff of smoke!");
 	new_draw_info(NDI_UNIQUE, 0,pl, "It must have been an illusion.");
 	if (pl->type==PLAYER) esrv_del_item (pl->contr, tmp->count);
-	remove_ob(tmp);
+	if ( ! QUERY_FLAG (tmp, FLAG_REMOVED))
+            remove_ob (tmp);
 	free_object(tmp);
 	return;
     }
     
-    /* startequip items are not allowed to be put into containers: */
-    if (pl->type == PLAYER && op->type == CONTAINER &&
-	QUERY_FLAG(tmp, FLAG_STARTEQUIP)) {
-      new_draw_info(NDI_UNIQUE, 0,pl,"This object cannot be put into containers!");
-      return;
-    }
-    
-    if (nrof==0 || nrof>tmp->nrof) nrof=(tmp->nrof?tmp->nrof:1);
+    if (nrof > tmp_nrof || nrof == 0)
+	nrof = tmp_nrof;
     /* Figure out how much weight this object will add to the player */
     weight = tmp->weight * nrof;
     if (tmp->inv) weight += tmp->carrying * (100 - tmp->stats.Str) / 100;
-    if ((pl->weight + pl->carrying +weight) > weight_limit[pl->stats.Str]) {
+    if (pl->stats.Str <= MAX_STAT)
+        effective_weight_limit = weight_limit[pl->stats.Str];
+    else
+        effective_weight_limit = weight_limit[MAX_STAT];
+    if ((pl->weight + pl->carrying + weight) > effective_weight_limit) {
 	new_draw_info(NDI_UNIQUE, 0,pl,"That item is too heavy for you to pick up.");
 	return;
     }
@@ -307,7 +298,7 @@ void pick_up_object (object *pl, object *op, object *tmp, int nrof)
 	SET_FLAG(tmp, FLAG_WAS_WIZ);
 #endif
 
-    if(nrof != tmp->nrof && !(nrof == 1 && tmp->nrof == 0)) {
+    if (nrof != tmp_nrof) {
 	object *tmp2 = tmp;
         tag_t tmp2_tag = tmp2->count;
 	tmp = get_split_ob (tmp, nrof);
@@ -317,7 +308,7 @@ void pick_up_object (object *pl, object *op, object *tmp, int nrof)
 	}
 	/* Tell a client what happened rest of objects */
 	if (pl->type == PLAYER) {
-            if (was_destroyed (tmp2, tmp2_tag))
+	    if (was_destroyed (tmp2, tmp2_tag))
 		esrv_del_item (pl->contr, tmp2_tag);
 	    else
 		esrv_send_item (pl, tmp2);
@@ -327,9 +318,11 @@ void pick_up_object (object *pl, object *op, object *tmp, int nrof)
 	 * - we are moving all the items from the container to elsewhere,
 	 * so it needs to be deleted.
 	 */
-	if (tmp->env && pl->type==PLAYER) 
-	    esrv_del_item (pl->contr, tmp->count);
-	remove_ob(tmp); /* Unlink it */
+        if ( ! QUERY_FLAG (tmp, FLAG_REMOVED)) {
+	    if (tmp->env && pl->type==PLAYER) 
+	        esrv_del_item (pl->contr, tmp->count);
+	    remove_ob(tmp); /* Unlink it */
+	}
     }
     if(QUERY_FLAG(tmp, FLAG_UNPAID))
 	(void) sprintf(buf,"%s will cost you %s.", query_name(tmp),
@@ -360,18 +353,42 @@ void pick_up_object (object *pl, object *op, object *tmp, int nrof)
 void pick_up(object *op,object *alt) 
 /* modified slightly to allow monsters use this -b.t. 5-31-95 */
 {
-    object *tmp=NULL;
+    int need_fix_tmp = 0;
+    object *tmp;
+    mapstruct *tmp_map;
     int count;
+    tag_t tag;
 
-    if(alt)
-	tmp=alt;
-    else if(op->below==NULL || !can_pick(op, tmp)) {
-	new_draw_info(NDI_UNIQUE, 0,op,"There is nothing to pick up here.");
-	return;
-    } else
-	tmp=op->below;
+    /* Decide which object to pick. */
+    if (alt)
+    {
+        if ( ! can_pick (op, alt)) {
+            new_draw_info_format (NDI_UNIQUE, 0, op, "You can't pick up a %s.",
+                                  alt->name);
+	    goto leave;
+        }
+        tmp = alt;
+    }
+    else
+    {
+        if (op->below == NULL || ! can_pick (op, op->below)) {
+             new_draw_info (NDI_UNIQUE, 0, op,
+                            "There is nothing to pick up here.");
+             goto leave;
+        }
+        tmp = op->below;
+    }
 
-    if (op->type==PLAYER && op->contr->count && op->contr->count <tmp->nrof)
+    /* Try to catch it. */
+    tmp_map = tmp->map;
+    tmp = stop_item (tmp);
+    if (tmp == NULL)
+        goto leave;
+    need_fix_tmp = 1;
+    if ( ! can_pick (op, tmp))
+        goto leave;
+
+    if (op->type==PLAYER)
 	count=op->contr->count;
     else
 	count=tmp->nrof;
@@ -380,7 +397,7 @@ void pick_up(object *op,object *alt)
     if (op->container) {
 	alt = op->container;
 	if (alt != tmp->env && !sack_can_hold (op, alt, tmp,count))
-	    return;
+	    goto leave;
     } else { /* non container pickup */
 	for (alt=op->inv; alt; alt=alt->below)
 	    if (alt->type==CONTAINER && QUERY_FLAG(alt, FLAG_APPLIED) &&
@@ -405,11 +422,27 @@ void pick_up(object *op,object *alt)
 #ifdef PICKUP_DEBUG
     printf ("Pick_up(): %s picks %s (%d) and inserts it %s.\n",op->name, tmp->name,  op->contr->count, alt->name);
 #endif
-    if(op->type==PLAYER) { 
-       pick_up_object(op, alt, tmp, op->contr->count);
+
+    /* startequip items are not allowed to be put into containers: */
+    if (op->type == PLAYER && alt->type == CONTAINER
+	&& QUERY_FLAG (tmp, FLAG_STARTEQUIP))
+    {
+        new_draw_info (NDI_UNIQUE, 0, op,
+                       "This object cannot be put into containers!");
+        goto leave;
+    }
+
+    tag = tmp->count;
+    pick_up_object (op, alt, tmp, count);
+    if (was_destroyed (tmp, tag) || tmp->env)
+        need_fix_tmp = 0;
+    if (op->type == PLAYER)
        op->contr->count=0;
-    } else 
-       pick_up_object(op, alt, tmp, tmp->nrof);
+    goto leave;
+
+  leave:
+    if (need_fix_tmp)
+        fix_stopped_item (tmp, tmp_map, op);
 }
 
 
@@ -450,7 +483,7 @@ int command_take (object *op, char *params)
 	for (tmp=op->below; tmp!=NULL; tmp=tmp->next)
 	    if (!tmp->invisible) {
 		char buf[MAX_BUF];
-		sprintf(buf,"You can't pick up a %s",
+		sprintf(buf,"You can't pick up a %s.",
 		    tmp->name? tmp->name:"null");
 		new_draw_info(NDI_UNIQUE, 0,op, buf);
 		break;

@@ -1540,12 +1540,7 @@ void animate_bomb(object *op) {
   if (at)
     for(i=1;i<9;i++)
       fire_arch(op,op,i,at,0,0);
-  remove_ob(op);
-  op->x=env->x;
-  op->y=env->y;
-  if(!explode_object(op)) /* Boom 8) */
-    LOG(llevError,"Error: bomb refused to go off.\n");
-  return;
+  explode_object(op);
 }
 
 
@@ -1586,8 +1581,8 @@ void move_cancellation(object *op) {
     insert_ob_in_map(op,op->map,op);
     return;
   }
-  hit_map(op, 0, op->attacktype);
-  insert_ob_in_map(op,op->map,op);
+  if ((op = insert_ob_in_map (op, op->map, op)) != NULL)
+    hit_map (op, 0, op->attacktype);
 }
 
 void cancellation(object *op)

@@ -974,7 +974,6 @@ static void fire_bow(object *op, int dir)
   arrow->level = SK_level (op);
 
   arrow->map = op->map;
-  SET_FLAG(arrow, FLAG_NO_PICK);
   SET_FLAG(arrow, FLAG_FLYING);
   SET_FLAG(arrow, FLAG_FLY_ON);
   SET_FLAG(arrow, FLAG_WALK_ON);

@@ -1103,7 +1103,8 @@ cast_cone(object *op, object *caster,int dir, int strength, int spell_type,arche
     if ( ! QUERY_FLAG (tmp, FLAG_FLYING))
       LOG (llevDebug, "cast_cone(): arch %s doesn't have flying 1\n",
            spell_arch->name);
-    if ( ! QUERY_FLAG (tmp, FLAG_WALK_ON) || ! QUERY_FLAG (tmp, FLAG_FLY_ON))
+    if (( ! QUERY_FLAG (tmp, FLAG_WALK_ON) || ! QUERY_FLAG (tmp, FLAG_FLY_ON))
+        && tmp->stats.dam)
       LOG (llevDebug, "cast_cone(): arch %s doesn't have walk_on 1 and "
            "fly_on 1\n", spell_arch->name);
     insert_ob_in_map(tmp,op->map,op);
@@ -1115,17 +1116,12 @@ void move_cone(object *op) {
     int i;
     tag_t tag;
 
-    if (op->env) {
-        /* handle flowers in icecubes */
-        op->speed = 0;
-        update_ob_speed (op);
-        return;
-    }
-
     /* if no map then hit_map will crash so just ignore object */
     if (! op->map) {
 	LOG(llevError,"Tried to move_cone object %s without a map.\n",
 	    op->name ? op->name : "unknown");
+        op->speed = 0;
+        update_ob_speed (op);
 	return;
     }
 
@@ -1479,46 +1475,50 @@ void move_missile(object *op) {
   insert_ob_in_map(op,op->map,op);
 }
 
-int explode_object(object *op) {
-  object *tmp, *victim, *env;
+void explode_object(object *op)
+{
+  tag_t op_tag = op->count;
+  object *tmp;
+  mapstruct *map;
 
-  if(out_of_map(op->map,op->x,op->y))  /*  peterm:  check for out of map obj's.*/
-    {
-      return 0;
+  if (op->other_arch == NULL) {
+    LOG (llevError, "BUG: explode_object(): op without other_arch\n");
+    remove_ob (op);
+    free_object (op);
+    return;
+  }
+
+  if (op->env) {
+    object *env;
+    for (env = op; env->env != NULL; env = env->env) ;
+    if (env->map == NULL || out_of_map (env->map, env->x, env->y)) {
+      LOG (llevError, "BUG: explode_object(): env out of map\n");
+      remove_ob (op);
+      free_object (op);
+      return;
     }
-  for(env=op;env->env!=NULL;env=env->env);
-  if (env->map == NULL)
-    return 0;
-  if(op->other_arch==NULL)
-    return 0;
-  tmp=arch_to_object(op->other_arch);
+    remove_ob (op);
+    op->x = env->x;
+    op->y = env->y;
+    insert_ob_in_map_simple (op, env->map);
+  } else if (out_of_map (op->map, op->x, op->y)) {
+     LOG (llevError, "BUG: explode_object(): op out of map\n");
+     remove_ob (op);
+     free_object (op);
+     return;
+  }
 
-  /* peterm: Hack added to make objects be able to both hit for damage and
-    then explode.  */
-  if(op->attacktype){
-      for(victim=get_map_ob(op->map,op->x,op->y);victim!=NULL;victim=victim->above)
-        if(QUERY_FLAG(victim,FLAG_ALIVE))
-          break;
-      hit_map(op,0,op->attacktype);
-
-#if 0
-    /* Hit_map will also do a hit_player for us.  Leaving this call in
-     * effectively doubles the amount of damage the bullet is doing.
-     */
-      /* Should hit_map also be doing this?  Why call hit_player
-       * again?  Also, make sure victim has not been killed - it
-       * is possible that hit_map killed the object.
-       */
-      if(victim!=NULL && !QUERY_FLAG(victim,FLAG_FREED))
-	 hit_player(victim,op->stats.dam,op,op->attacktype);
-#endif
-    }
+  if (op->attacktype) {
+    hit_map (op, 0, op->attacktype);
+    if (was_destroyed (op, op_tag))
+      return;
+  }
 
   /*  peterm:  hack added to make fireballs and other explosions level
    *  dependent:
    */
-
   /*  op->stats.sp stores the spell which made this object here. */
+  tmp = arch_to_object (op->other_arch);
   tmp->stats.dam += SP_level_dam_adjust(op,op,op->stats.sp);
   if(op->attacktype&AT_MAGIC)
     tmp->attacktype|=AT_MAGIC;
@@ -1526,48 +1526,63 @@ int explode_object(object *op) {
   if(op->stats.hp)
     tmp->stats.hp=op->stats.hp;
   tmp->stats.maxhp=op->count; /* Unique ID */
-  tmp->x=env->x,tmp->y=env->y;
+  tmp->x = op->x;
+  tmp->y = op->y;
 
 #ifdef MULTIPLE_GODS /* needed for AT_HOLYWORD stuff -b.t. */
   if(tmp->attacktype&AT_HOLYWORD||tmp->attacktype&AT_GODPOWER) 
-          if(!tailor_god_spell(tmp,op)) return 0;   
+    if ( ! tailor_god_spell (tmp, op)) {
+      remove_ob (op);
+      free_object (op);
+      return;
+    }
 #endif
 
-  if (wall(env->map,env->x,env->y))
-    tmp->x-=DIRX(env),tmp->y-=DIRY(env);
-  if (out_of_map(env->map, env->x, env->y))
-    free_object(tmp);
-  else
-    insert_ob_in_map(tmp,env->map,op);
-  free_object(op);
-  return 1;
-}
+  /* Prevent recursion */
+  CLEAR_FLAG (op, FLAG_WALK_ON);
+  CLEAR_FLAG (op, FLAG_FLY_ON);
 
-void check_fired_arch(object *op) {
-  if(blocked(op->map,op->x,op->y)) {
-    object *tmp;
-    remove_ob(op);
-    if(out_of_map(op->map,op->x,op->y)) {
-	free_object(op);
-	return;
-    }
-    if(explode_object(op))
-      return;
-    for(tmp=get_map_ob(op->map,op->x,op->y);tmp!=NULL;tmp=tmp->above)
-      if(QUERY_FLAG(tmp, FLAG_ALIVE))
-        break;
-    if(tmp!=NULL)
-      op->stats.dam-=hit_player(tmp,op->stats.dam,op,op->attacktype);
-    if(blocked(op->map,op->x,op->y)) {
-      free_object(op);
-      return;
-    }
-    insert_ob_in_map(op,op->map,op);
+  insert_ob_in_map (tmp, op->map, op);
+  if ( ! was_destroyed (op, op_tag)) {
+    remove_ob (op);
+    free_object (op);
   }
 }
 
-void move_fired_arch(object *op) {
-    remove_ob(op);
+void check_fired_arch (object *op)
+{
+    tag_t op_tag = op->count, tmp_tag;
+    object *tmp;
+    int dam;
+
+    if ( ! blocked (op->map, op->x, op->y))
+        return;
+
+    if (op->other_arch) {
+        explode_object (op);
+        return;
+    }
+
+    for (tmp = get_map_ob (op->map,op->x,op->y); tmp != NULL; tmp = tmp->above)
+    {
+        if (QUERY_FLAG (tmp, FLAG_ALIVE)) {
+            tmp_tag = tmp->count;
+            dam = hit_player (tmp, op->stats.dam, op, op->attacktype);
+            if (was_destroyed (op, op_tag) || ! was_destroyed (tmp, tmp_tag)
+                || (op->stats.dam -= dam) < 0)
+            {
+                remove_ob (op);
+                free_object(op);
+                return;
+            }
+        }
+    }
+}
+
+void move_fired_arch (object *op)
+{
+    tag_t op_tag = op->count;
+    int new_x, new_y;
 
     /* peterm:  added to make comet leave a trail of burnouts 
 	it's an unadulterated hack, but the effect is cool.	*/
@@ -1576,61 +1591,39 @@ void move_fired_arch(object *op) {
 
         tmp1->x = op->x; tmp1->y = op->y;
         insert_ob_in_map(tmp1,op->map,op);
+        if (was_destroyed (op, op_tag))
+            return;
     } /* end addition.  */
 
-    op->x+=DIRX(op),op->y+=DIRY(op);
-    if(!op->direction||wall(op->map,op->x,op->y)) {
-	if(explode_object(op))
-	    return;
-	free_object(op);
-	return;
+    new_x = op->x + DIRX(op);
+    new_y = op->y + DIRY(op);
+    if (out_of_map (op->map, new_x, new_y)) {
+        remove_ob (op);
+        free_object (op);
+        return;
     }
 
-    if(reflwall(op->map,op->x,op->y)) {
-	op->direction=absdir(op->direction+4);
-	if ((op = insert_ob_in_map(op,op->map,op)) != NULL)
-	    update_turn_face(op);
-	return;
+    if ( ! op->direction || wall (op->map, new_x, new_y)) {
+        if (op->other_arch) {
+            explode_object (op);
+        } else {
+            remove_ob (op);
+            free_object (op);
+        }
+        return;
     }
-    if(blocked(op->map,op->x,op->y)) {
-	object *tmp;
 
-	if(out_of_map(op->map,op->x,op->y)) {
-	    free_object(op);
-	    return;
-	}
-
-	if(explode_object(op))
-	    return;
-
-	for(tmp=get_map_ob(op->map,op->x,op->y);tmp!=NULL;tmp=tmp->above)
-	    if(QUERY_FLAG(tmp, FLAG_ALIVE))
-		break;
-
-	if(tmp!=NULL) {
-	    /* Certain items, like speedballs, have attacktype ghosthit.
-	     * hit_player wants to remove the object after it hits the player.
-	     * Since it is already removed, just don't make it ghosthit, and
-	     * remove it here
-	     */
-
-	    if (op->attacktype & AT_GHOSTHIT) {
-		hit_player(tmp,op->stats.dam,op,(op->attacktype & ~AT_GHOSTHIT));
-		free_object(op);
-		return;
-	    }
-	    else
-		op->stats.dam-=hit_player(tmp,op->stats.dam,op,op->attacktype);
-	}
-	/* I guess this can be applicable if the object blocking the
-	 * space was destroyed?
-	 */
-	if(blocked(op->map,op->x,op->y)) {
-	    free_object(op);
-	    return;
-	}
-    } /* if space is blocked */
-    insert_ob_in_map(op,op->map,op);
+    remove_ob (op);
+    op->x = new_x;
+    op->y = new_y;
+    if ((op = insert_ob_in_map (op, op->map, op)) == NULL)
+        return;
+    if (reflwall (op->map, op->x, op->y)) {
+        op->direction = absdir (op->direction + 4);
+        update_turn_face (op);
+    } else {
+        check_fired_arch (op);
+    }
 }
 
 

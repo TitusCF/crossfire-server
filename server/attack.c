@@ -86,12 +86,17 @@ int did_make_save_item(object *op, int type) {
  * calling cancellation, etc.)
  */
 
-void save_throw_object(object *op, int type) {
-
-    if (!did_make_save_item(op, type)) {
+void save_throw_object (object *op, int type, object *originator)
+{
+    if ( ! did_make_save_item (op, type))
+    {
 	object *env=op->env;
 	int x=op->x,y=op->y;
 	mapstruct *m=op->map;
+
+        op = stop_item (op);
+        if (op == NULL)
+            return;
 
 	/* Hacked the following so that type LIGHTER will work. 
 	 * Also, objects which are potenital "lights" that are hit by 
@@ -105,7 +110,9 @@ void save_throw_object(object *op, int type) {
            &&op->other_arch&&op->glow_radius) { 
 		char *arch=op->other_arch->name;
 
-		decrease_ob_nr(op,1);
+		op = decrease_ob_nr (op, 1);
+                if (op)
+                    fix_stopped_item (op, m, originator);
 		if((op = get_archetype(arch))!=NULL) {
                    if(env) {  
 			op->x=env->x,op->y=env->y;
@@ -114,18 +121,21 @@ void save_throw_object(object *op, int type) {
 			    esrv_send_item(env, op);
                    } else { 
                       op->x=x,op->y=y;
-                      insert_ob_in_map(op,m,NULL);
+                      insert_ob_in_map(op,m,originator);
 		   }
 		}
 		return;
         }
         if(type&AT_CANCELLATION) {          /* Cancellation. */
               cancellation(op);
+              fix_stopped_item (op, m, originator);
               return;  
         }
-	if(op->nrof>1)
-	      decrease_ob_nr(op,RANDOM()%op->nrof);
-	else {
+	if(op->nrof>1) {
+	      op = decrease_ob_nr(op,RANDOM()%op->nrof);
+              if (op)
+                  fix_stopped_item (op, m, originator);
+	} else {
 	    if (op->env) {
 		object *tmp= is_player_inv(op->env);
 
@@ -134,7 +144,8 @@ void save_throw_object(object *op, int type) {
 		    esrv_update_item(UPD_WEIGHT, tmp, tmp);
 		}
 	    }
-	    remove_ob(op);
+	    if ( ! QUERY_FLAG (op, FLAG_REMOVED))
+                remove_ob(op);
 	    free_object(op);
 	}
 	if(type&(AT_FIRE|AT_ELECTRICITY)) {
@@ -144,7 +155,7 @@ void save_throw_object(object *op, int type) {
                 insert_ob_in_ob(op,env);
 	      } else { 
 		op->x=x,op->y=y;
-	      	insert_ob_in_map(op,m,NULL);
+	      	insert_ob_in_map(op,m,originator);
 	      }
 	}
 	return;
@@ -155,12 +166,16 @@ void save_throw_object(object *op, int type) {
         archetype *at = find_archetype("icecube");
         if (at == NULL)
           return;
+        op = stop_item (op);
+        if (op == NULL)
+            return;
         if ((tmp = present_arch(at,op->map,op->x,op->y)) == NULL) {
           tmp = arch_to_object(at);
           tmp->x=op->x,tmp->y=op->y;
-          insert_ob_in_map(tmp,op->map,NULL);
+          insert_ob_in_map(tmp,op->map,originator);
         }
-        remove_ob(op);
+        if ( ! QUERY_FLAG (op, FLAG_REMOVED))
+            remove_ob(op);
         (void) insert_ob_in_ob(op,tmp);
         return;
     }
@@ -177,7 +192,13 @@ int hit_map(object *op,int dir,int type) {
     LOG (llevError, "BUG: hit_map(): free object\n");
     return 0;
   }
-  
+
+  if (QUERY_FLAG (op, FLAG_REMOVED) || op->env != NULL) {
+    LOG (llevError, "BUG: hit_map(): hitter (arch %s, name %s) not on a map\n",
+         op->arch->name, op->name);
+    return 0;
+  }
+
   if (op->head) op=op->head;
 
   op_tag = op->count;
@@ -232,7 +253,7 @@ int hit_map(object *op,int dir,int type) {
       next_tag = next->count;
 
     if (QUERY_FLAG (tmp, FLAG_FREED)) {
-	LOG (llevError, "BUG: hit_map(): found free object\n");
+	LOG (llevError, "BUG: hit_map(): found freed object\n");
 	break;
     }
 
@@ -248,7 +269,9 @@ int hit_map(object *op,int dir,int type) {
       if (was_destroyed (op, op_tag))
         break;
     } else if (tmp->material) {
-      save_throw_object(tmp,type);
+      save_throw_object(tmp,type,op);
+      if (was_destroyed (op, op_tag))
+        break;
     }
   }
 #ifdef NO_CONE_PROPOGATE
@@ -308,41 +331,78 @@ static att_msg *attack_message(int dam) {
   return &messages;
 }
 
-/*
- * attack_ob() returns 1 on a hit, and 0 on a miss.
- * op is what is being attacked, hitter is what is hitting (Arrow, player,
- * whatever)
- */
 
-int attack_ob(object *op,object *hitter) {
-    int roll,dam=0;
+static int get_attack_mode (object **target, object **hitter,
+	int *simple_attack)
+{
+    if (QUERY_FLAG (*target, FLAG_FREED) || QUERY_FLAG (*hitter, FLAG_FREED)) {
+        LOG (llevError, "BUG: get_attack_mode(): freed object\n");
+        return 1;
+    }
+    if ((*target)->head)
+        *target = (*target)->head;
+    if ((*hitter)->head)
+        *hitter = (*hitter)->head;
+    if ((*hitter)->env != NULL || (*target)->env != NULL) {
+        *simple_attack = 1;
+        return 0;
+    }
+    if (QUERY_FLAG (*target, FLAG_REMOVED)
+        || QUERY_FLAG (*hitter, FLAG_REMOVED)
+        || (*hitter)->map == NULL || (*hitter)->map != (*target)->map)
+    {
+        LOG (llevError, "BUG: hitter (arch %s, name %s) with no relation to "
+             "target\n", (*hitter)->arch->name, (*hitter)->name);
+        return 1;
+    }
+    *simple_attack = 0;
+    return 0;
+}
+
+static int abort_attack (object *target, object *hitter, int simple_attack)
+{
+/* Check if target and hitter are still in a relation similar to the one
+ * determined by get_attack_mode().  Returns true if the relation has changed.
+ */
+    int new_mode;
+
+    if (hitter->env == target || target->env == hitter)
+        new_mode = 1;
+    else if (QUERY_FLAG (hitter, FLAG_REMOVED)
+             || QUERY_FLAG (target, FLAG_REMOVED)
+             || hitter->map == NULL || hitter->map != target->map)
+        return 1;
+    else
+        new_mode = 0;
+    return new_mode != simple_attack;
+}
+
+static void thrown_item_effect (object *, object *);
+
+static int attack_ob_simple (object *op, object *hitter, int base_dam,
+	int base_wc)
+{
+    int simple_attack, roll, dam=0;
     char buf[MAX_BUF];
     uint32 type;
     att_msg *msg;
-    char *op_name;
+    char *op_name = NULL;
     signed char luck=0;
+    tag_t op_tag, hitter_tag;
 
-    if(op->head!=NULL)
-	op=op->head;
-    if(op->name==NULL) {
-	if(settings.debug >= llevDebug) {
-	    dump_object(op);
-	    LOG(llevDebug,"Object without name tried to attack.\n%s\n",errmsg);
-	    /* we don't NEED to print this a zillion times, so GIVE IT A NAME. */
-	    op->name = add_string(op->arch->name);
-	    
-	}
-	if (QUERY_FLAG(op, FLAG_REMOVED) && !QUERY_FLAG(op, FLAG_FREED))
-	    free_object(op);
-	return 1;
-    }
+    if (get_attack_mode (&op, &hitter, &simple_attack))
+        goto error;
+
+    op_tag = op->count;
+    hitter_tag = hitter->count;
 
     /*
      * A little check to make it more difficult to dance forward and back
      * to avoid ever being hit by monsters.
      */
-    if (QUERY_FLAG(op, FLAG_MONSTER) && op->speed_left > -(FABS(op->speed))*0.3) {
-
+    if ( ! simple_attack && QUERY_FLAG (op, FLAG_MONSTER)
+        && op->speed_left > -(FABS(op->speed))*0.3)
+    {
 	/* Decrease speed BEFORE calling process_object.  Otherwise, an
 	 * infinite loop occurs, with process_object calling move_monster,
 	 * which then gets here again.  By decreasing the speed before
@@ -350,21 +410,12 @@ int attack_ob(object *op,object *hitter) {
 	 */
 	op->speed_left--;
 	process_object(op);
-	if (QUERY_FLAG(op, FLAG_FREED))
-	return 1;
+	if (was_destroyed (op, op_tag) || was_destroyed (hitter, hitter_tag)
+            || abort_attack (op, hitter, simple_attack))
+		goto error;
     }
 
     add_refcount(op_name = op->name);
-    if(hitter->head!=NULL)
-	hitter=hitter->head;
-
-    if (hitter->name==NULL) {
-	if(settings.debug >= llevDebug) {
-	    dump_object(hitter);
-	    LOG(llevDebug,"Object without name tried to attack.\n%s\n",errmsg);
-	}
-	return 1;
-    }
 
     /*  BROKEN:  the luck code.  If you look carefully, luck has these effects:
 	positive luck adds to the damage YOU take and to YOUR likelihood
@@ -382,11 +433,12 @@ int attack_ob(object *op,object *hitter) {
 	roll=RANDOM()%20+1+luck;
 
     /* Adjust roll for various situations. */
-    roll += adj_attackroll(hitter,op); 
+    if ( ! simple_attack)
+        roll += adj_attackroll(hitter,op); 
 
     /* See if we hit the creature */
-    if(roll==(20+luck)||op->stats.ac>=hitter->stats.wc-roll) {
-	int hitdam=hitter->stats.dam+luck;
+    if(roll==(20+luck)||op->stats.ac>=base_wc-roll) {
+	int hitdam = base_dam + luck;
 #ifdef CASTING_TIME
 	if ((hitter->type == PLAYER)&&(hitter->casting > -1)){
 	    hitter->casting = -1;
@@ -399,34 +451,44 @@ int attack_ob(object *op,object *hitter) {
 	    if (op->type == PLAYER)  {
 		new_draw_info(NDI_UNIQUE, 0,op,"You were hit and lost your spell!");
 		new_draw_info_format(NDI_ALL|NDI_UNIQUE,5,NULL,
-		    "%s was hit by %s and lost a spell.",op->name,hitter->name);
+		    "%s was hit by %s and lost a spell.",op_name,hitter->name);
 	    }
 	}
 #endif
-	/* If you hit something, the victim should *always* wake up.
-	 * Before, invisible hitters could avoid doing this. 
-	 * -b.t. */
-	if(QUERY_FLAG(op,FLAG_SLEEP)) CLEAR_FLAG(op,FLAG_SLEEP);
+	if ( ! simple_attack)
+        {
+            /* If you hit something, the victim should *always* wake up.
+             * Before, invisible hitters could avoid doing this. 
+             * -b.t. */
+            if (QUERY_FLAG (op, FLAG_SLEEP))
+                CLEAR_FLAG(op,FLAG_SLEEP);
 
-	/* If the victim can't see the attacker, it may alert others
-	 * for help. */
-	if(op->type!=PLAYER&&!can_see_enemy(op,hitter)
-	   &&!get_owner(op)&&RANDOM()%(op->stats.Int+1))
-	    npc_call_help(op);
+            /* If the victim can't see the attacker, it may alert others
+             * for help. */
+            if (op->type != PLAYER && ! can_see_enemy (op, hitter)
+                && ! get_owner (op) && RANDOM() % (op->stats.Int + 1))
+                npc_call_help (op);
 
-	/* if you were hidden and hit by a creature, you are discovered*/
-	if(op->hide && QUERY_FLAG(hitter,FLAG_ALIVE)) {
-	    make_visible(op);
-	    if(op->type==PLAYER) new_draw_info(NDI_UNIQUE, 0,op,
-		"You were hit by a wild attack. You are no longer hidden!");
-	}
+            /* if you were hidden and hit by a creature, you are discovered*/
+            if (op->hide && QUERY_FLAG (hitter, FLAG_ALIVE)) {
+                make_visible (op);
+                if (op->type == PLAYER)
+                    new_draw_info (NDI_UNIQUE, 0, op,
+                                   "You were hit by a wild attack. "
+                                   "You are no longer hidden!");
+            }
 
-	/* thrown items (hitter) will have various effects
-	 * when they hit the victim.  For things like thrown daggers,
-	 * this sets 'hitter' to the actual dagger, and not the
-	 * wrapper object.
-	 */
-	if((hitter=thrown_item_effect(hitter,op))==NULL) goto leave;
+            /* thrown items (hitter) will have various effects
+             * when they hit the victim.  For things like thrown daggers,
+             * this sets 'hitter' to the actual dagger, and not the
+             * wrapper object.
+             */
+            thrown_item_effect (hitter, op);
+            if (was_destroyed (hitter, hitter_tag)
+                || was_destroyed (op, op_tag)
+                || abort_attack (op, hitter, simple_attack))
+                goto leave;
+        }
 
 	/* Need to do at least 1 damage, otherwise there is no point
 	 * to go further and it will cause FPE's below.
@@ -436,18 +498,24 @@ int attack_ob(object *op,object *hitter) {
 	type=hitter->attacktype;
 	if(!type) type=AT_PHYSICAL;
 	/* Handle monsters that hit back */
-	if (QUERY_FLAG(op, FLAG_HITBACK) && QUERY_FLAG(hitter, FLAG_ALIVE)) {
+	if ( ! simple_attack && QUERY_FLAG (op, FLAG_HITBACK)
+	    && QUERY_FLAG (hitter, FLAG_ALIVE))
+	{
 	    if (op->attacktype & AT_ACID && hitter->type==PLAYER)
 		new_draw_info(NDI_UNIQUE, 0,hitter,"You are splashed by acid!\n");
 	    hit_player(hitter, RANDOM()%(op->stats.dam+1), op, op->attacktype);
-	    if (QUERY_FLAG(op, FLAG_FREED)) goto leave;
+	    if (was_destroyed (op, op_tag)
+                || was_destroyed (hitter, hitter_tag)
+                || abort_attack (op, hitter, simple_attack))
+                goto leave;
 	}
 
 	/* In the new attack code, it should handle multiple attack
 	 * types in its area, so remove it from here.
 	 */
 	dam=hit_player(op, (RANDOM()%hitdam)+1, hitter, type);
-	if (QUERY_FLAG(op, FLAG_FREED))
+	if (was_destroyed (op, op_tag) || was_destroyed (hitter, hitter_tag)
+            || abort_attack (op, hitter, simple_attack))
 	    goto leave;
     } /* end of if hitter hit op */
     /* if we missed, dam=0 */
@@ -492,10 +560,138 @@ int attack_ob(object *op,object *hitter) {
 	new_draw_info(NDI_BLACK, 0, hitter->owner, buf);
     }
 
-leave:
-    free_string(op_name);
+    goto leave;
+
+  error:
+    dam = 1;
+    goto leave;
+
+  leave:
+    if (op_name)
+        free_string (op_name);
     return dam;
 }
+
+int attack_ob (object *op, object *hitter)
+{
+    if (hitter->head)
+        hitter = hitter->head;
+    return attack_ob_simple (op, hitter, hitter->stats.dam, hitter->stats.wc);
+}
+
+/* op is the arrow, tmp is what is stopping the arrow.
+ *
+ * Returns 1 if op was inserted into tmp's inventory, 0 otherwise.
+ */
+static int stick_arrow (object *op, object *tmp)
+{
+    /* If the missile hit a player, we insert it in their inventory.
+     * However, if the missile is heavy, we don't do so (assume it falls
+     * to the ground after a hit).  What a good value for this is up to
+     * debate - 5000 is 5 kg, so arrows, knives, and other light weapons
+     * stick around.
+     */
+    if (op->weight <= 5000 && tmp->stats.hp >= 0) {
+	if(tmp->head != NULL)
+	    tmp = tmp->head;
+        remove_ob (op);
+	op = insert_ob_in_ob(op,tmp);
+	if (tmp->type== PLAYER)
+	    esrv_send_item (tmp, op);
+        return 1;
+    } else
+	return 0;
+}
+
+/* hit_with_arrow() disassembles the missile, attacks the victim and
+ * reassembles the missile.
+ *
+ * It returns a pointer to the reassembled missile, or NULL if the missile
+ * isn't available anymore.
+ */
+object *hit_with_arrow (object *op, object *victim)
+{
+    object *container, *hitter;
+    int hit_something;
+    tag_t victim_tag, hitter_tag;
+    sint16 victim_x, victim_y;
+
+    /* Disassemble missile */
+    if (op->inv) {
+        container = op;
+        hitter = op->inv;
+        remove_ob (hitter);
+        insert_ob_in_map_simple (hitter, container->map);
+        /* Note that we now have an empty THROWN_OBJ on the map.  Code that
+         * might be called until this THROWN_OBJ is either reassembled or
+         * removed at the end of this function must be able to deal with empty
+         * THROWN_OBJs. */
+    } else {
+        container = NULL;
+        hitter = op;
+    }
+
+    /* Try to hit victim */
+    victim_x = victim->x;
+    victim_y = victim->y;
+    victim_tag = victim->count;
+    hitter_tag = hitter->count;
+    hit_something = attack_ob_simple (victim, hitter, op->stats.dam,
+                                      op->stats.wc);
+    /* Arrow attacks door, rune of summoning is triggered, demon is put on
+     * arrow, move_apply() calls this function, arrow sticks in demon,
+     * attack_ob_simple() returns, and we've got an arrow that still exists
+     * but is no longer on the map. Ugh. (Beware: Such things can happen at
+     * other places as well!) */
+    if (was_destroyed (hitter, hitter_tag) || hitter->env != NULL) {
+        if (container) {
+            remove_ob (container);
+            free_object (container);
+        }
+        return NULL;
+    }
+
+    /* Missile hit victim */
+    if (hit_something)
+    {
+        /* Stop arrow */
+        if (container == NULL) {
+            hitter = fix_stopped_arrow (hitter);
+            if (hitter == NULL)
+                return NULL;
+        } else {
+            remove_ob (container);
+            free_object (container);
+        }
+
+        /* Try to stick arrow into victim */
+        if ( ! was_destroyed (victim, victim_tag)
+             && stick_arrow (hitter, victim))
+            return NULL;
+
+        /* Else try to put arrow on victim's map square */
+        if ((victim_x != hitter->x || victim_y != hitter->y)
+            && ! wall (hitter->map, victim_x, victim_y))
+        {
+            remove_ob (hitter);
+            hitter->x = victim_x;
+            hitter->y = victim_y;
+            insert_ob_in_map (hitter, hitter->map, hitter);
+        } else {
+            /* Else leave arrow where it is */
+            merge_ob (hitter, NULL);
+        }
+        return NULL;
+    }
+
+    /* Missile missed victim - reassemble missile */
+    if (container) {
+        remove_ob (hitter);
+        insert_ob_in_ob (hitter, container);
+    }
+    return op;
+}
+
 
 void tear_down_wall(object *op)
 {
@@ -743,26 +939,20 @@ int hit_player(object *op,int dam, object *hitter, int type) {
     char buf[MAX_BUF];
     object *old_hitter=NULL; /* this is used in case of servant monsters */ 
     int maxdam=0,ndam,attacktype=1,attacknum,magic=(type & AT_MAGIC);
-    tag_t hitter_tag;
+    int body_attack = op && op->head;   /* Did we hit op's head? */
+    int simple_attack;
+    tag_t op_tag, hitter_tag;
 
-    if (QUERY_FLAG (op, FLAG_FREED) || QUERY_FLAG (hitter, FLAG_FREED)) {
-        LOG (llevError, "BUG: hit_player(): freed object\n");
+    if (get_attack_mode (&op, &hitter, &simple_attack))
         return 0;
-    }
+
+    if (QUERY_FLAG (op, FLAG_WIZ))
+        return 0;
+
+    op_tag = op->count;
     hitter_tag = hitter->count;
 
-    if(op->head!=NULL) {
-	if(op->head==op) {
-	    LOG(llevError,"Recursive head error!\n");
-	    return 0;
-	}
-#if 0
-	/* To paralyze/slow a creature, we must hit its head with the attacktype.
-	 * If we are going to do this, this should probably be expanded.
-	 */
-	if(type&AT_PARALYZE || type&AT_SLOW)
-	    return 0;
-#else
+    if (body_attack) {
 	/* slow and paralyze must hit the head.  But we don't want to just
 	 * return - we still need to process other attacks the spell still
 	 * might have.  So just remove the paralyze and slow attacktypes,
@@ -776,19 +966,29 @@ int hit_player(object *op,int dam, object *hitter, int type) {
 	    type &= ~(AT_PARALYZE | AT_SLOW);
 	    if (!type || type==AT_MAGIC) return 0;
 	}
-#endif
-	op=op->head;
     }
 
-    if(op->type==DOOR && op->inv && op->inv->type==RUNE) {
-	spring_trap(op->inv,hitter);
-        if (was_destroyed (hitter, hitter_tag))
-            return 0;
+    if ( ! simple_attack && op->type == DOOR) {
+        object *tmp;
+        for (tmp = op->inv; tmp != NULL; tmp = tmp->below)
+            if (tmp->type == RUNE) {
+                spring_trap (tmp, hitter);
+                if (was_destroyed (hitter, hitter_tag)
+                    || was_destroyed (op, op_tag)
+                    || abort_attack (op, hitter, simple_attack))
+                    return 0;
+                break;
+            }
     }
 
-    /* If its already dead, or we're the wizard, don't attack it - no point */
-    if(QUERY_FLAG(op,FLAG_WIZ)||!QUERY_FLAG(op,FLAG_ALIVE)||op->stats.hp<0)
+    if ( ! QUERY_FLAG (op, FLAG_ALIVE) || op->stats.hp < 0) {
+        /* FIXME: If a player is killed by a rune in a door, the
+         * was_destroyed() check above doesn't return, and might get here.
+         */
+        LOG (llevDebug, "victim (arch %s, name %s) already dead in "
+             "hit_player()\n", op->arch->name, op->name);
 	return 0;
+    }
 
 #ifdef ATTACK_DEBUG
     LOG(llevDebug,"hit player: attacktype %d, dam %d\n", type, dam);
@@ -1212,7 +1412,11 @@ void paralyze_player(object *op, object *hitter, int dam)
     if((tmp=present(PARAIMAGE,op->map,op->x,op->y))==NULL) {
       tmp=clone_arch(PARAIMAGE);
       tmp->x=op->x,tmp->y=op->y;
-      insert_ob_in_map(tmp,op->map,NULL);
+      /* We can't use insert_ob_in_map() (which can trigger various things)
+       * unless a lot of was_destroyed() checks are added in our callers.
+       * But this is just a simple visual effect anyway.
+       */
+      insert_ob_in_map_simple(tmp,op->map);
     }
     op->speed_left-=(float)FABS(op->speed)*(dam*3);
     tmp->stats.food+=(signed short) (dam*3)/op->speed;
@@ -1274,22 +1478,17 @@ void deathstrike_player(object *op, object *hitter, int *dam)
 
 /* thrown_item_effect() - handles any special effects of thrown
  * items (like attacking living creatures--a potion thrown at a
- * monster). We return the hitter item for further
- * possible (ie physical) attacks. Other posibilities
- * include spilling containers, and lighting stuff on fire
- * with thrown torches.
+ * monster).
  */
-object *thrown_item_effect( object *hitter, object *victim) {
-  object *tmp=hitter;
- 
-  if(hitter->type==THROWN_OBJ) tmp = hitter->inv;
-  if(!tmp) return hitter;
+static void thrown_item_effect (object *hitter, object *victim)
+{
+  tag_t tag = hitter->count;
  
   if(!QUERY_FLAG(hitter,FLAG_ALIVE)) {
-    switch (tmp->type) {
+    switch (hitter->type) {
       case POTION:
         if(QUERY_FLAG(victim,FLAG_ALIVE)&&!QUERY_FLAG(victim,FLAG_UNDEAD)
-	  &&!(victim->immune&AT_MAGIC)) (void) apply_potion(victim,tmp);
+	  &&!(victim->immune&AT_MAGIC)) (void) apply_potion(victim,hitter);
         break;
       case FOOD:
 	/* cursed food is (often) poisonous....but it won't 'explode'
@@ -1299,22 +1498,13 @@ object *thrown_item_effect( object *hitter, object *victim) {
         break;
       case POISON: /* poison drinks */
         if(QUERY_FLAG(victim,FLAG_ALIVE)&&!QUERY_FLAG(victim,FLAG_UNDEAD)
-	  &&!(victim->immune&AT_POISON)) apply_poison(victim,tmp);
+	  &&!(victim->immune&AT_POISON)) apply_poison(victim,hitter);
         break;
       case CONTAINER: 
         /* spill_container(victim,RANDOM()%(hitter->stats.dam+1)); */
         break;
-      default:
-        break;
     }
-#if 0
-    /* glow objects (torches) are on fire.. */
-    if(!tmp->type&&tmp->glow_radius>0) {
-    }
-#endif
   }
- 
-  return tmp;
 }
 
 /* adj_attackroll() - adjustments to attacks by various conditions */
@@ -1324,8 +1514,11 @@ int adj_attackroll (object *hitter, object *target) {
   int adjust=0;
 
   /* safety */
-  if(!target||!hitter||!hitter->map||!target->map||hitter->map!=target->map)
+  if(!target||!hitter||!hitter->map||!target->map||hitter->map!=target->map) {
+    LOG (llevError, "BUG: adj_attackroll(): hitter and target not on same "
+         "map\n");
     return 0;
+  }
 
   /* aimed missiles use the owning object's sight */
   if(is_aimed_missile(hitter)) {

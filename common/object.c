@@ -1476,20 +1476,6 @@ object *insert_ob_in_map (object *op, mapstruct *m, object *originator)
   else
     set_map_ob(op->map,op->x,op->y,op);   /* Tell the map that we're here */
 
-  /* Only check this if we are the head of the object */
-  if (!op->head) {
-      mapstruct *map=op->map;
-      if (check_walk_on(op, originator))
-        return NULL;
-
-      /* If we are a multi part object, lets work our way through the check
-       * walk on's.
-       */
-      for (tmp=op->more; tmp!=NULL; tmp=tmp->more)
-          if (check_walk_on (op, originator))
-            return NULL;
-
-  }
   if(op->type==PLAYER)
     op->contr->do_los=1;
   for(tmp=get_map_ob(op->map,op->x,op->y);tmp!=NULL;tmp=tmp->above)
@@ -1512,8 +1498,27 @@ object *insert_ob_in_map (object *op, mapstruct *m, object *originator)
 #endif 
     /* Don't know if moving this to the end will break anything.  However,
      * we want to have update_look set above before calling this.
+     *
+     * check_walk_on() must be after this because code called from
+     * check_walk_on() depends on correct map flags (so functions like
+     * blocked() and wall() work properly), and these flags are updated by
+     * update_object().
      */
     update_object(op);
+
+    /* Only check this if we are the head of the object */
+    if ( ! op->head) {
+        mapstruct *map=op->map;
+        if (check_walk_on(op, originator))
+          return NULL;
+
+        /* If we are a multi part object, lets work our way through the check
+         * walk on's.
+         */
+        for (tmp=op->more; tmp!=NULL; tmp=tmp->more)
+            if (check_walk_on (op, originator))
+              return NULL;
+    }
 
     return op;
 }
@@ -1528,6 +1533,7 @@ object *insert_ob_in_map (object *op, mapstruct *m, object *originator)
 
 object *get_split_ob(object *orig_ob,int nr) {
     object *newob;
+    int is_removed = (QUERY_FLAG (orig_ob, FLAG_REMOVED) != 0);
 
     if(orig_ob->nrof<nr) {
 	sprintf(errmsg,"There are only %d %ss.",
@@ -1537,10 +1543,11 @@ object *get_split_ob(object *orig_ob,int nr) {
     newob=get_object();
     copy_object(orig_ob,newob);
     if((orig_ob->nrof-=nr)<1) {
-	remove_ob(orig_ob);
+	if ( ! is_removed)
+            remove_ob(orig_ob);
 	free_object(orig_ob);
     }
-    else if(!QUERY_FLAG(orig_ob,FLAG_REMOVED)){
+    else if ( ! is_removed) {
 	if(orig_ob->env!=NULL)
 	    sub_weight (orig_ob->env,orig_ob->weight*nr);
 	if (orig_ob->env == NULL && orig_ob->map->in_memory!=MAP_IN_MEMORY) {
@@ -1562,64 +1569,62 @@ object *get_split_ob(object *orig_ob,int nr) {
  * Return value: 'op' if something is left, NULL if the amount reached 0
  */
 
-object *decrease_ob_nr(object *op,int i)
+object *decrease_ob_nr (object *op, int i)
 {
-  object *tmp;
-  
-  /* nrof is split out into a long so it is handled ok on 64 bit machines.
-   * I think it might work to just do op->nrof-=i and cast that to an sint32
-   * to see if it is negative.  But if so, we might as well just nrof in
-   * the object structure an sint32, since that would still set a maximum
-   * value.
-   */
-  long nrof=op->nrof;
+    object *tmp;
 
-  nrof -= i;
-  if (nrof<0) nrof=0;
-  op->nrof = nrof;
+    if (i == 0)   /* objects with op->nrof require this check */
+        return op;
 
-  if(!op->nrof) {
-    op->nrof=0;	/* just to be sure that remove_ob handles weight properly */
-    /* We don't have remove object send delete to the new client, because
-     * in many areas, more intelligent strategies are employed.  However, if
-     * we are decreasing the number, we can be sure that the object is gone
-     * for good, so send a delete down the line.  Need to check for
-     * environment before we call remove_ob, since that deletes the
-     * environment.
-     */
-    if(op->env!=NULL) {
-      tmp=is_player_inv (op->env);
-      if(tmp!=NULL) {
-	(*esrv_del_item_func)(tmp->contr, op->count);
-	(*esrv_update_item_func)(UPD_WEIGHT, tmp, tmp);
-      }
-    } else {
-      for(tmp=op->above;tmp!=NULL;tmp=tmp->above)
-        if(tmp->type==PLAYER) {
-	    (*esrv_del_item_func)(tmp->contr, op->count);
-	    (*esrv_update_item_func)(UPD_WEIGHT, tmp, tmp);
-	}
+    if (i > op->nrof)
+        i = op->nrof;
+
+    if (QUERY_FLAG (op, FLAG_REMOVED))
+    {
+        op->nrof -= i;
     }
-    remove_ob(op);
-    free_object(op);
-    return NULL;
-  }
-  else
-    if(op->env!=NULL) {
-      sub_weight(op->env,op->weight*i);
-      tmp=is_player_inv (op->env);
-      if(tmp!=NULL) {
-	    (*esrv_send_item_func)(tmp, op);
-	    (*esrv_update_item_func)(UPD_WEIGHT, tmp, tmp);
-      }
-    } else {
-      for(tmp=op->above;tmp!=NULL;tmp=tmp->above)
-        if(tmp->type==PLAYER) {
-	    (*esrv_send_item_func)(tmp, op);
-	    (*esrv_update_item_func)(UPD_WEIGHT, tmp, tmp);
-	}
+    else if (op->env != NULL)
+    {
+        tmp = is_player_inv (op->env);
+        if (i < op->nrof) {
+            sub_weight (op->env, op->weight * i);
+            op->nrof -= i;
+            if (tmp) {
+                (*esrv_send_item_func) (tmp, op);
+                (*esrv_update_item_func) (UPD_WEIGHT, tmp, tmp);
+            }
+        } else {
+            remove_ob (op);
+            op->nrof = 0;
+            if (tmp) {
+                (*esrv_del_item_func) (tmp->contr, op->count);
+                (*esrv_update_item_func) (UPD_WEIGHT, tmp, tmp);
+            }
+        }
     }
-    return op;
+    else
+    {
+        if (i < op->nrof) {
+            op->nrof -= i;
+        } else {
+            remove_ob (op);
+            op->nrof = 0;
+        }
+        for (tmp = op->above; tmp != NULL; tmp = tmp->above)
+            if (tmp->type == PLAYER) {
+                if (op->nrof)
+                    (*esrv_send_item_func) (tmp, op);
+                else
+                    (*esrv_del_item_func) (tmp->contr, op->count);
+            }
+    }
+
+    if (op->nrof) {
+        return op;
+    } else {
+        free_object (op);
+        return NULL;
+    }
 }
 
 /*

@@ -18,6 +18,142 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+--------------------------------------------
+--- BEGIN stop_item() / attack fix patch ---  Jan Echternach 2000-11-06
+--------------------------------------------
+
+Summary of this patch:  Provide new stop_item() function for properly
+handling "moving" items on a map (flying arrows, thrown objects,
+active cones); obsoletes the workarounds.  Fix some attack bugs (with
+possible server crashes) - many attackers attacked while being
+removed, even though much code could only handle the attacker being on
+the same map as the victim (not even the attacker being in the
+victim's inventory, e.g. poison).
+
+common/object.c: insert_ob_in_map():  Call check_walk_on() after
+update_object() because the latter needs to update some very
+important flags used by a lot of code before this code is called
+by check_walk_on().
+
+common/object.c: get_split_ob():  Completed support for splitting
+removed objects.
+
+common/object.c: decrease_ob_nr(): Rewrote this function: Added
+support for removed objects.  Removing an object completely didn't
+always update the environment's weight properly.  Removing an amount
+of 0 from an object with nrof == 0 destroyed the object.  Improved
+performance a bit (don't need to update the player's weight if an
+object below the player is modified).
+
+server/apply.c: move_apply():  Added recursion limit.
+
+server/apply.c: move_apply(): THROWN_OBJ and ARROW:  Use new
+hit_with_arrow() function.
+
+server/apply.c: move_apply(): FBULLET and BULLET:  Call
+check_fired_arch() only when the victim blocks the square (FLAG_NO_PASS
+or FLAG_ALIVE).
+
+server/attack.c: save_throw_object():  Use new stop_item() function
+before trying to modify an object.  Added originator to all
+insert_ob_in_map() calls.
+
+server/attack.c: hit_map():  Added log message if the hitter is not on
+a map.  Added was_destroyed() check after calling save_throw_object().
+
+server/attack.c: get_attack_mode() and abort_attack():  New functions
+to determine the type of attack (simple or full attack).
+
+server/attack.c: attack_ob():  Now only attack_ob_simple() with default
+damage and weapon class values.
+
+server/attack.c: attack_ob_simple():  Contains most of old attack_ob(),
+but takes damage and weapon class as parameters, needed for
+hit_with_arrow().  Uses get_attack_mode() and abort_attack() to
+support new "simple" attack mode.
+
+server/attack.c: stick_arrow() and hit_with_arrow():  Moved those parts
+of old stop_arrow() and move_arrow() that dealt with attacking a
+victim over here.
+
+server/attack.c: hit_player():  Uses get_attack_mode() and
+abort_attack() to support new "simple" attack mode.
+
+server/attack.c: paralyze_player():  Use insert_ob_in_map_simple()
+instead of insert_ob_in_map() because the callers are not prepared for
+this function triggering any complex machinery, and
+insert_ob_in_map_simple() should be enough for plain visual effects.
+
+server/attack.c: thrown_item_effect():  Don't need to deal with thrown
+objects, hit_with_arrow() already does everything necessary.
+
+server/attack.c: adj_attackroll():  Added log message if hitter and
+victim are not on the same map.
+
+server/c_object.c:  Fixed two typos in "can't pick up xxx" messages.
+
+server/c_object.c: pick_up_object():  Removed can_pick() check because
+pick_up() already checks this.  Added support for picking up removed
+objects because the stop_item() in pick_up() can now call us with
+removed objects.  Moved FLAG_STARTEQUIP check to pick_up().  Fixed
+weight limit lookup for monsters that have strength > MAX_STAT.
+
+server/c_object.c: pick_up():  Use new stop_item() function.
+
+server/player.c: fire_bow() and server/skills.c: do_throw():  Removed
+FLAG_NO_PICK workaround for flying objects.  stop_item() now handles
+this correctly.
+
+server/rune.c: spring_trap():  Fix unlimited trap recursion.  Since
+traps are triggered by move_apply(), the result of triggering a trap
+may trigger the trap again before it is deactivated.
+
+server/rune.c: spring_trap():  Runes that don't cast spells can only be
+triggered by living objects.
+
+server/spell_effect.c: move_cancellation():  Don't call hit_map() with
+a removed attacker.
+
+server/spell_util.c: cast_cone():  Only print warning message about
+cones that don't have FLAG_FLY/WALK_ON if the cone does any damage.
+
+server/spell_util.c: move_cone():  Removed workaround for cones in ice
+cubes.  stop_item() now handles this correctly.
+
+server/spell_util.c: explode_object(): Rewrote this function: New
+interface - exploding object must not be removed when the function is
+called, it must have an other_arch (i.e. it must be able to explode),
+and it will be gone for sure when the function terminates.  Removed
+some code with no effect.  Don't call any attack functions with
+removed attackers.
+
+server/spell_util.c: check_fired_arch():  Rewrote this function.
+
+server/spell_util.c: move_fired_arch():  Rewrote most of this function:
+Don't attack with removed attackers.  Call check_fired_arch() instead
+of duplicating its code.
+
+server/spell_util.c: move_ball_lightning():  Don't attack with removed
+attackers.  Rewrote the movement algorithm to simplify this task.
+
+server/time.c: stop_item() and fix_stopped_item:  New functions.
+
+server/time.c: fix_stopped_arrow():  Contains most of the old
+stop_arrow() function.  Unlike stop_arrow(), it takes an arrow that is
+not removed.  Removed FLACK_NO_PICK workaround.
+
+server/time.c: stop_arrow():  Stops arrows and thrown objects and puts
+them on the map.  Sticking objects into targets is no longer handled
+by stop_arrow(), but by hit_with_arrow().
+
+server/time.c: move_arrow():  Don't attack with removed attackers.
+
+socket/item.c: esrv_move_object():  Removed misleading comment.
+
+------------------------------------------
+--- END stop_item() / attack fix patch ---  Jan Echternach 2000-11-06
+------------------------------------------
+
 server/time.c:  Add call to esrv_update_item to update the face for
 the client after the player chooses a class.  MSW 11/3/2000
 

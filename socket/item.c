@@ -710,8 +710,6 @@ void esrv_move_object (object *pl, long to, long tag, long nrof)
 	}
 	return;
     } else if (to == pl->count) {     /* pick it up to the inventory */
-	/* pick_up_object (pl, pl, op, nrof);*/
-	/* Using pick_up will cause objects to get put into containers. */
 	pl->contr->count = nrof;
 	pick_up(pl, op);
 	return ;

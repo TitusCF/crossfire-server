@@ -211,10 +211,23 @@ void spring_trap(object *trap,object *victim)
    object *env;
    tag_t trap_tag = trap->count;
 
-  trap->stats.hp--;  /*decrement detcount */
+  /* Prevent recursion */
+  if (trap->stats.hp <= 0)
+    return;
+
   /*  get the spell number from the name in the slaying field, and set
       that as the spell to be cast. */
-  if((spell_in_rune=look_up_spell_by_name(NULL,trap->slaying))!=-1) trap->stats.sp=spell_in_rune;
+  if ((spell_in_rune = look_up_spell_by_name (NULL, trap->slaying)) != -1)
+    trap->stats.sp=spell_in_rune;
+
+  /* Only living objects can trigger runes that don't cast spells, as
+   * doing direct damage to a non-living object doesn't work anyway.
+   * Typical example is an arrow attacking a door.
+   */
+  if ( ! QUERY_FLAG (victim, FLAG_ALIVE) && ! trap->stats.sp)
+    return;
+
+  trap->stats.hp--;  /*decrement detcount */
   if(victim) if(victim->type==PLAYER) new_draw_info(NDI_UNIQUE, 0,victim,trap->msg);
   /*  Flash an image of the trap on the map so the poor sod
    *   knows what hit him.  */
@@ -239,7 +252,7 @@ void spring_trap(object *trap,object *victim)
     cast_spell(trap,trap,trap->direction,trap->stats.sp,1,spellNormal,NULL);
   }
 
-  if(!trap->stats.hp) {
+  if (trap->stats.hp <= 0) {
     trap->type=98;  /* make the trap impotent */
     trap->stats.food=20;  /* make it stick around until its spells are gone */
     SET_FLAG(trap,FLAG_IS_USED_UP);

@@ -1085,6 +1085,18 @@ static void apply_sign (object *op, object *sign)
  */
 void move_apply (object *trap, object *victim, object *originator)
 {
+  static int recursion_depth = 0;
+
+  /* move_apply() is the most likely candidate for causing unwanted and
+   * possibly unlimited recursion. */
+  if (recursion_depth >= 5) {
+    LOG (llevError, "WARNING: move_apply(): aborting recursion "
+         "[trap arch %s, name %s; victim arch %s, name %s]\n",
+         trap->arch->name, trap->name, victim->arch->name, victim->name);
+    return;
+  }
+  recursion_depth++;
+
   switch (trap->type)
   {
   case PLAYERMOVER:
@@ -1101,31 +1113,31 @@ void move_apply (object *trap, object *victim, object *originator)
 	if (victim->speed_left<-50.0) victim->speed_left=-50.0;
 /*	fprintf(stderr,"apply, playermove, player speed_left=%f\n", victim->speed_left);*/
     }
-    return;
+    goto leave;
 
   case SPINNER:
     if(victim->direction) {
       victim->direction=absdir(victim->direction-trap->stats.sp);
       update_turn_face(victim);
     }
-    return;
+    goto leave;
 
   case DIRECTOR:
     if(victim->direction) {
       victim->direction=trap->stats.sp;
       update_turn_face(victim);
     }
-    return;
+    goto leave;
 
   case BUTTON:
   case PEDESTAL:
     update_button(trap);
-    return;
+    goto leave;
 
   case ALTAR:
     /* sacrifice victim on trap */
     apply_altar (trap, victim, originator);
-    return;
+    goto leave;
 
   case MMISSILE:
     if (QUERY_FLAG (victim, FLAG_ALIVE)) {
@@ -1136,31 +1148,24 @@ void move_apply (object *trap, object *victim, object *originator)
           free_object (trap);
       }
     }
-    return;
+    goto leave;
 
   case THROWN_OBJ:
+    if (trap->inv == NULL)
+      goto leave;
+    /* fallthrough */
   case ARROW:
-    if(QUERY_FLAG(victim, FLAG_ALIVE)&&trap->speed) {
-      tag_t trap_tag = trap->count;
-      if(attack_ob(victim,trap)) {
-	/* There can be cases where a monster 'kills' an arrow.  Typically
-	 * happens for things like black puddings that have hitback properties.
-	 */
-	if ( ! was_destroyed (trap, trap_tag)) {
-	    remove_ob(trap);
-	    stop_arrow(trap,victim);
-	}
-      }
-    }
-    return;
+    if (QUERY_FLAG (victim, FLAG_ALIVE) && trap->speed)
+      hit_with_arrow (trap, victim);
+    goto leave;
 
   case CANCELLATION:
   case BALL_LIGHTNING:
     if (QUERY_FLAG (victim, FLAG_ALIVE))
       hit_player (victim, trap->stats.dam, trap, trap->attacktype);
     else if (victim->material)
-      save_throw_object (victim, trap->attacktype);
-    return;
+      save_throw_object (victim, trap->attacktype, trap);
+    goto leave;
 
   case CONE:
     if(QUERY_FLAG(victim, FLAG_ALIVE)&&trap->speed) {
@@ -1168,12 +1173,14 @@ void move_apply (object *trap, object *victim, object *originator)
       if (attacktype)
         hit_player(victim,trap->stats.dam,trap,attacktype);
     }
-    return;
+    goto leave;
 
   case FBULLET:
   case BULLET:
-    check_fired_arch(trap);
-    return;
+    if (QUERY_FLAG (victim, FLAG_NO_PASS)
+        || QUERY_FLAG (victim, FLAG_ALIVE))
+      check_fired_arch (trap);
+    goto leave;
 
   case TRAPDOOR:
     {
@@ -1185,7 +1192,7 @@ void move_apply (object *trap, object *victim, object *originator)
           if(!QUERY_FLAG(ab,FLAG_FLYING))
             tot += (ab->nrof ? ab->nrof : 1) * ab->weight + ab->carrying;
         if(!(trap->value=(tot>trap->weight)?1:0))
-          return;
+          goto leave;
 	SET_ANIMATION(trap, trap->value);
         update_object(trap);
       }
@@ -1199,40 +1206,40 @@ void move_apply (object *trap, object *victim, object *originator)
         new_draw_info(NDI_UNIQUE, 0,ab,"You fall into a trapdoor!");
         transfer_ob(ab,(int)EXIT_X(trap),(int)EXIT_Y(trap),0,ab);
       }
-      return;
+      goto leave;
     }
 
   case CONVERTER:
     convert_item (victim, trap);
-    return;
+    goto leave;
 
   case TRIGGER_BUTTON:
   case TRIGGER_PEDESTAL:
   case TRIGGER_ALTAR:
     check_trigger (trap, victim);
-    return;
+    goto leave;
 
   case DEEP_SWAMP:
     walk_on_deep_swamp (trap, victim);
-    return;
+    goto leave;
 
   case CHECK_INV:
     check_inv (victim, trap);
-    return;
+    goto leave;
 
   case HOLE:
     /* Hole not open? */
     if(trap->stats.wc > 0)
-      return;
+      goto leave;
     /* Is this a multipart monster and not the head?  If so, return.
      * Processing will happen if the head runs into the pit
      */
     if (victim->head)
-      return;
+      goto leave;
     play_sound_map (victim->map, victim->x, victim->y, SOUND_FALL_HOLE);
     new_draw_info (NDI_UNIQUE, 0, victim, "You fall through the hole!\n");
     transfer_ob (victim, EXIT_X (trap), EXIT_Y (trap), 1, victim);
-    return;
+    goto leave;
 
   case EXIT:
     if (victim->type == PLAYER && EXIT_PATH (trap)) {
@@ -1240,46 +1247,49 @@ void move_apply (object *trap, object *victim, object *originator)
 	  new_draw_info (NDI_NAVY, 0, victim, trap->msg);
       enter_exit (victim, trap);
     }
-    return;
+    goto leave;
 
   case ENCOUNTER:
 #ifdef RANDOM_ENCOUNTERS
     if (victim->type == PLAYER && QUERY_FLAG (trap, FLAG_IS_FLOOR))
       random_encounter (victim, trap);
 #endif
-    return;
+    goto leave;
 
   case SHOP_MAT:
     apply_shop_mat (trap, victim);
-    return;
+    goto leave;
 
   /* Drop a certain amount of gold, and have one item identified */
   case IDENTIFY_ALTAR:
     apply_id_altar (victim, trap, originator);
-    return;
+    goto leave;
 
   case SIGN:
     apply_sign (victim, trap);
-    return;
+    goto leave;
 
   case CONTAINER:
     if (victim->type==PLAYER)
       (void) esrv_apply_container (victim, trap);
     else
       (void) apply_container (victim, trap);
-    return;
+    goto leave;
 
   case RUNE:
     if (trap->level && QUERY_FLAG (victim, FLAG_ALIVE))
       spring_trap (trap, victim);
-    return;
+    goto leave;
 
   default:
     LOG (llevDebug, "name %s, arch %s, type %d with fly/walk on/off not "
          "handled in move_apply()\n", trap->name, trap->arch->name,
          trap->type);
-    return;
+    goto leave;
   }
+
+ leave:
+  recursion_depth--;
 }
 
 
@@ -2509,7 +2519,7 @@ void apply_lighter(object *who, object *lighter) {
 	 */
 	strcpy(item_name, item->name);
 
-	save_throw_object(item,AT_FIRE);
+	save_throw_object(item,AT_FIRE,who);
 	/* Change to check count and not freed, since the object pointer
 	 * may have gotten recycled
 	 */

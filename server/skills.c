@@ -1603,7 +1603,6 @@ void do_throw(object *op, object *toss_item, int dir) {
     throw_ob->speed_left = 0;
     throw_ob->map = op->map;
 
-    SET_FLAG(throw_ob, FLAG_NO_PICK);
     SET_FLAG(throw_ob, FLAG_FLYING);
     SET_FLAG(throw_ob, FLAG_FLY_ON);
     SET_FLAG(throw_ob, FLAG_WALK_ON);

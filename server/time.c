@@ -441,29 +441,79 @@ void move_hole(object *op) { /* 1 = opening, 0 = closing */
 }
 
 
-/* stop_arrow() - what to do when a non-living flying object
- * has to stop. Sept 96 - I added in thrown object code in 
- * here too. -b.t. 
- * op is arrow, tmp is what is stopping the arrow (can be NULL)
+/* stop_item() returns a pointer to the stopped object.  The stopped object
+ * may or may not have been removed from maps or inventories.  It will not
+ * have been merged with other items.
+ *
+ * This function assumes that only items on maps need special treatment.
+ *
+ * If the object can't be stopped, or it was destroyed while trying to stop
+ * it, NULL is returned.
+ *
+ * fix_stopped_item() should be used if the stopped item should be put on
+ * the map.
  */
+object *stop_item (object *op)
+{
+    if (op->map == NULL)
+        return op;
 
-void stop_arrow(object *op,object *tmp) {
+    switch (op->type)
+    {
+    case THROWN_OBJ:
+        {
+            object *payload = op->inv;
+            if (payload == NULL)
+                return NULL;
+            remove_ob (payload);
+            remove_ob (op);
+            free_object (op);
+            return payload;
+        }
 
-    if(wall(op->map,op->x,op->y))
-	op->x-=DIRX(op),op->y-=DIRY(op);
-    if(wall(op->map, op->x, op->y)) {
-	free_object(op);
-	return;
+    case ARROW:
+        if (op->speed >= MIN_ACTIVE_SPEED)
+            op = fix_stopped_arrow (op);
+        return op;
+
+    case CONE:
+        if (op->speed < MIN_ACTIVE_SPEED) {
+            return op;
+        } else {
+            return NULL;
+	}
+
+    default:
+        return op;
     }
+}
 
+/* fix_stopped_item() - put stopped item where stop_item() had found it.
+ * Inserts item into the old map, or merges it if it already is on the map.
+ *
+ * 'map' must be the value of op->map before stop_item() was called.
+ */
+void fix_stopped_item (object *op, mapstruct *map, object *originator)
+{
+    if (map == NULL)
+        return;
+    if (QUERY_FLAG (op, FLAG_REMOVED))
+        insert_ob_in_map (op, map, originator);
+    else if (op->type == ARROW)
+        merge_ob (op, NULL);   /* only some arrows actually need this */
+}
+
+
+object *fix_stopped_arrow (object *op)
+{
     if(RANDOM() % 100 < op->stats.food) {
 	/* Small chance of breaking */
+        remove_ob (op);
 	free_object(op);
-	return;
+	return NULL;
     }
 
     op->direction=0;
-    CLEAR_FLAG(op, FLAG_NO_PICK);
     CLEAR_FLAG(op, FLAG_WALK_ON);
     CLEAR_FLAG(op, FLAG_FLY_ON);
     CLEAR_FLAG(op, FLAG_FLYING);
@@ -475,63 +525,109 @@ void stop_arrow(object *op,object *tmp) {
     op->stats.sp = 0;
     op->stats.hp = 0;
     op->face=op->arch->clone.face;
-
-    /* this happens for thrown objects, which 'carry' the
-     * real object in inventory. */ 
-    if(op->inv) {
-	object *old=op,*new=op->inv;
-	remove_ob(op->inv);
-	new->map = old->map; 
-	free_object(old);
-	op = new;
-    }
-
-    /* If the missile hit a player, we insert it in their inventory.
-     * However, if the missile is heavy, we don't do so (assume it falls
-     * to the ground after a hit).  What a good value for this is up to
-     * debate - 5000 is 5 kg, so arrows, knives, and other light weapons
-     * stick around.
-     */
-    if(op->weight <= 5000 && tmp!=NULL&&tmp->stats.hp>=0) {
-	if(tmp->head != NULL)
-	    tmp = tmp->head;
-	op = insert_ob_in_ob(op,tmp);
-	if (tmp->type== PLAYER)
-	    esrv_send_item (tmp, op);
-    } else
-	insert_ob_in_map(op,op->map,op);
     op->owner=NULL; /* So that stopped arrows will be saved */
+    update_object (op);
+    return op;
 }
 
+/* stop_arrow() - what to do when a non-living flying object
+ * has to stop. Sept 96 - I added in thrown object code in 
+ * here too. -b.t. 
+ *
+ * Returns a pointer to the stopped object (which will have been removed
+ * from maps or inventories), or NULL if was destroyed.
+ */
+
+static void stop_arrow (object *op)
+{
+    if (op->inv) {
+	object *payload = op->inv;
+	remove_ob (payload);
+        insert_ob_in_map (payload, op->map, payload);
+        remove_ob (op);
+	free_object (op);
+    } else {
+        op = fix_stopped_arrow (op);
+        if (op)
+            merge_ob (op, NULL);
+    }
+}
 
 /* Move an arrow along its course.  op is the arrow or thrown object.
  */
 
 void move_arrow(object *op) {
     object *tmp;
+    sint16 new_x, new_y;
+    int was_reflected;
 
     if(op->map==NULL) {
-	LOG(llevDebug,"Arrow had no map.\n");
+	LOG (llevError, "BUG: Arrow had no map.\n");
 	remove_ob(op);
 	free_object(op);
 	return;
     }
 
-    remove_ob(op);
-
     /* we need to stop thrown objects at some point. Like here. */ 
     if(op->type==THROWN_OBJ) {
+        if (op->inv == NULL)
+            return;
 	if(op->last_sp-- < 0) { 
-	    stop_arrow(op, NULL); 
+	    stop_arrow (op);
 	    return; 
 	}
     }
 
+    /* Calculate target map square */
+    new_x = op->x + DIRX(op);
+    new_y = op->y + DIRY(op);
+    was_reflected = 0;
 
-    if(wall(op->map,op->x+DIRX(op),op->y+DIRY(op))) {
+    /* See if there is any living object on target map square */
+    tmp = out_of_map (op->map, new_x, new_y)
+            ? NULL : get_map_ob (op->map, new_x, new_y);
+    while (tmp != NULL && ! QUERY_FLAG (tmp, FLAG_ALIVE))
+	tmp = tmp->above;
+
+    if (tmp != NULL)
+    {
+        /* Found living object, but it is reflecting the missile.  Update
+         * as below.
+         */
+        if (QUERY_FLAG (tmp, FLAG_REFL_MISSILE))
+        {
+            int number = op->face->number;
+
+            op->direction = absdir (op->direction + 4);
+            op->state = 0;
+            if (GET_ANIM_ID (op)) {
+                number += 4;
+                if (number > GET_ANIMATION (op, 8))
+                    number -= 8;
+                op->face = &new_faces[number];
+            }
+            if (wall (op->map, new_x, new_y)) {
+                /* Target is standing on a wall.  Let arrow turn around before
+                 * the wall. */
+                new_x = op->x;
+                new_y = op->y;
+            }
+            was_reflected = 1;   /* skip normal movement calculations */
+        }
+        else
+        {
+            /* Attack the object. */
+            op = hit_with_arrow (op, tmp);
+            if (op == NULL)
+                return;
+        }
+    }
+
+    if ( ! was_reflected && wall (op->map, new_x, new_y))
+    {
 	/* if the object doesn't reflect, stop the arrow from moving */
 	if(!QUERY_FLAG(op, FLAG_REFLECTING) || !(RANDOM()%20)) {
-	    stop_arrow(op,NULL);
+	    stop_arrow (op);
 	    return;
 	} else {    /* object is reflected */
 	    /* If one of the major directions (n,s,e,w), just reverse it */
@@ -566,7 +662,7 @@ void move_arrow(object *op) {
 		else if(!right)
 		    op->direction=absdir(op->direction+1);
 		else {		/* is this possible? */
-		    stop_arrow(op,NULL);
+		    stop_arrow (op);
 		    return;
 		}
 	    }
@@ -577,48 +673,11 @@ void move_arrow(object *op) {
 	} /* object is reflected */
     } /* object ran into a wall */
 
-    op->x+=DIRX(op),op->y+=DIRY(op);
-    tmp=get_map_ob(op->map,op->x,op->y);
-
-    /* See if there is any living object on this space */
-    while(tmp!=NULL&&!QUERY_FLAG(tmp, FLAG_ALIVE))
-	tmp=tmp->above;
-
-    /* Nothing alive?  Insert arrow and return */
-    if(tmp==NULL) {
-	insert_ob_in_map(op,op->map,op);
-	return;
-    }
-
-    /* Found living object, but it is reflecting the missile.  Update
-     * as below.
-     */
-    if (QUERY_FLAG(tmp, FLAG_REFL_MISSILE)) {
-	int number = op->face->number;
-
-	op->direction=absdir(op->direction+4),op->state=0;
-	if(GET_ANIM_ID(op)) {
-	    number+=4;
-	    if(number > GET_ANIMATION(op, 8))
-		number-=8;
-	    op->face = &new_faces[number];
-	}
-	insert_ob_in_map(op,op->map,op);
-	return;
-    }
-
-    /* Attach the object.  IF successful, stop the arrow */
-    if(attack_ob(tmp,op))
-	stop_arrow(op,tmp);
-    else {
-	/* if we miss, insert it back into the map.  If no direction,
-	 * stop the arrow.
-	 */
-	if(op->direction)
-	    insert_ob_in_map(op,op->map,op);
-	else 
-	    stop_arrow(op,NULL);
-    }
+    /* Move the arrow. */
+    remove_ob (op);
+    op->x = new_x;
+    op->y = new_y;
+    insert_ob_in_map (op, op->map, op);
 }
 
 /* This routine doesnt seem to work for "inanimate" objects that
