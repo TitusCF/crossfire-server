@@ -23,7 +23,7 @@ especially if there is only a single path.  If it is a maze with several
 different paths, single width corridors are acceptable.  The main problem
 here are big labyrinths in which only one monster attacks at a time, and
 which there is only 1 or two routes.  If two players enter such a map, the
-one that went in first will be 
+one that went in first will be in the lead the entire time.
 
 2.3) Avoid spiral or single path mazes that just have monsters lining the
 corridor.  These are not very good for multiple players, not particularly
@@ -40,8 +40,8 @@ or a lot of diamonds, and then pop out again, without ever meeting
 a monster.
 
 3.2) Don't put monsters of high experience point near to entrance where they
-are trapped. Low level player could boost ther experience high by using some
-weapons or spells from distance without danger. For example find out trapped
+are trapped. Low level player could boost their experience high by using some
+weapons or spells from distance without danger. For example find a trapped
 troll and get wand of fireball.
 
 3.3) monsters on top of other monsters.  A troll should not be sitting on
@@ -104,7 +104,7 @@ never be forced to dimension door or word of recall out of a map because
 some gate closed behind him.  For a character without these spells,
 it would mean death.  A simple method around this is put a lever on
 both sides of the door.  If the door is opened by special actions (saying
-things, dropping things), just put the level on the hard to get side of
+things, dropping things), just put the lever on the hard to get side of
 the gate.
 
 6) If a map require multiple players to simultaneous be on it to solve
@@ -121,7 +121,7 @@ it should not require a 6 hour continous sitting, as the player works
 through each map to get to the next.  Multi level maps are fine - just
 don't over do it.  One way to do this is have several maps with a key
 or other special item at the end.  The final map could have the various
-battles, and then a series of gates/altars when uses up these keys.
+battles, and then a series of gates/altars which uses up these keys.
 
 8) Shops:
 

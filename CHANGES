@@ -18,6 +18,8 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+doc/mapguide:  Fix some typos.  MSW 5/26/2000
+
 include/define.h: Add MIN_ACTIVE_SPEED value to determine what threshold
 something will be put on the active list or not instead of using
 varying values throughout the source code.
