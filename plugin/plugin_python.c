@@ -5059,7 +5059,7 @@ static PyObject* CFCanUseWand(PyObject* self, PyObject* args)
     long whoptr;
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
-    return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_USE_WAND));
+    return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_USE_RANGE));
 };
 
 /*****************************************************************************/

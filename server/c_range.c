@@ -2,10 +2,11 @@
  * static char *rcsid_c_range_c =
  *   "$Id$";
  */
+
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copryight (C) 2000 Mark Wedel
+    Copyright (C) 2002 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -22,7 +23,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to mwedel@scruz.net
+    The authors can be reached via e-mail at crossfire-devel@real-time.com
 */
 
 /* This file deals with range related commands (casting, shooting,
@@ -256,124 +257,97 @@ int command_cast_spell (object *op, char *params, char command)
  */
 
 int legal_range(object *op,int r) {
-  int i;
-  object *tmp;
+    int i;
 
-  switch(r) {
-  case range_none: /* "Nothing" is always legal */
-    return 1;
-  case range_bow: /* bows */
-    for (tmp=op->inv; tmp!=NULL; tmp=tmp->below)
-      if (tmp->type == BOW && QUERY_FLAG(tmp, FLAG_APPLIED))
-	return 1;
+    switch(r) {
+	case range_none: /* "Nothing" is always legal */
+	    return 1;
+	case range_bow:
+	case range_misc:
+	    if (op->contr->ranges[r]) return 1;
+	    else return 0;
+
+	case range_magic: /* cast spells */
+	    if (op->contr->nrofknownspells == 0)
+		return 0;
+	    for (i = 0; i < op->contr->nrofknownspells; i++)
+		if (op->contr->known_spells[i] == op->contr->chosen_spell)
+		    return 1;
+	    op->contr->chosen_spell = op->contr->known_spells[0];
+	    return 1;
+
+	case range_golem: /* Use scrolls */
+	    if (op->contr->golem) return 1;
+	    return 0;
+
+	case range_skill:
+	    if (op->chosen_skill)
+		return 1;
+	    else
+		return 0;
+    }
+    /* No match above, must not be valid */
     return 0;
-  case range_magic: /* cast spells */
-    if (op->contr->nrofknownspells == 0)
-      return 0;
-    for (i = 0; i < op->contr->nrofknownspells; i++)
-      if (op->contr->known_spells[i] == op->contr->chosen_spell)
-        return 1;
-    op->contr->chosen_spell = op->contr->known_spells[0];
-    return 1;
-  case range_wand: /* use wands */
-    for (tmp=op->inv; tmp!=NULL; tmp=tmp->below)
-      if (tmp->type == WAND && QUERY_FLAG(tmp, FLAG_APPLIED)) {
-        if (QUERY_FLAG(tmp, FLAG_BEEN_APPLIED) || QUERY_FLAG(tmp, FLAG_IDENTIFIED))
-          op->contr->known_spell = 1;
-        else
-          op->contr->known_spell = 0;
-        op->contr->chosen_item_spell=tmp->stats.sp;
-        return 1;
-      }
-    return 0;
-  case range_rod:
-    for (tmp=op->inv; tmp!=NULL; tmp=tmp->below)
-      if (tmp->type == ROD && QUERY_FLAG(tmp, FLAG_APPLIED)) {
-        if (QUERY_FLAG(tmp,FLAG_BEEN_APPLIED) || QUERY_FLAG(tmp, FLAG_IDENTIFIED))
-          op->contr->known_spell = 1;
-        else
-          op->contr->known_spell = 0;
-        op->contr->chosen_item_spell=tmp->stats.sp;
-        return 1;
-      }
-    return 0;
-  case range_horn:
-    for (tmp=op->inv; tmp!=NULL; tmp=tmp->below)
-      if (tmp->type == HORN && QUERY_FLAG(tmp, FLAG_APPLIED)) {
-        if (QUERY_FLAG(tmp,FLAG_BEEN_APPLIED) || QUERY_FLAG(tmp, FLAG_IDENTIFIED))
-          op->contr->known_spell = 1;
-        else
-          op->contr->known_spell = 0;
-        op->contr->chosen_item_spell=tmp->stats.sp;
-        return 1;
-      }
-    return 0;
-  case range_scroll: /* Use scrolls */
-    return 0;
-  case range_skill:
-    if (op->chosen_skill)
-      return 1;
-    else
-      return 0;
-  }
-  return 0;
 }
 
 void change_spell(object *op,char k) {
-  char buf[MAX_BUF];
-  if(op->contr->golem!=NULL) {
-    remove_friendly_object(op->contr->golem);
-    remove_ob(op->contr->golem);
-    free_object(op->contr->golem);
-    op->contr->golem=NULL;
-  }
-  do {
-    op->contr->shoottype += ((k == '+') ? 1 : -1);
-    if(op->contr->shoottype >= range_size)
-      op->contr->shoottype = range_none;
-    else if (op->contr->shoottype <= range_bottom)
-      op->contr->shoottype = (rangetype)(range_size-1);
-  } while (!legal_range(op,op->contr->shoottype));
-  switch(op->contr->shoottype) {
-  case range_none:
-    strcpy(buf,"No ranged attack chosen.");
-    break;
-  case range_bow: {
-	object *tmp;
-	for (tmp = op->inv; tmp; tmp = tmp->below)
-	  if (tmp->type == BOW && QUERY_FLAG (tmp, FLAG_APPLIED))
-	    break;
-	sprintf (buf, "Switched to %s and %s.", query_name(tmp),
-		 tmp && tmp->race ? tmp->race : "nothing");
+    /* Try disabling this so that the player can switch ranges and
+     * still keep his golems.  There seems to be some ways that
+     * this currently happens but directly switching to another skill
+     * by equipping items or the like.
+     */
+#if 0
+    if(op->contr->golem!=NULL) {
+	remove_friendly_object(op->contr->golem);
+	remove_ob(op->contr->golem);
+	free_object(op->contr->golem);
+	op->contr->golem=NULL;
     }
-    break;
-  case range_magic:
-    sprintf(buf,"Switched to spells (%s).",
-            spells[op->contr->chosen_spell].name);
-    break;
-  case range_wand:
-    sprintf(buf,"Switched to wand (%s).",
-            op->contr->known_spell ?
-              spells[op->contr->chosen_item_spell].name : "unknown");
-    break;
-  case range_rod:
-    sprintf(buf, "Switched to rod (%s).",
-            op->contr->known_spell ?
-            spells[op->contr->chosen_item_spell].name : "unknown");
-    break;
-  case range_horn:
-    sprintf(buf, "Switched to horn (%s).",
-            op->contr->known_spell ?
-            spells[op->contr->chosen_item_spell].name : "unknown");
-    break;
-  case range_skill: 
-    sprintf (buf, "Switched to skill: %s", op->chosen_skill ?  
+#endif
+
+    do {
+	op->contr->shoottype += ((k == '+') ? 1 : -1);
+	if(op->contr->shoottype >= range_size)
+	    op->contr->shoottype = range_none;
+	else if (op->contr->shoottype <= range_bottom)
+	    op->contr->shoottype = (rangetype)(range_size-1);
+    } while (!legal_range(op,op->contr->shoottype));
+
+    /* Legal range has already checked that we have an appropriate item
+     * that uses the slot, so we don't need to be too careful about 
+     * checking the status of the object.
+     */
+    switch(op->contr->shoottype) {
+	case range_none:
+	    new_draw_info(NDI_UNIQUE, 0,op, "No ranged attack chosen.");
+	    break;
+
+	case range_golem:
+	    new_draw_info(NDI_UNIQUE, 0,op, "You regain control of your golem.");
+	    break;
+
+	case range_bow:
+	    new_draw_info_format(NDI_UNIQUE, 0,op, "Switched to %s and %s.", query_name(op->contr->ranges[range_bow]),
+		     op->contr->ranges[range_bow]->race ? op->contr->ranges[range_bow]->race : "nothing");
+	    break;
+
+	case range_magic:
+	    new_draw_info_format(NDI_UNIQUE, 0,op,"Switched to spells (%s).",
+		    spells[op->contr->chosen_spell].name);
+	    break;
+
+	case range_misc:
+	    new_draw_info_format(NDI_UNIQUE, 0,op, "Switched to %s.", query_base_name(op->contr->ranges[range_misc], 0));
+	    break;
+
+	case range_skill: 
+	    new_draw_info_format(NDI_UNIQUE, 0,op, "Switched to skill: %s", op->chosen_skill ?  
 		 op->chosen_skill->name : "none");
-    break;
-  default:
-    break;
-  }
-  new_draw_info(NDI_UNIQUE, 0,op,buf);
+	    break;
+
+	default:
+	    break;
+    }
 }
 
 

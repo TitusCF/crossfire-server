@@ -6,7 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2000 Mark Wedel
+    Copyright (C) 2002 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -23,7 +23,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to mwedel@scruz.net
+    The authors can be reached via e-mail at crossfire-devel@real-time.com
 */
 
 #ifndef SPELLS_H
@@ -212,13 +212,12 @@ enum spellnrs {
 #define PATH_TIME_MULT(op,spell) (((op->path_attuned & s->path) ? 0.8 : 1) * \
 				((op->path_repelled & s->path) ? 1.25 : 1))
 
-extern char *range_name[range_size];
 extern spell_parameters SP_PARAMETERS[];
 extern char *spellpathnames[NRSPELLPATHS];
 extern archetype *spellarch[NROFREALSPELLS];
 
 typedef enum SpellTypeFrom {
-  spellNormal, spellWand, spellRod, spellHorn, spellScroll, spellPotion
+  spellNormal, spellMisc /* rod/horn/wand */, spellScroll, spellPotion
 } SpellTypeFrom;
 
 

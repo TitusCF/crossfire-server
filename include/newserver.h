@@ -6,7 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2001 Mark Wedel
+    Copyright (C) 2002 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -67,7 +67,7 @@ struct Map {
 #define MAXANIMNUM  2000
 
 struct statsinfo {
-    char *range, *title, *ext_title;
+    char *range, *title;
 };
 
 

@@ -38,7 +38,7 @@
 #	in increments of 10 (a value of 10 has the normal value, 5
 #	would be half normal, 20 twice, etc.
 #
-#	weight, last_sp, last_heal is in percent (200% would
+#	weight, last_sp, gen_sp_armour is in percent (200% would
 #	be twice normal, 50% half of normal).  Negative values
 #	work the same as armour and dam.
 #
@@ -49,6 +49,12 @@
 #	replace exiting values.
 #
 #	magic is the mininum magic for an item to become that artifact.
+#
+#	item_power is the additional number of enchantments to count for
+#	this item.  This can be negative.  Note that this information is
+#	only relevant for equipment that is applied for long periods of time.
+#	I've made a quick pass through this file and put in item_power
+#	values, but these almost certainly need to be refined.
 #
 #	If the value is not described above, changing it probably is
 #	not supported.
@@ -313,6 +319,7 @@ type 15
 value 20
 luck 1
 weight 90
+item_power 1
 end
 #
 Allowed all
@@ -323,6 +330,7 @@ value 30
 attacktype 16385
 resist_fear 100
 weight 90
+item_power 1
 end
 #
 Allowed all
@@ -360,6 +368,7 @@ value 10
 dam 12
 resist_poison 30
 Cha -1
+item_power 1
 end
 #
 Allowed all
@@ -369,6 +378,7 @@ type 15
 value 15
 weight 80
 wc 2
+item_power 2
 end
 #
 Allowed axe,axe_2,axe_3,axe_4,axe_5,battle_axe,stoneaxe,poleaxe,morningstar,large_morningstar,nunchacu_1,nunchacu_2,hammer,mace,mace_2,lspear,spear,club,quarterstaff,big_club,stonehammer,stake,bonecrusher,mjoellnir,skullcleaver
@@ -379,6 +389,7 @@ value 50
 hp 1
 dam 11
 magic 2
+item_power 1
 end
 #
 Allowed all
@@ -389,6 +400,7 @@ value 50
 magic 3
 Con 1
 dam 11
+item_power 1
 end
 #
 Allowed all
@@ -412,6 +424,7 @@ type 15
 slaying ogre
 value 20
 magic 1
+item_power 2
 end
 #
 Allowed all
@@ -429,6 +442,7 @@ msg
   courage to send the most evil monsters
   back to whatever Hell they came from.
 endmsg
+item_power 2
 end
 #
 Allowed all
@@ -448,6 +462,7 @@ msg
   champions of light must fall to
   such powerful darkness.
 endmsg
+item_power 2
 end
 #
 Allowed all
@@ -461,6 +476,7 @@ msg
   This weapon radiates a bone-chilling
   aura of otherworldly cold.
 endmsg
+item_power 2
 end
 #
 Allowed all
@@ -487,6 +503,7 @@ value 40
 magic 3
 Str 1
 weight 110
+item_power 1
 end
 #
 Allowed all
@@ -507,6 +524,7 @@ type 15
 slaying troll
 value 50
 magic 2
+item_power 2
 end
 #
 Allowed all
@@ -523,6 +541,7 @@ msg
   their graves and making sure they
   stay dead this time.
 endmsg
+item_power 2
 end
 #
 Allowed all
@@ -532,6 +551,7 @@ type 15
 slaying dragon
 value 100
 magic 3
+item_power 2
 end
 #
 Allowed all
@@ -542,6 +562,7 @@ slaying beholder
 value 150
 resist_magic 20
 magic 3
+item_power 3
 end
 #
 Allowed all
@@ -553,6 +574,7 @@ magic 4
 Str 1
 Dex 1
 weight 90
+item_power 2
 end
 #
 Allowed all
@@ -565,6 +587,7 @@ resist_magic 30
 Int 1
 Pow 1
 weight 90
+item_power 3
 end
 #
 Allowed all
@@ -608,6 +631,7 @@ type 15
 magic 3
 value 20
 attacktype 256
+item_power 1
 end
 #
 Allowed axe,axe_2,axe_3,axe_4,axe_5,battle_axe,hammer,skullcleaver,mjoellnir,bonecrusher,frost_hammer
@@ -644,6 +668,7 @@ type 15
 value 20
 weight 80
 attacktype 1025
+item_power 1
 end
 #
 #
@@ -658,6 +683,7 @@ value 15
 weight 95
 attacktype 9
 last_sp 125
+item_power 1
 end
 #
 Allowed dagger,axe,axe_2,axe_3,axe_4,axe_5,battle_axe,sword,sword_2,sword_3,sabre,scimitar,light_sword,katana_1,falchion,broadsword,broadsword_2,shortsword,shortsword_2,morningstar,large_morningstar,hammer,mace,mace_2,lspear,spear,poleaxe,taifu_1,trident
@@ -668,6 +694,7 @@ magic 1
 value 15
 weight 85
 attacktype 5
+item_power 1
 last_sp 110
 end
 #
@@ -680,6 +707,7 @@ type 15
 value 20
 weight 80
 attacktype 1025
+item_power 1
 end
 #
 Allowed dagger
@@ -689,6 +717,7 @@ type 15
 value 30
 weight 80
 attacktype 4097
+item_power 1
 end
 #
 Allowed dagger
@@ -698,6 +727,7 @@ type 15
 value 10
 weight 80
 attacktype 33
+item_power 1
 end
 #
 #
@@ -708,10 +738,11 @@ chance 6
 Object Xebinon
 type 34
 value 35
-last_heal 2
+gen_sp_armour -2
 path_attuned 1024
 sp 1
 magic 2
+item_power 1
 end
 #
 Allowed all
@@ -729,6 +760,7 @@ Object Dark Vision
 type 34
 can_see_in_dark 1
 value 10
+item_power 1
 end
 #
 Allowed full helmet,helmet
@@ -740,6 +772,7 @@ magic 2
 Str 1
 Con 1
 Dex 1
+item_power 3
 end
 #
 Allowed full helmet
@@ -750,6 +783,7 @@ value 50
 magic 2
 Wis 1
 Cha 1
+item_power 2
 end
 #
 Allowed full helmet
@@ -769,6 +803,7 @@ msg
   equipment which helped them survive their
   environment.
 endmsg
+item_power 3
 end
 #
 Allowed !crown
@@ -786,6 +821,7 @@ type 34
 value 20
 luck 1
 weight 90
+item_power 1
 end
 #
 Allowed !crown
@@ -825,6 +861,7 @@ ac 1
 magic 1
 resist_physical 8
 resist_electricity 40
+item_power 3
 end
 #
 Allowed all
@@ -869,6 +906,7 @@ value 500
 sp 2
 Int 2
 Pow 2
+item_power 6
 end
 #
 Allowed crown
@@ -879,6 +917,7 @@ value 100
 resist_fire 30
 path_attuned 2
 path_repelled 4
+item_power 2
 end
 #
 Allowed crown
@@ -888,6 +927,7 @@ magic 2
 type 34
 value 10
 Cha 2
+item_power 2
 end
 #
 Allowed crown
@@ -898,6 +938,7 @@ value 15
 magic 3
 Cha 1
 Wis 1
+item_power 2
 end
 #
 Allowed crown
@@ -908,6 +949,7 @@ value 25
 magic 3
 Con 1
 Str 1
+item_power 2
 end
 #
 # Shields
@@ -951,6 +993,7 @@ msg
   craftfully made to give more
   protection than usual.
 endmsg
+item_power 2
 end
 #
 Allowed all
@@ -960,6 +1003,7 @@ type 33
 value 24
 magic 1
 resist_fire 20
+item_power 1
 end
 #
 Allowed all
@@ -999,6 +1043,7 @@ msg
   on you that this must be one of the
   most prized shields of all the lands.
 endmsg
+item_power 20
 end
 #
 Allowed all
@@ -1058,6 +1103,7 @@ resist_electricity 35
 attacktype 8
 weight 125
 value 175
+item_power 3
 end
 #
 Allowed gloves
@@ -1069,6 +1115,7 @@ wc 2
 resist_physical 8
 weight 125
 value 175
+item_power 2
 end
 #
 Allowed gloves
@@ -1079,6 +1126,7 @@ resist_physical 5
 resist_electricity 30
 weight 125
 value 10
+item_power 2
 end
 #
 Allowed all
@@ -1109,6 +1157,7 @@ resist_physical 2
 wc 4
 weight 95
 value 40
+item_power 4
 end
 #
 Allowed gloves
@@ -1172,6 +1221,7 @@ resist_physical 5
 resist_blind 40
 weight 110
 magic 1
+item_power 2
 end
 #
 Allowed plate_mail,scale_mail
@@ -1185,6 +1235,7 @@ resist_fear 30
 resist_physical 15
 weight 105
 magic 1
+item_power 3
 end
 #
 Allowed plate_mail,scale_mail
@@ -1197,6 +1248,7 @@ resist_poison +45
 resist_magic -10
 weight 105
 magic 1
+item_power 2
 end
 #
 Allowed plate_mail,scale_mail,dragon_mail
@@ -1209,6 +1261,7 @@ resist_physical 15
 resist_fire 35
 weight 90
 magic 2
+item_power 3
 end
 #
 Allowed all
@@ -1223,6 +1276,7 @@ resist_deplete 30
 resist_death 30
 resist_physical 10
 magic 2
+item_power 4
 end
 #
 Allowed all
@@ -1243,6 +1297,7 @@ msg
   worn at all.  It is obviously highly
   enchanted.
 endmsg
+item_power 3
 end
 #
 Allowed all
@@ -1316,6 +1371,7 @@ msg
   wearer and protecting against fire.  
   Unfortunately it is also very heavy, limiting speed somewhat.
 endmsg
+item_power 3
 end
 #
 Allowed plate_mail
@@ -1351,6 +1407,7 @@ msg
   This armour, which is of elven origin,
   is beautifully decorated with ancient emblems.
 endmsg
+item_power 1
 end
 #
 # Robes (subtype of armor)
@@ -1365,6 +1422,7 @@ msg
   This robe blurs the vision of those trying
   to attack, making the wearer more difficult to hit.
 endmsg
+item_power 3
 end
 #
 Allowed robe
@@ -1380,6 +1438,7 @@ msg
   This magical robe is somehow woven of
   metal fibers.
 endmsg
+item_power 3
 end
 #
 # Rings
@@ -1396,6 +1455,7 @@ exp 5
 Dex 3
 stealth 1
 can_see_in_dark 1
+item_power 10
 end
 #
 #Ring of Fighting
@@ -1412,6 +1472,7 @@ exp 2
 wc 2
 dam 2
 hp 1
+item_power 9
 end
 #
 #Ring of Combat
@@ -1432,6 +1493,7 @@ resist_physical 10
 resist_magic -5
 dam 2
 hp 1
+item_power 8
 end
 #
 #
@@ -1456,6 +1518,7 @@ resist_magic -15
 ac 1
 dam 3
 hp 2
+item_power 6
 end
 #
 #Ring of War
@@ -1480,6 +1543,7 @@ hp 3
 dam 5
 ac 2
 wc 3
+item_power 7
 end
 #
 #Ring of Ice
@@ -1502,6 +1566,7 @@ msg
   against cold.  It also grants its holder 
   greater control of cold spells.
 endmsg
+item_power 3
 end
 #
 Allowed all
@@ -1524,6 +1589,7 @@ msg
   grants the holder greater facility 
   with fire spells.
 endmsg
+item_power 3
 end
 #
 Allowed all
@@ -1544,6 +1610,7 @@ msg
   electricity.  It also gives facility
   with electricity spells.
 endmsg
+item_power 3
 end
 #
 Allowed all
@@ -1560,6 +1627,7 @@ msg
   these from their guild when they become 
   its leader.
 endmsg
+item_power 3
 end
 #
 Allowed all
@@ -1572,6 +1640,7 @@ sp 2
 Int 1
 Pow 1
 resist_magic 25
+item_power 5
 end
 #
 Allowed all
@@ -1585,6 +1654,7 @@ material 256
 Int 2
 Pow 2
 resist_magic 30
+item_power 7
 end
 #
 #  Slaying balrog--aint no such thing as a balrog yet, but.. when there is...
@@ -1604,6 +1674,7 @@ Pow 2
 resist_magic 30
 resist_fire 20
 path_attuned 2
+item_power 9
 end
 #
 #  Galadriel's magic ring.  She used it for the protection and healing
@@ -1622,6 +1693,7 @@ Pow 2
 resist_magic 30
 resist_drain 100
 path_attuned 257
+item_power 12
 end
 #
 #  Elrond's magic ring.  It was the greatest of the three rings.
@@ -1640,6 +1712,7 @@ resist_magic 30
 resist_drain 100
 resist_deplete 100
 path_attuned 259
+item_power 14
 end
 #
 #  The One Ring to rule them all
@@ -1671,6 +1744,7 @@ resist_magic 40
 resist_ghosthit -100
 path_attuned 606
 path_repelled 257
+item_power 15
 end
 #
 # Beguilement
@@ -1682,6 +1756,7 @@ face ring.117
 type 70
 value 50
 Cha 3
+item_power 3
 end
 #
 # Ring of the Dark Priest
@@ -1700,6 +1775,7 @@ Wis 1
 Pow 1
 can_see_in_dark 1
 grace 1
+item_power 3
 end
 #
 # Ring of the Healer
@@ -1717,6 +1793,7 @@ path_repelled 131072
 Wis 1
 Pow 1
 grace 1
+item_power 4
 end
 #
 # Ring of the Paladin
@@ -1734,6 +1811,7 @@ Wis 1
 material 256
 Pow 1
 grace 1
+item_power 4
 end
 #
 # Ring of the Prelate
@@ -1750,6 +1828,7 @@ Wis 2
 material 256
 Pow 1
 grace 2
+item_power 7
 end
 #
 # Ring of the Demon Priest
@@ -1770,6 +1849,7 @@ Wis 2
 Pow 2
 grace 2
 can_see_in_dark 1
+item_power 6
 end
 #
 # Ring of Benevolence
@@ -1789,6 +1869,7 @@ Wis 2
 Pow 2
 grace 2
 resist_magic 30
+item_power 7
 msg
 This ring is blessed by the gods who do good,
 and protects a little against the power of those who
@@ -1812,6 +1893,7 @@ Wis 2
 Pow 2
 resist_drain 100
 grace 2
+item_power 12
 end
 #
 # Ring of the Death Priest
@@ -1833,6 +1915,7 @@ can_see_in_dark 1
 Wis 3
 Pow 2
 grace 3
+item_power 12
 end
 #
 # Ring of the Saint
@@ -1854,6 +1937,7 @@ resist_ghosthit 100
 Wis 3
 Pow 2
 grace 2
+item_power 15
 end
 #
 # Ring of Miracles
@@ -1875,6 +1959,7 @@ Wis 3
 Pow 3
 material 256
 grace 3
+item_power 10
 end
 #
 #
@@ -1897,6 +1982,7 @@ msg
   which protects against acid. It also 
   gives a fair protection against normal attacks.
 endmsg
+item_power 3
 end
 #
 Allowed all
@@ -1909,6 +1995,7 @@ resist_slow 100
 resist_paralyze 100
 resist_confusion 30
 resist_fear 30
+item_power 10
 end
 #
 Allowed all
@@ -1929,6 +2016,7 @@ msg
   makes the wielder immune from life draining.
   It also grants an unnatural vitality.
 endmsg
+item_power 8
 end
 #
 Allowed all
@@ -1939,6 +2027,7 @@ type 70
 value 20
 Str 1
 resist_paralyze 100
+item_power 5
 end
 #
 Allowed all
@@ -1950,6 +2039,7 @@ value 40
 wc 2
 Dex 2
 dam 2
+item_power 6
 end
 #
 Allowed all
@@ -2204,6 +2294,7 @@ value 2000
 material 256
 face cloak_purple.111
 stand_still 1
+item_power 4
 end
 #
 Allowed all
@@ -2218,6 +2309,7 @@ value 2000
 material 256
 face serp_cloak.111
 stand_still 1
+item_power 5
 end
 #
 Allowed all
@@ -2235,6 +2327,7 @@ value 2000
 material 256
 face serp_cloak.111
 stand_still 1
+item_power 3
 end
 #
 Allowed all
@@ -2247,6 +2340,7 @@ value 20
 ac 1
 face cloak_lgrey.111
 stand_still 1
+item_power 1
 end
 #
 Allowed all
@@ -2259,6 +2353,7 @@ value 100
 ac 2
 face cloak_white.111
 stand_still 1
+item_power 2
 end
 #
 Allowed all
@@ -2272,6 +2367,7 @@ ac 3
 material 256
 face cloak_white.111
 stand_still 1
+item_power 3
 end
 #
 Allowed all
@@ -2284,6 +2380,7 @@ Cha 2
 weight 110
 face cloak_lblue.111
 stand_still 1
+item_power 2
 end
 #
 Allowed all
@@ -2297,6 +2394,7 @@ resist_fire 25
 material 256
 face cloak_lgrey.111
 stand_still 1
+item_power 1
 end
 #
 Allowed all
@@ -2310,6 +2408,7 @@ resist_cold 25
 material 256
 face cloak_red.111
 stand_still 1
+item_power 1
 end
 #
 Allowed all
@@ -2323,6 +2422,7 @@ resist_electricity 25
 material 256
 face cloak_white.111
 stand_still 1
+item_power 1
 end
 #
 Allowed all
@@ -2336,6 +2436,7 @@ resist_acid 65
 material 256
 face cloak_black.111
 stand_still 1
+item_power 3
 end
 #
 Allowed all
@@ -2353,6 +2454,7 @@ material 0
 Cha -2
 face cloak_black.111
 stand_still 1
+item_power 4
 end
 #
 Allowed all
@@ -2388,6 +2490,7 @@ material 256
 Cha -4
 face cloak_black.111
 stand_still 1
+item_power 10
 end
 #
 Allowed all
@@ -2479,6 +2582,7 @@ msg
   abit sleeker.
 endmsg
 stand_still 1
+item_power 4
 end
 #
 Allowed all
@@ -2496,6 +2600,7 @@ msg
   greatly in combat.
 endmsg
 stand_still 1
+item_power 1
 end
 #
 Allowed all
@@ -2513,6 +2618,7 @@ msg
   extra resistance.
 endmsg
 stand_still 1
+item_power 2
 end
 #
 
@@ -2665,6 +2771,7 @@ face amulet_lif.111
 resist_physical 20
 type 39
 value 20
+item_power 1
 end
 #
 Allowed all
@@ -2674,6 +2781,7 @@ face amulet_lif.111
 food 15
 type 39
 value 20
+item_power 4
 end
 #
 Allowed all
@@ -2685,6 +2793,7 @@ material 256
 type 39
 value 40
 sp 2
+item_power 2
 end
 #
 Allowed all
@@ -2725,6 +2834,7 @@ material 256
 type 39
 value 3000
 resist_physical 50
+item_power 3
 end
 #
 Allowed all
@@ -2736,6 +2846,7 @@ face amulet_lif.111
 material 256
 sp 7
 value 4000
+item_power 5
 end
 #
 Allowed all
@@ -2750,6 +2861,7 @@ ac 2
 resist_physical 30
 type 39
 value 1000
+item_power 5
 end
 #
 Allowed all
@@ -2763,6 +2875,7 @@ resist_confusion 100
 resist_paralyze 100
 resist_fear 100
 value 1000
+item_power 10
 end
 #
 Allowed all
@@ -2777,6 +2890,7 @@ resist_slow 100
 resist_paralyze 100
 resist_confusion 30
 resist_fear 30
+item_power 8
 end
 #
 Allowed all
@@ -2792,6 +2906,7 @@ Pow 2
 value 5000
 resist_magic 30
 reflect_spell 1
+item_power 10
 end
 #
 Allowed all
@@ -2804,6 +2919,7 @@ material 256
 Wis 3
 value 300
 path_attuned 385
+item_power 3
 end
 #
 Allowed all
@@ -3097,6 +3213,7 @@ type 14
 value 5
 weight 80
 wc 4
+item_power 2
 end
 #
 Allowed all
@@ -3117,6 +3234,7 @@ magic 2
 value 15
 attacktype 65
 dam 16
+item_power 1
 end
 #
 Allowed !crossbow
@@ -3128,6 +3246,7 @@ value 22
 weight 75
 sp 150
 wc 1
+item_power 1
 end
 #
 Allowed crossbow
@@ -3140,6 +3259,7 @@ weight 85
 sp 110
 wc 1
 attacktype 4
+item_power 2
 end
 #
 Allowed any
@@ -3152,6 +3272,7 @@ weight 95
 sp 125
 wc 1
 attacktype 8
+item_power 2
 end
 #
 Allowed crossbow
@@ -3163,6 +3284,7 @@ dam 14
 sp 75
 value 50
 attacktype 256
+item_power 1
 end
 #
 Allowed all
@@ -3176,6 +3298,7 @@ weight 90
 dam 15
 wc 2
 attacktype 6145
+item_power 3
 end
 #
 Allowed all
@@ -3202,6 +3325,7 @@ endmsg
 value 100
 wc 5
 dam -25
+item_power 4
 end
 #
 Allowed bow
@@ -3276,6 +3400,7 @@ material 256
 value 7
 path_attuned 1056
 Int 3
+item_power 4
 end
 #
 Allowed talisman
@@ -3286,6 +3411,7 @@ type 43
 material 256
 value 9
 path_attuned 6208
+item_power 2
 end
 #
 Allowed talisman
@@ -3296,6 +3422,7 @@ type 43
 material 256
 value 9
 path_attuned 14
+item_power 4
 end
 #
 Allowed talisman
@@ -3307,6 +3434,7 @@ material 256
 value 25
 path_attuned 28286
 Pow 1
+item_power 5
 end
 #
 # holy symbols
@@ -3321,6 +3449,7 @@ value 5
 path_attuned 257
 path_repelled 128
 path_denied 0
+item_power 1
 end
 #
 Allowed holy_symbol
@@ -3332,6 +3461,7 @@ material 256
 value 25
 path_attuned 8640
 Wis 2
+item_power 4
 end
 #
 Allowed holy_symbol
@@ -3343,6 +3473,7 @@ material 256
 value 25
 path_attuned 393216
 path_denied 256
+item_power 2
 end
 #
 Allowed holy_symbol
@@ -3353,6 +3484,7 @@ type 43
 material 256
 value 25
 path_attuned 65536
+item_power 1
 end
 #
 Allowed holy_symbol

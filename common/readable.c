@@ -6,7 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2001 Mark Wedel
+    Copyright (C) 2002 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -23,7 +23,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to mwedel@scruz.net
+    The authors can be reached via e-mail at crossfire-devel@real-time.com
 */
 
 
@@ -1275,7 +1275,7 @@ mon_desc (object *mon)
     static char retbuf[HUGE_BUF];
 
     sprintf (retbuf, " *** %s ***\n", mon->name);
-    strcat (retbuf, describe_item (mon));
+    strcat (retbuf, describe_item(mon, NULL));
 
     return retbuf;
 }
@@ -1463,7 +1463,7 @@ artifact_msg (int level, int booksize)
 	  add_abilities (tmp, art->item);
 	  tmp->type = type;
 	  SET_FLAG (tmp, FLAG_IDENTIFIED);
-	  if ((ch = describe_item (tmp)) != NULL && strlen (ch) > 1)
+	  if ((ch = describe_item (tmp, NULL)) != NULL && strlen (ch) > 1)
 	      sprintf (buf, "%s Properties of this artifact include: \n %s \n",
 		       buf, ch);
 	  free_object(tmp);

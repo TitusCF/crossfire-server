@@ -5,7 +5,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2000 Mark Wedel
+    Copyright (C) 2002 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -1861,8 +1861,6 @@ void paralyze_player(object *op, object *hitter, int dam)
 
     if (effect==0) return;
 
-    SET_FLAG(op,FLAG_PARALYZED); /* we mark this object as paralyzed */ 
-    
     op->speed_left-=FABS(op->speed)*effect;
     /* tmp->stats.food+=(signed short) effect/op->speed; */
 

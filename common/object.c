@@ -515,102 +515,53 @@ void reset_object(object *op) {
  */
 
 void clear_object(object *op) {
-   int tmp;
 
-  if(op->name!=NULL) {
-    free_string(op->name);
-    op->name=NULL;
-  }
-  if(op->name_pl!=NULL) {
-    free_string(op->name_pl);
-    op->name_pl=NULL;
-  }
-  if(op->title != NULL) {
-    free_string(op->title);
-    op->title = NULL;
-  }
-  if(op->race!=NULL) {
-    free_string(op->race);
-    op->race=NULL;
-  }
-  if(op->slaying!=NULL) {
-    free_string(op->slaying);
-    op->slaying=NULL;
-  }
-  if(op->msg!=NULL) {
-    free_string(op->msg);
-    op->msg=NULL;
-  }
-  for (tmp=0; tmp<=(NUM_FLAGS/32); tmp++)
-	op->flags[tmp] = 0;
-  /* This is more or less true */
-  SET_FLAG(op, FLAG_REMOVED);
-  op->map=NULL;
-  op->below=NULL;
-  op->above=NULL;
-  op->owner=NULL;
-  op->refcount=0;
-  op->inv=NULL;
-  op->env=NULL;
-  op->container=NULL;
-  op->more=NULL;
-  op->head=NULL;
-  op->arch=NULL;
-  op->other_arch=NULL;
-  op->enemy=NULL;
-  op->contr = NULL;
-  op->weight=0,op->carrying=0,op->weight_limit=0;
-  op->anim_speed=0;
-  op->level=0;
-  op->value=op->run_away=0;
-  op->invisible=0;
-  op->last_heal=0,op->last_sp=0,op->last_grace=0,op->last_eat=0;
-  op->nrof=0;
-  op->ownercount=0;
-  op->attacktype=0;
-  memset(&op->resist, 0, sizeof(op->resist));
-  op->stats.exp=0;
-  op->x=0; op->y=0; op->ox=0; op->oy=0;
-  op->stats.dam=0,op->stats.wc=0,op->stats.ac=0;
-  op->stats.luck=0;
-  op->stats.food=0;
-  op->stats.sp=op->stats.maxsp=op->stats.hp=op->stats.maxhp=0;
-  op->stats.grace=op->stats.maxgrace=0;
-  op->expmul=1.0;
-  op->direction=0;
-  op->glow_radius=0;
-  op->stats.Str=op->stats.Dex=op->stats.Con=0;
-  op->stats.Wis=op->stats.Cha=op->stats.Int=op->stats.Pow=0;
-  op->material=op->magic=op->state=op->type=0;
-  op->face = blank_face;
+    /* the memset will clear all these values for us, but we need
+     * to reduce the refcount on them.
+     */
+    if(op->name!=NULL)
+	free_string(op->name);
+    if(op->name_pl!=NULL)
+	free_string(op->name_pl);
+    if(op->title != NULL)
+	free_string(op->title);
+    if(op->race!=NULL)
+	free_string(op->race);
+    if(op->slaying!=NULL)
+	free_string(op->slaying);
+    if(op->msg!=NULL)
+	free_string(op->msg);
 
-  op->attacked_by = NULL;
-  op->attacked_by_count= -1;
-  op->type=0;
-  op->casting_speed = (float)0;
+    /* Using this memset is a lot easier (and probably faster)
+     * than explicitly clearing the fields.
+     */
+    memset((void*)((char*)op + offsetof(object, name)),
+		   0, sizeof(object)-offsetof(object, name));
+     /* Below here, we clear things that are not done by the memset,
+     * or set default values that are not zero.
+     */
 
-  /* The object should already have been removed from the speed list
-   * before this function is called
-   */
-  op->speed=op->speed_left=0;
-  op->pick_up=0;
-  op->can_apply=0;
-  op->will_apply=0;
-  op->move_status = 0;
-  op->move_type = 0;
-  op->path_repelled = 0;
-  op->path_attuned = 0;
-  op->path_denied = 0;
+    /* This is more or less true */
+    SET_FLAG(op, FLAG_REMOVED);
+
+    op->contr = NULL;
+    op->below=NULL;
+    op->above=NULL;
+    op->inv=NULL;
+    op->container=NULL;
+    op->env=NULL;
+    op->more=NULL;
+    op->head=NULL;
+    op->map=NULL;
+    op->refcount=0;
+    /* What is not cleared is next, prev, active_next, active_prev, and count */
+
+    op->expmul=1.0;
+    op->face = blank_face;
+    op->attacked_by_count= -1;
 #ifdef CASTING_TIME
-  op->casting = -1;
-  op->spelltype = 0;
-  op->spell = NULL;
+    op->casting = -1;
 #endif
-  op->randomitems=NULL;
-  op->spellitem = NULL;
-  op->animation_id=0;
-  op->weapontype=0;
-  op->client_type=0;
 }
 
 /*

@@ -6,7 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2000 Mark Wedel
+    Copyright (C) 2002 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -23,13 +23,51 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to mwedel@scruz.net
+    The authors can be reached via e-mail at crossfire-devel@real-time.com
 */
 
 #include <global.h>
 #include <funcpoint.h>
 #include <living.h>
 #include <spells.h>
+
+/* the ordering of this is actually doesn't make a difference
+ * However, for ease of use, new entries should go at the end
+ * so those people that debug the code that get used to something
+ * being in the location 4 don't get confused.
+ *
+ * The ordering in save_name, use_name, nonuse_name.
+ * save_name is the name used to load/save it from files.  It should
+ * match that of the doc/Developers/objects.  The only
+ * real limitation is that it shouldn't have spaces or other characters
+ * that may mess up the match code.  It must also start with body_
+ * use_name is how we describe the location if we can use it.
+ * nonuse_name is how we describe it if we can't use it.  I think
+ * the values below will make it pretty clear how those work out
+ * They are basically there to make life a little easier - if a character
+ * examines an item and it says it goes on 'your arm', its pretty clear
+ * they can use it.  See the last sample (commented out) for a dragon
+ * Note that using the term 'human' may not be very accurate, humanoid
+ * may be better.
+ * Basically, for the use/nonuse, the code does something like:
+ * "This item goes %s\n", with the use/nonuse values filling in the %s
+ */
+Body_Locations body_locations[NUM_BODY_LOCATIONS] = {
+{"body_range",	"in your range slot",	"in a human's range slot"},
+{"body_arm",	"on your arm",		"on a human's arm"},
+{"body_torso",	"on your body",		"on a human's torso"},
+{"body_head",	"on your head",		"on a human's head"},
+{"body_neck",	"around your neck",	"around a humans neck"},
+{"body_skill",	"in your skill slot",	"in a human's skill slot"},
+{"body_finger",	"on your finger",	"on a human's finger"},
+{"body_shoulder", "around your shoulders",  "around a human's shoulders"},
+{"body_foot",	"on your feet",		"on a human's feet"},
+{"body_hand",	"on your hands",	"on a human's hands"},
+{"body_wrist",	"around your wrists",	"around a human's wrist"},
+{"body_waist",	"around your waist",	"around a human's waist"},
+
+/*{"body_dragon_torso", "your body", "a dragon's body"} */
+};
 
 static char numbers[21][20] = {
   "no","","two","three","four","five","six","seven","eight","nine","ten",
@@ -76,6 +114,107 @@ materialtype material[NROFMATERIALS] = {
   {"ice", 	{14,11,16, 5, 0, 5, 6, 0,20,15, 0,0,0,0,0, 7,0,0,0,0,0,0,0,0}}
 };
 
+
+/* This curve may be too steep.  But the point is that there should
+ * be tough choices - there is no real point to this if everyone can
+ * wear whatever they want with no worries.  Perhaps having the steep
+ * curve is good (maybe even steeper), but allowing players to
+ * have 2 * level instead.  Ideally, top level characters should only be
+ * able to use 2-3 of the most power items.
+ * note that this table is only really used for program generated items -
+ * custom objects can use whatever they want.
+ */
+static int enc_to_item_power[21] = {
+0, 0, 1, 2, 3, 4,    /* 5 */
+5, 7, 9, 11, 13,    /* 10 */
+16, 18, 21, 24, 27, /* 15 */
+30, 35, 40, 45, 50  /* 20 */
+};
+
+int get_power_from_ench(int ench)
+{
+    if (ench < 0) ench = 0;
+    if (ench > 20) ench = 20;
+    return enc_to_item_power[ench];
+}
+
+/* This takes an object 'op' and figures out what its item_power
+ * rating should be.  This should only really be used by the treasure
+ * generation code, and when loading legacy objects.  It returns
+ * the item_power it calculates.
+ * If flag is 1, we return the number of enchantment, and not the
+ * the power.  This is used in the treasure code.
+ */
+int calc_item_power(object *op, int flag)
+{
+    int i, tmp, enc;
+
+    enc = 0;
+    for (i=0; i<NUM_STATS; i++)
+	enc += get_attr_value(&op->stats, i);
+
+    /* This protection logic is pretty flawed.  20% fire resistance
+     * is much more valuable than 20% confusion, or 20% slow, or
+     * several others.  Start at 1 - ignore physical - all that normal
+     * armour shouldn't be counted against 
+     */
+    tmp = 0;
+    for (i=1; i<NROFATTACKS; i++)
+	tmp += op->resist[i];
+
+    /* Add/substract 10 so that the rounding works out right */
+    if (tmp>0) enc += (tmp+10)/20;
+    else if (tmp<0) enc += (tmp - 10) / 20;
+
+    enc += op->magic;
+
+    /* For each attacktype a weapon has, one more encantment.  Start at 1 -
+     * physical doesn't count against total.
+     */
+    if (op->type == WEAPON) {
+	for (i=1; i<NROFATTACKS; i++)
+	    if (op->attacktype & (1 << i)) enc++;
+	if (op->slaying) enc += 2;	    /* What it slays is probably more relevent */
+    }
+    /* Items the player can equip */
+    if ((op->type == WEAPON) || (op->type == ARMOUR)   || (op->type == HELMET) ||
+        (op->type == SHIELD)   || (op->type == RING) ||
+        (op->type == BOOTS)    || (op->type == GLOVES) ||
+        (op->type == AMULET )  || (op->type == GIRDLE) ||
+        (op->type == BRACERS ) || (op->type == CLOAK)) {
+	enc += op->stats.food;	    /* sustenance */
+	enc += op->stats.hp;	    /* hp regen */
+	enc += op->stats.sp;	    /* mana regen */
+	enc += op->stats.grace;	    /* grace regen */
+	enc += op->stats.exp;	    /* speed bonus */
+    }
+    enc += op->stats.luck;
+
+    /* Do spell paths now */
+    for (i=1; i<NRSPELLPATHS; i++) {
+	if (op->path_attuned& (1 << i)) enc++;
+	else if (op->path_denied & (1 << i)) enc-=2;
+	else if (op->path_repelled & (1 << i)) enc--;
+    }
+
+    if(QUERY_FLAG(op,FLAG_LIFESAVE))	    enc += 5;
+    if(QUERY_FLAG(op,FLAG_REFL_SPELL))	    enc += 3;
+    if(QUERY_FLAG(op,FLAG_REFL_MISSILE))    enc += 2;
+    if(QUERY_FLAG(op,FLAG_STEALTH))	    enc += 1;
+    if(QUERY_FLAG(op,FLAG_XRAYS))	    enc += 2;
+    if(QUERY_FLAG(op,FLAG_SEE_IN_DARK))	    enc += 1;
+    if(QUERY_FLAG(op,FLAG_MAKE_INVIS))	    enc += 1;
+
+    if (enc > 20) {
+	LOG(llevDebug,"calc_item_power got %d enchantments for %s\n", enc, op->name);
+	enc = 20;
+    }
+    /* Items only have a positive power rating */
+    if (enc < 0) enc = 0;
+
+    return enc_to_item_power[enc];
+
+}
 
 /* describe_resistance generates the visible naming for resistances.
  * returns a static array of the description.  This can return
@@ -224,8 +363,13 @@ char *ring_desc (object *op)
     DESCRIBE_PATH_SAFE(buf, op->path_attuned, "Attuned", &len, VERY_BIG_BUF);
     DESCRIBE_PATH_SAFE(buf, op->path_repelled, "Repelled", &len, VERY_BIG_BUF);
     DESCRIBE_PATH_SAFE(buf, op->path_denied, "Denied", &len, VERY_BIG_BUF);
+    if(op->item_power)
+	sprintf(buf+strlen(buf), "(item_power %+d)",op->item_power);
+
     if(buf[0] == 0 && op->type!=SKILL)
 	strcpy(buf,"of adornment");
+
+
     return buf;
 }
 
@@ -533,12 +677,8 @@ static char *describe_monster(object *op) {
 	strcat(retbuf,"(wear ring)");
     if(QUERY_FLAG(op,FLAG_USE_SCROLL))
 	strcat(retbuf,"(read scroll)");
-    if(QUERY_FLAG(op,FLAG_USE_WAND))
-	strcat(retbuf,"(fire wand)");
-    if(QUERY_FLAG(op,FLAG_USE_ROD))
-	strcat(retbuf,"(use rod)");
-    if(QUERY_FLAG(op,FLAG_USE_HORN))
-	strcat(retbuf,"(use horn)");
+    if(QUERY_FLAG(op,FLAG_USE_RANGE))
+	strcat(retbuf,"(fires wand/rod/horn)");
     if(QUERY_FLAG(op,FLAG_CAN_USE_SKILL))
 	strcat(retbuf,"(skill user)");
     if(QUERY_FLAG(op,FLAG_CAST_SPELL))
@@ -629,9 +769,13 @@ static char *describe_monster(object *op) {
  * be, because different objects have different meanings
  * for the same field (eg, wands use 'food' for charges).  This
  * means these special cases need to be worked out.
+ *
+ * Add 'owner' who is the person examining this object.
+ * owner can be null if no one is being associated with this
+ * item (eg, debug dump or the like)
  */
 
-char *describe_item(object *op) {
+char *describe_item(object *op, object *owner) {
     char buf[MAX_BUF];
     static char retbuf[VERY_BIG_BUF];
     int identified,i;
@@ -724,6 +868,7 @@ char *describe_item(object *op) {
 	    strcat(retbuf,buf);
 	}
 
+
 	switch(op->type) {
 	    case BOW:
 	    case ARROW:
@@ -767,6 +912,11 @@ char *describe_item(object *op) {
 	    strcat(retbuf,"(levitate)");
 	if(QUERY_FLAG(op,FLAG_SEE_IN_DARK))
 	    strcat(retbuf,"(infravision)");
+
+	if(op->item_power) {
+	    sprintf(buf,"(item_power %+d)",op->item_power);
+	    strcat(retbuf,buf);
+	}
     } /* End if identified or applied */
 
     /* This blocks only deals with fully identified object.
@@ -859,8 +1009,10 @@ char *describe_item(object *op) {
 	    strcat(retbuf,buf);
 	}
 	DESCRIBE_ABILITY(retbuf, op->attacktype, "Attacks");
-	/* resistance on flesh is only visible for quetzals */
-	if (op->type != FLESH || QUERY_FLAG(op, FLAG_SEE_INVISIBLE))
+	/* resistance on flesh is only visible for quetzals.  If
+	 * non flesh, everyone can see its resistances
+	 */
+	if (op->type != FLESH || (owner && is_dragon_pl(owner)))
 	    strcat(retbuf,describe_resistance(op, 0));
 	DESCRIBE_PATH(retbuf, op->path_attuned, "Attuned");
 	DESCRIBE_PATH(retbuf, op->path_repelled, "Repelled");

@@ -304,8 +304,6 @@ void free_newsocket(NewSocket *ns)
     }
     if (ns->stats.range)
 	free(ns->stats.range);
-    if (ns->stats.ext_title)
-        free(ns->stats.ext_title);
     if (ns->stats.title)
         free(ns->stats.title);
     if (ns->comment)

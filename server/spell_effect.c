@@ -706,7 +706,7 @@ int cast_wow(object *op, int dir, int ability, SpellTypeFrom item) {
 }
 
 int perceive_self(object *op) {
-    char *cp=describe_item(op), buf[MAX_BUF];
+    char *cp=describe_item(op, op), buf[MAX_BUF];
     archetype *at=find_archetype("depletion");
     object *tmp;
     int i;
@@ -1795,8 +1795,6 @@ int summon_pet(object *op, int dir, SpellTypeFrom item) {
 
     if((dir==-1) || arch_blocked(at,op->map, op->x + freearr_x[dir], op->y+freearr_y[dir])) {
 	new_draw_info(NDI_UNIQUE, 0,op, "There is something in the way.");
-	if(op->type == PLAYER)
-	    op->contr->count_left = 0;
 	return 0;
     }
     for (i = 1; i < number + 1; i++) {
@@ -2052,7 +2050,7 @@ int cast_create_missile(object *op, object *caster,int dir, char *stringarg)
 }
 
 
-/* Alchemy code by Mark Wedel (master@rahul.net)
+/* Alchemy code by Mark Wedel
  *
  * This code adds a new spell, called alchemy.  Alchemy will turn
  * objects to gold nuggets, the value of the gold nuggets being
@@ -2293,7 +2291,7 @@ int cast_identify(object *op) {
       if (op->type==PLAYER) {
 
 	new_draw_info_format(NDI_UNIQUE, 0, op,
-		"You have %s.", long_desc(tmp));
+		"You have %s.", long_desc(tmp, op));
 	if (tmp->msg) {
 	  new_draw_info(NDI_UNIQUE, 0,op, "The item has a story:");
 	  new_draw_info(NDI_UNIQUE, 0,op, tmp->msg);
@@ -2316,7 +2314,7 @@ int cast_identify(object *op) {
       identify(tmp);
       if (op->type==PLAYER) {
 	new_draw_info_format(NDI_UNIQUE, 0,op,
-		"On the ground is %s.", long_desc(tmp));
+		"On the ground is %s.", long_desc(tmp, op));
 	if (tmp->msg) {
 	  new_draw_info(NDI_UNIQUE, 0,op, "The item has a story:");
 	  new_draw_info(NDI_UNIQUE, 0,op, tmp->msg);
@@ -3174,8 +3172,6 @@ int summon_avatar(object *op,object *caster,int dir, archetype *at, int spellnum
 
   if((dir==-1) || arch_blocked(at,op->map, op->x + freearr_x[dir], op->y+freearr_y[dir])) { 
     new_draw_info(NDI_UNIQUE, 0,op,"There is something in the way.");
-    if(op->type==PLAYER)
-      op->contr->count_left=0;
     return 0;
   }
 
@@ -3187,7 +3183,7 @@ int summon_avatar(object *op,object *caster,int dir, archetype *at, int spellnum
   if(op->type==PLAYER) {
     op->contr->golem=tmp;
     /* give the player control of the golem */
-    op->contr->shoottype=range_scroll;
+    op->contr->shoottype=range_golem;
   } 
 
   /*  This sets the level dependencies on dam, wc and hp */
@@ -3412,8 +3408,6 @@ int animate_weapon(object *op,object *caster,int dir, archetype *at, int spellnu
   /* if there's no place to put the golem, abort */
   if((dir==-1) || blocked(op->map,op->x+freearr_x[dir],op->y+freearr_y[dir])) {
     new_draw_info(NDI_UNIQUE, 0,op,"There is something in the way.");
-    if(op->type==PLAYER)
-      op->contr->count_left=0;
     return 0;
   }
 
@@ -3433,19 +3427,16 @@ int animate_weapon(object *op,object *caster,int dir, archetype *at, int spellnu
     if(!weapon) {
       if(op->type==PLAYER) { 
 	new_draw_info(NDI_UNIQUE, 0,op,"You need to wield a weapon to animate it.");
-	op->contr->count_left=0;   
       } 	
       return 0;
     } else if (spellnum == SP_STAFF_TO_SNAKE && strcmp(weapon->name,"quarterstaff")) {
       if(op->type==PLAYER) { 
 	new_draw_info(NDI_UNIQUE, 0,op,"The spell fails to transform your weapon.");
-	op->contr->count_left=0;   
       }
       return 0;
     } else if(op->type==PLAYER && 
 	      (QUERY_FLAG(weapon,FLAG_CURSED) || QUERY_FLAG(weapon,FLAG_DAMNED))) {
       new_draw_info(NDI_UNIQUE, 0,op,"You can't animate it.  It won't let go of your hand.");
-      op->contr->count_left=0;   
       return 0;
     }
   }
@@ -3463,7 +3454,7 @@ int animate_weapon(object *op,object *caster,int dir, archetype *at, int spellnu
     tmp->type=GOLEM;
     set_owner(tmp,op);
     op->contr->golem=tmp;
-    op->contr->shoottype=range_scroll;
+    op->contr->shoottype=range_golem;
   } else {
   /* If spell is cast by a pet, and the weapon is not cursed, make the animated
    * weapon a pet. */

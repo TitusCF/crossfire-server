@@ -611,46 +611,49 @@ int lookup_skill_by_name(char *string) {
 }
 
 /* check_skill_to_fire() -  */
-
 int check_skill_to_fire(object *who) {
-  int skillnr=0;
-  rangetype shoottype=range_none;
+    int skillnr=0;
+    rangetype shoottype=range_none;
 
-  if(who->type!=PLAYER) return 1;
+    if(who->type!=PLAYER) return 1;
 
-  switch((shoottype = who->contr->shoottype)) {
-    case range_bow:
-       skillnr = SK_MISSILE_WEAPON;
-       break;
-    case range_none:
-    case range_skill:
-       return 1;
-       break;
-    case range_magic:
-        if(spells[who->contr->chosen_spell].cleric)
-            skillnr = SK_PRAYING;
-        else
-            skillnr = SK_SPELL_CASTING;
-        break;
-    case range_scroll:
-    case range_rod:
-    case range_horn:
-    case range_wand:
-       skillnr = SK_USE_MAGIC_ITEM;
-       break;
-    default:
-       LOG(llevError,"Warning: bad call of check_skill_to_fire()\n");
-       return 0;
-  }
-  if (change_skill(who,skillnr)) { 
+    shoottype = who->contr->shoottype;
+    switch(shoottype) {
+
+	case range_bow:
+	    skillnr = SK_MISSILE_WEAPON;
+	    break;
+
+	case range_none:
+	case range_skill:
+	    return 1;
+	    break;
+
+	case range_magic:
+	    if(spells[who->contr->chosen_spell].cleric)
+		skillnr = SK_PRAYING;
+	    else
+		skillnr = SK_SPELL_CASTING;
+	    break;
+
+	case range_golem:
+	case range_misc:
+	    skillnr = SK_USE_MAGIC_ITEM;
+	    break;
+
+	default:
+	    LOG(llevError,"Warning: bad call of check_skill_to_fire()\n");
+	    return 0;
+    }
+    if (change_skill(who,skillnr)) { 
 #ifdef SKILL_UTIL_DEBUG
       LOG(llevDebug,"check_skill_to_fire(): got skill:%s for %s\n"
         ,skills[skillnr].name,who->name);
 #endif
-    who->contr->shoottype=shoottype;
-    return 1;
-  } else 
-    return 0;
+	who->contr->shoottype=shoottype;
+	return 1;
+    } else 
+	return 0;
 }
 
 /* check_skill_to_apply() - When a player tries to use an
@@ -674,60 +677,53 @@ int check_skill_to_apply(object *who, object *item) {
  
     if(who->type!=PLAYER) return 1; /* this fctn only for players */
 
-/* first figure out the required skill and ending shoottype          
- * from the item */
+    /* first figure out the required skill and ending shoottype          
+     * from the item */
  
     switch(item->type) {
-      case WEAPON:
-        skill = SK_MELEE_WEAPON;
-        shoottype = range_skill;
-        break;
-      case BOW:
-        skill = SK_MISSILE_WEAPON;
-        shoottype = range_bow;
-        break;
-      case POTION:
-      case SCROLL:
-        skill = SK_USE_MAGIC_ITEM; /* not literacy! */
-        shoottype = range_scroll;
-	break;
-      case ROD:
-        skill = SK_USE_MAGIC_ITEM;
-        shoottype = range_rod; 
-	break;
-      case WAND:                
-        skill = SK_USE_MAGIC_ITEM;
-        shoottype = range_wand; 
-        break;
-      case HORN:                
-        skill = SK_USE_MAGIC_ITEM;
-        shoottype = range_horn;
-        break;
-      default:
-        LOG(llevDebug,"Warning: bad call of check_skill_to_apply()\n");
-        LOG(llevDebug,"No skill exists for item: %s\n",query_name(item));
-        return 0;
+	case WEAPON:
+	    skill = SK_MELEE_WEAPON;
+	    shoottype = range_skill;
+	    break;
+
+	case BOW:
+	    skill = SK_MISSILE_WEAPON;
+	    shoottype = range_bow;
+	    break;
+
+	case POTION:
+	case SCROLL:
+	    skill = SK_USE_MAGIC_ITEM; /* not literacy! */
+	    shoottype = range_golem;
+	    break;
+
+	case ROD:
+	case WAND:                
+	case HORN:                
+	    skill = SK_USE_MAGIC_ITEM;
+	    shoottype = range_misc; 
+	    break;
+
+	default:
+	    LOG(llevDebug,"Warning: bad call of check_skill_to_apply()\n");
+	    LOG(llevDebug,"No skill exists for item: %s\n",query_name(item));
+	    return 0;
     }
  
-/* now we alter player status appropriately */
+    /* now we alter player status appropriately */
  
     if(!QUERY_FLAG(item,FLAG_APPLIED)) {     /* we are trying to unapply */
- 
-        if(who->chosen_skill && who->chosen_skill->stats.sp == skill)
+         if(who->chosen_skill && who->chosen_skill->stats.sp == skill)
            (void) change_skill(who,-1);
         return 0;
- 
     } else {                               /* we are trying to apply */
- 
-        if(!who->chosen_skill || (who->chosen_skill
-             && who->chosen_skill->stats.sp!=skill))
-                if(!change_skill(who,skill)) {
-                    new_draw_info(NDI_UNIQUE, 0,who,"You can't use that!");
-                    CLEAR_FLAG(item,FLAG_APPLIED);
-                    return 0;
-                }
+        if(!who->chosen_skill || (who->chosen_skill && who->chosen_skill->stats.sp!=skill))
+	    if(!change_skill(who,skill)) {
+		new_draw_info(NDI_UNIQUE, 0,who,"You can't use that!");
+		CLEAR_FLAG(item,FLAG_APPLIED);
+		return 0;
+	    }
     }
- 
     who->contr->shoottype=shoottype;
     return 1;
 }
@@ -765,13 +761,14 @@ int init_player_exp(object *pl) {
    *  or pre-skills/exp code player file */
    if(!exp_index) {  
         for(j=0;j<nrofexpcat;j++) {
-           tmp = get_object();
-           copy_object(exp_cat[j],tmp);
-           insert_ob_in_ob(tmp,pl);
-	   tmp->stats.exp = pl->stats.exp/nrofexpcat;
-           exp_ob[j] = tmp;
-           esrv_send_item(pl, tmp);
-           exp_index++;
+	    tmp = get_object();
+	    copy_object(exp_cat[j],tmp);
+	    insert_ob_in_ob(tmp,pl);
+	    tmp->stats.exp = pl->stats.exp/nrofexpcat;
+	    exp_ob[j] = tmp;
+	    esrv_send_item(pl, tmp);
+	    exp_index++;
+	    find_skill_exp_name(pl, tmp, pl->contr->last_skill_index);
         }
   } else if (exp_index!=nrofexpcat) { /* situation for old save file */
      if(exp_index<nrofexpcat) 
@@ -1041,58 +1038,68 @@ static int clipped_percent(int a, int b)
  * unused skills may have wrong value. This is why we call 
  * skill->exp_obj->level instead (the level of the associated experience
  * object -- which is always right).
- * -b.t.
+ * This function is pretty inefficient - it basically goes through the
+ * players inventory 'nrofexpcat' times.  However, this isn't called
+ * that often, so I have no great desire to try to make it more
+ * efficient - MSW
  */
  
 void show_skills(object *op) {
     object *tmp=NULL;
     char buf[MAX_BUF], *in;
     int i,length,is_first;
+    static char *periods="........................................";
 
     length = 31;
     in = "";
-    if (op)
     clear_win_info(op);
-    /* sprintf(buf,"Player Skills      Category    /lvl"); */ 
-    sprintf(buf,"Player skills by experience category");
-    new_draw_info(NDI_UNIQUE, 0,op,buf);
+    new_draw_info(NDI_UNIQUE, 0,op,"Player skills by experience category");
 
     /* print out skills by category */
     for (i=0;i<=nrofexpcat;i++) {
 	char Special[100];
+
 	Special[0]='\0';
 	is_first=1;
 	if(i==nrofexpcat) i=EXP_NONE; /* skip to misc exp category */
+
 	for (tmp=op->inv;tmp;tmp=tmp->below) {
 	    if(tmp->type!=SKILL) continue;
-	    if(skills[tmp->stats.sp].category==i
+
+	    /* Don't want to show info for all skills the player may be
+	     * able to get by equipping different things.  Doing so would also
+	     * result in things like spell casting being shown multiple times (one
+	     * for each talisman
+	     */
+	    if(skills[tmp->stats.sp].category==i 
 	       &&(tmp->invisible||QUERY_FLAG(tmp,FLAG_APPLIED))) {
+	
 		/* header info */
 		if(is_first) {  
 		    is_first=0;
 		    new_draw_info(NDI_UNIQUE, 0,op," "); 
+
 		    if(tmp->exp_obj) { 
-			object *tmp_exp = tmp->exp_obj;
-			int k=(length-15-strlen(tmp_exp->name)); 
-			char tmpbuf[40];
-			strcpy(tmpbuf,tmp_exp->name);
-			while(k>0) {k--; strcat(tmpbuf,".");}
+			/* Basically want to fill this out to 40 spaces with periods */
+			sprintf(buf,"%s%s", tmp->exp_obj->name, periods);
+			buf[40] = 0;
+
 			if (settings.use_permanent_experience) {
 			    new_draw_info_format(NDI_UNIQUE,0,op,"%slvl:%3d (xp:%d/%d/%d%%)",
-						 tmpbuf,tmp_exp->level,
-						 tmp_exp->stats.exp,
-						 level_exp(tmp_exp->level+1, op->expmul),
-						 clipped_percent(tmp_exp->last_heal,tmp_exp->stats.exp));
+				 buf,tmp->exp_obj->level,
+				 tmp->exp_obj->stats.exp,
+				 level_exp(tmp->exp_obj->level+1, op->expmul),
+				 clipped_percent(tmp->exp_obj->last_heal,tmp->exp_obj->stats.exp));
 			} else {
 			    new_draw_info_format(NDI_UNIQUE,0,op,"%slvl:%3d (xp:%d/%d)",
-						 tmpbuf,tmp_exp->level,
-						 tmp_exp->stats.exp,
-						 level_exp(tmp_exp->level+1, op->expmul));
+				 buf,tmp->exp_obj->level,
+				 tmp->exp_obj->stats.exp,
+				 level_exp(tmp->exp_obj->level+1, op->expmul));
 			}
-			if (strcmp(tmp_exp->name,"physique")==0) {
-			    sprintf(Special,"You can handle %d weapon improvements.",tmp_exp->level/5+5);
+			if (strcmp(tmp->exp_obj->name,"physique")==0) {
+			    sprintf(Special,"You can handle %d weapon improvements.",tmp->exp_obj->level/5+5);
 			}
-			if (strcmp(tmp_exp->name,"wisdom")==0) {
+			if (strcmp(tmp->exp_obj->name,"wisdom")==0) {
 			    char *cp = determine_god(op);
 			    sprintf(Special,"You worship %s.", cp?cp:"no god at current time");
 			}
@@ -1100,22 +1107,34 @@ void show_skills(object *op) {
 			new_draw_info(NDI_UNIQUE,0,op,"misc.");
 		    }
 		} /* is_first */
+
 		/* print matched skills */
 		if((!op || QUERY_FLAG(op, FLAG_WIZ)))
-		    (void) sprintf(buf,"%s%s %s (%5d)",in,
-				   QUERY_FLAG(tmp,FLAG_APPLIED)?"*":"-",
-				   skills[tmp->stats.sp].name,tmp->count);
+		    new_draw_info_format(NDI_UNIQUE,0,op, 
+			 "%s%s %s (%5d)",in,
+			 QUERY_FLAG(tmp,FLAG_APPLIED)?"*":"-",
+			 skills[tmp->stats.sp].name,tmp->count);
 		else
-		    (void) sprintf(buf,"%s%s %s",in,
-				   QUERY_FLAG(tmp,FLAG_APPLIED)?"*":"-",
-				   skills[tmp->stats.sp].name);
-		new_draw_info(NDI_UNIQUE,0,op,buf);
-	    }
-	}
+		    new_draw_info_format(NDI_UNIQUE,0,op, 
+			"%s%s %s",in,
+			QUERY_FLAG(tmp,FLAG_APPLIED)?"*":"-",
+			skills[tmp->stats.sp].name);
+	    } /* if object is skill object */
+	} /* for this cycle through inventory */
+
+	/* After we print all the skills for a category, print special information */
 	if (Special[0]!='\0') {
 	    new_draw_info(NDI_UNIQUE,0,op,Special);
 	}
-    }
+    } /* for all the exp categories */
+
+    /* This isn't really skill related.  However, this seems to be as good as any place
+     * to dump this information - after all, we are already showing the number of
+     * of allowed weapon enchantments
+     */
+
+    new_draw_info_format(NDI_UNIQUE,0,op, "Your equipped item power is %d out of %d\n",
+			 op->contr->item_power, op->level);
 }
 
 /* use_skill() - similar to invoke command, it executes the skill in the 

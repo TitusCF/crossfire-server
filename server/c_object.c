@@ -984,7 +984,8 @@ void examine_monster(object *op,object *tmp) {
 	new_draw_info(NDI_UNIQUE, 0,op,"It looks very ill.");
 }
 
-char *long_desc(object *tmp) {
+/* tmp is the object being described, pl is who is examing it. */
+char *long_desc(object *tmp, object *pl) {
   static char buf[VERY_BIG_BUF];
   char *cp;
 
@@ -1009,7 +1010,7 @@ char *long_desc(object *tmp) {
   case FOOD:
   case DRINK:
   case FLESH:
-    if(*(cp=describe_item(tmp))!='\0') {
+    if(*(cp=describe_item(tmp, pl))!='\0') {
 	int len;
 
 	strncpy(buf,query_name(tmp), VERY_BIG_BUF-1);
@@ -1040,24 +1041,9 @@ void examine(object *op, object *tmp) {
     if (tmp == NULL || tmp->type == CLOSE_CON)
 	return;
 
-    /* Eneq(csd.uu.se): If NO_PRETEXT is defined we should only print the name. */
-    if (QUERY_FLAG(tmp, FLAG_NO_PRETEXT)) {
-	strncpy(buf, long_desc(tmp), VERY_BIG_BUF-1);
-	buf[VERY_BIG_BUF-1]=0;
-    }
-    else {
-        /* Only quetzals can see the resistances on flesh. To realize
-	   this, we temporarily flag the flesh with SEE_INVISIBLE */
-        if (op->type == PLAYER && tmp->type == FLESH && is_dragon_pl(op))
-	    SET_FLAG(tmp, FLAG_SEE_INVISIBLE);
-	
-        strcpy(buf,"That is ");
-	
-	strncat(buf, long_desc(tmp), VERY_BIG_BUF-strlen(buf)-1);
-	buf[VERY_BIG_BUF-1]=0;
-	if (op->type == PLAYER && tmp->type == FLESH)
-	    CLEAR_FLAG(tmp, FLAG_SEE_INVISIBLE);
-    }
+    strcpy(buf,"That is ");
+    strncat(buf, long_desc(tmp, op), VERY_BIG_BUF-strlen(buf)-1);
+    buf[VERY_BIG_BUF-1]=0;
 
     new_draw_info(NDI_UNIQUE, 0,op,buf);
     buf[0]='\0';
@@ -1109,6 +1095,24 @@ void examine(object *op, object *tmp) {
 	  }
 	}
 	new_draw_info(NDI_UNIQUE, 0,op,buf);
+    }
+    /* Where to wear this item */
+    for (i=0; i < NUM_BODY_LOCATIONS; i++) {
+	if (tmp->body_info[i]<-1) {
+	    if (op->body_info[i])
+		new_draw_info_format(NDI_UNIQUE, 0,op, 
+			"It goes %s (%d)", body_locations[i].use_name, -tmp->body_info[i]);
+	    else
+		new_draw_info_format(NDI_UNIQUE, 0,op, 
+		        "It goes %s", body_locations[i].nonuse_name);
+	} else if (tmp->body_info[i]) {
+	    if (op->body_info[i])
+		new_draw_info_format(NDI_UNIQUE, 0,op, 
+			"It goes %s", body_locations[i].use_name);
+	    else
+		new_draw_info_format(NDI_UNIQUE, 0,op, 
+			"It goes %s", body_locations[i].nonuse_name);
+	}
     }
 
     if(tmp->weight) {
@@ -1225,7 +1229,6 @@ int command_pickup (object *op, char *params)
       goto NEWPICKUP;
     }
     if(1)fprintf(stderr,"command_pickup: !params\n");
-    op->contr->count_left=0;
     set_pickup_mode(op, (op->contr->mode > 6)? 0: op->contr->mode+1);
     return 0;
   }

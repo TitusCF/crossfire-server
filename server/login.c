@@ -6,7 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2001 Mark Wedel
+    Copyright (C) 2002 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -23,7 +23,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to mwedel@scruznet.com
+    The authors can be reached via e-mail at crossfire-devel@real-time.com
 */
 
 #include <global.h>
@@ -37,7 +37,6 @@
 extern spell spells[NROFREALSPELLS];
 extern void sub_weight (object *, signed long);
 extern void add_weight (object *, signed long);
-extern char *range_name[range_size];
 extern long pticks;
 
 /* If flag is non zero, it means that we want to try and save everyone, but
@@ -83,7 +82,6 @@ void emergency_save(int flag) {
   if (!flag) {
     for(pl=first_player;pl!=NULL;pl=pl->next) {
       if(pl->ob) {
-	unlock_player(pl->ob->name);
       }
     }
   }
@@ -105,51 +103,6 @@ void delete_character(char *name, int new) {
 	remove_directory(buf);
     }
 }
-
-/* Lock/unlock player functions.  In reality, the only time they are
- * really needed is if 2 players are logging in at the same time and
- * trying to use the same name to create characters (not very likely,
- * but...)  Otherwise, it checks against the existance of other active
- * players for duplicate names.  In reality, these functions could
- * probably be removed and it wouldn't create any problems.  However,
- * they are minor enough and the extra safety the grant is probably
- * worth keeping them around.
- */
-
-/* Renamed from 'remove_lock' to unlock_player to better match with
- * lock_player below.  Basically, given player 'pl', it removes the
- * corresponding lock file.
- */
-
-void unlock_player(char *name) {
-    char buf[MAX_BUF];
-
-    sprintf(buf,"%s/%s/%s.lock",settings.localdir,settings.playerdir,name);
-    if(!rmdir(buf)) {
-#ifdef DEBUG
-	perror("Couldn't remove lockfile(dir)");
-#endif
-    }
-}
-
-#if 0
-/* creates a lock for player 'name'.  returns 0 if the lock is successful,
- * 1 otherwise.
- */
-
-static int lock_player(char *name) {
-    char buf[MAX_BUF];
-
-    sprintf(buf,"%s/%s/%s.lock",settings.localdir,settings.playerdir,name);
-    if(!mkdir(buf,0770))
-	return 0;
-    if(errno != EEXIST) {
-	perror("Couldn't create lockfile(dir)");
-	return 1;
-    }
-    return 1;
-}
-#endif
 
 /* This verify that a character of name exits, and that it matches
  * password.  It return 0 if there is match, 1 if no such player,
@@ -188,11 +141,14 @@ int verify_player(char *name, char *password)
     return 1;
 }
 
-/* Checks to see if anyone else by 'name' is currently playing.  We
- * do this by a lockfile (playername.lock) in the save directory.  If
- * we find that file or another character of some name is already in the
- * game, we don't let this person join.  We return 0 if the name is
- * in use, 1 otherwise.
+/* Checks to see if anyone else by 'name' is currently playing. 
+ * If we find that file or another character of some name is already in the
+ * game, we don't let this person join (we should really let the new player
+ * enter the password, and if correct, disconnect that socket and attach it to
+ * the players current session.
+ * If no one by that name is currently playing, we then make sure the name
+ * doesn't include any bogus characters.
+ * We return 0 if the name is in use/bad, 1 if it is OK to use this name.
  */
 
 int check_name(player *me,char *name) {
@@ -204,26 +160,7 @@ int check_name(player *me,char *name) {
 	    return 0;
 	}
 
-#if 0
-    /* This is commented out - unexpected client/server crashes can leave the
-     * lock files laying around.  In retrospect, I don't think the reason
-     * give above is needed for lock files.  If two new people are creating
-     * characters at the same time (or logging in), the server data
-     * is still consistent (ie, it will get the name from player 1, store
-     * it in the player object, get the name from player 2, check it against
-     * current players and find a duplicated.)
-     */
-    if(lock_player(name)) {
-	/* Include the 'locked' so that the error message is more descriptive.
-	 * This way, players can include a slightly more detailed message
-	 * on the problem they are having.
-	 */
-	new_draw_info(NDI_UNIQUE, 0,me->ob,"That name is already in use (locked).");
-	return 0;
-    }
-#endif
     if(!playername_ok(name)) {
-	unlock_player(name);
 	new_draw_info(NDI_UNIQUE, 0,me->ob,"That name contains illegal characters.");
 	return 0;
     }
@@ -352,6 +289,11 @@ int save_player(object *op, int flag) {
   /* Match the enumerations but in string form */
   fprintf(fp,"usekeys %s\n", pl->usekeys==key_inventory?"key_inventory":
 	  (pl->usekeys==keyrings?"keyrings":"containers"));
+  /* Match the enumerations but in string form */
+  fprintf(fp,"unapply %s\n", pl->unapply==unapply_nochoice?"unapply_nochoice":
+	  (pl->unapply==unapply_never?"unapply_never":"unapply_always"));
+
+
 
 #ifdef BACKUP_SAVE_AT_HOME
   if (op->map!=NULL && flag==0)
@@ -570,15 +512,12 @@ void check_login(object *op) {
 	new_draw_info(NDI_UNIQUE, 0,op," ");
 	new_draw_info(NDI_UNIQUE, 0,op,"Wrong Password!");
 	new_draw_info(NDI_UNIQUE, 0,op," ");
-	unlock_player(pl->ob->name);
 	FREE_AND_COPY(op->name, "noname");
 	FREE_AND_COPY(op->name_pl, "noname");
-	pl->last_value= -1;
 	get_name(op);
 	return;	    /* Once again, rest of code just loads the char */
     }
 
-    unlock_player(pl->ob->name);
 #ifdef SAVE_INTERVAL
     pl->last_save_time=time(NULL);
 #endif /* SAVE_INTERVAL */
@@ -666,6 +605,15 @@ void check_login(object *op) {
 	    else if (!strcmp(bufall+8,"containers\n"))
 		pl->usekeys=containers;
 	    else LOG(llevDebug,"load_player: got unknown usekeys type: %s\n", bufall+8);
+	}
+	else if (!strcmp(buf,"unapply")) {
+	    if (!strcmp(bufall+8,"unapply_nochoice\n"))
+		pl->unapply=unapply_nochoice;
+	    else if (!strcmp(bufall+8,"unapply_never\n"))
+		pl->unapply=unapply_never;
+	    else if (!strcmp(bufall+8,"unapply_always\n"))
+		pl->unapply=unapply_always;
+	    else LOG(llevDebug,"load_player: got unknown unapply type: %s\n", bufall+8);
 	}
         else if (!strcmp(buf,"lev_array")){
 	    for(i=1;i<=value;i++) {
@@ -810,8 +758,6 @@ void check_login(object *op) {
     esrv_new_player(op->contr,op->weight+op->carrying);
     esrv_send_inventory(op, op);
 
-    pl->last_value= -1;
-
     /* This seems to compile without warnings now.  Don't know if it works
      * on SGI's or not, however.
      */
@@ -819,5 +765,14 @@ void check_login(object *op) {
 	sizeof(pl->known_spells[0]),(int (*)())spell_sort);
 
     CLEAR_FLAG(op, FLAG_FRIENDLY);
+
+    /* can_use_shield is a new flag.  However, the can_use.. seems to largely come
+     * from the class, and not race.  I don't see any way to get the class information
+     * to then update this.  I don't think this will actually break anything - anyone
+     * that can use armour should be able to use a shield.  What this may 'break'
+     * are features new characters get, eg, if someone starts up with a Q, they
+     * should be able to use a shield.  However, old Q's won't get that advantage.
+     */
+    if (QUERY_FLAG(op, FLAG_USE_ARMOUR)) SET_FLAG(op, FLAG_USE_SHIELD);
     return;
 }

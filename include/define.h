@@ -6,7 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2000 Mark Wedel
+    Copyright (C) 2002 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -23,7 +23,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to mwedel@scruz.net
+    The authors can be reached via e-mail at crossfire-devel@real-time.com
 */
 
 /* This file is really too large.  With all the .h files
@@ -371,8 +371,8 @@ error - Your ANSI C compiler should be defining __STDC__;
  * to the new system, I find several files that did not use the previous
  * macros.
  * 
- * If any FLAG's are added, be sure to add them to the flag_links structure
- * in common/loader.c, if necessary.
+ * If any FLAG's are or changed, make sure the flag_names structure in
+ * common/loader.l is updated.
  *
  * flags[0] is 0 to 31
  * flags[1] is 32 to 63
@@ -414,7 +414,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define FLAG_WAS_WIZ	 	4 /* Player was once a wiz */
 #define FLAG_APPLIED	 	5 /* Object is ready for use by living */
 #define FLAG_UNPAID	 	6 /* Object hasn't been paid for yet */
-/*#define FLAG_AN		7  unused - Name must be prepended by "an", not "a"*/
+#define FLAG_USE_SHIELD		7 /* Can this creature use a shield? */
 
 #define FLAG_NO_PICK	 	8 /* Object can't be picked up */
 #define FLAG_WALK_ON	 	9 /* Applied when it's walked upon */
@@ -429,12 +429,10 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define FLAG_IS_THROWN		17 /* Object is designed to be thrown. */
 #define FLAG_AUTO_APPLY		18 /* Will be applied when created */
 #define FLAG_TREASURE		19 /* Will generate treasure when applied */
-#define FLAG_APPLY_ONCE		20 /* Will dissapear when applied */
+/*#define FLAG_APPLY_ONCE	20 Unused -  Will dissapear when applied */
 #define FLAG_SEE_INVISIBLE 	21 /* Will see invisible player */
 #define FLAG_CAN_ROLL		22 /* Object can be rolled */
-
-/* this defines paralyze as spell on player, not onlya effect on speed */
-#define FLAG_PARALYZED      23 /* Object is paralyzed */
+/* #define FLAG_PARALYZED	23 Unused -  Object is paralyzed */
 
 #define FLAG_IS_TURNABLE 	24 /* Object can change face with direction */
 #define FLAG_WALK_OFF		25 /* Object is applied when left */
@@ -469,16 +467,16 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define FLAG_PICK_UP		48 /* Can pick up */
 #define FLAG_UNIQUE		49 /* Item is really unique (UNIQUE_ITEMS) */
 #define FLAG_NO_DROP		50 /* Object can't be dropped */
-#define FLAG_NO_PRETEXT		51 /* No text is added before name. */
+/* #define FLAG_NO_PRETEXT	51 Not used No text is added before name. */
 #define FLAG_CAST_SPELL		52 /* (Monster) can learn and cast spells */
 #define FLAG_USE_SCROLL		53 /* (Monster) can read scroll */
-#define FLAG_USE_WAND		54 /* (Monster) can apply and use wands */
+#define FLAG_USE_RANGE		54 /* (Monster) can apply and use range items */
 #define FLAG_USE_BOW		55 /* (Monster) can apply and fire bows */
 
 #define FLAG_USE_ARMOUR		56 /* (Monster) can wear armour/shield/helmet */
 #define FLAG_USE_WEAPON		57 /* (Monster) can wield weapons */
 #define FLAG_USE_RING		58 /* (Monster) can use rings, boots, gauntlets, etc */
-#define FLAG_READY_WAND		59 /* (Monster) has a wand readied... 8) */
+#define FLAG_READY_RANGE	59 /* (Monster) has a range attack readied... 8) */
 #define FLAG_READY_BOW		60 /* not implemented yet */
 #define FLAG_XRAYS		61 /* X-ray vision */
 #define FLAG_NO_APPLY		62 /* Avoids step_on/fly_on to this object */
@@ -504,9 +502,9 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define FLAG_CAN_USE_SKILL	79 /* The monster can use skills */
 
 #define FLAG_BEEN_APPLIED	80 /* The object has been applied */
-#define FLAG_READY_ROD		81 /* (Monster) has a rod readied... 8) */
+#define FLAG_READY_SCROLL	81 /* monster has scroll in inv and can use it */
 #define FLAG_USE_ROD		82 /* (Monster) can apply and use rods */
-#define FLAG_READY_HORN		83 /* (Monster) has a horn readied */
+/*#define FLAG_READY_HORN	83 unused (Monster) has a horn readied */
 #define FLAG_USE_HORN		84 /* (Monster) can apply and use horns */
 #define FLAG_MAKE_INVIS	        85 /* (Item) gives invisibility when applied */
 #define FLAG_INV_LOCKED		86 /* Item will not be dropped from inventory */
@@ -608,7 +606,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define D_UNLOCK(xyz)	(xyz)->contr->freeze_inv=(xyz)->contr->freeze_look=0;
 
 #define ARMOUR_SPEED(xyz)	(xyz)->last_sp
-#define ARMOUR_SPELLS(xyz)	(xyz)->last_heal
+#define ARMOUR_SPELLS(xyz)	(xyz)->gen_sp_armour
 #define WEAPON_SPEED(xyz)	(xyz)->last_sp
 
 /* GET_?_FROM_DIR if used only for positional firing where dir is X and Y
@@ -794,17 +792,53 @@ static inline void safe_strcat(char *dest, char *orig, int *curlen, int maxlen)
 
 /* Flags for apply_special() */
 enum apply_flag {
-  /* Basic flags, always use one of these */
-	AP_NULL			= 0,
-	AP_APPLY		= 1,
-	AP_UNAPPLY		= 2,
+    /* Basic flags, always use one of these */
+    AP_NULL			= 0,
+    AP_APPLY			= 1,
+    AP_UNAPPLY			= 2,
 
-        AP_BASIC_FLAGS		= 15,
+    AP_BASIC_FLAGS		= 15,
 
   /* Optional flags, for bitwise or with a basic flag */
-        AP_NO_MERGE		= 16,
-	AP_IGNORE_CURSE		= 32,
+    AP_NO_MERGE			= 16,
+    AP_IGNORE_CURSE		= 32,
+    AP_PRINT			= 64,	/* Print what to do, don't actually do it */
+					/* Note this is supported in all the functions */
+
 };
+
+/* Bitmask values for 'can_apply_object()' return values.
+ * the CAN_APPLY_ prefix is to just note what function the
+ * are returned from.
+ *
+ * CAN_APPLY_NEVER: who will never be able to use this - requires a body
+ *      location who doesn't have.
+ * CAN_APPLY_RESTRICTION: There is some restriction from using this item -
+ *      this basically means one of the FLAGS are set saying you can't
+ *      use this.
+ * CAN_APPLY_NOT_MASK - this can be used to check the return value to see
+ *	if this object can do anything to use this object.  If the value
+ *	returned from can_apply_object() anded with the mask is non zero,
+ *	then it is out of the control of this creature to use the item.
+ *	otherwise it means that by unequipping stuff, they could apply the object
+ * CAN_APPLY_UNAPPLY: Player needs to unapply something before applying
+ *      this.
+ * CAN_APPLY_UNAPPLY_MULT: There are multiple items that need to be
+ *      unapplied before this can be applied.  Think of switching to
+ *      a bow but you have a sword & shield - both the sword and
+ *      shield need to be uneqipped before you can do the bow.
+ * CAN_APPLY_UNAPPLY_CHOICE: There is a choice of items to unapply before
+ *      this one can be applied.  Think of rings - human is wearing two
+ *      rings and tries to apply one - there are two possible rings he
+ *      could remove.
+ *
+ */
+#define CAN_APPLY_NEVER		    0x1
+#define CAN_APPLY_RESTRICTION	    0x2
+#define CAN_APPLY_NOT_MASK	    0xf
+#define CAN_APPLY_UNAPPLY	    0x10
+#define CAN_APPLY_UNAPPLY_MULT	    0x20
+#define CAN_APPLY_UNAPPLY_CHOICE    0x40
 
 /* Cut off point of when an object is put on the active list or not */
 #define MIN_ACTIVE_SPEED	0.00001

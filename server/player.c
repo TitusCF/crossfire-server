@@ -68,7 +68,7 @@ void display_motd(object *op) {
     cp=strchr(buf,'\n');
     if(cp!=NULL)
       *cp='\0';
-    new_draw_info(NDI_UNIQUE, 0,op,buf);
+    new_draw_info(NDI_UNIQUE | NDI_GREEN, 0,op,buf);
   }
   close_and_delete(fp, comp);
   new_draw_info(NDI_UNIQUE, 0,op," ");
@@ -86,25 +86,61 @@ int playername_ok(char *cp) {
  * all the pointers so the caller doesn't need to do that.
  * Caller is responsible for setting the correct map.
  */
-static void get_player(player *p) {
+
+/* Redo this to do both get_player_ob and get_player.
+ * Hopefully this will be less bugfree and simpler.
+ * Returns the player structure.  If 'p' is null,
+ * we create a new one.  Otherwise, we recycle
+ * the one that is passed.
+ */
+static player* get_player(player *p) {
     object *op=arch_to_object(get_player_archetype(NULL));
     int i;
 
-    p->loading = NULL;
-    p->fire_on=0,p->run_on=0;
-    p->count=0;
-    p->count_left=0;
-    p->prev_cmd=' ';
-    p->prev_fire_on=0;
-    p->mode=0;
-    p->idle=0;
+    if (!p) {
+	player *tmp;
+
+	p = (player *) malloc(sizeof(player));
+	if(p==NULL)
+	    fatal(OUT_OF_MEMORY);
+
+	/* This adds the player in the linked list.  There is extra
+	 * complexity here because we want to add the new player at the
+	 * end of the list - there is in fact no compelling reason that
+	 * that needs to be done except for things like output of
+	 * 'who'.
+	 */
+	tmp=first_player;
+	while(tmp!=NULL&&tmp->next!=NULL)
+	    tmp=tmp->next;
+	if(tmp!=NULL)
+	    tmp->next=p;
+	else
+	    first_player=p;
+    }
+
+    /* Clears basically the entire player structure except
+     * for next and socket.
+     */
+    memset((void*)((char*)p + offsetof(player, maplevel)), 0, 
+	    sizeof(player) - offsetof(player, maplevel));
+
+    /* There are some elements we want initialized to non zero value -
+     * we deal with that below this point.
+     */
+    p->party_number=-1;
+    p->outputs_sync=16;		/* Every 2 seconds */
+    p->outputs_count=1;		/* Keeps present behaviour */
+    p->unapply = unapply_nochoice;
+#ifdef USE_SWAP_STATS
+    p->Swap_First = -1;
+#endif
+
 #ifdef AUTOSAVE
     p->last_save_tick = 9999999;
 #endif
-    *p->maplevel=0;
     
     strcpy(p->savebed_map, first_map_path);  /* Init. respawn position */
-    p->bed_x=0, p->bed_y=0;
     
     op->contr=p; /* this aren't yet in archetype */
     p->ob = op;
@@ -117,35 +153,14 @@ static void get_player(player *p) {
     roll_stats(op);
     p->state=ST_ROLL_STAT;
     clear_los(op);
-    p->last_stats.Str=0,  p->last_stats.Dex=0,
-    p->last_stats.Int=0,  p->last_stats.Con=0,
-    p->last_stats.Wis=0,  p->last_stats.Cha=0;
-    p->last_stats.Pow=0,  p->last_stats.Pow=0;
-    p->last_stats.hp=0,   p->last_stats.maxhp=0;
-    p->last_stats.wc=0,   p->last_stats.ac=0;
-    p->last_stats.sp=0,   p->last_stats.maxsp=0;
-    p->last_stats.grace=0, p->last_stats.maxgrace=0;
-    p->last_stats.exp= -1,p->last_stats.food=0;
-    p->digestion=0,p->gen_hp=0,p->gen_sp=0,p->gen_grace=0;
+
     p->gen_sp_armour=10;
-    p->last_spell= -1;
-    p->last_value= -1;
     p->last_speed= -1;
     p->shoottype=range_none;
-    p->last_shoot= range_bottom;
     p->listening=9;
-    p->golem=NULL;
-    p->last_used=NULL;
-    p->last_used_id=0;
-
-    p->weapon_sp=0;
     p->last_weapon_sp= -1;
-    p->has_hit=0;
-
     p->peaceful=1;			/* default peaceful */
-    p->last_tell[0] = '\0';		/* last player that told you something [mids 01/14/2002] */
     p->do_los=1;
-    p->last_weight= -1;
 #ifdef EXPLORE_MODE
     p->explore=0;
 #endif
@@ -153,16 +168,31 @@ static void get_player(player *p) {
     strncpy(p->title,op->arch->clone.name,MAX_NAME);
     op->race = add_string (op->arch->clone.race);
 
+    /* Would be better of '0' was not a defined spell */
     for(i=0;i<NROFREALSPELLS;i++)
 	p->known_spells[i]= -1;
-    p->nrofknownspells=0;
+
     p->chosen_spell = -1;
-    p->ob->chosen_skill = NULL;
-    if(QUERY_FLAG(op,FLAG_READY_SKILL))
-        CLEAR_FLAG(op,FLAG_READY_SKILL); 
+    CLEAR_FLAG(op,FLAG_READY_SKILL); 
+
+    /* we need to clear these to -1 and not zero - otherwise,
+     * if a player quits and starts a new character, we wont
+     * send new values to the client, as things like exp start
+     * at zero.
+     */
+    for (i=0; i < MAX_EXP_CAT; i++) {
+	p->last_skill_exp[i] = -1;
+	p->last_skill_level[i] = -1;
+    }
+    for (i=0; i < NROFATTACKS; i++) {
+	p->last_resist[i] = -1;
+    }
+    p->last_skill_index = -1;
+    p->last_stats.exp = -1;
+
     p->socket.update_look=0;
     p->socket.look_position=0;
-    p->own_title[0]='\0';
+    return p;
 }
 
 
@@ -198,8 +228,7 @@ int add_player(NewSocket *ns) {
 
     init_beforeplay(); /* Make sure everything is ready */
 
-    p=get_player_ob();
-    get_player(p);
+    p=get_player(NULL);
     memcpy(&p->socket, ns, sizeof(NewSocket));
     /* Needed because the socket we just copied over needs to be cleared.
      * Note that this can result in a client reset if there is partial data
@@ -541,7 +570,6 @@ void play_again(object *op)
 {
     op->contr->state=ST_PLAY_AGAIN;
     op->chosen_skill = NULL;
-    unlock_player(op->name);
     send_query(&op->contr->socket, CS_QUERY_SINGLECHAR, "Do you want to play again (a/q)?");
     /* a bit of a hack, but there are various places early in th
      * player creation process that a user can quit (eg, roll
@@ -569,7 +597,7 @@ int receive_play_again(object *op, char key)
 
 	remove_friendly_object(op);
 	free_object(op);
-	get_player(pl);
+	pl = get_player(pl);
 	op = pl->ob;
 	add_friendly_object(op);
 	op->contr->password[0]='~';
@@ -907,7 +935,6 @@ int key_change_class(object *op, char key)
     op->stats.hp=op->stats.maxhp;
     op->stats.sp=op->stats.maxsp;
     op->stats.grace=0;
-    op->contr->last_value= -1;
     if (op->msg) 
 	new_draw_info(NDI_BLUE, 0, op, op->msg);
     send_query(&op->contr->socket,CS_QUERY_SINGLECHAR,"Press any key for the next race.\nPress `d' to play this race.\n");
@@ -936,7 +963,6 @@ int key_confirm_quit(object *op, char key)
     terminate_all_pets(op);
     leave_map(op);
     op->direction=0;
-    op->contr->count_left=0;
     new_draw_info_format(NDI_UNIQUE | NDI_ALL, 5, NULL,
 	"%s quits the game.",op->name);
 
@@ -1255,218 +1281,234 @@ int check_pick(object *op) {
  */
 object *find_arrow(object *op, char *type)
 {
-  object *tmp = NULL;
+    object *tmp = NULL;
 
-  for(op=op->inv; op; op=op->below)
-    if(!tmp && op->type==CONTAINER && op->race==type &&
-      QUERY_FLAG(op,FLAG_APPLIED))
-      tmp = find_arrow (op, type);
-    else if (op->type==ARROW && op->race==type)
-      return op;
-  return tmp;
+    for(op=op->inv; op; op=op->below)
+	if(!tmp && op->type==CONTAINER && op->race==type &&
+	   QUERY_FLAG(op,FLAG_APPLIED))
+	tmp = find_arrow (op, type);
+	else if (op->type==ARROW && op->race==type)
+	    return op;
+    return tmp;
 }
 
 /*
- *  Player fires a bow. This probably should be combined with
- *  monster_use_bow().
+ *  Creature fires a bow - op can be monster or player.  Returns 
+ * 1 if bow was actually fired, 0 otherwise.
+ * op is the object firing the bow.
+ * part is for multipart creatures - the part firing the bow.
+ * dir is the direction of fire.
  */
-static void fire_bow(object *op, int dir)
+int fire_bow(object *op, object *part, int dir)
 {
-  object *bow, *arrow = NULL, *left;
-  tag_t left_tag;
+    object *arrow = NULL, *left, *bow;
+    tag_t left_tag, tag;
 
-  if (!dir) {
-    new_draw_info(NDI_UNIQUE, 0,op, "You can't shoot yourself!");
-    return;
-  }
-    
-  for(bow=op->inv; bow; bow=bow->below)
-    if(bow->type==BOW && QUERY_FLAG(bow, FLAG_APPLIED))
-      break;
-#ifdef MANY_CORES /* there must be applied bow if shoot_type is range_bow */
-  if (!bow) {
-    LOG (llevError, "Range: bow without activated bow.\n");
-    abort();
-  }
-#endif
-  if( !bow->race ) {
-    new_draw_info_format(NDI_UNIQUE, 0,op, "Your %s is broken.", bow->name);
-    op->contr->count_left=0;
-    return;
-  }
-  if ((arrow=find_arrow(op, bow->race)) == NULL) {
-    new_draw_info_format(NDI_UNIQUE, 0,op,"You have no %s left.", bow->race);
-    op->contr->count_left=0;
-    return;
-  }
-  if(wall(op->map,op->x+freearr_x[dir],op->y+freearr_y[dir])) {
-    new_draw_info(NDI_UNIQUE, 0,op,"Something is in the way.");
-    op->contr->count_left=0;
-    return;
-  }
-  /* this should not happen, but sometimes does */
-  if (arrow->nrof==0) {
+    if (!dir) {
+	new_draw_info(NDI_UNIQUE, 0,op, "You can't shoot yourself!");
+	return 0;
+    }
+    if (op->type == PLAYER) 
+	bow=op->contr->ranges[range_bow];
+    else {
+	for(bow=op->inv; bow; bow=bow->below)
+	    /* Don't check for applied - monsters don't apply bows - in that way, they
+	     * don't need to switch back and forth between bows and weapons.
+	     */
+	    if(bow->type==BOW)
+		break;
+
+	if (!bow) {
+	    LOG (llevError, "Range: bow without activated bow (%s).\n", op->name);
+	    return 0;
+	}
+    }
+    if( !bow->race ) {
+	new_draw_info_format(NDI_UNIQUE, 0,op, "Your %s is broken.", bow->name);
+	return 0;
+    }
+    if ((arrow=find_arrow(op, bow->race)) == NULL) {
+	if (op->type == PLAYER)
+	    new_draw_info_format(NDI_UNIQUE, 0,op,"You have no %s left.", bow->race);
+	/* FLAG_READY_BOW will get reset if the monsters picks up some arrows */
+	else CLEAR_FLAG(op, FLAG_READY_BOW);
+	return 0;
+    }
+    if(wall(op->map,op->x+freearr_x[dir],op->y+freearr_y[dir])) {
+	new_draw_info(NDI_UNIQUE, 0,op,"Something is in the way.");
+	return 0;
+    }
+    /* this should not happen, but sometimes does */
+    if (arrow->nrof==0) {
 	remove_ob(arrow);
 	free_object(arrow);
-	return;
-  }
-  left = arrow; /* these are arrows left to the player */
-  left_tag = left->count;
-  arrow = get_split_ob(arrow, 1);
-  set_owner(arrow,op);
-  arrow->direction=dir;
-  arrow->x = op->x;
-  arrow->y = op->y;
-  arrow->speed = 1;
-  op->speed_left = 0.01 - (float) FABS(op->speed) * 100 / bow->stats.sp;
-  fix_player(op);
-  update_ob_speed(arrow);
-  arrow->speed_left = 0;
-  SET_ANIMATION(arrow,dir);
-  arrow->stats.sp = arrow->stats.wc; /* save original wc and dam */
-  arrow->stats.hp = arrow->stats.dam; 
-  arrow->stats.dam += (QUERY_FLAG(bow, FLAG_NO_STRENGTH) ?
+	return 0;
+    }
+    left = arrow; /* these are arrows left to the player */
+    left_tag = left->count;
+    arrow = get_split_ob(arrow, 1);
+    set_owner(arrow,op);
+    arrow->direction=dir;
+    arrow->x = part->x;
+    arrow->y = part->y;
+    arrow->speed = 1;
+    if (op->type == PLAYER) {
+	op->speed_left = 0.01 - (float) FABS(op->speed) * 100 / bow->stats.sp;
+	fix_player(op);
+    }
+    update_ob_speed(arrow);
+    arrow->speed_left = 0;
+    SET_ANIMATION(arrow,dir);
+    arrow->stats.sp = arrow->stats.wc; /* save original wc and dam */
+    arrow->stats.hp = arrow->stats.dam; 
+    /* Note that this was different for monsters - they got their level
+     * added to the damage.  I think the strength bonus is more proper.
+     */
+     
+    arrow->stats.dam += (QUERY_FLAG(bow, FLAG_NO_STRENGTH) ?
 		      0 : dam_bonus[op->stats.Str]) +
 			bow->stats.dam + bow->magic + arrow->magic;
-  arrow->stats.wc = 20 - bow->magic - arrow->magic - SK_level(op) -
-    dex_bonus[op->stats.Dex] - thaco_bonus[op->stats.Str] - arrow->stats.wc -
-    bow->stats.wc;
-  arrow->level = SK_level (op);
+    if (op->type == PLAYER) {
+	arrow->stats.wc = 20 - bow->magic - arrow->magic - SK_level(op) -
+	    dex_bonus[op->stats.Dex] - thaco_bonus[op->stats.Str] - arrow->stats.wc -
+	    bow->stats.wc;
+	arrow->level = SK_level (op);
+    } else {
+	arrow->stats.wc= op->stats.wc - bow->magic - arrow->magic -
+		    arrow->stats.wc;
+	arrow->level = op->level;
+    }
 
-  arrow->map = op->map;
-  SET_FLAG(arrow, FLAG_FLYING);
-  SET_FLAG(arrow, FLAG_FLY_ON);
-  SET_FLAG(arrow, FLAG_WALK_ON);
-  play_sound_map(op->map, op->x, op->y, SOUND_FIRE_ARROW);
-  insert_ob_in_map(arrow,op->map,op,0);
-  move_arrow(arrow);
-  if (was_destroyed (left, left_tag))
-      esrv_del_item(op->contr, left_tag);
-  else
-      esrv_send_item(op, left);
+    arrow->map = op->map;
+    SET_FLAG(arrow, FLAG_FLYING);
+    SET_FLAG(arrow, FLAG_FLY_ON);
+    SET_FLAG(arrow, FLAG_WALK_ON);
+    play_sound_map(op->map, op->x, op->y, SOUND_FIRE_ARROW);
+    tag = arrow->count;
+    insert_ob_in_map(arrow,op->map,op,0);
+
+    if (!was_destroyed(arrow, tag))
+	move_arrow(arrow);
+
+    if (op->type == PLAYER) {
+	if (was_destroyed (left, left_tag))
+	    esrv_del_item(op->contr, left_tag);
+	else
+	    esrv_send_item(op, left);
+    }
+    return 1;
 }
 
+/* Fires a misc (wand/rod/horn) object in 'dir'.
+ * Broken apart from 'fire' to keep it more readable.
+ */
+void fire_misc_object(object *op, int dir)
+{
+    object  *item;
 
-void fire(object *op,int dir) {
-  object *weap=NULL;
-  int spellcost=0;
-
-  /* check for loss of invisiblity/hide */
-  if (action_makes_visible(op)) make_visible(op);
-
-   /* a check for players, make sure things are groovy. This routine
-    * will change the skill of the player as appropriate in order to
-    * fire whatever is requested. In the case of spells (range_magic)
-    * it handles whether cleric or mage spell is requested to be cast. 
-    * -b.t. 
-    */ 
-  if(op->type==PLAYER) 
-	if(!check_skill_to_fire(op)) return;
-
-  switch(op->contr->shoottype) {
-  case range_none:
-    return;
-
-  case range_bow:
-    fire_bow(op, dir);
-    return;
-
-  case range_magic: /* Casting spells */
-
-    op->contr->shoottype= range_magic;
-
-    spellcost=cast_spell(op,op,dir,op->contr->chosen_spell,0,spellNormal,NULL);
-
-    if(spells[op->contr->chosen_spell].cleric)
-        op->stats.grace-=spellcost;
-    else
-	op->stats.sp-=spellcost;
-
-    return;
-
-  case range_wand:
-    for(weap=op->inv;weap!=NULL;weap=weap->below)
-      if(weap->type==WAND&&QUERY_FLAG(weap, FLAG_APPLIED))
-	break;
-    if(weap==NULL) {
-      new_draw_info(NDI_UNIQUE, 0,op,"You have no wand readied.");
-      op->contr->count_left=0;
-      return;
-    }
-    if(weap->stats.food<=0) {
-      play_sound_player_only(op->contr, SOUND_WAND_POOF,0,0);
-      new_draw_info(NDI_UNIQUE, 0,op,"The wand says poof.");
-      return;
-    }
-    if(cast_spell(op,weap,dir,op->contr->chosen_item_spell,0,spellWand,NULL)) {
-      SET_FLAG(op, FLAG_BEEN_APPLIED); /* You now know something about it */
-      if (!(--weap->stats.food))
-      {
-	object *tmp;
-	if (weap->arch) {
-	  CLEAR_FLAG(weap, FLAG_ANIMATE);
-	  weap->face = weap->arch->clone.face;
-	  weap->speed = 0;
-	  update_ob_speed(weap);
-	}
-	if ((tmp=is_player_inv(weap)))
-	    esrv_update_item(UPD_ANIM, tmp, weap);
-      }
-    }
-    return;
-  case range_rod:
-  case range_horn:
-    for(weap=op->inv;weap!=NULL;weap=weap->below)
-      if(QUERY_FLAG(weap, FLAG_APPLIED)&&
-	 weap->type==(op->contr->shoottype==range_rod?ROD:HORN))
-	break;
-    if(weap==NULL) {
-      char buf[MAX_BUF];
-      sprintf(buf, "You have no %s readied.",
-	op->contr->shoottype == range_rod ? "rod" : "horn");
-      new_draw_info(NDI_UNIQUE, 0,op, buf);
-      op->contr->count_left=0;
-      return;
-    }
-    if(weap->stats.hp<spells[weap->stats.sp].sp) {
-#if 0
-      LOG(llevDebug,"Horn/rod: %d < %d (%d)\n", weap->stats.hp, spells[weap->stats.sp].sp, weap->stats.sp);
-#endif
-      play_sound_player_only(op->contr, SOUND_WAND_POOF,0,0);
-      if (op->contr->shoottype == range_rod)
-	new_draw_info(NDI_UNIQUE, 0,op,"The rod whines for a while, but nothing happens.");
-      else
-	new_draw_info(NDI_UNIQUE, 0,op,
-	          "No matter how hard you try you can't get another note out.");
-      return;
-    }
-    if(cast_spell(op,weap,dir,op->contr->chosen_item_spell,0,
-       op->contr->shoottype == range_rod ? spellRod : spellHorn,NULL)) {
-      SET_FLAG(op, FLAG_BEEN_APPLIED); /* You now know something about it */
-      drain_rod_charge(weap);
-    }
-    return;
-  case range_scroll: /* Control summoned monsters from scrolls */
-    if(op->contr->golem==NULL) {
-      op->contr->shoottype=range_none;
-      op->contr->chosen_spell= -1;
-    }
-    else 
-	control_golem(op->contr->golem, dir);
-    return;
-  case range_skill:
-    if(!op->chosen_skill) { 
-	if(op->type==PLAYER)
-      	    new_draw_info(NDI_UNIQUE, 0,op,"You have no applicable skill to use.");
+    if (!op->contr->ranges[range_misc]) {
+	new_draw_info(NDI_UNIQUE, 0,op,"You have range item readied.");
 	return;
     }
-    (void) do_skill(op,dir,NULL);
-    return;
-  default:
-    new_draw_info(NDI_UNIQUE, 0,op,"Illegal shoot type.");
-    op->contr->count_left=0;
-    return;
-  }
+
+    item = op->contr->ranges[range_misc];
+    if (item->type == WAND) {
+	if(item->stats.food<=0) {
+	    play_sound_player_only(op->contr, SOUND_WAND_POOF,0,0);
+	    new_draw_info_format(NDI_UNIQUE, 0,op,"The %s goes poof.", query_base_name(item, 0));
+	}
+    } else if (item->type == ROD || item->type==HORN) {
+	if(item->stats.hp<spells[item->stats.sp].sp) {
+	    play_sound_player_only(op->contr, SOUND_WAND_POOF,0,0);
+	    if (item->type== ROD)
+		new_draw_info_format(NDI_UNIQUE, 0,op,
+			     "The %s whines for a while, but nothing happens.", query_base_name(item,0));
+	    else
+	    new_draw_info(NDI_UNIQUE, 0,op,
+			  "No matter how hard you try you can't get another note out.");
+	    return;
+	}
+    }
+
+    if(cast_spell(op,item,dir,op->contr->chosen_item_spell,0,spellMisc,NULL)) {
+	SET_FLAG(op, FLAG_BEEN_APPLIED); /* You now know something about it */
+	if (item->type == WAND) {
+	    if (!(--item->stats.food)) {
+		object *tmp;
+		if (item->arch) {
+		    CLEAR_FLAG(item, FLAG_ANIMATE);
+		    item->face = item->arch->clone.face;
+		    item->speed = 0;
+		    update_ob_speed(item);
+		}
+		if ((tmp=is_player_inv(item)))
+		    esrv_update_item(UPD_ANIM, tmp, item);
+	    }
+	}
+	else if (item->type == ROD || item->type==HORN) {
+	    drain_rod_charge(item);
+	}
+    }
+}
+
+void fire(object *op,int dir) {
+    int spellcost=0;
+
+    /* check for loss of invisiblity/hide */
+    if (action_makes_visible(op)) make_visible(op);
+
+    /* a check for players, make sure things are groovy. This routine
+     * will change the skill of the player as appropriate in order to
+     * fire whatever is requested. In the case of spells (range_magic)
+     * it handles whether cleric or mage spell is requested to be cast. 
+     * -b.t. 
+     */ 
+    if(op->type==PLAYER) 
+	if(!check_skill_to_fire(op)) return;
+
+    switch(op->contr->shoottype) {
+	case range_none:
+	    return;
+
+	case range_bow:
+	    fire_bow(op, op, dir);
+	    return;
+
+	case range_magic: /* Casting spells */
+	    op->contr->shoottype= range_magic;
+	    spellcost=cast_spell(op,op,dir,op->contr->chosen_spell,0,spellNormal,NULL);
+
+	    if(spells[op->contr->chosen_spell].cleric)
+		op->stats.grace-=spellcost;
+	    else
+		op->stats.sp-=spellcost;
+	    return;
+
+	case range_misc:
+	    fire_misc_object(op, dir);
+	    return;
+
+	case range_golem: /* Control summoned monsters from scrolls */
+	    if(op->contr->golem==NULL) {
+		op->contr->shoottype=range_none;
+		op->contr->chosen_spell= -1;
+	    }
+	    else 
+		control_golem(op->contr->golem, dir);
+	    return;
+
+	case range_skill:
+	    if(!op->chosen_skill) { 
+		if(op->type==PLAYER)
+		    new_draw_info(NDI_UNIQUE, 0,op,"You have no applicable skill to use.");
+		return;
+	    }
+	    (void) do_skill(op,dir,NULL);
+	    return;
+	default:
+	    new_draw_info(NDI_UNIQUE, 0,op,"Illegal shoot type.");
+	    return;
+    }
 }
 
 
@@ -1768,8 +1810,6 @@ int handle_newcs_player(object *op)
     HandleClient(&op->contr->socket, op->contr);
     if (op->speed_left<0) return 0;
 
-    CLEAR_FLAG(op,FLAG_PARALYZED); /* if we are here, we never paralyzed anymore */
-    
     if(op->direction && (op->contr->run_on || op->contr->fire_on)) {
 	/* All move commands take 1 tick, at least for now */
 	op->speed_left--;
@@ -1836,6 +1876,45 @@ void remove_unpaid_objects(object *op, object *env)
 	op=next;
     }
 }
+
+
+/*
+ * Returns pointer a static string containing gravestone text
+ * Moved from apply.c to player.c - player.c is what
+ * actually uses this function.  player.c may not be quite the
+ * best, a misc file for object actions is probably better, 
+ * but there isn't one in the server directory.
+ */
+char *gravestone_text (object *op)
+{
+    static char buf2[MAX_BUF];
+    char buf[MAX_BUF];
+    time_t now = time (NULL);
+
+    strcpy (buf2, "                 R.I.P.\n\n");
+    if (op->type == PLAYER)
+        sprintf (buf, "%s the %s\n", op->name, op->contr->title);
+    else
+        sprintf (buf, "%s\n", op->name);
+    strncat (buf2, "                    ",  20 - strlen (buf) / 2);
+    strcat (buf2, buf);
+    if (op->type == PLAYER)
+        sprintf (buf, "who was in level %d when killed\n", op->level);
+    else
+        sprintf (buf, "who was in level %d when died.\n\n", op->level);
+    strncat (buf2, "                    ",  20 - strlen (buf) / 2);
+    strcat (buf2, buf);
+    if (op->type == PLAYER) {
+        sprintf (buf, "by %s.\n\n", op->contr->killer);
+        strncat (buf2, "                    ",  21 - strlen (buf) / 2);
+        strcat (buf2, buf);
+    }
+    strftime (buf, MAX_BUF, "%b %d %Y\n", localtime (&now));
+    strncat (buf2, "                    ",  20 - strlen (buf) / 2);
+    strcat (buf2, buf);
+    return buf2;
+}
+
 
 
 void do_some_living(object *op) {
@@ -2310,7 +2389,6 @@ void kill_player(object *op)
 #ifdef SET_TITLE
     op->contr->own_title[0]='\0';
 #endif /* SET_TITLE */
-    op->contr->count_left=0;
     new_draw_info(NDI_UNIQUE|NDI_ALL, 0,NULL, buf);
     check_score(op);
     if(op->contr->golem!=NULL) {

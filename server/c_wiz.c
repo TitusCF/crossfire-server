@@ -2,10 +2,11 @@
  * static char *rcsid_c_wiz_c =
  *   "$Id$";
  */
+
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copryight (C) 2000 Mark Wedel
+    Copyright (C) 2002 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -22,7 +23,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to mwedel@scruz.net
+    The authors can be reached via e-mail at crossfire-devel@real-time.com
 */
 
 /*
@@ -102,7 +103,6 @@ int command_kick (object *op, char *params)
 	op=pl->ob;
 	remove_ob(op);
 	op->direction=0;
-	op->contr->count_left=0;
 	new_draw_info_format(NDI_UNIQUE | NDI_ALL, 5, op,
 			     "%s is kicked out of the game.",op->name);
 	strcpy(op->contr->killer,"left");

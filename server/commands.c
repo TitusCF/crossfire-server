@@ -59,7 +59,9 @@ CommArray_s Commands[] = {
   {"verify", command_malloc_verify,0.0},
 #endif
   {"apply", command_apply,	1.0},	/* should be variable */
+  {"applymode", command_applymode,	1.0},	/* should be variable */
   {"archs", command_archs,	0.0},
+  {"body", command_body,	0.0},
   {"brace", command_brace,	0.0},
   {"cast", command_cast,	0.2},	/* Is this right? */
   {"disarm", command_disarm,	1.0},

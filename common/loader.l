@@ -7,7 +7,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2000 Mark Wedel
+    Copyright (C) 2002 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -24,7 +24,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to mwedel@scruz.net
+    The authors can be reached via e-mail at crossfire-devel@real-time.com
 */
 
 /* Eneq(@csd.uu.se): Added weight-modifiers in environment of objects.
@@ -36,85 +36,6 @@
 #include <loader.h>
 #include <newserver.h>
 #include <sproto.h>
-
-/* All the variable names.  Each entry should correspond to the
- * V_ vlaue in loader.h (that is, the 20'th value in this array should
- * correspond to the 20'th V_(value) in loader.h)  The V_??? get
- * used as indexes into this array.
- */
-
-/* If you change this list (add/delete/rename), also update the list
- * in crossedit/Attr.c, around line 360.  That list is the variables
- * that can be set in crossedit for various objects.
- * Realistically, these are not needed anymore - they were perhaps useful
- * at one point when both the loader and saver might have used them.
- * The only thing they are used for at all right now is some of the
- * get_ob_diff code uses these and indexes with the V_.. fields.
- * Most of the more recent changes just put the names write in the
- * get_ob_diff, which then also means you don't really need to worry
- * about the V_ flags.
- */
-static char *variable_const[NR_OF_VARIABLES] = {
-  "Object","name","race","slaying","msg","endmsg",
-  "Inventory","arch","other_arch","More",
-  "animation","end","last_heal","last_sp","last_grace","last_eat",
-  "speed","speed_left","slow_move",
-  "face","Str","Dex","Con","Wis","Cha","Int","Pow","hp","maxhp","sp","maxsp",
-  "grace","maxgrace",
-  "exp","food","dam","wc","ac","x","y","nrof","level","direction",
-  "type","material","value", "weight","carrying",
-  "immune","protected","attacktype","vulnerable",
-  "path_attuned","path_repelled","path_denied",
-  "invisible","magic","state","alive","applied","unpaid","need_an","need_ie",
-  "no_pick","no_pass","walk_on","walk_off","fly_on","fly_off","is_animated",
-  "flying","monster","neutral", "no_attack", "no_damage",
-  "friendly","generator","is_thrown","auto_apply","treasure",
-  "apply_once","see_invisible","can_roll","is_turnable",
-  "is_used_up","identified","reflecting","changing","splitting","hitback",
-  "startequip","blocksview","editable","undead","scared","unaggressive",
-  "reflect_missile","reflect_spell","no_magic",
-  "wiz","was_wiz","no_fix_player","tear_down", "luck",
-  "run_away","pass_thru",
-  "can_pass_thru","pick_up","anim_speed","container","no_drop",
-  "no_pretext","will_apply","random_movement", "can_apply",
-  "can_cast_spell","can_use_scroll","can_use_wand","can_use_bow",
-  "can_use_armour","can_use_weapon","can_use_ring","has_ready_wand",
-  "has_ready_bow","xrays","is_floor","lifesave","no_strength",
-  "sleep","stand_still","random_move","only_attack","armour",
-  "attack_movement","move_state","confused","stealth","connected",
-  "cursed","damned","see_anywhere","known_magical","known_cursed",
-  "can_use_skill","been_applied","title","has_ready_rod","can_use_rod",
-  "has_ready_horn","can_use_horn","expmul",
-  "unique","make_invisible","inv_locked",
-  "is_wooded","is_hilly","has_ready_skill","has_ready_weapon",
-  "no_skill_ident","glow_radius","is_blind","can_see_in_dark",
-  "is_cauldron","randomitems","is_dust", "no_steal", "one_hit","berserk",
-  "weapontype","sub_type", "sub_type2","casting_speed",
-  "elevation",
-/* GROS - And those are for the new plugin system */
-  "event_apply",    "event_apply_plugin",   "event_apply_options",
-  "event_attack",   "event_attack_plugin",  "event_attack_options",
-  "event_born",     "event_born_plugin",    "event_born_options",
-  "event_crash",    "event_crash_plugin",   "event_crash_options",
-  "event_death",    "event_death_plugin",   "event_death_options",
-  "event_drop",     "event_drop_plugin",    "event_drop_options",
-  "event_login",    "event_login_plugin",   "event_login_options",
-  "event_logout",   "event_logout_plugin",  "event_logout_options",
-  "event_pickup",   "event_pickup_plugin",  "event_pickup_options",
-  "event_remove",   "event_remove_plugin",  "event_remove_options",
-  "event_say",      "event_say_plugin",     "event_say_options",
-  "event_shout",    "event_shout_plugin",   "event_shout_options",
-  "event_tell",     "event_tell_plugin",    "event_tell_options",
-  "event_time",     "event_time_plugin",    "event_time_options",
-  "event_throw",    "event_throw_plugin",   "event_throw_options",
-  "event_trigger",  "event_trigger_plugin", "event_trigger_options",
-  "event_close", "event_close_plugin", "event_close_options",
-  "event_timer",    "event_timer_plugin",   "event_timer_options",
-#ifdef NPC_PROG
-  "npc_status","npc_program",
-#endif
-};
-
 
 #define YY_DECL int lex_load(object *op, int map_flags)
 
@@ -162,12 +83,97 @@ static void set_protection(object *op, uint32 mask, uint16 pro_val)
     }
 }
 
+
+static void set_body_info(object *op, char *params) {
+    int i;
+    char *cp;
+
+    /* go to first space character */
+    for (cp=params; !isspace(*cp); cp++) ;
+
+    *cp++ = 0;	/* null it out */
+
+    for (i=0; i<NUM_BODY_LOCATIONS; i++) {
+	if (!strcmp(params, body_locations[i].save_name)) {
+	    op->body_info[i] = atoi(cp);
+	    return;	/* Only one line passed in params */
+	}
+    }
+    LOG(llevError,"set_body_info called with bogus params: %s\n", params);
+}
+
+
+/* This function checks the object after it has been loaded (when we
+ * get the 'end' in the input stream).  This function can be used to 
+ * deal with legacy objects where fields may have changed.  It can also be used
+ * to check for objects to make sure there are no common errors.
+ */
+static void check_loaded_object(object *op) {
+    int ip;
+
+    /* We do some specialized handling to handle legacy cases of name_pl.
+     * If the object doesn't have a name_pl, we just use the object name -
+     * this isn't perfect (things won't be properly pluralized), but works to
+     * that degree (5 heart is still quite understandable).  But the case we
+     * also have to catch is if this object is not using the normal name for
+     * the object.  In that case, we also want to use the loaded name.
+     * Otherwise, what happens is that the the plural name will lose
+     * information (appear as just 'hearts' and not 'goblins heart') 
+     */
+    if (op->arch && op->name != op->arch->clone.name && op->name_pl == op->arch->clone.name_pl) {
+	if (op->name_pl) free_string(op->name_pl);
+	    op->name_pl = NULL;
+    }
+    if (!op->name_pl) op->name_pl = add_string(op->name);
+
+    /* We changed last_heal to gen_sp_armour, which is what it
+     * really does for many objects.  Need to catch any in maps
+     * that may have an old value.
+     */
+    if ((op->type == WEAPON) ||
+        (op->type == ARMOUR)   || (op->type == HELMET) ||
+        (op->type == SHIELD)   || (op->type == RING) ||
+        (op->type == BOOTS)    || (op->type == GLOVES) ||
+        (op->type == AMULET )  || (op->type == GIRDLE) ||
+        (op->type == BRACERS ) || (op->type == CLOAK)) {
+	if (op->last_heal) {
+	    LOG(llevDebug,"Object %s still has last_heal set, not gen_sp_armour\n",
+		op->name?op->name:"NULL");
+	    op->gen_sp_armour = op->last_heal;
+	    op->last_heal = 0;
+	}
+	ip = calc_item_power(op, 0);
+	/* Legacy objects from before item power was in the game */
+	if (!op->item_power && ip) {
+	    if (ip > 3) {
+		LOG(llevDebug,"Object %s had no item power, using %d\n", 
+		    op->name?op->name:"NULL", ip);
+	    }
+	    op->item_power = ip;
+	}
+	/* Check for possibly bogus values.  Has to meet both these criteria -
+	 * something that has item_power 1 is probably just fine if our calculated
+	 * value is 1 or 2 - these values are small enough that hard to be precise.
+	 * similarly, it item_power is 0, the first check will always pass,
+	 * but not the second one.
+	 */
+	if (ip > 2 *op->item_power && ip > (op->item_power + 3)) {
+	    LOG(llevDebug,"Object %s seems to have too low item power? %d > %d\n",
+		op->name?op->name:"NULL", ip, op->item_power);
+	}
+
+    }
+
+}
+
+
 %}
 
 
 
 S	[ \t]+.+
 WS	[ \t]*
+A	.+
 
 %x MESSAGE
 
@@ -268,28 +274,13 @@ WS	[ \t]*
 			ismore=1;
 		    }
 
-^end{WS}$	    {	/* We do some specialized handling to handle legacy cases of
-			 * name_pl.  If the object doesn't have a name_pl, we just
-			 * use the object name - this isn't perfect (things won't be
-			 * properly pluralized), but works to that degree (5 heart is still
-			 * quite understandable).  But the case we also have to catch is
-			 * if this object is not using the normal name for the object.  In that
-			 * case, we also want to use the loaded name.  Otherwise, what happens
-			 * is that the the plural name will lose information (appear as
-			 * just 'hearts' and not 'goblins heart')
-			 */
-			if (op->arch && op->name != op->arch->clone.name && op->name_pl == op->arch->clone.name_pl) {
-			    if (op->name_pl) free_string(op->name_pl);
-			    op->name_pl = NULL;
-			}
-			if (!op->name_pl) op->name_pl = add_string(op->name);
-
+^end{WS}$	    {	check_loaded_object(op);
 			if (ismore) return LL_MORE; 
 			else return LL_NORMAL;
 		    }
 ^last_heal{S}	    op->last_heal = IVAL;
 ^last_sp{S}	    op->last_sp = IVAL;
-^last_grace{S}    op->last_grace = IVAL;
+^last_grace{S}	    op->last_grace = IVAL;
 ^last_eat{S}	    op->last_eat = IVAL;
 ^speed{S}	    {	op->speed = FVAL;
 			if (op->speed<0) op->speed_left = op->speed_left-RANDOM()%100/100.0;
@@ -300,7 +291,12 @@ WS	[ \t]*
 ^slow_move{S}	    {	SET_SLOW_PENALTY(op,FVAL);
 			SET_FLAG(op, FLAG_SLOW_MOVE);
 		    }
-^face{S}	    op->face = &new_faces[FindFace(yval(), 0)];
+^title{S}	    {	char *y=yval();
+			if (*y=='\0') LOG(llevError,"Title without value.\n");
+			else FREE_AND_COPY(op->title, y);
+		    }
+
+^face{S}	op->face = &new_faces[FindFace(yval(), 0)];
 ^str{S}		op->stats.Str = IVAL;
 ^dex{S}		op->stats.Dex = IVAL;
 ^con{S}		op->stats.Con = IVAL;
@@ -343,11 +339,11 @@ WS	[ \t]*
 ^need_ie{S}	    { /* not used - jsut ignore */ }
 ^no_pick{S}	    SET_OR_CLEAR_FLAG(op, FLAG_NO_PICK, IVAL);
 ^no_pass{S}	    SET_OR_CLEAR_FLAG(op, FLAG_NO_PASS, IVAL);
+^is_animated{S}	    SET_OR_CLEAR_FLAG(op, FLAG_ANIMATE, IVAL);
 ^walk_on{S}	    SET_OR_CLEAR_FLAG(op, FLAG_WALK_ON, IVAL);
 ^walk_off{S}	    SET_OR_CLEAR_FLAG(op, FLAG_WALK_OFF, IVAL);
 ^fly_on{S}	    SET_OR_CLEAR_FLAG(op, FLAG_FLY_ON, IVAL);
 ^fly_off{S}	    SET_OR_CLEAR_FLAG(op, FLAG_FLY_OFF, IVAL);
-^is_animated{S}	    SET_OR_CLEAR_FLAG(op, FLAG_ANIMATE, IVAL);
 ^flying{S}	    SET_OR_CLEAR_FLAG(op, FLAG_FLYING, IVAL);
 ^monster{S}	    SET_OR_CLEAR_FLAG(op, FLAG_MONSTER, IVAL);
 ^neutral{S}	    SET_OR_CLEAR_FLAG(op, FLAG_NEUTRAL, IVAL);
@@ -366,7 +362,6 @@ WS	[ \t]*
 ^is_thrown{S}	    SET_OR_CLEAR_FLAG(op, FLAG_IS_THROWN, IVAL);
 ^auto_apply{S}	    SET_OR_CLEAR_FLAG(op, FLAG_AUTO_APPLY, IVAL);
 ^treasure{S}	    SET_OR_CLEAR_FLAG(op, FLAG_TREASURE, IVAL);
-^apply_once{S}	    SET_OR_CLEAR_FLAG(op, FLAG_APPLY_ONCE, IVAL);
 ^see_invisible{S}   SET_OR_CLEAR_FLAG(op, FLAG_SEE_INVISIBLE, IVAL);
 ^can_roll{S} 	    SET_OR_CLEAR_FLAG(op, FLAG_CAN_ROLL, IVAL);
 ^is_turnable{S}	    SET_OR_CLEAR_FLAG(op, FLAG_IS_TURNABLE, IVAL);
@@ -408,21 +403,22 @@ WS	[ \t]*
 ^pass_thru{S}	    SET_OR_CLEAR_FLAG(op, FLAG_PASS_THRU, IVAL);
 ^can_pass_thru{S}   SET_OR_CLEAR_FLAG(op, FLAG_CAN_PASS_THRU, IVAL);
 ^pick_up{S}	    op->pick_up = IVAL;
+^item_power{S}	    op->item_power = IVAL;
+^gen_sp_armour{S}   op->gen_sp_armour = IVAL;
 ^anim_speed{S}	    op->anim_speed = IVAL;
 ^container{S}	    op->weight_limit = IVAL;
 ^no_drop{S}	    SET_OR_CLEAR_FLAG(op, FLAG_NO_DROP, IVAL);
-^no_pretext{S}	    SET_OR_CLEAR_FLAG(op, FLAG_NO_PRETEXT, IVAL);
 ^will_apply{S}	    op->will_apply = IVAL;
 ^random_movement{S}	    SET_OR_CLEAR_FLAG(op, FLAG_RANDOM_MOVE, IVAL);
-^can_apply{S}		    op->can_apply = IVAL;
+^can_apply{S}		    { }
+^can_use_shield{S}  SET_OR_CLEAR_FLAG(op, FLAG_USE_SHIELD, IVAL);
 ^can_cast_spell{S}	    SET_OR_CLEAR_FLAG(op, FLAG_CAST_SPELL, IVAL);
 ^can_use_scroll{S}	    SET_OR_CLEAR_FLAG(op, FLAG_USE_SCROLL, IVAL);
-^can_use_wand{S}	    SET_OR_CLEAR_FLAG(op, FLAG_USE_WAND, IVAL);
+^can_use_range{S}	    SET_OR_CLEAR_FLAG(op, FLAG_USE_RANGE, IVAL);
 ^can_use_bow{S}		    SET_OR_CLEAR_FLAG(op, FLAG_USE_BOW, IVAL);
 ^can_use_armour{S}	    SET_OR_CLEAR_FLAG(op, FLAG_USE_ARMOUR, IVAL);
 ^can_use_weapon{S}	    SET_OR_CLEAR_FLAG(op, FLAG_USE_WEAPON, IVAL);
 ^can_use_ring{S}	    SET_OR_CLEAR_FLAG(op, FLAG_USE_RING, IVAL);
-^has_ready_wand{S}	    SET_OR_CLEAR_FLAG(op, FLAG_READY_WAND, IVAL);
 ^has_ready_bow{S}   SET_OR_CLEAR_FLAG(op, FLAG_READY_BOW, IVAL);
 ^xrays{S}	    SET_OR_CLEAR_FLAG(op, FLAG_XRAYS, IVAL);
 ^is_floor{S}	    SET_OR_CLEAR_FLAG(op, FLAG_IS_FLOOR, IVAL);
@@ -469,6 +465,12 @@ WS	[ \t]*
 ^protected{S}		set_protection(op, IVAL, RESIST_PROT);
 ^vulnerable{S}		set_protection(op, IVAL, RESIST_VULN);
 
+    /* old values - keep them around for now, but they should be removed at some point */
+^has_ready_rod{S}	SET_OR_CLEAR_FLAG(op, FLAG_READY_RANGE, IVAL);
+^has_ready_horn{S}	SET_OR_CLEAR_FLAG(op, FLAG_READY_RANGE, IVAL);
+^has_ready_wand{S}	SET_OR_CLEAR_FLAG(op, FLAG_READY_RANGE, IVAL);
+^can_use_wand{S}	SET_OR_CLEAR_FLAG(op, FLAG_USE_RANGE, IVAL);
+
 ^attack_movement{S} op->move_type = IVAL;
 ^move_state{S}	    op->move_status = IVAL;
 ^confused{S}	    SET_OR_CLEAR_FLAG(op, FLAG_CONFUSED, IVAL);
@@ -481,13 +483,8 @@ WS	[ \t]*
 ^known_cursed{S}    SET_OR_CLEAR_FLAG(op, FLAG_KNOWN_CURSED, IVAL);
 ^can_use_skill{S}   SET_OR_CLEAR_FLAG(op, FLAG_CAN_USE_SKILL, IVAL);
 ^been_applied{S}    SET_OR_CLEAR_FLAG(op, FLAG_BEEN_APPLIED, IVAL);
-^title{S}	    {	char *y=yval();
-			if (*y=='\0') LOG(llevError,"Title without value.\n");
-			else FREE_AND_COPY(op->title, y);
-		    }
-^has_ready_rod{S}	SET_OR_CLEAR_FLAG(op, FLAG_READY_ROD, IVAL);
+^has_ready_scroll{S}	SET_OR_CLEAR_FLAG(op, FLAG_READY_SCROLL, IVAL);
 ^can_use_rod{S}		SET_OR_CLEAR_FLAG(op, FLAG_USE_ROD, IVAL);
-^has_ready_horn{S}	SET_OR_CLEAR_FLAG(op, FLAG_READY_HORN, IVAL);
 ^can_use_horn{S}	SET_OR_CLEAR_FLAG(op, FLAG_USE_HORN, IVAL);
 ^expmul{S}		op->expmul = FVAL;
 ^unique{S}		SET_OR_CLEAR_FLAG(op, FLAG_UNIQUE, IVAL);
@@ -506,16 +503,18 @@ WS	[ \t]*
 ^is_dust{S}		SET_OR_CLEAR_FLAG(op, FLAG_DUST, IVAL);
 ^no_steal{S}		SET_OR_CLEAR_FLAG(op, FLAG_NO_STEAL, IVAL);
 ^one_hit{S}		SET_OR_CLEAR_FLAG(op, FLAG_ONE_HIT, IVAL);
+^berserk{S}		SET_OR_CLEAR_FLAG(op, FLAG_BERSERK, IVAL);
 
 ^can_knockback{S}	{ /* Some archetypes have these values in them */ }
 ^can_parry{S}		{ /* Probably the pupland archetypes - I imagined */ }
 ^can_impale{S}		{ /* That these are for the new combat code */ }
 ^can_cut{S}		{ /* just ignore for now */ }
 ^can_dam_armour{S}	{ }
-^weapontype{S}		op->weapontype = FVAL;
+^weapontype{S}		op->weapontype = IVAL;
 ^casting_speed{S}	op->casting_speed = FVAL;
 ^elevation{S}		op->elevation = IVAL;
 ^client_type{S}		op->client_type = IVAL;
+^body_{A}		set_body_info(op, yytext);
 
 ^event_apply{S}	    {	char *yv=yval();
 
@@ -1083,63 +1082,37 @@ int set_variable(object *op,char *buf) {
  * put gaps in the array that should not be processed.
  * The order matches the order of the define values in 'define.h'.
  */
-
-int flag_links[NUM_FLAGS+1][2] ={
-{FLAG_ALIVE, V_ALIVE}, {FLAG_WIZ, V_WIZ},
-{-1, -1}, {-1, -1},	/* REMOVED and FREED flags */
-{FLAG_WAS_WIZ, V_WAS_WIZ}, {FLAG_APPLIED, V_APPLIED},
-{FLAG_UNPAID, V_UNPAID}, {-1, -1}, /* was need_an flag */
-{FLAG_NO_PICK, V_NO_PICK}, {FLAG_WALK_ON, V_WALK_ON},
-{FLAG_NO_PASS, V_NO_PASS},{FLAG_ANIMATE, V_IS_ANIMATED},
-{FLAG_SLOW_MOVE, -1}, {FLAG_FLYING, V_FLYING},
-{FLAG_MONSTER, V_MONSTER}, {FLAG_FRIENDLY, V_FRIENDLY},
-{FLAG_GENERATOR, V_GENERATOR}, {FLAG_IS_THROWN, V_IS_THROWN},
-{FLAG_AUTO_APPLY, V_AUTO_APPLY}, {FLAG_TREASURE, V_TREASURE},
-{FLAG_APPLY_ONCE, V_APPLY_ONCE},{FLAG_SEE_INVISIBLE, V_SEE_INVISIBLE},
-{FLAG_CAN_ROLL, V_CAN_ROLL}, {-1, -1}, /*paralyze is only a effect flag */
-{FLAG_IS_TURNABLE, V_IS_TURNABLE},{FLAG_WALK_OFF, V_WALK_OFF},
-{FLAG_FLY_ON, V_FLY_ON},{FLAG_FLY_OFF, V_FLY_OFF}, 
-{FLAG_IS_USED_UP, V_IS_USED_UP}, {FLAG_IDENTIFIED, V_IDENTIFIED},
-{FLAG_REFLECTING, V_REFLECTING}, {FLAG_CHANGING, V_CHANGING},
-{FLAG_SPLITTING, V_SPLITTING}, {FLAG_HITBACK, V_HITBACK},
-{FLAG_STARTEQUIP, V_STARTEQUIP}, {FLAG_BLOCKSVIEW, V_BLOCKSVIEW},
-{FLAG_UNDEAD, V_UNDEAD}, {FLAG_SCARED, V_SCARED},
-{FLAG_UNAGGRESSIVE, V_UNAGGRESSIVE}, {FLAG_REFL_MISSILE, V_REFLECT_MISSILE},
-{FLAG_REFL_SPELL, V_REFLECT_SPELL}, {FLAG_NO_MAGIC, V_NO_MAGIC},
-{FLAG_NO_FIX_PLAYER, V_NO_FIX_PLAYER}, {-1, -1}, /* need_ie */
-{FLAG_TEAR_DOWN, V_TEAR_DOWN}, {FLAG_RUN_AWAY, V_RUN_AWAY},
-{FLAG_PASS_THRU, V_PASS_THRU}, {FLAG_CAN_PASS_THRU, V_CAN_PASS_THRU},
-{FLAG_PICK_UP, V_PICK_UP}, {FLAG_UNIQUE, V_UNIQUE},
-{FLAG_NO_DROP, V_NO_DROP}, {FLAG_NO_PRETEXT, V_NO_PRETEXT},
-{FLAG_CAST_SPELL, V_CAN_CAST_SPELL}, {FLAG_USE_SCROLL, V_CAN_USE_SCROLL},
-{FLAG_USE_WAND, V_CAN_USE_WAND},{FLAG_USE_BOW, V_CAN_USE_BOW},
-{FLAG_USE_ARMOUR, V_CAN_USE_ARMOUR},{FLAG_USE_WEAPON, V_CAN_USE_WEAPON},
-{FLAG_USE_RING, V_CAN_USE_RING}, {FLAG_READY_WAND, V_HAS_READY_WAND},
-{FLAG_READY_BOW, V_HAS_READY_BOW}, {FLAG_XRAYS, V_XRAYS},
-{-1, -1 /*NO_APPLY*/},  {FLAG_IS_FLOOR, V_IS_FLOOR},
-{FLAG_LIFESAVE, V_LIFESAVE}, {FLAG_NO_STRENGTH, V_NO_STRENGTH},
-{FLAG_SLEEP, V_SLEEP}, {FLAG_STAND_STILL, V_STAND_STILL},
-{FLAG_RANDOM_MOVE, V_RANDOM_MOVEMENT}, {FLAG_ONLY_ATTACK, V_ONLY_ATTACK},
-{FLAG_CONFUSED, V_CONFUSED}, {FLAG_STEALTH, V_STEALTH},
-{-1, -1 /*WIZPASS*/}, {-1, -1 /*IS_LINKED */},
-{FLAG_CURSED, V_CURSED}, {FLAG_DAMNED, V_DAMNED},
-{FLAG_SEE_ANYWHERE, V_SEE_ANYWHERE}, {FLAG_KNOWN_MAGICAL, V_KNOWN_MAGICAL},
-{FLAG_KNOWN_CURSED, V_KNOWN_CURSED}, {FLAG_CAN_USE_SKILL, V_CAN_USE_SKILL},
-{FLAG_BEEN_APPLIED, V_BEEN_APPLIED},  {FLAG_READY_ROD, V_HAS_READY_ROD},
-{FLAG_USE_ROD, V_CAN_USE_ROD}, {FLAG_READY_HORN, V_HAS_READY_HORN}, 
-{FLAG_USE_HORN, V_CAN_USE_HORN},{FLAG_MAKE_INVIS,V_MAKE_INVIS},
-{FLAG_INV_LOCKED,V_INV_LOCKED},{FLAG_IS_WOODED,V_IS_WOODED},
-{FLAG_IS_HILLY,V_IS_HILLY},{FLAG_READY_SKILL,V_HAS_READY_SKILL},
-{FLAG_READY_WEAPON,V_HAS_READY_WEAPON},{FLAG_NO_SKILL_IDENT,V_NO_SKILL_IDENT},
-{FLAG_BLIND,V_BLIND},{FLAG_SEE_IN_DARK,V_SEE_IN_DARK},
-{FLAG_IS_CAULDRON,V_IS_CAULDRON},{FLAG_DUST,V_DUST},{FLAG_NO_STEAL,V_NO_STEAL},
-{FLAG_ONE_HIT, V_ONE_HIT},
-{-1, -1 /* Client send debug flag (FLAG_CLIENT_SENT)*/},
-{FLAG_BERSERK, V_BERSERK}, 
-{FLAG_NEUTRAL, V_NEUTRAL}, {FLAG_NO_ATTACK, V_NO_ATTACK},
-{FLAG_NO_DAMAGE, V_NO_DAMAGE},
-{-1, -1 /* FLAG_OBJ_ORIGINAL */ },
-{-1, -1 /* FLAG_OBJ_SAVE_ON_OVL */ },
+/* This is a list of pointers taht correspond to the FLAG_.. values.
+ * This is a simple 1:1 mapping - if FLAG_FRIENDLY is 15, then
+ * the 15'th element of this array should match that name.
+ * If an entry is NULL, that is a flag not to loaded/saved.
+ */
+static char *flag_names[NUM_FLAGS+1] = {
+"alive", "wiz", NULL, NULL, "was_wiz", "applied", "unpaid",
+"can_use_shield", "no_pick", "walk_on", "no_pass",		/* 10 */
+"is_animated", NULL, "flying", "monster", "friendly", "generator",
+"is_thrown", "auto_apply", "treasure", NULL,			/* 20 */
+"see_invisible", "can_roll", NULL, "is_turnable", "walk_off",
+"fly_on", "fly_off", "is_used_up", "identified", "reflecting",	/* 30 */
+"changing", "splitting", "hitback", "startequip",
+"blocksview", "undead", "scared", "unaggressive",
+"reflect_missile", "reflect_spell",				/* 40 */
+"no_magic", "no_fix_player", NULL, "tear_down", "run_away",
+"pass_thru", "can_pass_thru", "pick_up", "unique", "no_drop",	/* 50 */
+ NULL, "can_cast_spell", "can_use_scroll", "can_use_range", 
+"can_use_bow",  "can_use_armour", "can_use_weapon", 
+"can_use_ring", "has_ready_range", "has_ready_bow",		/* 60 */
+"xrays", NULL, "is_floor", "lifesave", "no_strength", "sleep",
+"stand_still", "random_move", "only_attack", "confused",	/* 70 */
+ "stealth", NULL, NULL, "cursed", "damned",
+"see_anywhere", "known_magical", "known_cursed",
+"can_use_skill", "been_applied",				/* 80 */
+"has_ready_scroll", "can_use_rod", NULL,
+"can_use_horn", "make_invisible",  "inv_locked", "is_wooded",
+"is_hilly", "has_ready_skill", "has_ready_weapon",		/* 90 */
+"no_skill_ident", "is_blind", "can_see_in_dark", "is_cauldron", 
+"is_dust", "no_steal", "one_hit", NULL, "berserk", "neutral",	/* 100 */
+"no_attack", "no_damage", NULL, NULL				/* 104 */
 };
 
 
@@ -1204,8 +1177,7 @@ char *get_ob_diff(object *op,object *op2) {/* I plan to optimize this heavily */
     strcat(buf,buf2);
   }
   if(op->face!=op2->face) {
-      sprintf(buf2,"%s %s\n",variable_const[V_FACE],
-		op->face->name);
+      sprintf(buf2,"face %s\n",	op->face->name);
       strcat(buf,buf2);
   }
   for(i=1;i<=NR_EVENTS;i++)
@@ -1404,49 +1376,49 @@ char *get_ob_diff(object *op,object *op2) {/* I plan to optimize this heavily */
     strcat (buf, buf2);
   }
   if(op->stats.Str!=op2->stats.Str)
-    save_long(buf,variable_const[V_STR],op->stats.Str);
+    save_long(buf, "Str", op->stats.Str);
   if(op->stats.Dex!=op2->stats.Dex)
-    save_long(buf,variable_const[V_DEX],op->stats.Dex);
+    save_long(buf, "Dex", op->stats.Dex);
   if(op->stats.Con!=op2->stats.Con)
-    save_long(buf,variable_const[V_CON],op->stats.Con);
+    save_long(buf, "Con", op->stats.Con);
   if(op->stats.Wis!=op2->stats.Wis)
-    save_long(buf,variable_const[V_WIS],op->stats.Wis);
+    save_long(buf, "Wis", op->stats.Wis);
   if(op->stats.Pow!=op2->stats.Pow)
-    save_long(buf,variable_const[V_POW],op->stats.Pow);
+    save_long(buf, "Pow", op->stats.Pow);
   if(op->stats.Cha!=op2->stats.Cha)
-    save_long(buf,variable_const[V_CHA],op->stats.Cha);
+    save_long(buf, "Cha", op->stats.Cha);
   if(op->stats.Int!=op2->stats.Int)
-    save_long(buf,variable_const[V_INT],op->stats.Int);
+    save_long(buf, "Int", op->stats.Int);
   if(op->stats.hp!=op2->stats.hp)
-    save_long(buf,variable_const[V_HP],op->stats.hp);
+    save_long(buf, "hp", op->stats.hp);
   if(op->stats.maxhp!=op2->stats.maxhp)
-    save_long(buf,variable_const[V_MAXHP],op->stats.maxhp);
+    save_long(buf, "maxhp", op->stats.maxhp);
   if(op->stats.sp!=op2->stats.sp)
-    save_long(buf,variable_const[V_SP],op->stats.sp);
+    save_long(buf, "sp", op->stats.sp);
   if(op->stats.maxsp!=op2->stats.maxsp)
-    save_long(buf,variable_const[V_MAXSP],op->stats.maxsp);
+    save_long(buf, "maxsp", op->stats.maxsp);
   if(op->stats.grace!=op2->stats.grace)
-    save_long(buf,variable_const[V_GRACE],op->stats.grace);
+    save_long(buf, "grace", op->stats.grace);
   if(op->stats.maxgrace!=op2->stats.maxgrace)
-    save_long(buf,variable_const[V_MAXGRACE],op->stats.maxgrace);
+    save_long(buf, "maxgrace", op->stats.maxgrace);
   if(op->stats.exp!=op2->stats.exp)
-    save_long(buf,variable_const[V_EXP],op->stats.exp);
+    save_long(buf, "exp", op->stats.exp);
   if(op->expmul!=op2->expmul) 
-    save_double(buf,variable_const[V_EXPMUL],op->expmul);
+    save_double(buf, "expmul", op->expmul);
   if(op->stats.food!=op2->stats.food)
-    save_long(buf,variable_const[V_FOOD],op->stats.food);
+    save_long(buf, "food", op->stats.food);
   if(op->stats.dam!=op2->stats.dam)
-    save_long(buf,variable_const[V_DAM],op->stats.dam);
+    save_long(buf, "dam", op->stats.dam);
   if(op->stats.luck!=op2->stats.luck)
-    save_long(buf,variable_const[V_LUCK],op->stats.luck);
+    save_long(buf, "luck", op->stats.luck);
   if(op->stats.wc!=op2->stats.wc)
-    save_long(buf,variable_const[V_WC],op->stats.wc);
+    save_long(buf, "wc", op->stats.wc);
   if(op->stats.ac!=op2->stats.ac)
-    save_long(buf,variable_const[V_AC],op->stats.ac);
+    save_long(buf, "ac", op->stats.ac);
   if(op->x!=op2->x)
-    save_long(buf,variable_const[V_X],op->x);
+    save_long(buf, "x", op->x);
   if(op->y!=op2->y)
-    save_long(buf,variable_const[V_Y],op->y);
+    save_long(buf, "y", op->y);
   if(op->speed!=op2->speed) {
     sprintf(buf2,"speed %f\n",op->speed);
     strcat(buf,buf2);
@@ -1456,19 +1428,19 @@ char *get_ob_diff(object *op,object *op2) {/* I plan to optimize this heavily */
     strcat(buf,buf2);
   }
   if(op->move_status != op2->move_status)
-    save_long(buf,variable_const[V_MOVE_STATUS],op->move_status);
+    save_long(buf, "move_state", op->move_status);
   if(op->move_type != op2->move_type)
-    save_long(buf,variable_const[V_ATT_MOVE],op->move_type);
+    save_long(buf, "attack_movement", op->move_type);
   if(op->nrof!=op2->nrof)
-    save_long(buf,variable_const[V_NROF],op->nrof);
+    save_long(buf, "nrof", op->nrof);
   if(op->level!=op2->level)
-    save_long(buf,variable_const[V_LEVEL],op->level);
+    save_long(buf, "level", op->level);
   if(op->direction!=op2->direction)
-    save_long(buf,variable_const[V_DIRECTION],op->direction);
+    save_long(buf, "direction", op->direction);
   if(op->type!=op2->type)
-    save_long(buf,variable_const[V_TYPE],op->type);
+    save_long(buf, "type", op->type);
   if(op->attacktype!=op2->attacktype)
-    save_long(buf,variable_const[V_ATTACKTYPE],op->attacktype);
+    save_long(buf, "attacktype", op->attacktype);
 
   for (tmp=0; tmp < NROFATTACKS; tmp++) {
    if (op->resist[tmp] != op2->resist[tmp]) {
@@ -1478,72 +1450,62 @@ char *get_ob_diff(object *op,object *op2) {/* I plan to optimize this heavily */
   }
 
   if(op->path_attuned!=op2->path_attuned)
-    save_long(buf,variable_const[V_PATH_ATTUNED],op->path_attuned);
+    save_long(buf, "path_attuned", op->path_attuned);
   if(op->path_repelled!=op2->path_repelled)
-    save_long(buf,variable_const[V_PATH_REPELLED],op->path_repelled);
+    save_long(buf, "path_repelled", op->path_repelled);
   if(op->path_denied!=op2->path_denied)
-    save_long(buf,variable_const[V_PATH_DENIED],op->path_denied);
+    save_long(buf, "path_denied", op->path_denied);
   if(op->material!=op2->material)
-    save_long(buf,variable_const[V_MATERIAL],op->material);
+    save_long(buf, "material", op->material);
   if(op->value!=op2->value)
-    save_long(buf,variable_const[V_VALUE],op->value);
+    save_long(buf, "value", op->value);
   if(op->carrying!=op2->carrying)
-    save_long(buf,variable_const[V_CARRYING],op->carrying);
+    save_long(buf, "carrying", op->carrying);
   if(op->weight!=op2->weight)
-    save_long(buf,variable_const[V_WEIGHT],op->weight);
+    save_long(buf, "weight", op->weight);
   if(op->invisible!=op2->invisible)
-    save_long(buf,variable_const[V_INVISIBLE],op->invisible);
+    save_long(buf, "invisible", op->invisible);
   if(op->state!=op2->state)
-    save_long(buf,variable_const[V_STATE],op->state);
+    save_long(buf, "state", op->state);
   if(op->magic!=op2->magic)
-    save_long(buf,variable_const[V_MAGIC],op->magic);
+    save_long(buf, "magic", op->magic);
   if(op->last_heal!=op2->last_heal)
-    save_long(buf,variable_const[V_LAST_HEAL],op->last_heal);
+    save_long(buf, "last_heal", op->last_heal);
   if(op->last_sp!=op2->last_sp)
-    save_long(buf,variable_const[V_LAST_SP],op->last_sp);
+    save_long(buf, "last_sp", op->last_sp);
   if(op->last_grace!=op2->last_grace)
-    save_long(buf,variable_const[V_LAST_GRACE],op->last_grace);
+    save_long(buf, "last_grace", op->last_grace);
   if(op->last_eat!=op2->last_eat)
-    save_long(buf,variable_const[V_LAST_EAT],op->last_eat);
+    save_long(buf, "last_eat", op->last_eat);
   if(QUERY_FLAG(op,FLAG_IS_LINKED) && (tmp = get_button_value(op)))
-    save_long(buf,variable_const[V_CONNECTED],tmp);
+    save_long(buf, "connected", tmp);
   if(op->glow_radius!=op2->glow_radius)
-    save_long(buf,variable_const[V_GLOW_RADIUS],op->glow_radius);
+    save_long(buf, "glow_radius", op->glow_radius);
   if (op->randomitems!=op2->randomitems) {
     sprintf(buf2,"randomitems %s\n",(op->randomitems?op->randomitems->name:"none"));
     strcat(buf,buf2);
   }
 #ifdef NPC_PROG
   if(op->npc_status!=op2->npc_status)
-    save_long(buf,variable_const[V_NPC_STATUS],op->npc_status);
+    save_long(buf, "npc_status", op->npc_status);
   if(op->npc_program!=op2->npc_program)
-    save_long(buf,variable_const[V_NPC_PROGRAM],op->npc_program);
+    save_long(buf, "npc_program", op->npc_program);
 #endif
 
 
-/* Eneq(@csd.uu.se): Handles run_away and pick_up */
   if(op->run_away!=op2->run_away)
-    save_long(buf,variable_const[V_RUN_AWAY],op->run_away);
+    save_long(buf, "run_away", op->run_away);
   if(op->pick_up!=op2->pick_up)
-    save_long(buf,variable_const[V_PICK_UP],op->pick_up);
+    save_long(buf, "pick_up", op->pick_up);
   if(op->weight_limit!=op2->weight_limit)
-    save_long(buf,variable_const[V_CONTAINER],op->weight_limit);
-
-
-/* Vick (@bern.docs.uu.se) @921107 -> Handle 'will_apply' &
-   'random_movement.*/
-
+    save_long(buf, "container", op->weight_limit);
   if (op->will_apply!=op2->will_apply)
-    save_long(buf,variable_const[V_WILL_APPLY],op->will_apply);
+    save_long(buf, "will_apply", op->will_apply);
 
   if (op->current_weapon_script!=op2->current_weapon_script){
     sprintf(buf2,"current_weapon_script %s\n",(op->current_weapon_script));
     strcat(buf,buf2);
   };
-
-/* Mol(@meryl.csd.uu.se) 921108  Handle can_apply */
-  if (op->can_apply!=op2->can_apply)
-    save_long(buf,variable_const[V_CAN_APPLY],op->can_apply);
 
   if(op->weapontype && op->weapontype!=op2->weapontype) {
     sprintf(buf2,"weapontype %d\n",op->weapontype);
@@ -1558,16 +1520,39 @@ char *get_ob_diff(object *op,object *op2) {/* I plan to optimize this heavily */
     strcat(buf,buf2);
   }
 
+  if (op->item_power != op2->item_power) {
+    sprintf(buf2,"item_power %d\n", op->item_power);
+    strcat(buf,buf2);
+  }
+
+  if (op->gen_sp_armour != op2->gen_sp_armour) {
+    sprintf(buf2,"gen_sp_armour %d\n", op->gen_sp_armour);
+    strcat(buf,buf2);
+  }
+
   for (tmp=0; tmp <= NUM_FLAGS; tmp++) {
-    if ((flag_links[tmp][0]!=-1) && (QUERY_FLAG(op, flag_links[tmp][0]) !=
-	QUERY_FLAG(op2, flag_links[tmp][0]))) {
-	    if (flag_links[tmp][0]==FLAG_SLOW_MOVE) {
-		sprintf(buf2,"%s %f\n",variable_const[V_SLOW_MOVE],SLOW_PENALTY(op));
-		strcat(buf,buf2);
-	    }
-	    else
-	        BUFADD(QUERY_FLAG(op, flag_links[tmp][0]), flag_links[tmp][1]);
-	}
+    if (flag_names[tmp] && (QUERY_FLAG(op, tmp) != QUERY_FLAG(op2, tmp))) {
+	sprintf(buf2, "%s %d\n", flag_names[tmp], QUERY_FLAG(op, tmp));
+	strcat(buf, buf2);
+    }
+  }
+  /* The old code was buggy - it would lose custom SLOW_PENALTY if the archetype
+   * had a different slow_penalty (eg, when saving, it would also reset to the
+   * archetype value.
+   */
+  if (QUERY_FLAG(op, FLAG_SLOW_MOVE)) {
+    if (!QUERY_FLAG(op2, FLAG_SLOW_MOVE) || SLOW_PENALTY(op) != SLOW_PENALTY(op2)) {
+	sprintf(buf2,"slow_move %f\n",SLOW_PENALTY(op));
+	strcat(buf,buf2);
+    }
+  }
+
+  /* Save body locations */
+  for (i=0; i<NUM_BODY_LOCATIONS; i++) {
+    if (op->body_info[i] != op2->body_info[i]) {
+	sprintf(buf2, "%s %d\n", body_locations[i].save_name, op->body_info[i]);
+	strcat(buf, buf2);
+    }
   }
   if(buf[0]=='\0')
     return NULL;

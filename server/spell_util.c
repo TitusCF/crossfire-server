@@ -37,11 +37,6 @@
 #endif
 #include <sounds.h>
 
-char *range_name[range_size] = {
-  "none", "bow", "magic", "wand", "rod", "scroll", "horn"
-	,"steal"
-};
-
 archetype *spellarch[NROFREALSPELLS];
 
 void init_spells() {
@@ -190,7 +185,6 @@ int cast_spell(object *op,object *caster,int dir,int type,int ability,SpellTypeF
 	if(!spells[type].cleric&& op->stats.sp<SP_level_spellpoint_cost(op,caster,type))
 	{
 	  new_draw_info(NDI_UNIQUE, 0,op,"You don't have enough mana.");
-	  op->contr->count_left=0;
 	  return 0;
 	}
 	if(spells[type].cleric&&op->stats.grace<SP_level_spellpoint_cost(op,caster,type))
@@ -211,7 +205,6 @@ int cast_spell(object *op,object *caster,int dir,int type,int ability,SpellTypeF
 	  {
 		  prayer_failure(op,op->stats.grace,SP_level_spellpoint_cost(op,caster,type));
 			  new_draw_info_format(NDI_UNIQUE, 0,op,"%s ignores your prayer.",godname);
-		  op->contr->count_left=0;
 			  return 0;
 	  }
 	}
@@ -219,7 +212,6 @@ int cast_spell(object *op,object *caster,int dir,int type,int ability,SpellTypeF
 
   if (caster->path_denied & s->path) {
     new_draw_info(NDI_UNIQUE, 0,op, "You are unable to cast that spell.");
-    if(op->type==PLAYER) op->contr->count_left=0;
     return 0;
   }
   /* If it is an ability, assume that the designer of the archetype knows
@@ -227,7 +219,6 @@ int cast_spell(object *op,object *caster,int dir,int type,int ability,SpellTypeF
    */
   if (item==spellNormal && !ability && SK_level(caster) < s->level && !QUERY_FLAG(op,FLAG_WIZ)) {
     new_draw_info(NDI_UNIQUE, 0,op, "You lack enough skill to cast that spell.");
-    if(op->type==PLAYER) op->contr->count_left=0;
     return 0;
   }
 
@@ -270,16 +261,10 @@ int cast_spell(object *op,object *caster,int dir,int type,int ability,SpellTypeF
     case range_magic:
       new_draw_info(NDI_UNIQUE, 0,op,"Something blocks your spellcasting.");
       break;
-    case range_wand:
-      new_draw_info(NDI_UNIQUE, 0,op,"Something blocks the magic of your wand.");
+    case range_misc:
+      new_draw_info(NDI_UNIQUE, 0,op,"Something blocks the magic of your item.");
       break;
-    case range_rod:
-      new_draw_info(NDI_UNIQUE, 0,op,"Something blocks the magic of your rod.");
-      break;
-    case range_horn:
-      new_draw_info(NDI_UNIQUE, 0,op,"Something blocks the magic of your horn.");
-      break;
-    case range_scroll:
+    case range_golem:
       new_draw_info(NDI_UNIQUE, 0,op,"Something blocks the magic of your scroll.");
       break;
     default:
@@ -830,8 +815,6 @@ int summon_monster(object *op,object *caster,int dir,archetype *at,int spellnum)
     dir=find_free_spot(NULL,op->map,op->x,op->y,1,9);
   if((dir==-1) || blocked(op->map,op->x+freearr_x[dir],op->y+freearr_y[dir])) {
     new_draw_info(NDI_UNIQUE, 0,op,"There is something in the way.");
-    if(op->type==PLAYER)
-      op->contr->count_left=0;
     return 0;
   }
   tmp=arch_to_object(at);
@@ -845,7 +828,7 @@ int summon_monster(object *op,object *caster,int dir,archetype *at,int spellnum)
     set_owner(tmp,op);
     op->contr->golem=tmp;
     /* give the player control of the golem */
-    op->contr->shoottype=range_scroll;
+    op->contr->shoottype=range_golem;
   } else {
     if(QUERY_FLAG(op, FLAG_FRIENDLY)) {
       object *owner = get_owner(op);

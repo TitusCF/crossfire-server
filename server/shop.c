@@ -6,7 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2000 Mark Wedel
+    Copyright (C) 2002 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -23,8 +23,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to mwedel@scruz.net
-
+    The authors can be reached via e-mail at crossfire-devel@real-time.com
 */
 
 #include <global.h>
@@ -642,9 +641,9 @@ static void add_shop_item(object *tmp, shopinv *items, int *numitems, int *numal
 	case BOOTS:
 	case GLOVES:
 	case GIRDLE:
-	    sprintf(buf,"%s %s",query_base_name(tmp,0),describe_item(tmp));
+	    sprintf(buf,"%s %s",query_base_name(tmp,0),describe_item(tmp, NULL));
 	    items[*numitems].item_sort = strdup_local(buf);
-	    sprintf(buf,"%s %s",query_name(tmp),describe_item(tmp));
+	    sprintf(buf,"%s %s",query_name(tmp),describe_item(tmp, NULL));
 	    items[*numitems].item_real = strdup_local(buf);
 	    (*numitems)++;
 	    break;

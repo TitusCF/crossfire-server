@@ -48,7 +48,8 @@ ALLFILES = $(SRCS) README \
 	checkarch.pl.in collect.pl.in
 	
 
-FILES_HELP = $(srcdir)/help/apply $(srcdir)/help/bind \
+FILES_HELP = $(srcdir)/help/apply $(srcdir)/help/applymode \
+	$(srcdir)/help/bind $(srcdir)/help/brace \
 	$(srcdir)/help/cast $(srcdir)/help/drop $(srcdir)/help/dropall \
 	$(srcdir)/help/golem $(srcdir)/help/invoke \
 	$(srcdir)/help/keys $(srcdir)/help/mark $(srcdir)/help/melee \

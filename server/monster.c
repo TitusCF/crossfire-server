@@ -6,7 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2000 Mark Wedel
+    Copyright (C) 2002 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -23,7 +23,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to mwedel@scruz.net
+    The authors can be reached via e-mail at crossfire-devel@real-time.com
 */
 
 #include <global.h>
@@ -41,12 +41,10 @@
  */
 
 typedef struct _msglang {
-  char **messages;	/* An array of messages */
-  char ***keywords;	/* For each message, an array of strings to match */
+    char **messages;	/* An array of messages */
+    char ***keywords;	/* For each message, an array of strings to match */
 } msglang;
 
-
-extern spell spells[NROFREALSPELLS];
 
 #define MIN_MON_RADIUS 3 /* minimum monster detection radius */
 
@@ -141,6 +139,9 @@ object *find_nearest_living_creature(object *npc) {
 /* Tries to find an enmy for npc.  We pass the range vector since
  * our caller will find the information useful.
  * Currently, only move_monster calls this function.
+ * Fix function so that we always make calls to get_rangevector
+ * if we have a valid target - function as not doing so in
+ * many cases.
  */
 
 object *find_enemy(object *npc, rv_vector *rv)
@@ -151,9 +152,11 @@ object *find_enemy(object *npc, rv_vector *rv)
     npc->attacked_by = NULL;     /* always clear the attacker entry */    
 
     /* if we berserk, we don't care about others - we attack all we can find */
-    if(QUERY_FLAG(npc,FLAG_BERSERK))
-        return find_nearest_living_creature(npc);
-
+    if(QUERY_FLAG(npc,FLAG_BERSERK)) {
+	tmp = find_nearest_living_creature(npc);
+	if (tmp) get_rangevector(npc, tmp, rv, 0);
+	return tmp;
+    }
 
     /* Here is the main enemy selection.
      * We want this: if there is an enemy, attack him until its not possible or 
@@ -166,8 +169,11 @@ object *find_enemy(object *npc, rv_vector *rv)
      */
 
     /* pet move */
-    if ((npc->move_type & HI4) == PETMOVE)
-        return get_pet_enemy(npc,rv);
+    if ((npc->move_type & HI4) == PETMOVE) {
+        tmp= get_pet_enemy(npc,rv);
+	if (tmp) get_rangevector(npc, tmp, rv, 0);
+	return tmp;
+    }
     
     /* we check our old enemy. */
     if((tmp=check_enemy(npc, rv))==NULL)
@@ -198,7 +204,7 @@ object *find_enemy(object *npc, rv_vector *rv)
         if(!QUERY_FLAG(npc, FLAG_UNAGGRESSIVE) && !QUERY_FLAG(npc, FLAG_FRIENDLY) &&
             !QUERY_FLAG(npc, FLAG_NEUTRAL))
         {
-	        tmp = get_nearest_player(npc);
+	    tmp = get_nearest_player(npc);
 
             if(QUERY_FLAG(npc, FLAG_FRIENDLY)&&tmp)
     		    tmp = check_enemy(tmp,rv);
@@ -273,11 +279,7 @@ int move_monster(object *op) {
      */
     if (!op->map) return 0;
 
-    CLEAR_FLAG(op,FLAG_PARALYZED); /* if we are here, we never paralyzed anymore */
-
     /* for target facing, we copy this value here for fast access */
-    /* for some reason, rv is not set right for targeted enemy all times */
-    /* so i call it here direct again */
     if(oph->head)           /* force update the head - one arch one pic */
         oph = oph->head;
     
@@ -288,7 +290,6 @@ int move_monster(object *op) {
         /* we have an enemy, just tell him we want him dead */
         enemy->attacked_by = op;       /* our ptr */
         enemy->attacked_by_count = op->count; /* our tag */
-        get_rangevector(oph, enemy, &rv, 0);
     }
     
     if(QUERY_FLAG(op, FLAG_SLEEP)||QUERY_FLAG(op, FLAG_BLIND)
@@ -339,89 +340,101 @@ int move_monster(object *op) {
          * to capture 8th's of a sp fraction regens 
 	 */
 
-	 op->last_sp+= (int)((float)(8*op->stats.Pow)/FABS(op->speed));
+	op->last_sp+= (int)((float)(8*op->stats.Pow)/FABS(op->speed));
 	op->stats.sp+=op->last_sp/128;  /* causes Pow/16 sp/tick */
 	op->last_sp%=128;
 	if(op->stats.sp>op->stats.maxsp)
 	    op->stats.sp=op->stats.maxsp;
     }
 
-    if(QUERY_FLAG(op, FLAG_SCARED)&&!(RANDOM()%20))
+    /* this should probably get modified by many more values.
+     * (eg, creatures resistance to fear, level, etc. )
+     */
+    if(QUERY_FLAG(op, FLAG_SCARED) &&!(RANDOM()%20)) {
 	CLEAR_FLAG(op,FLAG_SCARED); /* Time to regain some "guts"... */
+    }
 
     /* If we don't have an enemy, do special movement or the like */
     if(!enemy) {
-        if(QUERY_FLAG(op, FLAG_ONLY_ATTACK)) 
-        {
+        if(QUERY_FLAG(op, FLAG_ONLY_ATTACK))  {
             remove_ob(op);
-	        free_object(op);
+	    free_object(op);
             return 1;
-	    }
-        if(!QUERY_FLAG(op, FLAG_STAND_STILL)) 
-        {
+	}
+
+	/* Probably really a bug for a creature to have both
+	 * stand still and a movement type set.
+	 */
+        if(!QUERY_FLAG(op, FLAG_STAND_STILL))  {
             if (op->move_type & HI4)
             {
-                switch (op->move_type & HI4)
-                {
-	    	        case (PETMOVE):
-		                pet_move (op);
-		            break;
-		            case (CIRCLE1):
-		                circ1_move (op);
-		            break;
-		            case (CIRCLE2):
-		                circ2_move (op);
-		            break;
-		            case (PACEV):
-		                pace_movev(op);
-		            break;
-		            case (PACEH):
-		                pace_moveh(op);
-		            break;
-		            case (PACEV2):
-		                pace2_movev (op);
-		            break;
-		            case (PACEH2):
-		                pace2_moveh (op);
-		            break;
-		            case (RANDO):
-		                rand_move (op);
-		            break;
-		            case (RANDO2):
-		                move_randomly (op);
-		            break;
-	            }
-        
-	            /*if(QUERY_FLAG(op, FLAG_FREED)) return 1; */ /* hm, when freed dont lets move him anymore */
-	            return 0;
-	        }
+                switch (op->move_type & HI4) {
+		    case (PETMOVE):
+			pet_move (op);
+			break;
+
+		    case (CIRCLE1):
+			circ1_move (op);
+			break;
+
+		    case (CIRCLE2):
+			circ2_move (op);
+			break;
+
+		    case (PACEV):
+			pace_movev(op);
+			break;
+
+		    case (PACEH):
+			pace_moveh(op);
+			break;
+
+		    case (PACEV2):
+			pace2_movev (op);
+			break;
+
+		    case (PACEH2):
+			pace2_moveh (op);
+			break;
+
+		    case (RANDO):
+			rand_move (op);
+			break;
+
+		    case (RANDO2):
+			move_randomly (op);
+		    break;
+		}
+		return 0;
+	    }
     	    else if (QUERY_FLAG(op,FLAG_RANDOM_MOVE))
                 (void) move_randomly(op);
 
-        } /* stand still */
-
+	} /* stand still */
         return 0;
     } /* no enemy */
 
     /* We have an enemy.  Block immediately below is for pets */
     if((op->type&HI4) == PETMOVE && (owner = get_owner(op)) != NULL && !on_same_map(op,owner))
     {
-	    follow_owner(op, owner);
-	    if(QUERY_FLAG(op, FLAG_REMOVED) && FABS(op->speed) > MIN_ACTIVE_SPEED)
-        {
-	        remove_friendly_object(op);
-	        free_object(op);
-	        return 1;
-	    }
+	follow_owner(op, owner);
+	/* If the pet was unable to follow the owner, free it */
+	if(QUERY_FLAG(op, FLAG_REMOVED) && FABS(op->speed) > MIN_ACTIVE_SPEED) {
+	    remove_friendly_object(op);
+	    free_object(op);
+	    return 1;
+	}
         return 0;
     }
    
-    /* doppleganger code to change monster facing to that of the nearest 
-	player */
+    /* doppleganger code to change monster facing to that of the nearest
+     * player.  Hmm.  The code is here, but no monster in the current
+     * arch set uses it.
+     */
     if ( (op->race != NULL)&& strcmp(op->race,"doppleganger") == 0)
     {
-	    op->face = enemy->face; 
-	    strcpy(op->name,enemy->name);
+	op->face = enemy->face; 
+	strcpy(op->name,enemy->name);
     }
 
     /* Move the check for scared up here - if the monster was scared,
@@ -430,52 +443,43 @@ int move_monster(object *op) {
      */
     if (!QUERY_FLAG(op, FLAG_SCARED))
     {
-	    rv_vector   rv1;
+	rv_vector   rv1;
 
         /* now we test every part of an object .... this is a real ugly piece of code */
-	    for (part=op; part!=NULL; part=part->more)
-        {
+	    for (part=op; part!=NULL; part=part->more) {
 	        get_rangevector(part, enemy, &rv1, 0x1);	
 	        dir=rv1.direction;
 
-            /* hm, not sure about this part - in original was a scared flag here too
-             * but that we test above... so can be old code here */
+		/* hm, not sure about this part - in original was a scared flag here too
+		 * but that we test above... so can be old code here 
+		 */
 	        if(QUERY_FLAG(op,FLAG_RUN_AWAY))
 		        dir=absdir(dir+4);
 	        if(QUERY_FLAG(op,FLAG_CONFUSED))
 		        dir = absdir(dir + RANDOM()%3 + RANDOM()%3 - 2);
 
-	        if(QUERY_FLAG(op,FLAG_CAST_SPELL))
-            {
-                if(monster_cast_spell(op,part,enemy,dir,&rv1))
-                    return 0;
-            }
+	        if(QUERY_FLAG(op,FLAG_CAST_SPELL) && !(RANDOM()%3)) {
+		    if(monster_cast_spell(op,part,enemy,dir,&rv1))
+			return 0;
+		}
 
-	        if(QUERY_FLAG(op,FLAG_READY_WAND)&&!(RANDOM()%3))
-            {
-                if(monster_use_wand(op,part,enemy,dir))
-                    return 0;
-            }
-	        if(QUERY_FLAG(op,FLAG_READY_ROD)&&!(RANDOM()%4))
-            {
-                if(monster_use_rod(op,part,enemy,dir))
-                    return 0;
-            }
-	        if(QUERY_FLAG(op,FLAG_READY_HORN)&&!(RANDOM()%5))
-            {
-                if(monster_use_horn(op,part,enemy,dir))
-                    return 0;
-            }
-	        if(QUERY_FLAG(op,FLAG_READY_SKILL)&&!(RANDOM()%3))
-            {
-                if(monster_use_skill(op,part,enemy,dir))
-                    return 0;
-            }
-	        if(QUERY_FLAG(op,FLAG_READY_BOW)&&!(RANDOM()%2))
-            {
-                if(monster_use_bow(op,part,enemy,dir))
-                    return 0;
-            }
+	        if(QUERY_FLAG(op,FLAG_READY_SCROLL) && !(RANDOM()%3)) {
+		    if(monster_use_scroll(op,part,enemy,dir,&rv1))
+			return 0;
+		}
+
+	        if(QUERY_FLAG(op,FLAG_READY_RANGE)&&!(RANDOM()%3)) {
+		    if(monster_use_range(op,part,enemy,dir))
+			return 0;
+		}
+	        if(QUERY_FLAG(op,FLAG_READY_SKILL)&&!(RANDOM()%3)) {
+		    if(monster_use_skill(op,part,enemy,dir))
+			return 0;
+		}
+	        if(QUERY_FLAG(op,FLAG_READY_BOW)&&!(RANDOM()%2)) {
+		    if(monster_use_bow(op,part,enemy,dir))
+			return 0;
+		}
 	    } /* for processing of all parts */        
     } /* If not scared */
 
@@ -484,7 +488,7 @@ int move_monster(object *op) {
     part = rv.part;
     dir=rv.direction;
 
-    if(QUERY_FLAG(op, FLAG_SCARED) || QUERY_FLAG(op,FLAG_RUN_AWAY))        
+    if(QUERY_FLAG(op, FLAG_SCARED) || QUERY_FLAG(op,FLAG_RUN_AWAY))
     	dir=absdir(dir+4);
 
     if(QUERY_FLAG(op,FLAG_CONFUSED))
@@ -492,32 +496,38 @@ int move_monster(object *op) {
 
     if ((op->move_type & LO4) && !QUERY_FLAG(op, FLAG_SCARED)) 
     {        
-	    switch (op->move_type & LO4)
-        {
-	        case DISTATT:
-		        dir = dist_att (dir,op,enemy,part,&rv);
-		    break;
-	        case RUNATT:
-		        dir = run_att (dir,op,enemy,part,&rv);
-		    break;
-	        case HITRUN:
-		        dir = hitrun_att(dir,op,enemy);
-		    break;
-	        case WAITATT:
-		        dir = wait_att (dir,op,enemy,part,&rv);
-		    break;
-	        case RUSH: /* why is here non ? */
-	        case ALLRUN:
-		    break; 
-	        case DISTHIT:
-		    dir = disthit_att (dir,op,enemy,part,&rv);
-		    break;
-	        case WAIT2:
-		        dir = wait_att2 (dir,op,enemy,part,&rv);
-		    break;
-	        default:
-	    	    LOG(llevDebug,"Illegal low mon-move: %d\n",op->move_type & LO4);
-    	}
+	switch (op->move_type & LO4) {
+	    case DISTATT:
+		dir = dist_att (dir,op,enemy,part,&rv);
+		break;
+
+	    case RUNATT:
+	        dir = run_att (dir,op,enemy,part,&rv);
+		break;
+
+	    case HITRUN:
+	        dir = hitrun_att(dir,op,enemy);
+		break;
+
+	    case WAITATT:
+	        dir = wait_att (dir,op,enemy,part,&rv);
+		break;
+
+	    case RUSH: /* default - monster normally moves towards player */ 
+	    case ALLRUN:
+		break; 
+
+	    case DISTHIT:
+		dir = disthit_att (dir,op,enemy,part,&rv);
+		break;
+
+	    case WAIT2:
+	        dir = wait_att2 (dir,op,enemy,part,&rv);
+		break;
+
+	    default:
+		LOG(llevDebug,"Illegal low mon-move: %d\n",op->move_type & LO4);
+	}
     }
 
     if (!dir)
@@ -526,6 +536,7 @@ int move_monster(object *op) {
     if (!QUERY_FLAG(op,FLAG_STAND_STILL)) {
 	if(move_object(op,dir)) /* Can the monster move directly toward player? */
 	    return 0;
+
 	if(QUERY_FLAG(op, FLAG_SCARED) || !can_hit(part,enemy,&rv) 
 	   || QUERY_FLAG(op,FLAG_RUN_AWAY)) {
 
@@ -550,40 +561,51 @@ int move_monster(object *op) {
 	    return 0;
 
     /*
-     * Monster can't move...now see if it can hit the player...
-     *    Eneq(@csd.uu.se): Added check to handle RUN_AWAY and berzerk attack from
-     *    RUN_AWAY, locked in monster.
+     * Try giving the monster a new enemy - the player that is closest
+     * to it.  In this way, it won't just keep trying to get to a target
+     * that is inaccessible.
+     * This could be more clever - it should go through a list of several
+     * enemies, as it is now, you could perhaps get situations where there
+     * are two players flanking the monster at close distance, but which
+     * the monster can't get to, and a third one at a far distance that
+     * the monster could get to - as it is, the monster won't look at that
+     * third one.
      */
     if (!QUERY_FLAG(op, FLAG_FRIENDLY) && enemy == op->enemy)
     {
-	    object *nearest_player = get_nearest_player(op);
-	    if (nearest_player && nearest_player != enemy && !can_hit(part,enemy,&rv))
-        {        
-	        op->enemy = NULL;
-	        enemy = nearest_player;
-	    }
+	object *nearest_player = get_nearest_player(op);
+	if (nearest_player && nearest_player != enemy && !can_hit(part,enemy,&rv)) {
+	    op->enemy = NULL;
+	    enemy = nearest_player;
+	}
     }
 
     if(!QUERY_FLAG(op, FLAG_SCARED)&&can_hit(part,enemy,&rv))
     {
+	/* The adjustement to wc that was here before looked totally bogus -
+	 * since wc can in fact get negative, that would mean by adding
+	 * the current wc, the creature gets better?  Instead, just
+	 * add a fixed amount - nasty creatures that are runny away should
+	 * still be pretty nasty.
+	 */
         if(QUERY_FLAG(op,FLAG_RUN_AWAY))
         {
-	        signed char tmp = (signed char)((float)part->stats.wc*(float)2);
-	        part->stats.wc+=tmp;
-	        (void)skill_attack(enemy,part,0,NULL);
-	        part->stats.wc-=tmp;
-	    }
+	    part->stats.wc+=10;
+	    (void)skill_attack(enemy,part,0,NULL);
+	    part->stats.wc-=10;
+	}
         else
             (void)skill_attack(enemy,part,0,NULL);
     } /* if monster is in attack range */
 
     if(QUERY_FLAG(part,FLAG_FREED))    /* Might be freed by ghost-attack or hit-back */
     	return 1;
+
     if(QUERY_FLAG(op, FLAG_ONLY_ATTACK))
     {
-	    remove_ob(op);
-	    free_object(op);
-	    return 1;
+	remove_ob(op);
+	free_object(op);
+	return 1;
     }
     return 0;
 }
@@ -594,37 +616,60 @@ int can_hit(object *ob1,object *ob2, rv_vector *rv) {
     return abs(rv->distance_x)<2&&abs(rv->distance_y)<2;
 }
 
-/*Someday we may need this check */
-int can_apply(object *who,object *item) {
-  return 1;
+/* Returns 1 is monster should cast spell sp at an enemy
+ * Returns 0 if the monster should not cast this spell.
+ *
+ * Note that this function does not check to see if the monster can
+ * in fact cast the spell (sp dependencies and what not.)  That is because
+ * this function is also sued to see if the monster should use spell items
+ * (rod/horn/wand/scroll).
+ */
+static int monster_should_cast_spell(object *monster, int sp)
+{
+    /* Not 'useful' spells. */
+    if (spells[sp].path&(PATH_INFO|PATH_TRANSMUTE|PATH_TRANSFER|PATH_LIGHT)) return 0;
+
+    /* We should really put a check in for PATH_RESTORE - if the monster has nothing
+     * wrong with it, no reason for it to cast one of those.  But 'wrong with it'
+     * is a very broad term.
+     */
+
+    /* Presumably useful. */
+    if (spells[sp].onself) return 2;
+    return 1;
+
 }
 
 #define MAX_KNOWN_SPELLS 20
 
-object *monster_choose_random_spell(object *monster) {
-  object *altern[MAX_KNOWN_SPELLS];
-  object *tmp;
-  spell *spell;
-  int i=0,j;
+/* Returns a randomly selected spell.    This logic is still
+ * less than ideal.  This code also only seems to deal with
+ * wizard spells, as the check is against sp, and not grace.
+ * can mosnters know cleric spells?
+ */
 
-  for(tmp=monster->inv;tmp!=NULL;tmp=tmp->below)
-    if(tmp->type==ABILITY||tmp->type==SPELLBOOK) {
-	 /*  Check and see if it's actually a useful spell */
-		if((spell=find_spell(tmp->stats.sp))!=NULL 
-			&&!(spell->path&(PATH_INFO|PATH_TRANSMUTE|PATH_TRANSFER|PATH_LIGHT))) {
-			 if(tmp->stats.maxsp)
-				for(j=0;i<MAX_KNOWN_SPELLS&&j<tmp->stats.maxsp;j++)
-				  altern[i++]=tmp;
-			 else
-				altern[i++]=tmp;
-			 if(i==MAX_KNOWN_SPELLS)
-				break;
-		}
-	
-	 }
-  if(!i)
-    return NULL;
-  return altern[RANDOM()%i];
+object *monster_choose_random_spell(object *monster) {
+    object *altern[MAX_KNOWN_SPELLS];
+    object *tmp;
+    int i=0,j;
+
+    for(tmp=monster->inv;tmp!=NULL;tmp=tmp->below)
+	if(tmp->type==ABILITY||tmp->type==SPELLBOOK) {
+	    /*  Check and see if it's actually a useful spell */
+	    if (monster_should_cast_spell(monster, tmp->stats.sp)) {
+		if(tmp->stats.maxsp)
+		    for(j=0;i<MAX_KNOWN_SPELLS&&j<tmp->stats.maxsp;j++)
+			altern[i++]=tmp;
+		else
+		    altern[i++]=tmp;
+		if(i==MAX_KNOWN_SPELLS)
+		    break;
+	    }
+	}
+
+    if(!i)
+	return NULL;
+    return altern[RANDOM()%i];
 }
 
 int monster_cast_spell(object *head, object *part,object *pl,int dir, rv_vector *rv) {
@@ -634,11 +679,6 @@ int monster_cast_spell(object *head, object *part,object *pl,int dir, rv_vector 
     object *owner;
     rv_vector	rv1;
 
-    /* TODO: Remove this here - this should not decided here! */
-    if(!(RANDOM()%3)) 
-    	return 0;
-   
-    
     /* If you want monsters to cast spells over friends, this spell should
      * be removed.  It probably should be in most cases, since monsters still
      * don't care about residual effects (ie, casting a cone which may have a 
@@ -648,14 +688,13 @@ int monster_cast_spell(object *head, object *part,object *pl,int dir, rv_vector 
     if(!(dir=path_to_player(part,pl,0)))
         return 0;
     
-    if(QUERY_FLAG(head,FLAG_FRIENDLY) && (owner = get_owner(head)) != NULL)
-    {
-	    get_rangevector(head, owner, &rv1, 0x1);
-	    if(dirdiff(dir,rv1.direction) < 2)
-        {
+    if(QUERY_FLAG(head,FLAG_FRIENDLY) && (owner = get_owner(head)) != NULL) {
+	get_rangevector(head, owner, &rv1, 0x1);
+	if(dirdiff(dir,rv1.direction) < 2) {
 	        return 0; /* Might hit owner with spell */
-        }
+	}
     }
+
     if(QUERY_FLAG(head,FLAG_CONFUSED))
 	dir = absdir(dir + RANDOM()%3 + RANDOM()%3 - 2);
 
@@ -669,6 +708,7 @@ int monster_cast_spell(object *head, object *part,object *pl,int dir, rv_vector 
     }
     else
 	spell_item=head->spellitem; 
+
 
     if(spell_item->stats.hp) {
 	/* Alternate long-range spell: check how far away enemy is */
@@ -688,7 +728,7 @@ int monster_cast_spell(object *head, object *part,object *pl,int dir, rv_vector 
   
     /* Monster doesn't have enough spell-points */
     if(head->stats.sp<SP_level_spellpoint_cost(head,head,sp_typ))
-	    return 0;
+	return 0;
 
     ability = (spell_item->type==ABILITY && !(spell_item->attacktype&AT_MAGIC));
 
@@ -698,9 +738,51 @@ int monster_cast_spell(object *head, object *part,object *pl,int dir, rv_vector 
     head->stats.sp-=SP_level_spellpoint_cost(head,head,sp_typ);
     /* choose the spell the monster will cast next */
     /* choose the next spell to cast */
-    head->spellitem = monster_choose_random_spell(head);  
+    head->spellitem = monster_choose_random_spell(head);
     
     return cast_spell(part,part,dir,sp_typ,ability, spellNormal,NULL);
+}
+
+
+int monster_use_scroll(object *head, object *part,object *pl,int dir, rv_vector *rv) {
+    object *scroll;
+    spell *sp;
+    object *owner;
+    rv_vector	rv1;
+
+    /* If you want monsters to cast spells over friends, this spell should
+     * be removed.  It probably should be in most cases, since monsters still
+     * don't care about residual effects (ie, casting a cone which may have a 
+     * clear path to the player, the side aspects of the code will still hit
+     * other monsters)
+     */
+    if(!(dir=path_to_player(part,pl,0)))
+        return 0;
+    
+    if(QUERY_FLAG(head,FLAG_FRIENDLY) && (owner = get_owner(head)) != NULL) {
+	get_rangevector(head, owner, &rv1, 0x1);
+	if(dirdiff(dir,rv1.direction) < 2) {
+	        return 0; /* Might hit owner with spell */
+	}
+    }
+
+    if(QUERY_FLAG(head,FLAG_CONFUSED))
+	dir = absdir(dir + RANDOM()%3 + RANDOM()%3 - 2);
+
+    for (scroll=head->inv; scroll; scroll=scroll->below)
+	if (scroll->type == SCROLL && monster_should_cast_spell(head, scroll->stats.sp)) break;
+
+    /* Used up all his scrolls, so nothing do to */
+    if (!scroll) {
+	CLEAR_FLAG(head, FLAG_READY_SCROLL);
+	return 0;
+    }
+
+    if (sp->onself) /* Spell should be cast on caster (ie, heal, strength) */
+	dir = 0;
+
+    apply_scroll(part, scroll, dir);
+    return 1;
 }
 
 /* monster_use_skill()-implemented 95-04-28 to allow monster skill use.
@@ -716,236 +798,187 @@ int monster_cast_spell(object *head, object *part,object *pl,int dir, rv_vector 
  */  
 
 int monster_use_skill(object *head, object *part, object *pl,int dir) {
-object *skill, *owner;
+    object *skill, *owner;
 
-  if(!(dir=path_to_player(part,pl,0)))
-    return 0;
-  if(QUERY_FLAG(head,FLAG_FRIENDLY) && (owner = get_owner(head)) != NULL) {
-    int dir2 = find_dir_2(head->x-owner->x, head->y-owner->y);
-    if(dirdiff(dir,dir2) < 1)
-      return 0; /* Might hit owner with skill -thrown rocks for example ?*/
-  }
-  if(QUERY_FLAG(head,FLAG_CONFUSED))
-    dir = absdir(dir + RANDOM()%3 + RANDOM()%3 - 2);
+    if(!(dir=path_to_player(part,pl,0)))
+	return 0;
 
-  /* skill selection - monster will use the next unused skill.
-   * well...the following scenario will allow the monster to 
-   * toggle between 2 skills. One day it would be nice to make
-   * more skills available to monsters.  
-   */
+    if(QUERY_FLAG(head,FLAG_FRIENDLY) && (owner = get_owner(head)) != NULL) {
+	int dir2 = find_dir_2(head->x-owner->x, head->y-owner->y);
+	if(dirdiff(dir,dir2) < 1)
+	    return 0; /* Might hit owner with skill -thrown rocks for example ?*/
+    }
+    if(QUERY_FLAG(head,FLAG_CONFUSED))
+	dir = absdir(dir + RANDOM()%3 + RANDOM()%3 - 2);
+
+    /* skill selection - monster will use the next unused skill.
+     * well...the following scenario will allow the monster to 
+     * toggle between 2 skills. One day it would be nice to make
+     * more skills available to monsters.  
+     */
  
-  for(skill=head->inv;skill!=NULL;skill=skill->below)
-    if(skill->type==SKILL && skill!=head->chosen_skill) { 
-        head->chosen_skill=skill; 
-        break;
+    for(skill=head->inv;skill!=NULL;skill=skill->below)
+	if(skill->type==SKILL && skill!=head->chosen_skill) { 
+	    head->chosen_skill=skill; 
+	    break;
+	}
+
+    if(!skill && !head->chosen_skill) {
+	LOG(llevDebug,"Error: Monster %s (%d) has FLAG_READY_SKILL without skill.\n",
+	    head->name,head->count);
+	CLEAR_FLAG(head, FLAG_READY_SKILL);
+	return 0;
+    }
+    /* use skill */
+    return do_skill(head,dir,NULL);
+}
+
+/* Monster will use a ranged spell attack. */
+
+int monster_use_range(object *head,object *part,object *pl,int dir) {
+    object *wand, *owner;
+
+    if(!(dir=path_to_player(part,pl,0)))
+	return 0;
+
+    if(QUERY_FLAG(head,FLAG_FRIENDLY) && (owner = get_owner(head)) != NULL) {
+	int dir2 = find_dir_2(head->x-owner->x, head->y-owner->y);
+	if(dirdiff(dir,dir2) < 2)
+	    return 0; /* Might hit owner with spell */
+    }
+    if(QUERY_FLAG(head,FLAG_CONFUSED))
+	dir = absdir(dir + RANDOM()%3 + RANDOM()%3 - 2);
+
+    for(wand=head->inv;wand!=NULL;wand=wand->below)
+	if(QUERY_FLAG(wand,FLAG_APPLIED) &&
+	   (wand->type == WAND || wand->type == ROD || wand->type==HORN))
+		break;
+
+    if(wand==NULL) {
+	LOG(llevError,"Error: Monster %s (%d) HAS_READY_RANG() without range.\n",
+            head->name,head->count);
+	CLEAR_FLAG(head, FLAG_READY_RANGE);
+	return 0;
+    }
+    if (wand->type == WAND) {
+	if(wand->stats.food<=0) {
+	    manual_apply(head,wand,0);
+	    CLEAR_FLAG(head, FLAG_READY_RANGE);
+	    if (wand->arch) {
+		CLEAR_FLAG(wand, FLAG_ANIMATE);
+		wand->face = wand->arch->clone.face;
+		wand->speed = 0;
+		update_ob_speed(wand);
+	    }
+	    return 0;
+	}
+    }
+    else {
+	if(wand->stats.hp<spells[wand->stats.sp].sp)
+	    return 0; /* Not recharged enough yet */
     }
 
-  if(!skill && !head->chosen_skill) {
-    LOG(llevDebug,"Error: Monster %s (%d) has FLAG_READY_SKILL without skill.\n",
-        head->name,head->count);
-    CLEAR_FLAG(head, FLAG_READY_SKILL);
-    return 0;
-  }
+    /* Spell should be cast on caster (ie, heal, strength) */
+    if (spells[wand->stats.sp].onself)
+	dir = 0;
 
-/* use skill */
-  return do_skill(head,dir,NULL);
-}
-
-
-/* For the future: Move this function together with case 3: in fire() */
-
-int monster_use_wand(object *head,object *part,object *pl,int dir) {
-  object *wand, *owner;
-  if(!(dir=path_to_player(part,pl,0)))
-    return 0;
-  if(QUERY_FLAG(head,FLAG_FRIENDLY) && (owner = get_owner(head)) != NULL) {
-    int dir2 = find_dir_2(head->x-owner->x, head->y-owner->y);
-    if(dirdiff(dir,dir2) < 2)
-      return 0; /* Might hit owner with spell */
-  }
-  if(QUERY_FLAG(head,FLAG_CONFUSED))
-    dir = absdir(dir + RANDOM()%3 + RANDOM()%3 - 2);
-  for(wand=head->inv;wand!=NULL;wand=wand->below)
-    if(wand->type==WAND&&QUERY_FLAG(wand,FLAG_APPLIED))
-      break;
-  if(wand==NULL) {
-    LOG(llevError,"Error: Monster %s (%d) HAS_READY_WAND() without wand.\n",
-            head->name,head->count);
-    CLEAR_FLAG(head, FLAG_READY_WAND);
-    return 0;
-  }
-  if(wand->stats.food<=0) {
-    manual_apply(head,wand,0);
-    CLEAR_FLAG(head, FLAG_READY_WAND);
-    if (wand->arch) {
-      CLEAR_FLAG(wand, FLAG_ANIMATE);
-      wand->face = wand->arch->clone.face;
-      wand->speed = 0;
-      update_ob_speed(wand);
+    if(cast_spell(part,wand,dir,wand->stats.sp,0,spellMisc,NULL)) {
+	if (wand->type==WAND)
+	    wand->stats.food--;
+	return 1;
     }
     return 0;
-  }
-  if(cast_spell(part,wand,dir,wand->stats.sp,0,spellWand,NULL)) {
-    wand->stats.food--;
-    return 1;
-  }
-  return 0;
-}
-
-int monster_use_rod(object *head,object *part,object *pl,int dir) {
-  object *rod, *owner;
-  if(!(dir=path_to_player(part,pl,0)))
-    return 0;
-  if(QUERY_FLAG(head,FLAG_FRIENDLY) && (owner = get_owner(head)) != NULL) {
-    int dir2 = find_dir_2(head->x-owner->x, head->y-owner->y);
-    if(dirdiff(dir,dir2) < 2)
-      return 0; /* Might hit owner with spell */
-  }
-  if(QUERY_FLAG(head,FLAG_CONFUSED))
-    dir = absdir(dir + RANDOM()%3 + RANDOM()%3 - 2);
-  for(rod=head->inv;rod!=NULL;rod=rod->below)
-    if(rod->type==ROD&&QUERY_FLAG(rod,FLAG_APPLIED))
-      break;
-  if(rod==NULL) {
-    LOG(llevError,"Error: Monster %s (%d) HAS_READY_ROD() without rod.\n",
-            head->name,head->count);
-    CLEAR_FLAG(head, FLAG_READY_ROD);
-    return 0;
-  }
-  if(rod->stats.hp<spells[rod->stats.sp].sp) {
-    return 0; /* Not recharged enough yet */
-  }
-  if(cast_spell(part,rod,dir,rod->stats.sp,0,spellRod,NULL)) {
-    drain_rod_charge(rod);
-    return 1;
-  }
-  return 0;
-}
-
-int monster_use_horn(object *head,object *part,object *pl,int dir) {
-  object *horn, *owner;
-  if(!(dir=path_to_player(part,pl,0)))
-    return 0;
-  if(QUERY_FLAG(head,FLAG_FRIENDLY) && (owner = get_owner(head)) != NULL) {
-    int dir2 = find_dir_2(head->x-owner->x, head->y-owner->y);
-    if(dirdiff(dir,dir2) < 2)
-      return 0; /* Might hit owner with spell */
-  }
-  if(QUERY_FLAG(head,FLAG_CONFUSED))
-    dir = absdir(dir + RANDOM()%3 + RANDOM()%3 - 2);
-  for(horn=head->inv;horn!=NULL;horn=horn->below)
-    if(horn->type==ROD&&QUERY_FLAG(horn,FLAG_APPLIED))
-      break;
-  if(horn==NULL) {
-    LOG(llevError,"Error: Monster %s (%d) HAS_READY_HORN() without horn.\n",
-            head->name,head->count);
-    CLEAR_FLAG(head, FLAG_READY_HORN);
-    return 0;
-  }
-  if(horn->stats.hp<spells[horn->stats.sp].sp) {
-    return 0; /* Not recharged enough yet */
-  }
-  if(cast_spell(part,horn,dir,horn->stats.sp,0,spellHorn,NULL)) {
-    drain_rod_charge(horn);
-    return 1;
-  }
-  return 0;
 }
 
 int monster_use_bow(object *head, object *part, object *pl, int dir) {
-  object *bow, *arrow, *owner;
-  int tag;
+    object *owner;
 
-  if(!(dir=path_to_player(part,pl,0)))
-    return 0;
-  if(QUERY_FLAG(head,FLAG_CONFUSED))
-    dir = absdir(dir + RANDOM()%3 + RANDOM()%3 - 2);
-  if(QUERY_FLAG(head,FLAG_FRIENDLY) && (owner = get_owner(head)) != NULL) {
-    int dir2 = find_dir_2(head->x-owner->x, head->y-owner->y);
-    if(dirdiff(dir,dir2) < 1)
-      return 0; /* Might hit owner with spell */
-  }
-  for(bow=head->inv;bow!=NULL;bow=bow->below)
-    if(bow->type==BOW&&QUERY_FLAG(bow,FLAG_APPLIED))
-      break;
-  if(bow==NULL) {
-    LOG(llevError,"Error: Monster %s (%d) HAS_READY_BOW() without bow.\n",
-            head->name,head->count);
-    CLEAR_FLAG(head, FLAG_READY_BOW);
-    return 0;
-  }
-  if((arrow=find_arrow(head,bow->race)) == NULL) {
-    /* Out of arrows */
-    manual_apply(head,bow,0);
-    CLEAR_FLAG(head, FLAG_READY_BOW);
-    return 0;
-  }
-  arrow=get_split_ob(arrow,1);
-  set_owner(arrow,head);
-  arrow->direction=dir;
-  arrow->x=part->x,arrow->y=part->y;
-  arrow->speed = 1;
-  update_ob_speed(arrow);
-  arrow->speed_left=0;
-  SET_ANIMATION(arrow, dir);
-  arrow->stats.sp = arrow->stats.wc; /* save original wc and dam */
-  arrow->stats.hp = arrow->stats.dam; 
-  arrow->stats.dam+= (QUERY_FLAG(bow, FLAG_NO_STRENGTH) ? 0 : head->level)
-                     +bow->stats.dam+bow->magic+arrow->magic;
-  arrow->stats.wc= head->stats.wc - bow->magic - arrow->magic - 
-                   arrow->stats.wc;
-  arrow->map=head->map;
-  SET_FLAG(arrow, FLAG_FLYING);
-  SET_FLAG(arrow, FLAG_FLY_ON);
-  SET_FLAG(arrow, FLAG_WALK_ON);
-  tag = arrow->count;
-  insert_ob_in_map(arrow,head->map,head,0);
-  if (!was_destroyed(arrow, tag))
-    move_arrow(arrow);
-  return 1;
+    if(!(dir=path_to_player(part,pl,0)))
+	return 0;
+    if(QUERY_FLAG(head,FLAG_CONFUSED))
+	dir = absdir(dir + RANDOM()%3 + RANDOM()%3 - 2);
+
+    if(QUERY_FLAG(head,FLAG_FRIENDLY) && (owner = get_owner(head)) != NULL) {
+	int dir2 = find_dir_2(head->x-owner->x, head->y-owner->y);
+	if(dirdiff(dir,dir2) < 1)
+	    return 0; /* Might hit owner with arrow */
+    }
+
+    /* in server/player.c */
+    return fire_bow(head, part, dir);
+
 }
 
+/* Checks if putting on 'item' will make 'who' do more
+ * damage.  This is a very simplistic check - also checking things
+ * like speed and ac are also relevant.
+ *
+ * return true if item is a better object.
+ */
+
 int check_good_weapon(object *who, object *item) {
-  object *other_weap;
-  int prev_dam=who->stats.dam;
-  for(other_weap=who->inv;other_weap!=NULL;other_weap=other_weap->below)
-    if(other_weap->type==item->type&&QUERY_FLAG(other_weap,FLAG_APPLIED))
-      break;
-  if(other_weap==NULL) /* No other weapons */
-    return 1;
-  if (monster_apply_special(who,item,0)) {
-    LOG(llevMonster,"Can't wield %s(%d).\n",item->name,item->count);
-    return 0;
-  }
-  if(who->stats.dam < prev_dam && !QUERY_FLAG(other_weap,FLAG_FREED)) {
-    /* New weapon was worse.  (Note ^: Could have been freed by merging) */
-    if (monster_apply_special(who,other_weap,0))
-      LOG(llevMonster,"Can't rewield %s(%d).\n",item->name,item->count);
-    return 0;
-  }
-  return 1;
+    object *other_weap;
+    int val=0, i;
+
+    for(other_weap=who->inv;other_weap!=NULL;other_weap=other_weap->below)
+	if(other_weap->type==item->type&&QUERY_FLAG(other_weap,FLAG_APPLIED))
+	    break;
+
+    if(other_weap==NULL) /* No other weapons */
+	return 1;
+
+    /* Rather than go through and apply the new one, and see if it is
+     * better, just do some simple checks
+     * Put some multipliers for things that hvae several effects,
+     * eg, magic affects both damage and wc, so it has more weight
+     */
+
+    val = item->stats.dam - other_weap->stats.dam;
+    val += (item->magic - other_weap->magic) * 3;
+    /* Monsters don't really get benefits from things like regen rates
+     * from items.  But the bonus for their stats are very important.
+     */
+    for (i=0; i<NUM_STATS; i++) 
+	val += (get_attr_value(&item->stats, i) - get_attr_value(&other_weap->stats, i))*2;
+
+    if (val > 0) return 1;
+    else return 0;
+
 }
 
 int check_good_armour(object *who, object *item) {
-  object *other_armour;
-  int prev_ac = who->stats.ac;
-  for (other_armour = who->inv; other_armour != NULL;
-       other_armour = other_armour->below)
-    if (other_armour->type == item->type && QUERY_FLAG(other_armour,FLAG_APPLIED))
-      break;
-  if (other_armour == NULL) /* No other armour, use the new */
-    return 1;
-  if (monster_apply_special(who, item,0)) {
-    LOG(llevMonster, "Can't take off %s(%d).\n",item->name,item->count);
-    return 0;
-  }
-  if(who->stats.ac < prev_ac && !QUERY_FLAG(other_armour,FLAG_FREED)) {
-    /* New armour was worse. *Note ^: Could have been freed by merging) */
-    if (monster_apply_special(who, other_armour,0))
-      LOG(llevMonster,"Can't rewear %s(%d).\n", item->name, item->count);
-    return 0;
-  }
-  return 1;
+    object *other_armour;
+    int val=0,i;
+
+    for (other_armour = who->inv; other_armour != NULL;
+	 other_armour = other_armour->below)
+	if (other_armour->type == item->type && QUERY_FLAG(other_armour,FLAG_APPLIED))
+	    break;
+
+    if (other_armour == NULL) /* No other armour, use the new */
+	return 1;
+
+    /* Like above function , see which is better */
+    val = item->stats.ac - other_armour->stats.ac;
+    val = (item->resist[ATNR_PHYSICAL] - other_armour->resist[ATNR_PHYSICAL])/5;
+    val += (item->magic - other_armour->magic) * 3;
+
+    /* for the other protections, do weigh them very much in the equation -
+     * it is the armor protection which is most important, because there is
+     * no good way to know what the player may attack the monster with.	
+     * So if the new item has better protection than the old, give that higher
+     * value.  If the reverse, then decrease the value of this item some.
+     */
+    for (i=1; i <NROFATTACKS; i++) {
+	if (item->resist[i] > other_armour->resist[i]) val++;
+	else if (item->resist[i] < other_armour->resist[i]) val--;
+    }
+
+    /* Very few armours have stats, so not much need to worry about those. */
+
+    if (val > 0) return 1;
+    else return 0;
+
 }
 
 /*
@@ -965,22 +998,22 @@ int check_good_armour(object *who, object *item) {
  */
 
 void monster_check_pickup(object *monster) {
-  object *tmp,*next;
-  int next_tag;
+    object *tmp,*next;
+    int next_tag;
 
-  for(tmp=monster->below;tmp!=NULL;tmp=next) {
-    next=tmp->below;
-    if (next) next_tag = next->count;
-    if (monster_can_pick(monster,tmp)) {
-      remove_ob(tmp);
-      tmp = insert_ob_in_ob(tmp,monster);
-      (void) monster_check_apply(monster,tmp);
+    for(tmp=monster->below;tmp!=NULL;tmp=next) {
+	next=tmp->below;
+	if (next) next_tag = next->count;
+	if (monster_can_pick(monster,tmp)) {
+	    remove_ob(tmp);
+	    tmp = insert_ob_in_ob(tmp,monster);
+	    (void) monster_check_apply(monster,tmp);
+	}
+	/* We could try to re-establish the cycling, of the space, but probably
+	 * not a big deal to just bail out.
+	 */
+	if (next && was_destroyed(next, next_tag)) return;
     }
-    /* We could try to re-establish the cycling, of the space, but probably
-     * not a big deal to just bail out.
-     */
-    if (next && was_destroyed(next, next_tag)) return;
-  }
 }
 
 /*
@@ -991,52 +1024,81 @@ void monster_check_pickup(object *monster) {
  */
 
 int monster_can_pick(object *monster, object *item) {
-  int flag=0;
-  if(!can_pick(monster,item))
+    int flag=0;
+    int i;
+
+    if(!can_pick(monster,item))
+	return 0;
+
+    if(QUERY_FLAG(item,FLAG_UNPAID))
+	return 0;
+
+    if (monster->pick_up&64)           /* All */
+	flag=1;
+
+    else switch(item->type) {
+	case MONEY:
+	case GEM:
+	    flag=monster->pick_up&2;
+	    break;
+
+	case FOOD:
+	    flag=monster->pick_up&4;
+	    break;
+
+	case WEAPON:
+	    flag=(monster->pick_up&8)||QUERY_FLAG(monster,FLAG_USE_WEAPON);
+	    break;
+
+	case ARMOUR:
+	case SHIELD:
+	case HELMET:
+	case BOOTS:
+	case GLOVES:
+	case GIRDLE:
+	    flag=(monster->pick_up&16)||QUERY_FLAG(monster,FLAG_USE_ARMOUR);
+	    break;
+
+	case SKILL:
+	    flag=QUERY_FLAG(monster,FLAG_CAN_USE_SKILL);
+	    break;
+
+	case RING:
+	    flag=QUERY_FLAG(monster,FLAG_USE_RING);
+	    break;
+
+	case WAND:
+	case HORN:
+	case ROD:
+	    flag=QUERY_FLAG(monster,FLAG_USE_RANGE);
+	    break;
+
+	case SPELLBOOK:
+	    flag=(monster->arch!=NULL&&QUERY_FLAG((&monster->arch->clone),FLAG_CAST_SPELL));
+	    break;
+
+	case SCROLL:
+	    flag = QUERY_FLAG(monster,FLAG_USE_SCROLL);
+
+	case BOW:
+	case ARROW:
+	    flag=QUERY_FLAG(monster,FLAG_USE_BOW);
+	    break;
+    }
+    /* Simplistic check - if the monster has a location to equip it, he will
+     * pick it up.  Note that this doesn't handle cases where an item may
+     * use several locations.
+     */
+    for (i=0; i < NUM_BODY_LOCATIONS; i++) {
+	if (monster->body_info[i] && item->body_info[i]) {
+	    flag=1;
+	    break;
+	}
+    }
+
+    if (((!(monster->pick_up&32))&&flag) || ((monster->pick_up&32)&&(!flag)))
+	return 1;
     return 0;
-  if(QUERY_FLAG(item,FLAG_UNPAID))
-    return 0;
-  if (monster->pick_up&64)           /* All */
-    flag=1;
-  else switch(item->type) {
-  case MONEY:
-  case GEM:
-    flag=monster->pick_up&2;
-    break;
-  case FOOD:
-    flag=monster->pick_up&4;
-    break;
-  case WEAPON:
-    flag=(monster->pick_up&8)||QUERY_FLAG(monster,FLAG_USE_WEAPON);
-    break;
-  case ARMOUR:
-  case SHIELD:
-  case HELMET:
-  case BOOTS:
-  case GLOVES:
-  case GIRDLE:
-    flag=(monster->pick_up&16)||QUERY_FLAG(monster,FLAG_USE_ARMOUR);
-    break;
-  case SKILL:
-    flag=QUERY_FLAG(monster,FLAG_CAN_USE_SKILL);
-    break;
-  case RING:
-    flag=QUERY_FLAG(monster,FLAG_USE_RING);
-    break;
-  case WAND:
-    flag=QUERY_FLAG(monster,FLAG_USE_WAND);
-    break;
-  case SPELLBOOK:
-    flag=(monster->arch!=NULL&&QUERY_FLAG((&monster->arch->clone),FLAG_CAST_SPELL));
-    break;
-  case BOW:
-  case ARROW:
-    flag=QUERY_FLAG(monster,FLAG_USE_BOW);
-    break;
-  }
-  if (((!(monster->pick_up&32))&&flag) || ((monster->pick_up&32)&&(!flag)))
-    return 1;
-  return 0;
 }
 
 /*
@@ -1047,28 +1109,26 @@ int monster_can_pick(object *monster, object *item) {
  */
 
 void monster_apply_below(object *monster) {
-  object *tmp, *next;
+    object *tmp, *next;
 
-  for(tmp=monster->below;tmp!=NULL;tmp=next) {
-    next=tmp->below;
-    switch (tmp->type) {
-    case CF_HANDLE:
-    case TRIGGER:
-      if (monster->will_apply&1)
-        manual_apply(monster,tmp,0);
-      break;
-    case TREASURE:
-      if (monster->will_apply&2)
-        manual_apply(monster,tmp,0);
-      break;
-    case SCROLL:  /* Ideally, they should wait until they meet a player */
-      if (QUERY_FLAG(monster,FLAG_USE_SCROLL))
-        manual_apply(monster,tmp,0); 
-      break;
+    for(tmp=monster->below;tmp!=NULL;tmp=next) {
+	next=tmp->below;
+	switch (tmp->type) {
+	    case CF_HANDLE:
+	    case TRIGGER:
+		if (monster->will_apply&1)
+		    manual_apply(monster,tmp,0);
+		break;
+
+	    case TREASURE:
+		if (monster->will_apply&2)
+		    manual_apply(monster,tmp,0);
+		break;
+
+	}
+	if (QUERY_FLAG (tmp, FLAG_IS_FLOOR))
+	    break;
     }
-    if (QUERY_FLAG (tmp, FLAG_IS_FLOOR))
-        break;
-  }
 }
 
 /*
@@ -1077,110 +1137,98 @@ void monster_apply_below(object *monster) {
  * If an item becomes outdated (monster found a better item),
  * a pointer to that object is returned, so it can be dropped.
  * (so that other monsters can pick it up and use it)
+ * Note that as things are now, monsters never drop something -
+ * they can pick up all that they can use.
  */
 
 /* Sept 96, fixed this so skills will be readied -b.t.*/
 
 void monster_check_apply(object *mon, object *item) {
 
-  if(item->type==SPELLBOOK&&
-     mon->arch!=NULL&&(QUERY_FLAG((&mon->arch->clone),FLAG_CAST_SPELL))) {
-    SET_FLAG(mon, FLAG_CAST_SPELL);
+    int flag = 0;
+
+    if(item->type==SPELLBOOK&&
+       mon->arch!=NULL&&(QUERY_FLAG((&mon->arch->clone),FLAG_CAST_SPELL))) {
+	SET_FLAG(mon, FLAG_CAST_SPELL);
+	return;
+    }
+
+    /* If for some reason, this item is already applied, no more work to do */
+    if(QUERY_FLAG(item,FLAG_APPLIED)) return;
+
+    /* Might be better not to do this - if the monster can fire a bow,
+     * it is possible in his wanderings, he will find one to use.  In
+     * which case, it would be nice to have ammo for it.
+     */
+    if(QUERY_FLAG(mon,FLAG_USE_BOW) && item->type==ARROW) {
+	/* Check for the right kind of bow */
+	object *bow;
+	for(bow=mon->inv;bow!=NULL;bow=bow->below)
+	    if(bow->type==BOW && bow->race==item->race) {
+		SET_FLAG(mon, FLAG_READY_BOW);
+		LOG(llevMonster,"Found correct bow for arrows.\n");
+		return;	    /* nothing more to do for arrows */
+	    }
+    }
+
+    if (item->type == TREASURE && mon->will_apply & WILL_APPLY_TREASURE) flag=1;
+    /* Eating food gets hp back */
+    else if (item->type == FOOD && mon->will_apply & WILL_APPLY_FOOD) flag=1;
+    else if (item->type == SCROLL && QUERY_FLAG(mon, FLAG_USE_SCROLL)) {
+	if (monster_should_cast_spell(mon, item->stats.sp))
+	    SET_FLAG(mon, FLAG_READY_SCROLL);
+	/* Don't use it right now */
+	return;
+    }
+    else if (item->type == WEAPON) flag = check_good_weapon(mon,item);
+    else if (IS_ARMOR(item)) flag = check_good_armour(mon,item);
+    /* Should do something more, like make sure this is a better item */
+    else if (item->type == SKILL || item->type == RING || item->type==WAND ||
+	     item->type == ROD || item->type==HORN) flag=1;
+    else if (item->type == BOW) {
+	/* We never really 'ready' the bow, because that would mean the
+	 * weapon would get undone.
+	 */
+	if (!(can_apply_object(mon, item) & CAN_APPLY_NOT_MASK))
+	    SET_FLAG(mon, FLAG_READY_BOW);
+	return;
+    }
+
+    /* if we don't match one of the above types, return now.
+     * can_apply_object will say that we can apply things like flesh, 
+     * bolts, and whatever else, because it only checks against the
+     * body_info locations.
+     */
+    if (!flag) return;
+
+    /* Check to see if the monster can use this item.  If not, no need
+     * to do further processing.  Note that can_apply_object already checks
+     * for the CAN_USE flags.
+     */
+    if (can_apply_object(mon, item) & CAN_APPLY_NOT_MASK) return;
+
+
+    /* should only be applying this item, not unapplying it.
+     * also, ignore status of curse so they can take off old armour.
+     * monsters have some advantages after all.
+     */
+    manual_apply(mon, item, AP_APPLY | AP_IGNORE_CURSE);
+
     return;
-  }
-  if(QUERY_FLAG(mon,FLAG_USE_BOW) && item->type==ARROW)
-  { /* Check for the right kind of bow */
-    object *bow;
-    for(bow=mon->inv;bow!=NULL;bow=bow->below)
-      if(bow->type==BOW && bow->race==item->race) {
-        SET_FLAG(mon, FLAG_READY_BOW);
-        LOG(llevMonster,"Found correct bow for arrows.\n");
-        if(!QUERY_FLAG(bow, FLAG_APPLIED))
-          manual_apply(mon,bow,0);
-        break;
-      }
-  }
-/* Mol: (mol@meryl.csd.uu.se) If can_apply <number> is defined in the objects
-   archetype it can apply the object. See global.h for more info. */
-  if (can_apply(mon,item)) {
-    int flag=0;
-    if (mon->can_apply&64)         /* All */
-        flag=1;
-    else switch(item->type) {
-    case TREASURE:
-      flag=0;
-    break;
-    case POTION:
-      flag=mon->can_apply&2;
-      break;
-    case FOOD: /* Can a monster eat food ?  Yes! (it heals) */
-      flag=mon->can_apply&4;
-      break;
-    case WEAPON:
-/*
- * Apply only if it's a better weapon than the used one.
- * All "standard" monsters need to adjust their wc to use the can_apply on
- * weapons.
- */
-      flag=((mon->can_apply&8)||QUERY_FLAG(mon,FLAG_USE_WEAPON))&&
-            check_good_weapon(mon,item);
-      break;
-    case ARMOUR:
-    case HELMET:
-    case SHIELD:
-      flag=((mon->can_apply&16)||QUERY_FLAG(mon,FLAG_USE_ARMOUR))&&
-            check_good_armour(mon,item);
-      break;
-    case SKILL:
-      if((flag=QUERY_FLAG(mon,FLAG_CAN_USE_SKILL))) {
-        if(!QUERY_FLAG(item,FLAG_APPLIED)) manual_apply(mon,item,0);
-        if (item->type==SKILL&&present_in_ob(SKILL,mon)!=NULL)
-	  SET_FLAG(mon, FLAG_READY_SKILL);
-      }
-      break;
-    case RING:
-      flag=QUERY_FLAG(mon,FLAG_USE_RING);
-      break;
-    case WAND:
-      flag=QUERY_FLAG(mon,FLAG_USE_WAND);
-      break;
-    case BOW:
-      flag=QUERY_FLAG(mon,FLAG_USE_BOW);
-    }
-    if (((!(mon->can_apply&32))&&flag) ||((mon->can_apply&32)&&(!flag))) {
-        /* &32 reverses behaviour. See global.h */
-        if(!QUERY_FLAG(item,FLAG_APPLIED))
-          manual_apply(mon,item,0);
-        if (item->type==BOW&&present_in_ob((unsigned char) item->stats.maxsp,mon)!=NULL)
-	  SET_FLAG(mon, FLAG_READY_BOW);
-    }
-    return;
-#if 0
-    if(!QUERY_FLAG(item,FLAG_APPLIED))
-      return item;
-    {
-      object *tmp;
-      for(tmp=mon->inv;tmp!=NULL;tmp=tmp->below)
-        if(tmp!=item&&tmp->type==item->type)
-          return tmp;
-    }
-#endif
-  }
-  return;
 }
 
 void npc_call_help(object *op) {
-  int x,y;
-  object *npc;
+    int x,y;
+    object *npc;
 
-  for(x = -3; x < 4; x++)
-    for(y = -3; y < 4; y++) {
-      if(out_of_map(op->map,op->x+x,op->y+y))
-        continue;
-      for(npc = get_map_ob(op->map,op->x+x,op->y+y);npc!=NULL;npc=npc->above)
-        if(QUERY_FLAG(npc, FLAG_ALIVE)&&QUERY_FLAG(npc, FLAG_UNAGGRESSIVE))
-          npc->enemy = op->enemy;
-    }
+    for(x = -3; x < 4; x++)
+	for(y = -3; y < 4; y++) {
+	    if(out_of_map(op->map,op->x+x,op->y+y))
+		continue;
+	    for(npc = get_map_ob(op->map,op->x+x,op->y+y);npc!=NULL;npc=npc->above)
+		if(QUERY_FLAG(npc, FLAG_ALIVE)&&QUERY_FLAG(npc, FLAG_UNAGGRESSIVE))
+		    npc->enemy = op->enemy;
+	}
 }
 
 

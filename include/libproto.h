@@ -122,6 +122,8 @@ extern void write_todclock(void);
 extern void init_clocks(void);
 extern void init_attackmess(void);
 /* item.c */
+extern int get_power_from_ench(int ench);
+extern int calc_item_power(object *op, int flag);
 extern char *describe_resistance(object *op, int newline);
 extern char *query_weight(object *op);
 extern char *get_levelnumber(int i);
@@ -130,7 +132,7 @@ extern char *ring_desc(object *op);
 extern char *query_short_name(object *op);
 extern char *query_name(object *op);
 extern char *query_base_name(object *op, int plural);
-extern char *describe_item(object *op);
+extern char *describe_item(object *op, object *owner);
 extern int is_magical(object *op);
 extern int need_identify(object *op);
 extern int look_up_spell_name(char *spname);
@@ -298,7 +300,6 @@ extern void make_path_to_file(char *filename);
 /* player.c */
 extern player *get_player_ob(void);
 extern void free_player(player *pl);
-extern void generate_ext_title(player *pl);
 extern object *find_skill(object *op, int skillnr);
 extern int atnr_is_dragon_enabled(int attacknr);
 extern int is_dragon_pl(object *op);

@@ -17,6 +17,200 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+-- Start body commit notes --
+Major commit.  This adds body locations which is used for equipping items.
+Equipment has information which body part it gets equipped to, and monsters
+have information on how which body locations they can have.
+
+As part of this work, I also did a lot of code cleanup.
+
+To use this, you must use up to date archetypes - the ones included
+in this commit are fine - just make sure you install them.  If
+you don't, players will not be able to equip items.
+
+common/arch.c: Initialize body_used to be same as body_info for
+    archetypes - this way when monsters are created, they can
+    start equipping items right away.
+common/exp.c: update new_exp() - some flags it checked for before no longer
+    exist or have new names.
+common/info.c: describe_item() now takes second parameter - update 
+    dump_abilities to use new calling convention.
+common/item.c: Add table that describes the body_info locations and
+    their names.  Add functions that calculate item power for objects
+    that don't have it set.  Update display functions to show 
+    item_power in items.  Update describe_monster() - use_horn/wand/rod
+    merged into just use_range.  Modify describe_item() to take second
+    paramater - who the item is being described for.  Show item_power
+    in describe_item.
+common/living.c: Pull out MAXLEVEL from being defined in this file -
+    define in in define.h, since other files use it.  Add NUM_STATS
+    define - replace hard coded values of having just 7 stats with it.
+    Update change_abil to not display that the player has a new
+    attacktype when equipping a bow that has it - fix_player() ignores
+    the attacktype of the bow, so it was incorrect information.
+    fix_player(): Initialize player ranges structure to null -
+    will get filled in by code in function, updated to deal with
+    updating the body_used data from body_info in the objects.
+    Replace instances of last_heal with gen_sp_armour.  Rearrange
+    some code to make function more readable.
+common/loader.c, common/loader.l: Remove the variable_const information - no
+    longer needed and confusing for new people when adding in new object
+    elements.  Add set_body_info() - parses the string from the load file and
+    sets the appropriate array element.  Add check_loaded_object() - does
+    sanity checking for an object after finished loading - replaces need for
+    long processing directive in the actual rules by having seperate function.
+    Remove unused flags from load directives (apply_once, no_pretext,
+    can_apply), add some new ones (item_power, gen_sp_armour), update others
+    to can_use_range.  Replace flag_links with simple array that contains the
+    name for each corresponding flag.  Update get_ob_diff to not use the V_
+    values and just include the actual string name - all recent changes have
+    done this, just updated for old stuff.  Update get_ob_diff to save new
+    values that have been added.
+common/object.c: clear_object:  Modify to use memset to clear
+    the structure to zero - this is less error prone than listing
+    all the specific values, and probably faster.  Also, makes it
+    easier to add new elements - no need to update object.c in most
+    cases.
+common/player.c: Remove get_player_ob routine - this is now merged
+    in with get_player_ob in server/player.c.  Remove generate_ext_title -
+    not used.
+common/readable.c: Update to pass second argument to describe_item.
+common/treasure.c: Update to calculate item_power of generated items.
+    Clean up a lot of code formatting.  Update add_abilities
+    to use gen_sp_armour values, not last heal (note, it appears
+    the last_heal values weren't being used before).  Update
+    calls to describe item to take second parameter.
+doc/Developers/objects: Update will_apply notes, add note about
+    item_power, body location.
+include/define.h: Comment out unused flags (flag_apply_once, flag_paralyzed,
+    flag_no_pretext, flag_ready_rod, flag_read_horn).  Add flag_use_shield.
+    rename flag_use_wand to flag_use_range.  rename flag_ready_wand to
+    flag_ready_range.  Add flag_ready_scroll.  Update ARMOUR_SPELLS access
+    macro.  Add AP_PRINT flag to apply flags.  Add CAN_APPLY_.. return types
+    for can_apply_object function.
+include/includes.h: add strftime, mktime checks to this file.
+include/libproto.h: rebuilt.
+include/living.h: Add NUM_STATS define, update extern declarations
+    to use it for sizing.
+include/loader.h: remove the V_.. info and  xbm_.. externs that were not
+    used.
+include/newserver.h: Remove ext_tile information.
+include/object.h:  Add Body_Locations structure, NUM_BODY_LOCATIONS define.
+    Add definitions for WILL_APPLY values.  Clean up object structure - 
+    formatting is now consistent, ordering of values groups values
+    together more logically.  Update all types to use the int8/int16/int32
+    types.  Several unused fields removed.
+include/player.h: Update rangetype enum.  Add unapplymode enum.
+    Clean up player structure - type updates, unused fields removed, 
+    formatting fixed up.
+include/spells.h: remove range_name extern.  Update SpellTypeFrom 
+    field to combine wand/rod/horn into spellMisc - none of the
+    spell casting code was differentiating these.
+include/sproto.h: rebuilt.
+lib/Makefile.in: Add new help files (applymode, bind, brace)
+lib/archetypes: rebuilt for body_info, gen_sp_armour, item_power,
+    can_use_shield information.
+lib/artifacts: updated for item_poer and gen_sp_armour changes.
+lib/treasures: remove unused _force for player treasure.
+plugin/plugin_python.c: Change FLAG_USE_WAND to FLAG_USE_RANGE.
+server/apply.c: Move stftime, mktime to include/includes.h.  Remove
+    draw_find() - one line function can just as easly be in the 
+    code itself.  Update calls to long_desc to pass second parameter.
+    move gravestone_text() to player.c file.  Add direction parameter to
+    apply_scroll() - in this way monsters can use it properly.
+    Remove dead code.  Update apply_special function.  Add
+    unapply_special(), get_item_from_body_location(), unapply_for_ob(),
+    and can_apply_object() functions.
+server/attack.c:  Remove SET_FLAG(op, FLAG_PARALYZED) line - no code
+    was ever checking status of FLAG_PARALYZED.
+server/c_misc.c:  add command_body() which dumps body information for
+    player.  Update who as idle element in player structure removed -
+    was not being used by anything.  Add command_applymode() to 
+    set players prefered unapply method.  Remove calls to unlock_player()
+    in various functions - unlock_player() has not done anything
+    meaningful for a while.
+server/c_object.c: Modify long_desc to take a second parameter
+    which is who is examing the object.  this is needed so that we
+    can pass it down to some of the lower level functions.
+    Update calls to describe_item to pass this second parameter.
+    remove FLAG_NO_PRETEXT code - no archetyps were using it.  When
+    examining objects, also tell player where to put them on.
+server/c_range.c:  Update legal_range() - we now store the object that
+    is responsible for a range in the player object, so code is
+    much simpler.  Update change_spell() to not destroy golem
+    just by readying another spell - we now let players regain control
+    of golems after switching to another range.  Update change_spell
+    to use item name of object for range description.
+server/c_wiz.c: remove reference to count_left from player object -
+    field removed from structure.
+server/commands.c: add new commands (applymode, body) to command dispatch
+    table.
+server/login.c:  Remove unlock_player() and lock_player() and calls to it -
+    current checking of names at login should be sufficient to
+    prevent duplicates.  Remove dead code from check_name.  Update
+    load/save code for unapply mode value.  Add set_flag(op,
+    FLAG_USE_SHIELD) if player is allowed to use armor - needed since
+    flag_use_shield is really a class feature and so is not automatically
+    updated for old player files.
+server/main.c: Remove references to count_left.  memset marker object to
+    NULL - seems to increase stability on metalforge server.
+server/monster.c: Many updates related to the body info - monsters follow some
+    rules as players.  Add monster_should_cast_spell function - monsters will
+    use this for all spellcasting related actions (abilities, scrolls, wands,
+    etc).  Update for merged rod/horn/wand ranges.  Update bow use by monsters
+    - they don't actually need to equip it to fire - this way we don't need to
+    constantly swap the monsters weapons between the bow and melee item.  Use
+    fire_bow from player.c for most of the work.  Modify scroll usage -
+    monster will use it when player is near, not when it first picks it up.
+    Add FLAG_READY_SCROLL to denote the monster has a scroll to use.  Also,
+    monster now casts it in appropriate direciton.  Merge the
+    monster_use_wand/rod/horn into monster_use_range.  Modify
+    check_good_weapon and check_good_armour to just look at the stats of the
+    two items without needing the monster to apply it first.
+server/player.c: Print motd in green so it is more noticable.  Update
+    get_player function to do work it did before as well as that of
+    get_player_ob.  Have get_player take a parameter which is the object of
+    the player if he has one.  Modify to use memset to clear the player
+    structure - more sure fire than explicitly listing values to initialize.
+    Remove calls to unlock_player.  Modify fire_bow so that monsters can also
+    use the function.  Add fire_misc_object() to fire_wand/rod/horn - removes
+    code from fire().  Add gravesetone_text() to this file.
+server/shop.c: Update to pass second parameter to describe_item().
+server/skill_util.c: Update check_skill_to_fire since there are fewer
+    rangetypes now.  change range_scroll name to range_golem, as that is
+    a bit more accurate for what it actually does.  Modify show_skills()
+    to show player his item power and total of items he has equipped.
+server/skills.c: Add second paramater to long_desc, remove references to
+    count_left.
+server/spell_effect.c: Add second paramater to long_desc, remove references to
+    count_left. Update range_scroll to range_golem
+server/spell_util.c: remove references to count_left.  Update messages
+    if player trying to cast where he can't with new range names.
+socket/info.c: Update range information and how we display what it is -
+    we will use the object name of the range if available.  Remove
+    reference last_known_spell, last_shoot, last_spell, last_value
+    player structure fields.
+socket/init.c: Remove ext_title information.
+socket/request.c: Add element for life_stealing in the resistance array.
+    Remove references to idle, count_left in player structure.  remove
+    ext2 title information.
+MSW 2002-07-14
+-- End body commit notes --
+
+common/anim.c, common/button.c, common/friend.c, common/glue.c,
+    common/init.c,common/logger.c, common/los.c, common/porting.c, 
+    common/time.c, common/utils.c, crossedit/png.c, crossedit/xutil.c,
+    include/attack.h, include/config.h, include/map.h, include/material.h,
+    include/newclient.h, include/skills.h, include/treasure.h,
+    random_maps/decor.c, random_maps/door.c, random_maps/floor.c,
+    random_maps/monster.c, random_maps/special.c, random_maps/standalone.c,
+    random_maps/style.c, random_maps/wall.c, server/alchemy.c,
+    server/c_chat.c, server/c_party.c, server/gods.c, server/hiscore.c,
+    server/init.c, server/pets.c, server/resurrection.c, server/rune.c,
+    server/time.c, socket/metaserver.c: Update banner copyright 
+    with proper contact information.
+MSW 2002-07-14
+
 server/disease.c: Fix propogation of diseases with negative damage (these
    do a percent of the creatures damage).  The new disease was getting
    a damage rating of 1 in all cases because we were passing a negative

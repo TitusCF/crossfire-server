@@ -6,6 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
+    Copyright (C) 2002 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -22,8 +23,9 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to frankj@ifi.uio.no.
+    The authors can be reached via e-mail at crossfire-devel@real-time.com
 */
+
 #include <stdio.h>
 #include <global.h>
 
@@ -108,9 +110,9 @@ int new_exp(object *ob) {
 		(1.0*(QUERY_FLAG(ob,FLAG_NO_MAGIC)!= FALSE)) +
 		(0.1*(QUERY_FLAG(ob,FLAG_PICK_UP)!= FALSE)) + 
 		(0.1*(QUERY_FLAG(ob,FLAG_USE_SCROLL)!= FALSE)) +
-		(0.2*(QUERY_FLAG(ob,FLAG_USE_WAND)!= FALSE)) +
-		(0.1*(QUERY_FLAG(ob,FLAG_USE_BOW)!= FALSE)) +
-		(0.1*(ob->can_apply != FALSE));
+		(0.2*(QUERY_FLAG(ob,FLAG_USE_RANGE)!= FALSE)) +
+		(0.1*(QUERY_FLAG(ob,FLAG_USE_BOW)!= FALSE));
+
   exp = (ob->stats.maxhp<5) ? 5 : ob->stats.maxhp;
   exp *= (QUERY_FLAG(ob,FLAG_CAST_SPELL) && has_ability(ob)) 
   	 ? (40+(ob->stats.maxsp>80?80:ob->stats.maxsp))/40 : 1;

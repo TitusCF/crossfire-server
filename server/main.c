@@ -64,7 +64,7 @@ void version(object *op) {
  */
   if (op==NULL) return;
   new_draw_info(NDI_UNIQUE, 0,op,"Authors and contributors to this program:");
-  new_draw_info(NDI_UNIQUE, 0,op,"mark@scruz.net (Mark Wedel)");
+  new_draw_info(NDI_UNIQUE, 0,op,"mwedel@sonic.net (Mark Wedel)");
   new_draw_info(NDI_UNIQUE, 0,op,"frankj@ifi.uio.no (Frank Tore Johansen)");
   new_draw_info(NDI_UNIQUE, 0,op,"kjetilho@ifi.uio.no (Kjetil Torgrim Homme)");
   new_draw_info(NDI_UNIQUE, 0,op,"tvangod@ecst.csuchico.edu (Tyler Van Gorder)");
@@ -364,7 +364,6 @@ static void enter_map(object *op, mapstruct *newmap, int x, int y) {
     if (op->contr) {
 	strcpy(op->contr->maplevel, newmap->path);
 	op->contr->count=0;
-	op->contr->count_left=0;
     }
 
     /* Update any golems */
@@ -856,98 +855,100 @@ void process_players2(mapstruct *map)
 
 void process_events (mapstruct *map)
 {
-  object *op;
-  object marker;
-  tag_t tag;
+    object *op;
+    object marker;
+    tag_t tag;
 
-  process_players1 (map);
+    process_players1 (map);
 
-  /* Put marker object at beginning of active list */
-  marker.active_next = active_objects;
-  if (marker.active_next)
-    marker.active_next->active_prev = &marker;
-  marker.active_prev = NULL;
-  active_objects = &marker;
- 
-  while (marker.active_next)
-  {
-    op = marker.active_next;
-    tag = op->count;
+    memset(&marker, 0, sizeof(object));
+    /* Put marker object at beginning of active list */
+    marker.active_next = active_objects;
 
-    /* Move marker forward - swap op and marker */
-    op->active_prev = marker.active_prev;
-    if (op->active_prev)
-      op->active_prev->active_next = op;
-    else
-      active_objects = op;
-    marker.active_next = op->active_next;
     if (marker.active_next)
-      marker.active_next->active_prev = &marker;
-    marker.active_prev = op;
-    op->active_next = &marker;
+	marker.active_next->active_prev = &marker;
+    marker.active_prev = NULL;
+    active_objects = &marker;
+ 
+    while (marker.active_next) {
+	op = marker.active_next;
+	tag = op->count;
 
-    /* Now process op */
-    if (QUERY_FLAG (op, FLAG_FREED)) {
-      LOG (llevError, "BUG: process_events(): Free object on list\n");
-      op->speed = 0;
-      update_ob_speed (op);
-      continue;
-    }
+	/* Move marker forward - swap op and marker */
+	op->active_prev = marker.active_prev;
 
-    if ( ! op->speed) {
-      LOG (llevError, "BUG: process_events(): Object %s has no speed, "
-           "but is on active list\n", op->arch->name);
-      update_ob_speed (op);
-      continue;
-    }
+	if (op->active_prev)
+	    op->active_prev->active_next = op;
+	else
+	    active_objects = op;
 
-    if (op->map == NULL && op->env == NULL && op->name &&
-        op->type != MAP && map == NULL)
-    {
-      LOG (llevError, "BUG: process_events(): Object without map or "
-           "inventory is on active list: %s (%d)\n",
-           op->name, op->count);
-      op->speed = 0;
-      update_ob_speed (op);
-      continue;
-    }
+	marker.active_next = op->active_next;
 
-    if (map != NULL && op->map != map)
-      continue;
+	if (marker.active_next)
+	    marker.active_next->active_prev = &marker;
+	marker.active_prev = op;
+	op->active_next = &marker;
 
-/* Eneq(@csd.uu.se): Handle archetype-field anim_speed differently when
-   it comes to the animation. If we have a value on this we don't animate it
-   at speed-events. */
+	/* Now process op */
+	if (QUERY_FLAG (op, FLAG_FREED)) {
+	    LOG (llevError, "BUG: process_events(): Free object on list\n");
+	    op->speed = 0;
+	    update_ob_speed (op);
+	    continue;
+	}
 
-    if (op->anim_speed && op->last_anim >= op->anim_speed) {
-      animate_object (op);
-      op->last_anim = 1;
-    } else {
-      op->last_anim++;
-    }
+	if ( ! op->speed) {
+	    LOG (llevError, "BUG: process_events(): Object %s has no speed, "
+		 "but is on active list\n", op->arch->name);
+	    update_ob_speed (op);
+	    continue;
+	}
 
-    if (op->speed_left > 0) {
-      --op->speed_left;
-      process_object (op);
-      if (was_destroyed (op, tag))
-        continue;
-    }
+	if (op->map == NULL && op->env == NULL && op->name &&
+	    op->type != MAP && map == NULL) {
+	    LOG (llevError, "BUG: process_events(): Object without map or "
+		 "inventory is on active list: %s (%d)\n",
+		 op->name, op->count);
+	    op->speed = 0;
+	    update_ob_speed (op);
+	    continue;
+	}
+
+	if (map != NULL && op->map != map)
+	    continue;
+
+	/* Animate the object.  Bug of feature that andim_speed
+	 * is based on ticks, and not the creatures speed?
+	 */
+	if (op->anim_speed && op->last_anim >= op->anim_speed) {
+	    animate_object (op);
+	    op->last_anim = 1;
+	} else {
+	    op->last_anim++;
+	}
+
+	if (op->speed_left > 0) {
+	    --op->speed_left;
+	    process_object (op);
+	    if (was_destroyed (op, tag))
+		continue;
+	}
 
 #ifdef CASTING_TIME
-    if (op->casting > 0)
-      op->casting--;
+	if (op->casting > 0)
+	    op->casting--;
 #endif
-    if (op->speed_left <= 0)
-      op->speed_left += FABS (op->speed);
-  }
+	if (op->speed_left <= 0)
+	    op->speed_left += FABS (op->speed);
+    }
 
-  /* Remove marker object from active list */
-  if (marker.active_prev != NULL)
-    marker.active_prev->active_next = NULL;
-  else
-    active_objects = NULL;
+    /* Remove marker object from active list */
+    if (marker.active_prev != NULL)
+	marker.active_prev->active_next = NULL;
+    else
+	active_objects = NULL;
 
-  process_players2 (map);
+    process_players2 (map);
 }
 
 void clean_tmp_files() {

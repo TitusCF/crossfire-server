@@ -6,7 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2000 Mark Wedel
+    Copyright (C) 2002 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -23,8 +23,9 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to mwedel@scruz.net
+    The authors can be reached via e-mail at crossfire-devel@real-time.com
 */
+
 #include <global.h>
 #include <loader.h>
 #ifndef __CEXTRACT__
@@ -70,6 +71,38 @@ void map_info(object *op) {
     new_draw_info(NDI_UNIQUE, 0,op,buf);
   }
 }
+
+/* This command dumps the body information for object *op.
+ * it doesn't care what the params are.
+ * This is mostly meant as a debug command.
+ */
+int command_body(object *op, char *params)
+{
+    int i;
+
+    /* Too hard to try and make a header that lines everything up, so just 
+     * give a description.
+     */
+    new_draw_info(NDI_UNIQUE, 0, op, "The first column is the name of the body location.");
+    new_draw_info(NDI_UNIQUE, 0, op, "The second column is how many of those locations your body has.");
+    new_draw_info(NDI_UNIQUE, 0, op, "The third column is how many slots in that location are available.");
+    for (i=0; i<NUM_BODY_LOCATIONS; i++) {
+	/* really debugging - normally body_used should not be set to anything
+	 * if body_info isn't also set.
+	 */
+	if (op->body_info[i] || op->body_used[i]) {
+	    new_draw_info_format(NDI_UNIQUE, 0, op, 
+		"%-30s %5d %5d", body_locations[i].use_name, op->body_info[i], op->body_used[i]);
+	}
+    }
+    if (!QUERY_FLAG(op, FLAG_USE_ARMOUR))
+	new_draw_info(NDI_UNIQUE, 0, op, "You are not allowed to wear armor");
+    if (!QUERY_FLAG(op, FLAG_USE_WEAPON))
+	new_draw_info(NDI_UNIQUE, 0, op, "You are not allowed to use weapons");
+
+    return 1;
+}
+
 
 int command_spell_reset(object *op, char *params)
 {
@@ -239,18 +272,18 @@ int command_who (object *op, char *params)
 	     */
 
 	    if(op == NULL || QUERY_FLAG(op, FLAG_WIZ))
-		(void) sprintf(buf,"%s the %s (@%s) [%s]%s%s%s (%d)",pl->ob->name,
+		(void) sprintf(buf,"%s the %s (@%s) [%s]%s%s (%d)",pl->ob->name,
 		       (pl->own_title[0]=='\0'?pl->title:pl->own_title),
 		       pl->socket.host,
 		       pl->ob->map->path,
-		       QUERY_FLAG(pl->ob,FLAG_WIZ)?" [WIZ]":"",pl->idle?" I":"",
+		       QUERY_FLAG(pl->ob,FLAG_WIZ)?" [WIZ]":"",
 		       pl->peaceful?"P":"W",pl->ob->count);
 	    else
-		(void) sprintf(buf,"%s the %s (@%s) [%s]%s%s%s",pl->ob->name,
+		(void) sprintf(buf,"%s the %s (@%s) [%s]%s%s",pl->ob->name,
 		       (pl->own_title[0]=='\0'?pl->title:pl->own_title),
 		       pl->socket.host,
 		       pl->ob->map->path,
-		       QUERY_FLAG(pl->ob,FLAG_WIZ)?" [WIZ]":"",pl->idle?" I":"",
+		       QUERY_FLAG(pl->ob,FLAG_WIZ)?" [WIZ]":"",
 		       pl->peaceful?"P":"W");
 	    new_draw_info(NDI_UNIQUE, 0,op,buf);
 	}
@@ -589,6 +622,35 @@ int command_logs (object *op, char *params)
     return 1;
 }
 
+int command_applymode(object *op, char *params)
+{
+    unapplymode unapply = op->contr->unapply;
+    static char *types[]={"nochoice", "never", "always"};
+
+    if (!params) {
+	new_draw_info_format(NDI_UNIQUE, 0, op, "usekeys is set to %s",
+	types[op->contr->usekeys]);
+	return 1;
+    }
+
+    if (!strcmp(params,"nochoice")) 
+	op->contr->unapply=unapply_nochoice;
+    else if (!strcmp(params,"never")) 
+	op->contr->unapply=unapply_never;
+    else if (!strcmp(params,"always")) 
+	op->contr->unapply=unapply_always;
+    else {
+	new_draw_info_format(NDI_UNIQUE, 0, op,
+	    "applymode: Unknown options %s, valid options are nochoice, never, always",
+			     params);
+	return 0;
+    }
+    new_draw_info_format(NDI_UNIQUE, 0, op, "Applymode %s set to %s",
+	(unapply==op->contr->usekeys?"":"now"),
+	types[op->contr->unapply]);
+    return 1;
+}
+
 int command_usekeys(object *op, char *params)
 {
     usekeytype oldtype=op->contr->usekeys;
@@ -922,7 +984,6 @@ void receive_player_name(object *op,char k) {
     FREE_AND_COPY(op->name, op->contr->write_buf+1);
     FREE_AND_COPY(op->name_pl, op->contr->write_buf+1);
     new_draw_info(NDI_UNIQUE, 0,op,op->contr->write_buf);
-    op->contr->last_value= -1; /* Flag: redraw all stats */
     op->contr->name_changed=1;
     get_password(op);
 }
@@ -931,7 +992,6 @@ void receive_player_password(object *op,char k) {
 
   unsigned int pwd_len=strlen(op->contr->write_buf);
   if(pwd_len<=1||pwd_len>17) {
-    unlock_player(op->name);
     get_name(op);
     return;
   }
@@ -939,7 +999,6 @@ void receive_player_password(object *op,char k) {
   if(op->contr->state==ST_CONFIRM_PASSWORD) {
     if(!check_password(op->contr->write_buf+1,op->contr->password)) {
       new_draw_info(NDI_UNIQUE, 0,op,"The passwords did not match.");
-      unlock_player(op->name);
       get_name(op);
       return;
     }

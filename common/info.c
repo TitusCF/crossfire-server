@@ -6,6 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
+    Copyright (C) 2002 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -22,7 +23,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to frankj@ifi.uio.no.
+    The authors can be reached via e-mail at crossfire-devel@real-time.com
 */
 
 #include <global.h>
@@ -56,7 +57,7 @@ void dump_abilities() {
       }
     }
 
-    ch = describe_item(&at->clone);
+    ch = describe_item(&at->clone, NULL);
     printf("%-16s|%6d|%4d|%3d|%s|%s|%s\n",at->clone.name,at->clone.stats.exp,
            at->clone.stats.hp,at->clone.stats.ac,ch,at->name,gen_name);
   }

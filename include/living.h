@@ -6,7 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2000 Mark Wedel
+    Copyright (C) 2002 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -23,7 +23,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to mwedel@scruz.net
+    The authors can be reached via e-mail at crossfire-devel@real-time.com
 */
 
 #ifndef LIVING_H
@@ -36,6 +36,9 @@
 #define CHA 4
 #define INT 5
 #define POW 6
+#define NUM_STATS 7
+
+#define MAXLEVEL      110
 
 /* Changed from NO_STAT to NO_STAT_VAL to fix conlfict on
  * AIX systems
@@ -55,10 +58,10 @@ extern int savethrow[111];
 extern int turn_bonus[MAX_STAT + 1];
 extern int learn_prayer_chance[MAX_STAT + 1];
 extern int learn_spell[];
-extern char *restore_msg[7];
-extern char *statname[7];
-extern char *short_stat_name[7];
-extern char *lose_msg[7];
+extern char *restore_msg[NUM_STATS];
+extern char *statname[NUM_STATS];
+extern char *short_stat_name[NUM_STATS];
+extern char *lose_msg[NUM_STATS];
 extern float speed_bonus[MAX_STAT + 1];
 extern int weight_limit[MAX_STAT + 1];
 

@@ -7,7 +7,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2000 Mark Wedel
+    Copyright (C) 2002 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -24,7 +24,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to mwedel@scruz.net
+    The authors can be reached via e-mail at crossfire-devel@real-time.com
 */
 
 #define ALLOWED_COMBINATION
@@ -705,222 +705,251 @@ int get_magic(int diff) {
 void fix_generated_item (object *op, object *creator, int difficulty,
                          int max_magic, int flags)
 {
-  int was_magic = op->magic;
+    int was_magic = op->magic, num_enchantments=0, save_item_power;
 
-  if(!creator||creator->type==op->type) creator=op; /*safety & to prevent polymorphed 
-						     * objects giving attributes */ 
+    if(!creator||creator->type==op->type) creator=op; /*safety & to prevent polymorphed 
+							* objects giving attributes */ 
 
-  if (difficulty<1) difficulty=1;
-  if (op->arch == crown_arch) {
-    set_magic(difficulty>25?30:difficulty+5, op, max_magic, flags);
-    generate_artifact(op,difficulty);
-  } else {
-    if(!op->magic && max_magic)
-      set_magic(difficulty,op,max_magic, flags);
-    if ((!was_magic && !(RANDOM()%CHANCE_FOR_ARTIFACT)) || op->type == HORN ||
-	difficulty >= 999 )
-      generate_artifact(op, difficulty);
-  }
-  if (!op->title) /* Only modify object if not special */
-    switch(op->type) {
-    case WEAPON:
-    case ARMOUR:
-    case SHIELD:
-    case HELMET:
-    case CLOAK:
-      if (QUERY_FLAG(op, FLAG_CURSED) && !(RANDOM()%4))
-        set_ring_bonus(op, -DICE2);
-      break;
-    case BRACERS:
-      if(!(RANDOM()%(QUERY_FLAG(op, FLAG_CURSED)?5:20))) {
-        set_ring_bonus(op,QUERY_FLAG(op, FLAG_CURSED)?-DICE2:DICE2);
-        if (!QUERY_FLAG(op, FLAG_CURSED))
-          op->value*=3;
-      }
-      break;
-    case POTION: {
-	int too_many_tries=0,is_special=0;
+    /* If we make an artifact, this information will be destroyed */
+    save_item_power = op->item_power;
+    op->item_power = 0;
 
-	while(!(is_special=special_potion(op)) && !op->stats.sp) {
-	   generate_artifact(op,difficulty);
-	   if(too_many_tries++ > 10) break;
-	}
-	if(!is_special) { 
-	   int nrof_potion=spells[op->stats.sp].scrolls-RANDOM()%3;
-           /* these 'potions' have been generated as artifacts 
-	    * and therefore need a few adjustments 
-            */ 
-           /* give fewer potions than scrolls */
-           if(nrof_potion>0)
-              op->nrof=RANDOM()%(nrof_potion)+1;
-           /* value multiplier is same as for scrolls */
-           op->value=(op->value*spells[op->stats.sp].level)/
-                 (spells[op->stats.sp].level+4);
-	}
-	break; 
+    if (difficulty<1) difficulty=1;
+    if (op->arch == crown_arch) {
+	set_magic(difficulty>25?30:difficulty+5, op, max_magic, flags);
+	num_enchantments = calc_item_power(op, 1);
+	generate_artifact(op,difficulty);
+    } else {
+	if(!op->magic && max_magic)
+	    set_magic(difficulty,op,max_magic, flags);
+	num_enchantments = calc_item_power(op, 1);
+	if ((!was_magic && !(RANDOM()%CHANCE_FOR_ARTIFACT)) || op->type == HORN ||
+	    difficulty >= 999 )
+	generate_artifact(op, difficulty);
     }
-    case AMULET:
-      if(op->arch==amulet_arch)
-        op->value*=5; /* Since it's not just decoration */
-    case RING:
-      if(op->arch==NULL) {
-        remove_ob(op);
-        free_object(op);
-        op=NULL;
-        break;
-      }
-      if(op->arch!=ring_arch&&op->arch!=amulet_arch) /* It's a special artefact!*/
-        break;
-      if ( ! (flags & GT_ONLY_GOOD) && ! (RANDOM() % 3))
-        SET_FLAG(op, FLAG_CURSED);
-      set_ring_bonus(op,QUERY_FLAG(op, FLAG_CURSED)?-DICE2:DICE2);
-      if(op->type!=RING) /* Amulets have only one ability */
-        break;
-      if(!(RANDOM()%4)) {
-        int d=(RANDOM()%2 || QUERY_FLAG(op, FLAG_CURSED))?-DICE2:DICE2;
-        if(d>0)
-          op->value*=3;
-        set_ring_bonus(op,d);
-        if(!(RANDOM()%4)) {
-          int d=(RANDOM()%3 || QUERY_FLAG(op, FLAG_CURSED))?-DICE2:DICE2;
-          if(d>0)
-            op->value*=5;
-          set_ring_bonus(op,d);
-        }
-      }
-      if(GET_ANIM_ID(op))
-	SET_ANIMATION(op, RANDOM()%((int) NUM_ANIMATIONS(op)));
-      break;
-    case BOOK:
-      /* Is it an empty book?, if yes lets make a special 
-       * msg for it, and tailor its properties based on the 
-       * creator and/or map level we found it on.
-       */
-      if(!op->msg&&RANDOM()%10) { 
-	/* set the book level properly */
-	if(creator->level==0 || QUERY_FLAG(creator,FLAG_ALIVE)) {
-            if(op->map&&op->map->difficulty) 
-	      op->level=RANDOM()%(op->map->difficulty)+RANDOM()%10+1;
-            else
-	      op->level=RANDOM()%20+1;
-	} else 
-	    op->level=RANDOM()%creator->level;
-
-	tailor_readable_ob(op,(creator&&creator->stats.sp)?creator->stats.sp:-1);
-        /* books w/ info are worth more! */
-      	op->value*=((op->level>10?op->level:(op->level+1)/2)*((strlen(op->msg)/250)+1));
-	/* creator related stuff */
-	if(QUERY_FLAG(creator,FLAG_NO_PICK)) /* for library, chained books! */
-	    SET_FLAG(op,FLAG_NO_PICK);
-	if(creator->slaying&&!op->slaying) /* for check_inv floors */
-	    op->slaying = add_string(creator->slaying);
-
-	/* add exp so reading it gives xp (once)*/
-        op->stats.exp = op->value>10000?op->value/5:op->value/10;
-      }
-      break;
-    case SPELLBOOK:
-      if (op->slaying
-          && (op->stats.sp = look_up_spell_name (op->slaying)) >= 0)
-      {
-         free_string (op->slaying);
-         op->slaying = NULL;
-      }
-      else if(!strcmp(op->arch->name,"cleric_book")) 
-	 do { 
-	     do
-               op->stats.sp=RANDOM()%NROFREALSPELLS;
-	     while(RANDOM()%10>=spells[op->stats.sp].books); 
-	 } while (!spells[op->stats.sp].cleric);
-      else
-	 do {
-             do   
-               op->stats.sp=RANDOM()%NROFREALSPELLS;
-             while(RANDOM()%10>=spells[op->stats.sp].books);
-         } while (spells[op->stats.sp].cleric);
-
-      op->value=(op->value*spells[op->stats.sp].level)/
-                 (spells[op->stats.sp].level+4);
-      change_book(op,-1);
-
-      /* add exp so learning gives xp */
-      op->level = spells[op->stats.sp].level;
-      op->stats.exp = op->value;
-
-      break;
-    case WAND:
-      do 
-        op->stats.sp=RANDOM()%NROFREALSPELLS;
-      while (!spells[op->stats.sp].charges||
-             spells[op->stats.sp].level>DICESPELL);
-      if (spells[op->stats.sp].cleric)
-      { /* Make the wand into a staff */
-        short i = op->stats.sp;
-        if (staff_arch == NULL)
-          staff_arch = find_archetype("staff");
-        copy_object(&staff_arch->clone, op);
-        op->stats.sp = i;
-      }
-      op->stats.food=RANDOM()%spells[op->stats.sp].charges+1;
-      op->level = spells[op->stats.sp].level/2+ RANDOM()%difficulty + RANDOM()%difficulty;
-      if (op->level<1) op->level=1;
-      op->value=(op->value*spells[op->stats.sp].level)/
-                 (spells[op->stats.sp].level+4);
-      break;
-    case ROD:
-      if (op->stats.maxhp)
-        op->stats.maxhp += RANDOM()%op->stats.maxhp;
-      op->stats.hp = op->stats.maxhp;
-      do
-        op->stats.sp = RANDOM()%NROFREALSPELLS;
-      while (!spells[op->stats.sp].charges||
-             spells[op->stats.sp].sp > op->stats.maxhp ||
-             spells[op->stats.sp].level>DICESPELL);
-      op->level = spells[op->stats.sp].level/2+ RANDOM()%difficulty + RANDOM()%difficulty;
-      op->value=(op->value*op->stats.hp*spells[op->stats.sp].level)/
-                (spells[op->stats.sp].level+4);
-      break;
-    case SCROLL:
-      do
-        op->stats.sp=RANDOM()%NROFREALSPELLS;
-      while (!spells[op->stats.sp].scrolls||
-             spells[op->stats.sp].scroll_chance<=RANDOM()%10);
-      op->nrof=RANDOM()%spells[op->stats.sp].scrolls+1;
-      op->level = spells[op->stats.sp].level/2+ RANDOM()%difficulty +
-	 RANDOM()%difficulty;
-      if (op->level<1) op->level=1;
-      op->value=(op->value*spells[op->stats.sp].level)/
-                 (spells[op->stats.sp].level+4);
-
-      /* add exp so reading them properly gives xp */ 
-      op->stats.exp = op->value/5;
-
-      break;
-    case RUNE:
-      (*trap_adjust_func)(op,difficulty);
-      break;
+    /* Object was made an artifact.  Calculate its item_power rating.
+     * the item_power in the object is what the artfiact adds.
+     */
+    if (op->title) {
+	/* if save_item_power is set, then most likely we started with an
+	 * artifact and have added new abilities to it - this is rare, but
+	 * but I have seen things like 'strange rings of fire'.  So just figure
+	 * out the power from the base power plus what this one adds.  Note
+	 * that since item_power is not quite linear, this actually ends up
+	 * being somewhat of a bonus
+	 */
+	if (save_item_power) {
+	    op->item_power = save_item_power + get_power_from_ench(op->item_power);
+	} else {
+	    op->item_power = get_power_from_ench(op->item_power + num_enchantments);
+	}
+    } else if (save_item_power) {
+	/* restore the item_power field to the object if we haven't changed it.
+	 * we don't care about num_enchantments - that will basically just
+	 * have calculated some value from the base attributes of the archetype.
+	 */
+	op->item_power = save_item_power;
     }
-  if (op->type == POTION && special_potion(op)) {
-    /*if(op->face==blank_face) op->face = potion_face;*/
-    FREE_AND_COPY(op->name, "potion");
-    FREE_AND_COPY(op->name_pl, "potions");
+	
+    if (!op->title) /* Only modify object if not special */
+	switch(op->type) {
+	    case WEAPON:
+	    case ARMOUR:
+	    case SHIELD:
+	    case HELMET:
+	    case CLOAK:
+		if (QUERY_FLAG(op, FLAG_CURSED) && !(RANDOM()%4))
+		    set_ring_bonus(op, -DICE2);
+		break;
 
-    op->level = spells[op->stats.sp].level/2+ RANDOM()%difficulty + RANDOM()%difficulty;
-    if ( ! (flags & GT_ONLY_GOOD) && RANDOM() % 2)
-      SET_FLAG(op, FLAG_CURSED);
-  }
+	    case BRACERS:
+		if(!(RANDOM()%(QUERY_FLAG(op, FLAG_CURSED)?5:20))) {
+		    set_ring_bonus(op,QUERY_FLAG(op, FLAG_CURSED)?-DICE2:DICE2);
+		    if (!QUERY_FLAG(op, FLAG_CURSED))
+			op->value*=3;
+		}
+		break;
 
-  if (flags & GT_STARTEQUIP) {
-      if (op->nrof < 2 && op->type != CONTAINER
-          && op->type != MONEY && ! QUERY_FLAG (op, FLAG_IS_THROWN))
-          SET_FLAG (op, FLAG_STARTEQUIP);
-      else if (op->type != MONEY)
-          op->value = 0;
-  }
+	    case POTION: {
+		int too_many_tries=0,is_special=0;
 
-  if ( ! (flags & GT_ENVIRONMENT))
-    fix_flesh_item (op, creator);
+		while(!(is_special=special_potion(op)) && !op->stats.sp) {
+		    generate_artifact(op,difficulty);
+		    if(too_many_tries++ > 10) break;
+		}
+		if(!is_special) { 
+		    int nrof_potion=spells[op->stats.sp].scrolls-RANDOM()%3;
+		    /* these 'potions' have been generated as artifacts 
+		     * and therefore need a few adjustments 
+		     */ 
+		    /* give fewer potions than scrolls */
+		    if(nrof_potion>0)
+			op->nrof=RANDOM()%(nrof_potion)+1;
+		    /* value multiplier is same as for scrolls */
+		    op->value=(op->value*spells[op->stats.sp].level)/
+			(spells[op->stats.sp].level+4);
+		}
+		break; 		
+	    }
 
+	    case AMULET:
+		if(op->arch==amulet_arch)
+		    op->value*=5; /* Since it's not just decoration */
+
+	    case RING:
+		if(op->arch==NULL) {
+		    remove_ob(op);
+		    free_object(op);
+		    op=NULL;
+		    break;
+		}
+		if(op->arch!=ring_arch&&op->arch!=amulet_arch) /* It's a special artifact!*/
+		    break;
+
+		if ( ! (flags & GT_ONLY_GOOD) && ! (RANDOM() % 3))
+		    SET_FLAG(op, FLAG_CURSED);
+		set_ring_bonus(op,QUERY_FLAG(op, FLAG_CURSED)?-DICE2:DICE2);
+		if(op->type!=RING) /* Amulets have only one ability */
+		    break;
+		if(!(RANDOM()%4)) {
+		    int d=(RANDOM()%2 || QUERY_FLAG(op, FLAG_CURSED))?-DICE2:DICE2;
+		    if(d>0)
+			op->value*=3;
+		    set_ring_bonus(op,d);
+		    if(!(RANDOM()%4)) {
+			int d=(RANDOM()%3 || QUERY_FLAG(op, FLAG_CURSED))?-DICE2:DICE2;
+			if(d>0)
+			    op->value*=5;
+			set_ring_bonus(op,d);
+		    }
+		}
+		if(GET_ANIM_ID(op))
+		    SET_ANIMATION(op, RANDOM()%((int) NUM_ANIMATIONS(op)));
+		break;
+
+	    case BOOK:
+		/* Is it an empty book?, if yes lets make a special 
+		 * msg for it, and tailor its properties based on the 
+		 * creator and/or map level we found it on.
+		 */
+		if(!op->msg&&RANDOM()%10) { 
+		    /* set the book level properly */
+		    if(creator->level==0 || QUERY_FLAG(creator,FLAG_ALIVE)) {
+			if(op->map&&op->map->difficulty) 
+			    op->level=RANDOM()%(op->map->difficulty)+RANDOM()%10+1;
+			else
+			    op->level=RANDOM()%20+1;
+		    } else 
+			op->level=RANDOM()%creator->level;
+
+		    tailor_readable_ob(op,(creator&&creator->stats.sp)?creator->stats.sp:-1);
+		    /* books w/ info are worth more! */
+		    op->value*=((op->level>10?op->level:(op->level+1)/2)*((strlen(op->msg)/250)+1));
+		    /* creator related stuff */
+		    if(QUERY_FLAG(creator,FLAG_NO_PICK)) /* for library, chained books! */
+			SET_FLAG(op,FLAG_NO_PICK);
+		    if(creator->slaying&&!op->slaying) /* for check_inv floors */
+			op->slaying = add_string(creator->slaying);
+
+		    /* add exp so reading it gives xp (once)*/
+		    op->stats.exp = op->value>10000?op->value/5:op->value/10;
+		}
+		break;
+
+	    case SPELLBOOK:
+		if (op->slaying && (op->stats.sp = look_up_spell_name (op->slaying)) >= 0) {
+		    free_string (op->slaying);
+		    op->slaying = NULL;
+		}
+		else if(!strcmp(op->arch->name,"cleric_book")) 
+		    do { 
+			op->stats.sp=RANDOM()%NROFREALSPELLS;
+		    } while((RANDOM()%10>=spells[op->stats.sp].books) || !spells[op->stats.sp].cleric);
+		else do {
+		    op->stats.sp=RANDOM()%NROFREALSPELLS;
+		} while((RANDOM()%10>=spells[op->stats.sp].books) || spells[op->stats.sp].cleric);
+
+		op->value=(op->value*spells[op->stats.sp].level)/(spells[op->stats.sp].level+4);
+		change_book(op,-1);
+
+		/* add exp so learning gives xp */
+		op->level = spells[op->stats.sp].level;
+		op->stats.exp = op->value;
+		break;
+
+	    case WAND:
+		do 
+		    op->stats.sp=RANDOM()%NROFREALSPELLS;
+		while (!spells[op->stats.sp].charges|| spells[op->stats.sp].level>DICESPELL);
+
+		if (spells[op->stats.sp].cleric) {
+		    /* Make the wand into a staff */
+		    short i = op->stats.sp;
+		    if (staff_arch == NULL)
+			staff_arch = find_archetype("staff");
+		    copy_object(&staff_arch->clone, op);
+		    op->stats.sp = i;
+		}
+		op->stats.food=RANDOM()%spells[op->stats.sp].charges+1;
+		op->level = spells[op->stats.sp].level/2+ RANDOM()%difficulty + RANDOM()%difficulty;
+		if (op->level<1) op->level=1;
+		op->value=(op->value*spells[op->stats.sp].level)/ (spells[op->stats.sp].level+4);
+		break;
+
+	    case ROD:
+		if (op->stats.maxhp)
+		    op->stats.maxhp += RANDOM()%op->stats.maxhp;
+		op->stats.hp = op->stats.maxhp;
+		do
+		    op->stats.sp = RANDOM()%NROFREALSPELLS;
+		while (!spells[op->stats.sp].charges||
+		       spells[op->stats.sp].sp > op->stats.maxhp ||
+		       spells[op->stats.sp].level>DICESPELL);
+
+		op->level = spells[op->stats.sp].level/2+ RANDOM()%difficulty + RANDOM()%difficulty;
+		op->value=(op->value*op->stats.hp*spells[op->stats.sp].level)/
+		    (spells[op->stats.sp].level+4);
+		break;
+
+	    case SCROLL:
+		do
+		    op->stats.sp=RANDOM()%NROFREALSPELLS;
+		while (!spells[op->stats.sp].scrolls || spells[op->stats.sp].scroll_chance<=RANDOM()%10);
+
+		op->nrof=RANDOM()%spells[op->stats.sp].scrolls+1;
+		op->level = spells[op->stats.sp].level/2+ RANDOM()%difficulty + RANDOM()%difficulty;
+		if (op->level<1) op->level=1;
+		op->value=(op->value*spells[op->stats.sp].level)/ (spells[op->stats.sp].level+4);
+
+		/* add exp so reading them properly gives xp */ 
+		op->stats.exp = op->value/5;
+		break;
+
+	    case RUNE:
+		(*trap_adjust_func)(op,difficulty);
+		break;
+	} /* switch type */
+
+    if (op->type == POTION && special_potion(op)) {
+	/*if(op->face==blank_face) op->face = potion_face;*/
+	FREE_AND_COPY(op->name, "potion");
+	FREE_AND_COPY(op->name_pl, "potions");
+
+	op->level = spells[op->stats.sp].level/2+ RANDOM()%difficulty + RANDOM()%difficulty;
+	if ( ! (flags & GT_ONLY_GOOD) && RANDOM() % 2)
+	    SET_FLAG(op, FLAG_CURSED);
+    }
+
+    if (flags & GT_STARTEQUIP) {
+	if (op->nrof < 2 && op->type != CONTAINER
+	    && op->type != MONEY && ! QUERY_FLAG (op, FLAG_IS_THROWN))
+	    SET_FLAG (op, FLAG_STARTEQUIP);
+	else if (op->type != MONEY)
+	    op->value = 0;
+    }
+
+    if ( ! (flags & GT_ENVIRONMENT))
+	fix_flesh_item (op, creator);
 }
 
 /*
@@ -1250,6 +1279,12 @@ void add_abilities(object *op, object *change) {
   else
     op->level += change->level;
 
+  if (change->gen_sp_armour < 0)
+    op->gen_sp_armour = -(change->gen_sp_armour);
+  else
+    op->gen_sp_armour = (op->gen_sp_armour * (change->gen_sp_armour)) / 100;
+
+  op->item_power = change->item_power;
 
   for (i=0; i<NROFATTACKS; i++) {
     if (change->resist[i]) {
@@ -1283,11 +1318,11 @@ void add_abilities(object *op, object *change) {
     else
       op->last_sp = (signed char) (((int)op->last_sp * (int)change->last_sp) / (int) 100);
   }
-  if (change->last_heal) {
-    if (change->last_heal < 0)
-      op->last_heal = (-change->last_heal);
+  if (change->gen_sp_armour) {
+    if (change->gen_sp_armour < 0)
+      op->gen_sp_armour = (-change->gen_sp_armour);
     else
-      op->last_heal = (signed char) (((int)op->last_heal * ((int)change->last_heal))
+      op->gen_sp_armour = (signed char) (((int)op->gen_sp_armour * ((int)change->gen_sp_armour))
                       / (int)100);
   }
   op->value *= change->value;
@@ -1376,7 +1411,7 @@ void give_artifact_abilities(object *op, object *artifct) {
     char identified = QUERY_FLAG(op, FLAG_IDENTIFIED);
     SET_FLAG(op, FLAG_IDENTIFIED);
     LOG(llevDebug, "Generated artifact %s %s [%s]\n",
-      op->name, op->title, describe_item(op));
+      op->name, op->title, describe_item(op, NULL));
     if (!identified)
 	  CLEAR_FLAG(op, FLAG_IDENTIFIED);
   }

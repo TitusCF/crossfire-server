@@ -41,16 +41,6 @@
 /* need math lib for double-precision and pow() in dragon_eat_flesh() */
 #include <math.h>
 
-#if defined(vax) || defined(ibm032)
-size_t strftime(char *, size_t, const char *, const struct tm *);
-time_t mktime(struct tm *);
-#endif
-
-void draw_find(object *op, object *find) {
-  new_draw_info_format(NDI_UNIQUE, 0, op, "You find %s in the chest.",
-	query_name(find));
-}
-
 /*
  * Return value: 1 if money was destroyed, 0 if not.
  */
@@ -78,7 +68,7 @@ static int apply_id_altar (object *money, object *altar, object *pl)
 	if (operate_altar (altar, &money)) {
 	    identify (marked);
 	    new_draw_info_format(NDI_UNIQUE, 0, pl,
-		"You have %s.", long_desc(marked));
+		"You have %s.", long_desc(marked, pl));
             if (marked->msg) {
 	        new_draw_info(NDI_UNIQUE, 0,pl, "The item has a story:");
 	        new_draw_info(NDI_UNIQUE, 0,pl, marked->msg);
@@ -93,7 +83,7 @@ static int apply_id_altar (object *money, object *altar, object *pl)
 		if (operate_altar(altar,&money)) {
 		    identify(id);
 		    new_draw_info_format(NDI_UNIQUE, 0, pl,
-			"You have %s.", long_desc(id));
+			"You have %s.", long_desc(id, pl));
 	            if (id->msg) {
 		        new_draw_info(NDI_UNIQUE, 0,pl, "The item has a story:");
 		        new_draw_info(NDI_UNIQUE, 0,pl, id->msg);
@@ -117,12 +107,6 @@ int apply_potion(object *op, object *tmp)
 {
     int got_one=0,i;
     object *force;
-
-#if 0
-   /* we now need this to happen */
-    if(op->type!=PLAYER)
-      return 0; /* This might change */
-#endif
 
     if(op->type==PLAYER) { 
       if (!QUERY_FLAG(tmp, FLAG_IDENTIFIED))
@@ -496,6 +480,7 @@ int improve_weapon(object *op,object *improver,object *weapon)
 	new_draw_info_format(NDI_UNIQUE, 0, op,
 	    "Damage has been increased by 5 to %d", weapon->stats.dam);
 	weapon->last_eat++;
+	weapon->item_power++;
 	decrease_ob(improver);
 	return 1;
   }
@@ -507,6 +492,7 @@ int improve_weapon(object *op,object *improver,object *weapon)
 		"Weapon weight reduced to %6.1f kg",
 		(float)weapon->weight/1000.0);
 	weapon->last_eat++;
+	weapon->item_power++;
 	decrease_ob(improver);
 	return 1;
   }
@@ -516,6 +502,7 @@ int improve_weapon(object *op,object *improver,object *weapon)
 	new_draw_info_format(NDI_UNIQUE, 0, op
 		,"Weapon magic increased to %d",weapon->magic);
 	decrease_ob(improver);
+	weapon->item_power++;
 	return 1;
   }
 
@@ -534,6 +521,7 @@ int improve_weapon(object *op,object *improver,object *weapon)
 	return 0;
   }
   eat_item(op,improver->slaying);
+  weapon->item_power++;
 
   switch (improver->stats.sp) {
    case IMPROVE_STR:
@@ -633,6 +621,7 @@ int improve_armour(object *op, object *improver, object *armour)
         new_draw_info(NDI_UNIQUE, 0,op,"cannot be further improved.");
     } 
     armour->magic++;
+    armour->item_power++;
     if (op->type == PLAYER) {
         esrv_send_item(op, armour);
         if(QUERY_FLAG(armour, FLAG_APPLIED))
@@ -952,40 +941,6 @@ int esrv_apply_container (object *op, object *sack)
 	}
     }
     return 1;
-}
-
-
-/*
- * Returns pointer a static string containing gravestone text
- */
-char *gravestone_text (object *op)
-{
-    static char buf2[MAX_BUF];
-    char buf[MAX_BUF];
-    time_t now = time (NULL);
-
-    strcpy (buf2, "                 R.I.P.\n\n");
-    if (op->type == PLAYER)
-        sprintf (buf, "%s the %s\n", op->name, op->contr->title);
-    else
-        sprintf (buf, "%s\n", op->name);
-    strncat (buf2, "                    ",  20 - strlen (buf) / 2);
-    strcat (buf2, buf);
-    if (op->type == PLAYER)
-        sprintf (buf, "who was in level %d when killed\n", op->level);
-    else
-        sprintf (buf, "who was in level %d when died.\n\n", op->level);
-    strncat (buf2, "                    ",  20 - strlen (buf) / 2);
-    strcat (buf2, buf);
-    if (op->type == PLAYER) {
-        sprintf (buf, "by %s.\n\n", op->contr->killer);
-        strncat (buf2, "                    ",  21 - strlen (buf) / 2);
-        strcat (buf2, buf);
-    }
-    strftime (buf, MAX_BUF, "%b %d %Y\n", localtime (&now));
-    strncat (buf2, "                    ",  20 - strlen (buf) / 2);
-    strcat (buf2, buf);
-    return buf2;
 }
 
 
@@ -1687,10 +1642,11 @@ static void apply_spellbook (object *op, object *tmp)
 }
 
 
-static void apply_scroll (object *op, object *tmp)
+void apply_scroll (object *op, object *tmp, int dir)
 {
     int scroll_spell=tmp->stats.sp, old_spell=0;
     rangetype old_shoot=range_none;
+    char buf[MAX_BUF];
 
     if(QUERY_FLAG(op, FLAG_BLIND)&&!QUERY_FLAG(op,FLAG_WIZ)) {
       new_draw_info(NDI_UNIQUE, 0,op, "You are unable to read while blind.");
@@ -1698,7 +1654,7 @@ static void apply_scroll (object *op, object *tmp)
     }
 
     if (!QUERY_FLAG(tmp, FLAG_IDENTIFIED)) 
-      identify(tmp);
+	identify(tmp);
 
     if( scroll_spell < 0 || scroll_spell >= NROFREALSPELLS) {
         new_draw_info (NDI_UNIQUE, 0, op,
@@ -1733,26 +1689,23 @@ static void apply_scroll (object *op, object *tmp)
         CLEAR_FLAG(tmp,FLAG_APPLIED);
         old_shoot= op->contr->shoottype;
         old_spell = op->contr->chosen_spell;
-        op->contr->shoottype=range_scroll;
+        op->contr->shoottype=range_golem;
         op->contr->chosen_spell = scroll_spell;
     }
 
     new_draw_info_format(NDI_BLACK, 0, op,
         "The scroll of %s turns to dust.", spells[tmp->stats.sp].name);
-    {
-      char buf[MAX_BUF];
 
-      sprintf(buf, "%s reads a scroll of %s.",op->name,spells[tmp->stats.sp].name);
-      new_info_map(NDI_ORANGE, op->map, buf);
-    }
+    /* Not sure if there is a reason to inform everyone on the map of this, but whatever */
+    sprintf(buf, "%s reads a scroll of %s.",op->name,spells[tmp->stats.sp].name);
+    new_info_map(NDI_ORANGE, op->map, buf);
 
-    cast_spell(op,tmp,0,scroll_spell,0,spellScroll,NULL);
+    cast_spell(op,tmp,dir,scroll_spell,0,spellScroll,NULL);
     decrease_ob(tmp);
-    if(op->type==PLAYER) {
-      if(op->contr->golem==NULL) {
+
+    if(op->type==PLAYER && op->contr->golem==NULL) {
         op->contr->shoottype=old_shoot;
 	op->contr->chosen_spell = old_spell;
-      }
     }
 }
 
@@ -1776,7 +1729,8 @@ static void apply_treasure (object *op, object *tmp)
     }
     do {
       remove_ob(treas);
-      draw_find(op,treas);
+      new_draw_info_format(NDI_UNIQUE, 0, op, "You find %s in the chest.",
+			   query_name(treas));
       treas->x=op->x,treas->y=op->y;
       treas = insert_ob_in_map (treas, op->map, op,0);
       if (treas && treas->type == RUNE && treas->level
@@ -1789,18 +1743,6 @@ static void apply_treasure (object *op, object *tmp)
     if ( ! was_destroyed (tmp, tmp_tag) && tmp->inv == NULL)
       decrease_ob (tmp);
 
-#if 0
-    /* Can't rely on insert_ob_in_map to do any restacking,
-     * so lets disable this.
-     */
-    if ( ! was_destroyed (op, op_tag)) {
-      /* Done to re-stack map with player on top? */
-      SET_FLAG (op, FLAG_NO_APPLY);
-      remove_ob (op);
-      insert_ob_in_map (op, op->map, NULL,0);
-      CLEAR_FLAG (op, FLAG_NO_APPLY);
-    }
-#endif
 }
 
 
@@ -1883,9 +1825,6 @@ int dragon_eat_flesh(object *op, object *meal) {
   int atnr_winner[NROFATTACKS]; /* winning candidates for resistance improvement */
   int winners=0;                /* number of winners */
   int i;                        /* index */
-  
-  /* this really sucks! MAXLEVEL is only defined in common/living */
-  int MAXLEVEL = 110;
   
   /* let's make sure and doublecheck the parameters */
   if (meal->type!=FLESH || !is_dragon_pl(op))
@@ -2023,7 +1962,6 @@ static void apply_savebed (object *pl)
     }
     remove_ob(pl);
     pl->direction=0;
-    pl->contr->count_left=0;
     new_draw_info_format(NDI_UNIQUE | NDI_ALL, 5, pl,
 	"%s leaves the game.",pl->name);
     
@@ -2089,19 +2027,19 @@ extern void apply_poison (object *op, object *tmp)
     decrease_ob(tmp);
 }
 
-   /* is_legal_2ways_exit (object* op, object *exit)
-    * this fonction return true if the exit
-    * is not a 2 ways one or it is 2 ways, valid exit.
-    * A valid 2 way exit means:
-    *   -You can come back (there is another exit at the other side)
-    *   -You are
-    *         ° the owner of the exit
-    *         ° or in the same party as the owner
-    *
-    * Note: a owner in a 2 way exit is saved as the owner's name
-    * in the field exit->name cause the field exit->owner doesn't
-    * survive in the swapping (in fact the whole exit doesn't survive).
-    */
+/* is_legal_2ways_exit (object* op, object *exit)
+ * this fonction return true if the exit
+ * is not a 2 ways one or it is 2 ways, valid exit.
+ * A valid 2 way exit means:
+ *   -You can come back (there is another exit at the other side)
+ *   -You are
+ *         ° the owner of the exit
+ *         ° or in the same party as the owner
+ *
+ * Note: a owner in a 2 way exit is saved as the owner's name
+ * in the field exit->name cause the field exit->owner doesn't
+ * survive in the swapping (in fact the whole exit doesn't survive).
+ */
  int is_legal_2ways_exit (object* op, object *exit)
    {
    object * tmp;
@@ -2272,7 +2210,7 @@ int manual_apply (object *op, object *tmp, int aflag)
     return 0;
 
   case SCROLL:
-    apply_scroll (op, tmp);
+    apply_scroll (op, tmp, 0);
     return 1;
 
   case POTION:
@@ -2483,9 +2421,331 @@ void player_apply_below (object *pl)
     }
 }
 
+/* Break this out of apply_special - this is just done
+ * to keep the size of apply_special to a more managable size.
+ */
+static int unapply_special (object *who, object *op, int aflags)
+{
+    char buf[HUGE_BUF];
 
-/* who is the object using the object.
- * op is the object they are using.
+    buf[0]='\0';	    /* Needs to be initialized */
+
+
+    CLEAR_FLAG(op, FLAG_APPLIED);
+    switch(op->type) {
+	case WEAPON:
+	    (void) change_abil (who,op);
+	    /* 'unready' melee weapons skill if it is current skill */
+	    (void) check_skill_to_apply(who,op);
+	    if(QUERY_FLAG(who,FLAG_READY_WEAPON))
+		CLEAR_FLAG(who,FLAG_READY_WEAPON);
+	    /* GROS: update the current_weapon_script field (used with script_attack for weapons) */
+	    who->current_weapon_script = NULL;
+	    who->current_weapon = NULL;
+	    sprintf(buf,"You unwield %s.",query_name(op));
+	    break;
+
+	case SKILL:         /* allows objects to impart skills */
+	    if (op != who->chosen_skill) {
+		LOG (llevError, "BUG: apply_special(): applied skill is not a chosen skill\n");
+	    }
+	    if (who->type==PLAYER) {
+		who->contr->shoottype = range_none;
+		if ( ! op->invisible) {
+		    /* its a tool, need to unlink it */
+		    unlink_skill (op);
+		    new_draw_info_format (NDI_UNIQUE, 0, who,
+                                    "You stop using the %s.", query_name(op));
+		    new_draw_info_format (NDI_UNIQUE, 0, who,
+                                    "You can no longer use the skill: %s.",
+                                    skills[op->stats.sp].name);
+		}
+	    }
+	    (void) change_abil (who, op);
+	    who->chosen_skill = NULL;
+	    CLEAR_FLAG (who, FLAG_READY_SKILL);
+	    buf[0] = '\0';
+	    break;
+
+	case ARMOUR:
+	case HELMET:
+	case SHIELD:
+	case RING:
+	case BOOTS:
+	case GLOVES:
+	case AMULET:
+	case GIRDLE:
+	case BRACERS:
+	case CLOAK:
+	    (void) change_abil (who,op);
+	    sprintf(buf,"You unwear %s.",query_name(op));
+	    break;
+
+	case BOW:
+	case WAND:
+	case ROD:
+	case HORN:
+	    (void) check_skill_to_apply(who,op);
+	    sprintf(buf,"You unready %s.",query_name(op));
+	    if(who->type==PLAYER) {
+		who->contr->shoottype = range_none;
+	    } else {
+		if (op->type == BOW)
+		    CLEAR_FLAG (who, FLAG_READY_BOW);
+		else 
+		    CLEAR_FLAG(who, FLAG_READY_RANGE);
+	    }
+	    break;
+
+	default:
+	    sprintf(buf,"You unapply %s.",query_name(op));
+	    break;
+    }
+    if (buf[0] != '\0')
+	new_draw_info(NDI_UNIQUE, 0,who,buf);
+
+    fix_player(who);
+
+    if ( ! (aflags & AP_NO_MERGE)) {
+	object *tmp;
+
+        tag_t del_tag = op->count;
+        tmp = merge_ob (op, NULL);
+        if (who->type == PLAYER) {
+            if (tmp) {  /* it was merged */
+                esrv_del_item (who->contr, del_tag);
+                op = tmp;
+            }
+            esrv_send_item (who, op);
+	}
+    }
+    return 0;
+}
+
+/* Returns the object that is using location 'loc'.
+ * Note that 'start' is the first object to start examing - we
+ * then go through the below of this.  In this way, you can do
+ * something like:
+ * tmp = get_item_from_body_location(who->inv, 1);
+ * if (tmp) tmp1 = get_item_from_body_location(tmp->below, 1);
+ * to find the second object that may use this location, etc.
+ * Returns NULL if no match is found.
+ * loc is the index into the array we are looking for a match.
+ * don't return invisible objects unless they are skill objects
+ * invisible other objects that use
+ * up body locations can be used as restrictions.
+ */
+object *get_item_from_body_location(object *start, int loc)
+{
+    object *tmp;
+
+    if (!start) return NULL;
+
+    for (tmp=start; tmp; tmp=tmp->below)
+	if (QUERY_FLAG(tmp, FLAG_APPLIED) && tmp->body_info[loc] && 
+	    (!tmp->invisible || tmp->type==SKILL)) return tmp;
+
+    return NULL;
+}
+
+
+
+/* Object who wants to apply 'op', but can because
+ * of other equipment.  This should only be called when it is known
+ * that there are objects to unapply.  This makes pretty heavy
+ * use of get_item_from_body_location.  It makes no intelligent choice
+ * on objects - rather, the first that is matched is used.
+ * Returns 0 on success, returns 1 if there is some problem.
+ * if aflags is AP_PRINT, we instead print out waht to unapply
+ * instead of doing it.  This is a lot less code than having
+ * another function that does just that.
+ */
+int unapply_for_ob(object *who, object *op, int aflags)
+{
+    int i;
+    object *tmp=NULL, *last;
+
+    /* If we are applying a shield or weapon, unapply any equipped shield
+     * or weapons first - only allowed to use one weapon/shield at a time.
+     */
+    if (op->type == WEAPON || op->type == SHIELD) {
+        for (tmp=who->inv; tmp; tmp=tmp->below) {
+	    if (QUERY_FLAG(tmp, FLAG_APPLIED) && tmp->type == op->type) {
+		if ((aflags & AP_IGNORE_CURSE) ||  (aflags & AP_PRINT) ||
+		    (!(QUERY_FLAG(op, FLAG_CURSED) && !QUERY_FLAG(tmp, FLAG_DAMNED)))) {
+		    if (aflags & AP_PRINT) 
+			new_draw_info(NDI_UNIQUE, 0, who, query_name(tmp));
+		    else
+			unapply_special(who, tmp, aflags);
+		}
+	    }
+	}
+    }
+
+    for (i=0; i<NUM_BODY_LOCATIONS; i++) {
+	/* this used up a slot that we need to free */
+	if (op->body_info[i]) {
+	    last = who->inv;
+
+	    /* We do a while loop - may need to remove several items in order
+	     * to free up enough slots.
+	     */
+	    while ((who->body_used[i] + op->body_info[i]) < 0) {
+		tmp = get_item_from_body_location(last, i);
+		if (!tmp) {
+		    LOG(llevError,"Can't find object using location %d (%s) on %s\n", 
+			i, body_locations[i].save_name, who->name);
+		    return 1;
+		}
+		/* If we are just printing, we don't care about cursed status */
+		if ((aflags & AP_IGNORE_CURSE) ||  (aflags & AP_PRINT) ||
+		    (!(QUERY_FLAG(tmp, FLAG_CURSED) && !QUERY_FLAG(tmp, FLAG_DAMNED)))) {
+		    if (aflags & AP_PRINT) 
+			new_draw_info(NDI_UNIQUE, 0, who, query_name(tmp));
+		    else
+			unapply_special(who, tmp, aflags);
+		    last = tmp->below;
+		}
+	    }
+	    /* if we got here, this slot is freed up - otherwise, if it wasn't freed up, the
+	     * return in the !tmp would have kicked in.
+	     */
+	} /* if op is using this body location */
+    } /* for body lcoations */
+    return 0;
+}
+
+/* checks to see of 'who' can apply object 'op'.
+ * Returns 0 if apply can be done without anything special.
+ * Otherwise returns a bitmask - potentially several of these may be
+ * set, but largely depends on circumstance - in the future, processing
+ * may be  pruned once we know some status (eg, once CAN_APPLY_NEVER
+ * is set, do we really are what the other flags may be?)
+ *
+ * See include/define.h for detailed description of the meaning of
+ * these return values.
+ */
+int can_apply_object(object *who, object *op)
+{
+    int i, retval=0;
+    object *tmp=NULL, *ws=NULL;
+
+    /* Players have 2 'arm's, so they could in theory equip 2 shields or
+     * 2 weapons, but we don't want to let them do that.  So if they are
+     * trying to equip a weapon or shield, see if they already have one
+     * in place and store that way.
+     */
+    if (op->type == WEAPON || op->type == SHIELD) {
+        for (tmp=who->inv; tmp && !ws; tmp=tmp->below) {
+	    if (QUERY_FLAG(tmp, FLAG_APPLIED) && tmp->type == op->type) {
+		retval = CAN_APPLY_UNAPPLY;
+		ws = tmp;
+	    }
+	}
+    }
+	
+
+    for (i=0; i<NUM_BODY_LOCATIONS; i++) {
+	if (op->body_info[i]) {
+	    /* Item uses more slots than we have */
+	    if (FABS(op->body_info[i]) > who->body_info[i]) {
+		/* Could return now for efficiently - rest of info below isn'
+		 * really needed.
+		 */
+		retval |= CAN_APPLY_NEVER;
+	    } else if ((who->body_used[i] + op->body_info[i]) < 0) {
+		/* in this case, equipping this would use more free spots than
+		 * we have.
+		 */
+		object *tmp1;
+
+
+		/* if we have an applied weapon/shield, and unapply it would free
+		 * enough slots to equip the new item, then just set this can
+		 * continue.  We don't care about the logic below - if you have
+		 * shield equipped and try to equip another shield, there is only
+		 * one choice.  However, the check for the number of body locations 
+		 * does take into the account cases where what is being applied
+		 * may be two handed for example.
+		 */
+		if (ws) {
+		    if ((who->body_used[i] - ws->body_info[i] + op->body_info[i]) >=0) {
+			retval |= CAN_APPLY_UNAPPLY;
+			continue;
+		    }
+		}
+
+		tmp1 = get_item_from_body_location(who->inv, i);
+		if (!tmp1) {
+		    LOG(llevError,"Can't find object using location %d on %s\n",
+			i, who->name);
+		    retval |= CAN_APPLY_NEVER;
+		} else {
+		    /* need to unapply something.  However, if this something
+		     * is different than we had found before, it means they need
+		     * to apply multiple objects
+		     */
+		    retval |= CAN_APPLY_UNAPPLY;
+		    if (!tmp) tmp = tmp1;
+		    else if (tmp != tmp1) {
+			retval |= CAN_APPLY_UNAPPLY_MULT;
+		    }
+		    /* This object isn't using up all the slots, so there must
+		     * be another.
+		     */
+		    if ((who->body_used[i] - tmp1->body_info[i]) != who->body_info[i])
+			retval |= CAN_APPLY_UNAPPLY_CHOICE;
+
+		    /* Does unequippint 'tmp1' free up enough slots for this to be
+		     * equipped?  If not, there must be something else to unapply.
+		     */
+		    if ((who->body_used[i] + op->body_info[i] - tmp1->body_info[i]) < 0)
+			retval |= CAN_APPLY_UNAPPLY_MULT;
+
+		}
+	    } /* if not enough free slots */
+	} /* if this object uses location i */
+    } /* for i -> num_body_locations loop */
+
+    /* Note that we don't check for FLAG_USE_ARMOUR - that should
+     * really be controlled by use of body locations.  We do have
+     * the weapon/shield checks, and the range checks for monsters,
+     * because you can't control those just by body location - bows, shields,
+     * and weapons all use the same slot.  Similar for horn/rod/wand - they
+     * all use the same location.
+     */
+    if (op->type == WEAPON && !QUERY_FLAG(who,FLAG_USE_WEAPON))
+	retval |= CAN_APPLY_RESTRICTION;
+    if (op->type == SHIELD && !QUERY_FLAG(who,FLAG_USE_SHIELD))
+	retval |= CAN_APPLY_RESTRICTION;
+
+
+    if (who->type != PLAYER) {
+	if ((op->type == WAND || op->type == HORN || op->type==ROD)
+	    && !QUERY_FLAG(who, FLAG_USE_RANGE))
+		retval |= CAN_APPLY_RESTRICTION;
+	if (op->type == BOW && !QUERY_FLAG(who, FLAG_USE_BOW))
+	    retval |= CAN_APPLY_RESTRICTION;
+	if (op->type == RING && !QUERY_FLAG(who, FLAG_USE_RING))
+	    retval |= CAN_APPLY_RESTRICTION;
+	if (op->type == BOW && !QUERY_FLAG(who, FLAG_USE_BOW))
+	    retval |= CAN_APPLY_RESTRICTION;
+    }
+    return retval;
+}
+
+		
+
+/* who is the object using the object.  It can be a monster
+ * op is the object they are using.  op is an equipment type item,
+ * eg, one which you put on and keep on for a while, and not something
+ * like a potion or scroll.
+ *
+ * function returns 1 if the action could not be completed, 0 on
+ * success.  However, success is a matter of meaning - if the
+ * user passes the 'apply' flag to an object already applied,
+ * nothing is done, and 0 is returned.
+ *
  * aflags is special flags (0 - normal/toggle, AP_APPLY=always apply,
  * AP_UNAPPLY=always unapply).
  *
@@ -2498,303 +2758,225 @@ void player_apply_below (object *pl)
  * apply_special() doesn't check for unpaid items.
  */
 int apply_special (object *who, object *op, int aflags)
-{ /* wear/wield */
-  int basic_flag = aflags & AP_BASIC_FLAGS;
-  object *tmp;
-  char buf[HUGE_BUF];
-  int i;
+{
+    int basic_flag = aflags & AP_BASIC_FLAGS;
+    object *tmp;
+    char buf[HUGE_BUF];
+    int i;
 
-  if(who==NULL) {
-    LOG(llevError,"apply_special() from object without environment.\n");
-    return 1;
-  }
-
-  if(op->env!=who)
-    return 1;   /* op is not in inventory */
-
-  buf[0]='\0';	    /* Needs to be initialized */
-  if (QUERY_FLAG(op,FLAG_APPLIED)) {
-    /* always apply, so no reason to unapply */
-    if (basic_flag == AP_APPLY) return 0;
-    if ( ! (aflags & AP_IGNORE_CURSE)
-        && (QUERY_FLAG(op, FLAG_CURSED) || QUERY_FLAG(op, FLAG_DAMNED)))
-    {
-      new_draw_info_format(NDI_UNIQUE, 0, who,
-	"No matter how hard you try, you just can't\nremove %s.",
-	      query_name(op));
-      return 1;
-    }
-    CLEAR_FLAG(op, FLAG_APPLIED);
-    switch(op->type) {
-    case WEAPON:
-      (void) change_abil (who,op);
-      /* 'unready' melee weapons skill if it is current skill */
-      (void) check_skill_to_apply(who,op);
-      if(QUERY_FLAG(who,FLAG_READY_WEAPON))
-		CLEAR_FLAG(who,FLAG_READY_WEAPON);
-      /* GROS: update the current_weapon_script field (used with script_attack for weapons) */
-      who->current_weapon_script = NULL;
-      who->current_weapon = NULL;
-      sprintf(buf,"You unwield %s.",query_name(op));
-      break;
-
-    case SKILL:         /* allows objects to impart skills */
-      if (op != who->chosen_skill) {
-          LOG (llevError, "BUG: apply_special(): applied skill is not "
-               "chosen skill\n");
-      }
-      if (who->type==PLAYER) {
-          who->contr->shoottype = range_none;
-          who->contr->last_value = -1;
-          if ( ! op->invisible) {
-              /* its a tool, need to unlink it */
-              unlink_skill (op);
-              new_draw_info_format (NDI_UNIQUE, 0, who,
-                                    "You stop using the %s.", query_name(op));
-              new_draw_info_format (NDI_UNIQUE, 0, who,
-                                    "You can no longer use the skill: %s.",
-                                    skills[op->stats.sp].name);
-	  }
-      }
-      (void) change_abil (who, op);
-      who->chosen_skill = NULL;
-      CLEAR_FLAG (who, FLAG_READY_SKILL);
-      buf[0] = '\0';
-      break;
-
-    case ARMOUR:
-    case HELMET:
-    case SHIELD:
-    case RING:
-    case BOOTS:
-    case GLOVES:
-    case AMULET:
-    case GIRDLE:
-    case BRACERS:
-    case CLOAK:
-      (void) change_abil (who,op);
-      sprintf(buf,"You unwear %s.",query_name(op));
-      break;
-    case BOW:
-    case WAND:
-    case ROD:
-    case HORN:
-      (void) check_skill_to_apply(who,op);
-      sprintf(buf,"You unready %s.",query_name(op));
-      if(who->type==PLAYER) {
-        who->contr->shoottype = range_none;
-        who->contr->last_value = -1;
-      } else {
-        switch (op->type) {
-          case WAND: CLEAR_FLAG (who, FLAG_READY_WAND); break;
-          case ROD:  CLEAR_FLAG (who, FLAG_READY_ROD); break;
-          case HORN: CLEAR_FLAG (who, FLAG_READY_HORN); break;
-          case BOW:  CLEAR_FLAG (who, FLAG_READY_BOW); break;
-        }
-      }
-      break;
-    default:
-      sprintf(buf,"You unapply %s.",query_name(op));
-      break;
-    }
-    if (buf[0] != '\0')
-      new_draw_info(NDI_UNIQUE, 0,who,buf);
-    fix_player(who);
-
-    if ( ! (aflags & AP_NO_MERGE)) {
-        tag_t del_tag = op->count;
-        tmp = merge_ob (op, NULL);
-        if (who->type == PLAYER) {
-            if (tmp) {  /* it was merged */
-                esrv_del_item (who->contr, del_tag);
-                op = tmp;
-            }
-            esrv_send_item (who, op);
-        }
-    }
-
-    return 0;
-  }
-  if (basic_flag == AP_UNAPPLY) return 0;
-  i=0;
-  /* This goes through and checks to see if the player already has something
-   * of that type applied - if so, unapply it.
-   */
-  for(tmp=who->inv;tmp!=NULL;tmp=tmp->below)
-    if(tmp->type==op->type&&QUERY_FLAG(tmp, FLAG_APPLIED)&&tmp!=op) {
-      if(tmp->type==RING&&!i)
-        i=1;
-      else if(apply_special(who,tmp,0))
-        return 1;
-    }
-  if(op->nrof > 1)
-    tmp = get_split_ob(op,op->nrof - 1);
-  else
-    tmp = NULL;
-  switch(op->type) {
-  case WEAPON: {
-
-    if(!QUERY_FLAG(who,FLAG_USE_WEAPON)) {
-      sprintf(buf,"You can't use %s.",query_name(op));
-      if(tmp!=NULL)
-        (void) insert_ob_in_ob(tmp,who);
-      new_draw_info(NDI_UNIQUE, 0,who,buf);
-      return 1;
-    }
-    if (!check_weapon_power(who, op->last_eat)) {
-      new_draw_info(NDI_UNIQUE, 0,who,
-		    "That weapon is too powerful for you to use.");
-      new_draw_info(NDI_UNIQUE, 0, who,	"It would consume your soul!.");
-      if(tmp!=NULL)
-        (void) insert_ob_in_ob(tmp,who);
-      return 1;
-      }
-    if( op->level &&  (strncmp(op->name,who->name,strlen(who->name)))) {
-	/* if the weapon does not have the name as the character, can't use it. */
-	/*		(Ragnarok's sword attempted to be used by Foo: won't work) */
-	new_draw_info(NDI_UNIQUE, 0,who,"The weapon does not recognize you as its owner.");
-        if(tmp!=NULL)
-          (void) insert_ob_in_ob(tmp,who);
+    if(who==NULL) {
+	LOG(llevError,"apply_special() from object without environment.\n");
 	return 1;
+    }
+
+    if(op->env!=who)
+	return 1;   /* op is not in inventory */
+
+    /* trying to unequip op */
+    if (QUERY_FLAG(op,FLAG_APPLIED)) {
+	/* always apply, so no reason to unapply */
+	if (basic_flag == AP_APPLY) return 0;
+
+	if ( ! (aflags & AP_IGNORE_CURSE)
+	    && (QUERY_FLAG(op, FLAG_CURSED) || QUERY_FLAG(op, FLAG_DAMNED))) {
+	    new_draw_info_format(NDI_UNIQUE, 0, who,
+				 "No matter how hard you try, you just can't\nremove %s.",
+				 query_name(op));
+	    return 1;
 	}
+	return unapply_special(who, op, aflags);
+    }
 
+    if (basic_flag == AP_UNAPPLY) return 0;
 
-    SET_FLAG(op, FLAG_APPLIED);
+    i = can_apply_object(who, op);
 
-	/* check for melee weapons skill, alter player status.
-	 * Note that we need to call this *before* change_abil */
-    if(!check_skill_to_apply(who,op)) return 1;
-    if(!QUERY_FLAG(who,FLAG_READY_WEAPON))
-         SET_FLAG(who, FLAG_READY_WEAPON);
+    /* Somewhere around here the item_power check should be done */
 
-    (void) change_abil (who,op);
+    /* Can't just apply this object.  Lets see what not and what to do */
+    if (i) {
+	if (i & CAN_APPLY_NEVER) {
+	    new_draw_info_format(NDI_UNIQUE, 0, who, "You don't have the body to use a %s\n", query_name(op));
+	    return 1;
+	} else if (i & CAN_APPLY_RESTRICTION) {
+	    new_draw_info_format(NDI_UNIQUE, 0, who, "You have a prohibition against using a %s\n", query_name(op));
+	    return 1;
+	}
+	if (who->type != PLAYER) {
+	    /* Some error, so don't try to equip something more */
+	    if (unapply_for_ob(who, op, aflags)) return 1;
+	} else {
+	    if (who->contr->unapply == unapply_never || 
+		(i & CAN_APPLY_UNAPPLY_CHOICE && who->contr->unapply == unapply_nochoice)) {
+		new_draw_info(NDI_UNIQUE, 0, who, "You need to unapply some item(s):");
+		unapply_for_ob(who, op, AP_PRINT);
+		return 1;
+	    }
+	    else if (who->contr->unapply == unapply_always || !(i & CAN_APPLY_UNAPPLY_CHOICE)) {
+		i = unapply_for_ob(who, op, aflags);
+		if (i) return 1;
+	    }
+	}
+    }
+    /* Ok.  We are now at the state where we can apply the new object.
+     * Note that we don't have the checks for can_use_...
+     * below - that is already taken care of by can_apply_object. 
+     */
+			  
+
+    if(op->nrof > 1)
+	tmp = get_split_ob(op,op->nrof - 1);
+    else
+	tmp = NULL;
+
+    switch(op->type) {
+	case WEAPON:
+	    if (!check_weapon_power(who, op->last_eat)) {
+		new_draw_info(NDI_UNIQUE, 0,who,
+		    "That weapon is too powerful for you to use.");
+		new_draw_info(NDI_UNIQUE, 0, who,	"It would consume your soul!.");
+		if(tmp!=NULL)
+		    (void) insert_ob_in_ob(tmp,who);
+		return 1;
+	    }
+	    if( op->level &&  (strncmp(op->name,who->name,strlen(who->name)))) {
+		/* if the weapon does not have the name as the character, can't use it. */
+		/* (Ragnarok's sword attempted to be used by Foo: won't work) */
+		new_draw_info(NDI_UNIQUE, 0,who,"The weapon does not recognize you as its owner.");
+		if(tmp!=NULL)
+		    (void) insert_ob_in_ob(tmp,who);
+		return 1;
+	    }
+	    SET_FLAG(op, FLAG_APPLIED);
+
+	    /* check for melee weapons skill, alter player status.
+	    * Note that we need to call this *before* change_abil */
+	    if(!check_skill_to_apply(who,op)) return 1;
+	    if(!QUERY_FLAG(who,FLAG_READY_WEAPON))
+		SET_FLAG(who, FLAG_READY_WEAPON);
+
+	    (void) change_abil (who,op);
 #ifdef PLUGINS
-    /* GROS: update the current_weapon_script field (used with EVENT_ATTACK for weapons) */
-    if (op->event_hook[EVENT_ATTACK] != NULL)
-    {
-        LOG(llevDebug, "Scripting Weapon wielded\n");
-        if (who->current_weapon_script) free_string(who->current_weapon_script);
-        who->current_weapon_script=add_string(query_name(op));
-        who->current_weapon = op;
-    };
+	    /* GROS: update the current_weapon_script field (used with EVENT_ATTACK for weapons) */
+	    if (op->event_hook[EVENT_ATTACK] != NULL) {
+		LOG(llevDebug, "Scripting Weapon wielded\n");
+		if (who->current_weapon_script) free_string(who->current_weapon_script);
+		who->current_weapon_script=add_string(query_name(op));
+	    }
 #endif
-    who->current_weapon = op;
-    sprintf(buf,"You wield %s.",query_name(op));
-    break;
-  }
-  case ARMOUR:
-  case HELMET:
-  case SHIELD:
-  case BOOTS:
-  case GLOVES:
-  case GIRDLE:
-  case BRACERS:
-  case CLOAK:
-    if(!QUERY_FLAG(who, FLAG_USE_ARMOUR)) {
-      sprintf(buf,"You can't use %s.",query_name(op));
-      new_draw_info(NDI_UNIQUE, 0,who,buf);
-      if(tmp!=NULL)
-        (void) insert_ob_in_ob(tmp,who);
-      return 1;
-    }
-  case RING:
-  case AMULET:
-    SET_FLAG(op, FLAG_APPLIED);
-    (void) change_abil (who,op);
-    sprintf(buf,"You wear %s.",query_name(op));
-    break;
+	    who->current_weapon = op;
+	    sprintf(buf,"You wield %s.",query_name(op));
+	    break;
 
-  /* this part is needed for skill-tools */ 
-  case SKILL:
-    if (who->chosen_skill) {
-        LOG (llevError, "BUG: apply_special(): can't apply two skills\n");
-        return 1;
-    }
-    if (who->type == PLAYER) {
-        who->contr->shoottype = range_skill;
-        if ( ! op->invisible) {
-            /* for tools */
-            if (op->exp_obj)
-                LOG (llevError, "BUG: apply_special(SKILL): found unapplied "
-                     "tool with experience object\n");
-            else
-                (void) link_player_skill (who, op);
-            new_draw_info_format (NDI_UNIQUE, 0, who, "You ready %s.",
+	case ARMOUR:
+	case HELMET:
+	case SHIELD:
+	case BOOTS:
+	case GLOVES:
+	case GIRDLE:
+	case BRACERS:
+	case CLOAK:
+	case RING:
+	case AMULET:
+	    SET_FLAG(op, FLAG_APPLIED);
+	    (void) change_abil (who,op);
+	    sprintf(buf,"You wear %s.",query_name(op));
+	    break;
+
+	/* this part is needed for skill-tools */ 
+	case SKILL:
+	    if (who->chosen_skill) {
+		LOG (llevError, "BUG: apply_special(): can't apply two skills\n");
+		return 1;
+	    }
+	    if (who->type == PLAYER) {
+		who->contr->shoottype = range_skill;
+		    if ( ! op->invisible) {
+			/* for tools */
+			if (op->exp_obj)
+			    LOG (llevError, "BUG: apply_special(SKILL): found unapplied tool with experience object (%s)\n", op->name);
+			else
+			    (void) link_player_skill (who, op);
+			new_draw_info_format (NDI_UNIQUE, 0, who, "You ready %s.",
                                   query_name (op));
-            new_draw_info_format (NDI_UNIQUE, 0, who,
+			new_draw_info_format (NDI_UNIQUE, 0, who,
                                   "You can now use the skill: %s.",
                                   skills[op->stats.sp].name);
-        } else {
-            new_draw_info_format (NDI_UNIQUE, 0, who, "Readied skill: %s.",
+		    } else {
+			new_draw_info_format (NDI_UNIQUE, 0, who, "Readied skill: %s.",
                                   skills[op->stats.sp].name);
-        }
-    }
-    SET_FLAG (op, FLAG_APPLIED);
-    (void) change_abil (who, op);
-    who->chosen_skill = op;
-    SET_FLAG (who, FLAG_READY_SKILL);
-    buf[0] = '\0';
-    break;
+		    }
+	    }
+	    SET_FLAG (op, FLAG_APPLIED);
+	    (void) change_abil (who, op);
+	    who->chosen_skill = op;
+	    SET_FLAG (who, FLAG_READY_SKILL);
+	    buf[0] = '\0';
+	    break;
+	
+	case WAND:
+	case ROD:
+	case HORN:
+	case BOW:
+	    /* check for skill, alter player status */ 
+	    SET_FLAG(op, FLAG_APPLIED);
+	    if(!check_skill_to_apply(who,op)) return 1;
+	    new_draw_info_format (NDI_UNIQUE, 0, who, "You ready %s.", query_name(op));
 
-  case WAND:
-  case ROD:
-  case HORN:
-  case BOW:
-    /* check for skill, alter player status */ 
-    SET_FLAG(op, FLAG_APPLIED);
-    if(!check_skill_to_apply(who,op)) return 1;
-    new_draw_info_format (NDI_UNIQUE, 0, who, "You ready %s.", query_name(op));
-    if(who->type==PLAYER) {
-      switch (op->type) {
-        case BOW:  who->contr->shoottype = range_bow; break;
-        case WAND: who->contr->shoottype = range_wand; break;
-        case ROD:  who->contr->shoottype = range_rod; break;
-        case HORN: who->contr->shoottype = range_horn; break;
-      }
-      if (op->type == BOW) {
-        new_draw_info_format (NDI_UNIQUE, 0, who,
+	    if(who->type==PLAYER) {
+		if (op->type == BOW) {
+		    new_draw_info_format (NDI_UNIQUE, 0, who,
                               "You will now fire %s with %s.",
 	                      op->race ? op->race : "nothing", query_name(op));
-      } else {
-        who->contr->chosen_item_spell = op->stats.sp;
-        who->contr->known_spell = (QUERY_FLAG (op, FLAG_BEEN_APPLIED)
-                                   || QUERY_FLAG (op, FLAG_IDENTIFIED));
-      }
-    } else {
-      switch (op->type) {
-        case WAND: SET_FLAG (who, FLAG_READY_WAND); break;
-        case ROD:  SET_FLAG (who, FLAG_READY_ROD); break;
-        case HORN: SET_FLAG (who, FLAG_READY_HORN); break;
-        case BOW:  SET_FLAG (who, FLAG_READY_BOW); break;
-      }
-    }
-    break;
+		    who->contr->shoottype = range_bow;
+		} else {
+		    who->contr->chosen_item_spell = op->stats.sp;
+		    who->contr->known_spell = (QUERY_FLAG (op, FLAG_BEEN_APPLIED)
+					   || QUERY_FLAG (op, FLAG_IDENTIFIED));
+		    who->contr->shoottype = range_misc;
+		}
+	    } else {
+		if (op->type == BOW)
+		    SET_FLAG (who, FLAG_READY_BOW);
+		else
+		    SET_FLAG (who, FLAG_READY_RANGE);
+	    }
+	    break;
 
-  default:
-    sprintf(buf,"You apply %s.",query_name(op));
-  }
-  if(!QUERY_FLAG(op, FLAG_APPLIED))
-      SET_FLAG(op, FLAG_APPLIED);
-  if (buf[0] != '\0')
-      new_draw_info (NDI_UNIQUE, 0, who, buf);
-  if(tmp!=NULL)
-    tmp = insert_ob_in_ob(tmp,who);
-  fix_player(who);
-  if(op->type != WAND && who->type == PLAYER)
-    SET_FLAG(op,FLAG_BEEN_APPLIED);
-  if (QUERY_FLAG(op, FLAG_CURSED) || QUERY_FLAG(op, FLAG_DAMNED)) {
-    if (who->type == PLAYER) {
-      new_draw_info(NDI_UNIQUE, 0,who, "Oops, it feels deadly cold!");
-      SET_FLAG(op,FLAG_KNOWN_CURSED);
+	default:
+	    sprintf(buf,"You apply %s.",query_name(op));
+    } /* end of switch op->type */
+
+    SET_FLAG(op, FLAG_APPLIED);
+    if (buf[0] != '\0')
+	new_draw_info (NDI_UNIQUE, 0, who, buf);
+
+    if(tmp!=NULL)
+	tmp = insert_ob_in_ob(tmp,who);
+
+    fix_player(who);
+
+    /* We exclude spell casting objects.  The fire code will set the
+     * been applied flag when they are used - until that point,
+     * you don't know anything about them.
+     */
+    if (who->type == PLAYER && op->type!=WAND && op->type!=HORN &&
+	op->type!=ROD)
+	SET_FLAG(op,FLAG_BEEN_APPLIED);
+
+    if (QUERY_FLAG(op, FLAG_CURSED) || QUERY_FLAG(op, FLAG_DAMNED)) {
+	if (who->type == PLAYER) {
+	    new_draw_info(NDI_UNIQUE, 0,who, "Oops, it feels deadly cold!");
+	    SET_FLAG(op,FLAG_KNOWN_CURSED);
+	}
     }
-  }
-  if(who->type==PLAYER) {
-      /* if multiple objects were applied, update both slots */
-      if (tmp)
-	esrv_send_item(who, tmp);
-      esrv_send_item(who, op);
-  }
-  return 0;
+    if(who->type==PLAYER) {
+	/* if multiple objects were applied, update both slots */
+	if (tmp)
+	    esrv_send_item(who, tmp);
+	esrv_send_item(who, op);
+    }
+    return 0;
 }
 
 

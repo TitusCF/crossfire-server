@@ -331,6 +331,13 @@ void first_arch_pass(FILE *fp) {
 	first=0;
 	copy_object(op,&at->clone);
 	at->clone.speed_left= (float) (-0.1);
+	/* copy the body_info to the body_used - this is only really
+	 * need for monsters, but doesn't hurt to do it for everything.
+	 * by doing so, when a monster is created, it has good starting
+	 * values for the body_used info, so when items are created 
+	 * for it, they can be properly equipped.
+	 */
+	memcpy(&at->clone.body_used, &op->body_info, sizeof(op->body_info));
 
 	switch(i) {
 	    case LL_NORMAL: /* A new archetype, just link it with the previous */
@@ -372,6 +379,7 @@ void first_arch_pass(FILE *fp) {
 		break;
 
 	}
+
 	at=get_archetype_struct();
 	clear_object(op);
 	op->arch=at;

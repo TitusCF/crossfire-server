@@ -6,7 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2000 Mark Wedel
+    Copyright (C) 2002 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -23,7 +23,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to mwedel@scruz.net
+    The authors can be reached via e-mail at crossfire-devel@real-time.com
 */
 
 /* This file implements some of the simpler output functions to the
@@ -318,28 +318,19 @@ void rangetostring(object *pl,char *obuf)
     }
     else
 #endif
-      sprintf(obuf,"Range: spell (%s)",
+      sprintf(obuf,"Range: spell (%s)", 
               spells[pl->contr->chosen_spell].name);
     break;
-   case range_wand:
-    sprintf(obuf,"Range: wand (%s)",
-          pl->contr->known_spell ?
-          spells[pl->contr->chosen_item_spell].name : "unknown");
+
+   case range_misc:
+    sprintf(obuf,"Range: %s", 
+	    pl->contr->ranges[range_misc]?query_base_name(pl->contr->ranges[range_misc],0): "none");
     break;
-   case range_rod:
-    sprintf(obuf,"Range: rod (%s)",
-          pl->contr->known_spell ?
-          spells[pl->contr->chosen_item_spell].name : "unknown");
-    break;
-   case range_horn:
-    sprintf(obuf,"Range: horn (%s)",
-          pl->contr->known_spell ?
-          spells[pl->contr->chosen_item_spell].name : "unknown");
-    break;
+
     /* range_scroll is only used for controlling golems.  If the
      * the player does not have a golem, reset some things.
      */
-   case range_scroll:
+   case range_golem:
     if (pl->contr->golem!=NULL)
       sprintf(obuf,"Range: golem (%s)",pl->contr->golem->name);
     else {
@@ -354,20 +345,15 @@ void rangetostring(object *pl,char *obuf)
    default:
     strcpy(obuf,"Range: illegal");
   }
-  pl->contr->last_known_spell = pl->contr->known_spell;
-  pl->contr->last_shoot=pl->contr->shoottype;
-  pl->contr->last_spell=chosen_spell;
 }
 
 void set_title(object *pl,char *buf)
 {
-  if(pl->contr->last_value==-1) {
     /* Eneq(@csd.uu.se): Let players define their own titles. */
     if (pl->contr->own_title[0]=='\0')
-      sprintf(buf,"Player: %s the %s",pl->name,pl->contr->title);
+	sprintf(buf,"Player: %s the %s",pl->name,pl->contr->title);
     else
-      sprintf(buf,"Player: %s the %s",pl->name,pl->contr->own_title);
-  }
+	sprintf(buf,"Player: %s the %s",pl->name,pl->contr->own_title);
 }
 
 
@@ -376,7 +362,7 @@ void set_title(object *pl,char *buf)
  * the view is now marked with value 2.  Any dependencies of map_mark
  * being nonzero have been changed to check for 1.  Also, since
  * map_mark is a char value, putting 2 in should cause no problems.
- * Mark Wedel (master@rahul.net)
+ * Mark Wedel
  * This function examines the map the player is on, and determines what
  * is visible.  2 is set for walls or objects that blocks view.  1
  * is for open spaces.  map_mark should already have been initialized
@@ -464,7 +450,7 @@ void magic_mapping_mark_recursive(object *pl, char *map_mark, int px, int py)
  * This is because the second stipple pattern used has a different
  * repeat rate
  *
- * Mark Wedel (master@rahul.net)
+ * Mark Wedel
  */
 
 void draw_map(object *pl) 

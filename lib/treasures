@@ -3522,26 +3522,6 @@ treasure elf
   arch arrow
   nrof 50
   end
-treasure human_male
-  arch gender_force
-    change_title Male
-  more
-  arch rank_force
-  more
-  arch alignment_force
-  more
-  arch guild_force
-  end
-treasure human_female
-  arch gender_force
-    change_title Female
-  more
-  arch rank_force
-  more
-  arch alignment_force
-  more
-  arch guild_force
-  end
 treasure human_player
   list random_knowledge
   end

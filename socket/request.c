@@ -94,7 +94,8 @@ short atnr_cs_stat[NROFATTACKS] = {CS_STAT_RES_PHYS,
     CS_STAT_RES_DEPLETE, CS_STAT_RES_DEATH,
     -1 /* Chaos */, -1 /* Counterspell */,
     -1 /* Godpower */, CS_STAT_RES_HOLYWORD,
-    CS_STAT_RES_BLIND,    -1 /* Blind */
+    CS_STAT_RES_BLIND, 
+    -1 /* Internal */, -1 /* life stealing */
 };
 
 /* This is the Setup cmd - easy first implementation */
@@ -274,7 +275,6 @@ void PlayerCmd(char *buf, int len, player *pl)
      */
     if (atoi(buf) || buf[0]=='0') {
 	pl->count=atoi((char*)buf);
-	pl->count_left=0;
 	buf=strchr(buf,' ');	/* advance beyond the numbers */
 	if (!buf) {
 #ifdef ESRV_DEBUG
@@ -284,7 +284,6 @@ void PlayerCmd(char *buf, int len, player *pl)
 	}
 	buf++;
     }
-    pl->idle=0;
     /* This should not happen anymore.    */
     if (pl->ob->speed_left<-1.0) {
 	LOG(llevError,"Player has negative time - shouldn't do command.\n");
@@ -297,7 +296,6 @@ void PlayerCmd(char *buf, int len, player *pl)
      * commands.
      */
 
-    pl->count_left=0;
     pl->count=0;
 
 }
@@ -324,7 +322,6 @@ void NewPlayerCmd(uint8 *buf, int len, player *pl)
     /* -1 is special - no repeat, but don't update */
     if (repeat!=-1) {
 	pl->count=repeat;
-	pl->count_left=0;
     }
     if ((len-4) >= MAX_BUF) len=MAX_BUF-5;
 
@@ -342,8 +339,6 @@ void NewPlayerCmd(uint8 *buf, int len, player *pl)
 	return;
     }
 
-    pl->idle=0;
-
     /* This should not happen anymore.    */
     if (pl->ob->speed_left<-1.0) {
 	LOG(llevError,"Player has negative time - shouldn't do command.\n");
@@ -355,7 +350,6 @@ void NewPlayerCmd(uint8 *buf, int len, player *pl)
      * for the command that issued the count should be done before any other
      * commands.
      */
-    pl->count_left=0;
     pl->count=0;
 
     /* Send confirmation of command execution now */
@@ -626,11 +620,10 @@ void esrv_update_stats(player *pl)
     if(pl->last_stats.exp != pl->ob->stats.exp && pl->socket.skillexp) 
     {
 	int s;
-	for(s=0;s<pl->last_skill_index;s++)
-        {
-        AddIfInt(pl->last_skill_exp[s],pl->last_skill_ob[s]->stats.exp , pl->last_skill_id[s]);
-        AddIfShort(pl->last_skill_level[s],pl->last_skill_ob[s]->level , pl->last_skill_id[s]+1);
-    }
+	for(s=0;s<pl->last_skill_index;s++) {
+	    AddIfInt(pl->last_skill_exp[s],pl->last_skill_ob[s]->stats.exp , pl->last_skill_id[s]);
+	    AddIfShort(pl->last_skill_level[s],pl->last_skill_ob[s]->level , pl->last_skill_id[s]+1);
+	}
     }
     AddIfInt(pl->last_stats.exp, pl->ob->stats.exp, CS_STAT_EXP);
     AddIfShort(pl->last_level, pl->ob->level, CS_STAT_LEVEL);
@@ -658,33 +651,10 @@ void esrv_update_stats(player *pl)
 	}
     }
  
-    /* the user set title is nothing we don't use in new client.
-     * If so, pack it behind name 
-     */
-    if(pl->socket.ext2) /* for the ext2 client, we send complex title  and no range info*/
-    {
-        if(pl->socket.ext_title_flag)
-        {
-            generate_ext_title(pl);
-            AddIfString(pl->socket.stats.ext_title , pl->ext_title, CS_STAT_EXT_TITLE);
-            
-            /* ugly little sucker, but so we got the arch name in class select of the
-             * client and we don't must change above anything */
-            if(pl->socket.ext_title_flag==2)
-            {
-                set_title(pl->ob, buf);
-                AddIfString(pl->socket.stats.title, buf, CS_STAT_TITLE);
-            }
-            pl->socket.ext_title_flag = 0;
-        }
-    }
-    else /* for old clients, the normal range & title cmd */
-    {    
-	rangetostring(pl->ob, buf); /* we want use the new fire & run system in new client */
-        AddIfString(pl->socket.stats.range, buf, CS_STAT_RANGE);
-        set_title(pl->ob, buf);
-        AddIfString(pl->socket.stats.title, buf, CS_STAT_TITLE);
-    }
+    rangetostring(pl->ob, buf); /* we want use the new fire & run system in new client */
+    AddIfString(pl->socket.stats.range, buf, CS_STAT_RANGE);
+    set_title(pl->ob, buf);
+    AddIfString(pl->socket.stats.title, buf, CS_STAT_TITLE);
 
     /* Only send it away if we have some actual data */
     if (sl.len>6) {

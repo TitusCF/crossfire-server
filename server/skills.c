@@ -660,7 +660,7 @@ int do_skill_ident2(object *tmp,object *pl, int obj_class)
 		  identify(tmp);
      		  if (pl->type==PLAYER) {
         	    new_draw_info_format(NDI_UNIQUE, 0, pl,
-                      "You identify %s.", long_desc(tmp));
+                      "You identify %s.", long_desc(tmp, pl));
         	    if (tmp->msg) {
           		new_draw_info(NDI_UNIQUE, 0,pl, "The item has a story:");
           		new_draw_info(NDI_UNIQUE, 0,pl, tmp->msg);
@@ -1434,14 +1434,12 @@ void do_throw(object *op, object *toss_item, int dir) {
     if(throw_ob==NULL) {
 	if(op->type==PLAYER) {
 	    new_draw_info(NDI_UNIQUE, 0,op,"You have nothing to throw.");
-	    op->contr->count_left=0; /* ?? is this needed?? */
 	}
 	return;
     }
     if (QUERY_FLAG(throw_ob, FLAG_STARTEQUIP)) {
 	if (op->type==PLAYER) {
 	    new_draw_info(NDI_UNIQUE, 0, op, "The gods won't let you throw that.");
-	    op->contr->count_left=0; /* ?? is this needed?? */
 	}
 	return;
     }
@@ -1508,7 +1506,6 @@ void do_throw(object *op, object *toss_item, int dir) {
 	    }
 	    else
 		new_draw_info(NDI_UNIQUE, 0,op,"Something is in the way.");
-	    op->contr->count_left=0; /* needed?? */
 	}
 	return;
     } /* if object can't be thrown */
