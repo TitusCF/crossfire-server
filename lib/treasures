@@ -595,9 +595,6 @@ treasureone ape_parts
  more
  arch tooth
     chance 10
- more
- arch brain
-    chance 3
  end
 # gnoll/giant parts
 treasureone giant_parts
