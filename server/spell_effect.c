@@ -3111,7 +3111,7 @@ int animate_weapon(object *op,object *caster,int dir, archetype *at, int spellnu
     if(op->contr->golem!=NULL&&!QUERY_FLAG(op->contr->golem,FLAG_FREED)) {
       control_golem(op->contr->golem,dir);
       return 0;
-    }
+    } else return 0;  /* exit if it's not a player using this spell. */
   /* if no direction specified, pick one */
   if(!dir) 
     dir=find_free_spot(NULL,op->map,op->x,op->y,1,9);
