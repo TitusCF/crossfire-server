@@ -1810,7 +1810,7 @@ trans 1
 yield 1
 skill smithery
 cauldron forge
-ingred plate mail,3 dragon's steak,balm of aethereality,potion of might
+ingred plate mail,3 dragon's steak,balm of aethereality,potion of strength
 #
 Object Displacement
 arch robe
@@ -1880,7 +1880,7 @@ trans 1
 yield 1
 skill smithery
 cauldron forge
-ingred full helmet,potion of might,ogre's corpse,bottle of philosophical oil
+ingred full helmet,potion of strength,ogre's corpse,bottle of philosophical oil
 #
 Object Valriel
 arch full_helmet
@@ -2057,7 +2057,7 @@ diff 15
 exp 15000
 skill bowyer
 cauldron workbench
-ingred bow,3 potion of might,hill giant's corpse,troll's heart
+ingred bow,3 potion of strength,hill giant's corpse,troll's heart
 #
 Object Thunder
 arch bow
@@ -3093,7 +3093,7 @@ exp 7000
 yield 7
 skill woodsman
 cauldron stove
-ingred 7 mushroom of Gourmet,potion of might
+ingred 7 mushroom of Gourmet,potion of strength
 #
 Object Quickness
 arch mushroom_3
