@@ -69,6 +69,13 @@
 #	    like a forge.  You can create formulae that are only usable
 #	    with a specific facilities.  This field is required.
 #
+#  "exp"    A required integer.  This is the amount of experience a user
+#           gets by using this formula.  You should factor difficulty in
+#           when setting exp.  The game does not do this for you.
+#
+#   "diff"  A required integer.  This is the percentage difficulty out of
+#   	    100 of how hard this formula is.  This is the only factor used in
+#           determining success or failure of the creation.
 #
 # IMPORTANT NOTE ---->
 #	    It is not enough to construct ad-hoc lists of 
