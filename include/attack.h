@@ -160,10 +160,10 @@ EXTERN char *resist_save[NROFATTACKS];
  */
 #else
 EXTERN char *resist_save[NROFATTACKS] = {
-"physical", "magic", "fire", "electricity", "cold", "confusion", "acid",
-"drain", "weaponmagic", "ghosthit", "poison", "slow", "paralyze",
-"turn_undead", "fear", "cancellation", "deplete", "death", "chaos",
-"counterspell", "godpower", "holyword", "blind" , "internal", "life_stealing"
+"physical ", "magic ", "fire ", "electricity ", "cold ", "confusion ", "acid ",
+"drain ", "weaponmagic ", "ghosthit ", "poison ", "slow ", "paralyze ",
+"turn_undead ", "fear ", "cancellation ", "deplete ", "death ", "chaos ",
+"counterspell ", "godpower ", "holyword ", "blind " , "internal ", "life_stealing "
 };
 
 /* Short description of names of the attacktypes */

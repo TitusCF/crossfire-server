@@ -1292,7 +1292,7 @@ char *get_ob_diff(object *op,object *op2) {/* I plan to optimize this heavily */
     FAST_SAVE_LONG(fastbuf,"grace ",op->stats.grace,6);
   if(op->stats.maxgrace!=op2->stats.maxgrace)
     /*save_long(buf, "maxgrace", op->stats.maxgrace);*/
-    FAST_SAVE_LONG(fastbuf,"maxgrace ",op->stats.maxgrace,6);
+    FAST_SAVE_LONG(fastbuf,"maxgrace ",op->stats.maxgrace,9);
   if(op->stats.exp!=op2->stats.exp)
     /*save_long_long(buf, "exp", op->stats.exp);*/
     FAST_SAVE_LONG(fastbuf,"exp ",op->stats.exp,4);
