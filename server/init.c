@@ -607,7 +607,6 @@ void init(int argc, char **argv) {
     init_library();	/* Must be called early */
     load_settings();	/* Load the settings file */
     init_weather();
-    read_supplydb();    /* read the supply and demand database */
     load_materials();
     parse_args(argc, argv, 2);
     fprintf(logfile,"Welcome to CrossFire, v%s\n",VERSION);
