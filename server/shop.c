@@ -163,7 +163,7 @@ int query_cost(object *tmp, object *who, int flag) {
       charisma = who->stats.Cha;  /* used for SK_BARGAINING modification */ 
 
       if (find_skill(who,SK_BARGAINING)) {
-	charisma = who->stats.Cha + (who->level+2)/3;
+	charisma += (who->level+2)/3;
 	if(charisma>30) charisma = 30;
       }
       if (cha_bonus[charisma]<=1.0) {
@@ -278,23 +278,56 @@ char *query_cost_string(object *tmp,object *who,int flag) {
   return cost_string_from_value(query_cost(tmp,who,flag));
 }
 
-/* This function finds out how much money the player is carrying,
- * and returns that value
- */
-
+/* This function finds out how much money the player is carrying,	*
+ * and returns that value						*/
+/* Now includes any coins in active containers -- DAMN			*/
 int query_money(object *op) {
     object *tmp;
     int	total=0;
 
-    if (op->type!=PLAYER) {
-	LOG(llevError, "Query money called with non player");
+    if (op->type!=PLAYER && op->type!=CONTAINER) {
+	LOG(llevError, "Query money called with non player/container");
 	return 0;
     }
     for (tmp = op->inv; tmp; tmp= tmp->below) {
-	if (tmp->type==MONEY)
-		total += tmp->nrof * tmp->value;
+	if (tmp->type==MONEY) {
+	    total += tmp->nrof * tmp->value;
+	} else if (tmp->type==CONTAINER && 
+		   QUERY_FLAG(tmp,FLAG_APPLIED) &&
+		   (tmp->race==NULL || strstr(tmp->race,"gold"))) {
+	    total += query_money(tmp);
+	}
     }
     return total;
+}
+
+/* DAMN: This is now a wrapper for pay_from_container, which is 	*
+ * called for the player, then for each active container that can hold	*
+ * money until op is paid for.  Change will be left wherever the last	*
+ * of the price was paid from.						*/
+int pay_for_item(object *op,object *pl) {
+    int to_pay = query_cost(op,pl,F_BUY);
+    object *pouch;
+
+    if (to_pay==0) return 1;
+    if(to_pay>query_money(pl)) return 0;
+
+    to_pay = pay_from_container(op, pl, to_pay);
+
+    for (pouch=pl->inv; (pouch!=NULL) && (to_pay>0); pouch=pouch->below) {
+	if (pouch->type == CONTAINER
+	    && QUERY_FLAG(pouch, FLAG_APPLIED)
+	    && (pouch->race == NULL || strstr(pouch->race, "gold"))) {
+	    to_pay = pay_from_container(op, pouch, to_pay);
+	}
+    }
+
+#ifndef REAL_WIZ
+    if(QUERY_FLAG(pl,FLAG_WAS_WIZ))
+      SET_FLAG(op, FLAG_WAS_WIZ);
+#endif
+    fix_player(pl);
+    return 1;
 }
 
 /* This pays for the item, and takes the proper amount of money off
@@ -304,24 +337,21 @@ int query_money(object *op) {
  * insert the coin objects -  this should update the weight
  * appropriately
  */
-
-int pay_for_item(object *op,object *pl) {
-    int item_cost=query_cost(op,pl,F_BUY),i, count;
-    int to_pay;
+/* DAMN: This function is used for the player, then for any active	*
+ * containers that can hold money, until the op is paid for.		*/
+int pay_from_container(object *op, object *pouch, int to_pay) {
+    int count, i, remain;
     object *tmp, *coin_objs[NUM_COINS], *next;
     archetype *at;
+    object *who;
 
-    if (item_cost==0) return 1;
-    if(item_cost>query_money(pl))
-        return 0;
+    if (pouch->type != PLAYER && pouch->type != CONTAINER) return to_pay;
 
+    remain = to_pay;
+    for (i=0; i<NUM_COINS; i++) coin_objs[i] = NULL;
 
-    for (i=0; i<NUM_COINS; i++) {
-	coin_objs[i] = NULL;
-    }
-
-    /* This hunk should remove all the money objects from the player */
-    for (tmp=pl->inv; tmp; tmp=next) {
+    /* This hunk should remove all the money objects from the player/container */
+    for (tmp=pouch->inv; tmp; tmp=next) {
 	next = tmp->below;
 
 	if (tmp->type == MONEY) {
@@ -329,20 +359,19 @@ int pay_for_item(object *op,object *pl) {
 		if (!strcmp(coins[NUM_COINS-1-i], tmp->arch->name) &&
 		    (tmp->value == tmp->arch->clone.value) ) {
 
-		    /* This should not happen, but if it does, just
-		     * merge the two.
-		     */
+		    /* This should not happen, but if it does, just		*
+		     * merge the two.						*/
 		    if (coin_objs[i]!=NULL) {
 			LOG(llevError,"%s has two money entries of (%s)\n",
-			    pl->name, coins[NUM_COINS-1-i]);
+			    pouch->name, coins[NUM_COINS-1-i]);
 			remove_ob(tmp);
 			coin_objs[i]->nrof += tmp->nrof;
-			esrv_del_item(pl->contr, tmp->count);
+			esrv_del_item(pouch->contr, tmp->count);
 			free_object(tmp);
 		    }
 		    else {
 			remove_ob(tmp);
-			esrv_del_item(pl->contr, tmp->count);
+			if(pouch->type==PLAYER) esrv_del_item(pouch->contr, tmp->count);
 			coin_objs[i] = tmp;
 		    }
 		    break;
@@ -359,49 +388,51 @@ int pay_for_item(object *op,object *pl) {
 	if (coin_objs[i]==NULL) {
 	    at = find_archetype(coins[NUM_COINS-1-i]);
 	    if (at==NULL) LOG(llevError, "Could not find %s archetype", coins[NUM_COINS-1-i]);
-	    coin_objs[i] =get_object();
+	    coin_objs[i] = get_object();
 	    copy_object(&at->clone, coin_objs[i]);
 	    coin_objs[i]->nrof = 0;
 	}
 
-    to_pay = item_cost;
     for (i=0; i<NUM_COINS; i++) {
 	int num_coins;
 
-	if (coin_objs[i]->nrof*coin_objs[i]->value> to_pay) {
-		num_coins = to_pay / coin_objs[i]->value;
-		if (num_coins*coin_objs[i]->value< to_pay) num_coins++;
+	if (coin_objs[i]->nrof*coin_objs[i]->value> remain) {
+	    num_coins = remain / coin_objs[i]->value;
+	    if (num_coins*coin_objs[i]->value< remain) num_coins++;
+	} else {
+	    num_coins = coin_objs[i]->nrof;
 	}
-	else 
-		num_coins = coin_objs[i]->nrof;
 
-	to_pay -= num_coins * coin_objs[i]->value;
+	remain -= num_coins * coin_objs[i]->value;
 	coin_objs[i]->nrof -= num_coins;
 	/* Now start making change.  Start at the coin value
 	 * below the one we just did, and work down to
 	 * the lowest value.
 	 */
 	count=i-1;
-	while (to_pay<0 && count>=0) {
-		num_coins = -to_pay/ coin_objs[count]->value;
+	while (remain<0 && count>=0) {
+		num_coins = -remain/ coin_objs[count]->value;
 		coin_objs[count]->nrof += num_coins;
-		to_pay += num_coins * coin_objs[count]->value;
+		remain += num_coins * coin_objs[count]->value;
 		count--;
 	}
     }
     for (i=0; i<NUM_COINS; i++) {
 	if (coin_objs[i]->nrof) {
-	    object *tmp = insert_ob_in_ob(coin_objs[i], pl);
-	    esrv_send_item(pl, tmp);
-	} else
+	    object *tmp = insert_ob_in_ob(coin_objs[i], pouch);
+	    for (who = pouch; who && who->type!=PLAYER && who->env!=NULL; who=who->env) {}
+	    esrv_send_item(who, tmp);
+	    esrv_send_item (who, pouch);
+	    esrv_update_item (UPD_WEIGHT, who, pouch);
+	    if (pouch->type != PLAYER) {
+		esrv_send_item (who, who);
+		esrv_update_item (UPD_WEIGHT, who, who);
+	    }
+	} else {
 	    free_object(coin_objs[i]);
+	}
     }
-#ifndef REAL_WIZ
-    if(QUERY_FLAG(pl,FLAG_WAS_WIZ))
-      SET_FLAG(op, FLAG_WAS_WIZ);
-#endif
-    fix_player(pl);
-    return 1;
+    return(remain);
 }
 
 /* Eneq(@csd.uu.se): Better get_payment, descends containers looking for
@@ -462,14 +493,15 @@ int get_payment(object *pl) {
   return ret;
 }
 
-/* Modified function to give out platinum coins.  This function is
- * not as general as pay_for_item in finding money types - each
- * new money type needs to be explicity code in here.
- */
-
+/* Modified function to give out platinum coins.  This function is	*
+ * not as general as pay_for_item in finding money types - each		*
+ * new money type needs to be explicity code in here.			*/
+/* Modified to fill available race: gold containers before dumping	*
+ * remaining coins in character's inventory. -- DAMN 			*/
 void sell_item(object *op, object *pl) {
   int i=query_cost(op,pl,F_SELL), count;
   object *tmp;
+  object *pouch;
   archetype *at;
 
   if(pl==NULL||pl->type!=PLAYER) {
@@ -489,16 +521,41 @@ void sell_item(object *op, object *pl) {
     return;
   }
   for (count=0; coins[count]!=NULL; count++) {
-    at = find_archetype(coins[count]);
-    if (at==NULL) LOG(llevError, "Could not find %s archetype", coins[count]);
-    else if ((i/at->clone.value)) {
-	tmp = get_object();
-	copy_object(&at->clone, tmp);
-	tmp->nrof = i/tmp->value;
-	i -= tmp->nrof * tmp->value;
-	tmp = insert_ob_in_ob(tmp, pl);
-	esrv_send_item (pl, tmp);
-    }
+      at = find_archetype(coins[count]);
+      if (at==NULL) LOG(llevError, "Could not find %s archetype", coins[count]);
+      else if ((i/at->clone.value) > 0) {
+	  for ( pouch=pl->inv ; pouch ; pouch=pouch->below ) {
+	      if ( pouch->type==CONTAINER && QUERY_FLAG(pouch, FLAG_APPLIED) && pouch->race && strstr(pouch->race, "gold") ) {
+		  int w = at->clone.weight * (100-pouch->stats.Str)/100;
+		  int n = i/at->clone.value;
+		  if ( n>0 && (!pouch->weight_limit || pouch->carrying+w<=pouch->weight_limit)) {
+		      if (pouch->weight_limit && (pouch->weight_limit-pouch->carrying)/w<n) {
+			  n = (pouch->weight_limit-pouch->carrying)/w;
+		      }
+		      tmp = get_object();
+		      copy_object(&at->clone, tmp);
+		      tmp->nrof = n;
+		      i -= tmp->nrof * tmp->value;
+		      tmp = insert_ob_in_ob(tmp, pouch);
+		      esrv_send_item (pl, tmp);
+		      esrv_send_item (pl, pouch);
+		      esrv_update_item (UPD_WEIGHT, pl, pouch);
+		      esrv_send_item (pl, pl);
+		      esrv_update_item (UPD_WEIGHT, pl, pl);
+		  }
+	      }
+	  }
+	  if (i/at->clone.value > 0) {
+	      tmp = get_object();
+	      copy_object(&at->clone, tmp);
+	      tmp->nrof = i/tmp->value;
+	      i -= tmp->nrof * tmp->value;
+	      tmp = insert_ob_in_ob(tmp, pl);
+	      esrv_send_item (pl, tmp);
+	      esrv_send_item (pl, pl);
+	      esrv_update_item (UPD_WEIGHT, pl, pl);
+	  }
+      }
   }
 
   if (i!=0) 
