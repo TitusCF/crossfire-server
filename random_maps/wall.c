@@ -111,6 +111,7 @@ void make_map_walls(mapstruct *map,char **layout, char *w_style) {
   
 
   /* get the style map */
+  if(!strcmp(w_style,"none")) return;
   sprintf(styledirname,"%s","/styles/wallstyles");
   sprintf(stylefilepath,"%s/%s",styledirname,w_style);
   style_map = find_style(styledirname,w_style,-1);

@@ -42,18 +42,18 @@
 int Xsize;
 int Ysize;
 
-char wallstyle[256];
-char wall_name[256];
-char floorstyle[256];
-char monsterstyle[256];
-char treasurestyle[256];
-char layoutstyle[256];
-char decorstyle[256];
-char doorstyle[256];
-char exitstyle[256];
-char final_map[256];
-char origin_map[256];
-char this_map[256];
+char wallstyle[512];
+char wall_name[512];
+char floorstyle[512];
+char monsterstyle[512];
+char treasurestyle[512];
+char layoutstyle[512];
+char decorstyle[512];
+char doorstyle[512];
+char exitstyle[512];
+char final_map[512];
+char origin_map[512];
+char this_map[HUGE_BUF];
 
 int layoutoptions1=0;
 int layoutoptions2=0;
@@ -184,8 +184,8 @@ mapstruct *generate_random_map(char *InFileName,char *OutFileName) {
     arguments it needs.  */
 char **layoutgen() {
   char **maze=0;
-  if(Xsize<3) Xsize = 15 + RANDOM()%25;
-  if(Ysize<3) Ysize = 15 + RANDOM()%25;
+  if(Xsize<10) Xsize = 15 + RANDOM()%25;
+  if(Ysize<10) Ysize = 15 + RANDOM()%25;
   if(symmetry == RANDOM_SYM) {
     symmetry_used = (RANDOM() % ( XY_SYM))+1;
     if(symmetry_used==Y_SYM||symmetry_used==XY_SYM) Ysize = Ysize/2+1;
