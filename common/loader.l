@@ -164,6 +164,12 @@ static void check_loaded_object(object *op) {
 	}
 
     }
+    if (QUERY_FLAG(op, FLAG_MONSTER)) {
+	if (op->stats.hp > op->stats.maxhp)
+	    LOG(llevDebug,"Monster %s has hp set higher than maxhp (%d>%d)\n",
+		op->name,
+		op->stats.hp, op->stats.maxhp);
+    }
 
 }
 

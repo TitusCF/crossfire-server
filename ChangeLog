@@ -17,6 +17,21 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+TODO - add notes about item damage - clear it out of my mailbox.
+common/loader.l, loader.c: Add check at load time to see if monsters
+   hp is higher than its maxhp and print a debug message if so.
+devel/Makefile: Remove - makefiles shouldn't be in CVS, only .in versions.
+server/attack.c: Fix calculation of max_damage in kill_object - this
+   was being done incorrectly, resulting in fired spell objects causing
+   incorrect amounts of damage, resulint in some monsters ending up with
+   a lot of hp.  Fix call to kill_object to pass in correct damage value.
+server/monster.c: Put in check so that monster won't regen to more hp
+   than they should have.
+server/spell_util.c: Removed unused variable from move_missile.
+server/weather.c: fix bug that causes crash if empty space is encountered
+   on map.
+MSW 2003-01-03
+
 socket/request.c: Fix buffer (malloc) overrun in esrv_send_stats - more
   stuff has gotten to be added, without ever increasing the size of the
   buffer to hold it.

@@ -2268,6 +2268,7 @@ int real_temperature(int x, int y)
 int real_world_temperature(int x, int y, mapstruct *m)
 {
     int wx, wy, temp, eleva, elevb;
+    object *op;
 
     worldmap_to_weathermap(x, y, &wx, &wy, m->path);
     temp = real_temperature(wx, wy);
@@ -2275,7 +2276,11 @@ int real_world_temperature(int x, int y, mapstruct *m)
 	eleva = 0;
     else
 	eleva = weathermap[x][y].avgelev;
-    elevb = GET_MAP_OB(m, x, y)->elevation;
+
+    op= GET_MAP_OB(m, x, y);
+    if (!op) return eleva;
+
+    elevb = op->elevation;
     if (elevb < 0)
 	elevb = 0;
     if (elevb > eleva) {

@@ -1331,7 +1331,11 @@ int kill_object(object *op,int dam, object *hitter, int type)
     CFP.Value[1] = (void *)(hitter);
     CFP.Value[2] = (void *)(op);
     GlobalEvent(&CFP);
-    maxdam+=op->stats.hp+1;
+    /* maxdam needs to be the amount of damage it took to kill
+     * this creature.  The function(s) that call us have already
+     * adjusted the creatures HP total, so that is negative.
+     */
+    maxdam = dam + op->stats.hp + 1;
 
     if(QUERY_FLAG(op,FLAG_BLOCKSVIEW))
 	update_all_los(op->map,op->x, op->y); /* makes sure los will be recalculated */
@@ -1722,7 +1726,7 @@ int hit_player(object *op,int dam, object *hitter, int type) {
     }
 
     /* See if the creature has been killed */
-    rtn_kill = kill_object(op, dam, hitter, type);
+    rtn_kill = kill_object(op, maxdam, hitter, type);
     if (rtn_kill != -1)
 	return rtn_kill;
 

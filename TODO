@@ -88,8 +88,34 @@ Future feature requests
 - Add/change door handling - make them more real life - they stick around,
   can be opened, closed, different keys for different doors, etc.  This
   sort of mimics the gate behaviour, except keys may need to open them, etc.
+
 - Added armor quality, with armor being damaged as it is used.  Add repair
   shops to go with this.  Uncertain if people really like this idea or not
+  Further notes from mailing list: 
+  Item has current quality rating -  different items have different max
+  ratings - magic would increase its rating.  ITem operates normally
+  when it has 50%+ of its quality.  At less than 50%, item loses
+  functionality in a limited fashion (eg, multiply quality percentage
+  by two to determine effective abilities in terms of percentage.)
+  Item max qualities should be in the same range for most all items, so
+  that powerful items given to low level characters get dinged up just
+  as fast as their normal items.
+  Diminished effects would be handled in fix player.
+  Cost to repair based on how damage item is (100 = half cost,
+  0 = full cost).  Items can be repaired on pro-rated basis.  Repair
+  anvils would need to get added.
+  Items are damaged based on how much damage player takes - more
+  damaging attacks have higher chance to do item damage.  Amount of
+  damage done to items might depend somewhat on damage done to player.
+  Acid attacks would be changed to use this same code - they just
+  always damage items at a much higher rate.  Different ideas is that
+  chance of item damage is fixed, but amount done is based on damage
+  sustained.  Other idea is that chance of damage is based on
+  real damage (percent, square root, other adjustments, perhaps
+  ignoring low values), but damage is somewhat constant.
+  Should probably be tunables in settings to determine amount of damage
+  done to item, and how often item is damaged.
+
 - Change players draining exp from others.  Currently, there are problems
   in that it not adjusted based on levels, so there are various abuses
   draining from low level characters.  Also, generally it is not possibled

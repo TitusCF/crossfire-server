@@ -1520,7 +1520,7 @@ void control_golem(object *op,int dir) {
 
 void move_missile(object *op) {
   int i;
-  object *owner, *tmp;
+  object *owner;
   sint16 new_x, new_y;
 
   owner = get_owner(op);
