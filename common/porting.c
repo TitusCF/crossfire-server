@@ -321,6 +321,22 @@ int strcasecmp(char *s1, char*s2)
 }
 #endif
 
+#if !defined(HAVE_SNPRINTF)
+
+int snprintf(char *dest, int max, const char *format, ...)
+{
+    va_list var;
+    int ret;
+
+    va_start(var, format);
+    ret = vsprintf(dest, format, var);
+    va_end(var);
+    if (ret > max) abort();
+
+    return ret;
+}
+#endif
+
 
 /* This takes an err number and returns a string with a description of
  * the error.
