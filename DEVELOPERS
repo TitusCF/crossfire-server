@@ -15,10 +15,8 @@ but presently I believe they are not currently working on crossfire.
 Tyler Van Gorder <tvangod@ecst.csuchico.edu> added color stuff,
 	interested in working on client side (user interface)
 David.M.Fisher@Dartmouth.EDU (David M. Fisher)
-quinet@montefiore.ulg.ac.be (Raphael Quinet) - client/server (protocols,
-	sharing of resources, ...) and also developing the interface of one
-	client.  Also sounds.  Will not be able to do any serious work until
-	after June 1994.
+quinet@gamers.org (Raphael Quinet) - sounds (originally using rplay),
+	client/server split, various small changes to the server.
 Rupert G. Goldie <rgg@aaii.oz.au> testing under Purify, new spells,
 	spell paths, and gifts.
 'Evil' ERic Mehlhaff <mehlhaff@ocf.Berkeley.EDU> Client server, also
