@@ -1481,9 +1481,9 @@ static void apply_skillscroll (object *op, object *tmp)
 
 	case 1:
 	    new_draw_info_format(NDI_UNIQUE, 0,op,"You succeed in learning %s",
-			 tmp->name);
+			 tmp->skill);
 	    new_draw_info_format(NDI_UNIQUE, 0, op,
-			 "Type 'bind ready_skill %s",tmp->name);
+			 "Type 'bind ready_skill %s",tmp->skill);
 	    new_draw_info(NDI_UNIQUE, 0,op,"to store the skill in a key.");
 	    decrease_ob(tmp);
 	    return;
