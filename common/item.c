@@ -205,16 +205,7 @@ int calc_item_power(object *op, int flag)
     if(QUERY_FLAG(op,FLAG_SEE_IN_DARK))	    enc += 1;
     if(QUERY_FLAG(op,FLAG_MAKE_INVIS))	    enc += 1;
 
-#if 0
-    if (enc > 20) {
-	LOG(llevDebug,"calc_item_power got %d enchantments for %s\n", enc, op->name?op->name:"(null)");
-	enc = 20;
-    }
-#endif
-    /* Items only have a positive power rating */
-    if (enc < 0) enc = 0;
-
-    return enc_to_item_power[enc];
+    return get_power_from_ench(enc);
 
 }
 
