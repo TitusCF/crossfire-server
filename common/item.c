@@ -1192,7 +1192,7 @@ void identify(object *op) {
 	SET_FLAG(op,FLAG_KNOWN_CURSED);
 
     if (op->type == POTION) {
-	if (op->inv) {
+	if (op->inv && op->randomitems) {
 	    if (op->title) free_string(op->title);
 	    op->title = add_refcount(op->inv->name);
 	} else if (op->arch) {

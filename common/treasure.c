@@ -832,12 +832,25 @@ void fix_generated_item (object *op, object *creator, int difficulty,
 
 	    case POTION: {
 		int too_many_tries=0,is_special=0;
+		extern char *spell_mapping[];
+
+		/* Handle healing and magic power potions */
+		if (op->stats.sp && !op->randomitems) {
+		    object *tmp;
+
+		    tmp = get_archetype(spell_mapping[op->stats.sp]);
+		    insert_ob_in_ob(tmp, op);
+		    op->stats.sp=0;
+		}
 
 		while(!(is_special=special_potion(op)) && !op->inv) {
 		    generate_artifact(op,difficulty);
 		    if(too_many_tries++ > 10) break;
 		}
-		if (op->inv) { 
+		/* don't want to change value for healing/magic power potions,
+		 * since the value set on those is already correct.
+		 */
+		if (op->inv && op->randomitems) { 
 		    /* value multiplier is same as for scrolls */
 		    op->value=(op->value*op->inv->value);
 		    op->level = op->inv->level/2+ RANDOM()%difficulty + RANDOM()%difficulty;

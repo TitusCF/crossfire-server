@@ -856,6 +856,31 @@ static int do_skill_attack(object *tmp, object *op, char *string, object *skill)
 		}
 	    }
 	} else {
+	    /* Seen some crashes below where current_weapon is not set,
+	     * even though the flag says it is.  So if current weapon isn't set,
+	     * do some work in trying to find the object to use.
+	     */
+	    if (!op->current_weapon) {
+		object *tmp;
+
+		LOG(llevError,"Player %s does not have current weapon set but flag_ready_weapon is set\n",
+		    op->name);
+		for (tmp=op->inv; tmp; tmp=tmp->below)
+		    if (tmp->type == WEAPON && QUERY_FLAG(tmp, FLAG_APPLIED)) break;
+
+		if (op->current_weapon_script)
+		    FREE_AND_CLEAR_STR(op->current_weapon_script);
+		if (!tmp) {
+		    LOG(llevError,"Could not find applied weapon on %s",
+			op->name);
+		    op->current_weapon=NULL;
+		    return 0;
+		} else {
+		    op->current_weapon = tmp;
+		    op->current_weapon_script=add_string(query_name(tmp));
+		}
+	    }
+
 	    /* Has ready weapon - make sure chosen_skill is set up properly */
 	    if (!op->chosen_skill || op->current_weapon->skill != op->chosen_skill->skill) {
 		change_skill(op, find_skill_by_name(op, op->current_weapon->skill), 1);

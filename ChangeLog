@@ -17,6 +17,15 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+common/item.c: If potion wasn't given a random spell, use the archetype
+   name when it is identified.
+common/treasure.c: Fix potion codes so that healing and magic power potions
+   get the proper spell inserted into them.  Also fix line termination issue.
+server/skill_util.c: Add check in skill_attack() to make sure current_weapon
+   is not null - there has been some crashes here, but I can't figure out
+   how it gets to this state, so better to at least handle it.
+MSW 2004-04-07
+
 server/player.c: In flee_player(), make sure the enemy to the player is
    on an actual map - fixes crashes.
 MSW 2004-04-06
