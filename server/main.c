@@ -343,7 +343,7 @@ static void enter_map(object *op, mapstruct *newmap, int x, int y) {
 #endif
     /* Update any golems */
     if(op->type == PLAYER && op->contr->golem != NULL) {
-	int i = find_free_spot(op->arch,newmap, x, y, 1, SIZEOFFREE+1);
+	int i = find_free_spot(op->contr->golem->arch,newmap, x, y, 1, SIZEOFFREE+1);
 
 	remove_ob(op->contr->golem);
 	if (i==-1) {
@@ -352,9 +352,12 @@ static void enter_map(object *op, mapstruct *newmap, int x, int y) {
 	    op->contr->golem=NULL;
 	}
 	else {
-	    op->contr->golem->map = newmap;
-	    op->contr->golem->x = x + freearr_x[i];
-	    op->contr->golem->y = y + freearr_y[i];
+	    object *tmp;
+	    for (tmp=op->contr->golem; tmp!=NULL; tmp=tmp->more) {
+		tmp->x = x + freearr_x[i]+ (tmp->arch==NULL?0:tmp->arch->clone.x);
+		tmp->y = y + freearr_y[i]+ (tmp->arch==NULL?0:tmp->arch->clone.y);
+		tmp->map = newmap;
+	    }
 	    insert_ob_in_map(op->contr->golem, newmap, NULL);
 	    op->contr->golem->direction = find_dir_2(op->x - op->contr->golem->x, op->y - op->contr->golem->y);
 	}

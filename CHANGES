@@ -17,6 +17,20 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 CVS changes since last release:
 
+common/object.c: Modify find_free_spot to call arch_out_of_map so that
+   it properly deals with multipart objects.
+server/main.c: Fix enter_map so that we first use the golem (and not player)
+   when calling find_free_spot.  Also, modify code so that it properly
+   updates coordinates of the multipart golem.
+MSW 2001/03/20
+
+server/skills.c: Fix orate so that we check for a positive chance (and just
+not nonzero chance) for successful oration.  Due to adjustments, at low levels,
+the oratory chance can be negative.  MSW 2001/03/20
+
+server/spell_effect.c: Change cast_change_attr to find an enemy (and not
+friend) when casting the curse spell.  MSW 2001/03/20
+
 server/apply.c: Increase size of buf to be a HUGE_BUF to very
 long item names don't cause a stack overflow.  MSW 2001/03/20
 

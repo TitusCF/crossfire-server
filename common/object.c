@@ -1928,7 +1928,7 @@ int find_free_spot(archetype *at, mapstruct *m,int x,int y,int start,int stop) {
     /* Surprised the out_of_map check was missing. Without it, we may
      * end up accessing garbage, which may say a space is free
      */
-    if (out_of_map(m, x+freearr_x[i],y+freearr_y[i])) continue;
+    if (arch_out_of_map(at, m, x+freearr_x[i],y+freearr_y[i])) continue;
     if(!arch_blocked(at,m,x+freearr_x[i],y+freearr_y[i]))
       altern[index++]=i;
     else if(wall(m,x+freearr_x[i],y+freearr_y[i])&&maxfree[i]<stop)
