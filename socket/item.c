@@ -713,7 +713,7 @@ void LookAt(char *buf, int len,player *pl)
     if (FABS(dx)>MAP_CLIENT_X/2 || FABS(dy)>MAP_CLIENT_Y/2)
           return;
 
-    if(pl->blocked_los[dx+MAP_CLIENT_X/2][dy+MAP_CLIENT_Y/2])
+    if(pl->blocked_los[dx+(pl->socket.mapx/2)][dy+(pl->socket.mapy/2)])
           return;
     look_at(pl->ob, dx, dy);
 }

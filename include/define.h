@@ -257,6 +257,42 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define MAX_NAME 16
 #define BIG_NAME 32
 
+
+/* definitions for detailed pickup descriptions.
+ *   The objective is to define intelligent groups of items that the
+ *   user can pick up or leave as he likes. */
+
+/* high bit as flag for new pickup options */
+#define PU_NOTHING		0x00000000
+
+#define PU_DEBUG		0x10000000
+#define PU_INHIBIT		0x20000000
+#define PU_STOP			0x40000000
+#define PU_NEWMODE		0x80000000
+
+#define PU_RATIO		0x0000000F
+
+#define PU_FOOD			0x00000010
+#define PU_DRINK		0x00000020
+#define PU_VALUABLES		0x00000040
+#define PU_BOW			0x00000080
+
+#define PU_ARROW		0x00000100
+#define PU_HELMET		0x00000200
+#define PU_SHIELD		0x00000400
+#define PU_ARMOUR		0x00000800
+
+#define PU_BOOTS		0x00001000
+#define PU_GLOVES		0x00002000
+#define PU_CLOAK		0x00004000
+#define PU_KEY			0x00008000
+
+#define PU_MISSILEWEAPON	0x00010000
+#define PU_ALLWEAPON		0x00020000
+#define PU_MAGICAL		0x00040000
+#define PU_POTION		0x00080000
+
+
 /* Instead of using arbitrary constants for indexing the
  * freearr, add these values.  <= SIZEOFFREE1 will get you
  * within 1 space.  <= SIZEOFFREE2 wll get you withing 
@@ -342,6 +378,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define FLAG_APPLIED	 	5 /* Object is ready for use by living */
 #define FLAG_UNPAID	 	6 /* Object hasn't been paid for yet */
 #define FLAG_AN		 	7 /* Name must be prepended by "an", not "a"*/
+
 #define FLAG_NO_PICK	 	8 /* Object can't be picked up */
 #define FLAG_WALK_ON	 	9 /* Applied when it's walked upon */
 #define FLAG_NO_PASS		10 /* Nothing can pass (wall() is true) */
@@ -350,6 +387,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define FLAG_FLYING		13 /* Not affected by WALK_ON or SLOW_MOVE) */
 #define FLAG_MONSTER		14 /* Will attack players */
 #define FLAG_FRIENDLY		15 /* Will help players */
+
 #define FLAG_GENERATOR		16 /* Will generate type ob->stats.food */
 #define FLAG_IS_THROWN		17 /* Object is designed to be thrown. */
 #define FLAG_AUTO_APPLY		18 /* Will be applied when created */
@@ -359,6 +397,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define FLAG_CAN_ROLL		22 /* Object can be rolled */
 /* FLAG_IS_TURNING is no longer used */
 /*#define FLAG_IS_TURNING		23 *//* Object will turn after player */
+
 #define FLAG_IS_TURNABLE 	24 /* Object can change face with direction */
 #define FLAG_WALK_OFF		25 /* Object is applied when left */
 #define FLAG_FLY_ON		26 /* As WALK_ON, but only with FLAG_FLYING */
@@ -367,6 +406,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define FLAG_IDENTIFIED		29 /* Not implemented yet */
 #define FLAG_REFLECTING		30 /* Object reflects from walls (lightning) */
 #define FLAG_CHANGING		31 /* Changes to other_arch when anim is done*/
+
 /* Start of values in flags[1] */
 #define FLAG_SPLITTING		32 /* Object splits into stats.food other objs */
 #define FLAG_HITBACK		33 /* Object will hit back when hit */
@@ -376,6 +416,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define FLAG_SCARED		37 /* Monster is scared (mb player in future)*/
 #define FLAG_UNAGGRESSIVE	38 /* Monster doesn't attack players */
 #define FLAG_REFL_MISSILE	39 /* Arrows will reflect from object */
+
 #define FLAG_REFL_SPELL		40 /* Spells (some) will reflect from object */
 #define FLAG_NO_MAGIC		41 /* Spells (some) can't pass this object */
 #define FLAG_NO_FIX_PLAYER	42 /* fix_player() won't be called */
@@ -386,6 +427,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define FLAG_PASS_THRU		46 /* Objects with can_pass_thru can pass \
 				      thru this object as if it wasn't there */
 #define FLAG_CAN_PASS_THRU	47 /* Can pass thru... */
+
 #define FLAG_PICK_UP		48 /* Can pick up */
 #define FLAG_UNIQUE		49 /* Item is really unique (UNIQUE_ITEMS) */
 #define FLAG_NO_DROP		50 /* Object can't be dropped */
@@ -394,6 +436,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define FLAG_USE_SCROLL		53 /* (Monster) can read scroll */
 #define FLAG_USE_WAND		54 /* (Monster) can apply and use wands */
 #define FLAG_USE_BOW		55 /* (Monster) can apply and fire bows */
+
 #define FLAG_USE_ARMOUR		56 /* (Monster) can wear armour/shield/helmet */
 #define FLAG_USE_WEAPON		57 /* (Monster) can wield weapons */
 #define FLAG_USE_RING		58 /* (Monster) can use rings, boots, gauntlets, etc */
@@ -402,8 +445,9 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define FLAG_XRAYS		61 /* X-ray vision */
 #define FLAG_NO_APPLY		62 /* Avoids step_on/fly_on to this object */
 #define FLAG_IS_FLOOR		63 /* Can't see what's underneath this object */
-#define FLAG_LIFESAVE		64 /* Saves a players' life once, then destr. */
+
 /* Start of values in flags[2] */
+#define FLAG_LIFESAVE		64 /* Saves a players' life once, then destr. */
 #define FLAG_NO_STRENGTH	65 /* Strength-bonus not added to wc/dam */
 #define FLAG_SLEEP		66 /* NPC is sleeping */
 #define FLAG_STAND_STILL	67 /* NPC will not (ever) move */
@@ -411,6 +455,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define FLAG_ONLY_ATTACK	69 /* NPC will evaporate if there is no enemy */
 #define FLAG_CONFUSED		70 /* Will also be unable to cast spells */
 #define FLAG_STEALTH		71 /* Will wake monsters with less range */
+
 #define FLAG_WIZPASS		72 /* The wizard can go through walls */
 #define FLAG_IS_LINKED		73 /* The object is linked with other objects */
 #define FLAG_CURSED		74 /* The object is cursed */
@@ -419,6 +464,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define FLAG_KNOWN_MAGICAL	77 /* The object is known to be magical */
 #define FLAG_KNOWN_CURSED	78 /* The object is known to be cursed */
 #define FLAG_CAN_USE_SKILL	79 /* The monster can use skills */
+
 #define FLAG_BEEN_APPLIED	80 /* The object has been applied */
 #define FLAG_READY_ROD		81 /* (Monster) has a rod readied... 8) */
 #define FLAG_USE_ROD		82 /* (Monster) can apply and use rods */
@@ -427,6 +473,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define FLAG_MAKE_INVIS	        85 /* (Item) gives invisibility when applied */
 #define FLAG_INV_LOCKED		86 /* Item will not be dropped from inventory */
 #define FLAG_IS_WOODED		87 /* Item is wooded terrain */
+
 #define FLAG_IS_HILLY		88 /* Item is hilly/mountain terrain */
 #define FLAG_READY_SKILL	89 /* (Monster or Player) has a skill readied */
 #define FLAG_READY_WEAPON	90 /* (Monster or Player) has a weapon readied */
@@ -435,6 +482,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define FLAG_SEE_IN_DARK	93 /* if set ob not effected by darkness */ 
 #define FLAG_IS_CAULDRON	94 /* container can make alchemical stuff */
 #define FLAG_DUST		95 /* item is a 'powder', effects throwing */
+
 /* Start of values in flags[3] */
 #define FLAG_NO_STEAL		96 /* Item can't be stolen */
 #define FLAG_ONE_HIT		97 /* Monster can only hit once before going

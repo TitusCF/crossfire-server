@@ -78,7 +78,7 @@ typedef struct pl {
   unsigned char prev_fire_on;
   unsigned char prev_keycode; /* Previous command executed */
   unsigned char key_down;     /* Last move-key still held down */
-  uint16 mode;			/* Mode of player for pickup. */
+  uint32 mode;			/* Mode of player for pickup. */
   signed char digestion;	/* Any bonuses/penalties to digestion */
   signed char gen_hp;		/* Bonuses to regeneration speed of hp */
   signed char gen_sp;		/* Bonuses to regeneration speed of sp */

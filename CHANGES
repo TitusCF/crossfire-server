@@ -18,6 +18,24 @@ else.  With this, include the file(s) that you changed.
 
 Changes for CVS:
 
+Add Nils Lohner patch that new selections to the pickup mode.
+
+include/define.h: Pickup type defines added.
+include/player.h: Change mode (pickup mode) to 32 bits.
+server/c_object.c: command_pickup function modified to support all
+    the new pickup options.
+server/player.c: Fix for path_to_player to prevent crashes.  Add check
+    in move_player_attack just in case.  check_pick function modified to
+    support new pickup options.  do_some_living modified to eat flesh
+    items if player is starving and they don't have any food.
+server/spell_effect.c: cast_detection modified so that detect magic/curse
+    will not show objects beneath the floor.  Change so that detect_monster
+    and detect_evil spells copy the face of what they detected - gives better
+    appearance on client.
+socket/item.c: fix bug LookAt that ws checking blocked_los on wrong
+    offset.
+MSW 2001-08-28
+
 Enhancements to make monsters 'do the right thing' with relation
 to tiled maps (ie, will detect players and attack them if on an adjoining
 tiled maps).  This involved a rewrite of path_to_player - I've tested this

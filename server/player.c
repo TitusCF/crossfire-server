@@ -182,7 +182,7 @@ int add_player(NewSocket *ns) {
      */
 
     if (checkbanned (defname, ns->host)){
-	fprintf (logfile, "Banned player tryed to add. [%s@%s]\n", defname, ns->host);
+	fprintf (logfile, "Banned player tried to add. [%s@%s]\n", defname, ns->host);
 	fflush (logfile);
 	return 0;
     }
@@ -354,10 +354,9 @@ int path_to_player(object *mon, object *pl,int mindiff) {
 	y = lasty + freearr_y[dir];
 
 	m = get_map_from_coord(m, &x, &y);
-        if (m == NULL) return 0;
 
 	/* Space is blocked - try changing direction a little */
-	if (blocked(m, x, y) && (m == mon->map && blocked_link(mon, x, y))) {
+	if (!m || (blocked(m, x, y) && (m == mon->map && blocked_link(mon, x, y)))) {
 	    /* recalculate direction from last good location.  Possible
 	     * we were not traversing ideal location before.
 	     */
@@ -398,7 +397,7 @@ int path_to_player(object *mon, object *pl,int mindiff) {
 		    m = lastmap;
 		    if (!out_of_map(m, x, y)) {
 			m = get_map_from_coord(m, &x, &y);
-			if (!blocked(m, x, y) && (m == mon->map && blocked_link(mon, x, y))) break;
+			if (m && !blocked(m, x, y) && (m == mon->map && blocked_link(mon, x, y))) break;
 		    }
 		}
 		/* go through entire loop without finding a valid
@@ -931,7 +930,11 @@ int check_pick(object *op) {
   object *tmp, *next;
   tag_t next_tag=0, op_tag;
   int stop = 0;
+  int j, k, wvratio;
+  char putstring[128], tmpstr[16];
 
+
+  /* if you're flying, you cna't pick up anything */
   if (QUERY_FLAG (op, FLAG_FLYING))
     return 1;
 
@@ -940,6 +943,9 @@ int check_pick(object *op) {
   next = op->below;
   if (next)
     next_tag = next->count;
+
+  /* loop while there are items on the floor that are not marked as
+   * destroyed */
   while (next && ! was_destroyed (next, next_tag))
   {
     tmp = next;
@@ -962,28 +968,21 @@ int check_pick(object *op) {
     }
 #endif /* SEARCH_ITEMS */
 
+    /* high bit set?  We're using the new autopickup model */
+    if(!(op->contr->mode & PU_NEWMODE))
+    { 
     switch (op->contr->mode) {
 	case 0:	return 1;	/* don't pick up */
-
-	case 1:
-		pick_up (op, tmp);
+	case 1: pick_up (op, tmp);
 		return 1;
-
-	case 2:
-		pick_up (op, tmp);
+	case 2: pick_up (op, tmp);
 		return 0;
-
 	case 3: return 0;	/* stop before pickup */
-
-	case 4:
-		pick_up (op, tmp);
+	case 4: pick_up (op, tmp);
 		break;
-
-	case 5: 
-		pick_up (op, tmp);
+	case 5: pick_up (op, tmp);
 		stop = 1;
 		break;
-
 	case 6:
 		if (QUERY_FLAG (tmp, FLAG_KNOWN_MAGICAL) &&
 		    ! QUERY_FLAG(tmp, FLAG_KNOWN_CURSED))
@@ -1003,6 +1002,181 @@ int check_pick(object *op) {
                        >= op->contr->mode)
 		  pick_up(op,tmp);
     }
+    } /* old model */
+    else
+    {
+      /* NEW pickup handling */
+      if(op->contr->mode & PU_DEBUG)
+      {
+	/* some debugging code to figure out item information */
+	if(tmp->name!=NULL)
+	  sprintf(putstring,"item name: %s    item type: %d    weight/value: %d",
+	      tmp->name, tmp->type,
+	      (int)(query_cost(tmp, op, F_TRUE)*100 / (tmp->weight * MAX(tmp->nrof,1))));
+	else
+	  sprintf(putstring,"item name: %s    item type: %d    weight/value: %d",
+	      tmp->arch->name, tmp->type,
+	      (int)(query_cost(tmp, op, F_TRUE)*100 / (tmp->weight * MAX(tmp->nrof,1))));
+	new_draw_info(NDI_UNIQUE, 0,op,putstring);
+
+	sprintf(putstring,"...flags: ");
+	for(k=0;k<4;k++)
+	{
+	  for(j=0;j<32;j++)
+	  {
+	    if((tmp->flags[k]>>j)&0x01)
+	    {
+	      sprintf(tmpstr,"%d ",k*32+j);
+	      strcat(putstring, tmpstr);
+	    }
+	  }
+	}
+	new_draw_info(NDI_UNIQUE, 0,op,putstring);
+
+#if 0
+	/* print the flags too */
+	for(k=0;k<4;k++)
+	{
+	  fprintf(stderr,"%d [%d] ", k, k*32+31);
+	  for(j=0;j<32;j++)
+	  {
+	    fprintf(stderr,"%d",tmp->flags[k]>>(31-j)&0x01);
+	    if(!((j+1)%4))fprintf(stderr," ");
+	  }
+	  fprintf(stderr," [%d]\n", k*32);
+	}
+#endif
+      }
+      /* philosophy:
+       * It's easy to grab an item type from a pile, as long as it's
+       * generic.  This takes no game-time.  For more detailed pickups
+       * and selections, select-items shoul dbe used.  This is a
+       * grab-as-you-run type mode that's really useful for arrows for
+       * example.
+       * The drawback: right now it has no frontend, so you need to
+       * stick the bits you want into a calculator in hex mode and then
+       * convert to decimal and then 'pickup <#>
+       */
+
+      /* the first two modes are exclusive: if NOTHING we return, if
+       * STOP then we stop.  All the rest are applied sequentially,
+       * meaning if any test passes, the item gets picked up. */
+
+      /* if mode is set to pick nothing up, return */
+      if(op->contr->mode & PU_NOTHING) return 1;
+      /* if mode is set to stop when encountering objects, return */
+      /* take STOP before INHIBIT since it doesn't actually pick
+       * anything up */
+      if(op->contr->mode & PU_STOP) return 0;
+      /* useful for going into stores and not losing your settings... */
+      /* and for battles wher you don't want to get loaded down while
+       * fighting */
+      if(op->contr->mode & PU_INHIBIT) return 1;
+
+      /* prevent us from turning into auto-thieves :) */
+      if (QUERY_FLAG (tmp, FLAG_UNPAID)) continue;
+
+      /* all food and drink if desired */
+      /* question: don't pick up known-poisonous stuff? */
+      if(op->contr->mode & PU_FOOD)
+	if (tmp->type == FOOD)
+	{ pick_up(op, tmp); if(0)fprintf(stderr,"FOOD\n"); continue; }
+      if(op->contr->mode & PU_DRINK)
+	if (tmp->type == DRINK)
+	{ pick_up(op, tmp); if(0)fprintf(stderr,"DRINK\n"); continue; }
+      if(op->contr->mode & PU_POTION)
+	if (tmp->type == POTION)
+	{ pick_up(op, tmp); if(0)fprintf(stderr,"POTION\n"); continue; }
+
+      /* pick up all magical items */
+      if(op->contr->mode & PU_MAGICAL)
+	if (QUERY_FLAG (tmp, FLAG_KNOWN_MAGICAL) && ! QUERY_FLAG(tmp, FLAG_KNOWN_CURSED))
+	{ pick_up(op, tmp); if(0)fprintf(stderr,"MAGICAL\n"); continue; }
+
+      if(op->contr->mode & PU_VALUABLES)
+      {
+	if (tmp->type == MONEY || tmp->type == GEM) 
+	{ pick_up(op, tmp); if(0)fprintf(stderr,"MONEY/GEM\n"); continue; }
+      }
+
+      /* bows and arrows. Bows are good for selling! */
+      if(op->contr->mode & PU_BOW)
+	if (tmp->type == BOW) 
+	{ pick_up(op, tmp); if(0)fprintf(stderr,"BOW\n"); continue; }
+      if(op->contr->mode & PU_ARROW)
+	if (tmp->type == ARROW) 
+	{ pick_up(op, tmp); if(0)fprintf(stderr,"ARROW\n"); continue; }
+
+      /* all kinds of armor etc. */
+      if(op->contr->mode & PU_ARMOUR)
+	if (tmp->type == ARMOUR) 
+	{ pick_up(op, tmp); if(0)fprintf(stderr,"ARMOUR\n"); continue; }
+      if(op->contr->mode & PU_HELMET)
+	if (tmp->type == HELMET) 
+	{ pick_up(op, tmp); if(0)fprintf(stderr,"HELMET\n"); continue; }
+      if(op->contr->mode & PU_SHIELD)
+	if (tmp->type == SHIELD) 
+	{ pick_up(op, tmp); if(0)fprintf(stderr,"SHIELD\n"); continue; }
+      if(op->contr->mode & PU_BOOTS)
+	if (tmp->type == BOOTS) 
+	{ pick_up(op, tmp); if(0)fprintf(stderr,"BOOTS\n"); continue; }
+      if(op->contr->mode & PU_GLOVES)
+	if (tmp->type == GLOVES) 
+	{ pick_up(op, tmp); if(0)fprintf(stderr,"GLOVES\n"); continue; }
+      if(op->contr->mode & PU_CLOAK)
+	if (tmp->type == CLOAK) 
+	{ pick_up(op, tmp); if(0)fprintf(stderr,"GLOVES\n"); continue; }
+
+      /* hoping to catch throwing daggers here */
+      if(op->contr->mode & PU_MISSILEWEAPON)
+	if(tmp->type == WEAPON && QUERY_FLAG(tmp, FLAG_IS_THROWN)) 
+	{ pick_up(op, tmp); if(0)fprintf(stderr,"MISSILEWEAPON\n"); continue; }
+
+      /* careful: chairs and tables are weapons! */
+      if(op->contr->mode & PU_ALLWEAPON)
+      {
+	if(tmp->type == WEAPON && tmp->name!=NULL) 
+	{
+	  if(strstr(tmp->name,"table")==NULL && strstr(tmp->arch->name,"table")==NULL &&
+	      strstr(tmp->name,"chair") && strstr(tmp->arch->name,"chair")==NULL) 
+	  { pick_up(op, tmp); if(0)fprintf(stderr,"WEAPON\n"); continue; }
+	}
+	if(tmp->type == WEAPON && tmp->name==NULL) 
+	{
+	  if(strstr(tmp->arch->name,"table")==NULL &&
+	      strstr(tmp->arch->name,"chair")==NULL) 
+	  { pick_up(op, tmp); if(0)fprintf(stderr,"WEAPON\n"); continue; }
+	}
+      }
+
+      /* misc stuff that's useful */
+      if(op->contr->mode & PU_KEY)
+	if (tmp->type == KEY || tmp->type == SPECIAL_KEY) 
+	{ pick_up(op, tmp); if(0)fprintf(stderr,"KEY\n"); continue; }
+
+      /* any of the last 4 bits set means we use the ratio for value
+       * pickups */
+      if(op->contr->mode & PU_RATIO)
+      {
+	/* use value density to decide what else to grab */
+	/* >=7 was >= op->contr->mode */
+	/* >=7 is the old standard setting.  Now we take the last 4 bits
+	 * and multiply them by 5, giving 0..15*5== 5..75 */
+	wvratio=(op->contr->mode & PU_RATIO) * 5;
+	if ((query_cost(tmp, op, F_TRUE)*100 / (tmp->weight * MAX(tmp->nrof, 1))) >= wvratio)
+	{
+	  pick_up(op, tmp);
+	  if(0)fprintf(stderr,"HIGH WEIGHT/VALUE [");
+	  if(tmp->name!=NULL) {
+	    if(0)fprintf(stderr,"%s", tmp->name);
+	  }
+	  else if(0)fprintf(stderr,"%s",tmp->arch->name);
+	  if(0)fprintf(stderr,",%d] = ", tmp->type);
+	  if(0)fprintf(stderr,"%d\n",(int)(query_cost(tmp,op,F_TRUE)*100 / (tmp->weight * MAX(tmp->nrof,1))));
+	  continue;
+	}
+      }
+    } /* the new pickup model */
   }
   return ! stop;
 }
@@ -1370,8 +1544,10 @@ void move_player_attack(object *op, int dir)
      * move_ob uses.
      */
     if ((op->contr->braced || !move_ob(op,dir,op)) && !out_of_map(op->map,nx,ny)) {
-	if (OUT_OF_REAL_MAP(op->map, nx, ny)) 
+	if (OUT_OF_REAL_MAP(op->map, nx, ny)) {
 	    m = get_map_from_coord(op->map, &nx, &ny);
+	    if (!m) return; /* Don't think this should happen */
+	}
 	else m =op->map;
     
 	if ((tmp=get_map_ob(m,nx,ny))==NULL) {
@@ -1721,23 +1897,34 @@ void do_some_living(object *op) {
     }
   }
 
-  if(op->contr->state==ST_PLAYING&&op->stats.food<0&&op->stats.hp>=0) {
-	  object *tmp;
-	  for(tmp=op->inv;tmp!=NULL;tmp=tmp->below)
-		  if(!QUERY_FLAG(tmp, FLAG_UNPAID)&&
-			  (tmp->type==FOOD||tmp->type==DRINK||tmp->type==POISON))
-			  {
-		new_draw_info(NDI_UNIQUE, 0,op,"You blindly grab for a bite of food.");
-	manual_apply(op,tmp,0);
-	if(op->stats.food>=0||op->stats.hp<0)
-	  break;
-      }
-  }
-  while(op->stats.food<0&&op->stats.hp>0)
-    op->stats.food++,op->stats.hp--;
+    if(op->contr->state==ST_PLAYING&&op->stats.food<0&&op->stats.hp>=0) {
+	object *tmp, *flesh=NULL;
 
-  if (!op->contr->state&&!QUERY_FLAG(op,FLAG_WIZ)&&(op->stats.hp<0||op->stats.food<0)) 
-    kill_player(op);
+	for(tmp=op->inv;tmp!=NULL;tmp=tmp->below) {
+	    if(!QUERY_FLAG(tmp, FLAG_UNPAID)) {
+		if (tmp->type==FOOD || tmp->type==DRINK || tmp->type==POISON) {
+		    new_draw_info(NDI_UNIQUE, 0,op,"You blindly grab for a bite of food.");
+		    manual_apply(op,tmp,0);
+		    if(op->stats.food>=0||op->stats.hp<0)
+			break;
+		}
+		else if (tmp->type==FLESH) flesh=tmp;
+	    } /* End if paid for object */
+	} /* end of for loop */
+	/* If player is still starving, it means they don't have any food, so
+	 * eat flesh instead.
+	 */
+	if (op->stats.food<0 && op->stats.hp>=0 && flesh) {
+	    new_draw_info(NDI_UNIQUE, 0,op,"You blindly grab for a bite of food.");
+	    manual_apply(op,flesh,0);
+	}
+    } /* end if player is starving */
+
+    while(op->stats.food<0&&op->stats.hp>0)
+	op->stats.food++,op->stats.hp--;
+
+    if (!op->contr->state&&!QUERY_FLAG(op,FLAG_WIZ)&&(op->stats.hp<0||op->stats.food<0)) 
+	kill_player(op);
 }
 
       

@@ -2321,112 +2321,170 @@ int cast_identify(object *op) {
 }
 
 int cast_detection(object *op, int type) {
-  object *tmp;
-  int x,y,done_one;
-  archetype *detect_arch;
+    object *tmp, *last=NULL;
+    int x,y,done_one,nx,ny;
+    archetype *detect_arch;
+    mapstruct	*m;
 
-  detect_arch = find_archetype("detect_magic");
-  if (detect_arch == (archetype *) NULL)
-  {
-    LOG(llevError, "Couldn't find archetype detect_magic.\n");
-    return 0;
-  }
-
-  for (x = op->x - MAP_CLIENT_X/2; x <= op->x + MAP_CLIENT_X/2; x++)
-    for (y = op->y - MAP_CLIENT_Y/2; y <= op->y + MAP_CLIENT_Y/2; y++) {
-      if (out_of_map(op->map, x, y))
-        continue;
-      done_one = 0;
-      for (tmp = get_map_ob(op->map, x, y); tmp &&
-	    (!done_one || type==SP_DETECT_MAGIC || type==SP_DETECT_CURSE);
-	      tmp = tmp->above)
-      {
-        switch(type) {
-        case SP_DETECT_MAGIC:
-          if (!QUERY_FLAG(tmp,FLAG_KNOWN_MAGICAL) && !QUERY_FLAG(tmp, FLAG_IDENTIFIED) &&
-	    is_magical(tmp)) {
-            SET_FLAG(tmp,FLAG_KNOWN_MAGICAL);
-            if(tmp->type==RUNE) /*peterm:  make runes more visible*/
-                if(tmp->attacktype&AT_MAGIC)  /* if they're magic! */
-                       tmp->stats.Cha/=4;
-            done_one = 1;
-          }
-          break;
-        case SP_DETECT_MONSTER:
-          if (op->type == PLAYER)
-            done_one = QUERY_FLAG(tmp, FLAG_MONSTER);
-          else
-            done_one = (tmp->type == PLAYER);
-          break;
-        case SP_DETECT_EVIL: { 
-	  done_one = 0;
- 	  if(QUERY_FLAG(tmp,FLAG_MONSTER)&&tmp->race) {
-	    object *god=find_god(determine_god(op));
-            if(god&&god->slaying&&strstr(god->slaying,tmp->race))
-		done_one = 1;
-	  } 
-          break;
-	}
-        case SP_SHOW_INVIS:
-	    /* Might there be other objects that we can make visibile? */
-	    if (tmp->invisible && (QUERY_FLAG(tmp, FLAG_MONSTER) || 
-		tmp->type==PLAYER || tmp->type==CF_HANDLE || 
-		tmp->type==TRAPDOOR || tmp->type==EXIT || tmp->type==HOLE ||
-		tmp->type==BUTTON || tmp->type==TELEPORTER ||
-		tmp->type==GATE || tmp->type==LOCKED_DOOR ||
-		tmp->type==WEAPON || tmp->type==ALTAR || tmp->type==SIGN ||
-		tmp->type==TRIGGER_PEDESTAL || tmp->type==SPECIAL_KEY ||
-		tmp->type==TREASURE || tmp->type==BOOK ||
-		tmp->type==HOLY_ALTAR)) {
-		if(RANDOM()%(SK_level(op)) > tmp->level/4) {
-		    tmp->invisible=0;
-		    done_one = 1;
-		}
-	    }
-          break;
-        case SP_DETECT_CURSE:
-          if (!QUERY_FLAG(tmp, FLAG_KNOWN_CURSED) &&
-		 (QUERY_FLAG(tmp, FLAG_CURSED) ||
-		 QUERY_FLAG(tmp, FLAG_DAMNED))) {
-	    SET_FLAG(tmp, FLAG_KNOWN_CURSED);
-            done_one = 1;
-          }
-          break;
-        }
-      } /* Done all the object on this square */
-      if (done_one) {
-          object *detect_ob = arch_to_object(detect_arch);
-          detect_ob->x = x;
-          detect_ob->y = y;
-          insert_ob_in_map(detect_ob, op->map, op,0);
-      }
+    detect_arch = find_archetype("detect_magic");
+    if (detect_arch == (archetype *) NULL) {
+	LOG(llevError, "Couldn't find archetype detect_magic.\n");
+	return 0;
     }
-  if ((type == SP_DETECT_MAGIC || type == SP_DETECT_CURSE) &&
-      op->type == PLAYER)
-  {
-    done_one = 0;
-    for (tmp = op->inv; tmp; tmp = tmp->below)
-      if (!QUERY_FLAG(tmp, FLAG_IDENTIFIED))
-        switch(type) {
-        case SP_DETECT_MAGIC:
-          if (is_magical(tmp) && !QUERY_FLAG(tmp,FLAG_KNOWN_MAGICAL)) {
-            SET_FLAG(tmp,FLAG_KNOWN_MAGICAL);
-	    esrv_send_item (op, tmp);
-            done_one = 1;
-          }
-          break;
-        case SP_DETECT_CURSE:
-          if (!QUERY_FLAG(tmp, FLAG_KNOWN_CURSED) &&
-		 (QUERY_FLAG(tmp, FLAG_CURSED) ||
-		 QUERY_FLAG(tmp, FLAG_DAMNED))) {
-	    SET_FLAG(tmp, FLAG_KNOWN_CURSED);
-	    esrv_send_item (op, tmp);
-            done_one = 1;
-          }
-          break;
-        }
-  }
-  return 1;
+
+    /* this size should really be based on level or spell parameter -
+     * even if out of the view, the setting of these values can be useful
+     * simply so that when you come across them they have already been
+     * set for you.
+     */
+    for (x = op->x - MAP_CLIENT_X/2; x <= op->x + MAP_CLIENT_X/2; x++)
+	for (y = op->y - MAP_CLIENT_Y/2; y <= op->y + MAP_CLIENT_Y/2; y++) {
+
+	    if (out_of_map(op->map, x, y))
+		continue;
+
+	    done_one = 0;
+	    nx=x;
+	    ny=y;
+	    m = get_map_from_coord(op->map, &nx, &ny);
+
+	    /* Add some logic here to only examine objects above the floor.
+	     * This should not be done for show invis (may want to show
+	     * invisible floor objects) - may be others also.
+	     */
+
+	    if (type==SP_SHOW_INVIS) last = get_map_ob(m, nx, ny);
+	    else {
+		for (tmp=get_map_ob(m, nx, ny); tmp; tmp=tmp->above) last=tmp;
+
+		for (tmp=last; tmp; tmp=tmp->below) {
+		    if (QUERY_FLAG(tmp, FLAG_IS_FLOOR)) break;
+		    else last=tmp;
+		}
+
+		if (tmp) last=tmp->above;
+	    }
+	    
+	    /* detect magic and detect curse need to set flags on all the items.  for
+	     * the other detect spells, we only care if there is one of the matching object
+	     * on that face.
+	     */
+	    for (tmp = last; 
+		tmp && (!done_one || type==SP_DETECT_MAGIC || type==SP_DETECT_CURSE); 
+		tmp=tmp->above) {
+
+		switch(type) {
+
+		    case SP_DETECT_MAGIC:
+			if (!QUERY_FLAG(tmp,FLAG_KNOWN_MAGICAL) && !QUERY_FLAG(tmp, FLAG_IDENTIFIED) &&
+			    is_magical(tmp)) {
+
+			    SET_FLAG(tmp,FLAG_KNOWN_MAGICAL);
+			    /* peterm:  make magical runes more visible*/
+			    if(tmp->type==RUNE && tmp->attacktype&AT_MAGIC)
+				tmp->stats.Cha/=4;
+			    done_one = 1;
+			}
+			break;
+
+		    case SP_DETECT_MONSTER:
+			/* lets not care about who is casting the spell - everyone on the
+			 * map sees the results anyways,
+			 */
+			if ((QUERY_FLAG(tmp, FLAG_MONSTER) || tmp->type==PLAYER)) {
+			    done_one = 2;
+			    last=tmp;
+			}
+			break;
+
+
+		    case SP_DETECT_EVIL:
+			done_one = 0;
+			if(QUERY_FLAG(tmp,FLAG_MONSTER) && tmp->race) {
+			    object *god=find_god(determine_god(op));
+			    if(god && god->slaying && strstr(god->slaying,tmp->race)) {
+				last=tmp;
+				done_one = 2;
+			    }
+			}
+			break;
+
+
+		    case SP_SHOW_INVIS:
+		    /* Might there be other objects that we can make visibile? */
+		    if (tmp->invisible && (QUERY_FLAG(tmp, FLAG_MONSTER) || 
+			tmp->type==PLAYER || tmp->type==CF_HANDLE || 
+			tmp->type==TRAPDOOR || tmp->type==EXIT || tmp->type==HOLE ||
+			tmp->type==BUTTON || tmp->type==TELEPORTER ||
+			tmp->type==GATE || tmp->type==LOCKED_DOOR ||
+			tmp->type==WEAPON || tmp->type==ALTAR || tmp->type==SIGN ||
+			tmp->type==TRIGGER_PEDESTAL || tmp->type==SPECIAL_KEY ||
+			tmp->type==TREASURE || tmp->type==BOOK ||
+			tmp->type==HOLY_ALTAR)) {
+			if(RANDOM()%(SK_level(op)) > tmp->level/4) {
+			    tmp->invisible=0;
+			    done_one = 1;
+			}
+		    }
+		    break;
+
+		    case SP_DETECT_CURSE:
+		    if (!QUERY_FLAG(tmp, FLAG_KNOWN_CURSED) &&
+			(QUERY_FLAG(tmp, FLAG_CURSED) ||
+			 QUERY_FLAG(tmp, FLAG_DAMNED))) {
+			SET_FLAG(tmp, FLAG_KNOWN_CURSED);
+			done_one = 1;
+		    }
+		    break;
+
+		} /* end of switch statement */
+	     } /* Done all the object on this square */
+
+	    if (done_one) {
+		object *detect_ob = arch_to_object(detect_arch);
+		detect_ob->x = x;
+		detect_ob->y = y;
+		/* if this is set, we want to copy the face */
+		if (done_one == 2 && last) {
+		    detect_ob->face = last->face;
+		    detect_ob->animation_id = last->animation_id;
+		    detect_ob->anim_speed = last->anim_speed;
+		    detect_ob->last_anim=0;
+		    /* by default, the detect_ob is already animated */
+		    if (!QUERY_FLAG(last, FLAG_ANIMATE)) CLEAR_FLAG(detect_ob, FLAG_ANIMATE);
+		}
+		insert_ob_in_map(detect_ob, op->map, op,0);
+	    }
+	} /* for processing the surrounding spaces */
+
+    /* Now process objects in the players inventory if detect curse or magic */
+    if ((type == SP_DETECT_MAGIC || type == SP_DETECT_CURSE) && op->type == PLAYER) {
+	done_one = 0;
+	for (tmp = op->inv; tmp; tmp = tmp->below) {
+	    if (!QUERY_FLAG(tmp, FLAG_IDENTIFIED))
+
+		switch(type) {
+		    case SP_DETECT_MAGIC:
+			if (is_magical(tmp) && !QUERY_FLAG(tmp,FLAG_KNOWN_MAGICAL)) {
+			    SET_FLAG(tmp,FLAG_KNOWN_MAGICAL);
+			    esrv_send_item (op, tmp);
+			    done_one = 1;
+			}
+		    break;
+
+		    case SP_DETECT_CURSE:
+		    if (!QUERY_FLAG(tmp, FLAG_KNOWN_CURSED) &&
+			(QUERY_FLAG(tmp, FLAG_CURSED) ||
+			 QUERY_FLAG(tmp, FLAG_DAMNED))) {
+			SET_FLAG(tmp, FLAG_KNOWN_CURSED);
+			esrv_send_item (op, tmp);
+			done_one = 1;
+		    }
+		    break;
+		} /* end of switch */
+	} /* for the players inventory */
+    } /* if detect magic/curse and object is a player */
+    return 1;
 }
 
 /* Shamelessly hacked from PeterM's cast_charm and destruction code 
