@@ -1401,6 +1401,10 @@ object *find_throw_ob( object *op, char *request ) {
           tmp = NULL;
         }
       }
+    } else if (QUERY_FLAG(tmp, FLAG_UNPAID)) {
+	new_draw_info_format(NDI_UNIQUE, 0, op, "You should pay for the %s"
+	    " first.", query_name(tmp));
+	tmp = NULL;
     }
   }
 
