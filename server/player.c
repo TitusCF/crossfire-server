@@ -958,8 +958,10 @@ static void fire_bow(object *op, int dir)
   arrow->stats.wc = 20 - bow->magic - arrow->magic - SK_level(op) -
     dex_bonus[op->stats.Dex] - thaco_bonus[op->stats.Str] - arrow->stats.wc -
     bow->stats.wc;
+  arrow->level = SK_level (op);
 
   arrow->map = op->map;
+  SET_FLAG(arrow, FLAG_NO_PICK);
   SET_FLAG(arrow, FLAG_FLYING);
   SET_FLAG(arrow, FLAG_FLY_ON);
   SET_FLAG(arrow, FLAG_WALK_ON);
@@ -987,7 +989,7 @@ void fire(object *op,int dir) {
     * -b.t. 
     */ 
 #ifdef ALLOW_SKILLS 
-  if(op->type==PLAYER&&!QUERY_FLAG(op,FLAG_WIZ)) 
+  if(op->type==PLAYER) 
 	if(!check_skill_to_fire(op)) return;
 #endif
 

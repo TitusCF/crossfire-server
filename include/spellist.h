@@ -209,7 +209,7 @@ spell spells[NROFREALSPELLS]={
 {"ball lightning",               9,10, 30, 30, 1, 9,  0,  1, 0, 0, 0,
  PATH_ELEC, "ball_lightning",},
 {"meteor swarm",                12,30,  0, 30, 0, 0,  0,  1, 0, 0, 0,
- PATH_FIRE, "meteor",},
+ PATH_MISSILE, "meteor",},
 {"comet",                        8,15,  0, 20, 0, 0,  0,  1, 0, 0, 0,
  PATH_MISSILE, NULL,},							/* 90 */
 {"mystic fist",                  5,10,  0, 15, 0, 0,  1,  1, 0, 0, 0,

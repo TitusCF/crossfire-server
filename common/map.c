@@ -184,7 +184,7 @@ int check_path (char *name, int prepend_dir)
     if (i == NROF_COMPRESS_METHODS)
       return (-1);
     if (!S_ISREG (statbuf.st_mode))
-	return (0);
+	return (-1);
 
     if (((statbuf.st_mode & S_IRGRP) && getegid() == statbuf.st_gid) ||
 	((statbuf.st_mode & S_IRUSR) && geteuid() == statbuf.st_uid) ||
@@ -505,8 +505,16 @@ FILE *open_and_uncompress(char *name,int flag, int *compressed) {
       }
       if ((fp = popen(buf2, "r")) != NULL)
         return fp;
-    } else if((fp=fopen(name,"r"))!=NULL)
+    } else if((fp=fopen(name,"r"))!=NULL) {
+      struct stat statbuf;
+      if (fstat (fileno (fp), &statbuf) || ! S_ISREG (statbuf.st_mode)) {
+        LOG (llevDebug, "Can't open %s - not a regular file\n", name);
+        (void) fclose (fp);
+        errno = EISDIR;
+        return NULL;
+      }
       return fp;
+    }
   }
   LOG(llevDebug, "Can't open %s\n", name);
   return NULL;

@@ -466,6 +466,7 @@ void stop_arrow(object *op,object *tmp) {
     }
 
     op->direction=0;
+    CLEAR_FLAG(op, FLAG_NO_PICK);
     CLEAR_FLAG(op, FLAG_WALK_ON);
     CLEAR_FLAG(op, FLAG_FLY_ON);
     CLEAR_FLAG(op, FLAG_FLYING);

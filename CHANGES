@@ -18,6 +18,66 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+lib/checkarch.pl:  New perl script to check the archetypes file for
+obvious bugs (like object that is alive but doesn't have a level).
+- Jan Echternach 4/17/2000
+
+include/spellist.h:  "meteor swarm" is now a missile spell (PATH_MISSILE)
+just like "comet".  - Jan Echternach 4/17/2000
+
+server/spell_util.c: path_level_mod():  Rewrote to fix countless bugs.
+New interface with explicit base level parameter.
+server/spell_effect.c: finger_of_death():  Call path_level_mod() with
+correct base level.
+server/spell_util.c: casting_level():  New function that combines
+SK_level() with path_level_mod().
+- Jan Echternach 4/17/2000
+
+server/spell_util.c:  Several cosmetic changes (spell type parameter name
+is spell_type, arch_to_object(get_archtetype(...)) is equivalent to
+get_archetype(...), use casting_level() if applicable).
+- Jan Echternach 4/17/2000
+
+server/spell_util.c: fire_swarm():  New 'caster' parameter because
+owner and caster can be different.  Level of the swarm object is casting
+level of the caster, not overall level of the owner.
+server/spell_util.c: fire_arch_from_position():  Set level of fired
+arch to casting level of caster.
+server/spell_util.c: cast_cone(), cast_smite_spell(): Set level of spell
+object to casting_level() and not SK_level() to honour path_attuned and
+path_repelled of the caster.
+server/spell_util.c: move_cone():  Just copy the level for new cone
+objects.
+
+Missing level meant AT_DEATH didn't work, missing call to
+path_level_mod()/casting_level() meant path_attuned/path_repelled was
+ignored.  - Jan Echternach 4/17/2000 
+
+server/player.c: fire_bow():  Set level of fired arrow.  Arrows with
+AT_DEATH are now working.  - Jan Echternach 4/17/2000 
+
+server/player.c: fire():  Call check_skill_to_fire() even for wizards
+because this function has the important side effect of setting the current
+skill and experience objects.  - Jan Echternach 4/17/2000 
+
+server/skills.c: do_throw(), server/time.c: stop_arrow(), server/player.c:
+fire_bow():  Flying arrows and thrown objects have FLAG_NO_PICK set because
+picking these objects is currently broken (and maybe it shouldn't be
+possible anyway - picking up a _flying_ arrow?).  - Jan Echternach 4/17/2000 
+
+server/c_wiz.c: set_god():  Didn't work at all because it was trying to
+set the current player as his own god.  - Jan Echternach 4/17/2000 
+
+server/map.c: check_path():  Return value was wrong if the name did not
+refer to a regular file.  A symptom of this bug was that the server crashed
+if a wizard tried to enter a directory with the 'goto' command.
+- Jan Echternach 4/17/2000 
+
+server/map.c: open_and_uncompress():  Check that the file we have opened
+is (still) a regular file, fail if it's not.  This is the right place
+for such checks if we want to avoid race conditions (e.g. file replaced by
+directory while trying to open it).  - Jan Echternach 4/17/2000 
+
 c_party.c commands.c daemon.c disease.c gods.c spell_effect.c spell_util.c:
 Cosmetic fixes - updates to rcsid string to include right file name as well as
 updates to mail address and/or additions to top banner.  Mark Wedel 4/13/2000

@@ -86,7 +86,7 @@ int command_setgod(object *op, char *params)
     	new_draw_info_format(NDI_UNIQUE,0,op,"No such god %s.",str);
     	return 1;
     }
-    become_follower(ob,params);
+    become_follower(ob,str);
     return 1;
 }
 

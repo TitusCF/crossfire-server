@@ -2935,9 +2935,8 @@ int finger_of_death(object *op, object *caster, int dir) {
  
   /* we create a hitter object -- the spell */
   hitter=get_archetype("face_of_death");
-  hitter->level=SP_PARAMETERS[SP_FINGER_DEATH].bdam + 
-        3*SP_level_dam_adjust(op,caster,SP_FINGER_DEATH) + 
-	path_level_mod(caster, SP_FINGER_DEATH);
+  hitter->level = path_level_mod (caster, SP_PARAMETERS[SP_FINGER_DEATH].bdam + 
+        3*SP_level_dam_adjust(op,caster,SP_FINGER_DEATH), SP_FINGER_DEATH);
   set_owner(hitter,op);
   hitter->x=target->x;
   hitter->y=target->y;

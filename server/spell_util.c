@@ -105,24 +105,38 @@ spell *find_spell(int spelltype) {
   return &spells[spelltype];
 }
 
-int path_level_mod(object *op, int sp) {
- spell *s = find_spell(sp);
- int val;
+/*
+ * base_level: level before considering attuned/repelled paths
+ * Returns modified level.
+ */
+int path_level_mod (object *caster, int base_level, int spell_type)
+{
+ spell *s = find_spell(spell_type);
+ int new_level;
 
- if (op->path_denied & s->path)
-  return -100;				/* shouldn't get here, but ... */
- val = (op->path_repelled & s->path) ? -5 : 0
-   +   (op->path_attuned & s->path) ? 5 : 0;
- if (op->level - val < 1)
-  return op->level-1;
- else
-  return val;
+ if (caster->path_denied & s->path)
+ {
+   LOG (llevError, "BUG: path_level_mod (arch %s, name %s): casting denied "
+        "spell\n", caster->arch->name, caster->name);
+   return 1;
+ }
+ new_level = base_level
+             + ((caster->path_repelled & s->path) ? -5 : 0)
+             + ((caster->path_attuned & s->path) ? 5 : 0);
+ return (new_level < 1) ? 1 : new_level;
 }
 
-int check_spell_known(object *op,int sp) {
+int casting_level (object *caster, int spell_type)
+{
+  return path_level_mod (caster, SK_level (caster), spell_type);
+}
+
+
+int check_spell_known (object *op, int spell_type)
+{
   int i;
   for(i=0; i < (int)op->contr->nrofknownspells; i++)
-    if(op->contr->known_spells[i]==sp)
+    if(op->contr->known_spells[i]==spell_type)
       return 1;
   return 0;
 }
@@ -571,7 +585,7 @@ if (item == spellNormal && !ability ){
     n=RANDOM()%3 + RANDOM()%3 + RANDOM()%3 +3 +
       SP_level_strength_adjust(op,caster, type);
     success = 1;
-    fire_swarm(op,dir,spellarch[type],SP_METEOR,n,0);
+    fire_swarm(op,caster,dir,spellarch[type],SP_METEOR,n,0);
     break;
   }
   case SP_BULLET_SWARM: {
@@ -579,7 +593,7 @@ if (item == spellNormal && !ability ){
     n=RANDOM()%3 + RANDOM()%3 + RANDOM()%3 +3 +
       SP_level_strength_adjust(op,caster, type);
     success = 1;
-    fire_swarm(op,dir,spellarch[type],SP_BULLET,n,1);
+    fire_swarm(op,caster,dir,spellarch[type],SP_BULLET,n,1);
     break;
   }
   case SP_BULLET_STORM: {
@@ -587,7 +601,7 @@ if (item == spellNormal && !ability ){
     n=RANDOM()%3 + RANDOM()%3 + RANDOM()%3 +3 +
       SP_level_strength_adjust(op,caster, type);
     success = 1;
-    fire_swarm(op,dir,spellarch[type],SP_LARGE_BULLET,n,1);
+    fire_swarm(op,caster,dir,spellarch[type],SP_LARGE_BULLET,n,1);
     break;
   }
   case SP_CAUSE_MANY: {
@@ -595,7 +609,7 @@ if (item == spellNormal && !ability ){
     n=RANDOM()%3 + RANDOM()%3 + RANDOM()%3 +3 +
       SP_level_strength_adjust(op,caster, type);
     success = 1;
-    fire_swarm(op,dir,spellarch[type],SP_CAUSE_HEAVY,n,1);
+    fire_swarm(op,caster,dir,spellarch[type],SP_CAUSE_HEAVY,n,1);
     break;
   }
   case SP_METEOR:
@@ -992,6 +1006,7 @@ int fire_arch_from_position (object *op, object *caster, sint16 x, sint16 y,
   tmp->x=x, tmp->y=y;
   tmp->direction=dir;
   set_owner(tmp,op);
+  tmp->level = casting_level (caster, type);
 #ifdef MULTIPLE_GODS /* needed for AT_HOLYWORD,AT_GODPOWER stuff */
   if(tmp->attacktype&AT_HOLYWORD||tmp->attacktype&AT_GODPOWER) {
 	      if(!tailor_god_spell(tmp,op)) return 0; 
@@ -1042,9 +1057,7 @@ cast_cone(object *op, object *caster,int dir, int strength, int spell_type,arche
     success=1;
     tmp=arch_to_object(spell_arch);
     set_owner(tmp,op);
-/*  Make face of death work? */
-    /* tmp->level=op->level;  */
-    tmp->level=SK_level(op); /* need to use the cleric level, not overall value -b.t. */ 
+    tmp->level = casting_level (caster, spell_type);
     tmp->x=x,tmp->y=y;
 #ifdef MULTIPLE_GODS /* holy word stuff */                
     if((tmp->attacktype&AT_HOLYWORD)||(tmp->attacktype&AT_GODPOWER)) {
@@ -1127,7 +1140,7 @@ void move_cone(object *op) {
 	    tmp->x=x, tmp->y=y;
 
 	    /* added to make face of death work,and counterspell */
-	    tmp->level=SK_level(op);  
+	    tmp->level = op->level;
 
 #ifdef MULTIPLE_GODS /* holy word stuff */
 	    if(tmp->attacktype&AT_HOLYWORD||tmp->attacktype&AT_GODPOWER) 
@@ -1684,6 +1697,10 @@ the minimum for knowing a spell, the more effective it becomes.
 most of the following adjustments are for damage only, some are
 for turning undead and whatnot.  
 
+  The following functions assume that casting the spell is not
+denied.  Denied spells have an undefined path level modifier.
+There wouldn't be a meaningful result anyway.
+
   The arrays are defined in spells.h*/
 
 /* July 1995 - I changed the next 3 functions slightly by replacing
@@ -1694,14 +1711,9 @@ for turning undead and whatnot.
  * path modifiers. 	--DAMN						*/
 
 int SP_level_dam_adjust(object *op, object *caster, int spell_type)
-{  int adj;
-#ifdef ALLOW_SKILLS
-   int level=SK_level(caster)+path_level_mod(caster, spell_type);
-#else
-   int level=caster->level+path_level_mod(caster, spell_type);
-#endif
-
-    adj=(level-spells[spell_type].level);
+{
+    int level = casting_level (caster, spell_type);
+    int adj = (level-spells[spell_type].level);
     if(adj < 0) adj=0;
     if(SP_PARAMETERS[spell_type].ldam)
 	adj/=SP_PARAMETERS[spell_type].ldam;
@@ -1713,13 +1725,9 @@ int SP_level_dam_adjust(object *op, object *caster, int spell_type)
 /* now based on caster's level instead of on op's level and caster's	*
  * path modifiers. 	--DAMN						*/
 int SP_level_strength_adjust(object *op, object *caster, int spell_type)
-{  int adj;
-#ifdef ALLOW_SKILLS
-   int level=SK_level(caster)+path_level_mod(caster, spell_type);
-#else
-   int level=caster->level+path_level_mod(caster, spell_type);
-#endif
-    adj= (level-spells[spell_type].level);
+{
+    int level = casting_level (caster, spell_type);
+    int adj = (level-spells[spell_type].level);
     if(adj < 0) adj=0;
     if(SP_PARAMETERS[spell_type].ldur)
 	adj/=SP_PARAMETERS[spell_type].ldur;
@@ -1738,11 +1746,7 @@ intended to keep the sp cost related to the effectiveness. */
 int SP_level_spellpoint_cost(object *op, object *caster, int spell_type)
 {
   spell *s=find_spell(spell_type);
-# ifdef ALLOW_SKILLS 
-  int level=SK_level(op)+path_level_mod(caster, spell_type);
-#else
-  int level=op->level+path_level_mod(caster, spell_type);
-#endif /* ALLOW_SKILLS */
+  int level = casting_level (caster, spell_type);
 #ifdef SPELLPOINT_LEVEL_DEPEND
   int sp;
   if(SP_PARAMETERS[spell_type].spl)
@@ -1802,7 +1806,8 @@ void move_swarm_spell(object *op)
     the parts of the swarm.  
 
   Interface:
-    op:  the caster
+    op:  the owner
+    caster: the caster (owner, wand, rod, scroll)
     dir: the direction everything will be fired in
     swarm_type:  the archetype that will be fired
     spell_type:  the spell type of the archetype that's fired
@@ -1810,15 +1815,15 @@ void move_swarm_spell(object *op)
 */
     
 
-void fire_swarm (object *op, int dir, archetype *swarm_type, int spell_type,
-	int n, int magic)
+void fire_swarm (object *op, object *caster, int dir, archetype *swarm_type,
+	int spell_type, int n, int magic)
 {
   object *tmp;
-  tmp=arch_to_object(find_archetype("swarm_spell"));
+  tmp=get_archetype("swarm_spell");
   tmp->x=op->x;
   tmp->y=op->y;	    
   set_owner(tmp,op);       /* needed so that if swarm elements kill, caster gets xp.*/
-  tmp->level=op->level;   /*needed later, to get level dep. right.*/
+  tmp->level=casting_level(caster, spell_type);   /*needed later, to get level dep. right.*/
   tmp->stats.sp=spell_type;  /* needed later, see move_swarm_spell */
   tmp->magic = magic;
   tmp->stats.hp=n;	    /* n in swarm*/
@@ -2153,7 +2158,7 @@ int cast_smite_spell (object *op, object *caster,int dir, int type) {
       return 0;
 
   /* tailor the effect by priest level and worshipped God */
-   effect->level=SK_level(op);
+   effect->level = casting_level (caster, type);
 #ifdef MULTIPLE_GODS
    if(effect->attacktype&AT_HOLYWORD||effect->attacktype&AT_GODPOWER) {
         if(tailor_god_spell(effect,op))
