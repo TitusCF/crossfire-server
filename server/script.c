@@ -562,7 +562,7 @@ SCM Script_getPreviousObject(SCM who)
 
 SCM Script_getFirstOnSquare(SCM where, SCM x, SCM y)
 {
-  return gh_long2scm((object *)(get_map_ob((mapstruct *)(gh_scm2long(where)),gh_scm2int(x),gh_scm2int(y))));
+  return gh_long2scm((long)(get_map_ob((mapstruct *)(gh_scm2long(where)),gh_scm2int(x),gh_scm2int(y))));
 };
 
 SCM Script_getMap(SCM who)
@@ -1751,3 +1751,5 @@ SCM Script_isType(SCM who, SCM what)
 {
         return gh_bool2scm(WHO->type==what);
 };
+
+
