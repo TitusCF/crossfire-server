@@ -630,8 +630,11 @@ int player_login (player* pl, char* host)
     int precision;
     gettimestamp (buf,sizeof(buf),&precision);
     sprintf (query,"INSERT INTO playerlog (player, logmessage, playerstat, host, moment, counter)\
-                                   VALUES ('%s', 'LOGIN', '', '%s', '%s', %d)",
+                                   VALUES ('%s', 'LOGIN', '%s', '%s', '%s', %d)",
                     addslashes(pl->ob->name),
+/*                    saveplayerstats (pl->ob,NULL,NULL,buf,precision,NULL),
+    Removed by GROS. Why? */
+                    '', /*Replaced by empty string*/
                     addslashes(host),buf,precision);
     sprintf (message,"%s has entered the game",pl->ob->name);
     database_insert (query);
@@ -653,7 +656,7 @@ int player_logout (player* pl, char* host)
                     VALUES ('%s', 'LOGOUT', '%s', '%s', '%s', %d)",
                     addslashes(pl->ob->name),
                     saveplayerstats (pl->ob,NULL,NULL,buf,precision,NULL),
-                    host,buf,precision);
+                    addslashes(host),buf,precision);
     sprintf (message,"%s left the game",pl->ob->name);
     database_insert (query);
     insert_message (buf,"SERVER","",addslashes(message),
@@ -792,7 +795,8 @@ CFParm* triggerEvent(CFParm* PParm)
     int eventcode;
     static int result;
     eventcode = *(int *)(PParm->Value[0]);
-    /*printf ("Got event %d\n",eventcode);*/
+    /*May help fixing some events*/
+    printf ("\t[Crossfire Logger] Got event %d\n",eventcode);
     switch (eventcode){
         case EVENT_BORN:
             result=player_birth ( (object*)PParm->Value[1]);
@@ -887,6 +891,13 @@ CFParm* removePlugin(CFParm* PParm)
     close_database();
     return NULL;
 };
+/*****************************************************************************/
+/* This function is called to ask various informations to the plugin.        */
+/*****************************************************************************/
+CFParm* getPluginProperty(CFParm* PParm)
+{
+    return NULL;
+}
 
 void debugF(int* i)
 {
