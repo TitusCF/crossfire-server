@@ -597,7 +597,7 @@
 #define STARTMAX        500     /* How big array of objects to start with */
 #define OBJ_EXPAND      100     /* How big steps to use when expanding array */
 
-#define HIGHSCORE_LENGTH 10	/* How many entries there are room for */
+#define HIGHSCORE_LENGTH 1000	/* How many entries there are room for */
 
 #define ARCHTABLE 5003		/* Used when hashing archetypes */
 #define MAXSTRING 20
