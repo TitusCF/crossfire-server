@@ -335,6 +335,8 @@ int do_skill (object *op, object *part, object *skill, int dir, char *string) {
 		next=tmp->above;
 		if(QUERY_FLAG(tmp, FLAG_IS_CAULDRON)) {
 		    attempt_do_alchemy(op, tmp);
+		    if (QUERY_FLAG(tmp, FLAG_APPLIED))
+			esrv_send_inventory(op, tmp);
 		    did_alc=1;
 		}
 	    }

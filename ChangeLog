@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/skill_util.c: Call esrv_send_inventory on the cauldron if we
+   performed alchemy.  Needed for cauldron's contents to get updated.
+   MSW 2003-09-23
+
   Modified files:
     TODO common/anim.c common/arch.c common/button.c common/exp.c
     common/init.c common/item.c common/living.c common/loader.c
