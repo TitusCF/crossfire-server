@@ -1,6 +1,0 @@
-syntax: speed <newspeed> 
-notes:
-without arguments, this prints
-your current speed. If given an
-argument, it will set reset your
-speed to the new speed.

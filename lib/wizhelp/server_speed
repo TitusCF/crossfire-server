@@ -1,0 +1,6 @@
+syntax: server_speed [newspeed] 
+notes:
+Without arguments, this prints
+current server speed. If given an
+argument, it will set server
+speed to the new speed.

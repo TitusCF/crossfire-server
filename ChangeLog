@@ -19,6 +19,12 @@ Changes for CVS:
 
 common/object.c: apply patch #1066665 courtesy Salathar for exits with
    blockview 1.
+lib/formulae: apply patch #1064643 courtesy Salathar to fix broken formulae.
+lib/wizhelp/speed: remove file, command changed name.
+lib/wizhelp/server_speed: updated 'speed' command help.
+server/c_wiz.c: apply patch #1063051 courtesy Salathar to update muzzle message.
+server/commands.c: apply patch #1052224 courtesy Casper to change
+   'speed' to 'server_speed' as name is ambiguous.
 Ryo Saeba 2004-11-25
 
 common/loader.l: Fix passed size in FAST_SAVE_LONG() - was one too long,

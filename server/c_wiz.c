@@ -340,7 +340,7 @@ int command_toggle_shout(object *op, char *params)
 	}else{
 		pl->ob->contr->no_shout = 0;
     new_draw_info(NDI_UNIQUE | NDI_ORANGE, 0, pl->ob,
-			 "You are allowed to shout again.");
+			 "You are allowed to shout and chat again.");
     new_draw_info_format(NDI_UNIQUE , 0, op,
 			 "You remove %s's muzzle.", pl->ob->name);
 		return 1;
