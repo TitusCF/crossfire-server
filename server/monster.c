@@ -1367,6 +1367,26 @@ static msglang *parse_message(char *msg) {
 	  }
           last = line + 1;
         }
+	  /*
+	   * your eyes aren't decieving you, this is code repetition.  However,
+	   * the above code doesn't catch the case where line<cp going into the
+	   * for loop, skipping the above code completely, and leaving undefined
+       * data in the keywords array.  This patches it up and solves a crash
+	   * bug.  garbled 2001-10-20
+	   */
+	  if (keywordnr < nrofkeywords) {
+		  LOG(llevError, "Map developer screwed up match statement"
+		      " in parse_message\n");
+		   if (keywordnr>1)
+			   /* This is purely addtional information, should *
+			    * only be gieb if asked */
+			   LOG(llevDebug, "Msgnr %d, after keyword %s\n", msgnr+1,
+				   msgs->keywords[msgnr][keywordnr-2]);
+		   else
+			   LOG(llevDebug, "Msgnr %d, first keyword\n",msgnr+1);
+	      for(keywordnr; keywordnr <= nrofkeywords; keywordnr++)
+		      msgs->keywords[msgnr][keywordnr] = strdup_local("xxxx");
+	  }
       last = cp;
     }
   if(last != NULL)
