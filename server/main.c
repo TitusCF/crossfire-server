@@ -396,8 +396,18 @@ void enter_exit(object *op, object *exit_ob) {
     oldmap->players--;
   }
 
-  /* Do any processing to get the map loaded and ready */
-  op->map = ready_map_name(newpath,(unique?MAP_PLAYER_UNIQUE:0));
+  /* If a unique loaded, see if its in memory, and use it.
+   * otherwise, load it up.
+   */
+  if (exit_ob && QUERY_FLAG(exit_ob, FLAG_UNIQUE)) {
+    op->map=has_been_loaded(apartment);
+    if (!op->map || 
+	(op->map->in_memory!=MAP_LOADING && op->map->in_memory!=MAP_IN_MEMORY))
+	op->map = ready_map_name(newpath,(unique?MAP_PLAYER_UNIQUE:0));
+  } else {
+    /* Do any processing to get the map loaded and ready */
+    op->map = ready_map_name(newpath,(unique?MAP_PLAYER_UNIQUE:0));
+  }
 
   /* Did the load fail for some reason?  If so, put the player back on the
    * map they came from and remove the exit that pointed the player to
@@ -431,6 +441,8 @@ void enter_exit(object *op, object *exit_ob) {
   /* If we got the map we wanted and it is UNIQUE, we need to update
    * it so it gets saved in the right place.  Set unique so that
    * when we save it, it knows to save it in the right place
+   * If the map is already in ram, this is redundant, but not a big
+   * problem.
    */
   else if (exit_ob && QUERY_FLAG(exit_ob, FLAG_UNIQUE)) {
     strcpy(op->map->path, apartment);
@@ -641,7 +653,7 @@ void process_players2(mapstruct *map)
 
 void process_events (mapstruct *map)
 {
-  object *op, *next;
+  object *op;
   object marker;
   tag_t tag;
 

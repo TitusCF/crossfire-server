@@ -16,6 +16,11 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+MSW 2000/11/22
+server/main.c:  Modify enter_exit so that it properly uses per player
+unique maps that are only in memory and not on disk.  Remove unused
+variable from process events (unrelated change).
+
 PeterM  2000/11/18:
   New spells added:
   1)  Sanctuary   (aura of counterwall)
