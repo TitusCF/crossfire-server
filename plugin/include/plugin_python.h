@@ -645,9 +645,9 @@ MODULEAPI int cmd_customPython(object *op, char *params);
 /* This structure is used to define one python-implemented crossfire command.*/
 typedef struct PythonCmdStruct
 {
-    char *name;    /* The name of the command, as known in the game.    */
-    char *script;  /* The name of the script file to bind.              */
-    double speed;   /* The speed of the command execution.                   */
+    char *name;    /* The name of the command, as known in the game.         */
+    char *script;  /* The name of the script file to bind.                   */
+    double speed;  /* The speed of the command execution.                    */
 } PythonCmd;
 
 /* This plugin allows up to 1024 custom commands.                            */

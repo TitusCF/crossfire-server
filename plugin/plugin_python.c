@@ -234,164 +234,164 @@ static int allocate_stack(void)
 #endif
 static PyObject* CFAttackTypePhysical(PyObject* self, PyObject* args)
 {
-  int val = AT_PHYSICAL;
-  if (!PyArg_ParseTuple(args,"",NULL))
-      return NULL;
-  return Py_BuildValue("i",val);
+    int val = AT_PHYSICAL;
+    if (!PyArg_ParseTuple(args,"",NULL))
+        return NULL;
+    return Py_BuildValue("i",val);
 };
 static PyObject* CFAttackTypeMagic(PyObject* self, PyObject* args)
 {
-  int val = AT_MAGIC;
-  if (!PyArg_ParseTuple(args,"",NULL))
-      return NULL;
-  return Py_BuildValue("i",val);
+    int val = AT_MAGIC;
+    if (!PyArg_ParseTuple(args,"",NULL))
+        return NULL;
+    return Py_BuildValue("i",val);
 };
 static PyObject* CFAttackTypeFire(PyObject* self, PyObject* args)
 {
-  int val = AT_FIRE;
-  if (!PyArg_ParseTuple(args,"",NULL))
-      return NULL;
-  return Py_BuildValue("i",val);
+    int val = AT_FIRE;
+    if (!PyArg_ParseTuple(args,"",NULL))
+        return NULL;
+    return Py_BuildValue("i",val);
 };
 static PyObject* CFAttackTypeElectricity(PyObject* self, PyObject* args)
 {
-  int val = AT_ELECTRICITY;
-  if (!PyArg_ParseTuple(args,"",NULL))
-      return NULL;
-  return Py_BuildValue("i",val);
+    int val = AT_ELECTRICITY;
+    if (!PyArg_ParseTuple(args,"",NULL))
+        return NULL;
+    return Py_BuildValue("i",val);
 };
 static PyObject* CFAttackTypeCold(PyObject* self, PyObject* args)
 {
-  int val = AT_COLD;
-  if (!PyArg_ParseTuple(args,"",NULL))
-      return NULL;
-  return Py_BuildValue("i",val);
+    int val = AT_COLD;
+    if (!PyArg_ParseTuple(args,"",NULL))
+        return NULL;
+    return Py_BuildValue("i",val);
 };
 static PyObject* CFAttackTypeConfusion(PyObject* self, PyObject* args)
 {
-  int val = AT_CONFUSION;
-  if (!PyArg_ParseTuple(args,"",NULL))
-      return NULL;
-  return Py_BuildValue("i",val);
+    int val = AT_CONFUSION;
+    if (!PyArg_ParseTuple(args,"",NULL))
+        return NULL;
+    return Py_BuildValue("i",val);
 };
 static PyObject* CFAttackTypeAcid(PyObject* self, PyObject* args)
 {
-  int val = AT_ACID;
-  if (!PyArg_ParseTuple(args,"",NULL))
-      return NULL;
-  return Py_BuildValue("i",val);
+    int val = AT_ACID;
+    if (!PyArg_ParseTuple(args,"",NULL))
+        return NULL;
+    return Py_BuildValue("i",val);
 };
 static PyObject* CFAttackTypeDrain(PyObject* self, PyObject* args)
 {
-  int val = AT_DRAIN;
-  if (!PyArg_ParseTuple(args,"",NULL))
-      return NULL;
-  return Py_BuildValue("i",val);
+    int val = AT_DRAIN;
+    if (!PyArg_ParseTuple(args,"",NULL))
+        return NULL;
+    return Py_BuildValue("i",val);
 };
 static PyObject* CFAttackTypeWeaponmagic(PyObject* self, PyObject* args)
 {
-  int val = AT_WEAPONMAGIC;
-  if (!PyArg_ParseTuple(args,"",NULL))
-      return NULL;
-  return Py_BuildValue("i",val);
+    int val = AT_WEAPONMAGIC;
+    if (!PyArg_ParseTuple(args,"",NULL))
+        return NULL;
+    return Py_BuildValue("i",val);
 };
 static PyObject* CFAttackTypeGhosthit(PyObject* self, PyObject* args)
 {
-  int val = AT_GHOSTHIT;
-  if (!PyArg_ParseTuple(args,"",NULL))
-      return NULL;
-  return Py_BuildValue("i",val);
+    int val = AT_GHOSTHIT;
+    if (!PyArg_ParseTuple(args,"",NULL))
+        return NULL;
+    return Py_BuildValue("i",val);
 };
 static PyObject* CFAttackTypePoison(PyObject* self, PyObject* args)
 {
-  int val = AT_POISON;
-  if (!PyArg_ParseTuple(args,"",NULL))
-      return NULL;
-  return Py_BuildValue("i",val);
+    int val = AT_POISON;
+    if (!PyArg_ParseTuple(args,"",NULL))
+        return NULL;
+    return Py_BuildValue("i",val);
 };
 static PyObject* CFAttackTypeSlow(PyObject* self, PyObject* args)
 {
-  int val = AT_SLOW;
-  if (!PyArg_ParseTuple(args,"",NULL))
-      return NULL;
-  return Py_BuildValue("i",val);
+    int val = AT_SLOW;
+    if (!PyArg_ParseTuple(args,"",NULL))
+        return NULL;
+    return Py_BuildValue("i",val);
 };
 static PyObject* CFAttackTypeParalyze(PyObject* self, PyObject* args)
 {
-  int val = AT_PARALYZE;
-  if (!PyArg_ParseTuple(args,"",NULL))
-      return NULL;
-  return Py_BuildValue("i",val);
+    int val = AT_PARALYZE;
+    if (!PyArg_ParseTuple(args,"",NULL))
+        return NULL;
+    return Py_BuildValue("i",val);
 };
 static PyObject* CFAttackTypeTurnUndead(PyObject* self, PyObject* args)
 {
-  int val = AT_TURN_UNDEAD;
-  if (!PyArg_ParseTuple(args,"",NULL))
-      return NULL;
-  return Py_BuildValue("i",val);
+    int val = AT_TURN_UNDEAD;
+    if (!PyArg_ParseTuple(args,"",NULL))
+        return NULL;
+    return Py_BuildValue("i",val);
 };
 static PyObject* CFAttackTypeFear(PyObject* self, PyObject* args)
 {
-  int val = AT_FEAR;
-  if (!PyArg_ParseTuple(args,"",NULL))
-      return NULL;
-  return Py_BuildValue("i",val);
+    int val = AT_FEAR;
+    if (!PyArg_ParseTuple(args,"",NULL))
+        return NULL;
+    return Py_BuildValue("i",val);
 };
 static PyObject* CFAttackTypeCancellation(PyObject* self, PyObject* args)
 {
-  int val = AT_CANCELLATION;
-  if (!PyArg_ParseTuple(args,"",NULL))
-      return NULL;
-  return Py_BuildValue("i",val);
+    int val = AT_CANCELLATION;
+    if (!PyArg_ParseTuple(args,"",NULL))
+        return NULL;
+    return Py_BuildValue("i",val);
 };
 static PyObject* CFAttackTypeDepletion(PyObject* self, PyObject* args)
 {
-  int val = AT_DEPLETE;
-  if (!PyArg_ParseTuple(args,"",NULL))
-      return NULL;
-  return Py_BuildValue("i",val);
+    int val = AT_DEPLETE;
+    if (!PyArg_ParseTuple(args,"",NULL))
+        return NULL;
+    return Py_BuildValue("i",val);
 };
 static PyObject* CFAttackTypeDeath(PyObject* self, PyObject* args)
 {
-  int val = AT_DEATH;
-  if (!PyArg_ParseTuple(args,"",NULL))
-      return NULL;
-  return Py_BuildValue("i",val);
+    int val = AT_DEATH;
+    if (!PyArg_ParseTuple(args,"",NULL))
+        return NULL;
+    return Py_BuildValue("i",val);
 };
 static PyObject* CFAttackTypeChaos(PyObject* self, PyObject* args)
 {
-  int val = AT_CHAOS;
-  if (!PyArg_ParseTuple(args,"",NULL))
-      return NULL;
-  return Py_BuildValue("i",val);
+    int val = AT_CHAOS;
+    if (!PyArg_ParseTuple(args,"",NULL))
+        return NULL;
+    return Py_BuildValue("i",val);
 };
 static PyObject* CFAttackTypeCounterspell(PyObject* self, PyObject* args)
 {
-  int val = AT_COUNTERSPELL;
-  if (!PyArg_ParseTuple(args,"",NULL))
-      return NULL;
-  return Py_BuildValue("i",val);
+    int val = AT_COUNTERSPELL;
+    if (!PyArg_ParseTuple(args,"",NULL))
+        return NULL;
+    return Py_BuildValue("i",val);
 };
 static PyObject* CFAttackTypeGodpower(PyObject* self, PyObject* args)
 {
-  int val = AT_GODPOWER;
-  if (!PyArg_ParseTuple(args,"",NULL))
-      return NULL;
-  return Py_BuildValue("i",val);
+    int val = AT_GODPOWER;
+    if (!PyArg_ParseTuple(args,"",NULL))
+        return NULL;
+    return Py_BuildValue("i",val);
 };
 static PyObject* CFAttackTypeHolyWord(PyObject* self, PyObject* args)
 {
-  int val = AT_HOLYWORD;
-  if (!PyArg_ParseTuple(args,"",NULL))
-      return NULL;
-  return Py_BuildValue("i",val);
+    int val = AT_HOLYWORD;
+    if (!PyArg_ParseTuple(args,"",NULL))
+        return NULL;
+    return Py_BuildValue("i",val);
 };
 static PyObject* CFAttackTypeBlind(PyObject* self, PyObject* args)
 {
-  int val = AT_BLIND;
-  if (!PyArg_ParseTuple(args,"",NULL))
-      return NULL;
-  return Py_BuildValue("i",val);
+    int val = AT_BLIND;
+    if (!PyArg_ParseTuple(args,"",NULL))
+        return NULL;
+    return Py_BuildValue("i",val);
 };
 static PyObject* CFAttackTypeLifeStealing(PyObject* self, PyObject* args)
 {
@@ -533,7 +533,6 @@ static PyObject* CFEventTimer(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFGetMapWidth                                                    */
 /* Python : CFPython.GetMapWidth(map)                                        */
-/* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFGetMapWidth(PyObject* self, PyObject* args)
 {
@@ -549,7 +548,6 @@ static PyObject* CFGetMapWidth(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFGetMapHeight                                                   */
 /* Python : CFPython.GetMapHeight(map)                                       */
-/* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFGetMapHeight(PyObject* self, PyObject* args)
 {
@@ -565,7 +563,6 @@ static PyObject* CFGetMapHeight(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFGetObjectAt                                                    */
 /* Python : CFPython.GetObjectAt(map,x,y)                                    */
-/* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFGetObjectAt(PyObject* self, PyObject* args)
 {
@@ -585,7 +582,6 @@ static PyObject* CFGetObjectAt(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFSetValue                                                       */
 /* Python : CFPython.SetValue(object,value)                                  */
-/* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFSetValue(PyObject* self, PyObject* args)
 {
@@ -609,7 +605,6 @@ static PyObject* CFSetValue(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFGetValue                                                       */
 /* Python : CFPython.GetValue(object)                                        */
-/* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFGetValue(PyObject* self, PyObject* args)
 {
@@ -626,7 +621,6 @@ static PyObject* CFGetValue(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFSetSkillExperience                                             */
 /* Python : CFPython.SetSkillExperience(object,skill,value)                  */
-/* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFSetSkillExperience(PyObject* self, PyObject* args)
 {
@@ -672,7 +666,6 @@ static PyObject* CFSetSkillExperience(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFGetSkillExperience                                             */
 /* Python : CFPython.GetSkillExperience(object, skill)                       */
-/* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFGetSkillExperience(PyObject* self, PyObject* args)
 {
@@ -700,7 +693,6 @@ static PyObject* CFGetSkillExperience(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFMatchString                                                    */
 /* Python : CFPython.MatchString(firststr,secondstr)                         */
-/* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFMatchString(PyObject* self, PyObject* args)
 {
@@ -724,7 +716,6 @@ static PyObject* CFMatchString(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFSetCursed                                                      */
 /* Python : CFPython.SetCursed(object,value)                                 */
-/* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFSetCursed(PyObject* self, PyObject* args)
 {
@@ -736,16 +727,16 @@ static PyObject* CFSetCursed(PyObject* self, PyObject* args)
 
     CHECK_OBJ(whoptr);
 
-  if (value!=0)
-  {
+    if (value!=0)
+    {
         SET_FLAG(WHO, FLAG_CURSED);
-  }
-  else
-  {
+    }
+    else
+    {
         CLEAR_FLAG(WHO, FLAG_CURSED);
-  };
-  Py_INCREF(Py_None);
-  return Py_None;
+    };
+    Py_INCREF(Py_None);
+    return Py_None;
 };
 
 /*****************************************************************************/
@@ -777,7 +768,6 @@ static PyObject* CFSetDamned(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFActivateRune                                                   */
 /* Python : CFPython.ActivateRune(object_who,object_what)                    */
-/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFActivateRune(PyObject* self, PyObject* args)
 {
@@ -800,8 +790,7 @@ static PyObject* CFActivateRune(PyObject* self, PyObject* args)
 
 /*****************************************************************************/
 /* Name   : CFCheckTrigger                                                   */
-/* Python : CFPython.CheckTrigger(object,objectwhat)                         */
-/* Status : Untested                                                         */
+/* Python : CFPython.CheckTrigger(object trigger,object what)                */
 /*****************************************************************************/
 static PyObject* CFCheckTrigger(PyObject* self, PyObject* args)
 {
@@ -823,7 +812,6 @@ static PyObject* CFCheckTrigger(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFSetUnaggressive                                                */
 /* Python : CFPython.SetUnaggressive(who,value)                              */
-/* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFSetUnaggressive(PyObject* self, PyObject* args)
 {
@@ -849,8 +837,7 @@ static PyObject* CFSetUnaggressive(PyObject* self, PyObject* args)
 
 /*****************************************************************************/
 /* Name   : CFCastAbility                                                    */
-/* Python : CFPython.CastAbility(object,spell,direction,option)              */
-/* Status : Stable                                                           */
+/* Python : CFPython.CastAbility(object,caster,spell,direction,option)       */
 /*****************************************************************************/
 static PyObject* CFCastAbility(PyObject* self, PyObject* args)
 {
@@ -903,8 +890,7 @@ static PyObject* CFCastAbility(PyObject* self, PyObject* args)
 
 /*****************************************************************************/
 /* Name   : CFGetMapPath                                                     */
-/* Python : CFPython.GetMapPath(objectmap)                                   */
-/* Status : Stable                                                           */
+/* Python : CFPython.GetMapPath(map)                                         */
 /*****************************************************************************/
 static PyObject* CFGetMapPath(PyObject* self, PyObject* args)
 {
@@ -920,7 +906,6 @@ static PyObject* CFGetMapPath(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFGetMapObject                                                   */
 /* Python : CFPython.GetMapObject()                                          */
-/* Status : KIA                                                              */
 /*****************************************************************************/
 /* Remark : This function is deprecated and should not be used anymore.      */
 /*****************************************************************************/
@@ -934,7 +919,6 @@ static PyObject* CFGetMapObject(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFGetMessage                                                     */
 /* Python : CFPython.GetMessage(object)                                      */
-/* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFGetMessage(PyObject* self, PyObject* args)
 {
@@ -955,7 +939,6 @@ static PyObject* CFGetMessage(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFSetMessage                                                     */
 /* Python : CFPython.SetMessage(object,message)                              */
-/* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFSetMessage(PyObject* self, PyObject* args)
 {
@@ -976,7 +959,6 @@ static PyObject* CFSetMessage(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFGetGod                                                         */
 /* Python : CFPython.GetGod(object)                                          */
-/* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFGetGod(PyObject* self, PyObject* args)
 {
@@ -1005,7 +987,6 @@ static PyObject* CFGetGod(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFSetGod                                                         */
 /* Python : CFPython.SetGod(object,godstr)                                   */
-/* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFSetGod(PyObject* self, PyObject* args)
 {
@@ -1058,7 +1039,6 @@ static PyObject* CFSetGod(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFSetWeight                                                      */
 /* Python : CFPython.SetWeight(object,value)                                 */
-/* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFSetWeight(PyObject* self, PyObject* args)
 {
@@ -1080,6 +1060,7 @@ static PyObject* CFSetWeight(PyObject* self, PyObject* args)
         set_exception("weight must not be negative");
         return NULL;
     };
+
     WHO->weight = value;
 
     Py_INCREF(Py_None);
@@ -1089,7 +1070,6 @@ static PyObject* CFSetWeight(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFReadyMap                                                       */
 /* Python : CFPython.ReadyMap(name)                                          */
-/* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFReadyMap(PyObject* self, PyObject* args)
 {
@@ -1097,6 +1077,7 @@ static PyObject* CFReadyMap(PyObject* self, PyObject* args)
     mapstruct *mymap;
     int val;
     CFParm* CFR;
+
     if (!PyArg_ParseTuple(args,"s",&mapname))
         return NULL;
 
@@ -1113,7 +1094,6 @@ static PyObject* CFReadyMap(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFTeleport                                                       */
 /* Python : CFPython.Teleport(object,mapptr,x,y)                             */
-/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFTeleport(PyObject* self, PyObject* args)
 {
@@ -1161,7 +1141,6 @@ static PyObject* CFTeleport(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFOutOfMap                                                       */
 /* Python : CFPython.IsOutOfMap(object,x,y)                                  */
-/* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFIsOutOfMap(PyObject* self, PyObject* args)
 {
@@ -1179,7 +1158,6 @@ static PyObject* CFIsOutOfMap(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFPickUp                                                         */
 /* Python : CFPython.Pickup(object,whatob)                                   */
-/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFPickUp(PyObject* self, PyObject* args)
 {
@@ -1203,7 +1181,6 @@ static PyObject* CFPickUp(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFGetWeight                                                      */
 /* Python : CFPython.GetWeight(object)                                       */
-/* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFGetWeight(PyObject* self, PyObject* args)
 {
@@ -1221,7 +1198,6 @@ static PyObject* CFGetWeight(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFIsCanBePicked                                                  */
 /* Python : CFPython.CanBePicked(object)                                     */
-/* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFIsCanBePicked(PyObject* self, PyObject* args)
 {
@@ -1238,7 +1214,6 @@ static PyObject* CFIsCanBePicked(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFGetMap                                                         */
 /* Python : CFPython.GetMap(object)                                          */
-/* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFGetMap(PyObject* self, PyObject* args)
 {
@@ -1255,7 +1230,6 @@ static PyObject* CFGetMap(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFGetNextObject                                                  */
 /* Python : CFPython.GetNextObject(object)                                   */
-/* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFGetNextObject(PyObject* self, PyObject* args)
 {
@@ -1272,7 +1246,6 @@ static PyObject* CFGetNextObject(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFGetPreviousObject                                              */
 /* Python : CFPython.GetPreviousObject(object)                               */
-/* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFGetPreviousObject(PyObject* self, PyObject* args)
 {
@@ -1289,7 +1262,6 @@ static PyObject* CFGetPreviousObject(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFGetFirstObjectOnSquare                                         */
 /* Python : CFPython.GetFirstObjectOnSquare(map,x,y)                         */
-/* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFGetFirstObjectOnSquare(PyObject* self, PyObject* args)
 {
@@ -1316,7 +1288,6 @@ static PyObject* CFGetFirstObjectOnSquare(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFSetQuantity                                                    */
 /* Python : CFPython.SetQuantity(object,nrof)                                */
-/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFSetQuantity(PyObject* self, PyObject* args)
 {
@@ -1346,7 +1317,6 @@ static PyObject* CFSetQuantity(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFGetQuantity                                                    */
 /* Python : CFPython.GetQuantity(object)                                     */
-/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFGetQuantity(PyObject* self, PyObject* args)
 {
@@ -1363,7 +1333,6 @@ static PyObject* CFGetQuantity(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFInsertObjectInside                                             */
 /* Python : CFPython.InsertObjectInside(object,environment)                  */
-/* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFInsertObjectInside(PyObject* self, PyObject* args)
 {
@@ -1398,7 +1367,6 @@ static PyObject* CFInsertObjectInside(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFFindPlayer                                                     */
 /* Python : CFPlayer.FindPlayer(name)                                        */
-/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFFindPlayer(PyObject* self, PyObject* args)
 {
@@ -1425,7 +1393,6 @@ static PyObject* CFFindPlayer(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFApply                                                          */
 /* Python : CFPython.Apply(object, whatobj, flags)                           */
-/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFApply(PyObject* self, PyObject* args)
 {
@@ -1454,7 +1421,6 @@ static PyObject* CFApply(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFDrop                                                           */
 /* Python : CFPython.Drop(object, name)                                      */
-/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFDrop(PyObject* self, PyObject* args)
 {
@@ -1479,7 +1445,6 @@ static PyObject* CFDrop(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFTake                                                           */
 /* Python : CFPython.Take(object,name)                                       */
-/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFTake(PyObject* self, PyObject* args)
 {
@@ -1504,7 +1469,6 @@ static PyObject* CFTake(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFIsInvisible                                                    */
 /* Python : CFPython.IsInvisible(object)                                     */
-/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFIsInvisible(PyObject* self, PyObject* args)
 {
@@ -1521,31 +1485,30 @@ static PyObject* CFIsInvisible(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFWhoAmI                                                         */
 /* Python : CFPython.WhoAmI()                                                */
-/* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFWhoAmI(PyObject* self, PyObject* args)
 {
     if (!PyArg_ParseTuple(args,"",NULL))
         return NULL;
+
     return Py_BuildValue("l",(long)(StackWho[StackPosition]));
 };
 
 /*****************************************************************************/
 /* Name   : CFWhoIsActivator                                                 */
 /* Python : CFPython.WhoIsActivator()                                        */
-/* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFWhoIsActivator(PyObject* self, PyObject* args)
 {
     if (!PyArg_ParseTuple(args,"",NULL))
         return NULL;
+
     return Py_BuildValue("l",(long)(StackActivator[StackPosition]));
 };
 
 /*****************************************************************************/
 /* Name   : CFWhatIsMessage                                                  */
 /* Python : CFPython.WhatIsMessage()                                         */
-/* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFWhatIsMessage(PyObject* self, PyObject* args)
 {
@@ -1564,7 +1527,6 @@ static PyObject* CFWhatIsMessage(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFSay                                                            */
 /* Python : CFPython.Say(object,message)                                     */
-/* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFSay(PyObject* self, PyObject* args)
 {
@@ -1585,8 +1547,8 @@ static PyObject* CFSay(PyObject* self, PyObject* args)
     GCFP.Value[1] = (void *)(WHO->map);
     GCFP.Value[2] = (void *)(buf);
     (PlugHooks[HOOK_NEWINFOMAP])(&GCFP);
-
     free(buf);
+
     Py_INCREF(Py_None);
     return Py_None;
 };
@@ -1594,7 +1556,6 @@ static PyObject* CFSay(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFSetInvisible                                                   */
 /* Python : CFPython.SetInvisible(object,value)                              */
-/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFSetInvisible(PyObject* self, PyObject* args)
 {
@@ -1614,7 +1575,6 @@ static PyObject* CFSetInvisible(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFGetExperience                                                  */
 /* Python : CFPython.GetExperience(object)                                   */
-/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFGetExperience(PyObject* self, PyObject* args)
 {
@@ -1631,7 +1591,6 @@ static PyObject* CFGetExperience(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFGetSpeed                                                       */
 /* Python : CFPython.GetSpeed(object)                                        */
-/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFGetSpeed(PyObject* self, PyObject* args)
 {
@@ -1648,7 +1607,6 @@ static PyObject* CFGetSpeed(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFSetSpeed                                                       */
 /* Python : CFPython.SetSpeed(object,value)                                  */
-/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFSetSpeed(PyObject* self, PyObject* args)
 {
@@ -1659,7 +1617,7 @@ static PyObject* CFSetSpeed(PyObject* self, PyObject* args)
         return NULL;
 
     CHECK_OBJ(whoptr);
-    if (value< -9.99 || value> 9.99)
+    if (value < -9.99 || value > 9.99)
     {
         set_exception("value must be between -9.99 and 9.99");
         return NULL;
@@ -1673,7 +1631,6 @@ static PyObject* CFSetSpeed(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFGetFood                                                        */
 /* Python : CFPython.GetFood(object)                                         */
-/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFGetFood(PyObject* self, PyObject* args)
 {
@@ -1690,7 +1647,6 @@ static PyObject* CFGetFood(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFSetFood                                                        */
 /* Python : CFPython.SetFood(object, value)                                  */
-/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFSetFood(PyObject* self, PyObject* args)
 {
@@ -1716,7 +1672,6 @@ static PyObject* CFSetFood(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFGetGrace                                                       */
 /* Python : CFPython.GetGrace(object)                                        */
-/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFGetGrace(PyObject* self, PyObject* args)
 {
@@ -1733,7 +1688,6 @@ static PyObject* CFGetGrace(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFSetGrace                                                       */
 /* Python : CFPython.SetGrace(object, value)                                 */
-/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFSetGrace(PyObject* self, PyObject* args)
 {
@@ -1759,7 +1713,6 @@ static PyObject* CFSetGrace(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFGetReturnValue                                                 */
 /* Python : CFPython.GetReturnValue()                                        */
-/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFGetReturnValue(PyObject* self, PyObject* args)
 {
@@ -1772,7 +1725,6 @@ static PyObject* CFGetReturnValue(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFSetReturnValue                                                 */
 /* Python : CFPython.SetReturnValue(value)                                   */
-/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFSetReturnValue(PyObject* self, PyObject* args)
 {
@@ -1788,7 +1740,6 @@ static PyObject* CFSetReturnValue(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFGetDirection                                                   */
 /* Python : CFPython.GetDirection(object)                                    */
-/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFGetDirection(PyObject* self, PyObject* args)
 {
@@ -1805,7 +1756,6 @@ static PyObject* CFGetDirection(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFSetDirection                                                   */
 /* Python : CFPython.SetDirection(object, value)                             */
-/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFSetDirection(PyObject* self, PyObject* args)
 {
@@ -1826,7 +1776,6 @@ static PyObject* CFSetDirection(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFGetLastSP                                                      */
 /* Python : CFPython.GetLastSP(object)                                       */
-/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFGetLastSP(PyObject* self, PyObject* args)
 {
@@ -1843,7 +1792,6 @@ static PyObject* CFGetLastSP(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFSetLastSP                                                      */
 /* Python : CFPython.SetLastSP(object, value)                                */
-/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFSetLastSP(PyObject* self, PyObject* args)
 {
@@ -1869,7 +1817,6 @@ static PyObject* CFSetLastSP(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFGetLastGrace                                                   */
 /* Python : CFPython.GetLastGrace(object)                                    */
-/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFGetLastGrace(PyObject* self, PyObject* args)
 {
@@ -1886,7 +1833,6 @@ static PyObject* CFGetLastGrace(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFSetLastGrace                                                   */
 /* Python : CFPython.SetLastGrace(object,value)                              */
-/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFSetLastGrace(PyObject* self, PyObject* args)
 {
@@ -1912,7 +1858,6 @@ static PyObject* CFSetLastGrace(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFFixObject                                                      */
 /* Python : CFPython.FixObject(object)                                       */
-/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFFixObject(PyObject* self, PyObject* args)
 {
@@ -1931,7 +1876,6 @@ static PyObject* CFFixObject(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFSetFace                                                        */
 /* Python : CFPython.SetFace(object,string)                                  */
-/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFSetFace(PyObject* self, PyObject* args)
 {
@@ -1961,7 +1905,6 @@ static PyObject* CFSetFace(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFGetAttackType                                                  */
 /* Python : CFPython.GetAttackType(object)                                   */
-/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFGetAttackType(PyObject* self, PyObject* args)
 {
@@ -1978,7 +1921,6 @@ static PyObject* CFGetAttackType(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFSetAttackType                                                  */
 /* Python : CFPython.SetAttackType(object,value)                             */
-/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFSetAttackType(PyObject* self, PyObject* args)
 {
@@ -1999,7 +1941,6 @@ static PyObject* CFSetAttackType(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFSetDamage                                                      */
 /* Python : CFPython.SetDamage(object,value)                                 */
-/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFSetDamage(PyObject* self, PyObject* args)
 {
@@ -2025,7 +1966,6 @@ static PyObject* CFSetDamage(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFGetDamage                                                      */
 /* Python : CFPython.GetDamage(object)                                       */
-/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFGetDamage(PyObject* self, PyObject* args)
 {
@@ -2042,7 +1982,6 @@ static PyObject* CFGetDamage(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFSetBeenApplied                                                 */
 /* Python : CFPython.SetBeenApplied(object,value)                            */
-/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFSetBeenApplied(PyObject* self, PyObject* args)
 {
@@ -2066,7 +2005,6 @@ static PyObject* CFSetBeenApplied(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFSetIdentified                                                  */
 /* Python : CFPython.SetIdentified(object,value)                             */
-/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFSetIdentified(PyObject* self, PyObject* args)
 {
@@ -2090,7 +2028,6 @@ static PyObject* CFSetIdentified(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFKillObject                                                     */
 /* Python : CFPython.KillObject(object,what_object,killtype)                 */
-/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFKillObject(PyObject* self, PyObject* args)
 {
@@ -2154,19 +2091,18 @@ static PyObject* CFKillObject(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFWhoIsOther                                                     */
 /* Python : CFPython.WhoIsOther()                                            */
-/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFWhoIsOther(PyObject* self, PyObject* args)
 {
     if (!PyArg_ParseTuple(args,"",NULL))
         return NULL;
+
     return Py_BuildValue("l",(long)(StackOther[StackPosition]));
 };
 
 /*****************************************************************************/
 /* Name   : CFDirectionN                                                     */
 /* Python : CFPython.DirectionN()                                            */
-/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFDirectionN(PyObject* self, PyObject* args)
 {
@@ -2179,7 +2115,6 @@ static PyObject* CFDirectionN(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFDirectionNE                                                    */
 /* Python : CFPython.DirectionNE()                                           */
-/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFDirectionNE(PyObject* self, PyObject* args)
 {
@@ -2192,7 +2127,6 @@ static PyObject* CFDirectionNE(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFDirectionE                                                     */
 /* Python : CFPython.DirectionE()                                            */
-/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFDirectionE(PyObject* self, PyObject* args)
 {
@@ -2205,7 +2139,6 @@ static PyObject* CFDirectionE(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFDirectionSE                                                    */
 /* Python : CFPython.DirectionSE()                                           */
-/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFDirectionSE(PyObject* self, PyObject* args)
 {
@@ -2218,7 +2151,6 @@ static PyObject* CFDirectionSE(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFDirectionS                                                     */
 /* Python : CFPython.DirectionS()                                            */
-/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFDirectionS(PyObject* self, PyObject* args)
 {
@@ -2231,7 +2163,6 @@ static PyObject* CFDirectionS(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFDirectionSW                                                    */
 /* Python : CFPython.DirectionSW()                                           */
-/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFDirectionSW(PyObject* self, PyObject* args)
 {
@@ -2244,7 +2175,6 @@ static PyObject* CFDirectionSW(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFDirectionW                                                     */
 /* Python : CFPython.DirectionW()                                            */
-/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFDirectionW(PyObject* self, PyObject* args)
 {
@@ -2257,7 +2187,6 @@ static PyObject* CFDirectionW(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFDirectionNW                                                    */
 /* Python : CFPython.DirectionNW()                                           */
-/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFDirectionNW(PyObject* self, PyObject* args)
 {
@@ -2270,7 +2199,6 @@ static PyObject* CFDirectionNW(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFCastSpell                                                      */
 /* Python : CFPython.CastSpell(object,spell_object,direction,string)         */
-/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFCastSpell(PyObject* self, PyObject* args)
 {
@@ -2300,7 +2228,6 @@ static PyObject* CFCastSpell(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFForgetSpell                                                    */
 /* Python : CFPython.ForgetSpell(object,spell)                               */
-/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFForgetSpell(PyObject* self, PyObject* args)
 {
@@ -2323,7 +2250,6 @@ static PyObject* CFForgetSpell(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFAcquireSpell                                                   */
 /* Python : CFPython.AcquireSpell(object,spell_object)                       */
-/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFAcquireSpell(PyObject* self, PyObject* args)
 {
@@ -2348,7 +2274,6 @@ static PyObject* CFAcquireSpell(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFDoKnowSpell                                                    */
 /* Python : CFPython.DoKnowSpell(object,string)                              */
-/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFDoKnowSpell(PyObject* self, PyObject* args)
 {
@@ -2374,7 +2299,6 @@ static PyObject* CFDoKnowSpell(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFCheckInvisibleObjectInside                                     */
 /* Python : CFPython.CheckInvisibleObjectInside(object,string)               */
-/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFCheckInvisibleObjectInside(PyObject* self, PyObject* args)
 {
@@ -2399,7 +2323,6 @@ static PyObject* CFCheckInvisibleObjectInside(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFCreateInvisibleObjectInside                                    */
 /* Python : CFPython.CreateInvisibleObjectInside(object,string)              */
-/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFCreateInvisibleObjectInside(PyObject* self, PyObject* args)
 {
@@ -2449,7 +2372,6 @@ static PyObject* CFCreateInvisibleObjectInside(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFCreateObjectInside                                             */
 /* Python : CFPython.CreateObjectInside(string,object)                       */
-/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFCreateObjectInside(PyObject* self, PyObject* args)
 {
@@ -2481,8 +2403,7 @@ static PyObject* CFCreateObjectInside(PyObject* self, PyObject* args)
 
 /*****************************************************************************/
 /* Name   : CFCheckMap                                                       */
-/* Python : CFPython.CheckMap(what_string,map_string,pos)                    */
-/* Status : Untested                                                         */
+/* Python : CFPython.CheckMap(what_string,map,pos)                           */
 /*****************************************************************************/
 static PyObject* CFCheckMap(PyObject* self, PyObject* args)
 {
@@ -2514,8 +2435,8 @@ static PyObject* CFCheckMap(PyObject* self, PyObject* args)
         map = CFR->Value[0];
         PyFreeMemory(CFR);
 
-	if (map == NULL)
-	    return Py_BuildValue("l",(long)0);
+        if (map == NULL)
+            return Py_BuildValue("l",(long)0);
     }
 
     mflags = get_map_flags(map, &map, x, y, &nx, &ny);
@@ -2533,7 +2454,6 @@ static PyObject* CFCheckMap(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFCheckArchInventory                                             */
 /* Python : CFPython.CheckArchInventory(who, 'arch_name')                    */
-/* Status : Stable                                                           */
 /* Info   : This routine search explicit for a arch_name.                    */
 /*****************************************************************************/
 static PyObject* CFCheckArchInventory(PyObject* self, PyObject* args)
@@ -2547,7 +2467,7 @@ static PyObject* CFCheckArchInventory(PyObject* self, PyObject* args)
 
     CHECK_OBJ(whoptr);
 
-    for (tmp = WHO->inv; tmp != NULL; tmp = tmp->below)
+    for(tmp = WHO->inv; tmp != NULL; tmp = tmp->below)
     {
         if (!strcmp(tmp->arch->name,whatstr))
             break;
@@ -2559,7 +2479,6 @@ static PyObject* CFCheckArchInventory(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFCheckInventory                                                 */
 /* Python : CFPython.CheckInventory(object,string)                           */
-/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFCheckInventory(PyObject* self, PyObject* args)
 {
@@ -2577,7 +2496,7 @@ static PyObject* CFCheckInventory(PyObject* self, PyObject* args)
     if (foundob != NULL)
         return Py_BuildValue("l",(long)(foundob));
 
-    for (tmp = WHO->inv; tmp; tmp = tmp->below)
+    for(tmp = WHO->inv; tmp; tmp = tmp->below)
     {
         if (!strncmp(query_name(tmp),whatstr,strlen(whatstr)))
         {
@@ -2595,8 +2514,6 @@ static PyObject* CFCheckInventory(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFGetName                                                        */
 /* Python : CFPython.GetName(object)                                         */
-/* Status : Untested  - hm, query name should return CF name like "name      */
-/*        : (unpaid) (cursed) and not the 'pure' name - we must test this    */
 /*****************************************************************************/
 static PyObject* CFGetName(PyObject* self, PyObject* args)
 {
@@ -2612,7 +2529,6 @@ static PyObject* CFGetName(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFSetName                                                        */
 /* Python : CFPython.SetName(object, name[, name_pl])                        */
-/* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFSetName(PyObject* self, PyObject* args)
 {
@@ -2642,7 +2558,6 @@ static PyObject* CFSetName(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFGetTitle                                                       */
 /* Python : CFPython.GetTitle(object)                                        */
-/* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFGetTitle(PyObject* self, PyObject* args)
 {
@@ -2665,7 +2580,6 @@ static PyObject* CFGetTitle(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFSetTitle                                                       */
 /* Python : CFPython.SetTitle(object, name)                                  */
-/* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFSetTitle(PyObject* self, PyObject* args)
 {
@@ -2688,7 +2602,6 @@ static PyObject* CFSetTitle(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFGetSlaying                                                     */
 /* Python : CFPython.GetSlaying(object)                                      */
-/* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFGetSlaying(PyObject* self, PyObject* args)
 {
@@ -2704,7 +2617,6 @@ static PyObject* CFGetSlaying(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFSetSlaying                                                     */
 /* Python : CFPython.SetSlaying(object, name)                                */
-/* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFSetSlaying(PyObject* self, PyObject* args)
 {
@@ -2727,7 +2639,6 @@ static PyObject* CFSetSlaying(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFCreateObject                                                   */
 /* Python : CFPython.CreateObject(arch_name,pos[,map])                       */
-/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFCreateObject(PyObject* self, PyObject* args)
 {
@@ -2764,7 +2675,6 @@ static PyObject* CFCreateObject(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFRemoveObject                                                   */
 /* Python : CFPython.RemoveObject(object)                                    */
-/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFRemoveObject(PyObject* self, PyObject* args)
 {
@@ -2794,7 +2704,6 @@ static PyObject* CFRemoveObject(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFIsAlive                                                        */
 /* Python : CFPython.IsAlive(object)                                         */
-/* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFIsAlive(PyObject* self, PyObject* args)
 {
@@ -2810,7 +2719,6 @@ static PyObject* CFIsAlive(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFIsWiz                                                          */
 /* Python : CFPython.IsDungeonMaster(object)                                 */
-/* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFIsWiz(PyObject* self, PyObject* args)
 {
@@ -2826,7 +2734,6 @@ static PyObject* CFIsWiz(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFWasWiz                                                         */
 /* Python : CFPython.WasDungeonMaster(object)                                */
-/* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFWasWiz(PyObject* self, PyObject* args)
 {
@@ -2842,7 +2749,6 @@ static PyObject* CFWasWiz(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFIsApplied                                                      */
 /* Python : CFPython.IsApplied(object)                                       */
-/* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFIsApplied(PyObject* self, PyObject* args)
 {
@@ -2858,7 +2764,6 @@ static PyObject* CFIsApplied(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFIsUnpaid                                                       */
 /* Python : CFPython.IsUnpaid(object)                                        */
-/* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFIsUnpaid(PyObject* self, PyObject* args)
 {
@@ -2874,7 +2779,6 @@ static PyObject* CFIsUnpaid(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFIsFlying                                                       */
 /* Python : CFPython.IsFlying(object)                                        */
-/* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFIsFlying(PyObject* self, PyObject* args)
 {
@@ -2890,7 +2794,6 @@ static PyObject* CFIsFlying(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFIsMonster                                                      */
 /* Python : CFPython.IsMonster(object)                                       */
-/* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFIsMonster(PyObject* self, PyObject* args)
 {
@@ -2906,7 +2809,6 @@ static PyObject* CFIsMonster(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFIsFriendly                                                     */
 /* Python : CFPython.IsFriendly(object)                                      */
-/* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFIsFriendly(PyObject* self, PyObject* args)
 {
@@ -2922,7 +2824,6 @@ static PyObject* CFIsFriendly(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFIsGenerator                                                    */
 /* Python : CFPython.IsGenerator(object)                                     */
-/* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFIsGenerator(PyObject* self, PyObject* args)
 {
@@ -2938,7 +2839,6 @@ static PyObject* CFIsGenerator(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFIsThrown                                                       */
 /* Python : CFPython.IsThrown(object)                                        */
-/* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFIsThrown(PyObject* self, PyObject* args)
 {
@@ -2954,7 +2854,6 @@ static PyObject* CFIsThrown(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFCanSeeInvisible                                                */
 /* Python : CFPython.CanSeeInvisible(object)                                 */
-/* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFCanSeeInvisible(PyObject* self, PyObject* args)
 {
@@ -2970,7 +2869,6 @@ static PyObject* CFCanSeeInvisible(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFCanRoll                                                        */
 /* Python : CFPython.CanRoll(object)                                         */
-/* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFCanRoll(PyObject* self, PyObject* args)
 {
@@ -2986,7 +2884,6 @@ static PyObject* CFCanRoll(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFIsTurnable                                                     */
 /* Python : CFPython.IsTurnable(object)                                      */
-/* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFIsTurnable(PyObject* self, PyObject* args)
 {
@@ -3002,7 +2899,6 @@ static PyObject* CFIsTurnable(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFIsUsedUp                                                       */
 /* Python : CFPython.IsUsedUp(object)                                        */
-/* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFIsUsedUp(PyObject* self, PyObject* args)
 {
@@ -3018,7 +2914,6 @@ static PyObject* CFIsUsedUp(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFIsIdentified                                                   */
 /* Python : CFPython.IsIdentified(object)                                    */
-/* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFIsIdentified(PyObject* self, PyObject* args)
 {
@@ -3034,7 +2929,6 @@ static PyObject* CFIsIdentified(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFIsSplitting                                                    */
 /* Python : CFPython.IsSplitting(object)                                     */
-/* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFIsSplitting(PyObject* self, PyObject* args)
 {
@@ -3050,7 +2944,6 @@ static PyObject* CFIsSplitting(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFHitBack                                                        */
 /* Python : CFPython.HitBack(object)                                         */
-/* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFHitBack(PyObject* self, PyObject* args)
 {
@@ -3066,7 +2959,6 @@ static PyObject* CFHitBack(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFBlocksView                                                     */
 /* Python : CFPython.BlocksView(object)                                      */
-/* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFBlocksView(PyObject* self, PyObject* args)
 {
@@ -3082,7 +2974,6 @@ static PyObject* CFBlocksView(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFIsUndead                                                       */
 /* Python : CFPython.IsUndead(object)                                        */
-/* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFIsUndead(PyObject* self, PyObject* args)
 {
@@ -3098,7 +2989,6 @@ static PyObject* CFIsUndead(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFIsScared                                                       */
 /* Python : CFPython.IsScared(object)                                        */
-/* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFIsScared(PyObject* self, PyObject* args)
 {
@@ -3114,7 +3004,6 @@ static PyObject* CFIsScared(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFIsUnaggressive                                                 */
 /* Python : CFPython.IsUnaggressive(object)                                  */
-/* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFIsUnaggressive(PyObject* self, PyObject* args)
 {
@@ -3130,7 +3019,6 @@ static PyObject* CFIsUnaggressive(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFReflectMissiles                                                */
 /* Python : CFPython.ReflectMissiles(object)                                 */
-/* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFReflectMissiles(PyObject* self, PyObject* args)
 {
@@ -3146,7 +3034,6 @@ static PyObject* CFReflectMissiles(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFReflectSpells                                                  */
 /* Python : CFPython.ReflectSpells(object)                                   */
-/* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFReflectSpells(PyObject* self, PyObject* args)
 {
@@ -3162,7 +3049,6 @@ static PyObject* CFReflectSpells(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFIsRunningAway                                                  */
 /* Python : CFPython.IsRunningAway(object)                                   */
-/* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFIsRunningAway(PyObject* self, PyObject* args)
 {
@@ -3178,7 +3064,6 @@ static PyObject* CFIsRunningAway(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFCanPassThru                                                    */
 /* Python : CFPython.CanPassThru                                             */
-/* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFCanPassThru(PyObject* self, PyObject* args)
 {
@@ -3194,7 +3079,6 @@ static PyObject* CFCanPassThru(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFCanPickUp                                                      */
 /* Python : CFPython.CanPickUp(object)                                       */
-/* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFCanPickUp(PyObject* self, PyObject* args)
 {
@@ -3210,7 +3094,6 @@ static PyObject* CFCanPickUp(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFIsUnique                                                       */
 /* Python : CFPython.IsUnique(object)                                        */
-/* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFIsUnique(PyObject* self, PyObject* args)
 {
@@ -3226,7 +3109,6 @@ static PyObject* CFIsUnique(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFCanCastSpell                                                   */
 /* Python : CFPython.CanCastSpell(object)                                    */
-/* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFCanCastSpell(PyObject* self, PyObject* args)
 {
@@ -3242,7 +3124,6 @@ static PyObject* CFCanCastSpell(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFCanUseScroll                                                   */
 /* Python : CFPython.CanUseScroll(object)                                    */
-/* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFCanUseScroll(PyObject* self, PyObject* args)
 {
@@ -3258,7 +3139,6 @@ static PyObject* CFCanUseScroll(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFCanUseWand                                                     */
 /* Python : CFPython.CanUseWand(object)                                      */
-/* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFCanUseWand(PyObject* self, PyObject* args)
 {
@@ -3274,7 +3154,6 @@ static PyObject* CFCanUseWand(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFCanUseBow                                                      */
 /* Python : CFPython.CanUseBow(object)                                       */
-/* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFCanUseBow(PyObject* self, PyObject* args)
 {
@@ -3290,7 +3169,6 @@ static PyObject* CFCanUseBow(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFCanUseArmour                                                   */
 /* Python : CFPython.CanUseArmour(object)                                    */
-/* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFCanUseArmour(PyObject* self, PyObject* args)
 {
@@ -3306,7 +3184,6 @@ static PyObject* CFCanUseArmour(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFCanUseWeapon                                                   */
 /* Python : CFPython.CanUseWeapon(object)                                    */
-/* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFCanUseWeapon(PyObject* self, PyObject* args)
 {
@@ -3322,7 +3199,6 @@ static PyObject* CFCanUseWeapon(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFCanUseRing                                                     */
 /* Python : CFPython.CanUseRing(object)                                      */
-/* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFCanUseRing(PyObject* self, PyObject* args)
 {
@@ -3338,7 +3214,6 @@ static PyObject* CFCanUseRing(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFHasXRays                                                       */
 /* Python : CFPython.HasXRays(object)                                        */
-/* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFHasXRays(PyObject* self, PyObject* args)
 {
@@ -3354,7 +3229,6 @@ static PyObject* CFHasXRays(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFIsFloor                                                        */
 /* Python : CFPython.IsFloor(object)                                         */
-/* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFIsFloor(PyObject* self, PyObject* args)
 {
@@ -3370,7 +3244,6 @@ static PyObject* CFIsFloor(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFIsLifeSaver                                                    */
 /* Python : CFPython.IsLifesaver(object)                                     */
-/* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFIsLifeSaver(PyObject* self, PyObject* args)
 {
@@ -3386,7 +3259,6 @@ static PyObject* CFIsLifeSaver(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFIsSleeping                                                     */
 /* Python : CFPython.IsSleeping(object)                                      */
-/* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFIsSleeping(PyObject* self, PyObject* args)
 {
@@ -3402,7 +3274,6 @@ static PyObject* CFIsSleeping(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFStandStill                                                     */
 /* Python : CFPython.StandStill(object)                                      */
-/* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFStandStill(PyObject* self, PyObject* args)
 {
@@ -3418,7 +3289,6 @@ static PyObject* CFStandStill(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFOnlyAttack                                                     */
 /* Python : CFPython.OnlyAttack(object)                                      */
-/* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFOnlyAttack(PyObject* self, PyObject* args)
 {
@@ -3434,7 +3304,6 @@ static PyObject* CFOnlyAttack(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFIsConfused                                                     */
 /* Python : CFPython.IsConfused(object)                                      */
-/* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFIsConfused(PyObject* self, PyObject* args)
 {
@@ -3450,7 +3319,6 @@ static PyObject* CFIsConfused(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFHasStealth                                                     */
 /* Python : CFPython.HasStealth(object)                                      */
-/* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFHasStealth(PyObject* self, PyObject* args)
 {
@@ -3466,7 +3334,6 @@ static PyObject* CFHasStealth(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFIsCursed                                                       */
 /* Python : CFPython.IsCursed(object)                                        */
-/* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFIsCursed(PyObject* self, PyObject* args)
 {
@@ -3482,7 +3349,6 @@ static PyObject* CFIsCursed(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFIsDamned                                                       */
 /* Python : CFPython.IsDamned(object)                                        */
-/* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFIsDamned(PyObject* self, PyObject* args)
 {
@@ -3498,7 +3364,6 @@ static PyObject* CFIsDamned(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFIsKnownMagical                                                 */
 /* Python : CFPython.IsKnownMagical(object)                                  */
-/* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFIsKnownMagical(PyObject* self, PyObject* args)
 {
@@ -3514,7 +3379,6 @@ static PyObject* CFIsKnownMagical(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFIsKnownCursed                                                  */
 /* Python : CFPython.IsKnownCursed(object)                                   */
-/* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFIsKnownCursed(PyObject* self, PyObject* args)
 {
@@ -3530,7 +3394,6 @@ static PyObject* CFIsKnownCursed(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFCanUseSkill                                                    */
 /* Python : CFPython.CanUseSkill(object)                                     */
-/* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFCanUseSkill(PyObject* self, PyObject* args)
 {
@@ -3546,7 +3409,6 @@ static PyObject* CFCanUseSkill(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFHasBeenApplied                                                 */
 /* Python : CFPython.HasBeenApplied(object)                                  */
-/* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFHasBeenApplied(PyObject* self, PyObject* args)
 {
@@ -3562,7 +3424,6 @@ static PyObject* CFHasBeenApplied(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFCanUseRod                                                      */
 /* Python : CFPython.CanUseRod(object)                                       */
-/* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFCanUseRod(PyObject* self, PyObject* args)
 {
@@ -3578,7 +3439,6 @@ static PyObject* CFCanUseRod(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFCanUseHorn                                                     */
 /* Python : CFPython.CanUseHorn(object)                                      */
-/* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFCanUseHorn(PyObject* self, PyObject* args)
 {
@@ -3594,7 +3454,6 @@ static PyObject* CFCanUseHorn(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFMakeInvisible                                                  */
 /* Python : CFPython.MakeInvisible(object)                                   */
-/* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFMakeInvisible(PyObject* self, PyObject* args)
 {
@@ -3610,7 +3469,6 @@ static PyObject* CFMakeInvisible(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFIsBlind                                                        */
 /* Python : CFPython.IsBlind(object)                                         */
-/* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFIsBlind(PyObject* self, PyObject* args)
 {
@@ -3626,7 +3484,6 @@ static PyObject* CFIsBlind(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFCanSeeInDark                                                   */
 /* Python : CFPython.CanSeeInDark(object)                                    */
-/* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFCanSeeInDark(PyObject* self, PyObject* args)
 {
@@ -3642,7 +3499,6 @@ static PyObject* CFCanSeeInDark(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFGetAC                                                          */
 /* Python : CFPython.GetAC(object)                                           */
-/* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFGetAC(PyObject* self, PyObject* args)
 {
@@ -3658,7 +3514,6 @@ static PyObject* CFGetAC(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFGetWC                                                          */
 /* Python : CFPython.GetWC(object)                                           */
-/* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFGetWC(PyObject* self, PyObject* args)
 {
@@ -3674,7 +3529,6 @@ static PyObject* CFGetWC(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFGetCha                                                         */
 /* Python : CFPython.GetCharisma(object)                                     */
-/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFGetCha(PyObject* self, PyObject* args)
 {
@@ -3690,7 +3544,6 @@ static PyObject* CFGetCha(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFGetCon                                                         */
 /* Python : CFPython.GetConstitution(object)                                 */
-/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFGetCon(PyObject* self, PyObject* args)
 {
@@ -3706,7 +3559,6 @@ static PyObject* CFGetCon(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFGetDex                                                         */
 /* Python : CFPython.GetDexterity(object)                                    */
-/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFGetDex(PyObject* self, PyObject* args)
 {
@@ -3722,7 +3574,6 @@ static PyObject* CFGetDex(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFGetHP                                                          */
 /* Python : CFPython.GetHP(object)                                           */
-/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFGetHP(PyObject* self, PyObject* args)
 {
@@ -3733,13 +3584,11 @@ static PyObject* CFGetHP(PyObject* self, PyObject* args)
     CHECK_OBJ(whoptr);
 
     return Py_BuildValue("i",WHO->stats.hp);
-
 };
 
 /*****************************************************************************/
 /* Name   : CFGetInt                                                         */
 /* Python : CFPython.GetIntelligence(object)                                 */
-/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFGetInt(PyObject* self, PyObject* args)
 {
@@ -3755,7 +3604,6 @@ static PyObject* CFGetInt(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFGetPow                                                         */
 /* Python : CFPython.GetPower(object)                                        */
-/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFGetPow(PyObject* self, PyObject* args)
 {
@@ -3771,7 +3619,6 @@ static PyObject* CFGetPow(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFGetSP                                                          */
 /* Python : CFPython.GetSP(object)                                           */
-/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFGetSP(PyObject* self, PyObject* args)
 {
@@ -3787,7 +3634,6 @@ static PyObject* CFGetSP(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFGetStr                                                         */
 /* Python : CFPython.GetStrength(object)                                     */
-/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFGetStr(PyObject* self, PyObject* args)
 {
@@ -3803,7 +3649,6 @@ static PyObject* CFGetStr(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFGetWis                                                         */
 /* Python : CFPython.GetWisdom(object)                                       */
-/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFGetWis(PyObject* self, PyObject* args)
 {
@@ -3819,7 +3664,6 @@ static PyObject* CFGetWis(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFGetMaxHP                                                       */
 /* Python : CFPython.GetMaxHP(object)                                        */
-/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFGetMaxHP(PyObject* self, PyObject* args)
 {
@@ -3835,7 +3679,6 @@ static PyObject* CFGetMaxHP(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFGetMaxSP                                                       */
 /* Python : CFPython.GetMaxSP(object)                                        */
-/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFGetMaxSP(PyObject* self, PyObject* args)
 {
@@ -3851,7 +3694,6 @@ static PyObject* CFGetMaxSP(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFGetXPos                                                        */
 /* Python : CFPython.GetXPosition(object)                                    */
-/* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFGetXPos(PyObject* self, PyObject* args)
 {
@@ -3867,7 +3709,6 @@ static PyObject* CFGetXPos(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFGetYPos                                                        */
 /* Python : CFPython.GetYPosition                                            */
-/* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFGetYPos(PyObject* self, PyObject* args)
 {
@@ -3883,7 +3724,6 @@ static PyObject* CFGetYPos(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFSetPosition                                                    */
 /* Python : CFPython.SetPosition(object,pos)                                 */
-/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFSetPosition(PyObject* self, PyObject* args)
 {
@@ -3911,7 +3751,6 @@ static PyObject* CFSetPosition(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFSetNickname                                                    */
 /* Python : CFPython.SetNickname(object,name)                                */
-/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFSetNickname(PyObject* self, PyObject* args)
 {
@@ -3954,7 +3793,6 @@ static PyObject* CFSetNickname(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFSetAC                                                          */
 /* Python : CFPython.SetAC(object, value)                                    */
-/* Status : Untested, AC may not survive fix_player()                        */
 /*****************************************************************************/
 static PyObject* CFSetAC(PyObject* self, PyObject* args)
 {
@@ -3979,7 +3817,6 @@ static PyObject* CFSetAC(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFSetWC                                                          */
 /* Python : CFPython.SetWC(object, value)                                    */
-/* Status : Untested, WC may not survive fix_player()                        */
 /*****************************************************************************/
 static PyObject* CFSetWC(PyObject* self, PyObject* args)
 {
@@ -4004,7 +3841,6 @@ static PyObject* CFSetWC(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFSetCha                                                         */
 /* Python : CFPython.SetCharisma(object,value)                               */
-/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFSetCha(PyObject* self, PyObject* args)
 {
@@ -4034,7 +3870,6 @@ static PyObject* CFSetCha(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFSetCon                                                         */
 /* Python : CFPython.SetConstitution(object,value)                           */
-/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFSetCon(PyObject* self, PyObject* args)
 {
@@ -4064,7 +3899,6 @@ static PyObject* CFSetCon(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFSetDex                                                         */
 /* Python : CFPython.SetDexterity(object,value)                              */
-/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFSetDex(PyObject* self, PyObject* args)
 {
@@ -4094,7 +3928,6 @@ static PyObject* CFSetDex(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFSetHP                                                          */
 /* Python : CFPython.SetHP(object,value)                                     */
-/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFSetHP(PyObject* self, PyObject* args)
 {
@@ -4119,7 +3952,6 @@ static PyObject* CFSetHP(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFSetInt                                                         */
 /* Python : CFPython.SetIntelligence(object,value)                           */
-/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFSetInt(PyObject* self, PyObject* args)
 {
@@ -4149,7 +3981,6 @@ static PyObject* CFSetInt(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFSetMaxHP                                                       */
 /* Python : CFPython.SetMaxHP(object,value)                                  */
-/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFSetMaxHP(PyObject* self, PyObject* args)
 {
@@ -4174,7 +4005,6 @@ static PyObject* CFSetMaxHP(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFSetMaxSP                                                       */
 /* Python : CFPython.SetMaxSP(object,value)                                  */
-/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFSetMaxSP(PyObject* self, PyObject* args)
 {
@@ -4199,7 +4029,6 @@ static PyObject* CFSetMaxSP(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFSetPow                                                         */
 /* Python : CFPython.SetPower(object,value)                                  */
-/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFSetPow(PyObject* self, PyObject* args)
 {
@@ -4229,7 +4058,6 @@ static PyObject* CFSetPow(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFSetSP                                                          */
 /* Python : CFPython.SetSP(object,value)                                     */
-/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFSetSP(PyObject* self, PyObject* args)
 {
@@ -4254,7 +4082,6 @@ static PyObject* CFSetSP(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFSetStr                                                         */
 /* Python : CFPython.SetStrength(object,value)                               */
-/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFSetStr(PyObject* self, PyObject* args)
 {
@@ -4284,7 +4111,6 @@ static PyObject* CFSetStr(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFSetWis                                                         */
 /* Python : CFPython.SetWisdom(object,value)                                 */
-/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFSetWis(PyObject* self, PyObject* args)
 {
@@ -4312,16 +4138,10 @@ static PyObject* CFSetWis(PyObject* self, PyObject* args)
 };
 
 /*****************************************************************************/
-/* Kharkov update : Write and Message changed.                               */
-/* Write(message,dest[,color])                                               */
-/* -> Writes a message to a specific player.                                 */
-/* Message(message,dest[,color])                                             */
-/* -> Writes a message to a specific map (given by an object in this map).   */
-/*****************************************************************************/
-/*****************************************************************************/
 /* Name   : CFMessage                                                        */
 /* Python : CFPython.Message(message,object[,color])                         */
-/* Status : Untested                                                         */
+/*****************************************************************************/
+/* Writes a message to a specific map (given by an object in this map).      */
 /*****************************************************************************/
 static PyObject* CFMessage(PyObject* self, PyObject* args)
 {
@@ -4346,7 +4166,8 @@ static PyObject* CFMessage(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFWrite                                                          */
 /* Python : CFPython.Write(message,object[,color])                           */
-/* Status : Untested                                                         */
+/*****************************************************************************/
+/* Writes a message to a specific player.                                    */
 /*****************************************************************************/
 static PyObject* CFWrite(PyObject* self, PyObject* args)
 {
@@ -4373,7 +4194,6 @@ static PyObject* CFWrite(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFIsOfType                                                       */
 /* Python : CFPython.IsOfType(object,type)                                   */
-/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFIsOfType(PyObject* self, PyObject* args)
 {
@@ -4391,7 +4211,6 @@ static PyObject* CFIsOfType(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFGetType                                                        */
 /* Python : CFPython.GetType(object)                                         */
-/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFGetType(PyObject* self, PyObject* args)
 {
@@ -4404,11 +4223,9 @@ static PyObject* CFGetType(PyObject* self, PyObject* args)
     return Py_BuildValue("i",WHO->type);
 };
 
-/* Those replace the old get-script... and set-script... system */
 /*****************************************************************************/
 /* Name   : CFGetEventHandler                                                */
 /* Python : CFPython.GetEventHandler(object,event_number)                    */
-/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFGetEventHandler(PyObject* self, PyObject* args)
 {
@@ -4434,7 +4251,6 @@ static PyObject* CFGetEventHandler(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFSetEventHandler                                                */
 /* Python : CFPython.SetEventHandler(object,event_number,script_name)        */
-/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFSetEventHandler(PyObject* self, PyObject* args)
 {
@@ -4466,7 +4282,6 @@ static PyObject* CFSetEventHandler(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFGetEventPlugin                                                 */
 /* Python : CFPython.GetEventPlugin(object,event_number)                     */
-/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFGetEventPlugin(PyObject* self, PyObject* args)
 {
@@ -4492,7 +4307,6 @@ static PyObject* CFGetEventPlugin(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFSetEventPlugin                                                 */
 /* Python : CFPython.SetEventPlugin(object,event_number,script_name)         */
-/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFSetEventPlugin(PyObject* self, PyObject* args)
 {
@@ -4525,7 +4339,6 @@ static PyObject* CFSetEventPlugin(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFGetEventOptions                                                */
 /* Python : CFPython.GetEventOptions(object,event_number)                    */
-/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFGetEventOptions(PyObject* self, PyObject* args)
 {
@@ -4551,7 +4364,6 @@ static PyObject* CFGetEventOptions(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFSetEventOptions                                                */
 /* Python : CFPython.SetEventOptions(object,event_number,script_name)        */
-/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFSetEventOptions(PyObject* self, PyObject* args)
 {
@@ -4583,7 +4395,6 @@ static PyObject* CFSetEventOptions(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFLoadObject                                                     */
 /* Python : CFPython.LoadObject(string)                                      */
-/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFLoadObject(PyObject* self, PyObject* args)
 {
@@ -4606,7 +4417,6 @@ static PyObject* CFLoadObject(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFSaveObject                                                     */
 /* Python : CFPython.SaveObject(what)                                        */
-/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFSaveObject(PyObject* self, PyObject* args)
 {
@@ -4630,7 +4440,6 @@ static PyObject* CFSaveObject(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFGetIP                                                          */
 /* Python : CFPython.GetIP(object)                                           */
-/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFGetIP(PyObject* self, PyObject* args)
 {
@@ -4653,7 +4462,6 @@ static PyObject* CFGetIP(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFGetInventory                                                   */
 /* Python : CFPython.GetInventory(object)                                    */
-/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFGetInventory(PyObject* self, PyObject* args)
 {
@@ -4670,7 +4478,6 @@ static PyObject* CFGetInventory(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFGetInternalName                                                */
 /* Python : CFPython.GetInternalName(object)                                 */
-/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFGetInternalName(PyObject* self, PyObject* args)
 {
@@ -4686,7 +4493,6 @@ static PyObject* CFGetInternalName(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFRegisterCommand                                                */
 /* Python : CFPython.RegisterCommand(cmdname,scriptname,speed)               */
-/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFRegisterCommand(PyObject* self, PyObject* args)
 {
@@ -4733,7 +4539,6 @@ static PyObject* CFRegisterCommand(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFCostFlagFTrue                                                  */
 /* Python : CFPython.CostFlagFTrue()                                         */
-/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFCostFlagFTrue(PyObject* self, PyObject* args)
 {
@@ -4746,7 +4551,6 @@ static PyObject* CFCostFlagFTrue(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFCostFlagFBuy                                                   */
 /* Python : CFPython.CostFlagFBuy()                                          */
-/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFCostFlagFBuy(PyObject* self, PyObject* args)
 {
@@ -4759,7 +4563,6 @@ static PyObject* CFCostFlagFBuy(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFCostFlagFSell                                                  */
 /* Python : CFPython.CostFlagFSell()                                         */
-/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFCostFlagFSell(PyObject* self, PyObject* args)
 {
@@ -4808,7 +4611,6 @@ static PyObject* CFCostFlagFNotCursed(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFGetObjectCost                                                  */
 /* Python : CFPython.GetObjectCost(buyer,object,type)                        */
-/* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFGetObjectCost(PyObject* self, PyObject* args)
 {
@@ -4837,7 +4639,6 @@ static PyObject* CFGetObjectCost(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFGetObjectMoney                                                 */
 /* Python : CFPython.GetObjectMoney(buyer)                                   */
-/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFGetObjectMoney(PyObject* self, PyObject* args)
 {
@@ -4861,7 +4662,6 @@ static PyObject* CFGetObjectMoney(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFPayForItem                                                     */
 /* Python : CFPython.PayForItem(buyer,object)                                */
-/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFPayForItem(PyObject* self, PyObject* args)
 {
@@ -4888,7 +4688,6 @@ static PyObject* CFPayForItem(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFPayAmount                                                      */
 /* Python : CFPython.PayAmount(buyer,value)                                  */
-/* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFPayAmount(PyObject* self, PyObject* args)
 {
@@ -4914,7 +4713,6 @@ static PyObject* CFPayAmount(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFSendCustomCommand                                              */
 /* Python : CFPython.SendCustomCommandwho, 'customcommand')                  */
-/* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFSendCustomCommand(PyObject* self, PyObject* args)
 {
@@ -4937,7 +4735,6 @@ static PyObject* CFSendCustomCommand(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFGetHumidity                                                    */
 /* Python : CFPython.GetHumidity(x,y,map)                                    */
-/* Status : Place Holder.                                                    */
 /*****************************************************************************/
 /* Returns the humidity level of a given square of a map.                    */
 /*****************************************************************************/
@@ -4946,6 +4743,7 @@ static PyObject* CFGetHumidity(PyObject* self, PyObject* args)
     int val=0;
     int x, y;
     long map; /* mapstruct pointer */
+
     if (!PyArg_ParseTuple(args,"iil",&x,&y,&map))
         return NULL;
 
@@ -4957,7 +4755,6 @@ static PyObject* CFGetHumidity(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFGetTemperature                                                 */
 /* Python : CFPython.GetTemperature(x,y,map)                                 */
-/* Status : Place Holder.                                                    */
 /*****************************************************************************/
 /* Returns the temperature of a given square of a map.                       */
 /*****************************************************************************/
@@ -4966,6 +4763,7 @@ static PyObject* CFGetTemperature(PyObject* self, PyObject* args)
     int val=0;
     int x, y;
     long map; /* mapstruct pointer */
+
     if (!PyArg_ParseTuple(args,"iil",&x,&y,&map))
         return NULL;
 
@@ -4977,7 +4775,6 @@ static PyObject* CFGetTemperature(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFGetPressure                                                    */
 /* Python : CFPython.GetPressure(x,y,map)                                    */
-/* Status : Place Holder.                                                    */
 /*****************************************************************************/
 /* Returns the pressure level of a given square of a map.                    */
 /*****************************************************************************/
@@ -4986,6 +4783,7 @@ static PyObject* CFGetPressure(PyObject* self, PyObject* args)
     int val=0;
     int x, y;
     long map; /* mapstruct pointer */
+
     if (!PyArg_ParseTuple(args,"iil",&x,&y,&map))
         return NULL;
 
@@ -4997,7 +4795,6 @@ static PyObject* CFGetPressure(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name    : CFSetVariable                                                   */
 /* Python  : CFPython.SetVariable(object,args)                               */
-/* Status  : Unknown                                                         */
 /*****************************************************************************/
 /* Changes an object according to an argument string. Equivalent of the DM   */
 /* patch command.                                                            */
@@ -5023,7 +4820,6 @@ static PyObject* CFSetVariable(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name    : CFDecreaseObjectNr                                              */
 /* Python  : CFPython.DecreaseObjectNr(object,value)                         */
-/* Status  : Unknown                                                         */
 /*****************************************************************************/
 static PyObject* CFDecreaseObjectNr(PyObject* self, PyObject* args)
 {
@@ -5049,7 +4845,6 @@ static PyObject* CFDecreaseObjectNr(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name    : CFGetMapDir                                                     */
 /* Python  : CFPython.GetMapDirectory()                                      */
-/* Status  : Unknown                                                         */
 /*****************************************************************************/
 static PyObject* CFGetMapDir(PyObject* self, PyObject* args)
 {
@@ -5061,7 +4856,6 @@ static PyObject* CFGetMapDir(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name    : CFGetUniqueDir                                                  */
 /* Python  : CFPython.GetUniqueDirectory()                                   */
-/* Status  : Unknown                                                         */
 /*****************************************************************************/
 static PyObject* CFGetUniqueDir(PyObject* self, PyObject* args)
 {
@@ -5073,7 +4867,6 @@ static PyObject* CFGetUniqueDir(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name    : CFGetTempDir                                                    */
 /* Python  : CFPython.GetTempDirectory()                                     */
-/* Status  : Unknown                                                         */
 /*****************************************************************************/
 static PyObject* CFGetTempDir(PyObject* self, PyObject* args)
 {
@@ -5085,7 +4878,6 @@ static PyObject* CFGetTempDir(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name    : CFGetConfigurationDir                                           */
 /* Python  : CFPython.GetConfigurationDirectory()                            */
-/* Status  : Unknown                                                         */
 /*****************************************************************************/
 static PyObject* CFGetConfigurationDir(PyObject* self, PyObject* args)
 {
@@ -5097,7 +4889,6 @@ static PyObject* CFGetConfigurationDir(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name    : CFGetDataDir                                                    */
 /* Python  : CFPython.GetDataDirectory()                                     */
-/* Status  : Unknown                                                         */
 /*****************************************************************************/
 static PyObject* CFGetDataDir(PyObject* self, PyObject* args)
 {
@@ -5109,7 +4900,6 @@ static PyObject* CFGetDataDir(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name    : CFGetLocalDir                                                   */
 /* Python  : CFPython.GetLocalDirectory()                                    */
-/* Status  : Unknown                                                         */
 /*****************************************************************************/
 static PyObject* CFGetLocalDir(PyObject* self, PyObject* args)
 {
@@ -5121,7 +4911,6 @@ static PyObject* CFGetLocalDir(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name    : CFGetPlayerDir                                                  */
 /* Python  : CFPython.GetPlayerDirectory()                                   */
-/* Status  : Unknown                                                         */
 /*****************************************************************************/
 static PyObject* CFGetPlayerDir(PyObject* self, PyObject* args)
 {
@@ -5177,7 +4966,6 @@ MODULEAPI CFParm* triggerEvent(CFParm* PParm)
 {
     int eventcode;
     static int result;
-
 
     eventcode = *(int *)(PParm->Value[0]);
     printf( "PYTHON - triggerEvent:: eventcode %d\n",eventcode);
@@ -5400,7 +5188,7 @@ MODULEAPI CFParm* initPlugin(CFParm* PParm)
 /*****************************************************************************/
 MODULEAPI CFParm* removePlugin(CFParm* PParm)
 {
-        return NULL;
+    return NULL;
 };
 
 /*****************************************************************************/
@@ -5408,9 +5196,9 @@ MODULEAPI CFParm* removePlugin(CFParm* PParm)
 /*****************************************************************************/
 MODULEAPI CFParm* getPluginProperty(CFParm* PParm)
 {
-
     static double dblval = 0.0;
     int i;
+
     if (PParm!=NULL)
     {
         if(!strcmp((char *)(PParm->Value[0]),"command?"))

@@ -17,6 +17,8 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+plugin/plugin_python.c, plugin/include/plugin_python.h: Whitespace changes,
+    remove obsolete comments.
 plugin/plugin_python.c: Only set WhoAmI when running the command registered by
     CFPython.RegisterCommand. Set default result value to "success".
 plugin/plugin_python.c: Fix memory leaks by freeing old strings before
