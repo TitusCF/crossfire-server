@@ -316,7 +316,9 @@ sub treasuresOut {
     foreach $treasure (@treasure_files) {
 	open(TREAS, $treasure) || &die("cannot open ".$treasure);
 	while(<TREAS>) {
-	    print TREASURES $_;
+	    if (! /^\s*$/) {
+		print TREASURES $_;
+	    }
 	}
 	close(FACE);
     }
