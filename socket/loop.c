@@ -433,8 +433,13 @@ static void block_until_new_connection()
 	}
 	FD_ZERO(&readfs);
 	FD_SET((uint32)init_sockets[0].fd, &readfs);
-	Timeout.tv_sec=60;
-	Timeout.tv_usec=0;
+	if (settings.fastclock > 0) {
+	    Timeout.tv_sec=0;
+	    Timeout.tv_usec=50;
+	} else {
+	    Timeout.tv_sec=60;
+	    Timeout.tv_usec=0;
+	}
 #ifdef WATCHDOG
 	watchdog();
 #endif
