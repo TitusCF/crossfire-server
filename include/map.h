@@ -162,9 +162,9 @@ typedef struct mapdef {
     uint16 difficulty;	/* What level the player should be to play here */
 
     uint8 darkness;    	/* indicates level of darkness of map */
-    uint8 width,height;	/* Width and height of map. */
-    uint8 enter_x;	/* enter_x and enter_y are default entrance location */
-    uint8 enter_y;	/* on the map if none are set in the exit */
+    uint16 width,height;	/* Width and height of map. */
+    uint16 enter_x;	/* enter_x and enter_y are default entrance location */
+    uint16 enter_y;	/* on the map if none are set in the exit */
     oblinkpt *buttons;	/* Linked list of linked lists of buttons */
     MapSpace	*spaces;    /* Array of spaces on this map */
     char    *msg;	/* Message map creator may have left */

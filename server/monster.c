@@ -349,20 +349,24 @@ int move_monster(object *op) {
 	strcpy(op->name,enemy->name);
     }
 
-    for (part=op; part!=NULL; part=part->more) {
+    /* Move the check for scared up here - if the monster was scared,
+     * we were not doing any of the logic below, so might as well save
+     * a few cpu cycles.
+     */
+    if (!QUERY_FLAG(op, FLAG_SCARED)) {
 	rv_vector   rv1;
+	for (part=op; part!=NULL; part=part->more) {
 
-	get_rangevector(part, enemy, &rv1, 0x1);
+	    get_rangevector(part, enemy, &rv1, 0x1);
 	
-	dir=rv1.direction;
+	    dir=rv1.direction;
 
-	if(QUERY_FLAG(op, FLAG_SCARED) || QUERY_FLAG(op,FLAG_RUN_AWAY))
-	    dir=absdir(dir+4);
+	    if(QUERY_FLAG(op, FLAG_SCARED) || QUERY_FLAG(op,FLAG_RUN_AWAY))
+		dir=absdir(dir+4);
 
-	if(QUERY_FLAG(op,FLAG_CONFUSED))
-	    dir = absdir(dir + RANDOM()%3 + RANDOM()%3 - 2);
+	    if(QUERY_FLAG(op,FLAG_CONFUSED))
+		dir = absdir(dir + RANDOM()%3 + RANDOM()%3 - 2);
 
-	if (!QUERY_FLAG(op, FLAG_SCARED)) {
 	    if(QUERY_FLAG(op,FLAG_CAST_SPELL))
 		if(monster_cast_spell(op,part,enemy,dir,&rv1))
 		    return 0;
@@ -381,8 +385,8 @@ int move_monster(object *op) {
 	    if(QUERY_FLAG(op,FLAG_READY_BOW)&&!(RANDOM()%2))
 		if(monster_use_bow(op,part,enemy,dir))
 		    return 0;
-	}
-    } /* for processing of all parts */
+	} /* for processing of all parts */
+    } /* If not scared */
 
     
     get_rangevector(op, enemy, &rv, 0);
@@ -1388,7 +1392,7 @@ static msglang *parse_message(char *msg) {
 	   * your eyes aren't decieving you, this is code repetition.  However,
 	   * the above code doesn't catch the case where line<cp going into the
 	   * for loop, skipping the above code completely, and leaving undefined
-       * data in the keywords array.  This patches it up and solves a crash
+           * data in the keywords array.  This patches it up and solves a crash
 	   * bug.  garbled 2001-10-20
 	   */
 	  if (keywordnr < nrofkeywords) {
@@ -1401,8 +1405,14 @@ static msglang *parse_message(char *msg) {
 				   msgs->keywords[msgnr][keywordnr-2]);
 		   else
 			   LOG(llevDebug, "Msgnr %d, first keyword\n",msgnr+1);
+#if 0
+/* Removed this block - according to the compiler, this has no effect,
+ * and looking at the if statement above, the certainly appears to be the
+ * case.
+ */
 	      for(keywordnr; keywordnr <= nrofkeywords; keywordnr++)
 		      msgs->keywords[msgnr][keywordnr] = strdup_local("xxxx");
+#endif
 	  }
       last = cp;
     }

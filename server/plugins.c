@@ -426,7 +426,7 @@ void removeOnePlugin(char *id)
 /*****************************************************************************/
 void initPlugins(void)
 {
-        struct dirent **namelist;
+        struct dirent **namelist=NULL;
         int n;
         char buf[MAX_BUF];
         char buf2[MAX_BUF];
@@ -707,7 +707,7 @@ void initOnePlugin(char* pluginfile)
 /*****************************************************************************/
 /* Hook functions. Those are wrappers to crosslib functions, used by plugins.*/
 /* Remember : NEVER call crosslib functions directly from a plugin if a hook */
-/* exists.
+/* exists.                                                                   */
 /*****************************************************************************/
 
 /*****************************************************************************/

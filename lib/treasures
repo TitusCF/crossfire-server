@@ -426,7 +426,7 @@ treasureone beholder_parts
     chance 10
   end
 treasureone skull_parts
-  arch skull_tooth
+  arch tooth
     chance 95
 more
   arch tongue

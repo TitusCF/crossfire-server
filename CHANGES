@@ -17,6 +17,17 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Various minor bugfixes - 
+common/loader.c: rebuilt
+include/map.h: Change width,height,enter_x,enter_y to be 16 bit instead
+   of 8 bits.
+lib/treasures: change skull treasure to tooth instead of skull_tooth since
+   the later is not currently in the distributed archetypes file
+server/monster.c: Optimize some code, remove some other that is not used.
+server/plugins.c: Fix un initialized value in initPlugins that would
+   cause crash at startup if plugin directory does not exist.
+MSW 2001-11-13
+
 common/object.c: Modify copy_owner so that if a player is passed in
    as the object to copy, we properly set that player as the owner of the
    object instead of returning.  This fixes the lack of exp when poison
