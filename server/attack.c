@@ -167,9 +167,11 @@ void save_throw_object(object *op, int type) {
 }
 
 int hit_map(object *op,int dir,int type) {
-  object *tmp,*next=NULL;
+  object *tmp, *next;
+  mapstruct *map;
+  sint16 x, y;
   int retflag=0;  /* added this flag..  will return 1 if it hits a monster */
-  tag_t tag;
+  tag_t op_tag, next_tag;
 
   if (QUERY_FLAG (op, FLAG_FREED)) {
     LOG (llevError, "BUG: hit_map(): free object\n");
@@ -178,13 +180,16 @@ int hit_map(object *op,int dir,int type) {
   
   if (op->head) op=op->head;
 
-  tag = op->count;
+  op_tag = op->count;
 
-  if (!op->map) {
-    LOG(llevDebug,"hit_map called, but %s has no map", op->name);
+  if ( ! op->map) {
+    LOG (llevError,"BUG: hit_map(): %s has no map", op->name);
     return 0;
   }
-  if(out_of_map(op->map,op->x+freearr_x[dir],op->y+freearr_y[dir]))
+  map = op->map;
+  x = op->x + freearr_x[dir];
+  y = op->y + freearr_y[dir];
+  if (out_of_map (map, x, y))
       return 0;
 
  /* peterm:  a few special cases for special attacktypes --counterspell
@@ -207,31 +212,45 @@ int hit_map(object *op,int dir,int type) {
     type &= ~AT_CHAOS;
   }
 
-  for(tmp=get_map_ob(op->map,op->x+freearr_x[dir],op->y+freearr_y[dir]);
-      tmp!=NULL;tmp=next)
+  next = get_map_ob (map, x, y);
+  if (next)
+    next_tag = next->count;
+  while (next)
   {
-    next=tmp->above;
+    if (was_destroyed (next, next_tag)) {
+      /* There may still be objects that were above 'next', but there is no
+       * simple way to find out short of copying all object references and
+       * tags into a temporary array before we start processing the first
+       * object.  That's why we just abort.  Doesn't happen very often anyway.
+       */
+      LOG (llevDebug, "hit_map(): next object destroyed\n");
+      break;
+    }
+    tmp = next;
+    next = tmp->above;
+    if (next)
+      next_tag = next->count;
 
-    /* Since we are traversing a stack, it is possible that the stack
-     * gets messed up.  So do some checks.
-     */
-    if (QUERY_FLAG(tmp, FLAG_FREED)) {
-	LOG(llevDebug,"Warning: in hit_map, found free object\n");
+    if (QUERY_FLAG (tmp, FLAG_FREED)) {
+	LOG (llevError, "BUG: hit_map(): found free object\n");
 	break;
     }
-    else if(QUERY_FLAG(tmp,FLAG_ALIVE)) {
+
+    /* Something could have happened to 'tmp' while 'tmp->below' was processed.
+     * For example, 'tmp' was put in an icecube.
+     */
+    if (tmp->map != map || tmp->x != x || tmp->y != y)
+      continue;
+
+    if (QUERY_FLAG (tmp, FLAG_ALIVE)) {
       hit_player(tmp,op->stats.dam,op,type);
       retflag |=1;
-      if (was_destroyed (op, tag))
+      if (was_destroyed (op, op_tag))
         break;
-    } /* It is possible the object has been relocated to know longer be
-       * on the map (ie, in an icecube.)  If we no longer have a map,
-       * just ignore.
-       */
-    else if(tmp->material && tmp->map)
+    } else if (tmp->material) {
       save_throw_object(tmp,type);
+    }
   }
-  /*if(tmp==NULL) return 0;  This doesn't work, of course */
 #ifdef NO_CONE_PROPOGATE
   return retflag;
 #else

@@ -26,6 +26,15 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+server/rune.c: trap_disarm():  Bugfix: Use SK_level() to determine
+disarmer's level.  Fixes server crash if multisquare monster casts
+"disarm".  - Jan Echternach 6/8/2000
+
+server/attack.c: hit_map():  Use was_destroyed() to properly check for
+destroyed next object.  Use llevError for error messages.  Skip all
+objects that are (no longer) at the specified map position.
+- Jan Echternach 6/8/2000
+
 lib/crossfire.png: Some floors modified to no longer have transperencies.
 include/newserver.h:  Add Send_Face_Png made, also update versions of
 	the protocol

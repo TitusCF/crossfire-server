@@ -326,13 +326,15 @@ int trap_disarm(object *disarmer, object *trap, int risk) {
 
   int trapworth;  /* need to compute the experience worth of the trap
                      before we kill it */
+  int disarmer_level = SK_level (disarmer);
+
   /* this formula awards a more reasonable amount of exp */
   trapworth =  MAX(1,trap->level)  * disarmer->map->difficulty *
 	sqr(MAX(trap->stats.dam,spells[trap->stats.sp].sp)) /
-	disarmer->level;
+	disarmer_level;
 
     if(!(RANDOM()%(MAX(2,
-		       MIN(20,trap->level-disarmer->level 
+		       MIN(20,trap->level-disarmer_level 
 			   +5 - disarmer->stats.Dex/2)))))
         {
             new_draw_info(NDI_UNIQUE, 0,disarmer,"You successfuly disarm it!");
@@ -355,7 +357,7 @@ int trap_disarm(object *disarmer, object *trap, int risk) {
     else
         {
             new_draw_info(NDI_UNIQUE, 0,disarmer,"You fail to disarm the trap.");
-	    if(! (RANDOM()% (MAX(2,disarmer->level-trap->level 
+	    if(! (RANDOM()% (MAX(2,disarmer_level-trap->level 
 				 + disarmer->stats.Dex/2-6)))
 	       &&risk) {
 		new_draw_info(NDI_UNIQUE, 0,disarmer,"In fact, you set it off!");
