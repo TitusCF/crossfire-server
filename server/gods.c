@@ -45,6 +45,8 @@
  * and limitations to priests */
 #define MORE_PRIEST_GIFTS
 
+static int god_gives_present (object *op, object *god, treasure *tr);
+
 int lookup_god_by_name(char *name) {
   int godnr=-1,nmlen = strlen(name);
  
@@ -140,8 +142,6 @@ void pray_at_altar(object *pl, object *altar) {
 	/* May switch Gods, but its random chance based on our current level
 	 * note it gets harder to swap gods the higher we get */
 	if((angry==1)&&!(RANDOM()%(pl->chosen_skill->exp_obj->level+1))) {
-	  int i;  /* index over known_spells */
-	  int sp;  /*  spell index */
 
 	  become_follower(pl,&altar->other_arch->clone);
 	} /* If angry... switching gods */
@@ -209,8 +209,27 @@ static void check_special_prayers (object *op, object *god)
 
 void become_follower (object *op, object *new_god) {
     object *exp_obj = op->chosen_skill->exp_obj;
+    treasure *tr;
+    object *item;
     int i;
     
+    /* take away any special god-characteristic items. */
+    for(item=op->inv;item!=NULL;item=item->below)
+      if(QUERY_FLAG(item,FLAG_STARTEQUIP) && item->invisible) {
+        if(item->type==SKILL) continue;
+        if(item->type==FORCE) continue;
+        remove_ob(item);
+        free_object(item);
+        item=op->inv;
+      }
+    
+    
+    /* give the player any special god-characteristic-items. */
+    for(tr=new_god->randomitems->items; tr!=NULL; tr = tr->next) {
+      if(tr->item && tr->item->clone.invisible && tr->item->clone.type != SPELLBOOK &&
+         tr->item->clone.type != BOOK)
+        god_gives_present(op,new_god,tr); }
+
     if(!op||!new_god) return;
 
     if(op->race&&new_god->slaying&&strstr(op->race,new_god->slaying)) { 
@@ -763,12 +782,12 @@ void god_intervention (object *op, object *god)
         }
 
         /* Other gifts */
-        if ( ! item->invisible)
-            if (god_gives_present (op, god, tr))
+        if ( ! item->invisible) {
+          if (god_gives_present (op, god, tr)) 
                 return;
             else
                 continue;
-
+        }
         /* else ignore it */
     }
 

@@ -189,6 +189,10 @@ treasure Ruggilli
   more
   arch god_cure_confusion
   more
+  arch immolation
+  more
+  arch immolation_immunity
+  more
   arch god_cure_poison
   more
   arch god_remove_depletion
