@@ -540,9 +540,10 @@ void tear_down_wall(object *op)
 
 int hit_player_attacktype(object *op, object *hitter, int dam, 
 	uint32 attacktype, int magic) {
-
+  
     int does_slay=0;
-
+    int level_diff;       /* for special attacktypes (paralyze, etc) */
+    
 #ifdef ATTACK_DEBUG
     LOG(llevDebug, "\thit_player_attacktype: attacktype %x, dam %d\n",
 	attacktype, dam);
@@ -587,11 +588,14 @@ int hit_player_attacktype(object *op, object *hitter, int dam,
     } else if (attacktype & 
       (AT_CONFUSION|AT_POISON|AT_SLOW|AT_PARALYZE|AT_FEAR|AT_CANCELLATION|
        AT_DEPLETE|AT_BLIND)) {
+        /* chance for inflicting a special attack depends on the
+	   difference between attacker's and defender's level */
+        level_diff = MIN(110, MAX(0, op->level - hitter->level));
 
         if (op->speed && (QUERY_FLAG(op, FLAG_MONSTER) || op->type==PLAYER) &&
           !(RANDOM()%((attacktype&AT_SLOW?6:3))) && 
 	  (RANDOM()%20+1+((op->protected&attacktype)?4:0)-((op->vulnerable&attacktype)?4:0)
-	   < savethrow[op->level])) {
+	   < savethrow[level_diff])) {
 	  /* Player has been hit by something */
 	    if (attacktype & AT_CONFUSION) confuse_player(op,hitter,dam);
 	    else if (attacktype & AT_POISON) poison_player(op,hitter,dam);
@@ -1123,10 +1127,11 @@ void poison_player(object *op, object *hitter, int dam)
 	tmp->stats.food+=dam;  /*  more damage, longer poisoning */
 
         if(op->type==PLAYER) {
-          tmp->stats.Con= -(dam/4+1);
-          tmp->stats.Str= -(dam/3+2);
-          tmp->stats.Dex= -(dam/6+1);
-          tmp->stats.Int= -dam/7;
+	  /* player looses stats, maximum is -10 of each */
+	  tmp->stats.Con= MAX(-(dam/4+1), -10);
+	  tmp->stats.Str= MAX(-(dam/3+2), -10);
+	  tmp->stats.Dex= MAX(-(dam/6+1), -10);
+	  tmp->stats.Int= MAX(-dam/7, -10);
           SET_FLAG(tmp,FLAG_APPLIED);
           fix_player(op);
           new_draw_info(NDI_UNIQUE, 0,op,"You suddenly feel very ill.");
