@@ -15,7 +15,7 @@
 /* Please note that it is still very beta - some of the functions may not    */
 /* work as expected and could even cause the server to crash.                */
 /*****************************************************************************/
-/* Version: 0.1 Alpha (also known as "Ophiuchus")                            */
+/* Version: 0.6 Beta  (also known as "Kharkov")                              */
 /* Contact: yann.chachkoff@mailandnews.com                                   */
 /*****************************************************************************/
 /* That code is placed under the GNU General Public Licence (GPL)            */
@@ -555,6 +555,7 @@ static PyObject* CFGetObjectCost(PyObject* self, PyObject* args);
 static PyObject* CFGetObjectMoney(PyObject* self, PyObject* args);
 static PyObject* CFPayForItem(PyObject* self, PyObject* args);
 static PyObject* CFPayAmount(PyObject* self, PyObject* args);
+static PyObject* CFSendCustomCommand(PyObject* self, PyObject* args);
 
 /* Those are used to handle the events. The first one is used when a player  */
 /* attacks with a "scripted" weapon. HandleEvent is used for all other events*/
@@ -796,6 +797,7 @@ static PyMethodDef CFPythonMethods[] =
         {"GetObjectMoney", CFGetObjectMoney,METH_VARARGS},
         {"PayForItem",CFPayForItem,METH_VARARGS},
         {"PayAmount",CFPayAmount,METH_VARARGS},
+        {"SendCustomCommand",CFSendCustomCommand,METH_VARARGS},
 /* Skills wrappers : */
         {"SkillStealing", CFSkillStealing, METH_VARARGS},
         {"SkillLockpicking", CFSkillLockpicking, METH_VARARGS},

@@ -6439,6 +6439,25 @@ static PyObject* CFPayAmount(PyObject* self, PyObject* args)
 };
 
 /*****************************************************************************/
+/* Name   : CFSendCustomCommand                                              */
+/* Python : SendCustomCommand(who, 'customcommand')                          */
+/* Status : Untested                                                         */
+/*****************************************************************************/
+static PyObject* CFSendCustomCommand(PyObject* self, PyObject* args)
+{
+    long whoptr;
+    char *customcmd;
+
+    if (!PyArg_ParseTuple(args,"ls",&whoptr,&customcmd))
+        return NULL;
+    GCFP.Value[0] = (void *)(WHO);
+    GCFP.Value[1] = (void *)(customcmd);
+    (PlugHooks[HOOK_SENDCUSTOMCOMMAND])(&GCFP);
+    Py_INCREF(Py_None);
+    return Py_None;
+};
+
+/*****************************************************************************/
 /* The Plugin Management Part.                                               */
 /* Most of the functions below should exist in any CF plugin. They are used  */
 /* to glue the plugin to the server core. All functions follow the same      */
