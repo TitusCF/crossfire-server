@@ -1,4 +1,12 @@
-"$Id$"
+6/4/2000:  Fix done to disease.c which causes diseases to 
+put experience into the appropriate category.    --PeterM
+
+6/4/2000:  Added race fields to a lot of monsters.  Modified
+disease arcs so that they'll be specific to races.  Changed
+include/spellist.h to re-enable the disease spells.  --PeterM
+
+6/4/2000  Added a self-limiting parameter to diseases so
+that their power can be tuned to be reasonable.  --PeterM
 
 Changes in top level CVS tree.  A few notes when putting entries in this
 file:
