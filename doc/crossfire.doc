@@ -24,27 +24,29 @@ what default fields should be displayed in the attributes menu.
 
 Attack types (attacktype):
 
-Physical	     1
-Magic		     2
-Fire		     4
-Electricity	     8
-Cold		    16
-Confusion	    32
-Acid		    64  Damages players equipment
-Drain		   128
-Weaponmagic	   256  (Special, use with care)
-Ghosthit	   512  (Attacker dissolves)
-Poison		  1024
-Slow		  2048
-Paralyze	  4096
-Turn undead	  8192  
-Fear		 16384
-Cancellation	 32768
-Depletion	 65536
-Death		131072
-Chaos		262144
-Counterspell	524288
-Godpower       1048576 (Special, only for use by priest spells)
+Physical	     1  Reduced by 1% per point of armor
+Magic		     2  All magic spells, but not prayers
+Fire		     4  Can ignite objects
+Electricity	     8  Can also ignite objects
+Cold		    16  Can freeze objects into ice cubes
+Confusion	    32  Movement/attack directions become random
+Acid		    64  Random equipped item gets -1 to magic attribute
+Drain		   128  Victim loses 2% exp, attacker gains half of that
+Weaponmagic	   256  Direct damage: Special, use with care
+Ghosthit	   512  Attacker dissolves (obsolete)
+Poison		  1024  Some damage each turn thereafter
+Slow		  2048  Speed is reduced
+Paralyze	  4096  Speed is reduced to zero
+Turn undead	  8192  Like Fear, but for undead only
+Fear		 16384  Like Turn Undead, but for living only
+Cancellation	 32768  Removes magic (+/-) from items
+Depletion	 65536  Lose one point from one stat
+Death		131072  Chance of instant death, otherwise nothing
+Chaos		262144  None by itself, uses random other types
+Counterspell	524288  Cancels magic spells
+Godpower       1048576  Adds relevant god's attacktype
+Holy Word      2097152  Enemies: X5, Undead: X1 -unless friends, others: none
+Blind          4194304  Blinds victim
 
 Note that one archetype can have multiple attack types by adding
 these values together.  Thus, something with an attacktype of 65
@@ -76,14 +78,14 @@ creatures armor.
 
 Material types (material):
 
-Paper	  1
-Iron	  2
-Glass	  4
-Leather	  8
-Wood	 16
-Organic	 32
-Stone	 64
-Cloth	128
+Paper	     1
+Iron	     2
+Glass	     4
+Leather	     8
+Wood	    16
+Organic	    32
+Stone	    64
+Cloth	   128
 Adamantite 256
 
 The objects material affects how saving throws against an object affect it.
@@ -545,7 +547,7 @@ same Con can regenerate at different rates if their speeds are different.
 
 Wis: Determines how close a player needs to be before the creature wakes
 up.  This is done as a square, for reasons of speed.  Thus, if the wisdom is
-11, any player that moves within the 11x11 square of the player will wake
+11, any player that moves within the 11x11 square of the monster will wake
 the monster up.  If the player has stealth, the size of this square is
 reduced in half plus 1.
 
