@@ -233,7 +233,9 @@ int teleport (object *teleporter, unsigned char tele_type, object *originator)
            (tmp->arch==NULL?0:tmp->arch->clone.x),
     tmp->y=other_teleporter->y+freearr_y[k]+
            (tmp->arch==NULL?0:tmp->arch->clone.y);
-  return insert_ob_in_map(teleported,other_teleporter->map,originator,0) == NULL;
+  tmp = insert_ob_in_map(teleported,other_teleporter->map,originator,0);
+  if (tmp && tmp->type == PLAYER) MapNewmapCmd(tmp->contr);
+  return (tmp == NULL);
 }
 
 void recursive_roll(object *op,int dir,object *pusher) {

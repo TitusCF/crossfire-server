@@ -69,12 +69,8 @@ depend:
 install::
 
 proto:
-	cextract +Ap -P -o ../include/libproto.h.bak $(INCLUDES) \
-	-cpp-program="gcc -E -C" \
-	$(SRCS)
-	$(SED) -e "s/#if __STDC__/#ifdef __STDC__/" -e "s/__signed/signed/g" -e "/inline/d" -e "/YY_BUFFER/d" < ../include/libproto.h.bak > ../include/sockproto.h
+	cproto -D__CEXTRACT__ $(INCLUDES) $(SRCS) > ../include/sockproto.h
 	chmod 644 ../include/sockproto.h
-	$(RM) -f ../include/sockproto.h.bak
 
 archive:
 	if [ ! -d $(ARCHIVE)/socket ]; then $(MKDIR) $(ARCHIVE)/socket; fi

@@ -274,7 +274,9 @@ void check_score(object *op) {
     if(op->map == NULL)
 	*new_score.maplevel = '\0';
     else { 
-	strncpy(new_score.maplevel,op->map->name,BIG_NAME-1);
+	strncpy(new_score.maplevel,
+		op->map->name?op->map->name:op->map->path,
+		BIG_NAME-1);
 	new_score.maplevel[BIG_NAME-1] = '\0';
     }
     new_score.maxhp=(int) op->stats.maxhp;

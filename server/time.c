@@ -740,28 +740,34 @@ void change_object(object *op) { /* Doesn`t handle linked objs yet */
 }
 
 void move_teleporter(object *op) {
-  
-  if(op->above!=NULL) {
+
+    /* If nothing above us, nothing to do */
+    if (!op->above) return;
+
+    /* Some things can't get moved */
+    if (QUERY_FLAG(op->above, FLAG_NO_PASS) || 
+	QUERY_FLAG(op->above, FLAG_IS_FLOOR)) return;
+
     if(EXIT_PATH(op)) {
-      if(op->above->type==PLAYER) 
-        enter_exit(op->above,op);
-      else
-        return;
+	if(op->above->type==PLAYER) 
+	    enter_exit(op->above,op);
+	else
+	    /* Currently only players can transfer maps */
+	    return;
     }
-    else if(EXIT_X(op)||EXIT_Y(op))
-    {
-      if (out_of_map(op->map, EXIT_X(op), EXIT_Y(op)))
-      {
-        LOG(llevError, "Removed illegal teleporter.\n");
-        remove_ob(op);
-        free_object(op);
-        return;
-      }
-      transfer_ob(op->above,EXIT_X(op),EXIT_Y(op),0,op);
+    else if(EXIT_X(op)||EXIT_Y(op)) {
+	if (out_of_map(op->map, EXIT_X(op), EXIT_Y(op))) {
+	    LOG(llevError, "Removed illegal teleporter.\n");
+	    remove_ob(op);
+	    free_object(op);
+	    return;
+	}
+	transfer_ob(op->above,EXIT_X(op),EXIT_Y(op),0,op);
     } else
-      teleport(op,TELEPORTER,op);
-  }
+	/* Random teleporter */
+	teleport(op,TELEPORTER,op);
 }
+
 
 /*  This object will teleport someone to a different map
     and will also apply changes to the player from its inventory.

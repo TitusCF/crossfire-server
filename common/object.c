@@ -1717,14 +1717,19 @@ int check_walk_on (object *op, object *originator)
     if(QUERY_FLAG(op,FLAG_NO_APPLY))
 	return 0;
 
-    /* Spell effects are immune to these checks - this
-     * helps performance a lot on maps with lots of spell activity
+#if 0
      */
-    if (QUERY_FLAG(op, FLAG_FLYING) && QUERY_FLAG(op, FLAG_NO_PICK)) return 0;
+#endif
 
     tag = op->count;
     for(tmp=GET_MAP_OB(op->map, op->x, op->y);tmp!=NULL;tmp=tmp->above) {
 	if (tmp == op) continue;    /* Can't apply yourself */
+
+	/* Trim the search when we find the first other spell effect 
+	 * this helps performance so that if a space has 50 spell objects,
+	 * we don't need to check all of them.
+	 */
+	if (QUERY_FLAG(tmp, FLAG_FLYING) && QUERY_FLAG(tmp, FLAG_NO_PICK)) return 0;
 
 	/* Slow down creatures moving over rough terrain */
 	if(QUERY_FLAG(tmp,FLAG_SLOW_MOVE)&&!QUERY_FLAG(op,FLAG_FLYING)) {

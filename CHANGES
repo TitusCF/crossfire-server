@@ -18,6 +18,21 @@ else.  With this, include the file(s) that you changed.
 
 Changes for CVS:
 
+common/map.c: modify link_multipart_objects to preserve name and title of
+    head when making the more parts.  modify update_position so that it should
+    never show an invisible face to the player.
+common/object.c: fix check_walk_on so that spells will now properly get
+    affected by spinners and directories.
+include/sockproto.h: Rebuilt to include MapNewmapCmd
+server/hiscore.c: Fix crash if player savebeds map on map which does not
+    have a name.  Use the path instead.
+server/move.c: modify teleporter function to send MapNewmapCmd to client
+    if player got teleported.  Needed for fog of war code.
+server/time.c: modify move_teleporter so that it will not teleport walls.
+socket/Makefile.in: Modified to use cproto to generate proto files.
+MSW 2001-08-04
+
+
 common/Makefile.in crossedit/Makefile.in doc/Makefile.in
 doc/playbook-html/Makefile.in doc/spoiler/Makefile.in
 doc/spoiler-html/Makefile.in lib/Makefile.in lib/crossfire.png

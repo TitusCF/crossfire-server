@@ -483,6 +483,14 @@ static void link_multipart_objects(mapstruct *m)
 		    op->head = tmp;
 		    op->map = m;
 		    last->more = op;
+		    if (tmp->name != op->name) {
+			if (op->name) free_string(op->name);
+			op->name = add_string(tmp->name);
+		    }
+		    if (tmp->title != op->title) {
+			if (op->title) free_string(op->title);
+			op->title = add_string(tmp->title);
+		    }
 		    /* we could link all the parts onto tmp, and then just
 		     * call insert_ob_in_map once, but the effect is the same,
 		     * as insert_ob_in_map will call itself with each part, and
@@ -1475,27 +1483,26 @@ void update_position (mapstruct *m, int x, int y) {
 	 *
 	 * Always put the player down for drawing.
 	 */
-	if ((tmp->type==PLAYER || QUERY_FLAG(tmp, FLAG_MONSTER)) && !tmp->invisible) {
-	    top = tmp->face;
-	}
-	else if (QUERY_FLAG(tmp,FLAG_IS_FLOOR)) {
-	    /* If we got a floor, that means middle and top were below it,
-	     * so should not be visible, so we clear them.
-	     */
-	    middle=blank_face;
-	    top=blank_face;
-	    if (!tmp->invisible)
+	if (!tmp->invisible) {
+	    if ((tmp->type==PLAYER || QUERY_FLAG(tmp, FLAG_MONSTER)))
+		top = tmp->face;
+	    else if (QUERY_FLAG(tmp,FLAG_IS_FLOOR)) {
+		/* If we got a floor, that means middle and top were below it,
+		* so should not be visible, so we clear them.
+		*/
+		middle=blank_face;
+		top=blank_face;
 		floor = tmp->face;
+	    }
+	    /* Flag anywhere have high priority */
+	    else if (QUERY_FLAG(tmp, FLAG_SEE_ANYWHERE)) {
+		middle = tmp->face;
+		anywhere =1;
+	    }
+	    /* Find the highest visible face around */
+	    else if (tmp->face->visibility > middle->visibility && !anywhere)
+		middle = tmp->face;
 	}
-	/* Flag anywhere have high priority */
-	else if (QUERY_FLAG(tmp, FLAG_SEE_ANYWHERE)) {
-	    middle = tmp->face;
-	    anywhere =1;
-	}
-	/* Find the highest visible face around */
-	else if (tmp->face->visibility > middle->visibility && !anywhere)
-	    middle = tmp->face;
-
 	if (tmp==tmp->above) {
 	    LOG(llevError, "Error in structure of map\n");
 	    exit (-1);
