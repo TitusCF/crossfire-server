@@ -499,6 +499,23 @@ void clear_object(object *op) {
     event *evt;
     event *evt2;
 
+    /* redo this to be simpler/more efficient. Was also seeing
+     * crashes in the old code.  Move this to the top - am
+     * seeing periodic crashes in this code, and would like to have
+     * as much info available as possible (eg, object name).
+     */
+    for (evt = op->events; evt; evt=evt2) {
+	evt2 = evt->next;
+
+        if (evt->hook != NULL) FREE_AND_CLEAR_STR(evt->hook);
+        if (evt->plugin != NULL) FREE_AND_CLEAR_STR(evt->plugin);
+        if (evt->options != NULL) FREE_AND_CLEAR_STR(evt->options);
+
+        free(evt);
+    }
+    op->events = NULL;
+
+
     /* the memset will clear all these values for us, but we need
      * to reduce the refcount on them.
      */
@@ -511,30 +528,6 @@ void clear_object(object *op) {
     if (op->msg!=NULL)	    FREE_AND_CLEAR_STR(op->msg);
     if (op->lore!=NULL)	    FREE_AND_CLEAR_STR(op->lore);
     if (op->materialname!= NULL) FREE_AND_CLEAR_STR(op->materialname);
-
-    /* Clean the events list */
-    while (op->events != NULL)
-    {
-        evt2 = NULL;
-        evt  = op->events;
-        while (evt->next != NULL)
-        {
-            evt2 = evt;
-            evt  = evt->next;
-
-        }
-
-        if (evt->hook != NULL) FREE_AND_CLEAR_STR(evt->hook);
-        if (evt->plugin != NULL) FREE_AND_CLEAR_STR(evt->plugin);
-        if (evt->options != NULL) FREE_AND_CLEAR_STR(evt->options);
-
-        FREE_AND_CLEAR(evt);
-
-        if (evt2 != NULL)
-            evt2->next = NULL;
-        else
-            op->events = NULL;
-    }
 
 
     memset((void*)((char*)op + offsetof(object, name)),
