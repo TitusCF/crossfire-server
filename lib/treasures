@@ -172,7 +172,7 @@ more
   more
 arch god_grace_limit_high
 more
-  arch mithril_ar_ele
+  arch mithril_ar_ele_sorig
     chance 2
 end
 #############################################################
