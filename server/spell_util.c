@@ -1720,9 +1720,11 @@ void check_fired_arch (object *op)
             if (was_destroyed (op, op_tag) || ! was_destroyed (tmp, tmp_tag)
                 || (op->stats.dam -= dam) < 0)
             {
+	      if(!QUERY_FLAG(op,FLAG_REMOVED)) { 
                 remove_ob (op);
                 free_object(op);
                 return;
+	      }
             }
         }
     }
