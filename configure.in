@@ -145,12 +145,23 @@ dnl AC_CHECK_LIB(dmalloc, main)
 dnl Gros - Support for the dynamic loader library
 AC_CHECK_LIB(dl, main)
 
+
+
+
+dnl Checks for header files.
+AC_HEADER_DIRENT
+AC_HEADER_STDC
+AC_CHECK_HEADERS(fcntl.h limits.h malloc.h strings.h sys/file.h sys/ioctl.h sys/time.h time.h unistd.h stddef.h stdlib.h sys/ttycom.h sys/termios.h crypt.h arpa/inet.h des.h Python.h)
+
 dnl This is sort of bogus, but this library seems to be
 dnl in a very non standard place.  Need to wildcard this,
 dnl since it changes for each version.  In my limited
 dnl testing, it seems that if the path doesn't match,
 dnl then this leaves the * in place, which is why
 dnl we check to see that this actually exists.
+dnl this needs to be put after the check for headers,
+dnl since it also relies on the previous detection of
+dnl Python.h
 echo -n "checking for python lib... "
 PYTHON_LIB=`echo /usr/lib/python*/config/libpython*.a`
 if test ! -f $PYTHON_LIB ; then
@@ -162,15 +173,10 @@ else
     echo "yes"
     AC_CHECK_LIB(pthread, main,  PY_LIBS="$PY_LIBS -lpthread", , $PY_LIBS )
     AC_CHECK_LIB(util, main,  PY_LIBS="$PY_LIBS -lutil", , $PY_LIBS )
-    PLUGIN_TARGET="plugin_python.so.0.1"
+    if test "X$ac_cv_header_Python_h" == "Xyes"; then
+	    PLUGIN_TARGET="plugin_python.so.0.1"
+    fi;
 fi
-
-
-
-dnl Checks for header files.
-AC_HEADER_DIRENT
-AC_HEADER_STDC
-AC_CHECK_HEADERS(fcntl.h limits.h malloc.h strings.h sys/file.h sys/ioctl.h sys/time.h time.h unistd.h stddef.h stdlib.h sys/ttycom.h sys/termios.h crypt.h arpa/inet.h des.h Python.h)
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST
