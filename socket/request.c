@@ -156,6 +156,9 @@ void SetUp(char *buf, int len, NewSocket *ns)
 	    /* if beyond this size, need to use map1cmd no matter what */
 	    if (ns->mapx>11 || ns->mapy>11) ns->map1cmd=1;
 	    strcat(cmdback, ns->map1cmd?"1":"0");
+        } else if (!strcmp(cmd,"newmapcmd")) {
+            ns->newmapcmd= atoi(param);
+            strcat(cmdback, param);
 	} else if (!strcmp(cmd,"mapsize")) {
 	    int x, y=0;
 	    char tmpbuf[MAX_BUF], *cp;
@@ -487,6 +490,12 @@ void MapRedrawCmd(char *buff, int len, player *pl)
      */
     memset(&pl->socket.lastmap, 0, sizeof(struct Map));
     draw_client_map(pl->ob);
+}
+
+void MapNewmapCmd( player *pl)
+{
+    if( pl->socket.newmapcmd == 1)
+        Write_String_To_Socket( &pl->socket, "newmap", 6);
 }
 
 

@@ -377,6 +377,9 @@ static void enter_map(object *op, mapstruct *newmap, int x, int y) {
 	}
     }
     swap_below_max (newmap->path);
+
+    if( op->type == PLAYER)
+        MapNewmapCmd( op->contr);
 }
 
 void set_map_timeout(mapstruct *oldmap)

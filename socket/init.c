@@ -207,6 +207,7 @@ void InitConnection(NewSocket *ns, uint32 from)
     ns->old_mode = 0;
     ns->mapx = 11;
     ns->mapy = 11;
+    ns->newmapcmd= 0;
 
     /* we should really do some checking here - if total clients overflows
      * we need to do something more intelligent, because client id's will start

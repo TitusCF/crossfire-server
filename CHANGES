@@ -18,6 +18,16 @@ else.  With this, include the file(s) that you changed.
 
 Changes for CVS:
 
+Added support for the newmap cmd needed for the fog_of_war code
+in the gtk client. 
+include/newserver.h: added newmapcmd:1 to NewSocket struct
+server/main.c: added call to MapNewmapCmd in enter_map()
+socket/init.c: init code for new newmapcmd value in NewSocket
+socket/request.c: deal with "newmapcmd" value in client setup string
+                  Added MapNewmapCmd( player* pl) function.
+SMACFIGGEN 2001-07-21
+
+
 common/object.c: remove_ob - set P_NEED_UPDATE before calling update_position
 to prevent warnings from update_position being called with P_NEED_UPDATE
 being set.  MSW 2001-07-19
