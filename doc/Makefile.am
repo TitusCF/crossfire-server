@@ -27,7 +27,7 @@ SUBDIRS = scripts Developers playbook spoiler spell-docs spoiler-html playbook-h
 
 dist_noinst_DATA = handbook.ps spoiler.ps
 dist_noinst_SCRIPTS = include_html.pl
-dist_man6_MANS = crossedit.man crossfire.man crossfire-config.man
+dist_man6_MANS = crossedit.man crossfire.man crossfire-config.man crossloop.web.man
 
 EXTRA_DIST = Crossedit.doc PlayerStats \
 	README RunTimeCommands SurvivalGuide alchemy.doc \
