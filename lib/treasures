@@ -403,6 +403,8 @@ more
   arch god_spelldirect_poison_fog
   more
   arch god_spelldirect_cause_smallpox
+  more bracers_gnarg
+    chance 2
 end
 ##############################################################
 #
