@@ -99,6 +99,8 @@ int GetType (object *tmp)
 	return T_Button;
 	 case CREATOR:
 		return T_Connected|T_Maker;
+	 case CONVERTER:
+		return T_Maker|T_Lockcode;
     case GATE:
     case HANDLE:
     case TIMED_GATE:
