@@ -1230,10 +1230,8 @@ void fix_player(object *op) {
 	    op->stats.dam=1;
 
 	op->speed=1.0+speed_bonus[op->stats.Dex];
-#ifdef SEARCH_ITEMS
-	if (op->contr->search_str[0])
+	if (settings.search_items && op->contr->search_str[0])
 	    op->speed -= 1;
-#endif
 	if (op->attacktype==0)
 	    op->attacktype=op->arch->clone.attacktype;
 

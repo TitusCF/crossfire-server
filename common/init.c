@@ -61,6 +61,7 @@ SIMPLE_EXP,
 RESET_LOCATION_TIME,
 SET_TITLE,
 RESURRECTION,
+SEARCH_ITEMS,
 0,		/* This and the next 3 values are metaserver values */
 "",
 "",

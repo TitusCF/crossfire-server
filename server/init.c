@@ -373,6 +373,15 @@ static void load_settings()
 		LOG(llevError, "load_settings: Unkown value for set_title"
 		    ": %s\n", cp);
 	    }
+	} else if (!strcasecmp(buf, "search_items")) {
+	    if (!strcasecmp(cp, "on") || !strcasecmp(cp, "true")) {
+		settings.search_items=TRUE;
+	    } else if (!strcasecmp(cp, "off") || !strcasecmp(cp, "false")) {
+		settings.search_items=FALSE;
+	    } else {
+		LOG(llevError, "load_settings: Unkown value for search_items"
+		    ": %s\n", cp);
+	    }
 	} else if (!strcasecmp(buf,"simple_exp")) {
 	    if (!strcasecmp(cp,"on") || !strcasecmp(cp,"true")) {
 		settings.simple_exp=TRUE;

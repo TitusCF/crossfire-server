@@ -98,9 +98,7 @@ CommArray_s Commands[] = {
   {"use_skill", command_uskill, 1.0},
   {"ready_skill", command_rskill, 1.0},
   {"search",command_search,	1.0},
-#ifdef SEARCH_ITEMS
   {"search-items", command_search_items,	0.0},
-#endif
   {"statistics", command_statistics,	0.0},
   {"strings", command_strings,	0.0},
   {"take", command_take,	1.0},

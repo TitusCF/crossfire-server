@@ -298,6 +298,7 @@ typedef struct Settings {
     int	    reset_loc_time; /* Number of seconds to put player back at home */
     uint8   set_title;	    /* players can set thier title */
     uint8   resurrection;   /* ressurection possible w/ permadeth on */
+    uint8   search_items;   /* search_items command */
 
     /* The meta_ is information for the metaserver.  These are set in 
      * the lib/settings file.

@@ -521,10 +521,8 @@ void check_login(object *op) {
     pl->last_save_time=time(NULL);
 #endif /* SAVE_INTERVAL */
     pl->party_number = (-1);
-
-#ifdef SEARCH_ITEMS
-    pl->search_str[0]='\0';
-#endif /* SEARCH_ITEMS */
+    if (settings.search_items == TRUE)
+	pl->search_str[0]='\0';
     pl->name_changed=1;
     pl->orig_stats.Str=0;
     pl->orig_stats.Dex=0;

@@ -360,7 +360,7 @@
  * client has all the info the player does.
  */
 
-#define SEARCH_ITEMS
+#define SEARCH_ITEMS TRUE
 
 
 /*

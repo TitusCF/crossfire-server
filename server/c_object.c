@@ -1362,10 +1362,13 @@ void set_pickup_mode(object *op,int i) {
     }
 }
 
-#ifdef SEARCH_ITEMS
 int command_search_items (object *op, char *params)
 {
       char buf[MAX_BUF];
+
+      if (settings.search_items == FALSE)
+	  return 1;
+
   if(params == NULL) {
 	if(op->contr->search_str[0]=='\0') {
 	  new_draw_info(NDI_UNIQUE, 0,op,"Example: search magic+1");
@@ -1387,5 +1390,5 @@ int command_search_items (object *op, char *params)
       new_draw_info(NDI_UNIQUE, 0,op,buf);
   fix_player(op);
       return 1;
-    }
-#endif /* SEARCH_ITEMS */
+}
+

@@ -168,10 +168,7 @@ typedef struct pl {
 				    /* but we will have to get password first */
 				    /* so we have to remember which party to */
 				    /* join */
-#ifdef SEARCH_ITEMS
     char    search_str[MAX_BUF];    /* Item we are looking for */
-#endif /* SEARCH_ITEMS */
-
 #ifdef SPELL_ENCUMBRANCE
     sint16  encumbrance;	    /* How much our player is encumbered  */
 				    /* Probably would be more clever to always have the */

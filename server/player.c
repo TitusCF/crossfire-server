@@ -1058,14 +1058,12 @@ int check_pick(object *op) {
     if ( ! can_pick (op, tmp))
       continue;
 
-#ifdef SEARCH_ITEMS
-    if (op->contr->search_str[0]!='\0')
+    if (op->contr->search_str[0]!='\0' && settings.search_items == TRUE)
     {
       if (item_matched_string (op, tmp, op->contr->search_str))
         pick_up (op, tmp);
       continue;
     }
-#endif /* SEARCH_ITEMS */
 
     /* high bit set?  We're using the new autopickup model */
     if(!(op->contr->mode & PU_NEWMODE))
