@@ -127,7 +127,9 @@ void metaserver_update()
      * but don't have a player, etc.  This operation below should not be that
      * costly.
      */
-    for (pl=first_player; pl!=NULL; pl=pl->next) num_players++;
+    for (pl=first_player; pl!=NULL; pl=pl->next) {
+	if (!pl->hidden) num_players++;
+    }
 
     sprintf(data,"%s|%d|%s|%s|%d|%d|%ld", settings.meta_host, num_players, VERSION, 
 	    settings.meta_comment, cst_tot.ibytes, cst_tot.obytes,

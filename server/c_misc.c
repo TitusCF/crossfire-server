@@ -59,11 +59,11 @@ void map_info(object *op) {
     else strcpy(map_path, m->path + strlen(m->path) - 18);
 #ifndef MAP_RESET
       sprintf(buf,"%-18.18s %2ld %2d   %1ld %4ld %2ld",
-              map_path, m->players,players_on_map(m),m->in_memory,m->timeout,
+              map_path, m->players,players_on_map(m,FALSE),m->in_memory,m->timeout,
               m->difficulty);
 #else
       sprintf(buf,"%-18.18s %2d %2d   %1d %4d %2d  %02d:%02d:%02d",
-              map_path, m->players,players_on_map(m),
+              map_path, m->players,players_on_map(m,FALSE),
               m->in_memory,m->timeout,m->difficulty,
 	      (MAP_WHEN_RESET(m)%86400)/3600,(MAP_WHEN_RESET(m)%3600)/60,
               MAP_WHEN_RESET(m)%60);
@@ -265,6 +265,8 @@ int command_who (object *op, char *params)
     for(pl=first_player;pl!=NULL;pl=pl->next) {
 	if(pl->ob->map == NULL)
 	    continue;
+	if (pl->hidden) continue;
+
 	if (pl->state==ST_PLAYING || pl->state==ST_GET_PARTY_PASSWORD) {
 
 	    /* Any reason one sprintf can't be used?  The are displaying all
@@ -303,7 +305,7 @@ int command_mapinfo (object *op, char *params)
     return 1;
   }
 
-int command_maps (object *op, char *params)
+ int command_maps (object *op, char *params)
 {
     map_info(op);
     return 1;

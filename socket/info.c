@@ -171,7 +171,7 @@ void new_draw_info(int flags,int pri, object *pl, const char *buf)
 		new_draw_info((flags & ~NDI_ALL), pri, tmppl->ob, buf);
 
 	for (i=1; i<socket_info.allocated_sockets; i++) {
-	    if (init_sockets[i].status == Ns_Old && init_sockets[i].old_mode != Old_Listen) {
+	    if (init_sockets[i].status == Ns_Old && init_sockets[i].old_mode != Old_Listen && pri< 10) {
 		cs_write_string(&init_sockets[i], buf, strlen(buf));
 		/* Most messages don't have a newline, so add one */
 		cs_write_string(&init_sockets[i], "\n", 1);

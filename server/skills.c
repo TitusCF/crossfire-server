@@ -143,7 +143,12 @@ int attempt_steal(object* op, object* who)
 	    if (op->type == PLAYER)
 		esrv_del_item(op->contr, tmp->count);
 	    pick_up(who, tmp);
-	    if(can_pick(who,tmp)) {
+	    /* need to see if the player actually stole this item -
+	     * if it is in the players inv, assume it is.  This prevents
+	     * abuses where the player can not carry the item, so just
+	     * keeps stealing it over and over.
+	     */
+	    if (who == is_player_inv(tmp)) {
 		/* for players, play_sound: steals item */
 		success = tmp;
 		CLEAR_FLAG(tmp, FLAG_INV_LOCKED);

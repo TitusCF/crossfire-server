@@ -17,6 +17,36 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Mostly bugfixes, but the addition of a wiz 'hide' command which makes the
+   wiz out of sight so to speak.
+--
+common/loader.l, common/loader.c: Fix bug where flag values were being saved
+   with actual value of the flag (eg, 32768, 16, etc) instead of 1/0 value -
+   Code effectively worked the same, just was a bit odd looking at save files.
+include/player.h: Add hidden element to player structure.
+include/sproto.h: Add command_hide(), update proto for players_on_map()
+lib/Makefile.am, lib/Makefile.in: add wizhelp/hide file.
+server/apply.c: Add error checking to converts so it doesn't crash if the
+   converter doesn't have a proper other_arch.  Modify shopmats so that they
+   don't transport spell effects, like fireballs an burning hands.
+server/attack.c: Modify code so players can drain other players exp.
+server/c_misc.c: Modify various functions to not show info on hidden DM.
+server/c_wiz.c: Add command_hide(), clean up command_invisible() a bit.
+server/commands.c: Add hide command to dispatch table.
+server/main.c: Add code to not update players on map for hidden dm.
+server/player.c: Give hidden dm perpetual invisiblity.
+server/skills.c: Only get exp if you actually stole an item - fixes abuse
+   whereby players who couldn't carry item could continually 'steal' it from 
+   monster and just gain exp.
+server/swap.c: modify players_on_map() to take addition arg to determine if
+   real players on map should be shown, or if we shouldn't count hidden dms.
+socket/info.c: Modify code so that oldsockets don't get reports on high verbose
+   messages.
+socket/metaserver.c: Modify metaserver update to not include hidden dms.
+utils/Makefile.in: update datestmp.
+MSW 2002-09-27
+   
+
 server/pet.c:  Add check to pet_move() to make sure the space we are
    checking is within the map, and handle map tiling.
 MSW 2002-09-23

@@ -1828,7 +1828,15 @@ int move_player(object *op,int dir) {
  */
 int handle_newcs_player(object *op)
 {
-    if(op->invisible&&!(QUERY_FLAG(op,FLAG_MAKE_INVIS))) {
+    if (op->contr->hidden) {
+	op->invisible = 1000;
+	/* the socket code flasehs the player visible/invisible
+	 * depending on the value if invisible, so we need to
+	 * alternate it here for it to work correctly.
+	 */
+	if (pticks & 2) op->invisible--;
+    } 
+    else if(op->invisible&&!(QUERY_FLAG(op,FLAG_MAKE_INVIS))) {
 	op->invisible--;
 	if(!op->invisible) make_visible(op);
     }

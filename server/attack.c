@@ -1154,33 +1154,34 @@ int hit_player_attacktype(object *op, object *hitter, int dam,
 		 * you summon vampires, you get some exp.  Most of this code
 		 * below is taken directly from kill_object
 		 */
-		if (owner) {
-		    if (owner != hitter) {
-			old_skill = owner->chosen_skill;
-			owner->chosen_skill = hitter->chosen_skill;
-			owner->exp_obj=hitter->exp_obj;
+		if (owner && owner != hitter) {
+		    old_skill = owner->chosen_skill;
+		    owner->chosen_skill = hitter->chosen_skill;
+		    owner->exp_obj=hitter->exp_obj;
 
-			/* Not sure if this will happen or not - I'm think it could with
-			 * summoned pets - they may use a skill and thus the chosen_skill
-			 * gets updated to something they have.
-			 */
-			if (owner->chosen_skill && owner->chosen_skill->env != owner) {
-			    LOG(llevDebug,"kill_object: chosen skill doesn't belong to owner? (%s, %s)\n",
-				owner->chosen_skill->name, owner->name);
-			    owner->chosen_skill = NULL;
-			}
-			if (owner->exp_obj && owner->exp_obj->env != owner) {
-			    LOG(llevDebug,"kill_object: exp_obj doesn't belong to owner? (%s, %s)\n",
-				owner->exp_obj->name, owner->name);
-			    owner->exp_obj = NULL;
-			}
+		    /* Not sure if this will happen or not - I'm think it could with
+		     * summoned pets - they may use a skill and thus the chosen_skill
+		     * gets updated to something they have.
+		     */
+		    if (owner->chosen_skill && owner->chosen_skill->env != owner) {
+			LOG(llevDebug,"kill_object: chosen skill doesn't belong to owner? (%s, %s)\n",
+			    owner->chosen_skill->name, owner->name);
+			owner->chosen_skill = NULL;
 		    }
-		    add_exp(owner,op->stats.exp/(rate*2));
+		    if (owner->exp_obj && owner->exp_obj->env != owner) {
+			LOG(llevDebug,"kill_object: exp_obj doesn't belong to owner? (%s, %s)\n",
+			    owner->exp_obj->name, owner->name);
+			owner->exp_obj = NULL;
+		    }
+		    if (op->type != PLAYER || owner->type != PLAYER) 
+			add_exp(owner,op->stats.exp/(rate*2));
 		    owner->chosen_skill = old_skill;
 		} else {
-		    add_exp(hitter,op->stats.exp/(rate*2));
+		    if (op->type != PLAYER || hitter->type != PLAYER) 
+			add_exp(hitter,op->stats.exp/(rate*2));
 		}
-		add_exp(op,-op->stats.exp/rate);
+		if (hitter->type != PLAYER)
+		    add_exp(op,-op->stats.exp/rate);
 	    }
 	    dam = 1;	/* Drain is an effect.  Still return 1 - otherwise, if you have pure
 			 * drain attack, you won't know that you are actually sucking out EXP,

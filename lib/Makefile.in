@@ -172,7 +172,7 @@ dist_wizhelp_DATA = wizhelp/abil wizhelp/addexp \
 	wizhelp/dumpallmaps wizhelp/dumpallobjects \
 	wizhelp/dumpbelow wizhelp/dumpfriendlyobjects \
 	wizhelp/forget_spell wizhelp/free \
-	wizhelp/goto wizhelp/invisible \
+	wizhelp/goto wizhelp/hide wizhelp/invisible \
 	wizhelp/kick wizhelp/learn_special_prayer \
 	wizhelp/learn_spell wizhelp/nodm \
 	wizhelp/nowiz wizhelp/overlay_save \

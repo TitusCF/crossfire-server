@@ -42,6 +42,27 @@
 #include <treasure.h>
 #include <skills.h>
 
+
+int command_hide(object *op, char *params)
+{
+    if (op->contr->hidden) {
+        op->contr->hidden=0;
+        new_draw_info(NDI_UNIQUE, 0,op, "You are no longer hidden from other players");
+	op->map->players++;
+	new_draw_info_format(NDI_UNIQUE | NDI_ALL, 5, NULL,
+             "%s has entered the game.",op->name);
+    }
+    else {
+        op->contr->hidden=1;
+        new_draw_info(NDI_UNIQUE, 0,op, "Other players will no longer see you.");
+	op->map->players--;
+	new_draw_info_format(NDI_UNIQUE | NDI_ALL, 5, NULL,
+             "%s left the game.",op->name);
+    }
+    return 1;
+}
+
+
 /* This finds and returns the object which matches the name or
  * object nubmer (specified via num #whatever).
  */
@@ -908,6 +929,7 @@ int command_nowiz (object *op, char *params) /* 'noadm' is alias */
 #ifdef REAL_WIZ
      CLEAR_FLAG(op, FLAG_WAS_WIZ);
 #endif
+    op->contr->hidden=0;
      new_draw_info(NDI_UNIQUE | NDI_ALL, 1, NULL,
 	"The Dungeon Master is gone..");
      return 1;
@@ -980,12 +1002,12 @@ int command_dm (object *op, char *params)
 
 int command_invisible (object *op, char *params)
 {
-  if (!op)
+    if (op) {
+	op->invisible+=100;
+	update_object(op,UP_OBJ_FACE);
+	new_draw_info(NDI_UNIQUE, 0,op,"You turn invisible.");
+    }
     return 0;
-      op->invisible+=100;
-      update_object(op,UP_OBJ_FACE);
-      new_draw_info(NDI_UNIQUE, 0,op,"You turn invisible.");
-  return 0;
 }
 
 
@@ -1062,3 +1084,4 @@ int command_unloadplugin(object *op, char *params)
     removeOnePlugin(params);
     return 1;
 }
+

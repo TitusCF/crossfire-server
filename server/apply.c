@@ -670,6 +670,11 @@ int convert_item(object *item, object *converter) {
     }
   }
   item=arch_to_object(converter->other_arch);
+  if (!item) {
+    LOG(llevError,"Broken converter %s at %s (%d, %d)\n", 
+	converter->name, converter->map->path, converter->x, converter->y);
+    return 0;
+  }
   if(CONV_NR(converter))
     item->nrof=CONV_NR(converter);
   if(nr)
@@ -1001,6 +1006,9 @@ static int apply_shop_mat (object *shop_mat, object *op)
                        shop_mat);
 	    }
 	}
+	/* Don't teleport things like spell effects */
+	if (QUERY_FLAG(op, FLAG_NO_PICK)) return 0;
+
 	/* Removed code that checked for multipart objects - it appears that
 	 * the teleport function should be able to handle this just fine.
 	 */

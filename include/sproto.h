@@ -239,6 +239,7 @@ int command_rotateshoottype(object *op, char *params);
 int command_throw(object *op, char *params);
 int command_rotatespells(object *op, char *params);
 /* c_wiz.c */
+int command_hide(object *op, char *params);
 int command_setgod(object *op, char *params);
 int command_kick(object *op, char *params);
 int command_save_overlay(object *op, char *params);
@@ -268,6 +269,7 @@ int command_learn_special_prayer(object *op, char *params);
 int command_forget_spell(object *op, char *params);
 int command_listplugins(object *op, char *params);
 int command_loadplugin(object *op, char *params);
+int command_unloadplugin(object *op, char *params);
 int command_unloadplugin(object *op, char *params);
 /* commands.c */
 void init_commands(void);
@@ -332,6 +334,7 @@ void set_dumpmon9(void);
 void set_dumpmont(char *name);
 void set_daemon(void);
 void set_datadir(char *path);
+void set_confdir(char *path);
 void set_localdir(char *path);
 void set_mapdir(char *path);
 void set_archetypes(char *path);
@@ -781,7 +784,7 @@ void swap_map(mapstruct *map);
 void check_active_maps(void);
 mapstruct *map_least_timeout(char *except_level);
 void swap_below_max(char *except_level);
-int players_on_map(mapstruct *m);
+int players_on_map(mapstruct *m, int show_all);
 void flush_old_maps(void);
 /* time.c */
 void remove_door(object *op);

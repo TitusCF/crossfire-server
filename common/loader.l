@@ -1538,7 +1538,7 @@ char *get_ob_diff(object *op,object *op2) {/* I plan to optimize this heavily */
 
   for (tmp=0; tmp <= NUM_FLAGS; tmp++) {
     if (flag_names[tmp] && (QUERY_FLAG(op, tmp) != QUERY_FLAG(op2, tmp))) {
-	sprintf(buf2, "%s %d\n", flag_names[tmp], QUERY_FLAG(op, tmp));
+	sprintf(buf2, "%s %d\n", flag_names[tmp], QUERY_FLAG(op, tmp)?1:0);
 	strcat(buf, buf2);
     }
   }

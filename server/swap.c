@@ -231,13 +231,16 @@ void swap_below_max(char *except_level) {
 /*
  * players_on_map(): will be replaced by map->players when I'm satisfied
  * that the variable is always correct.
+ * If show_all is true, we show everyone.  If not, we don't show hidden
+ * players (dms)
  */
 
-int players_on_map(mapstruct *m) {
+int players_on_map(mapstruct *m, int show_all) {
   player *pl;
   int nr=0;
   for(pl=first_player;pl!=NULL;pl=pl->next)
-    if(pl->ob != NULL && !QUERY_FLAG(pl->ob,FLAG_REMOVED) && pl->ob->map==m)
+    if(pl->ob != NULL && !QUERY_FLAG(pl->ob,FLAG_REMOVED) && pl->ob->map==m &&
+       (show_all || !pl->hidden))
       nr++;
   return nr;
 }
@@ -264,7 +267,7 @@ void flush_old_maps() {
 	 * is not set so it isn't swapped out.
 	 */
 	if ((m->in_memory == MAP_IN_MEMORY) && (m->timeout==0) &&
-	    !players_on_map(m)) {
+	    !players_on_map(m,TRUE)) {
 	    set_map_timeout(m);
 	}
 

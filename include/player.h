@@ -108,6 +108,7 @@ typedef struct pl {
     uint32	has_hit:1;	    /* If set, weapon_sp instead of speed will count */
     uint32	name_changed:1;	    /* If true, the player has set a name. */
     uint32	peaceful:1;	    /* If set, won't attack friendly creatures */
+    uint32	hidden:1;	    /* If True, player (DM) is hidden from view */
 #ifdef EXPLORE_MODE
     uint32	explore:1;	    /* if True, player is in explore mode */
 #endif

@@ -274,7 +274,8 @@ void leave_map(object *op)
     remove_ob(op);
 
     if (oldmap) {
-	oldmap->players--;
+	if (!op->contr->hidden)
+	    oldmap->players--;
 	if (oldmap->players <= 0) { /* can be less than zero due to errors in tracking this */
 	    set_map_timeout(oldmap);
 	}
@@ -356,8 +357,9 @@ static void enter_map(object *op, mapstruct *newmap, int x, int y) {
     GlobalEvent(&CFP);
 #endif
 
+    if (!op->contr->hidden)
+	newmap->players++;
 
-    newmap->players++;
     newmap->timeout=0;
     op->enemy = NULL;
 
@@ -748,7 +750,7 @@ void process_active_maps() {
     if(enough_elapsed_time()) {
 	for(map=first_map;map!=NULL;map=map->next) {
 	    if(map->in_memory == MAP_IN_MEMORY) {
-		if(players_on_map(map))
+		if(players_on_map(map,TRUE))
 		    process_events(map);
 	    }
 	}
