@@ -17,6 +17,16 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+include/sproto.h: rebuilt
+lib/help/killpets: New file
+lib/Makefile.in: Add help/killpets file.
+server/c_misc.c: Add command_kill_pets().
+server/commands.c: add killpets command which kills your pets.
+server/monster.c:  Add some code in check_enemy so that the enemy
+    has to be a monster/generator/player to be considered valid -
+    I was seeing things like arrows ending up as target enemies.
+MSW 2002-09-07
+
 More bugfixes:
 common/loader.l, loader.c: Fix up the handling with speed with respect
    to style maps - the objects were still getting put on the active
@@ -56,7 +66,7 @@ random_maps/square_spiral.c: Fix bug that could cause the search
 server/monster.c: Fix some bugs with monsters and wakeup - remove
     check for friendly that could never be true, and also fix
     logic so that monsters will now find the players.
-MSW 2002-09-12
+MSW 2002-09-05
 
 common/button.c:  Fix do_mood_floor() to look at all objects on space for
    something to effect, not just things above the moodfloor.
@@ -68,7 +78,7 @@ common/readlable.c: Fix crash caused by passing null value to mon_desc -
 server/monster.c: Make it so that monsters with see invisible are not
    immune to blind - monster can be given appropriate resistance to make
    it so it is not effected by blind.
-MSW 2002-09-11
+MSW 2002-09-04
 
 server/main.c: Move #endif in crypt_string to more proper place.
 server/monster.c: Fix bad if statement that may have been waking up

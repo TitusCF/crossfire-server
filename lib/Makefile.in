@@ -52,7 +52,8 @@ FILES_HELP = $(srcdir)/help/apply $(srcdir)/help/applymode \
 	$(srcdir)/help/bind $(srcdir)/help/brace \
 	$(srcdir)/help/cast $(srcdir)/help/drop $(srcdir)/help/dropall \
 	$(srcdir)/help/golem $(srcdir)/help/invoke \
-	$(srcdir)/help/keys $(srcdir)/help/mark $(srcdir)/help/melee \
+	$(srcdir)/help/keys $(srcdir)/help/killpets \
+	$(srcdir)/help/mark $(srcdir)/help/melee \
 	$(srcdir)/help/mouse $(srcdir)/help/move \
 	$(srcdir)/help/name $(srcdir)/help/output \
 	$(srcdir)/help/output-count $(srcdir)/help/output-sync \

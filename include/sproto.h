@@ -176,6 +176,7 @@ int command_peaceful(object *op, char *params);
 int command_wimpy(object *op, char *params);
 int command_brace(object *op, char *params);
 int command_style_map_info(object *op, char *params);
+int command_kill_pets(object *op, char *params);
 /* c_move.c */
 int command_east(object *op, char *params);
 int command_north(object *op, char *params);
@@ -430,7 +431,6 @@ void pace2_moveh(object *ob);
 void rand_move(object *ob);
 void check_earthwalls(object *op, int x, int y);
 void check_doors(object *op, int x, int y);
-int move_object(object *op, int dir);
 void communicate(object *op, char *txt);
 int talk_to_npc(object *op, object *npc, char *txt);
 int talk_to_wall(object *npc, char *txt);
@@ -439,6 +439,7 @@ int can_detect_enemy(object *op, object *enemy, rv_vector *rv);
 int stand_in_light(object *op);
 int can_see_enemy(object *op, object *enemy);
 /* move.c */
+int move_object(object *op, int dir);
 int move_ob(object *op, int dir, object *originator);
 int transfer_ob(object *op, int x, int y, int randomly, object *originator);
 int teleport(object *teleporter, uint8 tele_type, object *user);

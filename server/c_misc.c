@@ -1150,3 +1150,10 @@ int command_style_map_info(object *op, char *params)
     new_draw_info_format(NDI_UNIQUE, 0, op, "Mem for objects:      %d", objects_used * sizeof(object));
     return 0;
 }
+
+int command_kill_pets(object *op, char *params)
+{
+    terminate_all_pets(op);
+    new_draw_info(NDI_UNIQUE, 0, op, "Your pets have been killed.");
+    return 0;
+}
