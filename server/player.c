@@ -1005,33 +1005,38 @@ int key_confirm_quit(object *op, char key)
 }
 
 void flee_player(object *op) {
-  int dir,diff;
-  if(op->stats.hp < 0) {
-    LOG(llevDebug, "Fleeing player is dead.\n");
-    CLEAR_FLAG(op, FLAG_SCARED);
-    return;
-  }
-  if(op->enemy==NULL) {
-    LOG(llevDebug,"Fleeing player had no enemy.\n");
-    CLEAR_FLAG(op, FLAG_SCARED);
-    return;
-  }
-  if(!(random_roll(0, 4, op, PREFER_LOW)) && did_make_save(op, op->level, 0)) {
-    op->enemy=NULL;
-    CLEAR_FLAG(op, FLAG_SCARED);
-    return;
-  }
-  dir=absdir(4+find_dir_2(op->x-op->enemy->x,op->y-op->enemy->y));
-  for(diff=0;diff<3;diff++) {
-    int m=1-(RANDOM()&2);
-    if(move_ob(op,absdir(dir+diff*m),op)||
-       (diff==0&&move_ob(op,absdir(dir-diff*m),op))) {
-      return;
+    int dir,diff;
+    rv_vector rv;
+
+    if(op->stats.hp < 0) {
+	LOG(llevDebug, "Fleeing player is dead.\n");
+	CLEAR_FLAG(op, FLAG_SCARED);
+	return;
     }
-  }
-  /* Cornered, get rid of scared */
-  CLEAR_FLAG(op, FLAG_SCARED);
-  op->enemy=NULL;
+
+    if(op->enemy==NULL) {
+	LOG(llevDebug,"Fleeing player had no enemy.\n");
+	CLEAR_FLAG(op, FLAG_SCARED);
+	return;
+    }
+    if(!(random_roll(0, 4, op, PREFER_LOW)) && did_make_save(op, op->level, 0)) {
+	op->enemy=NULL;
+	CLEAR_FLAG(op, FLAG_SCARED);
+	return;
+    }
+    get_rangevector(op, op->enemy, &rv, 0);
+
+    dir=absdir(4+rv.direction);
+    for(diff=0;diff<3;diff++) {
+	int m=1-(RANDOM()&2);
+	if(move_ob(op,absdir(dir+diff*m),op)||
+	   (diff==0 && move_ob(op,absdir(dir-diff*m),op))) {
+		return;
+	}
+    }
+    /* Cornered, get rid of scared */
+    CLEAR_FLAG(op, FLAG_SCARED);
+    op->enemy=NULL;
 }
 
 
@@ -2017,11 +2022,10 @@ int move_player(object *op,int dir) {
 	return 0;
 
     /* Sanity check: make sure dir is valid */
-    if ( ( dir < 0 ) || ( dir >= 9 ) )
-        {
+    if ( ( dir < 0 ) || ( dir >= 9 ) ) {
         LOG( llevError, "move_player: invalid direction %d\n", dir);
         return 0;
-        }
+    }
 
     /* peterm:  added following line */
     if(QUERY_FLAG(op,FLAG_CONFUSED) && dir)
@@ -2077,6 +2081,15 @@ int handle_newcs_player(object *op)
 	if(!op->invisible) {
 	    make_visible(op);
 	    new_draw_info(NDI_UNIQUE, 0, op, "Your invisibility spell runs out.");
+	}
+    }
+
+    if (QUERY_FLAG(op, FLAG_SCARED)) {
+	flee_player(op);
+	/* If player is still scared, that is his action for this tick */
+	if (QUERY_FLAG(op, FLAG_SCARED)) {
+	    op->speed_left--;
+	    return 0;
 	}
     }
 

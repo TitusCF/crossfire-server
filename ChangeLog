@@ -17,6 +17,16 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/attack.c: Add scare_creature() function, which sets FLAG_SCARED
+   and also sets up appropriate enemy.  Clean up some formatting in
+   other functions, and fix friendly fire - move it out of the loop for
+   all attacktypes (can be after we have figured out max damage).  Also,
+   has a bug where if an attach wasn't doing any damage, friendly fire could
+   actually make it do damage (eg, fear spell).
+server/player.c: Fix up flee_player() to be map tile aware.  Also, add
+   call to flee_player() in handle_newcs_player() so player will run away.
+MSW 2004-03-24
+
 server/attack.c: Add missing skill=NULL in kill_object() - can be rare
    cases where the proper skill can't be found.
 server/move.c: Fix push_object() so that it also updates the pushers/

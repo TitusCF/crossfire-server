@@ -1026,6 +1026,17 @@ void tear_down_wall(object *op)
     }
 }
 
+void scare_creature(object *target, object *hitter)
+{
+    object *owner = get_owner(hitter);
+
+    if (!owner) owner=hitter;
+
+    SET_FLAG(target, FLAG_SCARED);
+    if (!target->enemy) target->enemy=owner;
+}
+
+
 /* This returns the amount of damage hitter does to op with the
  * appropriate attacktype.  Only 1 attacktype should be set at a time.
  * This doesn't damage the player, but returns how much it should
@@ -1103,33 +1114,37 @@ int hit_player_attacktype(object *op, object *hitter, int dam,
     case ATNR_FEAR:
     case ATNR_CANCELLATION:
     case ATNR_DEPLETE:
-    case ATNR_BLIND: {
-        /* chance for inflicting a special attack depends on the
-	   difference between attacker's and defender's level */
-	int level_diff = MIN(110, MAX(0, op->level - hitter->level));
+    case ATNR_BLIND:
+	{
+	    /* chance for inflicting a special attack depends on the
+	     * difference between attacker's and defender's level 
+	     */
+	    int level_diff = MIN(110, MAX(0, op->level - hitter->level));
 
-	/* First, only creatures/players with speed can be affected.
-	 * Second, just getting hit doesn't mean it always affects
-	 * you.  Third, you still get a saving through against the
-	 * effect.  */
-        if (op->speed && 
-	    (QUERY_FLAG(op, FLAG_MONSTER) || op->type==PLAYER) &&
-	    !(rndm(0, (attacknum == ATNR_SLOW?6:3)-1)) &&
-	    !did_make_save(op, level_diff,  op->resist[attacknum]/10)) {
+	    /* First, only creatures/players with speed can be affected.
+	     * Second, just getting hit doesn't mean it always affects
+	     * you.  Third, you still get a saving through against the
+	     * effect.  
+	     */
+	    if (op->speed && 
+		(QUERY_FLAG(op, FLAG_MONSTER) || op->type==PLAYER) &&
+		!(rndm(0, (attacknum == ATNR_SLOW?6:3)-1)) &&
+		!did_make_save(op, level_diff,  op->resist[attacknum]/10)) {
 
-	  /* Player has been hit by something */
-	  if (attacknum == ATNR_CONFUSION) confuse_player(op,hitter,dam);
-	  else if (attacknum == ATNR_POISON) poison_player(op,hitter,dam);
-	  else if (attacknum == ATNR_SLOW) slow_player(op,hitter,dam);
-	  else if (attacknum == ATNR_PARALYZE) paralyze_player(op,hitter,dam);
-	  else if (attacknum == ATNR_FEAR) SET_FLAG(op, FLAG_SCARED);
-	  else if (attacknum == ATNR_CANCELLATION) cancellation(op);
-	  else if (attacknum == ATNR_DEPLETE) drain_stat(op);
-	  else if (attacknum == ATNR_BLIND  && !QUERY_FLAG(op,FLAG_UNDEAD) &&
+		/* Player has been hit by something */
+		if (attacknum == ATNR_CONFUSION) confuse_player(op,hitter,dam);
+		else if (attacknum == ATNR_POISON) poison_player(op,hitter,dam);
+		else if (attacknum == ATNR_SLOW) slow_player(op,hitter,dam);
+		else if (attacknum == ATNR_PARALYZE) paralyze_player(op,hitter,dam);
+		else if (attacknum == ATNR_FEAR) scare_creature(op, hitter);
+		else if (attacknum == ATNR_CANCELLATION) cancellation(op);
+		else if (attacknum == ATNR_DEPLETE) drain_stat(op);
+		else if (attacknum == ATNR_BLIND  && !QUERY_FLAG(op,FLAG_UNDEAD) &&
 		   !QUERY_FLAG(op,FLAG_GENERATOR)) blind_player(op,hitter,dam);
+	    }
+	    dam = 0; /* These are all effects and don't do real damage */
 	}
-	dam = 0; /* These are all effects and don't do real damage */
-	} break;
+	break;
     case ATNR_ACID:
       {
 	int flag=0;
@@ -1252,7 +1267,7 @@ int hit_player_attacktype(object *op, object *hitter, int dam,
 	    if (op->level * div <
 		(turn_bonus[owner->stats.Wis]+owner->level +
 		 (op->resist[ATNR_TURN_UNDEAD]/100)))
-	      SET_FLAG(op, FLAG_SCARED);
+		scare_creature(op, owner);
 	}
 	else 
 	  dam = 0; /* don't damage non undead - should we damage
@@ -1289,7 +1304,7 @@ int hit_player_attacktype(object *op, object *hitter, int dam,
 	/* As with turn undead above, give a bonus on the saving throw */
 	if((op->level+(op->resist[ATNR_HOLYWORD]/100)) <
 	   owner->level+turn_bonus[owner->stats.Wis])
-	  SET_FLAG(op, FLAG_SCARED);
+	    scare_creature(op, owner);
       } break;
     case ATNR_LIFE_STEALING:
       {
@@ -1663,7 +1678,7 @@ int hit_player(object *op,int dam, object *hitter, int type) {
     int simple_attack;
     tag_t op_tag, hitter_tag;
     int rtn_kill = 0;
-	int friendlyfire;
+    int friendlyfire;
 
     if (get_attack_mode (&op, &hitter, &simple_attack))
         return 0;
@@ -1775,20 +1790,24 @@ int hit_player(object *op,int dam, object *hitter, int type) {
 	      maxdam = ndam;
 	      maxattacktype = 1<<attacknum;
 	    }
-		
-		/* if this is friendly fire then do a set % of damage only*/
-		friendlyfire = friendly_fire(op, hitter);
-		if (friendlyfire){
-			
-			maxdam = ((dam * settings.set_friendly_fire) / 100)+1;
-			
-			#ifdef ATTACK_DEBUG
-			LOG(llevDebug,"Friendly fire (type:%d setting: %d%) did %d damage dropped to %d\n",
-			friendlyfire, settings.set_friendly_fire, dam, maxdam);
-			#endif
-			}
-		}
+	}
     }
+	
+    /* if this is friendly fire then do a set % of damage only
+     * Note - put a check in to make sure this attack is actually
+     * doing damage - otherwise, the +1 in the coe below will make
+     * an attack do damage before when it otherwise didn't
+     */
+    friendlyfire = friendly_fire(op, hitter);
+    if (friendlyfire && maxdam){
+	maxdam = ((dam * settings.set_friendly_fire) / 100)+1;
+			
+#ifdef ATTACK_DEBUG
+	LOG(llevDebug,"Friendly fire (type:%d setting: %d%) did %d damage dropped to %d\n",
+	friendlyfire, settings.set_friendly_fire, dam, maxdam);
+#endif
+    }
+
 
 #ifdef ATTACK_DEBUG
     LOG(llevDebug,"Attacktype %d did %d damage\n", type, maxdam);
@@ -1821,7 +1840,7 @@ int hit_player(object *op,int dam, object *hitter, int type) {
 	    if (QUERY_FLAG(op, FLAG_MONSTER))
 		SET_FLAG(op, FLAG_RUN_AWAY);
 	    else
-		SET_FLAG(op, FLAG_SCARED);
+		scare_creature(op, hitter);
     }
 
     if(QUERY_FLAG(op,FLAG_TEAR_DOWN)) {
