@@ -659,7 +659,6 @@ static void add_shop_item(object *tmp, shopinv *items, int *numitems, int *numal
 void shop_listing(object *op)
 {
     int i,j,numitems=0,numallocated=0;
-    char *map_mark = (char *) malloc(MAP_SIZE(op->map));
     object	*stack;
     shopinv	*items;
 
@@ -668,31 +667,25 @@ void shop_listing(object *op)
 
     new_draw_info(NDI_UNIQUE, 0, op, "\nThe shop contains:");
 
-    memset(map_mark, 0, MAP_SIZE(op->map));
-    magic_mapping_mark(op, map_mark, 3);
     items=malloc(40*sizeof(shopinv));
     numallocated=40;
 
     /* Find all the appropriate items */
     for (i=0; i<MAP_WIDTH(op->map); i++) {
 	for (j=0; j<MAP_HEIGHT(op->map); j++) {
-	    if (map_mark[i + MAP_WIDTH(op->map) * j]) {
-		stack  =get_map_ob(op->map,i,j);
-
-		while (stack) {
-		    if (QUERY_FLAG(stack, FLAG_UNPAID)) {
-			if (numitems==numallocated) {
-			    items=realloc(items, sizeof(shopinv)*(numallocated+10));
-			    numallocated+=10;
-			}
-			add_shop_item(stack, items, &numitems, &numallocated);
+	    stack = get_map_ob(op->map, i, j);
+	    while (stack) {
+		if (QUERY_FLAG(stack, FLAG_UNPAID)) {
+		    if (numitems==numallocated) {
+			items=realloc(items, sizeof(shopinv)*(numallocated+10));
+			numallocated+=10;
 		    }
-		    stack = stack->above;
+		    add_shop_item(stack, items, &numitems, &numallocated);
 		}
+		stack = stack->above;
 	    }
 	}
     }
-    free(map_mark);
     if (numitems == 0) {
 	new_draw_info(NDI_UNIQUE, 0, op, "The shop is currently empty.\n");
 	free(items);
