@@ -6,7 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 1994 Mark Wedel
+    Copyright (C) 2000 Mark Wedel
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -23,7 +23,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to master@rahul.net
+    The author can be reached via e-mail to mwedel@scruz.net
 */
 
 #include <pwd.h>
@@ -841,7 +841,7 @@ int check_pick(object *op) {
 		temp = item->below;
 		if (can_pick(op, item)) {
 			if (op->contr->mode==6) {
-			    if (is_magical(item) &&
+			    if (QUERY_FLAG(item, FLAG_KNOWN_MAGICAL) &&
 			      !QUERY_FLAG(item, FLAG_KNOWN_CURSED)) {
 				pick_up(op, item);
 			    }

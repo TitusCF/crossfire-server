@@ -18,6 +18,12 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+server/player.c:  If player is using pickup mode 6, only have them pick up
+the item if they know it is magical.  Prior to change, items would be
+picked up if they are magical, but not if the player knew that, so the code
+was giving extra knowledge to players.  Bug reported by Kurt Fitzner,
+checked in by Mark Wedel, 3/26/2000
+
 common/map.c:  Code fix by Kurt Fitzner so that unique maps will get
 compressed if so needed.  Fixes problem of unique maps not being
 able to get reloaded as they are saved with the compress suffix but
