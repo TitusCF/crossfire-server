@@ -126,7 +126,7 @@ int command_bleed(object *op, char *params);
 int command_cringe(object *op, char *params);
 int command_think(object *op, char *params);
 /* c_misc.c */
-void map_info(object *op);
+void map_info(object *op, char *search);
 int command_body(object *op, char *params);
 int command_spell_reset(object *op, char *params);
 int command_motd(object *op, char *params);

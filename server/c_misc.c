@@ -38,7 +38,7 @@ extern weathermap_t **weathermap;
  * who, etc.
  */
 
-void map_info(object *op) {
+void map_info(object *op, char *search) {
   mapstruct *m;
   char buf[MAX_BUF], map_path[MAX_BUF];
   long sec = seconds();
@@ -48,6 +48,7 @@ void map_info(object *op) {
   new_draw_info(NDI_UNIQUE, 0,op,"Path               Pl PlM IM   TO Dif Reset");
   for(m=first_map;m!=NULL;m=m->next) {
 
+    if ( search && strstr(m->path,search)==NULL ) continue; /* Skip unwanted maps */
     /* Print out the last 18 characters of the map name... */
     if (strlen(m->path)<=18) strcpy(map_path, m->path);
     else strcpy(map_path, m->path + strlen(m->path) - 18);
@@ -292,7 +293,7 @@ int command_mapinfo (object *op, char *params)
 
  int command_maps (object *op, char *params)
 {
-    map_info(op);
+    map_info(op,params);
     return 1;
   }
 
