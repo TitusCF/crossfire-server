@@ -95,9 +95,9 @@ Future feature requests
   can get back to the city with sysadmin intervention.  It would be pretty
   easy to check and make sure the player is surrounded by ocean - not sure
   if this might be used to cheat somehow (dimension door to the ocean,
-  then use the command instead of word of recall?)
-- When you try to load a map that you already have loaded, have crossedit
-  raise the window of the original map.
+  then use the command instead of word of recall?) 
+  I believe this problem is now fixed - MSW 2001/07/07
+
 - Delete oldest swapped map in case the TMPDIR disk fills up while
   swapping out a map.  To do this, detection of error on save would need
   to be done (presently, the fputs are done without return value checks.)
@@ -184,11 +184,6 @@ Future feature requests
   [us]int8, [us]int16, [us]int32    : Variables that should be at least that
 	size (is there actually anything that needs to be precisely some size?)
 	These typedefs can be set depending on system type.
-- Expand the features of parse_message():
-  Support for state-variables in messages.
-  Support for services (ie, receive item, give different item, or advice)
-  Allow for automated movement (ie, guards could do patrols, etc).  Both
-  relative direction and absolute coordinates should be supported.
 - Related to above:  In communication remains the same (keyword matches),
   highlite the keywords or in some way make them more noticable so players
   can know to use them.  This is no worse than many commercial games which
@@ -211,10 +206,6 @@ Future feature requests
   other words, the spell objects could pretty much provide all the information
   needed for some of the more general functions (cast cone, fire_bolt, etc.)
 - Figurine (when a figurine pet dies, it becomes a figurine, and can be reused)
-- maybe even make a simple interpreting programming language to be used by
-  the objects. [object ob;ob=environment();set_speed(ob,3);sleep(30);
-  set_speed(ob,default_speed(ob));destruct(this_object());]
-  (sleep(30) is the easy part: speed_left=-1,speed=1/30.0)
 - Make some general variable structures, try to get rid of the current
   mess where some variables are used for other things than they
   were meant to (union won't do either).
@@ -223,31 +214,12 @@ Future feature requests
   most range attacks (thus, in a group of orcs, the ones not immediately
   around the player could still use missile weapons.)
 
-- Look into updating the map look at the end of each time.  Presently, when
-  ever an object is inserted, it recalculates what the maps looks like on
-  a particular space as well as properties.  However, for things like buttons,
-  this function may be called several times (as well as if a bunch of objects
-  is being inserted.)  Better method would be to add some flag stating if a
-  space needs to be updated (ie, is stale), and if so, update it.  In fact,
-  a lot of updates would not need to be done until it is needed (ie, who cares
-  if a space out of the players view is out of date?)
-
 - Ability to rename objects in your inventory.  Best way would probably be
   to just add another pointer to the object that points to the desired name.
   That name is only used when in the inventory, other name is still used
   for other purposes.  When object is dropped, remove that name tag.  This
   could be a client issue, but something more would need to be added to 
   preserve the names accross runs.
-
-- Handle multi space objects more efficiently in saved files.  The current
-  problem is since multi space objects are saved last in the map, they can
-  'bury' objects below them (ie, drop a sword on a shop, and when the map
-  resets, the sword will now be below the shop.)  Best method might be
-  to only save a monsters head when the map is saved (head contains all
-  the needed information), and the rest of the monster can be inferred when
-  loading the map.  For buildings, we probably jsut need to break apart the
-  building into individual segments - main gain of it being 1 object is
-  that updates to it affect all pieces.
 
 Secondary features:
 
