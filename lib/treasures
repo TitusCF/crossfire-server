@@ -1133,7 +1133,7 @@ treasureone list9
   more
   arch mithril_chainmail
     magic 4
-    chance 5
+    chance 1
   more
   arch lockpicks
     chance 10
