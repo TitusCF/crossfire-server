@@ -155,12 +155,15 @@ EXTERN char *resist_plus[NROFATTACKS];
 EXTERN char *attacktype_desc[NROFATTACKS];
 EXTERN char *resist_save[NROFATTACKS];
 
+/* Beware, names require an _ if there is a space, else they will be read
+ * as for example: resist_life stealing 50!
+ */
 #else
 EXTERN char *resist_save[NROFATTACKS] = {
 "physical", "magic", "fire", "electricity", "cold", "confusion", "acid",
 "drain", "weaponmagic", "ghosthit", "poison", "slow", "paralyze",
 "turn_undead", "fear", "cancellation", "deplete", "death", "chaos",
-"counterspell", "godpower", "holyword", "blind" , "internal", "life stealing"
+"counterspell", "godpower", "holyword", "blind" , "internal", "life_stealing"
 };
 
 /* Short description of names of the attacktypes */
