@@ -2391,7 +2391,8 @@ void eat_special_food(object *who, object *food) {
 
 void apply_lighter(object *who, object *lighter) {
     object *item = who->inv;
-    int nrof;
+    int count,nrof;
+    char item_name[MAX_BUF];
 
     item=find_marked_object(who);
     if(item) {  
@@ -2406,10 +2407,20 @@ void apply_lighter(object *who, object *lighter) {
 	     return;
         }
 	nrof=item->nrof;
+	count=item->count;
+	/* If the item is destroyed, we don't have a valid pointer to the
+	 * name object, so make a copy so the message we print out makes
+	 * some sense.
+	 */
+	strcpy(item_name, item->name);
+
 	save_throw_object(item,AT_FIRE);
-	if ((nrof != item->nrof ) || QUERY_FLAG(item, FLAG_FREED)) {
+	/* Change to check count and not freed, since the object pointer
+	 * may have gotten recycled
+	 */
+	if ((nrof != item->nrof ) || (count != item->count)) {
 	    new_draw_info_format(NDI_UNIQUE, 0,who,
-		 "You light the %s with the %s.",item->name,lighter->name);
+		 "You light the %s with the %s.",item_name,lighter->name);
 	} else {
 	    new_draw_info_format(NDI_UNIQUE, 0,who,
 		 "You attempt to light the %s with the %s and fail.",item->name,lighter->name);
