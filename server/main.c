@@ -393,10 +393,6 @@ static void enter_map(object *op, mapstruct *newmap, int x, int y) {
      * old map does not work.
      */
     if (oldmap != newmap) {
-        /* we are really on a new map. tell it the client */
-        if(op->contr->socket.ext2) /* send mapstats cmd to ext2 clients */
-            send_mapstats_cmd(op, newmap); 
- 
         if (oldmap) /* adjust old map */
         {
             oldmap->players--;

@@ -17,6 +17,25 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+common/loader.l, common/loader.c, common/object.c, include/object.h,
+   socket/item.c:
+   Remove sub_type and sub_type2 information -
+   these were poorly named fields and not properly implemented.
+common/treasure.c: Add missing return type to change_treasure function.
+crossedit/Edit.c: Add SET_MAP_FLAGS macro to set P_NEED_UPDATE flag
+   before calling update_position.
+include/config.h: Add NEW_WORLD_MAP selection which results in proper
+   emergency save paths if you are using the maps-bigworld distribution.
+server/c_wiz.c: Fix the formatting (indentation) of the command_create
+   function.  No actual changes in how it runs, but the old
+   formatting was really terrible and inconsistent.
+server/main.c: remove call to send_mapstats_cmd
+server/monster.c: Update the comment style to be proper, as well
+   as the comments themselves.
+socket/request.c: Fix up improper indentation in esrv_update_stats.
+   remove send_mapstats_cmd function.
+MSW 2001-12-23
+
 Lots of changes here.  Basically implement a night and day system, as
 well as tracking of game time.  A clockdata file is now created and
 updated by the server to increment time.  Time increases by 1 hour,

@@ -46,7 +46,7 @@
 #include <loader.h>
 
 
-static change_treasure(treasure *t, object *op); /* overrule default values */
+static void change_treasure(treasure *t, object *op); /* overrule default values */
 
 /*
  * Initialize global archtype pointers:
@@ -293,7 +293,7 @@ static void put_treasure (object *op, object *creator, int flags)
 /* if there are change_xxx commands in the treasure, we include the changes
  * in the generated object
  */
-static change_treasure(treasure *t, object *op)
+static void change_treasure(treasure *t, object *op)
 {
     /* CMD: change_name xxxx */
     if(t->change_arch.name)

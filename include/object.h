@@ -80,8 +80,6 @@ typedef struct obj {
   sint8 facing;			/* Object is oriented/facing that way. */
 
   uint8 type; 		    /* PLAYER, BULLET, etc.  See define.h */
-  uint8   sub_type1;    /* sub type definition - this will be send to client too */
-  uint32  sub_type2;   /* sub type definition2 - this is for internal use */
 
   sint16	resist[NROFATTACKS];	/* Resistance adjustments for attacks */
   uint32	attacktype;	/* Bitmask of attacks this object does */

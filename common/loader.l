@@ -486,8 +486,6 @@ WS	[ \t]*
 ^can_cut{S}		{ /* just ignore for now */ }
 ^can_dam_armour{S}	{ }
 ^weapontype{S}		op->weapontype = FVAL;
-^sub_type{S}		op->sub_type1 = (char) IVAL;
-^sub_type2{S}		op->sub_type2 = (char) IVAL;
 ^casting_speed{S}	op->casting_speed = FVAL;
 ^elevation{S}		op->elevation = IVAL;
 

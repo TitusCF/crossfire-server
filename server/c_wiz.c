@@ -235,44 +235,44 @@ int command_create (object *op, char *params)
       archetype *at;
       artifact *art=NULL;
 
-  if (!op)
-    return 0;
+    if (!op)
+	return 0;
 
-  if (params == NULL) {
+    if (params == NULL) {
         new_draw_info(NDI_UNIQUE, 0,op, "Usage: create [nr] [magic] <archetype> [ of <artifact>]");
         return 1;
-      }
-  bp = params;
+    }
+    bp = params;
      
-      if(sscanf(bp, "%d ", &nrof)) {
-    if ((bp = strchr(params, ' ')) == NULL) {
-          new_draw_info(NDI_UNIQUE, 0,op, "Usage: create [nr] [magic] <archetype> [ of <artifact>]");
-          return 1;
-        }
+    if(sscanf(bp, "%d ", &nrof)) {
+	if ((bp = strchr(params, ' ')) == NULL) {
+	    new_draw_info(NDI_UNIQUE, 0,op, "Usage: create [nr] [magic] <archetype> [ of <artifact>]");
+	    return 1;
+	}
         bp++;
         set_nrof = 1;
         LOG(llevDebug, "(%d) %s\n", nrof, buf);
-      }
-      if (sscanf(bp, "%d ", &magic)) {
-        if ((bp = strchr(bp, ' ')) == NULL) {
-          new_draw_info(NDI_UNIQUE, 0,op, "Usage: create [nr] [magic] <archetype> [ of <artifact>]");
-          return 1;
-        }
-        bp++;
+    }
+    if (sscanf(bp, "%d ", &magic)) {
+	if ((bp = strchr(bp, ' ')) == NULL) {
+	    new_draw_info(NDI_UNIQUE, 0,op, "Usage: create [nr] [magic] <archetype> [ of <artifact>]");
+	    return 1;
+	}
+	bp++;
         set_magic = 1;
         LOG(llevDebug, "(%d) (%d) %s\n", nrof, magic, buf);
-      }
-      if ((cp = strstr(bp, " of ")) != NULL) {
-        *cp = '\0';
+    }
+    if ((cp = strstr(bp, " of ")) != NULL) {
+	*cp = '\0';
         cp += 4;
-      }
+    }
 
-      if((at=find_archetype(bp))==NULL) {
-        new_draw_info(NDI_UNIQUE, 0,op,"No such archetype.");
+    if((at=find_archetype(bp))==NULL) {
+	new_draw_info(NDI_UNIQUE, 0,op,"No such archetype.");
         return 1;
-      }
+    }
 
-      if (cp) {
+    if (cp) {
 	if (find_artifactlist(at->clone.type)==NULL) {
 	    new_draw_info_format(NDI_UNIQUE, 0, op,
 		"No artifact list for type %d\n", at->clone.type);
@@ -291,63 +291,64 @@ int command_create (object *op, char *params)
 	}
         LOG(llevDebug, "(%d) (%d) (%s) of (%s)\n",
             set_nrof ? nrof : 0, set_magic ? magic : 0 , bp, cp);
-      }
-      if(at->clone.nrof) {
-        tmp=arch_to_object(at);
-        tmp->x=op->x,tmp->y=op->y;
-        if (set_nrof)
-          tmp->nrof = nrof;
-        tmp->map=op->map;
+    } /* if cp */
+
+    if(at->clone.nrof) {
+	tmp=arch_to_object(at);
+	tmp->x=op->x,tmp->y=op->y;
+	if (set_nrof)
+	    tmp->nrof = nrof;
+	tmp->map=op->map;
 #ifndef REAL_WIZ
 	SET_FLAG(tmp, FLAG_WAS_WIZ);
 #endif
-        if (set_magic)
-          set_abs_magic(tmp, magic);
-        if (art)
-          give_artifact_abilities(tmp, art->item);
+	if (set_magic)
+	    set_abs_magic(tmp, magic);
+	if (art)
+	    give_artifact_abilities(tmp, art->item);
         if (need_identify(tmp)) {
-	  SET_FLAG(tmp, FLAG_IDENTIFIED);
-	  CLEAR_FLAG(tmp, FLAG_KNOWN_MAGICAL);
+	    SET_FLAG(tmp, FLAG_IDENTIFIED);
+	    CLEAR_FLAG(tmp, FLAG_KNOWN_MAGICAL);
 	}
         tmp = insert_ob_in_ob(tmp,op);
 	esrv_send_item(op, tmp);
         return 1;
-      } 
-      for (i=0 ; i < (set_nrof ? nrof : 1); i++) {
-        archetype *atmp;
-        object *prev=NULL,*head=NULL;
-        for (atmp=at;atmp!=NULL;atmp=atmp->more) {
-          tmp=arch_to_object(atmp);
+    }
+    for (i=0 ; i < (set_nrof ? nrof : 1); i++) {
+	archetype *atmp;
+	object *prev=NULL,*head=NULL;
+	for (atmp=at;atmp!=NULL;atmp=atmp->more) {
+	    tmp=arch_to_object(atmp);
 #ifndef REAL_WIZ
-	  SET_FLAG(tmp, FLAG_WAS_WIZ);
+	    SET_FLAG(tmp, FLAG_WAS_WIZ);
 #endif
-          if(head==NULL)
-            head=tmp;
-          tmp->x=op->x+tmp->arch->clone.x;
-          tmp->y=op->y+tmp->arch->clone.y;
-          tmp->map=op->map;
-          if (set_magic)
-            set_abs_magic(tmp, magic);
-          if (art)
-            give_artifact_abilities(tmp, art->item);
-          if (need_identify(tmp)) {
-	    SET_FLAG(tmp, FLAG_IDENTIFIED);
-	    CLEAR_FLAG(tmp, FLAG_KNOWN_MAGICAL);
-	  }
-          if(head!=tmp)
-            tmp->head=head,prev->more=tmp;
-          prev=tmp;
-        }
+	    if(head==NULL)
+		head=tmp;
+	    tmp->x=op->x+tmp->arch->clone.x;
+	    tmp->y=op->y+tmp->arch->clone.y;
+	    tmp->map=op->map;
+	    if (set_magic)
+		set_abs_magic(tmp, magic);
+	    if (art)
+		give_artifact_abilities(tmp, art->item);
+	    if (need_identify(tmp)) {
+		SET_FLAG(tmp, FLAG_IDENTIFIED);
+		CLEAR_FLAG(tmp, FLAG_KNOWN_MAGICAL);
+	    }
+	    if(head!=tmp)
+		tmp->head=head,prev->more=tmp;
+	    prev=tmp;
+	}
         if (QUERY_FLAG(head,FLAG_ALIVE))
-          insert_ob_in_map(head,op->map,op,0);
+	    insert_ob_in_map(head,op->map,op,0);
         else
-          head = insert_ob_in_ob(head,op);
+	    head = insert_ob_in_ob(head,op);
         if (at->clone.randomitems!=NULL)
-          create_treasure(at->clone.randomitems,head,GT_APPLY,
+	    create_treasure(at->clone.randomitems,head,GT_APPLY,
                           op->map->difficulty,0);
-	esrv_send_item(op, head);
-      }
-      return 1;
+	    esrv_send_item(op, head);
+    }
+    return 1;
 }
 
 /* if(<not socket>) */

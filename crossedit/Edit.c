@@ -1844,6 +1844,7 @@ Boolean EditObjectDelete (Edit self, int x, int y, int z)
     free_object (obj);
     /* remove_ob should do this for us */
     /* But it doesnt - ds */
+    SET_MAP_FLAGS(self->emap, x, y, P_NEED_UPDATE);
     update_position (self->emap, x, y);
     return True;
 }
@@ -1939,6 +1940,7 @@ Boolean EditInsert (Edit self,int x, int y, int z)
 	draw_add (self, x, y);
 
     EditObjectCalc(self,op,&rect);
+    SET_MAP_FLAGS(self->emap, x, y, P_NEED_UPDATE);
     update_position (self->emap, x, y);
     CrEditRefresh(self->w,rect);
 

@@ -581,8 +581,6 @@ void clear_object(object *op) {
   op->attacked_by = NULL;
   op->attacked_by_count= -1;
   op->type=0;
-  op->sub_type1 = 0;
-  op->sub_type2 = 0;
   op->casting_speed = (float)0;
   op->anim_enemy_dir = -1;      /* control the facings 25 animations */
   op->anim_moving_dir = -1;     /* the same for movement */

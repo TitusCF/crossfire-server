@@ -269,6 +269,16 @@
 
 #define MAX_TIME	120000
 
+/* NEW_WORLD_MAP
+ * If you have checked out the maps-bigworld directory from CVS,
+ * enable this define below.  The only thing it currently does is
+ * update the EMERGENCY_... positions to fall properly into scorn on 
+ * the new map.
+ */
+
+/*
+#define NEW_WORLD_MAP
+*/
 
 /* This is a modification to the cone spells.  If a cone spell hits
  * a monster, the spell stops progressing (same is true for parties
@@ -843,12 +853,20 @@
  */
 
 #ifdef WIN32 /* change define path city */
-#define EMERGENCY_MAPPATH "\\city\\city"
+#  define EMERGENCY_MAPPATH "\\city\\city"
+#  define EMERGENCY_X 5
+#  define EMERGENCY_Y 37
 #else
-#define EMERGENCY_MAPPATH "/city/city"
+#  ifdef NEW_WORLD_MAP
+#    define EMERGENCY_MAPPATH "/world/world_105_115"
+#    define EMERGENCY_X 5
+#    define EMERGENCY_Y 37
+#  else
+#    define EMERGENCY_MAPPATH "/city/city"
+#    define EMERGENCY_X 15
+#    define EMERGENCY_Y 19
+#  endif
 #endif
-#define EMERGENCY_X 15
-#define EMERGENCY_Y 19
 
 
 /*

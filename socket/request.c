@@ -692,13 +692,13 @@ void esrv_update_stats(player *pl)
             pl->socket.ext_title_flag = 0;
         }
     }
-   else /* for old clients, the normal range & title cmd */
+    else /* for old clients, the normal range & title cmd */
     {    
-       rangetostring(pl->ob, buf); /* we want use the new fire & run system in new client */
+	rangetostring(pl->ob, buf); /* we want use the new fire & run system in new client */
         AddIfString(pl->socket.stats.range, buf, CS_STAT_RANGE);
         set_title(pl->ob, buf);
         AddIfString(pl->socket.stats.title, buf, CS_STAT_TITLE);
-   }
+    }
 
     /* Only send it away if we have some actual data */
     if (sl.len>6) {
@@ -1564,19 +1564,3 @@ void send_plugin_custom_message(object *pl, char *buf)
     cs_write_string(&pl->contr->socket,buf,strlen(buf));
 }
 
-/* sends a mapstats cmd to the players client, after the player had entered the map.
- * Cmd sends map width / map height + mapinfo string.
- * TEST: x and y of the map entry. Perhaps we must stay with it.
- * Inside the mapinfo string can be all special tags used by magic mouth string.
- * This means in first place the media tags. Its used to set the background sound,
- * but it can also trigger a mpepg when ever included in CF.
- * The "real text part" of the string is the map name/location name.
- * Remember that we in the Editor, this all can be seperated in special parts
- * (like background sound settings, etc.). MT
- */
-void send_mapstats_cmd(object *op, mapstruct *map)
-{
-    char tmp[2024];
-    sprintf(tmp,"mapstats %d %d %d %d %s", map->width, map->height, op->x, op->y, map->name);
-    Write_String_To_Socket(&op->contr->socket, tmp, strlen(tmp));
-}

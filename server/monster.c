@@ -1700,38 +1700,39 @@ int talk_to_wall(object *npc, char *txt) {
   return 0;
 }
 
-/* find_mon_throw_ob() - modeled on find_throw_ob */
-/* this is far to complex, and the result is bad */
-/* Where is the sense to throw gold coins or fethers??! */
-/* Not the dumbest goblin is stupid enough to throw with his money. */
-/* Now, we just go through the inventory and we ONLY throw is_thrown 
-/* items - and thats how this should work. */
+/* find_mon_throw_ob() - modeled on find_throw_ob
+ * This is probably overly simplistic as it is now - We want
+ * monsters to throw things like chairs and other pieces of
+ * furniture, even if they are not good throwable objects.
+ * Probably better to have the monster throw a throwable object
+ * first, then throw any non equipped weapon.
+ */
 
 object *find_mon_throw_ob( object *op ) {
-  object *tmp = NULL;
+    object *tmp = NULL;
   
-  if(op->head) tmp=op->head; else tmp=op;  
+    if(op->head) tmp=op->head; else tmp=op;  
 
-  /* New throw code: look through the inventory. Grap the first legal is_thrown */
-  /* marked item and throw it to the enemy. */
-  /* Some of the original code was a bit ... strange. */
-  /* At all, i shrink this code to 5% */
-  for(tmp=op->inv;tmp;tmp=tmp->below) {
+    /* New throw code: look through the inventory. Grap the first legal is_thrown
+     * marked item and throw it to the enemy.
+     */
 
-      /* the first is only for secure. The second is for monster useful */
+    for(tmp=op->inv;tmp;tmp=tmp->below) {
+
+	/* Can't throw invisible objects or items that are applied */
       if(tmp->invisible || QUERY_FLAG(tmp,FLAG_APPLIED)) continue;
 
       if(QUERY_FLAG(tmp,FLAG_IS_THROWN)) 
           break;
           
-  }
+    }
 
 #ifdef DEBUG_THROW
-  LOG(llevDebug,"%s chooses to throw: %s (%d)\n",op->name,
+    LOG(llevDebug,"%s chooses to throw: %s (%d)\n",op->name,
 	!(tmp)?"(nothing)":query_name(tmp),tmp?tmp->count:-1);
 #endif
 
-  return tmp;
+    return tmp;
 }
 
 /* determine if we can 'detect' the enemy. Check for walls blocking the
