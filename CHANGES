@@ -18,6 +18,14 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+server/spell_effect.c: create_bomb():  New spell_type parameter, merely
+for consistency with itself and with other spell casting functions.
+- Jan Echternach 4/19/2000
+
+server/spell_effect.c: create_bomb():  Set level of created bomb.
+Fixes the problem that the splints were casted without a level.
+- Jan Echternach 4/19/2000
+
 lib/checkarch.pl:  New perl script to check the archetypes file for
 obvious bugs (like object that is alive but doesn't have a level).
 - Jan Echternach 4/17/2000

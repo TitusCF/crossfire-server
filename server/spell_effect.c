@@ -1513,7 +1513,7 @@ int summon_pet(object *op, int dir, SpellTypeFrom item) {
   return 1;
 }
 
-int create_bomb(object *op,object *caster,int dir,char *name) {
+int create_bomb(object *op,object *caster,int dir,int spell_type,char *name) {
   object *tmp;
   int dx=op->x+freearr_x[dir],dy=op->y+freearr_y[dir];
   if(wall(op->map,dx,dy)) {
@@ -1523,8 +1523,9 @@ int create_bomb(object *op,object *caster,int dir,char *name) {
   tmp=get_archetype(name);
 
   /*  level dependencies for bomb  */
-  tmp->stats.dam=SP_PARAMETERS[SP_BOMB].bdam + SP_level_dam_adjust(op,caster,SP_BOMB);
-  tmp->stats.hp=SP_PARAMETERS[SP_BOMB].bdur + SP_level_strength_adjust(op,caster,SP_BOMB);
+  tmp->stats.dam=SP_PARAMETERS[spell_type].bdam + SP_level_dam_adjust(op,caster,spell_type);
+  tmp->stats.hp=SP_PARAMETERS[spell_type].bdur + SP_level_strength_adjust(op,caster,spell_type);
+  tmp->level = casting_level (caster, spell_type);
 
   set_owner(tmp,op);
   tmp->x=dx,tmp->y=dy;

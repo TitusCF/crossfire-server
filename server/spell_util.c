@@ -415,7 +415,7 @@ if (item == spellNormal && !ability ){
     success = fire_bolt(op,caster,dir,type,!ability);
     break;
   case SP_BOMB:
-    success = create_bomb(op,caster,dir,"bomb");
+    success = create_bomb(op,caster,dir,type,"bomb");
     break;
   case SP_GOLEM:
   case SP_FIRE_ELEM:

@@ -522,7 +522,7 @@ extern int cast_heal ( object *op, int dir, int spell_type );
 extern int cast_regenerate_spellpoints ( object *op );
 extern int cast_change_attr ( object *op, object *caster, int dir, int spell_type );
 extern int summon_pet ( object *op, int dir, SpellTypeFrom item );
-extern int create_bomb ( object *op, object *caster, int dir, char *name );
+extern int create_bomb ( object *op, object *caster, int dir, int spell_type, char *name );
 extern void animate_bomb ( object *op );
 extern int fire_cancellation ( object *op, int dir, archetype *at, int magic );
 extern void move_cancellation ( object *op );
