@@ -18,6 +18,9 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+crossedite/Makefile.in:  Modify to use $(MAKE) instead of make when 
+descending into subdirectories - fixes compilation on FreeBSD - MSW 5/17/2000
+
 socket/init.c:  Fix incorrect check on return value from fread when
 loading xpm images.  MSW 5/17/2000
 

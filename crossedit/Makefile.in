@@ -105,7 +105,7 @@ Crossedit.ad.h: Crossedit.ad
 
 depend:
 	$(DEPEND) $(DEPENDFLAGS) -- $(CFLAGS) $(INCLUDES) -I../include -Iinclude -ICnv -I. -- $(SRCS)
-	(cd Cnv; make depend)
+	(cd Cnv; $(MAKE) depend)
 
 proto:
 	cextract +p -P $(INCLUDES)  \
@@ -126,7 +126,7 @@ archive:
 
 clean::
 	$(RM) -f crossedit $(OBJS) Makefile.bak
-	(cd Cnv; make clean)
+	(cd Cnv; $(MAKE) clean)
 
 .c.o:
 	$(CC) $(CFLAGS) $(INCLUDES) -I../include -I. -Iinclude -ICnv -c $*.c
@@ -134,12 +134,12 @@ clean::
 all: crossedit
 
 all:
-	(cd Cnv; make all)
+	(cd Cnv; $(MAKE) all)
 
 
 patchlist::
 	@echo $(ALLFILES) > .patchlist
-	(cd Cnv; make patchlist)
+	(cd Cnv; $(MAKE) patchlist)
 
 
 install:: crossedit
