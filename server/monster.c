@@ -1281,14 +1281,22 @@ void monster_check_apply(object *mon, object *item) {
 }
 
 void npc_call_help(object *op) {
-    int x,y;
+    int x,y, mflags;
     object *npc;
+    sint16 sx, sy;
+    mapstruct *m;
 
     for(x = -3; x < 4; x++)
 	for(y = -3; y < 4; y++) {
-	    if(out_of_map(op->map,op->x+x,op->y+y))
+	    m = op->map;
+	    sx = op->x + x;
+	    sy = op->y + y;
+	    mflags = get_map_flags(m, &m, sx, sy, &sx, &sy);
+	    /* If nothing alive on this space, no need to search the space. */
+	    if ((mflags & P_OUT_OF_MAP) || !(mflags & P_IS_ALIVE))
 		continue;
-	    for(npc = get_map_ob(op->map,op->x+x,op->y+y);npc!=NULL;npc=npc->above)
+
+	    for(npc = get_map_ob(m,sx,sy);npc!=NULL;npc=npc->above)
 		if(QUERY_FLAG(npc, FLAG_ALIVE)&&QUERY_FLAG(npc, FLAG_UNAGGRESSIVE))
 		    npc->enemy = op->enemy;
 	}

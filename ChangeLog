@@ -17,6 +17,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/apply.c: Fix auto_apply - missing else, causing extra
+   treausres to be generated inside of shop tiles.
+server/monster.c: Fix npc_call_help to be map tile aware.
+MSW 2003-06-18
+
 lib/collect.pl.in: Modify it so that it will collect .trs (treasure) files and
    build a treasures.bld from that as well as the existing treasures file.  In
    this way, treasure information for objects can be put in the arch

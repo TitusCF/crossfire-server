@@ -3233,7 +3233,7 @@ void fix_auto_apply(mapstruct *m) {
 	  tmp->speed = 0;
 	  update_ob_speed(tmp);
 	}
-        if(tmp && tmp->arch && tmp->type!=PLAYER && tmp->type!=TREASURE &&
+        else if(tmp && tmp->arch && tmp->type!=PLAYER && tmp->type!=TREASURE &&
 	  tmp->randomitems)
             create_treasure(tmp->randomitems, tmp, GT_APPLY,
                             m->difficulty,0);
