@@ -1488,20 +1488,20 @@ void draw_client_map1(object *pl)
 		 */
 
 		oldlen = sl.len;
-//#if 0
-//		/* First thing we do is blank out this space (clear it)
-//		 * if not already done.  If the client is using darkness, and
-//		 * this space is at the edge, we also include the darkness.
-//		 */
-//		if (d==4) {
-//		    if (pl->contr->socket.darkness && pl->contr->socket.lastmap.cells[ax][ay].count != d) {
-//			mask |= 8;
-//			SockList_AddShort(&sl, mask);
-//			SockList_AddChar(&sl, 0);
-//		    }
-//		    count = d;
-//		} else
-//#endif
+#if 0
+		/* First thing we do is blank out this space (clear it)
+		 * if not already done.  If the client is using darkness, and
+		 * this space is at the edge, we also include the darkness.
+		 */
+		if (d==4) {
+		    if (pl->contr->socket.darkness && pl->contr->socket.lastmap.cells[ax][ay].count != d) {
+			mask |= 8;
+			SockList_AddShort(&sl, mask);
+			SockList_AddChar(&sl, 0);
+		    }
+		    count = d;
+		} else
+#endif
 		{
 		    SockList_AddShort(&sl, mask);
 		    if (pl->contr->socket.lastmap.cells[ax][ay].count != -1) need_send=1;
