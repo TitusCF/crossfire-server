@@ -157,7 +157,7 @@ dist_help_DATA = help/apply help/applymode \
 	help/keys help/killpets \
 	help/mark help/melee \
 	help/mouse help/move \
-	help/name help/output \
+	help/output \
 	help/output-count help/output-sync \
 	help/party help/pickup \
 	help/quit help/range help/rename help/save \
