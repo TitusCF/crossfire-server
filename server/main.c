@@ -1113,6 +1113,7 @@ int main(int argc, char **argv)
 
     doeric_server();
     process_events(NULL);    /* "do" something with objects with speed */
+    cftimer_process_timers();/* Process the crossfire Timers */    
 #ifdef PLUGINS
     /* GROS : Here we handle the CLOCK global event */
     evtid = EVENT_CLOCK;

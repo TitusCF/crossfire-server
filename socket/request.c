@@ -1542,5 +1542,13 @@ void esrv_map_scroll(NewSocket *ns,int dx,int dy)
     memcpy(&(ns->lastmap), &newmap,sizeof(struct Map));
     ns->sent_scroll = 1;
 }
-
+/*****************************************************************************/
+/* GROS: The following one is used to allow a plugin to send a generic cmd to*/
+/* a player. Of course, the client need to know the command to be able to    */
+/* manage it !                                                               */
+/*****************************************************************************/
+void send_plugin_custom_message(object *pl, char *buf)
+{
+    cs_write_string(&pl->contr->socket,buf,strlen(buf));
+};
 

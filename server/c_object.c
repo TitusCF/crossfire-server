@@ -82,7 +82,7 @@ int command_uskill ( object *pl, char *params) {
 int command_rskill ( object *pl, char *params) {
    int skillno;
 
-   if (!params) { 
+   if (!params) {
         new_draw_info(NDI_UNIQUE, 0,pl, "Usage: ready_skill <skill name>");
         return 0;
    }
@@ -563,14 +563,15 @@ void drop_object (object *op, object *tmp, long nrof)
       if(tmp->event_hook[EVENT_DROP] != NULL)
       {
         CFParm CFP;
-        int k, l, m;
+        CFParm *CFR;
+        int k, l, m, rtn_script;
         m = 0;
         k = EVENT_DROP;
         l = SCRIPT_FIX_ALL;
         CFP.Value[0] = &k;
         CFP.Value[1] = op;
         CFP.Value[2] = tmp;
-        CFP.Value[3] = NULL;
+        CFP.Value[3] = &nrof;
         CFP.Value[4] = NULL;
         CFP.Value[5] = &m;
         CFP.Value[6] = &m;
@@ -579,7 +580,11 @@ void drop_object (object *op, object *tmp, long nrof)
         CFP.Value[9] = tmp->event_hook[k];
         CFP.Value[10]= tmp->event_options[k];
         if (findPlugin(tmp->event_plugin[k])>=0)
-          ((PlugList[findPlugin(tmp->event_plugin[k])].eventfunc) (&CFP));
+        {
+          CFR = ((PlugList[findPlugin(tmp->event_plugin[k])].eventfunc) (&CFP));
+          rtn_script = *(int *)(CFR->Value[0]);
+          if (rtn_script!=0) return;
+        }
       }
 #endif
     if (QUERY_FLAG (tmp, FLAG_STARTEQUIP)) {

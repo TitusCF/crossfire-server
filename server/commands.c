@@ -343,14 +343,7 @@ static CommFunc find_command(char *cmd)
     if (asp)
       return asp->func;
     else
-    {
-    /* GROS - If we are here, then maybe this is a plugin-provided command ? */
-      asp = find_plugin_command(cmd);
-      if (asp)
-        return asp->func;
-      else
-        return NULL;
-    };
+      return NULL;
   };
 }
 
@@ -383,6 +376,7 @@ int parse_string(object *op, char *str)
 {
     CommFunc f;
     char *cp;
+    CommArray_s *asp;
 
 #ifdef INPUT_DEBUG
     LOG(llevDebug, "Command: '%s'\n", str);
@@ -392,6 +386,11 @@ int parse_string(object *op, char *str)
      * No arguments?
      */
     if (!(cp=strchr(str, ' '))) {
+	/* GROS - If we are here, then maybe this is a plugin-provided command ? */
+	asp = find_plugin_command(str, op);
+	if (asp)
+	    return asp->func(op, NULL);
+
 	if ((f=find_command(str)))
 	    return f(op, NULL);
 	if (QUERY_FLAG(op,FLAG_WIZ) && (f=find_wizcommand(str)))
@@ -411,6 +410,9 @@ int parse_string(object *op, char *str)
     /* Clear all spaces from the start of the optional argument */
     while (*cp==' ') cp++;
 
+    asp = find_plugin_command(str,op);
+    if (asp) return asp->func(op,cp);
+
     if ((f=find_command(str)))
 	return f(op, cp);
     if (QUERY_FLAG(op, FLAG_WIZ) && (f=find_wizcommand(str)))
@@ -424,7 +426,7 @@ int parse_string(object *op, char *str)
 
 
 /*  this function handles splitting up a ; separated
- *  compound command into sub-commands:  it is recursive. 
+ *  compound command into sub-commands:  it is recursive.
  */
 int parse_command(object *op, char *str) {
   char *tmp,*tmp2;

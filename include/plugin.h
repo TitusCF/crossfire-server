@@ -9,6 +9,7 @@
 
 #ifndef PLUGIN_H_
 #define PLUGIN_H_
+#include <dlfcn.h>
 #include <version.h>
 #include <global.h>
 #include <object.h>
@@ -21,11 +22,11 @@
 #include <../random_maps/random_map.h>
 #include <../random_maps/rproto.h>
 
+
 /*****************************************************************************/
 /* This one does not exist under Win32.                                      */
 /*****************************************************************************/
 #ifndef WIN32
-#include <dlfcn.h>
 #include <dirent.h>
 #endif
 
@@ -125,7 +126,10 @@
 #define HOOK_PAYFORITEM         45
 #define HOOK_PAYFORAMOUNT       46
 #define HOOK_NEWDRAWINFO        47
-#define NR_OF_HOOKS             48
+#define HOOK_SENDCUSTOMCOMMAND  48
+#define HOOK_CFTIMERCREATE      49
+#define HOOK_CFTIMERDESTROY     50
+#define NR_OF_HOOKS             51
 
 /*****************************************************************************/
 /* CFParm is the data type used to pass informations between the server and  */

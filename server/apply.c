@@ -2585,6 +2585,7 @@ int apply_special (object *who, object *op, int aflags)
         LOG(llevDebug, "Scripting Weapon wielded\n");
         if (who->current_weapon_script) free_string(who->current_weapon_script);
         who->current_weapon_script=add_string(query_name(op));
+        who->current_weapon = op;
     };
 #endif
     who->current_weapon = op;

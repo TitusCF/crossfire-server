@@ -1,52 +1,59 @@
 #ifndef PLUGPROTO_H_
 #define PLUGPROTO_H_
 
-CFParm* CFWLog(CFParm* PParm);
-CFParm* CFWNewInfoMap(CFParm* PParm);
-CFParm* CFWSpringTrap(CFParm* PParm);
-CFParm* CFWCastSpell(CFParm* PParm);
-CFParm* CFWCmdRSkill(CFParm* PParm);
-CFParm* CFWBecomeFollower(CFParm* PParm);
-CFParm* CFWPickup(CFParm* PParm);
-CFParm* CFWGetMapObject(CFParm* PParm);
-CFParm* CFWESRVSendItem(CFParm* PParm);
-CFParm* CFWFindPlayer(CFParm* PParm);
-CFParm* CFWManualApply(CFParm* PParm);
-CFParm* CFWCmdDrop(CFParm* PParm);
-CFParm* CFWCmdTake(CFParm* PParm);
-CFParm* CFWCmdTitle(CFParm* PParm);
-CFParm* CFWTransferObject(CFParm* PParm);
-CFParm* CFWKillObject(CFParm* PParm);
-CFParm* CFWDoForgetSpell(CFParm* PParm);
-CFParm* CFWDoLearnSpell(CFParm* PParm);
-CFParm* CFWCheckSpellKnown(CFParm* PParm);
-CFParm* CFWESRVSendInventory(CFParm* PParm);
-CFParm* CFWCreateArtifact(CFParm* PParm);
-CFParm* CFWGetArchetype(CFParm* PParm);
-CFParm* CFWUpdateSpeed(CFParm* PParm);
-CFParm* CFWUpdateObject(CFParm* PParm);
-CFParm* CFWFindAnimation(CFParm* PParm);
-CFParm* CFWGetArchetypeByObjectName(CFParm* PParm);
-CFParm* CFWInsertObjectInMap(CFParm* PParm);
-CFParm* CFWReadyMapName(CFParm* PParm);
-CFParm* CFWAddExp(CFParm* PParm);
-CFParm* CFWDetermineGod(CFParm* PParm);
-CFParm* CFWFindGod(CFParm* PParm);
-CFParm* CFWDumpObject(CFParm* PParm);
-CFParm* CFWLoadObject(CFParm* PParm);
-CFParm* CFWRemoveObject(CFParm* PParm);
-CFParm* CFWAddString(CFParm* PParm);
-CFParm* CFWAddRefcount(CFParm* PParm);
-CFParm* CFWFreeString(CFParm* PParm);
-CFParm* CFWGetFirstMap(CFParm* PParm);
-CFParm* CFWGetFirstPlayer(CFParm* PParm);
-CFParm* CFWGetFirstArchetype(CFParm* PParm);
-CFParm* CFWQueryCost(CFParm* PParm);
-CFParm* CFWQueryMoney(CFParm* PParm);
-CFParm* CFWPayForItem(CFParm* PParm);
-CFParm* CFWPayForAmount(CFParm* PParm);
-
-CFParm* RegisterGlobalEvent(CFParm* PParm);
-CFParm* UnregisterGlobalEvent(CFParm* PParm);
+f_plugin HookList[NR_OF_HOOKS] =
+{
+    NULL,
+    CFWLog,
+    CFWNewInfoMap,
+    CFWSpringTrap,
+    CFWCastSpell,
+    CFWCmdRSkill,
+    CFWBecomeFollower,
+    CFWPickup,
+    CFWGetMapObject,
+    CFWESRVSendItem,
+    CFWFindPlayer,
+    CFWManualApply,
+    CFWCmdDrop,
+    CFWCmdTake,
+    CFWCmdTitle,
+    CFWTransferObject,
+    CFWKillObject,
+    CFWDoLearnSpell,
+    CFWDoForgetSpell,
+    CFWCheckSpellKnown,
+    CFWESRVSendInventory,
+    CFWCreateArtifact,
+    CFWGetArchetype,
+    CFWUpdateSpeed,
+    CFWUpdateObject,
+    CFWFindAnimation,
+    CFWGetArchetypeByObjectName,
+    CFWInsertObjectInMap,
+    CFWReadyMapName,
+    CFWAddExp,
+    CFWDetermineGod,
+    CFWFindGod,
+    RegisterGlobalEvent,
+    UnregisterGlobalEvent,
+    CFWDumpObject,
+    CFWLoadObject,
+    CFWRemoveObject,
+    CFWAddString,
+    CFWFreeString,
+    CFWAddRefcount,
+    CFWGetFirstMap,
+    CFWGetFirstPlayer,
+    CFWGetFirstArchetype,
+    CFWQueryCost,
+    CFWQueryMoney,
+    CFWPayForItem,
+    CFWPayForAmount,
+    CFWNewDrawInfo,
+    CFWSendCustomCommand,
+    CFWCFTimerCreate,
+    CFWCFTimerDestroy
+};
 
 #endif /*PLUGPROTO_H_*/

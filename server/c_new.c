@@ -74,7 +74,7 @@ int execute_newserver_command(object *pl, char *command)
 	while (*cp==' ') cp++;
     }
 
-    csp = find_plugin_command(command);
+    csp = find_plugin_command(command,pl);
 
     if (!csp)
     csp = find_command_element(command, NewServerCommands,

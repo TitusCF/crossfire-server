@@ -58,7 +58,7 @@ int PlugNR = 0;
 /* Note that find_plugin_command is called *before* the internal commands are*/
 /* checked, meaning that you can "overwrite" them.                           */
 /*****************************************************************************/
-CommArray_s *find_plugin_command(char *cmd)
+CommArray_s *find_plugin_command(char *cmd, object *op)
 {
     CFParm* CmdParm;
     CFParm* RTNValue;
@@ -70,6 +70,7 @@ CommArray_s *find_plugin_command(char *cmd)
     CmdParm = (CFParm *)(malloc(sizeof(CFParm)));
     CmdParm->Value[0] = cmdchar;
     CmdParm->Value[1] = cmd;
+    CmdParm->Value[2] = op;
     RTNCmd = (CommArray_s *)(malloc(sizeof(CommArray_s)));
 
     for(i=0;i<PlugNR;i++)
@@ -371,8 +372,7 @@ void initOnePlugin(char* pluginfile)
                 HookParm->Value[1] = &CFWNewDrawInfo;
                 break;
             };
-/* Gros: this must be a linux special, or? ;-) */
-/*            HookParm->dparm = 2044; */
+            HookParm->dparm = 2044;
             PlugList[PlugNR].hookfunc(HookParm);
         };
         free(HookParm->Value[0]);
@@ -442,7 +442,7 @@ void initPlugins(void)
                     };
                 }
             };
-
+        if (namelist != NULL) free(namelist);
 };
 
 /*****************************************************************************/
@@ -506,6 +506,7 @@ void initOnePlugin(char* pluginfile)
         PlugList[PlugNR].eventfunc = (f_plugin)(dlsym(ptr,"triggerEvent"));
         PlugList[PlugNR].pinitfunc = (f_plugin)(dlsym(ptr,"postinitPlugin"));
         PlugList[PlugNR].propfunc = (f_plugin)(dlsym(ptr,"getPluginProperty"));
+        printf("Done\n");
         if (PlugList[PlugNR].pinitfunc==NULL)
         {
                 printf("Plugin postinit error: %s\n", dlerror());
@@ -529,7 +530,8 @@ void initOnePlugin(char* pluginfile)
                 for(j=1; j<=NR_OF_HOOKS;j++)
                 {
                     memcpy(HookParm->Value[0], &j, sizeof(int));
-                    switch(j)
+                    HookParm->Value[1] = HookList[j];
+                    /*switch(j)
                     {
                         case HOOK_NONE:
                             break;
@@ -674,7 +676,10 @@ void initOnePlugin(char* pluginfile)
                         case HOOK_NEWDRAWINFO:
                             HookParm->Value[1] = &CFWNewDrawInfo;
                             break;
-                    };
+                        case HOOK_SENDCUSTOMCOMMAND:
+                            HookParm->Value[1] = &CFWSendCustomCommand;
+                            break;
+                    };*/
                     PlugList[PlugNR].hookfunc(HookParm);
                 };
                 free(HookParm->Value[0]);
@@ -846,7 +851,6 @@ CFParm* CFWESRVSendItem(CFParm* PParm)
         (object *)(PParm->Value[0]),
         (object *)(PParm->Value[1])
     );
-    return PParm;
 };
 
 /*****************************************************************************/
@@ -1091,8 +1095,7 @@ CFParm* CFWUpdateSpeed(CFParm* PParm)
     update_ob_speed(
         (object *)(PParm->Value[0])
     );
-
-    return PParm;
+    return NULL;
 };
 
 /*****************************************************************************/
@@ -1106,8 +1109,7 @@ CFParm* CFWUpdateObject(CFParm* PParm)
         (object *)(PParm->Value[0]),
         *(int *)(PParm->Value[1])
     );
-
-    return PParm;
+    return NULL;
 };
 
 /*****************************************************************************/
@@ -1198,7 +1200,6 @@ CFParm* CFWAddExp(CFParm* PParm)
         (object *)(PParm->Value[0]),
         *(int *)(PParm->Value[1])
     );
-    return PParm;
 };
 
 /*****************************************************************************/
@@ -1244,7 +1245,7 @@ CFParm* CFWDumpObject(CFParm* PParm)
 {
     CFParm* CFP;
     char*   val;
-    /* object* ob; not used yet */
+    object* ob;
     val = (char *)(malloc(sizeof(char)*10240));
     CFP = (CFParm*)(malloc(sizeof(CFParm)));
     dump_me((object *)(PParm->Value[0]),val);
@@ -1300,7 +1301,7 @@ CFParm* CFWAddRefcount(CFParm* PParm)
 };
 CFParm* CFWFreeString(CFParm* PParm)
 {
-    /* CFParm* CFP; not used yet */
+    CFParm* CFP;
     char* val;
     val = (char *)(PParm->Value[0]);
     free_string (val);
@@ -1419,11 +1420,37 @@ CFParm* CFWNewDrawInfo(CFParm* PParm)
                   (char *)(PParm->Value[3]));
     return NULL;
 };
-/*
-CFParm* CFW(CFParm* PParm)
-CFParm* CFW(CFParm* PParm)
-CFParm* CFW(CFParm* PParm)
-*/
+
+CFParm* CFWSendCustomCommand(CFParm* PParm)
+{
+    send_plugin_custom_message((object *)(PParm->Value[0]),(char *)(PParm->Value[1]));
+    return NULL;
+};
+
+CFParm* CFWCFTimerCreate(CFParm* PParm)
+{
+//int cftimer_create(int id, long delay, object* ob, int mode)
+    CFParm* CFP;
+    static int val;
+    CFP = (CFParm*)(malloc(sizeof(CFParm)));
+    val = cftimer_create(*(int *)(PParm->Value[0]),
+                         *(long *)(PParm->Value[1]),
+                         (object *)(PParm->Value[2]),
+                         *(int *)(PParm->Value[3]));
+    CFP->Value[0] = (void *)(&val);
+    return CFP;
+};
+
+CFParm* CFWCFTimerDestroy(CFParm* PParm)
+{
+//int cftimer_destroy(int id)
+    CFParm* CFP;
+    static int val;
+    CFP = (CFParm*)(malloc(sizeof(CFParm)));
+    val = cftimer_destroy(*(int *)(PParm->Value[0]));
+    CFP->Value[0] = (void *)(&val);
+    return CFP;
+};
 
 /*****************************************************************************/
 /* The following is not really a wrapper like the others are.                */

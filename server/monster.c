@@ -1483,7 +1483,7 @@ int talk_to_npc(object *op, object *npc, char *txt) {
       CFP.Value[0] = &k;
       CFP.Value[1] = op;
       CFP.Value[2] = cobj;
-      CFP.Value[3] = NULL;
+      CFP.Value[3] = npc;
       CFP.Value[4] = txt;
       CFP.Value[5] = &m;
       CFP.Value[6] = &m;

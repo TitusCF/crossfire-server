@@ -101,6 +101,7 @@ static char *variable_const[NR_OF_VARIABLES] = {
   "event_throw",    "event_throw_plugin",   "event_throw_options",
   "event_trigger",  "event_trigger_plugin", "event_trigger_options",
   "event_close", "event_close_plugin", "event_close_options",
+  "event_timer",    "event_timer_plugin",   "event_timer_options",
 #ifdef NPC_PROG
   "npc_status","npc_program",
 #endif
@@ -807,6 +808,28 @@ WS	[ \t]*
                                                         FREE_AND_COPY(op->event_options[EVENT_TIME], yv);
                                                 };
 		    }
+^event_timer{S}          {	char *yv=yval();
+			if (*yv=='\0') LOG(llevError,"Event (timer) without val\n");
+			else
+			{
+				FREE_AND_COPY(op->event_hook[EVENT_TIMER],(yv));
+			};
+		}
+^event_timer_plugin{S}  {	char *yv=yval();
+			if (*yv=='\0') LOG(llevError,"Event (timer) without plugin\n");
+			else
+			{
+				FREE_AND_COPY(op->event_plugin[EVENT_TIMER], yv);
+			};
+		}
+^event_timer_options{S} {	char *yv=yval();
+			if (*yv=='\0') LOG(llevError,"Event (timer) without options\n");
+			else
+			{
+				FREE_AND_COPY(op->event_options[EVENT_TIMER], yv);
+			};
+		}
+
 ^event_throw{S}	    {	char *yv=yval();
 
 			if (*yv=='\0') LOG(llevError,"Event (throw) without val\n");
@@ -1191,6 +1214,9 @@ char *get_ob_diff(object *op,object *op2) {/* I plan to optimize this heavily */
             case EVENT_CLOSE:
                 sprintf(buf2,"event_close %s\n",op->event_hook[i]);
                 break;
+            case EVENT_TIMER:
+                sprintf(buf2,"event_timer %s\n",op->event_hook[i]);
+                break;
         };
         strcat(buf,buf2);
     }
@@ -1248,6 +1274,9 @@ char *get_ob_diff(object *op,object *op2) {/* I plan to optimize this heavily */
             case EVENT_CLOSE:
                 sprintf(buf2,"event_close_plugin %s\n",op->event_plugin[i]);
                 break;
+            case EVENT_TIMER:
+                sprintf(buf2,"event_timer_plugin %s\n",op->event_plugin[i]);
+                break;
         };
         strcat(buf,buf2);
     }
@@ -1304,6 +1333,9 @@ char *get_ob_diff(object *op,object *op2) {/* I plan to optimize this heavily */
                 break;
             case EVENT_CLOSE:
                 sprintf(buf2,"event_close_options %s\n",op->event_options[i]);
+                break;
+            case EVENT_TIMER:
+                sprintf(buf2,"event_timer_options %s\n",op->event_options[i]);
                 break;
         };
         strcat(buf,buf2);

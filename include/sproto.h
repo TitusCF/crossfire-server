@@ -492,7 +492,7 @@ int player_can_view(object *pl, object *op);
 int action_makes_visible(object *op);
 int op_on_battleground(object *op, int *x, int *y);
 /* plugins.c */
-CommArray_s *find_plugin_command(char *cmd);
+CommArray_s *find_plugin_command(char *cmd, object *op);
 void displayPluginsList(object *op);
 int findPlugin(char *id);
 void initPlugins(void);
@@ -543,6 +543,9 @@ CFParm *CFWQueryMoney(CFParm *PParm);
 CFParm *CFWPayForItem(CFParm *PParm);
 CFParm *CFWPayForAmount(CFParm *PParm);
 CFParm *CFWNewDrawInfo(CFParm *PParm);
+CFParm *CFWSendCustomCommand(CFParm *PParm);
+CFParm *CFWCFTimerCreate(CFParm *PParm);
+CFParm *CFWCFTimerDestroy(CFParm *PParm);
 CFParm *RegisterGlobalEvent(CFParm *PParm);
 CFParm *UnregisterGlobalEvent(CFParm *PParm);
 void GlobalEvent(CFParm *PParm);
@@ -784,3 +787,8 @@ void move_player_mover(object *op);
 void move_creator(object *op);
 void move_marker(object *op);
 int process_object(object *op);
+/* timers.c */
+void cftimer_process_timers(void);
+int cftimer_create(int id, long delay, object *ob, int mode);
+int cftimer_destroy(int id);
+int cftimer_find_free_id(void);
