@@ -5,7 +5,7 @@
 # now, this simple makefile should do the job.
 #
 #   Copyright (C) 1992 Frank Tore Johansen
-#   Copyright (C) 1998 Mark Wedel
+#   Copyright (C) 2001 Mark Wedel
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 #   along with this program; if not, write to the Free Software
 #   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #
-#   The author can be reached via e-mail to mark@pyramid.com
+#   The author can be reached via e-mail to crossfire-devel@real-time.com
 
 SHELL = @BOURNE_SHELL@
 
@@ -29,6 +29,7 @@ VPATH = @srcdir@
 srcdir = @srcdir@
 
 SRCS = \
+	image.c \
 	info.c \
 	init.c \
 	item.c\

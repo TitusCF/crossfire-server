@@ -7,7 +7,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2000 Mark Wedel
+    Copyright (C) 2001 Mark Wedel
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -24,7 +24,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to mwedel@scruz.net
+    The author can be reached via e-mail to crossfire-devel@real-time.com
 */
 
 /* socket.c mainly deals with initialization and higher level socket
@@ -56,105 +56,6 @@
 
 Socket_Info socket_info;
 NewSocket *init_sockets;
-FaceInfo faces[MAXFACENUM];
-static char *face_types[FACE_TYPES] = {"png"};
-
-
-/* read_client_images loads all the iamge types into memory.
- *  This  way, we can easily send them to the client.  We should really do something
- * better than abort on any errors - on the other hand, these are all fatal
- * to the server (can't work around them), but the abort just seems a bit
- * messy (exit would probably be better.)
- */
-
-/* Couple of notes:  We assume that the faces are in a continous block.
- * This works fine for now, but this could perhaps change in the future
- */
-
-/* Function largely rewritten May 2000 to be more general purpose.
- * The server itself does not care what the image data is - to the server,
- * it is just data it needs to allocate.  As such, the code is written
- * to do such.
- */
-
-/* Rotate right from bsd sum. */
-#define ROTATE_RIGHT(c) if ((c) & 01) (c) = ((c) >>1) + 0x80000000; else (c) >>= 1;
-
-#define XPM_BUF 10000
-void read_client_images()
-{
-    char filename[400];
-    char buf[500];
-    char *cp;
-    FILE *infile;
-    int num,len,compressed, fileno,i;
-
-    for (fileno=0; fileno<FACE_TYPES; fileno++) {
-	sprintf(filename,"%s/crossfire.%s",settings.datadir, face_types[fileno]);
-	LOG(llevDebug,"Loading image file %s\n", filename);
-
-	if ((infile = open_and_uncompress(filename,0,&compressed))==NULL) {
-	    LOG(llevError,"Unable to open %s\n", filename);
-	    abort();
-	}
-	while(fgets(buf, 400, infile)!=NULL) {
-	    if(strncmp(buf,"IMAGE ",6)!=0) {
-		LOG(llevError,"read_client_images:Bad image line - not IMAGE, instead\n%s",buf);
-		abort();
-	    }
-	    num = atoi(buf+6);
-	    if (num<0 || num>=MAXFACENUM) {
-		LOG(llevError,"read_client_images: Image num %d not in 0..%d\n%s",
-		    num,MAXFACENUM,buf);
-		abort();
-	    }
-	    /* Skip accross the number data */
-	    for (cp=buf+6; *cp!=' '; cp++) ;
-	    len = atoi(cp);
-	    if (len==0 || len>XPM_BUF) {
-		LOG(llevError,"read_client_images: length not valid: %d\n%s",
-		    len,buf);
-		abort();
-	    }
-	    /* First skip the space, then skip the numbers */
-	    for (cp++; *cp!=' '; cp++) ;
-
-	    /* Skip the space in our pointer*/
-	    cp++;
-	    /* Clear the newline */
-	    buf[strlen(buf)-1] = '\0';
-	    if (fileno==0) {
-		if (faces[num].name != NULL) {
-		    LOG(llevError,"read_client_images: duplicate image %d\n%s",
-			num,buf);
-		    abort();
-		}
-		faces[num].name = strdup_local(cp);
-	    } else {
-		/* Just do a sanity check here */
-		if (strcmp(faces[num].name, cp)) {
-		    LOG(llevError,"read_client_images: image mismatch: %s!=%s\n%s",
-			faces[num].name, cp, buf);
-		    abort();
-		}
-	    }
-	    faces[num].datalen[fileno] = len;
-	    faces[num].data[fileno] = malloc(len);
-	    if ((i=fread( faces[num].data[fileno], len, 1, infile))!=1) {
-		LOG(llevError,"read_client_images: Did not read desired amount of data, wanted %d, got %d\n%s",
-		    len, i, buf);
-		    abort();
-	    }
-	    faces[num].checksum=0;
-	    for (i=0; i<len; i++) {
-		ROTATE_RIGHT(faces[num].checksum);
-		faces[num].checksum += faces[num].data[fileno][i];
-		faces[num].checksum &= 0xffffffff;
-	    }
-	}
-	close_and_delete(infile,compressed);
-    }
-}
 
 /* Initializes a connection - really, it just sets up the data structure,
  * socket setup is handled elsewhere.  We do send a version to the
@@ -195,8 +96,9 @@ void InitConnection(NewSocket *ns, uint32 from)
     LOG(llevDebug, "Socket buffer size now %d bytes\n", oldbufsize);
 #endif
 
-    ns->facemode = Send_Face_Png;
+    ns->faceset = 0;
     ns->facecache = 0;
+    ns->image2 = 0;
     ns->sound = 0;
     ns->ext2 = 0;
     ns->ext_title_flag = 1;
@@ -378,16 +280,8 @@ void init_ericserver()
 /* Free's all the memory that ericserver allocates. */
 void free_all_newserver()
 {  
-    int num, i;
-
     LOG(llevDebug,"Freeing all new client/server information.\n");
-    for(num=0;num<MAXFACENUM;num++) {
-	if (faces[num].name) {
-	    free(faces[num].name);
-	    for (i=0; i<FACE_TYPES; i++) 
-		free(faces[num].data[i]);
-	}
-    }
+    free_socket_images();
     free(init_sockets);
 }
 

@@ -1,0 +1,46 @@
+Rules for image sets:
+
+1) Image format for all images should be png.
+
+2) There must be an active maintainer of each of the image sets.  If a set
+gets too out of date because of no maintainer, that particular set gets
+removed.
+
+3) When new arch (and image) is introduced, only an image for the main set is
+required.  It is up to the maintainers of the different sets to make an image
+if the default one is not appropriate.
+
+4) There must be a reason for adding a new set.  This generally equates
+to enough people expressing interest in the set, or the number of new images 
+is substantial enough to warrant the addition.  The use of image sets
+is not for making a set with 10 images because you prefer those over
+some in another set.
+
+5) Naming if image.set.111.png.  If the image name is Bk.272, then the
+actual file name would be Bk.<set>.272.png.  <set> is a four letter
+abbreviation that has some relevance to the set name.
+
+6) Whenever adding a new image set, update the lib/image_info file
+
+7) Image sets only provide alternate images - the .arc files are remained
+unchanged by the addition of image sets. 
+
+------------------------------------------------------------------------------
+Internal working of image sets:
+
+All images within crossfire are still known without the set or png
+extension.  Thus, for archetypes, the image name is sword.111, not
+sword.base.111.png.
+
+The collect script only collects the images for the set.  If the client
+requests an image that is not in the set it is using, the server will
+use the fallback logic to find an image to send to the client.  Collecting
+only the images in the set results in smaller installed image files,
+a smaller memory footprint for the server, and faster loading time.
+
+The server does not care about the image content.  As far as the server
+is concerned, it is just a bunch of bits it serves to the client.
+
+The server uses the image number, the long name, and the fallback.
+The long name can be used when the client requests the images it
+gets sent.

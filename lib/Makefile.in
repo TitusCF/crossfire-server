@@ -34,14 +34,15 @@ INSTALLFILES = $(srcdir)/artifacts $(srcdir)/ban_file $(srcdir)/def_help \
 	$(srcdir)/messages $(srcdir)/motd $(srcdir)/races \
 	$(srcdir)/skill_params $(srcdir)/spell_params \
 	$(srcdir)/treasures $(srcdir)/animations $(srcdir)/archetypes \
-	$(srcdir)/bmaps $(srcdir)/bmaps.paths $(srcdir)/crossfire.png \
-	$(srcdir)/attackmess
+	$(srcdir)/bmaps $(srcdir)/bmaps.paths $(srcdir)/crossfire.0 \
+	$(srcdir)/crossfire.1 \
+	$(srcdir)/attackmess $(srcdir)/image_info
 
-BININSTALL = $(srcdir)/xpmtopix.pl $(srcdir)/collect.pl $(srcdir)/util.pl
+BININSTALL = $(srcdir)/collect.pl $(srcdir)/util.pl
 
 ALLFILES = $(SRCS) README \
 	Makefile.in .collect-stamp  $(INSTALLFILES) $(BININSTALL) settings \
-	xpmtopix.pl.in checkarch.pl.in collect.pl.in
+	checkarch.pl.in collect.pl.in
 	
 
 FILES_HELP = $(srcdir)/help/apply $(srcdir)/help/bind \
@@ -80,10 +81,10 @@ RM = @RM@
 SHELL = @BOURNE_SHELL@
 
 
-all:: archetypes bmaps.paths crossfire.png  animations
+all:: archetypes bmaps.paths crossfire.0  animations
 
 
-crossfire.png: bmaps.paths
+crossfire.0: bmaps.paths
 	$(srcdir)/adm/collect_images.pl -png
 
 .collect-stamp:
@@ -104,7 +105,7 @@ animations: .collect-stamp
 bmaps.paths bmaps: .collect-stamp
 	make collect
 
-install:: archetypes bmaps.paths crossfire.png animations collect.pl xpmtopix.pl util.pl
+install:: archetypes bmaps.paths crossfire.0 animations collect.pl util.pl
 	@if [ ! -d $(datadir) ]; then \
 		$(MKDIR) -p $(datadir); \
 	fi
@@ -151,7 +152,7 @@ clean::
 	$(RM) -f Makefile.bak
 
 distclean:: clean
-	$(RM) -f Makefile checkarch.pl xpmtopix.pl collect.pl
+	$(RM) -f Makefile checkarch.pl collect.pl
 
 real-clean::
 	$(RM) -f archetypes bmaps .collect-stamp

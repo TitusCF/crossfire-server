@@ -6,7 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2000 Mark Wedel
+    Copyright (C) 2001 Mark Wedel
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -23,8 +23,10 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to mwedel@scruz.net
+    The author can be reached via e-mail to crossfire-devel@real-time.com
+*/
 
+/*
     newserver.h defines various structures and values that are use for the
     new client server communication method.  Values defined here are only
     used on the server side code.  For shared client/server values, see
@@ -37,7 +39,6 @@
 #define MAXMAPCELLFACES 50
 
 #define NUM_LOOK_OBJECTS 50
-
 
 struct MapCell {
   short faces[MAXMAPCELLFACES];
@@ -63,7 +64,6 @@ struct statsinfo {
  * handle some higher level functions.  fd is the actual file descriptor we
  * are using.
  */
-enum FaceSendMode { Send_Face_Png, Send_Face_None};
 
 enum Sock_Status {Ns_Avail, Ns_Add, Ns_Dead, Ns_Old};
 
@@ -83,7 +83,6 @@ typedef struct Buffer {
 typedef struct NewSocket {
     enum Sock_Status status;
     int fd;
-    enum FaceSendMode facemode;
     struct Map lastmap;
     uint8 faces_sent[MAXFACENUM];
     uint8 anims_sent[MAXANIMNUM];
@@ -92,16 +91,18 @@ typedef struct NewSocket {
     SockList	inbuf;
     char    *host;	    /* Which host it is connected from (ip address)*/
     Buffer  outputbuffer;   /* For undeliverable data */
-    uint32  facecache:1;    /* IF true, client is caching images */
+    uint32  facecache:1;    /* If true, client is caching images */
+    uint8   faceset;	    /* Set the client is using, default 0 */
     uint32  sent_scroll:1;
     uint32  ext2:1;         /* enables the new sdl client/server stuff */
     uint32  ext_title_flag;  /* if 1, we should generate and send a new ext_title update */
     uint32  sound:1;	    /* does the client want sound */
     uint32  skillexp:1;	    /* does the client want skill exp data - MT*/
     uint32  map1cmd:1;	    /* Always use map1 protocol command */
-    uint32  map2cmd:1;	    /* Always use map1 protocol command */
+    uint32  map2cmd:1;	    /* Always use map2 protocol command */
     uint32  newmapcmd:1;    /* Send newmap command when entering new map SMACFIGGEN*/
     uint32  darkness:1;	    /* True if client wants darkness information */
+    uint32  image2:1;	    /* Client wants image2/face2 commands */
     uint32  newanim:1;      /* enable the advanced animation system - MT */
     uint32  cs_version, sc_version; /* versions of the client */
     uint32  update_look:1;  /* If true, we need to send the look window */
@@ -120,16 +121,6 @@ typedef struct NewSocket {
 
 #define PNG_FACE_INDEX	0
 
-typedef struct FaceInfo {
-  char *name;   /* name of the image, including component path names (ie,
-                 * ./arch/system/bug.111)
-                 */
-  char *data[FACE_TYPES];	/* image data */
-  uint16 datalen[FACE_TYPES];   /* length of the xpm data */
-  uint32 checksum;		/* Checksum of face data */
-} FaceInfo;
-
-
 typedef struct Socket_Info {
     struct timeval timeout;	/* Timeout for select */
     int	    max_filedescriptor;	/* max filedescriptor on the system */
@@ -138,7 +129,6 @@ typedef struct Socket_Info {
 } Socket_Info;
 
 extern Socket_Info socket_info;
-extern FaceInfo	faces[MAXFACENUM];  /* face information */
 
 #define VERSION_CS 1023    /* version >= 1023 understand setup cmd */
 #define VERSION_SC 1026

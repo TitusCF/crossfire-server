@@ -502,33 +502,47 @@ S->C: bitmap <face><fg><bg><data>
 	(Images are 24x24, but you get 8 bits/byte, so 24*24/8 = 72)
 
 S->C: image <face><len><data>
+S->C: image2 <face><set><len><data>
 	Command added in SC version 1023.
 	This command is much the same as the pixmap command above. face
-	and len are 4 binary bytes.  Data is the information necessary
-	to render the image.  Image can be of any of numerous types as
-	support gets added for new images - however, it is guaranteed that
-	the server will send the image type the client has requested with
-	the facemode command.  Currently, this is only used for png
-	images.
+	and len are 4 binary bytes.  Data is the png data used to
+	the image.
+
+	If the client has requested a specific faceset, then the
+	image2 command will be used.  This includes the faceset the
+	image belongs to (8 bit data).
+
+	There is no image1 command.  Image2 was used to keep the versionin
+	in sync with the face2 command below.  It is also more intuitive
+	as in the server, the image2 flag is used to determine if we are
+	using these new commands.
 
 S->C: face <num><name>
 S->C: face1 <num><checksum><name>
+S->C: face2 <num><setnum><checksum><name>
 	Informs the client that <num> (binary short) is associated with
 	<name>.  This is used when the client is caching images.  In normal
 	operation, when the server runs accross a face that it hasn't sent
-	the client, it sends a pixmap or bitmap for that face.  In the face
+	the client, it sends a pixmap or bitmap for that face.  If the face
 	mode is none, the server then sends this command.  The client can
 	then check to see if it might have cached this face, and if not,
 	should then request it from the server.  Note that the num to name
 	mappings can change between server and different runs of the
-	server.  For this reason, that is why this needs to be sent each
-	time through.  The client should be able to load/determine what face
+	server.  For this reason, this data needs to be sent each
+	time run.  The client should be able to load/determine what face
 	to load via the name.
+
 	In sc version 1026 and later, the server will use the face1 command
 	which include a checksum that is a 32 bit value.  This can be used by
 	the client to know if its face is up to date.  The checksum is a 32
 	bit unsigned value.  If the client reports a sc_version of 1025
 	or earlier, the server will use the face command not not face1.
+
+	The face2 command is used if the client has sent used the
+	faceset setup command.  This is the same as the face1 command,
+	except we also include what faceset the image belongs to.  This
+	lets the client has multiple image sets installed and still
+	be able to cache properly.  setnum is 8 bit binary data.
 
 C->S: setfacemode <val>
 	This tells the server what type of display mode the client is using.
@@ -537,6 +551,9 @@ C->S: setfacemode <val>
 	If the 5'th bit is true (ie, 0x10 & val is true), that then informs
 	the server that client is caching the images, and only send image
 	names.
+	This command is depreciated, as the only type of images currently
+	supported is PNG.  The client should instead use the setup command
+	to request if it wants to cache images or not.
 
 C->S: askface <num>
 	Requests that the server send the client face <num>.  It will rely
@@ -790,6 +807,22 @@ S->C: setup <option1> <value1> <option2> <value2>
 
 	    While the server in theory supports non square viewing regions,
             this has not be tested.
+
+	newmapcmd (0/1)
+	    This tells the server if the client understands the newmap
+	    protocol command.  This is used by the client in the fog
+	    of war mode to clear the old data when the player changes
+	    maps.
+
+	facecache (0/1)
+	    Determines if the client is caching images (1) or wants the
+	    images sent to it without caching them.  This replaces the
+	    setfacemode command.
+
+	faceset (8 bit)
+	    Faceset the client wishes to use.  If the faceset is not
+	    valid, the server returns the faceset the client will be
+	    using (default 0).
 
 	All data in the setup command is in ascii text form.  options and
 	values can not have whitepace - the client and server use whitspace

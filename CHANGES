@@ -17,6 +17,37 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+This change lets the server have multiple image sets.  The client
+can then request which image set to use, and the server will use
+that image set, falling back to other sets as necessary.  I have tested
+this with CVS client, and works fine at least in terms of old functionality.
+=
+doc/Makefile.in: Add images file which describes image guideline.
+doc/Protocol: Various updates - some things missing, added other notes
+    about facesets.
+doc/images: New file, describes guidelines for image sets, as well
+    as some of the internals
+include/newserver.h: Update for multiple image set - redid most of the
+    image definitions as they were out of date with only png being supported.
+include/sockproto.h: rebuilt
+lib/Makefile.in: remove crossfire.png, add crossfire.0, crossfire.0.  Update
+    build directions to use crossfire.0 instead of crossfire.png
+lib/adm/collect_images.pl: Modified to collect all the image sets, remove
+    support for collect xpm and xbm images.
+lib/crossfire.0: new file, base images
+lib/crossfire.1: new file, alternate images
+lib/image_info: New file, describes image sets.
+lib/crossfire.png, lib/xpmtopix.pl.in: Removed - no longer needed.
+socket/Makefile.in: add image.c file.
+socket/image.c: Moved all image related data in this file - this includes
+    loading the image files, as well as the protocol commands.
+socket/init.c: move read_client_images to image.c file.  set ns->faceset
+    and ns->facecache to 0.  Move freeing of image data to image.c
+socket/request.c: fixed some indentation inconsistencies.add setup commands
+    for faceset as facecache.  Move SetFaceMode,SendFaceCmd,esrv_send_face
+    to image.c file.
+MSW 2001-12-31
+
 common/loader.l, common/loader.c, common/object.c, include/object.h,
    socket/item.c:
    Remove sub_type and sub_type2 information -

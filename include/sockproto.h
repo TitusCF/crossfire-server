@@ -1,12 +1,18 @@
+/* image.c */
+int is_valid_faceset(int fsn);
+void free_socket_images(void);
+void read_client_images(void);
+void SetFaceMode(char *buf, int len, NewSocket *ns);
+void SendFaceCmd(char *buff, int len, player *pl);
+void esrv_send_face(NewSocket *ns, short face_num, int nocache);
 /* info.c */
 void flush_output_element(object *pl, Output_Buf *outputs);
 void check_output_buffers(object *pl, char *buf);
 void new_draw_info(int flags, int pri, object *pl, const char *buf);
 void new_draw_info_format(int flags, int pri, object *pl, char *format, ...);
-void new_info_map(int color, mapstruct *map, char *str);
 void new_info_map_except(int color, mapstruct *map, object *op, char *str);
-void new_info_map_except2(int color, mapstruct *map, object *op1, object *op2,
-			  char *str);
+void new_info_map_except2(int color, mapstruct *map, object *op1, object *op2, char *str);
+void new_info_map(int color, mapstruct *map, char *str);
 void draw(object *pl);
 void clear_win_info(object *op);
 void rangetostring(object *pl, char *obuf);
@@ -16,7 +22,6 @@ void magic_mapping_mark_recursive(object *pl, char *map_mark, int px, int py);
 void draw_map(object *pl);
 void Log_Kill(const char *Who, const char *What, int WhatType, const char *With, int WithType);
 /* init.c */
-void read_client_images(void);
 void InitConnection(NewSocket *ns, uint32 from);
 void init_ericserver(void);
 void free_all_newserver(void);
@@ -36,7 +41,7 @@ void LockItem(uint8 *data, int len, player *pl);
 void MarkItem(uint8 *data, int len, player *pl);
 void look_at(object *op, int dx, int dy);
 void LookAt(char *buf, int len, player *pl);
-void esrv_move_object (object *pl, tag_t to, tag_t tag, long nrof);
+void esrv_move_object(object *pl, tag_t to, tag_t tag, long nrof);
 /* loop.c */
 void Handle_Oldsocket(NewSocket *ns);
 void HandleClient(NewSocket *ns, player *pl);
@@ -66,23 +71,19 @@ void PlayerCmd(char *buf, int len, player *pl);
 void NewPlayerCmd(uint8 *buf, int len, player *pl);
 void ReplyCmd(char *buf, int len, player *pl);
 void VersionCmd(char *buf, int len, NewSocket *ns);
-void SetFaceMode(char *buf, int len, NewSocket *ns);
 void SetSound(char *buf, int len, NewSocket *ns);
 void MapRedrawCmd(char *buff, int len, player *pl);
 void MapNewmapCmd(player *pl);
-void SendFaceCmd(char *buff, int len, player *pl);
 void MoveCmd(char *buf, int len, player *pl);
 void send_query(NewSocket *ns, uint8 flags, char *text);
 void esrv_update_stats(player *pl);
 void esrv_new_player(player *pl, uint32 weight);
 void esrv_send_animation(NewSocket *ns, short anim_num);
-void esrv_send_face(NewSocket *ns, short face_num, int nocache);
 void draw_client_map1(object *pl);
 void draw_client_map2(object *pl);
 void draw_client_map(object *pl);
 void esrv_map_scroll(NewSocket *ns, int dx, int dy);
 void send_plugin_custom_message(object *pl, char *buf);
-void send_mapstats_cmd(object *op, mapstruct *map);
 /* sounds.c */
 void play_sound_player_only(player *pl, int soundnum, int x, int y);
 void play_sound_map(mapstruct *map, int x, int y, int sound_num);

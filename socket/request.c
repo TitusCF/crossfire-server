@@ -6,7 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2000 Mark Wedel
+    Copyright (C) 2001 Mark Wedel
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -23,7 +23,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to mwedel@scruz.net
+    The author can be reached via e-mail to crossfire-devel@real-time.com
 */
 
 /*
@@ -112,9 +112,7 @@ void SetUp(char *buf, int len, NewSocket *ns)
 
     LOG(llevInfo,"Get SetupCmd:: %s\n", buf);
     strcpy(cmdback,"setup");
-    for(s=0;;) {
-	if(s>=len)	/* ugly, but for secure...*/
-	    break;
+    for(s=0;s<len; ) {
 
 	cmd = &buf[s];
 
@@ -138,18 +136,18 @@ void SetUp(char *buf, int len, NewSocket *ns)
 
 	
 	if (!strcmp(cmd,"newanim")) {
-		ns->newanim = atoi(param);
-		strcat(cmdback, param);
+	    ns->newanim = atoi(param);
+	    strcat(cmdback, param);
 	}
-    else if (!strcmp(cmd,"sound")) {
-        ns->sound = atoi(param);
-        strcat(cmdback, param);
-    }
-    else if (!strcmp(cmd,"ext2")) {
-        ns->ext2 = atoi(param);
-        strcat(cmdback, param);
-    }
-    else if (!strcmp(cmd,"sexp")) {
+	else if (!strcmp(cmd,"sound")) {
+	    ns->sound = atoi(param);
+	    strcat(cmdback, param);
+	}
+	else if (!strcmp(cmd,"ext2")) {
+	    ns->ext2 = atoi(param);
+	    strcat(cmdback, param);
+	}
+	else if (!strcmp(cmd,"sexp")) {
 	    ns->skillexp = atoi(param);
 	    strcat(cmdback, param);
 	} else if (!strcmp(cmd,"darkness")) {
@@ -168,10 +166,20 @@ void SetUp(char *buf, int len, NewSocket *ns)
             /* if beyond this size, need to use map2cmd no matter what */
             if (ns->mapx>11 || ns->mapy>11) ns->map2cmd=1;
             strcat(cmdback, ns->map2cmd?"1":"0");
-            if(ns->map2cmd)ns->map1cmd=0; 
-        } else if (!strcmp(cmd,"newmapcmd")) {
-            ns->newmapcmd= atoi(param);
+            if(ns->map2cmd)ns->map1cmd=0;
+	} else if (!strcmp(cmd,"facecache")) {
+	    ns->facecache = atoi(param);
             strcat(cmdback, param);
+	} else if (!strcmp(cmd,"faceset")) {
+	    char tmpbuf[20];
+	    int q = atoi(param);
+
+	    if (is_valid_faceset(q))
+		ns->faceset=q;
+	    sprintf(tmpbuf,"%d", ns->faceset);
+	    strcat(cmdback, tmpbuf);
+	    /* if the client is using faceset, it knows about image2 command */
+	    ns->image2=1;
         } else if (!strcmp(cmd,"mapsize")) {
 	    int x, y=0;
 	    char tmpbuf[MAX_BUF], *cp;
@@ -462,34 +470,6 @@ void VersionCmd(char *buf, int len,NewSocket *ns)
     }
 }
 
-/*
- * Client tells us what type of faces it wants.  Also sets
- * the caching attribute.
- *
- */
-
-void SetFaceMode(char *buf, int len, NewSocket *ns)
-{
-    char tmp[256];
-
-    int mask =(atoi(buf) & CF_FACE_CACHE), mode=(atoi(buf) & ~CF_FACE_CACHE);
-
-    if (mode==CF_FACE_NONE) {
-	ns->facemode=Send_Face_None;
-    } else if (mode==CF_FACE_PNG) {
-	ns->facemode=Send_Face_Png;
-    } else {
-	sprintf(tmp,"drawinfo %d %s", NDI_RED,"Warning - send unsupported face mode.  Will use Png");
-	Write_String_To_Socket(ns, tmp, strlen(tmp));
-#ifdef ESRV_DEBUG
-	LOG(llevDebug,"SetFaceMode: Invalid mode from client: %d\n", mode);
-#endif
-    }
-    if (mask) {
-	ns->facecache=1;
-    }
-}
-
 /* sound related functions. */
  
 void SetSound(char *buf, int len, NewSocket *ns)
@@ -515,19 +495,6 @@ void MapNewmapCmd( player *pl)
 }
 
 
-/* client has requested pixmap that it somehow missed getting
- * This will be called often if the client is
- * caching images.
- */
-
-void SendFaceCmd(char *buff, int len, player *pl)
-{
-	long tmpnum = atoi(buff);
-	short facenum=tmpnum & 0xffff;
-
-	if(facenum!=0)
-		esrv_send_face(&pl->socket, facenum,1);
-}
 
 /* Moves and object (typically, container to inventory
  * move <to> <tag> <nrof> 
@@ -772,64 +739,6 @@ void esrv_send_animation(NewSocket *ns, short anim_num)
     Send_With_Handling(ns, &sl);
     free(sl.buf);
     ns->anims_sent[anim_num] = 1;
-}
-
-
-/*
- * esrv_send_face sends a face to a client if they are in pixmap mode
- * nothing gets sent in bitmap mode. 
- * If nocache is true (nonzero), ignore the cache setting from the client -
- * this is needed for the askface, in which we really do want to send the
- * face (and askface is the only place that should be setting it).  Otherwise,
- * we look at the facecache, and if set, send the image name.
- */
-
-void esrv_send_face(NewSocket *ns,short face_num, int nocache)
-{
-    SockList sl;
-
-
-
-    if (face_num < 0 || face_num >= MAXFACENUM) {
-	LOG(llevError,"esrv_send_face (%d) out of bounds??\n",face_num);
-	return;
-    }
-    if (faces[face_num].data == NULL) {
-	LOG(llevError,"esrv_send_face: faces[%d].data == NULL\n",face_num);
-	return;
-    }
-
-    sl.buf = malloc(MAXSOCKBUF);
-
-    if ((!nocache && ns->facecache) || ns->facemode==Send_Face_None ) {
-	if (ns->sc_version >= 1026)
-	    strcpy((char*)sl.buf, "face1 ");
-	else
-	    strcpy((char*)sl.buf, "face ");
-
-	sl.len=strlen(sl.buf);
-	SockList_AddShort(&sl, face_num);
-	if (ns->sc_version >= 1026)
-	    SockList_AddInt(&sl, faces[face_num].checksum);
-	strcpy((char*)sl.buf + sl.len, new_faces[face_num].name);
-	sl.len += strlen(new_faces[face_num].name);
-	Send_With_Handling(ns, &sl);
-    }
-    else if (ns->facemode == Send_Face_Png) {
-	strcpy((char*)sl.buf, "image ");
-	sl.len=strlen((char*)sl.buf);
-	SockList_AddInt(&sl, face_num);
-	SockList_AddInt(&sl, faces[face_num].datalen[PNG_FACE_INDEX]);
-	memcpy(sl.buf+sl.len, faces[face_num].data[PNG_FACE_INDEX], faces[face_num].datalen[PNG_FACE_INDEX]);
-	sl.len += faces[face_num].datalen[PNG_FACE_INDEX];
-/*	LOG(llevDebug,"sending png %d, len %d\n", face_num, faces[face_num].datalen);*/
-	Send_With_Handling(ns, &sl);
-    } else {
-	LOG(llevError,"Invalid face send mode on client_num (%d)\n",
-	    ns->facemode);
-    }
-    ns->faces_sent[face_num] = 1;
-    free(sl.buf);
 }
 
 
