@@ -362,11 +362,11 @@ void move_detector(object *op)
 		object *tmp2;
 		if(op->stats.hp) {
 		  for(tmp2= tmp->inv;tmp2;tmp2=tmp2->below) {
-			 if(!strcmp(op->slaying,tmp->name)) detected=1;
-			 if(tmp2->type==FORCE && !strcmp(tmp2->slaying,op->slaying)) detected=1;
+			 if(op->slaying && !strcmp(op->slaying,tmp->name)) detected=1;
+			 if(tmp2->type==FORCE &&tmp2->slaying && !strcmp(tmp2->slaying,op->slaying)) detected=1;
 		  }
 		}
-	if (!strcmp(op->slaying,tmp->name)) {
+	if (op->slaying && !strcmp(op->slaying,tmp->name)) {
 	  detected = 1;
 	}
 	else if (tmp->type==SPECIAL_KEY && tmp->slaying==op->slaying)
