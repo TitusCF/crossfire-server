@@ -33,7 +33,7 @@ dist_pkgdata_DATA = artifacts def_help formulae  messages races smooth\
 
 CONF_FILES = settings motd dm_file forbid ban_file skill_params  \
 	spell_params exp_table 
-VAR_FILES = highscore bookarch temp.maps clockdata
+VAR_FILES = highscore banish_file bookarch temp.maps clockdata
 EXTRA_DIST = README .collect-stamp $(CONF_FILES) treasures treasures.bld
 
 helpdir=$(pkgdatadir)/help
@@ -165,4 +165,3 @@ archive::
 libArch:
 	tar cvf A`perl puredate.pl`.tar arch treasures
 	gzip A`perl puredate.pl`.tar
-

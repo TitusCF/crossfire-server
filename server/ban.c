@@ -31,14 +31,34 @@ int checkbanned(char *login, char *host)
   char  buf[MAX_BUF];
   char  log_buf[64], host_buf[64], line_buf[160];
   char  *indexpos;
-  int           num1;
+  int   num1;
   int   Hits=0;                 /* Hits==2 means we're banned */
+  int	loop=0;
+  
+ while (loop < 2) {	/* have to check both ban files now */
 
-  sprintf (buf, "%s/%s", settings.confdir, BANFILE);
-  if ((bannedfile = fopen(buf, "r")) == NULL) {
-    LOG (llevDebug, "Could not find file Banned file.\n");
-    return(0);
-  }
+		/* First time through look for BANFILE */
+
+	 if (loop == 0){	
+  	 sprintf (buf, "%s/%s", settings.confdir, BANFILE);
+  		if ((bannedfile = fopen(buf, "r")) == NULL) {
+    	LOG (llevDebug, "Could not find file Banned file\n");
+    	loop++;	
+  		}
+	}
+		
+		/* Second time through look for BANISHFILE */
+
+  	if (loop == 1){
+  sprintf (buf, "%s/%s", settings.localdir, BANISHFILE);
+		if ((bannedfile = fopen(buf, "r")) == NULL) {
+    	LOG (llevDebug, "Could not find file Banish file\n");
+    	return(0);
+  		}
+	}
+
+	/* Do the actual work here checking for banned IPs */
+  
   while(fgets(line_buf, 160, bannedfile) != NULL) {
     /* Split line up */
     if((*line_buf=='#')||(*line_buf=='\n'))
@@ -88,6 +108,7 @@ int checkbanned(char *login, char *host)
   fclose(bannedfile);
   if(Hits>=2)
     return(1);
-  else
-    return(0);
+  loop++;  
+ }
+	return(0);
 }

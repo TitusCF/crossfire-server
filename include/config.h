@@ -352,7 +352,6 @@
 #define BANFILE         "ban_file"
 #endif
 
-
 /* CSPORT is the port used for the new client/server code.  Change
  * if desired.  Only of relevance if ERIC_SERVER is set above
  */
@@ -591,7 +590,7 @@
 #define ARCHETYPES	"archetypes"
 #define HIGHSCORE	"highscore"
 #define TREASURES	"treasures"
-
+#define	BANISHFILE  "banish_file"
 
 #define MAX_ERRORS	25	/* Bail out if more are received during tick */
 #define STARTMAX        500     /* How big array of objects to start with */
@@ -706,4 +705,3 @@
  */
 
 #define RESET_LOCATION_TIME	0
-

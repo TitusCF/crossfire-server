@@ -134,6 +134,44 @@ int command_setgod(object *op, char *params)
     return 1;
 }
 
+/*Add player's IP to ban_file and kick them off the server
+* I know most people have dynamic IPs but this is more of a short term
+* solution if they have to get a new IP to play maybe they'll calm down.
+* This uses the banish_file in the local directory *not* the ban_file
+* The action is logged with a ! for easy searching. -tm
+*/
+int command_banish (object *op, char *params)
+  {
+	  player *pl;
+	  FILE *banishfile;
+	  char  buf[MAX_BUF];
+	  
+	if (!params) {
+         new_draw_info(NDI_UNIQUE, 0,op,"Usage: banish <player>.");
+         return 1;
+    }
+	
+	pl = get_other_player_from_name(op, params);
+	if (!pl) return 1;
+	
+	sprintf (buf, "%s/%s", settings.localdir, BANISHFILE);
+	
+    if ((banishfile = fopen(buf, "a")) == NULL) {
+    	LOG (llevDebug, "Could not find file banish_file.\n");
+		new_draw_info(NDI_UNIQUE,0,op,"Could not find banish_file.");
+    	return(0);
+  		}
+		
+  	fprintf(banishfile,"*@%s\n",pl->socket.host);
+	LOG (llevDebug, "! %s banned %s from IP: %s.\n", op->name, pl->ob->name, pl->socket.host);
+  	new_draw_info_format(NDI_UNIQUE | NDI_RED, 0,op,"You banish %s", pl->ob->name);
+	new_draw_info_format(NDI_UNIQUE | NDI_ALL | NDI_RED, 5, op,
+			     "%s banishes %s from the land!", op->name, pl->ob->name);
+	command_kick(op, pl->ob->name);
+    fclose(banishfile);
+	return 1;
+  }
+  
 int command_kick (object *op, char *params)
 {
   struct pl *pl;
@@ -146,7 +184,7 @@ int command_kick (object *op, char *params)
 	op=pl->ob;
 	remove_ob(op);
 	op->direction=0;
-	new_draw_info_format(NDI_UNIQUE | NDI_ALL, 5, op,
+	new_draw_info_format(NDI_UNIQUE | NDI_ALL | NDI_RED, 5, op,
 			     "%s is kicked out of the game.",op->name);
 	strcpy(op->contr->killer,"left");
 	check_score(op); /* Always check score */
@@ -155,7 +193,7 @@ int command_kick (object *op, char *params)
 #if MAP_MAXTIMEOUT
 	op->map->timeout = MAP_TIMEOUT(op->map);
 #endif
-	play_again(op);
+	pl->socket.status = Ns_Dead;
       }
   return 1;
 }
@@ -179,7 +217,9 @@ int command_save_overlay(object *op, char *params)
 
     return(1);
 } 
+/*a simple toggle for the no_shout field.
 
+*/
 int command_toggle_shout(object *op, char *params)
 {
 	player *pl;
@@ -201,7 +241,7 @@ int command_toggle_shout(object *op, char *params)
 		return 1;
 	}else{
 		pl->ob->contr->no_shout = 0;
-    new_draw_info(NDI_UNIQUE | NDI_RED, 0, pl->ob,
+    new_draw_info(NDI_UNIQUE | NDI_ORANGE, 0, pl->ob,
 			 "You are allowed to shout again.");
     new_draw_info_format(NDI_UNIQUE , 0, op,
 			 "You toggle shout for %s.", pl->ob->name);
@@ -303,11 +343,11 @@ static player *get_other_player_from_name(object *op, char *name)
     }
 
     if (pl->ob == op) {
-	new_draw_info(NDI_UNIQUE, 0, op, "You can't summon yourself next to yourself.");
+	new_draw_info(NDI_UNIQUE, 0, op, "You can't do that to yourself.");
 	return NULL;
     }
     if(pl->state != ST_PLAYING) {
-	new_draw_info(NDI_UNIQUE, 0,op,"That player can't be summoned right now.");
+	new_draw_info(NDI_UNIQUE, 0,op,"That player is in no state for that right now.");
 	return NULL;
     }
     return pl;

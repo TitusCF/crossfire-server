@@ -245,6 +245,7 @@ int command_rotateshoottype(object *op, char *params);
 int command_throw(object *op, char *params);
 int command_rotatespells(object *op, char *params);
 /* c_wiz.c */
+int command_banish(object *op, char *params);
 int command_loadtest(object *op, char *params);
 int command_hide(object *op, char *params);
 int command_setgod(object *op, char *params);
