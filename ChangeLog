@@ -17,6 +17,15 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+common/object.c, include/libproto.h: change nrof parameter of get_split_ob to
+   uint32 type.
+server/c_object.c, include/sproto.h: change nrof parameter of drop_object to
+   uint32 type.
+plugin/{plugin_python.c, include/plugin_python.h},
+plugin_animator/{plugin_animator.c, include/plugin_animator.h},
+server/{apply.c, attack.c, gods.c, monster.c, player.c, skills.c, time.c,
+   timers.c}: Change type of CFParm.Value[5] and StackParm1[] to uint32 to be
+   able to pass an "nrof" value.
 plugin/plugin_python.c, plugin/include/plugin_python.h: Remove spell wrapper
    functions.
 plugin/plugin_python.c, plugin/include/plugin_python.h: Replace skill-IDs by

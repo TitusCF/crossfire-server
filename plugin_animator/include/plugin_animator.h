@@ -112,7 +112,7 @@ extern object* StackActivator[MAX_RECURSIVE_CALL];
 extern object* StackWho[MAX_RECURSIVE_CALL];
 extern object* StackOther[MAX_RECURSIVE_CALL];
 extern char* StackText[MAX_RECURSIVE_CALL];
-extern int StackParm1[MAX_RECURSIVE_CALL];
+extern uint32 StackParm1[MAX_RECURSIVE_CALL];
 extern int StackParm2[MAX_RECURSIVE_CALL];
 extern int StackParm3[MAX_RECURSIVE_CALL];
 extern int StackParm4[MAX_RECURSIVE_CALL];

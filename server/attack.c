@@ -645,16 +645,17 @@ static int attack_ob_simple (object *op, object *hitter, int base_dam,
     if ((evt = find_event(op, EVENT_ATTACK)) != NULL)
     {
         CFParm CFP;
-        int k, l, m;
+        int k, l;
+        uint32 n;
         k = EVENT_ATTACK;
         l = SCRIPT_FIX_ALL;
-        m = 0;
+        n = 0;
         CFP.Value[0] = &k;
         CFP.Value[1] = hitter;
         CFP.Value[2] = hitter;
         CFP.Value[3] = op;
         CFP.Value[4] = NULL;
-        CFP.Value[5] = &m;
+        CFP.Value[5] = &n;
         CFP.Value[6] = &base_dam;
         CFP.Value[7] = &base_wc;
         CFP.Value[8] = &l;
@@ -672,7 +673,8 @@ static int attack_ob_simple (object *op, object *hitter, int base_dam,
             if ((evt = find_event(hitter->current_weapon, EVENT_ATTACK)) != NULL)
             {
                 CFParm CFP;
-                int k, l, n;
+                int k, l;
+                uint32 n;
                 n = 0;
                 k = EVENT_ATTACK;
                 l = SCRIPT_FIX_ALL;
@@ -896,16 +898,17 @@ object *hit_with_arrow (object *op, object *victim)
     {
         CFParm CFP;
         CFParm* CFR;
-        int k, l, m;
+        int k, l;
+        uint32 n;
         k = EVENT_ATTACK;
         l = SCRIPT_FIX_ALL;
-        m = 0;
+        n = 0;
         CFP.Value[0] = &k;
         CFP.Value[1] = hitter;
         CFP.Value[2] = op;
         CFP.Value[3] = victim;
         CFP.Value[4] = NULL;
-        CFP.Value[5] = &m;
+        CFP.Value[5] = &n;
         CFP.Value[6] = &(op->stats.dam);
         CFP.Value[7] = &(op->stats.wc);
         CFP.Value[8] = &l;
@@ -1371,15 +1374,17 @@ int kill_object(object *op,int dam, object *hitter, int type)
     {
         CFParm* CFR;
         int k, l, m;
+        uint32 n;
         k = EVENT_DEATH;
         l = SCRIPT_FIX_ALL;
         m = 0;
+        n = type;
         CFP.Value[0] = &k;
         CFP.Value[1] = hitter;
         CFP.Value[2] = op;
         CFP.Value[3] = NULL;
         CFP.Value[4] = NULL;
-        CFP.Value[5] = &type;
+        CFP.Value[5] = &n;
         CFP.Value[6] = &m;
         CFP.Value[7] = &m;
         CFP.Value[8] = &l;

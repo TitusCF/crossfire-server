@@ -973,8 +973,10 @@ int esrv_apply_container (object *op, object *sack)
 		CFParm CFP;
 		CFParm* CFR;
 		int k, l, m;
+		uint32 n;
 		int rtn_script = 0;
 		m = 0;
+		n = 0;
 		k = EVENT_CLOSE;
 		l = SCRIPT_FIX_ALL;
 		CFP.Value[0] = &k;
@@ -982,7 +984,7 @@ int esrv_apply_container (object *op, object *sack)
 		CFP.Value[2] = tmp;
 		CFP.Value[3] = NULL;
 		CFP.Value[4] = NULL;
-		CFP.Value[5] = &m;
+		CFP.Value[5] = &n;
 		CFP.Value[6] = &m;
 		CFP.Value[7] = &m;
 		CFP.Value[8] = &l;
@@ -1269,8 +1271,10 @@ void move_apply (object *trap, object *victim, object *originator)
     CFParm CFP;
     CFParm* CFR;
     int k, l, m;
+    uint32 n;
     int rtn_script = 0;
     m = 0;
+    n = 0;
     k = EVENT_TRIGGER;
     l = SCRIPT_FIX_ALL;
     CFP.Value[0] = &k;
@@ -1278,7 +1282,7 @@ void move_apply (object *trap, object *victim, object *originator)
     CFP.Value[2] = originator;
     CFP.Value[3] = victim;
     CFP.Value[4] = NULL;
-    CFP.Value[5] = &m;
+    CFP.Value[5] = &n;
     CFP.Value[6] = &m;
     CFP.Value[7] = &m;
     CFP.Value[8] = &l;
@@ -1519,15 +1523,17 @@ static void apply_book (object *op, object *tmp)
     {
         CFParm CFP;
         int k, l, m;
+        uint32 n;
         k = EVENT_APPLY;
         l = SCRIPT_FIX_ALL;
         m = 0;
+        n = 0;
         CFP.Value[0] = &k;
         CFP.Value[1] = op;
         CFP.Value[2] = tmp;
         CFP.Value[3] = NULL;
         CFP.Value[4] = NULL;
-        CFP.Value[5] = &m;
+        CFP.Value[5] = &n;
         CFP.Value[6] = &m;
         CFP.Value[7] = &m;
         CFP.Value[8] = &l;
@@ -2263,7 +2269,9 @@ int manual_apply (object *op, object *tmp, int aflag)
     CFParm CFP;
     CFParm* CFR;
     int k, l, m;
+    uint32 n;
     m = 0;
+    n = aflag;
     k = EVENT_APPLY;
     l = SCRIPT_FIX_ALL;
     CFP.Value[0] = &k;
@@ -2271,7 +2279,7 @@ int manual_apply (object *op, object *tmp, int aflag)
     CFP.Value[2] = tmp;
     CFP.Value[3] = NULL;
     CFP.Value[4] = NULL;
-    CFP.Value[5] = &aflag;
+    CFP.Value[5] = &n;
     CFP.Value[6] = &m;
     CFP.Value[7] = &m;
     CFP.Value[8] = &l;

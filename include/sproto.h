@@ -228,7 +228,7 @@ int sack_can_hold(object *pl, object *sack, object *op, int nrof);
 void pick_up(object *op, object *alt);
 int command_take(object *op, char *params);
 void put_object_in_sack(object *op, object *sack, object *tmp, long nrof);
-void drop_object(object *op, object *tmp, long nrof);
+void drop_object(object *op, object *tmp, uint32 nrof);
 void drop(object *op, object *tmp);
 int command_dropall(object *op, char *params);
 int command_drop(object *op, char *params);

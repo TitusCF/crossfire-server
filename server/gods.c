@@ -232,15 +232,17 @@ void pray_at_altar(object *pl, object *altar, object *skill) {
         CFParm CFP;
         CFParm* CFR;
         int k, l, m;
+        uint32 n;
         k = EVENT_APPLY;
         l = SCRIPT_FIX_ALL;
         m = 0;
+        n = 0;
         CFP.Value[0] = &k;
         CFP.Value[1] = pl;
         CFP.Value[2] = altar;
         CFP.Value[3] = NULL;
         CFP.Value[4] = NULL;
-        CFP.Value[5] = &m;
+        CFP.Value[5] = &n;
         CFP.Value[6] = &m;
         CFP.Value[7] = &m;
         CFP.Value[8] = &l;

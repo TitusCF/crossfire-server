@@ -1565,7 +1565,7 @@ void replace_insert_ob_in_map(char *arch_string, object *op) {
  * global static errmsg array.
  */
 
-object *get_split_ob(object *orig_ob,int nr) {
+object *get_split_ob(object *orig_ob, uint32 nr) {
     object *newob;
     int is_removed = (QUERY_FLAG (orig_ob, FLAG_REMOVED) != 0);
 

@@ -1620,6 +1620,7 @@ int talk_to_npc(object *op, object *npc, char *txt) {
     object *cobj;
     CFParm CFP;
     int k, l, m;
+    uint32 n;
     char *cp, buf[MAX_BUF];
     event *evt;
 
@@ -1628,10 +1629,11 @@ int talk_to_npc(object *op, object *npc, char *txt) {
     k = EVENT_SAY;
     l = SCRIPT_FIX_ALL;
     m = 0;
+    n = 0;
     CFP.Value[0] = &k;
     CFP.Value[1] = op;
     CFP.Value[4] = txt;
-    CFP.Value[5] = &m;
+    CFP.Value[5] = &n;
     CFP.Value[6] = &m;
     CFP.Value[7] = &m;
     CFP.Value[8] = &l;

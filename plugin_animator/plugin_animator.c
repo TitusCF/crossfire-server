@@ -22,7 +22,7 @@ object* StackActivator[MAX_RECURSIVE_CALL];
 object* StackWho[MAX_RECURSIVE_CALL];
 object* StackOther[MAX_RECURSIVE_CALL];
 char* StackText[MAX_RECURSIVE_CALL];
-int StackParm1[MAX_RECURSIVE_CALL];
+uint32 StackParm1[MAX_RECURSIVE_CALL];
 int StackParm2[MAX_RECURSIVE_CALL];
 int StackParm3[MAX_RECURSIVE_CALL];
 int StackParm4[MAX_RECURSIVE_CALL];
@@ -670,7 +670,7 @@ int HandleEvent(CFParm* PParm)
     StackWho[StackPosition]         = (object *)(PParm->Value[2]);
     StackOther[StackPosition]       = (object *)(PParm->Value[3]);
     StackText[StackPosition]        = (char *)(PParm->Value[4]);
-    StackParm1[StackPosition]       = *(int *)(PParm->Value[5]);
+    StackParm1[StackPosition]       = *(uint32 *)(PParm->Value[5]);
     StackParm2[StackPosition]       = *(int *)(PParm->Value[6]);
     StackParm3[StackPosition]       = *(int *)(PParm->Value[7]);
     StackParm4[StackPosition]       = *(int *)(PParm->Value[8]);

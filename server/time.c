@@ -600,15 +600,17 @@ static void stop_arrow (object *op)
     {
         CFParm CFP;
         int k, l, m;
+        uint32 n;
         k = EVENT_STOP;
         l = SCRIPT_FIX_NOTHING;
         m = 0;
+        n = 0;
         CFP.Value[0] = &k;
         CFP.Value[1] = NULL;
         CFP.Value[2] = op;
         CFP.Value[3] = NULL;
         CFP.Value[4] = NULL;
-        CFP.Value[5] = &m;
+        CFP.Value[5] = &n;
         CFP.Value[6] = &m;
         CFP.Value[7] = &m;
         CFP.Value[8] = &l;
@@ -878,8 +880,10 @@ void move_teleporter(object *op) {
 		CFParm CFP;
 		CFParm* CFR;
 		int k, l, m;
+		uint32 n;
 		int rtn_script = 0;
 		m = 0;
+		n = 0;
 		k = EVENT_TRIGGER;
 		l = SCRIPT_FIX_ALL;
 		CFP.Value[0] = &k;
@@ -887,7 +891,7 @@ void move_teleporter(object *op) {
 		CFP.Value[2] = op->above;
 		CFP.Value[3] = NULL;
 		CFP.Value[4] = NULL;
-		CFP.Value[5] = &m;
+		CFP.Value[5] = &n;
 		CFP.Value[6] = &m;
 		CFP.Value[7] = &m;
 		CFP.Value[8] = &l;
@@ -918,8 +922,10 @@ void move_teleporter(object *op) {
 		CFParm CFP;
 		CFParm* CFR;
 		int k, l, m;
+		uint32 n;
 		int rtn_script = 0;
 		m = 0;
+		n = 0;
 		k = EVENT_TRIGGER;
 		l = SCRIPT_FIX_ALL;
 		CFP.Value[0] = &k;
@@ -927,7 +933,7 @@ void move_teleporter(object *op) {
 		CFP.Value[2] = op->above;
 		CFP.Value[3] = NULL;
 		CFP.Value[4] = NULL;
-		CFP.Value[5] = &m;
+		CFP.Value[5] = &n;
 		CFP.Value[6] = &m;
 		CFP.Value[7] = &m;
 		CFP.Value[8] = &l;
@@ -949,8 +955,10 @@ void move_teleporter(object *op) {
 	    CFParm CFP;
 	    CFParm* CFR;
 	    int k, l, m;
+	    uint32 n;
 	    int rtn_script = 0;
 	    m = 0;
+	    n = 0;
 	    k = EVENT_TRIGGER;
 	    l = SCRIPT_FIX_ALL;
 	    CFP.Value[0] = &k;
@@ -958,7 +966,7 @@ void move_teleporter(object *op) {
 	    CFP.Value[2] = op->above;
 	    CFP.Value[3] = NULL;
 	    CFP.Value[4] = NULL;
-	    CFP.Value[5] = &m;
+	    CFP.Value[5] = &n;
 	    CFP.Value[6] = &m;
 	    CFP.Value[7] = &m;
 	    CFP.Value[8] = &l;
@@ -998,9 +1006,11 @@ void move_player_changer(object *op) {
 	    CFParm CFP;
 	    CFParm* CFR;
 	    int k, l, m;
+	    uint32 n;
 	    int rtn_script = 0;
 
 	    m = 0;
+	    n = 0;
 	    k = EVENT_TRIGGER;
 	    l = SCRIPT_FIX_NOTHING;
 	    CFP.Value[0] = &k;
@@ -1008,7 +1018,7 @@ void move_player_changer(object *op) {
 	    CFP.Value[2] = op->above;
 	    CFP.Value[3] = NULL;
 	    CFP.Value[4] = NULL;
-	    CFP.Value[5] = &m;
+	    CFP.Value[5] = &n;
 	    CFP.Value[6] = &m;
 	    CFP.Value[7] = &m;
 	    CFP.Value[8] = &l;
@@ -1335,15 +1345,17 @@ int process_object(object *op) {
     {
 	CFParm CFP;
 	int k, l, m;
+	uint32 n;
 	k = EVENT_TIME;
 	l = SCRIPT_FIX_NOTHING;
 	m = 0;
+	n = 0;
 	CFP.Value[0] = &k;
 	CFP.Value[1] = NULL;
 	CFP.Value[2] = op;
 	CFP.Value[3] = NULL;
 	CFP.Value[4] = NULL;
-	CFP.Value[5] = &m;
+	CFP.Value[5] = &n;
 	CFP.Value[6] = &m;
 	CFP.Value[7] = &m;
 	CFP.Value[8] = &l;

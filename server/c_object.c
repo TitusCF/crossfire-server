@@ -905,7 +905,7 @@ void put_object_in_sack (object *op, object *sack, object *tmp, long nrof)
  *  nrof objects is tried to dropped.
  * This is used when dropping objects onto the floor.
  */
-void drop_object (object *op, object *tmp, long nrof)
+void drop_object (object *op, object *tmp, uint32 nrof) 
 {
     char buf[MAX_BUF];
     object *floor;

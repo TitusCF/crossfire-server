@@ -1092,15 +1092,17 @@ static int write_note(object *pl, object *item, char *msg, object *skill) {
     if ((evt = find_event(item, EVENT_TRIGGER)) != NULL) {
 	CFParm CFP;
 	int k, l, m;
+	uint32 n;
 	k = EVENT_TRIGGER;
 	l = SCRIPT_FIX_ALL;
 	m = 0;
+	n = 0;
 	CFP.Value[0] = &k;
 	CFP.Value[1] = pl;
 	CFP.Value[2] = item;
 	CFP.Value[3] = NULL;
 	CFP.Value[4] = msg;
-	CFP.Value[5] = &m;
+	CFP.Value[5] = &n;
 	CFP.Value[6] = &m;
 	CFP.Value[7] = &m;
 	CFP.Value[8] = &l;
@@ -1643,15 +1645,17 @@ static int do_throw(object *op, object *part, object *toss_item, int dir, object
     {
         CFParm CFP;
         int k, l, m;
+        uint32 n;
         k = EVENT_THROW;
         l = SCRIPT_FIX_ACTIVATOR;
         m = 0;
+        n = 0;
         CFP.Value[0] = &k;
         CFP.Value[1] = op;
         CFP.Value[2] = throw_ob;
         CFP.Value[3] = NULL;
         CFP.Value[4] = NULL;
-        CFP.Value[5] = &m;
+        CFP.Value[5] = &n;
         CFP.Value[6] = &m;
         CFP.Value[7] = &m;
         CFP.Value[8] = &l;

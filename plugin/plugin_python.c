@@ -5296,7 +5296,7 @@ MODULEAPI int HandleEvent(CFParm* PParm)
     StackWho[StackPosition]         = (object *)(PParm->Value[2]);
     StackOther[StackPosition]       = (object *)(PParm->Value[3]);
     StackText[StackPosition]        = (char *)(PParm->Value[4]);
-    StackParm1[StackPosition]       = *(int *)(PParm->Value[5]);
+    StackParm1[StackPosition]       = *(uint32 *)(PParm->Value[5]);
     StackParm2[StackPosition]       = *(int *)(PParm->Value[6]);
     StackParm3[StackPosition]       = *(int *)(PParm->Value[7]);
     StackParm4[StackPosition]       = *(int *)(PParm->Value[8]);
