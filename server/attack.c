@@ -310,6 +310,17 @@ void attack_message(int dam, int type, object *op, object *hitter) {
         sprintf(buf1, "missed %s", op->name);
         sprintf(buf2, " misses");
 	found++;
+    } else if ((hitter->type == DISEASE || hitter->type == SYMPTOM ||
+	(type & AT_POISON && IS_LIVE(op)) && !found) {
+        for (i=0; i < MAXATTACKMESS && attack_mess[ATM_SUFFER][i].level != -1;
+	     i++)
+	    if (dam < attack_mess[ATM_SUFFER][i].level) {
+	        sprintf(buf1, "%s %s%s", attack_mess[ATM_SUFFER][i].buf1,
+			op->name, attack_mess[ATM_SUFFER][i].buf2);
+		sprintf(buf2, "%s", attack_mess[ATM_SUFFER][i].buf3);
+		found++;
+		break;
+	    }
     } else if (op->type == DOOR && !found) {
         for (i=0; i < MAXATTACKMESS && attack_mess[ATM_DOOR][i].level != -1;
 	     i++)
@@ -436,9 +447,8 @@ void attack_message(int dam, int type, object *op, object *hitter) {
 	(get_owner(hitter) != NULL && hitter->owner->type == PLAYER)))
       return;
 
-    /* we have no good messages for godpower, and they are usually diseases.
-       in addition, scale down magic considerably. */
-    if ((type & AT_MAGIC && rndm(0, 5)) || type & AT_GODPOWER)
+    /* scale down magic considerably. */
+    if (type & AT_MAGIC && rndm(0, 5)
       return;
 
     /* Did a player hurt another player?  Inform both! */

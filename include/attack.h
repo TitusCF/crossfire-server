@@ -67,6 +67,7 @@
 #define ATM_CRUSH	15
 #define ATM_BLUD	16
 #define ATM_DOOR	17
+#define ATM_SUFFER	18
 
 /* Note that the last ATNR_ should be one less than NROFATTACKS above
  * since the ATNR starts counting at zero.
