@@ -235,11 +235,10 @@ chance 20
 ingred 2 giant bat's wing,water of the wise
 #
 # -- serpent to snake (you rub it on your staff!)
-# currently buggy. lets comment it out
-# Object serpent
-# arch balm_generic
-# chance 12
-# ingred snake's skin,bottle of philosophical oil
+Object serpent
+arch balm_generic
+chance 12
+ingred snake's skin,bottle of philosophical oil
 #
 #  Figurines -- these devices should only summon 'golems'; never any
 #	        other effects.
@@ -459,18 +458,20 @@ ingred ogre's heart,3 water of the wise,pile of philosophical salt,pirate's hear
 #    Note the 0 chance--these formulae are quest items.
 #
 # -- fire immune
+# (quest: peterm/FireTemple)
 Object NONE
 arch potion_cold
-chance 1
+chance 0
 yield 10
 ingred fire para-elemental's residue,3 balm of asbestos,dragon's steak,7 water of ruby
+keycode fire alchemist
 #
 # -- cold immune
 Object NONE
 arch potion_fire
 chance 1
 yield 10
-ingred ice para-elemental's residue,3 balm of warmth,chinese dragon's steak,7 water of ruby
+ingred ice para-elemental's residue,3 balm of warmth,chinese dragon's steak,7 water of sapphire
 #
 # -- guess what this is.... 
 Object NONE
@@ -478,7 +479,6 @@ arch potion_invulnerability
 chance 0
 yield 4
 ingred spectre's ectoplasm,demon's head,7 water of ruby,7 balm of aethereality
-
 #
 #  -- protection/immunity potions for potion_gen
 #
@@ -756,6 +756,16 @@ trans 1
 yield 20
 ingred 20 arrow,3 unicorn horn,2 water of sapphire,clover,white rose
 #
+# -------------------
+# Armour 'n stuff
+# -------------------
+#
+Object minor protection
+arch cloak
+chance 5
+trans 1
+yield 1
+ingred cloak,spectre's ectoplasm,3 balm of aethereality
 # -------------------
 # Amulets
 # -------------------
