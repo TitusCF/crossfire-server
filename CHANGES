@@ -1,6 +1,14 @@
 Changes in top level CVS tree (please add your changes at the very top of
 the file):
 
+Add crossfire.oc.humbug.org.au server information to README file - msw
+
+Change compress method definitions from being determined by checks
+on system type to having autoconf find the utilities for us.  Also, add
+bzip2 support. Files affected: Makefile.in configure.in common/map.c
+server/init.c server/login.c include/config.h include/define.h
+include/autoconf.h.in - msw
+
 Fix in server/rune.c - if the victim of a trap/rune is not on a map
 and the object has a disease, it would crash the server.  Temporary
 fix put in to make sure there is a map, and if not, use a predefined

@@ -191,6 +191,11 @@ voldsboks.pvv.org (3-25-1999)
    port: 13327 (default)
    version: 0.95.2
 
+crossfire.oc.humbug.org.au (8-22-1999)
+   port: 13327 (default)
+   version: 0.95.5?
+   Notes: Permadeath is turned off.
+
 Note that the whitestar.pyrsonal.org server is not listed, as it is likely
 to go away soon.
 
