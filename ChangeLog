@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+
+------------------------------------------------------------------------------
+Changes for 1.7.0:
+
 configure, configure.ac, include/autoconf.h.in:  Update for
    version 1.7.0.  Add check for libz - needed by libpng (at least on my
    system), which is needed for the editor.
