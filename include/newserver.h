@@ -41,6 +41,7 @@
 
 struct MapCell {
   short faces[MAXMAPCELLFACES];
+  char quick_pos[MAXMAPCELLFACES];
   int count;
 };
 
@@ -97,6 +98,7 @@ typedef struct NewSocket {
     uint32  sound:1;	    /* does the client want sound */
     uint32  skillexp:1;	    /* does the client want skill exp data - MT*/
     uint32  map1cmd:1;	    /* Always use map1 protocol command */
+    uint32  map2cmd:1;	    /* Always use map1 protocol command */
     uint32  newmapcmd:1;    /* Send newmap command when entering new map SMACFIGGEN*/
     uint32  darkness:1;	    /* True if client wants darkness information */
     uint32  newanim:1;      /* enable the advanced animation system - MT */

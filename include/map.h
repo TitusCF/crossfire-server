@@ -87,6 +87,9 @@
 #define SET_MAP_FACE(M,X,Y,C,L) ( (M)->spaces[(X) + (M)->width * (Y)].faces[L] = C )
 #define GET_MAP_FACE(M,X,Y,L) ( (M)->spaces[(X) + (M)->width * (Y)].faces[L]  )
 
+#define SET_MAP_FACE_OBJ(M,X,Y,C,L) ( (M)->spaces[(X) + (M)->width * (Y)].faces_obj[L] = C )
+#define GET_MAP_FACE_OBJ(M,X,Y,L) ( (M)->spaces[(X) + (M)->width * (Y)].faces_obj[L]  )
+
 /* You should really know what you are doing before using this - you
  * should almost always be using out_of_map instead, which takes into account
  * map tiling.
@@ -120,6 +123,7 @@
 typedef struct MapSpace {
     object	*bottom;	/* lowest object on this space */
     New_Face	*faces[3];	/* faces for the 3 layers */
+    object	* faces_obj[3];	/* face objects for the 3 layers */
     uint8	flags;		/* flags about this space (see the P_ values above) */
     sint8	light;		/* How much light this space provides */
 } MapSpace;

@@ -1470,6 +1470,7 @@ void update_position (mapstruct *m, int x, int y) {
     object *tmp, *last = NULL;
     uint8 flags = 0, oldflags, light=0, anywhere=0;
     New_Face *top,*floor, *middle;
+    object *top_obj, *floor_obj, *middle_obj;
 
     oldflags = GET_MAP_FLAGS(m,x,y);
     if (!(oldflags & P_NEED_UPDATE)) {
@@ -1501,7 +1502,10 @@ void update_position (mapstruct *m, int x, int y) {
 	 */
 	if (!tmp->invisible) {
 	    if ((tmp->type==PLAYER || QUERY_FLAG(tmp, FLAG_MONSTER)))
-		top = tmp->face;
+        {
+            top = tmp->face;
+            top_obj = tmp;
+        }
 	    else if (QUERY_FLAG(tmp,FLAG_IS_FLOOR)) {
 		/* If we got a floor, that means middle and top were below it,
 		* so should not be visible, so we clear them.
@@ -1509,18 +1513,23 @@ void update_position (mapstruct *m, int x, int y) {
 		middle=blank_face;
 		top=blank_face;
 		floor = tmp->face;
-	    }
+        floor_obj = tmp;
+        }
 	    /* Flag anywhere have high priority */
 	    else if (QUERY_FLAG(tmp, FLAG_SEE_ANYWHERE)) {
 		middle = tmp->face;
-		anywhere =1;
+        middle_obj = tmp;
+        anywhere =1;
 	    }
 	    /* Find the highest visible face around.  If equal
 	     * visibilities, we still want the one nearer to the
 	     * top
 	     */
 	    else if (middle == blank_face || (tmp->face->visibility > middle->visibility && !anywhere))
-		middle = tmp->face;
+        {
+    		middle = tmp->face;
+            middle_obj = tmp;
+        }
 	}
 	if (tmp==tmp->above) {
 	    LOG(llevError, "Error in structure of map\n");
@@ -1571,7 +1580,6 @@ void update_position (mapstruct *m, int x, int y) {
      * may be possible for the faces to match but be different objects.
      */
     if (top == middle) middle=blank_face;
-
     /* There are three posibilities at this point:
      * 1) top face is set, need middle to be set.
      * 2) middle is set, need to set top.
@@ -1589,8 +1597,9 @@ void update_position (mapstruct *m, int x, int y) {
 	if (!tmp->invisible || editor) {
 	    /* Fill in top if needed */
 	    if (top == blank_face) {
-		top = tmp->face;
-		if (top == middle) middle=blank_face;
+            top = tmp->face;
+            top_obj = tmp;
+          if (top == middle) middle=blank_face;
 	    } else {
 		/* top is already set - we should only get here if
 		 * middle is not set
@@ -1600,8 +1609,9 @@ void update_position (mapstruct *m, int x, int y) {
 		 * 
 		 */
 		if (tmp->face  != top ) {
-		    middle = tmp->face;
-		    break;
+            middle = tmp->face;
+            middle_obj = tmp;
+            break;
 		}
 	    }
 	}
@@ -1609,8 +1619,20 @@ void update_position (mapstruct *m, int x, int y) {
     if (middle == floor) middle = blank_face;
     if (top == middle) middle = blank_face;
     SET_MAP_FACE(m,x,y,top,0);
+    if(top != blank_face)
+        SET_MAP_FACE_OBJ(m,x,y,top_obj,0);
+    else
+        SET_MAP_FACE_OBJ(m,x,y,NULL,0);
     SET_MAP_FACE(m,x,y,middle,1);
+    if(middle != blank_face)
+        SET_MAP_FACE_OBJ(m,x,y,middle_obj,1);
+    else
+        SET_MAP_FACE_OBJ(m,x,y,NULL,1);
     SET_MAP_FACE(m,x,y,floor,2);
+    if(floor != blank_face)
+        SET_MAP_FACE_OBJ(m,x,y,floor_obj,2);
+    else
+        SET_MAP_FACE_OBJ(m,x,y,NULL,2);
     SET_MAP_LIGHT(m,x,y,light);
 }
 

@@ -82,7 +82,7 @@ INCLUDES= $(EXTRA_INCLUDES) -I../include -I$(srcdir)/../include
 
 LDFLAGS = @LDFLAGS@
 
-LIBS = @LIBS@ $(EXTRA_LIBS)
+LIBS = @LIBS@ $(EXTRA_LIBS) -ldl
 
 SHELL = @BOURNE_SHELL@
 

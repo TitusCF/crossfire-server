@@ -78,6 +78,7 @@ void esrv_new_player(player *pl, uint32 weight);
 void esrv_send_animation(NewSocket *ns, short anim_num);
 void esrv_send_face(NewSocket *ns, short face_num, int nocache);
 void draw_client_map1(object *pl);
+void draw_client_map2(object *pl);
 void draw_client_map(object *pl);
 void esrv_map_scroll(NewSocket *ns, int dx, int dy);
 /* sounds.c */

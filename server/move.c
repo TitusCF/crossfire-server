@@ -47,11 +47,6 @@ int move_ob (object *op, int dir, object *originator)
 	LOG(llevError,"Trying to move NULL.\n");
 	return 0;
     }
-    /* If the space the player is trying to is out of the map,
-     * bail now - we know it can't work.
-     */
-    if (out_of_map(op->map,op->x+freearr_x[dir],op->y+freearr_y[dir])) return 0;
-
     /* this function should now only be used on the head - it won't call itself
      * recursively, and people calling us should pass the right part.
      */
@@ -60,6 +55,12 @@ int move_ob (object *op, int dir, object *originator)
 	    op->head->name, op->map->name, op->x, op->y);
 	op = op->head;
     }
+
+    /* If the space the player is trying to is out of the map,
+     * bail now - we know it can't work.
+     */
+    if (out_of_map(op->map,op->x+freearr_x[dir],op->y+freearr_y[dir])) return 0;
+
 
     /* Modified these to check for appropriate object anyplace on map
      * not just the top (stacking is less deterministic now).

@@ -330,7 +330,7 @@ void first_arch_pass(FILE *fp) {
   while((i=load_object(fp,op,first,0))) {
     first=0;
     copy_object(op,&at->clone);
-    at->clone.speed_left= -0.1;
+    at->clone.speed_left= (float) (-0.1);
     switch(i) {
     case LL_NORMAL: /* A new archetype, just link it with the previous */
       if(last_more!=NULL)
@@ -338,6 +338,8 @@ void first_arch_pass(FILE *fp) {
       if(prev!=NULL)
         prev->next=at;
       prev=last_more=at;
+      op->quick_pos = 0; /* assume as base a single arch */
+      at->clone.quick_pos = 0; /* sic */
       break;
 #if 0
     case 2:
@@ -348,10 +350,15 @@ void first_arch_pass(FILE *fp) {
       at->head=prev;
       at->clone.head = &prev->clone;
       if(last_more!=NULL) {
-        last_more->more=at;
-        last_more->clone.more = &at->clone;
+          last_more->more=at;
+          last_more->clone.more = &at->clone;
       }
       last_more=at;
+      
+      /*LOG(llevDebug,"Part object: %d,%d\n", at->clone.x,at->clone.y);*/
+      prev->clone.quick_pos = 255; /* mark head tile */
+      at->clone.quick_pos = 0|(at->clone.x<<4)|at->clone.y;
+      
       break;
     }
     at=get_archetype_struct();
