@@ -17,6 +17,8 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+common/living.c: Have give_skill_by_name() update the skill pointers in the
+   player object.
 server/spell_attack.c: Properly set maxhp in the cone spell - this is used
    in ok_to_put_more() to make sure one spell doesn't hit a single space
    too many times.

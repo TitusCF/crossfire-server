@@ -1498,6 +1498,10 @@ object *give_skill_by_name(object *op, char *skill_name)
     skill_obj->stats.exp = 0;
     skill_obj->level = 1;
     insert_ob_in_ob(skill_obj, op);
+    if (op->contr) {
+	op->contr->last_skill_ob[skill_obj->subtype] = skill_obj;
+	op->contr->last_skill_exp[skill_obj->subtype] = -1;
+    }
     return skill_obj;
 }
 
