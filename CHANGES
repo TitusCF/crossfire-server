@@ -16,6 +16,9 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+MSW 2000/11/26:
+utils/metaserver.pl (added), utils/Makefile.in:  Add metaserver.pl script.
+
 MSW 2000/11/25:
 include/patchlevel.h (removed), doc/spell-docs/Makefile (removed),
 include/Makefile.in, include/version.h, server/init.c, server/main.c,
