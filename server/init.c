@@ -338,8 +338,15 @@ static void load_settings()
 		    "at least 0, %d is invalid\n", lev);
 	    else
 		settings.dynamiclevel = lev;
-	}
-	else if (!strcasecmp(buf,"simple_exp")) {
+	} else if (!strcasecmp(buf, "fastclock")) {
+	    int lev = atoi(cp);
+
+	    if (lev < 0)
+		LOG(llevError, "load_settings: fastclock must be at least 0"
+		    ", %d is invalid\n", lev);
+	    else
+		settings.fastclock = lev;
+	} else if (!strcasecmp(buf,"simple_exp")) {
 	    if (!strcasecmp(cp,"on") || !strcasecmp(cp,"true")) {
 		settings.simple_exp=TRUE;
 	    } else if (!strcasecmp(cp,"off") || !strcasecmp(cp,"false")) {
