@@ -3,7 +3,7 @@ Section: games
 Priority: optional
 Maintainer: Jaakko Niemi <liiwi@debian.org>
 Standards-Version: 3.5.2
-Build-Depends: debhelper (>= 4.1.16), libxaw7-dev, xlibs-dev, xutils, flex, automake1.6
+Build-Depends: debhelper (>= 4.1.16), libxaw7-dev, xlibs-dev, xutils, flex, automake1.6, dpatch
 
 Package: crossfire-server
 Architecture: any

@@ -6,8 +6,7 @@ export DH_VERBOSE=1
 LIB_DIR = var/games/crossfire
 DATADIR = usr/share/games/crossfire
 
-build: build-stamp
-build-stamp:
+build: patch
 	dh_testdir
 
 	./configure	--prefix=/$(LIB_DIR) 		\
@@ -17,14 +16,14 @@ build-stamp:
 			--localstatedir=/var/games	\
 			--sysconfdir=/etc
 
-
-
 	# Add here commands to compile the package.
 	$(MAKE) all
 
 	touch build-stamp
 
-clean:
+clean: clean-patched unpatch
+
+clean-patched:
 	dh_testdir
 	-rm -f build-stamp install-stamp
 	-rm -rf debian/crossfire-server
@@ -50,6 +49,15 @@ clean:
 #	-rm lib/crossfire.cfb
 
 	dh_clean
+
+patch: patch-stamp
+patch-stamp:
+	dpatch apply-all
+	touch patch-stamp
+
+unpatch:
+	dpatch deapply-all
+	rm -rf patch-stamp debian/patched
 
 install: 
 install: build
