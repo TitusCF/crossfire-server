@@ -5468,7 +5468,7 @@ static char * altar_112_xpm[] = {
 "                        ",
 "                        "};
 ESRV_XPM_END
-ESRV_XPM 00159 ./arch/indoor/altars/altardevo.111
+ESRV_XPM 00159 ./arch/gods/altars/altardevo.111
 /* XPM */
 static char * altardevo_111_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -5506,7 +5506,7 @@ static char * altardevo_111_xpm[] = {
 "                        ",
 "                        "};
 ESRV_XPM_END
-ESRV_XPM 00160 ./arch/indoor/altars/altargaea.111
+ESRV_XPM 00160 ./arch/gods/altars/altargaea.111
 /* XPM */
 static char * altargaea_111_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -5546,7 +5546,7 @@ static char * altargaea_111_xpm[] = {
 "                        ",
 "                        "};
 ESRV_XPM_END
-ESRV_XPM 00161 ./arch/indoor/altars/altargnarg.111
+ESRV_XPM 00161 ./arch/gods/altars/altargnarg.111
 /* XPM */
 static char * altargnarg_111_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -5584,7 +5584,7 @@ static char * altargnarg_111_xpm[] = {
 "                        ",
 "                        "};
 ESRV_XPM_END
-ESRV_XPM 00162 ./arch/indoor/altars/altargoro.111
+ESRV_XPM 00162 ./arch/gods/altars/altargoro.111
 /* XPM */
 static char * altargoro_111_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -5625,7 +5625,7 @@ static char * altargoro_111_xpm[] = {
 "                        ",
 "                        "};
 ESRV_XPM_END
-ESRV_XPM 00163 ./arch/indoor/altars/altarlyth.111
+ESRV_XPM 00163 ./arch/gods/altars/altarlyth.111
 /* XPM */
 static char * altarlyth_111_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -5664,7 +5664,7 @@ static char * altarlyth_111_xpm[] = {
 "                        ",
 "                        "};
 ESRV_XPM_END
-ESRV_XPM 00164 ./arch/indoor/altars/altarmostr.111
+ESRV_XPM 00164 ./arch/gods/altars/altarmostr.111
 /* XPM */
 static char * altarmostr_111_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -5702,7 +5702,7 @@ static char * altarmostr_111_xpm[] = {
 "                        ",
 "                        "};
 ESRV_XPM_END
-ESRV_XPM 00165 ./arch/indoor/altars/altarnone.111
+ESRV_XPM 00165 ./arch/gods/altars/altarnone.111
 /* XPM */
 static char * altarnone_111_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -5738,7 +5738,7 @@ static char * altarnone_111_xpm[] = {
 "                        ",
 "                        "};
 ESRV_XPM_END
-ESRV_XPM 00166 ./arch/indoor/altars/altarrugg.111
+ESRV_XPM 00166 ./arch/gods/altars/altarrugg.111
 /* XPM */
 static char * altarrugg_111_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -5780,7 +5780,7 @@ static char * altarrugg_111_xpm[] = {
 "                        ",
 "                        "};
 ESRV_XPM_END
-ESRV_XPM 00167 ./arch/indoor/altars/altarsori.111
+ESRV_XPM 00167 ./arch/gods/altars/altarsori.111
 /* XPM */
 static char * altarsori_111_xpm[] = {
 "24 24 7 1",
@@ -5816,7 +5816,7 @@ static char * altarsori_111_xpm[] = {
 "                        ",
 "                        "};
 ESRV_XPM_END
-ESRV_XPM 00168 ./arch/indoor/altars/altarvalr.111
+ESRV_XPM 00168 ./arch/gods/altars/altarvalr.111
 /* XPM */
 static char * altarvalr_111_xpm[] = {
 /* width height ncolors chars_per_pixel */

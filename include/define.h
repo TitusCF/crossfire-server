@@ -6,7 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 1994 Mark Wedel
+    Copyright (C) 2000 Mark Wedel
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -23,7 +23,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to mark@pyramid.com
+    The author can be reached via e-mail to mwedel@scruz.net
 */
 
 /* This file is really too large.  With all the .h files
@@ -139,13 +139,14 @@
 
 /*  peterm:  detector is an object which notices the presense of
 	 another object and is triggered like buttons.  */
-#define DETECTOR 51
+#define DETECTOR	51
 
 #define SPEEDBALL	52
 #define DEAD_OBJECT	53
 #define DRINK		54
 #define MARKER          55 /* inserts an invisible, weightless
 			      force into a player with a specified string. */
+#define HOLY_ALTAR	56
 
 #define GEM		60 
 #define FIRECHEST	61 

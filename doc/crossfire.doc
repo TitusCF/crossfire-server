@@ -279,6 +279,21 @@ them to the internal values - thus, you seldom need to know these unless
 you are trying to debug something.
 
 ------------------------------------------------------------------------------
+HOLY_ALTARS (re-done code by Mark Wedel)
+
+Holy altars are altars for the various religions.  Praying at a
+holy_altar will make you a follower of that god, and if you already follow
+that god, you may get some extra bonus.  Meaning of the fields
+
+level: To re-consecrate an altar, the players skill level must be as
+high or higher than the level field.  In this way, some altars can not
+be re-consecrated, while other altars, like those in dungeons, could be.
+
+other_arch: The god that this altar belongs to.  This replaces the
+title field that used to be used.
+
+
+------------------------------------------------------------------------------
 DISEASES by Peter Mardahl
 
 The following describes some things about the archetype

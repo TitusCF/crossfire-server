@@ -586,6 +586,7 @@ void load_objects (mapstruct *m, FILE *fp, int block) {
 		LOG(llevDebug,"Discarded object %s - invalid archetype.\n",op->name);
 	    continue;
 	}
+#if 0
 	/* this hack allows for 'unused' altars (see below) to have a 
  	 * random god (see the 'god table' in god.c) associated w/ it -b.t. 
 	 */
@@ -593,6 +594,7 @@ void load_objects (mapstruct *m, FILE *fp, int block) {
 	if(op->type==ALTAR && !op->value && !editor && !op->stats.sp)
 	   if(baptize_altar(op))
 		LOG(llevDebug,"Baptized altar to %s\n",op->title);
+#endif
 #endif
 	switch(i) {
 	  case LL_NORMAL:

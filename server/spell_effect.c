@@ -2044,7 +2044,8 @@ int cast_detection(object *op, int type) {
 		tmp->type==GATE || tmp->type==LOCKED_DOOR ||
 		tmp->type==WEAPON || tmp->type==ALTAR || tmp->type==SIGN ||
 		tmp->type==TRIGGER_PEDESTAL || tmp->type==SPECIAL_KEY ||
-		tmp->type==TREASURE || tmp->type==BOOK)) {
+		tmp->type==TREASURE || tmp->type==BOOK ||
+		tmp->type==HOLY_ALTAR)) {
 		if(RANDOM()%(SK_level(op)) > tmp->level/4) {
 		    tmp->invisible=0;
 		    done_one = 1;
@@ -2884,42 +2885,48 @@ object *fix_summon_pet(archetype *at, object *op, int dir, int type ) {
 /* cast_consecrate() - a spell to make an altar your god's */
  
 int cast_consecrate(object *op) {
-  char buf[MAX_BUF];
-  int success=0;
+    char buf[MAX_BUF];
+    int success=0;
+
 #ifdef MULTIPLE_GODS
-  object *tmp, *god=find_god(determine_god(op));
-#endif
-  sprintf(buf,"Nothing happens.");
-#ifdef MULTIPLE_GODS
-  if(!god) {
-        new_draw_info(NDI_UNIQUE, 0,op,
-            "You can't consecrate anything if you don't worship a god!");
+    object *tmp, *god=find_god(determine_god(op));
+
+    if(!god) {
+	new_draw_info(NDI_UNIQUE, 0,op,
+		      "You can't consecrate anything if you don't worship a god!");
         return 0;
-  }
+    }
  
-  sprintf(buf,"You are'nt standing over an altar!");
-  for(tmp=op->below;tmp;tmp=tmp->below)
-        if(tmp->type==ALTAR) {
-             if(!tmp->title && strcmp(tmp->name,tmp->arch->clone.name)) {
-                 sprintf(buf,"That altar may not be consecrated.");
-                 break;
-             } else if(QUERY_FLAG(tmp,FLAG_IS_FLOOR)) break;
-             if(tmp->title)
-                 free_string(tmp->title);
-             if(tmp->name)
-                 free_string(tmp->name);
-             sprintf(buf,"%s of %s",tmp->arch->clone.name,god->name);
-             tmp->name = add_string(buf);
-             tmp->title = add_string(god->name);
-             sprintf(buf,"You consecrated the altar to %s!",god->name);
-             success = 1;
-	     if(op->type==PLAYER) esrv_update_item(UPD_NAME, op, tmp);
-             break;
-        }
+    for(tmp=op->below;tmp;tmp=tmp->below) {
+        if(tmp->type==HOLY_ALTAR) {
+	    if(QUERY_FLAG(tmp,FLAG_IS_FLOOR)) break;
+
+	    /* We use SK_level here instead of path_level mod because I think
+	     * all the gods should give equal chance of re-consecrating altars
+	     */
+	    if(tmp->level > SK_level(op)) {
+		new_draw_info_format(NDI_UNIQUE, 0,op,
+		    "You are not poweful enough to reconsecrate the altar of %s", tmp->title);
+	    } else {
+	    /* If we got here, we are consecrating an altar */
+		if(tmp->name)	free_string(tmp->name);
+		sprintf(buf,"%s of %s",tmp->arch->clone.name,god->name);
+		tmp->name = add_string(buf);
+		tmp->level = SK_level(op);
+		tmp->other_arch = god;
+		if(op->type==PLAYER) esrv_update_item(UPD_NAME, op, tmp);
+		new_draw_info_format(NDI_UNIQUE,0, op,
+				     "You consecrated the altar to %s!",god->name);
+		return 1;
+	    }
+	}
+    }
+    new_draw_info(NDI_UNIQUE, 0,op,"You are not standing over an altar!");
+    return 0;
+#else
+    new_draw_info(NDI_UNIQUE, 0,op,"Nothing happens.");
+    return 0;
 #endif
- 
-   new_draw_info(NDI_UNIQUE, 0,op,buf);
-   return success;
 }
 
 

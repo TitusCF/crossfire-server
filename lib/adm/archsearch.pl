@@ -1,4 +1,4 @@
-#!/usr/local/bin/perl
+#!/usr/bin/perl
 #
 # Usage: archsearch.pl file
 #
@@ -13,10 +13,11 @@
 # in pupland
 #
 
+
 die("Usage: archsearch.pl file\n") if ($#ARGV < 0);
 
 for ($file=0; $file<=$#ARGV; $file++) {
-    print "Proccessing $ARGV[$file]\n";
+#    print "Proccessing $ARGV[$file]\n";
     if (!open(INFILE, "<$ARGV[$file]")) {
 	print "Can not open $ARGV[$file] - skipping\n";
 	next;
@@ -28,13 +29,20 @@ for ($file=0; $file<=$#ARGV; $file++) {
 		$type=-1;
 		$x = -1;
 		$y = -1;
+		$title="";
 	}
+	$object .= $_;
 	$type = $1 if (/^type (\S+)/);
+	$title = $1 if (/^title (\S+)/);
 	$invisible = $1 if (/^invisible (\S+)/);
 	$x = $1 if (/^x (\S+)/);
 	$y = $1 if (/^y (\S+)/);
-	if (/^end$/ && $invisible) {
-	    print "Object $obname (type $type) @ $x, $y is invisible\n";
+	if (/^end$/ ) {
+	    if ($obname =~ /^altar/ && $title ne "") {
+		print "$ARGV[$file]\n$object";
+	    }
+#	    print "Object $obname (type $type) @ $x, $y is invisible\n";
+	    $object="";
 	}
 	# This is what we are searching for.  value will be put in $1
 	# Note that multile searches are certainly possible.

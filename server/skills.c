@@ -5,8 +5,8 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 1992 Frank Tore Johansen
     Copyright (C) 2000 Mark Wedel
+    Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -905,35 +905,48 @@ int find_traps (object *pl) {
 
 /* pray() - when this skill is called from do_skill(), it allows
  * the player to regain lost grace points at a faster rate. -b.t.
+ * This always returns 0 - return value is used by calling function
+ * such that if it returns true, player gets exp in that skill.  This
+ * the effect here can be done on demand, we probably don't want to
+ * give infinite exp by returning true in any cases.
  */
 
-/* Oct 95 - altered it to allow for MULTIPLE_GODS hack */
-
 int pray (object *pl) {
-  char buf[MAX_BUF];
+    char buf[MAX_BUF];
+    object *tmp;
 
-  sprintf(buf,"You pray.");
-  if(pl->type!=PLAYER) return 0;
+    if(pl->type!=PLAYER) return 0;
+
+    strcpy(buf,"You pray.");
 #ifdef MULTIPLE_GODS
-  else { /* look at the top object underneath the player, is it an altar? */ 
-    object *tmp=pl->below;
-    if(tmp && tmp->type==ALTAR)
-        if(tmp && tmp->title && pl->chosen_skill->exp_obj && find_god(tmp->title)) { /* its owned by a God! */ 
-          sprintf(buf,"You pray over the %s of %s.",tmp->arch->clone.name,tmp->title);
-	  pray_at_altar(pl,tmp);
-        }
-  }
+    /* Check all objects - we could stop at floor objects,
+     * but if someone buries an altar, I don't see a problem with
+     * going through all the objects, and it shouldn't be much slower
+     * than extra checks on object attributes.
+     */
+    for (tmp=pl->below; tmp!=NULL; tmp=tmp->below) {
+	/* Only if the altar actually belongs to someone do you get special benefits */
+	if(tmp && tmp->type==HOLY_ALTAR && tmp->other_arch) {
+	    sprintf(buf,"You pray over the %s",tmp->name);
+	    pray_at_altar(pl,tmp);
+	    break;  /* Only pray at one altar */
+	}
+    }
 #endif
 
-  new_draw_info(NDI_UNIQUE,0,pl,buf);
+    new_draw_info(NDI_UNIQUE,0,pl,buf);
      
-  if(pl->stats.grace < pl->stats.maxgrace) {
-    pl->stats.grace++;
-    pl->last_grace = -1;
-  } else return 0; 
+    if(pl->stats.grace < pl->stats.maxgrace) {
+	pl->stats.grace++;
+	pl->last_grace = -1;
+    } else return 0; 
 
-  do_some_living(pl);
-  return 0;
+    /* Is this really right?  This will basically increase food
+     * consumption, hp & sp regeneration, and everything else that
+     * do_some_living does.
+     */
+    do_some_living(pl);
+    return 0;
 }
 
 /* This skill allows the player to regain a few sp or hp for a 

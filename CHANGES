@@ -18,6 +18,44 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+common/arch.c, common/loader.l (loader.c):  Modify the load routines
+to strip off trailing whitespace in object names and other_arch fields -
+I believe this is why altars to Sorig did not generally work, and while
+generally that white space should not exist, doing a little extra checking
+for it is not a bad idea - MSW 4/26/2000
+
+Add HOLY_ALTAR type, and use that for praying over for gods and the
+like.
+doc/crossfire.doc:  Add description of HOLY_ALTAR type and meaning
+	of fields.
+common/map.c:  Disable consecration code for altars.
+include/define.h: Add type for HOLY_ALTAR
+include/sproto.h: Update for change of some functions below.
+server/c_wiz.c:  Modify setgod command to call become_follower with
+	proper second arg.
+server/gods.c: Change become_follower to take object pointer to god instead
+	of name, since the holy_altar has the pointer in its other_arch.
+	Modify pray_at_altar to use the new fields, as well as fixed
+	what seemed to be numerous bugs in that function.
+sever/skills.c: Change check from ALTAR to HOLY_ALTAR, also change
+	check to see if HOLY_ALTAR is consecrated by looking at the
+	other_arch field.
+server/spell_effect.c:  Update consecrate so that caster must be
+	higher effective level than the altar, also update for
+	differing fields.
+maps/thomas/sisters/shrine0, map/thomas/sisters/tower0:  Remove
+	title from altars on these maps - these were the only two maps
+	using old style altars consecrated to a god.  Since it appears the
+	real purpose of the altars on these maps was to trigger something
+	else, they were kept as old style altars.
+arch/gods/altars (relocated from arch/indoors, as I think the new
+	location makes more logical sense):  Update for new fields/format.
+	This also affects lib/archetypes, lib/bmaps.paths, lib/crossfire.xpm,
+	lib/crossfire.cfb
+lib/adm/archsearch.pl:  Modified to hunt out old archetypes - some of the
+	changes could be useful in general cases.
+MSW 4/26/2000
+
 server/spell_util.c: Fix move_golem so that multi square avatars (golems)
 don't hit themselves.  Remove will_hit_self function (only used in
 move_golem), since it did not work.  Change structure & indenting of

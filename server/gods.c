@@ -71,90 +71,109 @@ object *find_god(char *name) {
 }
 
 void pray_at_altar(object *pl, object *altar) {
-  object *pl_god=find_god(determine_god(pl));
+    object *pl_god=find_god(determine_god(pl));
  
+
 #ifdef MULTIPLE_GODS
-  /* hmm. what happend depends on pl's current god, level, etc */
-  if(!pl_god) {  /*new convert */
-    become_follower(pl,altar->title);
-    return;
+    /* If non consecrate altar, don't do anything */
+    if (!altar->other_arch) return;
 
-  } else if(!strcmp(pl_god->name,altar->title)) { 	/* pray at your gods altar */
-     int bonus = ((pl->stats.Wis/10)+(SK_level(pl)/10));
+    /* hmm. what happend depends on pl's current god, level, etc */
+    if(!pl_god) {  /*new convert */
+	become_follower(pl,&altar->other_arch->clone);
+	return;
 
-     /* we can get neg grace up faster */
-     if(pl->stats.grace<0) pl->stats.grace+=(bonus>-1*(pl->stats.grace/10) ?
-          bonus : -1*(pl->stats.grace/10));
-     /* we can super-charge grace to 2x max */
-     if(pl->stats.grace<(2*pl->stats.maxgrace)) {
-        pl->stats.grace+=bonus/2;
+    } else if(!strcmp(pl_god->name,altar->other_arch->clone.name)) { 	/* pray at your gods altar */
+	int bonus = ((pl->stats.Wis/10)+(SK_level(pl)/10));
+
+	/* we can get neg grace up faster */
+	if(pl->stats.grace<0) pl->stats.grace+=(bonus>-1*(pl->stats.grace/10) ?
+			bonus : -1*(pl->stats.grace/10));
+	/* we can super-charge grace to 2x max */
+	if(pl->stats.grace<(2*pl->stats.maxgrace)) {
+	    pl->stats.grace+=bonus/2;
+	}
+	/* I think there was a bug here in that this was nested
+	 * in the if immediately above
+	 */
 	if(pl->stats.grace>(2*pl->stats.maxgrace)) {
-	  pl->stats.grace=(2*pl->stats.maxgrace);
+	    pl->stats.grace=(2*pl->stats.maxgrace);
 	}
-     }
 
-     /* Every once in a while, the god decides to checkup on their
-      * follower, and may intervene to help them out. */
-     bonus += pl->stats.luck; /* -- DAMN -- */
-     if((RANDOM()%500-bonus)<0) god_intervention(pl,pl_god);
+	/* Every once in a while, the god decides to checkup on their
+	 * follower, and may intervene to help them out. 
+	 */
+	bonus += pl->stats.luck; /* -- DAMN -- */
+	if((RANDOM()%500-bonus)<0) god_intervention(pl,pl_god);
  
-  } else if(altar->title) { /* praying to another god! */
-     int loss = 0,angry=1;
-     object *alt_god=find_god(altar->title); 
+    } else { /* praying to another god! */
+	int loss = 0,angry=1;
  
-     if(alt_god&&(!strcmp(alt_god->name,pl_god->name))) { /* Youch, praying to an enemy god! */ 
-	angry=2;
-	if((RANDOM()%(SK_level(pl)+3))-5 > 0) { /* you really screwed up */
-	   angry=3;
-	   new_draw_info_format(NDI_UNIQUE|NDI_NAVY,0,pl,
+	/* I believe the logic for detecting opposing gods was completely
+	 * broken - I think it should work now.  altar->other_arch
+	 * points to the god of this altar (which we have
+	 * already verified is non null).  pl_god->other_arch
+	 * is the opposing god - we need to verify that exists before
+	 * using its values.
+	 */
+	if(pl_god->other_arch && (altar->other_arch->name==pl_god->other_arch->name)) {
+	    angry=2;
+	    if((RANDOM()%(SK_level(pl)+3))-5 > 0) { /* you really screwed up */
+		angry=3;
+		new_draw_info_format(NDI_UNIQUE|NDI_NAVY,0,pl,
                                 "Foul Priest! %s punishes you!",pl_god->name);
-	   cast_mana_storm(pl,pl_god->level+20);
-	}
-	new_draw_info_format(NDI_UNIQUE|NDI_NAVY,0,pl,
+		cast_mana_storm(pl,pl_god->level+20);
+	    }
+	    new_draw_info_format(NDI_UNIQUE|NDI_NAVY,0,pl,
                                 "Foolish heretic! %s is livid!",pl_god->name);
-     } else 
-	new_draw_info_format(NDI_UNIQUE|NDI_NAVY,0,pl,
+	} else 
+	    new_draw_info_format(NDI_UNIQUE|NDI_NAVY,0,pl,
                                 "Heretic! %s is angered!",pl_god->name);
  
-     /* whether we will be successfull in defecting or not -
-      * we lose experience from the clerical experience obj */
+	/* whether we will be successfull in defecting or not -
+	 * we lose experience from the clerical experience obj */
 
-     loss = 0.1 * (float) pl->chosen_skill->exp_obj->stats.exp;
-     if(loss) lose_priest_exp(pl,RANDOM()%(loss*angry));
+	loss = 0.1 * (float) pl->chosen_skill->exp_obj->stats.exp;
+	if(loss) lose_priest_exp(pl,RANDOM()%(loss*angry));
  
-     /* May switch Gods, but its random chance based on our current level
-      * note it gets harder to swap gods the higher we get */
-     if((angry==1)&&!(RANDOM()%(pl->chosen_skill->exp_obj->level+1))) {
-       int i;  /* index over known_spells */
-       int sp;  /*  spell index */
-       become_follower(pl,altar->title);
+	/* May switch Gods, but its random chance based on our current level
+	 * note it gets harder to swap gods the higher we get */
+	if((angry==1)&&!(RANDOM()%(pl->chosen_skill->exp_obj->level+1))) {
+	    int i;  /* index over known_spells */
+	    int sp;  /*  spell index */
 
-       /* Forget all the special spells from your former God */
-       for(i=0;i<pl->contr->nrofknownspells;i++)
-	 if((sp=pl->contr->known_spells[i])>0) {
-	   if(spells[sp].cleric && spells[sp].books == 0) {
-	     pl->contr->nrofknownspells--;
-	     pl->contr->known_spells[i]=
-	       pl->contr->known_spells[pl->contr->nrofknownspells];
-	     new_draw_info_format(NDI_UNIQUE|NDI_NAVY,0,pl,
-	         "You lose your knowledge of %s!",spells[sp].name);
-	     i=0;
-	   }
-	 }
+	    become_follower(pl,&altar->other_arch->clone);
 
-     }
-  }
+	    /* Forget all the special spells from your former God */
+	    for(i=0;i<pl->contr->nrofknownspells;i++)
+		/* Can this ever be false? */
+		if((sp=pl->contr->known_spells[i])>0) {
+		    if(spells[sp].cleric && spells[sp].books == 0) {
+			pl->contr->nrofknownspells--;
+			pl->contr->known_spells[i]=
+			    pl->contr->known_spells[pl->contr->nrofknownspells];
+			new_draw_info_format(NDI_UNIQUE|NDI_NAVY,0,pl,
+				"You lose your knowledge of %s!",spells[sp].name);
+			/* I think we can just do an i-- here and still
+			 * have it work - i=0 is probably excessive */
+			i=0;
+			
+		    } /* if cleric spell not normally found */
+		} /* if ... */
+
+	} /* If angry... switching gods */
+    } /* If prayed at altar to other god */
 #endif
-
 }
 
-void become_follower (object *op, char *godname) {
-  object *exp_obj = op->chosen_skill->exp_obj;
-  object *new_god = find_god(godname);
+void become_follower (object *op, object *new_god) {
+    object *exp_obj = op->chosen_skill->exp_obj;
 
     if(!op||!new_god) return;
+
     if(op->race&&new_god->slaying&&strstr(op->race,new_god->slaying)) { 
-	new_draw_info_format(NDI_UNIQUE|NDI_NAVY,0,op,"Fool! %s detests your kind!",godname);
+	new_draw_info_format(NDI_UNIQUE|NDI_NAVY,0,op,"Fool! %s detests your kind!",
+			     new_god->name);
         if(RANDOM()%(op->level)-5>0) 
 	   cast_mana_storm(op,new_god->level+10);
 	return;
@@ -162,6 +181,7 @@ void become_follower (object *op, char *godname) {
 
     new_draw_info_format(NDI_UNIQUE|NDI_NAVY,0,op,
 	   "You become a follower of %s!",new_god->name);
+
     if(exp_obj->title) { /* get rid of old god */ 
        new_draw_info_format(NDI_UNIQUE,0,op,
 	       "%s's blessing is withdrawn from you.",exp_obj->title);
@@ -205,20 +225,19 @@ void become_follower (object *op, char *godname) {
     update_priest_flag(new_god,exp_obj,FLAG_USE_ARMOUR);
 
     if(worship_forbids_use(op,exp_obj,FLAG_USE_WEAPON,"weapons"))
-      stop_using_item(op,WEAPON,2);
+	stop_using_item(op,WEAPON,2);
 
     if(worship_forbids_use(op,exp_obj,FLAG_USE_ARMOUR,"armour")) { 
-      stop_using_item(op,ARMOUR,1);
-      stop_using_item(op,HELMET,1);
-      stop_using_item(op,BOOTS,1);
-      stop_using_item(op,GLOVES,1);
-      stop_using_item(op,SHIELD,1);
+	stop_using_item(op,ARMOUR,1);
+	stop_using_item(op,HELMET,1);
+	stop_using_item(op,BOOTS,1);
+	stop_using_item(op,GLOVES,1);
+	stop_using_item(op,SHIELD,1);
     }
 #endif
 
     SET_FLAG(exp_obj,FLAG_APPLIED); 
     (void) change_abil(op,exp_obj);
-
 } 
 
 int worship_forbids_use (object *op, object *exp_obj, uint32 flag, char *string) {
