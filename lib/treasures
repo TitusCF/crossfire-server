@@ -2922,6 +2922,13 @@ treasure wyvern
 #  arch dragon_steak
 #  chance 90
   end
+treasure drake
+  arch dragonclaw
+    chance 10
+  more
+  arch dragon_wing
+    chance 30
+  end
 treasure chinese
   list big_dragon_parts
     chance 50
