@@ -1060,11 +1060,12 @@ static void apply_sign (object *op, object *sign)
     }
 
     if (sign->stats.food) {
-        if (sign->last_eat >= sign->stats.food) {
-            new_draw_info (NDI_UNIQUE, 0, op, "Nothing is written on it.");
-            return;
-        }
-        sign->last_eat++;
+      if (sign->last_eat >= sign->stats.food) {
+        if (!QUERY_FLAG (sign, FLAG_WALK_ON) && !QUERY_FLAG (sign, FLAG_FLY_ON))
+          new_draw_info (NDI_UNIQUE, 0, op, "You cannot read it anymore.");
+        return;
+      }
+      sign->last_eat++;
     }
 
     /* Sign or magic mouth?  Do we need to see it, or does it talk to us?

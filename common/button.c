@@ -72,13 +72,11 @@ void push_button(object *op) {
 	update_object(tmp);
 	break;
     case SIGN:
-	if (tmp->stats.food && ++tmp->last_eat>tmp->stats.food) {
-	    (*info_map_func)(NDI_UNIQUE | NDI_NAVY,tmp->map,	
-			    "Nothing is written on it.");
-	} else {
-	    (*info_map_func)(NDI_UNIQUE | NDI_NAVY,tmp->map,tmp->msg);
-	}
-	break;
+      if (!tmp->stats.food || tmp->last_eat < tmp->stats.food) {
+        (*info_map_func)(NDI_UNIQUE | NDI_NAVY,tmp->map,tmp->msg);
+        if (tmp->stats.food) tmp->last_eat++;
+      }
+      break;
     case ALTAR:
 	tmp->value = 1;
 	SET_ANIMATION(tmp, tmp->value);
