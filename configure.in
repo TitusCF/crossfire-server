@@ -81,6 +81,16 @@ fi;
 
 AC_PATH_PROGS(BOURNE_SHELL, sh ksh bash)
 
+dnl The follow two are really just a way to specify where the xpm/gtk information
+dnl resides if not with the normal X11 stuff (ie, in /opt/X11 and not /usr
+dnl /usr/X11
+
+AC_ARG_WITH(ldflags, [  --with-ldflags=dir      provide addition linker directives to find libraries ],
+		EXTRA_LIB="$withval")
+
+AC_ARG_WITH(includes, [  --with-includes=dir     provide different compiler options to find headers with ],
+		EXTRA_INC="$withval")
+
 dnl nsl, socket may be needed for the X-windowing system, so check
 dnl for them before before checking for X.
 
@@ -90,6 +100,9 @@ AC_CHECK_LIB(socket, main)
 dnl Checks for libraries.
 dnl Start of X11 libraries
 AC_PATH_XTRA
+
+CPPFLAGS="$CPPFLAGS $EXTRA_INC"
+LDFLAGS="$LDFLAGS $EXTRA_LIB"
 
 dnl Some of these checks are probably excessive.  Unfortunately, on
 dnl some systems, to link in Xaw, Xt you need SM, which needs ICE.
@@ -111,20 +124,20 @@ AC_CHECK_LIB(Xmu, main,  AC_DEFINE(HAVE_LIBXMU) X11LIBS="$X11LIBS -lXmu", ,$X11L
 
 AC_CHECK_LIB(Xaw, main, AC_DEFINE(HAVE_LIBXAW) X11LIBS="-lXaw $X11LIBS", , $X11LIBS)
 
-AC_CHECK_LIB(Xpm, main,  AC_DEFINE(HAVE_LIBXPM) X11LIBS="$X11LIBS -lXpm", , -lX11 )
-
-AC_CHECK_LIB(png, main,  AC_DEFINE(HAVE_LIBPNG) X11LIBS="$X11LIBS -lpng", , -lX11 )
-
 LDFLAGS="$OLD_LD_FLAGS"
 X11LIBS="$X_LIBS $X11LIBS"
+
+AC_CHECK_LIB(Xpm, main,  AC_DEFINE(HAVE_LIBXPM) X11LIBS="$X11LIBS -lXpm", , -lX11 )
+
+AC_CHECK_LIB(m, main)
+
+AC_CHECK_LIB(png, main,  AC_DEFINE(HAVE_LIBPNG) X11LIBS="$X11LIBS -lpng", , -lX11 )
 
 dnl Misc libraries.
 AC_CHECK_LIB(crypt, main)
 AC_CHECK_LIB(des, des_crypt)
 
 AC_CHECK_LIB(dmalloc, main)
-
-AC_CHECK_LIB(m, main)
 
 dnl Checks for header files.
 AC_HEADER_DIRENT
