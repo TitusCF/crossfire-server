@@ -18,6 +18,14 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+server/spell_util.c: Fix move_golem so that multi square avatars (golems)
+don't hit themselves.  Remove will_hit_self function (only used in
+move_golem), since it did not work.  Change structure & indenting of
+move_golem function so it isn't quite so nested - functionality
+remains the same.  When we do find something to kill in move_golem,
+call attack_ob against it instead of hit_map - hit_map is not save
+for multi object hitters.  MSW 4/24/2000
+
 Key usage change:  Add new command 'usekeys' that specify how keys
 are searched for. The three options are inventory, keyrings, and containers.
 These options apply to both standard keys and special keys.  If the player

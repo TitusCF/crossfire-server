@@ -1286,81 +1286,95 @@ void move_bolt(object *op) {
   }
 }
 
+
 /* updated this to allow more than the golem 'head' to attack */
+/* op is the golem to be moved. */
+
 void move_golem(object *op) {
-  int made_attack=0;
-  object *tmp;
-  if(QUERY_FLAG(op, FLAG_MONSTER))
-    return; /* Has already been moved */
-  if(get_owner(op)==NULL) {
-    LOG(llevDebug,"Golem without owner destructed.\n");
-    remove_ob(op);
-    free_object(op);
-    return;
-  }
-  if(--op->stats.hp<0) {
-    char buf[MAX_BUF];
-    if(op->exp_obj && op->exp_obj->stats.Wis) {
-      if(op->inv) 
-	sprintf(buf,"Your staff stops slithering around and lies still.");
-      else
-	sprintf(buf,"Your %s departed this plane.",op->name);
-    } else if (!strncmp(op->name,"animated ",9)) {
-      sprintf(buf,"Your %s falls to the ground.",op->name);
-    } else {
-      sprintf(buf,"Your %s dissolved.",op->name);
+    int made_attack=0;
+    object *tmp;
+
+    if(QUERY_FLAG(op, FLAG_MONSTER))
+	return; /* Has already been moved */
+
+    if(get_owner(op)==NULL) {
+	LOG(llevDebug,"Golem without owner destructed.\n");
+	remove_ob(op);
+	free_object(op);
+	return;
     }
-    new_draw_info(NDI_UNIQUE, 0,op->owner,buf);
-    remove_friendly_object(op);
-    op->owner->contr->golem=NULL;
-    remove_ob(op);
-    free_object(op);
-    return;
-  }
-
-  /* Do golem attacks/movement for single & multisq golems. 
-   * Assuming here that op is the 'head' object. Pass only op to 
-   * move_ob (makes recursive calls to other parts) 
-   */
-  if(!move_ob(op,op->direction))
-    for(tmp=op;tmp;tmp=tmp->more) { 
-      int x=tmp->x+freearr_x[op->direction],y=tmp->y+freearr_y[op->direction];
-      if(!out_of_map(op->map,x,y)&&!will_hit_self(op,x,y)) {
-        object *victim;
-        for(victim=get_map_ob(op->map,x,y);victim;victim=victim->above) 
-             if(QUERY_FLAG(victim,FLAG_ALIVE)) break;
-
-        if(victim) {
-	  /* for golems with race fields, we don't attack
-	   * aligned races */
-	  if(victim->race&&op->race&&strstr(op->race,victim->race)) {
-	    if(op->owner) new_draw_info_format(NDI_UNIQUE, 0,op->owner,
-		    "%s avoids damaging %s.",op->name,victim->name);
-	  } else if (op->exp_obj && op->exp_obj->stats.Wis
-		     && victim == op->owner) {
-	    if(op->owner) new_draw_info_format(NDI_UNIQUE, 0,op->owner,
-		    "%s avoids damaging you.",op->name);
-	  } else {
-            hit_map(tmp,op->direction,op->attacktype);
-            made_attack=1;
-	  }
+    /* It would be nice to have a cleaner way of what message to print
+     * when the golem expires than these hard coded entries.
+     */
+    if(--op->stats.hp<0) {
+	char buf[MAX_BUF];
+	if(op->exp_obj && op->exp_obj->stats.Wis) {
+	    if(op->inv) 
+		strcpy(buf,"Your staff stops slithering around and lies still.");
+	    else
+		sprintf(buf,"Your %s departed this plane.",op->name);
+	} else if (!strncmp(op->name,"animated ",9)) {
+	    sprintf(buf,"Your %s falls to the ground.",op->name);
+	} else {
+	    sprintf(buf,"Your %s dissolved.",op->name);
 	}
-      }
+	new_draw_info(NDI_UNIQUE, 0,op->owner,buf);
+	remove_friendly_object(op);
+	op->owner->contr->golem=NULL;
+	remove_ob(op);
+	free_object(op);
+	return;
     }
-  if(made_attack) update_object(op);
-}
 
-/* check to see if the monster will hit itself at
- * location x,y 
- */
-int will_hit_self(object *head, int x, int y) {
-  object *tmp;
+    /* Do golem attacks/movement for single & multisq golems. 
+     * Assuming here that op is the 'head' object. Pass only op to 
+     * move_ob (makes recursive calls to other parts) 
+     * move_ob returns 0 if the creature was not able to move.
+     */
+    if(move_ob(op,op->direction)) return;
 
-  for(tmp=head;tmp;tmp=tmp->more) { 
-    int cx=tmp->arch->clone.x, cy=tmp->arch->clone.y;
-    if((cx+head->x==x)&&(cy+head->y==y)) return 1; 
-  }
-  return 0;
+    for(tmp=op;tmp;tmp=tmp->more) { 
+	int x=tmp->x+freearr_x[op->direction],y=tmp->y+freearr_y[op->direction];
+	object *victim;
+
+	if (out_of_map(op->map,x,y)) continue;
+
+	for(victim=get_map_ob(op->map,x,y);victim;victim=victim->above) 
+	    if(QUERY_FLAG(victim,FLAG_ALIVE)) break;
+
+	/* We used to call will_hit_self to make sure we don't
+	 * hit ourselves, but that didn't work, and I don't really
+	 * know if that was more efficient anyways than this.
+	 * This at least works.  Note that victim->head can be NULL,
+	 * but since we are not trying to dereferance that pointer,
+	 * that isn't a problem.
+	 */
+	if(victim && victim!=op && victim->head!=op) {
+
+	    /* for golems with race fields, we don't attack
+	     * aligned races */
+
+	    if(victim->race&&op->race&&strstr(op->race,victim->race)) {
+		if(op->owner) new_draw_info_format(NDI_UNIQUE, 0,op->owner,
+			"%s avoids damaging %s.",op->name,victim->name);
+	    } else if (op->exp_obj && op->exp_obj->stats.Wis
+		       && victim == op->owner) {
+		if(op->owner) new_draw_info_format(NDI_UNIQUE, 0,op->owner,
+				"%s avoids damaging you.",op->name);
+	    } else {
+		/* I think using hit_map here is just wrong -
+		 * we are not attacking a space - we have a specific
+		 * creature we are attacking, attack_ob seems more
+		 * appropriate.
+		 */
+		
+		attack_ob(victim,op);
+/*		hit_map(tmp,op->direction,op->attacktype);*/
+		made_attack=1;
+	    }
+	} /* If victim */
+    }
+    if(made_attack) update_object(op);
 }
 
 void control_golem(object *op,int dir) {
