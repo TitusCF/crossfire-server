@@ -28,24 +28,24 @@
 
 #include <global.h>
 #include <random_map.h>
+#include <rproto.h>
 
 /*  Put in the walls and autojoin them.  */
 
-object *pick_joined_wall(object *the_wall,char **layout,int i,int j);
 
 /* given a layout and a coordinate, tell me which squares up/down/right/left
 	are occupied. */
 
-int surround_flag(char **layout,int i,int j){
+int surround_flag(char **layout,int i,int j,RMParms *RP){
   /* 1 = wall to left,
 	  2 = wall to right,
 	  4 = wall above
 	  8 = wall below */
   int surround_index = 0;
   if((i > 0) && layout[i-1][j]!=0) surround_index |=1;
-  if((i < Xsize-1) && layout[i+1][j]!=0) surround_index |=2;
+  if((i < RP->Xsize-1) && layout[i+1][j]!=0) surround_index |=2;
   if((j > 0) && layout[i][j-1]!=0) surround_index |=4;
-  if((j < Ysize-1) && layout[i][j+1]!=0) surround_index |=8;
+  if((j < RP->Ysize-1) && layout[i][j+1]!=0) surround_index |=8;
   return surround_index;
 }
 
@@ -53,22 +53,22 @@ int surround_flag(char **layout,int i,int j){
 /* like surround_flag, but only walls count.
 	*/
 
-int surround_flag2(char **layout,int i,int j){
+int surround_flag2(char **layout,int i,int j,RMParms *RP){
   /* 1 = wall to left,
 	  2 = wall to right,
 	  4 = wall above
 	  8 = wall below */
   int surround_index = 0;
   if((i > 0) && layout[i-1][j]=='#') surround_index |=1;
-  if((i < Xsize-1) && layout[i+1][j]=='#') surround_index |=2;
+  if((i < RP->Xsize-1) && layout[i+1][j]=='#') surround_index |=2;
   if((j > 0) && layout[i][j-1]=='#') surround_index |=4;
-  if((j < Ysize-1) && layout[i][j+1]=='#') surround_index |=8;
+  if((j < RP->Ysize-1) && layout[i][j+1]=='#') surround_index |=8;
   return surround_index;
 }
 
 
 /* like surround_flag, except it checks  a map, not a layout. */
-int surround_flag3(mapstruct *map,int i,int j){
+int surround_flag3(mapstruct *map,int i,int j,RMParms *RP){
   /* 1 =  blocked to left,
 	  2 = blocked to right,
 	  4 = blocked above
@@ -76,16 +76,16 @@ int surround_flag3(mapstruct *map,int i,int j){
   int surround_index = 0;
 
   if((i > 0) && blocked(map,i-1,j)) surround_index |=1;
-  if((i < Xsize-1) && blocked(map,i+1,j)) surround_index |=2;
+  if((i < RP->Xsize-1) && blocked(map,i+1,j)) surround_index |=2;
   if((j > 0) && blocked(map,i,j-1)) surround_index |=4;
-  if((j < Ysize-1) && blocked(map,i,j+1)) surround_index |=8;
+  if((j < RP->Ysize-1) && blocked(map,i,j+1)) surround_index |=8;
 
   return surround_index;
 }
 
 /* like surround_flag2, except it checks  a map, not a layout. */
 
-int surround_flag4(mapstruct *map,int i,int j){
+int surround_flag4(mapstruct *map,int i,int j,RMParms *RP){
   /* 1 =  blocked to left,
 	  2 = blocked to right,
 	  4 = blocked above
@@ -93,9 +93,9 @@ int surround_flag4(mapstruct *map,int i,int j){
   int surround_index = 0;
 
   if((i > 0) && wall_blocked(map,i-1,j)) surround_index |=1;
-  if((i < Xsize-1) && wall_blocked(map,i+1,j)) surround_index |=2;
+  if((i < RP->Xsize-1) && wall_blocked(map,i+1,j)) surround_index |=2;
   if((j > 0) && wall_blocked(map,i,j-1)) surround_index |=4;
-  if((j < Ysize-1) && wall_blocked(map,i,j+1)) surround_index |=8;
+  if((j < RP->Ysize-1) && wall_blocked(map,i,j+1)) surround_index |=8;
 
   return surround_index;
 }
@@ -103,7 +103,7 @@ int surround_flag4(mapstruct *map,int i,int j){
 /* takes a map and a layout, and puts walls in the map (picked from
 	w_style) at '#' marks. */
 
-void make_map_walls(mapstruct *map,char **layout, char *w_style) {
+void make_map_walls(mapstruct *map,char **layout, char *w_style,RMParms *RP) {
   char styledirname[256];
   char stylefilepath[256];
   mapstruct *style_map=0;
@@ -122,13 +122,13 @@ void make_map_walls(mapstruct *map,char **layout, char *w_style) {
 	 int i,j;
 	char *cp;
 
-	 sprintf(wall_name,"%s",the_wall->arch->name);
-	 if ((cp=strchr(wall_name,'_'))!=NULL) *cp=0;
-	 printf("the wall name is %s\n",wall_name);
-	 for(i=0;i<Xsize;i++)
-		for(j=0;j<Ysize;j++) {
+	 sprintf(RP->wall_name,"%s",the_wall->arch->name);
+	 if ((cp=strchr(RP->wall_name,'_'))!=NULL) *cp=0;
+	 printf("the wall name is %s\n",RP->wall_name);
+	 for(i=0;i<RP->Xsize;i++)
+		for(j=0;j<RP->Ysize;j++) {
 		  if(layout[i][j]=='#') {
-			 object *thiswall=pick_joined_wall(the_wall,layout,i,j);
+			 object *thiswall=pick_joined_wall(the_wall,layout,i,j,RP);
 			 thiswall->x = i; thiswall->y = j;
 			 SET_FLAG(thiswall,FLAG_NO_PASS); /* make SURE it's a wall */
 			 wall(map,i,j);
@@ -144,7 +144,7 @@ void make_map_walls(mapstruct *map,char **layout, char *w_style) {
 /* picks the right wall type for this square, to make it look nice,
 	and have everything nicely joined.  It uses the layout.  */
 
-object *pick_joined_wall(object *the_wall,char **layout,int i,int j) {
+object *pick_joined_wall(object *the_wall,char **layout,int i,int j,RMParms *RP) {
   /* 1 = wall to left,
 	  2 = wall to right,
 	  4 = wall above
@@ -170,7 +170,7 @@ object *pick_joined_wall(object *the_wall,char **layout,int i,int j) {
 	 }
   }
 
-  surround_index = surround_flag2(layout,i,j);
+  surround_index = surround_flag2(layout,i,j,RP);
 
   switch(surround_index) {
   case 0:
@@ -240,7 +240,7 @@ will only return the wall which would belong there, and doesn't
 remove anything.  It depends on the
 global, previously-set variable, "wall_name"  */
 
-object * retrofit_joined_wall(mapstruct *the_map,int i,int j,int insert_flag) {
+object * retrofit_joined_wall(mapstruct *the_map,int i,int j,int insert_flag,RMParms *RP) {
   /* 1 = wall to left,
 	  2 = wall to right,
 	  4 = wall above
@@ -268,64 +268,64 @@ object * retrofit_joined_wall(mapstruct *the_map,int i,int j,int insert_flag) {
 
   /* canonicalize the wall name */
   for(l=0;l<64;l++) {
-	 if(wall_name[l]=='_') {
-		wall_name[l] = 0;
+	 if(RP->wall_name[l]=='_') {
+		RP->wall_name[l] = 0;
 		break;
 	 }
   }
 
-  surround_index = surround_flag4(the_map,i,j);
+  surround_index = surround_flag4(the_map,i,j,RP);
   switch(surround_index) {
   case 0:
-	 strcat(wall_name,"_0");
+	 strcat(RP->wall_name,"_0");
 	 break;
   case 1:
-	 strcat(wall_name,"_1_3");
+	 strcat(RP->wall_name,"_1_3");
 	 break;
   case 2:
-	 strcat(wall_name,"_1_4");
+	 strcat(RP->wall_name,"_1_4");
 	 break;
   case 3:
-	 strcat(wall_name,"_2_1_2");
+	 strcat(RP->wall_name,"_2_1_2");
 	 break;
   case 4:
-	 strcat(wall_name,"_1_2");
+	 strcat(RP->wall_name,"_1_2");
 	 break;
   case 5:
-	 strcat(wall_name,"_2_2_4");
+	 strcat(RP->wall_name,"_2_2_4");
 	 break;
   case 6:
-	 strcat(wall_name,"_2_2_1");
+	 strcat(RP->wall_name,"_2_2_1");
 	 break;
   case 7:
-	 strcat(wall_name,"_3_1");
+	 strcat(RP->wall_name,"_3_1");
 	 break;
   case 8:
-	 strcat(wall_name,"_1_1");
+	 strcat(RP->wall_name,"_1_1");
 	 break;
   case 9:
-	 strcat(wall_name,"_2_2_3");
+	 strcat(RP->wall_name,"_2_2_3");
 	 break;
   case 10:
-	 strcat(wall_name,"_2_2_2");
+	 strcat(RP->wall_name,"_2_2_2");
 	 break;
   case 11:
-	 strcat(wall_name,"_3_3");
+	 strcat(RP->wall_name,"_3_3");
 	 break;
   case 12:
-	 strcat(wall_name,"_2_1_1");
+	 strcat(RP->wall_name,"_2_1_1");
 	 break;
   case 13:
-	 strcat(wall_name,"_3_4");
+	 strcat(RP->wall_name,"_3_4");
 	 break;
   case 14:
-	 strcat(wall_name,"_3_2");
+	 strcat(RP->wall_name,"_3_2");
 	 break;
   case 15:
-	 strcat(wall_name,"_4");
+	 strcat(RP->wall_name,"_4");
 	 break;
   }
-  wall_arch = find_archetype(wall_name);
+  wall_arch = find_archetype(RP->wall_name);
   if(wall_arch!=NULL) {
     new_wall=arch_to_object(wall_arch);
     new_wall->x = i;

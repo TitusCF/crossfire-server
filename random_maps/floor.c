@@ -28,10 +28,11 @@
 
 #include <global.h>
 #include <random_map.h>
+#include <rproto.h>
 
 /*  make a map and layout the floor.  */
 
-mapstruct *make_map_floor(char **layout, char *floorstyle) {
+mapstruct *make_map_floor(char **layout, char *floorstyle,RMParms *RP) {
   char styledirname[256];
   char stylefilepath[256];
   mapstruct *style_map=0;
@@ -39,7 +40,7 @@ mapstruct *make_map_floor(char **layout, char *floorstyle) {
   mapstruct *newMap =0; /* (mapstruct *) calloc(sizeof(mapstruct),1); */
   
   /* allocate the map */
-  newMap = get_empty_map(Xsize,Ysize);
+  newMap = get_empty_map(RP->Xsize,RP->Ysize);
 
   /* get the style map */
   sprintf(styledirname,"%s","/styles/floorstyles");
@@ -50,8 +51,8 @@ mapstruct *make_map_floor(char **layout, char *floorstyle) {
   /* fill up the map with the given floor style */
   if((the_floor=pick_random_object(style_map))!=NULL) {
 	 int i,j;
-	 for(i=0;i<Xsize;i++)
-		for(j=0;j<Ysize;j++) {
+	 for(i=0;i<RP->Xsize;i++)
+		for(j=0;j<RP->Ysize;j++) {
 		  object *thisfloor=arch_to_object(the_floor->arch);
 		  thisfloor->x = i; thisfloor->y = j;
 		  insert_ob_in_map_simple(thisfloor,newMap);

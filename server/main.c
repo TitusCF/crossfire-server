@@ -46,6 +46,7 @@
 #include <time.h>
 #endif
 
+#include <../random_maps/random_map.h>
 #include <../random_maps/rproto.h>
 
 static char days[7][4] = {

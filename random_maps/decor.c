@@ -28,6 +28,7 @@
 
 #include <global.h>
 #include <random_map.h>
+#include <rproto.h>
 
 #define NR_DECOR_OPTIONS 1
 
@@ -42,7 +43,7 @@ int obj_count_in_map(mapstruct *map,int x,int y) {
 }
 /* put the decor into the map.  Right now, it's very primitive. */
 
-void put_decor(mapstruct *map,char **maze,char *decorstyle,int decor_option) {
+void put_decor(mapstruct *map,char **maze,char *decorstyle,int decor_option,RMParms *RP) {
   mapstruct *decor_map;
   char style_name[256];
 
@@ -58,13 +59,13 @@ void put_decor(mapstruct *map,char **maze,char *decorstyle,int decor_option) {
   case 0: break;
   case 1:  /* random placement of decor objects. */
     {
-      int number_to_place = RANDOM() % ( (Xsize *Ysize) / 5);
+      int number_to_place = RANDOM() % ( (RP->Xsize *RP->Ysize) / 5);
       int failures=0;
       object *new_decor_object;
       while(failures < 100 && number_to_place  > 0) {
 		  int x,y;
-		  x = RANDOM() % (Xsize-2) +1;
-		  y = RANDOM() % (Ysize-2) +1;
+		  x = RANDOM() % (RP->Xsize-2) +1;
+		  y = RANDOM() % (RP->Ysize-2) +1;
 		  if(maze[x][y]==0 && obj_count_in_map(map,x,y)<2) /* empty */
 			 { 
 				object *this_object;
@@ -84,7 +85,7 @@ void put_decor(mapstruct *map,char **maze,char *decorstyle,int decor_option) {
 	 default:  /* place decor objects everywhere: tile the map. */
 		{
 		  int i,j;
-		  for(i=1;i<Xsize-1;i++) for(j=1;j<Ysize-1;j++) {
+		  for(i=1;i<RP->Xsize-1;i++) for(j=1;j<RP->Ysize-1;j++) {
 			 if(maze[i][j]==0) {
 				object *new_decor_object, *this_object;
 				

@@ -31,6 +31,7 @@
 
 #include <global.h>
 #include <random_map.h>
+#include <rproto.h>
 
 /* some defines for various options which can be set. */
 
@@ -68,7 +69,7 @@ treasure style    (may be empty or NULL, or "none" to cause no treasure.)
 treasureoptions   (may be 0 for random choices or positive)
 */
 
-void place_treasure(mapstruct *map,char **layout, char *treasure_style,int treasureoptions) {
+void place_treasure(mapstruct *map,char **layout, char *treasure_style,int treasureoptions,RMParms *RP) {
   char styledirname[256];
   char stylefilepath[256];
   mapstruct *style_map=0;
@@ -85,10 +86,10 @@ void place_treasure(mapstruct *map,char **layout, char *treasure_style,int treas
 
   /* pick the number of treasures */
   if(treasureoptions & SPARSE)
-    num_treasures = BC_RANDOM(total_map_hp/600+difficulty/2+1);
+    num_treasures = BC_RANDOM(RP->total_map_hp/600+RP->difficulty/2+1);
   else if(treasureoptions & RICH)
-    num_treasures = BC_RANDOM(total_map_hp/150+2*difficulty+1);
-  else num_treasures = BC_RANDOM(total_map_hp/300+difficulty+1);  
+    num_treasures = BC_RANDOM(RP->total_map_hp/150+2*RP->difficulty+1);
+  else num_treasures = BC_RANDOM(RP->total_map_hp/300+RP->difficulty+1);  
     
   if(num_treasures <= 0 ) return;
 
@@ -101,22 +102,22 @@ void place_treasure(mapstruct *map,char **layout, char *treasure_style,int treas
   if(treasureoptions & CONCENTRATED) {
 
 	 /* map_layout_style global, and is previously set */
-    switch(map_layout_style) {
+    switch(RP->map_layout_style) {
     case ONION_LAYOUT:
       {
 		  int i,j;
 		  /* search the onion for C's or '>', and put treasure there. */
-		  for(i=0;i<Xsize;i++) {
-			 for(j=0;j<Xsize;j++) {
+		  for(i=0;i<RP->Xsize;i++) {
+			 for(j=0;j<RP->Xsize;j++) {
 				if(layout[i][j]=='C' || layout[i][j]=='>') {
-				  int tdiv = symmetry_used;
+				  int tdiv = RP->symmetry_used;
 				  object **doorlist;
 				  object *chest;
 				  if(tdiv==3) tdiv = 2; /* this symmetry uses a divisor of 2*/
-				  chest=place_chest(treasureoptions,i,j,map,style_map,num_treasures/tdiv);
+				  chest=place_chest(treasureoptions,i,j,map,style_map,num_treasures/tdiv,RP);
 				  if(treasureoptions & (DOORED|HIDDEN)) {
-					 doorlist=find_doors_in_room(map,i,j);
-					 lock_and_hide_doors(doorlist,map,treasureoptions);
+					 doorlist=find_doors_in_room(map,i,j,RP);
+					 lock_and_hide_doors(doorlist,map,treasureoptions,RP);
 					 free(doorlist);
 				  }
 				}
@@ -131,17 +132,17 @@ void place_treasure(mapstruct *map,char **layout, char *treasure_style,int treas
 		  object **doorlist;
 		  i=j=-1;tries=0;
 		  while(i==-1&&tries<100) {
-			 i = RANDOM()%(Xsize-2)+1;
-			 j = RANDOM()%(Ysize-2)+1;
-			 find_enclosed_spot(map,&i,&j);
+			 i = RANDOM()%(RP->Xsize-2)+1;
+			 j = RANDOM()%(RP->Ysize-2)+1;
+			 find_enclosed_spot(map,&i,&j,RP);
 			 if(wall_blocked(map,i,j)) i=-1;
 			 tries++;
 		  }
-		  chest=place_chest(treasureoptions,i,j,map,style_map,num_treasures);
+		  chest=place_chest(treasureoptions,i,j,map,style_map,num_treasures,RP);
 		  i = chest->x; j = chest->y;
 		  if(treasureoptions &( DOORED|HIDDEN)) {
 			 doorlist=surround_by_doors(map,i,j,treasureoptions);
-			 lock_and_hide_doors(doorlist,map,treasureoptions);
+			 lock_and_hide_doors(doorlist,map,treasureoptions,RP);
 			 free(doorlist);
 		  }
       }
@@ -150,9 +151,9 @@ void place_treasure(mapstruct *map,char **layout, char *treasure_style,int treas
   else { /* DIFFUSE treasure layout */
     int ti,i,j;
     for(ti=0;ti<num_treasures;ti++) {
-      i = RANDOM()%(Xsize-2)+1;
-      j = RANDOM()%(Ysize-2)+1;
-      place_chest(treasureoptions,i,j,map,style_map,1);
+      i = RANDOM()%(RP->Xsize-2)+1;
+      j = RANDOM()%(RP->Ysize-2)+1;
+      place_chest(treasureoptions,i,j,map,style_map,1,RP);
     }
   }
 }
@@ -163,7 +164,7 @@ void place_treasure(mapstruct *map,char **layout, char *treasure_style,int treas
 	determined (may be null, or may be a treasure list from lib/treasures,
 	if the global variable "treasurestyle" is set to that treasure list's name */
 
-object * place_chest(int treasureoptions,int x, int y,mapstruct *map, mapstruct *style_map,int n_treasures) {
+object * place_chest(int treasureoptions,int x, int y,mapstruct *map, mapstruct *style_map,int n_treasures,RMParms *RP) {
   object *the_chest;
   int i;
 
@@ -179,7 +180,7 @@ object * place_chest(int treasureoptions,int x, int y,mapstruct *map, mapstruct 
   if(0) {  /* don't use treasure style maps for now!  */
     int ti;
     /* if treasurestyle lists a treasure list, use it. */
-    treasurelist *tlist=find_treasurelist(treasurestyle);
+    treasurelist *tlist=find_treasurelist(RP->treasurestyle);
     if(tlist!=NULL)
       for(ti=0;ti<n_treasures;ti++) {  /* use the treasure list */
 		  object *new_treasure=pick_random_object(style_map);
@@ -202,8 +203,8 @@ object * place_chest(int treasureoptions,int x, int y,mapstruct *map, mapstruct 
 	 object *the_trap;
 	 if(trap_map) {
 		the_trap= pick_random_object(trap_map);
-		the_trap->stats.Cha = 10+difficulty;
-		the_trap->level = BC_RANDOM((3*difficulty)/2);
+		the_trap->stats.Cha = 10+RP->difficulty;
+		the_trap->level = BC_RANDOM((3*RP->difficulty)/2);
 		if(the_trap) {
 		  object *new_trap;
 		  new_trap = arch_to_object(the_trap->arch);
@@ -223,7 +224,7 @@ object * place_chest(int treasureoptions,int x, int y,mapstruct *map, mapstruct 
     char keybuf[256];
     sprintf(keybuf,"%d",RANDOM());
     the_chest->slaying = add_string(keybuf);
-    keyplace(map,x,y,keybuf,PASS_DOORS,1);
+    keyplace(map,x,y,keybuf,PASS_DOORS,1,RP);
   }
 
   /* actually place the chest. */
@@ -236,14 +237,14 @@ object * place_chest(int treasureoptions,int x, int y,mapstruct *map, mapstruct 
 
 /* finds the closest monster and returns him, regardless of doors
 	or walls */
-object *find_closest_monster(mapstruct *map,int x,int y) {
+object *find_closest_monster(mapstruct *map,int x,int y,RMParms *RP) {
   int i;
   for(i=0;i<SIZEOFFREE;i++) {
     int lx,ly;
     lx=x+freearr_x[i];
     ly=y+freearr_y[i];
 	 /* boundscheck */
-    if(lx > 0 && ly > 0 && lx < Xsize && ly < Ysize)
+    if(lx > 0 && ly > 0 && lx < RP->Xsize && ly < RP->Ysize)
 		/* don't bother searching this square unless the map says life exists.*/
       if(get_map(map,lx,ly)->flags & P_IS_ALIVE) {
 		  object *the_monster=get_map_ob(map,lx,ly);
@@ -268,7 +269,7 @@ object *find_closest_monster(mapstruct *map,int x,int y) {
 	sure a key is placed on both sides of the door.
 */
 	
-void keyplace(mapstruct *map,int x,int y,char *keycode,int door_flag,int n_keys) {
+void keyplace(mapstruct *map,int x,int y,char *keycode,int door_flag,int n_keys,RMParms *RP) {
   int i,j;
   int kx,ky;
   object *the_keymaster; /* the monster that gets the key. */
@@ -283,10 +284,10 @@ void keyplace(mapstruct *map,int x,int y,char *keycode,int door_flag,int n_keys)
     int tries=0;
     the_keymaster=NULL;
     while(tries<5&&the_keymaster==NULL) {
-      i = (RANDOM()%(Xsize-2))+1;
-      j = (RANDOM()%(Ysize-2))+1;
+      i = (RANDOM()%(RP->Xsize-2))+1;
+      j = (RANDOM()%(RP->Ysize-2))+1;
 		tries++;
-      the_keymaster=find_closest_monster(map,i,j);
+      the_keymaster=find_closest_monster(map,i,j,RP);
     }
     /* if we don't find a good keymaster, drop the key on the ground. */
     if(the_keymaster==NULL) {
@@ -300,16 +301,16 @@ void keyplace(mapstruct *map,int x,int y,char *keycode,int door_flag,int n_keys)
        NO_PASS_DOORS is set. */
     if(n_keys==1) {
       if(wall_blocked(map,x,y)) return;
-      the_keymaster=find_monster_in_room(map,x,y);
+      the_keymaster=find_monster_in_room(map,x,y,RP);
       if(the_keymaster==NULL)  /* if fail, find a spot to drop the key. */
-		  find_spot_in_room(map,x,y,&kx,&ky);
+		  find_spot_in_room(map,x,y,&kx,&ky,RP);
     }
     else {
       /* I'm lazy, so just try to place in all 4 directions. */
-      keyplace(map,x+1,y,keycode,NO_PASS_DOORS,1);
-      keyplace(map,x,y+1,keycode,NO_PASS_DOORS,1);
-      keyplace(map,x-1,y,keycode,NO_PASS_DOORS,1);
-      keyplace(map,x,y-1,keycode,NO_PASS_DOORS,1);
+      keyplace(map,x+1,y,keycode,NO_PASS_DOORS,1,RP);
+      keyplace(map,x,y+1,keycode,NO_PASS_DOORS,1,RP);
+      keyplace(map,x-1,y,keycode,NO_PASS_DOORS,1,RP);
+      keyplace(map,x,y-1,keycode,NO_PASS_DOORS,1,RP);
       return;
     }    
   }
@@ -333,13 +334,13 @@ object *theMonsterToFind;
 /* a recursive routine which will return a monster, eventually,if there is one.
    it does a check-off on the layout, converting 0's to 1's */  
 
-object *find_monster_in_room_recursive(char **layout, mapstruct *map, int x, int y) {
+object *find_monster_in_room_recursive(char **layout, mapstruct *map, int x, int y, RMParms *RP) {
   int i,j;
   /* if we've found a monster already, leave */
   if(theMonsterToFind!=NULL) return theMonsterToFind;
 
   /* bounds check x and y */
-  if(!(x >= 0 && y >= 0 && x < Xsize && y < Ysize)) return theMonsterToFind;
+  if(!(x >= 0 && y >= 0 && x < RP->Xsize && y < RP->Ysize)) return theMonsterToFind;
 
   /* if the square is blocked or searched already, leave */
   if(layout[x][y]!=0) return theMonsterToFind; /* might be NULL, that's fine.*/
@@ -359,7 +360,7 @@ object *find_monster_in_room_recursive(char **layout, mapstruct *map, int x, int
   
   /* now search all the 8 squares around recursively for a monster,in random order */
   for(i=RANDOM()%8,j=0; j<8 && theMonsterToFind==NULL;i++,j++) {
-    theMonsterToFind = find_monster_in_room_recursive(layout,map,x+freearr_x[i%8+1],y+freearr_y[i%8+1]);
+    theMonsterToFind = find_monster_in_room_recursive(layout,map,x+freearr_x[i%8+1],y+freearr_y[i%8+1],RP);
     if(theMonsterToFind!=NULL) return theMonsterToFind;
   }
   return theMonsterToFind;
@@ -369,22 +370,22 @@ object *find_monster_in_room_recursive(char **layout, mapstruct *map, int x, int
 /* sets up some data structures:  the _recursive form does the
    real work.  */
 
-object *find_monster_in_room(mapstruct *map,int x,int y) {
+object *find_monster_in_room(mapstruct *map,int x,int y,RMParms *RP) {
   char **layout2;
   int i,j;
   theMonsterToFind=0;
-  layout2 = (char **) calloc(sizeof(char *),Xsize);
+  layout2 = (char **) calloc(sizeof(char *),RP->Xsize);
   /* allocate and copy the layout, converting C to 0. */
-  for(i=0;i<Xsize;i++) {
-    layout2[i]=(char *)calloc(sizeof(char),Ysize);
-    for(j=0;j<Ysize;j++) {
+  for(i=0;i<RP->Xsize;i++) {
+    layout2[i]=(char *)calloc(sizeof(char),RP->Ysize);
+    for(j=0;j<RP->Ysize;j++) {
       if(wall_blocked(map,i,j)) layout2[i][j] = '#';
     }
   }
-  theMonsterToFind = find_monster_in_room_recursive(layout2,map,x,y);
+  theMonsterToFind = find_monster_in_room_recursive(layout2,map,x,y,RP);
   
   /* deallocate the temp. layout */
-  for(i=0;i<Xsize;i++) {
+  for(i=0;i<RP->Xsize;i++) {
     free(layout2[i]);
   }
   free(layout2);
@@ -404,11 +405,11 @@ int number_of_free_spots_in_room;
 a datastructure of free points is set up, and a position chosen from
 that datastructure. */
 
-void find_spot_in_room_recursive(char **layout,int x,int y) {
+void find_spot_in_room_recursive(char **layout,int x,int y,RMParms *RP) {
   int i,j;
 
   /* bounds check x and y */
-  if(!(x >= 0 && y >= 0 && x < Xsize && y < Ysize)) return;
+  if(!(x >= 0 && y >= 0 && x < RP->Xsize && y < RP->Ysize)) return;
 
   /* if the square is blocked or searched already, leave */
   if(layout[x][y]!=0) return;
@@ -422,30 +423,30 @@ void find_spot_in_room_recursive(char **layout,int x,int y) {
   number_of_free_spots_in_room++;
   /* now search all the 8 squares around recursively for free spots,in random order */
   for(i=RANDOM()%8,j=0; j<8 && theMonsterToFind==NULL;i++,j++) {
-    find_spot_in_room_recursive(layout,x+freearr_x[i%8+1],y+freearr_y[i%8+1]);
+    find_spot_in_room_recursive(layout,x+freearr_x[i%8+1],y+freearr_y[i%8+1],RP);
   }
 
 }
 
 /* find a random non-blocked spot in this room to drop a key. */
-void find_spot_in_room(mapstruct *map,int x,int y,int *kx,int *ky) {
+void find_spot_in_room(mapstruct *map,int x,int y,int *kx,int *ky,RMParms *RP) {
   char **layout2;
   int i,j;
   number_of_free_spots_in_room=0;
-  room_free_spots_x = (int *)calloc(sizeof(int),Xsize * Ysize);
-  room_free_spots_y = (int *)calloc(sizeof(int),Xsize * Ysize);
+  room_free_spots_x = (int *)calloc(sizeof(int),RP->Xsize * RP->Ysize);
+  room_free_spots_y = (int *)calloc(sizeof(int),RP->Xsize * RP->Ysize);
 
-  layout2 = (char **) calloc(sizeof(char *),Xsize);
+  layout2 = (char **) calloc(sizeof(char *),RP->Xsize);
   /* allocate and copy the layout, converting C to 0. */
-  for(i=0;i<Xsize;i++) {
-    layout2[i]=(char *)calloc(sizeof(char),Ysize);
-    for(j=0;j<Ysize;j++) {
+  for(i=0;i<RP->Xsize;i++) {
+    layout2[i]=(char *)calloc(sizeof(char),RP->Ysize);
+    for(j=0;j<RP->Ysize;j++) {
       if(wall_blocked(map,i,j)) layout2[i][j] = '#';
     }
   }
   
   /* setup num_free_spots and room_free_spots */ 
-  find_spot_in_room_recursive(layout2,x,y);
+  find_spot_in_room_recursive(layout2,x,y,RP);
   
   if(number_of_free_spots_in_room > 0) {
     i = RANDOM()%number_of_free_spots_in_room;
@@ -454,7 +455,7 @@ void find_spot_in_room(mapstruct *map,int x,int y,int *kx,int *ky) {
   }
 
   /* deallocate the temp. layout */
-  for(i=0;i<Xsize;i++) {
+  for(i=0;i<RP->Xsize;i++) {
     free(layout2[i]);
   }
   free(layout2);
@@ -467,7 +468,7 @@ void find_spot_in_room(mapstruct *map,int x,int y,int *kx,int *ky) {
 	walls the better, but it'll settle for 1 wall, or even 0, but
 	it'll return 0 if no FREE spots are found.*/
 
-void find_enclosed_spot(mapstruct *map, int *cx, int *cy) {
+void find_enclosed_spot(mapstruct *map, int *cx, int *cy,RMParms *RP) {
   int x,y;
   int i;
   x = *cx;y=*cy;
@@ -476,7 +477,7 @@ void find_enclosed_spot(mapstruct *map, int *cx, int *cy) {
     int lx,ly,sindex;
     lx = x +freearr_x[i];
     ly = y +freearr_y[i];
-    sindex = surround_flag3(map,lx,ly);
+    sindex = surround_flag3(map,lx,ly,RP);
     /* if it's blocked on 3 sides, it's enclosed */
     if(sindex==7 || sindex == 11 || sindex == 13 || sindex == 14) {
       *cx= lx;*cy= ly;
@@ -490,7 +491,7 @@ void find_enclosed_spot(mapstruct *map, int *cx, int *cy) {
     int lx,ly,sindex;
     lx = x +freearr_x[i];
     ly = y +freearr_y[i];
-    sindex = surround_flag3(map,lx,ly);
+    sindex = surround_flag3(map,lx,ly,RP);
     /* if it's blocked on 3 sides, it's enclosed */
     if(sindex==3 || sindex == 5 || sindex == 9 || sindex == 6 || sindex==10 || sindex==12) {
       *cx= lx;*cy= ly;
@@ -503,7 +504,7 @@ void find_enclosed_spot(mapstruct *map, int *cx, int *cy) {
     int lx,ly,sindex;
     lx = x +freearr_x[i];
     ly = y +freearr_y[i];
-    sindex = surround_flag3(map,lx,ly);
+    sindex = surround_flag3(map,lx,ly,RP);
     /* if it's blocked on 3 sides, it's enclosed */
     if(sindex) {
       *cx= lx;*cy= ly;
@@ -581,12 +582,12 @@ object *door_in_square(mapstruct *map,int x,int y) {
    
 
 /* the workhorse routine, which finds the doors in a room */
-void find_doors_in_room_recursive(char **layout,mapstruct *map,int x,int y,object **doorlist,int *ndoors) {
+void find_doors_in_room_recursive(char **layout,mapstruct *map,int x,int y,object **doorlist,int *ndoors,RMParms *RP) {
   int i,j;
   object *door;
 
   /* bounds check x and y */
-  if(!(x >= 0 && y >= 0 && x < Xsize && y < Ysize)) return;
+  if(!(x >= 0 && y >= 0 && x < RP->Xsize && y < RP->Ysize)) return;
 
   /* if the square is blocked or searched already, leave */
   if(layout[x][y]==1) return;
@@ -609,13 +610,13 @@ void find_doors_in_room_recursive(char **layout,mapstruct *map,int x,int y,objec
     layout[x][y]=1;
     /* now search all the 8 squares around recursively for free spots,in random order */
     for(i=RANDOM()%8,j=0; j<8 && theMonsterToFind==NULL;i++,j++) {
-      find_doors_in_room_recursive(layout,map,x+freearr_x[i%8+1],y+freearr_y[i%8+1],doorlist,ndoors);
+      find_doors_in_room_recursive(layout,map,x+freearr_x[i%8+1],y+freearr_y[i%8+1],doorlist,ndoors,RP);
     }
   }
 }
 
 /* find a random non-blocked spot in this room to drop a key. */
-object** find_doors_in_room(mapstruct *map,int x,int y) {
+object** find_doors_in_room(mapstruct *map,int x,int y,RMParms *RP) {
   char **layout2;
   object **doorlist;
   int i,j;
@@ -624,20 +625,20 @@ object** find_doors_in_room(mapstruct *map,int x,int y) {
   doorlist = (object **)calloc(sizeof(int),256);
 
 
-  layout2 = (char **) calloc(sizeof(char *),Xsize);
+  layout2 = (char **) calloc(sizeof(char *),RP->Xsize);
   /* allocate and copy the layout, converting C to 0. */
-  for(i=0;i<Xsize;i++) {
-    layout2[i]=(char *)calloc(sizeof(char),Ysize);
-    for(j=0;j<Ysize;j++) {
+  for(i=0;i<RP->Xsize;i++) {
+    layout2[i]=(char *)calloc(sizeof(char),RP->Ysize);
+    for(j=0;j<RP->Ysize;j++) {
       if(wall_blocked(map,i,j)) layout2[i][j] = '#';
     }
   }
   
   /* setup num_free_spots and room_free_spots */ 
-  find_doors_in_room_recursive(layout2,map,x,y,doorlist,&ndoors);
+  find_doors_in_room_recursive(layout2,map,x,y,doorlist,&ndoors,RP);
 
   /* deallocate the temp. layout */
-  for(i=0;i<Xsize;i++) {
+  for(i=0;i<RP->Xsize;i++) {
     free(layout2[i]);
   }
   free(layout2);
@@ -649,7 +650,7 @@ object** find_doors_in_room(mapstruct *map,int x,int y) {
 /* locks and/or hides all the doors in doorlist, or does nothing if
 	opts doesn't say to lock/hide doors. */
 
-void lock_and_hide_doors(object **doorlist,mapstruct *map,int opts) {
+void lock_and_hide_doors(object **doorlist,mapstruct *map,int opts,RMParms *RP) {
   object *door;
   int i;
   /* lock the doors and hide the keys. */
@@ -668,7 +669,7 @@ void lock_and_hide_doors(object **doorlist,mapstruct *map,int opts) {
       insert_ob_in_map(new_door,map,NULL);
       sprintf(keybuf,"%d",RANDOM());
       new_door->slaying = add_string(keybuf);
-      keyplace(map,new_door->x,new_door->y,keybuf,NO_PASS_DOORS,2);
+      keyplace(map,new_door->x,new_door->y,keybuf,NO_PASS_DOORS,2,RP);
     }
   }
 
@@ -677,12 +678,12 @@ void lock_and_hide_doors(object **doorlist,mapstruct *map,int opts) {
     for(i=0,door=doorlist[0];doorlist[i]!=NULL;i++) {
       object *wallface;
       door=doorlist[i];
-      wallface=retrofit_joined_wall(map,door->x,door->y,1);
+      wallface=retrofit_joined_wall(map,door->x,door->y,1,RP);
 		if(wallface!=NULL) {
-		  retrofit_joined_wall(map,door->x-1,door->y,0);
-		  retrofit_joined_wall(map,door->x+1,door->y,0);
-		  retrofit_joined_wall(map,door->x,door->y-1,0);
-		  retrofit_joined_wall(map,door->x,door->y+1,0);
+		  retrofit_joined_wall(map,door->x-1,door->y,0,RP);
+		  retrofit_joined_wall(map,door->x+1,door->y,0,RP);
+		  retrofit_joined_wall(map,door->x,door->y-1,0,RP);
+		  retrofit_joined_wall(map,door->x,door->y+1,0,RP);
 		  door->face = wallface->face;
 		  if(!QUERY_FLAG(wallface,FLAG_REMOVED)) remove_ob(wallface);
 		  free_object(wallface);

@@ -16,10 +16,13 @@ a wall.
    reasonable mazes:  a straightforward recursive random walk maze
    generator would generate a map with a trivial circle-the-outer-wall solution */
 
-#include <maze_gen.h>
-#include <time.h>
+#include <stdio.h>
 #include <global.h>
 #include <random_map.h>
+#include <maze_gen.h>
+#include <time.h>
+
+
 /* this include solely, and only, is needed for the definition of RANDOM */
 
 
@@ -39,7 +42,7 @@ int wall_chance;
 ** maze.  option is a flag for either a sparse or a full maze. Sparse
 mazes have sizable rooms. option = 1, full, 0, sparse.*/
 
-char **maze_gen(int xsize, int ysize,int option) {
+char **maze_gen(int xsize, int ysize,int option,RMParms *RP) {
   int i,j;
 
   /* allocate that array, set it up */
@@ -48,7 +51,6 @@ char **maze_gen(int xsize, int ysize,int option) {
     maze[i] = (char *) calloc(sizeof(char),ysize);
   }
 
-  map_layout_style = MAZE_LAYOUT;
   /* write the outer walls */
   for(i=0;i<xsize;i++) 
     maze[i][0] = maze[i][ysize-1] = '#';

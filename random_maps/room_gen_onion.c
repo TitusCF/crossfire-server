@@ -96,7 +96,6 @@ char **map_gen_onion(int xsize, int ysize, int option, int layers) {
 
   /* allocate that array, set it up */
   char **maze = (char **)calloc(sizeof(char*),xsize);
-  map_layout_style = ONION_LAYOUT;
   for(i=0;i<xsize;i++) {
     maze[i] = (char *) calloc(sizeof(char),ysize);
   }

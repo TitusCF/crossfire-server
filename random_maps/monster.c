@@ -27,7 +27,7 @@
 
 #include <global.h>
 #include <random_map.h>
-
+#include <rproto.h>
 
 /* some monsters are multisquare, and these guys require special
 	handling. */
@@ -62,7 +62,7 @@ void	 insert_multisquare_ob_in_map(object *new_obj,mapstruct *map) {
 	 
 
 /*  place some monsters into the map. */
-void place_monsters(mapstruct *map, char *monsterstyle, int difficulty) {
+void place_monsters(mapstruct *map, char *monsterstyle, int difficulty,RMParms *RP) {
   char styledirname[256];
   mapstruct *style_map=0;
   long unsigned int total_experience;  /* used for matching difficulty */
@@ -80,12 +80,12 @@ void place_monsters(mapstruct *map, char *monsterstyle, int difficulty) {
   failed_placements = 0;
   exp_per_sq = 0;
   while(exp_per_sq <= level_exp(difficulty,1.0) && failed_placements < 100
-	&& number_monsters < (Xsize * Ysize)/8) {
+	&& number_monsters < (RP->Xsize * RP->Ysize)/8) {
     object *this_monster=pick_random_object(style_map);
     int x,y,freeindex;
     if(this_monster == NULL) return;  /* no monster?? */
-    x = RANDOM() % Xsize;
-    y = RANDOM() % Ysize;
+    x = RANDOM() % RP->Xsize;
+    y = RANDOM() % RP->Ysize;
     freeindex = find_first_free_spot(this_monster->arch,map,x,y);
     if(freeindex!=-1) {
 	 object *new_monster = arch_to_object(this_monster->arch);
@@ -97,7 +97,7 @@ void place_monsters(mapstruct *map, char *monsterstyle, int difficulty) {
 	 insert_multisquare_ob_in_map(new_monster,map);
 	 total_experience+= this_monster->stats.exp;
 	 number_monsters++;
-	 total_map_hp+=new_monster->stats.hp;  /*  a global count */
+	 RP->total_map_hp+=new_monster->stats.hp;  /*  a global count */
     }
     else {
 	 failed_placements++;

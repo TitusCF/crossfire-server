@@ -1,6 +1,7 @@
 
 
-char **maze_gen(int xsize, int ysize,int option);  /* the outside interface routine */
+#include <random_map.h>
+char **maze_gen(int xsize, int ysize,int option,RMParms *RP);  /* the outside interface routine */
 void fill_maze_full(char **maze,int x,int y,int xsize,int ysize);
 void fill_maze_sparse(char **maze,int x,int y,int xsize,int ysize);
 void make_wall_free_list(int xsize,int ysize);

@@ -46,7 +46,7 @@
  * that can be set in crossedit for various objects.
  */
 
-#define YY_DECL int rmap_lex_read()
+#define YY_DECL int rmap_lex_read(RMParms *RP)
 
 static char *rmap_yval();
 
@@ -83,32 +83,32 @@ WS	[ \t]*
 
 
 
-^wallstyle{S}	    strcpy(wallstyle,rmap_yval());
-^floorstyle{S}	    strcpy(floorstyle,rmap_yval());
-^monsterstyle{S}    strcpy(monsterstyle,rmap_yval());
-^treasurestyle{S}   strcpy(treasurestyle,rmap_yval());
-^layoutstyle{S}	    strcpy(layoutstyle,rmap_yval());
-^doorstyle{S}	    strcpy(doorstyle,rmap_yval());
-^decorstyle{S}	    strcpy(decorstyle,rmap_yval());
-^xsize{S}	    Xsize = IVAL;
-^ysize{S}	    Ysize = IVAL;
-^layoutoptions1{S}  layoutoptions1 = IVAL;
-^layoutoptions2{S}  layoutoptions2 = IVAL;
-^layoutoptions3{S}  layoutoptions3 = IVAL;
-^symmetry{S}        symmetry = IVAL;
-^difficulty{S}        difficulty = IVAL;
-^decoroptions{S}      decoroptions = IVAL;
-^exitstyle{S}       strcpy(exitstyle,rmap_yval());
-^dungeon_level{S}   dungeon_level = IVAL;
-^dungeon_depth{S}   dungeon_depth = IVAL;
-^final_map{S}       strcpy(final_map,rmap_yval());
-^orientation{S}     orientation = IVAL;
-^origin_x{S}        origin_x = IVAL;
-^origin_y{S}        origin_y = IVAL;
-^origin_map{S}       strcpy(origin_map,rmap_yval());
-^random_seed{S}        random_seed = IVAL;
-^treasureoptions{S}    treasureoptions = IVAL;
-^generate_treasure_now{S} generate_treasure_now = IVAL;
+^wallstyle{S}	    strcpy(RP->wallstyle,rmap_yval());
+^floorstyle{S}	    strcpy(RP->floorstyle,rmap_yval());
+^monsterstyle{S}    strcpy(RP->monsterstyle,rmap_yval());
+^treasurestyle{S}   strcpy(RP->treasurestyle,rmap_yval());
+^layoutstyle{S}	    strcpy(RP->layoutstyle,rmap_yval());
+^doorstyle{S}	    strcpy(RP->doorstyle,rmap_yval());
+^decorstyle{S}	    strcpy(RP->decorstyle,rmap_yval());
+^xsize{S}	    RP->Xsize = IVAL;
+^ysize{S}	    RP->Ysize = IVAL;
+^layoutoptions1{S}  RP->layoutoptions1 = IVAL;
+^layoutoptions2{S}  RP->layoutoptions2 = IVAL;
+^layoutoptions3{S}  RP->layoutoptions3 = IVAL;
+^symmetry{S}        RP->symmetry = IVAL;
+^difficulty{S}        RP->difficulty = IVAL;
+^decoroptions{S}      RP->decoroptions = IVAL;
+^exitstyle{S}       strcpy(RP->exitstyle,rmap_yval());
+^dungeon_level{S}   RP->dungeon_level = IVAL;
+^dungeon_depth{S}   RP->dungeon_depth = IVAL;
+^final_map{S}       strcpy(RP->final_map,rmap_yval());
+^orientation{S}    RP-> orientation = IVAL;
+^origin_x{S}        RP->origin_x = IVAL;
+^origin_y{S}       RP-> origin_y = IVAL;
+^origin_map{S}       strcpy(RP->origin_map,rmap_yval());
+^random_seed{S}        RP->random_seed = IVAL;
+^treasureoptions{S}    RP->treasureoptions = IVAL;
+^generate_treasure_now{S} RP->generate_treasure_now = IVAL;
 
 
 <*>(^{WS}$)|\n		{/* ignore empty lines, newlines we don't do above */}
@@ -143,7 +143,7 @@ static char *rmap_yval()
 
 
 
-int load_parameters(FILE *fp, int bufstate) {
+int load_parameters(FILE *fp, int bufstate,RMParms *RP) {
     int retval;
     char inbuf[MAX_BUF];
 
@@ -156,14 +156,14 @@ int load_parameters(FILE *fp, int bufstate) {
         YY_BUFFER_STATE  yybufstate;
         while (fgets(inbuf, MAX_BUF-3, fp)) {
             yybufstate=yy_scan_string(inbuf);
-            retval=rmap_lex_read();
+            retval=rmap_lex_read(RP);
             yy_delete_buffer(yybufstate);
             if (retval==LL_NORMAL) return retval;
         }
         return LL_EOF;
     }
 
-    retval=rmap_lex_read();
+    retval=rmap_lex_read(RP);
 /*    LOG(llevDebug," load completed, object=%s\n",op->name);*/
     return retval;
 }

@@ -28,7 +28,7 @@
 #include <global.h>
 #include <random_map.h>
 
-void put_doors(mapstruct *the_map,char **maze , char *doorstyle) {
+void put_doors(mapstruct *the_map,char **maze , char *doorstyle, RMParms *RP) {
   int i,j;
   mapstruct *vdoors;
   mapstruct *hdoors;
@@ -39,12 +39,12 @@ void put_doors(mapstruct *the_map,char **maze , char *doorstyle) {
   if(!vdoors) return;
   sprintf(doorpath,"/styles/doorstyles/hdoors%s",strrchr(vdoors->path,'/'));
   hdoors = find_style(doorpath,0,-1);
-  for(i=0;i<Xsize;i++) 
-    for(j=0;j<Ysize;j++) {
+  for(i=0;i<RP->Xsize;i++) 
+    for(j=0;j<RP->Ysize;j++) {
       if(maze[i][j]=='*'||maze[i][j]=='d') {
 		  int sindex;
 		  object *this_door,*new_door;
-		  sindex = surround_flag2(maze,i,j);
+		  sindex = surround_flag2(maze,i,j,RP);
 		  if(sindex==3) 
 			 this_door=pick_random_object(hdoors);
 		  else

@@ -28,7 +28,7 @@
 #include <global.h>
 #include <random_map.h>
 #include <sproto.h>
-
+#include <rproto.h>
 
 /* orientation:  0 means random,
   1 means descending dungeon
@@ -39,7 +39,7 @@
   6 means southward
 */
 
-void place_exits(mapstruct *map, char **maze,char *exitstyle,int orientation) {
+void place_exits(mapstruct *map, char **maze,char *exitstyle,int orientation,RMParms *RP) {
   char styledirname[256];
   mapstruct *style_map_down=0;  /* harder maze */
   mapstruct *style_map_up=0;    /* easier maze */
@@ -83,7 +83,7 @@ void place_exits(mapstruct *map, char **maze,char *exitstyle,int orientation) {
   }
 
   /* we need a down exit only if we're recursing. */
-  if(dungeon_level < dungeon_depth || final_map[0]!=0)
+  if(RP->dungeon_level < RP->dungeon_depth || RP->final_map[0]!=0)
     if(style_map_down == 0) the_exit_down = arch_to_object(find_archetype("exit"));
     else {
       object *tmp;
@@ -93,9 +93,9 @@ void place_exits(mapstruct *map, char **maze,char *exitstyle,int orientation) {
   else the_exit_down = 0;
 
   /* set up the down exit */
-  the_exit_up->stats.hp = origin_x;
-  the_exit_up->stats.sp = origin_y;
-  the_exit_up->slaying = add_string(origin_map);
+  the_exit_up->stats.hp = RP->origin_x;
+  the_exit_up->stats.sp = RP->origin_y;
+  the_exit_up->slaying = add_string(RP->origin_map);
 
   /* figure out where to put the entrance */
   /* begin a logical block */
@@ -103,21 +103,21 @@ void place_exits(mapstruct *map, char **maze,char *exitstyle,int orientation) {
     int ex=-1,ey=-1;
     int i,j;
     /* first, look for a C, the map center.  */
-    for(i=0;i<Xsize&&cx==-1;i++)
-      for(j=0;j<Ysize;j++) {
+    for(i=0;i<RP->Xsize&&cx==-1;i++)
+      for(j=0;j<RP->Ysize;j++) {
 		  if(maze[i][j]=='C') {
 			 cx = i; cy=j; break;
 		  }
       }
     if(cx!=-1) {
-      if(cx > Xsize/2) ex = 1;
-      else ex = Xsize -2;
-      if(cy > Ysize/2) ey = 1;
-      else ey = Ysize -2;
+      if(cx > RP->Xsize/2) ex = 1;
+      else ex = RP->Xsize -2;
+      if(cy > RP->Ysize/2) ey = 1;
+      else ey = RP->Ysize -2;
     }
     else {
-		ex = RANDOM() % (Xsize-2) +1;
-		ey = RANDOM() % (Ysize-2) +1;
+		ex = RANDOM() % (RP->Xsize-2) +1;
+		ey = RANDOM() % (RP->Ysize-2) +1;
     }
 	 i = find_first_free_spot(the_exit_up->arch,map,ex,ey);
 	 the_exit_up->x = ex + freearr_x[i];
@@ -143,10 +143,10 @@ void place_exits(mapstruct *map, char **maze,char *exitstyle,int orientation) {
 	 /* make the other exit far away from this one if
 		 there's no center. */
 	 if(cx==-1) {
-		if(ex > Xsize/2) cx = 1;
-		else cx = Xsize -2;
-		if(ey > Ysize/2) cy = 1;
-		else cy = Ysize -2;
+		if(ex > RP->Xsize/2) cx = 1;
+		else cx = RP->Xsize -2;
+		if(ey > RP->Ysize/2) cy = 1;
+		else cy = RP->Ysize -2;
 	 };
 
 	 if(the_exit_down) {
@@ -154,22 +154,22 @@ void place_exits(mapstruct *map, char **maze,char *exitstyle,int orientation) {
 		i = find_first_free_spot(the_exit_down->arch,map,cx,cy);
 		the_exit_down->x = cx + freearr_x[i];
 		the_exit_down->y = cy + freearr_y[i];
-		origin_x = the_exit_down->x;
-		origin_y = the_exit_down->y;
-		write_map_parameters_to_string(buf);
+		RP->origin_x = the_exit_down->x;
+		RP->origin_y = the_exit_down->y;
+		write_map_parameters_to_string(buf,RP);
 		the_exit_down->msg = add_string(buf);
 		/* the identifier for making a random map. */
-		if(dungeon_level >= dungeon_depth && final_map[0]!=0) {
+		if(RP->dungeon_level >= RP->dungeon_depth && RP->final_map[0]!=0) {
 		  mapstruct *new_map;
 		  char new_map_name[MAX_BUF];
 		  object *the_exit_back = arch_to_object(the_exit_up->arch);
 		  /* give the final map a name */
-		  sprintf(new_map_name,"%sfinal_map",final_map);
+		  sprintf(new_map_name,"%sfinal_map",RP->final_map);
 		  /* set the exit down. */
 		  the_exit_down->slaying = add_string(new_map_name);
 		  /* load it */
-		  if( (new_map=has_been_loaded(final_map)) == NULL)
-		    new_map = load_original_map(final_map,0);
+		  if( (new_map=has_been_loaded(RP->final_map)) == NULL)
+		    new_map = load_original_map(RP->final_map,0);
 		  /* leave if we couldn't find it. */
 		  if(new_map==NULL) return;
 		  /* fix the treasures in the map. */

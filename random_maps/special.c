@@ -31,6 +31,7 @@
 
 #include <global.h>
 #include <random_map.h>
+#include <rproto.h>
 
 #define NUM_OF_SPECIAL_TYPES 4
 #define NO_SPECIAL 0
@@ -50,17 +51,17 @@ void nuke_map_region(mapstruct *map,int xstart,int ystart, int xsize, int ysize)
   int i,j;
   object *tmp;
   for(i=xstart;i<xstart + xsize;i++) 
-	 for(j=ystart;j<ystart +ysize;j++) {
-		for(tmp=get_map_ob(map,i,j);tmp!=NULL;tmp=tmp->above) {
-		  if(!QUERY_FLAG(tmp,FLAG_IS_FLOOR)) {
-			 if(tmp->head) tmp=tmp->head;
-			 remove_ob(tmp);
-			 free_object(tmp);
-			 tmp=get_map_ob(map,i,j);
-		  }
-		  if(tmp==NULL) break;
-		}
-	 }
+    for(j=ystart;j<ystart +ysize;j++) {
+      for(tmp=get_map_ob(map,i,j);tmp!=NULL;tmp=tmp->above) {
+        if(!QUERY_FLAG(tmp,FLAG_IS_FLOOR)) {
+          if(tmp->head) tmp=tmp->head;
+          remove_ob(tmp);
+          free_object(tmp);
+          tmp=get_map_ob(map,i,j);
+        }
+        if(tmp==NULL) break;
+      }
+    }
 }
 
 
@@ -77,20 +78,20 @@ void include_map_in_map(mapstruct *dest_map, mapstruct *in_map,int x, int y) {
   nuke_map_region(dest_map,x,y,in_map->mapx,in_map->mapy);
 		
   for(i=0;i<in_map->mapx;i++) 
-	 for(j=0;j<in_map->mapy;j++) {
-		for(tmp=get_map_ob(in_map,i,j);tmp!=NULL;tmp=tmp->above) {
-		  /* don't copy things with multiple squares:  must be dealt with
-			  specially. */
-		  if(tmp->head!=NULL) continue;
-		  new_ob = arch_to_object(tmp->arch);
-		  copy_object_with_inv(tmp,new_ob);
-		  if(QUERY_FLAG(tmp,FLAG_IS_LINKED))
-			 add_button_link(new_ob,dest_map,tmp->path_attuned);
-		  new_ob->x = i + x;
-		  new_ob->y = j + y;
-		  insert_multisquare_ob_in_map(new_ob,dest_map);
-		}
-	 }
+    for(j=0;j<in_map->mapy;j++) {
+      for(tmp=get_map_ob(in_map,i,j);tmp!=NULL;tmp=tmp->above) {
+        /* don't copy things with multiple squares:  must be dealt with
+           specially. */
+        if(tmp->head!=NULL) continue;
+        new_ob = arch_to_object(tmp->arch);
+        copy_object_with_inv(tmp,new_ob);
+        if(QUERY_FLAG(tmp,FLAG_IS_LINKED))
+          add_button_link(new_ob,dest_map,tmp->path_attuned);
+        new_ob->x = i + x;
+        new_ob->y = j + y;
+        insert_multisquare_ob_in_map(new_ob,dest_map);
+      }
+    }
 }
 
 int find_spot_for_submap(mapstruct *map,char **layout,int *ix, int *iy,int xsize, int ysize) {
@@ -99,35 +100,35 @@ int find_spot_for_submap(mapstruct *map,char **layout,int *ix, int *iy,int xsize
   int is_occupied=0;
   int l,m;
   /* don't even try to place a submap into a map if the big map isn't
-	  sufficiently large. */
+     sufficiently large. */
   if(2*xsize > map->mapx || 2*ysize > map->mapy) return 0;
   
   /* search a bit for a completely free spot. */
   for(tries=0;tries<20;tries++) {
-	 /* pick a random location in the layout */
-	 i = RANDOM() % (map->mapx - xsize-2)+1;
-	 j = RANDOM() % (map->mapy - ysize-2)+1;
-	 is_occupied=0;
-	 for(l=i;l<i + xsize;l++)
-		for(m=j;m<j + ysize;m++)
-		  is_occupied|=layout[l][m];
-	 if(!is_occupied) break;
+    /* pick a random location in the layout */
+    i = RANDOM() % (map->mapx - xsize-2)+1;
+    j = RANDOM() % (map->mapy - ysize-2)+1;
+    is_occupied=0;
+    for(l=i;l<i + xsize;l++)
+      for(m=j;m<j + ysize;m++)
+        is_occupied|=layout[l][m];
+    if(!is_occupied) break;
   }
 
 	 
   /* if we failed, relax the restrictions */
   
   if(is_occupied) { /* failure, try a relaxed placer. */
-	 /* pick a random location in the layout */
-	 for(tries=0;tries<10;tries++) {
-		i = RANDOM() % (map->mapx - xsize-2)+1;
-		j = RANDOM() % (map->mapy - ysize-2)+1;
-		is_occupied=0;
-		for(l=i;l<i + xsize;l++)
-		  for(m=j;m<j + ysize;m++)
-			 if(layout[l][m]=='C' || layout[l][m]=='>' || layout[l][m]=='<')
-				is_occupied=1;
-	 }
+    /* pick a random location in the layout */
+    for(tries=0;tries<10;tries++) {
+      i = RANDOM() % (map->mapx - xsize-2)+1;
+      j = RANDOM() % (map->mapy - ysize-2)+1;
+      is_occupied=0;
+      for(l=i;l<i + xsize;l++)
+        for(m=j;m<j + ysize;m++)
+          if(layout[l][m]=='C' || layout[l][m]=='>' || layout[l][m]=='<')
+            is_occupied=1;
+    }
   }
   if(is_occupied) return 0;
   *ix=i;
@@ -143,9 +144,9 @@ void place_fountain_with_specials(mapstruct *map) {
   object *potion=get_object();
   copy_object(pick_random_object(fountain_style),potion);
   while(i<0) {
-	 ix = RANDOM() % (map->mapx -2) +1;
-	 iy = RANDOM() % (map->mapx -2) +1;
-	 i = find_first_free_spot(fountain->arch,map,ix,iy);
+    ix = RANDOM() % (map->mapx -2) +1;
+    iy = RANDOM() % (map->mapx -2) +1;
+    i = find_first_free_spot(fountain->arch,map,ix,iy);
   };
   ix += freearr_x[i];
   iy += freearr_y[i];
@@ -163,7 +164,7 @@ void place_fountain_with_specials(mapstruct *map) {
 
 }
 
-void place_special_exit(mapstruct * map, int hole_type) {
+void place_special_exit(mapstruct * map, int hole_type,RMParms *RP) {
   int ix,iy,i=-1;
   char buf[HUGE_BUF];
   mapstruct *exit_style=find_style("/styles/misc","obscure_exits",-1);
@@ -174,9 +175,9 @@ void place_special_exit(mapstruct * map, int hole_type) {
   copy_object(pick_random_object(exit_style),the_exit);
 
   while(i<0) {
-	 ix = RANDOM() % (map->mapx -2) +1;
-	 iy = RANDOM() % (map->mapx -2) +1;
-	 i = find_first_free_spot(the_exit->arch,map,ix,iy);
+    ix = RANDOM() % (map->mapx -2) +1;
+    iy = RANDOM() % (map->mapx -2) +1;
+    i = find_first_free_spot(the_exit->arch,map,ix,iy);
   };
   
   ix += freearr_x[i];
@@ -188,44 +189,44 @@ void place_special_exit(mapstruct * map, int hole_type) {
   
   switch(hole_type) {
   case GLORY_HOLE:   /* treasures */
-	 {
-		int g_xsize,g_ysize;
-		g_xsize = RANDOM() %3 + 4 + difficulty/4;
-		g_ysize = RANDOM() %3 + 4 + difficulty/4;
-		write_parameters_to_string(buf, g_xsize, g_ysize,wallstyle,floorstyle,"none",
-											"none","onion","wealth2","none",exitstyle,0,0,
-											OPT_WALLS_ONLY,0,0,1,dungeon_level,dungeon_level,
-											difficulty,difficulty,-1,1,0,0,0,0);
-		the_exit->slaying = add_string("/!");
-		the_exit->msg = add_string(buf);
-		break;
-	 }
+    {
+      int g_xsize,g_ysize;
+      g_xsize = RANDOM() %3 + 4 + RP->difficulty/4;
+      g_ysize = RANDOM() %3 + 4 + RP->difficulty/4;
+      write_parameters_to_string(buf, g_xsize, g_ysize,RP->wallstyle,RP->floorstyle,"none",
+                                 "none","onion","wealth2","none",RP->exitstyle,0,0,
+                                 OPT_WALLS_ONLY,0,0,1,RP->dungeon_level,RP->dungeon_level,
+                                 RP->difficulty,RP->difficulty,-1,1,0,0,0,0);
+      the_exit->slaying = add_string("/!");
+      the_exit->msg = add_string(buf);
+      break;
+    }
   case ORC_ZONE:  /* hole with orcs in it. */
-	 {
-		int g_xsize,g_ysize;
-		g_xsize = RANDOM() %3 + 4 + difficulty/4;
-		g_ysize = RANDOM() %3 + 4 + difficulty/4;
-		write_parameters_to_string(buf, g_xsize, g_ysize,wallstyle,floorstyle,"orc",
-											"none","onion","wealth2","none",exitstyle,0,0,
-											OPT_WALLS_ONLY,0,0,1,dungeon_level,dungeon_level,
-											difficulty,difficulty,-1,1,0,0,0,0);
-		the_exit->slaying = add_string("/!");
-		the_exit->msg = add_string(buf);
-		break;
-	 }
+    {
+      int g_xsize,g_ysize;
+      g_xsize = RANDOM() %3 + 4 + RP->difficulty/4;
+      g_ysize = RANDOM() %3 + 4 + RP->difficulty/4;
+      write_parameters_to_string(buf, g_xsize, g_ysize,RP->wallstyle,RP->floorstyle,"orc",
+                                 "none","onion","wealth2","none",RP->exitstyle,0,0,
+                                 OPT_WALLS_ONLY,0,0,1,RP->dungeon_level,RP->dungeon_level,
+                                 RP->difficulty,RP->difficulty,-1,1,0,0,0,0);
+      the_exit->slaying = add_string("/!");
+      the_exit->msg = add_string(buf);
+      break;
+    }
   case MINING_ZONE:  /* hole with orcs in it. */
-	 {
-		int g_xsize,g_ysize;
-		g_xsize = RANDOM() %9 + 4 + difficulty/4;
-		g_ysize = RANDOM() %9 + 4 + difficulty/4;
-		write_parameters_to_string(buf, g_xsize, g_ysize,wallstyle,floorstyle,"none",
-											"none","maze","minerals2","none",exitstyle,0,0,
-											OPT_WALLS_ONLY,0,0,1,dungeon_level,dungeon_level,
-											difficulty,difficulty,-1,1,0,0,0,0);
-		the_exit->slaying = add_string("/!");
-		the_exit->msg = add_string(buf);
-		break;
-	 }
+    {
+      int g_xsize,g_ysize;
+      g_xsize = RANDOM() %9 + 4 + RP->difficulty/4;
+      g_ysize = RANDOM() %9 + 4 + RP->difficulty/4;
+      write_parameters_to_string(buf, g_xsize, g_ysize,RP->wallstyle,RP->floorstyle,"none",
+                                 "none","maze","minerals2","none",RP->exitstyle,0,0,
+                                 OPT_WALLS_ONLY,0,0,1,RP->dungeon_level,RP->dungeon_level,
+                                 RP->difficulty,RP->difficulty,-1,1,0,0,0,0);
+      the_exit->slaying = add_string("/!");
+      the_exit->msg = add_string(buf);
+      break;
+    }
 
 		
   }
@@ -233,7 +234,7 @@ void place_special_exit(mapstruct * map, int hole_type) {
 }
   
 		  
-void place_specials_in_map(mapstruct *map, char **layout) {
+void place_specials_in_map(mapstruct *map, char **layout,RMParms *RP) {
   mapstruct *special_map;
   int ix,iy;  /* map insertion locatons */
   int special_type; /* type of special to make */
@@ -242,27 +243,27 @@ void place_specials_in_map(mapstruct *map, char **layout) {
   special_type = RANDOM() % NUM_OF_SPECIAL_TYPES;
   switch(special_type) {
 
-	 /* includes a special map into the random map being made. */
+    /* includes a special map into the random map being made. */
   case SPECIAL_SUBMAP: {
-	 special_map = find_style("/styles/specialmaps",0,difficulty); 
-	 if(special_map==NULL) return;
+    special_map = find_style("/styles/specialmaps",0,RP->difficulty); 
+    if(special_map==NULL) return;
 	 
-	 if(find_spot_for_submap(map,layout,&ix,&iy,special_map->mapx,special_map->mapy)) 
-		include_map_in_map(map,special_map,ix,iy);
-	 break;
+    if(find_spot_for_submap(map,layout,&ix,&iy,special_map->mapx,special_map->mapy)) 
+      include_map_in_map(map,special_map,ix,iy);
+    break;
   }
 
   /* Make a special fountain:  an unpickable potion disguised as
-	  a fountain, or rather, colocated with a fountain. */
+     a fountain, or rather, colocated with a fountain. */
   case SPECIAL_FOUNTAIN: {
-	 place_fountain_with_specials(map);
-	 break;
+    place_fountain_with_specials(map);
+    break;
   }
 
   /* Make an exit to another random map, e.g. a gloryhole. */
   case SPECIAL_EXIT: {
-	 place_special_exit(map,0);
-	 break;
+    place_special_exit(map,0,RP);
+    break;
   }
   }
   

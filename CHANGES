@@ -17,6 +17,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 CVS changes since last release:
 
+PeterM:  2000/12/14:
+Restructuring of the random map code.  Functionally, it
+should be identical.  All global variables moved into the
+functions.
+
+
 
 MSW 2000/12/10:
 utils/metaserver.pl: Various improvements.  Main one is that tcp
