@@ -17,6 +17,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 CVS changes since last release:
 
+common/readable.c: Name spellbooks based on level of spell, and not
+    just randomly.  Patch by Preston Crow, applied by Mark Wedel 2001-03-29
+
 configure, configure.in, include/autoconf.h, includes.h: add check for
    time.h and include it if we find it.
 socket/item.c: esrv_move_object - have it check to see if the object is

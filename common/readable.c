@@ -1,3 +1,31 @@
+/*
+ * static char *rcsid_readable_c =
+ *   "$Id$";
+ */
+
+/*
+    CrossFire, A Multiplayer game for X-windows
+
+    Copyright (C) 2001 Mark Wedel
+    Copyright (C) 1992 Frank Tore Johansen
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+
+    The author can be reached via e-mail to mwedel@scruz.net
+*/
+
 
 /* This file contains code relevant to the BOOKS hack -- designed
  * to allow randomly occuring messages in non-magical texts.
@@ -425,22 +453,20 @@ static char *book_descrpt[] =
 
 static char *mage_book_name[] =
 {
-    "grimoire",
-    "grimoire",
-    "grimoire",
-    "manual",
-    "tome",
-    "treatise"
+    "grimoire",     /* Level 1   */
+    "grimoire",     /* Level 2-3 */
+    "manual",       /* Level 4-5 */
+    "tome",         /* Level 6-7 */
+    "treatise"      /* Level 8+  */
 };
 
 static char *priest_book_name[] =
 {
-    "hymnal",
-    "prayerbook",
-    "prayerbook",
-    "prayerbook",
-    "sacred text",
-    "testiment"
+    "hymnal",       /* Level 1   */
+    "prayerbook",   /* Level 2-3 */
+    "prayerbook",   /* Level 4-5 */
+    "sacred text",  /* Level 6-7 */
+    "testament"     /* Level 8+  */
 };
 
 static int max_titles[6] =
@@ -1131,13 +1157,20 @@ change_book (object *book, int msgtype)
       case SPELLBOOK:		/* depends on mage/clerical */
 	  if (!strcmp (book->arch->name, "cleric_book"))
 	    {
+		int level;
+		level=spells[book->stats.sp].level/2;
 		nbr = sizeof (priest_book_name) / sizeof (char *);
-		strcpy (name, priest_book_name[RANDOM () % nbr]);
+		if (level>(nbr-1)) level=nbr-1;
+		strcpy (name, priest_book_name[level]);
 	    }
 	  else
 	    {
+		int level;
+
+		level=spells[book->stats.sp].level/2;
 		nbr = sizeof (mage_book_name) / sizeof (char *);
-		strcpy (name, mage_book_name[RANDOM () % nbr]);
+		if (level>(nbr-1)) level=nbr-1;
+		strcpy (name, mage_book_name[level]);
 	    }
 	  if (book->name)
 	      free_string (book->name);
