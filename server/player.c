@@ -1361,10 +1361,10 @@ object *find_better_arrow(object *op, object *target, char *type, int *better)
 		for (attacknum=0; attacknum < NROFATTACKS;
 		     attacknum++, attacktype = 1<<attacknum)
 		    if (arrow->attacktype & attacktype)
-			if (target->resist[attacknum] < 0)
-			    if (((arrow->magic + arrow->stats.dam)*(100-target->resist[attacknum])/100) > betterby) {
+			if (target->arch->clone.resist[attacknum] < 0)
+			    if (((arrow->magic + arrow->stats.dam)*(100-target->arch->clone.resist[attacknum])/100) > betterby) {
 				tmp = arrow;
-				betterby = (arrow->magic + arrow->stats.dam)*(100-target->resist[attacknum])/100;
+				betterby = (arrow->magic + arrow->stats.dam)*(100-target->arch->clone.resist[attacknum])/100;
 			    }
 		if ((2 + arrow->magic + arrow->stats.dam) > betterby) {
 		    tmp = arrow;
@@ -1416,7 +1416,8 @@ object *pick_arrow_target(object *op, char *type, int dir)
 	x += freearr_x[dir];
 	y += freearr_y[dir];
 	mflags = get_map_flags(m, &m, x, y, &x, &y);
-	if (mflags & P_OUT_OF_MAP || mflags & P_WALL) {
+	if (mflags & P_OUT_OF_MAP || mflags & P_WALL ||
+	    mflags & P_BLOCKSVIEW) {
 	    tmp = NULL;
 	    break;
 	}
@@ -1454,6 +1455,7 @@ int fire_bow(object *op, object *part, object *arrow, int dir, int wc_mod,
 {
     object *left, *bow;
     tag_t left_tag, tag;
+    int bowspeed;
 
     if (!dir) {
 	new_draw_info(NDI_UNIQUE, 0, op, "You can't shoot yourself!");
@@ -1478,6 +1480,14 @@ int fire_bow(object *op, object *part, object *arrow, int dir, int wc_mod,
 	new_draw_info_format(NDI_UNIQUE, 0, op, "Your %s is broken.", bow->name);
 	return 0;
     }
+
+    bowspeed = bow->stats.sp + dex_bonus[op->stats.Dex];
+
+    /* penalize ROF for bestarrow */
+    if (op->type == PLAYER && op->contr->bowtype == bow_bestarrow)
+	bowspeed -= dex_bonus[op->stats.Dex] + 5;
+    if (bowspeed < 1)
+	bowspeed = 1;
 
     if (arrow == NULL) {
 	if ((arrow=find_arrow(op, bow->race)) == NULL) {
@@ -1519,8 +1529,7 @@ int fire_bow(object *op, object *part, object *arrow, int dir, int wc_mod,
     arrow->y = sy;
 
     if (op->type == PLAYER) {
-	op->speed_left = 0.01 - (float)FABS(op->speed) * 100 /
-	    bow->stats.sp;
+	op->speed_left = 0.01 - (float)FABS(op->speed) * 100 / bowspeed;
 	fix_player(op);
     }
 
