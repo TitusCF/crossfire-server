@@ -1348,7 +1348,7 @@ int do_skill_attack(object *tmp, object *op, char *string) {
     char buf[MAX_BUF], *name = query_name(tmp);
     static char *attack_hth_skill[] = {"skill_karate",	"skill_clawing",
 	"skill_flame_touch", "skill_punching", NULL };
- 
+    
    /* For Players only: if there is no ready weapon, and no "attack" skill
     * is readied either then check if op has a hand-to-hand "attack skill" 
     * to use instead. We define this an "attack" skill as any skill 
@@ -1365,17 +1365,30 @@ int do_skill_attack(object *tmp, object *op, char *string) {
 	&& ((!pskill||!pskill->exp_obj)||!pskill->exp_obj->stats.Str)) { 
 	    int i=0,got_one=0;
 	    object *tmp2=NULL;
-	    while(attack_hth_skill[i]!=NULL) { 
-		for(tmp2=op->inv;tmp2;tmp2=tmp2->below) 
+	    
+	    /* dragons always use "clawing" hth skill per default */
+	    if (!strcmp(op->race ,"dragon")) {
+	        for(tmp2=op->inv;tmp2;tmp2=tmp2->below)
 		    if(tmp2->type==SKILL 
-			&& !strcmp(attack_hth_skill[i],tmp2->arch->name)) {
-				got_one=1;
-				break;
+		       && !strcmp("skill_clawing", tmp2->arch->name)) {
+		    got_one=1;
+		    break;
+		}
+	    }
+	    
+	    /* for other players use first hth skill we find */
+	    while(attack_hth_skill[i]!=NULL && !got_one) { 
+	        for(tmp2=op->inv;tmp2;tmp2=tmp2->below) {
+		    if(tmp2->type==SKILL 
+		       && !strcmp(attack_hth_skill[i],tmp2->arch->name)) {
+		        got_one=1;
+		        break;
 		    }
+	        }
 	 	if(got_one) break;
 		i++;
 	    }
-
+	    
 	    if(!got_one) { /* Arrgh. The player has no hth attack skills in inventory. 
 			    * Lets give them the last one in attack_hth_skill[] */ 
 		archetype *skill;
