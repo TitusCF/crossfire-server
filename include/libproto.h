@@ -93,7 +93,7 @@ extern void dummy_draw_info(int a, int b, object *ob, const char *txt);
 extern void dummy_function_mapstr(int a, mapstruct *map, char *str);
 extern void dummy_function_int_ob_ob(int n, object *ob, object *ob2);
 extern void dummy_move_apply_func(object *ob, object *ob2, object *ob3);
-extern void dummy_function_dragongain (object *ob, int a1, int a2);
+extern void dummy_function_dragongain(object *ob, int a1, int a2);
 /* holy.c */
 extern void init_gods(void);
 extern void add_god_to_list(archetype *god_arch);
@@ -118,9 +118,9 @@ extern void init_globals(void);
 extern void init_objects(void);
 extern void init_defaults(void);
 extern void init_dynamic(void);
-extern void init_attackmess(void);
-extern void init_clocks(void);
 extern void write_todclock(void);
+extern void init_clocks(void);
+extern void init_attackmess(void);
 /* item.c */
 extern char *describe_resistance(object *op, int newline);
 extern char *query_weight(object *op);
@@ -155,6 +155,8 @@ extern void fix_player(object *op);
 extern int allowed_class(object *op);
 extern uint32 level_exp(int level, double expmul);
 extern void add_exp(object *op, int exp);
+extern void set_dragon_name(object *pl, object *abil, object *skin);
+extern void dragon_level_gain(object *who);
 extern void player_lvl_adj(object *who, object *op);
 extern void calc_perm_exp(object *op);
 extern int adjust_exp(object *op, int exp);
@@ -171,7 +173,6 @@ extern void save_double(char *buf, char *name, double v);
 extern void init_vars(void);
 extern char *get_ob_diff(object *op, object *op2);
 extern void save_object(FILE *fp, object *op, int flag);
-extern void dragon_ability_gain(object *who, int atnr, int level);
 /* logger.c */
 extern void LOG(LogLevel logLevel, char *format, ...);
 /* los.c */
@@ -299,6 +300,8 @@ extern player *get_player_ob(void);
 extern void free_player(player *pl);
 extern void generate_ext_title(player *pl);
 extern object *find_skill(object *op, int skillnr);
+extern int atnr_is_dragon_enabled(int attacknr);
+extern int is_dragon_pl(object *op);
 /* re-cmp.c */
 extern char *re_cmp(char *str, char *regexp);
 /* readable.c */
@@ -345,12 +348,13 @@ extern void ss_dump_statistics(void);
 extern char *ss_dump_table(int what);
 extern int buf_overflow(char *buf1, char *buf2, int bufsize);
 /* time.c */
-extern void print_tod(object *op);
 extern void reset_sleep(void);
 extern void log_time(long process_utime);
 extern int enough_elapsed_time(void);
 extern void sleep_delta(void);
 extern void set_max_time(long t);
+extern void get_tod(timeofday_t *tod);
+extern void print_tod(object *op);
 extern void time_info(object *op);
 extern long seconds(void);
 /* treasure.c */

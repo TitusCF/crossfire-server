@@ -5,7 +5,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copryight (C) 2000 Mark Wedel
+    Copryight (C) 2002 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -22,7 +22,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to mwedel@scruz.net
+    The author can be reached via e-mail to crossfire-devel@real-time.com
 */
 
 /* Created July 95 to separate skill utilities from actual skills -b.t. */
@@ -1218,11 +1218,11 @@ int change_skill (object *who, int sk_index)
  * return 0 on success, 1 on failure.
  */
 
-int change_skill_to_skill (object *who, object *skill)
+int change_skill_to_skill (object *who, object *skl)
 {
-    if (!skill) return 1;	    /* Quick sanity check */
+    if (!skl) return 1;	    /* Quick sanity check */
 
-    if (who->chosen_skill == skill)
+    if (who->chosen_skill == skl)
     {
         /* optimization for changing skill to current skill */
         if (who->type == PLAYER)
@@ -1230,12 +1230,12 @@ int change_skill_to_skill (object *who, object *skill)
         return 0;
     }
 
-    if (skill->env != who) {
+    if (skl->env != who) {
 	LOG(llevError,"change_skill_to_skill: skill is not in players inventory\n");
 	return 1;
     }
 
-    if (apply_special (who, skill, AP_APPLY)) {
+    if (apply_special (who, skl, AP_APPLY)) {
 	LOG (llevError, "BUG: change_skill(): can't apply new skill\n");
             return 1;
     }
@@ -1624,4 +1624,5 @@ object *get_skill_from_inventory(object *op, const char *skname) {
     if (tmp->type == SKILL && strcmp(tmp->name, skname)==0)
       return tmp;
   }
+  return NULL;
 }

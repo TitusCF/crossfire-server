@@ -195,6 +195,9 @@ archive::
 	@if [ -d $(ARCHIVE)/lib/help ]; then set +x; \
 	else (set -x; $(MKDIR) $(ARCHIVE)/lib/help); fi
 	$(CP) $(FILES_HELP) $(ARCHIVE)/lib/help
+	@if [ -d $(ARCHIVE)/lib/wizhelp ]; then set +x; \
+	else (set -x; $(MKDIR) $(ARCHIVE)/lib/wizhelp); fi
+	$(CP) $(FILES_WIZHELP) $(ARCHIVE)/lib/wizhelp
 
 patchlist::
 	@echo Makefile.in $(PFILES) $(FILES_ADM) $(FILES_HELP) $(PFILES_MISC) > .patchlist

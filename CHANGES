@@ -15,7 +15,21 @@ changes' is much more useful than 'misc edits' or 'code cleanup'.
 small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
-Changes for CVS:
+Changes for 1.1.0:
+
+Updates for 1.1.0 release - pretty much all minor bug fixes, like
+compiler warning messages, invalid ANSI C constructs, missing files to
+include in the distribution.
+Makefile.in, include/version.h: update version.
+include/Makefile.in: Add some missing files
+include/libproto.h, sproto.h: rebuilt to prevent compiler warnings
+lib/Makefile.in: Include the wizhelp files in the archive.
+server/apply.c, server/skill_util.c: fix invalid code (function parameter
+    names can't match structs/typedefs), add a missing return value.
+server/c_move.c, server/c_new.c, server/c_object.c, server/commands.c,
+    server/daemon.c: Don't include the sproto.h if CEXTRACT is defined.
+server/plugins.c: fix printf command that was printing wrong value type.
+doc/spoiler-html/Makefile.in: Remove extraneous newline
 
 server/player.c: modify play_again to remove the player object if not done so
 already.  This fixes a crash observed on metalforge when a player quit at the

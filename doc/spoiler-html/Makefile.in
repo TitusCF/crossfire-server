@@ -52,14 +52,12 @@ monput.html: .bmaps in_monput makeps.pl monsters.gif
 	makeps.pl libdir=$(CROSSRC)/lib archdir=$(CROSSRC)/lib/ size=0.4 input=in_monput inarch=$(datadir)/archetypes > monput.html
 
 in_monput: monster-extract $(CROSSBIN) $(datadir)/treasures 		$(datadir)/archetypes
-
 	$(CROSSBIN) -m2 |  sort -f | 		$(AWK) -F'|' -f monster-extract > in_monput
 
 spells.html: .bmaps in_spells makeps.pl spells.gif
 	makeps.pl libdir=$(CROSSRC)/lib archdir=$(CROSSRC)/lib/ size=0.4 input=in_spells inarch=$(datadir)/archetypes > spells.html
 
 in_spells: spells-extract  $(INCDIR)/spellist.h 		$(CROSSBIN) $(datadir)/archetypes
-
 	tr -d \" < $(INCDIR)/spellist.h | 		$(AWK) -F, -v crosscmd="$(CROSSBIN) -m4" 			-f spells-extract | sort > in_spells
 
 version.html: $(CROSSBIN)

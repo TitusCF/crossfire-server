@@ -2006,39 +2006,40 @@ int dragon_eat_flesh(object *op, object *meal) {
       abil->last_eat = 0;
     }
   }
+  return 1;
 }
 
-static void apply_savebed (object *player)
+static void apply_savebed (object *pl)
 {
-    if(!player->contr->name_changed||!player->stats.exp) {
-      new_draw_info(NDI_UNIQUE, 0,player,"You don't deserve to save your character yet.");
+    if(!pl->contr->name_changed||!pl->stats.exp) {
+      new_draw_info(NDI_UNIQUE, 0,pl,"You don't deserve to save your character yet.");
       return;
     }
-    if(QUERY_FLAG(player,FLAG_WAS_WIZ)) {
-      new_draw_info(NDI_UNIQUE, 0,player,"Since you have cheated you can't save.");
+    if(QUERY_FLAG(pl,FLAG_WAS_WIZ)) {
+      new_draw_info(NDI_UNIQUE, 0,pl,"Since you have cheated you can't save.");
       return;
     }
-    remove_ob(player);
-    player->direction=0;
-    player->contr->count_left=0;
-    new_draw_info_format(NDI_UNIQUE | NDI_ALL, 5, player,
-	"%s leaves the game.",player->name);
+    remove_ob(pl);
+    pl->direction=0;
+    pl->contr->count_left=0;
+    new_draw_info_format(NDI_UNIQUE | NDI_ALL, 5, pl,
+	"%s leaves the game.",pl->name);
     
     /* update respawn position */
-    strcpy(player->contr->savebed_map, player->map->path);
-    player->contr->bed_x = player->x;
-    player->contr->bed_y = player->y;
+    strcpy(pl->contr->savebed_map, pl->map->path);
+    pl->contr->bed_x = pl->x;
+    pl->contr->bed_y = pl->y;
     
-    strcpy(player->contr->killer,"left");
-    check_score(player); /* Always check score */
-    (void)save_player(player,0);
-    play_again(player);
-    player->map->players--;
+    strcpy(pl->contr->killer,"left");
+    check_score(pl); /* Always check score */
+    (void)save_player(pl,0);
+    play_again(pl);
+    pl->map->players--;
 #if MAP_MAXTIMEOUT 
-    MAP_SWAP_TIME(player->map) = MAP_TIMEOUT(player->map);
+    MAP_SWAP_TIME(pl->map) = MAP_TIMEOUT(pl->map);
 #endif
-    player->speed = 0;
-    update_ob_speed(player);
+    pl->speed = 0;
+    update_ob_speed(pl);
 }
 
 
