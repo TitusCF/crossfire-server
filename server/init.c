@@ -612,8 +612,6 @@ static void load_settings()
 
 void init(int argc, char **argv) {
 
-    (void) umask(0);	/* We don't want to be affected by players' umask */
-
     init_done=0;		/* Must be done before init_signal() */
     logfile=stderr;
     parse_args(argc, argv, 1);	/* First arg pass - right now it does
