@@ -415,10 +415,6 @@ void doeric_server()
 	    free_newsocket(&init_sockets[i]);
 	    init_sockets[i].status = Ns_Avail;
 	    socket_info.nconns--;
-	    for (j=i; j<socket_info.nconns; j++)
-		init_sockets[j] = init_sockets[j+1];
-	    if ((socket_info.nconns+1) < socket_info.allocated_sockets) 
-		init_sockets[socket_info.nconns+1].status = Ns_Avail;
 	} else if (init_sockets[i].status != Ns_Avail){
 	    FD_SET(init_sockets[i].fd, &tmp_read);
 	    FD_SET(init_sockets[i].fd, &tmp_write);
@@ -512,11 +508,8 @@ void doeric_server()
 	    int j;
 
 	    free_newsocket(&init_sockets[i]);
+	    init_sockets[i].status = Ns_Avail;
 	    socket_info.nconns--;
-	    for (j=i; j<socket_info.nconns; j++)
-		init_sockets[j] = init_sockets[j+1];
-	    if ((socket_info.nconns+1) < socket_info.allocated_sockets)
-		init_sockets[socket_info.nconns+1].status = Ns_Avail;
 	    continue;
 	}
 	if (FD_ISSET(init_sockets[i].fd, &tmp_read)) {
@@ -526,6 +519,7 @@ void doeric_server()
 	    init_sockets[i].can_write=1;
 	}
     }
+
     /* This does roughly the same thing, but for the players now */
     for (pl=first_player; pl!=NULL; pl=next) {
 
