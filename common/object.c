@@ -1326,7 +1326,7 @@ object *insert_ob_in_map (object *op, mapstruct *m, object *originator, int flag
 
     /* If there are other objects, then */
     if((top=GET_MAP_OB(op->map,op->x,op->y))!=NULL) {
-	object *last;
+	object *last=NULL;
 	/*
 	 * If there are multiple objects on this space, we do some trickier handling.
 	 * We've already dealt with merging if appropriate.
