@@ -284,9 +284,10 @@ void enter_exit(object *op, object *exit_ob) {
   if(!newpath)
 	 newpath = op->map->path;
 
-  /* If the exit is marked unique, this is a special 'apartment' map -
-	* a unique one for each player.
-	*/
+   /* If the exit is marked unique, this is a special 'apartment' map -
+    * a unique one for each player.
+    */
+
   if (op->type==PLAYER && exit_ob && QUERY_FLAG(exit_ob, FLAG_UNIQUE)) {
 	 sprintf(apartment, "%s/%s/%s/%s", settings.localdir,
 				settings.playerdir, op->name, clean_path(newpath));
@@ -301,22 +302,17 @@ void enter_exit(object *op, object *exit_ob) {
 	 }
   }
 
-  /* If notunique has been cleared, then the stuff above has already
-	* found a map, so no need to check again.  Otherwise, check
-	* to see if the actual file exists.
-	* We check to see if a unique version also exists - needed if the
-	* player saves on the unique map.
-	*/
-  if (!unique && !has_been_loaded(newpath) && 
-      check_path(newpath,!unique) == -1) {
-	 if (check_path(newpath, 0) == -1) {
-		new_draw_info_format(NDI_UNIQUE, 0,op, "The %s is closed.", newpath);
-		return;
-	 }
-	 else {
-		unique=1;
-	 }
-  }
+    /* If under nonstandard name, it means the map is unique 
+     * If its not unique, and it hasn't been loaded, see if the map actually
+     * exists.
+     */
+    if (check_path(newpath, 0) != - 1) {
+	unique=1;
+    } else if (!unique && !has_been_loaded(newpath) && (check_path(newpath,0)==-1)) {
+	new_draw_info_format(NDI_UNIQUE, 0,op, "The %s is closed.", newpath);
+	return;
+    }
+
 
   /* Clear the player's count, and reset direction */
   op->direction=0;

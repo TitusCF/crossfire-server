@@ -1,6 +1,9 @@
 Changes in top level CVS tree (please add your changes at the very top of
 the file):
 
+Patch by Carsten Pluntke that fixes a problem with unique maps not being
+properly reloaded after being swapped out (main.c) - msw
+
 Fix so that when picking up objects from a container, the client gets
 an update to remove the object display from the container (ie, if
 you pick up all the gold coins from a container, the total in the players
