@@ -4670,23 +4670,30 @@ static PyObject* CFGetName(PyObject* self, PyObject* args)
 
 /*****************************************************************************/
 /* Name   : CFSetName                                                        */
-/* Python : CFPython.SetName(object, name)                                   */
+/* Python : CFPython.SetName(object, name[, name_pl])                        */
 /* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFSetName(PyObject* self, PyObject* args)
 {
     long whoptr;
     char *txt;
+    char *txt_pl = NULL;
 
-    if (!PyArg_ParseTuple(args,"ls",&whoptr,&txt))
+    if (!PyArg_ParseTuple(args,"ls|s",&whoptr,&txt,&txt_pl))
         return NULL;
 
     CHECK_OBJ(whoptr);
 
+    if (txt_pl == NULL)
+        txt_pl = txt;
     if (WHO->name != NULL)
         DELETE_STRING(WHO->name);
-    if(txt && strcmp(txt,""))
+    if (strcmp(txt, ""))
         WHO->name = add_string(txt);
+    if (WHO->name_pl != NULL)
+        DELETE_STRING(WHO->name_pl);
+    if (strcmp(txt_pl, ""))
+        WHO->name_pl = add_string(txt_pl);
     Py_INCREF(Py_None);
     return Py_None;
 };

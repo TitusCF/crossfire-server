@@ -17,6 +17,8 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+plugin/plugin_python.c: Add an optional parameter to CFPython.SetName() to
+   specify name_pl as well. Always set name_pl.
 plugin/plugin_python.c: Fix a buffer overflow in CFPython.RegisterCommand():
    allocated memory was not sufficient to hold the trailing '\0'.
 plugin/plugin_python.c: Use #define constants.
