@@ -559,9 +559,8 @@ void clear_object(object *op) {
     op->expmul=1.0;
     op->face = blank_face;
     op->attacked_by_count= -1;
-#ifdef CASTING_TIME
-    op->casting = -1;
-#endif
+    if (settings.casting_time == TRUE)
+	op->casting = -1;
 }
 
 /*

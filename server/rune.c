@@ -448,9 +448,9 @@ int cast_generic_rune(object *op, object *caster, int dir, char *stringarg, int 
 	    write_rune(op,dir,spellinrune,caster->level,stringarg);
 	}
     }
-#ifdef CASTING_TIME
     /* free the spell arg */
-    if(stringarg) {free(stringarg);stringarg=NULL; };
-#endif
+    if (stringarg && settings.casting_time == TRUE) {
+	free(stringarg);stringarg=NULL;
+    }
     return total_sp_cost;
 }

@@ -663,22 +663,25 @@ static int attack_ob_simple (object *op, object *hitter, int base_dam,
     /* See if we hit the creature */
     if(roll==20 || op->stats.ac>=base_wc-roll) {
 	int hitdam = base_dam;
-#ifdef CASTING_TIME
-	if ((hitter->type == PLAYER)&&(hitter->casting > -1)){
-	    hitter->casting = -1;
-	    hitter->spell_state = 1;
-	    new_draw_info(NDI_UNIQUE, 0,hitter,"You attacked and lost your spell!");
-	}
-	if ((op->casting > -1)&&(hitdam > 0)){
-	    op->casting = -1;
-	    op->spell_state = 1;
-	    if (op->type == PLAYER)  {
-		new_draw_info(NDI_UNIQUE, 0,op,"You were hit and lost your spell!");
-		new_draw_info_format(NDI_ALL|NDI_UNIQUE,5,NULL,
-		    "%s was hit by %s and lost a spell.",op_name,hitter->name);
+	if (settings.casting_time == TRUE) {
+	    if ((hitter->type == PLAYER)&&(hitter->casting > -1)){
+		hitter->casting = -1;
+		hitter->spell_state = 1;
+		new_draw_info(NDI_UNIQUE, 0,hitter,"You attacked and lost "
+		    "your spell!");
+	    }
+	    if ((op->casting > -1)&&(hitdam > 0)){
+		op->casting = -1;
+		op->spell_state = 1;
+		if (op->type == PLAYER)  {
+		    new_draw_info(NDI_UNIQUE, 0,op,"You were hit and lost "
+			"your spell!");
+		    new_draw_info_format(NDI_ALL|NDI_UNIQUE,5,NULL,
+			"%s was hit by %s and lost a spell.",
+			op_name,hitter->name);
+		}
 	    }
 	}
-#endif
 	if ( ! simple_attack)
         {
             /* If you hit something, the victim should *always* wake up.

@@ -217,32 +217,30 @@ int cast_spell(object *op,object *caster,int dir,int type,int ability,SpellTypeF
     return 0;
   }
 
-#ifdef CASTING_TIME
-  if (op->casting==-1) /* begin the casting */
-   {
-     if (item == spellNormal&&!ability){
-       op->casting = s->time*PATH_TIME_MULT(op,s);
-       op->spell   = s;  /* so no one cast a spell and switchs to get lower 
-			    casting times!!! */
-       op->spelltype = type;
-       op->spell_state = 1;
-
-
-	/*  put the stringarg into the object struct so that when the
-	    spell is actually cast, it knows about the stringarg.
-	    necessary for the invoke command spells.  */
-       if(stringarg) {
-          op->spellarg = strdup_local(stringarg);  
-	}
-	else op->spellarg=NULL;
-       return 0;
-     }
-  } else if (op->casting != 0) {
-    if (op->type == PLAYER )
-      new_draw_info(NDI_UNIQUE, 0,op,"You are casting!");
-    return 0;
+  if (settings.casting_time == TRUE) {
+      if (op->casting==-1) { /* begin the casting */
+	  if (item == spellNormal&&!ability){
+	      op->casting = s->time*PATH_TIME_MULT(op,s);
+	      op->spell = s;
+	/* so no one cast a spell and switchs to get lower casting times!!! */
+	      op->spelltype = type;
+	      op->spell_state = 1;
+	      /*  put the stringarg into the object struct so that when the
+		  spell is actually cast, it knows about the stringarg.
+		  necessary for the invoke command spells.  */
+	      if(stringarg) {
+		  op->spellarg = strdup_local(stringarg);  
+	      }
+	      else op->spellarg=NULL;
+	      return 0;
+	  }
+      } else if (op->casting != 0) {
+	  if (op->type == PLAYER )
+	      new_draw_info(NDI_UNIQUE, 0,op,"You are casting!");
+	  return 0;
+      }
   }
-#endif
+
   /*  ban removed on clerical spells in no-magic areas */
   if (!ability && item != spellPotion && 
 	( ((!s->cleric)&&blocks_magic(op->map,op->x,op->y))||
@@ -273,10 +271,10 @@ int cast_spell(object *op,object *caster,int dir,int type,int ability,SpellTypeF
 
     play_sound_player_only(op->contr, SOUND_FUMBLE_SPELL,0,0);
     new_draw_info(NDI_UNIQUE, 0,op,"You fumble the spell.");
-#ifdef CASTING_TIME
-  op->casting = -1;
-  op->spell_state = 1;
-#endif    
+    if (settings.casting_time == TRUE) {
+	op->casting = -1;
+	op->spell_state = 1;
+    }
     if(s->sp==0) /* Shouldn't happen... */
       return 0;
     return(random_roll(1, SP_level_spellpoint_cost(op,caster,type), op, 
@@ -301,21 +299,21 @@ int cast_spell(object *op,object *caster,int dir,int type,int ability,SpellTypeF
  * spell takes effect, and the caster can possibly be disturbed.
  * (maybe that should depend upon the spell cast?)
  */
-#ifdef CASTING_TIME
-if (item == spellNormal && !ability ){
-  op->casting = -1;
-  op->spell_state = 1;
-  s = op->spell; /* set s to the cast spell */
-  type = op->spelltype;
-  stringarg = op->spellarg;
-}
-#else
-  /* It seems the that the patch that added spell casting times
-   * increased the time value of most spells by about 10.  So divide
-   * by 10 to get back to more normal use.
-   */
-  op->speed_left -= (s->time*PATH_TIME_MULT(op,s) / 10) * FABS(op->speed);
-#endif
+  if (settings.casting_time == TRUE) {
+      if (item == spellNormal && !ability ){
+	  op->casting = -1;
+	  op->spell_state = 1;
+	  s = op->spell; /* set s to the cast spell */
+	  type = op->spelltype;
+	  stringarg = op->spellarg;
+      }
+  } else {
+      /* It seems the that the patch that added spell casting times
+       * increased the time value of most spells by about 10.  So divide
+       * by 10 to get back to more normal use.
+       */
+      op->speed_left -= (s->time*PATH_TIME_MULT(op,s) / 10) * FABS(op->speed);
+  }
   switch((enum spellnrs) type) {
   case SP_BULLET:
   case SP_LARGE_BULLET:
@@ -670,12 +668,11 @@ if (item == spellNormal && !ability ){
     if(caster->type == PLAYER)
       success=write_rune(op,dir,0,-2,stringarg);
     else success= 0;
-#ifdef CASTING_TIME
-	  /* free the spell arg */
-	  if(stringarg) {free(stringarg);stringarg=NULL; };
-#endif
-
-
+    /* free the spell arg */
+    if(settings.casting_time == TRUE && stringarg) {
+	free(stringarg);
+	stringarg=NULL;
+    }
     break;
   case SP_LIGHT:
     success = cast_light(op,caster,dir);
@@ -752,10 +749,10 @@ if (item == spellNormal && !ability ){
   }
 
   play_sound_map(op->map, op->x, op->y, SOUND_CAST_SPELL_0 + type);
-#ifdef CASTING_TIME
-	  /* free the spell arg */
-	  if(stringarg) {free(stringarg);stringarg=NULL; };
-#endif
+  /* free the spell arg */
+  if(settings.casting_time == TRUE && stringarg) {
+      free(stringarg);stringarg=NULL;
+  }
 
 #ifdef SPELLPOINT_LEVEL_DEPEND
   return success?SP_level_spellpoint_cost(op,caster,type):0;

@@ -400,6 +400,15 @@ static void load_settings()
 		LOG(llevError, "load_settings: Unkown value for"
 		    "spell_failure_effects: %s\n", cp);
 	    }
+	} else if (!strcasecmp(buf, "casting_time")) {
+	    if (!strcasecmp(cp, "on") || !strcasecmp(cp, "true")) {
+		settings.casting_time=TRUE;
+	    } else if (!strcasecmp(cp, "off") || !strcasecmp(cp, "false")) {
+		settings.casting_time=FALSE;
+	    } else {
+		LOG(llevError, "load_settings: Unkown value for"
+		    "casting_time: %s\n", cp);
+	    }
 	} else if (!strcasecmp(buf,"simple_exp")) {
 	    if (!strcasecmp(cp,"on") || !strcasecmp(cp,"true")) {
 		settings.simple_exp=TRUE;

@@ -159,9 +159,8 @@
  * is cast automatically in that direction (so only 1 key is needed.)
  * But this could be undesirable as various things move while you cast it.
  */
-/*
-#define CASTING_TIME
-*/
+
+#define CASTING_TIME FALSE
 
 /* CS_LOGSTATS will cause the server to log various usage stats
  * (number of connections, amount of data sent, amount of data received,
@@ -425,7 +424,7 @@
   op->level - 35
 */
 
-#define SPELL_ENCUMBRANCE
+#define SPELL_ENCUMBRANCE TRUE
 
 /* SPELL_FAILURE_EFFECTS only has meaing if SPELL_ENCUMBRANCE is defined.
  * What it does, is that when the player fails a spell, various effects
@@ -441,7 +440,7 @@
  * them properly.
  */
 
-/* #define SPELL_FAILURE_EFFECTS */
+#define SPELL_FAILURE_EFFECTS FALSE
 
 
 /* Set this to FALSE if you don't want characters to loose a random stat when

@@ -307,20 +307,21 @@ void rangetostring(object *pl,char *obuf)
    }
     break;
    case range_magic:
-#ifdef CASTING_TIME
-    if (pl->casting > -1) {
-      if (pl->casting == 0)
-      sprintf(obuf,"Range: Holding spell (%s)",
-              pl->spell->name);
-      else
-      sprintf(obuf,"Range: Casting spell (%s)",
-              pl->spell->name);
-    }
-    else
-#endif
-      sprintf(obuf,"Range: spell (%s)", 
-              spells[pl->contr->chosen_spell].name);
-    break;
+       if (settings.casting_time == TRUE) {
+	   if (pl->casting > -1) {
+	       if (pl->casting == 0)
+		   sprintf(obuf,"Range: Holding spell (%s)",
+		       pl->spell->name);
+	       else
+		   sprintf(obuf,"Range: Casting spell (%s)",
+			   pl->spell->name);
+	   } else
+	       sprintf(obuf,"Range: spell (%s)", 
+		   spells[pl->contr->chosen_spell].name);
+       } else
+	   sprintf(obuf,"Range: spell (%s)", 
+               spells[pl->contr->chosen_spell].name);
+       break;
 
    case range_misc:
     sprintf(obuf,"Range: %s", 

@@ -176,14 +176,12 @@ typedef struct obj {
     struct obj	*spellitem;	/* Spell ability monster is choosing to use */
     double	expmul;		/* needed experience = (calc_exp*expmul) - means some */
 				/* races/classes can need less/more exp to gain levels */
-#ifdef CASTING_TIME
     sint16	casting;         /* time left before spell goes off */
     uint16	spell_state;
     uint16	start_holding;
     struct spell_struct *spell;
     uint32	spelltype;
     char	*spellarg;
-#endif
 
     /* Following are values used by any object */
     struct archt *arch;         /* Pointer to archetype */

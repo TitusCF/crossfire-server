@@ -807,18 +807,19 @@ void process_players1(mapstruct *map)
 	} /* end of for loop for all the players */
     } /* for flag */
     for(pl=first_player;pl!=NULL;pl=pl->next) {
-	if (map!=NULL && (pl->ob == NULL || pl->ob->map!=map)) continue;
-#ifdef CASTING_TIME
-	if (pl->ob->casting > 0){
-	    pl->ob->casting--;
-	    pl->ob->start_holding = 1;
+	if (map!=NULL && (pl->ob == NULL || pl->ob->map!=map))
+	    continue;
+	if (settings.casting_time == TRUE) {
+	    if (pl->ob->casting > 0){
+		pl->ob->casting--;
+		pl->ob->start_holding = 1;
+	    }
+	    /* set spell_state so we can update the range in stats field */
+	    if ((pl->ob->casting == 0) && (pl->ob->start_holding ==1)){
+		pl->ob->start_holding = 0;
+		pl->ob->spell_state = 1;
+	    }
 	}
-	/* set spell_state so we can update the range in stats field */
-	if ((pl->ob->casting == 0) && (pl->ob->start_holding ==1)){
-	    pl->ob->start_holding = 0;
-	    pl->ob->spell_state = 1;
-	}
-#endif
 	do_some_living(pl->ob);
 /*	draw(pl->ob);*/	/* updated in socket code */
     }
@@ -935,11 +936,8 @@ void process_events (mapstruct *map)
 	    if (was_destroyed (op, tag))
 		continue;
 	}
-
-#ifdef CASTING_TIME
-	if (op->casting > 0)
+	if (settings.casting_time == TRUE && op->casting > 0)
 	    op->casting--;
-#endif
 	if (op->speed_left <= 0)
 	    op->speed_left += FABS (op->speed);
     }

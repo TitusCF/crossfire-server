@@ -301,6 +301,7 @@ typedef struct Settings {
     uint8   search_items;   /* search_items command */
     uint8   spell_encumbrance; /* encumbrance effects spells */
     uint8   spell_failure_effects; /* nasty backlash to spell failures */
+    uint8   casting_time;   /* it takes awhile to cast a spell */
 
     /* The meta_ is information for the metaserver.  These are set in 
      * the lib/settings file.
