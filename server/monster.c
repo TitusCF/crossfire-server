@@ -1734,7 +1734,7 @@ int can_detect_enemy (object *op, object *enemy, rv_vector *rv) {
     /* Quality invisible? Bah, we wont see them w/o SEE_INVISIBLE
      * flag (which was already checked) in can_see_enmy (). Lets get out of here 
      */
-    if(enemy->invisible && (!enemy->contr || !enemy->contr->tmp_invis))
+    if(enemy->invisible && (!enemy->contr || (!enemy->contr->tmp_invis && !enemy->contr->hidden)))
 	return 0;
 
     /* use this for invis also */
