@@ -630,6 +630,7 @@ extern void move_marker ( object *op );
 extern void apply_changes_to_player(object *player, object *change);
 extern int process_object ( object *op );
 extern void move_player_changer(object *op);
+extern int op_on_battleground ( object *op, int *x, int *y );
 
 #endif /* __STDC__ */
 #endif /* __CEXTRACT__ */

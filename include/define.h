@@ -155,6 +155,7 @@
 			      force into a player with a specified string. */
 #define HOLY_ALTAR	56
 #define PLAYER_CHANGER  57
+#define BATTLEGROUND    58      /* battleground, by Andreas Vogl */
 
 #define GEM		60 
 #define FIRECHEST	61 
