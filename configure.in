@@ -120,7 +120,7 @@ X11LIBS="$X_LIBS $X11LIBS"
 
 dnl Misc libraries.
 AC_CHECK_LIB(crypt, main)
-AC_CHECK_LIB(des, main)
+AC_CHECK_LIB(des, des_crypt)
 
 AC_CHECK_LIB(dmalloc, main)
 

@@ -90,7 +90,7 @@ RM = @RM@
 
 crossedit: $(OBJS) ../common/libcross.a Cnv/libCnv.a
 	$(RM) -f $@
-	$(CC) -o $@ $(OBJS) ../common/libcross.a $(LIBS) Cnv/libCnv.a
+	$(CC) -o $@ $(OBJS) ../common/libcross.a Cnv/libCnv.a $(LIBS)
 
 
 ../common/libcross.a:

@@ -17,6 +17,16 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 CVS changes since last release:
 
+MSW 2000/12/4:
+common/treasure.c: Make it so resistances from artifact files are absolute 
+	adjustments.
+Makefile.in configure configure.in: Fix check for libdes to see if des_crypt
+	exists in libdes before setting HAVE_LIBDES
+crossedit/Makefile.in:  Add Cnv/libCnv.a before LIBS - should fix
+	linking error on irix systems.
+utils/metaserver.pl: modified so it ignores entries from hosts that 
+	report their name as put.your.hostname.here
+
 MSW 2000/12/3:
 crossedit/Attr.c: Add the new resist names to set of variables one can set.
 

@@ -53,7 +53,10 @@ while (1) {
 	    print STDERR "$0: error on recv call: $OS_ERROR\n";
 	($port, $ip) = sockaddr_in($ipaddr);
 	$host = inet_ntoa $ip;
-	$data{$host} = "$host|$cur_time|$data";
+	($name, $rest) = split /\|/, $data;
+	if ($name ne "put.your.hostname.here") {
+		$data{$host} = "$host|$cur_time|$data";
+	}
     }
     # Need to generate some files.  This is also where we remove outdated
     # hosts.

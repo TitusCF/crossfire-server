@@ -1177,16 +1177,7 @@ void add_abilities(object *op, object *change) {
   
   for (i=0; i<NROFATTACKS; i++) {
     if (change->resist[i]) {
-	if (change->resist[i] < 0)
-	    op->resist[i] = change->resist[i];
-	else if (change->resist[i] > 0) {
-	    if ((op->type==ARMOUR || op->type==HELMET || op->type==SHIELD) && i==ATNR_PHYSICAL) {
-		op->resist[i] = (op->resist[i] * change->resist[i])/10;
-	    }
-	    else {
-		op->resist[i] += change->resist[i];
-	    }
-	}
+	op->resist[i] += change->resist[i];
     }
   }
   if (change->stats.dam) {
