@@ -163,7 +163,7 @@ int apply_potion(object *op, object *tmp)
       return 1;
     }
     /* only players get this */
-    if(op->type==PLAYER&&tmp->attacktype&AT_GODPOWER) {
+    if(op->type==PLAYER&&tmp->attacktype&AT_GODPOWER) {    /* improvement potion */
 	int i;
 
 	for(i=1;i<MIN(11,op->level);i++) {
@@ -737,7 +737,7 @@ int apply_container (object *op, object *sack)
 	return 0; /* This might change */
 
     if (sack==NULL || sack->type != CONTAINER) {
-	LOG (llevError, "apply_container: %s is not container!\n",sack->name);
+	LOG (llevError, "apply_container: %s is not container!\n",sack?sack->name:"NULL");
 	return 0;
     }
     op->contr->last_used = NULL;
@@ -811,24 +811,19 @@ int apply_container (object *op, object *sack)
 	}
     } else { /* not applied */
 	if (sack->slaying) { /* it's locked */
-	    for (tmp=op->inv; tmp; tmp=tmp->below)
-		if (tmp->type == SPECIAL_KEY && 
-		    tmp->slaying == sack->slaying)
-		    break;
-	    if (tmp) {
-		sprintf (buf, "You unlock %s with ", query_name(sack));
-		strcat (buf, query_name(tmp));
-		strcat (buf, ".");
-		SET_FLAG (sack, FLAG_APPLIED);
-		if (sack->env == NULL) { /* if it's on ground,open it also */
-		    new_draw_info (NDI_UNIQUE,0,op, buf);
-		    apply_container (op, sack);
-		    return 1;
-		}
-	    } else {
-		sprintf (buf, "You don't have the key to unlock %s.",
-			 query_name(sack));
+	  tmp = FindKey(sack, op->inv);
+	  if (tmp) {
+	    sprintf (buf, "You unlock %s with %s.", query_name(sack), query_name(tmp));
+	    SET_FLAG (sack, FLAG_APPLIED);
+	    if (sack->env == NULL) { /* if it's on ground,open it also */
+	      new_draw_info (NDI_UNIQUE,0,op, buf);
+	      apply_container (op, sack);
+	      return 1;
 	    }
+	  } else {
+	    sprintf (buf, "You don't have the key to unlock %s.",
+		     query_name(sack));
+	  }
 	} else {
 	    sprintf (buf, "You readied %s.", query_name(sack));
 	    SET_FLAG (sack, FLAG_APPLIED);
@@ -858,14 +853,13 @@ int apply_container (object *op, object *sack)
 
 int esrv_apply_container (object *op, object *sack)
 {
-    char buf[MAX_BUF];
     object *tmp=op->container;
 
     if(op->type!=PLAYER)
 	return 0; /* This might change */
 
     if (sack==NULL || sack->type != CONTAINER) {
-	LOG (llevError, "esrv_apply_container: %s is not container!\n",sack->name);
+	LOG (llevError, "esrv_apply_container: %s is not container!\n",sack?sack->name:"NULL");
 	return 0;
     }
 
@@ -893,21 +887,14 @@ int esrv_apply_container (object *op, object *sack)
      */
 
     if (sack->slaying) { /* it's locked */
-	for (tmp=op->inv; tmp; tmp=tmp->below)
-	    if (tmp->type == SPECIAL_KEY && 
-		tmp->slaying == sack->slaying)
-		break;
-
-	if (tmp) {
-	    sprintf (buf, "You unlock %s with ", query_name(sack));
-	    strcat (buf, query_name(tmp));
-	    strcat (buf, ".");
-	    new_draw_info(NDI_UNIQUE, 0, op, buf);
-	} else {
-	    new_draw_info_format(NDI_UNIQUE, 0, op,  "You don't have the key to unlock %s.",
-			 query_name(sack));
-	    return 0;
-	}
+      tmp=FindKey(sack, op->inv);
+      if (tmp) {
+	new_draw_info_format(NDI_UNIQUE, 0, op, "You unlock %s with %s.", query_name(sack), query_name(tmp));
+      } else {
+	new_draw_info_format(NDI_UNIQUE, 0, op,  "You don't have the key to unlock %s.",
+			     query_name(sack));
+	return 0;
+      }
     }
 
     /* By the time we get here, we have made sure any other container has been closed and
