@@ -61,16 +61,8 @@ char **expand2x(char **layout, int xsize, int ysize) {
 static void expand_misc(char **newlayout, int i, int j, char **layout,
                         int xsize, int ysize) {
   newlayout[i*2][j*2] = layout[i][j];
-  if (i+1 < xsize) {			/* fill up right edge */
-    newlayout[i*2+1][j*2] = '\0';
-  }
-  if (j+1 < ysize) {			/* fill up bottom edge */
-    newlayout[i*2][j*2+1] = '\0';
-
-    if (i+1 < xsize) {
-      newlayout[i*2+1][j*2+1] = '\0';
-    }
-  } /* endif(ysize) */
+  /* (Note: no need to reset rest of 2x2 area to \0 because calloc does that
+   * for us.) */
 }
 
 /* Returns a bitmap that represents which squares on the right and bottom
@@ -110,17 +102,15 @@ static void expand_wall(char **newlayout, int i, int j, char **layout,
   newlayout[i*2][j*2] = '#';
   if (i+1 < xsize) {
     if (both_pattern & 1) {		/* join walls/doors to the right */
-      newlayout[i*2+1][j*2] = '#';
-    } else {
-      newlayout[i*2+1][j*2] = '\0';
+/*      newlayout[i*2+1][j*2] = '#'; */
+      newlayout[i*2+1][j*2] = layout[i+1][j];
     }
   }
 
   if (j+1 < ysize) {
-    if (both_pattern & 2) {
-      newlayout[i*2][j*2+1] = '#';	/* join walls/doors to the bottom */
-    } else {
-      newlayout[i*2][j*2+1] = '\0';
+    if (both_pattern & 2) {		/* join walls/doors to the bottom */
+/*      newlayout[i*2][j*2+1] = '#'; */
+      newlayout[i*2][j*2+1] = layout[i][j+1];
     }
 
     if (wall_pattern==7) {		/* if orig layout is a 2x2 wall block,
