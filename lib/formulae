@@ -670,7 +670,7 @@ yield 5
 ingred potion of fire,potion of sunfire,water of diamond
 #
 # -- meteor storm, very powerful. Quest formula. 
-Object firery destruction
+Object fiery destruction
 arch potion_generic
 chance 0
 yield 6
