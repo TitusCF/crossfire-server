@@ -1,17 +1,8 @@
 Template: crossfire-server/ask_upgrade
-Type: select
-Choices: yes, no
-Description: Move files and directories?
- Beginning from version 1.0.0, all game runtime generated files are kept
- in /var/games/crossfire. Looks like you had old package installed,
- and files need to be moved from /var/lib/games/crossfire into 
- /var/games/crossfire. Do you want me to do this? If you prefer to
- do this by yourself, just say no.
-Choices-ru: Да, Нет
-Description-ru: Перенести файлы и каталоги?
- Начиная  с версии 1.0.0, все сгенерированные во время выполнения файлы
- сохраняются   в  каталоге  /var/games/crossfire.  Похоже,  что  у  вас
- установлена  старая версия пакета, и нужно перенести файлы из каталога
- /var/lib/games/crossfire  в  /var/games/crossfire. Хотите, чтобы я это
- сделал? Если хотите сделать это сами, только скажите НЕТ.
-
+Type: boolean
+_Description: Move files and directories to /var/games/crossfire?
+ Beginning from version 1.0.0, all game runtime generated files are kept in
+ /var/games/crossfire. Looks like you had the old package installed, and files
+ need to be moved from /var/lib/games/crossfire into /var/games/crossfire.
+ Do you want to do this? If you prefer to do this by yourself, just answer
+ negatively here.

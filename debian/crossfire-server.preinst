@@ -13,13 +13,13 @@ case "$1" in
 	    db_go || true
 
 	    db_get crossfire-server/ask_upgrade || true
-	    if [ "$RET" = "yes" ] ; then
+	    if [ "$RET" = "true" ] ; then
 		if [ ! -d /var/games/crossfire/ ] ; then
 		    echo "moving /var/lib/games/crossfire/ to /var/games/crossfire"
 		    mv -f /var/lib/games/crossfire/ /var/games/ || true
 		    if [ -d /var/lib/games/crossfire/ ] ; then
 			if [ "`ls /var/lib/games/crossfire/ | wc -l`" -gt 0 ] ; then
-			    echo "there are still files in /var/lib/games/crossfire/ !"
+			    echo "Some files remain in /var/lib/games/crossfire/ !"
 			    echo "Please move them to /var/games/crossfire"
 			fi
 		    fi
