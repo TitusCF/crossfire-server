@@ -709,7 +709,7 @@ void esrv_update_stats(player *pl)
         AddIfShort(pl->last_stats.Cha, pl->ob->stats.Cha, CS_STAT_CHA);
     }
     if(pl->socket.exp64) {
-	char s;
+	uint8 s;
 	for(s=0;s<NUM_SKILLS;s++) {
 	    if (pl->last_skill_ob[s] && 
 		pl->last_skill_exp[s] != pl->last_skill_ob[s]->stats.exp) {
@@ -1426,6 +1426,8 @@ void draw_client_map1(object *pl)
 	     * set to lower values.
 	     */
 	    if (ax >= pl->contr->socket.mapx || ay >= pl->contr->socket.mapy) {
+		int i, got_one;
+
 		oldlen = sl.len;
 
 		if (pl->contr->socket.ext_mapinfos){
@@ -1441,10 +1443,21 @@ void draw_client_map1(object *pl)
 		if (check_head(&sl, &pl->contr->socket, ax, ay, 0))
 		    mask |= 0x1;
 
-		if (mask & 0xf) {
+		/* If all we are doing is sending 0 (blank) faces, we don't
+		 * actually need to send that - just the coordinates
+		 * with no faces tells the client to blank out the
+		 * space.
+		 */
+		got_one=0;
+		for (i=oldlen+2; i<sl.len; i++) {
+		    if (sl.buf[i]) got_one=1;
+		}
+
+		if (got_one && (mask & 0xf)) {
 		    sl.buf[oldlen+1] = mask & 0xff;
 		} else {
-		    sl.len = oldlen;
+		    sl.len = oldlen + 2;
+		    
 		}
 		/*What concerns extendinfos, nothing to be done for now 
 		 * (perhaps effects layer later)
