@@ -17,6 +17,16 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 CVS changes since last release:
 
+MSW 2001/01/31:
+common/object.c: Fix that that spells cast on spaces with no floors get 
+    set properly after the spell expires.
+common/player.c: Use skill tools first (lockpicks, talismans, etc) before
+    using native skills.  In this way, an object with bonus automatically
+    gets used.
+common/living.c:  Fix so that negative con bonuses work properly - fixes
+    bug where a higher con could result in lower total hp due to improper
+    calculation.
+
 MSW 2001/01/30:
 Complete rewrite of the exit handling code.  Hopefully as an effect, this will
 fix the player appearing in the middle of the oceans.  I think the code
