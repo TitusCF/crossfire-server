@@ -430,22 +430,22 @@ char *ltostr10(signed long n) {
  */
 
 void save_long(char *buf, char *name, long n) {
-#if 0 /* This doesn't work, since buf is always the beginning */
-  char *cp, *var;
-  for(cp=buf;*name!='\0';)
-    *cp++ = *name++;
-  *cp++=' ';
-  for(var=ltostr10(n);*var!='\0';)
-    *cp++ = *name++;
-  *cp='\0';
-#else
-  char buf2[MAX_BUF];
-  strcpy(buf2,name);
-  strcat(buf2," ");
-  strcat(buf2,ltostr10(n));
-  strcat(buf2,"\n");
-  strcat(buf,buf2);
-#endif
+    char buf2[MAX_BUF];
+
+    strcpy(buf2,name);
+    strcat(buf2," ");
+    strcat(buf2,ltostr10(n));
+    strcat(buf2,"\n");
+    strcat(buf,buf2);
+}
+
+
+
+void save_long_long(char *buf, char *name, sint64 n) {
+    char buf2[MAX_BUF];
+
+    sprintf(buf2,"%s %lld\n", name, n);
+    strcat(buf,buf2);
 }
 
 /* This is a list of the suffix, uncompress and compress functions.  Thus,

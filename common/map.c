@@ -1436,8 +1436,8 @@ int calculate_difficulty(mapstruct *m) {
     archetype *at;
     int x,y;
     int diff=0;
-    int total_exp=0,exp_pr_sq;
     int i;
+    sint64 exp_pr_sq, total_exp=0;
 
     if (MAP_DIFFICULTY(m)) {
 	LOG(llevDebug, "Using stored map difficulty: %d\n", MAP_DIFFICULTY(m));

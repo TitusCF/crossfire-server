@@ -132,7 +132,7 @@ int fear_bonus[MAX_STAT + 1]={
    Both come in handy at least in function add_exp()
 */
 
-#define MAX_EXPERIENCE  levels[MAXLEVEL]
+#define MAX_EXPERIENCE  levels[settings.max_level]
 
 /* because exp_obj sum to make the total score,
  * we cannot allow that sum to exceed the maximum
@@ -149,15 +149,19 @@ int fear_bonus[MAX_STAT + 1]={
  *  -b.t.
  */
 
-#define MAX_EXP_IN_OBJ levels[MAXLEVEL]/(MAX_EXP_CAT - 1) 
+#define MAX_EXP_IN_OBJ levels[settings.max_level]/(MAX_EXP_CAT - 1) 
 
 
-extern uint32 levels[MAXLEVEL+1];
+extern uint64 *levels;
 
-/* Max level is 100.  By making it 101, it means values 0->100 are valid.
- * Thus, we can use op->level directly, and it also works for level 0 people.
+#define MAX_SAVE_LEVEL 110
+/* This no longer needs to be changed anytime the number of
+ * levels is increased - rather, did_make_save will do the
+ * right thing and always use range within this table.
+ * for safety, savethrow should not be accessed directly anymore,
+ * and instead did_make_save should be used instead.
  */
-int savethrow[MAXLEVEL+1]={
+static int savethrow[MAX_SAVE_LEVEL+1]={
   18,
   18,17,16,15,14,14,13,13,12,12,12,11,11,11,11,10,10,10,10, 9,
    9, 9, 9, 9, 8, 8, 8, 8, 8, 8, 7, 7, 7, 7, 7, 7, 7, 6, 6, 6,
@@ -816,10 +820,14 @@ void fix_player(object *op) {
 
     /* for players which cannot use armour, they gain AC -1 per 3 levels,
      * plus a small amount of physical resist, those poor suckers. ;) 
+     * the fact that maxlevel is factored in could be considered sort of bogus -
+     * we should probably give them some bonus and cap it off - otherwise,
+     * basically, if a server updates its max level, these playes may find
+     * that their protection from physical goes down
      */
     if(!QUERY_FLAG(op,FLAG_USE_ARMOUR) && op->type==PLAYER) {
 	ac=MAX(-10,op->arch->clone.stats.ac - op->level/3);
-	prot[ATNR_PHYSICAL] += ((100-prot[AT_PHYSICAL])*(80*op->level/MAXLEVEL))/100;
+	prot[ATNR_PHYSICAL] += ((100-prot[AT_PHYSICAL])*(80*op->level/settings.max_level))/100;
     }
     else
 	ac=op->arch->clone.stats.ac;
@@ -1431,7 +1439,7 @@ void player_lvl_adj(object *who, object *op) {
     if(!op)        /* when rolling stats */ 
 	op = who;	
  
-    if(op->level < MAXLEVEL && op->stats.exp >= level_exp(op->level+1,op->expmul)) {
+    if(op->level < settings.max_level && op->stats.exp >= level_exp(op->level+1,op->expmul)) {
 	op->level++;
 	
 	if (op != NULL && op == who && op->stats.exp > 1 && is_dragon_pl(who))
@@ -1464,12 +1472,12 @@ void player_lvl_adj(object *who, object *op) {
 
 /*
  * Returns how much experience is needed for a player to become
- * the given level.
+ * the given level.  level should really never exceed max_level
  */
 
-uint32 level_exp(int level,double expmul) {
-    if (level > 110)
-	return expmul * levels[110];
+sint64 level_exp(int level,double expmul) {
+    if (level > settings.max_level)
+	return expmul * levels[settings.max_level];
     return expmul * levels[level];
 }
 
@@ -1514,7 +1522,7 @@ void calc_perm_exp(object *op)
 static void add_player_exp(object *op, int exp)
 {
     object *exp_ob=NULL;
-    int limit;
+    sint64 limit;
 
     if(!op->chosen_skill) { 
 	LOG(llevError,"add_exp() called for %s w/ no ready skill.\n",op->name);
@@ -1540,7 +1548,7 @@ static void add_player_exp(object *op, int exp)
     /* Basically, you can never gain more experience in one shot
      * than half what you need to gain for next level.
      */
-    if(exp_ob->level < MAXLEVEL) { 
+    if(exp_ob->level < settings.max_level) { 
 	limit=(levels[exp_ob->level+1]-levels[exp_ob->level])/2;
 	if (exp > limit) exp=limit;
     } else { /* there is no going any higher! */ 
@@ -1737,3 +1745,20 @@ void apply_death_exp_penalty(object *op) {
     op->stats.exp -= del_exp;
     player_lvl_adj(op,NULL);
 }
+
+/* This function takes an object (monster/player, op), and
+ * determines if it makes a basic save throw by looking at the
+ * save_throw table.  level is the effective level to make
+ * the save at, and bonus is any plus/bonus (typically based on
+ * resistance to particular attacktype.
+ * Returns 1 if op makes his save, 0 if he failed
+ */
+int did_make_save(object *op, int level, int bonus)
+{
+    if (level > MAX_SAVE_LEVEL) level = MAX_SAVE_LEVEL;
+
+    if ((random_roll(1, 20, op, PREFER_HIGH) + bonus) < savethrow[level])
+	return 0;
+    return 1;
+}
+    

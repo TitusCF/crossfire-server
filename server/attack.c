@@ -1052,8 +1052,7 @@ int hit_player_attacktype(object *op, object *hitter, int dam,
         if (op->speed && 
 	    (QUERY_FLAG(op, FLAG_MONSTER) || op->type==PLAYER) &&
 	    !(rndm(0, (attacknum == ATNR_SLOW?6:3)-1)) &&
-	    ((random_roll(1, 20, op, PREFER_LOW) + 
-	      op->resist[attacknum]/10) < savethrow[level_diff])) {
+	    !did_make_save(op, level_diff,  op->resist[attacknum]/10)) {
 
 	  /* Player has been hit by something */
 	  if (attacknum == ATNR_CONFUSION) confuse_player(op,hitter,dam);
@@ -1709,7 +1708,7 @@ int hit_player(object *op,int dam, object *hitter, int type) {
 	npc_call_help(op);
     }
 
-    if(magic && (random_roll(1, 20, op, PREFER_HIGH))>=savethrow[op->level])
+    if (magic && did_make_save(op, op->level, 0))
 	maxdam=maxdam/2;
 
     attack_message(maxdam, maxattacktype, op, hitter);

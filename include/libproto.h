@@ -163,13 +163,14 @@ extern int allowed_class(object *op);
 extern void set_dragon_name(object *pl, object *abil, object *skin);
 extern void dragon_level_gain(object *who);
 extern void player_lvl_adj(object *who, object *op);
-extern uint32 level_exp(int level, double expmul);
+extern sint64 level_exp(int level, double expmul);
 extern void calc_perm_exp(object *op);
 extern int check_exp_loss(object *op, int exp);
 extern int check_exp_add(object *op, int exp);
 extern int check_exp_adjust(object *op, int exp);
 extern void add_exp(object *op, int exp);
 extern void apply_death_exp_penalty(object *op);
+extern int did_make_save(object *op, int level, int bonus);
 /* logger.c */
 extern void LOG(LogLevel logLevel, char *format, ...);
 /* los.c */
@@ -281,14 +282,15 @@ extern char *tempnam_local(char *dir, char *pfx);
 extern void remove_directory(const char *path);
 extern char *strdup_local(char *str);
 extern long strtol_local(register char *str, char **ptr, register int base);
+extern char *strcasestr_local(const char *s, char *find);
 extern char *strerror_local(int errnum);
 extern int isqrt(int n);
 extern char *ltostr10(signed long n);
 extern void save_long(char *buf, char *name, long n);
+extern void save_long_long(char *buf, char *name, sint64 n);
 extern FILE *open_and_uncompress(char *name, int flag, int *compressed);
 extern void close_and_delete(FILE *fp, int compressed);
 extern void make_path_to_file(char *filename);
-extern char *strcasestr_local(const char *s, char *find);
 /* player.c */
 extern void free_player(player *pl);
 extern object *find_skill(object *op, int skillnr);

@@ -616,7 +616,7 @@ int command_statistics(object *pl, char *params)
 {
     if (!pl->contr) return 1;
     new_draw_info_format(NDI_UNIQUE, 0, pl,"  Experience: %d",pl->stats.exp);
-    new_draw_info_format(NDI_UNIQUE, 0, pl,"  Next Level: %d",level_exp(pl->level+1, pl->expmul));
+    new_draw_info_format(NDI_UNIQUE, 0, pl,"  Next Level: %lld",level_exp(pl->level+1, pl->expmul));
     new_draw_info(NDI_UNIQUE, 0, pl,       "\nStat       Nat/Real/Max");
 
     new_draw_info_format(NDI_UNIQUE, 0, pl, "Str         %2d/ %3d/%3d",

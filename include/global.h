@@ -59,6 +59,18 @@ typedef unsigned char	uint8;
 typedef signed char	sint8;
 typedef unsigned short Fontindex;
 
+#if SIZEOF_LONG == 8
+typedef unsigned long	    uint64;
+typedef signed long	    sint64;
+#elif SIZEOF_LONG_LONG == 8
+typedef unsigned long long	uint64;
+typedef signed long long 	sint64;
+#else
+error do not know how to get a 64 bit value on this system.
+error correct and send mail to crossfire-devel on how to do this
+#endif
+
+
 
 
 /* global stuff used by new skill/experience system -b.t.
@@ -331,6 +343,8 @@ typedef struct Settings {
 
     char    *emergency_mapname;	    /* map to return players to in emergency */
     uint16  emergency_x, emergency_y;	/* coordinates to use on that map */
+
+    sint16  max_level;		    /* This is read out of exp_table */
 } Settings;
 
 extern Settings settings;

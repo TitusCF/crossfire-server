@@ -229,8 +229,7 @@ void polymorph_living(object *op) {
     /* High level creatures are immune, as are creatures immune to magic.  Otherwise,
      * give the creature a saving throw.
      */
-    if (op->level>=20 || random_roll(1, 20, op, PREFER_HIGH) +
-	op->resist[ATNR_MAGIC]/10 > savethrow[op->level] ||
+    if (op->level>=20 || did_make_save(op, op->level, op->resist[ATNR_MAGIC]/10) ||
 	(op->resist[ATNR_MAGIC]==100))
 	return;
 
@@ -2668,7 +2667,15 @@ int create_the_feature(object *op, object *caster,int dir, int spell_effect)
 
     m = op->map;
 
-    if(get_map_flags(m, &m, x, y, &x, &y) & (P_BLOCKED | P_OUT_OF_MAP)) {
+    /* Basically, if player is casting build directory, they can cast it on
+     * the space they are standing, so don't check for blocked in that
+     * case (we'll also presume that the fact that the player is on a space
+     * means he's withing the map).  Always check the map if we're not
+     * doing a directory, or if the target space for the feature does not
+     * match the space the player (op) is on.
+     */
+    if ((spell_effect != SP_BUILD_DIRECTOR || x != op->x || y != op->y) && 
+        (get_map_flags(m, &m, x, y, &x, &y) & (P_BLOCKED | P_OUT_OF_MAP))) {
 	new_draw_info(NDI_UNIQUE, 0,op,"Something is in the way.");
 	return 0;
     }

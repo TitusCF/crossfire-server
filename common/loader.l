@@ -359,7 +359,7 @@ A	.+
 ^maxsp{S}	op->stats.maxsp = IVAL;
 ^grace{S}	op->stats.grace = IVAL;
 ^maxgrace{S}	op->stats.maxgrace = IVAL;
-^exp{S}		op->stats.exp = atol(yval());
+^exp{S}		op->stats.exp = atoll(yval());
 ^food{S}	op->stats.food = IVAL;
 ^dam{S}		op->stats.dam = IVAL;
 ^wc{S}		op->stats.wc = IVAL;
@@ -1473,7 +1473,7 @@ char *get_ob_diff(object *op,object *op2) {/* I plan to optimize this heavily */
   if(op->stats.maxgrace!=op2->stats.maxgrace)
     save_long(buf, "maxgrace", op->stats.maxgrace);
   if(op->stats.exp!=op2->stats.exp)
-    save_long(buf, "exp", op->stats.exp);
+    save_long_long(buf, "exp", op->stats.exp);
   if(op->expmul!=op2->expmul) 
     save_double(buf, "expmul", op->expmul);
   if(op->stats.food!=op2->stats.food)

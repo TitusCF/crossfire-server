@@ -39,7 +39,7 @@ typedef struct scr {
   char name[BIG_NAME];      /* name  */
   char title[BIG_NAME];	    /* Title */
   char killer[BIG_NAME];    /* name (+ title) or "quit" */
-  long exp;                 /* Experience */
+  sint64 exp;               /* Experience */
   char maplevel[BIG_NAME];  /* Killed on what level */
   int maxhp,maxsp,maxgrace; /* Max hp, sp, grace when killed */
   int position;             /* Position in the highscore list */
@@ -99,7 +99,7 @@ static void copy_score(score *sc1,score *sc2) {
 
 static char *put_score(score *sc) {
   static char buf[MAX_BUF];
-  sprintf(buf,"%s:%s:%ld:%s:%s:%d:%d:%d",sc->name,sc->title,sc->exp,sc->killer,sc->maplevel,
+  sprintf(buf,"%s:%s:%lld:%s:%s:%d:%d:%d",sc->name,sc->title,sc->exp,sc->killer,sc->maplevel,
           sc->maxhp,sc->maxsp,sc->maxgrace);
   return buf;
 }
@@ -128,7 +128,7 @@ static score *get_score(char *bp) {
 
   if ((cp = spool(NULL, "score")) == NULL)
     return NULL;
-  sscanf(cp,"%ld",&sc.exp);
+  sscanf(cp,"%lld",&sc.exp);
 
   if ((cp = spool(NULL, "killer")) == NULL)
     return NULL;
@@ -158,15 +158,15 @@ static char * draw_one_high_score(score *sc) {
     static char retbuf[MAX_BUF];
 
     if(!strncmp(sc->killer,"quit",MAX_NAME))
-	sprintf(retbuf,"%3d %10ld %s the %s quit the game on map %s [%d][%d][%d].",
+	sprintf(retbuf,"%3d %10lld %s the %s quit the game on map %s [%d][%d][%d].",
             sc->position,sc->exp,sc->name,sc->title,sc->maplevel,sc->maxhp,sc->maxsp,
 		sc->maxgrace);
     else if(!strncmp(sc->killer,"left",MAX_NAME))
-	sprintf(retbuf,"%3d %10ld %s the %s left the game on map %s [%d][%d][%d].",
+	sprintf(retbuf,"%3d %10lld %s the %s left the game on map %s [%d][%d][%d].",
             sc->position,sc->exp,sc->name,sc->title,sc->maplevel,sc->maxhp,sc->maxsp,
 		sc->maxgrace);
     else
-	sprintf(retbuf,"%3d %10ld %s the %s was killed by %s on map %s [%d][%d][%d].",
+	sprintf(retbuf,"%3d %10lld %s the %s was killed by %s on map %s [%d][%d][%d].",
             sc->position,sc->exp,sc->name,sc->title,sc->killer,sc->maplevel,
             sc->maxhp,sc->maxsp,sc->maxgrace);
     return retbuf;

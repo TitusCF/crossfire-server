@@ -17,6 +17,68 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Patch for 64 bit experience total, as well as flexible number of levels.
+Basically, max level is now dynamic, set in exp_table file.  Experience
+is now a 64 bit value, so much higher totals now allowed.  To 
+allow for flexible levels, add new function - did_make_save() which is used
+for players/monsters to see if they make their saving throw - this is
+necessary because the savethrow[] array may not be as large as max level -
+did_make_save takes this into account.
+NOTE: If your updating a server, you will need to copy over/set up a
+new exp_table file that has max_levels defined and at least one of the
+tables uncommented.  There are no longer any compiled in defaults
+--
+configure, configure.ac: Add AC_CHECK_SIZEOF calls for long and long long
+   so we can know which one to use for 64 bit support (other checks
+   may need to be added)
+common/exp.c: Remove levels table, replace it with a 64 bit pointer.
+   Change init_experience to allocate appropriately sized table, have it
+   read max_level value from exp_table file.  Replace atoi calls with
+   atoll to get 64 bit value.  Update dump_experience to properly
+   print 64 bit values.
+common/info.c: Update dump routines that dump exp to properly print
+   64 bit values.
+common/init.c: Add initializing for settings.max_level value.
+common/item.c: Update sprintf's to handle 64 bit output of exp (speed)
+   value in objects.
+common/living.c: change MAX_EXP define, update MAX_EXP_IN_OBJ define,
+   add MAX_SAVE_LEVEL which corresponds to how large the savethrow
+   table is.  Change MAXLEVEL to settings.max_level.  Change level_exp()
+   to return 64 bit value, other updates in functions to use 64 bit
+   values.  Add did_make_save() function.
+common/loader.l, common/loader.c: Update load/save routins of exp to 
+   deal with 64 bit values.
+common/map.c: Update calculate_difficulty to use 64 bit values when
+   storing exp - unlikely to make a difference, since unlikely any map
+   will get to a point where it has that much exp on it.
+common/porting.c: Remove dead code from save_long(), add save_long_long()
+   to save 64 bit values.
+include/autoconf.h.in: SIZEOF_LONG and SIZEOF_LONG_LONG values added.
+include/global.h: Add code to typedef sint64/uint64 types based on what
+   type gives us those values.  Add max_level to settings array.
+include/libproto.h: rebuilt.
+include/living.h: Replace exp field with 64 bit value.
+include/player.h: Update party kill log exp tracking to have 64 bit
+   values.
+lib/exp_table: Udpate comments about max_level, uncomment what
+   was the default table so new installs have working table.
+   Add 5 levels to all the tables.
+random_maps/monster.c: Update place_monsters to use 64 bit when storing
+   exp total for map/per square.
+server/apply.c: Replace MAXLEVEL with settings.max_level, add
+   did_make_save calls where appropriate
+server/c_misc.c: have statistics command properly print 64 bit
+   exp value.
+server/c_wiz.c: Have stats command properly display 64 bit value.
+server/hiscore.c: Replace exp values with 64 bit values, update to
+   properly load/display them.
+server/player.c: replace savethrow[] reference with did_make_save()
+server/skill_util.c: Update skills command to properly show 64 bit exp values.
+server/spell_effect.c: replace savethrow[] reference with did_make_save(),
+   allow players to cast directors right beneath themselves, but other
+   walls must be on empty space.
+MSW 2003-03-07
+
 Various bug fixes.
 crossedit/Attr.c: Minor cleanup to eliminate some compile time warnings.
 plugin/plugin_python.c: Remove some unused variables, thus fixing up some

@@ -925,7 +925,7 @@ int command_stats (object *op, char *params)
          sprintf(buf,"Con : %-2d        AC : %-4d  WC  : %d",
                  pl->ob->stats.Con,pl->ob->stats.ac,pl->ob->stats.wc) ;
          new_draw_info(NDI_UNIQUE, 0,op,buf);
-         sprintf(buf,"Wis : %-2d       EXP : %d",
+         sprintf(buf,"Wis : %-2d       EXP : %lld",
                  pl->ob->stats.Wis,pl->ob->stats.exp);
          new_draw_info(NDI_UNIQUE, 0,op,buf);
          sprintf(buf,"Cha : %-2d      Food : %d",

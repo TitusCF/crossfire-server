@@ -1124,13 +1124,13 @@ void show_skills(object *op) {
 			buf[40] = 0;
 
 			if (settings.use_permanent_experience) {
-			    new_draw_info_format(NDI_UNIQUE,0,op,"%slvl:%3d (xp:%d/%d/%d%%)",
+			    new_draw_info_format(NDI_UNIQUE,0,op,"%slvl:%3d (xp:%lld/%lld/%d%%)",
 				 buf,tmp->exp_obj->level,
 				 tmp->exp_obj->stats.exp,
 				 level_exp(tmp->exp_obj->level+1, op->expmul),
 				 clipped_percent(tmp->exp_obj->last_heal,tmp->exp_obj->stats.exp));
 			} else {
-			    new_draw_info_format(NDI_UNIQUE,0,op,"%slvl:%3d (xp:%d/%d)",
+			    new_draw_info_format(NDI_UNIQUE,0,op,"%slvl:%3d (xp:%lld/%lld)",
 				 buf,tmp->exp_obj->level,
 				 tmp->exp_obj->stats.exp,
 				 level_exp(tmp->exp_obj->level+1, op->expmul));

@@ -988,8 +988,7 @@ void flee_player(object *op) {
     CLEAR_FLAG(op, FLAG_SCARED);
     return;
   }
-  if(!(random_roll(0, 4, op, PREFER_LOW)) &&
-     random_roll(1, 20, op, PREFER_HIGH) >= savethrow[op->level]) {
+  if(!(random_roll(0, 4, op, PREFER_LOW)) && did_make_save(op, op->level, 0)) {
     op->enemy=NULL;
     CLEAR_FLAG(op, FLAG_SCARED);
     return;

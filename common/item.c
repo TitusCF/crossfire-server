@@ -328,7 +328,7 @@ char *ring_desc (object *op)
 	}
     }
     if(op->stats.exp)
-	sprintf(buf+strlen(buf), "(speed %+d)", op->stats.exp);
+	sprintf(buf+strlen(buf), "(speed %+lld)", op->stats.exp);
     if(op->stats.wc)
 	sprintf(buf+strlen(buf), "(wc%+d)", op->stats.wc);
     if(op->stats.dam)
@@ -899,7 +899,7 @@ char *describe_item(object *op, object *owner) {
 	}
 
 	if(op->stats.exp) {
-	    sprintf(buf,"(speed %+d)",op->stats.exp);
+	    sprintf(buf,"(speed %+lld)",op->stats.exp);
 	    strcat(retbuf,buf);
 	}
 

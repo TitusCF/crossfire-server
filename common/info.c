@@ -58,7 +58,7 @@ void dump_abilities() {
     }
 
     ch = describe_item(&at->clone, NULL);
-    printf("%-16s|%6d|%4d|%3d|%s|%s|%s\n",at->clone.name,at->clone.stats.exp,
+    printf("%-16s|%6lld|%4d|%3d|%s|%s|%s\n",at->clone.name,at->clone.stats.exp,
            at->clone.stats.hp,at->clone.stats.ac,ch,at->name,gen_name);
   }
 }
@@ -85,7 +85,7 @@ void print_monsters() {
 		   op->stats.wc,attbuf);
 	    for (i=0; i<NROFATTACKS; i++)
 		printf("%4d", op->resist[i]);
-	    printf("|%8d|%9d|\n",op->stats.exp, new_exp(op));
+	    printf("|%8lld|%9d|\n",op->stats.exp, new_exp(op));
     }
     free_object(op);
   }

@@ -1902,16 +1902,16 @@ int dragon_eat_flesh(object *op, object *meal) {
       /* got positive resistance, now calculate improvement chance (0-100) */
       
       /* this bonus makes resistance increase easier at lower levels */
-      bonus = (MAXLEVEL - op->level) * 30. / ((double)MAXLEVEL);
+      bonus = (settings.max_level - op->level) * 30. / ((double)settings.max_level);
       if (i == abil->stats.exp)
 	bonus += 5;  /* additional bonus for resistance of ability-focus */
       
       /* monster bonus increases with level, because high-level
          flesh is too rare */
-      mbonus = op->level * 20. / ((double)MAXLEVEL);
+      mbonus = op->level * 20. / ((double)settings.max_level);
       
       chance = (((double)MIN(op->level+bonus, meal->level+bonus+mbonus))*100. /
-		((double)MAXLEVEL)) - skin->resist[i];
+		((double)settings.max_level)) - skin->resist[i];
       
       if (chance >= 0.)
 	chance += 1.;
