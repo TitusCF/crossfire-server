@@ -753,6 +753,8 @@ void check_login(object *op) {
 	kill_player(op);
 	if (pl->state != ST_PLAYING) return;
     }
+    LOG(llevInfo,"LOGIN: Player named %s from ip %s\n", op->name, 
+	op->contr->socket.host);
 
     /* Do this after checking for death - no reason sucking up bandwidth if
      * the data isn't needed.

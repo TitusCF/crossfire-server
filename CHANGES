@@ -17,6 +17,12 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+Add/Remove some LOG calls:
+common/living.c:  Remove log messages about gen_sp values on armor
+server/login.c, server/main.c: Add messages about player logins/logouts with
+IP address.  Useful for tracking potentially troublesome players and where
+they are player from.  MSW 8/7/2000
+
 The following change basically does the following:  When the server sends an
 item name to the client, this item name is now two pieces - the first piece
 of the name is its singular form, the second piece is the plural name.  This

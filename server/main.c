@@ -788,6 +788,8 @@ void leave(player *pl) {
 	 * of the data.
 	 */
 	pl->socket.status=Ns_Dead;
+	LOG(llevInfo,"LOGOUT: Player named %s from ip %s\n", pl->ob->name,
+	    pl->socket.host);
 
 	(void) sprintf(buf,"%s left the game.",pl->ob->name);
 	if (pl->ob->map) {
