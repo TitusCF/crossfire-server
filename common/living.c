@@ -887,18 +887,22 @@ void fix_player(object *op) {
     op->slaying=NULL;
   }
   if(!QUERY_FLAG(op,FLAG_WIZ)) {
-	CLEAR_FLAG(op, FLAG_FLYING);
+        if ( ! QUERY_FLAG (&op->arch->clone, FLAG_FLYING))
+	  CLEAR_FLAG(op, FLAG_FLYING);
 	CLEAR_FLAG(op, FLAG_XRAYS);
 	CLEAR_FLAG(op, FLAG_MAKE_INVIS);
   }
   CLEAR_FLAG(op,FLAG_LIFESAVE);
-  CLEAR_FLAG(op,FLAG_REFL_SPELL);
-  CLEAR_FLAG(op,FLAG_REFL_MISSILE);
   CLEAR_FLAG(op,FLAG_STEALTH);
+  CLEAR_FLAG(op,FLAG_BLIND);
+  if ( ! QUERY_FLAG (&op->arch->clone, FLAG_REFL_SPELL))
+    CLEAR_FLAG(op,FLAG_REFL_SPELL);
+  if ( ! QUERY_FLAG (&op->arch->clone, FLAG_REFL_MISSILE))
+    CLEAR_FLAG(op,FLAG_REFL_MISSILE);
   if(!QUERY_FLAG(&op->arch->clone,FLAG_UNDEAD))
     CLEAR_FLAG(op,FLAG_UNDEAD);
-  CLEAR_FLAG(op,FLAG_BLIND);
-  CLEAR_FLAG(op,FLAG_SEE_IN_DARK);
+  if ( ! QUERY_FLAG (&op->arch->clone, FLAG_SEE_IN_DARK))
+    CLEAR_FLAG(op,FLAG_SEE_IN_DARK);
 
   op->path_attuned=op->arch->clone.path_attuned;
   op->path_repelled=op->arch->clone.path_repelled;

@@ -16,10 +16,14 @@ changes' is much more useful than 'misc edits' or 'code cleanup'.
 small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+common/living.c: fix_player():  Bugfix: Don't reset FLAG_FLYING,
+FLAG_REFL_SPELL, FLAG_REFL_MISSILE and FLAG_SEE_IN_DARK if the archetype
+has these flags.  - Jan Echternach 6/19/2000
+
 random_maps/*  Numerous changes improving random maps, including
 two crash-fixes, a new type of 'special', ability to copy inventory
 of monsters when putting them into maps...  --PeterM 6/19/2000
-
 
 New naming scheme for random maps:  they won't grow in size
 indefinitely anymore.  --PeterM 6/17/2000
