@@ -2607,6 +2607,9 @@ void scroll_failure(object *op, int failure, int power)
 }
 
 void apply_changes_to_player(object *player, object *change) {
+  int excess_stat=0;  /* if the stat goes over the maximum
+                         for the race, put the excess stat some
+                         where else. */
   switch (change->type) {
   case CLASS: 
     {
@@ -2615,15 +2618,31 @@ void apply_changes_to_player(object *player, object *change) {
       object *walk;
       int flag_change_face=1;
 
-      /* reshuffle the stats */
-      stats->Str += ns->Str;
-      stats->Dex += ns->Dex;
-      stats->Con += ns->Con;
-      stats->Int += ns->Int;
-      stats->Wis += ns->Wis;
-      stats->Pow += ns->Pow;
-      stats->Cha += ns->Cha;
-      
+      /* the following code assigns stats up to the stat max
+         for the race, and if the stat max is exceeded, 
+         tries to randomly reassign the excess stat */ 
+      int i,j;
+      for(i=0;i<7;i++) {
+        int stat=get_attr_value(stats,i);
+        int race_bonus = get_attr_value(&(player->arch->clone.stats),i);
+        stat += get_attr_value(ns,i);
+        if(stat > 20 + race_bonus) {
+          excess_stat++;
+          stat = 20+race_bonus;
+        }
+        set_attr_value(stats,i,stat);
+      }
+      for(j=0;excess_stat >0 && j<100;j++)  {/* try 100 times to assign excess stats */
+        int i = RANDOM() %7;
+        int stat=get_attr_value(stats,i);
+        int race_bonus = get_attr_value(&(player->arch->clone.stats),i);
+        if(i==CHA) continue;  /* exclude cha from this */
+        if( stat < 20 + race_bonus) {
+          change_attr_value(stats,i,1);
+          excess_stat--;
+        }
+      }
+
       /* insert the randomitems from the change's treasurelist into
 	 the player ref: player.c*/
       if(change->randomitems!=NULL) 
