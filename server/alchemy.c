@@ -637,7 +637,10 @@ int calc_alch_danger(object *caster,object *cauldron, recipe *rp) {
         danger += (strtoint(name)/1000) + 3;
 	nrofi++;
    }
-   danger += rp->diff*3;
+   if (rp == NULL)
+       danger += 110;
+   else
+       danger += rp->diff*3;
  
     /* Using a bad device is *majorly* stupid */
    if(QUERY_FLAG(cauldron,FLAG_CURSED)) danger +=80;
