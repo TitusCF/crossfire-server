@@ -1676,45 +1676,50 @@ object *find_target_for_friendly_spell(object *op,int dir)
 /*  peterm: ball lightning mover.  */
 /*  ball lightning automatically seeks out a victim, if
     it sees any monsters close enough.  */
-
 void move_ball_lightning(object *op) {
-    int i,nx,ny,tx,ty,j,dam_save;
+    int i,nx,ny,tx,ty,j,dam_save,dir;
     object *owner;
 	 
     owner = get_owner(op);
-    remove_ob(op);
 
 	 /* Only those attuned to PATH_ELEC may use ball lightning with AT_GODPOWER */
-    if((!(owner->path_attuned & PATH_ELEC))&& (op->attacktype & AT_GODPOWER)) {
+    if(owner && (!(owner->path_attuned & PATH_ELEC))&& (op->attacktype & AT_GODPOWER)) {
+      remove_ob(op);
       free_object(op);
       new_draw_info_format(NDI_UNIQUE,0,owner,"The ball lightning dispells immediately.  Perhaps you need attunement to the spell path?");
       return;
     }
 
-    nx=op->x+DIRX(op);
-    ny=op->y+DIRY(op);
-    ty=op->y;
-    tx=op->x;  /*  the following logic makes sure that the ball
-		    doesn't move into a wall, and makes
-		    sure that it will move along a wall to try and
-		    get at it's victim.  */
-    if(!wall(op->map, nx, ny)&&!blocks_view(op->map,nx,ny)) {
-	tx=nx;
-	ty=ny;
+    /*  the following logic makes sure that the ball
+	doesn't move into a wall, and makes
+	sure that it will move along a wall to try and
+	get at it's victim.  */
+    dir = 0;
+
+    if(!(RANDOM() %4))
+      j = RANDOM() %2;
+    for(i = 1; i < 9; i++) {
+      /* i bit 0: alters sign of offset
+       * otther bits (i / 2): absolute value of offset
+       */
+
+      int offset = ((i ^ j) & 1) ? (i / 2) : - (i / 2);
+      int tmpdir = absdir (op->direction + offset);
+      nx = op->x + freearr_x[tmpdir];
+      ny = op->y + freearr_y[tmpdir];
+      if ( ! wall (op->map, nx, ny) && ! blocks_view (op->map, nx, ny)) {
+	dir = tmpdir;
+	break;
+      }
     }
-    else
-    {  i=RANDOM()%2;
-	if(i) {
-	if(!wall(op->map,op->x,ny)&&!blocks_view(op->map,op->x,ny)) ty=ny;
-	else if(!wall(op->map,nx,op->y)&&!blocks_view(op->map,nx,op->y)) tx=nx;
-	}
-	else {
-	if(!wall(op->map,nx,op->y)&&!blocks_view(op->map,nx,op->y)) tx=nx;
-	else if(!wall(op->map,op->x,ny)&&!blocks_view(op->map,op->x,ny)) ty=ny;
-	}
+    if (dir == 0) {
+      nx = op->x;
+      ny = op->y;
     }
-    op->y=ty;
-    op->x=tx;
+
+    remove_ob(op);
+    op->y=ny;
+    op->x=nx;
     insert_ob_in_map(op,op->map,op);
 	 
     dam_save = op->stats.dam;  /* save the original dam: we do halfdam on 
@@ -1724,21 +1729,17 @@ void move_ball_lightning(object *op) {
     for(j=0;j<9;j++) {
       int hx,hy;  /* hit these squares */
 
-      hx = tx+freearr_x[j]; hy = ty+freearr_y[j];
+      hx = nx+freearr_x[j]; hy = ny+freearr_y[j];
       
       /* first, don't ever, ever hit the owner.  Don't hit out
 	 of the map either.*/
-      if(! (owner->x==hx && owner->y==hy) && !out_of_map(op->map,hx,hy)) {
-	op->x = hx;
-	op->y = hy;
+      if(! (owner && owner->x==hx && owner->y==hy) && !out_of_map(op->map,hx,hy)) {
 	if(j) op->stats.dam = dam_save/2;
 		  
-	if(blocked(op->map,op->x,op->y)) hit_map(op,0,op->attacktype);
+	if(blocked(op->map,hx,hy)) hit_map(op,j,op->attacktype);
       }
     }
     /* restore to the center location and damage*/
-    op->y = ty;
-    op->x = tx;
     op->stats.dam = dam_save;
     i=spell_find_dir(op->map,op->x,op->y,get_owner(op));
 
@@ -1752,6 +1753,8 @@ void move_ball_lightning(object *op) {
       op->direction=i;
     }
 }
+
+
 
 /* peterm:
    do LOS stuff for ball lightning.  Go after the closest VISIBLE monster.

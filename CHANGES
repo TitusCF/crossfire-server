@@ -18,6 +18,10 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+PeterM:  2000-11-06
+server/spell_util.c	crash bug removed from move ball lightning:
+ball lightning mover improved in general.  --PeterM
+
 --------------------------------------------
 --- BEGIN stop_item() / attack fix patch ---  Jan Echternach 2000-11-06
 --------------------------------------------
