@@ -1512,6 +1512,7 @@ object *get_split_ob(object *orig_ob,int nr) {
 object *decrease_ob_nr (object *op, int i)
 {
     object *tmp;
+    player *pl;
 
     if (i == 0)   /* objects with op->nrof require this check */
         return op;
@@ -1525,7 +1526,23 @@ object *decrease_ob_nr (object *op, int i)
     }
     else if (op->env != NULL)
     {
+	/* is this object in the players inventory, or sub container
+	 * therein?
+	 */
         tmp = is_player_inv (op->env);
+	/* nope.  Is this a container the player has opened?
+	 * If so, set tmp to that player.
+	 * IMO, searching through all the players will mostly
+	 * likely be quicker than following op->env to the map,
+	 * and then searching the map for a player.
+	 */
+	if (!tmp) {
+	    for (pl=first_player; pl; pl=pl->next)
+		if (pl->ob->container == op->env) break;
+	    if (pl) tmp=pl->ob;
+	    else tmp=NULL;
+	}
+
         if (i < op->nrof) {
             sub_weight (op->env, op->weight * i);
             op->nrof -= i;

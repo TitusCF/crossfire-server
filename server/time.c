@@ -741,12 +741,14 @@ void change_object(object *op) { /* Doesn`t handle linked objs yet */
 
 void move_teleporter(object *op) {
 
+
+    /* Some things can't get moved.  If, skip over them. */
+    while (op->above && 
+        (QUERY_FLAG(op->above, FLAG_NO_PASS) || 
+	  QUERY_FLAG(op->above, FLAG_IS_FLOOR))) op=op->above;
+
     /* If nothing above us, nothing to do */
     if (!op->above) return;
-
-    /* Some things can't get moved */
-    if (QUERY_FLAG(op->above, FLAG_NO_PASS) || 
-	QUERY_FLAG(op->above, FLAG_IS_FLOOR)) return;
 
     if(EXIT_PATH(op)) {
 	if(op->above->type==PLAYER) 

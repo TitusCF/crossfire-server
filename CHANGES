@@ -18,6 +18,13 @@ else.  With this, include the file(s) that you changed.
 
 Changes for CVS:
 
+common/object.c:decrease_ob_nr modified to correctly update client when
+    player uses item from container that is on the ground (bookshelf for
+    example)
+server/time.c: move_teleporter modified to skip over wall/floors and
+    teleport whatever is above them.
+MSW 2001-08-05
+
 common/map.c: modify link_multipart_objects to preserve name and title of
     head when making the more parts.  modify update_position so that it should
     never show an invisible face to the player.
