@@ -238,7 +238,7 @@ RACE chess
   chess_bishop
   chess_queen
   chess_king
- RACE chaos
+RACE chaos
   living_chaos
   chaos_witch
 RACE dwarf
@@ -270,3 +270,12 @@ RACE consuming_fire_creatures
   !dragon
   !baby_dragon
   !big_dragon
+ # this is the summoning list for the goddess Ixalovh
+RACE chaotic_water_creatures
+  !para_water
+  !water_elemental
+  !lokanth
+  !tentacle
+  !water_witch
+  !tentacle2
+  !chinese_dragon
