@@ -73,21 +73,6 @@ categories. Also, there are no inherent
 restrictions on character skill use$-$any player may
 use any {\em acquired} skill. 
 
-\begin{table}
-\begin{center}
-\caption{How stats associated with a skill modify gained experience}\label{tab:exp_stat_mod}
-\index{skills, stat multipliers}
-\footnotesize
-\vskip 12pt
-\begin{tabular}{|cc|cc|} \hline
-Average of  & Experience gained  & Average of & Experience gained \\
-associated stats &  multiplier & associated stats &  multiplier \\ \hline\hline
-\input{statskmod}
-\hline
-\end{tabular}
-\end{center}
-\end{table}
-
 \subsection{Algorithm for Experience Gain under the skills system}
 
 Here we take the view that a player must 'overcome an opponent'
@@ -104,13 +89,11 @@ know more about this, check out the skills\_developers.doc}.
 Below the algorithm for experience gain is given where player ``pl'' 
 that has ``vanquished'' opponent ``op'' using skill ``sk'':
 \begin{quote}
-EXP GAIN = (EXP$_{op}$ + EXP$_{sk}$) * lvl\_mult * stat\_mult
+EXP GAIN = (EXP$_{op}$ + EXP$_{sk}$) * lvl\_mul
 \end{quote}
 where EXP$_{sk}$ is a constant award based on the skill used, 
 EXP$_{op}$ is the base experience award for `op' which depends
 on what op is (see below), 
-stat\_mult is taken from table \ref{tab:exp_stat_mod}, 
-and lvl\_mult is:\\ 
 
 \noindent{For} level$_{pl}$ $<$ level$_{op}$:: 
 \begin{quote}

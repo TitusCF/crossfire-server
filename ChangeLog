@@ -17,6 +17,20 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+------------------------------------------------------------------------------
+Changes for 1.6.0:
+
+configure, Makefiles: Rebuilt for 1.6.0 release
+doc/*/Makefile.am: Modified to use one makeps.pl utility in scripts directory.
+doc/scripts/makeps.pl: Make this the definitive copy - fix problem with it 
+   trying to combine big images when it doesn't need to.  Remove other copies.
+doc/playbook/chap1.tex, doc/playbook/chap5.tex: Fix some obvious errors,
+   but overall, the playbook is still quite out of date.
+doc/playbook/treas2-extract: Have it not include abilities in given items,
+   have it properly deal with multiple underscores in arch names.
+doc/spoiler-html/spoiler.html, doc/spoiler.ps: Rebuilt
+MSW 2004-04-26
+
 server/apply.c: apply_savebed() - make call to terminate_all pets before
    call to remove_ob() so that pets are properly removed.
 common/item.c, server/c_object.c: Fix code so that skill tools (talismans,

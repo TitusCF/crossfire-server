@@ -66,7 +66,6 @@ EXEEXT = @EXEEXT@
 OBJEXT = @OBJEXT@
 PATH_SEPARATOR = @PATH_SEPARATOR@
 AMTAR = @AMTAR@
-AR = @AR@
 AS = @AS@
 AWK = @AWK@
 BASENAME = @BASENAME@
@@ -75,15 +74,9 @@ BZIP = @BZIP@
 CC = @CC@
 COMPRESS = @COMPRESS@
 CPP = @CPP@
-CXX = @CXX@
-CXXCPP = @CXXCPP@
 DEPDIR = @DEPDIR@
 DLLTOOL = @DLLTOOL@
 ECHO = @ECHO@
-EGREP = @EGREP@
-F77 = @F77@
-GCJ = @GCJ@
-GCJFLAGS = @GCJFLAGS@
 GUNZIP = @GUNZIP@
 GZIP = @GZIP@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
@@ -101,7 +94,6 @@ PYTHON_LIB = @PYTHON_LIB@
 PY_INCLUDES = @PY_INCLUDES@
 PY_LIBS = @PY_LIBS@
 RANLIB = @RANLIB@
-RC = @RC@
 STRIP = @STRIP@
 TAR = @TAR@
 UNCOMPRESS = @UNCOMPRESS@
@@ -119,8 +111,6 @@ pkgconfdir = @pkgconfdir@
 pkgstatedir = @pkgstatedir@
 x_includes = @x_includes@
 x_libraries = @x_libraries@
-
-dist_noinst_SCRIPTS = makeps.pl
 
 EXTRA_DIST = spells-extract stats-extract\
 	spoiler.shtml helm-extract mag-extract shield-extract \
@@ -142,10 +132,8 @@ subdir = doc/spoiler-html
 mkinstalldirs = $(SHELL) $(top_srcdir)/utils/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/include/autoconf.h
 CONFIG_CLEAN_FILES =
-SCRIPTS = $(dist_noinst_SCRIPTS)
-
 DIST_SOURCES =
-DIST_COMMON = $(dist_noinst_SCRIPTS) Makefile.am Makefile.in
+DIST_COMMON = Makefile.am Makefile.in
 all: all-am
 
 .SUFFIXES:
@@ -195,7 +183,7 @@ distdir: $(DISTFILES)
 	done
 check-am: all-am
 check: check-am
-all-am: Makefile $(SCRIPTS)
+all-am: Makefile
 
 installdirs:
 
@@ -288,26 +276,26 @@ check_ok: dump_switches
 	$(RM) *.gif
 	touch .bmaps
 
-items: .bmaps in_items makeps.pl items.gif
-	$(PERL) makeps.pl libdir=$(top_srcdir)/lib archdir=$(top_srcdir)/lib/ size=0.4 input=in_items inarch=$(pkgdatadir)/archetypes > items
+items: .bmaps in_items ../scripts/makeps.pl items.gif
+	$(PERL) ../scripts/makeps.pl libdir=$(top_srcdir)/lib archdir=$(top_srcdir)/lib/ size=0.4 input=in_items inarch=$(pkgdatadir)/archetypes > items
 
 in_items: $(srcdir)/../scripts/items-extract.pl $(pkgdatadir)/archetypes $(top_srcdir)/common/living.c
 	$(PERL) $(srcdir)/../scripts/items-extract.pl  living_c=$(top_srcdir)/common/living.c $(pkgdatadir)/archetypes > in_items
 
-stats.html: .bmaps in_stats makeps.pl stats.gif
-	$(PERL) makeps.pl libdir=$(top_srcdir)/lib archdir=$(top_srcdir)/lib/ size=0.4 input=in_stats inarch=$(pkgdatadir)/archetypes > stats.html
+stats.html: .bmaps in_stats ../scripts/makeps.pl stats.gif
+	$(PERL) ../scripts/makeps.pl libdir=$(top_srcdir)/lib archdir=$(top_srcdir)/lib/ size=0.4 input=in_stats inarch=$(pkgdatadir)/archetypes > stats.html
 
 in_stats: stats-extract $(pkgdatadir)/archetypes $(top_srcdir)/common/living.c
 	$(AWK) -v living_c=$(top_srcdir)/common/living.c 		-f stats-extract $(pkgdatadir)/archetypes > in_stats
 
-monput.html: .bmaps in_monput makeps.pl monsters.gif
-	$(PERL) makeps.pl libdir=$(top_srcdir)/lib archdir=$(top_srcdir)/lib/ size=0.4 input=in_monput inarch=$(pkgdatadir)/archetypes > monput.html
+monput.html: .bmaps in_monput ../scripts/makeps.pl monsters.gif
+	$(PERL) ../scripts/makeps.pl libdir=$(top_srcdir)/lib archdir=$(top_srcdir)/lib/ size=0.4 input=in_monput inarch=$(pkgdatadir)/archetypes > monput.html
 
 in_monput: ../scripts/monster-extract.pl $(CROSSBIN) $(pkgdatadir)/treasures $(pkgdatadir)/archetypes
 	$(CROSSBIN) -m2 |  sort -f | $(PERL) ../scripts/monster-extract.pl > in_monput
 
-spells.html: .bmaps in_spells makeps.pl spells.gif
-	$(PERL) makeps.pl libdir=$(top_srcdir)/lib archdir=$(top_srcdir)/lib/ size=0.4 input=in_spells inarch=$(pkgdatadir)/archetypes > spells.html
+spells.html: .bmaps in_spells ../scripts/makeps.pl spells.gif
+	$(PERL) ../scripts/makeps.pl libdir=$(top_srcdir)/lib archdir=$(top_srcdir)/lib/ size=0.4 input=in_spells inarch=$(pkgdatadir)/archetypes > spells.html
 
 in_spells: spells-extract  $(INCDIR)/spellist.h 		$(CROSSBIN) $(pkgdatadir)/archetypes
 	tr -d \" < $(INCDIR)/spellist.h | 		$(AWK) -F, -v crosscmd="$(CROSSBIN) -m4" 			-f spells-extract | sort > in_spells

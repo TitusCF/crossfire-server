@@ -131,8 +131,8 @@ RECURSIVE_TARGETS = info-recursive dvi-recursive install-info-recursive \
 	install-exec-recursive installdirs-recursive install-recursive \
 	uninstall-recursive check-recursive installcheck-recursive
 DIST_COMMON = README AUTHORS COPYING ChangeLog INSTALL Makefile.am \
-	Makefile.in NEWS TODO acinclude.m4 aclocal.m4 config.guess \
-	config.sub configure configure.ac configure.in
+	Makefile.in NEWS TODO acinclude.m4 aclocal.m4 configure \
+	configure.ac
 DIST_SUBDIRS = common random_maps socket server include lib utils doc \
 	plugin devel crossedit
 all: all-recursive

@@ -3,8 +3,6 @@ FIG = fig/earrow.gif fig/nearrow.gif fig/sarrow.gif fig/swarrow.gif\
 	fig/narrow.gif fig/nwarrow.gif fig/searrow.gif fig/warrow.gif\
 	fig/screen_dia.gif fig/book.gif fig/stairdown.gif fig/stairup.gif
 
-dist_noinst_SCRIPTS = makeps.pl
-
 EXTRA_DIST = handbook.shtml chap1.html chap2.shtml chap3.shtml\
 	chap4.shtml chap5.shtml chap6.shtml chap7.html appA.html appB.html\
  	appC.shtml bonus-extract char-extract spellpath-extract\
@@ -51,8 +49,8 @@ check_ok: dump_switches
 	$(RM) *.gif
 	touch .bmaps
 
-items: .bmaps in_items makeps.pl items.gif
-	$(PERL) makeps.pl libdir=$(top_srcdir)/lib archdir=$(top_srcdir)/lib/ size=0.4 input=in_items  inarch=$(pkgdatadir)/archetypes > items
+items: .bmaps in_items ../scripts/makeps.pl items.gif
+	$(PERL) ../scripts/makeps.pl libdir=$(top_srcdir)/lib archdir=$(top_srcdir)/lib/ size=0.4 input=in_items  inarch=$(pkgdatadir)/archetypes > items
 
 in_items: items-extract $(pkgdatadir)/archetypes $(top_srcdir)/common/living.c
 	$(AWK) -v living_c=$(top_srcdir)/common/living.c 		-f items-extract $(pkgdatadir)/archetypes > in_items
@@ -69,14 +67,14 @@ bonus.html:
 in_char: char-extract $(pkgdatadir)/archetypes $(top_srcdir)/common/living.c
 	$(AWK) -v living_c=$(top_srcdir)/common/living.c 		-f char-extract $(pkgdatadir)/archetypes > in_char
 
-char.html: .bmaps in_char makeps.pl characters.gif
-	$(PERL) makeps.pl libdir=$(top_srcdir)/lib archdir=$(top_srcdir)/lib/ size=0.4 input=in_char inarch=$(pkgdatadir)/archetypes > char.html
+char.html: .bmaps in_char ../scripts/makeps.pl characters.gif
+	$(PERL) ../scripts/makeps.pl libdir=$(top_srcdir)/lib archdir=$(top_srcdir)/lib/ size=0.4 input=in_char inarch=$(pkgdatadir)/archetypes > char.html
 
 in_stats: stats-extract $(pkgdatadir)/archetypes $(top_srcdir)/common/living.c
 	$(AWK) -v living_c=$(top_srcdir)/common/living.c 		-f stats-extract $(pkgdatadir)/archetypes > in_stats
 
-stats.html: .bmaps in_stats makeps.pl stats.gif
-	$(PERL) makeps.pl libdir=$(top_srcdir)/lib archdir=$(top_srcdir)/lib/ size=0.4 input=in_stats archdir=$(pkgdatadir)/archetypes > stats.html
+stats.html: .bmaps in_stats ../scripts/makeps.pl stats.gif
+	$(PERL) ../scripts/makeps.pl libdir=$(top_srcdir)/lib archdir=$(top_srcdir)/lib/ size=0.4 input=in_stats archdir=$(pkgdatadir)/archetypes > stats.html
 
 equip.html: in_equip treas2-extract
 	$(AWK) -v eqitems=in_equip -f treas2-extract 	../../lib/treasures > equip.html

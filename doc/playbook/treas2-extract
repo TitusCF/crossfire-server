@@ -54,6 +54,7 @@ $1 == "treasure" {
 				continue; 
 			  } 
 			  if($2 ~ "^skill") continue;
+			  if($2 ~ "^abil") continue;
 			  if($2 ~ "force$") continue;
 			  if($2 in ignoreitem) continue;
 			  equip = $2;
@@ -78,11 +79,11 @@ END {
 			if(list[i]==list[j]) break;
                    nr = split(equiplist[j], eq, ",");
 		}
-                sub("_", " ", eq[nr]);
+                gsub("_", " ", eq[nr]);
                 printf("%s",capitalize(eq[nr--]));
                 do {
                         printf(", ");
-                        sub("_", " ", eq[nr]);
+                        gsub("_", " ", eq[nr]);
                         # printf("& %s\\\\\n",capitalize(eq[nr]));
                         printf("%s",capitalize(eq[nr]));
                 } while (--nr>1);

@@ -176,6 +176,7 @@ close(IN);
 
 sub assemble {
     local($w, $h, $ppm, $buff, $i, $j, $bmap_file, $ps_file) = @_;
+    my($one_image)=0;
 
     $bmap_file = $archdir.$bmap{$faces{0,0}}.".png";
     if ($output eq "tex") {$ps_file = $faces{0, 0} . '.ps';     } 
@@ -184,12 +185,18 @@ sub assemble {
 
     $w = $xmax - $xmin + 1;
     $h = $ymax - $ymin + 1;
+
+    # with big image support, we don't need to assemble images.  But not all
+    # images are big image - so we do a simple check - see if the face for the
+    # first and last piece are the same - if so, presume this is a big image
+    if ($archdir.$bmap{$faces{0,0}} eq $archdir.$bmap{$faces{$w-1,$h-1}}) { $one_image=1; }
+
     if (! -e $ps_file) {
-	if (($w == 1) && ($h == 1)) {
+	if ((($w == 1) && ($h == 1)) || $one_image) {
 	    # Maybe ln -s instead?
 	    if ($output eq "tex") {
-		if ($colour) {	system("pngtopnm -mix -background $BG $bmap_file | pnmtops -noturn > $ps_file"); }
-		else {	system("pngtopnm -mix -background $BG $bmap_file | pnmdepth 255 | ppmtopgm | pnmtops -noturn > $ps_file"); }
+		if ($colour) {	system("pngtopnm -mix -background $BG $bmap_file | pnmtops -noturn -nosetpage > $ps_file"); }
+		else {	system("pngtopnm -mix -background $BG $bmap_file | pnmdepth 255 | ppmtopgm | pnmtops -noturn -nosetpage> $ps_file"); }
 	    }
 	    elsif ($giftrans) {
 		system("pngtopnm -mix -background $BG $bmap_file | ppmtogif | giftrans -t $BG $ppm > $ps_file");
@@ -214,7 +221,7 @@ sub assemble {
 	    for ($i = $xmin; $i <= $xmax; $i++) {
 		for ($j = $ymin; $j <= $ymax; $j++) {
 		    print STDERR
-			 'Processing ' . $bmap{$faces{$i, $j}};
+			 'Processing x ' . $bmap{$faces{$i, $j}};
 		    $valx = ($i - $xmin) * $IMAGE_SIZE;
 		    $valy = ($j - $ymin) * $IMAGE_SIZE;
 #		    print STDERR "pngtopnm -background #ABCD01239876 $archdir$bmap{$faces{$i,$j}}.png > tmp.ppm\n";

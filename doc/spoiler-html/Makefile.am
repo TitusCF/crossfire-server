@@ -1,6 +1,4 @@
 
-dist_noinst_SCRIPTS = makeps.pl
-
 EXTRA_DIST = spells-extract stats-extract\
 	spoiler.shtml helm-extract mag-extract shield-extract \
 	empty.pbm bow-extract arche-extract weap-extract
@@ -34,26 +32,26 @@ check_ok: dump_switches
 	$(RM) *.gif
 	touch .bmaps
 
-items: .bmaps in_items makeps.pl items.gif
-	$(PERL) makeps.pl libdir=$(top_srcdir)/lib archdir=$(top_srcdir)/lib/ size=0.4 input=in_items inarch=$(pkgdatadir)/archetypes > items
+items: .bmaps in_items ../scripts/makeps.pl items.gif
+	$(PERL) ../scripts/makeps.pl libdir=$(top_srcdir)/lib archdir=$(top_srcdir)/lib/ size=0.4 input=in_items inarch=$(pkgdatadir)/archetypes > items
 
 in_items: $(srcdir)/../scripts/items-extract.pl $(pkgdatadir)/archetypes $(top_srcdir)/common/living.c
 	$(PERL) $(srcdir)/../scripts/items-extract.pl  living_c=$(top_srcdir)/common/living.c $(pkgdatadir)/archetypes > in_items
 
-stats.html: .bmaps in_stats makeps.pl stats.gif
-	$(PERL) makeps.pl libdir=$(top_srcdir)/lib archdir=$(top_srcdir)/lib/ size=0.4 input=in_stats inarch=$(pkgdatadir)/archetypes > stats.html
+stats.html: .bmaps in_stats ../scripts/makeps.pl stats.gif
+	$(PERL) ../scripts/makeps.pl libdir=$(top_srcdir)/lib archdir=$(top_srcdir)/lib/ size=0.4 input=in_stats inarch=$(pkgdatadir)/archetypes > stats.html
 
 in_stats: stats-extract $(pkgdatadir)/archetypes $(top_srcdir)/common/living.c
 	$(AWK) -v living_c=$(top_srcdir)/common/living.c 		-f stats-extract $(pkgdatadir)/archetypes > in_stats
 
-monput.html: .bmaps in_monput makeps.pl monsters.gif
-	$(PERL) makeps.pl libdir=$(top_srcdir)/lib archdir=$(top_srcdir)/lib/ size=0.4 input=in_monput inarch=$(pkgdatadir)/archetypes > monput.html
+monput.html: .bmaps in_monput ../scripts/makeps.pl monsters.gif
+	$(PERL) ../scripts/makeps.pl libdir=$(top_srcdir)/lib archdir=$(top_srcdir)/lib/ size=0.4 input=in_monput inarch=$(pkgdatadir)/archetypes > monput.html
 
 in_monput: ../scripts/monster-extract.pl $(CROSSBIN) $(pkgdatadir)/treasures $(pkgdatadir)/archetypes
 	$(CROSSBIN) -m2 |  sort -f | $(PERL) ../scripts/monster-extract.pl > in_monput
 
-spells.html: .bmaps in_spells makeps.pl spells.gif
-	$(PERL) makeps.pl libdir=$(top_srcdir)/lib archdir=$(top_srcdir)/lib/ size=0.4 input=in_spells inarch=$(pkgdatadir)/archetypes > spells.html
+spells.html: .bmaps in_spells ../scripts/makeps.pl spells.gif
+	$(PERL) ../scripts/makeps.pl libdir=$(top_srcdir)/lib archdir=$(top_srcdir)/lib/ size=0.4 input=in_spells inarch=$(pkgdatadir)/archetypes > spells.html
 
 in_spells: spells-extract  $(INCDIR)/spellist.h 		$(CROSSBIN) $(pkgdatadir)/archetypes
 	tr -d \" < $(INCDIR)/spellist.h | 		$(AWK) -F, -v crosscmd="$(CROSSBIN) -m4" 			-f spells-extract | sort > in_spells

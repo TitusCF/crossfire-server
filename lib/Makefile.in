@@ -75,7 +75,7 @@ INSTALL_DATA = @INSTALL_DATA@
 install_sh_DATA = $(install_sh) -c -m 644
 install_sh_PROGRAM = $(install_sh) -c
 install_sh_SCRIPT = $(install_sh) -c
-INSTALL_SCRIPT = @INSTALL_SCRIPT@ -m 755
+INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_HEADER = $(INSTALL_DATA)
 transform = @program_transform_name@
 NORMAL_INSTALL = :
@@ -190,7 +190,6 @@ dist_wizhelp_DATA = wizhelp/abil wizhelp/addexp \
 
 
 admdir = $(pkgdatadir)/adm
-dist_adm_DATA = adm/README 
 dist_adm_SCRIPTS = adm/map_check \
 	adm/map_info adm/map_expand.pl adm/mapslitter.pl adm/archsearch.pl \
 	adm/collect_images.pl
@@ -201,13 +200,12 @@ subdir = lib
 mkinstalldirs = $(SHELL) $(top_srcdir)/utils/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/include/autoconf.h
 CONFIG_CLEAN_FILES = checkarch.pl collect.pl
-SCRIPTS = $(dist_noinst_SCRIPTS) $(dist_adm_SCRIPTS)
+SCRIPTS = $(dist_adm_SCRIPTS) $(dist_noinst_SCRIPTS)
 
 DIST_SOURCES =
-DATA = $(dist_adm_DATA) $(dist_help_DATA) $(dist_pkgdata_DATA) \
-	$(dist_wizhelp_DATA)
+DATA = $(dist_help_DATA) $(dist_pkgdata_DATA) $(dist_wizhelp_DATA)
 
-DIST_COMMON = README $(dist_adm_DATA) $(dist_help_DATA) \
+DIST_COMMON = README $(dist_adm_SCRIPTS) $(dist_help_DATA) \
 	$(dist_noinst_SCRIPTS) $(dist_pkgdata_DATA) \
 	$(dist_wizhelp_DATA) Makefile.am Makefile.in checkarch.pl.in \
 	collect.pl.in
@@ -223,6 +221,26 @@ checkarch.pl: $(top_builddir)/config.status checkarch.pl.in
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
 collect.pl: $(top_builddir)/config.status collect.pl.in
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
+dist_admSCRIPT_INSTALL = $(INSTALL_SCRIPT)
+install-dist_admSCRIPTS: $(dist_adm_SCRIPTS)
+	@$(NORMAL_INSTALL)
+	$(mkinstalldirs) $(DESTDIR)$(admdir)
+	@list='$(dist_adm_SCRIPTS)'; for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  if test -f $$d$$p; then \
+	    f=`echo "$$p" | sed 's|^.*/||;$(transform)'`; \
+	    echo " $(dist_admSCRIPT_INSTALL) $$d$$p $(DESTDIR)$(admdir)/$$f"; \
+	    $(dist_admSCRIPT_INSTALL) $$d$$p $(DESTDIR)$(admdir)/$$f; \
+	  else :; fi; \
+	done
+
+uninstall-dist_admSCRIPTS:
+	@$(NORMAL_UNINSTALL)
+	@list='$(dist_adm_SCRIPTS)'; for p in $$list; do \
+	  f=`echo "$$p" | sed 's|^.*/||;$(transform)'`; \
+	  echo " rm -f $(DESTDIR)$(admdir)/$$f"; \
+	  rm -f $(DESTDIR)$(admdir)/$$f; \
+	done
 
 mostlyclean-libtool:
 	-rm -f *.lo
@@ -233,44 +251,6 @@ clean-libtool:
 distclean-libtool:
 	-rm -f libtool
 uninstall-info-am:
-dist_admDATA_INSTALL = $(INSTALL_DATA)
-install-dist_admDATA: $(dist_adm_DATA)
-	@$(NORMAL_INSTALL)
-	$(mkinstalldirs) $(DESTDIR)$(admdir)
-	@list='$(dist_adm_DATA)'; for p in $$list; do \
-	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
-	  f="`echo $$p | sed -e 's|^.*/||'`"; \
-	  echo " $(dist_admDATA_INSTALL) $$d$$p $(DESTDIR)$(admdir)/$$f"; \
-	  $(dist_admDATA_INSTALL) $$d$$p $(DESTDIR)$(admdir)/$$f; \
-	done
-
-uninstall-dist_admDATA:
-	@$(NORMAL_UNINSTALL)
-	@list='$(dist_adm_DATA)'; for p in $$list; do \
-	  f="`echo $$p | sed -e 's|^.*/||'`"; \
-	  echo " rm -f $(DESTDIR)$(admdir)/$$f"; \
-	  rm -f $(DESTDIR)$(admdir)/$$f; \
-	done
-
-dist_admSCRIPTS_INSTALL = $(INSTALL_SCRIPT)
-install-dist_admSCRIPTS: $(dist_adm_SCRIPTS)
-	@$(NORMAL_INSTALL)
-	$(mkinstalldirs) $(DESTDIR)$(admdir)
-	@list='$(dist_adm_SCRIPTS)'; for p in $$list; do \
-	if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
-	f="`echo $$p | sed -e 's|^.*/||'`"; \
-	echo " $(dist_admSCRIPTS_INSTALL) $$d$$p $(DESTDIR)$(admdir)/$$f"; \
-	$(dist_admSCRIPTS_INSTALL) $$d$$p $(DESTDIR)$(admdir)/$$f; \
-	done
-
-uninstall-dist_admSCRIPTS:
-	@$(NORMAL_UNINSTALL)
-	@list='$(dist_adm_SCRIPTS)'; for p in $$list; do \
-	f="`echo $$p | sed -e 's|^.*/||'`"; \
-	echo " rm -f $(DESTDIR)$(admdir)/$$f"; \
-	rm -f $(DESTDIR)$(admdir)/$$f; \
-	done
-
 dist_helpDATA_INSTALL = $(INSTALL_DATA)
 install-dist_helpDATA: $(dist_help_DATA)
 	@$(NORMAL_INSTALL)
@@ -403,9 +383,9 @@ info: info-am
 
 info-am:
 
-install-data-am: install-data-local install-dist_admDATA \
+install-data-am: install-data-local install-dist_admSCRIPTS \
 	install-dist_helpDATA install-dist_pkgdataDATA \
-	install-dist_wizhelpDATA install-dist_admSCRIPTS 
+	install-dist_wizhelpDATA
 
 install-exec-am:
 
@@ -423,23 +403,23 @@ mostlyclean: mostlyclean-am
 
 mostlyclean-am: mostlyclean-generic mostlyclean-libtool
 
-uninstall-am: uninstall-dist_admDATA uninstall-dist_helpDATA \
+uninstall-am: uninstall-dist_admSCRIPTS uninstall-dist_helpDATA \
 	uninstall-dist_pkgdataDATA uninstall-dist_wizhelpDATA \
-	uninstall-info-am uninstall-local uninstall-dist_admSCRIPTS
+	uninstall-info-am uninstall-local
 
 .PHONY: all all-am check check-am clean clean-generic clean-libtool \
 	distclean distclean-generic distclean-libtool distdir dvi \
 	dvi-am info info-am install install-am install-data \
-	install-data-am install-data-local install-dist_admDATA \
+	install-data-am install-data-local install-dist_admSCRIPTS \
 	install-dist_helpDATA install-dist_pkgdataDATA \
 	install-dist_wizhelpDATA install-exec install-exec-am \
 	install-info install-info-am install-man install-strip \
 	installcheck installcheck-am installdirs maintainer-clean \
 	maintainer-clean-generic mostlyclean mostlyclean-generic \
 	mostlyclean-libtool uninstall uninstall-am \
-	uninstall-dist_admDATA uninstall-dist_helpDATA \
+	uninstall-dist_admSCRIPTS uninstall-dist_helpDATA \
 	uninstall-dist_pkgdataDATA uninstall-dist_wizhelpDATA \
-	uninstall-info-am uninstall-local install-dist_admSCRIPTS
+	uninstall-info-am uninstall-local
 
 
 crossfire.0: bmaps.paths
