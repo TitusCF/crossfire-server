@@ -17,6 +17,13 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/player.c: modify play_again to remove the player object if not done so
+already.  This fixes a crash observed on metalforge when a player quit at the
+roll/swap stats prompt (undocumented that you can use 'q' then to do so).  It
+looks like this should also fix crashes that may be associated with the kick
+and shutdown wiz commands.
+MSW 2002-03-12
+
 Added new dragon race to crossfire.
 Players of this dragon race can gain resistances
 by eating the flesh of their defeated foes.

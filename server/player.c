@@ -546,6 +546,16 @@ void play_again(object *op)
     op->chosen_skill = NULL;
     unlock_player(op->name);
     send_query(&op->contr->socket, CS_QUERY_SINGLECHAR, "Do you want to play again (a/q)?");
+    /* a bit of a hack, but there are various places early in th
+     * player creation process that a user can quit (eg, roll
+     * stats) that isn't removing the player.  Taking a quick
+     * look, there are many places that call play_again without
+     * removing the player - it probably makes more sense
+     * to leave it to play_again to remove the object in all
+     * cases.
+     */
+    if (!QUERY_FLAG(op, FLAG_REMOVED)) 
+	remove_ob(op);
 }
 
 
