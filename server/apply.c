@@ -1717,13 +1717,14 @@ static void apply_food (object *op, object *tmp)
     else {
       if(op->stats.food+tmp->stats.food>999) {
 	if(tmp->type==FOOD || tmp->type==FLESH)
-	  new_draw_info(NDI_UNIQUE, 0,op,"You can't possibly eat all that now.");
+	  new_draw_info(NDI_UNIQUE, 0,op,"You feel full, but what a waste of food!");
 	else
-	  new_draw_info(NDI_UNIQUE, 0,op,"You can't possibly drink all that now.");
-	return;
+	  new_draw_info(NDI_UNIQUE, 0,op,"Most of the drink goes down your face not your throat!");
       }
+
       if(!QUERY_FLAG(tmp, FLAG_CURSED)) {
         char buf[MAX_BUF];
+
         if(tmp->type==DRINK)
             sprintf(buf,"Ahhh...that %s tasted good.",tmp->name);
         else 
@@ -1735,6 +1736,8 @@ static void apply_food (object *op, object *tmp)
         op->stats.hp+=tmp->stats.food/50;
         if(op->stats.hp>op->stats.maxhp)
           op->stats.hp=op->stats.maxhp;
+	if (op->stats.food > 999)
+	    op->stats.food = 999;
       }
       /* special food hack -b.t. */
       if(tmp->title || QUERY_FLAG(tmp,FLAG_CURSED)) eat_special_food(op,tmp);
