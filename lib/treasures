@@ -523,6 +523,16 @@ treasureone polarbear_parts
   arch heart
      chance 10
   end
+treasureone giantrat_parts
+ arch liver
+    chance 20
+ more
+ arch heart
+    chance 10
+ more
+ arch grat_pelt
+    chance 10
+ end
 # gnoll/giant parts
 treasureone giant_parts
   arch fl_corpse
@@ -1689,6 +1699,9 @@ treasureone containers
   more
   arch quiver
     chance 10
+  more
+  arch scrollcase
+    chance 5
   end
 treasureone shop_general
   list containers
@@ -4909,6 +4922,68 @@ treasure neko
   list neko_parts
     chance 99
   end
+treasure witch_fire
+  arch ability_fire
+  more
+  arch ability_fire_wall
+  more
+  arch ability_summon_fire
+ end
+treasure witch_earth
+  arch ability_bullet
+  more
+  arch rock2
+   chance 50
+   nrof 20
+   no
+     arch gem
+     nrof 20
+     end
+  more
+  arch ability_fear
+  more
+  arch ability_thorn_wall
+  more
+  arch ability_summon_earth
+ end
+treasure witch_air
+  arch ability_lightning
+  more
+  arch ability_poison
+  more
+  arch ability_wind
+  more
+  arch ability_summon_air
+ end
+treasure witch_water
+  arch ability_cold
+  more
+  arch ability_fog
+  more
+  arch ability_slow
+   more
+  arch ability_frost_wall
+  more
+  arch ability_summon_water
+ end
+treasure witch_chaos
+  arch ability_color
+  more
+  arch ability_b_lightning
+  more
+  arch ability_pool_chaos
+  more
+  arch ability_summon_water
+  more
+  arch ability_summon_air
+  more
+  arch ability_summon_earth
+  more
+  arch ability_summon_fire
+  end
+treasure giantrat
+  list giantrat_parts
+ end
 treasure giant_worm
   arch ability_bullet
   more

@@ -31,7 +31,7 @@ dist_man6_MANS = crossedit.man crossfire.man
 
 EXTRA_DIST = Crossedit.doc PlayerStats \
 	README RunTimeCommands SurvivalGuide alchemy.doc \
-	experience metaserver multigod skills.doc spell_params.doc \
+	experience metaserver multigod plugins skills.doc spell_params.doc \
 	spell-paths spellcasters_guide_to_runes spells
 
 DTOP=$(top_srcdir)/$(PACKAGE)-doc

@@ -112,6 +112,7 @@ RACE animal
   dire_wolf
   behemoth
   shadowtiger
+  giantrat
   pet_necro
   neko
 RACE bird
@@ -157,19 +158,23 @@ RACE water_elemental
   para_water
   para_ice
   water_elemental
+  water_witch
 RACE fire_elemental
   para_fire
   para_lava
   fire_elemental
+  fire_witch
   @fireborn
 RACE air_elemental
   para_air
   para_lightning
   air_elemental
+  air_witch
 RACE earth_elemental
   para_mud
   para_earth
   earth_elemental
+  earth_witch
 RACE giant
   generate_ogre
   generate_giant
@@ -233,6 +238,9 @@ RACE chess
   chess_bishop
   chess_queen
   chess_king
+ RACE chaos
+  living_chaos
+  chaos_witch
 RACE dwarf
   gnome
   dwarf
@@ -258,6 +266,7 @@ RACE consuming_fire_creatures
   !para_fire
   !fire_serpent
   !fire_elemental
+  !fire_witch
   !dragon
   !baby_dragon
   !big_dragon

@@ -111,7 +111,9 @@ sub print_usage() {
 }
 # return table containing all objects in the map
 sub readmap {
-    local ($m);
+    my ($m);
+    my($last);
+    my($parent);
     $last = "";
     $parent = "";
     
@@ -122,7 +124,7 @@ sub readmap {
     }
     $_ = <IN>;
     if (! /^arch map$/) {
-	print "Error: file $file isn't mapfile.\n";
+#	print "Error: file $file isn't mapfile.\n";
 	return;
     }
     if ($VERBOSE) {
@@ -153,7 +155,7 @@ sub readmap {
 	if (($m = (@_ = /^arch \S+\s*$/g)) > 1) {
 	    $parent = /^arch (\S+)\s*$/;
 	    # object has inventory
-	    local ($inv) = $_;
+	    my ($inv) = $_;
 	    while (<IN>) {
 		if (/((.|\n)*end\n)(arch (.|\n)*\nend\n)/) {
 		    &check_obj ("$inv$1");
@@ -164,16 +166,18 @@ sub readmap {
 		} elsif (/^end$/) {
 		    &check_obj ("$inv$_");
 		} else {
-		    if ($printmap) { print "$mapname"; $printmap=0;}
-		    print "  Error: Corrupted map file $file.\nSegment:\n$_\nLine: $.\n";
+#		    if ($printmap) { print "$mapname"; $printmap=0;}
+# This doesn't work right - it gets confused when objects are within
+# another object
+#		    print "  Error: Corrupted map file $file.\nSegment:\n$_\nLine: $.\n";
 		}
 	    } 
 	    $parent="";
 	} elsif (/^More$/ || $m == 1) {
 	    &check_obj ($_);
 	} else {
-	    if ($printmap) { print "$mapname"; $printmap=0;}
-	    print "  Error: Corrupted map file $file.\nSegment:\n$_\nLine: $.\n"; 
+#	    if ($printmap) { print "$mapname"; $printmap=0;}
+#	    print "  Error: Corrupted map file $file.\nSegment:\n$_\nLine: $.\n"; 
 	}
     }
     close (IN);
@@ -308,7 +312,7 @@ sub maplist {
 
     opendir (DIR , $dir) || die "Can't open directory : $dir\n";
     while ($file = readdir (DIR)) {
-	next if ($file eq "." || $file eq ".." || $file eq "CVS");
+	next if ($file eq "." || $file eq ".." || $file eq "CVS" || $file eq "unlinked" || $file eq "editor");
 	$file = "$dir/$file";
 	next if (-l $file);
 	push (@dirs, $file) if (-d $file);
