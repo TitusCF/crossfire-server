@@ -220,31 +220,6 @@ int savethrow[MAXLEVEL+1]={
    1, 1, 1, 1, 1, 1, 1, 1, 1, 1
 };
 
-int object_saves[NROFATTACKS][NROFMATERIALS] = {
-  /* Paper, Iron, Glass, Leather, Wood, Organic, Stone, Cloth, Adamant */
-  {15, 2,14, 5,10, 3, 2,14,0}, /* Physical */
-  {10,12,11,10,11,12, 5,11,0}, /* Magic */
-  {17, 3, 8,10,13, 9, 2,13,0}, /* Fire */
-  { 9,12, 3, 3, 2,11, 2, 4,0}, /* Electricity */
-  { 5, 2,10, 3, 2, 3, 2, 4,0}, /* Cold */
-  { 7,10, 5,10,10,10, 2, 5,0}, /* Water */
-  {13, 7, 1,10, 9, 9, 1,10,0}, /* Acid */
-  { 0, 0, 0, 0, 0, 0, 0, 0,0}, /* Drain */
-  {20,20,20,20,20,20,20,20,0}, /* Weaponmagic */
-  {15,15,15,15,15,15,15,15,0}, /* Ghosthit */
-  { 0, 0, 0, 0, 0, 0, 0, 0,0}, /* IT */
-  { 0, 0, 0, 0, 0, 0, 0, 0,0}, /* Disease */
-  { 0, 0, 0, 0, 0, 0, 0, 0,0}, /* Paralyze */
-  { 0, 0, 0, 0, 0, 0, 0, 0,0}, /* Turn undead */
-  { 0, 0, 0, 0, 0, 0, 0, 0,0}, /* Fear */
-  {10,10, 0,12,12, 0, 5, 5,0}, /* Cancellation */
-  { 0, 0, 0, 0, 0, 0, 0, 0,0}, /* Depletion */
-  { 0, 0, 0, 0, 0, 0, 0, 0,0}, /* Death */
-  { 0, 0, 0, 0, 0, 0, 0, 0,0}, /* Chaos */
-  { 0, 0, 0, 0, 0, 0, 0, 0,0},  /* Counterspell */
-  { 0, 0, 0, 0, 0, 0, 0, 0,0}  /* Godpower */
-};
-
 char *attacks[NROFATTACKS] = {
   "physical", "magical", "fire", "electricity", "cold", "confusion",
   "acid", "drain", "weaponmagic", "ghosthit", "poison", "slow",
@@ -904,6 +879,7 @@ void fix_player(object *op) {
 	op->contr->gen_hp = 0;
 	op->contr->gen_sp = 0;
 	op->contr->gen_grace = 0;
+	op->contr->gen_sp_armour = 10;
   }
   if(op->slaying!=NULL) {
     free_string(op->slaying);
@@ -922,6 +898,10 @@ void fix_player(object *op) {
     CLEAR_FLAG(op,FLAG_UNDEAD);
   CLEAR_FLAG(op,FLAG_BLIND);
   CLEAR_FLAG(op,FLAG_SEE_IN_DARK);
+
+  op->path_attuned=op->arch->clone.path_attuned;
+  op->path_repelled=op->arch->clone.path_repelled;
+  op->path_denied=op->arch->clone.path_denied;
 
   op->protected=op->arch->clone.protected;
   op->vulnerable=op->arch->clone.vulnerable;
@@ -952,29 +932,30 @@ void fix_player(object *op) {
       ) {
         for(i=0;i<7;i++)
           change_attr_value(&(op->stats),i,get_attr_value(&(tmp->stats),i));
-		/* these are the items that currently can change digestion, regeneration,
-		 * spell point recovery and mana point recovery.  Seems sort of an arbitary
-		 * list, but other items store other info into stats array. */
-		if ( (tmp->type == EXPERIENCE) || (tmp->type == WEAPON)
-		  || (tmp->type == ARMOUR) || (tmp->type == HELMET)
-		  || (tmp->type == SHIELD) || (tmp->type == RING)
-		  || (tmp->type == BOOTS) || (tmp->type == GLOVES)
-		  || (tmp->type == AMULET ) || (tmp->type == GIRDLE)
-		  || (tmp->type == BRACERS ) || (tmp->type == CLOAK) 
-		  ||(tmp->type == DISEASE) || (tmp->type == FORCE)){
-			op->contr->digestion += tmp->stats.food;
-			op->contr->gen_hp += tmp->stats.hp;
-			op->contr->gen_sp += tmp->stats.sp;
-			op->contr->gen_grace += tmp->stats.grace;
-		}
-	  }
+	/* these are the items that currently can change digestion, regeneration,
+	 * spell point recovery and mana point recovery.  Seems sort of an arbitary
+	 * list, but other items store other info into stats array. */
+	if ( (tmp->type == EXPERIENCE)  || (tmp->type == WEAPON)
+	     || (tmp->type == ARMOUR)   || (tmp->type == HELMET)
+	     || (tmp->type == SHIELD)   || (tmp->type == RING)
+	     || (tmp->type == BOOTS)    || (tmp->type == GLOVES)
+	     || (tmp->type == AMULET )  || (tmp->type == GIRDLE)
+	     || (tmp->type == BRACERS ) || (tmp->type == CLOAK) 
+	     || (tmp->type == DISEASE)  || (tmp->type == FORCE) ){
+	  op->contr->digestion     += tmp->stats.food;
+	  op->contr->gen_hp        += tmp->stats.hp;
+	  op->contr->gen_sp        += tmp->stats.sp;
+	  op->contr->gen_grace     += tmp->stats.grace;
+	  op->contr->gen_sp_armour += tmp->last_heal;
+	  if (tmp->last_heal) LOG(llevDebug,"Object %s applied, gen_sp_armour + %d = %d\n", tmp->name, tmp->last_heal, op->contr->gen_sp_armour);
+	}
+      }
 
-		if(tmp->type==SYMPTOM) {
-		  speed_reduce_from_disease = tmp->last_sp / 100.0;
-		  if(speed_reduce_from_disease ==0) speed_reduce_from_disease = 1;
-		}
-		  
-		  
+      if(tmp->type==SYMPTOM) {
+	speed_reduce_from_disease = tmp->last_sp / 100.0;
+	if(speed_reduce_from_disease ==0) speed_reduce_from_disease = 1;
+      }
+
       op->protected|=tmp->protected;
       op->vulnerable|=tmp->vulnerable;
       if (tmp->type!=BOW) {
