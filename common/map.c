@@ -188,7 +188,7 @@ int check_path (char *name, int prepend_dir)
     else
 	strcpy(buf, name);
 #ifdef WIN32 /* ***win32: check this sucker in windows style. */
-	return(_access(name,0));
+	return(_access(buf,0));
 #else
 
     /* old method (strchr(buf, '\0')) seemd very odd to me -
