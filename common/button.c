@@ -541,16 +541,18 @@ int get_button_value(object *button) {
  */
  
 void do_mood_floor(object *op, object *op2) {
-        object *tmp;
-        object *tmp2;
+    object *tmp;
+    object *tmp2;
 
-        for(tmp=get_map_ob(op->map,op->x,op->y);
-                tmp&&!QUERY_FLAG(tmp,FLAG_MONSTER);tmp=tmp->above)  
-        	if(tmp->above==NULL) break;
+    for (tmp = op->above; tmp; tmp=tmp->above)
+	if (QUERY_FLAG(tmp, FLAG_MONSTER)) break;
 
-        if(tmp->type==PLAYER) return;
+    /* doesn't effect players, and if there is a player on this space, won't also
+     * be a monster here.
+     */
+    if (!tmp || tmp->type == PLAYER) return;
 
-	switch(op->last_sp) { 
+    switch(op->last_sp) { 
 	  case 0:			/* furious--make all monsters mad */ 
 		if(QUERY_FLAG(tmp, FLAG_UNAGGRESSIVE))
 			CLEAR_FLAG(tmp, FLAG_UNAGGRESSIVE);
@@ -601,8 +603,7 @@ void do_mood_floor(object *op, object *op2) {
 	  default:
 		break;
 
-	}
-        return;
+    }
 }
 
 /* this function returns the object it matches, or NULL if non.

@@ -17,6 +17,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+common/button.c: Fix mood floor code - before, it was changing the moods
+   of all sorts of objects (luggage, itself, etc).  Now, it only
+   changes objects above the floor, and only monsters.
+MSW 2002-05-31
+
+
 Main change is the addition of name_pl and client_type to object
 structure.  The name_pl contains the proper plural name instance - fixes
 problem of '2 tooths'.  client_type is sent to the client so that client
