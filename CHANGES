@@ -18,6 +18,10 @@ else.  With this, include the file(s) that you changed.
 CVS changes since last release:
 
 MSW 2000/01/15:
+Change blindness and paralyze so that duration is reduced based on protection
+the player has. file server/attack.c
+
+MSW 2000/01/15:
 Various fixes for friendly object code:
 common/button.c: Add missing call to remove_friendly_object
 common/friend.c: Pretty much completely re-written.  add_friendly_object now

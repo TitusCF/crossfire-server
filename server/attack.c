@@ -1443,11 +1443,19 @@ void blind_player(object *op, object *hitter, int dam)
 {
     object *tmp,*owner;
 
+    /* This shouldn't happen, but will prevent divide by zero errors below if it does. */
+    if (op->resist[ATNR_BLIND]==100) return;
+
     tmp = present_in_ob(BLINDNESS,op);
     if(!tmp) { 
       tmp = get_archetype("blindness");
       SET_FLAG(tmp, FLAG_BLIND);
       SET_FLAG(tmp, FLAG_APPLIED);
+      /* use floats so we don't lose too much precision due to rounding errors.
+       * speed is a float anyways.
+       */
+      tmp->speed = 100.0 * tmp->speed / (100.0 - (float)op->resist[ATNR_BLIND]);
+
       tmp = insert_ob_in_ob(tmp,op);
       change_abil(op,tmp);   /* Mostly to display any messages */
       fix_player(op);        /* This takes care of some other stuff */
@@ -1463,21 +1471,34 @@ void blind_player(object *op, object *hitter, int dam)
 }
 
 void paralyze_player(object *op, object *hitter, int dam) 
-{    object *tmp;
+{
+    float effect,max;
+    object *tmp;
+
+    /* Same note as blindness above */
+    if (op->resist[ATNR_PARALYZE]==100) return;
+
     if((tmp=present(PARAIMAGE,op->map,op->x,op->y))==NULL) {
-      tmp=clone_arch(PARAIMAGE);
-      tmp->x=op->x,tmp->y=op->y;
-      /* We can't use insert_ob_in_map() (which can trigger various things)
-       * unless a lot of was_destroyed() checks are added in our callers.
-       * But this is just a simple visual effect anyway.
-       */
-      insert_ob_in_map_simple(tmp,op->map);
+	tmp=clone_arch(PARAIMAGE);
+	tmp->x=op->x,tmp->y=op->y;
+	/* We can't use insert_ob_in_map() (which can trigger various things)
+	 * unless a lot of was_destroyed() checks are added in our callers.
+	 * But this is just a simple visual effect anyway.
+	 */
+	insert_ob_in_map_simple(tmp,op->map);
     }
-    op->speed_left-=(float)FABS(op->speed)*(dam*3);
-    tmp->stats.food+=(signed short) (dam*3)/op->speed;
-    if(op->speed_left< -(FABS(op->speed)*40)) {
-      op->speed_left  = (float) -(FABS(op->speed)*40);
-      tmp->stats.food = (signed short) (40/FABS(op->speed));
+    /* Do this as a float - otherwise, rounding might very well reduce this to 0 */
+    effect = (float)dam * 3.0 / (100.0 - (float) op->resist[ATNR_PARALYZE]);
+
+    op->speed_left-=FABS(op->speed)*effect;
+    tmp->stats.food+=(signed short) effect/op->speed;
+
+    /* max number of ticks to be affected for. */
+    max = (100 - op->resist[ATNR_PARALYZE])/ 2;
+
+    if (op->speed_left< -(FABS(op->speed)*max)) {
+      op->speed_left  = (float) -(FABS(op->speed)*max);
+      tmp->stats.food = (signed short) (max/FABS(op->speed));
     }
 }
 
