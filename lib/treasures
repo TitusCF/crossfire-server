@@ -2644,11 +2644,11 @@ treasure bear
   end
 treasure ape
   list ape_parts
-    chance 25
+    chance 30
   end
 treasure dwolf
   list dwolf_parts
-    chance 40
+    chance 30
   more
   arch ability_frostbolt
  end
@@ -2658,7 +2658,7 @@ treasure polarbear
   end
 treasure wolf
   list wolf_parts
-    chance 30
+    chance 40
   end
 treasure gnoll
   list giant_parts
@@ -5140,6 +5140,7 @@ treasure witch_chaos
   end
 treasure giantrat
   list giantrat_parts
+    chance 30
  end
 treasure hellhound
   arch ability_hellfire
@@ -5202,6 +5203,7 @@ treasure skeletalmage
 end
 treasure behemoth
   list behemoth_parts
+    chance 30
 end
 #
 treasureone sheep
