@@ -246,9 +246,13 @@ int hit_map(object *op,int dir,int type) {
       /* There may still be objects that were above 'next', but there is no
        * simple way to find out short of copying all object references and
        * tags into a temporary array before we start processing the first
-       * object.  That's why we just abort.  Doesn't happen very often anyway.
+       * object.  That's why we just abort.
+       *
+       * This happens whenever attack spells (like fire) hit a pile
+       * of objects. This is not a bug - nor an error. The errormessage
+       * below was spamming the logs for absolutely no reason.
        */
-      LOG (llevDebug, "hit_map(): next object destroyed\n");
+      /* LOG (llevDebug, "hit_map(): next object destroyed\n"); */
       break;
     }
     tmp = next;

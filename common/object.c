@@ -827,7 +827,13 @@ void update_ob_speed(object *op) {
 
 void update_object(object *op, int action) {
     int update_now, flags;
-
+    
+    if (op == NULL) {
+        /* this should never happen */
+        LOG(llevDebug,"update_object() called for NULL object.\n");
+	return;
+    }
+    
     if(op->env!=NULL) {
 	/* Animation is currently handled by client, so nothing
 	 * to do in this case.
@@ -839,7 +845,14 @@ void update_object(object *op, int action) {
      * going to get freed anyways.
      */
     if (!op->map || op->map->in_memory == MAP_SAVING) return;
-
+    
+    /* make sure the object is within map boundaries */
+    if (op->x < 0 || op->x >= MAP_WIDTH(op->map) ||
+	op->y < 0 || op->y >= MAP_HEIGHT(op->map)) {
+        LOG(llevError,"update_object() called for object out of map!\n");
+	return;
+    }
+    
     flags = GET_MAP_FLAGS(op->map, op->x, op->y);
     SET_MAP_FLAGS(op->map, op->x, op->y, flags | P_NEED_UPDATE);
 
