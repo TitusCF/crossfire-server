@@ -80,7 +80,7 @@ mapstruct *generate_random_map(char *InFileName,char *OutFileName) {
 
   /*  rotate the layout randomly */
   layout=rotate_layout(layout,RANDOM()%4,RP);
-  { int i,j;
+  /*  { int i,j;
   for(i=0;i<RP->Xsize;i++) {
     for(j=0;j<RP->Ysize;j++) {
       if(layout[i][j]==0) layout[i][j]=' ';
@@ -88,7 +88,7 @@ mapstruct *generate_random_map(char *InFileName,char *OutFileName) {
       if(layout[i][j]==' ') layout[i][j]=0;
     }
     printf("\n");
-  }}
+    }}*/
   /* allocate the map and set the floor */
   theMap = make_map_floor(layout,RP->floorstyle,RP); 
 
