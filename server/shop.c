@@ -185,8 +185,20 @@ int query_cost(object *tmp, object *who, int flag) {
           val=(4.0*(float)val*(1.0-diff));
       else val *=4;
   }
-  if(val<0)
-    val=1000000;
+
+  /* I don't understand this code...., I'm changing it to 
+	  use 0 instead of 1000000 if we're selling*/
+  if(val<0) {
+	 if(flag==F_SELL) 
+		val=0;
+	 else
+		val=1000000;
+  }
+
+  /* Unidentified stuff won't sell for more than 60gp */
+  if(flag==F_SELL && !QUERY_FLAG(tmp, FLAG_IDENTIFIED) && need_identify(tmp)) {
+	 val = (val > 600)? 600:val;
+  }
   return (int)val;
 }
 
