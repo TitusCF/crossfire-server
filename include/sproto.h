@@ -620,6 +620,7 @@ extern void move_firechest ( object *op );
 extern void move_player_mover ( object *op );
 extern void move_creator ( object *op );
 extern int process_object ( object *op );
+extern object *FindKey ( object *Door, object *ob );
 
 #endif /* __STDC__ */
 #endif /* __CEXTRACT__ */
