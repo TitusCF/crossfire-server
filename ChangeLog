@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/time.c: Fix bad code in stop_arrow that caused crashes/improper
+freeing of data.
+MSW 2002-12-30
+
 common/treasure.c: Fix initialization of treasure structs to use calloc.
 server/player.c: Fix infinite loop.
 socket/loop.c: Make sure we put in null terminator for socket data.

@@ -536,9 +536,9 @@ object *fix_stopped_arrow (object *op)
     op->stats.dam= op->stats.hp;
     op->attacktype = op->stats.grace;
     if (op->slaying != NULL)
-	free(op->slaying);
+	free_string (op->slaying);
     if (op->spellarg != NULL) {
-	op->slaying = strdup(op->spellarg);
+	op->slaying = add_string(op->spellarg);
 	free(op->spellarg);
     } else
 	op->slaying = NULL;
