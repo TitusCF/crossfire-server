@@ -44,13 +44,6 @@
  * flags  However, for some things, that would just be too messy.
  */
 
-/* To be removed soon (setable by player) */
-/* IF this is set, then the range type will not switch to skill when
- * you use a melee weapon - this better emulates pre-skill code.
- */
-
-#define NO_AUTO_SKILL_SWITCH
-
 /* There are 4 main sections to this file-
  * Section 1 is feature selection (enabling/disabling certain features)
  *

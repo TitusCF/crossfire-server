@@ -1473,19 +1473,15 @@ int do_skill_attack(object *tmp, object *op, char *string) {
     */
           if(op->type==PLAYER && QUERY_FLAG(op,FLAG_READY_WEAPON)
              && (!op->chosen_skill || op->chosen_skill->stats.sp!=SK_MELEE_WEAPON)) {
-#ifdef NO_AUTO_SKILL_SWITCH
 		rangetype oldrange=op->contr->shoottype;
-#endif
                  (void) change_skill(op,SK_MELEE_WEAPON);
 
 /* This is just a simple hack - would probably be cleaner to have change_skill
  * do the right thing, but this isn't that bad.
  */
-#ifdef NO_AUTO_SKILL_SWITCH
 		if (op->contr->shoottype!=oldrange) {
 		    op->contr->shoottype=oldrange;
 		}
-#endif
 	  }
  
     /* lose invisiblity/hiding status for running attacks */
