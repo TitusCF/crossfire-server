@@ -1115,8 +1115,12 @@ void fix_player(object *op) {
     if(pl_level<1) pl_level=1; /* safety, we should always get 1 levels worth of hp! */ 
     for(i=1,op->stats.maxhp=0;i<=pl_level&&i<=10;i++) {
       j=op->contr->levhp[i]+con_bonus[op->stats.Con]/2;
-      if(i%2&&con_bonus[op->stats.Con]%2)
-        j++;
+      if(i%2&&con_bonus[op->stats.Con]%2) {
+	if (con_bonus[op->stats.Con]>0) 
+	    j++;
+	else
+	    j--;
+      }
       op->stats.maxhp+=j>1?j:1;
     }
     for(i=11;i<=op->level;i++)
