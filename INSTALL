@@ -67,10 +67,10 @@ the 'x.y' format.
   these scripts are run as the normal compilation & installation process,
   so this is only a real problem if you plan to rebuild the archetypes.
 
-5) Compile the program:  type 'make'.  It should take a little while.  If
-   you get errors that abort the compile, copy them down (either using cut
-   and paste, or redirect the output of the compile to a file), and send
-   those to the bug alias (crossfire-bugs@ifi.uio.no), along with what
+5) Compile the program:  type 'make'.  It should take a little while.  If you
+   get errors that abort the compile, copy them down (either using cut and
+   paste, or redirect the output of the compile to a file), and send those to
+   the bug alias (crossfire-devel@listserv.real-time.com), along with what
    machine type & OS you are using.  Also, include the compile line with its
    various options.  A message saying 'it failed to compile main.c' tells me
    little, and I can not fix problems with that little detail.

@@ -346,6 +346,9 @@ int save_player(object *op, int flag) {
   fprintf(fp,"pickup %d\n", pl->mode);
   fprintf(fp,"outputs_sync %d\n", pl->outputs_sync);
   fprintf(fp,"outputs_count %d\n", pl->outputs_count);
+  /* Match the enumerations but in string form */
+  fprintf(fp,"usekeys %s\n", pl->usekeys==key_inventory?"key_inventory":
+	  (pl->usekeys==keyrings?"keyrings":"containers"));
 
 #ifdef BACKUP_SAVE_AT_HOME
   if (op->map!=NULL && flag==0)
@@ -627,6 +630,15 @@ void check_login(object *op) {
 	    pl->orig_stats.Wis=value;
         else if (!strcmp(buf,"Cha"))
 	    pl->orig_stats.Cha=value;
+	else if (!strcmp(buf,"usekeys")) {
+	    if (!strcmp(bufall+8,"key_inventory\n"))
+		pl->usekeys=key_inventory;
+	    else if (!strcmp(bufall+8,"keyrings\n"))
+		pl->usekeys=keyrings;
+	    else if (!strcmp(bufall+8,"containers\n"))
+		pl->usekeys=containers;
+	    else LOG(llevDebug,"load_player: got unknown usekeys type: %s\n", bufall+8);
+	}
         else if (!strcmp(buf,"lev_array")){
 	    for(i=1;i<=value;i++) {
 		int j;

@@ -172,7 +172,7 @@ your system to poke around with the code or core dump, I will likely take
 you up on your offer.  If you make such an offer, I will assume that you
 have oberyed whatever usage rules/policies are applicable for your site.
 
-  Mail the bug report to crossfire-bugs@ifi.uio.no
+  Mail the bug report to crossfire-devel@listserv.real-time.com
 
 ------------------------------------------------------------------------------
 SUBMITTING PATCHES:  See the doc/programming_guide file.
@@ -198,15 +198,12 @@ develop.nmdg.com (8-25-1999)
    version: 0.95.3
 
 
-Note that the whitestar.pyrsonal.org server is not listed, as it is likely
-to go away soon.
-
 COPYRIGHT
 
     Don't get scared by the below, it's included just for "safety" reasons 8)
     (Don't want anyone to start selling the game)
 
-    Copyright (C) 1994 Mark Wedel
+    Copyright (C) 2000 Mark Wedel
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -223,4 +220,4 @@ COPYRIGHT
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to mwedel@scruznet.com
+    The author can be reached via e-mail to mwedel@scruz.net
