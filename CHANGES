@@ -1,6 +1,11 @@
 Changes in top level CVS tree (please add your changes at the very top of
 the file):
 
+server/alchemy.c  --  levels less than ten no longer produce
+cursed items, but only slag or nothing.  --PeterM
+server/shop.c  --  unidentified stuff is worth at most 60gp or so. 
+  ---PeterM
+
 random_maps/style.c - fix type in the scandir function which cause
 compilation problems for those systems that actually need it. - msw
 
