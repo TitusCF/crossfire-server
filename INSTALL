@@ -84,13 +84,13 @@ the 'x.y' format.
    is only needed if other people may be running the the executable.
 
 8) Crossfire requires maps installed into the directory specified by
-   --libdir (or the default).  Maps are a seperate distribution available on
-   the ftp server.  The maps can be unpacked directory into the location
-   specified by --libdir.  All the map files need to be readable by which
+   --datadir (or the default).  Maps are a seperate distribution available on
+   the ftp server.  The maps can be unpacked directly into the location
+   specified by --datadir.  All the map files need to be readable by which
    ever uid is running the server - if multiple people will be running
    servers, the map permissions may need to get updated.
 
-9) You can compress/gzip all files in and below the LIBDIR.  Performance of
+9) You can compress/gzip all files in and below the DATADIR.  Performance of
    compressing various files may very.  Several files are only read during
    startup, so compressing them will not affect game performance once running.
 
