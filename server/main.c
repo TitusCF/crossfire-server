@@ -295,7 +295,7 @@ void enter_exit(object *op, object *exit_ob) {
       return;
     }
   } else
-    newpath = op->contr->maplevel;
+    if(op->contr) newpath = op->contr->maplevel;
 
   /* If no map path has been found yet, just keep the player on the
    * map he is on right now
@@ -328,15 +328,17 @@ void enter_exit(object *op, object *exit_ob) {
   if (check_path(newpath, 0) != - 1) {
     unique=1;
   } else if (!unique && !has_been_loaded(newpath) && (check_path(newpath,1)==-1)) {
-    new_draw_info_format(NDI_UNIQUE, 0,op, "The %s is closed.", newpath);
+    if(op->type == PLAYER)
+      new_draw_info_format(NDI_UNIQUE, 0,op, "The %s is closed.", newpath);
     return;
   }
 
   /* Clear the player's count, and reset direction */
-  op->direction=0;
-  op->contr->count=0;
-  op->contr->count_left=0;
-
+  if(op->type == PLAYER) {
+    op->direction=0;
+    op->contr->count=0;
+    op->contr->count_left=0;
+  }
   /* For exits that cause damages (like pits) */
   if(exit_ob && exit_ob->stats.dam && op->type==PLAYER)
     hit_player(op,exit_ob->stats.dam,exit_ob,exit_ob->attacktype);
@@ -358,7 +360,7 @@ void enter_exit(object *op, object *exit_ob) {
      */
     if(strcmp (newpath, oldmap->path)) {
       /* Remove any golems */
-      if(op->contr->golem) {
+      if(op->type == PLAYER && op->contr->golem != NULL) {
 	remove_friendly_object(op->contr->golem);
 	remove_ob(op->contr->golem);
 	free_object(op->contr->golem);
@@ -451,10 +453,12 @@ void enter_exit(object *op, object *exit_ob) {
       obl->next = dummy_map.pending;
   }
 
-  op->contr->loading = op->map;
-  op->contr->new_x = x;
-  op->contr->new_y = y;
-  op->contr->removed = removed;
+  if (op->type == PLAYER) {
+    op->contr->loading = op->map;
+    op->contr->new_x = x;
+    op->contr->new_y = y;
+    op->contr->removed = removed;
+  }
   op->map->timeout = 0;
 
 #ifdef USE_LIGHTING
