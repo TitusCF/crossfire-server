@@ -1,4 +1,10 @@
-#! /usr/local/bin/perl
+#! /usr/bin/perl
+
+# this script takes a map (in new format, eg those that support
+# tiling and only save the head for multipart objects) and
+# expands it by some factor.  Note that editing of the destination
+# file will certainly be necessary, but this may be useful instead
+# of having to re-do a scaled map by hand.
 
 $default_X_size = 16;
 $default_Y_size = 16;
@@ -10,7 +16,7 @@ $input_map = $ARGV[$#ARGV];
 # argv loop
 foreach $i (0 .. $#ARGV) {
   if($ARGV[$i] =~ "-h") { $help = 1; }
-  if($ARGV[$i] =~ "-e") { $factor = $ARGV[++$i]; }
+  if($ARGV[$i] =~ "-e") { $expand = $ARGV[++$i]; }
 }
 
 # various help/runtime messages
@@ -26,8 +32,27 @@ if($help) {
 }
 
 #Read in input map
-open(FILE, $input_map) && (@mapdata=<FILE>) && close(FILE)
-  || print "FATAL: file $input_map not found!\n";
+open(FILE, $input_map)  || die "FATAL: file $input_map not found!\n";
+# process the map object special.  This is easier than trying
+# to handle the special values it has
+
+while (<FILE>) {
+
+    if (/^width (\d+)$/) {
+	printf "width %d\n", $1 * $expand;
+    } elsif (/^height (\d+)$/) {
+	printf "height %d\n", $1 * $expand;
+    } elsif (/^enter_x (\d+)$/) {
+	printf "enter_x %d\n", $1 * $expand;
+    } elsif (/^enter_y (\d+)$/) {
+	printf "enter_y %d\n", $1 * $expand;
+    }
+    else { print $_; }
+    last if (/^end$/);
+}
+@mapdata=<FILE>;
+close(FILE);
+
 
 # convert map data into objects
 while ($i<=$#mapdata) {
@@ -42,13 +67,9 @@ while ($i<=$#mapdata) {
   $i++; 
 }
 
-# Object 0 is the map header info, dont
-# expand it, so just print it out
-&expand_obj("0 1 0");
-$bufline = $olines_in_obj[0];
 
 #Expand the map objects 1 to $objnum 
-while ($j++<$objnum) {
+for ($j=0; $j<$objnum; $j++) {
   &expand_obj("$j $expand $bufline");
   $bufline += $olines_in_obj[$j];
 }
@@ -72,15 +93,8 @@ sub expand_obj {
         if($name[$obj]) { printf("arch %s\n",$name[$obj]); } 
         else { return; }
 
-        if($obj==0) { 
-          if($x[0]) { printf("x %d\n",$x[0]*$expand); } 
-          else { printf("x %d\n",$default_X_size*$expand); } 
-        } elsif ($x[$obj]) { printf("x %d\n",$start_x); } 
-
-        if($obj==0) { 
-          if($y[0]) { printf("y %d\n",$y[0]*$expand); }
-          else { printf("y %d\n",$default_Y_size*$expand); }
-        } elsif ($y[$obj]) { printf("y %d\n",$start_y); }
+	printf("x %d\n",$start_x);
+	printf("y %d\n",$start_y);
 
         while ($start_buf<$end_buf) {
           print "$otherline[$start_buf]"; 
