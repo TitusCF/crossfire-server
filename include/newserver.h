@@ -45,8 +45,7 @@
 
 struct MapCell {
   short faces[MAP_LAYERS];
-  char quick_pos[MAP_LAYERS];
-  int count;
+  int count;	/* This is really darkness in the map1 command */
 };
 
 /* This basically defines the largest size an 

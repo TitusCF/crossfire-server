@@ -1247,16 +1247,19 @@ void draw_client_map1(object *pl)
 		 * if not already done.  If the client is using darkness, and
 		 * this space is at the edge, we also include the darkness.
 		 */
-		if (d==4 && pl->contr->socket.darkness && pl->contr->socket.lastmap.cells[ax][ay].count != d) {
-		    mask |= 8;
-		    SockList_AddShort(&sl, mask);
-		    SockList_AddChar(&sl, 0);
+		if (d==4) {
+		    if (pl->contr->socket.darkness && pl->contr->socket.lastmap.cells[ax][ay].count != d) {
+			mask |= 8;
+			SockList_AddShort(&sl, mask);
+			SockList_AddChar(&sl, 0);
+		    }
 		    count = d;
 		} else {
 		    SockList_AddShort(&sl, mask);
 		    if (pl->contr->socket.lastmap.cells[ax][ay].count != -1) need_send=1;
 		    count = -1;
 		}
+
 		if (pl->contr->socket.mapmode == Map1aCmd && have_head(ax, ay)) {
 		    /* Now check to see if any heads need to be sent */
 

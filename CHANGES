@@ -17,6 +17,16 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+crossedit/png.c, crossedit/xutil.c: Increase size of temporary buffers that
+  are used when loading images - necessary to allow the editor to run without
+  crashing.
+include/newserver.h: Remove quick_pos from the MapCell structure.
+server/main.c: Add code to set the coordinates to the EMERGENCY_X/Y
+  values if using the EMERGENCY_MAP.
+socket/request.c: Fix code that was causing darkness to get repeatedly
+  sent for some spaces.
+MSW 2002-05-19 
+
 The bulk of this commit is to modify the server to only send the lower
 rightmost part of multipart archetypes that use the same head.  This allows
 support of big images in the client.

@@ -220,12 +220,12 @@ int init_pngx_loader(Display *display)
     ximage = XCreateImage(display, visual,
 		      depth,
 		      ZPixmap, 0, 0, 
-		      32, 32,  pad, 0);
+		      256, 256,  pad, 0);
     if (!ximage) {
 	fprintf(stderr,"Failed to create Ximage\n");
 	return 1;
     }
-    ximage->data = malloc(ximage->bytes_per_line * 32);
+    ximage->data = malloc(ximage->bytes_per_line * 256);
     if (!ximage->data) {
 	fprintf(stderr,"Failed to create Ximage data\n");
 	return 1;

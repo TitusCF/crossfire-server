@@ -62,6 +62,8 @@ XChar2b fontindex_to_XChar2b(Fontindex s)
 }
 
 
+#define IMAGE_BUF 65536
+
 /*
  * ReadPixmaps(): When color pixmaps are used instead of fonts, this function
  * does the actual reading of pixmap-file.  This function is based largely on
@@ -89,7 +91,7 @@ int ReadImages(Display *gdisp, Pixmap **pixmaps, Pixmap **masks,
     Window	root = RootWindow (gdisp,DefaultScreen(gdisp));
     int		use_private_cmap=0,num, compressed, len,i;
     FILE	*infile;
-    char	*cp, databuf[HUGE_BUF], filename[MAX_BUF];
+    char	*cp, databuf[IMAGE_BUF], filename[MAX_BUF];
 #ifdef IMAGE_TIME_LOAD
     time_t	start_time = time(NULL);
 #endif
@@ -145,7 +147,7 @@ int ReadImages(Display *gdisp, Pixmap **pixmaps, Pixmap **masks,
 	/* Skip accross the number data */
 	for (cp=databuf+6; *cp!=' '; cp++) ;
 	len = atoi(cp);
-	if (len==0 || len>HUGE_BUF) {
+	if (len==0 || len>IMAGE_BUF) {
 	    LOG(llevError,"ReadImages: length not valid: %d\n%s",
                     len,databuf);
                 abort();

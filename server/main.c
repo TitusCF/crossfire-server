@@ -710,6 +710,8 @@ void enter_exit(object *op, object *exit_ob) {
 	if (!newmap) {
 	    LOG(llevError,"enter_exit: Pathname to map does not exist! (%s)\n", op->contr->maplevel);
 	    newmap = ready_map_name(EMERGENCY_MAPPATH, 0);
+	    op->x = EMERGENCY_X;
+	    op->y = EMERGENCY_Y;
 	    /* If we can't load the emergency map, something is probably really
 	     * screwed up, so bail out now.
 	     */
