@@ -546,6 +546,9 @@ level           The level the spell will cast spells at.  Level 1
                 walls will cast spells at minimal strength.  Level 100
                 walls will cast deadly spells.
 
+connected	either rotate the wall or trigger it.  If triggering, 
+		set speed to 0 for best results.
+
 
 ------------------------------------------------------------------------------
 Containers:
@@ -707,6 +710,8 @@ didn't realize that if you blow a spell over a detector, it may be detected,
 but a pedestal won't notice it.)
 
 slaying   name of the thing the detector is to look for
+	  * note:  FORCEs with slaying fields == slaying field of detector
+	   will be detected.
 speed     time between samples
 connected connected value of detector
 sp        1 if detection sets buttons,
@@ -725,6 +730,7 @@ slaying	  the code
 speed	  how quickly it will mark something standing on it
 food	  duration of the force it inserts.  If nonzero, the duration
           is finite:  about 1 food per 10 seconds
+name	  slaying field of a force to remove.
 ------------------------------------------------------------------------------
 NOTE ABOUT ALL CONNECTED ITEMS:
 
