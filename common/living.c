@@ -1207,13 +1207,13 @@ void fix_player(object *op) {
 	if(!(i%6)) wc--; 
 	/* addtional dam every 4 levels. */ 
 	if(!(i%4)&&!(dam_bonus[op->stats.Str]<0)) 
-	  op->stats.dam = MIN(op->stats.dam+1+(dam_bonus[op->stats.Str]/5), 127);
+	    op->stats.dam+=(1+(dam_bonus[op->stats.Str]/5));
       }
     } else 
 #endif /* ALLOW_SKILLS */ 
     wc-=(op->level+thaco_bonus[op->stats.Str]);
-    op->stats.dam = MIN(op->stats.dam+dam_bonus[op->stats.Str], 127);
-    
+
+    op->stats.dam+=dam_bonus[op->stats.Str];
     if(op->contr->braced)
       wc+=4;
     if(op->stats.dam<1)
