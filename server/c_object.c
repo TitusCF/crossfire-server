@@ -326,7 +326,7 @@ static void pick_up_object (object *pl, object *op, object *tmp, int nrof)
     }
     if(QUERY_FLAG(tmp, FLAG_UNPAID))
 	(void) sprintf(buf,"%s will cost you %s.", query_name(tmp),
-		query_cost_string(tmp,op,F_BUY));
+		query_cost_string(tmp,pl,F_BUY));
     else
 	(void) sprintf(buf,"You pick up %s.", query_name(tmp));
     new_draw_info(NDI_UNIQUE, 0,pl,buf);
