@@ -80,6 +80,10 @@
 #include <sys/time.h>
 #endif
 
+#ifdef HAVE_TIME_H
+#include <time.h>
+#endif
+
 /* stddef is for offsetof */
 #ifdef HAVE_STDDEF_H
 #include <stddef.h>

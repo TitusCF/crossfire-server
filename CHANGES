@@ -17,6 +17,22 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 CVS changes since last release:
 
+configure, configure.in, include/autoconf.h, includes.h: add check for
+   time.h and include it if we find it.
+socket/item.c: esrv_move_object - have it check to see if the object is
+   already on the ground before we try to re-drop it.  Likewise, check
+   to see if it is already in players inventory before we try to pick
+   it up.
+common/object.c: Don't send face updates to the client or make
+   the space as needing to be redrawn.  Client now deals with animation 
+   of the look window on its own. 
+utils/(metaserver.pl crossloop add_throw.perl crossloop.pl) 
+lib/(Makefie.in, checkarch.pl collect.pl xpmtopix.pl) - - deleted
+   from CVS - '.in' versions of these files now exist and the real
+   versions are created as part of the configure process.  Update 
+   Makefile.in to reflect this change.
+MSW 2001/03/28
+
 common/object.c: have update_position just update the flag that the
    server needs to send the look window to the client and don't send the
    item at this point, as sending the look will do that.

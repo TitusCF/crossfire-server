@@ -688,6 +688,10 @@ void esrv_move_object (object *pl, long to, long tag, long nrof)
     if (!to) {	/* drop it to the ground */
 /*	printf ("Drop it on the ground.\n");*/
 
+	if (op->map && !op->env) {
+/*	    LOG(llevDebug,"Dropping object to ground that is already on ground\n");*/
+	    return;
+	}
 	/* If it is an active container, then we should drop all objects
 	 * in the container and not the container itself.
 	 */
@@ -704,6 +708,9 @@ void esrv_move_object (object *pl, long to, long tag, long nrof)
 	}
 	return;
     } else if (to == pl->count) {     /* pick it up to the inventory */
+	/* return if player has already picked it up */
+	if (op->env == pl) return;
+
 	pl->contr->count = nrof;
 	pick_up(pl, op);
 	return ;
