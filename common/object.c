@@ -472,8 +472,13 @@ void set_owner (object *op, object *owner)
 void copy_owner (object *op, object *clone)
 {
     object *owner = get_owner (clone);
-    if (owner == NULL)
-      return;
+    if (owner == NULL) {
+	/* players don't have owners - they own themselves.  Update
+	 * as appropriate.
+	 */
+	if (clone->type == PLAYER) owner=clone;
+	else return;
+    }
     set_owner_simple (op, owner);
 
     if (clone->chosen_skill)

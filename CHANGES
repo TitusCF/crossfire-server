@@ -17,6 +17,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+common/object.c: Modify copy_owner so that if a player is passed in
+   as the object to copy, we properly set that player as the owner of the
+   object instead of returning.  This fixes the lack of exp when poison
+   inflicted from a weapon kills something.  MSW 2001-11-05
+
 common/map.c: Fix bug in get_rangevector which was causing reverse
  of documented procedure.  This also resulted in monsters not attacking
  adjacent creatures with physical attacks.  MSW 2001-11-03
