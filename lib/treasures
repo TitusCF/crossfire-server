@@ -81,11 +81,9 @@ treasure Gorokh
   arch god_enchant_weapon_medium
     chance 50
   more
-arch god_grace_limit_medium
-more
   arch god_spelldirect_flaming_aura
   more
-arch god_grace_limit_high
+arch god_grace_limit_medium
 more
   arch god_spelldirect_rage
   more
