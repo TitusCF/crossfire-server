@@ -582,7 +582,7 @@ void make_path_to_file (char *filename)
 #endif
 	if (stat(buf, &statbuf) || !S_ISDIR (statbuf.st_mode)) {
 	    LOG(llevDebug, "Was not dir...");
-	    if (mkdir (buf, 0777)) {
+	    if (mkdir (buf, SAVE_DIR_MODE)) {
 		perror ("Couldn't make path to file");
 		return;
 	    }

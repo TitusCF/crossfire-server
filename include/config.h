@@ -317,8 +317,6 @@
  * BANFILE - ban certain users/hosts.
  * CSPORT - port to use for new client/server
  * DMFILE - file with dm/wizard access lists
- * DM_MAIL - address of server administrator
- * LIBDIR - location of archetypes & other data.
  * LOGFILE - where to log if using -daemon option
  * MAP_ - various map timeout and swapping parameters
  * MAX_OBJECTS - how many objects to keep in memory.
@@ -622,14 +620,16 @@
 /*
  * If you have defined SAVE_PLAYER, you might want to change this, too.
  * This is the access rights for the players savefiles.
- * I think it is usefull to restrict access to the savefiles for the
- * game admin. So if you make crossfire set-uid, use 0600.
- * If you are running the game set-gid (to a games-group, for instance),
- * you must remember to make it writeable for the group (ie 0660).
- * Kjetil W. J{\o}rgensen, jorgens@pvv.unit.no
- * (Note: something should probably be done with lock-file permission)
+ * Given that crossfire runs in a client/server model, there should
+ * be no issue setting these to be quite restrictive (600 and 700).
+ * Before client/server, multiple people might run the executable,
+ * thus requiring that the server be setuid/setgid, and more generous
+ * permisisons needed.
+ * SAVE_MODE is permissions for the files, SAVE_DIR_MODE is permission
+ * for nay directories created.
  */
 #define	SAVE_MODE	0660
+#define	SAVE_DIR_MODE	0770
 
 /* NOTE ON SAVE_INTERVAL and AUTOSAVE:  Only one of these two really
  * needs to be selected.  You can set both, and things will work fine,

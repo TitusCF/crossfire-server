@@ -14101,7 +14101,7 @@ fi
 
 
 
-ac_config_files="$ac_config_files Makefile crossedit/Makefile crossedit/doc/Makefile crossedit/include/Makefile crossedit/Cnv/Makefile crossedit/bitmaps/Makefile doc/Makefile doc/Developers/Makefile doc/spell-docs/Makefile doc/spoiler/Makefile doc/spoiler-html/Makefile doc/playbook/Makefile doc/playbook-html/Makefile doc/scripts/Makefile lib/Makefile random_maps/Makefile socket/Makefile server/Makefile include/Makefile utils/Makefile lib/checkarch.pl lib/collect.pl utils/add_throw.perl utils/crossloop.tmpl utils/crossloop.pl.tmpl utils/metaserver.pl utils/crossloop.web common/Makefile plugin/Makefile devel/Makefile"
+ac_config_files="$ac_config_files Makefile crossedit/Makefile crossedit/doc/Makefile crossedit/include/Makefile crossedit/Cnv/Makefile crossedit/bitmaps/Makefile doc/Makefile doc/Developers/Makefile doc/spell-docs/Makefile doc/spoiler/Makefile doc/spoiler-html/Makefile doc/playbook/Makefile doc/playbook-html/Makefile doc/scripts/Makefile lib/Makefile random_maps/Makefile socket/Makefile server/Makefile include/Makefile utils/Makefile lib/checkarch.pl lib/collect.pl utils/add_throw.perl utils/crossloop.tmpl utils/crossloop.pl.tmpl utils/metaserver.pl utils/crossloop.web utils/scores.pl common/Makefile plugin/Makefile devel/Makefile"
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
 # tests run on this system so they can be shared between configure
@@ -14631,6 +14631,7 @@ do
   "utils/crossloop.pl.tmpl" ) CONFIG_FILES="$CONFIG_FILES utils/crossloop.pl.tmpl" ;;
   "utils/metaserver.pl" ) CONFIG_FILES="$CONFIG_FILES utils/metaserver.pl" ;;
   "utils/crossloop.web" ) CONFIG_FILES="$CONFIG_FILES utils/crossloop.web" ;;
+  "utils/scores.pl" ) CONFIG_FILES="$CONFIG_FILES utils/scores.pl" ;;
   "common/Makefile" ) CONFIG_FILES="$CONFIG_FILES common/Makefile" ;;
   "plugin/Makefile" ) CONFIG_FILES="$CONFIG_FILES plugin/Makefile" ;;
   "devel/Makefile" ) CONFIG_FILES="$CONFIG_FILES devel/Makefile" ;;

@@ -17,7 +17,30 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
-TODO: Various updates
+acinclude.m4: Update path to find python includes, since aclocal.m4 gets 
+   derived from this file.
+configure.ac, configure: Add utils/scores.pl to list of files to substitute on.
+common/loader.l, loader.c: Add subtype for objects - will be used in future work.
+common/object.c: Add subtype diff check in CAN_MERGE()
+common/porting.c: Have it use SAVE_DIR_MODE when doing the mkdir, and not have
+   hardcoded 777 permissions.
+doc/Makefile.in, doc/Makefile.am, doc/Developers/Makefile.am,
+   doc/Developers/Makefile.in: Move some of the spell docs around and merge
+   them together
+doc/Developers/objects: Add notes about subtype.
+doc/Developers/spells: New file, contains preliminary work on spell objects.
+include/config.h: Remove command about DM_MAIL and LIBDIR from file, as they
+   are options no longer present.  Update comment about SAVE_MODE, and add
+   SAVE_DIR_MODE
+include/object.h: Add subtype field to object.
+server/login.c: Have it use SAVE_DIR_MODE when doing the mkdir, and not have
+   hardcoded 6700 permissions.
+utils/Makefile.in: Updated to know about scores.pl
+utils/scores.pl.in: New file - reads player file to generate HTML score
+   file.
+MSW 2003-04-04
+
+TODO: Various update
 aclocal.m4,configure: Update path to find python (fix again)
 common/image.c: Minor update to a ocmment in the code.
 common/los.c: Add missing P_OUT_OF_MAP checks that resulted in some incorrect

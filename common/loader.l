@@ -370,6 +370,7 @@ A	.+
 ^level{S}	op->level = IVAL;
 ^direction{S}	op->direction = IVAL;
 ^type{S}	op->type = IVAL;
+^subtype{S}	op->subtype = IVAL;
 ^material{S}	op->material = IVAL;
 ^materialname{S}    {	char *yv=yval();
 			if (*yv=='\0')
@@ -1510,6 +1511,8 @@ char *get_ob_diff(object *op,object *op2) {/* I plan to optimize this heavily */
     save_long(buf, "direction", op->direction);
   if(op->type!=op2->type)
     save_long(buf, "type", op->type);
+  if(op->subtype!=op2->subtype)
+    save_long(buf, "type", op->subtype);
   if(op->attacktype!=op2->attacktype)
     save_long(buf, "attacktype", op->attacktype);
 

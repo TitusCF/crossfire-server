@@ -1,0 +1,526 @@
+SPELLS:
+------------------------------------------------------------------------------
+Index:
+
+1. Background
+2. Spell Objects
+3. Spell Paths
+
+
+------------------------------------------------------------------------------
+1. BACKGROUND
+
+This document describe all things spell and spell related that developers
+need to know.  This document outlines the new spell objects and how
+this all works.
+
+------------------------------------------------------------------------------
+2. SPELL OBJECTS
+
+In the old model, each spell had a specific number associated with it.
+Monster spell abilities, while object, just said to use spell number
+X.  Given that everything else in the game is object, this hardcoding
+of spells was less than ideal.
+
+In the new system, spells are objects.  The spell object the player knows
+has the characteristics of the spell.  As a first pass, the existing
+spells are just converted to object form.  As time passes, new spells
+can be easily added in this system.  It also simplifies the code - the
+spells a player knows are now objects in his inventory.  The spell
+a wand casts is the spell in its inventory.  The spell a scroll casts
+is the spell in its inventory, and the spell you learn by reading
+a spellbook is the spell in its inventory.
+
+This model makes it very easy to make variations of some spells.  Want
+to make an extra large fireball?  All this is needed is to take the
+large fireball arch, increase a few paramters, and your all set.
+
+The following is the fields in the object structure, and how they
+correspond to a spell.  Fields that are not mentioned are not used.
+
+char *name: Name of the spell (large fireball, icestorm, etc)
+char *lore: Description of the spell to be put in books, or perhaps even
+   to just let the player see.  In a sense, this puts documentation of
+   the spells within the object, instead of having to maintain seperate
+   files.
+float casting_speed:  How long it takes to cast the spell (was time)
+face/anim: If the spells is a generic spell that doesn't have an other_arch
+   pointer, this is the face (or animation to use when the spell is
+   cast.
+uint8 type: SPELL (to denote this is spell object)
+sint16 resist[] values: For protection spells, resistance they provide.
+uint32 attacktype: Attacktype of the spell.
+uint32 path_*: spell path information.  Note as of this writing, only
+    path_attuned is expected to mean anything.  However, I can envision
+    the user of path_repelled/denied to denote that if the caster is
+    attuned to some path, they have penalties in casting this spell.
+sint32 value: Base value of this spell for scroll, spellbooks, wands, rods.
+sint16 level: Level of the spell
+other_arch: archetype this spell uses.
+char *skill (new): Skill needed to cast this spell.
+sint32 subtype (new): Sub classification for this spell.  It sort of
+    relates to the existing spell number, but in a more general form.
+    At first pass, subtypes would fall into protection spells, bolt
+    spells, ball spells, cone spells, stat increase spells.  There
+    are a number of spells which can not be abstracted and are unique
+    in their own right (dimension door, word of recall, polymorph, etc).
+    In these cases, there will be one value for that spell type.
+
+From living/stats substructure:
+Str, Dex, etc: If spell changes and ability, this is the ability it changes.
+sint16 dam: Base damage the spell does:
+sint16 sp: how many spellpoints the spell costs
+sint16 grace: how much grace the spell costs
+sint16 maxsp/maxgrace: Every 'maxsp/maxgrace' levels beyond its base level,
+    the spell cost doubles (this is pro rated like the old code.  For example,
+    if a first level spell costs 5 sp, and maxsp is 5, then at level 6 it
+    would cost 10 sp.  However, at level 2, it is 6 sp, level 3 is 7 sp,
+    etc.
+
+TBD:
+bdur (base duration), ldam (level adjustment for damage), ldur (level
+adjustment for duration): These need to get put into some field -
+I'm undecided if it makes more sense to add new fields (instead of
+overloading existing ones).
+
+There are also many fields in the spell structure which are not
+copied - charges, scrolls, scroll_chance, books, range, defensive,
+cleric, onself.
+
+The defensive, range, and onself can largely be derived from the
+subtype above.  if subtype is protection or healing, it'd be
+self.  A cone, bolt, or ball would be range.
+
+range is very important - range would determine blast area of ball
+spells, range of cones, etc, and thus probably be one of the fields
+that people are more likely to update (huge fireball, etc).
+
+cleric is basically redundant now - the skill says what skill to use
+for this spell.  Note that a spell could in theory cost both mana
+and grace - what it costs is not necessarily tied to a skill.  However,
+it would be bad practice to make a wizardry spell use mana.  However,
+I could potentially see hybrid skills that have some variosu benefits,
+or if we have say a 'magic' god, perhaps some special spells it provides
+a use mana.
+
+So lets next touch on the idea of treasurelist for spell objects.
+
+As mentioned above, spell objects, like wands, spellbooks, scrolls,
+etc, contain the spell they cast.  The way spells end up in those
+objects is via a mechanism there is already code for - treasurelists.
+
+Currently, the treasure generation code notices if a wand, rod, spellbook,
+or scroll is generated.  If so, it calls special code that looks
+at the field of the spell structure and randomly chooses a spell.
+
+Instead, this is just replaced with treasurelists.  The scroll object
+would have a 'randomitems scroll', wands a 'randomitems wand',etc.  These
+may be big treasure lists, but that shouldn't post any problem.  More
+likely, these lists would be broken up into smaller pieces (eg,
+scroll_low_level, scroll_medium_level, scroll_high_level).
+
+ This provides finer resolution than is currently allowed in the spell 
+structure - you could make some spell available only in rods, but not
+wands.  you can better adjust things to better spells show up in
+tougher dungeons, etc,  The only thing that is really missing here is
+how to figure out how many charges to put into wands.
+
+------------------------------------------------------------------------------
+3. SPELL PATHS DOCUMENTATION
+
+Long ago a number of archmages discovered patterns in the web that spells
+weave in the aether. They found that some spells had structural similarities
+to others and some of the mages took to studying particular groups of spells.
+These mages found that by molding their thought patterns to match the patterns
+of the spells they could better utilise all the spells of the group. Because
+of their disciplined approach, the mages were described as following spell
+Paths. As they attuned themselves to particular spell Paths they found that
+they would become repelled from others, and in some cases found they were
+denied any access to some paths. The legacy of these mages remains in some
+of the magical items to be found around the world.
+
+Technical details:
+In the same way that players and objects can be protected, immune, and
+vulnerable to the different types of attacks, they can now be attuned,
+repelled, or denied access to the different spell Paths. An object that
+is attuned to a Path cast spells from that Path at 80% of the spell point
+cost and receives duration/damage bonuses as if the caster were five levels
+higher. An object that is repelled from a Path casts spells from that Path
+at 125% of the spell point cost and receives duration/damage bonuses as if 
+the caster were five levels lower (minimum of first level). An object that
+is denied access to a Path cannot cast any spells from it. The casting 
+time is also modified by 80% and 125% respectively. These values are
+defined in PATH_SP_MULT (from spells.h), PATH_TIME_MULT (from spells.h), and
+path_level_mod (from spells.c)
+ 
+The Paths themselves are the following:
+  "Nothing",
+  "Protection",
+  "Fire",
+  "Frost",
+  "Electricity",
+  "Missiles",
+  "Self",
+  "Summoning",
+  "Abjuration",
+  "Restoration",
+  "Detonation",
+  "Mind",
+  "Creation",
+  "Teleportation",
+  "Information",
+  "Transmutation",
+  "Transferrence".
+
+See define.h for the number values corresponding to the Path.
+
+Some more will be added in the near future. Some spells do not currently 
+belong to a Path, this is probably appropriate for some spells.
+Paths are inherited just like protection/immunity/vulnerability, ie if a
+ring contains "path_attuned 1", the wearer becomes attuned to the Path of
+Protection.
+
+Paths are quite powerful and shouldn't be given away cheaply. Ideally, most
+objects with path_attuned attributes should have path_repelled and path_denied
+attributes as well, to balance out (eg attuned to Fire, repelled from 
+Protection, and denied from Restoration)
+
+
+Rupert G. Goldie 21/4/94
+
+
+This document explains how to reset certain spell parameters,
+such as damage and duration, and the level dependencies of the above.
+
+You may either change the compiled-in defaults, defined in spellist.h,
+or the file lib/spell_params, which is read upon server initialization or
+read upon the dm executing 'spellreset'.
+
+
+Fundamental definitions:
+level --  spell level
+sp    --  the spellpoints the spell costs
+bdam  --  usually the damage the spell does
+bdur  --  the duration or range of the spell
+ldam  --  how many levels above the min. level to cast the spell to gain
+	  1pt of damage
+ldur  --  how many levels above the min. level to gain one point of duration
+spl   --  How many levels it takes for the spellpoint cost of the spell to double
+
+This is the format of the file:
+
+<spell name>
+<level> <sp> <bdam> <bdur> <ldam> <bdur> <spl>
+<spell name>
+<level> <sp> <bdam> <bdur> <ldam> <bdur> <spl>
+...
+
+Spells not in the parameter file use the compiled in defaults
+in spellist.h
+
+sp_level_strength_adjust = MAX(0, (caster's level - spell level) / ldur) )
+sp_level_dam_adjust = MAX(0, (caster's level- spell level)/ ldam) )
+
+Examples:  if ldam=3 for small fireball, a 4th level character's fireball's
+will do 1pt more damage per turn than a 1st level character's fireball.
+
+
+
+Special cases and exceptions
+
+cone spells:  bdur = duration of cone
+	      
+fireballs:  bdur ==  radius of explosion.
+
+lightnings:  bdur == length of bolt?
+
+bomb:  bdur == radius of explosion.
+
+destruction:  bdur = range of damage
+	      damage = bdam + int(caster)
+
+turn undead:  duration ==  bdur + wisdom bonus
+
+fear:  duration == bdur + cha bonus
+
+holy_word  duration==bdur + turn bonus
+
+summoning spells:  ldur:  how many levels needed to give the monster an
+			additional 10hp
+		   ldam:  how many levels needed to give the monster's dam
+			additional 2hp/attack
+		  bdam:  base damage done by monster
+		  bdur:  base hp of monster
+
+earthwall:  hp ==  bdam + sp_level_strength * 10
+
+firewall:  duration= bdur + 5*sp_level_strength_adjust
+frostwall:  ""
+counterwall:  ""
+pool of chaos: ""
+
+invisibility:
+duration = bdur + ldam * sp_level_strength_adjust
+
+earth_to_dust:  range = bdur + sp_level_strength_adjust
+
+strength, dexterity, constitution, charisma,  
+armour, all protection and immunity spells, levitate
+
+  duration = 500 server_clicks + 50*sp_level_strength_adjust
+
+cancellation:  no level dependence hacked in
+
+confusion:  none
+
+mass confusion:  duration = bdur + sp_level_strength_adjust
+
+meteor swarm:  sp_level_strength_adjust=# additional comets
+
+
+build [whatever]:
+	hp = bdam + 5*sp_level_dam_adjust
+	duration = bdur + 5*sp_level_strength_adjust
+
+create food :  bdam = base food value creatable with this spell
+	       ldam = food value += 50*SP_level_dam_adjust
+	Effects of spells imbedded into potions -b.t.
+	-------------------------------------------------------------------
+
+	  These are the "empirical" results of my testing the CF 0.92.4
+	spell code. Seven main general effects, related to the way in
+	which the spell manifests, are noted:
+
+	      "360"  	Indicates that the spell is released as 
+			in a 360 degree field of effect, centered
+			on the potion user. User is uneffected. 
+
+	      "attack" 	Indicates that spell is released, centered
+			on the potion 'user'. One day, when the 
+			throwing code is fixed, the 'user' can include 
+			the target of a thrown potion.
+
+	      "self"	Similar to "attack" but no 'visual' effect
+			occurs and no others are effected.
+
+	      "golem"	A creature controled by the potion user is
+			created. 
+
+	      "create"	Makes an item in the user's square. 
+
+	      "destroy"	Destroys items/creatures surrounding the user.
+
+	      "summon" 	Summons creatures friendly to user, but not 
+			strickly controled by the user.
+
+
+	Looking at the list below, it would appear that the "golem","360"
+	and "attack" spells are most likely to work. Real problems seem 
+	to exist for casting many of the clerical spells. 
+
+	Unless otherwise noted, all spells work.
+
+
+	Sp#. SPELL		Effect		Notes
+	--------------		----------	----------------------------- 
+
+	1. sm. fireball		attack		
+	2. md. fireball		attack
+	3. lg. fireball		attack
+	4. burning hands	360
+	5. sm. lightning	attack
+	6. lg. lightning	attack
+	7. magic missile	attack		No visual effect.	
+	8. create bomb		create 		creates bomb at user's feet.
+	9. create golem	 	golem		no xp gain for golem kills.	
+	10 - 13. create 	golem			""
+	         elemental
+	14. dimension door	self		nothing happens; asks 
+						"what direction?"
+	15. create earth wall 	create		fails; asks "what direction?"
+	16. paralyze		360
+	17. icestorm		360
+	18. magic mapping	self		works fine.
+	19. turn undead		360
+ 	20. poison cloud	360?		user appears unaffected.
+	21. fear		360
+	22. wonder		360		flowers appear, other effects?
+	23. destruction		destroy		works, but says "you killed
+						<victim> with <username>" odd.
+	24. percieve self	self			 
+	25. word of recall	self		
+	26. invisibility	self		in 0.92.4 code this failed,
+						bug fixed for 0.92.5+ (?)
+	27. invis. to undead	self		as for invisibility
+	28. probe		self		bizarre. gives user weight.
+	29. large bullet	attack		fails. nothing happens.
+	30. improv. invis.	self		same as for invisibility.
+	31. holy word		360		failed, says "need to worship
+						a god". Might work if you are
+						a worshipper??
+	32. minor healing	self	  	Heals others if nearby??	
+	33. med. healing	self			""	
+	34. major healing	self		        "" 
+	35. heal		self		 	"" 
+	36. create food		create		food appears below user.
+	37. earth to dust	destroy		fails. 
+	38. armour		self		
+	39. strength		self		works fine. 
+	40. dexterity		self
+	41. constitution	self
+	42. charisma		self
+	43. create fire wall	create		fails; as create earth wall.	
+	44. create frost wall	create		fails; as above
+	45 - 53. protection	self		all work well
+		 from ?? spells
+	54. levitation		self
+	55. sm. speedball	attack		no effect.
+	56. lg. speedball	attack		no effect.
+	57. hellfire		360
+	58. dragon breath	360
+	59. lg. icestorm	360
+	60. charging		self?		fails.
+	61. polymorph		attack?		fails. nothing happens.
+	62. cancellation	attack?		fails. nothing happens.
+	63. confusion		self		works, says "hands glow red"
+	64. mass confusion	360 		
+	65. summon pet monst.	summon		works, but no text.
+	66. slow		360
+	67. regenerate sp. 	self		
+	68. cure poison		self
+	69. prot. from conf.	self		
+	70. prot. from cancel	self
+	71. prot. from deplete	self
+	72. alchemy		360		works, only adjacent sq. effected 
+	73. remove curse	self	
+	74. remove damnation	self
+	75. identify		self
+	76. detect magic	360
+	77. detect monster	360
+	78. detect evil		360
+	79. detect curse	360
+	80. heroism		self
+	81. aggravation		???		failed. 
+	82. firebolt		attack		
+	83. frostbolt		attack
+	84. shockwave 		360
+	85. colorspray		360
+	86. haste		self		failed?. effect is very small.
+	87. face of death. 	360
+	88. ball lightning	create		on users sq. attacks user?
+	89. meteor swarm	attack		very deadly.
+	90. comet		attack		deadly.
+	91. mystic fist		golem		as other golem spells.
+	92. raise dead		????		not tested
+	93. resurrection	????		not tested
+	94. reincarnation	????		not tested
+	95-103. immunity spells self
+	104. invulnerability	self		
+	105. defense		self	
+	106. rune of fire	create		fails; rune appears above user 
+	107. rune of frost	create		 ""
+	108. rune of shock	create		 ""
+	109. rune of blasting	create		 ""
+	110. rune of death	create		 "" 
+	111. rune of marking	create		 ""
+	112. build director	create		works; below user in facing dir  
+	113. create pool chaos	create		failed.
+	114. build bullet wall	create		appears on top of user;points
+						in user facing direction.
+	115. build lightn. wall	create		as build bull. wall above
+	116. build fire wall	create		as build bull. wall above
+	117. magic rune		create		failed.
+	118. rune of mag. drain	create		as other runes
+	119. anti-mag. rune	create		 ""
+	120. rune of transfer	create		 ""
+	121. transference	attack		works; can kill user
+	122. magic drain	attack		works
+	123. counterspell	360
+	124. disarm		????		works?
+	125. cure confusion	self
+	126. restoration	self
+	127. summon evil mon.	summon		failed.
+	128. counterwall	create		fails; asks "what direction?"
+	129. cause lht. wounds	attack		bizarre; req. worship a god.
+						fails to work if you do.
+	130. cause med. wounds	attack		 ""
+	131. cause ser. wounds	attack		 ""
+	132. charm monster	attack		fails
+	133. banishment		360		as "holy word"
+	134. create missile	create		creates missiles in user 
+						inventory! Works I guess.
+	135. show invisible	self		
+	136. xray vision	self		
+	137. pacify		attack		fails
+	138. summon fog		create		creates fog above user.
+	139. steambolt		attack		works; later steam surr. user.
+	140. command undead	attack		appears to fail
+	141. holy orb		attack		fails; as "holy word"
+	142. summon avatar	golem		 ""
+	143. holy possession	self		fails; get "empty blessing" msg.
+	144. bless		self		 ""
+	145. curse		self/attack	 ""
+	146. regeneration	self		
+	147. concecrate altar	????		fails; need "god to worship". In
+						that case fails too.
+	148. summon cult mon.	summon		failed; might work if right
+						god is worshiped.
+	149. cause crit. wounds	attack		failed; as other "wounds" spells
+	150. retrib. strike	attack		failed majorly! CF code thrown
+						into inf. loop. DONT USE THIS!! 
+	151. finger of death	attack		as retrib. strike!
+	152. insect plague	attack		as retrib. strike!
+	153. finger of death	attack		as retrib. strike!
+	154. call holy servnt.	golem		as summon avatar.
+	155. wall of thorns	create		fails as counterwall
+	156. staff to snake	create?		fails
+	157. light		create		fails, asks "what direction"
+	158. darkness		create		 ""
+	159. nightfall		????		
+	160. daylight		????
+	161. sunspear		attack		
+	162. faery fire		attack		user makes others glow.	
+	163. cure blindness	self
+	164. dark vision	self		
+ 
+	165.	SP_BULLET_SWARM,
+	166.	SP_BULLET_STORM,
+	167.	SP_CAUSE_MANY,
+	168.	SP_S_SNOWSTORM,
+	169.	SP_M_SNOWSTORM,
+	170.	SP_L_SNOWSTORM,	
+	171.	SP_CURE_DISEASE,	
+	172.	SP_CAUSE_EBOLA,	
+	173.	SP_CAUSE_FLU,
+	174.	SP_CAUSE_PLAGUE,
+	175.	SP_CAUSE_LEPROSY,	
+	176.	SP_CAUSE_SMALLPOX,
+	177.	SP_CAUSE_PNEUMONIC_PLAGUE,
+	178.	SP_CAUSE_ANTHRAX,
+	179.	SP_CAUSE_TYPHOID,
+	180.	SP_MANA_BLAST,
+	181.	SP_S_MANABALL,		
+	182.	SP_M_MANABALL,		
+	183.	SP_L_MANABALL,	
+	184.	SP_MANA_BOLT,
+	185.	SP_DANCING_SWORD,	
+	186.	SP_ANIMATE_WEAPON, 
+	187.	SP_CAUSE_COLD,              
+	188.	SP_DIVINE_SHOCK,      
+	189.	SP_WINDSTORM,
+	190.	SP_SANCTUARY,         
+	191.	SP_PEACE,          
+	192.	SP_SPIDERWEB, 
+	193.	SP_CONFLICT,          
+	194.	SP_RAGE,
+	195.	SP_FORKED_LIGHTNING,   
+	196.	SP_POISON_FOG,     
+	197.	SP_FLAME_AURA,
+	198.	SP_VITRIOL,          
+	199.	SP_VITRIOL_SPLASH,
+	200.	SP_IRONWOOD_SKIN,     
+	201.	SP_WRATHFUL_EYE, 
+	202.	SP_TOWN_PORTAL,  
+	203.	SP_MISSILE_SWARM,     
+	204.	SP_CAUSE_RABIES
+        205.    Glyph

@@ -135,7 +135,8 @@ inline int CAN_MERGE(object *ob1, object *ob2) {
 	(ob1->animation_id != ob2->animation_id) ||
 	(ob1->client_type != ob2->client_type) ||
 	(ob1->materialname != ob2->materialname) ||
-	(ob1->lore != ob2->lore)
+	(ob1->lore != ob2->lore) ||
+	(ob1->subtype != ob2->subtype)
 	) 
 	    return 0;
 

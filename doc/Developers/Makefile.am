@@ -22,5 +22,5 @@
 
 EXTRA_DIST = README cvs images map-technical mapguide \
 	objects plugins programming_guide protocol python \
-	random-maps random-styles runes skills teleporters testplans
+	random-maps random-styles runes skills spells teleporters testplans
 

@@ -120,6 +120,7 @@ typedef struct obj {
 
     /* This next big block are basically used for monsters and equipment */
     uint8	type;		/* PLAYER, BULLET, etc.  See define.h */
+    uint8	subtype;	/* subtype of object */
     uint16	client_type;	/* Public type information.  see doc/Developers/objects */
     sint16	resist[NROFATTACKS];	/* Resistance adjustments for attacks */
     uint32	attacktype;	/* Bitmask of attacks this object does */

@@ -19,7 +19,7 @@ Sections:
 	
 3. Objects in general
 	A. Names (name, name_pl)
-	B. Types (type)
+	B. Types (type) & Subtypes (subtype)
 	C. Client Types (client_type)
 	D. editable field (editable)
 	E. Animations (anim - mina) (facings)
@@ -511,9 +511,10 @@ within the spellbook for example).
 
 
 
-B. Types (type)
-=============== 
-Specified in defines.h.  A type determines how an item operates/ what it does.
+B. Types (type) & Subtypes (subtype)
+====================================
+
+Specified in defines.h.  A type determines how an item operates/what it does.
 A type only needs to be added for a new archetype if in some area of the
 program, it is actually used.  Addition of new types is generally
 a rare event.
@@ -530,6 +531,47 @@ information.  Note that within maps, you should almost never change
 the type field of an object - instead, you should start with an
 object of the appropriate type and change the fields of the object
 to appear as you want it.
+
+Subtypes are related to types, in that it narrows down the scope of the
+type of object.  For example, the type may be the value for skill,
+with subtype being the different skill it uses.  Or for spell objects,
+subtype could be the spell identifier.
+
+Subtype is a new field as of April 2003.  It's use needs to be extended.
+As example of this is with all equipment items - they should get moved
+to be of type 'equipment', with subtype specifying exactly what it does
+(ring, helm, armor, etc).
+
+Note that the meaning of the subtype is specific to the type itself - they are
+not unique across all types.  For example, for type equipment, subtype 1 might
+be a helm.  But for type skills, subtype 1 might be smithery.  One should not
+rely on subtype to convey any meaningful information unless the type of the
+object is known or also examined.
+
+The question may then be asked - when making a new arch, how do I know
+if I need a new type, or if I should be the subtype of an existing type.
+
+When to add a new type:
+1) If code to support applying the object is completely different than
+   what exists in apply.c (eg, not reusing existing functions), or
+2) If code to support movement of the type does not reuse existing
+   functions (server/time.c)
+
+When to make a new subtype:
+1) Your behaviour is _close_ to that of an existing type, but you want it
+   to be slightly different (eg, teleporters that don't work on players), or
+2) You need to be able to differentiate between objects of the same type.
+   Eg, adding a new skill would add a new subtype, not a new type.
+
+If your not sure, drop a mail to the crossfire developers list.
+
+If there is a header file that contains all the other information related to
+the object type, the subtype should be defined there.  Otherwise, subtypes
+should be defined in define.h.  The subtype definitions should include be
+prefixed by what they are a subtype for.  Eg, SKILL_SMITHERY, SKILL_JEWELER,
+etc, and not just SMITHERY and JEWELER.  It is acceptable to abbreviate the
+prefix if it is very long.
+
 
 C. Client Types (client_type)
 ==============================

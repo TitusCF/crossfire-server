@@ -182,11 +182,7 @@ int create_savedir_if_needed(char *savedir)
   } else {
     stat(savedir, buf);
     if ((buf->st_mode & S_IFDIR) == 0)
-#if defined(_IBMR2) || defined(___IBMR2)
-      if (mkdir(savedir, S_ISUID|S_ISGID|S_IRUSR|S_IWUSR|S_IXUSR))
-#else
-      if (mkdir(savedir, S_ISUID|S_ISGID|S_IREAD|S_IWRITE|S_IEXEC))
-#endif
+      if (mkdir(savedir, SAVE_DIR_MODE))
 	{
 	perror("Unable to create player savedir,");
 	perror(savedir);
