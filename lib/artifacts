@@ -1876,6 +1876,7 @@ Object Gaea
 type 87
 weight 120
 reflect_spells 1
+Str -1
 hp 2
 resist_fire 10
 resist_cold 10
