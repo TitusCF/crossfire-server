@@ -388,6 +388,9 @@ treasure Lythander
   arch spell_conflict
   more
   arch spell_defense
+more
+  arch pipe_lythander
+    chance 3
 end
 #############################################################
 # Gnarg - Father of goblins, Lord Troll, Master of poisons,
@@ -4293,14 +4296,14 @@ treasure hellhound
   arch abil_fear
  end
 treasure shadow
-  arch spell_cancellation
+  arch spell_negaball
   more
-  arch spell_invisible
+  arch spell_cancellation
  end
 treasure s_wyvern
-  arch spell_cancellation
+  arch spell_negabolt
   more
-  arch spell_invisible
+  arch spell_cancellation
  end
 treasure giant_worm
   arch spell_magic_bullet
