@@ -222,11 +222,7 @@ int hit_map(object *op,int dir,int type) {
   if(type&AT_COUNTERSPELL) {
     counterspell(op,dir);  /* see newspells.c */
     if(!(type & ~(AT_COUNTERSPELL|AT_MAGIC))){
-#ifdef NO_CONE_PROPOGATE
-	return 1;
-#else
 	return 0;  /* we're done, no other attacks */
-#endif
     }
     type &= ~AT_COUNTERSPELL;
   }
@@ -283,11 +279,7 @@ int hit_map(object *op,int dir,int type) {
         break;
     }
   }
-#ifdef NO_CONE_PROPOGATE
-  return retflag;
-#else
   return 0;
-#endif
 }
 
 void attack_message(int dam, int type, object *op, object *hitter) {

@@ -80,7 +80,6 @@
  * MAX_TIME - how long an internal tick is in microseconds
  * MANY_CORES - generate core dumps on gross errors instead of continuing?
  * MULTIPLE_GODS - adds numerous gods to the game, with different powers
- * NO_CONE_PROPOGATE - makes cone spells stop at the first monster
  * PARTY_KILL_LOG - stores party kill information
  * SECURE - Allow overriding values with run time flags?
  * WATCHDOG - allows use of an external watchdog program
@@ -214,16 +213,6 @@
  */
 
 #define MAX_TIME	120000
-
-/* This is a modification to the cone spells.  If a cone spell hits
- * a monster, the spell stops progressing (same is true for parties
- * of players).  This weakens the cones spells a bit.  If it is not
- * define, you get the old behaviour (cone spells cover every square
- * up to their range in a 90 degree arc.
- */
-/*
-#define NO_CONE_PROPOGATE
-*/
 
 /* Polymorph as it currently stands is unbalancing, so by default
  * we have it disabled.  It can be enabled and it works, but
