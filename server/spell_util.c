@@ -1723,32 +1723,40 @@ void move_ball_lightning(object *op) {
     op->y=ty;
     op->x=tx;
 	 
-	 dam_save = op->stats.dam;  /* save the original dam: we do halfdam on 
+    dam_save = op->stats.dam;  /* save the original dam: we do halfdam on 
 											 surrounding squares */
 
-	 /* loop over current square and neighbors to hit. */
-	 for(j=0;j<9;j++) {
-		int hx,hy;  /* hit these squares */
+    /* loop over current square and neighbors to hit. */
+    for(j=0;j<9;j++) {
+      int hx,hy;  /* hit these squares */
 
-		hx = tx+freearr_x[j]; hy = ty+freearr_y[j];
-
-		/* first, don't ever, ever hit the owner.  Don't hit out
-		   of the map either.*/
-		if(! (owner->x==hx && owner->y==hy) && !out_of_map(op->map,hx,hy)) {
-		  op->x = hx;
-		  op->y = hy;
-		  if(j) op->stats.dam = dam_save/2;
+      hx = tx+freearr_x[j]; hy = ty+freearr_y[j];
+      
+      /* first, don't ever, ever hit the owner.  Don't hit out
+	 of the map either.*/
+      if(! (owner->x==hx && owner->y==hy) && !out_of_map(op->map,hx,hy)) {
+	op->x = hx;
+	op->y = hy;
+	if(j) op->stats.dam = dam_save/2;
 		  
-		  if(blocked(op->map,op->x,op->y)) hit_map(op,0,op->attacktype);
-		}
-	 }
-	 /* restore to the center location and damage*/
-	 op->y = ty;
-	 op->x = tx;
-	 op->stats.dam = dam_save;
-	 i=spell_find_dir(op->map,op->x,op->y,get_owner(op));
+	if(blocked(op->map,op->x,op->y)) hit_map(op,0,op->attacktype);
+      }
+    }
+    /* restore to the center location and damage*/
+    op->y = ty;
+    op->x = tx;
+    op->stats.dam = dam_save;
+    i=spell_find_dir(op->map,op->x,op->y,get_owner(op));
 
-    if(i>=0) op->direction=i;
+    if(i>=0) { /* we have a preferred direction!  */
+      /* pick another direction if the preferred dir is blocked. */
+      if(wall(op->map,tx + freearr_x[i], ty + freearr_y[i])) {
+	i+= RANDOM()%3-1;  /* -1, 0, +1 */
+	if(i==0) i=8;
+	if(i==9) i=1;
+      }
+      op->direction=i;
+    }
     insert_ob_in_map(op,op->map,op);
 }
 
@@ -1775,15 +1783,15 @@ int reduction_dir[SIZEOFFREE][3] = {
   {2,3,-1}, /* 12 */
   {2,3,4}, /* 13 */
   {3,4,-1}, /* 14 */
-  {14,4,16}, /* 15 */
+  {4,14,16}, /* 15 */
   {5,4,-1}, /* 16 */
   {4,5,6}, /* 17 */
   {6,5,-1}, /* 18 */
-  {20,6,18}, /* 19 */
+  {6,20,18}, /* 19 */
   {7,6,-1}, /* 20 */
   {6,7,8}, /* 21 */
   {7,8,-1}, /* 22 */
-  {22,8,24}, /* 23 */
+  {8,22,24}, /* 23 */
   {8,1,-1}, /* 24 */
   {24,9,10}, /* 25 */
   {9,10,-1}, /* 26 */
@@ -1822,7 +1830,7 @@ int can_see_monsterP(mapstruct *m, int x, int y,int dir) {
   dx = freearr_x[dir];
   dy = freearr_y[dir];
 
-  if(dir==-1) return 0;  /* exit condition:  invalid direction */
+  if(dir<0) return 0;  /* exit condition:  invalid direction */
   if(wall(m,x + dx,y+dy)) return 0;
 
   /* yes, can see. */
@@ -1854,11 +1862,9 @@ int spell_find_dir(mapstruct *m, int x, int y, object *exclude) {
   for(i=(RANDOM()%8)+1;i<max;i++) {
     nx = x + freearr_x[i];
     ny = y + freearr_y[i];
-    if(wall(m, nx,ny))
-      max=maxfree[i];
-    else {
+    if(!out_of_map(m,nx,ny)) {
       tmp=get_map_ob(m,nx,ny);
-      while(tmp!=NULL && ((tmp!=NULL&&!QUERY_FLAG(tmp,FLAG_MONSTER)&&
+      while(tmp!=NULL && ((!QUERY_FLAG(tmp,FLAG_MONSTER)&&
         !QUERY_FLAG(tmp,FLAG_GENERATOR)) ||
 	(tmp == exclude || (tmp->head && tmp->head == exclude))))
                 tmp=tmp->above;
