@@ -93,7 +93,7 @@ int item_matched_string(object *pl, object *op, char *name)
 	else count=pl->contr->count;
 	if (!cp || cp[0]=='\0' || count<0) return 0;
 	/* base name matched - not bad */
-	if (strcasecmp(cp,op->name)==0 && !count) return 4;
+	if (strcasecmp(cp,op->name)==0 && !count) retval=24;
 	else if (count>1) {	/* Need to plurify name for proper match */
 	    char newname[MAX_BUF];
 	    strcpy(newname, op->name);
@@ -106,13 +106,13 @@ int item_matched_string(object *pl, object *op, char *name)
 	    else strcat(newname,"s");
 	    if (!strcasecmp(newname,cp)) {
 		pl->contr->count=count;	/* May not do anything */
-		return 6;
+		retval=26;
 	    }
 	}
 	else if (count==1) {
 	    if (!strcasecmp(op->name,cp)) {
 		pl->contr->count=count;	/* May not do anything */
-		return 6;
+		retval=26;
 	    }
 	}
 	if (!strcasecmp(cp,query_name(op))) retval=20;
