@@ -144,6 +144,8 @@
 #define SPEEDBALL	52
 #define DEAD_OBJECT	53
 #define DRINK		54
+#define MARKER          55 /* inserts an invisible, weightless
+			      force into a player with a specified string. */
 
 #define GEM		60 
 #define FIRECHEST	61 

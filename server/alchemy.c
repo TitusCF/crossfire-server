@@ -204,6 +204,18 @@ object * attempt_recipe(object *caster, object *cauldron,int ability, recipe *rp
   /* this should be passed to this fctn, not too effiecent cpu use this way */
   int numb=numb_ob_inside(cauldron), batches=abs(nbatches);
 
+  if(rp->keycode)  /* code required for this recipe, search the caster */
+	 { object *tmp;
+	 for(tmp=caster->inv;tmp!=NULL;tmp=tmp->below) {
+		if(tmp->type==FORCE && tmp->slaying && !strcmp(rp->keycode,tmp->slaying))
+		  break;
+	 }
+	 if(tmp==NULL) { /* failure--no code found */
+		new_draw_info(NDI_UNIQUE,0,caster,
+	  "You know the ingredients, but not the technique.  Go learn how to do this recipe.");
+		return 0;  
+	 }
+	 }
 #ifdef EXTREME_ALCHEMY_DEBUG
   LOG(llevDebug,"attempt_recipe(): got %d nbatches\n",nbatches);
   LOG(llevDebug,"attempt_recipe(): using recipe %s\n", rp->title?rp->title:"unknown");

@@ -10,6 +10,7 @@ typedef struct recipestruct {
 	int yield;        /*  The maximum number of items produced by the recipe */
         linked_char *ingred;    /* comma delimited list of ingredients */
         struct recipestruct *next;
+  char *keycode;   /* keycode needed to use the recipe */
 } recipe;
 
 typedef struct recipeliststruct {

@@ -363,6 +363,13 @@ void move_detector(object *op)
     detected = 0;
 
     for(tmp = get_map_ob(op->map,op->x,op->y);tmp!=NULL&&!detected;tmp=tmp->above) {
+		object *tmp2;
+		if(op->stats.hp) {
+		  for(tmp2= tmp->inv;tmp2;tmp2=tmp2->below) {
+			 if(!strcmp(op->slaying,tmp->name)) detected=1;
+			 if(tmp2->type==FORCE && !strcmp(tmp2->slaying,op->slaying)) detected=1;
+		  }
+		}
 	if (!strcmp(op->slaying,tmp->name)) {
 	  detected = 1;
 	}
@@ -771,8 +778,41 @@ void move_creator(object *op) {
   insert_ob_in_map(tmp,op->map);
 }
 
-  
+/* move_marker --peterm@soda.csua.berkeley.edu
+   when moved, a marker will search for a player sitting above
+   it, and insert an invisible, weightless force into him
+   with a specific code as the slaying field.
+   At that time, it writes the contents of its own message
+   field to the player. */
 
+void move_marker(object *op) {
+  object *tmp,*tmp2;
+  
+  for(tmp=get_map_ob(op->map,op->x,op->y);tmp!=NULL;tmp=tmp->above) {
+    if(tmp->type == PLAYER) { /* we've got someone to MARK */
+      /* cycle through his inventory to look for the MARK we want to place */
+      for(tmp2=tmp->inv;tmp2 !=NULL; tmp2=tmp2->below) {
+	if(tmp2->type == FORCE && tmp2->slaying && !strcmp(tmp2->slaying,op->slaying)) break;
+      }
+      
+      /* if we didn't find our own MARK */
+      if(tmp2==NULL) {
+	object *force = get_archetype("force");
+	if(op->stats.food) {
+	  force->speed = 0.01;
+	  force->speed_left = -op->stats.food;
+	}
+	/* put in the lock code */
+	force->slaying = add_string(op->slaying);
+	insert_ob_in_ob(force,tmp);
+
+      }
+
+    }
+
+  }
+}
+ 
 int process_object(object *op) {
 
   if(QUERY_FLAG(op, FLAG_MONSTER))
@@ -922,8 +962,11 @@ int process_object(object *op) {
     move_player_mover(op);
     return 0;
   case CREATOR:
-	 move_creator(op);
-	 return 0;
+    move_creator(op);
+    return 0;
+  case MARKER:
+    move_marker(op);
+    return 0;
   }
 
   return 0;

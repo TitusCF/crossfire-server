@@ -45,6 +45,7 @@ static recipe *get_empty_formula() {
   t->index = 0;
   t->transmute = 0;
   t->yield=0;
+  t->keycode = 0;
   t->title = NULL;
   t->arch_name = NULL;
   t->ingred = NULL;
@@ -124,6 +125,9 @@ void init_formulae() {
     if (!strncmp(cp, "Object", 6)) {
       formula=get_empty_formula();
       formula->title = add_string(strchr(cp,' ') + 1);
+    }
+    else if (!strncmp(cp, "keycode", 7)) {
+      formula->keycode = add_string(strchr(cp,' ') + 1);
     }
     else if (sscanf(cp, "trans %d", &value)) {
         formula->transmute = (uint16) value;
