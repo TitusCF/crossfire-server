@@ -748,7 +748,7 @@ int use_oratory(object *pl, int dir) {
 	chance=SK_level(pl)*2+(stat1-2*tmp->stats.Int)/2;
 
 	/* Ok, got a 'sucker' lets try to make them a follower */
-       	if(chance && tmp->level<(RANDOM()%chance)) {
+       	if(chance>0 && tmp->level<(RANDOM()%chance)) {
 	    new_draw_info_format(NDI_UNIQUE, 0,pl, 
 		"You convince the %s to become your follower.\n", 
 		query_name(tmp));
