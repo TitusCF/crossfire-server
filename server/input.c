@@ -175,6 +175,7 @@ char *long_desc(object *tmp) {
 
 void examine(object *op, object *tmp) {
     char buf[VERY_BIG_BUF];
+    int i;
 
     if (tmp == NULL || tmp->type == CLOSE_CON)
 	return;
@@ -226,22 +227,19 @@ void examine(object *op, object *tmp) {
     if(buf[0]!='\0')
 	new_draw_info(NDI_UNIQUE, 0,op,buf);
 
-    if(tmp->material) {
+    if(tmp->material && !tmp->msg) {
 	strcpy(buf,"It is made of: ");
-	if(tmp->material&M_PAPER)	    strcat(buf,"paper ");
-	if(tmp->material&M_IRON)	    strcat(buf,"iron ");
-	if(tmp->material&M_GLASS)	    strcat(buf,"glass ");
-	if(tmp->material&M_LEATHER)	    strcat(buf,"leather ");
-	if(tmp->material&M_WOOD)	    strcat(buf,"wood ");
-	if(tmp->material&M_ORGANIC)	    strcat(buf,"organics ");
-	if(tmp->material&M_STONE)	    strcat(buf,"stone ");
-	if(tmp->material&M_CLOTH)	    strcat(buf,"cloth ");
-	if(tmp->material&M_ADAMANT)	    strcat(buf,"adamantite ");
+	for(i=0; i < NROFMATERIALS; i++) {
+	  if(tmp->material & (1<<i)) {
+	    strcat(buf, material[i].name);
+	    strcat(buf, " ");
+	  }
+	}
 	new_draw_info(NDI_UNIQUE, 0,op,buf);
     }
 
     if(tmp->weight) {
-	sprintf(buf,"%s weighs %3.3f kg.", tmp->nrof>1?"They":"It",
+	sprintf(buf,tmp->nrof>1?"They weigh %3.3f kg.":"It weighs %3.3f kg.",
             (tmp->nrof?tmp->weight*tmp->nrof:tmp->weight)/1000.0);
 	new_draw_info(NDI_UNIQUE, 0,op,buf);
     }
