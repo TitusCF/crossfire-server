@@ -65,6 +65,45 @@ float stat_exp_mult[MAX_STAT+1]={
  1.2, 1.3, 1.4, 1.5, 1.7, 2.0
 };
 
+#ifdef ALLOW_SKILLS	  	       /* last_skill_ob links direct to exp. objects */
+
+typedef struct _skill_name_table {
+	char *name;
+	int id;
+}_skill_name_table;
+
+static _skill_name_table skill_name_table[] = {
+	{"agility", CS_STAT_SKILLEXP_AGILITY},
+	{"personality", CS_STAT_SKILLEXP_PERSONAL},
+	{"mental", CS_STAT_SKILLEXP_MENTAL},
+	{"physique", CS_STAT_SKILLEXP_PHYSIQUE},
+	{"magic", CS_STAT_SKILLEXP_MAGIC},
+	{"wisdom", CS_STAT_SKILLEXP_WISDOM},
+	{"",-1}
+};
+
+/* find and assign the skill exp stuff */
+
+void find_skill_exp_name(object *pl, object *exp, int index)
+{
+
+	register int s;
+	
+	for(s=0;skill_name_table[s].id != -1;s++)
+	{
+		if(!strcmp(skill_name_table[s].name, exp->name) )
+        {
+			pl->contr->last_skill_ob[index] = exp;
+			pl->contr->last_skill_id[index] = skill_name_table[s].id;
+			pl->contr->last_skill_index++;
+			return;
+        }
+		
+	}
+}
+
+/*	LOG(llevInfo,"** SKILL NAMES:: <%s> <%s>\n", exp->name, skill_name_table[s].name); */
+#endif
 
 /* do_skill() - Main skills use function-similar in scope to cast_spell(). 
  * We handle all requests for skill use outside of some combat here. 
@@ -707,11 +746,19 @@ int init_player_exp(object *pl) {
         LOG(llevError, "init_player_exp(): called non-player %s.\n",pl->name);
 	return 0;
    }
-   /* first-pass find all current exp objects */
+ 
+#ifdef ALLOW_SKILLS	  	       
+   pl->contr->last_skill_index = 0;
+#endif 
+   
+  /* first-pass find all current exp objects */
    for(tmp=pl->inv;tmp;tmp=tmp->below)
       if(tmp->type==EXPERIENCE) {
            exp_ob[exp_index] = tmp;
-           exp_index++;
+#ifdef ALLOW_SKILLS	  	       
+		   find_skill_exp_name(pl, tmp, pl->contr->last_skill_index);
+#endif
+	       exp_index++;
       } else if (exp_index == MAX_EXP_CAT)
     	   return 0;	 
  
@@ -854,10 +901,16 @@ int link_player_skills(object *pl) {
    pl->chosen_skill = NULL;
    CLEAR_FLAG (pl, FLAG_READY_SKILL);
 
-   /* first find all exp and skill objects */
+#ifdef ALLOW_SKILLS	  	       
+   pl->contr->last_skill_index = 0;
+#endif 
+		   /* first find all exp and skill objects */
    for(tmp=pl->inv;tmp&&sk_index<100;tmp=tmp->below)
       if(tmp->type==EXPERIENCE) {
            exp_ob[exp_index] = tmp;
+#ifdef ALLOW_SKILLS	  	       
+		   find_skill_exp_name(pl, tmp, pl->contr->last_skill_index);
+#endif
            tmp->nrof=1; /* to handle multiple instances */
            exp_index++;
       } else if (tmp->type==SKILL) {

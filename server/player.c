@@ -151,6 +151,15 @@ static void get_player(player *p) {
 #ifdef LINKED_SKILL_LIST
     p->ob->sk_list = NULL;
 #endif
+#ifdef ALLOW_SKILLS	  	       
+	p->last_skill_index = 0;
+	for(i=0;i<LAST_MAX_EXP_CAT;i++)
+	{
+		p->last_skill_exp[i] = p->last_skill_id[i] = 0;
+		p->last_skill_level[i] =0;
+		p->last_skill_ob[i] = NULL;
+	}
+#endif	
     if(QUERY_FLAG(op,FLAG_READY_SKILL))
         CLEAR_FLAG(op,FLAG_READY_SKILL); 
     p->socket.update_look=0;
