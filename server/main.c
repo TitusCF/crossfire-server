@@ -104,8 +104,7 @@ void version(object *op) {
   new_draw_info(NDI_UNIQUE, 0,op,"Images and art:");
   new_draw_info(NDI_UNIQUE, 0,op,"Peter Gardner");
   new_draw_info(NDI_UNIQUE, 0,op,"David Gervais       [david_eg@mail.com]");
-  new_draw_info(NDI_UNIQUE, 0,op,"Mitsuhiro Itakura   [ita@gold.koma.jaeri.go.jp]
-");
+  new_draw_info(NDI_UNIQUE, 0,op,"Mitsuhiro Itakura   [ita@gold.koma.jaeri.go.jp]");
   new_draw_info(NDI_UNIQUE, 0,op,"Hansjoerg Malthaner [hansjoerg.malthaner@danet.de]");
   new_draw_info(NDI_UNIQUE, 0,op,"Mårten Woxberg      [maxmc@telia.com]");
   new_draw_info(NDI_UNIQUE, 0,op,"And many more!");
