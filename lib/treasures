@@ -2374,6 +2374,17 @@ treasure poor_old
 treasure angel
   list rich_old
   end
+trasure archangel
+  list rich_old
+  more
+  arch ability_wrathful_eye
+  more
+  arch ability_wrathful_eye
+  more
+  arch ability_wrathful_eye
+  more
+  arch ability_paralyze
+end
 treasure raas
   arch icor
     chance 20
