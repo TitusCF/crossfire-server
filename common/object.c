@@ -1192,8 +1192,15 @@ void remove_ob(object *op) {
 	last=tmp;
     }
     /* last == NULL of there are no objects on this space */
-    if (last==NULL)
+    if (last==NULL) {
+	/* set P_NEED_UPDATE, otherwise update_position will complain.  In theory,
+	 * we could preserve the flags (GET_MAP_FLAGS), but update_position figures
+	 * those out anyways, and if there are any flags set right now, they won't
+	 * be correct anyways.
+	 */
+	SET_MAP_FLAGS(op->map, op->x, op->y,  P_NEED_UPDATE);
 	update_position(op->map, op->x, op->y);
+    }
     else
 	update_object(last, UP_OBJ_REMOVE);
 

@@ -18,6 +18,10 @@ else.  With this, include the file(s) that you changed.
 
 Changes for CVS:
 
+common/object.c: remove_ob - set P_NEED_UPDATE before calling update_position
+to prevent warnings from update_position being called with P_NEED_UPDATE
+being set.  MSW 2001-07-19
+
 socket/request.c: Fix bug in map1 command which resulted in it sending
 too much data with even maps.  For example, if the client requested
 a 16x16 map, the server would effectively send a 17x17 map to the client.
