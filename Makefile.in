@@ -71,7 +71,7 @@ NO_X = @no_x@
 
 XX_EXTRA_CFLAGS = $(EXTRA_CFLAGS)
 
-VERSION = crossfire-0.95.3
+VERSION = crossfire-0.95.4
 
 ARCHIVE = /tmp/$(VERSION)
 
