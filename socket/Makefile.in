@@ -84,7 +84,7 @@ clean:
 	$(RM) -f $(OBJS) Makefile.bak
 
 distclean: clean
-	$(RM) -f Makefile
+	$(RM) -f Makefile socket.a
 
 .c.o:
 	$(CC) $(CFLAGS) $(INCLUDES)  -c $*.c

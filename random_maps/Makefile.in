@@ -108,7 +108,7 @@ clean::
 	$(RM) -f random_map $(OBJS) Makefile.bak
 
 distclean:: clean
-	$(RM) -f Makefile
+	$(RM) -f Makefile random_map.a standalone.o
 
 .c.o:
 	$(CC) $(CFLAGS) $(INCLUDES) -c $*.c

@@ -18,6 +18,12 @@ else.  With this, include the file(s) that you changed.
 
 Changes for CVS:
 
+common/Makefile.in crossedit/Makefile.in doc/Makefile.in
+doc/playbook-html/Makefile.in doc/spoiler/Makefile.in
+doc/spoiler-html/Makefile.in lib/Makefile.in lib/crossfire.png
+random_maps/Makefile.in socket/Makefile.in utils/Makefile.in: Fix up
+so that distclean now clears out all appropriate files - MSW 2001-08-01
+
 common/map.c free_map Set in_memory status to MAP_SWAPPED - fixed bugs of maps
     not getting reset properly
 common/object.c: insert_ob_in_map - was passing wrong value to check_walk_on,

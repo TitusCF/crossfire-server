@@ -107,7 +107,7 @@ clean::
 	$(RM) -f $(OBJS)
 
 distclean:: clean
-	$(RM) -f Makefile
+	$(RM) -f Makefile libcross.a
 
 .c.o:
 	$(CC) $(CFLAGS) $(INCLUDES)  -c $*.c

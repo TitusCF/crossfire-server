@@ -48,4 +48,4 @@ patchlist::
 clean::
 
 distclean:: clean
-	$(RM) -f Makefile
+	$(RM) -f Makefile add_throw.perl crossloop crossloop.pl metaserver.pl

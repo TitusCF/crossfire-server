@@ -131,7 +131,7 @@ distclean:: clean
 	    (echo "making distclean in $$dir..."; \
 	    cd $$dir; $(MAKE) $(MFLAGS) 'MFLAGS=$(MFLAGS)' 'ARCHIVE=$(ARCHIVE)'  'VERSION=$(VERSION)' 'MKDIR=$(MKDIR)' 'CP=$(CP)' 'RM=$(RM)' distclean;) \
 	done;
-	$(RM) -f Makefile
+	$(RM) -f Makefile core
 
 .c.o:
 	$(CC) $(CFLAGS) $(INCLUDES) -I../include -I. -Iinclude -ICnv -c $*.c

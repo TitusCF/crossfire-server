@@ -102,12 +102,12 @@ install::
 depend::
 
 clean::
-	$(RM) $(TEX)
-	$(RM) items .bmaps in_monput in_items in_spells
-	$(RM) *.ps *x*.ppm tmp.ppm work.ppm
-	$(RM) spoiler.dvi spoiler.log spoiler.aux
+	$(RM) -f $(TEX)
+	$(RM) -f items .bmaps in_monput in_items in_spells in_stats
+	$(RM) -f *.ps *x*.ppm tmp.ppm work.ppm
+	$(RM) -f spoiler.dvi spoiler.log spoiler.aux
 
-distclean::
+distclean:: clean
 	$(RM) -f Makefile
 
 archive::

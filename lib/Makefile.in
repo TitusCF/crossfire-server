@@ -157,7 +157,7 @@ clean::
 	$(RM) -f Makefile.bak
 
 distclean:: clean
-	$(RM) -f Makefile
+	$(RM) -f Makefile checkarch.pl xpmtopix.pl collect.pl
 
 real-clean::
 	$(RM) -f archetypes bmaps .collect-stamp

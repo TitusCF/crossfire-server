@@ -97,11 +97,11 @@ install::
 depend::
 
 clean::
-	$(RM) items .bmaps in_monput in_items in_spells in_stats
-	$(RM) *x*.ppm tmp.ppm work.ppm
+	$(RM) -f items .bmaps in_monput in_items in_spells in_stats
+	$(RM) -f *x*.ppm tmp.ppm work.ppm *.gif
 
-distclean::
-	$(RM) -f Makefile
+distclean:: clean
+	$(RM) -f Makefile $(HTML)
 
 archive::
 	@if [ -d $(ARCHIVE)/doc/spoiler-html ]; then set +x; \

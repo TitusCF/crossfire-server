@@ -10,6 +10,21 @@ FIG = fig/earrow.gif fig/nearrow.gif fig/sarrow.gif fig/swarrow.gif\
 	fig/narrow.gif fig/nwarrow.gif fig/searrow.gif fig/warrow.gif\
 	fig/screen_dia.gif fig/book.gif fig/stairdown.gif fig/stairup.gif
 
+#
+# This are automatically generated files
+#
+HTML = gods.html appC.html stats.gif potion.html flesh.html food.html rings.html \
+	books.html money.html shopmat.html shop.html chap6.html lockpicks.html \
+	statskmod.html version.html skill_stat.html chap5.html runeshock.html \
+	runemark.html runefire.html runefrost.html runegen.html runedeath.html \
+	runeblast.html cauldron.html altar.html spellpath.html chap4.html \
+	corpse.html gravestone.html wands.html talisman.html sign.html\
+	scrolls.html savebed.html rods.html potions.html pit.html levels.html \
+	keys.html horns.html holysymbol.html handbutt.html guild.html \
+	gatedoor.html fr_wall.html foodone.html dir_spin.html br_wall.html \
+	bows.html chap3.html skills.html equip.html stats.html char.html \
+	bonus.html chap2.html handbook.html 
+
 CROSSBIN = ../../server/crossfire
 INCDIR = ../../include
 CROSSRC = ../..
@@ -240,11 +255,11 @@ install::
 depend::
 
 clean::
-	$(RM) items .bmaps in_monput in_items in_spells in_stats
-	$(RM) *x*.ppm tmp.ppm work.ppm
+	$(RM) -f items .bmaps in_monput in_items in_spells in_stats in_equip
+	$(RM) -f *x*.ppm tmp.ppm work.ppm in_char items
 
-distclean::
-	$(RM) -f Makefile
+distclean:: clean
+	$(RM) -f Makefile *.gif $(HTML)
 
 archive::
 	@if [ -d $(ARCHIVE)/doc/playbook-html ]; then set +x; \
