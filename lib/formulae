@@ -196,7 +196,7 @@ chance 25
 ingred electric dragon's steak,water of the wise,2 key
 #
 # -- phys. prot.
-Object ethrealness
+Object aethereality
 arch balm_generic
 chance 28
 ingred 3 ghost's ectoplasm,water of emerald
@@ -279,7 +279,7 @@ yield 4
 ingred fire para-elemental's residue,7 pile of sulphur,bottle of philosophical oil
 #
 #  -- mystic fist
-Object a clinched hand
+Object a clenched hand
 arch figurine_generic
 chance 1
 yield 7
@@ -322,7 +322,7 @@ Object countermagic
 arch dust_generic
 chance 23
 yield 4
-ingred lead,lead,pile of philosophical phosphorus
+ingred 2 lead,pile of philosophical phosphorus
 #
 # -- icestorm
 Object frost
@@ -428,7 +428,7 @@ chance 18
 ingred 3 water of the wise,ogre's arm,pile of philosophical salt
 #
 # -- dex spell
-Object quickness
+Object agility
 arch potion_generic
 chance 18
 yield 7
@@ -477,18 +477,18 @@ Object NONE
 arch potion_invulnerability
 chance 0
 yield 4
-ingred spectre's ectoplasm,demon's head,7 water of ruby,7 balm of ethrealness
+ingred spectre's ectoplasm,demon's head,7 water of ruby,7 balm of aethereality
 
 #
 #  -- protection/immunity potions for potion_gen
 #
 # -- physical immunity (very powerful) 
 # this potion is repeated in prior recipe. 
-#Object ethreality
+#Object aethereality
 # arch potion_generic
 #chance 0
 #yield 14
-#ingred spectre's ectoplasm,demon's head,7 water of ruby,7 balm of ethrealness
+#ingred spectre's ectoplasm,demon's head,7 water of ruby,7 balm of aethereality
 # -- magic immunity (very powerful) 
 Object magic immunity
 arch potion_generic
@@ -655,7 +655,7 @@ chance 4
 yield 3
 ingred ice para-elemental's residue,water of sapphire
 #
-# -- sunbolt
+# -- sunspear
 Object sunfire
 arch potion_generic
 chance 4
