@@ -34,7 +34,7 @@
 #ifndef MAP_H
 #define MAP_H
 
-#define MAP_LAYERS		3
+#define MAP_LAYERS		4
 
 /* This is when the map will reset */
 #define MAP_WHEN_RESET(m)	((m)->reset_time)

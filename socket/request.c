@@ -766,6 +766,7 @@ static void esrv_map_setbelow(NewSocket *ns, int x,int y,
     }
     if(newmap->cells[x][y].count >= MAP_LAYERS) {
 	LOG(llevError,"Too many faces in map cell %d %d\n",x,y);
+	return;
 	abort();
     }
     newmap->cells[x][y].faces[newmap->cells[x][y].count] = face_num;
