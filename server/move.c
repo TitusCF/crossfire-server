@@ -75,7 +75,7 @@ int move_ob (object *op, int dir, object *originator)
 
     if (op->will_apply&4 ) {
 	tmp_ob=get_map_ob(op->map,op->x+freearr_x[dir],op->y+freearr_y[dir]);
-	while(tmp_ob->above != NULL) {
+	while(tmp_ob != NULL) {
 	    if (tmp_ob->type == EARTHWALL) {
 		hit_player(tmp_ob,5,op,AT_PHYSICAL); /* Tear down the earthwall */
 		return 0;
@@ -86,7 +86,7 @@ int move_ob (object *op, int dir, object *originator)
     if (op->will_apply&8 ) {
 	tmp_ob=get_map_ob(op->map,op->x+freearr_x[dir],op->y+freearr_y[dir]);
 	while(tmp_ob->above != NULL) {
-	    if (tmp_ob->type == DOOR) {
+	    if (tmp_ob == DOOR) {
 		hit_player(tmp_ob,9998,op,AT_PHYSICAL); /* Tear down the earthwall */
 		return 0;
 	    }

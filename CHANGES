@@ -17,6 +17,15 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+doc/Developers/objects: Update with new (better) information from
+   Todd Mitchell.  Doc is more complete, and now has an index which
+   should make it easier to find things.
+server/move.c: Fix dereferencing NULL problem - was looking at op->above,
+   but op could be NULL if the map had no objects on a space (typically
+   not the case, but...)  No reason I can see that we care about the object
+   above - just process in normal order.
+MSW 2002-08-21
+
 server/time.c: Possible fix for bug seen on metalforge - 
    in move_player_mover, make sure we are working with the head of the
    monster.
