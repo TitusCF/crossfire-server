@@ -168,7 +168,7 @@ int png_to_xpixmap(Display *display, Drawable draw, char *data, int len,
 	pixels = (char*)malloc(*width * *height * bpp);
 	pixels_byte =*width * *height * bpp;
     } else if ((*width * *height * bpp) > pixels_byte) {
-	realloc(pixels, *width * *height * bpp);
+	pixels=realloc(pixels, *width * *height * bpp);
 	pixels_byte =*width * *height * bpp;
     }
 
