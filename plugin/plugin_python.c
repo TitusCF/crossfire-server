@@ -234,161 +234,161 @@ static int allocate_stack(void)
 #endif
 static PyObject* CFAttackTypePhysical(PyObject* self, PyObject* args)
 {
-  int val = 1;
+  int val = AT_PHYSICAL;
   if (!PyArg_ParseTuple(args,"",NULL))
       return NULL;
   return Py_BuildValue("i",val);
 };
 static PyObject* CFAttackTypeMagic(PyObject* self, PyObject* args)
 {
-  int val = 2;
+  int val = AT_MAGIC;
   if (!PyArg_ParseTuple(args,"",NULL))
       return NULL;
   return Py_BuildValue("i",val);
 };
 static PyObject* CFAttackTypeFire(PyObject* self, PyObject* args)
 {
-  int val = 4;
+  int val = AT_FIRE;
   if (!PyArg_ParseTuple(args,"",NULL))
       return NULL;
   return Py_BuildValue("i",val);
 };
 static PyObject* CFAttackTypeElectricity(PyObject* self, PyObject* args)
 {
-  int val = 8;
+  int val = AT_ELECTRICITY;
   if (!PyArg_ParseTuple(args,"",NULL))
       return NULL;
   return Py_BuildValue("i",val);
 };
 static PyObject* CFAttackTypeCold(PyObject* self, PyObject* args)
 {
-  int val = 16;
+  int val = AT_COLD;
   if (!PyArg_ParseTuple(args,"",NULL))
       return NULL;
   return Py_BuildValue("i",val);
 };
 static PyObject* CFAttackTypeConfusion(PyObject* self, PyObject* args)
 {
-  int val = 32;
+  int val = AT_CONFUSION;
   if (!PyArg_ParseTuple(args,"",NULL))
       return NULL;
   return Py_BuildValue("i",val);
 };
 static PyObject* CFAttackTypeAcid(PyObject* self, PyObject* args)
 {
-  int val = 64;
+  int val = AT_ACID;
   if (!PyArg_ParseTuple(args,"",NULL))
       return NULL;
   return Py_BuildValue("i",val);
 };
 static PyObject* CFAttackTypeDrain(PyObject* self, PyObject* args)
 {
-  int val = 128;
+  int val = AT_DRAIN;
   if (!PyArg_ParseTuple(args,"",NULL))
       return NULL;
   return Py_BuildValue("i",val);
 };
 static PyObject* CFAttackTypeWeaponmagic(PyObject* self, PyObject* args)
 {
-  int val = 256;
+  int val = AT_WEAPONMAGIC;
   if (!PyArg_ParseTuple(args,"",NULL))
       return NULL;
   return Py_BuildValue("i",val);
 };
 static PyObject* CFAttackTypeGhosthit(PyObject* self, PyObject* args)
 {
-  int val = 512;
+  int val = AT_GHOSTHIT;
   if (!PyArg_ParseTuple(args,"",NULL))
       return NULL;
   return Py_BuildValue("i",val);
 };
 static PyObject* CFAttackTypePoison(PyObject* self, PyObject* args)
 {
-  int val = 1024;
+  int val = AT_POISON;
   if (!PyArg_ParseTuple(args,"",NULL))
       return NULL;
   return Py_BuildValue("i",val);
 };
 static PyObject* CFAttackTypeSlow(PyObject* self, PyObject* args)
 {
-  int val = 2048;
+  int val = AT_SLOW;
   if (!PyArg_ParseTuple(args,"",NULL))
       return NULL;
   return Py_BuildValue("i",val);
 };
 static PyObject* CFAttackTypeParalyze(PyObject* self, PyObject* args)
 {
-  int val = 4096;
+  int val = AT_PARALYZE;
   if (!PyArg_ParseTuple(args,"",NULL))
       return NULL;
   return Py_BuildValue("i",val);
 };
 static PyObject* CFAttackTypeTurnUndead(PyObject* self, PyObject* args)
 {
-  int val = 8192;
+  int val = AT_TURN_UNDEAD;
   if (!PyArg_ParseTuple(args,"",NULL))
       return NULL;
   return Py_BuildValue("i",val);
 };
 static PyObject* CFAttackTypeFear(PyObject* self, PyObject* args)
 {
-  int val = 16384;
+  int val = AT_FEAR;
   if (!PyArg_ParseTuple(args,"",NULL))
       return NULL;
   return Py_BuildValue("i",val);
 };
 static PyObject* CFAttackTypeCancellation(PyObject* self, PyObject* args)
 {
-  int val = 32768;
+  int val = AT_CANCELLATION;
   if (!PyArg_ParseTuple(args,"",NULL))
       return NULL;
   return Py_BuildValue("i",val);
 };
 static PyObject* CFAttackTypeDepletion(PyObject* self, PyObject* args)
 {
-  int val = 65536;
+  int val = AT_DEPLETE;
   if (!PyArg_ParseTuple(args,"",NULL))
       return NULL;
   return Py_BuildValue("i",val);
 };
 static PyObject* CFAttackTypeDeath(PyObject* self, PyObject* args)
 {
-  int val = 131072;
+  int val = AT_DEATH;
   if (!PyArg_ParseTuple(args,"",NULL))
       return NULL;
   return Py_BuildValue("i",val);
 };
 static PyObject* CFAttackTypeChaos(PyObject* self, PyObject* args)
 {
-  int val = 262144;
+  int val = AT_CHAOS;
   if (!PyArg_ParseTuple(args,"",NULL))
       return NULL;
   return Py_BuildValue("i",val);
 };
 static PyObject* CFAttackTypeCounterspell(PyObject* self, PyObject* args)
 {
-  int val = 524288;
+  int val = AT_COUNTERSPELL;
   if (!PyArg_ParseTuple(args,"",NULL))
       return NULL;
   return Py_BuildValue("i",val);
 };
 static PyObject* CFAttackTypeGodpower(PyObject* self, PyObject* args)
 {
-  int val = 1048576;
+  int val = AT_GODPOWER;
   if (!PyArg_ParseTuple(args,"",NULL))
       return NULL;
   return Py_BuildValue("i",val);
 };
 static PyObject* CFAttackTypeHolyWord(PyObject* self, PyObject* args)
 {
-  int val = 2097152;
+  int val = AT_HOLYWORD;
   if (!PyArg_ParseTuple(args,"",NULL))
       return NULL;
   return Py_BuildValue("i",val);
 };
 static PyObject* CFAttackTypeBlind(PyObject* self, PyObject* args)
 {
-  int val = 4194304;
+  int val = AT_BLIND;
   if (!PyArg_ParseTuple(args,"",NULL))
       return NULL;
   return Py_BuildValue("i",val);
@@ -2399,7 +2399,7 @@ static PyObject* CFSetSkillExperience(PyObject* self, PyObject* args)
             value = value - currentxp;
             GCFP.Value[1] = (void *)(&value);
             GCFP.Value[2] = (void *)(tmp->skill);
-            value2 = 0;
+            value2 = SK_EXP_ADD_SKILL;
             GCFP.Value[3] = (void *)(&value2);
             (PlugHooks[HOOK_ADDEXP])(&GCFP);
 

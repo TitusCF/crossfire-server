@@ -17,6 +17,7 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+plugin/plugin_python.c: Use #define constants.
 plugin/include/plugin_python.h, plugin/plugin_python.c,
 plugin_animator/plugin_animator.c, server/plugins.c: General cleanup - merge
    duplicate code, remove debugging code, rename variables, rename C function
