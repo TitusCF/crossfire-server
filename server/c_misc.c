@@ -253,12 +253,23 @@ int command_malloc_verify(object *op, char *parms)
 }
 #endif
 
-int command_who (object *op, char *params)
-{
+int command_who (object *op, char *params) {
     player *pl;
-    char namebuf[MAX_BUF];
+    uint16 i;
     char buf[MAX_BUF];
-
+    char tmpbuf[HUGE_BUF];
+    
+    /* 
+     * The who formats are defined in config to be blank. They should have been
+     * overridden by the settings file, if there are no entries however, it will
+     * have stayed blank. Since this probably isn't what is wanted, we will check if
+     * new formats have been specified, and if not we will use the old defaults.
+     */
+    if (!strcmp(settings.who_format,"")) 
+    	strcpy(settings.who_format, "%N_the_%t%h%d%n[%m]");
+    if (!strcmp(settings.who_wiz_format,"")) 
+    	strcpy(settings.who_wiz_format, "%N_the_%t%h%d%nLevel %l[%m]%i %c");
+    
     if (first_player != (player *) NULL)
 	new_draw_info(NDI_UNIQUE, 0,op,"Players:");
 
@@ -269,36 +280,101 @@ int command_who (object *op, char *params)
 
 	if (pl->state==ST_PLAYING || pl->state==ST_GET_PARTY_PASSWORD) {
 
-	    if(op == NULL || QUERY_FLAG(op, FLAG_WIZ)){
-		(void) sprintf(namebuf,"%s the %s%s%s%s%s:",
-		    pl->ob->name,
-		    (pl->own_title[0]=='\0'?pl->title:pl->own_title),
-		    pl->peaceful?"":" [Hostile]",
-		    QUERY_FLAG(pl->ob,FLAG_WIZ)?" [WIZ]":"",
-		    pl->hidden?" [HID]":"",
-            QUERY_FLAG(pl->ob,FLAG_AFK)?" [AFK]":"");
-		(void) sprintf(buf," Level %d [%s](@%s)(%d)",
-		    pl->ob->level,       
-		    pl->ob->map->path,
-		    pl->socket.host,
-		    pl->ob->count);
+	    if (op == NULL || QUERY_FLAG(op, FLAG_WIZ)) {
+		for (i=0;i<=strlen(settings.who_wiz_format);i++) {
+		    if (settings.who_wiz_format[i]=='%') {
+			i++;
+			get_who_escape_code_value(tmpbuf,settings.who_wiz_format[i],pl);
+			strcat(buf, tmpbuf);
+		    }
+		    else if (settings.who_wiz_format[i]=='_')
+			strcat(buf," "); /* allow '_' to be used in place of spaces */
+		    else {
+			sprintf(tmpbuf,"%c",settings.who_wiz_format[i]);
+			strcat(buf,tmpbuf);
+		    }
+		}
 	    }
-	    else{
- 		(void) sprintf(namebuf,"%s the %s%s%s%s:",
-  		    pl->ob->name,
-  		    (pl->own_title[0]=='\0'?pl->title:pl->own_title),
-  		    pl->peaceful?"":" [Hostile]",
- 		    QUERY_FLAG(pl->ob,FLAG_WIZ)?" [WIZ]":"",
- 		    QUERY_FLAG(pl->ob,FLAG_AFK)?" [AFK]":"");
-		(void) sprintf(buf," [%s]",
-		    pl->ob->map->path);
+	    else {
+		for (i=0;i<=strlen(settings.who_format);i++) {
+		    if (settings.who_format[i]=='%') {
+			i++;
+			get_who_escape_code_value(tmpbuf,settings.who_format[i],pl);
+			strcat(buf, tmpbuf);
+		    }
+		    else if (settings.who_format[i]=='_')
+		    	strcat(buf," "); /* allow '_' to be used in place of spaces */
+		    else {
+			sprintf(tmpbuf,"%c",settings.who_format[i]);
+			strcat(buf,tmpbuf);
+		    }
+		}
 	    }
-	    new_draw_info(NDI_UNIQUE, 0, op, namebuf);
+	    
 	    new_draw_info(NDI_UNIQUE, 0, op, buf);
+	    /* reset the buffer */
+	    buf[0]= '\0';
 	}
     }
     return 1;
 }
+
+/* Returns the value of the escape code used in the who format specifier
+ * the values are:
+ * N	Name of character
+ * t	title of character
+ * c	count
+ * n	newline
+ * h	[Hostile] if character is hostile, nothing otherwise
+ * d	[WIZ] if character is a dm, nothing otherwise
+ * a	[AFK] if character is afk, nothing otherwise
+ * l	the level of the character
+ * m	the map path the character is currently on
+ * M	the map name of the map the character is currently on
+ * r	the region name (eg scorn, wolfsburg)
+ * R	the regional title (eg The Kingdom of Scorn, The Port of Wolfsburg)
+ * i	player's ip adress
+ * %	a literal %
+ * _	a literal underscore
+ */
+  
+void *get_who_escape_code_value(char *return_val, const char letter, player *pl) {
+    
+    switch (letter) {
+	case 'N' :    strcpy(return_val, pl->ob->name);
+		          break;
+	case 't' :    strcpy(return_val,(pl->own_title[0]=='\0'?pl->title:pl->own_title));
+			  break;
+	case 'c' :    sprintf(return_val,"%d",pl->ob->count);
+			  break;
+	case 'n' :    strcpy(return_val, "\n\0"); 
+		          break;
+	case 'h' :    strcpy(return_val,pl->peaceful?"":" [Hostile]");
+			  break;
+	case 'l' :    sprintf(return_val,"%d",pl->ob->level);
+			  break;
+	case 'd' :    strcpy(return_val,(QUERY_FLAG(pl->ob,FLAG_WIZ)?" [WIZ]":""));
+			  break;
+	case 'a' :    strcpy(return_val,(QUERY_FLAG(pl->ob,FLAG_AFK)?" [AFK]":""));
+			  break;
+	case 'm' :    strcpy(return_val,pl->ob->map->path);
+		 	  break;
+	case 'M' :    strcpy(return_val,pl->ob->map->name);
+			  break;		
+	case 'r' :    strcpy(return_val,get_name_of_region_for_map(pl->ob->map));
+			  break;
+	case 'R' :    strcpy(return_val,get_region_longname(pl->ob->map->region));
+			  break;
+	case 'i' :    strcpy(return_val,pl->socket.host);
+			  break;
+	case '%' :    strcpy(return_val, "%\0"); 
+		          break;
+	case '_' :    strcpy(return_val, "_\0"); 
+		          break;
+    }
+
+}
+
 
 int command_afk (object *op, char *params)
 {

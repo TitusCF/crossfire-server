@@ -347,6 +347,8 @@ typedef struct Settings {
     uint8   recycle_tmp_maps; /* re-use tmp maps. */
     uint8   explore_mode;     /* explore mode allowed? */
     uint8   spellpoint_level_depend; /* spell costs go up with level */
+    char    who_format[MAX_BUF]; /* The format that the who command should use */
+    char    who_wiz_format[MAX_BUF]; /* The format that the who command should use when called by a dm*/
     char    motd[MAX_BUF];    /* name of the motd file */
     char    dm_mail[MAX_BUF]; /* DM's Email address */
 

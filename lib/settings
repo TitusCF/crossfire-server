@@ -51,6 +51,34 @@ fastclock 1
 
 item_power_factor 1.0
 
+# Sets the output format for the who command. This is what a player will see
+# about all the other players on the server when they type 'who' The string
+# has escapes that are filled with the relevant values for each character.
+# Currently the following escapes are supported:
+#
+# %N	Name of character
+# %t	title of character
+# %c	count of the player (for dumping/patching)
+# %n	newline
+# %h	[Hostile] if character is hostile, nothing otherwise
+# %d	[WIZ] if character is a dm, nothing otherwise
+# %a	[AFK] if character is afk, nothing otherwise
+# %l	the level of the character
+# %m	the map path the character is currently on
+# %M	the map name of the map the character is currently on
+# %r	the short region name (as shown by mapinfo)
+# %R	the formal region title.(as shown by whereami)
+# %i	player's ip adress
+# %%	a literal %
+# %_	a literal underscore
+#
+# an underscore that is not escaped gives a space (or you can use a real space 
+# if you prefer)
+# who_wiz_format is the same but for those with dm powers
+
+who_format %N the %t%h%d%n[%m]
+who_wiz_format %N the %t%h%d%nLevel %l[%m]%i%c
+
 # See notes for most of thse in include/config.h
 
 # dm_mail your_email@addr.here

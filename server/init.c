@@ -540,6 +540,12 @@ static void load_settings()
 		LOG(llevError, "load_settings: Unkown value for"
 		    "explore_mode: %s\n", cp);
 	    }
+	} else if (!strcasecmp(buf,"who_format")) {
+	    if (has_val)
+	    	strcpy(settings.who_format, cp);
+	} else if (!strcasecmp(buf,"who_wiz_format")) {
+	    if (has_val)
+	    	strcpy(settings.who_wiz_format, cp);      
 	} else if (!strcasecmp(buf, "spellpoint_level_depend")) {
 	    if (!strcasecmp(cp, "on") || !strcasecmp(cp, "true")) {
 		settings.spellpoint_level_depend=TRUE;

@@ -70,6 +70,8 @@ RECYCLE_TMP_MAPS,
 EXPLORE_MODE,
 SPELLPOINT_LEVEL_DEPEND,
 SET_FRIENDLY_FIRE,
+"", /* Who format specifier */
+"", /* who wiz format specifier */
 MOTD,
 "",		/* DM_MAIL */
 0,		/* This and the next 3 values are metaserver values */

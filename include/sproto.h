@@ -151,6 +151,7 @@ void malloc_info(object *op);
 void current_map_info(object *op);
 void current_region_info(object *op);
 int command_who(object *op, char *params);
+void *get_who_escape_code_value(char *return_val, const char letter, player *pl);
 int command_malloc(object *op, char *params);
 int command_mapinfo(object *op, char *params);
 int command_whereami(object *op, char *params);
