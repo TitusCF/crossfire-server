@@ -241,23 +241,13 @@ int do_skill (object *op, int dir, char *string) {
  * the algorithm for *PLAYER* experience gain. Monster exp gain is simpler.
  * Monsters just get 10% of the exp of the opponent.
  *
- *  Example: the basic exp gain for player 'who' how "vanquished" oppoenent
- * 'op' using skill 'sk' is:
+ * players get a ratio, eg, opponent lvl / player level.  This is then
+ * multiplied by various things.  If simple exp is true, then
+ * this multiplier, include the level difference, is always 1.
+ * This revised method prevents some cases where there are big gaps
+ * in the amount you get just because you are now equal level vs lower
+ * level
  *
- *      EXP GAIN = (op->exp + skills[sk].bexp) * lvl_mult * stat_mult
- *
- *  where lvl_mult is
- *
- *  for(pl->level < op->level):: 
- *    lvl_mult  = skills[sk].lexp * (op->level - pl->level) 
- *  for(pl->level = op->level):: 
- *    lvl_mult  = skills[sk].lexp; 
- *  for(pl->level > op->level):: 
- *    lvl_mult = op_lvl/pl_lvl;
- *
- *  and stat_mult is taken from stat_exp_mult[] table above.
- *
- * Coded by b.t. thomas@astro.psu.edu
  */
 
 int calc_skill_exp(object *who, object *op) {
@@ -315,7 +305,7 @@ int calc_skill_exp(object *who, object *op) {
 
       base = op_exp + skills[sk].bexp;  /* get base exp */
 
-
+#if 0
   /* get level multiplier */
       if(who_lvl < op_lvl)        
           lvl_mult=(float) skills[sk].lexp * (float) ((float) op_lvl - (float) who_lvl);
@@ -323,6 +313,17 @@ int calc_skill_exp(object *who, object *op) {
           lvl_mult = (float) skills[sk].lexp;
       else /* player is higher level than the object */
           lvl_mult = ((float) ((float) op_lvl)/((float) who_lvl));
+#else
+	/* The above was broken - since skills have different lexp multipliers,
+	 * there are cases where the player being higher level gains more exp.
+	 * Also, the simple difference times multiplier could result in a lot
+	 * of exp in some cases.
+	 */
+	if (settings.simple_exp) lvl_mult = (float) skills[sk].lexp;
+	else {
+	    lvl_mult = ((float) skills[sk].lexp * (float) op_lvl) / (float) who_lvl;
+	}
+#endif 
 
       stat_mult = calc_stat_mult(who,sk);
     }

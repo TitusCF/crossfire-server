@@ -395,17 +395,15 @@
  * Set to true if you want to use the new (0.95.3) experience system.
  * The system has the following changes:
  *
- * 1) 2000 exp need for second level.  All additional levels are shifted
- *  accordingly.
- * 2) Your stats in your skill categories don't affect the amount of
+ * 1) Your stats in your skill categories don't affect the amount of
  *  exp you get.
- * 3) Your level difference doesn't affect the exp you get for killing
+ * 2) Your level difference doesn't affect the exp you get for killing
  *  monsters.
  *
  * If this is set to FALSE out, you get the old system.
  *
  * This can also be set by using -simple-exp/+simple-exp as a run
- * time option.
+ * time option, or update the settings file
  */
 
 #define SIMPLE_EXP TRUE

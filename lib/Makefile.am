@@ -31,7 +31,7 @@ dist_pkgdata_DATA = artifacts def_help formulae  messages races \
 	treasures animations archetypes  bmaps bmaps.paths crossfire.0 \
 	crossfire.1 faces attackmess image_info
 
-CONF_FILES = settings motd dm_file forbid ban_file skill_params spell_params 
+CONF_FILES = settings motd dm_file forbid ban_file skill_params spell_params exp_table
 VAR_FILES = highscore bookarch temp.maps clockdata
 EXTRA_DIST = README .collect-stamp $(CONF_FILES)
 

@@ -374,7 +374,17 @@ int command_take (object *op, char *params)
 {
     object *tmp, *next;
 
-    tmp=(op->container) ? op->container->inv : op->below;
+    if (op->container) 
+	tmp=op->container;
+    else {
+	tmp=op->above;
+	if (tmp) while (tmp->above) {
+	    tmp=tmp->above;
+	}
+	if (!tmp)
+	    tmp=op->below;
+    }
+
     if (tmp==NULL) {
 	new_draw_info(NDI_UNIQUE, 0,op,"Nothing to take!");
 	return 0;

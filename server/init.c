@@ -158,6 +158,7 @@ struct Command_Line_Options options[] = {
 {"-m8", 0, 3, set_dumpmon8},
 {"-m9", 0, 3, set_dumpmon9},
 {"-mt", 1, 3, set_dumpmont},
+{"-mexp", 0, 3, dump_experience},
 #endif
 {"-s", 0, 3, showscores},
 {"-score", 1, 3, showscoresparm},
@@ -337,6 +338,16 @@ static void load_settings()
 		    "at least 0, %d is invalid\n", lev);
 	    else
 		settings.dynamiclevel = lev;
+	}
+	else if (!strcasecmp(buf,"simple_exp")) {
+	    if (!strcasecmp(cp,"on") || !strcasecmp(cp,"true")) {
+		settings.simple_exp=TRUE;
+	    } else if (!strcasecmp(cp,"off") || !strcasecmp(cp,"false")) {
+		settings.simple_exp=FALSE;
+	    } else {
+		LOG(llevError,"load_settings: Unkown value for simple_exp: %s\n",
+		    cp);
+	    }
 	} else {
 	    LOG(llevError,"Unknown value in settings file: %s\n", buf);
 	}

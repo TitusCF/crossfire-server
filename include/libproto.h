@@ -50,6 +50,8 @@ extern void verify_button_links(mapstruct *map);
 /* exp.c */
 extern int new_exp(object *ob);
 extern int has_ability(object *ob);
+extern void init_experience(void);
+extern void dump_experience(void);
 /* friend.c */
 extern void add_friendly_object(object *op);
 extern void remove_friendly_object(object *op);
@@ -164,17 +166,6 @@ extern void calc_perm_exp(object *op);
 extern int adjust_exp(object *op, int exp);
 extern int check_dm_add_exp_to_obj(object *exp_ob, int i);
 extern void apply_death_exp_penalty(object *op);
-/* loader.c */
-extern int lex_load(object *op, int map_flags);
-extern void yyrestart(FILE *input_file);
-extern void yy_load_buffer_state(void);
-extern int yyerror(char *s);
-extern int load_object(FILE *fp, object *op, int bufstate, int map_flags);
-extern int set_variable(object *op, char *buf);
-extern void save_double(char *buf, char *name, double v);
-extern void init_vars(void);
-extern char *get_ob_diff(object *op, object *op2);
-extern void save_object(FILE *fp, object *op, int flag);
 /* logger.c */
 extern void LOG(LogLevel logLevel, char *format, ...);
 /* los.c */
@@ -391,3 +382,14 @@ extern int random_roll(int min, int max, object *op, int goodbad);
 extern int die_roll(int num, int size, object *op, int goodbad);
 extern int rndm(int min, int max);
 extern void decay_objects(mapstruct *m);
+/* loader.c */
+extern int lex_load(object *op, int map_flags);
+extern void yyrestart(FILE *input_file);
+extern void yy_load_buffer_state(void);
+extern int yyerror(char *s);
+extern int load_object(FILE *fp, object *op, int bufstate, int map_flags);
+extern int set_variable(object *op, char *buf);
+extern void save_double(char *buf, char *name, double v);
+extern void init_vars(void);
+extern char *get_ob_diff(object *op, object *op2);
+extern void save_object(FILE *fp, object *op, int flag);

@@ -17,6 +17,31 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+INSTALL: Update directions with new automake method.
+common/Makefile.am, common/Makefile.in: Fix code for building the libproto.h
+   file - it was including loader.l and not loader.c
+common/exp.c: Add init_experience() and dump_experience() functions -
+   init_experience() loads the experience table from a file.  Add default
+   experience table into this file
+common/init.c: Add call to init_experience()
+common/living.c: Remove experience tables - players can select the one they
+   want by changing the exp_table file.  Remove reference to new_levels[] -
+   only levels[] is used now for the formentioned reason.
+include/config.h: Update notes about SIMPLE_EXP system.
+include/libproto.h: rebuilt.
+lib/Makefile.am, lib/Makefile.in: Add exp_table to list of files.
+lib/exp_table: New file that contains experience information.
+server/c_object.c: Modify command_take() to look for objects above the player
+   to pick up, then objects below.  This fixes the bug with not being able
+   to use the take command on items from a chest the player opens without
+   moving off the space.
+server/init.c: Add -mexp dump switch to dump the experience table.  Allow
+   the simple experience system to be set in the settings file.
+server/skill_util.c: Fix oddness in calc_skill_exp() which could result
+   in add amounts of exp given.
+MSW 2002-09-10
+
+
 include/sproto.h: rebuilt
 lib/help/killpets: New file
 lib/Makefile.in: Add help/killpets file.

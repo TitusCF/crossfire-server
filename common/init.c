@@ -134,6 +134,7 @@ void init_library() {
     init_attackmess();
     init_clocks();
     init_emergency_mappath();
+    init_experience();
 }
 
 

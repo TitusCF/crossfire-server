@@ -61,7 +61,7 @@ AM_LFLAGS = -i
 
 proto:
 	cproto -e -o ../include/libproto.h.bak $(CPPFLAGS) $(AM_CPPFLAGS) \
-		`echo $(SOURCES) " " | $(AWK) -v RS=" " '/.c$$/ { print }'`
+		`echo $(SOURCES) loader.c " " | $(AWK) -v RS=" " '/.c$$/ { print }'`
 	sed -e "s/__signed/signed/g" -e "/inline/d" -e "/YY_BUFFER/d" < ../include/libproto.h.bak > ../include/libproto.h
 	chmod 644 ../include/libproto.h
 	rm -f ../include/libproto.h.bak

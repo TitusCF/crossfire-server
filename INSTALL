@@ -55,22 +55,11 @@ the 'x.y' format.
    add the --with-includes=-I/usr/include/pythonX.Y, where X.Y will vary
    depending on the version of python installed on your system.
 
-3) Run 'make depend'.  This should prevent any inconsistent data and
-   cause proper remakes if you change the config.h file or re-run
-   configure.  It may spew various warnings - these can be ignored.
-
-4) Edit include/config.h.
+3) Edit include/config.h.
    Most options should be fairly well commented.
    The default config.h file has pretty sane values, and can be used unchanged.
 
-4a) Note that many of the perl programs assume that perl is located as
-  /usr/local/bin/perl - if it is someplace else, you will need to go through
-  and update the scripts (or probably easier is make a symlink in 
-  /usr/local/bin to where your perl is located.)  I don't believe any of
-  these scripts are run as the normal compilation & installation process,
-  so this is only a real problem if you plan to rebuild the archetypes.
-
-5) Compile the program:  type 'make'.  It should take a little while.  If you
+4) Compile the program:  type 'make'.  It should take a little while.  If you
    get errors that abort the compile, copy them down (either using cut and
    paste, or redirect the output of the compile to a file), and send those to
    the bug alias (crossfire-devel@listserv.real-time.com), along with what
@@ -78,32 +67,22 @@ the 'x.y' format.
    various options.  A message saying 'it failed to compile main.c' tells me
    little, and I can not fix problems with that little detail.
 
-6) Install the program by running 'make install'
+5) Install the program by running 'make install'
 
-7) You may want to set the uid or gid bit on the crossfire executable.
-   To do this, type either 'chmod u+s' or 'chmod g+s', with the filename
-   being the installed version of crossfire.  The highscore file and
-   player directory should have their permissions set appropriately.  This
-   is only needed if other people may be running the the executable.
-
-8) Crossfire requires maps installed into the directory specified by
+6) Crossfire requires maps installed into the directory specified by
    --datadir (or the default).  Maps are a seperate distribution available on
    the ftp server.  The maps can be unpacked directly into the location
    specified by --datadir.  All the map files need to be readable by which
    ever uid is running the server - if multiple people will be running
    servers, the map permissions may need to get updated.
 
-9) You can compress/gzip all files in and below the DATADIR.  Performance of
-   compressing various files may very.  Several files are only read during
-   startup, so compressing them will not affect game performance once running.
+7) It might be useful to edit "share/crossfire/motd" (MessageOfToDay) file.
 
-10) It might be useful to edit "share/crossfire/motd" (MessageOfToDay) file.
-
-11) If you want your server to be publically advertised to interested
+8) If you want your server to be publically advertised to interested
     players, edit the share/crossfire/settings file.  The metaserver host
     and port are accurate - your host and comment should be updated.
 
-12) By default, the installation process assumes that only one user id
+9) By default, the installation process assumes that only one user id
     will actually be used to run the game, and directory and file permissions
     are set as such.  If multiple users will run the game, permissions on
     many files will need to be updated (lib/bookarch, lib/unique_items,
