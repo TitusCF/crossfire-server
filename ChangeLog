@@ -17,6 +17,8 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+plugin/plugin_python.c: Change second parameter of CFPython.CheckMap to use
+   a map object instead of a map name. Now it works for tiles maps.
 acinclude.m4: Add check for python 2.4 to match this file with aclocal.m4.
 Andreas Kirschbaum 2005-03-06
 

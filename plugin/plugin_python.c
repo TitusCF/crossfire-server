@@ -2484,16 +2484,45 @@ static PyObject* CFCreateObjectInside(PyObject* self, PyObject* args)
 static PyObject* CFCheckMap(PyObject* self, PyObject* args)
 {
     char *what;
-    char *mapstr;
+    long mapptr;
     int x, y;
     object* foundob;
+    mapstruct* map;
+    sint16 nx, ny;
+    int mflags;
 
-    if (!PyArg_ParseTuple(args,"ss(ii)",&what,&mapstr,&x,&y))
+    if (!PyArg_ParseTuple(args,"sl(ii)",&what,&mapptr,&x,&y))
         return NULL;
+
+    CHECK_MAP(mapptr);
+
+    map = (mapstruct *)mapptr;
+
+    /* make sure the map is swapped in */
+    if (map->in_memory != MAP_IN_MEMORY)
+    {
+        CFParm* CFR;
+        int val;
+
+        val = 0;
+        GCFP.Value[0] = map->name;
+        GCFP.Value[1] = &val;
+        CFR = PlugHooks[HOOK_READYMAPNAME](&GCFP);
+        map = CFR->Value[0];
+        PyFreeMemory(CFR);
+
+	if (map == NULL)
+	    return Py_BuildValue("l",(long)0);
+    }
+
+    mflags = get_map_flags(map, &map, x, y, &nx, &ny);
+    if (mflags & P_OUT_OF_MAP)
+        return Py_BuildValue("l",(long)0);
+
     foundob = present_arch(
         find_archetype(what),
-        has_been_loaded(mapstr),
-        x,y
+        map,
+        nx, ny
     );
     return Py_BuildValue("l",(long)(foundob));
 };
