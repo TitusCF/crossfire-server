@@ -69,7 +69,7 @@ ArchFlagsRec archFlags[] = {
  * 0.91.9 - moved to start of file - needed for ReadPixmaps function.
  */
 XColor exactcolor, discolor[13];
-Colormap colormap=NULL;
+Colormap colormap=(Colormap)NULL;
 
 
 /**********************************************************************
