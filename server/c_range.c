@@ -351,7 +351,6 @@ void change_spell(object *op,char k) {
   case range_magic:
     sprintf(buf,"Switched to spells (%s).",
             spells[op->contr->chosen_spell].name);
-    new_draw_info(NDI_UNIQUE, 0,op,buf);
     break;
   case range_wand:
     sprintf(buf,"Switched to wand (%s).",
