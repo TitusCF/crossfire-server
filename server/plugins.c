@@ -371,7 +371,8 @@ void initOnePlugin(char* pluginfile)
                 HookParm->Value[1] = &CFWNewDrawInfo;
                 break;
             };
-            HookParm->dparm = 2044;
+/* Gros: this must be a linux special, or? ;-) */
+/*            HookParm->dparm = 2044; */
             PlugList[PlugNR].hookfunc(HookParm);
         };
         free(HookParm->Value[0]);
@@ -845,6 +846,7 @@ CFParm* CFWESRVSendItem(CFParm* PParm)
         (object *)(PParm->Value[0]),
         (object *)(PParm->Value[1])
     );
+    return PParm;
 };
 
 /*****************************************************************************/
@@ -1089,6 +1091,8 @@ CFParm* CFWUpdateSpeed(CFParm* PParm)
     update_ob_speed(
         (object *)(PParm->Value[0])
     );
+
+    return PParm;
 };
 
 /*****************************************************************************/
@@ -1102,6 +1106,8 @@ CFParm* CFWUpdateObject(CFParm* PParm)
         (object *)(PParm->Value[0]),
         *(int *)(PParm->Value[1])
     );
+
+    return PParm;
 };
 
 /*****************************************************************************/
@@ -1192,6 +1198,7 @@ CFParm* CFWAddExp(CFParm* PParm)
         (object *)(PParm->Value[0]),
         *(int *)(PParm->Value[1])
     );
+    return PParm;
 };
 
 /*****************************************************************************/
@@ -1237,7 +1244,7 @@ CFParm* CFWDumpObject(CFParm* PParm)
 {
     CFParm* CFP;
     char*   val;
-    object* ob;
+    /* object* ob; not used yet */
     val = (char *)(malloc(sizeof(char)*10240));
     CFP = (CFParm*)(malloc(sizeof(CFParm)));
     dump_me((object *)(PParm->Value[0]),val);
@@ -1293,7 +1300,7 @@ CFParm* CFWAddRefcount(CFParm* PParm)
 };
 CFParm* CFWFreeString(CFParm* PParm)
 {
-    CFParm* CFP;
+    /* CFParm* CFP; not used yet */
     char* val;
     val = (char *)(PParm->Value[0]);
     free_string (val);

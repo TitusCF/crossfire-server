@@ -82,7 +82,7 @@ scandir (dir, namelist, select, cmp)
   if (dp == NULL)
     return -1;
 
-  errno=0;
+  save=errno=0;
 
   i = 0;
   while ((d = readdir (dp)) != NULL)

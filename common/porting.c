@@ -36,6 +36,7 @@
 
 #ifdef WIN32 /* ---win32 exclude/include headers */
 #include "process.h"
+#define pid_t int  /* we include it non global, because there is a redefinition in python.h */
 #else
 #include <ctype.h>
 #include <sys/stat.h>
