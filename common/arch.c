@@ -190,6 +190,16 @@ int item_matched_string(object *pl, object *op, char *name)
 			      MIN(strlen(cp),strlen(query_base_name(op,0))))) retval=14;
 	else if (!strncasecmp(cp,query_base_name(op,1),
 			      MIN(strlen(cp),strlen(query_base_name(op,1))))) retval=14;
+
+	/* Do substring checks, so things like 'Str+1' will match.
+	 * retval of these should perhaps be lower - they are lower
+	 * then the specific strcasecmp aboves, but still higher than
+	 * some other match criteria.
+	 */
+	else if (strstr(query_base_name(op,1), cp)) retval = 12;
+	else if (strstr(query_base_name(op,0), cp)) retval = 12;
+	else if (strstr(query_short_name(op), cp)) retval = 12;
+
 	if (retval) {
 	    if (pl->type == PLAYER)
 		pl->contr->count=count;
