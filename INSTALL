@@ -57,8 +57,7 @@ the 'x.y' format.
 
 4) Edit include/config.h.
    Most options should be fairly well commented.
-   The default config.h file should have pretty sane values, and you should
-   be able to use it unchanged.
+   The default config.h file has pretty sane values, and can be used unchanged.
 
 4a) Note that many of the perl programs assume that perl is located as
   /usr/local/bin/perl - if it is someplace else, you will need to go through
@@ -94,9 +93,13 @@ the 'x.y' format.
    compressing various files may very.  Several files are only read during
    startup, so compressing them will not affect game performance once running.
 
-10) It might be useful to edit "lib/motd" (MessageOfToDay) file.
+10) It might be useful to edit "share/crossfire/motd" (MessageOfToDay) file.
 
-11) By default, the installation process assumes that only one user id
+11) If you want your server to be publically advertised to interested
+    players, edit the share/crossfire/settings file.  The metaserver host
+    and port are accurate - your host and comment should be updated.
+
+12) By default, the installation process assumes that only one user id
     will actually be used to run the game, and directory and file permissions
     are set as such.  If multiple users will run the game, permissions on
     many files will need to be updated (lib/bookarch, lib/unique_items,
