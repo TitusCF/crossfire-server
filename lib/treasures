@@ -398,10 +398,10 @@ more
   arch helmet_gnarg
     chance 5
   more
-arch god_grace_limit_medium
-more
   arch god_spelldirect_poison_fog
   more
+arch god_grace_limit_medium
+more
   arch god_spelldirect_cause_smallpox
   more
   arch bracers_gnarg
