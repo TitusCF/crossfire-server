@@ -17,6 +17,20 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/c_wiz.c: for command_create() - check to see if 'of' parameter
+   is a spell archetype name, and do the right thing if it is.  This
+   allows things like 'create rod_heavy of spell_large_lightning'.
+   Note that the command_create is still a seriously broken function
+   in many regards.
+server/rune.c: Fix write_rune() when trying to find the spell in encase
+   in the rune - assignment was incorrect, so it always took the last
+   matching spell in the players inventory, not the best matching spell.
+server/spell_util.c: Change the call to prayer_failure() so that its
+   potency is based on how badly short the player is short of grace.  Eg,
+   if only 1 point short, potency of 1.  This changes from before where
+   the potency was always the difference in mana.
+MSW 2004-06-17
+
 server/attack.c: Fix hit_with_arrow() so that it uses the proper map
    when inserting the arrow.
 server/c_wiz.c: Add note about brokeness of command_create()

@@ -999,7 +999,8 @@ int cast_spell(object *op, object *caster,int dir,object *spell_ob, char *string
 				     "%s grants your prayer, though you are unworthy.",godname);
 		}
 		else {
-		    prayer_failure(op,op->stats.grace,SP_level_spellpoint_cost(caster,spell_ob, SPELL_GRACE));
+		    prayer_failure(op,op->stats.grace,
+			   SP_level_spellpoint_cost(caster,spell_ob, SPELL_GRACE) - op->stats.grace);
 		    new_draw_info_format(NDI_UNIQUE, 0,op,"%s ignores your prayer.",godname);
 		    return 0;
 		}

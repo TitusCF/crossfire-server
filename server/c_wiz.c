@@ -487,11 +487,11 @@ int command_teleport (object *op, char *params) {
 
 int command_create (object *op, char *params)
 {
-      object *tmp=NULL;
-      int nrof,i, magic, set_magic = 0, set_nrof = 0, gotquote, gotspace;
-      char buf[MAX_BUF], *cp, *bp = buf, *bp2, *bp3, *bp4, *obp;
-      archetype *at;
-      artifact *art=NULL;
+    object *tmp=NULL;
+    int nrof,i, magic, set_magic = 0, set_nrof = 0, gotquote, gotspace;
+    char buf[MAX_BUF], *cp, *bp = buf, *bp2, *bp3, *bp4, *obp;
+    archetype *at, *at_spell=NULL;
+    artifact *art=NULL;
 
     if (!op)
 	return 0;
@@ -543,24 +543,32 @@ int command_create (object *op, char *params)
     }
 
     if (cp) {
-	if (find_artifactlist(at->clone.type)==NULL) {
-	    new_draw_info_format(NDI_UNIQUE, 0, op,
-		"No artifact list for type %d\n", at->clone.type);
-	}
-	else {
-	    art = find_artifactlist(at->clone.type)->items;
-
-	    do {
-		if (!strcmp(art->item->name, cp)) break;
-		art = art->next;
-	    } while (art!=NULL);
-            if (!art) {
+	/* Try to find a spell object for this.  Note have to use
+	 * find_archetype, and note find_archetype_by_object_name,
+	 * because teh spaces are nulled out above.
+	 */
+	if ((at_spell=find_archetype(cp))==NULL ||
+	    at_spell->clone.type != SPELL) {
+	    
+	    if (find_artifactlist(at->clone.type)==NULL) {
 		new_draw_info_format(NDI_UNIQUE, 0, op,
-		    "No such artifact ([%d] of %s)", at->clone.type, cp);
+		     "No artifact list for type %d\n", at->clone.type);
 	    }
+	    else {
+		art = find_artifactlist(at->clone.type)->items;
+
+		do {
+		    if (!strcmp(art->item->name, cp)) break;
+		    art = art->next;
+		} while (art!=NULL);
+		if (!art) {
+		    new_draw_info_format(NDI_UNIQUE, 0, op,
+				 "No such artifact ([%d] of %s)", at->clone.type, cp);
+		}
+	    }
+	    LOG(llevDebug, "%s creates: (%d) (%d) (%s) of (%s)\n", op->name,
+		set_nrof ? nrof : 0, set_magic ? magic : 0 , bp, cp);
 	}
-        LOG(llevDebug, "%s creates: (%d) (%d) (%s) of (%s)\n", op->name,
-            set_nrof ? nrof : 0, set_magic ? magic : 0 , bp, cp);
     } /* if cp */
 
     if(at->clone.nrof) {
@@ -579,6 +587,9 @@ int command_create (object *op, char *params)
 	    SET_FLAG(tmp, FLAG_IDENTIFIED);
 	    CLEAR_FLAG(tmp, FLAG_KNOWN_MAGICAL);
 	}
+	if (at_spell)
+	    insert_ob_in_ob(arch_to_object(at_spell), tmp);
+
 	while (*bp2) {
 	    /* find the first quote */
 	    for (bp3=bp2, gotquote=0, gotspace=0; *bp3 && gotspace < 2; bp3++) {
@@ -653,6 +664,14 @@ int command_create (object *op, char *params)
 		SET_FLAG(tmp, FLAG_IDENTIFIED);
 		CLEAR_FLAG(tmp, FLAG_KNOWN_MAGICAL);
 	    }
+	    if (at_spell)
+		insert_ob_in_ob(arch_to_object(at_spell), tmp);
+	    /* Note that I believe this entire block below (for finding the variables)
+	     * is completely broken here.  This is because it modifies the string it
+	     * works on. Thus, for the first object it creates, it would work OK,
+	     * but for the second, third, etc, it simply won't work because nulls have
+	     * been inserted.
+	     */
 	    while (*bp2) {
 		/* find the first quote */
 		for (bp3=bp2, gotquote=0, gotspace=0; *bp3 && gotspace < 2;
@@ -707,7 +726,7 @@ int command_create (object *op, char *params)
 	    insert_ob_in_map(head, op->map, op, 0);
         else
 	    head = insert_ob_in_ob(head, op);
-        if (at->clone.randomitems!=NULL)
+        if (at->clone.randomitems!=NULL && !at_spell)
 	    create_treasure(at->clone.randomitems, head, GT_APPLY,
                           op->map->difficulty, 0);
 	    esrv_send_item(op, head);

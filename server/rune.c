@@ -96,7 +96,7 @@ int write_rune(object *op,object *caster, object *spell, int dir,char *runename)
 	    if (tmp->type == SPELL) {
 		ms = item_matched_string(op, tmp, runename);
 		if (ms > bestmatch) {
-		    ms = bestmatch;
+		    bestmatch = ms;
 		    rune_spell = tmp;
 		}
 	    }
