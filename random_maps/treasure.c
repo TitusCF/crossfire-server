@@ -110,7 +110,7 @@ void place_treasure(mapstruct *map,char **layout, char *treasure_style,int treas
 		  int i,j;
 		  /* search the onion for C's or '>', and put treasure there. */
 		  for(i=0;i<RP->Xsize;i++) {
-			 for(j=0;j<RP->Xsize;j++) {
+			 for(j=0;j<RP->Ysize;j++) {
 				if(layout[i][j]=='C' || layout[i][j]=='>') {
 				  int tdiv = RP->symmetry_used;
 				  object **doorlist;
