@@ -379,7 +379,9 @@ void initOnePlugin(char* pluginfile)
                 HookParm->Value[1] = &CFWMoveObject;
                 break;
             };*/
-            HookParm->dparm = 2044;
+
+/*  Serious bug, fix this in all local copies */
+/*            HookParm->dparm = 2044; */
             PlugList[PlugNR].hookfunc(HookParm);
         };
         free(HookParm->Value[0]);
@@ -858,6 +860,7 @@ CFParm* CFWESRVSendItem(CFParm* PParm)
         (object *)(PParm->Value[0]),
         (object *)(PParm->Value[1])
     );
+    return(PParm);
 };
 
 /*****************************************************************************/
@@ -1207,6 +1210,7 @@ CFParm* CFWAddExp(CFParm* PParm)
         (object *)(PParm->Value[0]),
         *(int *)(PParm->Value[1])
     );
+    return(PParm);
 };
 
 /*****************************************************************************/
@@ -1252,7 +1256,7 @@ CFParm* CFWDumpObject(CFParm* PParm)
 {
     CFParm* CFP;
     char*   val;
-    object* ob;
+/*    object* ob; not used */
     val = (char *)(malloc(sizeof(char)*10240));
     CFP = (CFParm*)(malloc(sizeof(CFParm)));
     dump_me((object *)(PParm->Value[0]),val);
@@ -1308,7 +1312,7 @@ CFParm* CFWAddRefcount(CFParm* PParm)
 };
 CFParm* CFWFreeString(CFParm* PParm)
 {
-    CFParm* CFP;
+/*  CFParm* CFP; not used */
     char* val;
     val = (char *)(PParm->Value[0]);
     free_string (val);
@@ -1441,6 +1445,7 @@ CFParm* CFWMovePlayer (CFParm* PParm)
                      *(int*)PParm->Value[1]);
     CFP = (CFParm*)(malloc(sizeof(CFParm)));
     CFP->Value[0] = (void*) &val;
+    return(CFP);
 }
 /*****************************************************************************/
 /* move_object wrapper.                                                      */
@@ -1458,6 +1463,8 @@ CFParm* CFWMoveObject (CFParm* PParm)
                  (object*)PParm->Value[2]);
     CFP = (CFParm*)(malloc(sizeof(CFParm)));
     CFP->Value[0] = (void*) &val;
+
+    return(CFP);
 }
 
 CFParm* CFWSendCustomCommand(CFParm* PParm)
@@ -1505,6 +1512,7 @@ CFParm* CFWSetAnimation (CFParm* PParm)
         SET_ANIMATION (op,face);
         }
     update_object(op, UP_OBJ_FACE);
+    return(PParm);    
 }
 /*****************************************************************************/
 /* communicate wrapper.                                                      */
@@ -1540,6 +1548,8 @@ CFParm* CFWFindBestObjectMatch (CFParm* PParm)
     result=(object*)find_best_object_match(op,param);
     CFP = (CFParm*)(malloc(sizeof(CFParm)));
     CFP->Value[0] = (void*) result;
+
+    return(CFP);
 }
 /*****************************************************************************/
 /* player_apply_below wrapper.                                               */
@@ -1598,10 +1608,10 @@ CFParm* CFWObjectCreateClone (CFParm* PParm)
 CFParm* CFWTeleportObject (CFParm* PParm)
 {
     object* current;
-    char * mapname;
+/*    char * mapname; not used 
     int mapx;
     int mapy;
-    int unique;
+    int unique; not used */
     current=get_object();
     EXIT_PATH(current)=add_string ((char*)PParm->Value[1]);
     EXIT_X(current)=*(int*)PParm->Value[2];

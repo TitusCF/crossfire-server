@@ -9,13 +9,18 @@
 
 #ifndef PLUGIN_H_
 #define PLUGIN_H_
+
+/*****************************************************************************/
+/* This one does not exist under Win32.                                      */
+/*****************************************************************************/
+#ifndef WIN32
 #include <dlfcn.h>
+#endif
+
 #include <version.h>
 #include <global.h>
 #include <object.h>
-#ifndef __CEXTRACT__
-// #include <sproto.h>
-#endif
+
 #ifdef HAVE_TIME_H
 #include <time.h>
 #endif
