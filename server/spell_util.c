@@ -6,7 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 1994 Mark Wedel
+    Copyright (C) 2000 Mark Wedel
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -23,7 +23,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to master@rahul.net
+    The author can be reached via e-mail to mwedel@scruz.net
 */
 
 #include <global.h>
@@ -571,7 +571,7 @@ if (item == spellNormal && !ability ){
     n=RANDOM()%3 + RANDOM()%3 + RANDOM()%3 +3 +
       SP_level_strength_adjust(op,caster, type);
     success = 1;
-    fire_swarm(op,dir,spellarch[type],SP_METEOR,n);
+    fire_swarm(op,dir,spellarch[type],SP_METEOR,n,0);
     break;
   }
   case SP_BULLET_SWARM: {
@@ -579,7 +579,7 @@ if (item == spellNormal && !ability ){
     n=RANDOM()%3 + RANDOM()%3 + RANDOM()%3 +3 +
       SP_level_strength_adjust(op,caster, type);
     success = 1;
-    fire_swarm(op,dir,spellarch[type],SP_BULLET,n);
+    fire_swarm(op,dir,spellarch[type],SP_BULLET,n,1);
     break;
   }
   case SP_BULLET_STORM: {
@@ -587,7 +587,7 @@ if (item == spellNormal && !ability ){
     n=RANDOM()%3 + RANDOM()%3 + RANDOM()%3 +3 +
       SP_level_strength_adjust(op,caster, type);
     success = 1;
-    fire_swarm(op,dir,spellarch[type],SP_LARGE_BULLET,n);
+    fire_swarm(op,dir,spellarch[type],SP_LARGE_BULLET,n,1);
     break;
   }
   case SP_CAUSE_MANY: {
@@ -595,7 +595,7 @@ if (item == spellNormal && !ability ){
     n=RANDOM()%3 + RANDOM()%3 + RANDOM()%3 +3 +
       SP_level_strength_adjust(op,caster, type);
     success = 1;
-    fire_swarm(op,dir,spellarch[type],SP_CAUSE_HEAVY,n);
+    fire_swarm(op,dir,spellarch[type],SP_CAUSE_HEAVY,n,1);
     break;
   }
   case SP_METEOR:
@@ -966,7 +966,16 @@ int fire_bolt(object *op,object *caster,int dir,int type,int magic) {
  * casting object.
  */
 
-int fire_arch(object *op,object *caster,int dir,archetype *at, int type, int magic) {
+int fire_arch (object *op, object *caster, int dir, archetype *at, int type,
+	int magic)
+{
+	return fire_arch_from_position (op, caster, op->x, op->y, dir, at,
+	                                type, magic);
+}
+
+int fire_arch_from_position (object *op, object *caster, sint16 x, sint16 y,
+	int dir, archetype *at, int type, int magic)
+{
   object *tmp, *env;
  
   if(at==NULL)
@@ -980,7 +989,7 @@ int fire_arch(object *op,object *caster,int dir,archetype *at, int type, int mag
   tmp->stats.sp=type;
   tmp->stats.dam=SP_PARAMETERS[type].bdam+SP_level_dam_adjust(op,caster,type);
   tmp->stats.hp=SP_PARAMETERS[type].bdur+SP_level_strength_adjust(op,caster,type);
-  tmp->x=op->x,tmp->y=op->y;
+  tmp->x=x, tmp->y=y;
   tmp->direction=dir;
   set_owner(tmp,op);
 #ifdef MULTIPLE_GODS /* needed for AT_HOLYWORD,AT_GODPOWER stuff */
@@ -1759,26 +1768,31 @@ of spells.  Which spell it casts is flexible.  It fires the spells
 from a set of squares surrounding the caster, in a given direction. */
 
 void move_swarm_spell(object *op)
-{  int x,y; int di;
-    if(!(op->stats.hp--)||get_owner(op)==NULL) {
+{
+    sint16 x,y;
+    int di;
+    object *owner = get_owner (op);
+
+    if(op->stats.hp == 0 || owner == NULL) {
 	remove_ob(op);
 	free_object(op);
 	return;
     }
-   x=op->x; y=op->y;  /*  save original location of swarm object */
-    
-   if(op->stats.hp) di=RANDOM()%7-3;  /* get a random number of -3->3 */
-    else di=0;  /* fire the last one from forward. */
-   op->x+=freearr_x[absdir(op->direction +di)];
-   op->y+=freearr_y[absdir(op->direction +di)];
-/*  for level dependence, we need to know what spell is fired.  */
-/*  that's stored in op->stats.sp  by fire_swarm  */
-   if(!wall(op->map,op->x,op->y))
-   fire_arch(op,op,op->direction,op->other_arch,op->stats.sp,0);
-   op->x=x; op->y=y;  /* reset original location */
+    op->stats.hp--;
 
+   if(op->stats.hp)
+        di=RANDOM()%7-3;  /* get a random number of -3->3 */
+   else
+        di=0;  /* fire the last one from forward. */
+   x = op->x + freearr_x[absdir(op->direction +di)];
+   y = op->y + freearr_y[absdir(op->direction +di)];
+
+   /*  for level dependence, we need to know what spell is fired.  */
+   /*  that's stored in op->stats.sp  by fire_swarm  */
+   if ( ! wall (op->map, x, y))
+       fire_arch_from_position (owner, op, x, y, op->direction, op->other_arch,
+                                op->stats.sp, op->magic);
 }
-
 
 
 
@@ -1796,7 +1810,8 @@ void move_swarm_spell(object *op)
 */
     
 
-void fire_swarm(object *op,int dir,archetype *swarm_type,int spell_type,int n)
+void fire_swarm (object *op, int dir, archetype *swarm_type, int spell_type,
+	int n, int magic)
 {
   object *tmp;
   tmp=arch_to_object(find_archetype("swarm_spell"));
@@ -1805,6 +1820,7 @@ void fire_swarm(object *op,int dir,archetype *swarm_type,int spell_type,int n)
   set_owner(tmp,op);       /* needed so that if swarm elements kill, caster gets xp.*/
   tmp->level=op->level;   /*needed later, to get level dep. right.*/
   tmp->stats.sp=spell_type;  /* needed later, see move_swarm_spell */
+  tmp->magic = magic;
   tmp->stats.hp=n;	    /* n in swarm*/
   tmp->other_arch=swarm_type;  /* the archetype of the things to be fired*/
   tmp->direction=dir; 
