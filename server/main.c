@@ -450,8 +450,15 @@ void enter_exit(object *op, object *exit_ob) {
 	     * Simple enough we don't need another routine for it.
 	     */
 	    mapstruct	*newmap;
-
-	    newmap = ready_map_name(normalize_path(exit_ob->map->path, EXIT_PATH(exit_ob)), 0);
+	    if (exit_ob->map) {
+		newmap = ready_map_name(normalize_path(exit_ob->map->path, EXIT_PATH(exit_ob)), 0);
+	    } else {
+		/* For word of recall and other force objects
+		 * They contain the full pathname of the map to go back to,
+		 * so we don't need to normalize it.
+		 */
+		newmap = ready_map_name(EXIT_PATH(exit_ob), 0);
+	    }
 	    /* This supports the old behaviour, but it really should not be used.
 	     * I will note for example that with this method, it is impossible to
 	     * set 0,0 destination coordinates.  Really, if we want to support
