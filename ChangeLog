@@ -17,6 +17,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+common/living.c: Patch by Bernd Edler to remove cap on exp for players.
+MSW 2004-04-09
+
 common/item.c: If potion wasn't given a random spell, use the archetype
    name when it is identified.
 common/treasure.c: Fix potion codes so that healing and magic power potions

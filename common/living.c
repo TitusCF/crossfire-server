@@ -1771,15 +1771,6 @@ void change_exp(object *op, sint64 exp, char *skill_name, int flag) {
      */
     if (exp == 0) return;
 
-    /* reset exp to max allowed value.  We subtract from
-     * MAX_EXPERIENCE to prevent overflows.  If the player somehow has
-     * more than max exp, just return.
-     */
-    if (exp > 0 && ( op->stats.exp > (MAX_EXPERIENCE - exp))) {
-	exp = MAX_EXPERIENCE - op->stats.exp;
-	if (exp < 0) return;
-    }
-
     /* Monsters are easy - we just adjust their exp - we   
      * don't adjust level, since in most cases it is unrelated to
      * the exp they have - the monsters exp represents what its
@@ -1788,6 +1779,16 @@ void change_exp(object *op, sint64 exp, char *skill_name, int flag) {
     if(op->type != PLAYER) {
 	/* Sanity check */
 	if (!QUERY_FLAG(op, FLAG_ALIVE)) return;
+
+	/* reset exp to max allowed value.  We subtract from
+	 * MAX_EXPERIENCE to prevent overflows.  If the player somehow has
+	 * more than max exp, just return.
+	 */
+	if (exp > 0 && ( op->stats.exp > (MAX_EXPERIENCE - exp))) {
+	    exp = MAX_EXPERIENCE - op->stats.exp;
+	    if (exp < 0) return;
+	}
+
 	op->stats.exp += exp;
     }
     else {				/* Players only */ 
