@@ -19,6 +19,13 @@ else.  With this, include the file(s) that you changed.
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 
+server/spell_effect.c: magic_wall():  Duration of darkness spell now
+implemented with op->stats.food.  This avoids problems with very low
+speed values that were interpreted as infinite duration.
+lib/spell_params:  Changed duration parameters of darkness spell to
+give a reasonable duration with the new formula.
+- Jan Echternach 16/5/2000
+
 common/living.c: drain_stat():  There are 7 stats now, not 6.
 - Jan Echternach 15/5/2000
 

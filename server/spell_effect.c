@@ -847,9 +847,8 @@ int magic_wall(object *op,object *caster,int dir,int spell_type) {
     break;
   case SP_DARKNESS:
     tmp=get_archetype("darkness");
-    tmp->speed = 0.000350 * SP_PARAMETERS[SP_DARKNESS].bdur
-                 / (SP_PARAMETERS[SP_DARKNESS].bdur
-                    + SP_level_strength_adjust (op, caster, SP_DARKNESS));
+    tmp->stats.food = SP_PARAMETERS[SP_DARKNESS].bdur
+                      + SP_level_strength_adjust (op, caster, SP_DARKNESS);
     break; 
   case SP_COUNTERWALL:
     tmp=get_archetype("counterspell");
