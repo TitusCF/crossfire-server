@@ -15,6 +15,28 @@
 #########################################################
 # Valriel - Lord of Angels, Duke of the Heavens, Healer and Protector
 #
+# This is basically given to monsters that might get spellbooks or use
+# wands/rods/etc.  This is mostly necessary so that if they become
+# the pets of players, the player will get exp awarded to the correct
+# skill.
+treasure skill_use_magic_item
+  arch skill_use_magic_item
+end
+#
+treasure all_spell_skills
+  arch skill_use_magic_item
+  more
+  arch skill_evocation
+  more
+  arch skill_praying
+  more
+  arch skill_pyromancy
+  more
+  arch skill_sorcery
+  more
+  arch skill_summoning
+end
+#
 treasure Valriel
   arch valriel_avatar_info
   more
@@ -2537,36 +2559,9 @@ treasure poor_old
   nrof 8
   chance 10
   end
-treasure angel
-  list rich_old
-  end
-treasure archangel
-  list rich_old
-  more
-  arch spell_wrathful_eye
-    nrof 3
-  more
-  arch spell_paralyze
-end
 treasure raas
   arch icor
     chance 20
-  end
-treasure devil
-  list rich_old
-  more
-  list demon_parts
-    chance 40
-  end
-treasure fiend
-  list rich_old
-  more
-  list demon_parts
-    chance 40
-  more
-  arch abil_burning_hands
-  more
-  arch abil_medium_fireball
   end
 treasure sphinx
   list standard_old
@@ -2585,12 +2580,6 @@ treasure skeleton
   list standard_old
 # more
 # list human_bones
-  end
-treasure goblin
-  list goblin_parts
-    chance 10
-  more
-  list poor_old
   end
 treasure bear
   list bear_parts
@@ -2623,20 +2612,6 @@ treasure gnoll
   more
   list poor_old
   end
-treasure ogre
-  list giant_parts
-    chance 30
-  more
-  arch arm
-    chance 10
-  more
-  arch skill_throwing
-  more
-  list throw_weapons
-    chance 15
-  more
-  list poor_old
-  end
 treasure rich
   list rich_old
   more
@@ -2644,6 +2619,8 @@ treasure rich
     chance 20
   end
 treasure standard
+  arch skill_use_magic_item
+  more
   list standard_old
   more
 # non-humaniods are unlikely to have torches!
@@ -2843,22 +2820,6 @@ treasure rich_old
   arch cloak
   chance 10
   end
-treasure conjurer
-  arch skill_literacy
-  more
-  arch spell_summon_fire_elemental
-  more
-  arch spell_summon_air_elemental
-  more
-  arch spell_summon_water_elemental
-  more
-  arch spell_summon_earth_elemental
-  more
-  arch cloak
-    chance 60
-  more
-  list rich
-  end
 treasure snake
   arch serp_skin
     chance 3
@@ -2888,17 +2849,6 @@ treasure giant_bat
   arch bat_wing
     chance 10
   end
-treasure pixie
-  arch wand
-    chance 4
-  more
-  arch pix_dust
-    chance 15
-    no
-    arch pix_wing
-      chance 20
-    end
-  end
 treasure rod
   arch rod_light
   chance 2
@@ -2910,49 +2860,6 @@ treasure rod
 treasure ring
   arch ring
   chance 2
-  end
-# note: punching and throwing arent good
-# combination to give to NPC's. They wind
-# throwing away their melee weapons!
-treasure pirate
-  arch skill_stealing
-    chance 50
-  more
-  arch skill_throwing
-    chance 75
-    no
-      arch skill_punching
-    end
-  more
-  arch heart
-     chance 5
-  more
-  list standard
-  end
-treasure dark_elf
-  arch skill_literacy
-    chance 50
-    no
-    arch skill_bowyer
-    end
-  more
-  list throw_rich
-  end
-treasure npc_ninja
-  arch skill_jumping
-  more
-  list poor
-  more
-  arch skill_hide
-    chance 50
-    no
-    arch skill_karate
-    end
-  end
-treasure warrior_1
-  arch skill_oratory
-  more
-  list throw_stnd
   end
 treasure thief_1
   arch skill_stealing
@@ -3006,57 +2913,6 @@ treasure giant_old
   arch goldcoin
   chance 6
   nrof 80
-  end
-treasure titan
-  arch head
-  more
-  arch spell_paralyze
-  more
-  arch abil_fear
-    nrof 2
-  more
-  arch spell_sm_lightning
-    nrof 2
-  more
-  arch spell_large_lightning
-    nrof 2
-  more
-  arch abil_slow
-  more
-  arch bow
-  more
-  arch arrow
-  nrof 100
-  more
-  arch high_shield
-  more
-  arch bonecrusher
-  more
-  arch plate_mail
-  more
-  arch full_helmet
-  more
-  arch cloak
-  chance 50
-  end
-treasure belzebub
-  arch spell_summon_pet_monster
-  more
-  arch ring_mail
-  magic 4
-  more
-  arch uw_shield
-  more
-  arch uw_sword
-  more
-  arch ring
-  more
-  arch gem
-  chance 50
-  nrof 3
-  more
-  arch cloak
-  chance 50
   end
 treasure beholder_big
   arch big_eye
@@ -3334,54 +3190,6 @@ treasure dragon
   arch cloak
   chance 30
   end
-treasure orc
-  list goblin_parts
-    chance 20
-    no
-      arch orcchop
-      chance 25
-    end
-  more
-  arch cloak
-  chance 3
-  more
-#  arch orcchop
-#  chance 25
-#  more
-  arch bow
-  chance 10
-  yes
-    arch arrow
-    nrof 6
-    end
-  more
-  arch sword_4
-  magic 1
-  chance 5
-  no
-    arch shortsword
-    chance 10
-    no
-      arch dagger
-      chance 15
-      no
-        arch stoneaxe
-        chance 20
-        no
-          arch club
-          chance 25
-          end
-        end
-      end
-    end
-  more
-  arch small_shield
-  chance 10
-  more
-  arch silvercoin
-  nrof 80
-  chance 10
-  end
 treasure para_elemental
   arch residue
     chance 20
@@ -3392,169 +3200,6 @@ treasure ghost
   end
 treasure grave
   arch gravedirt
-  end
-treasure vampire
-  arch abil_fear
-    nrof 3
-  more
-  arch abil_slow
-  more
-  arch spell_paralyze
-  more
-  arch heart
-    chance 50
-  more
-  arch cloak
-  more
-  list random_books
-  more
-  list random_books
-  chance 50
-  more
-  arch ring
-  chance 70
-  more
-  arch ring
-  chance 50
-  end
-treasure minor_djinn
-  arch spell_paralyze
-  more
-  arch abil_fear
-  more
-  arch spell_major_healing
-  more
-  arch spell_sm_lightning
-  more
-  arch spell_large_lightning
-  more
-  arch abil_large_icestorm
-    chance 50
-  no
-    arch abil_burning_hands
-    more
-    arch abil_medium_fireball
-    end
-  more
-  arch spell_summon_fire_elemental
-  chance 50
-  no
-    arch spell_summon_water_elemental
-    end
-  more
-  arch spell_summon_earth_elemental
-  chance 50
-  no
-    arch spell_summon_air_elemental
-    end
-  more
-  arch abil_slow
-  end
-treasure djinn
-  arch spell_paralyze
-  more
-  arch spell_major_healing
-  more
-  arch abil_fear
-  more
-  arch spell_sm_lightning
-  more
-  arch spell_large_lightning
-  more
-  arch abil_large_icestorm
-  more
-  arch abil_icestorm
-  more
-  arch abil_icestorm
-  more
-  arch abil_large_icestorm
-  more
-  arch abil_burning_hands
-  more
-  arch spell_hellfire
-  more
-  arch spell_summon_fire_elemental
-  more
-  arch spell_summon_water_elemental
-  more
-  arch spell_summon_earth_elemental
-  more
-  arch spell_summon_air_elemental
-  more
-  arch abil_slow
-  more
-  arch rod_heavy
-  end
-treasure big_wizard
-  arch spell_paralyze
-  more
-  arch abil_fear
-  more
-  arch abil_poison_cloud
-  more
-  arch spell_sm_lightning
-  more
-  arch spell_large_lightning
-  more
-  arch abil_large_icestorm
-  more
-  arch abil_icestorm
-  more
-  arch spell_burning_hands
-  more
-  arch spell_medium_fireball
-  more
-  arch spell_magic_missile
-  more
-  arch spell_magic_bullet
-  more
-  arch abil_slow
-  more
-  list random_books
-  more
-  list random_books
-  more
-  list random_books
-  more
-  arch wand
-  more
-  arch wand
-  more
-  arch wand
-  more
-  arch wand
-  more
-  arch staff
-  more
-  arch rod_light
-  more
-  arch rod_light
-  more
-  arch rod_heavy
-  more
-  arch scroll_new
-  more
-  arch scroll_new
-  more
-  arch scroll_new
-  more
-  arch scroll_new
-  more
-  arch scroll_new
-  more
-  arch scroll_new
-  more
-  arch scroll_new
-  more
-  arch scroll_new
-  more
-  arch scroll_new
-  more
-  arch ring
-  chance 90
-  nrof 2
-  more
-  arch cloak
   end
 treasure pyromaniac
   arch spell_create_bomb
@@ -4394,22 +4039,8 @@ treasure avatar
   chance 50
   nrof 3
   end
-treasure jail
-  arch knight
-  more
-  arch knight
-  more
-  arch knight
-  end
 treasure unicorn
   arch u_horn
-  end
-treasure spectre
-  arch ectoplasm
-  more
-  arch arthritis
-  more
-  list lich_old
   end
 treasure banshee
   arch spell_paralyze
@@ -4439,80 +4070,6 @@ treasure banshee
   arch emerald
   chance 50
   nrof 4
-  end
-treasure lich
-  arch lich_dust
-  more
-  arch leprosy
-  more
-  list lich_old
-  end
-treasure lich_old
-  arch spell_paralyze
-  more
-  arch abil_fear
-  more
-  arch spell_summon_pet_monster
-  more
-  arch spell_magic_bullet
-  more
-  arch abil_large_icestorm
-  more
-  arch abil_icestorm
-  more
-  arch sword_2
-  chance 90
-  magic 5
-  more
-  arch cloak
-  more
-  arch shield
-  magic 4
-  chance 70
-  no
-    arch small_shield
-    magic 5
-    chance 40
-    end
-  more
-  arch full_helmet
-  magic 3
-  chance 50
-  no
-    arch helmet
-    magic 3
-    chance 50
-    end
-  more
-  arch goldcoin
-  chance 90
-  nrof 100
-  more
-  arch wand
-  chance 80
-  more
-  arch staff
-  chance 20
-  more
-  list random_books
-  more
-  list random_books
-  chance 70
-  more
-  arch ring
-  more
-  arch ring
-  chance 50
-  more
-  arch scroll_new
-  chance 90
-  more
-  arch scroll_new
-  chance 90
-  more
-  arch gem
-  chance 70
-  nrof 3
   end
 treasure suprise
   arch firechest
@@ -4548,79 +4105,6 @@ treasure cold_dragon
   arch abil_large_icestorm
    nrof 2
   end
-treasure gdwar_guard
-  arch axe_5
-  more
-  arch bighorned_helmet
-  more
-  arch plate_mail
-  more
-  arch crossbow
-  more
-  arch bolt
-  nrof 30
-  more
-  arch mithril
-  nrof 3
-  end
-treasure ldwar_guard
-  arch axe_5
-  more
-  arch bighorned_helmet
-  more
-  arch plate_mail
-  more
-  arch crossbow
-  more
-  arch bolt
-  nrof 20
-  more
-  arch mithril
-  nrof 1
-  end
-treasure DK
-  arch spell_paralyze
-  more
-  arch spell_small_speedball
-  more
-  arch plate_mail
-  more
-  arch bighorned_helmet
-  more
-  arch ring
-  more
-  arch ring
-  more
-  arch gem
-  nrof 20
-  chance 80
-  more
-  arch mace
-  chance 10
-  no
-    arch mace_2
-    chance 12
-    no
-      arch lamestar
-      chance 40
-      end
-    end
-  more
-  arch high_shield
-  chance 50
-  no
-    arch DShield
-    chance 50
-    no
-      arch DShieldm
-      chance 25
-      no
-        arch DShields
-        chance 40
-        end
-      end
-    end
-  end
 treasure Cwyvern
   list dragon_parts
     chance 70
@@ -4655,54 +4139,6 @@ treasure Cwyvern
   arch ring
     chance 30
   end
-treasure EDK
-  arch abil_burning_hands
-  more
-  arch abil_medium_fireball
-  more
-  arch spell_paralyze
-  more
-  arch abil_fear
-  more
-  arch plate_mail
-  more
-  arch bighorned_helmet
-  more
-  arch ring
-  more
-  list random_books
-  more
-  arch ring
-  more
-  arch gem
-  nrof 30
-  chance 80
-  more
-  arch gem
-  nrof 20
-  chance 80
-  more
-  arch firestar
-  chance 10
-  no
-    arch lamestar
-    chance 50
-    end
-  more
-  arch DShieldms
-  chance 7
-  no
-    arch DShield
-    chance 60
-    no
-      arch DShieldm
-      chance 50
-      no
-        arch DShields
-        end
-      end
-    end
-  end
 treasure fire_serpent
   arch abil_burning_hands
   chance 50
@@ -4717,149 +4153,6 @@ treasure serpent
   arch serp_skin
   chance 20
   end
-treasure serp_man
-  arch serp_sword
-  magic 2
-  chance 15
-  no
-    arch serp_sword
-    end
-  more
-  arch bow
-  magic 1
-  chance 30
-  yes
-    arch arrow
-    nrof 20
-    end
-  more
-  arch wand
-  chance 5
-  more
-  arch goldcoin
-  nrof 10
-  chance 50
-  end
-treasure serp_priest
-  arch dagger
-  magic 3
-  more
-  list random_books
-  chance 50
-  more
-  list random_books
-  more
-  arch staff
-  chance 80
-  more
-  arch rod_light
-  chance 30
-  more
-  arch abil_burning_hands
-  chance 20
-  more
-  arch abil_medium_fireball
-  chance 20
-  more
-  arch spell_paralyze
-  chance 80
-  more
-  arch abil_fear
-  more
-  arch spell_sm_lightning
-  more
-  arch spell_large_lightning
-  more
-  arch spell_create_pool_of_chaos
-  chance 20
-  more
-  arch spell_magic_missile
-  chance 20
-  end
-treasure lamia
-  arch spell_paralyze
-  more
-  arch abil_fear
-  more
-  arch ability_spit_acid
-  more
-  arch acid_spit
-  nrof 30
-  more
-  arch acid_spit
-  nrof 30
-  more
-  arch acid_spit
-  nrof 30
-  more
-  arch acid_spit
-  nrof 30
-  more
-  arch acid_spit
-  nrof 30
-  more
-  arch acid_spit
-  nrof 30
-  more
-  arch acid_spit
-  nrof 30
-  more
-  arch ring
-  chance 50
-  more
-  arch wand
-  chance 50
-  more
-  arch staff
-  chance 30
-  more
-  arch wand
-  chance 50
-  more
-  arch rod_heavy
-  chance 5
-  no
-    arch rod_light
-    chance 20
-    end
-  more
-  arch goldcoin
-  nrof 100
-  more
-  arch big_club
-  end
-treasure cyclops
-  arch big_club
-  more
-  arch ability_stone_throw
-  more
-  arch t_lboulder
-  nrof 20
-  more
-  arch platinacoin
-  nrof 40
-  end
-treasure Balrog
-  arch spell_paralyze
-  more
-  arch abil_fear
-  more
-  arch abil_burning_hands
-  more
-  arch abil_medium_fireball
-  more
-  arch spell_summon_fire_elemental
-  more
-  arch ring
-  chance 90
-  nrof 2
-  more
-  arch cloak
-  more
-  arch mithril_chainmail
-  more
-  arch firebrand
-  end
 treasure imp
   arch abil_burning_hands
   more
@@ -4873,99 +4166,6 @@ treasure lokanth
   more
   arch skill_clawing
   end
-treasure broo
-  list goblin_parts
-    chance 40
-  more
-  arch skill_one_handed_weapon
-  more
-  arch skill_two_handed_weapon
-  more
-  arch club
-  chance 40
-  magic 1
-  no
-    arch spear
-    chance 30
-    magic 2
-    no
-      arch lspear
-      chance 20
-      magic 3
-      no
-        arch poleaxe
-        chance 10
-        magic 4
-        end
-      end
-    end
-  more
-  arch scale_mail
-  chance 10
-  magic 1
-  no
-   arch plate_mail
-   chance 5
-   magic 3
-   no
-     arch leather_armour
-     chance 40
-     magic 1
-     end
-   end
-  more
-  arch small_shield
-  magic 2
-  chance 50
-  no
-    arch high_shield
-    magic 1
-    chance 10
-    end
-  more
-  arch helmet
-  magic 1
-  chance 30
-  more
-  arch bow
-  chance 30
-  magic 1
-  yes
-    arch arrow
-    nrof 30
-    magic 3
-    end
-  more
-  arch silvercoin
-  nrof 30
-  chance 60
-  no
-    arch goldcoin
-    nrof 10
-    chance 30
-    no
-      arch platinacoin
-      nrof 10
-      chance 10
-      end
-    end
-  more
-  arch scroll_new
-  chance 10
-  nrof 3
-  no
-    arch wand
-    chance 20
-    no
-      arch ring
-      chance 10
-      end
-    end
-  end
-treasure child
-  arch chocolate
-  chance 5
-  end
 treasure queen_ant
   arch gem
   end
@@ -4974,26 +4174,6 @@ treasure spit_ant
   more
   arch acid_spit
   nrof 30
-  end
-treasure c_thief
-  arch dagger
-  more
-  arch skill_stealing
-  more
-  arch goldcoin
-  nrof 50
-  chance 20
-  end
-treasure postman
-  list human_parts
-    chance 20
-  more
-  arch letter
-  nrof 10
-  chance 20
-  more
-  arch r_sack
-  chance 1
   end
 treasure guard_l
   arch scale_mail
@@ -5010,40 +4190,6 @@ treasure guard_h
   more
   arch poleaxe
   end
-treasure a_priest
-  list human_parts
-    chance 20
-  more
-  arch spell_paralyze
-  more
-  arch spell_cause_medium_wounds
-  more
-  arch spell_summon_pet_monster
-  more
-  arch spell_magic_missile
-  more
-  arch robe
-  more
-  arch sandals
-  end
-treasure holy_priest
-  list human_parts
-  more
-  arch spell_paralyze
-  more
-  arch spell_cause_heavy_wounds
-  more
-  arch spell_summon_pet_monster
-  more
-  arch spell_magic_missile
-  more
-  arch robe
-  more
-  arch sandals
-  end
-treasure beggar
-  list slave
-  end
 treasure slave
   list human_parts
     chance 20
@@ -5051,114 +4197,6 @@ treasure slave
   arch turban
   more
   arch sandals
-  end
-treasure c_m_priest
-  list human_parts
-  more
-  arch staff
-  magic 1
-  more
-  list random_books
-  chance 50
-  more
-  list random_books
-  chance 50
-  more
-  arch staff
-  chance 30
-  more
-  arch spell_paralyze
-  chance 50
-  no
-    arch spell_summon_pet_monster
-    end
-  more
-  arch abil_poison_cloud
-  chance 50
-  more
-  arch spell_paralyze
-  chance 20
-  no
-    arch abil_fear
-    end
-  more
-  arch spell_magic_missile
-  chance 20
-  no
-    arch spell_cause_medium_wounds
-    end
-  more
-  arch spell_create_pool_of_chaos
-  chance 20
-  end
-treasure c_priest
-  list human_parts
-  more
-  arch staff
-  magic 3
-  more
-  arch cleric_book
-  chance 50
-  more
-  arch cleric_book
-  more
-  arch staff
-  chance 80
-  more
-  arch rod_light
-  chance 30
-  no
-    arch rod_heavy
-    chance 30
-    end
-  more
-  arch spell_paralyze
-  more
-  arch spell_summon_pet_monster
-  more
-  arch abil_poison_cloud
-  more
-  arch spell_paralyze
-  more
-  arch abil_fear
-  more
-  arch abil_burning_hands
-  more
-  arch spell_hellfire
-  chance 20
-  no
-    arch spell_cause_heavy_wounds
-    end
-  more
-  arch spell_create_pool_of_chaos
-  chance 80
-  end
-treasure c_knight
-  list human_parts
-  more
-  arch sword_2
-  magic 3
-  chance 30
-  no
-    arch sword_2
-    magic 1
-    end
-  more
-  arch plate_mail
-  more
-  arch ring
-  chance 30
-  more
-  arch bow
-  magic 1
-  chance 30
-  yes
-    arch arrow
-    nrof 20
-    end
-  more
-  arch wand
-  chance 20
   end
 treasure byakie
   arch abil_fear
@@ -5300,14 +4338,6 @@ treasure skree_bits
     chance 10
     nrof 1
   end
-treasure skeletalmage
-  list standard_old
-  more
-  arch abil_fear
-  more
-  arch abil_frostbolt
-    chance 67
-end
 treasure behemoth
   list behemoth_parts
     chance 30
