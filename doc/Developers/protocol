@@ -91,7 +91,7 @@ S->C bandwidth is going to more the more serious limitation - the client
 generally won't be sending so much data that the its flow is much problem.
 
 Note that all the commands as detailed below are up to date descriptions
-(1-10-97).  I removed a lot of the old notes on this file, because they were
+I removed a lot of the old notes on this file, because they were
 out of date, and while might be good ideas, were not all that relevent to
 how things currently work.
 
@@ -220,6 +220,18 @@ S->C: version <csval> [scval [vinfo]]
 	many bytes it can skip.  As such, exact version matches should not
 	be necessary for proper operation - however, both the client and
 	server needs to be coded to handle such cases.
+
+	Note 2: For the most part, this has been obsoleted by the
+	setup command which always return status and whether it
+	understood the command or not.  However there are still some cases
+	where using this versioning is useful - an example it the
+	addition of the requestinfo/replyinfo commands - the client
+	wants to wait for acknowledge of all the replyinfo commands
+	it has issued before sending the addme command.  However, if the
+	server doesn't understand these options, the client will never
+	get a response.  With the versioning, the client can look at
+	the version and know if it should wait for a response or if
+	the server will never send back.
 
 C->S: addme
     Tells the server that it should add me (the client) to the game.  
@@ -830,6 +842,127 @@ S->C: setup <option1> <value1> <option2> <value2>
 
 	Currently (2001-05-28), the server only sends a setup in response to
 	client first having sent a setup command.
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+This section describes the requestinfo and replyinfo commands.
+Because these commands may handle different types of data with different
+return formats, this section is formatted a bit differently to make
+it easier to read the different structures.
+
+C->S: requestinfo <info_type>[options]
+S->C: replyinfo <info_type>[options]<data>
+
+    The requestinfo command is a general purpose way for the client to request
+    some piece of data the server may have.  The server still needs to be
+    coded to respond to the specific info_type, but if the passed info_type is
+    not supported, the server will still respond with the replyinfo, but with
+    an empty data list.
+
+    This mechanism allows the client to send requests for data and not need to
+    do complicated checking if the server would understand the specific
+    request - if the server understands it, the data gets sent back.  If the
+    server doesn't understand it, the client gets no data, but does get the
+    replyinfo so that it knows that the server does not support that
+    particular aspect.
+
+    Only one info_type is allowed for each requestinfo.  If the client
+    requests many pieces of information (say image sets available, spell
+    listings, etc), it should send multiple requestinfos.
+
+    [options] is specific to the info_type - it could be a range of values, or
+    empty.
+
+    Requestinfo requests will not change any data on the server - the setup
+    command should be used for that.  The requestinfo just requests data.
+    Note that since the requests can be made before a player logs in, the
+    requestinfo command will not generally support getting information related
+    to the player object.
+
+    The following info_types are supported:
+
+    image_info:
+	'image_info' (no options):
+
+	Request basic image information the server has.  The data is sent in
+	text format - the replyinfo is newline terminated.  Since the packet
+	length is sent in the header, that is used to figure out the length of
+	returned data.
+
+	Line 1: The last image number the server has.  Note that there is
+	no image 0, so this also amounts to the number of images
+	if you start counting from one.
+
+	Line 2: checksum of all the image name information.  This can
+	basically be used to determine if the number to name mapping is
+	the same, eg, if on server 1 the total is 123456, and the player
+	goes to server 2 and the total is the same, we can say with a high
+	degree of confidence that the name to number mappings are the name.
+	If instead the numbers differ, we know we can't rely on using the
+	same mappings.
+
+	Line 3+:The image set information the client has.  The format
+	is the same as the format in the image_info file, sans comments.
+	The server will ignore any parameters the client sends.
+
+	An examply response:
+
+	replyinfo image_info
+	3512
+	1169234
+	0:base:standard:0:32x32:none:The standard image set.
+	1:clsc:classic:0:32x32:none:Classic and new styling.
+
+
+    image_sums <start> <stop>
+
+	Request the image number to name (and checksum) values - in this way,
+	the client can build all images before play starts and also request
+	any missing images.  The returned data is
+
+	image_sums <start> <stop> <imagenum><checksum><namelength><name>
+
+	There is an initial space after the stop value, but no spaces after
+	that point.  The <start> and <stop> values are ascii text (same
+	format as it is sent to the server in).  The start and stop
+	values are inclusive - thus, if the start is 0 and the stop
+	is 100, 101 checksums will be set.
+
+	imagenum is 16 bit binary data.
+	checksum is 32 bit binary data.  It contains the checksum for
+	the image in the current selected set, and will use whatever
+	fallback logic the imagesets specify.
+	facenum is 8 bit binary data.
+	namelength is 8 bit binary data.  It is the length of the
+	name field below, including the null terminator.
+	name is chraracter data.  It is null terminated to make processing
+	easier - in this way, the client doesn't need to copy the data
+	to make it null terminated.
+
+	Note that due to possible OS system constraints on the maximum single
+	write supported to a socket, the complete set can not be requested at
+	once - instead, the images information should be requested in blocks
+	of less than 1000.  The server will not process a block larger than
+	1000 at a time.  Smaller blocks may be desired if the client wants to
+	try to reduce the potential lag caused.
+
+	Multiple requests for all the information can be sent at once, as the
+	server will buffer the response data, but constraints prevent the
+	server from sending the entire data back in one replyinfo (one being
+	that the data would be beyond 65535 bytes, so the length information
+	in the packet would not be accurate.)
+
+	If the client sends invalid data (stop is less than start, missing
+	stop paremeter, stop is beyond the number of images, or asking for
+	more than 1000 at a time), the reply will just be an empty list.
+
+	Note that the server will track that it has sent the face
+	information for the requested images, and thus will not send
+	it again (unless requested via requestinfo).  Thus, this
+	request should always do the right thing with the
+	returned information.
+
+	
+
 	
 
 ------------------------------------------------------------------------------
@@ -1026,7 +1159,8 @@ of the data.)  But times after that, performance is greatly improved.
 Changes:
 
 This area documents changes in the protocol version and what happened between
-them:
+them.  Note that this is not a complete list, as the setup command
+is used to control many cases.:
 
 CS version 1021 -> 1022: Client supports sending of verbal image type
 questions.
@@ -1042,6 +1176,9 @@ values in the stats command.
 
 SC version 1025 -> 1026: Add face1 command that includes the image
 checksum.
+
+SC version 1026 -> 1027: Add requestinfo/replyinfo commands - client
+can check this to know if it should expect a replyinfo to its requestinfo.
 
 ------------------------------------------------------------------------------
 Todo:

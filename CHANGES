@@ -17,6 +17,29 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for 1.1.0:
 
+Update to improve image caching and faceset support in the client.
+    The main change is adding the 'requestinfo image_info' and
+    'requestinfo image_sums' commands.
+common/image.c: Checksum the bmaps file when we load it - we send this as
+    part of the image_info data.
+doc/Developers/protocol: Document the requestinfo data.
+include/global.h: Add extern for bmaps_checksum, and the define for
+    ROTATE_RIGHT which is used for checksumming.
+include/newserver.h: Update SC version to 1027 so that clients can
+    know if they can issue requestinfo commands.
+include/sockproto.h: rebuilt
+lib/adm/collect_images.pl: Add support for it to make a crossfire-images
+    distribution that the client can use to bootstrap its image set.
+socket/image.c: Change SendFaceCmd to take a NewSocket parameter instead
+    of a player parameter - in this way, it can be used before the
+    AddMe command - this allows the client to download images before
+    issuing that command.  Add send_image_info and send_image_sums
+    function which send the requestinfo data to the client.
+socket/loop.c: Move the askface command from the player commands to the
+    newsocket commands.  Add RequestInfo functino that determines the
+    type of request and calls the specific function to deal with it.
+MSW 2002-03-25
+
 Updates for 1.1.0 release - pretty much all minor bug fixes, like
 compiler warning messages, invalid ANSI C constructs, missing files to
 include in the distribution.

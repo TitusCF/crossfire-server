@@ -131,7 +131,7 @@ typedef struct Socket_Info {
 extern Socket_Info socket_info;
 
 #define VERSION_CS 1023    /* version >= 1023 understand setup cmd */
-#define VERSION_SC 1026
+#define VERSION_SC 1027
 #define VERSION_INFO "Crossfire Server"
 
 

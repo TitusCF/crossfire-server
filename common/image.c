@@ -6,7 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2000 Mark Wedel
+    Copyright (C) 2002 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -23,20 +23,26 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The maintainer of this code can be reached at mwedel@scruz.net
+    The maintainer of this code can be reached at crossfire-devel@real-time.com
 */
-
 
 
 #include <global.h>
 #include <stdio.h>
 
-/* bmappair and xbm are used when looking for the image id numbe
+New_Face *new_faces;
+
+/* bmappair and xbm are used when looking for the image id numbers
  * of a face by name.  xbm is sorted alphabetically so that bsearch
  * can be used to quickly find the entry for a name.  the number is
  * then an index into the new_faces array.
+ * This data is redundant with new_face information - the difference
+ * is that this data gets sorted, and that doesn't necessarily happen
+ * with the new_face data - when accessing new_face[some number], 
+ * that some number corresponds to the face at that number - for
+ * xbm, it may not.  At current time, these do in fact match because
+ * the bmaps file is created in a sorted order.
  */
-New_Face *new_faces;
 
 struct bmappair {
     char *name;
@@ -190,6 +196,7 @@ int ReadBmapNames () {
     FILE *fp;
     int value, nrofbmaps = 0, i;
 
+    bmaps_checksum=0;
     sprintf (buf,"%s/bmaps", settings.datadir);
     LOG(llevDebug,"Reading bmaps from %s...",buf);
     if ((fp=fopen(buf,"r"))==NULL) {
@@ -218,6 +225,28 @@ int ReadBmapNames () {
 	}
 	value = atoi (p);
 	xbm[nroffiles].name = strdup_local(q);
+
+	/* We need to calculate the checksum of the bmaps file
+	 * name->number mapping to send to the client.  This does not
+	 * need to match what sum or other utility may come up with -
+	 * as long as we get the same results on the same real file
+	 * data, it does the job as it lets the client know if
+	 * the file has the same data or not.
+	 */
+	ROTATE_RIGHT(bmaps_checksum);
+	bmaps_checksum += value & 0xff;
+	bmaps_checksum &= 0xffffffff;
+
+	ROTATE_RIGHT(bmaps_checksum);
+	bmaps_checksum += (value >> 8) & 0xff;
+	bmaps_checksum &= 0xffffffff;
+	for (i=0; i<strlen(q); i++) {
+	    ROTATE_RIGHT(bmaps_checksum);
+	    bmaps_checksum += q[i];
+	    bmaps_checksum &= 0xffffffff;
+	}
+	
+
 	xbm[nroffiles].number = value;
 	nroffiles++;
 	if(value > nrofpixmaps)

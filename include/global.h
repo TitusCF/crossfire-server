@@ -6,7 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2000 Mark Wedel
+    Copyright (C) 2002 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -23,7 +23,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to mwedel@scruz.net
+    The author can be reached via e-mail to crossfire-devel@real-time.com
 */
 
 #ifndef GLOBAL_H
@@ -188,7 +188,10 @@ EXTERN archetype *ring_arch,*amulet_arch,*staff_arch,*crown_arch;
 EXTERN char *undead_name;	/* Used in hit_player() in main.c */
 
 EXTERN Animations *animations;
-EXTERN int num_animations,animations_allocated;
+EXTERN int num_animations,animations_allocated, bmaps_checksum;
+
+/* Rotate right from bsd sum. This is used in various places for checksumming */
+#define ROTATE_RIGHT(c) if ((c) & 01) (c) = ((c) >>1) + 0x80000000; else (c) >>= 1;
 
 
 #define SET_ANIMATION(ob,newanim) ob->face=&new_faces[animations[ob->animation_id].faces[newanim]]

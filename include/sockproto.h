@@ -3,8 +3,10 @@ int is_valid_faceset(int fsn);
 void free_socket_images(void);
 void read_client_images(void);
 void SetFaceMode(char *buf, int len, NewSocket *ns);
-void SendFaceCmd(char *buff, int len, player *pl);
+void SendFaceCmd(char *buff, int len, NewSocket *ns);
 void esrv_send_face(NewSocket *ns, short face_num, int nocache);
+void send_image_info(NewSocket *ns, char *params);
+void send_image_sums(NewSocket *ns, char *params);
 /* info.c */
 void flush_output_element(object *pl, Output_Buf *outputs);
 void check_output_buffers(object *pl, char *buf);
@@ -43,6 +45,7 @@ void look_at(object *op, int dx, int dy);
 void LookAt(char *buf, int len, player *pl);
 void esrv_move_object(object *pl, tag_t to, tag_t tag, long nrof);
 /* loop.c */
+void RequestInfo(char *buf, int len, NewSocket *ns);
 void Handle_Oldsocket(NewSocket *ns);
 void HandleClient(NewSocket *ns, player *pl);
 void watchdog(void);

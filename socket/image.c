@@ -149,9 +149,6 @@ static void check_faceset_fallback(int faceset, int togo)
  * to do such.
  */
 
-/* Rotate right from bsd sum. */
-#define ROTATE_RIGHT(c) if ((c) & 01) (c) = ((c) >>1) + 0x80000000; else (c) >>= 1;
-
 
 #define MAX_IMAGE_SIZE 10000
 void read_client_images()
@@ -284,13 +281,13 @@ void SetFaceMode(char *buf, int len, NewSocket *ns)
  * caching images.
  */
 
-void SendFaceCmd(char *buff, int len, player *pl)
+void SendFaceCmd(char *buff, int len, NewSocket *ns)
 {
     long tmpnum = atoi(buff);
     short facenum=tmpnum & 0xffff;
 
     if(facenum!=0)
-	esrv_send_face(&pl->socket, facenum,1);
+	esrv_send_face(ns, facenum,1);
 }
 
 /*
@@ -354,5 +351,79 @@ void esrv_send_face(NewSocket *ns,short face_num, int nocache)
 	Send_With_Handling(ns, &sl);
     }
     ns->faces_sent[face_num] = 1;
+    free(sl.buf);
+}
+
+/* send_image_info: Sends the number of images, checksum of the face file,
+ * and the image_info file information.  See the doc/Developers/protocol
+ * if you want further detail.
+ */
+
+void send_image_info(NewSocket *ns, char *params)
+{
+    SockList sl;
+    int i;
+
+    sl.buf = malloc(MAXSOCKBUF);
+
+    sprintf(sl.buf,"replyinfo image_info\n%d\n%d\n", nrofpixmaps-1, bmaps_checksum);
+    for (i=0; i<MAX_FACE_SETS; i++) {
+	if (facesets[i].prefix) {
+	    sprintf(sl.buf + strlen(sl.buf), "%d:%s:%s:%d:%s:%s:%s",
+		    i,  facesets[i].prefix, facesets[i].fullname, facesets[i].fallback,
+		    facesets[i].size, facesets[i].extension, facesets[i].comment);
+	}
+    }
+    sl.len = strlen(sl.buf);
+    Send_With_Handling(ns, &sl);
+    free(sl.buf);
+}
+
+void send_image_sums(NewSocket *ns, char *params)
+{
+    int start, stop, qq,i;
+    char *cp, buf[MAX_BUF];
+    SockList sl;
+
+    sl.buf = malloc(MAXSOCKBUF);
+
+    start = atoi(params);
+    for (cp = params; *cp != '\0'; cp++)
+	if (*cp == ' ') break;
+
+    stop = atoi(cp);
+    if (stop < start || *cp == '\0' || (stop-start)>1000 || stop >= nrofpixmaps) {
+	sprintf(buf,"replyinfo image_sums %d %d", start, stop);
+	cs_write_string(ns, buf, strlen(buf));
+	return;
+    }
+    sprintf(sl.buf,"replyinfo image_sums %d %d ", start, stop);
+
+    sl.len = strlen(sl.buf);
+
+    for (i=start; i<=stop; i++) {
+	SockList_AddShort(&sl, i);
+	ns->faces_sent[i] = 1;
+
+	qq = get_face_fallback(ns->faceset, i);
+	SockList_AddInt(&sl, facesets[qq].faces[i].checksum);
+	SockList_AddChar(&sl, qq);
+
+	qq = strlen(new_faces[i].name);
+	SockList_AddChar(&sl, qq + 1);
+	strcpy(sl.buf + sl.len, new_faces[i].name);
+	sl.len += qq;
+	SockList_AddChar(&sl, 0);
+    }
+    /* It would make more sense to catch this pre-emptively in the code above.
+     * however, if this really happens, we probably just want to cut down the
+     * size to less than 1000, since that is what we claim the protocol would
+     * support.
+     */
+    if (sl.len > MAXSOCKBUF) {
+	LOG(llevError,"send_image_send: buffer overrun, %s > %s\n", sl.len, MAXSOCKBUF);
+	abort();
+    }
+    Send_With_Handling(ns, &sl);
     free(sl.buf);
 }

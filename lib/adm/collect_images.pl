@@ -5,11 +5,31 @@
 # collects all the images at once, whether or not they have
 # been changed or not.
 
-# Currently, there are no command line options for this script.
+# This script collects all the images.  If given a -archive option, it
+# does some additional work - checksumming the images, making a bmaps.client
+# file, and then tarring that data up.  This data can then be used on the
+# client as a fast way to 'bootstrap' the clients images.
 
 use FileHandle;
 
 die("No arch directory - will not rebuild $mode image file") if (! -e "arch");
+
+$archive = 0;
+$TMPDIR="/tmp";
+
+# What we will call the collection of images.
+$ARCHNAME="crossfire-images";
+$DESTDIR="$TMPDIR/$ARCHNAME";
+
+# Maximum expected file 
+$MAXFILESIZE=100000;
+
+if ($ARGV[0] eq "-archive") {
+	$archive =1;
+	print "Will generate appropriate files for image archive\n";
+	die("$DESTDIR already exists - remove if you really want to remake the images") if (-d $DESTDIR);
+	die("$0: unable to mkdir $DESTDIR: $1\n") if (!mkdir($DESTDIR, 0755));
+}
 
 open(IMAGEINFO,"image_info") || die("Can't open image_info file: $!\n");
 while (<IMAGEINFO>) {
@@ -66,8 +86,29 @@ while(<BMAPS>) {
 	if (open(FILE,"$filename")) {
 	    print $fh "IMAGE $num $length $file.$file1\n";
 	    print "Error reading file $filename" if (!read(FILE, $buf, $length));
+	    $position = tell $fh;
 	    print $fh $buf;
 	    close(FILE);
+
+	    if ($archive) {
+		# Now figure out the checksum
+		# Same as what is used for the client/server - code basically
+		# taken write form that.
+		$sum = 0;
+		for ($i=0; $i<$length; $i++) {
+		    if ($sum & 01) {
+			$sum = ($sum >> 1) | 0x80000000;
+		    } else {
+			$sum >>= 1;
+		    }
+		    $sum += ord(substr $buf, $i, 1);
+		    $sum &= 0xffffffff;
+		}
+		# Do some name translation to figure out our output file name.
+		@comps = split /\//, $file;
+		$destfile = $comps[$#comps];
+		push @csums, "$destfile.$file1 $sum crossfire.$extension[$count]\@$position:$length\n";
+	    } # if archive
 	}
 	elsif ($count==0) {
 	    # set 0 should have all the sets
@@ -80,3 +121,16 @@ for ($count=0; $count<=$#extension; $count++) {
     close($ESRV[$count]);
 }
 close(BMAPS);
+
+if ($archive) {
+    open(OUT,">$DESTDIR/bmaps.client") || die("Can not open $DESTDIR/bmaps.paths\n");
+    print OUT sort @csums;
+    close(OUT);
+
+    for ($count=0; $count<=$#extension; $count++) {
+	system("cp crossfire.$count $DESTDIR/crossfire.$extension[$count]");
+    }
+    system("cd $TMPDIR; tar cf $ARCHNAME.tar $ARCHNAME");
+    system("mv $TMPDIR/$ARCHNAME.tar ../");
+    system("rm -rf $TMPDIR/$ARCHNAME");
+}

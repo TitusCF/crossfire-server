@@ -7,7 +7,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2001 Mark Wedel
+    Copyright (C) 2002 Mark Wedel & The Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -24,7 +24,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to mwedel@scruz.net
+    The author can be reached via e-mail to crossfire-devel@real-time.com
 */
 
 /* socket.c mainly deals with initialization and higher level socket
@@ -100,21 +100,54 @@ static struct PlCmdMapping plcommands[] = {
     { "command",	PlayerCmd},
     { "ncom",		(func_uint8_int_pl)NewPlayerCmd},
     { "lookat",		LookAt},
-    { "askface",	SendFaceCmd},	/* Added: phil */
     { "mapredraw",	MapRedrawCmd},	/* Added: phil */
     { "lock",		(func_uint8_int_pl)LockItem},
     { "mark",		(func_uint8_int_pl)MarkItem},
     { NULL, NULL}	/* terminator */
 };
+
 static struct NsCmdMapping nscommands[] = {
-    { "version",	VersionCmd },
     { "addme",		AddMeCmd },
+    { "askface",	SendFaceCmd},	/* Added: phil */
+    { "requestinfo",	RequestInfo},
     { "setfacemode",	SetFaceMode},
     { "setsound",	SetSound},
     { "setup",		SetUp},
+    { "version",	VersionCmd },
     { NULL, NULL}	/* terminator */
 };
 
+/* RequestInfo is sort of a meta command - there is some specific
+ * request of information, but we call other functions to provide
+ * that information.
+ */
+void RequestInfo(char *buf, int len, NewSocket *ns)
+{
+    char    *params=NULL, *cp;
+    /* No match */
+    char bigbuf[MAX_BUF];
+    int slen;
+
+    /* Set up replyinfo before we modify any of the buffers - this is used
+     * if we don't find a match.
+     */
+    strcpy(bigbuf,"replyinfo ");
+    slen = strlen(bigbuf);
+    safe_strcat(bigbuf, buf, &slen, MAX_BUF);
+
+    /* find the first space, make it null, and update the
+     * params pointer.
+     */
+    for (cp = buf; *cp != '\0'; cp++)
+	if (*cp==' ') {
+	    *cp = '\0';
+	    params = cp + 1;
+	    break;
+	}
+    if (!strcmp(buf, "image_info")) send_image_info(ns, params);
+    else if (!strcmp(buf,"image_sums")) send_image_sums(ns, params);
+    else Write_String_To_Socket(ns, bigbuf, len);
+}
 
 void Handle_Oldsocket(NewSocket *ns)
 {
