@@ -77,74 +77,28 @@ float exp_prot_mult[NROFATTACKS+2] = {
 
 };
 
-float exp_imm_mult[NROFATTACKS+2] = {
-	0.5,				/* AT_PHYSICAL	*/
-	1.0,				/* AT_MAGIC	*/
-	0.2,				/* AT_FIRE	*/
-	0.2,				/* AT_ELECTRICITY */
-	0.2,				/* AT_COLD	*/
-	0.2,				/* AT_WATER	*/
-	0.2,				/* AT_ACID	*/
-	0.2,				/* AT_DRAIN	*/
-	0.2,				/* AT_WEAPONMAGIC */
-	0.2,				/* AT_GHOSTHIT	*/
-	0.2,				/* AT_POISON	*/
-	0.2,				/* AT_DISEASE	*/
-	0.2,				/* AT_PARALYZE	*/
-	0.2,				/* AT_TURN_UNDEAD */
-	0.2,				/* AT_FEAR	*/
-	0.0,				/* AT_CANCELLATION */
-	0.0,				/* AT_DEPLETE */
-	0.0,				/* AT_DEATH */
-	0.0,				/* AT_CHAOS */
-	0.0				/* AT_COUNTERSPELL */
-
-};
-
-float exp_vuln_mult[NROFATTACKS+2] = {
-	0.8,				/* AT_PHYSICAL	*/
-	0.8,				/* AT_MAGIC	*/
-	0.9,				/* AT_FIRE	*/
-	0.9,				/* AT_ELECTRICITY */
-	0.9,				/* AT_COLD	*/
-	0.99,				/* AT_WATER	*/
-	0.9,				/* AT_ACID	*/
-	0.9,				/* AT_DRAIN	*/
-	0.9,				/* AT_WEAPONMAGIC */
-	0.9,				/* AT_GHOSTHIT	*/
-	0.9,				/* AT_POISON	*/
-	0.9,				/* AT_DISEASE	*/
-	0.9,				/* AT_PARALYZE	*/
-	0.9,				/* AT_TURN_UNDEAD */
-	0.9,				/* AT_FEAR	*/
-	0.0,				/* AT_CANCELLATION */
-	0.0,				/* AT_DEPLETE */
-	0.0,				/* AT_DEATH */
-	0.0,				/* AT_CHAOS */
-	0.0				/* AT_COUNTERSPELL */
-
-};
-
 /*
- * nex_exp() is an alternative way to calculate experience based
+ * new_exp() is an alternative way to calculate experience based
  * on the ability of a monster.
  * It's far from perfect, and doesn't consider everything which
  * can be considered, thus it's only used in debugging.
  */
 	
 int new_exp(object *ob) {
-  double	att_mult, prot_mult, imm_mult, vuln_mult, spec_mult;
+  double	att_mult, prot_mult, spec_mult;
   double	exp;
   int		i;
   long		mask = 1;
 
-  att_mult = prot_mult = imm_mult = vuln_mult = spec_mult = 1.0;
-  for(i=0;i<NROFATTACKS+2;i++) {
+  att_mult = prot_mult =spec_mult = 1.0;
+  for(i=0;i<NROFATTACKS;i++) {
+    mask = 1<<i;
     att_mult += (exp_att_mult[i] * ((ob->attacktype&mask) != FALSE));
-    prot_mult += (exp_prot_mult[i] * ((ob->protected&mask) != FALSE));
-    imm_mult += (exp_imm_mult[i] * ((ob->immune&mask) != FALSE));
-    vuln_mult *= (ob->vulnerable&mask) ? exp_vuln_mult[i] : 1.0;
-    mask <<= 1;
+    /* We multiply & then divide to prevent roundoffs on the floats.
+     * the doubling is to take into account the table and resistances
+     * are lower than they once were.
+     */
+    prot_mult += (exp_prot_mult[i] * 200*ob->resist[i]) / 100.0;
   }
   spec_mult += 	(0.3*(QUERY_FLAG(ob,FLAG_SEE_INVISIBLE)!= FALSE)) +
   		(0.5*(QUERY_FLAG(ob,FLAG_SPLITTING)!= FALSE))+
@@ -161,7 +115,7 @@ int new_exp(object *ob) {
   exp *= (QUERY_FLAG(ob,FLAG_CAST_SPELL) && has_ability(ob)) 
   	 ? (40+(ob->stats.maxsp>80?80:ob->stats.maxsp))/40 : 1;
   exp *= (80.0/(70.0+ob->stats.wc)) * (80.0/(70.0+ob->stats.ac)) * (50.0+ob->stats.dam)/50.0;
-  exp *= att_mult * prot_mult * imm_mult * vuln_mult * spec_mult;
+  exp *= att_mult * prot_mult * spec_mult;
   exp *= 2.0/(2.0-((FABS(ob->speed)<0.95)?FABS(ob->speed):0.95));
   exp *= (20.0+ob->stats.Con)/20.0;
   if (QUERY_FLAG(ob, FLAG_STAND_STILL))

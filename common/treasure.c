@@ -469,16 +469,13 @@ void set_abs_magic(object *op, int magic) {
   if (op->arch) {
     if (op->type == ARMOUR)
       ARMOUR_SPEED(op)=(ARMOUR_SPEED(&op->arch->clone)*(100+magic*10))/100;
-    if (op->armour)
-      op->armour=op->arch->clone.armour + (op->arch->clone.armour * magic)/20;
+
     if (magic < 0 && !(RANDOM()%3)) /* You can't just check the weight always */
       magic = (-magic);
     op->weight = (op->arch->clone.weight*(100-magic*10))/100;
   } else {
     if(op->type==ARMOUR)
       ARMOUR_SPEED(op)=(ARMOUR_SPEED(op)*(100+magic*10))/100;
-    if(op->armour)
-      op->armour+=(op->armour*magic)/20;
     if (magic < 0 && !(RANDOM()%3)) /* You can't just check the weight always */
       magic = (-magic);
     op->weight=(op->weight*(100-magic*10))/100;
@@ -502,145 +499,122 @@ void set_magic(int difficulty,object *op, int max_magic) {
 
 /*
  * Randomly adds one magical ability to the given object.
+ * Modified for Partial Resistance in many ways:
+ * 1) Since rings can have multiple bonuses, if the same bonus
+ *  is rolled again, increase it - the bonuses now stack with
+ *  other bonuses previously rolled and ones the item might natively have.
+ * 2) Add code to deal with new PR method.
  */
 
 void set_ring_bonus(object *op,int bonus) {
 
-  int r=RANDOM()%(bonus>0?25:11);
+    int r=RANDOM()%(bonus>0?25:11);
 
-  if(op->type==AMULET) {
-    if(!(RANDOM()%21))
-	r=20+RANDOM()%2;
-    else {
-	if(RANDOM()&2)
-	    r=10;
-	else
-	    r=11+RANDOM()%9;
+    if(op->type==AMULET) {
+	if(!(RANDOM()%21))
+	    r=20+RANDOM()%2;
+	else {
+	    if(RANDOM()&2)
+		r=10;
+	    else
+		r=11+RANDOM()%9;
+	}
     }
-  }
 
-  switch(r) {
-  case 0:
-    if(op->stats.Str)
-      return;
-    op->stats.Str=bonus;
-    break;
-  case 1:
-    if(op->stats.Int)
-      return;
-    op->stats.Int=bonus;
-    break;
-  case 2:
-    if(op->stats.Con)
-      return;
-    op->stats.Con=bonus;
-    break;
-  case 3:
-    if(op->stats.Dex)
-      return;
-    op->stats.Dex=bonus;
-    break;
-  case 4:
-    if(op->stats.Cha)
-      return;
-    op->stats.Cha=bonus;
-    break;
-  case 5:
-    if(op->stats.Wis)
-      return;
-    op->stats.Wis=bonus;
-    break;
-  case 6:
-    if(op->stats.Pow)
-      return;
-    op->stats.Pow=bonus;
-    break;
-  case 7:
-    if(op->stats.dam)
-      return;
-    op->stats.dam=bonus;
-    break;
-  case 8:
-    if(op->stats.wc)
-      return;
-    op->stats.wc=bonus;
-    break;
-  case 9:
-    if(op->stats.food)
-      return;
-    op->stats.food=bonus; /* hunger/sustenance */
-    break;
-  case 10:
-    if(op->stats.ac)
-      return;
-    op->stats.ac=bonus;
-    break;
-  case 11:
-    if(bonus==2) { /* Maybe make an artifact of this? */
-      op->immune|=AT_PARALYZE;
-      op->immune|=AT_SLOW;
-      op->stats.exp+=1;
-      op->value*=5;
-    } else
-      op->protected|=AT_PARALYZE;
-    break;
-  case 12:
-    op->protected|=AT_MAGIC;
-    op->value*=2;
-    break;
-  case 13:
-    op->protected|=AT_ELECTRICITY;
-    break;
-  case 14:
-    op->protected|=AT_FIRE;
-    op->vulnerable|=AT_COLD;
-    op->value=(op->value*3)/2;
-    break;
-  case 15:
-    op->protected|=AT_DRAIN;
-    break;
-  case 16:
-    op->protected|=AT_SLOW;
-    break;
-  case 17:
-    op->protected|=AT_COLD;
-    op->vulnerable|=AT_FIRE;
-    break;
-  case 18:
-    op->protected|=AT_POISON;
-    break;
-  case 19:
-    op->protected|=AT_FEAR;
-    break;
-  case 20:
-    if(op->type==AMULET) {
-      SET_FLAG(op,FLAG_REFL_SPELL);
-      op->value*=11;
-    } else {
-      op->stats.hp=1; /* regenerate hit points */
-      op->value*=4;
+    switch(r) {
+	/* Redone by MSW 2000-11-26 to have much less code.  Also,
+	 * bonuses and penalties will stack and add to existing values.
+	 * of the item.
+	 */
+	case 0:
+	case 1:
+	case 2:
+	case 3:
+	case 4:
+	case 5:
+	case 6:
+	    set_attr_value(&op->stats, r, bonus + get_attr_value(&op->stats,r));
+	    break;
+
+	case 7:
+	    op->stats.dam+=bonus;
+	    break;
+
+	case 8:
+	    op->stats.wc+=bonus;
+	    break;
+
+	case 9:
+	    op->stats.food+=bonus; /* hunger/sustenance */
+	    break;
+
+	case 10:
+	    op->stats.ac+=bonus;
+	    break;
+
+	/* Item that gives protections/vulnerabilities */
+	case 11:
+	case 12:
+	case 13:
+	case 14:
+	case 15:
+	case 16:
+	case 17:
+	case 18:
+	case 19: 
+	    {
+	    int b=5+FABS(bonus),val,resist=RANDOM() % num_resist_table;
+
+	    /* Roughly generate a bonus between 100 and 35 (depending on the bonus) */
+	    val = 10 + RANDOM() % b + RANDOM() % b + RANDOM() % b + RANDOM() % b;
+
+	    /* Cursed items need to have higher negative values to equal out with
+	     * positive values for how protections work out.  Put another
+	     * little random element in since that they don't always end up with
+	     * even values.
+	     */
+	    if (bonus<0) val = 2*-val - RANDOM() % b;
+	    if (val>35) val=35;	/* Upper limit */
+	    b=0;
+	    while (op->resist[resist_table[resist]]!=0 && b<4) {
+		resist=RANDOM() % num_resist_table;
+	    }
+	    if (b==4) return;	/* Not able to find a free resistance */
+	    op->resist[resist_table[resist]] = val;
+	    /* We should probably do something more clever here to adjust value
+	     * based on how good a resistance we gave.
+	     */
+	    break;
+	}
+	case 20:
+	    if(op->type==AMULET) {
+		SET_FLAG(op,FLAG_REFL_SPELL);
+		op->value*=11;
+	    } else {
+		op->stats.hp=1; /* regenerate hit points */
+		op->value*=4;
+	    }
+	    break;
+
+	case 21:
+	    if(op->type==AMULET) {
+		SET_FLAG(op,FLAG_REFL_MISSILE);
+		op->value*=9;
+	    } else {
+		op->stats.sp=1; /* regenerate spell points */
+		op->value*=3;
+	    }
+	break;
+
+	case 22:
+	    op->stats.exp+=bonus; /* Speed! */
+	    op->value=(op->value*2)/3;
+	    break;
     }
-    break;
-  case 21:
-    if(op->type==AMULET) {
-      SET_FLAG(op,FLAG_REFL_MISSILE);
-      op->value*=9;
-    } else {
-      op->stats.sp=1; /* regenerate spell points */
-      op->value*=3;
-    }
-    break;
-  case 22:
-    if(op->stats.exp)
-      return;
-    op->stats.exp=bonus; /* Speed! */
-    op->value=(op->value*2)/3;
-    break;
-  }
-  if(bonus>0)
-    op->value*=2*bonus;
-  else
-    op->value= -(op->value*2*bonus)/3;
+    if(bonus>0)
+	op->value*=2*bonus;
+    else
+	op->value= -(op->value*2*bonus)/3;
 }
 
 /*
@@ -870,22 +844,7 @@ void fix_generated_item(object *op,object *creator,int difficulty, int max_magic
     if (RANDOM()%2)
       SET_FLAG(op, FLAG_CURSED);
   }
-#if 0
-  if (op->arch == NULL)
-    LOG(llevDebug, "fix_generated_item(%s) had no arch.\n", op->name);
-  else
-    op->value = op->arch->clone.value / 2;
-#endif
-  /* Often times cursed rings show up with the only 'bad' effect being that
-   * they are cursed - they are still providing normal protections and
-   * immunities.  This makes cursed items really bad - make it vulnerable
-   * to whatever it protected/immune, and clear the protections/immunities.
-   */
-  if (QUERY_FLAG(op, FLAG_CURSED)) {
-    op->vulnerable |= op->protected | op->immune;
-    op->immune=0;
-    op->protected=0;
-  }
+
 }
 
 /*
@@ -1156,10 +1115,7 @@ void add_abilities(object *op, object *change) {
   if ((QUERY_FLAG(change,FLAG_CURSED) || QUERY_FLAG(change,FLAG_DAMNED))
 	 && op->magic > 0)
     set_abs_magic(op, -op->magic);
-  op->immune |= change->immune;
-  op->protected |= change->protected;
   op->attacktype |= change->attacktype;
-  op->vulnerable |= change->vulnerable;
   op->path_attuned |= change->path_attuned;
   op->path_repelled |= change->path_repelled;
   op->path_denied |= change->path_denied;
@@ -1217,11 +1173,21 @@ void add_abilities(object *op, object *change) {
     op->level = -(change->level);
   else
     op->level += change->level;
-  if (change->armour) {
-    if (change->armour < 0)
-      op->armour = (-change->armour);
-    else
-      op->armour  = (signed char) (((int)op->armour * (int)change->armour)/10);
+
+  
+  for (i=0; i<NROFATTACKS; i++) {
+    if (change->resist[i]) {
+	if (change->resist[i] < 0)
+	    op->resist[i] = change->resist[i];
+	else if (change->resist[i] > 0) {
+	    if ((op->type==ARMOUR || op->type==HELMET || op->type==SHIELD) && i==ATNR_PHYSICAL) {
+		op->resist[i] = (op->resist[i] * change->resist[i])/10;
+	    }
+	    else {
+		op->resist[i] += change->resist[i];
+	    }
+	}
+    }
   }
   if (change->stats.dam) {
     if (change->stats.dam < 0)
@@ -1399,41 +1365,53 @@ void generate_artifact(object *op, int difficulty) {
  */
 
 void fix_flesh_item(object *item, object *donor) {
-  char tmpbuf[MAX_BUF];
+    char tmpbuf[MAX_BUF];
+    int i;
 
-  if(item->type==FLESH && donor) {
-      /* change the name */
-      sprintf(tmpbuf,"%s's %s",donor->name,item->name);
-      free_string(item->name);
-      item->name=add_string(tmpbuf);
-     /* weight is FLESH weight/100 * donor */
-      if((item->weight = (float) (item->weight/100.0) * donor->weight)==0)
+    if(item->type==FLESH && donor) {
+	/* change the name */
+	sprintf(tmpbuf,"%s's %s",donor->name,item->name);
+	free_string(item->name);
+	item->name=add_string(tmpbuf);
+	/* weight is FLESH weight/100 * donor */
+	if((item->weight = (float) (item->weight/100.0) * donor->weight)==0)
 		item->weight=1;
-     /* value is multiplied by level of donor */
-      item->value *= isqrt(donor->level*2);
-     /* food value */
-      item->stats.food += (donor->stats.hp/100) + donor->stats.Con;
-     /* flesh items inherit vuln, prot of donor */
-      item->vulnerable = donor->vulnerable;
-      item->protected = donor->protected;
-     /* if donor has some attacktypes, the flesh is poisonous */
-      if(donor->attacktype&AT_POISON)
-	item->type=POISON;
-      if(donor->attacktype&AT_ACID) item->stats.hp = -1*item->stats.food;
-      SET_FLAG(item,FLAG_NO_STEAL);
-  }
+
+	/* value is multiplied by level of donor */
+	item->value *= isqrt(donor->level*2);
+
+	/* food value */
+	item->stats.food += (donor->stats.hp/100) + donor->stats.Con;
+
+	/* flesh items inherit some abilities of donor, but not
+	 * full effect.
+	 */
+	for (i=0; i<NROFATTACKS; i++)
+	    item->resist[i] = donor->resist[i]/2;
+
+	/* if donor has some attacktypes, the flesh is poisonous */
+	if(donor->attacktype&AT_POISON)
+	    item->type=POISON;
+	if(donor->attacktype&AT_ACID) item->stats.hp = -1*item->stats.food;
+	SET_FLAG(item,FLAG_NO_STEAL);
+    }
 }
 
 /* special_potion() - so that old potion code is still done right. */
 
 int special_potion (object *op) {
 
-  if(op->attacktype) return 1;
-  if(op->immune || op->vulnerable || op->protected) return 1;
-  if(op->stats.Str || op->stats.Dex || op->stats.Con || op->stats.Pow
+    int i;
+
+    if(op->attacktype) return 1;
+
+    if(op->stats.Str || op->stats.Dex || op->stats.Con || op->stats.Pow
  	|| op->stats.Wis || op->stats.Int || op->stats.Cha ) return 1;
 
-  return 0;
+    for (i=0; i<NROFATTACKS; i++)
+	if (op->resist[i]) return 1;
+
+    return 0;
 }
 
 void free_treasurestruct(treasure *t)

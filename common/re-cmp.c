@@ -24,6 +24,7 @@
 #include <memory.h>
 #include <limits.h>
 #include <re-cmp.h>
+#include <ctype.h>
 
 /* Get prototype functions to prevent warnings. */
 #if defined (__sun__) && defined(StupidSunHeaders)

@@ -754,112 +754,108 @@ int cast_destruction(object *op, object *caster, int dam, int attacktype) {
 }
 
 int magic_wall(object *op,object *caster,int dir,int spell_type) {
-  object *tmp;
-  if(!dir) {
-    new_draw_info(NDI_UNIQUE, 0,op,"In what direction?");
-    return 0;
-  }
-  if(blocked(op->map,op->x+freearr_x[dir],op->y+freearr_y[dir])) {
-    new_draw_info(NDI_UNIQUE, 0,op,"Something is in the way.");
-    return 0;
-  }
-  switch(spell_type) {
-  case SP_EARTH_WALL:
-    tmp=get_archetype("earthwall");
-    tmp->immune=0,tmp->protected=0;
-    tmp->stats.hp = SP_PARAMETERS[spell_type].bdur +
+    object *tmp, *tmp2;  
+    int i,posblocked=0,negblocked=0;
+
+    if(!dir) {
+	new_draw_info(NDI_UNIQUE, 0,op,"In what direction?");
+	return 0;
+    }
+    if(blocked(op->map,op->x+freearr_x[dir],op->y+freearr_y[dir])) {
+	new_draw_info(NDI_UNIQUE, 0,op,"Something is in the way.");
+	return 0;
+    }
+    switch(spell_type) {
+	case SP_EARTH_WALL:
+	    tmp=get_archetype("earthwall");
+	    for (i=0; i<NROFATTACKS; i++)
+		tmp->resist[i]=0;
+	    tmp->stats.hp = SP_PARAMETERS[spell_type].bdur +
                   10* SP_level_strength_adjust(op,caster,spell_type);
-	/* More solid, since they can be torn down */
-    tmp->stats.maxhp = tmp->stats.hp;
-    break;
-  case SP_FIRE_WALL:
-    tmp=get_archetype("firebreath");
-    tmp->attacktype |= AT_MAGIC;
-    tmp->stats.hp=SP_PARAMETERS[spell_type].bdur
-              + 5*SP_level_strength_adjust(op,caster,spell_type);
-    tmp->stats.dam=SP_PARAMETERS[spell_type].bdam
+	    /* More solid, since they can be torn down */
+	    tmp->stats.maxhp = tmp->stats.hp;
+	    break;
+
+	case SP_FIRE_WALL:
+	    tmp=get_archetype("firebreath");
+	    tmp->attacktype |= AT_MAGIC;
+	    tmp->stats.hp=SP_PARAMETERS[spell_type].bdur
+		+ 5*SP_level_strength_adjust(op,caster,spell_type);
+	    tmp->stats.dam=SP_PARAMETERS[spell_type].bdam
                   +SP_level_dam_adjust(op,caster,spell_type);
-    tmp->stats.food=1;                        /* so it doesn't propagate */
-#if 0
-    SET_SLOW_MOVE(tmp);
-    SET_SLOW_PENALTY(tmp,2);
-#endif
-    SET_FLAG(tmp, FLAG_WALK_ON);
-    SET_FLAG(tmp, FLAG_FLY_ON);
-    set_owner(tmp,op);
-    break;
-  case SP_FROST_WALL:
-    tmp=get_archetype("icestorm");
-    tmp->attacktype |= AT_MAGIC;
-    tmp->stats.hp=SP_PARAMETERS[spell_type].bdur
+	    tmp->stats.food=1;          /* so it doesn't propagate */
+	    SET_FLAG(tmp, FLAG_WALK_ON);
+	    SET_FLAG(tmp, FLAG_FLY_ON);
+	    set_owner(tmp,op);
+	    break;
+
+	case SP_FROST_WALL:
+	    tmp=get_archetype("icestorm");
+	    tmp->attacktype |= AT_MAGIC;
+	    tmp->stats.hp=SP_PARAMETERS[spell_type].bdur
               + 5*SP_level_strength_adjust(op,caster,spell_type);
-    tmp->stats.dam=SP_PARAMETERS[spell_type].bdam
+	    tmp->stats.dam=SP_PARAMETERS[spell_type].bdam
                   +SP_level_dam_adjust(op,caster,spell_type);
 
-    tmp->stats.food=1;                        /* so it doesn't propagate */
-#if 0
-    SET_SLOW_MOVE(tmp);
-    SET_SLOW_PENALTY(tmp,3);
-#endif
-    SET_FLAG(tmp, FLAG_WALK_ON);
-    SET_FLAG(tmp, FLAG_FLY_ON);
-    set_owner(tmp,op);
-    break;
-  case SP_WALL_OF_THORNS:
-    tmp=get_archetype("thorns");
-    tmp->stats.hp=SP_PARAMETERS[spell_type].bdur
+	    tmp->stats.food=1;	    /* so it doesn't propagate */
+	    SET_FLAG(tmp, FLAG_WALK_ON);
+	    SET_FLAG(tmp, FLAG_FLY_ON);
+	    set_owner(tmp,op);
+	    break;
+
+	case SP_WALL_OF_THORNS:
+	    tmp=get_archetype("thorns");
+	    tmp->stats.hp=SP_PARAMETERS[spell_type].bdur
               + 3*SP_level_strength_adjust(op,caster,spell_type);
-    tmp->stats.dam=SP_PARAMETERS[spell_type].bdam
+	    tmp->stats.dam=SP_PARAMETERS[spell_type].bdam
                   +SP_level_dam_adjust(op,caster,spell_type);
-    SET_FLAG(tmp, FLAG_WALK_ON);
-    /* SET_FLAG(tmp, FLAG_FLY_ON); */
-    /* SET_FLAG(tmp, FLAG_BLOCKSVIEW); */ 
-    set_owner(tmp,op);
-    break;
-  case SP_CHAOS_POOL:
-    tmp=get_archetype("color_spray");
-    tmp->attacktype|=AT_MAGIC;
-    tmp->stats.hp=SP_PARAMETERS[spell_type].bdur
+	    SET_FLAG(tmp, FLAG_WALK_ON);
+	    set_owner(tmp,op);
+	    break;
+
+	case SP_CHAOS_POOL:
+	    tmp=get_archetype("color_spray");
+	    tmp->attacktype|=AT_MAGIC;
+	    tmp->stats.hp=SP_PARAMETERS[spell_type].bdur
               + 5*SP_level_strength_adjust(op,caster,spell_type);
-    tmp->stats.dam=SP_PARAMETERS[spell_type].bdam
+	    tmp->stats.dam=SP_PARAMETERS[spell_type].bdam
                   +SP_level_dam_adjust(op,caster,spell_type);
 
-    tmp->stats.food=1;  /* so the color spray object won't propagate */
-    SET_FLAG(tmp, FLAG_WALK_ON);
-    SET_FLAG(tmp, FLAG_FLY_ON);
-    set_owner(tmp,op);
-    break;
-  case SP_DARKNESS:
-    tmp=get_archetype("darkness");
-    tmp->stats.food = SP_PARAMETERS[SP_DARKNESS].bdur
+	    tmp->stats.food=1;  /* so the color spray object won't propagate */
+	    SET_FLAG(tmp, FLAG_WALK_ON);
+	    SET_FLAG(tmp, FLAG_FLY_ON);
+	    set_owner(tmp,op);
+	    break;
+
+	case SP_DARKNESS:
+	    tmp=get_archetype("darkness");
+	    tmp->stats.food = SP_PARAMETERS[SP_DARKNESS].bdur
                       + SP_level_strength_adjust (op, caster, SP_DARKNESS);
-    break; 
-  case SP_COUNTERWALL:
-    tmp=get_archetype("counterspell");
-    tmp->attacktype|=AT_MAGIC;
-    tmp->stats.hp=SP_PARAMETERS[spell_type].bdur
-              + 5*SP_level_strength_adjust(op,caster,spell_type);
-    tmp->stats.dam=SP_PARAMETERS[spell_type].bdam
-                  +SP_level_dam_adjust(op,caster,spell_type);
-    tmp->stats.food=1;
+	    break; 
 
-/*
-    tmp->level=op->level;
-*/
-    tmp->level=SK_level(op);
-    SET_FLAG(tmp, FLAG_WALK_ON);
-    SET_FLAG(tmp, FLAG_FLY_ON);
-    set_owner(tmp,op);
-    break;
-  default:
-    LOG(llevError,"Unimplemented magic_wall spell: %d\n",spell_type);
-    return 0;
-  }
-  tmp->x=op->x+freearr_x[dir],tmp->y=op->y+freearr_y[dir];
-  if ((tmp = insert_ob_in_map (tmp, op->map, op)) == NULL) {
-    new_draw_info(NDI_UNIQUE, 0,op,"Something destroys your wall");
-    return 0;
-  }
+	case SP_COUNTERWALL:
+	    tmp=get_archetype("counterspell");
+	    tmp->attacktype|=AT_MAGIC;
+	    tmp->stats.hp=SP_PARAMETERS[spell_type].bdur
+              + 5*SP_level_strength_adjust(op,caster,spell_type);
+	    tmp->stats.dam=SP_PARAMETERS[spell_type].bdam
+                  +SP_level_dam_adjust(op,caster,spell_type);
+	    tmp->stats.food=1;
+	    tmp->level=SK_level(op);
+	    SET_FLAG(tmp, FLAG_WALK_ON);
+	    SET_FLAG(tmp, FLAG_FLY_ON);
+	    set_owner(tmp,op);
+	    break;
+
+	default:
+	    LOG(llevError,"Unimplemented magic_wall spell: %d\n",spell_type);
+	    return 0;
+    }
+    tmp->x=op->x+freearr_x[dir],tmp->y=op->y+freearr_y[dir];
+    if ((tmp = insert_ob_in_map (tmp, op->map, op)) == NULL) {
+	new_draw_info(NDI_UNIQUE, 0,op,"Something destroys your wall");
+	return 0;
+    }
 
   /*  This code causes the wall to extend to a distance of 5 in
 		each direction, or until an obstruction is encountered. 
@@ -867,8 +863,7 @@ int magic_wall(object *op,object *caster,int dir,int spell_type) {
 		created wall can extend, it won't go extend through
 		blocked spaces.  */
 
-  {int i,posblocked=0,negblocked=0; object *tmp2;  
-  for(i=1;i<5;i++) {
+    for(i=1;i<5;i++) {
 	 int x,y,dir2;
 	 
 	 dir2 = (dir<4)?(dir+2):dir-2;
@@ -887,16 +882,16 @@ int magic_wall(object *op,object *caster,int dir,int spell_type) {
 		tmp2->x = x; tmp2->y = y;
 		insert_ob_in_map(tmp2,op->map,op);
 	 } else negblocked=1;
-  }
-  }
+    }
 
-  if(QUERY_FLAG(tmp, FLAG_BLOCKSVIEW))
-    update_all_los(op->map);
-  if(op->type==PLAYER)
-    draw(op);
-  else
-    SET_FLAG(op, FLAG_SCARED); /* We don't want them to walk through the wall! */
-  return 1;
+
+    if(QUERY_FLAG(tmp, FLAG_BLOCKSVIEW))
+	update_all_los(op->map);
+    if(op->type==PLAYER)
+	draw(op);
+    else
+	SET_FLAG(op, FLAG_SCARED); /* We don't want them to walk through the wall! */
+    return 1;
 }
 
 /* cast_light() - I wanted this to be able to blind opponents who stand
@@ -1193,21 +1188,23 @@ cast_change_attr(object *op,object *caster,int dir,int spell_type) {
     break;
   case SP_IRONWOOD_SKIN:
   case SP_ARMOUR: {
-   /* peterm, modified so that it uses level-depend functions */
+    /* With PR code, I wonder if this could get merged in with the other protection spells */
+    /* peterm, modified so that it uses level-depend functions */
     force->stats.ac=2+SP_level_dam_adjust(op,caster,spell_type);
     if((tmp->stats.ac-force->stats.ac)<-20) 
 	force->stats.ac=tmp->stats.ac+20;
 
-    force->armour = 5+4*SP_level_dam_adjust(op,caster,spell_type);
-    if (force->armour > 25)
-      force->armour = 25;
-    if(tmp->armour>70&& force->armour>(100-tmp->armour)/3)
-	force->armour=3;  /* diminishing returns at high armor. */
+    force->resist[ATNR_PHYSICAL] = 5+4*SP_level_dam_adjust(op,caster,spell_type);
+    if (force->resist[ATNR_PHYSICAL] > 25)
+	force->resist[ATNR_PHYSICAL]=25;
+    if(tmp->resist[ATNR_PHYSICAL]>70&& force->resist[ATNR_PHYSICAL]>(100-tmp->resist[ATNR_PHYSICAL])/3)
+	force->resist[ATNR_PHYSICAL]=3;  /* diminishing returns at high armor. */
     new_draw_info(NDI_UNIQUE, 0,tmp,"A force shimmers around you.");
-    break; }
+    break; 
+  }
   case SP_CONFUSION:
     force->attacktype |= (AT_CONFUSION|AT_PHYSICAL);
-    force->protected |= AT_CONFUSION;
+    force->resist[ATNR_CONFUSION] = 50;	/*??? It was here before PR */
     break;
   case SP_HEROISM:
     if (tmp->type != PLAYER)
@@ -1219,13 +1216,18 @@ cast_change_attr(object *op,object *caster,int dir,int spell_type) {
   case SP_HOLY_POSSESSION: {
 #ifdef MULTIPLE_GODS
     object *god = find_god(determine_god(op));
+    int i;
+
     if(god) {
-      force->attacktype|=god->attacktype;
-      if(god->slaying) force->slaying = add_string(god->slaying);
-      force->immune|=god->immune;
-      force->protected|=god->protected;
-      force->path_attuned|=god->path_attuned;
-      new_draw_info_format(NDI_UNIQUE, 0,tmp,
+	force->attacktype|=god->attacktype;
+	if(god->slaying) force->slaying = add_string(god->slaying);
+
+	/* Only give out good benefits, not bad */
+	for (i=0; i<NROFATTACKS; i++)
+	    if (god->resist[i]>0) force->resist[i] = god->resist[i];
+
+	force->path_attuned|=god->path_attuned;
+	new_draw_info_format(NDI_UNIQUE, 0,tmp,
 	   "You are possessed by the essence of %s!",god->name);
     } else 
         new_draw_info(NDI_UNIQUE, 0,op,"Your blessing seems empty.");
@@ -1257,9 +1259,16 @@ cast_change_attr(object *op,object *caster,int dir,int spell_type) {
 #ifdef MULTIPLE_GODS
     object *god = find_god(determine_god(op));
     if(god) {
-       force->protected|=god->protected;
-       force->path_attuned|=god->path_attuned;
-          new_draw_info_format(NDI_UNIQUE, 0,tmp,
+	int i;
+
+	/* Only give out good benefits, and put a max on it */
+	for (i=0; i<NROFATTACKS; i++)
+	    if (god->resist[i]>0) {
+		force->resist[i] = god->resist[i];
+		if (force->resist[i]>50) force->resist[i]=50;
+	    }
+	force->path_attuned|=god->path_attuned;
+	new_draw_info_format(NDI_UNIQUE, 0,tmp,
 		"You receive the blessing of %s.",god->name);
     } else 
         new_draw_info(NDI_UNIQUE, 0,op,"Your blessing seems empty.");
@@ -1272,78 +1281,101 @@ cast_change_attr(object *op,object *caster,int dir,int spell_type) {
     SET_FLAG(force,FLAG_SEE_IN_DARK);
     break;
   case SP_PROT_COLD:
-    force->protected|=AT_COLD;
+    force->resist[ATNR_COLD]=50;
     break;
   case SP_PROT_FIRE:
-    force->protected|=AT_FIRE;
+    force->resist[ATNR_FIRE]=50;
     break;
   case SP_PROT_ELEC:
-    force->protected|=AT_ELECTRICITY;
+    force->resist[ATNR_ELECTRICITY]=50;
     break;
   case SP_PROT_POISON:
-    force->protected|=AT_POISON;
+    force->resist[ATNR_POISON]=50;
     break;
   case SP_PROT_SLOW:
-    force->protected|=AT_SLOW;
+    force->resist[ATNR_SLOW]=50;
     break;
   case SP_PROT_PARALYZE:
-    force->protected|=AT_PARALYZE;
+    force->resist[ATNR_PARALYZE]=50;
     break;
   case SP_PROT_DRAIN:
-    force->protected|=AT_DRAIN;
+    force->resist[ATNR_DRAIN]=50;
     break;
   case SP_PROT_ATTACK:
-    force->protected|=AT_PHYSICAL;
+    force->resist[ATNR_PHYSICAL]=50;
     break;
   case SP_PROT_MAGIC:
-    force->protected|=AT_MAGIC;
+    force->resist[ATNR_MAGIC]=50;
     break;
   case SP_PROT_CONFUSE:
-    force->protected|=AT_CONFUSION;
+    force->resist[ATNR_CONFUSION]=50;
     break;
   case SP_PROT_CANCEL:
-    force->protected|=AT_CANCELLATION;
+    force->resist[ATNR_CANCELLATION]=50;
     break;
   case SP_PROT_DEPLETE:
-    force->protected|=AT_DEPLETE;
+    force->resist[ATNR_DEPLETE]=50;
     break;
   case SP_LEVITATE:
     SET_FLAG(force, FLAG_FLYING);
     break;
 	/*mlee*/
   case SP_IMMUNE_COLD:
-    force->immune|=AT_COLD;
+    force->resist[ATNR_COLD]=100;
     break;
   case SP_IMMUNE_FIRE:
-    force->immune|=AT_FIRE;
+    force->resist[ATNR_FIRE]=100;
     break;
   case SP_IMMUNE_ELEC:
-    force->immune|=AT_ELECTRICITY;
+    force->resist[ATNR_ELECTRICITY]=100;
     break;
   case SP_IMMUNE_POISON:
-    force->immune|=AT_POISON;
+    force->resist[ATNR_POISON]=100;
     break;
   case SP_IMMUNE_SLOW:
-    force->immune|=AT_SLOW;
+    force->resist[ATNR_SLOW]=100;
     break;
   case SP_IMMUNE_PARALYZE:
-    force->immune|=AT_PARALYZE;
+    force->resist[ATNR_PARALYZE]=100;
     break;
   case SP_IMMUNE_DRAIN:
-    force->immune|=AT_DRAIN;
+    force->resist[ATNR_DRAIN]=100;
     break;
   case SP_IMMUNE_ATTACK:
-    force->immune|=AT_PHYSICAL;
+    force->resist[ATNR_PHYSICAL]=100;
     break;
   case SP_IMMUNE_MAGIC:
-    force->immune|=AT_MAGIC;
+    force->resist[ATNR_MAGIC]=100;
     break;
+
   case SP_INVULNERABILITY:
-    force->immune|=262143;
-    break;
   case SP_PROTECTION:
-    force->protected|=262143;
-    break;
+    /* Don't give them everything, so can't do a simple loop.
+     * Added holyword & blind with PR's - they seemed to be 
+     * misising before.
+     */
+    if (spell_type == SP_INVULNERABILITY) i=100;
+    else i=50;
+    force->resist[ATNR_PHYSICAL]=i;
+    force->resist[ATNR_MAGIC]=i;
+    force->resist[ATNR_FIRE]=i;
+    force->resist[ATNR_ELECTRICITY]=i;
+    force->resist[ATNR_COLD]=i;
+    force->resist[ATNR_CONFUSION]=i;
+    force->resist[ATNR_ACID]=i;
+    force->resist[ATNR_DRAIN]=i;
+    force->resist[ATNR_GHOSTHIT]=i;
+    force->resist[ATNR_POISON]=i;
+    force->resist[ATNR_SLOW]=i;
+    force->resist[ATNR_PARALYZE]=i;
+    force->resist[ATNR_TURN_UNDEAD]=i;
+    force->resist[ATNR_FEAR]=i;
+    force->resist[ATNR_DEPLETE]=i;
+    force->resist[ATNR_DEATH]=i;
+    force->resist[ATNR_HOLYWORD]=i;
+    force->resist[ATNR_BLIND]=i;
+
+
   case SP_HASTE:
     force->stats.exp=(3+SP_level_dam_adjust(op, caster,SP_HASTE));
     if(op->speed > 0.2 * SP_level_strength_adjust(op,caster,SP_HASTE)) 
@@ -2118,7 +2150,7 @@ int cast_pacify(object *op, object *weap, archetype *arch,int spellnum ) {
         if(!tmp->race||!god||!god->race
           ||!strstr(god->race,tmp->race)) {
 #endif
-          if(tmp->immune&AT_MAGIC||tmp->immune&AT_GODPOWER) continue;
+          if(tmp->resist[ATNR_MAGIC]==100||tmp->resist[ATNR_GODPOWER]==100) continue;
 	/* multiple square monsters only when caster is => level of creature */
           if((tmp->more || tmp->head) && (SK_level(op) < tmp->level)) continue;  
 	  if(weap->slaying) 		/* selective pacify */ 
@@ -2291,8 +2323,10 @@ int cast_transfer(object *op,int dir) {
     if(plyr) {
       /* DAMN: added spell strength adjust; higher level casters transfer mana faster */
 	int maxsp=plyr->stats.maxsp;
-	int sp=(plyr->stats.sp += SP_PARAMETERS[SP_TRANSFER].bdam
+	int sp=(plyr->stats.sp + SP_PARAMETERS[SP_TRANSFER].bdam
 		+ SP_level_dam_adjust(op,op,SP_TRANSFER));
+
+	plyr->stats.sp = sp;
 
 	new_draw_info(NDI_UNIQUE, 0,plyr,"You feel energy course through you.");
 	if(sp>=maxsp*2) {
@@ -2456,7 +2490,7 @@ int cast_charm(object *op, object *caster,archetype *arch,int spellnum) {
 	    tmp&&(!QUERY_FLAG(tmp,FLAG_MONSTER));tmp=tmp->above);
 	if(!tmp) continue;
 	if(tmp->type==PLAYER) continue;
-	if(tmp->immune & AT_MAGIC) continue;
+	if(tmp->resist[ATNR_MAGIC]==100) continue;
 	if(QUERY_FLAG(tmp,FLAG_UNDEAD)) continue;
 	if(tmp->more || tmp->head) continue;  /* multiple square monsters NOT */
 	/* if(op->level <( (RANDOM()%(2*tmp->level+1))-(op->stats.Cha-10)/2)) continue; */ 
@@ -2497,7 +2531,7 @@ int cast_charm_undead(object *op, object *caster,archetype *arch,int spellnum) {
             tmp&&(!QUERY_FLAG(tmp,FLAG_MONSTER));tmp=tmp->above);
         if(!tmp) continue;
         if(tmp->type==PLAYER) continue;
-        if(tmp->immune & AT_MAGIC) continue;
+        if(tmp->resist[ATNR_MAGIC]==100) continue;
         if(!QUERY_FLAG(tmp,FLAG_UNDEAD)) continue;
         if(tmp->more || tmp->head) continue;  /* multiple square monsters NOT */
         if(SK_level(op)+bonus < ( (RANDOM()%(2*tmp->level+1))-(op->stats.Wis-10)/2)) continue;
@@ -2789,9 +2823,7 @@ int summon_avatar(object *op,object *caster,int dir, archetype *at, int spellnum
     }
   }
   tmp->attacktype|=god->attacktype;
-  tmp->vulnerable|=god->vulnerable;
-  tmp->immune|=god->immune;
-  tmp->protected|=god->protected;
+  memcpy(tmp->resist, god->resist, sizeof(tmp->resist));
   if (tmp->race) {
     free_string (tmp->race);
     tmp->race = NULL;
@@ -2887,7 +2919,6 @@ object *fix_summon_pet(archetype *at, object *op, int dir, int type ) {
  
 int cast_consecrate(object *op) {
     char buf[MAX_BUF];
-    int success=0;
 
 #ifdef MULTIPLE_GODS
     object *tmp, *god=find_god(determine_god(op));
@@ -3115,27 +3146,38 @@ int animate_weapon(object *op,object *caster,int dir, archetype *at, int spellnu
   /* attacktype */
   if ( ! tmp->attacktype)
     tmp->attacktype = AT_PHYSICAL;
+
   for(i=0; i<NROFMATERIALS; i++)
     for(j=0; j<NROFATTACKS; j++)
       if(weapon->material & (1<<i)) {
-	if(material[i].save[j] < 3) 
-	  tmp->protected |= (1<<j);
+	/* There was code here to try to even out the saving
+	 * throws.  This is probably not ideal, but works
+	 * for the time being.
+	 */
+	if(material[i].save[j] < 3)
+	    tmp->resist[j] = 40;
 	else if(material[i].save[j] > 14) 
-	  tmp->vulnerable |= (1<<j);
+	    tmp->resist[j] = -50;
       }
-  tmp->protected &= ~weapon->vulnerable;
-  tmp->vulnerable &= ~(weapon->immune | weapon->protected);
+
   /* Set weapon's immunity */
-  tmp->immune = weapon->immune | AT_CONFUSION | AT_POISON | AT_SLOW
-    | AT_PARALYZE | AT_TURN_UNDEAD | AT_FEAR | AT_DEPLETE | AT_DEATH
-    | AT_BLIND;
+  tmp->resist[ATNR_CONFUSION] = 100;
+  tmp->resist[ATNR_POISON] = 100;
+  tmp->resist[ATNR_SLOW] = 100;
+  tmp->resist[ATNR_PARALYZE] = 100;
+  tmp->resist[ATNR_TURN_UNDEAD] = 100;
+  tmp->resist[ATNR_FEAR] = 100;
+  tmp->resist[ATNR_DEPLETE] = 100;
+  tmp->resist[ATNR_DEATH] = 100;
+  tmp->resist[ATNR_BLIND] = 100;
+
   /* Improve weapon's armour value according to best save vs. physical of its material */
   for(a=0,i=0; i<NROFMATERIALS; i++) {
     if(weapon->material & (1<<i) && material[i].save[0] > a) {
       a = material[i].save[0];
     }
   }
-  tmp->armour = 100 - (int)((100.0-(float)tmp->armour)/(30.0-2.0*(a>14?14.0:(float)a)));
+  tmp->resist[ATNR_PHYSICAL] = 100 - (int)((100.0-(float)tmp->resist[ATNR_PHYSICAL])/(30.0-2.0*(a>14?14.0:(float)a)));
   LOG (llevDebug, "animate_weapon: slaying %s\n",
        tmp->slaying ? tmp->slaying : "nothing");
 
@@ -3151,7 +3193,7 @@ int animate_weapon(object *op,object *caster,int dir, archetype *at, int spellnu
 	/ ((float)(weapon->weight>1000)? weapon->weight : 1000)));
   if(tmp->speed > 3.33) tmp->speed = 3.33;
   LOG(llevDebug,"animate_weapon: armour:%d  speed:%f  exp:%d.\n",
-      tmp->armour, tmp->speed, tmp->stats.exp);
+      tmp->resist[ATNR_PHYSICAL], tmp->speed, tmp->stats.exp);
 
   /* spell-dependent finishing touches and descriptive text */
   switch(spellnum) {
@@ -3251,7 +3293,7 @@ int cast_faery_fire(object *op,object *caster) {
       tmp=get_map_ob(op->map,op->x+i,op->y+j);
       while(tmp!=NULL&&(!QUERY_FLAG(tmp, FLAG_ALIVE)
 		||tmp->type==PLAYER||tmp->more||tmp->head
-		||tmp->immune==AT_MAGIC))
+		||tmp->resist[ATNR_MAGIC]==100))
         tmp=tmp->above;
       if(tmp==NULL)
         continue;
@@ -3292,7 +3334,7 @@ int cast_glow( object *op, object *caster,int dir) {
   if(out_of_map(op->map,x,y)) return 0;
 
   for(tmp=get_map_ob(op->map,x,y);tmp;tmp=tmp->above) {
-    if(QUERY_FLAG(tmp, FLAG_ALIVE)||tmp->immune&AT_MAGIC)
+    if(QUERY_FLAG(tmp, FLAG_ALIVE)||tmp->resist[ATNR_MAGIC]==100)
 	continue;
     if(QUERY_FLAG(tmp,FLAG_IS_FLOOR)) break;
   }
@@ -3504,7 +3546,8 @@ void move_peacemaker(object *op) {
   object *tmp;
   char buf[MAX_BUF];
   for(tmp=get_map_ob(op->map,op->x,op->y);tmp!=NULL;tmp=tmp->above) {
-    int atk_lev, def_lev, kill_lev;
+    int atk_lev, def_lev;
+
     if(!QUERY_FLAG(tmp,FLAG_MONSTER)) continue;
     if(QUERY_FLAG(tmp,FLAG_UNAGGRESSIVE)) continue;
     if(tmp->stats.exp == 0) continue;

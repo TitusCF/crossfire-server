@@ -1736,30 +1736,20 @@ god_info_msg (int level, int booksize)
 			  sprintf (buf, "%s%s\n ---\n", buf, tmpbuf);
 		      }
 	    }
-	  if (level == 4 && RANDOM () % 2)
+	  if (level == 4 && RANDOM () % 2) 
 	    {			/* Priest of god gets these protect,vulnerable... */
-		int     has_effect = 0, tmpvar;
-		char    tmpbuf[MAX_BUF];
-		sprintf (tmpbuf, "%s has a potent aura which is extended\n"
+		char    tmpbuf[MAX_BUF],*cp;
+
+		cp = describe_resistance(god, 1);
+
+		if (*cp) {  /* This god does have protections */
+		    sprintf (tmpbuf, "%s has a potent aura which is extended\n"
 			 ,name);
-		strcat (tmpbuf, "faithful priests. The effects of this aura include:\n");
-		if ((tmpvar = god->protected))
-		  {
-		      has_effect = 1;
-		      DESCRIBE_ABILITY (tmpbuf, tmpvar, "Protected");
-		  }
-		if (strlen (tmpbuf) > 38)
-		    sprintf (tmpbuf, "%s\n", tmpbuf);
-		if ((tmpvar = god->vulnerable))
-		  {
-		      has_effect = 1;
-		      DESCRIBE_ABILITY (tmpbuf, tmpvar, "Vulnerable");
-		  }
-		if (has_effect)
-		  {
-		      strcat (buf, tmpbuf);
-		      strcat (buf, "\n ---\n");
-		  }
+		    strcat (tmpbuf, "faithful priests. The effects of this aura include:\n");
+		    strcat(tmpbuf, cp);
+		    strcat (buf, tmpbuf);
+		    strcat (buf, "\n ---\n");
+		}
 		else
 		    sprintf (buf, " ");
 	    }
@@ -1781,34 +1771,21 @@ god_info_msg (int level, int booksize)
 	    }
 	  if (level == 6 && RANDOM () % 2)
 	    {			/* blessing,curse properties of the god */
-		int     has_effect = 0, tmpvar;
-		char    tmpbuf[MAX_BUF];
-		sprintf (tmpbuf, "\n");
-		sprintf (tmpbuf, "The priests of %s are known to be able to \n"
+		char    tmpbuf[MAX_BUF],*cp;
+
+		cp = describe_resistance(god, 1);
+
+		if (*cp) {  /* This god does have protections */
+		    sprintf (tmpbuf, "\nThe priests of %s are known to be able to \n"
 			 ,name);
-		if ((tmpvar = god->protected))
-		  {
-		      has_effect = 1;
-		      strcat (tmpbuf, "bestow a blessing which makes the recipient\n");
-		      DESCRIBE_ABILITY (tmpbuf, tmpvar, "Protected");
-		  }
-		if ((tmpvar = god->vulnerable))
-		  {
-		      strcat (tmpbuf, "\n");
-		      if (has_effect)
-			  strcat (tmpbuf, "and ");
-		      else
-			  has_effect = 1;
-		      strcat (tmpbuf, "lay a curse which makes the recipient\n");
-		      DESCRIBE_ABILITY (tmpbuf, tmpvar, "Vulnerable");
-		  }
-		if (has_effect)
-		  {
-		      strcat (buf, tmpbuf);
-		      strcat (buf, "\n ---\n");
-		  }
+		    strcat (tmpbuf, "bestow a blessing which makes the recipient\n");
+		    strcat(tmpbuf, cp);
+		    strcat (buf, tmpbuf);
+		    strcat (buf, "\n ---\n");
+		}
 		else
 		    sprintf (buf, " ");
+
 	    }
 	  if (level == 8 && RANDOM () % 2)
 	    {			/* immunity, holy possession */
@@ -1817,17 +1794,19 @@ god_info_msg (int level, int booksize)
 		sprintf (tmpbuf, "\n");
 		sprintf (tmpbuf, "The priests of %s are known to make cast a mighty \n"
 			 ,name);
-		if ((tmpvar = god->immune))
-		  {
-		      has_effect = 1;
-		      strcat (tmpbuf, "prayer of possession which gives the recipient\n");
-		      DESCRIBE_ABILITY (tmpbuf, tmpvar, "Immunity");
-		  }
-		if (has_effect)
-		  {
+
+		strcat (tmpbuf, "prayer of possession which gives the recipient\n");
+
+		for (tmpvar=0; tmpvar<NROFATTACKS; tmpvar++) {
+		    if (god->resist[tmpvar]==100) {
+			has_effect = 1;
+			sprintf(tmpbuf + strlen(tmpbuf),"Immunity to %s", attacktype_desc[tmpvar]);
+		    }
+		}
+		if (has_effect) {
 		      strcat (buf, tmpbuf);
 		      strcat (buf, "\n ---\n");
-		  }
+		}
 		else
 		    sprintf (buf, " ");
 	    }

@@ -74,11 +74,9 @@ typedef struct obj {
   sint8		direction;	/* Means the object is moving that way. */
   sint8 facing;			/* Object is oriented/facing that way. */
   uint8 type; 		        /* PLAYER, BULLET, etc.  See define.h */
-  /* The next 6 variables actually only really use 24 bits each */
-  uint32	immune;		/* Attacks which the object is immune against */
-  uint32	protected;	/* Attacks which does half damage */
-  uint32	attacktype;	/* Same bitmask as immune/protected */
-  uint32	vulnerable;	/* Attacks which does double damage */
+
+  sint16	resist[NROFATTACKS];	/* Resistance adjustments for attacks */
+  uint32	attacktype;	/* Bitmask of attacks this object does */
   uint32	path_attuned;	/* Paths the object is attuned to */
   uint32	path_repelled;	/* Paths the object is repelled from */
   uint32	path_denied; 	/* Paths the object is denied access to */
@@ -93,7 +91,6 @@ typedef struct obj {
   signed short last_grace;      /* as last_sp, except for grace */
   signed short last_eat;	/* How long since we last ate */
   signed short invisible;	/* How much longer the object will be invis */
-  sint8		armour;		/* How many % is subtracted from phys. damage */
   unsigned char pick_up;        /* See crossfire.doc */
   struct obj *owner;  /* Pointer to the object which controls this one */
                       /* Owner should not be referred to directly - */

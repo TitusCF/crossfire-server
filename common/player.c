@@ -66,12 +66,9 @@ player *get_player_ob() {
   new->shoottype = range_none;
   new->last_shoot = range_size;
   new->braced =0;
+  memset(&new->last_resist, 0, sizeof(new->last_resist));
 #ifdef SEARCH_ITEMS
   new->search_str[0]=0;
-#endif
-#if 0
-  memset(new->mapdelx, 0, 32);
-  memset(new->mapdely, 0, 32);
 #endif
 
 #ifdef USE_SWAP_STATS

@@ -137,8 +137,8 @@ void dump_gods() {
       fprintf(stderr,"  S:%d C:%d D:%d I:%d W:%d P:%d\n", 
 	god->stats.Str,god->stats.Con,god->stats.Dex, 
   	god->stats.Int,god->stats.Wis,god->stats.Pow);
-      fprintf(stderr,"  lvl:%d arm:%d speed:%4.2f\n", 
-  	god->level,god->armour,god->speed);
+      fprintf(stderr,"  lvl:%d speed:%4.2f\n", 
+  	god->level,god->speed);
       fprintf(stderr,"  wc:%d ac:%d hp:%d dam:%d \n",
   	god->stats.wc,god->stats.ac,god->stats.hp,god->stats.dam);
       fprintf(stderr," enemy: %s\n",god->title?god->title:"NONE");
@@ -148,32 +148,22 @@ void dump_gods() {
         fprintf(stderr,"  S:%d C:%d D:%d I:%d W:%d P:%d\n", 
 	  serv->stats.Str,serv->stats.Con,serv->stats.Dex, 
   	  serv->stats.Int,serv->stats.Wis,serv->stats.Pow);
-        fprintf(stderr,"  lvl:%d arm:%d speed:%4.2f\n", 
-  	  serv->level,serv->armour,serv->speed);
+        fprintf(stderr,"  lvl:%d speed:%4.2f\n", 
+  	  serv->level,serv->speed);
         fprintf(stderr,"  wc:%d ac:%d hp:%d dam:%d \n",
   	  serv->stats.wc,serv->stats.ac,serv->stats.hp,serv->stats.dam);
       } else
         fprintf(stderr," servant: NONE\n");
       fprintf(stderr," aligned_race(s): %s\n",god->race);
       fprintf(stderr," enemy_race(s): %s\n",(god->slaying?god->slaying:"none"));
+      fprintf(stderr,"%s", describe_resistance(god, 1));
       sprintf(tmpbuf," attacktype:");
       if((tmpvar=god->attacktype)) { 
         strcat(tmpbuf,"\n  ");
         DESCRIBE_ABILITY(tmpbuf, tmpvar, "Attacks");
       }
       strcat(tmpbuf,"\n aura:");
-      if((tmpvar=god->immune)) { 
-        strcat(tmpbuf,"\n  ");
-        DESCRIBE_ABILITY(tmpbuf, tmpvar, "Immune");
-      }
-      if((tmpvar=god->protected)) { 
-        strcat(tmpbuf,"\n  ");
-        DESCRIBE_ABILITY(tmpbuf, tmpvar, "Prot");
-      }
-      if((tmpvar=god->vulnerable)) { 
-        strcat(tmpbuf,"\n  ");
-        DESCRIBE_ABILITY(tmpbuf, tmpvar, "Vuln");
-      }
+
       strcat(tmpbuf,"\n paths:");
       if((tmpvar=god->path_attuned)) { 
         strcat(tmpbuf,"\n  ");

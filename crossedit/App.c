@@ -1053,7 +1053,6 @@ Edit AppEditInsert(App self,String path,EditType type)
 {
     Edit edit;
     Edit editor;
-    char buf[BUFSIZ];
 
     /*** check if exist ***/
     /* Dragon Master */

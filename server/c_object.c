@@ -354,8 +354,8 @@ void pick_up(object *op,object *alt)
 /* modified slightly to allow monsters use this -b.t. 5-31-95 */
 {
     int need_fix_tmp = 0;
-    object *tmp;
-    mapstruct *tmp_map;
+    object *tmp=NULL;
+    mapstruct *tmp_map=NULL;
     int count;
     tag_t tag;
 

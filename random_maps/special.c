@@ -85,7 +85,7 @@ void include_map_in_map(mapstruct *dest_map, mapstruct *in_map,int x, int y) {
 		  new_ob = arch_to_object(tmp->arch);
 		  copy_object_with_inv(tmp,new_ob);
 		  if(QUERY_FLAG(tmp,FLAG_IS_LINKED))
-			 add_button_link(new_ob,dest_map,tmp->protected);
+			 add_button_link(new_ob,dest_map,tmp->path_attuned);
 		  new_ob->x = i + x;
 		  new_ob->y = j + y;
 		  insert_multisquare_ob_in_map(new_ob,dest_map);
@@ -95,9 +95,9 @@ void include_map_in_map(mapstruct *dest_map, mapstruct *in_map,int x, int y) {
 
 int find_spot_for_submap(mapstruct *map,char **layout,int *ix, int *iy,int xsize, int ysize) {
   int tries;
-  int i,j;
+  int i=0,j=0;	/* initialization may not be needed but prevents compiler warnings */
+  int is_occupied=0;
   int l,m;
-  int is_occupied;
   /* don't even try to place a submap into a map if the big map isn't
 	  sufficiently large. */
   if(2*xsize > map->mapx || 2*ysize > map->mapy) return 0;

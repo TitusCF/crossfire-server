@@ -115,7 +115,8 @@ static int apply_id_altar (object *money, object *altar, object *pl)
 
 int apply_potion(object *op, object *tmp)
 {
-    int got_one=0;
+    int got_one=0,i;
+    object *force;
 
 #if 0
    /* we now need this to happen */
@@ -145,7 +146,6 @@ int apply_potion(object *op, object *tmp)
       }
       depl = present_arch_in_ob(at, op);
       if (depl!=NULL) {
-	int i;
         for (i = 0; i < 7; i++)
           if (get_attr_value(&depl->stats, i)) {
             new_draw_info(NDI_UNIQUE,0,op, restore_msg[i]);
@@ -162,7 +162,6 @@ int apply_potion(object *op, object *tmp)
     }
     /* only players get this */
     if(op->type==PLAYER&&tmp->attacktype&AT_GODPOWER) {    /* improvement potion */
-	int i;
 
 	for(i=1;i<MIN(11,op->level);i++) {
 	    if (QUERY_FLAG(tmp,FLAG_CURSED) || QUERY_FLAG(tmp,FLAG_DAMNED)) {
@@ -218,27 +217,6 @@ int apply_potion(object *op, object *tmp)
 	return 1;
     }
 
-    /* protection/immunity granting potions */
-    if(tmp->immune||tmp->protected) {
-      object *force;
-
-      force=get_archetype("force");
-      if(QUERY_FLAG(tmp, FLAG_CURSED) || QUERY_FLAG(tmp, FLAG_DAMNED)) {
-        force->vulnerable = tmp->immune | tmp->protected;
-/* Why set force->type to 0?  This makes the result permanent */
-/*        force->type = 0; */
-        force->stats.food*=10;
-      } else {
-        force->immune=tmp->immune;
-        force->protected=tmp->protected;
-      }
-      force->speed_left= -1;
-      force = insert_ob_in_ob(force,op);
-      SET_FLAG(force,FLAG_APPLIED);
-      change_abil(op,force);
-      decrease_ob(tmp);
-      return 1;
-    }
 
     /* A potion that casts a spell.  Healing, restore spellpoint (power potion)
      * and heroism all fit into this category.
@@ -253,6 +231,30 @@ int apply_potion(object *op, object *tmp)
       /* if youre dead, no point in doing this... */
       if(!QUERY_FLAG(op,FLAG_REMOVED)) fix_player(op);
       return 1;
+    }
+
+    /* Deal with protection potions */
+    force=NULL;
+    for (i=0; i<NROFATTACKS; i++) {
+	if (tmp->resist[i]) {
+	    if (!force) force=get_archetype("force");
+	    memcpy(force->resist, tmp->resist, sizeof(tmp->resist));
+	    break;  /* Only need to find one protection since we copy entire batch */
+	}
+    }
+    /* This is a protection potion */
+    if (force) {
+	/* cursed items last longer */
+	if(QUERY_FLAG(tmp, FLAG_CURSED) || QUERY_FLAG(tmp, FLAG_DAMNED)) {
+	    force->stats.food*=10;
+	}
+	force->speed_left= -1;
+	force = insert_ob_in_ob(force,op);
+	CLEAR_FLAG(tmp, FLAG_APPLIED);
+	SET_FLAG(force,FLAG_APPLIED);
+	change_abil(op,force);
+	decrease_ob(tmp);
+	return 1;
     }
 
     /* Only thing left are the stat potions */
@@ -411,17 +413,20 @@ int improve_weapon_stat(object *op,object *improver,object *weapon,
 
 int prepare_weapon(object *op, object *improver, object *weapon)
 {
-    int sacrifice_count;
+    int sacrifice_count,i;
     char buf[MAX_BUF];
 
     if (weapon->level!=0) {
       new_draw_info(NDI_UNIQUE,0,op,"Weapon already prepared.");
       return 0;
     }
-    /* If someone wants to do a weapon that makes them vulnerable,
-     * let them.
+    for (i=0; i<NROFATTACKS; i++)
+	if (weapon->resist[i]) break;
+
+    /* If we break out, i will be less than nrofattacks, preventing
+     * improvement of items that already have protections.
      */
-    if (weapon->immune || weapon->protected ||
+    if (i<NROFATTACKS || 
 	weapon->stats.hp ||	/* regeneration */
 	weapon->stats.sp ||	/* sp regeneration */
 	weapon->stats.exp ||	/* speed */
@@ -598,13 +603,15 @@ int check_improve_weapon (object *op, object *tmp)
  * the level of the character / 10 -- rounding upish, nor may
  * the armour value of the piece of equipment exceed either 
  * the users level or 90)
+ * Modified by MSW for partial resistance.  Only support
+ * changing of physical area right now.
  */
  
 int improve_armour(object *op, object *improver, object *armour)
 {
     int new_armour;
  
-    new_armour = armour->armour + armour->armour/25 + op->level/20 + 1;
+    new_armour = armour->resist[ATNR_PHYSICAL] + armour->resist[ATNR_PHYSICAL]/25 + op->level/20 + 1;
     if (new_armour > 90)
         new_armour = 90;
 
@@ -616,8 +623,8 @@ int improve_armour(object *op, object *improver, object *armour)
         return 0;
     }
 
-    if (new_armour > armour->armour) {
-	armour->armour = new_armour;
+    if (new_armour > armour->resist[ATNR_PHYSICAL]) {
+	armour->resist[ATNR_PHYSICAL] = new_armour;
 	armour->weight += armour->weight * 0.05;
     } else {
         new_draw_info(NDI_UNIQUE, 0,op,"The armour value of this equipment");
@@ -2013,7 +2020,6 @@ int apply_special (object *who, object *op, int aflags)
   object *tmp;
   char buf[MAX_BUF];
   int i;
-  tag_t del_tag;
 
   if(who==NULL) {
     LOG(llevError,"apply_special() from object without environment.\n");
@@ -2423,33 +2429,36 @@ void fix_auto_apply(mapstruct *m) {
  */
 
 void eat_special_food(object *who, object *food) {
-  /* matrix for attacks we can gain protection/immunity too from eating 
-   * be sure to perserve the ordering between at_type[] and sp_type[]! */
-  static int at_type[] = { AT_PHYSICAL, AT_MAGIC, AT_FIRE, AT_ELECTRICITY,
-	AT_COLD, AT_DRAIN, AT_POISON, AT_SLOW, AT_PARALYZE, AT_CANCELLATION,
-	AT_DEPLETE, AT_FEAR }; 
-  static int sp_type[] = { SP_ARMOUR, SP_PROT_MAGIC, SP_PROT_FIRE, 
-	SP_PROT_ELEC, SP_PROT_COLD, SP_PROT_DRAIN, SP_PROT_POISON, 
-	SP_PROT_SLOW, SP_PROT_PARALYZE, SP_PROT_CANCEL, SP_PROT_DEPLETE, 
-	SP_HEROISM }; 
+    /* Corresponding spell to cast to get protection to
+     * the attactkype.  This matches the order of ATNR values
+     * in attack.h
+     */
+    static int sp_type[NROFATTACKS] = { SP_ARMOUR, SP_PROT_MAGIC, SP_PROT_FIRE, 
+	SP_PROT_ELEC, SP_PROT_COLD, SP_PROT_CONFUSE, -1 /*acid */, 
+	SP_PROT_DRAIN, 	-1 /*weaponmagic*/, -1 /*ghosthit*/, SP_PROT_POISON, 
+	SP_PROT_SLOW, SP_PROT_PARALYZE, -1 /* turn undead */,
+	-1 /* fear */, SP_PROT_CANCEL, SP_PROT_DEPLETE, -1 /* death*/,
+	-1 /* chaos */, -1 /*counterspell */, -1 /* godpower */,
+	-1 /*holyword */, -1 /*blind*/, -1 /*internal */ };
 
-  /* matrix for stats we can increase by eating */
-  int i; 
-  /* Declare these static so they only get initialzed once.  IT doesn't appear
-   * that we are modifying these, so this works out ok.
-   */
-  static int stat[] = { STR, DEX, CON, CHA }, 
+    /* matrix for stats we can increase by eating */
+    int i; 
+    /* Declare these static so they only get initialzed once.  IT doesn't appear
+     * that we are modifying these, so this works out ok.
+     */
+    static int stat[] = { STR, DEX, CON, CHA }, 
     mod_stat[] = {SP_STRENGTH, SP_DEXTERITY, SP_CONSTITUTION, SP_CHARISMA };
   
-  /* check if food modifies stats of the eater */
-  for(i=0; i<(sizeof(stat)/sizeof(int)); i++)
-     if(get_attr_value(&food->stats, stat[i]))
+    /* check if food modifies stats of the eater */
+    for(i=0; i<(sizeof(stat)/sizeof(int)); i++)
+	if(get_attr_value(&food->stats, stat[i]))
           cast_change_attr(who,who,99,mod_stat[i]);
 
-  /* check if we can protect the eater */
-  if(food->protected)
-     for(i=0; i<(sizeof(at_type)/sizeof(int)); i++)
-  	if(food->protected&at_type[i]) cast_change_attr(who,who,99,sp_type[i]);
+    /* check if we can protect the eater */
+    for (i=0; i<NROFATTACKS; i++) {
+	if (food->resist[i]>0 && sp_type[i]!=-1)
+	    cast_change_attr(who,who,99,sp_type[i]);
+    }
 
   /* check for hp, sp change */
   if(food->stats.hp!=0) {
@@ -2589,7 +2598,6 @@ void scroll_failure(object *op, int failure, int power)
 }
 
 void apply_changes_to_player(object *player, object *change) {
-  object *op;
   switch (change->type) {
   case CLASS: 
     {

@@ -67,6 +67,7 @@ extern void set_font_path ( Display *dpy, char *path );
 extern int check_font_path ( Display *dpy );
 extern int fixfontpath ( Display *disp, char *name );
 extern int allocate_colors ( Display *disp, Window w, long screen_num, Colormap *colormap, XColor discolor[13 ] );
+extern int ReadImages(Display *gdisp, Pixmap **pixmaps, Pixmap **masks,  Colormap *cmap, enum DisplayMode type);
 
 #endif /* __STDC__ */
 #endif /* __CEXTRACT__ */

@@ -86,6 +86,7 @@ static char *variable_const[NR_OF_VARIABLES] = {
 #endif
 };
 
+
 #define YY_DECL int lex_load(object *op)
 
 static char *yval();
@@ -96,8 +97,36 @@ static int lex_error;
 #define SET_OR_CLEAR_FLAG(op, flag, val) \
 	{ if (val) SET_FLAG(op, flag); else CLEAR_FLAG(op, flag); }
 
+/* SET_RESIST is really only really needed for transition code.  We normally
+ * don't care about multiple values overwriting each other, but this is
+ * to catch items that have multiple protection/immune/vulnerable.
+ * This can be simplified later on to just do the set after all the archs
+ * and maps have been updated.
+ * We always keep the last value because otherwise the value from the
+ * arch may take precedence.
+ * Unfortunately, we will report warnings here simply because an object has
+ * been modified from the arch.
+ */
+#define SET_RESIST(op, type, val) \
+	{if (op->resist[type]!=0) { \
+	    LOG(llevInfo, "object %s having multiple resistances set, type=%s, old=%d, new=%d\n", \
+		       op->name?op->name:(op->arch?op->arch->name:"unknown"), \
+					resist_plus[type], op->resist[type], val); \
+	}  op->resist[type] = val;  }
+
 #define IVAL	atoi(yval())
 #define FVAL	atof(yval())
+
+/* Put this here since it is used below */
+static void set_protection(object *op, uint32 mask, uint16 pro_val)
+{
+    int i;
+
+    if (!mask) return;	/* Unlikely, but might as well check */
+    for (i=0; i<NROFATTACKS; i++) {
+	if (mask & (1<<i)) SET_RESIST(op, i, pro_val);
+    }
+}
 
 %}
 
@@ -238,10 +267,7 @@ WS	[ \t]*
 ^value{S}	op->value = IVAL;
 ^weight{S}	op->weight = atol(yval());
 ^carrying{S}	op->carrying = atol(yval());
-^immune{S}	op->immune = IVAL;
-^protected{S}	op->protected = IVAL;
 ^attacktype{S}  op->attacktype = IVAL;
-^vulnerable{S}    op->vulnerable = IVAL;
 ^path_attuned{S}  op->path_attuned = IVAL;
 ^path_repelled{S} op->path_repelled = IVAL;
 ^path_denied{S}   op->path_denied = IVAL;
@@ -341,7 +367,40 @@ WS	[ \t]*
 ^stand_still{S}	    SET_OR_CLEAR_FLAG(op, FLAG_STAND_STILL, IVAL);
 ^random_move{S}	    SET_OR_CLEAR_FLAG(op, FLAG_RANDOM_MOVE, IVAL);
 ^only_attack{S}	    SET_OR_CLEAR_FLAG(op, FLAG_ONLY_ATTACK, IVAL);
-^armour{S}	    op->armour = IVAL;
+
+    /* armour is loaded for compatiblity reasons */
+^armour{S}		SET_RESIST(op, ATNR_PHYSICAL, IVAL);
+    /* Start of various attacktypes */
+^resist_physical{S}	SET_RESIST(op, ATNR_PHYSICAL, IVAL);
+^resist_magic{S}	SET_RESIST(op, ATNR_MAGIC, IVAL);
+^resist_fire{S}		SET_RESIST(op, ATNR_FIRE, IVAL);
+^resist_electricity{S}	SET_RESIST(op, ATNR_ELECTRICITY, IVAL);
+^resist_cold{S}		SET_RESIST(op, ATNR_COLD, IVAL);
+^resist_confusion{S}	SET_RESIST(op, ATNR_CONFUSION, IVAL);
+^resist_acid{S}		SET_RESIST(op, ATNR_ACID, IVAL);
+^resist_drain{S}	SET_RESIST(op, ATNR_DRAIN, IVAL);
+^resist_weaponmagic{S}	SET_RESIST(op, ATNR_WEAPONMAGIC, IVAL);
+^resist_ghosthit{S}	SET_RESIST(op, ATNR_GHOSTHIT, IVAL);
+^resist_poison{S}	SET_RESIST(op, ATNR_POISON, IVAL);
+^resist_slow{S}		SET_RESIST(op, ATNR_SLOW, IVAL);
+^resist_paralyze{S}	SET_RESIST(op, ATNR_PARALYZE, IVAL);
+^resist_turn_undead{S}	SET_RESIST(op, ATNR_TURN_UNDEAD, IVAL);
+^resist_fear{S}		SET_RESIST(op, ATNR_FEAR, IVAL);
+^resist_cancellation{S}	SET_RESIST(op, ATNR_CANCELLATION, IVAL);
+^resist_deplete{S}	SET_RESIST(op, ATNR_DEPLETE, IVAL);
+^resist_death{S}	SET_RESIST(op, ATNR_DEATH, IVAL);
+^resist_chaos{S}	SET_RESIST(op, ATNR_CHAOS, IVAL);
+^resist_counterspell{S}	SET_RESIST(op, ATNR_COUNTERSPELL, IVAL);
+^resist_godpower{S}	SET_RESIST(op, ATNR_GODPOWER, IVAL);
+^resist_holyword{S}	SET_RESIST(op, ATNR_HOLYWORD, IVAL);
+^resist_blind{S}	SET_RESIST(op, ATNR_BLIND, IVAL);
+^resist_internal{S}	SET_RESIST(op, ATNR_INTERNAL, IVAL);
+
+    /* Old style resistances */
+^immune{S}		set_protection(op, IVAL, RESIST_IMMUNE);
+^protected{S}		set_protection(op, IVAL, RESIST_PROT);
+^vulnerable{S}		set_protection(op, IVAL, RESIST_VULN);
+
 ^attack_movement{S} op->move_type = IVAL;
 ^move_state{S}	    op->move_status = IVAL;
 ^confused{S}	    SET_OR_CLEAR_FLAG(op, FLAG_CONFUSED, IVAL);
@@ -393,6 +452,7 @@ WS	[ \t]*
 			    if (lex_error!=0) return lex_error; else return LL_EOF;}
 .*			{ yyerror( "Unrecognized string"); lex_error= -1; }
 %%
+
 
 int yyerror(char *s)
 {
@@ -675,8 +735,6 @@ char *get_ob_diff(object *op,object *op2) {/* I plan to optimize this heavily */
     save_long(buf,variable_const[V_WC],op->stats.wc);
   if(op->stats.ac!=op2->stats.ac)
     save_long(buf,variable_const[V_AC],op->stats.ac);
-  if(op->armour!=op2->armour)
-    save_long(buf,variable_const[V_ARMOUR],op->armour);
   if(op->x!=op2->x) 
     save_long(buf,variable_const[V_X],op->x);
   if(op->y!=op2->y)
@@ -701,14 +759,16 @@ char *get_ob_diff(object *op,object *op2) {/* I plan to optimize this heavily */
     save_long(buf,variable_const[V_DIRECTION],op->direction);
   if(op->type!=op2->type)
     save_long(buf,variable_const[V_TYPE],op->type);
-  if(op->immune!=op2->immune)
-    save_long(buf,variable_const[V_IMMUNE],op->immune);
-  if(op->protected!=op2->protected)
-    save_long(buf,variable_const[V_PROTECTED],op->protected);
   if(op->attacktype!=op2->attacktype)
     save_long(buf,variable_const[V_ATTACKTYPE],op->attacktype);
-  if(op->vulnerable!=op2->vulnerable)
-    save_long(buf,variable_const[V_VULNERABLE],op->vulnerable);
+
+  for (tmp=0; tmp < NROFATTACKS; tmp++) {
+   if (op->resist[tmp] != op2->resist[tmp]) {
+	sprintf(buf2,"resist_%s %d\n",resist_save[tmp], op->resist[tmp]);
+	strcat(buf,buf2);
+    }
+  }
+
   if(op->path_attuned!=op2->path_attuned)
     save_long(buf,variable_const[V_PATH_ATTUNED],op->path_attuned);
   if(op->path_repelled!=op2->path_repelled)

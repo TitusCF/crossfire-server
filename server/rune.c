@@ -161,7 +161,6 @@ int write_rune(object *op,int dir,int inspell,int level,char *runename) {
 */
 
 void move_rune(object *op) {
-    object *tmp;
     int det=0;
     if(!op->level) {return;}  /* runes of level zero cannot detonate. */
     det=op->invisible;

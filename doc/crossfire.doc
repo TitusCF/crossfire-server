@@ -328,7 +328,7 @@ msg             message         What the plague says when it strikes.
 race            those affected  races the plague strikes (* means everything) 
 level           Plague Level    General description of the plague's deadliness 
 
-armour          Attenuation     reduction in wc per generation of disease.
+last_grace	Attenuation     reduction in wc per generation of disease.
                                 This builds in a self-limiting factor.
 
 Explanations:
@@ -372,7 +372,7 @@ ac  every "disease move" the severity of the symptoms are increased by
 
 last_eat  increases food usage if negative.
 
-armour  Reduction in the diseases' contageousness everytime it infects someone
+last_grace  Reduction in the diseases' contageousness everytime it infects someone
 	new.  This limits how many generations a disease can propagate.
 
 

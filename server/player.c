@@ -103,7 +103,6 @@ int add_player(NewSocket *ns) {
     p->socket.inbuf.len=0;
 
     p->weapon_sp=0,p->last_weapon_sp= -1;
-    p->last_armour= (-1);
     p->has_hit=0;
 
     p->peaceful=1;			/* default peaceful */
@@ -817,7 +816,7 @@ void flee_player(object *op) {
  */
 int check_pick(object *op) {
   object *tmp, *next;
-  tag_t next_tag, op_tag;
+  tag_t next_tag=0, op_tag;
   int stop = 0;
 
   if (QUERY_FLAG (op, FLAG_FLYING))

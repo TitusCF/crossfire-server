@@ -41,7 +41,10 @@
  * Thus the prototypes made by cextract don't get included correctly.
  */
 #if !defined(__STDC__) 
-#error - Your ANSI C compiler should be defining __STDC__
+/* Removed # from start of following line.  makedepend was picking it up.
+ * The following should still hopefully result in an error.
+ */
+error - Your ANSI C compiler should be defining __STDC__;
 #endif
 
 #include <autoconf.h>
@@ -252,39 +255,6 @@
 #define MAX_NAME 16
 #define BIG_NAME 32
 #define SIZEOFFREE 49
-
-/*
- * Attacktypes:
- * If this ever exceeds 16, rmember to change all the short's in global.h.
- * (Already done, Vick 930307 :)
- */
-
-#define NROFATTACKS		24
-
-#define AT_PHYSICAL	0x00000001 /*       1 */
-#define AT_MAGIC	0x00000002 /*       2 */
-#define AT_FIRE		0x00000004 /*       4 */
-#define AT_ELECTRICITY	0x00000008 /*       8 */
-#define AT_COLD		0x00000010 /*      16 */
-#define AT_CONFUSION	0x00000020 /*      32 The spell will use this one */
-#define AT_ACID		0x00000040 /*      64 Things might corrode when hit */
-#define AT_DRAIN	0x00000080 /*     128 */
-#define AT_WEAPONMAGIC	0x00000100 /*     256 Very special, use with care */
-#define AT_GHOSTHIT	0x00000200 /*     512 Attacker dissolves */
-#define AT_POISON	0x00000400 /*    1024 */
-#define AT_SLOW		0x00000800 /*    2048 */
-#define AT_PARALYZE	0x00001000 /*    4096 */
-#define AT_TURN_UNDEAD	0x00002000 /*    8192 */
-#define AT_FEAR		0x00004000 /*   16384 */
-#define AT_CANCELLATION 0x00008000 /*   32768 ylitalo@student.docs.uu.se */
-#define AT_DEPLETE      0x00010000 /*   65536 vick@bern.docs.uu.se */
-#define AT_DEATH        0x00020000 /*  131072 peterm@soda.berkeley.edu */
-#define AT_CHAOS        0x00040000 /*  262144 peterm@soda.berkeley.edu*/
-#define AT_COUNTERSPELL 0x00080000 /*  524288 peterm@soda.berkeley.edu*/
-#define AT_GODPOWER	0x00100000 /* 1048576  peterm@soda.berkeley.edu */
-#define AT_HOLYWORD	0x00200000 /* 2097152 race selective attack thomas@astro.psu.edu */ 
-#define AT_BLIND	0x00400000 /* 4194304 thomas@astro.psu.edu */ 
-#define AT_INTERNAL	0x00800000 /* Only used for internal calculations */
 
 #define PATH_NULL	0x00000000      /* 0 */
 #define PATH_PROT	0x00000001      /* 1 */

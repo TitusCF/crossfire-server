@@ -1612,8 +1612,12 @@ difficulty 7
 Object the Underworld
 type 87
 value 1000
-immune 66240
-protected 4192
+resist_confusion 50
+resist_acid 90
+resist_drain 90
+resist_electricity 90
+resist_ghosthit 90
+resist_deplete 90
 weight 150
 material 256
 Cha -4

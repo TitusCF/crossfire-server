@@ -47,40 +47,41 @@ typedef struct att_msg_str {
  */
 
 int did_make_save_item(object *op, int type,object *originator) {
-  int i, saves=0,materials=0, orig_type=type;
+    int i, saves=0,materials=0,number;
 
-  type &= (~op->immune & ~op->protected);
-
-  if(type&AT_CANCELLATION)
-    type=15;
-  else if(type&AT_COLD)
-    type=4;
-  else if(type&AT_ELECTRICITY)
-    type=3;
-  else if(type&AT_FIRE)
-    type=2;
-  else if(type&AT_PHYSICAL)
-    type=0;                     /* This was 1 before... */
-  /* If we are hite by pure magic, the item can get destroyed.  We need
-   * to check the original type, because type is now set to what the object
-   * is not immune to.  Thus, if an object is immune to cold and hit by
-   * cold and magic, type would be magic here, and thus could be destroyed -
-   * that should not happen.
+    if(type&AT_CANCELLATION)
+	number=ATNR_CANCELLATION;
+    else if(type&AT_COLD)
+	number=ATNR_COLD;
+    else if(type&AT_ELECTRICITY)
+	number=ATNR_ELECTRICITY;
+    else if(type&AT_FIRE)
+	number=ATNR_FIRE;
+    else if(type&AT_PHYSICAL)
+	number=ATNR_PHYSICAL;
+  /* If we are hite by pure magic, the item can get destroyed.
+   * But if hit by AT_MAGIC | AT_CONFUSION, it should have no effect.
    */
-  else if(orig_type==AT_MAGIC) /* Only pure magic, not paralyze, etc */
-    type=1;                     /* This was 0 before... */
-  else return 1;
-  for(i=0;i<NROFMATERIALS;i++)
-    if(op->material&(1<<i)) {
-      materials++;
-      if(RANDOM()%20+1>=material[i].save[type]-op->magic)
-	saves++;
-      /* if the attack is too weak */
-      if((20-material[i].save[type])/3 > originator->stats.dam) saves++;
+    else if(type==AT_MAGIC) /* Only pure magic, not paralyze, etc */
+	number=ATNR_MAGIC;
+    else return 1;
+
+    /* If the object is immune, no effect */
+    if (op->resist[number]==100) return 1;
+  
+
+    for(i=0;i<NROFMATERIALS;i++) {
+	if(op->material&(1<<i)) {
+	    materials++;
+	    if(RANDOM()%20+1>=material[i].save[number]-op->magic-op->resist[number]/100)
+		saves++;
+	    /* if the attack is too weak */
+	    if((20-material[i].save[type])/3 > originator->stats.dam) saves++;
+	}
     }
-  if (saves==materials || materials==0) return 1;
-  if ((saves==0) || (RANDOM()%materials+1 > saves)) return 0;
-  return 1;
+    if (saves==materials || materials==0) return 1;
+    if ((saves==0) || (RANDOM()%materials+1 > saves)) return 0;
+    return 1;
 }
 
 /* This function calls did_make_save_item.  It then performs the
@@ -162,7 +163,8 @@ void save_throw_object (object *op, int type, object *originator)
 	}
 	return;
     }
-    if(type&AT_COLD &&!(op->immune&type||op->protected&type) &&
+    /* The value of 50 is arbitrary. */
+    if(type&AT_COLD &&(op->resist[ATNR_COLD]<50) &&
       !QUERY_FLAG(op,FLAG_NO_PICK)&&(RANDOM()&2)) {
         object *tmp;
         archetype *at = find_archetype("icecube");
@@ -188,7 +190,7 @@ int hit_map(object *op,int dir,int type) {
   mapstruct *map;
   sint16 x, y;
   int retflag=0;  /* added this flag..  will return 1 if it hits a monster */
-  tag_t op_tag, next_tag;
+  tag_t op_tag, next_tag=0;
 
   if (QUERY_FLAG (op, FLAG_FREED)) {
     LOG (llevError, "BUG: hit_map(): free object\n");
@@ -742,19 +744,23 @@ void tear_down_wall(object *op)
  * attacktype.  Only 1 attacktype should be set at a time.  This doesn't
  * damage the player, but returns how much it should take.  However, it will
  * do other effects (paralyzation, slow, etc.)
+ * Note - changed for PR code - we now pass the attack number and not
+ * the attacktype.  Makes it easier for the PR code.
  */
 
 int hit_player_attacktype(object *op, object *hitter, int dam, 
-	uint32 attacktype, int magic) {
+	uint32 attacknum, int magic) {
   
     int does_slay=0;
     int level_diff;       /* for special attacktypes (paralyze, etc) */
-    
-#ifdef ATTACK_DEBUG
-    LOG(llevDebug, "\thit_player_attacktype: attacktype %x, dam %d\n",
-	attacktype, dam);
-#endif
+    uint32 attacktype=1<<attacknum;
 
+    /* Catch anyone that may be trying to send us a bitmask instead of the number */
+    if (attacknum>=NROFATTACKS) {
+	LOG(llevError, "hit_player_attacktype: Invalid attacknumber passed: %x\n", attacknum);
+	return 0;
+    }
+    
     if (!attacktype) {
 	LOG(llevError,"hit_player_attacktype called without an attacktype\n");
 	return 0;
@@ -774,35 +780,50 @@ int hit_player_attacktype(object *op, object *hitter, int dam,
 	    dam*=3;
 	}
     }
-    if (op->vulnerable & attacktype) dam*=2;
-    if (op->protected & attacktype) dam/=2;
+
+    /* Adjust the damage.  Note that negative values increase damage. */
+    if (op->resist[attacknum]) {
+/*	int oldam=dam;*/
+
+	dam = dam*(100-op->resist[attacknum])/100;
+/*	fprintf(stderr,"Attacknum %d damage reduced from %d to %d, res=%d\n",
+		attacknum, oldam, dam, op->resist[attacknum]);
+*/
+    }
 
     /* Special hack.  By default, if immune to something, you shouldn't need
      * to worry.  However, acid is an exception, since it can still damage
      * your items.  Only include attacktypes if special processing is needed
      */
-    if ((op->immune & attacktype) && !does_slay && !(attacktype & AT_ACID)) 
+    if ((op->resist[attacknum]>=100) && !does_slay && !(attacktype & AT_ACID)) 
 	return 0;
 
     /* Keep this in order - makes things easier to find */
 
     if (attacktype & AT_PHYSICAL) {
-	if (op->armour) dam=((100-op->armour)*dam/100);
 	/*  here also check for diseases */
 	check_physically_infect(op,hitter);
- /* Don't need to do anything for magic, fire, electricity, cold */    
+
+    /* Don't need to do anything for magic, fire, electricity, cold */    
     } else if (attacktype & 
       (AT_CONFUSION|AT_POISON|AT_SLOW|AT_PARALYZE|AT_FEAR|AT_CANCELLATION|
        AT_DEPLETE|AT_BLIND)) {
+	/* Give bonus/penalty for saving throw. */
+	int save_adj=op->resist[attacknum]/10;
+
         /* chance for inflicting a special attack depends on the
 	   difference between attacker's and defender's level */
         level_diff = MIN(110, MAX(0, op->level - hitter->level));
 
+	/* First, only creatures/players with speed can be affected.
+	 * Second, just getting hit doesn't mean it always affects you.
+	 * Third, you still get a saving through against the effect.
+	 */
         if (op->speed && (QUERY_FLAG(op, FLAG_MONSTER) || op->type==PLAYER) &&
           !(RANDOM()%((attacktype&AT_SLOW?6:3))) && 
-	  (RANDOM()%20+1+((op->protected&attacktype)?4:0)-((op->vulnerable&attacktype)?4:0)
-	   < savethrow[level_diff])) {
-	  /* Player has been hit by something */
+	  ((RANDOM()%20+1+save_adj)  < savethrow[level_diff])) {
+
+	    /* Player has been hit by something */
 	    if (attacktype & AT_CONFUSION) confuse_player(op,hitter,dam);
 	    else if (attacktype & AT_POISON) poison_player(op,hitter,dam);
 	    else if (attacktype & AT_SLOW) slow_player(op,hitter,dam);
@@ -813,101 +834,112 @@ int hit_player_attacktype(object *op, object *hitter, int dam,
 	    else if (attacktype & AT_BLIND && !QUERY_FLAG(op,FLAG_UNDEAD) &&
 		 !QUERY_FLAG(op,FLAG_GENERATOR)) blind_player(op,hitter,dam);
 	}
-	dam=0;	/* Confusion is an effect - doesn't damage */
+	dam=0;	/* These are all effects and don't do real damage */
     }
     else if (attacktype & AT_ACID) {
-	if (!(op->immune & op->protected & ~op->vulnerable & AT_ACID )) {
-	    object *tmp;  /*  If someone is both immune and protected from acid, so is his stuff */
-	    int flag=0;
-	    char buf[256];
+	object *tmp;
+	int flag=0;
 
-	    if(op->immune & AT_ACID) dam /= 4;
-	    
-	    if (!op_on_battleground(op, NULL, NULL)) {
-	      for(tmp=op->inv;tmp!=NULL;tmp=tmp->below) {
-		if(!QUERY_FLAG(tmp,FLAG_APPLIED)||tmp->immune&AT_ACID||
-		   (tmp->protected&AT_ACID&&RANDOM()&1))
-			continue;
+	/* Items only get corroded if your not on a battleground and your not immune. */
+	if (!op_on_battleground(op, NULL, NULL) && (op->resist[ATNR_ACID]<100)) {
+	    for(tmp=op->inv;tmp!=NULL;tmp=tmp->below) {
+
+		if(!QUERY_FLAG(tmp,FLAG_APPLIED)||tmp->resist[ATNR_ACID]>=50) 
+		    continue;
+
 		if(!(tmp->material&M_IRON))
-			continue;
+		    continue;
 		if(tmp->magic< -4) /* Let's stop at -5 */
-			continue;
-		if(tmp->type==RING||tmp->type==GLOVES||tmp->type==BOOTS||
+		    continue;
+
+		if(tmp->type==RING|| /* removed boots and gloves from exlusion list in PR */
 		   tmp->type==GIRDLE||tmp->type==AMULET||tmp->type==WAND||
 		   tmp->type==ROD||tmp->type==HORN)
 			continue; /* To avoid some strange effects */
+
 		/* High damage acid has better chance of corroding objects */
 		if(RANDOM()%(dam+5)>RANDOM()%40+2*tmp->magic) {
 		    if(op->type==PLAYER) {
-			strcpy(buf,"The ");
-			strcat(buf,query_name(hitter));
-			strcat(buf,"'s acid corrodes your ");
-			strcat(buf,query_name(tmp));
-			strcat(buf,"!");
-			new_draw_info(NDI_UNIQUE, 0,op,buf);
-			flag=1;
+			/* Make this more visible */
+			new_draw_info_format(NDI_UNIQUE|NDI_RED,0, op,
+				"The %s's acid corrodes your %s!",
+				 query_name(hitter), query_name(tmp));
 		    }
+		    flag=1;
 		    tmp->magic--;
 		    if(op->type==PLAYER)
 			esrv_send_item(op, tmp);
 		}
-	      }
-	      if(flag) fix_player(op); /* Something was corroded */
 	    }
+	    if(flag) fix_player(op); /* Something was corroded */
 	}
-	/* Get around check up above */
-	if (op->immune & AT_ACID && !does_slay) dam=0;
     }
     else if (attacktype & AT_DRAIN) {
-      int rate = 50;
-      if(op->protected & attacktype) rate *= 2;
-      if(op->vulnerable & attacktype) rate /= 2;
+	/* rate is the proportion of exp drained.  High rate means
+	 * not much is drained, low rate means a lot is drained.
+	 */
+	int rate = 50;
+
+	if (op->resist[ATNR_DRAIN]>0) rate *= (100+op->resist[ATNR_DRAIN])/100;
+	else if (op->resist[ATNR_DRAIN]<0) rate /= (100 - op->resist[ATNR_DRAIN])/100;
+
+	/* full protection has no effect.  Nothing else in this function needs
+	 * to get done, so just return.
+	 */
+	if (!rate) return 0;
+
 	if(op->stats.exp<=rate) {
 	    if(op->type==GOLEM)
 		dam=999; /* It's force is "sucked" away. 8) */
 	    else /* If we can't drain, lets try to do physical damage */
-		dam=hit_player_attacktype(op, hitter, dam, AT_PHYSICAL, magic);
+		dam=hit_player_attacktype(op, hitter, dam, ATNR_PHYSICAL, magic);
 	} else {
 	    if(hitter->stats.hp<hitter->stats.maxhp &&
 	       (op->level > hitter->level) &&
 	       RANDOM()%(op->level-hitter->level+3)>3)
 		    hitter->stats.hp++;
+
 	    if (!op_on_battleground(hitter, NULL, NULL)) {
-	      if(!QUERY_FLAG(op,FLAG_WAS_WIZ))
-		add_exp(hitter,op->stats.exp/rate/2);
-	      add_exp(op,-op->stats.exp/rate);
+		/* Player gets half as much exp as was drained. */
+		if(!QUERY_FLAG(op,FLAG_WAS_WIZ))
+		    add_exp(hitter,op->stats.exp/(rate*2));
+		add_exp(op,-op->stats.exp/rate);
 	    }
 	    dam=0;	/* Drain is an effect */
 	}
-    /* weaponmagic, ghosthit not needed, poison, slow, paralyze handled above */
     } else if (attacktype & AT_TURN_UNDEAD) {
 	if (QUERY_FLAG(op,FLAG_UNDEAD)) {
 	    object *owner=get_owner(hitter)==NULL?hitter:get_owner(hitter);
             object *god = find_god (determine_god (owner));
             int div = 1;
+
 	    /* if undead are not an enemy of your god, you turn them at half
              * strength */
             if ( ! god || ! god->slaying
                 || strstr (god->slaying, undead_name) == NULL)
                 div = 2;
-	    if (op->level < (turn_bonus[owner->stats.Wis]+owner->level) / div)
-	        SET_FLAG(op, FLAG_SCARED);
+	    /* Give a bonus if you resist turn unded */
+	    if (op->level < 
+		(turn_bonus[owner->stats.Wis]+owner->level + (op->resist[ATNR_TURN_UNDEAD]/100)) / div)
+		    SET_FLAG(op, FLAG_SCARED);
 	}
 	else dam=0; /*don't damage non undead - should we damage undead? */
-    /* fear, cancelleation, deplete handled above */
+
     } else if (attacktype & AT_DEATH) {
 	 deathstrike_player(op, hitter, &dam);
+
     } else if (attacktype & AT_CHAOS) {
          LOG(llevError,"%s was hit by %s with non-specific chaos.\n",
 	     query_name(op),query_name(hitter));
          dam=0;
+
     } else if (attacktype & AT_COUNTERSPELL) {
          LOG(llevError,"%s was hit by %s with counterspell attack.\n",
 	     query_name(op),query_name(hitter));
 	dam=0; /* This should never happen.  Counterspell is handled seperately
 		* and filtered out.  If this does happen, Counterspell has no
 		* effect on anything but spells, so it does no damage. */
-    /* Godpower does normal effect? */
+
     } else if (attacktype & AT_HOLYWORD) {
       /* Holyword only affects a limited range of creatures 		*/
       /* Affects enemies of your god (*3 for slaying applied above)	*
@@ -919,14 +951,12 @@ int hit_player_attacktype(object *op, object *hitter, int dam,
        *	      (strstr(find_god(determine_god(hitter))->race,undead_name)==NULL)))) {
        * This has already been handled by hit_player, no need to check  *
        * twice  -- DAMN							*/
-      object *owner=get_owner(hitter)==NULL?hitter:get_owner(hitter);
+	object *owner=get_owner(hitter)==NULL?hitter:get_owner(hitter);
 
-      if(op->level<owner->level+turn_bonus[owner->stats.Wis])
-	SET_FLAG(op, FLAG_SCARED);
-      /*	}
-       *	else dam=0;	If not one of the creatures, no effect */
+	/* As with turn undead above, give a bonus on the saving throw */
+	if((op->level+(op->resist[ATNR_HOLYWORD]/100))<owner->level+turn_bonus[owner->stats.Wis])
+	    SET_FLAG(op, FLAG_SCARED);
     }
-    /* godpower, weaponmagic, and internal do direct damage */
     return dam;
 }
 
@@ -1000,13 +1030,9 @@ int hit_player(object *op,int dam, object *hitter, int type) {
     LOG(llevDebug,"hit player: attacktype %d, dam %d\n", type, dam);
 #endif
 
-    /* By default, if a creature is immune to magic, it is immune to any
-     * attacktype that has magic as part of it.
-     */
     if (magic) {
-      if (op->immune & AT_MAGIC) return 0;
-      if (op->vulnerable & AT_MAGIC) dam *= 2;
-      if (op->protected & AT_MAGIC) dam /= 2;
+	dam = dam * (100-op->resist[ATNR_MAGIC])/100;
+	if (dam == 0) return 0;
     }
 
     /* AT_CHAOS here is a weapon or monster.  Spells are handled by hit_map
@@ -1035,7 +1061,7 @@ int hit_player(object *op,int dam, object *hitter, int type) {
 	    return 0;
     }
 
-    for (attacknum=0; attacknum<NROFATTACKS; attacknum++, attacktype=attacktype<<1) {
+    for (attacknum=0; attacknum<NROFATTACKS; attacknum++, attacktype=1<<attacknum) {
 	/* Magic isn't really a true attack type - it gets combined with other
 	 * attack types.  As such, skip it over.  However, if magic is
 	 * the only attacktype in the group, then still attack with it
@@ -1048,19 +1074,12 @@ int hit_player(object *op,int dam, object *hitter, int type) {
 	 * effects (slow, paralization, etc.
          */
 	if (type & attacktype) {
-	    ndam=hit_player_attacktype(op,hitter,dam,attacktype,magic);
+	    ndam=hit_player_attacktype(op,hitter,dam,attacknum,magic);
 	    maxdam=(maxdam>ndam)?maxdam:ndam;
 	}
     }
-#if 0
-
+#ifdef ATTACK_DEBUG
     LOG(llevDebug,"Attacktype %d did %d damage\n", type, maxdam);
-
-    /* It doesn't appear that being scared will have anything to do with
-     * hitback.  In fact, hitback (monster hitting player) before the
-     * player hitting monster code is called.
-     */
-    CLEAR_FLAG(op,FLAG_SCARED); /* Or the monster won't hit back */
 #endif
 
     if(get_owner(hitter))
@@ -1501,29 +1520,30 @@ void deathstrike_player(object *op, object *hitter, int *dam)
  */
 static void thrown_item_effect (object *hitter, object *victim)
 {
-  tag_t tag = hitter->count;
- 
-  if(!QUERY_FLAG(hitter,FLAG_ALIVE)) {
-    switch (hitter->type) {
-      case POTION:
-        if(QUERY_FLAG(victim,FLAG_ALIVE)&&!QUERY_FLAG(victim,FLAG_UNDEAD)
-	  &&!(victim->immune&AT_MAGIC)) (void) apply_potion(victim,hitter);
-        break;
-      case FOOD:
-	/* cursed food is (often) poisonous....but it won't 'explode'
-     	 * like poison (drink) will. Lets just insert it in inventory
-	 * (coded elsewhere) and later figure out if the monster wants 
-  	 * to eat it (based on INT). */
-        break;
-      case POISON: /* poison drinks */
-        if(QUERY_FLAG(victim,FLAG_ALIVE)&&!QUERY_FLAG(victim,FLAG_UNDEAD)
-	  &&!(victim->immune&AT_POISON)) apply_poison(victim,hitter);
-        break;
-      case CONTAINER: 
-        /* spill_container(victim,RANDOM()%(hitter->stats.dam+1)); */
-        break;
+    if(!QUERY_FLAG(hitter,FLAG_ALIVE)) {
+	/* May not need a switch for just 2 types, but this makes it 
+	 * easier for expansion.
+	 */
+	switch (hitter->type) {
+	    case POTION:
+		/* should player get a save throw instead of checking magic protection? */
+		if(QUERY_FLAG(victim,FLAG_ALIVE)&&!QUERY_FLAG(victim,FLAG_UNDEAD)
+		   &&(victim->resist[ATNR_MAGIC]<60)) (void) apply_potion(victim,hitter);
+		break;
+
+	    case POISON: /* poison drinks */
+		/* As with potions, should monster get a save? */
+		if(QUERY_FLAG(victim,FLAG_ALIVE)&&!QUERY_FLAG(victim,FLAG_UNDEAD)
+		   &&(victim->resist[ATNR_POISON]<60)) apply_poison(victim,hitter);
+		break;
+
+	    /* Removed case statements that did nothing.
+	     * food may be poisonous, but monster must be willing to eat it,
+	     * so we don't handle it here.
+	     * Containers should perhaps break open, but that code was disabled.
+	     */
+	}
     }
-  }
 }
 
 /* adj_attackroll() - adjustments to attacks by various conditions */

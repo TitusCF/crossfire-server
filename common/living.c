@@ -381,40 +381,6 @@ void check_stat_bounds(living *stats) {
 
 #define ORIG_S(xyz,abc)	(op->contr->orig_stats.abc)
 
-/*
- * Adds abilities to the first object based on what the second object
- * gives to appliers.  If the second object does not have the APPLIED
- * flag set, it is assumed that it is being unapplied, and any abilities
- * it gives are subtracted from the first object.
- * (This is of course a problem now, since several objects may give
- * the same abilities, thus change_abil() is used mostly to display
- * messages, while fix_player() is called afterwards.)
- * Also writes a more or less informative message to the first object
- * about what abilities were gained/lost.
- */
-
-/* if immunity has changed then display that.  If not immune then show change
- * in resistance if resistance has changed or if immunity has changed and if
- * resistant then say resistant after saying no longer immune.
- */
-#define CHANGE_ABIL_IMMUNE_MACRO(AT,im1,im2,re1,re2) \
-  if ( (op->immune & (AT) ) != (refop.immune & (AT))) { \
-    success = 1; \
-    if(flag>0) \
-      (*draw_info_func)(NDI_UNIQUE, 0, op, im1 ); \
-    else { \
-      (*draw_info_func)(NDI_UNIQUE, 0, op, im2 ); \
-	  if (refop.protected& (AT)) (*draw_info_func)(NDI_UNIQUE, 0, op, re1 ); \
-	}\
-  } else if (  ( ! (op->immune & (AT) )) \
-		 && ((op->protected& (AT) ) != (refop.protected& (AT) ))) {\
-    success=1; \
-    if(flag>0) \
-      (*draw_info_func)(NDI_UNIQUE, 0, op, re1 ); \
-    else \
-      (*draw_info_func)(NDI_UNIQUE, 0, op, re2 ); \
-  } \
-
 /* return 1 if we sucessfully changed a stat, 0 if nothing was changed. */
 /* flag is set to 1 if we are applying the object, -1 if we are removing
  * the object.
@@ -657,79 +623,41 @@ int change_abil(object *op, object *tmp) {
     else
       (*draw_info_func)(NDI_UNIQUE, 0, op,"You feel your digestion speeding up.");
   }
-	CHANGE_ABIL_IMMUNE_MACRO(AT_PHYSICAL, "You feel much less solid.",
-	   "You suddenly feel very solid.", "You feel less solid.",
-	   "You feel more solid.");
+    for (i=0; i <NROFATTACKS; i++) {
+	if (i==ATNR_PHYSICAL) continue;	/* Don't display those messages */
+	if (op->resist[i] != refop.resist[i]) {
+	    success=1;
+	    if (op->resist[i]==100) { /* Now immune */
+		(*draw_info_func)(NDI_UNIQUE|NDI_BLUE, 0, op,
+				  resist_change[i][0]);
+	    } else if (refop.resist[i]==100) { /* was immune */
+		(*draw_info_func)(NDI_UNIQUE|NDI_BLUE, 0, op,
+				  resist_change[i][1]);
+	    } else if (op->resist[i] > refop.resist[i]) { /* more resistant */
+		(*draw_info_func)(NDI_UNIQUE|NDI_BLUE, 0, op,
+				  resist_change[i][2]);
 
-	CHANGE_ABIL_IMMUNE_MACRO(AT_MAGIC, "You feel immune to magic.",
-	   "You feel less immune to magic.", "You feel more resistant to magic.",
-	   "You feel less resistant to magic.");
+	    } else { /* now less resistant - only thing left */
+		(*draw_info_func)(NDI_UNIQUE|NDI_BLUE, 0, op,
+				  resist_change[i][3]);
 
-  CHANGE_ABIL_IMMUNE_MACRO(AT_FIRE, "You feel immune to fire.",
-	   "You feel less immune to fire.", "You feel resistant to fire.",
-	   "You feel less resistant to fire.");
-
-  if (( op->vulnerable&AT_FIRE) != (refop.vulnerable&AT_FIRE)) {
-    success=1;
-    if(flag>0)
-      (*draw_info_func)(NDI_UNIQUE, 0, op,"You feel exposed to fire.");
-    else
-      (*draw_info_func)(NDI_UNIQUE, 0, op,"You feel less exposed to fire.");
-  }
-  CHANGE_ABIL_IMMUNE_MACRO(AT_COLD, "You feel immune to cold.",
-	   "You feel less immune to cold.", "You feel resistant to cold.",
-	   "You feel less resistant to cold.");
-
-  if (( op->vulnerable&AT_COLD) != (refop.vulnerable&AT_COLD)) {
-    success=1;
-    if(flag>0)
-      (*draw_info_func)(NDI_UNIQUE, 0, op,"You feel exposed to cold.");
-    else
-      (*draw_info_func)(NDI_UNIQUE, 0, op,"You feel less exposed to cold.");
-  }
-  CHANGE_ABIL_IMMUNE_MACRO(AT_ELECTRICITY, "You feel immune to electricity.",
-	   "You feel less immune to electricity.", "You feel more resistant to electricity.",
-	   "You feel less resistant to electricity.");
-
-  CHANGE_ABIL_IMMUNE_MACRO(AT_ACID, "You feel immune to acid.",
-	   "You feel less immune to acid.", "You feel more resistant to acid.",
-	   "You feel less resistant to acid.");
-
-  CHANGE_ABIL_IMMUNE_MACRO(AT_DRAIN, "You feel very full of life.",
-	   "You shiver, everything seems so bleak.", "You feel more resistant to draining.",
-	   "You feel less resistant to draining.");
-
-  CHANGE_ABIL_IMMUNE_MACRO(AT_POISON, "You feel extremely healthy.",
-	   "You feel extremely less healthy!", "You feel more resistant to poison.",
-	   "You feel less resistant to poison.");
-
-  CHANGE_ABIL_IMMUNE_MACRO(AT_SLOW, "You feel in sync with time.",
-	   "You feel out of sync with time.", "You feel more in sync with time.",
-	   "You feel less in sync with time.");
-
-  CHANGE_ABIL_IMMUNE_MACRO(AT_PARALYZE, "You feel very unrestrained.",
-	   "You feel more restrained.", "You feel more resistant to paralyzation.",
-	   "You feel less resistant to paralyzation.");
-
-  CHANGE_ABIL_IMMUNE_MACRO(AT_FEAR, "You feel extremely brave.",
-	   "You feel less brave.", "You feel more resistant to fear.",
-	   "You feel less resistant to fear.");
-
-  CHANGE_ABIL_IMMUNE_MACRO(AT_CONFUSION, "You feel more sure of yourself.",
-	   "You feel less sure of yourself.", "You feel more resistant to confusion.",
-	   "You feel less resistant to confusion.");
-
-  if(tmp->type!=EXPERIENCE)
-    for (j=0; j<7; j++) {
-      if ((i=get_attr_value(&(tmp->stats),j))!=0) {
-	success=1;
-	if (i * flag > 0)
-		(*draw_info_func)(NDI_UNIQUE, 0, op, gain_msg[j]);
-	else
-		(*draw_info_func)(NDI_UNIQUE, 0, op, lose_msg[j]);
-      }
+	    }
+	}
     }
-  return success;
+
+
+    if(tmp->type!=EXPERIENCE) {
+	for (j=0; j<7; j++) {
+	    if ((i=get_attr_value(&(tmp->stats),j))!=0) {
+		success=1;
+		if (i * flag > 0)
+		    (*draw_info_func)(NDI_UNIQUE, 0, op, gain_msg[j]);
+		else
+		    (*draw_info_func)(NDI_UNIQUE, 0, op, lose_msg[j]);
+	    }
+	}
+    }
+    return success;
 }
 
 /*
@@ -907,10 +835,8 @@ void fix_player(object *op) {
   op->path_repelled=op->arch->clone.path_repelled;
   op->path_denied=op->arch->clone.path_denied;
 
-  op->protected=op->arch->clone.protected;
-  op->vulnerable=op->arch->clone.vulnerable;
-  op->immune=op->arch->clone.immune;
-  op->armour=op->arch->clone.armour;
+  memcpy(&op->resist, &op->arch->clone.resist, sizeof(op->resist));
+
   wc=op->arch->clone.stats.wc;
   op->stats.dam=op->arch->clone.stats.dam;
 
@@ -962,14 +888,15 @@ void fix_player(object *op) {
 	if(speed_reduce_from_disease ==0) speed_reduce_from_disease = 1;
       }
 
-      op->protected|=tmp->protected;
-      op->vulnerable|=tmp->vulnerable;
+      for (i=0; i<NROFATTACKS; i++)
+	    if (tmp->resist[i]) 
+		op->resist[i] += ((100-op->resist[i])*tmp->resist[i])/100;
+
       if (tmp->type!=BOW) {
 		  if(tmp->type != SYMPTOM) 
 			 op->attacktype|=tmp->attacktype;
 /*        if (tmp->attacktype) LOG(llevDebug,"Object %s applied, attacktype=0x%x\n", tmp->name, tmp->attacktype);*/
       }
-      op->immune|=tmp->immune;
       op->path_attuned|=tmp->path_attuned;
       op->path_repelled|=tmp->path_repelled;
       op->path_denied|=tmp->path_denied;
@@ -1041,34 +968,32 @@ void fix_player(object *op) {
 
 	if(tmp==op->chosen_skill) { 
 
-	  wc-=tmp->stats.wc; 
+	    wc-=tmp->stats.wc; 
 
-	  if(tmp->stats.dam>0) { 	/* skill is a 'weapon' */ 
-	    if(!QUERY_FLAG(op,FLAG_READY_WEAPON)) 
-                weapon_speed = (int) WEAPON_SPEED(tmp);
-	    if(weapon_speed<0) weapon_speed = 0;
-            weapon_weight=tmp->weight;
-            op->stats.dam+=tmp->stats.dam*(1 + (op->chosen_skill->level/9));
-	    if(tmp->magic) op->stats.dam += tmp->magic;
-	  }
+	    if(tmp->stats.dam>0) { 	/* skill is a 'weapon' */ 
+		if(!QUERY_FLAG(op,FLAG_READY_WEAPON)) 
+		    weapon_speed = (int) WEAPON_SPEED(tmp);
+		if(weapon_speed<0) weapon_speed = 0;
+		weapon_weight=tmp->weight;
+		op->stats.dam+=tmp->stats.dam*(1 + (op->chosen_skill->level/9));
+		if(tmp->magic) op->stats.dam += tmp->magic;
+	    }
 
-          if(tmp->stats.wc)
-            wc-=(tmp->stats.wc+tmp->magic);
+	    if(tmp->stats.wc)
+		wc-=(tmp->stats.wc+tmp->magic);
 
-          if(tmp->armour)
-            op->armour+=((100-op->armour)*tmp->armour)/100;
 
-          if(tmp->slaying!=NULL) {
-            if (op->slaying != NULL)
-              free_string (op->slaying);
-            add_refcount(op->slaying = tmp->slaying);
-          }
+	    if(tmp->slaying!=NULL) {
+		if (op->slaying != NULL)
+		    free_string (op->slaying);
+		add_refcount(op->slaying = tmp->slaying);
+	    }
 
-	  if(tmp->stats.ac)
-            op->stats.ac-=(tmp->stats.ac+tmp->magic);
+	    if(tmp->stats.ac)
+		op->stats.ac-=(tmp->stats.ac+tmp->magic);
 
 #ifdef SPELL_ENCUMBRANCE
-        if(op->type==PLAYER) op->contr->encumbrance+=(int)3*tmp->weight/1000;
+	    if(op->type==PLAYER) op->contr->encumbrance+=(int)3*tmp->weight/1000;
 #endif
 	}
 	break;
@@ -1084,8 +1009,7 @@ void fix_player(object *op) {
       case BOOTS:
       case GLOVES:
       case CLOAK:
-        if(tmp->armour)
-          op->armour+=((100-op->armour)*tmp->armour)/100;
+
         if(tmp->stats.wc)
           wc-=(tmp->stats.wc+tmp->magic);
         if(tmp->stats.dam)
@@ -1093,12 +1017,11 @@ void fix_player(object *op) {
         if(tmp->stats.ac)
           op->stats.ac-=(tmp->stats.ac+tmp->magic);
         break;
+
       case WEAPON:
         wc-=(tmp->stats.wc+tmp->magic);
         if(tmp->stats.ac&&tmp->stats.ac+tmp->magic>0)
           op->stats.ac-=tmp->stats.ac+tmp->magic;
-        if(tmp->armour)
-          op->armour+=((100-op->armour)*tmp->armour)/100;
         op->stats.dam+=(tmp->stats.dam+tmp->magic);
         weapon_weight=tmp->weight;
         weapon_speed=((int)WEAPON_SPEED(tmp)*2-tmp->magic)/2;
@@ -1118,8 +1041,6 @@ void fix_player(object *op) {
 #endif
       case BRACERS:
       case FORCE:
-        if(tmp->armour)
-          op->armour+=((100-op->armour)*tmp->armour)/100;
         if(tmp->stats.wc) { 
           if(best_wc<tmp->stats.wc+tmp->magic) {
              wc+=best_wc;

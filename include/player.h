@@ -40,7 +40,8 @@ typedef struct {
 #define WINLEFT (-5)
 #define WINRIGHT 5
 
-#define MAX_NAME 16   /* Max length of character name */
+/* this is already in define.h */
+/*#define MAX_NAME 16*/   /* Max length of character name */
 
 
 typedef enum rangetype {
@@ -109,7 +110,6 @@ typedef struct pl {
   unsigned char has_hit;   /* If set, weapon_sp instead of speed will count */
   float weapon_sp;         /* Penalties to speed when fighting w speed >ws/10*/
   float last_weapon_sp;    /* Last turn */
-  signed char last_armour; /* Last turn */
   uint16 last_flags;	    /* fire/run on flags for last tick */
   uint32  last_weight_limit;	/* Last weight limit transmitted to client */
   short shootstrength;     /* Strength of spell */
@@ -119,6 +119,7 @@ typedef struct pl {
   float last_speed;
   signed long last_value;  /* Same usage as last_stats */
   long last_weight;
+  sint16    last_resist[NROFATTACKS];	/* last resist values sent to client */
 
 #ifdef USE_SWAP_STATS
   int Swap_First;

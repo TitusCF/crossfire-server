@@ -78,6 +78,24 @@
 #include "sounds.h"
 
 
+/* This table translates the attack numbers as used within the
+ * program to the value we use when sending STATS command to the
+ * client.  IF a value is -1, then we don't send that to the
+ * client.
+ */
+short atnr_cs_stat[NROFATTACKS] = {CS_STAT_RES_PHYS,
+    CS_STAT_RES_MAG,CS_STAT_RES_FIRE, CS_STAT_RES_ELEC,
+    CS_STAT_RES_COLD, CS_STAT_RES_CONF, CS_STAT_RES_ACID,
+    CS_STAT_RES_DRAIN, -1 /* weaponmagic */,
+    CS_STAT_RES_GHOSTHIT, CS_STAT_RES_POISON, 
+    CS_STAT_RES_SLOW, CS_STAT_RES_PARA, CS_STAT_TURN_UNDEAD,
+    CS_STAT_RES_FEAR, -1 /* Cancellation */,
+    CS_STAT_RES_DEPLETE, CS_STAT_RES_DEATH,
+    -1 /* Chaos */, -1 /* Counterspell */,
+    -1 /* Godpower */, CS_STAT_RES_HOLYWORD,
+    CS_STAT_RES_BLIND,    -1 /* Blind */
+};
+
 /* The client has requested to be added to the game.  This is what
  * takes care of it.  We tell the client how things worked out.
  * I am not sure if this file is the best place for this function.  however,
@@ -402,7 +420,7 @@ void MoveCmd(char *buf, int len,player *pl)
     }
     vals[2]=atoi(buf);
 
-    LOG(llevDebug,"Move item %d (nrof=%d) to %d.\n", vals[1], vals[2], vals[0]);
+/*    LOG(llevDebug,"Move item %d (nrof=%d) to %d.\n", vals[1], vals[2], vals[0]);*/
     esrv_move_object(pl->ob,vals[0], vals[1], vals[2]);
 }
 
@@ -491,7 +509,6 @@ void esrv_update_stats(player *pl)
     AddIfShort(pl->last_stats.wc, pl->ob->stats.wc, CS_STAT_WC);
     AddIfShort(pl->last_stats.ac, pl->ob->stats.ac, CS_STAT_AC);
     AddIfShort(pl->last_stats.dam, pl->ob->stats.dam, CS_STAT_DAM);
-    AddIfShort(pl->last_armour, pl->ob->armour, CS_STAT_ARMOUR);
     AddIfFloat(pl->last_speed, pl->ob->speed, CS_STAT_SPEED);
     AddIfShort(pl->last_stats.food, pl->ob->stats.food, CS_STAT_FOOD);
     AddIfFloat(pl->last_weapon_sp, pl->weapon_sp, CS_STAT_WEAP_SP);
@@ -501,6 +518,17 @@ void esrv_update_stats(player *pl)
     if (pl->run_on) flags |= SF_RUNON;
 
     AddIfShort(pl->last_flags, flags, CS_STAT_FLAGS);
+    if (pl->socket.sc_version<1025) {
+	AddIfShort(pl->last_resist[ATNR_PHYSICAL], pl->ob->resist[ATNR_PHYSICAL], CS_STAT_ARMOUR);
+    } else {
+	int i;
+
+	for (i=0; i<NROFATTACKS; i++) {
+	    /* Skip ones we won't send */
+	    if (atnr_cs_stat[i]==-1) continue;
+	    AddIfShort(pl->last_resist[i], pl->ob->resist[i], atnr_cs_stat[i]);
+	}
+    }
 
     rangetostring(pl->ob, buf);
     AddIfString(pl->socket.stats.range, buf, CS_STAT_RANGE);

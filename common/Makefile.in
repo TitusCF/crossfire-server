@@ -92,7 +92,6 @@ install::
 
 proto:
 	cextract +Ap -P -o ../include/libproto.h.bak $(INCLUDES) \
-	-cpp-program="gcc -E -C" \
 	$(SRCS)
 	$(SED) -e "s/#if __STDC__/#ifdef __STDC__/" -e "s/__signed/signed/g" -e "/inline/d" -e "/YY_BUFFER/d" < ../include/libproto.h.bak > ../include/libproto.h
 	chmod 644 ../include/libproto.h

@@ -119,9 +119,8 @@ inline int CAN_MERGE(object *ob1, object *ob2) {
 	(ob1->msg != ob2->msg) || 
 	(ob1->weight != ob2->weight) ||
 	(ob1->stats.food != ob2->stats.food) ||
-	(ob1->protected != ob2->protected) || 
-	(ob1->immune != ob2->immune) ||
-	(ob1->vulnerable != ob2->vulnerable) || 
+	(memcmp(&ob1->resist, &ob2->resist, sizeof(ob1->resist))!=0) ||
+	(ob1->attacktype != ob2->attacktype) ||
 	(ob1->magic != ob2->magic) ||
 	(ob1->slaying != ob2->slaying) ||
 	(ob1->value != ob2->value) ||
@@ -511,11 +510,11 @@ void clear_object(object *op) {
   op->last_heal=0,op->last_sp=0,op->last_grace=0,op->last_eat=0;
   op->nrof=0;
   op->ownercount=0;
-  op->immune=0,op->protected=0,op->attacktype=0,op->vulnerable=0;
+  op->attacktype=0;
+  memset(&op->resist, 0, sizeof(op->resist));
   op->stats.exp=0;
   op->x=0; op->y=0; op->ox=0; op->oy=0;
   op->stats.dam=0,op->stats.wc=0,op->stats.ac=0;
-  op->armour=0;
   op->stats.luck=0;
   op->stats.food=0;
   op->stats.sp=op->stats.maxsp=op->stats.hp=op->stats.maxhp=0;

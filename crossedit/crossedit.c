@@ -76,7 +76,7 @@ XtActionsRec mainActions[] = {
  * main
  **********************************************************************/
 
-void main (int argc, char **argv, char **env)
+int main (int argc, char **argv, char **env)
 {
     XtAppContext app_con;
 

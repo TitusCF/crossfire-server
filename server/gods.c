@@ -195,8 +195,8 @@ void become_follower (object *op, object *new_god) {
     exp_obj->path_attuned=new_god->path_attuned;
     exp_obj->path_repelled=new_god->path_repelled;
     exp_obj->path_denied=new_god->path_denied;
-    exp_obj->protected=new_god->protected; 
-    exp_obj->vulnerable=new_god->vulnerable; 
+    /* This may copy immunities */
+    memcpy(exp_obj->resist, new_god->resist, sizeof(new_god->resist));
 #ifdef MORE_PRIEST_GIFTS
     exp_obj->stats.hp= (sint16) new_god->last_heal;  
     exp_obj->stats.sp= (sint16) new_god->last_sp; 

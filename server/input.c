@@ -111,7 +111,6 @@ void drop_inventory(object *op) {
  */
 void examine_monster(object *op,object *tmp) {
     object *mon=tmp->head?tmp->head:tmp;
-    archetype *at=tmp->arch;
 
     if(QUERY_FLAG(mon,FLAG_UNDEAD))
 	new_draw_info(NDI_UNIQUE, 0,op,"It is an undead force.");
@@ -509,8 +508,8 @@ static void show_commands(object *op, int what)
   char line[80];
   int i, size, namelen, linelen=0;
   CommArray_s *ap;
-  extern CommArray_s Commands[], WizCommands[], SocketCommands[];
-  extern const int CommandsSize, WizCommandsSize, SocketCommandsSize;
+  extern CommArray_s Commands[], WizCommands[];
+  extern const int CommandsSize, WizCommandsSize;
   
   switch (what) {
   case 1:
@@ -678,7 +677,7 @@ static int find_spell_byname(object *op, char *params, int options)
     int numknown; /* number of spells known by op */
     int spnum;  /* number of spell that is being cast */
     int match=-1,i;
-    int paramlen;
+    int paramlen=0;
 
     if(QUERY_FLAG(op, FLAG_WIZ))
 	numknown = NROFREALSPELLS;

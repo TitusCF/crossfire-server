@@ -125,7 +125,7 @@ extern Socket_Info socket_info;
 extern FaceInfo	faces[MAXFACENUM];  /* face information */
 
 #define VERSION_CS 1022
-#define VERSION_SC 1024
+#define VERSION_SC 1025
 #define VERSION_INFO "Crossfire Server"
 
 

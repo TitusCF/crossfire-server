@@ -55,7 +55,7 @@ void remove_friendly_object(object *op) {
     if(prev==NULL||prev->next==NULL||
        prev->next->ob!=op||prev->next->id!=op->count) {
       LOG(llevError,"Remove_friendly_object: Can't find object %s (%d).\n",
-          op->name,op->count);
+          op->name?op->name:op->arch->name,op->count);
       return;
     }
     this=prev->next;

@@ -67,24 +67,24 @@ void dump_abilities() {
  */
 
 void print_monsters() {
-  archetype *at;
-  object *op;
-  char   attbuf[32], protbuf[32], immbuf[32], vulnbuf[32];
+    archetype *at;
+    object *op;
+    char   attbuf[32];
+    int i;
 
-  printf("               |     |   |    |    |      attack       |    protected      |     immune        |    vulnerable     |        |         |\n");
-  printf("monster        | hp  |dam| ac | wc |pmf ecw adw gpd ptf|pmf ecw adw gpd ptf|pmf ecw adw gpd ptf|pmf ecw adw gpd ptf|  exp   | new exp |\n");
-  printf("---------------------------------------------------------------------------------------------------------------------------------------\n");
-  for(at=first_archetype;at!=NULL;at=at->next) {
-    op = arch_to_object(at);
-    if (QUERY_FLAG(op,FLAG_MONSTER)) {
-      bitstostring((long)op->attacktype, NROFATTACKS, attbuf);
-      bitstostring((long)op->protected, NROFATTACKS, protbuf);
-      bitstostring((long)op->immune, NROFATTACKS, immbuf);
-      bitstostring((long)op->vulnerable, NROFATTACKS, vulnbuf);
-      printf("%-15s|%5d|%3d|%4d|%4d|%s|%s|%s|%s|%8d|%9d|\n",
-        op->arch->name, op->stats.maxhp, op->stats.dam, op->stats.ac,
-        op->stats.wc,
-        attbuf, protbuf, immbuf, vulnbuf, op->stats.exp, new_exp(op));
+    printf("               |     |   |    |    |      attack       |                        resistances                                                                       |\n");
+    printf("monster        | hp  |dam| ac | wc |pmf ecw adw gpd ptf|phy mag fir ele cld cfs acd drn wmg ght poi slo par tud fer cnc dep dth chs csp gpw hwd bln int |  exp   | new exp |\n");
+    printf("---------------------------------------------------------------------------------------------------------------------------------------------------\n");
+    for(at=first_archetype;at!=NULL;at=at->next) {
+	op = arch_to_object(at);
+	if (QUERY_FLAG(op,FLAG_MONSTER)) {
+	    bitstostring((long)op->attacktype, NROFATTACKS, attbuf);
+	    printf("%-15s|%5d|%3d|%4d|%4d|%s|",
+		   op->arch->name, op->stats.maxhp, op->stats.dam, op->stats.ac,
+		   op->stats.wc,attbuf);
+	    for (i=0; i<NROFATTACKS; i++)
+		printf("%4d", op->resist[i]);
+	    printf("|%8d|%9d|\n",op->stats.exp, new_exp(op));
     }
     free_object(op);
   }

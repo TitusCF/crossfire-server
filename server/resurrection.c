@@ -87,10 +87,12 @@ int cast_raise_dead_spell(object *op,int dir,int spell_type, object * corpseobj)
 	/* If no object, temp will be set to NULL */
 	for(temp=get_map_ob(op->map,op->x+freearr_x[dir],op->y+freearr_y[dir]);
 	    temp!=NULL; temp=temp->above)
-	    /* really need a better way to spot corpseobjects
-	     * corpses immune to everything, so that they cannot be destroyed.
-	     */
-		if(temp->type == CORPSE && temp->immune==262143) 
+		/* Remove checks for immunity - bit of a hack.  Anyways, only
+		 * the CORPSE type is being used corpses for players, so
+		 * this check should be sufficient.  If we really want
+		 * to be sure, we could probably check the archetype or something.
+		 */
+		if(temp->type == CORPSE)
 		    break;
     } 
   } else temp = corpseobj;

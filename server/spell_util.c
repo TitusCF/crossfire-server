@@ -796,6 +796,13 @@ if (item == spellNormal && !ability ){
   case SP_CONFLICT:
     success = cast_cause_conflict(op,caster,spellarch[type],type);
     break;
+
+  case SP_POISON_FOG:
+  case SP_VITRIOL_SPLASH:
+    /* These two don't do anything yet, but putting the above in
+     * prevents compiler warnings.
+     */
+    break;
   }
 
   play_sound_map(op->map, op->x, op->y, SOUND_CAST_SPELL_0 + type);
@@ -955,14 +962,6 @@ static int ok_to_put_more(mapstruct *m,int x,int y,object *op,int immune_stop) {
 	/* Perhaps we should also put checks in for no magic and unholy
 	 * ground to prevent it from moving along?
 	 */
-#if 0
-	/* Remove code that determines if it stops because it hits
-	 * a type of monster.  I don't think that should affect it.
-	 */
-    head=tmp->head==NULL?tmp:tmp->head;
-    if((QUERY_FLAG(head, FLAG_ALIVE) && head->immune & immune_stop))
-      return 0;
-#endif
     }
     /* If it passes the above tests, it must be OK */
     return 1;
@@ -1396,17 +1395,7 @@ void move_bolt(object *op) {
     op->value=1;
     if(!op->direction)
       return;
-    /*
-     * The bolt stops if it hits someone who is immune to it.
-     */
-    tmp=get_map_ob(op->map,op->x,op->y);
-    while(tmp!=NULL&&(!QUERY_FLAG(tmp, FLAG_ALIVE)||!(tmp->immune&op->attacktype)))
-      tmp=tmp->above;
-    if(tmp!=NULL) {
-      remove_ob(op);
-      free_object(op);
-      return;
-    }
+
     if(blocks_view(op->map,op->x+DIRX(op),op->y+DIRY(op)))
       return;
     w=wall(op->map,op->x+DIRX(op),op->y+DIRY(op));
@@ -1607,7 +1596,6 @@ void explode_object(object *op)
 {
   tag_t op_tag = op->count;
   object *tmp;
-  mapstruct *map;
 
   if (op->other_arch == NULL) {
     LOG (llevError, "BUG: explode_object(): op without other_arch\n");
@@ -1680,7 +1668,7 @@ void explode_object(object *op)
   case CONE: 
     {
       int type = tmp->stats.sp;
-      int level = op->level;
+
       if(!type) type = op->stats.sp;
       copy_owner(tmp,op);
       cast_cone(op,op,0,SP_PARAMETERS[type].bdur,type,op->other_arch,op->attacktype&AT_MAGIC);
@@ -1828,7 +1816,7 @@ object *find_target_for_friendly_spell(object *op,int dir)
 /*  ball lightning automatically seeks out a victim, if
     it sees any monsters close enough.  */
 void move_ball_lightning(object *op) {
-    int i,nx,ny,tx,ty,j,dam_save,dir;
+    int i,nx,ny,j,dam_save,dir;
     object *owner;
 	 
     owner = get_owner(op);
@@ -1849,6 +1837,7 @@ void move_ball_lightning(object *op) {
 
     if(!(RANDOM() %4))
       j = RANDOM() %2;
+    else j=0;	/* ? j wasn't being assigned to anything before */
     for(i = 1; i < 9; i++) {
       /* i bit 0: alters sign of offset
        * otther bits (i / 2): absolute value of offset
@@ -1896,7 +1885,7 @@ void move_ball_lightning(object *op) {
 
     if(i>=0) { /* we have a preferred direction!  */
       /* pick another direction if the preferred dir is blocked. */
-      if(wall(op->map,tx + freearr_x[i], ty + freearr_y[i])) {
+      if(wall(op->map,nx + freearr_x[i], ny + freearr_y[i])) {
 	i+= RANDOM()%3-1;  /* -1, 0, +1 */
 	if(i==0) i=8;
 	if(i==9) i=1;

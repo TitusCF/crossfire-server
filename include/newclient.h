@@ -99,6 +99,29 @@
 #define CS_STAT_FLAGS	25
 #define CS_STAT_WEIGHT_LIM	26
 
+/* Start & end of resistances, inclusive. */
+#define CS_STAT_RESIST_START	100
+#define CS_STAT_RESIST_END	117
+#define CS_STAT_RES_PHYS	100
+#define CS_STAT_RES_MAG		101
+#define CS_STAT_RES_FIRE	102
+#define CS_STAT_RES_ELEC	103
+#define CS_STAT_RES_COLD	104
+#define CS_STAT_RES_CONF	105
+#define CS_STAT_RES_ACID	106
+#define CS_STAT_RES_DRAIN	107
+#define CS_STAT_RES_GHOSTHIT	108
+#define CS_STAT_RES_POISON	109
+#define CS_STAT_RES_SLOW	110
+#define CS_STAT_RES_PARA	111
+#define CS_STAT_TURN_UNDEAD	112
+#define CS_STAT_RES_FEAR	113
+#define CS_STAT_RES_DEPLETE	114
+#define CS_STAT_RES_DEATH	115
+#define CS_STAT_RES_HOLYWORD	116
+#define CS_STAT_RES_BLIND	117
+
+
 /* These are used with CS_STAT_FLAGS above to communicate S->C what the
  * server thinks the fireon & runon states are.
  */

@@ -35,11 +35,11 @@ INSTALLFILES = $(srcdir)/artifacts $(srcdir)/ban_file $(srcdir)/def_help \
 	$(srcdir)/skill_params $(srcdir)/spell_params \
 	$(srcdir)/treasures $(srcdir)/animations $(srcdir)/archetypes \
 	$(srcdir)/bmaps $(srcdir)/bmaps.paths $(srcdir)/crossfire.xpm \
-	$(srcdir)/faces $(srcdir)/crossfire.xbm $(srcdir)/crossfire.png \
-	$(srcdir)/settings
+	$(srcdir)/faces $(srcdir)/crossfire.xbm $(srcdir)/crossfire.png
 
 ALLFILES = $(SRCS) README xpmtopix.pl collect.pl util.pl \
-	Makefile.in .collect-stamp  $(INSTALLFILES)
+	Makefile.in .collect-stamp  $(INSTALLFILES) settings
+
 
 FILES_HELP = $(srcdir)/help/apply $(srcdir)/help/bind \
 	$(srcdir)/help/cast $(srcdir)/help/golem $(srcdir)/help/invoke \

@@ -644,3 +644,18 @@ int command_usekeys(object *op, char *params)
 	types[op->contr->usekeys]);
     return 1;
 }
+
+int command_resistances(object *op, char *params)
+{
+    int i;
+    if (!op)
+	return 0;
+
+    for (i=0; i<NROFATTACKS; i++) {
+	if (i==ATNR_INTERNAL) continue;
+
+	new_draw_info_format(NDI_UNIQUE, 0, op, "%-20s %+5d", 
+		attacktype_desc[i], op->resist[i]);
+    }
+  return 0;
+}

@@ -27,6 +27,7 @@
 */
 
 #define EXTERN
+#define INIT_C
 #include <global.h>
 #include <object.h>
 
@@ -58,7 +59,7 @@ SIMPLE_EXP,
 0,		/* This and the next 3 values are metaserver values */
 "",
 "",
--1,
+0,
 ""
 };
 

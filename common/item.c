@@ -54,6 +54,32 @@ static char levelnumbers_10[11][20] = {
   "seventieth","eightieth","ninetieth"
 };
 
+/* describe_resistance generates the visible naming for resistances.
+ * returns a static array of the description.  This can return
+ * a big buffer.
+ * if newline is true, we don't put parens around the description
+ * but do put a newline at the end.  Useful when dumping to files
+ */
+char *describe_resistance(object *op, int newline)
+{
+    static char buf[VERY_BIG_BUF];
+    char    buf1[VERY_BIG_BUF];
+    int tmpvar;
+
+    buf[0]=0;
+    for (tmpvar=0; tmpvar<NROFATTACKS; tmpvar++) {
+       if (op->resist[tmpvar]) {
+	    if (!newline)
+		sprintf(buf1,"(%s %+d)", resist_plus[tmpvar], op->resist[tmpvar]);
+	    else
+		sprintf(buf1,"%s %d\n", resist_plus[tmpvar], op->resist[tmpvar]);
+
+	    strcat(buf, buf1);
+       }
+    }
+    return buf;
+}
+
 
 /*
  * query_weight(object) returns a character pointer to a static buffer
@@ -147,8 +173,9 @@ char *ring_desc (object *op)
 	sprintf(buf+strlen(buf), "(dam%+d)", op->stats.dam);
     if(op->stats.ac)
 	sprintf(buf+strlen(buf), "(ac%+d)", op->stats.ac);
-    if(op->armour)
-	sprintf(buf+strlen(buf), "(armour%+d)", op->armour);
+
+    strcat(buf,describe_resistance(op, 0));
+
     if (op->stats.food != 0)
 	sprintf(buf+strlen(buf), "(sustenance%+d)", op->stats.food);
 	 /*    else if (op->stats.food < 0)
@@ -171,9 +198,6 @@ char *ring_desc (object *op)
 	strcat(buf,"(stealth)");
     /* Shorten some of the names, so they appear better in the windows */
     len=strlen(buf);
-    DESCRIBE_ABILITY_SAFE(buf, op->immune, "Immune", &len, VERY_BIG_BUF);
-    DESCRIBE_ABILITY_SAFE(buf, op->protected, "Pro", &len, VERY_BIG_BUF);
-    DESCRIBE_ABILITY_SAFE(buf, op->vulnerable, "Vuln", &len, VERY_BIG_BUF);
     DESCRIBE_PATH_SAFE(buf, op->path_attuned, "Attuned", &len, VERY_BIG_BUF);
     DESCRIBE_PATH_SAFE(buf, op->path_repelled, "Repelled", &len, VERY_BIG_BUF);
     DESCRIBE_PATH_SAFE(buf, op->path_denied, "Denied", &len, VERY_BIG_BUF);
@@ -699,10 +723,6 @@ char *describe_item(object *op) {
     }
   }
   if(!need_identify(op) || QUERY_FLAG(op,FLAG_IDENTIFIED) || QUERY_FLAG(op,FLAG_BEEN_APPLIED)) {
-    if(op->armour) {
-      sprintf(buf,"(armour%+d)",op->armour);
-      strcat(retbuf,buf);
-    }
     if(QUERY_FLAG(op,FLAG_XRAYS))
       strcat(retbuf,"(xray-vision)");
     if(QUERY_FLAG(op,FLAG_FLYING))
@@ -781,9 +801,7 @@ char *describe_item(object *op) {
      QUERY_FLAG(op,FLAG_MONSTER)) {
 /*    if (op->attacktype != 1)*/
       DESCRIBE_ABILITY(retbuf, op->attacktype, "Attacks");
-      DESCRIBE_ABILITY(retbuf, op->immune, "Immune");
-      DESCRIBE_ABILITY(retbuf, op->protected, "Protected");
-      DESCRIBE_ABILITY(retbuf, op->vulnerable, "Vulnerable");
+      strcat(retbuf,describe_resistance(op, 0));
       DESCRIBE_PATH(retbuf, op->path_attuned, "Attuned");
       DESCRIBE_PATH(retbuf, op->path_repelled, "Repelled");
       DESCRIBE_PATH(retbuf, op->path_denied, "Denied");
@@ -792,8 +810,8 @@ char *describe_item(object *op) {
 }
 
 /* Return true if the item is magical.  A magical item is one that
- * increases/decreases any abilities, provides protection, immunity,
- * or vulnerability, has a generic magical bonus, or is an artifact.
+ * increases/decreases any abilities, provides a resistance,
+ * has a generic magical bonus, or is an artifact.
  * This function is used by detect_magic to determine if an item
  * should be marked as magical.
  */
@@ -836,12 +854,13 @@ int is_magical(object *op) {
 	(op->type==WAND && op->stats.food))
 	    return 1;
 
-    /* if something protects, immunes or vulnerables, it must be magical.
-     * power crystal, spellbooks, and scrolls are always magical.
-     */
-    if (op->immune || op->protected || op->vulnerable || op->magic ||
-	op->type==POWER_CRYSTAL || op->type==SPELLBOOK || op->type==SCROLL ||
-	op->type==GIRDLE)
+    /* if something gives a protection, either positive or negative, its magical */
+    for (i=0; i<NROFATTACKS; i++)
+	if (op->resist[i]) return 1;
+	
+   /* power crystal, spellbooks, and scrolls are always magical.  */
+   if (op->magic || op->type==POWER_CRYSTAL || op->type==SPELLBOOK || 
+	op->type==SCROLL || op->type==GIRDLE)
 	    return 1;
 
     /* Check to see if it increases/decreases any stats */
@@ -853,25 +872,6 @@ int is_magical(object *op) {
      */
     return 0;
 }
-#if 0
-int always_magical(object *op) {
-  switch(op->type) {
-  case RING:
-  case BRACERS:
-  case AMULET:
-  case GIRDLE:
-  case ROD:
-  case SCROLL:
-  case SPELLBOOK:
-  case POTION:
-    return 1;
-  case WAND:
-    if (op->stats.food)
-      return 1;
-  }
-  return 0;
-}
-#endif
 
 /* need_identify returns true if the item should be identified.  This 
  * function really should not exist - by default, any item not identified

@@ -17,9 +17,35 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 CVS changes since last release:
 
+MSW 2000/12/3:
+Checking for partial resistance code.  Various minor errors also fixed
+(compiler warnings, unused variables, Makefile.in changes, etc).
+PR code also includes support to send protections to the client.
+Files changed:
+    common/Makefile.in common/button.c common/exp.c
+    common/friend.c common/holy.c common/info.c common/init.c
+    common/item.c common/living.c common/loader.c common/loader.l
+    common/object.c common/player.c common/re-cmp.c
+    common/readable.c common/treasure.c crossedit/App.c
+    crossedit/crossedit.c crossedit/proto.h doc/crossfire.doc
+    include/define.h include/global.h include/libproto.h
+    include/newclient.h include/newserver.h include/object.h
+    include/player.h include/sproto.h lib/Makefile.in
+    lib/archetypes lib/artifacts lib/crossfire.png
+    lib/crossfire.xbm lib/crossfire.xpm random_maps/rproto.h
+    random_maps/special.c random_maps/style.c server/Makefile.in
+    server/apply.c server/attack.c server/c_misc.c
+    server/c_object.c server/commands.c server/disease.c
+    server/gods.c server/input.c server/monster.c server/player.c
+    server/resurrection.c server/rune.c server/spell_effect.c
+    server/spell_util.c server/swap.c socket/metaserver.c
+    socket/request.c
+    Added Files:
+    include/attack.h
 
-Changes for 0.95.8:
+
 ------------------------------------------------------------------------------
+Changes for 0.95.8:
 
 MSW 2000/11/26:
 utils/metaserver.pl (added), utils/Makefile.in:  Add metaserver.pl script.

@@ -31,6 +31,7 @@
 #endif
 #include <object.h>
 
+#ifdef RECYCLE_TMP_MAPS
 /* This writes out information on all the temporary maps.  It is called by
  * swap_map below.
  */
@@ -63,6 +64,7 @@ static void write_map_log()
     }
     fclose(fp);
 }
+#endif
 
 void read_map_log() 
 {

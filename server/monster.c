@@ -1544,9 +1544,13 @@ int can_detect_enemy (object *op, object *enemy) {
 #ifdef USE_LIGHTING
     /* Radii adjustment for enemy standing in the dark */ 
     if(op->map->darkness>0 && !stand_in_light(enemy)) {
-       /* on dark maps body heat can help indicate location with infravision */
-       if(QUERY_FLAG(op,FLAG_SEE_IN_DARK)
-         &&(!enemy->immune&AT_FIRE||is_true_undead(enemy))) 
+
+       /* on dark maps body heat can help indicate location with infravision.
+	* There was a check for immunity for fire here (to increase radius) -
+	* I'm not positive if that makes sense - something could be immune to fire
+	* but not be any warmer blodoed than something else.
+	*/
+       if(QUERY_FLAG(op,FLAG_SEE_IN_DARK) && is_true_undead(enemy))
 	 radius += op->map->darkness/2;
        else
 	 radius -= op->map->darkness/2;

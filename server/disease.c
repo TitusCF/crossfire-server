@@ -283,7 +283,7 @@ int infect_object(object *victim, object *disease, int force) {
   copy_object(disease,new_disease);
   new_disease->stats.food=disease->stats.maxgrace;
   new_disease->value=disease->stats.maxhp;
-  new_disease->stats.wc -= disease->armour;  /* self-limiting factor */
+  new_disease->stats.wc -= disease->last_grace;  /* self-limiting factor */
 
   /* Unfortunately, set_owner does the wrong thing to the skills pointers
 	  resulting in exp going into the owners *current* chosen skill. */

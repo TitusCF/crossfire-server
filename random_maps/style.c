@@ -144,7 +144,7 @@ int nrofstyle_map_objects;
 
 /* the warning here is because I've declared it "const", the
    .h file in linux allows non-const.  */
-int select_regular_files(struct dirent *the_entry) {
+int select_regular_files(const struct dirent *the_entry) {
   if(the_entry->d_name[0]=='.') return 0;
   if(strstr(the_entry->d_name,"CVS")) return 0;
   return 1;

@@ -67,9 +67,10 @@ void metaserver_init()
     }
     sock.sin_family = AF_INET;
     sock.sin_port = htons(settings.meta_port);
-#ifndef __FreeBSD__
+#if 0
     /* Freebsd seems to have a problem in that the sendto in metaserver_update will
      * fail on a connected socket.  So don't connect the socket.
+     * Solaris has the same problem, so for now just disable this.
      */
     if (connect(metafd, &sock, sizeof(sock))<0) {
 	LOG(llevDebug,"metaserver_init: Unable to connect to metaserver, err %d\n", errno);
