@@ -1,4 +1,4 @@
-#!/usr/local/bin/perl
+#!/usr/bin/perl
 
 open(BMAPS,"bmaps.paths") || die("Can't open bmaps.paths: $!\n");
 open(ESRV,">crossfire.xpm") || die("Can't open crossfire.xpm for write: $!\n");

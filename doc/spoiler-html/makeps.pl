@@ -1,4 +1,4 @@
-#!/usr/local/bin/perl
+#!/usr/bin/perl
 eval 'exec perl -S $0 "$@"'
     if $running_under_some_shell;
 			# this emulates #! processing on NIH machines.

@@ -1,4 +1,4 @@
-#!/usr/local/bin/perl
+#!/usr/bin/perl
 
 # Usefull for making an index laTex file from *.idx file
 
