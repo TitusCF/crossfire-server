@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 CVS changes since last release:
 
+server/c_object.c: Fix bug in pick_up where it was not using the right
+   count for picking up objects if the player did not specify one.  This
+   allowed players to put objects into containers that should not really
+   fit.
 server/player.c:  Don't let players shoot arrows at themself.  Also,
    minor changes to use new_draw_info_format.
 server/swap.c: If recycle temp maps, don't save out random maps to

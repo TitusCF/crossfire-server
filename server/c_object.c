@@ -388,8 +388,10 @@ void pick_up(object *op,object *alt)
     if ( ! can_pick (op, tmp))
         goto leave;
 
-    if (op->type==PLAYER)
+    if (op->type==PLAYER) {
 	count=op->contr->count;
+	if (count==0) count = tmp->nrof;
+    }
     else
 	count=tmp->nrof;
 
