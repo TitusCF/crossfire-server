@@ -1755,7 +1755,7 @@ int summon_pet(object *op, int dir, SpellTypeFrom item) {
     int level, number, i;
     char *monster;
     treasurelist *trlist = NULL;
-    treasure *tr, *prevtr;
+    treasure *tr, *prevtr = NULL;
 
     level = ((op->head?op->head->level:SK_level(op)) / 4);
 

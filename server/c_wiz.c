@@ -637,6 +637,144 @@ int command_dump (object *op, char *params)
     return 1;
   }
 
+/* When DM is possessing a monster, flip aggression on and off, to allow
+   better motion */
+
+int command_mon_aggr (object *op, char *params)
+{
+    if (op->enemy || !QUERY_FLAG(op, FLAG_UNAGGRESSIVE)) {
+	op->enemy = NULL;
+	SET_FLAG(op, FLAG_UNAGGRESSIVE);
+	new_draw_info(NDI_UNIQUE, 0, op, "Agression turned OFF");
+    } else {
+	CLEAR_FLAG(op, FLAG_FRIENDLY);
+	CLEAR_FLAG(op, FLAG_UNAGGRESSIVE);
+	new_draw_info(NDI_UNIQUE, 0, op, "Agression turned ON");
+    }
+}
+
+/* DM can possess a monster.  Basically, this tricks the client into thinking
+   a given monster, is actually the player it controls.  This allows a DM
+   to inhabit a monster's body, and run around the game with it. */
+
+int command_possess (object *op, char *params)
+{
+    object *victim, *curinv, *nextinv, *tmp;
+    player *pl;
+    archetype *at;
+    int i;
+    char buf[MAX_BUF];
+
+    victim=NULL;
+    if (params != NULL) {
+	if (sscanf(params, "%d", &i))
+	    victim=find_object(i);
+	else if (sscanf(params, "%s", buf))
+	    victim=find_object_name(buf);
+    }
+    if (victim==NULL) {
+	new_draw_info(NDI_UNIQUE, 0, op, "Patch what object (nr)?");
+	return 1;
+    }
+    if (victim==op) {
+	new_draw_info(NDI_UNIQUE, 0, op, "As insane as you are, I cannot "
+		      "allow you to posess yourself.");
+	return 1;
+    }
+
+    /* clear out the old inventory */
+    curinv = op->inv;
+    while (curinv != NULL) {
+	nextinv = curinv->below;
+	esrv_del_item(op->contr, curinv->count);
+	curinv = nextinv;
+    }
+    /* make the switch */
+    pl = op->contr;
+    victim->contr = pl;
+    pl->ob = victim;
+    victim->type = PLAYER;
+    SET_FLAG(victim, FLAG_WIZ);
+
+    /* exp objects */
+    at = find_archetype("experience_agility");
+    tmp = get_object();
+    copy_object(&at->clone, tmp);
+    tmp = insert_ob_in_ob(tmp, victim);
+    at = find_archetype("experience_charisma");
+    tmp = get_object();
+    copy_object(&at->clone, tmp);
+    tmp = insert_ob_in_ob(tmp, victim);
+    at = find_archetype("experience_mental");
+    tmp = get_object();
+    copy_object(&at->clone, tmp);
+    tmp = insert_ob_in_ob(tmp, victim);
+    at = find_archetype("experience_physical");
+    tmp = get_object();
+    copy_object(&at->clone, tmp);
+    tmp = insert_ob_in_ob(tmp, victim);
+    at = find_archetype("experience_power");
+    tmp = get_object();
+    copy_object(&at->clone, tmp);
+    tmp = insert_ob_in_ob(tmp, victim);
+    at = find_archetype("experience_wis");
+    tmp = get_object();
+    copy_object(&at->clone, tmp);
+    tmp = insert_ob_in_ob(tmp, victim);
+    /* need to add basic skills like melee, bows, set chosen skill */
+    at = find_archetype("skill_punching");
+    tmp = get_object();
+    copy_object(&at->clone, tmp);
+    tmp = insert_ob_in_ob(tmp, victim);
+    (void)link_player_skill(victim, tmp);
+    at = find_archetype("skill_melee_weapon");
+    tmp = get_object();
+    copy_object(&at->clone, tmp);
+    tmp = insert_ob_in_ob(tmp, victim);
+    (void)link_player_skill(victim, tmp);
+    at = find_archetype("skill_missile_weapon");
+    tmp = get_object();
+    copy_object(&at->clone, tmp);
+    tmp = insert_ob_in_ob(tmp, victim);
+    (void)link_player_skill(victim, tmp);
+    at = find_archetype("skill_use_magic_item");
+    tmp = get_object();
+    copy_object(&at->clone, tmp);
+    tmp = insert_ob_in_ob(tmp, victim);
+    (void)link_player_skill(victim, tmp);
+    at = find_archetype("skill_spellcasting");
+    tmp = get_object();
+    copy_object(&at->clone, tmp);
+    tmp = insert_ob_in_ob(tmp, victim);
+    (void)link_player_skill(victim, tmp);
+    at = find_archetype("skill_praying");
+    tmp = get_object();
+    copy_object(&at->clone, tmp);
+    tmp = insert_ob_in_ob(tmp, victim);
+    (void)link_player_skill(victim, tmp);
+    /* send the inventory to the client */
+    curinv = victim->inv;
+    while (curinv != NULL) {
+	nextinv = curinv->below;
+	esrv_send_item(victim, curinv);
+	curinv = nextinv;
+    }
+    /* basic patchup */
+    for (i=0; i<NUM_BODY_LOCATIONS; i++)
+	if (i == 1 || i == 6 || i == 8 || i == 9)
+	    victim->body_info[i] = 2;
+        else
+	    victim->body_info[i] = 1;
+
+    esrv_new_player(pl, 80); /* just pick a wieght, we don't care */
+    esrv_send_inventory(victim, victim);
+    
+    fix_player(victim);
+
+    do_some_living(victim);
+}
+
+
 int command_patch (object *op, char *params)
 {
     int i;
