@@ -1150,7 +1150,7 @@ int process_object(object *op) {
     if(move_monster(op) || QUERY_FLAG(op, FLAG_FREED)) 
       return 1;
   if(QUERY_FLAG(op, FLAG_ANIMATE) && op->anim_speed==0) {
-    animate_object(op);
+    animate_object(op,1);
     if (QUERY_FLAG(op, FLAG_SEE_ANYWHERE))
       make_sure_seen(op);
   }

@@ -102,6 +102,10 @@ typedef struct obj {
   unsigned char pick_up;        /* See crossfire.doc */
   int anim_enemy_dir;       /* special shadow variable: show dir to targeted enemy */
   int anim_moving_dir;      /* sic: shows moving dir or -1 when object do something else */
+  int anim_enemy_dir_last;       /* if we change facing in movement, we must test for update the anim*/
+  int anim_moving_dir_last;      /* sic:*/
+  int anim_last_facing;     /* the last direction this monster was facing */
+  int anim_last_facing_last;     /* the last direction this monster was facing backbuffer*/
   struct obj *owner;  /* Pointer to the object which controls this one */
                       /* Owner should not be referred to directly - */
                       /* get_owner should be used instead. */

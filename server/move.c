@@ -349,7 +349,7 @@ int roll_ob(object *op,int dir, object *pusher) {
     return 1;
 }
 
-/* returns 0 if a monster was pushed and 1 if not - however */
+/* returns 1 if pushing invokes a attack, 0 when not */
 int push_ob(object *who, int dir, object *pusher) {
   int str1, str2;
   object *owner;
@@ -390,8 +390,9 @@ int push_ob(object *who, int dir, object *pusher) {
       {
           new_draw_info_format(NDI_UNIQUE, 0, pusher,
               "You start to attack %s !!",who->name);
-//          CLEAR_FLAG(who,FLAG_UNAGGRESSIVE); /* the sucker don't like you anymore */
+          CLEAR_FLAG(who,FLAG_UNAGGRESSIVE); /* the sucker don't like you anymore */
           who->enemy = pusher;
+          return 1;
       }
       else 
       {
@@ -405,7 +406,7 @@ int push_ob(object *who, int dir, object *pusher) {
   {
       new_draw_info_format(NDI_UNIQUE, 0, pusher,
           "You can't push %s.",who->name);
-      return 1;
+      return 0;
   }
   
   /* ok, now we are here. I only allow player pushing */

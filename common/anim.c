@@ -146,29 +146,44 @@ int find_animation(char *name)
 }
 
 /*
- * animate_object(object) updates the face-variable of an object.
+ * animate_object(object, count) updates the face-variable of an object.
  * If the object is the head of a multi-object, all objects are animated.
  */
 
-void animate_object(object *op) {
+void animate_object(object *op, int count) {
     int max_state;  /* Max animation state object should be drawn in */
     int base_state; /* starting index # to draw from */
     int	dir;
     register object *oph = op;
 
+#ifdef DEBUG /* hm, should really not happens */
     if(!op->animation_id || !NUM_ANIMATIONS(op)) {
 	LOG(llevError,"Object lacks animation.\n");
 	dump_object(op);
 	return;
     }
-    ++op->state;    /* increase draw state */
+#endif
 
+    /*  a animation is not only changing by anim_speed.
+     *  If we turn the object by teleporter for example, its direction & facing can
+     *  change, outside the normal animation loop. 
+     *  We have then to change the frame and not increase the state */
+     
     /* when we change to "one arch/one png, we must use this also for */
     /* the code above ... only the head then has an animation */
     /* which gets updated one time when this is called per tick */
-    if(op->head) /* we want always the head */
+    if(op->head) 
         oph=op->head;
-    
+
+    op->state+=count;    /* increase draw state (of the animation frame) */
+    if(!count)
+    {
+        /* object needs no update for moving */
+        if(oph->anim_enemy_dir == oph->anim_enemy_dir_last && 
+                oph->anim_moving_dir == oph->anim_moving_dir_last &&
+                oph->anim_last_facing == oph->anim_last_facing_last)
+            return; /* no need to set the frame new */        
+    }
     dir=oph->direction;
 
     /* If object is turning, then max animation state is half through the
@@ -195,36 +210,46 @@ void animate_object(object *op) {
 	else base_state = (dir-1)*(NUM_ANIMATIONS(op)/8); /* was 4  before - typo? */ 
     }
     /* thats the new extended animation: base_state is */
-    /* 0: we are paralyzed, sleep, etc. */
-    /* 1: we are stading or guarding */
-    /* 2-9: we are attacking in dir+1 */
-    /* 10-17: we are moving in dir+9 */
-    else if (NUM_FACINGS(op)==18) {
-        /* first: test for an effect */
-        if(QUERY_FLAG(oph, FLAG_SLEEP)|| QUERY_FLAG(oph, FLAG_PARALYZED ))
-        {
-            dir = 0;
-        }
-        /* we have targeted an enemy and follow him ? */
-        else if(oph->anim_enemy_dir != -1)
+    /* 0: thats the corpse */
+    /* 1-8:  guard/stand_still anim frames */
+    /* 9-16: move anim frames */
+    /* 17-24: fight anim frames */
+    /* TODO: allow different number of faces in each frame */
+
+    else if (NUM_FACINGS(op)==25) {
+        /* we have targeted an enemy and face him. when me move, we strave sidewards */
+        if(oph->anim_enemy_dir != -1 && (!QUERY_FLAG(op,FLAG_RUN_AWAY) && !QUERY_FLAG(op,FLAG_SCARED)))
         {
             dir = oph->anim_enemy_dir;      /* lets face to the enemy position */
-            if (!dir)   /* special case, same spot will be mapped to other */
-                dir = 4; /* 4 for iso, 5 for flat - do it automatically later */
-            dir++;
-            
+            oph->anim_enemy_dir_last = oph->anim_enemy_dir;
+            oph->anim_moving_dir_last = -1;
+            if (!dir)   /* special case, same spot will be mapped to south dir */
+                dir = 4;
+            oph->anim_last_facing = dir;
+            oph->anim_last_facing_last = -1;
+            dir +=16;
         }
         else if (oph->anim_moving_dir != -1)/* test of moving */
         {
-            if(!dir) /* ok, object is going to a position */
-                dir = 1;
-            dir+=9;
+            dir = oph->anim_moving_dir;      /* lets face in moving direction */
+            oph->anim_moving_dir_last = oph->anim_moving_dir;
+            oph->anim_enemy_dir_last = -1;
+            if (!dir)   /* special case, same spot will be mapped to south dir */
+                dir = 4;
+            oph->anim_last_facing = dir;
+            oph->anim_last_facing_last = -1;
+            dir +=8;
         }
-        else /* if nothing to do: object do nothing */
+        else /* if nothing to do: object do nothing. use original facing */
         {
-            dir = 1;
+            dir = oph->anim_last_facing;      /* lets face to last direction we had done something */
+            oph->anim_last_facing_last = dir;
+            if (!dir)   /* special case, same spot will be mapped to south dir */
+                dir = 4;
+            
         }
-        base_state = dir*(NUM_ANIMATIONS(op)/18); 
+
+        base_state = dir*(NUM_ANIMATIONS(op)/25); 
     }
     
     /* If beyond drawable states, reset */
@@ -247,7 +272,7 @@ void animate_object(object *op) {
     }
 #endif
     if(op->more)
-	animate_object(op->more);
+	animate_object(op->more, count);
     /* update_object will also recursively update all the pieces.
      * as such, we call it last, and only call it for the head
      * piece, and not for the other tail pieces.

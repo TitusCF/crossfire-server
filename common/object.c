@@ -584,8 +584,12 @@ void clear_object(object *op) {
   op->sub_type1 = 0;
   op->sub_type2 = 0;
   op->casting_speed = (float)0;
-  op->anim_enemy_dir = -1;
-  op->anim_moving_dir = -1;
+  op->anim_enemy_dir = -1;      /* control the facings 25 animations */
+  op->anim_moving_dir = -1;     /* the same for movement */
+  op->anim_enemy_dir_last = -1;
+  op->anim_moving_dir_last = -1;
+  op->anim_last_facing = 4;
+  op->anim_last_facing_last = -1;
   op->quick_pos = 255;
   /* The object should already have been removed from the speed list
    * before this function is called

@@ -77,7 +77,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 
 #define FONTSIZE		3000	/* Max chars in font */
 
-#define MAX_ANIMATIONS		64
+#define MAX_ANIMATIONS		256
 
 #define MAX_NAME 16
 #define BIG_NAME 32

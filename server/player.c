@@ -1521,12 +1521,11 @@ object * find_key(object *pl, object *container, object *door)
 
 /* moved door processing out of move_player_attack.
  * returns 1 if player has opened the door with a key
- * such that the caller should not do anything more,
+ * such that the caller should not do anything more.
  * 0 otherwise
  */
 static int player_attack_door(object *op, object *door)
 {
-
     /* If its a door, try to find a use a key.  If we do destroy the door,
      * might as well return immediately as there is nothing more to do -
      * otherwise, we fall through to the rest of the code.
@@ -1534,30 +1533,35 @@ static int player_attack_door(object *op, object *door)
     object *key=find_key(op, op, door);
 
     /* IF we found a key, do some extra work */
-    if (key) {
-	object *container=key->env;
+    if (key)
+    {
+	    object *container=key->env;
 
-	play_sound_map(op->map, op->x, op->y, SOUND_OPEN_DOOR);
-	if(action_makes_visible(op)) make_visible(op);
-	if(door->inv && door->inv->type ==RUNE) spring_trap(door->inv,op);
-	if (door->type == DOOR) {
-	    hit_player(door,9998,op,AT_PHYSICAL); /* Break through the door */
-	}
-	else if(door->type==LOCKED_DOOR) {
-	    new_draw_info_format(NDI_UNIQUE, NDI_BROWN, op, 
-		     "You open the door with the %s", query_short_name(key));
-	    remove_door2(door); /* remove door without violence ;-) */
-	}
-	/* Do this after we print the message */
-	decrease_ob(key); /* Use up one of the keys */
-	/* Need to update the weight the container the key was in */
-	if (container != op) 
-	    esrv_update_item(UPD_WEIGHT, op, container);
-	return 1; /* Nothing more to do below */
-    } else if (door->type==LOCKED_DOOR) {
-	/* Might as well return now - no other way to open this */
-	 new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, op, door->msg);
-	return 1;
+	    play_sound_map(op->map, op->x, op->y, SOUND_OPEN_DOOR);
+	    if(action_makes_visible(op)) 
+            make_visible(op);
+	    if(door->inv && door->inv->type ==RUNE) 
+            spring_trap(door->inv,op);
+	    if (door->type == DOOR) 
+	        hit_player(door,9998,op,AT_PHYSICAL); /* Break through the door */
+	    else if(door->type==LOCKED_DOOR)
+        {
+	        new_draw_info_format(NDI_UNIQUE, NDI_BROWN, op, 
+		            "You open the door with the %s", query_short_name(key));
+	        remove_door2(door); /* remove door without violence ;-) */
+	    }
+	    /* Do this after we print the message */
+	    decrease_ob(key); /* Use up one of the keys */
+	    /* Need to update the weight the container the key was in */
+	    if (container != op) 
+	        esrv_update_item(UPD_WEIGHT, op, container);
+	    return 1; /* Nothing more to do below */
+    } 
+    else if (door->type==LOCKED_DOOR) 
+    {
+	    /* Might as well return now - no other way to open this */
+	    new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, op, door->msg);
+	    return 1;
     }
     return 0;
 }
@@ -1569,8 +1573,9 @@ static int player_attack_door(object *op, object *door)
  * going to try and move (not fire weapons).
  */
 
-void move_player_attack(object *op, int dir)
+int move_player_attack(object *op, int dir)
 {
+    int ret=0;
     object *tmp;
     int nx=freearr_x[dir]+op->x,ny=freearr_y[dir]+op->y;
     mapstruct *m;
@@ -1587,13 +1592,13 @@ void move_player_attack(object *op, int dir)
     if ((op->contr->braced || !move_ob(op,dir,op)) && !out_of_map(op->map,nx,ny)) {
 	if (OUT_OF_REAL_MAP(op->map, nx, ny)) {
 	    m = get_map_from_coord(op->map, &nx, &ny);
-	    if (!m) return; /* Don't think this should happen */
+	    if (!m) return ret; /* Don't think this should happen */
 	}
 	else m =op->map;
     
 	if ((tmp=get_map_ob(m,nx,ny))==NULL) {
 	    /*	LOG(llevError,"player_move_attack: get_map_ob returns NULL, but player can not more there.\n");*/
-	    return;
+	    return ret;
 	}
 
 	/* Go through all the objects, and stop if we find one of interest. */
@@ -1605,13 +1610,13 @@ void move_player_attack(object *op, int dir)
 	}
     
 	if (tmp==NULL)		/* This happens anytime the player tries to move */
-	    return;		/* into a wall */
+	    return ret;		/* into a wall */
 
 	if(tmp->head != NULL)
 	    tmp = tmp->head;
 
 	if ((tmp->type==DOOR && tmp->stats.hp>=0) || (tmp->type==LOCKED_DOOR))
-	    if (player_attack_door(op, tmp)) return;
+	    if (player_attack_door(op, tmp)) return ret;
 
 	/* The following deals with possibly attacking peaceful
 	 * or frienddly creatures.  Basically, all players are considered
@@ -1629,11 +1634,12 @@ void move_player_attack(object *op, int dir)
 	    (QUERY_FLAG(tmp,FLAG_UNAGGRESSIVE) ||  QUERY_FLAG(tmp, FLAG_FRIENDLY)))
 	{
 	    /* If we're braced, we don't want to switch places with it */
-	    if (op->contr->braced) return;
+	    if (op->contr->braced) return ret;
 	    play_sound_map(op->map, op->x, op->y, SOUND_PUSH_PLAYER);
-	    (void) push_ob(tmp,dir,op);
-	    if(op->contr->tmp_invis||op->hide) make_visible(op);
-	    return;
+	    if(push_ob(tmp,dir,op))
+            ret = 1;
+        if(op->contr->tmp_invis||op->hide) make_visible(op);
+	    return ret;
 	}
     
 	if ((tmp->type==PLAYER || tmp->enemy != op) &&
@@ -1641,8 +1647,9 @@ void move_player_attack(object *op, int dir)
 	     || QUERY_FLAG(tmp, FLAG_FRIENDLY)) && (op->contr->peaceful
 		&& !op_on_battleground(op, NULL, NULL)) && (!op->contr->braced)) {
 	    play_sound_map(op->map, op->x, op->y, SOUND_PUSH_PLAYER);
-	    (void) push_ob(tmp,dir,op);
-	    if(op->contr->tmp_invis||op->hide) make_visible(op);
+	    if(push_ob(tmp,dir,op))
+            ret = 1;
+        if(op->contr->tmp_invis||op->hide) make_visible(op);
 	}
 
 	/* If the object is a boulder or other rollable object, then
@@ -1666,8 +1673,10 @@ void move_player_attack(object *op, int dir)
 
 	    op->contr->has_hit = 1; /* The last action was to hit, so use weapon_sp */
 
-	    skill_attack(tmp, op, 0, NULL);
-	    /* If attacking another player, that player gets automatic
+	    if(skill_attack(tmp, op, 0, NULL) )
+            ret = 1;
+
+        /* If attacking another player, that player gets automatic
 	     * hitback, and doesn't loose luck either.
 	     */
 	    if (tmp->type == PLAYER && tmp->stats.hp >= 0 && !tmp->contr->has_hit) {
@@ -1679,14 +1688,16 @@ void move_player_attack(object *op, int dir)
 	    if(action_makes_visible(op)) make_visible(op);
 	}
     } /* if player should attack something */
+    return ret;
 }
 
 int move_player(object *op,int dir) {
     int face, pick;
-
+/*
     if(op->contr->socket.newanim)
 	face = dir%8;
     else
+*/
 	face = dir ? (dir - 1) / 2 : -1;
 
     if(op->map == NULL || op->map->in_memory != MAP_IN_MEMORY)
@@ -1697,12 +1708,31 @@ int move_player(object *op,int dir) {
     if(QUERY_FLAG(op,FLAG_CONFUSED) && dir)
 	dir = absdir(dir + RANDOM()%3 + RANDOM()%3 - 2);
 
-    if(op->hide) do_hidden_move(op);
-
-    if(op->contr->fire_on) {
-	fire(op,dir);
+    op->anim_moving_dir = -1;
+    op->anim_enemy_dir = -1;
+    op->anim_last_facing = -1;
+    if(op->hide) 
+    {
+        op->anim_moving_dir = dir;
+        do_hidden_move(op);
     }
-    else move_player_attack(op,dir);
+    
+    if(op->contr->fire_on)
+    {
+    	fire(op,dir);
+        op->anim_enemy_dir = dir;
+    }
+    else
+    {
+        if(move_player_attack(op,dir))
+        {
+            op->anim_enemy_dir = dir;
+        }
+        else
+        {
+            op->anim_moving_dir = dir;
+        }
+    }
 
     /* Add special check for newcs players and fire on - this way, the
      * server can handle repeat firing.
@@ -1714,10 +1744,19 @@ int move_player(object *op,int dir) {
 	op->direction=0;
     }
 
-    if(face != -1)
-		SET_ANIMATION(op,face);
-
-    update_object(op, UP_OBJ_FACE);
+    if(op->contr->socket.newanim)
+    {
+        /* in the new anim system, we use again the CF anim engine */
+        if(op->anim_enemy_dir == -1 && op->anim_moving_dir == -1)
+            op->anim_last_facing = dir;
+        animate_object(op, 0);
+    }
+    else
+    {
+        if(face != -1)
+	    	SET_ANIMATION(op,face);
+        update_object(op, UP_OBJ_FACE);
+    }
 
     return 0;
 }
@@ -1752,8 +1791,8 @@ int handle_newcs_player(object *op)
 	 * there, as well as the confusion stuff.
 	 */
 	move_player(op, op->direction);
-	if (op->speed_left>0) return 1;
-	else return 0;
+	if (op->speed_left>0) 
+        return 1;
     }
     return 0;
 }

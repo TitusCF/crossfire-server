@@ -1789,7 +1789,6 @@ void paralyze_player(object *op, object *hitter, int dam)
     if (effect==0) return;
 
     SET_FLAG(op,FLAG_PARALYZED); /* we mark this object as paralyzed */ 
-    animate_object(op); /* set the right animation for paralyze when needed */
     
     op->speed_left-=FABS(op->speed)*effect;
     /* tmp->stats.food+=(signed short) effect/op->speed; */
