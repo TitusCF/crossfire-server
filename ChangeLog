@@ -17,6 +17,23 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Changed a ton of #ifdefs into settings:
+convert #ifdef NOT_PERMADETH into settings.not_permadeth.
+SET_TITLE and RESURRECTION are now settings.
+#ifdef SEARCH_ITEMS -> settings.search_items
+#ifdef SPELL_ENCUMBRANCE -> settings.spell_encumbrance
+#ifdef SPELL_FAILURE_EFFECTS -> settings.spell_failure_effects
+#ifdef CASTING_TIME -> settings.casting_time
+#ifdef REAL_WIZ -> settings.real_wiz
+#ifdef RECYCLE_TMP_MAPS -> settings.recycle_tmp_maps
+#ifdef SPELLPOINT_LEVEL_DEPEND -> settings.spellpoint_level_depend
+#ifdef EXPLORE_MODE -> settings.explore_mode
+make explore mode actually *work*.
+#define MOTD -> settings.motd
+#define DM_MAIL -> settings.dm_mail
+garbled 2002-11-12
+
+
 New alchemy code, as discussed on the developer list.  Now recipies include
 two new tags: skill and cauldron.  With skill, you can set which skill
 activates this recipie, and the cauldron, corresponds to the arch name of    
