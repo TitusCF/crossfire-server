@@ -307,6 +307,15 @@ int attack_ob(object *op,object *hitter) {
     add_refcount(op_name = op->name);
     if(hitter->head!=NULL)
 	hitter=hitter->head;
+
+    if (hitter->name==NULL) {
+	if(settings.debug) {
+	    dump_object(hitter);
+	    LOG(llevDebug,"Object without name tried to attack.\n%s\n",errmsg);
+	}
+	return 1;
+    }
+	
     if(op->stats.luck) {
 	luck=RANDOM()%abs(op->stats.luck);
 	if(op->stats.luck<0)
@@ -688,6 +697,13 @@ int hit_player(object *op,int dam, object *hitter, int type) {
     /* If its already dead, or we're the wizard, don't attack it - no point */
     if(QUERY_FLAG(op,FLAG_WIZ)||!QUERY_FLAG(op,FLAG_ALIVE)||op->stats.hp<0)
 	return 0;
+
+    /* If its already dead, or we're the wizard, don't attack it - no point */
+    if(hitter->name==NULL) {
+	if (settings.debug) 
+	    LOG(llevDebug, "hit_player: hitter has no name\n");
+	return 0;
+    }
 
 #ifdef ATTACK_DEBUG
     LOG(llevDebug,"hit player: attacktype %d, dam %d\n", type, dam);
