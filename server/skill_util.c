@@ -753,6 +753,9 @@ int init_player_exp(object *pl) {
    for(i=0;i<exp_index;i++) { 
 	if(!QUERY_FLAG(exp_ob[i],FLAG_APPLIED)) 
   	     SET_FLAG(exp_ob[i],FLAG_APPLIED); 
+        /* GD: Update perm exp when loading player. */
+        if (settings.use_permanent_experience)
+            calc_perm_exp(exp_ob[i]);
 	pl->stats.exp += exp_ob[i]->stats.exp;
 	player_lvl_adj(NULL, exp_ob[i]);
    } 
@@ -1006,8 +1009,11 @@ static int clipped_percent(int a, int b)
 {
   int rv;
 
-  rv = (a*100)/b;
+  if (b <= 0)
+    return 0;
 
+  rv = (int)((100.0f * ((float)a) / ((float)b) ) + 0.5f);
+  
   if (rv < 0)
     return 0;
   else if (rv > 100)

@@ -17,6 +17,11 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+common/living.c, server/skill_util.c:  Patches by Garth Denley:
+Fixes divide by zero crash, sets up perm exp when a new player is loaded,
+seperates permanent exp code/calculations into another function.
+checked in by MSW, 8/24/2000
+
 lib/crossfire.png: ground/sea*png - remove transperancies from png images
 since they should not be transparent.  MSW 8/23/2000
 

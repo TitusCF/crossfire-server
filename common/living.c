@@ -1586,6 +1586,39 @@ void player_lvl_adj(object *who, object *op) {
     }
 }
 
+/* Ensure that the permanent experience requirements in an exp object are met. */
+/* GD */
+void calc_perm_exp(object *op)
+{
+    int p_exp_min;
+
+    /* Sanity checks. */
+    if (op->type != EXPERIENCE) {
+        LOG(llevError, "calc_minimum_perm_exp called on a non-experience object!");
+        return;
+    }
+    if (!(settings.use_permanent_experience)) {
+        LOG(llevError, "calc_minimum_perm_exp called whilst permanent experience disabled!");
+        return;
+    }
+
+    /* The following fields are used: */
+    /* stats.exp: Current exp in experience object. */
+    /* last_heal: Permanent experience earnt. */
+    
+    /* Ensure that our permanent experience minimum is met. */
+    p_exp_min = (int)(PERM_EXP_MINIMUM_RATIO * (float)(op->stats.exp));
+    /*LOG(llevError, "Experience minimum check: %d p-min %d p-curr %d curr.\n", p_exp_min, op->last_heal, op->stats.exp);*/
+    if (op->last_heal < p_exp_min)
+        op->last_heal = p_exp_min;
+
+    /* Cap permanent experience. */
+    if (op->last_heal < 0)
+        op->last_heal = 0;
+    else if (op->last_heal > MAX_EXP_IN_OBJ)
+        op->last_heal = MAX_EXP_IN_OBJ;
+}
+
 /* adjust_exp() - make sure that we don't exceed max or min set on
  * experience
  */
@@ -1598,27 +1631,20 @@ int adjust_exp(object *op, int exp) {
         /* This code _only_ affects experience objects. */
         /* GD */
         if (op->type == EXPERIENCE) {
-            int p_exp_min;
             int p_exp_gain;
             int max_loss;
 
-            /* The following fields are used: */
-            /* stats.exp: Current exp in experience object. */
-            /* last_heal: Permanent experience earnt. */
-            
             /* Ensure that our permanent experience minimum is met. */
-            p_exp_min = (int)(PERM_EXP_MINIMUM_RATIO * (float)(op->stats.exp));
-            /*LOG(llevError, "Experience minimum check: %d p-min %d p-curr %d curr.\n", p_exp_min, op->last_heal, op->stats.exp);*/
-            if (op->last_heal < p_exp_min)
-                op->last_heal = p_exp_min;
-
+            calc_perm_exp(op);            
+            
             /* Experience gain: We get a ratio of the gain as permanent experience. */
             if (exp > 0) {
                 p_exp_gain = (int)(PERM_EXP_GAIN_RATIO * exp);
                 op->last_heal += p_exp_gain;
-                /* Cap permanent experience. */
-                if (op->last_heal > MAX_EXP_IN_OBJ)
-                    op->last_heal = MAX_EXP_IN_OBJ;
+
+                /* Update our new perm exp (so we display the right amount when asked. */
+                calc_perm_exp(op);
+                
                 /*LOG(llevError, "Gaining %d experience results in %d permanent exp (now %d).\n", exp, p_exp_gain, op->last_heal); */
             }
 
