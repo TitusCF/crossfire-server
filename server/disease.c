@@ -208,7 +208,7 @@ int move_disease(object *disease) {
  */
  
 int remove_symptoms(object *disease) {
-    object *symptom, *victim;
+    object *symptom, *victim=NULL;
 
     while ((symptom = find_symptom(disease)) != NULL) {
 	if (!victim) victim=symptom->env;
