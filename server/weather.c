@@ -1299,7 +1299,9 @@ void weather_effect(char *filename)
     if (settings.dynamiclevel >= 2) {
 	let_it_snow(m, wx, wy, filename);
 	singing_in_the_rain(m, wx, wy, filename);
-	feather_map(m, wx, wy, filename);
+	}
+    if (settings.dynamiclevel >= 4) {
+	    feather_map(m, wx, wy, filename);
     }
     if (settings.dynamiclevel >= 3) {
 	plant_a_garden(m, wx, wy, filename);
