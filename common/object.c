@@ -1340,7 +1340,8 @@ object *insert_ob_in_map (object *op, mapstruct *m, object *originator, int flag
 	return op;
     }
     if(op->more!=NULL) {
-	if (insert_ob_in_map(op->more,m,originator,flag) == NULL) {
+	/* The part may be on a different map. */
+	if (insert_ob_in_map(op->more,op->more->map,originator,flag) == NULL) {
 	    if ( ! op->head)
 		LOG (llevError, "BUG: insert_ob_in_map(): inserting op->more killed op\n");
 	    return NULL;
