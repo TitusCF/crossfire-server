@@ -299,9 +299,9 @@ static void change_treasure(treasure *t, object *op)
     /* CMD: change_name xxxx */
     if(t->change_arch.name)
     {
-        if(op->name)
-            free_string(op->name);
-        op->name = add_string(t->change_arch.name);
+	FREE_AND_COPY(op->name, t->change_arch.name);
+	/* not great, but better than something that is completely wrong */
+	FREE_AND_COPY(op->name_pl, t->change_arch.name);
     }
     
     if(t->change_arch.title)
@@ -902,8 +902,9 @@ void fix_generated_item (object *op, object *creator, int difficulty,
     }
   if (op->type == POTION && special_potion(op)) {
     /*if(op->face==blank_face) op->face = potion_face;*/
-    free_string(op->name);
-    op->name = add_string("potion");
+    FREE_AND_COPY(op->name, "potion");
+    FREE_AND_COPY(op->name_pl, "potions");
+
     op->level = spells[op->stats.sp].level/2+ RANDOM()%difficulty + RANDOM()%difficulty;
     if ( ! (flags & GT_ONLY_GOOD) && RANDOM() % 2)
       SET_FLAG(op, FLAG_CURSED);
@@ -1456,8 +1457,10 @@ void fix_flesh_item(object *item, object *donor) {
     if(item->type==FLESH && donor) {
 	/* change the name */
 	sprintf(tmpbuf,"%s's %s",donor->name,item->name);
-	free_string(item->name);
-	item->name=add_string(tmpbuf);
+	FREE_AND_COPY(item->name, tmpbuf);
+	sprintf(tmpbuf,"%s's %s",donor->name,item->name_pl);
+	FREE_AND_COPY(item->name_pl, tmpbuf);
+
 	/* weight is FLESH weight/100 * donor */
 	if((item->weight = (signed long) (((double)item->weight/(double)100.0) * (double)donor->weight))==0)
 		item->weight=1;
@@ -1523,6 +1526,7 @@ void free_artifact(artifact *at)
     if (at->allowed) free_charlinks(at->allowed);
     if (at->item) {
 	if (at->item->name) free_string(at->item->name);
+	if (at->item->name_pl) free_string(at->item->name_pl);
 	if (at->item->msg) free_string(at->item->msg);
 	if (at->item->title) free_string(at->item->title);
 	free(at->item);

@@ -543,7 +543,10 @@ error - Your ANSI C compiler should be defining __STDC__;
 				     * the overlay, and is not subject to
 				     * decay. */
 #define NUM_FLAGS		104 /* Should always be equal to the last
-				    * defined flag */
+				     * defined flag.  If you change this,
+				     * make sure you update the flag_links
+				     * in common/loader.l
+				     */
 
 /* Values can go up to 127 before the size of the flags array in the
  * object structure needs to be enlarged.

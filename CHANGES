@@ -17,6 +17,23 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+More minor changes, including a fix for the disappearing object bug -
+this was caused by the flag_links not getting updated the last
+time new flags were added.  Problem probably only showed up now
+because loader.c wasn't rebuilt until recent changes.
+--
+common/loader.c, common/loader.l: add extern to arch_init, when
+  loading and get an object from a file, complain and ignore it if
+  arch_init is not set (only time we should get object (vs arch) for
+  names is when we load the archetypes file).  Add missing entries
+  to flag_links array.
+common/treasure.c: Fix code so that proper plural names are generated
+  for custom items (potions, flesh items, etc).
+include/define.h: Add note about updating flag_links when NUM_FLAGS is
+  increased.
+server/skills.c: don't let players steal from players with FLAG_WIZ set.
+MSW 2002-06-09
+
 Mostly bugfixes.  I'm not sure if this will fix the disappearing arch problem-
 none of the changes made in the original multiple name would seem to 
 cause it, so hard to say if any of these changes may fix it.

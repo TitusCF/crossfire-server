@@ -106,6 +106,10 @@ int attempt_steal(object* op, object* who)
 	} else /* help npc to detect thief next time by raising its wisdom */ 
 	    op->stats.Wis += (op->stats.Int/5)+1;
     }
+    if (op->type == PLAYER && QUERY_FLAG(op, FLAG_WIZ)) {
+	new_draw_info(NDI_UNIQUE, 0, who, "You can't steal from the dungeon master!\n");
+	return 0;
+    }
 
     /* Ok then, go thru their inventory, stealing */
     for(tmp = op->inv; tmp != NULL; tmp = next) {

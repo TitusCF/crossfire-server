@@ -149,6 +149,7 @@ static char msgbuf[HUGE_BUF];
 
 #define IVAL	atoi(yval())
 #define FVAL	atof(yval())
+extern int arch_init;
 
 /* Put this here since it is used below */
 static void set_protection(object *op, uint32 mask, uint16 pro_val)
@@ -205,8 +206,12 @@ WS	[ \t]*
 			    LOG(llevError,"Object lacks name.\n");
 			    return LL_IGNORED;
 			}
-			if (op->arch!=NULL) op->arch->name=add_string(yv);
-			op->name = add_string(yv);
+		        if (!arch_init) {
+			    LOG(llevError,"Got object info when not in arch_init (%s)?\n", yv);
+			} else {
+			    if (op->arch!=NULL) op->arch->name=add_string(yv);
+			    op->name = add_string(yv);
+			}
 		    }
 
 ^name{S}	    {	char *yv=yval();
@@ -1128,10 +1133,13 @@ int flag_links[NUM_FLAGS+1][2] ={
 {FLAG_READY_WEAPON,V_HAS_READY_WEAPON},{FLAG_NO_SKILL_IDENT,V_NO_SKILL_IDENT},
 {FLAG_BLIND,V_BLIND},{FLAG_SEE_IN_DARK,V_SEE_IN_DARK},
 {FLAG_IS_CAULDRON,V_IS_CAULDRON},{FLAG_DUST,V_DUST},{FLAG_NO_STEAL,V_NO_STEAL},
-{FLAG_ONE_HIT, V_ONE_HIT}, {FLAG_BERSERK, V_BERSERK}, 
+{FLAG_ONE_HIT, V_ONE_HIT},
+{-1, -1 /* Client send debug flag (FLAG_CLIENT_SENT)*/},
+{FLAG_BERSERK, V_BERSERK}, 
 {FLAG_NEUTRAL, V_NEUTRAL}, {FLAG_NO_ATTACK, V_NO_ATTACK},
 {FLAG_NO_DAMAGE, V_NO_DAMAGE},
-{-1, -1 /* Client send debug flag */ }
+{-1, -1 /* FLAG_OBJ_ORIGINAL */ },
+{-1, -1 /* FLAG_OBJ_SAVE_ON_OVL */ },
 };
 
 
