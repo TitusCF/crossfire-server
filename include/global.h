@@ -50,13 +50,22 @@
  * The signedness for char is probably not universal, and using char
  * will probably be more portable than sint8/unit8
  */
+
  
 typedef unsigned int	uint32;
+#define UINT32_MAX	4294967295U
 typedef signed int	sint32;
+#define SINT32_MAX	2147483647
 typedef unsigned short	uint16;
+#define UINT16_MAX	65535
 typedef signed short	sint16;
+#define SINT16_MAX	32767
 typedef unsigned char	uint8;
+#define UINT8_MAX	255
 typedef signed char	sint8;
+#define SINT8_MAX	127
+
+
 typedef unsigned short Fontindex;
 
 #ifdef WIN32

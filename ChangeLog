@@ -17,6 +17,25 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Change most shop buy/sell functions to use 64 bit values.  Problem arises
+where player would sell valuable item, and if they wanted to buy them back,
+it would overflow a 32 bit value, so they could buy them back for free.
+Note quite as odd when you consider the buy/sell price for really valuable
+items to be very different.
+include/global.h: Add UINT32_MAX and other max type defines for our typedef
+   values so that we have standard setting of what the cap is.
+server/apply.c: Change get_payment call to take second argument.
+server/plugins.c: Add note about bug in handling of query_cost in this
+   function.
+server/shop.c: query_cost() now returns 64 bit.  Many other functions
+   updated to also take/return 64 bit cost values.  Have cost_string
+   nicely deal with values that are beyond affordability.  Rename get_payment2()
+   to get_payment(), and remove the later, which was just a simple wrapper
+   function that called get_payment2.
+server/spell_effect.c: Update alchemy code.  Remove some suspect use of
+   static values.
+MSW 2004-04-24
+
 server/apply.c: fix check_weapon_power() so it operates on overall character
   level and not skill level - this matches up what the out of skills
   displays.

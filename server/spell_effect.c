@@ -1633,7 +1633,7 @@ static object *small, *large;
 static void alchemy_object(object *obj, int *small_nuggets,
 	 int *large_nuggets, int *weight)
 {
-    int	value=query_cost(obj, NULL, F_TRUE);
+    uint64 value=query_cost(obj, NULL, F_TRUE);
 
     /* Give third price when we alchemy money (This should hopefully
      * make it so that it isn't worth it to alchemy money, sell
@@ -1651,17 +1651,13 @@ static void alchemy_object(object *obj, int *small_nuggets,
 	value *= 0.9;
 
     if ((obj->value>0) && rndm(0, 29)) {
-	static int value_store;
 	int count;
 
-	value_store += value;
-	count = value_store / large->value;
+	count = value / large->value;
 	*large_nuggets += count;
-	value_store -= count * large->value;
-	count = value_store / small->value;
+	value -= (uint64)count * (uint64)large->value;
+	count = value / small->value;
 	*small_nuggets += count;
-	value_store -= count * small->value;
-	/* LOG(llevDebug, "alchemize value %d, remainder %d\n", value, value_store); */
     }
 
     /* Turn 25 small nuggets into 1 large nugget.  If the value

@@ -1367,6 +1367,10 @@ CFParm* CFWQueryCost(CFParm* PParm)
     whatptr = (object *)(PParm->Value[0]);
     whoptr = (object *)(PParm->Value[1]);
     flag = *(int*)(PParm->Value[2]);
+    /* This is now broken since query_cost returns 64 bit -
+     * not positive how well/what needs to be changed for the plugin
+     * to know this and act accordingly.
+     */
     val=query_cost (whatptr,whoptr,flag);
     CFP->Value[0] = (void*) &val;
     return CFP;

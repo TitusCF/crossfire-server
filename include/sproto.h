@@ -620,15 +620,14 @@ int trap_show(object *trap, object *where);
 int trap_disarm(object *disarmer, object *trap, int risk, object *skill);
 void trap_adjust(object *trap, int difficulty);
 /* shop.c */
-int query_cost(object *tmp, object *who, int flag);
-char *cost_string_from_value(int cost);
+uint64 query_cost(object *tmp, object *who, int flag);
+char *cost_string_from_value(uint64 cost);
 char *query_cost_string(object *tmp, object *who, int flag);
-int query_money(object *op);
+uint64 query_money(object *op);
 int pay_for_amount(int to_pay, object *pl);
 int pay_for_item(object *op, object *pl);
-int pay_from_container(object *op, object *pouch, int to_pay);
-int get_payment2(object *pl, object *op);
-int get_payment(object *pl);
+uint64 pay_from_container(object *op, object *pouch, int to_pay);
+int get_payment(object *pl, object *op);
 void sell_item(object *op, object *pl);
 void shop_listing(object *op);
 /* skills.c */

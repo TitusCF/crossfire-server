@@ -56,8 +56,8 @@ static char *coins[] = {"platinacoin", "goldcoin", "silvercoin", NULL};
  *
  * Mark Wedel (mwedel@pyramid.com)
  */
-int query_cost(object *tmp, object *who, int flag) {
-    int val;
+uint64 query_cost(object *tmp, object *who, int flag) {
+    uint64 val;
     int number;	/* used to better calculate value */
     int no_bargain;
     float diff;
@@ -148,7 +148,7 @@ int query_cost(object *tmp, object *who, int flag) {
     /* Limit amount of money you can get for really great items. */
     if (flag==F_TRUE || flag==F_SELL) {
 	if (val/number>10000) {
-	    val=8000+isqrt((int)val/number)*20;
+	    val=8000+isqrt(val/number)*20;
 	    val *= number;
 	}
     }
@@ -207,14 +207,14 @@ int query_cost(object *tmp, object *who, int flag) {
     if(flag==F_SELL && !QUERY_FLAG(tmp, FLAG_IDENTIFIED) && need_identify(tmp)) {
 	 val = (val > 600)? 600:val;
     }
-    return (int)val;
+    return val;
 }
 
 /* Find the coin type that is worth more the 'c'.  Starts at the
  * cointype placement.
  */
 
-static archetype *find_next_coin(int c, int *cointype) {
+static archetype *find_next_coin(uint64 c, int *cointype) {
   archetype *coin;
 
   do {
@@ -228,70 +228,86 @@ static archetype *find_next_coin(int c, int *cointype) {
   return coin;
 }
 
-/* This returns a string of how much somethign is worth based on
+/* This returns a string of how much something is worth based on
  * an integer being passed.
+ * cost is the cost we need to represent.
+ * While cost is 64 bit, the number of any coin is still really
+ * limited to 32 bit (size of nrof field).  If it turns out players
+ * have so much money that they have more than 2 billion platinum
+ * coins, there are certainly issues - the easiest fix at that
+ * time is to add a higher denomination (mithril piece with
+ * 10,000 silver or something)
  */
-char *cost_string_from_value(int cost)
+char *cost_string_from_value(uint64 cost)
 {
-  static char buf[MAX_BUF];
-  archetype *coin, *next_coin;
-  char *endbuf;
-  int num, cointype = 0;
+    static char buf[MAX_BUF];
+    archetype *coin, *next_coin;
+    char *endbuf;
+    int num, cointype = 0;
 
-  coin = find_next_coin(cost, &cointype);
-  if (coin == NULL)
-    return "nothing";
+    coin = find_next_coin(cost, &cointype);
+    if (coin == NULL)
+	return "nothing";
 
-  num = cost / coin->clone.value;
-  cost -= num * coin->clone.value;
-  if (num == 1)
-    sprintf(buf, "1 %s", coin->clone.name);
-  else
-    sprintf(buf, "%d %ss", num, coin->clone.name);
-
-  next_coin = find_next_coin(cost, &cointype);
-  if (next_coin == NULL)
-    return buf;
-
-  do {
-    endbuf = buf + strlen(buf);
-
-    coin = next_coin;
     num = cost / coin->clone.value;
-    cost -= num * coin->clone.value;
-
-    if (cost == 0)
-      next_coin = NULL;
-    else
-      next_coin = find_next_coin(cost, &cointype);
-
-    if (next_coin) {
-      /* There will be at least one more string to add to the list,
-       * use a comma.
-       */
-      strcat(endbuf, ", "); endbuf += 2;
-    } else {
-      strcat(endbuf, " and "); endbuf += 5;
+    /* so long as nrof is 32 bit, this is true.
+     * If it takes more coins than a person can possibly carry, this
+     * is basically true.
+     */
+    if ( (cost / coin->clone.value) > UINT32_MAX) {
+	strcpy(buf,"an unimaginable sum of money.");
+	return buf;
     }
-    if (num == 1)
-      sprintf(endbuf, "1 %s", coin->clone.name);
-    else
-      sprintf(endbuf, "%d %ss", num, coin->clone.name);
-  } while (next_coin);
 
-  return buf;
+    cost -= (uint64)num * (uint64)coin->clone.value;
+    if (num == 1)
+	sprintf(buf, "1 %s", coin->clone.name);
+    else
+	sprintf(buf, "%d %ss", num, coin->clone.name);
+
+    next_coin = find_next_coin(cost, &cointype);
+    if (next_coin == NULL)
+	return buf;
+
+    do {
+	endbuf = buf + strlen(buf);
+
+	coin = next_coin;
+	num = cost / coin->clone.value;
+	cost -= (uint64)num * (uint64)coin->clone.value;
+
+	if (cost == 0)
+	    next_coin = NULL;
+	else
+	    next_coin = find_next_coin(cost, &cointype);
+
+	if (next_coin) {
+	    /* There will be at least one more string to add to the list,
+	     * use a comma.
+	     */
+	    strcat(endbuf, ", "); endbuf += 2;
+	} else {
+	    strcat(endbuf, " and "); endbuf += 5;
+	}
+	if (num == 1)
+	    sprintf(endbuf, "1 %s", coin->clone.name);
+	else
+	    sprintf(endbuf, "%d %ss", num, coin->clone.name);
+    } while (next_coin);
+
+    return buf;
 }
 
 char *query_cost_string(object *tmp,object *who,int flag) {
-  return cost_string_from_value(query_cost(tmp,who,flag));
+    return cost_string_from_value(query_cost(tmp,who,flag));
 }
 
-/* This function finds out how much money the player is carrying,	*
- * and returns that value						*/
-/* Now includes any coins in active containers -- DAMN			*/
-int query_money(object *op) {
+/* This function finds out how much money the player is carrying,
+ * including what is in containers.
+ */
+uint64 query_money(object *op) {
     object *tmp;
-    int	total=0;
+    uint64 total=0;
 
     if (op->type!=PLAYER && op->type!=CONTAINER) {
 	LOG(llevError, "Query money called with non player/container");
@@ -299,7 +315,7 @@ int query_money(object *op) {
     }
     for (tmp = op->inv; tmp; tmp= tmp->below) {
 	if (tmp->type==MONEY) {
-	    total += tmp->nrof * tmp->value;
+	    total += (uint64)tmp->nrof * (uint64)tmp->value;
 	} else if (tmp->type==CONTAINER &&
 		   QUERY_FLAG(tmp,FLAG_APPLIED) &&
 		   (tmp->race==NULL || strstr(tmp->race,"gold"))) {
@@ -308,15 +324,16 @@ int query_money(object *op) {
     }
     return total;
 }
-/* TCHIZE: This function takes the amount of money from the             *
- * the player inventory and from it's various pouches using the         *
- * pay_from_container function.                                         *
- * returns 0 if not possible. 1 if success                              */
+/* TCHIZE: This function takes the amount of money from the
+ * the player inventory and from it's various pouches using the
+ * pay_from_container function.
+ * returns 0 if not possible. 1 if success
+ */
 int pay_for_amount(int to_pay,object *pl) {
     object *pouch;
 
     if (to_pay==0) return 1;
-    if(to_pay>query_money(pl)) return 0;
+    if (to_pay > query_money(pl)) return 0;
 
     to_pay = pay_from_container(NULL, pl, to_pay);
 
@@ -331,17 +348,18 @@ int pay_for_amount(int to_pay,object *pl) {
     return 1;
 }
 
-/* DAMN: This is now a wrapper for pay_from_container, which is 	*
- * called for the player, then for each active container that can hold	*
- * money until op is paid for.  Change will be left wherever the last	*
- * of the price was paid from.						*/
+/* DAMN: This is now a wrapper for pay_from_container, which is
+ * called for the player, then for each active container that can hold
+ * money until op is paid for.  Change will be left wherever the last
+ * of the price was paid from.
+ */
 int pay_for_item(object *op,object *pl) {
-    int to_pay = query_cost(op,pl,F_BUY);
+    uint64 to_pay = query_cost(op,pl,F_BUY);
     object *pouch;
-    int saved_money;
+    uint64 saved_money;
 
     if (to_pay==0) return 1;
-    if(to_pay>query_money(pl)) return 0;
+    if (to_pay>query_money(pl)) return 0;
 
     /* We compare the paid price with the one for a player
      * without bargaining skill.
@@ -373,11 +391,13 @@ int pay_for_item(object *op,object *pl) {
  * with weight not be subtracted properly.  We now remove and
  * insert the coin objects -  this should update the weight
  * appropriately
+ *
+ * DAMN: This function is used for the player, then for any active
+ * containers that can hold money, until the op is paid for.
  */
-/* DAMN: This function is used for the player, then for any active	*
- * containers that can hold money, until the op is paid for.		*/
-int pay_from_container(object *op, object *pouch, int to_pay) {
-    int count, i, remain;
+uint64 pay_from_container(object *op, object *pouch, int to_pay) {
+    int count, i;
+    uint64 remain;
     object *tmp, *coin_objs[NUM_COINS], *next;
     archetype *at;
     object *who;
@@ -435,12 +455,12 @@ int pay_from_container(object *op, object *pouch, int to_pay) {
 
 	if (coin_objs[i]->nrof*coin_objs[i]->value> remain) {
 	    num_coins = remain / coin_objs[i]->value;
-	    if (num_coins*coin_objs[i]->value< remain) num_coins++;
+	    if ((uint64)num_coins*(uint64)coin_objs[i]->value < remain) num_coins++;
 	} else {
 	    num_coins = coin_objs[i]->nrof;
 	}
 
-	remain -= num_coins * coin_objs[i]->value;
+	remain -= (uint64)num_coins * (uint64)coin_objs[i]->value;
 	coin_objs[i]->nrof -= num_coins;
 	/* Now start making change.  Start at the coin value
 	 * below the one we just did, and work down to
@@ -457,7 +477,7 @@ int pay_from_container(object *op, object *pouch, int to_pay) {
     for (i=0; i<NUM_COINS; i++) {
 	if (coin_objs[i]->nrof) {
 	    object *tmp = insert_ob_in_ob(coin_objs[i], pouch);
-	    for (who = pouch; who && who->type!=PLAYER && who->env!=NULL; who=who->env) {}
+	    for (who = pouch; who && who->type!=PLAYER && who->env!=NULL; who=who->env) ;
 	    esrv_send_item(who, tmp);
 	    esrv_send_item (who, pouch);
 	    esrv_update_item (UPD_WEIGHT, who, pouch);
@@ -472,22 +492,27 @@ int pay_from_container(object *op, object *pouch, int to_pay) {
     return(remain);
 }
 
-/* Eneq(@csd.uu.se): Better get_payment, descends containers looking for
-   unpaid items. get_payment is now used as a link. To make it simple
-   we need the player-object here. */
-
-int get_payment2 (object *pl, object *op) {
+/* Better get_payment, descends containers looking for
+ * unpaid items, and pays for them.
+ * returns 0 if the player still has unpaid items.
+ * returns 1 if the player has paid for everything.
+ * pl is the player buying the stuff.
+ * op is the object we are examining.  If op has
+ * and inventory, we examine that.  IF there are objects
+ * below op, we descend down.
+ */
+int get_payment(object *pl, object *op) {
     char buf[MAX_BUF];
     int ret=1;
 
     if (op!=NULL&&op->inv)
-        ret = get_payment2(pl, op->inv);
+        ret = get_payment(pl, op->inv);
 
     if (!ret)
         return 0;
 
     if (op!=NULL&&op->below)
-        ret = get_payment2 (pl, op->below);
+        ret = get_payment (pl, op->below);
 
     if (!ret) 
         return 0;
@@ -495,7 +520,7 @@ int get_payment2 (object *pl, object *op) {
     if(op!=NULL&&QUERY_FLAG(op,FLAG_UNPAID)) {
         strncpy(buf,query_cost_string(op,pl,F_BUY),MAX_BUF);
         if(!pay_for_item(op,pl)) {
-            int i=query_cost(op,pl,F_BUY) - query_money(pl);
+            uint64 i=query_cost(op,pl,F_BUY) - query_money(pl);
 	    CLEAR_FLAG(op, FLAG_UNPAID);
 	    new_draw_info_format(NDI_UNIQUE, 0, pl,
 		"You lack %s to buy %s.", cost_string_from_value(i),
@@ -522,103 +547,98 @@ int get_payment2 (object *pl, object *op) {
     return 1;
 }
 
-int get_payment(object *pl) {
-  int ret;
 
-  ret = get_payment2 (pl, pl->inv);
-
-  return ret;
-}
-
-/* Modified function to give out platinum coins.  This function is	*
- * not as general as pay_for_item in finding money types - each		*
- * new money type needs to be explicity code in here.			*/
-/* Modified to fill available race: gold containers before dumping	*
- * remaining coins in character's inventory. -- DAMN 			*/
+/* Modified function to give out platinum coins.  This function uses
+ * the coins[] array to know what coins are available, just like
+ * buy item.
+ *
+ * Modified to fill available race: gold containers before dumping
+ * remaining coins in character's inventory.
+ */
 void sell_item(object *op, object *pl) {
-  int i=query_cost(op,pl,F_SELL), count;
-  object *tmp;
-  object *pouch;
-  archetype *at;
-  int extra_gain;
+    uint64 i=query_cost(op,pl,F_SELL), extra_gain;
+    int count;
+    object *tmp, *pouch;
+    archetype *at;
 
-  if(pl==NULL||pl->type!=PLAYER) {
-    LOG(llevDebug,"Object other than player tried to sell something.\n");
-    return;
-  }
+    if(pl==NULL||pl->type!=PLAYER) {
+	LOG(llevDebug,"Object other than player tried to sell something.\n");
+	return;
+    }
 
-  if(op->custom_name) FREE_AND_CLEAR_STR(op->custom_name);
+    if(op->custom_name) FREE_AND_CLEAR_STR(op->custom_name);
 
-  if(!i) {
-    new_draw_info_format(NDI_UNIQUE, 0, pl,
-	"We're not interested in %s.",query_name(op));
+    if(!i) {
+	new_draw_info_format(NDI_UNIQUE, 0, pl,
+	     "We're not interested in %s.",query_name(op));
 
-    /* Even if the character doesn't get anything for it, it may still be
-     * worth something.  If so, make it unpaid
+	/* Even if the character doesn't get anything for it, it may still be
+	 * worth something.  If so, make it unpaid
+	 */
+	if (op->value)
+	    SET_FLAG(op, FLAG_UNPAID);
+	identify(op);
+	return;
+    }
+
+    /* We compare the price with the one for a player
+     * without bargaining skill.
+     * This determins the amount of exp (if any) gained for bargaining.
+     * exp/10 -> 1 for each gold coin
      */
-    if (op->value)
-      SET_FLAG(op, FLAG_UNPAID);
-    identify(op);
-    return;
-  }
-  /* We compare the price with the one for a player
-   * without bargaining skill.
-   * This determins the amount of exp (if any) gained for bargaining.
-   * exp/10 -> 1 for each gold coin
-   */
-  extra_gain = i - query_cost(op,pl,F_SELL | F_NO_BARGAIN);
+    extra_gain = i - query_cost(op,pl,F_SELL | F_NO_BARGAIN);
 
-  if (extra_gain > 0)
-    change_exp(pl,extra_gain/10,"bargaining",SK_EXP_NONE);
+    if (extra_gain > 0)
+	change_exp(pl,extra_gain/10,"bargaining",SK_EXP_NONE);
   
-  for (count=0; coins[count]!=NULL; count++) {
-      at = find_archetype(coins[count]);
-      if (at==NULL) LOG(llevError, "Could not find %s archetype", coins[count]);
-      else if ((i/at->clone.value) > 0) {
-	  for ( pouch=pl->inv ; pouch ; pouch=pouch->below ) {
-	      if ( pouch->type==CONTAINER && QUERY_FLAG(pouch, FLAG_APPLIED) && pouch->race && strstr(pouch->race, "gold") ) {
-		  int w = at->clone.weight * (100-pouch->stats.Str)/100;
-		  int n = i/at->clone.value;
+    for (count=0; coins[count]!=NULL; count++) {
+	at = find_archetype(coins[count]);
+	if (at==NULL) LOG(llevError, "Could not find %s archetype", coins[count]);
+	else if ((i/at->clone.value) > 0) {
+	    for ( pouch=pl->inv ; pouch ; pouch=pouch->below ) {
+		if ( pouch->type==CONTAINER && QUERY_FLAG(pouch, FLAG_APPLIED) && pouch->race && strstr(pouch->race, "gold") ) {
+		    int w = at->clone.weight * (100-pouch->stats.Str)/100;
+		    int n = i/at->clone.value;
 
-		  if (w==0) w=1;    /* Prevent divide by zero */
-		  if ( n>0 && (!pouch->weight_limit || pouch->carrying+w<=pouch->weight_limit)) {
-		      if (pouch->weight_limit && (pouch->weight_limit-pouch->carrying)/w<n) {
-			  n = (pouch->weight_limit-pouch->carrying)/w;
-		      }
-		      tmp = get_object();
-		      copy_object(&at->clone, tmp);
-		      tmp->nrof = n;
-		      i -= tmp->nrof * tmp->value;
-		      tmp = insert_ob_in_ob(tmp, pouch);
-		      esrv_send_item (pl, tmp);
-		      esrv_send_item (pl, pouch);
-		      esrv_update_item (UPD_WEIGHT, pl, pouch);
-		      esrv_send_item (pl, pl);
-		      esrv_update_item (UPD_WEIGHT, pl, pl);
-		  }
-	      }
-	  }
-	  if (i/at->clone.value > 0) {
-	      tmp = get_object();
-	      copy_object(&at->clone, tmp);
-	      tmp->nrof = i/tmp->value;
-	      i -= tmp->nrof * tmp->value;
-	      tmp = insert_ob_in_ob(tmp, pl);
-	      esrv_send_item (pl, tmp);
-	      esrv_send_item (pl, pl);
-	      esrv_update_item (UPD_WEIGHT, pl, pl);
-	  }
-      }
-  }
+		    if (w==0) w=1;    /* Prevent divide by zero */
+		    if ( n>0 && (!pouch->weight_limit || pouch->carrying+w<=pouch->weight_limit)) {
+			if (pouch->weight_limit && (pouch->weight_limit-pouch->carrying)/w<n)
+			    n = (pouch->weight_limit-pouch->carrying)/w;
 
-  if (i!=0) 
+			tmp = get_object();
+			copy_object(&at->clone, tmp);
+			tmp->nrof = n;
+			i -= (uint64)tmp->nrof * (uint64)tmp->value;
+			tmp = insert_ob_in_ob(tmp, pouch);
+			esrv_send_item (pl, tmp);
+			esrv_send_item (pl, pouch);
+			esrv_update_item (UPD_WEIGHT, pl, pouch);
+			esrv_send_item (pl, pl);
+			esrv_update_item (UPD_WEIGHT, pl, pl);
+		    }
+		}
+	    }
+	    if (i/at->clone.value > 0) {
+		tmp = get_object();
+		copy_object(&at->clone, tmp);
+		tmp->nrof = i/tmp->value;
+		i -= (uint64)tmp->nrof * (uint64)tmp->value;
+		tmp = insert_ob_in_ob(tmp, pl);
+		esrv_send_item (pl, tmp);
+		esrv_send_item (pl, pl);
+		esrv_update_item (UPD_WEIGHT, pl, pl);
+	    }
+	}
+    }
+
+    if (i!=0) 
 	LOG(llevError,"Warning - payment not zero: %d\n", i);
 
-  new_draw_info_format(NDI_UNIQUE, 0, pl,
+    new_draw_info_format(NDI_UNIQUE, 0, pl,
 	"You receive %s for %s.",query_cost_string(op,pl,1),
           query_name(op));
-  SET_FLAG(op, FLAG_UNPAID);
-  identify(op);
+    SET_FLAG(op, FLAG_UNPAID);
+    identify(op);
 }
 
 
