@@ -47,7 +47,7 @@ FILES_HELP = $(srcdir)/help/apply $(srcdir)/help/bind \
 	$(srcdir)/help/name $(srcdir)/help/output \
 	$(srcdir)/help/output-count $(srcdir)/help/output-sync \
 	$(srcdir)/help/party $(srcdir)/help/pickup \
-	$(srcdir)/help/quit $(srcdir)/help/range help/save \
+	$(srcdir)/help/quit $(srcdir)/help/range $(srcdir)help/save \
 	$(srcdir)/help/sort_inventory $(srcdir)/help/spells \
 	$(srcdir)/help/statistics $(srcdir)/help/take $(srcdir)/help/traps \
 	$(srcdir)/help/unbind $(srcdir)/help/usekeys
