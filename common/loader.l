@@ -60,9 +60,9 @@ static char *variable_const[NR_OF_VARIABLES] = {
   "path_attuned","path_repelled","path_denied",
   "invisible","magic","state","alive","applied","unpaid","need_an","need_ie",
   "no_pick","no_pass","walk_on","walk_off","fly_on","fly_off","is_animated",
-  "flying","monster",
+  "flying","monster","neutral", "no_attack", "no_damage",
   "friendly","generator","is_thrown","auto_apply","treasure",
-  "apply_once","see_invisible","can_roll","is_turning","is_turnable",
+  "apply_once","see_invisible","can_roll","is_turnable",
   "is_used_up","identified","reflecting","changing","splitting","hitback",
   "startequip","blocksview","editable","undead","scared","unaggressive",
   "reflect_missile","reflect_spell","no_magic",
@@ -315,6 +315,9 @@ WS	[ \t]*
 ^is_animated{S}	    SET_OR_CLEAR_FLAG(op, FLAG_ANIMATE, IVAL);
 ^flying{S}	    SET_OR_CLEAR_FLAG(op, FLAG_FLYING, IVAL);
 ^monster{S}	    SET_OR_CLEAR_FLAG(op, FLAG_MONSTER, IVAL);
+^neutral{S}	    SET_OR_CLEAR_FLAG(op, FLAG_NEUTRAL, IVAL);
+^no_attack{S}	    SET_OR_CLEAR_FLAG(op, FLAG_NO_ATTACK, IVAL);
+^no_damage{S}	    SET_OR_CLEAR_FLAG(op, FLAG_NO_DAMAGE, IVAL);
 ^friendly{S}	    {	if (IVAL) {
 			    SET_FLAG(op, FLAG_FRIENDLY);
 			    if (op->type != PLAYER) {
@@ -390,7 +393,10 @@ WS	[ \t]*
 ^is_floor{S}	    SET_OR_CLEAR_FLAG(op, FLAG_IS_FLOOR, IVAL);
 ^lifesave{S}	    SET_OR_CLEAR_FLAG(op, FLAG_LIFESAVE, IVAL);
 ^no_strength{S}	    SET_OR_CLEAR_FLAG(op, FLAG_NO_STRENGTH, IVAL);
-^sleep{S}	    SET_OR_CLEAR_FLAG(op, FLAG_SLEEP, IVAL);
+^sleep{S}	    {
+			SET_OR_CLEAR_FLAG(op, FLAG_SLEEP, IVAL);
+			LOG(llevDebug," Warning: Object %s has sleep set in arch.\n",op->name);
+		    }
 ^stand_still{S}	    SET_OR_CLEAR_FLAG(op, FLAG_STAND_STILL, IVAL);
 ^random_move{S}	    SET_OR_CLEAR_FLAG(op, FLAG_RANDOM_MOVE, IVAL);
 ^only_attack{S}	    SET_OR_CLEAR_FLAG(op, FLAG_ONLY_ATTACK, IVAL);
@@ -1053,7 +1059,7 @@ int flag_links[NUM_FLAGS+1][2] ={
 {FLAG_GENERATOR, V_GENERATOR}, {FLAG_IS_THROWN, V_IS_THROWN},
 {FLAG_AUTO_APPLY, V_AUTO_APPLY}, {FLAG_TREASURE, V_TREASURE},
 {FLAG_APPLY_ONCE, V_APPLY_ONCE},{FLAG_SEE_INVISIBLE, V_SEE_INVISIBLE},
-{FLAG_CAN_ROLL, V_CAN_ROLL}, {-1, -1},
+{FLAG_CAN_ROLL, V_CAN_ROLL}, {-1, -1}, /*paralyze is only a effect flag */
 {FLAG_IS_TURNABLE, V_IS_TURNABLE},{FLAG_WALK_OFF, V_WALK_OFF},
 {FLAG_FLY_ON, V_FLY_ON},{FLAG_FLY_OFF, V_FLY_OFF}, 
 {FLAG_IS_USED_UP, V_IS_USED_UP}, {FLAG_IDENTIFIED, V_IDENTIFIED},
@@ -1090,7 +1096,10 @@ int flag_links[NUM_FLAGS+1][2] ={
 {FLAG_READY_WEAPON,V_HAS_READY_WEAPON},{FLAG_NO_SKILL_IDENT,V_NO_SKILL_IDENT},
 {FLAG_BLIND,V_BLIND},{FLAG_SEE_IN_DARK,V_SEE_IN_DARK},
 {FLAG_IS_CAULDRON,V_IS_CAULDRON},{FLAG_DUST,V_DUST},{FLAG_NO_STEAL,V_NO_STEAL},
-{FLAG_ONE_HIT, V_ONE_HIT}, {FLAG_BERSERK, V_BERSERK}, {-1, -1 /* Client send debug flag */ }
+{FLAG_ONE_HIT, V_ONE_HIT}, {FLAG_BERSERK, V_BERSERK}, 
+{FLAG_NEUTRAL, V_NEUTRAL}, {FLAG_NO_ATTACK, V_NO_ATTACK},
+{FLAG_NO_DAMAGE, V_NO_DAMAGE},
+{-1, -1 /* Client send debug flag */ }
 };
 
 
@@ -1575,5 +1584,8 @@ void save_object(FILE *fp,object *op, int flag) {
 
     fprintf(fp,"end\n");
 }
+
+
+
 
 

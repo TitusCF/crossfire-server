@@ -1233,7 +1233,13 @@ void move_apply (object *trap, object *victim, object *originator)
       goto leave;
     /* fallthrough */
   case ARROW:
-    if (QUERY_FLAG (victim, FLAG_ALIVE) && trap->speed)
+
+      /* bad bug: monster throw a object, make a step forwards, step on object ,
+       * trigger this here and get hit by own missile - and will be own enemy.
+       * Victim then is his own enemy and will start to kill herself (this is
+       * removed) but we have not synced victim and his missile. To avoid senseless
+       * action, we avoid hits here */
+      if ((QUERY_FLAG (victim, FLAG_ALIVE) && trap->speed) && trap->owner != victim)
       hit_with_arrow (trap, victim);
     goto leave;
 

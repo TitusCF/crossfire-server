@@ -627,8 +627,15 @@ void move_arrow(object *op) {
     while (tmp != NULL && ! QUERY_FLAG (tmp, FLAG_ALIVE))
 	tmp = tmp->above;
 
-    if (tmp != NULL)
-    {
+    /* A bad problem was that a monster can throw or fire something and then
+     * it run in it. Not only this is a sync. problem, the monster will also
+     * hit herself and used as his own enemy! Result is, that many monsters
+     * start to hit herself dead.
+     * I removed both: No monster can be hit from his own missile and it can't 
+     * be his own enemy. - MT, 25.11.01 */
+    
+    if (tmp != NULL && tmp != op->owner)
+    {        
         /* Found living object, but it is reflecting the missile.  Update
          * as below. (Note that for living creatures there is a small
          * chance that reflect_missile fails.)

@@ -189,6 +189,7 @@ int do_skill (object *op, int dir, char *string) {
       case SK_THROWING:
 	success = skill_throw(op,dir,string);
 	break;
+
       case SK_SET_TRAP:
            new_draw_info(NDI_UNIQUE, 0,op,"This skill is not currently implemented.");
         break;

@@ -347,13 +347,14 @@ int path_to_player(object *mon, object *pl,int mindiff) {
     mapstruct *m ,*lastmap;
 
     get_rangevector(mon, pl, &rv, 0);
+
     if (rv.distance<mindiff) return 0;
 
     x=mon->x;
     y=mon->y;
     m=mon->map;
     dir = rv.direction;
-    lastdir = rv.direction;
+    lastdir = firstdir = rv.direction; /* perhaps we stand next to pl, init firstdir too */
     diff = FABS(rv.distance_x)>FABS(rv.distance_y)?FABS(rv.distance_x):FABS(rv.distance_y);
     /* If we can't solve it within the search distance, return now. */
     if (diff>max) return 0;
@@ -379,7 +380,7 @@ int path_to_player(object *mon, object *pl,int mindiff) {
 		x = lastx;
 		y = lasty;
 		m = lastmap;
-		dir = rv.direction;
+		dir = firstdir = rv.direction;
 	    } else {
 		/* direct path is blocked - try taking a side step to
 		 * either the left or right.
@@ -428,7 +429,7 @@ int path_to_player(object *mon, object *pl,int mindiff) {
 	    max--;
 	    lastdir=dir;
 	    if (!firstdir) firstdir = dir;
-	}
+  	}
 	if (diff<=1) {
 	    /* Recalculate diff (distance) because we may not have actually
 	     * headed toward player for entire distance.
@@ -440,6 +441,7 @@ int path_to_player(object *mon, object *pl,int mindiff) {
     }
     /* If we reached the max, didn't find a direction in time */
     if (!max) return 0;
+
     return firstdir;
 }
 

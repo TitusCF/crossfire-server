@@ -572,6 +572,7 @@ static int attack_ob_simple (object *op, object *hitter, int base_dam,
 
     if (get_attack_mode (&op, &hitter, &simple_attack))
         goto error;
+
 #ifdef PLUGINS
     /* GROS: Handle for plugin attack event */
     if(op->event_hook[EVENT_ATTACK] != NULL)
@@ -751,11 +752,13 @@ static int attack_ob_simple (object *op, object *hitter, int base_dam,
   leave:
     if (op_name)
         free_string (op_name);
+
     return dam;
 }
 
 int attack_ob (object *op, object *hitter)
 {
+
     if (hitter->head)
         hitter = hitter->head;
     return attack_ob_simple (op, hitter, hitter->stats.dam, hitter->stats.wc);
@@ -848,6 +851,7 @@ object *hit_with_arrow (object *op, object *victim)
     }
     else
 #endif
+
         hit_something = attack_ob_simple (victim, hitter, op->stats.dam,
                                         op->stats.wc);
 
@@ -1429,7 +1433,8 @@ int hit_player(object *op,int dam, object *hitter, int type) {
     if (get_attack_mode (&op, &hitter, &simple_attack))
         return 0;
 
-    if (QUERY_FLAG (op, FLAG_WIZ))
+    /* very simple: if our target has no_damage 1 set or is wiz, we can't hurt him */
+    if (QUERY_FLAG (op, FLAG_WIZ) || QUERY_FLAG (op, FLAG_NO_DAMAGE))
         return 0;
 
     op_tag = op->count;

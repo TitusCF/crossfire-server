@@ -104,8 +104,7 @@ PostBuild_Cmds=copy ReleaseQuit\crossfire32.exe ..\crossfire32.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MT /W3 /Gi /GX /O2 /Ob2 /I "..\include" /I "..\random_maps" /I "..\\" /I "..\plugin\include" /I "d:\Python21\include" /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /D "DEBUG" /YX"preheader.pch" /FD /c
-# ADD CPP /nologo /MT /W3 /Gi /GX /O2 /Ob2 /I "..\include" /I "..\random_maps" /I "..\\" /I "..\plugin\include" /I "d:\Python21\include" /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /D "DEBUG" /YX"preheader.pch" /FD /c
-# SUBTRACT CPP /Z<none>
+# ADD CPP /nologo /MT /W3 /Gi /GX /O2 /Ob2 /I "..\include" /I "..\random_maps" /I "..\\" /I "..\plugin\include" /I "d:\Python21\include" /D "_CONSOLE" /D "DEBUG" /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "DEBUG_MOVEATTACK" /YX"preheader.pch" /FD /c
 # ADD BASE RSC /l 0x407 /d "NDEBUG"
 # ADD RSC /l 0x407 /d "NDEBUG"
 BSC32=bscmake.exe
@@ -2761,5 +2760,9 @@ SOURCE=..\include\xdir.h
 
 # End Source File
 # End Group
+# Begin Source File
+
+SOURCE=..\common\loader.l
+# End Source File
 # End Target
 # End Project

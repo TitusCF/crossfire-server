@@ -102,6 +102,9 @@ typedef struct obj {
                       /* Owner should not be referred to directly - */
                       /* get_owner should be used instead. */
   struct obj *enemy;   /* Monster/player to follow even if not closest */
+  struct obj *attacked_by;   /* This object start to attack us! only player & monster */
+  tag_t		attacked_by_count;         /* the tag of attacker, so we can be sure */
+  
   struct archt *arch;           /* Pointer to archetype */
   struct archt *other_arch;	/* Pointer used for various things */
   signed long weight;           /* Attributes of the object */

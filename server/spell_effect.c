@@ -147,6 +147,8 @@ void cast_magic_storm(object *op, object *tmp, int lvl) {
 
 }
 
+/* TODO: we need a special flag here to aggravate monster.
+ * Enemy will be deleted in check_enemy() if not friendly->non friendly or visa verse */
 void aggravate_monsters(object *op) {
   int i,j;
   object *tmp;

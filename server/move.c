@@ -349,6 +349,7 @@ int roll_ob(object *op,int dir, object *pusher) {
     return 1;
 }
 
+/* returns 0 if a monster was pushed and 1 if not - however */
 int push_ob(object *who, int dir, object *pusher) {
   int str1, str2;
   object *owner;
@@ -356,7 +357,13 @@ int push_ob(object *who, int dir, object *pusher) {
   if (who->head != NULL)
     who = who->head;
   owner = get_owner(who);
-  if (who->more == NULL && owner == pusher) {
+
+  CLEAR_FLAG(who,FLAG_SLEEP); /* what ever: this action lets wakeup the sucker */
+  
+  /* player change place with his pets or summoned creature */
+  /* TODO: allow multi arch pushing. Can't be very difficult */
+  if (who->more == NULL && owner == pusher)
+  {
     int temp;
     remove_ob(who);
     remove_ob(pusher);
@@ -370,8 +377,40 @@ int push_ob(object *who, int dir, object *pusher) {
     insert_ob_in_map (pusher,pusher->map,pusher,0);
     return 0;
   }
-  if(QUERY_FLAG(who,FLAG_UNAGGRESSIVE) && owner != pusher)
-    who->enemy = pusher;
+
+
+  /* We want ONLY become enemy of evil, unaggressive monster. We must RUN in them */
+  /* In original we have here a unaggressive check only - that was the reason why */
+  /* we so often become an enemy of friendly monsters... */
+  /* funny: was they set to unaggressive 0 (= not so nice) they don't attack */
+  if(owner != pusher &&  pusher->type == PLAYER && who->type != PLAYER &&
+      !QUERY_FLAG(who,FLAG_FRIENDLY)&& !QUERY_FLAG(who,FLAG_NEUTRAL))
+  {
+      if(pusher->contr->run_on) /* only when we run */
+      {
+          new_draw_info_format(NDI_UNIQUE, 0, pusher,
+              "You start to attack %s !!",who->name);
+//          CLEAR_FLAG(who,FLAG_UNAGGRESSIVE); /* the sucker don't like you anymore */
+          who->enemy = pusher;
+      }
+      else 
+      {
+        new_draw_info_format(NDI_UNIQUE, 0, pusher,
+             "You avoid to attack %s .",who->name);
+      }
+  }
+
+  /* now, lets test stand still we NEVER can psuh stand_still monsters. */
+  if(QUERY_FLAG(who,FLAG_STAND_STILL))
+  {
+      new_draw_info_format(NDI_UNIQUE, 0, pusher,
+          "You can't push %s.",who->name);
+      return 1;
+  }
+  
+  /* ok, now we are here. I only allow player pushing */
+  /* for monsters, we have the arch commands how and why they can move/pushed */
+  /* and we have melee power like knockback */
   str1 = (who->stats.Str>0?who->stats.Str:who->level);
   str2 = (pusher->stats.Str>0?pusher->stats.Str:pusher->level);
   if(QUERY_FLAG(who,FLAG_WIZ) ||
@@ -383,23 +422,18 @@ int push_ob(object *who, int dir, object *pusher) {
       new_draw_info_format(NDI_UNIQUE, 0, who,
 	"%s tried to push you.",pusher->name);
     }
-    if (QUERY_FLAG(who, FLAG_MONSTER)) {
-      new_draw_info_format(NDI_UNIQUE, 0, pusher,
-	"Your pushing annoys %s.",who->name);
-    }
+
     return 0;
   }
+
   if (who->type == PLAYER) {
     new_draw_info_format(NDI_UNIQUE, 0, who,
 	"%s pushed you.",pusher->name);
   }
-  if (QUERY_FLAG(who, FLAG_MONSTER)) {
-    if(owner == pusher)
-      new_draw_info_format(NDI_UNIQUE, 0,pusher,
-	"%s doesn't seem pleased with your action.",who->name);
-    else
-      new_draw_info_format(NDI_UNIQUE, 0,pusher,
-	"%s is definitely annoyed at your pushing.",who->name);
+  else if (QUERY_FLAG(who, FLAG_MONSTER)) {
+      new_draw_info_format(NDI_UNIQUE, 0, pusher,
+          "You pushed %s back.", who->name);
   }
+  
   return 1;
 }

@@ -88,7 +88,7 @@ LIB32=link.exe -lib
 # PROP Intermediate_Dir "ReleaseLog"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MD /W3 /GX /O2 /I "..\..\include" /I "d:\Python21\include" /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "_LIB" /D "PYTHON_PLUGIN_EXPORTS" /YX /FD /c
-# ADD CPP /nologo /MD /W3 /GX /O2 /I "..\..\include" /I "d:\Python21\include" /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "_LIB" /D "PYTHON_PLUGIN_EXPORTS" /YX"libcross.pch" /FD /c
+# ADD CPP /nologo /MD /W3 /GX /O2 /I "..\..\include" /I "d:\Python21\include" /D "_LIB" /D "PYTHON_PLUGIN_EXPORTS" /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "DEBUG_MOVEATTACK" /YX"libcross.pch" /FD /c
 # ADD BASE RSC /l 0x407 /d "NDEBUG"
 # ADD RSC /l 0x407 /d "NDEBUG"
 BSC32=bscmake.exe

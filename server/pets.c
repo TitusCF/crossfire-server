@@ -47,7 +47,7 @@ object *get_pet_enemy(object * pet, rv_vector *rv){
 	/* If the owner has turned on the pet, make the pet
 	 * unfriendly.
 	 */
-	if ((get_enemy(owner,rv)) == pet) {
+	if ((check_enemy(owner,rv)) == pet) {
 	    CLEAR_FLAG(pet, FLAG_FRIENDLY);
 	    remove_friendly_object(pet);
 	    pet->move_type &=~PETMOVE;

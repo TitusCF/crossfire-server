@@ -422,8 +422,6 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define FLAG_APPLY_ONCE		20 /* Will dissapear when applied */
 #define FLAG_SEE_INVISIBLE 	21 /* Will see invisible player */
 #define FLAG_CAN_ROLL		22 /* Object can be rolled */
-/* FLAG_IS_TURNING is no longer used */
-/*#define FLAG_IS_TURNING		23 *//* Object will turn after player */
 
 /* this defines paralyze as spell on player, not onlya effect on speed */
 #define FLAG_PARALYZED      23 /* Object is paralyzed */
@@ -526,7 +524,11 @@ error - Your ANSI C compiler should be defining __STDC__;
 
 #define FLAG_BERSERK            99 /* monster will attack closest living
 				      object */
-#define NUM_FLAGS		99 /* Should always be equal to the last
+#define FLAG_NEUTRAL            100 /* monster is from type neutral */
+#define FLAG_NO_ATTACK          101 /* monster don't attack */
+#define FLAG_NO_DAMAGE          102 /* monster can't be damaged */
+
+#define NUM_FLAGS		102 /* Should always be equal to the last
 				    * defined flag */
 
 /* Values can go up to 127 before the size of the flags array in the

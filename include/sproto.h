@@ -387,7 +387,7 @@ int forbid_play(void);
 void do_specials(void);
 int main(int argc, char **argv);
 /* monster.c */
-object *get_enemy(object *npc, rv_vector *rv);
+object *check_enemy(object *npc, rv_vector *rv);
 object *find_nearest_living_creature(object *npc);
 object *find_enemy(object *npc, rv_vector *rv);
 int check_wakeup(object *op, object *enemy, rv_vector *rv);
