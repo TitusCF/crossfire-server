@@ -1419,14 +1419,21 @@ void slow_player(object *op,object *hitter,int dam)
 void confuse_player(object *op, object *hitter, int dam)
 {
     object *tmp;
+    int maxduration;
+    
     tmp = present_in_ob(CONFUSION,op);
     if(!tmp) {
       tmp = get_archetype("confusion");
       tmp = insert_ob_in_ob(tmp,op);
     }
-    tmp->stats.food += 5;
-    if( tmp->stats.food > 30)
-      tmp->stats.food = 30;
+    
+    /* Duration added per hit and max. duration of confusion both depend
+       on the player's resistance */
+    tmp->stats.food += MAX(1, 5*(100-op->resist[ATNR_CONFUSION])/100);
+    maxduration = MAX(2, 30*(100-op->resist[ATNR_CONFUSION])/100);
+    if( tmp->stats.food > maxduration)
+      tmp->stats.food = maxduration;
+    
     if(op->type == PLAYER && !QUERY_FLAG(op,FLAG_CONFUSED))
       new_draw_info(NDI_UNIQUE, 0,op,"You suddenly feel very confused!");
     SET_FLAG(op, FLAG_CONFUSED);
