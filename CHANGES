@@ -16,6 +16,20 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+PeterM  2000/11/18:
+  New spells added:
+  1)  Sanctuary   (aura of counterwall)
+  2)  Peace	  (make monsters unable to fight)
+  3)  Spiderweb   (create spider webs)
+  4)  rage	  (heroism, armour, haste, regenration combined)
+  5)  forked lightning  (lightning which forks and strikes )
+  6)  flaming aura  (aura of fire)
+  7)  vitriol     combined ball/cone/pool acid attack spell
+  8)  vitriol splash  (spell for internal use only)
+  9)  ironwood skin  (clerical version of armour spell)
+
+Not implemented:  10) poison fog
+
 MSW 2000/11/17:
 socket/metaserver.c:  More changes - use fcntl to set O_NONBLOCK.  Don't
    close socket if connect fails, since with sendto it is not required
