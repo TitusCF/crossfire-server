@@ -289,6 +289,8 @@ int hit_map(object *op,int dir,int type) {
 void attack_message(int dam, int type, object *op, object *hitter) {
   char buf[MAX_BUF], buf1[MAX_BUF], buf2[MAX_BUF];
   int i, found=0;
+  mapstruct *map;
+  object *next, *tmp;
 
   /* put in a few special messages for some of the common attacktypes
    *  a player might have.  For example, fire, electric, cold, etc
@@ -435,8 +437,29 @@ void attack_message(int dam, int type, object *op, object *hitter) {
 		play_sound_player_only(hitter->contr, SOUND_PLAYER_HITS3,0,0);
 	}
 	new_draw_info(NDI_BLACK, 0, hitter, buf);
-    } else if(get_owner(hitter)!=NULL&&hitter->owner->type==PLAYER &&
-	      rndm(0, 5) == 0) {
+    } else if(get_owner(hitter)!=NULL&&hitter->owner->type==PLAYER) {
+      /* look for stacked spells and start reducing the message chances */
+        if (hitter->type == FBALL || hitter->type == FBULLET ||
+	    hitter->type == CONE) {
+	   i=4;
+	   map = hitter->map;
+	   if (out_of_map(map, hitter->x, hitter->y))
+	       return;
+	   next = get_map_ob(map, hitter->x, hitter->y);
+	   if (next)
+	       while(next) {
+		   if (next->type == FBALL || next->type == FBULLET ||
+		       next->type == CONE)
+		       i*=3;
+		   tmp = next;
+		   next = tmp->above;
+	       }
+	   if (i < 0)
+	       return;
+	   if (rndm(0, i) != 0)
+	       return;
+	} else if (rndm(0, 5) != 0)
+	    return;
         sprintf(buf,"Your %s%s %s.", hitter->name, buf2, op->name);
 	play_sound_map(op->map, op->x, op->y, SOUND_PLAYER_HITS4);
 	new_draw_info(NDI_BLACK, 0, hitter->owner, buf);
