@@ -34,8 +34,11 @@ David Hurst "dnh@hawthorn.csse.monash.edu.au" - gods rebalancing, images
 Hwei Sheng Teoh hsteoh@quickfur.yi.org -- random_maps expand2x, also,
        images for Fiend, dread, beholder generator, grimreaper.
 Tim Rightnour ("garbled", root@garbled.net) - luck, attackmessages, time,
-	weather, new alchemy, overlay maps, emotions.
-
+	weather, new alchemy, overlay maps, emotions. 
+Todd Mitchell ("Avion", temichell@sympatico.ca) -general busybody, 
+	graphics and arches(player animation, winter graphics, many others),
+	metadata (lore),python scripts, creating maps, getting Tim to add 
+	Orcknuckle...
 
 
 Still active developers:
