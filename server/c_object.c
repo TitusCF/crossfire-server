@@ -1310,6 +1310,13 @@ NEWPICKUP:
   sprintf(putstring,"%d POTION",i & PU_POTION?1:0);
   new_draw_info(NDI_UNIQUE, 0,op,putstring);
 
+  sprintf(putstring,"%d SPELLBOOK",i & PU_SPELLBOOK?1:0);
+  new_draw_info(NDI_UNIQUE, 0,op,putstring);
+  sprintf(putstring,"%d SKILLSCROLL",i & PU_SKILLSCROLL?1:0);
+  new_draw_info(NDI_UNIQUE, 0,op,putstring);
+  sprintf(putstring,"%d READABLES",i & PU_READABLES?1:0);
+  new_draw_info(NDI_UNIQUE, 0,op,putstring);
+
   new_draw_info(NDI_UNIQUE, 0,op,"");
 #endif
 

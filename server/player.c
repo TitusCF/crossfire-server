@@ -1185,6 +1185,18 @@ int check_pick(object *op) {
 	if (tmp->type == POTION)
 	{ pick_up(op, tmp); if(0)fprintf(stderr,"POTION\n"); continue; }
 
+      /* spellbooks, skillscrolls and normal books/scrolls */
+      if(op->contr->mode & PU_SPELLBOOK)
+	if (tmp->type == SPELLBOOK) 
+	{ pick_up(op, tmp); if(0)fprintf(stderr,"SPELLBOOK\n"); continue; }
+      if(op->contr->mode & PU_SKILLSCROLL)
+	if (tmp->type == SKILLSCROLL) 
+	{ pick_up(op, tmp); if(0)fprintf(stderr,"SKILLSCROLL\n"); continue; }
+      if(op->contr->mode & PU_READABLES)
+	if (tmp->type == BOOK || tmp->type == SCROLL) 
+	{ pick_up(op, tmp); if(0)fprintf(stderr,"READABLES\n"); continue; }
+
+
       /* pick up all magical items */
       if(op->contr->mode & PU_MAGICAL)
 	if (QUERY_FLAG (tmp, FLAG_KNOWN_MAGICAL) && ! QUERY_FLAG(tmp, FLAG_KNOWN_CURSED))

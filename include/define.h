@@ -310,6 +310,10 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define PU_MAGICAL		0x00040000
 #define PU_POTION		0x00080000
 
+#define PU_SPELLBOOK		0x00100000
+#define PU_SKILLSCROLL		0x00200000
+#define PU_READABLES		0x00400000
+
 
 /* Instead of using arbitrary constants for indexing the
  * freearr, add these values.  <= SIZEOFFREE1 will get you
