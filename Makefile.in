@@ -47,10 +47,6 @@
 # Any extra special options for the C compiler.
 #EXTRA_CFLAGS=-Wall
 
-#Gros: Extra flags and includes for Guile Interpreter support
-EXTRA_CFLAGS=@GUILE_CFLAGS@
-EXTRA_LIBS=@GUILE_LDFLAGS@
-
 #
 #
 CC=@CC@

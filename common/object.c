@@ -37,8 +37,8 @@
 #endif /* win32 */
 #include <object.h>
 #include <funcpoint.h>
-#include <skills.h> 
-
+#include <skills.h>
+#include <loader.h>
 #ifdef MEMORY_DEBUG
 int nroffreeobjects = 0;
 int nrofallocobjects = 0;
@@ -115,7 +115,7 @@ inline int CAN_MERGE(object *ob1, object *ob2) {
 
     /* the 0x400000 on flags2 is FLAG_INV_LOCK.  I don't think something
      * being locked in inventory should prevent merging.
-     * 0x4 in flags3 is CLIENT_SENT 
+     * 0x4 in flags3 is CLIENT_SENT
      */
     if ((ob1->arch != ob2->arch) || 
 	(ob1->stats.sp != ob2->stats.sp) ||
@@ -257,6 +257,41 @@ void dump_object(object *op) {
   errmsg[0]='\0';
   dump_object2(op);
 }
+
+/* GROS - Dumps an object. Return the result into a string                   */
+/* Note that no checking is done for the validity of the target string, so   */
+/* you need to be sure that you allocated enough space for it.               */
+void dump_me(object *op, char *outstr)
+{
+    char *cp;
+
+    if(op==NULL)
+    {
+        strcpy(outstr,"[NULL pointer]");
+        return;
+    }
+    outstr[0]='\0';
+
+    if(op->arch!=NULL)
+    {
+        strcat(outstr,"arch ");
+        strcat(outstr,op->arch->name?op->arch->name:"(null)");
+        strcat(outstr,"\n");
+        if((cp=get_ob_diff(op,&empty_archetype->clone))!=NULL)
+            strcat(outstr,cp);
+        strcat(outstr,"end\n");
+    }
+    else
+    {
+        strcat(outstr,"Object ");
+        if (op->name==NULL)
+            strcat(outstr, "(null)");
+        else
+            strcat(outstr,op->name);
+        strcat(outstr,"\n");
+        strcat(outstr,"end\n");
+    }
+};
 
 /*
  * This is really verbose...Can be triggered by the P key while in DM mode.
@@ -452,31 +487,18 @@ void copy_owner (object *op, object *clone)
  */
 
 void reset_object(object *op) {
+  int i;
   op->name = NULL;
   op->title = NULL;
   op->race = NULL;
   op->slaying = NULL;
   op->msg = NULL;
-  op->script_load = NULL;
-  op->script_apply = NULL;
-  op->script_say = NULL;
-  op->script_trigger = NULL;
-  op->script_time = NULL;
-  op->script_attack = NULL;
-  op->script_throw = NULL;
-  op->script_drop = NULL;
-  op->script_stop = NULL;
-  op->script_death = NULL;
-  op->script_str_load = NULL;
-  op->script_str_apply = NULL;
-  op->script_str_say = NULL;
-  op->script_str_trigger = NULL;
-  op->script_str_time = NULL;
-  op->script_str_attack = NULL;
-  op->script_str_throw = NULL;
-  op->script_str_drop = NULL;
-  op->script_str_stop = NULL;
-  op->script_str_death = NULL;
+  for(i=0;i<30;i++)
+  {
+    op->event_hook[i] = NULL;
+    op->event_plugin[i] = NULL;
+    op->event_options[i] = NULL;
+  }  
   op->current_weapon_script = NULL;
   clear_object(op);
 }
@@ -2066,6 +2088,42 @@ int was_destroyed (object *op, tag_t old_tag)
     /* checking for FLAG_FREED isn't necessary, but makes this function more
      * robust */
     return op->count != old_tag || QUERY_FLAG (op, FLAG_FREED);
+}
+
+/* GROS - Creates an object using a string representing its content.         */
+/* Basically, we save the content of the string to a temp file, then call    */
+/* load_object on it. I admit it is a highly inefficient way to make things, */
+/* but it was simple to make and allows reusing the load_object function.    */
+/* Remember not to use load_object_str in a time-critical situation.         */
+/* Also remember that multiparts objects are not supported for now.          */
+object* load_object_str(char *obstr)
+{
+    object *op;
+    FILE *tempfile;
+    char filename[MAX_BUF];
+    sprintf(filename,"%s/cfloadobstr2044",settings.tmpdir);
+    tempfile=fopen(filename,"w");
+    if (tempfile == NULL)
+    {
+        LOG(llevError,"Error - Unable to access load object temp file\n");
+        return NULL;
+    };
+    fprintf(tempfile,obstr);
+    fclose(tempfile);
+
+    op=get_object();
+
+    tempfile=fopen(filename,"r");
+    if (tempfile == NULL)
+    {
+        LOG(llevError,"Error - Unable to read object temp file\n");
+        return NULL;
+    };
+    load_object(tempfile,op,LO_NEWFILE,0);
+    LOG(llevDebug," load str completed, object=%s\n",op->name);
+    CLEAR_FLAG(op,FLAG_REMOVED);
+    fclose(tempfile);
+    return op;
 }
 
 /*** end of object.c ***/

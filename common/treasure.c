@@ -795,7 +795,7 @@ void fix_generated_item (object *op, object *creator, int difficulty,
 	 do {
              do   
                op->stats.sp=RANDOM()%NROFREALSPELLS;
-             while(RANDOM()%10>=spells[op->stats.sp].books); 
+             while(RANDOM()%10>=spells[op->stats.sp].books);
          } while (spells[op->stats.sp].cleric);
 
       op->value=(op->value*spells[op->stats.sp].level)/
@@ -1132,7 +1132,7 @@ void init_artifacts() {
  */
 
 void add_abilities(object *op, object *change) {
-  int i, tmp;
+  int i,j, tmp;
   if (change->face != blank_face) {
 #ifdef TREASURE_VERBOSE
     LOG(llevDebug, "FACE: %d\n", change->face->number);
@@ -1266,79 +1266,23 @@ void add_abilities(object *op, object *change) {
       free_string(op->msg);
     op->msg = add_refcount(change->msg);
   }
-  /* GROS: Added support for script_... in artifact file */
-  if (change->script_attack) {
-    if (op->script_attack)
-      free_string(op->script_attack);
-    op->script_attack = add_refcount(change->script_attack);
-  }
-  if (change->script_apply) {
-    if (op->script_apply)
-      free_string(op->script_apply);
-    op->script_apply = add_refcount(change->script_apply);
-  }
-  if (change->script_drop) {
-    if (op->script_drop)
-      free_string(op->script_drop);
-    op->script_drop = add_refcount(change->script_drop);
-  }
-  if (change->script_say) {
-    if (op->script_say)
-      free_string(op->script_say);
-    op->script_say = add_refcount(change->script_say);
-  }
-  if (change->script_trigger) {
-    if (op->script_trigger)
-      free_string(op->script_trigger);
-    op->script_trigger = add_refcount(change->script_trigger);
-  }
-  if (change->script_time) {
-    if (op->script_time)
-      free_string(op->script_time);
-    op->script_time = add_refcount(change->script_time);
-  }
-  if (change->script_throw) {
-    if (op->script_throw)
-      free_string(op->script_throw);
-    op->script_throw = add_refcount(change->script_throw);
-  }
-  /* GROS: Added support for script_str... in artifact file */
-  if (change->script_str_attack) {
-    if (op->script_str_attack)
-      free_string(op->script_str_attack);
-    op->script_str_attack = add_refcount(change->script_str_attack);
-  }
-  if (change->script_str_apply) {
-    if (op->script_str_apply)
-      free_string(op->script_str_apply);
-    op->script_str_apply = add_refcount(change->script_str_apply);
-  }
-  if (change->script_str_drop) {
-    if (op->script_str_drop)
-      free_string(op->script_str_drop);
-    op->script_str_drop = add_refcount(change->script_str_drop);
-  }
-  if (change->script_str_say) {
-    if (op->script_str_say)
-      free_string(op->script_str_say);
-    op->script_str_say = add_refcount(change->script_str_say);
-  }
-  if (change->script_str_trigger) {
-    if (op->script_str_trigger)
-      free_string(op->script_str_trigger);
-    op->script_str_trigger = add_refcount(change->script_str_trigger);
-  }
-  if (change->script_str_time) {
-    if (op->script_str_time)
-      free_string(op->script_str_time);
-    op->script_str_time = add_refcount(change->script_str_time);
-  }
-  if (change->script_str_throw) {
-    if (op->script_str_throw)
-      free_string(op->script_str_throw);
-    op->script_str_throw = add_refcount(change->script_str_throw);
-  }
-
+  /* GROS: Added support for event_... in artifact file */
+  for(j=0;j<20;j++)
+  {
+    if(change->event_hook[j])
+    {
+        if (op->event_hook[j])
+        {
+            free_string(op->event_hook[j]);
+            free_string(op->event_plugin[j]);
+            free_string(op->event_options[j]);
+        };
+        op->event_hook[j]    = add_refcount(change->event_hook[j]);
+        op->event_plugin[j]  = add_refcount(change->event_plugin[j]);
+        if (change->event_options[j])
+            op->event_options[j] = add_refcount(change->event_options[j]);
+    }
+  };
 }
 
 static int legal_artifact_combination(object *op, artifact *art) {

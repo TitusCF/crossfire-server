@@ -558,17 +558,30 @@ void drop_object (object *op, object *tmp, long nrof)
 	};
     } else
       remove_ob (tmp);
-
-        /* GROS: Added script_drop support */
-        if (tmp->script_drop!=NULL) {
-                printf("Script_drop is %s\n", tmp->script_drop);
-                guile_call_event(op, tmp ,NULL, 0, NULL, 0,0, tmp->script_drop, SCRIPT_FIX_ALL);
-        };
-        if (tmp->script_str_drop!=NULL) {
-                guile_call_event_str(op, tmp ,NULL, 0, NULL, 0,0, tmp->script_str_drop, SCRIPT_FIX_ALL);
-        };
-
-
+#ifdef PLUGINS
+      /* GROS: Handle for plugin drop event */
+      if(tmp->event_hook[EVENT_DROP] != NULL)
+      {
+        CFParm CFP;
+        int k, l, m;
+        m = 0;
+        k = EVENT_DROP;
+        l = SCRIPT_FIX_ALL;
+        CFP.Value[0] = &k;
+        CFP.Value[1] = op;
+        CFP.Value[2] = tmp;
+        CFP.Value[3] = NULL;
+        CFP.Value[4] = NULL;
+        CFP.Value[5] = &m;
+        CFP.Value[6] = &m;
+        CFP.Value[7] = &m;
+        CFP.Value[8] = &l;
+        CFP.Value[9] = tmp->event_hook[k];
+        CFP.Value[10]= tmp->event_options[k];
+        if (findPlugin(tmp->event_plugin[k])>=0)
+          ((PlugList[findPlugin(tmp->event_plugin[k])].eventfunc) (&CFP));
+      }
+#endif
     if (QUERY_FLAG (tmp, FLAG_STARTEQUIP)) {
       sprintf(buf,"You drop the %s.", query_name(tmp));
       new_draw_info(NDI_UNIQUE, 0,op,buf);

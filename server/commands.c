@@ -217,6 +217,9 @@ CommArray_s WizCommands [] = {
   {"kick", command_kick, 0.0},
   {"learn_special_prayer", command_learn_special_prayer, 0.0},
   {"learn_spell", command_learn_spell, 0.0},
+  {"plugin",command_loadplugin,0.0},
+  {"pluglist",command_listplugins,0.0},
+  {"plugout",command_unloadplugin,0.0},
   {"nodm", command_nowiz,0.0},
   {"nowiz", command_nowiz,0.0},
   {"patch", command_patch,0.0},
@@ -340,7 +343,14 @@ static CommFunc find_command(char *cmd)
     if (asp)
       return asp->func;
     else
-      return NULL;
+    {
+    /* GROS - If we are here, then maybe this is a plugin-provided command ? */
+      asp = find_plugin_command(cmd);
+      if (asp)
+        return asp->func;
+      else
+        return NULL;
+    };
   };
 }
 

@@ -531,8 +531,8 @@ object *fix_stopped_arrow (object *op)
 }
 
 /* stop_arrow() - what to do when a non-living flying object
- * has to stop. Sept 96 - I added in thrown object code in 
- * here too. -b.t. 
+ * has to stop. Sept 96 - I added in thrown object code in
+ * here too. -b.t.
  *
  * Returns a pointer to the stopped object (which will have been removed
  * from maps or inventories), or NULL if was destroyed.
@@ -540,15 +540,30 @@ object *fix_stopped_arrow (object *op)
 
 static void stop_arrow (object *op)
 {
-    /* GROS - Handling stop event */
-    if (op->script_stop!=NULL)
+#ifdef PLUGINS
+    /* GROS: Handle for plugin stop event */
+    if(op->event_hook[EVENT_STOP] != NULL)
     {
-        guile_call_event(NULL, op, NULL, 0, NULL,0,0,op->script_stop, SCRIPT_FIX_NOTHING);
-    };
-    if (op->script_str_stop!=NULL)
-    {
-        guile_call_event_str(NULL, op, NULL, 0, NULL,0,0,op->script_str_stop, SCRIPT_FIX_NOTHING);
-    };
+        CFParm CFP;
+        int k, l, m;
+        k = EVENT_STOP;
+        l = SCRIPT_FIX_NOTHING;
+        m = 0;
+        CFP.Value[0] = &k;
+        CFP.Value[1] = NULL;
+        CFP.Value[2] = op;
+        CFP.Value[3] = NULL;
+        CFP.Value[4] = NULL;
+        CFP.Value[5] = &m;
+        CFP.Value[6] = &m;
+        CFP.Value[7] = &m;
+        CFP.Value[8] = &l;
+        CFP.Value[9] = op->event_hook[k];
+        CFP.Value[10]= op->event_options[k];
+        if (findPlugin(op->event_plugin[k])>=0)
+            ((PlugList[findPlugin(op->event_plugin[k])].eventfunc) (&CFP));
+    }
+#endif
     if (op->inv) {
 	object *payload = op->inv;
 	remove_ob (payload);
@@ -760,8 +775,40 @@ void move_teleporter(object *op) {
     if (!tmp) return;
 
     if(EXIT_PATH(head)) {
-	if(op->above->type==PLAYER) 
-	    enter_exit(op->above, head);
+      if(op->above->type==PLAYER)
+      {
+#ifdef PLUGINS
+        /* GROS: Handle for plugin TRIGGER event */
+        if(op->event_hook[EVENT_TRIGGER] != NULL)
+        {
+          CFParm CFP;
+          CFParm* CFR;
+          int k, l, m;
+          int rtn_script = 0;
+          m = 0;
+          k = EVENT_TRIGGER;
+          l = SCRIPT_FIX_ALL;
+          CFP.Value[0] = &k;
+          CFP.Value[1] = op;
+          CFP.Value[2] = op->above;
+          CFP.Value[3] = NULL;
+          CFP.Value[4] = NULL;
+          CFP.Value[5] = &m;
+          CFP.Value[6] = &m;
+          CFP.Value[7] = &m;
+          CFP.Value[8] = &l;
+          CFP.Value[9] = op->event_hook[k];
+          CFP.Value[10]= op->event_options[k];
+          if (findPlugin(op->event_plugin[k])>=0)
+          {
+            CFR = (PlugList[findPlugin(op->event_plugin[k])].eventfunc) (&CFP);
+            rtn_script = *(int *)(CFR->Value[0]);
+          }
+          if (rtn_script!=0) return;
+        }
+#endif
+        enter_exit(op->above, head);
+      }
 	else
 	    /* Currently only players can transfer maps */
 	    return;
@@ -773,10 +820,73 @@ void move_teleporter(object *op) {
 	    free_object(head);
 	    return;
 	}
+#ifdef PLUGINS
+	/* GROS: Handle for plugin TRIGGER event */
+	if(op->event_hook[EVENT_TRIGGER] != NULL)
+	{
+		CFParm CFP;
+		CFParm* CFR;
+		int k, l, m;
+		int rtn_script = 0;
+		m = 0;
+		k = EVENT_TRIGGER;
+		l = SCRIPT_FIX_ALL;
+		CFP.Value[0] = &k;
+		CFP.Value[1] = op;
+		CFP.Value[2] = op->above;
+		CFP.Value[3] = NULL;
+		CFP.Value[4] = NULL;
+		CFP.Value[5] = &m;
+		CFP.Value[6] = &m;
+		CFP.Value[7] = &m;
+		CFP.Value[8] = &l;
+		CFP.Value[9] = op->event_hook[k];
+		CFP.Value[10]= op->event_options[k];
+		if (findPlugin(op->event_plugin[k])>=0)
+		{
+			CFR = (PlugList[findPlugin(op->event_plugin[k])].eventfunc) (&CFP);
+			rtn_script = *(int *)(CFR->Value[0]);
+		}
+		if (rtn_script!=0) return;
+	}
+#endif
 	transfer_ob(tmp,EXIT_X(head),EXIT_Y(head),0,head);
-    } else
-	/* Random teleporter */
-	teleport(head, TELEPORTER, tmp);
+    }
+    else
+    {
+		/* Random teleporter */
+#ifdef PLUGINS
+		/* GROS: Handle for plugin TRIGGER event */
+		if(op->event_hook[EVENT_TRIGGER] != NULL)
+		{
+			CFParm CFP;
+			CFParm* CFR;
+			int k, l, m;
+			int rtn_script = 0;
+			m = 0;
+			k = EVENT_TRIGGER;
+			l = SCRIPT_FIX_ALL;
+			CFP.Value[0] = &k;
+			CFP.Value[1] = op;
+			CFP.Value[2] = op->above;
+			CFP.Value[3] = NULL;
+			CFP.Value[4] = NULL;
+			CFP.Value[5] = &m;
+			CFP.Value[6] = &m;
+			CFP.Value[7] = &m;
+			CFP.Value[8] = &l;
+			CFP.Value[9] = op->event_hook[k];
+			CFP.Value[10]= op->event_options[k];
+			if (findPlugin(op->event_plugin[k])>=0)
+			{
+				CFR = (PlugList[findPlugin(op->event_plugin[k])].eventfunc) (&CFP);
+				rtn_script = *(int *)(CFR->Value[0]);
+			}
+			if (rtn_script!=0) return;
+		}
+#endif
+		teleport(head, TELEPORTER, tmp);
+	}
 }
 
 
@@ -793,6 +903,36 @@ void move_player_changer(object *op) {
    if(op->above!=NULL) {
     if(EXIT_PATH(op)) {
       if(op->above->type==PLAYER) {
+#ifdef PLUGINS
+      /* GROS: Handle for plugin TRIGGER event */
+      if(op->event_hook[EVENT_TRIGGER] != NULL)
+      {
+        CFParm CFP;
+        CFParm* CFR;
+        int k, l, m;
+        int rtn_script = 0;
+        m = 0;
+        k = EVENT_TRIGGER;
+        l = SCRIPT_FIX_NOTHING;
+        CFP.Value[0] = &k;
+        CFP.Value[1] = op;
+        CFP.Value[2] = op->above;
+        CFP.Value[3] = NULL;
+        CFP.Value[4] = NULL;
+        CFP.Value[5] = &m;
+        CFP.Value[6] = &m;
+        CFP.Value[7] = &m;
+        CFP.Value[8] = &l;
+        CFP.Value[9] = op->event_hook[k];
+        CFP.Value[10]= op->event_options[k];
+        if (findPlugin(op->event_plugin[k])>=0)
+        {
+          CFR = (PlugList[findPlugin(op->event_plugin[k])].eventfunc) (&CFP);
+          rtn_script = *(int *)(CFR->Value[0]);
+        }
+        if (rtn_script!=0) return;
+      }
+#endif
 	player=op->above;
 	for(walk=op->inv;walk!=NULL;walk=walk->below) 
 	  apply_changes_to_player(player,walk);
@@ -1015,15 +1155,30 @@ int process_object(object *op) {
     }
     return 1;
   }
-  /* GROS: Executing the script_time event */
-  if (op->script_time!=NULL)
+#ifdef PLUGINS
+  /* GROS: Handle for plugin time event */
+  if(op->event_hook[EVENT_TIME] != NULL)
   {
-        guile_call_event(NULL, op, NULL, 0, NULL,0,0,op->script_time, SCRIPT_FIX_NOTHING);
-  };
-  if (op->script_str_time!=NULL)
-  {
-        guile_call_event_str(NULL, op, NULL, 0, NULL,0,0,op->script_str_time, SCRIPT_FIX_NOTHING);
-  };
+    CFParm CFP;
+    int k, l, m;
+    k = EVENT_TIME;
+    l = SCRIPT_FIX_NOTHING;
+    m = 0;
+    CFP.Value[0] = &k;
+    CFP.Value[1] = NULL;
+    CFP.Value[2] = op;
+    CFP.Value[3] = NULL;
+    CFP.Value[4] = NULL;
+    CFP.Value[5] = &m;
+    CFP.Value[6] = &m;
+    CFP.Value[7] = &m;
+    CFP.Value[8] = &l;
+    CFP.Value[9] = op->event_hook[k];
+    CFP.Value[10]= op->event_options[k];
+    if (findPlugin(op->event_plugin[k])>=0)
+        ((PlugList[findPlugin(op->event_plugin[k])].eventfunc) (&CFP));
+  }
+#endif
   switch(op->type) {
   case ROD:
   case HORN:

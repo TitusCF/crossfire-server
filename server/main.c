@@ -101,14 +101,14 @@ void version(object *op) {
   new_draw_info(NDI_UNIQUE, 0,op,"Wacren@Gin.ObsPM.Fr (Laurent Wacrenier)");
   new_draw_info(NDI_UNIQUE, 0,op,"thomas@astro.psu.edu (Brian Thomas)");
   new_draw_info(NDI_UNIQUE, 0,op,"jsm@axon.ksc.nasa.gov (John Steven Moerk)");
+  new_draw_info(NDI_UNIQUE, 0,op,"Delbecq David       [david.delbecq@mailandnews.com]");
+  new_draw_info(NDI_UNIQUE, 0,op,"Chachkoff Yann      [yann.chachkoff@mailandnews.com]\n");
   new_draw_info(NDI_UNIQUE, 0,op,"Images and art:");
   new_draw_info(NDI_UNIQUE, 0,op,"Peter Gardner");
   new_draw_info(NDI_UNIQUE, 0,op,"David Gervais       [david_eg@mail.com]");
   new_draw_info(NDI_UNIQUE, 0,op,"Mitsuhiro Itakura   [ita@gold.koma.jaeri.go.jp]");
   new_draw_info(NDI_UNIQUE, 0,op,"Hansjoerg Malthaner [hansjoerg.malthaner@danet.de]");
   new_draw_info(NDI_UNIQUE, 0,op,"Mårten Woxberg      [maxmc@telia.com]");
-  new_draw_info(NDI_UNIQUE, 0,op,"Delbecq David       [david.delbecq@usa.net]");
-  new_draw_info(NDI_UNIQUE, 0,op,"Chachkoff Yann      [yann.chachkoff@mailandnews.com]");
   new_draw_info(NDI_UNIQUE, 0,op,"And many more!");
 }
 
@@ -231,7 +231,7 @@ static char *normalize_path (char *src, char *dst) {
 
     q = p = buf;
     while ((q = strstr (q, "//")))
-	p = ++q;	
+	p = ++q;
 
     *path = '\0';
     q = path;
@@ -282,7 +282,10 @@ void leave_map(object *op)
  */
 static void enter_map(object *op, mapstruct *newmap, int x, int y) {
     mapstruct *oldmap = op->map;
-
+#ifdef PLUGINS
+    int evtid;
+    CFParm CFP;
+#endif
 
     if (out_of_map(newmap, x, y)) {
 	LOG(llevError,"enter_map: supplied coordinates are not within the map! (%s: %d, %d)\n",
@@ -321,12 +324,29 @@ static void enter_map(object *op, mapstruct *newmap, int x, int y) {
      */
     if(!QUERY_FLAG(op, FLAG_REMOVED))
 	remove_ob(op);
-
+#ifdef PLUGINS
+    if (op->map!=NULL)
+    {
+    	/* GROS : Here we handle the MAPLEAVE global event */
+    	evtid = EVENT_MAPLEAVE;
+    	CFP.Value[0] = (void *)(&evtid);
+    	CFP.Value[1] = (void *)(op);
+    	GlobalEvent(&CFP);
+    };
+#endif
     /* remove_ob clears these so they must be reset after the remove_ob call */
     op->x = x;
     op->y = y;
     op->map = newmap;
     insert_ob_in_map(op,op->map,NULL,INS_NO_WALK_ON);
+
+#ifdef PLUGINS
+    /* GROS : Here we handle the MAPENTER global event */
+    evtid = EVENT_MAPENTER;
+    CFP.Value[0] = (void *)(&evtid);
+    CFP.Value[1] = (void *)(op);
+    GlobalEvent(&CFP);
+#endif
 
     newmap->players++;
     newmap->timeout=0;
@@ -948,12 +968,26 @@ void cleanup()
 
 void leave(player *pl, int draw_exit) {
     char buf[MAX_BUF];
-
+#ifdef PLUGINS
+    int evtid;
+    CFParm CFP;
+#endif
     if (pl!=NULL) {
 	/* We do this so that the socket handling routine can do the final
 	 * cleanup.  We also leave that loop to actually handle the freeing
 	 * of the data.
 	 */
+#ifdef PLUGINS
+        if (draw_exit==0)
+        {
+            /* GROS : Here we handle the LOGOUT global event */
+            evtid = EVENT_LOGOUT;
+            CFP.Value[0] = (void *)(&evtid);
+            CFP.Value[1] = (void *)(pl);
+            CFP.Value[2] = (void *)(pl->socket.host);
+            GlobalEvent(&CFP);
+        };
+#endif
 	pl->socket.status=Ns_Dead;
 	LOG(llevInfo,"LOGOUT: Player named %s from ip %s\n", pl->ob->name,
 	    pl->socket.host);
@@ -1022,7 +1056,7 @@ int forbid_play()
  * these actions will fall on the same tick (compared to say using 500/2500/15000
  * which would mean on that 15,000 tick count a whole bunch of stuff gets
  * done).  Of course, there can still be times where multiple specials are
- * done on the same tick, but that will happen very infrequently 
+ * done on the same tick, but that will happen very infrequently
  *
  * I also think this code makes it easier to see how often we really are
  * doing the various things.
@@ -1054,20 +1088,12 @@ void do_specials() {
       fix_luck();
 }
 
-/* GROS: This is the new main function, used to start the Guile
- * subsystem. The "old" main has been renamed to main_crossfire
- */
 int main(int argc, char **argv)
 {
-    gh_enter(argc, argv, main_crossfire);
-    return 0;
-}
-
-/* GROS: Note that the return type had to be changed from int
- * to void.
- */
-void main_crossfire(int argc,char **argv)
-{
+#ifdef PLUGINS
+  int evtid;
+  CFParm CFP;
+#endif
 #ifdef WIN32 /* ---win32 this sets the win32 from 0d0a to 0a handling */
 	_fmode = _O_BINARY ;
 #endif
@@ -1079,16 +1105,24 @@ void main_crossfire(int argc,char **argv)
   settings.argc=argc;
   settings.argv=argv;
   init(argc, argv);
-  guile_init_functions();  /* GROS - Init the script interpreter */
-
+#ifdef PLUGINS
+  initPlugins();        /* GROS - Init the Plugins */
+#endif
   for(;;) {
     nroferrors = 0;
 
     doeric_server();
     process_events(NULL);    /* "do" something with objects with speed */
+#ifdef PLUGINS
+    /* GROS : Here we handle the CLOCK global event */
+    evtid = EVENT_CLOCK;
+    CFP.Value[0] = (void *)(&evtid);
+    GlobalEvent(&CFP);
+#endif
     check_active_maps(); /* Removes unused maps after a certain timeout */
     do_specials();       /* Routines called from time to time. */
 
     sleep_delta();	/* Slepp proper amount of time before next tick */
   }
+  return 0;
 }

@@ -51,6 +51,10 @@ int command_say (object *op, char *params)
 int command_shout (object *op, char *params)
 {
     char buf[MAX_BUF];
+#ifdef PLUGINS
+    int evtid;
+    CFParm CFP;
+#endif
     if (params == NULL) {
 	new_draw_info(NDI_UNIQUE, 0,op,"Shout what?");
 	return 1;
@@ -60,12 +64,21 @@ int command_shout (object *op, char *params)
     strncat(buf, params, MAX_BUF-30);
     buf[MAX_BUF - 30] = '\0';
     new_draw_info(NDI_UNIQUE | NDI_ALL | NDI_RED, 1, NULL, buf);
+#ifdef PLUGINS
+    /* GROS : Here we handle the SHOUT global event */
+    evtid = EVENT_SHOUT;
+    CFP.Value[0] = (void *)(&evtid);
+    CFP.Value[1] = (void *)(op);
+    CFP.Value[2] = (void *)(params);
+    GlobalEvent(&CFP);
+#endif
     return 1;
 }
 
 int command_tell (object *op, char *params)
 {
     char buf[MAX_BUF],*name = NULL ,*msg = NULL;
+    char buf2[MAX_BUF];
     player *pl;
     if ( params != NULL){
         name = params;
@@ -86,7 +99,6 @@ int command_tell (object *op, char *params)
 	return 1;
     }
 
-
     sprintf(buf,"%s tells you:",op->name);
     strncat(buf, msg, MAX_BUF-strlen(buf)-1);
     buf[MAX_BUF-1]=0;
@@ -94,13 +106,14 @@ int command_tell (object *op, char *params)
     for(pl=first_player;pl!=NULL;pl=pl->next)
       if(strncasecmp(pl->ob->name,name,MAX_NAME)==0)
       {
-	new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, pl->ob, buf);
+        new_draw_info(NDI_UNIQUE | NDI_ORANGE, 0, pl->ob, buf);
+        sprintf(buf2, "You tell to %s: %s",name,msg);
+        new_draw_info(NDI_UNIQUE | NDI_ORANGE, 0, op, buf2);
         return 1;
       }
     new_draw_info(NDI_UNIQUE, 0,op,"No such player.");
     return 1;
   }
-
 
 /*
  * This function covers basic emotions a player can have.  An emotion can be

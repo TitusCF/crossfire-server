@@ -56,11 +56,9 @@ SRCS = \
 	move.c\
 	pets.c\
 	player.c\
+	plugins.c\
 	resurrection.c\
 	rune.c\
-            script.c\
-            script_spells.c\
-            script_types.c\
 	shop.c\
 	skills.c\
 	skill_util.c\
@@ -84,7 +82,7 @@ INCLUDES= $(EXTRA_INCLUDES) -I../include -I$(srcdir)/../include
 
 LDFLAGS = @LDFLAGS@
 
-LIBS = @LIBS@ $(EXTRA_LIBS)
+LIBS = @LIBS@ $(EXTRA_LIBS) -ldl
 
 SHELL = @BOURNE_SHELL@
 
@@ -100,7 +98,7 @@ RM = @RM@
 
 crossfire: $(OBJS) $(LOCAL_LIBRARIES)
 	$(RM) -f $@
-	$(CC) $(LDFLAGS) -o $@ $(OBJS) $(LOCAL_LIBRARIES) $(LIBS) 
+	$(CC) $(LDFLAGS) -o $@ $(OBJS) $(LOCAL_LIBRARIES) $(LIBS)
 
 
 ../common/libcross.a:

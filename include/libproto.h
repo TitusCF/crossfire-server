@@ -226,6 +226,7 @@ extern signed long sum_weight(object *op);
 extern object *is_player_inv(object *op);
 extern void dump_object2(object *op);
 extern void dump_object(object *op);
+extern void dump_me(object *op, char *outstr);
 extern void dump_all_objects(void);
 extern object *get_nearest_part(object *op, object *pl);
 extern object *find_object(int i);
@@ -272,6 +273,7 @@ extern int dirdiff(int dir1, int dir2);
 extern int can_pick(object *who, object *item);
 extern object *ObjectCreateClone(object *asrc);
 extern int was_destroyed(object *op, tag_t old_tag);
+extern object *load_object_str(char *obstr);
 /* porting.c */
 extern char *tempnam_local(char *dir, char *pfx);
 extern void remove_directory(const char *path);
@@ -370,6 +372,6 @@ extern void free_artifact(artifact *at);
 extern void free_artifactlist(artifactlist *al);
 extern void free_all_treasures(void);
 /* utils.c */
-int random_roll(int min, int max, object *op, int goodbad);
-int die_roll(int num, int size, object *op, int goodbad);
-int rndm(int min, int max);
+extern int random_roll(int min, int max, object *op, int goodbad);
+extern int die_roll(int num, int size, object *op, int goodbad);
+extern int rndm(int min, int max);

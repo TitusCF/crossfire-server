@@ -1329,7 +1329,7 @@ static msglang *parse_message(char *msg) {
         LOG(llevError,"Too few keywords in message.\n");
         free(buf);
         free_messages(msgs);
-        return NULL; 
+        return NULL;
       }
       msgs->keywords[msgnr] = (char **) malloc(sizeof(char **) * (nrofkeywords +1));
       msgs->keywords[msgnr][nrofkeywords] = NULL;
@@ -1405,17 +1405,95 @@ void communicate(object *op, char *txt) {
 int talk_to_npc(object *op, object *npc, char *txt) {
   msglang *msgs;
   int i,j;
-  /* GROS: Guile script handler */
-  if(npc->script_say != NULL)
+  object *cobj;
+#ifdef PLUGINS
+  /* GROS: Handle for plugin say event */
+  if(npc->event_hook[EVENT_SAY] != NULL)
   {
-    guile_call_event(op, npc, NULL, 0, txt,0,0,npc->script_say, SCRIPT_FIX_ALL);
-    return 0;
+    CFParm CFP;
+    int k, l, m;
+    k = EVENT_SAY;
+    l = SCRIPT_FIX_ALL;
+    m = 0;
+    CFP.Value[0] = &k;
+    CFP.Value[1] = op;
+    CFP.Value[2] = npc;
+    CFP.Value[3] = NULL;
+    CFP.Value[4] = txt;
+    CFP.Value[5] = &m;
+    CFP.Value[6] = &m;
+    CFP.Value[7] = &m;
+    CFP.Value[8] = &l;
+    CFP.Value[9] = npc->event_hook[k];
+    CFP.Value[10]= npc->event_options[k];
+    if (findPlugin(npc->event_plugin[k])>=0)
+    {
+        ((PlugList[findPlugin(npc->event_plugin[k])].eventfunc) (&CFP));
+        return 0;
+    }
   }
-  if (npc->script_str_say !=NULL)
+  /* GROS - Here we let the objects inside inventories hear and answer, too. */
+  /* This allows the existence of "intelligent" weapons you can discuss with */
+  for(cobj=npc->inv;cobj!=NULL;)
   {
-    guile_call_event_str(op,npc,NULL,0,txt,0,0,npc->script_str_say, SCRIPT_FIX_ALL);
+    if(cobj->event_hook[EVENT_SAY] != NULL)
+    {
+      CFParm CFP;
+      int k, l, m;
+      k = EVENT_SAY;
+      l = SCRIPT_FIX_ALL;
+      m = 0;
+      CFP.Value[0] = &k;
+      CFP.Value[1] = op;
+      CFP.Value[2] = cobj;
+      CFP.Value[3] = NULL;
+      CFP.Value[4] = txt;
+      CFP.Value[5] = &m;
+      CFP.Value[6] = &m;
+      CFP.Value[7] = &m;
+      CFP.Value[8] = &l;
+      CFP.Value[9] = cobj->event_hook[k];
+      CFP.Value[10]= cobj->event_options[k];
+      if (findPlugin(cobj->event_plugin[k])>=0)
+      {
+          ((PlugList[findPlugin(cobj->event_plugin[k])].eventfunc) (&CFP));
+          return 0;
+      }
+    }
+    cobj = cobj->below;
   }
 
+  /* GROS: Then we parse the target inventory */
+  /*if (npc!=NULL)
+  for(cobj=npc->inv;cobj!=NULL;cobj=cobj->next)
+  {
+    printf("Name is %s\n", cobj->name);
+  if(npc->event_hook[EVENT_SAY] != NULL)
+  {
+    CFParm CFP;
+    int k, l, m;
+    k = EVENT_SAY;
+    l = SCRIPT_FIX_ALL;
+    m = 0;
+    CFP.Value[0] = &k;
+    CFP.Value[1] = op;
+    CFP.Value[2] = cobj;
+    CFP.Value[3] = NULL;
+    CFP.Value[4] = txt;
+    CFP.Value[5] = &m;
+    CFP.Value[6] = &m;
+    CFP.Value[7] = &m;
+    CFP.Value[8] = &l;
+    CFP.Value[9] = cobj->event_hook[k];
+    CFP.Value[10]= cobj->event_options[k];
+    if (findPlugin(cobj->event_plugin[k])>=0)
+    {
+        ((PlugList[findPlugin(cobj->event_plugin[k])].eventfunc) (&CFP));
+        return 0;
+    }
+  }
+  }*/
+#endif
   if(npc->msg == NULL || *npc->msg != '@')
     return 0;
   if((msgs = parse_message(npc->msg)) == NULL)

@@ -75,22 +75,37 @@ object *find_god(char *name) {
 
 void pray_at_altar(object *pl, object *altar) {
     object *pl_god=find_god(determine_god(pl));
+#ifdef PLUGINS
     int return_pray_script; /* GROS : This is for return value of script */
-
-    /* GROS: We trigger a script-apply event for the altar each time you pray on it */
-    if (altar->script_apply != NULL)
+    /* GROS: Handle for plugin altar-parying (apply) event */
+    if(altar->event_hook[EVENT_APPLY] != NULL)
     {
-      return_pray_script = guile_call_event(pl, altar, NULL, 0, NULL,0,0,altar->script_apply,SCRIPT_FIX_ALL);
-      if (return_pray_script) return;
+        CFParm CFP;
+        CFParm* CFR;
+        int k, l, m;
+        k = EVENT_APPLY;
+        l = SCRIPT_FIX_ALL;
+        m = 0;
+        CFP.Value[0] = &k;
+        CFP.Value[1] = pl;
+        CFP.Value[2] = altar;
+        CFP.Value[3] = NULL;
+        CFP.Value[4] = NULL;
+        CFP.Value[5] = &m;
+        CFP.Value[6] = &m;
+        CFP.Value[7] = &m;
+        CFP.Value[8] = &l;
+        CFP.Value[9] = altar->event_hook[k];
+        CFP.Value[10]= altar->event_options[k];
+        if (findPlugin(altar->event_plugin[k])>=0)
+        {
+            CFR = (PlugList[findPlugin(altar->event_plugin[k])].eventfunc) (&CFP);
+            return_pray_script = *(int *)(CFR->Value[0]);
+            free(CFR);
+            if (return_pray_script) return;
+        }
     }
-    else
-    {
-      if (altar->script_str_apply != NULL)
-      {
-        return_pray_script = guile_call_event_str(pl, altar, NULL, 0, NULL,0,0,altar->script_str_apply,SCRIPT_FIX_ALL);
-        if (return_pray_script) return;
-      };
-    };
+#endif
 
     /* If non consecrate altar, don't do anything */
     if (!altar->other_arch) return;

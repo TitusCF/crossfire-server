@@ -1094,18 +1094,33 @@ int write_note(object *pl, object *item, char *msg) {
 	  skills[SK_INSCRIPTION].name);
 	return 0;
   }
-   /* GROS : Handler for books with actions triggered by writing into them */
-   if (item->script_trigger!=NULL)
-   {
-     guile_call_event(pl, item, NULL, 0, msg, 0, 0, item->script_trigger, SCRIPT_FIX_ALL);
-     return strlen(msg);
-   };
-   if (item->script_str_trigger!=NULL)
-   {
-      guile_call_event_str(pl, item, NULL, 0, msg, 0, 0, item->script_str_trigger, SCRIPT_FIX_ALL);
-      return strlen(msg);
-   };
-
+#ifdef PLUGINS
+  /* GROS: Handle for plugin book writing (trigger) event */
+  if(item->event_hook[EVENT_TRIGGER] != NULL)
+  {
+    CFParm CFP;
+    int k, l, m;
+    k = EVENT_TRIGGER;
+    l = SCRIPT_FIX_ALL;
+    m = 0;
+    CFP.Value[0] = &k;
+    CFP.Value[1] = pl;
+    CFP.Value[2] = item;
+    CFP.Value[3] = NULL;
+    CFP.Value[4] = msg;
+    CFP.Value[5] = &m;
+    CFP.Value[6] = &m;
+    CFP.Value[7] = &m;
+    CFP.Value[8] = &l;
+    CFP.Value[9] = item->event_hook[k];
+    CFP.Value[10]= item->event_options[k];
+    if (findPlugin(item->event_plugin[k])>=0)
+    {
+        ((PlugList[findPlugin(item->event_plugin[k])].eventfunc) (&CFP));
+        return strlen(msg);
+    }
+   }
+#endif
   if(!book_overflow(item->msg,msg,BOOK_BUF)) { /* add msg string to book */
     if(item->msg) {
       strcpy(buf,item->msg);
@@ -1634,18 +1649,30 @@ void do_throw(object *op, object *toss_item, int dir) {
     /* need to put in a good sound for this */
     play_sound_map(op->map, op->x, op->y, SOUND_THROW_OBJ);
 #endif
-
+#ifdef PLUGINS
 /* GROS - Now we can call the associated script_throw event (if any) */
-
-    if (throw_ob->script_throw!=NULL)
+    if(throw_ob->event_hook[EVENT_THROW] != NULL)
     {
-        guile_call_event(op, throw_ob, NULL, 0, NULL, 0, 0, throw_ob->script_throw, SCRIPT_FIX_ACTIVATOR);
-    };
-    if (throw_ob->script_str_throw!=NULL)
-    {
-        guile_call_event_str(op, throw_ob, NULL, 0, NULL, 0, 0, throw_ob->script_str_throw, SCRIPT_FIX_ACTIVATOR);
-    };
-
+        CFParm CFP;
+        int k, l, m;
+        k = EVENT_THROW;
+        l = SCRIPT_FIX_ACTIVATOR;
+        m = 0;
+        CFP.Value[0] = &k;
+        CFP.Value[1] = op;
+        CFP.Value[2] = throw_ob;
+        CFP.Value[3] = NULL;
+        CFP.Value[4] = NULL;
+        CFP.Value[5] = &m;
+        CFP.Value[6] = &m;
+        CFP.Value[7] = &m;
+        CFP.Value[8] = &l;
+        CFP.Value[9] = throw_ob->event_hook[k];
+        CFP.Value[10]= throw_ob->event_options[k];
+        if (findPlugin(throw_ob->event_plugin[k])>=0)
+            ((PlugList[findPlugin(throw_ob->event_plugin[k])].eventfunc) (&CFP));
+    }
+#endif
 #ifdef DEBUG_THROW
     LOG(llevDebug," pause_f=%d \n",pause_f);
     LOG(llevDebug," %s stats: wc=%d dam=%d dist=%d spd=%f break=%d\n",

@@ -110,11 +110,5 @@
 #define FALSE 0
 #endif
 
-
-/* GROS: Add support for Guile Interpreter */
-#include <guile/gh.h>
-/* GROS: This one contains all declarations for script functions. */
-#include <script.h>
-
 #endif /* INCLUDES_H */
 

@@ -40,7 +40,7 @@
  * Crossfire requires ANSI-C, but some compilers "forget" to define it.
  * Thus the prototypes made by cextract don't get included correctly.
  */
-#if !defined(__STDC__) 
+#if !defined(__STDC__)
 /* Removed # from start of following line.  makedepend was picking it up.
  * The following should still hopefully result in an error.
  */
@@ -314,7 +314,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define PATH_MISSILE	0x00000010   /* 16 */
 #define PATH_SELF	0x00000020      /* 32 */
 #define PATH_SUMMON	0x00000040   /* 64 */
-#define PATH_ABJURE	0x00000080  /* 128 */ 
+#define PATH_ABJURE	0x00000080  /* 128 */
 #define PATH_RESTORE	0x00000100  /* 256 */
 #define PATH_DETONATE	0x00000200  /* 512 */
 #define PATH_MIND	0x00000400    /* 1024 */
@@ -796,4 +796,5 @@ enum apply_flag {
 #  endif
 #endif
 
+#define PLUGINS
 #endif /* DEFINE_H */

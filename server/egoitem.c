@@ -9,6 +9,29 @@
 #include <sproto.h>
 #endif
 
+/* GROS: I put this here, because no other file seemed quite good.*/
+object *create_artifact(object *op, char *artifactname)
+{
+        artifactlist *al;
+        artifact *art;
+        char *temptitle;
+        al = find_artifactlist(op->type);
+        if (al==NULL)
+                return NULL;
+        for (art=al->items; art!=NULL; art=art->next)
+        {
+                temptitle = (char *)(malloc(strlen(art->item->name) + 5));
+                strcpy(temptitle, " of ");
+                strcat(temptitle, art->item->name);
+                if (!strcmp (temptitle, artifactname))
+                {
+                        give_artifact_abilities(op, art->item);
+                }
+
+                free(temptitle);
+        };
+        return NULL;
+}
 
 
 /*  peterm:  do_power_crystal

@@ -149,31 +149,9 @@ typedef struct obj {
    for advancement (eanders@cmu.edu) */
   double expmul;        /* needed experience = (calc_exp*expmul) */
 /* GROS: Upgraded obj structure to allow script events */
-  char *script_load;            /* GROS: This is the name of the script file          */
-                                /* used when the archetype is loaded                  */
-  char *script_apply;           /* Executed when object is applied                    */
-  char *script_say;             /* Executed when sth. is said on the object           */
-  char *script_trigger;         /* Executed when a trigger (connected) is activated   */
-  char *script_time;            /* Executed each time the object gets the opportunity
-                                 * to move.
-                                 */
-  char *script_attack;          /* Executed whenever the monster is being attacked    */
-  char *script_throw;           /* Executed whenever the object is thrown             */
-  char *script_drop;            /* Executed whenever the object is dropped            */
-  char *script_stop;            /* Executed whenever the object is stopped (arrows-thrown objects) */
-  char *script_death;           /* Executed whenever the object is killed (for players only) */
-
-  char *script_str_load;  /* Script Load buffer     */
-  char *script_str_apply;  /* Script Apply buffer    */
-  char *script_str_say;  /* Script Say buffer      */
-  char *script_str_trigger;  /* Script Trigger buffer  */
-  char *script_str_time;  /* Script Time buffer     */
-  char *script_str_attack;  /* Script Attack buffer   */
-  char *script_str_throw;  /* Script Throw buffer    */
-  char *script_str_drop;  /* Script Drop buffer     */
-  char *script_str_stop;  /* Script Stop buffer     */
-  char *script_str_death;       /* Script Death buffer */
-
+  char *event_hook[30];
+  char *event_plugin[30];
+  char *event_options[30];
 /* GROS: Added for script_attack with weapons support */
   char *current_weapon_script;  /* The script of the currently used weapon. Executed each time the object
                                  * attacks something */

@@ -489,28 +489,58 @@ static int attack_ob_simple (object *op, object *hitter, int base_dam,
 
     if (get_attack_mode (&op, &hitter, &simple_attack))
         goto error;
-
-    /* GROS: This is used to handle attack script */
-    if (op->script_attack!=NULL)
+#ifdef PLUGINS
+    /* GROS: Handle for plugin attack event */
+    if(op->event_hook[EVENT_ATTACK] != NULL)
     {
-        guile_call_event(hitter, op, NULL, 0, NULL, base_dam, base_wc, op->script_attack, SCRIPT_FIX_ALL);
-    };
-    if (op->script_str_attack!=NULL)
-    {
-        guile_call_event_str(hitter, op, NULL, 0, NULL, base_dam, base_wc, op->script_str_attack, SCRIPT_FIX_ALL);
-    };
+        CFParm CFP;
+        int k, l, m;
+        k = EVENT_ATTACK;
+        l = SCRIPT_FIX_ALL;
+        m = 0;
+        CFP.Value[0] = &k;
+        CFP.Value[1] = hitter;
+        CFP.Value[2] = hitter;
+        CFP.Value[3] = op;
+        CFP.Value[4] = NULL;
+        CFP.Value[5] = &m;
+        CFP.Value[6] = &base_dam;
+        CFP.Value[7] = &base_wc;
+        CFP.Value[8] = &l;
+        CFP.Value[9] = op->event_hook[k];
+        CFP.Value[10]= op->event_options[k];
+        if (findPlugin(op->event_plugin[k])>=0)
+            ((PlugList[findPlugin(op->event_plugin[k])].eventfunc) (&CFP));
+    }
     /* GROS: This is used to handle script_weapons with weapons. Only used for players */
     if (hitter->type==PLAYER)
     {
         if (hitter->current_weapon != NULL)
         {
-                if (guile_use_weapon_script(hitter, op, base_dam, base_wc))
-                {
-                        return 0;
-                };
+            /* GROS: Handle for plugin attack event */
+            if(hitter->current_weapon->event_hook[EVENT_ATTACK] != NULL)
+            {
+                CFParm CFP;
+                int k, l, n;
+                n = 0;
+                k = EVENT_ATTACK;
+                l = SCRIPT_FIX_ALL;
+                CFP.Value[0] = &k;
+                CFP.Value[1] = hitter;
+                CFP.Value[2] = hitter->current_weapon;
+                CFP.Value[3] = op;
+                CFP.Value[4] = NULL;
+                CFP.Value[5] = &n;
+                CFP.Value[6] = &base_dam;
+                CFP.Value[7] = &base_wc;
+                CFP.Value[8] = &l;
+                CFP.Value[9] = hitter->current_weapon->event_hook[k];
+                CFP.Value[10]= hitter->current_weapon->event_options[k];
+                (PlugList[findPlugin(hitter->current_weapon->event_plugin[k])].eventfunc) (&CFP);
+            }
         };
     };
-
+#endif
     op_tag = op->count;
     hitter_tag = hitter->count;
 
@@ -706,24 +736,37 @@ object *hit_with_arrow (object *op, object *victim)
     victim_y = victim->y;
     victim_tag = victim->count;
     hitter_tag = hitter->count;
-
-    /* GROS: Handling script_attack event for thrown items */
-    if (op->script_attack!=NULL)
+#ifdef PLUGINS
+    /* GROS: Handling plugin attack event for thrown items */
+    if(op->event_hook[EVENT_ATTACK] != NULL)
     {
-        sretval = guile_call_event(hitter, op ,victim, 0, NULL, op->stats.dam, op->stats.wc, op->script_attack, SCRIPT_FIX_ALL);
+        CFParm CFP;
+        CFParm* CFR;
+        int k, l, m;
+        k = EVENT_ATTACK;
+        l = SCRIPT_FIX_ALL;
+        m = 0;
+        CFP.Value[0] = &k;
+        CFP.Value[1] = hitter;
+        CFP.Value[2] = op;
+        CFP.Value[3] = victim;
+        CFP.Value[4] = NULL;
+        CFP.Value[5] = &m;
+        CFP.Value[6] = &(op->stats.dam);
+        CFP.Value[7] = &(op->stats.wc);
+        CFP.Value[8] = &l;
+        CFP.Value[9] = op->event_hook[k];
+        CFP.Value[10]= op->event_options[k];
+        if (findPlugin(op->event_plugin[k])>=0)
+        {
+            CFR = (PlugList[findPlugin(op->event_plugin[k])].eventfunc) (&CFP);
+            sretval = *(int *)(CFR->Value[0]);
+        }
     }
     else
-    {
-      if (op->script_str_attack!=NULL)
-      {
-        sretval = guile_call_event_str(hitter, op ,victim, 0, NULL, op->stats.dam, op->stats.wc, op->script_str_attack, SCRIPT_FIX_ALL);
-      }
-      else
-      {
+#endif
         hit_something = attack_ob_simple (victim, hitter, op->stats.dam,
                                         op->stats.wc);
-      };
-    };
 
     /* Arrow attacks door, rune of summoning is triggered, demon is put on
      * arrow, move_apply() calls this function, arrow sticks in demon,
@@ -1061,25 +1104,47 @@ int kill_object(object *op,int dam, object *hitter, int type)
     int battleg=0;    /* true if op standing on battleground */
     int killed_script_rtn = 0;
     object *owner=NULL;
-
-    /* GROS: Handling for the death event */
-    if(op->script_death!=NULL)
-    {
-        killed_script_rtn = guile_call_event(hitter, op ,NULL, type, NULL, 0,0, op->script_death, SCRIPT_FIX_ALL);
-        if (killed_script_rtn)
-                return 0;
-    }
-    else {
-	if (op->script_str_death!=NULL)
-        {
-                killed_script_rtn = guile_call_event_str(hitter, op ,NULL, type, NULL, 0,0, op->script_str_death, SCRIPT_FIX_ALL);
-                if (killed_script_rtn)
-                        return 0;
-        }
-    }
-
+    int evtid;
+#ifdef PLUGINS
+    CFParm CFP;
+#endif
     /* Object has been killed.  Lets clean it up */
     if (op->stats.hp<0) {
+#ifdef PLUGINS
+    /* GROS: Handle for plugin death event */
+    if(op->event_hook[EVENT_DEATH] != NULL)
+    {
+        CFParm* CFR;
+        int k, l, m;
+        k = EVENT_DEATH;
+        l = SCRIPT_FIX_ALL;
+        m = 0;
+        CFP.Value[0] = &k;
+        CFP.Value[1] = hitter;
+        CFP.Value[2] = op;
+        CFP.Value[3] = NULL;
+        CFP.Value[4] = NULL;
+        CFP.Value[5] = &type;
+        CFP.Value[6] = &m;
+        CFP.Value[7] = &m;
+        CFP.Value[8] = &l;
+        CFP.Value[9] = op->event_hook[k];
+        CFP.Value[10]= op->event_options[k];
+        if (findPlugin(op->event_plugin[k])>=0)
+        {
+            CFR =(PlugList[findPlugin(op->event_plugin[k])].eventfunc) (&CFP);
+            killed_script_rtn = *(int *)(CFR->Value[0]);
+            if (killed_script_rtn)
+                return 0;
+        };
+    }
+    /* GROS: Handle for the global kill event */
+    evtid = EVENT_GKILL;
+    CFP.Value[0] = (void *)(&evtid);
+    CFP.Value[1] = (void *)(hitter);
+    CFP.Value[2] = (void *)(op);
+    GlobalEvent(&CFP);
+#endif
 	maxdam+=op->stats.hp+1;
 
 	if(QUERY_FLAG(op,FLAG_BLOCKSVIEW))
@@ -1255,7 +1320,7 @@ int kill_object(object *op,int dam, object *hitter, int type)
 		strncpy(op->contr->killer,hitter->name,BIG_NAME);
                 op->contr->killer[BIG_NAME-1]='\0';
 	    }
-	}
+	  }
     }
     return -1;
 }

@@ -813,7 +813,7 @@ int apply_container (object *op, object *sack)
 }
 
 /*
- * Eneq(@csd.uu.se): Handle apply on containers. 
+ * Eneq(@csd.uu.se): Handle apply on containers.
  * Moved to own function and added many features [Tero.Haatanen@lut.fi]
  * This version is for client/server mode.
  * op is the player, sack is the container the player is opening or closing.
@@ -846,6 +846,36 @@ int esrv_apply_container (object *op, object *sack)
 	    CLEAR_FLAG (op->container, FLAG_WALK_OFF);
 	    CLEAR_FLAG (op->container, FLAG_FLY_OFF);
 	}
+#ifdef PLUGINS
+	/* GROS: Handle for plugin close event */
+	if(tmp->event_hook[EVENT_CLOSE] != NULL)
+	{
+		CFParm CFP;
+		CFParm* CFR;
+		int k, l, m;
+		int rtn_script = 0;
+		m = 0;
+		k = EVENT_CLOSE;
+		l = SCRIPT_FIX_ALL;
+		CFP.Value[0] = &k;
+		CFP.Value[1] = op;
+		CFP.Value[2] = tmp;
+		CFP.Value[3] = NULL;
+		CFP.Value[4] = NULL;
+		CFP.Value[5] = &m;
+		CFP.Value[6] = &m;
+		CFP.Value[7] = &m;
+		CFP.Value[8] = &l;
+		CFP.Value[9] = tmp->event_hook[k];
+		CFP.Value[10]= tmp->event_options[k];
+		if (findPlugin(tmp->event_plugin[k])>=0)
+		{
+			CFR = (PlugList[findPlugin(tmp->event_plugin[k])].eventfunc) (&CFP);
+			rtn_script = *(int *)(CFR->Value[0]);
+			if (rtn_script!=0) return 1;
+		}
+	}
+#endif
 	new_draw_info_format(NDI_UNIQUE, 0, op, "You close %s.",
 		      query_name(op->container));
 	CLEAR_FLAG(op->container, FLAG_APPLIED);
@@ -853,7 +883,7 @@ int esrv_apply_container (object *op, object *sack)
 	esrv_update_item (UPD_FLAGS, op, tmp);
 	if (tmp == sack) return 1;
     }
-		      
+
 
     /* If the player is trying to open it (which he must be doing if we got here),
      * and it is locked, check to see if player has the equipment to open it.
@@ -1107,15 +1137,44 @@ void move_apply (object *trap, object *victim, object *originator)
      rune detonates, summoning monster.  monster lands on nearby rune.
      nearby rune detonates.  This sort of recursion is expected and
      proper.  This code was causing needless crashes. */
-  if (recursion_depth >= 500) { 
+  if (recursion_depth >= 500) {
     LOG (llevDebug, "WARNING: move_apply(): aborting recursion "
          "[trap arch %s, name %s; victim arch %s, name %s]\n",
          trap->arch->name, trap->name, victim->arch->name, victim->name);
     return;
   }
   recursion_depth++;
-
   if (trap->head) trap=trap->head;
+#ifdef PLUGINS
+  /* GROS: Handle for plugin close event */
+  if(trap->event_hook[EVENT_TRIGGER] != NULL)
+  {
+    CFParm CFP;
+    CFParm* CFR;
+    int k, l, m;
+    int rtn_script = 0;
+    m = 0;
+    k = EVENT_TRIGGER;
+    l = SCRIPT_FIX_ALL;
+    CFP.Value[0] = &k;
+    CFP.Value[1] = trap;
+    CFP.Value[2] = originator;
+    CFP.Value[3] = victim;
+    CFP.Value[4] = NULL;
+    CFP.Value[5] = &m;
+    CFP.Value[6] = &m;
+    CFP.Value[7] = &m;
+    CFP.Value[8] = &l;
+    CFP.Value[9] = trap->event_hook[k];
+    CFP.Value[10]= trap->event_options[k];
+    if (findPlugin(trap->event_plugin[k])>=0)
+    {
+      CFR = (PlugList[findPlugin(trap->event_plugin[k])].eventfunc) (&CFP);
+      rtn_script = *(int *)(CFR->Value[0]);
+      if (rtn_script!=0) return;
+    }
+  }
+#endif
   switch (trap->type)
   {
   case PLAYERMOVER:
@@ -1235,22 +1294,32 @@ void move_apply (object *trap, object *victim, object *originator)
   case TRIGGER_BUTTON:
   case TRIGGER_PEDESTAL:
   case TRIGGER_ALTAR:
-  /* GROS: Handle for script_trigger event */
-    if (trap->script_trigger != NULL)
+#ifdef PLUGINS
+  /* GROS: Handle for plugin trigger event */
+    if(trap->event_hook[EVENT_TRIGGER] != NULL)
     {
-      guile_call_event(victim, trap, NULL, 0, NULL,0,0,trap->script_trigger, SCRIPT_FIX_ALL);
+        CFParm CFP;
+        int k, l, m;
+        k = EVENT_TRIGGER;
+        l = SCRIPT_FIX_ALL;
+        m = 0;
+        CFP.Value[0] = &k;
+        CFP.Value[1] = victim;
+        CFP.Value[2] = trap;
+        CFP.Value[3] = NULL;
+        CFP.Value[4] = NULL;
+        CFP.Value[5] = &m;
+        CFP.Value[6] = &m;
+        CFP.Value[7] = &m;
+        CFP.Value[8] = &l;
+        CFP.Value[9] = trap->event_hook[EVENT_TRIGGER];
+        CFP.Value[10]= trap->event_options[EVENT_TRIGGER];
+        if (findPlugin(trap->event_plugin[k])>=0)
+            ((PlugList[findPlugin(trap->event_plugin[EVENT_TRIGGER])].eventfunc) (&CFP));
     }
     else
-    {
-      if (trap->script_str_trigger != NULL)
-      {
-        guile_call_event_str(victim, trap, NULL, 0, NULL,0,0,trap->script_str_trigger, SCRIPT_FIX_ALL);
-      }
-      else
-      {
+#endif
         check_trigger (trap, victim);
-      }
-    };
     goto leave;
 
   case DEEP_SWAMP:
@@ -1258,22 +1327,32 @@ void move_apply (object *trap, object *victim, object *originator)
     goto leave;
 
   case CHECK_INV:
-  /* GROS: Handle for script_trigger event */
-    if (trap->script_trigger != NULL)
+#ifdef PLUGINS
+  /* GROS: Handle for plugin trigger event */
+    if(trap->event_hook[EVENT_TRIGGER] != NULL)
     {
-      guile_call_event(victim, trap, NULL, 0, NULL,0,0,trap->script_trigger, SCRIPT_FIX_ALL);
+        CFParm CFP;
+        int k, l, m;
+        k = EVENT_TRIGGER;
+        l = SCRIPT_FIX_ALL;
+        m = 0;
+        CFP.Value[0] = &k;
+        CFP.Value[1] = victim;
+        CFP.Value[2] = trap;
+        CFP.Value[3] = NULL;
+        CFP.Value[4] = NULL;
+        CFP.Value[5] = &m;
+        CFP.Value[6] = &m;
+        CFP.Value[7] = &m;
+        CFP.Value[8] = &l;
+        CFP.Value[9] = trap->event_hook[k];
+        CFP.Value[10]= trap->event_options[k];
+        if (findPlugin(trap->event_plugin[k])>=0)
+            ((PlugList[findPlugin(trap->event_plugin[k])].eventfunc) (&CFP));
     }
     else
-    {
-      if (trap->script_str_trigger != NULL)
-      {
-        guile_call_event_str(victim, trap, NULL, 0, NULL,0,0,trap->script_str_trigger, SCRIPT_FIX_ALL);
-      }
-      else
-      {
+#endif
         check_inv (victim, trap);
-      }
-    };
     goto leave;
 
   case HOLE:
@@ -1297,18 +1376,30 @@ void move_apply (object *trap, object *victim, object *originator)
 	 */
 	if (trap->msg && strncmp(EXIT_PATH(trap),"/!",2) && strncmp(EXIT_PATH(trap), "/random/", 8))
 	    new_draw_info (NDI_NAVY, 0, victim, trap->msg);
-      /* GROS: Handle for script_trigger event */
-      if (trap->script_trigger != NULL)
+#ifdef PLUGINS
+  /* GROS: Handle for plugin trigger event */
+      if(trap->event_hook[EVENT_TRIGGER] != NULL)
       {
-        guile_call_event(victim, trap, NULL, 0, NULL,0,0,trap->script_trigger, SCRIPT_FIX_ALL);
+        CFParm CFP;
+        int k, l, m;
+        k = EVENT_TRIGGER;
+        l = SCRIPT_FIX_ALL;
+        m = 0;
+        CFP.Value[0] = &k;
+        CFP.Value[1] = victim;
+        CFP.Value[2] = trap;
+        CFP.Value[3] = NULL;
+        CFP.Value[4] = NULL;
+        CFP.Value[5] = &m;
+        CFP.Value[6] = &m;
+        CFP.Value[7] = &m;
+        CFP.Value[8] = &l;
+        CFP.Value[9] = trap->event_hook[k];
+        CFP.Value[10]= trap->event_options[k];
+        if (findPlugin(trap->event_plugin[k])>=0)
+            ((PlugList[findPlugin(trap->event_plugin[k])].eventfunc) (&CFP));
       }
-      else
-      {
-        if (trap->script_str_trigger != NULL)
-        {
-          guile_call_event_str(victim, trap, NULL, 0, NULL,0,0,trap->script_str_trigger, SCRIPT_FIX_ALL);
-        }
-      };
+#endif
       enter_exit (victim, trap);
     }
     goto leave;
@@ -1340,22 +1431,32 @@ void move_apply (object *trap, object *victim, object *originator)
   case RUNE:
     if (trap->level && QUERY_FLAG (victim, FLAG_ALIVE))
     {
-      /* GROS: Handle for script_trigger event */
-      if (trap->script_trigger != NULL)
+#ifdef PLUGINS
+      /* GROS: Handle for plugin trigger event */
+      if(trap->event_hook[EVENT_TRIGGER] != NULL)
       {
-        guile_call_event(victim, trap, NULL, 0, NULL,0,0,trap->script_trigger, SCRIPT_FIX_ALL);
+        CFParm CFP;
+        int k, l, m;
+        k = EVENT_TRIGGER;
+        l = SCRIPT_FIX_ALL;
+        m = 0;
+        CFP.Value[0] = &k;
+        CFP.Value[1] = victim;
+        CFP.Value[2] = trap;
+        CFP.Value[3] = NULL;
+        CFP.Value[4] = NULL;
+        CFP.Value[5] = &m;
+        CFP.Value[6] = &m;
+        CFP.Value[7] = &m;
+        CFP.Value[8] = &l;
+        CFP.Value[9] = trap->event_hook[k];
+        CFP.Value[10]= trap->event_options[k];
+        if (findPlugin(trap->event_plugin[k])>=0)
+            ((PlugList[findPlugin(trap->event_plugin[k])].eventfunc) (&CFP));
       }
       else
-      {
-        if (trap->script_str_trigger != NULL)
-        {
-          guile_call_event_str(victim, trap, NULL, 0, NULL,0,0,trap->script_str_trigger, SCRIPT_FIX_ALL);
-        }
-        else
-        {
-          spring_trap(trap, victim);
-        }
-      };
+#endif
+        spring_trap(trap, victim);
     };
     goto leave;
 
@@ -1411,21 +1512,32 @@ static void apply_book (object *op, object *tmp)
 
     new_draw_info_format (NDI_UNIQUE, 0, op,
                           "You open the %s and start reading.", tmp->name);
-
-    /* GROS: Handling for reading scripted books */
-    if (tmp->script_apply != NULL)
+#ifdef PLUGINS
+    /* GROS: Handle for plugin trigger event */
+    if(tmp->event_hook[EVENT_APPLY] != NULL)
     {
-      guile_call_event(op,tmp, NULL, 0, NULL,0,0,tmp->script_apply, SCRIPT_FIX_ALL);
+        CFParm CFP;
+        int k, l, m;
+        k = EVENT_APPLY;
+        l = SCRIPT_FIX_ALL;
+        m = 0;
+        CFP.Value[0] = &k;
+        CFP.Value[1] = op;
+        CFP.Value[2] = tmp;
+        CFP.Value[3] = NULL;
+        CFP.Value[4] = NULL;
+        CFP.Value[5] = &m;
+        CFP.Value[6] = &m;
+        CFP.Value[7] = &m;
+        CFP.Value[8] = &l;
+        CFP.Value[9] = tmp->event_hook[k];
+        CFP.Value[10]= tmp->event_options[k];
+        if (findPlugin(tmp->event_plugin[k])>=0)
+            ((PlugList[findPlugin(tmp->event_plugin[k])].eventfunc) (&CFP));
     }
     else
-    {
-      if (tmp->script_str_apply != NULL)
-      {
-        guile_call_event_str(op,tmp, NULL, 0, NULL,0,0,tmp->script_str_apply, SCRIPT_FIX_ALL);
-      }
-      else
+#endif
         new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, op, tmp->msg);
-    };
 
     /* gain xp from reading */
     if(!QUERY_FLAG(tmp,FLAG_NO_SKILL_IDENT)) { /* only if not read before */
@@ -1760,7 +1872,7 @@ static void apply_treasure (object *op, object *tmp)
       if (was_destroyed (op, op_tag) || was_destroyed (tmp, tmp_tag))
         break;
     } while ((treas=tmp->inv)!=NULL);
-    
+
     if ( ! was_destroyed (tmp, tmp_tag) && tmp->inv == NULL)
       decrease_ob (tmp);
 
@@ -1985,18 +2097,35 @@ int manual_apply (object *op, object *tmp, int aflag)
       return 0;   /* monsters just skip unpaid items */
     }
   }
-  /* GROS: This is used to handle apply scripts */
-  if (tmp->script_apply!=NULL)
+#ifdef PLUGINS
+  /* GROS: Handle for plugin trigger event */
+  if(tmp->event_hook[EVENT_APPLY] != NULL)
   {
-    rtn_script = guile_call_event(op,tmp, NULL, aflag, NULL,0,0,tmp->script_apply, SCRIPT_FIX_ALL);
-    if (rtn_script!=0) return 1;
-  };
-  if (tmp->script_str_apply!=NULL)
-  {
-    rtn_script = guile_call_event_str(op,tmp, NULL, aflag, NULL,0,0,tmp->script_str_apply, SCRIPT_FIX_ALL);
-    if (rtn_script!=0) return 1;
-  };
-
+    CFParm CFP;
+    CFParm* CFR;
+    int k, l, m;
+    m = 0;
+    k = EVENT_APPLY;
+    l = SCRIPT_FIX_ALL;
+    CFP.Value[0] = &k;
+    CFP.Value[1] = op;
+    CFP.Value[2] = tmp;
+    CFP.Value[3] = NULL;
+    CFP.Value[4] = NULL;
+    CFP.Value[5] = &aflag;
+    CFP.Value[6] = &m;
+    CFP.Value[7] = &m;
+    CFP.Value[8] = &l;
+    CFP.Value[9] = tmp->event_hook[k];
+    CFP.Value[10]= tmp->event_options[k];
+    if (findPlugin(tmp->event_plugin[k])>=0)
+    {
+        CFR = (PlugList[findPlugin(tmp->event_plugin[k])].eventfunc) (&CFP);
+        rtn_script = *(int *)(CFR->Value[0]);
+        if (rtn_script!=0) return 1;
+    }
+  }
+#endif
   switch (tmp->type)
   {
   case CF_HANDLE:
@@ -2293,16 +2422,6 @@ int apply_special (object *who, object *op, int aflags)
   if(op->env!=who)
     return 1;   /* op is not in inventory */
 
-  /* GROS: This is used to handle apply scripts */
-  if (op->script_apply!=NULL)
-  {
-      guile_call_event(who,op, NULL, aflags, NULL,0,0,op->script_apply, SCRIPT_FIX_ALL);
-  };
-  if (op->script_str_apply!=NULL)
-  {
-        guile_call_event_str(who,op, NULL, aflags, NULL,0,0,op->script_str_apply, SCRIPT_FIX_ALL);
-  };
-
   buf[0]='\0';	    /* Needs to be initialized */
   if (QUERY_FLAG(op,FLAG_APPLIED)) {
     /* always apply, so no reason to unapply */
@@ -2459,14 +2578,16 @@ int apply_special (object *who, object *op, int aflags)
          SET_FLAG(who, FLAG_READY_WEAPON);
 
     (void) change_abil (who,op);
-    /* GROS: update the current_weapon_script field (used with script_attack for weapons) */
-    if ((op->script_attack != NULL)|(op->script_str_attack != NULL))
+#ifdef PLUGINS
+    /* GROS: update the current_weapon_script field (used with EVENT_ATTACK for weapons) */
+    if (op->event_hook[EVENT_ATTACK] != NULL)
     {
         LOG(llevDebug, "Scripting Weapon wielded\n");
         if (who->current_weapon_script) free_string(who->current_weapon_script);
         who->current_weapon_script=add_string(query_name(op));
         who->current_weapon = op;
     };
+#endif
     sprintf(buf,"You wield %s.",query_name(op));
     break;
   }

@@ -814,3 +814,34 @@ int command_forget_spell (object *op, char *params)
     do_forget_spell (op, spell);
     return 1;
 }
+/* GROS */
+/* Lists all plugins currently loaded with their IDs and full names.         */
+int command_listplugins(object *op, char *params)
+{
+    displayPluginsList(op);
+    return 1;
+};
+/* GROS */
+/* Loads the given plugin. The DM specifies the name of the library to load  */
+/* (no pathname is needed). Do not ever attempt to load the same plugin more */
+/* than once at a time, or bad things could happen.                          */
+int command_loadplugin(object *op, char *params)
+{
+    char buf[MAX_BUF];
+
+    strcpy(buf,DATADIR);
+    strcat(buf,"/plugins/");
+    strcat(buf,params);
+    printf("Requested plugin file is %s\n", buf);
+    initOnePlugin(buf);
+    return 1;
+};
+/* GROS */
+/* Unloads the given plugin. The DM specified the ID of the library to       */
+/* unload. Note that some things may behave strangely if the correct plugins */
+/* are not loaded.                                                           */
+int command_unloadplugin(object *op, char *params)
+{
+    removeOnePlugin(params);
+    return 1;
+};
