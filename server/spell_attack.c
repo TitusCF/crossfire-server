@@ -739,8 +739,8 @@ int cast_cone(object *op, object *caster,int dir, object *spell)
     }
 
     if(!dir) {
-	range_min= -3;
-	range_max=4;
+	range_min= 0;
+	range_max=8;
     }
 
     for(i=range_min;i<=range_max;i++) {
@@ -755,7 +755,17 @@ int cast_cone(object *op, object *caster,int dir, object *spell)
 	while (d < 0) d+=8;
 	while (d > 8) d-=8;
 
-	if (caster->type != RUNE && d==0) continue;
+	/* If it's not a rune, we don't want to blast the caster.
+	 * In that case, we have to see - if dir is specified,
+	 * turn this into direction 8.  If dir is not specified (all
+	 * direction) skip - otherwise, one line would do more damage
+	 * becase 0 direction will go through 9 directions - necessary
+	 * for the rune code.
+	 */
+	if (caster->type != RUNE && d==0) {
+	    if (dir!=0) d=8;
+	    else continue;
+	}
 
 	x = op->x+freearr_x[d];
 	y = op->y+freearr_y[d];

@@ -17,6 +17,8 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+common/object.c: Change CAN_MERGE() so that we never merge applied objects -
+   whether or not they are rings.
 lib/*: different spell for dragons vs players for firebreath - update
    treasures so monsters use ability version.
 server/gods.c: Add missing call to link_player_skills(), resulting in players
@@ -26,6 +28,7 @@ server/skill_util.c: Change learn_skill() so we don't create a skill pointer
    such a created skill, it is still a bit confusing).  Fix finding of
    hand to hand skills to make sure the player can in fact use the skill
    in question.
+server/spell_attack.c: Fix cast_cone() so that it properly hits all directions.
 MSW 2004-02-22
 
 

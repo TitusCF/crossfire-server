@@ -155,23 +155,17 @@ inline int CAN_MERGE(object *ob1, object *ob2) {
 	) 
 	    return 0;
 
+    /* Don't merge objects that are applied.  With the new 'body' code,
+     * it is possible for most any character to have more than one of
+     * some items equipped, and we don't want those to merge.
+     */
+    if (QUERY_FLAG(ob1, FLAG_APPLIED) || QUERY_FLAG(ob2, FLAG_APPLIED))
+	return 0;
+
     switch (ob1->type) {
 	case SCROLL:
 	    if (ob1->level != ob2->level) return 0;
 	    break;
-
-	case RING:
-	    /* Don't merge applied rings - easier to keep them seperate, and
-	     * it makes more sense (can easily unapply one ring).  Rings are
-	     * the only objects that need this special code, as they are the
-	     * only objects of the same type in which more than 1 can be
-	     * applied at a time.
-	     *
-	     * Note - there is no break so we fall into the POTION/AMULET
-	     * check below.
-	     */
-	    if (QUERY_FLAG(ob1, FLAG_APPLIED) || QUERY_FLAG(ob2, FLAG_APPLIED))
-		return 0;
 
 	case POTION:
 	case AMULET:
