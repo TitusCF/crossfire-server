@@ -80,7 +80,6 @@
  * MAX_TIME - how long an internal tick is in microseconds
  * MANY_CORES - generate core dumps on gross errors instead of continuing?
  * PARTY_KILL_LOG - stores party kill information
- * SECURE - Allow overriding values with run time flags?
  * WATCHDOG - allows use of an external watchdog program
  *
  ***********************************************************************/
@@ -229,28 +228,6 @@
 #define PARTY_KILL_LOG 20
 */
 
-
-/*
- * If SECURE is defined, crossfire will not accept enviromental variables
- * as changes to the LIBDIR and other defines pointing to specific
- * directories.  The only time this should really be an issue if you are
- * running crossfire setuid/setgid and someone else could change the
- * values and get special priveledges.  If you are running with normal uid
- * privelidges, then this is not any more/less secure (user could compile
- * there own version pointing wherever they want.)  However, having nonsecure
- * can make debugging or other developement much easier, because you can
- * change the paths without forcing a recompile.
- *
- * NOTE: Prior to 0.93.2, the default was for this to be defined (ie,
- * could not change values on the command line/through environmental
- * variables.)
- */
-/*
-#define SECURE
-*/
-
-
-
 /* Use permanent experience code?
  * This code allows players to build up a small amount of 'permanent
  * experience' which reduces the effect of large experience drains, such as
@@ -348,7 +325,6 @@
  * CSPORT - port to use for new client/server
  * DMFILE - file with dm/wizard access lists
  * DM_MAIL - address of server administrator
- * DUMP_SWITCHES - enable -m? flags for spoiler generation
  * LIBDIR - location of archetypes & other data.
  * LOGFILE - where to log if using -daemon option
  * MAP_ - various map timeout and swapping parameters
@@ -392,15 +368,6 @@
 #define DMFILE "dm_file"
 #endif
 
-
-/*
- * If you want to regenerate the spoiler.ps file, you have to recompile
- * the game with DUMP_SWITCHES defined.  If defined, it turns on the
- * -m -m2 -m3 -m4 switches.  There is probably no reason not to define
- * this
- */
-
-#define DUMP_SWITCHES
 
 /* LOGFILE specifies which file to log to when playing with the
  * -daemon option.

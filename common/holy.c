@@ -123,7 +123,6 @@ void free_all_god() {
 
 
 void dump_gods() {
-#ifdef DUMP_SWITCHES
     godlink *glist;
   
     fprintf(stderr,"\n");
@@ -199,6 +198,5 @@ void dump_gods() {
       if(!gifts) fprintf(stderr,"NONE");
       fprintf(stderr,"\n\n");
     }
-#endif
 }
 

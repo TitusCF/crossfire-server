@@ -158,7 +158,6 @@ void init_library() {
 void init_environ() {
     char *cp;
 
-#ifndef SECURE
     cp=getenv("CROSSFIRE_LIBDIR");
     if (cp) settings.datadir=cp;
     cp=getenv("CROSSFIRE_LOCALDIR");
@@ -175,7 +174,6 @@ void init_environ() {
     if (cp) settings.uniquedir=cp;
     cp=getenv("CROSSFIRE_TMPDIR");
     if (cp) settings.tmpdir=cp;
-#endif
 }
     
 

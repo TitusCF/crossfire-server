@@ -111,7 +111,6 @@ struct Command_Line_Options options[] = {
 {"-d", 0, 1, set_debug},
 {"+d", 0, 1, unset_debug},
 {"-mon", 0, 1, set_mondebug},
-#ifndef SECURE
 {"-data",1,1, set_datadir},
 {"-conf",1,1, set_confdir},
 {"-local",1,1, set_localdir},
@@ -121,7 +120,6 @@ struct Command_Line_Options options[] = {
 {"-treasures", 1, 1, set_treasures},
 {"-uniquedir", 1, 1, set_uniquedir},
 {"-tmpdir", 1, 1, set_tmpdir},
-#endif
 {"-log", 1, 1, set_logfile},
 
 /* Pass 2 functions.  Most of these could probably be in pass 1, 
@@ -134,7 +132,6 @@ struct Command_Line_Options options[] = {
  * and defaults should have been set up. 
  */
 {"-o", 0, 3, compile_info},
-#ifdef DUMP_SWITCHES
 {"-m", 0, 3, set_dumpmon1},
 {"-m2", 0, 3, set_dumpmon2},
 {"-m3", 0, 3, set_dumpmon3},
@@ -146,7 +143,6 @@ struct Command_Line_Options options[] = {
 {"-m9", 0, 3, set_dumpmon9},
 {"-mt", 1, 3, set_dumpmont},
 {"-mexp", 0, 3, dump_experience},
-#endif
 {"-s", 0, 3, showscores},
 {"-score", 1, 3, showscoresparm}
 };
@@ -549,9 +545,6 @@ void help() {
     printf(" -s          Display the high-score list.\n");
     printf(" -score <name or class> Displays all high scores with matching name/class.\n");
     printf(" -v          Print version and contributors.\n");
-
-#ifndef SECURE
-    printf("\nThe following options are only available if a secure server was not compiled.\n");
     printf(" -data       Sets the lib dir (archetypes, treasures, etc.)\n");
     printf(" -local      Read/write local data (hiscore, unique items, etc.)\n");
     printf(" -maps       Sets the directory for maps.\n");
@@ -560,10 +553,6 @@ void help() {
     printf(" -treasures	 Sets the treasures file to use.\n");
     printf(" -uniquedir  Sets the unique items/maps directory.\n");
     printf(" -tmpdir     Sets the directory for temporary files (mostly maps.)\n");
-#endif
-
-#ifdef DUMP_SWITCHES
-    printf("\nThe following are only available in DUMP_SWITCHES was compiled in.\n");
     printf(" -m          Lists out suggested experience for all monsters.\n");
     printf(" -m2         Dumps out abilities.\n");
     printf(" -m3         Dumps out artifactt information.\n");
@@ -574,7 +563,6 @@ void help() {
     printf(" -m8         Dumps out gods information.\n");
     printf(" -m9         Dumps out more alchemy information (formula checking).\n");
     printf(" -mt <name>  Dumps out list of treasures for a monster.\n");
-#endif
     exit(0);
 }
 
@@ -589,7 +577,6 @@ void init_beforeplay() {
   init_formulae();  /* If not called before, reads formulae from file */
   init_new_exp_system();    /* If not called before, inits experience system */
 
-#ifdef DUMP_SWITCHES
   switch(settings.dumpvalues) {
   case 1:
     print_monsters();
@@ -622,7 +609,6 @@ void init_beforeplay() {
     dump_monster_treasure(settings.dumparg);
     exit(0);
   }
-#endif
 }
 
 void init_startup() {
@@ -677,11 +663,6 @@ void compile_info() {
 #endif
   if(!i)
     printf("(none)\n");
-#ifdef SECURE
-  printf("Secure:\t\t<true>\n");
-#else
-  printf("Secure:\t\t<false>\n");
-#endif
   printf("Datadir:\t\t%s\n",settings.datadir);
   printf("Localdir:\t\t%s\n",settings.localdir);
 #ifdef PERM_FILE
@@ -717,11 +698,6 @@ void compile_info() {
   printf("Editor:\t\t%s\n",X_EDITOR);
 #endif
 
-#ifdef SHOP_LISTINGS
-  printf("Shop listings:\t<true>\n");
-#else
-  printf("Shop listings:\t<false>\n");
-#endif
   printf("Max_time:\t%d\n",MAX_TIME);
 
 #ifdef WIN32 /* ***win32 compile_info(): remove execl... */
