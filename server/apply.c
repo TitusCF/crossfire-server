@@ -412,7 +412,7 @@ int prepare_weapon(object *op, object *improver, object *weapon)
      */
     if (i<NROFATTACKS || 
 	weapon->stats.hp ||	/* regeneration */
-	weapon->stats.sp ||	/* sp regeneration */
+	(weapon->stats.sp && weapon->type == WEAPON) ||	/* sp regeneration */
 	weapon->stats.exp ||	/* speed */
 	weapon->stats.ac)	/* AC - only taifu's I think */
     {
@@ -574,8 +574,8 @@ int check_improve_weapon (object *op, object *tmp)
       new_draw_info(NDI_UNIQUE, 0, op, "You need to mark a weapon object.");
       return 0;
     }
-    if (otmp->type!=WEAPON) {
-      new_draw_info(NDI_UNIQUE, 0,op,"Marked item is not a weapon");
+    if (otmp->type != WEAPON && otmp->type != BOW) {
+      new_draw_info(NDI_UNIQUE, 0,op,"Marked item is not a weapon or bow");
       return 0;
     }
     new_draw_info(NDI_UNIQUE, 0,op,"Applied weapon builder.");
@@ -2946,10 +2946,26 @@ int apply_special (object *who, object *op, int aflags)
 	    SET_FLAG (who, FLAG_READY_SKILL);
 	    break;
 	
+	case BOW:
+	    if (!check_weapon_power(who, op->last_eat)) {
+		new_draw_info(NDI_UNIQUE, 0, who,
+		    "That item is too powerful for you to use.");
+		new_draw_info(NDI_UNIQUE, 0, who, "It would consume your soul!.");
+		if(tmp != NULL)
+		    (void)insert_ob_in_ob(tmp,who);
+		return 1;
+	    }
+	    if( op->level && (strncmp(op->name,who->name,strlen(who->name)))) {
+		new_draw_info(NDI_UNIQUE, 0, who,
+		    "The weapon does not recognize you as its owner.");
+		if(tmp != NULL)
+		    (void)insert_ob_in_ob(tmp,who);
+		return 1;
+	    }
+	    /*FALLTHROUGH*/
 	case WAND:
 	case ROD:
 	case HORN:
-	case BOW:
 	    /* check for skill, alter player status */ 
 	    SET_FLAG(op, FLAG_APPLIED);
 	    if(!check_skill_to_apply(who,op)) return 1;
@@ -2957,6 +2973,7 @@ int apply_special (object *who, object *op, int aflags)
 
 	    if(who->type==PLAYER) {
 		if (op->type == BOW) {
+		    (void)change_abil(who, op);
 		    new_draw_info_format (NDI_UNIQUE, 0, who,
                               "You will now fire %s with %s.",
 	                      op->race ? op->race : "nothing", query_name(op));
