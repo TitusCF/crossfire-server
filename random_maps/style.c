@@ -106,12 +106,12 @@ scandir (dir, namelist, select, cmp)
 	    v = new;
 	  }
 
-	dsize = &d->d_name[sizeof(d->d_name)] - (char *) d;
-	v[i] = (struct dirent *) malloc (dsize);
+	/*	dsize = &d->d_name[sizeof(d->d_name)] - (char *) d; */
+	v[i] = (struct dirent *) malloc (d->d_reclen);
 	if (v[i] == NULL)
 	  goto lose;
 
-	memcpy (v[i++], d, dsize);
+	memcpy (v[i++], d, d_d->reclen);
       }
 
   if (errno != 0)

@@ -34,7 +34,9 @@ void put_doors(mapstruct *the_map,char **maze , char *doorstyle) {
   mapstruct *hdoors;
   char doorpath[128];
 
+  if(!strcmp(doorstyle,"none")) return;
   vdoors = find_style("/styles/doorstyles/vdoors",doorstyle,-1);
+  if(!vdoors) return;
   sprintf(doorpath,"/styles/doorstyles/hdoors%s",strrchr(vdoors->path,'/'));
   hdoors = find_style(doorpath,0,-1);
   for(i=0;i<Xsize;i++) 

@@ -317,7 +317,7 @@
  * knows where to find the information.
  */
 
-#define RECYCLE_TMP_MAPS
+/*#define RECYCLE_TMP_MAPS*/
 
 
 /* define RESURECTION if you want to let players bring other players
