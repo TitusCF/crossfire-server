@@ -215,6 +215,7 @@ char* addslashes (char* string)
     static char* current;
     static int string_count=0;
     int i;
+    if (string==NULL) return NULL;
     current=(char*)malloc (strlen(string)*2+1);
     if (current==NULL) return string;
     if (strings[string_count])
@@ -387,15 +388,14 @@ char* takescreenshoot(object* op)
             x=op->x-(op->contr->socket.mapx-1)/2+clientx;
             y=op->y-(op->contr->socket.mapy-1)/2+clienty;
 
-            fprintf (screenshoot,"%d,%d %s|%s|%s ",
+	    if (((x>=0) && (y>=0)) && ((x<op->map->width) && (y<op->map->height)))
+	    {
+                fprintf (screenshoot,"%d,%d %s|%s|%s ",
                     clientx,clienty,
                     GET_MAP_FACE(op->map,x,y,0)?GET_MAP_FACE(op->map,x,y,0)->name:"blank.111",
                     GET_MAP_FACE(op->map,x,y,1)?GET_MAP_FACE(op->map,x,y,1)->name:"blank.111",
                     GET_MAP_FACE(op->map,x,y,2)?GET_MAP_FACE(op->map,x,y,2)->name:"blank.111"
                     );
-
-            if ((x>=0) && (y>=0)) //Gros: Quick-and-dirty hack to prevent unwanted crashes
-            {
                 for(tmp=get_map_ob(op->map,x,y);tmp!=NULL&&tmp->above!=NULL;
                     tmp=tmp->above);
                 for ( ; tmp != NULL; tmp=tmp->below ) {
@@ -799,7 +799,8 @@ CFParm* triggerEvent(CFParm* PParm)
     static int result;
     eventcode = *(int *)(PParm->Value[0]);
     /*May help fixing some events*/
-    printf ("\t[Crossfire Logger] Got event %d\n",eventcode);
+    if (eventcode != 14)
+        printf ("\t[Crossfire Logger] Got event %d\n",eventcode);
     switch (eventcode){
         case EVENT_BORN:
             result=player_birth ( (object*)PParm->Value[1]);
