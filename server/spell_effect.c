@@ -469,7 +469,7 @@ int cast_create_food(object *op,object *caster, object *spell_ob, int dir, char 
               + 50 * SP_level_duration_adjust(caster,spell_ob);
 
     if(stringarg) {
-	at=find_archetype(stringarg);
+	at=find_archetype_by_object_name(stringarg);
 	if (at==NULL || ((at->clone.type != FOOD && at->clone.type != DRINK)
 	    || (at->clone.stats.food > food_value)))
 		stringarg = NULL;
