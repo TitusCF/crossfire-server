@@ -1,6 +1,27 @@
 Changes in top level CVS tree (please add your changes at the very top of
 the file):
 
+This one makes a couple things level dependent that used to be fixed:
+1) time it takes Word of Recall to take effect
+2) amount of energy transferred by Transferrence spell
+3) percentage of energy drained by Magic Drain spell
+
+Also, the following effects have been modified:
+1) Followers of a cult that considers undead enemies have a penalty to
+Command Undead.
+2) Magic Drain gives back to the caster a small portion of the energy
+drained from the victim.
+
+And a bug was fixed:
+1) SP_level_dam_adjust used and SP_level_strength_adjust used the
+player's level, where they should have used the caster's level.
+  --Patches from DAMN, applied by PeterM
+
+Marker object added, alchemy modified so that recipes
+can require keycodes and MARKS to execute, detectors modified
+to be able to detect MARKS, and all of this documented in
+crossfire.doc  --PeterM
+
 server/gods.c  --  changing gods now costs players their special
 			prayers. --PeterM
 server/alchemy.c  --  levels less than ten no longer produce

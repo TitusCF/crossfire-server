@@ -111,8 +111,8 @@ int path_level_mod(object *op, int sp) {
 
  if (op->path_denied & s->path)
   return -100;				/* shouldn't get here, but ... */
- val = ((op->path_repelled & s->path)!=0) * -5 +
-	((op->path_attuned & s->path)!=0) * 5;
+ val = (op->path_repelled & s->path) ? -5 : 0
+   +   (op->path_attuned & s->path) ? 5 : 0;
  if (op->level - val < 1)
   return op->level-1;
  else
@@ -468,7 +468,7 @@ if (item == spellNormal && !ability ){
     success = perceive_self(op);
     break;
   case SP_WOR:
-    success = cast_wor(op);
+    success = cast_wor(op,caster);
     break;
   case SP_INVIS:
   case SP_INVIS_UNDEAD:
@@ -1659,13 +1659,15 @@ for turning undead and whatnot.
  * the casters level (op->level) with the skill level (SK_level(op)) 
  * instead for when we have compiled with ALLOW_SKILLS - b.t. 
  */
+/* now based on caster's level instead of on op's level and caster's	*
+ * path modifiers. 	--DAMN						*/
 
 int SP_level_dam_adjust(object *op, object *caster, int spell_type)
 {  int adj;
 #ifdef ALLOW_SKILLS
-   int level=SK_level(op)+path_level_mod(caster, spell_type);
+   int level=SK_level(caster)+path_level_mod(caster, spell_type);
 #else
-   int level=op->level+path_level_mod(caster, spell_type);
+   int level=caster->level+path_level_mod(caster, spell_type);
 #endif
 
     adj=(level-spells[spell_type].level);
@@ -1677,13 +1679,14 @@ int SP_level_dam_adjust(object *op, object *caster, int spell_type)
 }
 
 /* July 1995 - changed slightly (SK_level) for ALLOW_SKILLS - b.t. */
-
+/* now based on caster's level instead of on op's level and caster's	*
+ * path modifiers. 	--DAMN						*/
 int SP_level_strength_adjust(object *op, object *caster, int spell_type)
 {  int adj;
 #ifdef ALLOW_SKILLS
-   int level=SK_level(op)+path_level_mod(caster, spell_type);
+   int level=SK_level(caster)+path_level_mod(caster, spell_type);
 #else
-   int level=op->level+path_level_mod(caster, spell_type);
+   int level=caster->level+path_level_mod(caster, spell_type);
 #endif
     adj= (level-spells[spell_type].level);
     if(adj < 0) adj=0;

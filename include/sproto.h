@@ -508,7 +508,7 @@ extern int cast_speedball ( object *op, int dir, int type );
 extern int probe ( object *op, int dir );
 extern int cast_invisible ( object *op, object *caster, int spell_type );
 extern int cast_earth2dust ( object *op, object *caster );
-extern int cast_wor ( object *op );
+extern int cast_wor ( object *op, object *caster );
 extern int cast_wow ( object *op, int dir, int ability, SpellTypeFrom item );
 extern int perceive_self ( object *op );
 extern int cast_destruction ( object *op, object *caster, int dam, int attacktype );

@@ -662,7 +662,8 @@ cast_earth2dust(object *op,object *caster) {
 }
 
 /* puts a 'WORD_OF_RECALL_' object in player */
-int cast_wor(object *op) {
+/* modified to work faster for higher level casters -- DAMN		*/
+int cast_wor(object *op, object *caster) {
   object *dummy;
 
   if(op->type!=PLAYER)
@@ -678,13 +679,18 @@ int cast_wor(object *op) {
     return 0;
   }
   if(op->owner) op=op->owner; /* better insert the spell in the player */
-  dummy->speed = 0.01;
+  dummy->speed = 0.002 * ((float)(SP_PARAMETERS[SP_WOR].bdur
+				 + SP_level_strength_adjust(op,caster,SP_WOR)));
   update_ob_speed(dummy);
   dummy->speed_left= -1;
   dummy->type=WORD_OF_RECALL;
   EXIT_PATH(dummy)=add_string(first_map_path);
   (void) insert_ob_in_ob(dummy,op);
   new_draw_info(NDI_UNIQUE, 0,op,"You feel a force starting to build up inside you.");
+  LOG(llevDebug,"Word of Recall for %s in %f ticks.\n", op->name,
+      ((-dummy->speed_left)/(dummy->speed==0?0.0001:dummy->speed)));
+  LOG(llevDebug,"Word of Recall for player level %d, caster level %d: 0.002 * %d + %d\n",
+      SK_level(op), SK_level(caster), SP_PARAMETERS[SP_WOR].bdur, SP_level_strength_adjust(op,caster,SP_WOR));
   return 1;
 }
 
@@ -2290,8 +2296,10 @@ int cast_transfer(object *op,int dir) {
 		break;
 
     if(plyr) {
+      /* DAMN: added spell strength adjust; higher level casters transfer mana faster */
 	int maxsp=plyr->stats.maxsp;
-	int sp=(plyr->stats.sp+=8);
+	int sp=(plyr->stats.sp += SP_PARAMETERS[SP_TRANSFER].bdam
+		+ SP_level_dam_adjust(op,op,SP_TRANSFER));
 
 	new_draw_info(NDI_UNIQUE, 0,plyr,"You feel energy course through you.");
 	if(sp>=maxsp*2) {
@@ -2320,26 +2328,43 @@ int cast_transfer(object *op,int dir) {
 /*  drain_magic:  peterm  */
 /*  drains all the magic out of the victim.  */
 int drain_magic(object *op,int dir) {
-     object *tmp=NULL;
+  object *tmp=NULL;
+  double mana, rate;
 
-   if (!out_of_map(op->map,op->x+freearr_x[dir],op->y+freearr_y[dir])) {
-     for(tmp=get_map_ob(op->map,op->x+freearr_x[dir],op->y+freearr_y[dir]);
-         tmp!=NULL;
-         tmp=tmp->above)
-        if(QUERY_FLAG(tmp, FLAG_ALIVE))
-		break;
+  if (!out_of_map(op->map,op->x+freearr_x[dir],op->y+freearr_y[dir])) {
+    for(tmp=get_map_ob(op->map,op->x+freearr_x[dir],op->y+freearr_y[dir]);
+	tmp!=NULL;
+	tmp=tmp->above)
+      if(QUERY_FLAG(tmp, FLAG_ALIVE))
+	break;
      /*  If we did not find a player in the specified direction, transfer
 	to anyone on top of us. */
-   }
+  }
 
-    if(tmp==NULL)
-         for(tmp=get_map_ob(op->map,op->x,op->y); tmp!=NULL; tmp=tmp->above)
-	if(QUERY_FLAG(tmp, FLAG_ALIVE))
+  if(tmp==NULL)
+    for(tmp=get_map_ob(op->map,op->x,op->y); tmp!=NULL; tmp=tmp->above)
+      if(QUERY_FLAG(tmp, FLAG_ALIVE))
         break;
 
-
-      if(tmp&&op!=tmp) { tmp->stats.sp*=0.1; return 1; }
-      else return 0;
+  /* DAMN: Percent spell point loss determined by caster level
+     Caster gains percent of drained mana, also determined by caster level */
+  if(tmp&&op!=tmp) {
+    rate = (double)(SP_PARAMETERS[SP_MAGIC_DRAIN].bdam
+      + 5* SP_level_dam_adjust(op,op,SP_MAGIC_DRAIN)) / 100.0;
+    if(rate > 0.95) rate = 0.95;
+    mana = tmp->stats.sp * rate;
+    tmp->stats.sp -= mana;
+    if(QUERY_FLAG(op, FLAG_ALIVE)) {
+      rate = (double)(SP_PARAMETERS[SP_MAGIC_DRAIN].bdam
+	+ 5* SP_level_strength_adjust(op,op,SP_MAGIC_DRAIN)) / 100.0;
+      if(rate > 0.95) rate = 0.95;
+      mana = mana * rate;
+      op->stats.sp += mana;
+    }
+    return 1;
+  } else {
+    return 0;
+  }
 }
      
 /*  counterspell:  peterm  */
@@ -2456,9 +2481,16 @@ int cast_charm(object *op, object *caster,archetype *arch,int spellnum) {
 }
 
 int cast_charm_undead(object *op, object *caster,archetype *arch,int spellnum) {
-  int i,bonus=QUERY_FLAG(caster,FLAG_UNDEAD)?5:-1; /* the undead command themselves better */ 
+  int i,bonus;
   object *tmp,*effect;
  
+  if (QUERY_FLAG(caster,FLAG_UNDEAD) || strstr(find_god(determine_god(op))->race,undead_name)!=NULL) {
+    bonus = 5;
+  } else if (strstr(find_god(determine_god(op))->slaying,undead_name)!=NULL) {
+    bonus = -5;
+  } else {
+    bonus = -1;
+  }
   for(i=1;i<MIN(9+SP_level_strength_adjust(op,caster,spellnum),SIZEOFFREE);i++) {
 	if (out_of_map(op->map,op->x+freearr_x[i],op->y+freearr_y[i]))
 	    continue;
