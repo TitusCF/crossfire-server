@@ -19,6 +19,15 @@ else.  With this, include the file(s) that you changed.
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ------------------------------------------------------------------------------
 
+include/sproto.h:  Removed prototype of obsolete make_gravestone()
+function.
+server/apply.c:  Put back gravestone_text() function that was removed
+accidently a while ago, needed by NOT_PERMADEATH.
+server/player.c:  Don't use the dead player as the originator of object
+movements.  Fixed string handling for NOT_PERMADEATH.
+- Jan Echternach 10/30/2000
+
+
 Major race/class change by PeterM:
 BEGIN:
 *****************

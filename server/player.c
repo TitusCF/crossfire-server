@@ -1782,7 +1782,7 @@ void kill_player(object *op)
 	        op->contr->killer);
     tmp->msg = add_string(buf);
     tmp->x=op->x,tmp->y=op->y;
-    insert_ob_in_map(tmp,op->map,op);
+    insert_ob_in_map (tmp, op->map, NULL);
 
  /**************************************/
  /*                                    */
@@ -1890,12 +1890,16 @@ void kill_player(object *op)
 #ifdef NOT_PERMADEATH
     tmp=arch_to_object(find_archetype("gravestone"));
     sprintf(buf,"%s's gravestone",op->name);
+    if (tmp->name)
+        free_string (tmp->name);
     tmp->name=add_string(buf);
     sprintf(buf,"RIP\nHere rests the hero %s the %s,\nwho was killed by %s.\n",
 	    op->name, op->contr->title, op->contr->killer);
+    if (tmp->msg)
+        free_string (tmp->msg);
     tmp->msg = add_string(buf);
     tmp->x=x,tmp->y=y;
-    insert_ob_in_map(tmp,map,op);
+    insert_ob_in_map (tmp, map, NULL);
 #else
     /*  peterm:  added to create a corpse at deathsite.  */
     tmp=arch_to_object(find_archetype("corpse_pl"));
@@ -1907,9 +1911,9 @@ void kill_player(object *op)
     tmp->x=x;tmp->y=y;
     if (tmp->msg)
 	free_string(tmp->msg);
-    tmp->msg = gravestone_text(op);
+    tmp->msg = add_string (gravestone_text(op));
     SET_FLAG (tmp, FLAG_UNIQUE);
-    insert_ob_in_map(tmp,map,op);
+    insert_ob_in_map (tmp, map, NULL);
 #endif
 }
 

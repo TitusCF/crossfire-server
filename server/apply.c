@@ -917,6 +917,40 @@ int esrv_apply_container (object *op, object *sack)
 
 
 /*
+ * Returns pointer a static string containing gravestone text
+ */
+char *gravestone_text (object *op)
+{
+    static char buf2[MAX_BUF];
+    char buf[MAX_BUF];
+    time_t now = time (NULL);
+
+    strcpy (buf2, "                 R.I.P.\n\n");
+    if (op->type == PLAYER)
+        sprintf (buf, "%s the %s\n", op->name, op->contr->title);
+    else
+        sprintf (buf, "%s\n", op->name);
+    strncat (buf2, "                    ",  20 - strlen (buf) / 2);
+    strcat (buf2, buf);
+    if (op->type == PLAYER)
+        sprintf (buf, "who was in level %d when killed\n", op->level);
+    else
+        sprintf (buf, "who was in level %d when died.\n\n", op->level);
+    strncat (buf2, "                    ",  20 - strlen (buf) / 2);
+    strcat (buf2, buf);
+    if (op->type == PLAYER) {
+        sprintf (buf, "by %s.\n\n", op->contr->killer);
+        strncat (buf2, "                    ",  21 - strlen (buf) / 2);
+        strcat (buf2, buf);
+    }
+    strftime (buf, MAX_BUF, "%b %d %Y\n", localtime (&now));
+    strncat (buf2, "                    ",  20 - strlen (buf) / 2);
+    strcat (buf2, buf);
+    return buf2;
+}
+
+
+/*
  * Returns true if sacrifice was accepted.
  */
 static int apply_altar (object *altar, object *sacrifice, object *originator)

@@ -33,7 +33,6 @@ extern int convert_item ( object *item, object *converter );
 extern int apply_container ( object *op, object *sack );
 extern int esrv_apply_container ( object *op, object *sack );
 extern char *gravestone_text ( object *op );
-extern int make_gravestone ( object *op, object *grave );
 extern void move_apply ( object *trap, object *victim, object *originator );
 extern int manual_apply ( object *op, object *tmp, int aflag );
 extern int player_apply ( object *pl, object *op, int aflag, int quiet );
