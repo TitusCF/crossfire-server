@@ -100,6 +100,17 @@ object *check_enemy(object *npc, rv_vector *rv) {
 	else if (!QUERY_FLAG(npc, FLAG_FRIENDLY) && 
              (!QUERY_FLAG(npc->enemy, FLAG_FRIENDLY) && npc->enemy->type!=PLAYER))
                 npc->enemy=NULL;
+
+	/* I've noticed that pets could sometimes get an arrow as the
+	 * target enemy - this code below makes sure the enemy is something
+	 * that should be attacked.  My guess is that the arrow hits
+	 * the creature/owner, and so the creature then takes that
+	 * as the enemy to attack.
+	 */
+	else if (!QUERY_FLAG(npc->enemy, FLAG_MONSTER) && 
+                  !QUERY_FLAG(npc->enemy,FLAG_GENERATOR ) && npc->type!=PLAYER)
+                npc->enemy=NULL;
+
     }
     return can_detect_enemy(npc,npc->enemy,rv)?npc->enemy:NULL;
 }
