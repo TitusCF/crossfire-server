@@ -17,6 +17,15 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 CVS changes since last release:
 
+common/object.c: Add clear_owner function.
+include/libproto.h: rebuild.
+server/player.c: Modify op_on_battleground to look for battleground
+    anyplace on space.  Temp for for wall of thorns on space - as long
+    as maps don't try to abuse the use of battlegrounds, should be OK.
+server/time.c: Add clear_owner call to stop_arrow.  Fixes problem of
+    thrown objects not getting saved.
+MSW 2001-04-28
+
 common/object.c: Have update_object map the look window for redraw if
    the object is not something the client normally animates (like a lever).
    MSW 2001-04-27

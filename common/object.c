@@ -353,6 +353,18 @@ object *get_owner(object *op) {
   return NULL;
 }
 
+void clear_owner(object *op)
+{
+    if (!op) return;
+
+    if (op->owner && op->ownercount == op->owner->count)
+	op->owner->refcount--;
+
+    op->owner = NULL;
+    op->ownercount = 0;
+}
+
+
 /*
  * Sets the owner of the first object to the second object.
  * Also checkpoints a backup id-scheme which detects freeing (and reusage)
@@ -399,6 +411,7 @@ static void set_skill_pointers (object *op, object *chosen_skill,
     CLEAR_FLAG (op, FLAG_READY_SKILL);
 }
 #endif
+
 
 /*
  * Sets the owner and sets the skill and exp pointers to owner's current

@@ -2274,20 +2274,18 @@ int op_on_battleground (object *op, int *x, int *y) {
    * and the exit-coordinates sp/hp must both be > 0.
    * => The intention here is to prevent abuse of the battleground-
    * feature (like pickable or hidden battleground tiles). */
-  for (tmp=op->below, floor=0; tmp!=NULL && !floor; tmp=tmp->below) {
+  for (tmp=op->below; tmp!=NULL; tmp=tmp->below) {
     if (QUERY_FLAG (tmp, FLAG_IS_FLOOR)) {
       if (QUERY_FLAG (tmp, FLAG_NO_PICK) &&
 	  strcmp(tmp->name, "battleground")==0 &&
 	  tmp->type == BATTLEGROUND && EXIT_X(tmp) && EXIT_Y(tmp)) {
-	if (x != NULL && y != NULL)
-	  *x=EXIT_X(tmp), *y=EXIT_Y(tmp);
-	return 1;
-      } else
-	floor++; /* onle the uppermost IS_FLOOR object is processed */
+	    if (x != NULL && y != NULL)
+		*x=EXIT_X(tmp), *y=EXIT_Y(tmp);
+	    return 1;
+      }
     }
   }
-  
-  tmp = NULL;
+  /* If we got here, did not find a battleground */
   return 0;
 }
 

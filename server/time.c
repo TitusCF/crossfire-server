@@ -543,6 +543,7 @@ static void stop_arrow (object *op)
     if (op->inv) {
 	object *payload = op->inv;
 	remove_ob (payload);
+	clear_owner(payload);
         insert_ob_in_map (payload, op->map, payload);
         remove_ob (op);
 	free_object (op);
