@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 CVS changes since last release:
 
+PeterM 2000/12/18:  Re-add the conflict spell (various files)
+attack.c:  fix a bug which could easily have led to seg fault,
+          and did when I was testing under efence.
+
 MSW 2000/12/17: Various changes.  Note that the scope of files in this checkin
 make it appear that a lot was changed, but in fact it was mostly just
 re-orginization - very little code has actually changed.

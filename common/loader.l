@@ -80,7 +80,7 @@ static char *variable_const[NR_OF_VARIABLES] = {
   "unique","make_invisible","inv_locked",
   "is_wooded","is_hilly","has_ready_skill","has_ready_weapon",
   "no_skill_ident","glow_radius","is_blind","can_see_in_dark",
-  "is_cauldron","randomitems","is_dust", "no_steal", "one_hit",
+  "is_cauldron","randomitems","is_dust", "no_steal", "one_hit","berserk",
 #ifdef NPC_PROG
   "npc_status","npc_program",
 #endif
@@ -616,7 +616,7 @@ int flag_links[NUM_FLAGS+1][2] ={
 {FLAG_READY_WEAPON,V_HAS_READY_WEAPON},{FLAG_NO_SKILL_IDENT,V_NO_SKILL_IDENT},
 {FLAG_BLIND,V_BLIND},{FLAG_SEE_IN_DARK,V_SEE_IN_DARK},
 {FLAG_IS_CAULDRON,V_IS_CAULDRON},{FLAG_DUST,V_DUST},{FLAG_NO_STEAL,V_NO_STEAL},
-{FLAG_ONE_HIT, V_ONE_HIT}, {-1, -1 /* Client send debug flag */ }
+{FLAG_ONE_HIT, V_ONE_HIT}, {FLAG_BERSERK, V_BERSERK}, {-1, -1 /* Client send debug flag */ }
 };
 
 

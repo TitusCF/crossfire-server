@@ -3648,7 +3648,7 @@ int cast_cause_conflict(object *op, object *caster, archetype *spellarch,int typ
       level = MAX(1,SK_level(caster)/2);
       if(RANDOM()%level > tmp->level) {  /* successfully induced conflict */
 	char buf[MAX_BUF];
-	/*	SET_FLAG(tmp,FLAG_BERSERK); */
+	SET_FLAG(tmp,FLAG_BERSERK);
 	if(tmp->name) {
 	  sprintf(buf,"You've clouded %s's mind.  He turns on his friends!",tmp->name); 
 	  new_draw_info(NDI_RED,0,op,buf);

@@ -76,7 +76,7 @@ int did_make_save_item(object *op, int type,object *originator) {
 	    if(RANDOM()%20+1>=material[i].save[number]-op->magic-op->resist[number]/100)
 		saves++;
 	    /* if the attack is too weak */
-	    if((20-material[i].save[type])/3 > originator->stats.dam) saves++;
+	    if((20-material[i].save[number])/3 > originator->stats.dam) saves++;
 	}
     }
     if (saves==materials || materials==0) return 1;

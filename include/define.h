@@ -446,10 +446,10 @@ error - Your ANSI C compiler should be defining __STDC__;
 				    * to send an upditem when we have not
 				    * actually sent the item.
 				    */
-#define NUM_FLAGS 98
-/*#define FLAG_BERSERK            99*/ /* monster will attack closest living
+
+#define FLAG_BERSERK            99 /* monster will attack closest living
 				      object */
-/*#define NUM_FLAGS		99 *//* Should always be equal to the last
+#define NUM_FLAGS		99 /* Should always be equal to the last
 				    * defined flag */
 
 /* Values can go up to 127 before the size of the flags array in the
