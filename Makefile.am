@@ -1,6 +1,9 @@
 
-# Always keep crossedit as the last thing
-SUBDIRS = common random_maps socket server include lib utils doc plugin devel crossedit
+if HAVE_X
+  CROSSEDIT = crossedit
+endif
+
+SUBDIRS = common random_maps socket server include lib utils doc plugin devel $(CROSSEDIT)
 
 EXTRA_DIST = AUTHORS ChangeLog COPYING DEVELOPERS autogen.sh run_win32.bat
 

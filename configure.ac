@@ -172,6 +172,7 @@ fi
 AC_SUBST(x_includes)
 AC_SUBST(x_libraries)
 AC_SUBST(no_x)
+AM_CONDITIONAL(HAVE_X,test "x$no_x" = "x")
 AC_SUBST(X11LIBS)
 AC_SUBST(PERL)
 AC_SUBST(BASENAME)
