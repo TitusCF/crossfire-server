@@ -11,7 +11,7 @@ PFILES = Makefile.in Crossedit.doc PlayerStats RandomMaps.doc \
 	crosslib.doc experience include_html.pl	mapguide \
 	mapmakers_guide_to_runes multigod programming_guide \
 	skills.doc skills_developer.doc spell_params.doc spell-paths \
-	spellcasters_guide_to_runes spells teleporter.doc xbmtobdf.man
+	spellcasters_guide_to_runes spells teleporter.doc 
 
 FILES = $(PFILES) handbook.ps spoiler.ps
 
