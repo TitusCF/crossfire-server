@@ -250,7 +250,7 @@ int command_malloc_verify(object *op, char *parms)
 	else
 		new_draw_info(NDI_UNIQUE, 0,op,"Heap checks out OK.");
 	return 1;
-}
+yea	}
 #endif
 
 int command_who (object *op, char *params) {
@@ -270,7 +270,7 @@ int command_who (object *op, char *params) {
     /*local functon for qsort comparison*/
     int name_cmp (chars_names *c1, chars_names *c2)
     {
-      return strcmp (c1->namebuf, c2->namebuf);
+      return strcasecmp (c1->namebuf, c2->namebuf);
     }
     
     /* 
@@ -292,14 +292,14 @@ int command_who (object *op, char *params) {
 	if (pl->state==ST_PLAYING || pl->state==ST_GET_PARTY_PASSWORD) {
 
 	    num_players++;
-	    chars = (chars_names *) realloc(chars, (num_players+1)*sizeof(chars_names));
-	    sprintf(chars[num_players].namebuf, "");
-	    chars[num_players].login_order = num_players;
+	    chars = (chars_names *) realloc(chars, num_players*sizeof(chars_names));
             if (chars == NULL)
 	    {
 	        new_draw_info(NDI_UNIQUE, 0, op, "who failed - out of memory!");
                 return 0;
             } 
+	    sprintf(chars[num_players-1].namebuf, "");
+	    chars[num_players-1].login_order = num_players;
 	    /*Check for WIZ's & AFK's*/
 	    if (QUERY_FLAG(pl->ob,FLAG_WIZ))
 	      num_wiz++;
@@ -310,13 +310,13 @@ int command_who (object *op, char *params) {
 		    if (settings.who_wiz_format[i]=='%') {
 			i++;
 			get_who_escape_code_value(tmpbuf,settings.who_wiz_format[i],pl);
-			strcat(chars[num_players].namebuf, tmpbuf);
+			strcat(chars[num_players-1].namebuf, tmpbuf);
 		    }
 		    else if (settings.who_wiz_format[i]=='_')
-			strcat(chars[num_players].namebuf," "); /* allow '_' to be used in place of spaces */
+			strcat(chars[num_players-1].namebuf," "); /* allow '_' to be used in place of spaces */
 		    else {
 			sprintf(tmpbuf,"%c",settings.who_wiz_format[i]);
-			strcat(chars[num_players].namebuf,tmpbuf);
+			strcat(chars[num_players-1].namebuf,tmpbuf);
 		    }
 		}
 	    }
@@ -325,13 +325,13 @@ int command_who (object *op, char *params) {
 		    if (settings.who_format[i]=='%') {
 			i++;
 			get_who_escape_code_value(tmpbuf,settings.who_format[i],pl);
-			strcat(chars[num_players].namebuf, tmpbuf);
+			strcat(chars[num_players-1].namebuf, tmpbuf);
 		    }
 		    else if (settings.who_format[i]=='_')
-		    	strcat(chars[num_players].namebuf," "); /* allow '_' to be used in place of spaces */
+		    	strcat(chars[num_players-1].namebuf," "); /* allow '_' to be used in place of spaces */
 		    else {
 			sprintf(tmpbuf,"%c",settings.who_format[i]);
-			strcat(chars[num_players].namebuf,tmpbuf);
+			strcat(chars[num_players-1].namebuf,tmpbuf);
 		    }
 		}
 	    }	    
@@ -342,8 +342,8 @@ int command_who (object *op, char *params) {
       sprintf(players_str, "Total Players (%d) -- WIZ(%d) AFK(%d)", num_players, num_wiz, num_afk);
       new_draw_info(NDI_UNIQUE, 0, op, players_str);
     }
-    qsort (chars, (num_players+1), sizeof(chars_names), name_cmp);
-    for (i=1;i<=num_players;i++)
+    qsort (chars, num_players, sizeof(chars_names), name_cmp);
+    for (i=0;i<num_players;i++)
 	new_draw_info(NDI_UNIQUE, 0, op, chars[i].namebuf);
     free (chars);    
     return 1;
