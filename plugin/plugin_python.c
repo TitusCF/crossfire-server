@@ -6763,10 +6763,8 @@ static PyObject* CFRegisterCommand(PyObject* self, PyObject* args)
     {
         if (CustomCommand[i].name == NULL)
         {
-            CustomCommand[i].name = (char *)(malloc(sizeof(char)*strlen(cmdname)));
-            CustomCommand[i].script = (char *)(malloc(sizeof(char)*strlen(scriptname)));
-            strcpy(CustomCommand[i].name,cmdname);
-            strcpy(CustomCommand[i].script,scriptname);
+            CustomCommand[i].name = strdup_local(cmdname);
+            CustomCommand[i].script = strdup_local(scriptname);
             CustomCommand[i].speed = cmdspeed;
             i = NR_CUSTOM_CMD;
         }
