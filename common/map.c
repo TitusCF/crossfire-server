@@ -381,12 +381,16 @@ int blocked_two(object *op, int x,int y) {
 	    if (tmp->last_sp) {
 		if (check_inv_recursive(op,tmp)==NULL)
 		    return 1;
+		else
+		    continue;
 	    } else {
 		/* In this case, the player must not have the object -
 		 * if they do, they can't pass through.
 		 */
 		if (check_inv_recursive(op,tmp)!=NULL) /* player has object */
 		    return 1;
+		else
+		    continue;
 	    }
 	} /* if check_inv */
 
