@@ -2035,6 +2035,10 @@ SOURCE=..\common\recipe.c
 # End Source File
 # Begin Source File
 
+SOURCE=..\common\region.c
+# End Source File
+# Begin Source File
+
 SOURCE=..\common\shstr.c
 
 !IF  "$(CFG)" == "crossfire32 - Win32 FullDebug"
