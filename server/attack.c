@@ -362,12 +362,17 @@ int attack_ob(object *op,object *hitter) {
 	}
 	return 1;
     }
-	
-    if(op->stats.luck) {
+
+    /*  BROKEN:  the luck code.  If you look carefully, luck has these effects:
+	positive luck adds to the damage YOU take and to YOUR likelihood
+	of getting HIT.  This is intolerable.  I am setting "luck" in this
+	broken routine to zero, for now.
+        if(op->stats.luck) {
 	luck=RANDOM()%abs(op->stats.luck);
 	if(op->stats.luck<0)
 	    luck= -luck;
-    }
+	    }*/
+    luck = 0;  /* Fix for the broken code below */
     if((int)luck < -5)
 	roll= -20;
     else
