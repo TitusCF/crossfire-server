@@ -633,85 +633,88 @@ void get_party_password(object *op, int partyid) {
 
 /* This rolls four 1-6 rolls and sums the best 3 of the 4. */
 int roll_stat() {
-  int a[4],i,j,k;
-  for(i=0;i<4;i++)
-    a[i]=(int)RANDOM()%6+1;
-  for(i=0,j=0,k=7;i<4;i++)
-    if(a[i]<k)
-      k=a[i],j=i;
-  for(i=0,k=0;i<4;i++) {
-    if(i!=j)
-      k+=a[i];
-  }
-  return k;
+    int a[4],i,j,k;
+
+    for(i=0;i<4;i++)
+	a[i]=(int)RANDOM()%6+1;
+
+    for(i=0,j=0,k=7;i<4;i++)
+	if(a[i]<k)
+	    k=a[i],j=i;
+
+    for(i=0,k=0;i<4;i++) {
+	if(i!=j)
+	    k+=a[i];
+    }
+    return k;
 }
 
 void roll_stats(object *op) {
-  int sum=0;
-  do {
-    op->stats.Str=roll_stat();
-    op->stats.Dex=roll_stat();
-    op->stats.Int=roll_stat();
-    op->stats.Con=roll_stat();
-    op->stats.Wis=roll_stat();
-    op->stats.Pow=roll_stat();
-    op->stats.Cha=roll_stat();
-    sum=op->stats.Str+op->stats.Dex+op->stats.Int+
-	op->stats.Con+op->stats.Wis+op->stats.Pow+
-	op->stats.Cha;
-  } while(sum<82||sum>116);
-	/* Sort the stats so that rerolling is easier... */
-	{
-	        int             i = 0, j = 0;
-	        int             statsort[7];
+    int sum=0;
+    int i = 0, j = 0;
+    int statsort[7];
 
-	        statsort[0] = op->stats.Str;
-	        statsort[1] = op->stats.Dex;
-	        statsort[2] = op->stats.Int;
-	        statsort[3] = op->stats.Con;
-	        statsort[4] = op->stats.Wis;
-	        statsort[5] = op->stats.Pow;
-	        statsort[6] = op->stats.Cha;
+    do {
+	op->stats.Str=roll_stat();
+	op->stats.Dex=roll_stat();
+	op->stats.Int=roll_stat();
+	op->stats.Con=roll_stat();
+	op->stats.Wis=roll_stat();
+	op->stats.Pow=roll_stat();
+	op->stats.Cha=roll_stat();
+	sum=op->stats.Str+op->stats.Dex+op->stats.Int+
+	    op->stats.Con+op->stats.Wis+op->stats.Pow+
+	    op->stats.Cha;
+    } while(sum<82||sum>116);
 
-	        /* a quick and dirty bubblesort? */
-	        do {
-	                if (statsort[i] < statsort[i + 1]) {
-	                        j = statsort[i];
-	                        statsort[i] = statsort[i + 1];
-	                        statsort[i + 1] = j;
-	                        i = 0;
-	              } else {
-	                        i++;
-	              }
-	      } while (i < 6);
+    /* Sort the stats so that rerolling is easier... */
+    statsort[0] = op->stats.Str;
+    statsort[1] = op->stats.Dex;
+    statsort[2] = op->stats.Int;
+    statsort[3] = op->stats.Con;
+    statsort[4] = op->stats.Wis;
+    statsort[5] = op->stats.Pow;
+    statsort[6] = op->stats.Cha;
 
-	        op->stats.Str = statsort[0];
-	        op->stats.Dex = statsort[1];
-	        op->stats.Con = statsort[2];
-	        op->stats.Int = statsort[3];
-	        op->stats.Wis = statsort[4];
-	        op->stats.Pow = statsort[5];
-	        op->stats.Cha = statsort[6];
-      }
+    /* a quick and dirty bubblesort? */
+    do {
+	if (statsort[i] < statsort[i + 1]) {
+	    j = statsort[i];
+	    statsort[i] = statsort[i + 1];
+	    statsort[i + 1] = j;
+	    i = 0;
+	} else {
+	    i++;
+	}
+    } while (i < 6);
 
-  op->contr->orig_stats.Str=op->stats.Str;
-  op->contr->orig_stats.Dex=op->stats.Dex;
-  op->contr->orig_stats.Int=op->stats.Int;
-  op->contr->orig_stats.Con=op->stats.Con;
-  op->contr->orig_stats.Wis=op->stats.Wis;
-  op->contr->orig_stats.Pow=op->stats.Pow;
-  op->contr->orig_stats.Cha=op->stats.Cha;
-  op->stats.hp= -10000;
-  op->level=0;
-  op->stats.exp=0;
-  op->stats.sp=0;
-  op->stats.grace=0;
-  op->stats.ac=0;
-  add_exp(op,0);
-  op->stats.sp=op->stats.maxsp;
-  op->stats.hp=op->stats.maxhp;
-  op->stats.grace=0;
-  op->contr->orig_stats=op->stats;
+    op->stats.Str = statsort[0];
+    op->stats.Dex = statsort[1];
+    op->stats.Con = statsort[2];
+    op->stats.Int = statsort[3];
+    op->stats.Wis = statsort[4];
+    op->stats.Pow = statsort[5];
+    op->stats.Cha = statsort[6];
+
+
+    op->contr->orig_stats.Str=op->stats.Str;
+    op->contr->orig_stats.Dex=op->stats.Dex;
+    op->contr->orig_stats.Int=op->stats.Int;
+    op->contr->orig_stats.Con=op->stats.Con;
+    op->contr->orig_stats.Wis=op->stats.Wis;
+    op->contr->orig_stats.Pow=op->stats.Pow;
+    op->contr->orig_stats.Cha=op->stats.Cha;
+    op->stats.hp= -10000;
+    op->level=0;
+    op->stats.exp=0;
+    op->stats.sp=0;
+    op->stats.grace=0;
+    op->stats.ac=0;
+    player_lvl_adj(op, NULL);
+    op->stats.sp=op->stats.maxsp;
+    op->stats.hp=op->stats.maxhp;
+    op->stats.grace=0;
+    op->contr->orig_stats=op->stats;
 }
 
 void Roll_Again(object *op)
@@ -722,8 +725,8 @@ void Roll_Again(object *op)
 
 void Swap_Stat(object *op,int Swap_Second)
 {
-  signed char tmp;
-  char buf[MAX_BUF];
+    signed char tmp;
+    char buf[MAX_BUF];
 
     if ( op->contr->Swap_First == -1 ) {
 	new_draw_info(NDI_UNIQUE, 0,op,"How the hell did you get here?!?!!!");
@@ -750,15 +753,14 @@ void Swap_Stat(object *op,int Swap_Second)
     op->stats.Cha = op->contr->orig_stats.Cha;
     op->stats.hp= -10000;
     op->level=0;
-    op->stats.exp=0;
+    op->stats.exp=1;
     op->stats.sp=0;
     op->stats.grace=0;
     op->stats.ac=0;
-    add_exp(op,0);
+    player_lvl_adj(op,NULL);
     op->stats.sp=op->stats.maxsp;
     op->stats.grace=0;
     op->stats.hp=op->stats.maxhp;
-    add_exp(op,0);
     op->contr->Swap_First=-1;
 }
 
