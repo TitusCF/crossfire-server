@@ -6,7 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2000 Mark Wedel
+    Copyright (C) 2002 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -23,7 +23,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to mwedel@scruz.net
+    The author can be reached via e-mail to crossfire-devel@real-time.com
 */
 
 #include <global.h>
@@ -1594,7 +1594,7 @@ static int player_attack_door(object *op, object *door)
 /* This function is just part of a breakup from move_player.
  * It should keep the code cleaner.
  * When this is called, the players direction has been updated
- * (taking into accoutn confusion.)  The player is also actually
+ * (taking into account confusion.)  The player is also actually
  * going to try and move (not fire weapons).
  */
 

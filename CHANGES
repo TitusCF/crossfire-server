@@ -17,6 +17,27 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Various minor bugfixes.  Note the changes may appear larger than they
+really are due to formatting/indentation changes.  Run diff -w to
+supress those:
+make_win32/installwin32.bat: Update for new image files.
+server/c_object.c: Fix SAVE_INTERVAL #ifdef block.  It failed to compile
+    as it was written.  Simplify code, but it should have the same effect.
+server/move.c: Modify push_object so that if a player swaps position 
+    with his pet, we send a esrv_map_scroll.  This should save bandwidth,
+    and also prevents display corruption when fog of war on the client
+    is in use.  Add some new comments, adjust some formatting.
+server/player.c: Fix minor typo in comment.
+server/skills.c: Modify new_draw_info that is responsible for the
+    "You pray" messages to not have the NDI_UNIQUE flag so that
+    they can get batched up, depending on users value of output-count
+server/swap.c: Remove swapped out per player unique maps from the list
+    of maps.  Reduces cpu and memory consumption by a minor amount, and
+    results in a cleaner 'maps command output.
+server/weather.c: Add standard crossfire banner to top of file.
+    Modify long long declartion to just be a long.
+MSW 2002-04-20
+
 socket/item.c: Add checks to esrv_move_object - before it just trusted
 the client that the destination target to move items into was a container.
 Now do valid checking that the object can be picked up, that the container

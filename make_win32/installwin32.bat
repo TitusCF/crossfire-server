@@ -14,7 +14,8 @@ md share\help
 md share\plugins
 copy lib\*. share\*.*
 copy lib\*.path share\*.path
-copy lib\crossfire.png share\*.*
+copy lib\crossfire.0 share\*.*
+copy lib\crossfire.1 share\*.*
 copy lib\help\*.* share\help\*.*
 
 echo off

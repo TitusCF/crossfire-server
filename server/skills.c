@@ -933,7 +933,7 @@ int pray (object *pl) {
 	}
     }
 
-    new_draw_info(NDI_UNIQUE,0,pl,buf);
+    new_draw_info(NDI_BLACK,0,pl,buf);
      
     if(pl->stats.grace < pl->stats.maxgrace) {
 	pl->stats.grace++;

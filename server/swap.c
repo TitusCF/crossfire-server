@@ -6,7 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2001 Mark Wedel
+    Copyright (C) 2002 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -23,7 +23,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to mwedel@scruz.net
+    The author can be reached via e-mail to crossfire-devel@real-time.com
 */
 
 #include <global.h>
@@ -110,77 +110,81 @@ void read_map_log()
 }
 
 void swap_map(mapstruct *map) {
-  player *pl;
+    player *pl;
 #ifdef PLUGINS
-  int evtid;
-  CFParm CFP;
+    int evtid;
+    CFParm CFP;
 #endif
-  if(map->in_memory != MAP_IN_MEMORY) {
-    LOG(llevError,"Tried to swap out map which was not in memory.\n");
-    return;
-  }
-  for(pl=first_player;pl!=NULL;pl=pl->next)
-    if(pl->ob == NULL || (!(QUERY_FLAG(pl->ob,FLAG_REMOVED)) && pl->ob->map == map))
-      break;
-  if(pl != NULL) {
-    LOG(llevDebug,"Wanted to swap out map with player.\n");
-    return;
-  }
-  remove_all_pets(map); /* Give them a chance to follow */
 
-  /* Update the reset time.  Only do this is STAND_STILL is not set */
-  if (!map->fixed_resettime)
-    set_map_reset_time(map);
+    if(map->in_memory != MAP_IN_MEMORY) {
+	LOG(llevError,"Tried to swap out map which was not in memory.\n");
+	return;
+    }
+    for(pl=first_player;pl!=NULL;pl=pl->next)
+	if(pl->ob == NULL || (!(QUERY_FLAG(pl->ob,FLAG_REMOVED)) && pl->ob->map == map))
+	    break;
 
-  /* If it is immediate reset time, don't bother saving it - just get
-   * rid of it right away.
-   */
-  if (map->reset_time <= seconds()) {
-    mapstruct *oldmap = map;
+    if(pl != NULL) {
+	LOG(llevDebug,"Wanted to swap out map with player.\n");
+	return;
+    }
+    remove_all_pets(map); /* Give them a chance to follow */
 
-    LOG(llevDebug,"Resetting map %s.\n",map->path);
-#ifdef PLUGINS
-    /* GROS : Here we handle the MAPRESET global event */
-    evtid = EVENT_MAPRESET;
-    CFP.Value[0] = (void *)(&evtid);
-    CFP.Value[1] = (void *)(map->path);
-    GlobalEvent(&CFP);
-#endif
-    map = map->next;
-    delete_map(oldmap);
-    return;
-  }
+    /* Update the reset time.  Only do this is STAND_STILL is not set */
+    if (!map->fixed_resettime)
+	set_map_reset_time(map);
 
-  if (new_save_map (map, 0) == -1) {
-    LOG(llevError, "Failed to swap map %s.\n", map->path);
-    /* need to reset the in_memory flag so that delete map will also
-     * free the objects with it.
+    /* If it is immediate reset time, don't bother saving it - just get
+     * rid of it right away.
      */
-    map->in_memory = MAP_IN_MEMORY;
-    delete_map(map);
-  } else
-    free_map(map,1);
+    if (map->reset_time <= seconds()) {
+	mapstruct *oldmap = map;
+
+	LOG(llevDebug,"Resetting map %s.\n",map->path);
+#ifdef PLUGINS
+	/* GROS : Here we handle the MAPRESET global event */
+	evtid = EVENT_MAPRESET;
+	CFP.Value[0] = (void *)(&evtid);
+	CFP.Value[1] = (void *)(map->path);
+	GlobalEvent(&CFP);
+#endif
+	map = map->next;
+	delete_map(oldmap);
+	return;
+    }
+
+    if (new_save_map (map, 0) == -1) {
+	LOG(llevError, "Failed to swap map %s.\n", map->path);
+	/* need to reset the in_memory flag so that delete map will also
+	 * free the objects with it.
+	 */
+	map->in_memory = MAP_IN_MEMORY;
+	delete_map(map);
+    } else {
+	free_map(map,1);
+    }
+
 #ifdef RECYCLE_TMP_MAPS
-  write_map_log();
+    write_map_log();
 #endif
 }
 
 void check_active_maps() {
-  mapstruct *map, *next;
+    mapstruct *map, *next;
 
-  for(map=first_map;map!=NULL;map=next) {
-    next = map->next;
-    if(map->in_memory != MAP_IN_MEMORY)
-      continue;
-    if(!map->timeout)
-      continue;
-    if( --(map->timeout) > 0)
-      continue;
-    /* If LWM is set, we only swap maps out when we run out of objects */
+    for(map=first_map;map!=NULL;map=next) {
+	next = map->next;
+	if(map->in_memory != MAP_IN_MEMORY)
+	    continue;
+	if(!map->timeout)
+	    continue;
+	if( --(map->timeout) > 0)
+	    continue;
+	/* If LWM is set, we only swap maps out when we run out of objects */
 #ifndef MAX_OBJECTS_LWM
-    swap_map(map);
+	swap_map(map);
 #endif
-  }
+    }
 }
 
 /*
@@ -246,42 +250,59 @@ int players_on_map(mapstruct *m) {
  */
 void flush_old_maps() {
 
-  mapstruct *m, *oldmap;
-  long sec;
+    mapstruct *m, *oldmap;
+    long sec;
 #ifdef PLUGINS
-  int evtid;
-  CFParm CFP;
+    int evtid;
+    CFParm CFP;
 #endif
-  sec = seconds();
+    sec = seconds();
 
-  m= first_map;
-  while (m) {
-    /* There can be cases (ie death) where a player leaves a map and the timeout
-     * is not set so it isn't swapped out.
-     */
-    if ((m->in_memory == MAP_IN_MEMORY) && (m->timeout==0) &&
-	!players_on_map(m)) {
-	set_map_timeout(m);
-    }
+    m= first_map;
+    while (m) {
+	/* There can be cases (ie death) where a player leaves a map and the timeout
+	 * is not set so it isn't swapped out.
+	 */
+	if ((m->in_memory == MAP_IN_MEMORY) && (m->timeout==0) &&
+	    !players_on_map(m)) {
+	    set_map_timeout(m);
+	}
+
+	/* per player unique maps are never really reset.  However, we do want
+	 * to perdiocially remove the entries in the list of active maps - this
+	 * generates a cleaner listing if a player issues the map commands, and
+	 * keeping all those swapped out per player unique maps also has some
+	 * memory and cpu consumption.
+	 * We do the cleanup here because there are lots of places that call
+	 * swap map, and doing it within swap map may cause problems as
+	 * the functions calling it may not expect the map list to change
+	 * underneath them.
+	 */
+	if (m->unique && m->in_memory == MAP_SWAPPED) {
+	    LOG(llevDebug,"Resetting map %s.\n",m->path);
+	    oldmap = m;
+	    m = m->next;
+	    delete_map(oldmap);
+	}
 #ifdef MAP_RESET /* No need to flush them if there are no resets */
-    if(m->in_memory != MAP_SWAPPED || m->tmpname == NULL ||
-       sec < m->reset_time) {
-	m = m->next;
-       }
-    else {
-	LOG(llevDebug,"Resetting map %s.\n",m->path);
+	else if(m->in_memory != MAP_SWAPPED || m->tmpname == NULL ||
+	   sec < m->reset_time) {
+	    m = m->next;
+	}
+	else {
+	    LOG(llevDebug,"Resetting map %s.\n",m->path);
 #ifdef PLUGINS
-    /* GROS : Here we handle the MAPRESET global event */
-    evtid = EVENT_MAPRESET;
-    CFP.Value[0] = (void *)(&evtid);
-    CFP.Value[1] = (void *)(m->path);
-    GlobalEvent(&CFP);
+	    /* GROS : Here we handle the MAPRESET global event */
+	    evtid = EVENT_MAPRESET;
+	    CFP.Value[0] = (void *)(&evtid);
+	    CFP.Value[1] = (void *)(m->path);
+	    GlobalEvent(&CFP);
 #endif    
 	clean_tmp_map(m);
 	oldmap = m;
 	m = m->next;
 	delete_map(oldmap);
-    }
+	}
 #endif
-  }
+    }
 }

@@ -604,20 +604,16 @@ void drop_object (object *op, object *tmp, long nrof)
  *  the player here.
  */
 #ifdef SAVE_INTERVAL
-    if (op->type == PLAYER)
-    {
-    if (!QUERY_FLAG(tmp, FLAG_UNPAID) &&
-      (tmp->nrof ? tmp->value * tmp->nrof : tmp->value > 2000))
-#if SAVE_INTERVAL
-      if((op->contr->last_save_time + SAVE_INTERVAL) <= time(NULL)) {
+    /* I'm not sure why there is a value check - since the save
+     * is done every SAVE_INTERVAL seconds, why care the value
+     * of what he is dropping?
+     */
+    if (op->type == PLAYER && !QUERY_FLAG(tmp, FLAG_UNPAID) &&
+      (tmp->nrof ? tmp->value * tmp->nrof : tmp->value > 2000) &&
+      (op->contr->last_save_time + SAVE_INTERVAL) <= time(NULL)) {
 	  save_player(op, 1);
 	  op->contr->last_save_time = time(NULL);
-     }
-#else
-	save_player(op,1); /* To avoid cheating */
-        };
-};
-#endif
+    }
 #endif /* SAVE_INTERVAL */
 
 

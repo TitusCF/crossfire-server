@@ -6,7 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2001 Mark Wedel
+    Copyright (C) 2002 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -23,7 +23,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to mwedel@scruz.net
+    The author can be reached via e-mail to crossfire-devel@real-time.com
 */
 
 #include <global.h>
@@ -351,90 +351,107 @@ int roll_ob(object *op,int dir, object *pusher) {
 
 /* returns 1 if pushing invokes a attack, 0 when not */
 int push_ob(object *who, int dir, object *pusher) {
-  int str1, str2;
-  object *owner;
+    int str1, str2;
+    object *owner;
 
-  if (who->head != NULL)
-    who = who->head;
-  owner = get_owner(who);
+    if (who->head != NULL)
+	who = who->head;
+    owner = get_owner(who);
 
-  CLEAR_FLAG(who,FLAG_SLEEP); /* what ever: this action lets wakeup the sucker */
+    /* Wake up sleeping monsters that may be pushed */
+    CLEAR_FLAG(who,FLAG_SLEEP);
   
-  /* player change place with his pets or summoned creature */
-  /* TODO: allow multi arch pushing. Can't be very difficult */
-  if (who->more == NULL && owner == pusher)
-  {
-    int temp;
-    remove_ob(who);
-    remove_ob(pusher);
-    temp = pusher->x;
-    pusher->x = who->x;
-    who->x = temp;
-    temp = pusher->y;
-    pusher->y = who->y;
-    who->y = temp;
-    insert_ob_in_map (who,who->map,pusher,0);
-    insert_ob_in_map (pusher,pusher->map,pusher,0);
-    return 0;
+    /* player change place with his pets or summoned creature */
+    /* TODO: allow multi arch pushing. Can't be very difficult */
+    if (who->more == NULL && owner == pusher) {
+	int temp;
+	remove_ob(who);
+	remove_ob(pusher);
+	temp = pusher->x;
+	pusher->x = who->x;
+	who->x = temp;
+	temp = pusher->y;
+	pusher->y = who->y;
+	who->y = temp;
+	insert_ob_in_map (who,who->map,pusher,0);
+	insert_ob_in_map (pusher,pusher->map,pusher,0);
+
+	/* we presume that if the player is pushing his put, he moved in
+	 * direction 'dir'.  I can' think of any case where this would not be
+	 * the case.  Putting the map_scroll should also improve performance some.
+	 */
+	if (pusher->type == PLAYER ) {
+	    esrv_map_scroll(&pusher->contr->socket, freearr_x[dir],freearr_y[dir]);
+	    pusher->contr->socket.update_look=1;
+	    pusher->contr->socket.look_position=0;
+	}
+	return 0;
   }
 
 
-  /* We want ONLY become enemy of evil, unaggressive monster. We must RUN in them */
-  /* In original we have here a unaggressive check only - that was the reason why */
-  /* we so often become an enemy of friendly monsters... */
-  /* funny: was they set to unaggressive 0 (= not so nice) they don't attack */
-  if(owner != pusher &&  pusher->type == PLAYER && who->type != PLAYER &&
-      !QUERY_FLAG(who,FLAG_FRIENDLY)&& !QUERY_FLAG(who,FLAG_NEUTRAL))
-  {
-      if(pusher->contr->run_on) /* only when we run */
-      {
-          new_draw_info_format(NDI_UNIQUE, 0, pusher,
+    /* We want ONLY become enemy of evil, unaggressive monster. We must RUN in them */
+    /* In original we have here a unaggressive check only - that was the reason why */
+    /* we so often become an enemy of friendly monsters... */
+    /* funny: was they set to unaggressive 0 (= not so nice) they don't attack */
+
+    if(owner != pusher &&  pusher->type == PLAYER && who->type != PLAYER &&
+      !QUERY_FLAG(who,FLAG_FRIENDLY)&& !QUERY_FLAG(who,FLAG_NEUTRAL)) {
+	if(pusher->contr->run_on) /* only when we run */ {
+	    new_draw_info_format(NDI_UNIQUE, 0, pusher,
               "You start to attack %s !!",who->name);
-          CLEAR_FLAG(who,FLAG_UNAGGRESSIVE); /* the sucker don't like you anymore */
-          who->enemy = pusher;
-          return 1;
-      }
-      else 
-      {
-        new_draw_info_format(NDI_UNIQUE, 0, pusher,
-             "You avoid to attack %s .",who->name);
-      }
-  }
-
-  /* now, lets test stand still we NEVER can psuh stand_still monsters. */
-  if(QUERY_FLAG(who,FLAG_STAND_STILL))
-  {
-      new_draw_info_format(NDI_UNIQUE, 0, pusher,
-          "You can't push %s.",who->name);
-      return 0;
-  }
-  
-  /* ok, now we are here. I only allow player pushing */
-  /* for monsters, we have the arch commands how and why they can move/pushed */
-  /* and we have melee power like knockback */
-  str1 = (who->stats.Str>0?who->stats.Str:who->level);
-  str2 = (pusher->stats.Str>0?pusher->stats.Str:pusher->level);
-  if(QUERY_FLAG(who,FLAG_WIZ) ||
-     random_roll(str1, str1/2+str1*2, who, PREFER_HIGH) >= 
-     random_roll(str2, str2/2+str2*2, pusher, PREFER_HIGH) ||
-     !move_ob(who,dir,pusher))
-  {
-    if (who ->type == PLAYER) {
-      new_draw_info_format(NDI_UNIQUE, 0, who,
-	"%s tried to push you.",pusher->name);
+	    CLEAR_FLAG(who,FLAG_UNAGGRESSIVE); /* the sucker don't like you anymore */
+	    who->enemy = pusher;
+	    return 1;
+	}
+	else 
+	{
+	    new_draw_info_format(NDI_UNIQUE, 0, pusher,
+				 "You avoid to attack %s .",who->name);
+	}
     }
 
-    return 0;
-  }
-
-  if (who->type == PLAYER) {
-    new_draw_info_format(NDI_UNIQUE, 0, who,
-	"%s pushed you.",pusher->name);
-  }
-  else if (QUERY_FLAG(who, FLAG_MONSTER)) {
-      new_draw_info_format(NDI_UNIQUE, 0, pusher,
-          "You pushed %s back.", who->name);
-  }
+    /* now, lets test stand still we NEVER can psuh stand_still monsters. */
+    if(QUERY_FLAG(who,FLAG_STAND_STILL))
+    {
+	new_draw_info_format(NDI_UNIQUE, 0, pusher,
+          "You can't push %s.",who->name);
+	return 0;
+    }
   
-  return 1;
+    /* This block is basically if you are pushing friendly but
+     * non pet creaturs.
+     * It basically does a random strength comparision to
+     * determine if you can push someone around.  Note that
+     * this pushes the other person away - its not a swap.
+     */
+
+    str1 = (who->stats.Str>0?who->stats.Str:who->level);
+    str2 = (pusher->stats.Str>0?pusher->stats.Str:pusher->level);
+    if(QUERY_FLAG(who,FLAG_WIZ) ||
+       random_roll(str1, str1/2+str1*2, who, PREFER_HIGH) >= 
+       random_roll(str2, str2/2+str2*2, pusher, PREFER_HIGH) ||
+       !move_ob(who,dir,pusher))
+    {
+	if (who ->type == PLAYER) {
+	    new_draw_info_format(NDI_UNIQUE, 0, who,
+		 "%s tried to push you.",pusher->name);
+	}
+	return 0;
+    }
+
+    /* If we get here, the push succeeded.  Let each now the
+     * status.  I'm not sure if the second statement really needs
+     * to be in an else block - the message is going to a different
+     * player
+     */
+    if (who->type == PLAYER) {
+	new_draw_info_format(NDI_UNIQUE, 0, who,
+			     "%s pushed you.",pusher->name);
+    }
+    else if (QUERY_FLAG(who, FLAG_MONSTER)) {
+	new_draw_info_format(NDI_UNIQUE, 0, pusher,
+		"You pushed %s back.", who->name);
+    }
+  
+    return 1;
 }
