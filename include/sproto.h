@@ -9,7 +9,7 @@ object *make_item_from_recipe(object *cauldron, recipe *rp);
 object *find_transmution_ob(object *first_ingred, recipe *rp);
 void alchemy_failure_effect(object *op, object *cauldron, recipe *rp, int danger);
 void remove_contents(object *first_ob, object *save_item);
-int calc_alch_danger(object *caster, object *cauldron);
+int calc_alch_danger(object *caster, object *cauldron, recipe *rp);
 /* apply.c */
 int apply_potion(object *op, object *tmp);
 int check_item(object *op, char *item);

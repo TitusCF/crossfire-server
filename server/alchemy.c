@@ -92,115 +92,104 @@ char * cauldron_sound ( void ) {
  */
  
 void attempt_do_alchemy(object *caster, object *cauldron) {
-  recipelist *fl;
-  recipe *rp=NULL;
-  float success_chance;
-  int numb,ability=1;
-  int formula=0;
- 
-     if(caster->type!=PLAYER) return; /* only players for now */ 
+    recipelist *fl;
+    recipe *rp=NULL;
+    float success_chance;
+    int numb, ability=1;
+    int formula=0;
+    float ave_chance;
+    object *item;
+    int skillno;
 
-      /* if no ingredients, no formula! lets forget it */
-     if(!(formula=content_recipe_value(cauldron))) return;
+    if (caster->type!=PLAYER)
+	return; /* only players for now */ 
+
+    /* if no ingredients, no formula! lets forget it */
+    if (!(formula=content_recipe_value(cauldron))) return;
  
-     numb=numb_ob_inside(cauldron);
-     if((fl=get_formulalist(numb))) {
-        if(QUERY_FLAG(caster,FLAG_WIZ)) { 
+    numb=numb_ob_inside(cauldron);
+    if ((fl=get_formulalist(numb))) {
+        if (QUERY_FLAG(caster, FLAG_WIZ)) { 
 	    rp=fl->items;
-	    while(rp && (formula % rp->index)!=0) {
+	    while (rp && (formula % rp->index)!=0) {
 #ifdef EXTREME_ALCHEMY_DEBUG
-		LOG(llevDebug," found list %d formula: %s of %s (%d)\n",numb,
-		   rp->arch_name,rp->title,rp->index);
+		LOG(llevDebug, " found list %d formula: %s of %s (%d)\n", numb,
+		    rp->arch_name, rp->title, rp->index);
 #endif
 	    	rp=rp->next;
 	    }
-	    if(rp) {
+	    if (rp) {
 #ifdef ALCHEMY_DEBUG
-		if(strcmp(rp->title,"NONE"))
-		    LOG(llevDebug,"WIZ got formula: %s of %s\n",
-			rp->arch_name,rp->title);
+		if(strcmp(rp->title, "NONE"))
+		    LOG(llevDebug, "WIZ got formula: %s of %s\n",
+			rp->arch_name, rp->title);
 		else 
-		    LOG(llevDebug,"WIZ got formula: %s (nbatches:%d)\n",rp->arch_name,
-                      formula/rp->index);
+		    LOG(llevDebug, "WIZ got formula: %s (nbatches:%d)\n",
+			rp->arch_name, formula/rp->index);
 #endif
-		attempt_recipe(caster,cauldron,ability,rp,formula/rp->index);
-	    }else LOG(llevDebug,"WIZ couldnt find formula for ingredients.\n"); 
+		attempt_recipe(caster, cauldron, ability, rp, formula/rp->index);
+	    }else LOG(llevDebug, "WIZ couldnt find formula for ingredients.\n"); 
 	    return;
 	} /* End of WIZ alchemy */
 
 	/* find the recipe */
-	for(rp = fl->items;rp!=NULL && (formula % rp->index)!=0;rp=rp->next);
+	for (rp = fl->items;rp!=NULL && (formula % rp->index)!=0;rp=rp->next)
+	    ;
 
-	if(rp)  /* if we found a recipe */
-	{
-	  float ave_chance = fl->total_chance/(float)fl->number;
-	  object *item;
-	  int skillno;
-
-	  /* the caster gets an increase in ability based on thier skill lvl */
-	  if (rp->skill != NULL) {
-	      skillno = lookup_skill_by_name(rp->skill);
-	      if (skillno < 0) { /* invalid skill */
-		  LOG(llevDebug, "Recipie %s has invalid skill %s\n",
-		      rp->title, rp->skill);
-		  return;
-	      }
-/*	      if(find_skill(caster, skillno) != NULL) {
-		  change_skill(caster, skillno); */
-
-	      if (caster->chosen_skill->stats.sp == skillno) {
-		  ability+=SK_level(caster)*((4.0 + cauldron->magic)/4.0);
+	if (rp) { /* if we found a recipe */
+	    ave_chance = fl->total_chance/(float)fl->number;
+	    /* the caster gets an increase in ability based on thier skill lvl */
+	    if (rp->skill != NULL) {
+		skillno = lookup_skill_by_name(rp->skill);
+		if (skillno < 0) { /* invalid skill */
+		    LOG(llevDebug, "Recipie %s has invalid skill %s\n",
+			rp->title, rp->skill);
+		    return;
+		}
+		if (caster->chosen_skill->stats.sp == skillno) {
+		    ability+=SK_level(caster)*((4.0 + cauldron->magic)/4.0);
 #ifdef ALCHEMY_DEBUG
-		  LOG(llevDebug, "Got alchemy ability lvl = %d\n", ability);
+		    LOG(llevDebug, "Got alchemy ability lvl = %d\n", ability);
 #endif
-	      } else {
-		  new_draw_info(NDI_UNIQUE, 0, caster, "You did not use the "
-		      "proper skill for this recipe,");
-		  /*return;*/
-	      }
-	  } else {
-	      LOG(llevDebug, "Recipie %s has NULL skill!\n", rp->title);
-	      return;
-	  }
-
-	  if (rp->cauldron == NULL) {
-	      LOG(llevDebug, "Recipie %s has NULL cauldron!\n", rp->title);
-	      return;
-	  }
-
-	  /* create the object **FIRST**, then decide whether to keep it.	*/
-	  if((item=attempt_recipe(caster,cauldron,ability,rp,formula/rp->index)) != NULL) {
-	    /*  compute base chance of recipe success */
-	    success_chance = ((float)(15*ability) /
-			      (float)(15*ability + numb*item->level * (numb+item->level+formula/rp->index)));
-	    if(ave_chance == 0) ave_chance = 1;
-	    /* adjust the success chance by the chance from the recipe list	*/
-	    if(ave_chance > rp->chance)
-	      success_chance *= (rp->chance + ave_chance)/ (2.0*ave_chance);
-	    else
-	      success_chance = 1.0- ( (1.0-success_chance)*(rp->chance +ave_chance)/(2.0*rp->chance));
-
-#ifdef ALCHEMY_DEBUG
-	    LOG(llevDebug,"percent success chance =  %f\n",success_chance);
-#endif
-
-	    /* roll the dice */
-	    if ((float)(random_roll(0, 99, caster, PREFER_LOW)) <= 100.0 * success_chance) {
-		/* more exp is given for higher ingred number recipes */ 
-		int amount = numb*numb*calc_skill_exp(caster, item);
-		add_exp(caster, amount);
-		/* so when skill id this item, less xp is awarded */
-		item->stats.exp=0;
-#ifdef EXTREME_ALCHEMY_DEBUG 
-		LOG(llevDebug,"%s gains %d experience points.\n",caster->name,amount); 
-#endif
-	        return;
+		} else {
+		    new_draw_info(NDI_UNIQUE, 0, caster, "You did not use the "
+				  "proper skill for this recipe.");
+		    /*return;*/
+		}
+	    } else {
+		LOG(llevDebug, "Recipie %s has NULL skill!\n", rp->title);
+		return;
 	    }
-	  }
+
+	    if (rp->cauldron == NULL) {
+		LOG(llevDebug, "Recipie %s has NULL cauldron!\n", rp->title);
+		return;
+	    }
+
+	    /* create the object **FIRST**, then decide whether to keep it.	*/
+	    if ((item=attempt_recipe(caster, cauldron, ability, rp, formula/rp->index)) != NULL) {
+		/*  compute base chance of recipe success */
+		success_chance = ((float)ability /
+				  (float)(rp->diff * (item->level+2)));
+		if (ave_chance == 0)
+		    ave_chance = 1;
+
+#ifdef ALCHEMY_DEBUG
+		LOG(llevDebug, "percent success chance =  %f ab%d / diff%d*lev%d\n",
+		    success_chance, ability, rp->diff, item->level);
+#endif
+
+		/* roll the dice */
+		if ((float)(random_roll(0, 101, caster, PREFER_LOW)) <= 100.0 * success_chance) {
+		    add_exp(caster, rp->exp);
+		    return;
+		}
+	    }
 	}
-     }
-     /* if we get here, we failed!! */
-     alchemy_failure_effect(caster,cauldron,rp,calc_alch_danger(caster,cauldron));
+    }
+    /* if we get here, we failed!! */
+    alchemy_failure_effect(caster, cauldron, rp,
+	calc_alch_danger(caster, cauldron, rp));
 }
 
 /* content_recipe_value()- recipe value of the entire contents of a container.
@@ -316,22 +305,20 @@ object * attempt_recipe(object *caster, object *cauldron, int ability, recipe *r
 /* adjust_product() - we adjust the nrof, exp and level of the final product, based
  * on the item's default parameters, and the relevant caster skill level. */
 
-void adjust_product(object *item,int lvl ,int yield) {
-   int nrof=1;
+void adjust_product(object *item, int lvl, int yield) {
+    int nrof=1;
 
-   if(!yield) yield = 1;
-   if(lvl<=0) lvl = 1; /* lets avoid div by zero! */ 
-   if(item->nrof) {
-/*     nrof = (RANDOM() % yield + RANDOM() % yield + RANDOM() % yield)/ 3 + 1;*/
-     nrof = ( 1.0 - 1.0/(lvl/10.0 + 1.0)) * (rndm(0, yield-1) + rndm(0, yield-1) + rndm(0, yield-1)) + 1;
-     if(nrof > yield) nrof = yield;
-     item->nrof=nrof;
-   }
-
-   /* item exp. This will be used later for experience calculation */
-   item->stats.exp += lvl*lvl*nrof;
-
-   /* item->level = (lvl+item->level)/2; avg between default and caster levels */
+    if (!yield)
+	yield = 1;
+    if (lvl<=0)
+	lvl = 1; /* lets avoid div by zero! */ 
+    if (item->nrof) {
+	nrof = (1.0 - 1.0/(lvl/10.0 + 1.0)) *
+	    (rndm(0, yield-1) + rndm(0, yield-1) + rndm(0, yield-1)) + 1;
+	if (nrof > yield)
+	    nrof = yield;
+	item->nrof=nrof;
+    }
 }
 
 
@@ -585,7 +572,7 @@ void alchemy_failure_effect(object *op,object *cauldron,recipe *rp,int danger) {
 	 }
       }
       return;
-  } else if (level<200) {               	/* MANA STORM - watch out!! */
+  } else {               	/* MANA STORM - watch out!! */
       new_draw_info(NDI_UNIQUE,0,op,"You unwisely release potent forces!");
       remove_contents (cauldron->inv,NULL);
       cast_mana_storm(op,level);
@@ -625,7 +612,7 @@ void remove_contents (object *first_ob, object *save_item) {
  * -b.t. 
  */
  
-int calc_alch_danger(object *caster,object *cauldron) {
+int calc_alch_danger(object *caster,object *cauldron, recipe *rp) {
    object *item; 
    char name[MAX_BUF];
    int danger=0,nrofi=0; 
@@ -650,7 +637,7 @@ int calc_alch_danger(object *caster,object *cauldron) {
         danger += (strtoint(name)/1000) + 3;
 	nrofi++;
    }
-   if(nrofi>1) danger *= nrofi;
+   danger += rp->diff*3;
  
     /* Using a bad device is *majorly* stupid */
    if(QUERY_FLAG(cauldron,FLAG_CURSED)) danger +=80;

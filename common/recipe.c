@@ -45,6 +45,8 @@ static recipe *get_empty_formula() {
   t->index = 0;
   t->transmute = 0;
   t->yield=0;
+  t->diff=0;
+  t->exp=0;
   t->keycode = 0;
   t->title = NULL;
   t->arch_name = NULL;
@@ -139,6 +141,12 @@ void init_formulae() {
     }
     else if (sscanf(cp, "chance %d", &value)) {
         formula->chance = (uint16) value;
+    }
+    else if (sscanf(cp, "exp %d", &value)) {
+	formula->exp = (uint16)value;
+    }
+    else if (sscanf(cp, "diff %d", &value)) {
+	formula->diff = (uint16)value;
     }
     else if (!strncmp(cp, "ingred",6)) {
       int numb_ingred = 1;
@@ -258,6 +266,8 @@ void dump_alchemy( void ) {
 		 fprintf(logfile, "\tSkill Required: %s", formula->skill);
 	     if (formula->cauldron != NULL)
 		 fprintf(logfile, "\tCauldron: %s\n", formula->cauldron);
+	     fprintf(logfile, "\tDifficulty: %d\t Exp: %d\n", formula->diff,
+		 formula->exp);
 	  }
 	} else 
 	   LOG(llevError,"Can't find archetype:%s for formula %s\n", string,

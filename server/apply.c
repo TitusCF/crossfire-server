@@ -644,7 +644,10 @@ int improve_armour(object *op, object *improver, object *armour)
             fix_player(op);
     }
     decrease_ob(improver);
-    insert_ob_in_ob(tmp, op);
+    if (tmp) {
+	insert_ob_in_ob(tmp, op);
+	esrv_send_item(op, tmp);
+    }
     return 1;
 }
 

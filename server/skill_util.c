@@ -201,18 +201,11 @@ int do_skill (object *op, object *part, int dir, char *string) {
 	    /* first, we try to find a cauldron, and do the alchemy thing.
 	     * failing that, we go and identify stuff. 
 	     */
-	    for (y=op->y-1; y <= op->y+1; y++) {
-		for (x=op->x-1; x <= op->x+1; x++) {
-		    if (get_map_flags(op->map, NULL, x, y, NULL, NULL) & (P_OUT_OF_MAP | P_WALL | P_BLOCKSVIEW))
-			continue;
-		    for (tmp=get_map_ob(op->map, x, y); tmp != NULL; tmp=next) {
-			next=tmp->above;
-			if(QUERY_FLAG(tmp, FLAG_IS_CAULDRON)) {
-			    attempt_do_alchemy(op, tmp);
-			    did_alc=1;
-			    continue;
-			}
-		    }
+	    for (tmp=get_map_ob(op->map, op->x, op->y); tmp != NULL;tmp=next) {
+		next=tmp->above;
+		if(QUERY_FLAG(tmp, FLAG_IS_CAULDRON)) {
+		    attempt_do_alchemy(op, tmp);
+		    did_alc=1;
 		}
 	    }
 	    if (did_alc == 0)

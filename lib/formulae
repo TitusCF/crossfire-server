@@ -104,6 +104,8 @@ Object NONE
 arch true_lead
 yield 2
 chance 5
+diff 80
+exp 100000
 skill alchemy
 cauldron cauldron
 ingred lead,pile of philosophical salt,bottle of philosophical oil,pile of philosophical sulphur,pile of philosophical phosphorus
@@ -113,6 +115,8 @@ Object NONE
 arch fix_mercury
 yield 2
 chance 5
+diff 80
+exp 100000
 skill alchemy
 cauldron cauldron
 ingred mercury,pile of philosophical salt,bottle of philosophical oil,pile of philosophical sulphur,pile of philosophical phosphorus
@@ -121,6 +125,8 @@ ingred mercury,pile of philosophical salt,bottle of philosophical oil,pile of ph
 Object NONE
 arch mercury
 chance 10
+diff 5
+exp 1000
 skill alchemy
 cauldron cauldron
 ingred 3 pile of cinnabar
@@ -129,6 +135,8 @@ ingred 3 pile of cinnabar
 Object NONE
 arch phil_salt
 chance 10
+diff 5
+exp 1000
 yield 7
 skill alchemy
 cauldron cauldron
@@ -138,6 +146,8 @@ ingred 7 pile of salt
 Object NONE
 arch phil_sulphur
 chance 10
+diff 5
+exp 1000
 yield 7
 skill alchemy
 cauldron cauldron
@@ -147,6 +157,8 @@ ingred 7 pile of sulphur
 Object NONE
 arch phil_phosphorus
 chance 10
+diff 5
+exp 1000
 yield 7
 skill alchemy
 cauldron cauldron
@@ -156,6 +168,8 @@ ingred 7 pile of phosphorus
 Object NONE
 arch phil_oil
 chance 9
+diff 5
+exp 1000
 yield 7
 skill alchemy
 cauldron cauldron
@@ -165,6 +179,8 @@ ingred 7 bottle of mineral oil
 Object the wise
 arch water
 chance 30
+diff 8
+exp 1000
 yield 7
 skill alchemy
 cauldron cauldron
@@ -174,6 +190,8 @@ ingred 7 water
 Object diamond
 arch water
 chance 30
+diff 10
+exp 5000
 yield 1
 skill alchemy
 cauldron cauldron
@@ -182,6 +200,8 @@ ingred water of the wise,3 diamond
 # water of ruby
 Object ruby
 arch water
+diff 10
+exp 5000
 chance 35
 skill alchemy
 cauldron cauldron
@@ -190,6 +210,8 @@ ingred 3 ruby,water of the wise
 # water of sapphire 
 Object sapphire
 arch water
+diff 10
+exp 5000
 chance 40
 skill alchemy
 cauldron cauldron
@@ -199,6 +221,8 @@ ingred 3 sapphire,water of the wise
 Object emerald
 arch water
 chance 40
+diff 10
+exp 5000
 skill alchemy
 cauldron cauldron
 ingred 3 emerald,water of the wise
@@ -207,6 +231,8 @@ ingred 3 emerald,water of the wise
 Object pearl
 arch water
 chance 40
+diff 10
+exp 5000
 skill alchemy
 cauldron cauldron
 ingred 3 pearl,water of the wise
@@ -226,6 +252,8 @@ ingred 3 pearl,water of the wise
 Object asbestos
 arch balm_generic
 chance 25
+diff 15
+exp 8000
 skill alchemy
 cauldron cauldron
 ingred 3 dragon scale,water of the wise
@@ -234,6 +262,8 @@ ingred 3 dragon scale,water of the wise
 Object warmth
 arch balm_generic
 chance 25
+diff 16
+exp 9000
 skill alchemy
 cauldron cauldron
 ingred vampire's heart,water of the wise,icecube
@@ -242,6 +272,8 @@ ingred vampire's heart,water of the wise,icecube
 Object warmth
 arch balm_generic
 chance 25
+diff 14
+exp 6000
 skill alchemy
 cauldron cauldron
 ingred vampire's heart,water of the wise,water of pearl
@@ -250,6 +282,8 @@ ingred vampire's heart,water of the wise,water of pearl
 Object insulation
 arch balm_generic
 chance 25
+diff 14
+exp 7000
 skill alchemy
 cauldron cauldron
 ingred beholdereye,water of the wise,2 key
@@ -258,6 +292,8 @@ ingred beholdereye,water of the wise,2 key
 Object aethereality
 arch balm_generic
 chance 28
+diff 17
+exp 8000
 skill alchemy
 cauldron cauldron
 ingred 3 ghost's ectoplasm,water of emerald
@@ -268,6 +304,8 @@ ingred 3 ghost's ectoplasm,water of emerald
 Object traveling
 arch balm_generic
 chance 2
+diff 12
+exp 6000
 yield 3
 skill alchemy
 cauldron cauldron
@@ -277,6 +315,8 @@ ingred 3 xan's wing,3 pixie's wings,3 water of sapphire
 Object transparency
 arch balm_generic
 chance 8
+diff 14
+exp 7000
 skill alchemy
 cauldron cauldron
 ingred ghost's ectoplasm,water of emerald,3 onion
@@ -285,6 +325,8 @@ ingred ghost's ectoplasm,water of emerald,3 onion
 Object invisible to undead
 arch balm_generic
 chance 15
+diff 10
+exp 5000
 skill alchemy
 cauldron cauldron
 ingred zombie's corpse,graveyard dirt
@@ -293,6 +335,8 @@ ingred zombie's corpse,graveyard dirt
 Object first aid
 arch balm_generic
 chance 27
+diff 9
+exp 4000
 skill alchemy
 cauldron cauldron
 ingred water of the wise,mandrake root
@@ -301,6 +345,8 @@ ingred water of the wise,mandrake root
 Object flying
 arch balm_generic
 chance 20
+diff 13
+exp 7000
 skill alchemy
 cauldron cauldron
 ingred 2 giant bat's wing,water of the wise
@@ -309,6 +355,8 @@ ingred 2 giant bat's wing,water of the wise
 Object serpent
 arch balm_generic
 chance 12
+diff 12
+exp 6000
 skill alchemy
 cauldron cauldron
 ingred snake's skin,bottle of philosophical oil
@@ -320,6 +368,8 @@ ingred snake's skin,bottle of philosophical oil
 Object clay
 arch figurine_generic
 chance 8
+diff 8
+exp 3000
 skill alchemy
 cauldron cauldron
 ingred 3 graveyard dirt,water of the wise
@@ -328,6 +378,8 @@ ingred 3 graveyard dirt,water of the wise
 Object whirlwind
 arch figurine_generic
 chance 7
+diff 20
+exp 20000
 yield 4
 skill alchemy
 cauldron cauldron
@@ -337,6 +389,8 @@ ingred air para-elemental's residue,7 pile of gypsum,bottle of philosophical oil
 Object stone
 arch figurine_generic
 chance 5
+diff 20
+exp 20000
 yield 4
 skill alchemy
 cauldron cauldron
@@ -346,6 +400,8 @@ ingred earth para-elemental's residue,7 pile of pyrite,bottle of philosophical o
 Object a great wave
 arch figurine_generic
 chance 4
+diff 20
+exp 20000
 yield 4
 skill alchemy
 cauldron cauldron
@@ -355,6 +411,8 @@ ingred water para-elemental's residue,7 water,bottle of philosophical oil
 Object a flame
 arch figurine_generic
 chance 3
+diff 20
+exp 20000
 yield 4
 skill alchemy
 cauldron cauldron
@@ -365,6 +423,8 @@ Object a clenched hand
 arch figurine_generic
 chance 1
 yield 7
+diff 14
+exp 10000
 skill alchemy
 cauldron cauldron
 ingred figurine of clay,hill giant's hand,bottle of philosophical oil
@@ -378,6 +438,8 @@ ingred figurine of clay,hill giant's hand,bottle of philosophical oil
 Object stasis
 arch dust_generic
 chance 15
+diff 10
+exp 5000
 skill alchemy
 cauldron cauldron
 ingred mountain stone,goblin's liver
@@ -386,6 +448,8 @@ ingred mountain stone,goblin's liver
 Object madness
 arch dust_generic
 chance 15
+diff 12
+exp 6000
 yield 2
 skill alchemy
 cauldron cauldron
@@ -396,6 +460,8 @@ Object ignition
 arch dust_generic
 chance 19
 yield 4
+diff 15
+exp 8000
 skill alchemy
 cauldron cauldron
 ingred water of diamond,pile of salt,pile of phosphorus,pile of sulphur
@@ -405,6 +471,8 @@ Object conflagration
 arch dust_generic
 chance 5
 yield 4
+diff 20
+exp 20000
 skill alchemy
 cauldron cauldron
 ingred water of diamond,pile of philosophical salt,pile of philosophical phosphorus,pile of philosophical sulphur
@@ -413,6 +481,8 @@ ingred water of diamond,pile of philosophical salt,pile of philosophical phospho
 Object countermagic
 arch dust_generic
 chance 23
+diff 15
+exp 9000
 yield 4
 skill alchemy
 cauldron cauldron
@@ -422,6 +492,8 @@ ingred 2 lead,pile of philosophical phosphorus
 Object frost
 arch dust_generic
 chance 18
+diff 12
+exp 10000
 yield 4
 skill alchemy
 cauldron cauldron
@@ -431,6 +503,8 @@ ingred icecube,icecube,icecube,water of diamond
 Object frost
 arch dust_generic
 chance 18
+diff 14
+exp 8000
 yield 3
 skill alchemy
 cauldron cauldron
@@ -440,6 +514,8 @@ ingred water of pearl,water of diamond,pile of gypsum
 Object concussion
 arch dust_generic
 chance 8
+diff 10
+exp 5000
 yield 2
 skill alchemy
 cauldron cauldron
@@ -449,6 +525,8 @@ ingred dust of conflagration,dust of ignition
 Object fright
 arch dust_generic
 chance 16
+diff 12
+exp 6000
 yield 2
 skill alchemy
 cauldron cauldron
@@ -458,6 +536,8 @@ ingred orc's heart,water of the wise
 Object repelling undead
 arch dust_generic
 chance 11
+diff 9
+exp 4500
 yield 6
 skill alchemy
 cauldron cauldron
@@ -476,6 +556,8 @@ ingred pile of salt,graveyard dirt
 Object clairvoyance
 arch dust_generic
 chance 14
+diff 7
+exp 4000
 yield 6
 skill alchemy
 cauldron cauldron
@@ -485,6 +567,8 @@ ingred 2 beholdereye,water of sapphire
 Object Ibn Gahzi
 arch dust_generic
 chance 3
+diff 9
+exp 4500
 yield 5
 skill alchemy
 cauldron cauldron
@@ -494,6 +578,8 @@ ingred 3 pile of gypsum,dread's eye,water of emerald
 Object show enchantment
 arch dust_generic
 chance 38
+diff 5
+exp 2000
 yield 5
 skill alchemy
 cauldron cauldron
@@ -503,6 +589,8 @@ ingred pixie dust,pile of pyrite
 Object night vision
 arch dust_generic
 chance 17
+diff 15
+exp 9000
 yield 10
 skill alchemy
 cauldron cauldron
@@ -513,6 +601,8 @@ Object piercing vision
 arch dust_generic
 chance 11
 yield 10
+diff 9
+exp 4500
 skill alchemy
 cauldron cauldron
 ingred water of sapphire,7 carrots
@@ -521,6 +611,8 @@ ingred water of sapphire,7 carrots
 Object clinging glow
 arch dust_generic
 chance 21
+diff 14
+exp 8000
 yield 10
 skill alchemy
 cauldron cauldron
@@ -533,6 +625,8 @@ ingred pile of pyrite,3 pixie dust,water of the wise
 Object Biren's mist
 arch dust_generic
 chance 6
+diff 15
+exp 7000
 yield 3
 skill alchemy
 cauldron cauldron
@@ -543,6 +637,8 @@ Object Biren's mist
 arch dust_generic
 chance 6
 yield 6
+diff 14
+exp 7500
 skill alchemy
 cauldron cauldron
 ingred water of the wise,water of pearl,booze
@@ -551,6 +647,8 @@ ingred water of the wise,water of pearl,booze
 Object the Dead
 arch dust_generic
 chance 14
+diff 14
+exp 7000
 yield 5
 skill alchemy
 cauldron cauldron
@@ -560,6 +658,8 @@ ingred skull's tongue,zombie's corpse,graveyard dirt
 Object visibility
 arch dust_generic
 chance 24
+diff 12
+exp 6000
 yield 6
 skill alchemy
 cauldron cauldron
@@ -569,6 +669,8 @@ ingred torch,water of ruby,pile of sulphur
 Object impenatrability
 arch dust_generic
 chance 15
+diff 18
+exp 12000
 yield 3
 skill alchemy
 cauldron cauldron
@@ -578,6 +680,8 @@ ingred burnt out torch,lead,dust of Biren's mist
 Object consuming wrath
 arch dust_generic
 chance 16
+diff 18
+exp 12000
 yield 5
 skill alchemy
 cauldron cauldron
@@ -587,6 +691,8 @@ ingred water of diamond,pile of phosphorus,lead,pile of sulphur
 Object encompassing rage
 arch dust_generic
 chance 4
+diff 20
+exp 20000
 yield 5
 skill alchemy
 cauldron cauldron
@@ -598,6 +704,8 @@ Object blizzards
 arch dust_generic
 chance 5
 yield 5
+diff 15
+exp 10000
 skill alchemy
 cauldron cauldron
 ingred water of sapphire,dust of frost,bottle of philosophical oil
@@ -614,6 +722,8 @@ ingred water of sapphire,dust of frost,bottle of philosophical oil
 Object might
 arch potion_generic
 chance 18
+diff 16
+exp 12000
 skill alchemy
 cauldron cauldron
 ingred 3 water of the wise,ogre's arm,pile of philosophical salt
@@ -622,6 +732,8 @@ ingred 3 water of the wise,ogre's arm,pile of philosophical salt
 Object agility
 arch potion_generic
 chance 18
+diff 16
+exp 12000
 yield 7
 skill alchemy
 cauldron cauldron
@@ -631,6 +743,8 @@ ingred 3 water of the wise,pixie dust,pile of philosophical salt
 Object health
 arch potion_generic
 chance 17
+diff 16
+exp 12000
 yield 7
 skill alchemy
 cauldron cauldron
@@ -640,6 +754,8 @@ ingred 3 water of the wise,small troll's liver,pile of philosophical salt
 Object beauty
 arch balm_generic
 chance 5
+diff 16
+exp 12000
 yield 7
 skill alchemy
 cauldron cauldron
@@ -649,6 +765,8 @@ ingred woman's head,3 mint sprig,water of the wise
 Object NONE
 arch potion_heroism
 chance 11
+diff 16
+exp 12000
 yield 8
 skill alchemy
 cauldron cauldron
@@ -662,6 +780,8 @@ ingred ogre's heart,3 water of the wise,pile of philosophical salt,pirate's hear
 Object NONE
 arch potion_cold
 chance 0
+diff 50
+exp 500000
 yield 10
 skill alchemy
 cauldron cauldron
@@ -672,6 +792,8 @@ keycode fire alchemist
 Object NONE
 arch potion_fire
 chance 1
+diff 50
+exp 500000
 yield 10
 skill alchemy
 cauldron cauldron
@@ -681,6 +803,8 @@ ingred ice para-elemental's residue,3 balm of warmth,chinese dragon's steak,7 wa
 Object NONE
 arch potion_invulnerability
 chance 0
+diff 50
+exp 500000
 yield 4
 skill alchemy
 cauldron cauldron
@@ -690,6 +814,8 @@ ingred spectre's ectoplasm,demon's head,7 water of ruby,3 balm of aethereality
 Object magic resistance
 arch potion_generic
 chance 0
+diff 50
+exp 500000
 yield 14
 skill alchemy
 cauldron cauldron
@@ -699,6 +825,8 @@ ingred block of true lead,demon's heart,7 water of diamond,3 potion of resist ma
 Object shock resistance
 arch potion_generic
 chance 0
+diff 50
+exp 500000
 yield 14
 skill alchemy
 cauldron cauldron
@@ -708,6 +836,8 @@ ingred lightning para-elemental's residue,block of fixed mercury,titan's head,7 
 Object resist magic
 arch potion_generic
 chance 25
+diff 20
+exp 20000
 yield 2
 skill alchemy
 cauldron cauldron
@@ -717,6 +847,8 @@ ingred water of ruby,beholder's tongue,mandrake root
 Object resist confusion
 arch potion_generic
 chance 22
+diff 20
+exp 20000
 skill alchemy
 cauldron cauldron
 ingred madman's head,beholdereye,water of ruby
@@ -725,6 +857,8 @@ ingred madman's head,beholdereye,water of ruby
 Object resist draining
 arch potion_generic
 chance 21
+diff 15
+exp 12000
 yield 10
 skill alchemy
 cauldron cauldron
@@ -734,6 +868,8 @@ ingred wight's corpse,water of ruby,graveyard dirt
 Object resist paralysis
 arch potion_generic
 chance 24
+diff 14
+exp 11000
 yield 10
 skill alchemy
 cauldron cauldron
@@ -743,6 +879,8 @@ ingred mercury,water of ruby,cunning gnome's corpse
 Object resist slow
 arch potion_generic
 chance 24
+diff 14
+exp 11000
 yield 10
 skill alchemy
 cauldron cauldron
@@ -752,6 +890,8 @@ ingred water of ruby,2 xan's wing
 Object resist poison
 arch potion_generic
 chance 20
+diff 15
+exp 12000
 yield 10
 skill alchemy
 cauldron cauldron
@@ -763,6 +903,8 @@ ingred scorpion's stinger,water of ruby,clover
 Object cure vision
 arch potion_generic
 chance 15
+diff 12
+exp 9000
 yield 5
 skill alchemy
 cauldron cauldron
@@ -772,6 +914,8 @@ ingred man's eye,carrots,balm of first aid
 Object cure sickness
 arch potion_generic
 chance 16
+diff 12
+exp 9000
 yield 5
 skill alchemy
 cauldron cauldron
@@ -781,6 +925,8 @@ ingred snake's skin,apple,balm of first aid
 Object cure madness
 arch potion_generic
 chance 17
+diff 12
+exp 9000
 yield 9
 skill alchemy
 cauldron cauldron
@@ -792,6 +938,8 @@ ingred madman's head,apple,balm of first aid
 Object NONE
 arch potion_magic
 chance 0
+diff 20
+exp 20000
 yield 5
 skill alchemy
 cauldron cauldron
@@ -801,6 +949,8 @@ ingred 3 potion of mystic power,block of fixed mercury,water of diamond
 Object NONE
 arch potion_magic
 chance 0
+diff 20
+exp 25000
 yield 4
 skill alchemy
 cauldron cauldron
@@ -810,6 +960,8 @@ ingred potion of mystic power,mushroom of Magic,water of diamond
 Object NONE
 arch potion_restoration
 chance 7
+diff 10
+exp 10000
 yield 5
 skill alchemy
 cauldron cauldron
@@ -819,6 +971,8 @@ ingred unicorn horn,3 booze
 Object NONE
 arch potion_heal
 chance 4
+diff 13
+exp 13000
 yield 4
 skill alchemy
 cauldron cauldron
@@ -828,6 +982,8 @@ ingred potion of life,mushroom of Healing,red rose
 Object NONE
 arch potion_heal
 chance 2
+diff 13
+exp 13000
 yield 5
 skill alchemy
 cauldron cauldron
@@ -837,6 +993,8 @@ ingred unicorn horn,balm of first aid,red rose
 Object recuperation
 arch potion_generic
 chance 9
+diff 13
+exp 13000
 yield 7
 skill alchemy
 cauldron cauldron
@@ -846,6 +1004,8 @@ ingred troll's liver,water of the wise,3 booze
 Object speed
 arch potion_generic
 chance 1
+diff 20
+exp 20000
 yield 4
 skill alchemy
 cauldron cauldron
@@ -855,6 +1015,8 @@ ingred pixie's wings,xan's wing,water of diamond
 Object mystic power
 arch potion_generic
 chance 8
+diff 12
+exp 12000
 yield 6
 skill alchemy
 cauldron cauldron
@@ -864,6 +1026,8 @@ ingred 3 water of diamond,sage's head,clover
 Object self knowledge
 arch potion_generic
 chance 20
+diff 10
+exp 10000
 yield 3
 skill alchemy
 cauldron cauldron
@@ -873,6 +1037,8 @@ ingred sage's head,water of the wise
 Object cure illness
 arch potion_generic
 chance 20
+diff 5
+exp 5000
 yield 5
 skill alchemy
 cauldron cauldron
@@ -884,6 +1050,8 @@ ingred booze,balm of first aid,red rose
 Object electric shock
 arch potion_generic
 chance 4
+diff 10
+exp 10000
 yield 3
 skill alchemy
 cauldron cauldron
@@ -893,6 +1061,8 @@ ingred lightning para-elemental's residue,water of diamond
 Object fire
 arch potion_generic
 chance 4
+diff 10
+exp 10000
 yield 3
 skill alchemy
 cauldron cauldron
@@ -902,6 +1072,8 @@ ingred fire para-elemental's residue,water of ruby
 Object freezing
 arch potion_generic
 chance 4
+diff 10
+exp 10000
 yield 3
 skill alchemy
 cauldron cauldron
@@ -911,6 +1083,8 @@ ingred ice para-elemental's residue,water of sapphire
 Object sunfire
 arch potion_generic
 chance 4
+diff 10
+exp 10000
 yield 3
 skill alchemy
 cauldron cauldron
@@ -920,6 +1094,8 @@ ingred lava para-elemental's residue,water of diamond
 Object black fire
 arch potion_generic
 chance 2
+diff 10
+exp 10000
 yield 5
 skill alchemy
 cauldron cauldron
@@ -929,6 +1105,8 @@ ingred potion of fire,potion of sunfire,water of diamond
 Object fiery destruction
 arch potion_generic
 chance 0
+diff 50
+exp 50000
 yield 6
 skill alchemy
 cauldron cauldron
@@ -938,6 +1116,8 @@ ingred potion of black fire,water of diamond,water of ruby,water of sapphire,wat
 Object firestorm
 arch potion_generic
 chance 12
+diff 18
+exp 18000
 yield 7
 skill alchemy
 cauldron cauldron
@@ -947,6 +1127,8 @@ ingred dust of ignition,3 booze,bottle of philosophical oil
 Object great firestorm
 arch potion_generic
 chance 4
+diff 18
+exp 18000
 yield 7
 skill alchemy
 cauldron cauldron
@@ -956,6 +1138,8 @@ ingred dust of conflagration,3 booze,bottle of philosophical oil
 Object noxious fumes
 arch potion_generic
 chance 15
+diff 18
+exp 18000
 yield 7
 skill alchemy
 cauldron cauldron
@@ -965,6 +1149,8 @@ ingred 3 xan's wing,water of emerald
 Object Rainbow Wave
 arch potion_generic
 chance 0
+diff 50
+exp 100000
 yield 6
 skill alchemy
 cauldron cauldron
@@ -974,6 +1160,8 @@ ingred wyvern of chaos's steak,7 water of diamond,potion of electric shock,skull
 Object lasting shock
 arch potion_generic
 chance 3
+diff 28
+exp 40000
 yield 3
 skill alchemy
 cauldron cauldron
@@ -987,6 +1175,8 @@ Object Slay Dragon
 arch arrow
 chance 3
 trans 1
+diff 5
+exp 5000
 yield 20
 skill bowyer
 cauldron workbench
@@ -995,6 +1185,8 @@ ingred 20 arrow,dragon's claw
 Object Slay Dragon
 arch bolt
 chance 4
+diff 5
+exp 5000
 trans 1
 yield 20
 skill bowyer
@@ -1005,6 +1197,8 @@ ingred 20 bolt,dragon's claw
 Object Assassinating Dragons
 arch bolt
 chance 0
+diff 30
+exp 50000
 yield 20
 trans 1
 skill bowyer
@@ -1015,6 +1209,8 @@ ingred 20 bolt,dragon's heart,water of emerald,scorpion's stinger
 Object Assassinating Dragons
 arch arrow
 chance 0
+diff 30
+exp 50000
 yield 20
 trans 1
 skill bowyer
@@ -1024,6 +1220,8 @@ ingred 20 arrow,dragon's heart,water of emerald,scorpion's stinger
 Object Assassinating Trolls
 arch bolt
 chance 0
+diff 30
+exp 50000
 trans 1
 yield 20
 skill bowyer
@@ -1034,6 +1232,8 @@ ingred 20 bolt,troll's heart,scorpion's stinger
 Object Assassinating Trolls
 arch arrow
 chance 0
+diff 30
+exp 50000
 yield 20
 trans 1
 skill bowyer
@@ -1044,6 +1244,8 @@ ingred 20 arrow,troll's heart,scorpion's stinger
 Object Blessedness
 arch bolt
 chance 0
+diff 30
+exp 50000
 trans 1
 yield 20
 skill bowyer
@@ -1054,6 +1256,8 @@ ingred 20 bolt,unicorn horn,2 water of sapphire
 Object Blessedness
 arch arrow
 chance 0
+diff 30
+exp 50000
 trans 1
 yield 20
 skill bowyer
@@ -1064,6 +1268,8 @@ ingred 20 arrow,unicorn horn,2 water of sapphire
 Object Magic
 arch arrow
 chance 4
+diff 5
+exp 5000
 trans 1
 yield 20
 skill bowyer
@@ -1074,6 +1280,8 @@ ingred 20 arrow,potion of mystic power
 Object Magic
 arch bolt
 chance 4
+diff 5
+exp 5000
 trans 1
 yield 20
 skill bowyer
@@ -1085,6 +1293,8 @@ Object Fire
 arch arrow
 chance 4
 trans 1
+diff 5
+exp 5000
 yield 20
 skill bowyer
 cauldron workbench
@@ -1094,6 +1304,8 @@ ingred 20 arrow,wyvern's steak
 Object Fire
 arch bolt
 chance 4
+diff 5
+exp 5000
 trans 1
 yield 20
 skill bowyer
@@ -1104,6 +1316,8 @@ ingred 20 bolt,wyvern's steak
 Object Frost
 arch arrow
 chance 4
+diff 5
+exp 5000
 trans 1
 yield 20
 skill bowyer
@@ -1114,6 +1328,8 @@ ingred 20 arrow,ghost's ectoplasm
 Object Frost
 arch bolt
 chance 4
+diff 5
+exp 5000
 trans 1
 yield 20
 skill bowyer
@@ -1124,6 +1340,8 @@ ingred 20 bolt,ghost's ectoplasm
 Object Lightning
 arch arrow
 chance 4
+diff 5
+exp 5000
 trans 1
 yield 20
 skill bowyer
@@ -1134,6 +1352,8 @@ ingred 20 arrow,skull's tooth
 Object Lightning
 arch bolt
 chance 4
+diff 5
+exp 5000
 trans 1
 yield 20
 skill bowyer
@@ -1144,6 +1364,8 @@ ingred 20 bolt,skull's tooth
 Object Paralysis
 arch arrow
 chance 4
+diff 5
+exp 5000
 trans 1
 yield 20
 skill bowyer
@@ -1154,6 +1376,8 @@ ingred 20 arrow,beholdereye
 Object Paralysis
 arch bolt
 chance 4
+diff 5
+exp 5000
 trans 1
 yield 20
 skill bowyer
@@ -1164,6 +1388,8 @@ ingred 20 bolt,beholdereye
 Object Poison
 arch arrow
 chance 4
+diff 5
+exp 5000
 trans 1
 yield 20
 skill bowyer
@@ -1174,6 +1400,8 @@ ingred 20 arrow,scorpion's stinger
 Object Poison
 arch bolt
 chance 4
+diff 5
+exp 5000
 trans 1
 yield 20
 skill bowyer
@@ -1187,6 +1415,8 @@ ingred 20 bolt,scorpion's stinger
 Object minor protection
 arch cloak
 chance 5
+diff 5
+exp 5000
 yield 1
 skill woodsman
 cauldron tanbench
@@ -1195,6 +1425,8 @@ ingred cloak,balm of aethereality
 Object intermediate protection
 arch cloak
 chance 4
+diff 10
+exp 15000
 yield 1
 skill woodsman
 cauldron tanbench
@@ -1203,6 +1435,8 @@ ingred cloak,ghost's ectoplasm,balm of aethereality
 Object greater protection
 arch cloak
 chance 2
+diff 20
+exp 30000
 yield 1
 skill woodsman
 cauldron tanbench
@@ -1211,6 +1445,8 @@ ingred cloak,spectre's ectoplasm,potion of aethereality
 Object Insulation
 arch cloak
 chance 3
+diff 10
+exp 10000
 yield 1
 skill woodsman
 cauldron tanbench
@@ -1218,6 +1454,8 @@ ingred cloak,3 electric dragon's steak,balm of insulation
 #
 Object Warmth
 arch cloak
+diff 10
+exp 10000
 chance 3
 yield 1
 skill woodsman
@@ -1227,6 +1465,8 @@ ingred cloak,3 chinese dragon's steak,balm of insulation
 Object Asbestos
 arch cloak
 chance 3
+diff 10
+exp 10000
 yield 1
 skill woodsman
 cauldron tanbench
@@ -1235,6 +1475,8 @@ ingred cloak,3 dragon's steak,balm of insulation
 Object Acid Proofing
 arch cloak
 chance 3
+diff 25
+exp 50000
 yield 1
 skill woodsman
 cauldron tanbench
@@ -1243,6 +1485,8 @@ ingred cloak,gaelotroll's corpse,block of true lead
 Object Lythander
 arch cloak
 chance 1
+diff 25
+exp 50000
 yield 1
 skill woodsman
 cauldron tanbench
@@ -1252,6 +1496,8 @@ Object Gaea
 arch cloak
 chance 1
 yield 1
+diff 26
+exp 55000
 skill woodsman
 cauldron tanbench
 ingred cloak,balm of asbestos,balm of insulation,balm of warmth,holy symbol
@@ -1259,6 +1505,8 @@ ingred cloak,balm of asbestos,balm of insulation,balm of warmth,holy symbol
 Object the Magi
 arch cloak
 chance 1
+diff 26
+exp 80000
 yield 1
 skill woodsman
 cauldron tanbench
@@ -1271,6 +1519,8 @@ ingred cloak,potion of wisdom,2 potion of power
 Object granite
 arch high_boots
 chance 5
+diff 5
+exp 10000
 yield 1
 skill smithery
 cauldron forge
@@ -1279,6 +1529,8 @@ ingred jack boots,3 lead
 Object granite
 arch low_boots
 chance 5
+diff 5
+exp 10000
 yield 1
 skill smithery
 cauldron forge
@@ -1287,6 +1539,8 @@ ingred shoes,3 lead
 Object mobility
 arch low_boots
 chance 3
+diff 10
+exp 20000
 yield 1
 skill smithery
 cauldron forge
@@ -1295,6 +1549,8 @@ ingred shoes,beholdereye,3 lead
 Object mobility
 arch elvenboots
 chance 1
+diff 10
+exp 20000
 yield 1
 skill smithery
 cauldron forge
@@ -1303,6 +1559,8 @@ ingred elven boots,dread's eye,block of true lead
 Object mobility
 arch levitationboots
 chance 1
+diff 20
+exp 50000
 yield 1
 skill smithery
 cauldron forge
@@ -1311,6 +1569,8 @@ ingred levitation boots,dread's eye,block of true lead
 Object clawing
 arch low_boots
 chance 5
+diff 10
+exp 20000
 yield 1
 skill smithery
 cauldron forge
@@ -1319,6 +1579,8 @@ ingred shoes,goblin's head,lead
 Object clawing
 arch high_boots
 chance 5
+diff 10
+exp 20000
 yield 1
 skill smithery
 cauldron forge
@@ -1327,6 +1589,8 @@ ingred jack boots,goblin's head,lead
 Object of steel
 arch high_boots
 chance 5
+diff 15
+exp 25000
 yield 1
 skill smithery
 cauldron forge
@@ -1335,6 +1599,8 @@ ingred jack boots,3 mithril crystal
 Object of steel
 arch low_boots
 chance 5
+diff 15
+exp 25000
 yield 1
 skill smithery
 cauldron forge
@@ -1347,6 +1613,8 @@ ingred shoes,3 mithril crystal
 Object Gorokh
 arch scale_mail
 chance 3
+diff 12
+exp 20000
 yield 1
 skill smithery
 cauldron forge
@@ -1355,6 +1623,8 @@ ingred chain mail,potion of magic resistance,demon's head
 Object Gorokh
 arch plate_mail
 chance 3
+diff 12
+exp 25000
 yield 1
 skill smithery
 cauldron forge
@@ -1363,6 +1633,8 @@ ingred plate mail,potion of magic resistance,demon's head
 Object Gnarg
 arch scale_mail
 chance 4
+diff 15
+exp 30000
 yield 1
 skill smithery
 cauldron forge
@@ -1371,6 +1643,8 @@ ingred scale mail,potion of resist poison,troll's heart
 Object Gnarg
 arch plate_mail
 chance 4
+diff 18
+exp 40000
 yield 1
 skill smithery
 cauldron forge
@@ -1379,6 +1653,8 @@ ingred plate mail,potion of resist poison,troll's heart
 Object Protection
 arch scale_mail
 chance 6
+diff 25
+exp 80000
 yield 1
 skill smithery
 cauldron forge
@@ -1387,6 +1663,8 @@ ingred scale mail,amulet of Shielding,lead
 Object Protection
 arch plate_mail
 chance 6
+diff 30
+exp 100000
 yield 1
 skill smithery
 cauldron forge
@@ -1395,6 +1673,8 @@ ingred plate mail,amulet of Shielding,3 lead
 Object Berwean
 arch plate_mail
 chance 4
+diff 10
+exp 20000
 yield 1
 skill smithery
 cauldron forge
@@ -1403,6 +1683,8 @@ ingred plate mail,3 pixie's wings,3 xan's wing
 Object Berwean
 arch mithril_chainmail
 chance 2
+diff 20
+exp 40000
 yield 1
 skill smithery
 cauldron forge
@@ -1411,6 +1693,8 @@ ingred mithril chainmail,3 pixie's wings,3 xan's wing,potion of speed
 Object Ruggilli
 arch dragon_mail
 chance 1
+diff 30
+exp 100000
 yield 1
 skill smithery
 cauldron forge
@@ -1419,6 +1703,8 @@ ingred dragon mail,3 dragon's steak,dragon's eye,dragon scale,fire para-elementa
 Object Ruggilli
 arch scale_mail
 chance 2
+diff 25
+exp 80000
 yield 1
 skill smithery
 cauldron forge
@@ -1427,6 +1713,8 @@ ingred scale mail,wyvern's steak,dragon scale,fire para-elemental's residue
 Object Gaea
 arch leather_armour
 chance 3
+diff 15
+exp 30000
 yield 1
 skill smithery
 cauldron forge
@@ -1435,6 +1723,8 @@ ingred leather armour,potion of resist draining,potion of recuperation
 Object Gaea
 arch ring_mail
 chance 3
+diff 12
+exp 20000
 yield 1
 skill smithery
 cauldron forge
@@ -1443,6 +1733,8 @@ ingred hauberk,potion of resist draining,potion of recuperation
 Object Protection
 arch chain_mail
 chance 5
+diff 20
+exp 40000
 yield 1
 skill smithery
 cauldron forge
@@ -1451,6 +1743,8 @@ ingred chain mail,balm of aethereality,lead
 Object Protection
 arch ring_mail2
 chance 5
+diff 20
+exp 40000
 yield 1
 skill smithery
 cauldron forge
@@ -1459,6 +1753,8 @@ ingred ring mail,balm of aethereality,lead
 Object Power
 arch plate_mail
 chance 2
+diff 40
+exp 150000
 yield 1
 skill smithery
 cauldron forge
@@ -1466,6 +1762,8 @@ ingred plate mail,3 dragon's steak,balm of aethereality,potion of might
 #
 Object Displacement
 arch robe
+diff 20
+exp 50000
 chance 4
 yield 1
 skill smithery
@@ -1474,6 +1772,8 @@ ingred robe,balm of transparency,3 mercury
 #
 Object metal weave
 arch robe
+diff 10
+exp 20000
 chance 4
 yield 1
 skill smithery
@@ -1487,6 +1787,8 @@ ingred robe,lead,balm of aethereality
 Object Xebinon
 arch helmet
 chance 2
+diff 5
+exp 10000
 yield 1
 skill smithery
 cauldron forge
@@ -1495,6 +1797,8 @@ ingred helmet,magic power potion,bottle of philosophical oil
 Object Dark Vision
 arch helmet
 chance 3
+diff 5
+exp 10000
 yield 1
 skill smithery
 cauldron forge
@@ -1503,6 +1807,8 @@ ingred helmet,3 dust of night vision,bottle of philosophical oil
 Object Might
 arch full_helmet
 chance 3
+diff 10
+exp 20000
 yield 1
 skill smithery
 cauldron forge
@@ -1511,6 +1817,8 @@ ingred full helmet,potion of might,ogre's corpse,bottle of philosophical oil
 Object Valriel
 arch full_helmet
 chance 4
+diff 10
+exp 20000
 yield 1
 skill smithery
 cauldron forge
@@ -1519,6 +1827,8 @@ ingred full helmet,3 balm of beauty,bottle of philosophical oil
 Object Argoth
 arch full_helmet
 chance 2
+diff 12
+exp 25000
 yield 1
 skill smithery
 cauldron forge
@@ -1527,6 +1837,8 @@ ingred full helmet,3 dragon's steak,mithril crystal,bottle of philosophical oil
 Object Lythander
 arch helmet
 chance 5
+diff 6
+exp 12000
 yield 1
 skill smithery
 cauldron forge
@@ -1535,6 +1847,8 @@ ingred helmet,clover,bottle of philosophical oil
 Object Sorig
 arch crown
 chance 3
+diff 20
+exp 40000
 yield 1
 skill smithery
 cauldron forge
@@ -1547,6 +1861,8 @@ ingred crown,lightning para-elemental's residue,balm of insulation,bottle of phi
 Object Deflection
 arch high_shield
 chance 5
+diff 20
+exp 50000
 yield 1
 skill smithery
 cauldron forge
@@ -1555,6 +1871,8 @@ ingred high shield,balm of aethereality,3 lead
 Object Mostrai
 arch small_shield
 chance 3
+diff 15
+exp 30000
 yield 1
 skill smithery
 cauldron forge
@@ -1563,6 +1881,8 @@ ingred small shield,balm of asbestos,mithril crystal
 Object Mostrai
 arch high_shield
 chance 3
+diff 18
+exp 35000
 yield 1
 skill smithery
 cauldron forge
@@ -1575,6 +1895,8 @@ ingred high shield,balm of asbestos,mithril crystal
 Object Havok
 arch gloves
 chance 4
+diff 5
+exp 12000
 yield 1
 skill woodsman
 cauldron tanbench
@@ -1584,6 +1906,8 @@ Object marksmanship
 arch gloves
 chance 5
 yield 1
+diff 8
+exp 16000
 skill woodsman
 cauldron tanbench
 ingred gloves,5 arrow of accuracy,bottle of mineral oil
@@ -1592,6 +1916,8 @@ Object Sorig
 arch gloves
 chance 3
 yield 1
+diff 13
+exp 20000
 skill woodsman
 cauldron tanbench
 ingred gloves,hill giant's hand,lightning para-elemental's residue,bottle of philosophical oil
@@ -1599,6 +1925,8 @@ ingred gloves,hill giant's hand,lightning para-elemental's residue,bottle of phi
 Object the Titans
 arch gauntlets
 chance 3
+diff 14
+exp 22000
 yield 1
 skill smithery
 cauldron forge
@@ -1607,6 +1935,8 @@ ingred gauntlets,hill giant's heart,bottle of philosophical oil
 Object bladed steel
 arch gloves
 chance 5
+diff 10
+exp 20000
 yield 1
 skill woodsman
 cauldron tanbench
@@ -1615,6 +1945,8 @@ ingred gloves,hill giant's hand,bottle of mineral oil
 Object Sorig
 arch gauntlets
 chance 1
+diff 35
+exp 120000
 yield 1
 skill smithery
 cauldron forge
@@ -1628,6 +1960,8 @@ Object Auriga
 arch bow
 chance 1
 yield 1
+diff 15
+exp 15000
 skill bowyer
 cauldron workbench
 ingred bow,3 potion of might,hill giant's corpse,troll's heart
@@ -1635,6 +1969,8 @@ ingred bow,3 potion of might,hill giant's corpse,troll's heart
 Object Thunder
 arch bow
 chance 3
+diff 16
+exp 16000
 yield 1
 skill bowyer
 cauldron workbench
@@ -1643,6 +1979,8 @@ ingred bow,titan's head,dust of stasis
 Object Thunder
 arch crossbow
 chance 3
+diff 16
+exp 16500
 yield 1
 skill bowyer
 cauldron workbench
@@ -1655,6 +1993,8 @@ ingred crossbow,titan's head,dust of stasis
 Object Madness
 arch dagger
 chance 5
+diff 5
+exp 8000
 yield 1
 skill smithery
 cauldron forge
@@ -1663,6 +2003,8 @@ ingred dagger,madman's head,bottle of mineral oil
 Object Poisoning
 arch dagger
 chance 5
+diff 5
+exp 5000
 yield 1
 skill smithery
 cauldron forge
@@ -1671,6 +2013,8 @@ ingred dagger,xan's wing,bottle of mineral oil
 Object Poisoning
 arch falchion
 chance 3
+diff 6
+exp 6000
 yield 1
 skill smithery
 cauldron forge
@@ -1679,6 +2023,8 @@ ingred falchion,3 xan's wing,bottle of philosophical oil
 Object Fear
 arch morningstar
 chance 5
+diff 8
+exp 10000
 yield 1
 skill smithery
 cauldron forge
@@ -1687,6 +2033,8 @@ ingred morningstar,wyvern's steak,bottle of philosophical oil
 Object Fear
 arch club
 chance 5
+diff 4
+exp 5000
 yield 1
 skill smithery
 cauldron forge
@@ -1695,6 +2043,8 @@ ingred club,wyvern's steak,bottle of philosophical oil
 Object Fear
 arch big_club
 chance 5
+diff 5
+exp 6000
 yield 1
 skill smithery
 cauldron forge
@@ -1703,6 +2053,8 @@ ingred large club,wyvern's steak,bottle of philosophical oil
 Object Gnarg
 arch sword
 chance 5
+diff 8
+exp 8000
 yield 1
 skill smithery
 cauldron forge
@@ -1711,6 +2063,8 @@ ingred long sword,3 xan's wing,bottle of philosophical oil
 Object Gnarg
 arch stonehammer
 chance 5
+diff 8
+exp 8000
 yield 1
 skill smithery
 cauldron forge
@@ -1720,6 +2074,8 @@ Object Kragi
 arch sword
 chance 10
 yield 1
+diff 10
+exp 10000
 skill smithery
 cauldron forge
 ingred sword,potion of health,bottle of philosophical oil
@@ -1727,6 +2083,8 @@ ingred sword,potion of health,bottle of philosophical oil
 Object Kragi
 arch hammer
 chance 10
+diff 11
+exp 12000
 yield 1
 skill smithery
 cauldron forge
@@ -1735,6 +2093,8 @@ ingred hammer,potion of health,bottle of philosophical oil
 Object Slay Ogre
 arch sword
 chance 6
+diff 7
+exp 8000
 yield 1
 skill smithery
 cauldron forge
@@ -1743,6 +2103,8 @@ ingred sword,ogre's heart,bottle of philosophical oil
 Object Slay Ogre
 arch axe_5
 chance 6
+diff 6
+exp 7000
 yield 1
 skill smithery
 cauldron forge
@@ -1751,6 +2113,8 @@ ingred axe,ogre's heart,bottle of philosophical oil
 Object Valriel
 arch morningstar
 chance 3
+diff 12
+exp 15000
 yield 1
 skill smithery
 cauldron forge
@@ -1758,6 +2122,8 @@ ingred morningstar,demon's head,bottle of philosophical oil
 #
 Object Valriel
 arch katana_1
+diff 13
+exp 16000
 chance 3
 yield 1
 skill smithery
@@ -1767,6 +2133,8 @@ ingred katana,demon's head,bottle of philosophical oil
 Object Gorokh
 arch broadsword
 chance 3
+diff 15
+exp 20000
 yield 1
 skill smithery
 cauldron forge
@@ -1775,6 +2143,8 @@ ingred broadsword,light angel's head,bottle of philosophical oil
 Object Gorokh
 arch poleaxe
 chance 3
+diff 16
+exp 21000
 yield 1
 skill smithery
 cauldron forge
@@ -1782,6 +2152,8 @@ ingred poleaxe,light angel's head,bottle of philosophical oil
 #
 Object the Devourers
 arch mace
+diff 20
+exp 32000
 chance 3
 yield 1
 skill smithery
@@ -1791,6 +2163,8 @@ ingred mace,ice para-elemental's residue,bottle of philosophical oil
 Object the Devourers
 arch nunchacu_1
 chance 3
+diff 25
+exp 43000
 yield 1
 skill smithery
 cauldron forge
@@ -1799,6 +2173,8 @@ ingred nunchacu,ice para-elemental's residue,bottle of mineral oil
 Object Slay Troll
 arch sword
 chance 5
+diff 10
+exp 13000
 yield 1
 skill smithery
 cauldron forge
@@ -1807,6 +2183,8 @@ ingred long sword,small troll's heart,bottle of philosophical oil
 Object Slay Troll
 arch mace_2
 chance 5
+diff 10
+exp 13000
 yield 1
 skill smithery
 cauldron forge
@@ -1816,6 +2194,8 @@ Object Slay Undead
 arch axe
 chance 5
 yield 1
+diff 6
+exp 8000
 skill smithery
 cauldron forge
 ingred axe,zombie's corpse,bottle of philosophical oil
@@ -1823,6 +2203,8 @@ ingred axe,zombie's corpse,bottle of philosophical oil
 Object Slay Undead
 arch shortsword_2
 chance 5
+diff 5
+exp 7000
 yield 1
 skill smithery
 cauldron forge
@@ -1832,6 +2214,8 @@ ingred shortsword,zombie's corpse,bottle of philosophical oil
 Object Slay Undead
 arch skullcleaver
 chance 5
+diff 30
+exp 50000
 yield 1
 skill smithery
 cauldron forge
@@ -1840,6 +2224,8 @@ ingred Skullcleaver,vampire's heart,bottle of philosophical oil
 Object Slay Beholder
 arch lspear
 chance 5
+diff 15
+exp 15000
 yield 1
 skill smithery
 cauldron forge
@@ -1848,6 +2234,8 @@ ingred long spear,3 beholdereye,bottle of philosophical oil
 Object Slay Beholder
 arch taifu_1
 chance 5
+diff 18
+exp 23000
 yield 1
 skill smithery
 cauldron forge
@@ -1855,6 +2243,8 @@ ingred Taifu,3 beholdereye,bottle of philosophical oil
 #
 Object Slay Dragon
 arch mace_2
+diff 20
+exp 40000
 chance 5
 yield 1
 skill smithery
@@ -1866,6 +2256,8 @@ ingred mace,3 dragon's steak,bottle of philosophical oil
 Object Slay Dragon
 arch firebrand
 chance 5
+diff 30
+exp 90000
 yield 1
 skill smithery
 cauldron forge
@@ -1874,6 +2266,8 @@ ingred firebrand,3 chinese dragon's steak,chinese dragon's heart,bottle of philo
 Object Slay Dragon
 arch frostbrand
 chance 5
+diff 30
+exp 90000
 yield 1
 skill smithery
 cauldron forge
@@ -1881,6 +2275,8 @@ ingred frostbrand,3 dragon's steak,dragon's heart,bottle of philosophical oil
 #
 Object Glamdri
 arch sabre
+diff 10
+exp 12000
 chance 2
 yield 1
 skill smithery
@@ -1890,6 +2286,8 @@ ingred sabre,potion of resist magic,beholdereye,bottle of philosophical oil
 Object Glamdri
 arch light_sword
 chance 2
+diff 11
+exp 13000
 yield 1
 skill smithery
 cauldron forge
@@ -1898,6 +2296,8 @@ ingred light sword,potion of resist magic,beholdereye,bottle of philosophical oi
 Object Sorig
 arch scimitar
 chance 3
+diff 14
+exp 15000
 yield 1
 skill smithery
 cauldron forge
@@ -1906,6 +2306,8 @@ ingred scimitar,lightning para-elemental's residue,bottle of philosophical oil
 Object Sorig
 arch poleaxe
 chance 3
+diff 16
+exp 20000
 yield 1
 skill smithery
 cauldron forge
@@ -1914,6 +2316,8 @@ ingred poleaxe,lightning para-elemental's residue,bottle of philosophical oil
 Object Ruggilli
 arch large_morningstar
 chance 3
+diff 14
+exp 17000
 yield 1
 skill smithery
 cauldron forge
@@ -1922,6 +2326,8 @@ ingred large morningstar,wyvern's steak,bottle of philosophical oil
 Object Ruggilli
 arch trident
 chance 3
+diff 15
+exp 18000
 yield 1
 skill smithery
 cauldron forge
@@ -1930,6 +2336,8 @@ ingred trident,wyvern's steak,bottle of philosophical oil
 Object Paralysis
 arch dagger
 chance 6
+diff 8
+exp 8000
 yield 1
 skill smithery
 cauldron forge
@@ -1943,6 +2351,8 @@ Object Shielding
 arch amulet
 chance 5
 yield 1
+diff 5
+exp 8000
 skill jeweler
 cauldron jeweler_bench
 ingred amulet,potion of aethereality,3 ruby of great value
@@ -1950,6 +2360,8 @@ ingred amulet,potion of aethereality,3 ruby of great value
 Object Sustenance
 arch amulet
 chance 5
+diff 6
+exp 9000
 yield 1
 skill jeweler
 cauldron jeweler_bench
@@ -1958,6 +2370,8 @@ ingred amulet,vampire's heart,3 diamond of great value
 Object Empowerment
 arch amulet
 chance 3
+diff 7
+exp 10000
 yield 1
 skill jeweler
 cauldron jeweler_bench
@@ -1966,6 +2380,8 @@ ingred amulet,3 magic power potion,3 sapphire of great value
 Object Aethereality
 arch amulet
 chance 3
+diff 20
+exp 40000
 yield 1
 skill jeweler
 cauldron jeweler_bench
@@ -1975,6 +2391,8 @@ Object the Magi
 arch amulet
 chance 1
 yield 1
+diff 35
+exp 150000
 skill jeweler
 cauldron jeweler_bench
 ingred amulet of Empowerment,3 potion of intelligence,3 potion of power,3 potion of magic resistance,3 diamond of flawless beauty
@@ -1983,6 +2401,8 @@ Object Deflection
 arch amulet
 chance 1
 yield 1
+diff 35
+exp 150000
 skill jeweler
 cauldron jeweler_bench
 ingred amulet of Aethereality,block of true lead,amulet of lifesaving,3 emerald of flawless beauty
@@ -1990,6 +2410,8 @@ ingred amulet of Aethereality,block of true lead,amulet of lifesaving,3 emerald 
 Object Free Action
 arch amulet
 chance 2
+diff 35
+exp 150000
 yield 1
 skill jeweler
 cauldron jeweler_bench
@@ -1998,6 +2420,8 @@ ingred amulet of lifesaving,ring of free action,3 potion of resist paralysis,3 s
 Object Holiness
 arch amulet
 chance 3
+diff 20
+exp 40000
 yield 1
 skill jeweler
 cauldron jeweler_bench
@@ -2011,6 +2435,8 @@ Object Thieves
 arch ring
 chance 3
 yield 1
+diff 15
+exp 25000
 skill jeweler
 cauldron jeweler_bench
 ingred ring,3 potion of dexterity,potion of speed,3 emerald of exceptional beauty
@@ -2018,6 +2444,8 @@ ingred ring,3 potion of dexterity,potion of speed,3 emerald of exceptional beaut
 Object Combat
 arch ring
 chance 5
+diff 20
+exp 50000
 yield 1
 skill jeweler
 cauldron jeweler_bench
@@ -2026,6 +2454,8 @@ ingred ring of Fighting,potion of constitution,3 sapphire of exceptional beauty
 Object Strife
 arch ring
 chance 3
+diff 25
+exp 75000
 yield 1
 skill jeweler
 cauldron jeweler_bench
@@ -2035,6 +2465,8 @@ Object Ice
 arch ring
 chance 5
 yield 1
+diff 15
+exp 25000
 skill jeweler
 cauldron jeweler_bench
 ingred ring,3 potion of cold resistance,chinese dragon's steak,3 sapphire of great value
@@ -2042,6 +2474,8 @@ ingred ring,3 potion of cold resistance,chinese dragon's steak,3 sapphire of gre
 Object Fire
 arch ring
 chance 5
+diff 15
+exp 25000
 yield 1
 skill jeweler
 cauldron jeweler_bench
@@ -2050,6 +2484,8 @@ ingred ring,3 potion of fire resistance,dragon's steak,3 ruby of great value
 Object Storm
 arch ring
 chance 5
+diff 15
+exp 25000
 yield 1
 skill jeweler
 cauldron jeweler_bench
@@ -2057,6 +2493,8 @@ ingred ring,3 potion of shock resistance,electric dragon's steak,3 emerald of gr
 #
 Object Acid
 arch ring
+diff 16
+exp 27000
 chance 5
 yield 1
 skill jeweler
@@ -2066,6 +2504,8 @@ ingred ring,3 balm of aethereality,gaelotroll's liver,7 pearl
 Object Magic
 arch ring
 chance 5
+diff 15
+exp 25000
 yield 1
 skill jeweler
 cauldron jeweler_bench
@@ -2074,6 +2514,8 @@ ingred ring,potion of magic resistance,potion of power,3 diamond of great value
 Object Ancient Magic
 arch ring
 chance 4
+diff 20
+exp 35000
 yield 1
 skill jeweler
 cauldron jeweler_bench
@@ -2082,6 +2524,8 @@ ingred ring of Magic,potion of intelligence,lich dust,3 diamond of exceptional b
 Object High Magic
 arch ring
 chance 2
+diff 25
+exp 45000
 yield 1
 skill jeweler
 cauldron jeweler_bench
@@ -2090,6 +2534,8 @@ ingred ring of Ancient Magic,potion of intelligence,potion of power,spectre's ec
 Object Mithrandir
 arch ring
 chance 1
+diff 25
+exp 40000
 yield 1
 skill jeweler
 cauldron jeweler_bench
@@ -2098,6 +2544,8 @@ ingred ring of High Magic,3 potion of fire resistance,dragon's heart,3 ruby of f
 Object Beguilement
 arch ring
 chance 10
+diff 15
+exp 25000
 yield 1
 skill jeweler
 cauldron jeweler_bench
@@ -2106,6 +2554,8 @@ ingred ring,potion of charisma,3 diamond of great value
 Object the Dark Priest
 arch ring
 chance 3
+diff 15
+exp 25000
 yield 1
 skill jeweler
 cauldron jeweler_bench
@@ -2114,6 +2564,8 @@ ingred ring,potion of wisdom,vampire's heart,3 ruby of great value
 Object the Demon Priest
 arch ring
 chance 1
+diff 35
+exp 70000
 yield 1
 skill jeweler
 cauldron jeweler_bench
@@ -2122,6 +2574,8 @@ ingred ring of the Dark Priest,potion of power,3 potion of fire resistance,3 rub
 Object the Healer
 arch ring
 chance 5
+diff 20
+exp 35000
 yield 1
 skill jeweler
 cauldron jeweler_bench
@@ -2130,6 +2584,8 @@ ingred ring,potion of wisdom,holy symbol,3 emerald of great value
 Object the Paladin
 arch ring
 chance 5
+diff 20
+exp 35000
 yield 1
 skill jeweler
 cauldron jeweler_bench
@@ -2138,6 +2594,8 @@ ingred ring,potion of wisdom,holy symbol,3 sapphire of great value
 Object the Prelate
 arch ring
 chance 3
+diff 30
+exp 75000
 yield 1
 skill jeweler
 cauldron jeweler_bench
@@ -2146,6 +2604,8 @@ ingred ring of the Healer,potion of wisdom,holy symbol of Turning,3 emerald of e
 Object the Crusade
 arch ring
 chance 2
+diff 30
+exp 75000
 yield 1
 skill jeweler
 cauldron jeweler_bench
@@ -2154,6 +2614,8 @@ ingred strange ring,potion of power,holy symbol of Great Virtue,3 emerald of exc
 Object Benevolence
 arch ring
 chance 1
+diff 30
+exp 75000
 yield 1
 skill jeweler
 cauldron jeweler_bench
@@ -2162,6 +2624,8 @@ ingred ring,3 potion of magic resistance,potion of wisdom,holy symbol of Probity
 Object Halvor
 arch ring
 chance 4
+diff 10
+exp 15000
 yield 1
 skill jeweler
 cauldron jeweler_bench
@@ -2170,6 +2634,8 @@ ingred ring,cunning gnome's corpse,3 sapphire of great value
 Object Free Action
 arch ring
 chance 2
+diff 15
+exp 25000
 yield 1
 skill jeweler
 cauldron jeweler_bench
@@ -2178,6 +2644,8 @@ ingred ring of Halvor,potion of resist confusion,3 sapphire of exceptional beaut
 Object Life
 arch ring
 chance 4
+diff 14
+exp 23000
 yield 1
 skill jeweler
 cauldron jeweler_bench
@@ -2186,6 +2654,8 @@ ingred strange ring,3 potion of recuperation,3 diamond of great value
 Object Yordan
 arch ring
 chance 8
+diff 10
+exp 15000
 yield 1
 skill jeweler
 cauldron jeweler_bench
@@ -2194,6 +2664,8 @@ ingred ring,3 potion of agility,3 diamond
 Object Occidental Mages
 arch ring
 chance 7
+diff 5
+exp 8000
 yield 1
 skill jeweler
 cauldron jeweler_bench
@@ -2206,6 +2678,8 @@ ingred ring,potion of Rainbow Wave,3 sapphire
 Object Plenty
 arch horn2
 chance 15
+diff 20
+exp 20000
 yield 1
 skill thaumaturgy
 cauldron thaumaturg_desk
@@ -2214,6 +2688,8 @@ ingred unicorn horn,3 mushroom of Gourmet,3 waybread of Aelingas
 Object Fire
 arch horn2
 chance 10
+diff 20
+exp 20000
 yield 1
 skill thaumaturgy
 cauldron thaumaturg_desk
@@ -2222,6 +2698,8 @@ ingred unicorn horn,3 dust of ignition
 Object Frost
 arch horn2
 chance 10
+diff 20
+exp 20000
 yield 1
 skill thaumaturgy
 cauldron thaumaturg_desk
@@ -2230,6 +2708,8 @@ ingred unicorn horn,3 dust of frost
 Object Eorlingas
 arch horn2
 chance 5
+diff 20
+exp 20000
 yield 1
 skill thaumaturgy
 cauldron thaumaturg_desk
@@ -2242,6 +2722,8 @@ ingred unicorn horn,3 dust of ignition,potion of mystic power
 Object Fire
 arch talisman
 chance 5
+diff 25
+exp 35000
 yield 1
 skill thaumaturgy
 cauldron thaumaturg_desk
@@ -2250,6 +2732,8 @@ ingred talisman,ring of Fire,dragon's heart
 Object Frost
 arch talisman
 chance 5
+diff 25
+exp 35000
 yield 1
 skill thaumaturgy
 cauldron thaumaturg_desk
@@ -2258,6 +2742,8 @@ ingred talisman,ring of Ice,chinese dragon's heart
 Object Elements
 arch talisman
 chance 2
+diff 35
+exp 75000
 yield 1
 skill thaumaturgy
 cauldron thaumaturg_desk
@@ -2266,6 +2752,8 @@ ingred talisman of Fire,talisman of Frost,3 electric dragon's steak,3 diamond of
 Object Unified Mind
 arch talisman
 chance 10
+diff 25
+exp 35000
 yield 1
 skill thaumaturgy
 cauldron thaumaturg_desk
@@ -2274,6 +2762,8 @@ ingred talisman,potion of intelligence,helmet of Xebinon
 Object Evocation
 arch talisman
 chance 3
+diff 25
+exp 35000
 yield 1
 skill thaumaturgy
 cauldron thaumaturg_desk
@@ -2286,6 +2776,8 @@ ingred talisman,3 figurine of a clenched hand,3 balm of traveling
 Object Probity
 arch holy_symbol
 chance 7
+diff 25
+exp 35000
 yield 1
 skill thaumaturgy
 cauldron thaumaturg_desk
@@ -2294,6 +2786,8 @@ ingred holy symbol,balm of asbestos,balm of warmth,balm of insulation
 Object Turning
 arch holy_symbol
 chance 10
+diff 25
+exp 35000
 yield 1
 skill thaumaturgy
 cauldron thaumaturg_desk
@@ -2302,6 +2796,8 @@ ingred holy symbol,7 dust of repelling undead,bottle of philosophical oil
 Object Calling
 arch holy_symbol
 chance 10
+diff 25
+exp 35000
 yield 1
 skill thaumaturgy
 cauldron thaumaturg_desk
@@ -2310,6 +2806,8 @@ ingred holy symbol,figurine of stone,figurine of a great wave,figurine of a flam
 Object The Dark Path
 arch holy_symbol
 chance 5
+diff 25
+exp 35000
 yield 1
 skill thaumaturgy
 cauldron thaumaturg_desk
@@ -2318,6 +2816,8 @@ ingred holy symbol,10 arrow of Assassinating dragons,vampire's heart
 Object Great Virtue
 arch holy_symbol
 chance 2
+diff 25
+exp 35000
 yield 1
 skill thaumaturgy
 cauldron thaumaturg_desk
@@ -2330,6 +2830,8 @@ ingred holy symbol,figurine of a clenched hand,3 healing potion,3 dust of clairv
 Object Gourmet
 arch mushroom_1
 chance 40
+diff 5
+exp 2000
 yield 7
 skill woodsman
 cauldron stove
@@ -2338,6 +2840,8 @@ ingred 7 mushroom,water of the wise
 Object Magic
 arch mushroom_2
 chance 20
+diff 8
+exp 4000
 yield 7
 skill woodsman
 cauldron stove
@@ -2346,6 +2850,8 @@ ingred 7 mushroom of Gourmet,potion of mystic power
 Object Healing
 arch mushroom_3
 chance 20
+diff 8
+exp 4000
 yield 7
 skill woodsman
 cauldron stove
@@ -2354,6 +2860,8 @@ ingred 7 mushroom of Gourmet,balm of first aid
 Object Stamina
 arch food
 chance 30
+diff 5
+exp 2000
 yield 7
 skill woodsman
 cauldron stove
@@ -2362,6 +2870,8 @@ ingred 7 food,potion of recuperation
 Object Aelingas
 arch waybread
 chance 30
+diff 10
+exp 6000
 yield 7
 skill woodsman
 cauldron stove
@@ -2370,6 +2880,8 @@ ingred 7 waybread,potion of heroism
 Object Strength
 arch mushroom_2
 chance 30
+diff 10
+exp 7000
 yield 7
 skill woodsman
 cauldron stove
@@ -2378,6 +2890,8 @@ ingred 7 mushroom of Gourmet,potion of might
 Object Quickness
 arch mushroom_3
 chance 30
+diff 12
+exp 8000
 yield 7
 skill woodsman
 cauldron stove
@@ -2386,6 +2900,8 @@ ingred 7 mushroom of Gourmet,potion of agility
 Object Heat Resistance
 arch mushroom_1
 chance 20
+diff 8
+exp 7000
 yield 7
 skill woodsman
 cauldron stove
@@ -2394,6 +2910,8 @@ ingred 7 mushroom of Gourmet,balm of asbestos
 Object Frost Resistance
 arch mushroom_2
 chance 20
+diff 8
+exp 7000
 yield 7
 skill woodsman
 cauldron stove
@@ -2402,6 +2920,8 @@ ingred 7 mushroom of Gourmet,balm of warmth
 Object Bravery
 arch mushroom_3
 chance 30
+diff 8
+exp 7000
 yield 7
 skill woodsman
 cauldron stove
@@ -2410,6 +2930,8 @@ ingred 7 mushroom of Gourmet,dust of fright
 Object Magic Resistance
 arch mushroom_3
 chance 20
+diff 8
+exp 7000
 yield 7
 skill woodsman
 cauldron stove
@@ -2417,6 +2939,8 @@ ingred 7 mushroom of Gourmet,potion of resist magic
 #
 Object Life
 arch mushroom_3
+diff 8
+exp 7000
 chance 30
 yield 7
 skill woodsman

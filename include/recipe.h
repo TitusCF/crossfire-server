@@ -4,6 +4,8 @@ typedef struct recipestruct {
     char *arch_name;   /* the archetype of the final product made */
     int chance;        /* chance that recipe for this item will appear
 		        * in an alchemical grimore */
+	int diff;		   /* alchemical dfficulty level */
+	int exp;		   /* how much exp to give for this formulae */
     int index;	       /* an index value derived from formula ingredients */
     int transmute;     /* if defined, one of the formula ingredients is
 			* used as the basis for the product object */
