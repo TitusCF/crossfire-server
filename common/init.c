@@ -86,6 +86,7 @@ void init_library() {
     init_anim();    /* Must be after we read in the bitmaps */
     init_archetypes();	/* Reads all archetypes from file */
     init_dynamic ();
+    init_attackmess();
 }
 
 /* init_environ initializes values from the environmental variables.
@@ -209,3 +210,93 @@ void init_dynamic () {
     LOG(llevDebug,"You Need a archetype called 'map' and it have to contain start map\n");
     exit (-1);
 }
+
+/*
+ * Initializes the attack messages.
+ * Called by init_library().
+ */
+
+attackmess_t attack_mess[NROFATTACKMESS][MAXATTACKMESS];
+
+void init_attackmess(){
+    char buf[MAX_BUF];
+    char filename[MAX_BUF];
+    char *cp, *p;
+    FILE *fp;
+    static int has_been_done=0;
+    int mess, level, comp;
+    int mode=0, total=0;
+
+    if (has_been_done)
+        return;
+    else
+        has_been_done = 1;
+
+    sprintf(filename, "%s/attackmess", settings.datadir);
+    LOG(llevDebug, "Reading attack messages from %s...", filename);
+    if ((fp = open_and_uncompress(filename, 0, &comp)) == NULL) {
+        LOG(llevError, "Can't open %s.\n", filename);
+	return;
+    }
+
+    level = 0;
+    while (fgets(buf, MAX_BUF, fp)!=NULL) {
+        if (*buf=='#') continue;
+	if((cp=strchr(buf,'\n'))!=NULL)
+  	    *cp='\0';
+	cp=buf;
+	while(*cp==' ') /* Skip blanks */
+	    cp++;
+
+	if (strncmp(cp, "TYPE:", 5)==0) {
+	    p = strtok(buf, ":");
+	    p = strtok(NULL, ":");
+	    if (mode == 1) {
+	        attack_mess[mess][level].level = -1;
+		attack_mess[mess][level].buf1 = NULL;
+		attack_mess[mess][level].buf2 = NULL;
+		attack_mess[mess][level].buf3 = NULL;
+	    }
+	    level = 0;
+	    mess = atoi(p);
+	    mode = 1;
+	    continue;
+	}
+	if (mode==1) {
+	    p = strtok(buf, "=");
+	    attack_mess[mess][level].level = atoi(buf);
+	    p = strtok(NULL, "=");
+	    if (p != NULL)
+	        attack_mess[mess][level].buf1 = strdup(p);
+	    else
+	      attack_mess[mess][level].buf1 = strdup("");
+	    mode = 2;
+	    continue;
+	} else if (mode==2) {
+	    p = strtok(buf, "=");
+	    attack_mess[mess][level].level = atoi(buf);
+	    p = strtok(NULL, "=");
+	    if (p != NULL)
+	        attack_mess[mess][level].buf2 = strdup(p);
+	    else
+	        attack_mess[mess][level].buf2 = strdup("");
+	    mode = 3;
+	    continue;
+	} else if (mode==3) {
+	    p = strtok(buf, "=");
+	    attack_mess[mess][level].level = atoi(buf);
+	    p = strtok(NULL, "=");
+	    if (p != NULL)
+	        attack_mess[mess][level].buf3 = strdup(p);
+	    else
+	        attack_mess[mess][level].buf3 = strdup("");
+	    mode = 1;
+	    level++;
+	    total++;
+	    continue;
+	}
+    }
+    printf("got %d messages in %d categories.\n", total, mess+1);
+    close_and_delete(fp, comp);
+}
+	    
