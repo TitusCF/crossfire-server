@@ -17,6 +17,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 CVS changes since last release:
 
+------------------------------------------------------------------------------
+Changes for 0.96.0:
+
 MSW 2001/01/11:
 include/rproto.h: Rebuilt for new random map code.
 server/player.c: remove player insert in key_roll_stat - player is already
@@ -141,7 +144,7 @@ common/loader.l: msgbuf was being used initialized in the main loading
 common/object.c: find_free functions were not checking to see if the
 	spaces they were examining were out of the map.  Added checks
 	to do so.
-server/apply.c: buf was being used initialized in the function.
+server/apply.c: buf was being used uninitialized in the function.
 socket/init.c: input buffer needs to be initialized as we do a 
 	strncasecmp against the buffer which may not have any data in it.
 
