@@ -1,11 +1,9 @@
-This file is probably way out of date.  I have updated it (11-9-97) to
-the best of my knowledge.  To get added/removed from this file, please
-send me (mark@pyramid.com) a mail specifically mentioning this file.
 The main purpose of this file is to try to reduce duplicate effort,
 and to know who worked on what.
 
 Peter Mardahl <peterm@eecs.berkeley.edu> runes, new spells, changing
-	of spell parameters, new archetypes
+	of spell parameters, new archetypes, random maps, traps,
+	diseases, graded lighting, movers, creators, peterm/* maps 
 Brian Thomas (thomas@astro.psu.edu)- Skills, alchemy, altars
 Phil Brown (phil@bolthole.com)- Java Client
 
