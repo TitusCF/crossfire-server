@@ -1,4 +1,4 @@
-#!/usr/local/bin/perl
+#!/usr/bin/perl
 # Adds the throwing skill to to the old player files.  This script
 # is likely no longer needed, since skills have been around for quite a while.
 #

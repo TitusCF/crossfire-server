@@ -1,4 +1,4 @@
-#!/usr/local/bin/perl
+#!/usr/bin/perl
 #
 # perl seems like a better language to do this in than C
 # Eventually, it would be nice for this to replace the C version.  For now,
