@@ -388,6 +388,7 @@ int change_abil(object *op, object *tmp) {
   int flag=QUERY_FLAG(tmp,FLAG_APPLIED)?1:-1,i,j,success=0;
   object refop;
   char message[MAX_BUF];
+  int potion_max=0;
   
   /* remember what object was like before it was changed.  note that
    * refop is a local copy of op only to be used for detecting changes
@@ -411,7 +412,8 @@ int change_abil(object *op, object *tmp) {
 	    tmp->stats.sp=0;/* Fix it up for super potions */
 	}
 	else {
-		set_attr_value(&(tmp->stats),j,0);
+	  /* potion is useless - player has already hit the natural maximum */
+	  potion_max = 1;
 	}
       }
     /* This section of code ups the characters normal stats also.  I am not
@@ -639,7 +641,7 @@ int change_abil(object *op, object *tmp) {
     }
   }
 
-     if(tmp->type!=EXPERIENCE) {
+     if(tmp->type!=EXPERIENCE && !potion_max) {
 	for (j=0; j<7; j++) {
 	    if ((i=get_attr_value(&(tmp->stats),j))!=0) {
 		success=1;
@@ -867,8 +869,10 @@ void fix_player(object *op) {
 	 && (tmp->type!=EXPERIENCE || !strcmp(tmp->arch->name, "experience_wis"))
 #endif
       ) {
-        for(i=0;i<7;i++)
-          change_attr_value(&(op->stats),i,get_attr_value(&(tmp->stats),i));
+	if (tmp->type != POTION) {
+	  for(i=0;i<7;i++)
+	    change_attr_value(&(op->stats),i,get_attr_value(&(tmp->stats),i));
+	}
 	/* these are the items that currently can change digestion, regeneration,
 	 * spell point recovery and mana point recovery.  Seems sort of an arbitary
 	 * list, but other items store other info into stats array. */
