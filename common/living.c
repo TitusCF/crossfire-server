@@ -848,13 +848,14 @@ void fix_player(object *op) {
   wc=op->arch->clone.stats.wc;
   op->stats.dam=op->arch->clone.stats.dam;
 
-
-  if(!QUERY_FLAG(op,FLAG_USE_ARMOUR) && op->type==PLAYER) 
-	/* for players which cannot use armour, they gain AC -1 per 3 levels. */
-	op->stats.ac=MAX(-10,op->arch->clone.stats.ac - op->level/3);
+  if(!QUERY_FLAG(op,FLAG_USE_ARMOUR) && op->type==PLAYER) {
+    /* for players which cannot use armour, they gain AC -1 per 3 levels,
+     * plus a small amount of physical resist, those poor suckers. ;) */
+    op->stats.ac=MAX(-10,op->arch->clone.stats.ac - op->level/3);
+    prot[ATNR_PHYSICAL] += ((100-prot[AT_PHYSICAL])*(80*op->level/MAXLEVEL))/100;
+  }
   else
-      op->stats.ac=op->arch->clone.stats.ac;
-
+    op->stats.ac=op->arch->clone.stats.ac;
 
   op->stats.luck=op->arch->clone.stats.luck;
   op->speed = op->arch->clone.speed;
