@@ -117,9 +117,9 @@ int attempt_steal(object* op, object* who)
 
 	/* you can't steal worn items, starting items, wiz stuff, 
 	 * innate abilities, or items w/o a type. Generally 
-	 * speaking, the invisibility flag prevents experience or 
+	 * speaking, the invisibility flag prevents experience or
 	 * abilities from being stolen since these types are currently
-	 * always invisible objects. I was implicit here so as to prevent 
+	 * always invisible objects. I was implicit here so as to prevent
 	 * future possible problems. -b.t. 
 	 * Flesh items generated w/ fix_flesh_item should have FLAG_NO_STEAL 
 	 * already  -b.t. 
@@ -471,7 +471,7 @@ static int attempt_jump (object *pl, int dir, int spaces) {
     /* Jump loop. Go through spaces opject wants to jump. Halt the
      * jump if a wall or creature is in the way. We set FLAG_FLYING
      * temporarily to allow player to aviod exits/archs that are not 
-     * fly_on, fly_off. This will also prevent pickup of objects 
+     * fly_on, fly_off. This will also prevent pickup of objects
      * while jumping over them.  
      */ 
 
@@ -1122,6 +1122,7 @@ int write_on_item (object *pl,char *params) {
 int write_note(object *pl, object *item, char *msg) {
   char buf[BOOK_BUF]; 
   object *newBook = NULL;
+  event *evt;
 
   /* a pair of sanity checks */
   if(!item||item->type!=BOOK) return 0;
@@ -1137,7 +1138,7 @@ int write_note(object *pl, object *item, char *msg) {
 	return 0;
   }
   /* GROS: Handle for plugin book writing (trigger) event */
-  if(item->event_hook[EVENT_TRIGGER] != NULL)
+  if ((evt = find_event(item, EVENT_TRIGGER)) != NULL)
   {
     CFParm CFP;
     int k, l, m;
@@ -1153,11 +1154,11 @@ int write_note(object *pl, object *item, char *msg) {
     CFP.Value[6] = &m;
     CFP.Value[7] = &m;
     CFP.Value[8] = &l;
-    CFP.Value[9] = item->event_hook[k];
-    CFP.Value[10]= item->event_options[k];
-    if (findPlugin(item->event_plugin[k])>=0)
+    CFP.Value[9] = evt->hook;
+    CFP.Value[10]= evt->options;
+    if (findPlugin(evt->plugin)>=0)
     {
-        ((PlugList[findPlugin(item->event_plugin[k])].eventfunc) (&CFP));
+        ((PlugList[findPlugin(evt->plugin)].eventfunc) (&CFP));
         return strlen(msg);
     }
    }
@@ -1463,6 +1464,7 @@ int do_throw(object *op, object *part, object *toss_item, int dir) {
     tag_t left_tag;
     int eff_str = 0,maxc,str=op->stats.Str,dam=0;
     int pause_f,weight_f=0;
+    event *evt;
     float str_factor=1.0,load_factor=1.0,item_factor=1.0;
 
     if(throw_ob==NULL) {
@@ -1686,7 +1688,7 @@ int do_throw(object *op, object *part, object *toss_item, int dir) {
     play_sound_map(op->map, op->x, op->y, SOUND_THROW_OBJ);
 #endif
 /* GROS - Now we can call the associated script_throw event (if any) */
-    if(throw_ob->event_hook[EVENT_THROW] != NULL)
+    if ((evt = find_event(throw_ob, EVENT_THROW)) != NULL)
     {
         CFParm CFP;
         int k, l, m;
@@ -1702,10 +1704,10 @@ int do_throw(object *op, object *part, object *toss_item, int dir) {
         CFP.Value[6] = &m;
         CFP.Value[7] = &m;
         CFP.Value[8] = &l;
-        CFP.Value[9] = throw_ob->event_hook[k];
-        CFP.Value[10]= throw_ob->event_options[k];
-        if (findPlugin(throw_ob->event_plugin[k])>=0)
-            ((PlugList[findPlugin(throw_ob->event_plugin[k])].eventfunc) (&CFP));
+        CFP.Value[9] = evt->hook;
+        CFP.Value[10]= evt->options;
+        if (findPlugin(evt->plugin)>=0)
+            ((PlugList[findPlugin(evt->plugin)].eventfunc) (&CFP));
     }
 #ifdef DEBUG_THROW
     LOG(llevDebug," pause_f=%d \n",pause_f);

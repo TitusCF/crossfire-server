@@ -2353,6 +2353,7 @@ void kill_player(object *op)
     int killed_script_rtn; /* GROS: For script return value */
     CFParm CFP;
     int evtid;
+    event *evt;
     if(save_life(op))
 	return;
 
@@ -2365,14 +2366,14 @@ void kill_player(object *op)
 		    "You have been defeated in combat!");
       new_draw_info(NDI_UNIQUE | NDI_NAVY, 0,op,
 		    "Local medics have saved your life...");
-      
+
       /* restore player */
       cast_heal(op, 0, SP_CURE_POISON);
       cast_heal(op, 0, SP_CURE_CONFUSION);
       cure_disease(op,0);  /* remove any disease */
       op->stats.hp=op->stats.maxhp;
       if (op->stats.food<=0) op->stats.food=999;
-      
+
       /* create a bodypart-trophy to make the winner happy */
       tmp=arch_to_object(find_archetype("finger"));
       if (tmp != NULL) {
@@ -2388,14 +2389,14 @@ void kill_player(object *op)
 	tmp->x = op->x, tmp->y = op->y;
 	insert_ob_in_map(tmp,op->map,op,0);
       }
-      
+
       /* teleport defeated player to new destination*/
       transfer_ob(op, x, y, 0, NULL);
       op->contr->braced=0;
       return;
     }
 /* GROS: Handle for plugin death event */
-  if(op->event_hook[EVENT_DEATH] != NULL)
+  if ((evt = find_event(op, EVENT_DEATH)) != NULL)
   {
     CFParm* CFR;
     int k, l, m;
@@ -2411,11 +2412,11 @@ void kill_player(object *op)
     CFP.Value[6] = &m;
     CFP.Value[7] = &m;
     CFP.Value[8] = &l;
-    CFP.Value[9] = op->event_hook[k];
-    CFP.Value[10]= op->event_options[k];
-    if (findPlugin(op->event_plugin[k])>=0)
+    CFP.Value[9] = evt->hook;
+    CFP.Value[10]= evt->options;
+    if (findPlugin(evt->plugin)>=0)
     {
-        CFR = (PlugList[findPlugin(op->event_plugin[k])].eventfunc) (&CFP);
+        CFR = (PlugList[findPlugin(evt->plugin)].eventfunc) (&CFP);
         killed_script_rtn = *(int *)(CFR->Value[0]);
         free(CFR);
         if (killed_script_rtn)

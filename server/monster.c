@@ -1734,6 +1734,7 @@ int talk_to_npc(object *op, object *npc, char *txt) {
     CFParm CFP;
     int k, l, m;
     char *cp, buf[MAX_BUF];
+    event *evt;
 
     /* Move this commone area up here - shouldn't cost much extra cpu
      * time, and makes the function more readable */
@@ -1749,15 +1750,15 @@ int talk_to_npc(object *op, object *npc, char *txt) {
     CFP.Value[8] = &l;
 
     /* GROS: Handle for plugin say event */
-    if(npc->event_hook[EVENT_SAY] != NULL)
+    if ((evt = find_event(npc, EVENT_SAY))!=NULL)
     {
 	CFP.Value[2] = npc;
 	CFP.Value[3] = NULL;
-	CFP.Value[9] = npc->event_hook[k];
-	CFP.Value[10]= npc->event_options[k];
-	if (findPlugin(npc->event_plugin[k])>=0)
+	CFP.Value[9] = evt->hook;
+	CFP.Value[10]= evt->options;
+	if (findPlugin(evt->plugin)>=0)
 	{
-	    ((PlugList[findPlugin(npc->event_plugin[k])].eventfunc) (&CFP));
+	    ((PlugList[findPlugin(evt->plugin)].eventfunc) (&CFP));
 	    return 0;
 	}
     }
@@ -1765,17 +1766,17 @@ int talk_to_npc(object *op, object *npc, char *txt) {
     /* This allows the existence of "intelligent" weapons you can discuss with */
     for(cobj=npc->inv;cobj!=NULL; cobj = cobj->below)
     {
-	if(cobj->event_hook[EVENT_SAY] != NULL)
-	{
-	    CFP.Value[2] = cobj;
-	    CFP.Value[3] = npc;
-	    CFP.Value[9] = cobj->event_hook[k];
-	    CFP.Value[10]= cobj->event_options[k];
-	    if (findPlugin(cobj->event_plugin[k])>=0)
-	    {
-		((PlugList[findPlugin(cobj->event_plugin[k])].eventfunc) (&CFP));
-		return 0;
-	    }
+        if ((evt = find_event(cobj, EVENT_SAY)) != NULL)
+        {
+            CFP.Value[2] = cobj;
+            CFP.Value[3] = npc;
+            CFP.Value[9] = evt->hook;
+            CFP.Value[10]= evt->options;
+            if (findPlugin(evt->plugin)>=0)
+            {
+                ((PlugList[findPlugin(evt->plugin)].eventfunc) (&CFP));
+                return 0;
+            }
 	}
     }
     if(npc->msg == NULL || *npc->msg != '@')

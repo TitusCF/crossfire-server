@@ -865,7 +865,7 @@ void fix_generated_item (object *op, object *creator, int difficulty,
 		if(!op->msg&&RANDOM()%10) { 
 		    /* set the book level properly */
 		    if(creator->level==0 || QUERY_FLAG(creator,FLAG_ALIVE)) {
-			if(op->map&&op->map->difficulty) 
+			if(op->map&&op->map->difficulty)
 			    op->level=RANDOM()%(op->map->difficulty)+RANDOM()%10+1;
 			else
 			    op->level=RANDOM()%20+1;
@@ -1385,20 +1385,45 @@ void add_abilities(object *op, object *change) {
   /* GROS: Added support for event_... in artifact file */
   for(j=0;j<20;j++)
   {
-    if(change->event_hook[j])
+    event *evt;
+    event *evt2;
+    event *evtn;
+    event *evtp;
+
+    evt = find_event(change,j);
+    evt2= find_event(op,j);
+
+    if ((evt) && (evt->hook))
     {
-        if (op->event_hook[j])
+        if ((evt2)&&(evt2->hook))
         {
-            free_string(op->event_hook[j]);
-            free_string(op->event_plugin[j]);
-            free_string(op->event_options[j]);
-        };
-        op->event_hook[j]    = add_refcount(change->event_hook[j]);
-        op->event_plugin[j]  = add_refcount(change->event_plugin[j]);
-        if (change->event_options[j])
-            op->event_options[j] = add_refcount(change->event_options[j]);
+            free_string(evt2->hook);
+            free_string(evt2->plugin);
+            free_string(evt2->options);
+            evtp = NULL;
+            evtn = evt2->next;
+            if (evt2 == op->events)
+            {
+                free(evt2);
+                op->events = evtn;
+            }
+            else
+            {
+                evtp = op->events;
+                while (evtp->next != evt2)
+                    evtp = evtp->next;
+                free(evt2);
+                evtp->next = evtn;
+            }
+        }
+
+        evt2->hook = add_refcount(evt->hook);
+        evt2->plugin = add_refcount(evt->plugin);
+
+        if (evt->options)
+            evt2->options = add_refcount(evt->options);
     }
-  };
+  }
 }
 
 static int legal_artifact_combination(object *op, artifact *art) {

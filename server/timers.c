@@ -40,8 +40,9 @@ void cftimer_process_event(object* ob)
 {
     CFParm CFP;
     int k, l, m;
+    event *evt;
 
-    if (ob->event_plugin[EVENT_TIMER] != NULL)
+    if ((evt = find_event(ob, EVENT_TIMER)) != NULL)
     {
         k = EVENT_TIMER;
         l = SCRIPT_FIX_ALL;
@@ -55,10 +56,10 @@ void cftimer_process_event(object* ob)
         CFP.Value[6] = &m;
         CFP.Value[7] = &m;
         CFP.Value[8] = &l;
-        CFP.Value[9] = ob->event_hook[k];
-        CFP.Value[10]= ob->event_options[k];
-        if (findPlugin(ob->event_plugin[k])>=0)
-            ((PlugList[findPlugin(ob->event_plugin[k])].eventfunc) (&CFP));
+        CFP.Value[9] = evt->hook;
+        CFP.Value[10]= evt->options;
+        if (findPlugin(evt->plugin)>=0)
+            ((PlugList[findPlugin(evt->plugin)].eventfunc) (&CFP));
     }
 }
 
@@ -87,7 +88,7 @@ int cftimer_create(int id, long delay, object* ob, int mode)
         return TIMER_ERR_MODE;
     if (ob == NULL)
         return TIMER_ERR_OBJ;
-    if (ob->event_hook[EVENT_TIMER] == NULL)
+    if (find_event(ob, EVENT_TIMER) == NULL)
         return TIMER_ERR_OBJ;
     timers_table[id].mode = mode;
     timers_table[id].ob   = ob;

@@ -746,12 +746,13 @@ void add_statbonus(object *op) {
 
 void fix_player(object *op) {
     int i,j;
+    event *evt;
     float f,max=9,added_speed=0,bonus_speed=0, sp_tmp,speed_reduce_from_disease=1;
     int weapon_weight=0,weapon_speed=0;
     int best_wc=0, best_ac=0, wc=0, ac=0;
     int prot[NROFATTACKS], vuln[NROFATTACKS], potion_resist[NROFATTACKS];
     object *grace_obj=NULL,*mana_obj=NULL,*hp_obj=NULL,*wc_obj=NULL,*tmp;
-  
+
     /* First task is to clear all the values back to their original values */
     if(op->type==PLAYER) {
 	for(i=0;i<NUM_STATS;i++) {
@@ -762,7 +763,7 @@ void fix_player(object *op) {
 	if(op->chosen_skill&&op->chosen_skill->exp_obj)
 	    op->chosen_skill->level=op->chosen_skill->exp_obj->level;
 
-        op->attacktype=0;    
+        op->attacktype=0;
 	op->contr->digestion = 0;
 	op->contr->gen_hp = 0;
 	op->contr->gen_sp = 0;
@@ -946,7 +947,7 @@ void fix_player(object *op) {
 	    }
 
 	    /* There may be other things that should not adjust the attacktype */
-	    if (tmp->type!=BOW && tmp->type != SYMPTOM) 
+	    if (tmp->type!=BOW && tmp->type != SYMPTOM)
 		op->attacktype|=tmp->attacktype;
 
 	    op->path_attuned|=tmp->path_attuned;
@@ -1048,7 +1049,8 @@ void fix_player(object *op) {
 		     * extra strength damage, this is where the code should
 		     * go.
 		     */
-		if (tmp->event_hook[EVENT_ATTACK] != NULL) {
+        evt = find_event(tmp,EVENT_ATTACK);
+        if (evt != NULL) {
 		    if (op->current_weapon_script)
 			free_string(op->current_weapon_script);
 		    op->current_weapon_script=add_string(query_name(tmp));

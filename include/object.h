@@ -42,6 +42,15 @@ typedef struct Body_Locations {
 
 extern Body_Locations body_locations[NUM_BODY_LOCATIONS];
 
+typedef struct _event
+{
+    int type;
+    char *hook;
+    char *plugin;
+    char *options;
+    struct _event *next;
+} event;
+
 /* Definition for WILL_APPLY values.  Replaces having harcoded values
  * sprinkled in the code.  Note that some of these also replace fields
  * that were in the can_apply area.  What is the point of having both
@@ -199,9 +208,10 @@ typedef struct obj {
     sint32  elevation;		/* elevation of this terrain - not currently used */
     uint8   smoothlevel;    /* how to smooth this square around*/
 
-    char	*event_hook[30];    /* GROS - extensions for scripting events */
-    char	*event_plugin[30];
-    char	*event_options[30];
+    //char	*event_hook[30];    /* GROS - extensions for scripting events */
+    //char	*event_plugin[30];
+    //char	*event_options[30];
+    event   *events;
 
 } object;
 

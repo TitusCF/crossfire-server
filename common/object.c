@@ -495,7 +495,6 @@ void copy_owner (object *op, object *clone)
  */
 
 void reset_object(object *op) {
-    int i;
 
     op->name = NULL;
     op->name_pl = NULL;
@@ -505,11 +504,6 @@ void reset_object(object *op) {
     op->msg = NULL;
     op->materialname = NULL;
     op->lore = NULL;
-    for(i=0;i<30;i++) {
-	op->event_hook[i] = NULL;
-	op->event_plugin[i] = NULL;
-	op->event_options[i] = NULL;
-    }
     op->current_weapon_script = NULL;
     clear_object(op);
 }
@@ -519,6 +513,9 @@ void reset_object(object *op) {
  */
 
 void clear_object(object *op) {
+
+    event *evt;
+    event *evt2;
 
     /* the memset will clear all these values for us, but we need
      * to reduce the refcount on them.
@@ -562,6 +559,30 @@ void clear_object(object *op) {
     op->attacked_by_count= -1;
     if (settings.casting_time == TRUE)
 	op->casting = -1;
+    /* Clean the events list */
+    while (op->events != NULL)
+    {
+        evt2 = NULL;
+        evt  = op->events;
+        while (evt->next != NULL)
+        {
+            evt2 = evt;
+            evt  = evt->next;
+
+        }
+
+        if (evt->hook != NULL) FREE_AND_CLEAR(evt->hook);
+        if (evt->plugin != NULL) FREE_AND_CLEAR(evt->plugin);
+        if (evt->options != NULL) FREE_AND_CLEAR(evt->options);
+
+        FREE_AND_CLEAR(evt);
+
+        if (evt2 != NULL)
+            evt2->next = NULL;
+        else
+            op->events = NULL;
+    }
+
 }
 
 /*

@@ -856,6 +856,7 @@ int apply_container (object *op, object *sack)
 
 int esrv_apply_container (object *op, object *sack)
 {
+    event *evt;
     object *tmp=op->container;
 
     if(op->type!=PLAYER)
@@ -877,7 +878,7 @@ int esrv_apply_container (object *op, object *sack)
 	    CLEAR_FLAG (op->container, FLAG_FLY_OFF);
 	}
 	/* GROS: Handle for plugin close event */
-	if(tmp->event_hook[EVENT_CLOSE] != NULL)
+    if ((evt = find_event(tmp, EVENT_CLOSE)) != NULL)
 	{
 		CFParm CFP;
 		CFParm* CFR;
@@ -895,11 +896,11 @@ int esrv_apply_container (object *op, object *sack)
 		CFP.Value[6] = &m;
 		CFP.Value[7] = &m;
 		CFP.Value[8] = &l;
-		CFP.Value[9] = tmp->event_hook[k];
-		CFP.Value[10]= tmp->event_options[k];
-		if (findPlugin(tmp->event_plugin[k])>=0)
+		CFP.Value[9] = evt->hook;
+		CFP.Value[10]= evt->options;
+		if (findPlugin(evt->plugin)>=0)
 		{
-			CFR = (PlugList[findPlugin(tmp->event_plugin[k])].eventfunc) (&CFP);
+			CFR = (PlugList[findPlugin(evt->plugin)].eventfunc) (&CFP);
 			rtn_script = *(int *)(CFR->Value[0]);
 			if (rtn_script!=0) return 1;
 		}
@@ -1128,6 +1129,7 @@ static void apply_sign (object *op, object *sign)
 void move_apply (object *trap, object *victim, object *originator)
 {
   static int recursion_depth = 0;
+  event *evt;
 
   /* move_apply() is the most likely candidate for causing unwanted and
    * possibly unlimited recursion. */
@@ -1145,7 +1147,7 @@ void move_apply (object *trap, object *victim, object *originator)
   recursion_depth++;
   if (trap->head) trap=trap->head;
   /* GROS: Handle for plugin close event */
-  if(trap->event_hook[EVENT_TRIGGER] != NULL)
+  if ((evt = find_event(trap, EVENT_TRIGGER))!=NULL)
   {
     CFParm CFP;
     CFParm* CFR;
@@ -1163,11 +1165,11 @@ void move_apply (object *trap, object *victim, object *originator)
     CFP.Value[6] = &m;
     CFP.Value[7] = &m;
     CFP.Value[8] = &l;
-    CFP.Value[9] = trap->event_hook[k];
-    CFP.Value[10]= trap->event_options[k];
-    if (findPlugin(trap->event_plugin[k])>=0)
+    CFP.Value[9] = evt->hook;
+    CFP.Value[10]= evt->options;
+    if (findPlugin(evt->plugin)>=0)
     {
-      CFR = (PlugList[findPlugin(trap->event_plugin[k])].eventfunc) (&CFP);
+      CFR = (PlugList[findPlugin(evt->plugin)].eventfunc) (&CFP);
       rtn_script = *(int *)(CFR->Value[0]);
       if (rtn_script!=0) return;
     }
@@ -1381,6 +1383,7 @@ void move_apply (object *trap, object *victim, object *originator)
 static void apply_book (object *op, object *tmp)
 {
     int lev_diff;
+    event *evt;
 
     if(QUERY_FLAG(op, FLAG_BLIND)&&!QUERY_FLAG(op,FLAG_WIZ)) {
       new_draw_info(NDI_UNIQUE, 0,op,"You are unable to read while blind.");
@@ -1419,7 +1422,7 @@ static void apply_book (object *op, object *tmp)
     new_draw_info_format (NDI_UNIQUE, 0, op,
                           "You open the %s and start reading.", tmp->name);
     /* GROS: Handle for plugin trigger event */
-    if(tmp->event_hook[EVENT_APPLY] != NULL)
+    if ((evt = find_event(tmp, EVENT_APPLY)) != NULL)
     {
         CFParm CFP;
         int k, l, m;
@@ -1435,10 +1438,10 @@ static void apply_book (object *op, object *tmp)
         CFP.Value[6] = &m;
         CFP.Value[7] = &m;
         CFP.Value[8] = &l;
-        CFP.Value[9] = tmp->event_hook[k];
-        CFP.Value[10]= tmp->event_options[k];
-        if (findPlugin(tmp->event_plugin[k])>=0)
-            ((PlugList[findPlugin(tmp->event_plugin[k])].eventfunc) (&CFP));
+        CFP.Value[9] = evt->hook;
+        CFP.Value[10]= evt->options;
+        if (findPlugin(evt->plugin)>=0)
+            ((PlugList[findPlugin(evt->plugin)].eventfunc) (&CFP));
     }
     else
         new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, op, tmp->msg);
@@ -2156,6 +2159,8 @@ extern void apply_poison (object *op, object *tmp)
 int manual_apply (object *op, object *tmp, int aflag)
 {
   int rtn_script;
+  event *evt;
+
   if (tmp->head) tmp=tmp->head;
 
   if (QUERY_FLAG (tmp, FLAG_UNPAID) && ! QUERY_FLAG (tmp, FLAG_APPLIED)) {
@@ -2166,13 +2171,13 @@ int manual_apply (object *op, object *tmp, int aflag)
       return 0;   /* monsters just skip unpaid items */
     }
   }
-  
+
   /* monsters mustn't apply random chests, nor magic_mouths with a counter */
   if (op->type != PLAYER && tmp->type == TREASURE)
     return 0;
-  
+
   /* GROS: Handle for plugin trigger event */
-  if(tmp->event_hook[EVENT_APPLY] != NULL)
+  if ((evt = find_event(tmp, EVENT_APPLY)) != NULL)
   {
     CFParm CFP;
     CFParm* CFR;
@@ -2189,11 +2194,11 @@ int manual_apply (object *op, object *tmp, int aflag)
     CFP.Value[6] = &m;
     CFP.Value[7] = &m;
     CFP.Value[8] = &l;
-    CFP.Value[9] = tmp->event_hook[k];
-    CFP.Value[10]= tmp->event_options[k];
-    if (findPlugin(tmp->event_plugin[k])>=0)
+    CFP.Value[9] = evt->hook;
+    CFP.Value[10]= evt->options;
+    if (findPlugin(evt->plugin)>=0)
     {
-        CFR = (PlugList[findPlugin(tmp->event_plugin[k])].eventfunc) (&CFP);
+        CFR = (PlugList[findPlugin(evt->plugin)].eventfunc) (&CFP);
         rtn_script = *(int *)(CFR->Value[0]);
         if (rtn_script!=0) return 1;
     }
@@ -2863,6 +2868,7 @@ int apply_special (object *who, object *op, int aflags)
 {
     int basic_flag = aflags & AP_BASIC_FLAGS;
     object *tmp, *tmp2;
+    event *evt;
     int i;
 
     if(who==NULL) {
@@ -2960,7 +2966,7 @@ int apply_special (object *who, object *op, int aflags)
 
 	    (void) change_abil (who,op);
 	    /* GROS: update the current_weapon_script field (used with EVENT_ATTACK for weapons) */
-	    if (op->event_hook[EVENT_ATTACK] != NULL) {
+        if ((evt = find_event(op, EVENT_ATTACK)) != NULL) {
 		LOG(llevDebug, "Scripting Weapon wielded\n");
 		if (who->current_weapon_script) free_string(who->current_weapon_script);
 		who->current_weapon_script=add_string(query_name(op));

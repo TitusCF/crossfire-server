@@ -3774,6 +3774,7 @@ static PyObject* CFKillObject(PyObject* self, PyObject* args)
     long whatptr;
     int ktype;
     int k = 1;
+    event *evt;
     CFParm* CFR;
 
     if (!PyArg_ParseTuple(args,"lli",&whoptr,&whatptr,&ktype))
@@ -3803,10 +3804,17 @@ static PyObject* CFKillObject(PyObject* self, PyObject* args)
 
     /* WHAT->script_str_death = NULL; */
     /* WHAT->script_death = NULL; */
+/*
     WHAT->event_hook[EVENT_DEATH] = NULL;
     WHAT->event_plugin[EVENT_DEATH] = NULL;
     WHAT->event_options[EVENT_DEATH] = NULL;
-
+*/
+    if ((evt = find_event(WHAT, EVENT_DEATH))!=NULL)
+    {
+        evt->hook = NULL;
+        evt->plugin = NULL;
+        evt->options = NULL;
+    }
    /* This is to avoid the attack routine to continue after we called
     * killObject, since the attacked object no longer exists.
     * By fixing guile_current_other to NULL, guile_use_weapon_script will
@@ -6099,10 +6107,19 @@ static PyObject* CFGetEventHandler(PyObject* self, PyObject* args)
 {
     long whoptr;
     int eventnr;
+    event *evt;
+    char buf[1];
 
     if (!PyArg_ParseTuple(args,"li",&whoptr,&eventnr))
         return NULL;
-    return Py_BuildValue("s",WHO->event_hook[eventnr]);
+    evt = find_event(WHO, eventnr);
+    if (evt == NULL)
+    {
+        strcpy(buf, "");
+        return Py_BuildValue("s", buf);
+    }
+    else
+        return Py_BuildValue("s",evt->hook);
 };
 
 /*****************************************************************************/
@@ -6116,11 +6133,14 @@ static PyObject* CFSetEventHandler(PyObject* self, PyObject* args)
     long whoptr;
     int eventnr;
     char* scriptname;
+    event *evt;
 
     if (!PyArg_ParseTuple(args,"lis",&whoptr, &eventnr, &scriptname))
         return NULL;
 
-    WHO->event_hook[eventnr] = add_string(scriptname);
+    evt = find_event(WHO, eventnr);
+    evt->hook = add_string(scriptname);
+
     Py_INCREF(Py_None);
     return Py_None;
 };
@@ -6135,10 +6155,20 @@ static PyObject* CFGetEventPlugin(PyObject* self, PyObject* args)
 {
     long whoptr;
     int eventnr;
+    event *evt;
+    char buf[1];
 
     if (!PyArg_ParseTuple(args,"li",&whoptr, &eventnr))
         return NULL;
-    return Py_BuildValue("s", WHO->event_plugin[eventnr]);
+
+    evt = find_event(WHO, eventnr);
+    if (evt == NULL)
+    {
+        strcpy(buf, "");
+        return Py_BuildValue("s", buf);
+    }
+    else
+        return Py_BuildValue("s",evt->plugin);
 };
 
 /*****************************************************************************/
@@ -6153,10 +6183,14 @@ static PyObject* CFSetEventPlugin(PyObject* self, PyObject* args)
     int eventnr;
     char* scriptname;
 
-    if (!PyArg_ParseTuple(args,"lis",&whoptr,&eventnr,&scriptname))
+    event *evt;
+
+    if (!PyArg_ParseTuple(args,"lis",&whoptr, &eventnr, &scriptname))
         return NULL;
 
-    WHO->event_plugin[eventnr] = add_string(scriptname);
+    evt = find_event(WHO, eventnr);
+    evt->plugin = add_string(scriptname);
+
     Py_INCREF(Py_None);
     return Py_None;
 };
@@ -6171,15 +6205,20 @@ static PyObject* CFGetEventOptions(PyObject* self, PyObject* args)
 {
     long whoptr;
     int eventnr;
-    static char estr[4];
-    if (!PyArg_ParseTuple(args,"li",&whoptr,&eventnr))
+    event *evt;
+    char buf[1];
+
+    if (!PyArg_ParseTuple(args,"li",&whoptr, &eventnr))
         return NULL;
-    if (WHO->event_options[eventnr] == NULL)
+
+    evt = find_event(WHO, eventnr);
+    if (evt == NULL)
     {
-        strcpy(estr,"");
-        return Py_BuildValue("s", estr);
-    };
-    return Py_BuildValue("s", WHO->event_options[eventnr]);
+        strcpy(buf, "");
+        return Py_BuildValue("i", buf);
+    }
+    else
+        return Py_BuildValue("s",evt->plugin);
 };
 
 /*****************************************************************************/
@@ -6193,11 +6232,13 @@ static PyObject* CFSetEventOptions(PyObject* self, PyObject* args)
     long whoptr;
     int eventnr;
     char* scriptname;
+    event *evt;
 
-    if (!PyArg_ParseTuple(args,"lis",&whoptr,&eventnr,&scriptname))
+    if (!PyArg_ParseTuple(args,"lis",&whoptr, &eventnr, &scriptname))
         return NULL;
 
-    WHO->event_options[eventnr] = add_string(scriptname);
+    evt = find_event(WHO, eventnr);
+    evt->options = add_string(scriptname);
 
     Py_INCREF(Py_None);
     return Py_None;

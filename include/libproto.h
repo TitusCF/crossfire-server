@@ -413,3 +413,5 @@ extern void save_double(char *buf, char *name, double v);
 extern void init_vars(void);
 extern char *get_ob_diff(object *op, object *op2);
 extern void save_object(FILE *fp, object *op, int flag);
+extern void insert_event(object* op, int etype, char *ehook, char *eplug, char *eoptions);
+extern event* find_event(object* op, int etype);

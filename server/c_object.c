@@ -863,6 +863,7 @@ void drop_object (object *op, object *tmp, long nrof)
 {
     char buf[MAX_BUF];
     object *floor;
+    event *evt;
 
     if (QUERY_FLAG(tmp, FLAG_NO_DROP)) {
 #if 0
@@ -901,7 +902,7 @@ void drop_object (object *op, object *tmp, long nrof)
     } else
       remove_ob (tmp);
       /* GROS: Handle for plugin drop event */
-      if(tmp->event_hook[EVENT_DROP] != NULL)
+      if ((evt = find_event(tmp, EVENT_DROP)) != NULL)
       {
         CFParm CFP;
         CFParm *CFR;
@@ -918,11 +919,11 @@ void drop_object (object *op, object *tmp, long nrof)
         CFP.Value[6] = &m;
         CFP.Value[7] = &m;
         CFP.Value[8] = &l;
-        CFP.Value[9] = tmp->event_hook[k];
-        CFP.Value[10]= tmp->event_options[k];
-        if (findPlugin(tmp->event_plugin[k])>=0)
+        CFP.Value[9] = evt->hook;
+        CFP.Value[10]= evt->options;
+        if (findPlugin(evt->plugin)>=0)
         {
-          CFR = ((PlugList[findPlugin(tmp->event_plugin[k])].eventfunc) (&CFP));
+          CFR = ((PlugList[findPlugin(evt->plugin)].eventfunc) (&CFP));
           rtn_script = *(int *)(CFR->Value[0]);
           if (rtn_script!=0) return;
         }

@@ -73,9 +73,10 @@ object *find_god(char *name) {
 void pray_at_altar(object *pl, object *altar) {
     object *pl_god=find_god(determine_god(pl));
     int return_pray_script; /* GROS : This is for return value of script */
+    event *evt;
 
     /* GROS: Handle for plugin altar-parying (apply) event */
-    if(altar->event_hook[EVENT_APPLY] != NULL)
+    if ((evt = find_event(altar, EVENT_APPLY)) != NULL)
     {
         CFParm CFP;
         CFParm* CFR;
@@ -92,11 +93,11 @@ void pray_at_altar(object *pl, object *altar) {
         CFP.Value[6] = &m;
         CFP.Value[7] = &m;
         CFP.Value[8] = &l;
-        CFP.Value[9] = altar->event_hook[k];
-        CFP.Value[10]= altar->event_options[k];
-        if (findPlugin(altar->event_plugin[k])>=0)
+        CFP.Value[9] = evt->hook;
+        CFP.Value[10]= evt->options;
+        if (findPlugin(evt->plugin)>=0)
         {
-            CFR = (PlugList[findPlugin(altar->event_plugin[k])].eventfunc) (&CFP);
+            CFR = (PlugList[findPlugin(evt->plugin)].eventfunc) (&CFP);
             return_pray_script = *(int *)(CFR->Value[0]);
             free(CFR);
             if (return_pray_script) return;

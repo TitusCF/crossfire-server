@@ -576,8 +576,9 @@ object *fix_stopped_arrow (object *op)
 
 static void stop_arrow (object *op)
 {
+    event *evt;
     /* GROS: Handle for plugin stop event */
-    if(op->event_hook[EVENT_STOP] != NULL)
+    if ((evt = find_event(op, EVENT_STOP)) != NULL)
     {
         CFParm CFP;
         int k, l, m;
@@ -593,10 +594,10 @@ static void stop_arrow (object *op)
         CFP.Value[6] = &m;
         CFP.Value[7] = &m;
         CFP.Value[8] = &l;
-        CFP.Value[9] = op->event_hook[k];
-        CFP.Value[10]= op->event_options[k];
-        if (findPlugin(op->event_plugin[k])>=0)
-            ((PlugList[findPlugin(op->event_plugin[k])].eventfunc) (&CFP));
+        CFP.Value[9] = evt->hook;
+        CFP.Value[10]= evt->options;
+        if (findPlugin(evt->plugin)>=0)
+            ((PlugList[findPlugin(evt->plugin)].eventfunc) (&CFP));
     }
     if (op->inv) {
 	object *payload = op->inv;
@@ -822,7 +823,7 @@ void change_object(object *op) { /* Doesn`t handle linked objs yet */
 
 void move_teleporter(object *op) {
     object *tmp, *head=op;
-
+    event *evt;
     /* if this is a multipart teleporter, handle the other parts
      * The check for speed isn't strictly needed - basically, if
      * there is an old multipart teleporter in which the other parts
@@ -844,7 +845,7 @@ void move_teleporter(object *op) {
       if(op->above->type==PLAYER)
       {
         /* GROS: Handle for plugin TRIGGER event */
-        if(op->event_hook[EVENT_TRIGGER] != NULL)
+        if ((evt = find_event(op, EVENT_TRIGGER)) != NULL)
         {
           CFParm CFP;
           CFParm* CFR;
@@ -862,11 +863,11 @@ void move_teleporter(object *op) {
           CFP.Value[6] = &m;
           CFP.Value[7] = &m;
           CFP.Value[8] = &l;
-          CFP.Value[9] = op->event_hook[k];
-          CFP.Value[10]= op->event_options[k];
-          if (findPlugin(op->event_plugin[k])>=0)
+          CFP.Value[9] = evt->hook;
+          CFP.Value[10]= evt->options;
+          if (findPlugin(evt->plugin)>=0)
           {
-            CFR = (PlugList[findPlugin(op->event_plugin[k])].eventfunc) (&CFP);
+            CFR = (PlugList[findPlugin(evt->plugin)].eventfunc) (&CFP);
             rtn_script = *(int *)(CFR->Value[0]);
           }
           if (rtn_script!=0) return;
@@ -885,7 +886,7 @@ void move_teleporter(object *op) {
 	    return;
 	}
 	/* GROS: Handle for plugin TRIGGER event */
-	if(op->event_hook[EVENT_TRIGGER] != NULL)
+    if ((evt = find_event(op, EVENT_TRIGGER)) != NULL)
 	{
 		CFParm CFP;
 		CFParm* CFR;
@@ -903,11 +904,11 @@ void move_teleporter(object *op) {
 		CFP.Value[6] = &m;
 		CFP.Value[7] = &m;
 		CFP.Value[8] = &l;
-		CFP.Value[9] = op->event_hook[k];
-		CFP.Value[10]= op->event_options[k];
-		if (findPlugin(op->event_plugin[k])>=0)
+		CFP.Value[9] = evt->hook;
+		CFP.Value[10]= evt->options;
+		if (findPlugin(evt->plugin)>=0)
 		{
-			CFR = (PlugList[findPlugin(op->event_plugin[k])].eventfunc) (&CFP);
+			CFR = (PlugList[findPlugin(evt->plugin)].eventfunc) (&CFP);
 			rtn_script = *(int *)(CFR->Value[0]);
 		}
 		if (rtn_script!=0) return;
@@ -918,7 +919,7 @@ void move_teleporter(object *op) {
     {
 		/* Random teleporter */
 		/* GROS: Handle for plugin TRIGGER event */
-		if(op->event_hook[EVENT_TRIGGER] != NULL)
+        if ((evt = find_event(op, EVENT_TRIGGER)) != NULL)
 		{
 			CFParm CFP;
 			CFParm* CFR;
@@ -936,11 +937,11 @@ void move_teleporter(object *op) {
 			CFP.Value[6] = &m;
 			CFP.Value[7] = &m;
 			CFP.Value[8] = &l;
-			CFP.Value[9] = op->event_hook[k];
-			CFP.Value[10]= op->event_options[k];
-			if (findPlugin(op->event_plugin[k])>=0)
+			CFP.Value[9] = evt->hook;
+			CFP.Value[10]= evt->options;
+			if (findPlugin(evt->plugin)>=0)
 			{
-				CFR = (PlugList[findPlugin(op->event_plugin[k])].eventfunc) (&CFP);
+				CFR = (PlugList[findPlugin(evt->plugin)].eventfunc) (&CFP);
 				rtn_script = *(int *)(CFR->Value[0]);
 			}
 			if (rtn_script!=0) return;
@@ -959,12 +960,13 @@ void move_teleporter(object *op) {
 void move_player_changer(object *op) {
   object *player;
   object *walk;
+  event *evt;
   char c;
    if(op->above!=NULL) {
     if(EXIT_PATH(op)) {
       if(op->above->type==PLAYER) {
       /* GROS: Handle for plugin TRIGGER event */
-      if(op->event_hook[EVENT_TRIGGER] != NULL)
+      if ((evt = find_event(op, EVENT_TRIGGER)) != NULL)
       {
         CFParm CFP;
         CFParm* CFR;
@@ -982,17 +984,17 @@ void move_player_changer(object *op) {
         CFP.Value[6] = &m;
         CFP.Value[7] = &m;
         CFP.Value[8] = &l;
-        CFP.Value[9] = op->event_hook[k];
-        CFP.Value[10]= op->event_options[k];
-        if (findPlugin(op->event_plugin[k])>=0)
+        CFP.Value[9] = evt->hook;
+        CFP.Value[10]= evt->options;
+        if (findPlugin(evt->plugin)>=0)
         {
-          CFR = (PlugList[findPlugin(op->event_plugin[k])].eventfunc) (&CFP);
+          CFR = (PlugList[findPlugin(evt->plugin)].eventfunc) (&CFP);
           rtn_script = *(int *)(CFR->Value[0]);
         }
         if (rtn_script!=0) return;
       }
 	player=op->above;
-	for(walk=op->inv;walk!=NULL;walk=walk->below) 
+	for(walk=op->inv;walk!=NULL;walk=walk->below)
 	  apply_changes_to_player(player,walk);
 	link_player_skills(op->above);
 	esrv_send_inventory(op->above,op->above);
@@ -1219,8 +1221,10 @@ void move_marker(object *op) {
  
 int process_object(object *op) {
 
+  event *evt;
+
   if(QUERY_FLAG(op, FLAG_MONSTER))
-    if(move_monster(op) || QUERY_FLAG(op, FLAG_FREED)) 
+    if(move_monster(op) || QUERY_FLAG(op, FLAG_FREED))
       return 1;
 
   if(QUERY_FLAG(op, FLAG_ANIMATE) && op->anim_speed==0) {
@@ -1253,7 +1257,7 @@ int process_object(object *op) {
     return 1;
   }
   /* GROS: Handle for plugin time event */
-  if(op->event_hook[EVENT_TIME] != NULL)
+  if ((evt = find_event(op, EVENT_TIME)) != NULL)
   {
     CFParm CFP;
     int k, l, m;
@@ -1269,10 +1273,10 @@ int process_object(object *op) {
     CFP.Value[6] = &m;
     CFP.Value[7] = &m;
     CFP.Value[8] = &l;
-    CFP.Value[9] = op->event_hook[k];
-    CFP.Value[10]= op->event_options[k];
-    if (findPlugin(op->event_plugin[k])>=0)
-        ((PlugList[findPlugin(op->event_plugin[k])].eventfunc) (&CFP));
+    CFP.Value[9] = evt->hook;
+    CFP.Value[10]= evt->options;
+    if (findPlugin(evt->plugin)>=0)
+        ((PlugList[findPlugin(evt->plugin)].eventfunc) (&CFP));
   }
   switch(op->type) {
   case ROD:
