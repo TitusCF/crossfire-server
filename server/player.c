@@ -3071,9 +3071,23 @@ void dragon_ability_gain(object *who, int atnr, int level) {
   
     /* everything seems okay - now bring on the gift: */
     item = &(tr->item->clone);
-  
+
+    if (item->type == SPELL) {
+	if (check_spell_known (who, item->name))
+	    return;
+
+	new_draw_info_format(NDI_UNIQUE|NDI_BLUE, 0, who, "You gained the ability of %s", item->inv->name);
+	do_learn_spell (who, item, 0);
+	return;
+    }
+
     /* grant direct spell */
     if (item->type == SPELLBOOK) {
+	if (!item->inv) {
+	    LOG(llevDebug,"dragon_ability_gain: Broken spellbook %s\n",
+		item->name);
+	    return;
+	}
 	if (check_spell_known (who, item->inv->name))
 	    return;
 	if (item->invisible) {

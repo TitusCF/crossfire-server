@@ -1204,7 +1204,7 @@ int hit_player_attacktype(object *op, object *hitter, int dam,
 				      hitter->chosen_skill? hitter->chosen_skill->skill:NULL, SK_EXP_TOTAL);
 		} else if (op->type != PLAYER || hitter->type != PLAYER) {
 		    change_exp(hitter, op->stats.exp/(rate*2), 
-			      hitter->chosen_skill->skill, 0);
+			      hitter->chosen_skill?hitter->chosen_skill->skill:NULL, 0);
 		}
 		change_exp(op,-op->stats.exp/rate, NULL, 0);
 	    } 
