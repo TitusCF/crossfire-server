@@ -1,0 +1,44 @@
+#! /bin/sh -e
+
+case "$1" in
+    install)
+     # do nothing
+     ;;
+    
+    upgrade)
+	# Source debconf library
+	. /usr/share/debconf/confmodule
+	if [ -d /var/lib/games/crossfire/ ] ; then
+	    db_input high crossfire-server/ask_upgrade || true
+	    db_go || true
+
+	    db_get crossfire-server/ask_upgrade || true
+	    if [ "$RET" = "yes" ] ; then
+		if [ ! -d /var/games/crossfire/ ] ; then
+		    echo "moving /var/lib/games/crossfire/ to /var/games/crossfire"
+		    mv -f /var/lib/games/crossfire/ /var/games/ || true
+		    if [ -d /var/lib/games/crossfire/ ] ; then
+			if [ "`ls /var/lib/games/crossfire/ | wc -l`" -gt 0 ] ; then
+			    echo "there are still files in /var/lib/games/crossfire/ !"
+			    echo "Please move them to /var/games/crossfire"
+			fi
+		    fi
+		fi
+	    fi
+	    
+	fi
+	db_stop || true
+	;;
+    abort-upgrade)
+	# do nothing
+	;;
+
+    *)
+	echo "$0: incorrect arguments: $*" >&2
+	exit 1
+	;;
+
+esac
+
+##DEBHELPER##
+

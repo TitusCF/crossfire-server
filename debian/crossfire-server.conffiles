@@ -1,0 +1,9 @@
+/etc/init.d/crossfire-server
+/etc/crossfire/settings
+/etc/crossfire/motd
+/etc/crossfire/dm_file
+/etc/crossfire/forbid
+/etc/crossfire/ban_file
+/etc/crossfire/skill_params
+/etc/crossfire/spell_params
+/etc/crossfire/exp_table

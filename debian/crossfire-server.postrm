@@ -1,0 +1,52 @@
+#! /bin/sh -e
+
+case "$1" in
+    failed-upgrade|abort-upgrade)
+	if [ -d /var/lib/games/crossfire/ ] ; then
+	    #only if we really moved everything
+	    if [ "`ls /var/lib/games/crossfire/ | wc -l`" -eq 0 ] ; then
+		if [ -d /var/games/crossfire/ ] ; then
+		    echo "moving files and directories back to /var/lib/games/crossfire/"
+		    mv /var/games/crossfire/* /var/lib/games/crossfire/ ||true
+		fi
+	    fi
+	fi
+    ;;
+
+  abort-install)
+    # do nothing
+    ;;
+
+  purge)
+    if [ -e /usr/share/debconf/confmodule ] ; then
+	. /usr/share/debconf/confmodule
+	db_purge
+    fi
+    ##purge game files
+    if [ -d /var/games/crossfire/ ] ; then
+	if [ "`ls /var/games/crossfire/ | wc -l`" -gt 0 ] ; then
+	echo "purging /var/games/crossfire/ and it's contents"
+	rm -rf /var/games/crossfire/ ||true
+	fi
+    fi
+    ##purge logfiles
+    if [ -d /var/log/crossfire/ ] ; then
+        if [ "`ls /var/log/crossfire/ | wc -l`" -gt 0 ] ; then
+	echo "purging /var/games/crossfire/ and it's contents"
+        rm -rf /var/log/crossfire/ ||true
+	fi
+    fi
+    ;;
+
+  remove|upgrade|disappear)
+    # do nothing
+    ;; 
+  *)
+    echo "$0: incorrect arguments: $*" >&2
+    exit 1
+    ;;
+
+esac
+
+##DEBHELPER##
+
