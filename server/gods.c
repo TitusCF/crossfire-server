@@ -479,10 +479,20 @@ void god_intervention(object *op, object *god) {
  
     /* add the gods attacktype*/
       if(!(RANDOM()%2)&&!(weapon->attacktype&god->attacktype)) {
+	char buf[MAX_BUF];
         new_draw_info(NDI_UNIQUE,0,op,"Your weapon suddenly glows!");
 	if (weapon->attacktype==0)
 	    weapon->attacktype = AT_PHYSICAL;
 	weapon->attacktype=weapon->attacktype|god->attacktype;
+
+        if(!weapon->title) {
+          new_draw_info_format(NDI_UNIQUE,0,op,
+             weapon->name);
+          sprintf(buf,"of %s",god->name);
+          weapon->title=add_string(buf);
+	  if(op->type==PLAYER)
+	    esrv_update_item(UPD_NAME, op, weapon);
+          }
 	return;
       }
 
