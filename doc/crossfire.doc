@@ -261,22 +261,7 @@ SPECIAL NOTES FOR CERTAIN OBJECTS:
 
 MAPS:
 
-'value' stores the timeout
-'weight' stores the reset time.  
-'level' stores the map difficulty.
-'stand_still'	If nonzero, the map reset time will not be updated
-	when someone enters/exits the map.  Thus, once the map has
-	been loaded, it will reset in 'reset time' no matter what
-	access happen.  This is useful for shops and towns, which
-	are constantly accessed, but should be reset periodically.
-
-All three of these values are used when loading the map.  Internally,
-fields in the map structure are used for some of these, or are
-assigned some of these values when they get scheduled for saving.
-
-Note that crossedit has a nice menu that lists outside values and maps
-them to the internal values - thus, you seldom need to know these unless
-you are trying to debug something.
+see doc/map-technical for this information.
 
 ------------------------------------------------------------------------------
 HOLY_ALTARS (re-done code by Mark Wedel)
