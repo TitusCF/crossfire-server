@@ -110,7 +110,7 @@ int max_carry[MAX_STAT + 1]={
  * before, you need to start someplace.
  */
 
-int weight_limit[MAX_STAT+ 1] = {
+uint32 weight_limit[MAX_STAT+ 1] = {
     200000,  /* 0 */
     250000,300000,350000,400000,500000,	    /* 5*/
     600000,700000,800000,900000,1000000,    /* 10 */

@@ -62,7 +62,7 @@ extern char *statname[NUM_STATS];
 extern char *short_stat_name[NUM_STATS];
 extern char *lose_msg[NUM_STATS];
 extern float speed_bonus[MAX_STAT + 1];
-extern int weight_limit[MAX_STAT + 1];
+extern uint32 weight_limit[MAX_STAT + 1];
 extern int cleric_chance[MAX_STAT + 1];
 extern int fear_bonus[MAX_STAT + 1];
 

@@ -737,7 +737,7 @@ void esrv_update_stats(player *pl)
     AddIfFloat(pl->last_speed, pl->ob->speed, CS_STAT_SPEED);
     AddIfShort(pl->last_stats.food, pl->ob->stats.food, CS_STAT_FOOD);
     AddIfFloat(pl->last_weapon_sp, pl->weapon_sp, CS_STAT_WEAP_SP);
-    AddIfInt( ( sint32 )pl->last_weight_limit, weight_limit[pl->ob->stats.Str], CS_STAT_WEIGHT_LIM);
+    AddIfInt(pl->last_weight_limit, weight_limit[pl->ob->stats.Str], CS_STAT_WEIGHT_LIM);
     flags=0;
     if (pl->fire_on) flags |=SF_FIREON;
     if (pl->run_on) flags |= SF_RUNON;
