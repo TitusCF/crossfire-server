@@ -1179,7 +1179,7 @@ void examine(object *op, object *tmp) {
  */
 void inventory(object *op,object *inv) {
   object *tmp;
-  char buf[MAX_BUF], *in;
+  char *in;
   int items = 0, length;
 
   if (inv==NULL && op==NULL) {
@@ -1219,18 +1219,16 @@ void inventory(object *op,object *inv) {
        (inv && inv->type != CONTAINER && !QUERY_FLAG(tmp, FLAG_APPLIED))))
       continue;
     if((!op || QUERY_FLAG(op, FLAG_WIZ)))
-      (void) sprintf(buf,"%s- %-*.*s (%5d) %-8s", in, length, length,
+      new_draw_info_format(NDI_UNIQUE, 0,op ,"%s- %-*.*s (%5d) %-8s", in, length, length,
 		     query_name(tmp), tmp->count,query_weight(tmp));
     else
-      (void) sprintf(buf,"%s- %-*.*s %-8s", in, length+8, 
+      new_draw_info_format(NDI_UNIQUE,0, op, "%s- %-*.*s %-8s", in, length+8, 
 		     length+8, query_name(tmp),
                      query_weight(tmp));
-    new_draw_info(NDI_UNIQUE, 0,op,buf);
   }
   if(!inv && op) {
-    sprintf(buf,"%-*s %-8s",
+    new_draw_info_format(NDI_UNIQUE,0, op ,"%-*s %-8s",
             41,"Total weight :",query_weight(op));
-    new_draw_info(NDI_UNIQUE, 0,op,buf);
   }
 }
 
