@@ -555,10 +555,16 @@ void do_mood_floor(object *op, object *op2) {
 		if(QUERY_FLAG(tmp, FLAG_UNAGGRESSIVE))
 			CLEAR_FLAG(tmp, FLAG_UNAGGRESSIVE);
 		if(QUERY_FLAG(tmp, FLAG_FRIENDLY)) { 
-			tmp->owner = 0;
 			CLEAR_FLAG(tmp, FLAG_FRIENDLY);
 			remove_friendly_object(tmp);
 			tmp->move_type = 0;
+			/* lots of checks here, but want to make sure we don't
+			 * dereference a null value
+			 */
+			if (tmp->type == GOLEM && tmp->owner && tmp->owner->type==PLAYER &&
+			    tmp->owner->contr->golem==tmp)
+				tmp->owner->contr->golem=NULL;
+			tmp->owner = 0;
 		}
 		break;
 	  case 1: 			/* angry -- get neutral monsters mad */	 
