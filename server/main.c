@@ -231,6 +231,7 @@ void enter_exit(object *op, object *exit_ob) {
 	  char newmap_name[HUGE_BUF];
 	  char oldmap_name[HUGE_BUF];
 	  int i;
+	  static int reference_number = 0;
 
 	  /* write the map parameters to the file. */
 	  fprintf(newmap_params,"%s",exit_ob->msg);
@@ -252,7 +253,8 @@ void enter_exit(object *op, object *exit_ob) {
 	  /* pick a new pathname for the new map:  it is of the form
 	   * oldmapname_x_y with underscores instead of '/' and '.', with
 	   * the entrance coordinates tacked on. */
-	  sprintf(newmap_name,"/random/%s_%d_%d",oldmap_name,exit_ob->x,exit_ob->y);
+	  /*sprintf(newmap_name,"/random/%s_%d_%d",oldmap_name,exit_ob->x,exit_ob->y);*/
+	  sprintf(newmap_name,"/random/%016d",reference_number++);
 
 	  /* now to generate the actual map. */
 	  new_map=(mapstruct *)generate_random_map("/tmp/rmap_params",newmap_name);
