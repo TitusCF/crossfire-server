@@ -46,6 +46,7 @@
 #define MORE_PRIEST_GIFTS
 
 static int god_gives_present (object *op, object *god, treasure *tr);
+static void follower_remove_similar_item (object *op, object *item);
 
 int lookup_god_by_name(char *name) {
   int godnr=-1,nmlen = strlen(name);
@@ -225,22 +226,43 @@ static void check_special_prayers (object *op, object *god)
     }
 }
 
+/*
+ * become_follower - This function is called whenever a player has
+ * switched to a new god. It handles basically all the stat changes
+ * that happen to the player, including the removal of godgiven
+ * items (from the former cult).
+ */
 void become_follower (object *op, object *new_god) {
-    object *exp_obj = op->chosen_skill->exp_obj;
+    object *exp_obj = op->chosen_skill->exp_obj; /* obj. containing god data */
+    object *old_god = NULL;                      /* old god */
     treasure *tr;
     object *item;
     int i;
     
-    /* take away any special god-characteristic items. */
-    for(item=op->inv;item!=NULL;item=item->below)
-      if(QUERY_FLAG(item,FLAG_STARTEQUIP) && item->invisible) {
-        if(item->type==SKILL || item->type==EXPERIENCE ||
-	   item->type==FORCE) continue;
-        remove_ob(item);
-        free_object(item);
-        item=op->inv;
-      }
+    /* get old god */
+    if (exp_obj->title)
+        old_god = find_god(exp_obj->title);
     
+    /* take away any special god-characteristic items. */
+    for(item=op->inv;item!=NULL;item=item->below) {
+        if(QUERY_FLAG(item,FLAG_STARTEQUIP) && item->invisible) {
+	    /* remove all invisible startequ. items which are
+	       not skill, exp or force */
+	    if(item->type==SKILL || item->type==EXPERIENCE ||
+	       item->type==FORCE) continue;
+	    remove_ob(item);
+	    free_object(item);
+	    item=op->inv;
+	}
+    }
+    
+    /* remove any godgiven items from the old god */
+    if (old_god) {
+        for(tr=old_god->randomitems->items; tr!=NULL; tr = tr->next) {
+	    if (tr->item && QUERY_FLAG(&tr->item->clone, FLAG_STARTEQUIP))
+	        follower_remove_similar_item(op, &tr->item->clone);
+	}
+    }
     
     /* give the player any special god-characteristic-items. */
     for(tr=new_god->randomitems->items; tr!=NULL; tr = tr->next) {
@@ -554,6 +576,11 @@ static int same_string (const char *s1, const char *s2)
             return strcmp (s1, s2) == 0;
 }
 
+/*
+ * follower_has_similar_item - Checks for any occurrence of
+ * the given 'item' in the inventory of 'op' (recursively).
+ * Returns 1 if found, else 0.
+ */
 static int follower_has_similar_item (object *op, object *item)
 {
     object *tmp;
@@ -569,6 +596,45 @@ static int follower_has_similar_item (object *op, object *item)
             return 1;
     }
     return 0;
+}
+
+/*
+ * follower_remove_similar_item - Checks for any occurrence of
+ * the given 'item' in the inventory of 'op' (recursively).
+ * Any matching items in the inventory are deleted, and a
+ * message is displayed to the player.
+ */
+static void follower_remove_similar_item (object *op, object *item)
+{
+    object *tmp, *next;
+    
+    if (op && op->type == PLAYER && op->contr) {
+        /* search the inventory */
+        for (tmp = op->inv; tmp != NULL; tmp = next) {
+	    next = tmp->below;   /* backup in case we remove tmp */
+        
+	    if (tmp->type == item->type
+		&& same_string (tmp->name, item->name)
+		&& same_string (tmp->title, item->title)
+		&& same_string (tmp->msg, item->msg)
+		&& same_string (tmp->slaying, item->slaying)) {
+	        
+	        /* message */
+		if (tmp->nrof > 1)
+		    new_draw_info_format(NDI_UNIQUE,0,op,
+		      "The %s crumble to dust!", query_short_name(tmp));
+		else
+		    new_draw_info_format(NDI_UNIQUE,0,op,
+		      "The %s crumbles to dust!", query_short_name(tmp));
+	        
+	        remove_ob(tmp);    /* remove obj from players inv. */
+		esrv_del_item(op->contr, tmp->count); /* notify client */
+		free_object(tmp);  /* free object */
+	    }
+	    if (tmp->inv)
+	      follower_remove_similar_item(tmp, item);
+	}
+    }
 }
 
 static int god_gives_present (object *op, object *god, treasure *tr)

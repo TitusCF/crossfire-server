@@ -172,11 +172,8 @@ more
   more
 arch god_grace_limit_high
 more
-  list sorig_treasure
-    chance 2
-end
-treasure sorig_treasure
   arch mithril_ar_ele
+    chance 2
 end
 #############################################################
 # Ruggilli - Chaos God of slaughter and terror, Consuming worm,
