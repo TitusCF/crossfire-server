@@ -1174,6 +1174,8 @@ void add_abilities(object *op, object *change) {
   if (QUERY_FLAG(change,FLAG_STAND_STILL)) {
     CLEAR_FLAG(op,FLAG_ANIMATE);
     /*op->speed = 0.0; */  /* why was this done? */
+    /* It was done so certain artifacts would join. */
+    if(!QUERY_FLAG(op,FLAG_ALIVE)) op->speed = 0.0;
     update_ob_speed(op);
   }
   if(change->nrof) op->nrof=RANDOM()%((int) change->nrof) + 1;
