@@ -281,6 +281,14 @@ void pick_up_object (object *pl, object *op, object *tmp, int nrof)
 	free_object(tmp);
 	return;
     }
+    
+    /* startequip items are not allowed to be put into containers: */
+    if (pl->type == PLAYER && op->type == CONTAINER &&
+	QUERY_FLAG(tmp, FLAG_STARTEQUIP)) {
+      new_draw_info(NDI_UNIQUE, 0,pl,"This object cannot be put into containers!");
+      return;
+    }
+    
     if (nrof==0 || nrof>tmp->nrof) nrof=(tmp->nrof?tmp->nrof:1);
     /* Figure out how much weight this object will add to the player */
     weight = tmp->weight * nrof;
