@@ -1,19 +1,3 @@
-
-General outline of future versions:
-
-1.0: First true public release - fully stable, and very well balanced.
-Post 1.0 outline, with the goal for a 2.0 release:
-1.1 -> 1.5: Make the big changes that will result in the biggest bunch
-    of new bugs.  Things I think about are map tiling, increased
-    viewable playing area, and object cleanup.  Small changes can also
-    go in these releases, but the idea is get the big stuff in early
-    so there is more time to find the bugs and get it working
-    (some will also require new clients or support within the client)
-1.6 -> 1.8: See what is still on the TODO list and other ideas, and decide
-    if they should get in by 2.0 or wait for 3.0
-1.9 -> 2.0: Releases for balancing and finding bugs - no new features,
-    and bug fixes should be well thought out.
-
 Various bits, in no particular order.  This is far from a complete list -
 however it keeps growing as various problems are discovered that
 don't have an easy fix.
@@ -31,8 +15,6 @@ light source does not illuminate the same space multiple times.
 ------------------------------------------------------------------------------
 Future feature requests
 
-- Make random treasure chests lockable, such that you need a special key
-  to open them.
 - If player tries to login with same name/password as a character currently
   active, drop the old connection and associate the player with the new 
   connection.  Useful if connection is dropped but server hasn't detected
@@ -74,7 +56,7 @@ Future feature requests
   can be opened, closed, different keys for different doors, etc.  This
   sort of mimics the gate behaviour, except keys may need to open them, etc.
 - Added armor quality, with armor being damaged as it is used.  Add repair
-  shops to go with this.
+  shops to go with this.  Uncertain if people really like this idea or not
 - Change players draining exp from others.  Currently, there are problems
   in that it not adjusted based on levels, so there are various abuses
   draining from low level characters.  Also, generally it is not possibled
@@ -100,13 +82,6 @@ Future feature requests
   see problems with pet monsters and the like.  Probably some extra
   field for spell effects which mark which spell category they are from
   needs to be added.
-
-- Add method so characters that get transported into the middle of oceans
-  can get back to the city with sysadmin intervention.  It would be pretty
-  easy to check and make sure the player is surrounded by ocean - not sure
-  if this might be used to cheat somehow (dimension door to the ocean,
-  then use the command instead of word of recall?) 
-  I believe this problem is now fixed - MSW 2001/07/07
 
 - Delete oldest swapped map in case the TMPDIR disk fills up while
   swapping out a map.  To do this, detection of error on save would need
@@ -136,15 +111,16 @@ Future feature requests
   of armor, weapon, boots, etc. This probably would clean up things a bit,
   and make more logical sense.  However, this is a major change and would
   require a bit of work.
-  Related to this:  Make access of object attributes through macros/inline
-  functions instead of direct referance.  In this way, the code can actually
-  request things by what they are used for (ie, instead of requesting hp and
-  sp in maps for destinatins, you would request dest_x and dest_y, and the
-  the macros would know those are actually sp & hp).  This also makes it 
-  easy to change overloading of some values to actually use differente elements
-  or add new elements to the structure.
-  Secondly related:  Make better handling for identified & non identified
-  item properties (ie, face, value, name, etc)
+  Probably instead of making a type/subtype, just make sure that no objects
+  re-use fields in non intuitive fashion - instead, add enough fields
+  to the object structure that object of a specific type uses it appropriately.
+  This increases memory footprint, but that probably isn't much an issue now.
+- Change identification handling.  Possible idea is to have different levels
+  of identification, with low level only showing basic information, and high
+  level showing full detail.  Skill identification should basically use this,
+  with the skill level determining actual level.  Depending on level of
+  identification, different information may be revealed (value, face, 
+  name, etc).
 - Allow monsters to be randomly generated on a map without generators (ie,
   orcs show up in forests or whatever.)  Uses this as an option to use instead
   of the existing random encounter code.
@@ -152,15 +128,13 @@ Future feature requests
   It looks like the code should already allow this, but I think the problem is
   that monster reevaluate their objectives too often, and which time they
   switch back to attacking the player.
-- Add a confirmation setting for the dm command so that the password doesn't
-  appear as plaintext.
 - Allow treasure lists to be specified as part of the objects message
 - Perhaps print out a message shortly before a spell effect is about to end.
 - Rewrite all variables, using own typedefs of type:
   [us]int8, [us]int16, [us]int32    : Variables that should be at least that
 	size (is there actually anything that needs to be precisely some size?)
 	These typedefs can be set depending on system type.
-- Related to above:  In communication remains the same (keyword matches),
+- If communication remains the same (keyword matches),
   highlite the keywords or in some way make them more noticable so players
   can know to use them.  This is no worse than many commercial games which
   give you just a few choices to choose from to continue a conversation.
@@ -182,20 +156,29 @@ Future feature requests
   other words, the spell objects could pretty much provide all the information
   needed for some of the more general functions (cast cone, fire_bolt, etc.)
 - Figurine (when a figurine pet dies, it becomes a figurine, and can be reused)
-- Make some general variable structures, try to get rid of the current
-  mess where some variables are used for other things than they
-  were meant to (union won't do either).
 
 - Ability to aim at targets not in the front row.  This should apply for
   most range attacks (thus, in a group of orcs, the ones not immediately
   around the player could still use missile weapons.)
 
-- Ability to rename objects in your inventory.  Best way would probably be
-  to just add another pointer to the object that points to the desired name.
-  That name is only used when in the inventory, other name is still used
-  for other purposes.  When object is dropped, remove that name tag.  This
-  could be a client issue, but something more would need to be added to 
-  preserve the names accross runs.
+- Ability to rename objects in your inventory.  Best to probably handle
+  this in the client - client can track the item of tag 1234 has name
+  whatever.  To do this, the tags would need to be persistent across
+  server runs.  This shouldn't be that difficult - store the tag in the
+  save file, and also have a temp file the server writes its lasted used
+  tag to.  The only issue is potential of running out of tag values -
+  its never been a problem because no server has ever been up long enough
+  to exhaust 32 bits.  However, if the last used tag value is stored away,
+  it now becomes the total run time of the server - even if no instance is
+  ever up for more than a week, the server itself could be up for a year
+  and end up running out of tags.
+  Note that by tags being persistent, other advantages arise - you can
+  really know if player 'Mark' on the scorechart is the same or a
+  different Mark than in the past, simply by storing the players tag.
+  The client can also use these known tag values for other tracking
+  purposes, like favorite lists.  The only problem is that when objects
+  merge, the correct update of the tag would need to be handled by the
+  server and/or client.
 
 Secondary features:
 
