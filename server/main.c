@@ -308,7 +308,7 @@ void enter_exit(object *op, object *exit_ob) {
      */
     if (check_path(newpath, 0) != - 1) {
 	unique=1;
-    } else if (!unique && !has_been_loaded(newpath) && (check_path(newpath,0)==-1)) {
+    } else if (!unique && !has_been_loaded(newpath) && (check_path(newpath,1)==-1)) {
 	new_draw_info_format(NDI_UNIQUE, 0,op, "The %s is closed.", newpath);
 	return;
     }
