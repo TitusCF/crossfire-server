@@ -196,6 +196,11 @@ crossfire.oc.humbug.org.au (8-22-1999)
    version: 0.95.5?
    Notes: Permadeath is turned off.
 
+develop.nmdg.com (8-25-1999)
+   port: 13327 (default)
+   version: 0.95.3
+
+
 Note that the whitestar.pyrsonal.org server is not listed, as it is likely
 to go away soon.
 
