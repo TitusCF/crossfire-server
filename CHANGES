@@ -17,6 +17,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 CVS changes since last release:
 
+MSW 2001/02/05:
+server/attack.c: Fix blind and paralyze - logic for reducing duration was
+   broken, resulting in zero duration for most characters.  It should now
+   work properly, reducing according to the amount of protection.
+
+
 MSW 2001/02/02:
 common/item.c: Don't have armour item types get returned as magical if they
     have an armour value - that is to be expected. This eliminates the false

@@ -1443,7 +1443,7 @@ void blind_player(object *op, object *hitter, int dam)
 {
     object *tmp,*owner;
 
-    /* This shouldn't happen, but will prevent divide by zero errors below if it does. */
+    /* Save some work if we know it isn't going to affect the player */
     if (op->resist[ATNR_BLIND]==100) return;
 
     tmp = present_in_ob(BLINDNESS,op);
@@ -1454,7 +1454,7 @@ void blind_player(object *op, object *hitter, int dam)
       /* use floats so we don't lose too much precision due to rounding errors.
        * speed is a float anyways.
        */
-      tmp->speed = 100.0 * tmp->speed / (100.0 - (float)op->resist[ATNR_BLIND]);
+      tmp->speed =  tmp->speed * (100.0 - (float)op->resist[ATNR_BLIND]) / 100;
 
       tmp = insert_ob_in_ob(tmp,op);
       change_abil(op,tmp);   /* Mostly to display any messages */
@@ -1475,8 +1475,6 @@ void paralyze_player(object *op, object *hitter, int dam)
     float effect,max;
     object *tmp;
 
-    /* Same note as blindness above */
-    if (op->resist[ATNR_PARALYZE]==100) return;
 
     if((tmp=present(PARAIMAGE,op->map,op->x,op->y))==NULL) {
 	tmp=clone_arch(PARAIMAGE);
@@ -1488,7 +1486,9 @@ void paralyze_player(object *op, object *hitter, int dam)
 	insert_ob_in_map_simple(tmp,op->map);
     }
     /* Do this as a float - otherwise, rounding might very well reduce this to 0 */
-    effect = (float)dam * 3.0 / (100.0 - (float) op->resist[ATNR_PARALYZE]);
+    effect = (float)dam * 3.0 * (100.0 - op->resist[ATNR_PARALYZE]) / 100;
+
+    if (effect==0) return;
 
     op->speed_left-=FABS(op->speed)*effect;
     tmp->stats.food+=(signed short) effect/op->speed;

@@ -28,6 +28,9 @@ or so).
 ------------------------------------------------------------------------------
 Future feature requests
 
+- Change draw_info so that server tells client what type of message it is
+  instead of the color.  Client can then decide what color to draw it
+  or other special handling.
 - Better handling of saved characters on potentially better maps.  The save
   can either have been caused via disconnection or autosave.
 - Change code so that objects 'spill over' to other spaces if too many
