@@ -281,6 +281,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 
 #define BUILDER            160 /* Generic item builder, see subtypes */
 #define MATERIAL            161 /* Material for building */
+#define GPS                 162 /* Ground positionning system */
 /* END TYPE DEFINE */
 
 /* Subtypes for BUILDER */

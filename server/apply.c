@@ -2458,6 +2458,10 @@ int manual_apply (object *op, object *tmp, int aflag)
       return 0;
     }
 
+  case GPS:
+    apply_positioning_system( op, tmp );
+    return 1;
+
   default:
     return 0;
   }
@@ -3638,3 +3642,66 @@ void apply_changes_to_player(object *pl, object *change) {
 	}
     }
 }
+
+/**
+ * This handles the positioning system.
+ * Useful to know a player's position.
+ * If item is also marked, then will reset the origin.
+ * If gps's food is 0, not yet reset -> can't use.
+ * Origin's x & y are stored in hp/sp.
+ * Can only be used on 'world_xxx_xxx' maps.
+ */
+void apply_positioning_system( object* pl, object* gps )
+    {
+    int x, y;
+    int reset;
+    int map_x, map_y;
+
+    if ( !pl->type == PLAYER )
+        /* Non players have no need for that */
+        return;
+
+    reset = 0;
+    if ( find_marked_object( pl ) == gps )
+        reset = 1;
+
+    if ( gps->stats.food == 0 && !reset )
+        {
+        new_draw_info( NDI_UNIQUE, 0, pl, "You must fix the origin of the positioning system first!" );
+        return;
+        }
+
+    if ( !pl->map || !pl->map->name )
+        {
+        new_draw_info( NDI_UNIQUE, 0, pl, "This is a too weird place to try to position yourself." );
+        return;
+        }
+
+    /* Check map is a world one */
+    if ( sscanf( pl->map->name, "world_%d_%d", &map_x, &map_y ) != 2 )
+        {
+        new_draw_info( NDI_UNIQUE, 0, pl, "You must be in the world to position yourself." );
+        return;
+        }
+
+    /* Now compute actual position */
+    map_x -= 99;
+    map_y -= 99;
+    x = map_x * settings.worldmaptilesizex + pl->x;
+    y = map_y * settings.worldmaptilesizey + pl->y;
+
+    if ( reset )
+        {
+        gps->stats.hp = x;
+        gps->stats.sp = y;
+        gps->stats.food = 1;
+        new_draw_info( NDI_UNIQUE, 0, pl, "You reset the origin of the system." );
+        return;
+        }
+
+    x -= gps->stats.hp;
+    y -= gps->stats.sp;
+
+    /* Display location */
+    new_draw_info_format( NDI_UNIQUE, 0, pl, "You are at %d:%d.", x, y );
+    }

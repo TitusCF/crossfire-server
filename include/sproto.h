@@ -43,6 +43,7 @@ void eat_special_food(object *who, object *food);
 void apply_lighter(object *who, object *lighter);
 void scroll_failure(object *op, int failure, int power);
 void apply_changes_to_player(object *pl, object *change);
+void apply_positioning_system( object* pl, object* gps );
 /* attack.c */
 void cancellation(object *op);
 int did_make_save_item(object *op, int type, object *originator);
