@@ -57,6 +57,7 @@ void guile_init_functions()
 {
   LOG(llevInfo, "Guile-Scheme interpreter support by Gros\n");
   LOG(llevInfo, "Guile Interpreter initializing...\n");
+  gh_new_procedure("match-string", Script_matchString,2,0,0);
   gh_new_procedure("set-cursed", Script_setCursed,2,0,0);
   gh_new_procedure("activate-rune", Script_activateRune,2,0,0);
   gh_new_procedure("check_trigger", Script_checkTrigger,2,0,0);
@@ -1392,6 +1393,34 @@ SCM Script_crossfireWrite(SCM who, SCM message, SCM color)
 
   new_info_map(flags, npc->map, txt);
   free(txt);
+};
+
+/*
+ * I wrote this one to allow easier string searching.
+ * Scheme/Guile does have some string-parsing functions,
+ * but they are sometimes difficult to understand.
+ * This one is quite simple - This is a wrapper for re_cmp.
+ * We return #t if found, #f else.
+ */
+SCM Script_matchString(SCM first, SCM second)
+{
+  char *premiere;
+  char *seconde;
+  char *result;
+  int *length = 0;
+
+  premiere = gh_scm2newstr(first, length);
+  seconde = gh_scm2newstr(second, length);
+  result = re_cmp(premiere, seconde);
+  free(premiere);
+  free(seconde);
+  if (result != NULL)
+  {
+        return gh_bool2scm(TRUE);
+  } else
+  {
+        return gh_bool2scm(FALSE);
+  };
 };
 
 /*
