@@ -1473,7 +1473,11 @@ int mood_change(object *op, object *caster, object *spell) {
 	    /* charm */
 	    if (QUERY_FLAG(spell, FLAG_NO_ATTACK) && !QUERY_FLAG(head, FLAG_FRIENDLY)) {
 		SET_FLAG(head, FLAG_FRIENDLY);
-		set_owner(head, op);
+        /* Prevent uncontolled outbreaks of self replicating monsters.
+           Typical use case is charm, go somwhere, use aggravation to make hostile.
+           This could lead to fun stuff like mice outbreak in bigworld and server crawl. */
+        CLEAR_FLAG(head, FLAG_GENERATOR);
+        set_owner(head, op);
 		set_spell_skill(op, caster, spell, head);
 		add_friendly_object(head);
 		head->move_type = PETMOVE;
