@@ -15,7 +15,12 @@
 /* Please note that it is still very beta - some of the functions may not    */
 /* work as expected and could even cause the server to crash.                */
 /*****************************************************************************/
-/* Version: 0.1 Alpha (also known as "Ophiuchus")                            */
+/* Version history:                                                          */
+/* 0.1 "Ophiuchus"   - Initial Alpha release                                 */
+/* 0.5 "Stalingrad"  - Message length overflow corrected.                    */
+/* 0.6 "Kharkov"     - Message and Write correctly redefined.                */
+/*****************************************************************************/
+/* Version: 0.6 Beta (also known as "Kharkov")                               */
 /* Contact: yann.chachkoff@mailandnews.com                                   */
 /*****************************************************************************/
 /* That code is placed under the GNU General Public Licence (GPL)            */
@@ -2075,6 +2080,32 @@ static PyObject* CFSkillLevitation(PyObject* self, PyObject* args)
 };
 
 /*****************************************************************************/
+/* Stalingrad: XML Support Subsection starts here                            */
+/*****************************************************************************/
+
+/*****************************************************************************/
+/* Name   : CFLoadXMLObject                                                  */
+/* Python : LoadXMLObject(filename)                                          */
+/* Status : Untested                                                         */
+/*****************************************************************************/
+/* Loads a crossfire XML-file into an object, including subobjects (if any). */
+/* Note that I may have broken some XML rules (I hope I didn't, but...).     */
+/*****************************************************************************/
+
+/*****************************************************************************/
+/* Name   : CFSaveXMLObject                                                  */
+/* Python : SaveXMLObject(filename, object)                                  */
+/* Status : Untested                                                         */
+/*****************************************************************************/
+/* Saves a crossfire object (subobjects included) into a file, using an XML  */
+/* format. (At least I think it is mostly XML-compliant :)                   */
+/*****************************************************************************/
+
+/*****************************************************************************/
+/* Stalingrad: XML Support Subsection ends here                              */
+/*****************************************************************************/
+
+/*****************************************************************************/
 /* Name   : CFGetMapWidth                                                    */
 /* Python : CFPython.GetMapWidth(map)                                        */
 /* Status : Stable                                                           */
@@ -2421,15 +2452,27 @@ static PyObject* CFGetMapObject(PyObject* self, PyObject* args)
 
 static PyObject* CFGetMessage(PyObject* self, PyObject* args)
 {
-    char buf[MAX_BUF];
+    /* Stalingrad: extended the buffer - added a boundary checking */
+    /* (implementing this as a malloc'ed string problematic under some env.) */
+    /* Now declared static to help preventing memory leaks */
+    static char buf[4096];
     long whoptr;
 
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
     if (WHO->msg != NULL)
     {
-        strncpy(buf, WHO->msg,strlen(WHO->msg)-1);
-        buf[strlen(WHO->msg)]=0x0;
+        if (strlen(WHO->msg)>=4096)
+        {
+            printf("Warning ! Buffer overflow - The message will be truncated\n");
+            strncpy(buf, WHO->msg, 4096);
+            buf[4095]=0x0;
+        }
+        else
+        {
+            strncpy(buf, WHO->msg,strlen(WHO->msg));
+            buf[strlen(WHO->msg)+1]=0x0;
+        }
     }
     else
         buf[0] = 0x0;
@@ -2465,7 +2508,7 @@ static PyObject* CFGetGod(PyObject* self, PyObject* args)
 {
     long whoptr;
     CFParm* CFR;
-    char* value;
+    static char* value;
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
 
@@ -3057,14 +3100,17 @@ static PyObject* CFSay(PyObject* self, PyObject* args)
     object *who;
     long obptr;
     char *message;
-    char buf[MAX_BUF];
+    /* Stalingrad: Changed from static to dynamic buffer */
+    char *buf;
     int val;
 
     if (!PyArg_ParseTuple(args,"ls",&obptr,&message))
         return NULL;
 
     who = (object *)(obptr);
-    
+
+    /* Stalingrad: static->dynamic buffer */
+    buf = (char *)(malloc(sizeof(char)*(strlen(message)+strlen(query_name(who))+20)));
     sprintf(buf, "%s says: %s", query_name(who),message);
     val = NDI_NAVY|NDI_UNIQUE;
 
@@ -3074,6 +3120,8 @@ static PyObject* CFSay(PyObject* self, PyObject* args)
 
     (PlugHooks[HOOK_NEWINFOMAP])(&GCFP);
 
+    /* Stalingrad: static->dynamic buffer */
+    free(buf);
     Py_INCREF(Py_None);
     return Py_None;
 };
@@ -5905,29 +5953,32 @@ static PyObject* CFSetWis(PyObject* self, PyObject* args)
 };
 
 /*****************************************************************************/
+/* Kharkov update : Write and Message changed.                               */
+/* Write(message,dest[,color])                                               */
+/* -> Writes a message to a specific player.                                 */
+/* Message(message,dest[,color])                                             */
+/* -> Writes a message to a specific map (given by an object in this map).   */
+/*****************************************************************************/
+/*****************************************************************************/
 /* Name   :                                                                  */
 /* Python :                                                                  */
-/* Status : Untested                                                                */
+/* Status : Untested                                                         */
 /*****************************************************************************/
 
 static PyObject* CFMessage(PyObject* self, PyObject* args)
 {
-    int color = NDI_BLUE|NDI_UNIQUE;
+    int   color = NDI_BLUE|NDI_UNIQUE;
     char *message;
-    int pos   = 1;
+    long  whoptr;
 
-    if (!PyArg_ParseTuple(args,"s|i",&message,&color))
+    if (!PyArg_ParseTuple(args,"sl|i",&message,&whoptr,&color))
         return NULL;
 
     GCFP.Value[0] = (void *)(&color);
-    GCFP.Value[1] = (void *)(&pos);
-    GCFP.Value[2] = NULL;
-    GCFP.Value[3] = (void *)(message);
+    GCFP.Value[1] = (void *)(WHO->map);
+    GCFP.Value[2] = (void *)(message);
 
-    /*new_draw_info(NDI_UNIQUE | NDI_ALL | NDI_RED, 1, NULL, buf); */
-
-    (PlugHooks[HOOK_NEWDRAWINFO])(&GCFP);
-    /*(PlugHooks[HOOK_NEWINFOMAP])(&GCFP); */
+    (PlugHooks[HOOK_NEWINFOMAP])(&GCFP);
 
     Py_INCREF(Py_None);
     return Py_None;
@@ -5936,23 +5987,25 @@ static PyObject* CFMessage(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   :                                                                  */
 /* Python :                                                                  */
-/* Status : Untested                                                                */
+/* Status : Untested                                                         */
 /*****************************************************************************/
 
 static PyObject* CFWrite(PyObject* self, PyObject* args)
 {
-    int color = NDI_BLUE|NDI_UNIQUE;
-    char *message;
-    long whoptr;
+    int   zero   = 0;
+    char* message;
+    long  whoptr = 0;
+    int   color  = NDI_UNIQUE | NDI_ORANGE;
 
-    if (!PyArg_ParseTuple(args,"ls|i",&whoptr,&message,&color))
+    if (!PyArg_ParseTuple(args,"sl|i",&message,&whoptr,&color))
         return NULL;
 
     GCFP.Value[0] = (void *)(&color);
-    GCFP.Value[1] = (void *)(WHO->map);
-    GCFP.Value[2] = (void *)(message);
+    GCFP.Value[1] = (void *)(&zero);
+    GCFP.Value[2] = (void *)(WHO);
+    GCFP.Value[3] = (void *)(message);
 
-    (PlugHooks[HOOK_NEWINFOMAP])(&GCFP);
+    (PlugHooks[HOOK_NEWDRAWINFO])(&GCFP);
 
     Py_INCREF(Py_None);
     return Py_None;
@@ -6076,7 +6129,7 @@ static PyObject* CFGetEventOptions(PyObject* self, PyObject* args)
 {
     long whoptr;
     int eventnr;
-    char estr[4];
+    static char estr[4];
     if (!PyArg_ParseTuple(args,"li",&whoptr,&eventnr))
         return NULL;
     if (WHO->event_options[eventnr] == NULL)
@@ -6139,7 +6192,7 @@ static PyObject* CFLoadObject(PyObject* self, PyObject* args)
 static PyObject* CFSaveObject(PyObject* self, PyObject* args)
 {
     long whoptr;
-    char *result;
+    static char *result;
     CFParm* CFR;
 
     if (!PyArg_ParseTuple(args, "l",&whoptr))
@@ -6161,7 +6214,7 @@ static PyObject* CFSaveObject(PyObject* self, PyObject* args)
 static PyObject* CFGetIP(PyObject* self, PyObject* args)
 {
     long whoptr;
-    char *result;
+    static char *result;
 
     if (!PyArg_ParseTuple(args, "l",&whoptr))
         return NULL;
