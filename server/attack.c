@@ -311,7 +311,7 @@ void attack_message(int dam, int type, object *op, object *hitter) {
         sprintf(buf2, " misses");
 	found++;
     } else if ((hitter->type == DISEASE || hitter->type == SYMPTOM ||
-	(type & AT_POISON && IS_LIVE(op)) && !found) {
+	(type & AT_POISON && IS_LIVE(op))) && !found) {
         for (i=0; i < MAXATTACKMESS && attack_mess[ATM_SUFFER][i].level != -1;
 	     i++)
 	    if (dam < attack_mess[ATM_SUFFER][i].level) {
@@ -448,7 +448,7 @@ void attack_message(int dam, int type, object *op, object *hitter) {
       return;
 
     /* scale down magic considerably. */
-    if (type & AT_MAGIC && rndm(0, 5)
+    if (type & AT_MAGIC && rndm(0, 5))
       return;
 
     /* Did a player hurt another player?  Inform both! */
