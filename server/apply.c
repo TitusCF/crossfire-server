@@ -3352,10 +3352,19 @@ void fix_auto_apply(mapstruct *m) {
 		    tmp->speed = 0;
 		    update_ob_speed(tmp);
 		}
+		/* This function can be called everytime a map is loaded, even when
+		 * swapping back in.  As such, we don't want to create the treasure
+		 * over and ove again, so after we generate the treasure, blank out
+		 * randomitems so if it is swapped in again, it won't make anything.
+		 * This is a problem for the above objects, because they have counters
+		 * which say how many times to make the treasure.
+		 */
 		else if(tmp && tmp->arch && tmp->type!=PLAYER && tmp->type!=TREASURE &&
-		   tmp->type != SPELL && !tmp->inv && HAS_RANDOM_ITEMS(tmp))
+		   tmp->type != SPELL && HAS_RANDOM_ITEMS(tmp)) {
 		    create_treasure(tmp->randomitems, tmp, GT_APPLY,
                             m->difficulty,0);
+		    tmp->randomitems = NULL;
+		}
 	    }
 
     for(x=0;x<MAP_WIDTH(m);x++)
