@@ -18,6 +18,12 @@ else.  With this, include the file(s) that you changed.
 
 Changes for CVS:
 
+server/player.c
+common/living.c
+include/libproto.h:  New experience loss on death policy implemented.
+(As per consensus.)  3 levels or 20%, whichever is less.  
+  --PeterM 5/24/2001
+
 server/spell_util.c: Fix typo in polymorph code (when enabled in config.h)
 MSW 2001-05-24
 

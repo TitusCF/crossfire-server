@@ -1672,6 +1672,8 @@ void do_some_living(object *op) {
     kill_player(op);
 }
 
+      
+
 /* If the player should die (lack of hp, food, etc), we call this.
  * op is the player in jeopardy.  If the player can not be saved (not
  * permadeath, no lifesave), this will take care of removing the player
@@ -1761,7 +1763,7 @@ void kill_player(object *op)
 
 #ifdef NOT_PERMADEATH
     /* NOT_PERMADEATH code.  This basically brings the character back to life
-     * if they are dead - it takes some and a random stat.  See the config.h
+     * if they are dead - it takes some exp and a random stat.  See the config.h
      * file for a little more in depth detail about this.
      */
 
@@ -1873,9 +1875,9 @@ void kill_player(object *op)
     sprintf(buf,"%s's gravestone",op->name);
     tmp->name=add_string(buf);
     sprintf(buf,"RIP\nHere rests the hero %s the %s,\n"
-	        "who lost %d experience when killed\n"
+	        "who was killed\n"
 	        "by %s.\n",
-	        op->name, op->contr->title, (int)(op->stats.exp * 0.20),
+	        op->name, op->contr->title,
 	        op->contr->killer);
     tmp->msg = add_string(buf);
     tmp->x=op->x,tmp->y=op->y;
@@ -1892,10 +1894,11 @@ void kill_player(object *op)
     /* remove any poisoning and confusion the character may be suffering. */
     cast_heal(op, 0, SP_CURE_POISON);
     cast_heal(op, 0, SP_CURE_CONFUSION);
-	 cure_disease(op,0);  /* remove any disease */
+    cure_disease(op,0);  /* remove any disease */
 	
-    add_exp(op, (op->stats.exp * -0.20));
-    if(op->stats.food < 0) op->stats.food = 500;
+    /*add_exp(op, (op->stats.exp * -0.20)); */
+    apply_death_exp_penalty(op);
+    if(op->stats.food < 0) op->stats.food = 900;
     op->stats.hp = op->stats.maxhp;
 
  /*

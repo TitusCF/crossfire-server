@@ -26,6 +26,7 @@ extern void allocate_map ( mapstruct *m );
 extern int allowed_class ( object *op );
 extern void animate_object ( object *op );
 extern void animate_turning ( object *op );
+extern void apply_death_exp_penalty(object *op);
 extern int arch_blocked ( archetype *at, mapstruct *m, int x, int y );
 extern void arch_info ( object *op );
 extern int arch_out_of_map ( archetype *at, mapstruct *m, int x, int y );

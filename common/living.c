@@ -1669,3 +1669,27 @@ int check_dm_add_exp_to_obj(object *exp_ob, int i) {
 	i= MAX_EXP_IN_OBJ - exp_ob->stats.exp;
     return i;
 }
+
+/* Applies a death penalty experience.  20% or 3 levels, whichever is
+   less experience lost. */
+
+void apply_death_exp_penalty(object *op) {
+  object *tmp;
+  object *exp_ob;
+  long int del_exp=0;
+  int loss_20p;  /* 20 percent experience loss */
+  int loss_3l;   /* 3 level experience loss */
+  for(tmp=op->inv;tmp;tmp=tmp->below)
+    if(tmp->type==EXPERIENCE && tmp->stats.exp) { 
+      exp_ob = tmp;
+      loss_20p = exp_ob->stats.exp * 0.20;
+      loss_3l = exp_ob->stats.exp - new_levels[MAX(0,exp_ob->level -3)];
+      if(loss_3l < loss_20p) 
+        del_exp+=adjust_exp(exp_ob,-loss_3l);
+      else
+        del_exp+=adjust_exp(exp_ob,-loss_20p);
+      player_lvl_adj(op,exp_ob);
+    }
+  adjust_exp(op,del_exp);
+  player_lvl_adj(op,NULL);
+}
