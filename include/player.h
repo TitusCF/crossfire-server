@@ -93,7 +93,6 @@ typedef struct pl {
     NewSocket	socket;		    /* Socket information for this player */
     char	maplevel[MAX_BUF];  /* On which level is the player? */
     struct mapdef *loading;	    /* When entering a map in progress of loading, not really used */
-    sint16	new_x,new_y;	    /* After entering a map being loaded */
     char	savebed_map[MAX_BUF];  /* map where player will respawn after death */
     sint16	bed_x, bed_y;	    /* x,y - coordinates of respawn (savebed) */
     rangetype	shoottype;	    /* Which range-attack is being used by player */
@@ -119,7 +118,6 @@ typedef struct pl {
     sint8	last_level;	    /* Last level we sent to client */
 
     /* Try to put all the bitfields together - saves some small amount of memory */
-    uint32	known_spell:1;	    /* True if you know the spell of the wand */
     uint32	braced:1;	    /* Will not move if braced, only attack */
     uint32	tmp_invis:1;	    /* Will invis go away when we attack ? */
     char	*invis_race;	    /* What race invisible to? */

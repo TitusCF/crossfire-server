@@ -3094,8 +3094,6 @@ int apply_special (object *who, object *op, int aflags)
 	                      op->race ? op->race : "nothing", query_name(op));
 		    who->contr->shoottype = range_bow;
 		} else {
-		    who->contr->known_spell = (QUERY_FLAG (op, FLAG_BEEN_APPLIED)
-					   || QUERY_FLAG (op, FLAG_IDENTIFIED));
 		    who->contr->shoottype = range_misc;
 		}
 	    } else {

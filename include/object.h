@@ -140,7 +140,6 @@ typedef struct obj {
     uint16	material;      	/* What materials this object consist of */
     char 	*materialname;  /* specific material name */
     sint8	magic;		/* Any magical bonuses to this item */
-    sint8	thrownthaco;	/* How precise the throw is */
     uint8	state;          /* How the object was last drawn (animation) */
     sint32	value;		/* How much money it is worth (or contains) */
     sint16	level;		/* Level of creature or object */
@@ -158,7 +157,7 @@ typedef struct obj {
     sint32	weight;		/* Attributes of the object */
     sint32	weight_limit;	/* Weight-limit of object */
     sint32	carrying;	/* How much weight this object contains */
-    sint16	glow_radius;	/* indicates the glow radius of the object */
+    sint8	glow_radius;	/* indicates the glow radius of the object */
     living	stats;		/* Str, Con, Dex, etc */
     sint64	perm_exp;	/* Permanent exp */
     char	*current_weapon_script;  /* The script of the currently used weapon. Executed */

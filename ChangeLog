@@ -17,6 +17,13 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+include/map.h: removed unused fields from wmapdef..
+include/object.h: removed unused field from object.h. Changed glow_radius to sint8 to be
+   coherent with struct MapSpace.
+include/player.h: removed unused fields from player structure.
+server/apply.c: removed unused known_spell field.
+Ryo 2004-02-16
+
 common/object.c: change get_owner() so that it also returns no valid owner if
    the owner is removed.  This fixes a crash if a player quits but is still
    sitting at the play again prompt when something he owns kills something.

@@ -178,9 +178,6 @@ typedef struct MapSpace {
  */
 
 typedef struct wmapdef {
-    char path[HUGE_BUF];	/* Filename of the map */
-    char	*tmpname;	/* Name of temporary file */
-    char 	*name;		/* Name of map as given by its creator */
     sint16	temp;		/* base temperature of this tile (F) */
     sint16	pressure;	/* barometric pressure (mb) */
     sint8	humid;		/* humitidy of this tile */
