@@ -294,21 +294,32 @@ int check_item(object *op,char *item)
   return count;
 }
 
-void eat_item(object *op,char *item)
+/* This object removes 'nrof' of what item->slaying says to
+ * remove.  op is typically the player, which is only
+ * really used to determine what space to look at.
+ * Modified to only eat 'nrof' of objects.
+ */
+static void eat_item(object *op,char *item, int nrof)
 {
-  object *prev;
+    object *prev;
 
-  prev = op;
-  op=op->below;
-
-  while(op!=NULL) {
-    if (strcmp(op->arch->name,item)==0) {
-      decrease_ob_nr(op,op->nrof);
-      op=prev;
-    }
     prev = op;
     op=op->below;
-  }
+
+    while(op!=NULL) {
+	if (strcmp(op->arch->name,item)==0) {
+	    if (op->nrof >= nrof) {
+		decrease_ob_nr(op,nrof);
+		return;
+	    } else {
+		decrease_ob_nr(op,op->nrof);
+		nrof -= op->nrof;
+	    }
+	    op=prev;
+	}
+	prev = op;
+	op=op->below;
+    }
 }
 
 /* This checks to see of the player (who) is sufficient level to use a weapon
@@ -422,13 +433,12 @@ int prepare_weapon(object *op, object *improver, object *weapon)
     sacrifice_count=check_sacrifice(op,improver);
     if (sacrifice_count<=0)
       return 0;
-    sacrifice_count = isqrt(sacrifice_count);
-    weapon->level=sacrifice_count;
+    weapon->level=isqrt(sacrifice_count);
     new_draw_info(NDI_UNIQUE,0,op,"Your sacrifice was accepted.");
-    eat_item(op, improver->slaying);
+    eat_item(op, improver->slaying, sacrifice_count);
 
     new_draw_info_format(NDI_UNIQUE, 0, op,"Your *%s may be improved %d times.",
-	    weapon->name,sacrifice_count);
+	    weapon->name,weapon->level);
 
     sprintf(buf,"%s's %s",op->name,weapon->name);
     free_string(weapon->name);
@@ -521,7 +531,7 @@ int improve_weapon(object *op,object *improver,object *weapon)
 	    "You need at least %d %s", sacrifice_needed, improver->slaying);
 	return 0;
   }
-  eat_item(op,improver->slaying);
+  eat_item(op,improver->slaying, sacrifice_needed);
   weapon->item_power++;
 
   switch (improver->stats.sp) {

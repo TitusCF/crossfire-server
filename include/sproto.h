@@ -13,7 +13,6 @@ int calc_alch_danger(object *caster, object *cauldron, recipe *rp);
 /* apply.c */
 int apply_potion(object *op, object *tmp);
 int check_item(object *op, char *item);
-void eat_item(object *op, char *item);
 int check_weapon_power(object *who, int improvs);
 int improve_weapon_stat(object *op, object *improver, object *weapon, signed char *stat, int sacrifice_count, char *statname);
 int prepare_weapon(object *op, object *improver, object *weapon);
