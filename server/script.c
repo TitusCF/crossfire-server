@@ -404,7 +404,7 @@ static SCM gfec_catcher(void *data, SCM tag, SCM throw_args)
   SCM_DEFER_INTS;
 */
 /* For some unknown reason this does not work */
-//  *(char **)data = strdup(SCM_CHARS(SCM_CDR(SCM_STREAM(port))));
+/*  *(char **)data = strdup(SCM_CHARS(SCM_CDR(SCM_STREAM(port))));*/
 /*  SCM_ALLOW_INTS; */
   return gh_int2scm(1);
 };
@@ -767,7 +767,6 @@ SCM Script_setScriptTime(SCM who, SCM value)
     WHO->script_time = NULL;
   };
   free(txt);
-//  update_object(WHO);
 };
 SCM Script_setScriptAttack(SCM who, SCM value)
 {
@@ -1069,7 +1068,6 @@ SCM Script_createObject(SCM archname, SCM x, SCM y)
         };
   };
   free(txt);
-  //test = create_artifact(myob, "test");
   myob->x = gh_scm2long(x);
   myob->y = gh_scm2long(y);
   myob = insert_ob_in_map(myob, guile_current_who[guile_stack_position]->map ,NULL);
@@ -1471,7 +1469,6 @@ SCM Script_setTitle(SCM who, SCM newname)
   int *length = 0;
   char *txt = gh_scm2newstr(newname, length);
   WHO->title = add_string(txt);
-  //command_title((object *)gh_scm2long(who),txt);
   free(txt);
 };
 

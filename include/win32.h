@@ -9,9 +9,9 @@
 
 #if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
+#endif /* _MSC_VER > 1000 */
 
-#endif // !defined(AFX_STDAFX_H__31666CA1_2474_11D5_AE6C_F07569C10000__INCLUDED_)
+#endif /* !defined(AFX_STDAFX_H__31666CA1_2474_11D5_AE6C_F07569C10000__INCLUDED_) */
 
 #define WIN32_LEAN_AND_MEAN	
 #include <windows.h>
@@ -23,7 +23,7 @@
 #include <direct.h>
 #include <math.h>
 
-#include <sys/stat.h>	// somewhat odd, but you don't get stat here with __STDC__
+#include <sys/stat.h>	/* somewhat odd, but you don't get stat here with __STDC__ */
 
 #include <io.h>
 #include <stdio.h>
@@ -31,15 +31,15 @@
 #include <sys/types.h>
 #include <process.h>
 
-#define __STDC__ 1      // something odd, CF want this, but don'T include it
-                        // before the standard includes
+#define __STDC__ 1      /* something odd, CF want this, but don'T include it */
+                        /* before the standard includes */
 
 #define HAVE_SNPRINTF 1
 #define snprintf _snprintf
 
 #include "version.h"
 
-// include all needed autoconfig.h defines
+/* include all needed autoconfig.h defines */
 #define CS_LOGSTATS
 #define HAVE_SRAND
 #define HAVE_FCNTL_H
@@ -47,16 +47,16 @@
 #define GETTIMEOFDAY_TWO_ARGS
 #define MAXPATHLEN 256
 
-// Many defines to redirect unix functions or fake standard unix values
+/* Many defines to redirect unix functions or fake standard unix values */
 #define inline __inline
 #define unlink(__a) _unlink(__a)
 #define mkdir(__a, __b) mkdir(__a)
 #define getpid() _getpid()
 #define popen(__a, __b) _popen(__a, __b)
-#define pclose(__a) _pclose(__a) 
+#define pclose(__a) _pclose(__a)
 #define pid_t int
 
-#define R_OK 6		// for __access()
+#define R_OK 6		/* for __access() */
 #define F_OK 6
 
 #define PREFIXDIR ""
