@@ -2864,6 +2864,7 @@ static PyObject* CFSetQuantity(PyObject* self, PyObject* args)
 {
     long whatptr;
     int value;
+    int val = UP_OBJ_CHANGE;
 
     if (!PyArg_ParseTuple(args,"li",&whatptr,&value))
         return NULL;
@@ -2880,6 +2881,11 @@ static PyObject* CFSetQuantity(PyObject* self, PyObject* args)
         return NULL;
     };
     WHAT->nrof = value;
+
+    GCFP.Value[0] = (void *)(WHAT);
+    GCFP.Value[1] = (void *)(&val);
+    (PlugHooks[HOOK_UPDATEOBJECT])(&GCFP);
+
     Py_INCREF(Py_None);
     return Py_None;
 };
@@ -6565,6 +6571,22 @@ static PyObject* CFSetVariable(PyObject* self, PyObject* args)
     (PlugHooks[HOOK_SETVARIABLE])(&GCFP);
     Py_INCREF(Py_None);
     return Py_None;
+}
+
+static PyObject* CFDecreaseObjectNR(CFParm* PParm)
+{
+    long whoptr;
+    int val;
+    long retptr;
+    CFParm* CFR;
+    if (!PyArg_ParseTuple(args,"li",&whoptr,&val))
+        return NULL;
+    GCFP.Value[0] = (void *)(WHO);
+    GCFP.Value[1] = (void *)(val);
+    CFR = (PlugHooks[HOOK_DECREASEOBJECTNR])(&GCFP);
+    retptr=*(long*)(CFR->Value[0]);
+    free (CFR);
+    return Py_BuildValue("l",retptr);
 }
 
 static PyObject* CFGetMapDir(PyObject* self, PyObject* args)

@@ -1519,7 +1519,7 @@ CFParm* CFWSetAnimation (CFParm* PParm)
         SET_ANIMATION (op,face);
         }
     update_object(op, UP_OBJ_FACE);
-    return(PParm);    
+    return(PParm);
 }
 /*****************************************************************************/
 /* communicate wrapper.                                                      */
@@ -1612,6 +1612,18 @@ CFParm* CFWSetVariable(CFParm* PParm)
 {
     set_variable((object*)(PParm->Value[0]), (char *)(PParm->Value[1]));
     return NULL;
+}
+
+CFParm* CFWDecreaseObjectNR(CFParm* PParm)
+{
+    CFParm* CFP=(CFParm*)malloc(sizeof (CFParm));
+    object* op=(object*)PParm->Value[0];
+    int i=*(int*)PParm->Value[1];
+    object* ob;
+
+    ob = decrease_ob_nr (op, i);
+    CFP->Value[0] = ob;
+    return CFP;
 }
 
 /*****************************************************************************/
