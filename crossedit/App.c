@@ -822,12 +822,17 @@ App AppCreate(XtAppContext appCon,
     /*** images & colors ***/
     InitializeColors(XtDisplay(self->shell));
 
-    if (self->res.usePixmaps) displaymode=Dm_Bitmap;
 #ifdef HAVE_LIBXPM
+    if (self->res.usePixmaps) displaymode=Dm_Bitmap;
     else if (self->res.useColorPixmaps) displaymode=Dm_Pixmap;
 #else
-    else if (self->res.useColorPixmaps) {
+    displaymode=Dm_Font;
+    if (self->res.usePixmaps||self->res.useColorPixmaps) {
 	fprintf(stderr,"Crossedit not compiled with Xpm Support.\n");
+    }
+    if(!strcmp(FONTNAME,"")) {
+	fprintf(stderr,"No font defined for Crossedit.\n");
+        exit(0);
     }
 #endif
 
