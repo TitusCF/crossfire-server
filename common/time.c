@@ -67,7 +67,7 @@ const char *weekdays[DAYS_PER_WEEK] = {
    "the Day of the Deception",
    "the Day of Thunder",
    "the Day of Freedom",
-   "the day of the Great Gods",
+   "the Day of the Great Gods",
    "the Day of the Sun"
 };
 
