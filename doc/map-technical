@@ -56,14 +56,32 @@ name in the map structure.
 	unique map, or maybe a common map that is just permanent for
 	all the players.
 
-'outdoor' - if set, this is a hint that this is an outdoor map.  Currently,
-	this does not mean much, but may be used in the future
-	to take into account things like daylite and weather.
+'outdoor' - if set, this is a hint that this is an outdoor map.
+	If this is not set, weather and dawn/dusk will not occur on this
+	map.  It is highly advised that this be set appropriately.
 
 tile_path_<x> - Used with map tiling.  <x> is a number, 1 is north,
 	2 is east, 3 south, 4 west.  This determines what map is tiled
 	in that direction.  See the section below for more information about
 	map tiling.
+
+'temp'  - The base temperature in farenhiet for this map.  The temperature
+	is modified by the season and weather conditions.  In a map without
+	weather effects, this temperature will be used as the static
+	temperature for the entire map.  This can be useful to make an ice
+	cave actually cold.
+
+'pressure' - This should really never be set on a map.  The pressure in
+	millibars.
+
+'humid' - Again, should rarely be set on a map.  The humidity in percent.
+
+'windspeed' - Rarely set.  The windspeed in kph/h.
+
+'winddir' - Rarely set.  Direction of wind, 1-8, 1 is north, clockwise.
+
+'sky' - The sky conditions for this map.  See weather.h.  Don't set this
+	unless you really know what you are doing.
 
 ------------------------------------------------------------------------------
 THE MAP OBJECTS:

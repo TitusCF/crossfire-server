@@ -292,6 +292,13 @@ typedef struct Settings {
     char    meta_host[MAX_BUF];	    /* Hostname of this host */
     uint16  meta_port;		    /* Port number to use for updates */
     char    meta_comment[MAX_BUF];  /* Comment we send to the metaserver */
+    uint32  worldmapstartx;	    /* starting x tile for the worldmap */
+    uint32  worldmapstarty;	    /* starting y tile for the worldmap */
+    uint32  worldmaptilesx;	    /* number of tiles wide the worldmap is */
+    uint32  worldmaptilesy;	    /* number of tiles high the worldmap is */
+    uint32  worldmaptilesizex;	    /* number of squares wide in a wm tile */
+    uint32  worldmaptilesizey;	    /* number of squares high in a wm tile */
+    uint16  dynamiclevel;	    /* how dynamic is the world? */
 } Settings;
 
 extern Settings settings;
