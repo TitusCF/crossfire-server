@@ -1114,8 +1114,11 @@ int disthit_att (int dir, object *ob, object *enemy, object *part,rv_vector *rv)
     /* The logic below here looked plain wrong before.  Basically, what should
      * happen is that if the creatures hp percentage falls below run_away,
      * the creature should run away (dir+4)
+     * I think its wrong for a creature to have a zero maxhp value, but
+     * at least one map has this set, and whatever the map contains, the
+     * server should try to be resilant enough to avoid the problem
      */
-    if ((ob->stats.hp*100)/ob->stats.maxhp < ob->run_away)
+    if (ob->stats.maxhp && (ob->stats.hp*100)/ob->stats.maxhp < ob->run_away)
 	return absdir(dir+4);
     return dist_att (dir,ob,enemy,part,rv);
 }
