@@ -1220,6 +1220,8 @@ int cast_destruction(object *op, object *caster, object *spell_ob) {
     else if (caster->skill) op->skill = caster->skill;
     else op->skill = NULL;
 
+    change_skill(op,  find_skill_by_name(op, op->skill), 1);
+
     for(i= -range; i<range; i++) {
 	for(j=-range; j<range ; j++) {
 	    m = op->map;

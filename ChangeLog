@@ -17,6 +17,8 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/spell_attack.c: cast_destruction() - have it change the skill
+   for the caster so that exp is properly awarded.
 common/object.c: insert_map_in_ob() - remove CAN_MERGE checks after the
     map translation - otherwise, we can have bogus coordinates
     that are used for GET_MAP_OB.
@@ -25,6 +27,10 @@ random_maps/style.c: pick_random_object() - have it return null object
 server/c_wiz.c: command_kick() - check FLAG_FREED of player.  Remove all
     the broken skill/exp object granting code in command_possess() - this
     is probably still a broken function.
+common/item.c: describe_monster() - if the creature/player is stealthy,
+    mention it when the object is described.
+common/loader.l, loader.c: Fix passed in size to get_ob_diff() - was one
+    to long, causing string corruption.
 server/spell_attack.c: mood_change() - fix get_map_ob call - wasn't using
     correct coordinate variables, resulting in crash.
 MSW 2004-06-10

@@ -1695,7 +1695,7 @@ char *get_ob_diff(object *op,object *op2) {/* I plan to optimize this heavily */
 	FAST_SAVE_LONG(fastbuf,"range_modifier ",op->range_modifier,15);
 
     if (op->duration_modifier != op2->duration_modifier) 
-	FAST_SAVE_LONG(fastbuf,"duration_modifier ", op->duration_modifier,19);
+	FAST_SAVE_LONG(fastbuf,"duration_modifier ", op->duration_modifier,18);
 
     if (op->dam_modifier != op2->dam_modifier)
 	FAST_SAVE_LONG(fastbuf,"dam_modifier ", op->dam_modifier,14);

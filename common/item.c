@@ -707,6 +707,8 @@ static char *describe_monster(object *op) {
 	strcat(retbuf,"(unaggressive)");
     if(QUERY_FLAG(op,FLAG_HITBACK))
 	strcat(retbuf,"(hitback)");
+    if(QUERY_FLAG(op,FLAG_STEALTH))
+	strcat(retbuf,"(stealthy)");
     if(op->randomitems != NULL) {
 	treasure *t;
 	int first = 1;
