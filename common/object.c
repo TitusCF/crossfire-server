@@ -524,9 +524,9 @@ void clear_object(object *op) {
 
         }
 
-        if (evt->hook != NULL) FREE_AND_CLEAR(evt->hook);
-        if (evt->plugin != NULL) FREE_AND_CLEAR(evt->plugin);
-        if (evt->options != NULL) FREE_AND_CLEAR(evt->options);
+        if (evt->hook != NULL) FREE_AND_CLEAR_STR(evt->hook);
+        if (evt->plugin != NULL) FREE_AND_CLEAR_STR(evt->plugin);
+        if (evt->options != NULL) FREE_AND_CLEAR_STR(evt->options);
 
         FREE_AND_CLEAR(evt);
 

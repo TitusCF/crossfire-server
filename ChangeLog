@@ -17,6 +17,13 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Fix a crash related to plugin hooks
+common/object.c: clear_object(): object's event's hook/plugin/options
+    are initialized with FREE_AND_COPY, so they are shared strings.
+    Better to release'em with FREE_AND_CLEAR_STR instead of
+    FREE_AND_CLEAR, else nice crashes...
+Ryo 2004-01-16
+
 Fix writing not inserting correctly item in inventory, and Windows-
     specific stuff too
 server/skills.c: write_scroll(): Better to insert spell in scroll,
