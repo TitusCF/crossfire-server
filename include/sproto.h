@@ -198,6 +198,7 @@ int command_wimpy(object *op, char *params);
 int command_brace(object *op, char *params);
 int command_style_map_info(object *op, char *params);
 int command_kill_pets(object *op, char *params);
+int command_afk(object *op, char *params);
 /* c_move.c */
 int command_east(object *op, char *params);
 int command_north(object *op, char *params);

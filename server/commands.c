@@ -115,6 +115,7 @@ CommArray_s Commands[] = {
   {"version", command_version,	0.0},
   {"wimpy", command_wimpy,	0.0},
   {"who", command_who,		0.0},
+  {"afk", command_afk,          0.0},
 
   {"stay", command_stay,	1.0}, /* 1.0 because it is used when using a
 				       *  skill on yourself */

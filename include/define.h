@@ -559,7 +559,8 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define FLAG_CONTENT_ON_GEN      108
 #define FLAG_IS_A_TEMPLATE       109 /* Object has no ingame life until instanciated*/
 #define FLAG_IS_BUILDABLE        110 /* Can build on item */
-#define NUM_FLAGS                110 /* Should always be equal to the last
+#define FLAG_AFK                 111 /* Player is AFK */
+#define NUM_FLAGS                111 /* Should always be equal to the last
                                       * defined flag.  If you change this,
                                       * make sure you update the flag_links
                                       * in common/loader.l

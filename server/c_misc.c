@@ -251,12 +251,13 @@ int command_who (object *op, char *params)
 	if (pl->state==ST_PLAYING || pl->state==ST_GET_PARTY_PASSWORD) {
 
 	    if(op == NULL || QUERY_FLAG(op, FLAG_WIZ)){
-		(void) sprintf(namebuf,"%s the %s%s%s%s:",
+		(void) sprintf(namebuf,"%s the %s%s%s%s%s:",
 		    pl->ob->name,
 		    (pl->own_title[0]=='\0'?pl->title:pl->own_title),
 		    pl->peaceful?"":" [Hostile]",
 		    QUERY_FLAG(pl->ob,FLAG_WIZ)?" [WIZ]":"",
-		    pl->hidden?" [HID]":"");
+		    pl->hidden?" [HID]":"",
+            QUERY_FLAG(pl->ob,FLAG_AFK)?" [AFK]":"");
 		(void) sprintf(buf," Level %d [%s](@%s)(%d)",
 		    pl->ob->level,       
 		    pl->ob->map->path,
@@ -264,17 +265,32 @@ int command_who (object *op, char *params)
 		    pl->ob->count);
 	    }
 	    else{
-		(void) sprintf(namebuf,"%s the %s%s%s:",
-		    pl->ob->name,
-		    (pl->own_title[0]=='\0'?pl->title:pl->own_title),
-		    pl->peaceful?"":" [Hostile]",
-		    QUERY_FLAG(pl->ob,FLAG_WIZ)?" [WIZ]":"");
+ 		(void) sprintf(namebuf,"%s the %s%s%s%s:",
+  		    pl->ob->name,
+  		    (pl->own_title[0]=='\0'?pl->title:pl->own_title),
+  		    pl->peaceful?"":" [Hostile]",
+ 		    QUERY_FLAG(pl->ob,FLAG_WIZ)?" [WIZ]":"",
+ 		    QUERY_FLAG(pl->ob,FLAG_AFK)?" [AFK]":"");
 		(void) sprintf(buf," [%s]",
 		    pl->ob->map->path);
 	    }
 	    new_draw_info(NDI_UNIQUE, 0, op, namebuf);
 	    new_draw_info(NDI_UNIQUE, 0, op, buf);
 	}
+    }
+    return 1;
+}
+
+int command_afk (object *op, char *params)
+{
+    if QUERY_FLAG(op,FLAG_AFK) { 
+       CLEAR_FLAG(op,FLAG_AFK);
+       new_draw_info(NDI_UNIQUE, 0, op, "You are no longer AFK");
+    }    
+    else 
+    {
+       SET_FLAG(op,FLAG_AFK);
+       new_draw_info(NDI_UNIQUE, 0, op, "You are now AFK");
     }
     return 1;
 }

@@ -20,8 +20,13 @@ Changes for CVS:
 Applied patches:
 * #1119366 (salathar): wiz food, DMs don't use food anymore.
 * #1161816 (cowboyatheart) : Add wands/staves/rods/horns to new pickup.
-include/define.h: add 'PU_MAGIC_DEVICE.
+* #1119762 (salathar): afk command.
+common/loader.[lc]: add 'FLAG_AFK'.
+include/define.h: add 'PU_MAGIC_DEVICE. Add 'FLAG_AFK'.
+include/sproto.h: add 'command_afk'.
+server/c_misc.c: add 'AFK' to who display, add command_afk.
 server/c_object.c: add new flag to dump.
+server/commands.c: add command_afk.
 server/player.c: wiz don't use food. Check for rod/wand/horn for new pickup flag.
 Ryo 2005-03-13
 

@@ -1330,7 +1330,8 @@ static char *flag_names[NUM_FLAGS+1] = {
 "no_skill_ident", "is_blind", "can_see_in_dark", "is_cauldron",
 "is_dust", "no_steal", "one_hit", NULL, "berserk", "neutral",	/* 100 */
 "no_attack", "no_damage", NULL, NULL, "activate_on_push",
-"activate_on_release", "is_water", "use_content_on_gen", NULL, "is_buildable"   /* 110 */
+"activate_on_release", "is_water", "use_content_on_gen", NULL, "is_buildable",   /* 110 */
+NULL
 };
 
 
