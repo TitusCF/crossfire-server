@@ -388,19 +388,19 @@ PATH_TURNING,"holy_orb",},
  PATH_RESTORE,NULL},
 {"cause red death",           12,100, 0, 10, 0, 0,  0,  1, 0, 1, 0,
  PATH_WOUNDING,"ebola"},
-{"cause flu",                  2, 10, 0, 10, 0, 0,  0,  1, 0, 1, 0,
+{"cause flu",                  2, 10, 5, 10, 3, 2,  5,  1, 0, 1, 0,
  PATH_WOUNDING,"flu"},
 {"cause black death",         15, 120, 0, 10, 0, 0,  0,  1, 0, 1, 0,
  PATH_NULL,"bubonic_plague"},
-{"cause leprosy",              5, 20, 0, 10, 0, 0,  0,  1, 0, 1, 0,
+{"cause leprosy",              5, 20, 0, 10, 1, 1,  5,  1, 0, 1, 0,
  PATH_WOUNDING,"leprosy"},
 {"cause smallpox",            10, 85, 0, 10, 0, 0,  0,  1, 0, 1, 0,
  PATH_WOUNDING,"smallpox"},
 {"cause white death",              85,350, 0, 10, 0, 0,  0,  1, 0, 1, 0,
  PATH_WOUNDING,"pneumonic_plague"},
-{"cause anthrax",             12, 50, 0, 10, 0, 0,  0,  1, 0, 1, 0,
+{"cause anthrax",             12, 50, 0, 10, 1, 1,  1,  1, 0, 1, 0,
  PATH_WOUNDING,"anthrax"},
-{"cause typhoid",             8, 60, 0, 10, 0, 0,  0,  1, 0, 1, 0,
+{"cause typhoid",             8, 60, 0, 10, 1, 1,  1,  1, 0, 1, 0,
    PATH_WOUNDING,"typhoid"},
 {"mana blast",		       8, 10, 0, 15, 0, 0,  2,  1, 0, 0, 0,
    PATH_TRANSFER, "manablast", },					/* 180 */
@@ -412,10 +412,13 @@ PATH_TURNING,"holy_orb",},
    PATH_TRANSFER, "manabullet_l", },
 {"mana bolt",		       5, 18, 0,  9, 0, 0,  2,  1, 0, 0, 0,
    PATH_TRANSFER, "manabolt", },
-{"dancing sword",	      11, 25, 0, 10, 0, 0,  1,  0, 0, 0, 0,
+{"dancing sword",	      11, 25, 0, 10, 0, 0,  1,  0, 0, 0, 0,    /* 185 */
    PATH_CREATE, "dancingsword", },
 {"animate weapon",	       7, 25, 0, 10, 0, 0,  4,  0, 0, 0, 0,
-   PATH_TELE, "dancingsword", }
+   PATH_TELE, "dancingsword", },
+{"cause cold",                  2, 10, 5, 10, 3, 2,  5,  1, 0, 1, 0,   /* 187 */
+ PATH_WOUNDING,"cold"}
+
 };
 
 /*  peterm:  the following defines the parameters for all the
@@ -624,7 +627,8 @@ spell_parameters SP_PARAMETERS[NROFREALSPELLS] =
 {	8,	14,	4,	0,	32},	/* large manaball */
 {	10,	9,	3,	0,	30},	/* mana bolt */
 {	2,	20,	2,	1,	10},	/* dancing sword */     /* 185 */ 
-{	2,	20,	2,	1,	20}	/* animate weapon */
+{	2,	20,	2,	1,	20},	/* animate weapon */
+{   0,       0,     3,      5,		10}	/*cause cold*/      
 };
 
 char *spellpathnames[NRSPELLPATHS] = {

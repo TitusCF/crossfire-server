@@ -305,7 +305,7 @@
 
 #define NRSPELLPATHS	20
 
-#define NROFREALSPELLS	187	/* Number of different spells */
+#define NROFREALSPELLS	188	/* Number of different spells */
 
 #define NROFSKILLS  33  /* match to the number of elements in skills[] array */
 
