@@ -293,9 +293,17 @@ int infect_object(object *victim, object *disease, int force) {
   else {  /* for diseases which are passed by hitting, set owner and praying skill*/
     if(disease->env && disease->env->type==PLAYER) {
       object *player = disease->env;
-      set_owner(new_disease,player);
+
       new_disease->chosen_skill = find_skill(player,SK_PRAYING);
-      new_disease->exp_obj = new_disease->chosen_skill->exp_obj;
+
+      /* Not all players have praying.  A side effect here is that
+       * players can infect others with diseases they get from traps,
+       * but that is not likely a big deal.
+       */
+      if (new_disease->chosen_skill) {
+	set_owner(new_disease,player);
+	new_disease->exp_obj = new_disease->chosen_skill->exp_obj;
+      }
     }
   }
 

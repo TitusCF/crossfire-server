@@ -35,6 +35,10 @@
 #include <version.h>
 #include <patchlevel.h>
 
+#ifndef MSG_DONTWAIT
+#define MSG_DONTWAIT O_NONBLOCK
+#endif
+
 static int metafd=-1;
 static struct sockaddr_in sock;
 

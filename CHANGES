@@ -16,6 +16,18 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+MSW: 2000/11/16:
+socket/metaserver.c: Add #ifdef MSG_DONTWAIT into metaserver.c for systems 
+	that lack that definition.
+random_maps/style.c: alphasort was not properly de-referencing pointers
+	when doing name comparisons, and thus returned garbage results,
+	resulting in a crash when entering random maps.  This only happens
+	for systems which lack scandir in normal libraries (like Solaris).
+	BSDs and linux have scandir built in, and did not have a problem.
+server/disease.c: fix infect_object - server would crash if player did
+	not have praying skill and was infecting someone else.
+end of changes, MSW 2000/11/16
+
 PeterM : 2000/11/14
 PeterM: Made some changes so that non-disease effects may be done without
 being labelled as a disease.  Also, fixed a bug in which we'd kill something

@@ -58,9 +58,9 @@
    write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
    Boston, MA 02111-1307, USA.  */
 
-int alphasort( struct dirent *a, struct dirent *b)
+int alphasort( struct dirent **a, struct dirent **b)
 {
-  return strcmp (a->d_name, b->d_name);
+  return strcmp ((*a)->d_name, (*b)->d_name);
 }
 
 extern int errno;
