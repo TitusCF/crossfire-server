@@ -251,7 +251,7 @@ int command_who (object *op, char *params)
 	if (pl->state==ST_PLAYING || pl->state==ST_GET_PARTY_PASSWORD) {
 
 	    if(op == NULL || QUERY_FLAG(op, FLAG_WIZ)){
-		(void) sprintf(namebuf,"%s the %s%s%s:",
+		(void) sprintf(namebuf,"%s the %s%s%s%s:",
 		    pl->ob->name,
 		    (pl->own_title[0]=='\0'?pl->title:pl->own_title),
 		    pl->peaceful?" [Peaceful]":" [Hostile]",
