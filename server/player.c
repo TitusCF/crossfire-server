@@ -204,6 +204,7 @@ object *get_player(player *p, mapstruct *m) {
     p->last_stats.grace=0, p->last_stats.maxgrace=0;
     p->last_stats.exp= -1,p->last_stats.food=0;
     p->digestion=0,p->gen_hp=0,p->gen_sp=0,p->gen_grace=0;
+    p->gen_sp_armour=10;
     p->last_spell= -1;
     p->last_value= -1;
     p->last_speed= -1;
@@ -1417,8 +1418,15 @@ void do_some_living(object *op) {
   object *tmp;
   int last_food=op->stats.food;
   int gen_hp, gen_sp, gen_grace;
+  int over_hp, over_sp, over_grace;
   int x,y,i;  /*  these are for resurrection */
   mapstruct *map;  /*  this is for resurrection */
+  const int rate_hp = 1200;
+  const int rate_sp = 2500;
+  const int rate_grace = 2000;
+  const int max_hp = 1;
+  const int max_sp = 1;
+  const int max_grace = 1;
 
   if (op->contr->outputs_sync) {
     for (i=0; i<NUM_OUTPUT_BUFS; i++)
@@ -1430,49 +1438,96 @@ void do_some_living(object *op) {
   if(op->contr->state==ST_PLAYING) {
     gen_hp=(op->contr->gen_hp+1)*op->stats.maxhp;
     gen_sp=(op->contr->gen_sp+1)*op->stats.maxsp;
-	 gen_grace=(op->contr->gen_grace+1)*op->stats.maxgrace;
+    gen_grace=(op->contr->gen_grace+1)*op->stats.maxgrace;
+
+    /* Regenerate Spell Points */
     if(op->contr->golem==NULL&&--op->last_sp<0) {
-		 if(op->stats.sp<op->stats.maxsp)
-			 op->stats.sp++,op->stats.food--;
-		 op->last_sp=2000/(gen_sp<20 ? 30 : gen_sp+10);
-		 for(tmp=op->inv;tmp!=NULL;tmp=tmp->below)
-			 if((tmp->type==ARMOUR||tmp->type==HELMET||tmp->type==BOOTS||
-				  tmp->type==SHIELD||tmp->type==GLOVES||tmp->type==GIRDLE||
-				  tmp->type==AMULET)
-				 &&QUERY_FLAG(tmp, FLAG_APPLIED))
-				 op->last_sp+=ARMOUR_SPELLS(tmp);
+      gen_sp = gen_sp * 10 / (op->contr->gen_sp_armour < 10? 10 : op->contr->gen_sp_armour);
+      if(op->stats.sp<op->stats.maxsp) {
+	op->stats.sp++;
+	op->stats.food--;
+	if(op->contr->digestion<0)
+	  op->stats.food+=op->contr->digestion;
+	else if(op->contr->digestion>0&&RANDOM()%(1+op->contr->digestion))
+	  op->stats.food=last_food;
+      }
+      if (max_sp>1) {
+	over_sp = (gen_sp+10)/rate_sp;
+	if (over_sp > 0) {
+	  if(op->stats.sp<op->stats.maxsp) {
+	    op->stats.sp += over_sp>max_sp ? max_sp : over_sp;
+	    if(RANDOM()%rate_sp > ((gen_sp+10)%rate_sp))
+	      op->stats.sp--;
+	    if(op->stats.sp>op->stats.maxsp)
+	      op->stats.sp=op->stats.maxsp;
+	  }
+	  op->last_sp=0;
+	} else {
+	  op->last_sp=rate_sp/(gen_sp<20 ? 30 : gen_sp+10);
+	}
+      } else {
+	op->last_sp=rate_sp/(gen_sp<20 ? 30 : gen_sp+10);
+      }
     }
 
-	 /* regenerate grace */
-	/* I altered this a little - maximum grace is ony achieved through prayer -b.t.*/
-	 if(--op->last_grace<0) {
+    /* Regenerate Grace */
+    /* I altered this a little - maximum grace is ony achieved through prayer -b.t.*/
+    if(--op->last_grace<0) {
 #ifndef ALLOW_SKILLS /* allow regen 'naturally' to only 1/2 maxgrace w/ skills code */ 
-		 if(op->stats.grace<op->stats.maxgrace) 
+      if(op->stats.grace<op->stats.maxgrace)
 #else
-		 if(op->stats.grace<op->stats.maxgrace/2)
+	if(op->stats.grace<op->stats.maxgrace/2)
 #endif
-			 op->stats.grace++;  /* no penalty in food for regaining grace */
-		 op->last_grace=2500/(gen_grace<20? 30:gen_grace+10);
-		 /* wearing stuff doesn't detract from grace generation. */
-	 }
+	  op->stats.grace++; /* no penalty in food for regaining grace */
+      if(max_grace>1) {
+	over_grace = (gen_grace<20 ? 30 : gen_grace+10)/rate_grace;
+	if (over_grace > 0) {
+	  op->stats.sp += over_grace 
+	    + (RANDOM()%rate_grace > ((gen_grace<20 ? 30 : gen_grace+10)%rate_grace))? -1 : 0;
+	  op->last_grace=0;
+	} else {
+	  op->last_grace=rate_grace/(gen_grace<20 ? 30 : gen_grace+10);
+	}
+      } else {
+	op->last_grace=rate_grace/(gen_grace<20 ? 30 : gen_grace+10);
+      }
+      /* wearing stuff doesn't detract from grace generation. */
+    }
 
+    /* Regenerate Hit Points */
     if(--op->last_heal<0) {
-		 if(op->stats.hp<op->stats.maxhp)
-			 op->stats.hp++,op->stats.food--;
-		 op->last_heal=1200/(gen_hp<20 ? 30 : gen_hp+10);
-		 if(op->contr->digestion<0)
-			 op->stats.food+=op->contr->digestion;
-		 else if(op->contr->digestion>0&&RANDOM()%(1+op->contr->digestion))
-			 op->stats.food=last_food;
+      if(op->stats.hp<op->stats.maxhp) {
+	op->stats.hp++;
+	op->stats.food--;
+	if(op->contr->digestion<0)
+	  op->stats.food+=op->contr->digestion;
+	else if(op->contr->digestion>0&&RANDOM()%(1+op->contr->digestion))
+	  op->stats.food=last_food;
+      }
+      if(max_hp>1) {
+	over_hp = (gen_hp<20 ? 30 : gen_hp+10)/rate_hp;
+	if (over_hp > 0) {
+	  op->stats.sp += over_hp 
+	    + (RANDOM()%rate_hp > ((gen_hp<20 ? 30 : gen_hp+10)%rate_hp))? -1 : 0;
+	  op->last_heal=0;
+	} else {
+	  op->last_heal=rate_hp/(gen_hp<20 ? 30 : gen_hp+10);
+	}
+      } else {
+	op->last_heal=rate_hp/(gen_hp<20 ? 30 : gen_hp+10);
+      }
     }
-    if(--op->last_eat<0) {
-		 int bonus=op->contr->digestion>0?op->contr->digestion:0,
-		 penalty=op->contr->digestion<0?-op->contr->digestion:0;
 
-		 op->last_eat=25*(1+bonus)/(op->contr->gen_hp+penalty+1);
-		 op->stats.food--;
+    /* Digestion */
+    if(--op->last_eat<0) {
+      int bonus=op->contr->digestion>0?op->contr->digestion:0,
+	penalty=op->contr->digestion<0?-op->contr->digestion:0;
+
+      op->last_eat=25*(1+bonus)/(op->contr->gen_hp+penalty+1);
+      op->stats.food--;
     }
- }
+  }
+
   if(op->contr->state==ST_PLAYING&&op->stats.food<0&&op->stats.hp>=0) {
 	  object *tmp;
 	  for(tmp=op->inv;tmp!=NULL;tmp=tmp->below)
