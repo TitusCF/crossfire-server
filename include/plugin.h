@@ -154,7 +154,8 @@
 #define HOOK_FREEOBJECT          57
 #define HOOK_CLONEOBJECT         58
 #define HOOK_TELEPORTOBJECT      59
-#define NR_OF_HOOKS             60
+#define HOOK_SETVARIABLE         60
+#define NR_OF_HOOKS             61
 
 /*****************************************************************************/
 /* CFParm is the data type used to pass informations between the server and  */

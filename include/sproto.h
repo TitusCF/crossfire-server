@@ -579,6 +579,7 @@ CFParm *CFWApplyBelow(CFParm *PParm);
 CFParm *CFWFreeObject(CFParm *PParm);
 CFParm *CFWObjectCreateClone(CFParm *PParm);
 CFParm *CFWTeleportObject(CFParm *PParm);
+CFParm* CFWSetVariable(CFParm* PParm);
 CFParm *RegisterGlobalEvent(CFParm *PParm);
 CFParm *UnregisterGlobalEvent(CFParm *PParm);
 void GlobalEvent(CFParm *PParm);

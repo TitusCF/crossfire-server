@@ -1603,6 +1603,18 @@ CFParm* CFWObjectCreateClone (CFParm* PParm)
     return CFP;
 }
 /*****************************************************************************/
+/* Sets a variable in a given object.                                        */
+/*****************************************************************************/
+/* 0 - object to change                                                      */
+/* 1 - string describing the change to make.                                 */
+/*****************************************************************************/
+CFParm* CFWSetVariable(CFParm* PParm)
+{
+    set_variable((object*)(PParm->Value[0]), (char *)(PParm->Value[1]));
+    return NULL;
+}
+
+/*****************************************************************************/
 /* teleport an object to another map                                         */
 /*****************************************************************************/
 /* 0 - object                                                                */
@@ -1615,7 +1627,7 @@ CFParm* CFWObjectCreateClone (CFParm* PParm)
 CFParm* CFWTeleportObject (CFParm* PParm)
 {
     object* current;
-/*    char * mapname; not used 
+/*    char * mapname; not used
     int mapx;
     int mapy;
     int unique; not used */

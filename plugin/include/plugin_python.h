@@ -277,6 +277,7 @@ static PyObject* CFSetEventOptions(PyObject* self, PyObject* args);
 static PyObject* CFGetIP(PyObject* self, PyObject* args);
 static PyObject* CFGetInventory(PyObject* self, PyObject* args);
 static PyObject* CFGetInternalName(PyObject* self, PyObject* args);
+static PyObject* CFSetVariable(PyObject* self, PyObject* args);
 
 /* Skill id wrappers */
 static PyObject* CFSkillStealing(PyObject* self, PyObject* args);
@@ -824,6 +825,7 @@ static PyMethodDef CFPythonMethods[] =
         {"GetDataDirectory", CFGetDataDir, METH_VARARGS},
         {"GetWC", CFGetWC, METH_VARARGS},
         {"SetWC", CFSetWC, METH_VARARGS},
+        {"SetVariable", CFSetVariable, METH_VARARGS},
 /* Skills wrappers : */
         {"SkillStealing", CFSkillStealing, METH_VARARGS},
         {"SkillLockpicking", CFSkillLockpicking, METH_VARARGS},

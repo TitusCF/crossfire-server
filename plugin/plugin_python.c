@@ -6547,6 +6547,26 @@ static PyObject* CFGetPressure(PyObject* self, PyObject* args)
     return Py_BuildValue("i",val);
 }
 
+/*****************************************************************************/
+/* Name    : CFSetVariable                                                   */
+/* Python  : SetVariable(object,args)                                        */
+/*****************************************************************************/
+/* Changes an object according to an argument string. Equivalent of the DM   */
+/* patch command.                                                            */
+/*****************************************************************************/
+static PyObject* CFSetVariable(PyObject* self, PyObject* args)
+{
+    char *txt;
+    long whoptr;
+    if (!PyArg_ParseTuple(args, "ls", &whoptr, &txt))
+      return NULL;
+    GCFP.Value[0] = (void *)(WHO);
+    GCFP.Value[1] = (void *)txt;
+    (PlugHooks[HOOK_SETVARIABLE])(&GCFP);
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
 static PyObject* CFGetMapDir(PyObject* self, PyObject* args)
 {
     if (!PyArg_ParseTuple(args,"",NULL))

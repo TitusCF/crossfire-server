@@ -62,8 +62,8 @@ f_plugin HookList[NR_OF_HOOKS] =
     CFWApplyBelow,
     CFWFreeObject,
     CFWObjectCreateClone,
-    CFWTeleportObject
-
+    CFWTeleportObject,
+    CFWSetVariable
 };
 
 #endif /*PLUGPROTO_H_*/
