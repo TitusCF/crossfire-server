@@ -340,7 +340,8 @@ attacktype is the attacktype used by the disease to smite "dam" damage with.
 
 wc/127 is the chance of someone in range catching it.
 
-magic is the range at which infection may occur.
+magic is the range at which infection may occur.  If negative, this is
+not level dependent.
 
 Stats are stat modifications.  These should typically be negative.
 
