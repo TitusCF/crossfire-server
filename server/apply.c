@@ -414,7 +414,7 @@ int improve_weapon_stat(object *op,object *improver,object *weapon,
 int prepare_weapon(object *op, object *improver, object *weapon)
 {
     int sacrifice_count;
-    char *tmp;
+    char buf[MAX_BUF];
 
     if (weapon->level!=0) {
       new_draw_info(NDI_UNIQUE,0,op,"Weapon already prepared.");
@@ -443,9 +443,8 @@ int prepare_weapon(object *op, object *improver, object *weapon)
     new_draw_info_format(NDI_UNIQUE, 0, op,"Your *%s may be improved %d times.",
 	    weapon->name,sacrifice_count);
 
-    tmp = (char *) malloc(strlen(weapon->name)+strlen(op->name) + 4);
-    sprintf(tmp,"%s's %s",op->name,weapon->name);
-    weapon->name=tmp; /* this seems to be wrong -Tero */
+    sprintf(buf,"%s's %s",op->name,weapon->name);
+    weapon->name=add_string(buf);
     weapon->nrof=0;  /*  prevents preparing n weapons in the same
 			 slot at once! */
     decrease_ob(improver);
@@ -624,6 +623,11 @@ int improve_armour(object *op, object *improver, object *armour)
         armour->magic++;
 	armour->armour+=addarm;
 	armour->weight+=armour->weight*0.05;
+	if (op->type == PLAYER) {
+	  esrv_send_item(op, armour);
+	  if(QUERY_FLAG(armour, FLAG_APPLIED))
+	    fix_player(op);
+	}
         decrease_ob(improver);
         return 1;
     } else {
@@ -2377,22 +2381,38 @@ void eat_special_food(object *who, object *food) {
  */
 
 void apply_lighter(object *who, object *lighter) {
-    object *item = who->inv;
+    object *item;
     int count,nrof;
     char item_name[MAX_BUF];
 
     item=find_marked_object(who);
-    if(item) {  
+    if(item) {
+        if(lighter->last_eat && lighter->stats.food) { /* lighter gets used up */
+        /* Split multiple lighters if they're being used up.  Otherwise	*
+	 * one charge from each would be used up.  --DAMN		*/
+	  if(lighter->nrof > 1) {
+	    object *oneLighter = get_object();
+	    copy_object(lighter, oneLighter);
+	    lighter->nrof -= 1;
+	    oneLighter->nrof = 1;
+	    oneLighter->stats.food--;
+	    esrv_send_item(who, lighter);
+	    oneLighter=insert_ob_in_ob(oneLighter, who);
+	    esrv_send_item(who, oneLighter);
+	  } else {
+	    lighter->stats.food--;
+	  }
+
+	} else if(lighter->last_eat) { /* no charges left in lighter */ 
+	     new_draw_info_format(NDI_UNIQUE, 0,who,
+				  "You attempt to light the %s with a used up %s.",
+				  item->name, lighter->name);
+	     return;
+        }
 	/* Perhaps we should split what we are trying to light on fire?
 	 * I can't see many times when you would want to light multiple
 	 * objects at once.
 	 */
-        if(lighter->last_eat && lighter->stats.food) /* lighter is used up */ 
-	    lighter->stats.food--; 
-        else if(lighter->last_eat) {           /* no charges left in lighter */ 
-	     new_draw_info_format(NDI_UNIQUE, 0,who,"You attempt to light the %s with the %s and nothing happens.", item->name, lighter->name);
-	     return;
-        }
 	nrof=item->nrof;
 	count=item->count;
 	/* If the item is destroyed, we don't have a valid pointer to the
