@@ -1183,7 +1183,7 @@ end
 #Ring of War
 #
 Allowed all
-chance 2
+chance 1
 Object War
 face ring.117
 type 70
