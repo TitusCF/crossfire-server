@@ -1,3 +1,8 @@
+#
+# Do not modify this file - any changes will get overwritten.
+# instead, modify the treasures file or the .trs file in the
+# arch directory.
+#
 # This file contains various treasures, with generation rules.
 #
 # $Id$
@@ -618,6 +623,43 @@ treasureone random_weapon
     chance 10
   end
 treasureone random_armour
+  arch b_full_helmet
+    magic 4
+    chance 5
+  more
+  arch b_helmet
+    magic 4
+    chance 5
+  more
+  arch b_horned_helmet
+    magic 4
+    chance 5
+  more
+  arch b_gauntlets
+    magic 4
+    chance 5
+  more
+  arch b_plate_mail
+    magic 4
+    chance 5
+  more
+  arch b_scale_mail
+    magic 4
+    chance 5
+  more
+  arch b_shield
+    magic 4
+    chance 5
+  more
+  arch b_small_shield
+    magic 4
+    chance 5
+  more
+#
+  arch ring_mail
+    magic 4
+    chance 5
+  more
   arch ring_mail
     magic 4
     chance 5
@@ -1425,6 +1467,39 @@ end
 # melee_weapons combines old list 11 and list 12 together.  List 26
 # is obsolete now
 treasureone melee_weapons
+  arch b_dagger
+    magic 4
+    chance 5
+  more
+  arch b_bsword_1
+    magic 4
+    chance 5
+  more
+  arch b_bsword_2
+    magic 4
+    chance 5
+  more
+  arch b_lsword
+    magic 4
+    chance 5
+  more
+  arch b_scimitar
+    magic 4
+    chance 5
+  more
+  arch b_ssword_1
+    magic 4
+    chance 5
+  more
+  arch b_ssword_2
+    magic 4
+    chance 5
+  more
+  arch b_sword_1
+    magic 4
+    chance 5
+  more
+#
   arch dagger
     magic 4
     chance 5
@@ -2118,20 +2193,20 @@ treasureone uncommon_items
   end
 treasure poor_old
   arch bow
-  chance 10
+  chance 5
   yes
     arch arrow
     nrof 6
     end
   more
-  arch sword_4
+  arch b_ssword_2
   magic 1
   chance 5
   no
-    arch shortsword
+    arch b_ssword_1
     chance 10
     no
-      arch dagger
+      arch b_dagger
       chance 15
       no
         arch stoneaxe
@@ -2144,8 +2219,8 @@ treasure poor_old
       end
     end
   more
-  arch small_shield
-  chance 10
+  arch b_small_shield
+  chance 4
   more
   arch silvercoin
   nrof 8
@@ -2230,7 +2305,7 @@ treasure poor
 treasure standard_old
   arch bow
   magic 1
-  chance 20
+  chance 10
   yes
     arch arrow
     nrof 10
@@ -2238,7 +2313,7 @@ treasure standard_old
   no
     arch crossbow
     magic 2
-    chance 10
+    chance 5
     yes
       arch bolt
       nrof 10
@@ -2249,7 +2324,7 @@ treasure standard_old
   magic 1
   chance 50
   no
-    arch dagger
+    arch b_dagger
     magic 2
     chance 40
     no
@@ -2257,11 +2332,11 @@ treasure standard_old
       magic 2
       chance 30
       no
-        arch shortsword
+        arch b_ssword_2
         magic 2
         chance 20
         no
-          arch sword_2
+          arch b_sword_1
           magic 2
           chance 10
           end
@@ -2269,35 +2344,45 @@ treasure standard_old
       end
     end
   more
-  arch shield
+  arch b_small_shield
   magic 2
-  chance 10
+  chance 5
   no
+   arch b_shield
+   magic 2
+   chance 5
+   no
     arch small_shield
     magic 2
-    chance 15
+    chance 4
     no
-      arch high_shield
-      magic 2
-      chance 7
-      end
+    	arch shield
+  	magic 2
+  	chance 2
+  	no
+      	   arch high_shield
+      	   magic 2
+      	   chance 1
+      	   end
+        end
     end
+   end
   more
-  arch helmet
+  arch b_helmet
   magic 1
-  chance 10
+  chance 5
   no
-    arch horned_helmet
+    arch b_horned_helmet
     magic 1
-    chance 10
+    chance 5
     no
-      arch full_helmet
+      arch b_full_helmet
       magic 1
-      chance 10
+      chance 2
       no
         arch bighorned_helmet
         magic 1
-        chance 10
+        chance 1
         end
       end
     end
@@ -2305,6 +2390,10 @@ treasure standard_old
   arch goldcoin
   chance 8
   nrof 2
+  more
+  arch silvercoin
+  chance 10
+  nrof 5
   more
   arch wand
   chance 2
@@ -2317,7 +2406,7 @@ treasure standard_old
   more
   arch scroll_new
   chance 2
-  end
+ end
 treasure rich_old
   arch bow
   magic 4
@@ -3053,11 +3142,11 @@ treasure warrior_class_items
   more
   arch guide_melee
   more
-  arch sword
+  arch b_sword_2
   more
   arch chain_mail
   more
-  arch shield
+  arch b_shield
   more
   arch sack
   end
@@ -3066,13 +3155,13 @@ treasure paladin_class_items
   more
   arch guide_melee
   more
-  arch broadsword
+  arch b_bsword_1
   more
-  arch plate_mail
+  arch b_plate_mail
   more
-  arch high_shield
+  arch b_shield
   more
-  arch full_helmet
+  arch b_full_helmet
   more
   arch cleric_book_l1
   more
@@ -3129,7 +3218,7 @@ treasure evoker_class_items
   more
   arch evoker_book_l1
   more
-  arch shortsword
+  arch b_ssword_1
   more
   arch staff
   end
@@ -3156,7 +3245,7 @@ treasure alchemist_class_items
   more
   arch sorcerer_book_l1
   more
-  arch dagger
+  arch b_dagger
   end
 treasure summoner_class_items
   list basic_skills
@@ -3175,7 +3264,7 @@ treasure summoner_class_items
   more
   arch summoner_book_l1
   more
-  arch shortsword
+  arch b_ssword_1
   end
 treasure wizard_class_items
   list wizard_skills
@@ -3192,7 +3281,7 @@ treasure wizard_class_items
   more
   arch sorcerer_book_l1
   more
-  arch dagger
+  arch b_dagger
   end
 treasure devotee_class_items
   list wizard_skills
@@ -3209,7 +3298,7 @@ treasure devotee_class_items
   more
   arch evoker_book_l1
   more
-  arch dagger
+  arch b_dagger
   end
 treasure wizard
   list wizard_skills
@@ -3222,7 +3311,7 @@ treasure wizard
   more
   arch sorcerer_book_l1
   more
-  arch dagger
+  arch b_dagger
   end
 treasure wraith_player_items
   arch wraith_player_force
@@ -3242,7 +3331,7 @@ treasure cleric
   more
   arch cleric_book_l1
   more
-  arch small_shield
+  arch b_small_shield
   end
 treasure barbarian_class_items
   arch skill_one_handed_weapon
@@ -3269,7 +3358,7 @@ treasure barbarian_class_items
   more
   arch skill_woodsman
   more
-  arch horned_helmet
+  arch b_horned_helmet
   more
   arch sack
   more
@@ -3335,7 +3424,7 @@ treasure warlock_class_items
   more
   arch talisman_evocation
   more
-  arch light_sword
+  arch b_lsword
   more
   arch leather_armour
   more
@@ -3368,20 +3457,20 @@ treasure viking
   more
   arch skill_bargaining
   more
-  arch small_shield
+  arch b_small_shield
   more
   arch bighorned_helmet
   end
 treasure swashbuckler_class_items
   list fighter_skills
   more
-  arch light_sword
+  arch b_lsword
   more
   arch skill_stealing
   more
   arch skill_singing
   more
-  arch dagger
+  arch b_dagger
   more
   arch amulet
   more
@@ -3938,4 +4027,3 @@ treasureone sheep
   arch leg_mutton
     chance 15
   end
-#
