@@ -138,8 +138,6 @@ scandir (dir, namelist, select, cmp)
 
 #endif
 
-object *style_map_object_list[2048];
-int nrofstyle_map_objects;
 
 
 /* the warning here is because I've declared it "const", the
@@ -151,14 +149,17 @@ int select_regular_files(const struct dirent *the_entry) {
 }
   
 /* this function loads and returns the map requested.
-  dirname, for example, is "/styles/wallstyles", stylename, is,
-for example, "castle", difficulty is -1 when difficulty is
-irrelevant to the style.  If dirname is given, but stylename
-isn't, and difficult is -1, it returns a random style map.
-Otherwise, it tries to match the difficulty given with a style
-file, named style_name_# where # is an integer */
+ * dirname, for example, is "/styles/wallstyles", stylename, is,
+ * for example, "castle", difficulty is -1 when difficulty is
+ * irrelevant to the style.  If dirname is given, but stylename
+ * isn't, and difficult is -1, it returns a random style map.
+ * Otherwise, it tries to match the difficulty given with a style
+ * file, named style_name_# where # is an integer 
+ */
 
-static mapstruct *styles=NULL;
+/* remove extern, so visible to command_style_map_info function */
+mapstruct *styles=NULL;
+
 
 mapstruct *load_style_map(char *style_name)
 {
@@ -187,28 +188,27 @@ mapstruct *load_style_map(char *style_name)
 }
 
 mapstruct *find_style(char *dirname,char *stylename,int difficulty) {
-  char style_file_path[256];
-  char style_file_full_path[256];
-  mapstruct *style_map = NULL;
-  struct stat file_stat;
-
+    char style_file_path[256];
+    char style_file_full_path[256];
+    mapstruct *style_map = NULL;
+    struct stat file_stat;
+    int i;
   
-  /* if stylename exists, set style_file_path to that file.*/
-  if(stylename && strlen(stylename)>0)
-    sprintf(style_file_path,"%s/%s",dirname,stylename);
-  else /* otherwise, just use the dirname.  We'll pick a random stylefile.*/
-    sprintf(style_file_path,"%s",dirname);
+    /* if stylename exists, set style_file_path to that file.*/
+    if(stylename && strlen(stylename)>0)
+	sprintf(style_file_path,"%s/%s",dirname,stylename);
+    else /* otherwise, just use the dirname.  We'll pick a random stylefile.*/
+	sprintf(style_file_path,"%s",dirname);
 
-  /* is what we were given a directory, or a file? */
-  sprintf(style_file_full_path,"%s/maps%s",settings.datadir,style_file_path);
-  stat(style_file_full_path,&file_stat);
+    /* is what we were given a directory, or a file? */
+    sprintf(style_file_full_path,"%s/maps%s",settings.datadir,style_file_path);
+    stat(style_file_full_path,&file_stat);
 
 
-  if(! (S_ISDIR(file_stat.st_mode))) {
-    style_map=load_style_map(style_file_path);
-
-  }
-  if(style_map == NULL)  /* maybe we were given a directory! */
+    if(! (S_ISDIR(file_stat.st_mode))) {
+	style_map=load_style_map(style_file_path);
+    }
+    if(style_map == NULL)  /* maybe we were given a directory! */
     {
 	 struct dirent **namelist;
 	 int n;
@@ -226,71 +226,65 @@ mapstruct *find_style(char *dirname,char *stylename,int difficulty) {
 	    style_map = load_style_map(style_file_path);
 	 }
 	 else {  /* find the map closest in difficulty */
-	   int min_dist=32000,min_index=-1;
-	   int i;
-	   for(i=0;i<n;i++) {
-	     int dist;
-	     char *mfile_name = strrchr(namelist[i]->d_name,'_')+1;
-	     if((mfile_name-1) == NULL) { /* since there isn't a sequence, */
-	       /*pick one at random to recurse */
-	       return find_style(style_file_path,
+	    int min_dist=32000,min_index=-1;
+
+	    for(i=0;i<n;i++) {
+		int dist;
+		char *mfile_name = strrchr(namelist[i]->d_name,'_')+1;
+
+		if((mfile_name-1) == NULL) { /* since there isn't a sequence, */
+		    int q;
+		    /*pick one at random to recurse */
+		    style_map= find_style(style_file_path,
 				 namelist[RANDOM()%n]->d_name,difficulty);
-	     }
-	       
-	     dist = abs(difficulty-atoi(mfile_name));
-	     if(dist<min_dist) {
-	       min_dist = dist;
-	       min_index = i;
-	     }
-	   }
-	   /* presumably now we've found the "best" match for the
-		 difficulty. */
-	   strcat(style_file_path,"/");
-	   strcat(style_file_path,namelist[min_index]->d_name);
-	   style_map = load_style_map(style_file_path);
-
+		    for (q=0; q<n; q++)
+			free(namelist[q]);
+		    free(namelist);
+		    return style_map;
+		} else {
+		    dist = abs(difficulty-atoi(mfile_name));
+		    if(dist<min_dist) {
+			min_dist = dist;
+			min_index = i;
+		    }
+		}
+	    }
+	    /* presumably now we've found the "best" match for the
+		    difficulty. */
+	    strcat(style_file_path,"/");
+	    strcat(style_file_path,namelist[min_index]->d_name);
+	    style_map = load_style_map(style_file_path);
 	 }
-	
+	for (i=0; i<n; i++)
+	    free(namelist[i]);
+	free(namelist);
     }
-
   return style_map;
 
 }
 
+
 /* picks a random object from a style map.
-	it maintains a data stucture so that if the same stylemap is
-	called several times, it uses the old datastucture. */
-
+ * Redone by MSW so it should be faster and not use static
+ * variables to generate tables.
+ */
 object *pick_random_object(mapstruct *style) {
-  static mapstruct *laststyle=0;
-  
-  /* if this isn't the current style, make the style_map_object_list array
-     for easy searching */
-  if(laststyle!=style)
-	 {
-		int i,j;
-		int maxx,maxy;
-		object *new_obj;
+    int x,y, i;
+    object *new_obj;
 
-		laststyle=style;
-		maxx = style->map_object->x;
-		maxy = style->map_object->y;
-		nrofstyle_map_objects = 0;
-		for(i=0;i<maxx;i++) {
-		  for(j=0;j<maxy;j++) {
-			 new_obj = get_map_ob(style,i,j);
-			 if(new_obj) { /* make sure it's the head: if it is, add it */
-				if(!new_obj->head ) {
-				  style_map_object_list[nrofstyle_map_objects] = new_obj;
-				  nrofstyle_map_objects++;
-				}
-			 }
-		  }
-		}
-	 }
-  if(nrofstyle_map_objects > 0)
-  return style_map_object_list[RANDOM() % nrofstyle_map_objects];
-  else return NULL;
+    /* If someone makes a style map that is empty, this will loop forever,
+     * but the callers will crash if we return a null object, so either
+     * way is not good.
+     */
+    do {
+	i = RANDOM () % (style->map_object->x * style->map_object->y);
+
+	x = i / style->map_object->y;
+	y = i % style->map_object->y;
+	new_obj = get_map_ob(style,x,y);
+    } while (new_obj == NULL);
+    if (new_obj->head) return new_obj->head;
+    else return new_obj;
 }
 				
 			 
