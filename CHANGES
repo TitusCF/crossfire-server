@@ -17,6 +17,8 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+common/button.c:  Fix do_mood_floor() to look at all objects on space for
+   something to effect, not just things above the moodfloor.
 server/attack.c: Add missing check to make sure the plugin exists before
    we try to access the plugin function.
 common/readlable.c: Fix crash caused by passing null value to mon_desc -

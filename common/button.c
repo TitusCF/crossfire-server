@@ -544,7 +544,7 @@ void do_mood_floor(object *op, object *op2) {
     object *tmp;
     object *tmp2;
 
-    for (tmp = op->above; tmp; tmp=tmp->above)
+    for (tmp = GET_MAP_OB(op->map, op->x, op->y); tmp; tmp=tmp->above)
 	if (QUERY_FLAG(tmp, FLAG_MONSTER)) break;
 
     /* doesn't effect players, and if there is a player on this space, won't also
