@@ -5,6 +5,7 @@
 
 #include <global.h>
 #include <living.h>
+#include <spells.h>
 
 static godlink *init_godslist() {
     godlink *gl = (godlink *) malloc(sizeof(godlink));
