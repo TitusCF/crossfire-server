@@ -32,7 +32,9 @@ Style Parameters:
 ******************************************************************************
 
 layoutstyle <style>	(special!) Pick the layout style for the map.  Currently, 
-			"rogue", "spiral", "maze", "snake", and "onion" are allowed.                        See below for more detail.
+			"rogue", "spiral", "maze", "snake", "onion",
+                        and "squarespiral"  are allowed. 
+                        See below for more detail.
 
 floorstyle <style>	Load /styles/floorstyles/<style> and pick a random
 			floortype from that style map for the random map.
@@ -380,6 +382,7 @@ layoutoptions1:
 Snake layouts
 ***************************************************************************
 No options are available for snake layouts.
+A player must touch every room to descend deeper in a snake.
 This is a basic snake layout:
 
 
@@ -422,6 +425,67 @@ This is a roomified, xy-symmetric snake layout:
 #        #     #   #     #        #
 #>       #     #   #     #       >#
 ###################################
+
+
+Square spirals
+***************************************************************************
+No options are available for square spirals
+A player must touch every room to descend in a square spiral.
+This is a basic square spiral layout:
+###############################
+#   #                         #
+#   D                         #
+#   #####################D#####
+#   #   #               #     #
+#   #   #               #     #
+#   #   D               #     #
+#   #   #############D###     #
+#   #   #   #       #   #     #
+#   #   #   #       #   #     #
+#   #   #   D       #   #     #
+#   #   #   #####D###   #     #
+#   #   #   # > #   #   #     #
+#   #   #   D   #   #   #     #
+#   #   #########   #   #     #
+#   #   #       D   #   #     #
+#   #   #       #   #   #     #
+#   #   D       #   #   #     #
+#   #################   #     #
+#   #               D   #     #
+#   #               #   #     #
+#   D               #   #     #
+#########################     #
+#                       D     #
+#                       #     #
+#                       #     #
+#<                      #     #
+###############################
+
+
+
+This is an xy-symmetric  square spiral layout:
+#####################################
+#             #   <   #             #
+##D##########D#       #D##########D##
+#  #    #     ####D####     #    #  #
+#  ###DD###   #       #   ###DD###  #
+#  #   #> #   ##D###D##   # >#   #  #
+#  #   ####D###       ###D####   #  #
+#  #   D      #       #      D   #  #
+#  ############D#####D############  #
+#  D                             D  #
+#  #                             #  #
+#  D                             D  #
+#  ############D#####D############  #
+#  #   D      #       #      D   #  #
+#  #   ####D###       ###D####   #  #
+#  #   #> #   ##D###D##   # >#   #  #
+#  ###DD###   #       #   ###DD###  #
+#  #    #     ####D####     #    #  #
+##D##########D#       #D##########D##
+#             #   <   #             #
+#####################################
+
 
 
 ************************************************
