@@ -142,6 +142,7 @@ void init_library() {
     init_vars();
     init_block();
     ReadBmapNames ();
+    ReadSmooth();
     init_anim();    /* Must be after we read in the bitmaps */
     init_archetypes();	/* Reads all archetypes from file */
     init_dynamic ();

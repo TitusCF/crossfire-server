@@ -75,6 +75,13 @@ New_Face *blank_face, *dark_faces[3], *potion_face, *empty_face;
  */
 int nroffiles = 0, nrofpixmaps=0;
 
+struct smoothing {
+    uint16 id;
+    uint16 smooth[8];
+};
+
+static struct smoothing *smooth=NULL;
+int nrofsmooth=0;
 /* the only thing this table is used for now is to
  * translate the colorname in the magicmap field of the
  * face into a numeric index that is then sent to the
@@ -99,6 +106,13 @@ char *colorname[NUM_COLORS] = {
 
 static int compar (struct bmappair *a, struct bmappair *b) {
     return strcmp (a->name, b->name);
+}
+static int compar_smooth (struct smoothing *a, struct smoothing *b) {
+    if (a->id<b->id)
+        return -1;
+    if (b->id<a->id)
+        return 1;
+    return 0;
 }
 
 
@@ -301,7 +315,6 @@ int ReadBmapNames () {
     return nrofpixmaps;
 }
 
-
 /* This returns an the face number of face 'name'.  Number is constant
  * during an invocation, but not necessarily between versions (this
  * is because the faces are arranged in alphabetical order, so
@@ -338,6 +351,105 @@ int FindFace (char *name, int error) {
 	(&tmp, xbm, nroffiles, sizeof(struct bmappair), (int (*)())compar);
 
     return bp ? bp->number : error;
+}
+/* According to docs, faces are saved in an array
+ * The number associated with each face is it's
+ * position in the array. Right, this should
+ * be easy to convert a facenumber to a facename.
+ * Hope this is so. Tchize
+ * Damn, this is not, have to work around a little. Tchize
+ */
+char* FindFaceName (int facenbr, char* error) {
+    int i=0;
+    if ( (facenbr>=nroffiles) ||(facenbr<0)) 
+        return error;
+    /*xbm[facenbr] is 'near' the face we are seeking*/
+    if (xbm[facenbr].number==facenbr)
+        return xbm[facenbr].name;
+    for (i=1;;i++){
+        if ( ((facenbr-i)<0) && ((facenbr+i)>nroffiles))
+            return error;
+        if (xbm[facenbr-i].number==facenbr){
+            return xbm[facenbr-i].name;
+        }
+        if (xbm[facenbr+i].number==facenbr){
+            return xbm[facenbr+i].name;
+        }
+    }
+}
+/* Reads the smooth file to know how to smooth datas.
+ * the smooth file if made of 9 elements lines.
+ * lines starting with # are comment
+ * the first element of line is face to smooth
+ * 8 next elements is the 8 faces used for 
+ * smoothing
+ */
+int ReadSmooth () {
+    char buf[MAX_BUF], *p, *q;
+    FILE *fp;
+    int value, smoothcount = 0, i;
+
+    bmaps_checksum=0;
+    sprintf (buf,"%s/smooth", settings.datadir);
+    LOG(llevDebug,"Reading smooth from %s...",buf);
+    if ((fp=fopen(buf,"r"))==NULL) {
+	perror("Can't open smooth file");
+	printf("buf = %s\n", buf);
+	exit(-1);
+    }
+    
+    /* First count how many smooth we have, so we can allocate correctly */
+    while (fgets (buf, MAX_BUF, fp)!=NULL)
+	if(buf[0] != '#' && buf[0] != '\n' )
+	    smoothcount++;
+    rewind(fp);
+    
+    smooth = (struct smoothing *) malloc(sizeof(struct smoothing) * (smoothcount));
+    memset (smooth, 0, sizeof (struct smoothing) * (smoothcount));
+    
+    while(fgets (buf, MAX_BUF, fp)!=NULL) {
+        if (*buf == '#')
+            continue;
+        p=strchr(buf,' ');
+        if (!p)
+            continue;
+        *p='\0';
+        q=buf;
+        smooth[nrofsmooth].id=FindFace(q,0);
+        for (i=0;i<8;i++){
+            q=p+1;
+            p=strchr(q,' ');
+            if ( (!p) && (i<7))
+                break;    
+            if (p)
+                *p='\0';
+            smooth[nrofsmooth].smooth[i]=FindFace(q,0);
+        }
+        if (i==8)
+            nrofsmooth++;
+    }
+    fclose(fp);
+
+    LOG(llevDebug,"done (got %d)\n",nrofsmooth);
+    qsort (smooth, nrofsmooth, sizeof(struct smoothing), (int (*)())compar_smooth);
+    return nrofsmooth;
+}
+
+int FindSmooth (uint16 face, uint16* smoothed) {
+    int i;
+    struct smoothing *bp, tmp;
+
+    tmp.id = face;
+    bp = (struct smoothing *)bsearch 
+	(&tmp, smooth, nrofsmooth, sizeof(struct smoothing), (int (*)())compar_smooth);
+    for (i=0;i<8;i++){
+        smoothed[i]=0;
+    }
+    if (bp)
+        for (i=0;i<8;i++){
+            smoothed[i]=bp->smooth[i];
+        }
+    return bp ? 1 : 0;
 }
 
 void free_all_images()

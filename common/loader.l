@@ -577,6 +577,7 @@ A	.+
 ^tooltype{S}            op->tooltype = IVAL;
 ^casting_speed{S}	op->casting_speed = FVAL;
 ^elevation{S}		op->elevation = IVAL;
+^smoothlevel{S}		op->smoothlevel = IVAL;
 ^client_type{S}		op->client_type = IVAL;
 ^body_{A}		set_body_info(op, yytext);
 
@@ -1579,6 +1580,8 @@ char *get_ob_diff(object *op,object *op2) {/* I plan to optimize this heavily */
     save_long(buf, "container", op->weight_limit);
   if (op->will_apply!=op2->will_apply)
     save_long(buf, "will_apply", op->will_apply);
+  if(op->smoothlevel!=op2->smoothlevel)
+    save_long(buf, "smoothlevel", op->smoothlevel);
 
   if (op->current_weapon_script!=op2->current_weapon_script){
     sprintf(buf2,"current_weapon_script %s\n",(op->current_weapon_script));

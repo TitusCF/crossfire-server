@@ -45,6 +45,7 @@
 
 struct MapCell {
   short faces[MAP_LAYERS];
+  uint16 smooth[MAP_LAYERS];
   int count;	/* This is really darkness in the map1 command */
 };
 
@@ -126,16 +127,41 @@ typedef struct NewSocket {
     uint16  look_position;  /* start of drawing of look window */
     uint8   mapx, mapy;	    /* How large a map the client wants */
     uint8   itemcmd;	    /* What version of the 'item' protocol command to use */
+    uint32  ext_mapinfos:1;  /* If true client accept additionnal info on maps*/
+    /* Below are flags for extedend infos to pass to client 
+     * with S->C mapextended command */
+    uint32  EMI_smooth:1;   /* Send smooth in extendmapinfos*/
 
     /* Below here is information only relevant for old sockets */
     char    *comment;	    /* name or listen comment */
     enum Old_Mode old_mode;
 } NewSocket;
 
-
+/*Constants in the form EMI_ is for extended map infos.
+ * Even if the client select the additionnal infos it wants
+ * on the map, there may exist cases where this whole info
+ * is not given in one buch but in separate bunches. This 
+ * is done performance reasons (imagine some info related to
+ * a visible object and another info related to a 4 square
+ * width and height area). At the begin of an extended info packet
+ * is a bit field. A bit is activated for each extended info
+ * present in the data 
+ */
+/* Meanings:
+ * EMI_NOREDRAW  Take extended infos into account but don't redraw,
+ *               some additionnal datas will follow in a new packet
+ * EMI_SMOOTH    Datas about smoothing  
+ */ 
+#define EMI_NOREDRAW        0x01  
+#define EMI_SMOOTH          0x02
+/*this last one says the bitfield continue un next byte
+ * There may be several on contiguous bytes. So there is 7
+ * actual bits used per byte, and the number of bytes
+ * is not fixed in protocol
+ */
+#define EMI_HASMOREBITS     0x80
 
 #define FACE_TYPES  1
-
 #define PNG_FACE_INDEX	0
 
 typedef struct Socket_Info {

@@ -197,6 +197,7 @@ typedef struct obj {
     uint8	anim_speed;	/* ticks between animation-frames */
     uint8	last_anim;	/* last sequence used to draw face */
     sint32  elevation;		/* elevation of this terrain - not currently used */
+    uint8   smoothlevel;    /* how to smooth this square around*/
 
     char	*event_hook[30];    /* GROS - extensions for scripting events */
     char	*event_plugin[30];

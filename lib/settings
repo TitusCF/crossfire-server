@@ -23,14 +23,14 @@ metaserver_comment Put a comment here.
 # values for the new big worldmap, and weather. Only use if you are using the
 # new bigmap.
 #
-# worldmapstartx 100
-# worldmapstarty 100
-# worldmaptilesx 30
-# worldmaptilesy 30
-# worldmaptilesizex 50
-# worldmaptilesizey 50
-# dynamiclevel 0
-# fastclock 0
+worldmapstartx 100
+worldmapstarty 100
+worldmaptilesx 30
+worldmaptilesy 30
+worldmaptilesizex 50
+worldmaptilesizey 50
+dynamiclevel 1
+fastclock 1
 # dm_mail your_email@addr.here
 
 # Makes death non permanent.  If enabled and you die, you lose a bunch of
@@ -42,7 +42,7 @@ metaserver_comment Put a comment here.
 # adventuring right at the edge of death something more reasonable to do
 # (death still hurts here).  On the other hand, it certainly makes the
 # game a bit safer and easier.
-not_permadeth true
+# not_permadeth true
 
 # define resurrection if you want to let players bring other players
 # back to life via some spells.  If resurrection is undefined, then a
