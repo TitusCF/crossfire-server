@@ -128,6 +128,9 @@ function timeline ($values,$moments, $maxvalue, $color)
   timeline ($Vpersonalityexp,$Vmoment,$maxpersonalityexp,array (0,255,255));
   timeline ($Vgeneralexp,$Vmoment,$maxgeneralexp,array (0,0,0));*/
   }
+
 Header("Content-type: image/png");
 imagePNG ($im);
 ?>
+
+

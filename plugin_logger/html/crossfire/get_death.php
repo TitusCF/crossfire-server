@@ -50,7 +50,7 @@ list ($title, $inventoryfile, $face,
       $agilitylvl, $agilityexp, $mentallvl, $mentalexp,
       $physiquelvl, $physiqueexp, $magiclvl, $magicexp,
       $wisdomlvl, $wisdomexp, $personalitylvl, $personalityexp,
-      $generallvl, $generalexp, $god)=pg_fetch_array($playershootresult,0);
+      $generallvl, $generalexp, $god)=database_fetch_array($playershootresult,0);
 require ("screenshoot.php");
 
 function put_stat($statlvl,$statexp,$statname,$god="")
@@ -128,3 +128,5 @@ function dump_inventory($filename)
 <?php
 }
 ?>
+
+

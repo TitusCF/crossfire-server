@@ -1,5 +1,5 @@
 <?php
-$crossfirebasedir="/var/www/html/crossfire/";
+$crossfirebasedir="/home/crossfire/public_html/loggerstuff/crossfire/";
 function addtile ($tilename,$x,$y, $picture)
   {
   global $crossfirebasedir;
@@ -7,7 +7,14 @@ function addtile ($tilename,$x,$y, $picture)
   global $tileheight;
   global $shoot;
   if ($tilename=="blank.111") return;
-  $im=ImageCreateFromPng ($crossfirebasedir."png/".$tilename .".png");
+  if (file_exists($crossfirebasedir."png/".$tilename .".png"))
+  {
+      $im=ImageCreateFromPng ($crossfirebasedir."png/".$tilename .".png");
+  }
+  else
+  {
+      $im=ImageCreateFromPng ($crossfirebasedir."png/mint.base.111.png");
+  }
   ImageCopy ($shoot,$im,$x*$tilewidth,$y*$tileheight,0,0,$tilewidth,$tileheight);
   return;
   }

@@ -5,14 +5,14 @@
  * 1: postgres  (supported)
  * 2: MySql     (not supported)
  */
-$databaseservertype=1;/*Only this one supported for now*/
-$databasename="crossfire";
+$databaseservertype=2;/*Only this one supported for now*/
+$databasename="CrossfireDSN";
 $databaseuser="crossfire";
 /*
  * Comment any of the following line to
  * forget the associated argument in database connection
  */
-// $databasepass="";
+$databasepass="crossfire";
 // $databasehost="";
 // $databaseport="";
 
@@ -38,8 +38,17 @@ function database_connect ()
             $databasehandle=pg_connect($string);
             break;
         case 2:
-            $databasehandle=mysql_connect($databasehost, $databaseuser, $databasepass);
-            mysql_select_db($databasename, $databasehandle);
+            //$databasehandle=mysql_connect($databasehost, $databaseuser, $databasepass);
+            //mysql_select_db($databasename, $databasehandle);
+            if (!($databasehandle=mySql_connect($databasehost, $databaseuser, $databasepass)))
+            {
+                print("ARG ! Connection to MySQL failed !");
+            }
+            if (!mySql_select_db($databasename, $databasehandle))
+            {
+                print("Arg ! Select failed !<BR>\n");
+                print(mySql_errno() . ": " . mySql_error() . "<BR>\n");
+            }
             break;
     }
 }
@@ -132,4 +141,3 @@ function server_active()
     return (abs($when-time())<($SERVER_PING_LATENCY*2));
 }
 ?>
-

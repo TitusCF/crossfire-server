@@ -38,9 +38,9 @@ clean :
 
 install :
 	echo Installing plugin...
-	cp plugin_logger.so $(CROSSFIRE_PATH)/plugins
+	cp plugin_logger.so $(CROSSFIRE_PATH)/lib/crossfire/plugins
 	echo Updating battle arena...
-	cp battle_arena/* $(CROSSFIRE_PATH)/maps/city/misc/ -rf
+	cp battle_arena/* $(CROSSFIRE_PATH)/share/crossfire/maps/city/misc/ -rf
 
 html_install :
 	@echo Copying html and pictures files
