@@ -1037,6 +1037,7 @@ static PyObject* CFSetGod(PyObject* self, PyObject* args)
     if (tmp == NULL)
     {
         set_exception("illegal god name %s", txt);
+        free_string(prayname);
         return NULL;
     }
 
@@ -2433,6 +2434,8 @@ static PyObject* CFCreateInvisibleObjectInside(PyObject* self, PyObject* args)
     GCFP.Value[0] = (void *)(myob);
     (PlugHooks[HOOK_UPDATESPEED])(&GCFP);
 
+    if (myob->slaying != NULL)
+        DELETE_STRING(myob->slaying);
     myob->slaying = add_string(txt);
     myob = insert_ob_in_ob(myob, where);
 
@@ -3930,6 +3933,8 @@ static PyObject* CFSetNickname(PyObject* self, PyObject* args)
     }
     else
     {
+        if (WHO->title != NULL)
+            DELETE_STRING(WHO->title);
         WHO->title = add_string(newnick);
         if (WHO->env != NULL)
         {
@@ -4450,6 +4455,8 @@ static PyObject* CFSetEventHandler(PyObject* self, PyObject* args)
         return NULL;
     }
 
+    if (evt->hook != NULL)
+        DELETE_STRING(evt->hook);
     evt->hook = add_string(scriptname);
 
     Py_INCREF(Py_None);
@@ -4507,6 +4514,8 @@ static PyObject* CFSetEventPlugin(PyObject* self, PyObject* args)
         return NULL;
     }
 
+    if (evt->plugin != NULL)
+        DELETE_STRING(evt->plugin);
     evt->plugin = add_string(scriptname);
 
     Py_INCREF(Py_None);
@@ -4563,6 +4572,8 @@ static PyObject* CFSetEventOptions(PyObject* self, PyObject* args)
         return NULL;
     }
 
+    if (evt->options != NULL)
+        DELETE_STRING(evt->options);
     evt->options = add_string(scriptname);
 
     Py_INCREF(Py_None);

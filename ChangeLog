@@ -17,6 +17,8 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+plugin/plugin_python.c: Fix memory leaks by freeing old strings before
+   assigning a new value.
 plugin/plugin_python.c: Use correct format specifiers for item values and
    experience values.
 plugin/plugin_python.c: Make CFPython.IsCanBePicked return whether the object
