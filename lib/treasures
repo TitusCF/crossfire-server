@@ -4281,6 +4281,34 @@ treasure spectre
   more
   list lich_old
   end
+treasure banshee
+  arch ability_paralyze
+  more
+  arch ability_fear
+  more
+  arch ability_paralyze
+  more
+  arch skill_clawing
+  more
+  arch ability_cause_med_wound
+  more
+  arch ring
+  chance 50
+  arch amulet
+  chance 15
+  more
+  arch gem
+  chance 30
+  nrof 20
+  more
+  arch sapphire
+  chance 25
+  nrof 30
+  more
+  arch emerald
+  chance 50
+  nrof 35
+  end
 treasure lich
   arch lich_dust
   more
@@ -4995,7 +5023,7 @@ treasure witch_fire
   arch ability_summon_fire
  end
 treasure witch_earth
-  arch ability_bullet
+  arch skill_throwing
   more
   arch rock2
    chance 50
