@@ -55,9 +55,14 @@ int move_object(object *op, int dir) {
   */
 int move_ob (object *op, int dir, object *originator)
 {
-    int newx = op->x+freearr_x[dir];
-    int newy = op->y+freearr_y[dir];
+    sint16 newx = op->x+freearr_x[dir];
+    sint16 newy = op->y+freearr_y[dir];
     object *tmp;
+    mapstruct *m;
+    int mflags;
+
+    m = op->map;
+    mflags = get_map_flags(m, &m, newx, newy, &newx, &newy);
 
     if(op==NULL) {
 	LOG(llevError,"Trying to move NULL.\n");
@@ -74,7 +79,7 @@ int move_ob (object *op, int dir, object *originator)
     /* If the space the player is trying to is out of the map,
      * bail now - we know it can't work.
      */
-    if (out_of_map(op->map,op->x+freearr_x[dir],op->y+freearr_y[dir])) return 0;
+    if (mflags & P_OUT_OF_MAP) return 0;
 
     /* 0.94.2 - we need to set the direction for the new animation code.
      * it uses it to figure out face to use - I can't see it
@@ -86,9 +91,9 @@ int move_ob (object *op, int dir, object *originator)
     op->direction = dir;
 
     if(op->will_apply&4)
-	check_earthwalls(op,newx,newy);
+	check_earthwalls(op,m, newx,newy);
     if(op->will_apply&8)
-	check_doors(op,newx,newy);
+	check_doors(op,m, newx,newy);
 
     /* 0.94.1 - I got a stack trace that showed it crash with remove_ob trying
      * to remove a removed object, and this function was the culprit.  A possible
@@ -117,6 +122,7 @@ int move_ob (object *op, int dir, object *originator)
     for(tmp = op; tmp != NULL; tmp = tmp->more)
 	tmp->x+=freearr_x[dir], tmp->y+=freearr_y[dir];
 
+    /* insert_ob_in_map will deal with any tiling issues */
     insert_ob_in_map(op, op->map, originator,0);
 
     /* Hmmm.  Should be possible for multispace players now */

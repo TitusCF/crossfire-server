@@ -52,6 +52,7 @@ void attack_message(int dam, int type, object *op, object *hitter);
 int attack_ob(object *op, object *hitter);
 object *hit_with_arrow(object *op, object *victim);
 void tear_down_wall(object *op);
+void scare_creature(object *target, object *hitter);
 int hit_player_attacktype(object *op, object *hitter, int dam, uint32 attacknum, int magic);
 int kill_object(object *op, int dam, object *hitter, int type);
 int friendly_fire(object *op, object *hitter);
@@ -67,7 +68,10 @@ int is_aimed_missile(object *op);
 /* ban.c */
 int checkbanned(char *login, char *host);
 /* build_map.c */
-void apply_map_builder( object* op, int dir );
+void remove_marking_runes(struct mapdef *map, short x, short y);
+int find_unused_connected_value(struct mapdef *map);
+object *get_wall(struct mapdef *map, int x, int y);
+void fix_walls(struct mapdef *map, int x, int y);
 /* c_chat.c */
 int command_say(object *op, char *params);
 int command_me(object *op, char *params);
@@ -444,8 +448,8 @@ void pace_moveh(object *ob);
 void pace2_movev(object *ob);
 void pace2_moveh(object *ob);
 void rand_move(object *ob);
-void check_earthwalls(object *op, int x, int y);
-void check_doors(object *op, int x, int y);
+void check_earthwalls(object *op, mapstruct *m, int x, int y);
+void check_doors(object *op, mapstruct *m, int x, int y);
 void communicate(object *op, char *txt);
 int talk_to_npc(object *op, object *npc, char *txt);
 int talk_to_wall(object *npc, char *txt);
@@ -658,6 +662,7 @@ int skill_attack(object *tmp, object *pl, int dir, char *string, object *skill);
 int attack_hth(object *pl, int dir, char *string, object *skill);
 int attack_melee_weapon(object *op, int dir, char *string, object *skill);
 /* spell_attack.c */
+void check_spell_knockback(object *op);
 void forklightning(object *op, object *tmp);
 void move_bolt(object *op);
 int fire_bolt(object *op, object *caster, int dir, object *spob, object *skill);
@@ -666,7 +671,6 @@ void explode_bullet(object *op);
 void check_bullet(object *op);
 void move_bullet(object *op);
 int fire_bullet(object *op, object *caster, int dir, object *spob);
-void check_spell_knockback(object *op);
 void cone_drop(object *op);
 void move_cone(object *op);
 int cast_cone(object *op, object *caster, int dir, object *spell);

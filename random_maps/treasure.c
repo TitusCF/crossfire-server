@@ -296,7 +296,7 @@ int keyplace(mapstruct *map,int x,int y,char *keycode,int door_flag,int n_keys,R
   if(door_flag==PASS_DOORS) {
     int tries=0;
     the_keymaster=NULL;
-    while(tries<5&&the_keymaster==NULL) {
+    while(tries<15&&the_keymaster==NULL) {
       i = (RANDOM()%(RP->Xsize-2))+1;
       j = (RANDOM()%(RP->Ysize-2))+1;
       tries++;
@@ -304,9 +304,18 @@ int keyplace(mapstruct *map,int x,int y,char *keycode,int door_flag,int n_keys,R
     }
     /* if we don't find a good keymaster, drop the key on the ground. */
     if(the_keymaster==NULL) {
-      int freeindex = find_first_free_spot(the_key->arch,map,i,j);
-      kx = i + freearr_x[freeindex];
-      ky = j + freearr_y[freeindex];
+      int freeindex;
+
+      freeindex = -1;
+      for(tries = 0; tries < 15 && freeindex == -1; tries++) {
+	kx = (RANDOM()%(RP->Xsize-2))+1;
+	ky = (RANDOM()%(RP->Ysize-2))+1;
+	freeindex = find_first_free_spot(the_key->arch,map,kx,ky);
+      }
+      if(freeindex != -1) {
+	kx += freearr_x[freeindex];
+	ky += freearr_y[freeindex];
+      }
     }
   }
   else {  /* NO_PASS_DOORS --we have to work harder.*/

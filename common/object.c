@@ -131,7 +131,6 @@ inline int CAN_MERGE(object *ob1, object *ob2) {
      * 0x4 in flags3 is CLIENT_SENT
      */
     if ((ob1->arch != ob2->arch) || 
-	(ob1->stats.sp != ob2->stats.sp) ||
 	(ob1->flags[0] != ob2->flags[0]) || 
 	(ob1->flags[1] != ob2->flags[1]) ||
 	((ob1->flags[2] & ~0x400000) != (ob2->flags[2] & ~ 0x400000)) ||
@@ -140,8 +139,8 @@ inline int CAN_MERGE(object *ob1, object *ob2) {
 	(ob1->title != ob2->title) ||
 	(ob1->msg != ob2->msg) || 
 	(ob1->weight != ob2->weight) ||
-	(ob1->stats.food != ob2->stats.food) ||
 	(memcmp(&ob1->resist, &ob2->resist, sizeof(ob1->resist))!=0) ||
+	(memcmp(&ob1->stats, &ob2->stats, sizeof(ob1->stats))!=0) ||
 	(ob1->attacktype != ob2->attacktype) ||
 	(ob1->magic != ob2->magic) ||
 	(ob1->slaying != ob2->slaying) ||
@@ -167,14 +166,6 @@ inline int CAN_MERGE(object *ob1, object *ob2) {
 	    if (ob1->level != ob2->level) return 0;
 	    break;
 
-	case POTION:
-	case AMULET:
-	    /* This should compare the value of the stats, and not the pointer
-	     * itself.  There can be cases were potions seem to loose their
-	     * plus
-	     */
-	    if (memcmp(&ob1->stats,&ob2->stats, sizeof(living))) return 0;
-	    break;
     }
     /* Everything passes, must be OK. */
     return 1;

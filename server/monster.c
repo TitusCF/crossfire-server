@@ -1439,9 +1439,9 @@ void rand_move (object *ob) {
         return;
 }
 
-void check_earthwalls(object *op, int x, int y) {
+void check_earthwalls(object *op, mapstruct *m, int x, int y) {
     object *tmp;
-    for (tmp = get_map_ob(op->map, x, y); tmp!=NULL; tmp=tmp->above) {
+    for (tmp = get_map_ob(m, x, y); tmp!=NULL; tmp=tmp->above) {
 	if (tmp->type == EARTHWALL) {
 	    hit_player(tmp,op->stats.dam,op,AT_PHYSICAL);
 	    return;
@@ -1449,9 +1449,9 @@ void check_earthwalls(object *op, int x, int y) {
     }
 }
 
-void check_doors(object *op, int x, int y) {
+void check_doors(object *op, mapstruct *m, int x, int y) {
     object *tmp;
-    for (tmp = get_map_ob(op->map, x, y); tmp!=NULL; tmp=tmp->above) {
+    for (tmp = get_map_ob(m, x, y); tmp!=NULL; tmp=tmp->above) {
 	if (tmp->type == DOOR) {
 	    hit_player(tmp,1000,op,AT_PHYSICAL);
 	    return;
