@@ -581,6 +581,9 @@ if (item == spellNormal && !ability ){
     success = 1;
     break;
 /* peterm: following spells added */
+  case SP_DIVINE_SHOCK:
+    success = fire_arch(op,caster,dir,find_archetype("divine_shock"),type,!ability);
+    break;
   case SP_BALL_LIGHTNING:
     success = fire_arch(op,caster,dir,find_archetype("ball_lightning"),type,!ability);
     break;
@@ -1050,9 +1053,10 @@ int fire_arch_from_position (object *op, object *caster, sint16 x, sint16 y,
     case SP_M_MISSILE:
     move_missile(tmp);
 	break;
+  case SP_DIVINE_SHOCK:
     case SP_BALL_LIGHTNING:
 	tmp->stats.food=SP_PARAMETERS[type].bdur +
-                      SP_level_strength_adjust(op,caster,type);
+                      4*SP_level_strength_adjust(op,caster,type);
 	move_ball_lightning(tmp);
 	break;
     default:
@@ -1681,8 +1685,19 @@ object *find_target_for_friendly_spell(object *op,int dir)
     it sees any monsters close enough.  */
 
 void move_ball_lightning(object *op) {
-    int i,nx,ny,tx,ty;
+    int i,nx,ny,tx,ty,j,dam_save;
+	 object *owner;
+	 
+	 owner = get_owner(op);
     remove_ob(op);
+
+	 /* Only those attuned to PATH_ELEC may use ball lightning with AT_GODPOWER */
+	 if((!(owner->path_attuned & PATH_ELEC))&& (op->attacktype & AT_GODPOWER)) {
+		free_object(op);
+		new_draw_info_format(NDI_UNIQUE,0,owner,"The ball lightning dispells immediately.  Perhaps you need attunement to the spell path?");
+		return;
+	 }
+
     nx=op->x+DIRX(op);
     ny=op->y+DIRY(op);
     ty=op->y;
@@ -1707,14 +1722,117 @@ void move_ball_lightning(object *op) {
     }
     op->y=ty;
     op->x=tx;
+	 
+	 dam_save = op->stats.dam;  /* save the original dam: we do halfdam on 
+											 surrounding squares */
 
-    if(blocked(op->map,op->x,op->y)) hit_map(op,0,op->attacktype);
+	 /* loop over current square and neighbors to hit. */
+	 for(j=0;j<9;j++) {
+		int hx,hy;  /* hit these squares */
 
-    i=spell_find_dir(op->map,op->x,op->y,get_owner(op));
+		hx = tx+freearr_x[j]; hy = ty+freearr_y[j];
 
-    if(i) op->direction=i;
+		/* first, don't ever, ever hit the owner.  Don't hit out
+		   of the map either.*/
+		if(! (owner->x==hx && owner->y==hy) && !out_of_map(op->map,hx,hy)) {
+		  op->x = hx;
+		  op->y = hy;
+		  if(j) op->stats.dam = dam_save/2;
+		  
+		  if(blocked(op->map,op->x,op->y)) hit_map(op,0,op->attacktype);
+		}
+	 }
+	 /* restore to the center location and damage*/
+	 op->y = ty;
+	 op->x = tx;
+	 op->stats.dam = dam_save;
+	 i=spell_find_dir(op->map,op->x,op->y,get_owner(op));
+
+    if(i>=0) op->direction=i;
     insert_ob_in_map(op,op->map,op);
 }
+
+/* peterm:
+   do LOS stuff for ball lightning.  Go after the closest VISIBLE monster.
+   Basically, we step back until dir is 0 and fail if we're blocked on the
+   way.
+
+*/
+
+int reduction_dir[SIZEOFFREE][3] = {
+  {0,0,0}, /* 0 */ 
+  {0,0,0}, /* 1 */
+  {0,0,0}, /* 2 */
+  {0,0,0}, /* 3 */
+  {0,0,0}, /* 4 */
+  {0,0,0}, /* 5 */
+  {0,0,0}, /* 6 */
+  {0,0,0}, /* 7 */
+  {0,0,0}, /* 8 */
+  {8,1,2}, /* 9 */
+  {1,2,-1}, /* 10 */
+  {2,10,12}, /* 11 */
+  {2,3,-1}, /* 12 */
+  {2,3,4}, /* 13 */
+  {3,4,-1}, /* 14 */
+  {14,4,16}, /* 15 */
+  {5,4,-1}, /* 16 */
+  {4,5,6}, /* 17 */
+  {6,5,-1}, /* 18 */
+  {20,6,18}, /* 19 */
+  {7,6,-1}, /* 20 */
+  {6,7,8}, /* 21 */
+  {7,8,-1}, /* 22 */
+  {22,8,24}, /* 23 */
+  {8,1,-1}, /* 24 */
+  {24,9,10}, /* 25 */
+  {9,10,-1}, /* 26 */
+  {10,11,-1}, /* 27 */
+  {27,11,29}, /* 28 */
+  {11,12,-1}, /* 29 */
+  {12,13,-1}, /* 30 */
+  {12,13,14}, /* 31 */
+  {13,14,-1}, /* 32 */
+  {14,15,-1}, /* 33 */
+  {33,15,35}, /* 34 */
+  {16,15,-1}, /* 35 */
+  {17,16,-1}, /* 36 */
+  {18,17,16}, /* 37 */
+  {18,17,-1}, /* 38 */
+  {18,19,-1}, /* 39 */
+  {41,19,39}, /* 40 */
+  {19,20,-1}, /* 41 */
+  {20,21,-1}, /* 42 */
+  {20,21,22}, /* 43 */
+  {21,22,-1}, /* 44 */
+  {23,22,-1}, /* 45 */
+  {45,47,23}, /* 46 */
+  {23,24,-1}, /* 47 */
+  {24,9,-1}}; /* 48 */
+
+/* Recursive routine to step back and see if we can
+   find a path to that monster that we found.  If not,
+   we don't bother going toward it.  Returns 1 if we
+   can see a direct way to get it.*/
+ 
+
+int can_see_monsterP(mapstruct *m, int x, int y,int dir) {
+  int dx, dy;  /* delta (dx)  */
+
+  dx = freearr_x[dir];
+  dy = freearr_y[dir];
+
+  if(dir==-1) return 0;  /* exit condition:  invalid direction */
+  if(wall(m,x + dx,y+dy)) return 0;
+
+  /* yes, can see. */
+  if(dir < 9) return 1;
+  return can_see_monsterP(m, x, y, reduction_dir[dir][0]) |
+    can_see_monsterP(m,x,y, reduction_dir[dir][1]) |
+    can_see_monsterP(m,x,y, reduction_dir[dir][2]);
+}
+  
+  
 	
 /* raytrace:
  * spell_find_dir(map, x, y, exclude) will search first the center square
@@ -1728,24 +1846,27 @@ void move_ball_lightning(object *op) {
 
 int spell_find_dir(mapstruct *m, int x, int y, object *exclude) {
   int i,max=SIZEOFFREE;
+  int nx,ny;
   object *tmp;
   if (exclude && exclude->head)
     exclude = exclude->head;
 
   for(i=(RANDOM()%8)+1;i<max;i++) {
-    if(wall(m, x+freearr_x[i],y+freearr_y[i]))
+    nx = x + freearr_x[i];
+    ny = y + freearr_y[i];
+    if(wall(m, nx,ny))
       max=maxfree[i];
     else {
-      tmp=get_map_ob(m,x+freearr_x[i],y+freearr_y[i]);
+      tmp=get_map_ob(m,nx,ny);
       while(tmp!=NULL && ((tmp!=NULL&&!QUERY_FLAG(tmp,FLAG_MONSTER)&&
-        tmp->type!=PLAYER&&!QUERY_FLAG(tmp,FLAG_GENERATOR)) ||
+        !QUERY_FLAG(tmp,FLAG_GENERATOR)) ||
 	(tmp == exclude || (tmp->head && tmp->head == exclude))))
                 tmp=tmp->above;
-      if(tmp!=NULL)
+      if(tmp!=NULL && can_see_monsterP(m,x,y,i))
         return freedir[i];
     }
   }
-  return 0;
+  return -1;  /* flag for "keep going the way you were" */
 }
 
 
