@@ -17,6 +17,20 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+TODO: various updates.
+common/button: Old patch by David Seikel: change inventory checkers so that
+   the monster/player is also checked against.  And do more proper for checkers
+   that check against slaying or race - if the trigger doesn't have
+   those set, we don't want to compare a null against another null and
+   get success).
+server/apply.c: Change apply_shop_mat() so that it removes unpaid objects from
+   monsters (or thrown containers for that matter).  Old patch by Bernd Edler
+   to improve messages dragons get for eating various food types.
+server/player.c: Add another missing call to fix_player().  Modify
+   move_player_attack() so that the target player doesn't hit back if
+   they are the WIZ or on a battleground
+MSW 2003-10-06
+
 utils/player_dl.html utils/player_dl.pl.in: New files - scripts for allowing
    character directories to be downloaded over the web.
 configure.ac: Add check for 'tar', so that we can put it in the script above.

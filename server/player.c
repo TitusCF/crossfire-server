@@ -859,18 +859,19 @@ int key_change_class(object *op, char key)
 	/* this must before then initial items are given */
 	esrv_new_player(op->contr, op->weight+op->carrying);
 	create_treasure(find_treasurelist("starting_wealth"),op, 0, 0, 0);
-    /* GROS : Here we handle the BORN global event */
-    evtid = EVENT_BORN;
-    CFP.Value[0] = (void *)(&evtid);
-    CFP.Value[1] = (void *)(op);
-    GlobalEvent(&CFP);
 
-    /* GROS : We then generate a LOGIN event */
-    evtid = EVENT_LOGIN;
-    CFP.Value[0] = (void *)(&evtid);
-    CFP.Value[1] = (void *)(op->contr);
-    CFP.Value[2] = (void *)(op->contr->socket.host);
-    GlobalEvent(&CFP);
+	/* GROS : Here we handle the BORN global event */
+	evtid = EVENT_BORN;
+	CFP.Value[0] = (void *)(&evtid);
+	CFP.Value[1] = (void *)(op);
+	GlobalEvent(&CFP);
+
+	/* GROS : We then generate a LOGIN event */
+	evtid = EVENT_LOGIN;
+	CFP.Value[0] = (void *)(&evtid);
+	CFP.Value[1] = (void *)(op->contr);
+	CFP.Value[2] = (void *)(op->contr->socket.host);
+	GlobalEvent(&CFP);
 	op->contr->state=ST_PLAYING;
 
 	if (op->msg) {
@@ -892,6 +893,7 @@ int key_change_class(object *op, char key)
 	give_initial_items(op,op->randomitems);
 	link_player_skills(op);
 	esrv_send_inventory(op, op);
+	fix_player(op);
 	return 0;
     }
 
@@ -901,24 +903,24 @@ int key_change_class(object *op, char key)
 
     tmp_loop = 0;
     while(!tmp_loop) {
-      char *name = add_string (op->name);
-      int x = op->x, y = op->y;
-      remove_statbonus(op);
-      remove_ob (op);
-      op->arch = get_player_archetype(op->arch);
-      copy_object (&op->arch->clone, op);
-      op->stats = op->contr->orig_stats;
-      free_string (op->name);
-      op->name = name;
-      free_string(op->name_pl);
-      op->name_pl = add_string(name);
-      op->x = x;
-      op->y = y;
-      SET_ANIMATION(op, 2);    /* So player faces south */
-      insert_ob_in_map (op, op->map, op,0);
-      strncpy(op->contr->title,op->arch->clone.name,MAX_NAME);
-      add_statbonus(op);
-      tmp_loop=allowed_class(op);
+	char *name = add_string (op->name);
+	int x = op->x, y = op->y;
+	remove_statbonus(op);
+	remove_ob (op);
+	op->arch = get_player_archetype(op->arch);
+	copy_object (&op->arch->clone, op);
+	op->stats = op->contr->orig_stats;
+	free_string (op->name);
+	op->name = name;
+	free_string(op->name_pl);
+	op->name_pl = add_string(name);
+	op->x = x;
+	op->y = y;
+	SET_ANIMATION(op, 2);    /* So player faces south */
+	insert_ob_in_map (op, op->map, op,0);
+	strncpy(op->contr->title,op->arch->clone.name,MAX_NAME);
+	add_statbonus(op);
+	tmp_loop=allowed_class(op);
     }
     update_object(op,UP_OBJ_FACE);
     esrv_update_item(UPD_FACE,op,op);
@@ -1848,8 +1850,10 @@ static int player_attack_door(object *op, object *door)
 void move_player_attack(object *op, int dir)
 {
     object *tmp, *mon;
-    int nx=freearr_x[dir]+op->x,ny=freearr_y[dir]+op->y;
+    int nx=freearr_x[dir]+op->x,ny=freearr_y[dir]+op->y, on_battleground;
     mapstruct *m;
+
+    on_battleground = op_on_battleground(op, NULL, NULL);
 
     /* If braced, or can't move to the square, and it is not out of the
      * map, attack it.  Note order of if statement is important - don't
@@ -1931,7 +1935,7 @@ void move_player_attack(object *op, int dir)
 	 */
 	if ((mon->type==PLAYER || mon->enemy != op) &&
 	    (mon->type==PLAYER || QUERY_FLAG(mon,FLAG_UNAGGRESSIVE) || QUERY_FLAG(mon, FLAG_FRIENDLY)) && 
-	    (op->contr->peaceful && !op_on_battleground(op, NULL, NULL))) {
+	    (op->contr->peaceful && !on_battleground)) {
 	    if (!op->contr->braced) {
 		play_sound_map(op->map, op->x, op->y, SOUND_PUSH_PLAYER);
 		(void) push_ob(mon,dir,op);
@@ -1963,10 +1967,14 @@ void move_player_attack(object *op, int dir)
 	    op->contr->has_hit = 1; /* The last action was to hit, so use weapon_sp */
 
 	    skill_attack(mon, op, 0, NULL, NULL);
+
 	    /* If attacking another player, that player gets automatic
 	     * hitback, and doesn't loose luck either.
+	     * Disable hitback on the battleground or if the target is
+	     * the wiz.
 	     */
-	    if (mon->type == PLAYER && mon->stats.hp >= 0 && !mon->contr->has_hit) {
+	    if (mon->type == PLAYER && mon->stats.hp >= 0 && !mon->contr->has_hit &&
+		!on_battleGround && !QUERY_FLAG(mon, FLAG_WIZ)) {
 		short luck = mon->stats.luck;
 		mon->contr->has_hit = 1;
 		skill_attack(op, mon, 0, NULL, NULL);

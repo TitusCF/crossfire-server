@@ -64,6 +64,10 @@ Future feature requests
   is make this a bitmask or the like with multiple possiblities.  If the
   object doesn't have another bitmask set, object can't pass through.  For
   compatiblity reasons, no_pass should set all the new no_pass_.. bits.
+  Note that these bits should also be extended for movement of more than
+  just the player, eg, spells, diseases, etc.  Thus, you could have something
+  like a 'no spell propogation' space - players could still cast spells on
+  themselves, but range spells don't go anywhare.
 
 - Ability for stores to set different prices for goods (eg, remote store
   charges more for the services it provides).
@@ -217,25 +221,6 @@ Future feature requests
   most range attacks (thus, in a group of orcs, the ones not immediately
   around the player could still use missile weapons.)
 
-- Ability to rename objects in your inventory.  Best to probably handle
-  this in the client - client can track the item of tag 1234 has name
-  whatever.  To do this, the tags would need to be persistent across
-  server runs.  This shouldn't be that difficult - store the tag in the
-  save file, and also have a temp file the server writes its lasted used
-  tag to.  The only issue is potential of running out of tag values -
-  its never been a problem because no server has ever been up long enough
-  to exhaust 32 bits.  However, if the last used tag value is stored away,
-  it now becomes the total run time of the server - even if no instance is
-  ever up for more than a week, the server itself could be up for a year
-  and end up running out of tags.
-  Note that by tags being persistent, other advantages arise - you can
-  really know if player 'Mark' on the scorechart is the same or a
-  different Mark than in the past, simply by storing the players tag.
-  The client can also use these known tag values for other tracking
-  purposes, like favorite lists.  The only problem is that when objects
-  merge, the correct update of the tag would need to be handled by the
-  server and/or client.
-
 - Better sound support - instead of having hardcoded events for sounds (eg,
   button push, door open, etc), sounds should be tied to objects, with some
   number of sound events (eg, object active, object destroyed, object moved,
@@ -257,6 +242,42 @@ Future feature requests
 - Make the elevation of terrain adjust line of sight.  If on the tallest
   mountain, you would be able to see over neighboring mountains and not 
   get your view blocked.
+
+- Change attacktype handling.  Currently, attacktypes are just bitmasks,
+  so if a weapon does 'dam 30' it does 30 dam for all attacktypes it has
+  set.
+  The idea is to make an array of dam values for the attacktype, so
+  you could have a weapon like 'phys 12, fire 6'.  This then gets adjusted by 
+  appropriate resistances the creature has.
+  For attacktypes that are effects (slow, paralyze, etc) dam should be the
+  potency of the effect (number of ticks player is effected).
+  If an item has multiple dam values set, then it would do damage from all
+  the attacktypes (eg, a phys 10 fire 3 is something like a flameblade
+  which does mostly physical and a little fire).
+
+- Improve material code:
+  1) Make material file more readable.  Mostly, make it one entry per
+     line (no comma seperated lists), with values 0 by default, so only
+     values that are different need to be entered.  Maybe make materials
+     archtypes, and then use treasurelist type setup below?
+  2) Remove random material selection from the material file and put it
+     elsewhere - basically, more fined grained material control (silver daggers,
+     but not silver axes for example).  Perhaps the idea of material
+     type treasurelists?
+  3) Remove material bitmask.  Instead, have a pointer to the actual materialtype
+     struct, and determine basis on that (eg, this could burn up, etc).  If
+     necessary, add some appropiates field to the material struct that
+     denote those abilities.
+  4) Suffix to be used for alternative image names and animation sequence
+     for objects (eg, dagger.111.gold for example)
+  5) Some way to denote that even though 'materialname' is set, that the loader
+     should still do appropriate adjustements for the material.  Thus, if a
+     person sets the material in the editor, the server will adjust the values
+     appropriately.
+  6) Allow for multiple materials in same object.  Trickier to do this.
+  7) More hints for materials.  Eg, is it a notable material that should be
+     included in the object name, or mundane?  Likewise, is it a type of material 
+     that can be reconstituted (metals) or not (wood, stone, etc)
 
 Secondary features:
 

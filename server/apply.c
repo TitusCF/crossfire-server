@@ -1033,11 +1033,29 @@ static int apply_altar (object *altar, object *sacrifice, object *originator)
 static int apply_shop_mat (object *shop_mat, object *op)
 {
     int rv = 0;
-    object *tmp;
+    object *tmp, *next;
 
     SET_FLAG (op,FLAG_NO_APPLY);   /* prevent loops */
 
     if (op->type != PLAYER) {
+	/* Remove all the unpaid objects that may be carried here.
+	 * This could be pets or monsters that are somehow in
+	 * the shop.
+	 */
+	for (tmp=op->inv; tmp; tmp=next) {
+	    next = tmp->below;
+	    if (QUERY_FLAG(tmp, FLAG_UNPAID)) {
+		int i = find_free_spot (tmp->arch, op->map, op->x, op->y, 1, 9);
+
+		remove_ob(tmp);
+		if (i==-1) i=0;
+		tmp->map = op->map;
+		tmp->x = op->x + freearr_x[i];
+		tmp->y = op->y + freearr_y[i];
+		insert_ob_in_map(tmp, op->map, op, 0);
+	    }
+	}
+
 	if (QUERY_FLAG(op, FLAG_UNPAID)) {
 
 	    /* Somebody dropped an unpaid item, just move to an adjacent place. */
@@ -1858,7 +1876,7 @@ int dragon_eat_flesh(object *op, object *meal) {
   
   char buf[MAX_BUF];            /* tmp. string buffer */
   double chance;                /* improvement-chance of one resistance type */
-  double maxchance=0;           /* highest chance of any type */
+  double totalchance=1;         /* total chance of gaining one resistance */
   double bonus=0;               /* level bonus (improvement is easier at lowlevel) */
   double mbonus=0;              /* monster bonus */
   int atnr_winner[NROFATTACKS]; /* winning candidates for resistance improvement */
@@ -1931,20 +1949,24 @@ int dragon_eat_flesh(object *op, object *meal) {
 	winners++;
       }
       
-      if (chance > maxchance) maxchance = chance;
+      if (chance >= 0.01 ) totalchance *= 1 - chance/100;
       
       /*printf("   %s: bonus %.1f, chance %.1f\n", attacks[i], bonus, chance);*/
     }
   }
   
-  /* print message according to maxchance */
-  if (maxchance > 50.)
+  /* inverse totalchance as until now we have the failure-chance   */
+  totalchance = 100 - totalchance*100;
+  /* print message according to totalchance */
+  if (totalchance > 50.)
     sprintf(buf, "Hmm! The %s tasted delicious!", meal->name);
-  else if (maxchance > 10.)
+  else if (totalchance > 10.)
     sprintf(buf, "The %s tasted very good.", meal->name);
-  else if (maxchance > 1.)
+  else if (totalchance > 1.)
     sprintf(buf, "The %s tasted good.", meal->name);
-  else if (maxchance > 0.0001)
+  else if (totalchance > 0.1)
+    sprintf(buf, "The %s tasted bland.", meal->name);
+  else if (totalchance >= 0.01)
     sprintf(buf, "The %s had a boring taste.", meal->name);
   else if (meal->last_eat > 0 && atnr_is_dragon_enabled(meal->last_eat))
     sprintf(buf, "The %s tasted strange.", meal->name);

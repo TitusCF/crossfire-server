@@ -648,14 +648,20 @@ object * check_inv_recursive(object *op, object *trig)
 {
     object *tmp,*ret=NULL;
 
+    /* First check the object itself. */
+    if((trig->stats.hp && (op->type == trig->stats.hp)) 
+	|| (trig->slaying && (op->slaying == trig->slaying)) 
+	|| (trig->race && (op->arch->name == trig->race))) 
+	    return op;
+
     for(tmp=op->inv; tmp; tmp=tmp->below) {
 	if (tmp->inv) {
 	    ret=check_inv_recursive(tmp, trig);
 	    if (ret) return ret;
 	}
-	else if((trig->stats.hp && tmp->type == trig->stats.hp) 
-		|| tmp->slaying == trig->slaying 
-		|| tmp->arch->name == trig->race) 
+	else if((trig->stats.hp && (tmp->type == trig->stats.hp)) 
+		|| (trig->slaying && (tmp->slaying == trig->slaying)) 
+		|| (trig->race && (tmp->arch->name == trig->race))) 
 		    return tmp;
     }
     return NULL;
