@@ -1344,12 +1344,11 @@ int cast_heal(object *op,object *caster, object *spell, int dir) {
 	}
     }
     if (spell->attacktype & AT_CONFUSION) {
-	at=find_archetype("confusion");
-	poison=present_arch_in_ob(at,tmp);
+	poison=present_in_ob_by_name(FORCE,"confusion", tmp);
 	if (poison) {
 	    success = 1;
 	    new_draw_info(NDI_UNIQUE, 0,tmp, "Your mind feels clearer");
-	    poison->stats.food = 1;
+	    poison->duration = 1;
 	}
     }
     if (spell->attacktype & AT_BLIND) {
