@@ -249,8 +249,8 @@ static void enter_map(object *op, mapstruct *newmap, int x, int y) {
     if (out_of_map(newmap, x, y)) {
 	LOG(llevError,"enter_map: supplied coordinates are not within the map! (%s: %d, %d)\n",
 	    newmap->path, x, y);
-	x=EXIT_X(op->map->map_object);
-	y=EXIT_Y(op->map->map_object);
+	x=EXIT_X(newmap->map_object);
+	y=EXIT_Y(newmap->map_object);
     }
     /* try to find a spot for the player */
     if (arch_blocked(op->arch, newmap, x, y)) {	/* First choice blocked */
