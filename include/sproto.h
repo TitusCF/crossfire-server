@@ -67,6 +67,8 @@ int is_aimed_missile(object *op);
 int checkbanned(char *login, char *host);
 /* c_chat.c */
 int command_say(object *op, char *params);
+int command_cointoss(object *op, char *params);
+int command_orcknuckle(object *op, char *params);
 int command_shout(object *op, char *params);
 int command_tell(object *op, char *params);
 int command_reply(object *op, char *params);

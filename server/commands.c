@@ -188,6 +188,8 @@ CommArray_s CommunicationCommands [] = {
   {"bleed", command_bleed,		0.0},
   {"cringe", command_cringe,		0.0},
   {"think", command_think,		0.0},
+  {"cointoss", command_cointoss, 0.0},
+  {"orcknuckle", command_orcknuckle, 0.0},
 };
 
 const int CommunicationCommandSize = sizeof(CommunicationCommands)/ sizeof(CommArray_s);
