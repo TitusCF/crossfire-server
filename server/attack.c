@@ -1142,11 +1142,13 @@ int hit_player(object *op,int dam, object *hitter, int type) {
 	}
 	if(QUERY_FLAG (op, FLAG_FRIENDLY) && op->type != PLAYER) {
 	    remove_friendly_object(op);
-	    if (get_owner (op) != NULL && op->owner->type == PLAYER)
+	    if (op->type == GOLEM && get_owner (op) != NULL && op->owner->type == PLAYER)
 		op->owner->contr->golem=NULL;
+#if 0
 	    else
 		LOG (llevError, "BUG: hit_player(): Encountered golem "
 		     "without owner.\n");
+#endif
 	    remove_ob(op);
 	    free_object(op);
 	    return maxdam;
