@@ -280,6 +280,7 @@ static void put_treasure (object *op, object *creator, int flags)
     if (flags & GT_ENVIRONMENT) {
         op->x = creator->x;
         op->y = creator->y;
+	SET_FLAG(op, FLAG_OBJ_ORIGINAL);
         insert_ob_in_map (op, creator->map,op,INS_NO_MERGE | INS_NO_WALK_ON);
     } else {
         op = insert_ob_in_ob (op, creator);

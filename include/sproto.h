@@ -806,3 +806,6 @@ int cftimer_find_free_id(void);
 /* weather.c */
 void tick_the_clock(void);
 void set_darkness_map(mapstruct *m);
+void init_weather(void);
+void init_weather(void);
+void perform_weather(void);

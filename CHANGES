@@ -17,6 +17,13 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Add the concept of overlay maps to the code.  An overlay map is a map which
+is loaded on top of another map, replacing values in the header, and placing
+objects on top of other objects.  This is the fundamental part of the new
+weather code, but also can be used to allow dynamic editing of the worldmaps
+by DM's eventually.
+garbled 2002-01-01
+
 server/spell_effect.c: fix animate_bomb so that if the bomb is in a container,
   it does not crash the server - the problem was that it was calling
   drop, which would then drop it right back into the container.  also, the

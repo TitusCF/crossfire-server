@@ -423,6 +423,14 @@ error - Your ANSI C compiler should be defining __STDC__;
 
 /* convenience macros to determine what kind of things we are dealing with */
 
+#define IS_WEAPON(op) \
+	(op->type == ARROW || op->type == BOW || op->type == WEAPON)
+
+#define IS_ARMOR(op) \
+	(op->type == ARMOUR || op->type == SHIELD || op->type == HELMET || \
+	 op->type == CLOAK || op->type == BOOTS || op->type == GLOVES || \
+	 op->type == BRACERS || op->type == GIRDLE)
+
 #define IS_LIVE(op) \
 	(op->type == PLAYER || QUERY_FLAG(op, FLAG_MONSTER) || \
 	(QUERY_FLAG(op, FLAG_ALIVE) && !QUERY_FLAG(op, FLAG_GENERATOR) && \
@@ -563,8 +571,12 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define FLAG_NEUTRAL            100 /* monster is from type neutral */
 #define FLAG_NO_ATTACK          101 /* monster don't attack */
 #define FLAG_NO_DAMAGE          102 /* monster can't be damaged */
-
-#define NUM_FLAGS		102 /* Should always be equal to the last
+#define FLAG_OBJ_ORIGINAL	103 /* NEVER SET THIS.  Item was loaded by
+				     * load_original_map() */
+#define FLAG_OBJ_SAVE_ON_OVL	104 /* this object should be saved on
+				     * the overlay, and is not subject to
+				     * decay. */
+#define NUM_FLAGS		104 /* Should always be equal to the last
 				    * defined flag */
 
 /* Values can go up to 127 before the size of the flags array in the

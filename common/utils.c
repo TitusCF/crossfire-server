@@ -135,3 +135,64 @@ int rndm(int min, int max)
 
   return(RANDOM()%diff+min);
 }
+
+/* decay and destroy persihable items in a map */
+
+void decay_objects(mapstruct *m)
+{
+    int x, y, destroy;
+    object *op, *otmp;
+
+    if (m->unique)
+	return;
+
+    for (x=0; x < MAP_WIDTH(m); x++)
+	for (y=0; y < MAP_HEIGHT(m); y++)
+	   for (op = get_map_ob(m, x, y); op; op = otmp) {
+		destroy = 0;
+		otmp = op->above;
+		if (QUERY_FLAG(op,FLAG_IS_FLOOR) && QUERY_FLAG(op, FLAG_UNIQUE))
+		    break;
+		if (QUERY_FLAG(op, FLAG_IS_FLOOR) ||
+		   QUERY_FLAG(op, FLAG_OBJ_ORIGINAL) ||
+		   QUERY_FLAG(op, FLAG_OBJ_SAVE_ON_OVL) ||
+		   QUERY_FLAG(op, FLAG_UNIQUE) ||
+		   QUERY_FLAG(op, FLAG_UNPAID) || IS_LIVE(op))
+		    continue;
+		/* otherwise, we decay and destroy */
+		if (IS_WEAPON(op)) {
+		    op->stats.dam--;
+		    if (op->stats.dam < 0)
+			destroy = 1;
+		} else if (IS_ARMOR(op)) {
+		    op->stats.ac--;
+		    if (op->stats.ac < 0)
+			destroy = 1;
+		} else if (op->type == FOOD) {
+		    op->stats.food -= rndm(5,20);
+		    if (op->stats.food < 0)
+			destroy = 1;
+		} else {
+		    if (op->material & M_PAPER || op->material & M_LEATHER ||
+			op->material & M_WOOD || op->material & M_ORGANIC ||
+			op->material & M_CLOTH || op->material & M_LIQUID)
+			destroy = 1;
+		    if (op->material & M_IRON && rndm(1,5) == 1)
+			destroy = 1;
+		    if (op->material & M_GLASS && rndm(1,2) == 1)
+			destroy = 1;
+		    if ((op->material & M_STONE || op->material & M_ADAMANT) &&
+			rndm(1,10) == 1)
+			destroy = 1;
+		    if ((op->material & M_SOFT_METAL || op->material & M_BONE) &&
+			rndm(1,3) == 1)
+			destroy = 1;
+		    if (op->material & M_ICE && MAP_TEMP(m) > 32)
+			destroy = 1;
+		}
+		if (destroy) {
+		    remove_ob(op);
+		    free_object(op);
+		}
+	    }
+}

@@ -119,6 +119,23 @@ char *create_pathname (char *name) {
 }
 
 /*
+ * same as create_pathname, but for the overlay maps.
+ */
+
+char *create_overlay_pathname (char *name) {
+    static char buf[MAX_BUF];
+
+    /* Why?  having extra / doesn't confuse unix anyplace?  Dependancies
+     * someplace else in the code? msw 2-17-97
+     */
+    if (*name == '/')
+      sprintf (buf, "%s/%s%s", settings.localdir, settings.mapdir, name);
+    else
+      sprintf (buf, "%s/%s/%s", settings.localdir, settings.mapdir, name);
+    return (buf);
+}
+
+/*
  * This makes absolute path to the itemfile where unique objects
  * will be saved. Converts '/' to '@'. I think it's essier maintain
  * files than full directory structure, but if this is problem it can 
@@ -548,6 +565,10 @@ void load_objects (mapstruct *m, FILE *fp, int mapflags) {
 		LOG(llevDebug,"Discarded object %s - invalid archetype.\n",op->name);
 	    continue;
 	}
+
+	if (!(mapflags & MAP_OVERLAY))
+	   SET_FLAG(op, FLAG_OBJ_ORIGINAL);
+
 	switch(i) {
 	  case LL_NORMAL:
 	    insert_ob_in_map(op,m,op,INS_NO_MERGE | INS_NO_WALK_ON | INS_ON_TOP);
@@ -572,7 +593,7 @@ void load_objects (mapstruct *m, FILE *fp, int mapflags) {
  * and we only save the head of multi part objects - this is needed
  * in order to do map tiling properly.
  */
-void save_objects (mapstruct *m, FILE *fp, FILE *fp2) {
+void save_objects (mapstruct *m, FILE *fp, FILE *fp2, int flag) {
     int i, j = 0,unique=0;
     object *op,  *otmp;
     /* first pass - save one-part objects */
@@ -596,7 +617,10 @@ void save_objects (mapstruct *m, FILE *fp, FILE *fp2) {
 		if (unique || QUERY_FLAG(op, FLAG_UNIQUE))
 		    save_object( fp2 , op, 3);
 		else
-		    save_object(fp, op, 3);
+		    if (flag == 0 ||
+			(flag == 2 && (!QUERY_FLAG(op, FLAG_OBJ_ORIGINAL) &&
+			 !QUERY_FLAG(op, FLAG_UNPAID))))
+		    	save_object(fp, op, 3);
 
 #if 0
 		for (tmp = op->more; tmp; tmp = tmp->more) {
@@ -866,6 +890,8 @@ mapstruct *load_original_map(char *filename, int flags) {
     LOG(llevDebug, "load_original_map: %s (%x)\n", filename,flags);
     if (flags & MAP_PLAYER_UNIQUE) 
 	strcpy(pathname, filename);
+    else if (flags & MAP_OVERLAY)
+	strcpy(pathname, create_overlay_pathname(filename));
     else
 	strcpy(pathname, create_pathname(filename));
 
@@ -913,7 +939,7 @@ static mapstruct *load_temporary_map(mapstruct *m) {
 	LOG(llevError, "No temporary filename for map %s\n", m->path);
 	strcpy(buf, m->path);
 	delete_map(m);
-        m = load_original_map(buf,0);
+        m = load_original_map(buf, 0);
 	if(m==NULL) return NULL;
 	(*fix_auto_apply_func)(m); /* Chests which open as default */
 	return m;
@@ -924,7 +950,7 @@ static mapstruct *load_temporary_map(mapstruct *m) {
 	perror("Can't read map file");
 	strcpy(buf, m->path);
 	delete_map(m);
-        m = load_original_map(buf,0);
+        m = load_original_map(buf, 0);
 	if(m==NULL) return NULL;
 	(*fix_auto_apply_func)(m); /* Chests which open as default */
 	return m;
@@ -935,11 +961,52 @@ static mapstruct *load_temporary_map(mapstruct *m) {
 	LOG(llevError,"Error loading map header for %s (%s)\n",
 	    m->path, m->tmpname);
 	delete_map(m);
-        m = load_original_map(m->path,0);
+        m = load_original_map(m->path, 0);
 	return NULL;
     }
     m->compressed = comp;
     allocate_map(m);
+
+    m->in_memory=MAP_LOADING;
+    load_objects (m, fp, 0);
+    close_and_delete(fp, comp);
+    m->in_memory=MAP_IN_MEMORY;
+    return m;
+}
+
+/*
+ * Loads a map, which has been loaded earlier, from file.
+ * Return the map object we load into (this can change from the passed
+ * option if we can't find the original map)
+ */
+
+mapstruct *load_overlay_map(char *filename, mapstruct *m) {
+    FILE *fp;
+    int comp;
+    char buf[MAX_BUF];
+    char pathname[MAX_BUF];
+
+    strcpy(pathname, create_overlay_pathname(filename));
+
+    if((fp=open_and_uncompress(pathname, 0, &comp))==NULL) {
+	LOG(llevDebug,"Can't open overlay %s\n", pathname);
+	strcpy(buf, m->path);
+	delete_map(m);
+        m = load_original_map(buf, 0);
+	if(m==NULL) return NULL;
+	(*fix_auto_apply_func)(m); /* Chests which open as default */
+	return m;
+    }
+    
+    if (load_map_header(fp, m)) {
+	LOG(llevError,"Error loading map header for overlay %s (%s)\n",
+	    m->path, pathname);
+	delete_map(m);
+        m = load_original_map(m->path, 0);
+	return NULL;
+    }
+    m->compressed = comp;
+    /*allocate_map(m);*/
 
     m->in_memory=MAP_LOADING;
     load_objects (m, fp, 0);
@@ -1031,9 +1098,12 @@ int new_save_map(mapstruct *m, int flag) {
     }
     
     if (flag || (m->unique)) {
-	if (!m->unique)
-	    strcpy (filename, create_pathname (m->path));
-	else /* means flag must be set */
+	if (!m->unique) { /* flag is set */
+	    if (flag == 2)
+		strcpy(filename, create_overlay_pathname(m->path));
+	    else
+		strcpy (filename, create_pathname (m->path));
+	} else 
 	    strcpy (filename, m->path);
 
 	/* If the compression suffix already exists on the filename, don't
@@ -1044,7 +1114,7 @@ int new_save_map(mapstruct *m, int flag) {
 	  strcmp((filename + strlen(filename)-strlen(uncomp[m->compressed][0])),
 	     uncomp[m->compressed][0]))
 	          strcat(filename, uncomp[m->compressed][0]);
-	make_path_to_file (filename);
+	make_path_to_file(filename);
     } else {
 	if (!m->tmpname)
 	    m->tmpname = tempnam_local(settings.tmpdir,NULL);
@@ -1086,6 +1156,13 @@ int new_save_map(mapstruct *m, int flag) {
     if (m->msg) fprintf(fp,"msg\n%sendmsg\n", m->msg);
     if (m->unique) fprintf(fp,"unique %d\n", m->unique);
     if (m->outdoor) fprintf(fp,"outdoor %d\n", m->outdoor);
+    if (m->temp) fprintf(fp, "temp %d\n", m->temp);
+    if (m->pressure) fprintf(fp, "pressure %d\n", m->pressure);
+    if (m->humid) fprintf(fp, "humid %d\n", m->humid);
+    if (m->windspeed) fprintf(fp, "windspeed %d\n", m->windspeed);
+    if (m->winddir) fprintf(fp, "winddir %d\n", m->winddir);
+    if (m->sky) fprintf(fp, "sky %d\n", m->sky);
+
     /* Save any tiling information */
     for (i=0; i<4; i++)
 	if (m->tile_path[i])
@@ -1099,12 +1176,15 @@ int new_save_map(mapstruct *m, int flag) {
      * player)
      */
     fp2 = fp; /* save unique items into fp2 */
-    if (flag == 0 && !m->unique) {
+    if ((flag == 0 || flag == 2) && !m->unique) {
 	sprintf (buf,"%s.v00",create_items_path (m->path));
 	if ((fp2 = fopen (buf, "w")) == NULL) {
 	    LOG(llevError, "Can't open unique items file %s\n", buf);
 	}
-	save_objects (m, fp, fp2);
+	if (flag == 2)
+	    save_objects(m, fp, fp2, 2);
+	else
+	    save_objects (m, fp, fp2, 0);
 	if (fp2 != NULL) {
 	    if (ftell (fp2) == 0) {
 		fclose (fp2);
@@ -1115,7 +1195,7 @@ int new_save_map(mapstruct *m, int flag) {
 	    }
 	}
     } else { /* save same file when not playing, like in editor */
-	save_objects (m, fp, fp);
+	save_objects(m, fp, fp, 0);
     }
 
     if (m->compressed && !flag)
@@ -1348,7 +1428,11 @@ mapstruct *ready_map_name(char *name, int flags) {
     /* Below here is stuff common to both first time loaded maps and
      * temp maps.
      */
+    m=load_overlay_map(name, m);
+    if (m==NULL)
+	return NULL;
 
+    decay_objects(m); /* start the decay */
     /* In case other objects press some buttons down */
     update_buttons(m);
     (*set_darkness_map_func)(m);

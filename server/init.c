@@ -33,6 +33,9 @@
 #endif
 #include <version.h>
 
+/* global weathermap */
+weathermap_t **weathermap;
+
 void set_logfile(char *val) { settings.logfilename=val; }
 void call_version() { version(NULL); exit(0); }
 void showscores() { display_high_score(NULL,9999,NULL); exit(0); }
@@ -356,6 +359,7 @@ void init(int argc, char **argv) {
 
     init_library();	/* Must be called early */
     load_settings();	/* Load the settings file */
+    init_weather();
     parse_args(argc, argv, 2);
     fprintf(logfile,"Welcome to CrossFire, v%s\n",VERSION);
     fprintf(logfile,"Copyright (C) 1994 Mark Wedel.\n");

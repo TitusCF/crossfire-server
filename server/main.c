@@ -693,7 +693,7 @@ void enter_exit(object *op, object *exit_ob) {
 	     * screwed up, so bail out now.
 	     */
 	    if (!newmap) {
-		LOG(llevError,"enter_exit: could not load emergency map? Fata error\n");
+		LOG(llevError,"enter_exit: could not load emergency map? Fatal error\n");
 		abort();
 	    }
 	}
@@ -958,7 +958,7 @@ void clean_tmp_files() {
 #ifdef RECYCLE_TMP_MAPS
 	swap_map(m);
 #else
-	new_save_map(m, 0);
+	new_save_map(m, 2); /* note we save here into a overlay map */
     clean_tmp_map(m);
 #endif
   }

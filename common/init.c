@@ -61,7 +61,8 @@ RESET_LOCATION_TIME,
 "",
 "",
 0,
-""
+"",
+0,0,0,0,0,0,0  /* worldmap settings*/
 };
 
 
@@ -347,7 +348,7 @@ void init_attackmess(){
 	    continue;
 	}
     }
-    printf("got %d messages in %d categories.\n", total, mess+1);
+    LOG(llevDebug, "got %d messages in %d categories.\n", total, mess+1);
     close_and_delete(fp, comp);
 }
 	    

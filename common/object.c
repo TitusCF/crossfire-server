@@ -1678,6 +1678,7 @@ object *insert_ob_in_ob(object *op,object *where) {
         op->name, op->count);
     return op;
   }
+  CLEAR_FLAG(op, FLAG_OBJ_ORIGINAL);
   CLEAR_FLAG(op, FLAG_REMOVED);
   if(op->nrof) {
     for(tmp=where->inv;tmp!=NULL;tmp=tmp->below)
