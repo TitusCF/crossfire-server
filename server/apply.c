@@ -59,7 +59,7 @@ static int apply_id_altar (object *money, object *altar, object *pl)
     object *id, *marked;
     int success=0;
 
-    if (pl == NULL && pl->type != PLAYER)
+    if (pl == NULL || pl->type != PLAYER)
       return 0;
 
     /* Check for MONEY type is a special hack - it prevents 'nothing needs
