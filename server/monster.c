@@ -96,7 +96,6 @@ object *check_enemy(object *npc, rv_vector *rv) {
 		 (QUERY_FLAG(npc->enemy, FLAG_FRIENDLY) || 
 		  npc->enemy->type == PLAYER || npc->enemy == npc->owner))
 		    npc->enemy = NULL;
-	    
 	else if (!QUERY_FLAG(npc, FLAG_FRIENDLY) && 
              (!QUERY_FLAG(npc->enemy, FLAG_FRIENDLY) && npc->enemy->type!=PLAYER))
                 npc->enemy=NULL;
@@ -108,7 +107,7 @@ object *check_enemy(object *npc, rv_vector *rv) {
 	 * as the enemy to attack.
 	 */
 	else if (!QUERY_FLAG(npc->enemy, FLAG_MONSTER) && 
-                  !QUERY_FLAG(npc->enemy,FLAG_GENERATOR ) && npc->type!=PLAYER)
+                  !QUERY_FLAG(npc->enemy,FLAG_GENERATOR) && npc->enemy->type!=PLAYER)
                 npc->enemy=NULL;
 
     }
