@@ -42,6 +42,9 @@
 #include <sproto.h>
 #endif
 
+/**
+ * Returns the id of specified god.
+ */
 int lookup_god_by_name(char *name) {
     int godnr=-1,nmlen = strlen(name);
  
@@ -55,6 +58,9 @@ int lookup_god_by_name(char *name) {
     return godnr;
 }
 
+/**
+ * Returns pointer to specified god's object through pntr_to_god_obj..
+ */
 object *find_god(char *name) {
     object *god=NULL;
 
@@ -68,8 +74,9 @@ object *find_god(char *name) {
     return god;
 }
 
-/* determine_god() - determines if op worships a god. Returns
- * the godname if they do. In the case of an NPC, if they have
+/**
+ * Determines if op worships a god.
+ * Returns the godname if they do. In the case of an NPC, if they have
  * no god, we give them a random one. -b.t.
  */
 
@@ -114,6 +121,9 @@ char *determine_god(object *op) {
     return ("none");
 }
 
+/**
+ * Returns 1 if s1 and s2 are the same - either both NULL, or strcmp( ) == 0
+ */
 static int same_string (const char *s1, const char *s2)
 {
     if (s1 == NULL)
@@ -129,9 +139,8 @@ static int same_string (const char *s1, const char *s2)
 }
 
 
-/*
- * follower_remove_similar_item - Checks for any occurrence of
- * the given 'item' in the inventory of 'op' (recursively).
+/**
+ * Checks for any occurrence of the given 'item' in the inventory of 'op' (recursively).
  * Any matching items in the inventory are deleted, and a
  * message is displayed to the player.
  */
@@ -168,9 +177,8 @@ static void follower_remove_similar_item (object *op, object *item)
     }
 }
 
-/*
- * follower_has_similar_item - Checks for any occurrence of
- * the given 'item' in the inventory of 'op' (recursively).
+/**
+ * Checks for any occurrence of the given 'item' in the inventory of 'op' (recursively).
  * Returns 1 if found, else 0.
  */
 static int follower_has_similar_item (object *op, object *item)
@@ -190,6 +198,9 @@ static int follower_has_similar_item (object *op, object *item)
     return 0;
 }
 
+/**
+ * God gives an item to the player.
+ */
 static int god_gives_present (object *op, object *god, treasure *tr)
 {
     object *tmp;
@@ -206,6 +217,10 @@ static int god_gives_present (object *op, object *god, treasure *tr)
     return 1;
 }
 
+/**
+ * Player prays at altar.
+ * Checks for god changing, divine intervention, and so on.
+ */
 void pray_at_altar(object *pl, object *altar, object *skill) {
     object *pl_god=find_god(determine_god(pl));
     int return_pray_script; /* GROS : This is for return value of script */
@@ -322,6 +337,9 @@ void pray_at_altar(object *pl, object *altar, object *skill) {
     }
 }
 
+/**
+ * Removes special prayers given by a god.
+ */
 static void check_special_prayers (object *op, object *god)
 {
     /* Ensure that 'op' doesn't know any special prayers that are not granted
@@ -379,8 +397,8 @@ static void check_special_prayers (object *op, object *god)
     }
 }
 
-/*
- * become_follower - This function is called whenever a player has
+/**
+ * This function is called whenever a player has
  * switched to a new god. It handles basically all the stat changes
  * that happen to the player, including the removal of godgiven
  * items (from the former cult).
@@ -527,7 +545,9 @@ void become_follower (object *op, object *new_god) {
     check_special_prayers (op, new_god);
 }
 
-/* op is the player.
+/**
+ * Forbids or let player use something item type.
+ * op is the player.
  * exp_obj is the widsom experience.
  * flag is the flag to check against.
  * string is the string to print out.
@@ -548,7 +568,9 @@ int worship_forbids_use (object *op, object *exp_obj, uint32 flag, char *string)
   return 0;
 }
 
-/* stop_using_item() - unapplies up to number worth of items of type */
+/**
+ * Unapplies up to number worth of items of type
+ */
 void stop_using_item ( object *op, int type, int number ) {
   object *tmp;
 
@@ -559,7 +581,8 @@ void stop_using_item ( object *op, int type, int number ) {
     }
 }
 
-/* update_priest_flag() - if the god does/doesnt have this flag, we
+/**
+ * If the god does/doesnt have this flag, we
  * give/remove it from the experience object if it doesnt/does
  * already exist. For players only!
  */
@@ -609,7 +632,9 @@ archetype *determine_holy_arch (object *god, const char *type)
     return NULL;
 }
 
-
+/**
+ * God helps player by removing curse and/or damnation.
+ */
 static int god_removes_curse (object *op, int remove_damnation)
 {
     object *tmp;
@@ -649,6 +674,12 @@ static int follower_level_to_enchantments (int level, int difficulty)
     return (30 + (level - 40) / 4) / difficulty;
 }
 
+/**
+ * God wants to enchant weapon.
+ * Affected weapon is the applied one (weapon or bow). It's checked to make sure
+ * it isn't a weapon for another god. If all is all right, update weapon with
+ * attacktype, slaying and such.
+ */
 static int god_enchants_weapon (object *op, object *god, object *tr, object *skill)
 {
     char buf[MAX_BUF];
@@ -704,10 +735,11 @@ static int god_enchants_weapon (object *op, object *god, object *tr, object *ski
 }
 
 
-/* god_intervention() - called from praying() currently. Every
- * once in a while the god will intervene to help the worshiper.
+/**
+ * Every once in a while the god will intervene to help the worshiper.
  * Later, this fctn can be used to supply quests, etc for the 
  * priest. -b.t. 
+ * called from pray_at_altar() currently. 
  */
 
 void god_intervention (object *op, object *god, object *skill)
@@ -929,7 +961,11 @@ void god_intervention (object *op, object *god, object *skill)
     new_draw_info (NDI_UNIQUE, 0, op, "You feel rapture.");
 }
 
-
+/**
+ * Checks and maybe punishes someone praying.
+ * All applied items are examined, if player is using more items of other gods,
+ * s/he loses experience in praying or general experience if no praying.
+ */
 int god_examines_priest (object *op, object *god) {
     int reaction=1;
     object *item=NULL, *skop;
@@ -962,10 +998,12 @@ int god_examines_priest (object *op, object *god) {
     return reaction;
 }
 
-/* god_likes_item() - your god looks at the item you
- * are using and we return either -1 (bad), 0 (neutral) or
+/**
+ * God checks item the player is using.
+ * Return either -1 (bad), 0 (neutral) or
  * 1 (item is ok). If you are using the item of an enemy
- * god, it can be bad...-b.t. */
+ * god, it can be bad...-b.t.
+ */
 
 int god_examines_item(object *god, object *item) {
   char buf[MAX_BUF];
@@ -992,8 +1030,10 @@ int god_examines_item(object *god, object *item) {
   return 0; /* item is sacred to a non-enemy god/or is otherwise magical */ 
 }
 
-/* get_god() - returns the gods index in linked list 
- * if exists, if not, it returns -1. -b.t.  */
+/**
+ * Returns priest's god's id. 
+ * Straight calls lookup_god_by_name
+ */
 
 int get_god(object *priest) {
   int godnr=lookup_god_by_name(determine_god(priest)); 
@@ -1002,9 +1042,9 @@ int get_god(object *priest) {
 }
 
 
-/* tailor_god_spell() - changes the attributes of cone, smite, 
- * and ball spells as needed by the code. Returns false if there
- * was no race to assign to the slaying field of the spell, but
+/**
+ * Changes the attributes of cone, smite, and ball spells as needed by the code.
+ * Returns false if there was no race to assign to the slaying field of the spell, but
  * the spell attacktype contains AT_HOLYWORD.  -b.t.
  */
 
