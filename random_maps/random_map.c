@@ -117,7 +117,7 @@ mapstruct *generate_random_map(char *OutFileName, RMParms *RP) {
 	free(layout[i]);
     free(layout);
 
-    theMap->msg = add_string(buf);
+    theMap->msg = strdup_local(buf);
   
     return theMap;
 }
