@@ -1,6 +1,10 @@
 Changes in top level CVS tree (please add your changes at the very top of
 the file):
 
+Remove xbmtobdf man page - since it is run automatically and it is likely
+that people will not run it manually (and it appears to be innacruate - or
+at least imcomplete), may as well remove it.  - msw
+
 Change install location of man pages to section 6 instead of section 1 - msw
 
 New man page submitted by Egbert Hinzen that is actually correct and
