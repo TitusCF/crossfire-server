@@ -260,20 +260,24 @@ int adj_stealchance (object *op, object *victim, int roll) {
 int steal(object* op, int dir)
 {
     object *tmp, *next;
-    int x = op->x + freearr_x[dir];
-    int y = op->y + freearr_y[dir];
+    sint16 x, y;
+
+    x = op->x + freearr_x[dir];
+    y = op->y + freearr_y[dir];
+    mapstruct *m;
 
     if(dir == 0) {
 	/* Can't steal from ourself! */
 	return 0;
     }
 
-    if(wall(op->map,x,y)) {
+    m = op->map;
+    if(get_map_flags(m, &m ,x,y, &x, &y) & (P_WALL | P_OUT_OF_MAP)) {
 	return 0;
     }
 
     /* Find the topmost object at this spot */
-    for(tmp = get_map_ob(op->map,x,y);
+    for(tmp = get_map_ob(m,x,y);
 	tmp != NULL && tmp->above != NULL;
         tmp = tmp->above);
 
@@ -454,16 +458,15 @@ static int stop_jump(object *pl, int dist, int spaces) {
 
     CLEAR_FLAG(pl,FLAG_FLYING);
     insert_ob_in_map(pl,pl->map,pl,0);
-    if (pl->type==PLAYER) draw(pl);  
-
-    /* pl->speed_left= (int) -FABS((load*8)+1); */ 
     return 0;
 }
 
 
 static int attempt_jump (object *pl, int dir, int spaces) {
     object *tmp;
-    int i,exp=0,dx=freearr_x[dir],dy=freearr_y[dir];
+    int i,exp=0,dx=freearr_x[dir],dy=freearr_y[dir], mflags;
+    sint16 x, y;
+    mapstruct *m;
 
     /* Jump loop. Go through spaces opject wants to jump. Halt the
      * jump if a wall or creature is in the way. We set FLAG_FLYING
@@ -475,20 +478,28 @@ static int attempt_jump (object *pl, int dir, int spaces) {
     remove_ob(pl);
     SET_FLAG(pl,FLAG_FLYING);
     for(i=0;i<=spaces;i++) { 
-	if (out_of_map(pl->map,pl->x+dx,pl->y+dy)) {
+	x = pl->x + dx;
+	y = pl->y + dy;
+	m = pl->map;
+
+	mflags = get_map_flags(m, &m, x, y, &x, &y);
+
+
+	if (mflags & P_OUT_OF_MAP) {
 	    (void) stop_jump(pl,i,spaces);
-	    return calc_skill_exp(pl,NULL);
+	    return 0;
 	}
-	for(tmp=get_map_ob(pl->map,pl->x+dx,pl->y+dy); tmp;tmp=tmp->above) { 
-	    if(wall(tmp->map,tmp->x,tmp->y)) {           /* Jump into wall*/ 
-		new_draw_info(NDI_UNIQUE, 0,pl,"Your jump is blocked.");
-		(void) stop_jump(pl,i,spaces);
-		return 0;
-	    }
+	if (mflags & P_WALL) {
+	    new_draw_info(NDI_UNIQUE, 0,pl,"Your jump is blocked.");
+	    (void) stop_jump(pl,i,spaces);
+	    return 0;
+	}
+
+	for(tmp=get_map_ob(m, x, y); tmp;tmp=tmp->above) { 
 	    /* Jump into creature */ 
 	    if(QUERY_FLAG(tmp,FLAG_MONSTER) || tmp->type==PLAYER ) {   
-		new_draw_info_format(NDI_UNIQUE, 0,pl,"You jump into%s%s.", 
-		    tmp->type == PLAYER ? " " : " the ", tmp->name);
+		new_draw_info_format(NDI_UNIQUE, 0,pl,"You jump into %s%s.", 
+		    tmp->type == PLAYER ? "" : "the ", tmp->name);
 		if(tmp->type!=PLAYER || 
 		   (pl->type==PLAYER && pl->contr->party_number==-1) ||
 		   (pl->type==PLAYER && tmp->type==PLAYER &&
@@ -497,18 +508,21 @@ static int attempt_jump (object *pl, int dir, int spaces) {
 		(void) stop_jump(pl,i,spaces);
 		return exp;  /* note that calc_skill_exp() is already called by skill_attack() */ 
 	    }
-	     /* If the space has fly on set (no matter what the space is),
-	      * we should get the effects - after all, the player is
-	      * effectively flying.
-	      */
+	    /* If the space has fly on set (no matter what the space is),
+	     * we should get the effects - after all, the player is
+	     * effectively flying.
+	     */
 	    if(QUERY_FLAG(tmp, FLAG_FLY_ON)) { 
-		pl->x+=dx,pl->y+=dy;
+		pl->x = x;
+		pl->y = y;
+		pl->map = m;
 		(void) stop_jump(pl,i,spaces);
 		return calc_skill_exp(pl,NULL);
 	    }
 	}
-	pl->x+=dx;
-	pl->y+=dy;
+	pl->x = x;
+	pl->y = y;
+	pl->map = m;
     }
     (void) stop_jump(pl,i,spaces);
     return calc_skill_exp(pl,NULL);
@@ -1497,7 +1511,8 @@ int do_throw(object *op, object *part, object *toss_item, int dir) {
      * have no effective throwing strength, or you threw at a wall
      */ 
     if(!dir || (eff_str <= 1) ||
-       wall(part->map,part->x+freearr_x[dir],part->y+freearr_y[dir])) {
+       get_map_flags(part->map,NULL,
+	part->x+freearr_x[dir],part->y+freearr_y[dir],NULL,NULL) & (P_WALL | P_OUT_OF_MAP)) {
 
 	/* bounces off 'wall', and drops to feet */
 	remove_ob(throw_ob);

@@ -651,6 +651,7 @@ int command_mon_aggr (object *op, char *params)
 	CLEAR_FLAG(op, FLAG_UNAGGRESSIVE);
 	new_draw_info(NDI_UNIQUE, 0, op, "Agression turned ON");
     }
+    return 1;
 }
 
 /* DM can possess a monster.  Basically, this tricks the client into thinking
@@ -772,6 +773,7 @@ int command_possess (object *op, char *params)
     fix_player(victim);
 
     do_some_living(victim);
+    return 1;
 }
 
 

@@ -211,37 +211,22 @@ static void check_wall(object *op,int x,int y) {
     if (ax < 0 || ay < 0 || ax >= op->contr->socket.mapx || ay >= op->contr->socket.mapy)
 	return;
 
+#if 0
+    fprintf(stderr,"check_wall, ax,ay=%d, %d  x,y = %d, %d  blocksview = %d, %d\n",
+	    ax, ay, x, y, op->x + x - MAP_CLIENT_X/2, op->y + y - MAP_CLIENT_Y/2);
+#endif
+
     /* If this space is already blocked, prune the processing - presumably
      * whatever has set this space to be blocked has done the work and already
      * done the dependency chain.
      */
     if (op->contr->blocked_los[ax][ay] == 100) return;
 
-#if 0
-    fprintf(stderr,"check_wall, ax,ay=%d, %d  x,y = %d, %d  blocksview = %d, %d\n",
-	    ax, ay, x, y, op->x + x - MAP_CLIENT_X/2, op->y + y - MAP_CLIENT_Y/2);
-#endif
 
-    if(blocks_view(op->map,op->x + x - MAP_CLIENT_X/2, op->y + y - MAP_CLIENT_Y/2))
+    if(get_map_flags(op->map, NULL, 
+	op->x + x - MAP_CLIENT_X/2, op->y + y - MAP_CLIENT_Y/2, 
+	NULL, NULL) & P_BLOCKSVIEW)
 	set_wall(op,x,y);
-#if 0
-    /* don't do this - much more efficient for our calling function to just
-     * iterate through all the spaces then this mechanism below, which may
-     * have us look at the same space numerous times.
-     */
-    else {
-	/* This goes and checkes to see if any spaces this space
-	 * may potentially be blocked are also blocked.  It
-	 * is actually not efficient to do it this way, because
-	 * one space may be blocked by many spaces in front, so
-	 * this means we may end up looking through a lot more
-	 * spaces then necessary.
-	 */
-	int i;
-	for(i=0;i<block[x][y].index;i++)
-	    check_wall(op,block[x][y].x[i],block[x][y].y[i]);
-    }
-#endif
 }
 
 /*
@@ -272,13 +257,11 @@ void expand_sight(object *op)
 
     for(x=1;x<op->contr->socket.mapx-1;x++)	/* loop over inner squares */
 	for(y=1;y<op->contr->socket.mapy-1;y++) {
-#if 0
-	    fprintf(stderr,"expand_sight x,y = %d, %d  blocksview = %d, %d\n",
-		    x, y, op->x-op->contr->socket.mapx/2+x, op->y-op->contr->socket.mapy/2+y);
-#endif
-	    if(!op->contr->blocked_los[x][y] &&
-	        !blocks_view(op->map,op->x-op->contr->socket.mapx/2+x,
-		op->y-op->contr->socket.mapy/2+y)) {
+	    if (!op->contr->blocked_los[x][y] &&
+	        !(get_map_flags(op->map,NULL, 
+		op->x-op->contr->socket.mapx/2+x,
+		op->y-op->contr->socket.mapy/2+y,
+		NULL, NULL) & P_BLOCKSVIEW)) {
 
 		for(i=1;i<=8;i+=1) {	/* mark all directions */
 		    dx = x + freearr_x[i];
@@ -291,6 +274,7 @@ void expand_sight(object *op)
 
     if(MAP_DARKNESS(op->map)>0)  /* player is on a dark map */
 	expand_lighted_sight(op);
+
 
     /* clear mark squares */
     for (x = 0; x < op->contr->socket.mapx; x++)
@@ -317,8 +301,9 @@ int has_carried_lights(object *op) {
  
 void expand_lighted_sight(object *op)
 {
-    int x,y,darklevel,ax,ay, basex, basey;
+    int x,y,darklevel,ax,ay, basex, basey, mflags, light;
     mapstruct *m=op->map;
+    sint16 nx, ny;
  
     darklevel = MAP_DARKNESS(m);
 
@@ -344,7 +329,7 @@ void expand_lighted_sight(object *op)
     /* First, limit player furthest (unlighted) vision */
     for (x = 0; x < op->contr->socket.mapx; x++)
 	for (y = 0; y < op->contr->socket.mapy; y++)
-	    if(!(op->contr->blocked_los[x][y]==100))
+	    if(op->contr->blocked_los[x][y]!=100)
 		  op->contr->blocked_los[x][y]= MAX_LIGHT_RADII;
 
     /* the spaces[] darkness value contains the information we need.
@@ -355,24 +340,30 @@ void expand_lighted_sight(object *op)
      */
     for (x=(op->x - op->contr->socket.mapx/2 - MAX_LIGHT_RADII), basex=-MAX_LIGHT_RADII;
       x < (op->x + op->contr->socket.mapx/2 + MAX_LIGHT_RADII); x++, basex++) {
-	if (x < 0 || x>=MAP_WIDTH(op->map)) continue;
 
 	for (y=(op->y - op->contr->socket.mapy/2 - MAX_LIGHT_RADII), basey=-MAX_LIGHT_RADII;
 	  y < (op->y + op->contr->socket.mapy/2 + MAX_LIGHT_RADII); y++, basey++) {
-	    if (y < 0 || y>=MAP_HEIGHT(op->map)) continue;
+	    m = op->map;
+	    nx = x;
+	    ny = y;
+
+	    mflags = get_map_flags(m, &m, nx, ny, &nx, &ny);
+
+	    if (mflags & P_OUT_OF_MAP) continue;
 
 	    /* This space is providing light, so we need to brighten up the
 	     * spaces around here.
 	     */
-	    if (GET_MAP_LIGHT(op->map, x, y)) {
+	    light = GET_MAP_LIGHT(m, nx, ny);
+	    if (light) {
 #if 0
 		fprintf(stderr,"expand_lighted_sight: Found light at x=%d, y=%d, basex=%d, basey=%d\n", 
 			x, y, basex, basey);
 #endif
-		for (ax=basex - GET_MAP_LIGHT(op->map, x, y); ax<basex+GET_MAP_LIGHT(op->map, x, y); ax++) {
-		    if (ax<0 || ax>op->contr->socket.mapx) continue;
-		    for (ay=basey - GET_MAP_LIGHT(op->map, x, y); ay<basey+GET_MAP_LIGHT(op->map, x, y); ay++) {
-			if (ay<0 || ay>op->contr->socket.mapy) continue;
+		for (ax=basex - light; ax<basex+light; ax++) {
+		    if (ax<0 || ax>=op->contr->socket.mapx) continue;
+		    for (ay=basey - light; ay<basey+light; ay++) {
+			if (ay<0 || ay>=op->contr->socket.mapy) continue;
 
 			/* If the space is fully blocked, do nothing.  Otherwise, we
 			 * brighten the space.  The further the light is away from the
@@ -385,7 +376,7 @@ void expand_lighted_sight(object *op)
 			 * 3 (2.82 or sqrt(8)) and not 2 like it is right now.
 			 */
 			if(op->contr->blocked_los[ax][ay]!=100)
-			    op->contr->blocked_los[ax][ay]-= (GET_MAP_LIGHT(op->map, x, y) - 
+			    op->contr->blocked_los[ax][ay]-= (light - 
 							      MAX(abs(basex-ax),abs(basey -ay)));
 		    } /* for ay */
 		} /* for ax */
@@ -393,6 +384,19 @@ void expand_lighted_sight(object *op)
 	} /* for y */
     } /* for x */
 
+    /* Outdoor should never really be completely pitch black dark like
+     * a dungeon, so let the player at least see a little around themselves
+     */
+    if (op->map->outdoor && darklevel > (MAX_DARKNESS - 3)) {
+	if (op->contr->blocked_los[op->contr->socket.mapx/2][op->contr->socket.mapy/2] > (MAX_DARKNESS-3))
+	    op->contr->blocked_los[op->contr->socket.mapx/2][op->contr->socket.mapy/2] = MAX_DARKNESS - 3;
+
+	for (x=-1; x<=1; x++)
+	    for (y=-1; y<=1; y++) {
+		if (op->contr->blocked_los[x + op->contr->socket.mapx/2][y + op->contr->socket.mapy/2] > (MAX_DARKNESS-2))
+		    op->contr->blocked_los[x + op->contr->socket.mapx/2][y + op->contr->socket.mapy/2] = MAX_DARKNESS - 2;
+	    }
+    }
     /*  grant some vision to the player, based on the darklevel */
     for(x=darklevel-MAX_DARKNESS; x<MAX_DARKNESS + 1 -darklevel; x++)
 	for(y=darklevel-MAX_DARKNESS; y<MAX_DARKNESS + 1 -darklevel; y++)
@@ -437,9 +441,10 @@ void update_los(object *op) {
      * be blocked by different spaces in front, this mean that a lot of spaces
      * could be examined multile times, as each path would be looked at.
      */
-    for (x=(MAP_CLIENT_X - op->contr->socket.mapx)/2; x<(MAP_CLIENT_X + op->contr->socket.mapx)/2; x++) 
-	for (y=(MAP_CLIENT_Y - op->contr->socket.mapy)/2; y<(MAP_CLIENT_Y + op->contr->socket.mapy)/2; y++) 
+    for (x=(MAP_CLIENT_X - op->contr->socket.mapx)/2 - 1; x<(MAP_CLIENT_X + op->contr->socket.mapx)/2 + 1; x++) 
+	for (y=(MAP_CLIENT_Y - op->contr->socket.mapy)/2 - 1; y<(MAP_CLIENT_Y + op->contr->socket.mapy)/2 + 1; y++) 
 	    check_wall(op, x, y);
+
 
     /* do the los of the player. 3 (potential) cases */
     if(QUERY_FLAG(op,FLAG_BLIND)) /* player is blind */ 

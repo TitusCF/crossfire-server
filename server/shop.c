@@ -615,8 +615,9 @@ static int shop_sort(const void *a1, const void *a2)
 
 static void add_shop_item(object *tmp, shopinv *items, int *numitems, int *numallocated)
 {
+#if 0
     char buf[MAX_BUF];
-
+#endif
     /* clear unpaid flag so that doesn't come up in query
      * string.  We clear nrof so that we can better sort
      * the object names.

@@ -17,6 +17,43 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Bulk of this commit is to improve code for tiled maps - replace
+wall/blocks_magic/blocks_cleric, etc with get_map_flags which
+also does map tiling translation as needed.  This should fix a lot
+of the bugs related to map tiling (there are sure to be more out
+there - all the get_map_ob still need to be checked).
+Other changes - many spells stopped progressing on spaces that
+blocked view - that is now removed - didn't make a lot of sense.
+Other fixes - some cleric spells (eg, word of recall) checked to
+see if magic was prohibited, didn't check to see if cleric
+was prohibited.
+Clean up some bugs in the lighting code that would cause erroneous
+results.  Also, allow players to see immediately around them on
+outdoor maps no matter how dark the map really is - behaviour
+on indoor maps is the same.
+Lots of code reformatted, and lots of obsoleted/dead code removed.
+Add max range to dimension door.
+Fix magic map - got broken when the layer stuff was redone - was
+not showing proper colors.  IT also works sensibly on tiled maps
+now - rather than display based on the map, it gives the player a
+50x50 area centered on where the player is.
+Change fire_bow - move special player fire modes into own function -
+makes code much cleaner.
+Hopefully this fixes more bugs than it introduces.
+common/los.c, common/map.c, common/object.c, crossedit/Edit.c, 
+include/libproto.h, include/sockproto.h, include/map.h, 
+include/spellist.h, include/sproto.h, random_maps/treasure.c,
+random_maps/wall.c, server/attack.c, server/c_misc.c,
+server/c_wiz.c, server/disease.c, server/main.c, server/monster.c,
+server/pets.c, server/player.c, server/rune.c, server/shop.c,
+server/skill_util.c, server/skills.c, server/spell_effect.c,
+server/spell_util.c, server/time.c, socket/info.c: See note above
+server/apply.c: Limit number of times weapon can be enchanted so
+   that it won't overflow item_power.  Modify enchant armor
+   to enchant as normal armor is enchanted, also only allows one
+   item to be enchanted.
+MSW 2002-01-07
+
 common/item.c: Add 'unidentified' to display of examined items if the
    item has not been identified.  Only display spell regen penalty
    for armour if there is in fact a penalty.

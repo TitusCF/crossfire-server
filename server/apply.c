@@ -458,7 +458,7 @@ int improve_weapon(object *op,object *improver,object *weapon)
     new_draw_info(NDI_UNIQUE, 0,op,"This weapon has not been prepared.");
     return 0;
   }
-  if (weapon->level==weapon->last_eat) {
+  if (weapon->level==weapon->last_eat && weapon->item_power >=100) {
     new_draw_info(NDI_UNIQUE, 0,op,"This weapon cannot be improved any more.");
     return 0;
   }
@@ -480,6 +480,7 @@ int improve_weapon(object *op,object *improver,object *weapon)
 	new_draw_info_format(NDI_UNIQUE, 0, op,
 	    "Damage has been increased by 5 to %d", weapon->stats.dam);
 	weapon->last_eat++;
+
 	weapon->item_power++;
 	decrease_ob(improver);
 	return 1;
@@ -565,7 +566,7 @@ int check_improve_weapon (object *op, object *tmp)
 
     if(op->type!=PLAYER)
       return 0;
-    if (blocks_magic(op->map,op->x,op->y)) {
+    if (get_map_flags(op->map,NULL, op->x,op->y, NULL, NULL) & P_NO_MAGIC) {
 	new_draw_info(NDI_UNIQUE, 0,op,"Something blocks the magic of the scroll.");
 	return 0;
     }
@@ -596,43 +597,54 @@ int check_improve_weapon (object *op, object *tmp)
  * Modified by MSW for partial resistance.  Only support
  * changing of physical area right now.
  */
- 
+
+/* This code deals with the armour improvment scrolls.
+ * Change limits on improvement - let players go up to
+ * +5 no matter what level, but they are limited by item
+ * power.
+ * Try to use same improvement code as in the common/treasure.c
+ * file, so that if you make a +2 full helm, it will be just
+ * the same as one you find in a shop.
+ */
 int improve_armour(object *op, object *improver, object *armour)
 {
-    int new_armour;
- 
-    new_armour = armour->resist[ATNR_PHYSICAL] + armour->resist[ATNR_PHYSICAL]/25 + op->level/20 + 1;
-    if (new_armour > 90)
-        new_armour = 90;
+    object *tmp;
 
-    if (armour->magic >= (op->level / 10 + 1)
-        || new_armour > op->level)
-    {
-	int i;
-
-	i = armour->magic * 10;
-	if (i > new_armour) new_armour=i;
-
-        new_draw_info_format(NDI_UNIQUE, 0,op,"You need to be level %d", new_armour);
-        new_draw_info(NDI_UNIQUE, 0,op,"to improve this armour.");
-        return 0;
+    if (armour->magic >= 5) {
+        new_draw_info(NDI_UNIQUE, 0,op,"This armour can not be enchanted any further.");
+	return 0;
     }
+    /* Dealing with random artifact armor is a lot trickier (in terms of value, weight,
+     * etc), so take the easy way out and don't worry about it.
+     * Note - maybe add scrolls which make the random artifact versions (eg, armour
+     * of gnarg and what not?)
+     */
+    if (armour->title) {
+	new_draw_info(NDI_UNIQUE, 0, op, "This armour will not accept further enchantment.");
+	return 0;
+    }
+	
+    /* Split objects if needed.  Can't insert tmp until the
+     * end of this function - otherwise it will just re-merge.
+     */
+    if(armour->nrof > 1)
+	tmp = get_split_ob(armour,armour->nrof - 1);
+    else
+	tmp = NULL;
 
-    if (new_armour > armour->resist[ATNR_PHYSICAL]) {
-	armour->resist[ATNR_PHYSICAL] = new_armour;
-	armour->weight += armour->weight * 0.05;
-    } else {
-        new_draw_info(NDI_UNIQUE, 0,op,"The armour value of this equipment");
-        new_draw_info(NDI_UNIQUE, 0,op,"cannot be further improved.");
-    } 
     armour->magic++;
-    armour->item_power++;
+
+    ARMOUR_SPEED(armour)=(ARMOUR_SPEED(&armour->arch->clone)*(100+armour->magic*10))/100;
+    armour->weight = (armour->arch->clone.weight*(100-armour->magic*10))/100;
+    armour->item_power = get_power_from_ench(armour->arch->clone.item_power + armour->magic);
+
     if (op->type == PLAYER) {
         esrv_send_item(op, armour);
         if(QUERY_FLAG(armour, FLAG_APPLIED))
             fix_player(op);
     }
     decrease_ob(improver);
+    insert_ob_in_ob(tmp, op);
     return 1;
 }
 
@@ -2011,7 +2023,7 @@ static void apply_armour_improver (object *op, object *tmp)
 {
     object *armor;
 
-    if (blocks_magic(op->map,op->x,op->y)) {
+    if (get_map_flags(op->map,NULL, op->x,op->y,NULL, NULL) & P_NO_MAGIC) {
         new_draw_info(NDI_UNIQUE, 0,op,"Something blocks the magic of the scroll.");
         return;
     }

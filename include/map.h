@@ -81,6 +81,11 @@
 #define MAP_LOADING 3
 #define MAP_SAVING 4
 
+/* GET_MAP_FLAGS really shouldn't be used very often - get_map_flags should
+ * really be used, as it is multi tile aware.  However, there are some cases
+ * where it is known the map is not tiled or the values are known
+ * consistent (eg, op->map, op->x, op->y)
+ */
 #define GET_MAP_FLAGS(M,X,Y)	( (M)->spaces[(X) + (M)->width * (Y)].flags )
 #define SET_MAP_FLAGS(M,X,Y,C)	( (M)->spaces[(X) + (M)->width * (Y)].flags = C )
 #define GET_MAP_LIGHT(M,X,Y)	( (M)->spaces[(X) + (M)->width * (Y)].light )
@@ -119,6 +124,16 @@
 #define P_NO_ERROR      0x80	/* Purely temporary - if set, update_position
                                  * does not complain if the flags are different.
                                  */
+/* The following two values are not stored in the MapLook flags, but instead
+ * used in the get_map_flags value - that function is used to return
+ * the flag value, as well as other conditions - using a more general
+ * function that does more of the work can hopefully be used to replace
+ * lots of duplicate checks currently in the code.
+ */
+#define P_OUT_OF_MAP	0x100	/* This space is outside the map */
+#define	P_NEW_MAP	0x200	/* Coordinates passed result in a new tiled map  */
+#define P_BLOCKED	(P_NO_PASS | P_IS_ALIVE)    /* convenience macro */
+#define P_WALL		P_NO_PASS   /* Just to match naming of wall function */
 
 /* Can't use MapCell as that is used in newserver.h
  * Instead of having numerous arrays that have information on a

@@ -493,7 +493,7 @@ spell_parameters SP_PARAMETERS[NROFREALSPELLS] =
 {   50,     280,    1,      1,		15},	/*summon earth elemental*/
 {   40,     140,    1,      1,		15},	/*summon water elemental*/
 {   10,     160,    1,      1,		15},	/*summon air elemental*/
-{   0,      0,      0,      0,		0},	/*dimension door*/
+{   0,      10,     0,      1,		0},	/*dimension door*/
 {   0,      32,     0,      1,		0},	/*create earth wall*/
 {   25,     5,      3,      3,		0},	/*paralyze*/
 {   4,      6,      3,      5,		9},	/*icestorm*/

@@ -75,10 +75,14 @@ int surround_flag3(mapstruct *map,int i,int j,RMParms *RP){
 	  8 = blocked below */
   int surround_index = 0;
 
-  if((i > 0) && blocked(map,i-1,j)) surround_index |=1;
-  if((i < RP->Xsize-1) && blocked(map,i+1,j)) surround_index |=2;
-  if((j > 0) && blocked(map,i,j-1)) surround_index |=4;
-  if((j < RP->Ysize-1) && blocked(map,i,j+1)) surround_index |=8;
+  if((i > 0) && (get_map_flags(map,NULL, i-1,j, NULL, NULL) & P_BLOCKED))
+    surround_index |=1;
+  if((i < RP->Xsize-1) && (get_map_flags(map,NULL, i+1,j, NULL, NULL) & P_BLOCKED))
+    surround_index |=2;
+  if((j > 0) && (get_map_flags(map, NULL, i,j-1, NULL, NULL) & P_BLOCKED))
+    surround_index |=4;
+  if((j < RP->Ysize-1) && (get_map_flags(map,NULL, i,j+1, NULL, NULL) & P_BLOCKED))
+    surround_index |=8;
 
   return surround_index;
 }
@@ -104,39 +108,38 @@ int surround_flag4(mapstruct *map,int i,int j,RMParms *RP){
 	w_style) at '#' marks. */
 
 void make_map_walls(mapstruct *map,char **layout, char *w_style,RMParms *RP) {
-  char styledirname[256];
-  char stylefilepath[256];
-  mapstruct *style_map=0;
-  object *the_wall;
+    char styledirname[256];
+    char stylefilepath[256];
+    mapstruct *style_map=0;
+    object *the_wall;
   
+    /* get the style map */
+    if(!strcmp(w_style,"none")) return;
+    sprintf(styledirname,"%s","/styles/wallstyles");
+    sprintf(stylefilepath,"%s/%s",styledirname,w_style);
+    style_map = find_style(styledirname,w_style,-1);
+    if(style_map == 0) return;
 
-  /* get the style map */
-  if(!strcmp(w_style,"none")) return;
-  sprintf(styledirname,"%s","/styles/wallstyles");
-  sprintf(stylefilepath,"%s/%s",styledirname,w_style);
-  style_map = find_style(styledirname,w_style,-1);
-  if(style_map == 0) return;
-
-  /* fill up the map with the given floor style */
-  if((the_wall=pick_random_object(style_map))!=NULL) {
-	 int i,j;
+    /* fill up the map with the given floor style */
+    if((the_wall=pick_random_object(style_map))!=NULL) {
+	int i,j;
 	char *cp;
 
-	 sprintf(RP->wall_name,"%s",the_wall->arch->name);
-	 if ((cp=strchr(RP->wall_name,'_'))!=NULL) *cp=0;
-	 for(i=0;i<RP->Xsize;i++)
-		for(j=0;j<RP->Ysize;j++) {
-		  if(layout[i][j]=='#') {
-			 object *thiswall=pick_joined_wall(the_wall,layout,i,j,RP);
-			 thiswall->x = i; thiswall->y = j;
-			 SET_FLAG(thiswall,FLAG_NO_PASS); /* make SURE it's a wall */
-			 wall(map,i,j);
-			 insert_ob_in_map(thiswall,map,thiswall,INS_NO_MERGE | INS_NO_WALK_ON);
-		  }
-		}
-  }
+	sprintf(RP->wall_name,"%s",the_wall->arch->name);
+	if ((cp=strchr(RP->wall_name,'_'))!=NULL) *cp=0;
 
-  
+	for(i=0;i<RP->Xsize;i++)
+	    for(j=0;j<RP->Ysize;j++) {
+		if(layout[i][j]=='#') {
+		    object *thiswall=pick_joined_wall(the_wall,layout,i,j,RP);
+
+		    thiswall->x = i;
+		    thiswall->y = j;
+		    SET_FLAG(thiswall,FLAG_NO_PASS); /* make SURE it's a wall */
+		    insert_ob_in_map(thiswall,map,thiswall,INS_NO_MERGE | INS_NO_WALK_ON);
+		}
+	    }
+    }
 }
 
 

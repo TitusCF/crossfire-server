@@ -51,11 +51,13 @@
 
 
 /* returns true if square x,y has P_NO_PASS set, which is true for walls
-	and doors but not monsters. */
+ * and doors but not monsters.
+ * This function is not map tile aware.
+ */
 
 int wall_blocked(mapstruct *m, int x, int y) {
   int r;
-  if(out_of_map(m,x,y))
+  if(OUT_OF_REAL_MAP(m,x,y))
     return 1;
   r = GET_MAP_FLAGS(m,x,y) & (P_NO_PASS );
   return r;

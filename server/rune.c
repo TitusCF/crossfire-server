@@ -56,8 +56,8 @@ int write_rune(object *op,int dir,int inspell,int level,char *runename) {
     object *tmp;
     archetype *at=NULL;
     char buf[MAX_BUF];
-    
-    int nx,ny;
+    mapstruct *m;
+    sint16 nx,ny;
 
       if(!dir) {
 	dir=1;
@@ -65,11 +65,13 @@ int write_rune(object *op,int dir,int inspell,int level,char *runename) {
 
     nx=op->x+freearr_x[dir];
     ny=op->y+freearr_y[dir];
-    if(blocked(op->map,nx,ny)) {
+    m = op->map;
+
+    if (get_map_flags(m, &m, nx, ny, &nx, &ny)) {
 	new_draw_info(NDI_UNIQUE, 0,op,"Can't make a rune there!");
 	return 0;
     }
-    for(tmp=get_map_ob(op->map,nx,ny);tmp!=NULL;tmp=tmp->above)
+    for(tmp=get_map_ob(m,nx,ny);tmp!=NULL;tmp=tmp->above)
 	if(tmp->type==RUNE) break;
     if(tmp){
 #if 0
@@ -152,11 +154,11 @@ int write_rune(object *op,int dir,int inspell,int level,char *runename) {
     tmp->stats.Cha = op->level/2;  /* the invisibility parameter */
     tmp->x=nx;
     tmp->y=ny;
-    tmp->map = op->map;
+    tmp->map = m;
     tmp->direction=dir;  /* where any spell will go upon detonation */
     tmp->level=SK_level(op);  /* what level to cast the spell at */
     if(inspell||tmp->stats.dam) set_owner(tmp,op); /* runes without need no owner */
-    insert_ob_in_map(tmp,op->map,op,0);
+    insert_ob_in_map(tmp,m,op,0);
     return 1;
 
 }

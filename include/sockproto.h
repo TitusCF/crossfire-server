@@ -20,7 +20,6 @@ void clear_win_info(object *op);
 void rangetostring(object *pl, char *obuf);
 void set_title(object *pl, char *buf);
 void magic_mapping_mark(object *pl, char *map_mark, int strength);
-void magic_mapping_mark_recursive(object *pl, char *map_mark, int px, int py);
 void draw_map(object *pl);
 void Log_Kill(const char *Who, const char *What, int WhatType, const char *With, int WithType);
 /* init.c */

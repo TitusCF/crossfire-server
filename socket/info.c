@@ -356,12 +356,73 @@ void set_title(object *pl,char *buf)
 }
 
 
+/* We set this size - this is to make magic map work properly on
+ * tiled maps.  There is no requirement that this matches the
+ * tiled maps size - it just seemed like a reasonable value.
+ * Magic map code now always starts out putting the player in the
+ * center of the map - this makes the most sense when dealing
+ * with tiled maps.
+ * We also figure out the magicmap color to use as we process the
+ * spaces - this is more efficient as we already have up to date
+ * map pointers.
+ */
+
+#define MAGIC_MAP_SIZE	50
+#define MAGIC_MAP_HALF	MAGIC_MAP_SIZE/2
+
+/* Takes a player, the map_mark array and an x and y starting position.
+ * pl is the player.
+ * px, py are offsets from the player.
+ *
+ * This function examines all the adjacant spaces next to px, py.
+ * It updates teh map_mark arrow with the color and high bits set
+ * for various code values.
+ */
+static void magic_mapping_mark_recursive(object *pl, char *map_mark, int px, int py)
+{
+    int x, y, dx, dy,mflags;
+    sint16 nx, ny;
+    mapstruct *mp;
+    New_Face *f;
+
+    for (dx = -1; dx <= 1; dx++) {
+	for (dy = -1; dy <= 1; dy++) {
+	    x = px + dx;
+	    y = py + dy;
+
+	    if (FABS(x) >= MAGIC_MAP_HALF || FABS(y) >= MAGIC_MAP_HALF) continue;
+
+	    mp = pl->map;
+	    nx = pl->x + x;
+	    ny = pl->y + y;
+
+	    mflags = get_map_flags(pl->map, &mp, nx, ny, &nx, &ny);
+	    if (mflags & P_OUT_OF_MAP) continue;
+
+	    if (map_mark[MAGIC_MAP_HALF + x + MAGIC_MAP_SIZE* (MAGIC_MAP_HALF + y)] == 0) {
+		f= GET_MAP_FACE(mp, nx, ny, 0);
+		if (f == blank_face)
+		    f= GET_MAP_FACE(mp, nx, ny, 1);
+		if (f == blank_face)
+		    f= GET_MAP_FACE(mp, nx, ny, 2);
+
+		if (mflags & (P_BLOCKSVIEW | P_NO_MAGIC))
+		    map_mark[MAGIC_MAP_HALF + x + MAGIC_MAP_SIZE* (MAGIC_MAP_HALF + y)] = FACE_WALL | (f?f->magicmap:0);
+		else {
+		    map_mark[MAGIC_MAP_HALF + x + MAGIC_MAP_SIZE* (MAGIC_MAP_HALF + y)] = FACE_FLOOR | (f?f->magicmap:0);
+		    magic_mapping_mark_recursive(pl, map_mark, x, y);
+		}
+	    }
+	}
+    }
+}
+
 
 /* Note:  For improved magic mapping display, the space that blocks
  * the view is now marked with value 2.  Any dependencies of map_mark
  * being nonzero have been changed to check for 1.  Also, since
  * map_mark is a char value, putting 2 in should cause no problems.
- * Mark Wedel
+ *
  * This function examines the map the player is on, and determines what
  * is visible.  2 is set for walls or objects that blocks view.  1
  * is for open spaces.  map_mark should already have been initialized
@@ -372,82 +433,36 @@ void set_title(object *pl,char *buf)
 
 void magic_mapping_mark(object *pl, char *map_mark, int strength)
 {
-  int x, y;
-  int xmin = pl->x - strength + 1 < 0 ? 0 : pl->x - strength + 1;
-  int xmax = pl->x + strength - 1 > MAP_WIDTH(pl->map) - 1 ? 
-    MAP_WIDTH(pl->map) - 1 : pl->x + strength - 1;
-  int ymin = pl->y - strength + 1 < 0 ? 0 : pl->y - strength + 1;
-  int ymax = pl->y + strength - 1 > MAP_HEIGHT(pl->map) - 1 ? 
-    MAP_HEIGHT(pl->map) - 1 : pl->y + strength - 1;
+    int x, y, mflags;
+    sint16 nx, ny;
+    mapstruct *mp;
+    New_Face *f;
 
-  for (x = xmin; x <= xmax; x++) {
-    for (y = ymin; y <= ymax; y++) {
-      if (wall(pl->map, x, y) || blocks_view(pl->map, x, y))
-	map_mark[x + MAP_WIDTH(pl->map) * y] = 2;
-      else {
-	map_mark[x + MAP_WIDTH(pl->map) * y] = 1;
-	magic_mapping_mark_recursive(pl, map_mark, x, y);
-      }
-    }
-  }
-}
+    for (x = -strength; x <strength; x++) {
+	for (y = -strength; y <strength; y++) {
+	    mp = pl->map;
+	    nx = pl->x + x;
+	    ny = pl->y + y;
+	    mflags = get_map_flags(pl->map, &mp, nx, ny, &nx, &ny);
+	    f= GET_MAP_FACE(mp, nx, ny, 0);
+	    if (f == blank_face)
+		f= GET_MAP_FACE(mp, nx, ny, 1);
+	    if (f == blank_face)
+		f= GET_MAP_FACE(mp, nx, ny, 2);
 
-/* Takes a player, the map_mark array and an x and y starting position.
- * pl could be replaced by the map, since that is all taht pl is
- * used for.
- * This function examines all the adjacant spaces next to px, py.
- * If there is a wall or it otherwise blocks view on a space, we set
- * map_mark to 2.
- * If the space is otherwise open, we set it to 1, and this function
- * is called again to examine those spaces.
- */
-void magic_mapping_mark_recursive(object *pl, char *map_mark, int px, int py)
-{
-  int x, y, dx, dy;
-
-  for (dx = -1; dx <= 1; dx++) {
-    for (dy = -1; dy <= 1; dy++) {
-      x = px + dx;
-      y = py + dy;
-      if (x >= 0 && x < MAP_WIDTH(pl->map) && y >= 0 && y < MAP_HEIGHT(pl->map)
-	&& (map_mark[x + MAP_WIDTH(pl->map) * y] ==0) ) {
-            if (blocks_view(pl->map, x, y))
-		map_mark[x + MAP_WIDTH(pl->map) * y] = 2;
+	    if (mflags &  (P_BLOCKSVIEW | P_NO_MAGIC))
+		map_mark[MAGIC_MAP_HALF + x + MAGIC_MAP_SIZE* (MAGIC_MAP_HALF + y)] = FACE_WALL | (f?f->magicmap:0);
 	    else {
-		if (wall(pl->map, x, y))
-		    map_mark[x + MAP_WIDTH(pl->map) * y] = 2;
-		else
-		    map_mark[x + MAP_WIDTH(pl->map) * y] = 1;
+		map_mark[MAGIC_MAP_HALF + x + MAGIC_MAP_SIZE* (MAGIC_MAP_HALF + y)] = FACE_FLOOR | (f?f->magicmap:0);
 		magic_mapping_mark_recursive(pl, map_mark, x, y);
 	    }
 	}
     }
-  }
 }
-
 
 
 /* The following function is a lot messier than it really should be,
  * but there is no real easy solution.
- *
- * One of the main causes is uses the crossfire font to draw the stipple
- * pattern.  This then means that the excess needs to be erased.  As things
- * stand now, the excess is erased, and things look ok.
- *
- * Also, display on black and white system is still not as good (useful)
- * as on a color system.  However, things are not too bad.  At present, there
- * are 4 possible outputs:  White, meaning a wall, black, meaning
- * nothing (or only floor), grey (stippled pattern), for any other objects
- * that do not have a black foreground, and another stippled patern for
- * objects that do have a black foreground.
- *
- * Display of the stipples is not perfect.  One of the stipples is just
- * a checkerboard pattern.  IF the resolution is odd, and two of these
- * are placed together, little imperfections in the matching shows up.
- * However, it doesn't affect the usefulness of the display much, and
- * I don't want to add more code to deal with making the stipple perfect.
- * This is because the second stipple pattern used has a different
- * repeat rate
  *
  * Mark Wedel
  */
@@ -455,66 +470,47 @@ void magic_mapping_mark_recursive(object *pl, char *map_mark, int px, int py)
 void draw_map(object *pl) 
 {
     int x,y;
-    char *map_mark = (char *) malloc(MAP_WIDTH(pl->map) * MAP_HEIGHT(pl->map));
-    int xmin = MAP_WIDTH(pl->map), xmax = 0, ymin = MAP_HEIGHT(pl->map), ymax = 0;
+    char *map_mark = (char *) calloc(MAGIC_MAP_SIZE*MAGIC_MAP_SIZE, 1);
+    int xmin, xmax, ymin, ymax;
     SockList sl;
 
     if (pl->type!=PLAYER) {
-	LOG(llevError,"Non player objectg called draw_map.\n");
+	LOG(llevError,"Non player object called draw_map.\n");
 	return;
     }
    
     /* First, we figure out what spaces are 'reachable' by the player */
-    memset(map_mark, 0, MAP_WIDTH(pl->map) * MAP_HEIGHT(pl->map));
     magic_mapping_mark(pl, map_mark, 3);
-    for(x = 0; x < MAP_WIDTH(pl->map); x++) {
-      for(y = 0; y < MAP_HEIGHT(pl->map); y++) {
-        if (map_mark[x + MAP_WIDTH(pl->map) * y]==1) {
-	  xmin = x < xmin ? x : xmin;
-	  xmax = x > xmax ? x : xmax;
-	  ymin = y < ymin ? y : ymin;
-	  ymax = y > ymax ? y : ymax;
-        }
-      }
+
+    /* We now go through and figure out what spaces have been
+     * marked, and thus figure out rectangular region we send
+     * to the client (eg, if only a 10x10 area is visible, we only
+     * want to send those 100 spaces.)
+     */
+    xmin = MAGIC_MAP_SIZE;
+    ymin = MAGIC_MAP_SIZE;
+    xmax = 0;
+    ymax = 0;
+    for(x = 0; x < MAGIC_MAP_SIZE ; x++) {
+	for(y = 0; y < MAGIC_MAP_SIZE; y++) {
+	    if (map_mark[x + MAP_WIDTH(pl->map) * y] | FACE_FLOOR) {
+		xmin = x < xmin ? x : xmin;
+		xmax = x > xmax ? x : xmax;
+		ymin = y < ymin ? y : ymin;
+		ymax = y > ymax ? y : ymax;
+	    }
+	}
     }
 
-    xmin--;
-    xmin = xmin < 0 ? 0 : xmin;
-    xmax++;
-    xmax = xmax > MAP_WIDTH(pl->map) - 1 ? MAP_WIDTH(pl->map) - 1: xmax;
-    ymin--;
-    ymin = ymin < 0 ? 0 : ymin;
-    ymax++;
-    ymax = ymax > MAP_HEIGHT(pl->map) - 1? MAP_HEIGHT(pl->map) - 1: ymax;
-    
     sl.buf=malloc(MAXSOCKBUF);
     sprintf((char*)sl.buf,"magicmap %d %d %d %d ", (xmax-xmin+1), (ymax-ymin+1),
-	    pl->x - xmin, pl->y - ymin);
+	    MAGIC_MAP_HALF - xmin, MAGIC_MAP_HALF - ymin);
     sl.len=strlen((char*)sl.buf);
     
-    /* Reversed ordering of X and Y in 0.93.2.  This way the order should
-     * match up the way we said it would
-     */
     for (y = ymin; y <= ymax; y++) {
-      for (x = xmin; x <= xmax; x++) {
-	    int mark;
-	    
-	    if ((mark=map_mark[x+MAP_WIDTH(pl->map)*y])==0)
-		sl.buf[sl.len++]=0;
-	    else {
-	        /* get map face and assign the proper magicmap value */
-		New_Face *f = GET_MAP_FACE(pl->map, x, y, 0);
-		if (f==NULL) {
-		    /* this map spot is completely empty */
-		    sl.buf[sl.len++]=0;
-		}
-		else if (mark==2)
-		    sl.buf[sl.len++]=f->magicmap | FACE_WALL;
-		else
-		    sl.buf[sl.len++]=f->magicmap;
-	    }
-
-      } /* x loop */
+	for (x = xmin; x <= xmax; x++) {
+	    sl.buf[sl.len++]= map_mark[x+MAGIC_MAP_SIZE*y] & ~FACE_FLOOR;
+	} /* x loop */
     } /* y loop */
     
     Send_With_Handling(&pl->contr->socket, &sl);

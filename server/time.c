@@ -164,17 +164,18 @@ void remove_confusion(object *op) {
 }
 
 void execute_wor(object *op) {
-  object *wor=op;
-  while(op!=NULL&&op->type!=PLAYER)
-    op=op->env;
-  if(op!=NULL) {
-    if(blocks_magic(op->map,op->x,op->y))
-      new_draw_info(NDI_UNIQUE, 0,op,"You feel something fizzle inside you.");
-    else
-      enter_exit(op,wor);
-  }
-  remove_ob(wor);
-  free_object(wor);
+    object *wor=op;
+    while(op!=NULL&&op->type!=PLAYER)
+	op=op->env;
+
+    if(op!=NULL) {
+	if (get_map_flags(op->map, NULL, op->x, op->y, NULL, NULL) & P_NO_CLERIC)
+	    new_draw_info(NDI_UNIQUE, 0,op,"You feel something fizzle inside you.");
+	else
+	    enter_exit(op,wor);
+    }
+    remove_ob(wor);
+    free_object(wor);
 }
 
 void poison_more(object *op) {
@@ -606,7 +607,8 @@ static void stop_arrow (object *op)
 void move_arrow(object *op) {
     object *tmp;
     sint16 new_x, new_y;
-    int was_reflected;
+    int was_reflected, mflags;
+    mapstruct *m;
 
     if(op->map==NULL) {
 	LOG (llevError, "BUG: Arrow had no map.\n");
@@ -637,58 +639,63 @@ void move_arrow(object *op) {
     new_y = op->y + DIRY(op);
     was_reflected = 0;
 
-    /* See if there is any living object on target map square */
-    tmp = out_of_map (op->map, new_x, new_y)
-            ? NULL : get_map_ob (op->map, new_x, new_y);
-    while (tmp != NULL && ! QUERY_FLAG (tmp, FLAG_ALIVE))
-	tmp = tmp->above;
+    m = op->map;
+    mflags = get_map_flags(m, &m, new_x, new_y, &new_x, &new_y);
 
-    /* A bad problem was that a monster can throw or fire something and then
-     * it run in it. Not only this is a sync. problem, the monster will also
-     * hit herself and used as his own enemy! Result is, that many monsters
-     * start to hit herself dead.
-     * I removed both: No monster can be hit from his own missile and it can't 
-     * be his own enemy. - MT, 25.11.01 */
-    
-    if (tmp != NULL && tmp != op->owner)
-    {        
-        /* Found living object, but it is reflecting the missile.  Update
-         * as below. (Note that for living creatures there is a small
-         * chance that reflect_missile fails.)
-         */
-        if (QUERY_FLAG (tmp, FLAG_REFL_MISSILE) && (!QUERY_FLAG(tmp,
-	    FLAG_ALIVE) || (rndm(0, 99)) < 90-op->level/10))
-        {
-            int number = op->face->number;
-	    
-            op->direction = absdir (op->direction + 4);
-            op->state = 0;
-            if (GET_ANIM_ID (op)) {
-                number += 4;
-                if (number > GET_ANIMATION (op, 8))
-                    number -= 8;
-                op->face = &new_faces[number];
-            }
-            if (wall (op->map, new_x, new_y)) {
-                /* Target is standing on a wall.  Let arrow turn around before
-                 * the wall. */
-                new_x = op->x;
-                new_y = op->y;
-            }
-            was_reflected = 1;   /* skip normal movement calculations */
-        }
-        else
-        {
-            /* Attack the object. */
-            op = hit_with_arrow (op, tmp);
-            if (op == NULL)
-                return;
-        }
+    if (mflags & P_OUT_OF_MAP) {
+	stop_arrow(op);
+	return;
     }
 
-    if ( ! was_reflected && wall (op->map, new_x, new_y))
-    {
-	/* if the object doesn't reflect, stop the arrow from moving */
+    /* only need to look for living creatures if this flag is set */
+    if (mflags & P_IS_ALIVE) {
+	for (tmp = get_map_ob(m, new_x, new_y); tmp != NULL; tmp=tmp->above)
+	     if (QUERY_FLAG(tmp, FLAG_ALIVE)) break;
+
+    
+	/* Not really fair, but don't let monsters hit themselves with
+	 * their own arrow - this can be because they fire it then
+	 * move into it.
+	 */
+
+	if (tmp != NULL && tmp != op->owner) {
+	    /* Found living object, but it is reflecting the missile.  Update
+	     * as below. (Note that for living creatures there is a small
+	     * chance that reflect_missile fails.)
+	     */
+
+	    if (QUERY_FLAG (tmp, FLAG_REFL_MISSILE)  &&
+		(rndm(0, 99)) < (90-op->level/10)) {
+
+		int number = op->face->number;
+	    
+		op->direction = absdir (op->direction + 4);
+		op->state = 0;
+		if (GET_ANIM_ID (op)) {
+		    number += 4;
+		    if (number > GET_ANIMATION (op, 8))
+			number -= 8;
+		    op->face = &new_faces[number];
+		}
+		was_reflected = 1;   /* skip normal movement calculations */
+	    }
+	     else {
+		/* Attack the object. */
+		op = hit_with_arrow (op, tmp);
+		if (op == NULL)
+		    return;
+	     }
+	} /* if this is not hitting its owner */
+    } /* if there is something alive on this space */
+
+
+    if (mflags & P_WALL) {
+	/* if the object doesn't reflect, stop the arrow from moving
+	 * note that this code will now catch cases where a monster is
+	 * on a wall but has reflecting - the arrow won't reflect.
+	 * Mapmakers shouldn't put monsters on top of wall in the first
+	 * place, so I don't consider that a problem.
+	 */
 	if(!QUERY_FLAG(op, FLAG_REFLECTING) || !(rndm(0, 19))) {
 	    stop_arrow (op);
 	    return;
@@ -701,10 +708,13 @@ void move_arrow(object *op) {
 		 * the object should now take.
 		 */
 	
-		int left= wall(op->map,op->x+freearr_x[absdir(op->direction-1)],
-		       op->y+freearr_y[absdir(op->direction-1)]),
-		right=wall(op->map,op->x+freearr_x[absdir(op->direction+1)],
-		   op->y+freearr_y[absdir(op->direction+1)]);
+		int left, right;
+
+
+		left= get_map_flags(op->map,NULL, op->x+freearr_x[absdir(op->direction-1)],
+		       op->y+freearr_y[absdir(op->direction-1)], NULL, NULL) & P_WALL;
+		right=get_map_flags(op->map,NULL, op->x+freearr_x[absdir(op->direction+1)],
+		   op->y+freearr_y[absdir(op->direction+1)], NULL, NULL) & P_WALL;
 
 		if(left==right)
 		    op->direction=absdir(op->direction+4);
@@ -714,11 +724,13 @@ void move_arrow(object *op) {
 		    op->direction=absdir(op->direction-2);
 	    }
 	    /* Is the new direction also a wall?  If show, shuffle again */
-	    if(wall(op->map,op->x+DIRX(op),op->y+DIRY(op))) {
-		int left= wall(op->map,op->x+freearr_x[absdir(op->direction-1)],
-			 op->y+freearr_y[absdir(op->direction-1)]),
-		right=wall(op->map,op->x+freearr_x[absdir(op->direction+1)],
-		     op->y+freearr_y[absdir(op->direction+1)]);
+	    if(get_map_flags(op->map,NULL, op->x+DIRX(op),op->y+DIRY(op), NULL, NULL) & P_WALL) {
+		int left, right;
+
+		left= get_map_flags(op->map,NULL, op->x+freearr_x[absdir(op->direction-1)],
+			 op->y+freearr_y[absdir(op->direction-1)], NULL, NULL) & P_WALL;
+		right = get_map_flags(op->map,NULL, op->x+freearr_x[absdir(op->direction+1)],
+		     op->y+freearr_y[absdir(op->direction+1)], NULL, NULL) & P_WALL;
 
 		if(!left)
 		    op->direction=absdir(op->direction-1);
@@ -742,9 +754,10 @@ void move_arrow(object *op) {
     op->y = new_y;
 
     /* decrease the speed as it flies. 0.05 means a standard bow will shoot
-     about 17 squares. Tune as needed. */
+     * about 17 squares. Tune as needed.
+     */
     op->speed -= 0.05;
-    insert_ob_in_map (op, op->map, op,0);
+    insert_ob_in_map (op, m, op,0);
 }
 
 /* This routine doesnt seem to work for "inanimate" objects that

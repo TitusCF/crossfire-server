@@ -130,8 +130,8 @@ object *check_enemy(object *npc, rv_vector *rv) {
  * this function is map tile aware.
  */
 object *find_nearest_living_creature(object *npc) {
-    int i;
-    int nx,ny;
+    int i,mflags;
+    sint16 nx,ny;
     mapstruct *m;
     object *tmp;
     int search_arr[SIZEOFFREE];
@@ -143,10 +143,12 @@ object *find_nearest_living_creature(object *npc) {
          */
         nx = npc->x + freearr_x[search_arr[i]];
         ny = npc->y + freearr_y[search_arr[i]];
-	if (out_of_map(npc->map,nx,ny)) continue;
-	m = get_map_from_coord(npc->map, &nx, &ny);
+	m = npc->map;
 
-	if (GET_MAP_FLAGS(m, nx, ny) & P_IS_ALIVE) {
+	mflags = get_map_flags(m, &m, nx, ny, &nx, &ny);
+	if (mflags & P_OUT_OF_MAP) continue;
+
+	if (mflags & P_IS_ALIVE) {
 	    tmp=get_map_ob(m,nx,ny);
 	    while(tmp!=NULL && !QUERY_FLAG(tmp,FLAG_MONSTER)&&
 		  !QUERY_FLAG(tmp,FLAG_GENERATOR ) && tmp->type!=PLAYER) 
@@ -964,7 +966,7 @@ int monster_use_bow(object *head, object *part, object *pl, int dir) {
     }
 
     /* in server/player.c */
-    return fire_bow(head, part, dir);
+    return fire_bow(head, part, dir, 0, part->x, part->y);
 
 }
 
@@ -1915,6 +1917,9 @@ int can_detect_enemy (object *op, object *enemy, rv_vector *rv) {
  */
 
 int stand_in_light( object *op) {
+    sint16 nx,ny;
+    mapstruct *m;
+
 
     if(!op) return 0;
     if(op->glow_radius) return 1;
@@ -1929,9 +1934,13 @@ int stand_in_light( object *op) {
 	 */
 	for (x = op->x - MAX_LIGHT_RADII; x< op->x + MAX_LIGHT_RADII; x++) {
 	    for (y = op->y - MAX_LIGHT_RADII; y< op->y + MAX_LIGHT_RADII; y++) {
-		if (out_of_map(op->map, x, y)) continue;
+		m = op->map;
+		nx = x;
+		ny = y;
 
-		if (GET_MAP_LIGHT(op->map, x, y) > MAX(abs(x - op->x), abs(y - op->y))) return 1;
+		if (get_map_flags(m, &m, nx, ny, &nx, &ny) & P_OUT_OF_MAP) continue;
+
+		if (GET_MAP_LIGHT(m, nx, ny) > MAX(abs(x - op->x), abs(y - op->y))) return 1;
 	    }
 	}
     }

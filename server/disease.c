@@ -223,24 +223,35 @@ object * find_symptom(object *disease) {
   
 /*  searches around for more victims to infect */
 int check_infection(object *disease) {
-  int x,y,i,j,range;
-  struct mapdef *map;
-  object *tmp;
+    int x,y,range, mflags;;
+    struct mapdef *map;
+    object *tmp;
+    sint16 i,j;
 
-  range = abs(disease->magic);
-  if(disease->env) { x = disease->env->x; y = disease->env->y;map=disease->env->map;}
-  else { x = disease->x; y = disease->y; map = disease->map; };
+    range = abs(disease->magic);
+    if(disease->env) { 
+	x = disease->env->x;
+	y = disease->env->y;
+	map=disease->env->map;
+    }
+    else { 
+	x = disease->x;
+	y = disease->y;
+	map = disease->map;
+    }
 
-  if(map == NULL) return 0;
-  for(i=x-range;i<x+range;i++) {
-	 for(j=y-range;j<y+range;j++) {
-		if(!out_of_map(map,i,j))
-		  for(tmp=get_map_ob(map,i,j);tmp;tmp=tmp->above) {
-			 infect_object(tmp,disease,0);
-		  }
-	 }
-  }
-  return 1;
+    if(map == NULL) return 0;
+    for(i=x-range;i<x+range;i++) {
+	for(j=y-range;j<y+range;j++) {
+	    mflags = get_map_flags(map,&map, i,j, &i, &j);
+	    if (!(mflags & P_OUT_OF_MAP) && (mflags & P_IS_ALIVE)) {
+		for(tmp=get_map_ob(map,i,j);tmp;tmp=tmp->above) {
+		    infect_object(tmp,disease,0);
+		}
+	    }
+	}
+    }
+    return 1;
 }
 
 

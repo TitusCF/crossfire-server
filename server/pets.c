@@ -40,7 +40,8 @@
 
 object *get_pet_enemy(object * pet, rv_vector *rv){
     object *owner, *tmp, *attacker, *tmp3;
-    int i,x,y;
+    int i;
+    sint16 x,y;
     mapstruct *nm;
     int search_arr[SIZEOFFREE];
 
@@ -108,17 +109,16 @@ object *get_pet_enemy(object * pet, rv_vector *rv){
     for (i = 0; i < SIZEOFFREE; i++) {
 	x = owner->x + freearr_x[search_arr[i]];
         y = owner->y + freearr_y[search_arr[i]];
-	if (out_of_map(owner->map, x, y)) continue;
-	else {
-	    nm = get_map_from_coord(owner->map, &x, &y);
-	    /* Only look on the space if there is something alive there. */
-	    if (GET_MAP_FLAGS(nm, x,y)&P_IS_ALIVE) {
-		for (tmp = get_map_ob(nm, x, y); tmp != NULL; tmp = tmp->above) {
-		    object *tmp2 = tmp->head == NULL?tmp:tmp->head;
-		    if (QUERY_FLAG(tmp2,FLAG_ALIVE) && !QUERY_FLAG(tmp2,FLAG_FRIENDLY)
-			&& !QUERY_FLAG(tmp2,FLAG_UNAGGRESSIVE) && tmp2 != pet && 
-			tmp2 != owner && tmp2->type != PLAYER &&
-			can_detect_enemy(pet, tmp2, rv)) {
+	nm = owner->map;
+	/* Only look on the space if there is something alive there. */
+	if (get_map_flags(nm, &nm, x, y, &x, &y) & P_IS_ALIVE) {
+	    for (tmp = get_map_ob(nm, x, y); tmp != NULL; tmp = tmp->above) {
+		object *tmp2 = tmp->head == NULL?tmp:tmp->head;
+
+		if (QUERY_FLAG(tmp2,FLAG_ALIVE) && !QUERY_FLAG(tmp2,FLAG_FRIENDLY)
+		    && !QUERY_FLAG(tmp2,FLAG_UNAGGRESSIVE) && tmp2 != pet && 
+		    tmp2 != owner && tmp2->type != PLAYER &&
+		    can_detect_enemy(pet, tmp2, rv)) {
 
 			if (!can_see_enemy(pet, tmp2)) {
 			    if (tmp3 != NULL)
@@ -130,10 +130,9 @@ object *get_pet_enemy(object * pet, rv_vector *rv){
 			    else
 				pet->enemy = NULL;
 			}
-		    } /* if this is a valid enemy */
-		} /* for objects on this space */
-	    } /* if there is something living on this space */
-	} /* this is a valid space on the map */
+		}/* if this is a valid enemy */
+	    }/* for objects on this space */
+	}/* if there is something living on this space */
     } /* for loop of spaces around the owner */
 
     /* fine, we went through the whole loop and didn't find one we could
@@ -175,18 +174,17 @@ object *get_pet_enemy(object * pet, rv_vector *rv){
 	for (i = 0; i < SIZEOFFREE; i++) {
 	    x = pet->x + freearr_x[search_arr[i]];
 	    y = pet->y + freearr_y[search_arr[i]];
-	    if (out_of_map(pet->map, x, y)) continue;
-	    else {
-		nm = get_map_from_coord(pet->map, &x, &y);
-		/* Only look on the space if there is something alive there. */
-		if (GET_MAP_FLAGS(nm, x,y)&P_IS_ALIVE) {
-		    for (tmp = get_map_ob(nm, x, y); tmp != NULL; tmp = tmp->above) {
-			object *tmp2 = tmp->head == NULL?tmp:tmp->head;
-			if (QUERY_FLAG(tmp2,FLAG_ALIVE) &&
-			    !QUERY_FLAG(tmp2,FLAG_FRIENDLY)
-			    && !QUERY_FLAG(tmp2,FLAG_UNAGGRESSIVE) &&
-			    tmp2 != pet && tmp2 != owner && tmp2->type != PLAYER &&
-			    can_detect_enemy(pet, tmp2, rv)) {
+	    nm = pet->map;
+	    /* Only look on the space if there is something alive there. */
+	    if (get_map_flags(nm, &nm, x,y, &x, &y) & P_IS_ALIVE) {
+		for (tmp = get_map_ob(nm, x, y); tmp != NULL; tmp = tmp->above) {
+		    object *tmp2 = tmp->head == NULL?tmp:tmp->head;
+
+		    if (QUERY_FLAG(tmp2,FLAG_ALIVE) &&
+			!QUERY_FLAG(tmp2,FLAG_FRIENDLY)
+			&& !QUERY_FLAG(tmp2,FLAG_UNAGGRESSIVE) &&
+			tmp2 != pet && tmp2 != owner && tmp2->type != PLAYER &&
+			can_detect_enemy(pet, tmp2, rv)) {
 
 			    if (!can_see_enemy(pet, tmp2)) {
 				if (tmp3 != NULL)
@@ -198,10 +196,9 @@ object *get_pet_enemy(object * pet, rv_vector *rv){
 				else
 				    pet->enemy = NULL;
 			    }
-			} /* make sure we can get to the bugger */
-		    } /* for objects on this space */
-		} /* if there is something living on this space */
-	    } /* this is a valid space on the map */
+		    } /* make sure we can get to the bugger */
+		}/* for objects on this space */
+	    } /* if there is something living on this space */
 	} /* for loop of spaces around the pet */
     } /* pet in defence mode */
 
@@ -320,7 +317,7 @@ void pet_move(object * ob)
 	    dir = rndm(1, 8);
 	    dx = ob->x + freearr_x[dir];
 	    dy = ob->y + freearr_y[dir];
-	    if (out_of_map(owner->map, dx, dy) || wall(owner->map, dx, dy))
+	    if (get_map_flags(owner->map, NULL, dx, dy, NULL, NULL) & (P_WALL | P_OUT_OF_MAP))
 		continue;
 	    else
 		break;

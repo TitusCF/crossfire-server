@@ -67,10 +67,6 @@ int maxfree[SIZEOFFREE]=
 int freedir[SIZEOFFREE]= {
   0,1,2,3,4,5,6,7,8,1,2,2,2,3,4,4,4,5,6,6,6,7,8,8,8,
   1,2,2,2,2,2,3,4,4,4,4,4,5,6,6,6,6,6,7,8,8,8,8,8};
-int rightof_x[9]= {0,  1, -1,  0, -1, -1,  1,  0,  1};
-int rightof_y[9]= {0,  0, -1, -1,  1,  0,  1,  1, -1};
-int leftof_x[9] = {0, -1,  1,  0,  1,  1, -1,  0, -1};
-int leftof_y[9] = {0,  0,  1,  1, -1,  0, -1, -1,  1};
 
 /* Moved this out of define.h and in here, since this is the only file
  * it is used in.  Also, make it an inline function for cleaner
@@ -902,7 +898,7 @@ void update_object(object *op, int action) {
  */
 
 void free_object(object *ob) {
-  object *tmp,*op;
+    object *tmp,*op;
 
     if (!QUERY_FLAG(ob,FLAG_REMOVED)) {
 	LOG(llevDebug,"Free object called with non removed object\n");
@@ -911,89 +907,73 @@ void free_object(object *ob) {
 	abort();
 #endif
     }
-  if(QUERY_FLAG(ob,FLAG_FRIENDLY)) {
-    LOG(llevMonster,"Warning: tried to free friendly object.\n");
-    remove_friendly_object(ob);
-  }
-  if(QUERY_FLAG(ob,FLAG_FREED)) {
-    dump_object(ob);
-    LOG(llevError,"Trying to free freed object.\n%s\n",errmsg);
-    return;
-  }
-  if(ob->more!=NULL) {
-    free_object(ob->more);
-    ob->more=NULL;
-  }
-  if (ob->inv) {
-    if (ob->map==NULL || ob->map->in_memory!=MAP_IN_MEMORY ||
-       wall(ob->map,ob->x,ob->y))
-    {
-      op=ob->inv;
-      while(op!=NULL) {
-        tmp=op->below;
-        remove_ob(op);
-        free_object(op);
-        op=tmp;
-      }
+    if(QUERY_FLAG(ob,FLAG_FRIENDLY)) {
+	LOG(llevMonster,"Warning: tried to free friendly object.\n");
+	remove_friendly_object(ob);
+    }
+    if(QUERY_FLAG(ob,FLAG_FREED)) {
+	dump_object(ob);
+	LOG(llevError,"Trying to free freed object.\n%s\n",errmsg);
+	return;
+    }
+    if(ob->more!=NULL) {
+	free_object(ob->more);
+	ob->more=NULL;
+    }
+    if (ob->inv) {
+	if (ob->map==NULL || ob->map->in_memory!=MAP_IN_MEMORY ||
+	    (get_map_flags(ob->map, NULL, ob->x, ob->y, NULL, NULL) & P_NO_PASS))
+	{
+	    op=ob->inv;
+	    while(op!=NULL) {
+		tmp=op->below;
+		remove_ob(op);
+		free_object(op);
+		op=tmp;
+	    }
+	}
+	else {	/* Put objects in inventory onto this space */
+	    op=ob->inv;
+	    while(op!=NULL) {
+		tmp=op->below;
+		remove_ob(op);
+		if(QUERY_FLAG(op,FLAG_STARTEQUIP)||QUERY_FLAG(op,FLAG_NO_DROP) ||
+		   op->type==RUNE)
+		free_object(op);
+		else {
+		    op->x=ob->x;
+		    op->y=ob->y;
+		    insert_ob_in_map(op,ob->map,NULL,0); /* Insert in same map as the envir */
+		}
+		op=tmp;
+	    }
+	}
+    }
+    /* Remove object from the active list */
+    ob->speed = 0;
+    update_ob_speed(ob);
+
+    SET_FLAG(ob, FLAG_FREED);
+    ob->count = 0;
+
+    /* Remove this object from the list of used objects */
+    if(ob->prev==NULL) {
+	objects=ob->next;
+	if(objects!=NULL)
+	    objects->prev=NULL;
     }
     else {
-      op=ob->inv;
-      while(op!=NULL) {
-        tmp=op->below;
-        remove_ob(op);
-        if(QUERY_FLAG(op,FLAG_STARTEQUIP)||QUERY_FLAG(op,FLAG_NO_DROP) ||
-	  op->type==RUNE)
-          free_object(op);
-        else {
-          op->x=ob->x,op->y=ob->y;
-          insert_ob_in_map(op,ob->map,NULL,0); /* Insert in same map as the envir */
-        }
-        op=tmp;
-      }
+	ob->prev->next=ob->next;
+	if(ob->next!=NULL)
+	    ob->next->prev=ob->prev;
     }
-  }
-  /* Remove object from the active list */
-  ob->speed = 0;
-  update_ob_speed(ob);
-
-  SET_FLAG(ob, FLAG_FREED);
-  ob->count = 0;
-  /* First free the object from the used objects list: */
-  if(ob->prev==NULL) {
-    objects=ob->next;
-    if(objects!=NULL)
-      objects->prev=NULL;
-  }
-  else {
-    ob->prev->next=ob->next;
-    if(ob->next!=NULL)
-      ob->next->prev=ob->prev;
-  }
   
-  if(ob->name!=NULL) {
-    free_string(ob->name);
-    ob->name=NULL;
-  }
-  if(ob->name_pl!=NULL) {
-    free_string(ob->name_pl);
-    ob->name_pl=NULL;
-  }
-  if(ob->title!=NULL) {
-    free_string(ob->title);
-    ob->title=NULL;
-  }
-  if(ob->race!=NULL) {
-    free_string(ob->race);
-    ob->race=NULL;
-  }
-  if(ob->slaying!=NULL) {
-    free_string(ob->slaying);
-    ob->slaying=NULL;
-  }
-  if(ob->msg!=NULL) {
-    free_string(ob->msg);
-    ob->msg=NULL;
-  }
+    if(ob->name!=NULL) FREE_AND_CLEAR_STR(ob->name);
+    if(ob->name_pl!=NULL) FREE_AND_CLEAR_STR(ob->name_pl);
+    if(ob->title!=NULL) FREE_AND_CLEAR_STR(ob->title);
+    if(ob->race!=NULL) FREE_AND_CLEAR_STR(ob->race);
+    if(ob->slaying!=NULL) FREE_AND_CLEAR_STR(ob->slaying);
+    if(ob->msg!=NULL) FREE_AND_CLEAR_STR(ob->msg);
 
 #if 0 /* MEMORY_DEBUG*/
     /* This is a nice idea.  Unfortunately, a lot of the code in crossfire
@@ -1008,15 +988,15 @@ void free_object(object *ob) {
      */
     free(ob);
 #else
-  /* Now link it with the free_objects list: */
-  ob->prev=NULL;
-  ob->next=free_objects;
-  if(free_objects!=NULL)
-    free_objects->prev=ob;
-  free_objects=ob;
-  nroffreeobjects++;
-#endif
 
+    /* Now link it with the free_objects list: */
+    ob->prev=NULL;
+    ob->next=free_objects;
+    if(free_objects!=NULL)
+	free_objects->prev=ob;
+    free_objects=ob;
+    nroffreeobjects++;
+#endif
 }
 
 /*
@@ -1349,15 +1329,14 @@ object *insert_ob_in_map (object *op, mapstruct *m, object *originator, int flag
     x = op->x;
     y = op->y;
     op->map=get_map_from_coord(m, &x, &y);
-    /* Ideally, the caller figures this out */
+    /* Ideally, the caller figures this out.  However, it complicates a lot
+     * of areas of callers (eg, anything that uses find_free_spot would now
+     * need extra work
+     */
     if (op->map != m) {
 	/* coordinates should not change unless map also changes */
 	op->x = x;
 	op->y = y;
-#if 0
-	LOG(llevDebug,"insert_ob_in_map not called with proper tiled map: %s != %s, orig coord = %d, %d\n",
-	    op->map->path, m->path, op->ox, op->oy);
-#endif
     }
 
     CLEAR_FLAG(op,FLAG_APPLIED); /* hack for fixing F_APPLIED in items of dead people */
@@ -1416,7 +1395,8 @@ object *insert_ob_in_map (object *op, mapstruct *m, object *originator, int flag
 	     * Need to find the object that in fact blocks view, otherwise
 	     * stacking is a bit odd.
 	     */
-	    if (!(flag & INS_ON_TOP) && blocks_view(op->map, op->x, op->y) && 
+	    if (!(flag & INS_ON_TOP) &&
+		(get_map_flags(op->map, NULL, op->x, op->y, NULL, NULL) & P_BLOCKSVIEW) && 
 		(op->face && !op->face->visibility)) {
 		for (last=top; last != floor; last=last->below)
 		    if QUERY_FLAG(last, FLAG_BLOCKSVIEW) break;
@@ -1932,23 +1912,32 @@ void set_cheat(object *op) {
  * Note - this only checks to see if there is space for the head of the
  * object - if it is a multispace object, this should be called for all
  * pieces.
+ * Note2: This function does correctly handle tiled maps, but does not
+ * inform the caller.  However, insert_ob_in_map will update as
+ * necessary, so the caller shouldn't need to do any special work.
  */
 
 int find_free_spot(archetype *at, mapstruct *m,int x,int y,int start,int stop) {
-  int i,index=0;
-  static int altern[SIZEOFFREE];
-  for(i=start;i<stop;i++) {
-    /* Surprised the out_of_map check was missing. Without it, we may
-     * end up accessing garbage, which may say a space is free
-     */
-    if (arch_out_of_map(at, m, x+freearr_x[i],y+freearr_y[i])) continue;
-    if(!arch_blocked(at,m,x+freearr_x[i],y+freearr_y[i]))
-      altern[index++]=i;
-    else if(wall(m,x+freearr_x[i],y+freearr_y[i])&&maxfree[i]<stop)
-      stop=maxfree[i];
-  }
-  if(!index) return -1;
-  return altern[RANDOM()%index];
+    int i,index=0, flag;
+    static int altern[SIZEOFFREE];
+
+    for(i=start;i<stop;i++) {
+	flag = arch_blocked(at,m,x+freearr_x[i],y+freearr_y[i]);
+	if(!flag)
+	    altern[index++]=i;
+	/* Basically, if we find a wall on a space, we cut down the search size.
+	 * In this way, we won't return spaces that are on another side of a wall.
+	 * This mostly work, but it cuts down the search size in all directions - 
+	 * if the space being examined only has a wall to the north and empty
+	 * spaces in all the other directions, this will reduce the search space
+	 * to only the spaces immediately surrounding the target area, and
+	 * won't look 2 spaces south of the target space.
+	 */
+	else if ((flag & P_NO_PASS) &&  maxfree[i]<stop)
+	    stop=maxfree[i];
+    }
+    if(!index) return -1;
+    return altern[RANDOM()%index];
 }
 
 /*
@@ -1959,13 +1948,12 @@ int find_free_spot(archetype *at, mapstruct *m,int x,int y,int start,int stop) {
  */
 
 int find_first_free_spot(archetype *at, mapstruct *m,int x,int y) {
-  int i;
-  for(i=0;i<SIZEOFFREE;i++) {
-    if (out_of_map(m,x+freearr_x[i],y+freearr_y[i])) continue;
-    if(!arch_blocked(at,m,x+freearr_x[i],y+freearr_y[i]))
-      return i;
-  }
-  return -1;
+    int i;
+    for(i=0;i<SIZEOFFREE;i++) {
+	if(!arch_blocked(at,m,x+freearr_x[i],y+freearr_y[i]))
+	    return i;
+    }
+    return -1;
 }
 
 /* new function to make monster searching more efficient, and effective! 
@@ -2071,32 +2059,40 @@ void get_search_arr(int *search_arr)
 /*
  * find_dir(map, x, y, exclude) will search some close squares in the
  * given map at the given coordinates for live objects.
- * It will not considered the object given as exlude among possible
+ * It will not considered the object given as exclude among possible
  * live objects.
  * It returns the direction toward the first/closest live object if finds
  * any, otherwise 0.
  */
 
 int find_dir(mapstruct *m, int x, int y, object *exclude) {
-  int i,max=SIZEOFFREE;
-  object *tmp;
-  if (exclude && exclude->head)
-    exclude = exclude->head;
+    int i,max=SIZEOFFREE, mflags;
+    sint16 nx, ny;
+    object *tmp;
+    mapstruct *mp;
 
-  for(i=1;i<max;i++) {
-    if(wall(m, x+freearr_x[i],y+freearr_y[i]))
-      max=maxfree[i];
-    else {
-      tmp=GET_MAP_OB(m,x+freearr_x[i],y+freearr_y[i]);
-      while(tmp!=NULL && ((tmp!=NULL&&!QUERY_FLAG(tmp,FLAG_MONSTER)&&
-	tmp->type!=PLAYER) || (tmp == exclude || 
-	(tmp->head && tmp->head == exclude))))
-	        tmp=tmp->above;
-      if(tmp!=NULL)
-        return freedir[i];
+    if (exclude && exclude->head)
+	exclude = exclude->head;
+
+    for(i=1;i<max;i++) {
+	mp = m;
+	nx = x + freearr_x[i];
+	ny = y + freearr_y[i];
+
+	mflags = get_map_flags(m, &mp, nx, ny, &nx, &ny);
+
+	if (mflags & P_WALL)
+	    max=maxfree[i];
+	else if (mflags & P_IS_ALIVE) {
+	    for (tmp=GET_MAP_OB(mp,nx,ny); tmp!= NULL; tmp=tmp->above) {
+		if ((QUERY_FLAG(tmp,FLAG_MONSTER) ||  tmp->type==PLAYER) &&
+		    (tmp != exclude ||(tmp->head && tmp->head != exclude))) break;
+	    }
+	    if(tmp)
+		return freedir[i];
+	}
     }
-  }
-  return 0;
+    return 0;
 }
 
 /*

@@ -214,7 +214,7 @@ int hit_map(object *op,int dir,int type) {
   map = op->map;
   x = op->x + freearr_x[dir];
   y = op->y + freearr_y[dir];
-  if (out_of_map (map, x, y))
+  if (get_map_flags(map, &map, x, y, &x, &y) & P_OUT_OF_MAP)
       return 0;
 
  /* peterm:  a few special cases for special attacktypes --counterspell
@@ -886,8 +886,8 @@ object *hit_with_arrow (object *op, object *victim)
 
         /* Else try to put arrow on victim's map square */
         if ((victim_x != hitter->x || victim_y != hitter->y)
-            && ! wall (hitter->map, victim_x, victim_y))
-        {
+            && !(get_map_flags(hitter->map, NULL, victim_x, victim_y, NULL, NULL) & P_WALL))
+	{
             remove_ob (hitter);
             hitter->x = victim_x;
             hitter->y = victim_y;

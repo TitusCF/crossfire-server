@@ -82,6 +82,7 @@ extern int nrofallocobjects,nroffreeobjects;
 #endif
 
 
+
 /*
  * Returns the mapstruct which has a name matching the given argument.
  * return NULL if no match is found.
@@ -259,63 +260,34 @@ void dump_all_maps() {
   }
 }
 
-/*
- * Returns true if a wall is present in a given location.
+/* This rolls up wall, blocks_magic, blocks_view, etc, all into
+ * one function that just returns a P_.. value (see map.h)
+ * it will also do map translation for tiled maps, returning
+ * new values into newmap, nx, and ny.  Any and all of those
+ * values can be null, in which case if a new map is needed (returned
+ * by a P_NEW_MAP value, another call to get_map_from_coord
+ * is needed.  The case of not passing values is if we're just
+ * checking for the existence of something on those spaces, but
+ * don't expect to insert/remove anything from those spaces.
  */
+int get_map_flags(mapstruct *oldmap, mapstruct **newmap, sint16 x, sint16 y, sint16 *nx, sint16 *ny)
+{
+    int newx, newy, retval=0;
+    mapstruct *mp;
 
-int wall(mapstruct *m, int x,int y) {
-    if (out_of_map(m,x,y))
-	return 1;
-    return (GET_MAP_FLAGS(m,x,y) & P_NO_PASS);
+    if (out_of_map(oldmap, x, y)) return P_OUT_OF_MAP;
+    newx = x;
+    newy = y;
+    mp = get_map_from_coord(oldmap, &newx, &newy);
+    if (mp != oldmap)
+	retval |= P_NEW_MAP;
+    if (newmap) *newmap = mp;
+    if (nx) *nx = newx;
+    if (ny) *ny = newy;
+    retval |= mp->spaces[newx + mp->width * newy].flags;
+    return retval;
 }
 
-/*
- * Returns true if it's impossible to see through the given coordinate
- * in the given map.
- */
-
-int blocks_view(mapstruct *m, int x, int y) {
-    mapstruct *nm;
-
-    nm = get_map_from_coord(m, &x, &y);
-    if(!nm)
-	return 1;
-    return (GET_MAP_FLAGS(nm,x,y) & P_BLOCKSVIEW);
-}
-
-/*
- * Returns true if the given coordinate in the given map blocks magic.
- */
-
-int blocks_magic(mapstruct *m, int x, int y) {
-    if(out_of_map(m,x,y))
-	return 1;
-    return (GET_MAP_FLAGS(m,x,y) & P_NO_MAGIC);
-
-}
-
-/*
- * Returns true if clerical spells cannot work here
- */
-int blocks_cleric(mapstruct *m, int x, int y) {
-    if(out_of_map(m,x,y))
-	return 1;
-    return (GET_MAP_FLAGS(m,x,y) & P_NO_CLERIC);
-}
-
-/*
- * Returns true if the given coordinate in the given map blocks passage.
- * either alive or no_pass means the space is blocked.
- */
-
-int blocked(mapstruct *m, int x, int y) {
-    if(out_of_map(m,x,y))
-	return 1;
-    if (OUT_OF_REAL_MAP(m,x,y))
-	m=get_map_from_coord(m,&x,&y);
-
-    return (GET_MAP_FLAGS(m,x,y) & (P_NO_PASS | P_IS_ALIVE));
-}
 
 /*
  * Returns true if the given coordinate is blocked by the
@@ -330,19 +302,24 @@ int blocked(mapstruct *m, int x, int y) {
 int blocked_link(object *ob, int x, int y) {
     object *tmp;
     mapstruct	*m;
+    sint16  sx, sy;
+    int mflags;
 
-    if(out_of_map(ob->map,x,y))
+    sx = x;
+    sy = y;
+    m = ob->map;
+
+    mflags = get_map_flags(m, &m, sx, sy, &sx, &sy);
+
+    if (mflags & P_OUT_OF_MAP)
 	return 1;
 
-    if (OUT_OF_REAL_MAP(ob->map,x,y))
-	m=get_map_from_coord(ob->map, &x, &y);
-    else m = ob->map;
 
     /* If space is currently not blocked by anything, no need to
      * go further.  Not true for players - all sorts of special
      * things we need to do for players.
      */
-    if (ob->type != PLAYER && ! (GET_MAP_FLAGS(m, x,y) & (P_NO_PASS | P_IS_ALIVE))) return 0;
+    if (ob->type != PLAYER && ! (mflags & (P_NO_PASS | P_IS_ALIVE))) return 0;
 
 
     if(ob->head != NULL)
@@ -384,81 +361,42 @@ int blocked_link(object *ob, int x, int y) {
     return 0;
 }
 
-#if 0
-/*
- * Eneq(@csd.uu.se): This is a new version of blocked, this one handles objects
- * that can be passed through by monsters with the CAN_PASS_THRU defined.
- * Returns 1 if the object can not pass through that space.
- * This is a fairly inefficient check - it needs to look at every object
- * on the space.  A call to blocked should be made first, and only if the
- * space is blocked should this function be called.
- */
-
-int blocked_two(object *op, int x,int y) {
-    object *tmp;
-    mapstruct *m;
-
-    if(out_of_map(op->map,x,y))
-	return 1;
-
-    m = get_map_from_coord(op->map, &x, &y);
-    if (!m) return 1;
-
-    for(tmp=GET_MAP_OB(m,x,y);tmp!=NULL;tmp=tmp->above){
-
-	/* I broke this into multiple if statements to make it
-	 * clearer.  Logic is the same, and a good compiler will take
-	 * care of any optimizations for us.
-	 */
-
-	/* Can not pass through doors */
-	if (QUERY_FLAG(tmp,FLAG_ALIVE) && tmp->type!=DOOR) return 1;
-
-
-	/* Can't get through this space */
-	if (QUERY_FLAG(tmp,FLAG_NO_PASS) && !QUERY_FLAG(tmp,FLAG_PASS_THRU))
-	    return 1;
-
-	/* slightly different than above case */
-	if (QUERY_FLAG(tmp,FLAG_NO_PASS) && QUERY_FLAG(tmp,FLAG_PASS_THRU) &&
-	    !QUERY_FLAG(op,FLAG_CAN_PASS_THRU)) return 1;
-    }
-    return 0;
-}
-#endif
 
 /*
  * Returns true if the given archetype can't fit in the given spot.
- * Unlike most of the above functions, this one does not check for
- * out_of_map status.  arch_out_of_map should be called before
- * this in all cases.
+ * This is meant for multi space objects - for single space objecs,
+ * just calling get_map_flags and checking the P_BLOCKED is
+ * sufficient.  This function goes through all the parts of the
+ * multipart object and makes sure they can be inserted.
+ *
+ * While this doesn't call out of map, the get_map_flags does.
+ *
+ * This function has been used to deprecate arch_out_of_map -
+ * this function also does that check, and since in most cases,
+ * a call to one would follow the other, doesn't make a lot of sense to
+ * have two seperate functions for this.
+ *
+ * This returns nonzero if this arch can not go on the space provided,
+ * 0 otherwise.  the return value will contain the P_.. value
+ * so the caller can know why this object can't go on the map.
+ * Note that callers should not expect P_NEW_MAP to be set
+ * in return codes - since the object is multispace - if
+ * we did return values, what do you return if half the object
+ * is one map, half on another.
  */
 
 int arch_blocked(archetype *at,mapstruct *m,int x,int y) {
     archetype *tmp;
+    int flag;
 
     if(at==NULL)
-	return blocked(m,x,y);
-    for(tmp=at;tmp!=NULL;tmp=tmp->more)
-	if(blocked(m,x+tmp->clone.x,y+tmp->clone.y))
-	    return 1;
-    return 0;
-}
+	return get_map_flags(m,NULL, x,y, NULL, NULL) & (P_BLOCKED | P_OUT_OF_MAP);
 
-/*
- * Returns true if the given archetype can't fit into the map at the
- * given spot (some part of it is outside the map-boundaries).
- */
-
-int arch_out_of_map(archetype *at,mapstruct *m,int x,int y) {
-    archetype *tmp;
-
-    if(at==NULL)
-	return out_of_map(m,x,y);
-
-    for(tmp=at;tmp!=NULL;tmp=tmp->more)
-	if(out_of_map(m,x+tmp->clone.x,y+tmp->clone.y))
-	    return 1;
+    for(tmp=at;tmp!=NULL;tmp=tmp->more) {
+	flag = get_map_flags(m, NULL, x+tmp->clone.x,y+tmp->clone.y, NULL, NULL);
+	if (flag & (P_BLOCKED | P_OUT_OF_MAP))
+	    return (flag & (P_BLOCKED | P_OUT_OF_MAP));
+    }
     return 0;
 }
 
@@ -468,7 +406,6 @@ int arch_out_of_map(archetype *at,mapstruct *m,int x,int y) {
  * The object 'container' is the object that contains the inventory.
  * This is needed so that we can update the containers weight.
  */
-
 
 void fix_container(object *container)
 {
@@ -700,14 +637,6 @@ mapstruct *get_linked_map() {
  */
 
 void allocate_map(mapstruct *m) {
-#if 0
-    /* These are obnoxious - presumably the caller of this function knows what it is
-     * doing.  Instead of checking for load status, lets check instead to see
-     * if the data has already been allocated.
-     */
-    if(m->in_memory != MAP_SWAPPED )
-	return;
-#endif
     m->in_memory = MAP_IN_MEMORY;
     /* Log this condition and free the storage.  We could I suppose
      * realloc, but if the caller is presuming the data will be intact,

@@ -788,7 +788,7 @@ void process_players1(mapstruct *map)
 		 * tick time so it will be about 10 seconds before we try and save
 		 * again.
 		 */
-		if (blocks_cleric(pl->ob->map, pl->ob->x, pl->ob->y)) {
+		if (get_map_flags(pl->ob->map, NULL, pl->ob->x, pl->ob->y, NULL, NULL) & P_NO_CLERIC) {
 		    pl->last_save_tick += 100;
 		} else {
 		    save_player(pl->ob,1);

@@ -68,7 +68,7 @@ void spell_failure(object *op, int failure,int power)
     { 
 	object *tmp;
 	/* Safety check to make sure we don't get any mana storms in scorn */
-	if (blocks_magic(op->map, op->x, op->y)) {
+	if (get_map_flags(op->map, NULL, op->x, op->y, NULL, NULL) & P_NO_MAGIC) {
 	    new_draw_info(NDI_UNIQUE, 0, op, "The magic warps and you are turned inside out!");
 	    hit_player(tmp,9998,op,AT_INTERNAL);
 
@@ -447,8 +447,9 @@ void polymorph(object *op, object *who) {
 
 int cast_polymorph(object *op, int dir) {
     object *tmp, *next;
-    int range;
+    int range, mflags;
     archetype *poly;
+    mapstruct *m;
 
     if(dir == 0)
 	return 0;
@@ -456,14 +457,17 @@ int cast_polymorph(object *op, int dir) {
     poly = find_archetype("polymorph");
     /* Range is until it hits a wall */
     for(range = 1;;range++) {
-	int x=op->x+freearr_x[dir]*range,y=op->y+freearr_y[dir]*range;
+	sint16 x=op->x+freearr_x[dir]*range,y=op->y+freearr_y[dir]*range;
 	object *image;
 
-	if(wall(op->map,x,y) || blocks_magic(op->map,x,y))
+	m = op->map;
+	mflags = get_map_flags(m, &m, x, y, &x, &y);
+
+	if (mflags & (P_WALL | P_NO_MAGIC))
 	    break;
 
 	/* Get the top most object */
-	for(tmp = get_map_ob(op->map,x,y); tmp != NULL && tmp->above != NULL;
+	for(tmp = get_map_ob(m,x,y); tmp != NULL && tmp->above != NULL;
 	    tmp = tmp->above);
 
 	/* Now start polymorphing the objects, top down */
@@ -481,7 +485,7 @@ int cast_polymorph(object *op, int dir) {
 	 */
 	image->stats.food += range;
 	image->speed_left = 0.1;
-	insert_ob_in_map(image,op->map,op,0);
+	insert_ob_in_map(image,m,op,0);
     }
     return 1;
 }
@@ -551,45 +555,64 @@ int cast_create_food(object *op,object *caster, int dir, char *stringarg)
   
   
 int cast_speedball(object *op, int dir, int type) {
-  object *spb;
-  if(blocked(op->map,op->x+freearr_x[dir],op->y+freearr_y[dir]))
-    return 0;
-  spb=clone_arch(SPEEDBALL);
-  spb->x=op->x+freearr_x[dir],spb->y=op->y+freearr_y[dir];
-  spb->speed_left= -0.1;
-  if(type==SP_LARGE_SPEEDBALL)
-    spb->stats.dam=30;
-  insert_ob_in_map(spb,op->map,op,0);
-  return 1;
+    object *spb;
+    mapstruct *m;
+    sint16 x, y;
+
+    x = op->x+freearr_x[dir];
+    y = op->y+freearr_y[dir];
+    m = op->map;
+
+    if (get_map_flags(m, &m, x, y, &x, &y) & (P_OUT_OF_MAP | P_BLOCKED))
+	return 0;
+
+    spb = clone_arch(SPEEDBALL);
+    spb->x = x;
+    spb->y = y;
+
+    spb->speed_left= -0.1;
+    if(type==SP_LARGE_SPEEDBALL)
+	spb->stats.dam=30;
+
+    insert_ob_in_map(spb,m,op,0);
+    return 1;
 }
 
 int probe(object *op, int dir) {
-  int r;
-  object *tmp;
+    int r, mflags;
+    object *tmp;
+    mapstruct *m;
 
-  if(!dir) {
-    examine_monster(op,op);
-    return 1;
-  }
-  for(r=1;;r++) {
-    int x=op->x+r*freearr_x[dir],y=op->y+r*freearr_y[dir];
-    if(out_of_map(op->map,x,y))
-      break;
-    if(blocks_magic(op->map,x,y)) {
-      new_draw_info(NDI_UNIQUE, 0,op,"Something blocks your magic.");
-      return 0;
+
+    if(!dir) {
+	examine_monster(op,op);
+	return 1;
     }
-    for(tmp=get_map_ob(op->map,x,y);tmp!=NULL;tmp=tmp->above)
-      if(QUERY_FLAG(tmp, FLAG_ALIVE)&&(tmp->type==PLAYER||QUERY_FLAG(tmp, FLAG_MONSTER))) {
-        new_draw_info(NDI_UNIQUE, 0,op,"You detect something.");
-        if(tmp->head!=NULL)
-          tmp=tmp->head;
-        examine_monster(op,tmp);
-        return 1;
-      }
-  }
-  new_draw_info(NDI_UNIQUE, 0,op,"You detect nothing.");
-  return 1;
+    for(r=1;;r++) {
+	sint16 x=op->x+r*freearr_x[dir],y=op->y+r*freearr_y[dir];
+
+	m = op->map;
+	mflags = get_map_flags(m, &m, x, y, &x, &y);
+
+	if (mflags & P_OUT_OF_MAP) break;
+
+	if (mflags & P_NO_MAGIC) {
+	    new_draw_info(NDI_UNIQUE, 0,op,"Something blocks your magic.");
+	    return 0;
+	}
+	if (mflags & P_IS_ALIVE) {
+	    for(tmp=get_map_ob(m,x,y);tmp!=NULL;tmp=tmp->above)
+		if(QUERY_FLAG(tmp, FLAG_ALIVE)&&(tmp->type==PLAYER||QUERY_FLAG(tmp, FLAG_MONSTER))) {
+		    new_draw_info(NDI_UNIQUE, 0,op,"You detect something.");
+		    if(tmp->head!=NULL)
+			tmp=tmp->head;
+		    examine_monster(op,tmp);
+		    return 1;
+		}
+	}
+    }
+    new_draw_info(NDI_UNIQUE, 0,op,"You detect nothing.");
+    return 1;
 }
 
 /* Makes the player or character invisible.
@@ -667,43 +690,47 @@ cast_earth2dust(object *op,object *caster) {
   return 1;
 }
 
-/* puts a 'WORD_OF_RECALL_' object in player */
-/* modified to work faster for higher level casters -- DAMN		*/
+/* puts a 'WORD_OF_RECALL_' object in player
+ * modified to work faster for higher level casters -- DAMN
+ */
 int cast_wor(object *op, object *caster) {
-  object *dummy;
+    object *dummy;
 
-  if(op->type!=PLAYER)
-    return 0;
-  if(blocks_magic(op->map,op->x,op->y)) {
-    new_draw_info(NDI_UNIQUE, 0,op,"Something blocks your spell.");
-    return 0;
-  }
-  dummy=get_archetype("force");
-  if(dummy == NULL){
-    new_draw_info(NDI_UNIQUE, 0,op,"Oops, program error!");
-    LOG(llevError,"get_object failed!\n");
-    return 0;
-  }
-  if(op->owner) op=op->owner; /* better insert the spell in the player */
-  dummy->speed = 0.002 * ((float)(SP_PARAMETERS[SP_WOR].bdur
+    if(op->type!=PLAYER)
+	return 0;
+
+    if(get_map_flags(op->map,NULL, op->x,op->y, NULL, NULL) & P_NO_CLERIC) {
+	new_draw_info(NDI_UNIQUE, 0,op,"Something blocks your spell.");
+	return 0;
+    }
+    dummy=get_archetype("force");
+    if(dummy == NULL){
+	new_draw_info(NDI_UNIQUE, 0,op,"Oops, program error!");
+	LOG(llevError,"get_object failed!\n");
+	return 0;
+    }
+    if(op->owner) op=op->owner; /* better insert the spell in the player */
+    dummy->speed = 0.002 * ((float)(SP_PARAMETERS[SP_WOR].bdur
 				 + SP_level_strength_adjust(op,caster,SP_WOR)));
-  update_ob_speed(dummy);
-  dummy->speed_left= -1;
-  dummy->type=WORD_OF_RECALL;
-  /* If we could take advantage of enter_player_savebed() here, it would be
-   * nice, but until the map load fails, we can't.
-   */
-  EXIT_PATH(dummy) = add_string(op->contr->savebed_map);
-  EXIT_X(dummy) = op->contr->bed_x;
-  EXIT_Y(dummy) = op->contr->bed_y;
+    update_ob_speed(dummy);
+    dummy->speed_left= -1;
+    dummy->type=WORD_OF_RECALL;
+    /* If we could take advantage of enter_player_savebed() here, it would be
+     * nice, but until the map load fails, we can't.
+     */
+    EXIT_PATH(dummy) = add_string(op->contr->savebed_map);
+    EXIT_X(dummy) = op->contr->bed_x;
+    EXIT_Y(dummy) = op->contr->bed_y;
   
-  (void) insert_ob_in_ob(dummy,op);
-  new_draw_info(NDI_UNIQUE, 0,op,"You feel a force starting to build up inside you.");
-  LOG(llevDebug,"Word of Recall for %s in %f ticks.\n", op->name,
+    (void) insert_ob_in_ob(dummy,op);
+    new_draw_info(NDI_UNIQUE, 0,op,"You feel a force starting to build up inside you.");
+#if 0
+    LOG(llevDebug,"Word of Recall for %s in %f ticks.\n", op->name,
       ((-dummy->speed_left)/(dummy->speed==0?0.0001:dummy->speed)));
-  LOG(llevDebug,"Word of Recall for player level %d, caster level %d: 0.002 * %d + %d\n",
+    LOG(llevDebug,"Word of Recall for player level %d, caster level %d: 0.002 * %d + %d\n",
       SK_level(op), SK_level(caster), SP_PARAMETERS[SP_WOR].bdur, SP_level_strength_adjust(op,caster,SP_WOR));
-  return 1;
+#endif
+    return 1;
 }
 
 int cast_wow(object *op, int dir, int ability, SpellTypeFrom item) {
@@ -1032,12 +1059,19 @@ int cast_destruction(object *op, object *caster, int dam, int attacktype) {
 int magic_wall(object *op,object *caster,int dir,int spell_type) {
     object *tmp, *tmp2;  
     int i,posblocked=0,negblocked=0;
+    sint16 x, y;
+    mapstruct *m;
+
 
     if(!dir) {
 	new_draw_info(NDI_UNIQUE, 0,op,"In what direction?");
 	return 0;
     }
-    if(blocked(op->map,op->x+freearr_x[dir],op->y+freearr_y[dir])) {
+    m = op->map;
+    x = op->x+freearr_x[dir];
+    y = op->y+freearr_y[dir];
+
+    if (get_map_flags(m, &m, x, y, &x, &y) & (P_OUT_OF_MAP | P_BLOCKED)) {
 	new_draw_info(NDI_UNIQUE, 0,op,"Something is in the way.");
 	return 0;
     }
@@ -1127,45 +1161,53 @@ int magic_wall(object *op,object *caster,int dir,int spell_type) {
 	    LOG(llevError,"Unimplemented magic_wall spell: %d\n",spell_type);
 	    return 0;
     }
-    tmp->x=op->x+freearr_x[dir],tmp->y=op->y+freearr_y[dir];
-    if ((tmp = insert_ob_in_map (tmp, op->map, op,0)) == NULL) {
+    tmp->x = x;
+    tmp->y = y;
+
+    if ((tmp = insert_ob_in_map (tmp, m, op,0)) == NULL) {
 	new_draw_info(NDI_UNIQUE, 0,op,"Something destroys your wall");
 	return 0;
     }
 
-  /*  This code causes the wall to extend to a distance of 5 in
-		each direction, or until an obstruction is encountered. 
-		posblocked and negblocked help determine how far the
-		created wall can extend, it won't go extend through
-		blocked spaces.  */
+    /*  This code causes the wall to extend to a distance of 5 in
+     * each direction, or until an obstruction is encountered. 
+     * posblocked and negblocked help determine how far the
+     * created wall can extend, it won't go extend through
+     * blocked spaces.
+     */
 
     for(i=1;i<5;i++) {
-	 int x,y,dir2;
+	int dir2;
 	 
-	 dir2 = (dir<4)?(dir+2):dir-2;
+	dir2 = (dir<4)?(dir+2):dir-2;
 	 
-	 x = tmp->x+i*freearr_x[dir2]; y = tmp->y+i*freearr_y[dir2];
-	 if(!blocked(op->map,x,y)&&!posblocked) {
-		tmp2 = get_object();
-		copy_object(tmp,tmp2);
-		tmp2->x = x; tmp2->y = y;
-		insert_ob_in_map(tmp2,op->map,op,0);
-	 } else posblocked=1;
-	 x = tmp->x-i*freearr_x[dir2]; y = tmp->y-i*freearr_y[dir2];
-	 if(!blocked(op->map,x,y)&&!negblocked) {
-		tmp2 = get_object();
-		copy_object(tmp,tmp2);
-		tmp2->x = x; tmp2->y = y;
-		insert_ob_in_map(tmp2,op->map,op,0);
-	 } else negblocked=1;
-    }
+	x = tmp->x+i*freearr_x[dir2]; 
+	y = tmp->y+i*freearr_y[dir2];
 
+	if(!(get_map_flags(m, &m, x, y, &x, &y) & (P_OUT_OF_MAP | P_BLOCKED)) && !posblocked) {
+	    tmp2 = get_object();
+	    copy_object(tmp,tmp2);
+	    tmp2->x = x; tmp2->y = y;
+	    insert_ob_in_map(tmp2,m,op,0);
+	} else posblocked=1;
+
+	x = tmp->x-i*freearr_x[dir2];
+	y = tmp->y-i*freearr_y[dir2];
+	m = tmp->map;
+
+	if(!(get_map_flags(m, &m, x, y, &x, &y) & (P_OUT_OF_MAP | P_BLOCKED)) && !negblocked) {
+	    tmp2 = get_object();
+	    copy_object(tmp,tmp2);
+	    tmp2->x = x; tmp2->y = y;
+	    insert_ob_in_map(tmp2,m,op,0);
+	} else negblocked=1;
+
+    }
 
     if(QUERY_FLAG(tmp, FLAG_BLOCKSVIEW))
 	update_all_los(op->map, op->x, op->y);
-    if(op->type==PLAYER)
-	draw(op);
-    else
+
+    if(op->type!=PLAYER)
 	SET_FLAG(op, FLAG_SCARED); /* We don't want them to walk through the wall! */
     return 1;
 }
@@ -1175,51 +1217,58 @@ int magic_wall(object *op,object *caster,int dir,int spell_type) {
  */
 
 int cast_light(object *op,object *caster,int dir) {
-  object *target=NULL,*tmp=NULL;
-  int x,y,dam=SP_PARAMETERS[SP_LIGHT].bdam    
-                  +SP_level_dam_adjust(op,caster,SP_LIGHT);;
+    object  *target=NULL,*tmp=NULL;
+    sint16  x,y;
+    int	    dam, mflags;
+    mapstruct *m;
 
-  if(!dir) {
-    new_draw_info(NDI_UNIQUE, 0,op,"In what direction?");
-    return 0;
-  }
+    dam = SP_PARAMETERS[SP_LIGHT].bdam + SP_level_dam_adjust(op,caster,SP_LIGHT);
 
-  x=op->x+freearr_x[dir],y=op->y+freearr_y[dir];
+    if(!dir) {
+	new_draw_info(NDI_UNIQUE, 0,op,"In what direction?");
+	return 0;
+    }
 
-  if (!out_of_map(op->map,x,y)) {
-    for(target=get_map_ob(op->map,x,y);target;target=target->above)
-     if(QUERY_FLAG(target,FLAG_MONSTER)) {
-        /* coky doky. got a target monster. Lets make a blinding attack */
-         if(target->head) target = target->head;
-         (void) hit_player(target,dam,op,(AT_BLIND|AT_MAGIC));
-         return 1; /* one success only! */
-      }
-  }
+    x=op->x+freearr_x[dir];
+    y=op->y+freearr_y[dir];
+    m = op->map;
 
-  /* no live target, perhaps a wall is in the way? */
-  if(blocked(op->map,x,y)) {
-      new_draw_info(NDI_UNIQUE, 0,op,"Something is in the way.");
-      return 0;
-  }
-  /* ok, looks groovy to just insert a new light on the map */
-  tmp=get_archetype("light");
-  if(!tmp) { 
+    mflags = get_map_flags(m, &m, x, y, &x, &y);
+
+    if (!(mflags & P_OUT_OF_MAP) && (mflags & P_IS_ALIVE)) {
+	for(target=get_map_ob(m,x,y);target;target=target->above)
+	    if(QUERY_FLAG(target,FLAG_MONSTER)) {
+		/* oky doky. got a target monster. Lets make a blinding attack */
+		if(target->head) target = target->head;
+		(void) hit_player(target,dam,op,(AT_BLIND|AT_MAGIC));
+		return 1; /* one success only! */
+	    }
+    }
+
+    /* no live target, perhaps a wall is in the way? */
+    if(mflags & P_BLOCKED) {
+	new_draw_info(NDI_UNIQUE, 0,op,"Something is in the way.");
+	return 0;
+    }
+
+    /* ok, looks groovy to just insert a new light on the map */
+    tmp=get_archetype("light");
+    if(!tmp) { 
 	LOG(llevError,"Error: spell arch for cast_light() missing.\n");
 	return 0;
-  }
-  tmp->speed = 0.000001 * (SP_PARAMETERS[SP_LIGHT].bdur
+    }
+    tmp->speed = 0.000001 * (SP_PARAMETERS[SP_LIGHT].bdur
               - (10*SP_level_strength_adjust(op,caster,SP_LIGHT)));
-  if (tmp->speed < MIN_ACTIVE_SPEED) tmp->speed = MIN_ACTIVE_SPEED;
-  tmp->glow_radius=dam;
-  tmp->x=x,tmp->y=y;
-  insert_ob_in_map(tmp,op->map,op,0);
-
-  if(op->type==PLAYER) draw(op);
-  return 1;
+    if (tmp->speed < MIN_ACTIVE_SPEED) tmp->speed = MIN_ACTIVE_SPEED;
+    tmp->glow_radius=dam;
+    tmp->x=x;
+    tmp->y=y;
+    insert_ob_in_map(tmp,m,op,0);
+    return 1;
 }
 
 int dimension_door(object *op,int dir) {
-    int dist;
+    int dist, maxdist;
 
     if(op->type!=PLAYER)
 	return 0;
@@ -1229,59 +1278,67 @@ int dimension_door(object *op,int dir) {
 	return 0;
     }
 
+    /* Given the new outdoor maps, can't let players dimension door for
+     * ever, so put limits in.
+     */
+    maxdist = SP_PARAMETERS[SP_D_DOOR].bdur +
+	SP_level_strength_adjust(op, op, SP_D_DOOR);
+
     if(op->contr->count) {
+	if (op->contr->count > maxdist) {
+	    new_draw_info(NDI_UNIQUE, 0, op, "You can't dimension door that far!");
+	    return 0;
+	}
+
 	for(dist=0;dist<op->contr->count; dist++)
-	    if (blocks_magic(op->map,op->x+freearr_x[dir]*(dist+1),
-                             op->y+freearr_y[dir]*(dist+1))) break;
+	    if (get_map_flags(op->map, NULL, 
+		op->x+freearr_x[dir]*(dist+1), op->y+freearr_y[dir]*(dist+1),
+		NULL, NULL) & P_NO_MAGIC) break;
 
 	if(dist<op->contr->count) {
-	    new_draw_info(NDI_UNIQUE, 0,op,"Something blocks your magic.\n");
+	    new_draw_info(NDI_UNIQUE, 0,op,"Something blocks the magic of the spell.\n");
 	    op->contr->count=0;
 	    return 0;
 	}
 	op->contr->count=0;
 
-	/* If the player is trying to dimension door to solid rock, choose
-	 * a random place on the map to put the player.
-	 * Changed in 0.94.3 so that the player can not get put in
-	 * a no magic spot.
+	/* Remove code that puts player on random space on maps.  IMO,
+	 * a lot of maps probably have areas the player should not get to,
+	 * but may not be marked as NO_MAGIC (as they may be bounded
+	 * by such squares).  Also, there are probably treasure rooms and
+	 * lots of other maps that protect areas with no magic, but the
+	 * areas themselves don't contain no magic spaces.
 	 */
-	if(blocked(op->map,op->x+freearr_x[dir]*dist, op->y+freearr_y[dir]*dist)){
-	    int x=rndm(0, MAP_WIDTH(op->map)-1),y=rndm(0, MAP_HEIGHT(op->map)-1);
-
-	    if(blocked(op->map,x,y) || blocks_magic(op->map,x,y)) {
+	if(get_map_flags(op->map, NULL, 
+	    op->x+freearr_x[dir]*dist, op->y+freearr_y[dir]*dist,
+	    NULL, NULL) & P_BLOCKED) {
 		new_draw_info(NDI_UNIQUE, 0,op,"You cast your spell, but nothing happens.\n");
 		return 1; /* Maybe the penalty should be more severe... */
-	    }
-
-	    remove_ob(op);
-	    op->x=x,op->y=y;
-	    if ((op = insert_ob_in_map(op,op->map,op,0)) != NULL) {
-		/* I believe that currently, this will always be true as
-		 * only players can use dimension door, but might as
-		 * well be safe.  comment out call to draw - the main
-		 * update loop will figure it out.
-		 */
-		if( op->type == PLAYER)
-		    MapNewmapCmd(op->contr);
-/*	        draw(op);*/
-	    }
-	    return 1;
 	}
-    } else { /* Player didn't specify a distance, so lets see how far
-	      * we can move the player.
-	      */
-	for(dist=0;!blocks_view (op->map,op->x+freearr_x[dir]*(dist+1),
-                                     op->y+freearr_y[dir]*(dist+1))&&
-               !blocks_magic(op->map,op->x+freearr_x[dir]*(dist+1),
-                                     op->y+freearr_y[dir]*(dist+1));
-	    dist++);
+    } else { 
+	/* Player didn't specify a distance, so lets see how far
+	 * we can move the player.  Don't know why this stopped on
+	 * spaces that blocked the players view.
+	 */
+
+	for(dist=1; dist <= maxdist; dist++)
+	    if (get_map_flags(op->map, NULL, 
+	      op->x+freearr_x[dir] * dist, 
+	      op->y+freearr_y[dir] * dist,
+	      NULL, NULL) & P_NO_MAGIC) {
+		dist--;
+		break;
+	    }
 
 	/* If the destinate is blocked, keep backing up until we
 	 * find a place for the player.
 	 */
-	for(;dist>0&&blocked(op->map,op->x+freearr_x[dir]*dist,
-                                 op->y+freearr_y[dir]*dist);dist--);
+	for(;dist>0; dist--)
+	    if ((get_map_flags(op->map,NULL, 
+	      op->x+freearr_x[dir]*dist,
+	      op->y+freearr_y[dir]*dist,
+	      NULL, NULL) & P_BLOCKED) ==0) 
+		break;
 
 	if(!dist) {
 	    new_draw_info(NDI_UNIQUE, 0,op,"Your spell failed!\n");
@@ -1291,13 +1348,13 @@ int dimension_door(object *op,int dir) {
 
     /* Actually move the player now */
     remove_ob(op);
-    op->x+=freearr_x[dir]*dist,op->y+=freearr_y[dir]*dist;
+    op->x+=freearr_x[dir]*dist;
+    op->y+=freearr_y[dir]*dist;
     if ((op = insert_ob_in_map(op,op->map,op,0)) == NULL)
         return 1;
 
-    if( op->type == PLAYER)
-	MapNewmapCmd(op->contr);
-/*    draw(op);*/
+    if (op->type == PLAYER)
+    MapNewmapCmd(op->contr);
     op->speed_left= -FABS(op->speed)*5; /* Freeze them for a short while */
     return 1;
 }
@@ -1856,23 +1913,24 @@ int summon_pet(object *op, int dir, SpellTypeFrom item) {
 }
 
 int create_bomb(object *op,object *caster,int dir,int spell_type,char *name) {
-  object *tmp;
-  int dx=op->x+freearr_x[dir],dy=op->y+freearr_y[dir];
-  if(wall(op->map,dx,dy)) {
-    new_draw_info(NDI_UNIQUE, 0,op,"There is something in the way.");
-    return 0;
-  }
-  tmp=get_archetype(name);
+    object *tmp;
+    int dx=op->x+freearr_x[dir],dy=op->y+freearr_y[dir];
 
-  /*  level dependencies for bomb  */
-  tmp->stats.dam=SP_PARAMETERS[spell_type].bdam + SP_level_dam_adjust(op,caster,spell_type);
-  tmp->stats.hp=SP_PARAMETERS[spell_type].bdur + SP_level_strength_adjust(op,caster,spell_type);
-  tmp->level = casting_level (caster, spell_type);
+    if(get_map_flags(op->map,NULL, dx,dy, NULL,NULL) & (P_OUT_OF_MAP | P_WALL)) {
+	new_draw_info(NDI_UNIQUE, 0,op,"There is something in the way.");
+	return 0;
+    }
+    tmp=get_archetype(name);
 
-  set_owner(tmp,op);
-  tmp->x=dx,tmp->y=dy;
-  insert_ob_in_map(tmp,op->map,op,0);
-  return 1;
+    /*  level dependencies for bomb  */
+    tmp->stats.dam=SP_PARAMETERS[spell_type].bdam + SP_level_dam_adjust(op,caster,spell_type);
+    tmp->stats.hp=SP_PARAMETERS[spell_type].bdur + SP_level_strength_adjust(op,caster,spell_type);
+    tmp->level = casting_level (caster, spell_type);
+
+    set_owner(tmp,op);
+    tmp->x=dx,tmp->y=dy;
+    insert_ob_in_map(tmp,op->map,op,0);
+    return 1;
 }
 
 void animate_bomb(object *op) {
@@ -1931,20 +1989,21 @@ int fire_cancellation(object *op,int dir,archetype *at, int magic) {
 }
 
 void move_cancellation(object *op) {
-  remove_ob(op);
-  op->x+=DIRX(op),op->y+=DIRY(op);
-  if(!op->direction||wall(op->map,op->x,op->y)) {
-    free_object(op);
-    return;
-  }
-  if(reflwall(op->map,op->x,op->y, op)) {
+    remove_ob(op);
 
-    op->direction=absdir(op->direction+4);
-    insert_ob_in_map(op,op->map,op,0);
-    return;
-  }
-  if ((op = insert_ob_in_map (op, op->map, op,0)) != NULL)
-    hit_map (op, 0, op->attacktype);
+    op->x+=DIRX(op),op->y+=DIRY(op);
+    if (!op->direction||
+       get_map_flags(op->map,NULL,op->x,op->y,NULL,NULL) & (P_OUT_OF_MAP | P_WALL)) {
+	free_object(op);
+	return;
+    }
+    if(reflwall(op->map,op->x,op->y, op)) {
+	op->direction=absdir(op->direction+4);
+	insert_ob_in_map(op,op->map,op,0);
+	return;
+    }
+    if ((op = insert_ob_in_map (op, op->map, op,0)) != NULL)
+	hit_map (op, 0, op->attacktype);
 }
 
 void cancellation(object *op)
@@ -2152,7 +2211,8 @@ static void update_map(object *op, mapstruct *m, int small_nuggets, int large_nu
 
 int alchemy(object *op)
 {
-    int x,y,weight=0,weight_max,large_nuggets,small_nuggets, nx, ny;
+    int x,y,weight=0,weight_max,large_nuggets,small_nuggets, mflags;
+    sint16 nx, ny;
     object *next,*tmp;
     mapstruct *mp;
 
@@ -2172,10 +2232,11 @@ int alchemy(object *op)
 	    nx = x;
 	    ny = y;
 
-	    mp = get_map_from_coord(op->map, &nx, &ny);
+	    mp = op->map;
 
-	    /* wall checks out of map for us */
-	    if(wall(mp,nx,ny) || blocks_magic(mp, nx, ny))
+	    mflags = get_map_flags(mp, &mp, nx, ny, &nx, &ny);
+
+	    if(mflags & (P_OUT_OF_MAP | P_WALL | P_NO_MAGIC))
 		continue;
 
 	    small_nuggets=0;
@@ -2552,31 +2613,28 @@ int cast_pacify(object *op, object *weap, archetype *arch,int spellnum ) {
  */
 
 int summon_fog(object *op, object *caster,int dir,int spellnum) { 
-  object *tmp;
-  int i,dx=op->x+freearr_x[dir],dy=op->y+freearr_y[dir];
+    object *tmp;
+    int i,dx=op->x+freearr_x[dir],dy=op->y+freearr_y[dir];
 
-  if (!spellarch[spellnum])
-    return 0;
+    if (!spellarch[spellnum])
+	return 0;
 
-  for(i=1;i<MIN(2+SP_level_strength_adjust(op,caster,spellnum),SIZEOFFREE);i++) {
-
-     if(wall(op->map,dx,dy)) {
-        new_draw_info(NDI_UNIQUE, 0,op,"There is something in the way.");
-        return 0;
-     }
-     tmp=get_archetype(spellarch[spellnum]->name);
-     tmp->x=dx,tmp->y=dy;	/* all fog starts in 1 place */ 
+    for(i=1;i<MIN(2+SP_level_strength_adjust(op,caster,spellnum),SIZEOFFREE);i++) {
+	if(get_map_flags(op->map,NULL, dx,dy,NULL,NULL) & (P_OUT_OF_MAP | P_WALL)) {
+	    new_draw_info(NDI_UNIQUE, 0,op,"There is something in the way.");
+	    return 0;
+	}
+	tmp=get_archetype(spellarch[spellnum]->name);
+	tmp->x=dx,tmp->y=dy;	/* all fog starts in 1 place */ 
 #ifdef WALL_CREDIT              /* does someone get exp for the kills? */ 
-     set_owner(tmp,op);		/* note however, that after 'fog' moves */ 
+	set_owner(tmp,op);	/* note however, that after 'fog' moves */ 
 				/* it is no longer owned. It is unlikely */
 				/* that players will garner much exp with */
 				/* this spell */
 #endif
-     insert_ob_in_map(tmp,op->map,op,0);
-  }
-
-  return 1;
-
+	insert_ob_in_map(tmp,op->map,op,0);
+    }
+    return 1;
 }
 
 /*  create_the_feature:  peterm  */
@@ -2587,12 +2645,23 @@ int create_the_feature(object *op, object *caster,int dir, int spell_effect)
 {
     object *tmp=NULL;
     char buf1[20];
-    int putflag=0;
+    sint16 x, y;
+    mapstruct *m;
 
-    if(!dir) dir=op->facing;
-    else putflag=1;
 
-    if(blocked(op->map,op->x+freearr_x[dir],op->y+freearr_y[dir])) {
+    if(!dir) {
+	dir=op->facing;
+	x = op->x;
+	y = op->y;
+    }
+    else {
+	x = op->x+freearr_x[dir];
+	y = op->y+freearr_y[dir];
+    }
+
+    m = op->map;
+
+    if(get_map_flags(m, &m, x, y, &x, &y) & (P_BLOCKED | P_OUT_OF_MAP)) {
 	new_draw_info(NDI_UNIQUE, 0,op,"Something is in the way.");
 	return 0;
     }
@@ -2648,22 +2717,14 @@ int create_the_feature(object *op, object *caster,int dir, int spell_effect)
     tmp->level=SK_level(op)/2;  /*  so that the spell that the wall casts
 				 inherit part of the effectiveness of
 				 of the wall builder */
-    tmp->x=op->x;tmp->y=op->y;
-    if(putflag) { 
-	tmp->x+=freearr_x[dir];
-	tmp->y+=freearr_y[dir];
-    }
-    if (out_of_map(op->map, tmp->x, tmp->y)) {
-	free_object(tmp);
-	return 0;
-    }
-    if ((tmp = insert_ob_in_map (tmp, op->map, op,0)) == NULL)
+    tmp->x=x;
+    tmp->y=y;
+
+    if ((tmp = insert_ob_in_map (tmp, m, op,0)) == NULL)
         return 1;
     if(QUERY_FLAG(tmp, FLAG_BLOCKSVIEW))
 	update_all_los(op->map, op->x, op->y);
-    if(op->type==PLAYER)
-	draw(op);
-    else
+    if(op->type!=PLAYER)
 	SET_FLAG(op, FLAG_SCARED); /* We don't want them to walk through the wall! */
     return 1;
 }
@@ -3372,71 +3433,81 @@ int finger_of_death(object *op, object *caster, int dir) {
  * Generalization of staff_to_snake.  Makes a golem out of the caster's weapon.
  * The golem is based on the archetype specified, modified by the caster's level
  * and the attributes of the weapon.  The weapon is inserted in the golem's 
- * inventory so that it falls to the ground when the golem dies.	-- DAMN	*/
+ * inventory so that it falls to the ground when the golem dies.
+ * This code was very odd - code early on would only let players use the spell,
+ * yet the code wass full of player checks.  I've presumed that the code
+ * that only let players use it was correct, and removed all the other
+ * player checks. MSW 2003-01-06
+ */
 
 int animate_weapon(object *op,object *caster,int dir, archetype *at, int spellnum) {
-  object *weapon, *tmp;
-  char buf[MAX_BUF];
-  int a, i, j;
-  int magic;
+    object *weapon, *tmp;
+    char buf[MAX_BUF];
+    int a, i, j;
+    sint16 x, y;
+    int magic;
+    mapstruct *m;
  
-  if(!at){
-    new_draw_info(NDI_UNIQUE, 0,op,"Oops, program error!");
-    LOG(llevError,"animate_weapon failed: missing archetype!\n");
-    return 0;
-  }
-  /* if player already has a golem, abort */
-  if(op->type==PLAYER)
-    if(op->contr->golem!=NULL&&!QUERY_FLAG(op->contr->golem,FLAG_FREED)) {
-      control_golem(op->contr->golem,dir);
-      return 0;
-    } 
-  if(op->type!=PLAYER) return 0;  /* exit if it's not a player using this spell. */
-  /* if no direction specified, pick one */
-  if(!dir) 
-    dir=find_free_spot(NULL,op->map,op->x,op->y,1,9);
-  /* if there's no place to put the golem, abort */
-  if((dir==-1) || blocked(op->map,op->x+freearr_x[dir],op->y+freearr_y[dir])) {
-    new_draw_info(NDI_UNIQUE, 0,op,"There is something in the way.");
-    return 0;
-  }
+    if(!at){
+	new_draw_info(NDI_UNIQUE, 0,op,"Oops, program error!");
+	LOG(llevError,"animate_weapon failed: missing archetype!\n");
+	return 0;
+    }
+    /* exit if it's not a player using this spell. */
+    if(op->type!=PLAYER) return 0;
 
-  if(spellnum == SP_DANCING_SWORD) {
-    archetype *weapon_at = find_archetype("sword");
-    if(weapon_at) {
-      weapon = &(weapon_at->clone);
+    /* if player already has a golem, abort */
+    if(op->contr->golem!=NULL && op->contr->golem_count == op->contr->golem->count) {
+	control_golem(op->contr->golem,dir);
+	return 0;
+    }
+
+    /* if no direction specified, pick one */
+    if(!dir) 
+	dir=find_free_spot(NULL,op->map,op->x,op->y,1,9);
+
+    m = op->map;
+    x = op->x+freearr_x[dir];
+    y = op->y+freearr_y[dir];
+
+    /* if there's no place to put the golem, abort */
+    if((dir==-1) || (get_map_flags(m, &m, x, y, &x, &y) & (P_BLOCKED | P_OUT_OF_MAP))) {
+	new_draw_info(NDI_UNIQUE, 0,op,"There is something in the way.");
+	return 0;
+    }
+
+    if(spellnum == SP_DANCING_SWORD) {
+	archetype *weapon_at = find_archetype("sword");
+	if(weapon_at) {
+	    weapon = &(weapon_at->clone);
+	} else {
+	    new_draw_info(NDI_UNIQUE, 0,op,"Oops, program error!");
+	    LOG(llevError,"animate_weapon failed: missing archetype!\n");
+	    return 0;
+	}
     } else {
-      new_draw_info(NDI_UNIQUE, 0,op,"Oops, program error!");
-      LOG(llevError,"animate_weapon failed: missing archetype!\n");
-      return 0;
-    }
-  } else {
-    /* get the weapon to transform */
-    for(weapon = op->inv; weapon; weapon = weapon->below)
-      if(weapon->type==WEAPON&&QUERY_FLAG(weapon,FLAG_APPLIED)) break;
-    if(!weapon) {
-      if(op->type==PLAYER) { 
-	new_draw_info(NDI_UNIQUE, 0,op,"You need to wield a weapon to animate it.");
-      } 	
-      return 0;
-    } else if (spellnum == SP_STAFF_TO_SNAKE && strcmp(weapon->name,"quarterstaff")) {
-      if(op->type==PLAYER) { 
-	new_draw_info(NDI_UNIQUE, 0,op,"The spell fails to transform your weapon.");
-      }
-      return 0;
-    } else if(op->type==PLAYER && 
-	      (QUERY_FLAG(weapon,FLAG_CURSED) || QUERY_FLAG(weapon,FLAG_DAMNED))) {
-      new_draw_info(NDI_UNIQUE, 0,op,"You can't animate it.  It won't let go of your hand.");
-      return 0;
-    }
-  }
-  magic = weapon->magic>0 ? weapon->magic : -1*weapon->magic;
+	/* get the weapon to transform */
+	for(weapon = op->inv; weapon; weapon = weapon->below)
+	    if(weapon->type==WEAPON&&QUERY_FLAG(weapon,FLAG_APPLIED)) break;
 
-  /* create the golem object */
-  tmp=arch_to_object(at);
+	if(!weapon) {
+	    new_draw_info(NDI_UNIQUE, 0,op,"You need to wield a weapon to animate it.");
+	    return 0;
+	} else if (spellnum == SP_STAFF_TO_SNAKE && strcmp(weapon->name,"quarterstaff")) {
+	    new_draw_info(NDI_UNIQUE, 0,op,"The spell fails to transform your weapon.");
+	    return 0;
+	} else if (QUERY_FLAG(weapon,FLAG_CURSED) || QUERY_FLAG(weapon,FLAG_DAMNED)) {
+	    new_draw_info(NDI_UNIQUE, 0,op,"You can't animate it.  It won't let go of your hand.");
+	    return 0;
+	}
+    }
 
-  /* if animated by a player, give the player control of the golem */
-  if(op->type==PLAYER) {
+    magic = weapon->magic>0 ? weapon->magic : -1*weapon->magic;
+
+    /* create the golem object */
+    tmp=arch_to_object(at);
+
+    /* if animated by a player, give the player control of the golem */
     CLEAR_FLAG(tmp, FLAG_MONSTER);
     SET_FLAG(tmp, FLAG_FRIENDLY);
     tmp->stats.exp=0;
@@ -3446,162 +3517,140 @@ int animate_weapon(object *op,object *caster,int dir, archetype *at, int spellnu
     op->contr->golem=tmp;
     op->contr->shoottype=range_golem;
     op->contr->golem_count = tmp->count;
-  } else {
-  /* If spell is cast by a pet, and the weapon is not cursed, make the animated
-   * weapon a pet. */
-    if(QUERY_FLAG(op, FLAG_FRIENDLY)
-       && !QUERY_FLAG(weapon,FLAG_CURSED)
-       && !QUERY_FLAG(weapon,FLAG_DAMNED)){
-      object *owner = get_owner(op);
-      if(owner != NULL) {
-        set_owner(tmp,owner);
-        tmp->move_type = PETMOVE;
-        add_friendly_object(tmp);
-        SET_FLAG(tmp, FLAG_FRIENDLY);
-      }
+
+    /* ok, tailor the golem's characteristics based on the weapon */
+    if (spellnum == SP_STAFF_TO_SNAKE || spellnum == SP_ANIMATE_WEAPON) {
+	if (apply_special (op, weapon,
+                       AP_UNAPPLY | AP_IGNORE_CURSE | AP_NO_MERGE)) {
+	    LOG (llevError, "BUG: animate_weapon(): can't unapply weapon\n");
+	    return 0;
+	}
+	remove_ob (weapon);
+	insert_ob_in_ob (weapon, tmp);
+	esrv_send_item(op, weapon);
+	SET_FLAG (tmp, FLAG_USE_WEAPON);
+	if (apply_special (tmp, weapon, AP_APPLY))
+	    LOG (llevError, "BUG: animate_weapon(): golem can't apply weapon\n");
     }
-    /* otherwise, make the golem an enemy */
-    SET_FLAG(tmp, FLAG_MONSTER);
-  }
 
-  /* ok, tailor the golem's characteristics based on the weapon */
-  if (spellnum == SP_STAFF_TO_SNAKE || spellnum == SP_ANIMATE_WEAPON) {
-    if (apply_special (op, weapon,
-                       AP_UNAPPLY | AP_IGNORE_CURSE | AP_NO_MERGE))
-    {
-      LOG (llevError, "BUG: animate_weapon(): can't unapply weapon\n");
-      return 0;
+    /* modify weapon's animated wc */
+    tmp->stats.wc = tmp->stats.wc
+	- SP_level_dam_adjust(op,caster,spellnum)
+	- 5 * weapon->stats.Dex
+	- 2 * weapon->stats.Str
+	- magic;
+
+    /* Modify hit points for weapon */
+    tmp->stats.maxhp = tmp->stats.maxhp
+	+ SP_PARAMETERS[spellnum].bdur
+	+ 4 * SP_level_strength_adjust(op,caster,spellnum)
+	+ 8 * magic
+	+ 12 * weapon->stats.Con;
+
+    /* Modify weapon's damage */
+    tmp->stats.dam = SP_PARAMETERS[spellnum].bdam
+	+ weapon->stats.dam
+	+ magic
+	+ 2 * SP_level_dam_adjust(op,caster,spellnum)
+	+ 5 * weapon->stats.Str;
+
+    /* sanity checks */
+    if(tmp->stats.wc<-127) tmp->stats.wc = -127;
+    if(tmp->stats.maxhp<0) tmp->stats.maxhp=10;
+    tmp->stats.hp = tmp->stats.maxhp;
+
+    if(tmp->stats.dam<0) tmp->stats.dam=127;
+
+/*    LOG(llevDebug,"animate_weapon: wc:%d  hp:%d  dam:%d.\n", tmp->stats.wc, tmp->stats.hp, tmp->stats.dam);*/
+
+    /* attacktype */
+    if ( ! tmp->attacktype)
+	tmp->attacktype = AT_PHYSICAL;
+
+    for(i=0; i<NROFMATERIALS; i++)
+	for(j=0; j<NROFATTACKS; j++)
+	    if(weapon->material & (1<<i)) {
+		/* There was code here to try to even out the saving
+		 * throws.  This is probably not ideal, but works
+		 * for the time being.
+		 */
+		if(material[i].save[j] < 3)
+		    tmp->resist[j] = 40;
+		else if(material[i].save[j] > 14) 
+		    tmp->resist[j] = -50;
+	    }
+
+    /* Set weapon's immunity */
+    tmp->resist[ATNR_CONFUSION] = 100;
+    tmp->resist[ATNR_POISON] = 100;
+    tmp->resist[ATNR_SLOW] = 100;
+    tmp->resist[ATNR_PARALYZE] = 100;
+    tmp->resist[ATNR_TURN_UNDEAD] = 100;
+    tmp->resist[ATNR_FEAR] = 100;
+    tmp->resist[ATNR_DEPLETE] = 100;
+    tmp->resist[ATNR_DEATH] = 100;
+    tmp->resist[ATNR_BLIND] = 100;
+
+    /* Improve weapon's armour value according to best save vs. physical of its material */
+    for(a=0,i=0; i<NROFMATERIALS; i++) {
+	if(weapon->material & (1<<i) && material[i].save[0] > a) {
+	    a = material[i].save[0];
+	}
     }
-    remove_ob (weapon);
-    insert_ob_in_ob (weapon, tmp);
-    if (op->type == PLAYER)
-      esrv_send_item(op, weapon);
-    SET_FLAG (tmp, FLAG_USE_WEAPON);
-    if (apply_special (tmp, weapon, AP_APPLY))
-      LOG (llevError, "BUG: animate_weapon(): golem can't apply weapon\n");
-  }
 
-  /* modify weapon's animated wc */
-  tmp->stats.wc = tmp->stats.wc
-    - SP_level_dam_adjust(op,caster,spellnum)
-    - 5 * weapon->stats.Dex
-    - 2 * weapon->stats.Str
-    - magic;
-  /* Modify hit points for weapon */
-  tmp->stats.maxhp = tmp->stats.maxhp
-    + SP_PARAMETERS[spellnum].bdur
-    + 4 * SP_level_strength_adjust(op,caster,spellnum)
-    + 8 * magic
-    + 12 * weapon->stats.Con;
-  /* Modify weapon's damage */
-  tmp->stats.dam = SP_PARAMETERS[spellnum].bdam
-    + weapon->stats.dam
-    + magic
-    + 2 * SP_level_dam_adjust(op,caster,spellnum)
-    + 5 * weapon->stats.Str;
-  /* sanity checks */
-  if(tmp->stats.wc<-127) tmp->stats.wc = -127;
-  if(tmp->stats.maxhp<0) tmp->stats.maxhp=10;
-  tmp->stats.hp = tmp->stats.maxhp;
-  if(tmp->stats.dam<0) tmp->stats.dam=127;
-  LOG(llevDebug,"animate_weapon: wc:%d  hp:%d  dam:%d.\n", tmp->stats.wc, tmp->stats.hp, tmp->stats.dam);
-  /* attacktype */
-  if ( ! tmp->attacktype)
-    tmp->attacktype = AT_PHYSICAL;
+    tmp->resist[ATNR_PHYSICAL] = 100 - (int)((100.0-(float)tmp->resist[ATNR_PHYSICAL])/(30.0-2.0*(a>14?14.0:(float)a)));
+/*    LOG (llevDebug, "animate_weapon: slaying %s\n", tmp->slaying ? tmp->slaying : "nothing"); */
 
-  for(i=0; i<NROFMATERIALS; i++)
-    for(j=0; j<NROFATTACKS; j++)
-      if(weapon->material & (1<<i)) {
-	/* There was code here to try to even out the saving
-	 * throws.  This is probably not ideal, but works
-	 * for the time being.
-	 */
-	if(material[i].save[j] < 3)
-	    tmp->resist[j] = 40;
-	else if(material[i].save[j] > 14) 
-	    tmp->resist[j] = -50;
-      }
+    /* Determine golem's speed */
+    tmp->speed = 0.4 + 0.1 * SP_level_dam_adjust(op,caster,spellnum);
 
-  /* Set weapon's immunity */
-  tmp->resist[ATNR_CONFUSION] = 100;
-  tmp->resist[ATNR_POISON] = 100;
-  tmp->resist[ATNR_SLOW] = 100;
-  tmp->resist[ATNR_PARALYZE] = 100;
-  tmp->resist[ATNR_TURN_UNDEAD] = 100;
-  tmp->resist[ATNR_FEAR] = 100;
-  tmp->resist[ATNR_DEPLETE] = 100;
-  tmp->resist[ATNR_DEATH] = 100;
-  tmp->resist[ATNR_BLIND] = 100;
-
-  /* Improve weapon's armour value according to best save vs. physical of its material */
-  for(a=0,i=0; i<NROFMATERIALS; i++) {
-    if(weapon->material & (1<<i) && material[i].save[0] > a) {
-      a = material[i].save[0];
-    }
-  }
-  tmp->resist[ATNR_PHYSICAL] = 100 - (int)((100.0-(float)tmp->resist[ATNR_PHYSICAL])/(30.0-2.0*(a>14?14.0:(float)a)));
-  LOG (llevDebug, "animate_weapon: slaying %s\n",
-       tmp->slaying ? tmp->slaying : "nothing");
-
-  /* Determine golem's speed */
-  /* This formula is apparently broken.  I write a replacement. */
-  /*  tmp->speed = ((weapon->last_sp>0.1)?weapon->last_sp:0.1) -
-    (((weapon->last_sp>0.1)?weapon->last_sp:0.1)/
-     ( (1.0 * (float)SP_level_dam_adjust(op, caster, spellnum) +
-	1.5 * (float)weapon->stats.Dex +
-	2.0 * (float)weapon->stats.Str +
-	3.0 * (float)magic +
-	5.0 * (float)weapon->stats.exp) )
-     * ((float)((tmp->weight>1000)? tmp->weight : 1000)
-     / ((float)(weapon->weight>1000)? weapon->weight : 1000))); */
-
-  /* replacement  */
-  tmp->speed = 0.4 + 0.1 * SP_level_dam_adjust(op,caster,spellnum);
-
-  if(tmp->speed > 3.33) tmp->speed = 3.33;
-  LOG(llevDebug,"animate_weapon: armour:%d  speed:%f  exp:%d.\n",
+    if(tmp->speed > 3.33) tmp->speed = 3.33;
+/*  LOG(llevDebug,"animate_weapon: armour:%d  speed:%f  exp:%d.\n",
       tmp->resist[ATNR_PHYSICAL], tmp->speed, tmp->stats.exp);
+*/
 
-  /* spell-dependent finishing touches and descriptive text */
-  switch(spellnum) {
+    /* spell-dependent finishing touches and descriptive text */
+    switch(spellnum) {
 
-  case SP_STAFF_TO_SNAKE:
-    new_draw_info(NDI_UNIQUE, 0,op,"Your staff becomes a serpent and leaps to the ground!");
-    break;
+	case SP_STAFF_TO_SNAKE:
+	    new_draw_info(NDI_UNIQUE, 0,op,"Your staff becomes a serpent and leaps to the ground!");
+	    break;
 
-  case SP_ANIMATE_WEAPON:
-    new_draw_info_format(NDI_UNIQUE, 0,op,"Your %s flies from your hand and hovers in mid-air!", weapon->name);
-    sprintf(buf, "animated %s", weapon->name);
-    if(tmp->name) free_string(tmp->name);
-    tmp->name = add_string(buf);
+	case SP_ANIMATE_WEAPON:
+	    new_draw_info_format(NDI_UNIQUE, 0,op,"Your %s flies from your hand and hovers in mid-air!", weapon->name);
+	    sprintf(buf, "animated %s", weapon->name);
+	    if(tmp->name) free_string(tmp->name);
+	    tmp->name = add_string(buf);
 
-    tmp->face = weapon->face;
-    tmp->animation_id = weapon->animation_id;
-    tmp->anim_speed = weapon->anim_speed;
-    tmp->last_anim = weapon->last_anim;
-    tmp->state = weapon->state;
-    if(QUERY_FLAG(weapon, FLAG_ANIMATE)) {
-      SET_FLAG(tmp,FLAG_ANIMATE); 
-    } else {
-      CLEAR_FLAG(tmp,FLAG_ANIMATE); 
+	    tmp->face = weapon->face;
+	    tmp->animation_id = weapon->animation_id;
+	    tmp->anim_speed = weapon->anim_speed;
+	    tmp->last_anim = weapon->last_anim;
+	    tmp->state = weapon->state;
+	    if(QUERY_FLAG(weapon, FLAG_ANIMATE)) {
+		SET_FLAG(tmp,FLAG_ANIMATE); 
+	    } else {
+		CLEAR_FLAG(tmp,FLAG_ANIMATE); 
+	    }
+	update_ob_speed(tmp);
+	break;
+
+	case SP_DANCING_SWORD:
+	    new_draw_info(NDI_UNIQUE, 0,op,"A magical sword appears in mid air, eager to slay your foes for you!");
+	    break;
+
+	default:
+	    break;
     }
-    update_ob_speed(tmp);
-    break;
 
-  case SP_DANCING_SWORD:
-    new_draw_info(NDI_UNIQUE, 0,op,"A magical sword appears in mid air, eager to slay your foes for you!");
-    break;
-  default:
-    break;
-  }
-
-  /*  make experience increase in proportion to the strength of the summoned creature. */
-  tmp->stats.exp *= SP_level_spellpoint_cost(op,caster,spellnum)/spells[spellnum].sp;
-  tmp->speed_left= -1;
-  tmp->x=op->x+freearr_x[dir],tmp->y=op->y+freearr_y[dir];
-  tmp->direction=dir;
-  insert_ob_in_map(tmp,op->map,op,0);
-  return 1;
+    /*  make experience increase in proportion to the strength of the summoned creature. */
+    tmp->stats.exp *= SP_level_spellpoint_cost(op,caster,spellnum)/spells[spellnum].sp;
+    tmp->speed_left= -1;
+    tmp->x=x;
+    tmp->y=y;
+    tmp->direction=dir;
+    insert_ob_in_map(tmp,m,op,0);
+    return 1;
 }
 
 /* cast_daylight() - changes the map darkness level *lower* */
@@ -3755,10 +3804,13 @@ int make_object_glow(object *op, int radius, int time) {
  */
 
 int cast_cause_disease(object *op, object *caster, int dir, archetype *disease_arch, int type) {
-    int x,y,i;
-    object *walk;
+    sint16  x,y;
+    int	i,  mflags;
+    object  *walk;
+    mapstruct *m;
 
-    x = op->x;  y = op->y;
+    x = op->x;
+    y = op->y;
 
     /* If casting from a scroll, no direction will be available, so refer to the 
      * direction the player is pointing.
@@ -3767,75 +3819,83 @@ int cast_cause_disease(object *op, object *caster, int dir, archetype *disease_a
     if (!dir) return 0;	    /* won't find anything if casting on ourself, so just return */
 
     /* search in a line for a victim */
-    for(i=0;i<5;i++) {
-	x += freearr_x[dir]; y+= freearr_y[dir];
+    for(i=1;i<6;i++) {
+	x = op->x + i * freearr_x[dir];
+	y = op->y + i * freearr_y[dir];
+	m = op->map;
 
-	if(out_of_map(op->map,x,y)) return 0;
+	mflags = get_map_flags(m, &m, x, y, &x, &y);
 
-	/* search this square for a victim */
-	for(walk=get_map_ob(op->map,x,y);walk;walk=walk->above)
-	    if (QUERY_FLAG(walk,FLAG_MONSTER) || (walk->type==PLAYER)) {  /* found a victim */
-		  object *disease = arch_to_object(disease_arch);
+	if (mflags & P_OUT_OF_MAP) return 0;
 
-		  set_owner(disease,op);
-		  disease->stats.exp = 0;
-		  disease->level = op->level;
+	/* don't go through walls */
+	if (mflags & P_NO_PASS) return 0;
+
+	/* Only bother looking on this space if there is something living here */
+	if (mflags & P_IS_ALIVE) {
+	    /* search this square for a victim */
+	    for(walk=get_map_ob(m,x,y);walk;walk=walk->above)
+		if (QUERY_FLAG(walk,FLAG_MONSTER) || (walk->type==PLAYER)) {  /* found a victim */
+		    object *disease = arch_to_object(disease_arch);
+
+		    set_owner(disease,op);
+		    disease->stats.exp = 0;
+		    disease->level = op->level;
 		  
-		  /* Try to get the experience into the correct category.
-		   * Need to set chosen_skill for it to work when cast from a 
-		   * glyph - I'm not sure why this works when not cast as
-		   * glyphs - the same code in attack.c that uses the chosen_skill
-		   * would seem to get used.
-		   */
-		  if(op->chosen_skill && op->chosen_skill->exp_obj) {
+		    /* Try to get the experience into the correct category.
+		     * Need to set chosen_skill for it to work when cast from a 
+		     * glyph - I'm not sure why this works when not cast as
+		     * glyphs - the same code in attack.c that uses the chosen_skill
+		     * would seem to get used.
+		     */
+		    if(op->chosen_skill && op->chosen_skill->exp_obj) {
 			disease->exp_obj = op->chosen_skill->exp_obj;
 			disease->chosen_skill = op->chosen_skill;
-		  }
+		    }
 
-		  /*do level adjustments */
-		  if(disease->stats.wc)
-			 disease->stats.wc +=  SP_level_strength_adjust(op,caster,type)/2;
+		    /* do level adjustments */
+		    if(disease->stats.wc)
+			disease->stats.wc +=  SP_level_strength_adjust(op,caster,type)/2;
 
-		  if(disease->magic> 0)
+		    if(disease->magic> 0)
 			 disease->magic += SP_level_strength_adjust(op,caster,type)/4;
 
-		  if(disease->stats.maxhp>0)
+		    if(disease->stats.maxhp>0)
 			 disease->stats.maxhp += SP_level_strength_adjust(op,caster,type);
 
-		  if(disease->stats.maxgrace>0)
+		    if(disease->stats.maxgrace>0)
 			 disease->stats.maxgrace += SP_level_strength_adjust(op,caster,type);
 
-		  if(disease->stats.dam) {
+		    if(disease->stats.dam) {
 			 if(disease->stats.dam > 0)
 				disease->stats.dam += SP_level_dam_adjust(op,caster,type);
 			 else disease->stats.dam -= SP_level_dam_adjust(op,caster,type);
-		  }
+		    }
 
-		  if(disease->last_sp) {
+		    if(disease->last_sp) {
 			 disease->last_sp -= 2*SP_level_dam_adjust(op,caster,type);
 			 if(disease->last_sp <1) disease->last_sp = 1;
-		  }
+		    }
 
-		  if(disease->stats.maxsp) {
+		    if(disease->stats.maxsp) {
 			 if(disease->stats.maxsp > 0)
 				disease->stats.maxsp += SP_level_dam_adjust(op,caster,type);
 			 else disease->stats.maxsp -= SP_level_dam_adjust(op,caster,type);
-		  }
+		    }
 		  
-		  if(disease->stats.ac) 
+		    if(disease->stats.ac) 
 			 disease->stats.ac += SP_level_dam_adjust(op,caster,type);
 
-		  if(disease->last_eat)
+		    if(disease->last_eat)
 			 disease->last_eat -= SP_level_dam_adjust(op,caster,type);
 
-		  if(disease->stats.hp)
+		    if(disease->stats.hp)
 			 disease->stats.hp -= SP_level_dam_adjust(op,caster,type);
 
-		  if(disease->stats.sp)
+		    if(disease->stats.sp)
 			 disease->stats.sp -= SP_level_dam_adjust(op,caster,type);
 		  
-
-		  if(infect_object(walk,disease,1)) {
+		    if(infect_object(walk,disease,1)) {
 			 object *flash;  /* visual effect for inflicting disease */
 
 			 new_draw_info_format(NDI_UNIQUE, 0, op, "You inflict %s on %s!",disease->name,walk->name);
@@ -3849,10 +3909,9 @@ int cast_cause_disease(object *op, object *caster, int dir, archetype *disease_a
 			 return 1;
 		  }
 		  free_object(disease);
-	    }
-	/* no more infecting through walls. */
-	if(blocked(op->map,x,y)) return 1;
-    }
+		}
+	} /* if living creature */
+    } /* for range of spaces */
     new_draw_info(NDI_UNIQUE,0,op,"No one caught anything!");
     return 1;
 }
@@ -3860,61 +3919,63 @@ int cast_cause_disease(object *op, object *caster, int dir, archetype *disease_a
 
 
 /* move aura function.  An aura is a part of someone's inventory,
-which he carries with him, but which acts on the map immediately
-around him.
-Aura parameters:
-food:  duration counter.   
-attacktype:  aura's attacktype 
-other_arch:  archetype to drop where we attack
-
+ * which he carries with him, but which acts on the map immediately
+ * around him.
+ * Aura parameters:
+ * food:  duration counter.   
+ * attacktype:  aura's attacktype 
+ * other_arch:  archetype to drop where we attack
  */
 
 void move_aura(object *aura) {
-  int i;
-  object *env;
+    int i;
+    object *env;
 
-  /* auras belong in inventories */
-  env = aura->env;
+    /* auras belong in inventories */
+    env = aura->env;
 
-  /* no matter what we've gotta remove the aura...
-     we'll put it back if its time isn't up.  */
-  remove_ob(aura);
+    /* no matter what we've gotta remove the aura...
+     * we'll put it back if its time isn't up.  
+     */
+    remove_ob(aura);
 
-  /* exit if we're out of gas */
-  if(aura->stats.food--< 0) {
-    free_object(aura);
-    return;
-  }
-  /* auras only exist in inventories */
-  if(env == NULL || env->map==NULL) {
-    free_object(aura);
-    return;
-  }
-  aura->x = env->x;
-  aura->y = env->y;
+    /* exit if we're out of gas */
+    if(aura->stats.food--< 0) {
+	free_object(aura);
+	return;
+    }
+
+    /* auras only exist in inventories */
+    if(env == NULL || env->map==NULL) {
+	free_object(aura);
+	return;
+    }
+    aura->x = env->x;
+    aura->y = env->y;
 
     /* we need to jump out of the inventory for a bit
-       in order to hit the map conveniently. */
-  insert_ob_in_map(aura,env->map,aura,0);
-  for(i=1;i<9;i++) { 
-    hit_map(aura,i,aura->attacktype);
-    if(aura->other_arch) {
-      object *new_ob;
-      int nx, ny;
-      nx = aura->x + freearr_x[i];
-      ny = aura->y + freearr_y[i];
-      /* we're done if the "i" square next to us is full */
-      if(out_of_map(aura->map,nx,ny) ||
-	 wall(aura->map,nx,ny)) continue;
-      new_ob = arch_to_object(aura->other_arch);
-      new_ob->x = nx;
-      new_ob->y = ny;
-      insert_ob_in_map(new_ob,env->map,aura,0);
+     * in order to hit the map conveniently. 
+     */
+    insert_ob_in_map(aura,env->map,aura,0);
+
+    for(i=1;i<9;i++) { 
+	int nx, ny;
+	nx = aura->x + freearr_x[i];
+	ny = aura->y + freearr_y[i];
+	if (!(get_map_flags(aura->map, NULL, nx, ny, NULL, NULL) & (P_WALL | P_OUT_OF_MAP)))
+	    hit_map(aura,i,aura->attacktype);
+	    if(aura->other_arch) {
+		object *new_ob;
+
+		new_ob = arch_to_object(aura->other_arch);
+		new_ob->x = nx;
+		new_ob->y = ny;
+		insert_ob_in_map(new_ob,env->map,aura,0);
+	    }
     }
-  }
-  /* put the aura back in the player's inventory */
-  remove_ob(aura);
-  insert_ob_in_ob(aura, env);
+    /* put the aura back in the player's inventory */
+    remove_ob(aura);
+    insert_ob_in_ob(aura, env);
 }
       
 

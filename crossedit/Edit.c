@@ -548,7 +548,7 @@ static void EditInsertArch (Edit self, int x, int y, int i, archetype * at)
     if (op && op->arch == at)
         return;
 
-    if (arch_out_of_map (at, self->emap, x, y)) {
+    if (arch_blocked(at, self->emap, x, y) & P_OUT_OF_MAP) {
         debug("Out of Map\n");
         return;
     }
