@@ -1376,14 +1376,16 @@ int fire_bow(object *op, object *part, int dir)
 	    dex_bonus[op->stats.Dex] - thaco_bonus[op->stats.Str] - arrow->stats.wc -
 	    bow->stats.wc;
 	arrow->level = SK_level (op);
-	arrow->attacktype |= bow->attacktype;
+	if (arrow->attacktype == AT_PHYSICAL)
+	    arrow->attacktype |= bow->attacktype;
 	if (bow->slaying != NULL)
 	    arrow->slaying = strdup(bow->slaying);
     } else {
 	arrow->stats.wc= op->stats.wc - bow->magic - arrow->magic -
 		    arrow->stats.wc;
 	arrow->level = op->level;
-	arrow->attacktype |= bow->attacktype;
+	if (arrow->attacktype == AT_PHYSICAL)
+	    arrow->attacktype |= bow->attacktype;
 	if (bow->slaying != NULL)
 	    arrow->slaying = strdup(bow->slaying);
     }
