@@ -317,7 +317,8 @@ int blocked_link(object *ob, mapstruct *m, int sx, int sy) {
 	    }
 	} /* if check_inv */
 	else if (QUERY_FLAG(tmp,FLAG_NO_PASS) || (QUERY_FLAG(tmp,FLAG_ALIVE) &&
-		     tmp->head != ob && tmp != ob && tmp->type != DOOR))
+            tmp->head != ob && tmp != ob && tmp->type != DOOR) && 
+            !(QUERY_FLAG(tmp,FLAG_WIZ) && tmp->contr->hidden))
 			return 1;
 
     }

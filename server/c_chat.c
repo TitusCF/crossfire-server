@@ -434,12 +434,14 @@ static int basic_emote(object *op, char *params, int emotion)
 	    break;
 	} /*case*/
 	new_info_map_except(NDI_WHITE, op->map, op, buf);
-	new_draw_info(NDI_UNIQUE, 0, op, buf2);
+	new_draw_info(NDI_UNIQUE|NDI_WHITE, 0, op, buf2);
 	return(0);
     } else {
         for(pl=first_player;pl!=NULL;pl=pl->next) {
-	    if(strncasecmp(pl->ob->name, params, MAX_NAME)==0 &&
-	       pl->ob->map == op->map && pl->ob != op) {
+    	  if(strncasecmp(pl->ob->name, params, MAX_NAME)==0 &&
+            pl->ob->map == op->map && pl->ob != op &&
+            !(QUERY_FLAG(pl->ob,FLAG_WIZ) && pl->ob->contr->hidden)) {
+            /* Hidden dms are not affected by emotions*/
 		switch(emotion) {
 		case EMOTE_NOD:
 		    sprintf(buf, "You nod solemnly to %s.", pl->ob->name);
@@ -626,7 +628,7 @@ static int basic_emote(object *op, char *params, int emotion)
 			  op->name);
 		  break;
 		} /*case*/
-		new_draw_info(NDI_UNIQUE, 0, op, buf);
+		new_draw_info(NDI_UNIQUE|NDI_WHITE, 0, op, buf);
 		new_draw_info(NDI_UNIQUE|NDI_WHITE, 0, pl->ob, buf2);
 		new_info_map_except2(NDI_WHITE, op->map, op, pl->ob, buf3);
 		return(0);
@@ -740,7 +742,7 @@ static int basic_emote(object *op, char *params, int emotion)
 		    sprintf(buf2, "You look away from %s.", op->name);
 		    break;
 		}/*case*/
-		new_draw_info(NDI_UNIQUE, 0, op, buf);
+		new_draw_info(NDI_UNIQUE|NDI_WHITE, 0, op, buf);
 		new_info_map_except(NDI_WHITE, op->map, op, buf2);
 		return(0);
 	    }/*if self*/

@@ -121,7 +121,7 @@ int confirm_party_password(object *op) {
   tmppartylist = firstparty;
   while(tmppartylist != NULL) {
     if(op->contr->party_number_to_join == tmppartylist->partyid) {
-        if(strcmp(op->contr->write_buf+1,tmppartylist->passwd) == 0)
+        if(strncmp(op->contr->write_buf+1,tmppartylist->passwd, 7) == 0)
           return 0;
         else
           return 1;
@@ -199,7 +199,7 @@ int command_party (object *op, char *params)
     new_draw_info(NDI_UNIQUE, 0,op,"For a list of current parties type: party list");
     new_draw_info(NDI_UNIQUE, 0,op,"To leave a party type: party leave");
     new_draw_info(NDI_UNIQUE, 0,op,"To change a passwd for a party type: party passwd <password>");
-    new_draw_info(NDI_UNIQUE, 0,op,"There is an 8 character max");
+    new_draw_info(NDI_UNIQUE, 0,op,"There is an 7 character max");
     new_draw_info(NDI_UNIQUE, 0,op,"To talk to party members type: party say <msg>");
     new_draw_info(NDI_UNIQUE, 0,op,"To see who is in your party: party who");
 #ifdef PARTY_KILL_LOG
@@ -367,7 +367,8 @@ int command_party (object *op, char *params)
     tmplist = firstparty;
     while(tmplist != NULL) {
       if(tmplist->partyid == op->contr->party_number) {
-        strcpy(tmplist->passwd,params);
+        strncpy(tmplist->passwd,params,7);
+        tmplist->passwd[7] = '\0';
 	    new_draw_info_format(NDI_UNIQUE, 0, op,
 		    "The password for party %s is %s", tmplist->partyname,tmplist->passwd);
         snprintf( buf, MAX_BUF, "Password for party %s is now %s, changed by %s",
@@ -482,7 +483,7 @@ int command_party (object *op, char *params)
   new_draw_info(NDI_UNIQUE, 0,op,"For a list of current parties type: party list");
   new_draw_info(NDI_UNIQUE, 0,op,"To leave a party type: party leave");
   new_draw_info(NDI_UNIQUE, 0,op,"To change a passwd for a party type: party passwd <password>");
-  new_draw_info(NDI_UNIQUE, 0,op,"There is an 8 character max");
+  new_draw_info(NDI_UNIQUE, 0,op,"There is an 7 character max");
   new_draw_info(NDI_UNIQUE, 0,op,"To talk to party members type: party say <msg>");
   new_draw_info(NDI_UNIQUE, 0,op,"To see who is in your party: party who");
 #ifdef PARTY_KILL_LOG

@@ -139,6 +139,8 @@ void do_wizard_hide( object* op, int silent_dm )
 	            "The Dungeon Master is gone..");
             }
 	    new_draw_info_format(NDI_UNIQUE | NDI_ALL | NDI_DK_ORANGE, 5, NULL,
+            "%s leaves the game.",op->name);
+        new_draw_info_format(NDI_UNIQUE | NDI_ALL | NDI_DK_ORANGE, 5, NULL,
             "%s left the game.",op->name);
         }
     }

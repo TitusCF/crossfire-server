@@ -1092,7 +1092,11 @@ void leave(player *pl, int draw_exit) {
 	}
 	pl->ob->type = DEAD_OBJECT; /* To avoid problems with inventory window */
     }
-  if (pl!=NULL && draw_exit) new_draw_info(NDI_UNIQUE | NDI_ALL | NDI_DK_ORANGE, 5, NULL, buf);
+    /* If a hidden dm dropped connection do not create
+    * inconsistencies by showing that they have left the game 
+    */
+    if (!(QUERY_FLAG(pl->ob,FLAG_WIZ) && pl->ob->contr->hidden) && 
+        (pl!=NULL && draw_exit)) new_draw_info(NDI_UNIQUE | NDI_ALL | NDI_DK_ORANGE, 5, NULL, buf);
 }
 
 int forbid_play()

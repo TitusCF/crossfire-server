@@ -17,6 +17,16 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Applied patches #1086095 and 1088385 courtesy Salathar:
+ common/map.c: hidden DM is non blocking
+ server/c_chat: can't do emotions towards hidden DMs. Player's emotions
+   always displayed in split window.
+ server/c_wiz.c: add an extra player leave message when DM hides
+ server/main.c: don't display leave messages for hidden DM when connection timeout
+server/c_party.c: party password max length is 7, due to buffer size.
+   (i think it was a patch from Casper?)
+Ryo 2004-12-25
+
 server/c_wiz.c: Remove item when 'free' by DM if not removed, avoiding crash.
 Ryo 2004-12-22
 
