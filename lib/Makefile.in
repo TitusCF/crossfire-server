@@ -144,7 +144,10 @@ dist_pkgdata_DATA = artifacts def_help formulae  messages races \
 	crossfire.1 faces attackmess image_info materials
 
 
-CONF_FILES = settings motd dm_file forbid ban_file skill_params 
+CONF_FILES = settings motd dm_file forbid ban_file skill_params  \
+	spell_params exp_table 
+
+VAR_FILES = highscore bookarch temp.maps clockdata
 EXTRA_DIST = README .collect-stamp $(CONF_FILES)
 
 helpdir = $(pkgdatadir)/help
@@ -418,7 +421,6 @@ uninstall-am: uninstall-dist_admDATA uninstall-dist_helpDATA \
 	uninstall-dist_pkgdataDATA uninstall-dist_wizhelpDATA \
 	uninstall-info-am uninstall-local
 
-spell_params exp_table VAR_FILES = highscore bookarch temp.maps clockdata
 
 crossfire.0: bmaps.paths
 	$(PERL) $(srcdir)/adm/collect_images.pl -png

@@ -50,7 +50,7 @@ static struct statistics {
 
 #define TOPBIT	(1 << (sizeof(REFCOUNT_TYPE) * CHAR_BIT - 1))
 
-#define PADDING	((2 * sizeof(long) - sizeof(REFCOUNT_TYPE)) % sizeof(long))
+#define PADDING	((2 * sizeof(long) - sizeof(REFCOUNT_TYPE)) % sizeof(long)) + 1
 
 typedef struct _shared_string {
     union {
