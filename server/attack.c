@@ -1488,14 +1488,14 @@ int kill_object(object *op,int dam, object *hitter, int type)
 		play_sound_map(owner->map, owner->x, owner->y, SOUND_PLAYER_KILLS);
 	}
 
-	/* If a player kills another player with melee, not on
+	/* If a player kills another player, not on
 	 * battleground, the "killer" looses 1 luck. Since this is
 	 * not reversible, it's actually quite a pain IMHO. -AV 
 	 * Fix bug in that we were changing the luck of the hitter, not
 	 * player that the object belonged to - so if you killed another player
 	 * with spells, pets, whatever, there was no penalty.
 	 */
-	if(op->type == PLAYER && hitter != op && !battleg)
+	if(op->type == PLAYER && owner != op && !battleg)
 	    change_luck(owner, -1);
 
 	/* This code below deals with finding the appropriate skill

@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/attack.c: Do not decrease luck if a player kills himself with a spell
+   or pet.
+Andreas Kirschbaum 2005-03-20
+
 server/c_wiz.c: change command_free() and command_remove() to always
   process the head of the object - doing this operations on the non head
   will typically always cause problems.
