@@ -5077,6 +5077,11 @@ treasure witch_chaos
 treasure giantrat
   list giantrat_parts
  end
+treasure hellhound
+  arch ability_hellfire
+  more
+  arch ability_fear
+ end
 treasure giant_worm
   arch ability_bullet
   more
