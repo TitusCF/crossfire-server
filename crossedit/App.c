@@ -42,6 +42,7 @@
 
 Pixmap *pixmaps;	/* list of pixmaps */
 Pixmap *masks;		/* list of masks */
+int FontSize;		/* Size of font (really images) */
 #define E_EDITABLE   (E_MONSTER | E_EXIT | E_TREASURE | E_BACKGROUND | \
                      E_DOOR | E_SPECIAL | E_SHOP | E_NORMAL | E_FALSE_WALL)
 
@@ -822,20 +823,19 @@ App AppCreate(XtAppContext appCon,
     /*** images & colors ***/
     InitializeColors(XtDisplay(self->shell));
 
+    /* Default */
+    displaymode=Dm_Bitmap;
 #ifdef HAVE_LIBXPM
-    if (self->res.usePixmaps) displaymode=Dm_Bitmap;
-    else if (self->res.useColorPixmaps) displaymode=Dm_Pixmap;
-#else
-    displaymode=Dm_Font;
-    if (self->res.usePixmaps||self->res.useColorPixmaps) {
-	fprintf(stderr,"Crossedit not compiled with Xpm Support.\n");
-    }
-    if(!strcmp(FONTNAME,"")) {
-	fprintf(stderr,"No font defined for Crossedit.\n");
-        exit(0);
-    }
+    if (self->res.useColorPixmaps) displaymode=Dm_Pixmap;
+#endif
+#ifdef HAVE_LIBPNG
+    if (self->res.usePng) displaymode=Dm_Png;
 #endif
 
+    if (displaymode==Dm_Png) 
+	FontSize=32;
+    else
+	FontSize=24;
     CnvInitialize(self->shell);
 
     if (ReadImages(self->display, &pixmaps, &masks, &colormap, displaymode)) {

@@ -18,6 +18,20 @@ else.  With this, include the file(s) that you changed.
 CVS changes since last release:
 
 MSW 2000/12/3:
+Misc changes.  Main one is adding PNG support to the editor.
+TODO: Remove outdated things to do (like partial resistance code)
+configure, configure.in, include/autoconf.h.in: Add check for libpng.
+include/global.h: Remove displaymodes - moved to crossedit/Defines.h
+crossedit/App.c, crossedit/App.h crossedit/CrEdit.c crossedit/CrFace.c
+  crossedit/CrList.c crossedit/CrUtil.c crossedit/Edit.c crossedit/crossedit.c 
+  crossedit/xutil.c, crossedit/png.c (new file): Add support for png display
+  in crossedit.
+crossedit/Makefile.in:  Add png.c file.
+server/c_misc.c: Change who command to only display real players, and not
+  players in process of connecting/unconnecting.  Also, remove code to display
+  old sockets, since those are not supported anymore.
+
+MSW 2000/12/3:
 Checking for partial resistance code.  Various minor errors also fixed
 (compiler warnings, unused variables, Makefile.in changes, etc).
 PR code also includes support to send protections to the client.

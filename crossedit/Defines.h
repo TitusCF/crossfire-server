@@ -10,11 +10,7 @@
 #define CrossEdit
 #endif
 
-/*** kludge ***/
-#ifdef FONTSIZE 
-#undef FONTSIZE
-#endif
-#define FONTSIZE 24
+extern int FontSize;
 
 #define WIZARD_MODE
 
@@ -74,59 +70,8 @@ XDrawImageString16(disp,win,gc,x,y,str,len)
 typedef XChar2b XChar; 
 #endif
 
-/*
- * Made this a macro since it's mostly used in time-critical areas:
- * (Hopefully a good optimizer will be able to move the if() out of
- * any loop where this macro is used.  That wouldn't have been possible
- * if this was a function!)
- */
+enum DisplayMode {Dm_Font, Dm_Bitmap, Dm_Pixmap, Dm_Png};
 
-/*
- * Have two version of this macro.  One if Xpm_Pix is defined, another
- * if Xpm_Pix is not defined.  IT would be better to actually have the
- * #ifdef's inside the macro itself, instead of having two versions, but
- * I was not able to get that to work.
- * Mark Wedel (mark@pyramid.com)
- */
-
-#ifdef HAVE_LIBXPM
-#define draw_face(pl,win,gc,x,y,face) \
-{ \
-  if (pl->color_pixmaps) \
-  { \
-    XSetClipMask(pl->gdisp, gc, pl->masks[(face)]); \
-    XSetClipOrigin(pl->gdisp, gc, x, (y) - 24); \
-    XCopyArea(pl->gdisp, pl->pixmaps[(face)], win, gc, 0, 0, 24, 24, \
-	(unsigned int) (x), (unsigned int) ((y) - 24)); \
-  } \
-  else if(pl->use_pixmaps) \
-  { \
-    XCopyPlane(pl->gdisp,pl->pixmaps[(face)],win,gc,0,0,24,24, \
-               (unsigned int) (x),(unsigned int) ((y) - 24),1); \
-  } \
-  else \
-  { \
-    XChar buf; \
-    buf = FontindexToXChar((Fontindex) (face)); \
-    XDRAWIMAGESTRING(pl->gdisp,win,gc,x,y,&buf,1); \
-  } \
-}
-#else
-#define draw_face(pl,win,gc,x,y,face) \
-{ \
-  if(pl->use_pixmaps) \
-  { \
-    XCopyPlane(pl->gdisp,pl->pixmaps[(face)],win,gc,0,0,24,24, \
-               (unsigned int) (x),(unsigned int) ((y) - 24),1); \
-  } \
-  else \
-  { \
-    XChar buf; \
-    buf = FontindexToXChar((Fontindex) (face)); \
-    XDRAWIMAGESTRING(pl->gdisp,win,gc,x,y,&buf,1); \
-  } \
-}
-#endif
 /* Useful macro */
 #define HAS_COLOUR(widg) (PlanesOfScreen(XtScreen(widg)) > 1)
 

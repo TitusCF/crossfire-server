@@ -21,11 +21,11 @@ extern XChar2b fontindex_to_XChar2b ( Fontindex s );
 void FaceDraw (Widget w, GC gc, New_Face *face, int x, int y) {
     XChar xbuf;
 
-    if(displaymode==Dm_Pixmap) {
+    if(displaymode==Dm_Pixmap || displaymode==Dm_Png) {
 	XSetClipMask(XtDisplay (w), gc, masks[face->number]);
 	XSetClipOrigin(XtDisplay (w), gc, x, y);
 	XCopyArea(XtDisplay (w), pixmaps[face->number],
-		  XtWindow(w), gc, 0, 0, FONTSIZE, FONTSIZE, x, y);
+		  XtWindow(w), gc, 0, 0, FontSize, FontSize, x, y);
     } else {
 	if (HAS_COLOUR(w)) {
 	    XSetForeground (XtDisplay (w), gc, discolor[face->fg].pixel);
@@ -39,7 +39,7 @@ void FaceDraw (Widget w, GC gc, New_Face *face, int x, int y) {
 	}
 	if (displaymode==Dm_Bitmap) {
 	    XCopyPlane(XtDisplay (w), pixmaps[face->number], 
-		       XtWindow(w), gc, 0, 0, FONTSIZE, FONTSIZE, x, y, 1);
+		       XtWindow(w), gc, 0, 0, FontSize, FontSize, x, y, 1);
 	} else {
 	    xbuf = FontindexToXChar(face->number);
 	    XDRAWIMAGESTRING (XtDisplay (w),XtWindow(w), gc, 

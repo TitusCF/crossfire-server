@@ -259,8 +259,6 @@ EXTERN char *font_graphic;
 # endif
 #endif
 
-enum DisplayMode {Dm_Font, Dm_Bitmap, Dm_Pixmap};
-
 typedef struct Settings {
     char    *logfilename;   /* logfile to use */
     uint16  csport;	    /* port for new client/server */

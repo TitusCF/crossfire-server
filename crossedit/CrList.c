@@ -138,7 +138,7 @@ static void SetSize(Widget w)
 	i++;
     } while (node);
 
-    height = --i * FONTSIZE;
+    height = --i * FontSize;
     width = self->core.width;
     
     /*** do request from parent container ***/
@@ -208,7 +208,7 @@ CrListCall GetYCall (Widget w, int y)
 static void Insert(Widget w,XEvent *e,String *argv,Cardinal *argc)
 {
     CrListWidget self = (CrListWidget)w;
-    CrListCall ret =  GetYCall(w, e->xbutton.y / FONTSIZE);
+    CrListCall ret =  GetYCall(w, e->xbutton.y / FontSize);
 
     if (!self->crList.insertCallbacks)
 	return;
@@ -222,7 +222,7 @@ static void Insert(Widget w,XEvent *e,String *argv,Cardinal *argc)
 static void Select(Widget new,XEvent *e,String *argv,Cardinal *argc)
 {
     CrListWidget self = (CrListWidget)new;
-    CrListCall ret =  GetYCall(new, e->xbutton.y / FONTSIZE);
+    CrListCall ret =  GetYCall(new, e->xbutton.y / FontSize);
 
     if (ret->index < 0)	return;
     debug1("%s-Select()\n",self->core.name);
@@ -232,7 +232,7 @@ static void Select(Widget new,XEvent *e,String *argv,Cardinal *argc)
 static void Delete(Widget new,XEvent *e,String *argv,Cardinal *argc)
 {
     CrListWidget self = (CrListWidget)new;
-    CrListCall ret =  GetYCall(new, e->xbutton.y / FONTSIZE);
+    CrListCall ret =  GetYCall(new, e->xbutton.y / FontSize);
 
     if (ret->index < 0 || !self->crList.deleteCallbacks)
 	return;
@@ -294,10 +294,10 @@ static void Redisplay(Widget w,XEvent *event,Region region)
 
     if (region) {
 	XClipBox(region,&rect);
-	rect.height = rect.height / FONTSIZE + 2;
-	rect.y /= FONTSIZE;
-	XClearArea(XtDisplay(w),XtWindow(w), 0, rect.y * FONTSIZE, 
-		   0, rect.height * FONTSIZE - 1, False);
+	rect.height = rect.height / FontSize + 2;
+	rect.y /= FontSize;
+	XClearArea(XtDisplay(w),XtWindow(w), 0, rect.y * FontSize, 
+		   0, rect.height * FontSize - 1, False);
     } else {
 	rect.y = 0;
 	XClearWindow (XtDisplay(w),XtWindow(w));
@@ -307,11 +307,11 @@ static void Redisplay(Widget w,XEvent *event,Region region)
     for (y = rect.y; node && (!region || rect.height--); y++) {
 	debug2 ("%s Drawing %s\n", self->core.name,node->name);
 	/*DrawObject(w,0,y,node);*/
-	FaceDraw (w, self->crList.gc, node->face, 0, y * FONTSIZE);
+	FaceDraw (w, self->crList.gc, node->face, 0, y * FontSize);
 	XDrawString(XtDisplay(w),XtWindow(w),
 		    self->crList.normal_GC 
 		    /*DefaultGCOfScreen(XtScreen(w))*/,
-		    FONTSIZE + 8, y * FONTSIZE + 16,
+		    FontSize + 8, y * FontSize + 16,
 		    node->name,strlen(node->name));
 	node = self->crList.next 
 	    ((XtPointer)self->crList.caller, (XtPointer)node);

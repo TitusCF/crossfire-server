@@ -177,6 +177,9 @@
 /* Define if you have the Xpm library (-lXpm).  */
 #undef HAVE_LIBXPM
 
+/* Define if you have the Xpm library (-lpng).  */
+#undef HAVE_LIBPNG
+
 /* Define if you have the Xt library (-lXt).  */
 #undef HAVE_LIBXT
 

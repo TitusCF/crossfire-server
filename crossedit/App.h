@@ -75,6 +75,7 @@ typedef struct {
     Dimension mapHeight; /* maximum height of shown map */
     Boolean usePixmaps;  /* use pixmaps instead fonts */
     Boolean useColorPixmaps;  /* use color pixmaps instead fonts */
+    Boolean usePng;		/* use png images instead fonts */
     String cmdCrossfire; /* to run crossfire */
     String cmdReset;     /* to run reset on crossfire */
     String cmdGoto;      /* to run goto on crossfire */

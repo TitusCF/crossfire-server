@@ -1117,12 +1117,12 @@ static void Layout(Edit self,Widget parent,Cardinal stacking)
       ("edit",topLevelShellWidgetClass, self->app->shell,
        XtNwidth,
        ((unsigned int)self->emap->mapx > self->app->res.mapWidth ?
-	self->app->res.mapWidth * FONTSIZE :
-	self->emap->mapx * FONTSIZE ) + 16,/* kludge */
+	self->app->res.mapWidth * FontSize :
+	self->emap->mapx * FontSize ) + 16,/* kludge */
        XtNheight,
        ((unsigned int)self->emap->mapy > self->app->res.mapHeight ?
-	self->app->res.mapHeight * FONTSIZE :
-	self->emap->mapy * FONTSIZE ) + 46,/* kludge */
+	self->app->res.mapHeight * FontSize :
+	self->emap->mapy * FontSize ) + 46,/* kludge */
        XtNiconPixmap,bitmaps.edit,
        NULL);
     vbox = XtVaCreateManagedWidget ("vbox", panedWidgetClass,

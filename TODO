@@ -196,20 +196,6 @@ Future feature requests
   mess where some variables are used for other things than they
   were meant to (union won't do either).
 
-- Redo immunity/protection/vulnerable code to have varying levels (maybe
-  -127 to 127).  Have an index table for each value to determine how much
-  damage you would take.  Multiple protection spells increase the index
-  value, and thus increase protection.  Very high protection level (100+)
-  may equate to an immunity.  In order to prevent getting immunities from
-  casting a lot of lower level spells, limit protection to something like 99
-  unless the protection being added is above that (thus, 5 +20 protectin get
-  you to 99, but 1 100 gets you 100.)  To do this would likely mean all the
-  archetypes need to be set up (although immunity could be 100 protection for
-  that attacktype, protection is 20 or something.)  Also, instead of listing
-  protection numbers on items, a verbose listing is probably better (0-10
-  might be minimal protection, 11-20 low protection, 31-40 good protection,
-  etc.)
-
 - Ability to aim at targets not in the front row.  This should apply for
   most range attacks (thus, in a group of orcs, the ones not immediately
   around the player could still use missile weapons.)
@@ -230,10 +216,6 @@ Future feature requests
   could be a client issue, but something more would need to be added to 
   preserve the names accross runs.
 
-- Add a line or two in the window which will show some statuses of
-  immunities, confusion, depletion, and other things which might be obvious
-  to the character but are not conveniently displayed for the player.
-
 - Handle multi space objects more efficiently in saved files.  The current
   problem is since multi space objects are saved last in the map, they can
   'bury' objects below them (ie, drop a sword on a shop, and when the map
@@ -243,13 +225,6 @@ Future feature requests
   loading the map.  For buildings, we probably jsut need to break apart the
   building into individual segments - main gain of it being 1 object is
   that updates to it affect all pieces.
-
-- Allow more items to be merged (rings mostly).  This involves code
-  changes (need to split the object), archetype changes (nrof=1),
-  and potentially map changes.
-
-- Ability to transfer a singular item directly from a container to the
-  floor (definately a client issue)
 
 Secondary features:
 
@@ -264,19 +239,11 @@ add a lot to the game (IMO).
   without having to rebuild the default images.
 
 ------------------------------------------------------------------------------
- Things that are client issues, or ones that will no longer apply if X11 code
-is removed from the server:
+ Things that are now client issues:
 
+- Ability to transfer a singular item directly from a container to the
+  floor (definately a client issue)
 - Use X-resources more extensively (colors, etc)
-- Ability to save keybindings/preferances across characters (either done with
-	X defaults or via client.  Note - client already lets you do this)
-- When two players using pixmaps enters the game at the same time, the
-  first player will be freezed while the pixmaps are loaded for the second.
-  The other players won't notice anything though, so don't know if this is
-  worth fixing.  (Shouldn't be noticable without debug option - this will not
-  be an issue with the client)
-- make a client/server system (tcp/ip) - work has been started, still some
-	stuff that needs to be done.
 - made pickup command more intelligent - you should be able to use
      words or more generic terms for things you want to pickup up.
 - better inventory handling - ability to hide items from normal inventory view,

@@ -61,7 +61,7 @@ OBJS = $(SRCS:.c=.o)
 
 
 ALLFILES = README TODO Makefile.in Crossedit.ad Crossedit.ad.h  \
-	$(SRCS) $(HDRS)
+	$(SRCS) $(HDRS) png.c
 
 SUBDIRS = include Cnv bitmaps doc
 

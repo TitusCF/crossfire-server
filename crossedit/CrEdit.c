@@ -370,7 +370,7 @@ static void UpdatePosition (Widget w, int x, int y,Boolean inv)
 	     op;
 	     i++, op = op->above);
 	if (i > 0) {
-	    int diff = self->crEdit.fontSize - FONTSIZE;
+	    int diff = self->crEdit.fontSize - FontSize;
 	    int depth = diff / STACK_MIN + 1;
 	    float dist = 0;
 
@@ -408,7 +408,7 @@ static void UpdatePosition (Widget w, int x, int y,Boolean inv)
 		}
 		XDrawRectangle (XtDisplay(w), 
 				XtWindow(w), self->crEdit.gc,
-				(int) xb, (int) yb, FONTSIZE -1, FONTSIZE -1);
+				(int) xb, (int) yb, FontSize -1, FontSize -1);
 		xb -= dist;
 		yb -= dist;
 		op = op->above;
@@ -416,7 +416,7 @@ static void UpdatePosition (Widget w, int x, int y,Boolean inv)
 	}
     } else { /* Normal map drawing routine */
         New_Face f;
-        if (displaymode==Dm_Pixmap) {
+        if (displaymode==Dm_Pixmap || displaymode==Dm_Png) {
           f = *(get_map_floor (self->crEdit.map, x, y)->face);
           FaceDraw (w, self->crEdit.gc, &f,
                     x * self->crEdit.fontSize,
@@ -440,7 +440,8 @@ static void UpdatePosition (Widget w, int x, int y,Boolean inv)
 	    f.fg = f.bg;
 	    f.bg = tmp;
 	}
-	if (displaymode!=Dm_Pixmap || f.number != blank_face->number)
+	if (displaymode!=Dm_Pixmap || displaymode==Dm_Png ||
+	    f.number != blank_face->number)
 	    FaceDraw (w, self->crEdit.gc, &f, 
 		  x * self->crEdit.fontSize, 
 		  y * self->crEdit.fontSize);
@@ -546,7 +547,7 @@ static int CalcIndex (Widget w, int x, int y) {
 	 i++, op = op->above);
 
     if (i > 0) {
-	int diff = self->crEdit.fontSize - FONTSIZE;
+	int diff = self->crEdit.fontSize - FontSize;
 	int depth = diff / STACK_MIN;
 	float dist = 0;
 	
@@ -955,7 +956,7 @@ static void Initialize(Widget req,Widget new,Arg args[],Cardinal *num)
 
     /*** allocate gc ***/
     self->crEdit.gc = GCCreate (new);
-    self->crEdit.fontSize = FONTSIZE;
+    self->crEdit.fontSize = FontSize;
     SetSize(new);
     BorderOff(new);
 }
@@ -1005,7 +1006,7 @@ static Boolean SetValues(Widget cur,Widget req,Widget new,
     
     /*** stacking change ***/
     if(self->crEdit.stacking != old->crEdit.stacking) {
-	self->crEdit.fontSize = FONTSIZE + self->crEdit.stacking;
+	self->crEdit.fontSize = FontSize + self->crEdit.stacking;
 	SetSize(new);
 	redpy = True;
     }

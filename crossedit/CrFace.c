@@ -83,7 +83,7 @@ static int DrawObject(Widget wd, int x, int y, object * tmp)
     if (!tmp)
 	tmp = &empty_archetype->clone;
 
-    FaceDraw (wd, w->crFace.gc, tmp->face, x * FONTSIZE, y * FONTSIZE);
+    FaceDraw (wd, w->crFace.gc, tmp->face, x * FontSize, y * FontSize);
     return (0);
 }
 
@@ -123,8 +123,8 @@ static void GetSize(Widget w,Dimension *width,Dimension *height)
 
   if(!self->crFace.ob) return;
   GetConst(w,&minx,&miny,&maxx,&maxy);
-  *width = (maxx - minx + 1) * FONTSIZE;
-  *height = (maxy - miny + 1) * FONTSIZE;
+  *width = (maxx - minx + 1) * FontSize;
+  *height = (maxy - miny + 1) * FontSize;
 }
 
 /**********************************************************************

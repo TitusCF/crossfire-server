@@ -37,7 +37,9 @@ static XtResource resources[] = {
     {"usePixmaps", "UsePixmaps", XtRBoolean, sizeof (XtRBoolean),
     Offset (usePixmaps), XtRImmediate, False},
     {"useColorPixmaps", "UseColorPixmaps", XtRBoolean, sizeof (XtRBoolean),
-    Offset (useColorPixmaps), XtRImmediate, False},
+     Offset (useColorPixmaps), XtRImmediate, False},
+    {"usePng", "UsePng", XtRBoolean, sizeof (XtRBoolean),
+     Offset (usePng), XtRImmediate, False},
     {"cmdCrossfire", "CmdCrossfire", XtRString, sizeof (XtRString),
     Offset (cmdCrossfire), XtRString, NULL},
     {"cmdReset", "CmdReset", XtRString, sizeof (XtRString),
@@ -52,6 +54,7 @@ static XtResource resources[] = {
 static XrmOptionDescRec options[] = {
     {"-pix","*usePixmaps",XrmoptionNoArg,"TRUE"},
     {"-xpm","*useColorPixmaps",XrmoptionNoArg,"TRUE"},
+    {"-png","*usePng",XrmoptionNoArg,"TRUE"},
 
 }; 
 

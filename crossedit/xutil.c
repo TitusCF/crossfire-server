@@ -26,6 +26,18 @@
     The author can be reached via e-mail to mwedel@scruz.net
 */
 
+
+#include <autoconf.h>
+/* Stupid pngconf.h file has a check to see if _SETJMP_H is
+ * already defined, and if so, it generates a compilation error.
+ * I have no idea what they were thinking - wasn't th point of those
+ * defines so that you didn't need to worry about order or including
+ * the same file multiple times?
+ */
+#ifdef HAVE_LIBPNG
+#include "png.c"
+#endif
+
 #include <global.h>
 #include <funcpoint.h>
 #include <loader.h>
@@ -74,7 +86,6 @@ XChar2b fontindex_to_XChar2b(Fontindex s)
 
 int ReadImages(Display *gdisp, Pixmap **pixmaps, Pixmap **masks,
     Colormap *cmap, enum DisplayMode type) {
-#ifdef HAVE_LIBXPM
 
     Window	root = RootWindow (gdisp,DefaultScreen(gdisp));
     XpmAttributes xpmatribs;
@@ -103,7 +114,7 @@ int ReadImages(Display *gdisp, Pixmap **pixmaps, Pixmap **masks,
      */
 
     *pixmaps = (Pixmap *) malloc(sizeof(Pixmap *) * nrofpixmaps);
-    if (type==Dm_Pixmap)
+    if (type==Dm_Pixmap || type==Dm_Png)
 	*masks = (Pixmap *) malloc(sizeof(Pixmap *) * nrofpixmaps);
 
     for (i=0; i < nrofpixmaps; i++)
@@ -115,6 +126,8 @@ int ReadImages(Display *gdisp, Pixmap **pixmaps, Pixmap **masks,
 	sprintf(filename,"%s/crossfire.xpm",settings.datadir);
     else if (type==Dm_Bitmap)
 	sprintf(filename,"%s/crossfire.xbm",settings.datadir);
+    else if (type==Dm_Png)
+	sprintf(filename,"%s/crossfire.png",settings.datadir);
 
     if ((infile = open_and_uncompress(filename,0,&compressed))==NULL) {
         LOG(llevError,"Unable to open %s\n", filename);
@@ -149,6 +162,16 @@ int ReadImages(Display *gdisp, Pixmap **pixmaps, Pixmap **masks,
 	i++;
 	if (!(i % 100)) LOG(llevDebug,".");
 
+	if (type==Dm_Png) {
+#ifdef HAVE_LIBPNG
+	    unsigned long  x,y;
+	    if (png_to_xpixmap(gdisp, root, databuf, len, 
+			   &(*pixmaps)[num], &(*masks)[num], *cmap, &x, &y)) {
+
+			LOG(llevError,"Error loading png file.\n");
+	    }
+#endif
+	}
 	if (type==Dm_Pixmap) {
 again:	error=XpmCreatePixmapFromBuffer(gdisp, root, databuf,
 	      &(*pixmaps)[num], &(*masks)[num], &xpmatribs);
@@ -189,9 +212,7 @@ again:	error=XpmCreatePixmapFromBuffer(gdisp, root, databuf,
 	}
     LOG(llevDebug,"done.\n");
     return use_private_cmap;
-#else
     return 0;	/* Prevents some warning messages */
-#endif
 }
 
 /* This frees all the pixmaps.  This not only makes for better code,
@@ -280,3 +301,5 @@ try_private:
   }
   return iscolor;
 }
+
+
