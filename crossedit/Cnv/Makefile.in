@@ -10,10 +10,10 @@ FILES =	excloff.xbm exclon.xbm flagoff.xbm flagon.xbm notify.xbm prompt.xbm\
 
 OBJS = $(SRCS:.c=.o)
 
-INCLUDES= -I@x_includes@ $(EXTRA_INCLUDES) -I../include -I. -I../../include
+INCLUDES= -I@x_includes@ $(EXTRA_INCLUDES) -I../include -I. -I../../include @CPPFLAGS@
 
 X11LIBS = 	@X11LIBS@
-LIBS = @LIBS@ $(X11LIBS)
+LIBS = @LIBS@ @LDFLAGS@ $(X11LIBS)
 
 DEPEND = @DEPEND@
 
