@@ -1741,83 +1741,67 @@ cast_change_attr(object *op,object *caster,int dir,int spell_type) {
 }
 
 
-/* this pet monster stuff is total crap!
- * We should replace it with:
- * struct summoned_mon int foo {
- *       char * mon_arch;
- *       int  num_summoned;
- *       }
- * struct summoned_mon pets_summoned = {
- *      { "bird", 5 },
- *      { "vampire", 6},
- *      { NULL, 0 }     -* terminator *-
- * }
- *
+/*
  * Or even better, use treasure lists for this,
  * eg, mage_pet_monster treasure list, etc.  Means
  * that these could be changed without recompiling the server.
+ *
+ * Garbled 2002-12-14
+ * Made summon_pet_monster use the treasurelist, as suggested above. Adding
+ * new lines to the treasures for these categories will automatically work.
  */
-
-#define MAX_PET_MONSTERS 5
-char mage_pet_monsters [MAX_PET_MONSTERS][16] =
-                {"bat","spider","stalker","beholder","dark_elf"};
-int mage_num_called [MAX_PET_MONSTERS] = {2,1,1,2,3};
-char priest_pet_monsters [MAX_PET_MONSTERS][16] =
-                {"bee","killer_bee","devil","angel","panther"};
-int priest_num_called [MAX_PET_MONSTERS] = {3,2,2,2,5};
-char altern_pet_monsters [MAX_PET_MONSTERS][16] =
-                {"bird","pixie","skeleton","skull","vampire"};
-int altern_num_called [MAX_PET_MONSTERS] = {1,1,2,1,1};
-
-
 
 int summon_pet(object *op, int dir, SpellTypeFrom item) {
     int level, number, i;
     char *monster;
-    archetype *at;
+    treasurelist *trlist = NULL;
+    treasure *tr, *prevtr;
 
     level = ((op->head?op->head->level:SK_level(op)) / 4);
-    if (level >= MAX_PET_MONSTERS)
-	level = MAX_PET_MONSTERS - 1;
 
     switch(rndm(0, 2)) {
 	case 0:
-	    number = priest_num_called[level];
-	    monster = priest_pet_monsters[level];
+	    trlist = find_treasurelist("mage_pet_monster");
 	    break;
 	case 1:
-	    number = mage_num_called[level];
-	    monster = mage_pet_monsters[level];
+	    trlist = find_treasurelist("priest_pet_monster");
 	    break;
-
 	default:
-	    number = altern_num_called[level];
-	    monster = altern_pet_monsters[level];
+	    trlist = find_treasurelist("altern_pet_monster");
 	    break;
     }
 
-    at = find_archetype(monster);
-    if(at == NULL) {
-	LOG(llevError,"Unknown archetype in summon pet: %s\n",monster);
+    if (trlist == NULL)
+	return 0;
+
+    for (i=0, tr=trlist->items; tr != NULL && i < level-1;
+	prevtr = tr, tr = tr->next, i++);
+    
+    if(prevtr == NULL || prevtr->item == NULL) {
+	LOG(llevError,"Treasurelist Found NULL in summon_pet_monster()\n");
 	return 0;
     }
-    if (!dir)
-	dir = find_free_spot(at, op->map, op->x, op->y, 1, SIZEOFFREE);
 
-    if((dir==-1) || arch_blocked(at,op->map, op->x + freearr_x[dir], op->y+freearr_y[dir])) {
-	new_draw_info(NDI_UNIQUE, 0,op, "There is something in the way.");
+    number = prevtr->nrof;
+
+    if (!dir)
+	dir = find_free_spot(prevtr->item, op->map, op->x, op->y, 1, SIZEOFFREE);
+
+    if ((dir==-1) || arch_blocked(prevtr->item, op->map, 
+	op->x + freearr_x[dir], op->y+freearr_y[dir])) {
+	new_draw_info(NDI_UNIQUE, 0, op, "There is something in the way.");
 	return 0;
     }
     for (i = 1; i < number + 1; i++) {
 	archetype *atmp;
 	object *prev = NULL, *head = NULL; /* We want to summon dragons *grin* */
 
-	for(atmp = at; atmp!=NULL; atmp = atmp->more) {
+	for(atmp = prevtr->item; atmp!=NULL; atmp = atmp->more) {
 	    object *tmp;
 	    tmp = arch_to_object(atmp);
 
 	    /* if this is the head, set owner/friendly as needed */
-	    if (atmp == at) {
+	    if (atmp == prevtr->item) {
 		set_owner(tmp, op);
 		SET_FLAG(tmp, FLAG_MONSTER);
 		if (op->type == PLAYER) {
@@ -1861,7 +1845,7 @@ int summon_pet(object *op, int dir, SpellTypeFrom item) {
 		    SET_FLAG(tmp, FLAG_NO_DROP);
 	}
 	dir = absdir(dir + 1);
-	if (arch_blocked(at,op->map, op->x + freearr_x[dir], op->y + freearr_y[dir])) {
+	if (arch_blocked(prevtr->item, op->map, op->x + freearr_x[dir], op->y + freearr_y[dir])) {
 	    if (i < number) {
 		new_draw_info(NDI_UNIQUE, 0,op, "There is something in the way,");
 		new_draw_info(NDI_UNIQUE, 0,op, "no more pets for this casting.");

@@ -443,6 +443,61 @@ treasure dragon_ability_poison
 end
 ##############################################################
 #
+# Pet Monsters -
+#
+treasure mage_pet_monster
+  arch bat
+    nrof 2
+  more
+  arch spider
+    nrof 1
+  more
+  arch stalker
+    nrof 1
+  more
+  arch beholder
+    nrof 2
+  more
+  arch dark_elf
+    nrof 3
+  more
+end
+treasure altern_pet_monster
+  arch bird
+    nrof 1
+  more
+  arch pixie
+    nrof 1
+  more
+  arch skeleton
+    nrof 2
+  more
+  arch skull
+    nrof 1
+  more
+  arch vampire
+    nrof 1
+  more
+end
+treasure priest_pet_monster
+  arch bee
+    nrof 3
+  more
+  arch killer_bee
+    nrof 2
+  more
+  arch devil
+    nrof 2
+  more
+  arch angel
+    nrof 2
+  more
+  arch panther
+    nrof 5
+  more
+end
+##############################################################
+#
 # BODY PARTS - 
 #
 treasureone beholder_parts
