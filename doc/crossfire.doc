@@ -654,6 +654,10 @@ TRIGGER_PEDESTAL:  IF a matching object is on top of the pedestal, then trigger
 a trigger.
 
 TRIGGER_ALTAR: Takes a sacrifice, then pushes a trigger.
+If "last_sp 0" is set, the altar will trigger the connected value TWO
+times per sacrifice: Once by dropping the sacrifice, second by altar reset.
+If "last_sp 1" is set, the altar won't trigger the connected value
+by reset - Hence, only ONE time per sacrifice.
 
 TRIGGER (handle):  Pushes a trigger.
 

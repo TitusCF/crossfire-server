@@ -380,7 +380,20 @@ int check_trigger (object *op, object *cause)
           if (operate_altar (op, &cause)) {
             SET_ANIMATION (op, 1);
             update_object(op);
-            trigger_move (op, 1);
+	    
+	    if (op->last_sp >= 0) {
+	      trigger_move (op, 1);
+	      if (op->last_sp > 0)
+		op->last_sp = -op->last_sp;
+	    }
+	    else {
+	      /* for trigger altar with last_sp, the ON/OFF
+		 status (-> +/- value) is "simulated": */
+	      op->value = !op->value;
+	      trigger_move (op, 1);
+	      op->last_sp = -op->last_sp;
+	      op->value = !op->value;
+	    }
             return cause == NULL;
           } else {
             return 0;
@@ -388,7 +401,19 @@ int check_trigger (object *op, object *cause)
         } else {
           SET_ANIMATION (op, 0);
           update_object(op);
-          trigger_move (op, 0);
+	  
+          /* If trigger_altar has "last_sp > 0" set on the map,
+             it will push the connected value only once per sacrifice.
+             Otherwise (default), the connected value will be
+             pushed twice: First by sacrifice, second by reset! -AV */
+          if (!op->last_sp)
+            trigger_move (op, 0);
+          else {
+            op->stats.wc = 0;
+            op->value = !op->value;
+            op->speed = 0;
+            update_ob_speed(op);
+          }
         }
         return 0;
 

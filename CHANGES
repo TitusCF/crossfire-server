@@ -17,6 +17,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 CVS changes since last release:
 
+MSW 2001/03/09:
+common/button.c: Added new attribute to altar triggers: "last_sp 1".
+    If set, the altar trigger will push the connected value only
+    by dropping the sacrifice, NOT by altar reset. If unset ("last_sp 0")
+    it will work like it used to (push by sacrifice and by reset).
+
 MSW 2001/03/06:
 server/spell_effect.c: Fix message when consecration fails - use the ob->name
     field and not the ob->title field.  Also fix broken logic that checked
