@@ -74,8 +74,9 @@ FILES_WIZHELP = $(srcdir)/wizhelp/abil $(srcdir)/wizhelp/addexp \
 	$(srcdir)/wizhelp/shutdown $(srcdir)/wizhelp/speed \
 	$(srcdir)/wizhelp/spellreset $(srcdir)/wizhelp/ssdumptable \
 	$(srcdir)/wizhelp/style_info $(srcdir)/wizhelp/summon \
-	$(srcdir)/wizhelp/time $(srcdir)/wizhelp/who \
-	$(srcdir)/wizhelp/wizhelp $(srcdir)/wizhelp/wizpass
+	$(srcdir)/wizhelp/teleport $(srcdir)/wizhelp/time \
+	$(srcdir)/wizhelp/who $(srcdir)/wizhelp/wizhelp \
+	$(srcdir)/wizhelp/wizpass
 
 FILES_ADM = adm/README adm/check-xpm.pl adm/dilate_xpm_files \
 	adm/fix_xpm_colors adm/make_xpm_file.pl adm/map_check \
