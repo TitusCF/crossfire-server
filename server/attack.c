@@ -310,6 +310,16 @@ void attack_message(int dam, int type, object *op, object *hitter) {
         sprintf(buf1, "missed %s", op->name);
         sprintf(buf2, " misses");
 	found++;
+    } else if (op->type == DOOR && !found) {
+        for (i=0; i < MAXATTACKMESS && attack_mess[ATM_DOOR][i].level != -1;
+	     i++)
+	    if (dam < attack_mess[ATM_DOOR][i].level) {
+	        sprintf(buf1, "%s %s%s", attack_mess[ATM_DOOR][i].buf1,
+			op->name, attack_mess[ATM_DOOR][i].buf2);
+		sprintf(buf2, "%s", attack_mess[ATM_DOOR][i].buf3);
+		found++;
+		break;
+	    }
     } else if (hitter->type == PLAYER  && IS_LIVE(op)) {
         if (USING_SKILL(hitter, SK_KARATE)) {
           for (i=0; i < MAXATTACKMESS && attack_mess[ATM_KARATE][i].level != -1;
