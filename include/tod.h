@@ -73,4 +73,9 @@ extern void get_tod(timeofday_t *tod);
 #define SKY_HEAVY_SNOW    15
 #define SKY_BLIZZARD      16
 
+typedef struct _weather_avoids {
+	char *name;
+	int snow;
+} weather_avoids_t;
+
 #endif /* _TOD_H_ */

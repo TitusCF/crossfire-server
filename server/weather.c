@@ -61,6 +61,31 @@ const int season_tempchange[HOURS_PER_DAY] = {
    0, 0,  0, 0, 0, 0, 0, -1, -1, -1, -1, -1, -1, -1, -1, 0, 0, 0, 0, 0, 1, 1,
 	1, 1, 1, 1, 1, 1};
 
+/*
+ * The table below is used to set which tiles the weather will avoid
+ * processing.  This keeps it from putting snow on snow, and putting snow
+ * on the ocean, and other things like that.
+ */
+
+weather_avoids_t weather_avoids[] = {
+    {"snow", 1},
+    {"snow2", 1},
+    {"snow4", 1},
+    {"snow5", 1},
+    {"rain1", 1},
+    {"rain2", 1},
+    {"rain3", 1},
+    {"rain4", 1},
+    {"rain5", 1},
+    {"drifts", 0},
+    {"cforest1", 0},
+    {"sea", 0},
+    {"sea1", 0},
+    {"deep_sea", 0},
+    {"shallow_sea", 0},
+    {NULL, 0}
+}; 
+
 void set_darkness_map(mapstruct *m)
 {
     int i;
@@ -87,10 +112,6 @@ void dawn_to_dusk(timeofday_t *tod)
     if (season_timechange[tod->season][tod->hour] == 0) return;
 
     for(m=first_map;m!=NULL;m=m->next) {
-#ifndef MAP_RESET
-	if (m->in_memory == MAP_SWAPPED)
-	    continue;
-#endif
 	if (!m->outdoor)
 	    continue;
 	change_map_light(m, season_timechange[tod->season][tod->hour]);
@@ -1115,47 +1136,23 @@ void weather_effect(char *filename)
 
 object *avoid_weather(int *av, mapstruct *m, int x, int y, int *gs)
 {
-    int avoid, gotsnow;
+    int avoid, gotsnow, i;
+
     object *tmp;
     avoid = 0;
     gotsnow = 0;
     for (tmp=GET_MAP_OB(m, x, y); tmp; tmp = tmp->above) {
-	if (!strcmp(tmp->arch->name, "snow")) {
-	    gotsnow++;
+	for (i=0; weather_avoids[i].name != NULL; i++) {
+	    if (!strcmp(tmp->arch->name, weather_avoids[i].name)) {
+		if (weather_avoids[i].snow == 1)
+		    gotsnow++;
+		else
+		    avoid++;
+		break;
+	    }
+	}
+	if (avoid || gotsnow)
 	    break;
-	} else if (!strcmp(tmp->arch->name, "snow2")) {
-	    gotsnow++;
-	    break;
-	} else if (!strcmp(tmp->arch->name, "snow4")) {
-	    gotsnow++;
-	    break;
-	} else if (!strcmp(tmp->arch->name, "rain1")) {
-	    gotsnow++;
-	    break;
-	} else if (!strcmp(tmp->arch->name, "rain2")) {
-	    gotsnow++;
-	    break;
-	} else if (!strcmp(tmp->arch->name, "rain3")) {
-	    gotsnow++;
-	    break;
-	} else if (!strcmp(tmp->arch->name, "rain4")) {
-	    gotsnow++;
-	    break;
-	} else if (!strcmp(tmp->arch->name, "rain5")) {
-	    gotsnow++;
-	    break;
-	} else if (!strcmp(tmp->name, "drifts"))
-	    avoid++;
-	else if (!strcmp(tmp->arch->name, "cforest1"))
-	    avoid++;
-	else if (!strcmp(tmp->name, "sea"))
-	    avoid++;
-	else if (!strcmp(tmp->name, "sea1"))
-	    avoid++;
-	else if (!strcmp(tmp->name, "deep_sea"))
-	    avoid++;
-	else if (!strcmp(tmp->name, "shallow_sea"))
-	    avoid++;
     }
     *gs = gotsnow;
     *av = avoid;
