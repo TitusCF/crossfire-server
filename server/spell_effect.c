@@ -1235,7 +1235,12 @@ int cast_light(object *op,object *caster,int dir) {
 
     mflags = get_map_flags(m, &m, x, y, &x, &y);
 
-    if (!(mflags & P_OUT_OF_MAP) && (mflags & P_IS_ALIVE)) {
+    if (mflags & P_OUT_OF_MAP) {
+	new_draw_info(NDI_UNIQUE, 0,op,"Nothing is there.");
+	return 0;
+    }
+
+    if (mflags & P_IS_ALIVE) {
 	for(target=get_map_ob(m,x,y);target;target=target->above)
 	    if(QUERY_FLAG(target,FLAG_MONSTER)) {
 		/* oky doky. got a target monster. Lets make a blinding attack */
