@@ -976,64 +976,67 @@ void move_teleporter(object *op) {
 */
 
 void move_player_changer(object *op) {
-  object *player;
-  object *walk;
-  event *evt;
-  char c;
-   if(op->above!=NULL) {
-    if(EXIT_PATH(op)) {
-      if(op->above->type==PLAYER) {
-      /* GROS: Handle for plugin TRIGGER event */
-      if ((evt = find_event(op, EVENT_TRIGGER)) != NULL)
-      {
-        CFParm CFP;
-        CFParm* CFR;
-        int k, l, m;
-        int rtn_script = 0;
-        m = 0;
-        k = EVENT_TRIGGER;
-        l = SCRIPT_FIX_NOTHING;
-        CFP.Value[0] = &k;
-        CFP.Value[1] = op;
-        CFP.Value[2] = op->above;
-        CFP.Value[3] = NULL;
-        CFP.Value[4] = NULL;
-        CFP.Value[5] = &m;
-        CFP.Value[6] = &m;
-        CFP.Value[7] = &m;
-        CFP.Value[8] = &l;
-        CFP.Value[9] = evt->hook;
-        CFP.Value[10]= evt->options;
-        if (findPlugin(evt->plugin)>=0)
-        {
-          CFR = (PlugList[findPlugin(evt->plugin)].eventfunc) (&CFP);
-          rtn_script = *(int *)(CFR->Value[0]);
-        }
-        if (rtn_script!=0) return;
-      }
+    object *player;
+    object *walk;
+    event *evt;
+    char c;
+
+    if (!op->above || !EXIT_PATH(op)) return;
+
+    /* This isn't all that great - means that the player_mover
+     * needs to be on top.
+     */
+    if(op->above->type==PLAYER) {
+	/* GROS: Handle for plugin TRIGGER event */
+	if ((evt = find_event(op, EVENT_TRIGGER)) != NULL) {
+	    CFParm CFP;
+	    CFParm* CFR;
+	    int k, l, m;
+	    int rtn_script = 0;
+
+	    m = 0;
+	    k = EVENT_TRIGGER;
+	    l = SCRIPT_FIX_NOTHING;
+	    CFP.Value[0] = &k;
+	    CFP.Value[1] = op;
+	    CFP.Value[2] = op->above;
+	    CFP.Value[3] = NULL;
+	    CFP.Value[4] = NULL;
+	    CFP.Value[5] = &m;
+	    CFP.Value[6] = &m;
+	    CFP.Value[7] = &m;
+	    CFP.Value[8] = &l;
+	    CFP.Value[9] = evt->hook;
+	    CFP.Value[10]= evt->options;
+	    if (findPlugin(evt->plugin)>=0) {
+		CFR = (PlugList[findPlugin(evt->plugin)].eventfunc) (&CFP);
+		rtn_script = *(int *)(CFR->Value[0]);
+	    }
+	    if (rtn_script!=0) return;
+	} /* if event tied to this */
+
 	player=op->above;
 	for(walk=op->inv;walk!=NULL;walk=walk->below)
-	  apply_changes_to_player(player,walk);
+	    apply_changes_to_player(player,walk);
+
+	fix_player(player);
 	esrv_send_inventory(op->above,op->above);
 	esrv_update_item(UPD_FACE, op->above, op->above);
 	
 	/* update players death & WoR home-position */
 	sscanf(EXIT_PATH(op), "%c", &c);
 	if (c == '/') {
-	  strcpy(player->contr->savebed_map, EXIT_PATH(op));
-	  player->contr->bed_x = EXIT_X(op), player->contr->bed_y = EXIT_Y(op);
+	    strcpy(player->contr->savebed_map, EXIT_PATH(op));
+	    player->contr->bed_x = EXIT_X(op);
+	    player->contr->bed_y = EXIT_Y(op);
 	}
 	else
-	  LOG(llevDebug, "WARNING: destination '%s' in player_changer must be an absolute path!",
-	      EXIT_PATH(op));
+	    LOG(llevDebug, "WARNING: destination '%s' in player_changer must be an absolute path!",
+		EXIT_PATH(op));
 	
 	enter_exit(op->above,op);
 	save_player(player, 1);
-      }
-      else
-        return;
     }
-   }
 }
 
 /* firewalls fire other spells.
