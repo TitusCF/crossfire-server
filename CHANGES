@@ -1,5 +1,21 @@
-Changes in top level CVS tree (please add your changes at the very top of
-the file):
+Changes in top level CVS tree.  A few notes when putting entries in this
+file:
+1) Please include a date in the form mm/dd/yyyy (yes, us americans are 
+screwed up relative to most the world, but some consistent date format
+is needed for this file.)
+2) You don't need to go into exacting detail of the changes.  This file
+is mostly meant to give an idea to others what has changed - you don't
+need to recreate the code here.
+3) Please include your name with the changes you make.
+4) Whenever making an update, please update this file, no matter how
+small - this just lets others know that the file has changed if nothing
+else.  With this, include the file(s) that you changed.
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+server/skill_util.c: Fixed spelling of unwield
+configure.in: Update -z checks to not use eval, double quote the variable.
+This seems to be needed on solaris and probably other systems.
+Both changes commited by Mark Wedel, 2/7/2000
 
 ---SMALL BUGFIX--- John Cater 5/11/1999
 server/attack.c:
