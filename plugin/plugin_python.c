@@ -2899,7 +2899,7 @@ static PyObject* CFGetFirstObjectOnSquare(PyObject* self, PyObject* args)
 static PyObject* CFSetQuantity(PyObject* self, PyObject* args)
 {
     long whatptr;
-    uint value;
+    uint32 value;
     int val = UP_OBJ_CHANGE;
 
     if (!PyArg_ParseTuple(args,"li",&whatptr,&value))

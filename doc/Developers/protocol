@@ -366,7 +366,7 @@ C->S: lock <val><tag>
 C->S: mark <tag>
 	'marks' and item for secondary usage.  Some actions in crossfire
 	require an action that uses another item (improvement scrolls, flint
-	& steal).  In order not to rely on inventory ordering or other
+	& steel).  In order not to rely on inventory ordering or other
 	gimmicks, this 'marked' item is used.  Only one item can be marked
 	at a time - server will only keep track of the latest mark sent.
 	<tag> is a 4 byte binary value.  The server will generally send a

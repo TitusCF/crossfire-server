@@ -198,5 +198,8 @@ it just fine.
 8) If you need to send a map, new archetypes, or other new files where
 a diff doesn't make since, a uuencoded tar file will work just fine.
 
-Mail all patches to crossfire-devel@lists.real-time.com
+Submit all patches to the Sourceforge patch tracker on
+http://sourceforge.net/projects/crossfire., and mail an announcement to
+crossfire-devel@lists.real-time.com.
+
 

@@ -89,7 +89,7 @@ CAUTION: Some items are perishable. If for instance you shoot a
         going up in smoke! So be careful not to destroy valuable
         items.
 
-Books/scrolls: 
+Spellbooks/prayerbooks: 
         This is how players can obtain magical spells, sometimes a
         player can learn the spell, other times they cannot. There are
         many, many different types of books and scrolls out there.
@@ -159,9 +159,15 @@ Improve item scrolls:
 	square root of (sacrifice/2).
 
 
-Wands/Rings:
+Rings/Amulets:
         Again many different types, rings can be worn to add/remove
         different immunities.
+
+Wands/Staves/Rods, Scrolls:
+        Not so many types of wands, staves and rods as scrolls. These
+        let you cast spells you don't know. A scroll can be used once,
+        wands and staves have a limited number of charges, and rods let
+        you use a spell every so often.
 
 Artifacts:
         These are the real treasures of the game. There are more than

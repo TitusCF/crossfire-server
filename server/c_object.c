@@ -1447,8 +1447,8 @@ void examine(object *op, object *tmp) {
     switch(tmp->type) {
 	case SPELLBOOK:
 	    if(QUERY_FLAG(tmp, FLAG_IDENTIFIED) && tmp->inv ) {
-		sprintf(buf,"%s is a %d level %s spell",
-			tmp->inv->name, tmp->inv->level,
+ 		sprintf(buf,"%s is a %s level %s spell",
+ 			tmp->inv->name, get_levelnumber(tmp->inv->level),
 			tmp->inv->skill);
 	    }
 	    break;

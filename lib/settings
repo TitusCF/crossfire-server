@@ -130,7 +130,7 @@ motd motd
 # Basically, if real_wiz is set then the WIZ/WAS_WIZ flags for objects
 # are not set - instead, wizard created/manipulated objects appear as
 # normal objects.  This makes the wizard a little more mudlike, since
-# object manipulations will be usable for other objects.
+# manipulated items will be usable by normal players.
 
 real_wiz true
 

@@ -17,6 +17,18 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+include/config.h: fix Win32 log path so there actually is a log.
+plugin/plugin_python.c: uint doesn't exist under Win32, use uint32 instead.
+
+Patches from tracker, courtesy Kurtat:
+patch 1022942: Random documentation updates
+ doc/SurvivalGuide
+ doc/Developers/programming_guide
+ doc/Developers/protocol
+patch 1022973: Words for numbers in spellbook description
+ server/c_object
+Ryo 2004-09-12
+
 server/attack.c: Pass in skill (string) to change_exp instead of skop->skill -
    skop can be null, resulting in a crash here.  In addition, other calls
    to change_exp in this function use the skill string, so it is good to
