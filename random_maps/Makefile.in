@@ -48,7 +48,7 @@ SRCS =	random_map.c \
 	expand2x.c
 
 ALLFILES = $(SRCS) reader.l Makefile.in maze_gen.h random_map.h room_gen.h\
-	standalone.c rproto.h
+	standalone.c rproto.h expand2x.h
 
 DEPEND = @DEPEND@
 
