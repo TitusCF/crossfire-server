@@ -1269,7 +1269,7 @@ static inline int update_space(SockList *sl, NewSocket *ns, mapstruct  *mp, int 
 }
 
 /**
- * This function is mainly a copy of update_space, 
+ * This function is mainly a copy of update_space,
  * except it handles update of the smoothing updates,
  * not the face updates.
  * Removes the need to replicate the same code for each layer.
@@ -1430,9 +1430,6 @@ void draw_client_map1(object *pl)
 
 		oldlen = sl.len;
 
-		if (pl->contr->socket.ext_mapinfos){
-		    SockList_AddShort(&esl, emask);
-		}
 
 		SockList_AddShort(&sl, mask);
 
@@ -1455,11 +1452,13 @@ void draw_client_map1(object *pl)
 
 		if (got_one && (mask & 0xf)) {
 		    sl.buf[oldlen+1] = mask & 0xff;
-		} else {
-		    sl.len = oldlen + 2;
-		    
+		} else { /*either all faces blank, either no face at all*/
+            if (mask & 0xf) /*at least 1 face, we know it's blank, only send coordinates*/
+		        sl.len = oldlen + 2;
+            else
+                sl.len = oldlen;
 		}
-		/*What concerns extendinfos, nothing to be done for now 
+		/*What concerns extendinfos, nothing to be done for now
 		 * (perhaps effects layer later)
 		 */
 		continue;   /* don't do processing below */
@@ -1489,20 +1488,20 @@ void draw_client_map1(object *pl)
 		 */
 
 		oldlen = sl.len;
-#if 0
-		/* First thing we do is blank out this space (clear it)
-		 * if not already done.  If the client is using darkness, and
-		 * this space is at the edge, we also include the darkness.
-		 */
-		if (d==4) {
-		    if (pl->contr->socket.darkness && pl->contr->socket.lastmap.cells[ax][ay].count != d) {
-			mask |= 8;
-			SockList_AddShort(&sl, mask);
-			SockList_AddChar(&sl, 0);
-		    }
-		    count = d;
-		} else
-#endif
+//#if 0
+//		/* First thing we do is blank out this space (clear it)
+//		 * if not already done.  If the client is using darkness, and
+//		 * this space is at the edge, we also include the darkness.
+//		 */
+//		if (d==4) {
+//		    if (pl->contr->socket.darkness && pl->contr->socket.lastmap.cells[ax][ay].count != d) {
+//			mask |= 8;
+//			SockList_AddShort(&sl, mask);
+//			SockList_AddChar(&sl, 0);
+//		    }
+//		    count = d;
+//		} else
+//#endif
 		{
 		    SockList_AddShort(&sl, mask);
 		    if (pl->contr->socket.lastmap.cells[ax][ay].count != -1) need_send=1;
@@ -1548,7 +1547,7 @@ void draw_client_map1(object *pl)
 		mask = (ax & 0x3f) << 10 | (ay & 0x3f) << 4;
 		eoldlen = esl.len;
 		emask = (ax & 0x3f) << 10 | (ay & 0x3f) << 4;
-		SockList_AddShort(&sl, mask);		
+		SockList_AddShort(&sl, mask);
 
 		if (pl->contr->socket.ext_mapinfos)
 		    SockList_AddShort(&esl, emask);
@@ -1578,7 +1577,7 @@ void draw_client_map1(object *pl)
 		/* Floor face */
 		if (update_space(&sl, &pl->contr->socket, m, nx, ny, ax, ay, 2))
 		    mask |= 0x4;
-		
+
 		if (pl->contr->socket.EMI_smooth)
 		    if (update_smooth(&esl, &pl->contr->socket, m, nx, ny, ax, ay, 2)){
 			emask |= 0x4;
@@ -1586,7 +1585,7 @@ void draw_client_map1(object *pl)
 
 		/* Middle face */
 		if (update_space(&sl, &pl->contr->socket, m, nx, ny, ax, ay, 1))
-		    mask |= 0x2;		
+		    mask |= 0x2;
 
 		if (pl->contr->socket.EMI_smooth)
 		    if (update_smooth(&esl, &pl->contr->socket, m, nx, ny, ax, ay, 1)){
@@ -1606,7 +1605,7 @@ void draw_client_map1(object *pl)
 		/* Top face */
 		else {
 		    if (update_space(&sl, &pl->contr->socket, m, nx, ny, ax, ay, 0))
-		        mask |= 0x1;            
+		        mask |= 0x1;
 		    if (pl->contr->socket.EMI_smooth)
 			if (update_smooth(&esl, &pl->contr->socket, m, nx, ny, ax, ay, 0)){
 			    emask |= 0x1;
