@@ -1399,6 +1399,12 @@ mapstruct *ready_map_name(char *name, int flags) {
 	if (! (flags & (MAP_FLUSH|MAP_PLAYER_UNIQUE))) 
 	    load_unique_objects(m);
 
+	if (! (flags & (MAP_FLUSH|MAP_PLAYER_UNIQUE|MAP_OVERLAY))) {
+	    m=load_overlay_map(name, m);
+	    if (m==NULL)
+		return NULL;
+	}
+
     } else {
 	/* If in this loop, we found a temporary map, so load it up. */
 
@@ -1422,9 +1428,6 @@ mapstruct *ready_map_name(char *name, int flags) {
     /* Below here is stuff common to both first time loaded maps and
      * temp maps.
      */
-    m=load_overlay_map(name, m);
-    if (m==NULL)
-	return NULL;
 
     decay_objects(m); /* start the decay */
     /* In case other objects press some buttons down */
