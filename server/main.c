@@ -217,102 +217,120 @@ void enter_exit(object *op, object *exit_ob) {
 
   /* First, lets figure out what map the player is going to go to */
   if (exit_ob) {
-	 x=EXIT_X(exit_ob);
-	 y=EXIT_Y(exit_ob);
+    x=EXIT_X(exit_ob);
+    y=EXIT_Y(exit_ob);
 
-	 /* check to see if we make a randomly generated map */
-	 if(EXIT_PATH(exit_ob)&&EXIT_PATH(exit_ob)[1]=='!') 
-		{
-		  mapstruct *new_map;
-		  FILE *newmap_params;  /* give the new map its parameters */
-		  newmap_params=fopen("/tmp/rmap_params","w");
-		  if(newmap_params!=NULL) {
-			 char newmap_name[MAX_BUF];
-			 char oldmap_name[MAX_BUF];
-			 int i;
+    /* check to see if we make a randomly generated map */
+    if(EXIT_PATH(exit_ob)&&EXIT_PATH(exit_ob)[1]=='!') 
+      {
+	mapstruct *new_map;
+	FILE *newmap_params;  /* give the new map its parameters */
+	newmap_params=fopen("/tmp/rmap_params","w");
+	if(newmap_params!=NULL) {
+	  char newmap_name[MAX_BUF];
+	  char oldmap_name[MAX_BUF];
+	  int i;
 
-			 /* write the map parameters to the file. */
-			 fprintf(newmap_params,"%s",exit_ob->msg);
+	  /* write the map parameters to the file. */
+	  fprintf(newmap_params,"%s",exit_ob->msg);
 
-			 /* provide for returning to where we came from. */
-			 fprintf(newmap_params,"origin_map %s\n",op->map->path);
-			 fprintf(newmap_params,"origin_x %d\n",exit_ob->x);
-			 fprintf(newmap_params,"origin_y %d\n",exit_ob->y);
-			 /* cause there to be treasure. */
-			 fprintf(newmap_params,"generate_treasure_now 1\n");
-			 fclose(newmap_params);
-			 
-			 /* change the old map path into a single token */
-			 strcpy(oldmap_name,op->map->path);
-			 for(i=0;i<strlen(oldmap_name);i++) {
-				if(oldmap_name[i]=='/' || oldmap_name[i]=='.') oldmap_name[i]='_';
-			 }
+	  /* provide for returning to where we came from. */
+	  fprintf(newmap_params,"origin_map %s\n",op->map->path);
+	  fprintf(newmap_params,"origin_x %d\n",exit_ob->x);
+	  fprintf(newmap_params,"origin_y %d\n",exit_ob->y);
+	  /* cause there to be treasure. */
+	  fprintf(newmap_params,"generate_treasure_now 1\n");
+	  fclose(newmap_params);
 
-			 /* pick a new pathname for the new map:  it is of the form
-			  oldmapname_x_y with underscores instead of '/' and '.', with
-			  the entrance coordinates tacked on. */
-			 sprintf(newmap_name,"/random/%s_%d_%d",oldmap_name,exit_ob->x,exit_ob->y);
+	  /* change the old map path into a single token */
+	  strcpy(oldmap_name,op->map->path);
+	  for(i=0;i<strlen(oldmap_name);i++) {
+	    if(oldmap_name[i]=='/' || oldmap_name[i]=='.') oldmap_name[i]='_';
+	  }
 
-			 /* now to generate the actual map. */
-			 new_map=(mapstruct *)generate_random_map("/tmp/rmap_params",newmap_name);
-			 
-			 /* set the hp,sp,path of the exit for the new */
-			 if(new_map) {
-				x=exit_ob->stats.hp = new_map->map_object->stats.hp;	
-				y=exit_ob->stats.sp = new_map->map_object->stats.sp;
-				exit_ob->slaying = add_string(newmap_name);
-			 }
-		  }
-		  else {
-			 LOG(llevError,"Couldn't open parameter-passing file for random map.");
-		  }
-		}
-	 if (EXIT_PATH(exit_ob)) {
-		newpath = normalize_path (exit_ob->map->path, EXIT_PATH(exit_ob));
-	 } else {
-		if (EXIT_LEVEL (exit_ob) > 0)
-		  LOG(llevError,"Number Map levels are no more supported\n");
-		return;
-	 }
+	  /* pick a new pathname for the new map:  it is of the form
+	   * oldmapname_x_y with underscores instead of '/' and '.', with
+	   * the entrance coordinates tacked on. */
+	  sprintf(newmap_name,"/random/%s_%d_%d",oldmap_name,exit_ob->x,exit_ob->y);
+
+	  /* now to generate the actual map. */
+	  new_map=(mapstruct *)generate_random_map("/tmp/rmap_params",newmap_name);
+
+	  /* set the hp,sp,path of the exit for the new */
+	  if(new_map) {
+	    x=exit_ob->stats.hp = new_map->map_object->stats.hp;	
+	    y=exit_ob->stats.sp = new_map->map_object->stats.sp;
+	    exit_ob->slaying = add_string(newmap_name);
+	  }
+	}
+	else {
+	  LOG(llevError,"Couldn't open parameter-passing file for random map.");
+	}
+      }
+    if (EXIT_PATH(exit_ob)) {
+      /* If we're already in a unique map, get the map's original path from its basename -- DAMN */
+      if (exit_ob->map && exit_ob->map->path) {
+	sprintf(apartment, "%s/%s/%s/", settings.localdir, settings.playerdir, op->name);
+	if (!strncmp(exit_ob->map->path, apartment, strlen(apartment))) {
+	  char *t;
+	  LOG(llevDebug,"%s is leaving unique map %s.\n", op->name, exit_ob->map->path);
+	  if((t = strrchr(exit_ob->map->path,'/'))) {
+	    t++;
+	    strcpy(apartment, t);
+	  } else { /* This "shouldn't" happen. */
+	    LOG(llevError,"Pathless unique map: '%s'?\n", exit_ob->map->path);
+	    strcpy(apartment, exit_ob->map->path);
+	  }
+	  while((t = strchr(apartment,'_'))) t[0] = '/';
+	  newpath = normalize_path (apartment, EXIT_PATH(exit_ob));
+	} else {
+	  newpath = normalize_path (exit_ob->map->path, EXIT_PATH(exit_ob));
+	}
+      } else {
+	newpath = normalize_path (exit_ob->map->path, EXIT_PATH(exit_ob));
+      }
+    } else {
+      if (EXIT_LEVEL(exit_ob) > 0)
+	LOG(llevError,"Number Map levels are no longer supported\n");
+      return;
+    }
   } else
-	 newpath = op->contr->maplevel;
-
+    newpath = op->contr->maplevel;
 
   /* If no map path has been found yet, just keep the player on the
-	* map he is on right now
-	*/
+   * map he is on right now
+   */
   if(!newpath)
-	 newpath = op->map->path;
+    newpath = op->map->path;
 
-   /* If the exit is marked unique, this is a special 'apartment' map -
-    * a unique one for each player.
-    */
+  /* If the exit is marked unique, this is a special 'apartment' map -
+   * a unique one for each player.
+   */
 
   if (op->type==PLAYER && exit_ob && QUERY_FLAG(exit_ob, FLAG_UNIQUE)) {
-	 sprintf(apartment, "%s/%s/%s/%s", settings.localdir,
-				settings.playerdir, op->name, clean_path(newpath));
+    sprintf(apartment, "%s/%s/%s/%s", settings.localdir,
+	    settings.playerdir, op->name, clean_path(newpath));
 
-	 /* If we already have a unique map for the player, use it.
-	  * Otherwise, we fall through below where
-	  * depending on values where it checks for the original map again
-	  */
-	 if (check_path(apartment,0)!= -1) {
-		newpath = apartment;
-		unique=1;
-	 }
+    /* If we already have a unique map for the player, use it.
+     * Otherwise, we fall through below where
+     * depending on values where it checks for the original map again
+     */
+    if (check_path(apartment,0)!= -1) {
+      newpath = apartment;
+      unique=1;
+    }
   }
 
-    /* If under nonstandard name, it means the map is unique 
-     * If its not unique, and it hasn't been loaded, see if the map actually
-     * exists.
-     */
-    if (check_path(newpath, 0) != - 1) {
-	unique=1;
-    } else if (!unique && !has_been_loaded(newpath) && (check_path(newpath,1)==-1)) {
-	new_draw_info_format(NDI_UNIQUE, 0,op, "The %s is closed.", newpath);
-	return;
-    }
-
+  /* If under nonstandard name, it means the map is unique 
+   * If its not unique, and it hasn't been loaded, see if the map actually
+   * exists.
+   */
+  if (check_path(newpath, 0) != - 1) {
+    unique=1;
+  } else if (!unique && !has_been_loaded(newpath) && (check_path(newpath,1)==-1)) {
+    new_draw_info_format(NDI_UNIQUE, 0,op, "The %s is closed.", newpath);
+    return;
+  }
 
   /* Clear the player's count, and reset direction */
   op->direction=0;
@@ -321,118 +339,116 @@ void enter_exit(object *op, object *exit_ob) {
 
   /* For exits that cause damages (like pits) */
   if(exit_ob && exit_ob->stats.dam && op->type==PLAYER)
-	 hit_player(op,exit_ob->stats.dam,exit_ob,exit_ob->attacktype);
+    hit_player(op,exit_ob->stats.dam,exit_ob,exit_ob->attacktype);
 
   /* Keep track of the map the player is on right now */
   oldmap=op->map;
 
-
   /* When logging in, the object is already removed.  If that is
-	* not the case, then the following is used */
+   * not the case, then the following is used */
   if(!removed) {
-	 remove_ob(op);
+    remove_ob(op);
 
-	 lastlevel = oldmap->path;
-	 op->map = NULL;
+    lastlevel = oldmap->path;
+    op->map = NULL;
 
-	 /* If we are changing maps, do some extra logic.  In theory,
-	  * if the player is going to the same map, we could do this much
-	  * simply and just update the player x,y
-	  */
-	 if(strcmp (newpath, oldmap->path)) {
-		/* Remove any golems */
-		if(op->contr->golem) {
-		  remove_friendly_object(op->contr->golem);
-		  remove_ob(op->contr->golem);
-		  free_object(op->contr->golem);
-		  op->contr->golem=NULL;
-		}
+    /* If we are changing maps, do some extra logic.  In theory,
+     * if the player is going to the same map, we could do this much
+     * simply and just update the player x,y
+     */
+    if(strcmp (newpath, oldmap->path)) {
+      /* Remove any golems */
+      if(op->contr->golem) {
+	remove_friendly_object(op->contr->golem);
+	remove_ob(op->contr->golem);
+	free_object(op->contr->golem);
+	op->contr->golem=NULL;
+      }
 
-		/* This stuff should probably be moved to ready_map: */
-		op->map = &dummy_map;
+      /* This stuff should probably be moved to ready_map: */
+      op->map = &dummy_map;
 
 #if MAP_MAXTIMEOUT
-		oldmap->timeout = MAP_TIMEOUT(oldmap);
-		/* Do MINTIMEOUT first, so that MAXTIMEOUT is used if that is
-		 * lower than the min value.
-		 */
+      oldmap->timeout = MAP_TIMEOUT(oldmap);
+      /* Do MINTIMEOUT first, so that MAXTIMEOUT is used if that is
+       * lower than the min value.
+       */
 #if MAP_MINTIMEOUT
-		if (oldmap->timeout < MAP_MINTIMEOUT) {
-		  oldmap->timeout = MAP_MINTIMEOUT;
-		}
+      if (oldmap->timeout < MAP_MINTIMEOUT) {
+	oldmap->timeout = MAP_MINTIMEOUT;
+      }
 #endif
-		if (oldmap->timeout > MAP_MAXTIMEOUT) {
-		  oldmap->timeout = MAP_MAXTIMEOUT;
-		}
-		/* Swap out the oldest map if low on mem */
-		swap_below_max (newpath);
+      if (oldmap->timeout > MAP_MAXTIMEOUT) {
+	oldmap->timeout = MAP_MAXTIMEOUT;
+      }
+      /* Swap out the oldest map if low on mem */
+      swap_below_max (newpath);
 #else
-		/* save out the map */
-		swap_map(oldmap);
+      /* save out the map */
+      swap_map(oldmap);
 #endif /* MAP_MAXTIMEOUT */
-	 }
-	 oldmap->players--;
+    }
+    oldmap->players--;
   }
 
   /* Do any processing to get the map loaded and ready */
   op->map = ready_map_name(newpath,(unique?MAP_PLAYER_UNIQUE:0));
 
-
   /* Did the load fail for some reason?  If so, put the player back on the
-	* map they came from and remove the exit that pointed the player to
-	* the bad map.
-	*/
+   * map they came from and remove the exit that pointed the player to
+   * the bad map.
+   */
   if (op->map==NULL) { /* Something went wrong, try to go back */
-	 int x2,y2;
-	 object *enc;
+    int x2,y2;
+    object *enc;
 
-	 LOG(llevError,"Error, couldn't open map %s.\n", newpath);
-	 op->map = ready_map_name (lastlevel, 0);
-	 x = last_x;
-	 y = last_y;
-	 LOG(llevDebug, "Trying to remove all entries to the map.\n");
+    LOG(llevError,"Error, couldn't open map %s.\n", newpath);
+    op->map = ready_map_name (lastlevel, 0);
+    x = last_x;
+    y = last_y;
+    LOG(llevDebug, "Trying to remove all entries to the map.\n");
 
-	 for (x2 = (-2); x2 < 3; x2++) {
-		for (y2 = (-2); y2 < 3; y2++) {
-		  if (out_of_map(op->map, x2 + op->x, y2 + op->y))
-		    continue;
-		  enc = get_map_ob(op->map, x2 + op->x, y2 + op->y);
-		  if (!enc)
-		    continue;
-		  if (enc->type != ENCOUNTER || enc->slaying == NULL ||
-				strcmp(enc->slaying, newpath))
-			 continue;
-		  free_string(enc->slaying);
-		  enc->slaying = (char *) NULL;
-		}
-	 }
+    for (x2 = (-2); x2 < 3; x2++) {
+      for (y2 = (-2); y2 < 3; y2++) {
+	if (out_of_map(op->map, x2 + op->x, y2 + op->y))
+	  continue;
+	enc = get_map_ob(op->map, x2 + op->x, y2 + op->y);
+	if (!enc)
+	  continue;
+	if (enc->type != ENCOUNTER || enc->slaying == NULL ||
+	    strcmp(enc->slaying, newpath))
+	  continue;
+	free_string(enc->slaying);
+	enc->slaying = (char *) NULL;
+      }
+    }
   }
   /* If we got the map we wanted and it is UNIQUE, we need to update
-	* it so it gets saved in the right place.  Set unique so that
-	* when we save it, it knows to save it in the right place
-	*/
+   * it so it gets saved in the right place.  Set unique so that
+   * when we save it, it knows to save it in the right place
+   */
   else if (exit_ob && QUERY_FLAG(exit_ob, FLAG_UNIQUE)) {
-	 strcpy(op->map->path, apartment);
-	 SET_FLAG(op->map->map_object, FLAG_UNIQUE);
+    strcpy(op->map->path, apartment);
+    SET_FLAG(op->map->map_object, FLAG_UNIQUE);
   }
 	    
   op->map->players++;
 
   /* If objects are being updated while the map is loading, things like
-	* pets will be put into the players map, pending element.  That is
-	* really just the dummy_map.  Since the map has actually loaded now,
-	* we want to append that list to the 'real' loaded maps pending
-	* list -- MSW
-	*/
+   * pets will be put into the players map, pending element.  That is
+   * really just the dummy_map.  Since the map has actually loaded now,
+   * we want to append that list to the 'real' loaded maps pending
+   * list -- MSW
+   */
   if(dummy_map.pending != (objectlink *) NULL) {
-	 objectlink *obl;
+    objectlink *obl;
 
-	 for(obl = op->map->pending; obl!= NULL && obl->next != NULL; 
-		  obl=obl->next);
-	 if(obl == NULL)
-		op->map->pending = dummy_map.pending;
-	 else
-		obl->next = dummy_map.pending;
+    for(obl = op->map->pending; obl!= NULL && obl->next != NULL; 
+	obl=obl->next);
+    if(obl == NULL)
+      op->map->pending = dummy_map.pending;
+    else
+      obl->next = dummy_map.pending;
   }
 
   op->contr->loading = op->map;
