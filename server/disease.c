@@ -388,7 +388,7 @@ int do_symptoms(object *disease) {
       new_symptom->stats.food = new_symptom->stats.maxgrace;
 
       FREE_AND_COPY(new_symptom->name, disease->name);
-      FREE_AND_COPY(new_symptom->name_pl disease->name);
+      FREE_AND_COPY(new_symptom->name_pl, disease->name);
       new_symptom->level = disease->level;
       new_symptom->speed = disease->speed;
       new_symptom->value = 0;

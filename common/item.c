@@ -624,6 +624,7 @@ char *query_base_name(object *op, int plural) {
 static char *describe_monster(object *op) {
     char buf[MAX_BUF];
     static char retbuf[VERY_BIG_BUF];
+    int i;
 
     retbuf[0]='\0';
 
@@ -744,6 +745,12 @@ static char *describe_monster(object *op) {
     DESCRIBE_PATH(retbuf, op->path_attuned, "Attuned");
     DESCRIBE_PATH(retbuf, op->path_repelled, "Repelled");
     DESCRIBE_PATH(retbuf, op->path_denied, "Denied");
+    for (i=0; i < NROFATTACKS; i++) {
+	if (op->resist[i]) {
+	    sprintf(buf, "(%s %+d)", resist_plus[i], op->resist[i]);
+	    strcat(retbuf, buf);
+	}
+    }
     return retbuf;
 }
 

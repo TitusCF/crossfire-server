@@ -17,6 +17,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+common/item.c: Have describe monster show resistances of monsters - useful
+   for spoiler output, as well probe spell.
+server/disease.c: Fix typo.
+MSW 2002-08-02
+
 include/global.h: add FREE_AND_CLEAR_STR macro, relocate DELETE_STRING
    by the other macros.
 server/c_misc.c: Fix string printout in applymode function.
