@@ -218,7 +218,7 @@ void current_map_info(object *op) {
 
     if (QUERY_FLAG(op,FLAG_WIZ)) {
 	new_draw_info_format(NDI_UNIQUE, 0, op,
-		"players:%d difficulty:%d size:%dx%d start:%dx%d timeout %ld", 
+		"players:%d difficulty:%d size:%dx%d start:%dx%d timeout %ld",
 		 m->players, m->difficulty, 
 		 MAP_WIDTH(m), MAP_HEIGHT(m), 
 		 MAP_ENTER_X(m), MAP_ENTER_Y(m),
@@ -330,7 +330,7 @@ int command_weather (object *op, char *params)
     if (op->map == NULL)
 	return 1;
 
-    if (worldmap_to_weathermap(op->x, op->y, &wx, &wy, op->map->path) != 0)
+    if (worldmap_to_weathermap(op->x, op->y, &wx, &wy, op->map) != 0)
 	return 1;
 
     if (QUERY_FLAG(op, FLAG_WIZ)) {
