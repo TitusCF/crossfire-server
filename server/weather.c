@@ -75,11 +75,15 @@ weather_avoids_t weather_avoids[] = {
     {"snow2", 1},
     {"snow4", 1},
     {"snow5", 1},
+	{"mountain1_snow", 1},
+	{"mountain2_snow", 1},	
     {"rain1", 1},
     {"rain2", 1},
     {"rain3", 1},
     {"rain4", 1},
     {"rain5", 1},
+	{"mountain1_rivlets", 1},
+	{"mountain2_rivlets", 1},
     {"drifts", 0},
     {"glacier", 0},
     {"cforest1", 0},
@@ -158,13 +162,21 @@ weather_grow_t weather_grow[] = {
     /* herb, tile, random, rfmin, rfmax, humin, humax, tempmin, tempmax, elevmin, elevmax, season */
     {"mint", "grass", 10, 1.0, 2.0, 30, 100, 10, 25, -100, 9999, 2},
     {"rose_red", "grass", 15, 1.0, 2.0, 30, 100, 10, 25, -100, 9999, 2},
+	{"rose_red", "hills", 15, 1.0, 2.0, 30, 100, 10, 25, -100, 9999, 2},
     {"mint", "brush", 8, 1.0, 2.0, 30, 100, 10, 25, -100, 9999, 2},
     {"blackroot", "swamp", 15, 1.6, 2.0, 60, 100, 20, 30, -100, 1500, 0},
+	{"mushroom_1", "grass", 15, 1.6, 2.0, 60, 100, 3, 30, -100, 1500, 0},
+	{"mushroom_2", "grass", 15, 1.6, 2.0, 60, 100, 3, 30, -100, 1500, 0},
+	{"mushroom_1", "swamp", 15, 1.6, 2.0, 60, 100, 3, 30, -100, 1500, 0},
+	{"mushroom_2", "swamp", 15, 1.6, 2.0, 60, 100, 3, 30, -100, 1500, 0},
+	{"mushroom_1", "hills", 15, 1.6, 2.0, 60, 100, 3, 30, -100, 1500, 0},
+	{"mushroom_2", "hills", 15, 1.6, 2.0, 60, 100, 3, 30, -100, 1500, 0},
     {"pipeweed", "farmland", 20, 1.0, 2.0, 30, 100, 10, 25, 100, 5000, 0},
     {"cabbage", "farmland", 10, 1.0, 2.0, 30, 100, 10, 25, -100, 9999, 0},
     {"onion", "farmland", 10, 1.0, 2.0, 30, 100, 10, 25, 100, 9999, 0},
     {"carrot", "farmland", 10, 1.0, 2.0, 30, 100, 10, 25, 100, 9999, 0},
     {"thorns", "brush", 15, 0.5, 1.3, 30, 100, 10, 25, -100, 9999, 0},
+	{"mountain_foilage", "mountain", 6, 1.0, 2.0, 25, 100, 5, 30, 0, 15999, 2},
     {NULL, NULL, 1, 0.0, 0.0, 0, 0, 0, 0, 0, 0, 0}
 };
 
@@ -1576,19 +1588,19 @@ void singing_in_the_rain(mapstruct *m, int wx, int wy, char *filename)
 		continue;
 	    oldsnow = avoid_weather(&avoid, m, x, y, &gotsnow, 0);
 	    if (!avoid) {
-		if (sky == SKY_LIGHT_RAIN || sky == SKY_RAIN)
-		    switch (rndm(0, SKY_HAIL-sky)) {
+		if (sky == SKY_LIGHT_RAIN || sky == SKY_RAIN) {
+			switch (rndm(0, SKY_HAIL-sky)) {
 		    case 0: at = find_archetype("rain1"); break;
 		    case 1: at = find_archetype("rain2"); break;
 		    default: at = NULL;
-		    }
-		if (sky >= SKY_HEAVY_RAIN && sky <= SKY_HURRICANE)
+		    }}
+		if (sky >= SKY_HEAVY_RAIN && sky <= SKY_HURRICANE){
 		    switch (rndm(0, SKY_HAIL-sky)) {
 		    case 0: at = find_archetype("rain3"); break;
 		    case 1: at = find_archetype("rain4"); break;
 		    case 2: at = find_archetype("rain5"); break;
 		    default: at = NULL;
-		    }
+		    }}
 		    /* the bottom floor of scorn is not IS_FLOOR */
 		    topfloor=NULL;
 		    for (tmp=GET_MAP_OB(m, x, y); tmp;
@@ -1692,6 +1704,10 @@ void singing_in_the_rain(mapstruct *m, int wx, int wy, char *filename)
 		    else if (!strcmp(tmp->arch->name, "rain4"))
 			avoid++;
 		    else if (!strcmp(tmp->arch->name, "rain5"))
+			avoid++;
+			else if (!strcmp(tmp->arch->name, "mountain1_rivlets"))
+			avoid++;
+			else if (!strcmp(tmp->arch->name, "mountain2_rivlets"))
 			avoid++;
 		    if (avoid) {
 			remove_ob(tmp);
