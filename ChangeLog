@@ -17,6 +17,8 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+doc/{README_PLUGINS.doc, README_PYTHON.txt, plugins}, doc/Developers/{README,
+plugins, python}: Update plugin documentation.
 plugin/plugin_python.c, plugin/include/plugin_python.h: Whitespace changes,
     remove obsolete comments.
 plugin/plugin_python.c: Only set WhoAmI when running the command registered by
