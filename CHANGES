@@ -17,6 +17,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
 MSW 2000/11/25:
+socket/metaserver.c: If on FreeBSD systems, do not attempt to connect to
+the metaserve.  FreeBSD seems to have a problem using sendto on a connected
+soccket.
+
+MSW 2000/11/25:
 configure.in, configure, include/autoconf.h.in, server/main.c:  Update
 to check for libdes.a and des.h and use those for password decryption - fixes
 a problem on freebsd if it is using md5 crypt.  Hopefully it doesn't break
