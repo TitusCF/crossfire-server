@@ -17,6 +17,18 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+configure.in, configure, plugin/Makefile, plugin/Makefile.in,
+   plugin/Makefile.old:  Modify the plugin module to gets its needed
+   information from configure.  configure.in modified to look for Python.h and
+   to find the python library.  plugin/Makefile.in is a new file.
+   plugin/Makefile.old is the old plugin/Makefile (removed) - may be useful
+   for sites where configure does not work for some reason.  The use of
+   --with-includes=-I/usr/include/python2.2 (or the like) will likely be
+   needed for configure to find the Python.h file.  Note - if you
+   are doing a CVS update, you will need to re-run configure with the
+   appropriate options for this change to take effect.
+MSW 2002-06-13
+
 server/main.c:  If on freebsd system, don't crypt the password. 
 Crypt on freebsd behaves diferently, and since there is little reason
 to encrypt passwords, easier to just leave them decrypted.

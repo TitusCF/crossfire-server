@@ -1,0 +1,85 @@
+#
+# Makefile for crossfire 0.95.0 and beyond
+#
+# This file will eventually be replaced by a configure script.  But for
+# now, this simple makefile should do the job.
+#
+#   Copyright (C) 1992 Frank Tore Johansen
+#   Copyright (C) 2001 Mark Wedel
+#
+#   This program is free software; you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation; either version 2 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with this program; if not, write to the Free Software
+#   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+#
+#   The author can be reached via e-mail to mwedel@sonic.net
+
+
+VPATH = @srcdir@
+srcdir = @srcdir@
+CROSSFIRE_PATH = @datadir@
+DEPEND = @DEPEND@
+SED = @SED@
+CFLAGS = @CFLAGS@ $(EXTRA_CFLAGS)
+LDFLAGS = @LDFLAGS@
+SHELL = @BOURNE_SHELL@
+INSTALL = @INSTALL@
+MKDIR = @MKDIR@
+CC = @CC@
+RM = @RM@
+CPPFLAGS = @CPPFLAGS@
+INCLUDES= $(EXTRA_INCLUDES) -I../include -I$(srcdir)/../include -I./include $(CPPFLAGS)
+PYTHON_LIB=@PYTHON_LIB@
+LIBS = @LIBS@ $(EXTRA_LIBS) @PY_LIBS@
+
+
+ALLFILES = Makefile.in $(SRCS)
+SRCS = plugin_python.c
+OBJS = $(SRCS:.c=.o)
+
+# Probably not very portable options
+EXTRA_LDFLAGS=	-Xlinker -export-dynamic -rdynamic -Xlinker -Bsymbolic -shared -Wl,-soname,plugin_python.so.0 
+
+
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+bindir = @bindir@
+
+all : plugin_python.so.0.1
+
+clean:
+	$(RM) -f *.o core plugin_python.so.0.1 Makefile.bak
+
+install:
+	@if [ ! -d $(CROSSFIRE_PATH)/plugins ]; then \
+	    echo "Creating directory $(CROSSFIRE_PATH)/plugins"; \
+	    $(MKDIR) -p $(CROSSFIRE_PATH)/plugins; \
+	fi
+	$(INSTALL) plugin_python.so.0.1 $(CROSSFIRE_PATH)/plugins
+
+plugin_python.so.0.1: $(OBJS) ../common/libcross.a
+	$(CC) $(CFLAGS) $(LDFLAGS) $(EXTRA_LDFLAGS) $(OBJS) ../common/libcross.a $(LIBS) $(PYTHON_LIB) -o plugin_python.so.0.1
+
+plugin_python.o: plugin_python.c
+	$(CC) $(CFLAGS) $(INCLUDES) -c plugin_python.c
+
+
+depend:
+	$(DEPEND) $(DEPENDFLAGS) -- $(CFLAGS) $(INCLUDES) -I../include -- $(SRCS)
+
+archive:
+	@if [ ! -d $(ARCHIVE)/plugin ]; then $(MKDIR) $(ARCHIVE)/plugin; fi
+	$(CP) $(ALLFILES) $(ARCHIVE)/plugin
+
+distclean:: clean
+	$(RM) -f Makefile
+
