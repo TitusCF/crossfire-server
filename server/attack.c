@@ -328,6 +328,9 @@ int attack_ob(object *op,object *hitter) {
 	if(settings.debug >= llevDebug) {
 	    dump_object(op);
 	    LOG(llevDebug,"Object without name tried to attack.\n%s\n",errmsg);
+	    /* we don't NEED to print this a zillion times, so GIVE IT A NAME. */
+	    op->name = add_string(op->arch->name);
+	    
 	}
 	if (QUERY_FLAG(op, FLAG_REMOVED) && !QUERY_FLAG(op, FLAG_FREED))
 	    free_object(op);
