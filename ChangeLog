@@ -17,6 +17,13 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+common/arch.c: fix item_matched_string() so that matching makes sense -
+   the ordering was wrong, so that we would match something with a low
+   priority, and skip over looking to see if that same object would get
+   a better match.  Order the function so that we look for the best
+   matches first.
+MSW 2003-10-08
+
 socket/request.c: Clean up some compile warnings.  Improve big face
   handling - there were cases where data wasn't being sent when
   it should have, and vice versa.  Basically, do better checking

@@ -279,6 +279,31 @@ Future feature requests
      included in the object name, or mundane?  Likewise, is it a type of material 
      that can be reconstituted (metals) or not (wood, stone, etc)
 
+Improve exit/teleporter code.  With tiled maps, it is now desirable to move
+   monsters between those maps, so exits should be able to move monsters.  Add
+   bitmask/flag to exit to denote what it moves - players, monsters, or
+   objects.
+
+Add exp rewarder type object.  It's basic properties:
+    1) amount of exp to reward the player (stats.exp)
+    2) Skill to award the exp to (skill field)
+    3) Flag to denote we should teach the player this skill if they don't
+	have it (can_use_skill flag?)  In this way, rewarders could grant
+	skills to the player.
+    4) Different ways to be activated (walk on/fly on, as well as it being
+	activated from something that 'pushes' it (aka, magic mouth, button,
+	etc)).  In the case of another object activating it, the player
+	would still need to be on the space the object is on.
+    5) Use the 'slaying' field to denote that if the player has a force in
+	his inventory by the same name, he doesn't get the reward, and if
+	they don't have such a force, we add one to the player (so you can't
+	get the same reward repeatedly).  Use something like 'value' or
+        other field to denote how many ticks the force lasts for.  If value
+   	is zero, then force never expires
+    6) Use nrof to denote how many times the reward works.  Eg, if nrof
+        is 1, then once a player uses it, no one else can get that reward
+   	until the map resets.
+
 Secondary features:
 
 These are more features (low priority at that) to be added.  Some of these

@@ -211,30 +211,18 @@ int item_matched_string(object *pl, object *op, char *name)
 
 	if (!cp || cp[0]=='\0' || count<0) return 0;
 
-	/* base name matched - not bad */
-	if (strcasecmp(cp,op->name)==0 && !count) return 4;
-  else if (op->custom_name && strcasecmp(cp,op->custom_name)==0) {
-    pl->contr->count=count;	/* May not do anything */
-    /* Return 5 so custom name has higher priority than normal name */
-    return 5;
-  }
 
-	else if (count>1) {	/* Need to plurify name for proper match */
-	    if (!strcasecmp(cp,op->name_pl)) {
-		pl->contr->count=count;	/* May not do anything */
-		return 6;
-	    }
-	}
-	else if (count==1) {
-	    if (!strcasecmp(op->name,cp)) {
-		pl->contr->count=count;	/* May not do anything */
-		return 6;
-	    }
-	}
+	/* The code here should go from highest retval to lowest.  That
+	 * is because of the 'else' handling - we don't want to match on
+	 * something and set a low retval, even though it may match a higher retcal
+	 * later.  So keep it in descending order here, so we try for the best
+	 * match first, and work downward.
+	 */
 	if (!strcasecmp(cp,query_name(op))) retval=20;
 	else if (!strcasecmp(cp,query_short_name(op))) retval=18;
 	else if (!strcasecmp(cp,query_base_name(op,0))) retval=16;
 	else if (!strcasecmp(cp,query_base_name(op,1))) retval=16;
+	else if (op->custom_name && !strcasecmp(cp,op->custom_name)) retval=15;
 	else if (!strncasecmp(cp,query_base_name(op,0),
 			      MIN(strlen(cp),strlen(query_base_name(op,0))))) retval=14;
 	else if (!strncasecmp(cp,query_base_name(op,1),
@@ -248,6 +236,16 @@ int item_matched_string(object *pl, object *op, char *name)
 	else if (strstr(query_base_name(op,1), cp)) retval = 12;
 	else if (strstr(query_base_name(op,0), cp)) retval = 12;
 	else if (strstr(query_short_name(op), cp)) retval = 12;
+
+	/* Check against plural/non plural based on count. */
+	else if (count>1 && !strcasecmp(cp,op->name_pl)) {
+		retval=6;
+	}
+	else if (count==1 && !strcasecmp(op->name,cp)) {
+		retval=6;
+	}
+	/* base name matched - not bad */
+	else if (strcasecmp(cp,op->name)==0 && !count) retval=4;
 	/* Check for partial custom name, but give a real low priority */
 	else if (op->custom_name && strstr(op->custom_name, cp)) retval = 3;
 
