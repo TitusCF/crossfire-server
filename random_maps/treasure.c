@@ -285,6 +285,7 @@ void keyplace(mapstruct *map,int x,int y,char *keycode,int door_flag,int n_keys)
     while(tries<5&&the_keymaster==NULL) {
       i = (RANDOM()%(Xsize-2))+1;
       j = (RANDOM()%(Ysize-2))+1;
+		tries++;
       the_keymaster=find_closest_monster(map,i,j);
     }
     /* if we don't find a good keymaster, drop the key on the ground. */

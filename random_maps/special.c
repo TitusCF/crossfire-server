@@ -39,7 +39,9 @@
 #define SPECIAL_EXIT 3
 
 #define GLORY_HOLE 1
-#define NR_OF_HOLE_TYPES 1
+#define ORC_ZONE 2
+#define MINING_ZONE 3
+#define NR_OF_HOLE_TYPES 3
 
 /* clear map completely of all objects:  a rectangular area of xsize, ysize
 is cleared with the top left corner at xstart, ystart */
@@ -192,6 +194,32 @@ void place_special_exit(mapstruct * map, int hole_type) {
 		g_ysize = RANDOM() %3 + 4 + difficulty/4;
 		write_parameters_to_string(buf, g_xsize, g_ysize,wallstyle,floorstyle,"none",
 											"none","onion","wealth2","none",exitstyle,0,0,
+											OPT_WALLS_ONLY,0,0,1,dungeon_level,dungeon_level,
+											difficulty,difficulty,-1,1,0,0,0,0);
+		the_exit->slaying = add_string("/!");
+		the_exit->msg = add_string(buf);
+		break;
+	 }
+  case ORC_ZONE:  /* hole with orcs in it. */
+	 {
+		int g_xsize,g_ysize;
+		g_xsize = RANDOM() %3 + 4 + difficulty/4;
+		g_ysize = RANDOM() %3 + 4 + difficulty/4;
+		write_parameters_to_string(buf, g_xsize, g_ysize,wallstyle,floorstyle,"orc",
+											"none","onion","wealth2","none",exitstyle,0,0,
+											OPT_WALLS_ONLY,0,0,1,dungeon_level,dungeon_level,
+											difficulty,difficulty,-1,1,0,0,0,0);
+		the_exit->slaying = add_string("/!");
+		the_exit->msg = add_string(buf);
+		break;
+	 }
+  case MINING_ZONE:  /* hole with orcs in it. */
+	 {
+		int g_xsize,g_ysize;
+		g_xsize = RANDOM() %9 + 4 + difficulty/4;
+		g_ysize = RANDOM() %9 + 4 + difficulty/4;
+		write_parameters_to_string(buf, g_xsize, g_ysize,wallstyle,floorstyle,"none",
+											"none","maze","minerals2","none",exitstyle,0,0,
 											OPT_WALLS_ONLY,0,0,1,dungeon_level,dungeon_level,
 											difficulty,difficulty,-1,1,0,0,0,0);
 		the_exit->slaying = add_string("/!");
