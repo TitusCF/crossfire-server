@@ -29,19 +29,22 @@ srcdir = @srcdir@
 # order of these files is relevant so when new archives are made, they
 # will be extracted in this order so time information/dependencies will work
 # OK.
-INSTALLFILES = $(srcdir)/artifacts $(srcdir)/ban_file $(srcdir)/def_help \
-	$(srcdir)/dm_file $(srcdir)/forbid $(srcdir)/formulae \
-	$(srcdir)/messages $(srcdir)/motd $(srcdir)/races \
-	$(srcdir)/skill_params $(srcdir)/spell_params \
+INSTALLFILES = $(srcdir)/artifacts $(srcdir)/def_help $(srcdir)/formulae \
+	$(srcdir)/messages $(srcdir)/races \
 	$(srcdir)/treasures $(srcdir)/animations $(srcdir)/archetypes \
 	$(srcdir)/bmaps $(srcdir)/bmaps.paths $(srcdir)/crossfire.0 \
 	$(srcdir)/crossfire.1 $(srcdir)/faces \
 	$(srcdir)/attackmess $(srcdir)/image_info
 
+# For the checks on the install for this to work, can't have the $(srcdir)
+# stuff.
+INSTALLNEWFILES = settings /motd skill_params spell_params \
+	dm_file forbid ban_file
+
 BININSTALL = $(srcdir)/collect.pl $(srcdir)/util.pl
 
 ALLFILES = $(SRCS) README \
-	Makefile.in .collect-stamp  $(INSTALLFILES) $(BININSTALL) settings \
+	Makefile.in .collect-stamp  $(INSTALLFILES) $(BININSTALL) $INSTALLNEWFILES  \
 	checkarch.pl.in collect.pl.in
 	
 
@@ -135,7 +138,7 @@ install:: archetypes bmaps.paths crossfire.0 faces animations collect.pl util.pl
 		$(MKDIR) -p $(localdir); \
 	fi
 
-	if [ ! -d $(datadir)/help ]; then \
+	@if [ ! -d $(datadir)/help ]; then \
 		echo "Creating directory $(datadir)/help"; \
 		$(MKDIR) -p $(datadir)/help; \
 	fi;
@@ -143,7 +146,7 @@ install:: archetypes bmaps.paths crossfire.0 faces animations collect.pl util.pl
 	    echo "Installing $$i"; \
 	    $(INSTALL) $(INSTALLFLAGS) $$i $(datadir)/help; \
 	done
-	if [ ! -d $(datadir)/wizhelp ]; then \
+	@if [ ! -d $(datadir)/wizhelp ]; then \
 		echo "Creating directory $(datadir)/wizhelp"; \
 		$(MKDIR) -p $(datadir)/wizhelp; \
 	fi;
@@ -164,6 +167,13 @@ install:: archetypes bmaps.paths crossfire.0 faces animations collect.pl util.pl
 	@if [ ! -f $(datadir)/settings ]; then \
 		$(INSTALL) $(INSTALLFLAGS) settings $(datadir); \
 	fi
+
+	@for i in $(INSTALLNEWFILES); do \
+	    if [ ! -f $(datadir)/$$i ]; then \
+		    echo "Installing $$i"; \
+		    $(INSTALL) $(INSTALLFLAGS)  $$i $(datadir); \
+	    fi \
+	done
 
 	touch $(localdir)/highscore
 	touch $(localdir)/bookarch

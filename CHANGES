@@ -17,6 +17,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+lib/Makefile.in: modified so that it doesn't overwrite commonly customized
+   files (eg, motd, dm_file, ban_file).  These files will get installed 
+   on new installations.
+MSW 2002-06-14
+
 common/item.c: break out monster description into describe_monster
    function from describe_item - the later was a really long function.
    Reveal weapon speed for identified weapons, spell point regen
