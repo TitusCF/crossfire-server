@@ -5025,6 +5025,8 @@ treasure witch_fire
 treasure witch_earth
   arch skill_throwing
   more
+  arch ability_stone_throw
+  more
   arch rock2
    chance 50
    nrof 20
@@ -5081,6 +5083,16 @@ treasure hellhound
   arch ability_hellfire
   more
   arch ability_fear
+ end
+treasure shadow
+  arch ability_cancellation
+  more
+  arch ability_invisible
+ end
+treasure s_wyvern
+  arch ability_cancellation
+  more
+  arch ability_invisible
  end
 treasure giant_worm
   arch ability_bullet
