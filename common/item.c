@@ -399,6 +399,7 @@ char *query_base_name(object *op, int plural) {
 	return op->name; /* To speed things up (or make things slower?) */
 
     strcpy(buf,op->name);
+    len=strlen(buf);
 
     /* This code pretty much taken directly from query_short_name */
     if (plural) {
@@ -406,8 +407,8 @@ char *query_base_name(object *op, int plural) {
 	if (buf3!=NULL) {
 	    strcpy(buf2, buf3);
 	    *buf3 = '\0';   /* also changes value in buf */
+	    len=strlen(buf);
 	}
-	len=strlen(buf);
 
 	if(QUERY_FLAG(op,FLAG_NEED_IE)) {
 	    char *cp=strrchr(buf,'y');
@@ -436,31 +437,31 @@ char *query_base_name(object *op, int plural) {
 
 
     if (op->title && QUERY_FLAG(op,FLAG_IDENTIFIED)) {
-	strcat(buf, " ");
-	strcat(buf, op->title);
+	safe_strcat(buf, " ", &len, MAX_BUF);
+	safe_strcat(buf, op->title, &len, MAX_BUF);
     }
 
     switch(op->type) {
       case SPELLBOOK:
 	if (QUERY_FLAG(op,FLAG_IDENTIFIED)||QUERY_FLAG(op,FLAG_BEEN_APPLIED)) {
 	    if(!op->title) {
-		strcat(buf," of ");
-		if(op->slaying) strcat(buf,op->slaying);
+		safe_strcat(buf," of ", &len, MAX_BUF);
+		if(op->slaying) safe_strcat(buf,op->slaying, &len, MAX_BUF);
 		else
-		  strcat(buf,spells[op->stats.sp].name);
-		if(op->type != SPELLBOOK)
+		  safe_strcat(buf,spells[op->stats.sp].name, &len, MAX_BUF);
+		if(op->type != SPELLBOOK) 
 		    sprintf(buf+strlen(buf), " (lvl %d)", op->level);
 	    }
 	}
 	break;
+
       case SCROLL:
       case WAND:
-
       case ROD:
 	if (QUERY_FLAG(op,FLAG_IDENTIFIED)||QUERY_FLAG(op,FLAG_BEEN_APPLIED)) {
 	    if(!op->title) {
-		strcat(buf," of ");
-		strcat(buf,spells[op->stats.sp].name);
+		safe_strcat(buf," of ", &len, MAX_BUF);
+		safe_strcat(buf,spells[op->stats.sp].name, &len, MAX_BUF);
 		if(op->type != SPELLBOOK)
 		    sprintf(buf+strlen(buf), " (lvl %d)", op->level);
 	    }
@@ -475,8 +476,8 @@ char *query_base_name(object *op, int plural) {
 	    /* If ring has a title, full description isn't so useful */ 
 	    char *s = ring_desc(op);
 	    if (s[0]) {
-		strcat (buf, " ");
-		strcat (buf, s);
+		safe_strcat (buf, " ", &len, MAX_BUF);
+		safe_strcat (buf, s, &len, MAX_BUF);
 	    }
 	}
 #endif

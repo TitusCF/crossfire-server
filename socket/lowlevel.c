@@ -340,6 +340,14 @@ void Send_With_Handling(NewSocket *ns,SockList  *msg)
     if (ns->status == Ns_Dead || !msg)
 	return;
 
+    if (msg->len >= MAXSOCKBUF) {
+	LOG(llevError,"Trying to send a buffer beyond properly size, len =%d\n",
+	    msg->len);
+	/* Almost certainly we've overflowed a buffer, so quite now to make
+	 * it easier to debug.
+	 */
+	abort();
+    }
     sbuf[0] = ((uint32)(msg->len) >> 8) & 0xFF;
     sbuf[1] = ((uint32)(msg->len)) & 0xFF;
     if (ns->status != Ns_Old) 

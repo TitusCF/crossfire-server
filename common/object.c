@@ -804,11 +804,11 @@ void update_object(object *op) {
 object *update_position (mapstruct *m, int x, int y) {
     object *tmp, *last = NULL, *player=NULL;
     unsigned int flags = 0;
-    MapLook f,floor, f1;
+    MapLook top,floor, f1;
 
 
     f1=blank_look;
-    f=blank_look;
+    top=blank_look;
     floor=blank_look;
 
     for (tmp = get_map_ob (m, x, y); tmp; last = tmp, tmp = tmp->above) {
@@ -822,18 +822,18 @@ object *update_position (mapstruct *m, int x, int y) {
 	 * Always put the player down for drawing.
 	 */
 	if (tmp->type==PLAYER) {
-	    f.face = tmp->face;
+	    top.face = tmp->face;
 	    player=tmp;
 	}
 	else if (QUERY_FLAG(tmp,FLAG_IS_FLOOR)) {
-	    /* can't see anything that is below the floor, so reset it. */
 	    f1=blank_look;
 	    if (!tmp->invisible)
 		floor.face = tmp->face;
 	}
+	/* Find the highest visible face around */
+	if (tmp->face->visibility > f1.face->visibility && !tmp->invisible) 
+	    f1.face = tmp->face;
 
-	else if (f1.face->visibility < tmp->face->visibility && !tmp->invisible)
-		f1.face = tmp->face;
 	if (tmp==tmp->above) {
 	    LOG(llevError, "Error in structure of map\n");
 	    exit (-1);
@@ -851,30 +851,61 @@ object *update_position (mapstruct *m, int x, int y) {
 	    flags |= P_PASS_THRU;
 	if (QUERY_FLAG(tmp,FLAG_BLOCKSVIEW))
 	    flags |= P_BLOCKSVIEW;
+
+    } /* for stack of objects */
+
+    top.flags = flags;
+
+    /* At this point, we have a floor.face (if there is a floor),
+     * and the floor is set - we are not going to touch it at
+     * this point.
+     * f1 contains the highest visibility face. 
+     * top contains a player face, if there is one.
+     *
+     * We now need to fill in top.face and/or f1.face.
+     */
+
+    /* If the top face also happens to be high visibility, re-do our
+     * middle face.  This only happens when top.face is a player.
+     */
+    if (top.face == f1.face) f1.face=blank_look.face;
+
+    /* There are three posibilities at this point:
+     * 1) top face is set, need f1 to be set.
+     * 2) f1 is set, need to set top.
+     * 3) neither f1 or top is set - need to set both.
+     */
+
+    for (tmp=last; tmp; tmp=tmp->below) {
+	/* Once we get to a floor, stop, since we already have a floor object */
+	if (QUERY_FLAG(tmp,FLAG_IS_FLOOR)) break;
+
+	/* If two top faces are already set, quit processing */
+	if ((top.face != blank_look.face) && (f1.face != blank_look.face)) break;
+
+	/* Only show visible faces, unless its the editor - show all */
+	if (!tmp->invisible || editor) {
+	    /* Fill in top if needed */
+	    if (top.face == blank_look.face) {
+		top.face = tmp->face;
+	    } else {
+		/* top is already set - we should only get here if
+		 * f1 is not set
+		 *
+		* Set the middle face and break out, since there is nothing
+		 * more to fill in.  We don't check visiblity here, since
+		 * 
+		 */
+		if (tmp->face  != top.face ) {
+		    f1.face = tmp->face;
+		    break;
+		}
+	    }
+	}
     }
-    if (last && f.face==blank_face) f.face = last->face;
-
-    /* If not using the editor, lets find the top most non
-       inivisible face. Stop once we find a floor.*/
-    if (!editor) {
-	while (last && (last->invisible || !last->face->number) &&
-	      !QUERY_FLAG(last, FLAG_IS_FLOOR))
-	    last = last->below;
-
-	if (last!=NULL) f.face = last->face;
-	else f.face = blank_face;
-    }
-
-/* Basically, we want to try and set the floors first, since that some
- * object that comes along later can be put in the top spot.
- */
-    if (f.face == f1.face)
-	f1.face = blank_face;
+    set_map (m, x, y, &top);
     set_map_floor2(m, x, y, &f1);
-
-    f.flags = flags;
     set_map_floor(m,x,y,&floor);
-    set_map (m, x, y, &f);
 
     return player;
 }
@@ -1362,7 +1393,7 @@ object *insert_ob_in_map (object *op, mapstruct *m, object *originator)
 
   if (QUERY_FLAG (op, FLAG_FREED)) {
     LOG (llevError, "Trying to insert freed object!\n");
-    return;
+    return NULL;
   }
   if(m==NULL) {
     dump_object(op);
@@ -1508,7 +1539,6 @@ object *insert_ob_in_map (object *op, mapstruct *m, object *originator)
 
     /* Only check this if we are the head of the object */
     if ( ! op->head) {
-        mapstruct *map=op->map;
         if (check_walk_on(op, originator))
           return NULL;
 
@@ -1602,15 +1632,18 @@ object *decrease_ob_nr (object *op, int i)
             }
         }
     }
-    else
+    else 
     {
+	object *above = op->above;
+
         if (i < op->nrof) {
             op->nrof -= i;
         } else {
             remove_ob (op);
             op->nrof = 0;
         }
-        for (tmp = op->above; tmp != NULL; tmp = tmp->above)
+	/* Since we just removed op, op->above is null */
+        for (tmp = above; tmp != NULL; tmp = tmp->above)
             if (tmp->type == PLAYER) {
                 if (op->nrof)
                     (*esrv_send_item_func) (tmp, op);
