@@ -406,6 +406,7 @@ more
   more
   arch bracers_gnarg
     chance 2
+  more
 arch god_grace_limit_high
 more
   arch god_spelldirect_cause_rabies
@@ -693,6 +694,7 @@ treasureone human_parts
   arch hand
     nrof 2
     chance 10
+  more
   arch finger
     nrof 5
     chance 3
@@ -1027,6 +1029,7 @@ treasureone random_armour
   arch bighorned_helmet
     magic 1
     chance 5
+  more
   arch shield
     magic 2
     chance 5
@@ -2298,6 +2301,7 @@ treasureone shop_gems
   arch ruby
     chance 5
     nrof 8
+  more
   arch sapphire
     chance 5
     nrof 3
@@ -2913,7 +2917,9 @@ treasure ring
 treasure pirate
   arch skill_stealing
     chance 50
+  more
   arch skill_throwing
+    chance 75
     no
       arch skill_punching
     end
@@ -3287,6 +3293,7 @@ treasure dragon
   more
   arch scroll_new
   chance 50
+  more
   arch sword_2
   magic 5
   chance 20
@@ -3518,6 +3525,7 @@ treasure demilich
   arch ability_coldspell
   more
   arch ability_mass_confusion
+  more
   arch gem  
   nrof 1
   end
@@ -3537,6 +3545,7 @@ treasure monk_class_items
   arch r_sack
   more
   arch sandals
+  more
   arch skill_praying
   more
   arch skill_sense_curse
@@ -4294,6 +4303,7 @@ treasure banshee
   more
   arch ring
   chance 50
+  more
   arch amulet
   chance 15
   more
@@ -4370,8 +4380,10 @@ treasure lich_old
   more
   arch scroll_new
   chance 90
+  more
   arch scroll_new
   chance 90
+  more
   arch gem
   chance 70
   nrof 3
@@ -4665,6 +4677,7 @@ treasure lamia
   more
   arch wand
   chance 50
+  more
   arch rod_heavy
   chance 5
   no
@@ -4909,6 +4922,7 @@ treasure c_m_priest
   more
   arch wand
   chance 30
+  more
   arch ability_paralyze
   chance 50
   no
