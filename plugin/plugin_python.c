@@ -2371,7 +2371,7 @@ static PyObject* CFGetSkillExperience(PyObject* self, PyObject* args)
     for (tmp=WHO->inv;tmp;tmp=tmp->below)
     {
         if(tmp->type==SKILL && tmp->subtype==skill) {
-            return Py_BuildValue("L",(long long)(tmp->stats.exp));
+            return Py_BuildValue("L",(sint64)(tmp->stats.exp));
         }
     }
     return NULL;
