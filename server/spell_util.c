@@ -764,6 +764,7 @@ if (item == spellNormal && !ability ){
   case SP_CAUSE_PNEUMONIC_PLAGUE:
   case SP_CAUSE_ANTHRAX:
   case SP_CAUSE_TYPHOID:
+  case SP_CAUSE_RABIES:
     success = cast_cause_disease(op,caster,dir,spellarch[type],type);
     break;
     /* DAMN */
