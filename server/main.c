@@ -596,7 +596,8 @@ static void enter_unique_map(object *op, object *exit_ob)
  */
 
 void enter_exit(object *op, object *exit_ob) {
-
+    #define PORTAL_DESTINATION_NAME "Town portal destination" /* this one should really be in a header file */
+    object *tmp;
 
     /* It may be nice to support other creatures moving across
      * exits, but right now a lot of the code looks at op->contr,
@@ -662,6 +663,26 @@ void enter_exit(object *op, object *exit_ob) {
 		    exit_ob->name?exit_ob->name:"(none)", exit_ob->x, exit_ob->y, 
 		    exit_ob->map?exit_ob->map->path:"(none)");
 	    }
+
+            /* mids 02/13/2002 if exit is damned, update players death & WoR home-position and delete town portal */
+            if (QUERY_FLAG(exit_ob, FLAG_DAMNED)) {
+              /* remove an old force with a slaying field == PORTAL_DESTINATION_NAME */
+              for(tmp=op->inv; tmp != NULL; tmp = tmp->below) {
+                if(tmp->type == FORCE && tmp->slaying && !strcmp(tmp->slaying, PORTAL_DESTINATION_NAME)) break;
+              }
+              if(tmp) {
+                remove_ob(tmp);
+                free_object(tmp);
+              }
+ 
+              strcpy(op->contr->savebed_map, normalize_path(exit_ob->map->path, EXIT_PATH(exit_ob)));
+              op->contr->bed_x = EXIT_X(exit_ob), op->contr->bed_y = EXIT_Y(exit_ob);
+              save_player(op, 1);
+              /* LOG(llevDebug,"enter_exit: Taking damned exit %s to (%d,%d) on map %s\n",
+               * exit_ob->name?exit_ob->name:"(none)", exit_ob->x, exit_ob->y,  
+               * normalize_path(exit_ob->map->path, EXIT_PATH(exit_ob))); */
+            }
+
 	    enter_map(op, newmap, x, y);
 	}
 	/* For exits that cause damages (like pits) */

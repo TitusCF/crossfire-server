@@ -17,6 +17,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/main.c: If exit is damned, update players death & WoR home-position
+    and delete town portal.
+server/apply.c: Fix bug in move_apply. return was used instead of goto
+    leave, so recursion_depth wasn't decremented.
+mids 02/13/2002
+
 server/spell_effect.c: Fix bug in summon_cult_monster that would result
 in crash if monster was killed when inserted.  MSW 2002-02-10
 

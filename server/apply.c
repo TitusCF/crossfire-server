@@ -1351,7 +1351,7 @@ void move_apply (object *trap, object *victim, object *originator)
 
   case SIGN:
     if (victim->type != PLAYER && trap->stats.food > 0)
-      return; /* monsters musn't apply magic_mouths with counters */
+      goto leave; /* monsters musn't apply magic_mouths with counters */
     apply_sign (victim, trap);
     goto leave;
 
