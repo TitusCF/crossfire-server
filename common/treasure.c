@@ -1220,7 +1220,7 @@ void init_artifacts() {
 	else if (sscanf(cp, "difficulty %d", &value))
 	    art->difficulty = (uint8) value;
 	else if (!strncmp(cp, "Object",6)) {
-	    art->item = (object *) malloc(sizeof(object));
+	    art->item = (object *) calloc(1, sizeof(object));
 	    reset_object(art->item);
 	    if (!load_object(fp, art->item,LO_LINEMODE,0))
 		LOG(llevError,"Init_Artifacts: Could not load object.\n");

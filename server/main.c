@@ -929,6 +929,20 @@ void process_events (mapstruct *map)
 	    continue;
 	}
 
+	/* I've seen occasional crashes due to this - the object is removed,
+	 * and thus the map it points to (last map it was on) may be bogus
+	 * The real bug is to try to find out the cause of this - someone
+	 * is probably calling remove_ob without either an insert_ob or
+	 * free_object afterwards, leaving an object dangling.  But I'd
+	 * rather log this and continue on instead of crashing.
+	 */
+	if (QUERY_FLAG (op, FLAG_REMOVED)) {
+	    LOG (llevError, "BUG: process_events(): Removed object on list\n");
+	    dump_object(op);
+	    free_object(op);
+	    continue;
+	}
+
 	if ( ! op->speed) {
 	    LOG (llevError, "BUG: process_events(): Object %s has no speed, "
 		 "but is on active list\n", op->arch->name);

@@ -17,6 +17,13 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+common/treasure.c: Change the loading of the artifacts file to actually
+  calloc() the object - reset_object() doesn't clear all the values,
+  like active_next, active_prev, so better to just do it there.
+server/main.c: Add code in process_events() that checks for removed objects -
+   have seen occasional crashes caused by them.
+MSW 2004-05-08
+
 Armor enchantment now uses setting values.
 common/init.c: new values to init in settings.
 include/global.h: new setting values.
