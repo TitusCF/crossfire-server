@@ -79,7 +79,7 @@ int move_ob (object *op, int dir, object *originator)
 		hit_player(tmp_ob,5,op,AT_PHYSICAL); /* Tear down the earthwall */
 		return 0;
 	    }
-            tmp_ob = tmp_ob->above;
+            tmp_ob = tmp_ob->above; /* To prevent endless loop */
 	}
     }
     if (op->will_apply&8 ) {
@@ -89,7 +89,7 @@ int move_ob (object *op, int dir, object *originator)
 		hit_player(tmp_ob,9999,op,AT_PHYSICAL); /* Tear down the earthwall */
 		return 0;
 	    }
-            tmp_ob = tmp_ob->above;
+            tmp_ob = tmp_ob->above; /* To prevent endless loop */
 	}
     }
 
