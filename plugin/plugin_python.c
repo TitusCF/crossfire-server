@@ -31,6 +31,7 @@
 /* First let's include the header file needed                                */
 
 #include <plugin_python.h>
+#include <stdarg.h>
 
 #define PYTHON_DEBUG   /* give us some general infos out */
 
@@ -44,6 +45,9 @@
 #else
 #define MODULEAPI
 #endif
+
+#define CHECK_MAP(mapptr) if((mapptr) == 0) { set_exception("NULL map given"); return NULL; }
+#define CHECK_OBJ(objptr) if((objptr) == 0) { set_exception("NULL object given"); return NULL; }
 
 /****************************************/
 /* Utility functions                    */
@@ -74,10 +78,24 @@ static void PyFixPlayer( object* pl )
     PlugHooks[ HOOK_FIXPLAYER ]( &lCFR );
     }
 
+/* Set up an Python exception object.
+ */
+static void set_exception(const char *fmt, ...)
+{
+    char buf[1024];
+    va_list arg;
+
+    va_start(arg, fmt);
+    vsnprintf(buf, sizeof(buf), fmt, arg);
+    va_end(arg);
+
+    PyErr_SetString(PyExc_ValueError, buf);
+}
+
 /* Create an object. The parameter name may be an object name ("writing pen")
  * or an archetype name ("stylus"). An object name can have artifact suffixes
- * ("levitation boots of granite of mobility"). Returns NULL if the object does
- * not exist.
+ * ("levitation boots of granite of mobility"). Returns NULL (and sets the
+ * Python exception object) if the object does not exist.
  */
 static object *create_object(char *name)
 {
@@ -104,8 +122,8 @@ static object *create_object(char *name)
 
         if(strncmp(query_name(ob), "singluarity", 11) == 0)
         {
-            printf("create_object: object '%s' does not exist\n", name);
             PyFreeObject(ob);
+            set_exception("object '%s' does not exist", name);
             return NULL;
         }
     }
@@ -121,8 +139,8 @@ static object *create_object(char *name)
         /* Sanity check: obname should be a prefix of name. */
         if(strncmp(name, obname, strlen(obname)) != 0)
         {
-            printf("create_object: object name '%s' is not a prefix of '%s'\n", obname, name);
             PyFreeObject(ob);
+            set_exception("object name '%s' is not a prefix of '%s'", obname, name);
             return NULL;
         }
 
@@ -155,8 +173,8 @@ static object *create_object(char *name)
 
             if(i <= 0)
             {
-                printf("create_object: artifact suffix '%s' for '%s' does not exist\n", suffix, obname);
                 PyFreeObject(ob);
+                set_exception("artifact suffix '%s' for '%s' does not exist", suffix, obname);
                 return NULL;
             }
         }
@@ -2269,6 +2287,7 @@ static PyObject* CFGetMapWidth(PyObject* self, PyObject* args)
     long map;
     if (!PyArg_ParseTuple(args,"l",&map))
         return NULL;
+    CHECK_MAP(map);
     val = ((mapstruct *)(map))->width;
     return Py_BuildValue("i",val);
 };
@@ -2284,6 +2303,7 @@ static PyObject* CFGetMapHeight(PyObject* self, PyObject* args)
     long map;
     if (!PyArg_ParseTuple(args,"l",&map))
         return NULL;
+    CHECK_MAP(map);
     val = ((mapstruct *)(map))->height;
     return Py_BuildValue("i",val);
 };
@@ -2301,6 +2321,9 @@ static PyObject* CFGetObjectAt(PyObject* self, PyObject* args)
 
     if (!PyArg_ParseTuple(args,"lii",&map,&x,&y))
         return NULL;
+
+    CHECK_MAP(map);
+
     whoptr = (long)(get_map_ob((mapstruct *)(map),x,y));
     return Py_BuildValue("l",whoptr);
 };
@@ -2318,6 +2341,8 @@ static PyObject* CFSetValue(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"li",&whoptr,&newvalue))
         return NULL;
 
+    CHECK_OBJ(whoptr);
+
     WHO->value = newvalue;
     Py_INCREF(Py_None);
     return Py_None;
@@ -2334,6 +2359,8 @@ static PyObject* CFGetValue(PyObject* self, PyObject* args)
 
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
+
+    CHECK_OBJ(whoptr);
 
     return Py_BuildValue("i",WHO->value);
 };
@@ -2355,6 +2382,12 @@ static PyObject* CFSetSkillExperience(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"liL",&whoptr,&skill,&value))
         return NULL;
 
+    CHECK_OBJ(whoptr);
+    if (value < 0) {
+        set_exception("experience value must not be negative");
+        return NULL;
+    }
+
     /* Browse the inventory of object to find a matching skill. */
     for (tmp=WHO->inv;tmp;tmp=tmp->below)
     {
@@ -2374,6 +2407,8 @@ static PyObject* CFSetSkillExperience(PyObject* self, PyObject* args)
             return Py_None;
         };
     };
+
+    set_exception("%s does not know the skill %s", query_name(WHO), skill);
     return NULL;
 };
 
@@ -2391,6 +2426,8 @@ static PyObject* CFGetSkillExperience(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"li",&whoptr,&skill))
         return NULL;
 
+    CHECK_OBJ(whoptr);
+
     /* Browse the inventory of object to find a matching skill. */
     for (tmp=WHO->inv;tmp;tmp=tmp->below)
     {
@@ -2398,7 +2435,9 @@ static PyObject* CFGetSkillExperience(PyObject* self, PyObject* args)
             return Py_BuildValue("L",(sint64)(tmp->stats.exp));
         }
     }
-    return NULL;
+
+    Py_INCREF(Py_None);
+    return Py_None;
 };
 
 /*****************************************************************************/
@@ -2438,6 +2477,8 @@ static PyObject* CFSetCursed(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"li",&whoptr,&value))
         return NULL;
 
+    CHECK_OBJ(whoptr);
+
   if (value!=0)
   {
         SET_FLAG(WHO, FLAG_CURSED);
@@ -2463,6 +2504,9 @@ static PyObject* CFActivateRune(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"ll",&whoptr,&whatptr))
         return NULL;
 
+    CHECK_OBJ(whoptr);
+    CHECK_OBJ(whatptr);
+
     GCFP.Value[0] = (void *)(WHAT);
     GCFP.Value[1] = (void *)(WHO);
     (PlugHooks[HOOK_SPRINGTRAP])(&GCFP);
@@ -2484,6 +2528,9 @@ static PyObject* CFCheckTrigger(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"ll",&whoptr,&whatptr))
         return NULL;
 
+    CHECK_OBJ(whoptr);
+    CHECK_OBJ(whatptr);
+
     check_trigger(WHAT,WHO);
 
     Py_INCREF(Py_None);
@@ -2502,6 +2549,8 @@ static PyObject* CFSetUnaggressive(PyObject* self, PyObject* args)
 
     if (!PyArg_ParseTuple(args,"li",&whoptr,&value))
         return NULL;
+
+    CHECK_OBJ(whoptr);
 
     if (value!=0)
     {
@@ -2532,6 +2581,9 @@ static PyObject* CFCastAbility(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"llsis",&whoptr,&casterptr,&spell,&dir,&op))
         return NULL;
 
+    CHECK_OBJ(whoptr);
+    CHECK_OBJ(casterptr);
+
     GCFP.Value[0] = spell;
     CFR = (PlugHooks[HOOK_GETARCHETYPE])(&GCFP);
     spell_ob = CFR->Value[0];
@@ -2541,12 +2593,14 @@ static PyObject* CFCastAbility(PyObject* self, PyObject* args)
     {
         /* spell object does not exist */
         PyFreeObject(spell_ob);
+        set_exception("illegal spell name %s (unknown object)", spell);
         return NULL;
     }
     if (spell_ob->type != SPELL)
     {
         /* not a spell */
         PyFreeObject(spell_ob);
+        set_exception("illegal spell name %s (not a spell object)", spell);
         return NULL;
     }
 
@@ -2575,6 +2629,8 @@ static PyObject* CFGetMapPath(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"l",&where))
         return NULL;
 
+    CHECK_MAP(where);
+
     return Py_BuildValue("s",((mapstruct *)(where))->path);
 };
 
@@ -2587,6 +2643,7 @@ static PyObject* CFGetMapPath(PyObject* self, PyObject* args)
 /*****************************************************************************/
 static PyObject* CFGetMapObject(PyObject* self, PyObject* args)
 {
+    PyErr_SetString(PyExc_NotImplementedError, "GetMapObject is not implemented");
     return NULL; /* Deprecated */
 };
 
@@ -2603,6 +2660,9 @@ static PyObject* CFGetMessage(PyObject* self, PyObject* args)
 
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
+
+    CHECK_OBJ(whoptr);
+
     msg = WHO->msg;
     if (msg == NULL)
         msg = "";
@@ -2620,6 +2680,8 @@ static PyObject* CFSetMessage(PyObject* self, PyObject* args)
     long whoptr;
     if (!PyArg_ParseTuple(args,"ls",&whoptr, &txt))
         return NULL;
+
+    CHECK_OBJ(whoptr);
 
     if (WHO->msg != NULL)
         free_string(WHO->msg);
@@ -2641,10 +2703,18 @@ static PyObject* CFGetGod(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
 
+    CHECK_OBJ(whoptr);
+
     GCFP.Value[0] = (void *)(WHO);
     CFR = (PlugHooks[HOOK_DETERMINEGOD])(&GCFP);
     value = (char *)(CFR->Value[0]);
     PyFreeMemory( CFR );
+
+    if (strcmp(value, "none") == 0)
+    {
+        Py_INCREF(Py_None);
+        return Py_None;
+    }
 
     return Py_BuildValue("s",value);
 };
@@ -2667,6 +2737,8 @@ static PyObject* CFSetGod(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"ls",&whoptr,&txt))
         return NULL;
 
+    CHECK_OBJ(whoptr);
+
     prayname = add_string("praying");
 
     GCFP1.Value[0] = (void *)(WHO);
@@ -2678,6 +2750,12 @@ static PyObject* CFSetGod(PyObject* self, PyObject* args)
     CFR0 = (PlugHooks[HOOK_FINDGOD])(&GCFP0);
     tmp = (object *)(CFR0->Value[0]);
     PyFreeMemory( CFR0 );
+
+    if (tmp == NULL) 
+    {
+        set_exception("illegal god name %s", txt);
+        return NULL;
+    }
 
     GCFP2.Value[1] = (void *)(tmp);
 
@@ -2706,15 +2784,17 @@ static PyObject* CFSetWeight(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"ll",&whoptr,&value))
         return NULL;
 
+    CHECK_OBJ(whoptr);
+
     /* I used an arbitrary bound of 32000 here */
     if (value > 32000)
     {
-        printf( "SetWeight: Value must be lower than 32000\n");
+        set_exception("weight must not exceed 32000");
         return NULL;
     }
     else if (value < 0)
     {
-        printf( "(set-weight): Value must be greater than 0\n");
+        set_exception("weight must not be negative");
         return NULL;
     };
     WHO->weight = value;
@@ -2767,12 +2847,19 @@ static PyObject* CFTeleport(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"llii",&whoptr,&where,&x,&y))
         return NULL;
 
+    CHECK_OBJ(whoptr);
+    CHECK_MAP(where);
+
     if ((out_of_map((mapstruct*)(where),x,y))==0)
     {
         int k;
         object *tmp;
         k = find_first_free_spot(WHO->arch,(mapstruct*)(where),x,y);
-        if (k==-1) return NULL;
+        if (k==-1)
+        {
+            set_exception("no free spot found");
+            return NULL;
+        }
 
         GCFP.Value[0] = (void *)(WHO);
         (PlugHooks[HOOK_REMOVEOBJECT])(&GCFP);
@@ -2806,6 +2893,8 @@ static PyObject* CFIsOutOfMap(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"lii",&whoptr,&x,&y))
         return NULL;
 
+    CHECK_OBJ(whoptr);
+
     return Py_BuildValue("i", out_of_map(WHO->map,x,y));
 };
 
@@ -2821,6 +2910,9 @@ static PyObject* CFPickUp(PyObject* self, PyObject* args)
 
     if (!PyArg_ParseTuple(args,"ll",&whoptr,&whatptr))
         return NULL;
+
+    CHECK_OBJ(whoptr);
+    CHECK_OBJ(whatptr);
 
     GCFP.Value[0] = (void *)(WHO);
     GCFP.Value[1] = (void *)(WHAT);
@@ -2841,6 +2933,9 @@ static PyObject* CFGetWeight(PyObject* self, PyObject* args)
 
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
+
+    CHECK_OBJ(whoptr);
+
     printf( "GetWeight: requested target is %s\n", query_name(WHO));
     return Py_BuildValue("l",WHO->weight);
 };
@@ -2858,6 +2953,8 @@ static PyObject* CFIsCanBePicked(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
 
+    CHECK_OBJ(whoptr);
+
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_NO_PICK));
 };
 
@@ -2872,6 +2969,8 @@ static PyObject* CFGetMap(PyObject* self, PyObject* args)
 
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
+
+    CHECK_OBJ(whoptr);
 
     return Py_BuildValue("l",(long)(WHO->map));
 };
@@ -2888,7 +2987,8 @@ static PyObject* CFSetNextObject(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"ll",&whoptr,&whatptr))
         return NULL;
 
-    if (WHO==NULL) return NULL;
+    CHECK_OBJ(whoptr);
+    CHECK_OBJ(whatptr);
 
     WHO->below = WHAT;
     Py_INCREF(Py_None);
@@ -2907,7 +3007,8 @@ static PyObject* CFSetPreviousObject(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"ll",&whoptr,&whatptr))
         return NULL;
 
-    if (WHO==NULL) return NULL;
+    CHECK_OBJ(whoptr);
+    CHECK_OBJ(whatptr);
 
     WHO->above = WHAT;
     Py_INCREF(Py_None);
@@ -2926,7 +3027,7 @@ static PyObject* CFGetNextObject(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
 
-    if (WHO==NULL) return NULL;
+    CHECK_OBJ(whoptr);
 
     return Py_BuildValue("l",(long)(WHO->below));
 };
@@ -2943,7 +3044,7 @@ static PyObject* CFGetPreviousObject(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
 
-    if (WHO==NULL) return NULL;
+    CHECK_OBJ(whoptr);
 
     return Py_BuildValue("l",(long)(WHO->above));
 };
@@ -2962,6 +3063,8 @@ static PyObject* CFGetFirstObjectOnSquare(PyObject* self, PyObject* args)
 
     if (!PyArg_ParseTuple(args,"lii",&map,&x,&y))
         return NULL;
+
+    CHECK_MAP(map);
 
     GCFP.Value[0] = (mapstruct *)(map);
     GCFP.Value[1] = (void *)(&x);
@@ -2988,9 +3091,10 @@ static PyObject* CFSetQuantity(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"li",&whatptr,&value))
         return NULL;
 
+    CHECK_OBJ(whatptr);
     if (value < 0)
     {
-        printf( "(set-quantity): Value must be greater than 0\n");
+        set_exception("value must not be negative");
         return NULL;
     };
     WHAT->nrof = value;
@@ -3015,6 +3119,8 @@ static PyObject* CFGetQuantity(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"l",&whatptr))
         return NULL;
 
+    CHECK_OBJ(whatptr);
+
     return Py_BuildValue("l",WHAT->nrof);
 };
 
@@ -3031,6 +3137,9 @@ static PyObject* CFInsertObjectInside(PyObject* self, PyObject* args)
 
     if (!PyArg_ParseTuple(args,"ll",&whatptr,&whereptr))
         return NULL;
+
+    CHECK_OBJ(whatptr);
+    CHECK_OBJ(whereptr);
 
     myob = WHAT;
     if (!QUERY_FLAG(myob,FLAG_REMOVED))
@@ -3093,6 +3202,9 @@ static PyObject* CFApply(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"lli",&whoptr,&whatptr,&flags))
         return NULL;
 
+    CHECK_OBJ(whoptr);
+    CHECK_OBJ(whatptr);
+
     GCFP.Value[0] = (void *)(WHO);
     GCFP.Value[1] = (void *)(WHAT);
     GCFP.Value[2] = (void *)(&flags);
@@ -3117,6 +3229,8 @@ static PyObject* CFDrop(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"ls",&whoptr,&name))
         return NULL;
 
+    CHECK_OBJ(whoptr);
+
     GCFP.Value[0] = (void *)(WHO);
     GCFP.Value[1] = (void *)(name);
     CFR = (PlugHooks[HOOK_CMDDROP])(&GCFP);
@@ -3140,6 +3254,8 @@ static PyObject* CFTake(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"ls",&whoptr,&name))
         return NULL;
 
+    CHECK_OBJ(whoptr);
+
     GCFP.Value[0] = (void *)(WHO);
     GCFP.Value[1] = (void *)(name);
     CFR = (PlugHooks[HOOK_CMDTAKE])(&GCFP);
@@ -3160,6 +3276,9 @@ static PyObject* CFIsInvisible(PyObject* self, PyObject* args)
 
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
+
+    CHECK_OBJ(whoptr);
+
     return Py_BuildValue("i",WHO->invisible);
 };
 
@@ -3196,6 +3315,13 @@ static PyObject* CFWhatIsMessage(PyObject* self, PyObject* args)
 {
     if (!PyArg_ParseTuple(args,"",NULL))
         return NULL;
+
+    if (!StackText[StackPosition])
+    {
+        Py_INCREF(Py_None);
+        return Py_None;
+    }
+
     return Py_BuildValue("s",StackText[StackPosition]);
 };
 
@@ -3214,6 +3340,8 @@ static PyObject* CFSay(PyObject* self, PyObject* args)
 
     if (!PyArg_ParseTuple(args,"ls",&obptr,&message))
         return NULL;
+
+    CHECK_OBJ(obptr);
 
     who = (object *)(obptr);
 
@@ -3243,6 +3371,8 @@ static PyObject* CFSetGender(PyObject* self, PyObject* args)
 
     if (!PyArg_ParseTuple(args,"ls",&obptr,&gender))
         return NULL;
+
+    CHECK_OBJ(obptr);
 
     who = (object *)(obptr);
 
@@ -3279,6 +3409,8 @@ static PyObject* CFSetRank(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"ls",&obptr,&rank))
         return NULL;
 
+    CHECK_OBJ(obptr);
+
     who = (object *)(obptr);
 
     for(walk=who->inv;walk!=NULL;walk=walk->below)
@@ -3313,6 +3445,8 @@ static PyObject* CFSetAlignment(PyObject* self, PyObject* args)
 
     if (!PyArg_ParseTuple(args,"ls",&obptr,&align))
         return NULL;
+
+    CHECK_OBJ(obptr);
 
     who = (object *)(obptr);
 
@@ -3354,6 +3488,9 @@ static PyObject* CFSetGuildForce(PyObject* self, PyObject* args)
 
     if (!PyArg_ParseTuple(args,"ls",&obptr,&guild))
         return NULL;
+
+    CHECK_OBJ(obptr);
+
     who = (object *)(obptr);
 
     for(walk=who->inv;walk!=NULL;walk=walk->below)
@@ -3389,6 +3526,8 @@ static PyObject* CFGetGuildForce(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
 
+    CHECK_OBJ(whoptr);
+
     for(walk=WHO->inv;walk!=NULL;walk=walk->below)
     {
         if (!strcmp(walk->name,"GUILD_FORCE") && !strcmp(walk->arch->name,"guild_force"))
@@ -3413,6 +3552,8 @@ static PyObject* CFSetInvisible(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"li",&whoptr,&value))
         return NULL;
 
+    CHECK_OBJ(whoptr);
+
     WHO->invisible = value;
     Py_INCREF(Py_None);
     return Py_None;
@@ -3429,6 +3570,9 @@ static PyObject* CFGetExperience(PyObject* self, PyObject* args)
 
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
+
+    CHECK_OBJ(whoptr);
+
     return Py_BuildValue("l",WHO->stats.exp);
 };
 
@@ -3443,6 +3587,8 @@ static PyObject* CFGetSpeed(PyObject* self, PyObject* args)
 
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
+
+    CHECK_OBJ(whoptr);
 
     return Py_BuildValue("d",WHO->speed);
 };
@@ -3459,8 +3605,13 @@ static PyObject* CFSetSpeed(PyObject* self, PyObject* args)
 
     if (!PyArg_ParseTuple(args,"ld",&whoptr,&value))
         return NULL;
-    if (value< -9.99) return NULL;
-    if (value> 9.99) return NULL;
+
+    CHECK_OBJ(whoptr);
+    if (value< -9.99 || value> 9.99)
+    {
+        set_exception("value must be between -9.99 and 9.99");
+        return NULL;
+    }
 
     WHO->speed = (float) value;
     Py_INCREF(Py_None);
@@ -3479,6 +3630,8 @@ static PyObject* CFGetFood(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
 
+    CHECK_OBJ(whoptr);
+
     return Py_BuildValue("i",WHO->stats.food);
 };
 
@@ -3495,8 +3648,12 @@ static PyObject* CFSetFood(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"li",&whoptr,&value))
         return NULL;
 
-    if (value<0) return NULL;
-    if (value>999) return NULL;
+    CHECK_OBJ(whoptr);
+    if (value < 0 || value > 999)
+    {
+        set_exception("value must be between 0 and 999");
+        return NULL;
+    }
 
     WHO->stats.food = value;
 
@@ -3516,6 +3673,8 @@ static PyObject* CFGetGrace(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
 
+    CHECK_OBJ(whoptr);
+
     return Py_BuildValue("i",WHO->stats.grace);
 };
 
@@ -3532,8 +3691,12 @@ static PyObject* CFSetGrace(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"li",&whoptr,&value))
         return NULL;
 
-    if (value<-16000) return NULL;
-    if (value>16000) return NULL;
+    CHECK_OBJ(whoptr);
+    if (value < -16000 || value > 16000)
+    {
+        set_exception("value must be between -16000 and 16000");
+        return NULL;
+    }
 
     WHO->stats.grace = value;
 
@@ -3582,6 +3745,8 @@ static PyObject* CFGetDirection(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
 
+    CHECK_OBJ(whoptr);
+
     return Py_BuildValue("i",WHO->direction);
 };
 
@@ -3597,6 +3762,8 @@ static PyObject* CFSetDirection(PyObject* self, PyObject* args)
 
     if (!PyArg_ParseTuple(args,"li",&whoptr,&value))
         return NULL;
+
+    CHECK_OBJ(whoptr);
 
     WHO->direction = value;
     SET_ANIMATION(WHO, WHO->direction);
@@ -3616,6 +3783,8 @@ static PyObject* CFGetLastSP(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
 
+    CHECK_OBJ(whoptr);
+
     return Py_BuildValue("i",WHO->last_sp);
 };
 
@@ -3632,8 +3801,12 @@ static PyObject* CFSetLastSP(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"li",&whoptr,&value))
         return NULL;
 
-    if (value<0) return NULL;
-    if (value>16000) return NULL;
+    CHECK_OBJ(whoptr);
+    if (value < 0 || value > 16000)
+    {
+        set_exception("value must be between 0 and 16000");
+        return NULL;
+    }
 
     WHO->last_sp = value;
 
@@ -3653,6 +3826,8 @@ static PyObject* CFGetLastGrace(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
 
+    CHECK_OBJ(whoptr);
+
     return Py_BuildValue("i",WHO->last_grace);
 };
 
@@ -3669,8 +3844,12 @@ static PyObject* CFSetLastGrace(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"li",&whoptr,&value))
         return NULL;
 
-    if (value<0) return NULL;
-    if (value>16000) return NULL;
+    CHECK_OBJ(whoptr);
+    if (value < 0 || value > 16000)
+    {
+        set_exception("value must be between 0 and 16000");
+        return NULL;
+    }
 
     WHO->last_grace = value;
 
@@ -3689,6 +3868,8 @@ static PyObject* CFFixObject(PyObject* self, PyObject* args)
 
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
+
+    CHECK_OBJ(whoptr);
 
     fix_player(WHO);
     Py_INCREF(Py_None);
@@ -3709,6 +3890,8 @@ static PyObject* CFSetFace(PyObject* self, PyObject* args)
 
     if (!PyArg_ParseTuple(args,"ls",&whoptr,&txt))
         return NULL;
+
+    CHECK_OBJ(whoptr);
 
     GCFP.Value[0] = (void *)(txt);
     CFR = (PlugHooks[HOOK_FINDANIMATION])(&GCFP);
@@ -3735,6 +3918,8 @@ static PyObject* CFGetAttackType(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
 
+    CHECK_OBJ(whoptr);
+
     return Py_BuildValue("i",WHO->attacktype);
 };
 
@@ -3750,6 +3935,8 @@ static PyObject* CFSetAttackType(PyObject* self, PyObject* args)
 
     if (!PyArg_ParseTuple(args,"li",&whoptr,&value))
         return NULL;
+
+    CHECK_OBJ(whoptr);
 
     WHO->attacktype = value;
 
@@ -3770,8 +3957,12 @@ static PyObject* CFSetDamage(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"li",&whoptr,&value))
         return NULL;
 
-    if (value<0) return NULL;
-    if (value>120) return NULL;
+    CHECK_OBJ(whoptr);
+    if (value < 0 || value > 120)
+    {
+        set_exception("value must be between 0 and 120");
+        return NULL;
+    }
 
     WHO->stats.dam = value;
 
@@ -3791,6 +3982,8 @@ static PyObject* CFGetDamage(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
 
+    CHECK_OBJ(whoptr);
+
     return Py_BuildValue("i",WHO->stats.dam);
 };
 
@@ -3806,6 +3999,8 @@ static PyObject* CFSetBeenApplied(PyObject* self, PyObject* args)
 
     if (!PyArg_ParseTuple(args,"li",&whoptr,&value))
         return NULL;
+
+    CHECK_OBJ(whoptr);
 
     if (value!=0)
         SET_FLAG(WHO,FLAG_BEEN_APPLIED);
@@ -3828,6 +4023,8 @@ static PyObject* CFSetIdentified(PyObject* self, PyObject* args)
 
     if (!PyArg_ParseTuple(args,"li",&whoptr,&value))
         return NULL;
+
+    CHECK_OBJ(whoptr);
 
     if (value!=0)
         SET_FLAG(WHO,FLAG_IDENTIFIED);
@@ -3855,25 +4052,26 @@ static PyObject* CFKillObject(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"lli",&whoptr,&whatptr,&ktype))
         return NULL;
 
+    CHECK_OBJ(whoptr);
+    CHECK_OBJ(whatptr);
+
     WHAT->speed = 0;
     WHAT->speed_left = 0.0;
     update_ob_speed(WHAT);
 
     if(QUERY_FLAG(WHAT,FLAG_REMOVED))
     {
-        printf( "Warning (from KillObject): Trying to remove removed object\n");
+        set_exception("trying to remove removed object");
         return NULL;
     }
-    else
-    {
-        WHAT->stats.hp = -1;
-        GCFP.Value[0] = (void *)(WHAT);
-        GCFP.Value[1] = (void *)(&k);
-        GCFP.Value[2] = (void *)(WHO);
-        GCFP.Value[3] = (void *)(&ktype);
-        CFR = (PlugHooks[HOOK_KILLOBJECT])(&GCFP);
-        PyFreeMemory( CFR );
-    };
+
+    WHAT->stats.hp = -1;
+    GCFP.Value[0] = (void *)(WHAT);
+    GCFP.Value[1] = (void *)(&k);
+    GCFP.Value[2] = (void *)(WHO);
+    GCFP.Value[3] = (void *)(&ktype);
+    CFR = (PlugHooks[HOOK_KILLOBJECT])(&GCFP);
+    PyFreeMemory( CFR );
 
     /* WHAT->script_str_death = NULL; */
     /* WHAT->script_death = NULL; */
@@ -4032,6 +4230,9 @@ static PyObject* CFCastSpell(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"llis",&whoptr,&spellptr,&dir,&op))
         return NULL;
 
+    CHECK_OBJ(whoptr);
+    CHECK_OBJ(spellptr);
+
     GCFP.Value[0] = (void *)(WHO);
     GCFP.Value[1] = (void *)(WHO);
     GCFP.Value[2] = (void *)(&dir);
@@ -4057,6 +4258,8 @@ static PyObject* CFForgetSpell(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"ls",&whoptr,&spell))
         return NULL;
 
+    CHECK_OBJ(whoptr);
+
     GCFP.Value[0] = (void *)(WHO);
     GCFP.Value[1] = (void *)(spell);
     (PlugHooks[HOOK_FORGETSPELL])(&GCFP);
@@ -4078,8 +4281,11 @@ static PyObject* CFAcquireSpell(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"ll",&whoptr,&spell))
         return NULL;
 
+    CHECK_OBJ(whoptr);
+    CHECK_OBJ(spell);
+
     GCFP.Value[0] = (void *)(WHO);
-    GCFP.Value[1] = (void *)(&spell);
+    GCFP.Value[1] = (void *)(spell);
     GCFP.Value[2] = (void *)(&i);
     (PlugHooks[HOOK_LEARNSPELL])(&GCFP);
 
@@ -4101,6 +4307,8 @@ static PyObject* CFDoKnowSpell(PyObject* self, PyObject* args)
 
     if (!PyArg_ParseTuple(args,"ls",&whoptr,&spell))
         return NULL;
+
+    CHECK_OBJ(whoptr);
 
     GCFP.Value[0] = (void *)(WHO);
     GCFP.Value[1] = (void *)(spell);
@@ -4124,6 +4332,8 @@ static PyObject* CFCheckInvisibleInside(PyObject* self, PyObject* args)
 
     if (!PyArg_ParseTuple(args,"ls",&whoptr,&id))
         return NULL;
+
+    CHECK_OBJ(whoptr);
 
     for(tmp2=WHO->inv;tmp2 !=NULL; tmp2=tmp2->below)
     {
@@ -4152,6 +4362,8 @@ static PyObject* CFCreatePlayerForce(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"ls",&whereptr,&txt))
         return NULL;
 
+    CHECK_OBJ(whereptr);
+
     where = (object *)(whereptr);
 
     strcpy(txt2,"player_force");
@@ -4161,9 +4373,9 @@ static PyObject* CFCreatePlayerForce(PyObject* self, PyObject* args)
     myob = (object *)(CFR->Value[0]);
     PyFreeMemory( CFR );
 
-    if(!myob)
+    if(strncmp(query_name(myob), "singluarity", 11) == 0)
     {
-        printf("Python WARNING:: CreatePlayerForce: Can't find archtype 'player_force'\n");
+        set_exception("can't find archetype 'player_force'");
         return NULL;
     }
 
@@ -4196,6 +4408,8 @@ static PyObject* CFCreatePlayerInfo(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"ls",&whereptr,&txt))
         return NULL;
 
+    CHECK_OBJ(whereptr);
+
     where = (object *)(whereptr);
 
     strcpy(txt2,"player_info");
@@ -4205,9 +4419,9 @@ static PyObject* CFCreatePlayerInfo(PyObject* self, PyObject* args)
     myob = (object *)(CFR->Value[0]);
     PyFreeMemory( CFR );
 
-    if(!myob)
+    if(strncmp(query_name(myob), "singluarity", 11) == 0)
     {
-        printf("Python WARNING:: CreatePlayerInfo: Cant't find archtype 'player_info'\n");
+        set_exception("can't find archetype 'player_info'");
         return NULL;
     }
 
@@ -4237,6 +4451,8 @@ static PyObject* CFGetPlayerInfo(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"ls",&whereptr,&name))
         return NULL;
 
+    CHECK_OBJ(whereptr);
+
     who = (object *)(whereptr);
 
     /* get the first linked player_info arch in this inventory */
@@ -4264,11 +4480,9 @@ static PyObject* CFGetNextPlayerInfo(PyObject* self, PyObject* args)
 
     if (!PyArg_ParseTuple(args,"ll",&whereptr,&myob))
         return NULL;
-    if(!myob)
-    {
-        Py_INCREF(Py_None);
-        return Py_None; /* there was none left - this should avoided in script */
-    }
+
+    CHECK_OBJ(whereptr);
+    CHECK_OBJ(myob);
 
     /* thats our check parameters: arch "force_info", name of this arch */
 
@@ -4301,6 +4515,8 @@ static PyObject* CFCreateInvisibleInside(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"ls",&whereptr,&txt))
         return NULL;
 
+    CHECK_OBJ(whereptr);
+
     where = (object *)(whereptr);
 
     strcpy(txt2,"force");
@@ -4310,9 +4526,10 @@ static PyObject* CFCreateInvisibleInside(PyObject* self, PyObject* args)
     myob = (object *)(CFR->Value[0]);
     PyFreeMemory( CFR );
 
-    if(!myob)
+    if(strncmp(query_name(myob), "singluarity", 11) == 0)
     {
-        printf("Python WARNING:: CFCreateInvisibleInside: Can't find archtype 'force'\n");
+        PyFreeObject(myob);
+        set_exception("can't find archetype 'force'");
         return NULL;
     }
     myob->speed = 0.0;
@@ -4343,6 +4560,8 @@ static PyObject* CFCreateObjectInside(PyObject* self, PyObject* args)
 
     if (!PyArg_ParseTuple(args,"sl",&txt, &whereptr))
         return NULL;
+
+    CHECK_OBJ(whereptr);
 
     where = (object *)(whereptr);
 
@@ -4396,17 +4615,16 @@ static PyObject* CFCheckArchInventory(PyObject* self, PyObject* args)
 
     if (!PyArg_ParseTuple(args,"ls",&whoptr,&whatstr))
         return NULL;
-    tmp = WHO->inv;
 
-    while (tmp)
+    CHECK_OBJ(whoptr);
+
+    for (tmp = WHO->inv; tmp != NULL; tmp = tmp->below)
     {
         if (!strcmp(tmp->arch->name,whatstr))
-            return Py_BuildValue("l",(long)(tmp));
-        tmp = tmp->below;
+            break;
     };
 
-    Py_INCREF(Py_None);
-    return Py_None; /* we don't find a arch with this arch_name in the inventory */
+    return Py_BuildValue("l",(long)(tmp));
 };
 
 /*****************************************************************************/
@@ -4423,24 +4641,26 @@ static PyObject* CFCheckInventory(PyObject* self, PyObject* args)
 
     if (!PyArg_ParseTuple(args,"ls",&whoptr,&whatstr))
         return NULL;
-    tmp = WHO->inv;
+
+    CHECK_OBJ(whoptr);
+
     foundob = present_arch_in_ob(find_archetype(whatstr),WHO);
-    if (foundob == NULL)
+    if (foundob != NULL)
+        return Py_BuildValue("l",(long)(foundob));
+
+    for (tmp = WHO->inv; tmp; tmp = tmp->below)
     {
-        while (tmp)
+        if (!strncmp(query_name(tmp),whatstr,strlen(whatstr)))
         {
-            if (!strncmp(query_name(tmp),whatstr,strlen(whatstr)))
-            {
-                return Py_BuildValue("l",(long)(tmp));
-            };
-            if (!strncmp(tmp->name,whatstr,strlen(whatstr)))
-            {
-                return Py_BuildValue("l",(long)(tmp));
-            };
-            tmp = tmp->below;
+            return Py_BuildValue("l",(long)(tmp));
+        };
+        if (!strncmp(tmp->name,whatstr,strlen(whatstr)))
+        {
+            return Py_BuildValue("l",(long)(tmp));
         };
     };
-    return Py_BuildValue("l",(long)(foundob));
+
+    return Py_BuildValue("l",(long)0);
 };
 
 /*****************************************************************************/
@@ -4454,6 +4674,9 @@ static PyObject* CFGetName(PyObject* self, PyObject* args)
     long whoptr;
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
+
+    CHECK_OBJ(whoptr);
+
     return Py_BuildValue("s",WHO->name);
 };
 
@@ -4469,6 +4692,9 @@ static PyObject* CFSetName(PyObject* self, PyObject* args)
 
     if (!PyArg_ParseTuple(args,"ls",&whoptr,&txt))
         return NULL;
+
+    CHECK_OBJ(whoptr);
+
     if (WHO->name != NULL)
         DELETE_STRING(WHO->name);
     if(txt && strcmp(txt,""))
@@ -4487,6 +4713,15 @@ static PyObject* CFGetTitle(PyObject* self, PyObject* args)
     long whoptr;
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
+
+    CHECK_OBJ(whoptr);
+
+    if (!WHO->title)
+    {
+        Py_INCREF(Py_None);
+        return Py_None;
+    }
+
     return Py_BuildValue("s",WHO->title);
 };
 
@@ -4503,6 +4738,9 @@ static PyObject* CFSetTitle(PyObject* self, PyObject* args)
 
     if (!PyArg_ParseTuple(args,"ls",&whoptr,&txt))
         return NULL;
+
+    CHECK_OBJ(whoptr);
+
     if (WHO->title != NULL)
         DELETE_STRING(WHO->title);
     if(txt && strcmp(txt,""))
@@ -4521,7 +4759,10 @@ static PyObject* CFGetSlaying(PyObject* self, PyObject* args)
     long whoptr;
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
-    return Py_BuildValue("s",WHO->slaying);
+
+    CHECK_OBJ(whoptr);
+
+    return Py_BuildValue("s",WHO->slaying != NULL ? WHO->slaying : "");
 };
 
 /*****************************************************************************/
@@ -4536,6 +4777,9 @@ static PyObject* CFSetSlaying(PyObject* self, PyObject* args)
 
     if (!PyArg_ParseTuple(args,"ls",&whoptr,&txt))
         return NULL;
+
+    CHECK_OBJ(whoptr);
+
     if (WHO->slaying != NULL)
         DELETE_STRING(WHO->slaying);
     if(txt && strcmp(txt,""))
@@ -4556,10 +4800,12 @@ static PyObject* CFCreateObject(PyObject* self, PyObject* args)
     CFParm* CFR;
     int x,y;
     int val;
-    long map = (long)((StackWho[StackPosition])->map);
+    long map = StackWho[StackPosition] != NULL ? (long)StackWho[StackPosition]->map : 0;
 
     if (!PyArg_ParseTuple(args,"s(ii)|l",&txt, &x,&y,&map))
         return NULL;
+
+    CHECK_MAP(map);
 
     myob = create_object(txt);
     if (myob == NULL)
@@ -4592,11 +4838,13 @@ static PyObject* CFRemoveObject(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
 
+    CHECK_OBJ(whoptr);
+
     myob = (object *)(whoptr);
     GCFP.Value[0] = (void *)(myob);
     (PlugHooks[HOOK_REMOVEOBJECT])(&GCFP);
 
-    if (StackActivator[StackPosition]->type == PLAYER)
+    if (StackActivator[StackPosition] != NULL && StackActivator[StackPosition]->type == PLAYER)
     {
         GCFP.Value[0] = (void *)(StackActivator[StackPosition]);
         GCFP.Value[1] = (void *)(StackActivator[StackPosition]);
@@ -4617,6 +4865,9 @@ static PyObject* CFIsAlive(PyObject* self, PyObject* args)
     long whoptr;
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
+
+    CHECK_OBJ(whoptr);
+
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_ALIVE));
 };
 
@@ -4630,6 +4881,9 @@ static PyObject* CFIsWiz(PyObject* self, PyObject* args)
     long whoptr;
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
+
+    CHECK_OBJ(whoptr);
+
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_WIZ));
 };
 
@@ -4643,6 +4897,9 @@ static PyObject* CFWasWiz(PyObject* self, PyObject* args)
     long whoptr;
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
+
+    CHECK_OBJ(whoptr);
+
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_WAS_WIZ));
 };
 
@@ -4656,6 +4913,9 @@ static PyObject* CFIsApplied(PyObject* self, PyObject* args)
     long whoptr;
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
+
+    CHECK_OBJ(whoptr);
+
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_APPLIED));
 };
 
@@ -4669,6 +4929,9 @@ static PyObject* CFIsUnpaid(PyObject* self, PyObject* args)
     long whoptr;
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
+
+    CHECK_OBJ(whoptr);
+
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_UNPAID));
 };
 
@@ -4682,6 +4945,9 @@ static PyObject* CFIsFlying(PyObject* self, PyObject* args)
     long whoptr;
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
+
+    CHECK_OBJ(whoptr);
+
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_FLYING));
 };
 
@@ -4695,6 +4961,9 @@ static PyObject* CFIsMonster(PyObject* self, PyObject* args)
     long whoptr;
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
+
+    CHECK_OBJ(whoptr);
+
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_MONSTER));
 };
 
@@ -4708,6 +4977,9 @@ static PyObject* CFIsFriendly(PyObject* self, PyObject* args)
     long whoptr;
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
+
+    CHECK_OBJ(whoptr);
+
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_FRIENDLY));
 };
 
@@ -4721,6 +4993,9 @@ static PyObject* CFIsGenerator(PyObject* self, PyObject* args)
     long whoptr;
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
+
+    CHECK_OBJ(whoptr);
+
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_GENERATOR));
 };
 
@@ -4734,6 +5009,9 @@ static PyObject* CFIsThrown(PyObject* self, PyObject* args)
     long whoptr;
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
+
+    CHECK_OBJ(whoptr);
+
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_IS_THROWN));
 };
 
@@ -4747,6 +5025,9 @@ static PyObject* CFCanSeeInvisible(PyObject* self, PyObject* args)
     long whoptr;
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
+
+    CHECK_OBJ(whoptr);
+
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_SEE_INVISIBLE));
 };
 
@@ -4760,6 +5041,9 @@ static PyObject* CFCanRoll(PyObject* self, PyObject* args)
     long whoptr;
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
+
+    CHECK_OBJ(whoptr);
+
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_CAN_ROLL));
 };
 
@@ -4773,6 +5057,9 @@ static PyObject* CFIsTurnable(PyObject* self, PyObject* args)
     long whoptr;
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
+
+    CHECK_OBJ(whoptr);
+
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_IS_TURNABLE));
 };
 
@@ -4786,6 +5073,9 @@ static PyObject* CFIsUsedUp(PyObject* self, PyObject* args)
     long whoptr;
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
+
+    CHECK_OBJ(whoptr);
+
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_IS_USED_UP));
 };
 
@@ -4800,6 +5090,9 @@ static PyObject* CFIsIdentified(PyObject* self, PyObject* args)
     int retval;
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
+
+    CHECK_OBJ(whoptr);
+
     retval = QUERY_FLAG(WHO,FLAG_IDENTIFIED);
     return Py_BuildValue("i",retval);
 };
@@ -4814,6 +5107,9 @@ static PyObject* CFIsSplitting(PyObject* self, PyObject* args)
     long whoptr;
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
+
+    CHECK_OBJ(whoptr);
+
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_SPLITTING));
 };
 
@@ -4827,6 +5123,9 @@ static PyObject* CFHitBack(PyObject* self, PyObject* args)
     long whoptr;
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
+
+    CHECK_OBJ(whoptr);
+
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_HITBACK));
 };
 
@@ -4840,6 +5139,9 @@ static PyObject* CFBlocksView(PyObject* self, PyObject* args)
     long whoptr;
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
+
+    CHECK_OBJ(whoptr);
+
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_BLOCKSVIEW));
 };
 
@@ -4853,6 +5155,9 @@ static PyObject* CFIsUndead(PyObject* self, PyObject* args)
     long whoptr;
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
+
+    CHECK_OBJ(whoptr);
+
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_UNDEAD));
 };
 
@@ -4866,6 +5171,9 @@ static PyObject* CFIsScared(PyObject* self, PyObject* args)
     long whoptr;
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
+
+    CHECK_OBJ(whoptr);
+
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_SCARED));
 };
 
@@ -4879,6 +5187,9 @@ static PyObject* CFIsUnaggressive(PyObject* self, PyObject* args)
     long whoptr;
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
+
+    CHECK_OBJ(whoptr);
+
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_UNAGGRESSIVE));
 };
 
@@ -4892,6 +5203,9 @@ static PyObject* CFReflectMissiles(PyObject* self, PyObject* args)
     long whoptr;
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
+
+    CHECK_OBJ(whoptr);
+
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_REFL_MISSILE));
 };
 
@@ -4905,6 +5219,9 @@ static PyObject* CFReflectSpells(PyObject* self, PyObject* args)
     long whoptr;
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
+
+    CHECK_OBJ(whoptr);
+
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_REFL_SPELL));
 };
 
@@ -4918,6 +5235,9 @@ static PyObject* CFIsRunningAway(PyObject* self, PyObject* args)
     long whoptr;
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
+
+    CHECK_OBJ(whoptr);
+
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_RUN_AWAY));
 };
 
@@ -4931,6 +5251,9 @@ static PyObject* CFCanPassThru(PyObject* self, PyObject* args)
     long whoptr;
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
+
+    CHECK_OBJ(whoptr);
+
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_CAN_PASS_THRU));
 };
 
@@ -4944,6 +5267,9 @@ static PyObject* CFCanPickUp(PyObject* self, PyObject* args)
     long whoptr;
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
+
+    CHECK_OBJ(whoptr);
+
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_PICK_UP));
 };
 
@@ -4957,6 +5283,9 @@ static PyObject* CFIsUnique(PyObject* self, PyObject* args)
     long whoptr;
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
+
+    CHECK_OBJ(whoptr);
+
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_UNIQUE));
 };
 
@@ -4970,6 +5299,9 @@ static PyObject* CFCanCastSpell(PyObject* self, PyObject* args)
     long whoptr;
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
+
+    CHECK_OBJ(whoptr);
+
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_CAST_SPELL));
 };
 
@@ -4983,6 +5315,9 @@ static PyObject* CFCanUseScroll(PyObject* self, PyObject* args)
     long whoptr;
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
+
+    CHECK_OBJ(whoptr);
+
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_USE_SCROLL));
 };
 
@@ -4996,6 +5331,9 @@ static PyObject* CFCanUseWand(PyObject* self, PyObject* args)
     long whoptr;
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
+
+    CHECK_OBJ(whoptr);
+
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_USE_RANGE));
 };
 
@@ -5009,6 +5347,9 @@ static PyObject* CFCanUseBow(PyObject* self, PyObject* args)
     long whoptr;
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
+
+    CHECK_OBJ(whoptr);
+
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_USE_BOW));
 };
 
@@ -5022,6 +5363,9 @@ static PyObject* CFCanUseArmour(PyObject* self, PyObject* args)
     long whoptr;
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
+
+    CHECK_OBJ(whoptr);
+
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_USE_ARMOUR));
 };
 
@@ -5035,6 +5379,9 @@ static PyObject* CFCanUseWeapon(PyObject* self, PyObject* args)
     long whoptr;
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
+
+    CHECK_OBJ(whoptr);
+
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_USE_WEAPON));
 };
 
@@ -5048,6 +5395,9 @@ static PyObject* CFCanUseRing(PyObject* self, PyObject* args)
     long whoptr;
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
+
+    CHECK_OBJ(whoptr);
+
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_USE_RING));
 };
 
@@ -5061,6 +5411,9 @@ static PyObject* CFHasXRays(PyObject* self, PyObject* args)
     long whoptr;
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
+
+    CHECK_OBJ(whoptr);
+
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_XRAYS));
 };
 
@@ -5074,6 +5427,9 @@ static PyObject* CFIsFloor(PyObject* self, PyObject* args)
     long whoptr;
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
+
+    CHECK_OBJ(whoptr);
+
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_IS_FLOOR));
 };
 
@@ -5087,6 +5443,9 @@ static PyObject* CFIsLifeSaver(PyObject* self, PyObject* args)
     long whoptr;
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
+
+    CHECK_OBJ(whoptr);
+
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_LIFESAVE));
 };
 
@@ -5100,6 +5459,9 @@ static PyObject* CFIsSleeping(PyObject* self, PyObject* args)
     long whoptr;
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
+
+    CHECK_OBJ(whoptr);
+
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_SLEEP));
 };
 
@@ -5113,6 +5475,9 @@ static PyObject* CFStandStill(PyObject* self, PyObject* args)
     long whoptr;
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
+
+    CHECK_OBJ(whoptr);
+
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_STAND_STILL));
 };
 
@@ -5126,6 +5491,9 @@ static PyObject* CFOnlyAttack(PyObject* self, PyObject* args)
     long whoptr;
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
+
+    CHECK_OBJ(whoptr);
+
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_ONLY_ATTACK));
 };
 
@@ -5139,6 +5507,9 @@ static PyObject* CFIsConfused(PyObject* self, PyObject* args)
     long whoptr;
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
+
+    CHECK_OBJ(whoptr);
+
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_CONFUSED));
 };
 
@@ -5152,6 +5523,9 @@ static PyObject* CFHasStealth(PyObject* self, PyObject* args)
     long whoptr;
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
+
+    CHECK_OBJ(whoptr);
+
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_STEALTH));
 };
 
@@ -5165,6 +5539,9 @@ static PyObject* CFIsCursed(PyObject* self, PyObject* args)
     long whoptr;
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
+
+    CHECK_OBJ(whoptr);
+
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_CURSED));
 };
 
@@ -5178,6 +5555,9 @@ static PyObject* CFIsDamned(PyObject* self, PyObject* args)
     long whoptr;
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
+
+    CHECK_OBJ(whoptr);
+
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_DAMNED));
 };
 
@@ -5191,6 +5571,9 @@ static PyObject* CFIsKnownMagical(PyObject* self, PyObject* args)
     long whoptr;
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
+
+    CHECK_OBJ(whoptr);
+
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_KNOWN_MAGICAL));
 };
 
@@ -5204,6 +5587,9 @@ static PyObject* CFIsKnownCursed(PyObject* self, PyObject* args)
     long whoptr;
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
+
+    CHECK_OBJ(whoptr);
+
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_KNOWN_CURSED));
 };
 
@@ -5217,6 +5603,9 @@ static PyObject* CFCanUseSkill(PyObject* self, PyObject* args)
     long whoptr;
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
+
+    CHECK_OBJ(whoptr);
+
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_CAN_USE_SKILL));
 };
 
@@ -5230,6 +5619,9 @@ static PyObject* CFHasBeenApplied(PyObject* self, PyObject* args)
     long whoptr;
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
+
+    CHECK_OBJ(whoptr);
+
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_BEEN_APPLIED));
 };
 
@@ -5243,6 +5635,9 @@ static PyObject* CFCanUseRod(PyObject* self, PyObject* args)
     long whoptr;
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
+
+    CHECK_OBJ(whoptr);
+
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_USE_ROD));
 };
 
@@ -5256,6 +5651,9 @@ static PyObject* CFCanUseHorn(PyObject* self, PyObject* args)
     long whoptr;
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
+
+    CHECK_OBJ(whoptr);
+
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_USE_HORN));
 };
 
@@ -5269,6 +5667,9 @@ static PyObject* CFMakeInvisible(PyObject* self, PyObject* args)
     long whoptr;
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
+
+    CHECK_OBJ(whoptr);
+
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_MAKE_INVIS));
 };
 
@@ -5282,6 +5683,9 @@ static PyObject* CFIsBlind(PyObject* self, PyObject* args)
     long whoptr;
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
+
+    CHECK_OBJ(whoptr);
+
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_BLIND));
 };
 
@@ -5295,6 +5699,9 @@ static PyObject* CFCanSeeInDark(PyObject* self, PyObject* args)
     long whoptr;
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
+
+    CHECK_OBJ(whoptr);
+
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_SEE_IN_DARK));
 };
 
@@ -5308,6 +5715,9 @@ static PyObject* CFGetAC(PyObject* self, PyObject* args)
     long whoptr;
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
+
+    CHECK_OBJ(whoptr);
+
     return Py_BuildValue("i",WHO->stats.ac);
 };
 
@@ -5321,6 +5731,9 @@ static PyObject* CFGetWC(PyObject* self, PyObject* args)
     long whoptr;
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
+
+    CHECK_OBJ(whoptr);
+
     return Py_BuildValue("i",WHO->stats.wc);
 };
 
@@ -5334,6 +5747,9 @@ static PyObject* CFGetCha(PyObject* self, PyObject* args)
     long whoptr;
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
+
+    CHECK_OBJ(whoptr);
+
     return Py_BuildValue("i",WHO->stats.Cha);
 };
 
@@ -5347,6 +5763,9 @@ static PyObject* CFGetCon(PyObject* self, PyObject* args)
     long whoptr;
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
+
+    CHECK_OBJ(whoptr);
+
     return Py_BuildValue("i",WHO->stats.Con);
 };
 
@@ -5360,6 +5779,9 @@ static PyObject* CFGetDex(PyObject* self, PyObject* args)
     long whoptr;
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
+
+    CHECK_OBJ(whoptr);
+
     return Py_BuildValue("i",WHO->stats.Dex);
 };
 
@@ -5373,6 +5795,9 @@ static PyObject* CFGetHP(PyObject* self, PyObject* args)
     long whoptr;
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
+
+    CHECK_OBJ(whoptr);
+
     return Py_BuildValue("i",WHO->stats.hp);
 
 };
@@ -5387,6 +5812,9 @@ static PyObject* CFGetInt(PyObject* self, PyObject* args)
     long whoptr;
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
+
+    CHECK_OBJ(whoptr);
+
     return Py_BuildValue("i",WHO->stats.Int);
 };
 
@@ -5400,6 +5828,9 @@ static PyObject* CFGetPow(PyObject* self, PyObject* args)
     long whoptr;
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
+
+    CHECK_OBJ(whoptr);
+
     return Py_BuildValue("i",WHO->stats.Pow);
 };
 
@@ -5413,6 +5844,9 @@ static PyObject* CFGetSP(PyObject* self, PyObject* args)
     long whoptr;
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
+
+    CHECK_OBJ(whoptr);
+
     return Py_BuildValue("i",WHO->stats.sp);
 };
 
@@ -5426,6 +5860,9 @@ static PyObject* CFGetStr(PyObject* self, PyObject* args)
     long whoptr;
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
+
+    CHECK_OBJ(whoptr);
+
     return Py_BuildValue("i",WHO->stats.Str);
 };
 
@@ -5439,6 +5876,9 @@ static PyObject* CFGetWis(PyObject* self, PyObject* args)
     long whoptr;
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
+
+    CHECK_OBJ(whoptr);
+
     return Py_BuildValue("i",WHO->stats.Wis);
 };
 
@@ -5452,6 +5892,9 @@ static PyObject* CFGetMaxHP(PyObject* self, PyObject* args)
     long whoptr;
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
+
+    CHECK_OBJ(whoptr);
+
     return Py_BuildValue("i",WHO->stats.maxhp);
 };
 
@@ -5465,6 +5908,9 @@ static PyObject* CFGetMaxSP(PyObject* self, PyObject* args)
     long whoptr;
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
+
+    CHECK_OBJ(whoptr);
+
     return Py_BuildValue("i",WHO->stats.maxsp);
 };
 
@@ -5478,6 +5924,9 @@ static PyObject* CFGetXPos(PyObject* self, PyObject* args)
     long whoptr;
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
+
+    CHECK_OBJ(whoptr);
+
     return Py_BuildValue("i",WHO->x);
 };
 
@@ -5491,6 +5940,9 @@ static PyObject* CFGetYPos(PyObject* self, PyObject* args)
     long whoptr;
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
+
+    CHECK_OBJ(whoptr);
+
     return Py_BuildValue("i",WHO->y);
 };
 
@@ -5508,6 +5960,8 @@ static PyObject* CFSetPosition(PyObject* self, PyObject* args)
 
     if (!PyArg_ParseTuple(args,"l(ii)",&whoptr,&x,&y))
         return NULL;
+
+    CHECK_OBJ(whoptr);
 
     GCFP.Value[0] = (void *)(WHO);
     GCFP.Value[1] = (void *)(&x);
@@ -5533,6 +5987,8 @@ static PyObject* CFSetNickname(PyObject* self, PyObject* args)
 
     if (!PyArg_ParseTuple(args,"ls",&whoptr,&newnick))
         return NULL;
+
+    CHECK_OBJ(whoptr);
 
     if (WHO->type==PLAYER)
     {
@@ -5572,8 +6028,12 @@ static PyObject* CFSetAC(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"li",&whoptr,&value))
         return NULL;
 
-    if (value>120) return NULL;
-    if (value<-120) return NULL;
+    CHECK_OBJ(whoptr);
+    if (value < -120 || value > 120)
+    {
+        set_exception("value must be between -120 and 120");
+        return NULL;
+    }
 
     WHO->stats.ac = value;
     Py_INCREF(Py_None);
@@ -5593,8 +6053,12 @@ static PyObject* CFSetWC(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"li",&whoptr,&value))
         return NULL;
 
-    if (value>120) return NULL;
-    if (value<-120) return NULL;
+    CHECK_OBJ(whoptr);
+    if (value < -120 || value > 120)
+    {
+        set_exception("value must be between -120 and 120");
+        return NULL;
+    }
 
     WHO->stats.wc = value;
     Py_INCREF(Py_None);
@@ -5614,8 +6078,12 @@ static PyObject* CFSetCha(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"li",&whoptr,&value))
         return NULL;
 
-    if (value>30) return NULL;
-    if (value<-30) return NULL;
+    CHECK_OBJ(whoptr);
+    if (value < -30 || value > 30)
+    {
+        set_exception("value must be between -30 and 30");
+        return NULL;
+    }
 
     WHO->stats.Cha = value;
     if (WHO->type == PLAYER)
@@ -5640,8 +6108,12 @@ static PyObject* CFSetCon(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"li",&whoptr,&value))
         return NULL;
 
-    if (value>30) return NULL;
-    if (value<-30) return NULL;
+    CHECK_OBJ(whoptr);
+    if (value < -30 || value > 30)
+    {
+        set_exception("value must be between -30 and 30");
+        return NULL;
+    }
 
     WHO->stats.Con = value;
     if (WHO->type == PLAYER)
@@ -5666,8 +6138,12 @@ static PyObject* CFSetDex(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"li",&whoptr,&value))
         return NULL;
 
-    if (value>30) return NULL;
-    if (value<-30) return NULL;
+    CHECK_OBJ(whoptr);
+    if (value < -30 || value > 30)
+    {
+        set_exception("value must be between -30 and 30");
+        return NULL;
+    }
 
     WHO->stats.Dex = value;
     if (WHO->type == PLAYER)
@@ -5692,8 +6168,12 @@ static PyObject* CFSetHP(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"li",&whoptr,&value))
         return NULL;
 
-    if (value>16000) return NULL;
-    if (value<0) return NULL;
+    CHECK_OBJ(whoptr);
+    if (value < 0 || value > 16000)
+    {
+        set_exception("value must be between 0 and 16000");
+        return NULL;
+    }
 
     WHO->stats.hp = value;
     Py_INCREF(Py_None);
@@ -5713,8 +6193,12 @@ static PyObject* CFSetInt(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"li",&whoptr,&value))
         return NULL;
 
-    if (value>30) return NULL;
-    if (value<-30) return NULL;
+    CHECK_OBJ(whoptr);
+    if (value < -30 || value > 30)
+    {
+        set_exception("value must be between -30 and 30");
+        return NULL;
+    }
 
     WHO->stats.Int = value;
     if (WHO->type == PLAYER)
@@ -5739,8 +6223,12 @@ static PyObject* CFSetMaxHP(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"li",&whoptr,&value))
         return NULL;
 
-    if (value>16000) return NULL;
-    if (value<0) return NULL;
+    CHECK_OBJ(whoptr);
+    if (value < 0 || value > 16000)
+    {
+        set_exception("value must be between 0 and 16000");
+        return NULL;
+    }
 
     WHO->stats.maxhp = value;
     Py_INCREF(Py_None);
@@ -5760,8 +6248,12 @@ static PyObject* CFSetMaxSP(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"li",&whoptr,&value))
         return NULL;
 
-    if (value>16000) return NULL;
-    if (value<0) return NULL;
+    CHECK_OBJ(whoptr);
+    if (value < 0 || value > 16000)
+    {
+        set_exception("value must be between 0 and 16000");
+        return NULL;
+    }
 
     WHO->stats.maxsp = value;
     Py_INCREF(Py_None);
@@ -5781,8 +6273,12 @@ static PyObject* CFSetPow(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"li",&whoptr,&value))
         return NULL;
 
-    if (value>30) return NULL;
-    if (value<-30) return NULL;
+    CHECK_OBJ(whoptr);
+    if (value < -30 || value > 30)
+    {
+        set_exception("value must be between -30 and 30");
+        return NULL;
+    }
 
     WHO->stats.Pow = value;
     if (WHO->type == PLAYER)
@@ -5807,8 +6303,12 @@ static PyObject* CFSetSP(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"li",&whoptr,&value))
         return NULL;
 
-    if (value>16000) return NULL;
-    if (value<0) return NULL;
+    CHECK_OBJ(whoptr);
+    if (value < 0 || value > 16000)
+    {
+        set_exception("value must be between 0 and 16000");
+        return NULL;
+    }
 
     WHO->stats.sp = value;
     Py_INCREF(Py_None);
@@ -5828,8 +6328,12 @@ static PyObject* CFSetStr(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"li",&whoptr,&value))
         return NULL;
 
-    if (value>30) return NULL;
-    if (value<-30) return NULL;
+    CHECK_OBJ(whoptr);
+    if (value < -30 || value > 30)
+    {
+        set_exception("value must be between -30 and 30");
+        return NULL;
+    }
 
     WHO->stats.Str = value;
     if (WHO->type == PLAYER)
@@ -5854,8 +6358,12 @@ static PyObject* CFSetWis(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"li",&whoptr,&value))
         return NULL;
 
-    if (value>30) return NULL;
-    if (value<-30) return NULL;
+    CHECK_OBJ(whoptr);
+    if (value < -30 || value > 30)
+    {
+        set_exception("value must be between -30 and 30");
+        return NULL;
+    }
 
     WHO->stats.Wis = value;
     if (WHO->type == PLAYER)
@@ -5888,6 +6396,8 @@ static PyObject* CFMessage(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"sl|i",&message,&whoptr,&color))
         return NULL;
 
+    CHECK_OBJ(whoptr);
+
     GCFP.Value[0] = (void *)(&color);
     GCFP.Value[1] = (void *)(WHO->map);
     GCFP.Value[2] = (void *)(message);
@@ -5912,6 +6422,8 @@ static PyObject* CFWrite(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"sl|i",&message,&whoptr,&color))
         return NULL;
 
+    CHECK_OBJ(whoptr);
+
     GCFP.Value[0] = (void *)(&color);
     GCFP.Value[1] = (void *)(&zero);
     GCFP.Value[2] = (void *)(WHO);
@@ -5935,6 +6447,9 @@ static PyObject* CFIsOfType(PyObject* self, PyObject* args)
 
     if (!PyArg_ParseTuple(args,"li",&whoptr,&type))
         return NULL;
+
+    CHECK_OBJ(whoptr);
+
     if (WHO->type==type)
         value = 1;
     else
@@ -5952,6 +6467,9 @@ static PyObject* CFGetType(PyObject* self, PyObject* args)
     long whoptr;
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
+
+    CHECK_OBJ(whoptr);
+
     return Py_BuildValue("i",WHO->type);
 };
 
@@ -5966,18 +6484,20 @@ static PyObject* CFGetEventHandler(PyObject* self, PyObject* args)
     long whoptr;
     int eventnr;
     event *evt;
-    char buf[1];
 
     if (!PyArg_ParseTuple(args,"li",&whoptr,&eventnr))
         return NULL;
+
+    CHECK_OBJ(whoptr);
+
     evt = find_event(WHO, eventnr);
     if (evt == NULL)
     {
-        strcpy(buf, "");
-        return Py_BuildValue("s", buf);
+        Py_INCREF(Py_None);
+        return Py_None;
     }
-    else
-        return Py_BuildValue("s",evt->hook);
+
+    return Py_BuildValue("s",evt->hook);
 };
 
 /*****************************************************************************/
@@ -5995,7 +6515,15 @@ static PyObject* CFSetEventHandler(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"lis",&whoptr, &eventnr, &scriptname))
         return NULL;
 
+    CHECK_OBJ(whoptr);
+
     evt = find_event(WHO, eventnr);
+    if (evt == NULL)
+    {
+        set_exception("illegal event number %d", eventnr);
+        return NULL;
+    }
+
     evt->hook = add_string(scriptname);
 
     Py_INCREF(Py_None);
@@ -6012,19 +6540,20 @@ static PyObject* CFGetEventPlugin(PyObject* self, PyObject* args)
     long whoptr;
     int eventnr;
     event *evt;
-    char buf[1];
 
     if (!PyArg_ParseTuple(args,"li",&whoptr, &eventnr))
         return NULL;
 
+    CHECK_OBJ(whoptr);
+
     evt = find_event(WHO, eventnr);
     if (evt == NULL)
     {
-        strcpy(buf, "");
-        return Py_BuildValue("s", buf);
+        Py_INCREF(Py_None);
+        return Py_None;
     }
-    else
-        return Py_BuildValue("s",evt->plugin);
+
+    return Py_BuildValue("s",evt->plugin);
 };
 
 /*****************************************************************************/
@@ -6043,7 +6572,15 @@ static PyObject* CFSetEventPlugin(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"lis",&whoptr, &eventnr, &scriptname))
         return NULL;
 
+    CHECK_OBJ(whoptr);
+
     evt = find_event(WHO, eventnr);
+    if (evt == NULL)
+    {
+        set_exception("illegal event number %d", eventnr);
+        return NULL;
+    }
+
     evt->plugin = add_string(scriptname);
 
     Py_INCREF(Py_None);
@@ -6060,19 +6597,20 @@ static PyObject* CFGetEventOptions(PyObject* self, PyObject* args)
     long whoptr;
     int eventnr;
     event *evt;
-    char buf[1];
 
     if (!PyArg_ParseTuple(args,"li",&whoptr, &eventnr))
         return NULL;
 
+    CHECK_OBJ(whoptr);
+
     evt = find_event(WHO, eventnr);
     if (evt == NULL)
     {
-        strcpy(buf, "");
-        return Py_BuildValue("i", buf);
+        Py_INCREF(Py_None);
+        return Py_None;
     }
-    else
-        return Py_BuildValue("s",evt->options);
+
+    return Py_BuildValue("s",evt->options);
 };
 
 /*****************************************************************************/
@@ -6090,7 +6628,15 @@ static PyObject* CFSetEventOptions(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"lis",&whoptr, &eventnr, &scriptname))
         return NULL;
 
+    CHECK_OBJ(whoptr);
+
     evt = find_event(WHO, eventnr);
+    if (evt == NULL)
+    {
+        set_exception("illegal event number %d", eventnr);
+        return NULL;
+    }
+
     evt->options = add_string(scriptname);
 
     Py_INCREF(Py_None);
@@ -6134,6 +6680,8 @@ static PyObject* CFSaveObject(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args, "l",&whoptr))
         return NULL;
 
+    CHECK_OBJ(whoptr);
+
     GCFP.Value[0] = (void *)(WHO);
     CFR = (PlugHooks[HOOK_DUMPOBJECT])(&GCFP);
     result = (char *)(CFR->Value[0]);
@@ -6155,16 +6703,16 @@ static PyObject* CFGetIP(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args, "l",&whoptr))
         return NULL;
 
-    if (WHO->contr!=NULL)
+    CHECK_OBJ(whoptr);
+
+    if (WHO->contr == NULL)
     {
-        result = WHO->contr->socket.host;
-        return Py_BuildValue("s",result);
+        Py_INCREF(Py_None);
+        return Py_None;
     }
-    else
-    {
-        printf( "PYTHON - Error - This object has no controller\n");
-        return Py_BuildValue("s","");
-    };
+
+    result = WHO->contr->socket.host;
+    return Py_BuildValue("s",result);
 };
 
 /*****************************************************************************/
@@ -6179,6 +6727,8 @@ static PyObject* CFGetInventory(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args, "l",&whoptr))
         return NULL;
 
+    CHECK_OBJ(whoptr);
+
     return Py_BuildValue("l", (long)(WHO->inv));
 };
 
@@ -6192,6 +6742,9 @@ static PyObject* CFGetInternalName(PyObject* self, PyObject* args)
     long whoptr;
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
+
+    CHECK_OBJ(whoptr);
+
     return Py_BuildValue("s",WHO->name);
 };
 
@@ -6210,13 +6763,19 @@ static PyObject* CFRegisterCommand(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args, "ssd",&cmdname,&scriptname,&cmdspeed))
         return NULL;
 
+    if (cmdspeed < 0)
+    {
+        set_exception("speed must not be negative");
+        return NULL;
+    }
+
     for (i=0;i<NR_CUSTOM_CMD;i++)
     {
         if (CustomCommand[i].name != NULL)
         {
             if (!strcmp(CustomCommand[i].name,cmdname))
             {
-                printf( "PYTHON - This command is already registered !\n");
+                set_exception("command '%s' is already registered", cmdname);
                 return NULL;
             }
         }
@@ -6293,7 +6852,8 @@ static PyObject* CFGetObjectCost(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"lli",&whoptr,&whatptr,&flag))
         return NULL;
 
-    if ((!WHAT) || (!WHO)) return Py_BuildValue("i",0);
+    CHECK_OBJ(whoptr);
+    CHECK_OBJ(whatptr);
 
     GCFP.Value[0] = (void *)(WHAT);
     GCFP.Value[1] = (void *)(WHO);
@@ -6319,7 +6879,7 @@ static PyObject* CFGetObjectMoney(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
 
-    if (!WHO) return Py_BuildValue("i",0);
+    CHECK_OBJ(whoptr);
 
     GCFP.Value[0] = (void *)(WHO);
     CFR = (PlugHooks[HOOK_QUERYMONEY])(&GCFP);
@@ -6344,7 +6904,8 @@ static PyObject* CFPayForItem(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"ll",&whoptr,&whatptr))
         return NULL;
 
-    if ((!WHAT) || (!WHO)) return Py_BuildValue("i",0);
+    CHECK_OBJ(whoptr);
+    CHECK_OBJ(whatptr);
 
     GCFP.Value[0] = (void *)(WHAT);
     GCFP.Value[1] = (void *)(WHO);
@@ -6370,7 +6931,7 @@ static PyObject* CFPayAmount(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"li",&whoptr,&to_pay))
         return NULL;
 
-    if (!WHO) return Py_BuildValue("i",0);
+    CHECK_OBJ(whoptr);
 
     GCFP.Value[0] = (void *)(&to_pay);
     GCFP.Value[1] = (void *)(WHO);
@@ -6393,6 +6954,8 @@ static PyObject* CFSendCustomCommand(PyObject* self, PyObject* args)
 
     if (!PyArg_ParseTuple(args,"ls",&whoptr,&customcmd))
         return NULL;
+
+    CHECK_OBJ(whoptr);
 
     GCFP.Value[0] = (void *)(WHO);
     GCFP.Value[1] = (void *)(customcmd);
@@ -6417,6 +6980,8 @@ static PyObject* CFGetHumidity(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"iil",&x,&y,&map))
         return NULL;
 
+    CHECK_MAP(map);
+
     return Py_BuildValue("i",val);
 }
 
@@ -6434,6 +6999,8 @@ static PyObject* CFGetTemperature(PyObject* self, PyObject* args)
     long map; /* mapstruct pointer */
     if (!PyArg_ParseTuple(args,"iil",&x,&y,&map))
         return NULL;
+
+    CHECK_MAP(map);
 
     return Py_BuildValue("i",val);
 }
@@ -6453,6 +7020,8 @@ static PyObject* CFGetPressure(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"iil",&x,&y,&map))
         return NULL;
 
+    CHECK_MAP(map);
+
     return Py_BuildValue("i",val);
 }
 
@@ -6471,6 +7040,8 @@ static PyObject* CFSetVariable(PyObject* self, PyObject* args)
 
     if (!PyArg_ParseTuple(args, "ls", &whoptr, &txt))
       return NULL;
+
+    CHECK_OBJ(whoptr);
 
     GCFP.Value[0] = (void *)(WHO);
     GCFP.Value[1] = (void *)txt;
@@ -6494,6 +7065,8 @@ static PyObject* CFDecreaseObjectNR(PyObject* self, PyObject* args)
 
     if (!PyArg_ParseTuple(args,"li",&whoptr,&val))
         return NULL;
+
+    CHECK_OBJ(whoptr);
 
     GCFP.Value[0] = (void *)(WHO);
     GCFP.Value[1] = (void *)(&val);
