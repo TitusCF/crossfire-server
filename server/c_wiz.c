@@ -1162,16 +1162,24 @@ int command_reset (object *op, char *params)
 }
 
 int command_nowiz (object *op, char *params) /* 'noadm' is alias */
-{
-     CLEAR_FLAG(op, FLAG_WIZ);
-     CLEAR_FLAG(op, FLAG_WIZPASS);
-     CLEAR_FLAG(op, FLAG_FLYING);
-     if (settings.real_wiz == TRUE)
-	 CLEAR_FLAG(op, FLAG_WAS_WIZ);
-    op->contr->hidden=0;
-     new_draw_info(NDI_UNIQUE | NDI_ALL | NDI_LT_GREEN, 1, NULL,
-	"The Dungeon Master is gone..");
-     return 1;
+    {
+    CLEAR_FLAG(op, FLAG_WIZ);
+    CLEAR_FLAG(op, FLAG_WIZPASS);
+    CLEAR_FLAG(op, FLAG_FLYING);
+    if (settings.real_wiz == TRUE)
+        CLEAR_FLAG(op, FLAG_WAS_WIZ);
+    if ( op->contr->hidden )
+        {
+        new_draw_info(NDI_UNIQUE, 0,op, "You are no longer hidden from other players");
+	    op->map->players++;
+	    new_draw_info_format(NDI_UNIQUE | NDI_ALL | NDI_DK_ORANGE, 5, NULL,
+            "%s has entered the game.",op->name);
+        op->contr->hidden=0;
+        op->invisible=1;
+        }
+    else
+        new_draw_info(NDI_UNIQUE | NDI_ALL | NDI_LT_GREEN, 1, NULL, "The Dungeon Master is gone..");
+    return 1;
   }
 
 /*

@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/c_wiz.c: Fix 'nodm' displaying incorrect messages, and forgetting to
+   update player count on map.
+Ryo 2004-05-08
+
 server/apply.c: Fix apply_special() to properly deal with LAMP objects - it
    wasn't dealing properly with the split off lamp compared to the one it
    was supposed to deal with - was crashing server.
