@@ -166,6 +166,12 @@ arch water
 chance 40
 ingred 3 emerald,water of the wise
 #
+# water of pearl
+Object pearl
+arch water
+chance 40
+ingred 3 pearl,water of the wise
+#
 #
 # -------------- 
 # Potions     -- incl. balms, figurines, and dusts 
@@ -183,11 +189,17 @@ arch balm_generic
 chance 25
 ingred 3 dragon scale,water of the wise
 #
-# -- cold prot.
+# -- cold prot. #1
 Object warmth
 arch balm_generic
 chance 25
 ingred chinese dragon's steak,water of the wise,icecube
+#
+# -- cold prot. #2
+Object warmth
+arch balm_generic
+chance 25
+ingred chinese dragon's steak,water of the wise,water of pearl
 #
 # -- elect prot.
 Object insulation
@@ -323,12 +335,19 @@ chance 23
 yield 4
 ingred 2 lead,pile of philosophical phosphorus
 #
-# -- icestorm
+# -- icestorm #1
 Object frost
 arch dust_generic
 chance 18
 yield 4
 ingred icecube,icecube,icecube,water of diamond
+#
+# -- icestorm #2
+Object frost
+arch dust_generic
+chance 18
+yield 3
+ingred water of pearl,water of diamond,pile of gypsum
 #
 # -- shockwave 
 Object concussion
@@ -411,6 +430,56 @@ arch dust_generic
 chance 6
 yield 3
 ingred water of the wise,icecube,booze
+# 
+# biren's mist #2
+Object Biren's mist
+arch dust_generic
+chance 6
+yield 3
+ingred water of the wise,water of pearl,booze
+#
+# -- command undead
+Object the Dead
+arch dust_generic
+chance 14
+yield 5
+ingred skull's tongue,lich dust,zombie's corpse
+#
+# -- light
+Object visibility
+arch dust_generic
+chance 24
+yield 6
+ingred torch,water of ruby,pile of sulphur
+#
+# -- darkness
+Object impenatrability
+arch dust_generic
+chance 15
+yield 3
+ingred burnt out torch,lead,dust of Biren's mist
+#
+# -- mana blast
+Object consuming wrath
+arch dust_generic
+chance 16
+yield 5
+ingred water of diamond,pile of phosphorus,lead,pile of sulphur
+#
+# -- medium mana ball
+Object encompassing rage
+arch dust_generic
+chance 4
+yield 5
+ingred water of diamond,pile of philosophical phosphorus,lead,pile of philosophical sulphur
+#
+#
+# -- medium snowstowm
+Object blizzards
+arch dust_generic
+chance 5
+yield 5
+ingred water of sapphire,dust of frost,bottle of philosophical oil
 #
 #    Potions -- these give 'non-contact' protections, have
 #	        attack effects on the 'drinker' (or one it is 
@@ -595,7 +664,7 @@ Object NONE
 arch potion_heal
 chance 4
 yield 4
-ingred potion of restoration,mushroom of Healing,red rose
+ingred potion of life,mushroom of Healing,red rose
 #
 # -- healing recipe #2
 Object NONE
@@ -631,6 +700,13 @@ arch potion_generic
 chance 20
 yield 3
 ingred sage's head,water of the wise
+#
+# -- cure disease
+Object cure illness
+arch potion_generic
+chance 20
+yield 5
+ingred booze,balm of first aid,red rose
 #
 # -- attack potions. Drinker/target is effected adversely
 #
@@ -690,6 +766,26 @@ chance 4
 yield 7
 ingred dust of conflagration,3 booze,bottle of philosophical oil
 #
+# -- poison cloud
+Object noxious fumes
+arch potion_generic
+chance 15
+yield 7
+ingred 3 xan's wing,scorpion's stinger,water of emerald
+#
+# -- color spray. very powerful, probably should be a quest item
+Object Rainbow Wave
+arch potion_generic
+chance 0
+yield 6
+ingred 3 wyvern of chaos's steak,7 water of diamond,potion of electric shock,dread's eye,skull's tongue
+#
+# -- ball lightning
+Object lasting shock
+arch potion_generic
+chance 3
+yield 3
+ingred 3 water of diamond,3 potion of electric shock,electric dragon's steak
 #
 # ------------------- 
 # Missile weapons
@@ -715,7 +811,7 @@ arch bolt
 chance 0
 yield 20
 trans 1
-ingred 20 bolt,dragon's heart,lich dust,water of emerald,demon's icor,scorpion's stinger
+ingred 20 bolt,dragon's heart,lich dust,water of emerald,scorpion's stinger
 #
 #
 Object Assassinating Dragons
@@ -723,22 +819,22 @@ arch arrow
 chance 0
 yield 20
 trans 1
-ingred 20 arrow,dragon's heart,lich dust,water of emerald,demon's icor,scorpion's stinger
+ingred 20 arrow,dragon's heart,lich dust,water of emerald,scorpion's stinger
 #
 Object Assassinating Trolls
 arch bolt
 chance 0
 trans 1
-yield 30
-ingred 30 bolt,troll's heart,demon's icor,scorpion's stinger
+yield 20
+ingred 20 bolt,troll's heart,scorpion's stinger,lich dust
 #
 #
 Object Assassinating Trolls
 arch arrow
 chance 0
-yield 30
+yield 20
 trans 1
-ingred 30 arrow,troll's heart,demon's icor,scorpion's stinger
+ingred 20 arrow,troll's heart,scorpion's stinger,lich dust
 #
 #
 Object Blessedness
@@ -746,7 +842,7 @@ arch bolt
 chance 0
 trans 1
 yield 20
-ingred 20 bolt,3 unicorn horn,2 water of sapphire,clover
+ingred 20 bolt,unicorn horn,2 water of sapphire,clover
 #
 #
 Object Blessedness
@@ -754,10 +850,106 @@ arch arrow
 chance 0
 trans 1
 yield 20
-ingred 20 arrow,3 unicorn horn,2 water of sapphire,clover,white rose
+ingred 20 arrow,unicorn horn,2 water of sapphire,clover
+#
+#
+Object Magic
+arch arrow
+chance 4
+trans 1
+yield 20
+ingred 20 arrow,potion of mystic power
+#
+#
+Object Magic
+arch bolt
+chance 4
+trans 1
+yield 20
+ingred 20 bolt,potion of mystic power
+#
+#
+Object Fire
+arch arrow
+chance 4
+trans 1
+yield 20
+ingred 20 arrow,wyvern's steak
+#
+#
+Object Fire
+arch bolt
+chance 4
+trans 1
+yield 20
+ingred 20 bolt,wyvern's steak
+#
+#
+Object Frost
+arch arrow
+chance 4
+trans 1
+yield 20
+ingred 20 arrow,ghost's ectoplasm
+#
+#
+Object Frost
+arch bolt
+chance 4
+trans 1
+yield 20
+ingred 20 bolt,ghost's ectoplasm
+#
+#
+Object Lightning
+arch arrow
+chance 4
+trans 1
+yield 20
+ingred 20 arrow,skull's tooth
+#
+#
+Object Lightning
+arch bolt
+chance 4
+trans 1
+yield 20
+ingred 20 bolt,skull's tooth
+#
+#
+Object Paralysis
+arch arrow
+chance 4
+trans 1
+yield 20
+ingred 20 arrow,beholdereye
+#
+#
+Object Paralysis
+arch bolt
+chance 4
+trans 1
+yield 20
+ingred 20 bolt,beholdereye
+#
+#
+Object Poison
+arch arrow
+chance 4
+trans 1
+yield 20
+ingred 20 arrow,scorpion's stinger
+#
+#
+Object Poison
+arch bolt
+chance 4
+trans 1
+yield 20
+ingred 20 bolt,scorpion's stinger
 #
 # -------------------
-# Armour 'n stuff
+# Cloaks
 # -------------------
 #
 Object minor protection
@@ -765,7 +957,361 @@ arch cloak
 chance 5
 trans 1
 yield 1
-ingred cloak,spectre's ectoplasm,3 balm of aethereality
+ingred cloak,spectre's ectoplasm,balm of aethereality
+#
+# -------------------
+# Armour
+# -------------------
+#
+Object Gorokh
+arch scale_mail
+chance 3
+trans 1
+yield 1
+ingred scale mail,potion of magic resistance,demon's head
+#
+Object Gorokh
+arch plate_mail
+chance 3
+trans 1
+yield 1
+ingred plate mail,potion of magic resistance,demon's head
+#
+Object Gnarg
+arch scale_mail
+chance 4
+trans 1
+yield 1
+ingred scale mail,potion of resist poison,troll's heart
+#
+Object Gnarg
+arch plate_mail
+chance 4
+trans 1
+yield 1
+ingred plate mail,potion of resist poison,troll's heart
+#
+Object Protection
+arch scale_mail
+chance 6
+trans 1
+yield 1
+ingred scale mail,amulet of Shielding,3 lead
+#
+Object Protection
+arch plate_mail
+chance 6
+trans 1
+yield 1
+ingred plate mail,amulet of Shielding,3 lead
+#
+Object Berwean
+arch plate_mail
+chance 4
+trans 1
+yield 1
+ingred plate mail,raas's icor,3 pixie's wings,3 xan's wing
+#
+Object Berwean
+arch mithril_chainmail
+chance 2
+trans 1
+yield 1
+ingred mithril chainmail,raas's icor,3 pixie's wings,3 xan's wing,5 potion of speed
+#
+Object Ruggilli
+arch plate_mail
+chance 2
+trans 1
+yield 1
+ingred plate mail,3 dragon's steak,dragon's eye,dragon scale,fire para-elemental's residue
+#
+Object Ruggilli
+arch scale_mail
+chance 2
+trans 1
+yield 1
+ingred scale mail,3 dragon's steak,dragon's eye,dragon scale,fire para-elemental's residue
+#
+Object Power
+arch plate_mail
+chance 2
+trans 1
+yield 1
+ingred plate mail,3 dragon's steak,balm of aethereality,potion of strength
+#
+Object Displacement
+arch robe
+chance 4
+trans 1
+yield 1
+ingred robe,3 balm of transparency,block of fixed mercury
+#
+Object metal weave
+arch robe
+chance 4
+trans 1
+yield 1
+ingred robe,block of true lead,balm of aethereality
+#
+# ------------------
+# Helmets
+# ------------------
+#
+Object Xebinon
+arch helmet
+chance 2
+trans 1
+yield 1
+ingred helmet,3 magic power potion,bottle of philosophical oil
+#
+Object Dark Vision
+arch helmet
+chance 3
+trans 1
+yield 1
+ingred helmet,dread's eye,3 dust of night vision,bottle of philosophical oil
+#
+Object Might
+arch full_helmet
+chance 3
+trans 1
+yield 1
+ingred full helmet,3 potion of might,hill giant's corpse,bottle of philosophical oil
+#
+Object Valriel
+arch full_helmet
+chance 4
+trans 1
+yield 1
+ingred full helmet,holy symbol,balm of beauty,bottle of philosophical oil
+#
+Object Argoth
+arch full_helmet
+chance 2
+trans 1
+yield 1
+ingred full helmet,3 dragon's steak,mithril crystal,bottle of philosophical oil
+#
+Object Lythander
+arch helmet
+chance 5
+trans 1
+yield 1
+ingred helmet,3 clover,bottle of philosophical oil
+#
+Object Sorig
+arch crown
+chance 3
+trans 1
+yield 1
+ingred crown,lightning para-elemental's residue,potion of shock resistance,bottle of philosophical oil
+#
+# ------------------
+# Shields
+# ------------------
+#
+Object Deflection
+arch high_shield
+chance 5
+trans 1
+yield 1
+ingred high shield,balm of aethereality,block of true lead
+#
+Object Mostrai
+arch small_shield
+chance 3
+trans 1
+yield 1
+ingred small shield,balm of asbestos,mithril crystal
+#
+Object Mostrai
+arch high_shield
+chance 3
+trans 1
+yield 1
+ingred high shield,balm of asbestos,mithril crystal
+#
+# ------------------
+# Gauntlets / Gloves
+# ------------------
+#
+Object Havok
+arch gloves
+chance 4
+trans 1
+yield 1
+ingred gloves,ogre's corpse,bottle of philosophical oil
+#
+Object marksmanship
+arch gloves
+chance 5
+trans 1
+yield 1
+ingred gloves,5 arrow of accuracy,bottle of mineral oil
+#
+Object Sorig
+arch gloves
+chance 3
+trans 1
+yield 1
+ingred gloves,hill giant's heart,lightning para-elemental's residue,bottle of philosophical oil
+#
+Object the Titans
+arch gauntlets
+chance 3
+trans 1
+yield 1
+ingred gauntlets,titan's head,bottle of philosophical oil
+#
+Object bladed steel
+arch gloves
+chance 5
+trans 1
+yield 1
+ingred gloves,hill giant's hand,bottle of mineral oil
+#
+Object Sorig
+arch gauntlets
+chance 1
+trans 1
+yield 1
+ingred gauntlets,hill giant's heart,lightning para-elemental's residue,bottle of philosophical oil,electric dragon's steak
+#
+# ------------------
+# Bows / Crossbows
+# ------------------
+#
+Object Auriga
+arch bow
+chance 1
+trans 1
+yield 1
+ingred bow,3 potion of might,hill giant's corpse,block of true lead,troll's heart
+#
+Object Thunder
+arch bow
+chance 3
+trans 1
+yield 1
+ingred bow,titan's head,dust of stasis,block of fixed mercury,cunning gnome's corpse
+#
+Object Thunder
+arch crossbow
+chance 3
+trans 1
+yield 1
+ingred crossbow,titan's head,dust of stasis,block of fixed mercury,cunning gnome's corpse
+#
+# ------------------
+# Weapons
+# ------------------
+#
+Object Poisoning
+arch dagger
+chance 5
+trans 1
+yield 1
+ingred dagger,scorpion's stinger,3 xan's wing,bottle of philosophical oil
+#
+Object Poisoning
+arch falchion
+chance 3
+trans 1
+yield 1
+ingred falchion,scorpion's stinger,3 xan's wing,bottle of philosophical oil
+#
+Object Fear
+arch morningstar
+chance 5
+trans 1
+yield 1
+ingred morningstar,wyvern's steak,bottle of philosophical oil
+#
+Object Gnarg
+arch sword
+chance 5
+trans 1
+yield 1
+ingred long sword,troll's corpse,xan's wing,bottle of philosophical oil
+#
+Object Kragi
+arch sword
+chance 10
+trans 1
+yield 1
+ingred sword,potion of health,bottle of philosophical oil
+#
+Object Slay Ogre
+arch sword
+chance 6
+trans 1
+yield 1
+ingred sword,ogre's heart,bottle of philosophical oil
+#
+Object Valriel
+arch large_morningstar
+chance 3
+trans 1
+yield 1
+ingred large morningstar,demon's head,holy symbol,bottle of philosophical oil
+#
+Object Gorokh
+arch broadsword
+chance 3
+trans 1
+yield 1
+ingred broadsword,light angel's head,holy symbol,bottle of philosophical oil
+#
+Object the Devourers
+arch mace
+chance 3
+trans 1
+yield 1
+ingred mace,ice para-elemental's residue,holy symbol,bottle of philosophical oil
+#
+Object Slay Troll
+arch sword
+chance 5
+trans 1
+yield 1
+ingred long sword,troll's heart,bottle of philosophical oil
+#
+Object Slay Undead
+arch axe
+chance 5
+trans 1
+yield 1
+ingred axe,ghost's ectoplasm,zombie's corpse,bottle of philosophical oil
+#
+Object Glamdri
+arch sabre
+chance 2
+trans 1
+yield 1
+ingred sabre,potion of magic resistance,beholdereye,bottle of philosophical oil
+#
+Object Sorig
+arch scimitar
+chance 3
+trans 1
+yield 1
+ingred scimitar,lightning para-elemental's residue,holy symbol,bottle of philosophical oil
+#
+Object Ruggilli
+arch large_morningstar
+chance 3
+trans 1
+yield 1
+ingred large morningstar,wyvern's steak,holy symbol,bottle of philosophical oil
+#
+Object Paralysis
+arch dagger
+chance 6
+trans 1
+yield 1
+ingred dagger,cunning gnome's corpse,bottle of mineral oil
+#
 # -------------------
 # Amulets
 # -------------------

@@ -2892,7 +2892,8 @@ chance 100
 Object Fire
 attacktype 4
 type 13
-value 5
+dam -8
+value 6
 end
 #
 Allowed all
@@ -2900,7 +2901,8 @@ chance 100
 Object Frost
 attacktype 16
 type 13
-value 5
+dam -8
+value 6
 end
 #
 Allowed all
@@ -2909,7 +2911,8 @@ difficulty 6
 Object Poison
 attacktype 1025
 type 13
-value 5
+dam -8
+value 6
 magic 1
 end
 #
@@ -2918,7 +2921,8 @@ chance 100
 Object Lightning
 attacktype 8
 type 13
-value 5
+dam -8
+value 6
 end
 #
 Allowed all
@@ -3369,6 +3373,15 @@ value 10
 end
 #
 Allowed water
+chance 17
+difficulty 2
+Object pearl
+type 54
+food 1
+value 50
+end
+#
+Allowed water
 chance 15
 difficulty 3
 Object emerald
@@ -3403,7 +3416,6 @@ type 54
 food 1
 value 191
 end
-#
 #
 # FOOD. Types of food which can effect player status
 #
@@ -3628,6 +3640,36 @@ sp 5
 value 1
 end
 #
+# -- poison cloud
+Allowed potion_generic
+chance 1
+Object noxious fumes
+stand_still 1
+type 5
+sp 21
+value 1
+end
+#
+# -- ball lightning
+Allowed potion_generic
+chance 1
+Object lasting shock
+stand_still 1
+type 5
+sp 88
+value 15
+end
+#
+# -- color spray
+Allowed potion_generic
+chance 1
+Object Rainbow Wave
+stand_still 1
+type 5
+sp 85
+value 20
+end
+#
 # - curative potions
 #
 Allowed balm_generic
@@ -3665,6 +3707,15 @@ stand_still 1
 type 5
 sp 125
 value 2
+end
+#
+Allowed potion_generic
+chance 1
+Object cure illness
+stand_still 1
+type 5
+sp 171
+value 3
 end
 #
 # - protective potions
@@ -4045,6 +4096,42 @@ level -30
 value 1
 end
 #
+Allowed dust_generic
+chance 1
+Object the Dead
+type 5
+sp 140
+level -30
+value 1
+end
+#
+# -- mana blast
+Allowed dust_generic
+chance 1
+Object consuming wrath
+type 5
+sp 180
+value 3
+end
+#
+# -- medium mana ball
+Allowed dust_generic
+chance 1
+Object encompassing rage
+type 5
+sp 182
+value 6
+end
+#
+# -- medium snowstorm
+Allowed dust_generic
+chance 1
+Object blizzards
+type 5
+sp 169
+value 4
+end
+#
 # dusts w/ provide detection
 #
 Allowed dust_generic
@@ -4101,6 +4188,28 @@ chance 1
 Object Biren's mist
 type 5
 sp 138
+value 1
+end
+#
+# misc. dusts
+#
+# -- light
+Allowed dust_generic
+chance 1
+Object visibility
+type 5
+sp 157
+level -20
+value 1
+end
+#
+# -- darkness
+Allowed dust_generic
+chance 1
+Object impenatrability
+type 5
+sp 158
+level -20
 value 1
 end
 #
