@@ -145,7 +145,7 @@ void place_fountain_with_specials(mapstruct *map) {
   copy_object(pick_random_object(fountain_style),potion);
   while(i<0 && tries<10) {
     ix = RANDOM() % (MAP_WIDTH(map) -2) +1;
-    iy = RANDOM() % (MAP_WIDTH(map) -2) +1; /* is this really supposed to be the width? */
+    iy = RANDOM() % (MAP_HEIGHT(map) -2) +1;
     i = find_first_free_spot(fountain->arch,map,ix,iy);
     tries++;
   };
@@ -182,7 +182,7 @@ void place_special_exit(mapstruct * map, int hole_type,RMParms *RP) {
 
   while(i<0) {
     ix = RANDOM() % (MAP_WIDTH(map) -2) +1;
-    iy = RANDOM() % (MAP_WIDTH(map) -2) +1;	/* Is this supposed to be width? */
+    iy = RANDOM() % (MAP_HEIGHT(map) -2) +1;
     i = find_first_free_spot(the_exit->arch,map,ix,iy);
   };
   
