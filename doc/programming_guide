@@ -109,6 +109,42 @@ the move to 4 space will make future readability easier.
   Its much easier to spot the block comments if they all start with *, 
   and these comments tend to be worth noticing.
 
+14) As discussed on irc, the preferred style for expressions is like this:
+
+if (expression) {
+  statement;
+  statement;
+}
+
+if <space> (expression), the space between the if and expression is required.
+
+NOT like this:
+
+if (expression)
+{
+  statement;
+  statement;
+}
+
+15) The preferred style of formal parameters:
+
+void myFooFunction(param1, param2, param3) {
+  statement;
+  statement;
+}
+
+No space after the left paren, no space before the right paren.
+Comma right after the formal param, space right after the comma.  
+
+
+16) Local variable names. Just a rules of thumb.
+
+This are ok:
+
+  int mylongvarname;
+  int my_long_var_name;
+
+Please do NOT use caps expect for typedefs, enums and defines.
 
 ------------------------------------------------------------------------------
 Section 3 - sending in patches:
