@@ -17,6 +17,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 CVS changes since last release:
 
+server/c_object.c: modify examine so that it properly shows info about
+    magic bullet spell books.  MSW 2001-04-05
+
 common/item.c: Modify identify function to clear the NO_SKILL_IDENT
    flag so objects will now merge.  Also, once the object has been
    identified, the no_skill_ident doesn't have meaning anymore.

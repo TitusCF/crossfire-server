@@ -1084,7 +1084,7 @@ void examine(object *op, object *tmp) {
     buf[0]='\0';
     switch(tmp->type) {
 	case SPELLBOOK:
-	    if(QUERY_FLAG(tmp, FLAG_IDENTIFIED) && tmp->stats.sp > 0 && tmp->stats.sp <= NROFREALSPELLS ) {
+	    if(QUERY_FLAG(tmp, FLAG_IDENTIFIED) && tmp->stats.sp >= 0 && tmp->stats.sp <= NROFREALSPELLS ) {
 		if(!strcmp(tmp->arch->name,"cleric_book"))
 		    sprintf(buf,"%s is a %d level prayer.",
 			    spells[tmp->stats.sp].name,spells[tmp->stats.sp].level);
