@@ -129,7 +129,16 @@
 #define HOOK_SENDCUSTOMCOMMAND  48
 #define HOOK_CFTIMERCREATE      49
 #define HOOK_CFTIMERDESTROY     50
-#define NR_OF_HOOKS             51
+#define HOOK_MOVEPLAYER         51
+#define HOOK_MOVEOBJECT         52
+#define HOOK_SETANIMATION        53
+#define HOOK_COMMUNICATE         54
+#define HOOK_FINDBESTOBJECTMATCH 55
+#define HOOK_APPLYBELOW          56
+#define HOOK_FREEOBJECT          57
+#define HOOK_CLONEOBJECT         58
+#define HOOK_TELEPORTOBJECT      59
+#define NR_OF_HOOKS             60
 
 /*****************************************************************************/
 /* CFParm is the data type used to pass informations between the server and  */

@@ -53,7 +53,17 @@ f_plugin HookList[NR_OF_HOOKS] =
     CFWNewDrawInfo,
     CFWSendCustomCommand,
     CFWCFTimerCreate,
-    CFWCFTimerDestroy
+    CFWCFTimerDestroy,
+    CFWMovePlayer,
+    CFWMoveObject,
+    CFWSetAnimation,
+    CFWCommunicate,
+    CFWFindBestObjectMatch,
+    CFWApplyBelow,
+    CFWFreeObject,
+    CFWObjectCreateClone,
+    CFWTeleportObject
+
 };
 
 #endif /*PLUGPROTO_H_*/

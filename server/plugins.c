@@ -226,7 +226,8 @@ void initOnePlugin(char* pluginfile)
         for(j=1; j<=NR_OF_HOOKS;j++)
         {
             memcpy(HookParm->Value[0], &j, sizeof(int));
-            switch(j)
+            HookParm->Value[1] = HookList[j];
+            /*switch(j)
             {
             case HOOK_NONE:
                 break;
@@ -371,7 +372,13 @@ void initOnePlugin(char* pluginfile)
             case HOOK_NEWDRAWINFO:
                 HookParm->Value[1] = &CFWNewDrawInfo;
                 break;
-            };
+            case HOOK_MOVEPLAYER:
+                HookParm->Value[1] = &CFWMovePlayer;
+                break;
+            case HOOK_MOVEOBJECT:
+                HookParm->Value[1] = &CFWMoveObject;
+                break;
+            };*/
             HookParm->dparm = 2044;
             PlugList[PlugNR].hookfunc(HookParm);
         };
@@ -1420,6 +1427,38 @@ CFParm* CFWNewDrawInfo(CFParm* PParm)
                   (char *)(PParm->Value[3]));
     return NULL;
 };
+/*****************************************************************************/
+/* move_player wrapper.                                                      */
+/*****************************************************************************/
+/* 0 - player to move                                                        */
+/* 1 - direction of move                                                     */
+/*****************************************************************************/
+CFParm* CFWMovePlayer (CFParm* PParm)
+{
+    CFParm* CFP;
+    static int val;
+    val=move_player ((object*)PParm->Value[0],
+                     *(int*)PParm->Value[1]);
+    CFP = (CFParm*)(malloc(sizeof(CFParm)));
+    CFP->Value[0] = (void*) &val;
+}
+/*****************************************************************************/
+/* move_object wrapper.                                                      */
+/*****************************************************************************/
+/* 0 - object to move                                                        */
+/* 1 - direction of move                                                     */
+/* 2 - originator                                                            */
+/*****************************************************************************/
+CFParm* CFWMoveObject (CFParm* PParm)
+{
+    CFParm* CFP;
+    static int val;
+    val=move_ob ((object*)PParm->Value[0],
+                 *(int*)PParm->Value[1],
+                 (object*)PParm->Value[2]);
+    CFP = (CFParm*)(malloc(sizeof(CFParm)));
+    CFP->Value[0] = (void*) &val;
+}
 
 CFParm* CFWSendCustomCommand(CFParm* PParm)
 {
@@ -1451,6 +1490,128 @@ CFParm* CFWCFTimerDestroy(CFParm* PParm)
     CFP->Value[0] = (void *)(&val);
     return CFP;
 };
+/*****************************************************************************/
+/* SET_ANIMATION wrapper.                                                    */
+/*****************************************************************************/
+/* 0 - object                                                                */
+/* 1 - face                                                                  */
+/*****************************************************************************/
+CFParm* CFWSetAnimation (CFParm* PParm)
+{
+    object* op=(object*)PParm->Value[0];
+    int face=*(int*)PParm->Value[1];
+    if (face!=-1)
+        {
+        SET_ANIMATION (op,face);
+        }
+    update_object(op, UP_OBJ_FACE);
+}
+/*****************************************************************************/
+/* communicate wrapper.                                                      */
+/*****************************************************************************/
+/* 0 - object                                                                */
+/* 1 - string                                                                */
+/*****************************************************************************/
+CFParm* CFWCommunicate (CFParm* PParm)
+{
+    char buf[MAX_BUF];
+    object* op=(object*)PParm->Value[0];
+    char* string=(char*)PParm->Value[1];
+    if ((!op) || (!string)) return NULL;
+    sprintf(buf, "%s says: ",op->name);
+    strncat(buf, string, MAX_BUF - strlen(buf)-1);
+    buf[MAX_BUF-1]=0;
+    new_info_map(NDI_WHITE,op->map, buf);
+    communicate (op,string);
+    return NULL;
+}
+/*****************************************************************************/
+/* find_best_object_match wrapper.                                           */
+/*****************************************************************************/
+/* 0 - object to find object in inventory                                    */
+/* 1 - name                                                                  */
+/*****************************************************************************/
+CFParm* CFWFindBestObjectMatch (CFParm* PParm)
+{
+    CFParm* CFP;
+    object* op=(object*)PParm->Value[0];
+    char* param=(char*)PParm->Value[1];
+    object* result;
+    result=(object*)find_best_object_match(op,param);
+    CFP = (CFParm*)(malloc(sizeof(CFParm)));
+    CFP->Value[0] = (void*) result;
+}
+/*****************************************************************************/
+/* player_apply_below wrapper.                                               */
+/*****************************************************************************/
+/* 0 - object player                                                         */
+/*****************************************************************************/
+CFParm* CFWApplyBelow (CFParm* PParm)
+{
+    object* op=(object*)PParm->Value[0];
+    if (!op) return NULL;
+    player_apply_below (op);
+    return NULL;
+}
+/*****************************************************************************/
+/* free_object wrapper.                                                      */
+/*****************************************************************************/
+/* 0 - object                                                                */
+/*****************************************************************************/
+CFParm* CFWFreeObject (CFParm* PParm)
+{
+    object* op=(object*)PParm->Value[0];
+    if (op) free_object(op);
+    return NULL;
+}
+/*****************************************************************************/
+/* ObjectCreateClone object_copy wrapper.                                    */
+/*****************************************************************************/
+/* 0 - object                                                                */
+/* 1 - type 0 = clone with inventory                                         */
+/*          1 = only duplicate the object without it's content and op->more  */
+/*****************************************************************************/
+CFParm* CFWObjectCreateClone (CFParm* PParm)
+{
+    CFParm* CFP=(CFParm*)malloc(sizeof (CFParm));
+    if (*(int*)PParm->Value[1]==0)
+        CFP->Value[0]=ObjectCreateClone ((object*)PParm->Value[0]);
+    else if (*(int*)PParm->Value[1]==1)
+        {
+        object* tmp;
+        tmp = get_object();
+        copy_object((object*)PParm->Value[0],tmp);
+        CFP->Value[0]=tmp;
+        }
+    return CFP;
+}
+/*****************************************************************************/
+/* teleport an object to another map                                         */
+/*****************************************************************************/
+/* 0 - object                                                                */
+/* 1 - mapname we use for destination                                        */
+/* 2 - mapx                                                                  */
+/* 3 - mapy                                                                  */
+/* 4 - unique?                                                               */
+/* 5 - msg (used for random maps entering. May be NULL)                      */
+/*****************************************************************************/
+CFParm* CFWTeleportObject (CFParm* PParm)
+{
+    object* current;
+    char * mapname;
+    int mapx;
+    int mapy;
+    int unique;
+    current=get_object();
+    EXIT_PATH(current)=add_string ((char*)PParm->Value[1]);
+    EXIT_X(current)=*(int*)PParm->Value[2];
+    EXIT_Y(current)=*(int*)PParm->Value[3];
+    if (*(int*)PParm->Value[4]) SET_FLAG(current,FLAG_UNIQUE);
+    if (PParm->Value[5]) current->msg=add_string ((char*)PParm->Value[5]);
+    enter_exit ((object*) PParm->Value[0],current);
+    free_object (current);
+    return NULL;
+}
 
 /*****************************************************************************/
 /* The following is not really a wrapper like the others are.                */

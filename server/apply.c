@@ -1294,31 +1294,6 @@ void move_apply (object *trap, object *victim, object *originator)
   case TRIGGER_BUTTON:
   case TRIGGER_PEDESTAL:
   case TRIGGER_ALTAR:
-#ifdef PLUGINS
-  /* GROS: Handle for plugin trigger event */
-    if(trap->event_hook[EVENT_TRIGGER] != NULL)
-    {
-        CFParm CFP;
-        int k, l, m;
-        k = EVENT_TRIGGER;
-        l = SCRIPT_FIX_ALL;
-        m = 0;
-        CFP.Value[0] = &k;
-        CFP.Value[1] = victim;
-        CFP.Value[2] = trap;
-        CFP.Value[3] = NULL;
-        CFP.Value[4] = NULL;
-        CFP.Value[5] = &m;
-        CFP.Value[6] = &m;
-        CFP.Value[7] = &m;
-        CFP.Value[8] = &l;
-        CFP.Value[9] = trap->event_hook[EVENT_TRIGGER];
-        CFP.Value[10]= trap->event_options[EVENT_TRIGGER];
-        if (findPlugin(trap->event_plugin[k])>=0)
-            ((PlugList[findPlugin(trap->event_plugin[EVENT_TRIGGER])].eventfunc) (&CFP));
-    }
-    else
-#endif
         check_trigger (trap, victim);
     goto leave;
 
@@ -1327,31 +1302,6 @@ void move_apply (object *trap, object *victim, object *originator)
     goto leave;
 
   case CHECK_INV:
-#ifdef PLUGINS
-  /* GROS: Handle for plugin trigger event */
-    if(trap->event_hook[EVENT_TRIGGER] != NULL)
-    {
-        CFParm CFP;
-        int k, l, m;
-        k = EVENT_TRIGGER;
-        l = SCRIPT_FIX_ALL;
-        m = 0;
-        CFP.Value[0] = &k;
-        CFP.Value[1] = victim;
-        CFP.Value[2] = trap;
-        CFP.Value[3] = NULL;
-        CFP.Value[4] = NULL;
-        CFP.Value[5] = &m;
-        CFP.Value[6] = &m;
-        CFP.Value[7] = &m;
-        CFP.Value[8] = &l;
-        CFP.Value[9] = trap->event_hook[k];
-        CFP.Value[10]= trap->event_options[k];
-        if (findPlugin(trap->event_plugin[k])>=0)
-            ((PlugList[findPlugin(trap->event_plugin[k])].eventfunc) (&CFP));
-    }
-    else
-#endif
         check_inv (victim, trap);
     goto leave;
 
@@ -1376,30 +1326,6 @@ void move_apply (object *trap, object *victim, object *originator)
 	 */
 	if (trap->msg && strncmp(EXIT_PATH(trap),"/!",2) && strncmp(EXIT_PATH(trap), "/random/", 8))
 	    new_draw_info (NDI_NAVY, 0, victim, trap->msg);
-#ifdef PLUGINS
-  /* GROS: Handle for plugin trigger event */
-      if(trap->event_hook[EVENT_TRIGGER] != NULL)
-      {
-        CFParm CFP;
-        int k, l, m;
-        k = EVENT_TRIGGER;
-        l = SCRIPT_FIX_ALL;
-        m = 0;
-        CFP.Value[0] = &k;
-        CFP.Value[1] = victim;
-        CFP.Value[2] = trap;
-        CFP.Value[3] = NULL;
-        CFP.Value[4] = NULL;
-        CFP.Value[5] = &m;
-        CFP.Value[6] = &m;
-        CFP.Value[7] = &m;
-        CFP.Value[8] = &l;
-        CFP.Value[9] = trap->event_hook[k];
-        CFP.Value[10]= trap->event_options[k];
-        if (findPlugin(trap->event_plugin[k])>=0)
-            ((PlugList[findPlugin(trap->event_plugin[k])].eventfunc) (&CFP));
-      }
-#endif
       enter_exit (victim, trap);
     }
     goto leave;
@@ -1431,31 +1357,6 @@ void move_apply (object *trap, object *victim, object *originator)
   case RUNE:
     if (trap->level && QUERY_FLAG (victim, FLAG_ALIVE))
     {
-#ifdef PLUGINS
-      /* GROS: Handle for plugin trigger event */
-      if(trap->event_hook[EVENT_TRIGGER] != NULL)
-      {
-        CFParm CFP;
-        int k, l, m;
-        k = EVENT_TRIGGER;
-        l = SCRIPT_FIX_ALL;
-        m = 0;
-        CFP.Value[0] = &k;
-        CFP.Value[1] = victim;
-        CFP.Value[2] = trap;
-        CFP.Value[3] = NULL;
-        CFP.Value[4] = NULL;
-        CFP.Value[5] = &m;
-        CFP.Value[6] = &m;
-        CFP.Value[7] = &m;
-        CFP.Value[8] = &l;
-        CFP.Value[9] = trap->event_hook[k];
-        CFP.Value[10]= trap->event_options[k];
-        if (findPlugin(trap->event_plugin[k])>=0)
-            ((PlugList[findPlugin(trap->event_plugin[k])].eventfunc) (&CFP));
-      }
-      else
-#endif
         spring_trap(trap, victim);
     };
     goto leave;
@@ -1481,7 +1382,7 @@ static void apply_book (object *op, object *tmp)
       return;
     }
     if(tmp->msg==NULL) {
-      new_draw_info_format(NDI_UNIQUE, 0, op, 
+      new_draw_info_format(NDI_UNIQUE, 0, op,
 	"You open the %s and find it empty.", tmp->name);
       return;
     }
