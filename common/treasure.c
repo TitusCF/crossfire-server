@@ -137,7 +137,7 @@ static treasure *load_treasure(FILE *fp) {
       t->next=load_treasure(fp);
       return t;
     } else
-      LOG(llevError,"Unknown treasure-command: '%s', last entry %s\n",cp,t->name);
+      LOG(llevError,"Unknown treasure-command: '%s', last entry %s\n",cp,t->name?t->name:"null");
   }
   LOG(llevError,"treasure lacks 'end'.\n");
   return t;
