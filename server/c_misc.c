@@ -633,7 +633,29 @@ int command_statistics(object *pl, char *params)
     new_draw_info_format(NDI_UNIQUE, 0, pl, "Cha         %2d/ %3d/%3d",
 	pl->contr->orig_stats.Cha, pl->stats.Cha, 20+pl->arch->clone.stats.Cha);
     new_draw_info_format(NDI_UNIQUE, 0, pl, "\nAttack Mode: %s",pl->contr->peaceful? "Peaceful":"Hostile");
-	
+
+    /* If dragon player, let's display natural resistances */
+    if ( is_dragon_pl( pl ) )
+        {
+        int attack;
+        object* tmp;
+        for ( tmp = pl->inv; tmp != NULL; tmp = tmp->below )
+            {
+            if ( ( tmp->type == FORCE ) && ( strcmp( tmp->arch->name, "dragon_skin_force" )== 0 ) )
+                {
+                new_draw_info( NDI_UNIQUE, 0, pl, "\nNatural skin resistances:" );
+                for ( attack = 0; attack < NROFATTACKS; attack++ )
+                    {
+                    if ( atnr_is_dragon_enabled( attack ) )
+                        {
+                        new_draw_info_format( NDI_UNIQUE, 0, pl, "%s: %d", change_resist_msg[ attack ], tmp->resist[ attack ] );
+                        }
+                    }
+                break;
+                }
+            }
+        }
+
    /* Can't think of anything else to print right now */
    return 0;
 }
