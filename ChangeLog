@@ -17,6 +17,33 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+common/item.c: make item_power stop showing up in ring short descriptions.
+        fix some of the items that were double-displaying materialnames, like
+        mithril mithril chainmail.
+common/loader.l: add tooltype
+common/utils.c: Unless the object is armour or weapons, pick the first
+        materialname we find.  Now, newly generated diamonds will stack.
+        Fix name_to_material to return NULL if it finds nothing, fixes
+        navar_city/museum crash.
+        Change set_materialname to take a materialtype_t argument, allowing
+        functions to manually set the materialname, rather than let the
+        randomizer pick for them.
+include/define.h:  Add TOOL and BUILDFAC for item building.
+include/object.h:  add tooltype for item building.
+include/materials.h: add M_SPECIAL.  Set this in an object, to prevent things
+        like mithril mithril chainmail.  This is primarily only needed in
+        artifacts, because they change the base material of the arch.  Also
+        useful in things like the demonspawn shield, and on maps.
+lib/artifacts: sprinkle M_SPECIAL around.
+server/player.c: remove auto_heal.  This never should have been
+        committed, and was never referenced by any code.
+server/c_object.c:  add item building, but add it disabled.  Too many
+        bugfixes were tied in with this code to cleanly add them. When
+        enabled, this code will add player item building, similar to
+        create to take place.  Requires a host of graphics and arches
+        to be useable.
+garbled 2003-02-13
+
 random_maps/special.c: Fix possible bug with placement of special maps.
 Add lore/endlore to object structure to hold general information about objects:
 common/loader.c, common/loader.l: Add loading and saving of lore field.
