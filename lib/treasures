@@ -161,6 +161,9 @@ more
   arch god_spelldirect_divine_shock
     chance 20
   more
+  arch god_spelldirect_forked_lightning
+    chance 20
+  more
 arch god_grace_limit_medium
 more
   arch god_spelldirect_cause_critical_wounds
