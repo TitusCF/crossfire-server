@@ -77,7 +77,7 @@ VERSION = crossfire-1.2.0
 
 ARCHIVE = /tmp/$(VERSION)
 
-SUBDIRS = common random_maps socket server include lib utils doc
+SUBDIRS = common random_maps socket server include lib utils doc plugin
 
 FILES = CHANGES CREDITS DEVELOPERS Makefile.in INSTALL License README \
 	TODO configure configure.in
