@@ -109,8 +109,9 @@ typedef struct FaceInfo {
   char *name;   /* name of the image, including component path names (ie,
                  * ./arch/system/bug.111)
                  */
-  char *data[FACE_TYPES];   /* xpm data */
+  char *data[FACE_TYPES];	/* image data */
   uint16 datalen[FACE_TYPES];   /* length of the xpm data */
+  uint32 checksum;		/* Checksum of face data */
 } FaceInfo;
 
 
@@ -125,7 +126,7 @@ extern Socket_Info socket_info;
 extern FaceInfo	faces[MAXFACENUM];  /* face information */
 
 #define VERSION_CS 1022
-#define VERSION_SC 1025
+#define VERSION_SC 1026
 #define VERSION_INFO "Crossfire Server"
 
 

@@ -68,8 +68,6 @@ static char *face_types[FACE_TYPES] = {"xbm", "xpm", "png"};
 
 /* Couple of notes:  We assume that the faces are in a continous block.
  * This works fine for now, but this could perhaps change in the future
- * (If clients do image caching, it would be handy for servers to perhaps
- * use different blocks for their new images..
  */
 
 /* Function largely rewritten May 2000 to be more general purpose.
@@ -77,6 +75,9 @@ static char *face_types[FACE_TYPES] = {"xbm", "xpm", "png"};
  * it is just data it needs to allocate.  As such, the code is written
  * to do such.
  */
+
+/* Rotate right from bsd sum. */
+#define ROTATE_RIGHT(c) if ((c) & 01) (c) = ((c) >>1) + 0x80000000; else (c) >>= 1;
 
 #define XPM_BUF 10000
 void read_client_images()
@@ -143,7 +144,12 @@ void read_client_images()
 		    len, i, buf);
 		    abort();
 	    }
-
+	    faces[num].checksum=0;
+	    for (i=0; i<len; i++) {
+		ROTATE_RIGHT(faces[num].checksum);
+		faces[num].checksum += faces[num].data[fileno][i];
+		faces[num].checksum &= 0xffffffff;
+	    }
 	}
 	close_and_delete(infile,compressed);
     }

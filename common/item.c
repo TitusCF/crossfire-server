@@ -855,8 +855,17 @@ int is_magical(object *op) {
 	    return 1;
 
     /* if something gives a protection, either positive or negative, its magical */
-    for (i=0; i<NROFATTACKS; i++)
+    /* This is really a pretty bad hack - as of now, ATNR_PHYSICAL is 0,
+     * so this always works out fine.
+     */
+    for (i=ATNR_PHYSICAL+1; i<NROFATTACKS; i++)
 	if (op->resist[i]) return 1;
+
+    /* Physical protection is expected on some item types, so they should
+     * not be considered magical.
+     */
+    if (op->resist[ATNR_PHYSICAL] && op->type != HELMET && op->type != SHIELD
+	&& op->type != ARMOUR) return 1;
 	
    /* power crystal, spellbooks, and scrolls are always magical.  */
    if (op->magic || op->type==POWER_CRYSTAL || op->type==SPELLBOOK || 
