@@ -438,7 +438,7 @@ PATH_TURNING,"holy_orb",},
 {"poison fog",             5, 15,  0, 10,  0,  0,  0,  1,  0,  1,  0,
    PATH_WOUNDING, "poison_fog"},
 {"flaming aura",           1,  5,  0, 10,  0,  0,  0,  0,  1,  1,  1,
-   PATH_DETONATE, "flaming_aura"},
+   PATH_FIRE, "flaming_aura"},
 {"vitriol",                5, 15,  0, 10,  0,  0,  0,  0,  1,  1,  1,
    PATH_DETONATE, "vitriol"},  /* not for people to cast. */
 {"vitriol splash",                5, 15,  0, 10,  0,  0,  0,  0,  1,  1,  1,
