@@ -1,0 +1,46 @@
+#
+#    Translators, if you are not familiar with the PO format, gettext
+#    documentation is worth reading, especially sections dedicated to
+#    this format, e.g. by running:
+#         info -n '(gettext)PO Files'
+#         info -n '(gettext)Header Entry'
+#
+#    Some information specific to po-debconf are available at
+#            /usr/share/doc/po-debconf/README-trans
+#         or http://www.debian.org/intl/l10n/po-debconf/README-trans
+#
+#    Developers do not need to manually edit POT or PO files.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: crossfire (1.4.0-4)\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2003-08-14 09:44+0200\n"
+"PO-Revision-Date: 2003-08-14 09:43+0100\n"
+"Last-Translator: Christian Perrier <bubulle@debian.org>\n"
+"Language-Team: French <debian-l10n-french@lists.debian.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=iso-8859-15\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#. Description
+#: ../templates:3
+msgid "Move files and directories to /var/games/crossfire?"
+msgstr ""
+"Faut-il déplacer les fichiers et répertoires vers /var/games/crossfire ?"
+
+#. Description
+#: ../templates:3
+msgid ""
+"Beginning from version 1.0.0, all game runtime generated files are kept in /"
+"var/games/crossfire. Looks like you had the old package installed, and files "
+"need to be moved from /var/lib/games/crossfire into /var/games/crossfire. Do "
+"you want to do this? If you prefer to do this by yourself, just answer "
+"negatively here."
+msgstr ""
+"À partir de la version 1.0.0, tous les fichiers générés pendant le "
+"fonctionnement du jeu sont conservés dans /var/games/crossfire. Il semble "
+"qu'une ancienne version du paquet était installée dont les fichiers "
+"devraient être déplacés de /var/lib/games/crossfire vers /var/games/"
+"crossfire. Souhaitez-vous effectuer ce déplacement ? Si vous préférez le "
+"faire vous-même, répondez négativement ici."
