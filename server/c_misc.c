@@ -708,7 +708,7 @@ int command_applymode(object *op, char *params)
 
     if (!params) {
 	new_draw_info_format(NDI_UNIQUE, 0, op, "applymode is set to %s",
-	types[op->contr->usekeys]);
+	types[op->contr->unapply]);
 	return 1;
     }
 
@@ -725,14 +725,14 @@ int command_applymode(object *op, char *params)
 	return 0;
     }
     new_draw_info_format(NDI_UNIQUE, 0, op, "Applymode %s set to %s",
-	(unapply==op->contr->usekeys?"":"now"),
+	(unapply==op->contr->unapply?"":" now"),
 	types[op->contr->unapply]);
     return 1;
 }
 
 int command_bowmode(object *op, char *params)
 {
-    bowtype_t oldtype=op->contr->petmode;
+    bowtype_t oldtype=op->contr->bowtype;
     static char *types[] =
 	{"normal", "threewide", "spreadshot", "firenorth",
 	 "firene", "fireeast", "firese", "firesouth",
