@@ -17,6 +17,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/c_new.c: fix command_run and command_fire so they check
+   the given direction is [0..8]. This enabled weird things like
+   hitting non-adjacent monsters.
+   Patch by Karla Stenger on cf-devel, slightly modified by me.
+Ryo 2003-10-21
+
 common/arch.c: fix item_matched_string() so that matching makes sense -
    the ordering was wrong, so that we would match something with a low
    priority, and skip over looking to see if that same object would get

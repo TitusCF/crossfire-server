@@ -114,8 +114,14 @@ int execute_newserver_command(object *pl, char *command)
 
 int command_run(object *op, char *params)
 {
+    int dir;
+    dir = params?atoi(params):0;
+    if ( dir<0 || dir>=9 ){
+        new_draw_info(NDI_UNIQUE, 0,op,"Can't run into a non adjacent square.");
+        return 0;
+    }
     op->contr->run_on=1;
-    return (move_player(op, params?atoi(params):0));
+    return move_player(op, dir);
 }
 
 int command_run_stop(object *op, char *params)
@@ -126,8 +132,14 @@ int command_run_stop(object *op, char *params)
 
 int command_fire(object *op, char *params)
 {
+    int dir;
+    dir = params?atoi(params):0;
+    if ( dir<0 || dir>=9 ){
+        new_draw_info(NDI_UNIQUE, 0,op,"Can't fire to a non adjacent square.");
+        return 0;
+    };
     op->contr->fire_on=1;
-    return move_player(op, params?atoi(params):0);
+    return move_player(op, dir);
 }
 
 int command_fire_stop(object *op, char *params)
