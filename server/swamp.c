@@ -55,13 +55,23 @@ void move_deep_swamp (object *op)
 	  break;
 	case 3:
 	  if (rndm(0, 4) == 0) {
-	    op->stats.food = 0;
-	    new_draw_info_format(NDI_UNIQUE | NDI_ALL, 1, NULL,
+	    /* player is ready to drown - only woodsman skill can save him */
+	    if (rndm(0, 4) == 0 || !change_skill(above, lookup_skill_by_name("woodsman"))) {
+	      op->stats.food = 0;
+	      new_draw_info_format(NDI_UNIQUE | NDI_ALL, 1, NULL,
 		"%s disappeared into a swamp.",above->name);
-	    strcpy(above->contr->killer,"drowning in a swamp");
-	    above->stats.hp = -1;
+	      strcpy(above->contr->killer,"drowning in a swamp");
+	      
+	      above->stats.hp = -1;
+	      kill_player(above); /* player dies in the swamp */
+	    }
+	    else {
+	      op->stats.food = 2;
+	      new_draw_info(NDI_UNIQUE, 0,above, "You almost drowned in the swamp! You");
+	      new_draw_info(NDI_UNIQUE, 0,above, "survived due to your woodsman skill.");
+	    }
 	  }
-	  break;
+	break;
       }
     } else if (!QUERY_FLAG(above, FLAG_ALIVE)) {
       if (rndm(0, 2) == 0) decrease_ob(above);
