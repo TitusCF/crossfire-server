@@ -55,7 +55,7 @@ extern object *objects;
 int write_rune(object *op,int dir,int inspell,int level,char *runename) { 
     object *tmp;
     archetype *at=NULL;
-    char *buf=(char *)malloc(sizeof(char) * 40);
+    char buf[MAX_BUF];
     
     int nx,ny;
 
@@ -97,7 +97,6 @@ int write_rune(object *op,int dir,int inspell,int level,char *runename) {
         /* next it attempts to look up a rune_archetype for this spell
 		by doing some string manipulations */
 	if(!at) {
-		char buf[MAX_BUF];
 		char insp[MAX_BUF];
 		int i;
 		strcpy(insp,spells[inspell].name);
@@ -117,22 +116,22 @@ int write_rune(object *op,int dir,int inspell,int level,char *runename) {
 	tmp->msg=add_string(buf); 
 	at=NULL;
 
-  /* the only circumstance in which we remove buf, otherwise we need it.*/
-    } else if (level!=-2 && (at=find_archetype(runename))!=NULL) free(buf);
-	    /*  the at=find_archetye(runename) was neccessary because
-		tmp=get_archetype returns a singulirity, not a null,
-		when it cannot find the archetype.  */
-		    /* note: if some smartass
-		    cast rune of marking, and gives the exact name
-		    of a powerful rune, it won't do him any good,
-		    because a rune of marking will have level 0
-		    and will thus never detonate. */
-      else { /* it's a rune of marking */
+
+	/*  the at=find_archetye(runename) is neccessary because
+	 * tmp=get_archetype returns a singulirity, not a null,
+	 * when it cannot find the archetype.
+	 * note: if some smartass
+	 * cast rune of marking, and gives the exact name
+	 * of a powerful rune, it won't do him any good,
+	 *  because a rune of marking will have level 0
+	 * and will thus never detonate. 
+	 */
+    } else if (level==-2 || (at=find_archetype(runename))==NULL) {
 	level=0;
 	tmp=get_archetype("rune_mark"); /* this is a rune of marking */
 	at=NULL;
 	tmp->msg = add_string((runename?runename:"There is no message\n"));
-      }
+    }
     if(at) tmp=get_archetype(runename);
     tmp->stats.Cha = op->level/2;  /* the invisibility parameter */
     tmp->x=nx;
