@@ -120,9 +120,26 @@ void pray_at_altar(object *pl, object *altar) {
  
      /* May switch Gods, but its random chance based on our current level
       * note it gets harder to swap gods the higher we get */
-     if((angry==1)&&!(RANDOM()%(pl->chosen_skill->exp_obj->level+1))) 
-                become_follower(pl,altar->title); 
-  } 
+     if((angry==1)&&!(RANDOM()%(pl->chosen_skill->exp_obj->level+1))) {
+       int i;  /* index over known_spells */
+       int sp;  /*  spell index */
+       become_follower(pl,altar->title);
+
+       /* Forget all the special spells from your former God */
+       for(i=0;i<pl->contr->nrofknownspells;i++)
+	 if((sp=pl->contr->known_spells[i])>0) {
+	   if(spells[sp].cleric && spells[sp].books == 0) {
+	     pl->contr->nrofknownspells--;
+	     pl->contr->known_spells[i]=
+	       pl->contr->known_spells[pl->contr->nrofknownspells];
+	     new_draw_info_format(NDI_UNIQUE|NDI_NAVY,0,pl,
+	         "You lose your knowledge of %s!",spells[sp].name);
+	     i=0;
+	   }
+	 }
+
+     }
+  }
 #endif
 
 }
