@@ -107,7 +107,8 @@ object *check_enemy(object *npc, rv_vector *rv) {
 	 * as the enemy to attack.
 	 */
 	else if (!QUERY_FLAG(npc->enemy, FLAG_MONSTER) && 
-                  !QUERY_FLAG(npc->enemy,FLAG_GENERATOR) && npc->enemy->type!=PLAYER)
+                  !QUERY_FLAG(npc->enemy,FLAG_GENERATOR) && 
+		 npc->enemy->type!=PLAYER && npc->enemy->type != GOLEM)
                 npc->enemy=NULL;
 
     }

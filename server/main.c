@@ -479,7 +479,7 @@ char *unclean_path(char *src)
 static void enter_random_map(object *pl, object *exit_ob)
 {
     mapstruct *new_map;
-    char newmap_name[HUGE_BUF];
+    char newmap_name[HUGE_BUF], *cp;
     static int reference_number = 0;
     RMParms rp;
 
@@ -492,10 +492,16 @@ static void enter_random_map(object *pl, object *exit_ob)
     rp.generate_treasure_now = 1;
     strcpy(rp.origin_map, pl->map->path);
 
-    /* pick a new pathname for the new map.  Currently, we just
-     * use a static variable and increment the counter one each time.
+    /* If we have a final_map, use it as a base name to give some clue
+     * as where the player is.  Otherwise, use the origin map.
+     * Take the last component (after the last slash) to give
+     * shorter names without bogus slashes.
      */
-    sprintf(newmap_name,"/random/%016d",reference_number++);
+    cp = strrchr(rp.final_map[0]? rp.final_map:rp.origin_map, '/');
+    if (!cp)
+	cp = rp.final_map[0]? rp.final_map:rp.origin_map;
+
+    sprintf(newmap_name,"/random/%s%04d",cp+1, reference_number++);
 
     /* now to generate the actual map. */
     new_map=(mapstruct *)generate_random_map(newmap_name,&rp);

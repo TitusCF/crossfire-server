@@ -17,6 +17,26 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+common/item.c: Add 'unidentified' to display of examined items if the
+   item has not been identified.  Only display spell regen penalty
+   for armour if there is in fact a penalty.
+lib/archetypes: rebuilt for updated demon speed, pick up other new archs.
+lib/animations, lib/bmaps lib/bmaps.paths lib/crossfire.0 lib/crossfire.1
+lib/faces: rebuilt
+server/main.c: Name random maps based on final map component (if available)
+   or map they are spawned from - this gives so clue in 'who' command
+   where the players really are.
+server/monster.c: Fix code that would cause monsters to ignore golems/
+   avatars.
+server/pets.c: Clean up a few warnings, fix bug in pet_move that caused
+   crashes - owner of a pet isn't always a player.
+server/player.c: Remove on_same_map check - can_detect_monster also
+   performed check, so no need to have extra call.
+server/spell_effect.c: modify alchemy to properly deal with tiled maps,
+   change behavior for spells that block view - they no longer block
+   alchemy, but spaces that block magic will.
+MSW 2002-01-05
+
 TODO - add notes about item damage - clear it out of my mailbox.
 common/loader.l, loader.c: Add check at load time to see if monsters
    hp is higher than its maxhp and print a debug message if so.

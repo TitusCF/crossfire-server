@@ -2121,7 +2121,7 @@ static void alchemy_object(object *obj, int *small_nuggets,
     free_object(obj);
 }
 
-static void update_map(object *op, int small_nuggets, int large_nuggets,
+static void update_map(object *op, mapstruct *m, int small_nuggets, int large_nuggets,
 	int x, int y)
 {
     object *tmp;
@@ -2130,7 +2130,7 @@ static void update_map(object *op, int small_nuggets, int large_nuggets,
     /* Put any nuggets below the player, but we can only pass this
      * flag if we are on the same space as the player 
      */
-    if (x == op->x && y == op->y) flag = INS_BELOW_ORIGINATOR;
+    if (x == op->x && y == op->y && op->map == m) flag = INS_BELOW_ORIGINATOR;
 
     if (small_nuggets) {
 	tmp = get_object();
@@ -2138,7 +2138,7 @@ static void update_map(object *op, int small_nuggets, int large_nuggets,
 	tmp-> nrof = small_nuggets;
 	tmp->x = x;
 	tmp->y = y;
-	insert_ob_in_map(tmp, op->map, op, flag);
+	insert_ob_in_map(tmp, m, op, flag);
     }
     if (large_nuggets) {
 	tmp = get_object();
@@ -2146,14 +2146,15 @@ static void update_map(object *op, int small_nuggets, int large_nuggets,
 	tmp-> nrof = large_nuggets;
 	tmp->x = x;
 	tmp->y = y;
-	insert_ob_in_map(tmp, op->map, op, flag);
+	insert_ob_in_map(tmp, m, op, flag);
     }
 }
 
 int alchemy(object *op)
 {
-    int x,y,weight=0,weight_max,large_nuggets,small_nuggets;
+    int x,y,weight=0,weight_max,large_nuggets,small_nuggets, nx, ny;
     object *next,*tmp;
+    mapstruct *mp;
 
     if(op->type!=PLAYER)
 	return 0;
@@ -2168,14 +2169,19 @@ int alchemy(object *op)
 
     for(y= op->y-1;y<=op->y+1;y++) {
 	for(x= op->x-1;x<=op->x+1;x++) {
-	    if(out_of_map(op->map,x,y) || wall(op->map,x,y) ||
-	       blocks_view(op->map,x,y))
+	    nx = x;
+	    ny = y;
+
+	    mp = get_map_from_coord(op->map, &nx, &ny);
+
+	    /* wall checks out of map for us */
+	    if(wall(mp,nx,ny) || blocks_magic(mp, nx, ny))
 		continue;
 
 	    small_nuggets=0;
 	    large_nuggets=0;
 
-	    for(tmp=get_map_ob(op->map,x,y);tmp!=NULL;tmp=next) {
+	    for(tmp=get_map_ob(mp,nx,ny);tmp!=NULL;tmp=next) {
 		next=tmp->above;
 		if (tmp->weight>0 && !QUERY_FLAG(tmp, FLAG_NO_PICK) &&
 		    !QUERY_FLAG(tmp, FLAG_ALIVE) &&
@@ -2195,7 +2201,7 @@ int alchemy(object *op)
 		    alchemy_object(tmp, &small_nuggets, &large_nuggets, &weight);
 	    
 		    if (weight>weight_max) {
-			update_map(op, small_nuggets, large_nuggets, x, y);
+			update_map(op, mp, small_nuggets, large_nuggets, nx, ny);
 			free_object(large);
 			free_object(small);
 			return 1;
@@ -2207,7 +2213,7 @@ int alchemy(object *op)
 	     * it also prevents us from alcheming nuggets that were just created
 	     * with this spell.
 	     */
-	    update_map(op, small_nuggets, large_nuggets, x, y);
+	    update_map(op, mp, small_nuggets, large_nuggets, nx, ny);
 	}
     }
     free_object(large);

@@ -40,7 +40,7 @@
 
 object *get_pet_enemy(object * pet, rv_vector *rv){
     object *owner, *tmp, *attacker, *tmp3;
-    int i,j,x,y;
+    int i,x,y;
     mapstruct *nm;
     int search_arr[SIZEOFFREE];
 
@@ -186,16 +186,18 @@ object *get_pet_enemy(object * pet, rv_vector *rv){
 			    !QUERY_FLAG(tmp2,FLAG_FRIENDLY)
 			    && !QUERY_FLAG(tmp2,FLAG_UNAGGRESSIVE) &&
 			    tmp2 != pet && tmp2 != owner && tmp2->type != PLAYER &&
-			    can_detect_enemy(pet, tmp2, rv))
-			if (!can_see_enemy(pet, tmp2)) {
-			    if (tmp3 != NULL)
-				tmp3 = tmp2;
-			} else {
-			    pet->enemy = tmp2;
-			    if(check_enemy(pet, rv)!=NULL)
-				return tmp2;
-			    else
-				pet->enemy = NULL;
+			    can_detect_enemy(pet, tmp2, rv)) {
+
+			    if (!can_see_enemy(pet, tmp2)) {
+				if (tmp3 != NULL)
+				    tmp3 = tmp2;
+			    } else {
+				pet->enemy = tmp2;
+				if(check_enemy(pet, rv)!=NULL)
+				    return tmp2;
+				else
+				    pet->enemy = NULL;
+			    }
 			} /* make sure we can get to the bugger */
 		    } /* for objects on this space */
 		} /* if there is something living on this space */
@@ -312,7 +314,7 @@ void pet_move(object * ob)
 	return;
     }
     /* Calculate Direction */
-    if (owner->contr->petmode == pet_sad) {
+    if (owner->type == PLAYER && owner->contr->petmode == pet_sad) {
 	/* in S&D mode, if we have no enemy, run randomly about. */
 	for (i=0; i < 15; i++) {
 	    dir = rndm(1, 8);

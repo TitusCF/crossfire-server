@@ -793,7 +793,10 @@ char *describe_item(object *op, object *owner) {
      * also makes the code easier to read.
      */
     if (!need_identify(op) || QUERY_FLAG(op, FLAG_IDENTIFIED)) identified = 1;
-    else identified = 0;
+    else {
+	strcpy(retbuf,"(unidentified)");
+	identified = 0;
+    }
 
     switch(op->type) {
 	case BOW:
@@ -952,10 +955,8 @@ char *describe_item(object *op, object *owner) {
 		    sprintf(buf,"(Max speed %1.2f)", ARMOUR_SPEED(op) / 10.0);
 		    strcat(retbuf, buf);
 		}
-		/* Do this in all cases - otherwise it gets confusing - does that
-		 * item have no penality, or is it not fully identified for example.
-	         */
-		sprintf(buf,"(Spell regen penalty %d)", ARMOUR_SPELLS(op));
+		if (ARMOUR_SPELLS(op))
+		    sprintf(buf,"(Spell regen penalty %d)", ARMOUR_SPELLS(op));
 		strcat(retbuf, buf);
 		more_info=1;
 		break;

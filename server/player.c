@@ -291,10 +291,10 @@ object *get_nearest_player(object *mon) {
 	 * some crashes (ol->ob->contr not set properly?), but secondly, a more
 	 * complicated method of state checking would be needed in any case -
 	 * as it was, a clever player could type quit, and the function would  
-	 * skip them over while waiting for confirmation.
-	 * put checks in for 
+	 * skip them over while waiting for confirmation.  Remove 
+	 * on_same_map check, as can_detect_enemy also does this
 	 */
-	if (!on_same_map(mon,ol->ob) || !can_detect_enemy(mon,ol->ob,&rv))
+	if (!can_detect_enemy(mon,ol->ob,&rv))
 		continue;
 
 	if(lastdist>rv.distance) {
