@@ -1341,7 +1341,8 @@ int skill_attack (object *tmp, object *pl, int dir, char *string) {
  * Legal opponents are the same as outlined in move_player_attack()
  */
  
-  if(tmp==NULL)
+  if(tmp==NULL) {
+    if (out_of_map(pl->map, pl->x+dx,pl->y+dy)) return 0;
     for(tmp=get_map_ob(pl->map,pl->x+dx,pl->y+dy);tmp;tmp=tmp->above)
         if((QUERY_FLAG(tmp,FLAG_ALIVE) && tmp->stats.hp>=0)
            || QUERY_FLAG(tmp, FLAG_CAN_ROLL)
@@ -1351,7 +1352,7 @@ int skill_attack (object *tmp, object *pl, int dir, char *string) {
                                 return 0;
                 break;
         }
-
+  }
   if(tmp!=NULL) return do_skill_attack(tmp,pl,string);
  
   if(pl->type==PLAYER)
