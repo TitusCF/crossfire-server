@@ -2914,7 +2914,7 @@ int cast_consecrate(object *op) {
 		sprintf(buf,"%s of %s",tmp->arch->clone.name,god->name);
 		tmp->name = add_string(buf);
 		tmp->level = SK_level(op);
-		tmp->other_arch = god;
+		tmp->other_arch = god->arch;
 		if(op->type==PLAYER) esrv_update_item(UPD_NAME, op, tmp);
 		new_draw_info_format(NDI_UNIQUE,0, op,
 				     "You consecrated the altar to %s!",god->name);
