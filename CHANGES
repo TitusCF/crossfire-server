@@ -17,6 +17,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 CVS changes since last release:
 
+server/player.c: Clear op->chosen_skill when we get to the play_again
+   prompt.  Otherwise, the server may try to use this later on, and it
+   no longer points to a valid object, so it results in a crash.
+   MSW 2001-04-19
+
 server/skill_util.c: Add missing call to out_of_map in skill_attack which
   could result in crashes if player is at edge of maps and decides to attack
   in direction off map.  MSW 2001-04-18

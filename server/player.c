@@ -428,6 +428,7 @@ void get_password(object *op) {
 void play_again(object *op)
 {
     op->contr->state=ST_PLAY_AGAIN;
+    op->chosen_skill = NULL;
     unlock_player(op->name);
     send_query(&op->contr->socket, CS_QUERY_SINGLECHAR, "Do you want to play again (a/q)?");
 }
