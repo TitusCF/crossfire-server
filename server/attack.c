@@ -1588,7 +1588,7 @@ int kill_object(object *op,int dam, object *hitter, int type)
 		for(pl=first_player;pl!=NULL;pl=pl->next) {
 		    if(pl->ob->contr->party_number==no && on_same_map(pl->ob, owner)) {
 			nexp=(pl->ob->level+4)*share;
-			change_exp(pl->ob,nexp, skop->skill, SK_EXP_TOTAL);
+			change_exp(pl->ob,nexp, skill, SK_EXP_TOTAL);
 			given+=nexp;
 		    }
 		}

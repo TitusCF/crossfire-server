@@ -17,6 +17,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/attack.c: Pass in skill (string) to change_exp instead of skop->skill -
+   skop can be null, resulting in a crash here.  In addition, other calls
+   to change_exp in this function use the skill string, so it is good to
+   be consistent.
+MSW 2004-09-09
+
 server/c_wiz.c: Don't forget to skip blanks after reading item number or stack
    position. Works better for commands like patch :)
 Ryo 2004-09-06
