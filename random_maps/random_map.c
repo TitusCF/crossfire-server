@@ -115,8 +115,7 @@ mapstruct *generate_random_map(char *OutFileName, RMParms *RP) {
     put_decor(theMap,layout,RP->decorstyle,RP->decoroptions,RP);
 
     /* generate treasures, etc. */
-    if(RP->generate_treasure_now)
-	fix_auto_apply(theMap);
+    fix_auto_apply(theMap);
 
     unblock_exits(theMap,layout,RP);
 

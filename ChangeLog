@@ -17,6 +17,23 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Applied patch 1001079 - make alchemy books say what skill & equipment
+  is needed - by Kevin Rudat.
+common/readable.c: Update code that generates book title, contents
+   to denote what skill and equipment is needed.
+random_maps/{random_map.c, reader.l, reader.c}, server/main.c:
+   Remove generate_treasure_now as an option
+   for random maps - none are using delayed treasure, and IMO, if someone
+   did, it would horribly break things, so it should never be used - given
+   that, no reason to leave the code there.
+server/main.c: Add additional debugging for process events on removed
+   objects - trying to track down occasional disease crash.
+server/time.c: Fix crash in move_player_mover() - it was never map tile
+   aware, but even more so, appears to have always been broken if the
+   player move tried to push the player off the edge of a map.  Check
+   for out of map condition, as well as make it map tile aware.
+MSW 2004-12-28
+
 Applied patches #1086095 and 1088385 courtesy Salathar:
  common/map.c: hidden DM is non blocking
  server/c_chat: can't do emotions towards hidden DMs. Player's emotions

@@ -1080,6 +1080,8 @@ void move_firewall(object *op) {
 void move_player_mover(object *op) {
     object *victim, *nextmover;
     int dir = op->stats.sp;
+    sint16 nx, ny;
+    mapstruct *m;
 
     /* Determine direction now for random movers so we do the right thing */
     if (!dir) dir=rndm(1, 8);
@@ -1094,8 +1096,16 @@ void move_player_mover(object *op) {
 		free_object(op);
 		return;
 	    }
+	    nx = op->x+freearr_x[dir];
+	    ny = op->y+freearr_y[dir];
+	    m = op->map;
+	    if (get_map_flags(m, &m, nx, ny, &nx, &ny) == P_OUT_OF_MAP) {
+		LOG(llevError,"move_player_mover: Trying to push player off the map! map=%s (%d, %d)\n",
+		    m->path, op->x, op->y);
+		return ;
+	    }
 
-	    for(nextmover=get_map_ob(op->map,op->x+freearr_x[dir],op->y+freearr_y[dir]); nextmover !=NULL; nextmover=nextmover->above) {
+	    for(nextmover=get_map_ob(m,nx, ny); nextmover !=NULL; nextmover=nextmover->above) {
 		if(nextmover->type == PLAYERMOVER) 
 		    nextmover->speed_left=-.99;
 		if(QUERY_FLAG(nextmover,FLAG_ALIVE)) {

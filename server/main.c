@@ -498,7 +498,6 @@ static void enter_random_map(object *pl, object *exit_ob)
     if (exit_ob->msg) set_random_map_variable(&rp,exit_ob->msg);
     rp.origin_x = exit_ob->x;
     rp.origin_y = exit_ob->y;
-    rp.generate_treasure_now = 1;
     strcpy(rp.origin_map, pl->map->path);
 
     /* If we have a final_map, use it as a base name to give some clue
@@ -985,6 +984,14 @@ void process_events (mapstruct *map)
 	}
 
 	if (op->speed_left > 0) {
+	    /* I've seen occasional crashes in move_symptom() with it
+	     * crashing because op is removed - add some debugging to
+	     * track if it is removed at this point.
+	     */
+	    if (QUERY_FLAG(op, FLAG_REMOVED)) {
+		LOG(llevDebug,"process_events: calling process_object with rmeoved object %s\n",
+		    op->name?op->name:"null");
+	    }
 	    --op->speed_left;
 	    process_object (op);
 	    if (was_destroyed (op, tag))

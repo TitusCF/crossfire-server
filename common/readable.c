@@ -1552,9 +1552,6 @@ void make_formula_book(object *book, int level) {
 	    break;
     }
 
-    /* preamble */
-    strcpy (retbuf, "Herein is described an alchemical proceedure: \n");
-
     if (!formula) {
 	book->msg = add_string(" <indescipherable text>\n");
 	new_text_name(book, 4);
@@ -1568,6 +1565,10 @@ void make_formula_book(object *book, int level) {
 	char   *op_name = NULL;
 	archetype *at;
 	int     nindex = nstrtok (formula->arch_name, ",");
+
+	/* preamble */
+	sprintf(retbuf, "Herein is described a project using %s: \n", 
+		 formula->skill?formula->skill:"an unknown skill");
 
 	/* construct name of object to be made */
 	if (nindex > 1)
@@ -1627,7 +1628,14 @@ void make_formula_book(object *book, int level) {
 	if (formula->ingred != NULL)
 	{
 	    linked_char *next;
-	    strcat (retbuf, " may be made using the \nfollowing ingredients:\n");
+	    archetype *at;
+
+	    at = find_archetype(formula->cauldron);
+
+	    sprintf(retbuf + strlen(retbuf),
+		    " may be made at %s using the following ingredients:\n",
+		    at?query_name(&at->clone):"an unknown place");
+
 	    for (next = formula->ingred; next != NULL; next = next->next)
 	    {
 		strcat (retbuf, next->name);
