@@ -983,18 +983,12 @@ static mapstruct *load_temporary_map(mapstruct *m) {
 mapstruct *load_overlay_map(char *filename, mapstruct *m) {
     FILE *fp;
     int comp;
-    char buf[MAX_BUF];
     char pathname[MAX_BUF];
 
     strcpy(pathname, create_overlay_pathname(filename));
 
     if((fp=open_and_uncompress(pathname, 0, &comp))==NULL) {
 	LOG(llevDebug,"Can't open overlay %s\n", pathname);
-	strcpy(buf, m->path);
-	delete_map(m);
-        m = load_original_map(buf, 0);
-	if(m==NULL) return NULL;
-	(*fix_auto_apply_func)(m); /* Chests which open as default */
 	return m;
     }
     
