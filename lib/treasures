@@ -47,11 +47,11 @@ treasure Valriel
   more
 arch god_grace_limit_medium
 more
-  arch god_spelldirect_sunspear
+  arch spell_sunspear
   more
-  arch god_spelldirect_daylight
+  arch spell_daylight
   more
-  arch god_spelldirect_wrathful_eye
+  arch spell_wrathful_eye
 end
 #############################################################
 # Gorokh - Demon King, Duke of Hell, Temptor and Tormentor
@@ -81,13 +81,13 @@ treasure Gorokh
   arch god_enchant_weapon_medium
     chance 50
   more
-  arch god_spelldirect_flaming_aura
+  arch spell_flaming_aura
   more
 arch god_grace_limit_medium
 more
-  arch god_spelldirect_rage
+  arch spell_rage
   more
-  arch god_spelldirect_vitriol
+  arch spell_vitriol
 end
 #############################################################
 # Devourers - Soul Eaters, Harbingers of Death, Nameless Lords
@@ -111,19 +111,19 @@ treasure Devourers
   more
 arch god_grace_limit_medium
 more
-  arch god_spelldirect_nightfall
+  arch spell_nightfall
   more
-  arch god_spelldirect_finger_of_death
+  arch spell_finger_of_death
   more
-  arch god_spelldirect_face_of_death
+  arch spell_face_of_death
   more
-  arch god_spelldirect_cause_many_wounds
+  arch spell_cause_many_wounds
   more
-  arch god_spelldirect_cause_red_death
+  arch spell_cause_red_death
   more
 arch god_grace_limit_high
   more
-  arch god_spelldirect_cause_black_death
+  arch spell_cause_black_death
     chance 10
 end
 #############################################################
@@ -156,19 +156,19 @@ treasure Sorig
   more
   arch god_grace_limit_low
   more
-  arch god_spelldirect_divine_shock
+  arch spell_divine_shock
     chance 20
   more
-  arch god_spelldirect_forked_lightning
+  arch spell_forked_lightning
     chance 20
   more
   arch god_grace_limit_medium
   more
-  arch god_spelldirect_cause_critical_wounds
+  arch spell_cause_critical_wounds
   more
-  arch god_spelldirect_windstorm
+  arch spell_windstorm
   more
-  arch god_spelldirect_cause_many_wounds
+  arch spell_cause_many_wounds
   more
   arch god_grace_limit_high
   more
@@ -209,13 +209,13 @@ treasure Ruggilli
   more
 arch god_grace_limit_medium
 more
-  arch god_spelldirect_flaming_aura
+  arch spell_flaming_aura
   more
-  arch god_spelldirect_rage
+  arch spell_rage
   more
 arch god_grace_limit_high
 more
-  arch god_spelldirect_retributive_strike
+  arch spell_retributive_strike
 more
   arch burningtail
     chance 2
@@ -250,37 +250,37 @@ treasure Gaea
   more
 arch god_grace_limit_low
 more
-  arch god_spelldirect_spiderweb
+  arch spell_spiderweb
     chance 20
   more
-  arch god_spelldirect_wall_of_thorns
+  arch spell_wall_of_thorns
   more
-  arch god_spelldirect_insect_plague
+  arch spell_insect_plague
   more
-  arch god_spelldirect_ironwood_skin
+  arch spell_iron_skin
   more
 arch god_grace_limit_medium
 more
-  arch god_spelldirect_raise_dead
+  arch spell_raise_dead
   more
-  arch god_spelldirect_remove_damnation
+  arch spell_remove_damnation
   more
-  arch god_spelldirect_nightfall
+  arch spell_nightfall
   more
-  arch god_spelldirect_sanctuary
+  arch spell_sanctuary
   more
-  arch god_spelldirect_daylight
+  arch spell_daylight
   more
-  arch god_spelldirect_resurrection
+  arch spell_resurrection
   more
-  arch god_spelldirect_peace
+  arch spell_peace
   more
   arch glovesofsun
   chance 10
   more
 arch god_grace_limit_high
 more
-  arch god_spelldirect_reincarnation
+  arch spell_reincarnation
   more
   list gaea_treasure
     chance 30
@@ -330,7 +330,7 @@ more
   more
 arch god_grace_limit_medium
 more
-  arch god_spelldirect_wall_of_thorns
+  arch spell_wall_of_thorns
 end
 #############################################################
 # Lythander - Elven god of luck, Huntsman of Goblins, Trollslayer,
@@ -363,9 +363,9 @@ more
   arch bow_lythander
     chance 5
   more
-  arch god_spelldirect_conflict
+  arch spell_conflict
   more
-  arch god_spelldirect_defense
+  arch spell_defense
 end
 #############################################################
 # Gnarg - Father of goblins, Lord Troll, Master of poisons,
@@ -398,18 +398,18 @@ more
   arch helmet_gnarg
     chance 5
   more
-  arch god_spelldirect_poison_fog
+  arch spell_poison_fog
   more
 arch god_grace_limit_medium
 more
-  arch god_spelldirect_cause_smallpox
+  arch spell_cause_smallpox
   more
   arch bracers_gnarg
     chance 2
   more
 arch god_grace_limit_high
 more
-  arch god_spelldirect_cause_rabies
+  arch spell_cause_rabies
 end
 ##############################################################
 # ability-treasure for dragon players
