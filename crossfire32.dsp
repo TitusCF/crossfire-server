@@ -1341,6 +1341,10 @@ SOURCE=.\random_maps\exit.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\random_maps\expand2x.c
+# End Source File
+# Begin Source File
+
 SOURCE=.\random_maps\floor.c
 
 !IF  "$(CFG)" == "crossfire32 - Win32 Release"
@@ -2554,6 +2558,10 @@ SOURCE=.\include\config.h
 # Begin Source File
 
 SOURCE=.\include\define.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\random_maps\expand2x.h
 # End Source File
 # Begin Source File
 
