@@ -391,8 +391,20 @@ void attack_message(int dam, int type, object *op, object *hitter) {
 		break;
 	    }
     }
+
+    /* bail out if a monster is casting spells */
+    if (!(hitter->type == PLAYER ||
+	(get_owner(hitter) != NULL && hitter->owner->type == PLAYER)))
+      return;
+
+    /* we have no good messages for godpower, and they are usually diseases.
+       in addition, scale down magic considerably. */
+    if ((type & AT_MAGIC && RANDOM()%6) || type & AT_GODPOWER)
+      return;
+
     /* Did a player hurt another player?  Inform both! */
-    if(op->type==PLAYER&&
+    /* only show half the player->player combat messages */
+    if(op->type==PLAYER&& RANDOM()%2 &&
        (get_owner(hitter)==NULL?hitter->type:hitter->owner->type)==PLAYER) {
 	if(get_owner(hitter)!=NULL)
 	    sprintf(buf,"%s's %s %s you.",
@@ -411,7 +423,8 @@ void attack_message(int dam, int type, object *op, object *hitter) {
 	new_draw_info(NDI_BLACK, 0,op,buf);
     } /* end of player hitting player */
 
-    if(hitter->type==PLAYER) {
+    /* scale down these messages too */
+    if(hitter->type==PLAYER && RANDOM()%3 == 0) {
 	sprintf(buf,"You %s.",buf1);
 	if (dam != 0) {
 	    if (dam < 10)
@@ -422,8 +435,9 @@ void attack_message(int dam, int type, object *op, object *hitter) {
 		play_sound_player_only(hitter->contr, SOUND_PLAYER_HITS3,0,0);
 	}
 	new_draw_info(NDI_BLACK, 0, hitter, buf);
-    } else if(get_owner(hitter)!=NULL&&hitter->owner->type==PLAYER) {
-	sprintf(buf,"Your %s%s %s.", hitter->name, buf2, op->name);
+    } else if(get_owner(hitter)!=NULL&&hitter->owner->type==PLAYER &&
+	      RANDOM()%6 == 0) {
+        sprintf(buf,"Your %s%s %s.", hitter->name, buf2, op->name);
 	play_sound_map(op->map, op->x, op->y, SOUND_PLAYER_HITS4);
 	new_draw_info(NDI_BLACK, 0, hitter->owner, buf);
     }
