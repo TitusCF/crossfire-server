@@ -1,5 +1,19 @@
 .TH crossfire-config 6 "Feb 04 2004" "" "CrossFire Game Server Manual"
 
+.SH NAME
+crossfire-config
+
+.SH SYNOPSIS
+usage: crossfire-config --Dflags
+gives complete Dflags line for compiler invocation
+
+usage: crossfire-config --parameter-list
+show the list of available parameters)
+
+usage: crossfire-config <parameter name>
+extract a compilation parameter
+
+.SH DESCRIPTION
 Little program aimed at giving information to plugin about config of the
 crossfire server.
 
@@ -7,10 +21,3 @@ Simply invoke with the config parameter to get. Only the most common parameters
 (those that could be needed by an independent configure script) are available.
 The rest is available in config.h andd should be included in any plugin needing
 it.
-
-    printf ("usage: crossfire-config --Dflags");
-    printf (" (gives complete Dflags line for compiler invocation)\n");
-    printf ("usage: crossfire-config --parameter-list");
-    printf (" (show the list of available parameters)\n");
-    printf ("usage: crossfire-config <parameter name>");
-    printf (" (extract a compilation parameter)\n");
