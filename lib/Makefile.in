@@ -57,6 +57,26 @@ FILES_HELP = $(srcdir)/help/apply $(srcdir)/help/bind \
 	$(srcdir)/help/statistics $(srcdir)/help/take $(srcdir)/help/traps \
 	$(srcdir)/help/unbind $(srcdir)/help/usekeys
 
+FILES_WIZHELP = $(srcdir)/wizhelp/abil $(srcdir)/wizhelp/addexp \
+	$(srcdir)/wizhelp/create $(srcdir)/wizhelp/debug \
+	$(srcdir)/wizhelp/dump $(srcdir)/wizhelp/dumpallarchtypes \
+	$(srcdir)/wizhelp/dumpallmaps $(srcdir)/wizhelp/dumpallobjects \
+	$(srcdir)/wizhelp/dumpbelow $(srcdir)/wizhelp/dumpfriendlyobjects \
+	$(srcdir)/wizhelp/forget_spell $(srcdir)/wizhelp/free \
+	$(srcdir)/wizhelp/goto $(srcdir)/wizhelp/invisible \
+	$(srcdir)/wizhelp/kick $(srcdir)/wizhelp/learn_special_prayer \
+	$(srcdir)/wizhelp/learn_spell $(srcdir)/wizhelp/nodm \
+	$(srcdir)/wizhelp/nowiz $(srcdir)/wizhelp/overlay_save \
+	$(srcdir)/wizhelp/patch $(srcdir)/wizhelp/plugin \
+	$(srcdir)/wizhelp/pluglist $(srcdir)/wizhelp/plugout \
+	$(srcdir)/wizhelp/printlos $(srcdir)/wizhelp/remove \
+	$(srcdir)/wizhelp/reset $(srcdir)/wizhelp/set_god \
+	$(srcdir)/wizhelp/shutdown $(srcdir)/wizhelp/speed \
+	$(srcdir)/wizhelp/spellreset $(srcdir)/wizhelp/ssdumptable \
+	$(srcdir)/wizhelp/style_info $(srcdir)/wizhelp/summon \
+	$(srcdir)/wizhelp/time $(srcdir)/wizhelp/who \
+	$(srcdir)/wizhelp/wizhelp $(srcdir)/wizhelp/wizpass
+
 FILES_ADM = adm/README adm/check-xpm.pl adm/dilate_xpm_files \
 	adm/fix_xpm_colors adm/make_xpm_file.pl adm/map_check \
 	adm/map_info adm/map_expand.pl adm/mapslitter.pl adm/archsearch.pl \
@@ -120,6 +140,14 @@ install:: archetypes bmaps.paths crossfire.0 animations collect.pl util.pl
 	@for i in $(FILES_HELP); do \
 	    echo "Installing $$i"; \
 	    $(INSTALL) $(INSTALLFLAGS) $$i $(datadir)/help; \
+	done
+	if [ ! -d $(datadir)/wizhelp ]; then \
+		echo "Creating directory $(datadir)/wizhelp"; \
+		$(MKDIR) -p $(datadir)/wizhelp; \
+	fi;
+	@for i in $(FILES_WIZHELP); do \
+	    echo "Installing $$i"; \
+	    $(INSTALL) $(INSTALLFLAGS) $$i $(datadir)/wizhelp; \
 	done
 	@for i in $(INSTALLFILES); do \
 	    echo "Installing $$i"; \
