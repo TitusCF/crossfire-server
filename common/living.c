@@ -887,7 +887,11 @@ void fix_player(object *op) {
 	  op->contr->gen_hp        += tmp->stats.hp;
 	  op->contr->gen_sp        += tmp->stats.sp;
 	  op->contr->gen_grace     += tmp->stats.grace;
-	  op->contr->gen_sp_armour += tmp->last_heal;
+	  /* Experience objects use last_heal for permanent exp, so
+	   * don't add those in.
+	   */
+	  if (tmp->type != EXPERIENCE)
+		op->contr->gen_sp_armour += tmp->last_heal;
 #if 0
 	  if (tmp->last_heal) LOG(llevDebug,"Object %s applied, gen_sp_armour + %d = %d\n", tmp->name, tmp->last_heal, op->contr->gen_sp_armour);
 #endif
