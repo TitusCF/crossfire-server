@@ -5,7 +5,7 @@
 
 CMDNAME="BINDIR/crossfire"
 maxrestart=500
-logdir="/tmp/crosservlog"
+logdir="/usr/games/crossfire/var/logs"
 
 
 logcount=0
@@ -14,11 +14,11 @@ rm -rf $logdir
 mkdir $logdir
 
 while [ ! "$logcount"x = "$maxrestart"x ]; do
-  echo "Starting Crossfire `date` for the $logcount time..." 1>$logdir/$logcount 2>&1
-  $CMDNAME -d 2>>$logdir/$logcount 1>&2
+  echo "Starting Crossfire `date` for the $logcount time..." >>$logdir/crossfire.log 2>&1
+  $CMDNAME -d 2>>$logdir/crossfire.log 1>&2
   if [ -f core ] ; then
         mv core core.$logcount
-        /usr/local/bin/gzip core.$logcount
+        /bin/gzip core.$logcount
   fi
   logcount=`expr $logcount + 1`
   sleep 50
