@@ -9,10 +9,15 @@ hole1.111 grass_S.111
 # sea need to go higher with empty border for graphical reasons
 # example can be seen in town hall in scorn.
 
-sea.111 empty_S.111
-sea.112 empty_S.111
-sea.113 empty_S.111
-sea.114 empty_S.111
+#Sea
+sea.111 sea_S.111
+sea.112 sea_S.112
+sea.113 sea_S.113
+sea.114 sea_S.114
+shallow_sea.111 shallow_sea_S.111
+shallow_sea.112 shallow_sea_S.112
+shallow_sea.113 shallow_sea_S.113
+shallow_sea.114 shallow_sea_S.114
 
 # pictures above need to be redone but switched to existing ones
 # to prevent the ugly default 'not found' smooth picture.
