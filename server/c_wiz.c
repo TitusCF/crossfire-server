@@ -250,8 +250,8 @@ int command_summon (object *op, char *params)
 int command_create (object *op, char *params)
 {
       object *tmp=NULL;
-      int nrof,i, magic, set_magic = 0, set_nrof = 0;
-      char buf[MAX_BUF], *cp, *bp = buf;
+      int nrof,i, magic, set_magic = 0, set_nrof = 0, gotquote, gotspace;
+      char buf[MAX_BUF], *cp, *bp = buf, *bp2, *bp3, *bp4, *obp;
       archetype *at;
       artifact *art=NULL;
 
@@ -259,36 +259,49 @@ int command_create (object *op, char *params)
 	return 0;
 
     if (params == NULL) {
-        new_draw_info(NDI_UNIQUE, 0,op, "Usage: create [nr] [magic] <archetype> [ of <artifact>]");
+        new_draw_info(NDI_UNIQUE, 0, op, 
+	    "Usage: create [nr] [magic] <archetype> [ of <artifact>]"
+	    " [variable_to_patch setting]");
         return 1;
     }
     bp = params;
      
     if(sscanf(bp, "%d ", &nrof)) {
 	if ((bp = strchr(params, ' ')) == NULL) {
-	    new_draw_info(NDI_UNIQUE, 0,op, "Usage: create [nr] [magic] <archetype> [ of <artifact>]");
+	    new_draw_info(NDI_UNIQUE, 0, op,
+		"Usage: create [nr] [magic] <archetype> [ of <artifact>]"
+	    " [variable_to_patch setting]");
 	    return 1;
 	}
         bp++;
         set_nrof = 1;
-        LOG(llevDebug, "(%d) %s\n", nrof, buf);
+        LOG(llevDebug, "%s creates: (%d) %s\n", op->name, nrof, bp);
     }
     if (sscanf(bp, "%d ", &magic)) {
 	if ((bp = strchr(bp, ' ')) == NULL) {
-	    new_draw_info(NDI_UNIQUE, 0,op, "Usage: create [nr] [magic] <archetype> [ of <artifact>]");
+	    new_draw_info(NDI_UNIQUE, 0, op,
+		"Usage: create [nr] [magic] <archetype> [ of <artifact>]"
+	    " [variable_to_patch setting]");
 	    return 1;
 	}
 	bp++;
         set_magic = 1;
-        LOG(llevDebug, "(%d) (%d) %s\n", nrof, magic, buf);
+        LOG(llevDebug, "%s creates: (%d) (%d) %s\n", op->name, nrof, magic, bp);
     }
     if ((cp = strstr(bp, " of ")) != NULL) {
 	*cp = '\0';
         cp += 4;
     }
 
+    for (bp2=bp; *bp2; bp2++)
+	if (*bp2 == ' ') {
+	    *bp2 = '\0';
+	    bp2++;
+	    break;
+	}
+
     if((at=find_archetype(bp))==NULL) {
-	new_draw_info(NDI_UNIQUE, 0,op,"No such archetype.");
+	new_draw_info(NDI_UNIQUE, 0, op, "No such archetype.");
         return 1;
     }
 
@@ -309,7 +322,7 @@ int command_create (object *op, char *params)
 		    "No such artifact ([%d] of %s)", at->clone.type, cp);
 	    }
 	}
-        LOG(llevDebug, "(%d) (%d) (%s) of (%s)\n",
+        LOG(llevDebug, "%s creates: (%d) (%d) (%s) of (%s)\n", op->name,
             set_nrof ? nrof : 0, set_magic ? magic : 0 , bp, cp);
     } /* if cp */
 
@@ -330,14 +343,59 @@ int command_create (object *op, char *params)
 	    SET_FLAG(tmp, FLAG_IDENTIFIED);
 	    CLEAR_FLAG(tmp, FLAG_KNOWN_MAGICAL);
 	}
-        tmp = insert_ob_in_ob(tmp,op);
+	while (*bp2) {
+	    /* find the first quote */
+	    for (bp3=bp2, gotquote=0, gotspace=0; *bp3 && gotspace < 2; bp3++) {
+		if (*bp3 == '"') {
+		    *bp3 = ' ';
+		    gotquote++;
+		    bp3++;
+		    for (bp4=bp3; *bp4; bp4++)
+			if (*bp4 == '"') {
+			    *bp4 = '\0';
+			    break;
+			}
+		    break;
+		} else if (*bp3 == ' ')
+		     gotspace++;
+            }
+	    if (!gotquote) { /* then find the second space */
+		for (bp3=bp2; *bp3; bp3++) {
+		    if (*bp3 == ' ') {
+			bp3++;
+			for (bp4=bp3; *bp4; bp4++) {
+			    if (*bp4 == ' ') {
+				*bp4 = '\0';
+				break;
+			    }
+			}
+			break;
+		    }
+		}
+	    }
+	    /* now bp3 should be the argument, and bp2 the whole command */
+	    if(set_variable(tmp, bp2) == -1)   
+		new_draw_info_format(NDI_UNIQUE, 0, op,
+		    "Unknown variable %s", bp2);
+	    else
+		new_draw_info_format(NDI_UNIQUE, 0, op,
+		    "(%s#%d)->%s=%s", tmp->name, tmp->count, bp2, bp3);
+	    if (gotquote)
+		bp2=bp4+2;
+	    else
+		bp2=bp4+1;
+	    if (obp == bp2)
+		break; /* invalid params */
+	    obp=bp2;
+	}
+        tmp = insert_ob_in_ob(tmp, op);
 	esrv_send_item(op, tmp);
         return 1;
     }
     for (i=0 ; i < (set_nrof ? nrof : 1); i++) {
 	archetype *atmp;
 	object *prev=NULL,*head=NULL;
-	for (atmp=at;atmp!=NULL;atmp=atmp->more) {
+	for (atmp=at; atmp!=NULL; atmp=atmp->more) {
 	    tmp=arch_to_object(atmp);
 #ifndef REAL_WIZ
 	    SET_FLAG(tmp, FLAG_WAS_WIZ);
@@ -355,17 +413,63 @@ int command_create (object *op, char *params)
 		SET_FLAG(tmp, FLAG_IDENTIFIED);
 		CLEAR_FLAG(tmp, FLAG_KNOWN_MAGICAL);
 	    }
+	    while (*bp2) {
+		/* find the first quote */
+		for (bp3=bp2, gotquote=0, gotspace=0; *bp3 && gotspace < 2;
+		     bp3++) {
+		    if (*bp3 == '"') {
+			*bp3 = ' ';
+			gotquote++;
+			bp3++;
+			for (bp4=bp3; *bp4; bp4++)
+			    if (*bp4 == '"') {
+				*bp4 = '\0';
+				break;
+			    }
+			break;
+		    } else if (*bp3 == ' ')
+		        gotspace++;
+                }
+		if (!gotquote) { /* then find the second space */
+		    for (bp3=bp2; *bp3; bp3++) {
+			if (*bp3 == ' ') {
+			    bp3++;
+			    for (bp4=bp3; *bp4; bp4++) {
+				if (*bp4 == ' ') {
+				    *bp4 = '\0';
+				    break;
+				}
+			    }
+			    break;
+			}
+		    }
+	        }
+	/* now bp3 should be the argument, and bp2 the whole command */
+		if(set_variable(tmp, bp2) == -1)   
+		    new_draw_info_format(NDI_UNIQUE, 0, op,
+			"Unknown variable %s", bp2);
+		else
+		    new_draw_info_format(NDI_UNIQUE, 0, op,
+			"(%s#%d)->%s=%s", tmp->name, tmp->count, bp2, bp3);
+		if (gotquote)
+		    bp2=bp4+2;
+		else
+		    bp2=bp4+1;
+		if (obp == bp2)
+		    break; /* invalid params */
+		obp=bp2;
+	    }
 	    if(head!=tmp)
 		tmp->head=head,prev->more=tmp;
 	    prev=tmp;
 	}
-        if (QUERY_FLAG(head,FLAG_ALIVE))
-	    insert_ob_in_map(head,op->map,op,0);
+        if (QUERY_FLAG(head, FLAG_ALIVE))
+	    insert_ob_in_map(head, op->map, op, 0);
         else
-	    head = insert_ob_in_ob(head,op);
+	    head = insert_ob_in_ob(head, op);
         if (at->clone.randomitems!=NULL)
-	    create_treasure(at->clone.randomitems,head,GT_APPLY,
-                          op->map->difficulty,0);
+	    create_treasure(at->clone.randomitems, head, GT_APPLY,
+                          op->map->difficulty, 0);
 	    esrv_send_item(op, head);
     }
     return 1;
