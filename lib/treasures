@@ -2374,7 +2374,7 @@ treasure poor_old
 treasure angel
   list rich_old
   end
-trasure archangel
+treasure archangel
   list rich_old
   more
   arch ability_wrathful_eye
