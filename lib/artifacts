@@ -1149,9 +1149,10 @@ value 130
 Str 1
 Con 1
 Dex 1
-wc 1
+wc 2
 magic -1
 resist_physical 10
+resist_magic -5
 dam 2
 hp 1
 end
@@ -1173,6 +1174,7 @@ Int -1
 wc 2
 magic -1
 resist_physical 20
+resist_magic -15
 ac 1
 dam 3
 hp 2
@@ -1191,12 +1193,14 @@ Con 3
 Dex 3
 Int -1
 Wis -1
-Pow -2
+Pow -1
 magic -5
 exp 4
 resist_physical 30
-resist_magic -50
-hp 2
+resist_magic -25
+hp 3
+dam 5
+ac 2
 wc 3
 end
 #
