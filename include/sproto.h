@@ -543,7 +543,6 @@ extern int summon_avatar ( object *op, object *caster, int dir, archetype *at, i
 extern object *fix_summon_pet ( archetype *at, object *op, int dir, int type );
 extern int cast_consecrate ( object *op );
 extern int finger_of_death ( object *op, object *caster, int dir );
-extern int staff_to_snake ( object *op, object *caster, int dir, archetype *at, int spellnum );
 extern int cast_daylight ( object *op );
 extern int cast_nightfall ( object *op );
 extern int cast_faery_fire ( object *op, object *caster );
