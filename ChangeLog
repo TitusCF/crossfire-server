@@ -17,6 +17,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/spell_attack.c: Properly set maxhp in the cone spell - this is used
+   in ok_to_put_more() to make sure one spell doesn't hit a single space
+   too many times.
+MSW 2004-02-23
+
 common/object.c: Change CAN_MERGE() so that we never merge applied objects -
    whether or not they are rings.
 lib/*: different spell for dragons vs players for firebreath - update

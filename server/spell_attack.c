@@ -710,6 +710,9 @@ void move_cone(object *op) {
 	    tmp->y=y;
 
 	    tmp->duration = op->duration + 1;
+
+	    /* Use for spell tracking - see ok_to_put_more() */
+	    tmp->stats.maxhp = op->stats.maxhp;
 	    insert_ob_in_map(tmp,op->map,op,0);
 	    if (tmp->other_arch) cone_drop(tmp);
 	}
@@ -825,6 +828,12 @@ int cast_cone(object *op, object *caster,int dir, object *spell)
 		 spell->other_arch->name);
 	}
 	insert_ob_in_map(tmp,op->map,op,0);
+
+	/* This is used for tracking spells so that one effect doesn't hit
+	 * a single space too many times.
+	 */
+	tmp->stats.maxhp = tmp->count;
+
 	if(tmp->other_arch) cone_drop(tmp);
     }
     return success;
