@@ -62,10 +62,19 @@ int did_make_save_item(object *op, int type, object *originator) {
 	return TRUE;
     roll = rndm(1, 20);
 
-    /* the attacktypes have no meaning for object saves */
-    type = type & ~(AT_CONFUSION|AT_DRAIN|AT_GHOSTHIT|AT_POISON|AT_SLOW|
+    /* the attacktypes have no meaning for object saves
+     * If the type is only magic, don't adjust type - basically, if
+     * pure magic is hitting an object, it should save.  However, if it
+     * is magic teamed with something else, then strip out the
+     * magic type, and instead let the fire, cold, or whatever component
+     * destroy the item.  Otherwise, you get the case of poisoncloud
+     * destroying objects because it has magic attacktype.
+     */
+    if (type != AT_MAGIC)
+	type &= ~(AT_CONFUSION|AT_DRAIN|AT_GHOSTHIT|AT_POISON|AT_SLOW|
 		    AT_PARALYZE|AT_TURN_UNDEAD|AT_FEAR|AT_DEPLETE|AT_DEATH|
-		    AT_COUNTERSPELL|AT_HOLYWORD|AT_BLIND|AT_LIFE_STEALING);
+		    AT_COUNTERSPELL|AT_HOLYWORD|AT_BLIND|AT_LIFE_STEALING|
+		    AT_MAGIC);
 
     if (type == 0)
 	return TRUE;

@@ -17,6 +17,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/attack.c: Change did_make_save to strip out magic attacktype when making
+    saves for objects - otherwise, things like poison cloud destroy objects.
+server/time.c: deal with player animations special in process_object - need to
+    pass in the facing value, and not direction, since direction gets reset.
+MSW 2003-03-19
+
 common/anim.c: Pass direction to animate_object() - needed for player
    animations as player's facing may not match direction.
 crossedit/Attr.c, server/main.c, server/time.c: Update calls to animate_object()
