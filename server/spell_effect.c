@@ -1533,9 +1533,11 @@ int create_bomb(object *op,object *caster,int dir,char *name) {
 void animate_bomb(object *op) {
   int i;
   object *env;
-  archetype *at = find_archetype("splint");
+  archetype *at;
+
   if(op->state!=NUM_ANIMATIONS(op)-1)
     return;
+  at = find_archetype("splint");
   for(env=op;env->env!=NULL;env=env->env);
   if (op->env) {
 	if (op->type==PLAYER) drop(env,op);
@@ -2903,22 +2905,33 @@ int finger_of_death(object *op, object *caster, int dir) {
   return success;
 }
 
-/* staff_to_snake() - taken from the code which summons golems. We
- * allow the cleric to create a golem from thier staff. If the staff
- * is magical, the snake created is enhanced, and vice-versa for 
- * cursed items!  -b.t.
- */
- 
-int staff_to_snake(object *op,object *caster,int dir, archetype *at, int spellnum) {
+/* animate_weapon - 
+ * Generalization of staff_to_snake.  Makes a golem out of the caster's weapon.
+ * The golem is based on the archetype specified, modified by the caster's level
+ * and the attributes of the weapon.  The weapon is inserted in the golem's 
+ * inventory so that it falls to the ground when the golem dies.	-- DAMN	*/
+
+int animate_weapon(object *op,object *caster,int dir, archetype *at, int spellnum) {
   object *weapon, *tmp;
+  char buf[MAX_BUF];
+  int a, i, j;
+  int magic;
  
+  if(!at){
+    new_draw_info(NDI_UNIQUE, 0,op,"Oops, program error!");
+    LOG(llevError,"animate_weapon failed: missing archetype!\n");
+    return 0;
+  }
+  /* if player already has a golem, abort */
   if(op->type==PLAYER)
     if(op->contr->golem!=NULL&&!QUERY_FLAG(op->contr->golem,FLAG_FREED)) {
       control_golem(op->contr->golem,dir);
       return 0;
     }
+  /* if no direction specified, pick one */
   if(!dir) 
     dir=find_free_spot(NULL,op->map,op->x,op->y,1,9);
+  /* if there's no place to put the golem, abort */
   if((dir==-1) || blocked(op->map,op->x+freearr_x[dir],op->y+freearr_y[dir])) {
     new_draw_info(NDI_UNIQUE, 0,op,"There is something in the way.");
     if(op->type==PLAYER)
@@ -2926,77 +2939,200 @@ int staff_to_snake(object *op,object *caster,int dir, archetype *at, int spellnu
     return 0;
   }
 
- /* need to find the weapon to transform */
- for(weapon=op->inv;weapon;weapon=weapon->below)
-    if(weapon->type==WEAPON&&QUERY_FLAG(weapon,FLAG_APPLIED)) break;
-
- if(!weapon||strcmp(weapon->name,"quarterstaff")) {
-    if(op->type==PLAYER) { 
-      new_draw_info(NDI_UNIQUE, 0,op,"The spell fails to transform your weapon.");
+  if(spellnum == SP_DANCING_SWORD) {
+    archetype *weapon_at = find_archetype("sword");
+    if(weapon_at) {
+      weapon = &(weapon_at->clone);
+    } else {
+      new_draw_info(NDI_UNIQUE, 0,op,"Oops, program error!");
+      LOG(llevError,"animate_weapon failed: missing archetype!\n");
+      return 0;
+    }
+  } else {
+    /* get the weapon to transform */
+    for(weapon = op->inv; weapon; weapon = weapon->below)
+      if(weapon->type==WEAPON&&QUERY_FLAG(weapon,FLAG_APPLIED)) break;
+    if(!weapon) {
+      if(op->type==PLAYER) { 
+	new_draw_info(NDI_UNIQUE, 0,op,"You need to wield a weapon to animate it.");
+	op->contr->count_left=0;   
+      } 	
+      return 0;
+    } else if (spellnum == SP_STAFF_TO_SNAKE && strcmp(weapon->name,"quarterstaff")) {
+      if(op->type==PLAYER) { 
+	new_draw_info(NDI_UNIQUE, 0,op,"The spell fails to transform your weapon.");
+	op->contr->count_left=0;   
+      }
+      return 0;
+    } else if(op->type==PLAYER && 
+	      (QUERY_FLAG(weapon,FLAG_CURSED) || QUERY_FLAG(weapon,FLAG_DAMNED))) {
+      new_draw_info(NDI_UNIQUE, 0,op,"You can't animate it.  It won't let go of your hand.");
       op->contr->count_left=0;   
-    } 	
-    return 0;
- } 
- 
- tmp=arch_to_object(at);
-  if(op->type==PLAYER && !QUERY_FLAG(weapon,FLAG_CURSED) &&
-      !QUERY_FLAG(weapon,FLAG_DAMNED)) {
+      return 0;
+    }
+  }
+  magic = weapon->magic>0 ? weapon->magic : -1*weapon->magic;
+
+  /* create the golem object */
+  tmp=arch_to_object(at);
+
+  /* if animated by a player, give the player control of the golem */
+  if(op->type==PLAYER) {
     CLEAR_FLAG(tmp, FLAG_MONSTER);
     tmp->stats.exp=0;
     add_friendly_object(tmp);
     tmp->type=GOLEM;
     set_owner(tmp,op);
     op->contr->golem=tmp;
-    /* give the player control of the golem */
     op->contr->shoottype=range_scroll;
   } else {
-    if(QUERY_FLAG(op, FLAG_FRIENDLY)&&(!QUERY_FLAG(weapon,FLAG_CURSED)||
-        !QUERY_FLAG(weapon,FLAG_DAMNED)) ) {
+  /* if uncursed and animated by a pet(???), make the golem a pet */
+    if(QUERY_FLAG(op, FLAG_FRIENDLY)
+       && !QUERY_FLAG(weapon,FLAG_CURSED)
+       && !QUERY_FLAG(weapon,FLAG_DAMNED)){
       object *owner = get_owner(op);
-      if(owner != NULL) /* For now, we transfer ownership */
+      if(owner != NULL)
         set_owner(tmp,owner);
       tmp->move_type = PETMOVE;
       add_friendly_object(tmp);
       SET_FLAG(tmp, FLAG_FRIENDLY);
-    } 
+    }
+    /* otherwise, make the golem an enemy */
     SET_FLAG(tmp, FLAG_MONSTER);
-  }  
-
-  /* ok, tailor the serpent's characteristics based on the weapon */
-  tmp->stats.wc = op->stats.wc - SP_level_strength_adjust(op,caster,spellnum);
-  tmp->stats.hp = SP_PARAMETERS[spellnum].bdur +
-                         4 * SP_level_strength_adjust(op,caster,spellnum);
-  tmp->stats.dam = weapon->stats.dam + (2*SP_level_dam_adjust(op,caster,spellnum));
-  if(tmp->stats.dam<0) tmp->stats.dam=127;  /*seen this go negative!*/
-  tmp->attacktype=AT_POISON|AT_PHYSICAL;
-  if(weapon->attacktype) tmp->attacktype=tmp->attacktype|weapon->attacktype;
-  /* magic weapons make boss snakes ! */
-  if(weapon->magic) {
-   int magic = weapon->magic>0 ? weapon->magic : -1*weapon->magic;
-   tmp->speed += 0.05 * magic;
-   tmp->stats.dam *= (1 + magic);
-   tmp->stats.hp *= (1 + magic);
-  }
-  if(weapon->immune) tmp->immune = weapon->immune; 
-  if(weapon->protected) tmp->protected = weapon->protected; 
-  if(weapon->vulnerable) tmp->vulnerable = weapon->vulnerable; 
-  if(weapon->slaying) {
-    if(tmp->slaying) free_string(tmp->slaying);
-    tmp->slaying = add_string(weapon->slaying);
   }
 
-  /* now, remove object from op inv, insert into snake */
+  /* ok, tailor the golem's characteristics based on the weapon */
+  tmp->stats.Str += weapon->stats.Str;
+  tmp->stats.Dex += weapon->stats.Dex;
+  tmp->stats.Con += weapon->stats.Con;
+  tmp->stats.Int += weapon->stats.Int;
+  tmp->stats.Wis += weapon->stats.Wis;
+  tmp->stats.Pow += weapon->stats.Pow;
+  tmp->stats.Cha += weapon->stats.Cha;
+  LOG(llevDebug, "animate_weapon: Str:%d  Dex:%d  Con:%d  Int:%d  Wis:%d  Pow:%d  Cha:%d.\n",
+      tmp->stats.Str, tmp->stats.Dex, tmp->stats.Con, tmp->stats.Int, tmp->stats.Wis, tmp->stats.Pow, tmp->stats.Cha);
+  /* modify weapon's animated wc */
+  tmp->stats.wc = tmp->stats.wc
+    - weapon->stats.wc
+    - SP_level_dam_adjust(op,caster,spellnum)
+    - 5 * weapon->stats.Dex
+    - 2 * weapon->stats.Str
+    - magic;
+  /* Modify hit points for weapon */
+  tmp->stats.maxhp = tmp->stats.maxhp
+    + SP_PARAMETERS[spellnum].bdur
+    + 4 * SP_level_strength_adjust(op,caster,spellnum)
+    + 8 * magic
+    + 12 * weapon->stats.Con;
+  /* Modify weapon's damage */
+  tmp->stats.dam = SP_PARAMETERS[spellnum].bdam
+    + weapon->stats.dam
+    + magic
+    + 2 * SP_level_dam_adjust(op,caster,spellnum)
+    + 5 * weapon->stats.Str;
+  /* sanity checks */
+  if(tmp->stats.wc<-127) tmp->stats.wc = -127;
+  if(tmp->stats.maxhp<0) tmp->stats.maxhp=10;
+  tmp->stats.hp = tmp->stats.maxhp;
+  if(tmp->stats.dam<0) tmp->stats.dam=127;
+  LOG(llevDebug,"animate_weapon: wc:%d  hp:%d  dam:%d.\n", tmp->stats.wc, tmp->stats.hp, tmp->stats.dam);
+  /* attacktype */
+  if (weapon->attacktype) {
+    tmp->attacktype = weapon->attacktype;
+  } else {
+    tmp->attacktype = AT_PHYSICAL;
+  }
+  /* Set weapon's protection according to material and protected attribute */
+  tmp->protected = weapon->protected;
+  /* Set vulnerability according to weapon's material and vulnerability attribute */
+  tmp->vulnerable = weapon->vulnerable;
+  for(i=0; i<NROFMATERIALS; i++)
+    for(j=0; j<NROFATTACKS; j++)
+      if(weapon->material & (1<<i)) {
+	if(material[i].save[j] < 3) 
+	  tmp->protected |= (1<<j);
+	else if(material[i].save[j] > 14) 
+	  tmp->vulnerable |= (1<<j);
+      }
+  tmp->protected &= ~weapon->vulnerable;
+  tmp->vulnerable &= ~(weapon->immune | weapon->protected);
+  /* Set weapon's immunity */
+  tmp->immune = weapon->immune | AT_CONFUSION | AT_POISON | AT_SLOW
+    | AT_PARALYZE | AT_TURN_UNDEAD | AT_FEAR | AT_DEPLETE | AT_DEATH
+    | AT_BLIND;
+  /* Improve weapon's armour value according to best save vs. physical of its material */
+  for(a=0,i=0; i<NROFMATERIALS; i++) {
+    if(weapon->material & (1<<i) && material[i].save[0] > a) {
+      a = material[i].save[0];
+    }
+  }
+  tmp->armour = 100 - (int)((100.0-(float)tmp->armour)/(30.0-2.0*(a>14?14.0:(float)a)));
+  /* If the weapon has a Slaying list, so does the golem */
+  if(tmp->slaying) free_string(tmp->slaying);
+  if(weapon->slaying) tmp->slaying = add_string(weapon->slaying);
 
-  CLEAR_FLAG(weapon,FLAG_APPLIED); 
-  remove_ob(weapon);
-  insert_ob_in_ob(weapon,tmp);
-  fix_player(op);
-  esrv_send_item(op, weapon);
+  /* Determine golem's speed */
+  tmp->speed = ((weapon->last_sp>0.1)?weapon->last_sp:0.1) -
+    (((weapon->last_sp>0.1)?weapon->last_sp:0.1)/
+     ( (1.0 * (float)SP_level_dam_adjust(op, caster, spellnum) +
+	1.5 * (float)weapon->stats.Dex +
+	2.0 * (float)weapon->stats.Str +
+	3.0 * (float)magic +
+	5.0 * (float)weapon->stats.exp) )
+     * ((float)((tmp->weight>1000)? tmp->weight : 1000)
+	/ ((float)(weapon->weight>1000)? weapon->weight : 1000)));
+  if(tmp->speed > 3.33) tmp->speed = 3.33;
+  LOG(llevDebug,"animate_weapon: armour:%d  speed:%f  exp:%d.\n",
+      tmp->armour, tmp->speed, tmp->stats.exp);
 
-  new_draw_info(NDI_UNIQUE, 0,op,"Your staff becomes a serpent and leaps to the ground!");
+  /* spell-dependent finishing touches and descriptive text */
+  switch(spellnum) {
 
-  /*  make experience increase in proportion to the strength of
-   *  the summoned creature. */
+  case SP_STAFF_TO_SNAKE:
+    /* now, remove object from op inv, insert into golem */
+    remove_ob(weapon);
+    /*    apply_special(op, weapon, AP_UNAPPLY);*/
+    insert_ob_in_ob(weapon,tmp);
+    fix_player(op);
+    esrv_send_item(op, weapon);
+    new_draw_info(NDI_UNIQUE, 0,op,"Your staff becomes a serpent and leaps to the ground!");
+    break;
+
+  case SP_ANIMATE_WEAPON:
+    /* now, remove object from op inv, insert into golem */
+    remove_ob(weapon);
+    /*    apply_special(op, weapon, AP_UNAPPLY);*/
+    insert_ob_in_ob(weapon,tmp);
+    fix_player(op);
+    esrv_send_item(op, weapon);
+
+    new_draw_info_format(NDI_UNIQUE, 0,op,"Your %s flies from your hand and hovers in mid-air!", weapon->name);
+    if(tmp->name) free_string(tmp->name);
+    sprintf(buf, "animated %s", weapon->name);
+    tmp->name = add_string(buf);
+
+    tmp->face = weapon->face;
+    tmp->animation_id = weapon->animation_id;
+    tmp->anim_speed = weapon->anim_speed;
+    tmp->last_anim = weapon->last_anim;
+    tmp->state = weapon->state;
+    if(QUERY_FLAG(weapon, FLAG_ANIMATE)) {
+      SET_FLAG(tmp,FLAG_ANIMATE); 
+    } else {
+      CLEAR_FLAG(tmp,FLAG_ANIMATE); 
+    }
+    update_ob_speed(tmp);
+    SET_FLAG(weapon,FLAG_APPLIED); /* so it can take acid damage */
+    break;
+
+  case SP_DANCING_SWORD:
+    new_draw_info(NDI_UNIQUE, 0,op,"A magical sword appears in mid air, eager to slay your foes for you!");
+    break;
+  default:
+    break;
+  }
+
+  /*  make experience increase in proportion to the strength of the summoned creature. */
   tmp->stats.exp *= SP_level_spellpoint_cost(op,caster,spellnum)/spells[spellnum].sp;
   tmp->speed_left= -1;
   tmp->x=op->x+freearr_x[dir],tmp->y=op->y+freearr_y[dir];
@@ -3241,8 +3377,3 @@ int cast_cause_disease(object *op, object *caster, int dir, archetype *disease_a
   new_draw_info(NDI_UNIQUE,0,op,"No one caught anything!");
   return 0;
 }
-			 
-			 
-		  
-  
-  
