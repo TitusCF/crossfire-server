@@ -79,5 +79,6 @@ extern void write_socket_buffer ( NewSocket *ns );
 extern void Write_String_To_Socket ( NewSocket *ns, char *buf, int len );
 extern void Write_To_Socket ( NewSocket *ns, unsigned char *buf, int len );
 
+extern void SetUp ( char *buf, int len, NewSocket *ns );
 #endif /* __STDC__ */
 #endif /* __CEXTRACT__ */
