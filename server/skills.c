@@ -518,9 +518,11 @@ static int do_skill_detect_curse(object *pl, object *skill) {
 		success+= calc_skill_exp(pl,tmp, skill);
 	}
 
-    /* Check ground, too */
+    /* Check ground, too, but only objects the player could pick up */
     for(tmp=get_map_ob(pl->map,pl->x,pl->y);tmp;tmp=tmp->above)
-	if (!QUERY_FLAG(tmp,FLAG_IDENTIFIED) && !QUERY_FLAG(tmp,FLAG_KNOWN_CURSED)
+	if (can_pick(pl, tmp) &&
+	    !QUERY_FLAG(tmp,FLAG_IDENTIFIED) && 
+	    !QUERY_FLAG(tmp,FLAG_KNOWN_CURSED)
             && (QUERY_FLAG(tmp,FLAG_CURSED) || QUERY_FLAG(tmp,FLAG_DAMNED)) &&
 	    tmp->item_power < skill->level) {
 		SET_FLAG(tmp,FLAG_KNOWN_CURSED);
@@ -543,9 +545,11 @@ static int do_skill_detect_magic(object *pl, object *skill) {
 		success+=calc_skill_exp(pl,tmp, skill);
 	}
 
-    /* Check ground, too */
+    /* Check ground, too, but like above, only if the object can be picked up*/
     for(tmp=get_map_ob(pl->map,pl->x,pl->y);tmp;tmp=tmp->above)
-        if(!QUERY_FLAG(tmp,FLAG_IDENTIFIED) && !QUERY_FLAG(tmp,FLAG_KNOWN_MAGICAL)
+        if (can_pick(pl, tmp) && 
+	    !QUERY_FLAG(tmp,FLAG_IDENTIFIED) && 
+	    !QUERY_FLAG(tmp,FLAG_KNOWN_MAGICAL)
 	    && (is_magical(tmp)) && tmp->item_power < skill->level) { 
             	SET_FLAG(tmp,FLAG_KNOWN_MAGICAL);
 		esrv_update_item(UPD_FLAGS, pl, tmp);
