@@ -18,6 +18,14 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+common/item.c: Modify query_short_name to avoid buffer overflow on long
+ring descriptions.  Also, increased size of buffer in this function so
+that longer ring descriptions will not get truncated.  MSW 5/22/2000
+
+server/c_chat.c: Add standard banner to top of file.  Fix say command so
+that it does not crash the server if something beyond 256 characters is
+spoken - extra data is just truncated.  MSW 5/22/2000
+
 common/object.c:  Splitted set_owner() into set_owner_simple() and
 set_owner().  copy_owner(): New function.
 server/spell_util.c: explode_object(): Use copy_owner() instead of setting

@@ -6,6 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
+    Copyright (C) 2000 Mark Wedel
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -22,7 +23,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to frankj@ifi.uio.no.
+    The author can be reached via e-mail to mwedel@scruz.net
 */
 
 #include <global.h>
@@ -185,8 +186,8 @@ char *ring_desc (object *op)
  */
 char *query_short_name(object *op) 
 {
-    static char buf[MAX_BUF];
-    char buf2[MAX_BUF];
+    static char buf[HUGE_BUF];
+    char buf2[HUGE_BUF];
 
     if(op->name == NULL)
 	return "(null)";
@@ -264,7 +265,8 @@ char *query_short_name(object *op)
 	    char *s = ring_desc(op);
 	    if (s[0]) {
 		strcat (buf, " ");
-		strcat (buf, s);
+		strncat (buf, s, HUGE_BUF-strlen(buf)-1);
+		buf[HUGE_BUF-1]=0;
 	    }
 	}
 #endif
