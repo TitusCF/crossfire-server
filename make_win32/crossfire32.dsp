@@ -2781,6 +2781,10 @@ SOURCE=..\include\xdir.h
 # End Group
 # Begin Source File
 
+SOURCE=..\ChangeLog
+# End Source File
+# Begin Source File
+
 SOURCE=..\common\loader.l
 # End Source File
 # End Target

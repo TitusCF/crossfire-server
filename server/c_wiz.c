@@ -1006,6 +1006,12 @@ int command_free (object *op, char *params)
     if ( from != STACK_FROM_STACK )
         /* Item is either stack top, or is a number thus is now stack top, let's remove it  */
         dm_stack_pop( op->contr );
+
+    if ( !QUERY_FLAG( tmp, FLAG_REMOVED ) )
+        {
+        new_draw_info( NDI_UNIQUE, 0, op, "Warning, item wasn't removed." );
+        remove_ob( tmp );
+        }
     free_object(tmp);
     return 1;
 }

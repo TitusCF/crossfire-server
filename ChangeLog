@@ -17,6 +17,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/c_wiz.c: Remove item when 'free' by DM if not removed, avoiding crash.
+Ryo 2004-12-22
+
 server/c_party.c: Make party passwords of 8 characters work, disallow longer
    passwords. Based on patch #1080096 from Casper.
    Correct help message for party commands.
