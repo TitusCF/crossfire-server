@@ -578,6 +578,18 @@ C->S: askface <num>
 	on the previous set facemode to determine what facetype to send.
 	num is a plaintext integer.
 
+S->C: smooth <facenbr> <sm000> <sm001> <sm010> <sm011> <sm100> <sm101> <sm110> <sm111>
+	All parameters are space separated plain text integers.
+	This command informs the client on how to smooth a face, when it will need it.
+	Following are the facenbr of the different pictures involved in the
+	smoothing algorithm. See doc on smoothing on how to use them. (TODO)
+	This info may be send automatically from server but could also be
+	requested by client using the asksmooth
+C->S: asksmooth <facenbr>
+	Parameters is a plain text integer.
+	Ask server to send a smooth sequence. Server will respond with a smooth command.
+	<facenbr> is an integer telling server which face we want smooth informations on.
+
 ******************************************************************************
 MAP UPDATE COMMANDS
 
@@ -775,6 +787,88 @@ S->C: magicmap <width> <height> <px> <py> <data>
 	The string of data represents the space from left to right,
 	then up to down.
 
+C->S: toggleextendedinfos <string1> <string2> .... <stringn>
+	Ask the server to send some additionnal informations about the map.
+	This command is followed by 1 or more strings. String are separated
+	with spaces. Each string toggle an info. The server will respond
+	with the command ExtendedInfoSet telling client what actual
+	extended infos will be send to the client.
+	Valid extended infos are as follow:
+		smoothing
+			send smoothing level informations to the client.
+
+S->C: ExtendedInfoSet <string1> <string2> .... <stringn>
+	Tell client what actually are the extended infos server may
+	send to the client when this is needed. All those infos will
+	be related to the map and send through mapextended command.
+	Each string represent an info which is enabled. Look
+	at toggleextendedinfos and mapextended for details.
+
+S->C: mapextended <what><length><coord1>[data1a][data1b][data1c]<coord2>...
+	This command is send from server when there is at least
+	1 ExtendedInfo activated using toggleextendedinfos and
+	the client called setup extendedMapInfos 1 (see setup command).
+	Basically this command is made of a block telling what infos comes
+	with this command, a block telling what length this info is and then
+	the infos themselfes. Here is described more in details those blocks.
+	<what> (uses N bytes)
+		How to know N?
+		In each byte, if the highest bit (bit 7) is set, this mean
+		another byte will follow. This would allow easy extension of protocol
+		without breaking client and needing a new command.
+		Here is described, for each byte, the signifiance of the bits:
+		Byte 0:
+			bit 0 EMI_NOREDRAW
+					Tells the client it's useless to redraw screen immediatly,
+					another map command will follow.
+			bit 1 EMI_SMOOTH
+					Tells the client there is datas in the [datas] blocks about
+					smoothing.
+			bit 7 EMI_HASMOREBITS
+					Tells the client to read the next byte as part of the <what>
+					block too. See above signifiance of higher bit.
+	<length> (uses 1 byte)
+		A one byte info describing the size (in bytes) of each data block. So
+		each data block may have a size of 0 to 255 bytes. Note that all data blocks
+		send in one mapextended command have the same size but different
+		mapextended commands may have different blocksize, even with same datas
+		present.
+	Following is a set of blocks made of a <coord> and 0 to 3 <data>
+	<coord> (uses 2 bytes)
+		This is the same as for the map1 and map1a commands, except the darkness bit
+		is reserved for future use. If it is set to 1, the next byte will be part
+		of the coords too (for larger visible map, but not used yet).
+	<data> (uses <length> bytes)
+		the coord block tells the client which square is concerned and which layers
+		in this square are concerned. According to this there may be up to 3 <data>
+		blocks following the <coord> block (same as for map1 and map1a). Ok, now
+		what stand in those <data>?
+		First each <data> block has a length determined by the <length> block. So
+		if ther are parts of the data the client may not understand, it's ok, he will
+		skip to the end of the <data> block, jumoing to the next. Should help add
+		additionnal informations. Since the protocol evolved as on timeline basis.
+		If a client can't understand a data type cause it is too old, he won't
+		understand the next one too, etc, until the next <data> block is reached.
+		So to prevent problem, the server take care to put informations in the data
+		block following the order of protocol evolution. If server need to
+		say to the client A BB C, assuming that A was defined in the
+		protocol before BB was defined which was before C was defined, it would say
+		ABBC and never ACBB. Now let's say later a developper want to extend BB to BBB,
+		the server should put the datas in the following order: ABBCB  cause the last B
+		is more recent in protocol than the 2 first BB and the C. All this make sure
+		there will be no mistakes or conflict between different protocol versions.
+		Ok, following is the informations which may be present in a <data> block if
+		the corresponding flags are put.
+
+		if EMI_SMOOTH is present in <WHAT>
+			1 byte telling the smoothlevel of the object at <coord>
+				see developper notes on smoothing to know what this means. (TODO)
+
+		<data> stops here for now. Later there will be datas for sending text from
+		a specific location, telling client to play special effects, etc.
+		gime some time
+									Tchize.
+
 
 ******************************************************************************
 SOUND RELATED COMMANDS:
@@ -895,6 +989,11 @@ S->C: setup <option1> <value1> <option2> <value2>
 	    Faceset the client wishes to use.  If the faceset is not
 	    valid, the server returns the faceset the client will be
 	    using (default 0).
+
+	extendedMapInfos (0/1)
+		Toggle sending from server of extended map informations.
+		What lies in this extended info depended on what extended
+		infos the client asked. See ToggleExtendedInfos command for details.
 
 	All data in the setup command is in ascii text form.  options and
 	values can not have whitepace - the client and server use whitspace

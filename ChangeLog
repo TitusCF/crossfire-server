@@ -17,6 +17,18 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+protocol: 
+	Added new command to send extended map informations to the
+	client. Mainly used for now to send smoothing informations.
+	Also commented the modifications in the protocol file ind doc/
+lib/Makefiles:
+	Changed to install the smooth file too. Needed by smooth code
+common/loader.l and loader.c
+	completly reworked get_ob_diff to improve speed at mapsave time.
+	For now function is interlaced with commented old code. Will clean
+	up when code will be proved working. (hope middle of july)
+Tchize 2003-07-03
+
 server/apply.c: Fix auto_apply - missing else, causing extra
    treausres to be generated inside of shop tiles.
 server/monster.c: Fix npc_call_help to be map tile aware.
