@@ -1329,8 +1329,7 @@ mon_info_msg (int level, int booksize)
      * in the archive in a snap!) -b.t. 
      */
     tmp = get_random_mon (level * 3);
-    do
-      {
+    while (tmp) {
 	  /* monster description */
 	  sprintf (tmpbuf, "\n---\n%s", mon_desc (tmp));
 
@@ -1341,8 +1340,7 @@ mon_info_msg (int level, int booksize)
 
 	  /* Note that the value this returns is not based on level */
 	  tmp = get_next_mon (tmp);
-      }
-    while (tmp);
+    }
 
 #ifdef BOOK_MSG_DEBUG
     LOG (llevDebug, "\n mon_info_msg() created strng: %d\n", strlen (retbuf));

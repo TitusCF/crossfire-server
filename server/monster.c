@@ -244,7 +244,7 @@ int check_wakeup(object *op, object *enemy, rv_vector *rv) {
     if (!enemy) return 0;
 
     /* blinded monsters can only find nearby objects to attack */
-    if(QUERY_FLAG(op, FLAG_BLIND) && !QUERY_FLAG(op, FLAG_SEE_INVISIBLE)) 
+    if(QUERY_FLAG(op, FLAG_BLIND))
 	radius = MIN_MON_RADIUS;
 
     /* This covers the situation where the monster is in the dark 
@@ -1927,8 +1927,7 @@ int can_see_enemy (object *op, object *enemy) {
      * see through walls). Should we change the code elsewhere to make you 
      * blind even if you can xray? 
      */
-    if(QUERY_FLAG(looker,FLAG_BLIND)&&
-       (!QUERY_FLAG(looker,FLAG_SEE_INVISIBLE)||QUERY_FLAG(looker,FLAG_XRAYS)))
+    if(QUERY_FLAG(looker,FLAG_BLIND) && !QUERY_FLAG(looker,FLAG_XRAYS))
 	    return 0;
 
     /* checking for invisible things */

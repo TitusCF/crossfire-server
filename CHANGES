@@ -17,6 +17,14 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+common/readlable.c: Fix crash caused by passing null value to mon_desc -
+   check for non null was at end of { } do loop - check should be at the
+   start.
+server/monster.c: Make it so that monsters with see invisible are not
+   immune to blind - monster can be given appropriate resistance to make
+   it so it is not effected by blind.
+MSW 2002-09-11
+
 server/main.c: Move #endif in crypt_string to more proper place.
 server/monster.c: Fix bad if statement that may have been waking up
     monsters when they shouldn't have been.
