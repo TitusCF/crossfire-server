@@ -310,6 +310,7 @@ int dispel_rune(object *op,int dir,int risk)
 	 */
 	if (tmp->type == SIGN && !strcmp(tmp->arch->name,"rune_mark")) {
 	    remove_ob(tmp);
+	    free_object(tmp);
 	    new_draw_info(NDI_UNIQUE, 0,op,"You wipe out the rune of marking!");
 	    return 1;
 	}

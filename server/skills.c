@@ -1098,7 +1098,7 @@ int write_on_item (object *pl,char *params) {
 		"You had better pay for that before you write on it.");
 	    return 0;
 	}
-	switch(item->type) {
+	switch(msgtype) {
 	    case SCROLL:
 		return write_scroll(pl,item);
 		break;
@@ -1161,6 +1161,8 @@ int write_note(object *pl, object *item, char *msg) {
         return strlen(msg);
     }
    }
+
+  buf[0] = 0;
   if(!book_overflow(item->msg,msg,BOOK_BUF)) { /* add msg string to book */
     if(item->msg) {
       strcpy(buf,item->msg);

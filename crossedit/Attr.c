@@ -160,7 +160,7 @@ static void getPath (object *ob, char *str, XtPointer c) {
 }
 
 static void getWeight (object *ob, char *str, XtPointer c) {
-    sprintf(str,"%ld",ob->weight);
+    sprintf(str,"%d",ob->weight);
 }
 
 /*** connected ***/
@@ -225,7 +225,7 @@ static void getNoPick (object *ob, char *str, XtPointer c) {
 
 /*** weight limit ***/
 static void getWeightL (object *ob, char *str, XtPointer c) {
-    sprintf(str,"%ld",ob->weight_limit);
+    sprintf(str,"%d",ob->weight_limit);
 }
 
 /*** brand ***/

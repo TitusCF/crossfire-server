@@ -18,6 +18,22 @@ else.  With this, include the file(s) that you changed.
 Changes for CVS:
 
 Various bug fixes.
+crossedit/Attr.c: Minor cleanup to eliminate some compile time warnings.
+plugin/plugin_python.c: Remove some unused variables, thus fixing up some
+    compiler warnings.
+random_maps/random_map.c, random_maps/random_map.h, random_maps/special.c:
+    Add MIN_RANDOM_MAP_SIZE values instead of hardcode constants.
+server/monster.c: Fix communicate - odd bug can be map gets swapped out
+    just after player is transferred to another map, causing crashes as
+    map that was originally spoken on is no longer in memory.
+server/rune.c: add missing free_object call when erasing runes.
+server/skills.c: Change write_on_item to determine type of writing based
+   on content of mesage, or lack thereof, and not the marked object.
+   Fix problem of buf not being initalized.
+MSW 2003-03-06
+
+
+Various bug fixes.
 Makefile.am, Makefile.in: Put crossedit as the last directory, so any build
    errors for crossedit doesn't effect anything else.
 README: Update ftp site listing.

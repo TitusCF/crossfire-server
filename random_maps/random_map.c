@@ -131,15 +131,9 @@ mapstruct *generate_random_map(char *OutFileName, RMParms *RP) {
     arguments it needs.  */
 char **layoutgen(RMParms *RP) {
     char **maze=0;
-    if(RP->symmetry!=NO_SYM) {
-	if(RP->Xsize<15) RP->Xsize = 15 + RANDOM()%25;
-	if(RP->Ysize<15) RP->Ysize = 15 + RANDOM()%25;
-    }
-    else {
-	/* Has to be at least 10 for square spirals to work */
-	if(RP->Xsize<10) RP->Xsize = 10 + RANDOM()%25;
-	if(RP->Ysize<10) RP->Ysize = 10 + RANDOM()%25;
-    }
+
+    if(RP->Xsize<MIN_RANDOM_MAP_SIZE) RP->Xsize = MIN_RANDOM_MAP_SIZE + RANDOM()%25 + 5;
+    if(RP->Ysize<MIN_RANDOM_MAP_SIZE) RP->Ysize = MIN_RANDOM_MAP_SIZE + RANDOM()%25 + 5;
   
     if(RP->symmetry == RANDOM_SYM) {
 	RP->symmetry_used = (RANDOM() % ( XY_SYM))+1;

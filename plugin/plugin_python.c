@@ -6549,49 +6549,42 @@ static PyObject* CFGetPressure(PyObject* self, PyObject* args)
 
 static PyObject* CFGetMapDir(PyObject* self, PyObject* args)
 {
-    long whoptr;
     if (!PyArg_ParseTuple(args,"",NULL))
         return NULL;
     return Py_BuildValue("s",settings.mapdir);
 }
 static PyObject* CFGetUniqueDir(PyObject* self, PyObject* args)
 {
-    long whoptr;
     if (!PyArg_ParseTuple(args,"",NULL))
         return NULL;
     return Py_BuildValue("s",settings.uniquedir);
 }
 static PyObject* CFGetTempDir(PyObject* self, PyObject* args)
 {
-    long whoptr;
     if (!PyArg_ParseTuple(args,"",NULL))
         return NULL;
     return Py_BuildValue("s",settings.tmpdir);
 }
 static PyObject* CFGetConfigurationDir(PyObject* self, PyObject* args)
 {
-    long whoptr;
     if (!PyArg_ParseTuple(args,"",NULL))
         return NULL;
     return Py_BuildValue("s",settings.confdir);
 }
 static PyObject* CFGetDataDir(PyObject* self, PyObject* args)
 {
-    long whoptr;
     if (!PyArg_ParseTuple(args,"",NULL))
         return NULL;
     return Py_BuildValue("s",settings.datadir);
 }
 static PyObject* CFGetLocalDir(PyObject* self, PyObject* args)
 {
-    long whoptr;
     if (!PyArg_ParseTuple(args,"",NULL))
         return NULL;
     return Py_BuildValue("s",settings.localdir);
 }
 static PyObject* CFGetPlayerDir(PyObject* self, PyObject* args)
 {
-    long whoptr;
     if (!PyArg_ParseTuple(args,"",NULL))
         return NULL;
     return Py_BuildValue("s",settings.playerdir);

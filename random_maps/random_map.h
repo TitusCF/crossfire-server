@@ -112,6 +112,7 @@ the numerical values matter so don't change them. */
 #define Y_SYM 3
 #define XY_SYM 4
 
+#define MIN_RANDOM_MAP_SIZE 10
 
 /*  a macro to get a strongly centered random distribution,
     from 0 to x, centered at x/2 */

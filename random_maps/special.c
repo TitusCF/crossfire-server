@@ -230,8 +230,8 @@ void place_special_exit(mapstruct * map, int hole_type,RMParms *RP) {
     /* Need to be at least this size, otherwise the load
      * code will generate new size values which are too large.
      */
-    if (g_xsize < 7) g_xsize = 7;
-    if (g_ysize < 7) g_ysize = 7;
+    if (g_xsize < MIN_RANDOM_MAP_SIZE) g_xsize = MIN_RANDOM_MAP_SIZE;
+    if (g_ysize < MIN_RANDOM_MAP_SIZE) g_ysize = MIN_RANDOM_MAP_SIZE;
 
     write_parameters_to_string(buf, g_xsize, g_ysize,RP->wallstyle,RP->floorstyle,mon,
                                  "none",style,decor,"none",RP->exitstyle,0,0,

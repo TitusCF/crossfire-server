@@ -1668,15 +1668,28 @@ static char *find_matching_message(char *msg, char *match)
  * we'll see how this works out.  only the first npc listens, which
  * is sort of bogus since it uses the free_arr which has a preference
  * to certain directions.
+ *
+ * There is a rare even that the orig_map is used for - basically, if
+ * a player says the magic word that gets him teleported off the map,
+ * it can result in the new map putting the object count too high,
+ * which forces the swap out of some other map.  In some cases, the
+ * map the player was just on now gets swapped out - thus, the
+ * object on that map are no longer in memory.  So check to see if the
+ * players map changes, and if so, don't process any further.
+ * If it does change, most likely we don't care about the results
+ * of further conversation.  Also, depending on the value of i,
+ * the conversation would continue on the new map, which probably isn't
+ * what is really wanted either.
  */
 void communicate(object *op, char *txt) {
     object *npc;
     int i, mflags;
     sint16 x, y;
-    mapstruct *mp;
+    mapstruct *mp, *orig_map = op->map;
 
     int flag=1; /*hasn't spoken to a NPC yet*/
     for(i = 0; i <= SIZEOFFREE2; i++) {
+
 	mp = op->map;
 	x = op->x + freearr_x[i];
 	y = op->y + freearr_y[i];
@@ -1685,8 +1698,13 @@ void communicate(object *op, char *txt) {
 	if (mflags & P_OUT_OF_MAP) continue;
 
 	for(npc = get_map_ob(mp,x,y); npc != NULL; npc = npc->above) {
-	    if (npc->type == MAGIC_EAR)
+	    if (npc->type == MAGIC_EAR) {
 		(void) talk_to_wall(npc, txt); /* Maybe exit after 1. success? */
+		if (orig_map != op->map) {
+		    LOG(llevDebug,"Warning: Forced to swap out very recent map - MAX_OBJECTS should probably be increased\n");
+		    return;
+		}
+	    }
 	    else if (flag)  {
 #if 0
 		if (talk_to_npc(op, npc,txt))
@@ -1694,6 +1712,10 @@ void communicate(object *op, char *txt) {
 #else
 		talk_to_npc(op, npc,txt);
 #endif
+		if (orig_map != op->map) {
+		    LOG(llevDebug,"Warning: Forced to swap out very recent map - MAX_OBJECTS should probably be increased\n");
+		    return;
+		}
 	    }
 	}
     }
