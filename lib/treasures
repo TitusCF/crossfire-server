@@ -37,11 +37,11 @@ treasure Valriel
   arch valriel_general_info
     chance 10
   more
-arch god_grace_limit_medium
-more
-  arch god_enchant_weapon_medium
+  arch god_enchant_weapon_low
     chance 30
   more
+arch god_grace_limit_medium
+more
   arch god_spelldirect_defense
 end
 #############################################################
@@ -60,8 +60,8 @@ treasure Gorokh
   more
   arch god_cure_poison
   more
-  arch god_remove_damnation
-    chance 20
+  arch god_remove_curse
+    chance 10
   more
   arch god_remove_depletion
     chance 40
@@ -69,11 +69,11 @@ treasure Gorokh
   arch gorokh_general_info
     chance 10
   more
-arch god_grace_limit_medium
-more
   arch god_enchant_weapon_medium
     chance 50
   more
+arch god_grace_limit_medium
+more
   arch god_spelldirect_flaming_aura
   more
 arch god_grace_limit_high
@@ -99,11 +99,11 @@ treasure Devourers
   arch devourers_general_info
     chance 10
   more
-arch god_grace_limit_medium
-more
   arch god_enchant_weapon_medium
     chance 50
   more
+arch god_grace_limit_medium
+more
   arch god_spelldirect_nightfall
   more
   arch god_spelldirect_finger_of_death
@@ -139,8 +139,14 @@ treasure Sorig
   arch god_remove_depletion
     chance 50
   more
+  arch god_remove_curse
+    chance 20
+  more
   arch sorig_general_info
     chance 10
+  more
+  arch god_enchant_weapon_medium
+    chance 50
   more
 arch god_grace_limit_low
 more
@@ -149,9 +155,6 @@ more
   more
 arch god_grace_limit_medium
 more
-  arch god_enchant_weapon_medium
-    chance 50
-  more
   arch god_spelldirect_cause_critical_wounds
   more
   arch god_spelldirect_windstorm
@@ -187,14 +190,17 @@ treasure Ruggilli
   arch god_remove_depletion
     chance 50
   more
+  arch god_remove_curse
+    chance 10
+  more
   arch ruggilli_general_info
     chance 10
   more
-arch god_grace_limit_medium
-more
   arch god_enchant_weapon_medium
     chance 50
   more
+arch god_grace_limit_medium
+more
   arch god_spelldirect_flaming_aura
   more
   arch god_spelldirect_rage
@@ -261,7 +267,7 @@ more
     chance 30
   more
   arch shield_gaea
-    chance 50
+    chance 5
 end
 treasure gaea_treasure
   arch shield_gaea
@@ -289,13 +295,16 @@ treasure Mostrai
   arch god_cure_poison
   more
   arch god_remove_damnation
-    chance 50
+    chance 40
   more
   arch god_remove_depletion
     chance 50
   more
   arch mostrai_general_info
     chance 10
+  more
+  arch god_enchant_weapon_high
+    chance 50
   more
 arch god_grace_limit_low
 more
@@ -304,15 +313,7 @@ more
   more
 arch god_grace_limit_medium
 more
-  arch god_enchant_weapon_medium
-    chance 50
-  more
   arch god_spelldirect_wall_of_thorns
-  more
-arch god_grace_limit_high
-more
-  arch god_enchant_weapon_high
-    chance 10
 end
 #############################################################
 # Lythander - Elven god of luck, Huntsman of Goblins, Trollslayer,
@@ -337,11 +338,11 @@ treasure Lythander
   arch lythander_general_info
     chance 10
   more
-arch god_grace_limit_medium
-more
   arch god_enchant_weapon_medium
     chance 50
   more
+arch god_grace_limit_medium
+more
   arch bow_lythander
     chance 5
   more
@@ -370,6 +371,9 @@ treasure Gnarg
   arch gnarg_general_info
     chance 10
   more
+  arch god_enchant_weapon_high
+    chance 50
+  more
 arch god_grace_limit_low
 more
   arch helmet_gnarg
@@ -379,18 +383,12 @@ more
   more
 arch god_grace_limit_medium
 more
-  arch god_enchant_weapon_medium
-    chance 50
-  more
   arch god_spelldirect_poison_fog
   more
   arch god_spelldirect_cause_red_death
   more
 arch god_grace_limit_high
 more
-  arch god_enchant_weapon_high
-    chance 10
-  more
   arch god_spelldirect_cause_white_death
 end
 ##############################################################
