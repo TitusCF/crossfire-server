@@ -35,10 +35,12 @@ INSTALLFILES = $(srcdir)/artifacts $(srcdir)/ban_file $(srcdir)/def_help \
 	$(srcdir)/skill_params $(srcdir)/spell_params \
 	$(srcdir)/treasures $(srcdir)/animations $(srcdir)/archetypes \
 	$(srcdir)/bmaps $(srcdir)/bmaps.paths $(srcdir)/crossfire.xpm \
-	$(srcdir)/faces $(srcdir)/crossfire.xbm $(srcdir)/crossfire.png
+	$(srcdir)/faces $(srcdir)/crossfire.xbm $(srcdir)/crossfire.png 
 
-ALLFILES = $(SRCS) README xpmtopix.pl collect.pl util.pl \
-	Makefile.in .collect-stamp  $(INSTALLFILES) settings
+BININSTALL = $(srcdir)/xpmtopix.pl $(srcdir)/collect.pl $(srcdir)/util.pl
+
+ALLFILES = $(SRCS) README \
+	Makefile.in .collect-stamp  $(INSTALLFILES) $(BININSTALL) settings
 
 
 FILES_HELP = $(srcdir)/help/apply $(srcdir)/help/bind \
@@ -65,6 +67,7 @@ exec_prefix = @exec_prefix@
 datadir = @datadir@
 localdir = @localstatedir@
 libdir = @libdir@
+bindir = @bindir@
 
 MKDIR = @MKDIR@
 
@@ -105,7 +108,7 @@ animations: .collect-stamp
 bmaps.paths bmaps: .collect-stamp
 	make collect
 
-install:: archetypes bmaps.paths crossfire.xbm crossfire.xpm crossfire.png  animations
+install:: archetypes bmaps.paths crossfire.xbm crossfire.xpm crossfire.png animations collect.pl xpmtopix.pl util.pl
 	@if [ ! -d $(datadir) ]; then \
 		$(MKDIR) -p $(datadir); \
 	fi
@@ -124,6 +127,11 @@ install:: archetypes bmaps.paths crossfire.xbm crossfire.xpm crossfire.png  anim
 	@for i in $(INSTALLFILES); do \
 	    echo "Installing $$i"; \
 	    $(INSTALL) $(INSTALLFLAGS)  $$i $(datadir); \
+	done
+
+	@for i in $(BININSTALL); do \
+		echo "Installing $$i"; \
+		$(INSTALL) $(INSTALLFLAGS)  $$i $(bindir); \
 	done
 
 	@if [ ! -f $(datadir)/settings ]; then \
