@@ -17,6 +17,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 CVS changes since last release:
 
+server/spell_util.c: have put_a_monster generate random monster
+   abilities.
+TODO, doc/mapguide: Various minor updates.
+MSW 2001-04-25
+
 server/c_object.c: Pass right object to query_cost_string so that
    if you pick up an unpaid object into a container, it generates
    the correct price.  MSW 2001-04-22

@@ -21,6 +21,8 @@ don't have an easy fix.
 ------------------------------------------------------------------------------
 Future feature requests
 
+- Make random treasure chests lockable, such that you need a special key
+  to open them.
 - If player tries to login with same name/password as a character currently
   active, drop the old connection and associate the player with the new 
   connection.  Useful if connection is dropped but server hasn't detected

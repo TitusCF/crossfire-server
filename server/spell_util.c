@@ -2312,6 +2312,8 @@ void put_a_monster(object *op,char *monstername) {
 	at=at->more;
     }
 
+    if (head->randomitems) 
+	create_treasure(head->randomitems, head, GT_INVISIBLE, op->map->difficulty,0);
     insert_ob_in_map(head,op->map,op);
 
     /* thought it'd be cool to insert a burnout, too.*/
