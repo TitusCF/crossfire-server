@@ -168,8 +168,9 @@ int write_rune(object *op,object *caster, object *spell, int dir,char *runename)
     rune->direction :	    direction it will cast a spell in
     rune->dam	    :	    damage the rune will do if it doesn't cast spells
     rune->attacktype:	    type of damage it does, if not casting spells
-    rune->slaying   :       string description of the spell in the rune
-
+    rune->other_arch:       spell in the rune
+    rune->Cha       :       how hidden the rune is
+    rune->maxhp     :       number of spells the rune casts
 */
 
 void move_rune(object *op) {
@@ -221,7 +222,7 @@ void spring_trap(object *trap,object *victim)
     object *env;
     tag_t trap_tag = trap->count;
     rv_vector rv;
-
+    int i;
 
     /* Prevent recursion */
     if (trap->stats.hp <= 0)
@@ -268,12 +269,14 @@ void spring_trap(object *trap,object *victim)
 	if (was_destroyed (trap, trap_tag))
 	    return;
 
-	if (trap->inv)
-	    cast_spell(trap,trap,trap->direction,trap->inv,NULL);
-	else {
-	    spell = arch_to_object(trap->other_arch);
-	    cast_spell(trap,trap,trap->direction,spell,NULL);
-	    free_object(spell);
+	for(i = 0; i < MAX(1, trap->stats.maxhp); i++) {
+	    if (trap->inv)
+		cast_spell(trap,trap,trap->direction,trap->inv,NULL);
+	    else {
+		spell = arch_to_object(trap->other_arch);
+		cast_spell(trap,trap,trap->direction,spell,NULL);
+		free_object(spell);
+	    }
 	}
     } else {
 	rune_attack(trap,victim); 
@@ -426,7 +429,9 @@ void trap_adjust(object *trap, int difficulty) {
      * a peak probability at difficulty 
      */
 
-    trap->level = MAX(1, rndm(0, difficulty-1) + rndm(0, difficulty-1));
+    trap->level = rndm(0, difficulty-1) + rndm(0, difficulty-1);
+    if(trap->level < 1)
+	trap->level = 1;
 
     /* set the hiddenness of the trap, similar formula to above */
     trap->stats.Cha = rndm(0, 19) + rndm(0, difficulty-1) + rndm(0, difficulty-1);
@@ -442,8 +447,11 @@ void trap_adjust(object *trap, int difficulty) {
 	    trap->stats.dam+=rndm(0, 4);
     
 	/*  the poison trap special case */
-	if(trap->attacktype & AT_POISON)
-	    trap->stats.dam = MAX(1, rndm(0, difficulty-1));  
+	if(trap->attacktype & AT_POISON) {
+	    trap->stats.dam = rndm(0, difficulty-1);
+	    if(trap->stats.dam < 1)
+		trap->stats.dam = 1;
+	}
 
 	/*  so we get an appropriate amnt of exp for AT_DEATH traps */
 	if(trap->attacktype & AT_DEATH) trap->stats.dam = 127;
