@@ -18,6 +18,10 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+socket/item.c:  Add MAXITEMLEN define at top of file and use that to determine
+    at what point item commands should be broken up.  Prior hard coded value
+    was not always large enough.  MSW 5/23/2000
+
 include/define.h:  add safe_strcat inline/static function.  Add
     DESCRIBE_ABILITY_SAFE and DESCRIBE_PATH_SAFE which use the safe_strcat
     to prevent buffer overuns.

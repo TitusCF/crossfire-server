@@ -39,6 +39,8 @@
 #include <newserver.h>
 #include <sproto.h>
 
+/* This is the maximum number of bytes we expect any one item to take up */
+#define MAXITEMLEN  300
 
 /*******************************************************************************
  *
@@ -179,7 +181,7 @@ void esrv_draw_look(object *pl)
 	    add_stringlen_to_sockbuf(query_short_name(tmp), &sl);
 	    got_one++;
 	    SET_FLAG(tmp, FLAG_CLIENT_SENT);
-	    if (sl.len > (MAXSOCKBUF-250)) {
+	    if (sl.len > (MAXSOCKBUF-MAXITEMLEN)) {
 		Send_With_Handling(&pl->contr->socket, &sl);
 		strcpy((char*)sl.buf,"item ");
 		sl.len=strlen((char*)sl.buf);
@@ -249,7 +251,7 @@ void esrv_send_inventory(object *pl, object *op)
 	     * items (especially with some of the bags out there) to
 	     * overflow the buffer.  IF so, send multiple item1 commands.
 	     */
-	    if (sl.len > (MAXSOCKBUF-250)) {
+	    if (sl.len > (MAXSOCKBUF-MAXITEMLEN)) {
 		Send_With_Handling(&pl->contr->socket, &sl);
 		strcpy((char*)sl.buf,"item1 ");
 		sl.len=strlen((char*)sl.buf);
