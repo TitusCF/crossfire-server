@@ -26,7 +26,12 @@
     The author can be reached via e-mail to crossfire-devel@real-time.com
 */
 
-/* This file deals with the image related communication to the
+/** \file
+ * Image related communication
+ *
+ *  \date 2003-12-02
+ *
+ * This file deals with the image related communication to the
  * client.  I've located all the functions in this file - this
  * localizes it more, and means that we don't need to declare
  * things like all the structures as globals.
@@ -39,33 +44,41 @@
 #include <newserver.h>
 #include <loader.h>
 
-#define MAX_FACE_SETS	20
+#define MAX_FACE_SETS	20  /**< Maximum number of image sets the program will handle */
 
+/** Information about one image */
 typedef struct FaceInfo {
-  uint8 *data;		    /* image data */
-  uint16 datalen;	    /* length of the xpm data */
-  uint32 checksum;	    /* Checksum of face data */
+  uint8 *data;		    /**< image data */
+  uint16 datalen;	    /**< length of the xpm data */
+  uint32 checksum;	    /**< Checksum of face data */
 } FaceInfo;
 
-
+/** Information about one face set */
 typedef struct {
-    char    *prefix;
+    char    *prefix;    /**< */
     char    *fullname;
-    uint8   fallback;
+    uint8   fallback;   /**< faceset to use when an image is not found in this faceset */
     char    *size;
     char    *extension;
     char    *comment;
-    FaceInfo	*faces;
+    FaceInfo	*faces; /**< images in this faceset */
 } FaceSets;
 
-static FaceSets facesets[MAX_FACE_SETS];
+static FaceSets facesets[MAX_FACE_SETS];    /**< All facesets */
 
+/**
+ * Checks specified faceset is valid
+ * \param fsn faceset number
+ */
 int is_valid_faceset(int fsn)
 {
     if (fsn >=0 && fsn < MAX_FACE_SETS && facesets[fsn].prefix) return TRUE;
     return FALSE;
 }
 
+/**
+ * Frees all faceset information
+ */
 void free_socket_images()
 {
     int num,q;
@@ -84,10 +97,17 @@ void free_socket_images()
     }
 }
 
-/* This returns the set we will actually use when sending
+/**
+ * This returns the set we will actually use when sending
  * a face.  This is used because the image files may be sparse.
  * This function is recursive.  imageno is the face number we are
  * trying to send
+ *
+ * If face is not found in specified faceset, tries with 'fallback' faceset.
+ *
+ * \param faceset faceset to check
+ * \param imageno image number
+ *
  */
 static int get_face_fallback(int faceset, int imageno)
 {
@@ -107,7 +127,9 @@ static int get_face_fallback(int faceset, int imageno)
     return get_face_fallback(facesets[faceset].fallback, imageno);
 }
 
-/* This is a simple recursive function that makes sure the fallbacks
+/**
+ * Checks fallback are correctly defined.
+ * This is a simple recursive function that makes sure the fallbacks
  * are all proper (eg, the fall back to defined sets, and also
  * eventually fall back to 0).  At the top level, togo is set to MAX_FACE_SETS,
  * if togo gets to zero, it means we have a loop.
@@ -132,25 +154,25 @@ static void check_faceset_fallback(int faceset, int togo)
     check_faceset_fallback(fallback, togo);
 }
 
-/* read_client_images loads all the iamge types into memory.
+#define MAX_IMAGE_SIZE 10000
+
+/**
+ * Loads all the image types into memory.
+ *
  *  This  way, we can easily send them to the client.  We should really do something
  * better than abort on any errors - on the other hand, these are all fatal
  * to the server (can't work around them), but the abort just seems a bit
  * messy (exit would probably be better.)
- */
-
-/* Couple of notes:  We assume that the faces are in a continous block.
+ *
+ * Couple of notes:  We assume that the faces are in a continous block.
  * This works fine for now, but this could perhaps change in the future
- */
-
-/* Function largely rewritten May 2000 to be more general purpose.
+ *
+ * Function largely rewritten May 2000 to be more general purpose.
  * The server itself does not care what the image data is - to the server,
  * it is just data it needs to allocate.  As such, the code is written
  * to do such.
  */
 
-
-#define MAX_IMAGE_SIZE 10000
 void read_client_images()
 {
     char filename[400];
@@ -250,7 +272,7 @@ void read_client_images()
     } /* For fileno < MAX_FACE_SETS */
 }
 
-/*
+/**
  * Client tells us what type of faces it wants.  Also sets
  * the caching attribute.
  *
@@ -276,7 +298,8 @@ void SetFaceMode(char *buf, int len, NewSocket *ns)
     }
 }
 
-/* client has requested pixmap that it somehow missed getting
+/**
+ * Client has requested pixmap that it somehow missed getting.
  * This will be called often if the client is
  * caching images.
  */
@@ -290,8 +313,8 @@ void SendFaceCmd(char *buff, int len, NewSocket *ns)
 	esrv_send_face(ns, facenum,1);
 }
 
-/*
- * esrv_send_face sends a face to a client if they are in pixmap mode
+/**
+ * Sends a face to a client if they are in pixmap mode
  * nothing gets sent in bitmap mode. 
  * If nocache is true (nonzero), ignore the cache setting from the client -
  * this is needed for the askface, in which we really do want to send the
@@ -354,7 +377,8 @@ void esrv_send_face(NewSocket *ns,short face_num, int nocache)
     free(sl.buf);
 }
 
-/* send_image_info: Sends the number of images, checksum of the face file,
+/**
+ * Sends the number of images, checksum of the face file,
  * and the image_info file information.  See the doc/Developers/protocol
  * if you want further detail.
  */
@@ -379,6 +403,15 @@ void send_image_info(NewSocket *ns, char *params)
     free(sl.buf);
 }
 
+/**
+ * Sends requested face information.
+ * \param ns socket to send to
+ * \param params contains first and last index of face
+ *
+ * For each image in [start..stop] sends
+ *  - checksum
+ *  - name
+ */
 void send_image_sums(NewSocket *ns, char *params)
 {
     int start, stop, qq,i;

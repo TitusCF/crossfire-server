@@ -26,7 +26,12 @@
     The author can be reached via e-mail to crossfire-devel@real-time.com
 */
 
-/*
+/**
+ * \file
+ * Client handling.
+ *
+ * \date 2003-12-02
+ *
  * This file implements all of the goo on the server side for handling 
  * clients.  It's got a bunch of global variables for keeping track of 
  * each of the clients. 
@@ -79,9 +84,10 @@
 
 #include "sounds.h"
 
-/* This table translates the attack numbers as used within the
+/**
+ * This table translates the attack numbers as used within the
  * program to the value we use when sending STATS command to the
- * client.  IF a value is -1, then we don't send that to the
+ * client.  If a value is -1, then we don't send that to the
  * client.
  */
 short atnr_cs_stat[NROFATTACKS] = {CS_STAT_RES_PHYS,
@@ -100,7 +106,7 @@ short atnr_cs_stat[NROFATTACKS] = {CS_STAT_RES_PHYS,
     -1 /* Disease - not fully done yet */
 };
 
-/* This is the Setup cmd - easy first implementation */
+/** This is the Setup cmd - easy first implementation */
 void SetUp(char *buf, int len, NewSocket *ns)
 {
     int s;
@@ -237,8 +243,9 @@ void SetUp(char *buf, int len, NewSocket *ns)
     Write_String_To_Socket(ns, cmdback, strlen(cmdback));
 }
 
-/* The client has requested to be added to the game.  This is what
- * takes care of it.  We tell the client how things worked out.
+/**
+ * The client has requested to be added to the game.
+ * This is what takes care of it.  We tell the client how things worked out.
  * I am not sure if this file is the best place for this function.  however,
  * it either has to be here or init_sockets needs to be exported.
  */
@@ -261,6 +268,7 @@ void AddMeCmd(char *buf, int len, NewSocket *ns)
     settings=oldsettings;	
 }
 
+/** Reply to ExtendedInfos command */
 void ToggleExtendedInfos (char *buf, int len, NewSocket *ns){
      char cmdback[MAX_BUF];
      char command[50];
@@ -327,7 +335,9 @@ void AskSmooth (char *buf, int len, NewSocket *ns){
      SockList_AddShort(&sl, smoothface);
      Send_With_Handling(ns, &sl);
 }
-/* This handles the general commands from the client (ie, north, fire, cast,
+
+/**
+ * This handles the general commands from the client (ie, north, fire, cast,
  * etc.)
  */
 void PlayerCmd(char *buf, int len, player *pl)
@@ -374,8 +384,9 @@ void PlayerCmd(char *buf, int len, player *pl)
 }
 
 
-/* This handles the general commands from the client (ie, north, fire, cast,
- * etc.)  It is a lot like PlayerCmd above, but is called with the
+/**
+ * This handles the general commands from the client (ie, north, fire, cast,
+ * etc.).  It is a lot like PlayerCmd above, but is called with the
  * 'ncom' method which gives more information back to the client so it
  * can throttle.
  */
@@ -438,7 +449,7 @@ void NewPlayerCmd(uint8 *buf, int len, player *pl)
 }
 
 
-/* This is a reply to a previous query. */
+/** This is a reply to a previous query. */
 void ReplyCmd(char *buf, int len, player *pl)
 {
     /* This is to synthesize how the data would be stored if it
@@ -503,7 +514,8 @@ void ReplyCmd(char *buf, int len, player *pl)
     }
 }
 
-/* Client tells its version.  If there is a mismatch, we close the
+/**
+ * Client tells its version.  If there is a mismatch, we close the
  * socket.  In real life, all we should care about is the client having
  * something older than the server.  If we assume the client will be
  * backwards compatible, having it be a later version should not be a 
@@ -556,14 +568,14 @@ void VersionCmd(char *buf, int len,NewSocket *ns)
     }
 }
 
-/* sound related functions. */
+/** sound related functions. */
  
 void SetSound(char *buf, int len, NewSocket *ns)
 {
     ns->sound = atoi(buf);
 }
 
-/* client wants the map resent */
+/** client wants the map resent */
 
 void MapRedrawCmd(char *buff, int len, player *pl)
 {
@@ -574,6 +586,7 @@ void MapRedrawCmd(char *buff, int len, player *pl)
     draw_client_map(pl->ob);
 }
 
+/** Newmap command */
 void MapNewmapCmd( player *pl)
 {
     if( pl->socket.newmapcmd == 1)
@@ -582,8 +595,9 @@ void MapNewmapCmd( player *pl)
 
 
 
-/* Moves and object (typically, container to inventory
- * move <to> <tag> <nrof> 
+/**
+ * Moves an object (typically, container to inventory).
+ * syntax is: move (to) (tag) (nrof)
  */
 void MoveCmd(char *buf, int len,player *pl)
 {
@@ -616,9 +630,9 @@ void MoveCmd(char *buf, int len,player *pl)
  *
  ******************************************************************************/
 
-/*
- * send_query asks the client to query the user.  This way, the client knows
- * it needs to send something back (vs just printing out a message
+/**
+ * Asks the client to query the user.  This way, the client knows
+ * it needs to send something back (vs just printing out a message)
  */
 void send_query(NewSocket *ns, uint8 flags, char *text)
 {
@@ -627,9 +641,6 @@ void send_query(NewSocket *ns, uint8 flags, char *text)
     sprintf(buf,"query %d %s", flags, text?text:"");
     Write_String_To_Socket(ns, buf, strlen(buf));
 }
-
-
-/* Sends the stats to the client - only sends them if they have changed */
 
 #define AddIfInt64(Old,New,Type) if (Old != New) {\
 			Old = New; \
@@ -664,8 +675,8 @@ void send_query(NewSocket *ns, uint8 flags, char *text)
 			sl.len += strlen(New); \
 			}
 
-/*
- * esrv_update_stats sends a statistics update.  We look at the old values,
+/**
+ * Sends a statistics update.  We look at the old values,
  * and only send what has changed.  Stat mapping values are in newclient.h
  * Since this gets sent a lot, this is actually one of the few binary
  * commands for now.
@@ -758,9 +769,9 @@ void esrv_update_stats(player *pl)
 }
 
 
-/* Tells the client that here is a player it should start using.
+/**
+ * Tells the client that here is a player it should start using.
  */
-
 void esrv_new_player(player *pl, uint32 weight)
 {
     SockList	sl;
@@ -783,7 +794,8 @@ void esrv_new_player(player *pl, uint32 weight)
 }
 
 
-/* Need to send an animation sequence to the client.
+/**
+ * Need to send an animation sequence to the client.
  * We will send appropriate face commands to the client if we haven't
  * sent them the face yet (this can become quite costly in terms of
  * how much we are sending - on the other hand, this should only happen
@@ -828,7 +840,8 @@ void esrv_send_animation(NewSocket *ns, short anim_num)
  *
  ******************************************************************************/
 
-/* This adds face_num to a map cell at x,y.  If the client doesn't have
+/**
+ * This adds face_num to a map cell at x,y.  If the client doesn't have
  * the face yet, we will also send it.
  */
 static void esrv_map_setbelow(NewSocket *ns, int x,int y,
@@ -864,6 +877,7 @@ struct MapLayer {
   struct LayerCell lcells[MAP_CLIENT_X * MAP_CLIENT_Y];
 };
 
+/** Checkes if map cells have changed */
 static int mapcellchanged(NewSocket *ns,int i,int j, struct Map *newmap)
 {
   int k;
@@ -879,11 +893,11 @@ static int mapcellchanged(NewSocket *ns,int i,int j, struct Map *newmap)
   return 0;
 }
 
-
-/* cnum is the client number, cur is the the buffer we put all of
+/**
+ * Basically, what this does is pack the data into layers.
+ * cnum is the client number, cur is the the buffer we put all of
  * this data into.  we return the end of the data.  layers is
  * how many layers of data we should back.
- * Basically, what this does is pack the data into layers.
  */  
 static uint8 *compactlayer(NewSocket *ns, unsigned char *cur, int numlayers, 
 			   struct Map *newmap)
@@ -983,7 +997,7 @@ static void esrv_map_doneredraw(NewSocket *ns, struct Map *newmap)
 }
 
 
-/* Clears a map cell */
+/** Clears a map cell */
 static void map_clearcell(struct MapCell *cell, int face0, int face1, int face2, int count)
 {
     cell->count=count;
@@ -1004,7 +1018,8 @@ static void map_clearcell(struct MapCell *cell, int face0, int face1, int face2,
 
 static object  *heads[MAX_HEAD_POS * MAX_HEAD_POS * MAX_LAYERS];
 
-/* simple function - returns true of any of the heads for this
+/**
+ * Returns true of any of the heads for this
  * space is set.  Returns 0 if all are blank - this is used
  * for empty space checking.
  */
@@ -1016,7 +1031,8 @@ static inline int have_head(int ax, int ay) {
     return 0;
 }
 
-/* check_head is a bit simplistic version of update_space below.
+/**
+ * check_head is a bit simplistic version of update_space below.
  * basically, it only checks the that the head on space ax,ay at layer
  * needs to get sent - if so, it adds the data, sending the head
  * if needed, and returning 1.  If this no data needs to get
@@ -1050,7 +1066,8 @@ static inline int check_head(SockList *sl, NewSocket *ns, int ax, int ay, int la
     return 0;   /* No change */
 }
 
-/* Removes the need to replicate the same code for each layer.
+/**
+ * Removes the need to replicate the same code for each layer.
  * this returns true if this space is now in fact different than
  * it was.
  * sl is the socklist this data is going into.
@@ -1250,7 +1267,8 @@ static inline int update_space(SockList *sl, NewSocket *ns, mapstruct  *mp, int 
     return 0;
 }
 
-/* This function is mainly a copy of update_space, 
+/**
+ * This function is mainly a copy of update_space, 
  * except it handles update of the smoothing updates,
  * not the face updates.
  * Removes the need to replicate the same code for each layer.
@@ -1305,7 +1323,8 @@ static inline int update_smooth(SockList *sl, NewSocket *ns, mapstruct  *mp, int
     /* Nothing changed */
     return 0;
 }
-/* returns the size of a data for a map square as returned by
+/**
+ * Returns the size of a data for a map square as returned by
  * mapextended. There are CLIENTMAPX*CLIENTMAPY*LAYERS entries
  * available.
  */
@@ -1317,7 +1336,8 @@ int getExtendedMapInfoSize(NewSocket* ns){
     }
     return result;
 }
-/* this function uses the new map1 protocol command to send the map
+/**
+ * This function uses the new map1 protocol command to send the map
  * to the client.  It is necessary because the old map command supports
  * a maximum map size of 15x15.
  * This function is much simpler than the old one.  This is because
@@ -1617,7 +1637,9 @@ void draw_client_map1(object *pl)
     free(sl.buf);
 }
 
-
+/**
+ * Draws client map.
+ */
 void draw_client_map(object *pl)
 {
     int i,j,nx,ny; /* ax and ay goes from 0 to max-size of arrays */
@@ -1791,9 +1813,10 @@ void send_plugin_custom_message(object *pl, char *buf)
     cs_write_string(&pl->contr->socket,buf,strlen(buf));
 }
 
-/* This sends the skill number to name mapping.  We ignore
+/**
+ * This sends the skill number to name mapping.  We ignore
  * the params - we always send the same info no matter what.
-  */
+ */
 void send_skill_info(NewSocket *ns, char *params)
 {
     SockList sl;

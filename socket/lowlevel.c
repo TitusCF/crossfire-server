@@ -26,7 +26,13 @@
     The author can be reached via e-mail to mark@pyramid.com
 */
 
-/* newsocket.c contains some base functions that both the client and server
+/**
+ * \file
+ * Low-level socket-related functions.
+ *
+ * \date 2003-12-02
+ *
+ * Contains some base functions that both the client and server
  * can use.  As such, depending what we are being compiled for will
  * determine what we can include.  the client is designed have
  * CFCLIENT defined as part of its compile flags.
@@ -100,7 +106,8 @@ short GetShort_String(unsigned char *data) {
  *
  ******************************************************************************/
 
-/* this readsfrom fd and puts the data in sl.  We return true if we think
+/**
+ * This reads from fd and puts the data in sl.  We return true if we think
  * we have a full packet, 0 if we have a partial packet.  The only processing
  * we do is remove the intial size value.  len (As passed) is the size of the
  * buffer allocated in the socklist.  We make the assumption the buffer is
@@ -229,7 +236,9 @@ int SockList_ReadPacket(int fd, SockList *sl, int len)
  *
  ******************************************************************************/
 
-/* Adds data to a socket buffer for whatever reason.
+/**
+ * Adds data to a socket buffer for whatever reason.
+ *
  * ns is the socket we are adding the data to, buf is the start of the
  * data, and len is the number of bytes to add.
  */
@@ -269,7 +278,10 @@ static void add_to_buffer(NewSocket *ns, unsigned char *buf, int len)
 #endif
 }
 
-/* When the socket is clear to write, and we have backlogged data, this
+/**
+ * Writes data to socket.
+ *
+ * When the socket is clear to write, and we have backlogged data, this
  * is called to write it out.
  */
 void write_socket_buffer(NewSocket *ns)
@@ -324,7 +336,8 @@ void write_socket_buffer(NewSocket *ns)
     } while (ns->outputbuffer.len>0);
 }
 
-/* This writes data to the socket. - It is very low level -
+/**
+ * This writes data to the socket. - It is very low level -
  * all we try and do is write out the data to the socket
  * provided (ns).  buf is the data to write, len is the number
  * of bytes to write.  IT doesn't return anything - rather, it
@@ -389,7 +402,8 @@ void Write_To_Socket(NewSocket *ns, unsigned char *buf, int len)
 }
 
 
-/* Takes a string of data, and writes it out to the socket. A very handy
+/**
+ * Takes a string of data, and writes it out to the socket. A very handy
  * shortcut function.
  */
 void cs_write_string(NewSocket *ns, const char *buf, int len)
@@ -402,7 +416,9 @@ void cs_write_string(NewSocket *ns, const char *buf, int len)
 }
 
 
-/* Send With Handling - calls Write_To_Socket to send data to the client.
+/**
+ * Calls Write_To_Socket to send data to the client.
+ *
  * The only difference in this function is that we take a SockList
  *, and we prepend the length information.
  */
@@ -428,7 +444,8 @@ void Send_With_Handling(NewSocket *ns,SockList  *msg)
     Write_To_Socket(ns, msg->buf, msg->len);
 }
 
-/* Takes a string of data, and writes it out to the socket. A very handy
+/**
+ * Takes a string of data, and writes it out to the socket. A very handy
  * shortcut function.
  */
 void Write_String_To_Socket(NewSocket *ns, char *buf, int len)
@@ -453,7 +470,8 @@ void Write_String_To_Socket(NewSocket *ns, char *buf, int len)
  */
 CS_Stats cst_tot, cst_lst;
 
-/* Writes out the gathered stats.  We clear cst_lst.
+/**
+ * Writes out the gathered stats.  We clear cst_lst.
  */
 void write_cs_stats()
 {

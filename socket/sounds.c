@@ -5,15 +5,27 @@
 
 /* Send bug reports to Raphael Quinet (quinet@montefiore.ulg.ac.be) */
 
+/**
+ * \file
+ * Sound-related functions.
+ *
+ * \date 2003-12-02
+ */
+
 #include <global.h>
 #include <sproto.h>
 #include <sounds.h>
 
-/* This is only used for new client/server sound.  If the sound source
+/**
+ * Maximum distance a player may hear a sound from.
+ * This is only used for new client/server sound.  If the sound source
  * on the map is farther away than this, we don't sent it to the client.
  */
 #define MAX_SOUND_DISTANCE 10
 
+/**
+ * Plays a sound for specified player only
+ */
 void play_sound_player_only(player *pl, int soundnum,  int x, int y)
 {
     int soundtype;
@@ -40,7 +52,7 @@ void play_sound_player_only(player *pl, int soundnum,  int x, int y)
 
 #define POW2(x) ((x) * (x))
 
-/* Plays some sound on map at x,y.  */
+/** Plays some sound on map at x,y.  */
 void play_sound_map(mapstruct *map, int x, int y, int sound_num)
 {
     player *pl;

@@ -26,7 +26,13 @@
     The authors can be reached via e-mail at crossfire-devel@real-time.com
 */
 
-/* This file implements some of the simpler output functions to the
+/**
+ * \file
+ * Basic client output functions.
+ *
+ * \date 2003-12-02
+ *
+ * This file implements some of the simpler output functions to the
  * client.  Basically, things like sending text strings along
  */
 
@@ -36,8 +42,8 @@
 #include <spells.h>
 #include <skills.h>
 
-/*
- * esrv_print_msg draws a normal message on the client.  It is pretty 
+/**
+ * Draws a normal message on the client.  It is pretty 
  * much the same thing as the draw_info above, but takes a color
  * parameter.  the esrv_drawinfo functions should probably be
  * replaced with this, just using black as the color.
@@ -55,19 +61,17 @@ static void esrv_print_msg(NewSocket *ns,int color, const char *str)
     Write_String_To_Socket(ns, buf, strlen(buf));
 }
 
-/****************************************************************************
-print_message : This routine prints out the character string in tmp on the
-                info window. If in color mode, then the text will show up in
-                a color specified by the variable colr. If Black and white
-                mode, then it prints a line of "="s before and after the
-                messsage.
 
-		This has been changed around - this is now a front end to
-		draw_info.  draw_info should never be called directly, except
-		by this functin.  Likewise, this function should only be
-		called by a few functions above (new_draw_info, 
-		check_output_buffers)
-****************************************************************************/
+/**
+ * Frontend for esrv_print_msg
+ * \param colr message color
+ * \param pl player to send to. Can be NULL
+ * \param tmp message to send. Can be NULL
+ *
+ * If pl is NULL or without contr set, writes message to log.
+ *
+ * Else sends message to player via esrv_print_msg
+ */
 
 static void print_message(int colr, object *pl,const char *tmp) {
 
@@ -86,7 +90,8 @@ static void print_message(int colr, object *pl,const char *tmp) {
 }
 
 
-/* Following prints out the contents of one of the buffer structures,
+/**
+ * Prints out the contents of specified buffer structures,
  * and clears the string.
  */
 
@@ -102,8 +107,19 @@ void flush_output_element(object *pl, Output_Buf *outputs)
     outputs->first_update=0;	/* This way, it will be reused */
 }
 
-/* Following checks the various buffers in the player structure and
- * other things, and stores/prints/whatever's the data, as appropriate.
+/**
+ * Sends message to player through output buffers.
+ * \param pl player to send message
+ * \param buf message to send
+ *
+ * If player's output_count is 1, sends message directly.
+ *
+ * Else checks output buffers for specified message.
+ *
+ * If found, checks if message should be sent now.
+ *
+ * If message not already in buffers, flushes olders buffer,
+ * and adds message to queue.
  */
 
 void check_output_buffers(object *pl, char *buf)
@@ -144,8 +160,8 @@ void check_output_buffers(object *pl, char *buf)
 	    
 
 
-/*
- * new_draw_info:
+/**
+ * Sends message to player(s).
  *
  * flags is various flags - mostly color, plus a few specials.
  *
@@ -157,8 +173,9 @@ void check_output_buffers(object *pl, char *buf)
  * pl can be passed as NULL - in fact, this will be done if NDI_ALL is set
  * in the flags.
  *
+ * If message is black, and not NDI_UNIQUE, gets sent through output buffers.
+ *
  */
-
 
 void new_draw_info(int flags,int pri, object *pl, const char *buf)
 {
@@ -197,9 +214,12 @@ void new_draw_info(int flags,int pri, object *pl, const char *buf)
     }
 }
 
-/* This is a pretty trivial function, but it allows us to use printf style
+/**
+ * Wrapper for new_draw_info printf-like.
+ *
+ * This is a pretty trivial function, but it allows us to use printf style
  * formatting, so instead of the calling function having to do it, we do
- * it here.  IT may also have advantages in the future for reduction of
+ * it here.  It may also have advantages in the future for reduction of
  * client/server bandwidth (client could keep track of various strings
  */
 
@@ -217,8 +237,8 @@ void new_draw_info_format(int flags, int pri,object *pl, char *format, ...)
     new_draw_info(flags, pri, pl, buf);
 }
 
-/*
- * write to everyone on the map *except* op.  This is useful for emotions.
+/**
+ * Writes to everyone on the map *except* op.  This is useful for emotions.
  */
 
 void new_info_map_except(int color, mapstruct *map, object *op, char *str) {
@@ -230,8 +250,8 @@ void new_info_map_except(int color, mapstruct *map, object *op, char *str) {
 	}
 }
 
-/*
- * write to everyone on the map except op1 and op2
+/**
+ * Writes to everyone on the map except op1 and op2
  */
 
 void new_info_map_except2(int color, mapstruct *map, object *op1, object *op2,
@@ -245,8 +265,8 @@ void new_info_map_except2(int color, mapstruct *map, object *op1, object *op2,
 	}
 }
 
-/*
- * write to everyone on the current map
+/**
+ * Writes to everyone on the specified map
  */
 
 void new_info_map(int color, mapstruct *map, char *str) {
@@ -259,7 +279,8 @@ void new_info_map(int color, mapstruct *map, char *str) {
 }
 
 
-/* This does nothing now.  However, in theory, we should probably send
+/**
+ * This does nothing now.  However, in theory, we should probably send
  * something to the client and let the client figure out how it might want
  * to handle this
  */
@@ -267,6 +288,9 @@ void clear_win_info(object *op)
 {
 }
 
+/**
+ * Get player's current range attack in obuf.
+ */
 void rangetostring(object *pl,char *obuf)
 {
     switch(pl->contr->shoottype) {
@@ -333,6 +357,9 @@ void rangetostring(object *pl,char *obuf)
     }
 }
 
+/**
+ * Sets player title.
+ */
 void set_title(object *pl,char *buf)
 {
     /* Eneq(@csd.uu.se): Let players define their own titles. */
@@ -343,12 +370,15 @@ void set_title(object *pl,char *buf)
 }
 
 
-/* Takes a player, the map_mark array and an x and y starting position.
+/**
+ * Helper for magic map creation.
+ *
+ * Takes a player, the map_mark array and an x and y starting position.
  * pl is the player.
  * px, py are offsets from the player.
  *
  * This function examines all the adjacant spaces next to px, py.
- * It updates teh map_mark arrow with the color and high bits set
+ * It updates the map_mark arrow with the color and high bits set
  * for various code values.
  */
 static void magic_mapping_mark_recursive(object *pl, char *map_mark, int px, int py)
@@ -394,7 +424,10 @@ static void magic_mapping_mark_recursive(object *pl, char *map_mark, int px, int
 }
 
 
-/* Note:  For improved magic mapping display, the space that blocks
+/**
+ * Creates magic map for player.
+ *
+ * Note:  For improved magic mapping display, the space that blocks
  * the view is now marked with value 2.  Any dependencies of map_mark
  * being nonzero have been changed to check for 1.  Also, since
  * map_mark is a char value, putting 2 in should cause no problems.
@@ -441,7 +474,10 @@ void magic_mapping_mark(object *pl, char *map_mark, int strength)
 }
 
 
-/* The following function is a lot messier than it really should be,
+/**
+ * Creates and sends magic map to player.
+ *
+ * The following function is a lot messier than it really should be,
  * but there is no real easy solution.
  *
  * Mark Wedel
@@ -499,7 +535,7 @@ void draw_magic_map(object *pl)
 }
 
 
-/*
+/**
  * Send a kill log record to sockets
  */
 

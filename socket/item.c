@@ -27,7 +27,13 @@
     The author can be reached via e-mail to crossfire-devel@real-time.com
 */
 
-/* This containes item logic for client/server.  IT doesn't contain
+/**
+ * \file
+ * Client/server logic.
+ *
+ * \date 2003-12-02
+ *
+ * This containes item logic for client/server.  It doesn't contain
  * the actual commands that send the data, but does contain
  * the logic for what items should be sent.
  */
@@ -39,7 +45,7 @@
 #include <newserver.h>
 #include <sproto.h>
 
-/* This is the maximum number of bytes we expect any one item to take up */
+/** This is the maximum number of bytes we expect any one item to take up */
 #define MAXITEMLEN  300
 
 /*******************************************************************************
@@ -48,10 +54,13 @@
  *
  ******************************************************************************/
 
-/* This is more or less stolen from the query_weight function. */
+/** This is more or less stolen from the query_weight function. */
 #define WEIGHT(op) (op->nrof?op->weight:op->weight+op->carrying)
 
-/* This is a simple function that we use a lot here.  It basically
+/**
+ * Adds string to socklist.
+ *
+ * This is a simple function that we use a lot here.  It basically
  * adds the specified buffer into the socklist, but prepends a
  * single byte in length.  If the data is longer than that byte, it is
  * truncated approprately.
@@ -67,7 +76,7 @@ inline void add_stringlen_to_sockbuf(char *buf, SockList *sl)
     sl->len += len;
 }
 
-/* 
+/**
  *  This is a similar to query_name, but returns flags
  *  to be sended to client. 
  */
@@ -127,7 +136,8 @@ unsigned int query_flags (object *op)
     return flags;
 }
 
-/* draw the look window.  Don't need to do animations here 
+/**
+ * Send the look window.  Don't need to do animations here 
  * This sends all the faces to the client, not just updates.  This is
  * because object ordering would otherwise be inconsistent
  */
@@ -274,6 +284,9 @@ void esrv_draw_look(object *pl)
     free(sl.buf);
 }
 
+/**
+ * Sends whole inventory.
+ */
 void esrv_send_inventory(object *pl, object *op)
 {
     object *tmp;
@@ -362,7 +375,10 @@ void esrv_send_inventory(object *pl, object *op)
     free(sl.buf);
 }
 
-/* Updates object *op for player *pl.  flags is a list of values to update
+/**
+ * Updates object *op for player *pl.
+ *
+ * flags is a list of values to update
  * to the client (as defined in newclient.h - might as well use the
  * same value both places.
  */
@@ -456,6 +472,9 @@ void esrv_update_item(int flags, object *pl, object *op)
     free(sl.buf);
 }
 
+/**
+ * Sends item's info to player.
+ */
 void esrv_send_item(object *pl, object*op)
 {
     int anim_speed, len;
@@ -533,7 +552,8 @@ void esrv_send_item(object *pl, object*op)
     free(sl.buf);
 }
 
-/* Tells the client to delete an item.  Uses the item
+/**
+ * Tells the client to delete an item.  Uses the item
  * command with a -1 location.
  */
 
@@ -558,7 +578,8 @@ void esrv_del_item(player *pl, int tag)
  *
  ******************************************************************************/
 
-/* Takes a player and object count (tag) and returns the actual object
+/**
+ * Takes a player and object count (tag) and returns the actual object
  * pointer, or null if it can't be found.
  */
 
@@ -588,7 +609,7 @@ object *esrv_get_ob_from_count(object *pl, tag_t count)
 }
 
 
-/* Client wants to examine some object.  So lets do so. */
+/** Client wants to examine some object.  So lets do so. */
 void ExamineCmd(char *buf, int len,player *pl)
 {
     long tag = atoi(buf);
@@ -602,7 +623,7 @@ void ExamineCmd(char *buf, int len,player *pl)
     examine (pl->ob, op);
 }
 
-/* Client wants to apply some object.  Lets do so. */
+/** Client wants to apply some object.  Lets do so. */
 void ApplyCmd(char *buf, int len,player *pl)
 {
     uint32 tag = atoi(buf);
@@ -628,7 +649,7 @@ void ApplyCmd(char *buf, int len,player *pl)
     player_apply (pl->ob, op, 0, 0);
 }
 
-/* Client wants to apply some object.  Lets do so. */
+/** Client wants to apply some object.  Lets do so. */
 void LockItem(uint8 *data, int len,player *pl)
 {
     int flag, tag;
@@ -649,7 +670,7 @@ void LockItem(uint8 *data, int len,player *pl)
     esrv_update_item(UPD_FLAGS, pl->ob, op);
 }
 
-/* Client wants to apply some object.  Lets do so. */
+/** Client wants to apply some object.  Lets do so. */
 void MarkItem(uint8 *data, int len,player *pl)
 {
     int tag;
@@ -667,8 +688,9 @@ void MarkItem(uint8 *data, int len,player *pl)
 }
 
 
-/*
- * look_at prints items on the specifc square.
+/**
+ * look_at prints items on the specified square.
+ *
  * [ removed EARTHWALL check and added check for containers inventory.
  *   Tero.Haatanen@lut.fi ]
  */
@@ -726,7 +748,7 @@ void look_at(object *op,int dx,int dy) {
 
 
 
-/* Client wants to apply some object.  Lets do so. */
+/** Client wants to look at some object.  Lets do so. */
 void LookAt(char *buf, int len,player *pl)
 {
     int dx, dy;
@@ -746,8 +768,7 @@ void LookAt(char *buf, int len,player *pl)
     look_at(pl->ob, dx, dy);
 }
 
-/* Move an object to a new lcoation */
-
+/** Move an object to a new location */
 void esrv_move_object (object *pl, tag_t to, tag_t tag, long nrof)
 {
     object *op, *env;

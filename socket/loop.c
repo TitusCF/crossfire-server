@@ -27,7 +27,13 @@
     The author can be reached via e-mail to crossfire-devel@real-time.com
 */
 
-/* socket.c mainly deals with initialization and higher level socket
+/**
+ * \file
+ * Main client/server loops.
+ *
+ * \date 2003-12-02
+ *
+ * loop.c mainly deals with initialization and higher level socket
  * maintenance (checking for lost connections and if data has arrived.)
  * The reading of data is handled in ericserver.c
  */
@@ -84,7 +90,9 @@ struct PlCmdMapping {
     uint8   flag;
 };
 
-/*
+/**
+ * Dispatch table for the server.
+ *
  * CmdMapping is the dispatch table for the server, used in HandleClient,
  * which gets called when the client has input.  All commands called here 
  * use the same parameter form (char* data, int len, int clientnum.
@@ -109,6 +117,7 @@ static struct PlCmdMapping plcommands[] = {
     { NULL, NULL}	/* terminator */
 };
 
+/** Face-related commands */
 static struct NsCmdMapping nscommands[] = {
     { "addme",		AddMeCmd },
     { "askface",	SendFaceCmd},	/* Added: phil */
@@ -122,7 +131,8 @@ static struct NsCmdMapping nscommands[] = {
     { NULL, NULL}	/* terminator */
 };
 
-/* RequestInfo is sort of a meta command - there is some specific
+/**
+ * RequestInfo is sort of a meta command. There is some specific
  * request of information, but we call other functions to provide
  * that information.
  */
@@ -155,6 +165,9 @@ void RequestInfo(char *buf, int len, NewSocket *ns)
     else Write_String_To_Socket(ns, bigbuf, len);
 }
 
+/**
+ * Handles old socket format.
+ */
 void Handle_Oldsocket(NewSocket *ns)
 {
     int stat,i;
@@ -282,7 +295,10 @@ void Handle_Oldsocket(NewSocket *ns)
 }
 
 
-/* HandleClient is actually not named really well - we only get here once
+/**
+ * Handle client input.
+ *
+ * HandleClient is actually not named really well - we only get here once
  * there is input, so we don't do exception or other stuff here.
  * sock is the output socket information.  pl is the player associated
  * with this socket, null if no player (one of the init_sockets for just
@@ -385,8 +401,9 @@ void HandleClient(NewSocket *ns, player *pl)
  ******************************************************************************/
 
 #ifdef WATCHDOG
-/*
+/**
  * Tell watchdog that we are still alive
+ *
  * I put the function here since we should hopefully already be getting
  * all the needed include files for socket support 
  */
@@ -415,6 +432,7 @@ void watchdog(void)
 
 extern unsigned long todtick;
 
+/** Waits for new connection */
 static void block_until_new_connection()
 {
 
@@ -456,8 +474,10 @@ static void block_until_new_connection()
 }
 
 
-/* This checks the sockets for input and exceptions, does the right thing.  A 
- * bit of this code is grabbed out of socket.c
+/**
+ * This checks the sockets for input and exceptions, does the right thing.
+ *
+ * A bit of this code is grabbed out of socket.c
  * There are 2 lists we need to look through - init_sockets is a list
  * 
  */

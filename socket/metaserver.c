@@ -26,6 +26,12 @@
     The authors can be reached via e-mail at crossfire-devel@real-time.com
 */
 
+/**
+ * \file
+ * \date 2003-12-02
+ * Meta-server related functions.
+ */
+
 #include <global.h>
 
 #ifndef WIN32 /* ---win32 exclude unix header files */
@@ -40,7 +46,10 @@
 static int metafd=-1;
 static struct sockaddr_in sock;
 
-/* metaserver_init sets up the connection.  Its only called once.  If we are not
+/**
+ * Connects to metaserver.
+ *
+ * Its only called once.  If we are not
  * trying to contact the metaserver of the connection attempt fails, metafd will be
  * set to -1.  We use this instead of messing with the settings.meta_on so that
  * that can be examined to at least see what the user was trying to do.
@@ -105,7 +114,9 @@ void metaserver_init()
     }
 }
 
-
+/**
+ * Updates our info in the metaserver
+ */
 void metaserver_update()
 {
     char data[MAX_BUF], num_players=0;

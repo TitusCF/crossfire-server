@@ -26,7 +26,13 @@
     The author can be reached via e-mail to crossfire-devel@real-time.com
 */
 
-/* socket.c mainly deals with initialization and higher level socket
+/**
+ * \file
+ * Socket general functions
+ *
+ * \date 2003-12-02
+ *
+ * Mainly deals with initialization and higher level socket
  * maintenance (checking for lost connections and if data has arrived.)
  * The reading of data is handled in ericserver.c
  */
@@ -56,7 +62,8 @@
 Socket_Info socket_info;
 NewSocket *init_sockets;
 
-/* Initializes a connection - really, it just sets up the data structure,
+/**
+ * Initializes a connection. Really, it just sets up the data structure,
  * socket setup is handled elsewhere.  We do send a version to the
  * client.
  */
@@ -157,7 +164,7 @@ void InitConnection(NewSocket *ns, uint32 from)
 }
 
 
-/* This sets up the socket and reads all the image information into memory. */
+/** This sets up the socket and reads all the image information into memory. */
 void init_ericserver()
 {
     struct sockaddr_in	insock;
@@ -277,7 +284,7 @@ void init_ericserver()
  *
  ******************************************************************************/
 
-/* Free's all the memory that ericserver allocates. */
+/** Free's all the memory that ericserver allocates. */
 void free_all_newserver()
 {  
     LOG(llevDebug,"Freeing all new client/server information.\n");
@@ -285,7 +292,9 @@ void free_all_newserver()
     free(init_sockets);
 }
 
-/* basically, all we need to do here is free all data structures that
+/**
+ * Frees a socket.
+ * Basically, all we need to do here is free all data structures that
  * might be associated with the socket.  It is up to the caller to
  * update the list
  */
@@ -313,6 +322,7 @@ void free_newsocket(NewSocket *ns)
     free(ns->inbuf.buf);
 }
 
+/** Sends the 'goodbye' command to the player, and closes connection. */
 void final_free_player(player *pl)
 {
     cs_write_string(&pl->socket, "goodbye", 8);
