@@ -1,0 +1,132 @@
+         List of relations
+      Name      | Type  |   Owner   
+----------------+-------+-----------
+ arena          | table | crossfire
+ birth          | table | crossfire
+ creature_death | table | crossfire
+ death          | table | crossfire
+ dialog         | table | crossfire
+ map_state      | table | crossfire
+ map_visits     | table | crossfire
+ playerlog      | table | crossfire
+ playershoot    | table | crossfire
+ screenshoot    | table | crossfire
+ server_events  | table | crossfire
+(11 rows)
+
+              Table "arena"
+   Attribute    |     Type     | Modifier 
+----------------+--------------+----------
+ winner         | varchar(50)  |
+ looser         | varchar(50)  | 
+ winner_comment | varchar(500) | 
+ looser_comment | varchar(500) | 
+ moment         | timestamp    | 
+ counter        | integer      | 
+ screenshoot    | varchar(32)  | 
+
+            Table "birth"
+ Attribute |     Type     | Modifier 
+-----------+--------------+----------
+ moment    | timestamp    | 
+ player    | varchar(200) | 
+ race      | varchar(200) | 
+ species   | varchar(200) | 
+ path      | varchar(200) |
+ counter   | integer      | 
+
+       Table "creature_death"
+ Attribute |     Type     | Modifier 
+-----------+--------------+----------
+ name      | varchar(200) | 
+ type      | integer      | 
+ moment    | timestamp    | 
+ count     | integer      | 
+
+             Table "death"
+  Attribute  |     Type     | Modifier 
+-------------+--------------+----------
+ moment      | timestamp    | 
+ player      | varchar(200) | 
+ killer      | varchar(200) | 
+ playershoot | varchar(32)  | 
+ screenshoot | varchar(32)  | 
+ counter     | integer      | 
+
+            Table "dialog"
+ Attribute  |     Type     | Modifier 
+------------+--------------+----------
+ moment     | timestamp    | 
+ player     | varchar(200) | 
+ title      | varchar(200) | 
+ saywhat    | varchar(500) | 
+ dialogtype | integer      | 
+ counter    | integer      | 
+
+          Table "map_state"
+ Attribute |     Type     | Modifier 
+-----------+--------------+----------
+ path      | varchar(200) | 
+ state     | integer      | 
+ moment    | timestamp    | 
+ name      | varchar(200) | 
+
+         Table "map_visits"
+ Attribute |     Type     | Modifier 
+-----------+--------------+----------
+ mappath   | varchar(200) | 
+ mapname   | varchar(100) | 
+ visittime | integer      | 
+ period    | timestamp    | 
+
+          Table "playerlog"
+ Attribute  |     Type     | Modifier 
+------------+--------------+----------
+ moment     | timestamp    | 
+ counter    | integer      | 
+ player     | varchar(200) | 
+ logmessage | varchar(50)  | 
+ playerstat | varchar(32)  | 
+ host       | varchar(50)  | 
+
+           Table "playershoot"
+   Attribute    |     Type     | Modifier 
+----------------+--------------+----------
+ player         | varchar(200) | 
+ title          | varchar(200) | 
+ inventoryfile  | varchar(200) | 
+ face           | varchar(50)  | 
+ agilitylvl     | integer      | 
+ agilityexp     | integer      | 
+ mentallvl      | integer      | 
+ mentalexp      | integer      | 
+ physiquelvl    | integer      | 
+ physiqueexp    | integer      | 
+ magiclvl       | integer      | 
+ magicexp       | integer      | 
+ wisdomlvl      | integer      | 
+ wisdomexp      | integer      | 
+ personalitylvl | integer      | 
+ personalityexp | integer      | 
+ generallvl     | integer      | 
+ generalexp     | integer      | 
+ god            | varchar(50)  | 
+ id             | varchar(32)  | 
+ moment         | timestamp    | 
+ counter        | integer      | 
+
+         Table "screenshoot"
+ Attribute |     Type     | Modifier 
+-----------+--------------+----------
+ id        | varchar(32)  | 
+ shootfile | varchar(200) | 
+
+        Table "server_events"
+ Attribute  |     Type     | Modifier 
+------------+--------------+----------
+ event      | integer      | 
+ parameter1 | varchar(200) | 
+ moment     | timestamp    | 
+ counter    | integer      | 
+ parameter2 | varchar(200) | 
+

@@ -1,0 +1,54 @@
+Configuring and installing the plugin_logger V0.1
+
+System requirements:
+
+ -> crossfire with plugins support
+ -> the source of the archetypes located in ../lib/arch/
+    If your don't have them, you must download them from crossfire repository
+ -> an ODBC library and its developpement header (sql.h, sqlext.h, sqltypes.h)
+ -> A database and it's ODBC driver
+    note: At the time i'm writing those line only postgersql is
+          suported within the web interface. But it does not hurt
+          installing the plugin without web interface so it only
+          gather informations about players.
+ -> web server
+ -> php with libgd support
+    (libgd is used to support pictures creation within php)
+
+Installing:
+
+A) the plugin itself
+
+  1) Be sure your system has ODBC configured in it
+     On unix systems, this can be done by installing libunixODBC and libunixODBC-devel.
+  2) Create a database using your prefered database system.
+     Ensure it has odbc support (mysql and postgresql have)
+  3) Using the ODBC tools create a DSN (Database Server Name) and test it.
+     Testing on systems with unixodbc is done by invoking the following command
+         isql DSN username password
+  4) write down the DSNname, the username and the password to access the database
+  5) edit include/plugin_logging.h and change the parameters to fit your system
+     Most important ones are those used to access database (DSN and so on)
+     and those used to know where your web pages are located (usually /var/www/html/crossfire)
+  6) use any sql tool to create the tables listed in database.txt
+     Further developpements will include a tool to do it for you.
+     'Till it's done, do it yourself....
+  7) Edit the top of Makefile to fit your crossfire and apache configuration
+  8) type
+         make
+         make install
+  9) Replace the player_changer.arc file in the source arch tree with the one
+     provided in this directory. Rebuild and reinstall the archetypes
+  10)Reset the crossfire server
+
+B) The web interface
+
+  1) Edit the top of html/crossfire/database.php to fit your database system
+  2) Edit the top of Makefile to fit you system configuration
+  3) Type
+         make pictures
+     which will gather all the pictures from the ../lib/arch directory
+  4) Type
+         make html_install
+
+That's all guys...

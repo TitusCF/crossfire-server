@@ -1,0 +1,1490 @@
+/*
+ * The crossfire logging facility.
+ * This plugin is part of a project who's purpose is to track every
+ * interesting thing happening in the crossfire server, from conversation
+ * between player and their deaths to informations about server crashes.
+ * The datas could then be loaded by some php pages to present info on a player,
+ * important events of the day, current Xp of all players,
+ * crash-o-meter and so on.
+ */
+
+/*
+ * This code is placed under the GNU General Public Licence (GPL)
+ * either version 2 or higher, at your choice. You can get a copy
+ * of the GPL at the following address: http://www.gnu.org
+ *
+ * (C)2001 Tchize. Feel free to log errors.
+ * tchize@mailandnews.com
+ */
+
+#include <plugin_logging.h>
+#ifndef __CEXTRACT__
+#include <logger_proto.h>
+#endif
+
+#define FLAG_ARENA_IS_INVALID   0x00000000
+#define FLAG_ARENA_HAS_PLAYER1  0x00000001
+#define FLAG_ARENA_HAS_PLAYER2  0x00000002
+/*Not all used yet*/
+#define FLAG_ARENA_HAS_COMMENT1 0x00000004
+#define FLAG_ARENA_HAS_COMMENT2 0x00000008
+#define FLAG_ARENA_HAS_RESULT   0x00000010
+#define FLAG_ARENA_HAS_ALL      0x0000001F
+
+#define QUERY_ARENA_FLAG(arena_name,flag) (arena_name.flags & flag)
+#define COMMENT_LENGTH 2048
+
+typedef struct {
+    char players[2][MAX_BUF];
+    int result;
+           /*0: player0 won. 1: player1 won. -1: not valid */
+    char comment[2][COMMENT_LENGTH];
+           /*0: winner comment. 1: looser comment*/
+    char timestamp[MAX_BUF];
+    int counter;
+    char screenshoot[MAX_BUF];
+    int flags;
+           /*screenshoots for player 0 and 1 at fatal moment*/
+    } arena_data;
+#define EMPTY_ARENA_DATAS { {"Player1","Player2"},\
+                          -1,                     \
+                          {"",""},                \
+                          "",-1,                  \
+                          "",                \
+                          FLAG_ARENA_IS_INVALID}
+arena_data empty_arena = EMPTY_ARENA_DATAS;
+arena_data last_arena=EMPTY_ARENA_DATAS, current_arena=EMPTY_ARENA_DATAS;
+
+int arena_player_comment (object* talker, char* saywhat, int playernumber)
+{
+    printf ("%s -> %s (%d)\n",talker->name,saywhat,playernumber);
+    if ((playernumber>1)|| !saywhat) return -1;
+    if (strcmp(last_arena.players[playernumber],talker->name)) return -1; /*Bad commenter*/
+    if ((strlen (saywhat)+strlen(last_arena.comment[playernumber])+3) >COMMENT_LENGTH) return -1; /*No space left*/
+    printf ("player %d said:\n %s\n-------\n",playernumber,saywhat);
+    strcat (last_arena.comment[playernumber],"\n");
+    strcat (last_arena.comment[playernumber],saywhat);
+    return 1;/*Return 1 to stop sending the say to other npcs!*/
+}
+
+int arena_looser_comment (object* talker, char* saywhat)
+{
+    if (QUERY_ARENA_FLAG(last_arena,FLAG_ARENA_HAS_RESULT))
+        return arena_player_comment (talker,saywhat,1-last_arena.result);
+    else return -1; /*No arena ready*/
+}
+
+int arena_winner_comment (object* talker, char* saywhat)
+{
+    if (QUERY_ARENA_FLAG(last_arena,FLAG_ARENA_HAS_RESULT))
+        return arena_player_comment (talker,saywhat,last_arena.result);
+    else{printf ("error\n"); return -1;}; /*No arena ready*/
+}
+/*Later may be used to force a player to comment!*/
+int arena_looser_leave(object* who)
+{
+    if (!strcmp(last_arena.players[1-last_arena.result],who->name)) return 0;
+    else last_arena.flags|=(last_arena.result>0)?FLAG_ARENA_HAS_COMMENT1:FLAG_ARENA_HAS_COMMENT2;
+    arena_fix_last();
+    return 0;
+}
+
+/*Later may be used to force a player to comment!*/
+int arena_winner_leave(object* who)
+{
+    if (!strcmp(last_arena.players[last_arena.result],who->name)) return 0;
+    else last_arena.flags|=(last_arena.result>0)?FLAG_ARENA_HAS_COMMENT2:FLAG_ARENA_HAS_COMMENT1;
+    arena_fix_last();
+    return 0;
+}
+
+void set_arena_time (void)
+{
+    gettimestamp (current_arena.timestamp,sizeof (current_arena.timestamp),&current_arena.counter);
+}
+
+void arena_fix_last (void)
+{
+    if (QUERY_ARENA_FLAG(last_arena,FLAG_ARENA_HAS_ALL)){
+        save_last_arena();
+        last_arena.flags=FLAG_ARENA_IS_INVALID;
+        /* Invalidate arena to be sure it is saved only once!  */
+        }
+}
+
+void save_last_arena(void)
+{
+    char query[HUGE_BUF];
+    if (!QUERY_ARENA_FLAG(last_arena,FLAG_ARENA_HAS_RESULT)) return;
+    printf ("Last arena was %s vs %s\n",last_arena.players[0],last_arena.players[1]);
+    printf ("%s won it\n",(last_arena.result==0)?last_arena.players[0]:last_arena.players[1]);
+    printf ("%s said: \n%s\n",last_arena.players[0],last_arena.comment[0]);
+    printf ("%s said: \n%s\n",last_arena.players[1],last_arena.comment[1]);
+    sprintf (query,"insert into arena (winner,looser,winner_comment,looser_comment,moment,counter,screenshoot)\
+                    VALUES ('%s', '%s', '%s', '%s', '%s', %d, '%s')",
+                    last_arena.players[last_arena.result],
+                    last_arena.players[1-last_arena.result],
+                    last_arena.comment[last_arena.result],
+                    last_arena.comment[1-last_arena.result],
+                    last_arena.timestamp,
+                    last_arena.counter,
+                    last_arena.screenshoot);
+    database_insert (query);
+    return;
+}
+
+void flush_arena (void)
+{
+    if (!QUERY_ARENA_FLAG(last_arena,FLAG_ARENA_IS_INVALID)) save_last_arena ();
+    memcpy (&last_arena,&current_arena,sizeof (arena_data));
+    memcpy (&current_arena,&empty_arena,sizeof (arena_data));
+}
+
+
+int set_arena_player (object* pl, int playernumber)
+{
+    if (playernumber>1) return -1;
+    if (current_arena.result!=-1)
+        {
+        flush_arena(); /*New arena*/
+        set_arena_time();
+        }
+    printf ("Player %d is %s\n",playernumber,pl->name);
+    strcpy (current_arena.players[playernumber],pl->name);
+    current_arena.flags|=(playernumber==0)?FLAG_ARENA_HAS_PLAYER1:FLAG_ARENA_HAS_PLAYER2;
+    return 0;
+}
+
+void set_looser (object* looser)
+{
+    player* pl;
+    object* op;
+    CFParm* CFPptr;
+    CFParm CFP;
+    char* screenshoot;
+    printf ("Looser is %s\n",looser->name);
+    if (!strcmp(looser->name,current_arena.players[0])){
+        current_arena.flags|=FLAG_ARENA_HAS_RESULT;
+        current_arena.result=1;
+    }else if (!strcmp(looser->name,current_arena.players[1])){
+        current_arena.flags|=FLAG_ARENA_HAS_RESULT;
+        current_arena.result=0;
+    }else current_arena.flags=FLAG_ARENA_IS_INVALID;
+    set_arena_time();
+    CFP.Value[0]=(void*)&current_arena.players[current_arena.result];
+    CFPptr=(PlugHooks[HOOK_FINDPLAYER])(&CFP);
+    pl=(player*)CFPptr->Value[0];
+    free (CFPptr);
+    op=pl->ob;
+    screenshoot=takescreenshoot (op);
+    if (screenshoot) strcpy (current_arena.screenshoot,screenshoot);
+    flush_arena();
+}
+int trigger_arena (object* trigger, object* above, char* options)
+/*When we get player infos, we suppose the arenas already got flushed*/
+{
+    if (!strcmp(options,"SET_PLAYER1"))
+        set_arena_player (above,0);
+    else if (!strcmp(options,"SET_PLAYER2"))
+        set_arena_player (above,1);
+    else if (!strcmp(options,"AM_LOOSER"))
+        set_looser (above);
+    return 0; /*To be sure teleporters still work!*/
+}
+/*
+ * The crossfire logging facility.
+ * This plugin is part of a project who's purpose is to track every
+ * interesting thing happening in the crossfire server, from conversation
+ * between player and their deaths to informations about server crashes.
+ * The datas could then be loaded by some php pages to present info on a player,
+ * important events of the day, current Xp of all players,
+ * crash-o-meter and so on.
+ */
+
+/*
+ * This code is placed under the GNU General Public Licence (GPL)
+ * either version 2 or higher, at your choice. You can get a copy
+ * of the GPL at the following address: http://www.gnu.org
+ *
+ * (C)2001 Tchize. Feel free to log errors.
+ * tchize@mailandnews.com
+ */
+
+#include <plugin_logging.h>
+#include <time.h>
+#ifndef __CEXTRACT__
+#include <logger_proto.h>
+#endif
+typedef struct creature_death{
+    char* creaturename;
+    long int death_count;
+    int clean;            /*If false, contain datas to be saved*/
+    struct creature_death* next;
+    struct creature_death* previous;
+} *creature_death_ptr;
+int modified_creature_death=0;
+struct creature_death* first_creature=NULL;
+#ifndef __CEXTRACT__
+/*
+ * Begin of private functions (not exported by cextract)
+ */
+creature_death_ptr find_creature_by_name (char* creaturename){
+    creature_death_ptr current=first_creature;
+    while (current!=NULL){
+        if (current->creaturename==creaturename) return current;
+        current=current->next;
+    }
+    return NULL;
+}
+creature_death_ptr create_creature (object* creature){
+    creature_death_ptr current;
+    current=(struct creature_death*)malloc (sizeof (struct creature_death));
+    current->death_count=0;
+    current->creaturename=hook_add_string(creature->name);
+    current->next=first_creature;
+    current->previous=NULL;
+    current->clean=1;
+    if (first_creature) first_creature->previous=current;
+    first_creature=current;
+    return first_creature;
+}
+void touchcreature (creature_death_ptr creature)
+{
+    if (creature->clean){
+        creature->clean=0;
+        modified_creature_death++;
+    }
+}
+
+void freecreature (creature_death_ptr creature)
+{
+    if (creature->clean){
+        if (creature->previous) creature->previous->next=creature->next;
+        else first_creature=creature->next;       /*We were the head*/
+        if (creature->next) creature->next->previous=creature->previous;
+        if (creature->creaturename) hook_free_string (creature->creaturename);
+        hook_free_string (creature->creaturename);
+        free (creature);
+    }
+}
+
+void untouchcreature (creature_death_ptr creature)
+{
+    if (!creature->clean){
+        creature->clean=1;
+        modified_creature_death--;
+    }
+}
+
+creature_death_ptr getcreatureAt (int *creaturenumber)
+{
+    int i=0,j=0;
+    creature_death_ptr current=first_creature;
+    if (*creaturenumber<0)*creaturenumber=0;
+    while (i<*creaturenumber){
+        if (current!=NULL){
+            j++;
+            current=current->next;
+        }
+        if (current==NULL){/*make it cycle at the end of list*/
+            current=first_creature;
+            j=0;
+        }
+        i++;
+    }
+    *creaturenumber=j;
+    return current;
+}
+
+void save_creature_visits (creature_death_ptr creature){
+    char query[MAX_BUF];
+    char query2[MAX_BUF];
+    char buffer[MAX_BUF];
+    int precision;
+    long int old_death;
+    printf ("flushing %s\n",creature->creaturename);
+    sprintf (query,"select count from creature_death where name='%s'",creature->creaturename);
+    old_death=database_getint(query);
+    gettimestamp (buffer,sizeof (buffer),&precision);
+    sprintf (query, "update creature_death set count=%ld where name='%s'",old_death+creature->death_count,creature->creaturename);
+    sprintf (query2, "insert into creature_death (count,moment,name,type)\
+                      VALUES (%ld,'%s','%s',%d)",
+                      old_death+creature->death_count,buffer,creature->creaturename,1);
+    database_UpdateOrInsert (query,query2);
+    creature->death_count--;
+    untouchcreature (creature);
+}
+#endif
+/*
+ * flush_creature_death
+ *
+ * This function save a certain quantity
+ * of creatures (creaturecount) to database
+ */
+void flush_creature_death (int creaturecount){
+    static int creaturenumber=0;
+    int i;
+    creature_death_ptr current;
+    creature_death_ptr current2;
+    /*printf ("part2(%d)...\n",creaturecount);*/
+    if (creaturecount>modified_creature_death) creaturecount=modified_creature_death; /*Save no more than maximum*/
+    if (creaturecount<=0) return;
+    current=getcreatureAt (&creaturenumber);
+    i=0;
+    for (;;){
+        current2=current->next;
+        freecreature (current); /*Free if necessary*/
+        current=current2;
+        if (current==NULL) current=first_creature;
+        /*printf ("\nTrying %s",current->creaturename);*/
+        if (current->clean) continue;
+        /*printf ("not clean");*/
+        i++;
+        save_creature_visits (current);
+        if (i>=creaturecount) break;
+    }
+    printf ("\n");
+}
+void try_flush_creature_death (int ratio){
+    int quantity;
+    if (modified_creature_death<0) printf ("[crossfire_logger]Warning: negative creature count for logger!!!!!!\n");
+    if (modified_creature_death<=0) return; /*Nothing to do (i don't believe it!)*/
+    printf ("flushing creatures....\n");
+    quantity=(modified_creature_death/ratio);
+    if (quantity<=0) flush_creature_death (1);
+    else flush_creature_death (quantity);
+}
+
+int add_death_creature (object* creature){
+    creature_death_ptr currentcreature;
+    char *creaturename;
+    creaturename=hook_add_string(creature->name);
+    printf ("Adding death creature:%s\n",creaturename);
+    currentcreature=find_creature_by_name (creaturename);
+    if (!currentcreature) currentcreature=create_creature (creature);
+    /* Add cumulative time to stats */
+    currentcreature->death_count++;
+    touchcreature (currentcreature);
+    hook_free_string (creaturename);
+    return 0;
+}/*
+ * The crossfire logging facility.
+ * This plugin is part of a project who's purpose is to track every
+ * interesting thing happening in the crossfire server, from conversation
+ * between player and their deaths to informations about server crashes.
+ * The datas could then be loaded by some php pages to present info on a player,
+ * important events of the day, current Xp of all players,
+ * crash-o-meter and so on.
+ */
+
+/*
+ * This code is placed under the GNU General Public Licence (GPL)
+ * either version 2 or higher, at your choice. You can get a copy
+ * of the GPL at the following address: http://www.gnu.org
+ *
+ * (C)2001 Tchize. Feel free to log errors.
+ * tchize@mailandnews.com
+ */
+
+#include <plugin_logging.h>
+#include <time.h>
+#ifndef __CEXTRACT__
+#include <logger_proto.h>
+#endif
+typedef struct map_time{
+    char* mapname;
+    char* mappath;
+    int players;          /*players curently in map*/
+    int clean;            /*If false, contain datas to be saved*/
+    long int totaltime;   /*Time will be given in 1 seconds steps*/
+    long int entertime;   /*last Time a player entered the map*/
+    struct map_time* next;
+    struct map_time* previous;
+} *map_time_ptr;
+int modified_map_time=0;
+struct map_time* first_map_time=NULL;
+#ifndef __CEXTRACT__
+/*
+ * Begin of private functions (not exported by cextract)
+ */
+map_time_ptr find_map_by_name (char* mappath){
+    map_time_ptr current=first_map_time;
+    while (current!=NULL){
+        if (current->mappath==mappath) return current;
+        current=current->next;
+    }
+    return NULL;
+}
+map_time_ptr create_map (struct mapdef* map){
+    map_time_ptr current;
+    current=(struct map_time*)malloc (sizeof (struct map_time));
+    current->players=0;
+    current->totaltime=0;
+    current->entertime=0;
+    current->mappath=hook_add_string(map->path);
+    current->mapname=hook_add_string(map->name);
+    current->next=first_map_time;
+    current->previous=NULL;
+    current->clean=1;
+    if (first_map_time) first_map_time->previous=current;
+    first_map_time=current;
+    map_alter (map->path);
+    return first_map_time;
+}
+void touchmap (map_time_ptr map)
+{
+    if (map->clean){
+        map->clean=0;
+        modified_map_time++;
+    }
+}
+
+void freemap (map_time_ptr map)
+{
+    if ((map->players<=0)&&(map->clean)){
+        if (map->previous) map->previous->next=map->next;
+        else first_map_time=map->next;       /*We were the head*/
+        if (map->next) map->next->previous=map->previous;
+        if (map->mapname) hook_free_string (map->mapname);
+        hook_free_string (map->mappath);
+        free (map);
+    }
+}
+
+void untouchmap (map_time_ptr map)
+{
+    if (!map->clean){
+        map->clean=1;
+        modified_map_time--;
+    }
+}
+
+map_time_ptr getMapAt (int *mapnumber)
+{
+    int i=0,j=0;
+    map_time_ptr current=first_map_time;
+    if (*mapnumber<0)*mapnumber=0;
+    while (i<*mapnumber){
+        if (current!=NULL){
+            j++;
+            current=current->next;
+        }
+        if (current==NULL){/*make it cycle at the end of list*/
+            current=first_map_time;
+            j=0;
+        }
+        i++;
+    }
+    *mapnumber=j;
+    return current;
+}
+void save_map_visits (map_time_ptr map){
+    char query[MAX_BUF];
+    char query2[MAX_BUF];
+    char buffer[MAX_BUF];
+    int precision;
+    int old_visit;
+    long int now;
+    /*printf ("Flushing %s ",map->mappath);*/
+    now=(long int) time(NULL);
+    map->totaltime+=(now-map->entertime)*map->players;
+    map->entertime=now;
+    if ( (strncmp ("/random/",map->mappath,strlen("/random/"))) &&
+         (strncmp (LOCALDIR,map->mappath,strlen(LOCALDIR)))    ){
+        sprintf (query,"select visittime from map_visits where mappath='%s'",map->mappath);
+        old_visit=database_getint(query);
+        gettimestamp (buffer,sizeof (buffer),&precision);
+        sprintf (query, "update map_visits set visittime=%ld where mappath='%s'",old_visit+map->totaltime,map->mappath);
+        sprintf (query2, "insert into map_visits (visittime,period,mappath,mapname)\
+                          VALUES (%ld,'%s','%s','%s')",
+                          old_visit+map->totaltime,buffer,map->mappath,map->mapname?map->mapname:"");
+        /*printf ("with visit time: %ld s\n",old_visit+map->totaltime);*/
+        database_UpdateOrInsert (query,query2);
+    }
+    map->totaltime=0;
+    untouchmap (map);
+}
+#endif
+/*
+ * flush_map_time
+ *
+ * This function save a certain quantity
+ * of maps (mapcount) to database
+ */
+void flush_map_time (int mapcount){
+    static int mapnumber=0;
+    int i;
+    map_time_ptr current;
+    map_time_ptr current2;
+    /*printf ("part2(%d)...\n",mapcount);*/
+    if (mapcount>modified_map_time) mapcount=modified_map_time; /*Save no more than maximum*/
+    if (mapcount<=0) return;
+    current=getMapAt (&mapnumber);
+    i=0;
+    for (;;){
+        current2=current->next;
+        freemap (current); /*Free if necessary*/
+        current=current2;
+        if (current==NULL) current=first_map_time;
+        /*printf ("\nTrying %s",current->mappath);*/
+        if (current->clean) continue;
+        /*printf ("not clean");*/
+        i++;
+        save_map_visits (current);
+        if (i>=mapcount) break;
+    }
+    printf ("\n");
+}
+void try_flush_map_time (int ratio){
+    int quantity;
+    if (modified_map_time<0) printf ("[crossfire_logger]Warning: negative map count for logger!!!!!!\n");
+    if (modified_map_time<=0) return; /*Nothing to do (i don't believe it!)*/
+    /*printf ("flushing....\n");*/
+    quantity=(modified_map_time/ratio);
+    if (quantity<=0) flush_map_time (1);
+    else flush_map_time (quantity);
+}
+
+int player_enter_map (struct mapdef* map){
+    map_time_ptr currentmap;
+    long int now;
+    char *mappath;
+    mappath=hook_add_string(map->path);
+    currentmap=find_map_by_name (mappath);
+    if (!currentmap) currentmap=create_map (map);
+    now=(long int) time(NULL);
+    /* Add cumulative time to stats */
+    currentmap->totaltime+=(now-currentmap->entertime)*currentmap->players;
+    currentmap->entertime=now;
+    currentmap->players++;
+    touchmap (currentmap);
+    hook_free_string (mappath);
+    return 0;
+}
+
+int player_leave_map(struct mapdef* map){
+    map_time_ptr currentmap;
+    long int now;
+    char *mappath;
+    printf ("In player leave map\n");
+    mappath=hook_add_string(map->path);
+    currentmap=find_map_by_name (mappath);
+    if (currentmap){
+        now=(long int) time(NULL);
+        /* Add cumulative time to stats */
+        currentmap->totaltime+=(now-currentmap->entertime)*currentmap->players;
+        currentmap->entertime=now;
+        currentmap->players--;
+    }else{
+        printf ("[crossfire_logger]Warning: players leave a non stated map!\n");
+    }
+    touchmap (currentmap);
+    hook_free_string (mappath);
+    return 0;
+}
+
+int map_alter (char* mappath){
+    char insert[MAX_BUF];
+    char update[MAX_BUF];
+    char buffer[MAX_BUF];
+    int precision;
+    gettimestamp (buffer,sizeof (buffer),&precision);
+    sprintf (insert,"insert into map_state (path,state,moment) VALUES ('%s',1,'%s')",mappath,buffer);
+    sprintf (update,"update map_state set state=1,moment='%s' where path='%s'",buffer,mappath);
+    database_UpdateOrInsert (update,insert);
+    return 0;
+}
+
+int map_reset (char* mappath){
+    char insert[MAX_BUF];
+    char update[MAX_BUF];
+    char buffer[MAX_BUF];
+    int precision;
+    gettimestamp (buffer,sizeof (buffer),&precision);
+    sprintf (insert,"insert into map_state (path,state,moment) VALUES ('%s',0,'%s')",mappath,buffer);
+    sprintf (update,"update map_state set state=0,moment='%s' where path='%s'",buffer,mappath);
+    database_UpdateOrInsert (update,insert);
+    return 0;
+}
+/*
+ * The crossfire logging facility.
+ * This plugin is part of a project who's purpose is to track every
+ * interesting thing happening in the crossfire server, from conversation
+ * between player and their deaths to informations about server crashes.
+ * The datas could then be loaded by some php pages to present info on a player,
+ * important events of the day, current Xp of all players,
+ * crash-o-meter and so on.
+ */
+
+/*
+ * This code is placed under the GNU General Public Licence (GPL)
+ * either version 2 or higher, at your choice. You can get a copy
+ * of the GPL at the following address: http://www.gnu.org
+ *
+ * (C)2001 Tchize. Feel free to log errors.
+ * tchize@mailandnews.com
+ */
+
+
+#include <plugin_logging.h>
+#ifndef __CEXTRACT__
+#include <logger_proto.h>
+#endif
+#include <sys/types.h>
+#include <sys/stat.h>
+CFParm* PlugProps;
+f_plugin PlugHooks[1024];
+/*
+ * ODBC Connectivity
+ */
+#include <sql.h>
+#include <sqlext.h>
+#include <sqltypes.h>
+
+
+FILE* logging_file=NULL;
+static CFParm GCFP;
+
+void log2file (char* text2log)
+{
+    time_t t = time(NULL);
+    char buf[MAX_BUF];
+    if (logging_file){
+        strftime(buf, sizeof(buf), "[%I:%M %p]", localtime(&t));
+        fprintf (logging_file,"%s%s\n",buf,text2log);
+    }
+}
+
+/******************************************************************************
+ * Database management part.
+ * These function are responsible of logging datas in a database,
+ * connect to the database at startup
+ *****************************************************************************/
+SQLHENV     V_OD_Env;      // Handle ODBC environment
+long        V_OD_erg;      // result of functions
+SQLHDBC     V_OD_hdbc;     // Handle connection
+char        V_OD_stat[10]; // Status SQL
+SQLINTEGER  V_OD_err,V_OD_rowanz,V_OD_id;
+SQLSMALLINT V_OD_mlen;
+char        V_OD_msg[200],V_OD_buffer[200];
+SQLHSTMT    V_OD_hstmt;    // Handle for a statement
+
+
+/*
+ * function connect_database
+ *
+ * Called at startup, this function gets an handle to the database
+ * The DSN (Database Server Name) , username and password are given
+ * at compile time or by an init file
+ * Note: file logging facilities must be ready
+ */
+void connect_database (void)
+{
+    char buf[MAX_BUF];
+    // 1. allocate Environment handle and register version
+    V_OD_erg=SQLAllocHandle(SQL_HANDLE_ENV,SQL_NULL_HANDLE,&V_OD_Env);
+    if ((V_OD_erg != SQL_SUCCESS) && (V_OD_erg != SQL_SUCCESS_WITH_INFO)){
+        sprintf(buf,"[DATABASE]Error AllocHandle");
+        log2file (buf);
+        printf ("%s\n",buf);
+        return;
+    }
+
+    V_OD_erg=SQLSetEnvAttr(V_OD_Env, SQL_ATTR_ODBC_VERSION,
+                           (void*)SQL_OV_ODBC3, 0);
+    if ((V_OD_erg != SQL_SUCCESS) && (V_OD_erg != SQL_SUCCESS_WITH_INFO)){
+        sprintf(buf,"[DATABASE]Error SetEnv");
+        log2file (buf);
+        printf ("%s\n",buf);
+        SQLFreeHandle(SQL_HANDLE_ENV, V_OD_Env);
+        return;
+    }
+    // 2. allocate connection handle, set timeout
+    V_OD_erg = SQLAllocHandle(SQL_HANDLE_DBC, V_OD_Env, &V_OD_hdbc);
+    if ((V_OD_erg != SQL_SUCCESS) && (V_OD_erg != SQL_SUCCESS_WITH_INFO)){
+        sprintf(buf,"[DATABASE]Error AllocHDB %ld",V_OD_erg);
+        log2file (buf);
+        printf ("%s\n",buf);
+        SQLFreeHandle(SQL_HANDLE_ENV, V_OD_Env);
+        return;
+    }
+    SQLSetConnectAttr(V_OD_hdbc, SQL_LOGIN_TIMEOUT, (SQLPOINTER *)5, 0);
+    SQLSetConnectAttr(V_OD_hdbc, SQL_AUTOCOMMIT, (SQLPOINTER *)SQL_TRUE, 0);
+    // 3. Connect to the datasource "web"
+    V_OD_erg = SQLConnect(V_OD_hdbc, (SQLCHAR*) "CrossfireDSN", SQL_NTS,
+                                     (SQLCHAR*) "crossfire", SQL_NTS,
+                                     (SQLCHAR*) "", SQL_NTS);
+    if ((V_OD_erg != SQL_SUCCESS) && (V_OD_erg != SQL_SUCCESS_WITH_INFO)){
+        sprintf(buf,"[DATABASE]Error SQLConnect %ld",V_OD_erg);
+        printf ("%s\n",buf);
+        log2file (buf);
+        SQLGetDiagRec(SQL_HANDLE_DBC, V_OD_hdbc,1,
+                      V_OD_stat, &V_OD_err,V_OD_msg,100,&V_OD_mlen);
+        sprintf(buf,"[DATABASE]%s (%ld)\n",V_OD_msg,V_OD_err);
+        printf ("%s\n",buf);
+        log2file (buf);
+        SQLFreeHandle(SQL_HANDLE_ENV, V_OD_Env);
+        return;
+    }
+    printf("Connected !\n");
+    log2file("[DATABASE]Connected");
+}
+void close_database(void)
+{
+    SQLDisconnect (V_OD_hdbc);
+    SQLFreeHandle(SQL_HANDLE_ENV, V_OD_Env);
+}
+
+int database_insert (char * query)
+{
+    V_OD_erg=SQLAllocHandle(SQL_HANDLE_STMT, V_OD_hdbc, &V_OD_hstmt);
+    if ((V_OD_erg != SQL_SUCCESS) && (V_OD_erg != SQL_SUCCESS_WITH_INFO)){
+                printf("Error in Alloc Statement Handle %ld\n",V_OD_erg);
+                return -1;
+    }
+    V_OD_erg=SQLExecDirect(V_OD_hstmt,query,SQL_NTS);
+    if ((V_OD_erg != SQL_SUCCESS) && (V_OD_erg != SQL_SUCCESS_WITH_INFO)){
+       printf("Error in Select %ld\n",V_OD_erg);
+       return -1;
+    }
+    SQLFreeHandle(SQL_HANDLE_STMT,V_OD_hstmt);
+    return 0;
+}
+/*
+ * function database_UpdateOrInsert
+ *
+ * This function tries to update the database executing
+ * the update string. If no row is affected it then
+ * execute the insert query.
+ * This allow to update a row if present and to
+ * insert it if not.
+ */
+int database_UpdateOrInsert (char* update,char* insert)
+{
+    SQLINTEGER rowcount;
+    SQLRETURN state;
+    V_OD_erg=SQLAllocHandle(SQL_HANDLE_STMT, V_OD_hdbc, &V_OD_hstmt);
+    if ((V_OD_erg != SQL_SUCCESS) && (V_OD_erg != SQL_SUCCESS_WITH_INFO)){
+                printf("Error in Alloc Statement Handle %ld\n",V_OD_erg);
+                return -1;
+    }
+    //printf ("[logger]update: %s\n",update);
+    V_OD_erg=SQLExecDirect(V_OD_hstmt,update,SQL_NTS);
+    if ((V_OD_erg != SQL_SUCCESS) && (V_OD_erg != SQL_SUCCESS_WITH_INFO)){
+       printf("Error in Update %ld\n",V_OD_erg);
+    }
+    state= SQLRowCount (V_OD_hstmt,(&rowcount));
+    if (rowcount<1){
+        //printf ("[logger]insert: %s\n",insert);
+        V_OD_erg=SQLExecDirect(V_OD_hstmt,insert,SQL_NTS);
+        if ((V_OD_erg != SQL_SUCCESS) && (V_OD_erg != SQL_SUCCESS_WITH_INFO)){
+            printf("Error in Insert %ld\n",V_OD_erg);
+            return -1;
+        }
+    }
+    SQLFreeHandle(SQL_HANDLE_STMT,V_OD_hstmt);
+    return 0;
+}
+/*
+ * function database_getint
+ *
+ * this function gets an SQL integer from
+ * the execution of int_query
+ * and return it
+ */
+int database_getint (char* int_query){
+    SQLINTEGER val;
+    SQLINTEGER size;
+    V_OD_erg=SQLAllocHandle(SQL_HANDLE_STMT, V_OD_hdbc, &V_OD_hstmt);
+    if ((V_OD_erg != SQL_SUCCESS) && (V_OD_erg != SQL_SUCCESS_WITH_INFO)){
+                printf("Error in Alloc Statement Handle %ld\n",V_OD_erg);
+                return -1;
+    }
+    //printf ("[logger]select: %s\n",int_query);
+    SQLBindCol(V_OD_hstmt,1,SQL_C_SLONG, &val,sizeof (SQLINTEGER),&size);
+    V_OD_erg=SQLExecDirect(V_OD_hstmt,int_query,SQL_NTS);
+    if ((V_OD_erg != SQL_SUCCESS) && (V_OD_erg != SQL_SUCCESS_WITH_INFO)){
+       printf("Error in Select %ld\n",V_OD_erg);
+       return -1;
+    }
+    V_OD_erg=SQLFetch (V_OD_hstmt);
+    if ((V_OD_erg != SQL_SUCCESS) && (V_OD_erg != SQL_SUCCESS_WITH_INFO)){
+       return 0;
+    }
+    SQLFreeHandle(SQL_HANDLE_STMT,V_OD_hstmt);
+    return val;
+}
+
+
+/******************************************************************************
+ * Events management part.
+ * These function are responsible for logging events in a database,
+ * using the database interface provided above and some external files.
+ *****************************************************************************/
+
+int last_sec=0;
+int counter=0;
+player_lvl zerolevel={1,0,1,0,1,0,1,0,1,0,NULL,1,0,1,0};
+              /* level 1 everywhere and experience 0 everywhere*/
+/*
+ * function gettimestamp
+ * This function puts in buffer a string corresponding to the current time
+ * with a second precision. the precision pointer is used to give a more
+ * unique timestamp. The pair timestamp-buffer is warranted to be unique
+ * as long as you don't request more than 2^16 per second.
+ */
+void gettimestamp (char* buffer, size_t bufsize, int* precision)
+{
+    int new_sec;
+    time_t t;
+    t=time(NULL);
+    new_sec=(localtime (&t))->tm_sec;
+    if (new_sec!=last_sec){
+        last_sec=new_sec;
+        counter=0;
+    } else counter++;
+    strftime (buffer,bufsize,"%Y-%m-%d %H:%M:%S", localtime (&t));
+    *precision=counter;
+}
+
+/*
+ * function getuniqid
+ * This function returns a string that is warranted to be uniq
+ * as long as the system clock does not get corrupted.
+ * the string is maximum 32 chars length and contains
+ * only the following characters: [A-Z][a-z][0-9]_
+ */
+char* getuniqid(void)
+{
+    char *p;
+    int counter;
+    char buffer[60];
+    static char buffer2[65];
+    gettimestamp (buffer,sizeof(buffer),&counter);
+    for (p=buffer;(*p)!='\0';p++)
+        {
+        if ( ((*p)<'a' || ((*p)>'z')) &&
+             ((*p)<'A' || ((*p)>'Z')) &&
+             ((*p)<'0' || ((*p)>'9')) &&
+             ((*p)!='_'))
+        *p='_';
+        }
+    sprintf (buffer2,"%s%d",buffer,counter);
+    while (strlen (buffer2) >32)
+        /* buffer is too big. let's crypt a bit to reduce...*/
+        for (counter=0;counter<(strlen(buffer2)-32);counter++)
+            buffer[counter]=((buffer[counter]-'a')^(buffer[counter+32]-'a'))+'a';
+        buffer[strlen(buffer2)-32]='\0';
+    return buffer2;
+}
+
+/*
+ * function getexp
+ * This function fills the structure pointed by levels
+ * with the current Xp and level of player in the differents
+ * experience paths.
+ * return *levels NULL in case of errors
+ */
+player_lvl* getexp (object* player, player_lvl* levels)
+{
+    object* op;
+    printf ("In getexp...\n");
+    memcpy (levels,&zerolevel,sizeof (player_lvl));
+    if (player->type!=PLAYER) return NULL;
+    for (op=player->inv;op;op=op->below){
+        if (op->type!=EXPERIENCE) continue;
+        if (!strcmp (op->name,"agility")){
+            levels->agilitylvl=op->level;
+            levels->agilityexp=op->stats.exp;
+        } else if (!strcmp (op->name,"mental")){
+            levels->mentallvl=op->level;
+            levels->mentalexp=op->stats.exp;
+        } else if (!strcmp (op->name,"physique")){
+            levels->physiquelvl=op->level;
+            levels->physiqueexp=op->stats.exp;
+        } else if (!strcmp (op->name,"magic")){
+            levels->magiclvl=op->level;
+            levels->magicexp=op->stats.exp;
+        } else if (!strcmp (op->name,"wisdom")){
+            levels->wisdomlvl=op->level;
+            levels->wisdomexp=op->stats.exp;
+            levels->god=op->title;
+        } else if (!strcmp (op->name,"personality")){
+            levels->personalitylvl=op->level;
+            levels->personalityexp=op->stats.exp;
+        }
+    }
+    levels->generallvl=player->level;
+    levels->generalexp=player->stats.exp;
+    return levels;
+}
+
+/*
+ * function takescreenshoot
+ * This function takes the list of objects
+ * visible around the player op and write it
+ * to a file in the screenshoot directory.
+ * It then return the key to reference it later.
+ * Since the los is the los of the player,
+ * the resulting screenshoot is what player's client saw
+ * and depend on the clientwidth and clientheight!
+ */
+char* takescreenshoot(object* op)
+{
+    int x,y;
+    int clientx,clienty;
+    static char key[33];
+    char query[HUGE_BUF];
+    char shootfile[MAX_BUF];
+    char filename[VERY_BIG_BUF];
+    static char smallfilename[MAX_BUF];
+    char *p;
+    int precision;
+    object* tmp;
+    FILE * screenshoot;
+    printf ("....\n");
+    strcpy (key,getuniqid());
+    gettimestamp (shootfile,sizeof(shootfile),&precision);
+    for (p=shootfile;(*p)!='\0';p++){
+        if ((*p)==' ')(*p)='_';
+        if ((*p)=='-')(*p)='_';
+        if ((*p)==':')(*p)='_';
+    }
+    sprintf (filename,"%s%s%s%d.sht",web_directory,screenshoot_dir,shootfile,precision);
+    sprintf (smallfilename,"%s%d",shootfile,precision);
+    printf ("Will write screenshoot in %s\n",filename);
+    screenshoot=fopen (filename,"w");
+    if (!screenshoot) return key;
+    fprintf (screenshoot,"MAP_SIZE %d,%d\n",op->contr->socket.mapy,op->contr->socket.mapy);
+    for (clienty=0;clienty<(op->contr->socket.mapy);clienty++){
+        for (clientx=0;clientx<(op->contr->socket.mapx);clientx++){
+            if (op->contr->blocked_los[clientx][clienty]>3)
+                 /*  face is not visible to client */
+                 continue;
+            x=op->x-(op->contr->socket.mapx-1)/2+clientx;
+            y=op->y-(op->contr->socket.mapy-1)/2+clienty;
+
+
+            fprintf (screenshoot,"%d,%d %s|%s|%s ",
+                    clientx,clienty,
+                    GET_MAP_FACE(op->map,x,y,0)?GET_MAP_FACE(op->map,x,y,0)->name:"blank.111",
+                    GET_MAP_FACE(op->map,x,y,1)?GET_MAP_FACE(op->map,x,y,1)->name:"blank.111",
+                    GET_MAP_FACE(op->map,x,y,2)?GET_MAP_FACE(op->map,x,y,2)->name:"blank.111"
+                    );
+            for(tmp=get_map_ob(op->map,x,y);tmp!=NULL&&tmp->above!=NULL;
+                tmp=tmp->above);
+            for ( ; tmp != NULL; tmp=tmp->below ) {
+                fprintf (screenshoot,"%s|",query_name(tmp));
+                if (QUERY_FLAG(tmp, FLAG_IS_FLOOR))          /* don't continue under the floor */
+                    break;
+            }
+            fprintf (screenshoot,"\n");
+        }
+    };
+    fclose (screenshoot);
+    chmod (filename,S_IRUSR| S_IWUSR | S_IRGRP | S_IROTH);
+    sprintf (query,"INSERT INTO screenshoot (id,shootfile) VALUES ('%s','%s')",key,smallfilename);
+    database_insert (query);
+    return key;
+}
+
+/*
+ * function saveinventory
+ * This function saves the visible inventory
+ * of op to a file. If id is given, it is
+ * used as a generator for creating the filename.
+ * The return value is the filename, relative to
+ * the crossfire web directory. NULL in case of errors.
+ * The return value points to an internal buffer which will
+ * be overridden at next call!
+ */
+char* saveinventory (object* op, char* id)
+{
+    static char key[33];
+    char fullfilename[VERY_BIG_BUF];
+    static char filename[MAX_BUF];
+    FILE *inventoryshoot;
+    object *what;
+    if (id) strcpy (key,id); else strcpy (key,getuniqid());
+    sprintf (filename,"%s%s.inv",inventoryshoot_dir,key);
+    sprintf (fullfilename,"%s%s",web_directory,filename);
+    inventoryshoot=fopen (fullfilename,"w");
+    if (!inventoryshoot){
+        perror ("Failed to save inventory");
+        return "";
+    }
+    for (what=op->inv;what;what=what->below){
+        if (what->invisible) continue;
+        fprintf (inventoryshoot,"[%s%s] %s\n",
+                 what->face->name,
+                 QUERY_FLAG(what,FLAG_APPLIED)?"|Active":"",
+                 query_short_name(what));
+    }
+    fclose (inventoryshoot);
+    return filename;
+};
+
+/*
+ * function saveplayerstats
+ * This function save the player's current stats in the database
+ * Input values:
+ *   -----------
+ *    object* op           The player being saved
+ *    player_lvl* levels   The stats of the player.
+ *                         NULL if have to guess
+ *    char* inventoryfile  The file the inventory has been saved in.
+ *                         NULL if not relevant
+ *    char* timestamp
+ *    int precision        The timestamp used to give time information to stats
+ *    char* key            The ident to use for those datas in database.
+ *                         NULL if still has to create
+ *
+ * Return value: key points to an internal buffer if key was not provided at call
+ */
+char* saveplayerstats (object* op, player_lvl* levels,char* inventoryfile,
+                       char* timestamp, int precision, char* key)
+{
+    char query[HUGE_BUF];
+    char key2[33];
+    player_lvl lvl;
+    if (!key) key=strcpy (key2,getuniqid());
+    if (!levels) levels=getexp (op,&lvl);
+    if (!levels) return key;
+    sprintf (query,"INSERT INTO playershoot (player,title,inventoryfile,face,\
+                    agilitylvl, agilityexp, mentallvl, mentalexp,\
+                    physiquelvl, physiqueexp, magiclvl, magicexp,\
+                    wisdomlvl, wisdomexp, personalitylvl, personalityexp,\
+                    generallvl, generalexp, god, id,\
+                    moment, counter)\
+                    VALUES ('%s', '%s', '%s', '%s',\
+                    %d, %d, %d, %d,\
+                    %d, %d, %d, %d,\
+                    %d, %d, %d, %d,\
+                    %d, %d, '%s', '%s',\
+                    '%s', %d) ",
+                    op->name,op->contr->title,inventoryfile?inventoryfile:"",op->face->name,
+                    levels->agilitylvl, levels->agilityexp, levels->mentallvl, levels->mentalexp,
+                    levels->physiquelvl, levels->physiqueexp, levels->magiclvl, levels->magicexp,
+                    levels->wisdomlvl, levels->wisdomexp, levels->personalitylvl, levels->personalityexp,
+                    levels->generallvl, levels->generalexp, levels->god?levels->god:"", key,
+                    timestamp, precision);
+    database_insert (query);
+    return key;
+};
+
+/*
+ * function takeplayershoot
+ * This function takes a shoot of the list of
+ * characteristics of a player in the database
+ * It also save it's current inventory to a file
+ * and returns a string used to references
+ * these datas in the database.
+ */
+char* takeplayershoot(object* op, char* timestamp, int precision)
+{
+    static char key[33];
+    char* filename;
+    if (op->type!=PLAYER) return NULL;
+    strcpy (key,getuniqid());
+    filename=saveinventory(op,key);
+    return saveplayerstats(op,NULL,filename,timestamp,precision,key);
+}
+
+void insert_message (char* moment, char* player, char* title, char* saywhat, int dialogtype, int precision)
+{
+    char query[MAX_BUF];
+    sprintf (query,"insert into dialog (moment,player,title, saywhat, dialogtype, counter) VALUES ('%s', '%s', '%s', '%s', %d, %d)",
+                    moment,player,title,saywhat,dialogtype,precision);
+    database_insert (query);
+}
+/*
+ * function player_shouts (object* op,char* shout_what)
+ * This function is used to log the player's dialogs
+ *
+ */
+
+int player_shouts (object* op, char* shout_what)
+{
+    char buf[MAX_BUF];
+    char query[HUGE_BUF];
+    int precision;
+    gettimestamp (buf, sizeof (buf), &precision);
+    insert_message (buf,op->name,op->contr?op->contr->title:"",shout_what,DIALOG_SHOUT,precision);
+    return 1;
+}
+
+int player_birth (object* op)
+{
+    char buf[MAX_BUF];
+    char query[HUGE_BUF];
+    char message[MAX_BUF];
+    int precision;
+
+    gettimestamp (buf,sizeof(buf),&precision);
+    sprintf (query,"insert into birth (moment, counter, player, race, specie, path)\
+                    VALUES ('%s', %d, '%s', '%s', '%s', 'Unknown')",
+                    buf,precision,op->name,op->race, op->contr?op->contr->title:"Unknown");
+    database_insert (query);
+    sprintf (message,"New player created: %s the %s",op->name,op->race);
+    insert_message (buf,"SERVER","",message,DIALOG_SERVER_NOTICE,precision);
+    log2file (query);
+    return 1;
+}
+
+int player_changer (object* player, object* changer)
+{
+    object* walk;
+    object* laststat=NULL;
+    char message[MAX_BUF];
+    char query[HUGE_BUF];
+    char buf[MAX_BUF];
+    int precision;
+    if ((!player) || (player->type!=PLAYER)) return 0;
+    for (walk=changer->inv;walk!=NULL;walk=walk->below)
+        if (walk->type==CLASS) laststat=walk;
+    if (!laststat) return 0;
+    sprintf (query,"UPDATE birth SET path='%s' where player='%s'",
+                    laststat->name,player->name);
+    database_insert (query);
+    gettimestamp (buf,sizeof(buf),&precision);
+    sprintf (message,"%s now follows the path: %s ",player->name,laststat->name);
+    insert_message (buf,"SERVER","",message,DIALOG_SERVER_NOTICE,precision);
+    log2file (query);
+    return 0;
+}
+
+int player_dies (object* op)
+{
+    char query[HUGE_BUF];
+    char buf[MAX_BUF];
+    char message[MAX_BUF];
+    char *pshoot;
+    char *sshoot;
+    int precision;
+    if (op->type!=PLAYER) return 0;
+    if (op->stats.food<0) strcpy (op->contr->killer,"starvation");
+    gettimestamp (buf,sizeof(buf),&precision);
+    pshoot=takeplayershoot(op,buf,precision);
+    printf ("%s\n",pshoot);
+    sshoot=takescreenshoot(op);
+    printf ("%s\n",sshoot);
+    sprintf (query,"insert into death (moment, counter, player, killer, playershoot, screenshoot) VALUES ('%s',%d,'%s','%s','%s','%s')",
+                    buf,precision,op->name,op->contr->killer,pshoot,sshoot);
+    database_insert (query);
+    sprintf (message,"%s killed %s",op->contr->killer,op->name);
+    insert_message (buf,"SERVER","",message,DIALOG_SERVER_INFO,precision);
+    log2file (query);
+    return 0; /*Must die*/
+}
+int creature_dies (object* op)
+{
+    if (op->stats.hp<0){
+        if (op->type!=PLAYER) add_death_creature(op);
+    }
+    return 0;
+}
+
+int player_login (player* pl, char* host)
+{
+    char query[HUGE_BUF];
+    char buf[MAX_BUF];
+    char message[MAX_BUF];
+    int precision;
+    gettimestamp (buf,sizeof(buf),&precision);
+    sprintf (query,"INSERT INTO playerlog (player, logmessage, playerstat, host, moment, counter)\
+                                   VALUES ('%s', 'LOGIN', '', '%s', '%s', %d)",
+                    pl->ob->name,
+                    host,buf,precision);
+    sprintf (message,"%s has entered the game",pl->ob->name);
+    database_insert (query);
+    insert_message (buf,"SERVER","",message,DIALOG_SERVER_INFO,precision);
+    return 1;
+}
+
+int player_logout (player* pl, char* host)
+{
+    char query[HUGE_BUF];
+    char buf[MAX_BUF];
+    char message[MAX_BUF];
+    int precision;
+    printf ("Going to log out...\n");
+    gettimestamp (buf,sizeof(buf),&precision);
+    sprintf (query,"INSERT INTO playerlog (player, logmessage, playerstat, host, moment, counter)\
+                                   VALUES ('%s', 'LOGOUT', '%s', '%s', '%s', %d)",
+                    pl->ob->name,
+                    saveplayerstats (pl->ob,NULL,NULL,buf,precision,NULL),
+                    host,buf,precision);
+    sprintf (message,"%s left the game",pl->ob->name);
+    database_insert (query);
+    insert_message (buf,"SERVER","",message,DIALOG_SERVER_INFO,precision);
+    return 1;
+}
+int event_say (object* talker, object* listener, char* saywhat, char* hook, char* options)
+{
+    if (!hook) return 0;
+    if (!strcmp(hook,"ARENA")){
+        if (!options) return 0;
+        if      (!strcmp (options,"WINNER_COMMENT")) return arena_winner_comment (talker,saywhat);
+        else if (!strcmp (options,"LOOSER_COMMENT")) return arena_looser_comment (talker,saywhat);
+    }
+    return 0;
+}
+
+int event_apply (object* who, object* what, char* hook, char* options)
+{
+    if (!hook) return 0;
+    if (!strcmp (hook,"ARENA")){
+        if (!options) return 0;
+        if      (!strcmp(options,"LOOSER_LEAVE")) return arena_looser_leave (who);
+        else if (!strcmp(options,"WINNER_LEAVE")) return arena_looser_leave (who);
+    }
+    return 0;
+}
+
+int update_map_stats (int type,object* op)
+{
+    if (type==EVENT_MAPENTER) player_enter_map(op->map);
+    else return player_leave_map(op->map);
+    return 0;
+}
+
+void doclock (void){
+    static int clock_count=0;
+    clock_count=(clock_count+1)%CLOCK_CYCLE;
+    if ((clock_count+1)%CLOCK_MAP_USE==0) try_flush_map_time (CLOCK_MAP_RATIO);
+    if ((clock_count+11)%CLOCK_PETS==0) try_flush_creature_death (CLOCK_PETS_RATIO);
+    if (clock_count==0) printf ("Tic\n");
+}
+
+
+/*****************************************************************************/
+/* The Plugin Management Part.                                               */
+/* Most of the functions below should exist in any CF plugin. They are used  */
+/* to glue the plugin to the server core. All functions follow the same      */
+/* declaration scheme (taking a CFParm* arg, returning a CFParm) to make the */
+/* plugin interface as general as possible. And since the loading of modules */
+/* isn't time-critical, it is never a problem. It could also make using      */
+/* programming languages other than C to write plugins a little easier, but  */
+/* this has yet to be proven.                                                */
+/*****************************************************************************/
+
+char* hook_add_string (char* text){
+    CFParm* result;
+    char* val;
+    GCFP.Value[0]=(void*)text;
+    result=(PlugHooks[HOOK_ADDSTRING])(&GCFP);
+    val=(char*)result->Value[0];
+    free (result);
+    return val;
+}
+
+char* hook_add_refcount (char* text){
+    CFParm* result;
+    char* val;
+    GCFP.Value[0]=(void*)text;
+    result=(PlugHooks[HOOK_ADDREFCOUNT])(&GCFP);
+    val=(char*)result->Value[0];
+    free (result);
+    return val;
+}
+
+void hook_free_string (char* text){
+    GCFP.Value[0]=(void*)text;
+    (PlugHooks[HOOK_FREESTRING])(&GCFP);
+    return ;
+}
+
+/*****************************************************************************/
+/* Called whenever a Hook Function needs to be connected to the plugin.      */
+/*****************************************************************************/
+CFParm* registerHook(CFParm* PParm)
+{
+    int Pos;
+    f_plugin Hook;
+    Pos = *(int*)(PParm->Value[0]);
+    Hook=(f_plugin)(PParm->Value[1]);
+    PlugHooks[Pos]=Hook;
+    return NULL;
+};
+
+/*****************************************************************************/
+/* Called whenever an event is triggered, both Local and Global ones.        */
+/*****************************************************************************/
+/* Two types of events exist in CF:                                          */
+/* - Local events: They are triggered by a single action on a single object. */
+/*                 Nearly any object can trigger a local event               */
+/*                 To warn the plugin of a local event, the map-maker needs  */
+/*                 to use the event... tags in the objects of their maps.    */
+/* - Global events: Those are triggered by actions concerning CF as a whole. */
+/*                 Those events may or may not be triggered by a particular  */
+/*                 object; they can't be specified by event... tags in maps. */
+/*                 The plugin should register itself for all global events it*/
+/*                 wants to be aware of.                                     */
+/* Why those two types ? Local Events are made to manage interactions between*/
+/* objects, for example to create complex scenarios. Global Events are made  */
+/* to allow logging facilities and server management. Global Events tends to */
+/* require more CPU time than Local Events, and are sometimes difficult to   */
+/* bind to any specific object.                                              */
+/*****************************************************************************/
+CFParm* triggerEvent(CFParm* PParm)
+{
+    int eventcode;
+    static int result;
+    eventcode = *(int *)(PParm->Value[0]);
+    /*printf ("Got event %d\n",eventcode);*/
+    switch (eventcode){
+        case EVENT_BORN:
+            result=player_birth ( (object*)PParm->Value[1]);
+            break;
+        case EVENT_SHOUT:
+            result=player_shouts ( (object*)PParm->Value[1],(char*)PParm->Value[2]);
+            break;
+        case EVENT_LOGIN:
+            result=player_login ( (player*)PParm->Value[1], (char*) PParm->Value[2]);
+            break;
+        case EVENT_LOGOUT:
+            result=player_logout ( (player*)PParm->Value[1], (char*) PParm->Value[2]);
+            break;
+        case EVENT_MAPENTER:
+        case EVENT_MAPLEAVE:
+            result=update_map_stats (*(int*)(PParm->Value[0]),(object*) PParm->Value[1]);
+            break;
+        case EVENT_MAPRESET:
+            printf ("reset!\n");
+            result=map_reset ((char*) PParm->Value[1]);
+            break;
+        case EVENT_CLOCK:
+            doclock();
+            result=0;
+            break;
+        case EVENT_CRASH:
+            printf ("Server crashes ;(\n");
+            result=0;
+            break;
+        case EVENT_DEATH:
+            if (!strcmp((char*)PParm->Value[10],"PLAYER_DIED"))
+                result=player_dies ((object*) PParm->Value[2]);
+            break;
+        case EVENT_GDEATH:
+            result=player_dies ((object*) PParm->Value[1]);
+            break;
+        case EVENT_GKILL:
+            result=creature_dies ((object*) PParm->Value[1]);
+            break;
+        case EVENT_TIME: /* Local event. Need to find quickly the correct handler!! */
+            if (1==1){};
+            break;
+        case EVENT_TRIGGER:
+            result=0;
+            if (!strcmp ((char*) PParm->Value[9],"ARENA"))
+                result=trigger_arena ((object*)PParm->Value[1], (object*)PParm->Value[2], (char*) PParm->Value[10]);
+            else if (!strcmp((char*)PParm->Value[9],"PLAYER_CHANGED"))
+                result=player_changer ((object*) PParm->Value[2],(object*)PParm->Value[1]);
+            break;
+        case EVENT_SAY:
+            result=event_say ((object*) PParm->Value[1], (object*) PParm->Value[2],
+                       (char*) PParm->Value[4],
+                       (char*) PParm->Value[9], (char*) PParm->Value[10]);
+            break;
+        case EVENT_APPLY:
+            result=event_apply ((object*) PParm->Value[1], (object*) PParm->Value[2],
+                       (char*) PParm->Value[9], (char*) PParm->Value[10]);
+            break;
+    };
+    GCFP.Value[0]=(void*)(&result);
+    return &GCFP;
+};
+
+/*****************************************************************************/
+/* Plugin initialization.                                                    */
+/*****************************************************************************/
+/* It is required that:                                                      */
+/* - The first returned value of the CFParm structure is the "internal" name */
+/*   of the plugin, used by objects to identify it.                          */
+/* - The second returned value is the name "in clear" of the plugin, used for*/
+/*   information purposes.                                                   */
+/*****************************************************************************/
+CFParm* initPlugin(CFParm* PParm)
+{
+    char buf[MAX_BUF];
+    char buf2[MAX_BUF];
+    printf("Crossfire logger facility at load...\n");
+    strcpy(buf,log_plugin_ident);
+    strcpy(buf2,log_plugin_string);
+    GCFP.Value[0] = (void *)(add_string(buf));
+    GCFP.Value[1] = (void *)(add_string(buf2));
+    logging_file=fopen (logging_filename,"a");
+    if (logging_file){
+        fprintf (logging_file,"\n"); /*Be sure to start logging on a new line*/
+        log2file("[LOGGING START]");
+    } else perror ("ALERT!! Cannot open logging file");
+
+    connect_database();
+    return &GCFP;
+};
+
+/*****************************************************************************/
+/* Used to do cleanup before killing the plugin.                             */
+/*****************************************************************************/
+CFParm* removePlugin(CFParm* PParm)
+{
+    log2file ("[LOGGING STOP]");
+    if (logging_file) fclose (logging_file);
+    close_database();
+    return NULL;
+};
+
+void debugF(int* i)
+{
+        printf("Int is %i\n", *i);
+};
+
+/*****************************************************************************/
+/* The postinitPlugin function is called by the server when the plugin load  */
+/* is complete. It lets the opportunity to the plugin to register some events*/
+/*****************************************************************************/
+CFParm* postinitPlugin(CFParm* PParm)
+{
+    int i;
+    GCFP.Value[1] = (void *)(add_string(log_plugin_ident));
+    i = EVENT_BORN;
+    GCFP.Value[0]=(void*)(&i);
+    (PlugHooks[HOOK_REGISTEREVENT])(&GCFP);
+    i = EVENT_SHOUT;
+    GCFP.Value[0]=(void*)(&i);
+    (PlugHooks[HOOK_REGISTEREVENT])(&GCFP);
+    i = EVENT_LOGIN;
+    GCFP.Value[0]=(void*)(&i);
+    (PlugHooks[HOOK_REGISTEREVENT])(&GCFP);
+    i = EVENT_LOGOUT;
+    GCFP.Value[0]=(void*)(&i);
+    (PlugHooks[HOOK_REGISTEREVENT])(&GCFP);
+    i = EVENT_LOGOUT;
+    GCFP.Value[0]=(void*)(&i);
+    (PlugHooks[HOOK_REGISTEREVENT])(&GCFP);
+    i = EVENT_LOGOUT;
+    GCFP.Value[0]=(void*)(&i);
+    (PlugHooks[HOOK_REGISTEREVENT])(&GCFP);
+    i = EVENT_MAPENTER;
+    GCFP.Value[0]=(void*)(&i);
+    (PlugHooks[HOOK_REGISTEREVENT])(&GCFP);
+    i = EVENT_MAPLEAVE;
+    GCFP.Value[0]=(void*)(&i);
+    (PlugHooks[HOOK_REGISTEREVENT])(&GCFP);
+    i = EVENT_MAPRESET;
+    GCFP.Value[0]=(void*)(&i);
+    (PlugHooks[HOOK_REGISTEREVENT])(&GCFP);
+    i = EVENT_CLOCK;
+    GCFP.Value[0]=(void*)(&i);
+    (PlugHooks[HOOK_REGISTEREVENT])(&GCFP);
+    i = EVENT_GDEATH;
+    GCFP.Value[0]=(void*)(&i);
+    (PlugHooks[HOOK_REGISTEREVENT])(&GCFP);
+    i = EVENT_GKILL;
+    GCFP.Value[0]=(void*)(&i);
+    (PlugHooks[HOOK_REGISTEREVENT])(&GCFP);
+    i = EVENT_CRASH;
+    GCFP.Value[0]=(void*)(&i);
+    (PlugHooks[HOOK_REGISTEREVENT])(&GCFP);
+    return NULL;
+};
