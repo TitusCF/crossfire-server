@@ -135,6 +135,7 @@ CommArray_s CommunicationCommands [] = {
   {"reply", command_reply,		0.0},
   {"say", command_say,			0.1},
   {"shout", command_shout,		0.1},
+  {"me", command_me,                   0.1},
   {"nod", command_nod,			0.0},
   {"dance", command_dance,		0.0},
   {"kiss", command_kiss,		0.0},
