@@ -156,21 +156,6 @@ object *get_player(player *p, mapstruct *m) {
 
     p->loading = NULL;
     op->map=m;
-    if(m->in_memory != MAP_IN_MEMORY) {
-	p->loading = m;
-	p->new_x = 0;
-	p->new_y = 0;
-	p->removed = 0;
-	op->x=0;
-	op->y=0;
-    } else {
-	i=find_free_spot(NULL,m,EXIT_X(m->map_object),EXIT_Y(m->map_object),
-			 0,SIZEOFFREE);
-	/* If no free spot, just stuff the player wherever it says */
-	if (i==-1) i=0;
-	op->x=EXIT_X(m->map_object)+freearr_x[i];
-	op->y=EXIT_Y(m->map_object)+freearr_y[i];
-    }
     p->fire_on=0,p->run_on=0;
     p->count=0;
     p->count_left=0;
@@ -232,6 +217,25 @@ object *get_player(player *p, mapstruct *m) {
     if(QUERY_FLAG(op,FLAG_READY_SKILL))
         CLEAR_FLAG(op,FLAG_READY_SKILL); 
     p->socket.update_look=0;
+
+    /* Do this last so that all the pointers are updated */
+    if(m->in_memory != MAP_IN_MEMORY) {
+	LOG(llevError,"get_player: Map not in memory?\n");
+	p->loading = m;
+	p->new_x = 0;
+	p->new_y = 0;
+	p->removed = 0;
+	op->x=0;
+	op->y=0;
+    } else {
+	i=find_free_spot(NULL,m,EXIT_X(m->map_object),EXIT_Y(m->map_object),
+			 0,SIZEOFFREE);
+	/* If no free spot, just stuff the player wherever it says */
+	if (i==-1) i=0;
+	op->x=EXIT_X(m->map_object)+freearr_x[i];
+	op->y=EXIT_Y(m->map_object)+freearr_y[i];
+	insert_ob_in_map(op, m, op);
+    }
     return op;
 }
 
@@ -664,11 +668,12 @@ int key_roll_stat(object *op, char key)
 		break;
 	    }
 
+#if 0
 	    /* So that enter_exit will put us at startx/starty */
 	    op->x= -1;
 
 	    enter_exit(op,NULL);
-
+#endif
 	    SET_ANIMATION(op, 2);     /* So player faces south */
 	    /* Enter exit adds a player otherwise */
 	    add_statbonus(op);
