@@ -17,6 +17,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+common/object.c: fix the monsters on tiled maps bug that I may have 
+    mentioned a while ago.  Seems that the server assumed that all 
+    parts of a multi part monster are on the same map as the head 
+    while moving.  
+DVS 2004-01-12
+
 common/living.c: fix fix_player() so that character gets benefits/penalties
    for sp/hp/grace/etc regen bonuses as related to the god they worship.
 server/player.c: dragon_ability_gain(): Modify so that character now gets
