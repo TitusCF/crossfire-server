@@ -33,12 +33,12 @@ main() {
 
 
   /* put your layout here */
-  /*layout = roguelike_layout_gen(Xsize,Ysize,0);*/
+  layout = roguelike_layout_gen(Xsize,Ysize,0);
   /*layout = make_snake_layout(Xsize,Ysize,0); */
   /*layout = make_square_spiral_layout(Xsize,Ysize,0); */
   /*layout = gen_corridor_rooms(Xsize, Ysize, 1); */
   /*layout = maze_gen(Xsize,Ysize,0); */
-  layout = map_gen_onion(Xsize,Ysize,0,0);
+  /*layout = map_gen_onion(Xsize,Ysize,0,0);*/
 
   dump_layout(layout, Xsize, Ysize);
   printf("\nExpanding layout...\n");

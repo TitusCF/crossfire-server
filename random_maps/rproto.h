@@ -9,6 +9,7 @@
 
 extern mapstruct *generate_random_map ( char *OutFileName, RMParms *RP );
 extern char **layoutgen ( RMParms *RP );
+extern char **expand2x(char **layout, int xsize, int ysize);
 extern char **symmetrize_layout ( char **maze, int sym, RMParms *RP );
 extern char ** rotate_layout ( char **maze, int rotation, RMParms *RP );
 extern void roomify_layout ( char **maze, RMParms *RP );

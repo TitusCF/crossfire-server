@@ -53,6 +53,8 @@ int *free_y_list;
 
 #define MAX_FINE .454545
 
+extern int surround_check(char **maze,int i, int j, int xsize, int ysize);
+
 char **map_gen_spiral(int xsize, int ysize, int option) {
   int i,j;
   float parm=0;
@@ -185,6 +187,20 @@ void connect_spirals(int xsize,int ysize,int sym, char **layout) {
     }
 
   }
+
+  /* get rid of bad doors. */
+  for(i=0;i<xsize;i++)
+    for(j=0;j<ysize;j++) {
+      if(layout[i][j]=='D') {  /* remove bad door. */
+        int si = surround_check(layout,i,j,xsize,ysize);
+        if(si!=3 && si!=12) { 
+          layout[i][j]=0;
+          /* back up and recheck any nearby doors */
+          i=0;j=0;
+        }
+      }
+    }
+         
 
 
 }

@@ -216,7 +216,14 @@ char **layoutgen(RMParms *RP) {
 
 
   maze = symmetrize_layout(maze, RP->symmetry_used,RP);
-
+#ifdef RMAP_DEBUG
+  dump_layout(maze,RP);
+#endif
+  /*
+  maze = expand2x(maze,RP->Xsize,RP->Ysize);
+  RP->Xsize = RP->Xsize * 2 -1;
+  RP->Ysize = RP->Ysize * 2 -1;
+  */
   return maze; 
 }
 
