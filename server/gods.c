@@ -76,8 +76,8 @@ object *find_god(char *name) {
 
 /**
  * Determines if op worships a god.
- * Returns the godname if they do. In the case of an NPC, if they have
- * no god, we give them a random one. -b.t.
+ * Returns the godname if they do or "none" if they have no god.
+ * In the case of an NPC, if they have no god, we give them a random one. -b.t.
  */
 
 char *determine_god(object *op) {
