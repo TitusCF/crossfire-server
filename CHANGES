@@ -18,6 +18,9 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+configure.in, configure:  Add check for perl so that we can call scripts
+properly - MSW 5/13/2000
+
 common/re-cmp.c:  Add some tolower calls in the comparisons so most
 regular expressions should not be case insenstive (makes matches & says
 work better).  Note that I did not change the behaviour on range matches

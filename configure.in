@@ -54,6 +54,7 @@ AC_PATH_PROG(AR, ar)
 AC_PATH_PROG(LATEX, latex)
 AC_PATH_PROG(GZIP, gzip)
 AC_PATH_PROG(GUNZIP, gunzip)
+AC_PATH_PROG(PERL, perl)
 
 if test -n "$GZIP" -a -z "$GUNZIP" ; then
     echo "Found gzip, but not gunzip - setting GUNZIP to gzip -c";
