@@ -222,7 +222,7 @@ void
 get_tod(timeofday_t *tod)
 {
   tod->year = todtick/HOURS_PER_YEAR;
-  tod->month = todtick/HOURS_PER_MONTH;
+  tod->month = (todtick/HOURS_PER_MONTH)%MONTHS_PER_YEAR;
   tod->day = (todtick%HOURS_PER_MONTH)/DAYS_PER_MONTH;
   tod->dayofweek = tod->day%DAYS_PER_WEEK;
   tod->hour = todtick%HOURS_PER_DAY;
