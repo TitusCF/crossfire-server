@@ -71,6 +71,7 @@ options:
 #define OPT_BOTTOM_R  8
 #define OPT_WALL_OFF  16
 #define OPT_IRR_SPACE 32
+#define OPT_WALLS_ONLY 64
 
 
 int *free_x_list;
@@ -123,6 +124,8 @@ char **map_gen_onion(int xsize, int ysize, int option, int layers) {
     for(j=0;j<ysize;j++)
 	 maze[0][j] = maze[xsize-1][j] = '#';
   };
+
+  if(option & OPT_WALLS_ONLY) return maze;
 
   /* pick off the mutually exclusive options */
   if(option & OPT_BOTTOM_R) 

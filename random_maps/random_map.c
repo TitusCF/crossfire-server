@@ -176,6 +176,7 @@ mapstruct *generate_random_map(char *InFileName,char *OutFileName) {
 
   fclose(InFile);
   /*  fclose(OutFile); */
+  /*new_save_map(theMap,1);*/
   return theMap;
 }
 
