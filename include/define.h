@@ -33,6 +33,9 @@
  * to be dumped in here.
  */
 
+#ifndef DEFINE_H
+#define DEFINE_H
+
 /*
  * Crossfire requires ANSI-C, but some compilers "forget" to define it.
  * Thus the prototypes made by cextract don't get included correctly.
@@ -628,6 +631,40 @@
 #define DARK_FACE2_NAME		"dark2.111"
 #define DARK_FACE3_NAME		"dark3.111"
 
+/* Simple function we use below to keep adding to the same string
+ * but also make sure we don't overwrite that string.
+ */
+static inline void safe_strcat(char *dest, char *orig, int *curlen, int maxlen)
+{
+    if (*curlen == (maxlen-1)) return;
+    strncpy(dest+*curlen, orig, maxlen-*curlen-1);
+    dest[maxlen-1]=0;
+    *curlen += strlen(orig);
+    if (*curlen>(maxlen-1)) *curlen=maxlen=1;
+}
+
+
+/* The SAFE versions of these call the safe_strcat function above.
+ * Ideally, all functions should use the SAFE functions, but they 
+ * require some extra support in the calling function to remain as
+ * efficient.
+ */
+#define DESCRIBE_ABILITY_SAFE(retbuf, variable, name, len, maxlen) \
+    if(variable) { \
+      int i,j=0; \
+      safe_strcat(retbuf,"(" name ": ", len, maxlen); \
+      for(i=0; i<NROFATTACKS; i++) \
+        if(variable & (1<<i)) { \
+          if (j) \
+            safe_strcat(retbuf,", ", len, maxlen); \
+          else \
+            j = 1; \
+          safe_strcat(retbuf, attacks[i], len, maxlen); \
+        } \
+      safe_strcat(retbuf,")",len,maxlen); \
+    }
+ 
+
 /* separated this from the common/item.c file. b.t. Dec 1995 */
 
 #define DESCRIBE_ABILITY(retbuf, variable, name) \
@@ -659,6 +696,22 @@
           strcat(retbuf, spellpathnames[i]); \
         } \
       strcat(retbuf,")"); \
+    }
+
+
+#define DESCRIBE_PATH_SAFE(retbuf, variable, name, len, maxlen) \
+    if(variable) { \
+      int i,j=0; \
+      safe_strcat(retbuf,"(" name ": ", len, maxlen); \
+      for(i=0; i<NRSPELLPATHS; i++) \
+        if(variable & (1<<i)) { \
+          if (j) \
+            safe_strcat(retbuf,", ", len, maxlen); \
+          else \
+            j = 1; \
+          safe_strcat(retbuf, spellpathnames[i], len, maxlen); \
+        } \
+      safe_strcat(retbuf,")", len, maxlen); \
     }
 
 #define AP_APPLY		1
@@ -693,3 +746,5 @@
 #    endif
 #  endif
 #endif
+
+#endif /* DEFINE_H */

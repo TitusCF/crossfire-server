@@ -1,3 +1,32 @@
+
+/*
+ * static char *rcsid_item_c =
+ *    "$Id$";
+ */
+
+/*
+    CrossFire, A Multiplayer game for X-windows
+
+    Copyright (C) 2000 Mark Wedel
+    Copyright (C) 1992 Frank Tore Johansen
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+
+    The author can be reached via e-mail to mwedel@scruz.net
+*/
+
 /* This containes item logic for client/server.  IT doesn't contain
  * the actual commands that send the data, but does contain
  * the logic for what items should be sent.
@@ -20,6 +49,21 @@
 /* This is more or less stolen from the query_weight function. */
 #define WEIGHT(op) (op->nrof?op->weight:op->weight+op->carrying)
 
+/* This is a simple function that we use a lot here.  It basically
+ * adds the specified buffer into the socklist, but prepends a
+ * single byte in length.  If the data is longer than that byte, it is
+ * truncated approprately.
+ */
+inline void add_stringlen_to_sockbuf(char *buf, SockList *sl)
+{
+    int len;
+
+    len=strlen(buf);
+    if (len>255) len=255;
+    SockList_AddChar(sl, len);
+    strncpy((char*)sl->buf+sl->len, buf,len);
+    sl->len += len;
+}
 
 /* 
  *  This is a similar to query_name, but returns flags
@@ -89,7 +133,7 @@ unsigned int query_flags (object *op)
 void esrv_draw_look(object *pl)
 {
     object *tmp, *last;
-    int flags, got_one=0;
+    int flags, got_one=0,len;
     SockList sl;
     char *buf;
 
@@ -132,10 +176,7 @@ void esrv_draw_look(object *pl)
 	    SockList_AddInt(&sl, flags);
 	    SockList_AddInt(&sl, QUERY_FLAG(tmp, FLAG_NO_PICK) ? -1 : WEIGHT(tmp));
 	    SockList_AddInt(&sl, tmp->face->number);
-	    buf=query_short_name(tmp);
-	    SockList_AddChar(&sl, strlen(buf));
-	    strcpy((char*)sl.buf+sl.len, buf);
-	    sl.len += strlen(buf);
+	    add_stringlen_to_sockbuf(query_short_name(tmp), &sl);
 	    got_one++;
 	    SET_FLAG(tmp, FLAG_CLIENT_SENT);
 	    if (sl.len > (MAXSOCKBUF-250)) {
@@ -156,7 +197,7 @@ void esrv_draw_look(object *pl)
 void esrv_send_inventory(object *pl, object *op)
 {
     object *tmp;
-    int flags, got_one=0, anim_speed;
+    int flags, got_one=0, anim_speed,len;
     SockList sl;
     char *buf;
     
@@ -185,10 +226,9 @@ void esrv_send_inventory(object *pl, object *op)
 	    SockList_AddInt(&sl, flags);
 	    SockList_AddInt(&sl, QUERY_FLAG(tmp, FLAG_NO_PICK) ? -1 : WEIGHT(tmp));
 	    SockList_AddInt(&sl, tmp->face->number);
-	    buf=query_base_name(tmp);
-	    SockList_AddChar(&sl, strlen(buf));
-	    strcpy((char*)sl.buf+sl.len, buf);
-	    sl.len += strlen(buf);
+
+	    add_stringlen_to_sockbuf(query_base_name(tmp), &sl);
+
 	    SockList_AddShort(&sl,tmp->animation_id);
 	    anim_speed=0;
 	    if (QUERY_FLAG(tmp,FLAG_ANIMATE)) {
@@ -272,10 +312,8 @@ void esrv_update_item(int flags, object *pl, object *op)
 	SockList_AddInt(&sl, op->face->number);
     }
     if (flags & UPD_NAME) {
-	buf=query_short_name(op);
-	SockList_AddChar(&sl,strlen(buf));
-	strcpy((char*)sl.buf+sl.len, buf);
-	sl.len += strlen(buf);
+	add_stringlen_to_sockbuf(query_short_name(op), &sl);
+
     }
     if (flags & UPD_ANIM) 
 	    SockList_AddShort(&sl,op->animation_id);
@@ -302,7 +340,7 @@ void esrv_update_item(int flags, object *pl, object *op)
 
 void esrv_send_item(object *pl, object*op)
 {
-    int anim_speed;
+    int anim_speed,len;
     SockList sl;
     char *buf;
     
@@ -337,10 +375,8 @@ void esrv_send_item(object *pl, object*op)
     SockList_AddInt(&sl, query_flags(op));
     SockList_AddInt(&sl, WEIGHT(op));
     SockList_AddInt(&sl, op->face->number);
-    buf=query_base_name(op);
-    SockList_AddChar(&sl,strlen(buf));
-    strcpy((char*)sl.buf+sl.len, buf);
-    sl.len += strlen(buf);
+    add_stringlen_to_sockbuf(query_base_name(op), &sl);
+
     SockList_AddShort(&sl,op->animation_id);
     anim_speed=0;
     if (QUERY_FLAG(op,FLAG_ANIMATE)) {

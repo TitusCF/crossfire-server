@@ -140,8 +140,9 @@ void examine_monster(object *op,object *tmp) {
 }
 
 char *long_desc(object *tmp) {
-  static char buf[MAX_BUF];
+  static char buf[VERY_BIG_BUF];
   char *cp;
+
   if(tmp==NULL)
     return "";
   buf[0]='\0';
@@ -163,12 +164,26 @@ char *long_desc(object *tmp) {
   case FOOD:
   case DRINK:
   case FLESH:
-    if(*(cp=describe_item(tmp))!='\0')
-      sprintf(buf,"%s %s",query_name(tmp),cp);
-    break;
+    if(*(cp=describe_item(tmp))!='\0') {
+	int len;
+
+	strncpy(buf,query_name(tmp), VERY_BIG_BUF-1);
+	buf[VERY_BIG_BUF-1]=0;
+	len=strlen(buf);
+	if (len<VERY_BIG_BUF-5) {
+	    /* Since we know the length, we save a few cpu cycles by using
+	     * it instead of calling strcat */
+	    strcpy(buf+len," ");
+	    len++;
+	    strncpy(buf+len, cp, VERY_BIG_BUF-len-1);
+	    buf[VERY_BIG_BUF-1]=0;
+	}
+    }
   }
-  if(buf[0]=='\0')
-    sprintf(buf,"%s",query_name(tmp));
+  if(buf[0]=='\0') {
+	strncpy(buf,query_name(tmp), VERY_BIG_BUF-1);
+	buf[VERY_BIG_BUF-1]=0;
+  }
 
   return buf;
 }
@@ -181,10 +196,15 @@ void examine(object *op, object *tmp) {
 	return;
 
     /* Eneq(csd.uu.se): If NO_PRETEXT is defined we should only print the name. */
-    if (QUERY_FLAG(tmp, FLAG_NO_PRETEXT))
-	sprintf(buf, "%s.", long_desc(tmp));
-    else
-	sprintf(buf, "That is %s.", long_desc(tmp));
+    if (QUERY_FLAG(tmp, FLAG_NO_PRETEXT)) {
+	strncpy(buf, long_desc(tmp), VERY_BIG_BUF-1);
+	buf[VERY_BIG_BUF-1]=0;
+    }
+    else {
+	strcpy(buf,"That is ");
+	strncat(buf, long_desc(tmp), VERY_BIG_BUF-strlen(buf)-1);
+	buf[VERY_BIG_BUF-1]=0;
+    }
 
     new_draw_info(NDI_UNIQUE, 0,op,buf);
     buf[0]='\0';

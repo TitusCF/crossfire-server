@@ -18,6 +18,25 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+include/define.h:  add safe_strcat inline/static function.  Add
+    DESCRIBE_ABILITY_SAFE and DESCRIBE_PATH_SAFE which use the safe_strcat
+    to prevent buffer overuns.
+common/item.c:  Have query_name use HUGE_BUF for its buffer - query_short_name
+    uses that buffer size, and we call the same thing.  have quer_name and
+    query_short_name use the safe_strcat function.  Increase buffer size
+    in ring_desc to be a VERY_BIG_BUF and also use safe_strcat along with the
+    DESCRIBE_*_SAFE macros.
+server/input.c:  Modify examine.c to not get buffer overruns for very long/
+    complicated items.  Modify long_desc to also handle long names/descriptions
+    without buffer overruns.
+socket/item.c:  Modify the functions that prepend the length to the name
+    of the object to handle very long (>255) object names properly - now we
+    just truncate it and only send the first 255 bytes.  add function
+    add_stringlen_to_sockbuf to make this task easier.
+With the above changes, very long named items/items with very long
+descriptions works properly in both the server (no crashes) and the
+client (no crashes/protocol errors)  MSW 5/22/2000
+
 common/item.c: Modify query_short_name to avoid buffer overflow on long
 ring descriptions.  Also, increased size of buffer in this function so
 that longer ring descriptions will not get truncated.  MSW 5/22/2000

@@ -54,6 +54,7 @@ static char levelnumbers_10[11][20] = {
   "seventieth","eightieth","ninetieth"
 };
 
+
 /*
  * query_weight(object) returns a character pointer to a static buffer
  * containing the text-representation of the weight of the given object.
@@ -125,8 +126,8 @@ char *get_number(int i) {
  */
 char *ring_desc (object *op) 
 {
-    static char buf[MAX_BUF];
-    int attr, val;
+    static char buf[VERY_BIG_BUF];
+    int attr, val,len;
     
     buf[0] = 0;
 
@@ -169,12 +170,13 @@ char *ring_desc (object *op)
     if(QUERY_FLAG(op,FLAG_STEALTH))
 	strcat(buf,"(stealth)");
     /* Shorten some of the names, so they appear better in the windows */
-    DESCRIBE_ABILITY(buf, op->immune, "Immune");
-    DESCRIBE_ABILITY(buf, op->protected, "Pro");
-    DESCRIBE_ABILITY(buf, op->vulnerable, "Vuln");
-    DESCRIBE_PATH(buf, op->path_attuned, "Attuned");
-    DESCRIBE_PATH(buf, op->path_repelled, "Repelled");
-    DESCRIBE_PATH(buf, op->path_denied, "Denied");
+    len=strlen(buf);
+    DESCRIBE_ABILITY_SAFE(buf, op->immune, "Immune", &len, VERY_BIG_BUF);
+    DESCRIBE_ABILITY_SAFE(buf, op->protected, "Pro", &len, VERY_BIG_BUF);
+    DESCRIBE_ABILITY_SAFE(buf, op->vulnerable, "Vuln", &len, VERY_BIG_BUF);
+    DESCRIBE_PATH_SAFE(buf, op->path_attuned, "Attuned", &len, VERY_BIG_BUF);
+    DESCRIBE_PATH_SAFE(buf, op->path_repelled, "Repelled", &len, VERY_BIG_BUF);
+    DESCRIBE_PATH_SAFE(buf, op->path_denied, "Denied", &len, VERY_BIG_BUF);
     if(buf[0] == 0 && op->type!=SKILL)
 	strcpy(buf,"of adornment");
     return buf;
@@ -188,21 +190,18 @@ char *query_short_name(object *op)
 {
     static char buf[HUGE_BUF];
     char buf2[HUGE_BUF];
+    int len=0;
 
     if(op->name == NULL)
 	return "(null)";
     if(!op->nrof && !op->weight && !op->title && !is_magical(op)) 
 	return op->name; /* To speed things up (or make things slower?) */
     if(op->nrof) {
-	strcpy(buf, get_number(op->nrof));
+	safe_strcat(buf, get_number(op->nrof), &len, HUGE_BUF);
 
-#if 0
-	/* if nrof==1, then get_number returns 'a'. Add an 'n' if appropriate*/
-	if(op->nrof==1&&QUERY_FLAG(op,FLAG_AN))
-	    strcat(buf,"n");
-#endif
-	if (op->nrof!=1) strcat(buf, " ");
-	strcat(buf,op->name);
+	if (op->nrof!=1) safe_strcat(buf, " ", &len, HUGE_BUF);
+	safe_strcat(buf,op->name, &len, HUGE_BUF);
+
 	if (op->nrof != 1) {
 	    char *buf3 = strstr(buf, " of ");
 	    if (buf3!=NULL) {
@@ -214,14 +213,14 @@ char *query_short_name(object *op)
 
 		if(cp!=NULL)
 		    *cp='\0'; /* Strip the 'y' */
-		strcat(buf,"ies");
+		safe_strcat(buf,"ies", &len, HUGE_BUF);
 	    } else if (buf[strlen(buf)-1]!='s') 
 		/* if the item ends in 's', then adding another one is 
 		 * not the way to pluralize it.  The only item where this 
 		 * matters (that I know of) is bracers, as they start of 
 		 * plural 
 		 */
-		strcat(buf,"s");
+		safe_strcat(buf,"s", &len, HUGE_BUF);
 
 	    /* If buf3 is set, then this was a string that contained
 	     * something of something (potion of dexterity.)  The part before
@@ -229,16 +228,16 @@ char *query_short_name(object *op)
 	     * (after and including the " of "), to the buffer string.
 	     */
 	    if (buf3)
-		strcat(buf, buf2);
+		safe_strcat(buf, buf2, &len, HUGE_BUF);
 	}
     } else {
 	/* if nrof is 0, the object is not mergable, and thus, op->name
 	   should contain the name to be used. */
-	strcpy(buf,op->name);
+	safe_strcat(buf,op->name, &len, HUGE_BUF);
     }
     if (op->title && QUERY_FLAG(op,FLAG_IDENTIFIED)) {
-	strcat(buf, " ");
-	strcat(buf, op->title);
+	safe_strcat(buf, " ", &len, HUGE_BUF);
+	safe_strcat(buf, op->title, &len, HUGE_BUF);
     }
 
     switch(op->type) {
@@ -248,10 +247,12 @@ char *query_short_name(object *op)
       case ROD:
 	if (QUERY_FLAG(op,FLAG_IDENTIFIED)||QUERY_FLAG(op,FLAG_BEEN_APPLIED)) {
 	    if(!op->title) {
-		strcat(buf," of ");
-		strcat(buf,spells[op->stats.sp].name);
-		if(op->type != SPELLBOOK)
-		    sprintf(buf+strlen(buf), " (lvl %d)", op->level);
+		safe_strcat(buf," of ", &len, HUGE_BUF);
+		safe_strcat(buf,spells[op->stats.sp].name, &len, HUGE_BUF);
+		if(op->type != SPELLBOOK) {
+		    sprintf(buf2, " (lvl %d)", op->level);
+		    safe_strcat(buf, buf2, &len, HUGE_BUF);
+		}
 	    }
 	}
 	break;
@@ -264,9 +265,8 @@ char *query_short_name(object *op)
 	    /* If ring has a title, full description isn't so useful */ 
 	    char *s = ring_desc(op);
 	    if (s[0]) {
-		strcat (buf, " ");
-		strncat (buf, s, HUGE_BUF-strlen(buf)-1);
-		buf[HUGE_BUF-1]=0;
+		safe_strcat (buf, " ", &len, HUGE_BUF);
+		safe_strcat(buf, s, &len, HUGE_BUF);
 	    }
 	}
 #endif
@@ -274,7 +274,8 @@ char *query_short_name(object *op)
       default:
 	if(op->magic && ((QUERY_FLAG(op,FLAG_BEEN_APPLIED) && 
 	   need_identify(op)) || QUERY_FLAG(op,FLAG_IDENTIFIED))) {
-	    sprintf(buf + strlen(buf), " %+d", op->magic);
+	    sprintf(buf2, " %+d", op->magic);
+	    safe_strcat(buf, buf2, &len, HUGE_BUF);
 	}
     }
     return buf;
@@ -292,25 +293,26 @@ char *query_short_name(object *op)
  *
  */
 char *query_name(object *op) {
-    static char buf[5][MAX_BUF];
+    static char buf[5][HUGE_BUF];
     static int use_buf=0;
+    int len=0;
 
     use_buf++;
     use_buf %=5;
 
-    strcpy (buf[use_buf], query_short_name(op));
+    safe_strcat(buf[use_buf], query_short_name(op), &len, HUGE_BUF);
 
     if (QUERY_FLAG(op,FLAG_INV_LOCKED))
-	strcat(buf[use_buf], " *");
+	safe_strcat(buf[use_buf], " *", &len, HUGE_BUF);
     if (op->type == CONTAINER && ((op->env && op->env->container == op) || 
 	(!op->env && QUERY_FLAG(op,FLAG_APPLIED))))
-	strcat(buf[use_buf]," (open)");
+	safe_strcat(buf[use_buf]," (open)", &len, HUGE_BUF);
 
     if (QUERY_FLAG(op,FLAG_KNOWN_CURSED)) {
 	if(QUERY_FLAG(op,FLAG_DAMNED))
-	    strcat(buf[use_buf], " (damned)");
+	    safe_strcat(buf[use_buf], " (damned)", &len, HUGE_BUF);
 	else if(QUERY_FLAG(op,FLAG_CURSED))
-	    strcat(buf[use_buf], " (cursed)");
+	    safe_strcat(buf[use_buf], " (cursed)", &len, HUGE_BUF);
     }
     /* Basically, if the object is known magical (detect magic spell on it),
      * and it isn't identified,  print out the fact that
@@ -322,17 +324,17 @@ char *query_name(object *op) {
      * abilities, especially for artifact items.
      */
     if (QUERY_FLAG(op,FLAG_KNOWN_MAGICAL) && !QUERY_FLAG(op,FLAG_IDENTIFIED))
-	strcat(buf[use_buf], " (magic)");
+	safe_strcat(buf[use_buf], " (magic)", &len, HUGE_BUF);
     if(QUERY_FLAG(op,FLAG_APPLIED)) {
 	switch(op->type) {
 	  case BOW:
 	  case WAND:
 	  case ROD:
 	  case HORN:
-	    strcat(buf[use_buf]," (readied)");
+	    safe_strcat(buf[use_buf]," (readied)", &len, HUGE_BUF);
 	    break;
 	  case WEAPON:
-	    strcat(buf[use_buf]," (wielded)");
+	    safe_strcat(buf[use_buf]," (wielded)", &len, HUGE_BUF);
 	    break;
 	  case ARMOUR:
 	  case HELMET:
@@ -344,18 +346,18 @@ char *query_name(object *op) {
 	  case GIRDLE:
 	  case BRACERS:
 	  case CLOAK:
-	    strcat(buf[use_buf]," (worn)");
+	    safe_strcat(buf[use_buf]," (worn)", &len, HUGE_BUF);
 	    break;
 	  case CONTAINER:
-	    strcat(buf[use_buf]," (active)");
+	    safe_strcat(buf[use_buf]," (active)", &len, HUGE_BUF);
 	    break;
 	  case SKILL:
 	  default:
-	    strcat(buf[use_buf]," (applied)");
+	    safe_strcat(buf[use_buf]," (applied)", &len, HUGE_BUF);
 	}
     }
     if(QUERY_FLAG(op, FLAG_UNPAID))
-	strcat(buf[use_buf]," (unpaid)");
+	safe_strcat(buf[use_buf]," (unpaid)", &len, HUGE_BUF);
 
     return buf[use_buf];
 }
