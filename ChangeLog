@@ -17,6 +17,19 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/rune.c: Fix it so that players won't be hit by traps if they are
+    not next to them when set off (firing arrows at a door for example).
+server/spell_util.c: Fix spell_failure() to properly damage player if they
+   fumble.  Fix cast_spell() to not complain about not having enough
+   grace if the spell doesn't take grace.  Add same check for mana, but that
+   is much less likely, as harder to get negative mana.
+socket/request.c: Fix problem where map sending code was not properly avoiding
+   duplicating the head of a big image on multiple layers.  This bug most often
+   manifested itself of player standing on lower right corner of large building,
+   and something else standing on other portion of building - player would seem
+   to disappear.
+MSW 2003-11-30
+
 lib/adm/collect_images.pl: forced binary mode for written files.
    This lets the script work correctly under Windows.
 Ryo 2003-11-29

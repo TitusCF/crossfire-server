@@ -863,7 +863,7 @@ void spell_failure(object *op, int failure,int power, object *skill)
 	/* Safety check to make sure we don't get any mana storms in scorn */
 	if (get_map_flags(op->map, NULL, op->x, op->y, NULL, NULL) & P_NO_MAGIC) {
 	    new_draw_info(NDI_UNIQUE, 0, op, "The magic warps and you are turned inside out!");
-	    hit_player(tmp,9998,op,AT_INTERNAL);
+	    hit_player(op,9998,op,AT_INTERNAL);
 
 	} else {
 	    new_draw_info(NDI_UNIQUE, 0,op,"You lose control of the mana!  The uncontrolled magic blasts you!");
@@ -962,11 +962,13 @@ int cast_spell(object *op, object *caster,int dir,object *spell_ob, char *string
 	    }
 	}
 
-	if (SP_level_spellpoint_cost(caster, spell_ob, SPELL_MANA) >  op->stats.sp) {
+	if (SP_level_spellpoint_cost(caster, spell_ob, SPELL_MANA) &&
+	    SP_level_spellpoint_cost(caster, spell_ob, SPELL_MANA) >  op->stats.sp) {
 	    new_draw_info(NDI_UNIQUE, 0,op,"You don't have enough mana.");
 	    return 0;
 	}
-	if (SP_level_spellpoint_cost(caster,spell_ob, SPELL_GRACE) >  op->stats.grace) {
+	if (SP_level_spellpoint_cost(caster,spell_ob, SPELL_GRACE) &&
+	    SP_level_spellpoint_cost(caster,spell_ob, SPELL_GRACE) >  op->stats.grace) {
 	    if(random_roll(0, op->stats.Wis-1, op, PREFER_HIGH) + op->stats.grace -
 	       10*SP_level_spellpoint_cost(caster,spell_ob, SPELL_GRACE)/op->stats.maxgrace >0) {
 		new_draw_info_format(NDI_UNIQUE, 0,op, 

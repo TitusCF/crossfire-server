@@ -220,6 +220,8 @@ void spring_trap(object *trap,object *victim)
 {
     object *env;
     tag_t trap_tag = trap->count;
+    rv_vector rv;
+
 
     /* Prevent recursion */
     if (trap->stats.hp <= 0)
@@ -244,6 +246,14 @@ void spring_trap(object *trap,object *victim)
      *   knows what hit him.  
      */
     for (env = trap; env->env != NULL; env = env->env) ;
+
+    /* If the victim is not next to this trap, don't set it off.
+     * players shouldn't get hit by firing arrows at a door for example.
+     * At the same time, the trap will stick around until detonated
+     */
+    get_rangevector(env, victim, &rv, 0);
+    if (rv.distance > 1) return;
+
     trap_show(trap,env);  
 
     /* Only if it is a spell do we proceed here */

@@ -1178,6 +1178,16 @@ static inline int update_space(SockList *sl, NewSocket *ns, mapstruct  *mp, int 
 			heads[(sy * MAX_HEAD_POS + sx) * MAX_LAYERS + i] = NULL;
 	    }
 	    else {
+		/* If this head is stored away, clear it - otherwise,
+		 * there can be cases where a object is on multiple layers - 
+		 * we only want to send it once.
+		 */
+		face_num = head->face->number;
+		for (i=0; i<MAP_LAYERS; i++)
+		    if (heads[(by * MAX_HEAD_POS + bx) * MAX_LAYERS + i] &&
+			heads[(by * MAX_HEAD_POS + bx) * MAX_LAYERS + i]->face->number == face_num)
+			heads[(by * MAX_HEAD_POS + bx) * MAX_LAYERS + i] = NULL;
+
 		/* First, try to put the new head on the same layer.  If that is used up,
 		 * then find another layer.
 		 */
