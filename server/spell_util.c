@@ -1,5 +1,5 @@
 /*
- * static char *rcsid_spells_c =
+ * static char *rcsid_spell_util_c =
  *   "$Id$";
  */
 

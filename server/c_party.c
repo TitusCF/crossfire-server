@@ -1,11 +1,11 @@
 /*
- * static char *rcsid_input_c =
+ * static char *rcsid_c_party_c =
  *   "$Id$";
  */
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copryight (C) 1994 Mark Wedel
+    Copryight (C) 2000 Mark Wedel
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -22,7 +22,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to master@rahul.net
+    The author can be reached via e-mail to mwedel@scruz.net
 */
 
 #include <global.h>

@@ -1,5 +1,5 @@
 /*
- * static char *rcsid_newspells_c =
+ * static char *rcsid_spell_effect_c =
  *   "$Id$";
  */
 
@@ -7,8 +7,8 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 1992 Frank Tore Johansen
     Copyright (C) 2000 Mark Wedel
+    Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
