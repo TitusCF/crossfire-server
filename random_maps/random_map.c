@@ -60,6 +60,11 @@ mapstruct *generate_random_map(char *OutFileName, RMParms *RP) {
   else
     RP->difficulty_given=1;
 
+  if(RP->expand2x > 0) {
+      RP->Xsize /=2;
+      RP->Ysize /=2;
+    }
+
   layout = layoutgen(RP);
 
   /* increment these for the current map */
@@ -219,11 +224,11 @@ char **layoutgen(RMParms *RP) {
 #ifdef RMAP_DEBUG
   dump_layout(maze,RP);
 #endif
-  /*
-  maze = expand2x(maze,RP->Xsize,RP->Ysize);
-  RP->Xsize = RP->Xsize * 2 -1;
-  RP->Ysize = RP->Ysize * 2 -1;
-  */
+  if(RP->expand2x) {
+    maze = expand2x(maze,RP->Xsize,RP->Ysize);
+    RP->Xsize = RP->Xsize * 2 -1;
+    RP->Ysize = RP->Ysize * 2 -1;
+  }
   return maze; 
 }
 

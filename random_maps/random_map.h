@@ -18,6 +18,7 @@ typedef struct {
 
   int Xsize;
   int Ysize;
+  int expand2x;
   int layoutoptions1;
   int layoutoptions2;
   int layoutoptions3;

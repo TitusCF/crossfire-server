@@ -81,6 +81,7 @@ WS	[ \t]*
 ^decorstyle{S}	    strcpy(RP->decorstyle,rmap_yval());
 ^xsize{S}	    RP->Xsize = IVAL;
 ^ysize{S}	    RP->Ysize = IVAL;
+^expand2x{S}        RP->expand2x = IVAL;
 ^layoutoptions1{S}  RP->layoutoptions1 = IVAL;
 ^layoutoptions2{S}  RP->layoutoptions2 = IVAL;
 ^layoutoptions3{S}  RP->layoutoptions3 = IVAL;
