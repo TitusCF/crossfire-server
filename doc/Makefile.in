@@ -19,7 +19,7 @@ prefix = @prefix@
 exec_prefix = @exec_prefix@
 mandir = @mandir@
 MAN1 = $(mandir)/man1
-MANSUFFIX = 1
+MANSUFFIX = 6
 
 INSTALL = @INSTALL@
 
