@@ -5,6 +5,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
+    Copyright (C) 2000 Mark Wedel
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -21,7 +22,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to frankj@ifi.uio.no.
+    The author can be reached via e-mail to mwedel@scruz.net
 */
 #include <global.h>
 #include <living.h>
@@ -255,15 +256,24 @@ static att_msg *attack_message(int dam) {
   } else if(dam<20) {
     strcpy(buf1,"crush");
     strcpy(buf2," very hard");
-  } else if(dam<25) {
+  } else if(dam<27) {
     strcpy(buf1,"smash");
     strcpy(buf2," with a bonecrunching sound");
-  } else if(dam<35) {
-    strcpy(buf1,"grind");
-    strcpy(buf2," to dust");
-  } else {
+  } else if(dam<40) {
     strcpy(buf1,"shred");
     strcpy(buf2," to pieces");
+  } else if(dam<70) {
+    strcpy(buf1,"beat");
+    strcpy(buf2," to a pulp");
+  } else if(dam<130) {
+    strcpy(buf1,"grind");
+    strcpy(buf2," to dust");
+  } else if(dam<250) {
+    strcpy(buf1,"atomize");
+    buf2[0]='\0';
+  } else {
+    strcpy(buf1,"annihilate");
+    buf2[0]='\0';
   }
   messages.msg1=buf1,messages.msg2=buf2;
   return &messages;
