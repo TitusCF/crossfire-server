@@ -613,9 +613,10 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define BRIGHTNESS(xyz)		(xyz)->glow_radius>MAX_LIGHT_RADII? \
 				  MAX_LIGHT_RADII:(xyz)->glow_radius;
 
-#define F_BUY 0
-#define F_SELL 1
-#define F_TRUE 2	/* True value of item, unadjusted */
+#define F_BUY		0
+#define F_SELL		1
+#define F_TRUE		2   /* True value of item, unadjusted */
+#define F_NO_BARGAIN	4   /* combine with F_BUY or F_SELL to disable bargaining calc */
 
 #define DIRX(xyz)	freearr_x[(xyz)->direction]
 #define DIRY(xyz)	freearr_y[(xyz)->direction]

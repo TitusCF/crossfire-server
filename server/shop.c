@@ -57,144 +57,157 @@ static char *coins[] = {"platinacoin", "goldcoin", "silvercoin", NULL};
  * Mark Wedel (mwedel@pyramid.com)
  */
 int query_cost(object *tmp, object *who, int flag) {
-  int val;
-  int number;	/* used to better calculate value */
-  int charisma;
+    int val;
+    int number;	/* used to better calculate value */
+    int no_bargain;
+    float diff;
+    float ratio;
 
-  if (tmp->type==MONEY) return (tmp->nrof * tmp->value);
-  if (tmp->type==GEM) {
+    no_bargain = flag & F_NO_BARGAIN;
+    flag &= ~F_NO_BARGAIN;
+
+    if (tmp->type==MONEY) return (tmp->nrof * tmp->value);
+    if (tmp->type==GEM) {
 	if (flag==F_TRUE) return (tmp->nrof * tmp->value);
 	if (flag==F_BUY) return (1.03 * tmp->nrof * tmp->value);
 	if (flag==F_SELL) return (0.97 * tmp->nrof * tmp->value);
 	LOG(llevError,"Query_cost: Gem type with unknown flag : %d\n", flag);
 	return 0;
-  }
-  number = tmp->nrof;
-  if (number==0) number=1;
-  if (QUERY_FLAG(tmp, FLAG_IDENTIFIED) || !need_identify(tmp)) {
-    if (QUERY_FLAG(tmp, FLAG_CURSED) || QUERY_FLAG(tmp, FLAG_DAMNED))
-      return 0;
-    else
-      val=tmp->value * number;
-  }
-  /* This area deals with objects that are not identified, but can be */
-  else {
-    if (tmp->arch != NULL) {
-      if (flag == F_BUY) {
-        LOG(llevError, "Asking for buy-value of unidentified object.");
-        val = tmp->arch->clone.value * 50 * number;
-      }
-      else	/* Trying to sell something, or get true value */
-        if (tmp->type == POTION)
-          val = number * 1000; /* Don't want to give anything away */
-        else {
-	  /* Get 2/3'rd value for applied objects, 1/3'rd for totally
-	   * unknown objects
-	   */
-	  if (QUERY_FLAG(tmp, FLAG_BEEN_APPLIED))
-	    val = number * tmp->arch->clone.value *2 / 3;
-	  else
-	    val = number * tmp->arch->clone.value / 3;
-	}
-    } else { /* No archetype with this object */
-      LOG(llevDebug,"In sell item: Have object with no archetype: %s\n", tmp->name);
-      if (flag == F_BUY) {
-        LOG(llevError, "Asking for buy-value of unidentified object without arch.");
-        val = number * tmp->value * 10;
-      }
-      else
-        val = number * tmp->value / 5;
     }
-  }
+    number = tmp->nrof;
+    if (number==0) number=1;
+    if (QUERY_FLAG(tmp, FLAG_IDENTIFIED) || !need_identify(tmp)) {
+	if (QUERY_FLAG(tmp, FLAG_CURSED) || QUERY_FLAG(tmp, FLAG_DAMNED))
+	    return 0;
+	else
+	    val=tmp->value * number;
+    }
+    /* This area deals with objects that are not identified, but can be */
+    else {
+	if (tmp->arch != NULL) {
+	    if (flag == F_BUY) {
+		LOG(llevError, "Asking for buy-value of unidentified object.");
+		val = tmp->arch->clone.value * 50 * number;
+	    }
+	    else {	/* Trying to sell something, or get true value */
+		if (tmp->type == POTION)
+		    val = number * 1000; /* Don't want to give anything away */
+		else {
+		    /* Get 2/3'rd value for applied objects, 1/3'rd for totally
+		     * unknown objects
+		     */
+		    if (QUERY_FLAG(tmp, FLAG_BEEN_APPLIED))
+			val = number * tmp->arch->clone.value *2 / 3;
+		    else
+			val = number * tmp->arch->clone.value / 3;
+		}
+	    }
+	} else { /* No archetype with this object */
+	    LOG(llevDebug,"In sell item: Have object with no archetype: %s\n", tmp->name);
+	    if (flag == F_BUY) {
+		LOG(llevError, "Asking for buy-value of unidentified object without arch.");
+		val = number * tmp->value * 10;
+	    }
+	    else
+		val = number * tmp->value / 5;
+	}
+    }
 
-  /* If the item has been applied or identifed or does not need to be
-   * identified, AND the object is magical and the archetype is non
-   * magical, then change values accordingly.  The tmp->arch==NULL is
-   * really just a check to prevent core dumps for when it checks
-   * tmp->arch->clone.magic for any magic.  The check for archetype
-   * magic is to not give extra money for archetypes that are by
-   * default magical.  This is because the archetype value should have
-   * already figured in that value.
-   */
-  if((QUERY_FLAG(tmp, FLAG_IDENTIFIED)||!need_identify(tmp)||
-     QUERY_FLAG(tmp, FLAG_BEEN_APPLIED)) &&
-     tmp->magic&&(tmp->arch==NULL||!tmp->arch->clone.magic)) {
-	if(tmp->magic>0)
-      	    val*=(3*tmp->magic*tmp->magic*tmp->magic);
-    	else
-	  /* Note that tmp->magic is negative, so that this
-	   * will actually be something like val /=2, /=3, etc.
-	   */
-          val/=(1-tmp->magic);
-     }
+    /* If the item has been applied or identifed or does not need to be
+     * identified, AND the object is magical and the archetype is non
+     * magical, then change values accordingly.  The tmp->arch==NULL is
+     * really just a check to prevent core dumps for when it checks
+     * tmp->arch->clone.magic for any magic.  The check for archetype
+     * magic is to not give extra money for archetypes that are by
+     * default magical.  This is because the archetype value should have
+     * already figured in that value.
+     */
+    if((QUERY_FLAG(tmp, FLAG_IDENTIFIED)||!need_identify(tmp)||
+	QUERY_FLAG(tmp, FLAG_BEEN_APPLIED)) &&
+        tmp->magic&&(tmp->arch==NULL||!tmp->arch->clone.magic)) {
+	    if(tmp->magic>0)
+		val*=(3*tmp->magic*tmp->magic*tmp->magic);
+	    else
+		/* Note that tmp->magic is negative, so that this
+		 * will actually be something like val /=2, /=3, etc.
+		 */
+	    val/=(1-tmp->magic);
+    }
 
-  if (tmp->type==WAND) {
+    if (tmp->type==WAND) {
 	/* Value of the wand is multiplied by the number of
 	 * charges.  the treasure code already sets up the value
+	 * 50 charges is used as the baseline.
 	 */
 	if (QUERY_FLAG(tmp, FLAG_IDENTIFIED) || !need_identify(tmp))
 	    val=(val*tmp->stats.food) / 50;
 	else /* if not identified, presume one charge */
 	    val/=50;
-  }
-
-  /* Limit amount of money you can get for really great items. */
-  if (flag==F_TRUE || flag==F_SELL) {
-    if (val/number>25000) {
-	val=8000+isqrt((int)val/number)*20;
-	val *= number;
     }
-  }
 
-/* this  modification is for merchant skill
- * now players with readied merchant skill get
- * more Cha up to the limit of modified Cha = 30.
- * -b.t. thomas@nomad.astro.psu.edu
- */
+    /* Limit amount of money you can get for really great items. */
+    if (flag==F_TRUE || flag==F_SELL) {
+	if (val/number>25000) {
+	    val=8000+isqrt((int)val/number)*20;
+	    val *= number;
+	}
+    }
 
-  if (who!=NULL && who->type==PLAYER) {
-      float diff;
+    /* This modification is for bargaining skill.
+     * Now only players with max level in bargaining
+     * AND Cha = 30 will get optimal price.
+     * Thus charisma will never get useless.
+     * -b.e. edler@heydernet.de
+     */
 
-      charisma = who->stats.Cha;  /* used for SK_BARGAINING modification */
+    if (who!=NULL && who->type==PLAYER) {
+	int lev_bargain = 0;
 
-      if (find_skill_by_number(who,SK_BARGAINING)) {
-	charisma += (who->level+2)/3;
-	if(charisma>30) charisma = 30;
-      }
-      if (cha_bonus[charisma]<=1.0) {
-	LOG(llevError,"Illegal charisma bonus, %d <=1.0", cha_bonus[charisma]);
-	diff=0.9;	/*pretty bad case */
-      }
-      else
-	/* Diff is now a float between 0 and 1 */
-	diff=(cha_bonus[charisma]-1)/(1+cha_bonus[charisma]);
+	/* ratio determines how much of the price modification
+	 * will come from the basic stat charisma
+	 * the rest will come from the level in bargaining skill
+	 */
+	ratio = 0.5;
 
-      /* we need to multiply these by 4.0 to keep buy costs roughly the same
-       * (otherwise, you could buy a potion of charisma for around 400 pp.
-       * Arguable, the costs in the archetypes should be updated to better
-       * reflect values (potion charisma list for 1250 gold)
-       */
-      if(flag==F_BUY)
+	if (find_skill_by_number(who,SK_BARGAINING)) {
+	    lev_bargain = find_skill_by_number(who,SK_BARGAINING)->level;
+	}
+	if ( !no_bargain && (lev_bargain>0) )
+	    diff = (0.8 - 0.6*((lev_bargain+settings.max_level*0.05)
+                         /(settings.max_level*1.05)));
+	else
+	    diff = 0.8;
+
+	diff *= 1-ratio;
+
+	/* Diff is now a float between 0.2 and 0.8 */
+	diff+=(cha_bonus[who->stats.Cha]-1)/(1+cha_bonus[who->stats.Cha])*ratio;
+
+	/* we need to multiply these by 4.0 to keep buy costs roughly the same
+	 * (otherwise, you could buy a potion of charisma for around 400 pp.
+	 * Arguable, the costs in the archetypes should be updated to better
+	 * reflect values (potion charisma list for 1250 gold)
+	 */
+	if(flag==F_BUY)
           val=(4.0*(float)val*(1.0+diff));
-      else if (flag==F_SELL)
+	else if (flag==F_SELL)
           val=(4.0*(float)val*(1.0-diff));
-      else val *=4;
-  }
+	else val *=4;
+    }
 
-  /* I don't understand this code...., I'm changing it to
-	  use 0 instead of 1000000 if we're selling*/
-  if(val<0) {
-	 if(flag==F_SELL)
-		val=0;
-	 else
-		val=1000000;
-  }
+    /* I don't think this should really happen - if it does, it indicates and
+     * overflow of diff above.  That shoudl only happen if
+     * we are selling objects - in that case, the person just
+     * gets no money.
+     */
+    if(val<0)
+	val=0;
 
-  /* Unidentified stuff won't sell for more than 60gp */
-  if(flag==F_SELL && !QUERY_FLAG(tmp, FLAG_IDENTIFIED) && need_identify(tmp)) {
+    /* Unidentified stuff won't sell for more than 60gp */
+    if(flag==F_SELL && !QUERY_FLAG(tmp, FLAG_IDENTIFIED) && need_identify(tmp)) {
 	 val = (val > 600)? 600:val;
-  }
-  return (int)val;
+    }
+    return (int)val;
 }
 
 /* Find the coin type that is worth more the 'c'.  Starts at the
@@ -325,9 +338,19 @@ int pay_for_amount(int to_pay,object *pl) {
 int pay_for_item(object *op,object *pl) {
     int to_pay = query_cost(op,pl,F_BUY);
     object *pouch;
+    int saved_money;
 
     if (to_pay==0) return 1;
     if(to_pay>query_money(pl)) return 0;
+
+    /* We compare the paid price with the one for a player
+     * without bargaining skill.
+     * This determins the amount of exp (if any) gained for bargaining.
+     */
+    saved_money = query_cost(op,pl,F_BUY | F_NO_BARGAIN) - to_pay;
+
+    if (saved_money > 0)
+      change_exp(pl,saved_money,"bargaining",SK_EXP_NONE);
 
     to_pay = pay_from_container(op, pl, to_pay);
 
@@ -517,6 +540,7 @@ void sell_item(object *op, object *pl) {
   object *tmp;
   object *pouch;
   archetype *at;
+  int extra_gain;
 
   if(pl==NULL||pl->type!=PLAYER) {
     LOG(llevDebug,"Object other than player tried to sell something.\n");
@@ -537,6 +561,16 @@ void sell_item(object *op, object *pl) {
     identify(op);
     return;
   }
+  /* We compare the price with the one for a player
+   * without bargaining skill.
+   * This determins the amount of exp (if any) gained for bargaining.
+   * exp/10 -> 1 for each gold coin
+   */
+  extra_gain = i - query_cost(op,pl,F_SELL | F_NO_BARGAIN);
+
+  if (extra_gain > 0)
+    change_exp(pl,extra_gain/10,"bargaining",SK_EXP_NONE);
+  
   for (count=0; coins[count]!=NULL; count++) {
       at = find_archetype(coins[count]);
       if (at==NULL) LOG(llevError, "Could not find %s archetype", coins[count]);

@@ -17,6 +17,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+include/define.h,server/shop.c: Apply patch by Bernd Edler that gives
+   bargaining experience based on the amount of money a character saves.
+   Higher the bargaining skill, the more money they can save.
+MSW 2004-02-16
+
 doc/Developers/spells: Update type on casting_time - include suggested value
   for times so that results are hopefully more coherent.
 lib/archetypes, treasures.bld: rebuilt.
