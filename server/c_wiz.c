@@ -98,26 +98,45 @@ int command_loadtest(object *op, char *params){
 	return 0;
 }
 
-int command_hide(object *op, char *params)
-{
-    if (op->contr->hidden) {
+/**
+ * Actually hides specified player (obviously a DM).
+ * If 'silent_dm' is non zero, other players are informed of DM entering/leaving,
+ * else they just think someone left/entered.
+ */
+void do_wizard_hide( object* op, int silent_dm )
+    {
+    if (op->contr->hidden)
+        {
         op->contr->hidden=0;
         op->invisible=1;
         new_draw_info(NDI_UNIQUE, 0,op, "You are no longer hidden from other players");
 	    op->map->players++;
-	    new_draw_info_format(NDI_UNIQUE | NDI_ALL | NDI_DK_ORANGE, 5, NULL,
+    	new_draw_info_format(NDI_UNIQUE | NDI_ALL | NDI_DK_ORANGE, 5, NULL,
             "%s has entered the game.",op->name);
-        new_draw_info(NDI_UNIQUE | NDI_ALL | NDI_LT_GREEN, 1, NULL,
-            "The Dungeon Master has arrived!");    }
-    else {
+        if ( !silent_dm )
+            {
+            new_draw_info(NDI_UNIQUE | NDI_ALL | NDI_LT_GREEN, 1, NULL,
+                "The Dungeon Master has arrived!");
+            }
+        }
+    else
+        {
         op->contr->hidden=1;
         new_draw_info(NDI_UNIQUE, 0,op, "Other players will no longer see you.");
 	    op->map->players--;
-        new_draw_info(NDI_UNIQUE | NDI_ALL | NDI_LT_GREEN, 1, NULL,
-	        "The Dungeon Master is gone..");
+        if ( !silent_dm )
+            {
+            new_draw_info(NDI_UNIQUE | NDI_ALL | NDI_LT_GREEN, 1, NULL,
+	            "The Dungeon Master is gone..");
+            }
 	    new_draw_info_format(NDI_UNIQUE | NDI_ALL | NDI_DK_ORANGE, 5, NULL,
             "%s left the game.",op->name);
+        }
     }
+
+int command_hide(object *op, char *params)
+{
+    do_wizard_hide( op, 0 );
     return 1;
 }
 
@@ -281,14 +300,14 @@ int command_toggle_shout(object *op, char *params)
     new_draw_info(NDI_UNIQUE | NDI_RED, 0, pl->ob,
 			 "You have been muzzled by the DM!");
     new_draw_info_format(NDI_UNIQUE , 0, op,
-			 "You toggle shout for %s.", pl->ob->name);
+			 "You muzzle %s.", pl->ob->name);
 		return 1;
 	}else{
 		pl->ob->contr->no_shout = 0;
     new_draw_info(NDI_UNIQUE | NDI_ORANGE, 0, pl->ob,
 			 "You are allowed to shout again.");
     new_draw_info_format(NDI_UNIQUE , 0, op,
-			 "You toggle shout for %s.", pl->ob->name);
+			 "You remove %s's muzzle.", pl->ob->name);
 		return 1;
 	}
 	
@@ -1225,6 +1244,39 @@ static int checkdm(object *op, char *pl_name, char *pl_passwd, char *pl_host)
   return (0);
 }
 
+int do_wizard_dm( object* op, char* params, int silent )
+    {
+    if ( !op->contr )
+        return;
+
+    if ( QUERY_FLAG( op, FLAG_WIZ ) )
+        {
+        new_draw_info( NDI_UNIQUE, 0, op, "You are already the Dungeon Master!" );
+        return 0;
+        }
+
+    if (checkdm(op, op->name,
+		(params?params:"*"), op->contr->socket.host)) {
+      SET_FLAG(op, FLAG_WIZ);
+      SET_FLAG(op, FLAG_WAS_WIZ);
+      SET_FLAG(op, FLAG_WIZPASS);
+      new_draw_info(NDI_UNIQUE, 0,op, "Ok, you are the Dungeon Master!");
+      SET_FLAG(op, FLAG_FLYING);
+      clear_los(op);
+      op->contr->write_buf[0] ='\0';
+
+      if ( !silent )
+        new_draw_info(NDI_UNIQUE | NDI_ALL | NDI_LT_GREEN, 1, NULL,
+  	    "The Dungeon Master has arrived!");
+
+      return 1;
+    } else {
+      new_draw_info(NDI_UNIQUE, 0,op, "Sorry Pal, I don't think so.");
+      op->contr->write_buf[0] ='\0';
+      return 0;
+    }
+    }
+
 /* Actual command to perhaps become dm.  Changed aroun a bit in version 0.92.2
  * - allow people on sockets to become dm, and allow better dm file
  */
@@ -1232,25 +1284,10 @@ static int checkdm(object *op, char *pl_name, char *pl_passwd, char *pl_host)
 int command_dm (object *op, char *params)
 {
   if (!op->contr) return 0;
-  else {
-    if (checkdm(op, op->name,
-		(params?params:"*"), op->contr->socket.host)) {
-      SET_FLAG(op, FLAG_WIZ);
-      SET_FLAG(op, FLAG_WAS_WIZ);
-      SET_FLAG(op, FLAG_WIZPASS);
-      new_draw_info(NDI_UNIQUE, 0,op, "Ok, you are the Dungeon Master!");
-      new_draw_info(NDI_UNIQUE | NDI_ALL | NDI_LT_GREEN, 1, NULL,
-  	"The Dungeon Master has arrived!");
-      SET_FLAG(op, FLAG_FLYING);
-      clear_los(op);
-      op->contr->write_buf[0] ='\0';
-      return 1;
-    } else {
-      new_draw_info(NDI_UNIQUE, 0,op, "Sorry Pal, I don't think so.");
-      op->contr->write_buf[0] ='\0';
-      return 1;
-    }
-  }
+
+  do_wizard_dm( op, params, 0 );
+
+  return 1;
 }
 
 int command_invisible (object *op, char *params)
@@ -1369,3 +1406,18 @@ int command_unloadplugin(object *op, char *params)
     removeOnePlugin(params);
     return 1;
 }
+
+/**
+ * A players wants to become DM and hide.
+ * Let's see if that's authorized.
+ * Make sure to not tell anything to anyone.
+ */
+int command_dmhide( object* op, char* params )
+    {
+    if ( !do_wizard_dm( op, params, 1 ) )
+        return 0;
+
+    do_wizard_hide( op, 1 );
+
+    return 1;
+    }

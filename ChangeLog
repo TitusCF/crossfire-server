@@ -17,6 +17,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+include/sproto.h: new 'dmhide' command.
+server/commands.c: new 'dmhide' command.
+server/c_wiz.c: added 'dmhide' command. Player becomes DM, and 'hide's immediately. Others
+   only see him/her leave the game, they don't know s/he's DM.
+Ryo 2004-05-24
+
 include/book.h: Increase the size of BOOK_BUF, so inscribed books can hold
   more informatin.
 lib/Makefile.am, lib/Makefile.in: Add the 'rename' to the list of help

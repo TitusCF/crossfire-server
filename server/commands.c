@@ -67,6 +67,7 @@ CommArray_s Commands[] = {
   {"cast", command_cast,	0.2},	/* Is this right? */
   {"disarm", command_disarm,	1.0},
   {"dm", command_dm,		0.0},
+  {"dmhide", command_dmhide,		0.0}, /* Like dm, but don't tell a dm arrived, hide player */
   {"drop", command_drop,	1.0},
   {"dropall", command_dropall,	1.0},
   {"examine", command_examine,	0.5},

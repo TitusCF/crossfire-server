@@ -283,6 +283,7 @@ int command_abil(object *op, char *params);
 int command_reset(object *op, char *params);
 int command_nowiz(object *op, char *params);
 int command_dm(object *op, char *params);
+int command_dmhide(object *op, char *params);
 int command_invisible(object *op, char *params);
 int command_learn_spell(object *op, char *params);
 int command_learn_special_prayer(object *op, char *params);
