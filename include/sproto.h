@@ -174,7 +174,7 @@ extern int move_disease ( object *disease );
 extern int remove_symptoms ( object *disease );
 extern object * find_symptom ( object *disease );
 extern int check_infection ( object *disease );
-extern int infect_object ( object *victim, object *disease );
+extern int infect_object ( object *victim, object *disease, int force );
 extern int do_symptoms ( object *disease );
 extern int grant_immunity ( object *disease );
 extern int move_symptom ( object *symptom );
