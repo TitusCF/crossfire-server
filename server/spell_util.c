@@ -760,7 +760,7 @@ if (item == spellNormal && !ability ){
   case SP_CREATE_MISSILE:
     success = cast_create_missile(op,caster,dir,stringarg);
     break;
-
+  case SP_CAUSE_COLD:
   case SP_CAUSE_EBOLA:
   case SP_CAUSE_FLU:
   case SP_CAUSE_PLAGUE:
