@@ -17,6 +17,17 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+socket/request.c: Clean up some compile warnings.  Improve big face
+  handling - there were cases where data wasn't being sent when
+  it should have, and vice versa.  Basically, do better checking
+  to see if we should send a big face for a particular layer, and
+  also better checking to make sure we don't send the same face more
+  than once for the same layer.  Also, change esrv_map_scroll() 
+  to clear out spaces that appear into view - adds a little extra bandwdith,
+  but necessary because otherwise the fact there is a big face on the edge
+  doesn't always get sent.
+MSW 2003-10-07
+
 TODO: various updates.
 common/button: Old patch by David Seikel: change inventory checkers so that
    the monster/player is also checked against.  And do more proper for checkers

@@ -307,13 +307,9 @@ void ToggleExtendedInfos (char *buf, int len, NewSocket *ns){
   * - Use the animation elements from 0 to 8 for smoothing.
   */
 void AskSmooth (char *buf, int len, NewSocket *ns){
-     char* name;
      char* defaultsmooth="default_smoothed.111";
-     char smoothname[MAX_BUF];
      char reply[MAX_BUF];
      SockList sl;
-     int i;
-     archetype* at;
      uint16 smoothface;
      int facenbr;
      facenbr=atoi (buf);
@@ -1059,13 +1055,13 @@ static inline int check_head(SockList *sl, NewSocket *ns, int ax, int ay, int la
  * it was.
  * sl is the socklist this data is going into.
  * ns is the socket we are working on - all the info we care
- * about is in this socket structure, so know need to pass the
+ * about is in this socket structure, so now need not pass the
  * entire player object.
  * mx and my are map coordinate offsets for map mp
  * sx and sy are the offsets into the socket structure that
  * holds the old values.
  * layer is the layer to update, with 2 being the floor and 0 the
- * top layer (this matches what the GET_MAP_FACE and GET_MAP_FACE_OBJ
+ * top layer (this matches what the GET_MAP_FACE and GET_MAP_FACE_OBJ)
  * take.  Interesting to note that before this function, the map1 function
  * numbers the spaces differently - I think this was a leftover from
  * the map command, where the faces stack up.  Sinces that is no longer
@@ -1092,15 +1088,24 @@ static inline int update_space(SockList *sl, NewSocket *ns, mapstruct  *mp, int 
      * 1) the heads[] values will get used even if the space is not visible.
      * 2) its possible the head is not on the same map as a part, and I'd
      *    rather not need to do the map translation overhead.
+     * 3) We need to do some extra checking to make sure that we will
+     * otherwise send the image as this layer, eg, either it matches
+     * the head value, or is not multipart.
      */
     if (head) {
-	for (i=0; i<MAP_LAYERS; i++)
-	    if (GET_MAP_FACE_OBJ(mp, mx, my, i) &&
-		GET_MAP_FACE_OBJ(mp, mx, my, i)->face == head->face) {
+	for (i=0; i<MAP_LAYERS; i++) {
+	    ob = GET_MAP_FACE_OBJ(mp, mx, my, i);
+	    if (!ob) continue;
+
+	    if (ob->head) ob=ob->head;
+
+	    if (ob->face == head->face &&
+		(ob == head && !ob->more)) {
 		    heads[(sy * MAX_HEAD_POS + sx) * MAX_LAYERS + layer] = NULL;
 		    head = NULL;
 		    break;
 	    }
+	}
     }
 
     ob = head;
@@ -1201,6 +1206,26 @@ static inline int update_space(SockList *sl, NewSocket *ns, mapstruct  *mp, int 
 	}
     } /* else not already head object or blank face */
 
+    /* This is a real hack.  Basically, if we have nothing to send for this layer,
+     * but there is a head on the next layer, send that instead.
+     * Without this, what happens is you can get the case where the player stands
+     * on the same space as the head.  However, if you have overlapping big objects
+     * of the same type, what happens then is it doesn't think it needs to send
+     * This tends to make stacking also work/look better.
+     */
+    if (!face_num && layer > 0 && heads[(sy * MAX_HEAD_POS + sx) * MAX_LAYERS + layer -1]) {
+	face_num = heads[(sy * MAX_HEAD_POS + sx) * MAX_LAYERS + layer -1]->face->number;
+	heads[(sy * MAX_HEAD_POS + sx) * MAX_LAYERS + layer -1] = NULL;
+    }
+
+    /* Another hack - because of heads and whatnot, this face may match one
+     * we already sent for a lower layer.  In that case, don't send
+     * this one.
+     */
+    if (face_num && layer<MAP_LAYERS && ns->lastmap.cells[sx][sy].faces[layer+1] == face_num) {
+	face_num = 0;
+    }
+
     /* We've gotten what face we want to use for the object.  Now see if
      * if it has changed since we last sent it to the client.
      */
@@ -1237,7 +1262,6 @@ static inline int update_smooth(SockList *sl, NewSocket *ns, mapstruct  *mp, int
 {
     object *ob, *head;
     int smoothlevel; /* old face_num;*/
-    int bx, by,i;
 
     /* If there is a multipart object stored away, treat that as more important.
      * If not, then do the normal processing.
@@ -1371,9 +1395,10 @@ void draw_client_map1(object *pl)
 	     */
 	    if (ax >= pl->contr->socket.mapx || ay >= pl->contr->socket.mapy) {
 		oldlen = sl.len;
-        if (pl->contr->socket.ext_mapinfos){
-            SockList_AddShort(&esl, emask);
-        }
+
+		if (pl->contr->socket.ext_mapinfos){
+		    SockList_AddShort(&esl, emask);
+		}
 
 		SockList_AddShort(&sl, mask);
 
@@ -1389,9 +1414,9 @@ void draw_client_map1(object *pl)
 		} else {
 		    sl.len = oldlen;
 		}
-        /*What concerns extendinfos, nothing to be done for now 
-         * (perhaps effects layer later)
-         */
+		/*What concerns extendinfos, nothing to be done for now 
+		 * (perhaps effects layer later)
+		 */
 		continue;   /* don't do processing below */
 	    }
 
@@ -1479,8 +1504,9 @@ void draw_client_map1(object *pl)
 		eoldlen = esl.len;
 		emask = (ax & 0x3f) << 10 | (ay & 0x3f) << 4;
 		SockList_AddShort(&sl, mask);		
-        if (pl->contr->socket.ext_mapinfos)
-            SockList_AddShort(&esl, emask);
+
+		if (pl->contr->socket.ext_mapinfos)
+		    SockList_AddShort(&esl, emask);
 
 		/* Darkness changed */
 		if (pl->contr->socket.lastmap.cells[ax][ay].count != d && pl->contr->socket.darkness) {
@@ -1508,18 +1534,19 @@ void draw_client_map1(object *pl)
 		if (update_space(&sl, &pl->contr->socket, m, nx, ny, ax, ay, 2))
 		    mask |= 0x4;
 		
-        if (pl->contr->socket.EMI_smooth)
-            if (update_smooth(&esl, &pl->contr->socket, m, nx, ny, ax, ay, 2)){
-                emask |= 0x4;
-            }
+		if (pl->contr->socket.EMI_smooth)
+		    if (update_smooth(&esl, &pl->contr->socket, m, nx, ny, ax, ay, 2)){
+			emask |= 0x4;
+		    }
 
 		/* Middle face */
 		if (update_space(&sl, &pl->contr->socket, m, nx, ny, ax, ay, 1))
 		    mask |= 0x2;		
-        if (pl->contr->socket.EMI_smooth)
-            if (update_smooth(&esl, &pl->contr->socket, m, nx, ny, ax, ay, 1)){
-                emask |= 0x2;
-            }
+
+		if (pl->contr->socket.EMI_smooth)
+		    if (update_smooth(&esl, &pl->contr->socket, m, nx, ny, ax, ay, 1)){
+			emask |= 0x2;
+		    }
 
 
 		if(nx == pl->x && ny == pl->y && pl->invisible & (pl->invisible < 50 ? 4 : 1)) {
@@ -1532,14 +1559,14 @@ void draw_client_map1(object *pl)
 		    }
 		}
 		/* Top face */
-		else{
-            if (update_space(&sl, &pl->contr->socket, m, nx, ny, ax, ay, 0))
+		else {
+		    if (update_space(&sl, &pl->contr->socket, m, nx, ny, ax, ay, 0))
 		        mask |= 0x1;            
-            if (pl->contr->socket.EMI_smooth)
-                if (update_smooth(&esl, &pl->contr->socket, m, nx, ny, ax, ay, 0)){
-                    emask |= 0x1;
-                }
-        }
+		    if (pl->contr->socket.EMI_smooth)
+			if (update_smooth(&esl, &pl->contr->socket, m, nx, ny, ax, ay, 0)){
+			    emask |= 0x1;
+			}
+		}
 		/* Check to see if we are in fact sending anything for this
 		 * space by checking the mask.  If so, update the mask.
 		 * if not, reset the len to that from before adding the mask
@@ -1730,7 +1757,7 @@ void esrv_map_scroll(NewSocket *ns,int dx,int dy)
      */
     for(x=0; x<mx; x++) {
 	for(y=0; y<my; y++) {
-	    if ((x+dx) < 0 || x >= ns->mapx || (y+dy) < 0 || y >= ns->mapy) {
+	    if ((x+dx) < 0 || (x+dx) >= ns->mapx || (y+dy) < 0 || (y + dy) >= ns->mapy) {
 		memset(&(newmap.cells[x][y]), 0, sizeof(struct MapCell));
 	    }
 	    else {
@@ -1739,6 +1766,7 @@ void esrv_map_scroll(NewSocket *ns,int dx,int dy)
 	    }
 	}
     }
+
     memcpy(&(ns->lastmap), &newmap,sizeof(struct Map));
     ns->sent_scroll = 1;
 }
