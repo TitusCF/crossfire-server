@@ -728,11 +728,11 @@ end
 treasureone chest_items
   arch goldcoin
     chance 5
-    nrof 15
+    nrof 1
   more
   arch silvercoin
     chance 5
-    nrof 90
+    nrof 9
   more
   list random_weapon
     chance 30
@@ -1227,43 +1227,43 @@ treasureone random_special
 treasureone random_coin
   arch goldcoin
     chance 5
-    nrof 50
+    nrof 5
   more
   arch goldcoin
+    chance 5
+    nrof 10
+  more
+  arch goldcoin
+    chance 5
+    nrof 15
+  more
+  arch goldcoin
+    chance 5
+    nrof 20
+  more
+  arch goldcoin
+    chance 5
+    nrof 25
+  more
+  arch silvercoin
+    chance 5
+    nrof 25
+  more
+  arch silvercoin
+    chance 5
+    nrof 50
+  more
+  arch silvercoin
+    chance 5
+    nrof 75
+  more
+  arch silvercoin
     chance 5
     nrof 100
   more
-  arch goldcoin
+  arch silvercoin
     chance 5
     nrof 150
-  more
-  arch goldcoin
-    chance 5
-    nrof 200
-  more
-  arch goldcoin
-    chance 5
-    nrof 250
-  more
-  arch silvercoin
-    chance 5
-    nrof 250
-  more
-  arch silvercoin
-    chance 5
-    nrof 500
-  more
-  arch silvercoin
-    chance 5
-    nrof 750
-  more
-  arch silvercoin
-    chance 5
-    nrof 1000
-  more
-  arch silvercoin
-    chance 5
-    nrof 1500
   more
   arch platinacoin
     chance 5
@@ -1271,72 +1271,72 @@ treasureone random_coin
   more
   arch platinacoin
     chance 5
-    nrof 20
+    nrof 2
   more
   arch platinacoin
     chance 5
-    nrof 40
+    nrof 4
   more
   arch platinacoin
     chance 5
-    nrof 60
+    nrof 6
 end
 treasureone random_wealth
   arch goldcoin
     chance 5
-    nrof 50
+    nrof 5
   more
   arch goldcoin
-    chance 5
-    nrof 100
-  more
-  arch goldcoin
-    chance 5
-    nrof 150
-  more
-  arch goldcoin
-    chance 5
-    nrof 200
-  more
-  arch goldcoin
-    chance 5
-    nrof 250
-  more
-  arch silvercoin
-    chance 5
-    nrof 250
-  more
-  arch silvercoin
-    chance 5
-    nrof 500
-  more
-  arch silvercoin
-    chance 5
-    nrof 750
-  more
-  arch silvercoin
-    chance 5
-    nrof 1000
-  more
-  arch silvercoin
-    chance 5
-    nrof 1500
-  more
-  arch platinacoin
     chance 5
     nrof 10
   more
-  arch platinacoin
+  arch goldcoin
+    chance 5
+    nrof 15
+  more
+  arch goldcoin
     chance 5
     nrof 20
   more
-  arch platinacoin
+  arch goldcoin
     chance 5
-    nrof 40
+    nrof 25
+  more
+  arch silvercoin
+    chance 5
+    nrof 25
+  more
+  arch silvercoin
+    chance 5
+    nrof 50
+  more
+  arch silvercoin
+    chance 5
+    nrof 75
+  more
+  arch silvercoin
+    chance 5
+    nrof 100
+  more
+  arch silvercoin
+    chance 5
+    nrof 150
   more
   arch platinacoin
     chance 5
-    nrof 60
+    nrof 1
+  more
+  arch platinacoin
+    chance 5
+    nrof 2
+  more
+  arch platinacoin
+    chance 5
+    nrof 4
+  more
+  arch platinacoin
+    chance 5
+    nrof 6
   more
   arch gem
     chance 5
@@ -1344,15 +1344,56 @@ treasureone random_wealth
   more
   arch gem
     chance 5
+    nrof 1
+  more
+  arch pearl
+    chance 5
+    nrof 2
+  more
+  arch pearl
+    chance 5
+    nrof 4
+  more
+  arch ruby
+    chance 5
+    nrof 1
+  more
+  arch ruby
+    chance 5
+    nrof 2
+  more
+  arch sapphire
+    chance 5
+    nrof 1
+  more
+  arch sapphire
+    chance 5
+    nrof 3
+  more
+  arch emerald
+    chance 5
+    nrof 2
+  more
+  arch emerald
+    chance 5
+    nrof 5
+  end
+treasureone random_gem
+  arch gem
+    chance 5
+    nrof 1
+  more
+  arch gem
+    chance 5
+    nrof 2
+  more
+  arch pearl
+    chance 5
     nrof 4
   more
   arch pearl
     chance 5
     nrof 6
-  more
-  arch pearl
-    chance 5
-    nrof 24
   more
   arch ruby
     chance 5
@@ -1360,64 +1401,23 @@ treasureone random_wealth
   more
   arch ruby
     chance 5
-    nrof 8
+    nrof 4
   more
   arch sapphire
     chance 5
-    nrof 3
+    nrof 2
   more
   arch sapphire
+    chance 5
+    nrof 4
+  more
+  arch emerald
     chance 5
     nrof 10
   more
   arch emerald
     chance 5
     nrof 4
-  more
-  arch emerald
-    chance 5
-    nrof 13
-  end
-treasureone random_gem
-  arch gem
-    chance 5
-    nrof 5
-  more
-  arch gem
-    chance 5
-    nrof 10
-  more
-  arch pearl
-    chance 5
-    nrof 20
-  more
-  arch pearl
-    chance 5
-    nrof 24
-  more
-  arch ruby
-    chance 5
-    nrof 10
-  more
-  arch ruby
-    chance 5
-    nrof 20
-  more
-  arch sapphire
-    chance 5
-    nrof 10
-  more
-  arch sapphire
-    chance 5
-    nrof 20
-  more
-  arch emerald
-    chance 5
-    nrof 10
-  more
-  arch emerald
-    chance 5
-    nrof 20
   end
 # All players will start with these skills
 # -- only skills critical to being able to
@@ -1463,15 +1463,15 @@ treasure prayer_skills
   end
 treasureone starting_wealth
   arch goldcoin
-    nrof 6
+    nrof 120
     chance 5
   more
   arch silvercoin
-    nrof 50
+    nrof 1000
     chance 5
   more
   arch platinacoin
-    nrof 2
+    nrof 40
     chance 5
   end
 treasureone shop_alchemy
@@ -2531,7 +2531,7 @@ treasure poor_old
   chance 10
   more
   arch silvercoin
-  nrof 80
+  nrof 8
   chance 10
   end
 treasure angel
@@ -2735,7 +2735,7 @@ treasure standard_old
   more
   arch goldcoin
   chance 8
-  nrof 20
+  nrof 2
   more
   arch wand
   chance 2
@@ -2807,7 +2807,7 @@ treasure rich_old
   more
   arch goldcoin
   chance 10
-  nrof 100
+  nrof 10
   more
   arch wand
   chance 10
@@ -2998,7 +2998,7 @@ treasure giant_old
   arch big_club
   more
   arch goldcoin
-  chance 65
+  chance 6
   nrof 80
   end
 treasure titan
@@ -3046,7 +3046,7 @@ treasure belzebub
   more
   arch gem
   chance 50
-  nrof 30
+  nrof 3
   more
   arch cloak
   chance 50
@@ -3112,7 +3112,7 @@ treasure beholder
   arch ability_slow
   more
   arch gem
-  nrof 2
+  nrof 1
   chance 10
   end
 treasure skull 
@@ -3146,7 +3146,7 @@ treasure skull
   arch ability_slow
   more
   arch gem
-  nrof 3
+  nrof 1
   chance 10
   end
 treasure demonlord
@@ -3198,33 +3198,33 @@ treasure chinese
   more
   arch gem
     chance 10
-    nrof 10
+    nrof 1
     no
       arch ruby
-        nrof 10
+        nrof 1
         chance 30
         no
           arch sapphire
-          nrof 30
+          nrof 3
           chance 30
           no
             arch emerald
-              nrof 40
+              nrof 4
               chance 50
         end
       end
     end
   more
   arch platinacoin
-    nrof 20
+    nrof 2
     chance 10
     no
     arch goldcoin
-      nrof 70
+      nrof 7
       chance 50
       no
       arch silvercoin
-        nrof 300
+        nrof 30
       end
     end
   end
@@ -3260,28 +3260,28 @@ treasure dragon
   more
   arch gem
   chance 50
-  nrof 20
+  nrof 2
   more
   arch ruby
-  nrof 20
+  nrof 2
   more
   arch sapphire
-  nrof 30
+  nrof 3
   more
   arch emerald
-  nrof 40
+  nrof 4
   more
   arch pearl
-  nrof 100
+  nrof 10
   more
   arch platinacoin
-  nrof 50
+  nrof 5
   more
   arch goldcoin
-  nrof 1000
+  nrof 100
   more
   arch silvercoin
-  nrof 10000
+  nrof 1000
   more
   arch scroll_new
   more
@@ -3519,7 +3519,7 @@ treasure demilich
   more
   arch ability_mass_confusion
   arch gem  
-  nrof 10
+  nrof 1
   end
 treasure monk_class_items
   list basic_skills
@@ -4210,28 +4210,28 @@ treasure acdc
   more
   arch gem
   chance 80
-  nrof 20
+  nrof 2
   more
   arch ruby
-  nrof 30
+  nrof 3
   more
   arch sapphire
-  nrof 30
+  nrof 3
   more
   arch emerald
-  nrof 35
+  nrof 4
   more
   arch pearl
-  nrof 60
+  nrof 6
   more
   arch platinacoin
-  nrof 50
+  nrof 5
   more
   arch goldcoin
-  nrof 300
+  nrof 30
   more
   arch silvercoin
-  nrof 5000
+  nrof 500
   more
   arch scroll_new
   more
@@ -4262,7 +4262,7 @@ treasure avatar
   more
   arch gem
   chance 50
-  nrof 30
+  nrof 3
   end
 treasure jail
   arch knight
@@ -4299,15 +4299,15 @@ treasure banshee
   more
   arch gem
   chance 30
-  nrof 20
+  nrof 2
   more
   arch sapphire
   chance 25
-  nrof 30
+  nrof 3
   more
   arch emerald
   chance 50
-  nrof 35
+  nrof 4
   end
 treasure lich
   arch lich_dust
@@ -4353,7 +4353,7 @@ treasure lich_old
   more
   arch goldcoin
   chance 90
-  nrof 1000
+  nrof 100
   more
   arch wand
   chance 80
@@ -4374,7 +4374,7 @@ treasure lich_old
   chance 90
   arch gem
   chance 70
-  nrof 30
+  nrof 3
   end
 treasure suprise
   arch firechest
@@ -4460,7 +4460,7 @@ treasure DK
   arch ring
   more
   arch gem
-  nrof 200
+  nrof 20
   chance 80
   more
   arch mace
@@ -4506,10 +4506,10 @@ treasure Cwyvern
   arch ability_pool_chaos
   more
   arch gem
-    nrof 400
+    nrof 40
   more
   arch gem
-    nrof 150
+    nrof 15
     chance 60
   more
   arch ring
@@ -4536,11 +4536,11 @@ treasure EDK
   arch ring
   more
   arch gem
-  nrof 300
+  nrof 30
   chance 80
   more
   arch gem
-  nrof 200
+  nrof 20
   chance 80
   more
   arch firestar
@@ -4595,7 +4595,7 @@ treasure serp_man
   chance 5
   more
   arch goldcoin
-  nrof 100
+  nrof 10
   chance 50
   end
 treasure serp_priest
@@ -4673,7 +4673,7 @@ treasure lamia
     end
   more
   arch goldcoin
-  nrof 1000
+  nrof 100
   more
   arch big_club
   end
@@ -4686,7 +4686,7 @@ treasure cyclops
   nrof 20
   more
   arch platinacoin
-  nrof 4000
+  nrof 40
   end
 treasure Balrog
   arch ability_paralyze
@@ -4780,15 +4780,15 @@ treasure broo
     end
   more
   arch silvercoin
-  nrof 300
+  nrof 30
   chance 60
   no
     arch goldcoin
-    nrof 100
+    nrof 10
     chance 30
     no
       arch platinacoin
-      nrof 100
+      nrof 10
       chance 10
       end
     end
@@ -5009,7 +5009,7 @@ treasure gargoyle
   more
   arch gem
   chance 50
-  nrof 9
+  nrof 1
   end
 treasure neko
   list neko_parts
@@ -5030,7 +5030,7 @@ treasure witch_earth
    nrof 20
    no
      arch gem
-     nrof 20
+     nrof 2
      end
   more
   arch ability_fear
@@ -5093,7 +5093,7 @@ treasure giant_worm
   more
   arch gem
     chance 60
-    nrof 75
+    nrof 7
   end
 treasure skree
   arch ability_fear
