@@ -1828,7 +1828,7 @@ void get_rangevector(object *op1, object *op2, rv_vector *retval, int flags)
     }
     best = op1;
     /* If this is multipart, find the closest part now */
-    if (flags & 0x1 && op1->more) {
+    if (!(flags & 0x1) && op1->more) {
 	object *tmp;
 	int best_distance = retval->distance_x * retval->distance_x +
 		    retval->distance_y * retval->distance_y, tmpi;

@@ -17,6 +17,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+common/map.c: Fix bug in get_rangevector which was causing reverse
+ of documented procedure.  This also resulted in monsters not attacking
+ adjacent creatures with physical attacks.  MSW 2001-11-03
 
 Add weapontypes to the game.  These are currently used for nothing other
 than messages, which are not fully written yet. Players should not see them
