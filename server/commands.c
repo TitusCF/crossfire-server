@@ -407,7 +407,14 @@ int parse_string(object *op, char *str)
 #ifdef INPUT_DEBUG
     LOG(llevDebug, "Command: '%s'\n", str);
 #endif
-
+    /*
+     * remove trailing spaces
+     */
+    cp = str+strlen(str)-1;
+    while ( (cp>=str) && (*cp==' ')){
+        *cp='\0';
+	cp--;
+    }
     /*
      * No arguments?
      */
@@ -459,7 +466,7 @@ int parse_command(object *op, char *str) {
   int i;
   /* if it's a keybinding command, ignore semicolons */
   if(strstr(str,"bind")) return parse_string(op,str);
-
+printf("parsin command '%s'\n",str);
   /* If on a socket, you can not do complex commands. */
   if(op && (tmp=strchr(str,';'))!=NULL)  /* we've found a ';' do the 1st and recurse */
 	 {

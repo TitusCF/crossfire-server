@@ -70,6 +70,14 @@ int execute_newserver_command(object *pl, char *command)
 
     pl->contr->has_hit=0;
 
+    /*
+     * remove trailing spaces from commant
+     */
+    cp=command+strlen(command)-1;
+    while ( (cp>=command) && (*cp==' ')){
+        *cp='\0';
+        cp--;
+    }
     cp=strchr(command, ' ');
     if (cp) {
 	*(cp++) ='\0';
