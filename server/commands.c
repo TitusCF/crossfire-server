@@ -106,6 +106,7 @@ CommArray_s Commands[] = {
   {"take", command_take,	1.0},
   {"throw", command_throw,	1.0},
   {"time", command_time,	0.0},
+  {"weather", command_weather,	0.0},
 #ifdef SET_TITLE
   {"title", command_title,	0.0},
 #endif

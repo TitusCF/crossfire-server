@@ -35,42 +35,6 @@
 extern unsigned long todtick;
 extern weathermap_t **weathermap;
 
-#define POLAR_BASE_TEMP		0	/* C */
-#define EQUATOR_BASE_TEMP	25	/* C */
-#define SEASONAL_ADJUST		10	/* polar distance */
-#define GULF_STREAM_WIDTH       3       /* width of gulf stream */
-#define GULF_STREAM_BASE_SPEED  40      /* base speed of gulf stream */
-
-/* don't muck with these unless you are sure you know what they do */
-#define PRESSURE_ITERATIONS		30
-#define PRESSURE_AREA			180
-#define PRESSURE_ROUNDING_FACTOR	2
-#define PRESSURE_ROUNDING_ITER		1
-#define PRESSURE_SPIKES			3
-#define PRESSURE_MAX			1040
-#define PRESSURE_MIN			960
-
-/* editing the below might require actual changes to code */
-#define WEATHERMAPTILESX		100
-#define WEATHERMAPTILESY		100
-
-/* sky conditions */
-#define SKY_CLEAR         0
-#define SKY_LIGHTCLOUD    1
-#define SKY_OVERCAST      2
-#define SKY_LIGHT_RAIN    3
-#define SKY_RAIN          4 /* rain -> storm has lightning */
-#define SKY_HEAVY_RAIN    5
-#define SKY_HURRICANE     6
-/* wierd weather 7-12 */
-#define SKY_FOG           7
-#define SKY_HAIL          8
-/* snow */
-#define SKY_LIGHT_SNOW    13 /* add 10 to rain to get snow */
-#define SKY_SNOW          14
-#define SKY_HEAVY_SNOW    15
-#define SKY_BLIZZARD      16
-
 int gulf_stream_speed[GULF_STREAM_WIDTH][WEATHERMAPTILESY];
 int gulf_stream_dir[GULF_STREAM_WIDTH][WEATHERMAPTILESY];
 int gulf_stream_start;
@@ -833,7 +797,6 @@ void init_humid_elev()
 	    }
 	    delete_map(m);
 	    /* jesus thats confusing as all hell */
-	    printf("water %d humid %d\n", water, water*100/(spwtx*spwty));
 	    weathermap[x][y].humid = water*100/(spwtx*spwty);
 	    weathermap[x][y].avgelev = elev/(spwtx*spwty);
 	    weathermap[x][y].water = weathermap[x][y].humid;
@@ -1079,7 +1042,7 @@ void perform_weather()
 	return;
     
     /* move right to left, top to bottom */
-    if (wmperformstartx == settings.worldmaptilesx) {
+    if (wmperformstartx+1 == settings.worldmaptilesx) {
 	wmperformstartx = 0;
 	wmperformstarty++;
     } else
@@ -1146,7 +1109,57 @@ void weather_effect(char *filename)
 	return;
 
     let_it_snow(m, wx, wy, filename);
+    singing_in_the_rain(m, wx, wy, filename);
 
+}
+
+object *avoid_weather(int *av, mapstruct *m, int x, int y, int *gs)
+{
+    int avoid, gotsnow;
+    object *tmp;
+    avoid = 0;
+    gotsnow = 0;
+    for (tmp=GET_MAP_OB(m, x, y); tmp; tmp = tmp->above) {
+	if (!strcmp(tmp->arch->name, "snow")) {
+	    gotsnow++;
+	    break;
+	} else if (!strcmp(tmp->arch->name, "snow2")) {
+	    gotsnow++;
+	    break;
+	} else if (!strcmp(tmp->arch->name, "snow4")) {
+	    gotsnow++;
+	    break;
+	} else if (!strcmp(tmp->arch->name, "rain1")) {
+	    gotsnow++;
+	    break;
+	} else if (!strcmp(tmp->arch->name, "rain2")) {
+	    gotsnow++;
+	    break;
+	} else if (!strcmp(tmp->arch->name, "rain3")) {
+	    gotsnow++;
+	    break;
+	} else if (!strcmp(tmp->arch->name, "rain4")) {
+	    gotsnow++;
+	    break;
+	} else if (!strcmp(tmp->arch->name, "rain5")) {
+	    gotsnow++;
+	    break;
+	} else if (!strcmp(tmp->name, "drifts"))
+	    avoid++;
+	else if (!strcmp(tmp->arch->name, "cforest1"))
+	    avoid++;
+	else if (!strcmp(tmp->name, "sea"))
+	    avoid++;
+	else if (!strcmp(tmp->name, "sea1"))
+	    avoid++;
+	else if (!strcmp(tmp->name, "deep_sea"))
+	    avoid++;
+	else if (!strcmp(tmp->name, "shallow_sea"))
+	    avoid++;
+    }
+    *gs = gotsnow;
+    *av = avoid;
+    return tmp;
 }
 
 void let_it_snow(mapstruct *m, int wx, int wy, char *filename)
@@ -1169,30 +1182,7 @@ void let_it_snow(mapstruct *m, int wx, int wy, char *filename)
 	    sky = weathermap[wx][wy].sky;
 	    if (temp <= 0 && sky > SKY_OVERCAST && sky < SKY_FOG)
 		sky += 10; /*let it snow*/
-	    for (tmp=GET_MAP_OB(m, x, y); tmp; tmp = tmp->above) {
-		/* problem: snow never gets upgraded */
-		if (!strcmp(tmp->arch->name, "snow")) {
-		    gotsnow++;
-		    oldsnow = tmp;
-		} else if (!strcmp(tmp->arch->name, "snow2")) {
-		    gotsnow++;
-		    oldsnow = tmp;
-		} else if (!strcmp(tmp->arch->name, "snow4")) {
-		    gotsnow++;
-		    oldsnow = tmp;
-		} else if (!strcmp(tmp->name, "drifts"))
-		    avoid++;
-		else if (!strcmp(tmp->arch->name, "cforest1"))
-		    avoid++;
-		else if (!strcmp(tmp->name, "sea"))
-		    avoid++;
-		else if (!strcmp(tmp->name, "sea1"))
-		    avoid++;
-		else if (!strcmp(tmp->name, "deep_sea"))
-		    avoid++;
-		else if (!strcmp(tmp->name, "shallow_sea"))
-		    avoid++;
-	    }
+	    oldsnow = avoid_weather(&avoid, m, x, y, &gotsnow);
 	    if (!avoid) {
 		if (sky >= SKY_LIGHT_SNOW && sky < SKY_HEAVY_SNOW)
 		    at = find_archetype("snow");
@@ -1201,6 +1191,16 @@ void let_it_snow(mapstruct *m, int wx, int wy, char *filename)
 		if (!strcmp(GET_MAP_OB(m, x, y)->name, "hills") &&
 		    sky >= SKY_LIGHT_SNOW)
 		    at = find_archetype("drifts");
+		/* special case scorn, where the no-magic field wrecks my
+		   logic */
+		if (GET_MAP_OB(m, x, y)->above != NULL) {
+		    if (!strcmp(GET_MAP_OB(m, x, y)->above->name,
+				"cobblestones") && sky >= SKY_LIGHT_SNOW)
+			at = find_archetype("snow4");
+		    if (!strcmp(GET_MAP_OB(m, x, y)->above->arch->name,
+				"cobblestones2") && sky >= SKY_LIGHT_SNOW)
+			at = find_archetype("snow4");
+		}
 		if (!strcmp(GET_MAP_OB(m, x, y)->name, "cobblestones") &&
 		    sky >= SKY_LIGHT_SNOW)
 		    at = find_archetype("snow4");
@@ -1226,6 +1226,10 @@ void let_it_snow(mapstruct *m, int wx, int wy, char *filename)
 		    two++;
 		if (!strcmp(GET_MAP_OB(m, x, y)->name, "tree"))
 		    two++;
+		if (!strcmp(GET_MAP_OB(m, x, y)->arch->name, "woods"))
+		    two++;
+		if (!strcmp(GET_MAP_OB(m, x, y)->arch->name, "woods_3"))
+		    two++;
 		if (gotsnow && at) {
 		    if (!strcmp(oldsnow->arch->name, at->name))
 			at = NULL;
@@ -1235,12 +1239,18 @@ void let_it_snow(mapstruct *m, int wx, int wy, char *filename)
 			tmp=GET_MAP_OB(m, x, y);
 			/* clean up the trees we put over the snow */
 			if (!strcmp(tmp->name, "evergreen"))
-			tmp = tmp->above;
+			    tmp = tmp->above;
 			else if (!strcmp(tmp->name, "tree"))
+			    tmp = tmp->above;
+			else if (!strcmp(tmp->arch->name, "woods"))
+			    tmp = tmp->above;
+			else if (!strcmp(tmp->arch->name, "woods_3"))
 			    tmp = tmp->above;
 			if (tmp != NULL)
 			    if (strcmp(tmp->arch->name, "tree3") == 0 ||
-				strcmp(tmp->arch->name, "tree5") == 0) {
+				strcmp(tmp->arch->name, "tree5") == 0 ||
+				strcmp(tmp->arch->name, "woods4") == 0 ||
+				strcmp(tmp->arch->name, "woods5") == 0) {
 				remove_ob(tmp);
 				free_object(tmp);
 			    }
@@ -1251,21 +1261,29 @@ void let_it_snow(mapstruct *m, int wx, int wy, char *filename)
 		    copy_object(&at->clone, ob);
 		    ob->x = x;
 		    ob->y = y;
+		    ob->material = M_ICE;
 		    if (!strcmp(ob->arch->name, "snow4"))
 			SET_FLAG(ob, FLAG_OVERLAY_FLOOR);
 		    insert_ob_in_map(ob, m, ob,
 		        INS_NO_MERGE | INS_NO_WALK_ON | INS_ABOVE_FLOOR_ONLY);
 		    if (two) {
+			at = NULL;
 			if (!strcmp(GET_MAP_OB(m, x, y)->name, "evergreen"))
 			    at = find_archetype("tree5");
 			if (!strcmp(GET_MAP_OB(m, x, y)->name, "tree"))
 			    at = find_archetype("tree3");
-			ob = get_object();
-			copy_object(&at->clone, ob);
-			ob->x = x;
-			ob->y = y;
-			insert_ob_in_map(ob, m, ob,
-			    INS_NO_MERGE | INS_NO_WALK_ON | INS_ON_TOP);
+			if (!strcmp(GET_MAP_OB(m, x, y)->arch->name, "woods"))
+			    at = find_archetype("woods4");
+			if (!strcmp(GET_MAP_OB(m, x, y)->arch->name, "woods3"))
+			    at = find_archetype("woods5");
+			if (at != NULL) {
+			    ob = get_object();
+			    copy_object(&at->clone, ob);
+			    ob->x = x;
+			    ob->y = y;
+			    insert_ob_in_map(ob, m, ob,
+			        INS_NO_MERGE | INS_NO_WALK_ON | INS_ON_TOP);
+			}
 		    }
 		}
 	    }
@@ -1286,21 +1304,20 @@ void let_it_snow(mapstruct *m, int wx, int wy, char *filename)
 		    else if (!strcmp(tmp->arch->name, "glacier"))
 			avoid++;
 		    if (avoid) {
+			/* replace snow with a big puddle */
 			remove_ob(tmp);
 			free_object(tmp);
-			tmp=GET_MAP_OB(m, x, y);
-			/* clean up the trees we put over the snow */
-			if (!strcmp(tmp->name, "evergreen"))
-			    tmp = tmp->above;
-			else if (!strcmp(tmp->name, "tree"))
-			    tmp = tmp->above;
-			if (tmp != NULL)
-			    if (strcmp(tmp->arch->name, "tree3") == 0 ||
-			        strcmp(tmp->arch->name, "tree5") == 0) {
-				remove_ob(tmp);
-				free_object(tmp);
-			    }
-			break;
+			at = find_archetype("rain5");
+			if (at != NULL) {
+			    ob = get_object();
+			    copy_object(&at->clone, ob);
+			    ob->x = x;
+			    ob->y = y;
+			    SET_FLAG(ob, FLAG_OVERLAY_FLOOR);
+			    ob->material = M_LIQUID;
+			    insert_ob_in_map(ob, m, ob, INS_NO_MERGE |
+				INS_NO_WALK_ON | INS_ABOVE_FLOOR_ONLY);
+			}
 		    }
 		}
 	    }
@@ -1334,7 +1351,150 @@ void let_it_snow(mapstruct *m, int wx, int wy, char *filename)
     }
 }
 
+void singing_in_the_rain(mapstruct *m, int wx, int wy, char *filename)
+{
+    int x, y;
+    int avoid, two, temp, sky, gotsnow;
+    object *ob, *tmp, *oldsnow;
+    archetype *at;
 
+    for (x=0; x < settings.worldmaptilesizex; x++) {
+	for (y=0; y < settings.worldmaptilesizey; y++) {
+	    (void)worldmap_to_weathermap(x, y, &wx, &wy, filename);
+	    ob = NULL;
+	    at = NULL;
+	    avoid = 0;
+	    two = 0;
+	    gotsnow = 0;
+	    temp = real_world_temperature(x, y, m);
+	    sky = weathermap[wx][wy].sky;
+	    /* it's probably allready snowing */
+	    if (temp < 0)
+		continue;
+	    oldsnow = avoid_weather(&avoid, m, x, y, &gotsnow);
+	    if (!avoid) {
+		if (sky == SKY_LIGHT_RAIN || sky == SKY_RAIN)
+		    switch (rndm(0, SKY_HAIL-sky)) {
+		    case 0: at = find_archetype("rain1"); break;
+		    case 1: at = find_archetype("rain2"); break;
+		    default: at = NULL;
+		    }
+		if (sky >= SKY_HEAVY_RAIN && sky <= SKY_HURRICANE)
+		    switch (rndm(0, SKY_HAIL-sky)) {
+		    case 0: at = find_archetype("rain3"); break;
+		    case 1: at = find_archetype("rain4"); break;
+		    case 2: at = find_archetype("rain5"); break;
+		    default: at = NULL;
+		    }
+		if (!strcmp(GET_MAP_OB(m, x, y)->name, "evergreen"))
+		    two++;
+		if (!strcmp(GET_MAP_OB(m, x, y)->name, "tree"))
+		    two++;
+		if (!strcmp(GET_MAP_OB(m, x, y)->arch->name, "woods"))
+		    two++;
+		if (!strcmp(GET_MAP_OB(m, x, y)->arch->name, "woods_3"))
+		    two++;
+		if (gotsnow && at) {
+		    if (!strcmp(oldsnow->arch->name, at->name))
+			at = NULL;
+		    else {
+			remove_ob(oldsnow);
+			free_object(oldsnow);
+			tmp=GET_MAP_OB(m, x, y);
+			/* clean up the trees we put over the snow */
+			if (!strcmp(tmp->name, "evergreen"))
+			    tmp = tmp->above;
+			else if (!strcmp(tmp->name, "tree"))
+			    tmp = tmp->above;
+			else if (!strcmp(tmp->arch->name, "woods"))
+			    tmp = tmp->above;
+			else if (!strcmp(tmp->arch->name, "woods_3"))
+			    tmp = tmp->above;
+			if (tmp != NULL)
+			    if (strcmp(tmp->arch->name, "tree3") == 0 ||
+				strcmp(tmp->arch->name, "tree5") == 0 ||
+				strcmp(tmp->arch->name, "woods4") == 0 ||
+				strcmp(tmp->arch->name, "woods5") == 0) {
+				remove_ob(tmp);
+				free_object(tmp);
+			    }
+		    }
+		}
+		if (at != NULL) {
+		    ob = get_object();
+		    copy_object(&at->clone, ob);
+		    ob->x = x;
+		    ob->y = y;
+		    SET_FLAG(ob, FLAG_OVERLAY_FLOOR);
+		    ob->material = M_LIQUID;
+		    insert_ob_in_map(ob, m, ob,
+		        INS_NO_MERGE | INS_NO_WALK_ON | INS_ABOVE_FLOOR_ONLY);
+		    if (two) {
+			at = NULL;
+			if (!strcmp(GET_MAP_OB(m, x, y)->name, "evergreen"))
+			    at = find_archetype("tree5");
+			if (!strcmp(GET_MAP_OB(m, x, y)->name, "tree"))
+			    at = find_archetype("tree3");
+			if (!strcmp(GET_MAP_OB(m, x, y)->arch->name, "woods"))
+			    at = find_archetype("woods4");
+			if (!strcmp(GET_MAP_OB(m, x, y)->arch->name, "woods3"))
+			    at = find_archetype("woods5");
+			if (at != NULL) {
+			    ob = get_object();
+			    copy_object(&at->clone, ob);
+			    ob->x = x;
+			    ob->y = y;
+			    insert_ob_in_map(ob, m, ob,
+				INS_NO_MERGE | INS_NO_WALK_ON | INS_ON_TOP);
+			}
+		    }
+		}
+	    }
+	    /* Things evaporate fast in the heat */
+	    if (temp > 8 && sky < SKY_OVERCAST && rndm(temp, 60) > 50) {
+		/* evaporate */
+		for (tmp=GET_MAP_OB(m, x, y)->above; tmp; tmp = tmp->above) {
+		    avoid = 0;
+		    if (!strcmp(tmp->arch->name, "rain1"))
+			avoid++;
+		    else if (!strcmp(tmp->arch->name, "rain2"))
+			avoid++;
+		    else if (!strcmp(tmp->arch->name, "rain3"))
+			avoid++;
+		    else if (!strcmp(tmp->arch->name, "rain4"))
+			avoid++;
+		    else if (!strcmp(tmp->arch->name, "rain5"))
+			avoid++;
+		    if (avoid) {
+			remove_ob(tmp);
+			free_object(tmp);
+			if (weathermap[wx][wy].humid < 100 && rndm(0, 50) == 0)
+			    weathermap[wx][wy].humid++;
+			tmp=GET_MAP_OB(m, x, y);
+			/* clean up the trees we put over the rain */
+			if (!strcmp(tmp->name, "evergreen"))
+			    tmp = tmp->above;
+			else if (!strcmp(tmp->name, "tree"))
+			    tmp = tmp->above;
+			else if (!strcmp(tmp->arch->name, "woods"))
+			    tmp = tmp->above;
+			else if (!strcmp(tmp->arch->name, "woods_3"))
+			    tmp = tmp->above;
+			if (tmp != NULL)
+			    if (strcmp(tmp->arch->name, "tree3") == 0 ||
+			        strcmp(tmp->arch->name, "tree5") == 0 ||
+				strcmp(tmp->arch->name, "woods4") == 0 ||
+				strcmp(tmp->arch->name, "woods5") == 0) {
+				remove_ob(tmp);
+				free_object(tmp);
+			    }
+			break;
+		    }
+		}
+	    }
+	}
+    }
+}
 
 /* provide wx and wy. Will fill in with weathermap coordinates.  Requires
    the current mapname (must be a worldmap), and your coordinates on the
@@ -1349,6 +1509,9 @@ int worldmap_to_weathermap(int x, int y, int *wx, int *wy, char *filename)
 
     spwtx = (settings.worldmaptilesx * settings.worldmaptilesizex) / WEATHERMAPTILESX;
     spwty = (settings.worldmaptilesy * settings.worldmaptilesizey) / WEATHERMAPTILESY;
+
+    while (*filename == '/')
+	*filename++;
 
     fx = -1;
     fy = -1;

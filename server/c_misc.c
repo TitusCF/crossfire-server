@@ -32,6 +32,7 @@
 #include <sproto.h>
 #endif
 
+extern weathermap_t **weathermap;
 
 /* Handles misc. input request - things like hash table, malloc, maps,
  * who, etc.
@@ -332,6 +333,87 @@ int command_time (object *op, char *params)
     time_info(op);
     return 1;
   }
+
+int command_weather (object *op, char *params)
+{
+    int wx, wy, temp, sky;
+    char buf[MAX_BUF];
+
+    if (settings.dynamiclevel < 1)
+	return 1;
+
+    if (op->map == NULL)
+	return 1;
+
+    if (worldmap_to_weathermap(op->x, op->y, &wx, &wy, op->map->path) != 0)
+	return 1;
+
+    temp = real_world_temperature(op->x, op->y, op->map);
+    new_draw_info_format(NDI_UNIQUE, 0, op, "It's currently %d degrees "
+	"Centigrade out.", temp);
+
+    /* humid */
+    if (weathermap[wx][wy].humid < 20)
+	new_draw_info(NDI_UNIQUE, 0, op, "It is very dry.");
+    else if (weathermap[wx][wy].humid < 40)
+	new_draw_info(NDI_UNIQUE, 0, op, "It is very comfortable today.");
+    else if (weathermap[wx][wy].humid < 60)
+	new_draw_info(NDI_UNIQUE, 0, op, "It is a bit muggy.");
+    else if (weathermap[wx][wy].humid < 80)
+	new_draw_info(NDI_UNIQUE, 0, op, "It is muggy.");
+    else
+	new_draw_info(NDI_UNIQUE, 0, op, "It is uncomfortably muggy.");
+
+    /* wind */
+    switch (weathermap[wx][wy].winddir) {
+    case 1: sprintf(buf, "north"); break;
+    case 2: sprintf(buf, "northeast"); break;
+    case 3: sprintf(buf, "east"); break;
+    case 4: sprintf(buf, "southeast"); break;
+    case 5: sprintf(buf, "south"); break;
+    case 6: sprintf(buf, "southwest"); break;
+    case 7: sprintf(buf, "west"); break;
+    case 8: sprintf(buf, "northwest"); break;
+    }
+    if (weathermap[wx][wy].windspeed < 5)
+	new_draw_info_format(NDI_UNIQUE, 0, op, "There is a mild breeze "
+	    "coming from the %s.", buf);
+    else if (weathermap[wx][wy].windspeed < 10)
+	new_draw_info_format(NDI_UNIQUE, 0, op, "There is a strong breeze "
+	    "coming from the %s.", buf);
+    else if (weathermap[wx][wy].windspeed < 15)
+	new_draw_info_format(NDI_UNIQUE, 0, op, "There is a light wind "
+	    "coming from the %s.", buf);
+    else if (weathermap[wx][wy].windspeed < 25)
+	new_draw_info_format(NDI_UNIQUE, 0, op, "There is a strong wind "
+	    "coming from the %s.", buf);
+    else if (weathermap[wx][wy].windspeed < 35)
+	new_draw_info_format(NDI_UNIQUE, 0, op, "There is a heavy wind "
+	    "coming from the %s.", buf);
+    else
+	new_draw_info_format(NDI_UNIQUE, 0, op, "The wind from the %s is "
+	    "incredibly strong!", buf);
+
+    sky = weathermap[wx][wy].sky;
+    if (temp <= 0 && sky > SKY_OVERCAST && sky < SKY_FOG)
+	sky += 10; /*let it snow*/
+    switch (sky) {
+    case SKY_CLEAR: new_draw_info(NDI_UNIQUE, 0, op, "There isn''t a cloud in the sky."); break;
+    case SKY_LIGHTCLOUD: new_draw_info(NDI_UNIQUE, 0, op, "There are a few light clouds in the sky."); break;
+    case SKY_OVERCAST: new_draw_info(NDI_UNIQUE, 0, op, "The sky is cloudy and dreary."); break;
+    case SKY_LIGHT_RAIN: new_draw_info(NDI_UNIQUE, 0, op, "It is raining softly."); break;
+    case SKY_RAIN: new_draw_info(NDI_UNIQUE, 0, op, "It is raining."); break;
+    case SKY_HEAVY_RAIN: new_draw_info(NDI_UNIQUE, 0, op, "It is raining heavily."); break;
+    case SKY_HURRICANE: new_draw_info(NDI_UNIQUE, 0, op, "There is a heavy storm!  You should go inside!"); break;
+    case SKY_FOG: new_draw_info(NDI_UNIQUE, 0, op, "It''s foggy and miserable."); break;
+    case SKY_HAIL: new_draw_info(NDI_UNIQUE, 0, op, "It''s hailing out!  Take cover!"); break;
+    case SKY_LIGHT_SNOW: new_draw_info(NDI_UNIQUE, 0, op, "Snow is gently falling from the sky."); break;
+    case SKY_SNOW: new_draw_info(NDI_UNIQUE, 0, op, "It''s snowing out."); break;
+    case SKY_HEAVY_SNOW: new_draw_info(NDI_UNIQUE, 0, op, "The snow is falling very heavily now."); break;
+    case SKY_BLIZZARD: new_draw_info(NDI_UNIQUE, 0, op, "A full blown blizzard is in effect.  You might want to take cover!"); break;
+    }
+    return 1;
+}
 
 int command_archs (object *op, char *params)
 {
