@@ -17,6 +17,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/apply.c: Fix apply_special() to properly deal with LAMP objects - it
+   wasn't dealing properly with the split off lamp compared to the one it
+   was supposed to deal with - was crashing server.
+MSW 2004-05-04
+
 common/item.c: describe_monster() - print luck when describing players (fixex
    perceive self not showing luck)
 server/attack.c: kill_object() - don't give player exp if he kills himself -

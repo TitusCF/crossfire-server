@@ -3071,18 +3071,20 @@ int apply_special (object *who, object *op, int aflags)
 	    tmp2 = arch_to_object(op->other_arch);
 	    tmp2->stats.food = op->stats.food;
 	    SET_FLAG(tmp2, FLAG_APPLIED);
-	    if (tmp == NULL) {
-		if (who->type == PLAYER)
-		    esrv_del_item(who->contr, (tag_t)op->count);
-		remove_ob(op);
-		free_object(op);
-	    } else {
-		if (who->type == PLAYER)
-		    esrv_del_item(who->contr, (tag_t)tmp->count);
-		remove_ob(tmp);
-		free_object(tmp);
-	    }
 	    insert_ob_in_ob(tmp2, who);
+
+	    /* Remove the old lantern */
+	    if (who->type == PLAYER)
+		esrv_del_item(who->contr, (tag_t)op->count);
+	    remove_ob(op);
+	    free_object(op);
+
+	    /* insert the portion that was split off */
+	    if(tmp!=NULL) {
+		(void) insert_ob_in_ob(tmp,who);
+		if(who->type==PLAYER)
+		    esrv_send_item(who, tmp);
+	    }
 	    fix_player(who);
 	    if (QUERY_FLAG(op, FLAG_CURSED) || QUERY_FLAG(op, FLAG_DAMNED)) {
 		if (who->type == PLAYER) {
