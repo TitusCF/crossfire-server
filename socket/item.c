@@ -174,6 +174,8 @@ void esrv_draw_look(object *pl)
 	SockList_AddShort(&sl,0);
 	SockList_AddChar(&sl, 0);
 	SockList_AddInt(&sl, 0);
+	if (pl->contr->socket.itemcmd == 2)
+	    SockList_AddShort(&sl, 0);
     }
 
     for (last=NULL; tmp!=last; tmp=tmp->below) {
@@ -186,6 +188,9 @@ void esrv_draw_look(object *pl)
 	    if (++start_look < pl->contr->socket.look_position) continue;
 	    end_look++;
 	    if (end_look > NUM_LOOK_OBJECTS) {
+		/* What we basically do is make a 'fake' object - when the user applies it,
+		 * we notice the special tag the object has, and act accordingly.
+		 */
 		SockList_AddInt(&sl, 0x80000000 | (pl->contr->socket.look_position+ NUM_LOOK_OBJECTS));
 		SockList_AddInt(&sl, 0);
 		SockList_AddInt(&sl, -1);
@@ -195,6 +200,8 @@ void esrv_draw_look(object *pl)
 		SockList_AddShort(&sl,0);
 		SockList_AddChar(&sl, 0);
 		SockList_AddInt(&sl, 0);
+		if (pl->contr->socket.itemcmd == 2)
+		    SockList_AddShort(&sl, 0);
 		break;
 	    }
 
