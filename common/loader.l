@@ -366,6 +366,7 @@ A	.+
 ^treasure{S}	    SET_OR_CLEAR_FLAG(op, FLAG_TREASURE, IVAL);
 ^see_invisible{S}   SET_OR_CLEAR_FLAG(op, FLAG_SEE_INVISIBLE, IVAL);
 ^can_roll{S} 	    SET_OR_CLEAR_FLAG(op, FLAG_CAN_ROLL, IVAL);
+^overlay_floor{S}   SET_OR_CLEAR_FLAG(op, FLAG_OVERLAY_FLOOR, IVAL);
 ^is_turnable{S}	    SET_OR_CLEAR_FLAG(op, FLAG_IS_TURNABLE, IVAL);
 ^is_used_up{S}	    SET_OR_CLEAR_FLAG(op, FLAG_IS_USED_UP, IVAL);
 ^identified{S}	    {	if (IVAL) {
@@ -1098,7 +1099,7 @@ static char *flag_names[NUM_FLAGS+1] = {
 "can_use_shield", "no_pick", "walk_on", "no_pass",		/* 10 */
 "is_animated", NULL, "flying", "monster", "friendly", "generator",
 "is_thrown", "auto_apply", "treasure", NULL /* flag_invis_undead */,	/* 20 */
-"see_invisible", "can_roll", NULL, "is_turnable", "walk_off",
+"see_invisible", "can_roll", "overlay_floor", "is_turnable", "walk_off",
 "fly_on", "fly_off", "is_used_up", "identified", "reflecting",	/* 30 */
 "changing", "splitting", "hitback", "startequip",
 "blocksview", "undead", "scared", "unaggressive",

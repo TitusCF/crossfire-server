@@ -1152,8 +1152,8 @@ void weather_effect(char *filename)
 void let_it_snow(mapstruct *m, int wx, int wy, char *filename)
 {
     int x, y;
-    int avoid, two, temp, sky;
-    object *ob, *tmp;
+    int avoid, two, temp, sky, gotsnow;
+    object *ob, *tmp, *oldsnow;
     archetype *at;
 
     for (x=0; x < settings.worldmaptilesizex; x++) {
@@ -1164,18 +1164,25 @@ void let_it_snow(mapstruct *m, int wx, int wy, char *filename)
 	    /* this will definately need tuning */
 	    avoid = 0;
 	    two = 0;
+	    gotsnow = 0;
 	    temp = real_world_temperature(x, y, m);
 	    sky = weathermap[wx][wy].sky;
 	    if (temp <= 0 && sky > SKY_OVERCAST && sky < SKY_FOG)
 		sky += 10; /*let it snow*/
 	    for (tmp=GET_MAP_OB(m, x, y); tmp; tmp = tmp->above) {
-		if (!strcasecmp(tmp->name, "snow"))
+		/* problem: snow never gets upgraded */
+		if (!strcmp(tmp->arch->name, "snow")) {
+		    gotsnow++;
+		    oldsnow = tmp;
+		} else if (!strcmp(tmp->arch->name, "snow2")) {
+		    gotsnow++;
+		    oldsnow = tmp;
+		} else if (!strcmp(tmp->arch->name, "snow4")) {
+		    gotsnow++;
+		    oldsnow = tmp;
+		} else if (!strcmp(tmp->name, "drifts"))
 		    avoid++;
-		else if (!strcmp(tmp->name, "snow2"))
-		    avoid++;
-		else if (!strcmp(tmp->name, "drifts"))
-		    avoid++;
-		else if (!strcmp(tmp->name, "cforest1"))
+		else if (!strcmp(tmp->arch->name, "cforest1"))
 		    avoid++;
 		else if (!strcmp(tmp->name, "sea"))
 		    avoid++;
@@ -1194,6 +1201,21 @@ void let_it_snow(mapstruct *m, int wx, int wy, char *filename)
 		if (!strcmp(GET_MAP_OB(m, x, y)->name, "hills") &&
 		    sky >= SKY_LIGHT_SNOW)
 		    at = find_archetype("drifts");
+		if (!strcmp(GET_MAP_OB(m, x, y)->name, "cobblestones") &&
+		    sky >= SKY_LIGHT_SNOW)
+		    at = find_archetype("snow4");
+		if (!strcmp(GET_MAP_OB(m, x, y)->arch->name, "cobblestones2") &&
+		    sky >= SKY_LIGHT_SNOW)
+		    at = find_archetype("snow4");
+		if (!strcmp(GET_MAP_OB(m, x, y)->name, "stones") &&
+		    sky >= SKY_LIGHT_SNOW)
+		    at = find_archetype("snow4");
+		if (!strcmp(GET_MAP_OB(m, x, y)->name, "flagstone") &&
+		    sky >= SKY_LIGHT_SNOW)
+		    at = find_archetype("snow4");
+		if (!strcmp(GET_MAP_OB(m, x, y)->arch->name, "stonefloor2") &&
+		    sky >= SKY_LIGHT_SNOW)
+		    at = find_archetype("snow4");
 		if (!strcmp(GET_MAP_OB(m, x, y)->name, "evergreens") &&
 		    sky >= SKY_LIGHT_SNOW)
 		    at = find_archetype("cforest1");
@@ -1203,12 +1225,34 @@ void let_it_snow(mapstruct *m, int wx, int wy, char *filename)
 		if (!strcmp(GET_MAP_OB(m, x, y)->name, "evergreen"))
 		    two++;
 		if (!strcmp(GET_MAP_OB(m, x, y)->name, "tree"))
-		    two++;  
+		    two++;
+		if (gotsnow && at) {
+		    if (!strcmp(oldsnow->arch->name, at->name))
+			at = NULL;
+		    else {
+			remove_ob(oldsnow);
+			free_object(oldsnow);
+			tmp=GET_MAP_OB(m, x, y);
+			/* clean up the trees we put over the snow */
+			if (!strcmp(tmp->name, "evergreen"))
+			tmp = tmp->above;
+			else if (!strcmp(tmp->name, "tree"))
+			    tmp = tmp->above;
+			if (tmp != NULL)
+			    if (strcmp(tmp->arch->name, "tree3") == 0 ||
+				strcmp(tmp->arch->name, "tree5") == 0) {
+				remove_ob(tmp);
+				free_object(tmp);
+			    }
+		    }
+		}
 		if (at != NULL) {
 		    ob = get_object();
 		    copy_object(&at->clone, ob);
 		    ob->x = x;
 		    ob->y = y;
+		    if (!strcmp(ob->arch->name, "snow4"))
+			SET_FLAG(ob, FLAG_OVERLAY_FLOOR);
 		    insert_ob_in_map(ob, m, ob,
 		        INS_NO_MERGE | INS_NO_WALK_ON | INS_ABOVE_FLOOR_ONLY);
 		    if (two) {
@@ -1231,11 +1275,15 @@ void let_it_snow(mapstruct *m, int wx, int wy, char *filename)
 		    avoid = 0;
 		    if (!strcmp(tmp->name, "snow"))
 			avoid++;
-		    else if (!strcmp(tmp->name, "snow2"))
+		    else if (!strcmp(tmp->arch->name, "snow2"))
 			avoid++;
-		    else if (!strcmp(tmp->name, "drifts"))
+		    else if (!strcmp(tmp->arch->name, "drifts"))
 			avoid++;
-		    else if (!strcmp(tmp->name, "cforest1"))
+		    else if (!strcmp(tmp->arch->name, "cforest1"))
+			avoid++;
+		    else if (!strcmp(tmp->arch->name, "snow4"))
+			avoid++;
+		    else if (!strcmp(tmp->arch->name, "glacier"))
 			avoid++;
 		    if (avoid) {
 			remove_ob(tmp);
@@ -1247,8 +1295,8 @@ void let_it_snow(mapstruct *m, int wx, int wy, char *filename)
 			else if (!strcmp(tmp->name, "tree"))
 			    tmp = tmp->above;
 			if (tmp != NULL)
-			    if (strcmp(tmp->name, "tree3") == 0 ||
-			        strcmp(tmp->name, "tree5") == 0) {
+			    if (strcmp(tmp->arch->name, "tree3") == 0 ||
+			        strcmp(tmp->arch->name, "tree5") == 0) {
 				remove_ob(tmp);
 				free_object(tmp);
 			    }

@@ -587,7 +587,8 @@ void load_objects (mapstruct *m, FILE *fp, int mapflags) {
 	switch(i) {
 	  case LL_NORMAL:
 	    /* if we are loading an overlay, put the floors on the bottom */
-	    if (QUERY_FLAG(op, FLAG_IS_FLOOR) && mapflags & MAP_OVERLAY)
+	    if ((QUERY_FLAG(op, FLAG_IS_FLOOR) ||
+		 QUERY_FLAG(op, FLAG_OVERLAY_FLOOR)) && mapflags & MAP_OVERLAY)
 		insert_ob_in_map(op,m,op,INS_NO_MERGE | INS_NO_WALK_ON | INS_ABOVE_FLOOR_ONLY);
 	    else
 		insert_ob_in_map(op,m,op,INS_NO_MERGE | INS_NO_WALK_ON | INS_ON_TOP);
