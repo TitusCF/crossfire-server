@@ -305,37 +305,56 @@ void ToggleExtendedInfos (char *buf, int len, NewSocket *ns){
      Write_String_To_Socket(ns, cmdback,strlen(cmdback));
 }
 
+/**
+ * A lot like the old AskSmooth (in fact, now called by AskSmooth).
+ * Basically, it makes no sense to wait for the client to request a 
+ * a piece of data from us that we know the client wants.  So
+ * if we know the client wants it, might as well push it to the
+ * client.
+ */
+void SendSmooth(NewSocket *ns, uint16 face) {
+     uint16 smoothface;
+     uint8 reply[MAX_BUF];
+     SockList sl;
+
+    /* If we can't find a face, return and set it so we won't try to send this
+     * again.
+     */
+    if ((!FindSmooth (face, &smoothface)) &&
+         (!FindSmooth ( smooth_face->number, &smoothface))) {
+
+        LOG(llevError,"could not findsmooth for %d. Neither default (%s)\n",face,smooth_face->name);
+	ns->faces_sent[face] |= NS_FACESENT_SMOOTH;
+	return;
+    }
+
+    if (!(ns->faces_sent[smoothface] & NS_FACESENT_FACE))
+	esrv_send_face(ns, smoothface, 0);
+
+    ns->faces_sent[face] |= NS_FACESENT_SMOOTH;
+
+    sl.buf=reply;
+    strcpy((char*)sl.buf,"smooth ");
+    sl.len=strlen((char*)sl.buf);
+    SockList_AddShort(&sl, face);
+    SockList_AddShort(&sl, smoothface);
+    Send_With_Handling(ns, &sl);
+}
+
  /**
   * Tells client the picture it has to use 
   * to smooth a picture number given as argument.
-  * Also take care of sending those pictures to the client.
-  * For information, here is where we get the smoothing inforations:
-  * - Take the facename and add '_smoothed' to it.
-  * - Look for that archetype and find it's animation.
-  * - Use the animation elements from 0 to 8 for smoothing.
   */
 void AskSmooth (char *buf, int len, NewSocket *ns){
-     char* defaultsmooth="default_smoothed.111";
-     uint8 reply[MAX_BUF];
-     SockList sl;
-     uint16 smoothface;
-     uint16 facenbr;
+    uint16 facenbr;
 
-     facenbr=atoi (buf);
-     if ((!FindSmooth (facenbr, &smoothface)) &&
-         (!FindSmooth ( ( uint16 )FindFace(defaultsmooth,0), &smoothface))
-        )
-
-         LOG(llevError,"could not findsmooth for %d. Neither default (%s)\n",facenbr,defaultsmooth);
-     if (ns->faces_sent[smoothface] == 0)
-                esrv_send_face(ns, smoothface, 0);
-     sl.buf=reply;
-     strcpy((char*)sl.buf,"smooth ");
-     sl.len=strlen((char*)sl.buf);
-     SockList_AddShort(&sl, facenbr);
-     SockList_AddShort(&sl, smoothface);
-     Send_With_Handling(ns, &sl);
+    facenbr=atoi (buf);
+    SendSmooth(ns, facenbr);
 }
+
+
+
+
 
 /**
  * This handles the general commands from the client (ie, north, fire, cast,
@@ -828,7 +847,7 @@ void esrv_send_animation(NewSocket *ns, short anim_num)
      * the face itself) down to the client.
      */
     for (i=0; i<animations[anim_num].num_animations; i++) {
-	if (ns->faces_sent[animations[anim_num].faces[i]] == 0)
+	if (!(ns->faces_sent[animations[anim_num].faces[i]] & NS_FACESENT_FACE))
 	    esrv_send_face(ns,animations[anim_num].faces[i],0);
 	SockList_AddShort(&sl, animations[anim_num].faces[i]);  /* flags - not used right now */
     }
@@ -867,7 +886,7 @@ static void esrv_map_setbelow(NewSocket *ns, int x,int y,
     }
     newmap->cells[x][y].faces[newmap->cells[x][y].count] = face_num;
     newmap->cells[x][y].count ++;
-    if (ns->faces_sent[face_num] == 0)
+    if (!(ns->faces_sent[face_num] & NS_FACESENT_FACE))
 	esrv_send_face(ns,face_num,0);
 }
 
@@ -1053,7 +1072,7 @@ static inline int check_head(SockList *sl, NewSocket *ns, int ax, int ay, int la
 
     if (face_num != ns->lastmap.cells[ax][ay].faces[layer]) {
 	SockList_AddShort(sl, face_num);
-	if (face_num && ns->faces_sent[face_num] == 0)
+	if (!(face_num && ns->faces_sent[face_num] & NS_FACESENT_FACE))
 	    esrv_send_face(ns, face_num, 0);
 	heads[(ay * MAX_HEAD_POS + ax) * MAX_LAYERS + layer] = NULL;
 	ns->lastmap.cells[ax][ay].faces[layer] = face_num;
@@ -1262,7 +1281,7 @@ static inline int update_space(SockList *sl, NewSocket *ns, mapstruct  *mp, int 
      */
     if (ns->lastmap.cells[sx][sy].faces[layer] != face_num)  {
 	ns->lastmap.cells[sx][sy].faces[layer] = face_num;
-	if (ns->faces_sent[face_num] == 0)
+	if (!(ns->faces_sent[face_num] & NS_FACESENT_FACE))
 	    esrv_send_face(ns, face_num, 0);
 	SockList_AddShort(sl, face_num);
 	return 1;
@@ -1301,7 +1320,6 @@ static inline int update_smooth(SockList *sl, NewSocket *ns, mapstruct  *mp, int
     ob=NULL;
     head = heads[(sy * MAX_HEAD_POS + sx) * MAX_LAYERS + layer];
 
-
     ob = GET_MAP_FACE_OBJ(mp, mx, my, layer);
 
     /* If there is no object for this space, or if the face for the object
@@ -1309,7 +1327,9 @@ static inline int update_smooth(SockList *sl, NewSocket *ns, mapstruct  *mp, int
      */
     if (!ob || ob->face == blank_face || MAP_NOSMOOTH(mp)) smoothlevel=0;
     else {
-	    smoothlevel = ob->smoothlevel;
+	smoothlevel = ob->smoothlevel;
+	if (smoothlevel && !(ns->faces_sent[ob->face->number] & NS_FACESENT_SMOOTH))
+	    SendSmooth(ns, ob->face->number);
     } /* else not already head object or blank face */
 
     /* We've gotten what face we want to use for the object.  Now see if
@@ -1327,6 +1347,7 @@ static inline int update_smooth(SockList *sl, NewSocket *ns, mapstruct  *mp, int
     /* Nothing changed */
     return 0;
 }
+
 /**
  * Returns the size of a data for a map square as returned by
  * mapextended. There are CLIENTMAPX*CLIENTMAPY*LAYERS entries
@@ -1601,7 +1622,7 @@ void draw_client_map1(object *pl)
 		    if (pl->contr->socket.lastmap.cells[ax][ay].faces[0] != pl->face->number) {
 			pl->contr->socket.lastmap.cells[ax][ay].faces[0] = pl->face->number;
 			mask |= 0x1;
-			if (pl->contr->socket.faces_sent[pl->face->number] == 0)
+			if (!(pl->contr->socket.faces_sent[pl->face->number] &NS_FACESENT_FACE))
 			    esrv_send_face(&pl->contr->socket, pl->face->number, 0);
 			SockList_AddShort(&sl, pl->face->number);
 		    }

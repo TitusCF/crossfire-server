@@ -17,6 +17,30 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+This change makes it so that the smoothing information is pushed to the client
+(if the client is using smoothing) instead of a process were we tell the
+client the smoothlevel and the client then has to request the face info for
+smoothing.  If we know the client wants the info, much easier to push it to
+the client.  This simplifies the client code (doesn't have to keep track
+of what is requests).  It also fixes the 'problem' that when you join the
+game, you get a few frames with no smoothing and then the smoothing shows
+up, which seems a bit odd.  My testing shows that old clients that want
+smoothing use this new logic withouth any problems.
+--
+common/image.c: add smooth_face default so that we don't have to look it
+  up everytime.
+include/define.h: Add SMOOTH_FACE_NAME used by image.c
+include/global.h: Add smooth_face extern declaration.
+include/newserver.h: Update comment on what faces_sent is used for,
+   add NS_FACESENT_* values which determines what info for the face was
+   sent.
+socket/image.c, socket/init.c, socket/item.c: Update faces_sent checks/set 
+    to check against NS_FACESENT bitmask.
+socket/request.c: Update faces_sent as mentioned above.  And SendSmooth(),
+   rewrite AskSmooth() to use SendSmooth().  Modify update_smooth()
+   to send smoothing information to the client.
+MSW 2005-03-19
+
 common/map.c: Clean up if statement ins blocked_link() which caused warning
    messages - broke it apart to make it a little clear.  Add check for
    premature end of map header - make code more resilent in case of truncated

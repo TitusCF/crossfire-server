@@ -248,7 +248,7 @@ extern int leftof_x[9], leftof_y[9];
 
 extern New_Face *blank_face, *empty_face;
 extern New_Face *dark_faces[];
-extern New_Face *potion_face;
+extern New_Face *potion_face, *smooth_face;
 extern MapLook blank_look;
 
 

@@ -723,6 +723,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define DARK_FACE1_NAME		"dark1.111"
 #define DARK_FACE2_NAME		"dark2.111"
 #define DARK_FACE3_NAME		"dark3.111"
+#define SMOOTH_FACE_NAME	"default_smoothed.111"
 
 /*
  * Defines for the luck/random functions to make things more readable

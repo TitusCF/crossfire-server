@@ -373,7 +373,7 @@ void esrv_send_face(NewSocket *ns,short face_num, int nocache)
 	sl.len += facesets[fallback].faces[face_num].datalen;
 	Send_With_Handling(ns, &sl);
     }
-    ns->faces_sent[face_num] = 1;
+    ns->faces_sent[face_num] |= NS_FACESENT_FACE;
     free(sl.buf);
 }
 
@@ -438,7 +438,7 @@ void send_image_sums(NewSocket *ns, char *params)
 
     for (i=start; i<=stop; i++) {
 	SockList_AddShort(&sl, i);
-	ns->faces_sent[i] = 1;
+	ns->faces_sent[i] |= NS_FACESENT_FACE;
 
 	qq = get_face_fallback(ns->faceset, i);
 	SockList_AddInt(&sl, facesets[qq].faces[i].checksum);

@@ -168,7 +168,7 @@ void esrv_draw_look(object *pl)
 
     SockList_AddInt(&sl, 0);
 
-    if (!pl->contr->socket.faces_sent[empty_face->number])
+    if (!(pl->contr->socket.faces_sent[empty_face->number]&NS_FACESENT_FACE))
 	esrv_send_face(&pl->contr->socket, empty_face->number,0);
 
     if (pl->contr->socket.look_position) {
@@ -215,7 +215,7 @@ void esrv_draw_look(object *pl)
 	    flags = query_flags (tmp);
 	    if (QUERY_FLAG(tmp, FLAG_NO_PICK))
 		flags |=  F_NOPICK;
-	    if (!pl->contr->socket.faces_sent[tmp->face->number])
+	    if (!(pl->contr->socket.faces_sent[tmp->face->number] & NS_FACESENT_FACE))
 		esrv_send_face(&pl->contr->socket, tmp->face->number,0);
 
 	    if (QUERY_FLAG(tmp,FLAG_ANIMATE) && 
@@ -307,7 +307,7 @@ void esrv_send_inventory(object *pl, object *op)
 	    flags = query_flags (tmp);
 	    if (QUERY_FLAG(tmp, FLAG_NO_PICK))
 		flags |=  F_NOPICK;
-	    if (!pl->contr->socket.faces_sent[tmp->face->number])
+	    if (!(pl->contr->socket.faces_sent[tmp->face->number] & NS_FACESENT_FACE))
 		esrv_send_face(&pl->contr->socket, tmp->face->number,0);
 	    if (QUERY_FLAG(tmp,FLAG_ANIMATE) && 
 			   !pl->contr->socket.anims_sent[tmp->animation_id])
@@ -423,7 +423,7 @@ void esrv_update_item(int flags, object *pl, object *op)
     }
 
     if (flags & UPD_FACE) {
-	if (!pl->contr->socket.faces_sent[op->face->number])
+	if (!(pl->contr->socket.faces_sent[op->face->number] & NS_FACESENT_FACE))
 	    esrv_send_face(&pl->contr->socket, op->face->number,0);
 	SockList_AddInt(&sl, op->face->number);
     }
@@ -504,7 +504,7 @@ void esrv_send_item(object *pl, object*op)
 
     SockList_AddInt(&sl, op->env? op->env->count:0);
 
-    if (!pl->contr->socket.faces_sent[op->face->number])
+    if (!(pl->contr->socket.faces_sent[op->face->number] & NS_FACESENT_FACE))
 	esrv_send_face(&pl->contr->socket, op->face->number,0);
     if (op->env && QUERY_FLAG(op,FLAG_ANIMATE) &&
 	   !pl->contr->socket.anims_sent[op->animation_id])

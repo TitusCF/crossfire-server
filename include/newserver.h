@@ -103,7 +103,7 @@ typedef struct NewSocket {
     enum Sock_Status status;
     int fd;
     struct Map lastmap;
-    uint8 faces_sent[MAXFACENUM];
+    uint8 faces_sent[MAXFACENUM];   /* This is a bitmap on sent face status */
     uint8 anims_sent[MAXANIMNUM];
     struct statsinfo stats;
     /* If we get an incomplete packet, this is used to hold the data. */
@@ -137,7 +137,13 @@ typedef struct NewSocket {
     enum Old_Mode old_mode;
 } NewSocket;
 
-/*Constants in the form EMI_ is for extended map infos.
+/* Bitmask for the faces_sent[] array - what
+ * portion of the face have we sent?
+ */
+#define NS_FACESENT_FACE	0x1
+#define NS_FACESENT_SMOOTH	0x2
+
+/* Constants in the form EMI_ is for extended map infos.
  * Even if the client select the additionnal infos it wants
  * on the map, there may exist cases where this whole info
  * is not given in one buch but in separate bunches. This 
@@ -154,7 +160,8 @@ typedef struct NewSocket {
  */ 
 #define EMI_NOREDRAW        0x01  
 #define EMI_SMOOTH          0x02
-/*this last one says the bitfield continue un next byte
+
+/* this last one says the bitfield continue un next byte
  * There may be several on contiguous bytes. So there is 7
  * actual bits used per byte, and the number of bytes
  * is not fixed in protocol

@@ -143,7 +143,7 @@ void InitConnection(NewSocket *ns, uint32 from)
      * this face.  Face 0 is sent to the client to say clear
      * face information.
      */
-    ns->faces_sent[0] = 1;
+    ns->faces_sent[0] = NS_FACESENT_FACE;
 
     ns->outputbuffer.start=0;
     ns->outputbuffer.len=0;
