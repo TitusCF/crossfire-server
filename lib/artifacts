@@ -175,6 +175,7 @@ Object Fear
 type 15
 value 30
 attacktype 16385
+resist_fear 100
 weight 90
 end
 #
@@ -391,8 +392,7 @@ Object Slay Beholder
 type 15
 slaying beholder
 value 150
-resist_magic 30
-
+resist_magic 20
 magic 3
 end
 #
@@ -414,7 +414,6 @@ type 15
 value 150
 magic 4
 resist_magic 30
-
 Int 1
 Pow 1
 weight 90
@@ -434,8 +433,7 @@ Con 7
 Int -10
 Wis -10
 Cha -15
-resist_magic 30
-
+resist_magic 20
 material 256
 weight 50
 exp 3
@@ -601,7 +599,6 @@ magic 1
 ac 1
 Cha 1
 resist_fire 30
-
 resist_physical 8
 msg
   Argoth was an ancient dwarven city
@@ -658,7 +655,7 @@ damned 1
 end
 #
 Allowed all
-chance 10
+chance 5
 Object Sorig
 type 34
 value 20
@@ -666,7 +663,6 @@ ac 1
 magic 1
 resist_physical 8
 resist_electricity 40
-
 end
 #
 Allowed all
@@ -719,7 +715,6 @@ Object Fire
 type 34
 value 100
 resist_fire 30
-
 path_attuned 2
 path_repelled 4
 end
@@ -802,8 +797,7 @@ Object Mostrai
 type 33
 value 24
 magic 1
-resist_fire 30
-
+resist_fire 20
 end
 #
 Allowed all
@@ -853,14 +847,14 @@ end
 # Gauntlets / Gloves
 #
 Allowed gauntlets
-chance 10
+chance 5
 Object Sorig
 type 100
 magic 2
 resist_physical 8
 attacktype 8
 weight 125
-value 75
+value 175
 end
 #
 Allowed gloves
@@ -868,7 +862,7 @@ chance 10
 Object Sorig
 type 100
 resist_physical 5
-resist_electricity 35
+resist_electricity 30
 weight 125
 value 10
 end
@@ -1035,7 +1029,6 @@ value 150
 magic 4
 Str 1
 resist_fire 30
-
 weight 200
 last_sp 5
 resist_physical 20
@@ -1125,7 +1118,6 @@ face ring.117
 type 70
 value 30
 resist_cold 30
-
 path_attuned 4
 msg
   This elemental ring is one of those made at 
@@ -1146,7 +1138,6 @@ face ring.117
 type 70
 value 35
 resist_fire 30
-
 path_attuned 2
 msg
   This elemental ring is one of those 
@@ -1168,7 +1159,6 @@ face ring.117
 type 70
 value 25
 resist_electricity 30
-
 path_attuned 8
 msg
   This elemental ring is one of those made 
@@ -1190,8 +1180,7 @@ type 70
 value 80
 sp 1
 Pow 1
-resist_magic 30
-
+resist_magic 20
 msg
   Most highlevel wizards receive one of 
   these from their guild when they become 
@@ -1208,8 +1197,7 @@ value 150
 sp 2
 Int 1
 Pow 1
-resist_magic 30
-
+resist_magic 25
 end
 #
 Allowed all
@@ -1222,7 +1210,6 @@ sp 2
 Int 2
 Pow 2
 resist_magic 30
-
 end
 #
 #  Slaying balrog--aint no such thing as a balrog yet, but.. when there is...
@@ -1239,8 +1226,7 @@ sp 2
 Int 1
 Pow 1
 resist_magic 30
-resist_fire 30
-
+resist_fire 20
 path_attuned 2
 end
 #
@@ -1257,9 +1243,7 @@ sp 2
 Int 2
 Pow 2
 resist_magic 30
-
 resist_drain 100
-
 path_attuned 257
 end
 #
@@ -1275,10 +1259,8 @@ sp 3
 Int 3
 Pow 3
 resist_magic 30
-
 resist_drain 100
 resist_deplete 100
-
 path_attuned 259
 end
 #
@@ -1303,12 +1285,9 @@ msg
   One Ring to bring them all
   and in the darkness bind them.
 endmsg
-make_invisible 1
-resist_magic 30
-
-resist_drain -100
+food 2
+resist_magic 40
 resist_ghosthit -100
-
 path_attuned 606
 path_repelled 257
 end
@@ -1320,7 +1299,6 @@ face ring.117
 type 70
 value 25
 resist_acid 30
-
 resist_physical 20
 msg
   This elemental ring is one of those 
@@ -1328,8 +1306,8 @@ msg
   powerful wizards who survived the 
   ancient war of the elementals.
   The wielder is surrounded by a thin, 
-  almost invisible, globe of base liquid;
-  which protects against acid.  It also 
+  almost invisible globe of base liquid;
+  which protects against acid. It also 
   gives a fair protection against normal attacks.
 endmsg
 end
@@ -1342,10 +1320,8 @@ type 70
 value 60
 resist_slow 100
 resist_paralyze 100
-
 resist_confusion 30
 resist_fear 30
-
 end
 #
 Allowed all
@@ -1356,12 +1332,11 @@ type 70
 value 80
 resist_drain 100
 resist_deplete 100
-
 hp 2
 msg
-  This semi-elemental ring is one of those
-  made at the Guild of Magicks by the powerful
-  wizards who survived the ancient war of the elementals.
+  This semi-elemental ring is one of those made
+  at the Guild of Magics by the powerful wizards
+  who survived the ancient war of the elementals.
   The wielder is surrounded by a thin, almost 
   invisible, globe of positive energy; which 
   makes the wielder immune from life draining.
@@ -1377,7 +1352,6 @@ type 70
 value 20
 Str 1
 resist_paralyze 30
-
 end
 #
 Allowed all
@@ -1446,10 +1420,11 @@ chance 17
 Object Plenty
 face horn2.111
 type 35
+level -20
 sp -36
 hp -30
 maxhp -30
-value 6
+value 25
 end
 #
 Allowed all
@@ -1585,12 +1560,11 @@ end
 Allowed all
 chance 3
 difficulty 3
-Object Protection from Fire
+Object Asbestos
 type 87
 weight 135
 value 400
-resist_fire 30
-
+resist_fire 20
 material 256
 end
 #
@@ -1601,8 +1575,7 @@ Object Warmth
 type 87
 weight 140
 value 350
-resist_cold 30
-
+resist_cold 20
 material 256
 end
 #
@@ -1613,8 +1586,7 @@ Object Insulation
 type 87
 weight 140
 value 350
-resist_electricity 30
-
+resist_electricity 20
 material 256
 end
 #
@@ -1626,7 +1598,6 @@ type 87
 value 500
 weight 90
 resist_acid 30
-
 material 256
 end
 #
@@ -1636,13 +1607,12 @@ difficulty 3
 Object the Devourers
 type 87
 magic 3
-value 50
+value 500
 weight 50
 resist_acid 30
 resist_drain 30
 resist_ghosthit 30
-resist_deplete 30
-
+resist_deplete 100
 material 0
 Cha -2
 end
@@ -1652,13 +1622,13 @@ chance 1
 difficulty 7
 Object the Underworld
 type 87
-value 1000
+value 2000
 resist_confusion 50
 resist_acid 90
-resist_drain 90
-resist_electricity 90
+resist_drain 100
+resist_fire -10
 resist_ghosthit 90
-resist_deplete 90
+resist_deplete 100
 weight 150
 material 256
 Cha -4
@@ -1669,7 +1639,7 @@ chance 1
 difficulty 20
 Object Invisibility
 type 87
-value 1000
+value 800
 weight 130
 material 256
 Str -10
@@ -1681,6 +1651,7 @@ msg
   invisibility.
 endmsg
 make_invisible 1
+resist_paralyze -100
 end
 #
 #
@@ -1854,7 +1825,6 @@ type 39
 value 0
 cursed 1
 resist_magic -100
-
 end
 #
 Allowed all
@@ -1873,7 +1843,6 @@ resist_electricity -100
 resist_cold -100
 resist_confusion -100
 resist_acid -100
-
 end
 #
 Allowed all
@@ -1884,7 +1853,6 @@ face amulet_lif.111
 type 39
 value 3000
 resist_physical 50
-
 end
 #
 Allowed all
@@ -1919,7 +1887,6 @@ type 39
 resist_confusion 100
 resist_paralyze 100
 resist_fear 100
-
 value 1000
 end
 #
@@ -1932,10 +1899,8 @@ type 39
 value 300
 resist_slow 100
 resist_paralyze 100
-
 resist_confusion 30
 resist_fear 30
-
 end
 #
 Allowed all
@@ -1949,7 +1914,6 @@ Int 2
 Pow 2
 value 5000
 resist_magic 30
-
 reflect_spell 1
 end
 #
@@ -2888,14 +2852,6 @@ Object shock immunity
 type 5
 resist_electricity 90
 value 100
-end
-#
-Allowed potion_generic
-chance 3
-Object aethereality
-type 5
-resist_physical 95
-value 140
 end
 #
 Allowed potion_generic
