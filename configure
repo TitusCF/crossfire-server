@@ -4381,9 +4381,10 @@ test "x$exec_prefix" = xNONE && exec_prefix='${prefix}'
 
 nprefix=`eval echo ${prefix}`
 
+
 if eval "test x$old_layout = xyes"; then
 	ndatadir=`eval echo ${datadir}`
-	nlocaldir=`eval echo ${localstatedir}`
+	nlocaldir=`echo ${localstatedir}`
 else
 	echo ""
 	echo "If you are upgrading an 0.95.3 or earlier release, you may want to use"
@@ -4550,7 +4551,9 @@ trap 'rm -fr `echo "Makefile
 	doc/spoiler/Makefile doc/spoiler-html/Makefile
 	doc/playbook/Makefile doc/playbook-html/Makefile
 	lib/Makefile random_maps/Makefile socket/Makefile server/Makefile 
-	include/Makefile utils/Makefile
+	include/Makefile utils/Makefile lib/xpmtopix.pl lib/checkarch.pl
+	lib/collect.pl utils/add_throw.perl utils/crossloop utils/crossloop.pl
+	utils/metaserver.pl 
 	common/Makefile
 	  include/autoconf.h" | sed "s/:[^ ]*//g"` conftest*; exit 1' 1 2 15
 EOF
@@ -4684,7 +4687,9 @@ CONFIG_FILES=\${CONFIG_FILES-"Makefile
 	doc/spoiler/Makefile doc/spoiler-html/Makefile
 	doc/playbook/Makefile doc/playbook-html/Makefile
 	lib/Makefile random_maps/Makefile socket/Makefile server/Makefile 
-	include/Makefile utils/Makefile
+	include/Makefile utils/Makefile lib/xpmtopix.pl lib/checkarch.pl
+	lib/collect.pl utils/add_throw.perl utils/crossloop utils/crossloop.pl
+	utils/metaserver.pl 
 	common/Makefile
 	 "}
 EOF

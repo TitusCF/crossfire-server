@@ -192,9 +192,12 @@ test "x$exec_prefix" = xNONE && exec_prefix='${prefix}'
 
 nprefix=`eval echo ${prefix}`
 
+dnl I am not sure why the eval screws up the localstatdir, but see my posting
+dnl on the mailing list for more info.
+
 if eval "test x$old_layout = xyes"; then
 	ndatadir=`eval echo ${datadir}`
-	nlocaldir=`eval echo ${localstatedir}`
+	nlocaldir=`echo ${localstatedir}`
 else
 	echo ""
 	echo "If you are upgrading an 0.95.3 or earlier release, you may want to use"
@@ -231,6 +234,8 @@ AC_OUTPUT(Makefile
 	doc/spoiler/Makefile doc/spoiler-html/Makefile
 	doc/playbook/Makefile doc/playbook-html/Makefile
 	lib/Makefile random_maps/Makefile socket/Makefile server/Makefile 
-	include/Makefile utils/Makefile
+	include/Makefile utils/Makefile lib/xpmtopix.pl lib/checkarch.pl
+	lib/collect.pl utils/add_throw.perl utils/crossloop utils/crossloop.pl
+	utils/metaserver.pl 
 	common/Makefile
 	 )
