@@ -18,6 +18,24 @@ else.  With this, include the file(s) that you changed.
 
 Changes for CVS:
 
+This checkin mainly fixes multipart teleporters - they should now
+work properly.  Also a minor fix to make the new pickup code work.
+server/apply.c: apply_shop_mat rewritten to be more 'presentable'.
+    Minor changes were needed in any case to pass the player/creature
+    a a second object to teleport.
+server/c_object.c: change the sscanf to be unsigned when getting value
+    for new pickup mode.  At least on my system, if the value in the
+    string was larger than the max signed value, sscanf set it to the 
+    max value.
+server/move.c: teleport function largely re-written.  Instead of the
+    third arg being the 'originator', it is now the object to teleport.
+    This allows the head of the teleporter to get passed to this function
+    even if the object to teleport is not on the head.
+server/time.c: move_teleporter modified to also check for objects on the
+    other parts of multipart teleporters.  Also, pass the head object
+    to the teleport function so that proper destination is used.
+MSW 2001-09-02
+
 Add Nils Lohner patch that new selections to the pickup mode.
 
 include/define.h: Pickup type defines added.

@@ -991,57 +991,64 @@ static int apply_altar (object *altar, object *sacrifice, object *originator)
 
 /*
  * Returns 1 if 'op' was destroyed, 0 if not.
+ * Largely re-written to not use nearly as many gotos, plus
+ * some of this code just looked plain out of date.
+ * MSW 2001-08-29
  */
 static int apply_shop_mat (object *shop_mat, object *op)
 {
-  int rv = 0;
-  object *tmp;
+    int rv = 0;
+    object *tmp;
 
-  SET_FLAG (op,FLAG_NO_APPLY);   /* prevent loops */
+    SET_FLAG (op,FLAG_NO_APPLY);   /* prevent loops */
 
-  if (op->type != PLAYER)
-  {
-    if (QUERY_FLAG(op, FLAG_UNPAID))
-    {
-      /* Somebody dropped an unpaid item, just move to an adjacent place. */
-      int i = find_free_spot (op->arch, op->map, op->x, op->y, 1, 9);
-      if (i == -1)
-        goto ret;
-      rv = transfer_ob (op, op->x + freearr_x[i], op->y + freearr_y[i], 0,
+    if (op->type != PLAYER) {
+	if (QUERY_FLAG(op, FLAG_UNPAID)) {
+
+	    /* Somebody dropped an unpaid item, just move to an adjacent place. */
+	    int i = find_free_spot (op->arch, op->map, op->x, op->y, 1, 9);
+	    if (i != -1) {
+		rv = transfer_ob (op, op->x + freearr_x[i], op->y + freearr_y[i], 0,
                        shop_mat);
-      goto ret;
+	    }
+	}
+	/* Removed code that checked for multipart objects - it appears that
+	 * the teleport function should be able to handle this just fine.
+	 */
+	rv = teleport (shop_mat, SHOP_MAT, op);
     }
-    if (op->more || op->head)
-      goto ret;   /* Some nasty bug has to be fixed here... */
-    rv = teleport (shop_mat, SHOP_MAT, shop_mat);
-    goto ret;
-  }
+    /* immediate block below is only used for players */
+    else if (get_payment (op)) {
+	rv = teleport (shop_mat, SHOP_MAT, op);
+	if (shop_mat->msg) {
+	    new_draw_info (NDI_UNIQUE, 0, op, shop_mat->msg);
+	}
+	/* This check below is a bit simplistic - generally it should be correct,
+	 * but there is never a guarantee that the bottom space on the map is
+	 * actually the shop floor.
+	 */
+	else if ( ! rv && (tmp = get_map_ob (op->map, op->x, op->y)) != NULL
+		   && tmp->type != SHOP_FLOOR) {
+	    new_draw_info (NDI_UNIQUE, 0, op, "Thank you for visiting our shop.");
+	}
+    }
+    else {
+	/* if we get here, a player tried to leave a shop but was not able
+	 * to afford the items he has.  We try to move the player so that
+	 * they are not on the mat anymore
+	 */
 
-  if (get_payment (op))
-  {
-    rv = teleport (shop_mat, SHOP_MAT, shop_mat);
-    if ( ! rv && (tmp = get_map_ob (op->map, op->x, op->y)) != NULL
-        && tmp->type != SHOP_FLOOR)
-    {
-      new_draw_info (NDI_UNIQUE, 0, op, "Thank you for visiting our shop.");
+	int i = find_free_spot (op->arch, op->map, op->x, op->y, 1, 9);
+	if(i == -1) {
+	    LOG (llevError, "Internal shop-mat problem.\n");
+	} else {
+	    remove_ob (op);
+	    op->x += freearr_x[i];
+	    op->y += freearr_y[i];
+	    rv = insert_ob_in_map (op, op->map, shop_mat,0) == NULL;
+	}
     }
-    goto ret;
-  }
-  else
-  {
-    int i = find_free_spot (op->arch, op->map, op->x, op->y, 1, 9);
-    if(i == -1) {
-      LOG (llevError, "Internal shop-mat problem.\n");
-      goto ret;
-    }
-    remove_ob (op);
-    op->x += freearr_x[i];
-    op->y += freearr_y[i];
-    rv = insert_ob_in_map (op, op->map, shop_mat,0) == NULL;
-    goto ret;
-  }
 
- ret:
   CLEAR_FLAG (op, FLAG_NO_APPLY);
   return rv;
 }

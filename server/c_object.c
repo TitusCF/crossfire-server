@@ -1205,7 +1205,7 @@ int command_pickup (object *op, char *params)
     set_pickup_mode(op, (op->contr->mode > 6)? 0: op->contr->mode+1);
     return 0;
   }
-  if(params==NULL || !sscanf(params, "%d", &i) || i<0 ) {
+  if(params==NULL || !sscanf(params, "%ud", &i) || i<0 ) {
     if(1)fprintf(stderr,"command_pickup: params==NULL\n");
     new_draw_info(NDI_UNIQUE, 0,op,"Usage: pickup <0-7> or <value_density> .");
     return 1;

@@ -740,33 +740,43 @@ void change_object(object *op) { /* Doesn`t handle linked objs yet */
 }
 
 void move_teleporter(object *op) {
-    object *telep = op;  /* teleporter object */
+    object *tmp, *head=op;
 
-    /* Floors can't get moved.  If, skip over them. */
-    while (op->above && QUERY_FLAG(op->above, FLAG_IS_FLOOR))
-        op=op->above;
+    /* if this is a multipart teleporter, handle the other parts
+     * The check for speed isn't strictly needed - basically, if
+     * there is an old multipart teleporter in which the other parts
+     * have speed, we don't really want to call it twice for the same
+     * function - in fact, as written below, part N would get called
+     * N times without the speed check.
+     */
+    if (op->more && FABS(op->more->speed)<MIN_ACTIVE_SPEED) move_teleporter(op->more);
 
-    /* If nothing above us, nothing to do */
-    if (!op->above) return;
+    if (op->head) head=op->head;
 
-    if(EXIT_PATH(telep)) {
+    for (tmp=op->above; tmp!=NULL; tmp=tmp->above)
+	if (!QUERY_FLAG(tmp, FLAG_IS_FLOOR)) break;
+
+    /* If nothing above us to move, nothing to do */
+    if (!tmp) return;
+
+    if(EXIT_PATH(head)) {
 	if(op->above->type==PLAYER) 
-	    enter_exit(op->above, telep);
+	    enter_exit(op->above, head);
 	else
 	    /* Currently only players can transfer maps */
 	    return;
     }
-    else if(EXIT_X(telep)||EXIT_Y(telep)) {
-	if (out_of_map(telep->map, EXIT_X(telep), EXIT_Y(telep))) {
+    else if(EXIT_X(head)||EXIT_Y(head)) {
+	if (out_of_map(head->map, EXIT_X(head), EXIT_Y(head))) {
 	    LOG(llevError, "Removed illegal teleporter.\n");
-	    remove_ob(telep);
-	    free_object(telep);
+	    remove_ob(head);
+	    free_object(head);
 	    return;
 	}
-	transfer_ob(op->above,EXIT_X(telep),EXIT_Y(telep),0,telep);
+	transfer_ob(tmp,EXIT_X(head),EXIT_Y(head),0,head);
     } else
 	/* Random teleporter */
-	teleport(op, TELEPORTER, telep);
+	teleport(head, TELEPORTER, tmp);
 }
 
 

@@ -195,49 +195,70 @@ int transfer_ob (object *op, int x, int y, int randomly, object *originator)
 
 /*
  * Return value: 1 if object was destroyed, 0 otherwise.
+ * Modified so that instead of passing the 'originator' that had no
+ * real use, instead we pass the 'user' of the teleporter.  All the
+ * callers know what they wanted to teleporter (move_teleporter or
+ * shop map code)
+ * tele_type is the type of teleporter we want to match against -
+ * currently, this is either set to SHOP_MAT or TELEPORTER.
+ * It is basically used so that shop_mats and normal teleporters can
+ * be used close to each other and not have the player put to the
+ * one of another type.
  */
-int teleport (object *teleporter, unsigned char tele_type, object *originator)
+int teleport (object *teleporter, uint8 tele_type, object *user)
 {
-  object *altern[120]; /* Better use c/malloc here in the future */
-  int i,j,k,nrofalt=0;
-  object *other_teleporter,*teleported=teleporter->above,*tmp;
+    object *altern[120]; /* Better use c/malloc here in the future */
+    int i,j,k,nrofalt=0;
+    object *other_teleporter, *tmp;
 
-  if(teleported==NULL) return 0;
-  if(teleported->head!=NULL)
-    teleported=teleported->head;
-  for(i= -5;i<6;i++)
-    for(j= -5;j<6;j++) {
-      if(i==0&&j==0)
-	continue;
-      if(out_of_map(teleporter->map,teleporter->x+i,teleporter->y+j))
-        continue;
-      other_teleporter=get_map_ob(teleporter->map,
+    if(user==NULL) return 0;
+    if(user->head!=NULL)
+	user=user->head;
+
+    /* Find all other teleporters within range.  This range
+     * should really be setable by some object attribute instead of
+     * using hard coded values.
+     */
+    for(i= -5;i<6;i++)
+	for(j= -5;j<6;j++) {
+	    if(i==0&&j==0)
+		continue;
+	    if(out_of_map(teleporter->map,teleporter->x+i,teleporter->y+j))
+		continue;
+	    other_teleporter=get_map_ob(teleporter->map,
                                   teleporter->x+i,teleporter->y+j);
-      while (other_teleporter) {
-	if (other_teleporter->type == tele_type) break;
-	other_teleporter = other_teleporter->above;
-      }
-      if (!other_teleporter) continue;
-      altern[nrofalt++]=other_teleporter;
+
+	    while (other_teleporter) {
+		if (other_teleporter->type == tele_type) break;
+		other_teleporter = other_teleporter->above;
+	    }
+	    if (other_teleporter)
+		altern[nrofalt++]=other_teleporter;
+	}
+
+    if(!nrofalt) {
+	LOG(llevError,"No alternative teleporters around!\n");
+	return 0;
     }
-  if(!nrofalt) {
-    LOG(llevError,"No alternative teleporters around!\n");
-    return 0;
-  }
-  other_teleporter=altern[RANDOM()%nrofalt];
-  k=find_free_spot(teleported->arch,other_teleporter->map,
+
+    other_teleporter=altern[RANDOM()%nrofalt];
+    k=find_free_spot(user->arch,other_teleporter->map,
                         other_teleporter->x,other_teleporter->y,1,9);
-  if (k==-1)
-    return 0;
-  remove_ob(teleported);
-  for(tmp=teleported;tmp!=NULL;tmp=tmp->more)
-    tmp->x=other_teleporter->x+freearr_x[k]+
-           (tmp->arch==NULL?0:tmp->arch->clone.x),
-    tmp->y=other_teleporter->y+freearr_y[k]+
+    if (k==-1)
+	return 0;
+
+    remove_ob(user);
+
+    /* Update location for the object */
+    for(tmp=user;tmp!=NULL;tmp=tmp->more) {
+	tmp->x=other_teleporter->x+freearr_x[k]+
+           (tmp->arch==NULL?0:tmp->arch->clone.x);
+	tmp->y=other_teleporter->y+freearr_y[k]+
            (tmp->arch==NULL?0:tmp->arch->clone.y);
-  tmp = insert_ob_in_map(teleported,other_teleporter->map,originator,0);
-  if (tmp && tmp->type == PLAYER) MapNewmapCmd(tmp->contr);
-  return (tmp == NULL);
+    }
+    tmp = insert_ob_in_map(user,other_teleporter->map,NULL,0);
+    if (tmp && tmp->type == PLAYER) MapNewmapCmd(tmp->contr);
+    return (tmp == NULL);
 }
 
 void recursive_roll(object *op,int dir,object *pusher) {
