@@ -2568,6 +2568,21 @@ face cloak_trans.112
 stand_still 1
 end
 #
+Allowed all
+chance 1
+difficulty 50
+Object Unholy Protection
+type 87
+damned 1
+weight 50
+resist_holyword 50
+material 8320
+materialname astolare
+Wis -2
+face cloak_black.111
+stand_still 1
+item_power 5
+end
 #
 #Artifact boots!
 #

@@ -1529,6 +1529,17 @@ skill woodsman
 cauldron tanbench
 ingred cloak,potion of wisdom,2 potion of power
 #
+Object Unholy Protection
+arch cloak
+chance 3
+diff 25
+exp 50000
+trans 1
+yield 1
+skill woodsman
+cauldron tanbench
+ingred cloak,ring of Doom,amulet of Unholiness,lich dust,vampire's heart
+#
 # -------------------
 # Boots
 # -------------------
