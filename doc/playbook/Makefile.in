@@ -21,6 +21,14 @@ ICONS =	altar.tex arm_mail.tex br_wall.tex books.tex bows.tex cauldron.tex \
 	shops.tex shopmat.tex sign.tex talisman.tex wands.tex
 
 CROSSBIN = ../../server/crossfire
+CROSSRC = ../..
+
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+datadir = @datadir@
+localdir = @localstatedir@
+AWK = @AWK@
+
 
 handbook:: ../handbook.ps
 
@@ -53,25 +61,25 @@ index.tex: make_index.pl
 	./make_index.pl handbook.idx > index.tex;
 
 items: .bmaps in_items makeps items.ps
-	$(AWK) -v libdir=$(CROSSRC)/lib -v archdir=$(CROSSRC)/lib/ -v size=0.4 -v input=in_items -f makeps $(C_LIBDIR)/archetypes > items
+	$(AWK) -v libdir=$(CROSSRC)/lib -v archdir=$(CROSSRC)/lib/ -v size=0.4 -v input=in_items -f makeps $(datadir)/archetypes > items
 
-in_items: items-extract $(C_LIBDIR)/archetypes
-	$(AWK) -f items-extract $(C_LIBDIR)/archetypes > in_items
+in_items: items-extract $(datadir)/archetypes
+	$(AWK) -f items-extract $(datadir)/archetypes > in_items
 
 bonus.tex:
 	$(AWK) -v living_c=../../common/living.c 	-f bonus-extract > bonus.tex
 
 char.tex: .bmaps in_char makeps characters.ps
-	$(AWK) -v libdir=$(CROSSRC)/lib -v archdir=$(CROSSRC)/lib/ -v size=0.4 -v input=in_char -f makeps $(C_LIBDIR)/archetypes > char.tex
+	$(AWK) -v libdir=$(CROSSRC)/lib -v archdir=$(CROSSRC)/lib/ -v size=0.4 -v input=in_char -f makeps $(datadir)/archetypes > char.tex
 
-in_char: char-extract $(C_LIBDIR)/archetypes $(CROSSRC)/common/living.c
-	$(AWK) -v living_c=$(CROSSRC)/common/living.c 		-f char-extract $(C_LIBDIR)/archetypes > in_char
+in_char: char-extract $(datadir)/archetypes $(CROSSRC)/common/living.c
+	$(AWK) -v living_c=$(CROSSRC)/common/living.c 		-f char-extract $(datadir)/archetypes > in_char
 
 equip.tex: in_equip treas2-extract
 	$(AWK) -v eqitems=in_equip -f treas2-extract 	../../lib/treasures > equip.tex
 
-in_equip: treas1-extract $(C_LIBDIR)/archetypes $(CROSSRC)/common/living.c
-	$(AWK) -v living_c=$(CROSSRC)/common/living.c 		-f treas1-extract $(C_LIBDIR)/archetypes | sort -d > in_equip
+in_equip: treas1-extract $(datadir)/archetypes $(CROSSRC)/common/living.c
+	$(AWK) -v living_c=$(CROSSRC)/common/living.c 		-f treas1-extract $(datadir)/archetypes | sort -d > in_equip
 
 gods.tex: gods-extract $(CROSSBIN)
 	$(AWK) -F, -v crosscmd="$(CROSSBIN) -m8" -f gods-extract > gods.tex
