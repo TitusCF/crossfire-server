@@ -1,5 +1,5 @@
 
-FILES = Makefile.in monster-extract spells-extract stats-extract arm-extract\
+FILES = Makefile.in spells-extract stats-extract arm-extract\
 	spoiler.html spoiler.shtml helm-extract mag-extract shield-extract \
 	makeps.pl empty.pbm bow-extract arche-extract\
 	weap-extract
@@ -51,8 +51,8 @@ in_stats: stats-extract $(datadir)/archetypes $(CROSSRC)/common/living.c
 monput.html: .bmaps in_monput makeps.pl monsters.gif
 	makeps.pl libdir=$(CROSSRC)/lib archdir=$(CROSSRC)/lib/ size=0.4 input=in_monput inarch=$(datadir)/archetypes > monput.html
 
-in_monput: monster-extract $(CROSSBIN) $(datadir)/treasures 		$(datadir)/archetypes
-	$(CROSSBIN) -m2 |  sort -f | 		$(AWK) -F'|' -f monster-extract > in_monput
+in_monput: ../scripts/monster-extract.pl $(CROSSBIN) $(datadir)/treasures $(datadir)/archetypes
+	$(CROSSBIN) -m2 |  sort -f |  ../scripts/monster-extract.pl > in_monput
 
 spells.html: .bmaps in_spells makeps.pl spells.gif
 	makeps.pl libdir=$(CROSSRC)/lib archdir=$(CROSSRC)/lib/ size=0.4 input=in_spells inarch=$(datadir)/archetypes > spells.html

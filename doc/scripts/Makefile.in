@@ -1,4 +1,4 @@
-FILES = items-extract.pl
+FILES = items-extract.pl monster-extract.pl
 
 all::
 

@@ -741,6 +741,8 @@ static char *describe_monster(object *op) {
 	else {
 		DESCRIBE_ABILITY(retbuf, op->attacktype, "Attacks");
 	}
+    } else {
+	DESCRIBE_ABILITY(retbuf, op->attacktype, "Attacks");
     }
     DESCRIBE_PATH(retbuf, op->path_attuned, "Attuned");
     DESCRIBE_PATH(retbuf, op->path_repelled, "Repelled");
