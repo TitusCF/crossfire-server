@@ -402,6 +402,7 @@ if (item == spellNormal && !ability ){
   case SP_PEACE:
   case SP_SPIDERWEB:
   case SP_VITRIOL_SPLASH:
+  case SP_WRATHFUL_EYE:
     success = cast_cone(op,caster,dir,duration,type,spellarch[type],!ability);
     break;
   case SP_TURN_UNDEAD:

@@ -423,27 +423,29 @@ PATH_TURNING,"holy_orb",},
 {"windstorm",                   3,3,  0, 10, 0, 0,  0,  1, 0, 1, 0,
  PATH_NULL, "windstorm",},
 {"sanctuary",                 7, 30,  0, 10,  0,  0,  0,  0,  1,  1,  1,  /* 190 */
-   PATH_NULL/*PATH_PROT*/,"sanctuary"},
+   PATH_PROT,"sanctuary"},
 {"peace",                 20, 80,  0, 10,  0,  0,  0,  1,  0,  1,  0,
-   PATH_NULL/*PATH_PROT*/,"peace"},
+   PATH_PROT,"peace"},
 {"spiderweb",              4, 10,  0, 10,  0,  0,  0,  1,  0,  1,  0,
-   PATH_NULL/*PATH_CREATE*/,"spiderweb_spell"},
+   PATH_CREATE,"spiderweb_spell"},
 {"conflict",              10, 50,  0, 10,  0,  0,  0,  1,  0,  1,  0,
-   PATH_NULL/*PATH_MIND*/, "enchantment"},
+   PATH_MIND, "enchantment"},
 {"rage",                   1,  5,  0, 10,  0,  0,  0,  1,  0,  1,  1,
-   PATH_NULL/*PATH_WOUNDING*/, "enchantment"},
+   PATH_WOUNDING, "enchantment"},
 {"forked lightning",       5, 15,  0, 10,  0,  0,  0,  1,  0,  1,  0,   /* 195 */
-   PATH_NULL/*PATH_ELEC*/, "forked_lightning"},
+   PATH_ELEC, "forked_lightning"},
 {"poison fog",             5, 15,  0, 10,  0,  0,  0,  1,  0,  1,  0,
-   PATH_NULL/*PATH_WOUNDING*/, "poison_fog"},
+   PATH_WOUNDING, "poison_fog"},
 {"flaming aura",           1,  5,  0, 10,  0,  0,  0,  0,  1,  1,  1,
-   PATH_NULL/*PATH_DETONATE*/, "flaming_aura"},
+   PATH_DETONATE, "flaming_aura"},
 {"vitriol",                5, 15,  0, 10,  0,  0,  0,  0,  1,  1,  1,
-   PATH_NULL/*PATH_DETONATE*/, "vitriol"},  /* not for people to cast. */
+   PATH_DETONATE, "vitriol"},  /* not for people to cast. */
 {"vitriol splash",                5, 15,  0, 10,  0,  0,  0,  0,  1,  1,  1,
-   PATH_NULL/*PATH_DETONATE*/, "vitriol_splash"},  /* not for people to cast. */
+   PATH_DETONATE, "vitriol_splash"},  /* not for people to cast. */
 {"ironwood skin",	 1, 8,  0, 20, 3, 2,  0,  1, 1, 1, 1,   /* 200 */
-   PATH_NULL/*PATH_SELF*/, "enchantment",}
+   PATH_SELF, "enchantment",},
+{"wrathful eye",	 5, 30,  0, 20, 0, 0,  0,  1, 0, 1, 0,   
+   PATH_SELF, "wrathful_eye",}
 };
 
 /*  peterm:  the following defines the parameters for all the
@@ -666,7 +668,8 @@ spell_parameters SP_PARAMETERS[NROFREALSPELLS] =
 {   6,      100,     25,      4,	20},	/*flame aura*/      
 {   100,    20,     25,      4,		6},	/*vitriol*/      
 {   40,      5,      4,      40,	10},	/*vitriol splash*/        
-{   0,      0,      5,      4,		6}	/*ironwood skin*/ 
+{   0,      0,      5,      4,		6},	/*ironwood skin*/ 
+{   20,      5,    3,      5,		7},	/*wrathful eye*/ 
 };
 
 char *spellpathnames[NRSPELLPATHS] = {
