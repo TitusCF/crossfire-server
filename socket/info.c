@@ -447,6 +447,7 @@ void draw_map(object *pl)
 	LOG(llevError,"Non player objectg called draw_map.\n");
 	return;
     }
+   
     /* First, we figure out what spaces are 'reachable' by the player */
     memset(map_mark, 0, MAP_WIDTH(pl->map) * MAP_HEIGHT(pl->map));
     magic_mapping_mark(pl, map_mark, 3);
@@ -460,6 +461,7 @@ void draw_map(object *pl)
         }
       }
     }
+
     xmin--;
     xmin = xmin < 0 ? 0 : xmin;
     xmax++;
@@ -468,25 +470,29 @@ void draw_map(object *pl)
     ymin = ymin < 0 ? 0 : ymin;
     ymax++;
     ymax = ymax > MAP_HEIGHT(pl->map) - 1? MAP_HEIGHT(pl->map) - 1: ymax;
-
-
+    
     sl.buf=malloc(MAXSOCKBUF);
     sprintf((char*)sl.buf,"magicmap %d %d %d %d ", (xmax-xmin+1), (ymax-ymin+1),
 	    pl->x - xmin, pl->y - ymin);
     sl.len=strlen((char*)sl.buf);
- 
+    
     /* Reversed ordering of X and Y in 0.93.2.  This way the order should
      * match up the way we said it would
      */
     for (y = ymin; y <= ymax; y++) {
       for (x = xmin; x <= xmax; x++) {
 	    int mark;
-
+	    
 	    if ((mark=map_mark[x+MAP_WIDTH(pl->map)*y])==0)
 		sl.buf[sl.len++]=0;
 	    else {
+	        /* get map face and assign the proper magicmap value */
 		New_Face *f = GET_MAP_FACE(pl->map, x, y, 0);
-		if (mark==2)
+		if (f==NULL) {
+		    /* this map spot is completely empty */
+		    sl.buf[sl.len++]=0;
+		}
+		else if (mark==2)
 		    sl.buf[sl.len++]=f->magicmap | FACE_WALL;
 		else
 		    sl.buf[sl.len++]=f->magicmap;
@@ -494,6 +500,7 @@ void draw_map(object *pl)
 
       } /* x loop */
     } /* y loop */
+    
     Send_With_Handling(&pl->contr->socket, &sl);
     free(sl.buf);
     free(map_mark);
