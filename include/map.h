@@ -63,7 +63,7 @@
 typedef struct mapdef {
   struct mapdef *next;	/* Next map, linked list */
   object *where;	/* What object were used to enter this map */
-  char path[MAX_BUF];	/* Filename of the map */
+  char path[HUGE_BUF];	/* Filename of the map */
   char *tmpname;	/* Name of temporary file */
   long reset_time;	/* When < sec since 1970, load original instead */
   sint32 timeout;	/* When it reaches 0, the map will be swapped out */
