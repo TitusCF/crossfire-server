@@ -17,6 +17,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+common/anim.c: Patch by AV to make sure multipart monsters animations
+   stay in sync.  MSW 2003-05-25
+
 server/apply.c: Fix bug in that we weren't calling esrv_map_scroll()
    when player used a shop map but lacked sufficient funds to pay
    for his items.

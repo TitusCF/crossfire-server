@@ -6,7 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2002 Mark Wedel & Crossfire Development Team
+    Copyright (C) 2002-2003 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -159,9 +159,17 @@ void animate_object(object *op, int dir) {
 	dump_object(op);
 	return;
     }
-    ++op->state;    /* increase draw state */
+    if (op->head) {
+	dir=op->head->direction;
 
-    if (op->head) dir=op->head->direction;
+	if (NUM_ANIMATIONS(op) == NUM_ANIMATIONS(op->head))
+	    op->state = op->head->state;
+	else
+	    ++op->state;
+    }
+    else {
+	++op->state;    /* increase draw state */
+    }
 
     /* If object is turning, then max animation state is half through the
      * animations.  Otherwise, we can use all the animations.
