@@ -17,6 +17,13 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+include/sproto.h, server/egoitem.c: Change create_artifact() to return whether
+   the artifact was created.
+server/plugins.c: Change CFWCreateArtifact()/HOOK_CREATEARTIFACT to return
+   whether the artifact was created.
+plugin/plugin_python.c: Define new function create_object() to create
+   objects. Use this function to fix CFPython.CreateObjectInside() and
+   CFPython.CreateObject(): creation of artifacts does work now.
 plugin/plugin_python.c: Fix CFPython.GetNextPlayerInfo() to work with long
    force names. Remove duplicate variable initialization.
 server/plugins.c: Remove the use of malloc() in initOnePlugin().

@@ -1064,13 +1064,13 @@ CFParm* CFWESRVSendInventory(CFParm* PParm)
 CFParm* CFWCreateArtifact(CFParm* PParm)
 {
     CFParm *CFP;
-    object* val;
+    static int val;
     CFP = (CFParm*)(malloc(sizeof(CFParm)));
     val = create_artifact(
         (object *)(PParm->Value[0]),
         (char *)(PParm->Value[1])
     );
-    CFP->Value[0] = (void *)(val);
+    CFP->Value[0] = &val;
     return CFP;
 };
 

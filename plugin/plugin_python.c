@@ -74,6 +74,97 @@ static void PyFixPlayer( object* pl )
     PlugHooks[ HOOK_FIXPLAYER ]( &lCFR );
     }
 
+/* Create an object. The parameter name may be an object name ("writing pen")
+ * or an archetype name ("stylus"). An object name can have artifact suffixes
+ * ("levitation boots of granite of mobility"). Returns NULL if the object does
+ * not exist.
+ */
+static object *create_object(char *name)
+{
+    CFParm lCFP;
+    CFParm *CFR;
+    object *ob;
+
+    /* Try to create object by object name. */
+    lCFP.Value[0] = name;
+    CFR = PlugHooks[HOOK_GETARCHBYOBJNAME](&lCFP);
+    ob = CFR->Value[0];
+    PyFreeMemory(CFR);
+
+    if(strncmp(query_name(ob), "singluarity", 11) == 0)
+    {
+        /* Object name failed, try archetype name. */
+
+        PyFreeObject(ob);
+
+        lCFP.Value[0] = name;
+        CFR = PlugHooks[HOOK_GETARCHETYPE](&lCFP);
+        ob = CFR->Value[0];
+        PyFreeMemory(CFR);
+
+        if(strncmp(query_name(ob), "singluarity", 11) == 0)
+        {
+            printf("create_object: object '%s' does not exist\n", name);
+            PyFreeObject(ob);
+            return NULL;
+        }
+    }
+    else
+    {
+        char *obname;
+        char *suffix;
+
+        /* Object name found, try adding artifact suffixes. */
+
+        obname = query_base_name(ob, 0);
+
+        /* Sanity check: obname should be a prefix of name. */
+        if(strncmp(name, obname, strlen(obname)) != 0)
+        {
+            printf("create_object: object name '%s' is not a prefix of '%s'\n", obname, name);
+            PyFreeObject(ob);
+            return NULL;
+        }
+
+        suffix = name+strlen(obname);
+        while(*suffix != '\0')
+        {
+            char *tmpname;
+            int i;
+
+            tmpname = strdup(suffix);
+            for(i = strlen(suffix); i > 0; i--)
+            {
+                int success;
+
+                tmpname[i] = '\0';
+
+                GCFP.Value[0] = ob;
+                GCFP.Value[1] = tmpname;
+                CFR = PlugHooks[HOOK_CREATEARTIFACT](&GCFP);
+                success = *(int *)CFR->Value[0];
+                PyFreeMemory(CFR);
+
+                if(success)
+                {
+                    suffix += i;
+                    break;
+                }
+            }
+            free(tmpname);
+
+            if(i <= 0)
+            {
+                printf("create_object: artifact suffix '%s' for '%s' does not exist\n", suffix, obname);
+                PyFreeObject(ob);
+                return NULL;
+            }
+        }
+    }
+
+    return ob;
+}
+
 /*****************************************************************************/
 /* And now the big part - The implementation of CFPython functions in C.     */
 /* All comments for those functions have the following entries:              */
@@ -4320,59 +4411,18 @@ static PyObject* CFCreateInvisibleInside(PyObject* self, PyObject* args)
 static PyObject* CFCreateObjectInside(PyObject* self, PyObject* args)
 {
     object *myob;
-    object *test;
     object *where;
-    int i;
     long whereptr;
-    char *tmpname;
     char *txt;
-    CFParm* CFR;
 
     if (!PyArg_ParseTuple(args,"sl",&txt, &whereptr))
         return NULL;
 
     where = (object *)(whereptr);
 
-    GCFP.Value[0] = (void *)(txt);
-    CFR = (PlugHooks[HOOK_GETARCHBYOBJNAME])(&GCFP);
-    myob = (object *)(CFR->Value[0]);
-    PyFreeMemory( CFR );
-
-    if (!strncmp(query_name(myob), "singluarity",11))
-    {
-        PyFreeObject( myob );
-        GCFP.Value[0] = (void *)(txt);
-        CFR = (PlugHooks[HOOK_GETARCHETYPE])(&GCFP);
-        myob = (object *)(CFR->Value[0]);
-        PyFreeMemory( CFR );
-    }
-    else
-    {
-        if (strcmp(query_name(myob),txt))
-        {
-            for(i=strlen(query_name(myob)); i>0;i--)
-            {
-                tmpname = (char *)(malloc(i+1));
-                strncpy(tmpname,query_name(myob),i);
-                tmpname[i] = 0x0;
-                if (!strcmp(query_name(myob),tmpname))
-                {
-                    free_string(tmpname);
-                    tmpname = txt + i;
-                    GCFP.Value[0] = (void *)(myob);
-                    GCFP.Value[1] = (void *)(tmpname);
-                    /*test = create_artifact(myob,tmpname); */
-                    CFR = (PlugHooks[HOOK_CREATEARTIFACT])(&GCFP);
-                    test = (object *)(CFR->Value[0]);
-                    PyFreeMemory( CFR );
-                }
-                else
-                {
-                    free_string(tmpname);
-                };
-            };
-        };
-    };
+    myob = create_object(txt);
+    if (myob == NULL)
+	return NULL;
 
     myob = insert_ob_in_ob(myob, where);
     if (where->type == PLAYER)
@@ -4581,10 +4631,7 @@ static PyObject* CFSetSlaying(PyObject* self, PyObject* args)
 static PyObject* CFCreateObject(PyObject* self, PyObject* args)
 {
     object *myob;
-    object *test;
     char *txt;
-    int i = 0;
-    char *tmpname;
     CFParm* CFR;
     int x,y;
     int val;
@@ -4593,49 +4640,10 @@ static PyObject* CFCreateObject(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"s(ii)|l",&txt, &x,&y,&map))
         return NULL;
 
-    /*myob = get_archetype(txt); */
-    /*myob = get_archetype_by_object_name(txt); */
-    GCFP.Value[0] = (void *)(txt);
-    CFR = (PlugHooks[HOOK_GETARCHBYOBJNAME])(&GCFP);
-    myob = (object *)(CFR->Value[0]);
-    PyFreeMemory( CFR );
+    myob = create_object(txt);
+    if (myob == NULL)
+	return NULL;
 
-    if (!strncmp(query_name(myob), "singluarity",11))
-    {
-        PyFreeObject( myob );
-        /*myob = get_archetype(txt); */
-        GCFP.Value[0] = (void *)(txt);
-        CFR = (PlugHooks[HOOK_GETARCHETYPE])(&GCFP);
-        myob = (object *)(CFR->Value[0]);
-        PyFreeMemory( CFR );
-    }
-    else
-    {
-        if (strcmp(query_name(myob),txt))
-        {
-            for(i=strlen(query_name(myob)); i>0;i--)
-            {
-                tmpname = (char *)(malloc(i+1));
-                strncpy(tmpname,query_name(myob),i);
-                tmpname[i] = 0x0;
-                if (!strcmp(query_name(myob),tmpname))
-                {
-                    free_string(tmpname);
-                    tmpname = txt + i;
-                    GCFP.Value[0] = (void *)(myob);
-                    GCFP.Value[1] = (void *)(tmpname);
-                    CFR = (PlugHooks[HOOK_CREATEARTIFACT])(&GCFP);
-                    /*test = create_artifact(myob,tmpname); */
-                    test = (object *)(CFR->Value[0]);
-                    PyFreeMemory( CFR );
-                }
-                else
-                {
-                    free_string(tmpname);
-                };
-            };
-        };
-    };
     myob->x = x;
     myob->y = y;
     val = 0;

@@ -9,15 +9,17 @@
 #include <sproto.h>
 #endif
 
-/* GROS: I put this here, because no other file seemed quite good.*/
-object *create_artifact(object *op, char *artifactname)
+/* GROS: I put this here, because no other file seemed quite good. Returns 1 if
+ * the artifact could be created.
+ */
+int create_artifact(object *op, char *artifactname)
 {
         artifactlist *al;
         artifact *art;
         char *temptitle;
         al = find_artifactlist(op->type);
         if (al==NULL)
-                return NULL;
+                return 0;
         for (art=al->items; art!=NULL; art=art->next)
         {
                 temptitle = (char *)(malloc(strlen(art->item->name) + 5));
@@ -26,11 +28,13 @@ object *create_artifact(object *op, char *artifactname)
                 if (!strcmp (temptitle, artifactname))
                 {
                         give_artifact_abilities(op, art->item);
+                        free(temptitle);
+                        return 1;
                 }
 
                 free(temptitle);
         };
-        return NULL;
+        return 0;
 }
 
 

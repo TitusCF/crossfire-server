@@ -322,7 +322,7 @@ object *find_disease(object *victim);
 int cure_disease(object *sufferer, object *caster);
 int reduce_symptoms(object *sufferer, int reduction);
 /* egoitem.c */
-object *create_artifact(object *op, char *artifactname);
+int create_artifact(object *op, char *artifactname);
 int apply_power_crystal(object *op, object *crystal);
 /* hiscore.c */
 char *spool(char *bp, char *error);
