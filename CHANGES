@@ -17,6 +17,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+common/item.c, include/material.h: Move the declaration/initialization
+  of materialtype from material.h to item.c
+server/main.c: Modify crypt_string so that on Freebsd systems, it will
+  use des_crypt if available, if not, won't encrypt.
+MSW 2002-06-19
+
 TODO: Additional updates.
 Add support for loading the EMERGENCY_.. locations from a .emergency file in
 the map directory.  This makes it easy to switch map distributions without the

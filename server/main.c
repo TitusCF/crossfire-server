@@ -150,27 +150,31 @@ void start_info(object *op) {
   }
 }
 
-char *crypt_string(char *str, char *salt) {
-/* Really, there is no reason to use this on any system.  But easier to
- * just leave this enabled for backward compatibility.
+/* Really, there is no reason to crypt the passwords  any system.  But easier
+ * to just leave this enabled for backward compatibility.  Put the
+ * simple case at top - no encryption - makes it easier to read.
  */
-#if !defined(WIN32) && !defined(__FreeBSD__)
-  static char *c=
-    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789./";
-  char s[2];
-  if(salt==NULL)
-    s[0]= c[RANDOM() % (int)strlen(c)],
-    s[1]= c[RANDOM() % (int)strlen(c)];
-  else
-    s[0]= salt[0],
-    s[1]= salt[1];
-#ifdef HAVE_LIBDES
-  return (char*)des_crypt(str,s);
+char *crypt_string(char *str, char *salt) {
+#if defined(WIN32) || (defined(__FreeBSD__) && !defined(HAVE_LIBDES))
+    return(str);
 #else
-  return (char*)crypt(str,s);
+    static char *c=
+	"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789./";
+    char s[2];
+
+    if(salt==NULL)
+	s[0]= c[RANDOM() % (int)strlen(c)],
+	s[1]= c[RANDOM() % (int)strlen(c)];
+    else
+	s[0]= salt[0],
+	s[1]= salt[1];
+
+#  ifdef HAVE_LIBDES
+    return (char*)des_crypt(str,s);
+#  endif
 #endif
-#endif /* win32 */
-  return(str);
+    /* Default case - just use crypt */
+    return (char*)crypt(str,s);
 }
 
 int check_password(char *typed,char *crypted) {
