@@ -705,7 +705,7 @@ void execute_word_of_recall(object *op) {
     while(op!=NULL && op->type!=PLAYER)
 	op=op->env;
 
-    if(op!=NULL) {
+    if(op!=NULL && op->map) {
 	if (get_map_flags(op->map, NULL, op->x, op->y, NULL, NULL) & P_NO_CLERIC)
 	    new_draw_info(NDI_UNIQUE, 0,op,"You feel something fizzle inside you.");
 	else

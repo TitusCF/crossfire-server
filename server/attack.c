@@ -918,7 +918,6 @@ object *hit_with_arrow (object *op, object *victim)
         }
     }
     else
-
         hit_something = attack_ob_simple (victim, hitter, op->stats.dam,
                                         op->stats.wc);
 
@@ -926,7 +925,8 @@ object *hit_with_arrow (object *op, object *victim)
      * arrow, move_apply() calls this function, arrow sticks in demon,
      * attack_ob_simple() returns, and we've got an arrow that still exists
      * but is no longer on the map. Ugh. (Beware: Such things can happen at
-     * other places as well!) */
+     * other places as well!)
+     */
     if (was_destroyed (hitter, hitter_tag) || hitter->env != NULL) {
         if (container) {
             remove_ob (container);
@@ -937,7 +937,8 @@ object *hit_with_arrow (object *op, object *victim)
 
     /* Missile hit victim */
     /* if the speed is > 10, then this is a fast moving arrow, we go straight
-       through the target */
+     * through the target 
+     */
     if (hit_something && op->speed <= 10.0)
     {
         /* Stop arrow */
@@ -962,7 +963,7 @@ object *hit_with_arrow (object *op, object *victim)
             remove_ob (hitter);
             hitter->x = victim_x;
             hitter->y = victim_y;
-            insert_ob_in_map (hitter, hitter->map, hitter,0);
+            insert_ob_in_map (hitter, victim->map, hitter,0);
         } else {
             /* Else leave arrow where it is */
             merge_ob (hitter, NULL);

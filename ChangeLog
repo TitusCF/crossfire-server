@@ -17,6 +17,13 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/attack.c: Fix hit_with_arrow() so that it uses the proper map
+   when inserting the arrow.
+server/c_wiz.c: Add note about brokeness of command_create()
+server/spell_effect.c: execute_word_of_recall() - don't attempt recall
+   if player isn't on any map.
+MSW 2004-06-15
+
 common/object.c
 include/define.h
 include/player.h

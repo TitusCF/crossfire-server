@@ -530,7 +530,6 @@ int command_create (object *op, char *params)
 	*cp = '\0';
         cp += 4;
     }
-
     for (bp2=bp; *bp2; bp2++)
 	if (*bp2 == ' ') {
 	    *bp2 = '\0';
@@ -617,6 +616,11 @@ int command_create (object *op, char *params)
 	    else
 		new_draw_info_format(NDI_UNIQUE, 0, op,
 		    "(%s#%d)->%s=%s", tmp->name, tmp->count, bp2, bp3);
+
+	    /* This is broken, because it is possible to get here
+	     * without bp4 being set.  However, this entire block
+	     * seems pretty suspect.
+	     */
 	    if (gotquote)
 		bp2=bp4+2;
 	    else
