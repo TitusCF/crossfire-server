@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/shop.c: patch from Andreas Kirschbaum for Windows compilation.
+server/spell_effect.c: patch from Andreas Kirschbaum for Windows compilation.
+Ryo 2004-05-03
+
 common/porting: changed open_and_uncompress to use const char* instead of
    char*, since value shouldn't be changed (and isn't).
 include/libproto.h: changed prototype for open_and_uncompress

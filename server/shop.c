@@ -189,9 +189,9 @@ uint64 query_cost(object *tmp, object *who, int flag) {
 	 * reflect values (potion charisma list for 1250 gold)
 	 */
 	if(flag==F_BUY)
-          val=(4.0*(float)val*(1.0+diff));
+          val=(4*val*(long)(1000*(1+diff)))/1000;
 	else if (flag==F_SELL)
-          val=(4.0*(float)val*(1.0-diff));
+          val=(4*val*(long)(1000*(1-diff)))/1000;
 	else val *=4;
     }
 

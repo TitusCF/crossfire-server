@@ -1648,7 +1648,7 @@ static void alchemy_object(object *obj, int *small_nuggets,
     else if (obj->type==MONEY || obj->type==GEM)
 	value /=3;
     else
-	value *= 0.9;
+	value = (value*9)/10;
 
     if ((obj->value>0) && rndm(0, 29)) {
 	int count;
