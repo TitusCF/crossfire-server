@@ -387,19 +387,22 @@ char* takescreenshoot(object* op)
             x=op->x-(op->contr->socket.mapx-1)/2+clientx;
             y=op->y-(op->contr->socket.mapy-1)/2+clienty;
 
-
             fprintf (screenshoot,"%d,%d %s|%s|%s ",
                     clientx,clienty,
                     GET_MAP_FACE(op->map,x,y,0)?GET_MAP_FACE(op->map,x,y,0)->name:"blank.111",
                     GET_MAP_FACE(op->map,x,y,1)?GET_MAP_FACE(op->map,x,y,1)->name:"blank.111",
                     GET_MAP_FACE(op->map,x,y,2)?GET_MAP_FACE(op->map,x,y,2)->name:"blank.111"
                     );
-            for(tmp=get_map_ob(op->map,x,y);tmp!=NULL&&tmp->above!=NULL;
-                tmp=tmp->above);
-            for ( ; tmp != NULL; tmp=tmp->below ) {
-                fprintf (screenshoot,"%s|",query_name(tmp));
-                if (QUERY_FLAG(tmp, FLAG_IS_FLOOR))          /* don't continue under the floor */
-                    break;
+
+            if ((x>=0) && (y>=0)) //Gros: Quick-and-dirty hack to prevent unwanted crashes
+            {
+                for(tmp=get_map_ob(op->map,x,y);tmp!=NULL&&tmp->above!=NULL;
+                    tmp=tmp->above);
+                for ( ; tmp != NULL; tmp=tmp->below ) {
+                    fprintf (screenshoot,"%s|",query_name(tmp));
+                    if (QUERY_FLAG(tmp, FLAG_IS_FLOOR))          /* don't continue under the floor */
+                        break;
+                }
             }
             fprintf (screenshoot,"\n");
         }
