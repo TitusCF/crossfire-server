@@ -1513,7 +1513,14 @@ void let_it_snow(mapstruct *m, int wx, int wy, char *filename)
 			/* replace snow with a big puddle */
 			remove_ob(tmp);
 			free_object(tmp);
-			at = find_archetype("rain5");
+			tmp=GET_MAP_OB(m, x, y);
+				if (!strcmp(tmp->arch->name, "mountain")){
+					at = find_archetype("mountain1_rivlets");}
+				else if (!strcmp(tmp->arch->name, "mountain2")){
+					at = find_archetype("mountain2_rivlets");}
+				else if (!strcmp(tmp->arch->name, "mountain4")){
+					at = find_archetype("mountain2_rivlets");}
+				else {at = find_archetype("rain5");}
 			if (at != NULL) {
 			    ob = get_object();
 			    copy_object(&at->clone, ob);
@@ -1588,6 +1595,13 @@ void singing_in_the_rain(mapstruct *m, int wx, int wy, char *filename)
 		continue;
 	    oldsnow = avoid_weather(&avoid, m, x, y, &gotsnow, 0);
 	    if (!avoid) {
+		tmp=GET_MAP_OB(m, x, y);
+		if (!strcmp(tmp->arch->name, "mountain")){
+			at = find_archetype("mountain1_rivlets"); break;}
+		else if (!strcmp(tmp->arch->name, "mountain2")){
+			at = find_archetype("mountain2_rivlets"); break;}
+		else if (!strcmp(tmp->arch->name, "mountain4")){
+			at = find_archetype("mountain2_rivlets"); break;}
 		if (sky == SKY_LIGHT_RAIN || sky == SKY_RAIN) {		
 			switch (rndm(0, SKY_HAIL-sky)) {
 		    case 0: at = find_archetype("rain1"); break;
