@@ -4239,7 +4239,6 @@ static PyObject* CFGetPlayerInfo(PyObject* self, PyObject* args)
 static PyObject* CFGetNextPlayerInfo(PyObject* self, PyObject* args)
 {
     long whereptr;
-    char name[128];
     object *myob, *walk;
     
     if (!PyArg_ParseTuple(args,"ll",&whereptr,&myob))
@@ -4251,13 +4250,11 @@ static PyObject* CFGetNextPlayerInfo(PyObject* self, PyObject* args)
     }
 
     /* thats our check paramters: arch "force_info", name of this arch */
-    strncpy(name, myob->name, 127); /* 127 chars should be enough for all */
-    name[63] = '\0';
 
     /* get the next linked player_info arch in this inventory */
     for(walk=myob->below;walk!=NULL;walk=walk->below)
     {
-        if (!strcmp(walk->arch->name,"player_info") &&  !strcmp(walk->name,name))
+        if (!strcmp(walk->arch->name,"player_info") && !strcmp(walk->name,myob->name))
             return Py_BuildValue("l",(long)(walk));
     }
 
@@ -6072,7 +6069,7 @@ static PyObject* CFWrite(PyObject* self, PyObject* args)
 {
     int   zero   = 0;
     char* message;
-    long  whoptr = 0;
+    long  whoptr;
     int   color  = NDI_UNIQUE | NDI_ORANGE;
 
     if (!PyArg_ParseTuple(args,"sl|i",&message,&whoptr,&color))

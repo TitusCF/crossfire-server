@@ -17,6 +17,8 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+plugin/plugin_python.c: Fix CFPython.GetNextPlayerInfo() to work with long
+   force names. Remove duplicate variable initialization.
 server/plugins.c: Remove the use of malloc() in initOnePlugin().
 Andreas Kirschbaum 2004-10-18
 
