@@ -1516,7 +1516,7 @@ int cast_change_ability(object *op,object *caster,object *spell_ob, int dir) {
 
 int cast_bless(object *op,object *caster,object *spell_ob, int dir) {
     int i;
-    object *god = find_god(determine_god(op)), *tmp2, *force, *tmp;
+    object *god = find_god(determine_god(op)), *tmp2, *force=NULL, *tmp;
 
     /* if dir = 99 op defaults to tmp, eat_special_food() requires this. */
     if(dir!=0) {
