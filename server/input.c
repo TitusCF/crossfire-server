@@ -106,37 +106,43 @@ void drop_inventory(object *op) {
 }
 
 
+/* op is the player
+ * tmp is the monster being examined.
+ */
 void examine_monster(object *op,object *tmp) {
-  object *mon=tmp->head?tmp->head:tmp;
-  archetype *at=tmp->arch;
-  if(QUERY_FLAG(mon,FLAG_UNDEAD))
-    new_draw_info(NDI_UNIQUE, 0,op,"It is an undead force.");
-  if(mon->level>op->level)
-    new_draw_info(NDI_UNIQUE, 0,op,"It is likely more powerful than you.");
-  else if(mon->level<op->level)
-    new_draw_info(NDI_UNIQUE, 0,op,"It is likely less powerful than you.");
-  else
-    new_draw_info(NDI_UNIQUE, 0,op,"It is probably as powerful as you.");
-  if(mon->attacktype&AT_ACID)
-    new_draw_info(NDI_UNIQUE, 0,op,"You seem to smell an acrid odor.");
-  if(tmp->type!=PLAYER)
-    return;
-  switch((mon->stats.hp+1)*4/(at->clone.stats.hp+1)) { /* From 1-4 */
-  case 1:
-    new_draw_info(NDI_UNIQUE, 0,op,"It is in a bad shape.");
-    break;
-  case 2:
-    new_draw_info(NDI_UNIQUE, 0,op,"It is hurt.");
-    break;
-  case 3:
-    new_draw_info(NDI_UNIQUE, 0,op,"It is somewhat hurt.");
-    break;
-  case 4:
-    new_draw_info(NDI_UNIQUE, 0,op,"It is in excellent shape.");
-    break;
-  }
-  if(present_in_ob(POISONING,mon)!=NULL)
-    new_draw_info(NDI_UNIQUE, 0,op,"It looks very ill.");
+    object *mon=tmp->head?tmp->head:tmp;
+    archetype *at=tmp->arch;
+
+    if(QUERY_FLAG(mon,FLAG_UNDEAD))
+	new_draw_info(NDI_UNIQUE, 0,op,"It is an undead force.");
+    if(mon->level>op->level)
+	new_draw_info(NDI_UNIQUE, 0,op,"It is likely more powerful than you.");
+    else if(mon->level<op->level)
+	new_draw_info(NDI_UNIQUE, 0,op,"It is likely less powerful than you.");
+    else
+	new_draw_info(NDI_UNIQUE, 0,op,"It is probably as powerful as you.");
+    if(mon->attacktype&AT_ACID)
+	new_draw_info(NDI_UNIQUE, 0,op,"You seem to smell an acrid odor.");
+
+    /* Anyone know why this used to use the clone value instead of the
+     * maxhp field?  This seems that it should give more accurate results.
+     */
+    switch((mon->stats.hp+1)*4/(mon->stats.maxhp+1)) { /* From 1-4 */
+	case 1:
+	    new_draw_info(NDI_UNIQUE, 0,op,"It is in a bad shape.");
+	    break;
+	case 2:
+	    new_draw_info(NDI_UNIQUE, 0,op,"It is hurt.");
+	    break;
+	case 3:
+	    new_draw_info(NDI_UNIQUE, 0,op,"It is somewhat hurt.");
+	    break;
+	case 4:
+	    new_draw_info(NDI_UNIQUE, 0,op,"It is in excellent shape.");
+	    break;
+    }
+    if(present_in_ob(POISONING,mon)!=NULL)
+	new_draw_info(NDI_UNIQUE, 0,op,"It looks very ill.");
 }
 
 char *long_desc(object *tmp) {
