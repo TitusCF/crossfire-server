@@ -567,11 +567,14 @@ recipe * get_random_recipe ( recipelist *rpl ) {
 
   /* looks like we have to choose a random one */ 
   if(fl==NULL) if((fl=get_random_recipelist())==NULL) return rp;
-
-  r=RANDOM()%fl->total_chance;
-  for (rp=fl->items;rp;rp=rp->next) {
+  
+  if (fl->total_chance > 0) {
+    r=RANDOM()%fl->total_chance;
+    printf("  r = %d\n", r);
+    for (rp=fl->items;rp;rp=rp->next) {
       r -= rp->chance;
       if (r<0) break;
+    }
   }
   return rp;
 }
