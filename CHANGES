@@ -1,12 +1,3 @@
-6/4/2000:  Fix done to disease.c which causes diseases to 
-put experience into the appropriate category.    --PeterM
-
-6/4/2000:  Added race fields to a lot of monsters.  Modified
-disease arcs so that they'll be specific to races.  Changed
-include/spellist.h to re-enable the disease spells.  --PeterM
-
-6/4/2000  Added a self-limiting parameter to diseases so
-that their power can be tuned to be reasonable.  --PeterM
 
 Changes in top level CVS tree.  A few notes when putting entries in this
 file:
@@ -25,6 +16,11 @@ changes' is much more useful than 'misc edits' or 'code cleanup'.
 small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+server/disease.c, sproto.h, rune.c   Fixes from jhantin@derringer.net for diseases:
+   Reversed strstr calls, force argument added to infect_object,
+diseases in immune carrier last forever, needles use infect object,
+cast_cause_disease won't fail.  --PeterM 6/9/2000
 
 common/loader.l:  Fix handling of objects with no animation.  Fixes server
 crash if object's archetype has an animation, but object doesn't.
@@ -51,6 +47,11 @@ weapon.  Don't set FLAG_APPLIED directly on weapon in golem, but use
 apply_special().  Don't call esrv_send_item() when caster is not a player
 (fixes server crash if monster casts this spell).
 - Jan Echternach 6/9/2000
+
+random_map/<various>  Fixes in the map code for various things, including:  
+1) crash bug on
+multi-square monsters. 2)  no treasures in final_map, 3) new feature of doing
+walls only, ....  --PeterM 6/9/2000:
 
 common/button.c: do_mood_floor():  Bugfixes: Only players can have pets.
 Call add_friendly_object() for friendly monsters.
@@ -131,6 +132,19 @@ server/attack.c: hit_map():  Use was_destroyed() to properly check for
 destroyed next object.  Use llevError for error messages.  Skip all
 objects that are (no longer) at the specified map position.
 - Jan Echternach 6/8/2000
+
+server/map.h server/main.c Increased buffer sizes for map paths. 
+Needed for random map code.  --PeterM 6/6/2000
+
+6/4/2000:  Fix done to disease.c which causes diseases to 
+put experience into the appropriate category.    --PeterM
+
+6/4/2000:  Added race fields to a lot of monsters.  Modified
+disease arcs so that they'll be specific to races.  Changed
+include/spellist.h to re-enable the disease spells.  --PeterM
+
+6/4/2000  (disease.c) Added a self-limiting parameter to diseases so
+that their power can be tuned to be reasonable.  --PeterM
 
 lib/crossfire.png: Some floors modified to no longer have transperencies.
 include/newserver.h:  Add Send_Face_Png made, also update versions of
