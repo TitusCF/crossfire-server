@@ -4,6 +4,7 @@
 /^Object/ {
 	randomitems = "";
 	name = obj = $2;
+	type = 0;
 }
 
 /^type/         { type = $2 }

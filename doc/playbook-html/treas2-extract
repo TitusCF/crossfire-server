@@ -15,7 +15,9 @@ BEGIN {
 	ignoreitem["priest_skills"] = 1;
 	ignoreitem["fighter_skills"] = 1;
 	ignoreitem["random_knowledge"] = 1;
+	ignoreitem["player_force"] = 1;
 	ignoreitem["nrof"] = 1;
+	ignoreitem["no_class_face_change"] = 1;
 
 	plural["arrow"] = 1;
 
@@ -52,6 +54,7 @@ $1 == "treasure" {
 				continue; 
 			  } 
 			  if($2 ~ "^skill") continue;
+			  if($2 ~ "force$") continue;
 			  if($2 in ignoreitem) continue;
 			  equip = $2;
 			  if(equip in plural) equip = sprintf("%ss",equip); 

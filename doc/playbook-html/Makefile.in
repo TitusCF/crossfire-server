@@ -3,7 +3,7 @@ FILES = Makefile.in handbook.shtml chap1.html chap2.shtml chap3.shtml\
 	chap4.shtml chap5.shtml chap6.shtml chap7.html appA.html appB.html\
  	appC.shtml bonus-extract char-extract spellpath-extract\
 	skills2-extract empty.pbm statskmod-extract treas1-extract\
-	treas2-extract skills-extract makeps items-extract generic-extract\
+	treas2-extract skills-extract makeps.pl items-extract generic-extract\
 	sorter levels-extract gods-extract
 
 FIG = fig/earrow.gif fig/nearrow.gif fig/sarrow.gif fig/swarrow.gif\
@@ -53,8 +53,8 @@ check_ok: dump_switches
 	$(RM) *.gif
 	touch .bmaps
 
-items: .bmaps in_items makeps items.gif
-	$(AWK) -v libdir=$(CROSSRC)/lib -v archdir=$(CROSSRC)/lib/ -v size=0.4 -v input=in_items -f makeps $(datadir)/archetypes > items
+items: .bmaps in_items makeps.pl items.gif
+	makeps.pl libdir=$(CROSSRC)/lib archdir=$(CROSSRC)/lib/ size=0.4 input=in_items  inarch=$(datadir)/archetypes > items
 
 in_items: items-extract $(datadir)/archetypes $(CROSSRC)/common/living.c
 	$(AWK) -v living_c=$(CROSSRC)/common/living.c 		-f items-extract $(datadir)/archetypes > in_items
@@ -71,14 +71,14 @@ bonus.html:
 in_char: char-extract $(datadir)/archetypes $(CROSSRC)/common/living.c
 	$(AWK) -v living_c=$(CROSSRC)/common/living.c 		-f char-extract $(datadir)/archetypes > in_char
 
-char.html: .bmaps in_char makeps characters.gif
-	$(AWK) -v libdir=$(CROSSRC)/lib -v archdir=$(CROSSRC)/lib/ -v size=0.4 -v input=in_char -f makeps $(datadir)/archetypes > char.html
+char.html: .bmaps in_char makeps.pl characters.gif
+	makeps.pl libdir=$(CROSSRC)/lib archdir=$(CROSSRC)/lib/ size=0.4 input=in_char inarch=$(datadir)/archetypes > char.html
 
 in_stats: stats-extract $(datadir)/archetypes $(CROSSRC)/common/living.c
 	$(AWK) -v living_c=$(CROSSRC)/common/living.c 		-f stats-extract $(datadir)/archetypes > in_stats
 
-stats.html: .bmaps in_stats makeps stats.gif
-	$(AWK) -v libdir=$(CROSSRC)/lib -v archdir=$(CROSSRC)/lib/ -v size=0.4 -v input=in_stats -f makeps $(datadir)/archetypes > stats.html
+stats.html: .bmaps in_stats makeps.pl stats.gif
+	makeps.pl libdir=$(CROSSRC)/lib archdir=$(CROSSRC)/lib/ size=0.4 input=in_stats archdir=$(datadir)/archetypes > stats.html
 
 equip.html: in_equip treas2-extract
 	$(AWK) -v eqitems=in_equip -f treas2-extract 	../../lib/treasures > equip.html

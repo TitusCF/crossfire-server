@@ -1,7 +1,7 @@
 
 FILES = Makefile.in monster-extract spells-extract stats-extract arm-extract\
  	helm-extract mag-extract shield-extract items-extract spoiler.tex\
- 	sorter makeps empty.pbm bow-extract arche-extract weap-extract
+ 	sorter makeps.pl empty.pbm bow-extract arche-extract weap-extract
 
 TEX =	monput.tex spells.tex stats.tex weap.tex shield.tex helmet.tex\
  	mag.tex arm.tex arche.tex bow.tex version.tex weapmag.tex
@@ -43,26 +43,26 @@ check_ok: dump_switches
 	$(RM) *.ps
 	touch .bmaps
 
-items: .bmaps in_items makeps items.ps
-	$(AWK) -v libdir=$(CROSSRC)/lib -v archdir=$(CROSSRC)/lib/ -v size=0.4 -v input=in_items -f makeps $(datadir)/archetypes > items
+items: .bmaps in_items makeps.pl items.ps
+	makeps.pl output=tex libdir=$(CROSSRC)/lib archdir=$(CROSSRC)/lib/ size=0.4 input=in_items inarch=$(datadir)/archetypes > items
 
 in_items: items-extract $(datadir)/archetypes $(CROSSRC)/common/living.c
 	$(AWK) -v living_c=$(CROSSRC)/common/living.c 		-f items-extract $(datadir)/archetypes > in_items
 
-stats.tex: .bmaps in_stats makeps characters.ps
-	$(AWK) -v libdir=$(CROSSRC)/lib -v archdir=$(CROSSRC)/lib/ -v size=0.4 -v input=in_stats -f makeps $(datadir)/archetypes > stats.tex
+stats.tex: .bmaps in_stats makeps.pl characters.ps
+	makeps.pl output=tex libdir=$(CROSSRC)/lib archdir=$(CROSSRC)/lib/ size=0.4 input=in_stats inarch=$(datadir)/archetypes > stats.tex
 
 in_stats: stats-extract $(datadir)/archetypes $(CROSSRC)/common/living.c
 	$(AWK) -v living_c=$(CROSSRC)/common/living.c 		-f stats-extract $(datadir)/archetypes > in_stats
 
-monput.tex: .bmaps in_monput makeps monsters.ps
-	$(AWK) -v libdir=$(CROSSRC)/lib -v archdir=$(CROSSRC)/lib/ -v size=0.4 -v input=in_monput -f makeps $(datadir)/archetypes > monput.tex
+monput.tex: .bmaps in_monput makeps.pl monsters.ps
+	makeps.pl output=tex libdir=$(CROSSRC)/lib archdir=$(CROSSRC)/lib/ size=0.4 input=in_monput inarch=$(datadir)/archetypes > monput.tex
 
 in_monput: monster-extract $(CROSSBIN) $(datadir)/treasures $(datadir)/archetypes
 	$(CROSSBIN) -m2 | sort -f | 		$(AWK) -F'|' -f monster-extract > in_monput
 
-spells.tex: .bmaps in_spells makeps spells.ps
-	$(AWK) -v libdir=$(CROSSRC)/lib -v archdir=$(CROSSRC)/lib/ -v size=0.4 -v input=in_spells -f makeps $(datadir)/archetypes > spells.tex
+spells.tex: .bmaps in_spells makeps.pl spells.ps
+	makeps.pl output=tex libdir=$(CROSSRC)/lib archdir=$(CROSSRC)/lib/ size=0.4 input=in_spells inarch=$(datadir)/archetypes > spells.tex
 
 in_spells: spells-extract sorter $(INCDIR)/spellist.h $(CROSSBIN) $(datadir)/archetypes
 	tr -d \" < $(INCDIR)/spellist.h | 		$(AWK) -F, -v crosscmd="$(CROSSBIN) -m4" 			-f spells-extract | sort > in_spells

@@ -65,7 +65,7 @@ BEGIN {
         xmin = xmax = ymin = ymax = 0;
         More = 0;
         dam = type = magical = ac = armour = weight = last_sp = 0;
-        att = prot = immune = 0;
+        att = prot = immune = invisible = 0;
 }
 
 /^type/         { type = $2 }
@@ -80,9 +80,10 @@ BEGIN {
 /^slaying/      { slay = $2; }
 /^magic/        { magical = $2 }
 /^name/         { name = substr($0, 6) }
+/^invisible/	{ invisible = $2 }
 /^end/ {
 	# but they are in the worthless, we ignore it
-	if (artifact[type] && !worthless[name]) {
+	if (artifact[type] && !worthless[name] && !invisible) {
 
 		if(!valuable[type] || (valuable[type] ~ name)) 
 		   if(keeprepeat[type] || !(oldname ~ name)) 

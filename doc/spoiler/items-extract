@@ -83,7 +83,7 @@ $1 in magic {
 /^immune/	{ immune = $2 }
 /^slaying/	{ slay = $2; }
 /^magic/	{ magical = $2 }
-/^name/		{ name = substr($0, 6) }
+/^name /		{ name = substr($0, 6) }
 
 /^end/ {
 	# Type 15 are artifacts if they are magical

@@ -3,7 +3,7 @@
 FILES = Makefile.in bonus-extract char-extract items-extract generic-extract\
  	gods-extract levels-extract local.sty skills-extract skills2-extract\
 	spellpath-extract statskmod-extract treas1-extract treas2-extract \
-	$(TEX) handbook.idx sorter makeps make_index.pl empty.pbm
+	$(TEX) handbook.idx sorter makeps.pl make_index.pl empty.pbm
 
 TEX   =	handbook.tex title.tex chap1.tex chap2.tex chap3.tex chap4.tex\
 	chap5.tex chap6.tex chap7.tex appA.tex appB.tex appC.tex
@@ -60,8 +60,8 @@ index.tex: make_index.pl
 	touch handbook.idx
 	./make_index.pl handbook.idx > index.tex;
 
-items: .bmaps in_items makeps items.ps
-	$(AWK) -v libdir=$(CROSSRC)/lib -v archdir=$(CROSSRC)/lib/ -v size=0.4 -v input=in_items -f makeps $(datadir)/archetypes > items
+items: .bmaps in_items makeps.pl items.ps
+	makeps.pl output=tex libdir=$(CROSSRC)/lib archdir=$(CROSSRC)/lib/ size=0.4  input=in_items inarch=$(datadir)/archetypes > items
 
 in_items: items-extract $(datadir)/archetypes
 	$(AWK) -f items-extract $(datadir)/archetypes > in_items
@@ -69,8 +69,8 @@ in_items: items-extract $(datadir)/archetypes
 bonus.tex:
 	$(AWK) -v living_c=../../common/living.c 	-f bonus-extract > bonus.tex
 
-char.tex: .bmaps in_char makeps characters.ps
-	$(AWK) -v libdir=$(CROSSRC)/lib -v archdir=$(CROSSRC)/lib/ -v size=0.4 -v input=in_char -f makeps $(datadir)/archetypes > char.tex
+char.tex: .bmaps in_char makeps.pl characters.ps
+	makeps.pl output=tex libdir=$(CROSSRC)/lib archdir=$(CROSSRC)/lib/ size=0.4 input=in_char inarch=$(datadir)/archetypes > char.tex
 
 in_char: char-extract $(datadir)/archetypes $(CROSSRC)/common/living.c
 	$(AWK) -v living_c=$(CROSSRC)/common/living.c 		-f char-extract $(datadir)/archetypes > in_char
