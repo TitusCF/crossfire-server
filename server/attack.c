@@ -1188,18 +1188,42 @@ int hit_player_attacktype(object *op, object *hitter, int dam,
 	 * Counterspell has no effect on anything but spells, so it
 	 * does no damage. */
 	break;
-      case ATNR_HOLYWORD:
-	{
-	   /* This has already been handled by hit_player, 
-	    *  no need to check twice  -- DAMN */
-
-	  object *owner = get_owner(hitter)==NULL?hitter:get_owner(hitter);
-	  
-	  /* As with turn undead above, give a bonus on the saving throw */
-	  if((op->level+(op->resist[ATNR_HOLYWORD]/100)) <
-	     owner->level+turn_bonus[owner->stats.Wis])
-	    SET_FLAG(op, FLAG_SCARED);
-	} break;
+    case ATNR_HOLYWORD:
+      {
+	/* This has already been handled by hit_player, 
+	 *  no need to check twice  -- DAMN */
+	
+	object *owner = get_owner(hitter)==NULL?hitter:get_owner(hitter);
+	
+	/* As with turn undead above, give a bonus on the saving throw */
+	if((op->level+(op->resist[ATNR_HOLYWORD]/100)) <
+	   owner->level+turn_bonus[owner->stats.Wis])
+	  SET_FLAG(op, FLAG_SCARED);
+      } break;
+    case ATNR_LIFE_STEALING:
+      {
+	int new_hp;
+	/* this is replacement to drain for players, instead of taking
+	 * exp it takes hp. It is geared for players, probably not
+	 * much use giving it to monsters
+	 *
+	 * life stealing doesn't do a lot of damage, but it gives the
+	 * damage it does do to the player.  Given that,
+	 * it only does 1/10'th normal damage (hence the divide by
+	 * 1000).
+	 */
+	/* You can't steal life from something undead */
+	if ((op->type == GOLEM) || (QUERY_FLAG(op, FLAG_UNDEAD))) return 0;
+	/* If drain protection is higher than life stealing, use that */
+	if (op->resist[ATNR_DRAIN] >= op->resist[ATNR_LIFE_STEALING])
+	  dam = (dam*(100 - op->resist[ATNR_DRAIN])) / 1000;
+	else dam = (dam*(100 - op->resist[ATNR_LIFE_STEALING])) / 1000;
+	/* You die at -1 hp, not zero. */
+	if (dam > (op->stats.hp+1)) dam = op->stats.hp+1;
+	new_hp = hitter->stats.hp + dam;
+	if (new_hp > hitter->stats.maxhp) new_hp = hitter->stats.maxhp;
+	if (new_hp > hitter->stats.hp) hitter->stats.hp = new_hp;
+      }
     }
     return dam;
 }

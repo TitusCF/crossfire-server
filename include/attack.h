@@ -43,7 +43,7 @@
  * the resist array in the object structure.
  */
 
-#define NROFATTACKS		24
+#define NROFATTACKS		25
 #define NROFATTACKMESS		20
 #define MAXATTACKMESS		20
 
@@ -98,6 +98,7 @@
 #define ATNR_HOLYWORD		21
 #define ATNR_BLIND		22
 #define ATNR_INTERNAL		23
+#define ATNR_LIFE_STEALING	24
 
 #define AT_PHYSICAL	0x00000001 /*       1 */
 #define AT_MAGIC	0x00000002 /*       2 */
@@ -123,6 +124,7 @@
 #define AT_HOLYWORD	0x00200000 /* 2097152 race selective attack thomas@astro.psu.edu */ 
 #define AT_BLIND	0x00400000 /* 4194304 thomas@astro.psu.edu */ 
 #define AT_INTERNAL	0x00800000 /* Only used for internal calculations */
+#define AT_LIFE_STEALING	0x01000000 /* 16777216 dnh@hawthorn.csse.monash.edu.au */
 
 /* attacktypes_load is suffixed to resist_ when saving objects.
  * (so the line may be 'resist_fire' 20 for example).  These are never
@@ -158,8 +160,7 @@ EXTERN char *resist_save[NROFATTACKS] = {
 "physical", "magic", "fire", "electricity", "cold", "confusion", "acid",
 "drain", "weaponmagic", "ghosthit", "poison", "slow", "paralyze",
 "turn_undead", "fear", "cancellation", "deplete", "death", "chaos",
-"counterspell", "godpower", "holyword", "blind" ,
-"internal"
+"counterspell", "godpower", "holyword", "blind" , "internal", "life stealing"
 };
 
 /* Short description of names of the attacktypes */
@@ -167,8 +168,7 @@ EXTERN char *attacktype_desc[NROFATTACKS] = {
 "physical", "magic", "fire", "electricity", "cold", "confusion", "acid",
 "drain", "weapon magic", "ghost hit", "poison", "slow", "paralyze",
 "turn undead", "fear", "cancellation", "deplete", "death", "chaos",
-"counterspell", "god power", "holy word", "blind" ,
-"internal"
+"counterspell", "god power", "holy word", "blind" , "internal", "life stealing"
 };
 
 /* This is the array that is what the player sees. */
@@ -180,8 +180,7 @@ EXTERN char *resist_plus[NROFATTACKS] = {
 "resist paralyzation", "resist turn undead", "resist fear", 
 "resist cancellation", "resist depletion", "resist death", "resist chaos",
 "resist counterspell", "resist god power", "resist holy word",
-"resist blindness" , 
-"resist internal"
+"resist blindness" ,  "resist internal", "resist life stealing"
 };
 
 /* These are the descriptions of the resistances displayed when a
@@ -191,8 +190,8 @@ EXTERN char *change_resist_msg[NROFATTACKS] = {
 "physical", "magic", "fire", "electricity", "cold", "confusion", "acid",
 "draining", "weapon magic", "ghosts", "poison", "slow", "paralyze",
 "turn undead", "fear", "cancellation", "depletion", "death attacks", "chaos",
-"counterspell", "god power", "holy word", "blinding attacks",
-"internal"
+"counterspell", "god power", "holy word", "blinding attacks", "internal",
+"life stealing"
 };
 
 
@@ -203,10 +202,10 @@ EXTERN char *change_resist_msg[NROFATTACKS] = {
 EXTERN int resist_table[] = {ATNR_PHYSICAL, ATNR_MAGIC, ATNR_FIRE, 
     ATNR_ELECTRICITY,ATNR_COLD, ATNR_CONFUSION, ATNR_ACID, ATNR_DRAIN,
     ATNR_GHOSTHIT, ATNR_POISON, ATNR_SLOW, ATNR_PARALYZE, ATNR_TURN_UNDEAD,
-    ATNR_FEAR, ATNR_DEPLETE, ATNR_DEATH, ATNR_HOLYWORD, ATNR_BLIND};
+    ATNR_FEAR, ATNR_DEPLETE, ATNR_DEATH, ATNR_HOLYWORD, ATNR_BLIND, ATNR_LIFE_STEALING};
 
 #endif
 
-#define num_resist_table 18
+#define num_resist_table 19
 
 #endif
