@@ -30,21 +30,6 @@
 #include <living.h>
 #include <spells.h>
 
-#define	DESCRIBE_ABILITY(retbuf, variable, name) \
-    if(variable) { \
-      int i,j=0; \
-      strcat(retbuf,"(" name ": "); \
-      for(i=0; i<NROFATTACKS; i++) \
-        if(variable & (1<<i)) { \
-          if (j) \
-            strcat(retbuf,", "); \
-          else \
-            j = 1; \
-          strcat(retbuf, attacks[i]); \
-        } \
-      strcat(retbuf,")"); \
-    }
-
 static char numbers[21][20] = {
   "no","","two","three","four","five","six","seven","eight","nine","ten",
   "eleven","twelve","thirteen","fourteen","fifteen","sixteen","seventeen",
@@ -445,7 +430,7 @@ char *query_base_name(object *op) {
 
 char *describe_item(object *op) {
   char buf[MAX_BUF];
-  static char retbuf[VERY_BIG_BUF];
+  static char retbuf[VERY_BIG__BUF];
 
   retbuf[0]='\0';
   if(QUERY_FLAG(op,FLAG_MONSTER)) {
