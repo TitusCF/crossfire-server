@@ -42,3 +42,23 @@ transference
 5 10 8 0 2 0 2
 magic drain
 12 20 75 30 4 2 10
+burning hands
+1  5   4  5   4  4   9
+mana blast
+2 10   4  5   4  4   9
+small fireball
+1  6   8  6   3  0  24
+small manaball
+2 12   8  6   3  0  24
+medium fireball
+3 10   8 10   3  0  24
+medium manaball
+4 20   8 10   3  0  24
+large fireball
+5 16   8 14   4  0  32
+large manaball
+6 32   8 14   4  0  32
+firebolt
+2  9  10  9   3  0  30
+mana bolt
+3 18  10  9   3  0  30
