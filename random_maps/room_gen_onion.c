@@ -356,7 +356,7 @@ void make_doors(char **maze, float *xlocations,float *ylocations,int layers,int 
 		  
 		}
 	 }
-	 if(options % OPT_NO_DOORS) 
+	 if(options & OPT_NO_DOORS) 
            maze[x1][y1] = '#';  /* no door. */
          else
            maze[x1][y1] = 'D'; /* write the door */
