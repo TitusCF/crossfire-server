@@ -35,14 +35,7 @@ int command_say (object *op, char *params)
     char buf[MAX_BUF];
 
     if (!params) return 0;
-    /* This broken apart from one sprintf to avoid buffer overuns.
-     * This could be done via snprintf, but I am not sure how widely
-     * available that is. MSW 5/22/2000
-     */
-    sprintf(buf, "%s says: ",op->name);
-    strncat(buf, params, MAX_BUF - strlen(buf)-1);
-    buf[MAX_BUF-1]=0;
-
+    snprintf(buf, MAX_BUF-1, "%s says: %s",op->name, params);
     new_info_map(NDI_WHITE,op->map, buf);
     communicate(op, params);
   
@@ -51,7 +44,6 @@ int command_say (object *op, char *params)
 
 int command_shout (object *op, char *params)
 {
-    char buf[MAX_BUF];
 #ifdef PLUGINS
     int evtid;
     CFParm CFP;
@@ -60,11 +52,8 @@ int command_shout (object *op, char *params)
 	new_draw_info(NDI_UNIQUE, 0,op,"Shout what?");
 	return 1;
     }
-    strcpy(buf,op->name);
-    strcat(buf," shouts: ");
-    strncat(buf, params, MAX_BUF-30);
-    buf[MAX_BUF - 30] = '\0';
-    new_draw_info(NDI_UNIQUE | NDI_ALL | NDI_RED, 1, NULL, buf);
+    new_draw_info_format(NDI_UNIQUE | NDI_ALL | NDI_RED, 1, NULL, 
+		 "%s shouts: %s", op->name, params);
 #ifdef PLUGINS
     /* GROS : Here we handle the SHOUT global event */
     evtid = EVENT_SHOUT;
@@ -79,8 +68,8 @@ int command_shout (object *op, char *params)
 int command_tell (object *op, char *params)
 {
     char buf[MAX_BUF],*name = NULL ,*msg = NULL;
-    char buf2[MAX_BUF];
     player *pl;
+
     if ( params != NULL){
         name = params;
         msg = strchr(name, ' ');
@@ -95,41 +84,35 @@ int command_tell (object *op, char *params)
 	new_draw_info(NDI_UNIQUE, 0,op,"Tell whom what?");
 	return 1;
     } else if ( msg == NULL){
-	sprintf(buf, "Tell %s what?", name);
-	new_draw_info(NDI_UNIQUE, 0,op,buf);
+	new_draw_info_format(NDI_UNIQUE, 0,op,"Tell %s what?", name);
 	return 1;
     }
 
-    sprintf(buf,"%s tells you: ",op->name);
-    strncat(buf, msg, MAX_BUF-strlen(buf)-1);
-    buf[MAX_BUF-1]=0;
+    snprintf(buf,MAX_BUF-1, "%s tells you: %s",op->name, msg);
 
     for(pl=first_player;pl!=NULL;pl=pl->next)
-      if(strncasecmp(pl->ob->name,name,MAX_NAME)==0)
-      {
-        new_draw_info(NDI_UNIQUE | NDI_ORANGE, 0, pl->ob, buf);
-        sprintf(buf2, "You tell to %s: %s",name,msg);
-        new_draw_info(NDI_UNIQUE | NDI_ORANGE, 0, op, buf2);
+	if(strncasecmp(pl->ob->name,name,MAX_NAME)==0) {
 
-        /* Update last_tell value [mids 01/14/2002] */
-        strcpy(pl->last_tell, op->name);
-        return 1;
-      }
+	    new_draw_info(NDI_UNIQUE | NDI_ORANGE, 0, pl->ob, buf);
+	    new_draw_info_format(NDI_UNIQUE | NDI_ORANGE, 0, op, 
+			     "You tell %s: %s", name, msg);
+
+	    /* Update last_tell value [mids 01/14/2002] */
+	    strcpy(pl->last_tell, op->name);
+	    return 1;
+	}
     new_draw_info(NDI_UNIQUE, 0,op,"No such player.");
     return 1;
-  }
+}
 
 /* Reply to last person who told you something [mids 01/14/2002] */
 int command_reply (object *op, char *params) {
-    char buf[MAX_BUF];
-    char buf2[MAX_BUF];
     player *pl;
 
     if (params == NULL) {
         new_draw_info(NDI_UNIQUE, 0, op, "Reply what?");
         return 1;
     }
-
 
     if (op->contr->last_tell[0] == '\0') {
         new_draw_info(NDI_UNIQUE, 0, op, "You can't reply to nobody.");
@@ -144,17 +127,13 @@ int command_reply (object *op, char *params) {
         return 1;
     }
 
-    sprintf(buf, "%s tells you: ", op->name);
-    strncat(buf, params, MAX_BUF-strlen(buf)-1);
-    buf[MAX_BUF-1] = 0;
-
     /* Update last_tell value */
     strcpy(pl->last_tell, op->name);
 
-    new_draw_info(NDI_UNIQUE | NDI_ORANGE, 0, pl->ob, buf);
-    sprintf(buf2, "You tell to %s: %s", pl->ob->name, params);
-    new_draw_info(NDI_UNIQUE | NDI_ORANGE, 0, op, buf2);
-
+    new_draw_info_format(NDI_UNIQUE | NDI_ORANGE, 0, pl->ob, 
+	"%s tells you: %s", op->name, params);
+    new_draw_info_format(NDI_UNIQUE | NDI_ORANGE, 0, op, 
+		  "You tell to %s: %s", pl->ob->name, params);
     return 1;
 }
 
@@ -692,8 +671,7 @@ static int basic_emote(object *op, char *params, int emotion)
 		return(0);
 	    }/*if self*/
 	}/*for*/
-	sprintf(buf, "%s is not around.", params);
-	new_draw_info(NDI_UNIQUE, 0, op, buf);
+	new_draw_info_format(NDI_UNIQUE, 0, op, "%s is not around.", params);
 	return(1);
     } /*else*/
 

@@ -2444,7 +2444,6 @@ chance 3
 difficulty 3
 Object the Devourers
 type 87
-magic 3
 value 500
 weight 50
 resist_drain 30
@@ -2462,7 +2461,6 @@ chance 1
 difficulty 5
 Object Gorokh
 type 87
-magic 3
 value 5000
 weight 200
 resist_fire 30

@@ -17,6 +17,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/c_chat.c: Fix some buffer overflow issues - use snprintf or
+   use new_draw_info_format instead.
+lib/artifacts: Update some cloaks not to require a minimum magic level,
+   since that will never be met.
+MSW 2002-10-16
+
 Minor bugfixes:
 common/living.c: Fix it so that if you die, you won't _gain_ exp in any
   skills - could happen if new table is harder - 3 level loss could still
