@@ -17,6 +17,17 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+include/book.h: Increase the size of BOOK_BUF, so inscribed books can hold
+  more informatin.
+lib/Makefile.am, lib/Makefile.in: Add the 'rename' to the list of help
+   files.
+lib/archetypes: update the glyph/rune spells to have proper face.
+lib/bmaps, lib/crossfire.* - add glyph.111 image.
+server/gods.c: Modify tailor_god_spell() to look harder to find a god -
+  necessary for glyph spells.
+server/spell_attack.c: Give players 50% of exp for monsters they charm.
+MSW 2004-05-19
+
 common/object.c: Correct get_search_arr() to return a proper permutation.
 Andreas Kirschbaum 2004-05-18
 

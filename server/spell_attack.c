@@ -1351,7 +1351,7 @@ int cast_curse(object *op, object *caster, object *spell_ob, int dir) {
  * effects monsters, it seems best to put it into this file
  ***********************************************************************/
 
-/* This covers the variosu spells that change the moods of monsters -
+/* This covers the various spells that change the moods of monsters -
  * makes them angry, peacful, friendly, etc.
  */
 int mood_change(object *op, object *caster, object *spell) {
@@ -1450,9 +1450,10 @@ int mood_change(object *op, object *caster, object *spell) {
 		set_owner(head, op);
 		set_spell_skill(op, caster, spell, head);
 		add_friendly_object(head);
-		head->stats.exp = 0;
 		head->move_type = PETMOVE;
 		done_one = 1;
+		change_exp(op, head->stats.exp / 2, spell->skill, SK_EXP_ADD_SKILL);
+		head->stats.exp = 0;
 	    }
 
 	    /* If a monster was effected, put an effect in */

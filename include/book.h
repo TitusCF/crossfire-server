@@ -6,9 +6,12 @@
  
 /* Message buf size. If this is changed, keep in mind that big strings
  * may be unreadable by the player as the tail of the message
- * can scroll over the beginning (as of v0.92.2).  */
+ * can scroll over the beginning (as of v0.92.2).
+ * Note that the book messages are stored in the msg buf,
+ * which is limited by 'HUGE_BUF' in the loader.
+ */
  
-#define BOOK_BUF        800
+#define BOOK_BUF        HUGE_BUF-10
  
 /* if little books arent getting enough text generated, enlarge this */
  

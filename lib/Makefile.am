@@ -46,7 +46,7 @@ dist_help_DATA = help/apply help/applymode \
 	help/name help/output \
 	help/output-count help/output-sync \
 	help/party help/pickup \
-	help/quit help/range help/save \
+	help/quit help/range help/rename help/save \
 	help/sort_inventory help/spells \
 	help/statistics help/take help/traps \
 	help/unbind help/usekeys

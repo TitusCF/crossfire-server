@@ -1054,6 +1054,12 @@ int tailor_god_spell(object *spellop, object *caster) {
 
     if (caster->type==SPELL_EFFECT || caster->type == SPELL) caster_is_spell=1;
 
+    /* if caster is a rune or the like, it doesn't worship anything.  However,
+     * if this object is owned by someone, then the god that they worship
+     * is relevant, so use that.
+     */
+    if (!god && get_owner(caster)) god=find_god(determine_god(get_owner(caster)));
+
     if ( ! god || (spellop->attacktype & AT_HOLYWORD && !god->race)) {
         if ( ! caster_is_spell)
             new_draw_info(NDI_UNIQUE, 0, caster,
