@@ -1837,15 +1837,18 @@ SOURCE=..\common\loader.c
 !IF  "$(CFG)" == "crossfire32 - Win32 FullDebug"
 
 # PROP Intermediate_Dir "FullDebug\common"
+# ADD CPP /D "YY_NO_UNISTD_H"
 
 !ELSEIF  "$(CFG)" == "crossfire32 - Win32 ReleaseQuit"
 
 # PROP BASE Intermediate_Dir "Win32_Release\common"
 # PROP Intermediate_Dir "ReleaseQuit\common"
+# ADD CPP /D "YY_NO_UNISTD_H"
 
 !ELSEIF  "$(CFG)" == "crossfire32 - Win32 ReleaseLog"
 
 # PROP Intermediate_Dir "ReleaseLog\common"
+# ADD CPP /D "YY_NO_UNISTD_H"
 
 !ENDIF 
 
