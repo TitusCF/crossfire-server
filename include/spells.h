@@ -25,64 +25,8 @@
     The author can be reached via e-mail to mark@pyramid.com.
 */
 
-#ifndef SPELLS_H_1
-#define SPELLS_H_1
-
-/* set constant definitions on the first pass, before object.h */
-#define NRSPELLPATHS	20
-#define NROFREALSPELLS	196	/* Number of different spells */
-
-#define PATH_NULL	0x00000000
-#define PATH_PROT	0x00000001 /*       1 */
-#define PATH_FIRE	0x00000002 /*       2 */
-#define PATH_FROST	0x00000004 /*       4 */
-#define PATH_ELEC	0x00000008 /*       8 */
-#define PATH_MISSILE	0x00000010 /*      16 */
-#define PATH_SELF	0x00000020 /*      32 */
-#define PATH_SUMMON	0x00000040 /*      64 */
-#define PATH_ABJURE	0x00000080 /*     128 */
-#define PATH_RESTORE	0x00000100 /*     256 */
-#define PATH_DETONATE	0x00000200 /*     512 */
-#define PATH_MIND	0x00000400 /*    1024 */
-#define PATH_CREATE	0x00000800 /*    2048 */
-#define PATH_TELE	0x00001000 /*    4096 */
-#define PATH_INFO	0x00002000 /*    8192 */
-#define PATH_TRANSMUTE	0x00004000 /*   16384 */
-#define PATH_TRANSFER	0x00008000 /*   32768 */
-#define PATH_TURNING	0x00010000 /*   65536 */
-#define PATH_WOUNDING	0x00020000 /*  131072 */
-#define PATH_DEATH	0x00040000 /*  262144 */
-#define PATH_LIGHT	0x00080000 /*  524288 */
- 
-#define DESCRIBE_PATH(retbuf, variable, name) \
-    if(variable) { \
-      int i,j=0; \
-      strcat(retbuf,"(" name ": "); \
-      for(i=0; i<NRSPELLPATHS; i++) \
-        if(variable & (1<<i)) { \
-          if (j) \
-            strcat(retbuf,", "); \
-          else \
-            j = 1; \
-          strcat(retbuf, spellpathnames[i]); \
-        } \
-      strcat(retbuf,")"); \
-    }
-
-#define IS_SUMMON_SPELL(spell) (((spell) > SP_BOMB && (spell) < SP_D_DOOR) \
-	|| ((spell) == SP_MYSTIC_FIST) || ((spell) == SP_SUMMON_AVATAR) \
-	|| ((spell) == SP_HOLY_SERVANT))
-
-#define PATH_SP_MULT(op,spell) (((op->path_attuned & s->path) ? 0.8 : 1) * \
-				((op->path_repelled & s->path) ? 1.25 : 1))
-
-#define PATH_TIME_MULT(op,spell) (((op->path_attuned & s->path) ? 0.8 : 1) * \
-				((op->path_repelled & s->path) ? 1.25 : 1))
-
-#else
-/* set the types and globals on the second pass;  they need object.h */
-#ifndef SPELLS_H_2
-#define SPELLS_H_2
+#ifndef SPELLS_H
+#define SPELLS_H
 
 extern Fontindex fbface[];
 extern Fontindex lface[];
@@ -108,8 +52,6 @@ typedef struct spell_struct {
   char *archname;	 /* Pointer to archetype used by spell */
 } spell;
 
-extern spell spells[NROFREALSPELLS];
-
 typedef struct
 {
   sint16 bdam;  /*  base damage  */
@@ -118,6 +60,8 @@ typedef struct
   sint16 ldur;  /*  duration adjustment for level  */
   sint16 spl;	/*  number of levels to increase cost by multiples of base */
 } spell_parameters;
+
+extern spell spells[NROFREALSPELLS];
 
 /* When adding new spells, don't insert into the middle of the list - 
  * add to the end of the list.  Some archetypes and treasures require
@@ -246,6 +190,16 @@ enum spellnrs {
   SP_DANCING_SWORD,	SP_ANIMATE_WEAPON
 };
 	
+#define IS_SUMMON_SPELL(spell) (((spell) > SP_BOMB && (spell) < SP_D_DOOR) \
+	|| ((spell) == SP_MYSTIC_FIST) || ((spell) == SP_SUMMON_AVATAR) \
+	|| ((spell) == SP_HOLY_SERVANT))
+
+#define PATH_SP_MULT(op,spell) (((op->path_attuned & s->path) ? 0.8 : 1) * \
+				((op->path_repelled & s->path) ? 1.25 : 1))
+#define PATH_TIME_MULT(op,spell) (((op->path_attuned & s->path) ? 0.8 : 1) * \
+				((op->path_repelled & s->path) ? 1.25 : 1))
+	
+extern char *range_name[range_size];
 extern spell_parameters SP_PARAMETERS[];
 extern char *spellpathnames[NRSPELLPATHS];
 extern archetype *spellarch[NROFREALSPELLS];
@@ -254,7 +208,5 @@ typedef enum SpellTypeFrom {
   spellNormal, spellWand, spellRod, spellHorn, spellScroll, spellPotion
 } SpellTypeFrom;
 
-
-#endif
 
 #endif

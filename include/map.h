@@ -37,7 +37,7 @@
 #define mapx map_object->x
 #define mapy map_object->y
 
-#define MAP_TIMEOUT(m)	((m)->map_object->value)
+#define MAP_TIMEOUT(m)		((m)->map_object->value)
 #define MAP_RESETTIME(m)	((m)->map_object->weight)
 
 /* This is only used when loading the map.  For internal use (treausre

@@ -25,9 +25,6 @@
     The author can be reached via e-mail to mark@pyramid.com
 */
 
-#ifndef SPELLIST_H
-#define SPELLIST_H
-
 #include "spells.h"
 
 spell spells[NROFREALSPELLS]={
@@ -653,4 +650,3 @@ char *spellpathnames[NRSPELLPATHS] = {
  "Light"
 };
 
-#endif
