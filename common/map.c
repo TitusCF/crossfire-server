@@ -779,6 +779,18 @@ static int load_map_header(FILE *fp, mapstruct *m)
 	    m->unique = atoi(value);
 	} else if (!strcmp(key,"outdoor")) {
 	    m->outdoor = atoi(value);
+	} else if (!strcmp(key, "temp")) {
+	    m->temp = atoi(value);
+	} else if (!strcmp(key, "pressure")) {
+	    m->pressure = atoi(value);
+	} else if (!strcmp(key, "humid")) {
+	    m->humid = atoi(value);
+	} else if (!strcmp(key, "windspeed")) {
+	    m->windspeed = atoi(value);
+	} else if (!strcmp(key, "winddir")) {
+	    m->winddir = atoi(value);
+	} else if (!strcmp(key, "sky")) {
+	    m->sky = atoi(value);
 	}
 	else if (!strncmp(key,"tile_path_", 10)) {
 	    int tile=atoi(key+10);
