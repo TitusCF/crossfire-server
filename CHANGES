@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/attack.c: Don't generate PLAYER_KILL_PLAYER messages if kill
+happened on battleground.  Also, datestamp the messages.
+MSW 2002-05-13
+
 server/attack.c: Generate log message when a player kills another player -
 include the ip address of the killer to make it easier to add them to
 ban files. MSW 2002-05-06

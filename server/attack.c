@@ -1331,10 +1331,18 @@ int kill_object(object *op,int dam, object *hitter, int type)
 	     * and filter out malicious player killers - that is why the
 	     * ip address is included.
 	     */
-	    if (op->type == PLAYER) 
-		LOG(llevInfo,"PLAYER_KILL_PLAYER: %s (%s) killed %s\n",
-		    owner->name, owner->contr->socket.host, query_name(op));
+	    if (op->type == PLAYER && !battleg)  {
+		time_t t=time(NULL);
+		struct tm *tmv;
+		char buf[256];
 
+		tmv = localtime(&t);
+		strftime(buf, 256,"%a %b %d %H:%M:%S %Y", tmv);
+
+
+		LOG(llevInfo,"%s PLAYER_KILL_PLAYER: %s (%s) killed %s\n",
+		    buf, owner->name, owner->contr->socket.host, query_name(op));
+	    }
 
 	    /* This appears to be doing primitive filtering to only
 	     * display the more interesting monsters.
