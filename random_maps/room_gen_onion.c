@@ -71,7 +71,7 @@ options:
 #define OPT_BOTTOM_R  8
 #define OPT_WALL_OFF  16
 #define OPT_IRR_SPACE 32
-#define OPT_WALLS_ONLY 64
+/*#define OPT_WALLS_ONLY 64*/
 
 
 int *free_x_list;

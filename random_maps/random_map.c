@@ -199,7 +199,7 @@ char **layoutgen() {
 
   if(strstr(layoutstyle,"onion")) {
     maze = map_gen_onion(Xsize,Ysize,layoutoptions1,layoutoptions2);
-    if(!(RANDOM()%3)) roomify_layout(maze);
+    if(!(RANDOM()%3)&& !(layoutoptions1 & OPT_WALLS_ONLY)) roomify_layout(maze);
   }
 
   if(strstr(layoutstyle,"maze")) {
@@ -215,7 +215,7 @@ char **layoutgen() {
       break;
     case 1:
       maze = map_gen_onion(Xsize,Ysize,layoutoptions1,layoutoptions2);
-      if(!(RANDOM()%3)) roomify_layout(maze);
+      if(!(RANDOM()%3)&& !(layoutoptions1 & OPT_WALLS_ONLY)) roomify_layout(maze);
       break;
     }
 

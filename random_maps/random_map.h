@@ -41,6 +41,8 @@ int load_parameters(FILE *fp, int bufstate);
 #define MAZE_LAYOUT 2
 #define NROFLAYOUTS 2
 
+#define OPT_WALLS_ONLY 64
+
 /* symmetry definitions--used in this file AND in treasure.c:
 the numerical values matter so don't change them. */
 #define RANDOM_SYM 0
