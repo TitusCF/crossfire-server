@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/rune.c: Fix bug that allowed players to use marking runes to create
+  arbitrary objects by embedding a endmsg in the string.
+MSW 2002-06-26
+
 lib/ban_file: Update comments to describe how it actually works.
 server/commands.c: Add some time cost to shout, say, and tell commands.  This
    prevents abusive players from issuing huge number of these commands.

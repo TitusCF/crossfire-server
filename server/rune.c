@@ -133,6 +133,12 @@ int write_rune(object *op,int dir,int inspell,int level,char *runename) {
 	tmp=get_archetype("rune_mark"); /* this is a rune of marking */
 	at=NULL;
 	if (runename) {
+	    if (strstr(runename,"endmsg")) {
+		new_draw_info_format(NDI_UNIQUE, 0, op,
+		     "Trying to cheat are we?", runename);
+		LOG(llevInfo,"write_rune: player %s tried to write bogus rune\n", op->name);
+		return 0;
+	    }
 	    strncpy(rune, runename, HUGE_BUF-2);
 	    rune[HUGE_BUF-2] = 0;
 	    strcat(rune, "\n");
