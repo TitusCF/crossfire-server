@@ -753,6 +753,7 @@ void update_object(object *op) {
 
     /* Can be null if the player has quit but window still exists. */
     if (op->map->map != NULL) {
+	object *tmp;
 	player=update_position (op->map, op->x, op->y);
 
 	/* Special check here.  If a player is on this space, and the 
@@ -760,19 +761,13 @@ void update_object(object *op) {
 	 * not normally animated (ie, buttons) and not invisible, mark this
 	 * space to be updated.
 	 */
-	if (player && player!=op &&  op->speed < MIN_ACTIVE_SPEED && !op->invisible) {
-		player->contr->socket.update_look=1;
-	}
-	    
-#if 0
-	if (player && player!=op && !player->contr->socket.update_look) {
-	    player->contr->socket.update_look=1;
+	if (player && player!=op && op->speed<MIN_ACTIVE_SPEED && !op->invisible) {
 	    for (tmp=op; tmp!=NULL; tmp=tmp->above)
 		if (QUERY_FLAG(tmp,FLAG_IS_FLOOR) && !tmp->invisible) break;
 
 	    if (!tmp) esrv_update_item_func(UPD_FACE, player, op);
 	}
-#endif
+	    
     }
 
     if(op->more!=NULL)
