@@ -302,6 +302,8 @@ typedef struct Settings {
     uint8   spell_encumbrance; /* encumbrance effects spells */
     uint8   spell_failure_effects; /* nasty backlash to spell failures */
     uint8   casting_time;   /* it takes awhile to cast a spell */
+    uint8   real_wiz;       /* use mud-like wizards */
+    uint8   recycle_tmp_maps; /* re-use tmp maps. */
 
     /* The meta_ is information for the metaserver.  These are set in 
      * the lib/settings file.

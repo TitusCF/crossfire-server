@@ -443,9 +443,8 @@ int command_create (object *op, char *params)
 	if (set_nrof)
 	    tmp->nrof = nrof;
 	tmp->map=op->map;
-#ifndef REAL_WIZ
-	SET_FLAG(tmp, FLAG_WAS_WIZ);
-#endif
+	if (settings.real_wiz == FALSE)
+	    SET_FLAG(tmp, FLAG_WAS_WIZ);
 	if (set_magic)
 	    set_abs_magic(tmp, magic);
 	if (art)
@@ -508,9 +507,8 @@ int command_create (object *op, char *params)
 	object *prev=NULL,*head=NULL;
 	for (atmp=at; atmp!=NULL; atmp=atmp->more) {
 	    tmp=arch_to_object(atmp);
-#ifndef REAL_WIZ
-	    SET_FLAG(tmp, FLAG_WAS_WIZ);
-#endif
+	    if (settings.real_wiz == FALSE)
+		SET_FLAG(tmp, FLAG_WAS_WIZ);
 	    if(head==NULL)
 		head=tmp;
 	    tmp->x=op->x+tmp->arch->clone.x;
@@ -666,9 +664,8 @@ int command_patch (object *op, char *params)
     }
     if((arg2=strchr(++arg,' ')))
       arg2++;
-#ifndef REAL_WIZ
-    SET_FLAG(tmp, FLAG_WAS_WIZ); /* To avoid cheating */
-#endif
+    if (settings.real_wiz == FALSE)
+	SET_FLAG(tmp, FLAG_WAS_WIZ); /* To avoid cheating */
     if(set_variable(tmp,arg) == -1)
       new_draw_info_format(NDI_UNIQUE, 0,op,"Unknown variable %s", arg);
     else {
@@ -741,9 +738,8 @@ int command_addexp (object *op, char *params)
     }
     pl->ob->stats.exp += i;
     player_lvl_adj(pl->ob, NULL);
-#ifndef REAL_WIZ
-    SET_FLAG(pl->ob, FLAG_WAS_WIZ);
-#endif
+    if (settings.real_wiz == FALSE)
+	SET_FLAG(pl->ob, FLAG_WAS_WIZ);
     return 1;
   }
 
@@ -832,9 +828,8 @@ int command_abil (object *op, char *params)
     }
     for(pl=first_player;pl!=NULL;pl=pl->next) 
        if(!strcmp(pl->ob->name,thing)){ 
-#ifndef REAL_WIZ  
-	  SET_FLAG(pl->ob, FLAG_WAS_WIZ);
-#endif
+	  if (settings.real_wiz == FALSE)
+	       SET_FLAG(pl->ob, FLAG_WAS_WIZ);
           if(!strcmp("str",thing2))
             pl->ob->stats.Str = iii,pl->orig_stats.Str = iii;
           if(!strcmp("dex",thing2))   
@@ -927,9 +922,8 @@ int command_nowiz (object *op, char *params) /* 'noadm' is alias */
      CLEAR_FLAG(op, FLAG_WIZ);
      CLEAR_FLAG(op, FLAG_WIZPASS);
      CLEAR_FLAG(op, FLAG_FLYING);
-#ifdef REAL_WIZ
-     CLEAR_FLAG(op, FLAG_WAS_WIZ);
-#endif
+     if (settings.real_wiz == TRUE)
+	 CLEAR_FLAG(op, FLAG_WAS_WIZ);
     op->contr->hidden=0;
      new_draw_info(NDI_UNIQUE | NDI_ALL, 1, NULL,
 	"The Dungeon Master is gone..");

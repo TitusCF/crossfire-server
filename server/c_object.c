@@ -213,13 +213,8 @@ static void pick_up_object (object *pl, object *op, object *tmp, int nrof)
 	new_draw_info(NDI_UNIQUE, 0,pl,"That item is too heavy for you to pick up.");
 	return;
     }
-	
-
-#ifndef REAL_WIZ
-    if(QUERY_FLAG(pl, FLAG_WAS_WIZ))
+    if (settings.real_wiz == FALSE && QUERY_FLAG(pl, FLAG_WAS_WIZ))
 	SET_FLAG(tmp, FLAG_WAS_WIZ);
-#endif
-
     if (nrof != tmp_nrof) {
 	object *tmp2 = tmp;
         tag_t tmp2_tag = tmp2->count;

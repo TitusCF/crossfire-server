@@ -318,11 +318,6 @@ int pay_for_amount(int to_pay,object *pl) {
 	    to_pay = pay_from_container(NULL, pouch, to_pay);
 	}
     }
-
-#ifndef REAL_WIZ
-    if(QUERY_FLAG(pl,FLAG_WAS_WIZ))
-      SET_FLAG(op, FLAG_WAS_WIZ);
-#endif
     fix_player(pl);
     return 1;
 }
@@ -347,11 +342,8 @@ int pay_for_item(object *op,object *pl) {
 	    to_pay = pay_from_container(op, pouch, to_pay);
 	}
     }
-
-#ifndef REAL_WIZ
-    if(QUERY_FLAG(pl,FLAG_WAS_WIZ))
-      SET_FLAG(op, FLAG_WAS_WIZ);
-#endif
+    if (settings.real_wiz == FALSE && QUERY_FLAG(pl, FLAG_WAS_WIZ))
+	SET_FLAG(op, FLAG_WAS_WIZ);
     fix_player(pl);
     return 1;
 }

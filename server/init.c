@@ -409,6 +409,24 @@ static void load_settings()
 		LOG(llevError, "load_settings: Unkown value for"
 		    "casting_time: %s\n", cp);
 	    }
+	} else if (!strcasecmp(buf, "real_wiz")) {
+	    if (!strcasecmp(cp, "on") || !strcasecmp(cp, "true")) {
+		settings.real_wiz=TRUE;
+	    } else if (!strcasecmp(cp, "off") || !strcasecmp(cp, "false")) {
+		settings.real_wiz=FALSE;
+	    } else {
+		LOG(llevError, "load_settings: Unkown value for"
+		    "real_wiz: %s\n", cp);
+	    }
+	} else if (!strcasecmp(buf, "recycle_tmp_maps")) {
+	    if (!strcasecmp(cp, "on") || !strcasecmp(cp, "true")) {
+		settings.recycle_tmp_maps=TRUE;
+	    } else if (!strcasecmp(cp, "off") || !strcasecmp(cp, "false")) {
+		settings.recycle_tmp_maps=FALSE;
+	    } else {
+		LOG(llevError, "load_settings: Unkown value for"
+		    "recycle_tmp_maps: %s\n", cp);
+	    }
 	} else if (!strcasecmp(buf,"simple_exp")) {
 	    if (!strcasecmp(cp,"on") || !strcasecmp(cp,"true")) {
 		settings.simple_exp=TRUE;
