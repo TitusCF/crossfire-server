@@ -64,7 +64,7 @@ static char *cauldron_effect [] = {
 char * cauldron_sound ( void ) {
   int size=sizeof(cauldron_effect)/sizeof(char *);
 
-  return cauldron_effect[RANDOM()%size]; 
+  return cauldron_effect[rndm(0, size-1)]; 
 }
 
 /* attempt_do_alchemy() - Main part of the ALCHEMY code. From this we call fctns
@@ -288,7 +288,7 @@ void adjust_product(object *item,int lvl ,int yield) {
    if(lvl<=0) lvl = 1; /* lets avoid div by zero! */ 
    if(item->nrof) {
 /*     nrof = (RANDOM() % yield + RANDOM() % yield + RANDOM() % yield)/ 3 + 1;*/
-     nrof = ( 1.0 - 1.0/(lvl/10.0 + 1.0)) * (RANDOM() % yield + RANDOM() % yield + RANDOM() % yield) + 1;
+     nrof = ( 1.0 - 1.0/(lvl/10.0 + 1.0)) * (rndm(0, yield-1) + rndm(0, yield-1) + rndm(0, yield-1)) + 1;
      if(nrof > yield) nrof = yield;
      item->nrof=nrof;
    }
@@ -382,7 +382,7 @@ void alchemy_failure_effect(object *op,object *cauldron,recipe *rp,int danger) {
   if(level<25) { 		      	/* INGREDIENTS USED/SLAGGED */
       object *item=NULL;
  
-      if(RANDOM()%3) {  /* slag created */
+      if(rndm(0, 2)) {  /* slag created */
         object *tmp=cauldron->inv;
         int weight=0;
 	uint16 material=M_STONE;
@@ -421,11 +421,11 @@ void alchemy_failure_effect(object *op,object *cauldron,recipe *rp,int danger) {
 
 	    /* special stuff for consumables */
            if(tmp->type==POTION||tmp->type==FOOD) {
-            	if(tmp->stats.sp&&RANDOM()%2) /* drains magic */
+            	if(tmp->stats.sp && rndm(0 ,1)) /* drains magic */
 			tmp->stats.sp = SP_REGENERATE_SPELLPOINTS;
 		else 
 		 	tmp->stats.sp = 0; /* so it can drain stats */ 
-            	if(RANDOM()%2) { 		/* poisonous */
+            	if(rndm(0, 1)) { 		/* poisonous */
 			tmp->type=FOOD; 
 			tmp->stats.hp=random_roll(0, 149, op, PREFER_LOW);
 	    	}
@@ -435,8 +435,8 @@ void alchemy_failure_effect(object *op,object *cauldron,recipe *rp,int danger) {
  
        	   /* change stats downward */
  	   do {
-           	change_attr_value(&tmp->stats,RANDOM()%7,-1*(RANDOM()%3+1));
-           } while (RANDOM()%3);
+           	change_attr_value(&tmp->stats,rndm(0, 6),-1*(rndm(1, 3)));
+           } while (rndm(0, 2));
       }  
       return;
 
@@ -466,7 +466,7 @@ void alchemy_failure_effect(object *op,object *cauldron,recipe *rp,int danger) {
    else if (level<50) {                		/* MINOR EXPLOSION/FIREBALL */
       object *tmp;
       remove_contents(cauldron->inv,NULL);
-      switch(RANDOM()%3) {
+      switch(rndm(0, 2)) {
 	case 0: 
            tmp=get_archetype("bomb");
   	   tmp->stats.dam=random_roll(1, level, op, PREFER_LOW);
@@ -506,7 +506,7 @@ void alchemy_failure_effect(object *op,object *cauldron,recipe *rp,int danger) {
         SET_FLAG(cauldron,FLAG_CURSED);
       else cauldron->magic--;
       cauldron->magic -= random_roll(0, 4, op, PREFER_LOW);
-      if(RANDOM()%2) {
+      if(rndm(0, 1)) {
         remove_contents(cauldron->inv,NULL);
         new_draw_info_format(NDI_UNIQUE,0,op,
 	   "Your %s turns darker then makes a gulping sound!",
@@ -532,7 +532,7 @@ void alchemy_failure_effect(object *op,object *cauldron,recipe *rp,int danger) {
       return;
 
   } else if (level<150) {               	/* COMBO EFFECT */
-      int roll = RANDOM()%3+1;
+      int roll = rndm(1, 3);
       while(roll) {
 	alchemy_failure_effect(op,cauldron,rp,level-39);
 	roll--;

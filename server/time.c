@@ -75,7 +75,7 @@ void generate_monster(object *gen) {
   object *op,*head=NULL,*prev=NULL;
   archetype *at=gen->other_arch;
 
-  if(GENERATE_SPEED(gen)&&RANDOM()%GENERATE_SPEED(gen))
+  if(GENERATE_SPEED(gen)&&rndm(0, GENERATE_SPEED(gen)-1))
     return;
   if(gen->other_arch==NULL) {
     LOG(llevError,"Generator without other_arch: %s\n",gen->name);
@@ -89,7 +89,7 @@ void generate_monster(object *gen) {
     op->y=gen->y+freearr_y[i]+at->clone.y;
     if(head!=NULL)
       op->head=head,prev->more=op;
-    if (RANDOM()%10) generate_artifact(op, gen->map->difficulty);
+    if (rndm(0, 9)) generate_artifact(op, gen->map->difficulty);
     insert_ob_in_map(op,gen->map,gen,0);
     if (QUERY_FLAG(op, FLAG_FREED)) return;
     if(op->randomitems!=NULL)
@@ -506,7 +506,7 @@ void fix_stopped_item (object *op, mapstruct *map, object *originator)
 
 object *fix_stopped_arrow (object *op)
 {
-    if(RANDOM() % 100 < op->stats.food) {
+    if(rndm(0, 99) < op->stats.food) {
 	/* Small chance of breaking */
         remove_ob (op);
 	free_object(op);
@@ -621,7 +621,7 @@ void move_arrow(object *op) {
          * chance that reflect_missile fails.)
          */
         if (QUERY_FLAG (tmp, FLAG_REFL_MISSILE) && (!QUERY_FLAG(tmp,
-	    FLAG_ALIVE) || (RANDOM()%100) < 90-op->level/10))
+	    FLAG_ALIVE) || (rndm(0, 99)) < 90-op->level/10))
         {
             int number = op->face->number;
 	    
@@ -653,7 +653,7 @@ void move_arrow(object *op) {
     if ( ! was_reflected && wall (op->map, new_x, new_y))
     {
 	/* if the object doesn't reflect, stop the arrow from moving */
-	if(!QUERY_FLAG(op, FLAG_REFLECTING) || !(RANDOM()%20)) {
+	if(!QUERY_FLAG(op, FLAG_REFLECTING) || !(rndm(0, 19))) {
 	    stop_arrow (op);
 	    return;
 	} else {    /* object is reflected */
@@ -967,14 +967,14 @@ void move_player_changer(object *op) {
 void move_firewall(object *op) {
   if ( ! op->map)
     return;   /* dm has created a firewall in his inventory */
-  cast_spell(op,op,op->stats.sp?op->stats.sp:(RANDOM()%8)+1,op->stats.dam,
+  cast_spell(op,op,op->stats.sp?op->stats.sp:rndm(1, 8),op->stats.dam,
 	1,spellNormal,NULL);
 }
 
 void move_firechest(object *op) {
   if ( ! op->map)
     return;   /* dm has created a firechest in his inventory */
-  fire_a_ball(op,(RANDOM()%8)+1,7);
+  fire_a_ball(op,rndm(1, 8),7);
 }
 
 
@@ -993,7 +993,7 @@ void move_player_mover(object *op) {
     int dir = op->stats.sp;
 
     /* Determine direction now for random movers so we do the right thing */
-    if (!dir) dir=(RANDOM()%8)+1;
+    if (!dir) dir=rndm(1, 8);
 
     for(victim=get_map_ob(op->map,op->x,op->y); victim !=NULL; victim=victim->above) {
 	if(QUERY_FLAG(victim, FLAG_ALIVE)&& (!(QUERY_FLAG(victim,FLAG_FLYING))||op->stats.maxhp)) {

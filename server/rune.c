@@ -173,7 +173,7 @@ void move_rune(object *op) {
     int det=0;
     if(!op->level) {return;}  /* runes of level zero cannot detonate. */
     det=op->invisible;
-    if(!(RANDOM()%(MAX(1,(op->stats.Cha)))))
+    if(!(rndm(0, MAX(1,(op->stats.Cha))-1)))
 	{
 	op->invisible=0;
 	op->speed_left-=1;
@@ -390,10 +390,10 @@ void trap_adjust(object *trap, int difficulty)
   /* the formula below will give a level from 1 to (2*difficulty) with */
   /* a peak probability at difficulty */
 
-  trap->level = MAX(1,RANDOM()%difficulty + RANDOM()%difficulty);
+  trap->level = MAX(1, rndm(0, difficulty-1) + rndm(0, difficulty-1));
 
   /* set the hiddenness of the trap, similar formula to above */
-  trap->stats.Cha = RANDOM()%20 + RANDOM()%difficulty + RANDOM()%difficulty;
+  trap->stats.Cha = rndm(0, 19) + rndm(0, difficulty-1) + rndm(0, difficulty-1);
 
   /* set the damage of the trap if it's not a spellcasting trap 
 	we get 0-4 pts of damage per level of difficulty of the map in
@@ -401,12 +401,13 @@ void trap_adjust(object *trap, int difficulty)
 
   if(trap->stats.sp == 0) {
 	trap->stats.dam = 0;
-	for(i=0;i<difficulty;i++) trap->stats.dam+=RANDOM()%5;
+	for(i=0;i<difficulty;i++) trap->stats.dam+=rndm(0, 4);
   }
     
 
   /*  the poison trap special case */
-  if(trap->attacktype & AT_POISON) trap->stats.dam = MAX(1,RANDOM()%difficulty);  
+  if(trap->attacktype & AT_POISON)
+      trap->stats.dam = MAX(1, rndm(0, difficulty-1));  
 
   /*  so we get an appropriate amnt of exp for AT_DEATH traps */
   if(trap->attacktype & AT_DEATH) trap->stats.dam = 127;

@@ -1128,7 +1128,7 @@ void check_cone_push(object *op) {
 	/* count the object's sections */
 	for(tmp2 = tmp; tmp2!=NULL;tmp2=tmp2->more) num_sections++;
 
-	if(RANDOM() % weight_move > tmp->weight/num_sections) {  /* move it. */
+	if(rndm(0, weight_move-1) > tmp->weight/num_sections) {  /* move it. */
 	    /* move_object is really for monsters, but looking at 
 	     * the move_object function, it appears that it should
 	     * also be safe for objects.
@@ -1159,7 +1159,7 @@ void check_cone_push(object *op) {
 	/* count the object's sections */
 	for(tmp2 = tmp; tmp2!=NULL;tmp2=tmp2->more) num_sections++;
       
-	if(RANDOM() % weight_move > tmp->weight/num_sections) {  /* move it. */
+	if(rndm(0, weight_move-1) > tmp->weight/num_sections) {  /* move it. */
 	    remove_ob(tmp);
 	    tmp->x = nx;
 	    tmp->y = ny;
@@ -1342,7 +1342,7 @@ void forklightning(object *op, object *tmp) {
 			  Should start out at 50, down to 25 for one already going left
 		     down to 0 for one going 90 degrees left off original path*/
 		  
-  if(RANDOM()%100 < tmp->stats.Con)  /* fork left */
+  if(rndm(0, 99) < tmp->stats.Con)  /* fork left */
 	 new_dir = -1;
 		  
 		  /* check the new dir for a wall and in the map*/
@@ -1383,7 +1383,7 @@ int reflwall(mapstruct *m,int x,int y, object *sp_op) {
   if(out_of_map(m,x,y)) return 0;
   for(op=get_map_ob(m,x,y);op!=NULL;op=op->above)
     if(QUERY_FLAG(op, FLAG_REFL_SPELL) && (!QUERY_FLAG(op, FLAG_ALIVE) ||
-       sp_op->type==LIGHTNING || (RANDOM()%100) < 90-sp_op->level/10))
+       sp_op->type==LIGHTNING || (rndm(0, 99)) < 90-sp_op->level/10))
       return 1;
   return 0;
 }
@@ -1441,7 +1441,7 @@ void move_bolt(object *op) {
 	/* New forking code.  Possibly create forks of this object
 			going off in other directions. */
 
-      if(RANDOM()%100< tmp->stats.Dex) {  /* stats.Dex % of forking */
+      if(rndm(0, 99)< tmp->stats.Dex) {  /* stats.Dex % of forking */
 	forklightning(op,tmp);
       }
       if (tmp) {
@@ -1841,8 +1841,8 @@ void move_ball_lightning(object *op) {
       get at it's victim.  */
   dir = 0;
 
-  if(!(RANDOM() %4))
-    j = RANDOM() %2;
+  if(!(rndm(0, 3)))
+    j = rndm(0, 1);
   else j=0;	/* ? j wasn't being assigned to anything before */
   for(i = 1; i < 9; i++) {
     /* i bit 0: alters sign of offset
@@ -1902,7 +1902,7 @@ void move_ball_lightning(object *op) {
   if(i>=0) { /* we have a preferred direction!  */
     /* pick another direction if the preferred dir is blocked. */
     if(wall(op->map,nx + freearr_x[i], ny + freearr_y[i])) {
-      i+= RANDOM()%3-1;  /* -1, 0, +1 */
+      i+= rndm(0, 2)-1;  /* -1, 0, +1 */
       if(i==0) i=8;
       if(i==9) i=1;
     }
@@ -2023,7 +2023,7 @@ int spell_find_dir(mapstruct *m, int x, int y, object *exclude) {
   if (exclude && exclude->type)
     owner_type = exclude->type;
   
-  for(i=(RANDOM()%8)+1;i<max;i++) {
+  for(i=rndm(1, 8);i<max;i++) {
     nx = x + freearr_x[i];
     ny = y + freearr_y[i];
     if(!out_of_map(m,nx,ny)) {
@@ -2150,16 +2150,16 @@ void move_swarm_spell(object *op)
     basedir = op->direction;
     if(basedir == 0) {
         /* spray in all directions! 8) */
-        basedir = RANDOM()%8+1;
+        basedir = rndm(1, 8);
     }
 
     /* new offset calculation to make swarm element distribution
        more uniform */
     if(op->stats.hp) {
         if(basedir & 1) { 
-            adjustdir = cardinal_adjust[RANDOM()%9];
+            adjustdir = cardinal_adjust[rndm(0, 8)];
         } else {
-            adjustdir = diagonal_adjust[RANDOM()%10];
+            adjustdir = diagonal_adjust[rndm(0, 9)];
         }
     } else {
         adjustdir = 0;  /* fire the last one from forward. */
@@ -2370,7 +2370,7 @@ int color_array[20];
 void shuffle_attack(object *op,int change_face)
 {
     int i;
-    i=RANDOM()%22;
+    i=rndm(0, 21);
     op->attacktype|=ATTACKS[i].attacktype|AT_MAGIC;
     if(change_face) {
 	SET_ANIMATION(op, ATTACKS[i].face);

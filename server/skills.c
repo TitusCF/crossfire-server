@@ -651,7 +651,7 @@ int do_skill_ident2(object *tmp,object *pl, int obj_class)
 	   && need_identify(tmp) 
 	   && !tmp->invisible && tmp->type==obj_class) { 
 		chance = die_roll(3, 10, pl, PREFER_LOW)-3 +
-			RANDOM()%(tmp->magic ? tmp->magic*5 : 1); 
+			rndm(0, (tmp->magic ? tmp->magic*5 : 1)-1); 
 		if(skill_value >= chance) {
 		  identify(tmp);
      		  if (pl->type==PLAYER) {
@@ -1225,7 +1225,7 @@ int write_scroll (object *pl, object *scroll) {
 	} else {
 		/* a  confused scribe gets a random spell */ 
 	    do
-			chosen_spell=RANDOM()%NROFREALSPELLS; 
+			chosen_spell=rndm(0, NROFREALSPELLS-1);
 	    while (spells[chosen_spell].scroll_chance==0);
 
 	    newScroll->level=SK_level(pl)>spells[chosen_spell].level ? 

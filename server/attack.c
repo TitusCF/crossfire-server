@@ -74,14 +74,14 @@ int did_make_save_item(object *op, int type,object *originator) {
     for(i=0;i<NROFMATERIALS;i++) {
 	if(op->material&(1<<i)) {
 	    materials++;
-	    if(RANDOM()%20+1>=material[i].save[number]-op->magic-op->resist[number]/100)
+	    if(rndm(1, 20)>=material[i].save[number]-op->magic-op->resist[number]/100)
 		saves++;
 	    /* if the attack is too weak */
 	    if((20-material[i].save[number])/3 > originator->stats.dam) saves++;
 	}
     }
     if (saves==materials || materials==0) return 1;
-    if ((saves==0) || (RANDOM()%materials+1 > saves)) return 0;
+    if ((saves==0) || (rndm(1, materials) > saves)) return 0;
     return 1;
 }
 
@@ -136,7 +136,7 @@ void save_throw_object (object *op, int type, object *originator)
               return;  
         }
 	if(op->nrof>1) {
-	      op = decrease_ob_nr(op,RANDOM()%op->nrof);
+	      op = decrease_ob_nr(op,rndm(0, op->nrof-1));
               if (op)
                   fix_stopped_item (op, m, originator);
 	} else {
@@ -399,12 +399,12 @@ void attack_message(int dam, int type, object *op, object *hitter) {
 
     /* we have no good messages for godpower, and they are usually diseases.
        in addition, scale down magic considerably. */
-    if ((type & AT_MAGIC && RANDOM()%6) || type & AT_GODPOWER)
+    if ((type & AT_MAGIC && rndm(0, 5)) || type & AT_GODPOWER)
       return;
 
     /* Did a player hurt another player?  Inform both! */
     /* only show half the player->player combat messages */
-    if(op->type==PLAYER&& RANDOM()%2 &&
+    if(op->type==PLAYER && rndm(0, 1) &&
        (get_owner(hitter)==NULL?hitter->type:hitter->owner->type)==PLAYER) {
 	if(get_owner(hitter)!=NULL)
 	    sprintf(buf,"%s's %s %s you.",
@@ -424,7 +424,7 @@ void attack_message(int dam, int type, object *op, object *hitter) {
     } /* end of player hitting player */
 
     /* scale down these messages too */
-    if(hitter->type==PLAYER && RANDOM()%3 == 0) {
+    if(hitter->type==PLAYER && rndm(0, 2) == 0) {
 	sprintf(buf,"You %s.",buf1);
 	if (dam != 0) {
 	    if (dam < 10)
@@ -436,7 +436,7 @@ void attack_message(int dam, int type, object *op, object *hitter) {
 	}
 	new_draw_info(NDI_BLACK, 0, hitter, buf);
     } else if(get_owner(hitter)!=NULL&&hitter->owner->type==PLAYER &&
-	      RANDOM()%6 == 0) {
+	      rndm(0, 5) == 0) {
         sprintf(buf,"Your %s%s %s.", hitter->name, buf2, op->name);
 	play_sound_map(op->map, op->x, op->y, SOUND_PLAYER_HITS4);
 	new_draw_info(NDI_BLACK, 0, hitter->owner, buf);
@@ -615,7 +615,7 @@ static int attack_ob_simple (object *op, object *hitter, int base_dam,
             /* If the victim can't see the attacker, it may alert others
              * for help. */
             if (op->type != PLAYER && ! can_see_enemy (op, hitter)
-                && ! get_owner (op) && RANDOM() % (op->stats.Int + 1))
+                && ! get_owner (op) && rndm(0, op->stats.Int))
                 npc_call_help (op);
 
             /* if you were hidden and hit by a creature, you are discovered*/
@@ -963,7 +963,7 @@ int hit_player_attacktype(object *op, object *hitter, int dam,
 	 * Third, you still get a saving through against the effect.
 	 */
         if (op->speed && (QUERY_FLAG(op, FLAG_MONSTER) || op->type==PLAYER) &&
-          !(RANDOM()%((attacktype&AT_SLOW?6:3))) &&
+          !(rndm(0, (attacktype&AT_SLOW?6:3)-1)) &&
 	  ((random_roll(1, 20, op, PREFER_LOW)+save_adj)  < savethrow[level_diff])) {
 
 	    /* Player has been hit by something */
@@ -1002,7 +1002,7 @@ int hit_player_attacktype(object *op, object *hitter, int dam,
 			continue; /* To avoid some strange effects */
 
 		/* High damage acid has better chance of corroding objects */
-		if(RANDOM()%(dam+5)>random_roll(0, 39, op, PREFER_HIGH)+2*tmp->magic) {
+		if(rndm(0, dam+4)>random_roll(0, 39, op, PREFER_HIGH)+2*tmp->magic) {
 		    if(op->type==PLAYER) {
 			/* Make this more visible */
 			new_draw_info_format(NDI_UNIQUE|NDI_RED,0, op,
@@ -1415,7 +1415,7 @@ int hit_player(object *op,int dam, object *hitter, int type) {
       if (dam >= 100)
 	dam /= 100;
       else
-	dam = (dam > (RANDOM()%100)) ? 1 : 0;
+	dam = (dam > (rndm(0, 99))) ? 1 : 0;
     }
 
     /* AT_CHAOS here is a weapon or monster.  Spells are handled by hit_map

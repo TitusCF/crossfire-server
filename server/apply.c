@@ -3029,7 +3029,7 @@ void apply_changes_to_player(object *pl, object *change) {
 	    }
 
 	    for(j=0;excess_stat >0 && j<100;j++)  {/* try 100 times to assign excess stats */
-		int i = RANDOM() %7;
+		int i = rndm(0, 6);
 		int stat=get_attr_value(stats,i);
 		int race_bonus = get_attr_value(&(pl->arch->clone.stats),i);
 		if(i==CHA) continue;  /* exclude cha from this */

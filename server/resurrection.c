@@ -168,7 +168,7 @@ int resurrection_fails(int levelcaster,int leveldead)
     */
   chance+=levelcaster-leveldead;
   if(chance<4) chance=4;
-  if(chance>RANDOM()%20) return 0;  /* resurrection succeeds */
+  if(chance>rndm(0, 19)) return 0;  /* resurrection succeeds */
   return 1;
 }
 
@@ -255,7 +255,7 @@ int resurrect_player(object *op,char *playername,int rspell)
       }
      if(rspell==SP_REINCARNATION) {
 	if(! (strcmp(buf2,"race"))) {
-	    sprintf(buf,"race %s\n",races[RANDOM()%12+1]);
+	    sprintf(buf,"race %s\n",races[rndm(1, 12)]);
 	}
      }
   fputs(buf,liveplayer);

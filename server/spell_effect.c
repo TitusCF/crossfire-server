@@ -188,7 +188,7 @@ int recharge(object *op) {
   new_draw_info_format(NDI_UNIQUE, 0, op,
 	"The %s glows with power.",query_name(wand));
 
-  wand->stats.food += RANDOM()%spells[wand->stats.sp].charges + 1;
+  wand->stats.food += rndm(1, spells[wand->stats.sp].charges);
   if(wand->arch&&QUERY_FLAG(&wand->arch->clone, FLAG_ANIMATE))
   {
     SET_FLAG(wand, FLAG_ANIMATE);
@@ -244,7 +244,7 @@ void polymorph_living(object *op) {
     if (!numat) return;	/* no valid matches? if so, return */
 
     /* Next make a choice, and loop through until we get to it */
-    choice = RANDOM()%numat;
+    choice = rndm(0, numat-1);
     for(at = first_archetype ; at != NULL; at = at->next)
 	if(QUERY_FLAG((&at->clone),FLAG_MONSTER) == QUERY_FLAG(op, FLAG_MONSTER) &&
 	   at->more == NULL && EDITABLE((&at->clone)))
@@ -353,7 +353,7 @@ void polymorph_item(object *who, object *op) {
     if (difficulty<0) difficulty=0;
     new_ob = get_object();
     do {
-	choice = RANDOM()%numat;
+	choice = rndm(0, numat-1);
 	for(at = first_archetype ; at != NULL; at = at->next) {
 	    if(at->clone.type == op->type && !at->clone.invisible && 
 	       at->clone.value > 0 && at->clone.value < max_value && 
@@ -382,7 +382,7 @@ void polymorph_item(object *who, object *op) {
     if(op->nrof && new_ob->nrof) {
 	new_ob->nrof = op->nrof;
 	/* decrease the number of items */
-	if (new_ob->nrof>2) new_ob->nrof -= RANDOM() % (op->nrof/2);
+	if (new_ob->nrof>2) new_ob->nrof -= rndm(0, op->nrof/2-1);
     }
 
     /* We don't want rings to keep sustenance/hungry status. There are propably
@@ -434,7 +434,7 @@ void polymorph(object *op, object *who) {
        || QUERY_FLAG(op, FLAG_NO_PASS) || op->type == TREASURE)
 	return;
 
-    tmp = RANDOM() % 8;
+    tmp = rndm(0, 7);
     if (tmp) polymorph_item(who, op);
     else polymorph_melt(who, op);
 }
@@ -695,10 +695,10 @@ int cast_wor(object *op, object *caster) {
 
 int cast_wow(object *op, int dir, int ability, SpellTypeFrom item) {
   int sp;
-  if(!(RANDOM()%4))
+  if(!rndm(0, 3))
     return cast_cone(op,op,0,10,SP_WOW,spellarch[SP_WOW],0);
   do
-    sp=RANDOM()%NROFREALSPELLS;
+    sp=rndm(0, NROFREALSPELLS-1);
   while (!spells[sp].books);
   return cast_spell(op,op,dir,sp,ability,item,NULL);
 }
@@ -1234,7 +1234,7 @@ int dimension_door(object *op,int dir) {
 	 * a no magic spot.
 	 */
 	if(blocked(op->map,op->x+freearr_x[dir]*dist, op->y+freearr_y[dir]*dist)){
-	    int x=RANDOM()%MAP_WIDTH(op->map),y=RANDOM()%MAP_HEIGHT(op->map);
+	    int x=rndm(0, MAP_WIDTH(op->map)-1),y=rndm(0, MAP_HEIGHT(op->map)-1);
 
 	    if(blocked(op->map,x,y) || blocks_magic(op->map,x,y)) {
 		new_draw_info(NDI_UNIQUE, 0,op,"You cast your spell, but nothing happens.\n");
@@ -1754,7 +1754,7 @@ int summon_pet(object *op, int dir, SpellTypeFrom item) {
   level = ((op->head?op->head->level:SK_level(op)) / 4);
   if (level >= MAX_PET_MONSTERS)
     level = MAX_PET_MONSTERS - 1;
-  switch(RANDOM()%3) {
+  switch(rndm(0, 2)) {
   case 0:
     number = priest_num_called[level];
     monster = priest_pet_monsters[level];
@@ -1955,7 +1955,7 @@ void cancellation(object *op)
 	cancellation(tmp);
   }
   else				/* Nullify this object. */
-    if(FABS(op->magic)<=(RANDOM()%6)) {
+    if(FABS(op->magic)<=(rndm(0, 5))) {
       op->magic=0;
       CLEAR_FLAG(op, FLAG_DAMNED);
       CLEAR_FLAG(op, FLAG_CURSED);
@@ -2087,13 +2087,13 @@ static void alchemy_object(object *obj, int *small_nuggets,
     else
 	value *= 0.9;
 
-    if ((obj->value>0) && RANDOM()%30) {
+    if ((obj->value>0) && rndm(0, 29)) {
 #ifdef LOSSY_ALCHEMY
 	int tmp = (value % large->value) / small->value;
 
 	*large_nuggets += value/ large->value;
 	if (tmp)
-	    *small_nuggets += RANDOM() % (tmp + 1);
+	    *small_nuggets += rndm(1, tmp);
 #else
 	static int value_store;
 	int count;
@@ -2815,7 +2815,7 @@ void counterspell(object *op,int dir)
 		break;
 	    }
 	    case 2: {
-		if(RANDOM()%150 == 0) {
+		if(rndm(0, 149) == 0) {
 		    tmp->stats.hp--;  /* weaken the rune */
 		    if(!tmp->stats.hp) {
 			remove_ob(tmp);
@@ -2949,7 +2949,7 @@ object *choose_cult_monster(object *pl, object *god, int summon_level) {
  
     /* next, randomly select a race from the aligned_races string */
     if(racenr>1) { 
-	racenr = RANDOM()%racenr;
+	racenr = rndm(0, racenr-1);
 	strcpy(buf,god->race);
         race = strtok(buf,",");
         for(i=0;i<racenr;i++) 
@@ -2985,7 +2985,7 @@ object *choose_cult_monster(object *pl, object *god, int summon_level) {
      * a valid entry, assuming nothing is available and quit.
      */
     if (!mon_nr) return NULL;
-    mon_nr = RANDOM() % mon_nr;
+    mon_nr = rndm(0, mon_nr-1);
     for(tobl=list->member;tobl;tobl=tobl->next) {
 	otmp=tobl->ob;
 	if(!otmp||!QUERY_FLAG(otmp,FLAG_MONSTER)) continue;
@@ -3078,7 +3078,7 @@ int summon_cult_monsters(object *op, int old_dir) {
 	    int ii;
 
 	    for(ii=summon_level-(head->level)-5;ii>0;ii--) {
-		switch(RANDOM()%3+1) {
+		switch(rndm(1, 3)) {
 		    case 1:
 			head->stats.wc--;
 			break;
@@ -3924,7 +3924,7 @@ void move_peacemaker(object *op) {
     if(victim->stats.exp == 0) continue;
     def_lev = MAX(1,victim->level);
     atk_lev = MAX(1,op->level);
-    if(RANDOM() % atk_lev > def_lev) {
+    if(rndm(0, atk_lev-1) > def_lev) {
 
       /* make this sucker peaceful. */
       victim->stats.dam = 0;

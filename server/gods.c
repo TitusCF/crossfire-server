@@ -432,7 +432,7 @@ char *determine_god(object *op) {
 	if(!op->title) {
 	    godlink *gl=first_god;
 
-	    godnr = (RANDOM()%gl->id) + 1;
+	    godnr = rndm(1, gl->id);
 	    while(gl) {
 		if(gl->id==godnr) break;
 		gl=gl->next;
