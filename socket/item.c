@@ -7,7 +7,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2000 Mark Wedel
+    Copyright (C) 2002 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -24,7 +24,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to mwedel@scruz.net
+    The author can be reached via e-mail to crossfire-devel@real-time.com
 */
 
 /* This containes item logic for client/server.  IT doesn't contain
@@ -772,7 +772,14 @@ void esrv_move_object (object *pl, tag_t to, tag_t tag, long nrof)
 #if 0
     printf ("Sacks name was '%s'.\n", env->name);
 #endif
-    put_object_in_sack (pl, env, op, nrof);
+    /* put_object_in_sack presumes that necessary sanity checking
+     * has already been done (eg, it can be picked up and fits in
+     * in a sack, so check for those things.  We should also check
+     * an make sure env is in fact a container for that matter.
+     */
+    if (env->type == CONTAINER && can_pick(pl, op) && sack_can_hold(pl, env, op, nrof)) {
+	put_object_in_sack (pl, env, op, nrof);
+    }
 }
 
 

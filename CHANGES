@@ -17,6 +17,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+socket/item.c: Add checks to esrv_move_object - before it just trusted
+the client that the destination target to move items into was a container.
+Now do valid checking that the object can be picked up, that the container
+can hold it, etc.  MSW 2002-04-18
+
 Add utils/crossloop.web.in script.  This script is used on metalforge -
    it generates the backtrace file, compresses the core, and sends out
    mail.
