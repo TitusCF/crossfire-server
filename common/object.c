@@ -499,6 +499,7 @@ void reset_object(object *op) {
   op->race = NULL;
   op->slaying = NULL;
   op->msg = NULL;
+  op->material = NULL;
   for(i=0;i<30;i++)
   {
     op->event_hook[i] = NULL;
