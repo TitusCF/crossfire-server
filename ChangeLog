@@ -17,6 +17,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+common/item.c: Fix bug with identified potions not getting set to proper name.
+MSW 2002-10-03
+
 Bugfixes:  Add golem_count element to player structure so we can properly
    detect when golem is destroyed.  This fixes a crash in some places as the
    code tried to remove this already removed golem.
@@ -27,7 +30,7 @@ server/player.c: Add code in handle_newscs_player() that checks status of
 server/spell_effect.c, server/spell_util.c: Initialize golem_count 
     value when golem is created.
 socket/request.c: Check for null map value.
-MSW 2002-10-04
+MSW 2002-10-02
 
 Mostly bugfixes, but the addition of a wiz 'hide' command which makes the
    wiz out of sight so to speak.
