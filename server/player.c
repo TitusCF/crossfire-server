@@ -1840,6 +1840,19 @@ int handle_newcs_player(object *op)
 	op->invisible--;
 	if(!op->invisible) make_visible(op);
     }
+
+    /* I've been seeing crashes where the golem has been destroyed, but
+     * the player object still points to the defunct golem.  The code that
+     * destroys the golem looks correct, and it doesn't always happen, so
+     * put this in a a workaround to clean up the golem pointer.
+     */
+    if (op->contr->golem && 
+	((op->contr->golem_count != op->contr->golem->count) || 
+	 QUERY_FLAG(op->contr->golem, FLAG_REMOVED))) {
+	op->contr->golem = NULL;
+	op->contr->golem_count = 0;
+    }
+
     /* call this here - we also will call this in do_ericserver, but
      * the players time has been increased when doericserver has been
      * called, so we recheck it here.

@@ -125,6 +125,7 @@ typedef struct pl {
     uint16	last_flags;	    /* fire/run on flags for last tick */
     uint32	last_weight_limit;  /* Last weight limit transmitted to client */
     object	*golem;		    /* Which golem is controlled */
+    uint32	golem_count;	    /* To track the golem */
     living	orig_stats;	    /* Permanent real stats of player */
     living	last_stats;	    /* Last stats as sent to client */
     float	last_speed;	    /* Last speed as sent to client */

@@ -803,6 +803,7 @@ int summon_monster(object *op,object *caster,int dir,archetype *at,int spellnum)
 /* Don't see any point in setting this when monsters summon monsters: */
     set_owner(tmp,op);
     op->contr->golem=tmp;
+    op->contr->golem_count = tmp->count;
     /* give the player control of the golem */
     op->contr->shoottype=range_golem;
   } else {

@@ -3195,6 +3195,7 @@ int summon_avatar(object *op,object *caster,int dir, archetype *at, int spellnum
 
   if(op->type==PLAYER) {
     op->contr->golem=tmp;
+    op->contr->golem_count = tmp->count;
     /* give the player control of the golem */
     op->contr->shoottype=range_golem;
   } 

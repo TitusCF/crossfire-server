@@ -1372,7 +1372,7 @@ void draw_client_map(object *pl)
      * can get swapped out.  If so, don't try to send them a map.  All will
      * be OK once they really log in.
      */
-    if (pl->map->in_memory!=MAP_IN_MEMORY) return;
+    if (pl->map==NULL || pl->map->in_memory!=MAP_IN_MEMORY) return;
     memset(&newmap, 0, sizeof(struct Map));
 
     for(j = (pl->y - pl->contr->socket.mapy/2) ; j < (pl->y + (pl->contr->socket.mapy+1)/2); j++) {

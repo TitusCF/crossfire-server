@@ -17,6 +17,18 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Bugfixes:  Add golem_count element to player structure so we can properly
+   detect when golem is destroyed.  This fixes a crash in some places as the
+   code tried to remove this already removed golem.
+  Fix crash when null player maps.
+include/player.h: Add golem_count element to player structure.
+server/player.c: Add code in handle_newscs_player() that checks status of
+    golem, clears op->contr->golem is value is bogus
+server/spell_effect.c, server/spell_util.c: Initialize golem_count 
+    value when golem is created.
+socket/request.c: Check for null map value.
+MSW 2002-10-04
+
 Mostly bugfixes, but the addition of a wiz 'hide' command which makes the
    wiz out of sight so to speak.
 --
