@@ -254,17 +254,24 @@ void recursive_roll(object *op,int dir,object *pusher) {
 int try_fit (object *op, int x, int y) 
 {
     object *tmp, *more;
-    int tx, ty;
+    sint16 tx, ty;
+    int mflags;
+    mapstruct *m;
+
     if (op->head) 
 	op = op->head;
 
     for (more = op; more ; more = more->more) {
 	tx = x + more->x - op->x;
 	ty = y + more->y - op->y;
-	if (out_of_map(op->map,tx,ty))
+	m = op->map;
+
+	mflags = get_map_flags(m, &m, tx, ty, &tx, &ty);
+
+	if (mflags & P_OUT_OF_MAP)
 	    return 1;
 
-	for (tmp = get_map_ob (more->map, tx, ty); tmp; tmp=tmp->above) {
+	for (tmp = get_map_ob (m, tx, ty); tmp; tmp=tmp->above) {
 	    if (tmp->head == op || tmp == op)
 		continue;
 
@@ -283,31 +290,42 @@ int try_fit (object *op, int x, int y)
 /*
  * this is not perfect yet. 
  * it does not roll objects behind multipart objects properly.
+ * Support for rolling multipart objects is questionable.
  */
 
 int roll_ob(object *op,int dir, object *pusher) {
     object *tmp;
-    int x, y;
+    sint16 x, y;
+    int flags;
+    mapstruct *m;
+
     if (op->head) 
 	op = op->head;
+
     x=op->x+freearr_x[dir];
     y=op->y+freearr_y[dir];
+
     if(!QUERY_FLAG(op,FLAG_CAN_ROLL) || 
        (op->weight &&
        random_roll(0, op->weight/50000-1, pusher, PREFER_LOW) > pusher->stats.Str))
 	return 0;
 
-    if(out_of_map(op->map,x,y))
+    m = op->map;
+    flags = get_map_flags(m, &m, x, y, &x, &y);
+
+    if (flags & (P_OUT_OF_MAP | P_IS_ALIVE))
 	return 0;
 
-    for(tmp=get_map_ob(op->map,op->x+freearr_x[dir],op->y+freearr_y[dir]);
-	tmp!=NULL;tmp=tmp->above) {
+    
+
+    /* If the target space is not blocked, no need to look at the objects on it */
+    if (flags & P_BLOCKED) {
+	for (tmp=get_map_ob(m, x, y); tmp!=NULL; tmp=tmp->above) {
 	if (tmp->head == op)
 	    continue;
-	if(QUERY_FLAG(tmp,FLAG_ALIVE))
-	    return 0;
 	if (QUERY_FLAG(tmp,FLAG_NO_PASS) && !roll_ob(tmp,dir,pusher))
 	    return 0;
+	}
     }
     if (try_fit (op, x, y))
 	return 0;

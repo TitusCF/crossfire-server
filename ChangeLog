@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/move.c: fix try_to_fit and roll_ob to work properly on tiled maps.
+Also some performance improvements to those functions.
+MSW 2003-01-12
+
 Bulk of this commit is to improve code for tiled maps - replace
 wall/blocks_magic/blocks_cleric, etc with get_map_flags which
 also does map tiling translation as needed.  This should fix a lot
