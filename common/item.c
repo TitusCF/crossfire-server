@@ -244,7 +244,7 @@ char *describe_resistance(object *op, int newline)
 
 char *query_weight(object *op) {
   static char buf[10];
-  int i=op->nrof?op->nrof*op->weight:op->weight+op->carrying;
+  sint32 i=op->nrof?op->nrof*op->weight:op->weight+op->carrying;
 
   if(op->weight<0)
     return "      ";
