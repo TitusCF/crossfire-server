@@ -140,7 +140,13 @@ sleep_delta()
     static struct timeval sleep_time;
     sleep_time.tv_sec = sleep_sec;
     sleep_time.tv_usec = sleep_usec;
+
+#ifndef WIN32 /* 'select' doesn't work on Windows, 'Sleep' is used instead */
     select(0, NULL, NULL, NULL, &sleep_time);
+#else
+    if (sleep_time.tv_sec) Sleep(sleep_time.tv_sec*1000);
+    Sleep((int)(sleep_time.tv_usec/1000.));
+#endif
   }
   else
     process_utime_long_count++;
