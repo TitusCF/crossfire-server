@@ -17,6 +17,21 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Experience cleanup - the main functional change is that no upper limit of 
+   exp in an individual skill, save for the limit that there is an upper
+   limit of total exp a player can have.  Thus, if a player concentrates
+   complete in one skill, he could get to level 110 in it.  A lot of
+   code cleanup was done - so much had gotten added to the exp code that it
+   was a real mess.
+common/living.c: re-arrange some of the code, so all the exp related
+   functions are together.  remove adjust_exp(), change check_dm_add_exp_to_obj()
+   to check_exp_adjust.  Add new functions add_player_exp(), check_exp_loss(),
+   check_exp_add(), subtract_player_exp().
+include/libproto.h: rebuilt.
+server/c_wiz.c: Update command_addexp() to use new exp functions.
+server/gods.c: Update lose_priest_exp() to use new exp functions.
+MSW 2002-10-11
+
 configure, configure.ac: Remove --enable-old-layout option - that is more than
     3+ years old now.  Add --enable-dmalloc option so code can be compiled
     with dmalloc debugging without needing to change/rebuild the configure

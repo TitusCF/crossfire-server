@@ -723,23 +723,24 @@ int command_addexp (object *op, char *params)
       return 1;
     }
 
-/* In new system: for dm adding experience to a player, only can 
- * add exp if we satisfy the following: 
- * 1) there is an associated skill readied by the player 
- * 2) added exp doesnt result in exp_ob->stats.exp>MAX_EXP_IN_OBJ 
- */
+    /* In new system: for dm adding experience to a player, only can 
+     * add exp if we satisfy the following: 
+     * 1) there is an associated skill readied by the player 
+     * 2) added exp doesnt result in exp_ob->stats.exp>MAX_EXP_IN_OBJ 
+     */
 
     if((skill = pl->ob->chosen_skill) && ((exp_ob = pl->ob->chosen_skill->exp_obj)
        || link_player_skill(pl->ob, skill))) { 
-      i = check_dm_add_exp_to_obj(exp_ob,i);
-      exp_ob->stats.exp += i;
+	i = check_exp_adjust(exp_ob,i);
+	exp_ob->stats.exp += i;
+	player_lvl_adj(pl->ob, exp_ob);
     } else {
       new_draw_info(NDI_UNIQUE, 0,op,"Can't find needed experience object.");
       new_draw_info(NDI_UNIQUE, 0,op,"Player has no associated skill readied.");
       return 1;
     }
     pl->ob->stats.exp += i;
-    add_exp(pl->ob,0);
+    player_lvl_adj(pl->ob, NULL);
 #ifndef REAL_WIZ
     SET_FLAG(pl->ob, FLAG_WAS_WIZ);
 #endif

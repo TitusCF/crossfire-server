@@ -1052,9 +1052,10 @@ void lose_priest_exp(object *pl, int loss) {
     LOG(llevError,"Bad call to lose_priest_exp() \n");
     return;
   }
-  if((loss = check_dm_add_exp_to_obj(pl->chosen_skill->exp_obj,loss))) {
+  if((loss = check_exp_loss(pl->chosen_skill->exp_obj,loss))) {
     pl->chosen_skill->exp_obj->stats.exp -= loss;
     pl->stats.exp -= loss;
-    add_exp(pl,0);
+    player_lvl_adj(pl, pl->chosen_skill->exp_obj);
+    player_lvl_adj(pl, NULL);
   }
 }

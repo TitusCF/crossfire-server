@@ -1321,155 +1321,6 @@ int allowed_class(object *op) {
 }
 
 /*
- * Returns how much experience is needed for a player to become
- * the given level.
- */
-
-uint32 level_exp(int level,double expmul) {
-    static long int bleep=1650000; 
-
-    if(level<=100) {
-	return expmul * levels[level];
-    }
-
-    /*  return required_exp; */
-    return expmul*(levels[100]+bleep*(level-100));
-}
-
-/* add_exp() - new algorithm. Revamped experience gain/loss routine. 
- * Based on the old add_exp() function - but tailored to add experience 
- * to experience objects. The way this works-- the code checks the 
- * current skill readied by the player (chosen_skill) and uses that to
- * identify the appropriate experience object. Then the experience in
- * the object, and the player's overall score are updated. In the case
- * of exp loss, all exp categories which have experience are equally
- * reduced. The total experience score of the player == sum of all 
- * exp object experience.  - b.t. thomas@astro.psu.edu 
- */
- 
-void add_exp(object *op, int exp) {
-    object *exp_ob=NULL; /* the object into which experience will go */ 
-    object *tmp,*pl_exp[MAX_EXP_CAT];
-    int old_exp,del_exp=0,nrofexp=0,i;
-
-    /* safety */
-    if(!op) { 
-	LOG(llevError,"add_exp() called for null object!\n"); 
-	return; 
-    }
-
-#ifdef EXP_DEBUG
-    LOG(llevDebug,"add_exp() called for %s, exp = %d\n",query_name(op),exp); 
-#endif
-
-    if(op->type != PLAYER) { 		/* for Monsters only */
-	/* Sanity check */
-	if (!QUERY_FLAG(op, FLAG_ALIVE)) return;
-	exp =  adjust_exp(op,exp);
-    }
-    else {				/* Players only */ 
-	if(exp>0) { /* ADDING exp (to one object) */ 
-	    int limit=0;
-
-	    if(!op->chosen_skill) { 
-		LOG(llevError,"add_exp() called for %s w/ no ready skill.\n",op->name);
-		return;
-	    } else if(!op->exp_obj && !op->chosen_skill->exp_obj) { 
-		/* This shouldn't be an error - killing monsters via scrolls
-		 * will get here, because use_magic skill doesn't give exp -
-		 * this means things like rods and scrolls.
-		 */
-		LOG(llevDebug,"add_exp() called for skill w/o exp obj (%s), .\n", 
-		    op->chosen_skill->name);
-		return;
-	    }
-
-	    /* if op->exp_obj is set, then the player has killed with an 
-	     * animated object cf. fireball */
-	    if(op->exp_obj)  
-		exp_ob = op->exp_obj;
-	    else
-		exp_ob = op->chosen_skill->exp_obj; 
-
-	    /* General adjustments for playbalance */ 
-
-	    /* I changed this from the old algorithm. Formerly,
-	     * if the experience you would have gained was 
-	     * greater than 1/2 your TOTAL experience, you only
-	     * gained 1/2 the award (which could *still be greater
-	     * than 1/2 your total exp!) (Actually, incorrect.  Previously
-	     * if it was greater than half your total, you would gain half your
-	     * your total - mw) . Now, exp gain is limited
-	     * so the exp award can be no *more than* 1/2 of 
-	     * the exp is takes to get from your present level to 
-	     * the next one (basically, no one can learn faster than
-	     * that!).
-	     */
-
-	    if(exp_ob->level < MAXLEVEL) { 
-		limit=(levels[exp_ob->level+1]-levels[exp_ob->level])/2;
-		if (exp > limit) exp=limit;
-	    } else { /* there is no going any higher! */ 
-		return;
-	    }
-
-	    /* prevents some forms of abuse */
-	    if(op->type==PLAYER && op->contr->braced) exp=exp/5; 
-
-	    /* Adding exp properly - we have to make sure that:
-	     *	1) op->stats.exp<MAX_EXPERIENCE 
-	     *	2) exp_ob->stats.exp<MAX_EXP_IN_OBJ
-	     * 	3) sum of exp obj experience = op->stats.exp
-	     */
-
-	    exp = adjust_exp(op,exp);	/* op->stats.exp < MAX_EXPERIENCE */ 
-	    old_exp = exp;	
-	    exp = adjust_exp(exp_ob,exp);   /* exp_ob->stats.exp < MAX_EXP_IN_OBJ */ 
-					    /* check and  adjustment */ 
-	    if(old_exp>exp) op->stats.exp+=(exp-old_exp); 
-	    player_lvl_adj(op,NULL);   
-	    player_lvl_adj(op,exp_ob);   
-  
-	} else if (op->type ==PLAYER && exp < 0) { /* SUBTRACT exp (from all exp obj) */ 
-	    float fraction = (float) exp/(float) op->stats.exp;
-
-	    /* Sub exper - we will remove the same fraction of experience
-	     * from all experience objects. 
-	     */
-
-	    for(tmp=op->inv;tmp;tmp=tmp->below)
-		if(tmp->type==EXPERIENCE && tmp->stats.exp) { 
-		    pl_exp[nrofexp] = tmp;
-		    nrofexp++; 
-		}
-
-	    /* we do experience objects first here */
-	    for(i=0;i<nrofexp;i++) { 
-		del_exp += adjust_exp(pl_exp[i],(pl_exp[i]->stats.exp*fraction)); 
-		player_lvl_adj(op,pl_exp[i]); /* adj exp object */ 
-	    }
-
-	    (void) adjust_exp(op, del_exp);
-	    player_lvl_adj(op,NULL); 
-
-	} else if (op->type !=PLAYER && exp < 0) { /* SUBTRACT monster exp */ 
-
-	    (void) adjust_exp(op, exp);
-	    player_lvl_adj(op,NULL);
-
-	} else { /* No exp gain, but check lvl adj */ 
-
-	    if(op->chosen_skill && op->chosen_skill->exp_obj)
-		player_lvl_adj(op, op->chosen_skill->exp_obj);
-	    player_lvl_adj(op,NULL); 
-	}
-
-	/* reset the player exp_obj to NULL */
-	if(op->exp_obj) op->exp_obj = NULL;
-    }
-}
-
-/*
  * set the new dragon name after gaining levels or
  * changing ability focus (later this can be extended to
  * eventually change the player's face and animation)
@@ -1616,6 +1467,24 @@ void player_lvl_adj(object *who, object *op) {
     }
 }
 
+
+
+/*
+ * Returns how much experience is needed for a player to become
+ * the given level.
+ */
+
+uint32 level_exp(int level,double expmul) {
+    static long int bleep=1650000; 
+
+    if(level<=100) {
+	return expmul * levels[level];
+    }
+
+    /*  return required_exp; */
+    return expmul*(levels[100]+bleep*(level-100));
+}
+
 /* Ensure that the permanent experience requirements in an exp object are met. */
 /* GD */
 void calc_perm_exp(object *op)
@@ -1645,107 +1514,228 @@ void calc_perm_exp(object *op)
     /* Cap permanent experience. */
     if (op->last_heal < 0)
         op->last_heal = 0;
-    else if (op->last_heal > MAX_EXP_IN_OBJ)
-        op->last_heal = MAX_EXP_IN_OBJ;
+    else if (op->last_heal > MAX_EXPERIENCE)
+        op->last_heal = MAX_EXPERIENCE;
 }
 
-/* adjust_exp() - make sure that we don't exceed max or min set on
- * experience
+
+/* Add experience to a player - exp should only be positive.
+ * Updates permanent exp for the skill we are adding to.
  */
-int adjust_exp(object *op, int exp) {
-    int max_exp = MAX_EXPERIENCE;
 
-    if (settings.use_permanent_experience) {
-        /* Permanent experience code. Blame me if any problems. :) */
-        /* This code _only_ affects experience objects. */
-        /* GD */
-        if (op->type == EXPERIENCE) {
-            int p_exp_gain;
-            int max_loss;
+static void add_player_exp(object *op, int exp)
+{
+    object *exp_ob=NULL;
+    int limit;
 
-            /* Ensure that our permanent experience minimum is met. */
-            calc_perm_exp(op);            
-            
-            /* Experience gain: We get a ratio of the gain as permanent experience. */
-            if (exp > 0) {
-                p_exp_gain = (int)(PERM_EXP_GAIN_RATIO * exp);
-                op->last_heal += p_exp_gain;
-
-                /* Update our new perm exp (so we display the right amount when asked. */
-                calc_perm_exp(op);
-                
-                /*LOG(llevError, "Gaining %d experience results in %d permanent exp (now %d).\n", exp, p_exp_gain, op->last_heal); */
-            }
-
-            /* Experience loss: Our permanent experience affects this. */
-            if (exp < 0) {
-              /*LOG(llevError, "Experience loss of %d from %d (%d perm).\n",
-                   -exp, op->stats.exp, op->last_heal); */
-                if (op->stats.exp <= op->last_heal) {
-                    /* Cripes. Less experience than permanent experience.
-                       No experience loss. */
-                    max_loss = 0;
-                    exp = 0;
-                } else {
-                    /* Max loss is a ratio of temporary experience (curr-perm). */
-                    max_loss = (int)(PERM_EXP_MAX_LOSS_RATIO * (float)(op->stats.exp - op->last_heal));
-                    if (exp < -max_loss)
-                        exp = -max_loss;
-                }
-                /* LOG(llevError, "Decided on a loss of %d.\n", -exp); */
-            }
-        }
+    if(!op->chosen_skill) { 
+	LOG(llevError,"add_exp() called for %s w/ no ready skill.\n",op->name);
+	return;
+    } else if(!op->exp_obj && !op->chosen_skill->exp_obj) { 
+	/* This shouldn't be an error - killing monsters via scrolls
+	 * will get here, because use_magic skill doesn't give exp -
+	 * this means things like rods and scrolls.
+	 */
+	LOG(llevDebug,"add_exp() called for skill w/o exp obj (%s), .\n", 
+	    op->chosen_skill->name);
+	return;
     }
-    
+
+    /* if op->exp_obj is set, then the player has killed with an 
+     * animated object cf. fireball 
+     */
+    if(op->exp_obj)  
+	exp_ob = op->exp_obj;
+    else
+	exp_ob = op->chosen_skill->exp_obj; 
+
+    /* Basically, you can never gain more experience in one shot
+     * than half what you need to gain for next level.
+     */
+    if(exp_ob->level < MAXLEVEL) { 
+	limit=(levels[exp_ob->level+1]-levels[exp_ob->level])/2;
+	if (exp > limit) exp=limit;
+    } else { /* there is no going any higher! */ 
+	return;
+    }
+
+    /* prevents some forms of abuse */
+    if(op->type==PLAYER && op->contr->braced) exp=exp/5;
+
     op->stats.exp += exp;
-    if(op->stats.exp < 0) {
-	exp -= op->stats.exp;
-	op->stats.exp = 0;
+    exp_ob->stats.exp += exp;
+    if (settings.use_permanent_experience && exp_ob->type == EXPERIENCE) {
+	calc_perm_exp(exp_ob);
+	exp_ob->last_heal += exp * PERM_EXP_GAIN_RATIO;
     }
-    /* reset max_exp value if we have experience obj */
-    if(op->type==EXPERIENCE) 
-	max_exp = MAX_EXP_IN_OBJ;
-
-    if(op->stats.exp>max_exp) {
-	exp = exp - (op->stats.exp - max_exp);
-	op->stats.exp=max_exp;
-    }
-    return exp;	/* return the actual amount changed stats.exp by */ 
+    player_lvl_adj(op,NULL);   
+    player_lvl_adj(op,exp_ob);   
 }
 
-/* check_dm_add_exp() - called from c_wiz.c. Needed by ALLOW_SKILLS
- * code. -b.t.
+/* This function checks to make sure that object 'op' can
+ * lost 'exp' experience.  It returns the amount of exp
+ * object 'op' can in fact lose - it basically makes
+ * adjustments based on permanent exp and the like.
+ * This function should always be used for losing experience -
+ * the 'exp' value passed should be positive - this is the
+ * amount that should get subtract from the player.
  */
+int check_exp_loss(object *op, int exp)
+{
+    int del_exp;
 
-int check_dm_add_exp_to_obj(object *exp_ob, int i) {
+    if (exp > op->stats.exp) exp = op->stats.exp;
+    if (settings.use_permanent_experience && op->type == SKILL) {
+	del_exp = (op->stats.exp - op->last_heal) * PERM_EXP_MAX_LOSS_RATIO;
+	if (del_exp < 0) del_exp = 0;
+	if (exp > del_exp) exp=del_exp;
+    }
+    return exp;
+}
 
-    if((exp_ob->stats.exp + i) < 0) 
-	i= -1*(exp_ob->stats.exp);
-    else if((exp_ob->stats.exp +i)> MAX_EXP_IN_OBJ)
-	i= MAX_EXP_IN_OBJ - exp_ob->stats.exp;
-    return i;
+/* returns the amount of exp we can add to this object.
+ * All this really checks is that we don't go above MAX_EXPERIENCE
+ */
+int check_exp_add(object *op, int exp)
+{
+    object *pl;
+
+    /* In the case of an exp object, we need to find the
+     * parent object.
+     */
+    for (pl=op; pl->env != NULL; pl=pl->env) ;
+
+    /* reset exp to max allowed value.  We subtract from
+     * MAX_EXPERIENCE to prevent overflows.  If the player somehow has
+     * more than max exp, just return.
+     */
+    if (exp > 0 && (pl->stats.exp > (MAX_EXPERIENCE - exp))) {
+	exp = MAX_EXPERIENCE - pl->stats.exp;
+	if (exp < 0) exp=0;
+    }
+    return exp;
+}
+
+int check_exp_adjust(object *op, int exp)
+{
+    if (exp<0) return check_exp_loss(op, exp);
+    return check_exp_add(op, exp);
+}
+
+
+/* Subtracts experience from player.  This subtracts a portion from all
+ * skills the player has.  Eg, if we figure the player is losing 10%
+ * of his total exp, what happens is he loses 10% from all his skills.
+ * Note that if permanent exp is used, player may not in fact lose
+ * as much as listed.  Eg, if player has gotten reduced to the point
+ * where everything is at the minimum perm exp, he would lose nothing.
+ */
+static void subtract_player_exp(object *op, int exp)
+{
+    float fraction = (float) exp/(float) op->stats.exp;
+    object *tmp;
+    int total_loss = 0, del_exp;
+
+
+    for(tmp=op->inv;tmp;tmp=tmp->below)
+	if(tmp->type==EXPERIENCE && tmp->stats.exp) { 
+	    del_exp = check_exp_loss(tmp, tmp->stats.exp * fraction);
+
+	    tmp->stats.exp -= del_exp;
+	    total_loss += del_exp;
+	    player_lvl_adj(op, tmp);
+	}
+
+    op->stats.exp -= total_loss;
+    player_lvl_adj(op,NULL); 
+}
+
+
+
+/* add_exp() - changes experience to a player/monster.  This
+ * does bounds checking to make sure we don't overflow the max exp.
+ * Note that this function is misnamed - it really should be
+ * modify_exp or the like, because exp can be negative, in which
+ * case the player/monster loses exp.
+ * The exp passed is typically not modified much by this function -
+ * it is assumed the caller has modified the exp as needed.
+ * rewritten by Mark Wedel as this was a really hodgepodge of
+ * code.
+ */
+ 
+void add_exp(object *op, int exp) {
+
+#ifdef EXP_DEBUG
+    LOG(llevDebug,"add_exp() called for %s, exp = %d\n",query_name(op),exp); 
+#endif
+
+    /* safety */
+    if(!op) { 
+	LOG(llevError,"add_exp() called for null object!\n"); 
+	return; 
+    }
+
+    /* if no change in exp, just return - most of the below code
+     * won't do anything if the value is 0 anyways.
+     */
+    if (exp == 0) return;
+
+    /* reset exp to max allowed value.  We subtract from
+     * MAX_EXPERIENCE to prevent overflows.  If the player somehow has
+     * more than max exp, just return.
+     */
+    if (exp > 0 && ( op->stats.exp > (MAX_EXPERIENCE - exp))) {
+	exp = MAX_EXPERIENCE - op->stats.exp;
+	if (exp < 0) return;
+    }
+
+    /* Monsters are easy - we just adjust their exp - we   
+     * don't adjust level, since in most cases it is unrelated to
+     * the exp they have - the monsters exp represents what its
+     * worth.
+     */
+    if(op->type != PLAYER) {
+	/* Sanity check */
+	if (!QUERY_FLAG(op, FLAG_ALIVE)) return;
+	op->stats.exp += exp;
+    }
+    else {				/* Players only */ 
+	if(exp>0) 
+	    add_player_exp(op, exp);
+	else
+	    subtract_player_exp(op, exp);
+
+    }
+    /* Reset players experience object pointer - From old code -
+     * not really sure why this should be done - probably to
+     * prevent abuses of it pointing to the wrong thing.
+     */
+    op->exp_obj = NULL;
 }
 
 /* Applies a death penalty experience.  20% or 3 levels, whichever is
-   less experience lost. */
+ *  less experience lost. 
+ */
 
 void apply_death_exp_penalty(object *op) {
-  object *tmp;
-  object *exp_ob;
-  long int del_exp=0;
-  int loss_20p;  /* 20 percent experience loss */
-  int loss_3l;   /* 3 level experience loss */
-  for(tmp=op->inv;tmp;tmp=tmp->below)
-    if(tmp->type==EXPERIENCE && tmp->stats.exp) { 
-      exp_ob = tmp;
-      loss_20p = exp_ob->stats.exp * 0.20;
-      loss_3l = exp_ob->stats.exp - levels[MAX(0,exp_ob->level -3)];
-      if(loss_3l < loss_20p) 
-        del_exp+=adjust_exp(exp_ob,-loss_3l);
-      else
-        del_exp+=adjust_exp(exp_ob,-loss_20p);
-      player_lvl_adj(op,exp_ob);
-    }
-  adjust_exp(op,del_exp);
-  player_lvl_adj(op,NULL);
+    object *tmp;
+    int del_exp=0, loss;
+    int loss_20p;  /* 20 percent experience loss */
+    int loss_3l;   /* 3 level experience loss */
+
+    for(tmp=op->inv;tmp;tmp=tmp->below)
+	if(tmp->type==EXPERIENCE && tmp->stats.exp) { 
+
+	    loss_20p = tmp->stats.exp * 0.20;
+	    loss_3l = tmp->stats.exp - levels[MAX(0,tmp->level -3)];
+	    if(loss_3l < loss_20p) 
+		loss = check_exp_loss(tmp, loss_3l);
+	    else
+		loss = check_exp_loss(tmp, loss_20p);
+	    tmp->stats.exp -= loss;
+	    del_exp += loss;
+	    player_lvl_adj(op,tmp);
+	}
+    op->stats.exp -= del_exp;
+    player_lvl_adj(op,NULL);
 }
