@@ -320,12 +320,12 @@ static char *formula_book_name[] =
 {
     "cookbook",
     "formulary",
-    "handbook",
     "lab book",
     "lab notes",
     "recipe book"
 };
 
+/* this isn't used except for empty books */
 static char *formula_author[] =
 {
     "Albertus Magnus",
@@ -1569,10 +1569,8 @@ spellpath_msg (int level, int booksize)
  * of a randomly selected alchemical formula.
  */
 
-char   *
-formula_msg (int level, int booksize)
-{
-    static char retbuf[BOOK_BUF];
+void make_formula_book(object *book, int level) {
+    char retbuf[BOOK_BUF], title[MAX_BUF];
     recipelist *fl;
     recipe *formula = NULL;
     int     chance;
@@ -1587,85 +1585,109 @@ formula_msg (int level, int booksize)
 
     if (fl->total_chance == 0)
       {
-	  strcpy (retbuf, "\n <undecipherable message> \n");
-	  return retbuf;
+	book->msg = add_string(" <indescipherable text>\n");
+	new_text_name(book, 4);
+	add_author(book,4);
+	return;
       }
 
     /* get a random formula, weighted by its bookchance */
     chance = RANDOM () % fl->total_chance;
-    for (formula = fl->items; formula != NULL; formula = formula->next)
-      {
-	  chance -= formula->chance;
-	  if (chance <= 0)
-	      break;
-      }
+    for (formula = fl->items; formula != NULL; formula = formula->next) {
+	chance -= formula->chance;
+	if (chance <= 0)
+	    break;
+    }
 
     /* preamble */
     strcpy (retbuf, "Herein is described an alchemical proceedure: \n");
 
-    /* looks like a formula was found. Base the amount
-     * of information on the booklevel and the spellevel
-     * of the formula. */
-    if (formula)
-      {
-	  char   *op_name = NULL;
-	  archetype *at;
-	  int     nindex = nstrtok (formula->arch_name, ",");
+    if (!formula) {
+	book->msg = add_string(" <indescipherable text>\n");
+	new_text_name(book, 4);
+	add_author(book,4);
+	
+    } else {
+	/* looks like a formula was found. Base the amount
+	 * of information on the booklevel and the spellevel
+	 * of the formula. */
 
-	  /* construct name of object to be made */
-	  if (nindex > 1)
+	char   *op_name = NULL;
+	archetype *at;
+	int     nindex = nstrtok (formula->arch_name, ",");
+
+	/* construct name of object to be made */
+	if (nindex > 1)
+	{
+	    int     rnum = RANDOM () % nindex;
+	    op_name = strtok (formula->arch_name, ",");
+	    while (rnum)
 	    {
-		int     rnum = RANDOM () % nindex;
-		op_name = strtok (formula->arch_name, ",");
-		while (rnum)
-		  {
-		      op_name = strtok (NULL, ",");
-		      rnum--;
-		  }
+		op_name = strtok (NULL, ",");
+		rnum--;
 	    }
-	  else
-	      op_name = formula->arch_name;
-	  if ((at = find_archetype (op_name)) != (archetype *) NULL)
-	      op_name = at->clone.name;
-	  else
-	      LOG (llevError, "formula_msg() can't find arch %s for formula.",
+	}
+	else
+	    op_name = formula->arch_name;
+
+	if ((at = find_archetype (op_name)) != (archetype *) NULL)
+	    op_name = at->clone.name;
+	else
+	    LOG (llevError, "formula_msg() can't find arch %s for formula.",
 		   op_name);
-	  /* item name */
-	  if (strcmp (formula->title, "NONE"))
-	      sprintf (retbuf, "%sThe %s of %s", retbuf, op_name, formula->title);
-	  else
+
+	/* item name */
+	if (strcmp (formula->title, "NONE")) {
+	    sprintf (retbuf, "%sThe %s of %s", retbuf, op_name, formula->title);
+	    /* This results in things like pile of philo. sulfur.
+	     * while philo. sulfur may look better, without this,
+	     * you get things like 'the wise' because its missing the
+	     * water of section.
+	     */
+	    sprintf(title,"%s: %s of %s", 
+		    formula_book_name[RANDOM() % (sizeof(formula_book_name) / sizeof(char*))],
+		    op_name, formula->title);
+	}
+	else
+	{
+	    sprintf (retbuf, "%sThe %s", retbuf, op_name);
+	    sprintf(title,"%s: %s",
+		    formula_book_name[RANDOM() % (sizeof(formula_book_name) / sizeof(char*))],
+		    op_name);
+	    if (at->clone.title)
 	    {
-		sprintf (retbuf, "%sThe %s", retbuf, op_name);
-		if (at->clone.title)
-		  {
-		      strcat (retbuf, " ");
-		      strcat (retbuf, at->clone.title);
-		  }
+		strcat (retbuf, " ");
+		strcat (retbuf, at->clone.title);
+		strcat(title, " ");
+		strcat(title, at->clone.title);
 	    }
-	  /* ingredients to make it */
-	  if (formula->ingred != NULL)
+	}
+	/* Lets name the book something meaningful ! */
+	if (book->name) free_string(book->name);
+	book->name = add_string(title);
+	if (book->title) {
+	    free_string(book->title);
+	    book->title = NULL;
+	}
+
+	/* ingredients to make it */
+	if (formula->ingred != NULL)
+	{
+	    linked_char *next;
+	    strcat (retbuf, " may be made using the \nfollowing ingredients:\n");
+	    for (next = formula->ingred; next != NULL; next = next->next)
 	    {
-		linked_char *next;
-		strcat (retbuf, " may be made using the \nfollowing ingredients:\n");
-		for (next = formula->ingred; next != NULL; next = next->next)
-		  {
-		      strcat (retbuf, next->name);
-		      strcat (retbuf, "\n");
-		  }
+		strcat (retbuf, next->name);
+		strcat (retbuf, "\n");
 	    }
-	  else
-	      LOG (llevError, "formula_msg() no ingredient list for object %s of %s",
+	}
+	else
+	    LOG (llevError, "formula_msg() no ingredient list for object %s of %s",
 		   op_name, formula->title);
-      }
-    else
-	strcat (retbuf, " <indescipherable text>\n");
-
-#ifdef BOOK_MSG_DEBUG
-    LOG (llevDebug, "\n formula_msg() created strng: %d\n", strlen (retbuf));
-    fprintf (logfile, " MADE THIS:\n%s\n", retbuf);
-#endif
-
-    return retbuf;
+	if (retbuf[strlen(retbuf)-1]!= '\n') strcat(retbuf, "\n");
+	if (book->msg) free_string(book->msg);
+	book->msg = add_string(retbuf);
+    }
 }
 #endif
 
@@ -1957,12 +1979,14 @@ tailor_readable_ob (object *book, int msg_type)
 	  break;
       case 4:			/* describe an alchemy formula */
 #ifdef ALCHEMY
-	  strcpy (msgbuf, formula_msg (level, book_buf_size));
+	    make_formula_book(book, level);
+	    /* make_formula_book already gives title */
+	    return;
 #else
-	  strcpy (msgbuf, msgfile_msg (level, book_buf_size));
-	  msg_type = 0;
+	    strcpy (msgbuf, msgfile_msg (level, book_buf_size));
+	    msg_type = 0;
 #endif
-	  break;
+	    break;
       case 5:			/* bits of information about a god */
 #ifdef MULTIPLE_GODS
 	  strcpy (msgbuf, god_info_msg (level, book_buf_size));

@@ -18,6 +18,12 @@ else.  With this, include the file(s) that you changed.
 
 Changes for CVS:
 
+common/readable.c: When making recipe books, give the recipe that they
+   are for in the title.  Makes it more worthwhile to buy them.
+lib/treasures.c: Increase the chance of readables in chests some (in fact,
+   add a chance.)
+MSW 2001-05-25
+
 lib/artifacts: Reduce potency of Poison artifact foods.
 server/apply.c: When eating poison artifact foods, hit player with poison
     attacktype instead of just subtracting hp.  This way people with

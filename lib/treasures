@@ -625,6 +625,9 @@ treasureone chest_items
   more
   list containers
     chance 3
+  more
+  list random_scroll
+    chance 5
   end
 #  skill scrolls --bt
 #  better scrolls are harder to find 
