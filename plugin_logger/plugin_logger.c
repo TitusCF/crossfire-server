@@ -735,13 +735,19 @@ void doclock (void){
 /* this has yet to be proven.                                                */
 /*****************************************************************************/
 
+static void hook_free_memory(CFParm* CFR)
+{
+    GCFP.Value[0]=CFR;
+    PlugHooks[HOOK_FREEMEMORY](&GCFP);
+}
+
 char* hook_add_string (char* text){
     CFParm* result;
     char* val;
     GCFP.Value[0]=(void*)text;
     result=(PlugHooks[HOOK_ADDSTRING])(&GCFP);
     val=(char*)result->Value[0];
-    free (result);
+    hook_free_memory (result);
     return val;
 }
 
@@ -751,7 +757,7 @@ char* hook_add_refcount (char* text){
     GCFP.Value[0]=(void*)text;
     result=(PlugHooks[HOOK_ADDREFCOUNT])(&GCFP);
     val=(char*)result->Value[0];
-    free (result);
+    hook_free_memory (result);
     return val;
 }
 
@@ -970,7 +976,7 @@ CFParm* postinitPlugin(CFParm* PParm)
     database_UpdateOrInsert (update,insert);
     cfpptr=(PlugHooks[HOOK_GETFIRSTMAP])(NULL);
     map=(struct mapdef*)cfpptr->Value[0];
-    free (cfpptr);
+    hook_free_memory (cfpptr);
     if (!map){
         insert_server_event (SERVER_EVENT_STARTUP,"Cold plug","",buffer,precision);
         printf ("\t[CROSSFIRE LOGGER]  Cold plug. Postinit finished.\n");
@@ -995,7 +1001,7 @@ CFParm* postinitPlugin(CFParm* PParm)
         printf ("\t[CROSSFIRE LOGGER]   Tracking players.\n");
         cfpptr=(PlugHooks[HOOK_GETFIRSTPLAYER])(NULL);
         po=(struct pl *)(cfpptr->Value[0]);
-        free (cfpptr);
+        hook_free_memory (cfpptr);
         for (;po;po=po->next){
             printf ("\t[CROSSFIRE LOGGER]     Found %s.\n",po->ob->name);
             player_enter_map (po->ob->map);

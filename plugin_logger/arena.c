@@ -174,7 +174,8 @@ void set_looser (object* looser)
     CFP.Value[0]=(void*)&current_arena.players[current_arena.result];
     CFPptr=(PlugHooks[HOOK_FINDPLAYER])(&CFP);
     pl=(player*)CFPptr->Value[0];
-    free (CFPptr);
+    CFP.Value[0]=CFPptr;
+    (PlugHooks[HOOK_FREEMEMORY])(&CFP);
     op=pl->ob;
     screenshoot=takescreenshoot (op);
     if (screenshoot) strcpy (current_arena.screenshoot,screenshoot);

@@ -418,13 +418,20 @@ void animate()
 /* programming languages other than C to write plugins a little easier, but  */
 /* this has yet to be proven.                                                */
 /*****************************************************************************/
+
+static void hook_free_memory(CFParm* CFR)
+{
+    GCFP.Value[0]=CFR;
+    PlugHooks[HOOK_FREEMEMORY](&GCFP);
+}
+
 char* hook_add_string (char* text){
     CFParm* result;
     char* val;
     GCFP.Value[0]=(void*)text;
     result=(PlugHooks[HOOK_ADDSTRING])(&GCFP);
     val=(char*)result->Value[0];
-    free (result);
+    hook_free_memory (result);
     return val;
 }
 
@@ -434,7 +441,7 @@ char* hook_add_refcount (char* text){
     GCFP.Value[0]=(void*)text;
     result=(PlugHooks[HOOK_ADDREFCOUNT])(&GCFP);
     val=(char*)result->Value[0];
-    free (result);
+    hook_free_memory (result);
     return val;
 }
 
@@ -453,7 +460,7 @@ int hook_move_player (object* player, int dir)
     GCFP.Value[1]=&dir;
     CFP=(PlugHooks[HOOK_MOVEPLAYER])(&GCFP);
     val=*(int*)CFP->Value[0];
-    free (CFP);
+    hook_free_memory (CFP);
     return val;
 }
 
@@ -466,7 +473,7 @@ int hook_move_ob (object* what, int dir, object* originator)
     GCFP.Value[2]=originator;
     CFP=(PlugHooks[HOOK_MOVEOBJECT])(&GCFP);
     val=*(int*)CFP->Value[0];
-    free (CFP);
+    hook_free_memory (CFP);
     return val;
 }
 void hook_scroll_map (object* player, int dir)

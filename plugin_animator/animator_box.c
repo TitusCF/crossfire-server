@@ -14,6 +14,15 @@
 #include <plugin_animator.h>
 #include <animator_box.h>
 static CFParm GCFP;
+
+/* wrapper for free */
+static void PyFreeMemory(CFParm* CFR)
+{
+    CFParm lCFR;
+    lCFR.Value[0] = CFR;
+    PlugHooks[HOOK_FREEMEMORY](&lCFR);
+}
+
 int get_dir_from_name (char*name)
     {
     if (!strcmp(name,"north")) return 1;
@@ -45,6 +54,7 @@ int runmovement(struct CFanimation_struct* animation, long int id, void* paramet
     GCFP.Value[2]=op;
     if (op->type==PLAYER) CFP=(PlugHooks[HOOK_MOVEPLAYER])(&GCFP);
     else CFP=(PlugHooks[HOOK_MOVEOBJECT])(&GCFP);
+    PyFreeMemory(CFP);
     return 1;
 }
 
@@ -203,6 +213,7 @@ int rundropobject(struct CFanimation_struct* animation, long int id, void* param
     GCFP.Value[1]=parameters;
     if (!parameters) return 0;
     CFP=(PlugHooks[HOOK_CMDDROP])(&GCFP);
+    PyFreeMemory(CFP);
     free (parameters);
     return 1;
 }
@@ -264,7 +275,7 @@ int runghosted(struct CFanimation_struct* animation, long int id, void* paramete
         GCFP.Value[1]=&val;
         CFP=(PlugHooks[HOOK_CLONEOBJECT])(&GCFP);
         corpse=CFP->Value[0];
-        free (CFP);
+        PyFreeMemory (CFP);
         corpse->x=animation->victim->x;
         corpse->y=animation->victim->y;
         corpse->type=0;
@@ -275,7 +286,7 @@ int runghosted(struct CFanimation_struct* animation, long int id, void* paramete
         val=0;
         GCFP.Value[3]=&val;
         CFP=(PlugHooks[HOOK_INSERTOBJECTINMAP])(&GCFP);
-        free (CFP);
+        PyFreeMemory (CFP);
         animation->wizard=1;
         animation->invisible=1;
         animation->corpse=corpse;
@@ -370,7 +381,7 @@ int runnotice(struct CFanimation_struct* animation, long int id, void* parameter
     pri = 0;
 
     GCFP.Value[0] = (&val);
-    CFGP.Value[1] = (&pri);
+    GCFP.Value[1] = (&pri);
     GCFP.Value[2] = (animation->victim);
     GCFP.Value[3] = (parameters);
     (PlugHooks[HOOK_NEWDRAWINFO])(&GCFP);

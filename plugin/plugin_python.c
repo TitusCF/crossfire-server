@@ -5660,7 +5660,7 @@ static PyObject* CFSetPosition(PyObject* self, PyObject* args)
     GCFP.Value[3] = (void *)(&k);
     GCFP.Value[4] = (void *)(NULL);
 
-    (PlugHooks[HOOK_TRANSFEROBJECT])(&GCFP);
+    PyFreeMemory((PlugHooks[HOOK_TRANSFEROBJECT])(&GCFP));
 
 /*  transfer_ob(WHO, gh_scm2int(X), gh_scm2int(Y), 0, NULL); */
 
