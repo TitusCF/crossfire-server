@@ -96,7 +96,7 @@ binary-arch:
 	dh_installman
 	dh_strip --dbg-package=crossfire-server
 	dh_compress
-	dh_fixperms
+	dh_fixperms 
 	dh_makeshlibs -V
 	dh_installdeb
 	dh_gencontrol

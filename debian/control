@@ -50,7 +50,7 @@ Description: Documentation for Crossfire
 Package: crossfire-server-dbg
 Architecture: any
 Depends: crossfire-maps (>=0.95.3), ${shlibs:Depends}, gdb, crossfire-server-common (=1.5.0-2)
-Description: Server for Crossfire Games with debug information not stripped from the binaries
+Description: Server for Crossfire Games with debug info 
  This is the server program for the crossfire client
  .
  Crossfire is a multiplayer graphical arcade and adventure game made for
