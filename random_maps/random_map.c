@@ -313,6 +313,7 @@ char ** rotate_layout(char **maze,int rotation,RMParms *RP) {
           maze[i][j]= new[(RP->Xsize-i-1)*RP->Ysize + RP->Ysize-j-1];
         }
       }
+      free(new);
       return maze;
       break;
     }
@@ -497,6 +498,8 @@ void doorify_layout(char **maze,RMParms *RP) {
     doorlist_x[di]=doorlist_x[doorlocs];
     doorlist_y[di]=doorlist_y[doorlocs];
   }
+  free(doorlist_x);
+  free(doorlist_y);
 }
 
 
