@@ -168,7 +168,7 @@ int command_rskill ( object *pl, char *params) {
    }
    skillno=lookup_skill_by_name(params);
    if (skillno==-1) {
-	new_draw_info_format(NDI_UNIQUE,0,pl,"Couldn't find skill %s", params);
+	new_draw_info_format(NDI_UNIQUE,0,pl,"Couldn't find the skill %s", params);
 	return 0;
    }
    return change_skill(pl,skillno);
@@ -200,7 +200,7 @@ int command_apply (object *op, char *params)
 	player_apply(op,inv,aflag,0);
     } else
 	  new_draw_info_format(NDI_UNIQUE, 0, op,
-	    "Could not find any match to %s.",params);
+	    "Could not find any match to the %s.",params);
   }
   return 0;
 }
@@ -219,19 +219,19 @@ int sack_can_hold (object *pl, object *sack, object *op, int nrof) {
     buf[0] = 0;
 
     if (! QUERY_FLAG (sack, FLAG_APPLIED))
-	sprintf (buf, "%s is not active.", query_name(sack));
+	sprintf (buf, "The %s is not active.", query_name(sack));
     if (sack == op)
-	sprintf (buf, "You can't put %s into itself.", query_name(sack));
+	sprintf (buf, "You can't put the %s into itself.", query_name(sack));
     if (sack->race && (sack->race != op->race || op->type == CONTAINER
 		       || (sack->stats.food && sack->stats.food != op->type)))
-	sprintf (buf, "You can put only %s into %s.", sack->race,
+	sprintf (buf, "You can put only %s into the %s.", sack->race,
 		 query_name(sack));
     if (op->type == SPECIAL_KEY && sack->slaying && op->slaying)
 	sprintf (buf, "You don't want put the key into %s.", query_name(sack));
     if (sack->weight_limit && sack->carrying + (nrof ? nrof : 1) * 
 	(op->weight + (op->type==CONTAINER?(op->carrying*op->stats.Str):0))
 	* (100 - sack->stats.Str) / 100  > sack->weight_limit)
-	sprintf (buf, "That won't fit in %s!", query_name(sack));
+	sprintf (buf, "That won't fit in the %s!", query_name(sack));
     if (buf[0]) {
 	if (pl)
 	    new_draw_info(NDI_UNIQUE, 0,pl, buf);
@@ -325,10 +325,10 @@ static void pick_up_object (object *pl, object *op, object *tmp, int nrof)
 	}
     }
     if(QUERY_FLAG(tmp, FLAG_UNPAID))
-	(void) sprintf(buf,"%s will cost you %s.", query_name(tmp),
+	(void) sprintf(buf,"The %s will cost you %s.", query_name(tmp),
 		query_cost_string(tmp,pl,F_BUY));
     else
-	(void) sprintf(buf,"You pick up %s.", query_name(tmp));
+	(void) sprintf(buf,"You pick up the %s.", query_name(tmp));
     new_draw_info(NDI_UNIQUE, 0,pl,buf);
 
     tmp = insert_ob_in_ob(tmp, op);
@@ -363,7 +363,7 @@ void pick_up(object *op,object *alt)
     if (alt)
     {
         if ( ! can_pick (op, alt)) {
-            new_draw_info_format (NDI_UNIQUE, 0, op, "You can't pick up a %s.",
+            new_draw_info_format (NDI_UNIQUE, 0, op, "You can't pick up the %s.",
                                   alt->name);
 	    goto leave;
         }
@@ -513,12 +513,12 @@ void put_object_in_sack (object *op, object *sack, object *tmp, long nrof)
     if (sack==tmp) return;	/* Can't put an object in itself */
     if (sack->type != CONTAINER) {
       new_draw_info_format(NDI_UNIQUE, 0,op,
-	"%s is not a container.", query_name(sack));
+	"The %s is not a container.", query_name(sack));
       return;
     }
     if (QUERY_FLAG(tmp,FLAG_STARTEQUIP)) {
       new_draw_info_format(NDI_UNIQUE, 0,op,
-	"You cannot put %s in the container.", query_name(tmp));
+	"You cannot put the %s in the container.", query_name(tmp));
       return;
     }
     if (tmp->type == CONTAINER && tmp->inv) {
@@ -570,7 +570,7 @@ void put_object_in_sack (object *op, object *sack, object *tmp, long nrof)
     } else
 	remove_ob(tmp);
 
-    sprintf(buf, "You put %s in ", query_name(tmp));
+    sprintf(buf, "You put the %s in ", query_name(tmp));
     strcat (buf, query_name(sack));
     strcat (buf, ".");
     tmp_tag = tmp->count;
@@ -637,7 +637,7 @@ void drop_object (object *op, object *tmp, long nrof)
       remove_ob (tmp);
 
     if (QUERY_FLAG (tmp, FLAG_STARTEQUIP)) {
-      sprintf(buf,"You drop %s.", query_name(tmp));
+      sprintf(buf,"You drop the %s.", query_name(tmp));
       new_draw_info(NDI_UNIQUE, 0,op,buf);
       new_draw_info(NDI_UNIQUE, 0,op,"The gods who lent it to you retrieves it.");
 	esrv_del_item (op->contr, tmp->count);
@@ -1142,10 +1142,10 @@ void examine(object *op, object *tmp) {
 
     if(tmp->value&&!QUERY_FLAG(tmp, FLAG_STARTEQUIP)) {
 	if(QUERY_FLAG(tmp, FLAG_UNPAID))
-	    sprintf(buf,"%s would cost you %s.",
+	    sprintf(buf,"The %s would cost you %s.",
 		    tmp->nrof>1?"They":"It",query_cost_string(tmp,op,F_BUY));
 	else
-	    sprintf(buf,"You would get %s for %s.",
+	    sprintf(buf,"You would get %s for the %s.",
 		    query_cost_string(tmp,op,F_SELL), tmp->nrof>1?"them":"it");
 	new_draw_info(NDI_UNIQUE, 0,op,buf);
     }
