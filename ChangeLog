@@ -17,6 +17,15 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Armor enchantment now uses setting values.
+common/init.c: new values to init in settings.
+include/global.h: new setting values.
+include/config.h: new default values for settings.
+lib/settings: explanation for those new values.
+server/apply.c: change armor improvement code to use setting values.
+server/init.c: read new settings.
+Ryo 2004-05-08
+
 common/init.c: there's a #define LOGFILE, use it instead of hardcoded value.
 include/config.h: change default logfile path to previous value in init.c.
 server/c_wiz.c: Fix 'nodm' displaying incorrect messages, and forgetting to

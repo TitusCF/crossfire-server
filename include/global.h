@@ -359,6 +359,12 @@ typedef struct Settings {
 
     sint16  max_level;		    /* This is read out of exp_table */
     float   item_power_factor;	    /* See note in setings file */
+
+    int     armor_max_enchant;  /* Maximum number of times an armor can be enchanted */
+    int     armor_weight_reduction; /* Weight reduction per enchantment */
+    uint8   armor_weight_linear;  /* If 1, weight reduction is linear, else exponantiel */
+    int     armor_speed_improvement;    /* Speed improvement */
+    uint8   armor_speed_linear;         /* If 1, speed improvement is linear, else exponantiel */
 } Settings;
 
 extern Settings settings;

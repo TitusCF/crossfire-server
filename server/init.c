@@ -598,7 +598,43 @@ static void load_settings()
 		    ", %d is invalid\n", val);
 	    else
 		settings.set_friendly_fire = val;	
-	} else {
+    } else if ( !strcasecmp( buf, "armor_max_enchant" ) ) {
+        int max_e = atoi( cp );
+        if ( max_e <= 0 )
+            LOG( llevError, "load_settings: armor_max_enchant is %d\n", max_e );
+        else
+            settings.armor_max_enchant = max_e;
+    } else if ( !strcasecmp( buf, "armor_weight_reduction" ) ) {
+        int wr = atoi( cp );
+        if ( wr < 0 )
+            LOG( llevError, "load_settings: armor_weight_reduction is %d\n", wr );
+        else
+            settings.armor_weight_reduction = wr;
+    } else if ( !strcasecmp( buf, "armor_weight_linear" ) ) {
+	    if (!strcasecmp(cp, "on") || !strcasecmp(cp, "true")) {
+		settings.armor_weight_linear=TRUE;
+	    } else if (!strcasecmp(cp, "off") || !strcasecmp(cp, "false")) {
+		settings.armor_weight_linear=FALSE;
+	    } else {
+		LOG(llevError, "load_settings: unknown value for armor_weight_linear: %s\n", cp);
+        }
+
+    } else if ( !strcasecmp( buf, "armor_speed_improvement" ) ) {
+        int wr = atoi( cp );
+        if ( wr < 0 )
+            LOG( llevError, "load_settings: armor_speed_improvement is %d\n", wr );
+        else
+            settings.armor_speed_improvement = wr;
+    } else if ( !strcasecmp( buf, "armor_speed_linear" ) ) {
+	    if (!strcasecmp(cp, "on") || !strcasecmp(cp, "true")) {
+		settings.armor_speed_linear = TRUE;
+	    } else if (!strcasecmp(cp, "off") || !strcasecmp(cp, "false")) {
+		settings.armor_speed_linear = FALSE;
+	    } else {
+		LOG(llevError, "load_settings: unknown value for armor_speed_linear: %s\n", cp);
+        }
+
+    } else {
 	    LOG(llevError,"Unknown value in settings file: %s\n", buf);
 	}
     }

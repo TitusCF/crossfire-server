@@ -201,3 +201,33 @@ use_permanent_experience false
 # by not targeted things like walls, explosions, cone spells, disease, poison...
 
 set_friendly_fire 5
+
+# This deals with armor enchantment.
+#
+# armor_max_enchant: maximum enchantments an armor will take.
+# default: 5
+#
+# armor_weight_reduction (in percent) and armor_weight_linear control how weight is reduced:
+#  * when armor_weight_linear is TRUE, armor weight is
+#   'base weight - armor enchantment * armor_weight_reduction'
+#  * when armor_weight_linear is FALSE, armor weight is reduced by armor_weight_reduction %
+#   per enchantment.
+#
+#   example:
+#    * with 10 and TRUE, if armor base weight is 100, it'll become:
+#      100 -> 90 -> 80 -> 70 -> 60 -> ...
+#    * with 10 and FALSE, it'll be:
+#      100 -> 90 -> 81 -> 73 -> 66 -> ...
+#
+# Note that the code will enforce a minimum weight of 1, else players can't pick up armor.
+#
+# default values: 10 and TRUE.
+#
+# armor_speed_improvement and armor_speed_linear do the same for speed increase.
+# default values: 10 and TRUE
+
+#armor_max_enchant       5
+#armor_weight_reduction  10
+#armor_weight_linear     TRUE
+#armor_speed_improvement 10
+#armor_speed_linear      TRUE

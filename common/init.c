@@ -80,7 +80,13 @@ MOTD,
 0,0,0,0,0,0,0,0,  /* worldmap settings*/
 EMERGENCY_MAPPATH, EMERGENCY_X, EMERGENCY_Y,
 0,
-1.0
+1.0,
+/* Armor enchantment stuff */
+ARMOR_MAX_ENCHANT,
+ARMOR_WEIGHT_REDUCTION,
+ARMOR_WEIGHT_LINEAR,
+ARMOR_SPEED_IMPROVEMENT,
+ARMOR_SPEED_LINEAR
 };
 
 /* perhaps not the best place for this, but needs to be

@@ -675,7 +675,7 @@ int improve_armour(object *op, object *improver, object *armour)
 {
     object *tmp;
 
-    if (armour->magic >= 5) {
+    if (armour->magic >= settings.armor_max_enchant) {
         new_draw_info(NDI_UNIQUE, 0,op,"This armour can not be enchanted any further.");
 	return 0;
     }
@@ -699,8 +699,42 @@ int improve_armour(object *op, object *improver, object *armour)
 
     armour->magic++;
 
-    ARMOUR_SPEED(armour)=(ARMOUR_SPEED(&armour->arch->clone)*(100+armour->magic*10))/100;
-    armour->weight = (armour->arch->clone.weight*(100-armour->magic*10))/100;
+    if ( !settings.armor_speed_linear )
+        {
+        int base = 100;
+        int pow = 0;
+        while ( pow < armour->magic )
+            {
+            base = base - ( base * settings.armor_speed_improvement ) / 100;
+            pow++;
+            }
+
+        ARMOUR_SPEED( armour ) = ( ARMOUR_SPEED( &armour->arch->clone ) * base ) / 100;
+        }
+    else
+        ARMOUR_SPEED( armour ) = ( ARMOUR_SPEED( &armour->arch->clone ) * ( 100 + armour->magic * settings.armor_speed_improvement ) )/100;
+
+    if ( !settings.armor_weight_linear )
+        {
+        int base = 100;
+        int pow = 0;
+        while ( pow < armour->magic )
+            {
+            base = base - ( base * settings.armor_weight_reduction ) / 100;
+            pow++;
+            }
+
+        armour->weight = ( armour->arch->clone.weight * base ) / 100;
+        }
+    else
+        armour->weight = ( armour->arch->clone.weight * ( 100 - armour->magic * settings.armor_weight_reduction ) ) / 100;
+
+    if ( armour->weight <= 0 )
+        {
+        LOG( llevInfo, "Warning: enchanted armours can have negative weight\n." );
+        armour->weight = 1;
+        }
+
     armour->item_power = get_power_from_ench(armour->arch->clone.item_power + armour->magic);
 
     if (op->type == PLAYER) {
