@@ -17,6 +17,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/build_map.c: change 'player' variable to 'pl', since a player
+    structure already exists. Also fix disappearing pedestals on non-unique
+    maps (put'em over floor, they are visible but hey, can't have everything :p)
+server/c_wiz.c: fix learn_spell.
+Ryo 2004-05-16
+
 Added a new item type: ground positioning system (GPS).
 This lets a player know his/her location in the world.
 Only works in 'world_xxx_xxx' maps.
