@@ -78,6 +78,8 @@
 
 /* #define LINKED_SKILL_LIST */
 
+#define NROFSKILLS	32	/* match to the number of elements in skills[] array */
+
 enum skillnrs { 
     /* 0 */
     SK_STEALING,		/* steal from other players/NPCs */
