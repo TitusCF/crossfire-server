@@ -1,3 +1,6 @@
+Fixed buffering bug in lowlevel.c
+  --David
+
 Changes from Crossfire 0.95.2 to 0.95.3:
 
 Fixed missing god animations in the archetypes.
