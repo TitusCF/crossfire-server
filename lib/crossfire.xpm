@@ -117687,7 +117687,75 @@ static char * wdsm_111_xpm[] = {
 "     .     ...    .     ",
 "                        ",
 "                        "};
-IMAGE 03437 959 ./arch/exit/well.111
+IMAGE 03437 846 ./arch/armour/mail/wdsm.112
+/* XPM */
+static char * wdsm_111_xpm[] = {
+/* width height num_colors chars_per_pixel */
+"24 24 3 1",
+/* colors */
+" 	s None	c None",
+".	c black",
+"X	c white",
+/* pixels */
+"                      . ",
+"                     .. ",
+"       ........ .   ..  ",
+"     ...........X. .X.  ",
+"    ...X.X.X.X.X.X.X.   ",
+"   .X.X...XXX...X.X.    ",
+"  .XXX.X.........X..    ",
+"  ..X...XX..X.X......   ",
+"  .....X.XX..X......    ",
+"  .XXX..XXX.X.X.X.X..   ",
+"  .....X.XX..X... ...   ",
+"      ..X.X.X....       ",
+"       ..X......        ",
+"       .XXX.X.X.        ",
+"      ...XX..X...       ",
+"      ..XXX.X.X.X.      ",
+"      .....X......      ",
+"     .X.X.X.X.X.X..     ",
+"    .XXX.XXX...X.X.     ",
+"    .XX.X.X.....X.X.    ",
+"    .X. . .X... ....    ",
+"     .     ...    .     ",
+"                        ",
+"                        "};
+IMAGE 03438 846 ./arch/armour/mail/wdsm.113
+/* XPM */
+static char * wdsm_111_xpm[] = {
+/* width height num_colors chars_per_pixel */
+"24 24 3 1",
+/* colors */
+" 	s None	c None",
+".	c black",
+"X	c white",
+/* pixels */
+"                      . ",
+"                     .. ",
+"       ........ .   ..  ",
+"     ...........X. .X.  ",
+"    ...X.X.X.X.X.X.X.   ",
+"   .X.X...XXX...X.X.    ",
+"  .XXX.X.........X..    ",
+"  ..X...XX..X.X......   ",
+"  .....X.XX..X......    ",
+"  .XXX..XXX.X.X.X.X..   ",
+"  .....X.XX..X... ...   ",
+"      ..X.X.X....       ",
+"       ..X......        ",
+"       .XXX.X.X.        ",
+"      ...XX..X...       ",
+"      ..XXX.X.X.X.      ",
+"      .....X......      ",
+"     .X.X.X.X.X.X..     ",
+"    .XXX.XXX...X.X.     ",
+"    .XX.X.X.....X.X.    ",
+"    .X. . .X... ....    ",
+"     .     ...    .     ",
+"                        ",
+"                        "};
+IMAGE 03439 959 ./arch/exit/well.111
 /* XPM */
 static char * well_111_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -117725,7 +117793,7 @@ static char * well_111_xpm[] = {
 "    .OXOXOXXXX.         ",
 "     ...OXX...          ",
 "        ...             "};
-IMAGE 03438 788 ./arch/armour/helmet/wig.111
+IMAGE 03440 788 ./arch/armour/helmet/wig.111
 /* XPM */
 static char * wig_111_xpm[] = {
 "24 24 4 1",
@@ -117757,7 +117825,7 @@ static char * wig_111_xpm[] = {
 "                        ",
 "                        ",
 "                        "};
-IMAGE 03439 881 ./arch/monster/undead/wight.111
+IMAGE 03441 881 ./arch/monster/undead/wight.111
 /* XPM */
 static char * wight_111_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -117792,7 +117860,7 @@ static char * wight_111_xpm[] = {
 "     ooo       ooo      ",
 "     ooo       ooo      ",
 "     ...       ...      "};
-IMAGE 03440 881 ./arch/monster/undead/wight.112
+IMAGE 03442 881 ./arch/monster/undead/wight.112
 /* XPM */
 static char * wight_112_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -117827,7 +117895,7 @@ static char * wight_112_xpm[] = {
 "     ooo       ooo      ",
 "     ooo       ooo      ",
 "     ...       ...      "};
-IMAGE 03441 881 ./arch/monster/undead/wight.113
+IMAGE 03443 881 ./arch/monster/undead/wight.113
 /* XPM */
 static char * wight_113_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -117862,7 +117930,7 @@ static char * wight_113_xpm[] = {
 "      ooo       ooo     ",
 "      ooo       ooo     ",
 "      ...       ...     "};
-IMAGE 03442 881 ./arch/monster/undead/wight.114
+IMAGE 03444 881 ./arch/monster/undead/wight.114
 /* XPM */
 static char * wight_114_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -117897,7 +117965,7 @@ static char * wight_114_xpm[] = {
 "      ooo       ooo     ",
 "      ooo       ooo     ",
 "      ...       ...     "};
-IMAGE 03443 788 ./arch/food/wine.111
+IMAGE 03445 788 ./arch/food/wine.111
 /* XPM */
 static char * wine_111_xpm[] = {
 "24 24 4 1",
@@ -117929,7 +117997,7 @@ static char * wine_111_xpm[] = {
 "       ..X.X.X.         ",
 "        ......          ",
 "                        "};
-IMAGE 03444 1228 ./arch/monster/angel/wingedhalo.111
+IMAGE 03446 1228 ./arch/monster/angel/wingedhalo.111
 /* XPM */
 static char * wingedhalo_111_xpm[] = {
 "24 24 33 1",
@@ -117990,7 +118058,7 @@ static char * wingedhalo_111_xpm[] = {
 "                        ",
 "                        ",
 "                        "};
-IMAGE 03445 818 ./arch/armour/helmet/wiz_hat.111
+IMAGE 03447 818 ./arch/armour/helmet/wiz_hat.111
 /* XPM */
 static char * wiz_hat_111_xpm[] = {
 "24 24 4 1",
@@ -118022,7 +118090,7 @@ static char * wiz_hat_111_xpm[] = {
 "          ...           ",
 "                        ",
 "                        "};
-IMAGE 03446 818 ./arch/armour/helmet/wiz_hat.112
+IMAGE 03448 818 ./arch/armour/helmet/wiz_hat.112
 /* XPM */
 static char * wiz_hat_112_xpm[] = {
 "24 24 4 1",
@@ -118054,7 +118122,7 @@ static char * wiz_hat_112_xpm[] = {
 "          ...           ",
 "                        ",
 "                        "};
-IMAGE 03447 818 ./arch/armour/helmet/wiz_hat.113
+IMAGE 03449 818 ./arch/armour/helmet/wiz_hat.113
 /* XPM */
 static char * wiz_hat_113_xpm[] = {
 "24 24 4 1",
@@ -118086,7 +118154,7 @@ static char * wiz_hat_113_xpm[] = {
 "          ...           ",
 "                        ",
 "                        "};
-IMAGE 03448 871 ./arch/player/class/Wizardry/wizard.111
+IMAGE 03450 871 ./arch/player/class/Wizardry/wizard.111
 /* XPM */
 static char * wizard_111_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -118121,7 +118189,7 @@ static char * wizard_111_xpm[] = {
 "     .XoXXoXoXXX.       ",
 "     ............       ",
 "                        "};
-IMAGE 03449 871 ./arch/player/class/Wizardry/wizard.131
+IMAGE 03451 871 ./arch/player/class/Wizardry/wizard.131
 /* XPM */
 static char * wizard_131_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -118156,7 +118224,7 @@ static char * wizard_131_xpm[] = {
 "       .oXXXXoXX.       ",
 "      ...........       ",
 "                        "};
-IMAGE 03450 924 ./arch/player/class/Wizardry/wizard.151
+IMAGE 03452 924 ./arch/player/class/Wizardry/wizard.151
 /* XPM */
 static char * wizard_151_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -118193,7 +118261,7 @@ static char * wizard_151_xpm[] = {
 "       .XOXXXOXOXX.     ",
 "       ............     ",
 "                        "};
-IMAGE 03451 924 ./arch/player/class/Wizardry/wizard.171
+IMAGE 03453 924 ./arch/player/class/Wizardry/wizard.171
 /* XPM */
 static char * wizard_171_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -118230,7 +118298,7 @@ static char * wizard_171_xpm[] = {
 "      .oOooOoOooo.      ",
 "      ............      ",
 "                        "};
-IMAGE 03452 856 ./arch/player/class/Wizardry/wizard_blue.111
+IMAGE 03454 856 ./arch/player/class/Wizardry/wizard_blue.111
 /* XPM */
 static char * wizard_111_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -118265,7 +118333,7 @@ static char * wizard_111_xpm[] = {
 "     .XoXXoXoXXX.       ",
 "     ............       ",
 "                        "};
-IMAGE 03453 866 ./arch/player/class/Wizardry/wizard_blue.131
+IMAGE 03455 866 ./arch/player/class/Wizardry/wizard_blue.131
 /* XPM */
 static char * wizard_131_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -118300,7 +118368,7 @@ static char * wizard_131_xpm[] = {
 "       .oXXXXoXX.       ",
 "      ...........       ",
 "                        "};
-IMAGE 03454 901 ./arch/player/class/Wizardry/wizard_blue.151
+IMAGE 03456 901 ./arch/player/class/Wizardry/wizard_blue.151
 /* XPM */
 static char * wizard_151_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -118337,7 +118405,7 @@ static char * wizard_151_xpm[] = {
 "       .XOXXXOXOXX.     ",
 "       ............     ",
 "                        "};
-IMAGE 03455 901 ./arch/player/class/Wizardry/wizard_blue.171
+IMAGE 03457 901 ./arch/player/class/Wizardry/wizard_blue.171
 /* XPM */
 static char * wizard_171_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -118374,7 +118442,7 @@ static char * wizard_171_xpm[] = {
 "      .oOooOoOooo.      ",
 "      ............      ",
 "                        "};
-IMAGE 03456 862 ./arch/player/class/Wizardry/wizard_green.111
+IMAGE 03458 862 ./arch/player/class/Wizardry/wizard_green.111
 /* XPM */
 static char * wizard_111_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -118409,7 +118477,7 @@ static char * wizard_111_xpm[] = {
 "     .XoXXoXoXXX.       ",
 "     ............       ",
 "                        "};
-IMAGE 03457 872 ./arch/player/class/Wizardry/wizard_green.131
+IMAGE 03459 872 ./arch/player/class/Wizardry/wizard_green.131
 /* XPM */
 static char * wizard_131_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -118444,7 +118512,7 @@ static char * wizard_131_xpm[] = {
 "       .oXXXXoXX.       ",
 "      ...........       ",
 "                        "};
-IMAGE 03458 902 ./arch/player/class/Wizardry/wizard_green.151
+IMAGE 03460 902 ./arch/player/class/Wizardry/wizard_green.151
 /* XPM */
 static char * wizard_151_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -118481,7 +118549,7 @@ static char * wizard_151_xpm[] = {
 "       .XOXXXOXOXX.     ",
 "       ............     ",
 "                        "};
-IMAGE 03459 902 ./arch/player/class/Wizardry/wizard_green.171
+IMAGE 03461 902 ./arch/player/class/Wizardry/wizard_green.171
 /* XPM */
 static char * wizard_171_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -118518,7 +118586,7 @@ static char * wizard_171_xpm[] = {
 "      .oOooOoOooo.      ",
 "      ............      ",
 "                        "};
-IMAGE 03460 859 ./arch/player/class/Wizardry/wizard_white.111
+IMAGE 03462 859 ./arch/player/class/Wizardry/wizard_white.111
 /* XPM */
 static char * wizard_111_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -118553,7 +118621,7 @@ static char * wizard_111_xpm[] = {
 "     .XoXXoXoXXX.       ",
 "     ............       ",
 "                        "};
-IMAGE 03461 859 ./arch/player/class/Wizardry/wizard_white.131
+IMAGE 03463 859 ./arch/player/class/Wizardry/wizard_white.131
 /* XPM */
 static char * wizard_131_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -118588,7 +118656,7 @@ static char * wizard_131_xpm[] = {
 "       .oXXXXoXX.       ",
 "      ...........       ",
 "                        "};
-IMAGE 03462 900 ./arch/player/class/Wizardry/wizard_white.151
+IMAGE 03464 900 ./arch/player/class/Wizardry/wizard_white.151
 /* XPM */
 static char * wizard_151_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -118625,7 +118693,7 @@ static char * wizard_151_xpm[] = {
 "       .XOXXXOXOXX.     ",
 "       ............     ",
 "                        "};
-IMAGE 03463 900 ./arch/player/class/Wizardry/wizard_white.171
+IMAGE 03465 900 ./arch/player/class/Wizardry/wizard_white.171
 /* XPM */
 static char * wizard_171_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -118662,7 +118730,7 @@ static char * wizard_171_xpm[] = {
 "      .oOooOoOooo.      ",
 "      ............      ",
 "                        "};
-IMAGE 03464 861 ./arch/player/class/Wizardry/wizard_yellow.111
+IMAGE 03466 861 ./arch/player/class/Wizardry/wizard_yellow.111
 /* XPM */
 static char * wizard_111_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -118697,7 +118765,7 @@ static char * wizard_111_xpm[] = {
 "     .XoXXoXoXXX.       ",
 "     ............       ",
 "                        "};
-IMAGE 03465 871 ./arch/player/class/Wizardry/wizard_yellow.131
+IMAGE 03467 871 ./arch/player/class/Wizardry/wizard_yellow.131
 /* XPM */
 static char * wizard_131_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -118732,7 +118800,7 @@ static char * wizard_131_xpm[] = {
 "       .oXXXXoXX.       ",
 "      ...........       ",
 "                        "};
-IMAGE 03466 902 ./arch/player/class/Wizardry/wizard_yellow.151
+IMAGE 03468 902 ./arch/player/class/Wizardry/wizard_yellow.151
 /* XPM */
 static char * wizard_151_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -118769,7 +118837,7 @@ static char * wizard_151_xpm[] = {
 "       .XOXXXOXOXX.     ",
 "       ............     ",
 "                        "};
-IMAGE 03467 902 ./arch/player/class/Wizardry/wizard_yellow.171
+IMAGE 03469 902 ./arch/player/class/Wizardry/wizard_yellow.171
 /* XPM */
 static char * wizard_171_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -118806,7 +118874,7 @@ static char * wizard_171_xpm[] = {
 "      .oOooOoOooo.      ",
 "      ............      ",
 "                        "};
-IMAGE 03468 844 ./arch/system/wizardmask.111
+IMAGE 03470 844 ./arch/system/wizardmask.111
 /* XPM */
 static char * wizardmask_111_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -118839,7 +118907,7 @@ static char * wizardmask_111_xpm[] = {
 "    ..............      ",
 "    ..............      ",
 "    ..............      "};
-IMAGE 03469 844 ./arch/system/wizardmask.131
+IMAGE 03471 844 ./arch/system/wizardmask.131
 /* XPM */
 static char * wizardmask_131_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -118872,7 +118940,7 @@ static char * wizardmask_131_xpm[] = {
 "     .............      ",
 "     .............      ",
 "     .............      "};
-IMAGE 03470 844 ./arch/system/wizardmask.151
+IMAGE 03472 844 ./arch/system/wizardmask.151
 /* XPM */
 static char * wizardmask_151_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -118905,7 +118973,7 @@ static char * wizardmask_151_xpm[] = {
 "      ..............    ",
 "      ..............    ",
 "      ..............    "};
-IMAGE 03471 844 ./arch/system/wizardmask.171
+IMAGE 03473 844 ./arch/system/wizardmask.171
 /* XPM */
 static char * wizardmask_171_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -118938,7 +119006,7 @@ static char * wizardmask_171_xpm[] = {
 "     ..............     ",
 "     ..............     ",
 "     ..............     "};
-IMAGE 03472 953 ./arch/monster/human/woman.111
+IMAGE 03474 953 ./arch/monster/human/woman.111
 /* XPM */
 static char * woman_111_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -118975,7 +119043,7 @@ static char * woman_111_xpm[] = {
 "        XXX     XXX     ",
 "       OOOO     OOO     ",
 "       OOOO     OOO     "};
-IMAGE 03473 982 ./arch/monster/human/woman.131
+IMAGE 03475 982 ./arch/monster/human/woman.131
 /* XPM */
 static char * woman_131_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -119013,7 +119081,7 @@ static char * woman_131_xpm[] = {
 "       XXX     XXX      ",
 "       OOO     OOOO     ",
 "       OOO     OOOO     "};
-IMAGE 03474 942 ./arch/monster/human/woman.171
+IMAGE 03476 942 ./arch/monster/human/woman.171
 /* XPM */
 static char * woman_171_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -119050,7 +119118,7 @@ static char * woman_171_xpm[] = {
 "        XXX     XXX     ",
 "       OOOO     OOO     ",
 "       OOOO     OOO     "};
-IMAGE 03475 891 ./arch/door/wooddoor_1.111
+IMAGE 03477 891 ./arch/door/wooddoor_1.111
 /* XPM */
 static char * wooddoor_1_111_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -119085,7 +119153,7 @@ static char * wooddoor_1_111_xpm[] = {
 "                        ",
 "                        ",
 "                        "};
-IMAGE 03476 822 ./arch/door/wooddoor_2.111
+IMAGE 03478 822 ./arch/door/wooddoor_2.111
 /* XPM */
 static char * wooddoor_2_111_xpm[] = {
 "24 24 4 1",
@@ -119117,7 +119185,7 @@ static char * wooddoor_2_111_xpm[] = {
 "         ...            ",
 "         ...            ",
 "         ..             "};
-IMAGE 03477 820 ./arch/floor/woodfloor.111
+IMAGE 03479 820 ./arch/floor/woodfloor.111
 /* XPM */
 static char * woodfloor_111_xpm[] = {
 "24 24 3 1",
@@ -119148,7 +119216,7 @@ static char * woodfloor_111_xpm[] = {
 "           .          X ",
 "           X         ...",
 "....X.....X.......X..   "};
-IMAGE 03478 811 ./arch/floor/woodfloor2.111
+IMAGE 03480 811 ./arch/floor/woodfloor2.111
 /* XPM */
 static char * woodfloor2_111_xpm[] = {
 "24 24 3 1",
@@ -119179,7 +119247,7 @@ static char * woodfloor2_111_xpm[] = {
 ". .. ... ... ...     ...",
 ". X  ... ... ... ... ...",
 ". ..X...X ..X... ... ..."};
-IMAGE 03479 879 ./arch/construct/house/woodhouse.111
+IMAGE 03481 879 ./arch/construct/house/woodhouse.111
 /* XPM */
 static char * woodhouse_111_xpm[] = {
 "24 24 6 1",
@@ -119213,7 +119281,7 @@ static char * woodhouse_111_xpm[] = {
 "                        ",
 "                        ",
 "                        "};
-IMAGE 03480 1031 ./arch/ground/Wood/woods_1.111
+IMAGE 03482 1031 ./arch/ground/Wood/woods_1.111
 /* XPM */
 static char * woods_1_111_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -119252,7 +119320,7 @@ static char * woods_1_111_xpm[] = {
 "X XX  X O.  O .     .X  ",
 ".X#XX O . XO       .    ",
 " . ..  .  O . XO   . X ."};
-IMAGE 03481 969 ./arch/ground/Wood/woods_2.111
+IMAGE 03483 969 ./arch/ground/Wood/woods_2.111
 /* XPM */
 static char * woods_2_111_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -119289,7 +119357,7 @@ static char * woods_2_111_xpm[] = {
 "oOOOOo XXo O+OO +oO  O o",
 " oOOoXo  Xoo OOoo oOOOoX",
 "X oooo X  X ooo     ooX."};
-IMAGE 03482 974 ./arch/ground/Wood/woods_3.111
+IMAGE 03484 974 ./arch/ground/Wood/woods_3.111
 /* XPM */
 static char * woods_3_111_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -119326,7 +119394,7 @@ static char * woods_3_111_xpm[] = {
 "X  ++   oX X.    .  . oX",
 "  ++   o .o.  ooX  .X .o",
 "            X..       .."};
-IMAGE 03483 822 ./arch/wall/woodwall/woodwall_0.111
+IMAGE 03485 822 ./arch/wall/woodwall/woodwall_0.111
 /* XPM */
 static char * woodwall_0_111_xpm[] = {
 "24 24 4 1",
@@ -119358,7 +119426,7 @@ static char * woodwall_0_111_xpm[] = {
 ".X.X.X..oo.X.X..        ",
 "      ..XX.             ",
 "      ..X.              "};
-IMAGE 03484 822 ./arch/wall/woodwall/woodwall_1.111
+IMAGE 03486 822 ./arch/wall/woodwall/woodwall_1.111
 /* XPM */
 static char * woodwall_1_111_xpm[] = {
 "24 24 4 1",
@@ -119390,7 +119458,7 @@ static char * woodwall_1_111_xpm[] = {
 "      ooXXo             ",
 "      .o..o             ",
 "      o.oo              "};
-IMAGE 03485 822 ./arch/wall/woodwall/woodwall_2.111
+IMAGE 03487 822 ./arch/wall/woodwall/woodwall_2.111
 /* XPM */
 static char * woodwall_2_111_xpm[] = {
 "24 24 4 1",
@@ -119422,7 +119490,7 @@ static char * woodwall_2_111_xpm[] = {
 ".X.X.X.X.X.X.X.X.X.X.X.X",
 "                        ",
 "                        "};
-IMAGE 03486 822 ./arch/wall/woodwall/woodwall_3.111
+IMAGE 03488 822 ./arch/wall/woodwall/woodwall_3.111
 /* XPM */
 static char * woodwall_3_111_xpm[] = {
 "24 24 4 1",
@@ -119454,7 +119522,7 @@ static char * woodwall_3_111_xpm[] = {
 ".X.X.X..oo.X.X.X.X.X.X.X",
 "      ..XX.             ",
 "      ..X.              "};
-IMAGE 03487 822 ./arch/wall/woodwall/woodwall_4.111
+IMAGE 03489 822 ./arch/wall/woodwall/woodwall_4.111
 /* XPM */
 static char * woodwall_4_111_xpm[] = {
 "24 24 4 1",
@@ -119486,7 +119554,7 @@ static char * woodwall_4_111_xpm[] = {
 "      .XXo.XXo.XX.      ",
 "      Xo.XXo.X.XX.      ",
 "      .XXo.XXo.XX.      "};
-IMAGE 03488 822 ./arch/wall/woodwall/woodwall_5.111
+IMAGE 03490 822 ./arch/wall/woodwall/woodwall_5.111
 /* XPM */
 static char * woodwall_5_111_xpm[] = {
 "24 24 4 1",
@@ -119518,7 +119586,7 @@ static char * woodwall_5_111_xpm[] = {
 "      o..Xo..Xo..o      ",
 "      .Xo..Xo.o..o      ",
 "      o..Xo..Xo..o      "};
-IMAGE 03489 822 ./arch/wall/woodwall/woodwall_6.111
+IMAGE 03491 822 ./arch/wall/woodwall/woodwall_6.111
 /* XPM */
 static char * woodwall_6_111_xpm[] = {
 "24 24 4 1",
@@ -119550,7 +119618,7 @@ static char * woodwall_6_111_xpm[] = {
 ".X.X.X.XXo.XXo.XX..X.X.X",
 "      Xo.XXo.X.XX.      ",
 "      .XXo.XXo.XX.      "};
-IMAGE 03490 822 ./arch/wall/woodwall/woodwall_7.111
+IMAGE 03492 822 ./arch/wall/woodwall/woodwall_7.111
 /* XPM */
 static char * woodwall_7_111_xpm[] = {
 "24 24 4 1",
@@ -119582,7 +119650,7 @@ static char * woodwall_7_111_xpm[] = {
 "o.o.o.o..Xo..Xo..oo.o.o.",
 "      .Xo..Xo.o..o      ",
 "      o..Xo..Xo..o      "};
-IMAGE 03491 822 ./arch/wall/woodwall/woodwall_8.111
+IMAGE 03493 822 ./arch/wall/woodwall/woodwall_8.111
 /* XPM */
 static char * woodwall_8_111_xpm[] = {
 "24 24 4 1",
@@ -119614,7 +119682,7 @@ static char * woodwall_8_111_xpm[] = {
 ".X.X.X.X.X.X.X..        ",
 "                        ",
 "                        "};
-IMAGE 03492 822 ./arch/wall/woodwall/woodwall_9.111
+IMAGE 03494 822 ./arch/wall/woodwall/woodwall_9.111
 /* XPM */
 static char * woodwall_9_111_xpm[] = {
 "24 24 4 1",
@@ -119646,7 +119714,7 @@ static char * woodwall_9_111_xpm[] = {
 "o.o.o.oo.Xo.o.oo        ",
 "      oo..o             ",
 "      o.oo              "};
-IMAGE 03493 822 ./arch/wall/woodwall/woodwall_A.111
+IMAGE 03495 822 ./arch/wall/woodwall/woodwall_A.111
 /* XPM */
 static char * woodwall_A_111_xpm[] = {
 "24 24 4 1",
@@ -119678,7 +119746,7 @@ static char * woodwall_A_111_xpm[] = {
 ".X.X.X.X.X.X.X.X.X.X.X.X",
 "                        ",
 "                        "};
-IMAGE 03494 822 ./arch/wall/woodwall/woodwall_B.111
+IMAGE 03496 822 ./arch/wall/woodwall/woodwall_B.111
 /* XPM */
 static char * woodwall_B_111_xpm[] = {
 "24 24 4 1",
@@ -119710,7 +119778,7 @@ static char * woodwall_B_111_xpm[] = {
 "o.o.o.ooXXo.o.o.o.o.o.o.",
 "      oo..o             ",
 "      oo.o              "};
-IMAGE 03495 822 ./arch/wall/woodwall/woodwall_C.111
+IMAGE 03497 822 ./arch/wall/woodwall/woodwall_C.111
 /* XPM */
 static char * woodwall_C_111_xpm[] = {
 "24 24 4 1",
@@ -119742,7 +119810,7 @@ static char * woodwall_C_111_xpm[] = {
 ".X.X.X.XXo.XXo.XX.      ",
 "      Xo.XXo.X.XX.      ",
 "      .XXo.XXo.XX.      "};
-IMAGE 03496 822 ./arch/wall/woodwall/woodwall_D.111
+IMAGE 03498 822 ./arch/wall/woodwall/woodwall_D.111
 /* XPM */
 static char * woodwall_D_111_xpm[] = {
 "24 24 4 1",
@@ -119774,7 +119842,7 @@ static char * woodwall_D_111_xpm[] = {
 "o.o.o.o..Xo..Xo..o      ",
 "      .Xo..Xo.o..o      ",
 "      o..Xo..Xo..o      "};
-IMAGE 03497 822 ./arch/wall/woodwall/woodwall_E.111
+IMAGE 03499 822 ./arch/wall/woodwall/woodwall_E.111
 /* XPM */
 static char * woodwall_E_111_xpm[] = {
 "24 24 4 1",
@@ -119806,7 +119874,7 @@ static char * woodwall_E_111_xpm[] = {
 ".X.X.X.XXo.XXo.XX..X.X.X",
 "      Xo.XXo.X.XX.      ",
 "      .XXo.XXo.XX.      "};
-IMAGE 03498 822 ./arch/wall/woodwall/woodwall_F.111
+IMAGE 03500 822 ./arch/wall/woodwall/woodwall_F.111
 /* XPM */
 static char * woodwall_F_111_xpm[] = {
 "24 24 4 1",
@@ -119838,7 +119906,7 @@ static char * woodwall_F_111_xpm[] = {
 "o.o.o.o..Xo..Xo..oo.o.o.",
 "      .Xo..Xo.o..o      ",
 "      o..Xo..Xo..o      "};
-IMAGE 03499 791 ./arch/monster/insect/ant/work_ant.131
+IMAGE 03501 791 ./arch/monster/insect/ant/work_ant.131
 /* XPM */
 static char * work_ant_131_xpm[] = {
 "24 24 4 1",
@@ -119870,7 +119938,7 @@ static char * work_ant_131_xpm[] = {
 "                        ",
 "                        ",
 "                        "};
-IMAGE 03500 791 ./arch/monster/insect/ant/work_ant.132
+IMAGE 03502 791 ./arch/monster/insect/ant/work_ant.132
 /* XPM */
 static char * work_ant_132_xpm[] = {
 "24 24 4 1",
@@ -119902,7 +119970,7 @@ static char * work_ant_132_xpm[] = {
 "                        ",
 "                        ",
 "                        "};
-IMAGE 03501 791 ./arch/monster/insect/ant/work_ant.171
+IMAGE 03503 791 ./arch/monster/insect/ant/work_ant.171
 /* XPM */
 static char * work_ant_171_xpm[] = {
 "24 24 4 1",
@@ -119934,7 +120002,7 @@ static char * work_ant_171_xpm[] = {
 "                        ",
 "                        ",
 "                        "};
-IMAGE 03502 791 ./arch/monster/insect/ant/work_ant.172
+IMAGE 03504 791 ./arch/monster/insect/ant/work_ant.172
 /* XPM */
 static char * work_ant_172_xpm[] = {
 "24 24 4 1",
@@ -119966,7 +120034,7 @@ static char * work_ant_172_xpm[] = {
 "                        ",
 "                        ",
 "                        "};
-IMAGE 03503 879 ./arch/monster/dragon/WDragon/worthless_dragon.131
+IMAGE 03505 879 ./arch/monster/dragon/WDragon/worthless_dragon.131
 /* XPM */
 static char * worthless_dragon_131_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -120002,7 +120070,7 @@ static char * worthless_dragon_131_xpm[] = {
 "     oOoOOOOoOOOOOOOOOoO",
 "  oooOOOoOOOOOOOOOOOOOoO",
 "  ooOOOOOOOoOOoOOoooOOoO"};
-IMAGE 03504 879 ./arch/monster/dragon/WDragon/worthless_dragon.132
+IMAGE 03506 879 ./arch/monster/dragon/WDragon/worthless_dragon.132
 /* XPM */
 static char * worthless_dragon_132_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -120038,7 +120106,7 @@ static char * worthless_dragon_132_xpm[] = {
 "     oooOOOOoOOOOOOOOOoO",
 "     oOoOOOOOOOOOOOOOOoO",
 "  oooOOOoOOOOOOOOoooOOoO"};
-IMAGE 03505 879 ./arch/monster/dragon/WDragon/worthless_dragon.133
+IMAGE 03507 879 ./arch/monster/dragon/WDragon/worthless_dragon.133
 /* XPM */
 static char * worthless_dragon_133_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -120074,7 +120142,7 @@ static char * worthless_dragon_133_xpm[] = {
 "     oooOOOOoOOOOOOOOOoO",
 "     oOOoOOOOOOOOOOOOOoO",
 "  oooOOOOOOOOOOOOoooOOoO"};
-IMAGE 03506 924 ./arch/monster/dragon/WDragon/worthless_dragon.171
+IMAGE 03508 924 ./arch/monster/dragon/WDragon/worthless_dragon.171
 /* XPM */
 static char * worthless_dragon_171_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -120112,7 +120180,7 @@ static char * worthless_dragon_171_xpm[] = {
 "    OOO        O+OO+O+++",
 "             OO+++OO+O+O",
 "           OO++++++OO+OO"};
-IMAGE 03507 937 ./arch/monster/dragon/WDragon/worthless_dragon.172
+IMAGE 03509 937 ./arch/monster/dragon/WDragon/worthless_dragon.172
 /* XPM */
 static char * worthless_dragon_172_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -120150,7 +120218,7 @@ static char * worthless_dragon_172_xpm[] = {
 "     O+OO     OO+OO+O+++",
 "     OOO    OO++++OO+O+O",
 "          OO+++++O+OO+OO"};
-IMAGE 03508 937 ./arch/monster/dragon/WDragon/worthless_dragon.173
+IMAGE 03510 937 ./arch/monster/dragon/WDragon/worthless_dragon.173
 /* XPM */
 static char * worthless_dragon_173_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -120188,7 +120256,7 @@ static char * worthless_dragon_173_xpm[] = {
 "     XoXX     XXoXXoXooo",
 "    XoXX    XXooooXXoXoX",
 "     XX   XXoooooXoXXoXX"};
-IMAGE 03509 879 ./arch/monster/dragon/WDragon/worthless_dragon.231
+IMAGE 03511 879 ./arch/monster/dragon/WDragon/worthless_dragon.231
 /* XPM */
 static char * worthless_dragon_231_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -120224,7 +120292,7 @@ static char * worthless_dragon_231_xpm[] = {
 "oooooOooooOooOoooooooooo",
 "ooooooOoooooooooooOoOooo",
 "OoooooooooooooOooOOOoooo"};
-IMAGE 03510 879 ./arch/monster/dragon/WDragon/worthless_dragon.232
+IMAGE 03512 879 ./arch/monster/dragon/WDragon/worthless_dragon.232
 /* XPM */
 static char * worthless_dragon_232_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -120260,7 +120328,7 @@ static char * worthless_dragon_232_xpm[] = {
 "oooooOooooOooOoooooooooo",
 "ooooooOoooooooooooOoOooo",
 "OoooooooooooooOOoOOOoooo"};
-IMAGE 03511 879 ./arch/monster/dragon/WDragon/worthless_dragon.233
+IMAGE 03513 879 ./arch/monster/dragon/WDragon/worthless_dragon.233
 /* XPM */
 static char * worthless_dragon_233_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -120296,7 +120364,7 @@ static char * worthless_dragon_233_xpm[] = {
 "oooooOooooOooOoooooooooo",
 "ooooooOoooooooooooOoOooo",
 "OoooooooooooooOOoOOOoooo"};
-IMAGE 03512 879 ./arch/monster/dragon/WDragon/worthless_dragon.271
+IMAGE 03514 879 ./arch/monster/dragon/WDragon/worthless_dragon.271
 /* XPM */
 static char * worthless_dragon_271_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -120332,7 +120400,7 @@ static char * worthless_dragon_271_xpm[] = {
 "OOOOOOOOOOoOOoOOOOoOOOOO",
 "OOOoOoOOOOOOOOOOOoOOOOOO",
 "OOOOoooOOoOOOOOOOOOOOOOo"};
-IMAGE 03513 879 ./arch/monster/dragon/WDragon/worthless_dragon.272
+IMAGE 03515 879 ./arch/monster/dragon/WDragon/worthless_dragon.272
 /* XPM */
 static char * worthless_dragon_272_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -120368,7 +120436,7 @@ static char * worthless_dragon_272_xpm[] = {
 "OOOOOOOOOOoOOoOOOOoOOOOO",
 "OOOoOoOOOOOOOOOOOoOOOOOO",
 "OOOOoooOooOOOOOOOOOOOOOo"};
-IMAGE 03514 879 ./arch/monster/dragon/WDragon/worthless_dragon.273
+IMAGE 03516 879 ./arch/monster/dragon/WDragon/worthless_dragon.273
 /* XPM */
 static char * worthless_dragon_273_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -120404,7 +120472,7 @@ static char * worthless_dragon_273_xpm[] = {
 "ooooooooooOooOooooOooooo",
 "oooOoOoooooooooooOoooooo",
 "ooooOOOoOOoooooooooooooO"};
-IMAGE 03515 924 ./arch/monster/dragon/WDragon/worthless_dragon.331
+IMAGE 03517 924 ./arch/monster/dragon/WDragon/worthless_dragon.331
 /* XPM */
 static char * worthless_dragon_331_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -120442,7 +120510,7 @@ static char * worthless_dragon_331_xpm[] = {
 "OOO+O++O+        +++    ",
 "+O+O++OOO++             ",
 "++O++OOOOOO++           "};
-IMAGE 03516 937 ./arch/monster/dragon/WDragon/worthless_dragon.332
+IMAGE 03518 937 ./arch/monster/dragon/WDragon/worthless_dragon.332
 /* XPM */
 static char * worthless_dragon_332_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -120480,7 +120548,7 @@ static char * worthless_dragon_332_xpm[] = {
 "OOO+O++O++     ++O+     ",
 "+O+O++OOOO++    +++     ",
 "++O++O+OOOOO++          "};
-IMAGE 03517 937 ./arch/monster/dragon/WDragon/worthless_dragon.333
+IMAGE 03519 937 ./arch/monster/dragon/WDragon/worthless_dragon.333
 /* XPM */
 static char * worthless_dragon_333_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -120518,7 +120586,7 @@ static char * worthless_dragon_333_xpm[] = {
 "oooOoOOoOO     OOoO     ",
 "OoOoOOooooOO    OOoO    ",
 "OOoOOoOoooooOO   OO     "};
-IMAGE 03518 879 ./arch/monster/dragon/WDragon/worthless_dragon.371
+IMAGE 03520 879 ./arch/monster/dragon/WDragon/worthless_dragon.371
 /* XPM */
 static char * worthless_dragon_371_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -120554,7 +120622,7 @@ static char * worthless_dragon_371_xpm[] = {
 "OoOOOOOOOOOoOOOOoOo     ",
 "OoOOOOOOOOOOOOOoOOOooo  ",
 "OoOOoooOOoOOoOOOOOOOoo  "};
-IMAGE 03519 879 ./arch/monster/dragon/WDragon/worthless_dragon.372
+IMAGE 03521 879 ./arch/monster/dragon/WDragon/worthless_dragon.372
 /* XPM */
 static char * worthless_dragon_372_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -120590,7 +120658,7 @@ static char * worthless_dragon_372_xpm[] = {
 "OoOOOOOOOOOoOOOOooo     ",
 "OoOOOOOOOOOOOOOOoOo     ",
 "OoOOoooOOOOOOOOoOOOooo  "};
-IMAGE 03520 879 ./arch/monster/dragon/WDragon/worthless_dragon.373
+IMAGE 03522 879 ./arch/monster/dragon/WDragon/worthless_dragon.373
 /* XPM */
 static char * worthless_dragon_373_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -120626,7 +120694,7 @@ static char * worthless_dragon_373_xpm[] = {
 "OoOOOOOOOOOoOOOOooo     ",
 "OoOOOOOOOOOOOOOoOOo     ",
 "OoOOoooOOOOOOOOOOOOooo  "};
-IMAGE 03521 882 ./arch/monster/dragon/WDragon/worthless_dragon.431
+IMAGE 03523 882 ./arch/monster/dragon/WDragon/worthless_dragon.431
 /* XPM */
 static char * worthless_dragon_431_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -120662,7 +120730,7 @@ static char * worthless_dragon_431_xpm[] = {
 "                 ooOOOo ",
 "                  oooooo",
 "                        "};
-IMAGE 03522 909 ./arch/monster/dragon/WDragon/worthless_dragon.432
+IMAGE 03524 909 ./arch/monster/dragon/WDragon/worthless_dragon.432
 /* XPM */
 static char * worthless_dragon_432_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -120698,7 +120766,7 @@ static char * worthless_dragon_432_xpm[] = {
 "                        ",
 "                        ",
 "                        "};
-IMAGE 03523 909 ./arch/monster/dragon/WDragon/worthless_dragon.433
+IMAGE 03525 909 ./arch/monster/dragon/WDragon/worthless_dragon.433
 /* XPM */
 static char * worthless_dragon_433_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -120734,7 +120802,7 @@ static char * worthless_dragon_433_xpm[] = {
 "                        ",
 "                        ",
 "                        "};
-IMAGE 03524 853 ./arch/monster/dragon/WDragon/worthless_dragon.471
+IMAGE 03526 853 ./arch/monster/dragon/WDragon/worthless_dragon.471
 /* XPM */
 static char * worthless_dragon_471_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -120768,7 +120836,7 @@ static char * worthless_dragon_471_xpm[] = {
 "                   .XX..",
 "                  ....  ",
 "                        "};
-IMAGE 03525 853 ./arch/monster/dragon/WDragon/worthless_dragon.472
+IMAGE 03527 853 ./arch/monster/dragon/WDragon/worthless_dragon.472
 /* XPM */
 static char * worthless_dragon_472_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -120802,7 +120870,7 @@ static char * worthless_dragon_472_xpm[] = {
 "                   .XX..",
 "                  ....  ",
 "                        "};
-IMAGE 03526 853 ./arch/monster/dragon/WDragon/worthless_dragon.473
+IMAGE 03528 853 ./arch/monster/dragon/WDragon/worthless_dragon.473
 /* XPM */
 static char * worthless_dragon_473_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -120836,7 +120904,7 @@ static char * worthless_dragon_473_xpm[] = {
 "                   .XX..",
 "                  ....  ",
 "                        "};
-IMAGE 03527 853 ./arch/monster/dragon/WDragon/worthless_dragon.531
+IMAGE 03529 853 ./arch/monster/dragon/WDragon/worthless_dragon.531
 /* XPM */
 static char * worthless_dragon_531_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -120870,7 +120938,7 @@ static char * worthless_dragon_531_xpm[] = {
 "    X..XX..XX     X.XX X",
 "   X.XX XXX..X    XX    ",
 "   XX      XXXX         "};
-IMAGE 03528 853 ./arch/monster/dragon/WDragon/worthless_dragon.532
+IMAGE 03530 853 ./arch/monster/dragon/WDragon/worthless_dragon.532
 /* XPM */
 static char * worthless_dragon_532_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -120904,7 +120972,7 @@ static char * worthless_dragon_532_xpm[] = {
 "    X..XX..XX     X.XX X",
 "   X.XX XXX..X    XX    ",
 "   XX      XXXX         "};
-IMAGE 03529 882 ./arch/monster/dragon/WDragon/worthless_dragon.533
+IMAGE 03531 882 ./arch/monster/dragon/WDragon/worthless_dragon.533
 /* XPM */
 static char * worthless_dragon_533_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -120939,7 +121007,7 @@ static char * worthless_dragon_533_xpm[] = {
 "    X..XX..XX     X.XX X",
 "   X.XX XXX..X    XX    ",
 "   XX      XXXX         "};
-IMAGE 03530 853 ./arch/monster/dragon/WDragon/worthless_dragon.571
+IMAGE 03532 853 ./arch/monster/dragon/WDragon/worthless_dragon.571
 /* XPM */
 static char * worthless_dragon_571_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -120973,7 +121041,7 @@ static char * worthless_dragon_571_xpm[] = {
 "X XX.X     XX..XX..X    ",
 "    XX    X..XXX XX.X   ",
 "         XXXX      XX   "};
-IMAGE 03531 853 ./arch/monster/dragon/WDragon/worthless_dragon.572
+IMAGE 03533 853 ./arch/monster/dragon/WDragon/worthless_dragon.572
 /* XPM */
 static char * worthless_dragon_572_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -121007,7 +121075,7 @@ static char * worthless_dragon_572_xpm[] = {
 "X XX.X     XX..XX..X    ",
 "    XX    X..XXX XX.X   ",
 "         XXXX      XX   "};
-IMAGE 03532 882 ./arch/monster/dragon/WDragon/worthless_dragon.573
+IMAGE 03534 882 ./arch/monster/dragon/WDragon/worthless_dragon.573
 /* XPM */
 static char * worthless_dragon_573_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -121042,7 +121110,7 @@ static char * worthless_dragon_573_xpm[] = {
 "X XX.X     XX..XX..X    ",
 "    XX    X..XXX XX.X   ",
 "         XXXX      XX   "};
-IMAGE 03533 853 ./arch/monster/dragon/WDragon/worthless_dragon.631
+IMAGE 03535 853 ./arch/monster/dragon/WDragon/worthless_dragon.631
 /* XPM */
 static char * worthless_dragon_631_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -121076,7 +121144,7 @@ static char * worthless_dragon_631_xpm[] = {
 "XX..X                   ",
 "  XXXX                  ",
 "                        "};
-IMAGE 03534 853 ./arch/monster/dragon/WDragon/worthless_dragon.632
+IMAGE 03536 853 ./arch/monster/dragon/WDragon/worthless_dragon.632
 /* XPM */
 static char * worthless_dragon_632_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -121110,7 +121178,7 @@ static char * worthless_dragon_632_xpm[] = {
 "XX..X                   ",
 "  XXXX                  ",
 "                        "};
-IMAGE 03535 853 ./arch/monster/dragon/WDragon/worthless_dragon.633
+IMAGE 03537 853 ./arch/monster/dragon/WDragon/worthless_dragon.633
 /* XPM */
 static char * worthless_dragon_633_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -121144,7 +121212,7 @@ static char * worthless_dragon_633_xpm[] = {
 "XX..X                   ",
 "  XXXX                  ",
 "                        "};
-IMAGE 03536 882 ./arch/monster/dragon/WDragon/worthless_dragon.671
+IMAGE 03538 882 ./arch/monster/dragon/WDragon/worthless_dragon.671
 /* XPM */
 static char * worthless_dragon_671_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -121180,7 +121248,7 @@ static char * worthless_dragon_671_xpm[] = {
 " oOOOoo                 ",
 "oooooo                  ",
 "                        "};
-IMAGE 03537 909 ./arch/monster/dragon/WDragon/worthless_dragon.672
+IMAGE 03539 909 ./arch/monster/dragon/WDragon/worthless_dragon.672
 /* XPM */
 static char * worthless_dragon_672_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -121216,7 +121284,7 @@ static char * worthless_dragon_672_xpm[] = {
 "                        ",
 "                        ",
 "                        "};
-IMAGE 03538 909 ./arch/monster/dragon/WDragon/worthless_dragon.673
+IMAGE 03540 909 ./arch/monster/dragon/WDragon/worthless_dragon.673
 /* XPM */
 static char * worthless_dragon_673_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -121252,7 +121320,7 @@ static char * worthless_dragon_673_xpm[] = {
 "                        ",
 "                        ",
 "                        "};
-IMAGE 03539 843 ./arch/monster/undead/wraith.111
+IMAGE 03541 843 ./arch/monster/undead/wraith.111
 /* XPM */
 static char * wraith_111_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -121286,7 +121354,7 @@ static char * wraith_111_xpm[] = {
 "         .. .. .        ",
 "           .... .       ",
 "             ....       "};
-IMAGE 03540 843 ./arch/monster/undead/wraith.112
+IMAGE 03542 843 ./arch/monster/undead/wraith.112
 /* XPM */
 static char * wraith_112_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -121320,7 +121388,7 @@ static char * wraith_112_xpm[] = {
 "       .......          ",
 "        .......         ",
 "         .....          "};
-IMAGE 03541 832 ./arch/monster/undead/wraith.113
+IMAGE 03543 832 ./arch/monster/undead/wraith.113
 /* XPM */
 static char * wraith_113_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -121353,7 +121421,7 @@ static char * wraith_113_xpm[] = {
 "      .....             ",
 "      ......            ",
 "        ....            "};
-IMAGE 03542 845 ./arch/player/race/wraithp.111
+IMAGE 03544 845 ./arch/player/race/wraithp.111
 /* XPM */
 static char * Wraith_111_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -121387,7 +121455,7 @@ static char * Wraith_111_xpm[] = {
 "        .X.. ..         ",
 "       . ....           ",
 "       ....             "};
-IMAGE 03543 845 ./arch/player/race/wraithp.131
+IMAGE 03545 845 ./arch/player/race/wraithp.131
 /* XPM */
 static char * Wraith_131_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -121421,7 +121489,7 @@ static char * Wraith_131_xpm[] = {
 "       ...              ",
 "       ...              ",
 "      ..                "};
-IMAGE 03544 845 ./arch/player/race/wraithp.151
+IMAGE 03546 845 ./arch/player/race/wraithp.151
 /* XPM */
 static char * Wraith_151_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -121455,7 +121523,7 @@ static char * Wraith_151_xpm[] = {
 "         .. .. .        ",
 "           .... .       ",
 "             ....       "};
-IMAGE 03545 845 ./arch/player/race/wraithp.171
+IMAGE 03547 845 ./arch/player/race/wraithp.171
 /* XPM */
 static char * Wraith_171_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -121489,7 +121557,7 @@ static char * Wraith_171_xpm[] = {
 "              ...       ",
 "              ...       ",
 "                ..      "};
-IMAGE 03546 791 ./arch/weapon/other/wrench.111
+IMAGE 03548 791 ./arch/weapon/other/wrench.111
 /* XPM */
 static char * wrench_111_xpm[] = {
 "24 24 4 1",
@@ -121521,7 +121589,7 @@ static char * wrench_111_xpm[] = {
 "     ..o.               ",
 "      ..                ",
 "                        "};
-IMAGE 03547 853 ./arch/wall/wwall/wwall_0.111
+IMAGE 03549 853 ./arch/wall/wwall/wwall_0.111
 /* XPM */
 static char * wwall_0_111_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -121555,7 +121623,7 @@ static char * wwall_0_111_xpm[] = {
 "        .X.XX.X.        ",
 "        ...XXXX.        ",
 "        .......         "};
-IMAGE 03548 853 ./arch/wall/wwall/wwall_1.111
+IMAGE 03550 853 ./arch/wall/wwall/wwall_1.111
 /* XPM */
 static char * wwall_1_111_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -121589,7 +121657,7 @@ static char * wwall_1_111_xpm[] = {
 "        .X.XX.X.        ",
 "        ...XXXX.        ",
 "        .......         "};
-IMAGE 03549 853 ./arch/wall/wwall/wwall_2.111
+IMAGE 03551 853 ./arch/wall/wwall/wwall_2.111
 /* XPM */
 static char * wwall_2_111_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -121623,7 +121691,7 @@ static char * wwall_2_111_xpm[] = {
 "                        ",
 "                        ",
 "                        "};
-IMAGE 03550 853 ./arch/wall/wwall/wwall_3.111
+IMAGE 03552 853 ./arch/wall/wwall/wwall_3.111
 /* XPM */
 static char * wwall_3_111_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -121657,7 +121725,7 @@ static char * wwall_3_111_xpm[] = {
 "                        ",
 "                        ",
 "                        "};
-IMAGE 03551 853 ./arch/wall/wwall/wwall_4.111
+IMAGE 03553 853 ./arch/wall/wwall/wwall_4.111
 /* XPM */
 static char * wwall_4_111_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -121691,7 +121759,7 @@ static char * wwall_4_111_xpm[] = {
 "        .X.XX..X..      ",
 "        .X.XX..XX.      ",
 "        ..XXX..XX.      "};
-IMAGE 03552 853 ./arch/wall/wwall/wwall_5.111
+IMAGE 03554 853 ./arch/wall/wwall/wwall_5.111
 /* XPM */
 static char * wwall_5_111_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -121725,7 +121793,7 @@ static char * wwall_5_111_xpm[] = {
 "        .X.XX..X..      ",
 "        .X.XX..XX.      ",
 "        ..XXX..XX.      "};
-IMAGE 03553 853 ./arch/wall/wwall/wwall_6.111
+IMAGE 03555 853 ./arch/wall/wwall/wwall_6.111
 /* XPM */
 static char * wwall_6_111_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -121759,7 +121827,7 @@ static char * wwall_6_111_xpm[] = {
 "        .X.XX..XX.      ",
 "        .X.XX..XX.      ",
 "        ..XXX..XX.      "};
-IMAGE 03554 853 ./arch/wall/wwall/wwall_7.111
+IMAGE 03556 853 ./arch/wall/wwall/wwall_7.111
 /* XPM */
 static char * wwall_7_111_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -121793,7 +121861,7 @@ static char * wwall_7_111_xpm[] = {
 "        .X.XX..XX.      ",
 "        .X.XX..XX.      ",
 "        ..XXX..XX.      "};
-IMAGE 03555 853 ./arch/wall/wwall/wwall_8.111
+IMAGE 03557 853 ./arch/wall/wwall/wwall_8.111
 /* XPM */
 static char * wwall_8_111_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -121827,7 +121895,7 @@ static char * wwall_8_111_xpm[] = {
 "                        ",
 "                        ",
 "                        "};
-IMAGE 03556 853 ./arch/wall/wwall/wwall_9.111
+IMAGE 03558 853 ./arch/wall/wwall/wwall_9.111
 /* XPM */
 static char * wwall_9_111_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -121861,7 +121929,7 @@ static char * wwall_9_111_xpm[] = {
 "                        ",
 "                        ",
 "                        "};
-IMAGE 03557 853 ./arch/wall/wwall/wwall_A.111
+IMAGE 03559 853 ./arch/wall/wwall/wwall_A.111
 /* XPM */
 static char * wwall_A_111_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -121895,7 +121963,7 @@ static char * wwall_A_111_xpm[] = {
 "                        ",
 "                        ",
 "                        "};
-IMAGE 03558 853 ./arch/wall/wwall/wwall_B.111
+IMAGE 03560 853 ./arch/wall/wwall/wwall_B.111
 /* XPM */
 static char * wwall_B_111_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -121929,7 +121997,7 @@ static char * wwall_B_111_xpm[] = {
 "                        ",
 "                        ",
 "                        "};
-IMAGE 03559 853 ./arch/wall/wwall/wwall_C.111
+IMAGE 03561 853 ./arch/wall/wwall/wwall_C.111
 /* XPM */
 static char * wwall_C_111_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -121963,7 +122031,7 @@ static char * wwall_C_111_xpm[] = {
 "        .X.XX..XX.      ",
 "        .X.XX..XX.      ",
 "        ..XXX..XX.      "};
-IMAGE 03560 853 ./arch/wall/wwall/wwall_D.111
+IMAGE 03562 853 ./arch/wall/wwall/wwall_D.111
 /* XPM */
 static char * wwall_D_111_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -121997,7 +122065,7 @@ static char * wwall_D_111_xpm[] = {
 "        .X.XX..XX.      ",
 "        .X.XX..XX.      ",
 "        ..XXX..XX.      "};
-IMAGE 03561 853 ./arch/wall/wwall/wwall_E.111
+IMAGE 03563 853 ./arch/wall/wwall/wwall_E.111
 /* XPM */
 static char * wwall_E_111_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -122031,7 +122099,7 @@ static char * wwall_E_111_xpm[] = {
 "        .X.XX..XX.      ",
 "        .X.XX..XX.      ",
 "        ..XXX..XX.      "};
-IMAGE 03562 853 ./arch/wall/wwall/wwall_F.111
+IMAGE 03564 853 ./arch/wall/wwall/wwall_F.111
 /* XPM */
 static char * wwall_F_111_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -122065,7 +122133,7 @@ static char * wwall_F_111_xpm[] = {
 "        .X.XX..XX.      ",
 "        .X.XX..XX.      ",
 "        ..XXX..XX.      "};
-IMAGE 03563 855 ./arch/wall/wwall/wwall_w_0.111
+IMAGE 03565 855 ./arch/wall/wwall/wwall_w_0.111
 /* XPM */
 static char * wwall_w_0_111_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -122099,7 +122167,7 @@ static char * wwall_w_0_111_xpm[] = {
 "        .X.XX..X..      ",
 "        .X.XX..XX.      ",
 "        ..XXX..XX.      "};
-IMAGE 03564 855 ./arch/wall/wwall/wwall_w_0.112
+IMAGE 03566 855 ./arch/wall/wwall/wwall_w_0.112
 /* XPM */
 static char * wwall_w_0_112_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -122133,7 +122201,7 @@ static char * wwall_w_0_112_xpm[] = {
 "        .X.XX..X..      ",
 "        .X.XX..XX.      ",
 "        ..XXX..XX.      "};
-IMAGE 03565 855 ./arch/wall/wwall/wwall_w_0.113
+IMAGE 03567 855 ./arch/wall/wwall/wwall_w_0.113
 /* XPM */
 static char * wwall_w_0_113_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -122167,7 +122235,7 @@ static char * wwall_w_0_113_xpm[] = {
 "        .X.XX..X..      ",
 "        .X.XX..XX.      ",
 "        ..XXX..XX.      "};
-IMAGE 03566 855 ./arch/wall/wwall/wwall_w_0.114
+IMAGE 03568 855 ./arch/wall/wwall/wwall_w_0.114
 /* XPM */
 static char * wwall_w_0_114_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -122201,7 +122269,7 @@ static char * wwall_w_0_114_xpm[] = {
 "        .X.XX..X..      ",
 "        .X.XX..XX.      ",
 "        ..XXX..XX.      "};
-IMAGE 03567 855 ./arch/wall/wwall/wwall_w_0.115
+IMAGE 03569 855 ./arch/wall/wwall/wwall_w_0.115
 /* XPM */
 static char * wwall_w_0_115_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -122235,7 +122303,7 @@ static char * wwall_w_0_115_xpm[] = {
 "        .X.XX..X..      ",
 "        .X.XX..XX.      ",
 "        ..XXX..XX.      "};
-IMAGE 03568 855 ./arch/wall/wwall/wwall_w_0.116
+IMAGE 03570 855 ./arch/wall/wwall/wwall_w_0.116
 /* XPM */
 static char * wwall_w_0_116_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -122269,7 +122337,7 @@ static char * wwall_w_0_116_xpm[] = {
 "        .X.XX..X..      ",
 "        .X.XX..XX.      ",
 "        ..XXX..XX.      "};
-IMAGE 03569 855 ./arch/wall/wwall/wwall_w_0.117
+IMAGE 03571 855 ./arch/wall/wwall/wwall_w_0.117
 /* XPM */
 static char * wwall_w_0_117_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -122303,7 +122371,7 @@ static char * wwall_w_0_117_xpm[] = {
 "        .X.XX..X..      ",
 "        .X.XX..XX.      ",
 "        ..XXX..XX.      "};
-IMAGE 03570 855 ./arch/wall/wwall/wwall_w_1.111
+IMAGE 03572 855 ./arch/wall/wwall/wwall_w_1.111
 /* XPM */
 static char * wwall_w_1_111_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -122337,7 +122405,7 @@ static char * wwall_w_1_111_xpm[] = {
 "                        ",
 "                        ",
 "                        "};
-IMAGE 03571 855 ./arch/wall/wwall/wwall_w_1.112
+IMAGE 03573 855 ./arch/wall/wwall/wwall_w_1.112
 /* XPM */
 static char * wwall_w_1_112_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -122371,7 +122439,7 @@ static char * wwall_w_1_112_xpm[] = {
 "                        ",
 "                        ",
 "                        "};
-IMAGE 03572 855 ./arch/wall/wwall/wwall_w_1.113
+IMAGE 03574 855 ./arch/wall/wwall/wwall_w_1.113
 /* XPM */
 static char * wwall_w_1_113_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -122405,7 +122473,7 @@ static char * wwall_w_1_113_xpm[] = {
 "                        ",
 "                        ",
 "                        "};
-IMAGE 03573 855 ./arch/wall/wwall/wwall_w_1.114
+IMAGE 03575 855 ./arch/wall/wwall/wwall_w_1.114
 /* XPM */
 static char * wwall_w_1_114_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -122439,7 +122507,7 @@ static char * wwall_w_1_114_xpm[] = {
 "                        ",
 "                        ",
 "                        "};
-IMAGE 03574 855 ./arch/wall/wwall/wwall_w_1.115
+IMAGE 03576 855 ./arch/wall/wwall/wwall_w_1.115
 /* XPM */
 static char * wwall_w_1_115_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -122473,7 +122541,7 @@ static char * wwall_w_1_115_xpm[] = {
 "                        ",
 "                        ",
 "                        "};
-IMAGE 03575 855 ./arch/wall/wwall/wwall_w_1.116
+IMAGE 03577 855 ./arch/wall/wwall/wwall_w_1.116
 /* XPM */
 static char * wwall_w_1_116_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -122507,7 +122575,7 @@ static char * wwall_w_1_116_xpm[] = {
 "                        ",
 "                        ",
 "                        "};
-IMAGE 03576 855 ./arch/wall/wwall/wwall_w_1.117
+IMAGE 03578 855 ./arch/wall/wwall/wwall_w_1.117
 /* XPM */
 static char * wwall_w_1_117_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -122541,7 +122609,7 @@ static char * wwall_w_1_117_xpm[] = {
 "                        ",
 "                        ",
 "                        "};
-IMAGE 03577 868 ./arch/wall/wwall/wwindow_0.111
+IMAGE 03579 868 ./arch/wall/wwall/wwindow_0.111
 /* XPM */
 static char * wwindow_0_111_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -122576,7 +122644,7 @@ static char * wwindow_0_111_xpm[] = {
 "        ...XX..X..      ",
 "        ...XX..XX.      ",
 "        ..XXX..XX.      "};
-IMAGE 03578 868 ./arch/wall/wwall/wwindow_1.111
+IMAGE 03580 868 ./arch/wall/wwall/wwindow_1.111
 /* XPM */
 static char * wwindow_1_111_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -122611,7 +122679,7 @@ static char * wwindow_1_111_xpm[] = {
 "                        ",
 "                        ",
 "                        "};
-IMAGE 03579 848 ./arch/monster/dragon/wyvern.131
+IMAGE 03581 848 ./arch/monster/dragon/wyvern.131
 /* XPM */
 static char * wyvern_131_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -122644,7 +122712,7 @@ static char * wyvern_131_xpm[] = {
 "                 ..     ",
 "                  ...   ",
 "                        "};
-IMAGE 03580 848 ./arch/monster/dragon/wyvern.132
+IMAGE 03582 848 ./arch/monster/dragon/wyvern.132
 /* XPM */
 static char * wyvern_132_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -122677,7 +122745,7 @@ static char * wyvern_132_xpm[] = {
 "                 ..     ",
 "                  ...   ",
 "                        "};
-IMAGE 03581 891 ./arch/monster/dragon/wyvern.171
+IMAGE 03583 891 ./arch/monster/dragon/wyvern.171
 /* XPM */
 static char * wyvern_171_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -122712,7 +122780,7 @@ static char * wyvern_171_xpm[] = {
 "              ...       ",
 "            ......      ",
 "                        "};
-IMAGE 03582 891 ./arch/monster/dragon/wyvern.172
+IMAGE 03584 891 ./arch/monster/dragon/wyvern.172
 /* XPM */
 static char * wyvern_172_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -122747,7 +122815,7 @@ static char * wyvern_172_xpm[] = {
 "              ...       ",
 "            ......      ",
 "                        "};
-IMAGE 03583 891 ./arch/monster/dragon/wyvern.231
+IMAGE 03585 891 ./arch/monster/dragon/wyvern.231
 /* XPM */
 static char * wyvern_231_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -122782,7 +122850,7 @@ static char * wyvern_231_xpm[] = {
 "       ...              ",
 "      ......            ",
 "                        "};
-IMAGE 03584 891 ./arch/monster/dragon/wyvern.232
+IMAGE 03586 891 ./arch/monster/dragon/wyvern.232
 /* XPM */
 static char * wyvern_232_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -122817,7 +122885,7 @@ static char * wyvern_232_xpm[] = {
 "       ...              ",
 "      ......            ",
 "                        "};
-IMAGE 03585 848 ./arch/monster/dragon/wyvern.271
+IMAGE 03587 848 ./arch/monster/dragon/wyvern.271
 /* XPM */
 static char * wyvern_271_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -122850,7 +122918,7 @@ static char * wyvern_271_xpm[] = {
 "     ..                 ",
 "   ...                  ",
 "                        "};
-IMAGE 03586 848 ./arch/monster/dragon/wyvern.272
+IMAGE 03588 848 ./arch/monster/dragon/wyvern.272
 /* XPM */
 static char * wyvern_272_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -122883,7 +122951,7 @@ static char * wyvern_272_xpm[] = {
 "     ..                 ",
 "   ...                  ",
 "                        "};
-IMAGE 03587 862 ./arch/monster/insect/xan.111
+IMAGE 03589 862 ./arch/monster/insect/xan.111
 /* XPM */
 static char * xan_111_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -122918,7 +122986,7 @@ static char * xan_111_xpm[] = {
 "                        ",
 "                        ",
 "                        "};
-IMAGE 03588 889 ./arch/monster/insect/xan.112
+IMAGE 03590 889 ./arch/monster/insect/xan.112
 /* XPM */
 static char * xan_112_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -122954,7 +123022,7 @@ static char * xan_112_xpm[] = {
 "                        ",
 "                        ",
 "                        "};
-IMAGE 03589 874 ./arch/monster/insect/xan_gen.111
+IMAGE 03591 874 ./arch/monster/insect/xan_gen.111
 /* XPM */
 static char * xan_gen_111_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -122989,7 +123057,7 @@ static char * xan_gen_111_xpm[] = {
 "   .ooo..XXX...oo.XXX.  ",
 "    ...  ...   ......   ",
 "                        "};
-IMAGE 03590 883 ./arch/wall/yellow/yellow_0.111
+IMAGE 03592 883 ./arch/wall/yellow/yellow_0.111
 /* XPM */
 static char * yellow_0_111_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -123023,7 +123091,7 @@ static char * yellow_0_111_xpm[] = {
 ".    .   .   .  .    .  ",
 "X... X.. X.. X. X... X. ",
 "XXXX.XXX.XXX.XX.XXXX.XX."};
-IMAGE 03591 902 ./arch/wall/yellow/yellow_1.111
+IMAGE 03593 902 ./arch/wall/yellow/yellow_1.111
 /* XPM */
 static char * yellow_1_111_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -123058,7 +123126,7 @@ static char * yellow_1_111_xpm[] = {
 "   .XXXXX.XXX.XX.XXXX   ",
 "   o....Xo..Xo.Xo...X   ",
 "   ooooo.ooo.oo.oooo.   "};
-IMAGE 03592 902 ./arch/wall/yellow/yellow_2.111
+IMAGE 03594 902 ./arch/wall/yellow/yellow_2.111
 /* XPM */
 static char * yellow_2_111_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -123093,7 +123161,7 @@ static char * yellow_2_111_xpm[] = {
 "                        ",
 "                        ",
 "                        "};
-IMAGE 03593 902 ./arch/wall/yellow/yellow_3.111
+IMAGE 03595 902 ./arch/wall/yellow/yellow_3.111
 /* XPM */
 static char * yellow_3_111_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -123128,7 +123196,7 @@ static char * yellow_3_111_xpm[] = {
 "                        ",
 "                        ",
 "                        "};
-IMAGE 03594 902 ./arch/wall/yellow/yellow_4.111
+IMAGE 03596 902 ./arch/wall/yellow/yellow_4.111
 /* XPM */
 static char * yellow_4_111_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -123163,7 +123231,7 @@ static char * yellow_4_111_xpm[] = {
 "   .XXXXX.XXX.XX.XXXX   ",
 "   o....Xo..Xo.Xo...X   ",
 "   ooooo.ooo.oo.oooo.   "};
-IMAGE 03595 902 ./arch/wall/yellow/yellow_5.111
+IMAGE 03597 902 ./arch/wall/yellow/yellow_5.111
 /* XPM */
 static char * yellow_5_111_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -123198,7 +123266,7 @@ static char * yellow_5_111_xpm[] = {
 "   .XXXXX.XXX.XX.XXXX   ",
 "   o....Xo..Xo.Xo...X   ",
 "   ooooo.ooo.oo.oooo.   "};
-IMAGE 03596 902 ./arch/wall/yellow/yellow_6.111
+IMAGE 03598 902 ./arch/wall/yellow/yellow_6.111
 /* XPM */
 static char * yellow_6_111_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -123233,7 +123301,7 @@ static char * yellow_6_111_xpm[] = {
 "   .XXXXX.XXX.XX.XXXX   ",
 "   o....Xo..Xo.Xo...X   ",
 "   ooooo.ooo.oo.oooo.   "};
-IMAGE 03597 902 ./arch/wall/yellow/yellow_7.111
+IMAGE 03599 902 ./arch/wall/yellow/yellow_7.111
 /* XPM */
 static char * yellow_7_111_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -123268,7 +123336,7 @@ static char * yellow_7_111_xpm[] = {
 "   .XXXXX.XXX.XX.XXXX   ",
 "   o....Xo..Xo.Xo...X   ",
 "   ooooo.ooo.oo.oooo.   "};
-IMAGE 03598 902 ./arch/wall/yellow/yellow_8.111
+IMAGE 03600 902 ./arch/wall/yellow/yellow_8.111
 /* XPM */
 static char * yellow_8_111_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -123303,7 +123371,7 @@ static char * yellow_8_111_xpm[] = {
 "                        ",
 "                        ",
 "                        "};
-IMAGE 03599 902 ./arch/wall/yellow/yellow_9.111
+IMAGE 03601 902 ./arch/wall/yellow/yellow_9.111
 /* XPM */
 static char * yellow_9_111_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -123338,7 +123406,7 @@ static char * yellow_9_111_xpm[] = {
 "                        ",
 "                        ",
 "                        "};
-IMAGE 03600 902 ./arch/wall/yellow/yellow_A.111
+IMAGE 03602 902 ./arch/wall/yellow/yellow_A.111
 /* XPM */
 static char * yellow_A_111_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -123373,7 +123441,7 @@ static char * yellow_A_111_xpm[] = {
 "                        ",
 "                        ",
 "                        "};
-IMAGE 03601 902 ./arch/wall/yellow/yellow_B.111
+IMAGE 03603 902 ./arch/wall/yellow/yellow_B.111
 /* XPM */
 static char * yellow_B_111_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -123408,7 +123476,7 @@ static char * yellow_B_111_xpm[] = {
 "                        ",
 "                        ",
 "                        "};
-IMAGE 03602 902 ./arch/wall/yellow/yellow_C.111
+IMAGE 03604 902 ./arch/wall/yellow/yellow_C.111
 /* XPM */
 static char * yellow_C_111_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -123443,7 +123511,7 @@ static char * yellow_C_111_xpm[] = {
 "   .XXXXX.XXX.XX.XXXX   ",
 "   o....Xo..Xo.Xo...X   ",
 "   ooooo.ooo.oo.oooo.   "};
-IMAGE 03603 902 ./arch/wall/yellow/yellow_D.111
+IMAGE 03605 902 ./arch/wall/yellow/yellow_D.111
 /* XPM */
 static char * yellow_D_111_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -123478,7 +123546,7 @@ static char * yellow_D_111_xpm[] = {
 "   .XXXXX.XXX.XX.XXXX   ",
 "   o....Xo..Xo.Xo...X   ",
 "   ooooo.ooo.oo.oooo.   "};
-IMAGE 03604 902 ./arch/wall/yellow/yellow_E.111
+IMAGE 03606 902 ./arch/wall/yellow/yellow_E.111
 /* XPM */
 static char * yellow_E_111_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -123513,7 +123581,7 @@ static char * yellow_E_111_xpm[] = {
 "   .XXXXX.XXX.XX.XXXX   ",
 "   o....Xo..Xo.Xo...X   ",
 "   ooooo.ooo.oo.oooo.   "};
-IMAGE 03605 902 ./arch/wall/yellow/yellow_F.111
+IMAGE 03607 902 ./arch/wall/yellow/yellow_F.111
 /* XPM */
 static char * yellow_F_111_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -123548,7 +123616,7 @@ static char * yellow_F_111_xpm[] = {
 "   .XXXXX.XXX.XX.XXXX   ",
 "   o....Xo..Xo.Xo...X   ",
 "   ooooo.ooo.oo.oooo.   "};
-IMAGE 03606 884 ./arch/ground/Wood/ytree_1.111
+IMAGE 03608 884 ./arch/ground/Wood/ytree_1.111
 /* XPM */
 static char * ytree_1_111_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -123582,7 +123650,7 @@ static char * ytree_1_111_xpm[] = {
 "           ..           ",
 "             .          ",
 "                        "};
-IMAGE 03607 870 ./arch/ground/Wood/ytree_2.111
+IMAGE 03609 870 ./arch/ground/Wood/ytree_2.111
 /* XPM */
 static char * ytree_2_111_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -123616,7 +123684,7 @@ static char * ytree_2_111_xpm[] = {
 "          ...           ",
 "                        ",
 "                        "};
-IMAGE 03608 965 ./arch/monster/undead/zombie.111
+IMAGE 03610 965 ./arch/monster/undead/zombie.111
 /* XPM */
 static char * zombie_111_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -123654,7 +123722,7 @@ static char * zombie_111_xpm[] = {
 "      ..X.      .XX.    ",
 "     .XXX.      .XX.    ",
 "      ...        ..     "};
-IMAGE 03609 965 ./arch/monster/undead/zombie.112
+IMAGE 03611 965 ./arch/monster/undead/zombie.112
 /* XPM */
 static char * zombie_112_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -123692,7 +123760,7 @@ static char * zombie_112_xpm[] = {
 "        . X.  . XX.     ",
 "       .XXX.  .XX.      ",
 "        ...    ..       "};
-IMAGE 03610 965 ./arch/monster/undead/zombie.113
+IMAGE 03612 965 ./arch/monster/undead/zombie.113
 /* XPM */
 static char * zombie_113_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -123730,7 +123798,7 @@ static char * zombie_113_xpm[] = {
 "          . X .X.       ",
 "          XXX.X.        ",
 "         .... .         "};
-IMAGE 03611 902 ./arch/monster/undead/zombie_gen.111
+IMAGE 03613 902 ./arch/monster/undead/zombie_gen.111
 /* XPM */
 static char * zombie_gen_111_xpm[] = {
 /* width height ncolors chars_per_pixel */
