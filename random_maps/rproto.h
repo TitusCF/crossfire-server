@@ -70,6 +70,38 @@ extern void include_map_in_map ( mapstruct *dest_map, mapstruct *in_map, int x, 
 extern int find_spot_for_submap ( mapstruct *map, char **layout, int *ix, int *iy, int xsize, int ysize );
 extern void place_fountain_with_specials ( mapstruct *map );
 extern void place_specials_in_map ( mapstruct *map, char **layout );
+extern void write_parameters_to_string(char *buf,
+										  int xsize_n,
+										  int ysize_n,
+										  char *wallstyle_n,
+										  char *floorstyle_n,
+										  char *monsterstyle_n,
+
+										  char *treasurestyle_n,
+										  char *layoutstyle_n,
+										  char *decorstyle_n,
+										  char *doorstyle_n,
+										  char *exitstyle_n,
+										  char *final_map_n,
+										  char *this_map_n,
+
+										  int layoutoptions1_n,
+										  int layoutoptions2_n,
+										  int layoutopitons3_n,
+										  int symmetry_n,
+										  int dungeon_depth_n,
+										  int dungeon_level_n,
+
+										  int difficulty_n,
+										  int difficulty_given_n,
+										  int decoroptions_n,
+										  int orientation_n,
+										  int origin_x_n,
+										  int origin_y_n,
+										  int random_seed_n,
+										  int treasureoptions_n
+										  ) ;
+void copy_object_with_inv(object *src, object *dest);
 
 #endif /* __STDC__ */
 #endif /* __CEXTRACT__ */

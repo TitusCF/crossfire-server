@@ -158,7 +158,7 @@ mapstruct *generate_random_map(char *InFileName,char *OutFileName) {
 
   place_treasure(theMap,layout,treasurestyle,treasureoptions);
 
-  put_decor(theMap,layout,decorstyle,0);
+  put_decor(theMap,layout,decorstyle,decoroptions);
 
   /* generate treasures, etc. */
   if(generate_treasure_now)
@@ -185,8 +185,16 @@ mapstruct *generate_random_map(char *InFileName,char *OutFileName) {
     arguments it needs.  */
 char **layoutgen() {
   char **maze=0;
-  if(Xsize<10) Xsize = 15 + RANDOM()%25;
-  if(Ysize<10) Ysize = 15 + RANDOM()%25;
+  if(symmetry!=NO_SYM) {
+	 if(Xsize<15) Xsize = 15 + RANDOM()%25;
+	 if(Ysize<15) Ysize = 15 + RANDOM()%25;
+  }
+  else
+	 {
+	 if(Xsize<4) Xsize = 15 + RANDOM()%25;
+	 if(Ysize<4) Ysize = 15 + RANDOM()%25;
+	 }
+  
   if(symmetry == RANDOM_SYM) {
     symmetry_used = (RANDOM() % ( XY_SYM))+1;
     if(symmetry_used==Y_SYM||symmetry_used==XY_SYM) Ysize = Ysize/2+1;
@@ -610,4 +618,171 @@ void write_map_parameters_to_string(char *buf) {
   }
 
 
+}
+
+void write_parameters_to_string(char *buf,
+										  int xsize_n,
+										  int ysize_n,
+										  char *wallstyle_n,
+										  char *floorstyle_n,
+										  char *monsterstyle_n,
+
+										  char *treasurestyle_n,
+										  char *layoutstyle_n,
+										  char *decorstyle_n,
+										  char *doorstyle_n,
+										  char *exitstyle_n,
+										  char *final_map_n,
+										  char *this_map_n,
+
+										  int layoutoptions1_n,
+										  int layoutoptions2_n,
+										  int layoutoptions3_n,
+										  int symmetry_n,
+										  int dungeon_depth_n,
+										  int dungeon_level_n,
+
+										  int difficulty_n,
+										  int difficulty_given_n,
+										  int decoroptions_n,
+										  int orientation_n,
+										  int origin_x_n,
+										  int origin_y_n,
+										  int random_seed_n,
+										  int treasureoptions_n
+										  ) 
+{
+
+  char small_buf[256];
+  sprintf(buf,"xsize %d\nysize %d\n",xsize_n,ysize_n);
+
+  if(wallstyle_n && wallstyle_n[0]) {
+    sprintf(small_buf,"wallstyle %s\n",wallstyle_n);
+    strcat(buf,small_buf);
+  }
+
+  if(floorstyle_n && floorstyle_n[0]) {
+    sprintf(small_buf,"floorstyle %s\n",floorstyle_n);
+    strcat(buf,small_buf);
+  }
+
+  if(monsterstyle_n && monsterstyle_n[0]) {
+    sprintf(small_buf,"monsterstyle %s\n",monsterstyle_n);
+    strcat(buf,small_buf);
+  }
+
+  if(treasurestyle_n && treasurestyle_n[0]) {
+    sprintf(small_buf,"treasurestyle %s\n",treasurestyle_n);
+    strcat(buf,small_buf);
+  }
+
+  if(layoutstyle_n &&layoutstyle_n[0]) {
+    sprintf(small_buf,"layoutstyle %s\n",layoutstyle_n);
+    strcat(buf,small_buf);
+  }
+
+  if(decorstyle_n && decorstyle_n[0]) {
+    sprintf(small_buf,"decorstyle %s\n",decorstyle_n);
+    strcat(buf,small_buf);
+  }
+
+  if(doorstyle_n && doorstyle_n[0]) {
+    sprintf(small_buf,"doorstyle %s\n",doorstyle_n);
+    strcat(buf,small_buf);
+  }
+
+  if(exitstyle_n && exitstyle_n[0]) {
+    sprintf(small_buf,"exitstyle %s\n",exitstyle_n);
+    strcat(buf,small_buf);
+  }
+
+  if(final_map_n && final_map_n[0]) {
+    sprintf(small_buf,"final_map %s\n",final_map);
+    strcat(buf,small_buf);
+  }
+
+  if(this_map_n && this_map_n[0]) {
+    sprintf(small_buf,"origin_map %s\n",this_map_n);
+    strcat(buf,small_buf);
+  }
+
+  if(layoutoptions1_n) {
+    sprintf(small_buf,"layoutoptions1 %d\n",layoutoptions1_n);
+    strcat(buf,small_buf);
+  }
+
+
+  if(layoutoptions2_n) {
+    sprintf(small_buf,"layoutoptions2 %d\n",layoutoptions2_n);
+    strcat(buf,small_buf);
+  }
+
+
+  if(layoutoptions3_n) {
+    sprintf(small_buf,"layoutoptions3 %d\n",layoutoptions3_n);
+    strcat(buf,small_buf);
+  }
+
+  if(symmetry_n) {
+    sprintf(small_buf,"symmetry %d\n",symmetry_n);
+    strcat(buf,small_buf);
+  }
+
+
+  if(difficulty_n && difficulty_given_n ) {
+    sprintf(small_buf,"difficulty %d\n",difficulty_n);
+    strcat(buf,small_buf);
+  }
+
+  sprintf(small_buf,"dungeon_level %d\n",dungeon_level_n);
+  strcat(buf,small_buf);
+
+  if(dungeon_depth_n) {
+    sprintf(small_buf,"dungeon_depth %d\n",dungeon_depth_n);
+    strcat(buf,small_buf);
+  }
+
+  if(decoroptions_n) {
+    sprintf(small_buf,"decoroptions %d\n",decoroptions_n);
+    strcat(buf,small_buf);
+  }
+
+  if(orientation_n) {
+    sprintf(small_buf,"orientation %d\n",orientation_n);
+    strcat(buf,small_buf);
+  }
+
+  if(origin_x_n) {
+    sprintf(small_buf,"origin_x %d\n",origin_x_n);
+    strcat(buf,small_buf);
+  }
+
+  if(origin_y_n) {
+    sprintf(small_buf,"origin_y %d\n",origin_y_n);
+    strcat(buf,small_buf);
+  }
+  if(random_seed_n) {
+    sprintf(small_buf,"random_seed %d\n",random_seed_n + 1);
+    strcat(buf,small_buf);
+  }
+
+  if(treasureoptions_n) {
+    sprintf(small_buf,"treasureoptions %d\n",treasureoptions_n);
+    strcat(buf,small_buf);
+  }
+
+
+}
+
+/* copy an object with an inventory...  i.e., duplicate the inv too. */
+void copy_object_with_inv(object *src_ob, object *dest_ob) {
+  object *walk,*tmp;
+
+  copy_object(src_ob,dest_ob);
+
+  for(walk=src_ob->inv;walk!=NULL;walk=walk->below) {
+	 tmp=get_object();
+	 copy_object(walk,tmp);
+	 insert_ob_in_ob(tmp,dest_ob);
+  }
 }

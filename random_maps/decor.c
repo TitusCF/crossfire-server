@@ -55,6 +55,7 @@ void put_decor(mapstruct *map,char **maze,char *decorstyle,int decor_option) {
     decor_option = RANDOM() % NR_DECOR_OPTIONS +1;
   };
   switch(decor_option) {
+  case 0: break;
   case 1:  /* random placement of decor objects. */
     {
       int number_to_place = RANDOM() % ( (Xsize *Ysize) / 5);
@@ -80,7 +81,27 @@ void put_decor(mapstruct *map,char **maze,char *decorstyle,int decor_option) {
 		  else failures++;
       }
       break;
+	 default:  /* place decor objects everywhere: tile the map. */
+		{
+		  int i,j;
+		  for(i=1;i<Xsize-1;i++) for(j=1;j<Ysize-1;j++) {
+			 if(maze[i][j]==0) {
+				object *new_decor_object, *this_object;
+				
+				new_decor_object = pick_random_object(decor_map);
+				this_object = arch_to_object(new_decor_object->arch);
+				copy_object(new_decor_object,this_object);
+				this_object->x = i;
+				this_object->y = j;
+				/* it screws things up if decor can stop people */
+				CLEAR_FLAG(this_object,FLAG_NO_PASS);
+				insert_ob_in_map(this_object,map,NULL);
+			 }
+		  }
+		  
+		}
+		break;
 
-    }	
+	 }
   }
 }

@@ -41,6 +41,7 @@
 #define TRAPPED 16 /* trap dropped in same location as chest. */
 #define SPARSE 32  /* 1/2 as much treasure as default */
 #define RICH 64   /* 2x as much treasure as default */
+#define FILLED 128  /* Fill/tile the entire map with treasure */
 #define LAST_OPTION 64  /* set this to the last real option, for random */
 
 #define NO_PASS_DOORS 0
@@ -78,9 +79,9 @@ void place_treasure(mapstruct *map,char **layout, char *treasure_style,int treas
   if(treasureoptions<=0) treasureoptions=RANDOM() % (2*LAST_OPTION);
 
   /* filter out the mutually exclusive options */
-  if(treasureoptions & (RICH|SPARSE))
-    if(RANDOM()%2) treasureoptions -=1;
-    else treasureoptions-=2;
+  if(treasureoptions & (RICH|SPARSE)) {
+    if(RANDOM()%2) treasureoptions -=1; 
+    else treasureoptions-=2;}
 
   /* pick the number of treasures */
   if(treasureoptions & SPARSE)
@@ -174,7 +175,8 @@ object * place_chest(int treasureoptions,int x, int y,mapstruct *map, mapstruct 
 
 
   /* put the treasures in the chest. */
-  if(style_map) {
+  /*  if(style_map) { */
+  if(0) {  /* don't use treasure style maps for now!  */
     int ti;
     /* if treasurestyle lists a treasure list, use it. */
     treasurelist *tlist=find_treasurelist(treasurestyle);

@@ -46,19 +46,12 @@ void	 insert_multisquare_ob_in_map(object *new_obj,mapstruct *map) {
   head = new_obj;
   for(at=new_obj->arch->more;at!=NULL;at=at->more) {
     object *new_seg;
-    MapLook f;
-
     new_seg = arch_to_object(at);
     new_seg->x = x + at->clone.x;
     new_seg->y = y + at->clone.y;
     new_seg->map = old_seg->map;
     insert_ob_in_map(new_seg,new_seg->map,NULL);
     new_seg->head = head;
-	 /*    if(QUERY_FLAG(&(at->clone),FLAG_ALIVE))
-			 f.flags=((get_map(map,new_seg->x,new_seg->y))->flags) | P_IS_ALIVE; 
-    if(QUERY_FLAG(&(at->clone),FLAG_NO_PASS))
-			 f.flags=((get_map(map,new_seg->x,new_seg->y))->flags) | P_NO_PASS;
-			 set_map(map,new_seg->x,new_seg->y,&f); */ 
     old_seg->more = new_seg;
     old_seg = new_seg;
   }
@@ -98,7 +91,7 @@ void place_monsters(mapstruct *map, char *monsterstyle, int difficulty) {
 	 object *new_monster = arch_to_object(this_monster->arch);
 	 x += freearr_x[freeindex];
 	 y += freearr_y[freeindex];
-	 copy_object(this_monster,new_monster);
+	 copy_object_with_inv(this_monster,new_monster);
 	 new_monster->x = x;
 	 new_monster->y = y;
 	 insert_multisquare_ob_in_map(new_monster,map);

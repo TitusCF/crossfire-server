@@ -27,6 +27,7 @@
 
 #include <global.h>
 #include <random_map.h>
+#include <sproto.h>
 
 
 /* orientation:  0 means random,

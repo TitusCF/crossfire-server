@@ -32,12 +32,16 @@
 #include <global.h>
 #include <random_map.h>
 
-#define NUM_OF_SPECIAL_TYPES 3
+#define NUM_OF_SPECIAL_TYPES 4
 #define NO_SPECIAL 0
 #define SPECIAL_SUBMAP 1
 #define SPECIAL_FOUNTAIN 2
+#define SPECIAL_EXIT 3
 
-/* clear map completly of all objects:  a rectangular area of xsize, ysize
+#define GLORY_HOLE 1
+#define NR_OF_HOLE_TYPES 1
+
+/* clear map completely of all objects:  a rectangular area of xsize, ysize
 is cleared with the top left corner at xstart, ystart */
 
 void nuke_map_region(mapstruct *map,int xstart,int ystart, int xsize, int ysize) {
@@ -52,6 +56,7 @@ void nuke_map_region(mapstruct *map,int xstart,int ystart, int xsize, int ysize)
 			 free_object(tmp);
 			 tmp=get_map_ob(map,i,j);
 		  }
+		  if(tmp==NULL) break;
 		}
 	 }
 }
@@ -76,7 +81,9 @@ void include_map_in_map(mapstruct *dest_map, mapstruct *in_map,int x, int y) {
 			  specially. */
 		  if(tmp->head!=NULL) continue;
 		  new_ob = arch_to_object(tmp->arch);
-		  copy_object(tmp,new_ob);
+		  copy_object_with_inv(tmp,new_ob);
+		  if(QUERY_FLAG(tmp,FLAG_IS_LINKED))
+			 add_button_link(new_ob,dest_map,tmp->protected);
 		  new_ob->x = i + x;
 		  new_ob->y = j + y;
 		  insert_multisquare_ob_in_map(new_ob,dest_map);
@@ -91,10 +98,10 @@ int find_spot_for_submap(mapstruct *map,char **layout,int *ix, int *iy,int xsize
   int is_occupied;
   /* don't even try to place a submap into a map if the big map isn't
 	  sufficiently large. */
-  if(3*xsize > map->mapx || 3*ysize > map->mapy) return 0;
+  if(2*xsize > map->mapx || 2*ysize > map->mapy) return 0;
   
   /* search a bit for a completely free spot. */
-  for(tries=0;tries<10;tries++) {
+  for(tries=0;tries<20;tries++) {
 	 /* pick a random location in the layout */
 	 i = RANDOM() % (map->mapx - xsize-2)+1;
 	 j = RANDOM() % (map->mapy - ysize-2)+1;
@@ -154,9 +161,51 @@ void place_fountain_with_specials(mapstruct *map) {
 
 }
 
+void place_special_exit(mapstruct * map, int hole_type) {
+  int ix,iy,i=-1;
+  char buf[HUGE_BUF];
+  mapstruct *exit_style=find_style("/styles/misc","obscure_exits",-1);
+  
+  object *the_exit=get_object();
+  if(!exit_style) return;
+ 
+  copy_object(pick_random_object(exit_style),the_exit);
+
+  while(i<0) {
+	 ix = RANDOM() % (map->mapx -2) +1;
+	 iy = RANDOM() % (map->mapx -2) +1;
+	 i = find_first_free_spot(the_exit->arch,map,ix,iy);
+  };
+  
+  ix += freearr_x[i];
+  iy += freearr_y[i];
+  the_exit->x = ix;
+  the_exit->y = iy;
+
+  if(!hole_type) hole_type = RANDOM() % NR_OF_HOLE_TYPES + 1 ;
+  
+  switch(hole_type) {
+  case GLORY_HOLE:   /* treasures */
+	 {
+		int g_xsize,g_ysize;
+		g_xsize = RANDOM() %3 + 4 + difficulty/4;
+		g_ysize = RANDOM() %3 + 4 + difficulty/4;
+		write_parameters_to_string(buf, g_xsize, g_ysize,wallstyle,floorstyle,"none",
+											"none","onion","wealth2","none",exitstyle,0,0,
+											OPT_WALLS_ONLY,0,0,1,dungeon_level,dungeon_level,
+											difficulty,difficulty,-1,1,0,0,0,0);
+		the_exit->slaying = add_string("/!");
+		the_exit->msg = add_string(buf);
+		break;
+	 }
+
+		
+  }
+  insert_ob_in_map(the_exit,map,NULL);
+}
+  
 		  
 void place_specials_in_map(mapstruct *map, char **layout) {
-  /* for now, simply include one of the special submaps */
   mapstruct *special_map;
   int ix,iy;  /* map insertion locatons */
   int special_type; /* type of special to make */
@@ -179,6 +228,12 @@ void place_specials_in_map(mapstruct *map, char **layout) {
 	  a fountain, or rather, colocated with a fountain. */
   case SPECIAL_FOUNTAIN: {
 	 place_fountain_with_specials(map);
+	 break;
+  }
+
+  /* Make an exit to another random map, e.g. a gloryhole. */
+  case SPECIAL_EXIT: {
+	 place_special_exit(map,0);
 	 break;
   }
   }

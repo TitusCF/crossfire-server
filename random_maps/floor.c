@@ -45,7 +45,7 @@ mapstruct *make_map_floor(char **layout, char *floorstyle) {
   sprintf(styledirname,"%s","/styles/floorstyles");
   sprintf(stylefilepath,"%s/%s",styledirname,floorstyle);
   style_map = find_style(styledirname,floorstyle,-1);
-  if(style_map == 0) return NULL;
+  if(style_map == 0) return newMap;
 
   /* fill up the map with the given floor style */
   if((the_floor=pick_random_object(style_map))!=NULL) {
