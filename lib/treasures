@@ -216,6 +216,9 @@ more
 arch god_grace_limit_high
 more
   arch god_spelldirect_retributive_strike
+more
+  arch burningtail
+    chance 2
 end
 #############################################################
 # Gaea - Goddess of peace, Guardian of life, Mother of nature
