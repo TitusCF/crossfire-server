@@ -491,6 +491,7 @@ void init(int argc, char **argv) {
     init_library();	/* Must be called early */
     load_settings();	/* Load the settings file */
     init_weather();
+	read_supplydb();	/* read the supply and demand database */
     parse_args(argc, argv, 2);
     fprintf(logfile,"Welcome to CrossFire, v%s\n",VERSION);
     fprintf(logfile,"Copyright (C) 1994 Mark Wedel.\n");
