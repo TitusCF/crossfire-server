@@ -17,6 +17,8 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 CVS changes since last release:
 
+common/object.c: Modify update_position so that we don't show invisible
+players to other players.  MSW 2001/03/20
 
 ------------------------------------------------------------------------------
 Changes for 0.97.0:

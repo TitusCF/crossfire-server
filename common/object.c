@@ -820,7 +820,7 @@ object *update_position (mapstruct *m, int x, int y) {
 	 *
 	 * Always put the player down for drawing.
 	 */
-	if (tmp->type==PLAYER) {
+	if (tmp->type==PLAYER && !tmp->invisible) {
 	    top.face = tmp->face;
 	    player=tmp;
 	}
