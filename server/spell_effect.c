@@ -576,7 +576,7 @@ int probe(object *op, int dir) {
   object *tmp;
 
   if(!dir) {
-    examine(op,op);
+    examine_monster(op,op);
     return 1;
   }
   for(r=1;;r++) {
@@ -956,9 +956,9 @@ int cast_light(object *op,object *caster,int dir) {
   }
   tmp->speed = 0.000001 * (SP_PARAMETERS[SP_LIGHT].bdur
               - (10*SP_level_strength_adjust(op,caster,SP_LIGHT)));
+  if (tmp->speed < MIN_ACTIVE_SPEED) tmp->speed = MIN_ACTIVE_SPEED;
   tmp->glow_radius=dam;
   tmp->x=x,tmp->y=y;
-  if(tmp->speed<=0) tmp->speed = 0.000001; /* safety */
   insert_ob_in_map(tmp,op->map,op);
 
   if(op->type==PLAYER) draw(op);
@@ -3344,7 +3344,7 @@ int make_object_glow(object *op, int radius, int time) {
    tmp->speed = 0.000001 * time;
    tmp->glow_radius=radius;
    tmp->x=op->x,tmp->y=op->y;
-   if(tmp->speed<=0) tmp->speed = 0; /* safety */
+   if(tmp->speed<MIN_ACTIVE_SPEED) tmp->speed = MIN_ACTIVE_SPEED; /* safety */
    tmp=insert_ob_in_ob(tmp,op);
 
    if(!tmp->env||op!=tmp->env) { 

@@ -713,6 +713,8 @@ static inline void safe_strcat(char *dest, char *orig, int *curlen, int maxlen)
 #define AP_APPLY		1
 #define AP_UNAPPLY		2
 
+/* Cut off point of when an object is put on the active list or not */
+#define MIN_ACTIVE_SPEED	0.00001
 
 /*
  * random() is much better than rand().  If you have random(), use it instead.

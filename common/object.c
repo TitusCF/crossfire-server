@@ -6,7 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 1994 Mark Wedel
+    Copyright (C) 2000 Mark Wedel
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -23,7 +23,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to master@rahul.net
+    The author can be reached via e-mail to mwedel@scruz.net
 */
 
 /* Eneq(@csd.uu.se): Added weight-modifiers in environment of objects.
@@ -87,7 +87,8 @@ inline int CAN_MERGE(object *ob1, object *ob2) {
      * be animated or have a very low speed.  Is this an attempted monster
      * check?
      */
-    if (!QUERY_FLAG(ob1,FLAG_ANIMATE) && FABS((ob1)->speed) > 0.001 ) return 0;
+    if (!QUERY_FLAG(ob1,FLAG_ANIMATE) && FABS((ob1)->speed) > MIN_ACTIVE_SPEED)
+	return 0;
 
 
     /* If the objects have been identified, set the BEEN_APPLIED flag.
@@ -697,7 +698,7 @@ void update_ob_speed(object *op) {
     if (arch_init) {
 	return;
     }
-    if (FABS(op->speed)>0.001) {
+    if (FABS(op->speed)>MIN_ACTIVE_SPEED) {
 	/* If already on active list, don't do anything */
 	if (op->active_next || op->active_prev || op==active_objects)
 	    return;

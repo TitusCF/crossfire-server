@@ -438,8 +438,7 @@ char *describe_item(object *op) {
 
   retbuf[0]='\0';
   if(QUERY_FLAG(op,FLAG_MONSTER)) {
-    /* Merge:  Should it be 0.01 instead of 0.001? CE 0.7 has the former*/
-    if(FABS(op->speed)>0.001) {
+    if(FABS(op->speed)>MIN_ACTIVE_SPEED) {
       switch((int)((FABS(op->speed))*15)) {
       case 0:
         strcat(retbuf,"(very slow movement)");

@@ -18,6 +18,13 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+include/define.h: Add MIN_ACTIVE_SPEED value to determine what threshold
+something will be put on the active list or not instead of using
+varying values throughout the source code.
+common/item.c, common/object.c, server/monster.c, server/pets.c,
+server/spell_effect.c:  Updated to use the MIN_ACTIVE_SPEED instead of
+hardcoded values.  MSW 5/26/2000
+
 include/define.h,include/global.h, common/image.c:  Remove following old
 face information: INV_*_FACES, BLOCKED_FACE, STIPPLE[12]_FACE.  This
 is just a general cleanup - the server has not used these since the
