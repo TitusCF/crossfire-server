@@ -32,8 +32,8 @@ Style Parameters:
 ******************************************************************************
 
 layoutstyle <style>	(special!) Pick the layout style for the map.  Currently, 
-			"maze" and "onion" are allowed.  See below for more
-			detail.
+			"spiral", "maze" and "onion" are allowed.  
+                        See below for more detail.
 
 floorstyle <style>	Load /styles/floorstyles/<style> and pick a random
 			floortype from that style map for the random map.
@@ -302,6 +302,41 @@ A "full" maze
 ### #      ## ##   #    # # ##         #
 #   #  # #    #  #    # # #    # #  #  #
 ########################################
+
+
+Spiral Maps
+***************************************************************************
+
+###########################
+###########################
+########### D    ##########
+#########   ####   ########
+########  ########  #######
+#######  ##########  ######
+######  ############  #####
+###### ####     #####D#####
+#####  ###  ###  ####  ####
+##### #### #####  #### ####
+#####D#### ###### ####D####
+#####  ###  #C### #### ####
+###### ####  >###D#### ####
+######D########## ####D####
+######  ########  ###  ####
+#######  ######  #### #####
+######## D D  D ####  #####
+#################### ######
+###################  ######
+#################   #######
+################# <########
+###########################
+###########################
+
+layoutoptions1:
+0  pick random options
+1  Regular spiral:  distance increases constantly with angle
+2  Fine spiral:  most coils possible are fit in
+4  Fit Spiral:  scale spiral to fit rectanglar region
+   (i.e., the spiral will look elliptical)
 
 
 An example input file:
