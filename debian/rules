@@ -10,6 +10,8 @@ build: patch build-stamp
 build-stamp:
 	dh_testdir
 
+# What max debug info, so turn it on
+	CFLAGS="-g3" 					\
 	./configure	--prefix=/$(LIB_DIR) 		\
 			--datadir=/usr/share/games 	\
 		        --bindir=/usr/games     	\

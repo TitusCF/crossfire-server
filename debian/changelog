@@ -1,7 +1,9 @@
-crossfire (1.5.0-2) unstable; urgency=low
+crossfire (1.5.0.0.20040315-1) unstable; urgency=low
 
   * Patched upstream release for Bug #232336
   * Patches upstream release for Bug #232421
+  * Created -dbg package for better feedback on crashes
+  * Added some simple manpages to keep lintian happy
  
  -- Bob Tanner <tanner@real-time.com>  Tue, 16 Feb 2004 14:32:00 -0600
 
