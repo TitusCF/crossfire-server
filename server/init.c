@@ -346,6 +346,15 @@ static void load_settings()
 		    ", %d is invalid\n", lev);
 	    else
 		settings.fastclock = lev;
+	}else if (!strcasecmp(buf, "not_permadeth")) {
+	    if (!strcasecmp(cp, "on") || !strcasecmp(cp, "true")) {
+		settings.not_permadeth=TRUE;
+	    } else if (!strcasecmp(cp, "off") || !strcasecmp(cp, "false")) {
+		settings.not_permadeth=FALSE;
+	    } else {
+		LOG(llevError, "load_settings: Unkown value for not_permadeth"
+		    ": %s\n", cp);
+	    }
 	} else if (!strcasecmp(buf,"simple_exp")) {
 	    if (!strcasecmp(cp,"on") || !strcasecmp(cp,"true")) {
 		settings.simple_exp=TRUE;

@@ -30,3 +30,5 @@ metaserver_comment Put a comment here.
 # worldmaptilesizex 50
 # worldmaptilesizey 50
 # dynamiclevel 0
+# fastclock 0
+not_permadeth true

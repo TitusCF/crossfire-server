@@ -298,7 +298,7 @@
  * game a bit safer and easier.
  */
 
-#define NOT_PERMADEATH
+#define NOT_PERMADETH TRUE
 
 
 /* This determine how many entries are stored in the kill log.  You
