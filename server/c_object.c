@@ -257,7 +257,8 @@ int sack_can_hold (object *pl, object *sack, object *op, int nrof) {
     if (op->type == SPECIAL_KEY && sack->slaying && op->slaying)
 	sprintf (buf, "You don't want put the key into %s.", query_name(sack));
     if (sack->weight_limit && sack->carrying + (nrof ? nrof : 1) * 
-	op->weight * (100 - sack->stats.Str) / 100  > sack->weight_limit)
+	(op->weight + (op->type==CONTAINER?(op->carrying*op->stats.Str):0))
+	* (100 - sack->stats.Str) / 100  > sack->weight_limit)
 	sprintf (buf, "That won't fit in %s!", query_name(sack));
     if (buf[0]) {
 	if (pl)
@@ -307,11 +308,10 @@ void pick_up_object (object *pl, object *op, object *tmp, int nrof)
 	free_object(tmp);
 	return;
     }
+    if (nrof==0 || nrof>tmp->nrof) nrof=(tmp->nrof?tmp->nrof:1);
     /* Figure out how much weight this object will add to the player */
-    weight = tmp->weight;
-    if (nrof) weight *=nrof;
-    else if (tmp->nrof) weight *= tmp->nrof;
-    if (op->type == CONTAINER) weight = weight * (100 - op->stats.Str) / 100;
+    weight = tmp->weight * nrof;
+    if (tmp->inv) weight += tmp->carrying * (100 - tmp->stats.Str) / 100;
     if ((pl->weight + pl->carrying +weight) > weight_limit[pl->stats.Str]) {
 	new_draw_info(NDI_UNIQUE, 0,pl,"That item is too heavy for you to pick up.");
 	return;
@@ -323,7 +323,7 @@ void pick_up_object (object *pl, object *op, object *tmp, int nrof)
 	SET_FLAG(tmp, FLAG_WAS_WIZ);
 #endif
 
-    if(nrof && nrof != tmp->nrof) {
+    if(nrof != tmp->nrof && !(nrof == 1 && tmp->nrof == 0)) {
 	object *tmp2 = tmp;
 	tmp = get_split_ob (tmp, nrof);
 	if(!tmp) {
@@ -480,7 +480,7 @@ int command_take (object *op, char *params)
  */
 void put_object_in_sack (object *op, object *sack, object *tmp, long nrof) 
 {
-    object *tmp2;
+    object *tmp2, *sack2;
     char buf[MAX_BUF];
 
     if (sack==tmp) return;	/* Can't put an object in itself */
@@ -500,11 +500,9 @@ void put_object_in_sack (object *op, object *sack, object *tmp, long nrof)
        * we instead move the contents of that container into the active
        * container, this is only done if the object has something in it. 
        */
-
-      sprintf (buf, "You move the items from %s into ", query_name(tmp));
-      strcat (buf,  query_name(op->container));
-      strcat (buf, ".");
-      new_draw_info(NDI_UNIQUE, 0,op, buf);
+      sack2 = tmp;
+      new_draw_info_format(NDI_UNIQUE, 0,op, "You move the items from %s into %s.", 
+		    query_name(tmp), query_name(op->container));
       for (tmp2 = tmp->inv; tmp2; tmp2 = tmp) {
 	  tmp = tmp2->below;
 	if (sack_can_hold(op, op->container, tmp2,tmp2->nrof))
@@ -515,6 +513,7 @@ void put_object_in_sack (object *op, object *sack, object *tmp, long nrof)
 	  break;
 	}
       }
+      esrv_update_item (UPD_WEIGHT, op, sack2);
       return;
     }
 
@@ -683,7 +682,7 @@ void drop(object *op, object *tmp)
     if (tmp->invisible) {
 	/* if the following is the case, it must be in an container. */
 	if (tmp->env && tmp->env->type != PLAYER) {
-	    /* Just toss the object - probably shouldn't be around
+	    /* Just toss the object - probably shouldn't be hanging
 	     * around anyways
 	     */
 	    remove_ob(tmp);
