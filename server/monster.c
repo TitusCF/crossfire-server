@@ -1592,7 +1592,6 @@ int talk_to_npc(object *op, object *npc, char *txt) {
   msglang *msgs;
   int i,j;
   object *cobj;
-#ifdef PLUGINS
   /* GROS: Handle for plugin say event */
   if(npc->event_hook[EVENT_SAY] != NULL)
   {
@@ -1679,7 +1678,6 @@ int talk_to_npc(object *op, object *npc, char *txt) {
     }
   }
   }*/
-#endif
   if(npc->msg == NULL || *npc->msg != '@')
     return 0;
   if((msgs = parse_message(npc->msg)) == NULL)

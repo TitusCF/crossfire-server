@@ -878,5 +878,4 @@ enum apply_flag {
 #  endif
 #endif
 
-#define PLUGINS
 #endif /* DEFINE_H */

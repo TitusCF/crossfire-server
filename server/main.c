@@ -291,10 +291,8 @@ void leave_map(object *op)
  */
 static void enter_map(object *op, mapstruct *newmap, int x, int y) {
     mapstruct *oldmap = op->map;
-#ifdef PLUGINS
     int evtid;
     CFParm CFP;
-#endif
 
     if (out_of_map(newmap, x, y)) {
 	LOG(llevError,"enter_map: supplied coordinates are not within the map! (%s: %d, %d)\n",
@@ -333,7 +331,6 @@ static void enter_map(object *op, mapstruct *newmap, int x, int y) {
      */
     if(!QUERY_FLAG(op, FLAG_REMOVED))
 	remove_ob(op);
-#ifdef PLUGINS
     if (op->map!=NULL)
     {
     	/* GROS : Here we handle the MAPLEAVE global event */
@@ -342,20 +339,17 @@ static void enter_map(object *op, mapstruct *newmap, int x, int y) {
     	CFP.Value[1] = (void *)(op);
     	GlobalEvent(&CFP);
     };
-#endif
     /* remove_ob clears these so they must be reset after the remove_ob call */
     op->x = x;
     op->y = y;
     op->map = newmap;
     insert_ob_in_map(op,op->map,NULL,INS_NO_WALK_ON);
 
-#ifdef PLUGINS
     /* GROS : Here we handle the MAPENTER global event */
     evtid = EVENT_MAPENTER;
     CFP.Value[0] = (void *)(&evtid);
     CFP.Value[1] = (void *)(op);
     GlobalEvent(&CFP);
-#endif
 
     if (!op->contr->hidden)
 	newmap->players++;
@@ -1006,16 +1000,14 @@ void cleanup()
 
 void leave(player *pl, int draw_exit) {
     char buf[MAX_BUF];
-#ifdef PLUGINS
     int evtid;
     CFParm CFP;
-#endif
+
     if (pl!=NULL) {
 	/* We do this so that the socket handling routine can do the final
 	 * cleanup.  We also leave that loop to actually handle the freeing
 	 * of the data.
 	 */
-#ifdef PLUGINS
         if (draw_exit==0)
         {
             /* GROS : Here we handle the LOGOUT global event */
@@ -1025,7 +1017,6 @@ void leave(player *pl, int draw_exit) {
             CFP.Value[2] = (void *)(pl->socket.host);
             GlobalEvent(&CFP);
         };
-#endif
 	pl->socket.status=Ns_Dead;
 	LOG(llevInfo,"LOGOUT: Player named %s from ip %s\n", pl->ob->name,
 	    pl->socket.host);
@@ -1133,10 +1124,8 @@ void do_specials() {
 
 int main(int argc, char **argv)
 {
-#ifdef PLUGINS
   int evtid;
   CFParm CFP;
-#endif
 #ifdef WIN32 /* ---win32 this sets the win32 from 0d0a to 0a handling */
 	_fmode = _O_BINARY ;
 #endif
@@ -1148,21 +1137,17 @@ int main(int argc, char **argv)
   settings.argc=argc;
   settings.argv=argv;
   init(argc, argv);
-#ifdef PLUGINS
   initPlugins();        /* GROS - Init the Plugins */
-#endif
   for(;;) {
     nroferrors = 0;
 
     doeric_server();
     process_events(NULL);    /* "do" something with objects with speed */
     cftimer_process_timers();/* Process the crossfire Timers */    
-#ifdef PLUGINS
     /* GROS : Here we handle the CLOCK global event */
     evtid = EVENT_CLOCK;
     CFP.Value[0] = (void *)(&evtid);
     GlobalEvent(&CFP);
-#endif
     check_active_maps(); /* Removes unused maps after a certain timeout */
     do_specials();       /* Routines called from time to time. */
 

@@ -1038,13 +1038,11 @@ void fix_player(object *op) {
 		     * extra strength damage, this is where the code should
 		     * go.
 		     */
-#ifdef PLUGINS
 		if (tmp->event_hook[EVENT_ATTACK] != NULL) {
 		    if (op->current_weapon_script)
 			free_string(op->current_weapon_script);
 		    op->current_weapon_script=add_string(query_name(tmp));
 		}
-#endif
 		op->current_weapon = tmp;
 		if(settings.spell_encumbrance == TRUE && op->type==PLAYER)
 		    op->contr->encumbrance+=(int)3*tmp->weight/1000;

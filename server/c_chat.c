@@ -44,24 +44,21 @@ int command_say (object *op, char *params)
 
 int command_shout (object *op, char *params)
 {
-#ifdef PLUGINS
     int evtid;
     CFParm CFP;
-#endif
+
     if (params == NULL) {
 	new_draw_info(NDI_UNIQUE, 0,op,"Shout what?");
 	return 1;
     }
     new_draw_info_format(NDI_UNIQUE | NDI_ALL | NDI_RED, 1, NULL, 
 		 "%s shouts: %s", op->name, params);
-#ifdef PLUGINS
     /* GROS : Here we handle the SHOUT global event */
     evtid = EVENT_SHOUT;
     CFP.Value[0] = (void *)(&evtid);
     CFP.Value[1] = (void *)(op);
     CFP.Value[2] = (void *)(params);
     GlobalEvent(&CFP);
-#endif
     return 1;
 }
 

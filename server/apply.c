@@ -844,7 +844,6 @@ int esrv_apply_container (object *op, object *sack)
 	    CLEAR_FLAG (op->container, FLAG_WALK_OFF);
 	    CLEAR_FLAG (op->container, FLAG_FLY_OFF);
 	}
-#ifdef PLUGINS
 	/* GROS: Handle for plugin close event */
 	if(tmp->event_hook[EVENT_CLOSE] != NULL)
 	{
@@ -873,7 +872,6 @@ int esrv_apply_container (object *op, object *sack)
 			if (rtn_script!=0) return 1;
 		}
 	}
-#endif
 	new_draw_info_format(NDI_UNIQUE, 0, op, "You close %s.",
 		      query_name(op->container));
 	CLEAR_FLAG(op->container, FLAG_APPLIED);
@@ -1112,7 +1110,6 @@ void move_apply (object *trap, object *victim, object *originator)
   }
   recursion_depth++;
   if (trap->head) trap=trap->head;
-#ifdef PLUGINS
   /* GROS: Handle for plugin close event */
   if(trap->event_hook[EVENT_TRIGGER] != NULL)
   {
@@ -1141,7 +1138,6 @@ void move_apply (object *trap, object *victim, object *originator)
       if (rtn_script!=0) return;
     }
   }
-#endif
   switch (trap->type)
   {
   case PLAYERMOVER:
@@ -1388,7 +1384,6 @@ static void apply_book (object *op, object *tmp)
 
     new_draw_info_format (NDI_UNIQUE, 0, op,
                           "You open the %s and start reading.", tmp->name);
-#ifdef PLUGINS
     /* GROS: Handle for plugin trigger event */
     if(tmp->event_hook[EVENT_APPLY] != NULL)
     {
@@ -1412,7 +1407,6 @@ static void apply_book (object *op, object *tmp)
             ((PlugList[findPlugin(tmp->event_plugin[k])].eventfunc) (&CFP));
     }
     else
-#endif
         new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, op, tmp->msg);
 
     /* gain xp from reading */
@@ -2128,7 +2122,6 @@ int manual_apply (object *op, object *tmp, int aflag)
   if (op->type != PLAYER && tmp->type == TREASURE)
     return 0;
   
-#ifdef PLUGINS
   /* GROS: Handle for plugin trigger event */
   if(tmp->event_hook[EVENT_APPLY] != NULL)
   {
@@ -2156,7 +2149,6 @@ int manual_apply (object *op, object *tmp, int aflag)
         if (rtn_script!=0) return 1;
     }
   }
-#endif
   switch (tmp->type)
   {
   case CF_HANDLE:
@@ -2878,14 +2870,12 @@ int apply_special (object *who, object *op, int aflags)
 	    new_draw_info_format(NDI_UNIQUE, 0, who, "You wield %s.",query_name(op));
 
 	    (void) change_abil (who,op);
-#ifdef PLUGINS
 	    /* GROS: update the current_weapon_script field (used with EVENT_ATTACK for weapons) */
 	    if (op->event_hook[EVENT_ATTACK] != NULL) {
 		LOG(llevDebug, "Scripting Weapon wielded\n");
 		if (who->current_weapon_script) free_string(who->current_weapon_script);
 		who->current_weapon_script=add_string(query_name(op));
 	    }
-#endif
 	    who->current_weapon = op;
 	    break;
 

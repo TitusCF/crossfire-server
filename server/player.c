@@ -834,10 +834,8 @@ int key_roll_stat(object *op, char key)
 int key_change_class(object *op, char key)
 {
       int tmp_loop;
-#ifdef PLUGINS
     int evtid;
     CFParm CFP;
-#endif
 
     if(key=='q'||key=='Q') {
       remove_ob(op);
@@ -850,7 +848,6 @@ int key_change_class(object *op, char key)
 	/* this must before then initial items are given */
 	esrv_new_player(op->contr, op->weight+op->carrying);
 	create_treasure(find_treasurelist("starting_wealth"),op, 0, 0, 0);
-#ifdef PLUGINS
     /* GROS : Here we handle the BORN global event */
     evtid = EVENT_BORN;
     CFP.Value[0] = (void *)(&evtid);
@@ -863,7 +860,6 @@ int key_change_class(object *op, char key)
     CFP.Value[1] = (void *)(op->contr);
     CFP.Value[2] = (void *)(op->contr->socket.host);
     GlobalEvent(&CFP);
-#endif
 	op->contr->state=ST_PLAYING;
 
 	if (op->msg) {
@@ -929,22 +925,18 @@ int key_change_class(object *op, char key)
 int key_confirm_quit(object *op, char key)
 {
     char buf[MAX_BUF];
-#ifdef PLUGINS
     CFParm CFP;
     int evtid;
-#endif
     if(key!='y'&&key!='Y'&&key!='q'&&key!='Q') {
       op->contr->state=ST_PLAYING;
       new_draw_info(NDI_UNIQUE, 0,op,"OK, continuing to play.");
       return 1;
     }
-#ifdef PLUGINS
     /* GROS : Here we handle the REMOVE global event */
     evtid = EVENT_REMOVE;
     CFP.Value[0] = (void *)(&evtid);
     CFP.Value[1] = (void *)(op);
     GlobalEvent(&CFP);
-#endif
     terminate_all_pets(op);
     leave_map(op);
     op->direction=0;
@@ -2120,11 +2112,9 @@ void kill_player(object *op)
     int lost_a_stat;
     int lose_this_stat;
     int this_stat;
-#ifdef PLUGINS
     int killed_script_rtn; /* GROS: For script return value */
     CFParm CFP;
     int evtid;
-#endif
     if(save_life(op))
 	return;
 
@@ -2165,7 +2155,6 @@ void kill_player(object *op)
       op->contr->braced=0;
       return;
     }
-#ifdef PLUGINS
 /* GROS: Handle for plugin death event */
   if(op->event_hook[EVENT_DEATH] != NULL)
   {
@@ -2201,7 +2190,6 @@ void kill_player(object *op)
   CFP.Value[1] = NULL;
   CFP.Value[2] = (void *)(op);
   GlobalEvent(&CFP);
-#endif
     if(op->stats.food<0) {
 	if (op->contr->explore) {
 	    new_draw_info(NDI_UNIQUE, 0,op,"You would have starved, but you are");

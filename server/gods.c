@@ -72,8 +72,8 @@ object *find_god(char *name) {
 
 void pray_at_altar(object *pl, object *altar) {
     object *pl_god=find_god(determine_god(pl));
-#ifdef PLUGINS
     int return_pray_script; /* GROS : This is for return value of script */
+
     /* GROS: Handle for plugin altar-parying (apply) event */
     if(altar->event_hook[EVENT_APPLY] != NULL)
     {
@@ -102,7 +102,6 @@ void pray_at_altar(object *pl, object *altar) {
             if (return_pray_script) return;
         }
     }
-#endif
 
     /* If non consecrate altar, don't do anything */
     if (!altar->other_arch) return;

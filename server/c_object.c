@@ -565,7 +565,6 @@ void drop_object (object *op, object *tmp, long nrof)
 	};
     } else
       remove_ob (tmp);
-#ifdef PLUGINS
       /* GROS: Handle for plugin drop event */
       if(tmp->event_hook[EVENT_DROP] != NULL)
       {
@@ -593,7 +592,6 @@ void drop_object (object *op, object *tmp, long nrof)
           if (rtn_script!=0) return;
         }
       }
-#endif
     if (QUERY_FLAG (tmp, FLAG_STARTEQUIP)) {
       sprintf(buf,"You drop the %s.", query_name(tmp));
       new_draw_info(NDI_UNIQUE, 0,op,buf);

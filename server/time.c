@@ -553,7 +553,6 @@ object *fix_stopped_arrow (object *op)
 
 static void stop_arrow (object *op)
 {
-#ifdef PLUGINS
     /* GROS: Handle for plugin stop event */
     if(op->event_hook[EVENT_STOP] != NULL)
     {
@@ -576,7 +575,6 @@ static void stop_arrow (object *op)
         if (findPlugin(op->event_plugin[k])>=0)
             ((PlugList[findPlugin(op->event_plugin[k])].eventfunc) (&CFP));
     }
-#endif
     if (op->inv) {
 	object *payload = op->inv;
 	remove_ob (payload);
@@ -797,7 +795,6 @@ void move_teleporter(object *op) {
     if(EXIT_PATH(head)) {
       if(op->above->type==PLAYER)
       {
-#ifdef PLUGINS
         /* GROS: Handle for plugin TRIGGER event */
         if(op->event_hook[EVENT_TRIGGER] != NULL)
         {
@@ -826,7 +823,6 @@ void move_teleporter(object *op) {
           }
           if (rtn_script!=0) return;
         }
-#endif
         enter_exit(op->above, head);
       }
 	else
@@ -840,7 +836,6 @@ void move_teleporter(object *op) {
 	    free_object(head);
 	    return;
 	}
-#ifdef PLUGINS
 	/* GROS: Handle for plugin TRIGGER event */
 	if(op->event_hook[EVENT_TRIGGER] != NULL)
 	{
@@ -869,13 +864,11 @@ void move_teleporter(object *op) {
 		}
 		if (rtn_script!=0) return;
 	}
-#endif
 	transfer_ob(tmp,EXIT_X(head),EXIT_Y(head),0,head);
     }
     else
     {
 		/* Random teleporter */
-#ifdef PLUGINS
 		/* GROS: Handle for plugin TRIGGER event */
 		if(op->event_hook[EVENT_TRIGGER] != NULL)
 		{
@@ -904,7 +897,6 @@ void move_teleporter(object *op) {
 			}
 			if (rtn_script!=0) return;
 		}
-#endif
 		teleport(head, TELEPORTER, tmp);
 	}
 }
@@ -923,7 +915,6 @@ void move_player_changer(object *op) {
    if(op->above!=NULL) {
     if(EXIT_PATH(op)) {
       if(op->above->type==PLAYER) {
-#ifdef PLUGINS
       /* GROS: Handle for plugin TRIGGER event */
       if(op->event_hook[EVENT_TRIGGER] != NULL)
       {
@@ -952,7 +943,6 @@ void move_player_changer(object *op) {
         }
         if (rtn_script!=0) return;
       }
-#endif
 	player=op->above;
 	for(walk=op->inv;walk!=NULL;walk=walk->below) 
 	  apply_changes_to_player(player,walk);
@@ -1177,7 +1167,6 @@ int process_object(object *op) {
     }
     return 1;
   }
-#ifdef PLUGINS
   /* GROS: Handle for plugin time event */
   if(op->event_hook[EVENT_TIME] != NULL)
   {
@@ -1200,7 +1189,6 @@ int process_object(object *op) {
     if (findPlugin(op->event_plugin[k])>=0)
         ((PlugList[findPlugin(op->event_plugin[k])].eventfunc) (&CFP));
   }
-#endif
   switch(op->type) {
   case ROD:
   case HORN:

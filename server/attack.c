@@ -569,7 +569,6 @@ static int attack_ob_simple (object *op, object *hitter, int base_dam,
     if (get_attack_mode (&op, &hitter, &simple_attack))
         goto error;
 
-#ifdef PLUGINS
     /* GROS: Handle for plugin attack event */
     if(op->event_hook[EVENT_ATTACK] != NULL)
     {
@@ -621,7 +620,6 @@ static int attack_ob_simple (object *op, object *hitter, int base_dam,
             }
         };
     };
-#endif
     op_tag = op->count;
     hitter_tag = hitter->count;
 
@@ -822,7 +820,6 @@ object *hit_with_arrow (object *op, object *victim)
     victim_y = victim->y;
     victim_tag = victim->count;
     hitter_tag = hitter->count;
-#ifdef PLUGINS
     /* GROS: Handling plugin attack event for thrown items */
     if(op->event_hook[EVENT_ATTACK] != NULL)
     {
@@ -850,7 +847,6 @@ object *hit_with_arrow (object *op, object *victim)
         }
     }
     else
-#endif
 
         hit_something = attack_ob_simple (victim, hitter, op->stats.dam,
                                         op->stats.wc);
@@ -1292,15 +1288,11 @@ int kill_object(object *op,int dam, object *hitter, int type)
     int killed_script_rtn = 0;
     object *owner=NULL, *old_skill;
     int evtid;
-
-#ifdef PLUGINS
     CFParm CFP;
-#endif
+
     if (op->stats.hp>=0)
 	return -1;
 
-
-#ifdef PLUGINS
     /* GROS: Handle for plugin death event */
     if(op->event_hook[EVENT_DEATH] != NULL)
     {
@@ -1334,7 +1326,6 @@ int kill_object(object *op,int dam, object *hitter, int type)
     CFP.Value[1] = (void *)(hitter);
     CFP.Value[2] = (void *)(op);
     GlobalEvent(&CFP);
-#endif
     maxdam+=op->stats.hp+1;
 
     if(QUERY_FLAG(op,FLAG_BLOCKSVIEW))

@@ -1118,7 +1118,6 @@ int write_note(object *pl, object *item, char *msg) {
   	new_draw_info(NDI_UNIQUE,0,pl,"Trying to cheat now are we?");
 	return 0;
   }
-#ifdef PLUGINS
   /* GROS: Handle for plugin book writing (trigger) event */
   if(item->event_hook[EVENT_TRIGGER] != NULL)
   {
@@ -1144,7 +1143,6 @@ int write_note(object *pl, object *item, char *msg) {
         return strlen(msg);
     }
    }
-#endif
   if(!book_overflow(item->msg,msg,BOOK_BUF)) { /* add msg string to book */
     if(item->msg) {
       strcpy(buf,item->msg);
@@ -1670,7 +1668,6 @@ void do_throw(object *op, object *toss_item, int dir) {
     /* need to put in a good sound for this */
     play_sound_map(op->map, op->x, op->y, SOUND_THROW_OBJ);
 #endif
-#ifdef PLUGINS
 /* GROS - Now we can call the associated script_throw event (if any) */
     if(throw_ob->event_hook[EVENT_THROW] != NULL)
     {
@@ -1693,7 +1690,6 @@ void do_throw(object *op, object *toss_item, int dir) {
         if (findPlugin(throw_ob->event_plugin[k])>=0)
             ((PlugList[findPlugin(throw_ob->event_plugin[k])].eventfunc) (&CFP));
     }
-#endif
 #ifdef DEBUG_THROW
     LOG(llevDebug," pause_f=%d \n",pause_f);
     LOG(llevDebug," %s stats: wc=%d dam=%d dist=%d spd=%f break=%d\n",
