@@ -1530,8 +1530,10 @@ static void apply_treasure (object *op, object *tmp)
     decrease_ob(tmp);
 
     /* Done to re-stack map with player on top? */
+    SET_FLAG (op, FLAG_NO_APPLY);
     remove_ob(op);
     insert_ob_in_map(op,op->map,NULL);
+    CLEAR_FLAG (op, FLAG_NO_APPLY);
 }
 
 
