@@ -981,7 +981,8 @@ void identify(object *op) {
   }
 
   if (op->map) /* The shop identifies items before they hit the ground */
-    update_object(op);
+    /* I don't think identification will change anything but face */
+    update_object(op,UP_OBJ_FACE);
   else {
     pl = is_player_inv(op->env);
     if (pl)

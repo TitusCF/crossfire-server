@@ -271,7 +271,7 @@ static void put_treasure (object *op, object *creator, int flags)
     if (flags & GT_ENVIRONMENT) {
         op->x = creator->x;
         op->y = creator->y;
-        insert_ob_in_map_simple (op, creator->map);
+        insert_ob_in_map (op, creator->map,op,INS_NO_MERGE | INS_NO_WALK_ON);
     } else {
         op = insert_ob_in_ob (op, creator);
         if ((flags & GT_APPLY) && QUERY_FLAG (creator, FLAG_MONSTER))
@@ -1165,10 +1165,8 @@ void add_abilities(object *op, object *change) {
     SET_FLAG(op,FLAG_XRAYS);
   if (QUERY_FLAG(change,FLAG_BLIND))
     SET_FLAG(op,FLAG_BLIND);
-#ifdef USE_LIGHTING
   if (QUERY_FLAG(change,FLAG_SEE_IN_DARK))
     SET_FLAG(op,FLAG_SEE_IN_DARK);
-#endif
   if (QUERY_FLAG(change,FLAG_REFL_MISSILE))
     SET_FLAG(op,FLAG_REFL_MISSILE);
   if (QUERY_FLAG(change,FLAG_MAKE_INVIS))

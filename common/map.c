@@ -37,6 +37,12 @@
 
 extern int nrofallocobjects,nroffreeobjects;
 
+#if 0
+/* If 0 this block because I don't know if it is still needed.
+ * if it is, it really should be done via autoconf now days
+ * and not by specific machine checks.
+ */
+
 #if defined(sgi)
 /* popen_local is defined in porting.c */
 #define popen popen_local
@@ -73,35 +79,23 @@ extern int nrofallocobjects,nroffreeobjects;
 #define S_ISREG(x) (((x) & S_IFMT) == S_IFREG)
 #endif
 #endif
-
-/* This is a list of the suffix, uncompress and compress functions.  Thus,
- * if you have some other compress program you want to use, the only thing
- * that needs to be done is to extended this.
- * The first entry must be NULL - this is what is used for non
- * compressed files.
- */
-#define NROF_COMPRESS_METHODS 4
-char *uncomp[4][3] = {
-  {NULL, NULL, NULL},
-  {".Z", UNCOMPRESS, COMPRESS},
-  {".gz", GUNZIP, GZIP},
-  {".bz2", BUNZIP, BZIP}
-};
+#endif
 
 
 /*
  * Returns the mapstruct which has a name matching the given argument.
+ * return NULL if no match is found.
  */
 
 mapstruct *has_been_loaded (char *name) {
-  mapstruct *map;
+    mapstruct *map;
 
-  if (!name || !*name) 
+    if (!name || !*name) 
 	return 0;
-  for (map = first_map; map; map = map->next)
-      if (!strcmp (name, map->path))
-	  break;
-  return (map);
+    for (map = first_map; map; map = map->next)
+	if (!strcmp (name, map->path))
+	    break;
+    return (map);
 }
 
 /*
@@ -158,6 +152,11 @@ static char *create_items_path (char *s) {
  * If prepend_dir is set, then we call create_pathname (which prepends
  * libdir & mapdir).  Otherwise, we assume the name given is fully
  * complete.
+ * Only the editor actually cares about the writablity of this -
+ * the rest of the code only cares that the file is readable.
+ * when the editor goes away, the call to stat should probably be
+ * replaced by an access instead (similar to the windows one, but
+ * that seems to be missing the prepend_dir processing
  */
 
 int check_path (char *name, int prepend_dir)
@@ -174,8 +173,12 @@ int check_path (char *name, int prepend_dir)
     else
 	strcpy(buf, name);
 
-    if ((endbuf = strchr(buf, '\0')) == NULL)
-      return (-1);
+    /* old method (strchr(buf, '\0')) seemd very odd to me -
+     * this method should be equivalant and is clearer.
+     * Can not use strcat because we need to cycle through
+     * all the names.
+     */
+    endbuf = buf + strlen(buf);
    
     for (i = 0; i < NROF_COMPRESS_METHODS; i++) {
       if (uncomp[i][0])
@@ -204,44 +207,38 @@ int check_path (char *name, int prepend_dir)
 #endif
 }
 
-void dump_map_lights(mapstruct *m) {
-  objectlink *obl=m->light;
-  object *tmp=NULL;
-  while(obl) {
-     if((tmp=obl->ob)) 
-       LOG(llevDebug,"%s (%d) radius:%d\n",tmp->name,tmp->count,tmp->glow_radius); 
-     obl=obl->next;
-  } 
-}
-
 /*
  * Prints out debug-information about a map.
+ * Dumping these at llevError doesn't seem right, but is
+ * necessary to make sure the information is in fact logged.
  */
 
 void dump_map(mapstruct *m) {
-  LOG(llevError,"Map %s status: %d.\n",m->path,m->in_memory);
-  LOG(llevError,"Size: %dx%d Start: %d,%d\n",
-          m->map_object->x,m->map_object->y,
-	  EXIT_X(m->map_object), EXIT_Y(m->map_object));
-  if(m->map_object->msg!=NULL)
-    LOG(llevError,"Message:\n%s",m->map_object->msg);
-  if(m->tmpname!=NULL)
-    LOG(llevError,"Tmpname: %s\n",m->tmpname);
-  LOG(llevError,"Difficulty: %d\n",m->difficulty); 
-#ifdef USE_LIGHTING
-  LOG(llevError,"Darkness: %d\n",m->darkness); 
-#endif
+    LOG(llevError,"Map %s status: %d.\n",m->path,m->in_memory);
+    LOG(llevError,"Size: %dx%d Start: %d,%d\n",
+	MAP_WIDTH(m), MAP_HEIGHT(m),
+	MAP_ENTER_X(m), MAP_ENTER_Y(m));
+
+    if(m->msg!=NULL)
+	LOG(llevError,"Message:\n%s",m->msg);
+
+    if(m->tmpname!=NULL)
+	LOG(llevError,"Tmpname: %s\n",m->tmpname);
+
+    LOG(llevError,"Difficulty: %d\n",m->difficulty); 
+    LOG(llevError,"Darkness: %d\n",m->darkness); 
 }
 
 /*
  * Prints out debug-information about all maps.
+ * This basically just goes through all the maps and calls
+ * dump_map on each one.
  */
 
 void dump_all_maps() {
-  mapstruct *m;
-  for(m=first_map;m!=NULL;m=m->next) {
-    LOG(llevError,"Map %s status %d.\n",m->path,m->in_memory);
-    LOG(llevError,"Tmpname: %s\n",m->tmpname);
+    mapstruct *m;
+    for(m=first_map;m!=NULL;m=m->next) {
+	dump_map(m);
   }
 }
 
@@ -250,10 +247,9 @@ void dump_all_maps() {
  */
 
 int wall(mapstruct *m, int x,int y) {
-
-	if (out_of_map(m,x,y))
-		return 1;
-	return (get_map(m,x,y))->flags & P_NO_PASS;
+    if (out_of_map(m,x,y))
+	return 1;
+    return (GET_MAP_FLAGS(m,x,y) & P_NO_PASS);
 }
 
 /*
@@ -262,9 +258,12 @@ int wall(mapstruct *m, int x,int y) {
  */
 
 int blocks_view(mapstruct *m, int x, int y) {
-  if(out_of_map(m,x,y))
-    return 1;
-  return (get_map(m,x,y))->flags & P_BLOCKSVIEW;
+    mapstruct *nm;
+
+    nm = get_map_from_coord(m, &x, &y);
+    if(!nm)
+	return 1;
+    return (GET_MAP_FLAGS(nm,x,y) & P_BLOCKSVIEW);
 }
 
 /*
@@ -274,7 +273,7 @@ int blocks_view(mapstruct *m, int x, int y) {
 int blocks_magic(mapstruct *m, int x, int y) {
     if(out_of_map(m,x,y))
 	return 1;
-    return (get_map(m,x,y))->flags & P_NO_MAGIC;
+    return (GET_MAP_FLAGS(m,x,y) & P_NO_MAGIC);
 
 }
 
@@ -284,93 +283,128 @@ int blocks_magic(mapstruct *m, int x, int y) {
 int blocks_cleric(mapstruct *m, int x, int y) {
     if(out_of_map(m,x,y))
 	return 1;
-    return (get_map(m,x,y))->flags & P_NO_CLERIC;
+    return (GET_MAP_FLAGS(m,x,y) & P_NO_CLERIC);
 }
 
 /*
  * Returns true if the given coordinate in the given map blocks passage.
+ * either alive or no_pass means the space is blocked.
  */
 
 int blocked(mapstruct *m, int x, int y) {
-    int r;
-    MapLook *f;
     if(out_of_map(m,x,y))
 	return 1;
-    f = get_map(m,x,y);
-    r = f->flags & (P_NO_PASS | P_IS_ALIVE);
-    return r;
+    return (GET_MAP_FLAGS(m,x,y) & (P_NO_PASS | P_IS_ALIVE));
 }
 
 /*
- * Returns true if the given coordinate in the map where the given object
- * is, blocks the given object (which may be multi-part)
+ * Returns true if the given coordinate is blocked by the
+ * object passed is not blocking.  This is used with 
+ * multipart monsters - if we want to see if a 2x2 monster
+ * can move 1 space to the left, we don't want its own area
+ * to block it from moving there.
+ * Returns TRUE if the space is blocked by something other than the
+ * monster.
  */
 
 int blocked_link(object *ob, int x, int y) {
-  object *tmp;
-  if(out_of_map(ob->map,x,y))
-    return 1;
-  if (!blocked(ob->map,x,y)) /* no need to go further */
-      return 0; 
-  if(ob->head != NULL)
-    ob=ob->head;
-  for(tmp = get_map_ob(ob->map,x,y); tmp!= NULL; tmp = tmp->above)
-    if (QUERY_FLAG(tmp,FLAG_NO_PASS) || (QUERY_FLAG(tmp,FLAG_ALIVE) &&
-       tmp->head != ob && tmp != ob))
+    object *tmp;
+
+    if(out_of_map(ob->map,x,y))
+	return 1;
+
+    /* If space is currently not blocked by anything, no need to
+     * go further.  Same logic as blocked_above.
+     */
+    if (! (GET_MAP_FLAGS(ob->map, x,y) & (P_NO_PASS | P_IS_ALIVE))) return 0;
+
+
+    if(ob->head != NULL)
+	ob=ob->head;
+
+    /* We basically go through the stack of objects, and if there is
+     * some other object that has NO_PASS or FLAG_ALIVE set, return
+     * true.  If we get through the entire stack, that must mean
+     * ob is blocking it, so return 0.
+     */
+    for(tmp = GET_MAP_OB(ob->map,x,y); tmp!= NULL; tmp = tmp->above)
+	if (QUERY_FLAG(tmp,FLAG_NO_PASS) || (QUERY_FLAG(tmp,FLAG_ALIVE) &&
+					     tmp->head != ob && tmp != ob))
       	return 1;
-  return 0;
+
+    return 0;
 }
 
 /*
  * Eneq(@csd.uu.se): This is a new version of blocked, this one handles objects
  * that can be passed through by monsters with the CAN_PASS_THRU defined.
  * Returns 1 if the object can not pass through that space.
- * This code really needs to be rewritten so it would at least be somewhat
- * reasonable to read.
+ * This is a fairly inefficient check - it needs to look at every object
+ * on the space.  A call to blocked should be made first, and only if the
+ * space is blocked should this function be called.
  */
 
 int blocked_two(object *op, int x,int y) {
-  object *tmp;
-  if(out_of_map(op->map,x,y))
-    return 1;
-  tmp=get_map_ob(op->map,x,y);
-  for(tmp=get_map_ob(op->map,x,y);tmp!=NULL;tmp=tmp->above){
-    if((QUERY_FLAG(tmp,FLAG_ALIVE)&&tmp->type!=DOOR)||
-	(QUERY_FLAG(tmp,FLAG_NO_PASS)&&!QUERY_FLAG(tmp,FLAG_PASS_THRU)&&tmp->type!=CHECK_INV)||
-        (QUERY_FLAG(tmp,FLAG_NO_PASS)&&QUERY_FLAG(tmp,FLAG_PASS_THRU)&&
-	!QUERY_FLAG(op,FLAG_CAN_PASS_THRU)&&tmp->type!=CHECK_INV))
-      return 1;
-    /* check inv doors by Florian Beck */
-    /* if check_inv has last_sp=1, the player can only move if he has the 
-     * object 
-     */
-    if (tmp->type==CHECK_INV&&QUERY_FLAG(tmp,FLAG_NO_PASS)) {
-      if (tmp->last_sp){ /* player needs object */
-	if (check_inv_recursive(op,tmp)==NULL) /* player doesn't have object 
-						  so no pass */
-	  return 1;
-      } else
-	/* player must *not* have object */
-	if (check_inv_recursive(op,tmp)!=NULL) /* player has object */
-	  return 1;
+    object *tmp;
+
+    if(out_of_map(op->map,x,y))
+	return 1;
+
+    for(tmp=GET_MAP_OB(op->map,x,y);tmp!=NULL;tmp=tmp->above){
+
+	/* I broke this into multiple if statements to make it
+	 * clearer.  Logic is the same, and a good compiler will take
+	 * care of any optimizations for us.
+	 */
+
+	/* Can not pass through doors */
+	if (QUERY_FLAG(tmp,FLAG_ALIVE) && tmp->type!=DOOR) return 1;
+
+	/* This must be before the checks below.  Code for inventory checkers. */
+	if (tmp->type==CHECK_INV && QUERY_FLAG(tmp,FLAG_NO_PASS)) {
+	    /* If last_sp is set, the player/monster needs an object,
+	     * so we check for it.  If they don't have it, they can't
+	     * pass through this space.
+	     */
+	    if (tmp->last_sp) {
+		if (check_inv_recursive(op,tmp)==NULL)
+		    return 1;
+	    } else {
+		/* In this case, the player must not have the object -
+		 * if they do, they can't pass through.
+		 */
+		if (check_inv_recursive(op,tmp)!=NULL) /* player has object */
+		    return 1;
+	    }
+	} /* if check_inv */
+
+	/* Can't get through this space */
+	if (QUERY_FLAG(tmp,FLAG_NO_PASS) && !QUERY_FLAG(tmp,FLAG_PASS_THRU))
+	    return 1;
+
+	/* slightly different than above case */
+	if (QUERY_FLAG(tmp,FLAG_NO_PASS) && QUERY_FLAG(tmp,FLAG_PASS_THRU) &&
+	    !QUERY_FLAG(op,FLAG_CAN_PASS_THRU)) return 1;
     }
-  }
-  /* end fb */
-  return 0;
+    return 0;
 }
 
 /*
  * Returns true if the given archetype can't fit in the given spot.
+ * Unlike most of the above functions, this one does not check for
+ * out_of_map status.  arch_out_of_map should be called before
+ * this in all cases.
  */
 
 int arch_blocked(archetype *at,mapstruct *m,int x,int y) {
-  archetype *tmp;
-  if(at==NULL)
-    return blocked(m,x,y);
-  for(tmp=at;tmp!=NULL;tmp=tmp->more)
-    if(blocked(m,x+tmp->clone.x,y+tmp->clone.y))
-      return 1;
-  return 0;
+    archetype *tmp;
+
+    if(at==NULL)
+	return blocked(m,x,y);
+    for(tmp=at;tmp!=NULL;tmp=tmp->more)
+	if(blocked(m,x+tmp->clone.x,y+tmp->clone.y))
+	    return 1;
+    return 0;
 }
 
 /*
@@ -379,161 +413,15 @@ int arch_blocked(archetype *at,mapstruct *m,int x,int y) {
  */
 
 int arch_out_of_map(archetype *at,mapstruct *m,int x,int y) {
-  archetype *tmp;
-  if(at==NULL)
-    return out_of_map(m,x,y);
-  for(tmp=at;tmp!=NULL;tmp=tmp->more)
-    if(out_of_map(m,x+tmp->clone.x,y+tmp->clone.y))
-      return 1;
-  return 0;
-}
+    archetype *tmp;
 
-/*
- * Goes through all objects in the given map, and does a sanity-check
- * on all pointers.
- */
+    if(at==NULL)
+	return out_of_map(m,x,y);
 
-void refresh_map(mapstruct *m) {
-  int x,y;
-  object *tmp,*tmp2=NULL,*active=NULL;
-
-  if(m==NULL || m->in_memory != MAP_IN_MEMORY)
-    return;
-  for(x=0;x<m->map_object->x;x++)
-    for(y=0;y<m->map_object->y;y++) {
-/* Eneq(@csd.uu.se): Hunting down inappropriate objects in the map. The game
-   sometime hangs and tries to remove_removed objects etc. */
-      for(active=tmp=get_map_ob(m,x,y);tmp!=NULL;tmp=tmp2)
-      { /* how can we get objects with pointer<1024, mta */
-        if (tmp < (object *) 1024) /* map is uninitialized? */
-          break;
-        tmp2=tmp->above;
-        active=tmp;
-        if (QUERY_FLAG(tmp,FLAG_REMOVED)) {
-          LOG(llevError,"Crossfire: Found removed object in map.\n");
-          active=(tmp->above==NULL?tmp->below:tmp->above);
-          if (tmp->below==NULL&&tmp2==NULL)
-            m->map_ob[x+m->map_object->x*y]=NULL;
-          else if (tmp->below==NULL&&tmp2!=NULL) {
-            tmp2->below=NULL;
-            m->map_ob[x+m->map_object->x*y]=tmp2;
-          } else if (tmp->below!=NULL&&tmp2==NULL)
-            tmp->below->above=NULL;
-          else if (tmp->below!=NULL&&tmp2!=NULL) {
-            tmp->below->above=tmp2;
-            tmp2->below=tmp->below;
-          }
-          if (!QUERY_FLAG(tmp,FLAG_FREED))
-            free_object(tmp);
-        }
-        if (QUERY_FLAG(tmp,FLAG_FREED)&&!QUERY_FLAG(tmp,FLAG_REMOVED)) {
-          LOG(llevError, "Crossfire: Found freed object in map.\n");
-          remove_ob(tmp);
-        }
-      }
-
-      if(active != NULL)
-        update_object(active);
-    }
-}
-
-/*
- * open_and_uncompress() first searches for the original filename.
- * if it exist, then it opens it and returns the file-pointer.
- * if not, it does two things depending on the flag.  If the flag
- * is set, it tries to create the original file by uncompressing a .Z file.
- * If the flag is not set, it creates a pipe that is used for
- * reading the file (NOTE - you can not use fseek on pipes)
- *
- * The compressed pointer is set to nonzero if the file is
- * compressed (and thus,  fp is actually a pipe.)  It returns 0
- * if it is a normal file
- *
- * (Note, the COMPRESS_SUFFIX is used instead of ".Z", thus it can easily
- * be changed in the config file.)
- */
-
-FILE *open_and_uncompress(char *name,int flag, int *compressed) {
-  FILE *fp;
-  char buf[MAX_BUF],buf2[MAX_BUF], *bufend;
-  int try_once = 0;
-
-  strcpy(buf, name);
-  bufend = buf + strlen(buf);
-
-/*  LOG(llevDebug, "open_and_uncompress(%s)\n", name);
-*/
-
-  /* strip off any compression prefixes that may exist */
-  for (*compressed = 0; *compressed < NROF_COMPRESS_METHODS; (*compressed)++) {
-    if ((uncomp[*compressed][0]) &&
-      (!strcmp(uncomp[*compressed][0], bufend - strlen(uncomp[*compressed][0])))) {
-	buf[strlen(buf) - strlen(uncomp[*compressed][0])] = '\0';
-	bufend = buf + strlen(buf);
-    }
-  }
-  for (*compressed = 0; *compressed < NROF_COMPRESS_METHODS; (*compressed)++) {
-    struct stat statbuf;
-
-    if (uncomp[*compressed][0])
-        strcpy(bufend, uncomp[*compressed][0]);
-    if (stat(buf, &statbuf)) {
-
-/*      LOG(llevDebug, "Failed to stat %s\n", buf);
-*/
-      continue;
-    }
-/*    LOG(llevDebug, "Found file %s\n", buf);
-*/
-    if (uncomp[*compressed][0]) {
-      strcpy(buf2, uncomp[*compressed][1]);
-      strcat(buf2, " < ");
-      strcat(buf2, buf);
-      if (flag) {
-        int i;
-        if (try_once) {
-          LOG(llevError, "Failed to open %s after decompression.\n", name);
-          return NULL;
-        }
-        try_once = 1;
-        strcat(buf2, " > ");
-        strcat(buf2, name);
-        LOG(llevDebug, "system(%s)\n", buf2);
-        if ((i=system(buf2))) {
-          LOG(llevError, "system(%s) returned %d\n", buf2, i);
-          return NULL;
-        }
-        unlink(buf);		/* Delete the original */
-        *compressed = '\0';	/* Restart the loop from the beginning */
-        chmod(name, statbuf.st_mode);
-        continue;
-      }
-      if ((fp = popen(buf2, "r")) != NULL)
-        return fp;
-    } else if((fp=fopen(name,"r"))!=NULL) {
-      struct stat statbuf;
-      if (fstat (fileno (fp), &statbuf) || ! S_ISREG (statbuf.st_mode)) {
-        LOG (llevDebug, "Can't open %s - not a regular file\n", name);
-        (void) fclose (fp);
-        errno = EISDIR;
-        return NULL;
-      }
-      return fp;
-    }
-  }
-  LOG(llevDebug, "Can't open %s\n", name);
-  return NULL;
-}
-
-/*
- * See open_and_uncompress().
- */
-
-void close_and_delete(FILE *fp, int compressed) {
-  if (compressed)
-    pclose(fp);
-  else
-    fclose(fp);
+    for(tmp=at;tmp!=NULL;tmp=tmp->more)
+	if(out_of_map(m,x+tmp->clone.x,y+tmp->clone.y))
+	    return 1;
+    return 0;
 }
 
 /* When the map is loaded, load_object does not actually insert objects
@@ -562,6 +450,51 @@ void fix_container(object *container)
     sum_weight(container);
 }
 
+/* link_multipart_objects go through all the objects on the map looking
+ * for objects whose arch says they are multipart yet according to the
+ * info we have, they only have the head (as would be expected when
+ * they are saved).  We do have to look for the old maps that did save
+ * the more sections and not re-add sections for them.
+ */
+
+static void link_multipart_objects(mapstruct *m)
+{
+    int x,y;
+    object *tmp, *op, *last, *above;
+    archetype	*at;
+
+    for(x=0;x<MAP_WIDTH(m);x++)
+	for(y=0;y<MAP_HEIGHT(m);y++)
+	    for(tmp=get_map_ob(m,x,y);tmp!=NULL;tmp=above) {
+		above=tmp->above;
+
+		/* already multipart - don't do anything more */
+		if (tmp->head || tmp->more) continue;
+
+		/* If there is nothing more to this object, this for loop
+		 * won't do anything.
+		 */
+		for (at = tmp->arch->more, last=tmp; at != NULL; at=at->more, last=op) {
+		    op = arch_to_object(at);
+
+		    /* update x,y coordinates */
+		    op->x += tmp->x;
+		    op->y += tmp->y;
+		    op->head = tmp;
+		    op->map = m;
+		    last->more = op;
+		    /* we could link all the parts onto tmp, and then just
+		     * call insert_ob_in_map once, but the effect is the same,
+		     * as insert_ob_in_map will call itself with each part, and
+		     * the coding is simpler to just to it here with each part.
+		     */
+		    insert_ob_in_map(op, op->map, tmp,INS_NO_MERGE|INS_ABOVE_FLOOR_ONLY|INS_NO_WALK_ON);
+		} /* for at = tmp->arch->more */
+	    } /* for objects on this space */
+}
+		    
+		
+
 /*
  * Loads (ands parses) the objects into a given map from the specified
  * file pointer.
@@ -569,13 +502,19 @@ void fix_container(object *container)
  */
 
 void load_objects (mapstruct *m, FILE *fp, int mapflags) {
-    int i;
+    int i,bufstate=LO_NEWFILE;
     object *op, *prev=NULL,*last_more=NULL;
 
     op=get_object();
     op->map = m; /* To handle buttons correctly */
 
-    while((i=load_object(fp,op,LO_REPEAT, mapflags))) {
+    while((i=load_object(fp,op,bufstate, mapflags))) {
+	/* Since the loading of the map header does not load an object
+	 * anymore, we need to pass LO_NEWFILE for the first object loaded,
+	 * and then switch to LO_REPEAT for faster loading.
+	 */
+	bufstate = LO_REPEAT;
+
 	/* if the archetype for the object is null, means that we
 	 * got an invalid object.  Don't do anythign with it - the game
 	 * or editor will not be able to do anything with it either.
@@ -587,13 +526,13 @@ void load_objects (mapstruct *m, FILE *fp, int mapflags) {
 	}
 	switch(i) {
 	  case LL_NORMAL:
-	    insert_ob_in_map_simple(op,m);
+	    insert_ob_in_map(op,m,op,INS_NO_MERGE | INS_NO_WALK_ON);
 	    if (op->inv) sum_weight(op);
 	    prev=op,last_more=op;
 	    break;
 
 	  case LL_MORE:
-	    insert_ob_in_map_simple(op,m);
+	    insert_ob_in_map(op,m, op, INS_NO_MERGE | INS_NO_WALK_ON | INS_ABOVE_FLOOR_ONLY);
 	    op->head=prev,last_more->more=op,last_more=op;
 	    break;
 	}
@@ -601,14 +540,20 @@ void load_objects (mapstruct *m, FILE *fp, int mapflags) {
         op->map = m;
     }
     free_object(op);
+    link_multipart_objects(m);
 }
 
+/* This saves all the objects on the map in a non destructive fashion.
+ * Modified by MSW 2001-07-01 to do in a single pass - reduces code,
+ * and we only save the head of multi part objects - this is needed
+ * in order to do map tiling properly.
+ */
 void save_objects (mapstruct *m, FILE *fp, FILE *fp2) {
     int i, j = 0,unique=0;
-    object *op, *tmp, *otmp;
+    object *op,  *otmp;
     /* first pass - save one-part objects */
-    for(i = 0; i < m->map_object->x; i++)
-	for (j = 0; j < m->map_object->y; j++) {
+    for(i = 0; i < MAP_WIDTH(m); i++)
+	for (j = 0; j < MAP_HEIGHT(m); j++) {
 	    unique=0;
 	    for(op = get_map_ob (m, i, j); op; op = otmp) {
 		otmp = op->above;
@@ -621,7 +566,7 @@ void save_objects (mapstruct *m, FILE *fp, FILE *fp2) {
 			continue;
 		}
 
-		if (op->head || op->more || op->owner)
+		if (op->head || op->owner)
 		    continue;
 
 		if (unique || QUERY_FLAG(op, FLAG_UNIQUE))
@@ -629,31 +574,7 @@ void save_objects (mapstruct *m, FILE *fp, FILE *fp2) {
 		else
 		    save_object(fp, op, 3);
 
-	    }
-	}
-    /* second pass - save multi-part objects */
-    for(i = 0; i < m->map_object->x; i++)
-        for (j = 0; j < m->map_object->y; j++) {
-	    unique=0;
-            for(op = get_map_ob (m, i, j); op; op = otmp) {
-                otmp = op->above;
-
-		if (QUERY_FLAG(op,FLAG_IS_FLOOR) && QUERY_FLAG(op, FLAG_UNIQUE))
-		    unique=1;
-
-		if(op->type == PLAYER) {
-			LOG(llevDebug, "Player on map that is being saved\n");
-			continue;
-		}
-
-		if (op->head || !op->more || op->owner)
-		    continue;
-
-		if (unique || QUERY_FLAG(op, FLAG_UNIQUE))
-		    save_object( fp2 , op, 3);
-		else
-		    save_object(fp, op, 3);
-
+#if 0
 		for (tmp = op->more; tmp; tmp = tmp->more) {
 		    if (unique || QUERY_FLAG(op, FLAG_UNIQUE)) {
 			fprintf ( fp2, "More\n");
@@ -663,8 +584,241 @@ void save_objects (mapstruct *m, FILE *fp, FILE *fp2) {
 			save_object(fp, tmp, 3);
 		    }
 		}
+#endif
+	    } /* for this space */
+	} /* for this j */
+}
+
+/*
+ * Allocates, initialises, and returns a pointer to a mapstruct.
+ * Modified to no longer take a path option which was not being
+ * used anyways.  MSW 2001-07-01
+ */
+
+mapstruct *get_linked_map() {
+    mapstruct *map=(mapstruct *) calloc(1,sizeof(mapstruct));
+    mapstruct *mp;
+
+    if(map==NULL)
+	fatal(OUT_OF_MEMORY);
+
+    for(mp=first_map;mp!=NULL&&mp->next!=NULL;mp=mp->next);
+    if(mp==NULL)
+	first_map=map;
+    else
+	mp->next=map;
+
+    map->in_memory=MAP_SWAPPED;
+    /* The maps used to pick up default x and y values from the
+     * map archetype.  Mimic that behaviour.
+     */
+    MAP_WIDTH(map)=16;
+    MAP_HEIGHT(map)=16;
+    MAP_RESET_TIMEOUT(map)=7200;
+    MAP_TIMEOUT(map)=300;
+    /* Gah - these should really have a zero default! */
+    MAP_ENTER_X(map)=1;
+    MAP_ENTER_Y(map)=1;
+#if 0
+    /* the calloc should already clear all this */
+    map->next=NULL;
+    map->path[0]='\0';
+    map->tmpname=NULL;
+    map->players=0;
+    map->timeout=0;
+    map->light = (objectlink *) NULL;
+    map->darkness = 0;
+    map->do_los=0;
+    map->map_object = NULL;
+    map->buttons = NULL;
+    map->compressed = 0;
+#endif
+    return map;
+}
+
+/*
+ * Allocates the arrays contained in a mapstruct.
+ * This basically allocates the dynamic array of spaces for the
+ * map.
+ */
+
+void allocate_map(mapstruct *m) {
+#if 0
+    /* These are obnoxious - presumably the caller of this function knows what it is
+     * doing.  Instead of checking for load status, lets check instead to see
+     * if the data has already been allocated.
+     */
+    if(m->in_memory != MAP_SWAPPED )
+	return;
+#endif
+    m->in_memory = MAP_IN_MEMORY;
+    /* Log this condition and free the storage.  We could I suppose
+     * realloc, but if the caller is presuming the data will be intact,
+     * that is their poor assumption.
+     */
+    if (m->spaces) {
+	LOG(llevError,"allocate_map callled with already allocated map (%s)\n", m->path);
+	free(m->spaces);
+    }
+
+    m->spaces = calloc(1, MAP_WIDTH(m) * MAP_HEIGHT(m) * sizeof(MapSpace));
+
+    if(m->spaces==NULL)
+	fatal(OUT_OF_MEMORY);
+}
+
+/* Creatures and returns a map of the specific size.  Used
+ * in random map code and the editor.
+ */
+mapstruct *get_empty_map(int sizex, int sizey) {
+    mapstruct *m = get_linked_map();
+    m->width = sizex;
+    m->height = sizey;
+    m->in_memory = MAP_SWAPPED;
+    allocate_map(m);
+    return m;
+}
+
+/* This loads the header information of the map.  The header
+ * contains things like difficulty, size, timeout, etc.
+ * this used to be stored in the map object, but with the
+ * addition of tiling, fields beyond that easily named in an
+ * object structure were needed, so it just made sense to
+ * put all the stuff in the map object so that names actually make
+ * sense.
+ * This could be done in lex (like the object loader), but I think
+ * currently, there are few enough fields this is not a big deal.
+ * MSW 2001-07-01
+ * return 0 on success, 1 on failure.
+ */
+
+static int load_map_header(FILE *fp, mapstruct *m)
+{
+    char buf[HUGE_BUF], msgbuf[HUGE_BUF], *key, *value, *end;
+    int msgpos=0;
+
+    while (fgets(buf, HUGE_BUF-1, fp)!=NULL) {
+	buf[HUGE_BUF-1] = 0;
+	key = buf;
+	while (isspace(*key)) key++;
+	if (*key == 0) continue;    /* empty line */
+	value = strchr(key, ' ');
+	if (!value) {
+	    end = strchr(key, '\n');
+	    *end=0;
+	} else {
+	    *value = 0;
+	    value++;
+	    while (isspace(*value)) value++;
+	    end = strchr(value, '\n');
+	}
+
+	/* key is the field name, value is what it should be set
+	 * to.  We've already done the work to null terminate key,
+	 * and strip off any leading spaces for both of these.
+	 * We have not touched the newline at the end of the line -
+	 * these are needed for some values.  the end pointer 
+	 * points to the first of the newlines.
+	 * value could be NULL!  It would be easy enough to just point
+	 * this to "" to prevent cores, but that would let more errors slide
+	 * through.
+	 */
+
+	if (!strcmp(key, "arch")) {
+	    /* This is an oddity, but not something we care about much. */
+	    if (strcmp(value,"map\n")) 
+		LOG(llevError,"loading map and got a non 'arch map' line(%s %s)?\n",key,value);
+	}
+	else if (!strcmp(key,"name")) {
+	    *end=0;
+	    m->name = strdup_local(value);
+	} else if (!strcmp(key,"msg")) {
+	    while (fgets(buf, HUGE_BUF-1, fp)!=NULL) {
+		if (!strcmp(buf,"endmsg\n")) break;
+		else {
+		    /* slightly more efficient than strcat */
+		    strcpy(msgbuf+msgpos, buf);
+		    msgpos += strlen(buf);
+		}
+	    }
+	    m->msg = strdup_local(msgbuf);
+	} 
+	/* first strcmp value on these are old names supported
+	 * for compatibility reasons.  The new values (second) are
+	 * what really should be used.
+	 */
+	else if (!strcmp(key,"hp") || !strcmp(key, "enter_x")) {
+	    m->enter_x = atoi(value);
+	} else if (!strcmp(key,"sp") || !strcmp(key, "enter_y")) {
+	    m->enter_y = atoi(value);
+	} else if (!strcmp(key,"x") || !strcmp(key, "width")) {
+	    m->width = atoi(value);
+	} else if (!strcmp(key,"y") || !strcmp(key, "height")) {
+	    m->height = atoi(value);
+	} else if (!strcmp(key,"weight") || !strcmp(key, "reset_timeout")) {
+	    m->reset_timeout = atoi(value);
+	} else if (!strcmp(key,"value") || !strcmp(key, "swap_time")) {
+	    m->timeout = atoi(value);
+	} else if (!strcmp(key,"level") || !strcmp(key, "difficulty")) {
+	    m->difficulty = atoi(value);
+	} else if (!strcmp(key,"invisible") || !strcmp(key, "darkness")) {
+	    m->darkness = atoi(value);
+	} else if (!strcmp(key,"stand_still") || !strcmp(key, "fixed_resettime")) {
+	    m->fixed_resettime = atoi(value);
+	} else if (!strcmp(key,"unique")) {
+	    m->unique = atoi(value);
+	}
+	else if (!strncmp(key,"tile_path_", 10)) {
+	    int tile=atoi(key+10);
+
+	    if (tile<1 || tile>4) {
+		LOG(llevError,"load_map_header: tile location %d out of bounds (%s)\n",
+		    tile, m->path);
+	    } else {
+		*end = 0;
+		if (m->tile_path[tile]) {
+		    LOG(llevError,"load_map_header: tile location %d duplicated (%s)\n",
+			tile, m->path);
+		    free(m->tile_path[tile]);
+		}
+		if (!editor) {
+		    if (check_path(value, 1)==-1) {
+			int i;
+			/* Need to try and normalize the path.  msgbuf is safe to use,
+			 * as that is all read in at one time.
+			 */
+			strcpy(msgbuf, m->path);
+			for (i=0; msgbuf[i]!=0; i++)
+			    if (msgbuf[i] == '/') end = msgbuf + i;
+			if (!end) {
+			    LOG(llevError,"get_map_header: Can not normalize tile path %s %s\n",
+				m->path, value);
+			    value = NULL;
+			} else {
+			    strcpy(end+1, value);
+			    if (check_path(msgbuf,1)==-1) {
+				LOG(llevError,"get_map_header: Can not normalize tile path %s %s\n",
+				    m->path, value);
+				value = NULL;
+			    } else
+				value = msgbuf;
+			}
+		    } /* if unable to load path as given */
+		} /* if not editor */
+		if (value)
+		    m->tile_path[tile-1] = strdup_local(value);
 	    }
 	}
+	else if (!strcmp(key,"end")) break;
+	else {
+	    LOG(llevError,"Got unknown value in map header: %s %s\n", key, value);
+	}
+    }
+    if (strcmp(key,"end")) {
+	LOG(llevError,"Got premature eof on map header!\n");
+	return 1;
+    }
+    return 0;
 }
 
 /*
@@ -673,7 +827,8 @@ void save_objects (mapstruct *m, FILE *fp, FILE *fp2) {
  * mapstruct.  A pointer to this structure is returned, or NULL on failure.
  * flags correspond to those in map.h.  Main ones used are
  * MAP_PLAYER_UNIQUE, in which case we don't do any name changes, and
- * MAP_BLOCK, in which case we block on this load.
+ * MAP_BLOCK, in which case we block on this load.  This happens in all
+ *   cases, no matter if this flag is set or not.
  * MAP_STYLE: style map - don't add active objects, don't add to server
  *		managed map list.
  */
@@ -681,7 +836,6 @@ void save_objects (mapstruct *m, FILE *fp, FILE *fp2) {
 mapstruct *load_original_map(char *filename, int flags) {
     FILE *fp;
     mapstruct *m;
-    object *op;
     int comp;
     char pathname[MAX_BUF];
     
@@ -696,41 +850,27 @@ mapstruct *load_original_map(char *filename, int flags) {
 	perror("Can't read map file");
 	return (NULL);
     }
-        
-    op = get_object();
 
-    if (!load_object(fp, op,LO_NEWFILE, flags) || op->type != MAP) {
-	LOG(llevError,"Error in map (%s) - map object not found\n", filename);
-        close_and_delete(fp, comp);
-	return (NULL);
-    }
-    if (op->arch == NULL) {
-      LOG(llevDebug, "Mapobject had no archetype\n");
-      op->arch = find_archetype("map");
-      if (op->arch == NULL)
-        LOG(llevError, "Archetype map lacks.");
-      if (op->arch->clone.type != MAP)
-        LOG(llevDebug, "Archetype map has wrong type.");
-    }
-    m = get_empty_map (op->x, op->y);
+    m = get_linked_map();
 
     strcpy (m->path, filename);
-    m->compressed = comp;
+    if (load_map_header(fp, m)) {
+	LOG(llevError,"Error loading map header for %s, flags=%d\n",
+	    filename, flags);
+	delete_map(m);
+	return NULL;
+    }
 
-    if (m->map_object)
-	free_object (m->map_object);
-    m->map_object = op;
-    op->map = m;
+    allocate_map(m);
+    m->compressed = comp;
 
     m->in_memory=MAP_LOADING;
     load_objects (m, fp, flags & (MAP_BLOCK|MAP_STYLE));
     close_and_delete(fp, comp);
     m->in_memory=MAP_IN_MEMORY;
-    m->difficulty=calculate_difficulty(m);
-    m->darkness=m->map_object->invisible;
-    m->do_los=0;
+    if (!MAP_DIFFICULTY(m)) 
+	MAP_DIFFICULTY(m)=calculate_difficulty(m);
     set_map_reset_time(m);
-
     return (m);
 }
 
@@ -742,7 +882,6 @@ mapstruct *load_original_map(char *filename, int flags) {
 
 static mapstruct *load_temporary_map(mapstruct *m) {
     FILE *fp;
-    object *op;
     int comp;
     char buf[MAX_BUF];
     
@@ -767,24 +906,16 @@ static mapstruct *load_temporary_map(mapstruct *m) {
 	return m;
     }
     
-    op = get_object();
 
-    load_object(fp,op,LO_NEWFILE,0);
-    if (op->arch == NULL || op->type != MAP) {
-	LOG(llevError,"Error in temporary map '%s'\n", m->path);
+    if (load_map_header(fp, m)) {
+	LOG(llevError,"Error loading map header for %s (%s)\n",
+	    m->path, m->tmpname);
+	delete_map(m);
         m = load_original_map(m->path,0);
-	return m;
+	return NULL;
     }
-
     m->compressed = comp;
-
-
-    if (m->map_object)
-	free_object (m->map_object);
-    m->map_object = op;
-
     allocate_map(m);
-    clear_map(m);
 
     m->in_memory=MAP_LOADING;
     load_objects (m, fp, 0);
@@ -803,8 +934,8 @@ static void delete_unique_items(mapstruct *m)
     int i,j,unique=0;
     object *op, *next;
 
-    for(i=0; i<m->map_object->x; i++)
-	for(j=0; j<m->map_object->y; j++) {
+    for(i=0; i<MAP_WIDTH(m); i++)
+	for(j=0; j<MAP_HEIGHT(m); j++) {
 	    unique=0;
 	    for (op=get_map_ob(m, i, j); op; op=next) {
 		next = op->above;
@@ -843,7 +974,7 @@ static void load_unique_objects(mapstruct *m) {
 	 * is debug output, so leave it in.
 	 */
 	LOG(llevDebug, "Can't open unique items file for %s\n", create_items_path(m->path));
-      return;
+	return;
     }
 
     m->in_memory=MAP_LOADING;
@@ -868,16 +999,17 @@ static void load_unique_objects(mapstruct *m) {
 int new_save_map(mapstruct *m, int flag) {
     FILE *fp, *fp2;
     char filename[MAX_BUF],buf[MAX_BUF];
+    int i;
     
     if (flag && !*m->path) {
 	LOG(llevError,"Tried to save map without path.\n");
 	return -1;
     }
     
-    if (flag || QUERY_FLAG(m->map_object, FLAG_UNIQUE)) {
-	if (!QUERY_FLAG(m->map_object, FLAG_UNIQUE))
+    if (flag || (m->unique)) {
+	if (!m->unique)
 	    strcpy (filename, create_pathname (m->path));
-	else
+	else /* means flag must be set */
 	    strcpy (filename, m->path);
 
 	/* If the compression suffix already exists on the filename, don't
@@ -897,13 +1029,8 @@ int new_save_map(mapstruct *m, int flag) {
     LOG(llevDebug,"Saving map %s\n",m->path);
     m->in_memory = MAP_SAVING;
 
-    if (!m->map_object) {
-	LOG(llevError, "no map object for map %s!\n", m->path);
-	return -1;
-    }
-
     /* Compress if it isn't a temporary save.  Do compress if unique */
-    if (m->compressed && (QUERY_FLAG(m->map_object, FLAG_UNIQUE) || flag)) {
+    if (m->compressed && (m->unique || flag)) {
 	char buf[MAX_BUF];
 	strcpy(buf, uncomp[m->compressed][2]);
 	strcat(buf, " > ");
@@ -917,7 +1044,29 @@ int new_save_map(mapstruct *m, int flag) {
 	return -1;
     }
     
-    save_object (fp, m->map_object, 3);
+    /* legacy */
+    fprintf(fp,"arch map\n");
+    if (m->name) fprintf(fp,"name %s\n", m->name);
+    if (!flag) fprintf(fp,"swap_time %d\n", m->swap_time);
+    if (m->reset_timeout) fprintf(fp,"reset_timeout %d\n", m->reset_timeout);
+    if (m->fixed_resettime) fprintf(fp,"fixed_resettime %d\n", m->fixed_resettime);
+    /* we unfortunately have no idea if this is a value the creator set
+     * or a difficulty value we generated when the map was first loaded
+     */
+    if (m->difficulty) fprintf(fp,"difficulty %d\n", m->difficulty);
+    if (m->darkness) fprintf(fp,"darkness %d\n", m->darkness);
+    if (m->width) fprintf(fp,"width %d\n", m->width);
+    if (m->height) fprintf(fp,"height %d\n", m->height);
+    if (m->enter_x) fprintf(fp,"enter_x %d\n", m->enter_x);
+    if (m->enter_y) fprintf(fp,"enter_y %d\n", m->enter_y);
+    if (m->msg) fprintf(fp,"msg\n%sendmsg\n", m->msg);
+    if (m->unique) fprintf(fp,"unique %d\n", m->unique);
+    /* Save any tiling information */
+    for (i=0; i<4; i++)
+	if (m->tile_path[i])
+	    fprintf(fp,"tile_path_%d %s\n", i+1, m->tile_path[i]);
+
+    fprintf(fp,"end\n");
 
     /* In the game save unique items in the different file, but
      * in the editor save them to the normal map file.
@@ -925,7 +1074,7 @@ int new_save_map(mapstruct *m, int flag) {
      * player)
      */
     fp2 = fp; /* save unique items into fp2 */
-    if (flag == 0 && !QUERY_FLAG(m->map_object, FLAG_UNIQUE)) {
+    if (flag == 0 && !m->unique) {
 	sprintf (buf,"%s.v00",create_items_path (m->path));
 	if ((fp2 = fopen (buf, "w")) == NULL) {
 	    LOG(llevError, "Can't open unique items file %s\n", buf);
@@ -953,108 +1102,6 @@ int new_save_map(mapstruct *m, int flag) {
     return 0;
 }
 
-/*
- * If any directories in the given path doesn't exist, they are created.
- */
-
-void make_path_to_file (char *filename)
-{
-    char buf[MAX_BUF], *cp = buf;
-    struct stat statbuf;
-
-    if (!filename || !*filename)
-	return;
-    strcpy (buf, filename);
-    LOG(llevDebug, "make_path_tofile %s...", filename);
-    while ((cp = strchr (cp + 1, (int) '/'))) {
-	*cp = '\0';
-#if 0
-	LOG(llevDebug, "\n Checking %s...", buf);
-#endif
-	if (stat(buf, &statbuf) || !S_ISDIR (statbuf.st_mode)) {
-	    LOG(llevDebug, "Was not dir...");
-	    if (mkdir (buf, 0777)) {
-		perror ("Couldn't make path to file");
-		return;
-	    }
-#if 0
-	    LOG(llevDebug, "Made dir.");
-	} else
-	    LOG(llevDebug, "Was dir");
-#else
-	}
-#endif
-	*cp = '/';
-    }
-    LOG(llevDebug,"\n");
-}
-
-
-/*
- * Clears the arrays containing object-pointers and outlook of a map.
- */
-
-void clear_map(mapstruct *m) {
-    MapLook *aptr, *endptr;
-
-    endptr=m->map+m->map_object->x*m->map_object->y;
-    for(aptr=m->map; aptr < endptr; ++aptr)
-	*aptr = blank_look;
-    endptr=m->floor+m->map_object->x*m->map_object->y;
-    for(aptr=m->floor; aptr < endptr; ++aptr)
-	*aptr = blank_look;
-    endptr=m->floor2+m->map_object->x*m->map_object->y;
-    for(aptr=m->floor2; aptr < endptr; ++aptr)
-	*aptr = blank_look;
-    memset(m->map_ob, 0,sizeof(object *)*m->map_object->x*m->map_object->y);
-}
-
-/*
- * This function relinks all _pointers_ to the objects from
- * one map to another.
- * Note: You can _not_ free the objects in the original map
- * after this function has been called.
- * (What happened to this function? It no longer copies the pointers! -Frank)
- */
-
-void copy_map(mapstruct *m1, mapstruct *m2) {
-  int x,y;
-
-  strncpy(m2->path,m1->path,BIG_NAME);
-  x = m2->map_object->x;
-  y = m2->map_object->y;
-  copy_object (m1->map_object, m2->map_object);
-  m2->map_object->x = x;
-  m2->map_object->y = y;  
-
-  for(x=0;x<m1->map_object->x&&x<m2->map_object->x;x++)
-    for(y=0;y<m1->map_object->y&&y<m2->map_object->y;y++) {
-      set_map(m2,x,y,get_map(m1,x,y));
-    }
-}
-
-/*
- * This function, like copy_map(), relinks all _pointers_ from
- * one map to the other map.
- */
-
-void relink_objs_offset(mapstruct *m1, mapstruct *m2, int dx, int dy) {
-  int x,y;
-  object *ob;
-
-  for (x = 0; x < m1->map_object->x && x < m2->map_object->x + dx; x++)
-    for (y = 0; y < m1->map_object->y && y < m2->map_object->y + dy; y++) {
-      set_map(m2, x + dx, y + dy, get_map(m1, x, y));
-      set_map_ob(m2, x + dx, y + dy, get_map_ob(m1, x, y));
-      set_map_ob(m1, x, y, (object *) NULL);
-      for (ob = get_map_ob(m2, x + dx, y + dy); ob; ob = ob->above)
-      {
-        ob->x = x + dx;
-        ob->y = y + dy;
-        ob->map = m2;
-      }
-    }
-}
 
 /*
  * Remove and free all objects in the inventory of the given object.
@@ -1081,62 +1128,65 @@ void clean_object(object *op)
  */
 
 void free_all_objects(mapstruct *m) {
-  int i,j;
-  object *op;
+    int i,j;
+    object *op;
 
-  for(i=0;i<m->map_object->x;i++)
-    for(j=0;j<m->map_object->y;j++) {
-      object *previous_obj=NULL;
-        while((op=get_map_ob(m,i,j))!=NULL) {
-          if (op==previous_obj)
-          {
-            LOG(llevDebug, "free_all_objects: Link error, bailing out.\n");
-            break;
-          }
-          previous_obj=op;
-          if(op->head!=NULL)
-          op = op->head;
+    for(i=0;i<MAP_WIDTH(m);i++)
+	for(j=0;j<MAP_HEIGHT(m);j++) {
+	    object *previous_obj=NULL;
+	    while((op=GET_MAP_OB(m,i,j))!=NULL) {
+		if (op==previous_obj) {
+		    LOG(llevDebug, "free_all_objects: Link error, bailing out.\n");
+		    break;
+		}
+		previous_obj=op;
+		if(op->head!=NULL)
+		    op = op->head;
 
-	  /* If the map isn't in memory, free_object will remove and
-	   * free objects in op's inventory.  So let it do the job.
-	   */
-	  if (m->in_memory==MAP_IN_MEMORY)
-	    clean_object(op);
-          remove_ob(op);
-          free_object(op);
-        }
-      }
+		/* If the map isn't in memory, free_object will remove and
+		 * free objects in op's inventory.  So let it do the job.
+		 */
+		if (m->in_memory==MAP_IN_MEMORY)
+		    clean_object(op);
+		remove_ob(op);
+		free_object(op);
+	    }
+	}
 }
 
 /*
- * This function moves all objects from one map to another.
- *
- * move_all_objects(): Only used from the editor(s?)
- * Yes. -Frank
+ * Frees everything allocated by the given mapstructure.
+ * don't free tmpname - our caller is left to do that
  */
 
-void move_all_objects(mapstruct *m1, mapstruct *m2) {
-  int i,j;
-  object *op;
+void free_map(mapstruct *m,int flag) {
+    int i;
 
-  for(i=0;i<m1->map_object->x&&i<m2->map_object->x;i++)
-    for(j=0;j<m1->map_object->y&&j<m2->map_object->y;j++) {
-      while((op=get_map_ob(m1,i,j))!=NULL&&op->head==NULL) {
-        remove_ob(op);
-        op->x=i,op->y=j; /* Not really needed */
-        insert_ob_in_map_simple(op,m2);
-      }
+    if (!m->in_memory) {
+	LOG(llevError,"Trying to free freed map.\n");
+	return;
     }
-  free_all_objects(m1);
+    if (flag && m->spaces) free_all_objects(m);
+    if (m->name) FREE_AND_CLEAR(m->name);
+    if (m->spaces) FREE_AND_CLEAR(m->spaces);
+    if (m->msg) FREE_AND_CLEAR(m->msg);
+    if (m->buttons)
+	free_objectlinkpt(m->buttons);
+    m->buttons = NULL;
+    for (i=0; i<4; i++)
+	if (m->tile_path[i]) FREE_AND_CLEAR(m->tile_path[i]);
 }
 
 /*
  * function: vanish mapstruct
  * m       : pointer to mapstruct, if NULL no action
+ * this deletes all the data on the map (freeing pointers)
+ * and then removes this map from the global linked list of maps.
  */
 
 void delete_map(mapstruct *m) {
-    mapstruct *tmp;
+    mapstruct *tmp, *last;
+    int i;
 
     if (!m)
       return;
@@ -1154,122 +1204,38 @@ void delete_map(mapstruct *m) {
 	free(m->tmpname);
 	m->tmpname=NULL;
     }
-    if (m == first_map)
-	first_map = m->next;
-    else {
-	for (tmp = first_map; tmp && tmp->next != m; tmp = tmp->next);
-        if(tmp)
-	  tmp->next = m->next;
+    last = NULL;
+    /* We need to look through all the maps and see if any maps
+     * are pointing at this one for tiling information.  Since
+     * tiling can be assymetric, we just can not look to see which
+     * maps this map tiles with and clears those.
+     */
+    for (tmp = first_map; tmp != m; tmp = tmp->next) {
+	if (tmp->next == m) last = tmp;
+
+	/* This should hopefully get unrolled on a decent compiler */
+	for (i=0; i<4; i++)
+	    if (tmp->tile_map[i] == m) tmp->tile_map[i]=NULL;
     }
+
+    /* If last is null, then this should be the first map in the list */
+    if (!last) {
+	if (m == first_map)
+	    first_map = m->next;
+	else
+	    /* m->path is a static char, so should hopefully still have
+	     * some useful data in it.
+	     */
+	    LOG(llevError,"delete_map: Unable to find map %s in list\n",
+		m->path);
+    }
+    else
+	last->next = m->next;
+
     free (m);
 }
 
-/*
- * Frees everything allocated by the given mapstructure.
- */
 
-void free_map(mapstruct *m,int flag) {
-  if (!m->in_memory) {
-    LOG(llevError,"Trying to free freed map.\n");
-    return;
-  }
-  if(flag)
-    free_all_objects(m);
-  m->in_memory=MAP_SWAPPED;
-  if (m->map != NULL)
-    CFREE(m->map);
-  if (m->map_ob != NULL)
-    CFREE(m->map_ob);
-  if (m->floor !=NULL)
-    CFREE(m->floor);
-  if (m->floor2 !=NULL)
-    CFREE(m->floor2);
-  m->map = NULL;/* It's being accessed again, incorrectly.  Maybe this will */
-		/* make it get loaded back in. */
-  m->map_ob = NULL;
-  m->floor = NULL;
-  m->floor2 = NULL;
-  if (m->map_object)
-      free_object (m->map_object);
-  m->map_object=NULL;
-  if (m->buttons)
-    free_objectlinkpt(m->buttons);
-  m->buttons = NULL;
-}
-
-/*
- * Allocates, initialises, and returns a pointer to a mapstruct.
- * takes a path argument it doesn't look like it uses.
- */
-
-mapstruct *get_linked_map(char *path) {
-  mapstruct *map=(mapstruct *) CALLOC(1,sizeof(mapstruct));
-  mapstruct *mp;
-
-  if(map==NULL)
-    fatal(OUT_OF_MEMORY);
-  for(mp=first_map;mp!=NULL&&mp->next!=NULL;mp=mp->next);
-  if(mp==NULL)
-    first_map=map;
-  else
-    mp->next=map;
-  map->next=NULL;
-  map->path[0]='\0';
-  map->tmpname=NULL;
-  map->encounter = 0;
-  map->players=0;
-  map->in_memory=MAP_SWAPPED;
-/*  map->read_only=0;*/
-  map->timeout=0;
-  map->light = (objectlink *) NULL;
-  map->darkness = 0;
-  map->do_los=0;
-  map->map_object = NULL;
-  map->buttons = NULL;
-  map->compressed = 0;
-
-  return map;
-}
-
-/*
- * Allocates the arrays contained in a mapstruct.
- */
-
-void allocate_map(mapstruct *m) {
-  if(m->in_memory != MAP_SWAPPED )
-    return;
-  m->in_memory = MAP_IN_MEMORY;
-  m->map=(MapLook *) CALLOC(m->map_object->x*m->map_object->y,sizeof(MapLook));
-  m->floor=(MapLook *) CALLOC(m->map_object->x*m->map_object->y,sizeof(MapLook));
-  m->map_ob=(object **) CALLOC(m->map_object->x*m->map_object->y,sizeof(object *));
-  m->floor2=(MapLook *) CALLOC(m->map_object->x*m->map_object->y,sizeof(MapLook));
-  if(m->map==NULL||m->map_ob==NULL || m->floor==NULL || m->floor2==NULL)
-    fatal(OUT_OF_MEMORY);
-}
-
-/*
- * Creates an empty map of the given size, and returns a pointer to it.
- */
-
-mapstruct *get_empty_map (int sizex, int sizey) {
-    mapstruct *m = get_linked_map (NULL);
-    archetype *tmp;
-
-    for (tmp = first_archetype; tmp; tmp = tmp->next)
-	if (tmp->clone.type == MAP)
-	    break;
-    if (tmp) {
-	m->map_object = ObjectCreateArch (tmp);
-	m->map_object->x = sizex;
-	m->map_object->y = sizey;
-	allocate_map (m);
-	clear_map (m);
-    } else {
-	m->map_object = NULL;
-	LOG (llevError, "no map archetypes\n");
-    }
-    return m;
-}
 
 /*
  * Makes sure the given map is loaded and swapped in.
@@ -1292,10 +1258,19 @@ mapstruct *ready_map_name(char *name, int flags) {
     /* Have we been at this level before? */
     m = has_been_loaded (name);
 
+    /* Map is good to go, so just return it */
     if (m && (m->in_memory == MAP_LOADING || m->in_memory == MAP_IN_MEMORY))
 	return m;
 
-    if ((flags & (MAP_FLUSH|MAP_PLAYER_UNIQUE)) || !m || (m->reset_time != -1 && seconds() > m->reset_time)) {
+    /* unique maps always get loaded from their original location, and never
+     * a temp location.  Likewise, if map_flush is set, or we have never loaded
+     * this map, load it now.  I removed the reset checking from here -
+     * it seems the probability of a player trying to enter a map that should
+     * reset but hasn't yet is quite low, and removing that makes this function
+     * a bit cleaner (and players probably shouldn't rely on exact timing for
+     * resets in any case - if they really care, they should use the 'maps command.
+     */
+    if ((flags & (MAP_FLUSH|MAP_PLAYER_UNIQUE)) || !m) {
 
 	/* first visit or time to reset */
 	if (m) {
@@ -1351,242 +1326,65 @@ mapstruct *ready_map_name(char *name, int flags) {
 }
 
 
-
-void no_maps_file(char *filename) {
-  LOG(llevError,"Can't open the %s file.\n",filename);
-  LOG(llevError,"If you have no maps, you must either make them yourself\n");
-  LOG(llevError,"with the mapeditor, or fetch them from ftp.ifi.uio.no\n");
-  LOG(llevError,"in the /pub/crossfire directory.  Be sure not to fetch\n");
-  LOG(llevError,"maps belonging to a later version than this version.\n");
-  exit(-1);
-}
-
-
-void set_map_reset_time(mapstruct *map) {
-#ifdef MAP_RESET
-#ifdef MAP_MAXRESET
-    if (MAP_RESETTIME(map)>MAP_MAXRESET)
-	map->reset_time = seconds() + MAP_MAXRESET;
-    else
-#endif /* MAP_MAXRESET */
-    map->reset_time = seconds() + MAP_RESETTIME (map);
-#else
-    map->reset_time = (-1); /* Will never be reset */
-#endif
-}
-
 /*
- * This routine is supposed to find out which level the players should have
- * before visiting this map.  It is used to calculate which bonuses to put
- * on magic items.
+ * This routine is supposed to find out the difficulty of the map.
+ * difficulty does not have a lot to do with character level,
+ * but does have a lot to do with treasure on the map.
  *
  * Difficulty can now be set by the map creature.  If the value stored
- * in the map is zero, then use this routine.
+ * in the map is zero, then use this routine.  Maps should really
+ * have a difficulty set than using this function - human calculation
+ * is much better than this functions guesswork.
  */
 
 int calculate_difficulty(mapstruct *m) {
-  object *op;
-  archetype *at;
-  int x,y;
-  int diff=0;
-  int total_exp=0,exp_pr_sq;
-  int i;
+    object *op;
+    archetype *at;
+    int x,y;
+    int diff=0;
+    int total_exp=0,exp_pr_sq;
+    int i;
 
-  if (MAP_DIFFICULTY(m)) {
+    if (MAP_DIFFICULTY(m)) {
 	LOG(llevDebug, "Using stored map difficulty: %d\n", MAP_DIFFICULTY(m));
 	return MAP_DIFFICULTY(m);
-  }
-  for(x=0;x<m->map_object->x;x++)
-    for(y=0;y<m->map_object->y;y++)
-      for(op=get_map_ob(m,x,y);op!=NULL;op=op->above) {
-        if(QUERY_FLAG(op,FLAG_MONSTER))
-          total_exp+=op->stats.exp;
-        if(QUERY_FLAG(op,FLAG_GENERATOR)) {
-          total_exp+=op->stats.exp;
-          at=type_to_archetype(GENERATE_TYPE(op));
-          if(at!=NULL)
-            total_exp+=at->clone.stats.exp*8;
-        }
-      }
+    }
+
+    for(x=0;x<MAP_WIDTH(m);x++)
+	for(y=0;y<MAP_HEIGHT(m);y++)
+	    for(op=get_map_ob(m,x,y);op!=NULL;op=op->above) {
+		if(QUERY_FLAG(op,FLAG_MONSTER))
+		    total_exp+=op->stats.exp;
+		if(QUERY_FLAG(op,FLAG_GENERATOR)) {
+		    total_exp+=op->stats.exp;
+		    at=type_to_archetype(GENERATE_TYPE(op));
+		    if(at!=NULL)
+			total_exp+=at->clone.stats.exp*8;
+		}
+	    }
 #ifdef NEWCALC
-  (int)exp_pr_sq=((double)1000*total_exp)/(m->map_object->x*m->map_object->y+1);
-  for(i=20;i>0;i--)
-    if(exp_pr_sq>level_exp(i,1.0)) {
-      diff=i;
-      break;
-    }
+    (int)exp_pr_sq=((double)1000*total_exp)/(m->map_object->x*m->map_object->y+1);
+    for(i=20;i>0;i--)
+	if(exp_pr_sq>level_exp(i,1.0)) {
+	    diff=i;
+	    break;
+	}
 #else
-  exp_pr_sq=((double)1000*total_exp)/(m->map_object->x*m->map_object->y+1);
-  diff=20;
-  for(i=1;i<20;i++)
-    if(exp_pr_sq<=level_exp(i,1.0)) {
-      diff=i;
-      break;
-    }
+    exp_pr_sq=((double)1000*total_exp)/(MAP_WIDTH(m)*MAP_HEIGHT(m)+1);
+    diff=20;
+    for(i=1;i<20;i++)
+	if(exp_pr_sq<=level_exp(i,1.0)) {
+	    diff=i;
+	    break;
+	}
 #endif
-  return diff;
+    return diff;
 }
 
 void clean_tmp_map(mapstruct *m) {
-  if(m->tmpname == NULL)
-    return;
+    if(m->tmpname == NULL)
+	return;
   (void) unlink(m->tmpname);
-}
-
-/*
- * member: copy by translate objects from source to a new map
- * source: -map
- * width : width of target map
- * height: height of target map
- * dx    : positive translate to right
- * dy    : positive translate to down
- */
-mapstruct *MapMoveScrollResize(mapstruct *source, 
-				int width, int height, int dx, int dy) 
-{
-    mapstruct *target;
-    object *obj,*prt; /* PaRT of obj */
-    int x,y,sx = source->map_object->x, sy = source->map_object->y;
-    int linked = 0, link=0;
-
-    if (!width) width = sx;
-    if (!height) height = sy;
-    target = get_empty_map (width, height);
-
-    strncpy (target->path, source->path, BIG_NAME);
-
-    copy_object (source->map_object, target->map_object);
-    target->map_object->x = width;
-    target->map_object->y = height;  
-
-    if(dx < 0) dx += target->map_object->x;
-    if(dy < 0) dy += target->map_object->y;
-
-    for(y=0; y < sy && y < target->map_object->y; y++)
-	for(x=0; x < sx && x < target->map_object->x; x++)
-	    while((obj = get_map_ob(source,x,y)) && !obj->head) {
-		if ((linked = QUERY_FLAG (obj,FLAG_IS_LINKED))) {
-		    link = get_button_value (obj);
-		    remove_button_link (obj);
-		}
-		remove_ob(obj);
-		for(prt = obj; prt; prt = prt->more) {
-		    prt->x += dx;
-		    prt->x %= target->map_object->x; /* it can be split by edge */
-		    prt->y += dy;           /* designers problem to fix */
-		    prt->y %= target->map_object->y;
-		}
-		insert_ob_in_map_simple(obj,target);
-		if (linked)
-		    add_button_link(obj, target, link);
-	    }
-    /*free_all_objects(source);*/
-    free_map (source, 1);
-    delete_map (source);
-    return target;
-}
-
-/*
- * member: copy by translate objects from source to target
- * target: -map
- * source: -map
- * dx    : positive translate to right
- * dy    : positive translate to down
- */
-void MapMoveScroll(mapstruct *target, mapstruct *source, int dx, int dy) 
-{
-    object *obj,*prt; /* PaRT of obj */
-    int x,y;
-
-    if(dx < 0) dx += target->map_object->x;
-    if(dy < 0) dy += target->map_object->y;
-
-    for(y=0; y < source->map_object->y && y < target->map_object->y; y++)
-	for(x=0; x < source->map_object->x && x < target->map_object->x; x++)
-	    while((obj = get_map_ob(source,x,y)) && !obj->head) {
-		remove_ob(obj);
-		for(prt = obj; prt; prt = prt->more) {
-		    prt->x += dx;
-		    prt->x %= target->map_object->x; /* it can be split by edge */
-		    prt->y += dy;           /* designers problem to fix */
-		    prt->y %= target->map_object->y;
-		}
-		insert_ob_in_map_simple(obj,target);
-	    }
-    free_all_objects(source);
-}
-
-object * MapGetRealObject (mapstruct * emap, int x, int y, int z)
-{
-    object *tmp = MapGetObjectZ (emap, x, y, z);
-    return tmp ? (tmp->head ? tmp->head : tmp) : tmp;
-}
-
-int MapInsertObjectZ(mapstruct *emap,object *o,int x, int y, int z)
-{
-    object *op, *above, *below;
-
-    if (o->more)
-        MapInsertObjectZ (emap,o->more, x, y, z);
-
-    o->x += x;
-    o->y += y;
-    o->map = emap;
-    CLEAR_FLAG(o,FLAG_REMOVED);
-
-    op = get_map_ob (emap, o->x, o->y);
-    if (z < 0) {
-	above = op;
-	below = NULL;
-    } else {
-	while (op && op->above)
-	    op = op->above;
-    
-	above = NULL;
-	below = op;
-	while (op && z-- > 0) {
-	    above = op;
-	    below = op = op->below;
-	}
-    }
-    o->below = below;
-    o->above = above;
-
-    if (above)
-        above->below = o;
-    else {
-	MapLook f;
-	f.flags = 0;
-	f.face = o->face;
-	set_map (emap, o->x, o->y, &f);
-    }
-    if (below)
-        below->above = o;
-    else
-        set_map_ob (emap, o->x, o->y, o);
-    
-    return (0);
-}
-
-int MapObjectOut (mapstruct *target, object *obj, int x, int y) {
-    object *tmp;
-    for(tmp = obj; tmp; tmp = tmp->more)
-        if(out_of_map(target,x + tmp->x,y + tmp->y)) return 1;
-    return 0;
-}
-
-object * MapGetObjectZ (mapstruct * emap, int x, int y, int z)
-{
-    object *op;
-
-    if (!emap || out_of_map (emap, x, y))
-        return (NULL);
-    op = get_map_ob (emap, x, y);
-    while (op && op->above)
-        op = op->above;
-    while (op && z-- > 0)
-        op = op->below;
-    return (op);
 }
 
 void free_all_maps()
@@ -1602,4 +1400,302 @@ void free_all_maps()
 	real_maps++;
     }
     LOG(llevDebug,"free_all_maps: Freed %d maps\n", real_maps);
+}
+
+/* change_map_light() - used to change map light level (darkness)
+ * up or down by *1*. This fctn is not designed to change by
+ * more than that!  Returns true if successful. -b.t. 
+ * Move this from los.c to map.c since this is more related
+ * to maps than los.
+ */
+ 
+int change_map_light(mapstruct *m, int change) {
+    int new_level = m->darkness + change;
+ 
+    if(new_level<=0) {
+	m->darkness = 0;
+        return 0;
+    }
+ 
+    if(new_level>MAX_DARKNESS) return 0;
+ 
+    if(change) {
+	/* inform all players on the map */
+	if (change>0) 
+	    (info_map_func)(NDI_BLACK, m,"It becomes darker.");
+	else
+	    (info_map_func)(NDI_BLACK, m,"It becomes brighter.");
+
+	m->darkness=new_level;
+	/* All clients need to get re-updated for the change */
+	update_all_map_los(m);
+	return 1;
+    }
+    return 0;
+}
+
+
+/* 
+ * This function updates various attributes about a specific space
+ * on the map (what it looks like, whether it blocks magic,
+ * has a living creatures, prevents people from passing
+ * through, etc)
+ */
+void update_position (mapstruct *m, int x, int y) {
+    object *tmp, *last = NULL;
+    uint8 flags = 0, oldflags, light=0, anywhere=0;
+    New_Face *top,*floor, *middle;
+
+    oldflags = GET_MAP_FLAGS(m,x,y);
+    if (!(oldflags & P_NEED_UPDATE)) {
+	LOG(llevDebug,"update_position called with P_NEED_UPDATE not set: %s (%d, %d)\n",
+	    m->path, x, y);
+	return;
+    }
+
+    middle=blank_face;
+    top=blank_face;
+    floor=blank_face;
+
+    for (tmp = get_map_ob (m, x, y); tmp; last = tmp, tmp = tmp->above) {
+
+	/* This could be made additive I guess (two lights better than
+	 * one).  But if so, it shouldn't be a simple additive - 2
+	 * light bulbs do not illuminate twice as far as once since
+	 * it is a disapation factor that is squared (or is it cubed?)
+	 */
+	if (tmp->glow_radius > light) light = tmp->glow_radius;
+
+	/* This call is needed in order to update objects the player
+	 * is standign in that have animations (ie, grass, fire, etc).
+	 * However, it also causes the look window to be re-drawn
+	 * 3 times each time the player moves, because many of the
+	 * functions the move_player calls eventualy call this.
+	 *
+	 * Always put the player down for drawing.
+	 */
+	if ((tmp->type==PLAYER || QUERY_FLAG(tmp, FLAG_MONSTER)) && !tmp->invisible) {
+	    top = tmp->face;
+	}
+	else if (QUERY_FLAG(tmp,FLAG_IS_FLOOR)) {
+	    /* If we got a floor, that means middle and top were below it,
+	     * so should not be visible, so we clear them.
+	     */
+	    middle=blank_face;
+	    top=blank_face;
+	    if (!tmp->invisible)
+		floor = tmp->face;
+	}
+	/* Flag anywhere have high priority */
+	else if (QUERY_FLAG(tmp, FLAG_SEE_ANYWHERE)) {
+	    middle = tmp->face;
+	    anywhere =1;
+	}
+	/* Find the highest visible face around */
+	else if (tmp->face->visibility > middle->visibility && !anywhere)
+	    middle = tmp->face;
+
+	if (tmp==tmp->above) {
+	    LOG(llevError, "Error in structure of map\n");
+	    exit (-1);
+	}
+      
+	if (QUERY_FLAG(tmp,FLAG_ALIVE))
+	    flags |= P_IS_ALIVE;
+	if (QUERY_FLAG(tmp,FLAG_NO_PASS))
+	    flags |= P_NO_PASS;
+	if (QUERY_FLAG(tmp,FLAG_NO_MAGIC))
+	    flags |= P_NO_MAGIC;
+	if (QUERY_FLAG(tmp,FLAG_DAMNED))
+	    flags |= P_NO_CLERIC;
+#if 0
+	/* P_PASS_THRU doesn't seem to do anything so commented out for now */
+	if (QUERY_FLAG(tmp,FLAG_PASS_THRU))
+	    flags |= P_PASS_THRU;
+#endif
+	if (QUERY_FLAG(tmp,FLAG_BLOCKSVIEW))
+	    flags |= P_BLOCKSVIEW;
+    } /* for stack of objects */
+
+    /* we don't want to rely on this function to have accurate flags, but
+     * since we're already doing the work, we calculate them here.
+     * if they don't match, logic is broken someplace.
+     */
+    if (((oldflags & ~(P_NEED_UPDATE|P_NO_ERROR)) != flags) &&
+        (!(oldflags & P_NO_ERROR))) {
+        LOG(llevDebug,"update_position: updated flags do not match old flags: %s (old=%d,new=%d) %x != %x\n",
+	    m->path, x, y,
+            (oldflags & ~P_NEED_UPDATE), flags);
+    }
+    SET_MAP_FLAGS(m, x, y, flags);
+
+    /* At this point, we have a floor face (if there is a floor),
+     * and the floor is set - we are not going to touch it at
+     * this point.
+     * middle contains the highest visibility face. 
+     * top contains a player/monster face, if there is one.
+     *
+     * We now need to fill in top.face and/or middle.face.
+     */
+
+    /* If the top face also happens to be high visibility, re-do our
+     * middle face.  This should not happen, as we already have the
+     * else statement above so middle should not get set.  OTOH, it 
+     * may be possible for the faces to match but be different objects.
+     */
+    if (top == middle) middle=blank_face;
+
+    /* There are three posibilities at this point:
+     * 1) top face is set, need middle to be set.
+     * 2) middle is set, need to set top.
+     * 3) neither middle or top is set - need to set both.
+     */
+
+    for (tmp=last; tmp; tmp=tmp->below) {
+	/* Once we get to a floor, stop, since we already have a floor object */
+	if (QUERY_FLAG(tmp,FLAG_IS_FLOOR)) break;
+
+	/* If two top faces are already set, quit processing */
+	if ((top != blank_face) && (middle != blank_face)) break;
+
+	/* Only show visible faces, unless its the editor - show all */
+	if (!tmp->invisible || editor) {
+	    /* Fill in top if needed */
+	    if (top == blank_face) {
+		top = tmp->face;
+	    } else {
+		/* top is already set - we should only get here if
+		 * middle is not set
+		 *
+		 * Set the middle face and break out, since there is nothing
+		 * more to fill in.  We don't check visiblity here, since
+		 * 
+		 */
+		if (tmp->face  != top ) {
+		    middle = tmp->face;
+		    break;
+		}
+	    }
+	}
+    }
+    if (middle == floor) middle = blank_face;
+    if (top == middle) middle = blank_face;
+    SET_MAP_FACE(m,x,y,top,0);
+    SET_MAP_FACE(m,x,y,middle,1);
+    SET_MAP_FACE(m,x,y,floor,2);
+    SET_MAP_LIGHT(m,x,y,light);
+}
+
+
+void set_map_reset_time(mapstruct *map) {
+#ifdef MAP_RESET
+#ifdef MAP_MAXRESET
+    if (MAP_RESET_TIMEOUT(map)>MAP_MAXRESET)
+        MAP_WHEN_RESET(map) = seconds() + MAP_MAXRESET;
+    else
+#endif /* MAP_MAXRESET */
+    MAP_WHEN_RESET(map) = seconds() + MAP_RESET_TIMEOUT (map);
+#else
+    MAP_WHEN_RESET(map) = (-1); /* Will never be reset */
+#endif
+}
+
+/* this returns TRUE if the coordinates (x,y) are out of
+ * map m.  This function also takes into account any
+ * tiling considerations, loading adjacant maps as needed.
+ * This is the function should always be used when it
+ * necessary to check for valid coordinates.
+ * This function will recursively call itself for the 
+ * tiled maps.
+ *
+ * 
+ */
+int out_of_map(mapstruct *m, int x, int y)
+{
+
+    /* If we get passed a null map, this is obviously the
+     * case.  This generally shouldn't happen, but if the
+     * map loads fail below, it could happen.
+     */
+    if (!m) return 0;
+
+    /* Simple case - coordinates are within this local
+     * map.
+     */
+    if ( x>=0 && x<MAP_WIDTH(m) && y>=0 && y < MAP_HEIGHT(m))
+	return 0;
+
+    if (x<0) {
+	if (!m->tile_path[3]) return 1;
+	if (!m->tile_map[3] || m->tile_map[3]->in_memory != MAP_IN_MEMORY)
+	    m->tile_map[3] = ready_map_name(m->tile_path[3], 0);
+	return (out_of_map(m->tile_map[3], x + MAP_WIDTH(m->tile_map[3]), y));
+    }
+    if (x>=MAP_WIDTH(m)) {
+	if (!m->tile_path[1]) return 1;
+	if (!m->tile_map[1] || m->tile_map[1]->in_memory != MAP_IN_MEMORY)
+	    m->tile_map[1] = ready_map_name(m->tile_path[1], 0);
+	return (out_of_map(m->tile_map[1], x - MAP_WIDTH(m), y));
+    }
+    if (y<0) {
+	if (!m->tile_path[0]) return 1;
+	if (!m->tile_map[0] || m->tile_map[0]->in_memory != MAP_IN_MEMORY)
+	    m->tile_map[0] = ready_map_name(m->tile_path[0], 0);
+	return (out_of_map(m->tile_map[0], x, y + MAP_HEIGHT(m->tile_map[0])));
+    }
+    if (y>=MAP_HEIGHT(m)) {
+	if (!m->tile_path[2]) return 1;
+	if (!m->tile_map[2] || m->tile_map[2]->in_memory != MAP_IN_MEMORY)
+	    m->tile_map[2] = ready_map_name(m->tile_path[2], 0);
+	return (out_of_map(m->tile_map[2], x, y - MAP_HEIGHT(m)));
+    }
+    return 1;
+}
+
+/* This is basically the same as out_of_map above, but
+ * instead we return NULL if no map is valid (coordinates
+ * out of bounds and no tiled map), otherwise it returns
+ * the map as that the coordinates are really on, and 
+ * updates x and y to be the localized coordinates.
+ * Using this is more efficient of calling out_of_map
+ * and then figuring out what the real map is
+ */
+mapstruct *get_map_from_coord(mapstruct *m, int *x, int *y)
+{
+
+    /* Simple case - coordinates are within this local
+     * map.
+     */
+    if (*x>=0 && *x<MAP_WIDTH(m) && *y>=0 && *y < MAP_HEIGHT(m))
+	return m;
+
+    if (*x<0) {
+	if (!m->tile_path[3]) return NULL;
+	if (!m->tile_map[3] || m->tile_map[3]->in_memory != MAP_IN_MEMORY)
+	    m->tile_map[3] = ready_map_name(m->tile_path[3], 0);
+	*x += MAP_WIDTH(m->tile_map[3]);
+	return (get_map_from_coord(m->tile_map[3], x, y));
+    }
+    if (*x>=MAP_WIDTH(m)) {
+	if (!m->tile_path[1]) return NULL;
+	if (!m->tile_map[1] || m->tile_map[1]->in_memory != MAP_IN_MEMORY)
+	    m->tile_map[1] = ready_map_name(m->tile_path[1], 0);
+	*x -= MAP_WIDTH(m);
+	return (get_map_from_coord(m->tile_map[1], x, y));
+    }
+    if (*y<0) {
+	if (!m->tile_path[0]) return NULL;
+	if (!m->tile_map[0] || m->tile_map[0]->in_memory != MAP_IN_MEMORY)
+	    m->tile_map[0] = ready_map_name(m->tile_path[0], 0);
+	*y += MAP_HEIGHT(m->tile_map[0]);
+	return (get_map_from_coord(m->tile_map[0], x, y));
+    }
+    if (*y>=MAP_HEIGHT(m)) {
+	if (!m->tile_path[2]) return NULL;
+	if (!m->tile_map[2] || m->tile_map[2]->in_memory != MAP_IN_MEMORY)
+	    m->tile_map[2] = ready_map_name(m->tile_path[2], 0);
+	*y -= MAP_HEIGHT(m);
+	return (get_map_from_coord(m->tile_map[2], x, y));
+    }
+    return NULL;    /* Shouldn't get here */
 }

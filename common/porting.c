@@ -332,3 +332,230 @@ char *strerror_local(int errnum)
     return("strerror_local not implemented");
 #endif
 }
+
+/*
+ * Based on (n+1)^2 = n^2 + 2n + 1
+ * given that	1^2 = 1, then
+ *		2^2 = 1 + (2 + 1) = 1 + 3 = 4
+ * 		3^2 = 4 + (4 + 1) = 4 + 5 = 1 + 3 + 5 = 9
+ * 		4^2 = 9 + (6 + 1) = 9 + 7 = 1 + 3 + 5 + 7 = 16
+ *		...
+ * In other words, a square number can be express as the sum of the
+ * series n^2 = 1 + 3 + ... + (2n-1)
+ */
+int
+isqrt(n)
+int n;
+{
+	int result, sum, prev;
+	result = 0;
+	prev = sum = 1;
+	while (sum <= n) {
+		prev += 2;
+		sum += prev;
+		++result;
+	}
+	return result;
+}
+
+
+/*
+ * returns a char-pointer to a static array, in which a representation
+ * of the decimal number given will be stored.
+ */
+
+char *ltostr10(signed long n) {
+  static char buf[10];
+  char *cp=buf+9;
+  long flag;
+
+  *cp='\0';
+  if(n<0)
+    flag= n = -n;
+  else
+    flag=0;
+  do {
+    *(--cp) = '0'+n%10;
+    n/=10;
+  } while(n);
+  if(flag)
+    *(--cp)='-';
+  return cp;
+}
+
+/*
+ * A fast routine which appends the name and decimal number specified
+ * to the given buffer.
+ * Could be faster, though, if the strcat()s at the end could be changed
+ * into alternate strcat which returned a pointer to the _end_, not the
+ * start!
+ */
+
+void save_long(char *buf, char *name, long n) {
+#if 0 /* This doesn't work, since buf is always the beginning */
+  char *cp, *var;
+  for(cp=buf;*name!='\0';)
+    *cp++ = *name++;
+  *cp++=' ';
+  for(var=ltostr10(n);*var!='\0';)
+    *cp++ = *name++;
+  *cp='\0';
+#else
+  char buf2[MAX_BUF];
+  strcpy(buf2,name);
+  strcat(buf2," ");
+  strcat(buf2,ltostr10(n));
+  strcat(buf2,"\n");
+  strcat(buf,buf2);
+#endif
+}
+
+/* This is a list of the suffix, uncompress and compress functions.  Thus,
+ * if you have some other compress program you want to use, the only thing
+ * that needs to be done is to extended this.
+ * The first entry must be NULL - this is what is used for non
+ * compressed files.
+ */
+char *uncomp[NROF_COMPRESS_METHODS][3] = {
+    {NULL, NULL, NULL},
+    {".Z", UNCOMPRESS, COMPRESS},
+    {".gz", GUNZIP, GZIP},
+    {".bz2", BUNZIP, BZIP}
+};
+
+
+/*
+ * open_and_uncompress() first searches for the original filename.
+ * if it exist, then it opens it and returns the file-pointer.
+ * if not, it does two things depending on the flag.  If the flag
+ * is set, it tries to create the original file by uncompressing a .Z file.
+ * If the flag is not set, it creates a pipe that is used for
+ * reading the file (NOTE - you can not use fseek on pipes)
+ *
+ * The compressed pointer is set to nonzero if the file is
+ * compressed (and thus,  fp is actually a pipe.)  It returns 0
+ * if it is a normal file
+ *
+ * (Note, the COMPRESS_SUFFIX is used instead of ".Z", thus it can easily
+ * be changed in the config file.)
+ */
+
+FILE *open_and_uncompress(char *name,int flag, int *compressed) {
+  FILE *fp;
+  char buf[MAX_BUF],buf2[MAX_BUF], *bufend;
+  int try_once = 0;
+
+  strcpy(buf, name);
+  bufend = buf + strlen(buf);
+
+/*  LOG(llevDebug, "open_and_uncompress(%s)\n", name);
+*/
+
+  /* strip off any compression prefixes that may exist */
+  for (*compressed = 0; *compressed < NROF_COMPRESS_METHODS; (*compressed)++) {
+    if ((uncomp[*compressed][0]) &&
+      (!strcmp(uncomp[*compressed][0], bufend - strlen(uncomp[*compressed][0])))) {
+	buf[strlen(buf) - strlen(uncomp[*compressed][0])] = '\0';
+	bufend = buf + strlen(buf);
+    }
+  }
+  for (*compressed = 0; *compressed < NROF_COMPRESS_METHODS; (*compressed)++) {
+    struct stat statbuf;
+
+    if (uncomp[*compressed][0])
+        strcpy(bufend, uncomp[*compressed][0]);
+    if (stat(buf, &statbuf)) {
+
+/*      LOG(llevDebug, "Failed to stat %s\n", buf);
+*/
+      continue;
+    }
+/*    LOG(llevDebug, "Found file %s\n", buf);
+*/
+    if (uncomp[*compressed][0]) {
+      strcpy(buf2, uncomp[*compressed][1]);
+      strcat(buf2, " < ");
+      strcat(buf2, buf);
+      if (flag) {
+        int i;
+        if (try_once) {
+          LOG(llevError, "Failed to open %s after decompression.\n", name);
+          return NULL;
+        }
+        try_once = 1;
+        strcat(buf2, " > ");
+        strcat(buf2, name);
+        LOG(llevDebug, "system(%s)\n", buf2);
+        if ((i=system(buf2))) {
+          LOG(llevError, "system(%s) returned %d\n", buf2, i);
+          return NULL;
+        }
+        unlink(buf);		/* Delete the original */
+        *compressed = '\0';	/* Restart the loop from the beginning */
+        chmod(name, statbuf.st_mode);
+        continue;
+      }
+      if ((fp = popen(buf2, "r")) != NULL)
+        return fp;
+    } else if((fp=fopen(name,"r"))!=NULL) {
+      struct stat statbuf;
+      if (fstat (fileno (fp), &statbuf) || ! S_ISREG (statbuf.st_mode)) {
+        LOG (llevDebug, "Can't open %s - not a regular file\n", name);
+        (void) fclose (fp);
+        errno = EISDIR;
+        return NULL;
+      }
+      return fp;
+    }
+  }
+  LOG(llevDebug, "Can't open %s\n", name);
+  return NULL;
+}
+
+/*
+ * See open_and_uncompress().
+ */
+
+void close_and_delete(FILE *fp, int compressed) {
+  if (compressed)
+    pclose(fp);
+  else
+    fclose(fp);
+}
+
+/*
+ * If any directories in the given path doesn't exist, they are created.
+ */
+
+void make_path_to_file (char *filename)
+{
+    char buf[MAX_BUF], *cp = buf;
+    struct stat statbuf;
+
+    if (!filename || !*filename)
+	return;
+    strcpy (buf, filename);
+    LOG(llevDebug, "make_path_tofile %s...", filename);
+    while ((cp = strchr (cp + 1, (int) '/'))) {
+	*cp = '\0';
+#if 0
+	LOG(llevDebug, "\n Checking %s...", buf);
+#endif
+	if (stat(buf, &statbuf) || !S_ISDIR (statbuf.st_mode)) {
+	    LOG(llevDebug, "Was not dir...");
+	    if (mkdir (buf, 0777)) {
+		perror ("Couldn't make path to file");
+		return;
+	    }
+#if 0
+	    LOG(llevDebug, "Made dir.");
+	} else
+	    LOG(llevDebug, "Was dir");
+#else
+	}
+#endif
+	*cp = '/';
+    }
+    LOG(llevDebug,"\n");
+}
+

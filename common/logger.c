@@ -6,6 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
+    Copyright (C) 2001 Mark Wedel
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -22,7 +23,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to frankj@ifi.uio.no.
+    The author can be reached via e-mail to mwedel@scruz.net
 */
 
 
@@ -69,8 +70,10 @@ void LOG (LogLevel logLevel, char *format, ...)
     exiting = 1;
     if (!trying_emergency_save)
       (*emergency_save_func) (0);
+#if 0
     if (!editor)
 	fatal(TOO_MANY_ERRORS);
+#endif
   }
   va_end(ap);
 }

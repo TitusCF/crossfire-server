@@ -69,7 +69,7 @@ void push_button(object *op) {
       break;
     case CF_HANDLE:
 	SET_ANIMATION(tmp, (tmp->value=tmp->stats.maxsp?!op->value:op->value));
-	update_object(tmp);
+	update_object(tmp,UP_OBJ_FACE);
 	break;
     case SIGN:
       if (!tmp->stats.food || tmp->last_eat < tmp->stats.food) {
@@ -80,13 +80,13 @@ void push_button(object *op) {
     case ALTAR:
 	tmp->value = 1;
 	SET_ANIMATION(tmp, tmp->value);
-	update_object(tmp);
+	update_object(tmp,UP_OBJ_FACE);
 	break;
     case BUTTON:
     case PEDESTAL:
 	tmp->value=op->value;
 	SET_ANIMATION(tmp, tmp->value);
-	update_object(tmp);
+	update_object(tmp,UP_OBJ_FACE);
 	break;
     case MOOD_FLOOR:
 	do_mood_floor(tmp, op);
@@ -165,7 +165,7 @@ void update_button(object *op) {
     /* If this button hasn't changed, don't do anything */
     if (op->value != old_value) {
 	SET_ANIMATION(op, op->value);
-	update_object(op);
+	update_object(op, UP_OBJ_FACE);
 	push_button(op); /* Make all other buttons the same */
     }
 }
@@ -215,7 +215,7 @@ void animate_turning(object *op) /* only one part objects */
       op->state=0; 
     SET_ANIMATION(op, (op->stats.sp-1) * NUM_ANIMATIONS(op) / 8 + 
 		  op->state);
-    update_object(op);
+    update_object(op,UP_OBJ_FACE);
 }
 
 #define ARCH_SACRIFICE(xyz) ((xyz)->slaying)
@@ -342,7 +342,7 @@ int check_trigger (object *op, object *cause)
             return 0;
           op->stats.ac = push;
           SET_ANIMATION (op, push);
-          update_object (op);
+          update_object (op, UP_OBJ_FACE);
           if (in_movement || ! push)
             return 0;
         }
@@ -366,7 +366,7 @@ int check_trigger (object *op, object *cause)
             return 0;
           op->stats.ac = push;
           SET_ANIMATION (op, push);
-          update_object(op);
+          update_object(op,UP_OBJ_FACE);
           if (in_movement || ! push)
             return 0;
         }
@@ -379,7 +379,7 @@ int check_trigger (object *op, object *cause)
             return 0;
           if (operate_altar (op, &cause)) {
             SET_ANIMATION (op, 1);
-            update_object(op);
+            update_object(op,UP_OBJ_FACE);
 	    
 	    if (op->last_sp >= 0) {
 	      trigger_move (op, 1);
@@ -400,7 +400,7 @@ int check_trigger (object *op, object *cause)
           }
         } else {
           SET_ANIMATION (op, 0);
-          update_object(op);
+          update_object(op,UP_OBJ_FACE);
 	  
           /* If trigger_altar has "last_sp > 0" set on the map,
              it will push the connected value only once per sacrifice.
@@ -424,7 +424,7 @@ int check_trigger (object *op, object *cause)
           push = 1;
         }
         SET_ANIMATION (op, push);
-        update_object(op);
+        update_object(op,UP_OBJ_FACE);
         trigger_move (op, push);
 	return 1;
 

@@ -317,22 +317,6 @@ object *find_object_name(char *str) {
 }
 
 void free_all_object_data() {
-
-#if 0
-
-    /* Don't clean these up, so that properly allocated but 'lost' objects
-     * still show up in memory debugging output.  This is things like
-     * a function doing a get_ob, but not freeing it.
-     */
-    for (op=objects; op!=NULL; op=next) {
-	next=op->next;
-	if (!op->head && !QUERY_FLAG(op,FLAG_REMOVED))
-		remove_ob(op);
-	if (!op->head && !QUERY_FLAG(op,FLAG_FREED))
-		free_object(op);
-    }
-#endif
-
 #ifdef MEMORY_DEBUG
     object *op, *next;
 
@@ -722,7 +706,7 @@ void update_turn_face(object *op) {
     if(!QUERY_FLAG(op,FLAG_IS_TURNABLE)||op->arch==NULL)
 	return;
     SET_ANIMATION(op, op->direction);
-    update_object(op);
+    update_object(op,UP_OBJ_FACE);
 }
 
 /*
@@ -789,10 +773,22 @@ void update_ob_speed(object *op) {
  * If the object being updated is beneath a player, the look-window
  * of that player is updated (this might be a suboptimal way of
  * updating that window, though, since update_object() is called _often_)
+ *
+ * action is a hint of what the caller believes need to be done.
+ * For example, if the only thing that has changed is the face (due to
+ * an animation), we don't need to call update_position until that actually
+ * comes into view of a player.  OTOH, many other things, like addition/removal
+ * of walls or living creatures may need us to update the flags now.
+ * current action are:
+ * UP_OBJ_INSERT: op was inserted
+ * UP_OBJ_REMOVE: op was removed
+ * UP_OBJ_CHANGE: object has somehow changed.  In this case, we always update
+ *  as that is easier than trying to look at what may have changed.
+ * UP_OBJ_FACE: only the objects face has changed.
  */
 
-void update_object(object *op) {
-    object *player;
+void update_object(object *op, int action) {
+    int update_now, flags;
 
     if(op->env!=NULL) {
 	/* Animation is currently handled by client, so nothing
@@ -801,155 +797,64 @@ void update_object(object *op) {
 	return;
     }
 
-    /* Can be null if the player has quit but window still exists. */
-    if (op->map->map != NULL) {
-	object *tmp;
-	player=update_position (op->map, op->x, op->y);
+    /* If the map is saving, don't do anything as everything is
+     * going to get freed anyways.
+     */
+    if (!op->map || op->map->in_memory == MAP_SAVING) return;
 
-	/* Special check here.  If a player is on this space, and the 
-	 * player is not the object that has changed, and the object is
-	 * not normally animated (ie, buttons) and not invisible, mark this
-	 * space to be updated.
-	 */
-	if (player && player!=op && op->speed<MIN_ACTIVE_SPEED && !op->invisible &&
-	    op->animation_id) {
-	    for (tmp=op; tmp!=NULL; tmp=tmp->above)
-		if (QUERY_FLAG(tmp,FLAG_IS_FLOOR) && !tmp->invisible) break;
+    flags = GET_MAP_FLAGS(op->map, op->x, op->y);
+    SET_MAP_FLAGS(op->map, op->x, op->y, flags | P_NEED_UPDATE);
 
-	    if (!tmp) esrv_update_item_func(UPD_FACE, player, op);
-	}
-	    
+    if (action == UP_OBJ_INSERT) {
+        if (QUERY_FLAG(op, FLAG_BLOCKSVIEW) && !(flags & P_BLOCKSVIEW))
+            update_now=1;
+
+        if (QUERY_FLAG(op, FLAG_NO_MAGIC) && !(flags & P_NO_MAGIC))
+            update_now=1;
+
+        if (QUERY_FLAG(op, FLAG_DAMNED) && !(flags & P_NO_CLERIC))
+            update_now=1;
+
+        if (QUERY_FLAG(op, FLAG_NO_PASS) && !(flags & P_NO_PASS))
+            update_now=1;
+
+        if (QUERY_FLAG(op, FLAG_ALIVE) && !(flags & P_IS_ALIVE))
+            update_now=1;
+
+    } else if (action == UP_OBJ_REMOVE) {
+        if (QUERY_FLAG(op, FLAG_BLOCKSVIEW) && (flags & P_BLOCKSVIEW))
+            update_now=1;
+
+        if (QUERY_FLAG(op, FLAG_NO_MAGIC) && (flags & P_NO_MAGIC))
+            update_now=1;
+
+        if (QUERY_FLAG(op, FLAG_DAMNED) && (flags & P_NO_CLERIC))
+            update_now=1;
+
+        if (QUERY_FLAG(op, FLAG_NO_PASS) && (flags & P_NO_PASS))
+            update_now=1;
+
+        if (QUERY_FLAG(op, FLAG_ALIVE) && (flags & P_IS_ALIVE))
+            update_now=1;
+
+    } else if (action == UP_OBJ_CHANGE) {
+	update_now=1;
+    } else if (action == UP_OBJ_FACE) {
+	/* Nothing to do for that case */
+    }
+    else {
+	LOG(llevError,"update_object called with invalid action: %d\n", action);
+    }
+
+    if (update_now) {
+        SET_MAP_FLAGS(op->map, op->x, op->y, flags | P_NO_ERROR | P_NEED_UPDATE);
+        update_position(op->map, op->x, op->y);
     }
 
     if(op->more!=NULL)
-	update_object(op->more);
+	update_object(op->more, action);
 }
 
-
-/* This updates how the map looks at a specified space.  We use
- * some time saving techniques instead of space - each map has 2 or
- * 3 arrays - one for floors, one for top object, and one for an
- * additional object (if DOUBLE_FLOOR patch).  Changed things around
- * so that we now have a visibility flag, and if that is set, then the
- * highest object with that visibility gets put into the addition object
- * slot.
- *
- * Return player object ifwe find one.
- * update_object (which calls this) needs to know if it should send an 
- * update to the client.  Update object could check for that, but
- * since this looks through the space anyways, might as well this function
- * return it for us.
- */
-object *update_position (mapstruct *m, int x, int y) {
-    object *tmp, *last = NULL, *player=NULL;
-    unsigned int flags = 0;
-    MapLook top,floor, f1;
-
-
-    f1=blank_look;
-    top=blank_look;
-    floor=blank_look;
-
-    for (tmp = get_map_ob (m, x, y); tmp; last = tmp, tmp = tmp->above) {
-
-	/* This call is needed in order to update objects the player
-	 * is standign in that have animations (ie, grass, fire, etc).
-	 * However, it also causes the look window to be re-drawn
-	 * 3 times each time the player moves, because many of the
-	 * functions the move_player calls eventualy call this.
-	 *
-	 * Always put the player down for drawing.
-	 */
-	if (tmp->type==PLAYER && !tmp->invisible) {
-	    top.face = tmp->face;
-	    player=tmp;
-	}
-	else if (QUERY_FLAG(tmp,FLAG_IS_FLOOR)) {
-	    f1=blank_look;
-	    if (!tmp->invisible)
-		floor.face = tmp->face;
-	}
-	/* Find the highest visible face around */
-	if (tmp->face->visibility > f1.face->visibility && !tmp->invisible) 
-	    f1.face = tmp->face;
-
-	if (tmp==tmp->above) {
-	    LOG(llevError, "Error in structure of map\n");
-	    exit (-1);
-	}
-      
-	if (QUERY_FLAG(tmp,FLAG_ALIVE))
-	    flags |= P_IS_ALIVE;
-	if (QUERY_FLAG(tmp,FLAG_NO_PASS))
-	    flags |= P_NO_PASS;
-	if (QUERY_FLAG(tmp,FLAG_NO_MAGIC))
-	    flags |= P_NO_MAGIC;
-	if (QUERY_FLAG(tmp,FLAG_DAMNED))
-	    flags |= P_NO_CLERIC;
-	if (QUERY_FLAG(tmp,FLAG_PASS_THRU))
-	    flags |= P_PASS_THRU;
-	if (QUERY_FLAG(tmp,FLAG_BLOCKSVIEW))
-	    flags |= P_BLOCKSVIEW;
-
-    } /* for stack of objects */
-
-    top.flags = flags;
-
-    /* At this point, we have a floor.face (if there is a floor),
-     * and the floor is set - we are not going to touch it at
-     * this point.
-     * f1 contains the highest visibility face. 
-     * top contains a player face, if there is one.
-     *
-     * We now need to fill in top.face and/or f1.face.
-     */
-
-    /* If the top face also happens to be high visibility, re-do our
-     * middle face.  This only happens when top.face is a player.
-     */
-    if (top.face == f1.face) f1.face=blank_look.face;
-
-    /* There are three posibilities at this point:
-     * 1) top face is set, need f1 to be set.
-     * 2) f1 is set, need to set top.
-     * 3) neither f1 or top is set - need to set both.
-     */
-
-    for (tmp=last; tmp; tmp=tmp->below) {
-	/* Once we get to a floor, stop, since we already have a floor object */
-	if (QUERY_FLAG(tmp,FLAG_IS_FLOOR)) break;
-
-	/* If two top faces are already set, quit processing */
-	if ((top.face != blank_look.face) && (f1.face != blank_look.face)) break;
-
-	/* Only show visible faces, unless its the editor - show all */
-	if (!tmp->invisible || editor) {
-	    /* Fill in top if needed */
-	    if (top.face == blank_look.face) {
-		top.face = tmp->face;
-	    } else {
-		/* top is already set - we should only get here if
-		 * f1 is not set
-		 *
-		* Set the middle face and break out, since there is nothing
-		 * more to fill in.  We don't check visiblity here, since
-		 * 
-		 */
-		if (tmp->face  != top.face ) {
-		    f1.face = tmp->face;
-		    break;
-		}
-	    }
-	}
-    }
-    if (f1.face == floor.face) f1.face = blank_face;
-    if (top.face == f1.face) f1.face = blank_face;
-    set_map (m, x, y, &top);
-    set_map_floor2(m, x, y, &f1);
-    set_map_floor(m,x,y,&floor);
-
-    return player;
-}
 
 /*
  * free_object() frees everything allocated by an object, removes
@@ -1004,7 +909,7 @@ void free_object(object *ob) {
           free_object(op);
         else {
           op->x=ob->x,op->y=ob->y;
-          insert_ob_in_map(op,ob->map,NULL); /* Insert in same map as the envir */
+          insert_ob_in_map(op,ob->map,NULL,0); /* Insert in same map as the envir */
         }
         op=tmp;
       }
@@ -1134,142 +1039,166 @@ void sub_weight (object *op, signed long weight) {
  */
 
 void remove_ob(object *op) {
-  object *tmp,*last=NULL;
-  object *otmp;
-  tag_t tag;
-  int check_walk_off;
+    object *tmp,*last=NULL;
+    object *otmp;
+    tag_t tag;
+    int check_walk_off;
+    mapstruct *m;
+    int x,y;
+    
 
-  if(QUERY_FLAG(op,FLAG_REMOVED)) {
-    dump_object(op);
-    LOG(llevError,"Trying to remove removed object.\n%s\n",errmsg);
+    if(QUERY_FLAG(op,FLAG_REMOVED)) {
+	dump_object(op);
+	LOG(llevError,"Trying to remove removed object.\n%s\n",errmsg);
 
-/* Might as well dump core here.  In most cases, the function calling
- * remove_ob makes assumptions about success, and the validity of the
- * next, above, and below pointers, and a core dump would probably result
- * shortly anyways.
- */
-#ifdef MANY_CORES
-    abort();
-#else
-    if(op->map!=NULL && op->map->in_memory == MAP_IN_MEMORY) {
-      op->map->need_refresh=1;
-      LOG(llevDebug,"Marked map %s for refresh.\n",op->map->path);
+	/* Changed it to always dump core in this case.  As has been learned
+	 * in the past, trying to recover from errors almost always
+	 * make things worse, and this is a real error here - something
+	 * that should not happen.
+	 * Yes, if this was a mission critical app, trying to do something
+	 * to recover may make sense, but that is because failure of the app    
+	 * may have other disastrous problems.  Cf runs out of a script
+	 * so is easily enough restarted without any real problems.
+	 * MSW 2001-07-01
+	 */
+	abort();
     }
-#endif
-    if(get_map_ob(op->map,op->x,op->y)==op)
-    { /* we are at bottom [Smart! -Frank] */
-       if (op->below)
-	  set_map_ob(op->map,op->x,op->y,op->below);
-       else if (op->above)
-	  set_map_ob(op->map,op->x,op->y,op->above);
-       else 
-	  set_map_ob(op->map,op->x,op->y,NULL);
+    if(op->more!=NULL)
+	remove_ob(op->more);
+
+    SET_FLAG(op, FLAG_REMOVED);
+
+    /* 
+     * In this case, the object to be removed is in someones
+     * inventory.
+     */
+    if(op->env!=NULL) {
+	if(op->nrof)
+	    sub_weight(op->env, op->weight*op->nrof);
+	else
+	    sub_weight(op->env, op->weight+op->carrying);
+
+	/* NO_FIX_PLAYER is set when a great many changes are being
+	 * made to players inventory.  If set, avoiding the call
+	 * to save cpu time.
+	 */
+	if ((otmp=is_player_inv(op->env))!=NULL && otmp->contr && 
+	    !QUERY_FLAG(otmp,FLAG_NO_FIX_PLAYER))
+	    fix_player(otmp);
+
+	if(op->above!=NULL)
+	    op->above->below=op->below;
+	else
+	    op->env->inv=op->below;
+
+	if(op->below!=NULL)
+	    op->below->above=op->above;
+
+	/* we set up values so that it could be inserted into
+	 * the map, but we don't actually do that - it is up
+	 * to the caller to decide what we want to do.
+	 */
+	op->x=op->env->x,op->y=op->env->y;
+	op->ox=op->x,op->oy=op->y;
+	op->map=op->env->map;
+	op->above=NULL,op->below=NULL;
+	op->env=NULL;
+	return;
     }
-    return; /* Why did you comment this away at DoCS?? It just makes it worse */
-  }
-  if(op->more!=NULL)
-    remove_ob(op->more);
-  SET_FLAG(op, FLAG_REMOVED);
-  if(op->env!=NULL) {
-    if(op->nrof)
-      sub_weight(op->env, op->weight*op->nrof);
-    else
-      sub_weight(op->env, op->weight+op->carrying);
-    if ((otmp=is_player_inv(op->env))!=NULL && otmp->contr && 
-	!QUERY_FLAG(otmp,FLAG_NO_FIX_PLAYER))
-      fix_player(otmp);
-    if(op->above!=NULL)
-      op->above->below=op->below;
-    else
-      op->env->inv=op->below;
-    if(op->below!=NULL)
-      op->below->above=op->above;
-    op->x=op->env->x,op->y=op->env->y;
-    op->ox=op->x,op->oy=op->y;
-    op->map=op->env->map;
-    op->above=NULL,op->below=NULL;
-    op->env=NULL;
-    return;
-  }
-  if (op->map == NULL) return;
-  if(out_of_map(op->map,op->x,op->y))
-    op->x=0,op->y=0,op->ox=0,op->oy=0;
-  if(op->above!=NULL) {                /* Don't change map, we're not on top */
-    op->above->below=op->below;        /* Link above with below */
-    if(op->below!=NULL) {              /* Something below us? */
-      op->below->above=op->above;      /* Yes, link above with below */
-      op->below=NULL;
+
+    /* If we get here, we are removing it from a map */
+    if (op->map == NULL) return;
+
+    x = op->x;
+    y = op->y;
+    m = get_map_from_coord(op->map, &x, &y);
+
+    if (!m) {
+	LOG(llevError,"remove_ob called when object was on map but appears to not be within valid coordinates? %s (%d,%d)\n",
+	    op->map->path, op->x, op->y);
+	/* in old days, we used to set x and y to 0 and continue.
+	 * it seems if we get into this case, something is probablye
+	 * screwed up and should be fixed.
+	 */
+	abort();
     }
-    else {                             /* Nothing below, tell the floor what */
-      if(get_map_ob(op->map,op->x,op->y)!=op) {
-        dump_object(op);
-        LOG(llevError,"Object squizez another object:\n%s\n",errmsg);
-        dump_object(get_map_ob(op->map,op->x,op->y));
-        LOG(llevError,"%s\n",errmsg);
-      }
-      set_map_ob(op->map,op->x,op->y,op->above);  /* goes on above it. */
+    if (op->map != m) {
+	LOG(llevDebug,"remove_ob: Object not really on map it claimed to be on? %s != %s, %d,%d != %d,%d\n",
+	    op->map->path, m->path, op->x, op->y, x, y);
+    }
+
+    /* Re did the following section of code - it looks like it had
+     * lots of logic for things we no longer care about
+     */
+
+    /* link the object above us */
+    if (op->above)
+	op->above->below=op->below;
+
+    /* Relink the object below us, if there is one */
+    if(op->below) {
+	op->below->above=op->above;
+    } else {
+	/* Nothing below, which means we need to relink map object for this space 
+	 * use translated coordinates in case some oddness with map tiling is
+	 * evident
+	 */
+	if(GET_MAP_OB(m,x,y)!=op) {
+	    dump_object(op);
+	    LOG(llevError,"remove_ob: GET_MAP_OB does not return object to be removed even though it appears to be on the bottom?\n%s\n", errmsg);
+	    dump_object(GET_MAP_OB(m,x,y));
+	    LOG(llevError,"%s\n",errmsg);
+	}
+	SET_MAP_OB(m,x,y,op->above);  /* goes on above it. */
     }
     op->above=NULL;                      
-  }
-  else if(op->below!=NULL) {
-    op->below->above=NULL,             /* It is now on top */
     op->below=NULL;
-  } else {
-      if(get_map_ob(op->map,op->x,op->y)!=op) {
-        LOG(llevError,"Object squizez another object:\n");
-        dump_object(op);
-        LOG(llevError,"%s\n",errmsg);
-        dump_object(get_map_ob(op->map,op->x,op->y));
-        LOG(llevError,"%s\n",errmsg);
-      }
-    set_map_ob(op->map,op->x,op->y,NULL);           /* No more objects here */
-  }
-  if (op->map->in_memory == MAP_SAVING)
-    return;
-  tag = op->count;
-  check_walk_off = ! QUERY_FLAG (op, FLAG_NO_APPLY);
-  for(tmp=get_map_ob(op->map,op->x,op->y);tmp!=NULL;tmp=tmp->above) {
-    /* No point updating the players look faces if he is the object
-     * being removed.
-     */
-    if(tmp->type==PLAYER && tmp!=op) {
-	/* If a container that the player is currently using somehow gets
-	 * removed (most likely destroyed), update the player view
-	 * appropriately.
+
+    if (op->map->in_memory == MAP_SAVING)
+	return;
+
+    tag = op->count;
+    check_walk_off = ! QUERY_FLAG (op, FLAG_NO_APPLY);
+    for(tmp=GET_MAP_OB(m,x,y);tmp!=NULL;tmp=tmp->above) {
+	/* No point updating the players look faces if he is the object
+	 * being removed.
 	 */
-	if (tmp->container==op) {
-	    CLEAR_FLAG(op, FLAG_APPLIED);
-	    tmp->container=NULL;
+
+	if(tmp->type==PLAYER && tmp!=op) {
+	    /* If a container that the player is currently using somehow gets
+	     * removed (most likely destroyed), update the player view
+	     * appropriately.
+	     */
+	    if (tmp->container==op) {
+		CLEAR_FLAG(op, FLAG_APPLIED);
+		tmp->container=NULL;
+	    }
+	    tmp->contr->socket.update_look=1;
 	}
-	tmp->contr->socket.update_look=1;
+	if (check_walk_off && (QUERY_FLAG (op, FLAG_FLYING) ?
+	    QUERY_FLAG (tmp, FLAG_FLY_OFF) : QUERY_FLAG (tmp, FLAG_WALK_OFF))) {
+	    
+	    move_apply_func (tmp, op, NULL);
+	    if (was_destroyed (op, tag)) {
+		LOG (llevError, "BUG: remove_ob(): name %s, archname %s destroyed "
+		     "leaving object\n", tmp->name, tmp->arch->name);
+	    }
+	}
+
+	/* Eneq(@csd.uu.se): Fixed this to skip tmp->above=tmp */
+
+	if(tmp->above == tmp)
+	    tmp->above = NULL;
+	last=tmp;
     }
-    if (check_walk_off && (QUERY_FLAG (op, FLAG_FLYING) ?
-        QUERY_FLAG (tmp, FLAG_FLY_OFF) : QUERY_FLAG (tmp, FLAG_WALK_OFF)))
-    {
-        move_apply_func (tmp, op, NULL);
-        if (was_destroyed (op, tag)) {
-          LOG (llevError, "BUG: remove_ob(): name %s, archname %s destroyed "
-               "leaving object\n", tmp->name, tmp->arch->name);
-        }
-    }
+    /* last == NULL of there are no objects on this space */
+    if (last==NULL)
+	update_position(op->map, op->x, op->y);
+    else
+	update_object(last, UP_OBJ_REMOVE);
 
-    /* Eneq(@csd.uu.se): Fixed this to skip tmp->above=tmp */
-
-    if(tmp->above == tmp)
-      tmp->above = NULL;
-    last=tmp;
-  }
-  if (last==NULL)
-    update_position(op->map, op->x, op->y);
-  else
-    update_object(last);
-
-  if(QUERY_FLAG(op,FLAG_BLOCKSVIEW)	/* Should be harmless from editor, */
-#ifdef USE_LIGHTING
-     ||(op->glow_radius>0) 
-#endif
-  ) 
-    update_all_los(op->map);	/* first_player is no longer set there */
+    if(QUERY_FLAG(op,FLAG_BLOCKSVIEW)|| (op->glow_radius>0)) 
+	update_all_los(op->map, op->x, op->y);
 
 }
 
@@ -1304,132 +1233,8 @@ object *merge_ob(object *op, object *top) {
 }
 
 
-/* This is a simple version of the insert_ob_in_map function below. 
- * We do stuff similar to insert_ob_in_map, but don't merge objects
- * or check apply.  This is needed by at least the polymorph function -
- * it expects the next object below it to still be around, and if the
- * object gets merged, it gets removed
- */
-
-void insert_ob_in_map_simple(object *op, mapstruct *m)
-{
-  object *tmp, *top;
-
-  if (QUERY_FLAG (op, FLAG_FREED)) {
-    LOG (llevError, "Trying to insert freed object!\n");
-    return;
-  }
-  if(m==NULL) {
-    dump_object(op);
-    LOG(llevError,"Trying to insert in null-map!\n%s\n",errmsg);
-    return;
-  }
-  if(out_of_map(m,op->x,op->y)) {
-    dump_object(op);
-    LOG(llevError,"Trying to insert object outside the map.\n%s\n", errmsg);
-    return;
-  }
-  if(!QUERY_FLAG(op,FLAG_REMOVED)) {
-    dump_object(op);
-    LOG(llevError,"Trying to insert (map) inserted object.\n%s\n", errmsg);
-    return;
-  }
-  if(op->more!=NULL)
-    insert_ob_in_map_simple(op->more,m);
-  CLEAR_FLAG(op,FLAG_REMOVED);
-  op->ox=op->x,op->oy=op->y;
-  op->map=m;
-  CLEAR_FLAG(op,FLAG_APPLIED); /* hack for fixing F_APPLIED in items of dead people */
-  CLEAR_FLAG(op, FLAG_INV_LOCKED);
-  CLEAR_FLAG(op, FLAG_NO_STEAL);
-  /* If anything below then */
-  if((top=get_map_ob(op->map,op->x,op->y))!=NULL) {
-    /*
-     * There is at least one object present, so we must figure out the order.
-     * First figure out what is on top;
-     */
-
-    while (top->above != NULL)
-      top = top->above;
-
-    tmp = top;
-
-    /*
-     * Rule 0: SEE_ANYWHERE() objects stay on top of the top.
-     */
-    while(tmp != NULL && QUERY_FLAG(tmp,FLAG_SEE_ANYWHERE) &&
-       !QUERY_FLAG(op,FLAG_SEE_ANYWHERE))
-          top = tmp, tmp = tmp->below;
-
-    /*
-     * Rule 1: Alive objects stay on top.
-     */
-    while(tmp != NULL && QUERY_FLAG(tmp,FLAG_ALIVE) &&
-	!QUERY_FLAG(op,FLAG_ALIVE) && !QUERY_FLAG(op,FLAG_FLYING) &&
-          !QUERY_FLAG(op,FLAG_SEE_ANYWHERE))
-      top = tmp, tmp = tmp->below;
-
-    /*
-     * Link the new object in the two-way list:
-     */
-
-    if (top == tmp) {
-      /*
-       * Simple case, insert new object above tmp.
-       */
-      if (tmp->above != NULL)
-        LOG(llevError, "insert_ob_in_map_simple: top == tmp && tmp->above != NULL.\n");
-      else {
-        tmp->above = op;
-        op->below = tmp;
-        op->above = (object *) NULL;
-      }
-    } else {
-      /*
-       * Not so simple case, insert between top and tmp.
-       */
-      if (tmp == NULL) { /* Insert at bottom of map */
-        top->below = op;
-        op->above = top;
-        op->below = (object *) NULL;
-        set_map_ob(op->map, op->x, op->y, op);
-      } else { /* Insert between top and tmp */
-        top->below = op;
-        op->above = top;
-        tmp->above = op;
-        op->below = tmp;
-      }
-    }
-  }
-  else
-    set_map_ob(op->map,op->x,op->y,op);   /* Tell the map that we're here */
-
-  /* build up linked list of light sources in each map. We do
-   * this even for non-dark maps, as down the line we might make
-   * a spell/effect which effects the global light of any map.
-   * -b.t.
-   */
-#ifdef USE_LIGHTING
-        if(op->glow_radius>0&&light_not_listed(op)) {
-		add_light_to_map(op,m);
-		update_all_los(m);
-	} else if(m->darkness&&(op->glow_radius>0||op->lights)) /* a light moved, check los */
-		update_all_los(m);
-#endif 
-  
-  if(op->type==PLAYER)
-    op->contr->do_los=1;
-  for(tmp=get_map_ob(op->map,op->x,op->y);tmp!=NULL;tmp=tmp->above)
-    switch(tmp->type) {
-    case PLAYER:
-	tmp->contr->socket.update_look=1;
-	break;
-    }
-    update_object(op);
-}
-
 /*
- * insert_ob_in_map (op, map, originator):
+ * insert_ob_in_map (op, map, originator, flag):
  * This function inserts the object in the two-way linked list
  * which represents what is on a map.
  * The second argument specifies the map, and the x and y variables
@@ -1438,152 +1243,170 @@ void insert_ob_in_map_simple(object *op, mapstruct *m)
  * originator: Player, monster or other object that caused 'op' to be inserted
  * into 'map'.  May be NULL.
  *
+ * flag is a bitmask about special things to do (or not do) when this 
+ * function is called.  see the object.h file for the INS_ values.
+ * Passing 0 for flag gives proper default values, so flag really only needs
+ * to be set if special handling is needed.
+ *
  * Return value:
  *   new object if 'op' was merged with other object
  *   NULL if 'op' was destroyed
  *   just 'op' otherwise
  */
 
-object *insert_ob_in_map (object *op, mapstruct *m, object *originator)
+object *insert_ob_in_map (object *op, mapstruct *m, object *originator, int flag)
 {
-  object *tmp, *top;
+    object *tmp, *top, *floor=NULL;
+    int x,y;
 
-  if (QUERY_FLAG (op, FLAG_FREED)) {
-    LOG (llevError, "Trying to insert freed object!\n");
-    return NULL;
-  }
-  if(m==NULL) {
-    dump_object(op);
-    LOG(llevError,"Trying to insert in null-map!\n%s\n",errmsg);
-    return op;
-  }
-  if(out_of_map(m,op->x,op->y)) {
-    dump_object(op);
-    LOG(llevError,"Trying to insert object outside the map.\n%s\n", errmsg);
-    return op;
-  }
-  if(!QUERY_FLAG(op,FLAG_REMOVED)) {
-    dump_object(op);
-    LOG(llevError,"Trying to insert (map) inserted object.\n%s\n", errmsg);
-    return op;
-  }
-  if(op->more!=NULL) {
-    if (insert_ob_in_map(op->more,m,originator) == NULL) {
-      if ( ! op->head)
-        LOG (llevError, "BUG: insert_ob_in_map(): inserting op->more "
-             "killed op\n");
-      return NULL;
+    if (QUERY_FLAG (op, FLAG_FREED)) {
+	LOG (llevError, "Trying to insert freed object!\n");
+	return NULL;
     }
-  }
-  CLEAR_FLAG(op,FLAG_REMOVED);
-  if(op->nrof)
-    for(tmp=get_map_ob(m,op->x,op->y);tmp!=NULL;tmp=tmp->above)
-      if (CAN_MERGE(op,tmp))
-      {
-        op->nrof+=tmp->nrof;
-/*        CLEAR_FLAG(op,FLAG_STARTEQUIP);*/
-        remove_ob(tmp);
-        free_object(tmp);
-      }
-  op->ox=op->x,op->oy=op->y;
-  op->map=m;
-  CLEAR_FLAG(op,FLAG_APPLIED); /* hack for fixing F_APPLIED in items of dead people */
-  CLEAR_FLAG(op, FLAG_INV_LOCKED);
-  if (!QUERY_FLAG(op, FLAG_ALIVE))
-    CLEAR_FLAG(op, FLAG_NO_STEAL);
-  /* If there are other objects, then */
-  if((top=get_map_ob(op->map,op->x,op->y))!=NULL) {
-    /*
-     * There is at least one object present, so we must figure out the order.
-     * First figure out what is on top;
-     */
-
-    while (top->above != NULL)
-      top = top->above;
-
-    tmp = top;
-
-    /* Re-did this with nested if statements.  In this way, each check does
-     * not need to check for the previous state - to me, it makes the code
-     * cleaner, and perhaps faster.
-     */
-    if (!QUERY_FLAG(op, FLAG_SEE_ANYWHERE)) {
-      /* See anywhere objects stay on top. */
-      while(tmp != NULL && QUERY_FLAG(tmp,FLAG_SEE_ANYWHERE))
-          top = tmp, tmp = tmp->below;
-
-      if (!QUERY_FLAG(op, FLAG_ALIVE) && !QUERY_FLAG(op,FLAG_FLYING)) {
-	/* Alive objects also stay on to. */
-	while(tmp != NULL && QUERY_FLAG(tmp,FLAG_ALIVE))
-	  top = tmp, tmp = tmp->below;
-
-        /* Have object 'fall below' other objects that block view, except in
-         * cases where the object has a high visibility (high meaning >0)
-         */
-        if (blocks_view(op->map, op->x, op->y) && (op->face &&
-                !op->face->visibility)) {
-	  while (tmp != NULL && QUERY_FLAG(tmp, FLAG_BLOCKSVIEW) &&
-	    !QUERY_FLAG(op, FLAG_BLOCKSVIEW))
-	      top = tmp, tmp = tmp->below;
+    if(m==NULL) {
+	dump_object(op);
+	LOG(llevError,"Trying to insert in null-map!\n%s\n",errmsg);
+	return op;
+    }
+    if(out_of_map(m,op->x,op->y)) {
+	dump_object(op);
+	LOG(llevError,"Trying to insert object outside the map.\n%s\n", errmsg);
+	return op;
+    }
+    if(!QUERY_FLAG(op,FLAG_REMOVED)) {
+	dump_object(op);
+	LOG(llevError,"Trying to insert (map) inserted object.\n%s\n", errmsg);
+	return op;
+    }
+    if(op->more!=NULL) {
+	if (insert_ob_in_map(op->more,m,originator,flag) == NULL) {
+	    if ( ! op->head)
+		LOG (llevError, "BUG: insert_ob_in_map(): inserting op->more killed op\n");
+	    return NULL;
 	}
-      }
+    }
+    CLEAR_FLAG(op,FLAG_REMOVED);
+
+    if(op->nrof && !(flag & INS_NO_MERGE)) {
+	for(tmp=GET_MAP_OB(m,op->x,op->y);tmp!=NULL;tmp=tmp->above)
+	    if (CAN_MERGE(op,tmp)) {
+		op->nrof+=tmp->nrof;
+		remove_ob(tmp);
+		free_object(tmp);
+	    }
+    }
+    /* Debugging information so you can see the last coordinates this object had */
+    op->ox=op->x;
+    op->oy=op->y;
+    x = op->x;
+    y = op->y;
+    op->map=get_map_from_coord(m, &x, &y);
+    /* Ideally, the caller figures this out */
+    if (op->map != m) {
+	/* coordinates should not change unless map also changes */
+	op->x = x;
+	op->y = y;
+#if 0
+	LOG(llevDebug,"insert_ob_in_map not called with proper tiled map: %s != %s, orig coord = %d, %d\n",
+	    op->map->path, m->path, op->ox, op->oy);
+#endif
     }
 
-    /*
-     * Link the new object in the two-way list:
+    CLEAR_FLAG(op,FLAG_APPLIED); /* hack for fixing F_APPLIED in items of dead people */
+    CLEAR_FLAG(op, FLAG_INV_LOCKED);
+    if (!QUERY_FLAG(op, FLAG_ALIVE))
+	CLEAR_FLAG(op, FLAG_NO_STEAL);
+
+    /* If there are other objects, then */
+    if((top=GET_MAP_OB(op->map,op->x,op->y))!=NULL) {
+	object *last;
+	/*
+	 * If there are multiple objects on this space, we do some trickier handling.
+	 * We've already dealt with merging if appropriate.
+	 * Generally, we want to put the new object on top. But if
+	 * flag contains INS_ABOVE_FLOOR_ONLY, once we find the lastt
+	 * floor, we want to insert above that and no further.
+	 * Also, if there are spell objects on this space, we stop processing
+	 * once we get to them.  This reduces the need to traverse over all of 
+	 * them when adding another one - this saves quite a bit of cpu time
+	 * when lots of spells are cast in one area.  Currently, it is presumed
+	 * that flying non pickable objects are spell objects.
+	 */
+
+	while (top != NULL) {
+	    if (QUERY_FLAG(top, FLAG_IS_FLOOR)) floor = top;
+	    if (QUERY_FLAG(top, FLAG_NO_PICK) && QUERY_FLAG(top, FLAG_FLYING)) {
+		/* We insert above top, so we want this object below this */
+		top=top->below;
+		break;
+	    }
+	    last = top;
+	    top = top->above;
+	}
+	/* Don't want top to be NULL, so set it to the last valid object */
+	top = last;
+
+	/* We let update_position deal with figuring out what the space
+	 * looks like instead of lots of conditions here.
+	 * makes things faster, and effectively the same result.
+	 */
+
+        /* Have object 'fall below' other objects that block view.
+	 * We take simple approach - instead of dumping it below the object that
+	 * blocks the view, we just dump it right above the floor.  Saves 
+	 * us the effort of trying to find the object that blocks the view.
+         */
+        if (blocks_view(op->map, op->x, op->y) && 
+	   (op->face && !op->face->visibility)) {
+	    top = floor;
+	}
+    } /* If objects on this space */
+
+    if (flag & INS_ABOVE_FLOOR_ONLY) top = floor;
+
+    /* Top is the object that our object (op) is going to get inserted above.
      */
 
-    if (top == tmp) {
-      /*
-       * Simple case, insert new object above tmp.
-       */
-      if (tmp->above != NULL)
-        LOG(llevError, "insert_ob_in_map: top == tmp && tmp->above != NULL.\n");
-      else {
-        tmp->above = op;
-        op->below = tmp;
-        op->above = (object *) NULL;
-      }
-    } else {
-      /*
-       * Not so simple case, insert between top and tmp.
-       */
-      if (tmp == NULL) { /* Insert at bottom of map */
-        top->below = op;
-        op->above = top;
-        op->below = (object *) NULL;
-        set_map_ob(op->map, op->x, op->y, op);
-      } else { /* Insert between top and tmp */
-        top->below = op;
-        op->above = top;
-        tmp->above = op;
-        op->below = tmp;
-      }
+    /* First object on this space */
+    if (!top) {
+	op->above = GET_MAP_OB(op->map, op->x, op->y);
+	if (op->above) op->above->below = op;
+	op->below = NULL;
+        SET_MAP_OB(op->map, op->x, op->y, op);
+    } else { /* get inserted into the stack above top */
+	op->above = top->above;
+	if (op->above) op->above->below = op;
+	op->below = top;
+	top->above = op;
     }
-  }
-  else
-    set_map_ob(op->map,op->x,op->y,op);   /* Tell the map that we're here */
 
-  if(op->type==PLAYER)
-    op->contr->do_los=1;
-  for(tmp=get_map_ob(op->map,op->x,op->y);tmp!=NULL;tmp=tmp->above)
-    switch(tmp->type) {
-    case PLAYER:
-	tmp->contr->socket.update_look=1;
-	break;
+    if(op->type==PLAYER)
+	op->contr->do_los=1;
+    /* If we have a floor, we know the player, if any, will be above
+     * it, so save a few ticks and start from there.
+     */
+    for(tmp=floor?floor:GET_MAP_OB(op->map,op->x,op->y);tmp!=NULL;tmp=tmp->above) {
+	if (tmp->type == PLAYER)
+	    tmp->contr->socket.update_look=1;
     }
-  /* build up linked list of light sources in each map. We do
-   * this even for non-dark maps, as down the line we might make
-   * a spell/effect which effects the global light of any map.
-   * -b.t.
-   */
-#ifdef USE_LIGHTING
-        if(op->glow_radius>0&&light_not_listed(op)) {
-		add_light_to_map(op,m);
-		update_all_los(m);
-	} else if(m->darkness&&(op->glow_radius>0||op->lights)) /* a light moved, check los */
-		update_all_los(m);
-#endif 
+
+    /* If this object glows, it may affect lighting conditions that are
+     * visible to others on this map.  But update_all_los is really
+     * an inefficient way to do this, as it means los for all players
+     * on the map will get recalculated.  The players could very well
+     * be far away from this change and not affected in any way -
+     * this should get redone to only look for players within range,
+     * or just updating the P_NEED_UPDATE for spaces within this area
+     * of effect may be sufficient.
+     */
+    if(MAP_DARKNESS(op->map) && op->glow_radius>0) 
+	update_all_los(op->map, op->x, op->y);
+
+
+    /* updates flags (blocked, alive, no magic, etc) for this map space */
+    update_object(op,UP_OBJ_INSERT);
+
+
     /* Don't know if moving this to the end will break anything.  However,
      * we want to have update_look set above before calling this.
      *
@@ -1592,47 +1415,45 @@ object *insert_ob_in_map (object *op, mapstruct *m, object *originator)
      * blocked() and wall() work properly), and these flags are updated by
      * update_object().
      */
-    update_object(op);
 
-    /* Only check this if we are the head of the object */
-    if ( ! op->head) {
+    /* if this is not the head or flag has been passed, don't check walk on status */
+
+    if (!(flag & INS_NO_WALK_ON) && !op->head) {
         if (check_walk_on(op, originator))
-          return NULL;
+	    return NULL;
 
         /* If we are a multi part object, lets work our way through the check
          * walk on's.
          */
         for (tmp=op->more; tmp!=NULL; tmp=tmp->more)
             if (check_walk_on (op, originator))
-              return NULL;
+		return NULL;
     }
-
     return op;
 }
 
 /* this function inserts an object in the map, but if it
-   finds an object of its own type, it'll remove that one first. 
-   op is the object to insert it under:  supplies x and the map.*/
+ *  finds an object of its own type, it'll remove that one first. 
+ *  op is the object to insert it under:  supplies x and the map.
+ */
 void replace_insert_ob_in_map(char *arch_string, object *op) {
-  object *tmp;
-  object *tmp1;
+    object *tmp;
+    object *tmp1;
 
-  /* first search for itself and remove any old instances */
+    /* first search for itself and remove any old instances */
 
-  for(tmp=get_map_ob(op->map,op->x,op->y); tmp!=NULL; tmp=tmp->above) {
-    if(!strcmp(tmp->arch->name,arch_string)) /* same archetype */ {
-      remove_ob(tmp);
-      free_object(tmp);
+    for(tmp=GET_MAP_OB(op->map,op->x,op->y); tmp!=NULL; tmp=tmp->above) {
+	if(!strcmp(tmp->arch->name,arch_string)) /* same archetype */ {
+	    remove_ob(tmp);
+	    free_object(tmp);
+	}
     }
-  }
 
-  tmp1=arch_to_object(find_archetype(arch_string));
+    tmp1=arch_to_object(find_archetype(arch_string));
 
   
-  tmp1->x = op->x; tmp1->y = op->y;
-  insert_ob_in_map(tmp1,op->map,op);
-
-
+    tmp1->x = op->x; tmp1->y = op->y;
+    insert_ob_in_map(tmp1,op->map,op,0);
 }        
 
 /*
@@ -1836,18 +1657,15 @@ object *insert_ob_in_ob(object *op,object *where) {
   op->x=0,op->y=0;
   op->ox=0,op->oy=0;
 
-#ifdef USE_LIGHTING /* reset the light list and los of the players on the map */
+  /* reset the light list and los of the players on the map */
   if(op->glow_radius>0&&where->map)
   {
 #ifdef DEBUG_LIGHTS
       LOG(llevDebug, " insert_ob_in_ob(): got %s to insert in map/op\n",
 	op->name);
 #endif /* DEBUG_LIGHTS */ 
-      add_light_to_list(op,where);
-      if(light_not_listed(op)) add_light_to_map(op,where->map);
-      if(where->map->darkness&&where->map->players) update_all_los(where->map);
+      if (MAP_DARKNESS(where->map)) update_all_los(where->map, where->x, where->y);
   }
-#endif /* USE_LIGHTING */ 
 
   /* Client has no idea of ordering so lets not bother ordering it here.
    * It sure simplifies this function...
@@ -1873,22 +1691,35 @@ object *insert_ob_in_ob(object *op,object *where) {
  * into 'map'.  May be NULL.
  *
  * Return value: 1 if 'op' was destroyed, 0 otherwise.
+ *
+ * 4-21-95 added code to check if appropriate skill was readied - this will
+ * permit faster movement by the player through this terrain. -b.t.
+ *
+ * MSW 2001-07-08: Check all objects on space, not just those below
+ * object being inserted.  insert_ob_in_map may not put new objects
+ * on top.
  */
- /* 4-21-95 added code to check if appropriate skill was readied - this will
-  * permit faster movement by the player through this terrain. -b.t.
-  */
 
 int check_walk_on (object *op, object *originator)
 {
     object *tmp;
     tag_t tag;
+    mapstruct *m=op->map;
+    int x=op->x, y=op->y;
 
     if(QUERY_FLAG(op,FLAG_NO_APPLY))
 	return 0;
+
+    /* Spell effects are immune to these checks - this
+     * helps performance a lot on maps with lots of spell activity
+     */
+    if (QUERY_FLAG(op, FLAG_FLYING) && QUERY_FLAG(op, FLAG_NO_PICK)) return 0;
+
     tag = op->count;
-    for(tmp=op->below;tmp!=NULL;tmp=tmp->below) {
-	if (tmp==tmp->below)	/* if we have a map loop, exit */
-	    break;
+    for(tmp=GET_MAP_OB(op->map, op->x, op->y);tmp!=NULL;tmp=tmp->above) {
+	if (tmp == op) continue;    /* Can't apply yourself */
+
+	/* Slow down creatures moving over rough terrain */
 	if(QUERY_FLAG(tmp,FLAG_SLOW_MOVE)&&!QUERY_FLAG(op,FLAG_FLYING)) {
 	    float diff;
 
@@ -1906,6 +1737,11 @@ int check_walk_on (object *op, object *originator)
 	    move_apply_func (tmp, op, originator);
             if (was_destroyed (op, tag))
               return 1;
+	    /* what the person/creature stepped onto has moved the object
+	     * someplace new.  Don't process any further - if we did,
+	     * have a feeling strange problems would result.
+	     */
+	    if (op->map != m || op->x != x || op->y != y) return 0;
 	}
     }
     return 0;
@@ -1923,7 +1759,7 @@ object *present_arch(archetype *at, mapstruct *m, int x, int y) {
     LOG(llevError,"Present_arch called outside map.\n");
     return NULL;
   }
-  for(tmp=get_map_ob(m,x,y); tmp != NULL; tmp = tmp->above)
+  for(tmp=GET_MAP_OB(m,x,y); tmp != NULL; tmp = tmp->above)
     if(tmp->arch == at)
       return tmp;
   return NULL;
@@ -1941,7 +1777,7 @@ object *present(unsigned char type,mapstruct *m, int x,int y) {
     LOG(llevError,"Present called outside map.\n");
     return NULL;
   }
-  for(tmp=get_map_ob(m,x,y);tmp!=NULL;tmp=tmp->above)
+  for(tmp=GET_MAP_OB(m,x,y);tmp!=NULL;tmp=tmp->above)
     if(tmp->type==type)
       return tmp;
   return NULL;
@@ -2057,7 +1893,7 @@ int find_dir(mapstruct *m, int x, int y, object *exclude) {
     if(wall(m, x+freearr_x[i],y+freearr_y[i]))
       max=maxfree[i];
     else {
-      tmp=get_map_ob(m,x+freearr_x[i],y+freearr_y[i]);
+      tmp=GET_MAP_OB(m,x+freearr_x[i],y+freearr_y[i]);
       while(tmp!=NULL && ((tmp!=NULL&&!QUERY_FLAG(tmp,FLAG_MONSTER)&&
 	tmp->type!=PLAYER) || (tmp == exclude || 
 	(tmp->head && tmp->head == exclude))))

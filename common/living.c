@@ -780,7 +780,7 @@ void add_statbonus(object *op) {
  */
 
 void fix_player(object *op) {
-  int i,j;
+  int i,j, light=0;
   float f,max=9,added_speed=0,bonus_speed=0, sp_tmp,speed_reduce_from_disease=1;
   float M,W,s,D,K,S,M2;
   int weapon_weight=0,weapon_speed=0;
@@ -857,15 +857,18 @@ void fix_player(object *op) {
   op->stats.luck=op->arch->clone.stats.luck;
   op->speed = op->arch->clone.speed;
 
-  for(tmp=op->inv;tmp!=NULL;tmp=tmp->below) 
+  for(tmp=op->inv;tmp!=NULL;tmp=tmp->below) {
+    /* See note in map.c:update_position about making this additive 
+     * since light sources are never applied, need to put check here.
+     */
+    if (tmp->glow_radius > light) light=tmp->glow_radius;
+
     if(QUERY_FLAG(tmp,FLAG_APPLIED) && tmp->type!=CONTAINER && tmp->type!=CLOSE_CON) {
-      if(op->type==PLAYER
 	    /* The meaning of stats in skill or experience objects is different -
 	     * we use them solely to link skills to experience, thus it is 
 	     * inappropriate to allow these applied objects to change stats.
              * An exception is exp_wis, containing info about god-properties! */ 
-	 && (tmp->type!=EXPERIENCE || !strcmp(tmp->arch->name, "experience_wis"))
-      ) {
+      if(op->type==PLAYER && (tmp->type!=EXPERIENCE || !strcmp(tmp->arch->name, "experience_wis"))) {
 	if (tmp->type != POTION) {
 	  for(i=0;i<7;i++)
 	    change_attr_value(&(op->stats),i,get_attr_value(&(tmp->stats),i));
@@ -919,7 +922,7 @@ void fix_player(object *op) {
 	    vuln[i] += ((100-vuln[i])*(-tmp->resist[i]))/100;
 	}
       }
-      
+
       if (tmp->type!=BOW) {
 		  if(tmp->type != SYMPTOM) 
 			 op->attacktype|=tmp->attacktype;
@@ -1085,7 +1088,8 @@ void fix_player(object *op) {
           max=ARMOUR_SPEED(tmp)/10.0;
         break;
       }
-    } /* Item is equipped - end of for loop going through items. */
+    }
+  } /* Item is equipped - end of for loop going through items. */
   
   /* 'total resistance = total protections - total vulnerabilities'.
    * If there is an uncursed potion in effect, granting more protection
@@ -1281,6 +1285,8 @@ void fix_player(object *op) {
   if (ac>120) ac=120;
   else if (ac<-120) ac=-120;
   op->stats.ac=ac;
+
+  op->glow_radius = light;
 
   update_ob_speed(op);
 

@@ -156,6 +156,12 @@ void init_block() {
 /*
  * Used to initialise the array used by the LOS routines.
  * x,y are indexes into the blocked[][] array.
+ * This recursively sets the blocked line of sight view.
+ * From the blocked[][] array, we know for example
+ * that if some particular space is blocked, it blocks
+ * the view of the spaces 'behind' it, and those blocked
+ * spaces behind it may block other spaces, etc.  
+ * In this way, the chain of visibility is set.
  */
 
 static void set_wall(object *op,int x,int y) {
@@ -172,10 +178,10 @@ static void set_wall(object *op,int x,int y) {
 
 	if (ax < 0 || ax>=op->contr->socket.mapx ||
 	    ay < 0 || ay>=op->contr->socket.mapy) continue;
-#ifdef LOS_DEBUG
+#if 0
 	fprintf(stderr,"blocked %d %d -> %d %d\n",
-#endif		dx, dy, ax, ay);
-
+		dx, dy, ax, ay);
+#endif
 	/* we need to adjust to the fact that the socket
 	 * code wants the los to start from the 0,0
 	 * and not be relative to middle of los array.
@@ -193,6 +199,7 @@ static void set_wall(object *op,int x,int y) {
 
 static void check_wall(object *op,int x,int y) {
     int ax, ay;
+
     if(!block[x][y].index)
 	return;
 
@@ -206,14 +213,37 @@ static void check_wall(object *op,int x,int y) {
     if (ax < 0 || ay < 0 || ax >= op->contr->socket.mapx || ay >= op->contr->socket.mapy)
 	return;
 
-    if(blocks_view(op->map,op->x-op->contr->socket.mapx/2 + ax,
-		 op->y-op->contr->socket.mapy/2 + ay))
+    /* If this space is already blocked, prune the processing - presumably
+     * whatever has set this space to be blocked has done the work and already
+     * done the dependency chain.
+     */
+    if (op->contr->blocked_los[ax][ay] == 100) return;
+
+#if 0
+    fprintf(stderr,"check_wall, ax,ay=%d, %d  x,y = %d, %d  blocksview = %d, %d\n",
+	    ax, ay, x, y, op->x + x - MAP_CLIENT_X/2, op->y + y - MAP_CLIENT_Y/2);
+#endif
+
+    if(blocks_view(op->map,op->x + x - MAP_CLIENT_X/2, op->y + y - MAP_CLIENT_Y/2))
 	set_wall(op,x,y);
+#if 0
+    /* don't do this - much more efficient for our calling function to just
+     * iterate through all the spaces then this mechanism below, which may
+     * have us look at the same space numerous times.
+     */
     else {
+	/* This goes and checkes to see if any spaces this space
+	 * may potentially be blocked are also blocked.  It
+	 * is actually not efficient to do it this way, because
+	 * one space may be blocked by many spaces in front, so
+	 * this means we may end up looking through a lot more
+	 * spaces then necessary.
+	 */
 	int i;
 	for(i=0;i<block[x][y].index;i++)
 	    check_wall(op,block[x][y].x[i],block[x][y].y[i]);
     }
+#endif
 }
 
 /*
@@ -231,36 +261,6 @@ void clear_los(object *op) {
 	       MAP_CLIENT_X * MAP_CLIENT_Y);
 }
 
-/* change_map_light() - used to change map light level (darkness)
- * up or down by *1*. This fctn is not designed to change by
- * more than that!  Returns true if successful. -b.t. 
- */
- 
-int change_map_light(mapstruct *m, int change) {
-    int new_level = m->darkness + change;
- 
-    if(new_level<=0) {
-	m->darkness = 0;
-        return 0;
-    }
- 
-    if(new_level>MAX_DARKNESS) return 0;
- 
-    if(change) {
-	/* inform all players on the map */
-	if (change>0) 
-	    (info_map_func)(NDI_BLACK, m,"It becomes darker.");
-	else
-	    (info_map_func)(NDI_BLACK, m,"It becomes brighter.");
-
-	m->darkness=m->map_object->invisible=new_level;
-	m->do_los=0; /* to insure that los is updated */
-	update_all_los(m);
-	return 1;
-    }
-    return 0;
-}
-
 /*
  * expand_sight goes through the array of what the given player is
  * able to see, and expands the visible area a bit, so the player will,
@@ -274,23 +274,25 @@ void expand_sight(object *op)
 
     for(x=1;x<op->contr->socket.mapx-1;x++)	/* loop over inner squares */
 	for(y=1;y<op->contr->socket.mapy-1;y++) {
+#if 0
+	    fprintf(stderr,"expand_sight x,y = %d, %d  blocksview = %d, %d\n",
+		    x, y, op->x-op->contr->socket.mapx/2+x, op->y-op->contr->socket.mapy/2+y);
+#endif
 	    if(!op->contr->blocked_los[x][y] &&
-	       !blocks_view(op->map,op->x-op->contr->socket.mapx/2+x,
-		      op->y-op->contr->socket.mapy/2+y))
+	        !blocks_view(op->map,op->x-op->contr->socket.mapx/2+x,
+		op->y-op->contr->socket.mapy/2+y)) {
 
-	    for(i=1;i<=8;i+=1) {	/* mark all directions */
-		dx = x + freearr_x[i];
-		dy = y + freearr_y[i];
-		if(op->contr->blocked_los[dx][dy] > 0) /* for any square blocked */
-		    op->contr->blocked_los[dx][dy]= -1;
+		for(i=1;i<=8;i+=1) {	/* mark all directions */
+		    dx = x + freearr_x[i];
+		    dy = y + freearr_y[i];
+		    if(op->contr->blocked_los[dx][dy] > 0) /* for any square blocked */
+			op->contr->blocked_los[dx][dy]= -1;
+		}
 	    }
 	}
 
-#ifdef USE_LIGHTING
-    if(op->map->do_los) update_map_lights(op->map);
-    if(op->map->darkness>0)  /* player is on a dark map */
+    if(MAP_DARKNESS(op->map)>0)  /* player is on a dark map */
 	expand_lighted_sight(op);
-#endif
 
     /* clear mark squares */
     for (x = 0; x < op->contr->socket.mapx; x++)
@@ -299,190 +301,26 @@ void expand_sight(object *op)
 		op->contr->blocked_los[x][y] = 0;
 }
 
-void add_light_to_list (object *light, object *op) {
-    objectlink *obl;
-
-    if(!light||light->glow_radius<1||QUERY_FLAG(light, FLAG_FREED)) return;
-
-    obl = get_objectlink();
-    obl->ob = light;
-    obl->id = light->count;
-    obl->next = op->lights;
-    op->lights = obl;
-#ifdef DEBUG_LIGHTS
-    LOG(llevDebug,"Adding light %s (%d) to op %s light list\n"
-	,light->name,light->count,op->name);
-#endif
-}
 
 
-void remove_light_from_list(object *light, object *op) {
-    objectlink *obl=op->lights,*first,*prev=NULL,*nxt;
 
-    if(!light||QUERY_FLAG(light, FLAG_FREED)) return;
-
-    prev=first=obl;
-    while(obl) {
-	nxt = obl->next;
-	if(obl->id==light->count) {
-	    if(obl==first) {
-		op->lights = nxt;
-		nxt = (nxt&&nxt->next) ? nxt->next: NULL;
-	    }
-	    if(prev) prev->next = nxt;
-#ifdef DEBUG_LIGHTS
-          LOG(llevDebug,"Removing light from op list: %s (%d)\n",
-		light->name,light->count);
-#endif
-	    CFREE(obl);
-	    obl = NULL;
-	    return;
-	} else
-	    prev = obl;
-	obl=nxt;
-    }
-
-    /* light not found! */
-    LOG(llevError,"Couldnt remove requested light %s (%d) from op list\n",
-        light->name, light->count);
-    if(first) op->lights = first;
-}
-
-/* returns true if op carries one or more lights */
+/* returns true if op carries one or more lights
+ * This is a trivial function now days, but it used to
+ * be a bit longer.  Probably better for callers to just
+ * check the op->glow_radius instead of calling this.
+ */
 
 int has_carried_lights(object *op) {
-    objectlink *obl;
-    object *tmp=NULL;
-
     /* op may glow! */
     if(op->glow_radius>0) return 1;
-
-    /* carried items */
-    for(obl=op->lights;obl;obl=obl->next)
-	if((tmp=obl->ob)&&!QUERY_FLAG(tmp,FLAG_FREED)&&obl->id>0) 
-	   return 1;
 
     return 0;
 }
  
-/* called when a player/pet monster changes maps, and has lights */
-
-void add_carried_lights(object *pl) {
-    objectlink *obl;
-    object *tmp=NULL;
- 
-    /* pl may glow! */
-    if(pl->glow_radius>0) add_light_to_map(pl,pl->map);
-
-    /* carried items */
-    for(obl=pl->lights;obl;obl=obl->next) {    
-	if((tmp=obl->ob)&&!QUERY_FLAG(tmp,FLAG_FREED)&&obl->id>0) { 
-#ifdef DEBUG_LIGHTS
-	    LOG(llevDebug,"got carried light: %s (%d)\n",tmp->name,tmp->count); 
-#endif
-	    add_light_to_map(tmp,pl->map);
-	}
-    }
-} 
-
-void remove_carried_lights(object *pl, mapstruct *map) {
-    objectlink *obl=get_objectlink(),*maplight;
-
-    for(obl=pl->lights;obl;obl=obl->next)
-	for(maplight=map->light;maplight;maplight=maplight->next) { 
-	    if(maplight->id==obl->id) maplight->id = -1;
-	}
-    if(pl->lights) update_map_lights(map);
-}
-
-
-void add_light_to_map(object *ob, mapstruct *map) {
-    objectlink *obl;
- 
-    if(ob->arch == NULL) { 
-	LOG(llevError,"Can't add light %s (%d) without arch\n",ob->name,ob->count);
-	return;
-    }
-#ifdef DEBUG_LIGHTS
-    LOG(llevDebug,"Adding light source: %s (%d) to maplist %s\n"
-        ,ob->name,ob->count,map->path);
-#endif   
-    obl=get_objectlink();   
-    obl->ob = ob;  
-    obl->id = ob->count;   
-    obl->next = map->light;
-    map->light=obl;
-
-    update_all_los(map);
-}
-
-/* light_not_listed()- check to see if the light is already on the map list 
- * returns true if the light is not listed */ 
-
-int light_not_listed(object *op) {
-    objectlink *obl=NULL;
-
-    if(!op->map)
-	if(op->env&&op->env->map) 
-	    obl=op->env->map->light;
-	else { 
-	    LOG(llevError,"Error: can't find map light list in light_not_listed()\n");
-	    return 0; 
-	}
-    else 
-	obl=op->map->light;
-    while(obl) {
-	if(obl->id==op->count) return 0;
-	obl=obl->next;
-    }
-    return 1;
-}
-
-/* update_map_lights() - traverse linked list of lights, and 
- * remove those objects which were freed. -b.t.
- */
-
-void update_map_lights(mapstruct *m) {
-    objectlink *obl=m->light,*prev,*first,*nxt=NULL;
-    object *tmp=NULL;
-
-    prev=first=obl;
-    while(obl) {
-	nxt = obl->next ? obl->next: NULL;
-	if(!(tmp=obl->ob)||(obl->id!=tmp->count)||QUERY_FLAG(tmp,FLAG_FREED)
-	   ||tmp->glow_radius<1) {
-
-	    if(obl==first) { 
-		first = prev = nxt;
-		nxt = (nxt&&nxt->next) ? nxt->next: NULL;
-	    }
-	    if(prev) prev->next = nxt;
-#ifdef DEBUG_LIGHTS
-	    if(tmp) LOG(llevDebug,"Removing light from map list: %s (%d)\n"
-		,tmp->name,tmp->count);
-	    else LOG(llevDebug,"Removing null light (%d) from map list.\n",
-		obl->id);
-#endif
-	    CFREE(obl);
-	    obl = NULL;
-	} else
-	    prev = obl;
-	obl=nxt;
-    }
-    if(first)
-	m->light = first;
-    else 	
-	m->light = NULL;
-
-    m->do_los = 0;
-}
-
 void expand_lighted_sight(object *op)
 {
-    int x,y,dx,dy,radius=0,darklevel;
-    object *tmp=NULL;
+    int x,y,darklevel,ax,ay, basex, basey;
     mapstruct *m=op->map;
-    objectlink *light=m->light;
  
     darklevel = MAP_DARKNESS(m);
 
@@ -495,76 +333,80 @@ void expand_lighted_sight(object *op)
      */
 
     if(darklevel<1) return;
+
+    /* Do a sanity check.  If not valid, some code below may do odd
+     * things.
+     */
+    if (darklevel > MAX_DARKNESS) {
+	LOG(llevError,"Map darkness for %s on %s is too high (%d)\n",
+	    op->name, op->map->path, darklevel);
+	darklevel = MAX_DARKNESS;
+    }
+
     /* First, limit player furthest (unlighted) vision */
     for (x = 0; x < op->contr->socket.mapx; x++)
 	for (y = 0; y < op->contr->socket.mapy; y++)
 	    if(!(op->contr->blocked_los[x][y]==100))
-		  op->contr->blocked_los[x][y]= 4;
+		  op->contr->blocked_los[x][y]= MAX_LIGHT_RADII;
 
-    for(light=m->light;light!=NULL;light=light->next) { 
-	if(!(tmp=light->ob)||tmp->count!=light->id
-		 ||tmp->glow_radius<1||QUERY_FLAG(tmp,FLAG_FREED)) continue;
+    /* the spaces[] darkness value contains the information we need.
+     * Only process the area of interest.
+     * the basex, basey values represent the position in the op->contr->blocked_los
+     * array.  Its easier to just increment them here (and start with the right
+     * value) than to recalculate them down below.
+     */
+    for (x=(op->x - op->contr->socket.mapx/2 - MAX_LIGHT_RADII), basex=-MAX_LIGHT_RADII;
+      x < (op->x + op->contr->socket.mapx/2 + MAX_LIGHT_RADII); x++, basex++) {
+	if (x < 0 || x>=MAP_WIDTH(op->map)) continue;
 
-	/* if the light is not carried by a live creature *or* if its 
-	 * on the map but its not the top object we ignore it (unless 
-	 * its invisible). This helps to speed up the game. 
-	 *
-	 * Remove that check (MSW 2001-05-29).  Best I can see, this
-	 * means we will process lights in piles of loot - I don't see
-	 * a problem with that - I personally find it odd if something
-	 * gets dropped onto a space with a torch that it suddenly gets
-	 * darker - the ordering of objects in crossfire is somewhat suspect.
-	 */
+	for (y=(op->y - op->contr->socket.mapy/2 - MAX_LIGHT_RADII), basey=-MAX_LIGHT_RADII;
+	  y < (op->y + op->contr->socket.mapy/2 + MAX_LIGHT_RADII); y++, basey++) {
+	    if (y < 0 || y>=MAP_HEIGHT(op->map)) continue;
 
+	    /* This space is providing light, so we need to brighten up the
+	     * spaces around here.
+	     */
+	    if (GET_MAP_LIGHT(op->map, x, y)) {
 #if 0
-	 if(!tmp->env&&tmp->above&&!tmp->invisible) continue;
+		fprintf(stderr,"expand_lighted_sight: Found light at x=%d, y=%d, basex=%d, basey=%d\n", 
+			x, y, basex, basey);
 #endif
+		for (ax=basex - GET_MAP_LIGHT(op->map, x, y); ax<basex+GET_MAP_LIGHT(op->map, x, y); ax++) {
+		    if (ax<0 || ax>op->contr->socket.mapx) continue;
+		    for (ay=basey - GET_MAP_LIGHT(op->map, x, y); ay<basey+GET_MAP_LIGHT(op->map, x, y); ay++) {
+			if (ay<0 || ay>op->contr->socket.mapy) continue;
 
-	/* which coordinates to use for the light */ 
-	if(!tmp->env) /* use map coord */
-	    dx=abs(tmp->x-op->x),dy=abs(tmp->y-op->y);
-	else /* light is held, use env coord */
-	    dx=abs(tmp->env->x-op->x),dy=abs(tmp->env->y-op->y);
+			/* If the space is fully blocked, do nothing.  Otherwise, we
+			 * brighten the space.  The further the light is away from the
+			 * source (basex-x), the less effect it has.  Note that as done
+			 * done now, light dims in effectively a square manner.  for light radius
+			 * as small as they are (4), this probably isn't terrible, but should
+			 * perhaps be fixed.  It wouldn't be hard to creat a lookup table
+			 * (dimming[abs(base-x)][abs(basey-y)]) that is actually calculated
+			 * properly (ie, if the light is +2,+2, the dimming would be
+			 * 3 (2.82 or sqrt(8)) and not 2 like it is right now.
+			 */
+			if(op->contr->blocked_los[ax][ay]!=100)
+			    op->contr->blocked_los[ax][ay]-= (GET_MAP_LIGHT(op->map, x, y) - 
+							      MAX(abs(basex-ax),abs(basey -ay)));
+		    } /* for ay */
+		} /* for ax */
+	    } /* if this space is providing light */
+	} /* for y */
+    } /* for x */
 
-	radius = BRIGHTNESS(tmp);
-
-	/* dx and dy are number of spaces it is away from player */
-	if(dx<=(op->contr->socket.mapx/2+radius)&&dy<=(op->contr->socket.mapy/2+radius)) {
-	    /* Its within range to do some good */
-	    int basex,basey;
-
-	    if(!tmp->env) { /* get right coord for the light */
-		basex=tmp->x-op->x+op->contr->socket.mapx/2;
-		basey=tmp->y-op->y+op->contr->socket.mapy/2;
-	    } else { 
-		basex=tmp->env->x-op->x+op->contr->socket.mapx/2;
-		basey=tmp->env->y-op->y+op->contr->socket.mapy/2;
-	    }
-	    radius-=1;  /* so we get right size illumination */ 
-		
-	    for(x=-radius;x<=radius;x++) 
-		for(y=-radius;y<=radius;y++) {
-		    /* round corners */
-		    if(radius>1&&(abs(x)==radius)&&(abs(y)==radius)) continue; 
-
-		    dx=basex+x,dy=basey+y;
-		    if(dx>=0 && dx<op->contr->socket.mapx &&
-		       dy>=0 && dy<op->contr->socket.mapy &&
-		       !(op->contr->blocked_los[dx][dy]==100))
-			    op->contr->blocked_los[dx][dy]-= radius - MAX(abs(x),abs(y))+1;
-		}
-	}
-    }
     /*  grant some vision to the player, based on the darklevel */
-    for(x=darklevel-5; x<6-darklevel; x++)
-	for(y=darklevel-5; y<6-darklevel; y++)
+    for(x=darklevel-MAX_DARKNESS; x<MAX_DARKNESS + 1 -darklevel; x++)
+	for(y=darklevel-MAX_DARKNESS; y<MAX_DARKNESS + 1 -darklevel; y++)
 	    if(!(op->contr->blocked_los[x+op->contr->socket.mapx/2][y+op->contr->socket.mapy/2]==100))
 		op->contr->blocked_los[x+op->contr->socket.mapx/2][y+op->contr->socket.mapy/2]-= 
 		    MAX(0,6 -darklevel - MAX(abs(x),abs(y))); 
 }
 
 /* blinded_sight() - sets all veiwable squares to blocked except 
- * for the one the central one that the player occupies 
+ * for the one the central one that the player occupies.  A little
+ * odd that you can see yourself (and what your standing on), but
+ * really need for any reasonable game play.
  */
 
 void blinded_sight (object *op) {
@@ -583,7 +425,7 @@ void blinded_sight (object *op) {
  */
 
 void update_los(object *op) {
-    int i, dx = op->contr->socket.mapx/2, dy = op->contr->socket.mapy/2;
+    int dx = op->contr->socket.mapx/2, dy = op->contr->socket.mapy/2, x, y;
   
     if(QUERY_FLAG(op,FLAG_REMOVED))
 	return;
@@ -592,12 +434,14 @@ void update_los(object *op) {
     if(QUERY_FLAG(op,FLAG_WIZ) /* ||XRAYS(op) */)
 	return;
 
-
-    for(i=1;i<9;i++)
-	/* The block[][] array presumes player always in center relative to
-	 * full size, and not client size, as that is a global structure.
-	 */
-	check_wall(op,MAP_CLIENT_X/2+freearr_x[i],MAP_CLIENT_Y/2+freearr_y[i]);
+    /* For larger maps, this is more efficient than the old way which
+     * used the chaining of the block array.  Since many space views could
+     * be blocked by different spaces in front, this mean that a lot of spaces
+     * could be examined multile times, as each path would be looked at.
+     */
+    for (x=(MAP_CLIENT_X - op->contr->socket.mapx)/2; x<(MAP_CLIENT_X + op->contr->socket.mapx)/2; x++) 
+	for (y=(MAP_CLIENT_Y - op->contr->socket.mapy)/2; y<(MAP_CLIENT_Y + op->contr->socket.mapy)/2; y++) 
+	    check_wall(op, x, y);
 
     /* do the los of the player. 3 (potential) cases */
     if(QUERY_FLAG(op,FLAG_BLIND)) /* player is blind */ 
@@ -613,23 +457,100 @@ void update_los(object *op) {
     }
 }
 
+/* update all_map_los is like update_all_los below,
+ * but updates everyone on the map, no matter where they
+ * are.  This generally should not be used, as a per
+ * specific map change doesn't make much sense when tiling
+ * is considered (lowering darkness would certainly be a
+ * strange effect if done on a tile map, as it makes
+ * the distinction between maps much more obvious to the
+ * players, which is should not be.
+ * Currently, this function is called from the
+ * change_map_light function
+ */
+void update_all_map_los(mapstruct *map) {
+    player *pl;
+
+    for(pl=first_player;pl!=NULL;pl=pl->next) {
+	if(pl->ob->map==map)
+	    pl->do_los=1;
+    }
+}
+
+
 /*
  * This function makes sure that update_los() will be called for all
  * players on the given map within the next frame.
  * It is triggered by removal or inserting of objects which blocks
  * the sight in the map.
+ * Modified by MSW 2001-07-12 to take a coordinate of the changed
+ * position, and to also take map tiling into account.  This change
+ * means that just being on the same map is not sufficient - the
+ * space that changes must be withing your viewable area.
+ *
+ * map is the map that changed, x and y are the coordinates.
  */
 
-void update_all_los(mapstruct *map) {
-  player *pl;
+void update_all_los(mapstruct *map, int x, int y) {
+    player *pl;
 
-#ifdef USE_LIGHTING
-    if(map->do_los) return; /* we already did this */
-    map->do_los = 1;
-#endif
-    for(pl=first_player;pl!=NULL;pl=pl->next)
-	if(pl->ob->map==map)
-	    pl->do_los=1;
+    for(pl=first_player;pl!=NULL;pl=pl->next) {
+	/* Player should not have a null map, but do this
+	 * check as a safety
+	 */
+	if (!pl->ob->map) continue;
+
+	/* Same map is simple case - see if pl is close enough.
+	 * Note in all cases, we did the check for same map first,
+	 * and then see if the player is close enough and update
+	 * los if that is the case.  If the player is on the
+	 * corresponding map, but not close enough, then the
+	 * player can't be on another map that may be closer,
+	 * so by setting it up this way, we trim processing
+	 * some.
+	 */
+	if(pl->ob->map==map) {
+	    if ((abs(pl->ob->x - x) <= pl->socket.mapx/2) &&
+	       (abs(pl->ob->y - y) <= pl->socket.mapy/2))
+		pl->do_los=1;
+	}
+	/* Now we check to see if player is on adjacent
+	 * maps to the one that changed and also within
+	 * view.  The tile_maps[] could be null, but in that
+	 * case it should never match the pl->ob->map, so
+	 * we want ever try to dereference any of the data in it.
+	 */
+
+	/* The logic for 0 and 3 is to see how far the player is
+	 * from the edge of the map (height/width) - pl->ob->(x,y)
+	 * and to add current position on this map - that gives a
+	 * distance.
+	 * For 1 and 2, we check to see how far the given
+	 * coordinate (x,y) is from the corresponding edge,
+	 * and then add the players location, which gives
+	 * a distance.
+	 */
+	else if (pl->ob->map == map->tile_map[0]) {
+	    if ((abs(pl->ob->x - x) <= pl->socket.mapx/2) &&
+	       (abs(y + MAP_HEIGHT(map->tile_map[0]) - pl->ob->y)  <= pl->socket.mapy/2))
+		pl->do_los=1;
+	}
+	else if (pl->ob->map == map->tile_map[2]) {
+	    if ((abs(pl->ob->x - x) <= pl->socket.mapx/2) &&
+	       (abs(pl->ob->y + MAP_HEIGHT(map) - y)  <= pl->socket.mapy/2))
+		pl->do_los=1;
+	}
+	else if (pl->ob->map == map->tile_map[1]) {
+	    if ((abs(pl->ob->x + MAP_WIDTH(map) - x) <= pl->socket.mapx/2) &&
+	       (abs(pl->ob->y - y)  <= pl->socket.mapy/2))
+		pl->do_los=1;
+	}
+	else if (pl->ob->map == map->tile_map[3]) {
+	    if ((abs(x + MAP_WIDTH(map->tile_map[3]) - pl->ob->x) <= pl->socket.mapx/2) &&
+	       (abs(pl->ob->y - y)  <= pl->socket.mapy/2))
+		pl->do_los=1;
+	}
+    }
 }
 
 /*

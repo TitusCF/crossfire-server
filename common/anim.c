@@ -209,6 +209,6 @@ void animate_object(object *op) {
      * piece, and not for the other tail pieces.
      */
     if (!op->head)
-	update_object(op);
+	update_object(op, UP_OBJ_FACE);
 }
 
