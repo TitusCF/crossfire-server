@@ -1,3 +1,5 @@
+"$Id$"
+
 Changes in top level CVS tree.  A few notes when putting entries in this
 file:
 1) Please include a date in the form mm/dd/yyyy (yes, us americans are 
@@ -5,12 +7,24 @@ screwed up relative to most the world, but some consistent date format
 is needed for this file.)
 2) You don't need to go into exacting detail of the changes.  This file
 is mostly meant to give an idea to others what has changed - you don't
-need to recreate the code here.
+need to recreate the code here.  If you change fixes a reported bug
+on the mailing list, please provide a brief description of the bug
+fixed.
 3) Please include your name with the changes you make.
 4) Whenever making an update, please update this file, no matter how
 small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Split off kill_player function from do some living, and check for player
+death upon player login.  This splits up an otherwise very large function,
+but more importantly, the second point allows NOT_PERMADEATH to work as
+expected when the player is dead when logged out.  Previous, the if the
+player was dead when they logged out, it would just kill off the character
+permanently (without grave marker or anything), even in NOT_PERMADEATH
+mode.  Also, cleaned up player load code to remove code that supported
+very old style save files.
+Files changed: server/login.c server/player.c include/sproto.h - msw
 
 Change NO_STAT define in living.h,skillist.h,skill_util.c to NO_STAT_VAL
 to remove conflict on AIX systems. - msw
