@@ -1415,7 +1415,8 @@ object *insert_ob_in_map (object *op, mapstruct *m, object *originator, int flag
 	     */
 
 	    while (top != NULL) {
-		if (QUERY_FLAG(top, FLAG_IS_FLOOR)) floor = top;
+		if (QUERY_FLAG(top, FLAG_IS_FLOOR) ||
+		    QUERY_FLAG(top, FLAG_OVERLAY_FLOOR)) floor = top;
 		if (QUERY_FLAG(top, FLAG_NO_PICK) && QUERY_FLAG(top, FLAG_FLYING)) {
 		    /* We insert above top, so we want this object below this */
 		    top=top->below;
