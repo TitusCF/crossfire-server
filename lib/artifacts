@@ -1581,7 +1581,6 @@ face ring.117
 type 70
 value 50
 Cha 1
-lifesave 1
 path_attuned 256
 path_repelled 131072
 Wis 1
@@ -1654,11 +1653,11 @@ path_repelled 131072
 Wis 2
 Pow 2
 grace 2
-resist_godpower 30
+resist_magic 30
 msg
 This ring is blessed by the gods who do good,
 and protects a little against the power of those who
-do harm.
+twist natural forces to do harm.
 endmsg
 end
 #
