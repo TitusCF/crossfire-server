@@ -994,10 +994,11 @@ static void map_clearcell(struct MapCell *cell)
  */
 void draw_client_map1(object *pl)
 {
-    int x,y,ax, ay, d, face_num1,face_num2,face_num3;
+    int x,y,ax, ay, d, face_num1,face_num2,face_num3, nx,ny;
     SockList sl;
     uint16  mask;
     New_Face	*face;
+    mapstruct *m;
 
     sl.buf=malloc(MAXSOCKBUF);
     strcpy((char*)sl.buf,"map1 ");
@@ -1017,7 +1018,10 @@ void draw_client_map1(object *pl)
 	    /* If the coordinates are not valid, or it is too dark to see,
 	     * we tell the client as such
 	     */
-	    if (out_of_map(pl->map, x, y)) {
+	    nx=x;
+	    ny=y;
+	    m = get_map_from_coord(pl->map, &nx, &ny);
+	    if (!m) {
 		/* space is out of map.  Update space and clear values
 		 * if this hasn't already been done.
 		 */
@@ -1082,8 +1086,8 @@ void draw_client_map1(object *pl)
 		    pl->contr->socket.lastmap.cells[ax][ay].count = d;
 
 		/* Check to see if floor face has changed */
-		face = get_map_floor(pl->map, x,y)->face;
-		if (face == blank_face) face_num1=0;
+		face = GET_MAP_FACE(m, nx,ny,2);
+		if (!face || face == blank_face) face_num1=0;
 		else face_num1 = face->number;
 
 		if (pl->contr->socket.lastmap.cells[ax][ay].faces[0] != face_num1) {
@@ -1094,8 +1098,8 @@ void draw_client_map1(object *pl)
 			esrv_send_face(&pl->contr->socket,face_num1,0);
 		}
 
-		face = get_map_floor2(pl->map, x,y)->face;
-		if (face == blank_face) face_num2=0;
+		face = GET_MAP_FACE(m, nx,ny,1);
+		if (!face || face == blank_face) face_num2=0;
 		else face_num2 = face->number;
 
 		if (pl->contr->socket.lastmap.cells[ax][ay].faces[1] != face_num2) {
@@ -1106,8 +1110,8 @@ void draw_client_map1(object *pl)
 			esrv_send_face(&pl->contr->socket,face_num2,0);
 		}
 
-		face = get_map(pl->map, x,y)->face;
-		if (face == blank_face) face_num3=0;
+		face = GET_MAP_FACE(m, nx,ny,0);
+		if (!face || face == blank_face) face_num3=0;
 		else face_num3 = face->number;
 
 		if (pl->contr->socket.lastmap.cells[ax][ay].faces[2] != face_num3) {
@@ -1153,11 +1157,12 @@ void draw_client_map1(object *pl)
 
 void draw_client_map(object *pl)
 {
-    int i,j,ax,ay; /* ax and ay goes from 0 to max-size of arrays */
+    int i,j,ax,ay,nx,ny; /* ax and ay goes from 0 to max-size of arrays */
     New_Face	*face,*floor;
     New_Face	*floor2;
     int d;
     struct Map	newmap;
+    mapstruct	*m;
 
     if (pl->type != PLAYER) {
 	LOG(llevError,"draw_client_map called with non player/non eric-server\n");
@@ -1170,6 +1175,21 @@ void draw_client_map(object *pl)
      */
     if (pl->map->in_memory!=MAP_IN_MEMORY) return;
     memset(&newmap, 0, sizeof(struct Map));
+
+    for(j = (pl->y - pl->contr->socket.mapy/2) ; j <= (pl->y + pl->contr->socket.mapy/2); j++) {
+        for(i = (pl->x - pl->contr->socket.mapx/2) ; i <= (pl->x + pl->contr->socket.mapx/2); i++) {
+	    ax=i;
+	    ay=j;
+	    m = get_map_from_coord(pl->map, &ax, &ay);
+	    if (m && (GET_MAP_FLAGS(m,ax,ay) & P_NEED_UPDATE))
+		update_position(m, ax, ay);
+	}
+    }
+    /* do LOS after calls to update_position */
+    if(pl->contr->do_los) {
+        update_los(pl);
+        pl->contr->do_los = 0;
+    }
 
     if (pl->contr->socket.map1cmd) {
 	/* Big maps need a different drawing mechanism to work */
@@ -1196,15 +1216,18 @@ void draw_client_map(object *pl)
 	    /* note the out_of_map and d>3 checks are both within the same
 	     * negation check.
 	     */
-	    if (!(out_of_map(pl->map,i,j) || d>3)) {
-		face = get_map(pl->map, i, j)->face;
-		floor = get_map_floor(pl->map, i,j)->face;
-		floor2 = get_map_floor2(pl->map, i,j)->face;
+	    nx = i;
+	    ny = j;
+	    m = get_map_from_coord(pl->map, &nx, &ny);
+	    if (m && d<=4) {
+		face = GET_MAP_FACE(m, nx, ny,0);
+		floor2 = GET_MAP_FACE(m, nx, ny,1);
+		floor = GET_MAP_FACE(m, nx, ny,2);
 
 		/* If all is blank, send a blank face. */
-		if (face == blank_face &&
-		    floor2 == blank_face &&
-		    floor == blank_face) {
+		if ((!face || face == blank_face) &&
+		    (!floor2 || floor2 == blank_face) &&
+		    (!floor || floor == blank_face)) {
 			esrv_map_setbelow(&pl->contr->socket,ax,ay,
 				blank_face->number,&newmap);
 		} else { /* actually have something interesting */
@@ -1213,13 +1236,13 @@ void draw_client_map(object *pl)
 		    esrv_map_setbelow(&pl->contr->socket,ax,ay,
 						  dark_faces[d-1]->number,&newmap);
 
-		    if (face != blank_face)
+		    if (face && face != blank_face)
 			esrv_map_setbelow(&pl->contr->socket,ax,ay,
 					  face->number,&newmap);
-		    if (floor2 != blank_face)
+		    if (floor2 && floor2 != blank_face)
 			esrv_map_setbelow(&pl->contr->socket,ax,ay,
 				floor2->number,&newmap);
-		    if (floor != blank_face)
+		    if (floor && floor != blank_face)
 			esrv_map_setbelow(&pl->contr->socket,ax,ay,
 					  floor->number,&newmap);
 		} 

@@ -1,7 +1,30 @@
 /*
- * static char *rcsid_socki0_c =
+ * static char *rcsid_sock_info_c =
  *   "$Id$";
  */
+
+/*
+    CrossFire, A Multiplayer game for X-windows
+
+    Copyright (C) 2000 Mark Wedel
+    Copyright (C) 1992 Frank Tore Johansen
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+
+    The author can be reached via e-mail to mwedel@scruz.net
+*/
 
 /* This file implements some of the simpler output functions to the
  * client.  Basically, things like sending text strings along
@@ -210,9 +233,6 @@ void draw(object *pl) {
 
     if(pl->contr->do_los) {
 	update_los(pl);
-#ifdef USE_LIGHTING
-	pl->map->do_los = 0;
-#endif
 	pl->contr->do_los = 0;
     }
 
@@ -338,18 +358,18 @@ void magic_mapping_mark(object *pl, char *map_mark, int strength)
 {
   int x, y;
   int xmin = pl->x - strength + 1 < 0 ? 0 : pl->x - strength + 1;
-  int xmax = pl->x + strength - 1 > pl->map->map_object->x - 1 ? 
-    pl->map->map_object->x - 1 : pl->x + strength - 1;
+  int xmax = pl->x + strength - 1 > MAP_WIDTH(pl->map) - 1 ? 
+    MAP_WIDTH(pl->map) - 1 : pl->x + strength - 1;
   int ymin = pl->y - strength + 1 < 0 ? 0 : pl->y - strength + 1;
-  int ymax = pl->y + strength - 1 > pl->map->map_object->y - 1 ? 
-    pl->map->map_object->y - 1 : pl->y + strength - 1;
+  int ymax = pl->y + strength - 1 > MAP_HEIGHT(pl->map) - 1 ? 
+    MAP_HEIGHT(pl->map) - 1 : pl->y + strength - 1;
 
   for (x = xmin; x <= xmax; x++) {
     for (y = ymin; y <= ymax; y++) {
       if (wall(pl->map, x, y) || blocks_view(pl->map, x, y))
-	map_mark[x + pl->map->map_object->x * y] = 2;
+	map_mark[x + MAP_WIDTH(pl->map) * y] = 2;
       else {
-	map_mark[x + pl->map->map_object->x * y] = 1;
+	map_mark[x + MAP_WIDTH(pl->map) * y] = 1;
 	magic_mapping_mark_recursive(pl, map_mark, x, y);
       }
     }
@@ -373,15 +393,15 @@ void magic_mapping_mark_recursive(object *pl, char *map_mark, int px, int py)
     for (dy = -1; dy <= 1; dy++) {
       x = px + dx;
       y = py + dy;
-      if (x >= 0 && x < pl->map->map_object->x && y >= 0 && y < pl->map->map_object->y
-	&& (map_mark[x + pl->map->map_object->x * y] ==0) ) {
+      if (x >= 0 && x < MAP_WIDTH(pl->map) && y >= 0 && y < MAP_HEIGHT(pl->map)
+	&& (map_mark[x + MAP_WIDTH(pl->map) * y] ==0) ) {
             if (blocks_view(pl->map, x, y))
-		map_mark[x + pl->map->map_object->x * y] = 2;
+		map_mark[x + MAP_WIDTH(pl->map) * y] = 2;
 	    else {
 		if (wall(pl->map, x, y))
-		    map_mark[x + pl->map->map_object->x * y] = 2;
+		    map_mark[x + MAP_WIDTH(pl->map) * y] = 2;
 		else
-		    map_mark[x + pl->map->map_object->x * y] = 1;
+		    map_mark[x + MAP_WIDTH(pl->map) * y] = 1;
 		magic_mapping_mark_recursive(pl, map_mark, x, y);
 	    }
 	}
@@ -419,8 +439,8 @@ void magic_mapping_mark_recursive(object *pl, char *map_mark, int px, int py)
 void draw_map(object *pl) 
 {
     int x,y;
-    char *map_mark = (char *) malloc(pl->map->map_object->x * pl->map->map_object->y);
-    int xmin = pl->map->map_object->x, xmax = 0, ymin = pl->map->map_object->y, ymax = 0;
+    char *map_mark = (char *) malloc(MAP_WIDTH(pl->map) * MAP_HEIGHT(pl->map));
+    int xmin = MAP_WIDTH(pl->map), xmax = 0, ymin = MAP_HEIGHT(pl->map), ymax = 0;
     SockList sl;
 
     if (pl->type!=PLAYER) {
@@ -428,11 +448,11 @@ void draw_map(object *pl)
 	return;
     }
     /* First, we figure out what spaces are 'reachable' by the player */
-    memset(map_mark, 0, pl->map->map_object->x * pl->map->map_object->y);
+    memset(map_mark, 0, MAP_WIDTH(pl->map) * MAP_HEIGHT(pl->map));
     magic_mapping_mark(pl, map_mark, 3);
-    for(x = 0; x < pl->map->map_object->x; x++) {
-      for(y = 0; y < pl->map->map_object->y; y++) {
-        if (map_mark[x + pl->map->map_object->x * y]==1) {
+    for(x = 0; x < MAP_WIDTH(pl->map); x++) {
+      for(y = 0; y < MAP_HEIGHT(pl->map); y++) {
+        if (map_mark[x + MAP_WIDTH(pl->map) * y]==1) {
 	  xmin = x < xmin ? x : xmin;
 	  xmax = x > xmax ? x : xmax;
 	  ymin = y < ymin ? y : ymin;
@@ -443,11 +463,11 @@ void draw_map(object *pl)
     xmin--;
     xmin = xmin < 0 ? 0 : xmin;
     xmax++;
-    xmax = xmax > pl->map->map_object->x - 1 ? pl->map->map_object->x - 1: xmax;
+    xmax = xmax > MAP_WIDTH(pl->map) - 1 ? MAP_WIDTH(pl->map) - 1: xmax;
     ymin--;
     ymin = ymin < 0 ? 0 : ymin;
     ymax++;
-    ymax = ymax > pl->map->map_object->y - 1? pl->map->map_object->y - 1: ymax;
+    ymax = ymax > MAP_HEIGHT(pl->map) - 1? MAP_HEIGHT(pl->map) - 1: ymax;
 
 
     sl.buf=malloc(MAXSOCKBUF);
@@ -462,10 +482,10 @@ void draw_map(object *pl)
       for (x = xmin; x <= xmax; x++) {
 	    int mark;
 
-	    if ((mark=map_mark[x+pl->map->map_object->x*y])==0)
+	    if ((mark=map_mark[x+MAP_WIDTH(pl->map)*y])==0)
 		sl.buf[sl.len++]=0;
 	    else {
-		New_Face *f = get_map(pl->map, x, y)->face;
+		New_Face *f = GET_MAP_FACE(pl->map, x, y, 0);
 		if (mark==2)
 		    sl.buf[sl.len++]=f->magicmap | FACE_WALL;
 		else
