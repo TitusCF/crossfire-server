@@ -729,7 +729,9 @@ if (item == spellNormal && !ability ){
     }
     break;
   case SP_RUNE_MARK:
-    success=write_rune(op,dir,0,-2,stringarg);
+    if(caster->type == PLAYER)
+      success=write_rune(op,dir,0,-2,stringarg);
+    else return 0;
 #ifdef CASTING_TIME
 	  /* free the spell arg */
 	  if(stringarg) {free(stringarg);stringarg=NULL; };
