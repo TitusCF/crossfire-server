@@ -1774,26 +1774,21 @@ int check_walk_on (object *op, object *originator)
     if(QUERY_FLAG(op,FLAG_NO_APPLY))
 	return 0;
 
-#if 0
-     */
-
-#endif
-
     tag = op->count;
 
     /* The objects have to be checked from top to bottom.
      * Hence, we first go to the top: */
     for (tmp=GET_MAP_OB(op->map, op->x, op->y); tmp!=NULL &&
-	 tmp->above!=NULL; tmp=tmp->above);
-    
-    for(;tmp!=NULL; tmp=tmp->below) {
-	if (tmp == op) continue;    /* Can't apply yourself */
-
+	 tmp->above!=NULL; tmp=tmp->above) {
 	/* Trim the search when we find the first other spell effect 
 	 * this helps performance so that if a space has 50 spell objects,
 	 * we don't need to check all of them.
 	 */
-	if (QUERY_FLAG(tmp, FLAG_FLYING) && QUERY_FLAG(tmp, FLAG_NO_PICK)) return 0;
+	if (QUERY_FLAG(tmp, FLAG_FLYING) && QUERY_FLAG(tmp, FLAG_NO_PICK)) break;
+    }
+    
+    for(;tmp!=NULL; tmp=tmp->below) {
+	if (tmp == op) continue;    /* Can't apply yourself */
 
 	/* Slow down creatures moving over rough terrain */
 	if(QUERY_FLAG(tmp,FLAG_SLOW_MOVE)&&!QUERY_FLAG(op,FLAG_FLYING)) {

@@ -17,6 +17,17 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+TODO: updated with bugs, remove things that have been done and are no
+  longer TODO's.
+configure.in, configure: Remove lib/xpmtopix.pl file form those to be
+  built, as that file has been removed.
+common/object.c: Fix bug in check_walk_on which would result in spell
+  objects not being properly processed - the intention is not to process
+  spell objects - we should stop going up (in previous loop) when we
+  get such an object, not on the way down.  This fixes directors not 
+  working really well.
+MSW 2001-01-13
+
 Add the concept of overlay maps to the code.  An overlay map is a map which
 is loaded on top of another map, replacing values in the header, and placing
 objects on top of other objects.  This is the fundamental part of the new

@@ -19,6 +19,16 @@ however it keeps growing as various problems are discovered that
 don't have an easy fix.
 
 ------------------------------------------------------------------------------
+Known Bugs:
+
+These are things which don't work as expected, but are difficult enough to
+fix that they get put here:
+
+Make lighting not go through walls.  Maybe move it to the 'set_wall'
+function - hard to do so that it is still somewhat efficient yet the same
+light source does not illuminate the same space multiple times.
+
+------------------------------------------------------------------------------
 Future feature requests
 
 - Make random treasure chests lockable, such that you need a special key
@@ -101,33 +111,6 @@ Future feature requests
 - Delete oldest swapped map in case the TMPDIR disk fills up while
   swapping out a map.  To do this, detection of error on save would need
   to be done (presently, the fputs are done without return value checks.)
-- Have map tiling handled automatically by the code - this should make
-  map designing easier and some spells work better.  Ideas for doing
-  this:  Keep present map system pretty much the same.  Add some extensions
-  so crossfire knows what directions, if any, there are other maps to
-  be tiled in.  Replace functions like out_of_map, get_map_ob,
-  insert_ob_in_map, et. al. to by multimap aware.  For example, if map
-  coordinates of -2 -2 are given to out_of_map, it would check to see
-  if due to tiling there is a map there.  If so, it claims it isn't out of
-  the map.  Likewise, if insert_map_in_ob gets such coordinates, it 
-  inserts the object in that map (and updates the op->map appropriately.)
-  In some sense, the map becomes a hidden object.  In this scenario,
-  if get_map_object or insert_ob_in_map gives coordinates outside the
-  map, it would then load the map.  A member of last tick this map
-  was referanced probably needs to be added (a player could be moving
-  parallell to and edge, but we wouldnt' want that other map swapped out.)
-  Advantage of this map idea is that for most all objects, this tiling
-  should be invisbile to most objects - those spells, monsters, etc
-  would freely move accross this tiling.
-  Possible problems:  How to deal with multi space objects (both in
-  terms of movement and actual placement).  I think movement might be
-  OK (I am not sure there is any requirement that all of a monsters has
-  to be on the same map).  However, for multi space objects (towns,
-  forts, etc) placing them accross maps becomes more difficult because
-  you need to be able to save a map with that setup.  A possible solution would
-  be to break apart non living objects that span maps.  For monsters, it may
-  be possible to just save this head (however, this will not work if the
-  monster has treasure in other bodyparts.)
   
 - Seperate weapon speed and real speed for players - one is used for attacking
   only, and the other for movement only.  Right now, a characters real speed
@@ -138,13 +121,10 @@ Future feature requests
   some use (perhaps base this on int - stupid monsters might pick up everything)
 - Add different dragon scales, in which different types of armor could be made
   from.
-- Look at getting better tools to split & merge the images.
 - Add random terrain type square.  Idea being you might make something a 
   random tree, and when the map is loaded, it chooses a tree random.  This
   would allow some variation in maps each time with possibly keeping the bulk
   of it the same (Depending how extensively the random trees are used.
-- Increase the outdoor scale, so travelling from one town to another is
-  actually a real adventure.
 - Allow transportation objects (ie, horses, carts, dragon, griffins, boats,
   etc.)  Flying objects should probably ignore line of sight for most
   objects (you are above the forest or mountains, but then fog should still
@@ -175,10 +155,6 @@ Future feature requests
 - Add a confirmation setting for the dm command so that the password doesn't
   appear as plaintext.
 - Allow treasure lists to be specified as part of the objects message
-- Set up config file that is read when the program is run that control
-	many of the options presently in config.h - for ones that make
-	sense (inventory icon, perhaps full ring descriptions), even let
-	them be things players can set. (even let TMPDIR be set in the file)
 - Perhaps print out a message shortly before a spell effect is about to end.
 - Rewrite all variables, using own typedefs of type:
   [us]int8, [us]int16, [us]int32    : Variables that should be at least that
