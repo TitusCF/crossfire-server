@@ -1072,7 +1072,7 @@ static inline int check_head(SockList *sl, NewSocket *ns, int ax, int ay, int la
 
     if (face_num != ns->lastmap.cells[ax][ay].faces[layer]) {
 	SockList_AddShort(sl, face_num);
-	if (!(face_num && ns->faces_sent[face_num] & NS_FACESENT_FACE))
+	if (face_num && !(ns->faces_sent[face_num] & NS_FACESENT_FACE))
 	    esrv_send_face(ns, face_num, 0);
 	heads[(ay * MAX_HEAD_POS + ax) * MAX_LAYERS + layer] = NULL;
 	ns->lastmap.cells[ax][ay].faces[layer] = face_num;

@@ -327,7 +327,7 @@ void esrv_send_face(NewSocket *ns,short face_num, int nocache)
     SockList sl;
     char fallback;
 
-    if (face_num < 0 || face_num >= nrofpixmaps) {
+    if (face_num <= 0 || face_num >= nrofpixmaps) {
 	LOG(llevError,"esrv_send_face (%d) out of bounds??\n",face_num);
 	return;
     }
