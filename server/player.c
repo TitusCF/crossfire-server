@@ -163,9 +163,7 @@ static player* get_player(player *p) {
     p->last_weapon_sp= -1;
     p->peaceful=1;			/* default peaceful */
     p->do_los=1;
-#ifdef EXPLORE_MODE
     p->explore=0;
-#endif
 
     strncpy(p->title,op->arch->clone.name,MAX_NAME);
     op->race = add_string (op->arch->clone.race);
@@ -2225,26 +2223,22 @@ void kill_player(object *op)
   GlobalEvent(&CFP);
 #endif
     if(op->stats.food<0) {
-#ifdef EXPLORE_MODE
 	if (op->contr->explore) {
 	    new_draw_info(NDI_UNIQUE, 0,op,"You would have starved, but you are");
 	    new_draw_info(NDI_UNIQUE, 0,op,"in explore mode, so...");
 	    op->stats.food=999;
 	    return;
 	}
-#endif /* EXPLORE_MODE */
 	sprintf(buf,"%s starved to death.",op->name);
 	strcpy(op->contr->killer,"starvation");
     }
     else {
-#ifdef EXPLORE_MODE
 	if (op->contr->explore) {
 	    new_draw_info(NDI_UNIQUE, 0,op,"You would have died, but you are");
 	    new_draw_info(NDI_UNIQUE, 0,op,"in explore mode, so...");
 	    op->stats.hp=op->stats.maxhp;
 	    return;
 	}
-#endif /* EXPLORE_MODE */
 	sprintf(buf,"%s died.",op->name);
     }
     play_sound_player_only(op->contr, SOUND_PLAYER_DIES,0,0);

@@ -199,9 +199,8 @@
  * It's a good idea to turn off EXPLORE_MODE if you will only be running
  * on server, since it would block new players.
  */
-/*
-#define EXPLORE_MODE
-*/
+
+#define EXPLORE_MODE FALSE
 
 
 /* FULL_RING_DESCRIPTION has crossfire prints out the abilities of
@@ -413,7 +412,7 @@
  *  characters increases though.
  */
 
-#define SPELLPOINT_LEVEL_DEPEND
+#define SPELLPOINT_LEVEL_DEPEND TRUE
 
 
 /* SPELL_ENCUMBRANCE -- If you're carrying a weapon or wearing heavy armour,

@@ -167,6 +167,7 @@ int command_resistances(object *op, char *params);
 int command_help(object *op, char *params);
 int onoff_value(char *line);
 int command_quit(object *op, char *params);
+int command_explore(object *op, char *params);
 int command_sound(object *op, char *params);
 void receive_player_name(object *op, char k);
 void receive_player_password(object *op, char k);

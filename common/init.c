@@ -67,6 +67,8 @@ SPELL_FAILURE_EFFECTS,
 CASTING_TIME,
 REAL_WIZ,
 RECYCLE_TMP_MAPS,
+EXPLORE_MODE,
+SPELLPOINT_LEVEL_DEPEND,
 0,		/* This and the next 3 values are metaserver values */
 "",
 "",

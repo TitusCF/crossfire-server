@@ -427,6 +427,24 @@ static void load_settings()
 		LOG(llevError, "load_settings: Unkown value for"
 		    "recycle_tmp_maps: %s\n", cp);
 	    }
+	} else if (!strcasecmp(buf, "explore_mode")) {
+	    if (!strcasecmp(cp, "on") || !strcasecmp(cp, "true")) {
+		settings.explore_mode=TRUE;
+	    } else if (!strcasecmp(cp, "off") || !strcasecmp(cp, "false")) {
+		settings.explore_mode=FALSE;
+	    } else {
+		LOG(llevError, "load_settings: Unkown value for"
+		    "explore_mode: %s\n", cp);
+	    }
+	} else if (!strcasecmp(buf, "spellpoint_level_depend")) {
+	    if (!strcasecmp(cp, "on") || !strcasecmp(cp, "true")) {
+		settings.spellpoint_level_depend=TRUE;
+	    } else if (!strcasecmp(cp, "off") || !strcasecmp(cp, "false")) {
+		settings.spellpoint_level_depend=FALSE;
+	    } else {
+		LOG(llevError, "load_settings: Unkown value for"
+		    "spellpoint_level_depend: %s\n", cp);
+	    }
 	} else if (!strcasecmp(buf,"simple_exp")) {
 	    if (!strcasecmp(cp,"on") || !strcasecmp(cp,"true")) {
 		settings.simple_exp=TRUE;
@@ -700,11 +718,7 @@ void compile_info() {
 #ifdef X_EDITOR
   printf("Editor:\t\t%s\n",X_EDITOR);
 #endif
-#ifdef EXPLORE_MODE
-  printf("Explore mode:\t<true>\n");
-#else
-  printf("Explore mode:\t<false>\n");
-#endif
+
 #ifdef SHOP_LISTINGS
   printf("Shop listings:\t<true>\n");
 #else

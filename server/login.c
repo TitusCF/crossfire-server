@@ -271,9 +271,7 @@ int save_player(object *op, int flag) {
       if(pl->own_title[0]!='\0')
 	  fprintf(fp,"title %s\n",pl->own_title);
 
-#ifdef EXPLORE_MODE
   fprintf(fp,"explore %d\n",pl->explore);
-#endif
   fprintf(fp,"gen_hp %d\n",pl->gen_hp);
   fprintf(fp,"gen_sp %d\n",pl->gen_sp);
   fprintf(fp,"gen_grace %d\n",pl->gen_grace);
@@ -541,11 +539,8 @@ void check_login(object *op) {
           break;
 	else if (!strcmp(buf,"title") && settings.set_title == TRUE)
 	    sscanf(bufall,"title %[^\n]",pl->own_title);
-
-#ifdef EXPLORE_MODE
 	else if (!strcmp(buf,"explore"))
 	    pl->explore = value;
-#endif
 	else if (!strcmp(buf,"gen_hp"))
 	    pl->gen_hp=value;
         else if (!strcmp(buf,"shoottype"))

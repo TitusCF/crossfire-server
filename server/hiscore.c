@@ -256,13 +256,11 @@ void check_score(object *op) {
 	new_draw_info(NDI_UNIQUE, 0,op,"you can't enter the high-score list.");
 	return;
     }
-#ifdef EXPLORE_MODE
     if (op->contr->explore) {
 	new_draw_info(NDI_UNIQUE, 0,op,"Since you were in explore mode,");
 	new_draw_info(NDI_UNIQUE, 0,op,"you can't enter the high-score list.");
 	return;
     }
-#endif
     strncpy(new_score.name,op->name,BIG_NAME);
     strncpy(new_score.title,op->contr->own_title,BIG_NAME);
     if(new_score.title[0]=='\0')

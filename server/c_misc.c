@@ -1012,29 +1012,28 @@ int command_quit (object *op, char *params)
     return 1;
   }
 
-#ifdef EXPLORE_MODE
 /*
  * don't allow people to exit explore mode.  It otherwise becomes
  * really easy to abuse this.
  */
 int command_explore (object *op, char *params)
 {
+    if (settings.explore_mode == FALSE)
+	return 1;
   /*
    * I guess this is the best way to see if we are solo or not.  Actually,
    * are there any cases when first_player->next==NULL and we are not solo?
    */
-      if ((first_player!=op->contr) || (first_player->next!=NULL)) {
-	  new_draw_info(NDI_UNIQUE, 0,op,"You can not enter explore mode if you are in a party");
-      }
-      else if (op->contr->explore)
-              new_draw_info(NDI_UNIQUE, 0,op, "There is no return from explore mode");
-      else {
-		op->contr->explore=1;
-		new_draw_info(NDI_UNIQUE, 0,op, "You are now in explore mode");
-      }
-      return 1;
+    if ((first_player!=op->contr) || (first_player->next!=NULL)) {
+	new_draw_info(NDI_UNIQUE, 0,op,"You can not enter explore mode if you are in a party");
+    } else if (op->contr->explore)
+	new_draw_info(NDI_UNIQUE, 0,op, "There is no return from explore mode");
+    else {
+	op->contr->explore=1;
+	new_draw_info(NDI_UNIQUE, 0,op, "You are now in explore mode");
     }
-#endif
+    return 1;
+}
 
 int command_sound (object *op, char *params)
 {
@@ -1103,13 +1102,14 @@ void receive_player_password(object *op,char k) {
 
 
 int explore_mode() {
-#ifdef EXPLORE_MODE
-  player *pl;
-  for (pl = first_player; pl != (player *) NULL; pl = pl->next)
-    if (pl->explore)
-      return 1;
-#endif
-  return 0;
+    player *pl;
+
+    if (settings.explore_mode == TRUE) {
+	for (pl = first_player; pl != (player *) NULL; pl = pl->next)
+	    if (pl->explore)
+		return 1;
+    }
+    return 0;
 }
 
 

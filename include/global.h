@@ -304,6 +304,8 @@ typedef struct Settings {
     uint8   casting_time;   /* it takes awhile to cast a spell */
     uint8   real_wiz;       /* use mud-like wizards */
     uint8   recycle_tmp_maps; /* re-use tmp maps. */
+    uint8   explore_mode;     /* explore mode allowed? */
+    uint8   spellpoint_level_depend; /* spell costs go up with level */
 
     /* The meta_ is information for the metaserver.  These are set in 
      * the lib/settings file.

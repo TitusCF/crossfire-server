@@ -754,11 +754,10 @@ int cast_spell(object *op,object *caster,int dir,int type,int ability,SpellTypeF
       free(stringarg);stringarg=NULL;
   }
 
-#ifdef SPELLPOINT_LEVEL_DEPEND
-  return success?SP_level_spellpoint_cost(op,caster,type):0;
-#else
-  return success?(s->sp*PATH_SP_MULT(op,s)):0;
-#endif
+  if (settings.spellpoint_level_depend == TRUE)
+      return success?SP_level_spellpoint_cost(op,caster,type):0;
+  else
+      return success?(s->sp*PATH_SP_MULT(op,s)):0;
 }
 
 
@@ -2072,19 +2071,20 @@ int SP_level_spellpoint_cost(object *op, object *caster, int spell_type)
 {
   spell *s=find_spell(spell_type);
   int level = casting_level (caster, spell_type);
-#ifdef SPELLPOINT_LEVEL_DEPEND
   int sp;
-  if(SP_PARAMETERS[spell_type].spl)
-   sp= (int) (spells[spell_type].sp * 
-	       (1.0 + 
-	(MAX(0,	(float)(level-spells[spell_type].level)/
-	(float)SP_PARAMETERS[spell_type].spl ))));
-  else sp= spells[spell_type].sp;
-  sp *= PATH_SP_MULT(caster,s);
-  return MIN(sp,(spells[spell_type].sp + 50));
-#else
-  return s->sp*PATH_SP_MULT(caster,s);
-#endif /* SPELLPOINT_LEVEL_DEPEND */  
+
+  if (settings.spellpoint_level_depend == TRUE) {
+      if (SP_PARAMETERS[spell_type].spl)
+	  sp= (int) (spells[spell_type].sp * 
+	     (1.0 + (MAX(0, (float)(level-spells[spell_type].level)/
+	     (float)SP_PARAMETERS[spell_type].spl ))));
+      else
+	  sp= spells[spell_type].sp;
+      sp *= PATH_SP_MULT(caster,s);
+      return MIN(sp,(spells[spell_type].sp + 50));
+  } else {
+      return s->sp*PATH_SP_MULT(caster,s);
+  }
 }
 
 
