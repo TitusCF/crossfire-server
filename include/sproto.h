@@ -51,6 +51,15 @@ object *hit_with_arrow(object *op, object *victim);
 void tear_down_wall(object *op);
 int hit_player_attacktype(object *op, object *hitter, int dam, uint32 attacknum, int magic);
 int kill_object(object *op, int dam, object *hitter, int type);
+int hit_player(object *op, int dam, object *hitter, int type);
+void poison_player(object *op, object *hitter, int dam);
+void slow_player(object *op, object *hitter, int dam);
+void confuse_player(object *op, object *hitter, int dam);
+void blind_player(object *op, object *hitter, int dam);
+void paralyze_player(object *op, object *hitter, int dam);
+void deathstrike_player(object *op, object *hitter, int *dam);
+int adj_attackroll(object *hitter, object *target);
+int is_aimed_missile(object *op);
 /* ban.c */
 int checkbanned(char *login, char *host);
 /* c_chat.c */
@@ -376,7 +385,6 @@ void leave(player *pl, int draw_exit);
 int forbid_play(void);
 void do_specials(void);
 int main(int argc, char **argv);
-void main_crossfire(int argc, char **argv);
 /* monster.c */
 object *get_enemy(object *npc, rv_vector *rv);
 object *find_nearest_living_creature(object *npc);
