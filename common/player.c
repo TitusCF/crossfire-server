@@ -186,8 +186,9 @@ int atnr_is_dragon_enabled(int attacknr) {
  * of the dragon race.
  */
 int is_dragon_pl(object* op) {
-  if (op != NULL && op->type == PLAYER && op->race != NULL
-      && strcmp(op->race, "dragon")==0)
+  if (op != NULL && op->type == PLAYER && op->arch != NULL
+      && op->arch->clone.race != NULL &&
+      strcmp(op->arch->clone.race, "dragon")==0)
     return 1;
   return 0;
 }
