@@ -48,6 +48,7 @@ type_func_ob_ob	monster_check_apply_func;
 type_func_void	init_blocksview_players_func;
 type_func_int_map_char	info_map_func;
 type_func_ob	move_teleporter_func;
+type_func_ob move_firewall_func;
 type_func_ob_int  trap_adjust_func;
 type_func_ob    move_creator_func;
 type_func_ob_ob esrv_send_item_func;
@@ -84,6 +85,7 @@ void init_function_pointers() {
   init_blocksview_players_func = dummy_function;
   info_map_func = dummy_function_mapstr;
   move_teleporter_func = dummy_function_ob;
+  move_firewall_func = dummy_function_ob;
   trap_adjust_func = dummy_function_ob_int;
   move_creator_func = dummy_function_ob;
   esrv_send_item_func = dummy_function_ob2;
@@ -194,6 +196,10 @@ void set_info_map(type_func_int_map_char addr) {
 
 void set_move_teleporter(type_func_ob addr) {
   move_teleporter_func = addr;
+}
+
+void set_move_firewall(type_func_ob addr) {
+  move_firewall_func = addr;
 }
 
 void set_trap_adjust(type_func_ob_int addr) {

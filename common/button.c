@@ -101,9 +101,12 @@ void push_button(object *op) {
         break;
     case DIRECTOR:
     case FIREWALL:
+		if(!QUERY_FLAG(tmp,FLAG_ANIMATE)&&tmp->type==FIREWALL) (*move_firewall_func)(tmp);
+		else {
         if ((tmp->stats.sp += tmp->stats.maxsp) > 8) /* next direction */
           tmp->stats.sp = ((tmp->stats.sp-1)%8)+1;
         animate_turning(tmp);
+		}
         break;
     case TELEPORTER:
 	(*move_teleporter_func)(tmp);
