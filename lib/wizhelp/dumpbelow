@@ -1,0 +1,5 @@
+syntax: dumpbelow 
+notes: dumpbelow
+will dump the attributes of the
+top item you are standing over.
+see also: dump

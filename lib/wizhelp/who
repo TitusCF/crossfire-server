@@ -1,0 +1,4 @@
+syntax: who 
+notes: when used as
+dm, this will also print out
+the object tag of players.

@@ -1,0 +1,7 @@
+syntax: addexp <player> <how
+much> 
+notes: the player must
+have a skill readied. All
+experience added in this manner
+will go directly to the skill
+readied.

@@ -1,0 +1,6 @@
+syntax: remove <tag> 
+notes:
+remove will, suprisingly enough,
+remove the object specified by
+the tag supplied.  see also:
+free

@@ -1,0 +1,4 @@
+syntax: style_info 
+notes: this
+will print out information
+regarding current styles in use.
