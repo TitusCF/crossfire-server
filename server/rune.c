@@ -191,6 +191,8 @@ void rune_attack(object *op,object *victim)
 {
     if(victim) {
 	 hit_player(victim,op->stats.dam,op,op->attacktype);
+	 if (QUERY_FLAG (victim, FLAG_FREED))
+		return;
 	 /*  if there's a disease in the needle, put it in the player */
 	 if(op->randomitems!=NULL) create_treasure(op->randomitems,op,GT_INVENTORY,
 		(victim->map?victim->map->difficulty:1),0);

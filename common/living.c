@@ -738,7 +738,7 @@ int change_abil(object *op, object *tmp) {
  */
 
 void drain_stat(object *op) {
-  drain_specific_stat(op, RANDOM()%6);
+  drain_specific_stat(op, RANDOM()%7);
 }
 
 void drain_specific_stat(object *op, int deplete_stats) {

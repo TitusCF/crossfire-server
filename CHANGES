@@ -19,6 +19,19 @@ else.  With this, include the file(s) that you changed.
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 
+common/living.c: drain_stat():  There are 7 stats now, not 6.
+- Jan Echternach 15/5/2000
+
+server/rune.c: rune_attack():  Check that victim still exists after
+hit_player() was missing.  This fixes server crashes if monster applied
+a chest, found a diseased needle and was killed by it.
+- Jan Echternach 15/5/2000
+
+server/spell_effect.c: cast_charm():  out_of_map() check was missing.
+This fixes server crashes when a player casted this spell near the
+edge of a map.  - Jan Echternach 15/5/2000
+
+
 Make image files and code more generic.  This was largely done to make
 adding support for png files easier, but in reality, it means adding support
 for any new file format is now trivially easy.  Format of the image

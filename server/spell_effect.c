@@ -2460,6 +2460,8 @@ int cast_charm(object *op, object *caster,archetype *arch,int spellnum) {
   object *tmp,*effect;
   
   for(i=1;i<MIN(9+SP_level_strength_adjust(op,caster,spellnum),SIZEOFFREE);i++) {
+	if (out_of_map(op->map,op->x+freearr_x[i],op->y+freearr_y[i]))
+	    continue;
 	for(tmp=get_map_ob(op->map,op->x+freearr_x[i],op->y+freearr_y[i]);
 	    tmp&&(!QUERY_FLAG(tmp,FLAG_MONSTER));tmp=tmp->above);
 	if(!tmp) continue;
