@@ -110,7 +110,7 @@ static void show_matching_spells(object *op, char *params, int cleric)
 	if (QUERY_FLAG(op,FLAG_WIZ)) spnum=i;
 	else spnum = op->contr->known_spells[i];
 
-	if (spells[spnum].cleric != (unsigned) cleric) continue;
+	if (spells[spnum].cleric != cleric) continue;
 	if (params && strncmp(spells[spnum].name,params, strlen(params)))
 		continue;
 	if (!first_match) {

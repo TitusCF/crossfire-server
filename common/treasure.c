@@ -539,7 +539,7 @@ void set_ring_bonus(object *op,int bonus) {
 	case 4:
 	case 5:
 	case 6:
-	    set_attr_value(&op->stats, r, (signed char) (bonus + get_attr_value(&op->stats,r)));
+	    set_attr_value(&op->stats, r, bonus + get_attr_value(&op->stats,r));
 	    break;
 
 	case 7:
@@ -1417,7 +1417,7 @@ void fix_flesh_item(object *item, object *donor) {
 	free_string(item->name);
 	item->name=add_string(tmpbuf);
 	/* weight is FLESH weight/100 * donor */
-	if((item->weight = (signed long) (((float)item->weight/100.0) * (float)donor->weight))==0)
+	if((item->weight = (float) (item->weight/100.0) * donor->weight)==0)
 		item->weight=1;
 
 	/* value is multiplied by level of donor */

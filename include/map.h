@@ -175,9 +175,10 @@ typedef struct mapdef {
  * can be negativbe.  direction is the crossfire direction scheme
  * that the creature should head.  part is the part of the
  * monster that is closest.
+ * Note: distance should be always >=0. I changed it to UINT. MT
  */
 typedef struct rv_vector {
-    int	    distance;
+    unsigned int	    distance;
     int	    distance_x;
     int	    distance_y;
     int	    direction;

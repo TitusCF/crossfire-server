@@ -800,14 +800,9 @@ void check_login(object *op) {
     /* This seems to compile without warnings now.  Don't know if it works
      * on SGI's or not, however.
      */
-#ifdef WIN32
     qsort((void *)pl->known_spells,pl->nrofknownspells,
-        sizeof(pl->known_spells[0]),spell_sort);
-#else
-    qsort((void *)pl->known_spells,pl->nrofknownspells,
-        sizeof(pl->known_spells[0]),(int(*)())spell_sort);
-#endif    
-    
+	sizeof(pl->known_spells[0]),(int (*)())spell_sort);
+
     CLEAR_FLAG(op, FLAG_FRIENDLY);
     return;
 }

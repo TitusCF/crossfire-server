@@ -4,6 +4,7 @@ rem Run this bat file
 rem compile the server with VC when needed
 rem and unpack the maps in \share\ folder
 rem c) Michael Toennies 2001
+cd ..
 md tmp
 md var
 md var\players

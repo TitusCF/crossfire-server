@@ -141,6 +141,7 @@ SOURCE=..\socket\info.c
 !ELSEIF  "$(CFG)" == "crossfire32 - Win32 ReleaseNormal"
 
 # PROP Intermediate_Dir "Win32_ReleaseNormal\socket"
+# ADD CPP /YX"crossfire32.pch"
 
 !ENDIF 
 
@@ -156,6 +157,7 @@ SOURCE=..\socket\init.c
 !ELSEIF  "$(CFG)" == "crossfire32 - Win32 ReleaseNormal"
 
 # PROP Intermediate_Dir "Win32_ReleaseNormal\socket"
+# ADD CPP /YX"crossfire32.pch"
 
 !ENDIF 
 
@@ -171,6 +173,7 @@ SOURCE=..\socket\item.c
 !ELSEIF  "$(CFG)" == "crossfire32 - Win32 ReleaseNormal"
 
 # PROP Intermediate_Dir "Win32_ReleaseNormal\socket"
+# ADD CPP /YX"crossfire32.pch"
 
 !ENDIF 
 
@@ -186,6 +189,7 @@ SOURCE=..\socket\loop.c
 !ELSEIF  "$(CFG)" == "crossfire32 - Win32 ReleaseNormal"
 
 # PROP Intermediate_Dir "Win32_ReleaseNormal\socket"
+# ADD CPP /YX"crossfire32.pch"
 
 !ENDIF 
 
@@ -201,6 +205,7 @@ SOURCE=..\socket\lowlevel.c
 !ELSEIF  "$(CFG)" == "crossfire32 - Win32 ReleaseNormal"
 
 # PROP Intermediate_Dir "Win32_ReleaseNormal\socket"
+# ADD CPP /YX"crossfire32.pch"
 
 !ENDIF 
 
@@ -216,6 +221,7 @@ SOURCE=..\socket\metaserver.c
 !ELSEIF  "$(CFG)" == "crossfire32 - Win32 ReleaseNormal"
 
 # PROP Intermediate_Dir "Win32_ReleaseNormal\socket"
+# ADD CPP /YX"crossfire32.pch"
 
 !ENDIF 
 
@@ -231,6 +237,7 @@ SOURCE=..\socket\request.c
 !ELSEIF  "$(CFG)" == "crossfire32 - Win32 ReleaseNormal"
 
 # PROP Intermediate_Dir "Win32_ReleaseNormal\socket"
+# ADD CPP /YX"crossfire32.pch"
 
 !ENDIF 
 
@@ -246,6 +253,7 @@ SOURCE=..\socket\sounds.c
 !ELSEIF  "$(CFG)" == "crossfire32 - Win32 ReleaseNormal"
 
 # PROP Intermediate_Dir "Win32_ReleaseNormal\socket"
+# ADD CPP /YX"crossfire32.pch"
 
 !ENDIF 
 
@@ -265,6 +273,7 @@ SOURCE=..\server\alchemy.c
 !ELSEIF  "$(CFG)" == "crossfire32 - Win32 ReleaseNormal"
 
 # PROP Intermediate_Dir "Win32_ReleaseNormal\server"
+# ADD CPP /YX"crossfire32.pch"
 
 !ENDIF 
 
@@ -280,6 +289,7 @@ SOURCE=..\server\apply.c
 !ELSEIF  "$(CFG)" == "crossfire32 - Win32 ReleaseNormal"
 
 # PROP Intermediate_Dir "Win32_ReleaseNormal\server"
+# ADD CPP /YX"crossfire32.pch"
 
 !ENDIF 
 
@@ -295,6 +305,7 @@ SOURCE=..\server\attack.c
 !ELSEIF  "$(CFG)" == "crossfire32 - Win32 ReleaseNormal"
 
 # PROP Intermediate_Dir "Win32_ReleaseNormal\server"
+# ADD CPP /YX"crossfire32.pch"
 
 !ENDIF 
 
@@ -310,6 +321,7 @@ SOURCE=..\server\ban.c
 !ELSEIF  "$(CFG)" == "crossfire32 - Win32 ReleaseNormal"
 
 # PROP Intermediate_Dir "Win32_ReleaseNormal\server"
+# ADD CPP /YX"crossfire32.pch"
 
 !ENDIF 
 
@@ -325,6 +337,7 @@ SOURCE=..\server\c_chat.c
 !ELSEIF  "$(CFG)" == "crossfire32 - Win32 ReleaseNormal"
 
 # PROP Intermediate_Dir "Win32_ReleaseNormal\server"
+# ADD CPP /YX"crossfire32.pch"
 
 !ENDIF 
 
@@ -340,6 +353,7 @@ SOURCE=..\server\c_misc.c
 !ELSEIF  "$(CFG)" == "crossfire32 - Win32 ReleaseNormal"
 
 # PROP Intermediate_Dir "Win32_ReleaseNormal\server"
+# ADD CPP /YX"crossfire32.pch"
 
 !ENDIF 
 
@@ -355,6 +369,7 @@ SOURCE=..\server\c_move.c
 !ELSEIF  "$(CFG)" == "crossfire32 - Win32 ReleaseNormal"
 
 # PROP Intermediate_Dir "Win32_ReleaseNormal\server"
+# ADD CPP /YX"crossfire32.pch"
 
 !ENDIF 
 
@@ -370,6 +385,7 @@ SOURCE=..\server\c_new.c
 !ELSEIF  "$(CFG)" == "crossfire32 - Win32 ReleaseNormal"
 
 # PROP Intermediate_Dir "Win32_ReleaseNormal\server"
+# ADD CPP /YX"crossfire32.pch"
 
 !ENDIF 
 
@@ -385,6 +401,7 @@ SOURCE=..\server\c_object.c
 !ELSEIF  "$(CFG)" == "crossfire32 - Win32 ReleaseNormal"
 
 # PROP Intermediate_Dir "Win32_ReleaseNormal\server"
+# ADD CPP /YX"crossfire32.pch"
 
 !ENDIF 
 
@@ -400,6 +417,7 @@ SOURCE=..\server\c_party.c
 !ELSEIF  "$(CFG)" == "crossfire32 - Win32 ReleaseNormal"
 
 # PROP Intermediate_Dir "Win32_ReleaseNormal\server"
+# ADD CPP /YX"crossfire32.pch"
 
 !ENDIF 
 
@@ -415,6 +433,7 @@ SOURCE=..\server\c_range.c
 !ELSEIF  "$(CFG)" == "crossfire32 - Win32 ReleaseNormal"
 
 # PROP Intermediate_Dir "Win32_ReleaseNormal\server"
+# ADD CPP /YX"crossfire32.pch"
 
 !ENDIF 
 
@@ -430,6 +449,7 @@ SOURCE=..\server\c_wiz.c
 !ELSEIF  "$(CFG)" == "crossfire32 - Win32 ReleaseNormal"
 
 # PROP Intermediate_Dir "Win32_ReleaseNormal\server"
+# ADD CPP /YX"crossfire32.pch"
 
 !ENDIF 
 
@@ -445,6 +465,7 @@ SOURCE=..\server\commands.c
 !ELSEIF  "$(CFG)" == "crossfire32 - Win32 ReleaseNormal"
 
 # PROP Intermediate_Dir "Win32_ReleaseNormal\server"
+# ADD CPP /YX"crossfire32.pch"
 
 !ENDIF 
 
@@ -460,6 +481,7 @@ SOURCE=..\server\disease.c
 !ELSEIF  "$(CFG)" == "crossfire32 - Win32 ReleaseNormal"
 
 # PROP Intermediate_Dir "Win32_ReleaseNormal\server"
+# ADD CPP /YX"crossfire32.pch"
 
 !ENDIF 
 
@@ -475,6 +497,7 @@ SOURCE=..\server\egoitem.c
 !ELSEIF  "$(CFG)" == "crossfire32 - Win32 ReleaseNormal"
 
 # PROP Intermediate_Dir "Win32_ReleaseNormal\server"
+# ADD CPP /YX"crossfire32.pch"
 
 !ENDIF 
 
@@ -490,6 +513,7 @@ SOURCE=..\server\gods.c
 !ELSEIF  "$(CFG)" == "crossfire32 - Win32 ReleaseNormal"
 
 # PROP Intermediate_Dir "Win32_ReleaseNormal\server"
+# ADD CPP /YX"crossfire32.pch"
 
 !ENDIF 
 
@@ -505,6 +529,7 @@ SOURCE=..\server\hiscore.c
 !ELSEIF  "$(CFG)" == "crossfire32 - Win32 ReleaseNormal"
 
 # PROP Intermediate_Dir "Win32_ReleaseNormal\server"
+# ADD CPP /YX"crossfire32.pch"
 
 !ENDIF 
 
@@ -520,6 +545,7 @@ SOURCE=..\server\init.c
 !ELSEIF  "$(CFG)" == "crossfire32 - Win32 ReleaseNormal"
 
 # PROP Intermediate_Dir "Win32_ReleaseNormal\server"
+# ADD CPP /YX"crossfire32.pch"
 
 !ENDIF 
 
@@ -535,6 +561,7 @@ SOURCE=..\server\login.c
 !ELSEIF  "$(CFG)" == "crossfire32 - Win32 ReleaseNormal"
 
 # PROP Intermediate_Dir "Win32_ReleaseNormal\server"
+# ADD CPP /YX"crossfire32.pch"
 
 !ENDIF 
 
@@ -550,6 +577,7 @@ SOURCE=..\server\main.c
 !ELSEIF  "$(CFG)" == "crossfire32 - Win32 ReleaseNormal"
 
 # PROP Intermediate_Dir "Win32_ReleaseNormal\server"
+# ADD CPP /YX"crossfire32.pch"
 
 !ENDIF 
 
@@ -565,6 +593,7 @@ SOURCE=..\server\monster.c
 !ELSEIF  "$(CFG)" == "crossfire32 - Win32 ReleaseNormal"
 
 # PROP Intermediate_Dir "Win32_ReleaseNormal\server"
+# ADD CPP /YX"crossfire32.pch"
 
 !ENDIF 
 
@@ -580,6 +609,7 @@ SOURCE=..\server\move.c
 !ELSEIF  "$(CFG)" == "crossfire32 - Win32 ReleaseNormal"
 
 # PROP Intermediate_Dir "Win32_ReleaseNormal\server"
+# ADD CPP /YX"crossfire32.pch"
 
 !ENDIF 
 
@@ -595,6 +625,7 @@ SOURCE=..\server\pets.c
 !ELSEIF  "$(CFG)" == "crossfire32 - Win32 ReleaseNormal"
 
 # PROP Intermediate_Dir "Win32_ReleaseNormal\server"
+# ADD CPP /YX"crossfire32.pch"
 
 !ENDIF 
 
@@ -610,6 +641,7 @@ SOURCE=..\server\player.c
 !ELSEIF  "$(CFG)" == "crossfire32 - Win32 ReleaseNormal"
 
 # PROP Intermediate_Dir "Win32_ReleaseNormal\server"
+# ADD CPP /YX"crossfire32.pch"
 
 !ENDIF 
 
@@ -625,6 +657,7 @@ SOURCE=..\server\plugins.c
 !ELSEIF  "$(CFG)" == "crossfire32 - Win32 ReleaseNormal"
 
 # PROP Intermediate_Dir "Win32_ReleaseNormal\server"
+# ADD CPP /YX"crossfire32.pch"
 
 !ENDIF 
 
@@ -640,6 +673,7 @@ SOURCE=..\server\resurrection.c
 !ELSEIF  "$(CFG)" == "crossfire32 - Win32 ReleaseNormal"
 
 # PROP Intermediate_Dir "Win32_ReleaseNormal\server"
+# ADD CPP /YX"crossfire32.pch"
 
 !ENDIF 
 
@@ -655,6 +689,7 @@ SOURCE=..\server\rune.c
 !ELSEIF  "$(CFG)" == "crossfire32 - Win32 ReleaseNormal"
 
 # PROP Intermediate_Dir "Win32_ReleaseNormal\server"
+# ADD CPP /YX"crossfire32.pch"
 
 !ENDIF 
 
@@ -670,6 +705,7 @@ SOURCE=..\server\shop.c
 !ELSEIF  "$(CFG)" == "crossfire32 - Win32 ReleaseNormal"
 
 # PROP Intermediate_Dir "Win32_ReleaseNormal\server"
+# ADD CPP /YX"crossfire32.pch"
 
 !ENDIF 
 
@@ -685,6 +721,7 @@ SOURCE=..\server\skill_util.c
 !ELSEIF  "$(CFG)" == "crossfire32 - Win32 ReleaseNormal"
 
 # PROP Intermediate_Dir "Win32_ReleaseNormal\server"
+# ADD CPP /YX"crossfire32.pch"
 
 !ENDIF 
 
@@ -700,6 +737,7 @@ SOURCE=..\server\skills.c
 !ELSEIF  "$(CFG)" == "crossfire32 - Win32 ReleaseNormal"
 
 # PROP Intermediate_Dir "Win32_ReleaseNormal\server"
+# ADD CPP /YX"crossfire32.pch"
 
 !ENDIF 
 
@@ -715,6 +753,7 @@ SOURCE=..\server\spell_effect.c
 !ELSEIF  "$(CFG)" == "crossfire32 - Win32 ReleaseNormal"
 
 # PROP Intermediate_Dir "Win32_ReleaseNormal\server"
+# ADD CPP /YX"crossfire32.pch"
 
 !ENDIF 
 
@@ -730,6 +769,7 @@ SOURCE=..\server\spell_util.c
 !ELSEIF  "$(CFG)" == "crossfire32 - Win32 ReleaseNormal"
 
 # PROP Intermediate_Dir "Win32_ReleaseNormal\server"
+# ADD CPP /YX"crossfire32.pch"
 
 !ENDIF 
 
@@ -745,6 +785,7 @@ SOURCE=..\server\swamp.c
 !ELSEIF  "$(CFG)" == "crossfire32 - Win32 ReleaseNormal"
 
 # PROP Intermediate_Dir "Win32_ReleaseNormal\server"
+# ADD CPP /YX"crossfire32.pch"
 
 !ENDIF 
 
@@ -760,6 +801,7 @@ SOURCE=..\server\swap.c
 !ELSEIF  "$(CFG)" == "crossfire32 - Win32 ReleaseNormal"
 
 # PROP Intermediate_Dir "Win32_ReleaseNormal\server"
+# ADD CPP /YX"crossfire32.pch"
 
 !ENDIF 
 
@@ -775,6 +817,7 @@ SOURCE=..\server\time.c
 !ELSEIF  "$(CFG)" == "crossfire32 - Win32 ReleaseNormal"
 
 # PROP Intermediate_Dir "Win32_ReleaseNormal\server"
+# ADD CPP /YX"crossfire32.pch"
 
 !ENDIF 
 
@@ -790,6 +833,7 @@ SOURCE=..\server\win32.c
 !ELSEIF  "$(CFG)" == "crossfire32 - Win32 ReleaseNormal"
 
 # PROP Intermediate_Dir "Win32_ReleaseNormal\server"
+# ADD CPP /YX"crossfire32.pch"
 
 !ENDIF 
 
@@ -1195,6 +1239,17 @@ SOURCE=..\plugin\include\plugin_python.h
 # Begin Source File
 
 SOURCE=..\plugin\plugin_python.c
+
+!IF  "$(CFG)" == "crossfire32 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "crossfire32 - Win32 FullDebug"
+
+!ELSEIF  "$(CFG)" == "crossfire32 - Win32 ReleaseNormal"
+
+# ADD CPP /YX"crossfire32.pch"
+
+!ENDIF 
+
 # End Source File
 # End Group
 # End Group

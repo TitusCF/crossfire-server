@@ -331,7 +331,7 @@ void NewPlayerCmd(uint8 *buf, int len, player *pl)
     SockList_AddShort(&sl,packet);
     if (FABS(pl->ob->speed) < 0.001) time=MAX_TIME * 100;
     else
-	time = (int) (MAX_TIME/ FABS(pl->ob->speed));
+	time = MAX_TIME/ FABS(pl->ob->speed);
     SockList_AddInt(&sl,time);
     Send_With_Handling(&pl->socket, &sl);
 }
@@ -564,27 +564,27 @@ void send_query(NewSocket *ns, uint8 flags, char *text)
 
 #define AddIfInt(Old,New,Type) if (Old != New) {\
 			Old = New; \
-			SockList_AddChar(&sl, (char)Type); \
+			SockList_AddChar(&sl, Type); \
 			SockList_AddInt(&sl, New); \
 		       }
 
 #define AddIfShort(Old,New,Type) if (Old != New) {\
 			Old = New; \
-			SockList_AddChar(&sl, (char)Type); \
+			SockList_AddChar(&sl, Type); \
 			SockList_AddShort(&sl, New); \
 		       }
 
 #define AddIfFloat(Old,New,Type) if (Old != New) {\
 			Old = New; \
-			SockList_AddChar(&sl, (char) Type); \
+			SockList_AddChar(&sl, Type); \
 			SockList_AddInt(&sl,(long)(New*FLOAT_MULTI));\
 			}
 
 #define AddIfString(Old,New,Type) if (Old == NULL || strcmp(Old,New)) {\
 			if (Old) free(Old);\
 	                Old = strdup_local(New);\
-			SockList_AddChar(&sl, (char)Type); \
-			SockList_AddChar(&sl, (char) strlen(New)); \
+			SockList_AddChar(&sl, Type); \
+			SockList_AddChar(&sl, strlen(New)); \
 			strcpy((char*)sl.buf + sl.len, New); \
 			sl.len += strlen(New); \
 			}
@@ -631,14 +631,14 @@ void esrv_update_stats(player *pl)
         }
     }
     AddIfInt(pl->last_stats.exp, pl->ob->stats.exp, CS_STAT_EXP);
-    AddIfShort(pl->last_level, (char) pl->ob->level, CS_STAT_LEVEL);
+    AddIfShort(pl->last_level, pl->ob->level, CS_STAT_LEVEL);
     AddIfShort(pl->last_stats.wc, pl->ob->stats.wc, CS_STAT_WC);
     AddIfShort(pl->last_stats.ac, pl->ob->stats.ac, CS_STAT_AC);
     AddIfShort(pl->last_stats.dam, pl->ob->stats.dam, CS_STAT_DAM);
     AddIfFloat(pl->last_speed, pl->ob->speed, CS_STAT_SPEED);
     AddIfShort(pl->last_stats.food, pl->ob->stats.food, CS_STAT_FOOD);
     AddIfFloat(pl->last_weapon_sp, pl->weapon_sp, CS_STAT_WEAP_SP);
-    AddIfInt((int)pl->last_weight_limit, weight_limit[pl->ob->stats.Str], CS_STAT_WEIGHT_LIM);
+    AddIfInt(pl->last_weight_limit, weight_limit[pl->ob->stats.Str], CS_STAT_WEIGHT_LIM);
     flags=0;
     if (pl->fire_on) flags |=SF_FIREON;
     if (pl->run_on) flags |= SF_RUNON;
@@ -923,7 +923,7 @@ static uint8 *compactlayer(NewSocket *ns, unsigned char *cur, int numlayers,
 	    /* Now, we back the redundant data into 1 byte xy pairings */
 	    for(y=x;y<layers[k].count;y++) {
 		if (layers[k].lcells[y].face == face) {
-		    *cur = (unsigned char) layers[k].lcells[y].xy;
+		    *cur = layers[k].lcells[y].xy;
 		    cur++;
 		    layers[k].lcells[y].face = -1;
 		}

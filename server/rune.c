@@ -98,7 +98,7 @@ int write_rune(object *op,int dir,int inspell,int level,char *runename) {
 		by doing some string manipulations */
 	if(!at) {
 		char insp[MAX_BUF];
-		size_t i;
+		int i;
 		strcpy(insp,spells[inspell].name);
 		for(i=0;i<strlen(insp);i++)
 			if(insp[i]==' ') insp[i]='_';

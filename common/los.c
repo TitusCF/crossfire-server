@@ -136,7 +136,7 @@ void init_block() {
 		    d1 = (float) (pow(MAP_CLIENT_X/2 - dx, 2) + pow(MAP_CLIENT_Y/2 - dy,2));
 		    r = (float)((dy-y)*(dy - MAP_CLIENT_Y/2) - (dx-x)*(MAP_CLIENT_X/2-dx))/d1;
 		    s = (float)((dy-y)*(MAP_CLIENT_X/2 - dx ) - (dx-x)*(MAP_CLIENT_Y/2-dy))/d1;
-		    l = (float) FABS(sqrt(d1) * s);
+		    l = FABS(sqrt(d1) * s);
 
 		    if (l <= SPACE_BLOCK) {
 			/* For simplicity, we mirror the coordinates to block the other

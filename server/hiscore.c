@@ -352,7 +352,7 @@ void display_high_score(object *op,int max, char *match) {
 	 */
 	strncpy(buf,scorebuf,MAX_BUF);
 	cp=buf;
-	while (strlen(cp)> (size_t)maxchar) {
+	while (strlen(cp)> maxchar) {
 	    bp = cp+maxchar-1;
 	    while (*bp != ' ' && bp>cp) bp--;
 	    *bp='\0';

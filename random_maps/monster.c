@@ -103,6 +103,6 @@ void place_monsters(mapstruct *map, char *monsterstyle, int difficulty,RMParms *
     else {
 	 failed_placements++;
     }
-    exp_per_sq=(long unsigned int)(((double)1000*(double)total_experience)/(double)((double)MAP_WIDTH(map)*(double)MAP_HEIGHT(map)+1));
+    exp_per_sq=((double)1000*total_experience)/(MAP_WIDTH(map)*MAP_HEIGHT(map)+1);
   }
 }
