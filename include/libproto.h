@@ -80,6 +80,7 @@ extern void set_esrv_update_item(type_func_int_ob_ob addr);
 extern void set_esrv_del_item(type_func_player_int addr);
 extern void set_set_darkness_map(type_func_map addr);
 extern void set_dragon_gain_func(type_func_dragon_gain addr);
+extern void set_weather_effect_func(type_func_char addr);
 extern void fatal(int err);
 extern void dummy_function_int(int i);
 extern void dummy_function_int_int(int i, int j);
@@ -96,6 +97,7 @@ extern void dummy_function_mapstr(int a, mapstruct *map, char *str);
 extern void dummy_function_int_ob_ob(int n, object *ob, object *ob2);
 extern void dummy_move_apply_func(object *ob, object *ob2, object *ob3);
 extern void dummy_function_dragongain(object *ob, int a1, int a2);
+extern void dummy_function_char(char *);
 /* holy.c */
 extern void init_gods(void);
 extern void add_god_to_list(archetype *god_arch);
