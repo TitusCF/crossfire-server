@@ -2,7 +2,7 @@
 #
 # This file describes the various image files installed.
 # For more information on how all this works and about adding new
-# image sets, see the doc/images file.
+# image sets, see the doc/Developer/images file.
 #
 # The format of each line:
 # num:extension:long name:fallback:geometry:extension:description
