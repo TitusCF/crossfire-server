@@ -1594,7 +1594,7 @@ int player_fire_bow(object *op, int dir)
     } else if (op->contr->bowtype == bow_threewide) {
 	ret = fire_bow(op, op, NULL, dir, 0, op->x, op->y);
 	ret |= fire_bow(op, op, NULL, dir, -5, op->x + freearr_x[absdir(dir+2)], op->y + freearr_y[absdir(dir+2)]);
-	ret |= fire_bow(op, op, NULL, dir, -5, op->x + freearr_x[absdir(dir-2)], op->y + freearr_y[absdir(dir-22)]);
+	ret |= fire_bow(op, op, NULL, dir, -5, op->x + freearr_x[absdir(dir-2)], op->y + freearr_y[absdir(dir-2)]);
     } else if (op->contr->bowtype == bow_spreadshot) {
 	ret |= fire_bow(op, op, NULL, dir, 0, op->x, op->y);
 	ret |= fire_bow(op, op, NULL, absdir(dir-1), -5, op->x, op->y);
