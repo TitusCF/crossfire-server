@@ -945,7 +945,7 @@ void process_events (mapstruct *map)
 	 * is based on ticks, and not the creatures speed?
 	 */
 	if (op->anim_speed && op->last_anim >= op->anim_speed) {
-	    animate_object (op);
+	    animate_object (op, op->direction);
 	    op->last_anim = 1;
 	} else {
 	    op->last_anim++;
