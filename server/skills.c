@@ -1160,7 +1160,8 @@ int write_note(object *pl, object *item, char *msg) {
   if(!book_overflow(item->msg,msg,BOOK_BUF)) { /* add msg string to book */
     if(item->msg) {
       strcpy(buf,item->msg);
-      free_string(item->msg);
+	  if (item->nrof < 2)
+        free_string(item->msg);
     }
     strcat(buf,msg);
     strcat(buf,"\n"); /* new msg needs a LF */
