@@ -410,8 +410,6 @@ void doeric_server()
 
     for(i=0;i<socket_info.allocated_sockets;i++) {
 	if (init_sockets[i].status == Ns_Dead) {
-	    int j;
-
 	    free_newsocket(&init_sockets[i]);
 	    init_sockets[i].status = Ns_Avail;
 	    socket_info.nconns--;
@@ -505,8 +503,6 @@ void doeric_server()
     if (pollret) for(i=1;i<socket_info.allocated_sockets;i++) {
 	if (init_sockets[i].status == Ns_Avail) continue;
 	if (FD_ISSET(init_sockets[i].fd,&tmp_exceptions)) {
-	    int j;
-
 	    free_newsocket(&init_sockets[i]);
 	    init_sockets[i].status = Ns_Avail;
 	    socket_info.nconns--;

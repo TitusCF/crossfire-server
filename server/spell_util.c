@@ -984,12 +984,6 @@ int fire_bolt(object *op,object *caster,int dir,int type,int magic) {
     SET_ANIMATION(tmp, dir);
   set_owner(tmp,op);
   tmp->level = SK_level (caster);
-#if 0
-  if(op->type==PLAYER)
-    tmp->stats.wc=5+(op->contr->shootstrength-5)/5,
-    tmp->stats.exp=(op->contr->shootstrength-5)/3+12,
-    tmp->stats.hp=8+(op->contr->shootstrength-5)/8;
-#endif
   tmp->x+=DIRX(tmp),tmp->y+=DIRY(tmp);
   if(wall(op->map,tmp->x,tmp->y)) {
     if(!QUERY_FLAG(tmp, FLAG_REFLECTING)) {
@@ -1052,10 +1046,7 @@ int fire_arch_from_position (object *op, object *caster, sint16 x, sint16 y,
     tmp->attacktype|=AT_MAGIC;
   if(QUERY_FLAG(tmp, FLAG_IS_TURNABLE))
     SET_ANIMATION(tmp, dir);
-#if 0
-  if(op->type==PLAYER)
-    tmp->stats.hp=(op->contr->shootstrength-10)/10+10;
-#endif
+
   if ((tmp = insert_ob_in_map (tmp, op->map, op)) == NULL)
     return 1;
   switch(type) {

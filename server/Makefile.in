@@ -41,6 +41,7 @@ SRCS = \
 	c_new.c\
 	c_object.c\
 	c_party.c\
+	c_range.c\
 	c_wiz.c\
 	commands.c\
 	daemon.c\
@@ -50,7 +51,6 @@ SRCS = \
 	hiscore.c\
 	gods.c\
 	init.c\
-	input.c\
 	login.c\
 	main.c\
 	monster.c\

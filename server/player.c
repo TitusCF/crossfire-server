@@ -188,7 +188,7 @@ object *get_player(player *p, mapstruct *m) {
     op->contr=p; /* this aren't yet in archetype */
     op->speed_left=0.5;
     op->speed=1.0;
-    op->direction=0;
+    op->direction=5;     /* So player faces south */
     op->stats.wc=2;
     op->run_away = 25; /* Then we panick... */
 
@@ -209,7 +209,7 @@ object *get_player(player *p, mapstruct *m) {
     p->last_spell= -1;
     p->last_value= -1;
     p->last_speed= -1;
-    p->shoottype=range_none,p->shootstrength=5;
+    p->shoottype=range_none;
     p->last_shoot= range_bottom;
     p->listening=9;
     p->golem=NULL;
@@ -621,6 +621,7 @@ int key_roll_stat(object *op, char key)
 
 	    enter_exit(op,NULL);
 
+	    SET_ANIMATION(op, 2);     /* So player faces south */
 	    /* Enter exit adds a player otherwise */
 	    if(op->contr->loading == NULL) {
 		insert_ob_in_map(op,op->map,op);
@@ -734,6 +735,7 @@ int key_change_class(object *op, char key)
       op->name = name;
       op->x = x;
       op->y = y;
+      SET_ANIMATION(op, 2);    /* So player faces south */
       insert_ob_in_map (op, op->map, op);
       strncpy(op->contr->title,op->arch->clone.name,MAX_NAME);
       add_statbonus(op);

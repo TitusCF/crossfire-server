@@ -764,3 +764,13 @@ int command_dm (object *op, char *params)
   }
 }
 
+int command_invisible (object *op, char *params)
+{
+  if (!op)
+    return 0;
+      op->invisible+=100;
+      update_object(op);
+      new_draw_info(NDI_UNIQUE, 0,op,"You turn invisible.");
+  return 0;
+}
+

@@ -58,7 +58,6 @@ CommArray_s Commands[] = {
 #endif
   {"apply", command_apply,	1.0},	/* should be variable */
   {"archs", command_archs,	0.0},
-  {"bell", command_bell,	0.0},
   {"brace", command_brace,	0.0},
   {"cast", command_cast,	0.2},	/* Is this right? */
   {"disarm", command_disarm,	1.0},
@@ -72,7 +71,6 @@ CommArray_s Commands[] = {
   {"hiscore", command_hiscore,	0.0},
   {"inventory", command_inventory,0.0},
   {"invoke", command_invoke,	1.0},
-  {"last", command_last,	0.0},
   {"listen", command_listen,	0.0},
   {"logs", command_logs,	0.0},
   {"malloc", command_malloc,	0.0},
@@ -103,7 +101,6 @@ CommArray_s Commands[] = {
   {"search-items", command_search_items,	0.0},
 #endif
   {"statistics", command_statistics,	0.0},
-  {"strength", command_strength,	0.0},
   {"strings", command_strings,	0.0},
   {"take", command_take,	1.0},
   {"tell", command_tell,	0.0},

@@ -6,7 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 1992 Mark Wedel
+    Copyright (C) 2000 Mark Wedel
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -23,7 +23,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to master@rahul.net
+    The author can be reached via e-mail to mwedel@scruz.net
 */
 #include <global.h>
 #include <loader.h>
@@ -645,3 +645,422 @@ int command_resistances(object *op, char *params)
     }
   return 0;
 }
+/*
+ * Actual commands.
+ * Those should be in small separate files (c_object.c, c_wiz.c, cmove.c,...)
+ */
+
+
+static void help_topics(object *op, int what)
+{
+    DIR *dirp;
+    struct dirent *de;
+    char filename[MAX_BUF], line[80];
+    int namelen, linelen=0;
+  
+    switch (what) {
+	case 1:
+	    sprintf(filename, "%s/wizhelp", settings.datadir);
+	    new_draw_info(NDI_UNIQUE, 0,op, "      Wiz commands:");
+	    break;
+	case 3:
+	    sprintf(filename, "%s/mischelp", settings.datadir);
+	    new_draw_info(NDI_UNIQUE, 0,op, "      Misc help:");
+	    break;
+	default:
+	    sprintf(filename, "%s/help", settings.datadir);
+	    new_draw_info(NDI_UNIQUE, 0,op, "      Commands:");
+	    break;
+    }
+    if (!(dirp=opendir(filename)))
+	return;
+
+    line[0] ='\0';
+    for (de = readdir(dirp); de; de = readdir(dirp)) {
+	namelen = NAMLEN(de);
+	if (namelen <= 2 && *de->d_name == '.' &&
+		(namelen == 1 || de->d_name[1] == '.' ) )
+	    continue;
+	linelen +=namelen+1;
+	if (linelen > 42) {
+	    new_draw_info(NDI_UNIQUE, 0,op, line);
+	    sprintf(line, " %s", de->d_name);
+	    linelen =namelen+1;
+	    continue;
+	}
+	strcat(line, " ");
+	strcat(line, de->d_name);
+    }
+    new_draw_info(NDI_UNIQUE, 0,op, line);
+    closedir(dirp);
+}
+
+static void show_commands(object *op, int what)
+{
+  char line[80];
+  int i, size, namelen, linelen=0;
+  CommArray_s *ap;
+  extern CommArray_s Commands[], WizCommands[];
+  extern const int CommandsSize, WizCommandsSize;
+  
+  switch (what) {
+  case 1:
+    ap =WizCommands;
+    size =WizCommandsSize;
+    new_draw_info(NDI_UNIQUE, 0,op, "      Wiz commands:");
+    break;
+  default:
+    ap =Commands;
+    size =CommandsSize;
+    new_draw_info(NDI_UNIQUE, 0,op, "      Commands:");
+    break;
+  }
+
+  line[0] ='\0';
+  for (i=0; i<size; i++) {
+    namelen = strlen(ap[i].name);
+    linelen +=namelen+1;
+    if (linelen > 42) {
+      new_draw_info(NDI_UNIQUE, 0,op, line);
+      sprintf(line, " %s", ap[i].name);
+      linelen =namelen+1;
+      continue;
+    }
+    strcat(line, " ");
+    strcat(line, ap[i].name);
+  }	       
+  new_draw_info(NDI_UNIQUE, 0,op, line);
+}
+
+
+int command_help (object *op, char *params)
+{
+  struct stat st;
+  FILE *fp;
+  char filename[MAX_BUF], line[MAX_BUF];
+  int len;
+
+  if(op != NULL)
+    clear_win_info(op);
+
+/*
+   * Main help page?
+ */
+  if (!params) {
+    sprintf(filename, "%s/def_help", settings.datadir);
+    if ((fp=fopen(filename, "r")) == NULL) {
+      LOG(llevError, "Can't open %s\n", filename);
+      perror("Can't read default help");
+      return 0;
+    }
+    while (fgets(line, MAX_BUF, fp)) {
+      line[MAX_BUF-1] ='\0';
+      len =strlen(line)-1;
+      if (line[len] == '\n')
+	line[len] ='\0';
+      new_draw_info(NDI_UNIQUE, 0,op, line);
+    }
+    fclose(fp);
+    return 0;
+  }
+
+  /*
+   * Topics list
+   */
+  if (!strcmp(params, "topics")) {
+    help_topics(op, 3);
+    help_topics(op, 0);
+    if (QUERY_FLAG(op, FLAG_WIZ))
+      help_topics(op, 1);
+    return 0;
+    }
+  
+  /*
+   * Commands list
+   */
+  if (!strcmp(params, "commands")) {
+    show_commands(op, 0);
+    if (QUERY_FLAG(op, FLAG_WIZ))
+      show_commands(op, 1);
+    return 0;
+  }
+
+  /*
+   * User wants info about command
+   */
+  if (strchr(params, '.') || strchr(params, ' ') || strchr(params, '/')) {
+    sprintf(line, "Illegal characters in '%s'", params);
+    new_draw_info(NDI_UNIQUE, 0,op, line);
+    return 0;
+  }
+
+  sprintf(filename, "%s/mischelp/%s", settings.datadir, params);
+  if (stat(filename, &st) || !S_ISREG(st.st_mode)) {
+    if (op) {
+      sprintf(filename, "%s/help/%s", settings.datadir, params);
+      if (stat(filename, &st) || !S_ISREG(st.st_mode)) {
+	if (QUERY_FLAG(op, FLAG_WIZ)) {
+	  sprintf(filename, "%s/wizhelp/%s", settings.datadir, params);
+	  if (stat(filename, &st) || !S_ISREG(st.st_mode))
+	    goto nohelp;
+	} else
+	  goto nohelp;
+      }
+  }
+  }
+
+  /*
+   * Found that. Just cat it to screen.
+   */
+  if ((fp=fopen(filename, "r")) == NULL) {
+    LOG(llevError, "Can't open %s\n", filename);
+    perror("Can't read helpfile");
+    return 0;
+      }
+  sprintf(line, "Help about '%s'", params);
+  new_draw_info(NDI_UNIQUE, 0,op, line);
+  while (fgets(line, MAX_BUF, fp)) {
+    line[MAX_BUF-1] ='\0';
+    len =strlen(line)-1;
+    if (line[len] == '\n')
+      line[len] ='\0';
+    new_draw_info(NDI_UNIQUE, 0,op, line);
+    }
+  fclose(fp);
+  return 0;
+
+  /*
+   * No_help -escape
+   */
+ nohelp:
+  sprintf(line, "No help availble on '%s'", params);
+  new_draw_info(NDI_UNIQUE, 0,op, line);
+  return 0;
+}
+
+
+int onoff_value(char *line)
+{
+  int i;
+
+  if (sscanf(line, "%d", &i))
+    return (i != 0);
+  switch (line[0]) {
+  case 'o':
+    switch (line[1]) {
+    case 'n': return 1;		/* on */
+    default:  return 0;		/* o[ff] */
+    }
+  case 'y':			/* y[es] */
+  case 'k':			/* k[ylla] */
+  case 's':
+  case 'd':
+    return 1;
+  case 'n':			/* n[o] */
+  case 'e':			/* e[i] */
+  case 'u':
+  default:
+    return 0;
+  }
+}
+
+int command_quit (object *op, char *params)
+{
+    send_query(&op->contr->socket,CS_QUERY_SINGLECHAR,
+	       "Quitting will delete your character.\nAre you sure you want to quit (y/n):");
+
+    op->contr->state = ST_CONFIRM_QUIT;
+    return 1;
+  }
+
+#ifdef EXPLORE_MODE
+/*
+ * don't allow people to exit explore mode.  It otherwise becomes
+ * really easy to abuse this.
+ */
+int command_explore (object *op, char *params)
+{
+  /*
+   * I guess this is the best way to see if we are solo or not.  Actually,
+   * are there any cases when first_player->next==NULL and we are not solo?
+   */
+      if ((first_player!=op->contr) || (first_player->next!=NULL)) {
+	  new_draw_info(NDI_UNIQUE, 0,op,"You can not enter explore mode if you are in a party");
+      }
+      else if (op->contr->explore)
+              new_draw_info(NDI_UNIQUE, 0,op, "There is no return from explore mode");
+      else {
+		op->contr->explore=1;
+		new_draw_info(NDI_UNIQUE, 0,op, "You are now in explore mode");
+      }
+      return 1;
+    }
+#endif
+
+int command_sound (object *op, char *params)
+{
+    if (op->contr->socket.sound) {
+        op->contr->socket.sound=0;
+        new_draw_info(NDI_UNIQUE, 0,op, "Silence is golden...");
+    }
+    else {
+        op->contr->socket.sound=1;
+        new_draw_info(NDI_UNIQUE, 0,op, "The sounds are enabled.");
+    }
+    return 1;
+}
+
+/* Perhaps these should be in player.c, but that file is
+ * already a bit big.
+ */
+
+void receive_player_name(object *op,char k) {
+
+  if(strlen(op->contr->write_buf)<=1) {
+    get_name(op);
+    return;
+  }
+  if(!check_name(op->contr,op->contr->write_buf+1)) {
+      get_name(op);
+      return;
+  }
+  if(op->name!=NULL)
+    free_string(op->name);
+  op->name=add_string(op->contr->write_buf+1);
+  new_draw_info(NDI_UNIQUE, 0,op,op->contr->write_buf);
+  op->contr->last_value= -1; /* Flag: redraw all stats */
+  op->contr->name_changed=1;
+  get_password(op);
+}
+
+void receive_player_password(object *op,char k) {
+
+  if(strlen(op->contr->write_buf)<=1) {
+    unlock_player(op->name);
+    get_name(op);
+    return;
+  }
+  new_draw_info(NDI_UNIQUE, 0,op,"          "); /* To hide the password better */
+  if(op->contr->state==ST_CONFIRM_PASSWORD) {
+    if(!check_password(op->contr->write_buf+1,op->contr->password)) {
+      new_draw_info(NDI_UNIQUE, 0,op,"The passwords did not match.");
+      unlock_player(op->name);
+      get_name(op);
+      return;
+    }
+    clear_win_info(op);
+    display_motd(op);
+    new_draw_info(NDI_UNIQUE, 0,op," ");
+    new_draw_info(NDI_UNIQUE, 0,op,"Welcome, Brave New Warrior!");
+    new_draw_info(NDI_UNIQUE, 0,op," ");
+    Roll_Again(op);
+    op->contr->state=ST_ROLL_STAT;
+    return;
+  }
+  strcpy(op->contr->password,crypt_string(op->contr->write_buf+1,NULL));
+  op->contr->state=ST_ROLL_STAT;
+  check_login(op);
+  return;
+}
+
+
+int explore_mode() {
+#ifdef EXPLORE_MODE
+  player *pl;
+  for (pl = first_player; pl != (player *) NULL; pl = pl->next)
+    if (pl->explore)
+      return 1;
+#endif
+  return 0;
+}
+
+
+#ifdef SET_TITLE
+int command_title (object *op, char *params)
+{
+    char buf[MAX_BUF];
+
+    if(params == NULL) {
+	if(op->contr->own_title[0]=='\0')
+	    sprintf(buf,"Your title is '%s'.", op->contr->title);
+	else
+	    sprintf(buf,"Your title is '%s'.", op->contr->own_title);
+	new_draw_info(NDI_UNIQUE, 0,op,buf);
+	return 1;
+    }
+    if(strcmp(params, "clear")==0 || strcmp(params, "default")==0) {
+	if(op->contr->own_title[0]=='\0')
+	    new_draw_info(NDI_UNIQUE, 0,op,"Your title is the default title.");
+	else
+	    new_draw_info(NDI_UNIQUE, 0,op,"Title set to default.");
+	op->contr->own_title[0]='\0';
+	return 1;
+    }
+
+    if((int)strlen(params) >= MAX_NAME) {
+	new_draw_info(NDI_UNIQUE, 0,op,"Title too long.");
+	return 1;
+    }
+    strcpy(op->contr->own_title, params);
+    return 1;
+}
+#endif /* SET_TITLE */
+
+int command_save (object *op, char *params)
+{
+    if (blocks_cleric(op->map, op->x, op->y)) {
+	new_draw_info(NDI_UNIQUE, 0, op, "You can not save on unholy ground");
+    } else {
+	if(save_player(op,1))
+	    new_draw_info(NDI_UNIQUE, 0,op,"You have been saved.");
+	else
+	    new_draw_info(NDI_UNIQUE, 0,op,"SAVE FAILED!");
+    }
+    return 1;
+}
+
+
+int command_peaceful (object *op, char *params)
+{
+    if((op->contr->peaceful=!op->contr->peaceful))
+	new_draw_info(NDI_UNIQUE, 0,op,"You will not attack other players.");
+    else
+	new_draw_info(NDI_UNIQUE, 0,op,"You will attack other players.");
+    return 1;
+}
+
+
+
+int command_wimpy (object *op, char *params)
+{
+    int i;
+    char buf[MAX_BUF];
+
+    if (params==NULL || !sscanf(params, "%d", &i)) {
+	sprintf(buf, "Your current wimpy level is %d.", op->run_away);
+	new_draw_info(NDI_UNIQUE, 0,op, buf);
+	return 1;
+    }
+    sprintf(buf, "Your new wimpy level is %d.", i);
+    new_draw_info(NDI_UNIQUE, 0,op, buf);
+    op->run_away = i;
+    return 1;
+}
+
+
+int command_brace (object *op, char *params)
+{
+  if (!params)
+    op->contr->braced =!op->contr->braced;
+  else
+    op->contr->braced =onoff_value(params);
+
+  if(op->contr->braced)
+    new_draw_info(NDI_UNIQUE, 0,op, "You are braced.");
+  else
+    new_draw_info(NDI_UNIQUE, 0,op, "Not braced.");
+
+      fix_player(op);
+  return 0;
+}
+

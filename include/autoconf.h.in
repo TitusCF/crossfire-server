@@ -195,6 +195,9 @@
 /* Define if you have the m library (-lm).  */
 #undef HAVE_LIBM
 
+/* Define if you have the des library (-ldes).  */
+#undef HAVE_LIBDES
+
 /* Just a phoney so that we will recompile if the user changes the
  * prefix or libdir
  */

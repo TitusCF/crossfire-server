@@ -17,6 +17,38 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 CVS changes since last release:
 
+MSW 2000/12/17: Various changes.  Note that the scope of files in this checkin
+make it appear that a lot was changed, but in fact it was mostly just
+re-orginization - very little code has actually changed.
+include/autoconf.h.in: Add HAVE_LIBDES to file.
+include/config.h: Remove comments after defines for MAP_MIN/MAX timeouts.
+	This just removes some warnings during compile.  comments are now
+	on lines by themselves.
+include/player.h: remove shootstrength for player structure.  It was unused.
+server/Makefile.in: remove input.c file, add c_range.c file.
+server/c_chat.c: remove command_last, add command_shout and command_tell
+	from input.c to this file.  Also fix bug in command tell which
+	would let players crash server at will.
+server/c_misc.c,server/c_object.c: Relocate many functions
+	 from input.c into these files.
+server/c_move.c, server/c_new.c: Add standard crossfire banner comment.
+server/c_range.c: New file - contains range related commands, 
+	including spell casting (relocated from input.c)
+server/c_wiz.c: move command_invisible from input.c into this file.
+server/commands.c: Remove unused commands (bell, last, strength)
+server/input.c: removed file.
+server/main.c: Change HAVE_DES_H to HAVE_LIBDES
+server/player.c: When choosing a race, draw it facing south for best
+	presentation of image.
+server/spell_util.c: Remove dead code (#if 0 shootstrength related
+	code)
+socket/loop.c: remove unused variables.
+NOTE: Due to the addition/removal of files, you will need to do
+'config.status; make depend; make' from the top level directory for
+everything to be compiled properly.
+End of MSW 2000/12/17 checkin.
+
+
 PeterM:  2000/12/17: Various problems fixed in
 random_maps/*.c:  endless loop removed,
 exit leading to blocked area of spiral fixed.

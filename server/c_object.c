@@ -967,3 +967,335 @@ int command_mark(object *op, char *params)
     return 0;	/*shouldnt get here */
 }
 
+
+/* op is the player
+ * tmp is the monster being examined.
+ */
+void examine_monster(object *op,object *tmp) {
+    object *mon=tmp->head?tmp->head:tmp;
+
+    if(QUERY_FLAG(mon,FLAG_UNDEAD))
+	new_draw_info(NDI_UNIQUE, 0,op,"It is an undead force.");
+    if(mon->level>op->level)
+	new_draw_info(NDI_UNIQUE, 0,op,"It is likely more powerful than you.");
+    else if(mon->level<op->level)
+	new_draw_info(NDI_UNIQUE, 0,op,"It is likely less powerful than you.");
+    else
+	new_draw_info(NDI_UNIQUE, 0,op,"It is probably as powerful as you.");
+    if(mon->attacktype&AT_ACID)
+	new_draw_info(NDI_UNIQUE, 0,op,"You seem to smell an acrid odor.");
+
+    /* Anyone know why this used to use the clone value instead of the
+     * maxhp field?  This seems that it should give more accurate results.
+     */
+    switch((mon->stats.hp+1)*4/(mon->stats.maxhp+1)) { /* From 1-4 */
+	case 1:
+	    new_draw_info(NDI_UNIQUE, 0,op,"It is in a bad shape.");
+	    break;
+	case 2:
+	    new_draw_info(NDI_UNIQUE, 0,op,"It is hurt.");
+	    break;
+	case 3:
+	    new_draw_info(NDI_UNIQUE, 0,op,"It is somewhat hurt.");
+	    break;
+	case 4:
+	    new_draw_info(NDI_UNIQUE, 0,op,"It is in excellent shape.");
+	    break;
+    }
+    if(present_in_ob(POISONING,mon)!=NULL)
+	new_draw_info(NDI_UNIQUE, 0,op,"It looks very ill.");
+}
+
+char *long_desc(object *tmp) {
+  static char buf[VERY_BIG_BUF];
+  char *cp;
+
+  if(tmp==NULL)
+    return "";
+  buf[0]='\0';
+  switch(tmp->type) {
+  case RING:
+  case SKILL:
+  case WEAPON:
+  case ARMOUR:
+  case BRACERS:
+  case HELMET:
+  case SHIELD:
+  case BOOTS:
+  case GLOVES:
+  case AMULET:
+  case GIRDLE:
+  case BOW:
+  case ARROW:
+  case CLOAK:
+  case FOOD:
+  case DRINK:
+  case FLESH:
+    if(*(cp=describe_item(tmp))!='\0') {
+	int len;
+
+	strncpy(buf,query_name(tmp), VERY_BIG_BUF-1);
+	buf[VERY_BIG_BUF-1]=0;
+	len=strlen(buf);
+	if (len<VERY_BIG_BUF-5) {
+	    /* Since we know the length, we save a few cpu cycles by using
+	     * it instead of calling strcat */
+	    strcpy(buf+len," ");
+	    len++;
+	    strncpy(buf+len, cp, VERY_BIG_BUF-len-1);
+	    buf[VERY_BIG_BUF-1]=0;
+	}
+    }
+  }
+  if(buf[0]=='\0') {
+	strncpy(buf,query_name(tmp), VERY_BIG_BUF-1);
+	buf[VERY_BIG_BUF-1]=0;
+  }
+
+  return buf;
+}
+
+void examine(object *op, object *tmp) {
+    char buf[VERY_BIG_BUF];
+    int i;
+
+    if (tmp == NULL || tmp->type == CLOSE_CON)
+	return;
+
+    /* Eneq(csd.uu.se): If NO_PRETEXT is defined we should only print the name. */
+    if (QUERY_FLAG(tmp, FLAG_NO_PRETEXT)) {
+	strncpy(buf, long_desc(tmp), VERY_BIG_BUF-1);
+	buf[VERY_BIG_BUF-1]=0;
+    }
+    else {
+	strcpy(buf,"That is ");
+	strncat(buf, long_desc(tmp), VERY_BIG_BUF-strlen(buf)-1);
+	buf[VERY_BIG_BUF-1]=0;
+    }
+
+    new_draw_info(NDI_UNIQUE, 0,op,buf);
+    buf[0]='\0';
+    switch(tmp->type) {
+	case SPELLBOOK:
+	    if(QUERY_FLAG(tmp, FLAG_IDENTIFIED) && tmp->stats.sp > 0 && tmp->stats.sp <= NROFREALSPELLS ) {
+		if(!strcmp(tmp->arch->name,"cleric_book"))
+		    sprintf(buf,"%s is a %d level prayer.",
+			    spells[tmp->stats.sp].name,spells[tmp->stats.sp].level);
+		else
+		    sprintf(buf,"%s is a %d level spell.",
+			    spells[tmp->stats.sp].name,spells[tmp->stats.sp].level);
+	    }
+	break;
+
+	case BOOK:
+	    if(tmp->msg!=NULL)
+		strcpy(buf,"Something is written in it.");
+	break;
+
+	case CONTAINER:
+	    if(tmp->race!=NULL) {
+		if(tmp->weight_limit && tmp->stats.Str<100)
+		    sprintf (buf,"It can hold only %s and its weight limit is %.1f kg.", 
+			 tmp->race, tmp->weight_limit/(10.0 * (100 - tmp->stats.Str)));
+		else
+		    sprintf (buf,"It can hold only %s.", tmp->race);
+	    } else
+		if(tmp->weight_limit && tmp->stats.Str<100)
+		    sprintf (buf,"Its weight limit is %.1f kg.", 
+			     tmp->weight_limit/(10.0 * (100 - tmp->stats.Str)));
+	    break;
+
+	case WAND:
+	    if(QUERY_FLAG(tmp, FLAG_IDENTIFIED))
+		sprintf(buf,"It has %d charges left.",tmp->stats.food);
+	    break;
+    }
+
+    if(buf[0]!='\0')
+	new_draw_info(NDI_UNIQUE, 0,op,buf);
+
+    if(tmp->material && !tmp->msg) {
+	strcpy(buf,"It is made of: ");
+	for(i=0; i < NROFMATERIALS; i++) {
+	  if(tmp->material & (1<<i)) {
+	    strcat(buf, material[i].name);
+	    strcat(buf, " ");
+	  }
+	}
+	new_draw_info(NDI_UNIQUE, 0,op,buf);
+    }
+
+    if(tmp->weight) {
+	sprintf(buf,tmp->nrof>1?"They weigh %3.3f kg.":"It weighs %3.3f kg.",
+            (tmp->nrof?tmp->weight*tmp->nrof:tmp->weight)/1000.0);
+	new_draw_info(NDI_UNIQUE, 0,op,buf);
+    }
+
+    if(tmp->value&&!QUERY_FLAG(tmp, FLAG_STARTEQUIP)) {
+	if(QUERY_FLAG(tmp, FLAG_UNPAID))
+	    sprintf(buf,"%s would cost you %s.",
+		    tmp->nrof>1?"They":"It",query_cost_string(tmp,op,F_BUY));
+	else
+	    sprintf(buf,"You would get %s for %s.",
+		    query_cost_string(tmp,op,F_SELL), tmp->nrof>1?"them":"it");
+	new_draw_info(NDI_UNIQUE, 0,op,buf);
+    }
+
+    if(QUERY_FLAG(tmp, FLAG_MONSTER))
+	examine_monster(op,tmp);
+   
+
+    /* Does the object have a message?  Don't show message for all object
+     * types - especially if the first entry is a match
+     */
+    if(tmp->msg && tmp->type != EXIT && tmp->type != BOOK && 
+       tmp->type != CORPSE && !QUERY_FLAG(tmp, FLAG_WALK_ON) && 
+       strncasecmp(tmp->msg, "@match",7)) {
+
+	/* This is just a hack so when identifying hte items, we print
+	 * out the extra message
+	 */
+	if (need_identify(tmp) && QUERY_FLAG(tmp, FLAG_IDENTIFIED))
+	    new_draw_info(NDI_UNIQUE, 0,op, "The object has a story:");
+
+	new_draw_info(NDI_UNIQUE, 0,op,tmp->msg);
+    }
+    new_draw_info(NDI_UNIQUE, 0,op," "); /* Blank line */
+}
+
+/*
+ * inventory prints object's inventory. If inv==NULL then print player's
+ * inventory. 
+ * [ Only items which are applied are showed. Tero.Haatanen@lut.fi ]
+ */
+void inventory(object *op,object *inv) {
+  object *tmp;
+  char buf[MAX_BUF], *in;
+  int items = 0, length;
+
+  if (inv==NULL && op==NULL) {
+    new_draw_info(NDI_UNIQUE, 0,op,"Inventory of what object?");
+    return;
+  }
+  tmp = inv ? inv->inv : op->inv;
+
+  while (tmp) {
+    if ((!tmp->invisible && 
+        (inv==NULL || inv->type == CONTAINER || QUERY_FLAG(tmp, FLAG_APPLIED)))
+         || (!op || QUERY_FLAG(op, FLAG_WIZ)))
+      items++;
+    tmp=tmp->below;
+  }
+  if (inv==NULL) { /* player's inventory */
+    if (items==0) {
+      new_draw_info(NDI_UNIQUE, 0,op,"You carry nothing.");
+      return;
+    } else {
+      length = 28;
+      in = "";
+      if (op)
+        clear_win_info(op);
+      new_draw_info(NDI_UNIQUE, 0,op,"Inventory:");
+    }
+  } else {
+    if (items==0) 
+      return;
+    else { 
+      length = 28;
+      in = "  ";
+    }
+  }
+  for (tmp=inv?inv->inv:op->inv; tmp; tmp=tmp->below) {
+    if((!op||!QUERY_FLAG(op, FLAG_WIZ)) && (tmp->invisible || 
+       (inv && inv->type != CONTAINER && !QUERY_FLAG(tmp, FLAG_APPLIED))))
+      continue;
+    if((!op || QUERY_FLAG(op, FLAG_WIZ)))
+      (void) sprintf(buf,"%s- %-*.*s (%5d) %-8s", in, length, length,
+		     query_name(tmp), tmp->count,query_weight(tmp));
+    else
+      (void) sprintf(buf,"%s- %-*.*s %-8s", in, length+8, 
+		     length+8, query_name(tmp),
+                     query_weight(tmp));
+    new_draw_info(NDI_UNIQUE, 0,op,buf);
+  }
+  if(!inv && op) {
+    sprintf(buf,"%-*s %-8s",
+            41,"Total weight :",query_weight(op));
+    new_draw_info(NDI_UNIQUE, 0,op,buf);
+  }
+}
+
+
+int command_pickup (object *op, char *params)
+{
+      int i;
+
+  if(!params) {
+    op->contr->count_left=0;
+    set_pickup_mode(op, (op->contr->mode > 6)? 0: op->contr->mode+1);
+    return 0;
+  }
+  if(params==NULL || !sscanf(params, "%d", &i) || i<0 ) {
+        new_draw_info(NDI_UNIQUE, 0,op,"Usage: pickup <0-7> or <value_density> .");
+        return 1;
+      }
+      set_pickup_mode(op,i);
+      return 1;
+}
+
+void set_pickup_mode(object *op,int i) {
+  switch(op->contr->mode=i) {
+    case 0:
+      new_draw_info(NDI_UNIQUE, 0,op,"Mode: Don't pick up.");
+      break;
+    case 1:
+      new_draw_info(NDI_UNIQUE, 0,op,"Mode: Pick up one item.");
+      break;
+    case 2:
+      new_draw_info(NDI_UNIQUE, 0,op,"Mode: Pick up one item and stop.");
+      break;
+    case 3:
+      new_draw_info(NDI_UNIQUE, 0,op,"Mode: Stop before picking up.");
+      break;
+    case 4:
+      new_draw_info(NDI_UNIQUE, 0,op,"Mode: Pick up all items.");
+      break;
+    case 5:
+      new_draw_info(NDI_UNIQUE, 0,op,"Mode: Pick up all items and stop.");
+      break;
+    case 6:
+      new_draw_info(NDI_UNIQUE, 0,op,"Mode: Pick up all magic items.");
+      break;
+    case 7:
+      new_draw_info(NDI_UNIQUE, 0,op,"Mode: Pick up all coins and gems");
+      break;
+    }
+}
+
+#ifdef SEARCH_ITEMS
+int command_search_items (object *op, char *params)
+{
+      char buf[MAX_BUF];
+  if(params == NULL) {
+	if(op->contr->search_str[0]=='\0') {
+	  new_draw_info(NDI_UNIQUE, 0,op,"Example: search magic+1");
+	  new_draw_info(NDI_UNIQUE, 0,op,"Would automatically pick up all");
+	  new_draw_info(NDI_UNIQUE, 0,op,"items containing the word 'magic+1'.");
+	  return 1;
+	}
+	op->contr->search_str[0]='\0';
+	new_draw_info(NDI_UNIQUE, 0,op,"Search mode turned off.");
+	fix_player(op);
+	return 1;
+  }
+  if((int)strlen(params) >= MAX_BUF) {
+	new_draw_info(NDI_UNIQUE, 0,op,"Search string too long.");
+	return 1;
+      }
+  strcpy(op->contr->search_str, params);
+      sprintf(buf,"Searching for '%s'.",op->contr->search_str);
+      new_draw_info(NDI_UNIQUE, 0,op,buf);
+  fix_player(op);
+      return 1;
+    }
+#endif /* SEARCH_ITEMS */

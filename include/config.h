@@ -695,8 +695,10 @@
  * maps.
  */
 
-#define MAP_MAXTIMEOUT	1000	/* How many ticks till maps are swapped out */
-#define MAP_MINTIMEOUT  500	/* At least that many ticks before swapout */
+/* How many ticks till maps are swapped out */
+#define MAP_MAXTIMEOUT	1000
+/* At least that many ticks before swapout */
+#define MAP_MINTIMEOUT  500
 
 /*
  * MAP_RESET tells whether map is reset after some time.  If it is defined,

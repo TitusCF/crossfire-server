@@ -151,7 +151,7 @@ char *crypt_string(char *str, char *salt) {
   else
     s[0]= salt[0],
     s[1]= salt[1];
-#ifdef HAVE_DES_H
+#ifdef HAVE_LIBDES
   return (char*)des_crypt(str,s);
 #else
   return (char*)crypt(str,s);

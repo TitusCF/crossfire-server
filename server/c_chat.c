@@ -48,8 +48,56 @@ int command_say (object *op, char *params)
     return 0;
 }
 
-int command_last (object *op, char *params)
+int command_shout (object *op, char *params)
 {
-  new_draw_info(NDI_UNIQUE, 0,op, "Last not yet implemented.");
-  return 0;
+    char buf[MAX_BUF];
+    if (params == NULL) {
+	new_draw_info(NDI_UNIQUE, 0,op,"Shout what?");
+	return 1;
+    }
+    strcpy(buf,op->name);
+    strcat(buf," shouts: ");
+    strncat(buf, params, MAX_BUF-30);
+    buf[MAX_BUF - 30] = '\0';
+    new_draw_info(NDI_UNIQUE | NDI_ALL | NDI_RED, 1, NULL, buf);
+    return 1;
 }
+
+int command_tell (object *op, char *params)
+{
+    char buf[MAX_BUF],*name = NULL ,*msg = NULL;
+    player *pl;
+    if ( params != NULL){
+        name = params;
+        msg = strchr(name, ' ');
+        if(msg){
+	     *(msg++)=0;
+	     if(*msg == 0)
+		msg = NULL;
+        }
+    }
+
+    if( name == NULL ){
+	new_draw_info(NDI_UNIQUE, 0,op,"Tell whom what?");
+	return 1;
+    } else if ( msg == NULL){
+	sprintf(buf, "Tell %s what?", name);
+	new_draw_info(NDI_UNIQUE, 0,op,buf);
+	return 1;
+    }
+
+
+    sprintf(buf,"%s tells you:",op->name);
+    strncat(buf, msg, MAX_BUF-strlen(buf)-1);
+    buf[MAX_BUF-1]=0;
+
+    for(pl=first_player;pl!=NULL;pl=pl->next)
+      if(strncasecmp(pl->ob->name,name,MAX_NAME)==0)
+      {
+	new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, pl->ob, buf);
+        return 1;
+      }
+    new_draw_info(NDI_UNIQUE, 0,op,"No such player.");
+    return 1;
+  }
+

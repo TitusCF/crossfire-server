@@ -112,7 +112,6 @@ typedef struct pl {
   float last_weapon_sp;    /* Last turn */
   uint16 last_flags;	    /* fire/run on flags for last tick */
   uint32  last_weight_limit;	/* Last weight limit transmitted to client */
-  short shootstrength;     /* Strength of spell */
   object *golem;           /* Which golem is controlled */
   living orig_stats;       /* Can be less in case of poisoning */
   living last_stats;       /* Last stats drawn with draw_stats() */
