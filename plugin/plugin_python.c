@@ -7057,6 +7057,8 @@ MODULEAPI void initCFPython()
 {
         PyObject *m, *d;
         int i;
+        FILE *scriptfile;
+        const char *scriptname;
 
         printf( "PYTHON - Start initCFPython.\n");
 
@@ -7070,4 +7072,14 @@ MODULEAPI void initCFPython()
             CustomCommand[i].script = NULL;
             CustomCommand[i].speed  = 0.0;
         };
+
+        StackPosition++;
+        scriptname = create_pathname("python/events/python_init.py");
+        scriptfile = fopen(scriptname, "r");
+        if (scriptfile != NULL)
+        {
+                PyRun_SimpleFile(scriptfile, scriptname);
+                fclose(scriptfile);
+        }
+        StackPosition--;
 };

@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+plugin/plugin_python.c: Run the script python_init.py right after
+   initializing the interpreter.
+Andreas Kirschbaum 2004-10-21
+
 server/c_party.c: actually warn party members of password change. Notify when
    someone joins party.
 Ryo 2004-10-21
