@@ -17,6 +17,35 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+doc updates: Rebuild the doc files, but most of this is fixing some of the
+doc build stuff to correctly working with the new image set naming
+scheme and fixing some bugs.  Some doc is certainly out of date - the
+playbook doesn't mention the classes for example.
+doc/handbook.ps, doc/spoiler.ps: rebuilt
+Note: all the doc/playbook changes also apply to the same files in
+  doc/playbook-html.
+doc/playbook/Makefile.in, doc/playbook/makeps, doc/playbook/makeps.pl:
+   replace the awk makeps script with the perl one.
+doc/playbook/items-extract: Don't show invisible items.
+doc/playbook/levels-extract: Update so that it properly finds the declaration
+   of the levels in living.c
+doc/playbook/treas1-extract: Clear type when we get a new Object header.  was
+   resulting in duplicate entries for the characters.
+doc/playbook/treas2-extract: Don't include forces of the no_class_face_change
+   as part of characters treasures
+doc/playbook-html/chap1.html: Update ftp site information.
+doc/spoiler/Makefile.in, doc/spoiler/makeps.pl, doc/spoiler/makeps:
+     replace the awk makeps script with the perl one.
+doc/spoiler/items-extract: Add a space after the name match so that it won't
+   match on the name_pl field.
+doc/spoiler-html/items-extract:  Add a space after the name match so that it won't
+   match on the name_pl field.
+doc/spoiler-html/makeps.pl: Update to handle new naming scheme for images.
+doc/spoiler-html/spoiler.html: rebuilt.
+lib/Makefile.in: Fix error in variable not being surrounded by parens.
+MSW 2002-06-30
+
+
 server/rune.c: Fix bug that allowed players to use marking runes to create
   arbitrary objects by embedding a endmsg in the string.
 MSW 2002-06-26

@@ -44,7 +44,7 @@ INSTALLNEWFILES = settings /motd skill_params spell_params \
 BININSTALL = $(srcdir)/collect.pl $(srcdir)/util.pl
 
 ALLFILES = $(SRCS) README \
-	Makefile.in .collect-stamp  $(INSTALLFILES) $(BININSTALL) $INSTALLNEWFILES  \
+	Makefile.in .collect-stamp  $(INSTALLFILES) $(BININSTALL) $(INSTALLNEWFILES)  \
 	checkarch.pl.in collect.pl.in
 	
 
