@@ -263,6 +263,9 @@ treasureone random_knowledge
   arch scroll_missile_weap
     chance 25
   more
+  arch scroll_melee_weap
+    chance 10
+  more
   arch scroll_praying
     chance 18
   more
