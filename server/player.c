@@ -1665,9 +1665,9 @@ void fire_misc_object(object *op, int dir)
 	    if (item->type== ROD)
 		new_draw_info_format(NDI_UNIQUE, 0,op,
 			     "The %s whines for a while, but nothing happens.", query_base_name(item,0));
-	    else
-	    new_draw_info(NDI_UNIQUE, 0,op,
-			  "No matter how hard you try you can't get another note out.");
+		else
+	    new_draw_info_format(NDI_UNIQUE, 0,op,
+			  "The %s needs more time to charge.", query_base_name(item,0));
 	    return;
 	}
     }
