@@ -17,6 +17,24 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Added new dragon race to crossfire.
+Players of this dragon race can gain resistances
+by eating the flesh of their defeated foes.
+They can also specify in a certain resistance-type
+and gain various abilities when increasing levels.
+This "focus" can be switched by eating very special
+As announced on cf-devel, this is the patch which
+adds a new dragon-race to Crossfire.
+Players of this dragon race can gain resistances
+by eating the flesh of their defeated foes.
+They can also specify in a certain resistance-type
+and gain various abilities when increasing levels.
+This "focus" can be switched by eating very special
+flesh, which will be available for sale.
+Dragon players gain special titles which cannot
+be overwritten by manually set titles.
+AndreasV 2002-03-01
+
 lib/collect.pl.in: Modified so that it uses the image.base.xyz.png to make
 sure each listed face in objects has an image, and not the old xbm images
 for that task.  Also, ignore all files that end in .png, .xpm, or the
