@@ -903,6 +903,7 @@ void init_signals() {
 #ifndef WIN32 /* init_signals() remove signals */
   signal(SIGHUP,rec_sighup);
   signal(SIGINT,rec_sigint);
+#ifndef DEBUG
   signal(SIGQUIT,rec_sigquit);
   signal(SIGSEGV,rec_sigsegv);
   signal(SIGPIPE,rec_sigpipe);
@@ -910,6 +911,7 @@ void init_signals() {
   signal(SIGBUS,rec_sigbus);
 #endif
   signal(SIGTERM,rec_sigterm);
+#endif
 #endif /* win32 */
 }
 
