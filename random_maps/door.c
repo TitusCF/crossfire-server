@@ -29,6 +29,20 @@
 #include <random_map.h>
 #include <rproto.h>
 
+/* where are there adjacent doors or walls? */
+int surround_check2(char **layout,int i,int j,int Xsize, int Ysize){
+  /* 1 = door or wall to left,
+	  2 = door or wall to right,
+	  4 = door or wall above
+	  8 = door or wall below */
+  int surround_index = 0;
+  if((i > 0) && (layout[i-1][j]=='D'||layout[i-1][j]=='#')) surround_index +=1;
+  if((i < Xsize-1) && (layout[i+1][j]=='D'||layout[i+1][j]=='#')) surround_index +=2;
+  if((j > 0) && (layout[i][j-1]=='D'||layout[i][j-1]=='#')) surround_index +=4;
+  if((j < Ysize-1) && (layout[i][j+1]=='D'&&layout[i][j+1]=='#')) surround_index +=8;
+  return surround_index;
+}
+
 void put_doors(mapstruct *the_map,char **maze , char *doorstyle, RMParms *RP) {
   int i,j;
   mapstruct *vdoors;
@@ -45,7 +59,7 @@ void put_doors(mapstruct *the_map,char **maze , char *doorstyle, RMParms *RP) {
       if(maze[i][j]=='D') {
 		  int sindex;
 		  object *this_door,*new_door;
-		  sindex = surround_flag(maze,i,j,RP);
+		  sindex = surround_check2(maze,i,j,RP->Xsize,RP->Ysize);
 		  if(sindex==3) 
 			 this_door=pick_random_object(hdoors);
 		  else
