@@ -747,7 +747,7 @@ void process_players1(mapstruct *map)
 	}
 #endif
 	do_some_living(pl->ob);
-	draw(pl->ob);
+/*	draw(pl->ob);*/	/* updated in socket code */
     }
 }
 

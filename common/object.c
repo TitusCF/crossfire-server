@@ -774,10 +774,13 @@ void update_object(object *op) {
 	 */
 
 	if (player && player!=op && !player->contr->socket.update_look) {
+	    player->contr->socket.update_look=1;
+#if 0
 	    for (tmp=op; tmp!=NULL; tmp=tmp->above)
 		if (QUERY_FLAG(tmp,FLAG_IS_FLOOR) && !tmp->invisible) break;
 
 	    if (!tmp) esrv_update_item_func(UPD_FACE, player, op);
+#endif
 	}
     }
 
