@@ -1173,7 +1173,7 @@ void add_abilities(object *op, object *change) {
     SET_FLAG(op,FLAG_MAKE_INVIS);	
   if (QUERY_FLAG(change,FLAG_STAND_STILL)) {
     CLEAR_FLAG(op,FLAG_ANIMATE);
-    op->speed = 0.0;
+    /*op->speed = 0.0; */  /* why was this done? */
     update_ob_speed(op);
   }
   if(change->nrof) op->nrof=RANDOM()%((int) change->nrof) + 1;
