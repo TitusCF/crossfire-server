@@ -60,20 +60,23 @@ sub traverse {
 # Empty directive to prevent warnings below
 	} elsif( $file =~ /.*\.arc$/) {	# ARCHETYPE
 	    $archsNum++;
-	    push(@archs,$file);
-	} elsif( $file =~ /.*$faceExt$/) { # FACE
+	    push(@archs,$file);n
+	} elsif( $name =~ /(\S+)\.base($faceExt)\.png$/) { # FACE
+
 	    $facesNum++;
-	    &warn("duplicate face ".$name." in ".$dir." and $faces{$name}")
-		if $faces{$name};
-	    $faces{$name} = $file;
-	    # &warn($file." has no archetype") 
-	    #	if ! -r $dir."/".&basename($file,$faceExt).".arc";
-	} elsif( $file =~ /.*$faceExt.xpm$/ || $file =~ /.$faceExt.png$/ ) { # FACE
-# Empty directive to prevent warnings below
+	    $im_name = "$1$2";
+	    &warn("duplicate face $im_name in ".$dir." and $faces{$im_name}")
+		if $faces{$im_name};
+	    $faces{$im_name} = $im_name;
+
 	} elsif ( $file =~ /.*\.face$/) {	# Face information file
 	    $facesFileNum++;
 	    push(@face_files, $file);
 	} 
+	elsif ( $file =~ /\.png$/ || $file =~ /\.xpm$/ || $file =~ /$faceExt$/) {
+	# we cover many files we probably shouldn't, but oh well.
+	# we just don't want complaints about all of these.
+	}
 	# ignore a couple of the more common 'junk' files that are not
 	# really junk.
 	elsif (($name ne "README") && ($name ne "CVS")) {

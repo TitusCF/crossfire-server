@@ -17,6 +17,15 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+lib/collect.pl.in: Modified so that it uses the image.base.xyz.png to make
+sure each listed face in objects has an image, and not the old xbm images
+for that task.  Also, ignore all files that end in .png, .xpm, or the
+face extension - consider them legitimate files for the arch directory.
+MSW 2002-02-25
+
+socket/image.c: Change type of image data to be uint8 from char.  Checksums
+were being incorrectly calculated when using the char type.  MSW 2002-02-25
+
 server/main.c: If exit is damned, update players death & WoR home-position
     and delete town portal.
 server/apply.c: Fix bug in move_apply. return was used instead of goto

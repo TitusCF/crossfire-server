@@ -42,7 +42,7 @@
 #define MAX_FACE_SETS	20
 
 typedef struct FaceInfo {
-  char *data;		    /* image data */
+  uint8 *data;		    /* image data */
   uint16 datalen;	    /* length of the xpm data */
   uint32 checksum;	    /* Checksum of face data */
 } FaceInfo;
