@@ -1767,7 +1767,10 @@ void move_player_attack(object *op, int dir)
 	 * on the space
 	 */
 	while (tmp!=NULL) {
-	    if (tmp == op) continue;
+	    if (tmp == op) {
+		tmp=tmp->above;
+		continue;
+	    }
 	    if (QUERY_FLAG(tmp,FLAG_ALIVE)) {
 		mon = tmp;
 		break;

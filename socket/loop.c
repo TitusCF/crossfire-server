@@ -188,6 +188,8 @@ void Handle_Oldsocket(NewSocket *ns)
 	}
     } while (ns->inbuf.buf[ns->inbuf.len++]!='\n');
 
+    ns->inbuf.buf[ns->inbuf.len]=0;
+
     cp = strchr(ns->inbuf.buf, ' ');
     if (cp) {
 	/* Replace the space with a null, skip any more spaces */

@@ -83,7 +83,7 @@ static treasurelist *get_empty_treasurelist() {
  */
 
 static treasure *get_empty_treasure() {
-  treasure *t = (treasure *) malloc(sizeof(treasure));
+  treasure *t = (treasure *) calloc(1,sizeof(treasure));
   if(t==NULL)
     fatal(OUT_OF_MEMORY);
   t->item=NULL;
