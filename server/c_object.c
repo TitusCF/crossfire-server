@@ -29,6 +29,7 @@
 
 #include <global.h>
 #include <loader.h>
+#include <skills.h>
 #ifndef __CEXTRACT__
 #include <sproto.h>
 #endif
@@ -72,10 +73,318 @@ object *find_best_object_match(object *pl, char *params)
     return best;
 }
 
+/*
+ * Notes about item creation:
+ * 1) It is similar in syntax to the dm create command.
+ * 2) It requires a player to have a buildfacility below him, a tool in his
+ *    possesion, and materials to build with.
+ * 3) The random roll is done in a loop, so if the player tries to make 100,
+ *    he makes 100 checks.
+ * 4) Exp is given only on succ. creations, but materials are used regardless.
+ * 5) The properties of the tool are stored in tooltype and weapontype.
+ * 6) The properties of the buildfacilities are stored in tooltype.
+ * 7) For now, all ingredients must be type 73 INORGANIC.
+ * 8) The player can attempt to create any arch, but item_power and value
+ *    will prevent most artifacts from being built.
+ * 9) The code allows magic bonuses up to +5.  It is not trivial to make a +5
+ *    item.
+ *10) If you ever extend it beyond +5, add more gemtypes.  Currently the code
+ *    looks for gemcost gems per item, per plus.  So a +5 item requires
+ *    gemcost pearls,rubies,emeralds,sapphires and diamonds.  Not cheap.
+ *11) There are a zillion if statements in this code.  Alot of checking takes
+ *    place here.  All of them are needed.
+ */
+
+int command_build (object *pl, char *params) {
+    object *marked, *facility, *tool, *newobj, *tmp;
+    archetype *at;
+    int skillnr, obpow, number, bonus, mneed, nrof, magic, i, nummade, found;
+    int gemcost;
+    char *bp;
+    materialtype_t *mt;
+
+    /* NOTE THIS FUNCTION IS CURRENTLY DISABLED */
+    return 0;
+
+    if (!params) {
+	new_draw_info(NDI_UNIQUE, 0, pl, "Usage:build [nr] [+magic] <object>");
+	return 0;
+    }
+    marked = find_marked_object(pl);
+    if (marked == NULL || !marked->material || marked->materialname == NULL ||
+	marked->type != INORGANIC) {
+        new_draw_info(NDI_UNIQUE, 0, pl, "You must mark some ingredients.");
+        return 0;
+    }
+    while (*params==' ')
+        params++;
+    bp = params;
+    nrof = 1;
+    magic = 0;
+
+    if (sscanf(bp, "%d ", &nrof)) {
+	if ((bp = strchr(params, ' ')) == NULL) {
+	    new_draw_info(NDI_UNIQUE, 0, pl,
+		"Usage: build [nr] [+magic] <object>");
+	    return 0;
+	}
+	bp++;
+    }
+    if (sscanf(bp, "+%d ", &magic)) {
+        if ((bp = strchr(bp, ' ')) == NULL) {
+	    new_draw_info(NDI_UNIQUE, 0, pl,
+		"Usage: build [nr] [+magic] <object>");
+	    return 0;
+	}
+	bp++;
+    }
+    while (*bp==' ')
+	bp++;
+    at=find_archetype_by_object_name(bp);
+    if (at == NULL) {
+	new_draw_info_format(NDI_UNIQUE, 0, pl,
+	    "You don't know how to make a %s.", bp);
+	return 0;
+    }
+    newobj = get_object();
+    copy_object(&at->clone, newobj);
+
+    skillnr = -1;
+
+    if ((IS_ARMOR(newobj) && newobj->material != M_LEATHER) ||
+	newobj->type == WEAPON)
+	skillnr = SK_SMITH;
+
+    if (IS_ARMOR(newobj) && newobj->material == M_LEATHER)
+	skillnr = SK_WOODSMAN;
+    
+    if (newobj->type == BOW || newobj->type == ARROW)
+	skillnr = SK_BOWYER;
+
+    if (skillnr == -1) {
+	new_draw_info(NDI_UNIQUE, 0, pl, "You don't know how to create that.");
+	return 0;
+    }
+
+    if (!change_skill(pl, skillnr)) {
+	new_draw_info(NDI_UNIQUE, 0, pl,
+	    "You lack the needed skill to make that item.");
+	return 0;
+    }
+    facility = NULL;
+    for (tmp=GET_MAP_OB(pl->map, pl->x, pl->y); tmp; tmp=tmp->above)
+	if (tmp->type == BUILDFAC && tmp->tooltype == newobj->type)
+	    facility=tmp;
+    if (facility == NULL) {
+	new_draw_info(NDI_UNIQUE, 0, pl, "You lack a suitable workspace.");
+	return 0;
+    }
+    if (magic && !(IS_ARMOR(newobj) || IS_WEAPON(newobj))) {
+	new_draw_info(NDI_UNIQUE, 0, pl, "A magical bonus is only valid with "
+	    "armour and weapons.");
+	return 0;
+    }
+
+    /* use newobj->weapontype == tool->weapontype for building weapons */
+    /* use newobj->material == tool->weapontype for building armour */
+    /* newobj->type == tool->tooltype */
+    tool = NULL;
+    for (tmp=pl->inv; tmp; tmp=tmp->below) {
+	if (tmp->type != TOOL)
+	    continue;
+	if (IS_ARMOR(newobj) && (newobj->material & tmp->weapontype) &&
+	    newobj->type == tmp->tooltype) {
+	    if (tool == NULL ||
+		(tool->level + tool->magic) < (tmp->level + tmp->magic))
+		tool = tmp;
+	} else if (IS_WEAPON(newobj) && (newobj->weapontype&tmp->weapontype) &&
+		   newobj->type == tmp->tooltype) {
+	    if (tool == NULL ||
+		(tool->level + tool->magic) < (tmp->level + tmp->magic))
+		tool = tmp;
+	}
+	/* should split off bows arrows and probably bolts around here */
+    }
+    if (tool == NULL) {
+	new_draw_info(NDI_UNIQUE, 0, pl, "You lack the required tools.");
+	return 0;
+    }
+
+    mt = name_to_material(marked->materialname);
+    if (mt == NULL) {
+	new_draw_info(NDI_UNIQUE, 0, pl, "Your raw materials are garbage.");
+	return 0;
+    }
+    if (magic < 0) {
+	new_draw_info(NDI_UNIQUE, 0, pl, "You cannot create cursed objects.");
+	return 0;
+    }
+    if (magic > 0 && SK_level(pl)/20 < magic) {
+	new_draw_info(NDI_UNIQUE, 0, pl, "You are not powerful enough to "
+	    "create such a magical item.");
+	return 0;
+    }
+
+    gemcost = 100;
+    if (newobj->type == ARROW)
+	gemcost = 1;
+    if (magic > 0) {
+	found = 0;
+	for (tmp=GET_MAP_OB(pl->map, pl->x, pl->y); tmp; tmp=tmp->above)
+	    if (tmp->type == GEM && !strcmp(tmp->arch->name, "pearl") &&
+		tmp->nrof >= gemcost*nrof*mt->value/100)
+		found++;
+	if (magic > 1)
+	    for (tmp=GET_MAP_OB(pl->map, pl->x, pl->y); tmp; tmp=tmp->above)
+		if (tmp->type == GEM && !strcmp(tmp->arch->name, "emerald") &&
+		    tmp->nrof >= gemcost*nrof*mt->value/100)
+		    found++;
+	if (magic > 2)
+	    for (tmp=GET_MAP_OB(pl->map, pl->x, pl->y); tmp; tmp=tmp->above)
+		if (tmp->type == GEM && !strcmp(tmp->arch->name, "sapphire") &&
+		    tmp->nrof >= gemcost*nrof*mt->value/100)
+		    found++;
+	if (magic > 3)
+	    for (tmp=GET_MAP_OB(pl->map, pl->x, pl->y); tmp; tmp=tmp->above)
+		if (tmp->type == GEM && !strcmp(tmp->arch->name, "ruby") &&
+		    tmp->nrof >= gemcost*nrof*mt->value/100)
+		    found++;
+	if (magic > 4)
+	    for (tmp=GET_MAP_OB(pl->map, pl->x, pl->y); tmp; tmp=tmp->above)
+		if (tmp->type == GEM && !strcmp(tmp->arch->name, "diamond") &&
+		    tmp->nrof >= gemcost*nrof*mt->value/100)
+		    found++;
+	if (found < magic) {
+	    new_draw_info(NDI_UNIQUE, 0, pl, "You did not provide a suitable "
+	        "sacrifice of gems on the ground to add this much magic.");
+	    return 0;
+	}
+	if (25*pow(3, magic)*mt->value/100 > pl->stats.sp) {
+	    new_draw_info(NDI_UNIQUE, 0, pl, "You do not have enough mana "
+		"to create this object.");
+	    return 0;
+	}
+    }
+
+    /* good lord.  Now we have a tool, facilites, materials (marked) and an
+       object we want to create.  Thats alot of if's */
+
+    obpow = (newobj->item_power + newobj->value/1000 + 1)*mt->value/100;
+    mneed = nrof*((newobj->weight * mt->weight)/80);
+    /* cost can be balanced out by cost to disassemble items for materials */
+    if ((marked->weight * MAX(1, marked->nrof)) < mneed) {
+	new_draw_info_format(NDI_UNIQUE, 0, pl, "You do not have enough %s.",
+	    marked->name);
+	return 0;
+    }
+    if (obpow > (tool->level+tool->magic)) {
+	new_draw_info_format(NDI_UNIQUE, 0, pl, "Your %s is not capable of "
+	    "crafting such a complex item.", tool->name);
+	return 0;
+    }
+    set_abs_magic(newobj, magic);
+    set_materialname(newobj, 1, mt);
+    for (i=0, nummade=0; i< nrof; i++) {
+	bonus = tool->level+tool->magic - obpow;
+	number = rndm(1, 3*obpow*magic);
+	LOG(llevDebug, "command_build: skill:%d obpow:%d rndm:%d tool:%s "
+	    "newobj:%s marked:%s magic:%d\n", SK_level(pl)+bonus, obpow,
+	    number, tool->name, newobj->name, marked->name, magic);
+	if (SK_level(pl)+bonus > number) {
+	    /* wow, we actually created something */
+	    newobj->x = pl->x;
+	    newobj->y = pl->y;
+	    newobj->map = pl->map;
+	    SET_FLAG(newobj, FLAG_IDENTIFIED);
+	    if (i == 0)
+		newobj = insert_ob_in_ob(newobj, pl);
+	    else
+		newobj->nrof++;
+	    esrv_send_item(pl, newobj);
+	    nummade++;
+	} else {
+	    free_object(newobj);
+	    if (bonus < rndm(1, number-SK_level(pl)+bonus)) {
+		new_draw_info_format(NDI_UNIQUE, 0, pl,
+		    "You broke your %s!\n", tool->name);
+		esrv_del_item(pl->contr, tool->count);
+		remove_ob(tool);
+		free_object(tool);
+		break;
+	    }
+	}
+	/* take away materials too */
+	tmp = get_split_ob(marked, MAX(1, mneed/marked->weight));
+	if (tmp)
+	    free_object(tmp);
+	if (marked->nrof < 1)
+	    esrv_del_item(pl->contr, marked->count);
+	else
+	    esrv_send_item(pl, marked);
+    }
+    if (magic)
+	for (tmp=GET_MAP_OB(pl->map, pl->x, pl->y); tmp; tmp=tmp->above)
+	    if (tmp->type == GEM && !strcmp(tmp->arch->name, "pearl") &&
+		tmp->nrof >= gemcost*nrof*mt->value/100)
+		tmp->nrof -= gemcost*nrof*mt->value/100;
+    if (magic > 1)
+	for (tmp=GET_MAP_OB(pl->map, pl->x, pl->y); tmp; tmp=tmp->above)
+	    if (tmp->type == GEM && !strcmp(tmp->arch->name, "emerald") &&
+		tmp->nrof >= gemcost*nrof*mt->value/100)
+		tmp->nrof -= gemcost*nrof*mt->value/100;
+    if (magic > 2)
+	for (tmp=GET_MAP_OB(pl->map, pl->x, pl->y); tmp; tmp=tmp->above)
+	    if (tmp->type == GEM && !strcmp(tmp->arch->name, "sapphire") &&
+		tmp->nrof >= gemcost*nrof*mt->value/100)
+		tmp->nrof -= gemcost*nrof*mt->value/100;
+    if (magic > 3)
+	for (tmp=GET_MAP_OB(pl->map, pl->x, pl->y); tmp; tmp=tmp->above)
+	    if (tmp->type == GEM && !strcmp(tmp->arch->name, "ruby") &&
+		tmp->nrof >= gemcost*nrof*mt->value/100)
+		tmp->nrof -= gemcost*nrof*mt->value/100;
+    if (magic > 4)
+	for (tmp=GET_MAP_OB(pl->map, pl->x, pl->y); tmp; tmp=tmp->above)
+	    if (tmp->type == GEM && !strcmp(tmp->arch->name, "diamond") &&
+		tmp->nrof >= gemcost*nrof*mt->value/100)
+		tmp->nrof -= gemcost*nrof*mt->value/100;
+    if (magic)
+	for (tmp=GET_MAP_OB(pl->map, pl->x, pl->y); tmp; tmp=tmp->above)
+	    if (tmp->type == GEM &&
+		(!strcmp(tmp->arch->name, "diamond") ||
+		 !strcmp(tmp->arch->name, "ruby") ||
+		 !strcmp(tmp->arch->name, "sapphire") ||
+		 !strcmp(tmp->arch->name, "emerald") ||
+		 !strcmp(tmp->arch->name, "pearl"))) {
+		if (tmp->nrof == 0) {
+		    remove_ob(tmp);
+		    free_object(tmp);
+		}
+		if (pl->contr)
+		    pl->contr->socket.update_look=1;
+	    }
+    pl->stats.sp -= 25*pow(3, magic)*mt->value/100;
+    fix_player(pl);
+    if (nummade > 1) {
+	new_draw_info_format(NDI_UNIQUE, 0, pl, "You have created %d %s.",
+	    nummade, query_base_name(newobj, 1));
+    } else if (nummade == 1) {
+	new_draw_info_format(NDI_UNIQUE, 0, pl, "You have created a %s.",
+	    query_base_name(newobj, 0));
+    } else {
+	new_draw_info_format(NDI_UNIQUE, 0, pl,
+	    "You have failed to craft a %s.", query_base_name(newobj, 0));
+	return 0;
+    }
+    if (skills[skillnr].category != EXP_NONE)
+	add_exp(pl, obpow*nummade);
+    return 1;
+}
+
+
 
 int command_uskill ( object *pl, char *params) {
    if (!params) {
-        new_draw_info(NDI_UNIQUE, 0,pl, "Usage: use_skill <skill name>");
+        new_draw_info(NDI_UNIQUE, 0, pl, "Usage: use_skill <skill name>");
         return 0;
    }
    return use_skill(pl,params);
@@ -85,12 +394,12 @@ int command_rskill ( object *pl, char *params) {
    int skillno;
 
    if (!params) {
-        new_draw_info(NDI_UNIQUE, 0,pl, "Usage: ready_skill <skill name>");
+        new_draw_info(NDI_UNIQUE, 0, pl, "Usage: ready_skill <skill name>");
         return 0;
    }
    skillno=lookup_skill_by_name(params);
    if (skillno==-1) {
-	new_draw_info_format(NDI_UNIQUE,0,pl,"Couldn't find the skill %s", params);
+	new_draw_info_format(NDI_UNIQUE, 0, pl, "Couldn't find the skill %s", params);
 	return 0;
    }
    return change_skill(pl,skillno);

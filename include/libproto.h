@@ -385,7 +385,7 @@ extern int rndm(int min, int max);
 extern void decay_objects(mapstruct *m);
 extern materialtype_t *name_to_material(char *name);
 extern void transmute_materialname(object *op, object *change);
-extern void set_materialname(object *op, int difficulty);
+extern void set_materialname(object *op, int difficulty, materialtype_t *nmt);
 /* loader.c */
 extern int lex_load(object *op, int map_flags);
 extern void yyrestart(FILE *input_file);

@@ -363,9 +363,10 @@ char *ring_desc (object *op)
     DESCRIBE_PATH_SAFE(buf, op->path_attuned, "Attuned", &len, VERY_BIG_BUF);
     DESCRIBE_PATH_SAFE(buf, op->path_repelled, "Repelled", &len, VERY_BIG_BUF);
     DESCRIBE_PATH_SAFE(buf, op->path_denied, "Denied", &len, VERY_BIG_BUF);
-    if(op->item_power)
-	sprintf(buf+strlen(buf), "(item_power %+d)",op->item_power);
 
+    /*    if(op->item_power)
+	sprintf(buf+strlen(buf), "(item_power %+d)",op->item_power);
+    */
     if(buf[0] == 0 && op->type!=SKILL)
 	strcpy(buf,"of adornment");
 
@@ -504,7 +505,12 @@ char *query_name(object *op) {
      */
     if (QUERY_FLAG(op,FLAG_KNOWN_MAGICAL) && !QUERY_FLAG(op,FLAG_IDENTIFIED))
 	safe_strcat(buf[use_buf], " (magic)", &len, HUGE_BUF);
-    if(QUERY_FLAG(op,FLAG_APPLIED)) {
+
+    if(op->item_power)
+	sprintf(buf[use_buf]+strlen(buf[use_buf]), "(item_power %+d)",
+	    op->item_power);
+
+    if (QUERY_FLAG(op,FLAG_APPLIED)) {
 	switch(op->type) {
 	  case BOW:
 	  case WAND:
@@ -564,7 +570,9 @@ char *query_base_name(object *op, int plural) {
     if ((IS_ARMOR(op) || IS_WEAPON(op)) && op->materialname)
 	mt = name_to_material(op->materialname);
 
-    if ((IS_ARMOR(op) || IS_WEAPON(op)) && op->materialname && mt) {
+    if ((IS_ARMOR(op) || IS_WEAPON(op)) && op->materialname && mt &&
+	op->arch->clone.materialname != mt->name &&
+	!(op->material & M_SPECIAL)) {
 	strcpy(buf, mt->description);
 	len=strlen(buf);
 	safe_strcat(buf, " ", &len, MAX_BUF);
@@ -924,7 +932,7 @@ char *describe_item(object *op, object *owner) {
 		    sprintf(buf,"(ac%+d)",op->stats.ac);
 		    strcat(retbuf,buf);
 		}
-		if (op->type==WEAPON && op->level>0) {
+		if ((op->type==WEAPON || op->type == BOW) && op->level>0) {
 		    sprintf(buf,"(improved %d/%d)",op->last_eat,op->level);
 		    strcat(retbuf,buf);
 		}

@@ -204,6 +204,7 @@ int command_fire_stop(object *op, char *params);
 int bad_command(object *op, char *params);
 /* c_object.c */
 object *find_best_object_match(object *pl, char *params);
+int command_build(object *pl, char *params);
 int command_uskill(object *pl, char *params);
 int command_rskill(object *pl, char *params);
 int command_apply(object *op, char *params);

@@ -203,11 +203,14 @@ void decay_objects(mapstruct *m)
 
 materialtype_t *name_to_material(char *name)
 {
-    materialtype_t *mt;
+    materialtype_t *mt, *nmt;
 
-    for (mt = materialt; mt != NULL && mt->next != NULL; mt=mt->next) {
-	if (strcmp(name, mt->name) == 0)
+    mt = NULL;
+    for (nmt = materialt; nmt != NULL && nmt->next != NULL; nmt=nmt->next) {
+	if (strcmp(name, nmt->name) == 0) {
+	    mt = nmt;
 	    break;
+	}
     }
     return mt;
 }
@@ -244,22 +247,27 @@ void transmute_materialname(object *op, object *change)
 }
 
 /* set the materialname and type for an item */
-void set_materialname(object *op, int difficulty)
+void set_materialname(object *op, int difficulty, materialtype_t *nmt)
 {
     materialtype_t *mt, *lmt;
     int j;
 
     if (op->materialname != NULL)
 	return;
-    if (op->name == NULL || op->name_pl == NULL)
-	return;
 
-    lmt = NULL;
-    for (mt = materialt; mt != NULL && mt->next != NULL; mt=mt->next) {
-	if (op->material & mt->material && rndm(1, 100) <= mt->chance &&
-	    difficulty >= mt->difficulty &&
-	    (op->magic >= mt->magic || mt->magic == 0))
-	    lmt = mt;
+    if (nmt == NULL) {
+	lmt = NULL;
+	for (mt = materialt; mt != NULL && mt->next != NULL; mt=mt->next) {
+	    if (op->material & mt->material && rndm(1, 100) <= mt->chance &&
+		difficulty >= mt->difficulty &&
+		(op->magic >= mt->magic || mt->magic == 0)) {
+		lmt = mt;
+		if (!(IS_WEAPON(op) || IS_ARMOR(op)))
+		    break;
+	    }
+	}
+    } else {
+	lmt = nmt;
     }
     if (lmt != NULL) {
 	if (op->stats.dam && IS_WEAPON(op)) {

@@ -45,15 +45,8 @@
 #define M_SOFT_METAL		1024
 #define M_BONE			2048
 #define M_ICE			4096
-
-/*
-typedef struct {
-  char  *name;
-  sint8  save[NROFATTACKS];
-} materialtype;
-
-EXTERN materialtype material[NROFMATERIALS];
-*/
+#define M_SPECIAL		8192	/* when displaying names, don't show the
+								   materialname */
 
 typedef struct _materialtype {
     char	*name;
@@ -74,8 +67,6 @@ typedef struct _materialtype {
 } materialtype_t;
 
 EXTERN materialtype_t *materialt;
-
-/* The data is initialized in common/item.c */
 
 #endif	/* MATERIAL_H_1 */
 

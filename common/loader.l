@@ -132,9 +132,9 @@ static void check_loaded_object(object *op) {
     /* objects now have a materialname.  try to patch it in */
     if (!(IS_WEAPON(op) && op->level > 0)) {
         if (op->map != NULL)
-            set_materialname(op, op->map->difficulty);
+            set_materialname(op, op->map->difficulty, NULL);
         else
-            set_materialname(op, 5);
+            set_materialname(op, 5, NULL);
     }
     /* back out the materialname from op->name very limited subset of obs */
     if ((IS_WEAPON(op) || IS_ARMOR(op)) && op->name && op->materialname) {
@@ -573,6 +573,7 @@ A	.+
 ^can_cut{S}		{ /* just ignore for now */ }
 ^can_dam_armour{S}	{ }
 ^weapontype{S}		op->weapontype = IVAL;
+^tooltype{S}            op->tooltype = IVAL;
 ^casting_speed{S}	op->casting_speed = FVAL;
 ^elevation{S}		op->elevation = IVAL;
 ^client_type{S}		op->client_type = IVAL;
@@ -1583,6 +1584,10 @@ char *get_ob_diff(object *op,object *op2) {/* I plan to optimize this heavily */
 
   if(op->weapontype && op->weapontype!=op2->weapontype) {
     sprintf(buf2,"weapontype %d\n",op->weapontype);
+    strcat(buf,buf2);
+  }
+  if(op->tooltype && op->tooltype!=op2->tooltype) {
+    sprintf(buf2,"tooltype %d\n",op->tooltype);
     strcat(buf,buf2);
   }
   if (op->elevation && op->elevation != op2->elevation) {

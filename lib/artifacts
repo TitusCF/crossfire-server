@@ -1135,7 +1135,7 @@ Object bladed steel
 type 100
 resist_physical 10
 dam 2
-material 2
+material 8194
 materialname steel
 weight 125
 value 40
@@ -1165,7 +1165,7 @@ end
 Allowed gloves
 chance 20
 Object oiled leather
-material 8
+material 8200
 materialname leather
 type 100
 resist_acid 25
@@ -2296,7 +2296,7 @@ Pow 1
 Wis 1
 sp 2
 value 2000
-material 128
+material 8320
 materialname astolare
 face cloak_purple.111
 stand_still 1
@@ -2370,7 +2370,7 @@ type 87
 weight 130
 value 300
 ac 3
-material 128
+material 8320
 materialname astolare
 face cloak_white.111
 stand_still 1
@@ -2398,7 +2398,7 @@ type 87
 weight 135
 value 400
 resist_fire 25
-material 128
+material 8320
 materialname asbestos
 face cloak_lgrey.111
 stand_still 1
@@ -2413,7 +2413,7 @@ type 87
 weight 140
 value 350
 resist_cold 25
-material 128
+material 8320
 materialname wool
 face cloak_red.111
 stand_still 1
@@ -2428,7 +2428,7 @@ type 87
 weight 140
 value 350
 resist_electricity 25
-material 128
+material 8320
 materialname rubber
 face cloak_white.111
 stand_still 1
@@ -2443,7 +2443,7 @@ type 87
 value 500
 weight 95
 resist_acid 65
-material 128
+material 8320
 materialname astolare
 face cloak_black.111
 stand_still 1
@@ -2460,7 +2460,7 @@ weight 50
 resist_drain 30
 resist_ghosthit 30
 resist_deplete 100
-material 128
+material 8320
 materialname astolare
 Cha -2
 face cloak_black.111
@@ -2496,7 +2496,7 @@ resist_fire -10
 resist_ghosthit 90
 resist_deplete 100
 weight 150
-material 128
+material 8320
 materialname astolare
 Cha -4
 face cloak_black.111
@@ -2511,7 +2511,7 @@ Object Invisibility
 type 87
 value 800
 weight 130
-material 128
+material 8320
 materialname astolare
 Str -10
 Dex -10
@@ -2537,7 +2537,7 @@ Object Invisibility
 type 99
 value 800
 weight 60
-material 8
+material 8200
 materialname dragonhide
 ac 1
 Str -10
@@ -2562,7 +2562,7 @@ Object granite
 type 99
 value 60
 weight 1000
-material 64
+material 8256
 materialname granite
 ac 5
 msg
@@ -2584,7 +2584,7 @@ Object mobility
 type 99
 value 50
 weight 80
-material 8
+material 8200
 materialname dragonhide
 resist_confusion 25
 resist_slow 20
@@ -2607,7 +2607,7 @@ Object clawing
 type 99
 value 50
 weight 120
-material 8
+material 8200
 materialname dragonhide
 dam 2
 msg
@@ -2626,7 +2626,7 @@ Object of steel
 type 99
 value 50
 weight 110
-material 2
+material 8194
 materialname steel
 ac 1
 resist_physical 10
@@ -3193,7 +3193,7 @@ Allowed bolt
 chance 100
 difficulty 5
 Object silver head
-material 2
+material 8194
 materialname silver
 type 13
 value 5
@@ -3219,7 +3219,7 @@ Object Adamantite
 type 13
 value 10
 weight 90
-material 256
+material 8448
 materialname adamantium
 food 10
 end

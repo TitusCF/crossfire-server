@@ -974,35 +974,6 @@ int key_confirm_quit(object *op, char key)
     return 1;
 }
 
-void auto_heal(object *op) {
-    object *tmp;
-
-    if (op->stats.hp < 0) {
-	LOG(llevDebug, "Healing player is dead.\n");
-	return;
-    } /* 35 -> 32 */
-    if (cast_spell(op, op, 0, SP_HEAL, 0, spellNormal,NULL))
-	return;
-    else if (cast_spell(op, op, 0, SP_MAJOR_HEAL, 0, spellNormal,NULL))
-	return;
-    else if (cast_spell(op, op, 0, SP_MED_HEAL, 0, spellNormal,NULL))
-	return;
-    else if (cast_spell(op, op, 0, SP_MINOR_HEAL, 0, spellNormal,NULL))
-	return;
-    else
-	/* a potion in the main inventory? */
-	for (tmp=op->inv; tmp; tmp = tmp->below)
-	    if (tmp->type == POTION && (tmp->stats.sp == SP_HEAL ||
-		    tmp->stats.sp == SP_MAJOR_HEAL ||
-		    tmp->stats.sp == SP_MED_HEAL ||
-		    tmp->stats.sp == SP_MINOR_HEAL)) {
-		apply_potion(op, tmp);
-		break;
-	    }
-    /* I give up, sorry buddy, you die. */
-    return;
-}
-
 void flee_player(object *op) {
   int dir,diff;
   if(op->stats.hp < 0) {

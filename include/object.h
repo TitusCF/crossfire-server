@@ -153,6 +153,7 @@ typedef struct obj {
 				/* each time the object attacks something */
     struct obj	*current_weapon;   /* Pointer to the weapon currently used */
     uint32	weapontype;	/* type of weapon */
+    uint32  tooltype; /* type of tool or build facility */
     sint8	body_info[NUM_BODY_LOCATIONS];	/* body info as loaded from the file */
     sint8	body_used[NUM_BODY_LOCATIONS];	/* Calculated value based on items equipped */
 				/* See the doc/Developers/objects for more info about body locations */

@@ -209,10 +209,9 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define SPAWN_GENERATOR         81 /* a spawn point or monster generator object */
 #define LAMP			82 /* a lamp */
 #define DUPLICATOR		83 /* duplicator/multiplier object */
-
-
+#define TOOL			84 /* a tool for building objects */
 #define SPELLBOOK	            85
-
+#define BUILDFAC		86 /* facilities for building objects */
 #define CLOAK		            87
 #define CONE		            88
 #define AURA                    89  /* aura spell object */
