@@ -678,13 +678,15 @@ void lock_and_hide_doors(object **doorlist,mapstruct *map,int opts) {
       object *wallface;
       door=doorlist[i];
       wallface=retrofit_joined_wall(map,door->x,door->y,1);
-      retrofit_joined_wall(map,door->x-1,door->y,0);
-      retrofit_joined_wall(map,door->x+1,door->y,0);
-      retrofit_joined_wall(map,door->x,door->y-1,0);
-      retrofit_joined_wall(map,door->x,door->y+1,0);
-      door->face = wallface->face;
-      if(!QUERY_FLAG(wallface,FLAG_REMOVED)) remove_ob(wallface);
-      free_object(wallface);
+		if(wallface!=NULL) {
+		  retrofit_joined_wall(map,door->x-1,door->y,0);
+		  retrofit_joined_wall(map,door->x+1,door->y,0);
+		  retrofit_joined_wall(map,door->x,door->y-1,0);
+		  retrofit_joined_wall(map,door->x,door->y+1,0);
+		  door->face = wallface->face;
+		  if(!QUERY_FLAG(wallface,FLAG_REMOVED)) remove_ob(wallface);
+		  free_object(wallface);
+		}
     }
   }
 }

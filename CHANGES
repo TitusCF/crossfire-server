@@ -17,6 +17,10 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+random_maps/treasure.c:  potential crash bug fixed.  Only applied
+when a bad archetype was given as a wallstyle.  I will also put
+in a redundant archetypes fix. --PeterM 7/26/00
+
 lib/adm/map_info, lib/adm/map_check:  Update to use new layout of installed
 files (share/crossfire), know about random exits (it doesn't do any checking
 to make sure the values are sane, which it probably should, but at least it
