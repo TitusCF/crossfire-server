@@ -17,6 +17,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+doc/Developers/protocol: Add documentation about the map2 protocol command.
+socket/request.c: Fix bad indentation for the map2 function.  No actual
+   functional code changes, but some comments updated.  Running diff with the
+   -w option will make the changes, or lack thereof, more viewable.
+MSW 2002-04-28
+
 crossedit/xutil.c: Update to use name of png file.
 lib/archetypes: collected - pl_dragon arch changed a while back, with no
     new collect.
