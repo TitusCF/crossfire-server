@@ -267,6 +267,11 @@ int infect_object(object *victim, object *disease) {
   new_disease->stats.food=disease->stats.maxgrace;
   new_disease->value=disease->stats.maxhp;
   set_owner(new_disease,disease->owner);
+  /* Unfortunately, set_owner does the wrong thing to the skills pointers
+	  resulting in exp going into the owners *current* chosen skill. */
+  new_disease->chosen_skill = disease->chosen_skill;
+  new_disease->exp_obj = disease->exp_obj;
+
   insert_ob_in_ob(new_disease,victim);
   CLEAR_FLAG(new_disease,FLAG_NO_PASS);
   if(disease->owner && disease->owner->type==PLAYER) {
@@ -340,6 +345,12 @@ int do_symptoms(object *disease) {
 		new_symptom->other_arch = disease->other_arch;
 
 		set_owner(new_symptom,disease->owner);
+		/* Unfortunately, set_owner does the wrong thing to the skills pointers
+			resulting in exp going into the owners *current* chosen skill. */
+		new_symptom->chosen_skill = disease->chosen_skill;
+		new_symptom->exp_obj = disease->exp_obj;
+		
+
 		CLEAR_FLAG(new_symptom,FLAG_NO_PASS);
 		insert_ob_in_ob(new_symptom,victim);
 		return 1;
