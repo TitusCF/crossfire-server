@@ -621,6 +621,8 @@ extern void move_player_mover ( object *op );
 extern void move_creator ( object *op );
 extern int process_object ( object *op );
 extern object *FindKey ( object *Door, object *ob );
+extern int animate_weapon(object *op,object *caster,int dir, archetype *at, int spellnum);
+extern int pay_from_container(object *op, object *pouch, int to_pay);
 
 #endif /* __STDC__ */
 #endif /* __CEXTRACT__ */
