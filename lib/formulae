@@ -53,6 +53,10 @@
 #	    common archetype ingredient!! See bolt of Dragon 
 #	    slaying for an example of a transmution formula. 
 #
+#  "keycode"  A string, such as "fire".  In order for the alchemist
+#           to execute this recipe, he must have a FORCE with a
+#	    slaying field matching the keycode
+#
 # IMPORTANT NOTE ---->
 #	    It is not enough to construct ad-hoc lists of 
 #	    ingredients to make a formula. Playbalance will
