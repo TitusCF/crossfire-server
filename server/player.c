@@ -1196,7 +1196,7 @@ object * find_key(object *pl, object *container, object *door)
 
 void move_player_attack(object *op, int dir)
 {
-  object *tmp, *tmp2;
+  object *tmp;
   int nx=freearr_x[dir]+op->x,ny=freearr_y[dir]+op->y;
 
 
@@ -1785,11 +1785,20 @@ void kill_player(object *op)
             }
             
             if (lose_this_stat) {
-                change_attr_value(&(dep->stats), i, -1);
-                SET_FLAG(dep, FLAG_APPLIED);
-                new_draw_info(NDI_UNIQUE, 0,op, lose_msg[i]);
-                fix_player(op);
-                lost_a_stat = 1;
+                this_stat = get_attr_value(&(dep->stats), i);
+		/* We could try to do something clever like find another
+		 * stat to reduce if this fails.  But chances are, if
+		 * stats have been depleted to -50, all are pretty low
+		 * and should be roughly the same, so it shouldn't make a
+		 * difference.
+		 */
+		if (this_stat>=-50) {
+		    change_attr_value(&(dep->stats), i, -1);
+		    SET_FLAG(dep, FLAG_APPLIED);
+		    new_draw_info(NDI_UNIQUE, 0,op, lose_msg[i]);
+		    fix_player(op);
+		    lost_a_stat = 1;
+		}
             }
         }
     }
