@@ -7,6 +7,7 @@
     CrossFire, A Multiplayer game for X-windows
 
     Copyright (C) 1992 Frank Tore Johansen
+    Copyright (C) 2000 Mark Wedel
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -22,7 +23,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to frankj@ifi.uio.no.
+    The author can be reached via e-mail to mwedel@scruz.net
 */
 
 
@@ -956,7 +957,8 @@ int new_save_map(mapstruct *m, int flag) {
 	return -1;
     }
 
-    if (m->compressed && flag) { /* Compress if it isn't a temporary save */
+    /* Compress if it isn't a temporary save.  Do compress if unique */
+    if (m->compressed && ((QUERY_FLAG(m->map_object, FLAG_UNIQUE) || flag)) {
 	char buf[MAX_BUF];
 	strcpy(buf, uncomp[m->compressed][2]);
 	strcat(buf, " > ");

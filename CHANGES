@@ -18,12 +18,19 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+common/map.c:  Code fix by Kurt Fitzner so that unique maps will get
+compressed if so needed.  Fixes problem of unique maps not being
+able to get reloaded as they are saved with the compress suffix but
+not in compressed form.  Code checked in by Mark Wedel, 3/26/2000
+
 server/skills.c, server/spell_effect.c: Improve behaviour when identifying
 items - the identify routine already updates the client if it is
 in the players inventory, so only send update to client if the item is
 on the map.  Also, do full item update, as many fields may change, and
 that is what the identify function does.  Standard top of
-file banner also added to skills.c file.
+file banner also added to skills.c file.  Fixes problem of
+objects in inventory being displayed with two numbers in from
+(ie, two two bows +1).
 Bug and initial fix of item updates by Kurt Fitzner, 
 implemented in a bit different way by Mark Wedel.  3/26/2000
 
