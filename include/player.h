@@ -6,6 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
+    Copyright (C) 2001 Mark Wedel
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -22,7 +23,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to mark@pyramid.com.
+    The author can be reached via e-mail to mwedel@scruz.net
 */
 
 #define NUM_OUTPUT_BUFS	5
@@ -134,6 +135,8 @@ typedef struct pl {
   New_Face  *floor[MAP_CLIENT_X][MAP_CLIENT_Y];
   New_Face  *floor2[MAP_CLIENT_X][MAP_CLIENT_Y];
   int	    darkmask[MAP_CLIENT_X][MAP_CLIENT_Y];
+
+  /* for smaller map sizes, only the the first elements are used (ie, upper left) */
   sint8	    blocked_los[MAP_CLIENT_X][MAP_CLIENT_Y];
 
   

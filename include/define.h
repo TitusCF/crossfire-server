@@ -297,18 +297,6 @@ error - Your ANSI C compiler should be defining __STDC__;
 
 #define NROF_SOUNDS (23 + NROFREALSPELLS) /* Number of sounds */
 
-/* These are used in the MapLook flags element.  They are not used in
- * in the object flags structure.
- */
-
-#define P_BLOCKSVIEW	0x00000001
-#define P_NO_MAGIC      0x00000002 /* Spells (some) can't pass this object */
-#define P_NO_PASS       0x00000004 /* Nothing can pass (wall() is true) */
-#define P_PASS_THRU     0x00000008 /* */
-#define P_IS_ALIVE      0x00000010 /* */
-#define P_NO_CLERIC     0x00000020 /* no clerical spells cast here */
-
-
 /* Flag structure now changed.
  * Each flag is now a bit offset, starting at zero.  The macros
  * will update/read the appropriate flag element in the object

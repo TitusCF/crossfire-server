@@ -139,6 +139,8 @@ EXTERN objectlink *first_friendly_object;	/* Objects monsters will go after */
 EXTERN godlink *first_god;
 EXTERN racelink *first_race;
 
+#define NROF_COMPRESS_METHODS 4
+EXTERN char *uncomp[NROF_COMPRESS_METHODS][3];
 /*
  * The editor uses these (will get them out of here later):
  */
@@ -217,18 +219,13 @@ EXTERN char *font_graphic;
 #endif
 
 
-#define set_map(M,X,Y,C)	((M)->map[(X)+((M)->map_object->x*(Y))]=*(C))
-#define get_map(M,X,Y)		(&(M)->map[(X)+((M)->map_object->x*(Y))])
-#define set_map_ob(M,X,Y,tmp)	((M)->map_ob[(X)+((M)->map_object->x*(Y))]=(tmp))
-#define get_map_ob(M,X,Y)	((M)->map_ob[(X)+((M)->map_object->x*(Y))])
-#define out_of_map(M,X,Y)	((X)<0||(X)>=(M)->map_object->x||(Y)<0||(Y)>=(M)->map_object->y)
-#define get_map_floor(M,X,Y)	(&(M)->floor[(X)+((M)->map_object->x*(Y))])
-#define set_map_floor(M,X,Y,C)	((M)->floor[(X)+((M)->map_object->x*(Y))]=*(C))
-
-#define get_map_floor2(M,X,Y)	(&(M)->floor2[(X)+((M)->map_object->x*(Y))])
-#define set_map_floor2(M,X,Y,C)	((M)->floor2[(X)+((M)->map_object->x*(Y))]=*(C))
-
 #define decrease_ob(xyz) decrease_ob_nr(xyz,1)
+
+/* FREE_AND_CLEAR frees the pointer and then sets it to NULL.
+ * This is generally done as a safety, and having this macro
+ * makes the code a bit cleaner when doing so.
+ */
+#define FREE_AND_CLEAR(xyz) {free(xyz); xyz=NULL; }
 
 #ifdef CALLOC
 #undef CALLOC

@@ -6,6 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
+    Copyright (C) 2001 Mark Wedel
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -22,7 +23,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to mark@pyramid.com.
+    The author can be reached via e-mail to mwedel@scruz.net
 */
 
 #ifndef OBJECT_H
@@ -118,7 +119,7 @@ typedef struct obj {
   uint32 hide;			/* The object is hidden, not invisible */
 
 /* lighting code uses these - b.t. */
-  struct oblnk *lights;   	/* list of lights the object carries */
+/*  struct oblnk *lights; */  	/* list of lights the object carries */
   signed short glow_radius;	/* indicates the glow radius of the object */
 
 /* changes made by kholland@sunlab.cit.cornell.edu */
@@ -222,5 +223,21 @@ extern int nroffreeobjects;
  * should be displayed in the look window
  */
 #define LOOK_OBJ(ob) (!ob->invisible && ob->type!=PLAYER)
+
+/* Used by update_object to know if the object being passed is
+ * being added or removed.
+ */
+#define UP_OBJ_INSERT   1
+#define UP_OBJ_REMOVE   2
+#define UP_OBJ_CHANGE   3
+#define UP_OBJ_FACE     4   /* Only thing that changed was the face */
+
+/* These are flags passed to insert_ob_in_map and 
+ * insert_ob_in_ob.  Note that all flags may not be meaningful
+ * for both functions.
+ */
+#define INS_NO_MERGE		0x0001
+#define INS_ABOVE_FLOOR_ONLY	0x0002
+#define INS_NO_WALK_ON		0x0004
 
 #endif

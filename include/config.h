@@ -88,7 +88,6 @@
  * NO_CONE_PROPOGATE - makes cone spells stop at the first monster
  * NOT_PERMADEATH - should death be the final end or not?
  * PARTY_KILL_LOG - stores party kill information
- * RANDOM_ENCOUNTERS - add in special encounter maps?
  * REAL_WIZ - changes wiz stuff to be more mudlike.
  * RECYCLE_TMP_MAPS - use tmp maps across multiple runs?
  * RESURRECTION - lets players bring other dead players back to life.
@@ -312,30 +311,6 @@
 #define PARTY_KILL_LOG 20
 */
 
-/* RANDOM_ENCOUNTERS determines if random encounter maps should be
- * done.  What this means is that if you are in natural terrain
- * (grass, brush, trees, jungle, etc), there is a chance as you step into
- * that terrain that a 3x3 area will become a random encounter.  You
- * automatically enter this encounter map, monsters are placed in it,
- * and you remain in it until you get to the outside of the encounter
- * map.  Reasons for having it active might be to make things a little
- * more interesting (players can no longer be absolutely safe bringing
- * stuff back to town), and it gives low level characters a place to beat
- * up an endless supply of some monsters.  Reasons for disabling is because
- * they might just be a nuisance, or you just don't like them.  It
- * may also be broken (I have gotten one report of it putting characters
- * back to the wrong map.).  I personally don't recommend its use because
- * you will get random encounters in many maps where you really should
- * not get them (any maps with appropriate terrain may get a random
- * encounter, and this includes things like dungeons or adventure maps that
- * actually have a few spaces of the terrain).  For random encounters to
- * be useful, it needs to be changed so that by default maps do not have
- * random encounters unless that map is explicit set for it to be OK.
- */
-/*
-#define RANDOM_ENCOUNTERS
-*/
-
 /* Calling this REAL_WIZ is probably not really good.  Something like
  * MUD_WIZ might be a better name.
  *
@@ -482,15 +457,6 @@
 
 #define STAT_LOSS_ON_DEATH FALSE
 
-/*
- * The following enables the new light/darkness code.  Basically, darkness
- * affects line of sight, depending how dark the actual map is.  There are
- * also objects that create light (torches, spells, etc), which counteract
- * this effect.
- * 0.94.2 - as per alchemy, this should probably be standard now
- */
-
-#define USE_LIGHTING
 
 /* Use permanent experience code?
  * This code allows players to build up a small amount of 'permanent

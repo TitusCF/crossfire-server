@@ -34,24 +34,30 @@
 #ifndef MAP_H
 #define MAP_H
 
-#if 0
-/* Doing this causes problems anyplace else we want to use these as
- * variable names or structure elements.
+/* This is when the map will reset */
+#define MAP_WHEN_RESET(m)	((m)->reset_time)
+
+#define MAP_RESET_TIMEOUT(m)	((m)->reset_timeout)
+#define MAP_DIFFICULTY(m)	((m)->difficulty)
+#define MAP_TIMEOUT(m)		((m)->timeout)
+#define MAP_SWAP_TIME(m)	((m)->swap_time)
+
+
+/* mape darkness used to enforce the MAX_DARKNESS value.
+ * but IMO, if it is beyond max value, that should be fixed
+ * on the map or in the code.
  */
-#define mapx map_object->x
-#define mapy map_object->y
-#endif
+#define MAP_DARKNESS(m)	   	(m)->darkness
 
-#define MAP_TIMEOUT(m)		((m)->map_object->value)
-#define MAP_RESETTIME(m)	((m)->map_object->weight)
-
-/* This is only used when loading the map.  For internal use (treausre
- * generation, etc). the map structure difficulty field should be used.
+#define MAP_WIDTH(m)		(m)->width
+#define MAP_HEIGHT(m)		(m)->height
+/* Convenient function - total number of spaces is used
+ * in many places.
  */
-#define MAP_DIFFICULTY(m)	((m)->map_object->level)
+#define MAP_SIZE(m)		((m)->width * (m)->height)
 
-#define MAP_DARKNESS(m)	   	(m)->map_object->invisible>MAX_DARKNESS? \
-				  MAX_DARKNESS:(m)->map_object->invisible;
+#define MAP_ENTER_X(m)		(m)->enter_x
+#define MAP_ENTER_Y(m)		(m)->enter_y
 
 
 /* options passed to ready_map_name and load_original_map */
@@ -66,37 +72,94 @@
 #define MAP_LOADING 3
 #define MAP_SAVING 4
 
+#define GET_MAP_FLAGS(M,X,Y)	( (M)->spaces[(X) + (M)->width * (Y)].flags )
+#define SET_MAP_FLAGS(M,X,Y,C)	( (M)->spaces[(X) + (M)->width * (Y)].flags = C )
+#define GET_MAP_LIGHT(M,X,Y)	( (M)->spaces[(X) + (M)->width * (Y)].light )
+#define SET_MAP_LIGHT(M,X,Y,L)	( (M)->spaces[(X) + (M)->width * (Y)].light = L )
+
+#define GET_MAP_OB(M,X,Y)	( (M)->spaces[(X) + (M)->width * (Y)].bottom )
+/* legacy */
+#define get_map_ob		GET_MAP_OB
+
+#define SET_MAP_OB(M,X,Y,tmp)	( (M)->spaces[(X) + (M)->width * (Y)].bottom = (tmp) )
+#define set_map_ob SET_MAP_OB
+
+#define SET_MAP_FACE(M,X,Y,C,L) ( (M)->spaces[(X) + (M)->width * (Y)].faces[L] = C )
+#define GET_MAP_FACE(M,X,Y,L) ( (M)->spaces[(X) + (M)->width * (Y)].faces[L]  )
+
+/* These are used in the MapLook flags element.  They are not used in
+ * in the object flags structure.
+ */
+
+#define P_BLOCKSVIEW	0x01
+#define P_NO_MAGIC      0x02	/* Spells (some) can't pass this object */
+#define P_NO_PASS       0x04	/* Nothing can pass (wall() is true) */
+#define P_PASS_THRU     0x08	/* */
+#define P_IS_ALIVE      0x10	/* something alive is on this space */
+#define P_NO_CLERIC     0x20	/* no clerical spells cast here */
+#define P_NEED_UPDATE	0x40	/* this space is out of date */
+#define P_NO_ERROR      0x80    /* Purely temporary - if set, update_position
+                                 * does not complain if the flags are different.
+                                 */
+
+
+/* Can't use MapCell as that is used in newserver.h
+ * Instead of having numerous arrays that have information on a
+ * particular space (was map, floor, floor2, map_ob),
+ * have this structure take care of that information.
+ * This puts it all in one place, and should also make it easier
+ * to extend information about a space.
+ */
+
+typedef struct MapSpace {
+    object	*bottom;	/* lowest object on this space */
+    New_Face	*faces[3];	/* faces for the 3 layers */
+    uint8	flags;		/* flags about this space (see the P_ values above) */
+    sint8	light;		/* How much light this space provides */
+} MapSpace;
+
+/* In general, code should always use the macros 
+ * above (or functions in map.c) to access many of the 
+ * values in the map structure.  Failure to do this will
+ * almost certainly break various features.  You may think
+ * it is safe to look at width and height values directly
+ * (or even through the macros), but doing so will completely
+ * break map tiling.
+ */
 typedef struct mapdef {
-  struct mapdef *next;	/* Next map, linked list */
-  object *where;	/* What object were used to enter this map */
-  char path[HUGE_BUF];	/* Filename of the map */
-  char *tmpname;	/* Name of temporary file */
-  long reset_time;	/* When < sec since 1970, load original instead */
-  sint32 timeout;	/* When it reaches 0, the map will be swapped out */
-  uint32 need_refresh:1;	/* Something went wrong, need sanity check */
-  sint16 players;		/* How many plares are on this level right now */
-  uint32 in_memory;	/* If not true, the map has been freed and must
+    struct mapdef *next;	/* Next map, linked list */
+#if 0
+    object *where;	/* What object were used to enter this map */
+#endif
+    char path[HUGE_BUF];	/* Filename of the map */
+    char *tmpname;	/* Name of temporary file */
+    char *name;		/* Name of map as given by its creator */
+    uint32 reset_time;	/* when this map should reset */
+    uint32 reset_timeout;  /* How many seconds must elapse before this map
+			    * should be reset
+			    */
+    uint32 fixed_resettime:1;	/* if true, reset time is not affected by
+				 * players entering/exiting map
+				 */
+    uint32 unique:1;	/* if set, this is a per player unique map */
+    sint32 timeout;	/* swapout is set to this */
+    sint32 swap_time;	/* When it reaches 0, the map will be swapped out */
+    sint16 players;	/* How many plares are on this level right now */
+    uint32 in_memory;	/* If not true, the map has been freed and must
 		         * be loaded before used.  The map,omap and map_ob
 		         * arrays will be allocated when the map is loaded */
-  uint32 encounter:1;	/* True if this is a randomly generated map -
-			 * prevents random encounter maps within random
-			 * encounter maps
-			 */
-  uint8 compressed;  /* Compression method used */
-  MapLook *map;
-  MapLook *floor;
-  MapLook *floor2;
-  object **map_ob;	/* What object lies on the floor */
-  uint16 difficulty;	/* What level the player should be to play here */
+    uint8 compressed;	/* Compression method used */
+    uint16 difficulty;	/* What level the player should be to play here */
 
-  /* lighting code uses these */
-  uint32 do_los:1;	/* True if line of sight needs to be recalculated for 
-		         * players on this map*/
-  uint8 darkness;    	/* indicates level of darkness of map */
-  objectlink *light;    /* linked list of lights (type object) in map */
-
-  object *map_object;   /* Map object in new map format */
-  oblinkpt *buttons;	/* Linked list of linked lists of buttons */
+    uint8 darkness;    	/* indicates level of darkness of map */
+    uint8 width,height;	/* Width and height of map. */
+    uint8 enter_x;	/* enter_x and enter_y are default entrance location */
+    uint8 enter_y;	/* on the map if none are set in the exit */
+    oblinkpt *buttons;	/* Linked list of linked lists of buttons */
+    MapSpace	*spaces;    /* Array of spaces on this map */
+    char    *msg;	/* Message map creator may have left */
+    char    *tile_path[4];  /* path to adjoining maps */
+    struct mapdef *tile_map[4];	/* Next map, linked list */
 } mapstruct;
 
 #endif
