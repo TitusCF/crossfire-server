@@ -236,6 +236,11 @@ void guile_run(char *scriptfile)
 int guile_call_event(object *first, object *second, object *third, int flags, char *text, int dam, int wc, char *scriptname, int fixthem)
 {
   char buf[MAX_BUF];
+  if (guile_stack_position == MAX_RECURSIVE_GUILE)
+  {
+        LOG(llevError, "Can't execute script - No space left in script stack\n");
+        return 0;
+  };
   guile_stack_position++;
   guile_current_activator[guile_stack_position] = first;
   guile_current_who[guile_stack_position]       = second;
@@ -265,6 +270,11 @@ int guile_call_event(object *first, object *second, object *third, int flags, ch
 int guile_call_event_str(object *first, object *second, object *third, int flags, char *text, int dam, int wc, char *scriptname, int fixthem)
 {
   char buf[MAX_BUF];
+  if (guile_stack_position == MAX_RECURSIVE_GUILE)
+  {
+        LOG(llevError, "Can't execute script - No space left in script stack\n");
+        return 0;
+  };
   guile_stack_position++;
   guile_current_activator[guile_stack_position] = first;
   guile_current_who[guile_stack_position]       = second;
@@ -294,6 +304,11 @@ int guile_call_event_str(object *first, object *second, object *third, int flags
 int guile_use_weapon_script(object *hitter, object *hit, int base_dam, int base_wc)
 {
   char buf[MAX_BUF];
+  if (guile_stack_position == MAX_RECURSIVE_GUILE)
+  {
+        LOG(llevError, "Can't execute script - No space left in script stack\n");
+        return 0;
+  };
   guile_stack_position++;
   guile_current_activator[guile_stack_position] = hitter;
   guile_current_who[guile_stack_position]       = hitter->current_weapon;
