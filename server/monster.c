@@ -33,6 +33,7 @@
 #include <skills.h>
 #endif
 
+#if 0
 /*
  * When parsing a message-struct, the msglang struct is used
  * to contain the values.
@@ -45,6 +46,7 @@ typedef struct _msglang {
     char ***keywords;	/* For each message, an array of strings to match */
 } msglang;
 
+#endif
 
 #define MIN_MON_RADIUS 3 /* minimum monster detection radius */
 
@@ -1449,6 +1451,7 @@ void check_doors(object *op, int x, int y) {
     }
 }
 
+#if 0 
 static void free_messages(msglang *msgs) {
   int messages, keywords;
 
@@ -1590,157 +1593,188 @@ static void dump_messages(msglang *msgs) {
   }
 }
 
-void communicate(object *op, char *txt) {
-  object *npc;
-  int i;
-  int flag=1; /*hasn't spoken to a NPC yet*/
-  for(i = 0; i <= SIZEOFFREE2; i++)
-    if (!out_of_map(op->map, op->x+freearr_x[i], op->y+freearr_y[i]))
-      for(npc = get_map_ob(op->map,op->x+freearr_x[i],op->y+freearr_y[i]);
-          npc != NULL; npc = npc->above) {
-        if (npc->type == MAGIC_EAR)
-          (void) talk_to_wall(npc, txt); /* Maybe exit after 1. success? */
-        else if(flag)  {
-          if (talk_to_npc(op, npc,txt))
-            flag=0; /* Can be crowded */
+#endif
+
+/* This replaces all the msglang stuff about which seems to be a lot of
+ * unneeded complication - since the setup of that data is never re-used
+ * (say 'hi' to monster, then 'yes', it would re-do the entire parse-message)
+ * it seems to me to make more sense to just have simple function that returns
+ * the 'text' portion of the message that it matches - this savees us a bunch
+ * of malloc's and free's, as well as that setup.
+ * This function takes the message to be parsed in 'msg', the text to
+ * match in 'match', and returns the portion of the message.  This
+ * returned portion is in a malloc'd buf that should be freed.
+ * Returns NULL if no match is found.
+ */
+static char *find_matching_message(char *msg, char *match)
+{
+    char *cp=msg, *cp1, *cp2, regex[MAX_BUF], *cp3, gotmatch=0;
+
+    while (1) {
+	if (strncmp(cp, "@match ", 7)) {
+	    LOG(llevDebug,"find_matching_message: Invalid message %s", msg);
+	    return NULL;
 	}
-      }
+	else {
+	    /* Find the end of the line, and copy the regex portion into it */
+	    cp2 = strchr(cp+7, '\n');
+	    strncpy(regex, cp+7, (cp2 - cp -7 ));
+	    regex[cp2 - cp -7] = 0;
+
+	    /* Find the next match command */
+	    cp1 = strstr(cp+6, "\n@match");
+
+	    /* Got a match - handle * as special case - proper regex would be .*,
+	     * but lots of messages don't use that form.
+	     */
+	    if (regex[0] == '*') gotmatch=1;
+	    else {
+		char *pipe, *pnext=NULL;
+		/* need to parse all the | seperators.  Our re_cmp isn't
+		 * realy a fully blown regex parser.
+		 */
+		for (pipe=regex; pipe != NULL; pipe = pnext) {
+		    pnext = strchr(pipe, '|');
+		    if (pnext) {
+			*pnext = 0;
+			pnext ++;
+		    }
+		    if (re_cmp(match, pipe)) {
+			gotmatch = 1;
+			break;
+		    }
+		}
+	    }
+	    if (gotmatch) {
+		if (cp1) {
+		    cp3 = malloc(cp1 - cp2 + 1);
+		    strncpy(cp3, cp2+1, cp1 - cp2);
+		    cp3[cp1 - cp2] = 0;
+		}
+		else {	/* if no next match, just want the rest of the string */
+		    cp3 = strdup_local(cp2 + 1);
+		}
+		return cp3;
+	    }
+	    if (cp1) cp = cp1 + 1;
+	    else return NULL;
+	}
+    }
+    /* Should never get reached */
+}
+
+/* This function looks for an object or creature that is listening.
+ * I've disabled the bit that has only the first npc monster listen -
+ * we'll see how this works out.  only the first npc listens, which
+ * is sort of bogus since it uses the free_arr which has a preference
+ * to certain directions.
+ */
+void communicate(object *op, char *txt) {
+    object *npc;
+    int i;
+    sint16 x, y;
+    mapstruct *mp;
+
+    int flag=1; /*hasn't spoken to a NPC yet*/
+    for(i = 0; i <= SIZEOFFREE2; i++) {
+	mp = op->map;
+	x = op->x + freearr_x[i];
+	y = op->y + freearr_y[i];
+
+	if (get_map_flags(mp, &mp, x, y, &x, &y) & P_OUT_OF_MAP) continue;
+
+	for(npc = get_map_ob(mp,x,y); npc != NULL; npc = npc->above) {
+	    if (npc->type == MAGIC_EAR)
+		(void) talk_to_wall(npc, txt); /* Maybe exit after 1. success? */
+	    else if(flag && npc->msg)  {
+#if 0
+		if (talk_to_npc(op, npc,txt))
+		flag=0; /* Can be crowded */
+#else
+		talk_to_npc(op, npc,txt);
+#endif
+	    }
+	}
+    }
 }
 
 int talk_to_npc(object *op, object *npc, char *txt) {
-  msglang *msgs;
-  int i,j;
-  object *cobj;
-  /* GROS: Handle for plugin say event */
-  if(npc->event_hook[EVENT_SAY] != NULL)
-  {
+    object *cobj;
     CFParm CFP;
     int k, l, m;
-    k = EVENT_SAY;
-    l = SCRIPT_FIX_ALL;
-    m = 0;
-    CFP.Value[0] = &k;
-    CFP.Value[1] = op;
-    CFP.Value[2] = npc;
-    CFP.Value[3] = NULL;
-    CFP.Value[4] = txt;
-    CFP.Value[5] = &m;
-    CFP.Value[6] = &m;
-    CFP.Value[7] = &m;
-    CFP.Value[8] = &l;
-    CFP.Value[9] = npc->event_hook[k];
-    CFP.Value[10]= npc->event_options[k];
-    if (findPlugin(npc->event_plugin[k])>=0)
-    {
-        ((PlugList[findPlugin(npc->event_plugin[k])].eventfunc) (&CFP));
-        return 0;
-    }
-  }
-  /* GROS - Here we let the objects inside inventories hear and answer, too. */
-  /* This allows the existence of "intelligent" weapons you can discuss with */
-  for(cobj=npc->inv;cobj!=NULL;)
-  {
-    if(cobj->event_hook[EVENT_SAY] != NULL)
-    {
-      CFParm CFP;
-      int k, l, m;
-      k = EVENT_SAY;
-      l = SCRIPT_FIX_ALL;
-      m = 0;
-      CFP.Value[0] = &k;
-      CFP.Value[1] = op;
-      CFP.Value[2] = cobj;
-      CFP.Value[3] = npc;
-      CFP.Value[4] = txt;
-      CFP.Value[5] = &m;
-      CFP.Value[6] = &m;
-      CFP.Value[7] = &m;
-      CFP.Value[8] = &l;
-      CFP.Value[9] = cobj->event_hook[k];
-      CFP.Value[10]= cobj->event_options[k];
-      if (findPlugin(cobj->event_plugin[k])>=0)
-      {
-          ((PlugList[findPlugin(cobj->event_plugin[k])].eventfunc) (&CFP));
-          return 0;
-      }
-    }
-    cobj = cobj->below;
-  }
+    char *cp, buf[MAX_BUF];
 
-  /* GROS: Then we parse the target inventory */
-  /*if (npc!=NULL)
-  for(cobj=npc->inv;cobj!=NULL;cobj=cobj->next)
-  {
-    printf("Name is %s\n", cobj->name);
-  if(npc->event_hook[EVENT_SAY] != NULL)
-  {
-    CFParm CFP;
-    int k, l, m;
+    /* Move this commone area up here - shouldn't cost much extra cpu
+     * time, and makes the function more readable */
     k = EVENT_SAY;
     l = SCRIPT_FIX_ALL;
     m = 0;
     CFP.Value[0] = &k;
     CFP.Value[1] = op;
-    CFP.Value[2] = cobj;
-    CFP.Value[3] = NULL;
     CFP.Value[4] = txt;
     CFP.Value[5] = &m;
     CFP.Value[6] = &m;
     CFP.Value[7] = &m;
     CFP.Value[8] = &l;
-    CFP.Value[9] = cobj->event_hook[k];
-    CFP.Value[10]= cobj->event_options[k];
-    if (findPlugin(cobj->event_plugin[k])>=0)
+
+    /* GROS: Handle for plugin say event */
+    if(npc->event_hook[EVENT_SAY] != NULL)
     {
-        ((PlugList[findPlugin(cobj->event_plugin[k])].eventfunc) (&CFP));
-        return 0;
+	CFP.Value[2] = npc;
+	CFP.Value[3] = NULL;
+	CFP.Value[9] = npc->event_hook[k];
+	CFP.Value[10]= npc->event_options[k];
+	if (findPlugin(npc->event_plugin[k])>=0)
+	{
+	    ((PlugList[findPlugin(npc->event_plugin[k])].eventfunc) (&CFP));
+	    return 0;
+	}
     }
-  }
-  }*/
-  if(npc->msg == NULL || *npc->msg != '@')
-    return 0;
-  if((msgs = parse_message(npc->msg)) == NULL)
-    return 0;
-#if 0 /* Turn this on again when enhancing parse_message() */
-  if(debug)
-    dump_messages(msgs);
-#endif
-  for(i=0; msgs->messages[i]; i++)
-    for(j=0; msgs->keywords[i][j]; j++)
-      if(msgs->keywords[i][j][0] == '*' || re_cmp(txt,msgs->keywords[i][j])) {
-        char buf[MAX_BUF];
-        sprintf(buf,"%s says:",query_name(npc)); /* We want more unique NPCS */
-                                                 /* "The <unique name> says ...." looks bad */
+    /* GROS - Here we let the objects inside inventories hear and answer, too. */
+    /* This allows the existence of "intelligent" weapons you can discuss with */
+    for(cobj=npc->inv;cobj!=NULL; cobj = cobj->below)
+    {
+	if(cobj->event_hook[EVENT_SAY] != NULL)
+	{
+	    CFP.Value[2] = cobj;
+	    CFP.Value[3] = npc;
+	    CFP.Value[9] = cobj->event_hook[k];
+	    CFP.Value[10]= cobj->event_options[k];
+	    if (findPlugin(cobj->event_plugin[k])>=0)
+	    {
+		((PlugList[findPlugin(cobj->event_plugin[k])].eventfunc) (&CFP));
+		return 0;
+	    }
+	}
+    }
+    if(npc->msg == NULL || *npc->msg != '@')
+	return 0;
+
+    cp = find_matching_message(npc->msg, txt);
+    if (cp) {
+        sprintf(buf,"%s says:",query_name(npc));
 	new_info_map(NDI_NAVY|NDI_UNIQUE, npc->map,buf);
-	new_info_map(NDI_NAVY | NDI_UNIQUE, npc->map, msgs->messages[i]);
-        free_messages(msgs);
+	new_info_map(NDI_NAVY | NDI_UNIQUE, npc->map, cp);
+	free(cp);
         return 1;
-      }
-  free_messages(msgs);
-  return 0;
+    }
+    return 0;
 }
 
 int talk_to_wall(object *npc, char *txt) {
-  msglang *msgs;
-  int i,j;
+    char *cp;
 
-  if(npc->msg == NULL || *npc->msg != '@')
-    return 0;
-  if((msgs = parse_message(npc->msg)) == NULL)
-    return 0;
-  if(settings.debug >= llevDebug)
-    dump_messages(msgs);
-  for(i=0; msgs->messages[i]; i++)
-    for(j=0; msgs->keywords[i][j]; j++)
-      if(msgs->keywords[i][j][0] == '*' || re_cmp(txt,msgs->keywords[i][j])) {
-        if (msgs->messages[i] && *msgs->messages[i] != 0)
-	  new_info_map(NDI_NAVY | NDI_UNIQUE, npc->map,msgs->messages[i]);
-        free_messages(msgs);
-	use_trigger(npc);
-        return 1;
-      }
-  free_messages(msgs);
-  return 0;
+    if(npc->msg == NULL || *npc->msg != '@')
+	return 0;
+
+    cp = find_matching_message(npc->msg, txt);
+    if (!cp)
+	return 0;
+
+    new_info_map(NDI_NAVY | NDI_UNIQUE, npc->map,cp);
+    use_trigger(npc);
+    free(cp);
+    return 1;
 }
 
 /* find_mon_throw_ob() - modeled on find_throw_ob

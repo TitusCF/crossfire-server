@@ -164,6 +164,11 @@ int check_name(player *me,char *name) {
 	new_draw_info(NDI_UNIQUE, 0,me->ob,"That name contains illegal characters.");
 	return 0;
     }
+    if (strlen(name) >= MAX_NAME) {
+	new_draw_info(NDI_UNIQUE, 0,me->ob,"That name is too long.");
+	return 0;
+    }
+
     return 1;
 }
 

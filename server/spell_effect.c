@@ -3928,7 +3928,7 @@ int cast_cause_disease(object *op, object *caster, int dir, archetype *disease_a
  */
 
 void move_aura(object *aura) {
-    int i;
+    int i, mflags;
     object *env;
 
     /* auras belong in inventories */
@@ -3962,7 +3962,8 @@ void move_aura(object *aura) {
 	int nx, ny;
 	nx = aura->x + freearr_x[i];
 	ny = aura->y + freearr_y[i];
-	if (!(get_map_flags(aura->map, NULL, nx, ny, NULL, NULL) & (P_WALL | P_OUT_OF_MAP)))
+	mflags = get_map_flags(env->map, NULL, nx, ny, NULL, NULL);
+	if ((mflags & (P_WALL | P_OUT_OF_MAP)) == 0) {
 	    hit_map(aura,i,aura->attacktype);
 	    if(aura->other_arch) {
 		object *new_ob;
@@ -3972,6 +3973,7 @@ void move_aura(object *aura) {
 		new_ob->y = ny;
 		insert_ob_in_map(new_ob,env->map,aura,0);
 	    }
+	}
     }
     /* put the aura back in the player's inventory */
     remove_ob(aura);

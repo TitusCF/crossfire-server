@@ -1130,12 +1130,12 @@ void examine(object *op, object *tmp) {
 	new_draw_info(NDI_UNIQUE, 0,op,buf);
     }
 
-    if(tmp->value&&!QUERY_FLAG(tmp, FLAG_STARTEQUIP)) {
+    if(tmp->value && !QUERY_FLAG(tmp, FLAG_STARTEQUIP) && !QUERY_FLAG(tmp, FLAG_NO_PICK)) {
 	if(QUERY_FLAG(tmp, FLAG_UNPAID))
 	    sprintf(buf,"%s would cost you %s.",
 		    tmp->nrof>1?"They":"It",query_cost_string(tmp,op,F_BUY));
 	else
-	    sprintf(buf,"You would get %s for the %s.",
+	    sprintf(buf,"You would get %s for %s.",
 		    query_cost_string(tmp,op,F_SELL), tmp->nrof>1?"them":"it");
 	new_draw_info(NDI_UNIQUE, 0,op,buf);
     }

@@ -17,6 +17,20 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Various bug fixes:
+common/item.c: If nrof of an item is 0, have it print singular name and
+   not plural name.
+server/c_object.c: Fix typo when printing value of optoins - had an
+   extra 'the' in place.  Also, don't print value of objects with
+   no pick flag set.
+server/login.c: Enforce maximum name length for new characters.
+server/monster.c: Change parsing code for messages/@match code -
+   new code is simpler, and should also be simpler and less bug
+   ridden, but otherwise functionally equivalant.  Also fix up
+   communicate to work properly on tiled maps.
+server/spell_effect.c: fix up move_aura to not crash hopefully.
+MSW 2003-01-26
+
 More bug fixes:
 common/item.c: Add missing braces - was resulting in some items getting
     display like 'gauntlets of strength (Str+1)(Str+1).

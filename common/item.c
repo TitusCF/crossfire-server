@@ -388,7 +388,7 @@ char *query_short_name(object *op)
     if(!op->nrof && !op->weight && !op->title && !is_magical(op)) 
 	return op->name; /* To speed things up (or make things slower?) */
 
-    if (op->nrof == 1)
+    if (op->nrof <= 1)
 	safe_strcat(buf,op->name, &len, HUGE_BUF);
     else
 	safe_strcat(buf,op->name_pl, &len, HUGE_BUF);
