@@ -41932,16 +41932,16 @@ static char * dunes_111_xpm[] = {
 "X. .o.oo X...X.o.oo ..X ",
 ". .Xo.o X..X... o.oX....",
 ".... o.XX..X ....o.. ..X"};
-IMAGE 01236 886 ./arch/floor/dung_floor.111
+IMAGE 01236 894 ./arch/floor/dung_floor.111
 /* XPM */
 static char * dung_floor_111_xpm[] = {
 /* width height ncolors chars_per_pixel */
 "24 24 4 1",
 /* colors */
-" 	s Gray	m white	c grey50",
-".	c Black",
-"X	s Dark gray	c Grey25",
-"o	c grey75",
+" 	c grey60",
+".	s Dark grey    c grey25",
+"X	s Light grey   c grey50",
+"o	c Light blue",
 /* pixels */
 "   .X    ..    .X    .XX",
 "...XX....XX....XXX....X.",
@@ -70611,15 +70611,15 @@ static char * map_111_xpm[] = {
 "  ..X.X.X.X.X...X.X.X.. ",
 "   ..........   ......  ",
 "                        "};
-IMAGE 02079 853 ./arch/floor/marble.111
+IMAGE 02079 845 ./arch/floor/marble.111
 /* XPM */
 static char * marble_111_xpm[] = {
 /* width height ncolors chars_per_pixel */
 "24 24 3 1",
 /* colors */
 " 	c White",
-".	c Black",
-"X	s Light gray	c Grey75",
+".	c grey50",
+"X	c light grey",
 /* pixels */
 " ... X.. X X.. X X ..X X",
 "....X ... X ..X X X.. X ",
