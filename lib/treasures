@@ -586,6 +586,19 @@ treasureone giantrat_parts
  arch grat_pelt
     chance 10
  end
+treasureone ape_parts
+ arch liver
+    chance 20
+ more
+ arch heart
+    chance 10
+ more
+ arch tooth
+    chance 10
+ more
+ arch brain
+    chance 3
+ end
 # gnoll/giant parts
 treasureone giant_parts
   arch fl_corpse
@@ -2597,6 +2610,10 @@ treasure goblin
 treasure bear
   list bear_parts
     chance 40
+  end
+treasure ape
+  list ape_parts
+    chance 25
   end
 treasure dwolf
   list dwolf_parts
