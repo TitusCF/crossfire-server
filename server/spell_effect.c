@@ -242,10 +242,16 @@ void polymorph_living(object *op) {
     if(op->head != NULL || op->more != NULL)
 	return;
 
+    /* High level creatures are immune, as are creatures immune to magic.  Otherwise,
+     * give the creature a saving throw.
+     */
+    if (op->level>=20 || ((RANDOM()%20 +1 + op->resist[ATNR_MAGIC]/10) > savethrow[op->level]) ||
+	(op->resist[ATNR_MAGIC]==100))
+	return;
+
     /* First, count up the number of legal matches */
     for(at = first_archetype ; at != NULL; at = at->next)
 	if(QUERY_FLAG((&at->clone),FLAG_MONSTER) == QUERY_FLAG(op, FLAG_MONSTER) &&
-	   QUERY_FLAG((&at->clone),FLAG_GENERATOR) == QUERY_FLAG(op,FLAG_GENERATOR) &&
 	   at->more == NULL && EDITABLE((&at->clone)))
     {
 	numat++;
@@ -256,7 +262,6 @@ void polymorph_living(object *op) {
     choice = RANDOM()%numat;
     for(at = first_archetype ; at != NULL; at = at->next)
 	if(QUERY_FLAG((&at->clone),FLAG_MONSTER) == QUERY_FLAG(op, FLAG_MONSTER) &&
-	   QUERY_FLAG((&at->clone),FLAG_GENERATOR) == QUERY_FLAG(op,FLAG_GENERATOR) &&
 	   at->more == NULL && EDITABLE((&at->clone)))
     {
 	if (!choice) break;
@@ -318,8 +323,8 @@ void polymorph_living(object *op) {
  */
 void polymorph_melt(object *who, object *op)
 {
-
-    new_draw_info_format(NDI_UNIQUE, 0, who,
+    /* Not unique */
+    new_draw_info_format(NDI_GREY, 0, who,
 	"%s%s glows red, melts and evaporates!",
             op->nrof?"":"The ",query_name(op));
     play_sound_map(op->map, op->x, op->y, SOUND_OB_EVAPORATE);
@@ -341,7 +346,7 @@ void polymorph_item(object *who, object *op) {
     /* We try and limit the maximum value of the changd object. */
     max_value = op->value * 2;
     if(max_value > 20000)
-	max_value = 20000 + (max_value - 20000) / 2;
+	max_value = 20000 + (max_value - 20000) / 3;
 
     /* Look through and try to find matching items.  Can't turn into something
      * invisible.  Also, if the value is too high now, it would almost
@@ -376,6 +381,7 @@ void polymorph_item(object *who, object *op) {
     } while (new_ob->value > max_value && tries<10);
     if (new_ob->invisible) {
 	LOG(llevError,"polymorph_item: fix_generated_object made %s invisible?!\n", new_ob->name);
+	free_object(new_ob);
     }
 
     /* Unable to generate an acceptable item?  Melt it */
@@ -412,10 +418,11 @@ void polymorph(object *op, object *who) {
     int tmp;
 
     /* Can't polymorph players right now */
-    if(op->type == PLAYER)
+    /* polymorphing generators opens up all sorts of abuses */
+    if(op->type == PLAYER || QUERY_FLAG(op, FLAG_GENERATOR))
 	return;
 
-    if(QUERY_FLAG(op, FLAG_MONSTER) || QUERY_FLAG(op,FLAG_GENERATOR)) {
+    if(QUERY_FLAG(op, FLAG_MONSTER)) {
 	polymorph_living(op);
 	return;
     }

@@ -521,6 +521,7 @@ void roll_stats(object *op) {
 
 void Roll_Again(object *op)
 {
+    esrv_new_player(op->contr, 0);
 #ifndef USE_SWAP_STATS
     send_query(&op->contr->socket,CS_QUERY_SINGLECHAR,"Roll again (y/n)? ");
 #else
@@ -730,6 +731,7 @@ int key_change_class(object *op, char key)
       tmp_loop=allowed_class(op);
     }
     update_object(op);
+    esrv_update_item(UPD_FACE,op,op);
     fix_player(op);
     op->stats.hp=op->stats.maxhp;
     op->stats.sp=op->stats.maxsp;

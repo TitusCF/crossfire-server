@@ -17,6 +17,17 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 CVS changes since last release:
 
+MSW 2000/12/10:
+include/config.h: Set ARCHTABLE size to correct value.
+server/player.c: Have server send update item to client for players face
+	while select class.  Added esrv_new_player in Roll_Again, because
+	without it, the client had yet to receive information on what tag
+	the player was so could not make sense of the updated face.
+server/spell_effect.c: Balance issues for polymorph.  Reduce maximum
+	value for high valued objects, remove ability to polymorph generators,
+	put maximum level on polymorphed monsters and give them saving
+	throws against the effects.
+
 MSW 2000/12/5:
 server/player.c: Move location of where it sets the player has_hit variable
 until after we have confirmed that the player has actually attacked a monster
