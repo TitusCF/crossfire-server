@@ -12,6 +12,9 @@
 #
 # Gods - treasures of gods are special.
 #
+#########################################################
+# Valriel - Lord of Angels, Duke of the Heavens, Healer and Protector
+#
 treasure Valriel
   arch valriel_avatar_info
   more
@@ -26,7 +29,7 @@ treasure Valriel
   arch god_cure_poison
   more
   arch god_remove_damnation
-    chance 50
+    chance 60
   more
   arch god_remove_depletion
     chance 50
@@ -34,13 +37,16 @@ treasure Valriel
   arch valriel_general_info
     chance 10
   more
-  arch god_grace_limit_medium
-  more
+arch god_grace_limit_medium
+more
   arch god_enchant_weapon_medium
-    chance 50
+    chance 30
   more
   arch god_spelldirect_defense
 end
+#############################################################
+# Gorokh - Demon King, Duke of Hell, Temptor and Tormentor
+#
 treasure Gorokh
   arch gorokh_avatar_info
   more
@@ -55,35 +61,30 @@ treasure Gorokh
   arch god_cure_poison
   more
   arch god_remove_damnation
-    chance 50
+    chance 20
   more
   arch god_remove_depletion
-    chance 50
+    chance 40
   more
   arch gorokh_general_info
     chance 10
   more
-  arch god_grace_limit_medium
-  more
+arch god_grace_limit_medium
+more
   arch god_enchant_weapon_medium
     chance 50
   more
-  arch god_spelldirect_cause_critical_wounds
+  arch god_spelldirect_flaming_aura
   more
-  arch god_spelldirect_cause_smallpox
+arch god_grace_limit_high
+more
+  arch god_spelldirect_rage
   more
-  arch god_spelldirect_cause_many_wounds
-  more
-  arch god_spelldirect_cause_red_death
-  more
-  arch god_spelldirect_finger_of_death
-  more
-  arch god_spelldirect_face_of_death
-  more
-  arch god_spelldirect_retributive_strike
-  more
-  arch god_spelldirect_cause_white_death
+  arch god_spelldirect_vitriol
 end
+#############################################################
+# Devourers - Soul Eaters, Harbingers of Death, Nameless Lords
+#             of the Tomb
 treasure Devourers
   arch devourers_avatar_info
   more
@@ -98,15 +99,30 @@ treasure Devourers
   arch devourers_general_info
     chance 10
   more
-  arch god_grace_limit_medium
-  more
+arch god_grace_limit_medium
+more
   arch god_enchant_weapon_medium
     chance 50
+  more
+  arch god_spelldirect_nightfall
   more
   arch god_spelldirect_finger_of_death
   more
   arch god_spelldirect_face_of_death
+  more
+  arch god_spelldirect_cause_many_wounds
+  more
+  arch god_spelldirect_cause_black_death
+    chance 10
+  more
+arch god_grace_limit_high
+more
+  arch god_spelldirect_cause_white_death
+    chance 10
 end
+#############################################################
+# Sorig - Lord of Storms, King of Thunder and Lightning, Sky Lord
+#
 treasure Sorig
   arch sorig_avatar_info
   more
@@ -126,23 +142,35 @@ treasure Sorig
   arch sorig_general_info
     chance 10
   more
-  arch god_grace_limit_medium
+arch god_grace_limit_low
+more
+  arch god_spelldirect_divine_shock
+    chance 20
   more
+arch god_grace_limit_medium
+more
   arch god_enchant_weapon_medium
     chance 50
   more
   arch god_spelldirect_cause_critical_wounds
   more
-  arch god_spelldirect_cause_smallpox
+  arch god_spelldirect_windstorm
   more
   arch god_spelldirect_cause_many_wounds
   more
-  arch god_spelldirect_cause_red_death
-  more
+arch god_grace_limit_high
+more
   arch god_spelldirect_retributive_strike
   more
-  arch god_spelldirect_cause_white_death
+  list sorig_treasure
+    chance 2
 end
+treasure sorig_treasure
+  arch mithril_ar_ele
+end
+#############################################################
+# Ruggilli - Chaos God of slaughter and terror, Consuming worm,
+#            Greedy gut
 treasure Ruggilli
   arch ruggilli_avatar_info
   more
@@ -162,23 +190,24 @@ treasure Ruggilli
   arch ruggilli_general_info
     chance 10
   more
-  arch god_grace_limit_medium
-  more
+arch god_grace_limit_medium
+more
   arch god_enchant_weapon_medium
     chance 50
   more
-  arch god_spelldirect_cause_critical_wounds
+  arch god_spelldirect_flaming_aura
   more
-  arch god_spelldirect_cause_smallpox
+  arch god_spelldirect_rage
   more
-  arch god_spelldirect_cause_many_wounds
-  more
-  arch god_spelldirect_cause_red_death
-  more
+arch god_grace_limit_high
+more
   arch god_spelldirect_retributive_strike
   more
-  arch god_spelldirect_cause_white_death
+  arch god_spelldirect_immolation
 end
+#############################################################
+# Gaea - Goddess of peace, Guardian of life, Mother of nature
+#
 treasure Gaea
   arch gaea_avatar_info
   more
@@ -201,8 +230,13 @@ treasure Gaea
   arch gaea_general_info
     chance 10
   more
-  arch god_grace_limit_medium
+arch god_grace_limit_low
+more
+  arch god_spelldirect_spiderweb
+    chance 20
   more
+arch god_grace_limit_medium
+more
   arch god_spelldirect_wall_of_thorns
   more
   arch god_spelldirect_raise_dead
@@ -217,8 +251,30 @@ treasure Gaea
   more
   arch god_spelldirect_resurrection
   more
+  arch god_spelldirect_peace
+  more
+arch god_grace_limit_high
+more
   arch god_spelldirect_reincarnation
+  more
+  list gaea_treasure
+    chance 30
+  more
+  arch shield_gaea
+    chance 50
 end
+treasure gaea_treasure
+  arch shield_gaea
+    chance 5
+  list random_plant
+    chance 50
+  no
+    arch tear_gaea
+  end
+end
+#############################################################
+# Mostrai - Dwarven deity of metal smithing and warcraft,
+#           Giant basher, Delver of secrets
 treasure Mostrai
   arch mostrai_avatar_info
   more
@@ -241,13 +297,26 @@ treasure Mostrai
   arch mostrai_general_info
     chance 10
   more
-  arch god_grace_limit_medium
+arch god_grace_limit_low
+more
+  arch mail_mostrai
+    chance 3
   more
+arch god_grace_limit_medium
+more
   arch god_enchant_weapon_medium
     chance 50
   more
   arch god_spelldirect_wall_of_thorns
+  more
+arch god_grace_limit_high
+more
+  arch god_enchant_weapon_high
+    chance 10
 end
+#############################################################
+# Lythander - Elven god of luck, Huntsman of Goblins, Trollslayer,
+#             the Trickster
 treasure Lythander
   arch lythander_avatar_info
   more
@@ -268,11 +337,19 @@ treasure Lythander
   arch lythander_general_info
     chance 10
   more
-  arch god_grace_limit_medium
-  more
+arch god_grace_limit_medium
+more
   arch god_enchant_weapon_medium
     chance 50
+  more
+  arch bow_lythander
+    chance 5
+  more
+  arch god_spelldirect_conflict
 end
+#############################################################
+# Gnarg - Father of goblins, Lord Troll, Master of poisons,
+#         Patron of assassins, The Unclean one
 treasure Gnarg
   arch gnarg_avatar_info
   more
@@ -285,7 +362,7 @@ treasure Gnarg
   arch god_cure_confusion
   more
   arch god_remove_damnation
-    chance 50
+    chance 30
   more
   arch god_remove_depletion
     chance 50
@@ -293,24 +370,30 @@ treasure Gnarg
   arch gnarg_general_info
     chance 10
   more
-  arch god_grace_limit_medium
-  more
-  arch god_enchant_weapon_medium
-    chance 50
-  more
-  arch god_spelldirect_cause_critical_wounds
+arch god_grace_limit_low
+more
+  arch helmet_gnarg
+    chance 5
   more
   arch god_spelldirect_cause_smallpox
   more
-  arch god_spelldirect_cause_many_wounds
+arch god_grace_limit_medium
+more
+  arch god_enchant_weapon_medium
+    chance 50
+  more
+  arch god_spelldirect_poison_fog
   more
   arch god_spelldirect_cause_red_death
   more
-  arch god_spelldirect_retributive_strike
+arch god_grace_limit_high
+more
+  arch god_enchant_weapon_high
+    chance 10
   more
   arch god_spelldirect_cause_white_death
 end
-#
+##############################################################
 #
 # BODY PARTS - 
 #
