@@ -59,6 +59,16 @@ typedef unsigned char	uint8;
 typedef signed char	sint8;
 typedef unsigned short Fontindex;
 
+#ifdef WIN32
+// Python plugin stuff defines SIZEOF_LONG_LONG as 8, and besides __int64 is a 64b type on MSVC...
+// So let's force the typedef
+typedef unsigned __int64	uint64;
+typedef signed __int64		sint64;
+// Needed for experience
+#define atoll	_atoi64
+
+#else // WIN32
+
 #if SIZEOF_LONG == 8
 typedef unsigned long	    uint64;
 typedef signed long	    sint64;
@@ -70,7 +80,7 @@ error do not know how to get a 64 bit value on this system.
 error correct and send mail to crossfire-devel on how to do this
 #endif
 
-
+#endif // WIN32
 
 
 /* global stuff used by new skill/experience system -b.t.
