@@ -17,6 +17,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 CVS changes since last release:
 
+PeterM  2001/04/06:  
+include/libproto.h common/object.c server/apply.c server/spell_util.c
+Added a new function:  instead of stacking many burnout or firetrail
+objects, only 1 per square is added.  Real reduction in server overhead.
+No reduction in cosmetic effect.
+
 common/porting.c: Fix compile warnings/bugs introduced by Win32 changes.
 server/time.c: Modify move_player_mover so that it determines direction
    of the mover and then process accordingly, as well as formatting
