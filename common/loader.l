@@ -388,6 +388,7 @@ A	.+
 ^startequip{S}	    SET_OR_CLEAR_FLAG(op, FLAG_STARTEQUIP, IVAL);
 ^blocksview{S}	    SET_OR_CLEAR_FLAG(op, FLAG_BLOCKSVIEW, IVAL);
 ^editable{S}	    op->arch->editable = IVAL;
+^editor_folder{S}   { }
 ^undead{S}  	    SET_OR_CLEAR_FLAG(op, FLAG_UNDEAD, IVAL);
 ^scared{S}  	    SET_OR_CLEAR_FLAG(op, FLAG_SCARED, IVAL);
 ^unaggressive{S}    SET_OR_CLEAR_FLAG(op, FLAG_UNAGGRESSIVE, IVAL);

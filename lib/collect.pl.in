@@ -166,6 +166,9 @@ sub storeFaceInfo {
 sub archsOut {
     foreach $arch (@archs) {
 	open(ARC,$arch) || &die("cannot open ".$arch);
+	$pathto = $arch;
+	$pathto =~ s@[^/]*/@@;
+	$pathto =~ s@(.*)/.*arc@$1@;
 line:	while(<ARC>) {
 	    chop;
 	    ($var,@values) = split;
@@ -200,6 +203,9 @@ line:	while(<ARC>) {
 	    if ($var eq "color_bg") {
 		$lbg = $values[0];
 		next line;
+	    }
+		if ($var eq "end") {
+			print ARCH "editor_folder $pathto\n";
 	    }
 	    if ($var eq "visibility") {
 		$lvis = $values[0];
