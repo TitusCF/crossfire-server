@@ -488,7 +488,8 @@ static Boolean Load(Edit self, char *name)
 	 * can check for Null map data pretty easy, but can't really check
 	 * for unknown map data.
 	 */
-	XtVaSetValues(self->w, XtNmap, NULL, NULL);
+	if (self->w) /* only when already a window, open otherwhise coredump */
+	    XtVaSetValues(self->w, XtNmap, NULL, NULL);
 	sprintf(buf,"Cannot load map %s",path);
 	CnvNotify(buf,"Continue",NULL);
 	if(!(tmp = ready_map_name(save,MAP_FLUSH))) return False;
