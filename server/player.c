@@ -136,7 +136,7 @@ static void get_player(player *p) {
     p->last_weight= -1;
 #ifdef EXPLORE_MODE
     p->explore=0;
-#endif  
+#endif
 
     strncpy(p->title,op->arch->clone.name,MAX_NAME);
     op->race = add_string (op->arch->clone.race);
@@ -320,7 +320,7 @@ object *get_nearest_player(object *mon) {
  *
  * Modified by MSW 2001-08-06 to handle tiled maps. Various notes:
  * 1) With DETOUR_AMOUNT being 2, it should still go and find players hiding
- * down corriders.  
+ * down corriders.
  * 2) I think the old code was broken if the first direction the monster
  * should move was blocked - the code would store the first direction without
  * verifying that the player can actually move in that direction.  The new
@@ -354,6 +354,8 @@ int path_to_player(object *mon, object *pl,int mindiff) {
 	y = lasty + freearr_y[dir];
 
 	m = get_map_from_coord(m, &x, &y);
+        if (m == NULL) return 0;
+
 	/* Space is blocked - try changing direction a little */
 	if (blocked(m, x, y) && (m == mon->map && blocked_link(mon, x, y))) {
 	    /* recalculate direction from last good location.  Possible

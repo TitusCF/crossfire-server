@@ -63,7 +63,7 @@ int move_ob (object *op, int dir, object *originator)
 
     /* Modified these to check for appropriate object anyplace on map
      * not just the top (stacking is less deterministic now).
-     * also now have it return 0 on both of these cases.  The 
+     * also now have it return 0 on both of these cases.  The
      * monster may be able to move there, but hacking the door or
      * earthwall was their action this tick.
      * will_apply should only be set for monsters, so players should
@@ -79,6 +79,7 @@ int move_ob (object *op, int dir, object *originator)
 		hit_player(tmp_ob,5,op,AT_PHYSICAL); /* Tear down the earthwall */
 		return 0;
 	    }
+            tmp_ob = tmp_ob->above;
 	}
     }
     if (op->will_apply&8 ) {
@@ -88,6 +89,7 @@ int move_ob (object *op, int dir, object *originator)
 		hit_player(tmp_ob,9999,op,AT_PHYSICAL); /* Tear down the earthwall */
 		return 0;
 	    }
+            tmp_ob = tmp_ob->above;
 	}
     }
 
