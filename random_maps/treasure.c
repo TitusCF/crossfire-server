@@ -580,8 +580,10 @@ object ** surround_by_doors(mapstruct *map,char **layout,int x,int y,int opts) {
 
   /* place doors in all the 8 adjacent unblocked squares. */
   for(i=1;i<9;i++) {
-    if(!wall_blocked(map,x+freearr_x[i],y+freearr_y[i])
-       || layout[x][y]=='>') {/* place a door */
+    int x1 = x + freearr_x[i], y1 = y+freearr_y[i];
+    
+    if(!wall_blocked(map,x1,y1)
+       || layout[x1][y1]=='>') {/* place a door */
       object * new_door=get_archetype( (freearr_x[i]==0)?doors[1]:doors[0]);
       new_door->x = x + freearr_x[i];
       new_door->y = y + freearr_y[i];

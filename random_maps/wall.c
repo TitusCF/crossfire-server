@@ -252,7 +252,7 @@ object * retrofit_joined_wall(mapstruct *the_map,int i,int j,int insert_flag,RMP
 
   /* first find the wall */
   for(the_wall = get_map_ob(the_map,i,j);the_wall!=NULL;the_wall=the_wall->above)
-    if(QUERY_FLAG(the_wall,FLAG_NO_PASS)) break;
+    if(QUERY_FLAG(the_wall,FLAG_NO_PASS) && the_wall->type!=EXIT && the_wall->type!=TELEPORTER) break;
 
   
   /* if what we found is a door, don't remove it, set the_wall to NULL to
