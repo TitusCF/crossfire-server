@@ -677,7 +677,7 @@ void fix_generated_item (object *op, object *creator, int difficulty,
     if(!op->magic && max_magic)
       set_magic(difficulty,op,max_magic, flags);
     if ((!was_magic && !(RANDOM()%CHANCE_FOR_ARTIFACT)) || op->type == HORN ||
-	difficulty >= 100000 )
+	difficulty >= 999 )
       generate_artifact(op, difficulty);
   }
   if (!op->title) /* Only modify object if not special */
