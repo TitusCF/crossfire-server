@@ -552,11 +552,14 @@ void do_mood_floor(object *op, object *op2) {
 		for(tmp2=get_map_ob(op2->map,op2->x,op2->y); /* finding an owner */ 
                    tmp2->type!=PLAYER;tmp2=tmp2->above)	
                 	if(tmp2->above==NULL) break;
-		
+
+                if (tmp2->type != PLAYER)
+                    break;
 		set_owner(tmp,tmp2);
 		SET_FLAG(tmp,FLAG_MONSTER);
 		tmp->stats.exp = 0;
 		SET_FLAG(tmp, FLAG_FRIENDLY);
+                add_friendly_object (tmp);
 		tmp->move_type = PETMOVE;
 		break;		
 

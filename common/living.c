@@ -1052,8 +1052,11 @@ void fix_player(object *op) {
           if(tmp->armour)
             op->armour+=((100-op->armour)*tmp->armour)/100;
 
-          if(tmp->slaying!=NULL)
+          if(tmp->slaying!=NULL) {
+            if (op->slaying != NULL)
+              free_string (op->slaying);
             add_refcount(op->slaying = tmp->slaying);
+          }
 
 	  if(tmp->stats.ac)
             op->stats.ac-=(tmp->stats.ac+tmp->magic);
@@ -1094,8 +1097,11 @@ void fix_player(object *op) {
         weapon_weight=tmp->weight;
         weapon_speed=((int)WEAPON_SPEED(tmp)*2-tmp->magic)/2;
         if(weapon_speed<0) weapon_speed=0;
-        if(tmp->slaying!=NULL)
+        if(tmp->slaying!=NULL) {
+          if (op->slaying != NULL)
+            free_string (op->slaying);
           add_refcount(op->slaying = tmp->slaying);
+        }
 #ifdef SPELL_ENCUMBRANCE
 	if(op->type==PLAYER) op->contr->encumbrance+=(int)3*tmp->weight/1000;
 #endif

@@ -322,6 +322,7 @@ void pick_up_object (object *pl, object *op, object *tmp, int nrof)
 
     if(nrof != tmp->nrof && !(nrof == 1 && tmp->nrof == 0)) {
 	object *tmp2 = tmp;
+        tag_t tmp2_tag = tmp2->count;
 	tmp = get_split_ob (tmp, nrof);
 	if(!tmp) {
 	    new_draw_info(NDI_UNIQUE, 0,pl, errmsg);
@@ -329,8 +330,8 @@ void pick_up_object (object *pl, object *op, object *tmp, int nrof)
 	}
 	/* Tell a client what happened rest of objects */
 	if (pl->type == PLAYER) {
-	    if (QUERY_FLAG(tmp2, FLAG_REMOVED))
-		esrv_del_item (pl->contr, tmp2->count);
+            if (was_destroyed (tmp2, tmp2_tag))
+		esrv_del_item (pl->contr, tmp2_tag);
 	    else
 		esrv_send_item (pl, tmp2);
 	}
@@ -483,6 +484,7 @@ int command_take (object *op, char *params)
  */
 void put_object_in_sack (object *op, object *sack, object *tmp, long nrof) 
 {
+    tag_t tmp_tag, tmp2_tag;
     object *tmp2, *sack2;
     char buf[MAX_BUF];
 
@@ -536,6 +538,7 @@ void put_object_in_sack (object *op, object *sack, object *tmp, long nrof)
     /* we want to put some portion of the item into the container */
     if (nrof && tmp->nrof != nrof) {
 	object *tmp2 = tmp;
+        tmp2_tag = tmp2->count;
 	tmp = get_split_ob (tmp, nrof);
 
 	if(!tmp) {
@@ -543,8 +546,8 @@ void put_object_in_sack (object *op, object *sack, object *tmp, long nrof)
 	    return;
 	}
 	/* Tell a client what happened other objects */ 
-	if (QUERY_FLAG(tmp2, FLAG_FREED))
-	      esrv_del_item (op->contr, tmp2->count);
+	if (was_destroyed (tmp2, tmp2_tag))
+	      esrv_del_item (op->contr, tmp2_tag);
 	else	/* this can proably be replaced with an update */
 	      esrv_send_item (op, tmp2);
     } else
@@ -553,6 +556,7 @@ void put_object_in_sack (object *op, object *sack, object *tmp, long nrof)
     sprintf(buf, "You put %s in ", query_name(tmp));
     strcat (buf, query_name(sack));
     strcat (buf, ".");
+    tmp_tag = tmp->count;
     tmp2 = insert_ob_in_ob(tmp, sack);
     new_draw_info(NDI_UNIQUE, 0,op,buf);
     fix_player(op); /* This is overkill, fix_player() is called somewhere */ 
@@ -562,7 +566,7 @@ void put_object_in_sack (object *op, object *sack, object *tmp, long nrof)
      * delete the original.
      */
     if (tmp2 != tmp) 
-	esrv_del_item (op->contr, tmp->count);
+	esrv_del_item (op->contr, tmp_tag);
 	    
     esrv_send_item (op, tmp2);
     /* update the sacks and players weight */
@@ -604,6 +608,7 @@ void drop_object (object *op, object *tmp, long nrof)
      */
     if(nrof && tmp->nrof != nrof) {
 	object *tmp2 = tmp;
+        tag_t tmp2_tag = tmp2->count;
 	tmp = get_split_ob (tmp, nrof);
 	if(!tmp) {
 	    new_draw_info(NDI_UNIQUE, 0,op, errmsg);
@@ -612,8 +617,8 @@ void drop_object (object *op, object *tmp, long nrof)
 	/* Tell a client what happened rest of objects.  tmp2 is now the
 	 * original object
 	 */ 
-	if (QUERY_FLAG(tmp2, FLAG_FREED))
-	      esrv_del_item (op->contr, tmp2->count);
+	if (was_destroyed (tmp2, tmp2_tag))
+	      esrv_del_item (op->contr, tmp2_tag);
 	else
 	      esrv_send_item (op, tmp2);
     } else

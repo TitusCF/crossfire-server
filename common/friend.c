@@ -54,7 +54,7 @@ void remove_friendly_object(object *op) {
       prev=prev->next;
     if(prev==NULL||prev->next==NULL||
        prev->next->ob!=op||prev->next->id!=op->count) {
-      LOG(llevDebug,"Remove_friendly_object: Can't find object %s (%d).\n",
+      LOG(llevError,"Remove_friendly_object: Can't find object %s (%d).\n",
           op->name,op->count);
       return;
     }

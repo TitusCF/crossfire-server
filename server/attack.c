@@ -670,10 +670,15 @@ int hit_player_attacktype(object *op, object *hitter, int dam,
     } else if (attacktype & AT_TURN_UNDEAD) {
 	if (QUERY_FLAG(op,FLAG_UNDEAD)) {
 	    object *owner=get_owner(hitter)==NULL?hitter:get_owner(hitter);
-	    /* if undead are not an enemy of your god, you turn them at half strength */
-	    if(op->level<((turn_bonus[owner->stats.Wis]+owner->level) /
-			  (strstr(find_god(determine_god(owner))->slaying,undead_name)?1:2)))
-		SET_FLAG(op, FLAG_SCARED);
+            object *god = find_god (determine_god (owner));
+            int div = 1;
+	    /* if undead are not an enemy of your god, you turn them at half
+             * strength */
+            if ( ! god || ! god->slaying
+                || strstr (god->slaying, undead_name) == NULL)
+                div = 2;
+	    if (op->level < (turn_bonus[owner->stats.Wis]+owner->level) / div)
+	        SET_FLAG(op, FLAG_SCARED);
 	}
 	else dam=0; /*don't damage non undead - should we damage undead? */
     /* fear, cancelleation, deplete handled above */
@@ -800,12 +805,15 @@ int hit_player(object *op,int dam, object *hitter, int type) {
      * a proper match, otherwise no damage.
      */
     if (type & AT_HOLYWORD) {
+        object *god;
 	if ((!hitter->slaying || 
 	     (!(op->race && strstr(hitter->slaying,op->race)) &&
 	     !(op->name && strstr(hitter->slaying,op->name)))) &&
 	    (!QUERY_FLAG(op,FLAG_UNDEAD) ||
-	     (hitter->title != NULL &&
-	      (strstr(find_god(determine_god(hitter))->race,undead_name)!=NULL))))
+	     (hitter->title != NULL
+              && (god = find_god(determine_god(hitter))) != NULL
+              && god->race != NULL
+	      && strstr(god->race,undead_name) != NULL)))
 	    return 0;
     }
 
@@ -885,10 +893,11 @@ int hit_player(object *op,int dam, object *hitter, int type) {
 	}
 	if(QUERY_FLAG (op, FLAG_FRIENDLY)) {
 	    remove_friendly_object(op);
-	    if(get_owner(op)!=NULL)
+	    if (get_owner (op) != NULL && op->owner->type == PLAYER)
 		op->owner->contr->golem=NULL;
 	    else
-		LOG(llevDebug,"Encountered golem without owner.\n");
+		LOG (llevError, "BUG: hit_player(): Encountered golem "
+		     "without owner.\n");
 	    remove_ob(op);
 	    free_object(op);
 	    return maxdam;

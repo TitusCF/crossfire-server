@@ -294,14 +294,8 @@ void polymorph_living(object *op) {
 
     /* Put the new creature on the map */
     op->x = x; op->y = y;
-    insert_ob_in_map(op,map,owner);
-
-    /* It is possible that there is something on the map that kills
-     * the object when inserted.  Unlikely, but worth checking. */
-    if (QUERY_FLAG(op, FLAG_FREED)) return;
-
-    /*update_object(op);*/ /*I believe insert_ob_in_map already does this */
-
+    if ((op = insert_ob_in_map (op, map, owner)) == NULL)
+        return;
 
     if(op->randomitems != NULL)
 	create_treasure(op->randomitems,op,GT_INVISIBLE,map->difficulty,0);
@@ -777,16 +771,6 @@ int magic_wall(object *op,object *caster,int dir,int spell_type) {
                   10* SP_level_strength_adjust(op,caster,spell_type);
 	/* More solid, since they can be torn down */
     tmp->stats.maxhp = tmp->stats.hp;
-#if 0
-    /* Don't make them friendly - ends up making them too hard hard for other
-     * players to kill
-     */
-    /*
-     *  Now, make agressive monsters tear down the walls:
-     */
-    SET_FLAG(tmp, FLAG_FRIENDLY);
-    add_friendly_object(tmp);
-#endif
     break;
   case SP_FIRE_WALL:
     tmp=get_archetype("firebreath");
@@ -872,9 +856,7 @@ int magic_wall(object *op,object *caster,int dir,int spell_type) {
     return 0;
   }
   tmp->x=op->x+freearr_x[dir],tmp->y=op->y+freearr_y[dir];
-  insert_ob_in_map(tmp,op->map,op);
-
-  if (QUERY_FLAG(tmp, FLAG_REMOVED)) {
+  if ((tmp = insert_ob_in_map (tmp, op->map, op)) == NULL) {
     new_draw_info(NDI_UNIQUE, 0,op,"Something destroys your wall");
     return 0;
   }
@@ -1003,8 +985,8 @@ int dimension_door(object *op,int dir) {
 
 	    remove_ob(op);
 	    op->x=x,op->y=y;
-	    insert_ob_in_map(op,op->map,op);
-	    draw(op);
+	    if ((op = insert_ob_in_map(op,op->map,op)) != NULL)
+	        draw(op);
 	    return 1;
 	}
     } else { /* Player didn't specify a distance, so lets see how far
@@ -1031,7 +1013,8 @@ int dimension_door(object *op,int dir) {
     /* Actually move the player now */
     remove_ob(op);
     op->x+=freearr_x[dir]*dist,op->y+=freearr_y[dir]*dist;
-    insert_ob_in_map(op,op->map,op);
+    if ((op = insert_ob_in_map(op,op->map,op)) == NULL)
+        return 1;
     draw(op);
     op->speed_left= -FABS(op->speed)*5; /* Freeze them for a short while */
     return 1;
@@ -1462,12 +1445,15 @@ int summon_pet(object *op, int dir, SpellTypeFrom item) {
           add_friendly_object(tmp);
           SET_FLAG(tmp, FLAG_FRIENDLY);
           tmp->move_type = PETMOVE;
-        } else
-          if(QUERY_FLAG(op, FLAG_FRIENDLY)) {
-            add_friendly_object(tmp);
-            SET_FLAG(tmp, FLAG_FRIENDLY);
-            tmp->move_type = PETMOVE;
-          } else
+        } else if (QUERY_FLAG (op, FLAG_FRIENDLY)) {
+      	    object *owner = get_owner(op);
+            if (owner != NULL) {
+               set_owner (tmp, owner);
+               tmp->move_type = PETMOVE;
+               add_friendly_object (tmp);
+               SET_FLAG (tmp, FLAG_FRIENDLY);
+	    }
+	}
         tmp->speed_left = -1;
         tmp->enemy = op->enemy;
         tmp->type = 0;
@@ -1482,8 +1468,8 @@ int summon_pet(object *op, int dir, SpellTypeFrom item) {
       prev = tmp;
     }
     head->direction = dir;
-    insert_ob_in_map(head, op->map, op);
-    if (!QUERY_FLAG(head, FLAG_FREED) && head->randomitems != NULL) {
+    head = insert_ob_in_map (head, op->map, op);
+    if (head != NULL && head->randomitems != NULL) {
       object *tmp;
       create_treasure(head->randomitems,head,GT_INVENTORY,6,0);
       for(tmp = head->inv; tmp != NULL; tmp = tmp->below)
@@ -1542,14 +1528,15 @@ void animate_bomb(object *op) {
   at = find_archetype("splint");
   for(env=op;env->env!=NULL;env=env->env);
   if (op->env) {
-	if (op->type==PLAYER) drop(env,op);
+        if (env->map == NULL)
+            return;
+	if (env->type==PLAYER) drop(env,op);
 	else {
 	    remove_ob(op);
-	    insert_ob_in_map(op, env->map, op);
+	    if ((op = insert_ob_in_map (op, env->map, op)) == NULL)
+                return;
 	}
   }
-  if (env->map == NULL)
-    return;
   if (at)
     for(i=1;i<9;i++)
       fire_arch(op,op,i,at,0,0);
@@ -1647,6 +1634,7 @@ int cast_create_missile(object *op, object *caster,int dir, char *stringarg)
   int missile_plus=0;
   char *missile_name;
   object *tmp, *missile;
+  tag_t tag;
 
   missile_name = "arrow";
 
@@ -1685,7 +1673,10 @@ int cast_create_missile(object *op, object *caster,int dir, char *stringarg)
 			arrows +4 and selling them, even with value = 1 */
 
   SET_FLAG(missile, FLAG_IDENTIFIED);
-  if (!cast_create_obj(op,caster,missile,dir) && op->type==PLAYER) {
+  tag = missile->count;
+  if ( ! cast_create_obj (op, caster, missile, dir) && op->type == PLAYER
+      && ! was_destroyed (missile, tag))
+  {
     tmp= get_owner(op);
     if (!tmp)
       pick_up(op, missile);
@@ -2265,7 +2256,8 @@ int create_the_feature(object *op, object *caster,int dir, int spell_effect)
 	free_object(tmp);
 	return 0;
     }
-    insert_ob_in_map(tmp,op->map,op);
+    if ((tmp = insert_ob_in_map (tmp, op->map, op)) == NULL)
+        return 1;
     if(QUERY_FLAG(tmp, FLAG_BLOCKSVIEW))
 	update_all_los(op->map);
     if(op->type==PLAYER)
@@ -2457,6 +2449,8 @@ int cast_charm(object *op, object *caster,archetype *arch,int spellnum) {
   int i;
   object *tmp,*effect;
   
+  if (op->type != PLAYER)
+    return 0;
   for(i=1;i<MIN(9+SP_level_strength_adjust(op,caster,spellnum),SIZEOFFREE);i++) {
 	if (out_of_map(op->map,op->x+freearr_x[i],op->y+freearr_y[i]))
 	    continue;
@@ -2477,9 +2471,9 @@ int cast_charm(object *op, object *caster,archetype *arch,int spellnum) {
 	}
 	set_owner(tmp,op);
 	SET_FLAG(tmp,FLAG_MONSTER);
-	if(op->type==PLAYER)
-	tmp->stats.exp = 0;
 	SET_FLAG(tmp,FLAG_FRIENDLY);
+        add_friendly_object (tmp);
+	tmp->stats.exp = 0;
 	tmp->move_type = PETMOVE;
   }
   return 1;
@@ -2488,7 +2482,9 @@ int cast_charm(object *op, object *caster,archetype *arch,int spellnum) {
 int cast_charm_undead(object *op, object *caster,archetype *arch,int spellnum) {
   int i,bonus;
   object *tmp,*effect;
- 
+
+  if (op->type != PLAYER)
+    return 0; 
   if (QUERY_FLAG(caster,FLAG_UNDEAD) || strstr(find_god(determine_god(op))->race,undead_name)!=NULL) {
     bonus = 5;
   } else if (strstr(find_god(determine_god(op))->slaying,undead_name)!=NULL) {
@@ -2515,9 +2511,9 @@ int cast_charm_undead(object *op, object *caster,archetype *arch,int spellnum) {
         }
         set_owner(tmp,op);
         SET_FLAG(tmp,FLAG_MONSTER);
-        if(op->type==PLAYER)
-        tmp->stats.exp = 0;
         SET_FLAG(tmp,FLAG_FRIENDLY);
+        add_friendly_object (tmp);
+	tmp->stats.exp = 0;
         tmp->move_type = PETMOVE;
   }
   return 1;
@@ -2706,8 +2702,8 @@ int summon_cult_monsters(object *op, int old_dir) {
 	    }
 	} /* if monster level is much less than character level */
 
-	insert_ob_in_map(head, op->map, op);
-	if (!QUERY_FLAG(head, FLAG_FREED) && head->randomitems != NULL) {
+	head = insert_ob_in_map (head, op->map, op);
+	if (head != NULL && head->randomitems != NULL) {
 	    object *tmp;
 	    create_treasure(head->randomitems,head,GT_INVENTORY,6,0);
 	    for(tmp = head->inv; tmp != NULL; tmp = tmp->below)
@@ -2798,8 +2794,14 @@ int summon_avatar(object *op,object *caster,int dir, archetype *at, int spellnum
   tmp->vulnerable|=god->vulnerable;
   tmp->immune|=god->immune;
   tmp->protected|=god->protected;
-  if(tmp->race) free_string(tmp->race);
-  if(tmp->slaying) free_string(tmp->slaying);
+  if (tmp->race) {
+    free_string (tmp->race);
+    tmp->race = NULL;
+  }
+  if (tmp->slaying) {
+    free_string (tmp->slaying);
+    tmp->slaying = NULL;
+  }
   if(god->race) tmp->race = add_string(god->race);
   if(god->slaying) tmp->slaying = add_string(god->slaying);
   /* safety, we must allow a god's servants some reasonable attack */
@@ -2839,11 +2841,12 @@ object *fix_summon_pet(archetype *at, object *op, int dir, int type ) {
         } else { 
           if(QUERY_FLAG(op, FLAG_FRIENDLY)) {
       	    object *owner = get_owner(op);
-            if(owner != NULL) /* For now, we transfer ownership */
+            if(owner != NULL) {/* For now, we transfer ownership */
                set_owner(tmp,owner);
-      	    tmp->move_type = PETMOVE;
-            add_friendly_object(tmp);
-            SET_FLAG(tmp, FLAG_FRIENDLY);
+               tmp->move_type = PETMOVE;
+               add_friendly_object(tmp);
+               SET_FLAG(tmp, FLAG_FRIENDLY);
+	    }
           }
         }
         if(op->type!=PLAYER||type!=GOLEM) { 
@@ -3058,11 +3061,12 @@ int animate_weapon(object *op,object *caster,int dir, archetype *at, int spellnu
        && !QUERY_FLAG(weapon,FLAG_CURSED)
        && !QUERY_FLAG(weapon,FLAG_DAMNED)){
       object *owner = get_owner(op);
-      if(owner != NULL)
+      if(owner != NULL) {
         set_owner(tmp,owner);
-      tmp->move_type = PETMOVE;
-      add_friendly_object(tmp);
-      SET_FLAG(tmp, FLAG_FRIENDLY);
+        tmp->move_type = PETMOVE;
+        add_friendly_object(tmp);
+        SET_FLAG(tmp, FLAG_FRIENDLY);
+      }
     }
     /* otherwise, make the golem an enemy */
     SET_FLAG(tmp, FLAG_MONSTER);
@@ -3135,7 +3139,10 @@ int animate_weapon(object *op,object *caster,int dir, archetype *at, int spellnu
   }
   tmp->armour = 100 - (int)((100.0-(float)tmp->armour)/(30.0-2.0*(a>14?14.0:(float)a)));
   /* If the weapon has a Slaying list, so does the golem */
-  if(tmp->slaying) free_string(tmp->slaying);
+  if (tmp->slaying) {
+    free_string (tmp->slaying);
+    tmp->slaying = NULL;
+  }
   if(weapon->slaying) tmp->slaying = add_string(weapon->slaying);
 
   /* Determine golem's speed */

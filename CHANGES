@@ -26,6 +26,77 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+common/button.c: do_mood_floor():  Bugfixes: Only players can have pets.
+Call add_friendly_object() for friendly monsters.
+- Jan Echternach 6/8/2000
+
+server/spell_effect.c and server/spell_util.c: Several functions:  Only
+add a pet if there really is a pet's owner, and it's a player.
+- Jan Echternach 6/8/2000
+
+server/spell_effect.c: cast_charm() and cast_charm_undead():  Bugfixes:
+Only players can cast these spells.  This fixes server crash if
+a monster casted a charm spell, and the charmed pet was killed.
+Call add_friendly_object for friendly monsters.
+- Jan Echternach 6/8/2000
+
+common/friend.c: remove_friendly_object():  Use llevError for error
+messages.  - Jan Echternach 6/8/2000
+
+common/living.c: fix_player(); server/gods.c: tailor_god_spell();
+server/spell_effect.c: summon_avatar() and animate_weapon(): Bugfix: Set
+a string to NULL after calling free_string().  This fixes a nasty bug
+that caused the string's reference count drop below 0, which resulted
+in corruption of malloc()'s internal data structures (and possibly
+server crashes).  - Jan Echternach 6/8/2000
+
+server/time.c: move_creator():  Bugfix: Call free_string() to free old
+values of op->name and op->title before overwriting them with new values.
+- Jan Echternach 6/8/2000
+
+common/object.c: insert_ob_in_map_simple() and insert_ob_in_map():
+Check that we don't insert freed objects.  - Jan Echternach 6/8/2000
+
+server/attack.c: hit_player_attacktype() and hit_player():  Bugfix: Check
+that find_god() really found a god, and that 'god->slaying' is not NULL.
+Fixes crash if a monster casted turn undead and actually hit something.
+- Jan Echternach 6/8/2000
+
+server/attack.c: hit_player():  Check that a pet's owner is a player.
+Prevents server crashes if a monster has a pet monster due to a bug
+somewhere.  Use llevError for error message.  - Jan Echternach 6/8/2000
+
+server/time.c: move_arrow():  Use llevDebug level for "Arrow had no
+map" message.  - Jan Echternach 6/8/2000
+
+server/c_object.c, server/spell_effect.c, server/spell_util.c:  Bugfixes:
+Added some missing checks for destroyed objects.  Use was_destroyed()
+or return value of insert_ob_in_map() to check for destroyed objects,
+not FLAG_FREED or FLAG_REMOVED.  Don't use op->count of destroyed objects.
+- Jan Echternach 6/8/2000
+
+server/shop.c: get_payment2():  Type of tag is 'tag_t', not 'long'.
+- Jan Echternach 6/8/2000
+
+server/spell_effect.c: animate_bomb():  Fix environment checks.
+- Jan Echternach 6/8/2000
+
+server/spell_util.c: fire_bolt():  Bugfix: Set level of bolt.
+- Jan Echternach 6/8/2000
+
+server/spell_util.c: explosion():  Bugfix: Set FLAG_NO_APPLY before
+moving the exploding object to the top.  - Jan Echternach 6/8/2000
+
+server/spell_util.c: put_a_monster():  First create the monster
+completely, then just insert its head.  - Jan Echternach 6/8/2000
+
+server/time.c: generate_monster():  Bugfix: Don't free generators that
+are used up in this function.  process_object() already does this.
+This fixes steambolt (which is a generator but must not used up here -
+generate_monster() wasn't looking at FLAG_IS_USED_UP) and all generators
+which should really be used up (because process_object() didn't expect
+generate_monster() to destroy the object).  - Jan Echternach 6/8/2000
+
 server/rune.c: trap_disarm():  Bugfix: Use SK_level() to determine
 disarmer's level.  Fixes server crash if multisquare monster casts
 "disarm".  - Jan Echternach 6/8/2000

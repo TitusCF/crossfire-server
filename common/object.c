@@ -1227,6 +1227,10 @@ void insert_ob_in_map_simple(object *op, mapstruct *m)
 {
   object *tmp, *top;
 
+  if (QUERY_FLAG (op, FLAG_FREED)) {
+    LOG (llevError, "Trying to insert freed object!\n");
+    return;
+  }
   if(m==NULL) {
     dump_object(op);
     LOG(llevError,"Trying to insert in null-map!\n%s\n",errmsg);
@@ -1343,6 +1347,10 @@ object *insert_ob_in_map (object *op, mapstruct *m, object *originator)
 {
   object *tmp, *top;
 
+  if (QUERY_FLAG (op, FLAG_FREED)) {
+    LOG (llevError, "Trying to insert freed object!\n");
+    return;
+  }
   if(m==NULL) {
     dump_object(op);
     LOG(llevError,"Trying to insert in null-map!\n%s\n",errmsg);

@@ -467,7 +467,7 @@ int get_payment2 (object *pl, object *op) {
             return 0;
         } else {
 	    object *tmp;
-	    long c = op->count;
+	    tag_t c = op->count;
 
 	    CLEAR_FLAG(op, FLAG_UNPAID);
 	    new_draw_info_format(NDI_UNIQUE, 0, op,

@@ -658,7 +658,10 @@ int tailor_god_spell(object *spellop, object *caster) {
 
     /* either holy word or godpower attacks will set the slaying field */
     if(spellop->attacktype&AT_HOLYWORD||spellop->attacktype&AT_GODPOWER) { 
-         if(spellop->slaying) free_string(spellop->slaying);
+         if (spellop->slaying) {
+             free_string(spellop->slaying);
+             spellop->slaying = NULL;
+         }
          if(!caster_is_spell)
             spellop->slaying = add_string(god->slaying);
 	 else if(caster->slaying) 

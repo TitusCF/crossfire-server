@@ -100,10 +100,6 @@ void generate_monster(object *gen) {
     prev=op;
     at=at->more;
   }
-  if(gen->stats.food&&!--(gen->stats.food)) {
-    remove_ob(gen);
-    free_object(gen);
-  }
 }
 
 void regenerate_rod(object *rod) {
@@ -515,7 +511,7 @@ void move_arrow(object *op) {
     object *tmp;
 
     if(op->map==NULL) {
-	LOG(llevError,"Arrow had no map.\n");
+	LOG(llevDebug,"Arrow had no map.\n");
 	remove_ob(op);
 	free_object(op);
 	return;
@@ -777,6 +773,8 @@ void move_creator(object *op) {
 	{ op->stats.hp=-1;return;}
   tmp=arch_to_object(op->other_arch);
   if(op->slaying) {
+	 if (tmp->name) free_string (tmp->name);
+	 if (tmp->title) free_string (tmp->title);
 	 tmp->name = add_string(op->slaying);
 	 tmp->title = add_string(op->slaying);
   }

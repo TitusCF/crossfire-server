@@ -834,11 +834,12 @@ int summon_monster(object *op,object *caster,int dir,archetype *at,int spellnum)
   } else {
     if(QUERY_FLAG(op, FLAG_FRIENDLY)) {
       object *owner = get_owner(op);
-      if(owner != NULL) /* For now, we transfer ownership */
-        set_owner(tmp,owner);
-      tmp->move_type = PETMOVE;
-      add_friendly_object(tmp);
-      SET_FLAG(tmp, FLAG_FRIENDLY);
+      if (owner != NULL) { /* For now, we transfer ownership */
+        set_owner (tmp, owner);
+        tmp->move_type = PETMOVE;
+        add_friendly_object (tmp);
+        SET_FLAG (tmp, FLAG_FRIENDLY);
+      }
     }
     SET_FLAG(tmp, FLAG_MONSTER);
   }
@@ -954,6 +955,7 @@ int fire_bolt(object *op,object *caster,int dir,int type,int magic) {
   if(QUERY_FLAG(tmp, FLAG_IS_TURNABLE))
     SET_ANIMATION(tmp, dir);
   set_owner(tmp,op);
+  tmp->level = SK_level (caster);
 #if 0
   if(op->type==PLAYER)
     tmp->stats.wc=5+(op->contr->shootstrength-5)/5,
@@ -969,8 +971,8 @@ int fire_bolt(object *op,object *caster,int dir,int type,int magic) {
     tmp->x=op->x,tmp->y=op->y;
     tmp->direction=absdir(tmp->direction+4);
   }
-  insert_ob_in_map(tmp,op->map,op);
-  move_bolt(tmp);
+  if ((tmp = insert_ob_in_map(tmp,op->map,op)) != NULL)
+    move_bolt (tmp);
   return 1;
 }
 
@@ -1026,11 +1028,8 @@ int fire_arch_from_position (object *op, object *caster, sint16 x, sint16 y,
   if(op->type==PLAYER)
     tmp->stats.hp=(op->contr->shootstrength-10)/10+10;
 #endif
-  insert_ob_in_map(tmp,op->map,op);
-  /* object was used when it was inserted into the map - don't do anything
-   * more
-   */
-  if (QUERY_FLAG(tmp, FLAG_FREED)) return 1;
+  if ((tmp = insert_ob_in_map (tmp, op->map, op)) == NULL)
+    return 1;
   switch(type) {
     case SP_M_MISSILE:
     move_missile(tmp);
@@ -1210,8 +1209,10 @@ void explosion(object *op) {
     return;
   }
   if(op->above!=NULL&&op->above->type!=PLAYER) {
+    SET_FLAG (op, FLAG_NO_APPLY);
     remove_ob(op);
     insert_ob_in_map(op,op->map,op);
+    CLEAR_FLAG (op, FLAG_NO_APPLY);
   }
   hit_map(op,0,op->attacktype);
   if(op->stats.hp>2&&!op->value) {
@@ -1303,12 +1304,15 @@ void move_bolt(object *op) {
       tmp->value=0;
       tmp->stats.hp++;
       tmp->x+=DIRX(tmp),tmp->y+=DIRY(tmp);
-      insert_ob_in_map(tmp,op->map,op);
-      if (!tmp->stats.food) {
-        tmp->stats.food = 1;
-        move_bolt(tmp);
-      } else
-        tmp->stats.food = 0;
+      tmp = insert_ob_in_map(tmp,op->map,op);
+      if (tmp) {
+        if ( ! tmp->stats.food) {
+          tmp->stats.food = 1;
+          move_bolt (tmp);
+        } else {
+          tmp->stats.food = 0;
+        }
+      }
     }
   }
 }
@@ -1320,6 +1324,7 @@ void move_bolt(object *op) {
 void move_golem(object *op) {
     int made_attack=0;
     object *tmp;
+    tag_t tag;
 
     if(QUERY_FLAG(op, FLAG_MONSTER))
 	return; /* Has already been moved */
@@ -1358,7 +1363,10 @@ void move_golem(object *op) {
      * move_ob (makes recursive calls to other parts) 
      * move_ob returns 0 if the creature was not able to move.
      */
+    tag = op->count;
     if(move_ob(op,op->direction,op)) return;
+    if (was_destroyed (op, tag))
+        return;
 
     for(tmp=op;tmp;tmp=tmp->more) { 
 	int x=tmp->x+freearr_x[op->direction],y=tmp->y+freearr_y[op->direction];
@@ -1560,8 +1568,8 @@ void move_fired_arch(object *op) {
 
     if(reflwall(op->map,op->x,op->y)) {
 	op->direction=absdir(op->direction+4);
-	insert_ob_in_map(op,op->map,op);
-	update_turn_face(op);
+	if ((op = insert_ob_in_map(op,op->map,op)) != NULL)
+	    update_turn_face(op);
 	return;
     }
     if(blocked(op->map,op->x,op->y)) {
@@ -1942,13 +1950,12 @@ void put_a_monster(object *op,char *monstername) {
 	    tmp->head=head;
 	    prev->more=tmp;
 	}
-	insert_ob_in_map(tmp,op->map,op);
-	/* If something happens on the insert, don't insert anymore parts */
-	if (QUERY_FLAG(tmp,FLAG_FREED)) break;
 	if (!head) head=tmp;
 	prev=tmp;
 	at=at->more;
     }
+
+    insert_ob_in_map(head,op->map,op);
 
     /* thought it'd be cool to insert a burnout, too.*/
     tmp=get_archetype("burnout");
