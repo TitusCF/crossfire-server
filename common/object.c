@@ -1200,10 +1200,10 @@ void remove_ob(object *op) {
     if(tmp->above == tmp)
       tmp->above = NULL;
     last=tmp;
-  }  
-  if(last==NULL)	/* No more objects present, draw the background */
-    set_map(op->map,op->x,op->y,&blank_look);
-  else			/* Redraw the object at the top */
+  }
+  if (last==NULL)
+    update_position(op->map, op->x, op->y);
+  else
     update_object(last);
 
   if(QUERY_FLAG(op,FLAG_BLOCKSVIEW)	/* Should be harmless from editor, */
