@@ -1584,7 +1584,7 @@ char *get_ob_diff(object *op,object *op2) {/* I plan to optimize this heavily */
   if(op->type!=op2->type)
     FAST_SAVE_LONG(fastbuf,"type ",op->type,5);
   if(op->subtype!=op2->subtype)
-    FAST_SAVE_LONG(fastbuf,"subtype ",op->subtype,2);
+    FAST_SAVE_LONG(fastbuf,"subtype ",op->subtype,8);
   if(op->attacktype!=op2->attacktype)
     FAST_SAVE_LONG(fastbuf,"attacktype ",op->attacktype,11);
 
