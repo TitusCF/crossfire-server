@@ -360,17 +360,16 @@ void init_ericserver()
  ******************************************************************************/
 
 /* Free's all the memory that ericserver allocates. */
-void free_all_ericserver()
+void free_all_newserver()
 {  
-    int num;
+    int num, i;
 
-#ifdef ESRV_DEBUG
-    LOG(llevDebug,"Freeing all ericserver information.\n");
-#endif
+    LOG(llevDebug,"Freeing all new client/server information.\n");
     for(num=0;num<MAXFACENUM;num++) {
 	if (faces[num].name) {
 	    free(faces[num].name);
-	    free(faces[num].data);
+	    for (i=0; i<FACE_TYPES; i++) 
+		free(faces[num].data[i]);
 	}
     }
     free(init_sockets);

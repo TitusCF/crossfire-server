@@ -30,6 +30,7 @@
 
 #include "shstr.h"
 
+#include <autoconf.h>
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
 #endif

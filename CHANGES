@@ -17,6 +17,32 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 CVS changes since last release:
 
+Various improvements to make finding memory leaks easier.
+common/anim.c: Add free_all_anim function
+common/arch.c: Modify free_all_arch to free more data
+common/init.c: If running under MEMORY_DEBUG, don't pre-allocate objects.
+common/map.c: Add free_all_maps functiion.
+common/object.c: Modify object allocations if using MEMORY_DEBUG to only
+   malloc one object at a time, and not pre-allocate objects.
+common/readable.c: Fix memory leak.
+common/shstr.c: Include autoconf.h so it can pull in dmalloc.h file.
+include/config.h: Remove notes of what was removed a long time ago.
+  Add MEMORY_DEBUG option.
+include/libproto.h, include/sockproto.h, include/sproto.h: automatic rebuild
+server/c_misc.c: Fix 'malloc info command so it reports right memory total
+   for maps.  Add command_style_map_info which sums up memory used by
+   style maps.
+server/commands.c: Add style_info wiz command which dumps memory usage
+   for style maps.
+server/init.c: Have sighup handler call cleanup function.
+server/main.c: Fix clean_tmp_files which could result in crash if one
+   of the maps in memory has 0 reset time.  Modify cleanup function
+   to free more data.
+server/player.c: op_on_battleground: Fix compile warning about unuused variable.
+socket/init.c: Change name of free_all_ericserver to free_all_newserver,
+   have it free all face data.
+MSW 2001-05-08
+
 socket/item.c: Modify look_at to not stop when it finds the first invisible
    object.
 server/monster.c: Modify  monster_check_pickup to check to see if the

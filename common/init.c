@@ -162,9 +162,13 @@ void init_globals() {
 void init_objects() {
   int i;
 /* Initialize all objects: */
-  free_objects=objarray;
   objects=NULL;
   active_objects = NULL;
+
+#ifdef MEMORY_DEBUG
+  free_objects=NULL;
+#else
+  free_objects=objarray;
   objarray[0].prev=NULL,
   objarray[0].next= &objarray[1],
   SET_FLAG(&objarray[0], FLAG_REMOVED);
@@ -179,6 +183,7 @@ void init_objects() {
   objarray[STARTMAX-1].prev= &objarray[STARTMAX-2];
   SET_FLAG(&objarray[STARTMAX-1], FLAG_REMOVED);
   SET_FLAG(&objarray[STARTMAX-1], FLAG_FREED);
+#endif
 }
 
 /*

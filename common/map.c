@@ -1589,3 +1589,7 @@ object * MapGetObjectZ (mapstruct * emap, int x, int y, int z)
     return (op);
 }
 
+void free_all_maps()
+{
+    while (first_map) delete_map(first_map);
+}

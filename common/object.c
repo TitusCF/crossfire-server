@@ -39,13 +39,21 @@
 #include <funcpoint.h>
 #include <skills.h> 
 
+#ifdef MEMORY_DEBUG
+int nroffreeobjects = 0;
+int nrofallocobjects = 0;
+#undef OBJ_EXPAND
+#define OBJ_EXPAND 1
+#else
 object objarray[STARTMAX]; /* All objects, allocated this way at first */
+int nroffreeobjects = STARTMAX;  /* How many OBs allocated and free (free) */
+int nrofallocobjects = STARTMAX; /* How many OBs allocated (free + used) */
+#endif
+
 object *objects;           /* Pointer to the list of used objects */
 object *free_objects;      /* Pointer to the list of unused objects */
 object *active_objects;	/* List of active objects that need to be processed */
 
-int nroffreeobjects = STARTMAX;  /* How many OBs allocated and free (free) */
-int nrofallocobjects = STARTMAX; /* How many OBs allocated (free + used) */
 
 int freearr_x[SIZEOFFREE]=
   {0,0,1,1,1,0,-1,-1,-1,0,1,2,2,2,2,2,1,0,-1,-2,-2,-2,-2,-2,-1,
@@ -311,6 +319,10 @@ object *find_object_name(char *str) {
 void free_all_object_data() {
     object *op, *next;
 
+#if 0
+    /* Don't clean these up, so that properly allocated but 'lost' objects
+     * still show up in memory debugging output.
+     */
     for (op=objects; op!=NULL; op=next) {
 	next=op->next;
 	if (!op->head && !QUERY_FLAG(op,FLAG_REMOVED))
@@ -318,7 +330,9 @@ void free_all_object_data() {
 	if (!op->head && !QUERY_FLAG(op,FLAG_FREED))
 		free_object(op);
     }
-#if 0
+#endif
+
+#ifdef MEMORY_DEBUG
     /* In theory, we should do this.  In practice, it is fairly difficult
      * because objects are created in groups of 100, and there is no record
      * of those starting pointers.
@@ -328,7 +342,6 @@ void free_all_object_data() {
 	free(op);
 	nrofallocobjects--;
 	nroffreeobjects--;
-	last=op;
 	op=next;
     }
 #endif

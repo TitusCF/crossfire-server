@@ -51,15 +51,7 @@
 
 #define NO_AUTO_SKILL_SWITCH
 
-/* Removed for 0.94.2:
- * CHRFONT - removed - not useful in client/server, or maybe even at all
- * NEW_IMPROVE_WEAPON - now standard on all releases.
- * NO_LOG - removed - can't see why anyone would want to enable it.
- * ONE_PLAYER_PR_UID - removed from option list - not useful in client/server
- *  model
- * SIMPLE_PARTY_SYSTEM - now standard part of game
- */
-/* 0.94.2 - rearrange this file some.  There are 4 main sections -
+/* There are 4 main sections to this file-
  * Section 1 is feature selection (enabling/disabling certain features)
  *
  * Section 2 is compiler/machine dependant section (stuff that just
@@ -771,6 +763,23 @@
  */
 
 /*#define MAX_OBJECTS_LWM	MAX_OBJECTS/2*/
+
+/*
+ * Turning on MEMORY_DEBUG slows down execution, but makes it easier
+ * to find memory corruption and leaks.  Currently, the main thing
+ * that happens with this activated is that one malloc is done for
+ * each object - thus whatever debugging mechanism the malloc library
+ * (or other debugging tool provides, like purify), it can track this
+ * individual malloc.  Default behaviour when turned off is that 
+ * enough memory is malloced for a large group of objects so malloc does
+ * not need to be called as often.
+ * This should only be turned on if some form of memory debugging tool
+ * is being used - otherwise, turning this on will cause some performance
+ * hit with no useful advantage.
+ */
+
+/*#define MEMORY_DEBUG*/
+
 
 /*
  * If you want to have a Message Of The Day file, define MOTD to be

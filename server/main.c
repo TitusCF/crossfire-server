@@ -882,7 +882,7 @@ void process_events (mapstruct *map)
 }
 
 void clean_tmp_files() {
-  mapstruct *m;
+  mapstruct *m, *next;
 
   LOG(llevInfo,"Cleaning up...\n");
 
@@ -890,7 +890,8 @@ void clean_tmp_files() {
    * items, we need to save the map so they get saved off.  Perhaps we should
    * just make a special function that only saves the unique items.
    */
-  for(m=first_map;m!=NULL;m=m->next) {
+  for(m=first_map;m!=NULL;m=next) {
+    next=m->next;
     if (m->in_memory == MAP_IN_MEMORY)
 /* If we want to reuse the temp maps, swap it out (note that will also
  * update the log file.  Otherwise, save the map (mostly for unique item
@@ -910,18 +911,23 @@ void clean_tmp_files() {
 /* clean up everything before exiting */
 void cleanup()
 {
+    LOG(llevDebug,"Cleanup called.  freeing data.\n");
     clean_tmp_files();
     write_book_archive();
+#ifdef MEMORY_DEBUG
+    free_all_maps();
     free_all_object_data();
     free_all_archs();
     free_all_treasures();
     free_all_images();
-    free_all_ericserver();
+    free_all_newserver();
     free_all_recipes();
     free_all_readable();
     free_all_god();
+    free_all_anim();
     /* See what the string data that is out there that hasn't been freed. */
 /*    LOG(llevDebug, ss_dump_table(0xff));*/
+#endif
     exit(0);
 }
 

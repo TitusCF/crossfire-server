@@ -112,17 +112,14 @@ void free_all_archs()
     int i=0,f=0;
 
     for (at=first_archetype; at!=NULL; at=next) {
-#if 0	/* Right now, we could probably free the entries in the animation
-	 * indexes.  However, we should really call a seperate function
-	 * to do that.
-	 */
-	if (at->faces) {
-		free(at->faces);
-		f++;
-	}
-#endif
 	if (at->more) next=at->more;
 	else next=at->next;
+	if (at->name) free_string(at->name);
+	if (at->clone.name) free_string(at->clone.name);
+	if (at->clone.title) free_string(at->clone.title);
+	if (at->clone.race) free_string(at->clone.race);
+	if (at->clone.slaying) free_string(at->clone.slaying);
+	if (at->clone.msg) free_string(at->clone.msg);
 	free(at);
 	i++;
     }

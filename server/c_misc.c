@@ -124,7 +124,7 @@ void malloc_info(object *op) {
   for(pl=first_player,players=0;pl!=NULL;pl=pl->next,players++);
   for(m=first_map,nrofmaps=0;m!=NULL;m=m->next,nrofmaps++)
     if(m->in_memory == MAP_IN_MEMORY)
-      mapmem+=m->mapx*m->mapy*(sizeof(object *)+sizeof(unsigned char *)*2),
+      mapmem+=m->mapx*m->mapy*(sizeof(object *)+sizeof(MapLook *)*3),
       nrm++;
   sprintf(errmsg,"Sizeof: object=%ld  player=%ld  map=%ld",
           (long)sizeof(object),(long)sizeof(player),(long)sizeof(mapstruct));
@@ -1059,3 +1059,27 @@ int command_brace (object *op, char *params)
   return 0;
 }
 
+int command_style_map_info(object *op, char *params)
+{
+    extern mapstruct *styles;
+    mapstruct	*mp;
+    int	    maps_used=0, mapmem=0, objects_used=0, x,y;
+    object  *tmp;
+
+    for (mp = styles; mp!=NULL; mp=mp->next) {
+	maps_used++;
+	mapmem += mp->mapx*mp->mapy*(sizeof(object *)+sizeof(MapLook *)*3) + sizeof(mapstruct);
+	for (x=0; x<mp->mapx; x++) {
+	    for (y=0; y<mp->mapy; y++) {
+		for (tmp=get_map_ob(mp, x, y); tmp!=NULL; tmp=tmp->above) 
+		    objects_used++;
+	    }
+	}
+    }
+    new_draw_info_format(NDI_UNIQUE, 0, op, "Style maps loaded:    %d", maps_used);
+    new_draw_info(NDI_UNIQUE, 0, op, "Memory used, not");
+    new_draw_info_format(NDI_UNIQUE, 0, op, "including objects:    %d", mapmem);
+    new_draw_info_format(NDI_UNIQUE, 0, op, "Style objects:        %d", objects_used);
+    new_draw_info_format(NDI_UNIQUE, 0, op, "Mem for objects:      %d", objects_used * sizeof(object));
+    return 0;
+}

@@ -171,6 +171,7 @@ CommArray_s WizCommands [] = {
   {"spellreset", command_spell_reset,0.0},
   {"ssdumptable", command_ssdumptable,0.0},
   {"stats", command_stats,0.0},
+  {"style_info", command_style_map_info, 0.0},	/* Costly command, so make it wiz only */
   {"summon", command_summon,0.0},
   {"wizpass", command_wizpass,0.0},
 };

@@ -2268,7 +2268,6 @@ int action_makes_visible (object *op) {
  */
 int op_on_battleground (object *op, int *x, int *y) {
   object *tmp;
-  int floor;
   
   /* A battleground-tile needs the following attributes to be valid:
    * is_floor 1 (has to be the FIRST floor beneath the player's feet),

@@ -582,7 +582,11 @@ void rec_sigint(int i) {
 
 void rec_sighup(int i) {
   LOG(llevInfo,"\nSIGHUP received\n");
-  fatal_signal(0, 1);
+  if(init_done) {
+    emergency_save(0);
+    cleanup();
+  }
+  exit(0);
 }
 
 void rec_sigquit(int i) {

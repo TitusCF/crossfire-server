@@ -31,6 +31,16 @@
 #include <global.h>
 #include <stdio.h>
 
+void free_all_anim() {
+    int i;
+
+    for (i=0; i<num_animations; i++) {
+	free_string(animations[i].name);
+	free(animations[i].faces);
+    }
+    free(animations);
+}
+
 void init_anim() {
     char buf[MAX_BUF];
     FILE *fp;
