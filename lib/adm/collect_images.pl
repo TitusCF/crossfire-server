@@ -43,11 +43,25 @@ while(<BMAPS>) {
     else {
 	$length = -s "$file.$mode";
 	open(FILE,"$file\.$mode") || print("Unable to open $file\.$mode for read: $!\n");
-	print ESRV "IMAGE $num $length $file\n";
-	while(<FILE>) {
-	    print ESRV $_;
-	}
-	close(FILE);
+        @name2 = split("/",$file);
+        $name3 = $name2[$#name2];
+        $name4 = "$name3\.$mode";
+#        print "name4:", $name4, "\n";
+        if(open(FILE2,"./alternate_images/$name4") ) {
+             print "Alternate image found: ",$name4,"\n";
+             $length = -s "./alternate_images/$name4";
+             print ESRV "IMAGE $num $length $file\n";
+             while(<FILE2>) {
+               print ESRV $_;
+	     }
+             close(FILE2);
+        } else {
+	   print ESRV "IMAGE $num $length $file\n";
+	   while(<FILE>) {
+	       print ESRV $_;
+	   }
+	   close(FILE);
+        }
     }
 }
 close(ESRV);
