@@ -902,7 +902,8 @@ void flee_player(object *op) {
     CLEAR_FLAG(op, FLAG_SCARED);
     return;
   }
-  if(!(RANDOM()%5)&&RANDOM()%20+1>=savethrow[op->level]) {
+  if(!(random_roll(0, 4, op, PREFER_LOW)) &&
+     random_roll(1, 20, op, PREFER_HIGH) >= savethrow[op->level]) {
     op->enemy=NULL;
     CLEAR_FLAG(op, FLAG_SCARED);
     return;
@@ -1819,7 +1820,8 @@ void do_some_living(object *op) {
 	op->stats.food--;
 	if(op->contr->digestion<0)
 	  op->stats.food+=op->contr->digestion;
-	else if(op->contr->digestion>0&&RANDOM()%(1+op->contr->digestion))
+	else if(op->contr->digestion>0 &&
+		random_roll(0, op->contr->digestion, op, PREFER_HIGH))
 	  op->stats.food=last_food;
       }
       if (max_sp>1) {
@@ -1827,7 +1829,7 @@ void do_some_living(object *op) {
 	if (over_sp > 0) {
 	  if(op->stats.sp<op->stats.maxsp) {
 	    op->stats.sp += over_sp>max_sp ? max_sp : over_sp;
-	    if(RANDOM()%rate_sp > ((gen_sp+10)%rate_sp))
+	    if(random_roll(0, rate_sp-1, op, PREFER_LOW) > ((gen_sp+10)%rate_sp))
 	      op->stats.sp--;
 	    if(op->stats.sp>op->stats.maxsp)
 	      op->stats.sp=op->stats.maxsp;
@@ -1850,7 +1852,7 @@ void do_some_living(object *op) {
 	    over_grace = (gen_grace<20 ? 30 : gen_grace+10)/rate_grace;
 	    if (over_grace > 0) {
 		op->stats.sp += over_grace 
-		    + (RANDOM()%rate_grace > ((gen_grace<20 ? 30 : gen_grace+10)%rate_grace))? -1 : 0;
+		    + (random_roll(0, rate_grace-1, op, PREFER_HIGH) > ((gen_grace<20 ? 30 : gen_grace+10)%rate_grace))? -1 : 0;
 		op->last_grace=0;
 	    } else {
 		op->last_grace=rate_grace/(gen_grace<20 ? 30 : gen_grace+10);
@@ -1868,7 +1870,8 @@ void do_some_living(object *op) {
 	op->stats.food--;
 	if(op->contr->digestion<0)
 	  op->stats.food+=op->contr->digestion;
-	else if(op->contr->digestion>0&&RANDOM()%(1+op->contr->digestion))
+	else if(op->contr->digestion>0 &&
+		random_roll(0, op->contr->digestion, op, PREFER_HIGH))
 	  op->stats.food=last_food;
       }
       if(max_hp>1) {
@@ -2103,7 +2106,7 @@ void kill_player(object *op)
                         lose_this_stat = 0;
                     /* Take loss chance vs keep chance to see if we retain the stat. */
                     } else {
-                        if ((RANDOM() % (loss_chance + keep_chance)) < keep_chance)
+                        if (random_roll(0, loss_chance + keep_chance-1, op, PREFER_LOW) < keep_chance)
                             lose_this_stat = 0;
                         /* LOG(llevDebug, "Determining stat loss. Stat: %d Keep: %d Lose: %d Result: %s.\n",
                              this_stat, keep_chance, loss_chance,
@@ -2429,7 +2432,7 @@ int hideability(object *ob) {
  */
 
 void do_hidden_move (object *op) {
-    int hide=0, num=RANDOM()%20;
+    int hide=0, num=random_roll(0, 19, op, PREFER_LOW);
     
     if(!op || !op->map) return;
 

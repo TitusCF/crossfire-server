@@ -391,7 +391,6 @@ static int attack_ob_simple (object *op, object *hitter, int base_dam,
     uint32 type;
     att_msg *msg;
     char *op_name = NULL;
-    signed char luck=0;
     tag_t op_tag, hitter_tag;
 
     if (get_attack_mode (&op, &hitter, &simple_attack))
@@ -442,28 +441,15 @@ static int attack_ob_simple (object *op, object *hitter, int base_dam,
 
     add_refcount(op_name = op->name);
 
-    /*  BROKEN:  the luck code.  If you look carefully, luck has these effects:
-	positive luck adds to the damage YOU take and to YOUR likelihood
-	of getting HIT.  This is intolerable.  I am setting "luck" in this
-	broken routine to zero, for now.
-        if(op->stats.luck) {
-	luck=RANDOM()%abs(op->stats.luck);
-	if(op->stats.luck<0)
-	    luck= -luck;
-	    }*/
-    luck = 0;  /* Fix for the broken code below */
-    if((int)luck < -5)
-	roll= -20;
-    else
-	roll=RANDOM()%20+1+luck;
+    roll=random_roll(1, 20, hitter, PREFER_HIGH);
 
     /* Adjust roll for various situations. */
     if ( ! simple_attack)
         roll += adj_attackroll(hitter,op); 
 
     /* See if we hit the creature */
-    if(roll==(20+luck)||op->stats.ac>=base_wc-roll) {
-	int hitdam = base_dam + luck;
+    if(roll==20 || op->stats.ac>=base_wc-roll) {
+	int hitdam = base_dam;
 #ifdef CASTING_TIME
 	if ((hitter->type == PLAYER)&&(hitter->casting > -1)){
 	    hitter->casting = -1;
@@ -528,7 +514,8 @@ static int attack_ob_simple (object *op, object *hitter, int base_dam,
 	{
 	    if (op->attacktype & AT_ACID && hitter->type==PLAYER)
 		new_draw_info(NDI_UNIQUE, 0,hitter,"You are splashed by acid!\n");
-	    hit_player(hitter, RANDOM()%(op->stats.dam+1), op, op->attacktype);
+	    hit_player(hitter, random_roll(0, (op->stats.dam), hitter,
+				      PREFER_LOW),op, op->attacktype);
 	    if (was_destroyed (op, op_tag)
                 || was_destroyed (hitter, hitter_tag)
                 || abort_attack (op, hitter, simple_attack))
@@ -538,7 +525,8 @@ static int attack_ob_simple (object *op, object *hitter, int base_dam,
 	/* In the new attack code, it should handle multiple attack
 	 * types in its area, so remove it from here.
 	 */
-	dam=hit_player(op, (RANDOM()%hitdam)+1, hitter, type);
+	dam=hit_player(op, random_roll(1, hitdam, hitter, PREFER_HIGH),
+		       hitter, type);
 	if (was_destroyed (op, op_tag) || was_destroyed (hitter, hitter_tag)
             || abort_attack (op, hitter, simple_attack))
 	    goto leave;
@@ -830,7 +818,7 @@ int hit_player_attacktype(object *op, object *hitter, int dam,
       if (dam >= 100)
 	dam /= 100;
       else
-	dam = (dam > (RANDOM()%100)) ? 1 : 0;
+	dam = (dam > (random_roll(0, 99, op, PREFER_LOW))) ? 1 : 0;
     }
 
     /* Special hack.  By default, if immune to something, you shouldn't need
@@ -863,7 +851,7 @@ int hit_player_attacktype(object *op, object *hitter, int dam,
 	 */
         if (op->speed && (QUERY_FLAG(op, FLAG_MONSTER) || op->type==PLAYER) &&
           !(RANDOM()%((attacktype&AT_SLOW?6:3))) &&
-	  ((RANDOM()%20+1+save_adj)  < savethrow[level_diff])) {
+	  ((random_roll(1, 20, op, PREFER_LOW)+save_adj)  < savethrow[level_diff])) {
 
 	    /* Player has been hit by something */
 	    if (attacktype & AT_CONFUSION) confuse_player(op,hitter,dam);
@@ -901,7 +889,7 @@ int hit_player_attacktype(object *op, object *hitter, int dam,
 			continue; /* To avoid some strange effects */
 
 		/* High damage acid has better chance of corroding objects */
-		if(RANDOM()%(dam+5)>RANDOM()%40+2*tmp->magic) {
+		if(RANDOM()%(dam+5)>random_roll(0, 39, op, PREFER_HIGH)+2*tmp->magic) {
 		    if(op->type==PLAYER) {
 			/* Make this more visible */
 			new_draw_info_format(NDI_UNIQUE|NDI_RED,0, op,
@@ -939,7 +927,7 @@ int hit_player_attacktype(object *op, object *hitter, int dam,
 	} else {
 	    if(hitter->stats.hp<hitter->stats.maxhp &&
 	       (op->level > hitter->level) &&
-	       RANDOM()%(op->level-hitter->level+3)>3)
+	       random_roll(0, (op->level-hitter->level+2), hitter, PREFER_HIGH)>3)
 		    hitter->stats.hp++;
 
 	    if (!op_on_battleground(hitter, NULL, NULL)) {
@@ -1352,7 +1340,7 @@ int hit_player(object *op,int dam, object *hitter, int type) {
 	npc_call_help(op);
     }
 
-    if(magic && (RANDOM()%20+1)>=savethrow[op->level])
+    if(magic && (random_roll(1, 20, op, PREFER_HIGH))>=savethrow[op->level])
 	maxdam=maxdam/2;
 
     op->stats.hp-=maxdam;
@@ -1613,7 +1601,7 @@ void deathstrike_player(object *op, object *hitter, int *dam)
        atk_lev, def_lev); */
 
     if(atk_lev >= def_lev ){
-	kill_lev = RANDOM() % atk_lev;
+	kill_lev = random_roll(0, atk_lev-1, hitter, PREFER_HIGH);
 
 	/* Note that the below effectively means the ratio of the atk vs
 	 * defener level is important - if level 52 character has very little

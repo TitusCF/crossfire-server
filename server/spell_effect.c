@@ -176,7 +176,7 @@ int recharge(object *op) {
       break;
   if(wand == NULL)
     return 0;
-  if(!(RANDOM()%4)) {
+  if(!(random_roll(0, 3, op, PREFER_LOW))) {
     new_draw_info_format(NDI_UNIQUE, 0, op,
 	"The %s vibrates violently, then explodes!",query_name(wand));
     play_sound_map(op->map, op->x, op->y, SOUND_OB_EXPLODE);
@@ -229,7 +229,8 @@ void polymorph_living(object *op) {
     /* High level creatures are immune, as are creatures immune to magic.  Otherwise,
      * give the creature a saving throw.
      */
-    if (op->level>=20 || ((RANDOM()%20 +1 + op->resist[ATNR_MAGIC]/10) > savethrow[op->level]) ||
+    if (op->level>=20 || random_roll(1, 20, op, PREFER_HIGH) +
+	op->resist[ATNR_MAGIC]/10 > savethrow[op->level] ||
 	(op->resist[ATNR_MAGIC]==100))
 	return;
 
@@ -1295,16 +1296,16 @@ cast_heal(object *op,int dir,int spell_type) {
            success = 1;
 	 break;
   case SP_MINOR_HEAL:
-    heal=(RANDOM()%7)+1;
+    heal=random_roll(1, 7, op, PREFER_HIGH);
     new_draw_info(NDI_UNIQUE, 0,tmp, "Your wounds start to close.");
     break;
   case SP_MED_HEAL:
-    heal=(RANDOM()%6)+(RANDOM()%6)+(RANDOM()%6)+7;
+    heal=die_roll(3, 6, op, PREFER_HIGH)+4;
     new_draw_info(NDI_UNIQUE, 0,tmp, "Your wounds start to fade.");
     break;
   case SP_MAJOR_HEAL:
     new_draw_info(NDI_UNIQUE, 0,tmp, "Your skin looks as good as new!");
-    heal=(RANDOM()%8)+(RANDOM()%8)+(RANDOM()%8)+(RANDOM()%8)+12;
+    heal=die_roll(4, 8, op, PREFER_HIGH)+8;
     break;
   case SP_HEAL:
     heal=tmp->stats.maxhp;  /* or should be this tmp->stats.maxhp? */
@@ -1459,7 +1460,7 @@ cast_change_attr(object *op,object *caster,int dir,int spell_type) {
   case SP_STRENGTH:
     if(tmp->type!=PLAYER)
       break;
-    if(!(RANDOM()%(MAX(1,(10 - MAX_STAT + tmp->stats.Str))))) {
+    if(!(random_roll(0, (MAX(1,(10 - MAX_STAT + tmp->stats.Str)))-1, op, PREFER_LOW))) {
     for(i=20,force->stats.Str=1;i>tmp->stats.Str;i-=2)
       force->stats.Str++; }
         else { new_draw_info(NDI_UNIQUE, 0,op,"You grow no stronger."); force->stats.Str=0; }
@@ -1467,7 +1468,7 @@ cast_change_attr(object *op,object *caster,int dir,int spell_type) {
   case SP_DEXTERITY:
     if(tmp->type!=PLAYER)
       break;
-    if(!(RANDOM()%(MAX(1,(10 - MAX_STAT + tmp->stats.Dex))))) {
+    if(!(random_roll(0, (MAX(1,(10 - MAX_STAT + tmp->stats.Dex)))-1, op, PREFER_LOW))) {
     for(i=20,force->stats.Dex=1;i>tmp->stats.Dex;i-=2)
       force->stats.Dex++; }
         else { new_draw_info(NDI_UNIQUE, 0,op,"You grow no more agile."); force->stats.Dex=0; }
@@ -1476,7 +1477,7 @@ cast_change_attr(object *op,object *caster,int dir,int spell_type) {
   case SP_CONSTITUTION:
     if(tmp->type!=PLAYER)
       break;
-    if(!(RANDOM()%(MAX(1,(10 - MAX_STAT + tmp->stats.Con))))) {
+    if(!(random_roll(0, (MAX(1,(10 - MAX_STAT + tmp->stats.Con)))-1, op, PREFER_LOW))) {
     for(i=20,force->stats.Con=1;i>tmp->stats.Con;i-=2)
       force->stats.Con++;}
         else { new_draw_info(NDI_UNIQUE, 0,op,"You don't feel any healthier."); force->stats.Con=0; }
@@ -1485,7 +1486,7 @@ cast_change_attr(object *op,object *caster,int dir,int spell_type) {
   case SP_CHARISMA:
     if(tmp->type!=PLAYER)
       break;
-    if(!(RANDOM()%(MAX(1,(10 - MAX_STAT + tmp->stats.Cha))))) {
+    if(!(random_roll(0, (MAX(1,(10 - MAX_STAT + tmp->stats.Cha)))-1, op, PREFER_LOW))) {
     for(i=20,force->stats.Cha=1;i>tmp->stats.Cha;i-=2)
       force->stats.Cha++;}
         else { new_draw_info(NDI_UNIQUE, 0,op,"You are no easier to look at."); force->stats.Cha=0; }
@@ -2286,7 +2287,8 @@ int cast_identify(object *op) {
 	}
       }
 
-      if ((random_val=RANDOM()%chance) > (chance - ++success - 2))
+      if ((random_val=random_roll(0, chance-1, op, PREFER_LOW)) >
+	  (chance - ++success - 2))
         break;
     }
   /* If all the power of the spell has been used up, don't go and identify
@@ -2308,7 +2310,7 @@ int cast_identify(object *op) {
 	}
 	esrv_send_item(op, tmp);
       }
-      if (RANDOM() %chance > (chance - ++success - 2))
+      if (random_roll(0, chance-1, op, PREFER_LOW) > (chance - ++success - 2))
 	break;
     }
   }
@@ -2421,7 +2423,8 @@ int cast_detection(object *op, int type) {
 			tmp->type==TRIGGER_PEDESTAL || tmp->type==SPECIAL_KEY ||
 			tmp->type==TREASURE || tmp->type==BOOK ||
 			tmp->type==HOLY_ALTAR)) {
-			if(RANDOM()%(SK_level(op)) > tmp->level/4) {
+			if(random_roll(0, SK_level(op)-1, op, PREFER_HIGH) >
+			   tmp->level/4) {
 			    tmp->invisible=0;
 			    done_one = 1;
 			}
@@ -2525,7 +2528,7 @@ int cast_pacify(object *op, object *weap, archetype *arch,int spellnum ) {
 	  if(weap->slaying) 		/* selective pacify */ 
 		if(tmp->race != weap->slaying && tmp->name != weap->slaying) continue;
         /* if(op->level <( (RANDOM()%(2*tmp->level+1))-(op->stats.Cha-10)/2)) continue; */ 
-          if(SK_level(op) <( (RANDOM()%(2*tmp->level+1))-(op->stats.Cha-10)/2)) continue;
+          if(SK_level(op) < random_roll(0, 2*tmp->level, op, PREFER_LOW)-(op->stats.Cha-10)/2) continue;
         }
 
         if((effect=get_archetype("detect_magic"))){
@@ -2865,7 +2868,7 @@ int cast_charm(object *op, object *caster,archetype *arch,int spellnum) {
 	if(QUERY_FLAG(tmp,FLAG_UNDEAD)) continue;
 	if(tmp->more || tmp->head) continue;  /* multiple square monsters NOT */
 	/* if(op->level <( (RANDOM()%(2*tmp->level+1))-(op->stats.Cha-10)/2)) continue; */ 
-	if(SK_level(op) <( (RANDOM()%(2*tmp->level+1))-(op->stats.Cha-10)/2)) continue;
+	if(SK_level(op) <random_roll(0, 2*tmp->level, op, PREFER_LOW)-(op->stats.Cha-10)/2) continue;
 
 	if((effect=get_archetype("detect_magic"))){
 		effect->x = tmp->x;
@@ -2905,7 +2908,7 @@ int cast_charm_undead(object *op, object *caster,archetype *arch,int spellnum) {
         if(tmp->resist[ATNR_MAGIC]==100) continue;
         if(!QUERY_FLAG(tmp,FLAG_UNDEAD)) continue;
         if(tmp->more || tmp->head) continue;  /* multiple square monsters NOT */
-        if(SK_level(op)+bonus < ( (RANDOM()%(2*tmp->level+1))-(op->stats.Wis-10)/2)) continue;
+        if(SK_level(op)+bonus < random_roll(0, 2*tmp->level, op, PREFER_LOW)-(op->stats.Wis-10)/2) continue;
 
         if((effect=get_archetype("detect_magic"))){
                 effect->x = tmp->x;
@@ -3016,7 +3019,7 @@ int summon_cult_monsters(object *op, int old_dir) {
     /* the summon level */
     i=SK_level(op)+op->stats.Wis/10;
     if (i==0) i=1;
-    summon_level = RANDOM()%i;
+    summon_level = random_roll(0, i-1, op, PREFER_HIGH);
     if(op->path_attuned&PATH_SUMMON) summon_level += 5;
     if(op->path_repelled&PATH_SUMMON) summon_level -= 5;
 
@@ -3058,9 +3061,9 @@ int summon_cult_monsters(object *op, int old_dir) {
      */
 
     if(mon->level>(summon_level/2))
-	number = RANDOM()%2 + 1;
+	number = random_roll(1, 2, op, PREFER_HIGH);
     else
-	number = RANDOM()%2 + RANDOM()%2 + 2;
+	number = die_roll(2, 2, op, PREFER_HIGH);
 
     for (i = 1; i < number + 1; i++) {
 	object *head;
@@ -3350,7 +3353,7 @@ int finger_of_death(object *op, object *caster, int dir) {
   /* there are 'grave' consequences for using this spell on the unliving! */
   if(QUERY_FLAG(target,FLAG_UNDEAD)) {
       success = 0;
-      if(RANDOM()%3) { 
+      if(random_roll(0, 2, op, PREFER_LOW)) { 
         new_draw_info(NDI_UNIQUE,0,op,"Idiot! Your spell boomerangs!"); 
 	hitter->x=op->x;
 	hitter->y=op->y;	
@@ -3966,7 +3969,8 @@ int cast_cause_conflict(object *op, object *caster, archetype *spellarch,int typ
       
       /* OK, now set the monster on other monsters */
       level = MAX(1,SK_level(caster)/2);
-      if(RANDOM()%level > tmp->level) {  /* successfully induced conflict */
+      if(random_roll(0, level-1, op, PREFER_HIGH) > tmp->level) {
+	/* successfully induced conflict */
 	char buf[MAX_BUF];
 	SET_FLAG(tmp,FLAG_BERSERK);
 	if(tmp->name) {
@@ -3979,4 +3983,3 @@ int cast_cause_conflict(object *op, object *caster, archetype *spellarch,int typ
     }
   return 1;
 }
-

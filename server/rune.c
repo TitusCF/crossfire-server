@@ -306,7 +306,7 @@ int trap_see(object *op,object *trap) {
   char buf[MAX_BUF];
   int chance;
 
-  chance = RANDOM()%100;
+  chance = random_roll(0, 99, op, PREFER_HIGH);;
   
   /*  decide if we see the rune or not */
   if((trap->stats.Cha==1) || (chance >
@@ -346,9 +346,9 @@ int trap_disarm(object *disarmer, object *trap, int risk) {
 	sqr(MAX(trap->stats.dam,spells[trap->stats.sp].sp)) /
 	disarmer_level;
 
-    if(!(RANDOM()%(MAX(2,
-		       MIN(20,trap->level-disarmer_level 
-			   +5 - disarmer->stats.Dex/2)))))
+    if(!(random_roll(0, (MAX(2,
+       MIN(20,trap->level-disarmer_level
+	   +5 - disarmer->stats.Dex/2))-1), disarmer, PREFER_LOW)))
         {
             new_draw_info(NDI_UNIQUE, 0,disarmer,"You successfuly disarm it!");
             remove_ob(trap);
@@ -363,9 +363,8 @@ int trap_disarm(object *disarmer, object *trap, int risk) {
     else
         {
             new_draw_info(NDI_UNIQUE, 0,disarmer,"You fail to disarm the trap.");
-	    if(! (RANDOM()% (MAX(2,disarmer_level-trap->level 
-				 + disarmer->stats.Dex/2-6)))
-	       &&risk) {
+	    if(! (random_roll(0, (MAX(2,disarmer_level-trap->level 
+	       + disarmer->stats.Dex/2-6))-1, disarmer, PREFER_LOW)) &&risk) {
 		new_draw_info(NDI_UNIQUE, 0,disarmer,"In fact, you set it off!");
 		spring_trap(trap,disarmer);
 	    }

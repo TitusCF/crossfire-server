@@ -265,7 +265,8 @@ int infect_object(object *victim, object *disease, int force) {
   if(!is_susceptible_to_disease(victim, disease)) return 0;
 
   /* roll the dice on infection before doing the inventory check!  */
-  if(!force && (RANDOM() % 127 >= disease->stats.wc)) return 0;
+  if(!force && (random_roll(0, 126, victim, PREFER_HIGH) >= disease->stats.wc))
+    return 0;
 
   /* do an immunity check */
   if(victim->head) tmp = victim->head->inv;
@@ -376,7 +377,7 @@ int do_symptoms(object *disease) {
       if(disease->stats.dam != 0) {
 	int dam = disease->stats.dam;
 	/* reduce the damage, on average, 50%, and making things random. */
-	dam = RANDOM() % dam +1;
+	dam = random_roll(1, dam, victim, PREFER_LOW);
 	if(disease->stats.dam < 0) dam = -dam;
 	new_symptom->stats.dam = dam;
       }
@@ -552,7 +553,8 @@ int cure_disease(object *sufferer,object *caster) {
 	     * is 1 in 5.
 	     */
 	    if ((casting_level >= disease->level) ||
-		 ( ! (RANDOM() % ( disease->level - casting_level)))) {
+		 ( ! (random_roll(0, (disease->level - casting_level - 1),
+				  caster, PREFER_LOW) ))) {
 
 		    remove_symptoms(disease);
 		    remove_ob(disease);

@@ -122,7 +122,8 @@ void pray_at_altar(object *pl, object *altar) {
 	 */
 	bonus = MAX(1, bonus + MAX(pl->stats.luck, -3)); /* -- DAMN -- */
 
-	if(((RANDOM()%400)-bonus)<0) god_intervention(pl,pl_god);
+	if(((random_roll(0, 399, pl, PREFER_LOW))-bonus)<0)
+	  god_intervention(pl,pl_god);
 
     } else { /* praying to another god! */
 	int loss = 0,angry=1;
@@ -136,7 +137,8 @@ void pray_at_altar(object *pl, object *altar) {
 	 */
 	if(pl_god->other_arch && (altar->other_arch->name==pl_god->other_arch->name)) {
 	    angry=2;
-	    if((RANDOM()%(SK_level(pl)+3))-5 > 0) { /* you really screwed up */
+	    if(random_roll(0, SK_level(pl)+2, pl, PREFER_LOW)-5 > 0) {
+	      /* you really screwed up */
 		angry=3;
 		new_draw_info_format(NDI_UNIQUE|NDI_NAVY,0,pl,
                                 "Foul Priest! %s punishes you!",pl_god->name);
@@ -152,12 +154,14 @@ void pray_at_altar(object *pl, object *altar) {
 	 * we lose experience from the clerical experience obj */
 
 	loss = 0.1 * (float) pl->chosen_skill->exp_obj->stats.exp;
-	if(loss) lose_priest_exp(pl,RANDOM()%(loss*angry));
+	if(loss)
+	  lose_priest_exp(pl, random_roll(0, loss*angry-1, pl, PREFER_LOW));
  
 	/* May switch Gods, but its random chance based on our current level
 	 * note it gets harder to swap gods the higher we get */
-	if((angry==1)&&!(RANDOM()%(pl->chosen_skill->exp_obj->level+1))) {
-
+	if((angry==1) &&
+	   !(random_roll(0, pl->chosen_skill->exp_obj->level, pl,
+			 PREFER_LOW))) {
 	  become_follower(pl,&altar->other_arch->clone);
 	} /* If angry... switching gods */
         else {  /* toss this player off the altar.  He can try again. */
@@ -275,7 +279,7 @@ void become_follower (object *op, object *new_god) {
     if(op->race&&new_god->slaying&&strstr(op->race,new_god->slaying)) { 
 	new_draw_info_format(NDI_UNIQUE|NDI_NAVY,0,op,"Fool! %s detests your kind!",
 			     new_god->name);
-        if(RANDOM()%(op->level)-5>0) 
+        if(random_roll(0, op->level-1, op, PREFER_LOW)-5>0) 
 	   cast_mana_storm(op,new_god->level+10);
 	return;
     }
@@ -682,7 +686,7 @@ void god_intervention (object *op, object *god)
     for (tr = god->randomitems->items; tr != NULL; tr = tr->next) {
         object *item;
 
-        if (tr->chance <= (RANDOM() % 100))
+        if (tr->chance <= random_roll(0, 99, op, PREFER_HIGH))
             continue;
 
         /* Treasurelist - generate some treasure for the follower */
@@ -725,7 +729,7 @@ void god_intervention (object *op, object *god)
         {
             if (op->stats.grace >= 0)
                 continue;
-            op->stats.grace = RANDOM() % 10;
+            op->stats.grace = random_roll(0, 9, op, PREFER_HIGH);
             new_draw_info (NDI_UNIQUE, 0, op,
                     "You are returned to a state of grace.");
             return;
@@ -749,7 +753,7 @@ void god_intervention (object *op, object *god)
         {
             int max = op->stats.maxsp * (item->stats.maxsp / 100.0);
             /* Restore to 50 .. 100%, if sp < 50% */
-            int new_sp = (RANDOM() % 1000 + 1000) / 2000.0 * max;
+            int new_sp = random_roll(1000, 1999, op, PREFER_HIGH) / 2000.0 * max;
             if (op->stats.sp >= max / 2)
                 continue;
             new_draw_info (NDI_UNIQUE, 0, op, "A blue lightning strikes "
@@ -903,8 +907,8 @@ int god_examines_priest (object *op, object *god) {
     int angry = abs(reaction);
     if(op->chosen_skill->exp_obj)
       loss = 0.05 * (float) op->chosen_skill->exp_obj->stats.exp;
-    lose_priest_exp(op,RANDOM()%(loss*angry));
-    if(RANDOM()%(angry+1)) 
+    lose_priest_exp(op, random_roll(0, loss*angry-1, op, PREFER_LOW));
+    if(random_roll(0, angry, op, PREFER_LOW))
       cast_mana_storm(op,SK_level(op)+(angry*3));
     sprintf(buf,"%s becomes angry and punishes you!",god->name);
     new_draw_info(NDI_UNIQUE|NDI_NAVY,0,op,buf); 

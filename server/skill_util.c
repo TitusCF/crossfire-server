@@ -1002,7 +1002,7 @@ learn_skill (object *pl, object *scroll) {
 	return 2;
     }
     /* now a random change to learn, based on player Int */
-    if(RANDOM()%100>learn_spell[pl->stats.Int])
+    if(random_roll(0, 99, pl, PREFER_LOW)>learn_spell[pl->stats.Int])
 	return 2; /* failure :< */
 
     /* Everything is cool. Give'em the skill */

@@ -274,7 +274,7 @@ void move_gate(object *op) { /* 1 = going down, 0 = goind up */
 
 	    if(tmp!=NULL) {
 		if(QUERY_FLAG(tmp, FLAG_ALIVE)) {
-		    hit_player(tmp,RANDOM()%(op->stats.dam+1)+1,op,AT_PHYSICAL);
+		    hit_player(tmp, random_roll(1, op->stats.dam, tmp, PREFER_LOW), op, AT_PHYSICAL);
 		    if(tmp->type==PLAYER) 
 			new_draw_info_format(NDI_UNIQUE, 0, tmp,
 					     "You are crushed by the %s!",op->name);

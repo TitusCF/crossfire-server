@@ -1644,8 +1644,9 @@ static void apply_spellbook (object *op, object *tmp)
      */ 
     if(QUERY_FLAG(op,FLAG_CONFUSED)) { 
       new_draw_info(NDI_UNIQUE,0,op,"In your confused state you flub the wording of the text!");
-      scroll_failure(op,RANDOM()%(spells[tmp->stats.sp].level+1),spells[tmp->stats.sp].sp);
-    } else if(QUERY_FLAG(tmp,FLAG_STARTEQUIP) || RANDOM()%150-(2*SK_level(op)) <
+      /* this needs to be a - number [garbled] */
+      scroll_failure(op, 0 - random_roll(0, spells[tmp->stats.sp].level, op, PREFER_LOW), spells[tmp->stats.sp].sp);
+    } else if(QUERY_FLAG(tmp,FLAG_STARTEQUIP) || random_roll(0, 149, op, PREFER_LOW)-(2*SK_level(op)) <
 	learn_spell[spells[tmp->stats.sp].cleric ? op->stats.Wis : op->stats.Int]) {
       new_draw_info(NDI_UNIQUE, 0,op,"You succeed in learning the spell!");
       do_learn_spell (op, tmp->stats.sp, 0);
@@ -2846,7 +2847,7 @@ void scroll_failure(object *op, int failure, int power)
   else if (failure <= -15&&failure > -35) /* drain mana */
     {
      new_draw_info(NDI_UNIQUE, 0,op,"Your mana is drained!.");
-     op->stats.sp -= RANDOM()%power;
+     op->stats.sp -= random_roll(0, power-1, op, PREFER_LOW);
      if(op->stats.sp<0) op->stats.sp = 0;
     }
 

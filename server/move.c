@@ -322,7 +322,8 @@ int roll_ob(object *op,int dir, object *pusher) {
     x=op->x+freearr_x[dir];
     y=op->y+freearr_y[dir];
     if(!QUERY_FLAG(op,FLAG_CAN_ROLL) || 
-       (op->weight&&RANDOM() % (op->weight/50000) > pusher->stats.Str))
+       (op->weight &&
+       random_roll(0, op->weight/50000-1, pusher, PREFER_LOW) > pusher->stats.Str))
 	return 0;
 
     if(out_of_map(op->map,x,y))
@@ -372,7 +373,9 @@ int push_ob(object *who, int dir, object *pusher) {
     who->enemy = pusher;
   str1 = (who->stats.Str>0?who->stats.Str:who->level);
   str2 = (pusher->stats.Str>0?pusher->stats.Str:pusher->level);
-  if(QUERY_FLAG(who,FLAG_WIZ) || RANDOM()%(str1/2+1) + str1 >= RANDOM()%(str2/2+1) + str2 ||
+  if(QUERY_FLAG(who,FLAG_WIZ) ||
+     random_roll(str1, str1/2+str1*2, who, PREFER_HIGH) >= 
+     random_roll(str2, str2/2+str2*2, pusher, PREFER_HIGH) ||
      !move_ob(who,dir,pusher))
   {
     if (who ->type == PLAYER) {

@@ -111,10 +111,6 @@ void attempt_do_alchemy(object *caster, object *cauldron) {
 	  change_skill(caster,SK_ALCHEMY);
           ability+=SK_level(caster)*((4.0 + cauldron->magic)/4.0);
         }
-	/* Add caster's luck to alcheky skill */
-	/* cauldron->magic multiplies luck only half as much as	*
-	 * it does Alchemy skill.  -- DAMN			*/
-	ability += caster->stats.luck*((8.0 + cauldron->magic)/8.0);
 
 #ifdef ALCHEMY_DEBUG
 	LOG(llevDebug,"Got alchemy ability lvl = %d\n",ability);
@@ -168,7 +164,7 @@ void attempt_do_alchemy(object *caster, object *cauldron) {
 #endif
 
 	    /* roll the dice */
-	    if((float)(RANDOM()%100) <= 100.0 * success_chance) {
+	    if((float)(random_roll(0, 99, caster, PREFER_LOW)) <= 100.0 * success_chance) {
 	      /* we learn from our experience IF we know something of the alchemical arts */
 	      if(caster->chosen_skill&&caster->chosen_skill->stats.sp==SK_ALCHEMY) { 
 		/* more exp is given for higher ingred number recipes */ 
@@ -376,7 +372,7 @@ void alchemy_failure_effect(object *op,object *cauldron,recipe *rp,int danger) {
  
   if(!op || !cauldron) return; 
 
-  if(danger>1) level=RANDOM()%danger+1;
+  if(danger>1) level=random_roll(1, danger, op, PREFER_LOW);
 
 #ifdef ALCHEMY_DEBUG
   LOG(llevDebug,"Alchemy_failure_effect(): using level=%d\n",level); 
@@ -431,7 +427,7 @@ void alchemy_failure_effect(object *op,object *cauldron,recipe *rp,int danger) {
 		 	tmp->stats.sp = 0; /* so it can drain stats */ 
             	if(RANDOM()%2) { 		/* poisonous */
 			tmp->type=FOOD; 
-			tmp->stats.hp=RANDOM()%150;
+			tmp->stats.hp=random_roll(0, 149, op, PREFER_LOW);
 	    	}
            }
 
@@ -473,15 +469,15 @@ void alchemy_failure_effect(object *op,object *cauldron,recipe *rp,int danger) {
       switch(RANDOM()%3) {
 	case 0: 
            tmp=get_archetype("bomb");
-  	   tmp->stats.dam=RANDOM()%level+1;
-  	   tmp->stats.hp=RANDOM()%level+1;
+  	   tmp->stats.dam=random_roll(1, level, op, PREFER_LOW);
+  	   tmp->stats.hp=random_roll(1, level, op, PREFER_LOW);
       	   new_draw_info_format(NDI_UNIQUE,0,op,"The %s creates a bomb!",
 		cauldron->name);
 	   break; 
 	default:
            tmp=get_archetype("fireball");
-  	   tmp->stats.dam=(RANDOM()%level+1)/5+1;
-  	   tmp->stats.hp=(RANDOM()%level+1)/10+2;
+  	   tmp->stats.dam=random_roll(1, level, op, PREFER_LOW)/5+1;
+  	   tmp->stats.hp=random_roll(1, level, op, PREFER_LOW)/10+2;
       	   new_draw_info_format(NDI_UNIQUE,0,op,"The %s erupts in flame!",
 		cauldron->name);
 	   break;
@@ -509,7 +505,7 @@ void alchemy_failure_effect(object *op,object *cauldron,recipe *rp,int danger) {
       if(!QUERY_FLAG(cauldron,FLAG_CURSED))
         SET_FLAG(cauldron,FLAG_CURSED);
       else cauldron->magic--;
-      cauldron->magic -= RANDOM()%5;
+      cauldron->magic -= random_roll(0, 4, op, PREFER_LOW);
       if(RANDOM()%2) {
         remove_contents(cauldron->inv,NULL);
         new_draw_info_format(NDI_UNIQUE,0,op,
@@ -528,7 +524,8 @@ void alchemy_failure_effect(object *op,object *cauldron,recipe *rp,int danger) {
       remove_contents(cauldron->inv,NULL);
       if(!tmp) 
 	alchemy_failure_effect(op,cauldron,rp,level);
-      else if(summon_hostile_monsters(cauldron,RANDOM()%10+1,tmp->arch->name))
+      else if(summon_hostile_monsters(cauldron,
+	      random_roll(1, 10, op, PREFER_LOW), tmp->arch->name))
   	 new_draw_info_format(NDI_UNIQUE, 0,op,
 	    "The %s %s and then pours forth monsters!",
 	    cauldron->name,cauldron_sound());
@@ -552,7 +549,7 @@ void alchemy_failure_effect(object *op,object *cauldron,recipe *rp,int danger) {
 	 * formulalist) */
       if(!rp) rp=get_random_recipe((recipelist *) NULL);
       if(rp && (tmp=get_archetype(rp->arch_name))) { 
-         generate_artifact(tmp,RANDOM()%((op->level/2)+2)+2);
+         generate_artifact(tmp,random_roll(1, op->level/2+1, op, PREFER_HIGH)+1);
 	 if((tmp=insert_ob_in_ob(tmp,cauldron))) { 
 	    remove_contents(cauldron->inv,tmp);
   	    new_draw_info_format(NDI_UNIQUE, 0,op,

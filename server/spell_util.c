@@ -200,10 +200,10 @@ int cast_spell(object *op,object *caster,int dir,int type,int ability,SpellTypeF
 	   *Instead of subtracting 10 from the roll, add in grace (which is
 	   * negative).  This puts a real limit on things.
 	   */
-	  if( (RANDOM()%op->stats.Wis) +op->stats.grace -
-		  10*SP_level_spellpoint_cost(op,caster,type)/op->stats.maxgrace >0) {
-			  new_draw_info_format(NDI_UNIQUE, 0,op, 
-				"%s grants your prayer, though you are unworthy.",godname);
+	  if(random_roll(0, op->stats.Wis-1, op, PREFER_HIGH) + op->stats.grace -
+	     10*SP_level_spellpoint_cost(op,caster,type)/op->stats.maxgrace >0) {
+		new_draw_info_format(NDI_UNIQUE, 0,op, 
+		    "%s grants your prayer, though you are unworthy.",godname);
 	  }
 	  else
 	  {
@@ -286,10 +286,9 @@ int cast_spell(object *op,object *caster,int dir,int type,int ability,SpellTypeF
     return 0;
   }
   if(item == spellNormal && op->type==PLAYER&&s->cleric&&
-	  /*     RANDOM()%100< s->level*2 - op->level + cleric_chance[op->stats.Wis]-
-				op->stats.luck*3) {*/
-	  RANDOM()%100 < s->level/(float)MAX(1,op->level) * cleric_chance[op->stats.Wis]-
-	  op->stats.luck*3) {
+	  random_roll(0, 99, op, PREFER_HIGH) < s->level/(float)MAX(1,op->level) *
+	  cleric_chance[op->stats.Wis]) {
+
     play_sound_player_only(op->contr, SOUND_FUMBLE_SPELL,0,0);
     new_draw_info(NDI_UNIQUE, 0,op,"You fumble the spell.");
 #ifdef CASTING_TIME
@@ -298,18 +297,20 @@ int cast_spell(object *op,object *caster,int dir,int type,int ability,SpellTypeF
 #endif    
     if(s->sp==0) /* Shouldn't happen... */
       return 0;
-    return RANDOM()%(SP_level_spellpoint_cost(op,caster,type)+1)+1;
+    return(random_roll(1, SP_level_spellpoint_cost(op,caster,type), op, 
+	PREFER_LOW));
   }
 #ifdef SPELL_ENCUMBRANCE
   if(item == spellNormal && op->type==PLAYER && (!s->cleric) ) {
-    int failure = (RANDOM()%200) - op->contr->encumbrance +op->level -s->level +35;
+    int failure = random_roll(0, 199, op, PREFER_LOW) -
+	op->contr->encumbrance +op->level -s->level +35;
 
     if( failure < 0) {
 	new_draw_info(NDI_UNIQUE, 0,op,"You bungle the spell because you have too much heavy equipment in use.");
 #ifdef SPELL_FAILURE_EFFECTS
         spell_failure(op,failure,SP_level_spellpoint_cost(op,caster,type));
 #endif
-	return RANDOM()%(SP_level_spellpoint_cost(op,caster,type)+ 1);
+	return(random_roll(0, SP_level_spellpoint_cost(op,caster,type), op, PREFER_LOW));
 	}
    }
 #endif /*SPELL_ENCUMBRANCE*/
@@ -579,35 +580,31 @@ if (item == spellNormal && !ability ){
     success = fire_arch(op,caster,dir,spellarch[type],type,!ability);
     break;
   case SP_METEOR_SWARM: {
-    int n;
-    n=RANDOM()%3 + RANDOM()%3 + RANDOM()%3 +3 +
-      SP_level_strength_adjust(op,caster, type);
     success = 1;
-    fire_swarm(op,caster,dir,spellarch[type],SP_METEOR,n,0);
+    fire_swarm(op, caster, dir, spellarch[type], SP_METEOR,
+	die_roll(3, 3, op, PREFER_HIGH) +
+	    SP_level_strength_adjust(op,caster, type), 0);
     break;
   }
   case SP_BULLET_SWARM: {
-    int n;
-    n=RANDOM()%3 + RANDOM()%3 + RANDOM()%3 +3 +
-      SP_level_strength_adjust(op,caster, type);
     success = 1;
-    fire_swarm(op,caster,dir,spellarch[type],SP_BULLET,n,1);
+    fire_swarm(op, caster, dir, spellarch[type], SP_BULLET,
+	die_roll(3, 3, op, PREFER_HIGH) +
+	    SP_level_strength_adjust(op,caster, type), 0);
     break;
   }
   case SP_BULLET_STORM: {
-    int n;
-    n=RANDOM()%3 + RANDOM()%3 + RANDOM()%3 +3 +
-      SP_level_strength_adjust(op,caster, type);
     success = 1;
-    fire_swarm(op,caster,dir,spellarch[type],SP_LARGE_BULLET,n,1);
+    fire_swarm(op, caster, dir, spellarch[type], SP_LARGE_BULLET,
+	die_roll(3, 3, op, PREFER_HIGH) +
+	    SP_level_strength_adjust(op,caster, type), 0);
     break;
   }
   case SP_CAUSE_MANY: {
-    int n;
-    n=RANDOM()%3 + RANDOM()%3 + RANDOM()%3 +3 +
-      SP_level_strength_adjust(op,caster, type);
     success = 1;
-    fire_swarm(op,caster,dir,spellarch[type],SP_CAUSE_HEAVY,n,1);
+    fire_swarm(op, caster, dir, spellarch[type], SP_CAUSE_HEAVY,
+	die_roll(3, 3, op, PREFER_HIGH) +
+	    SP_level_strength_adjust(op,caster, type), 0);
     break;
   }
   case SP_METEOR:
@@ -2240,7 +2237,7 @@ int create_aura(object *op, object *caster, archetype *aura_arch, int spell_type
   insert_ob_in_ob(new_aura, op);
   return 1;
 }
-	    
+
 /*  look_up_spell_by_name:  peterm
     this function attempts to find the spell spname in spells[].
     if it doesn't exist, or if the op cannot cast that spname,
