@@ -93,13 +93,14 @@ char *get_name_of_region_for_map(mapstruct  *m) {
 region *get_region_from_string(char *name) {
     region *reg;
     char *substr;
+    char *p;
     sint16 i;
     
     if (name==NULL) {
     	for (reg=first_region;reg->parent!=NULL;reg=reg->parent);
     	return reg;
     }
-    char *p = strchr(name, '\n');
+    p = strchr(name, '\n');
     if (p) *p = '\0';
     for (reg=first_region;reg!=NULL;reg=reg->next)
 	if (!strcasecmp(reg->name, name)) return reg;
