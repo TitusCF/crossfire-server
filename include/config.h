@@ -23,7 +23,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to mwedel@scurz.net
+    The author can be reached via e-mail to mwedel@scruz.net
 */
 
 /* This file contains various #defines that select various options.
@@ -968,4 +968,21 @@
  */
 
 /*#define BACKUP_SAVE_AT_HOME*/
+
+/* RESET_LOCATION_TIME is the number of seconds that must elapse before
+ * we fill return the player to his savebed location.  If this is zero,
+ * this feature is disabled (player will resume where ever he was
+ * when he last logged off).  If this is set to less than two hours,
+ * it will prevent players from camping out in treasure rooms.
+ * Do not comment this out - it must be set to something - if you
+ * comment this out, the program will not compile.
+ *
+ * This will work to BACKUP_SAVE_AT_HOME at home above, but where the player
+ * where appear under what conditions is a little complicated depending
+ * on how the player exited the game.  But if the elapsed time is greater than
+ * the value below, player will always get returned to savebed location
+ * location.
+ */
+
+#define RESET_LOCATION_TIME	15*60
 

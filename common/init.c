@@ -56,6 +56,7 @@ STAT_LOSS_ON_DEATH,
 USE_PERMANENT_EXPERIENCE,
 BALANCED_STAT_LOSS,
 SIMPLE_EXP,
+RESET_LOCATION_TIME,
 0,		/* This and the next 3 values are metaserver values */
 "",
 "",

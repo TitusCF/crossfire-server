@@ -2585,13 +2585,13 @@ int cast_charm(object *op, object *caster,archetype *arch,int spellnum) {
 
 int cast_charm_undead(object *op, object *caster,archetype *arch,int spellnum) {
   int i,bonus;
-  object *tmp,*effect;
+  object *tmp,*effect, *god=find_god(determine_god(op));
 
   if (op->type != PLAYER)
     return 0; 
-  if (QUERY_FLAG(caster,FLAG_UNDEAD) || strstr(find_god(determine_god(op))->race,undead_name)!=NULL) {
+  if (QUERY_FLAG(caster,FLAG_UNDEAD) || (god->race && strstr(god->race,undead_name)!=NULL)) {
     bonus = 5;
-  } else if (strstr(find_god(determine_god(op))->slaying,undead_name)!=NULL) {
+  } else if (god->slaying && strstr(god->slaying,undead_name)!=NULL) {
     bonus = -5;
   } else {
     bonus = -1;

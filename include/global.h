@@ -277,6 +277,7 @@ typedef struct Settings {
     uint8   use_permanent_experience; /* If true, players can gain perm exp */
     uint8   balanced_stat_loss; /* If true, Death stat depletion based on level etc */
     uint8   simple_exp;	    /* If true, use the simple experience system */
+    int	    reset_loc_time; /* Number of seconds to put player back at home */
 
     /* The meta_ is information for the metaserver.  These are set in 
      * the lib/settings file.

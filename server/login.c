@@ -6,6 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
+    Copyright (C) 2001 Mark Wedel
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -22,7 +23,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to frankj@ifi.uio.no.
+    The author can be reached via e-mail to mwedel@scruznet.com
 */
 
 #include <global.h>
@@ -505,10 +506,12 @@ void check_login(object *op) {
     FILE *fp;
     char filename[MAX_BUF];
     char buf[MAX_BUF],bufall[MAX_BUF];
-    int i,value,x,y,comp;
+    int i,value,comp;
     long checksum = 0;
     player *pl = op->contr;
     int correct = 0;
+    time_t    elapsed_save_time=0;
+    struct stat	statbuf;
 
     strcpy (pl->maplevel,first_map_path);
 
@@ -532,6 +535,16 @@ void check_login(object *op) {
     if ((fp=open_and_uncompress(filename,1,&comp)) == NULL) {
 	confirm_password(op);
 	return;
+    }
+    if (fstat(fileno(fp), &statbuf)) {
+	LOG(llevError,"Unable to stat %s?\n", filename);
+	elapsed_save_time=0;
+    } else {
+	elapsed_save_time = time(NULL) - statbuf.st_mtime;
+	if (elapsed_save_time<0) {
+	    LOG(llevError,"Player file %s was saved in the future? (%d time)\n", elapsed_save_time);
+	    elapsed_save_time=0;
+	}
     }
 
     if(fgets(bufall,MAX_BUF,fp) != NULL) {
@@ -689,7 +702,6 @@ void check_login(object *op) {
 
     CLEAR_FLAG(op, FLAG_NO_FIX_PLAYER);
 
-    x=op->x; y=op->y;
     strncpy(pl->title, op->arch->clone.name,MAX_NAME);
 
     /* If the map where the person was last saved does not exist,
@@ -703,13 +715,21 @@ void check_login(object *op) {
       if (check_path(pl->maplevel,0)==-1) {
 	strcpy(pl->maplevel, pl->savebed_map);
 	op->x = pl->bed_x, op->y = pl->bed_y;
-	x=op->x; y=op->y;
       }
+    }
+
+    /* If player saved beyond some time ago, and the feature is
+     * enabled, put the player back on his savebed map.
+     */
+    if ((settings.reset_loc_time >0) && (elapsed_save_time > settings.reset_loc_time)) {
+	strcpy(pl->maplevel, pl->savebed_map);
+	op->x = pl->bed_x, op->y = pl->bed_y;
     }
 
     /* make sure he's a player--needed because of class change. */
     op->type = PLAYER;
-    enter_exit(op,NULL); /* This won't insert the player any longer! */
+
+    enter_exit(op,NULL);
 
     pl->name_changed=1;
     pl->state = ST_PLAYING;
@@ -737,17 +757,6 @@ void check_login(object *op) {
     new_draw_info_format(NDI_UNIQUE | NDI_ALL, 5, NULL, 
 	     "%s has entered the game.",pl->ob->name);
 
-#if 0
-    if(pl->loading == NULL) {
-	if(!out_of_map(op->map,x,y))
-	    op->x=x, op->y=y;
-	    insert_ob_in_map(op,op->map,op);
-    } else {
-	LOG(llevError,"Warning: map was not in memory (%s).\n",
-                  op->map->path);
-	pl->removed = 0; /* Pl. will be inserted when map is loaded */
-    }
-#endif
     op->contr->socket.update_look=1;
     LOG(llevDebug,"Checksums: %x %x\n",
                 checksum,calculate_checksum(filename,1));

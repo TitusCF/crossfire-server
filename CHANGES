@@ -17,6 +17,19 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 CVS changes since last release:
 
+MSW 2001/03/18:
+common/init.c: add RESET_LOCATION_TIME initializer to settings structure.
+include/config.h: Add RESET_LOCATION_TIME value.  If nonzero and the save was longer than 
+    the specified time in seconds, player will be returned home upon login from
+    save.
+include/global.h: Add reset_loc_time field to settings structure.
+server/login.c: Remove some unused variables, add support to return player
+   home as described above.
+server/spell_effect.c: Fix for crashes when casting control undead and your
+   god does not have an enemy.  Now properly check to make sure we are not
+   dereferencing null pointers.
+
+
 MSW 2001/03/16:
 Change code so that if player dies and loading the players savebed map does
 not work, return player to EMERGENCY_MAPPATH instead.  New function added
