@@ -18,6 +18,12 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+* server/attack.c: hit_player(): Bugfix: remove_friendly_object()
+was called always after an object with type GOLEM had been killed,
+but friendly objects are objects with FLAG_FRIENDLY, not objects with
+type GOLEM.  This fixes some "Remove_friendly_object(): Can't find
+object" errors.   - Jan Echternach 5/26/2000
+
 -----------------------------------
 --- BEGIN apply() cleanup patch ---  Jan Echternach 26/5/2000
 -----------------------------------
