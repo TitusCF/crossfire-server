@@ -244,9 +244,23 @@ char *query_short_name(object *op)
     }
 
     switch(op->type) {
+      case SPELLBOOK:
+	if (QUERY_FLAG(op,FLAG_IDENTIFIED)||QUERY_FLAG(op,FLAG_BEEN_APPLIED)) {
+	    if(!op->title) {
+		safe_strcat(buf," of ", &len, HUGE_BUF);
+		if(op->slaying) safe_strcat(buf,op->slaying, &len, HUGE_BUF);
+		else
+		  safe_strcat(buf,spells[op->stats.sp].name, &len, HUGE_BUF);
+		if(op->type != SPELLBOOK) {
+		    sprintf(buf2, " (lvl %d)", op->level);
+		    safe_strcat(buf, buf2, &len, HUGE_BUF);
+		}
+	    }
+	}
+	
+	break;
       case SCROLL:
       case WAND:
-      case SPELLBOOK:
       case ROD:
 	if (QUERY_FLAG(op,FLAG_IDENTIFIED)||QUERY_FLAG(op,FLAG_BEEN_APPLIED)) {
 	    if(!op->title) {
@@ -427,9 +441,21 @@ char *query_base_name(object *op, int plural) {
     }
 
     switch(op->type) {
+      case SPELLBOOK:
+	if (QUERY_FLAG(op,FLAG_IDENTIFIED)||QUERY_FLAG(op,FLAG_BEEN_APPLIED)) {
+	    if(!op->title) {
+		strcat(buf," of ");
+		if(op->slaying) strcat(buf,op->slaying);
+		else
+		  strcat(buf,spells[op->stats.sp].name);
+		if(op->type != SPELLBOOK)
+		    sprintf(buf+strlen(buf), " (lvl %d)", op->level);
+	    }
+	}
+	break;
       case SCROLL:
       case WAND:
-      case SPELLBOOK:
+
       case ROD:
 	if (QUERY_FLAG(op,FLAG_IDENTIFIED)||QUERY_FLAG(op,FLAG_BEEN_APPLIED)) {
 	    if(!op->title) {
