@@ -1036,7 +1036,7 @@ void meditate (object *pl, object *skill) {
      * meditate. (see 'factor' variable for what sets the amount of time) 
      */
  
-    new_draw_info(NDI_UNIQUE,0,pl, "You meditate."); 
+    new_draw_info(NDI_BLACK,0,pl, "You meditate."); 
 
     if(pl->stats.sp < pl->stats.maxsp) {
 	pl->stats.sp++;

@@ -17,6 +17,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/skills.c: changed NDI_UNIQUE to NDI_BLACK for the meditation
+   message (so that messages can correctly be grouped, also makes it
+   coherent with praying).
+Ryo 2003-12-20
+
 Those fixes deal with gcc3.3 infinite loop.
 Fixes (except sizeof/memset) courtesy Bernd Edler.
 ---
