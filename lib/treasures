@@ -3843,7 +3843,7 @@ treasure paladin_class_items
   more
   arch full_helmet
   more
-  arch cleric_book
+  arch cleric_book_l1
   more
   arch paladin_holy_symbol
   more
