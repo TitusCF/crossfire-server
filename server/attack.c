@@ -1216,8 +1216,8 @@ int hit_player_attacktype(object *op, object *hitter, int dam,
 	if ((op->type == GOLEM) || (QUERY_FLAG(op, FLAG_UNDEAD))) return 0;
 	/* If drain protection is higher than life stealing, use that */
 	if (op->resist[ATNR_DRAIN] >= op->resist[ATNR_LIFE_STEALING])
-	  dam = (dam*(100 - op->resist[ATNR_DRAIN])) / 1000;
-	else dam = (dam*(100 - op->resist[ATNR_LIFE_STEALING])) / 1000;
+	  dam = (dam*(100 - op->resist[ATNR_DRAIN])) / 3000;
+	else dam = (dam*(100 - op->resist[ATNR_LIFE_STEALING])) / 3000;
 	/* You die at -1 hp, not zero. */
 	if (dam > (op->stats.hp+1)) dam = op->stats.hp+1;
 	new_hp = hitter->stats.hp + dam;
