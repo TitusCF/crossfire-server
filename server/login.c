@@ -267,10 +267,9 @@ int save_player(object *op, int flag) {
    }
 
   fprintf(fp,"password %s\n",pl->password);
-#ifdef SET_TITLE
-  if(pl->own_title[0]!='\0')
-    fprintf(fp,"title %s\n",pl->own_title);
-#endif /* SET_TITLE */
+  if (settings.set_title == TRUE)
+      if(pl->own_title[0]!='\0')
+	  fprintf(fp,"title %s\n",pl->own_title);
 
 #ifdef EXPLORE_MODE
   fprintf(fp,"explore %d\n",pl->explore);
@@ -542,10 +541,8 @@ void check_login(object *op) {
 	sscanf(bufall,"%s %d\n",buf,&value);
         if (!strcmp(buf,"endplst"))
           break;
-#ifdef SET_TITLE
-	else if (!strcmp(buf,"title"))
+	else if (!strcmp(buf,"title") && settings.set_title == TRUE)
 	    sscanf(bufall,"title %[^\n]",pl->own_title);
-#endif /* SET_TITLE */
 
 #ifdef EXPLORE_MODE
 	else if (!strcmp(buf,"explore"))

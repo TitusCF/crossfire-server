@@ -330,14 +330,16 @@ int command_party (object *op, char *params)
 	"Members of party: %s.",find_party(no,firstparty));
     for(pl=first_player;pl!=NULL;pl=pl->next)
       if(pl->ob->contr->party_number==no) {
-#ifdef SET_TITLE
-        if(pl->ob->contr->own_title[0]!='\0')
-          sprintf(buf,"%3d %s the %s",
-                  pl->ob->level,pl->ob->name,pl->ob->contr->own_title);
-        else
-#endif /* SET_TITLE */
-          sprintf(buf,"%3d %s the %s",
-                  pl->ob->level,pl->ob->name,pl->ob->contr->title);
+	  if (settings.set_title == TRUE) {
+	      if(pl->ob->contr->own_title[0]!='\0')
+		  sprintf(buf,"%3d %s the %s",
+		      pl->ob->level,pl->ob->name,pl->ob->contr->own_title);
+	      else
+		  sprintf(buf,"%3d %s the %s",
+		      pl->ob->level,pl->ob->name,pl->ob->contr->title);
+	  } else
+	      sprintf(buf,"%3d %s the %s",
+		  pl->ob->level,pl->ob->name,pl->ob->contr->title);
         new_draw_info(NDI_UNIQUE, 0,op,buf);
       }
     return 1;

@@ -344,7 +344,7 @@
  * to be defined for this to have any use
  */
 
-#define RESURRECTION
+#define RESURRECTION FALSE
 
 
 /*
@@ -389,7 +389,7 @@
  * someone has a good reason why it shouldn't
  */
 
-#define SET_TITLE
+#define SET_TITLE TRUE
 
 /*
  * Set to true if you want to use the new (0.95.3) experience system.

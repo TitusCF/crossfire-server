@@ -346,13 +346,31 @@ static void load_settings()
 		    ", %d is invalid\n", lev);
 	    else
 		settings.fastclock = lev;
-	}else if (!strcasecmp(buf, "not_permadeth")) {
+	} else if (!strcasecmp(buf, "not_permadeth")) {
 	    if (!strcasecmp(cp, "on") || !strcasecmp(cp, "true")) {
 		settings.not_permadeth=TRUE;
 	    } else if (!strcasecmp(cp, "off") || !strcasecmp(cp, "false")) {
 		settings.not_permadeth=FALSE;
 	    } else {
 		LOG(llevError, "load_settings: Unkown value for not_permadeth"
+		    ": %s\n", cp);
+	    }
+	} else if (!strcasecmp(buf, "resurrection")) {
+	    if (!strcasecmp(cp, "on") || !strcasecmp(cp, "true")) {
+		settings.resurrection=TRUE;
+	    } else if (!strcasecmp(cp, "off") || !strcasecmp(cp, "false")) {
+		settings.resurrection=FALSE;
+	    } else {
+		LOG(llevError, "load_settings: Unkown value for resurrection"
+		    ": %s\n", cp);
+	    }
+	} else if (!strcasecmp(buf, "set_title")) {
+	    if (!strcasecmp(cp, "on") || !strcasecmp(cp, "true")) {
+		settings.set_title=TRUE;
+	    } else if (!strcasecmp(cp, "off") || !strcasecmp(cp, "false")) {
+		settings.set_title=FALSE;
+	    } else {
+		LOG(llevError, "load_settings: Unkown value for set_title"
 		    ": %s\n", cp);
 	    }
 	} else if (!strcasecmp(buf,"simple_exp")) {

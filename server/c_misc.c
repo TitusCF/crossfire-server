@@ -1113,11 +1113,15 @@ int explore_mode() {
 }
 
 
-#ifdef SET_TITLE
 int command_title (object *op, char *params)
 {
     char buf[MAX_BUF];
     
+    if (settings.set_title == FALSE) {
+	new_draw_info(NDI_UNIQUE, 0, op, "You cannot change your title.");
+	return 1;
+    }
+
     /* dragon players cannot change titles */
     if (is_dragon_pl(op)) {
         new_draw_info(NDI_UNIQUE, 0, op, "Dragons cannot change titles.");
@@ -1148,7 +1152,6 @@ int command_title (object *op, char *params)
     strcpy(op->contr->own_title, params);
     return 1;
 }
-#endif /* SET_TITLE */
 
 int command_save (object *op, char *params)
 {

@@ -107,9 +107,7 @@ CommArray_s Commands[] = {
   {"throw", command_throw,	1.0},
   {"time", command_time,	0.0},
   {"weather", command_weather,	0.0},
-#ifdef SET_TITLE
   {"title", command_title,	0.0},
-#endif
   {"usekeys", command_usekeys,	0.0},
   {"version", command_version,	0.0},
   {"wimpy", command_wimpy,	0.0},

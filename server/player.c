@@ -976,9 +976,8 @@ int key_confirm_quit(object *op, char key)
     strcpy(op->contr->killer,"quit");
     check_score(op);
     op->contr->party_number=(-1);
-#ifdef SET_TITLE
-    op->contr->own_title[0]='\0';
-#endif /* SET_TITLE */
+    if (settings.set_title == TRUE)
+	op->contr->own_title[0]='\0';
     if(!QUERY_FLAG(op,FLAG_WAS_WIZ)) {
       sprintf(buf,"%s/%s/%s/%s.pl",settings.localdir,settings.playerdir,op->name,op->name);
       if(unlink(buf)== -1 && settings.debug >= llevDebug)
@@ -2441,9 +2440,8 @@ void kill_player(object *op)
  */
 
     op->contr->party_number=(-1);
-#ifdef SET_TITLE
-    op->contr->own_title[0]='\0';
-#endif /* SET_TITLE */
+    if (settings.set_title == TRUE)
+	op->contr->own_title[0]='\0';
     new_draw_info(NDI_UNIQUE|NDI_ALL, 0,NULL, buf);
     check_score(op);
     if(op->contr->golem!=NULL) {
@@ -2457,8 +2455,7 @@ void kill_player(object *op)
     op->direction=0;
     if(!QUERY_FLAG(op,FLAG_WAS_WIZ)&&op->stats.exp) {
       delete_character(op->name,0);
-      if (settings.not_permadeth == FALSE) {
-#ifdef RESURRECTION
+      if (settings.not_permadeth == FALSE && settings.resurrection == TRUE) {
 	/* save playerfile sans equipment when player dies
 	** then save it as player.pl.dead so that future resurrection
 	** type spells will work on them nicely
@@ -2477,7 +2474,7 @@ void kill_player(object *op)
 	op->map = map;
 	/* please see resurrection.c: peterm */
 	dead_player(op);
-#endif
+	  }
       }
     }
     play_again(op);
