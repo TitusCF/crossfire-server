@@ -151,7 +151,10 @@ void start_info(object *op) {
 }
 
 char *crypt_string(char *str, char *salt) {
-#ifndef WIN32 /* ***win32 crypt_string:: We don't need this anymore since server/client fork */
+/* Really, there is no reason to use this on any system.  But easier to
+ * just leave this enabled for backward compatibility.
+ */
+#if !defined(WIN32) && !defined(__FreeBSD__)
   static char *c=
     "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789./";
   char s[2];

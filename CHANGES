@@ -17,6 +17,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/main.c:  If on freebsd system, don't crypt the password. 
+Crypt on freebsd behaves diferently, and since there is little reason
+to encrypt passwords, easier to just leave them decrypted.
+Fix for sourceforge bug 469017
+MSW 2002-06-13
+
 More minor changes, including a fix for the disappearing object bug -
 this was caused by the flag_links not getting updated the last
 time new flags were added.  Problem probably only showed up now
