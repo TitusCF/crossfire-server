@@ -17,6 +17,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 CVS changes since last release:
 
+server/player.c:  Don't let players shoot arrows at themself.  Also,
+   minor changes to use new_draw_info_format.
+server/swap.c: If recycle temp maps, don't save out random maps to
+   get recycled.  MSW 2001/04/07
+
 PeterM  2001/04/06:  
 include/libproto.h common/object.c server/apply.c server/spell_util.c
 Added a new function:  instead of stacking many burnout or firetrail

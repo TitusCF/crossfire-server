@@ -51,7 +51,8 @@ static void write_map_log()
 	/* If tmpname is null, it is probably a unique player map,
 	 * so don't save information on it.
 	 */
-	if (map->in_memory != MAP_IN_MEMORY && (map->tmpname !=NULL)) {
+	if (map->in_memory != MAP_IN_MEMORY && (map->tmpname !=NULL) &&
+	    (strncmp(map->path,"/random",7))) {
 	    /* the 0 written out is a leftover from the lock number for
 	     * unique items.  Keep using it so that old temp files continue
 	     * to work.

@@ -964,6 +964,12 @@ static void fire_bow(object *op, int dir)
 {
   object *bow, *arrow = NULL, *left;
   tag_t left_tag;
+
+  if (!dir) {
+    new_draw_info(NDI_UNIQUE, 0,op, "You can't shoot yourself!");
+    return;
+  }
+    
   for(bow=op->inv; bow; bow=bow->below)
     if(bow->type==BOW && QUERY_FLAG(bow, FLAG_APPLIED))
       break;
@@ -974,14 +980,12 @@ static void fire_bow(object *op, int dir)
   }
 #endif
   if( !bow->race ) {
-    sprintf (errmsg, "Your %s is broken.", bow->name);
-    new_draw_info(NDI_UNIQUE, 0,op, errmsg);
+    new_draw_info_format(NDI_UNIQUE, 0,op, "Your %s is broken.", bow->name);
     op->contr->count_left=0;
     return;
   }
   if ((arrow=find_arrow(op, bow->race)) == NULL) {
-    sprintf (errmsg, "You have no %s left.", bow->race);
-    new_draw_info(NDI_UNIQUE, 0,op,errmsg);
+    new_draw_info_format(NDI_UNIQUE, 0,op,"You have no %s left.", bow->race);
     op->contr->count_left=0;
     return;
   }
