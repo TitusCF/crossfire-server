@@ -17,6 +17,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+plugin/plugin_python.c: change 'long long' so 'sint64' (typedef).
+Ryo Saeba 2004-11-29
+
 common/object.c: apply patch #1066665 courtesy Salathar for exits with
    blockview 1.
 lib/formulae: apply patch #1064643 courtesy Salathar to fix broken formulae.
