@@ -277,6 +277,9 @@ more
   more
   arch god_spelldirect_peace
   more
+  arch glovesofsun
+  chance 10
+  more
 arch god_grace_limit_high
 more
   arch god_spelldirect_reincarnation
@@ -286,9 +289,6 @@ more
   more
   arch shield_gaea
     chance 5
-  more
-  arch glovesofsun
-    chance 10
 end
 treasure gaea_treasure
   list random_plant
@@ -4754,3 +4754,10 @@ treasure skree_bits
     chance 10
     nrof 1
   end
+treasure skeletalmage
+  list standard_old
+  more
+  arch ability_fear
+  more
+  arch ability_coldspell
+end
