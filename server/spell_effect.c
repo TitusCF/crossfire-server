@@ -2476,6 +2476,9 @@ void counterspell(object *op,int dir)
 	 * so that we don't kill monsters with this (some monsters attacktype
 	 * has magic in it).
          */
+       /* don't attack our own spells */
+       if(tmp->owner && tmp->owner == op->owner) continue;
+
 	if(tmp->material==0 && tmp->attacktype&AT_MAGIC &&
 	   !(tmp->attacktype&AT_COUNTERSPELL) && 
 	   !QUERY_FLAG(tmp,FLAG_MONSTER))
