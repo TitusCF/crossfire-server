@@ -939,7 +939,7 @@ void process_events (mapstruct *map)
          * sort of a limbo, of removed, but something we want to keep
 	 * around.
 	 */
-	if (QUERY_FLAG (op, FLAG_REMOVED) && op->type != PLAYER) {
+	if (QUERY_FLAG (op, FLAG_REMOVED) && op->type != PLAYER && op->map) {
 	    LOG (llevError, "BUG: process_events(): Removed object on list\n");
 	    dump_object(op);
 	    free_object(op);
