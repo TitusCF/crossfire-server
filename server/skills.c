@@ -1203,8 +1203,11 @@ static int write_scroll (object *pl, object *scroll, object *skill) {
 	}
 
 	if (newscroll->inv) {
-	    remove_ob(newscroll->inv);
-	    free_object(newscroll->inv);
+	    object *ninv;
+
+	    ninv = newscroll->inv;
+	    remove_ob(ninv);
+	    free_object(ninv);
 	}
 	tmp = get_object();
 	copy_object(chosen_spell, tmp);

@@ -1886,7 +1886,7 @@ int cast_identify(object *op, object *caster, object *spell) {
 }
 
 
-int cast_detection(object *op, object *caster, object *spell) {
+int cast_detection(object *op, object *caster, object *spell, object *skill) {
     object *tmp, *last, *god, *detect;
     int done_one, range, mflags, floor, level;
     sint16 x, y, nx, ny;
@@ -1898,6 +1898,8 @@ int cast_detection(object *op, object *caster, object *spell) {
     god=find_god(determine_god(op));
     level=caster_level(caster, spell);
     range = spell->range + SP_level_range_adjust(caster, spell);
+
+    if (!skill) skill=caster;
 
     for (x = op->x - range; x <= op->x + range; x++)
 	for (y = op->y - range; y <= op->y + range; y++) {
@@ -1936,7 +1938,7 @@ int cast_detection(object *op, object *caster, object *spell) {
 		     tmp->type==TRIGGER_PEDESTAL || tmp->type==SPECIAL_KEY ||
 		     tmp->type==TREASURE || tmp->type==BOOK ||
 		     tmp->type==HOLY_ALTAR))) {
-			if(random_roll(0, op->chosen_skill->level-1, op, PREFER_HIGH) > level/4) {
+			if(random_roll(0, skill->level-1, op, PREFER_HIGH) > level/4) {
 			    tmp->invisible=0;
 			    done_one = 1;
 			}

@@ -2907,10 +2907,10 @@ void do_hidden_move (object *op) {
 
     if(!op || !op->map) return;
 
+    skop = find_obj_by_type_subtype(op, SKILL, SK_HIDING);
+
     /* its *extremely* hard to run and sneak/hide at the same time! */
     if(op->type==PLAYER && op->contr->run_on) {
-	skop = find_obj_by_type_subtype(op, SKILL, SK_HIDING);
-
 	if(!skop || num >= skop->level) {
 	    new_draw_info(NDI_UNIQUE,0,op,"You ran too much! You are no longer hidden!");
 	    make_visible(op);
@@ -2918,7 +2918,7 @@ void do_hidden_move (object *op) {
 	} else num += 20;
     }
     num += op->map->difficulty;
-    hide=hideability(op); /* modify by terrain hidden level */
+    hide = hideability(op); /* modify by terrain hidden level */
     num -= hide;
     if((op->type==PLAYER && hide<-10) || ((op->invisible-=num)<=0)) {
 	make_visible(op);

@@ -17,6 +17,23 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Fix a bunch of crashes observed on metalforge:
+server/player.c: do_hidden_move(): Move call to find skill so that it is
+    always called.
+server/skills.c: write_scroll(): Fix freeing of spell object in
+    scroll - newscroll->inv isn't valid after calling remove_ob, so
+    need to copy object to temporary pointer first.
+server/spell_effect.c: cast_detection(): Pass in skill to use.  If no
+    skill in use, use the caster object - fixes pointer derefence
+    as op->chosen_skill wasn't always set.
+server/spell_util.c: modify caster_level() to always return at least 1.
+    Fixes pointer potential divide by zero problems - also guarantees
+    that players will be able to cast first level spells even if 
+    repelled to that spellpath.  ok_to_put_more() - Fix to use correct
+    map pointer variable.  find_target_for_friendly_spell() - make it
+    so it handles tiled maps OK.
+MSW 2003-01-15
+
 common/object.c: fix the monsters on tiled maps bug that I may have 
     mentioned a while ago.  Seems that the server assumed that all 
     parts of a multi part monster are on the same map as the head 

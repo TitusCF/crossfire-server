@@ -213,6 +213,11 @@ int caster_level(object *caster, object *spell)
     /* Got valid caster level.  Now adjust for attunement */
     level += ((caster->path_repelled & spell->path_attuned) ? -2 : 0)
              + ((caster->path_attuned & spell->path_attuned) ? 2 : 0);
+
+    /* Always make this at least 1.  If this is zero, we get divide by zero
+     * errors in various places.
+     */
+    if (level < 1) level =1;
     return level;
 }
 
@@ -438,7 +443,7 @@ int ok_to_put_more(mapstruct *m,sint16 x,sint16 y,object *op,int immune_stop) {
 
     if(mflags & P_WALL) return 0;
 
-    for(tmp=get_map_ob(m,x,y);tmp!=NULL;tmp=tmp->above) {
+    for(tmp=get_map_ob(mp,x,y);tmp!=NULL;tmp=tmp->above) {
 	/* If there is a counterspell on the space, and this
 	 * object is using magic, don't progess.  I believe we could
 	 * leave this out and let in progress, and other areas of the code
@@ -570,6 +575,9 @@ void drain_rod_charge(object *rod) {
 
 object *find_target_for_friendly_spell(object *op,int dir) {
     object *tmp;
+    mapstruct *m;
+    sint16 x, y;
+    int mflags;
 
     /* I don't really get this block - if op isn't a player or rune,
      * we then make the owner of this object the target.
@@ -583,11 +591,16 @@ object *find_target_for_friendly_spell(object *op,int dir) {
 	if(!tmp || !QUERY_FLAG(tmp,FLAG_MONSTER)) tmp=op;
     }
     else {
-	if (out_of_map(op->map, op->x+freearr_x[dir],op->y+freearr_y[dir]))
+	m = op->map;
+	x =  op->x+freearr_x[dir];
+	y =  op->y+freearr_y[dir];
+
+	mflags = get_map_flags(m, &m, x, y, &x, &y);
+
+	if (mflags & P_OUT_OF_MAP)
 	    tmp=NULL;
 	else  {
-	    for(tmp=get_map_ob(op->map,op->x+freearr_x[dir],op->y+freearr_y[dir]);
-	      tmp!=NULL; tmp=tmp->above)
+	    for(tmp=get_map_ob(m, x, y); tmp!=NULL; tmp=tmp->above)
 		if(tmp->type==PLAYER)
 		    break;
 	}
@@ -1247,7 +1260,7 @@ int cast_spell(object *op, object *caster,int dir,object *spell_ob, char *string
 	    break;
 
 	case SP_DETECTION:
-	    success = cast_detection(op, caster, spell_ob);
+	    success = cast_detection(op, caster, spell_ob, skill);
 	    break;
 
 	case SP_MOOD_CHANGE:
