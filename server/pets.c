@@ -446,16 +446,17 @@ object *fix_summon_pet(archetype *at, object *op, int dir, int is_golem ) {
     head->direction = dir;
 
     /* need to change some monster attr to prevent problems/crashing */
-    if(head->last_heal) head->last_heal=0;
-    if(head->last_eat) head->last_eat=0;
-    if(head->last_grace) head->last_grace=0;
-    if(head->last_sp) head->last_sp=0;
+    head->last_heal=0;
+    head->last_eat=0;
+    head->last_grace=0;
+    head->last_sp=0;
+    head->other_arch=NULL;
+    head->stats.exp = 0;
+    CLEAR_FLAG(head,FLAG_CHANGING);
+    CLEAR_FLAG(head,FLAG_STAND_STILL);
+    CLEAR_FLAG(head,FLAG_GENERATOR);
+    CLEAR_FLAG(head,FLAG_SPLITTING);
     if(head->attacktype&AT_GHOSTHIT) head->attacktype=(AT_PHYSICAL|AT_DRAIN);
-    if(head->other_arch) head->other_arch=NULL;
-    if(QUERY_FLAG(head,FLAG_CHANGING)) CLEAR_FLAG(head,FLAG_CHANGING);
-    if(QUERY_FLAG(head,FLAG_STAND_STILL)) CLEAR_FLAG(head,FLAG_STAND_STILL);
-    if(QUERY_FLAG(head,FLAG_GENERATOR)) CLEAR_FLAG(head,FLAG_GENERATOR);
-    if(QUERY_FLAG(head,FLAG_SPLITTING)) CLEAR_FLAG(head,FLAG_SPLITTING);
 
     return head;
 }
@@ -902,6 +903,7 @@ int summon_object(object *op, object *caster, object *spell_ob, int dir)
 	    tmp->map = op->map;
 	}
 	head->direction = dir;
+	head->stats.exp = 0;
 	head = insert_ob_in_map(head, head->map, op, 0);
 	if (head && head->randomitems) {
 	    object *tmp;
