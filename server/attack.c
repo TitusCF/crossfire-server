@@ -46,7 +46,7 @@ typedef struct att_msg_str {
  * any further action (like destroying the item).
  */
 
-int did_make_save_item(object *op, int type) {
+int did_make_save_item(object *op, int type,object *originator) {
   int i, saves=0,materials=0, orig_type=type;
 
   type &= (~op->immune & ~op->protected);
@@ -75,6 +75,8 @@ int did_make_save_item(object *op, int type) {
       materials++;
       if(RANDOM()%20+1>=material[i].save[type]-op->magic)
 	saves++;
+      /* if the attack is too weak */
+      if((20-material[i].save[type])/3 > originator->stats.dam) saves++;
     }
   if (saves==materials || materials==0) return 1;
   if ((saves==0) || (RANDOM()%materials+1 > saves)) return 0;
@@ -88,7 +90,7 @@ int did_make_save_item(object *op, int type) {
 
 void save_throw_object (object *op, int type, object *originator)
 {
-    if ( ! did_make_save_item (op, type))
+    if ( ! did_make_save_item (op, type,originator))
     {
 	object *env=op->env;
 	int x=op->x,y=op->y;
@@ -268,7 +270,7 @@ int hit_map(object *op,int dir,int type) {
       retflag |=1;
       if (was_destroyed (op, op_tag))
         break;
-    } else if (tmp->material) {
+    } else if (tmp->material && op->stats.dam > 0) {
       save_throw_object(tmp,type,op);
       if (was_destroyed (op, op_tag))
         break;

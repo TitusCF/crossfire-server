@@ -38,6 +38,9 @@ Stat            Property        Definition
 
 attacktype      Attack effects  Attacktype of the disease. usu. AT_GODPOWER.
 other_arch      Creation        object created and dropped when symptom moved.
+title           Message         When the "disease" "infects" something, it will
+                                print "title victim!!!" to the player who owns
+				the "disease".
 wc+             Infectiousness  How well the plague spreads person-to-person
 magic+          Range           range of infection 
 Stats*          Disability      What stats are reduced by the disease (str con...)

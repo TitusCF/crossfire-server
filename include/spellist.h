@@ -419,7 +419,10 @@ PATH_TURNING,"holy_orb",},
 {"cause cold",                  2, 10, 5, 10, 3, 2,  5,  1, 0, 1, 0,   /* 187 */
    PATH_WOUNDING,"disease_cold"},
 {"divine shock",              1, 3, 0, 10, 0, 0, 5, 1, 0, 1, 0, 
-   PATH_WOUNDING,"divine_shock"}
+   PATH_WOUNDING,"divine_shock"},
+{"windstorm",                   3,3,  0, 10, 0, 0,  0,  1, 0, 1, 0,
+ PATH_NULL, "windstorm",}
+
 
 };
 
@@ -631,7 +634,8 @@ spell_parameters SP_PARAMETERS[NROFREALSPELLS] =
 {	2,	20,	2,	1,	10},	/* dancing sword */     /* 185 */ 
 {	2,	20,	2,	1,	20},	/* animate weapon */
 {   0,       0,     3,      5,		10},	/*cause cold*/      
-{   1,      1,     4,      1,		3}	/*divine shock*/      
+{   1,      1,     4,      1,		3},	/*divine shock*/      
+{   0,      20,     25,      4,		6}	/*windstorm*/      
 };
 
 char *spellpathnames[NRSPELLPATHS] = {

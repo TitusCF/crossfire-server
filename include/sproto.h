@@ -44,7 +44,7 @@ extern void fix_auto_apply ( mapstruct *m );
 extern void eat_special_food ( object *who, object *food );
 extern void apply_lighter ( object *who, object *lighter );
 extern void scroll_failure ( object *op, int failure, int power );
-extern int did_make_save_item ( object *op, int type );
+extern int did_make_save_item ( object *op, int type, object *originator );
 extern void save_throw_object ( object *op, int type, object *originator );
 extern int hit_map ( object *op, int dir, int type );
 extern int attack_ob ( object *op, object *hitter );

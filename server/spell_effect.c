@@ -1594,7 +1594,7 @@ void cancellation(object *op)
   {
     /* Recur through the inventory */
     for(tmp=op->inv;tmp!=NULL;tmp=tmp->below)
-      if (!did_make_save_item(tmp, AT_CANCELLATION))
+      if (!did_make_save_item(tmp, AT_CANCELLATION,op))
 	cancellation(tmp);
   }
   else				/* Nullify this object. */

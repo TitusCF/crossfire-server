@@ -393,6 +393,7 @@ if (item == spellNormal && !ability ){
   case SP_LARGE_ICESTORM:
   case SP_BANISHMENT:	
   case SP_MANA_BLAST:
+  case SP_WINDSTORM:
     success = cast_cone(op,caster,dir,duration,type,spellarch[type],!ability);
     break;
   case SP_TURN_UNDEAD:
@@ -1112,6 +1113,45 @@ cast_cone(object *op, object *caster,int dir, int strength, int spell_type,arche
   return success;
 }
 
+/* this function checks to see if the cone pushes objects as well
+   as flies over and damages them */
+void check_cone_push(object *op) {
+  object *tmp, *tmp2; /* object on the map */
+  for(tmp=get_map_ob(op->map,op->x,op->y);tmp!=NULL;tmp=tmp->above)
+    { 
+      int nx,ny;
+      int weight_move;
+      int num_sections = 1;
+      /* don't move parts of objects */
+      if(tmp->head) continue;
+
+      /* don't move floors or immobile objects */
+      if(QUERY_FLAG(tmp,FLAG_IS_FLOOR)||(!QUERY_FLAG(tmp,FLAG_ALIVE)&&QUERY_FLAG(tmp,FLAG_NO_PICK))) continue;
+      
+      nx = op->x + freearr_x[absdir(op->stats.sp)];
+      ny = op->y + freearr_y[absdir(op->stats.sp)];
+
+      /* don't try to move something someplace where it can't go */
+      if(arch_blocked(tmp->arch,op->map,nx,ny)) continue;
+      
+      /* OK, now we decide if we're going to move it */
+      /* assume a weightless thing is a spell or whatever */
+      if(tmp->weight==0) continue;
+
+      weight_move = 1000 + 1000 * op->level;
+      /* count the object's sections */
+      for(tmp2 = tmp; tmp2!=NULL;tmp2=tmp2->more) num_sections++;
+      
+      if(RANDOM() % weight_move > tmp->weight/num_sections) {  /* move it. */
+	remove_ob(tmp);
+	tmp->x = nx;
+	tmp->y = ny;
+	insert_ob_in_map(tmp,op->map,op);
+      }
+
+    }
+}
+
 void move_cone(object *op) {
     int i;
     tag_t tag;
@@ -1143,6 +1183,10 @@ void move_cone(object *op) {
      */
     tag = op->count;
     op->stats.food |= hit_map(op,0,op->attacktype);
+    /* Check to see if we should push anything.
+     * Cones with AT_PHYSICAL push whatever is in them to some
+     * degree.  */
+    if(op->attacktype & AT_PHYSICAL) check_cone_push(op);
     if (was_destroyed (op, tag))
         return;
 
