@@ -80,7 +80,7 @@ for information on setup.
 
 1) Create a /tmp/Root file with the new repository information.  The contents
 ofmine looks like:
-:ext:mwedel@cvs.crossfire.sourceforge.net:/cvsroot/crossfire
+:ext:mwedel@cvs.sourceforge.net:/cvsroot/crossfire
 
  Everything but the login name (mwedel) should be the same for anyone else.
 
