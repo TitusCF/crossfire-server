@@ -1497,7 +1497,7 @@ char *get_ob_diff(object *op,object *op2) {/* I plan to optimize this heavily */
       }
       if ((etmp->options != NULL) && ((etmp2 == NULL) || (etmp2->options == NULL) || (strcmp(etmp2->options,etmp->options))))
       {
-          ADD_STRINGLINE_ENTRY(fastbuf,plgoptions[etmp->type].name,etmp->hook,plgoptions[etmp->type].length);
+          ADD_STRINGLINE_ENTRY(fastbuf,plgoptions[etmp->type].name,etmp->options,plgoptions[etmp->type].length);
       }
 
   }

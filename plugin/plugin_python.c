@@ -6218,7 +6218,7 @@ static PyObject* CFGetEventOptions(PyObject* self, PyObject* args)
         return Py_BuildValue("i", buf);
     }
     else
-        return Py_BuildValue("s",evt->plugin);
+        return Py_BuildValue("s",evt->options);
 };
 
 /*****************************************************************************/
