@@ -1,6 +1,9 @@
 Changes in top level CVS tree (please add your changes at the very top of
 the file):
 
+Fixed a bug in the "depletion on death" code.  The depletion
+never had any stat removal specified.  --PeterM
+
 Remove berzerk code/variable from player structure.  The code had
 no effect - whatever functionality it once had has been removed in the
 past. - msw

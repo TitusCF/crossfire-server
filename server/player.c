@@ -1537,7 +1537,7 @@ void do_some_living(object *op) {
 	/* Pick a random stat and take a point off it.  Tell the player
 	 * what he lost.
 	 */
-	i = RANDOM() % 7;
+	i = RANDOM() % 7; 
 	change_attr_value(&(op->stats), i,-1);
 	check_stat_bounds(&(op->stats));
 	change_attr_value(&(op->contr->orig_stats), i,-1);
@@ -1554,6 +1554,7 @@ void do_some_living(object *op) {
 	    dep = arch_to_object(deparch);
 	    insert_ob_in_ob(dep, op);
 	}
+	change_attr_value(&(dep->stats), i,-1);
 	SET_FLAG(dep, FLAG_APPLIED);
 	new_draw_info(NDI_UNIQUE, 0,op, lose_msg[i]);
 	fix_player(op);
