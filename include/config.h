@@ -625,19 +625,7 @@
  * If you intend to run a central server, and not allow the players to
  * start their own crossfire, you won't need to define this.
  *
- * If USE_CHECKSUM is defined, a checksum will be calculated each time
- * a player saves a character.
- *
- * If ENABLE_CHECKSUM is defined, the players will get the cheat-flag set
- * if the checksums don't match.  If your player-files don't have checksums,
- * you'll want to leave "USE_CHECKSUM" defined for a while so they all
- * get checksums, and then define "ENABLE_CHECKSUM" to utilize this.
- * ENABLE_CHECKSUM should not be needed if you are on a central server and
- * players don't have access to the save files.
  */
-
-#define USE_CHECKSUM
-/* #define ENABLE_CHECKSUM */ /* Will be default in distant future versions */
 
 #ifndef PLAYERDIR
 #define PLAYERDIR "players"

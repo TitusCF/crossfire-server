@@ -675,11 +675,6 @@ void compile_info() {
   printf("Save mode:\t%4.4o\n",SAVE_MODE);
   printf("Playerdir:\t<VAR>/%s\n",settings.playerdir);
   printf("Itemsdir:\t<VAR>/%s\n", settings.uniquedir);
-#ifdef USE_CHECKSUM
-  printf("Use checksum:\t<true>\n");
-#else
-  printf("Use checksum:\t<false>\n");
-#endif
   printf("Tmpdir:\t\t%s\n",settings.tmpdir);
   printf("Map max timeout:\t%d\n",MAP_MAXTIMEOUT);
 #ifdef MAP_RESET

@@ -375,7 +375,6 @@ int check_name(player *me, char *name);
 int create_savedir_if_needed(char *savedir);
 void destroy_object(object *op);
 int save_player(object *op, int flag);
-long calculate_checksum(char *filename, int checkdouble);
 void copy_file(char *filename, FILE *fpout);
 void check_login(object *op);
 /* main.c */

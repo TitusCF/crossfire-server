@@ -355,7 +355,7 @@ int save_player(object *op, int flag) {
 	free(tmpfilename);
 	return 0;
   }
-  checksum = calculate_checksum(tmpfilename, 0);
+  checksum = 0;
   sprintf(backupfile, "%s.tmp", filename);
   rename(filename, backupfile);
   fp = fopen(filename,"w");
@@ -387,36 +387,6 @@ int save_player(object *op, int flag) {
 
   chmod(filename,SAVE_MODE);
   return 1;
-}
-
-/*
- * calculate_checksum:
- * Evil scheme to avoid tampering with the player-files 8)
- * The cheat-flag will be set if the file has been changed.
- */
-
-long calculate_checksum(char *filename, int checkdouble) {
-#ifdef USE_CHECKSUM
-  long checksum = 0;
-  int offset = 0;
-  FILE *fp;
-  char buf[MAX_BUF], *cp;
-  if ((fp = fopen(filename,"r")) == NULL)
-    return 0;
-  while(fgets(buf,MAX_BUF,fp)) {
-    if(checkdouble && !strncmp(buf,"checksum",8))
-      continue;
-    for(cp=buf;*cp;cp++) {
-      if(++offset>28)
-        offset = 0;
-      checksum^=(*cp<<offset);
-    }
-  }
-  fclose(fp);
-  return checksum;
-#else
-  return 0;
-#endif
 }
 
 void copy_file(char *filename, FILE *fpout) {
@@ -719,15 +689,6 @@ void check_login(object *op) {
     GlobalEvent(&CFP);
 #endif
     op->contr->socket.update_look=1;
-    LOG(llevDebug,"Checksums: %x %x\n",
-                checksum,calculate_checksum(filename,1));
-#ifdef ENABLE_CHECKSUM
-    if(calculate_checksum(filename,1) != checksum) {
-	new_draw_info(NDI_UNIQUE, 0,op,"Since your savefile has been tampered with,");
-	new_draw_info(NDI_UNIQUE, 0,op,"you will not be able to save again.");
-	set_cheat(op);
-    }
-#endif
     /* If the player should be dead, call kill_player for them
      * Only check for hp - if player lacks food, let the normal
      * logic for that to take place.  If player is permanently
