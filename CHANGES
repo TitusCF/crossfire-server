@@ -17,6 +17,14 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/attack.c: Modify drain attack code so that if some agent of the
+player is doing the drain (eg, avatar, summoned monster, or even spell),
+player gets exp added to his total.  Otherwise, the agent could suck all
+the exp out of the monster, resulting in no gain for the player.
+Also, fix bug in drain code where uninitialized value was being used
+if enemy had 0 protection to drain.
+MSW 2002-08-30
+
 Various bugfixes:
 common/map.c:  Change so that same logic is used to determine pclose/fclose
    that is used to determine popen/fopen - otherwise, compressed map

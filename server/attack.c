@@ -1118,7 +1118,7 @@ int hit_player_attacktype(object *op, object *hitter, int dam,
 	 */
 	int rate;
 	
-	if(op->resist[ATNR_DRAIN] > 0) 
+	if(op->resist[ATNR_DRAIN] >= 0) 
 	  rate = 50 + op->resist[ATNR_DRAIN] / 2;
 	else if(op->resist[ATNR_DRAIN] < 0)
 	  rate = 5000 / (100 - op->resist[ATNR_DRAIN]);
@@ -1126,7 +1126,7 @@ int hit_player_attacktype(object *op, object *hitter, int dam,
 	/* full protection has no effect.  Nothing else in this
 	 * function needs to get done, so just return.  */
 	if(!rate)
-	  return 0;
+	    return 0;
 
 	if(op->stats.exp <= rate) {
 	    if(op->type == GOLEM)
@@ -1135,20 +1135,56 @@ int hit_player_attacktype(object *op, object *hitter, int dam,
 	      /* If we can't drain, lets try to do physical damage */
 		dam = hit_player_attacktype(op, hitter, dam, ATNR_PHYSICAL, magic);
 	} else {
+	    /* Randomly give the hitter some hp */
 	    if(hitter->stats.hp<hitter->stats.maxhp &&
-	       (op->level > hitter->level) &&
-	       random_roll(0, (op->level-hitter->level+2), hitter, PREFER_HIGH)>3)
-	      hitter->stats.hp++;
+		(op->level > hitter->level) &&
+		random_roll(0, (op->level-hitter->level+2), hitter, PREFER_HIGH)>3)
+		hitter->stats.hp++;
 
-	    if (!op_on_battleground(hitter, NULL, NULL)) {
-	      /* Player gets half as much exp as was drained. */
-	      if(!QUERY_FLAG(op,FLAG_WAS_WIZ))
-		add_exp(hitter,op->stats.exp/(rate*2));
-	      add_exp(op,-op->stats.exp/rate);
+	    /* Can't do drains on battleground spaces.
+	     * Move the wiz check up here - before, the hitter wouldn't gain exp
+	     * exp, but the wiz would still lose exp!  If drainee is a wiz,
+	     * nothing happens.
+	     */
+	    if (!op_on_battleground(hitter, NULL, NULL) && !QUERY_FLAG(op,FLAG_WAS_WIZ)) {
+		object *owner = get_owner(hitter), *old_skill;
+
+		/* Try to find the owner of the thing doing the drain - thus, if
+		 * you summon vampires, you get some exp.  Most of this code
+		 * below is taken directly from kill_object
+		 */
+		if (owner != hitter) {
+		    old_skill = owner->chosen_skill;
+		    owner->chosen_skill = hitter->chosen_skill;
+		    owner->exp_obj=hitter->exp_obj;
+
+		    /* Not sure if this will happen or not - I'm think it could with
+		     * summoned pets - they may use a skill and thus the chosen_skill
+		     * gets updated to something they have.
+		     */
+		    if (owner->chosen_skill && owner->chosen_skill->env != owner) {
+			LOG(llevDebug,"kill_object: chosen skill doesn't belong to owner? (%s, %s)\n",
+			    owner->chosen_skill->name, owner->name);
+			owner->chosen_skill = NULL;
+		    }
+		    if (owner->exp_obj && owner->exp_obj->env != owner) {
+			LOG(llevDebug,"kill_object: exp_obj doesn't belong to owner? (%s, %s)\n",
+			    owner->exp_obj->name, owner->name);
+			owner->exp_obj = NULL;
+		    }
+		}
+		if (owner) {
+		    add_exp(owner,op->stats.exp/(rate*2));
+		    owner->chosen_skill = old_skill;
+		} else {
+		    add_exp(hitter,op->stats.exp/(rate*2));
+		}
+		add_exp(op,-op->stats.exp/rate);
 	    }
 	    dam = 0;	/* Drain is an effect */
 	}
-      } break;
+      } 
+      break;
     case ATNR_TURN_UNDEAD:
       {
 	if (QUERY_FLAG(op,FLAG_UNDEAD)) {
