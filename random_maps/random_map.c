@@ -65,6 +65,9 @@ mapstruct *generate_random_map(char *OutFileName, RMParms *RP) {
     else
 	RP->difficulty_given=1;
 
+    if(RP->Xsize<MIN_RANDOM_MAP_SIZE) RP->Xsize = MIN_RANDOM_MAP_SIZE + RANDOM()%25 + 5;
+    if(RP->Ysize<MIN_RANDOM_MAP_SIZE) RP->Ysize = MIN_RANDOM_MAP_SIZE + RANDOM()%25 + 5;
+
     if(RP->expand2x > 0) {
 	RP->Xsize /=2;
 	RP->Ysize /=2;
@@ -132,18 +135,15 @@ mapstruct *generate_random_map(char *OutFileName, RMParms *RP) {
 char **layoutgen(RMParms *RP) {
     char **maze=0;
 
-    if(RP->Xsize<MIN_RANDOM_MAP_SIZE) RP->Xsize = MIN_RANDOM_MAP_SIZE + RANDOM()%25 + 5;
-    if(RP->Ysize<MIN_RANDOM_MAP_SIZE) RP->Ysize = MIN_RANDOM_MAP_SIZE + RANDOM()%25 + 5;
-  
-    if(RP->symmetry == RANDOM_SYM) {
+    if(RP->symmetry == RANDOM_SYM) 
 	RP->symmetry_used = (RANDOM() % ( XY_SYM))+1;
-	if(RP->symmetry_used==Y_SYM||RP->symmetry_used==XY_SYM) RP->Ysize = RP->Ysize/2+1;
-	if(RP->symmetry_used==X_SYM||RP->symmetry_used==XY_SYM) RP->Xsize = RP->Xsize/2+1;
-    }
     else RP->symmetry_used = RP->symmetry;
 
-    if(RP->symmetry==Y_SYM||RP->symmetry==XY_SYM) RP->Ysize = RP->Ysize/2+1;
-    if(RP->symmetry==X_SYM||RP->symmetry==XY_SYM) RP->Xsize = RP->Xsize/2+1;
+    if(RP->symmetry_used==Y_SYM||RP->symmetry_used==XY_SYM) RP->Ysize = RP->Ysize/2+1;
+    if(RP->symmetry_used==X_SYM||RP->symmetry_used==XY_SYM) RP->Xsize = RP->Xsize/2+1;
+
+    if(RP->Xsize<MIN_RANDOM_MAP_SIZE) RP->Xsize = MIN_RANDOM_MAP_SIZE + RANDOM()%5;
+    if(RP->Ysize<MIN_RANDOM_MAP_SIZE) RP->Ysize = MIN_RANDOM_MAP_SIZE + RANDOM()%5;
 
     if(strstr(RP->layoutstyle,"onion")) {
 	maze = map_gen_onion(RP->Xsize,RP->Ysize,RP->layoutoptions1,RP->layoutoptions2);
