@@ -86,9 +86,9 @@ TYPE:2
 3=zap
 3=
 3= zaps
-7=spark
+7=shock
 7=
-7= sparks
+7= shocks
 10=jolt
 10=
 10= jolts
@@ -350,3 +350,67 @@ TYPE:8
 9999=nearly shatter the skull of
 9999=
 9999= pummels
+#placeholders for now
+#slash
+TYPE:9
+3=slash
+3=
+3= slashes
+9999=vicously slash
+9999=
+9999= viciously slashes
+#pierce
+TYPE:10
+3=pierce
+3=
+3= pierces
+9999=viciously pierce
+9999=
+9999= viciously pierces
+#cleave
+TYPE:11
+3=cleave
+3=
+3= cleaves
+9999=cleave hard
+9999=
+9999= cleaves hard
+#slice
+TYPE:12
+3=slice
+3=
+3= slices
+9999=slice hard
+9999=
+9999= slices hard
+#stab
+TYPE:13
+3=stab
+3=
+3= stabs
+9999=stab hard
+9999=
+9999= stabs hard
+#whip
+TYPE:14
+3=whip
+3=
+3= whips
+9999=whip hard
+9999=
+9999= whips hard
+#crush
+TYPE:15
+3=crush
+3=
+3= crushes
+9999=crush hard
+9999=
+9999= crushes hard
+#bludgeon
+3=hit
+3=
+3= hits
+9999=hit hard
+9999=
+9999= hits hard

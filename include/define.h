@@ -260,6 +260,18 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define MAX_NAME 16
 #define BIG_NAME 32
 
+/* definitions for weapontypes */
+
+#define WEAP_HIT	0  /* the basic */
+#define WEAP_SLASH	1  /* slash */
+#define WEAP_PIERCE	2  /* arrows, stiletto */
+#define WEAP_CLEAVE	3  /* axe */
+#define WEAP_SLICE	4  /* katana */
+#define WEAP_STAB	5  /* knife, dagger */
+#define WEAP_WHIP	6  /* whips n chains */
+#define WEAP_CRUSH	7  /* big hammers, flails */
+#define WEAP_BLUD	8  /* bludgeoning, club, stick */
+
 
 /* definitions for detailed pickup descriptions.
  *   The objective is to define intelligent groups of items that the

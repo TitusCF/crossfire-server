@@ -297,13 +297,18 @@ void attack_message(int dam, int type, object *op, object *hitter) {
    *  [garbled 20010919]
    */
 
+    if (dam == 9998 && op->type == DOOR) {
+	sprintf(buf1, "unlock %s", op->name);
+	sprintf(buf2, " unlocks");
+	found++;
+    }
     if(dam<0) {
         sprintf(buf1, "hit %s", op->name);
-	sprintf(buf2, " hit");
+	sprintf(buf2, " hits");
 	found++;
     } else if(dam==0) {
         sprintf(buf1, "missed %s", op->name);
-        sprintf(buf2, " missed");
+        sprintf(buf2, " misses");
 	found++;
     } else if (hitter->type == PLAYER  && IS_LIVE(op)) {
         if (USING_SKILL(hitter, SK_KARATE)) {
@@ -381,6 +386,28 @@ void attack_message(int dam, int type, object *op, object *hitter) {
 	        sprintf(buf1, "%s %s%s", attack_mess[ATM_FIRE][i].buf1,
 			op->name, attack_mess[ATM_FIRE][i].buf2);
 		sprintf(buf2, "%s", attack_mess[ATM_FIRE][i].buf3);
+		break;
+	    }
+    } else if (hitter->current_weapon != NULL && !found) {
+	int mtype;
+	switch (hitter->current_weapon->weapontype) {
+	    case WEAP_HIT: mtype = ATM_BASIC; break;
+	    case WEAP_SLASH: mtype = ATM_SLASH; break;
+	    case WEAP_PIERCE: mtype = ATM_PIERCE; break;
+	    case WEAP_CLEAVE: mtype = ATM_CLEAVE; break;
+	    case WEAP_SLICE: mtype = ATM_SLICE; break;
+	    case WEAP_STAB: mtype = ATM_STAB; break;
+	    case WEAP_WHIP: mtype = ATM_WHIP; break;
+	    case WEAP_CRUSH: mtype = ATM_CRUSH; break;
+	    case WEAP_BLUD: mtype = ATM_BLUD; break;
+	    default: mtype = ATM_BASIC; break;
+	}
+        for (i=0; i < MAXATTACKMESS && attack_mess[mtype][i].level != -1;
+	     i++)
+	    if (dam < attack_mess[mtype][i].level) {
+	        sprintf(buf1, "%s %s%s", attack_mess[mtype][i].buf1,
+			op->name, attack_mess[mtype][i].buf2);
+		sprintf(buf2, "%s", attack_mess[mtype][i].buf3);
 		break;
 	    }
     } else if (!found){

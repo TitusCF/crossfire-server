@@ -71,7 +71,7 @@ void spell_failure(object *op, int failure,int power)
 	/* Safety check to make sure we don't get any mana storms in scorn */
 	if (blocks_magic(op->map, op->x, op->y)) {
 	    new_draw_info(NDI_UNIQUE, 0, op, "The magic warps and you are turned inside out!");
-	    hit_player(tmp,9999,op,AT_INTERNAL);
+	    hit_player(tmp,9998,op,AT_INTERNAL);
 
 	} else {
 	    new_draw_info(NDI_UNIQUE, 0,op,"You lose control of the mana!  The uncontrolled magic blasts you!");
@@ -648,7 +648,7 @@ cast_earth2dust(object *op,object *caster) {
       for(tmp=get_map_ob(op->map,op->x+i,op->y+j);tmp!=NULL;tmp=next) {
         next=tmp->above;
         if(tmp&&QUERY_FLAG(tmp, FLAG_TEAR_DOWN))
-          hit_player(tmp,9999,op,AT_PHYSICAL);
+          hit_player(tmp,9998,op,AT_PHYSICAL);
       }
     }
   return 1;
@@ -2704,7 +2704,7 @@ int cast_transfer(object *op,int dir) {
             new_draw_info(NDI_UNIQUE, 0,plyr,"Your head explodes!");
             fire_arch (op, plyr,0, spellarch[SP_L_FIREBALL], SP_L_FIREBALL, 0);
                 /* Explodes a large fireball centered at player */
-/*            hit_player(plyr, 9999, op, AT_PHYSICAL);*/
+/*            hit_player(plyr, 9998, op, AT_PHYSICAL);*/
 	    plyr->stats.sp = 2*maxsp;
 
         }

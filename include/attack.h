@@ -44,7 +44,7 @@
  */
 
 #define NROFATTACKS		24
-#define NROFATTACKMESS		10
+#define NROFATTACKMESS		20
 #define MAXATTACKMESS		20
 
 /* attack message numbers must be less than NROFATTACKMESS */
@@ -58,6 +58,14 @@
 #define ATM_KARATE	6
 #define ATM_CLAW	7
 #define ATM_PUNCH	8
+#define ATM_SLASH	9
+#define ATM_PIERCE	10
+#define ATM_CLEAVE	11
+#define ATM_SLICE	12
+#define ATM_STAB	13
+#define ATM_WHIP	14
+#define ATM_CRUSH	15
+#define ATM_BLUD	16
 
 /* Note that the last ATNR_ should be one less than NROFATTACKS above
  * since the ATNR starts counting at zero.

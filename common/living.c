@@ -1057,6 +1057,15 @@ void fix_player(object *op) {
             free_string (op->slaying);
           add_refcount(op->slaying = tmp->slaying);
         }
+#ifdef PLUGINS
+	if (tmp->event_hook[EVENT_ATTACK] != NULL) {
+	    if (op->current_weapon_script)
+		free_string(op->current_weapon_script);
+	    op->current_weapon_script=add_string(query_name(tmp));
+	}
+#endif
+	op->current_weapon = tmp;
+
 #ifdef SPELL_ENCUMBRANCE
 	if(op->type==PLAYER) op->contr->encumbrance+=(int)3*tmp->weight/1000;
 #endif

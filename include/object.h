@@ -156,6 +156,7 @@ typedef struct obj {
   char *current_weapon_script;  /* The script of the currently used weapon. Executed each time the object
                                  * attacks something */
   struct obj *current_weapon;   /* Pointer to the weapon currently used */
+  uint32 weapontype;  /* type of weapon */
 
 } object;
 

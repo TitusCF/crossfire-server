@@ -82,6 +82,7 @@ static char *variable_const[NR_OF_VARIABLES] = {
   "is_wooded","is_hilly","has_ready_skill","has_ready_weapon",
   "no_skill_ident","glow_radius","is_blind","can_see_in_dark",
   "is_cauldron","randomitems","is_dust", "no_steal", "one_hit","berserk",
+  "weapontype",
 /* GROS - And those are for the new plugin system */
   "event_apply",    "event_apply_plugin",   "event_apply_options",
   "event_attack",   "event_attack_plugin",  "event_attack_options",
@@ -469,6 +470,7 @@ WS	[ \t]*
 ^can_impale{S}		{ /* That these are for the new combat code */ }
 ^can_cut{S}		{ /* just ignore for now */ }
 ^can_dam_armour{S}	{ }
+^weapontype{S}		op->weapontype = FVAL;
 ^event_apply{S}	    {	char *yv=yval();
 
 			if (*yv=='\0') LOG(llevError,"Event (apply) without val\n");
@@ -1460,6 +1462,11 @@ char *get_ob_diff(object *op,object *op2) {/* I plan to optimize this heavily */
 /* Mol(@meryl.csd.uu.se) 921108  Handle can_apply */
   if (op->can_apply!=op2->can_apply)
     save_long(buf,variable_const[V_CAN_APPLY],op->can_apply);
+
+  if(op->weapontype && op->weapontype!=op2->weapontype) {
+    sprintf(buf2,"weapontype %d\n",op->weapontype);
+    strcat(buf,buf2);
+  }
 
   for (tmp=0; tmp <= NUM_FLAGS; tmp++) {
     if ((flag_links[tmp][0]!=-1) && (QUERY_FLAG(op, flag_links[tmp][0]) !=

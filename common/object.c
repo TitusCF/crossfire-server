@@ -593,7 +593,7 @@ void clear_object(object *op) {
   op->randomitems=NULL;
   op->spellitem = NULL;
   op->animation_id=0;
-
+  op->weapontype=0;
 }
 
 /*
