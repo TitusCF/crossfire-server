@@ -132,7 +132,7 @@ static void Layout(App self,Display *display)
     self->files = CnvFilesCreate("filesMenu",use,CnvFilesCb,(XtPointer)self,".");
 
     use = XtVaCreateManagedWidget
-        ("cnvBrowseBile",commandWidgetClass,cont,
+	("cnvBrowseFile",commandWidgetClass,cont,
          NULL);
     XtAddCallback(use,XtNcallback,CnvBrowseFileCb,(XtPointer)self);
 
