@@ -632,9 +632,9 @@ int player_login (player* pl, char* host)
     sprintf (query,"INSERT INTO playerlog (player, logmessage, playerstat, host, moment, counter)\
                                    VALUES ('%s', 'LOGIN', '%s', '%s', '%s', %d)",
                     addslashes(pl->ob->name),
-/*                    saveplayerstats (pl->ob,NULL,NULL,buf,precision,NULL),
-    Removed by GROS. Why? */
-                    '', /*Replaced by empty string*/
+                    saveplayerstats (pl->ob,NULL,NULL,buf,precision,NULL),
+/*    Removed by GROS. Why?
+                    '', Replaced by empty string*/
                     addslashes(host),buf,precision);
     sprintf (message,"%s has entered the game",pl->ob->name);
     database_insert (query);
@@ -902,11 +902,6 @@ CFParm* getPluginProperty(CFParm* PParm)
 void debugF(int* i)
 {
         printf("\t[CROSSFIRE LOGGER]  Int is %i\n", *i);
-};
-
-CFParm* getPluginProperty(CFParm* PParm)
-{
-    return NULL;
 };
 
 /*****************************************************************************/
