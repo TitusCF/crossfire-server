@@ -20,6 +20,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for 0.95.6:
 
+lib/archetypes: rebuilt for 0.95.6
+lib/collect.pl:  Modify to search the archetypes directories in alphabetical
+order - before I believe they were collected in basically inode order.
+This should make it easier to multiple people to run the collect script
+not have basically an entirely new archetyeps file.  MSW 6/21/2000
+
 server/commands.c; server/c_object.c: dump_object_from_tag():  Removed
 broken command.  Fixes server crashes very easily triggered by players.
 - Jan Echternach 6/21/2000

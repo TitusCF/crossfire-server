@@ -49,7 +49,7 @@ sub traverse {
     local(@allfiles) = readdir(THISDIR);
     closedir(THISDIR);
 
-    foreach $tfile (@allfiles) {
+    foreach $tfile (sort @allfiles) {
 	next if $tfile =~ /^\./;
 	$file = $dir."/".$tfile;
 	$name = &basename($file,""); # DIR
