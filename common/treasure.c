@@ -45,6 +45,9 @@
 #include <funcpoint.h>
 #include <loader.h>
 
+
+static change_treasure(treasure *t, object *op); /* overrule default values */
+
 /*
  * Initialize global archtype pointers:
  */
@@ -119,12 +122,14 @@ static treasure *load_treasure(FILE *fp) {
     if(sscanf(cp,"arch %s",variable)) {
       if((t->item=find_archetype(variable))==NULL)
         LOG(llevError,"Treasure lacks archetype: %s\n",variable);
-    } else if (sscanf(cp, "list %s", variable))
-	t->name = add_string(variable);
+    }else if (sscanf(cp, "list %s", variable))
+        t->name = add_string(variable);
+    else if (sscanf(cp, "change_name %s", variable))
+      t->change_arch.name = add_string(variable);
     else if(sscanf(cp,"chance %d",&value))
       t->chance=(uint8) value;
     else if(sscanf(cp,"nrof %d",&value))
-      t->nrof=(uint16) value;
+        t->nrof=(uint16) value;
     else if(sscanf(cp,"magic %d",&value))
       t->magic=(uint8) value;
     else if(!strcmp(cp,"yes"))
@@ -281,6 +286,21 @@ static void put_treasure (object *op, object *creator, int flags)
     }
 }
 
+/* if there are change_xxx commands in the treasure, we include the changes
+ * in the generated object
+ */
+static change_treasure(treasure *t, object *op)
+{
+    /* CMD: change_name xxxx */
+    if(t->change_arch.name)
+    {
+        if(op->name)
+            free_string(op->name);
+        op->name = add_string(t->change_arch.name);
+    }
+
+}
+
 void create_all_treasures(treasure *t, object *op, int flag, int difficulty, int tries) {
   object *tmp;
 
@@ -296,6 +316,7 @@ void create_all_treasures(treasure *t, object *op, int flag, int difficulty, int
         if(t->nrof&&tmp->nrof<=1)
           tmp->nrof = RANDOM()%((int) t->nrof) + 1;
         fix_generated_item (tmp, op, difficulty, t->magic, flag);
+        change_treasure(t, tmp);        
         put_treasure (tmp, op, flag);
       }
     }
@@ -338,6 +359,7 @@ void create_one_treasure(treasurelist *tl, object *op, int flag, int difficulty,
         if(t->nrof&&tmp->nrof<=1)
           tmp->nrof = RANDOM()%((int) t->nrof) + 1;
         fix_generated_item (tmp, op, difficulty, t->magic, flag);
+        change_treasure(t, tmp);        
         put_treasure (tmp, op, flag);
     }
 }
@@ -539,7 +561,7 @@ void set_ring_bonus(object *op,int bonus) {
 	case 4:
 	case 5:
 	case 6:
-	    set_attr_value(&op->stats, r, bonus + get_attr_value(&op->stats,r));
+	    set_attr_value(&op->stats, r, (signed char)(bonus + get_attr_value(&op->stats,r)));
 	    break;
 
 	case 7:
@@ -878,6 +900,7 @@ void fix_generated_item (object *op, object *creator, int difficulty,
 
   if ( ! (flags & GT_ENVIRONMENT))
     fix_flesh_item (op, creator);
+
 }
 
 /*
@@ -1417,7 +1440,7 @@ void fix_flesh_item(object *item, object *donor) {
 	free_string(item->name);
 	item->name=add_string(tmpbuf);
 	/* weight is FLESH weight/100 * donor */
-	if((item->weight = (float) (item->weight/100.0) * donor->weight)==0)
+	if((item->weight = (signed long) (((double)item->weight/(double)100.0) * (double)donor->weight))==0)
 		item->weight=1;
 
 	/* value is multiplied by level of donor */

@@ -60,6 +60,20 @@ enum {
 };
 
 
+/* when a treasure got cloned from archlist, we want perhaps change some default
+ * values. All values in this structure will override the default arch.
+ * TODO: It is a bad way to implement this with a special structure.
+ * Because the real arch list is a at runtime not changed, we can grap for example
+ * here a clone of the arch, store it in the treasure list and then run the original
+ * arch parser over this clone, using the treasure list as script until an END comes. 
+ * This will allow ANY changes which is possible and we use ony one parser.
+ */
+
+typedef struct _change_arch {
+    char *name;              /* is != NULL, copy this over the original arch name */
+} _change_arch;
+
+
 /*
  * treasure is one element in a linked list, which together consist of a
  * complete treasure-list.  Any arch can point to a treasure-list
@@ -76,6 +90,7 @@ typedef struct treasurestruct {
 				    /* this link instead of ->next */
   struct treasurestruct *next_no;   /* If this item was not generated, */
 				    /* then continue here */
+  struct _change_arch change_arch;  /* override default arch values if set in treasure list */
   uint8 chance;			    /* Percent chance for this item */
   uint8 magic;			    /* Max magic bonus to item */
 				    /* If the entry is a list transition,
@@ -84,6 +99,7 @@ typedef struct treasurestruct {
  				     */
   uint16 nrof;			    /* random 1 to nrof items are generated */
 } treasure;
+
 
 typedef struct treasureliststruct {
   char *name;				/* Usually monster-name/combination */
