@@ -1263,6 +1263,43 @@ int command_invisible (object *op, char *params)
     return 0;
 }
 
+/**
+ * Returns spell object (from archetypes) by name.
+ * Returns NULL if 0 or more than one spell matches.
+ * Used for wizard's learn spell/prayer.
+ */
+object* get_spell_by_name( char* spell_name )
+    {
+    archetype* ar;
+    archetype* found;
+    size_t length;
+
+    found = NULL;
+    length = strlen( spell_name );
+
+    for (ar = first_archetype ; ar != NULL; ar = ar->next )
+        {
+        if ( ar->clone.type != SPELL )
+            continue;
+
+        if ( strlen( ar->clone.name ) < length )
+            continue;
+
+        if ( !strncmp( ar->clone.name, spell_name, length ) )
+            {
+            if ( found )
+                /* Already had one, >1 match, return NULL. */
+                return NULL;
+
+            found = ar;
+            }
+        }
+
+    if ( !found )
+        return NULL;
+
+    return arch_to_object( found );
+    }
 
 static int command_learn_spell_or_prayer (object *op, char *params,
                                           int special_prayer)
@@ -1272,7 +1309,7 @@ static int command_learn_spell_or_prayer (object *op, char *params,
     if (op->contr == NULL || params == NULL)
         return 0;
 
-    tmp = get_archetype(params);
+    tmp = get_spell_by_name(params);
     if (!tmp) {
 	new_draw_info_format(NDI_UNIQUE, 0, op,
 		"Could not find a spell by name of %s\n", params);
