@@ -1229,6 +1229,18 @@ treasureone missile_weapons
     magic 3
     nrof 25
   more
+  arch huntersbow
+    magic 3
+    chance 1
+  more
+  arch longbow
+    magic 3
+    chance 1
+  more
+  arch compositebow
+    magic 3
+    chance 1
+  more
   arch quiver
     chance 10
   end
