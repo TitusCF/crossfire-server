@@ -42,6 +42,28 @@
 #include <treasure.h>
 #include <skills.h>
 
+int command_loadtest(object *op, char *params){
+	int x,y;
+	char buf[1024];
+	/*This command will stress server*/
+	new_draw_info(NDI_UNIQUE, 0,op, "loadtest will stress server through teleporting");
+	new_draw_info(NDI_UNIQUE, 0,op, "at different map places.");
+	new_draw_info(NDI_UNIQUE, 0,op, "use at your own risks.");
+	new_draw_info(NDI_UNIQUE, 0,op, "Very long loop used so server may have to be reset.");
+	new_draw_info(NDI_UNIQUE, 0,op, "type loadtest TRUE to run");
+	new_draw_info_format(NDI_UNIQUE, 0, op,"{%s}",params);
+	if (!params)
+		return 0;
+	if (strncmp (params,"TRUE",4))
+		return 0;
+	new_draw_info_format(NDI_UNIQUE, 0, op,"gogogo",params);
+	for (x=0; x<settings.worldmaptilesx; x++)
+	for (y=0; y<settings.worldmaptilesy; y++){
+		sprintf (buf,"/world/world_%d_%d",x+settings.worldmapstartx,y+settings.worldmapstarty);
+		//new_draw_info_format(NDI_UNIQUE, 0, op,"going to %s",buf);
+		command_goto (op, buf);
+	}
+}
 
 int command_hide(object *op, char *params)
 {

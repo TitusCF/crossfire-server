@@ -81,6 +81,8 @@
 #define MAP_WINDSPEED(m)	(m)->windspeed
 #define MAP_WINDDIRECTION(m)	(m)->winddir
 #define MAP_SKYCOND(m)		(m)->sky
+#define MAP_WORLDPARTX(m)	(m)->wpartx
+#define MAP_WORLDPARTY(m)	(m)->wparty
 
 /* options passed to ready_map_name and load_original_map */
 #define MAP_FLUSH	    0x1
@@ -188,6 +190,8 @@ typedef struct wmapdef {
     uint32	rainfall;	/* cumulative rainfall */
     uint8 	darkness;	/* indicates level of darkness of map */
     uint8	water;		/* 0-100 percentage of water tiles */
+	/*Dynamic parts*/
+	sint16  realtemp;  /*  temperature at a given calculation step for this tile*/
 } weathermap_t;
 
 /* In general, code should always use the macros 
@@ -233,6 +237,7 @@ typedef struct mapdef {
     sint8     windspeed; /* windspeed of this tile */
     sint8     winddir;   /* direction of wind */
     sint8     sky;	/* sky conditions */
+    int     wpartx,wparty; /*Highly fasten conversion between worldmap and weathermap*/
     char    *msg;	/* Message map creator may have left */
     char    *tile_path[4];  /* path to adjoining maps */
     struct mapdef *tile_map[4];	/* Next map, linked list */

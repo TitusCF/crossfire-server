@@ -76,6 +76,7 @@ extern void get_tod(timeofday_t *tod);
 typedef struct _weather_avoids {
 	char *name;
 	int snow;
+	archetype *what; /*inited from name, faste to compare arch pointers than strings*/
 } weather_avoids_t;
 
 typedef struct _weather_replace {
@@ -88,7 +89,7 @@ typedef struct _weather_replace {
 typedef struct _weather_grow {
 	char *herb; /* arch name of item to grow */
 	char *tile; /* arch tile to grow on, NULL if anything */
-	int random; /* random factor.  min 1, higher = lower chance of 
+	int random; /* random factor.  min 1, higher = lower chance of
 		     * appearance */
 	float rfmin;
 	float rfmax; /* rainfall min/max (inches/day) */

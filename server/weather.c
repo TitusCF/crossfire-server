@@ -71,28 +71,28 @@ const int season_tempchange[HOURS_PER_DAY] = {
  */
 
 weather_avoids_t weather_avoids[] = {
-    {"snow", 1},
-    {"snow2", 1},
-    {"snow4", 1},
-    {"snow5", 1},
-    {"mountain1_snow", 1},
-    {"mountain2_snow", 1},	
-    {"rain1", 1},
-    {"rain2", 1},
-    {"rain3", 1},
-    {"rain4", 1},
-    {"rain5", 1},
-    {"mountain1_rivlets", 1},
-    {"mountain2_rivlets", 1},
-    {"drifts", 0},
-    {"glacier", 0},
-    {"cforest1", 0},
-    {"sea", 0},
-    {"sea1", 0},
-    {"deep_sea", 0},
-    {"shallow_sea", 0},
-    {"lava", 0},
-    {"permanent_lava", 0},
+    {"snow", 1, NULL},
+    {"snow2", 1, NULL},
+    {"snow4", 1, NULL},
+    {"snow5", 1, NULL},
+    {"mountain1_snow", 1, NULL},
+    {"mountain2_snow", 1, NULL},
+    {"rain1", 1, NULL},
+    {"rain2", 1, NULL},
+    {"rain3", 1, NULL},
+    {"rain4", 1, NULL},
+    {"rain5", 1, NULL},
+    {"mountain1_rivlets", 1, NULL},
+    {"mountain2_rivlets", 1, NULL},
+    {"drifts", 0, NULL},
+    {"glacier", 0, NULL},
+    {"cforest1", 0, NULL},
+    {"sea", 0, NULL},
+    {"sea1", 0, NULL},
+    {"deep_sea", 0, NULL},
+    {"shallow_sea", 0, NULL},
+    {"lava", 0, NULL},
+    {"permanent_lava", 0, NULL},
     {NULL, 0}
 }; 
 
@@ -103,22 +103,22 @@ weather_avoids_t weather_avoids[] = {
  */
 
 weather_avoids_t growth_avoids[] = {
-    {"cobblestones", 0},
-    {"cobblestones2", 0},
-    {"flagstone", 0},
-    {"stonefloor2", 0},
-    {"lava", 0},
-    {"permanent_lava", 0},
-    {"sea", 0},
-    {"sea1", 0},
-    {"deep_sea", 0},
-    {"shallow_sea", 0},
-    {"farmland", 0},
-    {"dungeon_magic", 0},
-    {"dungeon_floor", 0},
-    {"lake", 0},
-    {"grasspond", 0},
-    {NULL, 0}
+    {"cobblestones", 0, NULL},
+    {"cobblestones2", 0, NULL},
+    {"flagstone", 0, NULL},
+    {"stonefloor2", 0, NULL},
+    {"lava", 0, NULL},
+    {"permanent_lava", 0, NULL},
+    {"sea", 0, NULL},
+    {"sea1", 0, NULL},
+    {"deep_sea", 0, NULL},
+    {"shallow_sea", 0, NULL},
+    {"farmland", 0, NULL},
+    {"dungeon_magic", 0, NULL},
+    {"dungeon_floor", 0, NULL},
+    {"lake", 0, NULL},
+    {"grasspond", 0, NULL},
+    {NULL, 0, NULL}
 };
 
 /*
@@ -1128,6 +1128,14 @@ void init_rainfall()
 /* END of read/write/init */
 
 
+
+void init_weatheravoid (weather_avoids_t wa[]){
+	int i;
+	for (i=0; wa[i].name != NULL; i++) {
+		wa[i].what=find_archetype(wa[i].name);
+		}
+}
+
 int wmperformstartx;
 int wmperformstarty;
 
@@ -1152,6 +1160,10 @@ void init_weather()
 	settings.worldmaptilesx < 1 || settings.worldmaptilesy < 1 ||
 	settings.worldmaptilesizex < 1 || settings.worldmaptilesizex < 1)
 	return;
+    /*prepare structures used for avoidance*/
+    init_weatheravoid (weather_avoids);
+    init_weatheravoid (growth_avoids);
+
 
     LOG(llevDebug, "Initializing the weathermap...\n");
 
@@ -1290,9 +1302,10 @@ void weather_effect(char *filename)
     x = 0;
     y = 0;
     /* for now, just bail if it's not the worldmap */
-    if (worldmap_to_weathermap(x, y, &wx, &wy, filename) != 0)
+    if (worldmap_to_weathermap(x, y, &wx, &wy, /*filename*/ m) != 0)
 	return;
-
+	/*First, calculate temperature*/
+	calculate_temperature(m, wx, wy);
     /* we change the world first, if needed */
     if (settings.dynamiclevel >= 5) {
 	change_the_world(m, wx, wy, filename);
@@ -1336,22 +1349,24 @@ object *avoid_weather(int *av, mapstruct *m, int x, int y, int *gs, int grow)
 		    !(tmp->material & M_ICE || tmp->material & M_LIQUID))
 		    gotsnow++;
 	    for (i=0; growth_avoids[i].name != NULL; i++) {
-		if (!strcmp(tmp->arch->name, growth_avoids[i].name)) {
-		    avoid++;
-		    break;
-		}
-		if (!strncmp(tmp->arch->name, "biglake_", 8)) {
+		//if (!strcmp(tmp->arch->name, growth_avoids[i].name)) {
+		if (tmp->arch== growth_avoids[i].what) {
 		    avoid++;
 		    break;
 		}
 	    }
+		if (!strncmp(tmp->arch->name, "biglake_", 8)) {
+		    avoid++;
+		    break;
+		}
 	    if (avoid)
 		break;
 	}
     } else {
 	for (tmp=GET_MAP_OB(m, x, y); tmp; tmp = tmp->above) {
 	    for (i=0; weather_avoids[i].name != NULL; i++) {
-		if (!strcmp(tmp->arch->name, weather_avoids[i].name)) {
+		//if (!strcmp(tmp->arch->name, weather_avoids[i].name)) {
+		if (tmp->arch == weather_avoids[i].what) {
 		    if (weather_avoids[i].snow == 1)
 			gotsnow++;
 		    else
@@ -1366,6 +1381,18 @@ object *avoid_weather(int *av, mapstruct *m, int x, int y, int *gs, int grow)
     *gs = gotsnow;
     *av = avoid;
     return tmp;
+}
+
+/* Temperature is used in a lot of weather function.
+ * This need to be precalculated before used.
+ */
+void calculate_temperature(mapstruct *m, int wx, int wy){
+	int x,y;
+    for (x=0; x < settings.worldmaptilesizex; x++) {
+	for (y=0; y < settings.worldmaptilesizey; y++) {
+		weathermap[wx][wy].realtemp=real_world_temperature(x, y, m);
+	}
+	}
 }
 
 /*
@@ -1385,7 +1412,7 @@ void let_it_snow(mapstruct *m, int wx, int wy, char *filename)
 
     for (x=0; x < settings.worldmaptilesizex; x++) {
 	for (y=0; y < settings.worldmaptilesizey; y++) {
-	    (void)worldmap_to_weathermap(x, y, &wx, &wy, filename);
+	    (void)worldmap_to_weathermap(x, y, &wx, &wy, /*filename*/ m);
 	    ob = NULL;
 	    at = NULL;
 	    /* this will definately need tuning */
@@ -1393,7 +1420,8 @@ void let_it_snow(mapstruct *m, int wx, int wy, char *filename)
 	    two = 0;
 	    gotsnow = 0;
 	    nodstk = 0;
-	    temp = real_world_temperature(x, y, m);
+	    //temp = real_world_temperature(x, y, m);
+		temp = weathermap[wx][wy].realtemp;
 	    sky = weathermap[wx][wy].sky;
 	    if (temp <= 0 && sky > SKY_OVERCAST && sky < SKY_FOG)
 		sky += 10; /*let it snow*/
@@ -1450,6 +1478,7 @@ void let_it_snow(mapstruct *m, int wx, int wy, char *filename)
 			/* clean up the trees we put over the snow */
 			found = 0;
 			doublestack2 = NULL;
+            if (tmp)
 			for (i=0; weather_replace[i].tile != NULL; i++) {
 			    if (weather_replace[i].doublestack_arch == NULL)
 				continue;
@@ -1582,14 +1611,15 @@ void singing_in_the_rain(mapstruct *m, int wx, int wy, char *filename)
 
     for (x=0; x < settings.worldmaptilesizex; x++) {
 	for (y=0; y < settings.worldmaptilesizey; y++) {
-	    (void)worldmap_to_weathermap(x, y, &wx, &wy, filename);
+	    (void)worldmap_to_weathermap(x, y, &wx, &wy, /*filename*/m);
 	    ob = NULL;
 	    at = NULL;
 	    avoid = 0;
 	    two = 0;
 	    gotsnow = 0;
 	    nodstk = 0;
-	    temp = real_world_temperature(x, y, m);
+	    //temp = real_world_temperature(x, y, m);
+		temp = weathermap[wx][wy].realtemp;
 	    sky = weathermap[wx][wy].sky;
 	    /* it's probably allready snowing */
 	    if (temp < 0)
@@ -1780,13 +1810,14 @@ void plant_a_garden(mapstruct *m, int wx, int wy, char *filename)
     days = todtick / HOURS_PER_DAY;
     for (x=0; x < settings.worldmaptilesizex; x++) {
 	for (y=0; y < settings.worldmaptilesizey; y++) {
-	    (void)worldmap_to_weathermap(x, y, &wx, &wy, filename);
+	    (void)worldmap_to_weathermap(x, y, &wx, &wy, /*filename*/m);
 	    ob = NULL;
 	    at = NULL;
 	    avoid = 0;
 	    two = 0;
 	    gotsnow = 0;
-	    temp = real_world_temperature(x, y, m);
+	    //temp = real_world_temperature(x, y, m);
+		temp = weathermap[wx][wy].realtemp;
 	    sky = weathermap[wx][wy].sky;
 	    (void)avoid_weather(&avoid, m, x, y, &gotsnow, 1);
 	    if (!avoid) {
@@ -1878,14 +1909,15 @@ void change_the_world(mapstruct *m, int wx, int wy, char *filename)
     days = todtick / HOURS_PER_DAY;
     for (x=0; x < settings.worldmaptilesizex; x++) {
 	for (y=0; y < settings.worldmaptilesizey; y++) {
-	    (void)worldmap_to_weathermap(x, y, &wx, &wy, filename);
+	    (void)worldmap_to_weathermap(x, y, &wx, &wy, /*filename*/m);
 	    ob = NULL;
 	    at = NULL;
 	    dat = NULL;
 	    avoid = 0;
 	    two = 0;
 	    gotsnow = 0;
-	    temp = real_world_temperature(x, y, m);
+	    //temp = real_world_temperature(x, y, m);
+		temp = weathermap[wx][wy].realtemp;
 	    sky = weathermap[wx][wy].sky;
 	    (void)avoid_weather(&avoid, m, x, y, &gotsnow, 1);
 	    if (!avoid) {
@@ -1992,7 +2024,7 @@ void feather_map(mapstruct *m, int wx, int wy, char *filename)
 
     for (x=0; x < settings.worldmaptilesizex; x++) {
 	for (y=0; y < settings.worldmaptilesizey; y++) {
-	    (void)worldmap_to_weathermap(x, y, &wx, &wy, filename);
+	    (void)worldmap_to_weathermap(x, y, &wx, &wy, /*filename*/m);
 	    ob = NULL;
 	    at = NULL;
 	    avoid = 0;
@@ -2079,21 +2111,30 @@ void feather_map(mapstruct *m, int wx, int wy, char *filename)
    map.  returns -1 if you give it something it can't figure out. 0 normally.
 */
 
-int worldmap_to_weathermap(int x, int y, int *wx, int *wy, char *filename)
+//int worldmap_to_weathermap(int x, int y, int *wx, int *wy, char *filename)
+int worldmap_to_weathermap(int x, int y, int *wx, int *wy, mapstruct* m)
 {
     int spwtx, spwty;
     int fx, fy;
     int nx, ny;
-
+	char* filename=m->path;
     spwtx = (settings.worldmaptilesx * settings.worldmaptilesizex) / WEATHERMAPTILESX;
     spwty = (settings.worldmaptilesy * settings.worldmaptilesizey) / WEATHERMAPTILESY;
 
     while (*filename == '/')
 	*filename++;
 
-    fx = -1;
-    fy = -1;
-    sscanf(filename, "world/world_%d_%d", &fx, &fy);
+    fx = MAP_WORLDPARTX(m);
+    fy = MAP_WORLDPARTY(m);
+	if (fx > settings.worldmapstartx + settings.worldmaptilesx ||
+	  fx < settings.worldmapstartx ||
+      fy > settings.worldmapstarty + settings.worldmaptilesy ||
+	  fy < settings.worldmapstarty){
+		printf ("worldmap_to_weathermap(%s)\n",filename);
+    	sscanf(filename, "world/world_%d_%d", &fx, &fy);
+		MAP_WORLDPARTX(m)=fx;
+    	MAP_WORLDPARTY(m)=fy;
+		}
     if (fx > settings.worldmapstartx + settings.worldmaptilesx ||
 	fx < settings.worldmapstartx)
 	return -1;
@@ -2102,7 +2143,7 @@ int worldmap_to_weathermap(int x, int y, int *wx, int *wy, char *filename)
 	return -1;
     fx -= settings.worldmapstartx;
     fy -= settings.worldmapstarty;
-    
+
     nx = fx * settings.worldmaptilesizex + x;
     ny = fy * settings.worldmaptilesizey + y;
 
@@ -2302,8 +2343,8 @@ int real_world_temperature(int x, int y, mapstruct *m)
 {
     int wx, wy, temp, eleva, elevb;
     object *op;
-
-    worldmap_to_weathermap(x, y, &wx, &wy, m->path);
+	//printf ("real_world_temperature: worldmaptoweathermap : %s\n",m->path);
+    worldmap_to_weathermap(x, y, &wx, &wy, /*m->path*/m);
     temp = real_temperature(wx, wy);
     if (weathermap[wx][wy].avgelev < 0)
 	eleva = 0;
@@ -2687,4 +2728,3 @@ void process_rain()
 	    }
 	}
 }
-	    

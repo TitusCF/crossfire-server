@@ -881,3 +881,18 @@ enum apply_flag {
 #endif
 
 #endif /* DEFINE_H */
+
+/* Code fastening defines
+ * faststrcat & faststrncat will add buf2__ at position pointed by
+ * buf__ and increment buf__ position so it will point to the end of buf__.
+ * the '\0' caracter will not be put at end of buf__.
+ * use preparefastcat and finishfastcat on buf__ to prepare
+ * and clean up the string. (Lots faster than doing each time...)
+ */
+
+ #define PREPARE_FASTCAT(buf__) buf__+strlen(buf__)
+ #define FAST_STRNCAT(buf__,buf2__,size__) {memcpy (buf__,buf2__,size__);buf__+=size__;}
+ /*#define FAST_STRNCAT(buf__,buf2__,size__) {memcpy (buf__,buf2__,size__);buf__+=size__;\
+ if (size__!=strlen(buf2__)) printf ("Error, bad length for %s\n",buf2__);}*/
+ #define FAST_STRCAT(buf__,buf2__) {memcpy (buf__,buf2__,strlen(buf2__));buf__+=strlen(buf2__);}
+ #define FINISH_FASTCAT(buf__) buf__[0]='\0';

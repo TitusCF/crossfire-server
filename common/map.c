@@ -627,6 +627,9 @@ mapstruct *get_linked_map() {
     /* Gah - these should really have a zero default! */
     MAP_ENTER_X(map)=1;
     MAP_ENTER_Y(map)=1;
+	/*set part to -1 indicating conversion to weather map not yet done*/
+	MAP_WORLDPARTX(map)=-1;
+	MAP_WORLDPARTY(map)=-1;
     return map;
 }
 

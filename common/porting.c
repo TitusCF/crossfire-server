@@ -420,6 +420,11 @@ char *ltostr10(signed long n) {
     *(--cp)='-';
   return cp;
 }
+char *doubletostr10(double v){
+  static char tbuf[200];
+  sprintf(tbuf,"%f",v);
+  return tbuf;
+}
 
 /*
  * A fast routine which appends the name and decimal number specified
@@ -427,11 +432,15 @@ char *ltostr10(signed long n) {
  * Could be faster, though, if the strcat()s at the end could be changed
  * into alternate strcat which returned a pointer to the _end_, not the
  * start!
+ *
+ * Hey good news, it IS faster now, according to changes in get_ob_diff
+ * Completly redone prototype and made define in loader.l. See changes there.
+ * Didn't touch those for speed reason (don't use them anymore) .
+ *                                                             Tchize
  */
 
 void save_long(char *buf, char *name, long n) {
     char buf2[MAX_BUF];
-
     strcpy(buf2,name);
     strcat(buf2," ");
     strcat(buf2,ltostr10(n));

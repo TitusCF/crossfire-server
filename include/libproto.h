@@ -288,6 +288,7 @@ extern char *strcasestr_local(const char *s, char *find);
 extern char *strerror_local(int errnum);
 extern int isqrt(int n);
 extern char *ltostr10(signed long n);
+extern char *doubletostr10(double v);
 extern void save_long(char *buf, char *name, long n);
 extern void save_long_long(char *buf, char *name, sint64 n);
 extern FILE *open_and_uncompress(char *name, int flag, int *compressed);
