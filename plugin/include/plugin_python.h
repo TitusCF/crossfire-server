@@ -127,11 +127,6 @@ static PyObject* CFWhoAmI(PyObject* self, PyObject* args);
 static PyObject* CFWhoIsActivator(PyObject* self, PyObject* args);
 static PyObject* CFWhatIsMessage(PyObject* self, PyObject* args);
 static PyObject* CFSay(PyObject* self, PyObject* args);
-static PyObject* CFSetGender(PyObject* self, PyObject* args);
-static PyObject* CFSetRank(PyObject* self, PyObject* args);
-static PyObject* CFSetAlignment(PyObject* self, PyObject* args);
-static PyObject* CFSetGuildForce(PyObject* self, PyObject* args);
-static PyObject* CFGetGuildForce(PyObject* self, PyObject* args);
 static PyObject* CFSetInvisible(PyObject* self, PyObject* args);
 static PyObject* CFGetExperience(PyObject* self, PyObject* args);
 static PyObject* CFGetSpeed(PyObject* self, PyObject* args);
@@ -170,12 +165,6 @@ static PyObject* CFCastSpell(PyObject* self, PyObject* args);
 static PyObject* CFForgetSpell(PyObject* self, PyObject* args);
 static PyObject* CFAcquireSpell(PyObject* self, PyObject* args);
 static PyObject* CFDoKnowSpell(PyObject* self, PyObject* args);
-
-static PyObject* CFCreatePlayerForce(PyObject* self, PyObject* args);
-static PyObject* CFCreatePlayerInfo(PyObject* self, PyObject* args);
-static PyObject* CFGetPlayerInfo(PyObject* self, PyObject* args);
-static PyObject* CFGetNextPlayerInfo(PyObject* self, PyObject* args);
-
 static PyObject* CFCheckInvisibleObjectInside(PyObject* self, PyObject* args);
 static PyObject* CFCreateInvisibleObjectInside(PyObject* self, PyObject* args);
 static PyObject* CFCreateObjectInside(PyObject* self, PyObject* args);
@@ -566,8 +555,6 @@ static PyObject* CFSetValue(PyObject* self, PyObject* args);
 static PyObject* CFGetMapWidth(PyObject* self, PyObject* args);
 static PyObject* CFGetMapHeight(PyObject* self, PyObject* args);
 static PyObject* CFGetObjectAt(PyObject* self, PyObject* args);
-static PyObject* CFSetPreviousObject(PyObject* self, PyObject* args);
-static PyObject* CFSetNextObject(PyObject* self, PyObject* args);
 static PyObject* CFCostFlagFTrue(PyObject* self, PyObject* args);
 static PyObject* CFCostFlagFBuy(PyObject* self, PyObject* args);
 static PyObject* CFCostFlagFSell(PyObject* self, PyObject* args);
@@ -701,12 +688,6 @@ static PyMethodDef CFPythonMethods[] =
         {"ForgetSpell",CFForgetSpell,METH_VARARGS},
         {"AcquireSpell",CFAcquireSpell,METH_VARARGS},
         {"DoKnowSpell",CFDoKnowSpell,METH_VARARGS},
-
-        {"CreatePlayerForce",CFCreatePlayerForce,METH_VARARGS},
-        {"CreatePlayerInfo",CFCreatePlayerInfo,METH_VARARGS},
-        {"GetPlayerInfo",CFGetPlayerInfo,METH_VARARGS},
-        {"GetNextPlayerInfo",CFGetNextPlayerInfo,METH_VARARGS},
-
         {"CheckInvisibleObjectInside",CFCheckInvisibleObjectInside,METH_VARARGS},
         {"CreateInvisibleObjectInside",CFCreateInvisibleObjectInside,METH_VARARGS},
         {"CreateObjectInside",CFCreateObjectInside,METH_VARARGS},
@@ -807,11 +788,6 @@ static PyMethodDef CFPythonMethods[] =
         {"GetEventOptions",CFGetEventOptions,METH_VARARGS},
         {"SetEventOptions",CFSetEventOptions,METH_VARARGS},
         {"Say", CFSay, METH_VARARGS},
-        {"SetGender", CFSetGender, METH_VARARGS},
-        {"SetRank", CFSetRank, METH_VARARGS},
-        {"SetAlignment", CFSetAlignment, METH_VARARGS},
-        {"SetGuildForce", CFSetGuildForce, METH_VARARGS},
-        {"GetGuildForce", CFGetGuildForce, METH_VARARGS},
         {"WhoAmI", CFWhoAmI, METH_VARARGS},
         {"WhoIsActivator", CFWhoIsActivator, METH_VARARGS},
         {"WhatIsMessage", CFWhatIsMessage, METH_VARARGS},
@@ -826,8 +802,6 @@ static PyMethodDef CFPythonMethods[] =
         {"GetMapWidth",CFGetMapWidth,METH_VARARGS},
         {"GetMapHeight",CFGetMapHeight,METH_VARARGS},
         {"GetObjectAt",CFGetObjectAt,METH_VARARGS},
-        {"SetNextObject",CFSetNextObject,METH_VARARGS},
-        {"SetPreviousObject",CFSetPreviousObject,METH_VARARGS},
         {"CostFlagFTrue",CFCostFlagFTrue,METH_VARARGS},
         {"CostFlagFBuy",CFCostFlagFBuy,METH_VARARGS},
         {"CostFlagFSell",CFCostFlagFSell,METH_VARARGS},
