@@ -32,3 +32,9 @@ metaserver_comment Put a comment here.
 # dynamiclevel 0
 # fastclock 0
 not_permadeth true
+resurrection false
+set_title true
+search_items true
+spell_encumbrance true
+spell_failure_effects false
+casting_time false
