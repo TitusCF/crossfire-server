@@ -2032,6 +2032,11 @@ void get_rangevector_from_mapcoord(mapstruct  *m, int x, int y, object *op2, rv_
  */
 int on_same_map(object *op1, object *op2)
 {
+    /* If the object isn't on a map, can't be on the same map, now can it?
+     * this check also prevents crashes below.
+     */
+    if (op1->map == NULL || op2->map == NULL) return FALSE;
+
     if (op1->map == op2->map || op1->map->tile_map[0] == op2->map ||
 	op1->map->tile_map[1] == op2->map ||
 	op1->map->tile_map[2] == op2->map ||

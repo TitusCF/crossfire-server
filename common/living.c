@@ -1728,10 +1728,19 @@ void apply_death_exp_penalty(object *op) {
 
 	    loss_20p = tmp->stats.exp * 0.20;
 	    loss_3l = tmp->stats.exp - levels[MAX(0,tmp->level -3)];
+
+	    /* With the revised exp system, you can get cases where
+	     * losing 3 levels would still require that you have more
+	     * exp than you current have - this is true if the levels
+	     * tables is a lot harder.
+	     */
+	    if (loss_3l < 0) loss_3l = 0;
+
 	    if(loss_3l < loss_20p) 
 		loss = check_exp_loss(tmp, loss_3l);
 	    else
 		loss = check_exp_loss(tmp, loss_20p);
+
 	    tmp->stats.exp -= loss;
 	    del_exp += loss;
 	    player_lvl_adj(op,tmp);
