@@ -38,6 +38,8 @@ extern weathermap_t **weathermap;
 #define POLAR_BASE_TEMP		0	/* C */
 #define EQUATOR_BASE_TEMP	25	/* C */
 #define SEASONAL_ADJUST		10	/* polar distance */
+#define GULF_STREAM_WIDTH       3       /* width of gulf stream */
+#define GULF_STREAM_BASE_SPEED  40      /* base speed of gulf stream */
 
 /* don't muck with these unless you are sure you know what they do */
 #define PRESSURE_ITERATIONS		30
@@ -51,6 +53,11 @@ extern weathermap_t **weathermap;
 /* editing the below might require actual changes to code */
 #define WEATHERMAPTILESX		100
 #define WEATHERMAPTILESY		100
+
+int gulf_stream_speed[GULF_STREAM_WIDTH][WEATHERMAPTILESY];
+int gulf_stream_dir[GULF_STREAM_WIDTH][WEATHERMAPTILESY];
+int gulf_stream_start;
+int gulf_stream_direction;
 
 const int season_timechange[5][HOURS_PER_DAY] = {
 /* 0  1   2  3  4  5  6  7  8  9  10 11 12 13 14 1  2  3  4  5   6   7
@@ -131,6 +138,8 @@ void tick_the_clock()
 	    write_elevmap();
 	if (todtick%26 == 0)
 	    write_temperaturemap();
+	if (todtick%27 == 0)
+	    write_gulfstreammap();
     }
     get_tod(&tod);
     dawn_to_dusk(&tod);
@@ -138,6 +147,7 @@ void tick_the_clock()
     if (settings.dynamiclevel > 0) {
         perform_pressure();	/* pressure is the random factor */
         smooth_wind();	/* calculate the wind. depends on pressure */
+	plot_gulfstream();
         update_humid();
         init_temperature();
     }
@@ -353,51 +363,121 @@ void init_wind()
 	    weathermap[x][y].winddir = rndm(1, 8);
 	    weathermap[x][y].windspeed = rndm(1, 10);
 	}
+}
+
+/* gulf stream */
+
+void write_gulfstreammap()
+{
+    char filename[MAX_BUF];
+    FILE *fp;
+    int x, y;
+
+    sprintf(filename, "%s/gulfstreammap", settings.localdir);
+    if ((fp = fopen(filename, "w")) == NULL) {
+	LOG(llevError, "Cannot open %s for writing\n", filename);
+	return;
+    }
+    for (x=0; x < GULF_STREAM_WIDTH; x++) {
+	for (y=0; y < WEATHERMAPTILESY; y++)
+	    fprintf(fp, "%d ", gulf_stream_speed[x][y]);
+	fprintf(fp, "\n");
+    }
+    for (x=0; x < GULF_STREAM_WIDTH; x++) {
+	for (y=0; y < WEATHERMAPTILESY; y++)
+	    fprintf(fp, "%d ", gulf_stream_dir[x][y]);
+	fprintf(fp, "\n");
+    }
+    fclose(fp);
+}
+
+void read_gulfstreammap()
+{
+    char filename[MAX_BUF];
+    FILE *fp;
+    int x, y;
+
+    sprintf(filename, "%s/gulfstreammap", settings.localdir);
+    LOG(llevDebug, "Reading gulf stream data from %s...", filename);
+    if ((fp = fopen(filename, "r")) == NULL) {
+	LOG(llevError, "Cannot open %s for reading\n", filename);
+	LOG(llevDebug, "Initializing gulf stream maps...");
+	init_gulfstreammap();
+	write_gulfstreammap();
+	LOG(llevDebug, "Done\n");
+	return;
+    }
+    for (x=0; x < GULF_STREAM_WIDTH; x++) {
+	for (y=0; y < WEATHERMAPTILESY; y++) {
+	    fscanf(fp, "%d ", &gulf_stream_speed[x][y]);
+	    if (gulf_stream_speed[x][y] < 0 ||
+		gulf_stream_speed[x][y] > 120)
+		gulf_stream_speed[x][y] =
+		    rndm(GULF_STREAM_BASE_SPEED, GULF_STREAM_BASE_SPEED+10);
+	}
+	fscanf(fp, "\n");
+    }
+    for (x=0; x < GULF_STREAM_WIDTH; x++) {
+	for (y=0; y < WEATHERMAPTILESY; y++) {
+	    fscanf(fp, "%d ", &gulf_stream_dir[x][y]);
+	    if (gulf_stream_dir[x][y] < 0 ||
+		gulf_stream_dir[x][y] > 120)
+		gulf_stream_dir[x][y] = rndm(1, 8);
+	}
+	fscanf(fp, "\n");
+    }
+    LOG(llevDebug, "Done.\n");
+    fclose(fp);
+}
+
+void init_gulfstreammap()
+{
+    int x, y, tx;
 
     /* build a gulf stream */
-    x = rndm(0, WEATHERMAPTILESX);
-    y = rndm(0, 1);
+    x = rndm(GULF_STREAM_WIDTH, WEATHERMAPTILESX-GULF_STREAM_WIDTH);
+    /* doth the great bob inhale or exhale? */
+    gulf_stream_direction = rndm(0, 1);
+    gulf_stream_start = x;
 
-    if (y) {
+    if (gulf_stream_direction) {
 	for (y=WEATHERMAPTILESY-1; y >= 0; y--) {
 	    switch(rndm(0, 6)) {
 	    case 0:
 	    case 1:
 	    case 2:
-		weathermap[x][y].windspeed = rndm(40, 50);
-		weathermap[x][y].winddir = 8;
-		if (x==0) {
-		    weathermap[x+1][y].winddir = 7;
-		    weathermap[x+1][y].windspeed = rndm(40, 50);
-		} else {
-		    weathermap[x-1][y].winddir = 8;
-		    weathermap[x-1][y].windspeed = rndm(40, 50);
-		    x--;
+		for (tx=0; tx < GULF_STREAM_WIDTH; tx++) {
+		    gulf_stream_speed[tx][y] = rndm(GULF_STREAM_BASE_SPEED,
+			GULF_STREAM_BASE_SPEED+10);
+		    if (x==0)
+			gulf_stream_dir[tx][y] = 7;
+		    else {
+			gulf_stream_dir[tx][y] = 8;
+			if (tx == 0)
+			    x--;
+		    }
 		}
 		break;
 	    case 3:
-		weathermap[x][y].windspeed = rndm(40, 50);
-		weathermap[x][y].winddir = 7;
-		if (x==0) {
-		    weathermap[x+1][y].winddir = 7;
-		    weathermap[x+1][y].windspeed = rndm(40, 50);
-		} else {
-		    weathermap[x-1][y].winddir = 7;
-		    weathermap[x-1][y].windspeed = rndm(40, 50);
+		for (tx=0; tx < GULF_STREAM_WIDTH; tx++) {
+		    gulf_stream_speed[tx][y] = rndm(GULF_STREAM_BASE_SPEED,
+			GULF_STREAM_BASE_SPEED+10);
+		    gulf_stream_dir[tx][y] = 7;
 		}
 		break;
 	    case 4:
 	    case 5:
 	    case 6:		
-		weathermap[x][y].windspeed = rndm(40, 50);
-		weathermap[x][y].winddir = 6;
-		if (x==WEATHERMAPTILESX-1) {
-		    weathermap[x-1][y].winddir = 7;
-		    weathermap[x-1][y].windspeed = rndm(40, 50);
-		} else {
-		    weathermap[x+1][y].winddir = 6;
-		    weathermap[x+1][y].windspeed = rndm(40, 50);
-		    x++;
+		for (tx=0; tx < GULF_STREAM_WIDTH; tx++) {
+		    gulf_stream_speed[tx][y] = rndm(GULF_STREAM_BASE_SPEED,
+			GULF_STREAM_BASE_SPEED+10);
+		    if (x==WEATHERMAPTILESX-1)
+			gulf_stream_dir[tx][y] = 7;
+		    else {
+			gulf_stream_dir[tx][y] = 6;
+			if (tx == 0)
+			    x++;
+		    }
 		}
 		break;
 	    }
@@ -408,40 +488,38 @@ void init_wind()
 	    case 0:
 	    case 1:
 	    case 2:
-		weathermap[x][y].windspeed = rndm(40, 50);
-		weathermap[x][y].winddir = 2;
-		if (x==0) {
-		    weathermap[x+1][y].winddir = 3;
-		    weathermap[x+1][y].windspeed = rndm(40, 50);
-		} else {
-		    weathermap[x-1][y].winddir = 2;
-		    weathermap[x-1][y].windspeed = rndm(40, 50);
-		    x--;
+		for (tx=0; tx < GULF_STREAM_WIDTH; tx++) {
+		    gulf_stream_speed[tx][y] = rndm(GULF_STREAM_BASE_SPEED,
+			GULF_STREAM_BASE_SPEED+10);
+		    if (x==0)
+			gulf_stream_dir[tx][y] = 3;
+		    else {
+			gulf_stream_dir[tx][y] = 2;
+			if (tx == 0)
+			    x--;
+		    }
 		}
 		break;
 	    case 3:
-		weathermap[x][y].windspeed = rndm(40, 50);
-		weathermap[x][y].winddir = 2;
-		if (x==0) {
-		    weathermap[x+1][y].winddir = 2;
-		    weathermap[x+1][y].windspeed = rndm(40, 50);
-		} else {
-		    weathermap[x-1][y].winddir = 2;
-		    weathermap[x-1][y].windspeed = rndm(40, 50);
+		for (tx=0; tx < GULF_STREAM_WIDTH; tx++) {
+		    gulf_stream_speed[tx][y] = rndm(GULF_STREAM_BASE_SPEED,
+			GULF_STREAM_BASE_SPEED+10);
+		    gulf_stream_dir[tx][y] = 3;
 		}
 		break;
 	    case 4:
 	    case 5:
 	    case 6:		
-		weathermap[x][y].windspeed = rndm(40, 50);
-		weathermap[x][y].winddir = 4;
-		if (x==WEATHERMAPTILESX-1) {
-		    weathermap[x-1][y].winddir = 3;
-		    weathermap[x-1][y].windspeed = rndm(40, 50);
-		} else {
-		    weathermap[x+1][y].winddir = 4;
-		    weathermap[x+1][y].windspeed = rndm(40, 50);
-		    x++;
+		for (tx=0; tx < GULF_STREAM_WIDTH; tx++) {
+		    gulf_stream_speed[tx][y] = rndm(GULF_STREAM_BASE_SPEED,
+			GULF_STREAM_BASE_SPEED+10);
+		    if (x==WEATHERMAPTILESX-1)
+			gulf_stream_dir[tx][y] = 3;
+		    else {
+			gulf_stream_dir[tx][y] = 4;
+			if (tx == 0)
+			    x++;
+		    }
 		}
 		break;
 	    }
@@ -788,7 +866,7 @@ int wmperformstarty;
 
 void init_weather()
 {
-    int x, y;
+    int x, y, tx, ty;
     int i, j;
     int water;
     long int tmp;
@@ -823,10 +901,27 @@ void init_weather()
     read_pressuremap();
     read_winddirmap();
     read_windspeedmap();
+    read_gulfstreammap();
     read_watermap();
     read_humidmap();
     read_elevmap(); /* elevation must allways follow humidity */
     read_temperaturemap();
+    gulf_stream_direction = rndm(0, 1);
+    for (tx=0; tx < GULF_STREAM_WIDTH; tx++)
+	for (ty=0; ty < WEATHERMAPTILESY-1; ty++)
+	    if (gulf_stream_direction)
+		switch (gulf_stream_dir[tx][ty]) {
+		case 2: gulf_stream_dir[tx][ty] = 6; break;
+		case 3: gulf_stream_dir[tx][ty] = 7; break;
+		case 4: gulf_stream_dir[tx][ty] = 8; break;
+		}
+	    else
+		switch (gulf_stream_dir[tx][ty]) {
+		case 6: gulf_stream_dir[tx][ty] = 2; break;
+		case 7: gulf_stream_dir[tx][ty] = 3; break;
+		case 8: gulf_stream_dir[tx][ty] = 4; break;
+		}
+    gulf_stream_start = rndm(GULF_STREAM_WIDTH, WEATHERMAPTILESY-GULF_STREAM_WIDTH);
 
     LOG(llevDebug, "Done reading weathermaps\n");
     sprintf(filename, "%s/wmapcurpos", settings.localdir);
@@ -955,8 +1050,8 @@ void update_humid()
 {
     int x, y;
 
-    for (x=0; x < WEATHERMAPTILESX; x++)
-	for (y=0; y < WEATHERMAPTILESY; y++)
+    for (y=0; y < WEATHERMAPTILESY; y++)
+	for (x=0; x < WEATHERMAPTILESX; x++)
 	    weathermap[x][y].humid = humid_tile(x, y);
 }
 
@@ -987,11 +1082,14 @@ int humid_tile(int x, int y)
 	if (x != WEATHERMAPTILESX)
 	    ox = x + 1;
     }
-
-    humid = MIN(100, ((weathermap[x][y].humid * 2 +
+    humid = (weathermap[x][y].humid * 2 +
 	weathermap[ox][oy].humid * weathermap[ox][oy].windspeed +
-	weathermap[x][y].water + rndm(-2, 2)) / 
-	(weathermap[ox][oy].windspeed+3)));
+	weathermap[x][y].water + rndm(0, 10)) / 
+	(weathermap[ox][oy].windspeed+3) + rndm(0, 5);
+    if (humid < 0)
+	humid = 1;
+    if (humid > 100)
+	humid = 100;
     return humid;
 }
 
@@ -1080,9 +1178,13 @@ void perform_pressure()
 	n = rndm(600, 1300);
 	weathermap[x][y].pressure = n;
 	if (x > 5 && y > 5 && x < WEATHERMAPTILESX-5 && y < WEATHERMAPTILESY-5){
-	  for (j=x-2; j<x+2; j++)
-	    for (k=y-2; k<y+2; k++)
-	      weathermap[j][k].pressure = n;
+	    for (j=x-2; j<x+2; j++)
+		for (k=y-2; k<y+2; k++) {
+		    weathermap[j][k].pressure = n;
+		    /* occasionally add a storm */
+		    if (rndm(1, 20) == 1)
+			weathermap[j][k].humid = rndm(50, 80);
+		}
 	}
     }
 
@@ -1176,4 +1278,84 @@ void smooth_wind()
 	    if (weathermap[x][y].windspeed < 0)
 		weathermap[x][y].windspeed = 0;
 	}
+}
+
+void plot_gulfstream()
+{
+    int x, y, tx;
+
+    x = gulf_stream_start;
+
+    if (gulf_stream_direction) {
+	for (y=WEATHERMAPTILESY-1; y > 0; y--) {
+	    for (tx=0; tx < GULF_STREAM_WIDTH && x+tx < WEATHERMAPTILESX; tx++) {
+		if (similar_direction(weathermap[x+tx][y].winddir,
+		    gulf_stream_dir[tx][y]) &&
+		    weathermap[x+tx][y].windspeed < GULF_STREAM_BASE_SPEED-5)
+		    weathermap[x+tx][y].windspeed += gulf_stream_speed[tx][y];
+		else
+		    weathermap[x+tx][y].windspeed = gulf_stream_speed[tx][y];
+		weathermap[x+tx][y].winddir = gulf_stream_dir[tx][y];
+		if (tx == GULF_STREAM_WIDTH-1) {
+		    switch (gulf_stream_dir[tx][y]) {
+		    case 6: x--; break;
+		    case 7: break;
+		    case 8: x++; ; break;
+		    }
+		}
+		if (x < 0)
+		    x++;
+		if (x >= WEATHERMAPTILESX-GULF_STREAM_WIDTH)
+		    x--;
+	    }
+	}
+    } else {
+	for (y=0; y < WEATHERMAPTILESY-1; y++) {
+	    for (tx=0; tx < GULF_STREAM_WIDTH && x+tx < WEATHERMAPTILESX; tx++) {
+		if (similar_direction(weathermap[x+tx][y].winddir,
+		    gulf_stream_dir[tx][y]) &&
+		    weathermap[x+tx][y].windspeed < GULF_STREAM_BASE_SPEED-5)
+		    weathermap[x+tx][y].windspeed += gulf_stream_speed[tx][y];
+		else
+		    weathermap[x+tx][y].windspeed = gulf_stream_speed[tx][y];
+		weathermap[x+tx][y].winddir = gulf_stream_dir[tx][y];
+		if (tx == GULF_STREAM_WIDTH-1) {
+		    switch (gulf_stream_dir[tx][y]) {
+		    case 2: x++; break;
+		    case 3: break;
+		    case 4: x--; break;
+		    }
+		}
+		if (x < 0)
+		    x++;
+		if (x >= WEATHERMAPTILESX-GULF_STREAM_WIDTH)
+		    x--;
+	    }
+	}
+    }
+    /* occasionally move the stream */
+    if (rndm(1, 500) == 1) {
+	gulf_stream_direction = rndm(0, 1);
+	for (tx=0; tx < GULF_STREAM_WIDTH; tx++)
+	    for (y=0; y < WEATHERMAPTILESY-1; y++)
+		if (gulf_stream_direction)
+		    switch (gulf_stream_dir[tx][y]) {
+		    case 2: gulf_stream_dir[tx][y] = 6; break;
+		    case 3: gulf_stream_dir[tx][y] = 7; break;
+		    case 4: gulf_stream_dir[tx][y] = 8; break;
+		    }
+		else
+		    switch (gulf_stream_dir[tx][y]) {
+		    case 6: gulf_stream_dir[tx][y] = 2; break;
+		    case 7: gulf_stream_dir[tx][y] = 3; break;
+		    case 8: gulf_stream_dir[tx][y] = 4; break;
+		    }
+    }
+    if (rndm(1, 25) == 1)
+	gulf_stream_start += rndm(-1, 1);
+    if (gulf_stream_start >= WEATHERMAPTILESX-GULF_STREAM_WIDTH)
+	gulf_stream_start--;
+    if (gulf_stream_start < 1)
+	gulf_stream_start++;
+
 }
