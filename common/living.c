@@ -1449,7 +1449,7 @@ void player_lvl_adj(object *who, object *op) {
 	    if(who) (*draw_info_func)(NDI_UNIQUE|NDI_RED, 0, who,buf);
 	}
 	player_lvl_adj(who,op); /* To increase more levels */
-    } else if(op->level>1&&op->stats.exp<level_exp(op->level,op->expmul)) {
+    } else if (op->level>1 && op->stats.exp<level_exp(op->level,op->expmul)) {
 	op->level--;
 	if(who) fix_player(who);
 	if(op->type==EXPERIENCE) {
@@ -1468,14 +1468,9 @@ void player_lvl_adj(object *who, object *op) {
  */
 
 uint32 level_exp(int level,double expmul) {
-    static long int bleep=1650000; 
-
-    if(level<=100) {
-	return expmul * levels[level];
-    }
-
-    /*  return required_exp; */
-    return expmul*(levels[100]+bleep*(level-100));
+    if (level > 110)
+	return expmul * levels[110];
+    return expmul * levels[level];
 }
 
 /* Ensure that the permanent experience requirements in an exp object are met. */
