@@ -17,6 +17,21 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+TODO: Additional updates.
+Add support for loading the EMERGENCY_.. locations from a .emergency file in
+the map directory.  This makes it easy to switch map distributions without the
+need to recompile.  The emergency information is now stored in the settings
+structure.
+common/init.c: add EMERGENCY_  defines to default values in setting.  Add
+  init_emergency_mappath which loads the information.
+include/config.h: Remove NEW_WORLD_MAP definition, as it is no longer
+  needed.  Update some of the EMERGENCY_.. information as we don't need
+  to include the information for the new world map.
+include/global.h: Add emergency_.. fields to settings structure.
+server/login.c, server/main.c, server/player.c: Update references from
+  the EMERGENCY.. values to settings.emergency values.
+MSW 2002-06-15
+
 lib/Makefile.in: modified so that it doesn't overwrite commonly customized
    files (eg, motd, dm_file, ban_file).  These files will get installed 
    on new installations.

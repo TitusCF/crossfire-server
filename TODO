@@ -15,6 +15,14 @@ light source does not illuminate the same space multiple times.
 ------------------------------------------------------------------------------
 Future feature requests
 
+- refine the NO_PASS attribute of objects - it should be possible to make
+  it so that you can't walk over some spaces, but you could fly over them.
+  There are other cases - water could perhaps require something like a
+  'water walking' skill.  What should probably be done is make this 
+  a bitmask or the like with multiple possiblities.  If the object doesn't
+  have another bitmask set, object can't pass through.  For compatiblity
+  reasons, no_pass should set all the new no_pass_.. bits.
+
 - If player tries to login with same name/password as a character currently
   active, drop the old connection and associate the player with the new 
   connection.  Useful if connection is dropped but server hasn't detected
@@ -71,6 +79,10 @@ Future feature requests
   performance (maybe thread it?)
 - Clean up skills table so that the basic skill information is dynamically
   generated when the program runs, and not compiled in values.
+- Add adjustments to objects that adjusts chance of skill success.
+  Eg, objects the player use may adjust the characters effective level in
+  using a skill.  Likewise, objects/monsters could have resistances to
+  certain skills (eg, skill_resist values).
 - Clean up party code with respect to experience/skills.  Currently,
   other party members can get exp in whatever they want and let another
   party member do the killing.

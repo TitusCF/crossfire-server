@@ -62,9 +62,52 @@ RESET_LOCATION_TIME,
 "",
 0,
 "",
-0,0,0,0,0,0,0  /* worldmap settings*/
+0,0,0,0,0,0,0,  /* worldmap settings*/
+EMERGENCY_MAPPATH, EMERGENCY_X, EMERGENCY_Y
 };
 
+
+/* This loads the emergency map information from a
+ * .emergency file in the map directory.  Doing this makes
+ * it easier to switch between map distributions (don't need
+ * to recompile.  Note that there is no reason I see that
+ * this could not be re-loaded during play, but it seems
+ * like there should be little reason to do that.
+ */
+static void init_emergency_mappath()
+{
+    char filename[MAX_BUF], tmpbuf[MAX_BUF];
+    FILE    *fp;
+    int online=0;
+
+    /* If this file doesn't exist, not a big deal */
+    sprintf(filename,"%s/%s/.emergency",settings.datadir, settings.mapdir);
+    if ((fp = fopen(filename, "r"))!=NULL) {
+	while (fgets(tmpbuf, MAX_BUF-1, fp)) {
+	    if (tmpbuf[0] == '#') continue; /* ignore comments */
+	    
+	    if (online == 0) {
+		tmpbuf[strlen(tmpbuf)-1] = 0;	/* kill newline */
+		settings.emergency_mapname = strdup_local(tmpbuf);
+	    }
+	    else if (online == 1) {
+		settings.emergency_x = atoi(tmpbuf);
+	    }
+
+	    else if (online == 2) {
+		settings.emergency_y = atoi(tmpbuf);
+	    }
+	    online++;
+	    if (online>2) break;
+	}
+	fclose(fp);
+	if (online<=2)
+	    LOG(llevError,"Online read partial data from %s\n", filename);
+	LOG(llevDebug,"Emergency mappath reset to %s (%d, %d)\n", settings.emergency_mapname,
+	    settings.emergency_x, settings.emergency_y);
+    }
+}
+    
 
 /*
  * It is vital that init_library() is called by any functions
@@ -89,7 +132,9 @@ void init_library() {
     init_dynamic ();
     init_attackmess();
     init_clocks();
+    init_emergency_mappath();
 }
+
 
 /* init_environ initializes values from the environmental variables.
  * it needs to be called very early, since command line options should

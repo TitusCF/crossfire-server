@@ -2335,11 +2335,11 @@ void kill_player(object *op)
 
 	/*  set the location of where the person will reappear when  */
 	/* maybe resurrection code should fix map also */
-	strcpy(op->contr->maplevel, EMERGENCY_MAPPATH);
+	strcpy(op->contr->maplevel, settings.emergency_mapname);
 	if(op->map!=NULL)
 	    op->map = NULL;
-	op->x = EMERGENCY_X;
-	op->y = EMERGENCY_Y;
+	op->x = settings.emergency_x;
+	op->y = settings.emergency_y;
 	save_player(op,0);
 	op->map = map;
 	/* please see resurrection.c: peterm */

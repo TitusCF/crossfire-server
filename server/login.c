@@ -360,7 +360,7 @@ int save_player(object *op, int flag) {
 #endif
     fprintf(fp,"map %s\n",op->map->path);
   else
-    fprintf(fp,"map %s\n",EMERGENCY_MAPPATH);
+    fprintf(fp,"map %s\n",settings.emergency_mapname);
   
   fprintf(fp,"savebed_map %s\n", pl->savebed_map);
   fprintf(fp,"bed_x %d\nbed_y %d\n", pl->bed_x, pl->bed_y);

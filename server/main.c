@@ -199,11 +199,11 @@ void enter_player_savebed(object *op)
      * while we're at it.
      */
     if (oldmap == op->map && strcmp(op->contr->savebed_map, oldmap->path)) {
-	LOG(llevDebug,"Player %s savebed location %s is invalid - going to EMERGENCY_MAPPATH\n",
-	    op->name, op->contr->savebed_map);
-	strcpy(op->contr->savebed_map, EMERGENCY_MAPPATH);
-	op->contr->bed_x = EMERGENCY_X;
-	op->contr->bed_y = EMERGENCY_Y;
+	LOG(llevDebug,"Player %s savebed location %s is invalid - going to emergency location (%s)\n",
+	    settings.emergency_mapname, op->name, op->contr->savebed_map);
+	strcpy(op->contr->savebed_map, settings.emergency_mapname);
+	op->contr->bed_x = settings.emergency_x;
+	op->contr->bed_y = settings.emergency_y;
 	free_string(op->contr->savebed_map);
 	EXIT_PATH(tmp) = add_string(op->contr->savebed_map);
 	EXIT_X(tmp) = op->contr->bed_x;
@@ -712,9 +712,9 @@ void enter_exit(object *op, object *exit_ob) {
 	newmap = ready_map_name(op->contr->maplevel, flags);
 	if (!newmap) {
 	    LOG(llevError,"enter_exit: Pathname to map does not exist! (%s)\n", op->contr->maplevel);
-	    newmap = ready_map_name(EMERGENCY_MAPPATH, 0);
-	    op->x = EMERGENCY_X;
-	    op->y = EMERGENCY_Y;
+	    newmap = ready_map_name(settings.emergency_mapname, 0);
+	    op->x = settings.emergency_x;
+	    op->y = settings.emergency_y;
 	    /* If we can't load the emergency map, something is probably really
 	     * screwed up, so bail out now.
 	     */
