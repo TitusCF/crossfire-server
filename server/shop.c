@@ -673,6 +673,7 @@ void shop_listing(object *op)
     for (i=0; i<numitems; i++) {
 	new_draw_info(NDI_UNIQUE, 0, op, items[i].item_real);
 	free(items[i].item_sort);
+	free(items[i].item_real);
     }
     free(map_mark);
     free(items);
