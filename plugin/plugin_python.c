@@ -2489,31 +2489,15 @@ static PyObject* CFGetMapObject(PyObject* self, PyObject* args)
 
 static PyObject* CFGetMessage(PyObject* self, PyObject* args)
 {
-    /* Stalingrad: extended the buffer - added a boundary checking */
-    /* (implementing this as a malloc'ed string problematic under some env.) */
-    /* Now declared static to help preventing memory leaks */
-    static char buf[4096];
+    const char *msg;
     long whoptr;
 
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
-    if (WHO->msg != NULL)
-    {
-        if (strlen(WHO->msg)>=4096)
-        {
-            printf("Warning ! Buffer overflow - The message will be truncated\n");
-            strncpy(buf, WHO->msg, 4096);
-            buf[4095]=0x0;
-        }
-        else
-        {
-            strncpy(buf, WHO->msg,strlen(WHO->msg));
-            buf[strlen(WHO->msg)+1]=0x0;
-        }
-    }
-    else
-        buf[0] = 0x0;
-    return Py_BuildValue("s",buf);
+    msg = WHO->msg;
+    if (msg == NULL)
+        msg = "";
+    return Py_BuildValue("s", msg);
 };
 
 /*****************************************************************************/
@@ -2545,7 +2529,7 @@ static PyObject* CFGetGod(PyObject* self, PyObject* args)
 {
     long whoptr;
     CFParm* CFR;
-    static char* value;
+    char* value;
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
 
@@ -6311,7 +6295,7 @@ static PyObject* CFLoadObject(PyObject* self, PyObject* args)
 static PyObject* CFSaveObject(PyObject* self, PyObject* args)
 {
     long whoptr;
-    static char *result;
+    char *result;
     CFParm* CFR;
 
     if (!PyArg_ParseTuple(args, "l",&whoptr))
@@ -6333,7 +6317,7 @@ static PyObject* CFSaveObject(PyObject* self, PyObject* args)
 static PyObject* CFGetIP(PyObject* self, PyObject* args)
 {
     long whoptr;
-    static char *result;
+    char *result;
 
     if (!PyArg_ParseTuple(args, "l",&whoptr))
         return NULL;

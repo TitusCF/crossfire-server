@@ -1035,7 +1035,7 @@ CFParm* CFWDoLearnSpell(CFParm* PParm)
 CFParm* CFWCheckSpellKnown(CFParm* PParm)
 {
     CFParm *CFP;
-    static object *val;
+    object *val;
 
     CFP = (CFParm*)(malloc(sizeof(CFParm)));
     val = check_spell_known(
@@ -1262,9 +1262,8 @@ CFParm* CFWFindGod(CFParm* PParm)
 CFParm* CFWDumpObject(CFParm* PParm)
 {
     CFParm* CFP;
-    char*   val;
+    static char val[10240];
 /*    object* ob; not used */
-    val = (char *)(malloc(sizeof(char)*10240));
     CFP = (CFParm*)(malloc(sizeof(CFParm)));
     dump_me((object *)(PParm->Value[0]),val);
     CFP->Value[0] = (void *)(val);
