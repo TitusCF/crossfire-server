@@ -17,6 +17,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/player.c: Fix crash in stand_near_hostile when it is called on
+  tiled maps with player near edge.
+MSW 2003-11-01
 
 Various bug fixes:
 common/arch.c: Fix item_matched_string() so that it only passes in the length

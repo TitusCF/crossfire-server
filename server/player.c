@@ -2905,28 +2905,35 @@ void do_hidden_move (object *op) {
 /* determine if who is standing near a hostile creature. */
 
 int stand_near_hostile( object *who ) {
-  object *tmp=NULL;
-  int i,friendly=0,player=0;
+    object *tmp=NULL;
+    int i,friendly=0,player=0, mflags;
+    mapstruct *m;
+    sint16  x,y;
 
-  if(!who) return 0;
+    if(!who) return 0;
 
-  if(who->type==PLAYER) player=1; 
-  else friendly = QUERY_FLAG(who,FLAG_FRIENDLY);
+    if(who->type==PLAYER) player=1; 
+    else friendly = QUERY_FLAG(who,FLAG_FRIENDLY);
 
-  /* search adjacent squares */
-  for(i=1;i<9;i++) {
-    if (out_of_map(who->map, who->x+freearr_x[i],who->y+freearr_y[i])) continue;
-    for(tmp=get_map_ob(who->map,who->x+freearr_x[i],who->y+freearr_y[i]);
-	tmp;tmp=tmp->above) {
-	
-	if((player||friendly)
-	   &&QUERY_FLAG(tmp,FLAG_MONSTER)&&!QUERY_FLAG(tmp,FLAG_UNAGGRESSIVE)) 
-	    return 1;
-	else if(tmp->type==PLAYER) return 1;
+    /* search adjacent squares */
+    for(i=1;i<9;i++) {
+	x = who->x+freearr_x[i];
+	y = who->y+freearr_y[i];
+	m = who->map;
+	mflags = get_map_flags(m, &m, x, y, &x, &y);
+	/* space must be blocked if there is a monster.  If not
+	 * blocked, don't need to check this space.
+	 */
+	if (mflags & P_OUT_OF_MAP || !(mflags & P_BLOCKED)) continue;
+    
+	for(tmp=get_map_ob(m,x,y);tmp;tmp=tmp->above) {
+	    if((player||friendly)
+	       &&QUERY_FLAG(tmp,FLAG_MONSTER)&&!QUERY_FLAG(tmp,FLAG_UNAGGRESSIVE)) 
+		return 1;
+	    else if(tmp->type==PLAYER) return 1;
+	}
     }
-  }
-
-  return 0;
+    return 0;
 }
 
 /* check the player los field for viewability of the 
