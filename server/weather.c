@@ -81,13 +81,41 @@ weather_avoids_t weather_avoids[] = {
     {"rain4", 1},
     {"rain5", 1},
     {"drifts", 0},
+    {"glacier", 0},
     {"cforest1", 0},
     {"sea", 0},
     {"sea1", 0},
     {"deep_sea", 0},
     {"shallow_sea", 0},
+    {"lava", 0},
+    {"permanent_lava", 0},
     {NULL, 0}
 }; 
+
+/*
+ * this table is identical to the one above, except these are tiles to avoid
+ * when processing growth.  IE, don't grow herbs in the ocean.  The second
+ * field is unused.
+ */
+
+weather_avoids_t growth_avoids[] = {
+    {"cobblestones", 0},
+    {"cobblestones2", 0},
+    {"flagstone", 0},
+    {"stonefloor2", 0},
+    {"lava", 0},
+    {"permanent_lava", 0},
+    {"sea", 0},
+    {"sea1", 0},
+    {"deep_sea", 0},
+    {"shallow_sea", 0},
+    {"farmland", 0},
+    {"dungeon_magic", 0},
+    {"dungeon_floor", 0},
+    {"lake", 0},
+    {"grasspond", 0},
+    {NULL, 0}
+};
 
 /*
  * The table below is used in let_it_snow() and singing_in_the_rain() to
@@ -99,20 +127,23 @@ weather_avoids_t weather_avoids[] = {
  */
 
 weather_replace_t weather_replace[] = {
-    {"impossible_match", "snow", NULL, 0},
-    {"impossible_match2", "snow2", NULL, 0}, /* placeholders */
+    {"impossible_match", "snow5", NULL, 0},
+    {"impossible_match2", "snow4", NULL, 0}, /* placeholders */
+    {"impossible_match3", "snow3", NULL, 0},
     {"hills", "drifts", NULL, 0},
-    {"cobblestones", "snow4", NULL, 0},
-    {"cobblestones2", "snow4", NULL, 1},
-    {"stones", "snow4", NULL, 0},
-    {"flagstone", "snow4", NULL, 0},
-    {"stonefloor2", "snow4", NULL, 0},
+    {"grass", "snow3", NULL, 0},
+    {"sand", "snow2", NULL, 0},
+    {"stones", "snow2", NULL, 0},
+    {"steppe", "snow2", NULL, 0},
+    {"brush", "snow", NULL, 0},
+    {"farmland", "snow", NULL, 0},
     {"wasteland", "glacier", NULL, 0},
-    {"evergreens", NULL, "evergreens2", 1},
-    {"evergreen", NULL, "tree5", 0},
-    {"tree", NULL, "tree3", 0},
-    {"woods", NULL, "woods4", 1},
-    {"woods_3", NULL, "woods5", 1},
+    {"mountain", "glacier", NULL, 1},
+    {"evergreens", "snow", "evergreens2", 1},
+    {"evergreen","snow", "tree5", 1},
+    {"tree", "snow", "tree3", 0},
+    {"woods", "snow3", "woods4", 1},
+    {"woods_3", "snow", "woods5", 1},
     {NULL, NULL, NULL, 0},
 };
 
@@ -122,11 +153,76 @@ weather_replace_t weather_replace[] = {
  */
 
 weather_grow_t weather_grow[] = {
-    /* herb, tile, random, rfmin, rfmax, humin, humax, tempmin, tempmax, elevmin, elevmax */
-    {"mint", "grass", 10, 14000, 60000, 30, 100, 10, 25, -100, 9999},
-    {"mint", "brush", 8, 14000, 60000, 30, 100, 10, 25, -100, 9999},
-    {NULL, NULL, 1, 0, 0, 0, 0, 0, 0, 0, 0}
+    /* herb, tile, random, rfmin, rfmax, humin, humax, tempmin, tempmax, elevmin, elevmax, season */
+    {"mint", "grass", 10, 1.0, 2.0, 30, 100, 10, 25, -100, 9999, 2},
+    {"rose_red", "grass", 15, 1.0, 2.0, 30, 100, 10, 25, -100, 9999, 2},
+    {"mint", "brush", 8, 1.0, 2.0, 30, 100, 10, 25, -100, 9999, 2},
+    {"blackroot", "swamp", 15, 1.6, 2.0, 60, 100, 20, 30, -100, 1500, 0},
+    {"pipeweed", "farmland", 20, 1.0, 2.0, 30, 100, 10, 25, 100, 5000, 0},
+    {"cabbage", "farmland", 10, 1.0, 2.0, 30, 100, 10, 25, -100, 9999, 0},
+    {"onion", "farmland", 10, 1.0, 2.0, 30, 100, 10, 25, 100, 9999, 0},
+    {"carrot", "farmland", 10, 1.0, 2.0, 30, 100, 10, 25, 100, 9999, 0},
+    {"thorns", "brush", 15, 0.5, 1.3, 30, 100, 10, 25, -100, 9999, 0},
+    {NULL, NULL, 1, 0.0, 0.0, 0, 0, 0, 0, 0, 0, 0}
 };
+
+/*
+ * The table below uses the same format as the one above.  However this
+ * table is used to change the layout of the worldmap itself.  The tile
+ * parameter is a base tile to lay down underneath the herb tile.
+ */
+
+weather_grow_t weather_tile[] = {
+    /* herb, tile, random, rfmin, rfmax, humin, humax, tempmin, tempmax, elevmin, elevmax */
+    {"dunes", NULL, 2, 0.0, 0.03, 0, 20, 10, 99, 0, 4000, 0},
+    {"desert", NULL, 1, 0.0, 0.05, 0, 20, 10, 99, 0, 4000, 0},
+    {"pstone_2", NULL, 1, 0.0, 0.05, 0, 20, -30, 10, 0, 4000, 0},
+    {"pstone_3", NULL, 1, 0.0, 0.05, 0, 20, -30, 10, 0, 4000, 0},
+    {"grassbrown", NULL, 1, 0.05, 1.0, 20, 80, -20, -3, 0, 5000, 0},
+    {"grass_br_gr", NULL, 1, 0.05, 1.0, 20, 80, -3, 5, 0, 5000, 0},
+    {"grass", NULL, 1, 0.05, 1.0, 20, 80, 5, 15, 0, 5000, 0},
+    {"grassmedium", NULL, 1, 0.05, 1.0, 20, 80, 15, 25, 0, 5000, 0},
+    {"grassdark", NULL, 1, 0.05, 1.0, 20, 80, 25, 35, 0, 5000, 0},
+    {"brush", NULL, 1, 0.2, 1.0, 25, 70, 0, 30, 500, 6000, 0},
+    /* small */
+    {"evergreens2", "brush", 1, 0.5, 1.8, 30, 90, -30, 24, 3000, 8000, 0},
+    {"fernsdense", "brush", 1, 0.9, 2.5, 50, 100, 10, 35, 1000, 6000, 0},
+    {"fernssparse", "brush", 1, 0.7, 2.0, 30, 90, -15, 35, 0, 4000, 0},
+    {"woods4", "brush", 1, 0.1, 0.8, 30, 60, -5, 25, 1000, 4500, 0},
+    {"woods5", "brush", 1, 0.6, 1.5, 20, 70, -15, 20, 2000, 5500, 0},
+    {"forestsparse", "brush", 1, 0.3, 1.5, 15, 60, -20, 25, 0, 4500, 0},
+    /* big */
+    /*
+      {"ytree_2", "brush", 2, 0.1, 0.6, 30, 60, 10, 25, 1000, 3500, 0},
+      {"tree3", "grass", 2, 0.9, 2.5, 50, 100, 10, 35, 1000, 4000, 0},
+      {"tree5", "grass", 2, 0.5, 1.5, 40, 90, -10, 24, 3000, 8000, 0},
+      {"tree3", "grassmeduim", 2, 0.9, 2.5, 50, 100, 10, 35, 1000, 4000, 0},
+      {"tree5", "grassmedium", 2, 0.5, 1.5, 40, 90, -10, 24, 3000, 8000, 0},
+      {"tree3", "grassdark", 2, 0.9, 2.5, 50, 100, 10, 35, 1000, 4000, 0},
+      {"tree5", "grassdark", 2, 0.5, 1.5, 40, 90, -10, 24, 3000, 8000, 0},*/
+    /* mountians */
+    {"steppe", NULL, 1, 0.5, 1.3, 0, 30, -20, 35, 1000, 6000, 0},
+    {"steppelight", NULL, 1, 0.0, 0.6, 0, 20, -50, 35, 0, 5000, 0},
+    {"hills", NULL, 1, 0.1, 0.9, 20, 80, -10, 30, 5000, 8500, 0},
+    {"hills_rocky", NULL, 1, 0.0, 0.9, 0, 100, -50, 50, 5000, 8500, 0},
+    {"swamp", NULL, 1, 1.0, 9.9, 55, 80, 10, 50, 0, 1000, 0},
+    {"deep_swamp", NULL, 1, 1.0, 9.9, 80, 100, 10, 50, 0, 1000, 0},
+    {"mountain", NULL, 1, 0.0, 9.9, 0, 100, -50, 50, 8000, 10000, 0},
+    {"mountain2", NULL, 1, 0.0, 9.9, 0, 100, -50, 50, 9500, 11000, 0},
+    {"mountain4", NULL, 1, 0.0, 9.9, 0, 100, -50, 50, 10500, 12000, 0},
+    {"mountain5", NULL, 1, 0.0, 9.9, 0, 100, -50, 50, 11500, 13500, 0},
+    {"wasteland", NULL, 1, 0.0, 9.9, 0, 100, -50, 50, 13000, 99999, 0},
+    /* catchalls */
+    {"palms", "pstone_1", 1, 0.01, 0.1, 0, 30, 5, 99, 0, 4000, 0},
+    {"large_stones", NULL, 1, 0.0, 9.9, 0, 100, -50, 50, 6000, 8000, 0},
+    {"earth", NULL, 1, 0.0, 1.0, 0, 70, -30, 15, 0, 6000, 0},
+    {"medium_stones", NULL, 1, 1.0, 3.0, 70, 100, -30, 10,  0, 4000, 0}, /*unsure*/ 
+    {"earth", NULL, 1, 0.1, 0.9, 20, 80, -30, 30, 0, 4999, 0}, /* tundra */
+    {"swamp", NULL, 1, 1.0, 9.9, 50, 100, -30, 10, 0, 4000, 0},/* cold marsh */
+    {"earth", NULL, 1, 0.0, 99.9, 0, 100, -99, 99, 0, 99999, 0}, /* debug */
+    {NULL, NULL, 1, 0.0, 0.0, 0, 0, 0, 0, 0, 0}
+};
+
 
 /*
  * Set the darkness level for a map.  Requires the map pointer.
@@ -201,7 +297,7 @@ void tick_the_clock()
 	    write_gulfstreammap();
 	if (todtick%28 == 0 && settings.fastclock > 0)
 	    write_skymap();
-	if (todtick&29 == 0)
+	if (todtick%29 == 0)
 	    write_rainfallmap();
     }
     get_tod(&tod);
@@ -1186,17 +1282,18 @@ void weather_effect(char *filename)
     if (worldmap_to_weathermap(x, y, &wx, &wy, filename) != 0)
 	return;
 
-    if (settings.dynamiclevel < 2)
-	return;
-
-    let_it_snow(m, wx, wy, filename);
-    singing_in_the_rain(m, wx, wy, filename);
-
-    if (settings.dynamiclevel < 3)
-	return;
-
-    plant_a_garden(m, wx, wy, filename);
-
+    /* we change the world first, if needed */
+    if (settings.dynamiclevel >= 5) {
+	change_the_world(m, wx, wy, filename);
+    }
+    if (settings.dynamiclevel >= 2) {
+	let_it_snow(m, wx, wy, filename);
+	singing_in_the_rain(m, wx, wy, filename);
+	feather_map(m, wx, wy, filename);
+    }
+    if (settings.dynamiclevel >= 3) {
+	plant_a_garden(m, wx, wy, filename);
+    }
 }
 
 /*
@@ -1204,29 +1301,54 @@ void weather_effect(char *filename)
  * weather processing.  Must pass av and gs, which will be filled in
  * with 1 or 0.  gs will be 1 if we found snow/rain here.  av will be
  * 1 if we should avoid processing this tile. (don't rain on lakes)
- * x and y are the coordinates inside the current map m.  Returns
- * the object pointer for any snow item it found, so you can destroy/melt it
+ * x and y are the coordinates inside the current map m. If grow is
+ * 1, we use the growth table, rather than the avoidance table.
+ *
+ * Returns the object pointer for any snow item it found, so you can 
+ * destroy/melt it.
  */
 
-object *avoid_weather(int *av, mapstruct *m, int x, int y, int *gs)
+object *avoid_weather(int *av, mapstruct *m, int x, int y, int *gs, int grow)
 {
-    int avoid, gotsnow, i;
+    int avoid, gotsnow, i, n;
 
     object *tmp;
     avoid = 0;
     gotsnow = 0;
-    for (tmp=GET_MAP_OB(m, x, y); tmp; tmp = tmp->above) {
-	for (i=0; weather_avoids[i].name != NULL; i++) {
-	    if (!strcmp(tmp->arch->name, weather_avoids[i].name)) {
-		if (weather_avoids[i].snow == 1)
+    if (grow) {
+	for (tmp=GET_MAP_OB(m, x, y), n=0; tmp; tmp = tmp->above, n++) {
+	    /* look for things like walls, holes, etc */
+	    if (n)
+		if (!QUERY_FLAG (tmp, FLAG_IS_FLOOR) &&
+		    !(tmp->material & M_ICE || tmp->material & M_LIQUID))
 		    gotsnow++;
-		else
+	    for (i=0; growth_avoids[i].name != NULL; i++) {
+		if (!strcmp(tmp->arch->name, growth_avoids[i].name)) {
 		    avoid++;
-		break;
+		    break;
+		}
+		if (!strncmp(tmp->arch->name, "biglake_", 8)) {
+		    avoid++;
+		    break;
+		}
 	    }
+	    if (avoid)
+		break;
 	}
-	if (avoid || gotsnow)
-	    break;
+    } else {
+	for (tmp=GET_MAP_OB(m, x, y); tmp; tmp = tmp->above) {
+	    for (i=0; weather_avoids[i].name != NULL; i++) {
+		if (!strcmp(tmp->arch->name, weather_avoids[i].name)) {
+		    if (weather_avoids[i].snow == 1)
+			gotsnow++;
+		    else
+			avoid++;
+		    break;
+		}
+	    }
+	    if (avoid || gotsnow)
+		break;
+	}
     }
     *gs = gotsnow;
     *av = avoid;
@@ -1243,9 +1365,9 @@ object *avoid_weather(int *av, mapstruct *m, int x, int y, int *gs)
 void let_it_snow(mapstruct *m, int wx, int wy, char *filename)
 {
     int x, y, i;
-    int avoid, two, temp, sky, gotsnow, found;
+    int avoid, two, temp, sky, gotsnow, found, nodstk;
     char *doublestack, *doublestack2;
-    object *ob, *tmp, *oldsnow;
+    object *ob, *tmp, *oldsnow, *topfloor;
     archetype *at;
 
     for (x=0; x < settings.worldmaptilesizex; x++) {
@@ -1257,48 +1379,53 @@ void let_it_snow(mapstruct *m, int wx, int wy, char *filename)
 	    avoid = 0;
 	    two = 0;
 	    gotsnow = 0;
+	    nodstk = 0;
 	    temp = real_world_temperature(x, y, m);
 	    sky = weathermap[wx][wy].sky;
 	    if (temp <= 0 && sky > SKY_OVERCAST && sky < SKY_FOG)
 		sky += 10; /*let it snow*/
-	    oldsnow = avoid_weather(&avoid, m, x, y, &gotsnow);
+	    oldsnow = avoid_weather(&avoid, m, x, y, &gotsnow, 0);
 	    if (!avoid) {
 		if (sky >= SKY_LIGHT_SNOW && sky < SKY_HEAVY_SNOW)
 		    at = find_archetype(weather_replace[0].special_snow);
 		if (sky >= SKY_HEAVY_SNOW)
 		    at = find_archetype(weather_replace[1].special_snow);
 		if (sky >= SKY_LIGHT_SNOW) {
+		    /* the bottom floor of scorn is not IS_FLOOR */
+		    topfloor=NULL;
+		    for (tmp=GET_MAP_OB(m, x, y); tmp;
+			 topfloor = tmp,tmp = tmp->above) {
+			if (strcmp(tmp->arch->name, "dungeon_magic") != 0)
+			    if (!QUERY_FLAG(tmp, FLAG_IS_FLOOR))
+				break;
+		    }
+		    /* topfloor should now be the topmost IS_FLOOR=1 */
+		    if (topfloor == NULL)
+			continue;
+		    if (tmp != NULL)
+			nodstk++;
+		    /* something is wrong with that sector. just skip it */
 		    found = 0;
 		    for (i=0; weather_replace[i].tile != NULL; i++) {
 			if (weather_replace[i].arch_or_name == 1) {
-			    if (!strcmp(GET_MAP_OB(m, x, y)->arch->name,
+			    if (!strcmp(topfloor->arch->name,
 					weather_replace[i].tile))
 				found++;
 			} else {
-			    if (!strcmp(GET_MAP_OB(m, x, y)->name,
-					weather_replace[i].tile))
+			    if (!strcmp(topfloor->name, weather_replace[i].tile))
 				found++;
 			}
 			if (found) {
 			    if (weather_replace[i].special_snow != NULL)
 				at = find_archetype(weather_replace[i].special_snow);
-			    if (weather_replace[i].doublestack_arch != NULL) {
+			    if (weather_replace[i].doublestack_arch != NULL
+				&& !nodstk) {
 				two++;
 				doublestack = weather_replace[i].doublestack_arch;
 			    }
 			    break;
 			}
 		    }
-		}
-		/* special case scorn, where the no-magic field wrecks my
-		   logic */
-		if (GET_MAP_OB(m, x, y)->above != NULL) {
-		    if (!strcmp(GET_MAP_OB(m, x, y)->above->name,
-				"cobblestones") && sky >= SKY_LIGHT_SNOW)
-			at = find_archetype("snow4");
-		    if (!strcmp(GET_MAP_OB(m, x, y)->above->arch->name,
-				"cobblestones2") && sky >= SKY_LIGHT_SNOW)
-			at = find_archetype("snow4");
 		}
 		if (gotsnow && at) {
 		    if (!strcmp(oldsnow->arch->name, at->name))
@@ -1340,8 +1467,8 @@ void let_it_snow(mapstruct *m, int wx, int wy, char *filename)
 		    ob->x = x;
 		    ob->y = y;
 		    ob->material = M_ICE;
-		    if (!strcmp(ob->arch->name, "snow4"))
-			SET_FLAG(ob, FLAG_OVERLAY_FLOOR);
+		    SET_FLAG(ob, FLAG_OVERLAY_FLOOR);
+		    CLEAR_FLAG(ob, FLAG_IS_FLOOR);
 		    insert_ob_in_map(ob, m, ob,
 		        INS_NO_MERGE | INS_NO_WALK_ON | INS_ABOVE_FLOOR_ONLY);
 		    if (two) {
@@ -1392,7 +1519,7 @@ void let_it_snow(mapstruct *m, int wx, int wy, char *filename)
 	    if (temp < -8) {
 		avoid = 0;
 		for (tmp=GET_MAP_OB(m, x, y); tmp; tmp = tmp->above) {
-		    if (!strcasecmp(tmp->name, "glacier"))
+		    if (!strcasecmp(tmp->name, "ice"))
 			avoid--;
 		}
 		tmp = GET_MAP_OB(m, x, y);
@@ -1405,7 +1532,7 @@ void let_it_snow(mapstruct *m, int wx, int wy, char *filename)
 		else if (!strcasecmp(tmp->name, "shallow_sea"))
 		    avoid++;
 		if (avoid > 0) {
-		    at = find_archetype("glacier");
+		    at = find_archetype("ice");
 		    ob = get_object();
 		    copy_object(&at->clone, ob);
 		    ob->x = x;
@@ -1428,8 +1555,8 @@ void let_it_snow(mapstruct *m, int wx, int wy, char *filename)
 void singing_in_the_rain(mapstruct *m, int wx, int wy, char *filename)
 {
     int x, y, i;
-    int avoid, two, temp, sky, gotsnow, found;
-    object *ob, *tmp, *oldsnow;
+    int avoid, two, temp, sky, gotsnow, found, nodstk;
+    object *ob, *tmp, *oldsnow, *topfloor;
     char *doublestack, *doublestack2;
     archetype *at;
 
@@ -1441,12 +1568,13 @@ void singing_in_the_rain(mapstruct *m, int wx, int wy, char *filename)
 	    avoid = 0;
 	    two = 0;
 	    gotsnow = 0;
+	    nodstk = 0;
 	    temp = real_world_temperature(x, y, m);
 	    sky = weathermap[wx][wy].sky;
 	    /* it's probably allready snowing */
 	    if (temp < 0)
 		continue;
-	    oldsnow = avoid_weather(&avoid, m, x, y, &gotsnow);
+	    oldsnow = avoid_weather(&avoid, m, x, y, &gotsnow, 0);
 	    if (!avoid) {
 		if (sky == SKY_LIGHT_RAIN || sky == SKY_RAIN)
 		    switch (rndm(0, SKY_HAIL-sky)) {
@@ -1461,19 +1589,33 @@ void singing_in_the_rain(mapstruct *m, int wx, int wy, char *filename)
 		    case 2: at = find_archetype("rain5"); break;
 		    default: at = NULL;
 		    }
+		    /* the bottom floor of scorn is not IS_FLOOR */
+		    topfloor=NULL;
+		    for (tmp=GET_MAP_OB(m, x, y); tmp;
+			 topfloor = tmp,tmp = tmp->above) {
+			if (strcmp(tmp->arch->name, "dungeon_magic") != 0)
+			    if (!QUERY_FLAG(tmp, FLAG_IS_FLOOR))
+				break;
+		    }
+		    /* topfloor should now be the topmost IS_FLOOR=1 */
+		    if (topfloor == NULL)
+			continue;
+		    if (tmp != NULL)
+			nodstk++;
+		    /* something is wrong with that sector. just skip it */
 		found = 0;
 		for (i=0; weather_replace[i].tile != NULL; i++) {
 		    if (weather_replace[i].arch_or_name == 1) {
-			if (!strcmp(GET_MAP_OB(m, x, y)->arch->name,
+			if (!strcmp(topfloor->arch->name,
 				    weather_replace[i].tile))
 			    found++;
 		    } else {
-			if (!strcmp(GET_MAP_OB(m, x, y)->name,
-				    weather_replace[i].tile))
+			if (!strcmp(topfloor->name, weather_replace[i].tile))
 			    found++;
 		    }
 		    if (found) {
-			if (weather_replace[i].doublestack_arch != NULL) {
+			if (weather_replace[i].doublestack_arch != NULL
+			    && !nodstk) {
 			    two++;
 			    doublestack = weather_replace[i].doublestack_arch;
 			}
@@ -1600,10 +1742,11 @@ void singing_in_the_rain(mapstruct *m, int wx, int wy, char *filename)
 void plant_a_garden(mapstruct *m, int wx, int wy, char *filename)
 {
     int x, y, i;
-    int avoid, two, temp, sky, gotsnow, found;
-    object *ob, *tmp, *oldherb;
+    int avoid, two, temp, sky, gotsnow, found, days;
+    object *ob, *tmp;
     archetype *at;
 
+    days = todtick / HOURS_PER_DAY;
     for (x=0; x < settings.worldmaptilesizex; x++) {
 	for (y=0; y < settings.worldmaptilesizey; y++) {
 	    (void)worldmap_to_weathermap(x, y, &wx, &wy, filename);
@@ -1614,15 +1757,17 @@ void plant_a_garden(mapstruct *m, int wx, int wy, char *filename)
 	    gotsnow = 0;
 	    temp = real_world_temperature(x, y, m);
 	    sky = weathermap[wx][wy].sky;
-	    (void)avoid_weather(&avoid, m, x, y, &gotsnow);
+	    (void)avoid_weather(&avoid, m, x, y, &gotsnow, 1);
 	    if (!avoid) {
+		found = 0;
 		for (i=0; weather_grow[i].herb != NULL; i++) {
 		    for (tmp=GET_MAP_OB(m, x, y); tmp; tmp = tmp->above) {
 			if (strcmp(tmp->arch->name, weather_grow[i].herb) != 0)
 			    continue;
 			/* we found there is a herb here allready */
-			if (weathermap[wx][wy].rainfall < weather_grow[i].rfmin ||
-			    weathermap[wx][wy].rainfall > weather_grow[i].rfmax ||
+			found++;
+			if ((float)weathermap[wx][wy].rainfall/days < weather_grow[i].rfmin ||
+			    (float)weathermap[wx][wy].rainfall/days > weather_grow[i].rfmax ||
 			    weathermap[wx][wy].humid < weather_grow[i].humin ||
 			    weathermap[wx][wy].humid > weather_grow[i].humax ||
 			    temp < weather_grow[i].tempmin ||
@@ -1635,6 +1780,9 @@ void plant_a_garden(mapstruct *m, int wx, int wy, char *filename)
 			    break;
 			}
 		    }
+		    /* don't doublestack herbs */
+		    if (found)
+			continue;
 		    /* add a random factor */
 		    if (rndm(1, weather_grow[i].random) != 1)
 			continue;
@@ -1649,8 +1797,8 @@ void plant_a_garden(mapstruct *m, int wx, int wy, char *filename)
 			    } else
 				continue;
 		    }
-		    if (weathermap[wx][wy].rainfall < weather_grow[i].rfmin ||
-			weathermap[wx][wy].rainfall > weather_grow[i].rfmax)
+		    if ((float)weathermap[wx][wy].rainfall/days < weather_grow[i].rfmin ||
+			(float)weathermap[wx][wy].rainfall/days > weather_grow[i].rfmax)
 			continue;
 		    if (weathermap[wx][wy].humid < weather_grow[i].humin ||
 			weathermap[wx][wy].humid > weather_grow[i].humax)
@@ -1670,6 +1818,7 @@ void plant_a_garden(mapstruct *m, int wx, int wy, char *filename)
 		    copy_object(&at->clone, ob);
 		    ob->x = x;
 		    ob->y = y;
+		    /* XXX is this right?  maybe.. */
 		    SET_FLAG(ob, FLAG_OVERLAY_FLOOR);
 		    insert_ob_in_map(ob, m, ob,
 		        INS_NO_MERGE | INS_NO_WALK_ON | INS_ABOVE_FLOOR_ONLY);
@@ -1678,6 +1827,221 @@ void plant_a_garden(mapstruct *m, int wx, int wy, char *filename)
 	}
     }
 }
+
+/*
+ * Process worldmap regrowth.  m is the map we are currently processing.
+ * wx and wy are
+ * the weathermap coordinates for the weathermap square we want to work on.
+ * filename is the pathname for the current map.  This should be called from
+ * weather_effect()
+ */
+
+void change_the_world(mapstruct *m, int wx, int wy, char *filename)
+{
+    int x, y, i;
+    int avoid, two, temp, sky, gotsnow, found, days;
+    object *ob, *tmp, *doublestack;
+    archetype *at, *dat;
+
+    days = todtick / HOURS_PER_DAY;
+    for (x=0; x < settings.worldmaptilesizex; x++) {
+	for (y=0; y < settings.worldmaptilesizey; y++) {
+	    (void)worldmap_to_weathermap(x, y, &wx, &wy, filename);
+	    ob = NULL;
+	    at = NULL;
+	    dat = NULL;
+	    avoid = 0;
+	    two = 0;
+	    gotsnow = 0;
+	    temp = real_world_temperature(x, y, m);
+	    sky = weathermap[wx][wy].sky;
+	    (void)avoid_weather(&avoid, m, x, y, &gotsnow, 1);
+	    if (!avoid) {
+		for (i=0; weather_tile[i].herb != NULL; i++) {
+		    found=0;
+		    doublestack=NULL;
+		    for (tmp=GET_MAP_OB(m, x, y)->above; tmp; tmp = tmp->above) {
+			if (weather_tile[i].tile != NULL)
+			    if (strcmp(tmp->arch->name,
+				       weather_tile[i].tile) == 0) {
+				doublestack=tmp;
+				continue;
+			    }
+			if (strcmp(tmp->arch->name, weather_tile[i].herb) != 0)
+			    continue;
+			if ((float)weathermap[wx][wy].rainfall/days < weather_tile[i].rfmin ||
+			    (float)weathermap[wx][wy].rainfall/days > weather_tile[i].rfmax ||
+			    weathermap[wx][wy].humid < weather_tile[i].humin ||
+			    weathermap[wx][wy].humid > weather_tile[i].humax ||
+			    temp < weather_tile[i].tempmin ||
+			    temp > weather_tile[i].tempmax) {
+			    remove_ob(tmp);
+			    free_object(tmp);
+			    if (doublestack) {
+				remove_ob(doublestack);
+				free_object(doublestack);
+			    }
+			    break;
+			} else {
+			    found++; /* there is one here allready. leave it */
+			    break;
+			}
+		    }
+		    if (found)
+			break;
+		    /* add a random factor */
+		    if (rndm(1, weather_tile[i].random) != 1)
+			continue;
+		    if ((float)weathermap[wx][wy].rainfall/days < weather_tile[i].rfmin ||
+			(float)weathermap[wx][wy].rainfall/days > weather_tile[i].rfmax)
+			continue;
+		    if (weathermap[wx][wy].humid < weather_tile[i].humin ||
+			weathermap[wx][wy].humid > weather_tile[i].humax)
+			continue;
+		    if (temp < weather_tile[i].tempmin ||
+			temp > weather_tile[i].tempmax)
+			continue;
+		    if (GET_MAP_OB(m, x, y)->elevation < weather_tile[i].elevmin ||
+			GET_MAP_OB(m, x, y)->elevation > weather_tile[i].elevmax)
+			continue;
+		    /* we got this far.. must be a match */
+		    if (strcmp(GET_MAP_OB(m, x, y)->arch->name,
+			       weather_tile[i].herb) == 0)
+			break; /* no sense in doubling up */
+		    at = find_archetype(weather_tile[i].herb);
+		    break;
+		}
+		if (at != NULL) {
+		    if (weather_tile[i].tile != NULL &&
+			strcmp(weather_tile[i].tile,
+			       GET_MAP_OB(m, x, y)->arch->name) != 0)
+			dat = find_archetype(weather_tile[i].tile);
+		    if (dat != NULL) {
+			ob = get_object();
+			copy_object(&dat->clone, ob);
+			ob->x = x;
+			ob->y = y;
+			insert_ob_in_map(ob, m, ob,
+			    INS_NO_MERGE | INS_NO_WALK_ON | INS_ABOVE_FLOOR_ONLY);
+		    }
+		    if (gotsnow == 0) {
+			ob = get_object();
+			copy_object(&at->clone, ob);
+			ob->x = x;
+			ob->y = y;
+			if (dat != NULL)
+			    insert_ob_in_map(ob, m, ob,
+				INS_NO_MERGE | INS_NO_WALK_ON | INS_ON_TOP);
+			else
+			    insert_ob_in_map(ob, m, ob,
+		                INS_NO_MERGE | INS_NO_WALK_ON | INS_ABOVE_FLOOR_ONLY);
+		    }
+		}
+	    }
+	}
+    }
+}
+
+
+/*
+ * Reduce the blockiness of the maps. m is the map we are currently processing.
+ * wx and wy are
+ * the weathermap coordinates for the weathermap square we want to work on.
+ * filename is the pathname for the current map.  This should be called from
+ * weather_effect()
+ */
+
+void feather_map(mapstruct *m, int wx, int wy, char *filename)
+{
+    int x, y, i, nx, ny, j;
+    int avoid, two, temp, sky, gotsnow, found, nodstk;
+    object *ob, *tmp, *oldsnow, *topfloor, *ntmp, *ntopfloor;
+    char *doublestack, *doublestack2;
+    archetype *at;
+
+    for (x=0; x < settings.worldmaptilesizex; x++) {
+	for (y=0; y < settings.worldmaptilesizey; y++) {
+	    (void)worldmap_to_weathermap(x, y, &wx, &wy, filename);
+	    ob = NULL;
+	    at = NULL;
+	    avoid = 0;
+	    two = 0;
+	    j = 0;
+	    gotsnow = 0;
+	    nodstk = 0;
+	    oldsnow = avoid_weather(&avoid, m, x, y, &gotsnow, 1);
+	    if (avoid)
+		continue;
+	    if (rndm(0, 20) == 0)
+		continue;
+	    /* the bottom floor of scorn is not IS_FLOOR */
+	    topfloor=NULL;
+	    for (tmp=GET_MAP_OB(m, x, y); tmp;
+		 topfloor = tmp,tmp = tmp->above) {
+		if (strcmp(tmp->arch->name, "dungeon_magic") != 0)
+		    if (!QUERY_FLAG(tmp, FLAG_IS_FLOOR) &&
+			!QUERY_FLAG(tmp, FLAG_OVERLAY_FLOOR))
+			break;
+	    }
+	    /* topfloor should now be the topmost IS_FLOOR=1 */
+	    if (topfloor == NULL)
+		continue;
+	    if (tmp != NULL)
+		nodstk++;
+	    /* something is wrong with that sector. just skip it */
+
+	    j=rndm(1, 8);
+	    nx = freearr_x[j]+x;
+	    ny = freearr_y[j]+y;
+	    if (OUT_OF_REAL_MAP(m, nx, ny))
+		    continue;
+	    oldsnow = avoid_weather(&avoid, m, nx, ny, &gotsnow, 1);
+	    if (avoid)
+		continue;
+	    ntopfloor=NULL;
+	    for (ntmp=GET_MAP_OB(m, nx, ny); ntmp;
+		 ntopfloor = ntmp,ntmp = ntmp->above) {
+		if (strcmp(ntmp->arch->name, "dungeon_magic") != 0)
+		    if (!QUERY_FLAG(ntmp, FLAG_IS_FLOOR) &&
+			!QUERY_FLAG(ntmp, FLAG_OVERLAY_FLOOR))
+			break;
+	    }
+	    if (ntopfloor != NULL && QUERY_FLAG(ntopfloor, FLAG_IS_FLOOR)) {
+		remove_ob(topfloor);
+		free_object(topfloor);
+		if (tmp != NULL) {
+		    for (i=0; weather_tile[i].herb != NULL; i++) {
+			if (strcmp(tmp->arch->name, weather_tile[i].herb) == 0) {
+			    remove_ob(tmp);
+			    free_object(tmp);
+			    break;
+			}
+		    }
+		}
+	    } else {
+		continue;
+	    }
+	    ob = get_object();
+	    copy_object(&ntopfloor->arch->clone, ob);
+	    ob->x = x;
+	    ob->y = y;
+	    insert_ob_in_map(ob, m, ob, INS_NO_MERGE | INS_NO_WALK_ON | INS_ABOVE_FLOOR_ONLY);
+	    if (ntmp != NULL && nodstk == 0) {
+		for (i=0; weather_tile[i].herb != NULL; i++) {
+		    if (strcmp(ntmp->arch->name, weather_tile[i].herb) == 0) {
+			ob = get_object();
+			copy_object(&ntmp->arch->clone, ob);
+			ob->x = x;
+			ob->y = y;
+			insert_ob_in_map(ob, m, ob, INS_NO_MERGE | INS_NO_WALK_ON | INS_ON_TOP);
+			break;
+		    }
+		}
+	    }
+	}
+    }
+}
+
 
 /* provide wx and wy. Will fill in with weathermap coordinates.  Requires
    the current mapname (must be a worldmap), and your coordinates on the
