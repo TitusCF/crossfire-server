@@ -1018,6 +1018,8 @@ void move_player_mover(object *op) {
     for(victim=get_map_ob(op->map,op->x,op->y); victim !=NULL; victim=victim->above) {
 	if(QUERY_FLAG(victim, FLAG_ALIVE)&& (!(QUERY_FLAG(victim,FLAG_FLYING))||op->stats.maxhp)) {
 
+	    if (victim->head) victim = victim->head;
+
 	    if(QUERY_FLAG(op,FLAG_LIFESAVE)&&op->stats.hp--<0) {
 		remove_ob(op);
 		free_object(op);
