@@ -34,7 +34,7 @@
  */
 
 
-#ifdef WIN32
+#ifdef WIN32 /* ---win32 exclude/include headers */
 #include "process.h"
 #else
 #include <ctype.h>
@@ -42,10 +42,12 @@
 
 #include <sys/param.h>
 #include <stdio.h>
-#endif
 
 /* Need to pull in the HAVE_... values somehow */
+/* win32 reminder: always put this in a ifndef win32 block */
 #include <autoconf.h>
+#endif
+
 
 #ifdef HAVE_STDLIB_H
 #include <stdlib.h>
