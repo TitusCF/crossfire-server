@@ -91,6 +91,7 @@ EXEEXT = @EXEEXT@
 OBJEXT = @OBJEXT@
 PATH_SEPARATOR = @PATH_SEPARATOR@
 AMTAR = @AMTAR@
+AR = @AR@
 AS = @AS@
 AWK = @AWK@
 BASENAME = @BASENAME@
@@ -99,9 +100,15 @@ BZIP = @BZIP@
 CC = @CC@
 COMPRESS = @COMPRESS@
 CPP = @CPP@
+CXX = @CXX@
+CXXCPP = @CXXCPP@
 DEPDIR = @DEPDIR@
 DLLTOOL = @DLLTOOL@
 ECHO = @ECHO@
+EGREP = @EGREP@
+F77 = @F77@
+GCJ = @GCJ@
+GCJFLAGS = @GCJFLAGS@
 GUNZIP = @GUNZIP@
 GZIP = @GZIP@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
@@ -119,6 +126,7 @@ PYTHON_LIB = @PYTHON_LIB@
 PY_INCLUDES = @PY_INCLUDES@
 PY_LIBS = @PY_LIBS@
 RANLIB = @RANLIB@
+RC = @RC@
 STRIP = @STRIP@
 TAR = @TAR@
 UNCOMPRESS = @UNCOMPRESS@
@@ -141,7 +149,9 @@ SUBDIRS = scripts Developers playbook spoiler spell-docs spoiler-html playbook-h
 
 dist_noinst_DATA = handbook.ps spoiler.ps
 dist_noinst_SCRIPTS = include_html.pl
-dist_man6_MANS = crossedit.man crossfire.man crossfire-config.man crossloop.web.man
+dist_man6_MANS = crossedit.man crossfire.man crossfire-config.man \
+	crossloop.web.man crossloop.man
+
 
 EXTRA_DIST = Crossedit.doc PlayerStats \
 	README RunTimeCommands SurvivalGuide alchemy.doc \
