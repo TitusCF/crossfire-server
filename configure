@@ -13112,15 +13112,16 @@ done
 
 	if test "x$cf_have_python_h" = "xyes" ; then
 		PYTHON_LIB=""
-		python=`echo $dir | awk -F/ '{print $NF}'`;
-		as_ac_Lib=`echo "ac_cv_lib_$python''_PyArg_ParseTuple" | $as_tr_sh`
-echo "$as_me:$LINENO: checking for PyArg_ParseTuple in -l$python" >&5
-echo $ECHO_N "checking for PyArg_ParseTuple in -l$python... $ECHO_C" >&6
+
+                for lib in python{,2.2,2.1,2.0} ; do
+                        as_ac_Lib=`echo "ac_cv_lib_$lib''_PyArg_ParseTuple" | $as_tr_sh`
+echo "$as_me:$LINENO: checking for PyArg_ParseTuple in -l$lib" >&5
+echo $ECHO_N "checking for PyArg_ParseTuple in -l$lib... $ECHO_C" >&6
 if eval "test \"\${$as_ac_Lib+set}\" = set"; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
 else
   ac_check_lib_save_LIBS=$LIBS
-LIBS="-l$python  $LIBS"
+LIBS="-l$lib  $LIBS"
 cat >conftest.$ac_ext <<_ACEOF
 #line $LINENO "configure"
 #include "confdefs.h"
@@ -13170,33 +13171,29 @@ fi
 echo "$as_me:$LINENO: result: `eval echo '${'$as_ac_Lib'}'`" >&5
 echo "${ECHO_T}`eval echo '${'$as_ac_Lib'}'`" >&6
 if test `eval echo '${'$as_ac_Lib'}'` = yes; then
-  PYTHON_LIB="-l$python"
+  PYTHON_LIB="-l$lib"
 fi
 
+                        if test "x$PYTHON_LIB" != "x" ; then
+                                break
+                        fi
+                done
 
 		# These checks are a bit bogus - would be better to use AC_CHECK_LIB,
 		# but it caches the result of the first check, even if we run AC_CHECK_LIB
 		# with other options.
-		echo "$as_me:$LINENO: checking For python lib in various places" >&5
-echo $ECHO_N "checking For python lib in various places... $ECHO_C" >&6
-		if test -f /usr/lib/$python/lib$python.a ; then
-			PYTHON_LIB="/usr/lib/$python/lib$python.a"
-			echo "$as_me:$LINENO: result: found in /usr/lib/$python" >&5
-echo "${ECHO_T}found in /usr/lib/$python" >&6
-		elif test -f /usr/lib/$python/config/lib$python.a ; then
-			PYTHON_LIB="/usr/lib/$python/config/lib$python.a"
-			echo "$as_me:$LINENO: result: found in /usr/lib/$python/config" >&5
-echo "${ECHO_T}found in /usr/lib/$python/config" >&6
-		fi
+		python=`echo $dir | awk -F/ '{print $NF}'`;
 		if test "x$PYTHON_LIB" = "x"  ; then
-			PYTHON_LIB=`echo /usr/lib/python*/config/libpython*.a`
-			if test ! -f $PYTHON_LIB ; then
-			    echo "$as_me:$LINENO: result: no" >&5
-echo "${ECHO_T}no" >&6
-			    PYTHON_LIB=""
-			else
-			    echo "$as_me:$LINENO: result: yes" >&5
-echo "${ECHO_T}yes" >&6
+			echo "$as_me:$LINENO: checking For python lib in various places" >&5
+echo $ECHO_N "checking For python lib in various places... $ECHO_C" >&6
+			if test -f /usr/lib/$python/lib$python.a ; then
+				PYTHON_LIB="/usr/lib/$python/lib$python.a"
+				echo "$as_me:$LINENO: result: found in /usr/lib/$python" >&5
+echo "${ECHO_T}found in /usr/lib/$python" >&6
+			elif test -f /usr/lib/$python/config/lib$python.a ; then
+				PYTHON_LIB="/usr/lib/$python/config/lib$python.a"
+				echo "$as_me:$LINENO: result: found in /usr/lib/$python/config" >&5
+echo "${ECHO_T}found in /usr/lib/$python/config" >&6
 			fi
 		fi
 		if test "x$PYTHON_LIB" != "x"  ; then

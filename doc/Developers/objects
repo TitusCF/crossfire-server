@@ -50,6 +50,7 @@ Sections:
 
 7. Misc change description
 
+8. How to Add new values
 
 *******************************************************************************
 1. HOW TO CREATE NEW ARCHETYPES AND BITMAPS:
@@ -1848,3 +1849,32 @@ LIGHTING CODE (by Brian Thomas):
 		"torch" a source of light.
                 
 
+
+***************************************************************************************
+8. How to add new values
+***************************************************************************************
+
+ This section details how to add new fields/flags to an object structure.
+
+1) Send mail to the development list to make sure that a new element is really
+   added.
+
+For flags:
+
+2) Update the FLAG_.. entries in include/define.h for your new flag.  Recycle unused
+   values if possible - there may be cases where you want to group the new flags together.
+   If you are adding beyond the end of the existing values, update the NUM_FLAGS entry
+
+3) Decide the name of your flag as loaded/saved in objects.  The default syntax is
+   the name you assigned in step 2 above, minus the leading flag_ part.
+
+4) In the common/loader.l, update the load section (where the code is mostly ^value  
+   SET_OR_CLEAR(...)) add  your entries in.
+
+5) update the flag_names in common/loader.l.  The location of your names _must_ be
+   in the same array location as the FLAG_ value.
+
+6) Update other areas of the code that you presumably know about that will use these
+   flag values.
+
+7) As appropriate, update the arch files and rebuild.

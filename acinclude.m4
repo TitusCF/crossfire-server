@@ -20,27 +20,26 @@ AC_DEFUN([CF_CHECK_PYTHON],
 
 	if test "x$cf_have_python_h" = "xyes" ; then
 		PYTHON_LIB=""
-		python=`echo $dir | awk -F/ '{print $NF}'`;
-		AC_CHECK_LIB($python, PyArg_ParseTuple,[PYTHON_LIB="-l$python"])
+
+                for lib in python{,2.2,2.1,2.0} ; do
+                        AC_CHECK_LIB($lib, PyArg_ParseTuple,[PYTHON_LIB="-l$lib"])
+                        if test "x$PYTHON_LIB" != "x" ; then
+                                break
+                        fi
+                done
 
 		# These checks are a bit bogus - would be better to use AC_CHECK_LIB,
 		# but it caches the result of the first check, even if we run AC_CHECK_LIB
 		# with other options.
-		AC_MSG_CHECKING([For python lib in various places])
-		if test -f /usr/lib/$python/lib$python.a ; then
-			PYTHON_LIB="/usr/lib/$python/lib$python.a"
-			AC_MSG_RESULT([found in /usr/lib/$python])
-		elif test -f /usr/lib/$python/config/lib$python.a ; then
-			PYTHON_LIB="/usr/lib/$python/config/lib$python.a"
-			AC_MSG_RESULT([found in /usr/lib/$python/config])
-		fi
+		python=`echo $dir | awk -F/ '{print $NF}'`;
 		if test "x$PYTHON_LIB" = "x"  ; then
-			PYTHON_LIB=`echo /usr/lib/python*/config/libpython*.a`
-			if test ! -f $PYTHON_LIB ; then
-			    AC_MSG_RESULT([no])
-			    PYTHON_LIB=""
-			else
-			    AC_MSG_RESULT([yes])
+			AC_MSG_CHECKING([For python lib in various places])
+			if test -f /usr/lib/$python/lib$python.a ; then
+				PYTHON_LIB="/usr/lib/$python/lib$python.a"
+				AC_MSG_RESULT([found in /usr/lib/$python])
+			elif test -f /usr/lib/$python/config/lib$python.a ; then
+				PYTHON_LIB="/usr/lib/$python/config/lib$python.a"
+				AC_MSG_RESULT([found in /usr/lib/$python/config])
 			fi
 		fi
 		if test "x$PYTHON_LIB" != "x"  ; then

@@ -17,6 +17,21 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Various updates:
+NOTE - You need to install the updated archetypes (included below)
+   if you run this code without the updated archs, you will likely find
+   many things do not work.
+acinclude.m4 aclocal.m4 configure: more refinements for libpython detection.
+common/button.c: Two push_button() changes - have it check for ACTIVATE_ON_
+    PUSH/RELEASE to determine if the object should get activated.  Also,
+    change behaviour of TIMED_GATE so that multipart timed gates work.
+common/loader.l, loader.c: Update with acttivate_on_push/release
+doc/Developers/objects: Add notes about how to add flags to objects.
+include/define.h: add new FLAG_ values
+include/win32.h: update by pstolarc so it compiles on Win32.
+lib/archetypes: rebuilt
+MSW 2002-09-17
+
 common/map.c:  Fix problem with ordering in check_linked() - checking
    for NO_PASS was before checks for inventory checkers, resulting in
    inventory checkers that require the player to have an item not working.

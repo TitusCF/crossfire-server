@@ -544,7 +544,9 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define FLAG_OBJ_SAVE_ON_OVL	104 /* this object should be saved on
 				     * the overlay, and is not subject to
 				     * decay. */
-#define NUM_FLAGS		104 /* Should always be equal to the last
+#define FLAG_ACTIVATE_ON_PUSH	105 /* connected object is activated when 'pushed' */
+#define FLAG_ACTIVATE_ON_RELEASE 106	/* connected object is activated when 'released' */
+#define NUM_FLAGS		106 /* Should always be equal to the last
 				     * defined flag.  If you change this,
 				     * make sure you update the flag_links
 				     * in common/loader.l

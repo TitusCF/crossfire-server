@@ -434,6 +434,9 @@ A	.+
 ^random_move{S}	    SET_OR_CLEAR_FLAG(op, FLAG_RANDOM_MOVE, IVAL);
 ^only_attack{S}	    SET_OR_CLEAR_FLAG(op, FLAG_ONLY_ATTACK, IVAL);
 
+^activate_on_push{S}	SET_OR_CLEAR_FLAG(op, FLAG_ACTIVATE_ON_PUSH, IVAL);
+^activate_on_release{S}	SET_OR_CLEAR_FLAG(op, FLAG_ACTIVATE_ON_RELEASE, IVAL);
+
     /* armour is loaded for compatiblity reasons */
 ^armour{S}		SET_RESIST(op, ATNR_PHYSICAL, IVAL);
     /* Start of various attacktypes */
@@ -1114,7 +1117,8 @@ static char *flag_names[NUM_FLAGS+1] = {
 "is_hilly", "has_ready_skill", "has_ready_weapon",		/* 90 */
 "no_skill_ident", "is_blind", "can_see_in_dark", "is_cauldron", 
 "is_dust", "no_steal", "one_hit", NULL, "berserk", "neutral",	/* 100 */
-"no_attack", "no_damage", NULL, NULL				/* 104 */
+"no_attack", "no_damage", NULL, NULL, "activate_on_push",
+"activate_on_release"						/* 104 */
 };
 
 

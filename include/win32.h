@@ -6,6 +6,10 @@
 #if !defined(AFX_STDAFX_H__31666CA1_2474_11D5_AE6C_F07569C10000__INCLUDED_)
 #define AFX_STDAFX_H__31666CA1_2474_11D5_AE6C_F07569C10000__INCLUDED_
 
+/* Define the version here.  In Unixland, it's defined on the command line now. */
+#define VERSION "1.4.0"
+
+
 #if _MSC_VER > 1000
 #pragma once
 #endif /* _MSC_VER > 1000 */
@@ -89,6 +93,8 @@
 
 /* Location of read-only machine independent data */
 #define DATADIR "share"
+#define LIBDIR "share"
+#define CONFDIR "share"
 
 /* Location of changeable single system data (temp maps, hiscore, etc) */
 #define LOCALDIR "var"
