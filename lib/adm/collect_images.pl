@@ -55,6 +55,7 @@ for ($count=0; $count<=$#extension; $count++) {
     $fh = $ESRV[$count];
     open($fh, ">crossfire.$count") ||
 	die("Can't open crossfire.$count for write: $!\n");
+	binmode( $fh );
 }
 
 open(BMAPS,"bmaps.paths") || die("Can't open bmaps.paths: $!\n");
@@ -84,6 +85,7 @@ while(<BMAPS>) {
 
 	$length = -s "$filename";
 	if (open(FILE,"$filename")) {
+	    binmode( FILE );
 	    print $fh "IMAGE $num $length $file.$file1\n";
 	    print "Error reading file $filename" if (!read(FILE, $buf, $length));
 	    $position = tell $fh;

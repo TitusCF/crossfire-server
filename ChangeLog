@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+lib/adm/collect_images.pl: forced binary mode for written files.
+   This lets the script work correctly under Windows.
+Ryo 2003-11-29
+
 server/apply.c: correctly display learned skill's name, and not the
    scroll's.
 server/skills.c: make 'sense curse' and 'sense magic' check items
