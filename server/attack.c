@@ -1229,8 +1229,12 @@ void deathstrike_player(object *op, object *hitter, int *dam)
 		(op->race&&strstr(hitter->slaying,op->race))))	return;
 
     def_lev = op->level;
-/*  atk_lev  = (hitter->level)/2; */ 
-    atk_lev  = SK_level(hitter)/2;
+    if (def_lev < 1) {
+        LOG (llevError, "BUG: arch %s, name %s with level < 1\n",
+             op->arch->name, op->name);
+        def_lev = 1;
+    }
+    atk_lev = SK_level (hitter) / 2;
     LOG(llevDebug,"Deathstrike - attack level %d, defender level %d\n",
 	atk_lev, def_lev);
 
@@ -1248,7 +1252,7 @@ void deathstrike_player(object *op, object *hitter, int *dam)
 	     * integer rounding, this only makes any difference if the 
 	     * attack level is double the defender level.
 	     */
-	    *dam *= kill_lev / (def_lev == 0 ? 1 : def_lev);
+	    *dam *= kill_lev / def_lev;
 	}
     } else {
       *dam = 0;  /* no harm done */

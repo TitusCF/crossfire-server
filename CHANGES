@@ -20,6 +20,15 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for 0.95.6:
 
+server/commands.c; server/c_object.c: dump_object_from_tag():  Removed
+broken command.  Fixes server crashes very easily triggered by players.
+- Jan Echternach 6/21/2000
+
+server/attack.c: deathstrike_player():  Check for def_lev == 0 very early
+(and print error message if we find such an invalid level).  Should fix
+server crash in case archetypes or maps get broken again in that an
+alive object has level < 1.  - Jan Echternach 6/21/2000
+
 Makefile.in: Update version to 0.95.6
 include/patchlevel.h: Update to .6 for 0.95.6 release
 common/porting.c, include/config.h, include/loader.h, include/skills.h, 

@@ -52,7 +52,6 @@ CommArray_s Commands[] = {
 
 #ifdef DEBUG
   {"sstable", command_sstable,	0.0},
-  {"dumptag", dump_object_from_tag, 0.0},
 #endif
 #ifdef DEBUG_MALLOC_LEVEL
   {"verify", command_malloc_verify,0.0},

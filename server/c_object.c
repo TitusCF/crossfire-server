@@ -31,34 +31,6 @@
 #include <sproto.h>
 #include <living.h>
 
-/* this is a a debug function.  We dump the object with matching 'tag'.
- * This is mostly used for client debugging, so it referances data with
- * just the tag.  This is a costly call, since it searches through all
- * objects.  It dumps the output to the server logfile.
- */
-int dump_object_from_tag(object *pl, char *val)
-{
-    int tag=atoi(val);
-    object *op;
-
-    if (tag<=0) {
-	new_draw_info_format(NDI_UNIQUE, 0, pl,"Invalid tag given: %s\n", val);
-	return 0;
-    }
-
-    for (op=objects; op!=NULL; op=op->next)
-	if (op->count==tag) break;
-
-    if (!op) {
-	new_draw_info_format(NDI_UNIQUE, 0, pl,"Could not find matching object tag (%d)\n", tag);
-    }
-    else {
-	dump_object(op);
-	LOG(llevDebug,"Object dump for tag %d:\n%s\n", tag, errmsg);
-    }
-    return 0;
-}
-
 /*
  * Object id parsing functions
  */
