@@ -118,8 +118,8 @@ void init_anim() {
     LOG(llevDebug,"done. got (%d)\n", num_animations);
 }
 
-static int anim_compare(const void *a, const void *b) {
-    return strcmp(((Animations*)a)->name,((Animations*) b)->name);
+static int anim_compare(Animations *a, Animations *b) {
+    return strcmp(a->name, b->name);
 }
 
 /* Tries to find the animation id that matches name.  Returns an integer match 
@@ -131,13 +131,8 @@ int find_animation(char *name)
 
     search.name = name;
 
-#ifdef WIN32
     match = (Animations*)bsearch(&search, animations, (num_animations+1), 
-        sizeof(Animations), anim_compare);
-#else
-    match = (Animations*)bsearch(&search, animations, (num_animations+1), 
-        sizeof(Animations), (int (*)())anim_compare);
-#endif
+		sizeof(Animations), (int (*)())anim_compare);
 
 
     if (match) return match->num;
@@ -146,45 +141,23 @@ int find_animation(char *name)
 }
 
 /*
- * animate_object(object, count) updates the face-variable of an object.
+ * animate_object(object) updates the face-variable of an object.
  * If the object is the head of a multi-object, all objects are animated.
  */
 
-void animate_object(object *op, int count) {
+void animate_object(object *op) {
     int max_state;  /* Max animation state object should be drawn in */
     int base_state; /* starting index # to draw from */
-    int	dir;
-    register object *oph = op;
+    int	dir=op->direction;
 
-#ifdef DEBUG /* hm, should really not happens */
     if(!op->animation_id || !NUM_ANIMATIONS(op)) {
 	LOG(llevError,"Object lacks animation.\n");
 	dump_object(op);
 	return;
     }
-#endif
+    ++op->state;    /* increase draw state */
 
-    /*  a animation is not only changing by anim_speed.
-     *  If we turn the object by teleporter for example, its direction & facing can
-     *  change, outside the normal animation loop. 
-     *  We have then to change the frame and not increase the state */
-     
-    /* when we change to "one arch/one png, we must use this also for */
-    /* the code above ... only the head then has an animation */
-    /* which gets updated one time when this is called per tick */
-    if(op->head) 
-        oph=op->head;
-
-    op->state+=count;    /* increase draw state (of the animation frame) */
-    if(!count)
-    {
-        /* object needs no update for moving */
-        if(oph->anim_enemy_dir == oph->anim_enemy_dir_last && 
-                oph->anim_moving_dir == oph->anim_moving_dir_last &&
-                oph->anim_last_facing == oph->anim_last_facing_last)
-            return; /* no need to set the frame new */        
-    }
-    dir=oph->direction;
+    if (op->head) dir=op->head->direction;
 
     /* If object is turning, then max animation state is half through the
      * animations.  Otherwise, we can use all the animations.
@@ -207,51 +180,9 @@ void animate_object(object *op, int count) {
     }
     else if (NUM_FACINGS(op)==8) {
 	if (dir==0) base_state=0;
-	else base_state = (dir-1)*(NUM_ANIMATIONS(op)/8); /* was 4  before - typo? */ 
+	else base_state = (dir-1)*(NUM_ANIMATIONS(op)/4); 
     }
-    /* thats the new extended animation: base_state is */
-    /* 0: thats the corpse */
-    /* 1-8:  guard/stand_still anim frames */
-    /* 9-16: move anim frames */
-    /* 17-24: fight anim frames */
-    /* TODO: allow different number of faces in each frame */
 
-    else if (NUM_FACINGS(op)==25) {
-        /* we have targeted an enemy and face him. when me move, we strave sidewards */
-        if(oph->anim_enemy_dir != -1 && (!QUERY_FLAG(op,FLAG_RUN_AWAY) && !QUERY_FLAG(op,FLAG_SCARED)))
-        {
-            dir = oph->anim_enemy_dir;      /* lets face to the enemy position */
-            oph->anim_enemy_dir_last = oph->anim_enemy_dir;
-            oph->anim_moving_dir_last = -1;
-            if (!dir)   /* special case, same spot will be mapped to south dir */
-                dir = 4;
-            oph->anim_last_facing = dir;
-            oph->anim_last_facing_last = -1;
-            dir +=16;
-        }
-        else if (oph->anim_moving_dir != -1)/* test of moving */
-        {
-            dir = oph->anim_moving_dir;      /* lets face in moving direction */
-            oph->anim_moving_dir_last = oph->anim_moving_dir;
-            oph->anim_enemy_dir_last = -1;
-            if (!dir)   /* special case, same spot will be mapped to south dir */
-                dir = 4;
-            oph->anim_last_facing = dir;
-            oph->anim_last_facing_last = -1;
-            dir +=8;
-        }
-        else /* if nothing to do: object do nothing. use original facing */
-        {
-            dir = oph->anim_last_facing;      /* lets face to last direction we had done something */
-            oph->anim_last_facing_last = dir;
-            if (!dir)   /* special case, same spot will be mapped to south dir */
-                dir = 4;
-            
-        }
-
-        base_state = dir*(NUM_ANIMATIONS(op)/25); 
-    }
-    
     /* If beyond drawable states, reset */
     if (op->state>=max_state) op->state=0;
 
@@ -272,7 +203,7 @@ void animate_object(object *op, int count) {
     }
 #endif
     if(op->more)
-	animate_object(op->more, count);
+	animate_object(op->more);
     /* update_object will also recursively update all the pieces.
      * as such, we call it last, and only call it for the head
      * piece, and not for the other tail pieces.

@@ -889,6 +889,13 @@ void process_events (mapstruct *map)
    it comes to the animation. If we have a value on this we don't animate it
    at speed-events. */
 
+    if (op->anim_speed && op->last_anim >= op->anim_speed) {
+      animate_object (op);
+      op->last_anim = 1;
+    } else {
+      op->last_anim++;
+    }
+
     if (op->speed_left > 0) {
       --op->speed_left;
       process_object (op);
@@ -896,30 +903,6 @@ void process_events (mapstruct *map)
         continue;
     }
 
-    if (op->anim_speed && op->last_anim >= op->anim_speed) {
-        animate_object (op,1);
-
-        /* let reset move & fight anims */
-        if (NUM_FACINGS(op)==25 && op->type == PLAYER) /* check for direction changing */
-        {
-            if(op->anim_moving_dir != -1)
-            {
-                op->anim_last_facing = op->anim_moving_dir;
-                op->anim_moving_dir = -1;
-            }
-            if(op->anim_enemy_dir != -1)
-            {
-                op->anim_last_facing = op->anim_enemy_dir;
-                op->anim_enemy_dir = -1;
-            }
-        }
-        op->last_anim = 1;
-    } else {
-        if (NUM_FACINGS(op)==25) /* check for direction changing */
-            animate_object (op,0);        
-        op->last_anim++;
-    }
-    
 #ifdef CASTING_TIME
     if (op->casting > 0)
       op->casting--;

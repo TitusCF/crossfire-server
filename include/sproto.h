@@ -473,7 +473,7 @@ int check_pick(object *op);
 object *find_arrow(object *op, char *type);
 void fire(object *op, int dir);
 object *find_key(object *pl, object *container, object *door);
-int move_player_attack(object *op, int dir);
+void move_player_attack(object *op, int dir);
 int move_player(object *op, int dir);
 int handle_newcs_player(object *op);
 int save_life(object *op);
