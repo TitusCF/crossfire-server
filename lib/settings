@@ -31,6 +31,7 @@ metaserver_comment Put a comment here.
 # worldmaptilesizey 50
 # dynamiclevel 0
 # fastclock 0
+# dm_mail your_email@addr.here
 not_permadeth true
 resurrection false
 set_title true
@@ -38,3 +39,8 @@ search_items true
 spell_encumbrance true
 spell_failure_effects false
 casting_time false
+motd motd
+real_wiz true
+recycle_tmp_maps false
+spellpoint_level_depend true
+explore_mode false
