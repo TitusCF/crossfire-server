@@ -3633,28 +3633,29 @@ void move_peacemaker(object *op) {
   char buf[MAX_BUF];
   for(tmp=get_map_ob(op->map,op->x,op->y);tmp!=NULL;tmp=tmp->above) {
     int atk_lev, def_lev;
-
-    if(!QUERY_FLAG(tmp,FLAG_MONSTER)) continue;
-    if(QUERY_FLAG(tmp,FLAG_UNAGGRESSIVE)) continue;
-    if(tmp->stats.exp == 0) continue;
-    def_lev = MAX(1,tmp->level);
+    object *victim=tmp;
+    if(tmp->head) victim=tmp->head;
+    if(!QUERY_FLAG(victim,FLAG_MONSTER)) continue;
+    if(QUERY_FLAG(victim,FLAG_UNAGGRESSIVE)) continue;
+    if(victim->stats.exp == 0) continue;
+    def_lev = MAX(1,victim->level);
     atk_lev = MAX(1,op->level);
     if(RANDOM() % atk_lev > def_lev) {
 
       /* make this sucker peaceful. */
-      tmp->stats.dam = 0;
-      add_exp(op->owner,tmp->stats.exp);
-      tmp->stats.exp=0;
-      tmp->stats.sp = 0;
-      tmp->stats.grace = 0;
-      tmp->stats.Pow = 0;
-      tmp->move_type = RANDO2;
-      SET_FLAG(tmp,FLAG_UNAGGRESSIVE);
-      SET_FLAG(tmp,FLAG_RUN_AWAY);
-      SET_FLAG(tmp,FLAG_RANDOM_MOVE);
-      CLEAR_FLAG(tmp,FLAG_MONSTER);
-      if(tmp->name) {
-	sprintf(buf,"%s no longer feels like fighting.",tmp->name);
+      victim->stats.dam = 0;
+      add_exp(op->owner,victim->stats.exp);
+      victim->stats.exp=0;
+      victim->stats.sp = 0;
+      victim->stats.grace = 0;
+      victim->stats.Pow = 0;
+      victim->move_type = RANDO2;
+      SET_FLAG(victim,FLAG_UNAGGRESSIVE);
+      SET_FLAG(victim,FLAG_RUN_AWAY);
+      SET_FLAG(victim,FLAG_RANDOM_MOVE);
+      CLEAR_FLAG(victim,FLAG_MONSTER);
+      if(victim->name) {
+	sprintf(buf,"%s no longer feels like fighting.",victim->name);
 	new_draw_info(NDI_UNIQUE,0,op->owner,buf);
       }
     }
