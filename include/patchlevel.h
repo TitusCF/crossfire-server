@@ -1,5 +1,5 @@
 #ifdef MAKE
-#define PatchLevel .3
+#define PatchLevel .4
 #else
-#define PATCH ".3"
+#define PATCH ".4"
 #endif

@@ -118,107 +118,107 @@
 \indexentry{experience, categories}{16}
 \indexentry{level, overall}{16}
 \indexentry{level}{16}
-\indexentry{stats, secondary}{17}
-\indexentry{level, overall}{17}
-\indexentry{Wc}{17}
-\indexentry{stats, Wc}{17}
+\indexentry{stats, secondary}{16}
+\indexentry{level, overall}{16}
+\indexentry{Wc}{16}
+\indexentry{stats, Wc}{16}
 \indexentry{thaco}{17}
 \indexentry{stats, weapon speed}{17}
 \indexentry{weapon speed}{17}
 \indexentry{weapon factor}{17}
 \indexentry{stats, Dam}{17}
 \indexentry{damage}{17}
-\indexentry{stats, Ac}{18}
-\indexentry{Ac}{18}
-\indexentry{level, overall}{18}
+\indexentry{stats, Ac}{17}
+\indexentry{Ac}{17}
+\indexentry{level, overall}{17}
 \indexentry{hit points}{18}
 \indexentry{stats, Hp}{18}
 \indexentry{mana}{18}
 \indexentry{stats, mana}{18}
-\indexentry{stats, grace}{19}
-\indexentry{grace}{19}
+\indexentry{stats, grace}{18}
+\indexentry{grace}{18}
 \indexentry{meta-command}{19}
 \indexentry{commands, meta}{19}
 \indexentry{binding}{19}
 \indexentry{unbinding}{19}
 \indexentry{commands, bind}{19}
 \indexentry{commands, unbind}{19}
-\indexentry{picking up items}{20}
-\indexentry{commands, pickup}{20}
+\indexentry{picking up items}{19}
+\indexentry{commands, pickup}{19}
 \indexentry{commands, invoke}{20}
 \indexentry{commands, shout}{20}
 \indexentry{commands, who}{20}
 \indexentry{commands, tell}{20}
 \indexentry{party system}{20}
 \indexentry{commands, party}{20}
-\indexentry{magic}{22}
-\indexentry{magic, system}{22}
-\indexentry{\wizardry\}{22}
-\indexentry{\divinemagic\}{22}
-\indexentry{spells}{22}
-\indexentry{prayers}{22}
-\indexentry{\incantation s}{22}
-\indexentry{encumbrance}{22}
-\indexentry{spells, how to learn}{22}
-\indexentry{spells}{22}
-\indexentry{magic, paths}{23}
-\indexentry{magic, paths}{23}
-\indexentry{cults}{24}
-\indexentry{altars}{24}
-\indexentry{gods}{24}
-\indexentry{\divinemagic\}{24}
-\indexentry{magic, gods}{24}
-\indexentry{gods, worship}{24}
-\indexentry{cults}{24}
-\indexentry{prayers}{25}
-\indexentry{alchemy}{26}
-\indexentry{magic, alchemy}{26}
-\indexentry{\wizardry\}{26}
-\indexentry{magic, rune}{26}
-\indexentry{\wizardry\}{26}
-\indexentry{runes}{26}
-\indexentry{runes, types}{27}
-\indexentry{runes, disarming}{27}
-\indexentry{runes, usage}{27}
-\indexentry{skills}{29}
-\indexentry{experience}{29}
-\indexentry{skills, description}{29}
-\indexentry{skills, gaining experience}{29}
-\indexentry{experience}{29}
+\indexentry{magic}{21}
+\indexentry{magic, system}{21}
+\indexentry{\wizardry\}{21}
+\indexentry{\divinemagic\}{21}
+\indexentry{spells}{21}
+\indexentry{prayers}{21}
+\indexentry{\incantation s}{21}
+\indexentry{encumbrance}{21}
+\indexentry{spells, how to learn}{21}
+\indexentry{spells}{21}
+\indexentry{magic, paths}{22}
+\indexentry{magic, paths}{22}
+\indexentry{cults}{23}
+\indexentry{altars}{23}
+\indexentry{gods}{23}
+\indexentry{\divinemagic\}{23}
+\indexentry{magic, gods}{23}
+\indexentry{gods, worship}{23}
+\indexentry{cults}{23}
+\indexentry{prayers}{24}
+\indexentry{alchemy}{25}
+\indexentry{magic, alchemy}{25}
+\indexentry{\wizardry\}{25}
+\indexentry{magic, rune}{25}
+\indexentry{\wizardry\}{25}
+\indexentry{runes}{25}
+\indexentry{runes, types}{26}
+\indexentry{runes, disarming}{26}
+\indexentry{runes, usage}{26}
+\indexentry{skills}{28}
+\indexentry{experience}{28}
+\indexentry{skills, description}{28}
+\indexentry{skills, gaining experience}{28}
+\indexentry{experience}{28}
+\indexentry{skills, associated}{28}
+\indexentry{skills, miscellaneous}{28}
+\indexentry{skills, restrictions}{28}
+\indexentry{skills, list}{29}
 \indexentry{skills, associated}{29}
+\indexentry{experience, categories}{29}
 \indexentry{skills, miscellaneous}{29}
-\indexentry{skills, restrictions}{29}
-\indexentry{skills, list}{30}
-\indexentry{skills, associated}{30}
-\indexentry{experience, categories}{30}
-\indexentry{skills, miscellaneous}{30}
-\indexentry{skills, stat multipliers}{31}
-\indexentry{skills, how to use}{32}
-\indexentry{skills, learning}{33}
-\indexentry{skills, tools}{33}
-\indexentry{equipment, value}{34}
-\indexentry{shopping}{34}
-\indexentry{gems}{34}
-\indexentry{stealing from shops}{34}
-\indexentry{books}{34}
-\indexentry{scrolls}{35}
-\indexentry{potions}{35}
-\indexentry{wands}{35}
-\indexentry{rods}{35}
-\indexentry{horns}{35}
-\indexentry{rings}{35}
-\indexentry{food}{35}
-\indexentry{flesh}{35}
-\indexentry{armour}{36}
+\indexentry{skills, stat multipliers}{30}
+\indexentry{skills, how to use}{31}
+\indexentry{skills, learning}{32}
+\indexentry{skills, tools}{32}
+\indexentry{equipment, value}{33}
+\indexentry{shopping}{33}
+\indexentry{gems}{33}
+\indexentry{stealing from shops}{33}
+\indexentry{books}{33}
+\indexentry{scrolls}{34}
+\indexentry{potions}{34}
+\indexentry{wands}{34}
+\indexentry{rods}{34}
+\indexentry{horns}{34}
+\indexentry{rings}{34}
+\indexentry{food}{34}
+\indexentry{flesh}{34}
+\indexentry{armour}{35}
+\indexentry{weapons}{35}
+\indexentry{artifacts}{35}
+\indexentry{equipment, encumbrance}{35}
+\indexentry{encumbrance}{35}
+\indexentry{equipment, magic}{35}
+\indexentry{enchantment, armour}{35}
+\indexentry{armour}{35}
+\indexentry{enchantment, weapons}{36}
 \indexentry{weapons}{36}
-\indexentry{artifacts}{36}
-\indexentry{equipment, encumbrance}{36}
-\indexentry{encumbrance}{36}
-\indexentry{equipment, magic}{36}
-\indexentry{enchantment, armour}{36}
-\indexentry{armour}{36}
-\indexentry{enchantment, weapons}{37}
-\indexentry{weapons}{37}
-\indexentry{beginning players}{38}
-\indexentry{skills, description}{42}
-\indexentry{gods, description}{45}
+\indexentry{beginning players}{37}
+\indexentry{skills, description}{41}
+\indexentry{gods, description}{44}

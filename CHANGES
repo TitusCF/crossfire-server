@@ -6,7 +6,10 @@ Change for 0.95.4:
 
 Add better comment in config.h about the DM_MAIL option - msw.
 
-Fixed doc/spoiler/Makefile.in so it works with autoconf setup.
+Fixed and doc/playbook/Makefile.in doc/spoiler/Makefile.in so it works with
+autoconf setup.
+
+Updated to properly generated handbook.ps when needed - msw
 
 doc/crossfire.doc: Updated with disease code notes, detector notes.
 

@@ -29,8 +29,8 @@ VPATH = @srcdir@
 srcdir = @srcdir@
 
 SRCS = \
-	arch.c\
 	anim.c \
+	arch.c\
 	button.c\
 	exp.c\
 	friend.c\
