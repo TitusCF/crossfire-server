@@ -650,7 +650,7 @@ mapstruct *get_empty_map(int sizex, int sizey) {
 
 static int load_map_header(FILE *fp, mapstruct *m)
 {
-    char buf[HUGE_BUF], msgbuf[HUGE_BUF], *key, *value, *end;
+    char buf[HUGE_BUF], msgbuf[HUGE_BUF], *key=NULL, *value, *end;
     int msgpos=0;
 
     while (fgets(buf, HUGE_BUF-1, fp)!=NULL) {
@@ -704,7 +704,7 @@ static int load_map_header(FILE *fp, mapstruct *m)
 	     */
 	    if (msgpos != 0)
 		m->msg = strdup_local(msgbuf);
-	} 
+	}
 	/* first strcmp value on these are old names supported
 	 * for compatibility reasons.  The new values (second) are
 	 * what really should be used.
@@ -802,7 +802,7 @@ static int load_map_header(FILE *fp, mapstruct *m)
 	    LOG(llevError,"Got unknown value in map header: %s %s\n", key, value);
 	}
     }
-    if (strcmp(key,"end")) {
+    if (!key || strcmp(key,"end")) {
 	LOG(llevError,"Got premature eof on map header!\n");
 	return 1;
     }

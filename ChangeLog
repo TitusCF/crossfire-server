@@ -17,6 +17,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+common/map.c: Add extra check to make sure variable is set before calling
+   strcmp - this can happen if the map file that is being loaded is
+   0 bytes - without this, the server would crash.
+MSW 2004-08-23
+
+
 server/disease.c: fix crash when casting diseases on tiled maps.
 server/move.c: fix problem with multi-tile monsters and pass thru walls.
 server/spell_effect.c: fix magic walls sometimes appearing in wrong place.
