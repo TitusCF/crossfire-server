@@ -12,7 +12,27 @@
 default_smoothed.111 sdefault.001
 
 # Data extracted from arch files
+blake_0.111 empty_S.111
+blake_1.111 empty_S.111
+blake_2.111 empty_S.111
+blake_3.111 empty_S.111
+blake_4.111 empty_S.111
+blake_5.111 empty_S.111
+blake_6.111 empty_S.111
+blake_7.111 empty_S.111
+blake_8.111 empty_S.111
+blake_9.111 empty_S.111
+blake_A.111 empty_S.111
+blake_B.111 empty_S.111
+blake_C.111 empty_S.111
+blake_D.111 empty_S.111
+blake_E.111 empty_S.111
+blake_F.111 empty_S.111
 brush.111 grass_S.111
+deep_sea.111 deep_sea_S.111
+deep_sea.112 deep_sea_S.112
+deep_sea.113 deep_sea_S.113
+deep_sea.114 deep_sea_S.114
 desert.111 desert_S.111
 dunes.111 dunes_S.111
 evergreens.111 empty_S.111
@@ -22,8 +42,8 @@ grasspond.111 grass_S.111
 hills.111 hills_S.111
 hillsrocky.111 hillsrocky_S.111
 hole1.111 grass_S.111
-jungle_1.111 empty_S.111
-jungle_2.111 empty_S.111
+jungle_1.111 jungle_S.111
+jungle_2.111 jungle_S.111
 lava.111 lava_S.111
 lava.112 lava_S.112
 lava.113 lava_S.113
@@ -36,6 +56,7 @@ mountain1.111 mountain_S.111
 mountain2.111 mountain_S.111
 mountain4.111 mountain_S.111
 mountain5.111 mountain_S.111
+pstone.111 pstone_1_S.111
 sea.111 sea_S.111
 sea.112 sea_S.112
 sea.113 sea_S.113
@@ -45,10 +66,11 @@ shallow_sea.112 shallow_sea_S.112
 shallow_sea.113 shallow_sea_S.113
 shallow_sea.114 shallow_sea_S.114
 steppe.111 steppe_S.111
+swamp.111 swamp_S.111
 tree_1.111 grass_S.111
 tree_2.111 grass_S.111
 treed_hills.111 hills_S.111
 woods_1.111 grass_S.111
-woods_2.111 grass_S.111
+woods_2.111 woods_2_S.111
 woods_3.111 grass_S.111
 woods_4.111 grass_S.111
