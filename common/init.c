@@ -249,7 +249,7 @@ void init_clocks()
     else
         has_been_done = 1;
 
-    sprintf(filename, "%s/clockdata", settings.datadir);
+    sprintf(filename, "%s/clockdata", settings.localdir);
     LOG(llevDebug, "Reading clockdata from %s...", filename);
     if ((fp = fopen(filename, "r")) == NULL) {
         LOG(llevError, "Can't open %s.\n", filename);
