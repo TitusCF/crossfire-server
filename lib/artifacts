@@ -1455,6 +1455,7 @@ face ring.117
 type 70
 value 250
 sp 2
+material 256
 Int 2
 Pow 2
 resist_magic 30
@@ -1472,6 +1473,7 @@ type 70
 value 450
 sp 2
 Int 2
+material 256
 Pow 2
 resist_magic 30
 resist_fire 20
@@ -1488,6 +1490,7 @@ face ring.117
 type 70
 value 450
 sp 3
+material 256
 Int 3
 Pow 2
 resist_magic 30
@@ -1504,6 +1507,7 @@ face ring.117
 type 70
 value 550
 sp 3
+material 256
 Int 3
 Pow 3
 resist_magic 30
@@ -1536,6 +1540,7 @@ endmsg
 food 2
 stealth 1
 ac 6
+material 256
 resist_magic 40
 resist_ghosthit -100
 path_attuned 606
@@ -1562,6 +1567,7 @@ face ring.117
 type 70
 value 50
 Cha -1
+material 256
 path_attuned 131072
 path_repelled 256
 Wis 1
@@ -1579,6 +1585,7 @@ face ring.117
 type 70
 value 50
 Cha 1
+material 256
 path_attuned 256
 path_repelled 131072
 Wis 1
@@ -1598,6 +1605,7 @@ Cha 1
 path_attuned 65536
 path_repelled 64
 Wis 1
+material 256
 Pow 1
 grace 1
 end
@@ -1613,6 +1621,7 @@ value 250
 Cha 1
 path_attuned 65664
 Wis 2
+material 256
 Pow 1
 grace 2
 end
@@ -1625,6 +1634,7 @@ difficulty 6
 Object the Demon Priest
 face ring.117
 type 70
+material 256
 value 250
 Cha -2
 path_attuned 131136
@@ -1644,6 +1654,7 @@ difficulty 6
 Object Benevolence
 face ring.117
 type 70
+material 256
 value 250
 Cha 2
 path_attuned 257
@@ -1668,6 +1679,7 @@ Object the Crusade
 face ring.117
 type 70
 value 250
+material 256
 Cha 2
 path_attuned 65664
 Wis 2
@@ -1685,6 +1697,7 @@ Object the Death Priest
 face ring.117
 type 70
 value 400
+material 256
 Cha -3
 path_attuned 393280
 path_repelled 256
@@ -1704,6 +1717,7 @@ chance 1
 Object the Saint
 face ring.117
 type 70
+material 256
 value 400
 Cha 3
 path_attuned 65665
@@ -1733,6 +1747,7 @@ resist_drain 100
 resist_deplete 100
 Wis 3
 Pow 3
+material 256
 grace 3
 end
 #
@@ -1744,6 +1759,7 @@ face ring.117
 type 70
 value 25
 resist_acid 30
+material 256
 resist_physical 20
 msg
   This elemental ring is one of those 
@@ -2421,6 +2437,7 @@ chance 100
 difficulty 6
 Object Empowerment
 face amulet_lif.111
+material 256
 type 39
 value 40
 sp 2
@@ -2460,6 +2477,7 @@ chance 10
 difficulty 10
 Object Aethereality
 face amulet_lif.111
+material 256
 type 39
 value 3000
 resist_physical 50
@@ -2471,6 +2489,7 @@ difficulty 10
 Object Power
 type 39
 face amulet_lif.111
+material 256
 sp 7
 value 4000
 end
@@ -2482,6 +2501,7 @@ Object Deflection
 reflect_spell 1
 face amulet_lif.111
 reflect_missile 1
+material 256
 ac 2
 resist_physical 30
 type 39
@@ -2494,6 +2514,7 @@ difficulty 7
 Object the Shielded Mind
 face amulet_lif.111
 type 39
+material 256
 resist_confusion 100
 resist_paralyze 100
 resist_fear 100
@@ -2506,6 +2527,7 @@ difficulty 5
 Object Free Action
 face amulet_lif.111
 type 39
+material 256
 value 300
 resist_slow 100
 resist_paralyze 100
@@ -2519,6 +2541,7 @@ difficulty 9
 Object the Magi
 face amulet_lif.111
 type 39
+material 256
 sp 5
 Int 2
 Pow 2
@@ -2533,6 +2556,7 @@ difficulty 9
 Object Holiness
 face amulet_lif.111
 type 39
+material 256
 Wis 3
 value 300
 path_attuned 385
@@ -2558,6 +2582,7 @@ Object Destruction
 face amulet_lif.111
 type 39
 value 800
+material 256
 path_repelled 256
 path_attuned 542
 path_denied 2048
@@ -2970,6 +2995,7 @@ Allowed talisman
 chance 50
 Object Fire
 type 43
+material 256
 value 3
 path_attuned 2
 path_repelled 4
@@ -2979,6 +3005,7 @@ Allowed talisman
 chance 50
 Object Frost
 type 43
+material 256
 value 3
 path_attuned 4
 path_repelled 2
@@ -2988,6 +3015,7 @@ Allowed talisman
 chance 80
 Object Missiles
 type 43
+material 256
 value 5
 path_attuned 16
 end
@@ -2996,6 +3024,7 @@ Allowed talisman
 chance 40
 Object Unified Mind
 type 43
+material 256
 value 7
 path_attuned 1056
 Int 3
@@ -3006,6 +3035,7 @@ chance 20
 difficulty 10
 Object Evocation
 type 43
+material 256
 value 9
 path_attuned 6208
 end
@@ -3015,6 +3045,7 @@ chance 20
 difficulty 10
 Object Elements
 type 43
+material 256
 value 9
 path_attuned 14
 end
@@ -3024,6 +3055,7 @@ chance 3
 difficulty 13
 Object Wizardry
 type 43
+material 256
 value 25
 path_attuned 28286
 Pow 1
@@ -3036,6 +3068,7 @@ chance 80
 difficulty 5
 Object Probity
 type 43
+material 256
 value 5
 path_attuned 257
 path_repelled 128
@@ -3047,6 +3080,7 @@ chance 10
 difficulty 5
 Object Great Virtue
 type 43
+material 256
 value 25
 path_attuned 8640
 Wis 2
@@ -3057,6 +3091,7 @@ chance 10
 difficulty 5
 Object The Dark Path
 type 43
+material 256
 value 25
 path_attuned 393216
 path_denied 256
@@ -3067,6 +3102,7 @@ chance 10
 difficulty 5
 Object Turning
 type 43
+material 256
 value 25
 path_attuned 65536
 end
@@ -3076,6 +3112,7 @@ chance 50
 difficulty 5
 Object Calling
 type 43
+material 256
 value 5
 path_attuned 64
 path_repelled 256
