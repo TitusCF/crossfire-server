@@ -17,6 +17,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 CVS changes since last release:
 
+include/config.h: Add NO_POLYMORPH feature selection
+include/spellist.h: If NO_POLYMORPH is set, make it so that polymorph will
+   not show up in wands/rods
+server/spell_util.c: Handling for NO_POLYMORPH selection
+MSW 2001-05-11
+
 server/rune.c: Make sure rune message is newline terminated.  Fix map
 corruption problem.  MSW 2001-05-10
 

@@ -564,7 +564,16 @@ if (item == spellNormal && !ability ){
     success = cast_speedball(op,dir,type);
     break;
   case SP_POLYMORPH:
-    success = 0; /*cast_polymorph(op,dir); */
+#ifdef NO_POLYMORPH
+    /* Not great, but at least provide feedback so if players do have
+     * polymorph (ie, find it as a preset item or left over from before
+     * it was disabled), they get some feedback.
+     */
+    new_draw_info(NDI_UNIQUE, 0,op,"The spell fizzles");
+    success = 0;
+#else
+    success = 0 = cast_polymorph(op,dir);
+#endif
     break;
   case SP_CHARGING:
     success = recharge(op);
