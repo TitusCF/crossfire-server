@@ -1154,7 +1154,10 @@ int hit_player(object *op,int dam, object *hitter, int type) {
 	owner=get_owner(hitter);
 	if(owner==NULL)
 	    owner=hitter;
-
+	
+	/* is the victim (op) standing on battleground? */
+	if (op_on_battleground(op, NULL, NULL)) battleg=1;
+	
 	/* Player killed something */
 	if(owner->type==PLAYER) {
 	    Log_Kill(owner->name,
@@ -1180,12 +1183,12 @@ int hit_player(object *op,int dam, object *hitter, int type) {
 		new_draw_info(NDI_BLACK, 0,owner,buf);
 	    }/* message should be displayed */
 
-	    if(op->type == PLAYER && hitter != op)
-		 change_luck(hitter, -1);
+	    /* If a player kills another player with melee, not on
+               battleground, the "killer" looses 1 luck. Since this is
+               not reversible, it's actually quite a pain IMHO. -AV */ 
+	    if(op->type == PLAYER && hitter != op && !battleg)
+	      change_luck(hitter, -1);
 	} /* was a player that hit this creature */
-	
-	/* is the victim (op) standing on battleground? */
-	if (op_on_battleground(op, NULL, NULL)) battleg=1;
 	
 	/* Pet killed something. */
 	if(get_owner(hitter)!=NULL) {
