@@ -17,6 +17,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 CVS changes since last release:
 
+MSW 2000/12/5:
+common/button.c: Do not set path_attuned when loading connected objects from within
+the editor.  This is normally done for random map code/glue logic.
+common/player.c: When trying to find a skill to use, use a native skill
+first before going off and returning a skill object like a talisman.
+
 MSW 2000/12/4:
 common/treasure.c: Make it so resistances from artifact files are absolute 
 	adjustments.
