@@ -127,7 +127,7 @@ int find_spot_for_submap(mapstruct *map,char **layout,int *ix, int *iy,int xsize
       for(l=i;l<i + xsize;l++)
         for(m=j;m<j + ysize;m++)
           if(layout[l][m]=='C' || layout[l][m]=='>' || layout[l][m]=='<')
-            is_occupied=1;
+            is_occupied|=1;
     }
   }
   if(is_occupied) return 0;
