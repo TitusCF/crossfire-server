@@ -620,7 +620,7 @@ static PyObject* CFGetValue(PyObject* self, PyObject* args)
 
     CHECK_OBJ(whoptr);
 
-    return Py_BuildValue("i",WHO->value);
+    return Py_BuildValue("l",WHO->value);
 };
 
 /*****************************************************************************/
@@ -1320,10 +1320,10 @@ static PyObject* CFGetFirstObjectOnSquare(PyObject* self, PyObject* args)
 static PyObject* CFSetQuantity(PyObject* self, PyObject* args)
 {
     long whatptr;
-    uint32 value;
+    long value;
     int val = UP_OBJ_CHANGE;
 
-    if (!PyArg_ParseTuple(args,"li",&whatptr,&value))
+    if (!PyArg_ParseTuple(args,"ll",&whatptr,&value))
         return NULL;
 
     CHECK_OBJ(whatptr);
@@ -1624,7 +1624,7 @@ static PyObject* CFGetExperience(PyObject* self, PyObject* args)
 
     CHECK_OBJ(whoptr);
 
-    return Py_BuildValue("l",WHO->stats.exp);
+    return Py_BuildValue("L",WHO->stats.exp);
 };
 
 /*****************************************************************************/
