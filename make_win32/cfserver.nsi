@@ -1,7 +1,7 @@
 !include "MUI.nsh"
 
 ;Title Of Your Application
-Name "Crossfire Server (snapshot 2005-01-08)"
+Name "Crossfire Server 1.7.0"
 
 ;Do A CRC Check
 CRCCheck On
@@ -87,6 +87,8 @@ Section "Crossfire Server (required)" cf
 SectionEnd
 
 Section "Python plugin" py
+  SetOutPath $INSTDIR
+  File "c:\winnt\system32\python24.dll"
   SetOutPath $INSTDIR\share\plugins
   File "plugin_python\ReleaseLog\plugin_python.dll"
 SectionEnd
@@ -107,6 +109,7 @@ Section "un.Crossfire Server" un_cf
   SectionIn RO
   ;Delete Files
   Delete "$INSTDIR\crossfire32.exe"
+  Delete "$INSTDIR\python24.dll"
   Delete "$INSTDIR\Changelog.rtf"
   Delete "$INSTDIR\Share\plugins\python21.dll"
   Delete "$INSTDIR\Release_notes.txt"

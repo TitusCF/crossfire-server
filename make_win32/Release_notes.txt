@@ -1,15 +1,13 @@
-Release notes for Crossfire Server (Windows), January, 8th, 2005
+Release notes for Crossfire Server (Windows), January, 27th, 2005
 ----------------------------------------------------------------
 
-This is version 1.6.1 (snapshot) of the server.
+This is official version 1.7.0 of the server.
 
-Warning: this is not an official version, just a snapshot from current CVS.
-This snapshot is to let Windows users who can't compile from source benefit
-some new CVS stuff without waiting for next official release.
-
-The version means that it's a snapshot made after the official 1.6.1 release.
-Thus this version is at least equivalent to the 1.6.1 one.
-
+--------------------------------------------------------------
+For complete changes, see the Changelog file included with the software. Major
+changes since last release: Numerous bug fixes, including fixing some compile problems
+on some systems. DM improvements. New objects. All in all, there isn't any really major
+changes, but lots of minor ones.
 --------------------------------------------------------------
 
 Once you have installed the server, you MUST download a map set.
