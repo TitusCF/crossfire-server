@@ -1012,6 +1012,8 @@ int command_save (object *op, char *params)
 {
     if (blocks_cleric(op->map, op->x, op->y)) {
 	new_draw_info(NDI_UNIQUE, 0, op, "You can not save on unholy ground");
+    } else if (!op->stats.exp) {
+	new_draw_info(NDI_UNIQUE, 0, op, "You don't deserve to save yet.");
     } else {
 	if(save_player(op,1))
 	    new_draw_info(NDI_UNIQUE, 0,op,"You have been saved.");

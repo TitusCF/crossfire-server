@@ -284,6 +284,8 @@ int save_player(object *op, int flag) {
   sint16 backup_x, backup_y;
 #endif
 
+  if (!op->stats.exp) return 0;	/* no experience, no save */
+
   flag&=1;
 
   if(!pl->name_changed||(!flag&&!op->stats.exp)) {
