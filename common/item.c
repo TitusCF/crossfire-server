@@ -92,13 +92,13 @@ static char levelnumbers_10[11][20] = {
   "seventieth","eightieth","ninetieth"
 };
 
-
+/*
 materialtype material[NROFMATERIALS] = {
-  /*  		  P  M  F  E  C  C  A  D  W  G  P S P T F  C D D C C G H B  I *
+  *  		  P  M  F  E  C  C  A  D  W  G  P S P T F  C D D C C G H B  I *
    *		  H  A  I  L  O  O  C  R  E  H  O L A U E  A E E H O O O L  N *
    *		  Y  G  R  E  L  N  I  A  A  O  I O R R A  N P A A U D L I  T *
    *		  S  I  E  C  D  F  D  I  P  S  S W A N R  C L T O N   Y N  R *
-   *		  I  C     T     U     N  O  T  O   L      E E H S T P   D  N */
+   *		  I  C     T     U     N  O  T  O   L      E E H S T P   D  N *
   {"paper", 	{15,10,17, 9, 5, 7,13, 0,20,15, 0,0,0,0,0,10,0,0,0,0,0,0,0,0}},
   {"metal", 	{ 2,12, 3,12, 2,10, 7, 0,20,15, 0,0,0,0,0,10,0,0,0,0,0,0,0,0}},
   {"glass", 	{14,11, 8, 3,10, 5, 1, 0,20,15, 0,0,0,0,0, 0,0,0,0,0,0,0,0,0}},
@@ -113,7 +113,7 @@ materialtype material[NROFMATERIALS] = {
   {"bone", 	{10, 9, 4, 5, 3,10,10, 0,20,15, 0,0,0,0,0, 2,0,0,0,0,0,0,0,0}},
   {"ice", 	{14,11,16, 5, 0, 5, 6, 0,20,15, 0,0,0,0,0, 7,0,0,0,0,0,0,0,0}}
 };
-
+*/
 
 /* This curve may be too steep.  But the point is that there should
  * be tough choices - there is no real point to this if everyone can

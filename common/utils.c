@@ -198,3 +198,66 @@ void decay_objects(mapstruct *m)
 		}
 	    }
 }
+
+/* convert materialname to materialtype_t */
+
+materialtype_t *name_to_material(char *name)
+{
+    materialtype_t *mt;
+
+    for (mt = materialt; mt != NULL && mt->next != NULL; mt=mt->next) {
+	if (strcmp(name, mt->name) == 0)
+	    break;
+    }
+    return mt;
+}
+
+/* set the materialname and type for an item */
+void set_materialname(object *op, int difficulty)
+{
+    materialtype_t *mt, *lmt;
+    char tmpbuf[MAX_BUF];
+    int j;
+
+    if (op->materialname != NULL)
+	return;
+    if (op->name == NULL || op->name_pl == NULL)
+	return;
+
+    lmt = NULL;
+    for (mt = materialt; mt != NULL && mt->next != NULL; mt=mt->next) {
+	if (op->material & mt->material && rndm(1, 100) <= mt->chance &&
+	    difficulty >= mt->difficulty &&
+	    (op->magic >= mt->magic || mt->magic == 0))
+	    lmt = mt;
+    }
+    if (lmt != NULL) {
+	if (op->stats.dam && IS_WEAPON(op)) {
+	    op->stats.dam += lmt->damage;
+	    if (op->stats.dam < 1)
+		op->stats.dam = 1;
+	}
+	if (op->stats.sp && op->type == BOW)
+	    op->stats.sp += lmt->sp;
+	if (op->stats.wc && IS_WEAPON(op))
+	    op->stats.wc += lmt->wc;
+	if (IS_ARMOR(op)) {
+	    op->stats.ac += lmt->ac;
+	    for (j=0; j < NROFATTACKS; j++)
+		if (op->resist[j] != 0)
+		    op->resist[j] += lmt->mod[j];
+	}
+	op->materialname = add_string(lmt->name);
+	/* dont make it unstackable if it doesn't need to be */
+	if (IS_WEAPON(op) || IS_ARMOR(op)) {
+	    op->weight = (op->weight * lmt->weight)/100;
+	    op->value = (op->value * lmt->value)/100;
+	    sprintf(tmpbuf, "%s %s", lmt->description, op->name);
+	    free_string(op->name);
+	    op->name = add_string(tmpbuf);
+	    sprintf(tmpbuf, "%s %s", lmt->description, op->name_pl);
+	    free_string(op->name_pl);
+	    op->name_pl = add_string(tmpbuf);
+	}
+    }
+}

@@ -1095,15 +1095,9 @@ void examine(object *op, object *tmp) {
     if(buf[0]!='\0')
 	new_draw_info(NDI_UNIQUE, 0,op,buf);
 
-    if(tmp->material && !tmp->msg) {
-	strcpy(buf,"It is made of: ");
-	for(i=0; i < NROFMATERIALS; i++) {
-	  if(tmp->material & (1<<i)) {
-	    strcat(buf, material[i].name);
-	    strcat(buf, " ");
-	  }
-	}
-	new_draw_info(NDI_UNIQUE, 0,op,buf);
+    if(tmp->materialname != NULL && !tmp->msg) {
+	sprintf(buf, "It is made of: %s.", tmp->materialname);
+	new_draw_info(NDI_UNIQUE, 0, op, buf);
     }
     /* Where to wear this item */
     for (i=0; i < NUM_BODY_LOCATIONS; i++) {

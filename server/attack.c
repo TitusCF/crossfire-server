@@ -47,42 +47,51 @@ typedef struct att_msg_str {
  * any further action (like destroying the item).
  */
 
-int did_make_save_item(object *op, int type,object *originator) {
-    int i, saves=0,materials=0,number;
+int did_make_save_item(object *op, int type, object *originator) {
+    int i, roll, saves=0, attacks=0, number;
+    materialtype_t *mt;
 
-    if(type&AT_CANCELLATION)
-	number=ATNR_CANCELLATION;
-    else if(type&AT_COLD)
-	number=ATNR_COLD;
-    else if(type&AT_ELECTRICITY)
-	number=ATNR_ELECTRICITY;
-    else if(type&AT_FIRE)
-	number=ATNR_FIRE;
-    else if(type&AT_PHYSICAL)
-	number=ATNR_PHYSICAL;
-  /* If we are hite by pure magic, the item can get destroyed.
-   * But if hit by AT_MAGIC | AT_CONFUSION, it should have no effect.
-   */
-    else if(type==AT_MAGIC) /* Only pure magic, not paralyze, etc */
-	number=ATNR_MAGIC;
-    else return 1;
+    if (op->materialname == NULL) {
+        for (mt = materialt; mt != NULL && mt->next != NULL; mt=mt->next) {
+            if (op->material & mt->material)
+                break;
+        }
+    } else
+        mt = name_to_material(op->materialname);
+    if (mt == NULL)
+	return TRUE;
+    roll = rndm(1, 20);
 
-    /* If the object is immune, no effect */
-    if (op->resist[number]==100) return 1;
-  
+    /* the attacktypes have no meaning for object saves */
+    type = type & ~(AT_CONFUSION|AT_DRAIN|AT_GHOSTHIT|AT_POISON|AT_SLOW|
+		    AT_PARALYZE|AT_TURN_UNDEAD|AT_FEAR|AT_DEPLETE|AT_DEATH|
+		    AT_COUNTERSPELL|AT_HOLYWORD|AT_BLIND|AT_LIFE_STEALING);
 
-    for(i=0;i<NROFMATERIALS;i++) {
-	if(op->material&(1<<i)) {
-	    materials++;
-	    if(rndm(1, 20)>=material[i].save[number]-op->magic-op->resist[number]/100)
-		saves++;
-	    /* if the attack is too weak */
-	    if((20-material[i].save[number])/3 > originator->stats.dam) saves++;
-	}
+    if (type == 0)
+	return TRUE;
+    if (roll == 20)
+	return TRUE;
+    if (roll == 1)
+	return FALSE;
+
+    for (number=0; number < NROFATTACKS; i++) {
+	i = 1<<number;
+	if (!(i&type))
+	    continue;
+	attacks++;
+	if (op->resist[number] == 100)
+	    saves++;
+	else if (roll >= mt->save[number] - op->magic - op->resist[number]/100)
+	    saves++;
+	else if ((20-mt->save[number])/3 > originator->stats.dam)
+	    saves++;
     }
-    if (saves==materials || materials==0) return 1;
-    if ((saves==0) || (rndm(1, materials) > saves)) return 0;
-    return 1;
+
+    if (saves==attacks || attacks==0)
+	return TRUE;
+    if ((saves==0) || (rndm(1, attacks) > saves))
+	return FALSE;
+    return TRUE;
 }
 
 /* This function calls did_make_save_item.  It then performs the
@@ -273,7 +282,7 @@ int hit_map(object *op,int dir,int type) {
       retflag |=1;
       if (was_destroyed (op, op_tag))
         break;
-    } else if (tmp->material && op->stats.dam > 0) {
+    } else if ((tmp->material || tmp->materialname) && op->stats.dam > 0) {
       save_throw_object(tmp,type,op);
       if (was_destroyed (op, op_tag))
         break;

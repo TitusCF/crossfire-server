@@ -1232,7 +1232,7 @@ void move_apply (object *trap, object *victim, object *originator)
   case BALL_LIGHTNING:
     if (QUERY_FLAG (victim, FLAG_ALIVE))
       hit_player (victim, trap->stats.dam, trap, trap->attacktype);
-    else if (victim->material)
+    else if (victim->material || victim->materialname)
       save_throw_object (victim, trap->attacktype, trap);
     goto leave;
 

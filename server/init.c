@@ -193,6 +193,122 @@ static void parse_args(int argc, char *argv[], int pass)
     }
 }
 
+materialtype_t *materialt;
+
+static materialtype_t *get_empty_mat() {
+    materialtype_t *mt;
+    int i;
+
+    mt = (materialtype_t *)malloc(sizeof(materialtype_t));
+    if (mt == NULL)
+	fatal(OUT_OF_MEMORY);
+    mt->name = NULL;
+    mt->description = NULL;
+    for (i=0; i < NROFATTACKS; i++) {
+	mt->save[i] = 0;
+	mt->mod[i] = 0;
+    }
+    mt->chance = 0;
+    mt->difficulty = 0;
+    mt->magic = 0;
+    mt->damage = 0;
+    mt->wc = 0;
+    mt->ac = 0;
+    mt->sp = 0;
+    mt->weight = 100;
+    mt->value = 100;
+    mt->next = NULL;
+    return mt;
+}
+
+static void load_materials()
+{
+    char buf[MAX_BUF], filename[MAX_BUF], *cp, *next;
+    FILE *fp;
+    materialtype_t *mt;
+    int i, value;
+
+    sprintf(filename, "%s/materials", settings.datadir);
+    LOG(llevDebug, "Reading material type data from %s...", filename);
+    if ((fp = fopen(filename, "r")) == NULL) {
+        LOG(llevError, "Cannot open %s for reading\n", filename);
+        mt = get_empty_mat();
+        mt->next = NULL;
+        materialt = mt;
+        return;
+    }
+    mt = get_empty_mat();
+    materialt = mt;
+    while (fgets(buf, MAX_BUF, fp) != NULL) {
+	if (*buf=='#')
+	    continue;
+	if ((cp=strchr(buf, '\n'))!=NULL)
+	    *cp='\0';
+	cp=buf;
+	while(*cp==' ') /* Skip blanks */
+	    cp++;
+	if (!strncmp(cp, "name", 4)) {
+	    /* clean up the previous entry */
+	    if (mt->next != NULL) {
+		if (mt->description == NULL)
+		    mt->description = add_string(mt->name);
+		mt = mt->next;
+	    }
+	    mt->next = get_empty_mat();
+	    mt->name = add_string(strchr(cp, ' ') + 1);
+	} else if (!strncmp(cp, "description", 11)) {
+	    mt->description = add_string(strchr(cp, ' ') + 1);
+	} else if (sscanf(cp, "material %d", &value)) {
+	    mt->material = value;
+	} else if (!strncmp(cp, "saves", 5)) {
+	    cp = strchr(cp, ' ') + 1;
+	    for (i=0; i < NROFATTACKS; i++) {
+		if (cp == NULL) {
+		    mt->save[i] = 0;
+		    continue;
+		}
+		if ((next=strchr(cp,',')) != NULL)
+		    *(next++) = '\0';
+		sscanf(cp, "%hd", &mt->save[i]);
+		cp = next;
+	    }
+	} else if (!strncmp(cp, "mods", 4)) {
+	    	cp = strchr(cp, ' ') + 1;
+		for (i=0; i < NROFATTACKS; i++) {
+		    if (cp == NULL) {
+			mt->save[i] = 0;
+			continue;
+		    }
+		    if ((next=strchr(cp,',')) != NULL)
+			*(next++) = '\0';
+		    sscanf(cp, "%hd", &mt->mod[i]);
+		    cp = next;
+		}
+	} else if (sscanf(cp, "chance %d\n", &value)) {
+	    mt->chance = (sint8)value;
+	} else if (sscanf(cp, "diff %d\n", &value)) {
+	    mt->difficulty = (sint8)value;
+	} else if (sscanf(cp, "magic %d\n", &value)) {
+	    mt->magic = (sint8)value;
+	} else if (sscanf(cp, "damage %d\n", &value)) {
+	    mt->damage= (sint8)value;
+	} else if (sscanf(cp, "wc %d\n", &value)) {
+	    mt->wc = (sint8)value;
+	} else if (sscanf(cp, "ac %d\n", &value)) {
+	    mt->ac = (sint8)value;
+	} else if (sscanf(cp, "sp %d\n", &value)) {
+	    mt->sp = (sint8)value;
+	} else if (sscanf(cp, "weight %d\n", &value)) {
+	    mt->weight = value;
+	} else if (sscanf(cp, "value %d\n", &value)) {
+	    mt->value = value;
+	}
+    }
+    mt->next = NULL;
+    LOG(llevDebug, "Done.\n");
+    fclose(fp);
+}
+
 /* This loads the settings file.  There could be debate whether this should
  * be here or in the common directory - but since only the server needs this
  * information, having it here probably makes more sense.
@@ -491,7 +607,8 @@ void init(int argc, char **argv) {
     init_library();	/* Must be called early */
     load_settings();	/* Load the settings file */
     init_weather();
-	read_supplydb();	/* read the supply and demand database */
+    read_supplydb();    /* read the supply and demand database */
+    load_materials();
     parse_args(argc, argv, 2);
     fprintf(logfile,"Welcome to CrossFire, v%s\n",VERSION);
     fprintf(logfile,"Copyright (C) 1994 Mark Wedel.\n");

@@ -776,7 +776,11 @@ void fix_generated_item (object *op, object *creator, int difficulty,
 	 */
 	op->item_power = save_item_power;
     }
-	
+
+    /* materialtype modifications.  Note we allow this on artifacts. */
+
+    set_materialname(op, difficulty);
+
     if (!op->title) /* Only modify object if not special */
 	switch(op->type) {
 	    case WEAPON:

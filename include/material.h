@@ -46,12 +46,34 @@
 #define M_BONE			2048
 #define M_ICE			4096
 
+/*
 typedef struct {
-  char	*name;
-  sint8	 save[NROFATTACKS];
+  char  *name;
+  sint8  save[NROFATTACKS];
 } materialtype;
 
 EXTERN materialtype material[NROFMATERIALS];
+*/
+
+typedef struct _materialtype {
+    char	*name;
+	char 	*description;
+    int		material;
+    sint8	save[NROFATTACKS];
+    sint8	mod[NROFATTACKS];
+    sint8	chance;
+    sint8	difficulty;
+    sint8	magic;
+    sint8	damage;
+    sint8	wc;
+    sint8	ac;
+	sint8	sp;
+    int		weight;
+    int		value;
+    struct _materialtype *next;
+} materialtype_t;
+
+EXTERN materialtype_t *materialt;
 
 /* The data is initialized in common/item.c */
 

@@ -2249,6 +2249,7 @@ void kill_player(object *op)
 	        op->contr->killer);
 	tmp->msg=add_string(buf);
 	tmp->value=0, tmp->material=0, tmp->type=0;
+	tmp->materialname = NULL;
 	tmp->x = op->x, tmp->y = op->y;
 	insert_ob_in_map(tmp,op->map,op,0);
       }

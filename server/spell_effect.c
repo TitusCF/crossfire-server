@@ -3447,6 +3447,7 @@ int animate_weapon(object *op,object *caster,int dir, archetype *at, int spellnu
     sint16 x, y;
     int magic;
     mapstruct *m;
+    materialtype_t *mt;
  
     if(!at){
 	new_draw_info(NDI_UNIQUE, 0,op,"Oops, program error!");
@@ -3567,19 +3568,18 @@ int animate_weapon(object *op,object *caster,int dir, archetype *at, int spellnu
     if ( ! tmp->attacktype)
 	tmp->attacktype = AT_PHYSICAL;
 
-    for(i=0; i<NROFMATERIALS; i++)
-	for(j=0; j<NROFATTACKS; j++)
-	    if(weapon->material & (1<<i)) {
-		/* There was code here to try to even out the saving
-		 * throws.  This is probably not ideal, but works
-		 * for the time being.
-		 */
-		if(material[i].save[j] < 3)
-		    tmp->resist[j] = 40;
-		else if(material[i].save[j] > 14) 
-		    tmp->resist[j] = -50;
-	    }
-
+    mt = NULL;
+    if (op->materialname != NULL)
+	mt = name_to_material(op->materialname);
+    if (mt != NULL) {
+	for (i=0; i < NROFATTACKS; i++)
+	    tmp->resist[i] = 50 - (mt->save[i] * 5);
+	a = mt->save[0];
+    } else {
+	for (i=0; i < NROFATTACKS; i++)
+	    tmp->resist[i] = 5;
+	a = 10;
+    }
     /* Set weapon's immunity */
     tmp->resist[ATNR_CONFUSION] = 100;
     tmp->resist[ATNR_POISON] = 100;
@@ -3592,11 +3592,6 @@ int animate_weapon(object *op,object *caster,int dir, archetype *at, int spellnu
     tmp->resist[ATNR_BLIND] = 100;
 
     /* Improve weapon's armour value according to best save vs. physical of its material */
-    for(a=0,i=0; i<NROFMATERIALS; i++) {
-	if(weapon->material & (1<<i) && material[i].save[0] > a) {
-	    a = material[i].save[0];
-	}
-    }
 
     tmp->resist[ATNR_PHYSICAL] = 100 - (int)((100.0-(float)tmp->resist[ATNR_PHYSICAL])/(30.0-2.0*(a>14?14.0:(float)a)));
 /*    LOG (llevDebug, "animate_weapon: slaying %s\n", tmp->slaying ? tmp->slaying : "nothing"); */

@@ -200,22 +200,29 @@ void attempt_do_alchemy(object *caster, object *cauldron) {
 int content_recipe_value (object *op) {
   char name[MAX_BUF];
   object *tmp=op->inv;
-  int tval=0,formula=0;
+  int tval=0, formula=0;
 
     while(tmp) {
 	tval=0;
-        strcpy(name,tmp->name);
-        if(tmp->title) sprintf(name,"%s %s",tmp->name,tmp->title);
-        tval = (strtoint(name) * (tmp->nrof?tmp->nrof:1));
+        strcpy(name, tmp->name);
+        if (tmp->title)
+	    sprintf(name, "%s %s", tmp->name, tmp->title);
+	/* strip the materialname out of the name, so alchemy works */
+	if (tmp->materialname && !strncmp(tmp->materialname, tmp->name,
+					 strlen(tmp->materialname))) {
+	    tval = ((strtoint(name) - strtoint(tmp->materialname) -
+		strtoint(" ")) * (tmp->nrof?tmp->nrof:1));
+	} else
+	    tval = (strtoint(name) * (tmp->nrof?tmp->nrof:1));
 #ifdef ALCHEMY_DEBUG
-        LOG(llevDebug,"Got ingredient %d %s(%d)\n",tmp->nrof?tmp->nrof:1,
-		name,tval);
+        LOG(llevDebug,"Got ingredient %d %s(%d)\n", tmp->nrof?tmp->nrof:1,
+		name, tval);
 #endif   
 	formula += tval;
         tmp=tmp->below;
     }   
 #ifdef ALCHEMY_DEBUG
-    LOG(llevDebug," Formula value=%d\n",formula);
+    LOG(llevDebug, " Formula value=%d\n", formula);
 #endif
     return formula;
 }
@@ -419,6 +426,7 @@ void alchemy_failure_effect(object *op,object *cauldron,recipe *rp,int danger) {
         tmp->weight=weight;
         tmp->value=0;
 	tmp->material=material;
+	tmp->materialname = add_string("stone");
 	free_string(tmp->name);
 	tmp->name=add_string("slag");
 	if (tmp->name_pl) free_string(tmp->name_pl);

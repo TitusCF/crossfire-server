@@ -126,6 +126,14 @@ static void check_loaded_object(object *op) {
     }
     if (!op->name_pl) op->name_pl = add_string(op->name);
 
+    /* objects now have a materialname.  try to patch it in */
+    if (!(IS_WEAPON(op) && op->level > 0)) {
+        if (op->map != NULL)
+            set_materialname(op, op->map->difficulty);
+        else
+            set_materialname(op, 5);
+    }
+
     /* We changed last_heal to gen_sp_armour, which is what it
      * really does for many objects.  Need to catch any in maps
      * that may have an old value.
@@ -330,6 +338,13 @@ A	.+
 ^direction{S}	op->direction = IVAL;
 ^type{S}	op->type = IVAL;
 ^material{S}	op->material = IVAL;
+^materialname{S}    {	char *yv=yval();
+			if (*yv=='\0')
+			    LOG(llevError,"Materialname without val\n");
+			else
+			    FREE_AND_COPY(op->materialname, yv);
+		    }
+
 ^value{S}	op->value = IVAL;
 ^weight{S}	op->weight = atol(yval());
 ^carrying{S}	op->carrying = atol(yval());
@@ -1472,6 +1487,10 @@ char *get_ob_diff(object *op,object *op2) {/* I plan to optimize this heavily */
     save_long(buf, "path_denied", op->path_denied);
   if(op->material!=op2->material)
     save_long(buf, "material", op->material);
+  if(op->materialname && op->materialname!=op2->materialname) {
+    sprintf(buf2,"materialname %s\n",op->materialname);
+    strcat(buf,buf2);
+  }
   if(op->value!=op2->value)
     save_long(buf, "value", op->value);
   if(op->carrying!=op2->carrying)

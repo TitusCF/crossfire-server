@@ -530,6 +530,8 @@ void clear_object(object *op) {
 	free_string(op->slaying);
     if(op->msg!=NULL)
 	free_string(op->msg);
+    if (op->materialname != NULL)
+	free_string(op->materialname);
 
     /* Using this memset is a lot easier (and probably faster)
      * than explicitly clearing the fields.
@@ -583,6 +585,8 @@ void copy_object(object *op2, object *op) {
     free_string(op->slaying);
   if(op->msg!=NULL)
     free_string(op->msg);
+  if (op->materialname != NULL)
+      free_string(op->materialname);
   (void) memcpy((void *)((char *) op +offsetof(object,name)),
                 (void *)((char *) op2+offsetof(object,name)),
                 sizeof(object)-offsetof(object, name));
@@ -602,6 +606,8 @@ void copy_object(object *op2, object *op) {
     add_refcount(op->slaying);
   if(op->msg!=NULL)
     add_refcount(op->msg);
+  if (op->materialname != NULL)
+      add_refcount(op->materialname);
   if((op2->speed<0) && !editor)
     op->speed_left=op2->speed_left-RANDOM()%200/100.0;
   update_ob_speed(op);
@@ -676,6 +682,7 @@ object *get_object() {
   op->race=NULL;
   op->slaying=NULL;
   op->msg=NULL;
+  op->materialname=NULL;
   op->next=objects;
   op->prev=NULL;
   op->active_next = NULL;
@@ -974,6 +981,7 @@ void free_object(object *ob) {
     if(ob->race!=NULL) FREE_AND_CLEAR_STR(ob->race);
     if(ob->slaying!=NULL) FREE_AND_CLEAR_STR(ob->slaying);
     if(ob->msg!=NULL) FREE_AND_CLEAR_STR(ob->msg);
+    if(ob->materialname!=NULL) FREE_AND_CLEAR_STR(ob->materialname);
 
 #if 0 /* MEMORY_DEBUG*/
     /* This is a nice idea.  Unfortunately, a lot of the code in crossfire
