@@ -500,7 +500,7 @@ end
 #
 treasureone beholder_parts
   arch beholdereye
-    chance 90
+    chance 70
   more
 #  arch tentacle
 #    nrof 2
@@ -508,6 +508,9 @@ treasureone beholder_parts
 #  more
   arch tongue
     chance 10
+   more
+  arch brain
+    chance 3
   end
 treasureone skull_parts
   arch tooth
@@ -535,9 +538,19 @@ treasureone troll_parts
   more
   arch liver
     chance 15
+  more
+  arch brain
+    chance 3
+  end
+treasureone behemoth_parts
+  arch heart
+    chance 5
+  more
+  arch hide_black
+    chance 10
   end
 treasureone wolf_parts
-  arch wolf_pelt
+  arch hide_grey
     chance 50
   more
   arch liver
@@ -547,7 +560,7 @@ treasureone wolf_parts
    chance 15
   end
 treasureone bear_parts
-  arch bearskin
+  arch hide_brown
     chance 50
   more
   arch liver
@@ -557,7 +570,7 @@ treasureone bear_parts
     chance 10
   end
 treasureone dwolf_parts
-  arch dwolf_pelt
+  arch hide_white
      chance 25
   more
   arch liver
@@ -567,7 +580,7 @@ treasureone dwolf_parts
      chance 10
   end
 treasureone polarbear_parts
-  arch pbearskin
+  arch hide_white
      chance 25
   more
   arch liver
@@ -583,18 +596,27 @@ treasureone giantrat_parts
  arch heart
     chance 10
  more
- arch grat_pelt
+ arch hide_brown
     chance 10
  end
 treasureone ape_parts
  arch liver
-    chance 20
+    chance 30
  more
  arch heart
-    chance 10
+    chance 20
  more
  arch tooth
+   chance 10
+ more
+ arch hand
     chance 10
+  more
+  arch hide_brown
+    chance 10
+ more
+ arch brain
+    chance 5
  end
 # gnoll/giant parts
 treasureone giant_parts
@@ -615,6 +637,9 @@ treasureone giant_parts
   more
   arch liver
     chance 8
+  more
+  arch brain
+    chance 3
   end
 # orc/goblin parts
 treasureone goblin_parts
@@ -659,6 +684,9 @@ treasureone big_dragon_parts
   more
   arch heart
     chance 10
+  more
+  arch brain
+    chance 1
   end
 # more appropriate for wyvern/baby dragon
 treasureone dragon_parts
@@ -673,6 +701,9 @@ treasureone dragon_parts
   more
   arch dragon_scale 
     chance 5
+  more
+  arch brain
+    chance 1
   end
 # human/man-sized body parts
 treasureone human_parts
@@ -710,6 +741,9 @@ treasureone human_parts
     chance 3
   more
   arch skin
+    chance 1
+  more
+  arch brain
     chance 1
   end
 #
@@ -2891,7 +2925,7 @@ treasure xan
     chance 10
   end
 treasure giant_bat
-  arch dragon_wing
+  arch bat_wing
     chance 10
   end
 treasure pixie
@@ -5165,6 +5199,9 @@ treasure skeletalmage
   more
   arch ability_frostbolt
     chance 67
+end
+treasure behemoth
+  list behemoth_parts
 end
 #
 treasureone sheep
