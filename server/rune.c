@@ -192,10 +192,11 @@ void rune_attack(object *op,object *victim)
 	 /*  if there's a disease in the needle, put it in the player */
 	 if(op->randomitems!=NULL) create_treasure(op->randomitems,op,GT_INVENTORY,
 		(victim->map?victim->map->difficulty:1),0);
-	 if(op->inv) {
+	 if(op->inv && op->inv->type == DISEASE) {
 		object *disease=op->inv;
-		remove_ob(op->inv);
-		insert_ob_in_ob(disease,victim);
+		infect_object(victim, disease, 1);
+		remove_ob(disease);
+		free_object(disease);
 	 }
     }
     else  hit_map(op,0,op->attacktype);

@@ -140,38 +140,53 @@ inventory.  They themselves do nothing, except modify Symptoms, or
 spread to other live objects.  Symptoms are what actually damage the player:
 these are their own object. */
 
+/* check if victim is susceptible to disease. */
+static int is_susceptible_to_disease(object *victim, object *disease)
+{
+  if(strstr(disease->race, "*") && !QUERY_FLAG(victim, FLAG_UNDEAD))
+    return 1;
+  if(strstr(disease->race, "undead") && QUERY_FLAG(victim, FLAG_UNDEAD))
+    return 1;
+  if((victim->race && strstr(disease->race, victim->race)) || 
+     strstr(disease->race, victim->name))
+    return 1;
+  return 0;
+}
+
 int move_disease(object *disease) {
 
 /*  first task is to determine if the disease is inside or outside of someone.
 If outside, we decrement 'hp' until we're gone. */
 
   if(disease->env==NULL) { /* we're outside of someone */
-	 disease->value--;
-	 if(disease->value==0) {
-		remove_ob(disease);
-		free_object(disease);
-		return 1;
-	 }
-  }
-
-  /* if we're inside a person, have the disease run its course */
-  /* negative foods denote "perpetual" diseases. */
-  if(disease->stats.food>0 && disease->env!=NULL) {
-	 disease->stats.food--;
-	 if(disease->stats.food==0) {
-		remove_symptoms(disease);  /* remove the symptoms of this disease */
-		grant_immunity(disease);
-		remove_ob(disease);
-		free_object(disease);
-		return 1;
-	 }
+    disease->value--;
+    if(disease->value==0) {
+      remove_ob(disease);
+      free_object(disease);
+      return 1;
+    }
+  } else {
+    /* if we're inside a person, have the disease run its course */
+    /* negative foods denote "perpetual" diseases. */
+    if(disease->stats.food>0 && is_susceptible_to_disease(disease->env, disease)) {
+      disease->stats.food--;
+      if(disease->stats.food==0) {
+	remove_symptoms(disease);  /* remove the symptoms of this disease */
+	grant_immunity(disease);
+	remove_ob(disease);
+	free_object(disease);
+	return 1;
+      }
+    }
   }
 
   /*  check to see if we infect others */
   check_infection(disease);
 
   /* impose or modify the symptoms of the disease */
-  do_symptoms(disease);
+  if(disease->env)
+    do_symptoms(disease);
+
   return 0;
 }
 
@@ -216,7 +231,7 @@ int check_infection(object *disease) {
 	 for(j=y-range;j<y+range;j++) {
 		if(!out_of_map(map,i,j))
 		  for(tmp=get_map_ob(map,i,j);tmp;tmp=tmp->above) {
-			 infect_object(tmp,disease);
+			 infect_object(tmp,disease,0);
 		  }
 	 }
   }
@@ -230,7 +245,7 @@ int check_infection(object *disease) {
 	 dead objects aren't infectable.
 	 undead objects are infectible only if specifically named.
 */
-int infect_object(object *victim, object *disease) {
+int infect_object(object *victim, object *disease, int force) {
   object *tmp;
   object *new_disease;
 
@@ -239,20 +254,10 @@ int infect_object(object *victim, object *disease) {
 
   /* check and see if victim can catch disease:  diseases
 	  are specific */
-
-  if(strstr(disease->race,"*")) {	 /* disease affects everyone */
-	 if(QUERY_FLAG(victim,FLAG_UNDEAD) && !strstr(disease->race,"undead"))
-		return 0;  /* victim is undead and hence immune, since not specifically named*/
-	 
-  }
-  else
-	 {
-		if(!strstr(victim->race,disease->race) && !(strstr(victim->name,disease->race)))  /* Victim's not listed */
-		  return 0;
-	 }
+  if(!is_susceptible_to_disease(victim, disease)) return 0;
 
   /* roll the dice on infection before doing the inventory check!  */
-  if(RANDOM() % 127 >= disease->stats.wc) return 0;
+  if(!force && (RANDOM() % 127 >= disease->stats.wc)) return 0;
 
   /* do an immunity check */
   if(victim->head) tmp = victim->head->inv;
@@ -281,7 +286,10 @@ int infect_object(object *victim, object *disease) {
   if(disease->owner && disease->owner->type==PLAYER) {
 	 char buf[128];
 	 sprintf(buf,"You infect %s with your disease, %s!",victim->name,disease->name);
-	 new_draw_info(NDI_UNIQUE,4,disease->owner,buf);
+	 if(victim->type == PLAYER)
+	   new_draw_info(NDI_UNIQUE | NDI_RED, 0, disease->owner, buf);
+	 else
+	   new_draw_info(0, 4, disease->owner, buf);
   }
   if(victim->type==PLAYER) 
 	 new_draw_info(NDI_UNIQUE | NDI_RED,0,victim,"You suddenly feel ill.");
@@ -311,15 +319,7 @@ int do_symptoms(object *disease) {
 		object *new_symptom;
 		/* first check and see if the carrier of the disease
 			is immune.  If so, no symptoms!  */
-		if(strstr(disease->race,"*")) {	 /* disease affects everyone */
-		  if(QUERY_FLAG(victim,FLAG_UNDEAD) && !strstr(disease->race,"undead"))
-			 return 0;/* victim is undead and hence immune,since not specifically named*/
-		}
-		else
-		  {
-			 if(!strstr(victim->race,disease->race))  /* Victim's not listed */
-				return 0;
-		  }
+		if(!is_susceptible_to_disease(victim, disease)) return 0;
 		
 		new_symptom = get_archetype("symptom");
 		new_symptom->stats.dam = disease->stats.dam; 
@@ -451,7 +451,7 @@ int check_physically_infect(object *victim, object *hitter) {
   object *walk;
   /* search for diseases, give every disease a chance to infect */
   for(walk=hitter->inv;walk!=NULL;walk=walk->below) 
-	 if(walk->type==DISEASE) infect_object(victim,walk);
+	 if(walk->type==DISEASE) infect_object(victim,walk,0);
   return 1;
 }
 

@@ -3436,7 +3436,7 @@ int cast_cause_disease(object *op, object *caster, int dir, archetype *disease_a
 			 disease->stats.sp -= SP_level_dam_adjust(op,caster,type);
 		  
 
-		  if(infect_object(walk,disease)) {
+		  if(infect_object(walk,disease,1)) {
 			 char buf[128];
 			 object *flash;  /* visual effect for inflicting disease */
 			 sprintf(buf,"You inflict %s on %s!",disease->name,walk->name);
