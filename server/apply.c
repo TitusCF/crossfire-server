@@ -1810,8 +1810,7 @@ static void apply_food (object *op, object *tmp)
       op->stats.hp=op->stats.maxhp;
     else {
       /* check if this is a dragon (player), eating some flesh */
-      if (tmp->type==FLESH && strcmp(op->race, "dragon")==0
-	  && dragon_eat_flesh(op, tmp))
+      if (tmp->type==FLESH && is_dragon_pl(op) && dragon_eat_flesh(op, tmp))
 	;
       else {
 	/* usual case - no dragon meal: */
@@ -1825,7 +1824,7 @@ static void apply_food (object *op, object *tmp)
 	if(!QUERY_FLAG(tmp, FLAG_CURSED)) {
 	  char buf[MAX_BUF];
 	  
-	  if (strcmp(op->race, "dragon")!=0) {
+	  if (!is_dragon_pl(op)) {
 	    /* eating message for normal players*/
 	    if(tmp->type==DRINK)
 	      sprintf(buf,"Ahhh...that %s tasted good.",tmp->name);
@@ -1887,7 +1886,7 @@ int dragon_eat_flesh(object *op, object *meal) {
   int MAXLEVEL = 110;
   
   /* let's make sure and doublecheck the parameters */
-  if (op->type!=PLAYER || meal->type!=FLESH || strcmp(op->race, "dragon")!=0)
+  if (meal->type!=FLESH || !is_dragon_pl(op))
     return 0;
   
   /* now grab the 'dragon_skin'- and 'dragon_ability'-forces

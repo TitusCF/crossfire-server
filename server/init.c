@@ -727,7 +727,7 @@ void setup_library() {
 /*  set_init_blocksview_players(init_blocksview_players); */
   set_info_map(new_info_map);
   set_set_darkness_map(set_darkness_map);
-
+  set_dragon_gain_func(dragon_ability_gain);
 }
 
 /* init_races() - reads the races file in the lib/ directory, then

@@ -807,7 +807,7 @@ char *describe_item(object *op) {
       QUERY_FLAG(op,FLAG_MONSTER)) {
     
       /* describe attacktypes */
-      if (op->type == PLAYER && strcmp(op->race, "dragon")==0) {
+      if (is_dragon_pl(op)) {
 	/* for dragon players display the attacktypes from clawing skill */
 	object *tmp;
 	

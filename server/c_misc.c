@@ -977,7 +977,7 @@ int command_title (object *op, char *params)
     char buf[MAX_BUF];
     
     /* dragon players cannot change titles */
-    if (op != NULL && op->type == PLAYER && strcmp(op->race, "dragon")==0) {
+    if (is_dragon_pl(op)) {
         new_draw_info(NDI_UNIQUE, 0, op, "Dragons cannot change titles.");
         return 1;
     }

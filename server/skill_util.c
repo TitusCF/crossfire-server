@@ -1367,7 +1367,7 @@ int do_skill_attack(object *tmp, object *op, char *string) {
 	    object *tmp2=NULL;
 	    
 	    /* dragons always use "clawing" hth skill per default */
-	    if (!strcmp(op->race ,"dragon")) {
+	    if (is_dragon_pl(op)) {
 	        for(tmp2=op->inv;tmp2;tmp2=tmp2->below)
 		    if(tmp2->type==SKILL 
 		       && !strcmp("skill_clawing", tmp2->arch->name)) {

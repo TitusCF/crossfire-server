@@ -1050,7 +1050,7 @@ void examine(object *op, object *tmp) {
     else {
         /* Only quetzals can see the resistances on flesh. To realize
 	   this, we temporarily flag the flesh with SEE_INVISIBLE */
-        if (op->type == PLAYER && tmp->type == FLESH && strcmp(op->race, "dragon") == 0)
+        if (op->type == PLAYER && tmp->type == FLESH && is_dragon_pl(op))
 	    SET_FLAG(tmp, FLAG_SEE_INVISIBLE);
 	
         strcpy(buf,"That is ");

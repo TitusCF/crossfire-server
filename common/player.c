@@ -180,3 +180,14 @@ int atnr_is_dragon_enabled(int attacknr) {
     return 1;
   return 0;
 }
+
+/*
+ * returns true if the adressed object 'ob' is a player
+ * of the dragon race.
+ */
+int is_dragon_pl(object* op) {
+  if (op != NULL && op->type == PLAYER && op->race != NULL
+      && strcmp(op->race, "dragon")==0)
+    return 1;
+  return 0;
+}

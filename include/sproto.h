@@ -495,6 +495,8 @@ int stand_near_hostile(object *who);
 int player_can_view(object *pl, object *op);
 int action_makes_visible(object *op);
 int op_on_battleground(object *op, int *x, int *y);
+int atnr_is_dragon_enabled(int attacknr);
+int is_dragon_pl(object* ob);
 /* plugins.c */
 CommArray_s *find_plugin_command(char *cmd, object *op);
 void displayPluginsList(object *op);
@@ -803,7 +805,6 @@ void move_player_mover(object *op);
 void move_creator(object *op);
 void move_marker(object *op);
 int process_object(object *op);
-int atnr_is_dragon_enabled(int attacknr);
 void dragon_ability_gain(object *who, int atnr, int level);
 /* timers.c */
 void cftimer_process_timers(void);

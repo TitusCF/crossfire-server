@@ -1563,7 +1563,6 @@ void dragon_level_gain(object *who) {
     
     if (abil->resist[abil->stats.exp]>0 && abil->resist[abil->stats.exp]%5 == 0) {
       /* time to hand out a new ability-gift */
-      
       (*dragon_gain_func)(who, abil->stats.exp,
 			       (int)((1+abil->resist[abil->stats.exp])/5.));
     }
@@ -1598,8 +1597,7 @@ void player_lvl_adj(object *who, object *op) {
     if(op->level < MAXLEVEL && op->stats.exp >= level_exp(op->level+1,op->expmul)) {
 	op->level++;
 	
-	if (op != NULL && op == who && op->stats.exp > 1 &&
-	    op->type == PLAYER && strcmp(op->race, "dragon")==0)
+	if (op != NULL && op == who && op->stats.exp > 1 && is_dragon_pl(who))
 	  dragon_level_gain(who);
 	
 	if(who && (who->level < 11) && op->type!=EXPERIENCE) { 
