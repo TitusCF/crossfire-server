@@ -704,16 +704,19 @@ void roll_stats(object *op) {
     op->contr->orig_stats.Wis=op->stats.Wis;
     op->contr->orig_stats.Pow=op->stats.Pow;
     op->contr->orig_stats.Cha=op->stats.Cha;
-    op->stats.hp= -10000;
-    op->level=0;
+
+    op->level=1;
     op->stats.exp=0;
-    op->stats.sp=0;
-    op->stats.grace=0;
     op->stats.ac=0;
-    player_lvl_adj(op, NULL);
-    op->stats.sp=op->stats.maxsp;
-    op->stats.hp=op->stats.maxhp;
-    op->stats.grace=0;
+
+    op->contr->levhp[1] = 9;
+    op->contr->levsp[1] = 6;
+    op->contr->levgrace[1] = 3;
+
+    fix_player(op);
+    op->stats.hp = op->stats.maxhp;
+    op->stats.sp = op->stats.maxsp;
+    op->stats.grace = op->stats.maxgrace;
     op->contr->orig_stats=op->stats;
 }
 
@@ -751,16 +754,21 @@ void Swap_Stat(object *op,int Swap_Second)
     op->stats.Wis = op->contr->orig_stats.Wis;
     op->stats.Pow = op->contr->orig_stats.Pow;
     op->stats.Cha = op->contr->orig_stats.Cha;
-    op->stats.hp= -10000;
-    op->level=0;
-    op->stats.exp=1;
-    op->stats.sp=0;
-    op->stats.grace=0;
     op->stats.ac=0;
-    player_lvl_adj(op,NULL);
-    op->stats.sp=op->stats.maxsp;
-    op->stats.grace=0;
-    op->stats.hp=op->stats.maxhp;
+
+    op->level=1;
+    op->stats.exp=0;
+    op->stats.ac=0;
+
+    op->contr->levhp[1] = 9;
+    op->contr->levsp[1] = 6;
+    op->contr->levgrace[1] = 3;
+
+    fix_player(op);
+    op->stats.hp = op->stats.maxhp;
+    op->stats.sp = op->stats.maxsp;
+    op->stats.grace = op->stats.maxgrace;
+    op->contr->orig_stats=op->stats;
     op->contr->Swap_First=-1;
 }
 

@@ -17,6 +17,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/player.c: Have players start at max hp/grace/sp.
+MSW 2003-04-14
+
 server/c_range.c: Add check to make sure we are actually removing a
    golem and that the object hasn't been freed/recycled and the
    player not updated.  Fixes crashes.
