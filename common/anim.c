@@ -180,7 +180,7 @@ void animate_object(object *op) {
     }
     else if (NUM_FACINGS(op)==8) {
 	if (dir==0) base_state=0;
-	else base_state = (dir-1)*(NUM_ANIMATIONS(op)/4); 
+	else base_state = (dir-1)*(NUM_ANIMATIONS(op)/8);
     }
 
     /* If beyond drawable states, reset */
@@ -204,6 +204,7 @@ void animate_object(object *op) {
 #endif
     if(op->more)
 	animate_object(op->more);
+
     /* update_object will also recursively update all the pieces.
      * as such, we call it last, and only call it for the head
      * piece, and not for the other tail pieces.

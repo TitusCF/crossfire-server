@@ -17,6 +17,16 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+common/anim.c: Fix for 8 way facing animations.
+lib/treasures: Add sheep treasures
+lib/* (rest) - rebuilt
+server/spell_effect.c: Fix up counterspell - mainly fix a bug in that if
+   counterspell hit a multipart magic that used magic as an attacktype,
+   it would also crash.  However, code also woudln't work properly on
+   tiled maps, and I'm dubious if it would work properly if there was more
+   than one effect on a space.
+MSW 2003-02-23
+
 server/skills.c: Fix jump so that it updates the clients map properly.
 server/spell_effect.c: insert town portals below the player so it
    works better with apply.

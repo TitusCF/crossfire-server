@@ -2819,59 +2819,72 @@ int drain_magic(object *op,int dir) {
 
 void counterspell(object *op,int dir)
 {
-    object *tmp;
-    int nflag=0;
+    object *tmp, *head, *next;
+    int mflags;
+    mapstruct *m;
+    sint16  sx,sy;
+
+    sx = op->x + freearr_x[dir];
+    sy = op->y+freearr_y[dir];
+    m = op->map;
+    mflags = get_map_flags(m, &m, sx, sy, &sx, &sy);
+    if (mflags & P_OUT_OF_MAP) return;
     
-    for(tmp=get_map_ob(op->map,op->x+freearr_x[dir],op->y+freearr_y[dir]); tmp!=NULL; tmp=tmp->above,nflag=0)
-    {	  
-	/* Basially, if the object is magical and not counterspell, 
-	 * we will more or less remove the object.  Changed in 0.94.3
-	 * so that we don't kill monsters with this (some monsters attacktype
-	 * has magic in it).
-         */
+    for(tmp=get_map_ob(m,sx,sy); tmp!=NULL; tmp=next) {
+	next = tmp->above;
+
+	/* Need to look at the head object - otherwise, if tmp
+	 * points to a monster, we don't have all the necessary
+	 * info for it.
+	 */
+	if (tmp->head) head = tmp->head;
+	else head = tmp;
+
        /* don't attack our own spells */
        if(tmp->owner && tmp->owner == op->owner) continue;
 
-	if(tmp->material==0 && tmp->attacktype&AT_MAGIC &&
-	   !(tmp->attacktype&AT_COUNTERSPELL) && 
-	   !QUERY_FLAG(tmp,FLAG_MONSTER))
-		nflag=1;
+	/* Basically, if the object is magical and not counterspell, 
+	 * we will more or less remove the object.  Don't counterspell
+	 * monsters either.  Not sure what the material==0 is for,
+	 * since some pickable objects don't have a material.
+	 * I really wonder if it would just be better to let
+	 * that head->type catch everything.
+         */
 
-	else switch(tmp->type) {
-	    case CONE: case FBALL: case LIGHTNING:
-	    case FBULLET: case MMISSILE: case SPEEDBALL:
-	    case BOMB: case POISONCLOUD: case CANCELLATION:
+	if(head->material==0 && head->attacktype&AT_MAGIC &&
+	   !(head->attacktype&AT_COUNTERSPELL) && 
+	   !QUERY_FLAG(head,FLAG_MONSTER)) {
+		if(SK_level(op) > head->level) {
+		    remove_ob(head);
+		    free_object(head);
+		}
+	} else switch(head->type) {
+	    case CONE: 
+	    case FBALL: 
+	    case LIGHTNING:
+	    case FBULLET: 
+	    case MMISSILE: 
+	    case SPEEDBALL:
+	    case BOMB: 
+	    case POISONCLOUD: 
+	    case CANCELLATION:
 	    case SWARM_SPELL:
 	    case BALL_LIGHTNING:
-		nflag=1;
+		if(SK_level(op) > head->level) {
+		    remove_ob(head);
+		    free_object(head);
+		}
 		break;
 
 	    case RUNE:
-		nflag=2;
-		break;
-
-	    default:
-		nflag=0;
-	}
-	switch(nflag) {
-	    case 1: {
-	    /* { if(op->level > tmp->level) { */ 
-	        if(SK_level(op) > tmp->level) {
-		    remove_ob(tmp);
-		    free_object(tmp);
-		}
-		break;
-	    }
-	    case 2: {
 		if(rndm(0, 149) == 0) {
-		    tmp->stats.hp--;  /* weaken the rune */
-		    if(!tmp->stats.hp) {
-			remove_ob(tmp);
-			free_object(tmp);
+		    head->stats.hp--;  /* weaken the rune */
+		    if(!head->stats.hp) {
+			remove_ob(head);
+			free_object(head);
 		    }
 		}
 		break;
-	    }
 	}
     }
 }
