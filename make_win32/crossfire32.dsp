@@ -1,25 +1,25 @@
 # Microsoft Developer Studio Project File - Name="crossfire32" - Package Owner=<4>
 # Microsoft Developer Studio Generated Build File, Format Version 6.00
-# ** NICHT BEARBEITEN **
+# ** DO NOT EDIT **
 
 # TARGTYPE "Win32 (x86) Console Application" 0x0103
 
 CFG=crossfire32 - Win32 FullDebug
-!MESSAGE Dies ist kein gültiges Makefile. Zum Erstellen dieses Projekts mit NMAKE
-!MESSAGE verwenden Sie den Befehl "Makefile exportieren" und führen Sie den Befehl
+!MESSAGE This is not a valid makefile. To build this project using NMAKE,
+!MESSAGE use the Export Makefile command and run
 !MESSAGE 
 !MESSAGE NMAKE /f "crossfire32.mak".
 !MESSAGE 
-!MESSAGE Sie können beim Ausführen von NMAKE eine Konfiguration angeben
-!MESSAGE durch Definieren des Makros CFG in der Befehlszeile. Zum Beispiel:
+!MESSAGE You can specify a configuration when running NMAKE
+!MESSAGE by defining the macro CFG on the command line. For example:
 !MESSAGE 
 !MESSAGE NMAKE /f "crossfire32.mak" CFG="crossfire32 - Win32 FullDebug"
 !MESSAGE 
-!MESSAGE Für die Konfiguration stehen zur Auswahl:
+!MESSAGE Possible choices for configuration are:
 !MESSAGE 
-!MESSAGE "crossfire32 - Win32 FullDebug" (basierend auf  "Win32 (x86) Console Application")
-!MESSAGE "crossfire32 - Win32 ReleaseQuit" (basierend auf  "Win32 (x86) Console Application")
-!MESSAGE "crossfire32 - Win32 ReleaseLog" (basierend auf  "Win32 (x86) Console Application")
+!MESSAGE "crossfire32 - Win32 FullDebug" (based on "Win32 (x86) Console Application")
+!MESSAGE "crossfire32 - Win32 ReleaseQuit" (based on "Win32 (x86) Console Application")
+!MESSAGE "crossfire32 - Win32 ReleaseLog" (based on "Win32 (x86) Console Application")
 !MESSAGE 
 
 # Begin Project
@@ -132,6 +132,10 @@ PostBuild_Cmds=copy ReleaseLog\crossfire32.exe ..\crossfire32.exe
 # Begin Group "socket"
 
 # PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=..\socket\image.c
+# End Source File
 # Begin Source File
 
 SOURCE=..\socket\info.c
@@ -1144,6 +1148,10 @@ SOURCE=..\server\timers.c
 
 !ENDIF 
 
+# End Source File
+# Begin Source File
+
+SOURCE=..\server\weather.c
 # End Source File
 # Begin Source File
 
