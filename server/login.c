@@ -496,283 +496,263 @@ static int spell_sort(const char *a1,const char *a2)
 
 
 void check_login(object *op) {
-  FILE *fp;
-  char filename[MAX_BUF];
-  char buf[MAX_BUF],bufall[MAX_BUF];
-  int i,value,x,y,comp,has_keys=0;
-  long checksum = 0;
-  player *pl = op->contr;
-
-  strcpy (pl->maplevel, first_map_path);
-
-  /* First, lets check for newest form of save */
-  sprintf(filename,"%s/%s/%s/%s.pl",settings.localdir,settings.playerdir,op->name,op->name);
-  if (access(filename, F_OK)==-1) {
-    /* not there,  Try the old style */
-
-    sprintf(filename,"%s/%s/%s.pl",settings.localdir,settings.playerdir,op->name);
-    /* Ok - old style exists.  Lets make the new style directory */
-    if (access(filename, F_OK)==0) {
-	sprintf(buf,"%s/%s/%s",settings.localdir,settings.playerdir,op->name);
-	make_path_to_file(buf);
-    }
-  }
-
-  if ((fp=open_and_uncompress(filename,1,&comp)) == NULL) {
-    confirm_password(op);
-  } else {
+    FILE *fp;
+    char filename[MAX_BUF];
+    char buf[MAX_BUF],bufall[MAX_BUF];
+    int i,value,x,y,comp;
+    long checksum = 0;
+    player *pl = op->contr;
     int correct = 0;
+
+    strcpy (pl->maplevel, first_map_path);
+
+    /* First, lets check for newest form of save */
+    sprintf(filename,"%s/%s/%s/%s.pl",settings.localdir,settings.playerdir,op->name,op->name);
+    if (access(filename, F_OK)==-1) {
+	/* not there,  Try the old style */
+
+	sprintf(filename,"%s/%s/%s.pl",settings.localdir,settings.playerdir,op->name);
+	/* Ok - old style exists.  Lets make the new style directory */
+	if (access(filename, F_OK)==0) {
+	    sprintf(buf,"%s/%s/%s",settings.localdir,settings.playerdir,op->name);
+	    make_path_to_file(buf);
+	}
+    }
+
+    /* If no file, must be a new player, so lets get confirmation of
+     * the password.  Return control to the higher level dispatch,
+     * since the rest of this just deals with loading of the file.
+     */
+    if ((fp=open_and_uncompress(filename,1,&comp)) == NULL) {
+	confirm_password(op);
+	return;
+    }
+
     if(fgets(bufall,MAX_BUF,fp) != NULL) {
-      if(!strncmp(bufall,"checksum ",9)) {
-        checksum = strtol_local(bufall+9,(char **) NULL, 16);
-        (void) fgets(bufall,MAX_BUF,fp);
-      }
-      if(sscanf(bufall,"password %s\n",buf))
-        /* New password scheme: */
-        correct=check_password(pl->write_buf+1,buf);
-      else { /* Old scheme when passwords were stored in ascii */
-        bufall[strlen(bufall)-1]='\0';
-        correct= !strcmp(bufall,pl->write_buf+1);
-      }
+	if(!strncmp(bufall,"checksum ",9)) {
+	    checksum = strtol_local(bufall+9,(char **) NULL, 16);
+	    (void) fgets(bufall,MAX_BUF,fp);
+	}
+	if(sscanf(bufall,"password %s\n",buf)) {
+	    /* New password scheme: */
+	    correct=check_password(pl->write_buf+1,buf);
+	}
+	/* Old password mode removed - I have no idea what it 
+	 * was, and the current password mechanism has been used
+	 * for at least several years.
+	 */
     }
     if (!correct) {
-      new_draw_info(NDI_UNIQUE, 0,op," ");
-      new_draw_info(NDI_UNIQUE, 0,op,"Wrong Password!");
-      new_draw_info(NDI_UNIQUE, 0,op," ");
-      unlock_player(pl->ob->name);
-      if(op->name!=NULL)
-        free_string(op->name);
-      op->name=add_string("noname");
-      pl->last_value= -1;
-      get_name(op);
-    } else {
+	new_draw_info(NDI_UNIQUE, 0,op," ");
+	new_draw_info(NDI_UNIQUE, 0,op,"Wrong Password!");
+	new_draw_info(NDI_UNIQUE, 0,op," ");
 	unlock_player(pl->ob->name);
+	if(op->name!=NULL)
+	    free_string(op->name);
+	op->name=add_string("noname");
+	pl->last_value= -1;
+	get_name(op);
+	return;	    /* Once again, rest of code just loads the char */
+    }
+
+    unlock_player(pl->ob->name);
 #ifdef SAVE_INTERVAL
-      pl->last_save_time=time(NULL);
+    pl->last_save_time=time(NULL);
 #endif /* SAVE_INTERVAL */
-      pl->party_number = (-1);
+    pl->party_number = (-1);
 
 #ifdef SEARCH_ITEMS
-      pl->search_str[0]='\0';
+    pl->search_str[0]='\0';
 #endif /* SEARCH_ITEMS */
-      pl->name_changed=1;
-      pl->orig_stats.Str=0;
-      pl->orig_stats.Dex=0;
-      pl->orig_stats.Con=0;
-      pl->orig_stats.Int=0;
-      pl->orig_stats.Pow=0;
-      pl->orig_stats.Wis=0;
-      pl->orig_stats.Cha=0;
+    pl->name_changed=1;
+    pl->orig_stats.Str=0;
+    pl->orig_stats.Dex=0;
+    pl->orig_stats.Con=0;
+    pl->orig_stats.Int=0;
+    pl->orig_stats.Pow=0;
+    pl->orig_stats.Wis=0;
+    pl->orig_stats.Cha=0;
 
-      while (fgets(bufall,MAX_BUF,fp)!=NULL) {
-        sscanf(bufall,"%s %d\n",buf,&value);
+    /* Loop through the file, loading the rest of the values */
+    while (fgets(bufall,MAX_BUF,fp)!=NULL) {
+	sscanf(bufall,"%s %d\n",buf,&value);
         if (!strcmp(buf,"endplst"))
           break;
 #ifdef SET_TITLE
 	else if (!strcmp(buf,"title"))
-          sscanf(bufall,"title %[^\n]",pl->own_title);
+	    sscanf(bufall,"title %[^\n]",pl->own_title);
 #endif /* SET_TITLE */
 
 #ifdef EXPLORE_MODE
-      else if (!strcmp(buf,"explore"))
-        pl->explore = value;
+	else if (!strcmp(buf,"explore"))
+	    pl->explore = value;
 #endif
-        else if (!strcmp(buf,"gen_hp"))
-          pl->gen_hp=value;
+	else if (!strcmp(buf,"gen_hp"))
+	    pl->gen_hp=value;
         else if (!strcmp(buf,"shoottype"))
-          pl->shoottype=(rangetype)value;
+	    pl->shoottype=(rangetype)value;
         else if (!strcmp(buf,"gen_sp"))
-          pl->gen_sp=value;
+	    pl->gen_sp=value;
         else if (!strcmp(buf,"gen_grace"))
-          pl->gen_grace=value;
+	    pl->gen_grace=value;
         else if (!strcmp(buf,"spell"))
-          pl->chosen_spell=value;
+	    pl->chosen_spell=value;
         else if (!strcmp(buf,"listening"))
-          pl->listening=value;
+	    pl->listening=value;
         else if (!strcmp(buf,"peaceful"))
-          pl->peaceful=value;
+	    pl->peaceful=value;
         else if (!strcmp(buf,"digestion"))
-          pl->digestion=value;
+	    pl->digestion=value;
 	else if (!strcmp(buf,"pickup"))
-	  pl->mode=value;
+	    pl->mode=value;
 	else if (!strcmp(buf,"outputs_sync"))
-	  pl->outputs_sync = value;
+	    pl->outputs_sync = value;
 	else if (!strcmp(buf,"outputs_count"))
-	  pl->outputs_count = value;
+	    pl->outputs_count = value;
         else if (!strcmp(buf,"map"))
 	    sscanf(bufall,"map %s", pl->maplevel);
         else if (!strcmp(buf,"weapon_sp"))
-          sscanf(buf,"weapon_sp %f",&pl->weapon_sp);
+	    sscanf(buf,"weapon_sp %f",&pl->weapon_sp);
         else if (!strcmp(buf,"Str"))
-          pl->orig_stats.Str=value;
+	    pl->orig_stats.Str=value;
         else if (!strcmp(buf,"Dex"))
-          pl->orig_stats.Dex=value;
+	    pl->orig_stats.Dex=value;
         else if (!strcmp(buf,"Con"))
-          pl->orig_stats.Con=value;
+	    pl->orig_stats.Con=value;
         else if (!strcmp(buf,"Int"))
-          pl->orig_stats.Int=value;
+	    pl->orig_stats.Int=value;
         else if (!strcmp(buf,"Pow"))
-          pl->orig_stats.Pow=value;
+	    pl->orig_stats.Pow=value;
         else if (!strcmp(buf,"Wis"))
-          pl->orig_stats.Wis=value;
+	    pl->orig_stats.Wis=value;
         else if (!strcmp(buf,"Cha"))
-          pl->orig_stats.Cha=value;
+	    pl->orig_stats.Cha=value;
         else if (!strcmp(buf,"lev_array")){
-          for(i=1;i<=value;i++) {
-            int j;
-            fscanf(fp,"%d\n",&j);
-            pl->levhp[i]=j;
-            fscanf(fp,"%d\n",&j);
-            pl->levsp[i]=j;
-            fscanf(fp,"%d\n",&j);
-            pl->levgrace[i]=j;
-          }
-        } else if (!strcmp(buf,"spell_array")) {
-          pl->nrofknownspells=value;
-          for(i=0;i<pl->nrofknownspells;i++) {
-            int j;
-            fscanf(fp,"%d\n",&j);
-            pl->known_spells[i]=j;
-          }
-        } else if (!strcmp(buf,"known_spell")) {
-          char *cp=strchr(bufall,'\n');
-          *cp='\0';
-          cp=strchr(bufall,' ');
-          cp++;
-          for(i=0;i<NROFREALSPELLS;i++)
-            if(!strcmp(spells[i].name,cp)) {
-              pl->known_spells[pl->nrofknownspells++]=i;
-              break;
-            }
-          if(i==NROFREALSPELLS)
-            LOG(llevDebug, "Error: unknown spell (%s)\n",cp);
-        } else if (!strcmp(buf,"confkeys")) {
-	  LOG(llevDebug, "Ignoring old configkeys (%d)\n", value);
-          for(i=0; i < value; i++)
-	    fgets(bufall, sizeof(bufall), fp);
-        } else if (!strcmp(buf,"pushkey")) {
-	  LOG(llevDebug, "Ignoring old pushkey (%s)\n", bufall);
-        }
-      }
+	    for(i=1;i<=value;i++) {
+		int j;
+		fscanf(fp,"%d\n",&j);
+		pl->levhp[i]=j;
+		fscanf(fp,"%d\n",&j);
+		pl->levsp[i]=j;
+		fscanf(fp,"%d\n",&j);
+		pl->levgrace[i]=j;
+	    }
+	/* spell_array code removed - don't know when that was last used.
+	 * Even the load code below will someday be replaced by spells being
+	 * objects.
+	 */
+	} else if (!strcmp(buf,"known_spell")) {
+	    char *cp=strchr(bufall,'\n');
+	    *cp='\0';
+	    cp=strchr(bufall,' ');
+	    cp++;
+	    for(i=0;i<NROFREALSPELLS;i++)
+		if(!strcmp(spells[i].name,cp)) {
+		    pl->known_spells[pl->nrofknownspells++]=i;
+		    break;
+		}
+	    if(i==NROFREALSPELLS)
+		LOG(llevDebug, "Error: unknown spell (%s)\n",cp);
+	}
+	/* Remove confkeys, pushkey support - very old */
+    } /* End of loop loading the character file */
 
-#if 0
-      /* sigh */
-      free_object (op);
-      op = pl->ob = LoadObject (fp, NULL);
-#endif
-      reset_object(op);
-      op->contr = pl;
-      pl->ob = op;
-      load_object(fp, op, LO_NEWFILE);
+    reset_object(op);
+    op->contr = pl;
+    pl->ob = op;
+    /* this loads the standard objects values. */
+    load_object(fp, op, LO_NEWFILE);
+    close_and_delete(fp, comp);
 
-      CLEAR_FLAG(op, FLAG_NO_FIX_PLAYER);
+    CLEAR_FLAG(op, FLAG_NO_FIX_PLAYER);
 
-      x=op->x; y=op->y;
-      /* if old save file, try recover from it */
-      if(!op->arch) {
-         new_draw_info(NDI_UNIQUE, 0,op,"Error: unknown class. (probably old save file)\n");
-         op->arch = find_archetype (op->race);
-      }
-      if(!op->arch) { /* and fail... */
-        new_draw_info(NDI_UNIQUE, 0,op,"Fatal error: Can't find archetype\n");
-        LOG(llevError, "Error: Unknown class; %s.\n", op->race);
-      }
-      strncpy(pl->title, op->arch->clone.name,MAX_NAME);
+    x=op->x; y=op->y;
+    strncpy(pl->title, op->arch->clone.name,MAX_NAME);
 
-      /* If the map where the person was last saved does not exist,
-       * restart them in the beginning town.  This is good for when
-       * maps change between versions
-       * First, we check for partial path, then check to see if the full
-       * path (for unique player maps)
-       */
+    /* If the map where the person was last saved does not exist,
+     * restart them in the beginning town.  This is good for when
+     * maps change between versions
+     * First, we check for partial path, then check to see if the full
+     * path (for unique player maps)
+     */
 
-      if (check_path(pl->maplevel,1)==-1) {
+    if (check_path(pl->maplevel,1)==-1) {
 	if (check_path(pl->maplevel,0)==-1) {
 	    strcpy(pl->maplevel, first_map_path);
 	    x = -1;
 	}
-      }
+    }
 
-      enter_exit(op,NULL); /* This won't insert the player any longer! */
+    enter_exit(op,NULL); /* This won't insert the player any longer! */
 
-      if (op->stats.hp<0||op->stats.food<0) {
-/* IF NOT_PERMADEATH is set, this should really do something different,
- * like bring the character back to life under the normal rules.
- */
-        clear_win_info(op);
-        new_draw_info(NDI_UNIQUE, 0,op,"Your character was dead, when you quit.");
-        new_draw_info(NDI_UNIQUE, 0,op," ");
-	play_again(op);
-        delete_character(op->name,0);
-      } else { /* character is alive */
-        pl->name_changed=1;
-        pl->state = ST_PLAYING;
+    pl->name_changed=1;
+    pl->state = ST_PLAYING;
 #ifdef AUTOSAVE
-	pl->last_save_tick = pticks;
+    pl->last_save_tick = pticks;
 #endif
-	op->carrying=0;
-	/* Need to call fix_player now - program modified so that it is not
-	 * called during the load process (FLAG_NO_FIX_PLAYER set when
-	 * saved)
-	 * Moved ahead of the esrv functions, so proper weights will be
-	 * sent to the client.
-	 */
-	legal_range(op, op->contr->shoottype);
-	fix_weight ();
-	/* fix_weight calls fix_player */
-	/*fix_player(op);*/
-	esrv_new_player(op->contr,op->weight+op->carrying);
-	esrv_send_inventory(op, op);
+    op->carrying=0;
+    /* Need to call fix_player now - program modified so that it is not
+     * called during the load process (FLAG_NO_FIX_PLAYER set when
+     * saved)
+     * Moved ahead of the esrv functions, so proper weights will be
+     * sent to the client.
+     */
 
-
+    legal_range(op, op->contr->shoottype);
+    fix_weight ();
 
 #ifdef ALLOW_SKILLS
-	(void) init_player_exp(op);
-        (void) link_player_skills(op);
+    (void) init_player_exp(op);
+    (void) link_player_skills(op);
 #endif
 
+    new_draw_info(NDI_UNIQUE, 0,op,"Welcome Back!");
+    new_draw_info_format(NDI_UNIQUE | NDI_ALL, 5, NULL, 
+	     "%s has entered the game.",pl->ob->name);
 
-        new_draw_info(NDI_UNIQUE, 0,op,"Welcome Back!");
-	new_draw_info_format(NDI_UNIQUE | NDI_ALL, 5, NULL, 
-			     "%s has entered the game.",pl->ob->name);
-
-        if(pl->loading == NULL) {
-          if(!out_of_map(op->map,x,y))
-            op->x=x, op->y=y;
-          insert_ob_in_map(op,op->map);
-        } else {
-          LOG(llevError,"Warning: map was not in memory (%s).\n",
+    if(pl->loading == NULL) {
+	if(!out_of_map(op->map,x,y))
+	    op->x=x, op->y=y;
+	    insert_ob_in_map(op,op->map);
+    } else {
+	LOG(llevError,"Warning: map was not in memory (%s).\n",
                   op->map->path);
-          pl->removed = 0; /* Pl. will be inserted when map is loaded */
-        }
-	op->contr->socket.update_look=1;
-        close_and_delete(fp, comp);
-        LOG(llevDebug,"Checksums: %x %x\n",
+	pl->removed = 0; /* Pl. will be inserted when map is loaded */
+    }
+    op->contr->socket.update_look=1;
+    LOG(llevDebug,"Checksums: %x %x\n",
                 checksum,calculate_checksum(filename,1));
 #ifdef ENABLE_CHECKSUM
-        if(calculate_checksum(filename,1) != checksum) {
-          new_draw_info(NDI_UNIQUE, 0,op,"Since your savefile has been tampered with,");
-          new_draw_info(NDI_UNIQUE, 0,op,"you will not be able to save again.");
-          set_cheat(op);
-        }
-#endif
-      }
+    if(calculate_checksum(filename,1) != checksum) {
+	new_draw_info(NDI_UNIQUE, 0,op,"Since your savefile has been tampered with,");
+	new_draw_info(NDI_UNIQUE, 0,op,"you will not be able to save again.");
+	set_cheat(op);
     }
-    if (pl->state != ST_PLAYING)
-      close_and_delete(fp, comp); 
-  }
-  pl->last_value= -1;
+#endif
+    /* If the player should be dead, call kill_player for them
+     * Only check for hp - if player lacks food, let the normal 
+     * logic for that to take place.  If player is permanently
+     * dead, and not using permadeath mode, the kill_player will
+     * set the play_again flag, so return.
+     */
+    if (op->stats.hp<0) {
+	new_draw_info(NDI_UNIQUE, 0,op,"Your character was dead last your played.");
+	kill_player(op);
+	if (pl->state != ST_PLAYING) return;
+    }
 
-  /* This seems to compile without warnings now.  Don't know if it works
-   * on SGI's or not, however.
-   */
-  qsort((void *)pl->known_spells,pl->nrofknownspells,
+    /* Do this after checking for death - no reason sucking up bandwidth if
+     * the data isn't needed.
+     */
+    esrv_new_player(op->contr,op->weight+op->carrying);
+    esrv_send_inventory(op, op);
+
+    pl->last_value= -1;
+
+    /* This seems to compile without warnings now.  Don't know if it works
+     * on SGI's or not, however.
+     */
+    qsort((void *)pl->known_spells,pl->nrofknownspells,
 	sizeof(pl->known_spells[0]),(int (*)())spell_sort);
-  if (has_keys) {
-    new_draw_info(NDI_UNIQUE, 0,op,"Your old player keybindings will not be");
-    new_draw_info(NDI_UNIQUE, 0,op,"available - using default keybindings.");
-  }
-  return;
+    return;
 }
-  
-
