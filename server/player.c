@@ -45,7 +45,7 @@ player *find_player(char *plname)
   player *pl;
   for(pl=first_player;pl!=NULL;pl=pl->next)
   {
-    if(pl->ob != NULL && !QUERY_FLAG(pl->ob,FLAG_REMOVED) && !strcmp(query_name(pl->ob),plname))
+    if(pl->ob != NULL && !strcmp(query_name(pl->ob),plname))
         return pl;
   };
   return NULL;
