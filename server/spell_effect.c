@@ -1293,7 +1293,7 @@ int dimension_door(object *op,int dir) {
 	for(dist=0;dist<op->contr->count; dist++)
 	    if (get_map_flags(op->map, NULL, 
 		op->x+freearr_x[dir]*(dist+1), op->y+freearr_y[dir]*(dist+1),
-		NULL, NULL) & P_NO_MAGIC) break;
+		NULL, NULL) & (P_NO_MAGIC | P_OUT_OF_MAP)) break;
 
 	if(dist<op->contr->count) {
 	    new_draw_info(NDI_UNIQUE, 0,op,"Something blocks the magic of the spell.\n");
@@ -1325,7 +1325,7 @@ int dimension_door(object *op,int dir) {
 	    if (get_map_flags(op->map, NULL, 
 	      op->x+freearr_x[dir] * dist, 
 	      op->y+freearr_y[dir] * dist,
-	      NULL, NULL) & P_NO_MAGIC) {
+	      NULL, NULL) & (P_NO_MAGIC | P_OUT_OF_MAP)) {
 		dist--;
 		break;
 	    }
@@ -1354,7 +1354,7 @@ int dimension_door(object *op,int dir) {
         return 1;
 
     if (op->type == PLAYER)
-    MapNewmapCmd(op->contr);
+	MapNewmapCmd(op->contr);
     op->speed_left= -FABS(op->speed)*5; /* Freeze them for a short while */
     return 1;
 }
