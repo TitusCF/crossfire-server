@@ -995,7 +995,7 @@ int hit_player_attacktype(object *op, object *hitter, int dam,
     }
 
     /* Adjust the damage for resistance. Note that neg. values increase damage. */
-    if(1) { // if (op->resist[attacknum] || 1) { // This is a nop!
+    if (op->resist[attacknum]) {
       /* basically:  dam = dam*(100-op->resist[attacknum])/100;
        * in case 0>dam>1, we try to "simulate" a float value-effect */
       dam *= (100-op->resist[attacknum]);
@@ -1003,8 +1003,9 @@ int hit_player_attacktype(object *op, object *hitter, int dam,
 	dam /= 100;
       else
 	dam = (dam > (random_roll(0, 99, op, PREFER_LOW))) ? 1 : 0;
-      // why not simulate for all values?
-      // dam = (dam / 100) + (((dam % 100) > (random_roll(0, 99, op, PREFER_LOW))) ? 1 : 0)
+      /* why not simulate for all values?
+       * dam = (dam / 100) + (((dam % 100) > (random_roll(0, 99, op, PREFER_LOW))) ? 1 : 0)
+       */
     }
 
     /* Special hack.  By default, if immune to something, you
@@ -1015,7 +1016,7 @@ int hit_player_attacktype(object *op, object *hitter, int dam,
     if ((op->resist[attacknum] >= 100) && 
 	doesnt_slay && 
 	(attacknum != ATNR_ACID))
-      return 0; // why do we carefully propagate dam everywhere else?
+      return 0;
 
     /* Keep this in order - makes things easier to find */
     
@@ -1037,8 +1038,8 @@ int hit_player_attacktype(object *op, object *hitter, int dam,
     case ATNR_PARALYZE:
     case ATNR_FEAR:
     case ATNR_CANCELLATION:
-    case AT_DEPLETE:
-    case AT_BLIND: {
+    case ATNR_DEPLETE:
+    case ATNR_BLIND: {
         /* chance for inflicting a special attack depends on the
 	   difference between attacker's and defender's level */
 	int level_diff = MIN(110, MAX(0, op->level - hitter->level));
@@ -1055,28 +1056,28 @@ int hit_player_attacktype(object *op, object *hitter, int dam,
 	  
 	  switch(attacknum) {
 	    /* Player has been hit by something */
-	  case AT_CONFUSION:
+	  case ATNR_CONFUSION:
 	    confuse_player(op,hitter,dam);
 	    break;
-	  case AT_POISON:
+	  case ATNR_POISON:
 	    poison_player(op,hitter,dam);
 	    break;
-	  case AT_SLOW:
+	  case ATNR_SLOW:
 	    slow_player(op,hitter,dam);
 	    break;
-	  case AT_PARALYZE:
+	  case ATNR_PARALYZE:
 	    paralyze_player(op,hitter,dam);
 	    break;
-	  case AT_FEAR:
+	  case ATNR_FEAR:
 	    SET_FLAG(op, FLAG_SCARED);
 	    break;
-	  case AT_CANCELLATION:
+	  case ATNR_CANCELLATION:
 	    cancellation(op);
 	    break;
-	  case AT_DEPLETE:
+	  case ATNR_DEPLETE:
 	    drain_stat(op);
 	    break;
-	  case AT_BLIND:
+	  case ATNR_BLIND:
 	    if(!QUERY_FLAG(op,FLAG_UNDEAD) &&
 		 !QUERY_FLAG(op,FLAG_GENERATOR))
 	      blind_player(op,hitter,dam);
