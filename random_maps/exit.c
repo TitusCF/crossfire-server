@@ -168,7 +168,8 @@ void place_exits(mapstruct *map, char **maze,char *exitstyle,int orientation) {
 		  /* set the exit down. */
 		  the_exit_down->slaying = add_string(new_map_name);
 		  /* load it */
-		  new_map = load_original_map(final_map,0);
+		  if( (new_map=has_been_loaded(final_map)) == NULL)
+		    new_map = load_original_map(final_map,0);
 		  /* leave if we couldn't find it. */
 		  if(new_map==NULL) return;
 		  /* fix the treasures in the map. */

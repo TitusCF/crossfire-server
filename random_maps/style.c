@@ -178,7 +178,8 @@ mapstruct *find_style(char *dirname,char *stylename,int difficulty) {
 
 
   if(! (S_ISDIR(file_stat.st_mode))) {
-    style_map = load_original_map(style_file_path,0);
+    if( (style_map=has_been_loaded(style_file_path)) == NULL)
+      style_map = load_original_map(style_file_path,0);
   }
   if(style_map == NULL)  /* maybe we were given a directory! */
     {
@@ -195,7 +196,8 @@ mapstruct *find_style(char *dirname,char *stylename,int difficulty) {
 	 if(difficulty==-1) {  /* pick a random style from this dir. */
 	   strcat(style_file_path,"/");
 	   strcat(style_file_path,namelist[RANDOM()%n]->d_name);
-	   style_map = load_original_map(style_file_path,0);
+	   if( (style_map=has_been_loaded(style_file_path)) == NULL)
+	     style_map = load_original_map(style_file_path,0);
 	 }
 	 else {  /* find the map closest in difficulty */
 	   int min_dist=32000,min_index=-1;
@@ -219,7 +221,9 @@ mapstruct *find_style(char *dirname,char *stylename,int difficulty) {
 		 difficulty. */
 	   strcat(style_file_path,"/");
 	   strcat(style_file_path,namelist[min_index]->d_name);
-	   style_map = load_original_map(style_file_path,0);
+	   if( (style_map=has_been_loaded(style_file_path)) == NULL)
+	     style_map = load_original_map(style_file_path,0);
+
 
 	 }
 	
