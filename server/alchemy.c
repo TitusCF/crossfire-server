@@ -498,9 +498,7 @@ void alchemy_failure_effect(object *op,object *cauldron,recipe *rp,int danger) {
       alchemy_failure_effect(op,cauldron,rp,level-5);
       return;
 
-  }
-/* #ifdef SPELL_FAILURE_EFFECTS */ 
-   else if (level<50) {                		/* MINOR EXPLOSION/FIREBALL */
+  } else if (level<50) {               		/* MINOR EXPLOSION/FIREBALL */
       object *tmp;
       remove_contents(cauldron->inv,NULL);
       switch(rndm(0, 2)) {
@@ -536,9 +534,7 @@ void alchemy_failure_effect(object *op,object *cauldron,recipe *rp,int danger) {
 		cauldron->name);
       return;
 
-  }
-/* #endif SPELL_FAILURE_EFFECTS */
-    else if (level<100) {               	/* WHAMMY the CAULDRON */
+  } else if (level<100) {               	/* WHAMMY the CAULDRON */
       if(!QUERY_FLAG(cauldron,FLAG_CURSED))
         SET_FLAG(cauldron,FLAG_CURSED);
       else cauldron->magic--;
@@ -553,9 +549,7 @@ void alchemy_failure_effect(object *op,object *cauldron,recipe *rp,int danger) {
 		"Your %s becomes darker.",cauldron->name);
       return;
 
-  }
-/* #ifdef SPELL_FAILURE_EFFECTS */ 
-    else if (level<110) {               	/* SUMMON EVIL MONSTERS */
+  } else if (level<110) {               	/* SUMMON EVIL MONSTERS */
       object *tmp=get_random_mon(level/5);
 
       remove_contents(cauldron->inv,NULL);
@@ -575,10 +569,7 @@ void alchemy_failure_effect(object *op,object *cauldron,recipe *rp,int danger) {
 	roll--;
       }
       return;
-  }
-
-/* #endif  SPELL_FAILURE_EFFECTS */
-    else if (level==151) {              	/* CREATE RANDOM ARTIFACT */
+  } else if (level==151) {              	/* CREATE RANDOM ARTIFACT */
       object *tmp;
 	/* this is meant to be better than prior possiblity, 
 	 * in this one, we allow *any* valid alchemy artifact
@@ -594,15 +585,12 @@ void alchemy_failure_effect(object *op,object *cauldron,recipe *rp,int danger) {
 	 }
       }
       return;
-  }
-/* #ifdef SPELL_FAILURE_EFFECTS */ 
-    else if (level<200) {               	/* MANA STORM - watch out!! */
+  } else if (level<200) {               	/* MANA STORM - watch out!! */
       new_draw_info(NDI_UNIQUE,0,op,"You unwisely release potent forces!");
       remove_contents (cauldron->inv,NULL);
       cast_mana_storm(op,level);
       return;
   }
-/* #endif SPELL_FAILURE_EFFECTS */
 }
 
 

@@ -282,20 +282,18 @@ int cast_spell(object *op,object *caster,int dir,int type,int ability,SpellTypeF
     return(random_roll(1, SP_level_spellpoint_cost(op,caster,type), op, 
 	PREFER_LOW));
   }
-#ifdef SPELL_ENCUMBRANCE
-  if(item == spellNormal && op->type==PLAYER && (!s->cleric) ) {
+  if(settings.spell_encumbrance == TRUE && item == spellNormal &&
+     op->type==PLAYER && (!s->cleric) ) {
     int failure = random_roll(0, 199, op, PREFER_LOW) -
 	op->contr->encumbrance +op->level -s->level +35;
 
     if( failure < 0) {
 	new_draw_info(NDI_UNIQUE, 0,op,"You bungle the spell because you have too much heavy equipment in use.");
-#ifdef SPELL_FAILURE_EFFECTS
-        spell_failure(op,failure,SP_level_spellpoint_cost(op,caster,type));
-#endif
+	if (settings.spell_failure_effects == TRUE)
+	    spell_failure(op,failure,SP_level_spellpoint_cost(op,caster,type));
 	return(random_roll(0, SP_level_spellpoint_cost(op,caster,type), op, PREFER_LOW));
 	}
    }
-#endif /*SPELL_ENCUMBRANCE*/
 	
 /*
  * This is a simplification of the time it takes to cast a spell.

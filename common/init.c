@@ -62,6 +62,8 @@ RESET_LOCATION_TIME,
 SET_TITLE,
 RESURRECTION,
 SEARCH_ITEMS,
+SPELL_ENCUMBRANCE,
+SPELL_FAILURE_EFFECTS,
 0,		/* This and the next 3 values are metaserver values */
 "",
 "",

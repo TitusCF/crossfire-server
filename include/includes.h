@@ -68,6 +68,10 @@
 #include <setjmp.h>
 #include <stdlib.h>
 
+#ifdef __NetBSD__
+#include <math.h>
+#endif
+
 #ifdef HAVE_FCNTL_H
 #include <fcntl.h>
 #endif

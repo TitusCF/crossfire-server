@@ -382,6 +382,24 @@ static void load_settings()
 		LOG(llevError, "load_settings: Unkown value for search_items"
 		    ": %s\n", cp);
 	    }
+	} else if (!strcasecmp(buf, "spell_encumbrance")) {
+	    if (!strcasecmp(cp, "on") || !strcasecmp(cp, "true")) {
+		settings.spell_encumbrance=TRUE;
+	    } else if (!strcasecmp(cp, "off") || !strcasecmp(cp, "false")) {
+		settings.spell_encumbrance=FALSE;
+	    } else {
+		LOG(llevError, "load_settings: Unkown value for "
+		    "spell_encumbrance: %s\n", cp);
+	    }
+	} else if (!strcasecmp(buf, "spell_failure_effects")) {
+	    if (!strcasecmp(cp, "on") || !strcasecmp(cp, "true")) {
+		settings.spell_failure_effects=TRUE;
+	    } else if (!strcasecmp(cp, "off") || !strcasecmp(cp, "false")) {
+		settings.spell_failure_effects=FALSE;
+	    } else {
+		LOG(llevError, "load_settings: Unkown value for"
+		    "spell_failure_effects: %s\n", cp);
+	    }
 	} else if (!strcasecmp(buf,"simple_exp")) {
 	    if (!strcasecmp(cp,"on") || !strcasecmp(cp,"true")) {
 		settings.simple_exp=TRUE;

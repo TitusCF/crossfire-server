@@ -299,6 +299,8 @@ typedef struct Settings {
     uint8   set_title;	    /* players can set thier title */
     uint8   resurrection;   /* ressurection possible w/ permadeth on */
     uint8   search_items;   /* search_items command */
+    uint8   spell_encumbrance; /* encumbrance effects spells */
+    uint8   spell_failure_effects; /* nasty backlash to spell failures */
 
     /* The meta_ is information for the metaserver.  These are set in 
      * the lib/settings file.

@@ -2472,7 +2472,6 @@ void kill_player(object *op)
 	op->map = map;
 	/* please see resurrection.c: peterm */
 	dead_player(op);
-	  }
       }
     }
     play_again(op);

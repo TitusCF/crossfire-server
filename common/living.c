@@ -753,9 +753,8 @@ void fix_player(object *op) {
 	for(i=0;i<NUM_STATS;i++) {
 	    set_attr_value(&(op->stats),i,get_attr_value(&(op->contr->orig_stats),i));
 	}
-#ifdef SPELL_ENCUMBRANCE
-	op->contr->encumbrance=0;
-#endif
+	if (settings.spell_encumbrance == TRUE)
+	    op->contr->encumbrance=0;
 	if(op->chosen_skill&&op->chosen_skill->exp_obj)
 	    op->chosen_skill->level=op->chosen_skill->exp_obj->level;
 
@@ -999,15 +998,14 @@ void fix_player(object *op) {
 
 			if(tmp->stats.ac)
 			    ac-=(tmp->stats.ac+tmp->magic);
-#ifdef SPELL_ENCUMBRANCE
-			if(op->type==PLAYER) op->contr->encumbrance+=(int)3*tmp->weight/1000;
-#endif
+			if(settings.spell_encumbrance == TRUE &&
+			   op->type==PLAYER)
+			    op->contr->encumbrance+=(int)3*tmp->weight/1000;
 		    }
 		    break;
 		case SHIELD:
-#ifdef SPELL_ENCUMBRANCE
-		    if(op->type==PLAYER) op->contr->encumbrance+=(int)tmp->weight/2000;
-#endif
+		    if(settings.spell_encumbrance == TRUE && op->type==PLAYER)
+			op->contr->encumbrance+=(int)tmp->weight/2000;
 		case RING:
 		case AMULET:
 		case GIRDLE:
@@ -1048,16 +1046,13 @@ void fix_player(object *op) {
 		}
 #endif
 		op->current_weapon = tmp;
-
-#ifdef SPELL_ENCUMBRANCE
-		if(op->type==PLAYER) op->contr->encumbrance+=(int)3*tmp->weight/1000;
-#endif
+		if(settings.spell_encumbrance == TRUE && op->type==PLAYER)
+		    op->contr->encumbrance+=(int)3*tmp->weight/1000;
 		break;
 
 		case ARMOUR: /* Only the best of these three are used: */
-#ifdef SPELL_ENCUMBRANCE
-		    if(op->type==PLAYER) op->contr->encumbrance+=(int)tmp->weight/1000;
-#endif
+		    if(settings.spell_encumbrance == TRUE && op->type==PLAYER)
+			op->contr->encumbrance+=(int)tmp->weight/1000;
 		case BRACERS:
 		case FORCE:
 		    if(tmp->stats.wc) { 

@@ -3253,47 +3253,31 @@ void apply_lighter(object *who, object *lighter) {
 
 void scroll_failure(object *op, int failure, int power)
 { 
-  if(abs(failure/4)>power) power=abs(failure/4); /* set minimum effect */
-
-  if(failure<= -1&&failure > -15) /* wonder */
-    {
-     new_draw_info(NDI_UNIQUE, 0,op,"Your spell warps!.");
-     cast_cone(op,op,0,10,SP_WOW,spellarch[SP_WOW],0);
+    if(abs(failure/4)>power) power=abs(failure/4); /* set minimum effect */
+    
+    if(failure<= -1&&failure > -15) {/* wonder */
+	new_draw_info(NDI_UNIQUE, 0,op,"Your spell warps!.");
+	cast_cone(op,op,0,10,SP_WOW,spellarch[SP_WOW],0);
+    } else if (failure <= -15&&failure > -35) {/* drain mana */
+	new_draw_info(NDI_UNIQUE, 0,op,"Your mana is drained!.");
+	op->stats.sp -= random_roll(0, power-1, op, PREFER_LOW);
+	if(op->stats.sp<0) op->stats.sp = 0;
+    } else if (settings.spell_failure_effects == TRUE) {
+	if (failure <= -35&&failure > -60) { /* confusion */
+	    new_draw_info(NDI_UNIQUE, 0,op,"The magic recoils on you!");
+	    confuse_player(op,op,power);
+	} else if (failure <= -60&&failure> -70) {/* paralysis */
+	    new_draw_info(NDI_UNIQUE, 0,op,"The magic recoils and paralyzes "
+		"you!");
+	    paralyze_player(op,op,power);
+	} else if (failure <= -70&&failure> -80) {/* blind */
+	    new_draw_info(NDI_UNIQUE, 0,op,"The magic recoils on you!");
+	    blind_player(op,op,power);
+	} else if (failure <= -80) {/* blast the immediate area */
+	    new_draw_info(NDI_UNIQUE, 0,op,"You unlease uncontrolled mana!");
+	    cast_mana_storm(op,power);
+	}
     }
-
-  else if (failure <= -15&&failure > -35) /* drain mana */
-    {
-     new_draw_info(NDI_UNIQUE, 0,op,"Your mana is drained!.");
-     op->stats.sp -= random_roll(0, power-1, op, PREFER_LOW);
-     if(op->stats.sp<0) op->stats.sp = 0;
-    }
-
-  /* even nastier effects continue...*/ 
-#ifdef SPELL_FAILURE_EFFECTS 
-  else if (failure <= -35&&failure > -60) /* confusion */
-   {
-    new_draw_info(NDI_UNIQUE, 0,op,"The magic recoils on you!");
-    confuse_player(op,op,power);
-   }
-
-  else if (failure <= -60&&failure> -70) /* paralysis */
-  {
-    new_draw_info(NDI_UNIQUE, 0,op,"The magic recoils and paralyzes you!");
-    paralyze_player(op,op,power);
-  }
-
-  else if (failure <= -70&&failure> -80) /* blind */
-  {
-    new_draw_info(NDI_UNIQUE, 0,op,"The magic recoils on you!");
-    blind_player(op,op,power);
-  }
-
-  else if (failure <= -80) /* blast the immediate area */
-  { 
-    new_draw_info(NDI_UNIQUE, 0,op,"You unlease uncontrolled mana!");
-    cast_mana_storm(op,power);
-  }
-#endif
 }
 
 void apply_changes_to_player(object *pl, object *change) {
