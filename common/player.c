@@ -47,7 +47,7 @@ void free_player(player *pl) {
 	free_object(pl->ob);
     }
     /* Clear item stack */
-    free( pl->stack_items );
+    if (pl->stack_items) free( pl->stack_items );
 
     CFREE(pl);
 }
