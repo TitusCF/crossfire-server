@@ -507,7 +507,7 @@ void check_login(object *op) {
     player *pl = op->contr;
     int correct = 0;
 
-    strcpy (pl->maplevel, first_map_path);
+    strcpy (pl->maplevel,first_map_path);
 
     /* First, lets check for newest form of save */
     sprintf(filename,"%s/%s/%s/%s.pl",settings.localdir,settings.playerdir,op->name,op->name);
@@ -695,6 +695,8 @@ void check_login(object *op) {
 	}
     }
 
+	 /* make sure he's a player--needed because of class change. */
+	 op->type = PLAYER;
     enter_exit(op,NULL); /* This won't insert the player any longer! */
 
     pl->name_changed=1;

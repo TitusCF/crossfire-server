@@ -155,7 +155,7 @@ void execute_wor(object *op) {
   while(op!=NULL&&op->type!=PLAYER)
     op=op->env;
   if(op!=NULL) {
-    if(blocks_magic(op->map,op->x,op->y))
+    if(blocks_magic(op->map,op->x,op->y) && wor->stats.hp != 1)
       new_draw_info(NDI_UNIQUE, 0,op,"You feel something fizzle inside you.");
     else
       enter_exit(op,wor);
@@ -669,9 +669,10 @@ void change_object(object *op) { /* Doesn`t handle linked objs yet */
 }
 
 void move_teleporter(object *op) {
+  
   if(op->above!=NULL) {
     if(EXIT_PATH(op)) {
-      if(op->above->type==PLAYER)
+      if(op->above->type==PLAYER) 
         enter_exit(op->above,op);
       else
         return;
@@ -689,6 +690,31 @@ void move_teleporter(object *op) {
     } else
       teleport(op,TELEPORTER,op);
   }
+}
+
+/*  This object will teleport someone to a different map
+    and will also apply changes to the player from its inventory.
+    This was invented for giving classes, but there's no reason it
+    can't be generalized.
+*/
+
+void move_player_changer(object *op) {
+  object *player;
+  object *walk;
+   if(op->above!=NULL) {
+    if(EXIT_PATH(op)) {
+      if(op->above->type==PLAYER) {
+	player=op->above;
+	for(walk=op->inv;walk!=NULL;walk=walk->below) 
+	  apply_changes_to_player(player,walk);
+	link_player_skills(op->above);
+	esrv_send_inventory(op->above,op->above);
+	enter_exit(op->above,op);
+      }
+      else
+        return;
+    }
+   }
 }
 
 /*  peterm:  firewalls generalized to be able to shoot any type
@@ -795,7 +821,9 @@ void move_creator(object *op) {
    it, and insert an invisible, weightless force into him
    with a specific code as the slaying field.
    At that time, it writes the contents of its own message
-   field to the player. */
+   field to the player.  The marker will decrement hp to
+   0 and then delete itself every time it grants a mark.
+   unless hp was zero to start with, in which case it is infinite.*/
 
 void move_marker(object *op) {
   object *tmp,*tmp2;
@@ -821,6 +849,7 @@ void move_marker(object *op) {
       
       /* if we didn't find our own MARK */
       if(tmp2==NULL) {
+	         
 		  object *force = get_archetype("force");
 		  force->speed = 0;
 		  if(op->stats.food) {
@@ -830,8 +859,18 @@ void move_marker(object *op) {
 		  update_ob_speed (force);
 		  /* put in the lock code */
 		  force->slaying = add_string(op->slaying);
-		  insert_ob_in_ob(force,tmp); 
-
+		  insert_ob_in_ob(force,tmp);
+		  if(op->msg)
+		    new_draw_info(NDI_UNIQUE|NDI_NAVY,0,tmp,op->msg);
+		  if(op->stats.hp > 0) { 
+		    op->stats.hp--;
+		    if(op->stats.hp==0) {
+		      /* marker expires--granted mark number limit */
+		      remove_ob(op);
+		      free_object(op);
+		      return;
+		    }
+		  }
       }
 
     }
@@ -992,6 +1031,9 @@ int process_object(object *op) {
     return 0;
   case MARKER:
     move_marker(op);
+    return 0;
+  case PLAYER_CHANGER:
+    move_player_changer(op);
     return 0;
   }
 

@@ -318,12 +318,12 @@ int path_to_player(object *mon, object *pl,int mindiff) {
   return dir;
 }
 
-void give_initial_items(object *pl) {
+void give_initial_items(object *pl,treasurelist *items) {
     object *op,*next=NULL;
     static uint8 start_spells[] = {0, 1, 4, 5, 7,17,168};
     static uint8 start_prayers[] = {19, 31, 32, 129}; 
     if(pl->randomitems!=NULL)
-	create_treasure(pl->randomitems,pl,GT_INVENTORY,1,0);
+	create_treasure(items,pl,GT_INVENTORY,1,0);
 
     for (op=pl->inv; op; op=next) {
 	next = op->below;
@@ -333,6 +333,7 @@ void give_initial_items(object *pl) {
 	/* Not marked as starting equipment, so set 0 value. */
 	if (QUERY_FLAG(op,FLAG_IS_THROWN))
 	    op->value=0;
+	if(op->type==FORCE) { SET_FLAG(op,FLAG_APPLIED);};
 	if(op->type==SPELLBOOK) { /* fix spells for first level spells */
 	    if(!strcmp(op->arch->name,"cleric_book")) 
 		op->stats.sp=start_prayers[RANDOM()%(sizeof(start_prayers)/sizeof(uint8))];
@@ -426,6 +427,8 @@ void get_party_password(object *op, int partyid) {
   send_query(&op->contr->socket, CS_QUERY_HIDEINPUT, "What is the password?\n:");
 }
 
+
+/* This rolls four 1-6 rolls and sums the best 3 of the 4. */
 int roll_stat() {
   int a[4],i,j,k;
   for(i=0;i<4;i++)
@@ -601,15 +604,18 @@ int key_roll_stat(object *op, char key)
 #endif
     switch (key) {
 	case 'n':
-	case 'N':
+        case 'N': {
 	    SET_FLAG(op, FLAG_WIZ);
 	    if(op->map==NULL) {
 		LOG(llevError,"Map == NULL in state 2\n");
 		break;
 	    }
+
 	    /* So that enter_exit will put us at startx/starty */
 	    op->x= -1;
+
 	    enter_exit(op,NULL);
+
 	    /* Enter exit adds a player otherwise */
 	    if(op->contr->loading == NULL) {
 		insert_ob_in_map(op,op->map,op);
@@ -621,7 +627,7 @@ int key_roll_stat(object *op, char key)
 	    send_query(&op->contr->socket,CS_QUERY_SINGLECHAR,"Now choose a character.\nPress any key to change outlook.\nPress `d' when you're pleased.\n");
 	    op->contr->state = ST_CHANGE_CLASS;
 	    return 0;
-
+	}
      case 'y':
      case 'Y':
 	roll_stats(op);
@@ -680,11 +686,22 @@ int key_change_class(object *op, char key)
 #ifdef ALLOW_SKILLS
 	(void) init_player_exp(op);
 #endif
-	give_initial_items(op);
+	give_initial_items(op,op->randomitems);
 #ifdef ALLOW_SKILLS
 	(void) link_player_skills(op);
 #endif
 	esrv_send_inventory(op, op);
+	{
+	  object *WoR = get_archetype("force");
+	  WoR->speed = .5;
+	  WoR->speed_left = -1;
+	  WoR->type = WORD_OF_RECALL;
+	  WoR->stats.hp = 1;
+	  EXIT_PATH(WoR) = add_string("/HallOfSelection");
+	  EXIT_X(WoR) = 1;
+	  EXIT_Y(WoR) = 1; 
+	  insert_ob_in_ob(WoR,op);
+	}
 	return 0;
     }
 
@@ -1459,9 +1476,9 @@ void do_some_living(object *op) {
   int gen_hp, gen_sp, gen_grace;
   int over_hp, over_sp, over_grace;
   int i;
-  const int rate_hp = 1200;
-  const int rate_sp = 2500;
-  const int rate_grace = 2000;
+  int rate_hp = 1200;
+  int rate_sp = 2500;
+  int rate_grace = 2000;
   const int max_hp = 1;
   const int max_sp = 1;
   const int max_grace = 1;
@@ -1474,9 +1491,27 @@ void do_some_living(object *op) {
   }
 
   if(op->contr->state==ST_PLAYING) {
-    gen_hp=(op->contr->gen_hp+1)*op->stats.maxhp;
-    gen_sp=(op->contr->gen_sp+1)*op->stats.maxsp;
-    gen_grace=(op->contr->gen_grace+1)*op->stats.maxgrace;
+
+    /* these next three if clauses make it possible to SLOW DOWN
+       hp/grace/spellpoint regeneration. */
+    if(op->contr->gen_hp >= 0 ) 
+      gen_hp=(op->contr->gen_hp+1)*op->stats.maxhp;
+    else {
+      gen_hp = op->stats.maxhp;
+      rate_hp -= rate_hp/2 * op->contr->gen_hp;
+    }  
+    if(op->contr->gen_sp >= 0 )
+      gen_sp=(op->contr->gen_sp+1)*op->stats.maxsp;
+    else {
+      gen_sp = op->stats.maxsp;
+      rate_sp -= rate_sp/2 * op->contr->gen_sp;
+    }
+    if(op->contr->gen_grace >= 0)
+      gen_grace=(op->contr->gen_grace+1)*op->stats.maxgrace;
+    else {
+      gen_grace = op->stats.maxgrace;
+      rate_grace -= rate_grace/2 * op->contr->gen_grace;
+    }
 
     /* Regenerate Spell Points */
     if(op->contr->golem==NULL&&--op->last_sp<0) {
@@ -1560,8 +1595,10 @@ void do_some_living(object *op) {
     if(--op->last_eat<0) {
       int bonus=op->contr->digestion>0?op->contr->digestion:0,
 	penalty=op->contr->digestion<0?-op->contr->digestion:0;
-
-      op->last_eat=25*(1+bonus)/(op->contr->gen_hp+penalty+1);
+      if(op->contr->gen_hp > 0)
+	op->last_eat=25*(1+bonus)/(op->contr->gen_hp+penalty+1);
+      else
+	op->last_eat=25*(1+bonus)/(penalty +1);
       op->stats.food--;
     }
   }

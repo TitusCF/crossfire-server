@@ -2538,3 +2538,57 @@ void scroll_failure(object *op, int failure, int power)
   }
 #endif
 }
+
+void apply_changes_to_player(object *player, object *change) {
+  object *op;
+  switch (change->type) {
+  case CLASS: 
+    {
+      living *stats = &(player->contr->orig_stats);
+      living *ns = &(change->stats);
+      object *walk;
+      int flag_change_face=1;
+
+      /* reshuffle the stats */
+      stats->Str += ns->Str;
+      stats->Dex += ns->Dex;
+      stats->Con += ns->Con;
+      stats->Int += ns->Int;
+      stats->Wis += ns->Wis;
+      stats->Pow += ns->Pow;
+      stats->Cha += ns->Cha;
+      
+      /* insert the randomitems from the change's treasurelist into
+	 the player ref: player.c*/
+      if(change->randomitems!=NULL) 
+	give_initial_items(player,change->randomitems);
+
+
+      /* set up the face, for some races. */
+
+      /* first, look for the force object banning 
+	 changing the face.  Certain races never change face with class. */
+      for(walk=player->inv;walk!=NULL;walk=walk->below)
+	if (!strcmp(walk->name,"NOCLASSFACECHANGE")) flag_change_face=0;
+
+      if(flag_change_face) {
+	player->animation_id = GET_ANIM_ID(change);
+	player->face = change->face;
+
+	if(QUERY_FLAG(change,FLAG_ANIMATE)) 
+	  SET_FLAG(player,FLAG_ANIMATE);
+	else
+	  CLEAR_FLAG(player,FLAG_ANIMATE);
+      }
+
+      /* check the special case of can't use weapons */
+      /*if(QUERY_FLAG(change,FLAG_USE_WEAPON)) CLEAR_FLAG(player,FLAG_USE_WEAPON);*/
+      if(!strcmp(change->name,"monk")) CLEAR_FLAG(player,FLAG_USE_WEAPON);
+
+      break;
+
+    }
+  }
+    
+  
+}

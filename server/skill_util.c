@@ -882,7 +882,8 @@ int link_player_skills(object *pl) {
    /* This looks like we have an old player file, so give those basic
     * skills to the player in this case. 
     */
-   if(old_file) { 
+	/* No, don't do this anymore. */
+   if(0) { 
 	object *tmp2;
 	int limit = sizeof(basic_skills)/sizeof(char *);
 
@@ -903,19 +904,20 @@ int link_player_skills(object *pl) {
 			break;
 		}
 
-              if(add) { 
-		insert_ob_in_ob(tmp,pl);
-              	sk_ob[sk_index] = tmp;
-	      	sk_index++;
-              	LOG(llevDebug,"Added basic skill: %s to inventory of %s\n",
-			basic_skills[i], pl->name);
+			if(add) { 
+			  insert_ob_in_ob(tmp,pl);
+			  sk_ob[sk_index] = tmp;
+			  sk_index++; 
+				LOG(llevDebug,"Added basic skill: %s to inventory of %s\n",
+				basic_skills[i], pl->name);
 	      }
 	   } else { 
-              LOG(llevError, 
-		"init_player_skills() - can't find basic skill: %s\n",basic_skills[i]);
-	      return 0;
-	   } 
-  }
+		  LOG(llevError, 
+				"init_player_skills() - can't find basic skill: %s\n",basic_skills[i]);
+		  return 0;
+	   }
+	
+	}
   /* Ok, create linked list and link the associated skills to exp objects */
    for(i=0;i<sk_index;i++) {
 #ifdef LINKED_SKILL_LIST
