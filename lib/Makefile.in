@@ -49,7 +49,8 @@ ALLFILES = $(SRCS) README \
 	
 
 FILES_HELP = $(srcdir)/help/apply $(srcdir)/help/bind \
-	$(srcdir)/help/cast $(srcdir)/help/golem $(srcdir)/help/invoke \
+	$(srcdir)/help/cast $(srcdir)/help/drop $(srcdir)/help/dropall \
+	$(srcdir)/help/golem $(srcdir)/help/invoke \
 	$(srcdir)/help/keys $(srcdir)/help/mark $(srcdir)/help/melee \
 	$(srcdir)/help/mouse $(srcdir)/help/move \
 	$(srcdir)/help/name $(srcdir)/help/output \

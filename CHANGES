@@ -17,6 +17,20 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+common/arch.c: Add 'unlocked' match for item_matched_string.
+lib/help/drop, lib/help/dropall: Help files for these commands.
+lib/Makefile.in: Update to include help commands above.
+server/spell_effect.c: Fix formatting of summon_pet() function.  Modified so
+   that it no longers sucks player spellpoints when casting it via scroll -
+   scrolls should not cast the player spellpoints.  No idea why that code was
+   there - in fact, casting off a scroll used more sp than casting from
+   memory.  Modify cast_cause_disease() function so that if the passed
+   direction is 0, we refer to the facing and cast in that direction - this
+   means spells of cause disease now work.  Also perform some minor formatting
+   changes in the function.
+TODO: Add not about inscription.
+MSW 2002-07-05
+
 common/arch.c:  Fix bug in item_matched_string which was matching all
   values (inverse in fact) when passed with count > 1 in matching
   string - missing ! operator.

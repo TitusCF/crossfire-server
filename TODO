@@ -15,6 +15,10 @@ light source does not illuminate the same space multiple times.
 ------------------------------------------------------------------------------
 Future feature requests
 
+- Change inscription - instead of looking at range field of the player,
+  have the spell to be inscribed part of the inscription command, eg
+  'inscribe scroll of identify'.
+
 - refine the NO_PASS attribute of objects - it should be possible to make
   it so that you can't walk over some spaces, but you could fly over them.
   There are other cases - water could perhaps require something like a

@@ -7,7 +7,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2000 Mark Wedel
+    Copyright (C) 2002 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -24,7 +24,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to mwedel@scruz.net
+    The authors can be reached via e-mail at crossfire-devel@real-time.com
 */
 
 #include <global.h>
@@ -1730,6 +1730,23 @@ cast_change_attr(object *op,object *caster,int dir,int spell_type) {
 }
 
 
+/* this pet monster stuff is total crap!
+ * We should replace it with:
+ * struct summoned_mon int foo {
+ *       char * mon_arch;
+ *       int  num_summoned;
+ *       }
+ * struct summoned_mon pets_summoned = {
+ *      { "bird", 5 },
+ *      { "vampire", 6},
+ *      { NULL, 0 }     -* terminator *-
+ * }
+ *
+ * Or even better, use treasure lists for this,
+ * eg, mage_pet_monster treasure list, etc.  Means
+ * that these could be changed without recompiling the server.
+ */
+
 #define MAX_PET_MONSTERS 5
 char mage_pet_monsters [MAX_PET_MONSTERS][16] =
                 {"bat","spider","stalker","beholder","dark_elf"};
@@ -1741,131 +1758,109 @@ char altern_pet_monsters [MAX_PET_MONSTERS][16] =
                 {"bird","pixie","skeleton","skull","vampire"};
 int altern_num_called [MAX_PET_MONSTERS] = {1,1,2,1,1};
 
-/* this pet monster stuff is total crap!
-** We should replace it with:
-struct summoned_mon int foo {
-        char * mon_arch;
-        int  num_summoned;
-        }
-struct summoned_mon pets_summoned = {
-       { "bird", 5 },
-       { "vampire", 6},
-       { NULL, 0 }     -* terminator *-
-}
-**
-*/
 
 
 int summon_pet(object *op, int dir, SpellTypeFrom item) {
-  int level, number, i;
-  char *monster;
-  archetype *at;
+    int level, number, i;
+    char *monster;
+    archetype *at;
 
-/*
-  level = ((op->head?op->head->level:op->level) / 4); 
-*/
-  level = ((op->head?op->head->level:SK_level(op)) / 4);
-  if (level >= MAX_PET_MONSTERS)
-    level = MAX_PET_MONSTERS - 1;
-  switch(rndm(0, 2)) {
-  case 0:
-    number = priest_num_called[level];
-    monster = priest_pet_monsters[level];
-    break;
-  case 1:
-    number = mage_num_called[level];
-    monster = mage_pet_monsters[level];
-    break;
-  default:
-    number = altern_num_called[level];
-    monster = altern_pet_monsters[level];
-    break;
-  }
-  at = find_archetype(monster);
-  if(at == NULL) {
-    LOG(llevError,"Unknown archetype in summon pet: %s\n",monster);
-    return 0;
-  }
-  if (!dir)
-    dir = find_free_spot(at, op->map, op->x, op->y, 1, SIZEOFFREE);
-  if((dir==-1) || arch_blocked(at,op->map, op->x + freearr_x[dir], op->y+freearr_y[dir]))
-  {
-    new_draw_info(NDI_UNIQUE, 0,op, "There is something in the way.");
-    if(op->type == PLAYER)
-      op->contr->count_left = 0;
-    return 0;
-  }
-  if (item != spellNormal)
-    /* op->stats.sp -= 5 + 10*level + op->level; */ 
-    op->stats.sp -= 5 + 10*level + SK_level(op);
-  for (i = 1; i < number + 1; i++) {
-    archetype *atmp;
-    object *prev = NULL, *head = NULL; /* We want to summon dragons *grin* */
+    level = ((op->head?op->head->level:SK_level(op)) / 4);
+    if (level >= MAX_PET_MONSTERS)
+	level = MAX_PET_MONSTERS - 1;
 
-    for(atmp = at; atmp!=NULL; atmp = atmp->more) {
-      object *tmp;
-      tmp = arch_to_object(atmp);
-      if (atmp == at) {
-        set_owner(tmp, op);
-        SET_FLAG(tmp, FLAG_MONSTER);
-        if (op->type == PLAYER) {
-          tmp->stats.exp = 0;
-          add_friendly_object(tmp);
-          SET_FLAG(tmp, FLAG_FRIENDLY);
-          tmp->move_type = PETMOVE;
-        } else if (QUERY_FLAG (op, FLAG_FRIENDLY)) {
-      	    object *owner = get_owner(op);
-            if (owner != NULL) {
-               set_owner (tmp, owner);
-               tmp->move_type = PETMOVE;
-               add_friendly_object (tmp);
-               SET_FLAG (tmp, FLAG_FRIENDLY);
+    switch(rndm(0, 2)) {
+	case 0:
+	    number = priest_num_called[level];
+	    monster = priest_pet_monsters[level];
+	    break;
+	case 1:
+	    number = mage_num_called[level];
+	    monster = mage_pet_monsters[level];
+	    break;
+
+	default:
+	    number = altern_num_called[level];
+	    monster = altern_pet_monsters[level];
+	    break;
+    }
+
+    at = find_archetype(monster);
+    if(at == NULL) {
+	LOG(llevError,"Unknown archetype in summon pet: %s\n",monster);
+	return 0;
+    }
+    if (!dir)
+	dir = find_free_spot(at, op->map, op->x, op->y, 1, SIZEOFFREE);
+
+    if((dir==-1) || arch_blocked(at,op->map, op->x + freearr_x[dir], op->y+freearr_y[dir])) {
+	new_draw_info(NDI_UNIQUE, 0,op, "There is something in the way.");
+	if(op->type == PLAYER)
+	    op->contr->count_left = 0;
+	return 0;
+    }
+    for (i = 1; i < number + 1; i++) {
+	archetype *atmp;
+	object *prev = NULL, *head = NULL; /* We want to summon dragons *grin* */
+
+	for(atmp = at; atmp!=NULL; atmp = atmp->more) {
+	    object *tmp;
+	    tmp = arch_to_object(atmp);
+
+	    /* if this is the head, set owner/friendly as needed */
+	    if (atmp == at) {
+		set_owner(tmp, op);
+		SET_FLAG(tmp, FLAG_MONSTER);
+		if (op->type == PLAYER) {
+		    tmp->stats.exp = 0;
+		    add_friendly_object(tmp);
+		    SET_FLAG(tmp, FLAG_FRIENDLY);
+		    tmp->move_type = PETMOVE;
+		} else if (QUERY_FLAG (op, FLAG_FRIENDLY)) {
+		    object *owner = get_owner(op);
+		    if (owner != NULL) {
+			set_owner (tmp, owner);
+			tmp->move_type = PETMOVE;
+			add_friendly_object (tmp);
+			SET_FLAG (tmp, FLAG_FRIENDLY);
+		    }
+		}
+		tmp->speed_left = -1;
+		tmp->enemy = op->enemy;
+		tmp->type = 0;
+	    }
+	    if(head == NULL)
+		head = tmp;
+	    tmp->x = op->x + freearr_x[dir] + tmp->arch->clone.x;
+	    tmp->y = op->y + freearr_y[dir] + tmp->arch->clone.y;
+	    tmp->map = op->map;
+	    if(head != tmp)
+		tmp->head = head, prev->more = tmp;
+	    prev = tmp;
+	}
+	head->direction = dir;
+
+	/* Some monsters are sleeping by default - clear that */
+	CLEAR_FLAG(head, FLAG_SLEEP);
+
+	head = insert_ob_in_map (head, op->map, op,0);
+	if (head != NULL && head->randomitems != NULL) {
+	    object *tmp;
+	    create_treasure(head->randomitems,head,GT_APPLY,6,0);
+	    for(tmp = head->inv; tmp != NULL; tmp = tmp->below)
+		if(!tmp->nrof)
+		    SET_FLAG(tmp, FLAG_NO_DROP);
+	}
+	dir = absdir(dir + 1);
+	if (arch_blocked(at,op->map, op->x + freearr_x[dir], op->y + freearr_y[dir])) {
+	    if (i < number) {
+		new_draw_info(NDI_UNIQUE, 0,op, "There is something in the way,");
+		new_draw_info(NDI_UNIQUE, 0,op, "no more pets for this casting.");
+		return 1;
 	    }
 	}
-        tmp->speed_left = -1;
-        tmp->enemy = op->enemy;
-        tmp->type = 0;
-      }
-      if(head == NULL)
-        head = tmp;
-      tmp->x = op->x + freearr_x[dir] + tmp->arch->clone.x;
-      tmp->y = op->y + freearr_y[dir] + tmp->arch->clone.y;
-      tmp->map = op->map;
-      if(head != tmp)
-        tmp->head = head, prev->more = tmp;
-      prev = tmp;
-    }
-    head->direction = dir;
-    /* Some monsters are sleeping by default - clear that */
-    CLEAR_FLAG(head, FLAG_SLEEP);
-    head = insert_ob_in_map (head, op->map, op,0);
-    if (head != NULL && head->randomitems != NULL) {
-      object *tmp;
-      create_treasure(head->randomitems,head,GT_APPLY,6,0);
-      for(tmp = head->inv; tmp != NULL; tmp = tmp->below)
-        if(!tmp->nrof)
-          SET_FLAG(tmp, FLAG_NO_DROP);
-    }
-    dir = absdir(dir + 1);
-    if (arch_blocked(at,op->map, op->x + freearr_x[dir],
-                     op->y + freearr_y[dir]))
-    {
-      if (i < number) {
-        new_draw_info(NDI_UNIQUE, 0,op, "There is something in the way,");
-        new_draw_info(NDI_UNIQUE, 0,op, "no more pets for this casting.");
-        if (item != spellNormal) {
-          /* op->stats.sp += (5 + 12 * level + op->level) / (number - i); */ 
-          op->stats.sp += (5 + 12 * level + SK_level(op)) / (number - i);
-          if (op->stats.sp < 0)
-            op->stats.sp = 0;
-        }
-        return 1;
-      }
-    }
-  }
-  if (item != spellNormal && op->stats.sp < 0)
-    op->stats.sp = 0;
-  return 1;
+    } /* for i < number */
+    return 1;
 }
 
 int create_bomb(object *op,object *caster,int dir,int spell_type,char *name) {
@@ -3774,25 +3769,34 @@ int make_object_glow(object *op, int radius, int time) {
 
 
 /*  cast_cause_disease:  this spell looks along <dir> from the
-player and infects someone. */
+ * player and infects someone. 
+ * op is the player/monster, caster is the object, dir is the direction
+ * to cast, disease_arch is the specific disease, and type is the spell number
+ */
 
 int cast_cause_disease(object *op, object *caster, int dir, archetype *disease_arch, int type) {
-  int x,y,i;
-  object *walk;
+    int x,y,i;
+    object *walk;
 
-  x = op->x;  y = op->y;
+    x = op->x;  y = op->y;
 
+    /* If casting from a scroll, no direction will be available, so refer to the 
+     * direction the player is pointing.
+     */
+    if (!dir) dir=op->facing;
+    if (!dir) return 0;	    /* won't find anything if casting on ourself, so just return */
 
-  /* search in a line for a victim */
-  for(i=0;i<5;i++) {
-	 x += freearr_x[dir]; y+= freearr_y[dir];
-	 if(out_of_map(op->map,x,y)) continue;
-	 /* search this square for a victim */
-	 for(walk=get_map_ob(op->map,x,y);walk;walk=walk->above)
-		if(QUERY_FLAG(walk,FLAG_MONSTER) 
-			|| !(walk->type==PLAYER)) {  /* found a victim */
+    /* search in a line for a victim */
+    for(i=0;i<5;i++) {
+	x += freearr_x[dir]; y+= freearr_y[dir];
 
+	if(out_of_map(op->map,x,y)) return 0;
+
+	/* search this square for a victim */
+	for(walk=get_map_ob(op->map,x,y);walk;walk=walk->above)
+	    if (QUERY_FLAG(walk,FLAG_MONSTER) || (walk->type==PLAYER)) {  /* found a victim */
 		  object *disease = arch_to_object(disease_arch);
+
 		  set_owner(disease,op);
 		  disease->stats.exp = 0;
 		  disease->level = op->level;
@@ -3845,11 +3849,11 @@ int cast_cause_disease(object *op, object *caster, int dir, archetype *disease_a
 		  
 
 		  if(infect_object(walk,disease,1)) {
-			 char buf[128];
 			 object *flash;  /* visual effect for inflicting disease */
-			 sprintf(buf,"You inflict %s on %s!",disease->name,walk->name);
+
+			 new_draw_info_format(NDI_UNIQUE, 0, op, "You inflict %s on %s!",disease->name,walk->name);
+
 			 free_object(disease); /* don't need this one anymore */
-			 new_draw_info(NDI_UNIQUE,0,op,buf);
 			 flash=get_archetype("detect_magic");
 			 flash->x = x;
 			 flash->y = y;
@@ -3858,12 +3862,12 @@ int cast_cause_disease(object *op, object *caster, int dir, archetype *disease_a
 			 return 1;
 		  }
 		  free_object(disease);
-		}
-	 /* no more infecting through walls. */
-	 if(blocked(op->map,x,y)) return 0;
-  }
-  new_draw_info(NDI_UNIQUE,0,op,"No one caught anything!");
-  return 0;
+	    }
+	/* no more infecting through walls. */
+	if(blocked(op->map,x,y)) return 0;
+    }
+    new_draw_info(NDI_UNIQUE,0,op,"No one caught anything!");
+    return 0;
 }
 
 

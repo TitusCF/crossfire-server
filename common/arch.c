@@ -150,6 +150,9 @@ int item_matched_string(object *pl, object *op, char *name)
 	    (QUERY_FLAG(op,FLAG_CURSED) ||QUERY_FLAG(op,FLAG_DAMNED)))
 	    return 2;
 
+	if (!strcmp(cp,"unlocked") && !QUERY_FLAG(op, FLAG_INV_LOCKED))
+	    return 2;
+
 	/* Allow for things like '100 arrows' */
 	if ((count=atoi(cp))!=0) {
 	    cp=strchr(cp, ' ');
