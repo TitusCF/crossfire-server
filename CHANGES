@@ -17,6 +17,20 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+lib/Makefile.in: add a 'archonly' directive that only collects archetypes
+    and doesn't collect images.
+lib/archetypes: rebuilt for fixes made to arches.
+lib/collect.pl.in: modified to take second parameter -ARCHONLY, that causes
+    it not to save out animation, bmaps and faces file.
+server/apply.c: Change order of print when applying/unapplying - print out
+    the 'you apply/unapply' before we print out the changes that applying
+    the item does.  It seems odd for it to be 'you feel stronger.  you apply
+    xyz'.  Fix can_apply_object() so that if a player needs to unapply
+    several items, the right return code is returned and we don't say
+    the player has a choice.
+server/player.c: Fix missing clearing of player->next.
+MSW 2002-07-15
+
 -- Start body commit notes --
 Major commit.  This adds body locations which is used for equipping items.
 Equipment has information which body part it gets equipped to, and monsters

@@ -2,13 +2,25 @@
 
 require "util.pl";
 
-if ($#ARGV != 0 || ($ARGV[0] =~ m/^--?[hH](elp)?$/)){
-    die ("\nUSAGE: perl collect.pl  ARCHDIR\n".
-        "\nWhere ARCHDIR is the directory where you stored the ".
-        "raw archetypes.\n".
-        "This script will then create these files:\n".
-        "archetypes,bmaps,bmaps.paths,faces,animations.\n"
-    )
+if ($#ARGV >= 0) {
+    if ($ARGV[0] =~ m/^--?[hH](elp)?$/){
+	die ("\nUSAGE: perl collect.pl  ARCHDIR\n".
+	     "\nWhere ARCHDIR is the directory where you stored the ".
+	     "raw archetypes.\n".
+	     "This script will then create these files:\n".
+	     "archetypes,bmaps,bmaps.paths,faces,animations.\n"
+	)
+    }
+}
+
+# archonly is used to only build the archetypes.  I find this
+# very handy if I know I've only changed .arc files - I don't want
+# to rebuild the other files, because now cvs tries to do diffs
+# on them as well as commit them, even if there are no changes.
+$archonly = 0;
+if ($#ARGV >= 1) {
+    if ($ARGV[1] eq "ARCHONLY") { $archonly = 1; }
+    else {print "Ignoring unknown option: $ARGV[1]\n"; }
 }
 
 
@@ -29,23 +41,28 @@ open(ARCH,">".$archetypes) || &die("cannot open ".$archetypes);
 &archsOut;
 close(ARCH);
 
-&info("$bmaps");
-open(BMAPS,">".$bmaps) || &die("cannot open ".$bmaps);
-&bmapsOut;
-close(BMAPS);
-open(BMAPS,">".$paths) || &die("cannot open ".$paths);
-&pathsOut;
-close(BMAPS);
 
-&info("$faces");
-open(FACES,">".$faces) || &die("cannot open ".$faces);
-&facesOut;
-close(FACES);
+if (!$archonly) {
+    &info("$bmaps");
+    open(BMAPS,">".$bmaps) || &die("cannot open ".$bmaps);
+    &bmapsOut;
+    close(BMAPS);
 
-&info("$animations");
-open(ANIM,">".$animations) || &die("cannot open ".$animations);
-&animOut;
-close(ANIM);
+    open(BMAPS,">".$paths) || &die("cannot open ".$paths);
+    &pathsOut;
+    close(BMAPS);
+
+    &info("$faces");
+    open(FACES,">".$faces) || &die("cannot open ".$faces);
+    &facesOut;
+    close(FACES);
+
+    &info("$animations");
+    open(ANIM,">".$animations) || &die("cannot open ".$animations);
+    &animOut;
+    close(ANIM);
+}
+
 
 &stats;
 exit 0;

@@ -2426,14 +2426,11 @@ void player_apply_below (object *pl)
  */
 static int unapply_special (object *who, object *op, int aflags)
 {
-    char buf[HUGE_BUF];
-
-    buf[0]='\0';	    /* Needs to be initialized */
-
-
     CLEAR_FLAG(op, FLAG_APPLIED);
     switch(op->type) {
 	case WEAPON:
+	    new_draw_info_format(NDI_UNIQUE, 0, who, "You unwield %s.",query_name(op));
+
 	    (void) change_abil (who,op);
 	    /* 'unready' melee weapons skill if it is current skill */
 	    (void) check_skill_to_apply(who,op);
@@ -2442,7 +2439,6 @@ static int unapply_special (object *who, object *op, int aflags)
 	    /* GROS: update the current_weapon_script field (used with script_attack for weapons) */
 	    who->current_weapon_script = NULL;
 	    who->current_weapon = NULL;
-	    sprintf(buf,"You unwield %s.",query_name(op));
 	    break;
 
 	case SKILL:         /* allows objects to impart skills */
@@ -2464,7 +2460,6 @@ static int unapply_special (object *who, object *op, int aflags)
 	    (void) change_abil (who, op);
 	    who->chosen_skill = NULL;
 	    CLEAR_FLAG (who, FLAG_READY_SKILL);
-	    buf[0] = '\0';
 	    break;
 
 	case ARMOUR:
@@ -2477,8 +2472,8 @@ static int unapply_special (object *who, object *op, int aflags)
 	case GIRDLE:
 	case BRACERS:
 	case CLOAK:
+	    new_draw_info_format(NDI_UNIQUE, 0, who, "You unwear %s.",query_name(op));
 	    (void) change_abil (who,op);
-	    sprintf(buf,"You unwear %s.",query_name(op));
 	    break;
 
 	case BOW:
@@ -2486,7 +2481,7 @@ static int unapply_special (object *who, object *op, int aflags)
 	case ROD:
 	case HORN:
 	    (void) check_skill_to_apply(who,op);
-	    sprintf(buf,"You unready %s.",query_name(op));
+	    new_draw_info_format(NDI_UNIQUE, 0, who, "You unready %s.",query_name(op));
 	    if(who->type==PLAYER) {
 		who->contr->shoottype = range_none;
 	    } else {
@@ -2498,11 +2493,9 @@ static int unapply_special (object *who, object *op, int aflags)
 	    break;
 
 	default:
-	    sprintf(buf,"You unapply %s.",query_name(op));
+	    new_draw_info_format(NDI_UNIQUE, 0, who, "You unapply %s.",query_name(op));
 	    break;
     }
-    if (buf[0] != '\0')
-	new_draw_info(NDI_UNIQUE, 0,who,buf);
 
     fix_player(who);
 
@@ -2677,8 +2670,13 @@ int can_apply_object(object *who, object *op)
 
 		tmp1 = get_item_from_body_location(who->inv, i);
 		if (!tmp1) {
+#if 0
+		    /* This is sort of an error, but happens a lot when old players
+		     * join in with more stuff equipped than they are now allowed.
+		     */
 		    LOG(llevError,"Can't find object using location %d on %s\n",
 			i, who->name);
+#endif
 		    retval |= CAN_APPLY_NEVER;
 		} else {
 		    /* need to unapply something.  However, if this something
@@ -2691,9 +2689,11 @@ int can_apply_object(object *who, object *op)
 			retval |= CAN_APPLY_UNAPPLY_MULT;
 		    }
 		    /* This object isn't using up all the slots, so there must
-		     * be another.
+		     * be another.  If so, and it the new item doesn't need all
+		     * the slots, the player then has a choice.  
 		     */
-		    if ((who->body_used[i] - tmp1->body_info[i]) != who->body_info[i])
+		    if (((who->body_used[i] - tmp1->body_info[i]) != who->body_info[i]) &&
+			(FABS(op->body_info[i]) < who->body_info[i]))
 			retval |= CAN_APPLY_UNAPPLY_CHOICE;
 
 		    /* Does unequippint 'tmp1' free up enough slots for this to be
@@ -2761,7 +2761,6 @@ int apply_special (object *who, object *op, int aflags)
 {
     int basic_flag = aflags & AP_BASIC_FLAGS;
     object *tmp;
-    char buf[HUGE_BUF];
     int i;
 
     if(who==NULL) {
@@ -2855,6 +2854,8 @@ int apply_special (object *who, object *op, int aflags)
 	    if(!QUERY_FLAG(who,FLAG_READY_WEAPON))
 		SET_FLAG(who, FLAG_READY_WEAPON);
 
+	    new_draw_info_format(NDI_UNIQUE, 0, who, "You wield %s.",query_name(op));
+
 	    (void) change_abil (who,op);
 #ifdef PLUGINS
 	    /* GROS: update the current_weapon_script field (used with EVENT_ATTACK for weapons) */
@@ -2865,7 +2866,6 @@ int apply_special (object *who, object *op, int aflags)
 	    }
 #endif
 	    who->current_weapon = op;
-	    sprintf(buf,"You wield %s.",query_name(op));
 	    break;
 
 	case ARMOUR:
@@ -2879,8 +2879,8 @@ int apply_special (object *who, object *op, int aflags)
 	case RING:
 	case AMULET:
 	    SET_FLAG(op, FLAG_APPLIED);
+	    new_draw_info_format(NDI_UNIQUE, 0, who, "You wear %s.",query_name(op));
 	    (void) change_abil (who,op);
-	    sprintf(buf,"You wear %s.",query_name(op));
 	    break;
 
 	/* this part is needed for skill-tools */ 
@@ -2911,7 +2911,6 @@ int apply_special (object *who, object *op, int aflags)
 	    (void) change_abil (who, op);
 	    who->chosen_skill = op;
 	    SET_FLAG (who, FLAG_READY_SKILL);
-	    buf[0] = '\0';
 	    break;
 	
 	case WAND:
@@ -2944,12 +2943,10 @@ int apply_special (object *who, object *op, int aflags)
 	    break;
 
 	default:
-	    sprintf(buf,"You apply %s.",query_name(op));
+	    new_draw_info_format(NDI_UNIQUE, 0, who, "You apply %s.",query_name(op));
     } /* end of switch op->type */
 
     SET_FLAG(op, FLAG_APPLIED);
-    if (buf[0] != '\0')
-	new_draw_info (NDI_UNIQUE, 0, who, buf);
 
     if(tmp!=NULL)
 	tmp = insert_ob_in_ob(tmp,who);

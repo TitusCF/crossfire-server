@@ -117,6 +117,8 @@ static player* get_player(player *p) {
 	    tmp->next=p;
 	else
 	    first_player=p;
+
+	p->next = NULL;
     }
 
     /* Clears basically the entire player structure except

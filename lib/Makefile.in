@@ -120,6 +120,9 @@ crossfire.0: bmaps.paths
 collect:
 	@PERL@ -I$(srcdir) $(srcdir)/collect.pl $(srcdir)/arch
 
+archonly:
+	@PERL@ -I$(srcdir) $(srcdir)/collect.pl $(srcdir)/arch ARCHONLY
+
 archetypes: .collect-stamp
 	make collect
 
