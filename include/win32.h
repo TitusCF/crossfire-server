@@ -36,6 +36,7 @@
 #include "version.h"
 
 // include all needed autoconfig.h defines
+#define CS_LOGSTATS
 #define HAVE_SRAND
 #define HAVE_FCNTL_H
 #define HAVE_STDDEF_H
