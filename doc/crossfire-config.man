@@ -1,0 +1,14 @@
+Little program aimed at giving information to plugin about config of the
+crossfire server.
+
+Simply invoke with the config parameter to get. Only the most common parameters
+(those that could be needed by an independent configure script) are available.
+The rest is available in config.h andd should be included in any plugin needing
+it.
+
+    printf ("usage: crossfire-config --Dflags");
+    printf (" (gives complete Dflags line for compiler invocation)\n");
+    printf ("usage: crossfire-config --parameter-list");
+    printf (" (show the list of available parameters)\n");
+    printf ("usage: crossfire-config <parameter name>");
+    printf (" (extract a compilation parameter)\n");
