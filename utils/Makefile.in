@@ -369,7 +369,7 @@ crossloop.pl: crossloop.pl.tmpl
 	$(SED) s%BINDIR%$(bindir)%g < crossloop.pl.tmpl > crossloop.pl
 
 crossloop: crossloop.tmpl
-	$(SED) s%BINDIR%$(bindir)%g < crossloop.pl.tmpl > crossloop
+	$(SED) s%BINDIR%$(bindir)%g < crossloop.tmpl > crossloop
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:

@@ -20,4 +20,4 @@ crossloop.pl: crossloop.pl.tmpl
 	$(SED) s%BINDIR%$(bindir)%g < crossloop.pl.tmpl > crossloop.pl
 
 crossloop: crossloop.tmpl
-	$(SED) s%BINDIR%$(bindir)%g < crossloop.pl.tmpl > crossloop
+	$(SED) s%BINDIR%$(bindir)%g < crossloop.tmpl > crossloop
