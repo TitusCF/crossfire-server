@@ -2498,65 +2498,54 @@ void kill_player(object *op)
 	save_player(op,1);
 	return;
     } /* NOT_PERMADETH */
+    else {
+	/* If NOT_PERMADETH is set, then the rest of this is not reachable.  This
+	 * should probably be embedded in an else statement.
+	 */
 
-/* If NOT_PERMADETH is set, then the rest of this is not reachable.  This
- * should probably be embedded in an else statement.
- */
+	op->contr->party_number=(-1);
+	if (settings.set_title == TRUE)
+	    op->contr->own_title[0]='\0';
+	new_draw_info(NDI_UNIQUE|NDI_ALL, 0,NULL, buf);
+	check_score(op);
+	if(op->contr->golem!=NULL) {
+	    remove_friendly_object(op->contr->golem);
+	    remove_ob(op->contr->golem);
+	    free_object(op->contr->golem);
+	    op->contr->golem=NULL;
+	}
+	loot_object(op); /* Remove some of the items for good */
+	remove_ob(op);
+	op->direction=0;
 
-    op->contr->party_number=(-1);
-    if (settings.set_title == TRUE)
-	op->contr->own_title[0]='\0';
-    new_draw_info(NDI_UNIQUE|NDI_ALL, 0,NULL, buf);
-    check_score(op);
-    if(op->contr->golem!=NULL) {
-      remove_friendly_object(op->contr->golem);
-      remove_ob(op->contr->golem);
-      free_object(op->contr->golem);
-      op->contr->golem=NULL;
-    }
-    loot_object(op); /* Remove some of the items for good */
-    remove_ob(op);
-    op->direction=0;
-    if(!QUERY_FLAG(op,FLAG_WAS_WIZ)&&op->stats.exp) {
-      delete_character(op->name,0);
-      if (settings.not_permadeth == FALSE && settings.resurrection == TRUE) {
-	/* save playerfile sans equipment when player dies
-	** then save it as player.pl.dead so that future resurrection
-	** type spells will work on them nicely
-	*/
-	op->stats.hp = op->stats.maxhp;
-	op->stats.food = 999;
+	if(!QUERY_FLAG(op,FLAG_WAS_WIZ)&&op->stats.exp) {
+	    delete_character(op->name,0);
+	    if (settings.resurrection == TRUE) {
+		/* save playerfile sans equipment when player dies
+		 ** then save it as player.pl.dead so that future resurrection
+		 ** type spells will work on them nicely
+		 */
+		delete_character(op->name,0);
+		op->stats.hp = op->stats.maxhp;
+		op->stats.food = 999;
 
-	/*  set the location of where the person will reappear when  */
-	/* maybe resurrection code should fix map also */
-	strcpy(op->contr->maplevel, settings.emergency_mapname);
-	if(op->map!=NULL)
-	    op->map = NULL;
-	op->x = settings.emergency_x;
-	op->y = settings.emergency_y;
-	save_player(op,0);
-	op->map = map;
-	/* please see resurrection.c: peterm */
-	dead_player(op);
-      }
-    }
-    play_again(op);
+		/*  set the location of where the person will reappear when  */
+		/* maybe resurrection code should fix map also */
+		strcpy(op->contr->maplevel, settings.emergency_mapname);
+		if(op->map!=NULL)
+		    op->map = NULL;
+		op->x = settings.emergency_x;
+		op->y = settings.emergency_y;
+		save_player(op,0);
+		op->map = map;
+		/* please see resurrection.c: peterm */
+		dead_player(op);
+	    } else {
+		delete_character(op->name,1);
+	    }
+	}
+	play_again(op);
 
-    if (settings.not_permadeth == TRUE) { /* this is unreachable */
-	tmp=arch_to_object(find_archetype("gravestone"));
-	sprintf(buf,"%s's gravestone",op->name);
-	FREE_AND_COPY(tmp->name, buf);
-	FREE_AND_COPY(tmp->name_pl, buf);
-
-	sprintf(buf,"RIP\nHere rests the hero %s the %s,\n"
-	    "who was killed by %s.\n", op->name, op->contr->title,
-	    op->contr->killer);
-	if (tmp->msg)
-	    free_string (tmp->msg);
-	tmp->msg = add_string(buf);
-	tmp->x=x,tmp->y=y;
-	insert_ob_in_map (tmp, map, NULL,0);
-    } else {
 	/*  peterm:  added to create a corpse at deathsite.  */
 	tmp=arch_to_object(find_archetype("corpse_pl"));
 	sprintf(buf,"%s", op->name);

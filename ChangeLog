@@ -18,6 +18,9 @@ else.  With this, include the file(s) that you changed.
 Changes for CVS:
 
 More bugfixes:
+server/player.c: Fix permadeath without resurrection - wasn't deleting
+    player save files as it was supposed to.  If permadeath +
+    resurrection was in use, I believe it all worked as expected.
 include/shop.h: remove _SHOP_H after endif, causing compiler warnings.
 include/skills.h: Add check to USING_SKILL to make sure chosen_skill
    is not null.
