@@ -654,19 +654,19 @@ spell_parameters SP_PARAMETERS[NROFREALSPELLS] =
 {	2,	20,	2,	1,	10},	/* dancing sword */     /* 185 */ 
 {	2,	20,	2,	1,	20},	/* animate weapon */
 {   0,       0,     3,      5,		10},	/*cause cold*/      
-{   1,      1,     4,      1,		8},	/*divine shock*/      
+{   1,      1,     4,      1,		4},	/*divine shock*/      
 {   0,      20,     25,      4,		8},	/*windstorm*/      
 {   0,     100,      0,      1,		20},	/*sanctuary*/    /* 190 */     
 {   0,      4,       0,      9,		36},	/*peace*/      
 {   0,      10,     0,       5,		50},	/*spiderweb*/      
 {   0,      5,      0,      10,		10},	/*conflict*/      
-{   0,       0,     5,      4,		8},	/*rage*/      
+{   0,       0,     5,      4,		4},	/*rage*/      
 {   10,     16,     3,      0,		24},	/*forked lightning*/      /* 195*/
 {   10,     5,     5,      4,		10},	/*poison fog*/      
 {   6,      100,     25,      4,	20},	/*flame aura*/      
 {   100,    20,     25,      4,		6},	/*vitriol*/      
-{   40,      5,      4,      40,	15},	/*vitriol splash*/        
-{   0,      0,      5,      4,		8}	/*armour*/               
+{   40,      5,      4,      40,	10},	/*vitriol splash*/        
+{   0,      0,      5,      4,		6}	/*armour*/               
 };
 
 char *spellpathnames[NRSPELLPATHS] = {
