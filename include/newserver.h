@@ -94,7 +94,7 @@ typedef struct NewSocket {
     Buffer  outputbuffer;   /* For undeliverable data */
     uint32  facecache:1;    /* IF true, client is caching images */
     uint32  sent_scroll:1;
-    uint32  sound:1;	    /* does the client want sound? */
+    uint32  sound:1;	    /* does the client want sound */
     uint32  cs_version, sc_version; /* versions of the client */
     uint32  update_look:1;  /* If true, we need to send the look window */
     uint32  can_write:1;    /* Can we write to this socket? */
@@ -129,7 +129,7 @@ typedef struct Socket_Info {
 extern Socket_Info socket_info;
 extern FaceInfo	faces[MAXFACENUM];  /* face information */
 
-#define VERSION_CS 1022
+#define VERSION_CS 1023    /* version >= 1023 understand setup cmd */
 #define VERSION_SC 1026
 #define VERSION_INFO "Crossfire Server"
 
