@@ -18,6 +18,10 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+socket/request.c:  Add length checking to NewPlayerCmd so that if the client
+sends us a really long command, we just truncate the end of it and not
+overwrite our internal buffers causing crashes.  MSW 5/8/2000
+
 server/player.c: add out_of_map check to stand_near_hostile function.  This
 fixes a server crash if the player uses a hiding skill near the edge of a map.
 MSW 5/8/2000

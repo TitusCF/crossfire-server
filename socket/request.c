@@ -149,6 +149,7 @@ void NewPlayerCmd(uint8 *buf, int len, player *pl)
 	pl->count=repeat;
 	pl->count_left=0;
     }
+    if ((len-4) >= MAX_BUF) len=MAX_BUF-5;
 
     strncpy(command, (char*)buf+6, len-4);
     command[len-4]='\0';
