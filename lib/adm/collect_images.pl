@@ -126,11 +126,19 @@ if ($archive) {
     open(OUT,">$DESTDIR/bmaps.client") || die("Can not open $DESTDIR/bmaps.paths\n");
     print OUT sort @csums;
     close(OUT);
+    open(OUT,">$DESTDIR/README") || die("Can not open $DESTDIR/README\n");
+    print OUT "These image files for the client should be located in\n";
+    print OUT "\$prefix/share/crossfire-client.  \$prefix is the location given in the -prefix\n";
+    print OUT "option when configure is run to build the client.  The default is /usr/local.\n";
+    print OUT "In that case these files should be put in /usr/local/share/crossfire-client\n";
+    print OUT "The client will print a messgae if it is unable to find the image information\n";
+    print OUT "with the location is looked for them.\n";
+    close(OUT);
 
     for ($count=0; $count<=$#extension; $count++) {
 	system("cp crossfire.$count $DESTDIR/crossfire.$extension[$count]");
     }
-    system("cd $TMPDIR; tar cf $ARCHNAME.tar $ARCHNAME");
+    system("cd $DESTDIR; tar cf $TMPDIR/$ARCHNAME.tar .");
     system("mv $TMPDIR/$ARCHNAME.tar ../");
     system("rm -rf $TMPDIR/$ARCHNAME");
 }
