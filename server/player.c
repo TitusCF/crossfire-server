@@ -1699,7 +1699,7 @@ void kill_player(object *op)
       if (tmp != NULL) {
 	sprintf(buf,"%s's finger",op->name);
 	tmp->name = add_string(buf);
-	sprintf(buf,"  This finger has been cutt off %s\n"
+	sprintf(buf,"  This finger has been cut off %s\n"
 	            "  the %s, when he was defeated at\n  level %d by %s.\n",
 	        op->name, op->contr->title, (int)(op->level),
 	        op->contr->killer);
