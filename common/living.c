@@ -1527,14 +1527,6 @@ void set_dragon_name(object *pl, object *abil, object *skin) {
       else
 	sprintf(pl->contr->title, "big %s dragon", attacks[atnr]);
     }
-    
-    /* also save title in abil force */
-    if (abil->title == NULL) {
-      /* this should never happen, because there's a default title
-         in the arch. but some old players might need it */
-      abil->title = (char *)malloc(MAX_BUF);
-    }
-    strcpy(abil->title, pl->contr->title);
   }
   
   strcpy(pl->contr->own_title, "");

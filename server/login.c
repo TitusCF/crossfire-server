@@ -756,14 +756,16 @@ void check_login(object *op) {
     
     /* if it's a dragon player, set the correct title here */
     if (is_dragon_pl(op) && op->inv != NULL) {
-      object *tmp;
+        object *tmp, *abil, *skin;
         for (tmp=op->inv; tmp!=NULL; tmp=tmp->below) {
 	    if (tmp->type == FORCE) {
-	        if (strcmp(tmp->arch->name, "dragon_ability_force")==0
-		    && tmp->title != NULL)
-		  strcpy(pl->title, tmp->title);
+	        if (strcmp(tmp->arch->name, "dragon_ability_force")==0)
+		    abil = tmp;
+		else if (strcmp(tmp->arch->name, "dragon_skin_force")==0)
+		    skin = tmp;
 	    }
 	}
+	set_dragon_name(op, abil, skin);
     }
     
     new_draw_info(NDI_UNIQUE, 0,op,"Welcome Back!");

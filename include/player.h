@@ -145,7 +145,7 @@ typedef struct pl {
    it possible for him/her to define this in the resources. */
   
   char own_title[MAX_NAME];
-  char title[MAX_NAME];
+  char title[BIG_NAME];
   
 /* EXT_SERVER: this string hold player description.
  * Client must parse it.
