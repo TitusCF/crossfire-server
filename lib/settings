@@ -77,7 +77,7 @@ item_power_factor 1.0
 # who_wiz_format is the same but for those with dm powers
 
 who_format %N the %t%h%d%n[%m]
-who_wiz_format %N the %t%h%d%nLevel %l[%m]%i%c
+who_wiz_format %N the %t%h%d%nLevel %l [%m](@%i)(%c)
 
 # See notes for most of thse in include/config.h
 

@@ -256,8 +256,22 @@ int command_malloc_verify(object *op, char *parms)
 int command_who (object *op, char *params) {
     player *pl;
     uint16 i;
-    char buf[MAX_BUF];
     char tmpbuf[HUGE_BUF];
+    int num_players = 0;
+    int num_wiz = 0;
+    int num_afk = 0;
+    char players_str[MAX_BUF];
+    typedef struct
+    {
+      char namebuf[MAX_BUF];
+      int login_order;
+    } chars_names;
+    chars_names *chars = NULL;
+    /*local functon for qsort comparison*/
+    int name_cmp (chars_names *c1, chars_names *c2)
+    {
+      return strcmp (c1->namebuf, c2->namebuf);
+    }
     
     /* 
      * The who formats are defined in config to be blank. They should have been
@@ -268,10 +282,7 @@ int command_who (object *op, char *params) {
     if (!strcmp(settings.who_format,"")) 
     	strcpy(settings.who_format, "%N_the_%t%h%d%n[%m]");
     if (!strcmp(settings.who_wiz_format,"")) 
-    	strcpy(settings.who_wiz_format, "%N_the_%t%h%d%nLevel %l[%m]%i %c");
-    
-    if (first_player != (player *) NULL)
-	new_draw_info(NDI_UNIQUE, 0,op,"Players:");
+    	strcpy(settings.who_wiz_format, "%N_the_%t%h%d%nLevel %l [%m](@%i)(%c)");
 
     for(pl=first_player;pl!=NULL;pl=pl->next) {
 	if(pl->ob->map == NULL)
@@ -280,18 +291,32 @@ int command_who (object *op, char *params) {
 
 	if (pl->state==ST_PLAYING || pl->state==ST_GET_PARTY_PASSWORD) {
 
+	    num_players++;
+	    chars = (chars_names *) realloc(chars, (num_players+1)*sizeof(chars_names));
+	    sprintf(chars[num_players].namebuf, "");
+	    chars[num_players].login_order = num_players;
+            if (chars == NULL)
+	    {
+	        new_draw_info(NDI_UNIQUE, 0, op, "who failed - out of memory!");
+                return 0;
+            } 
+	    /*Check for WIZ's & AFK's*/
+	    if (QUERY_FLAG(pl->ob,FLAG_WIZ))
+	      num_wiz++;
+	    if (QUERY_FLAG(pl->ob,FLAG_AFK))
+	      num_afk++;
 	    if (op == NULL || QUERY_FLAG(op, FLAG_WIZ)) {
 		for (i=0;i<=strlen(settings.who_wiz_format);i++) {
 		    if (settings.who_wiz_format[i]=='%') {
 			i++;
 			get_who_escape_code_value(tmpbuf,settings.who_wiz_format[i],pl);
-			strcat(buf, tmpbuf);
+			strcat(chars[num_players].namebuf, tmpbuf);
 		    }
 		    else if (settings.who_wiz_format[i]=='_')
-			strcat(buf," "); /* allow '_' to be used in place of spaces */
+			strcat(chars[num_players].namebuf," "); /* allow '_' to be used in place of spaces */
 		    else {
 			sprintf(tmpbuf,"%c",settings.who_wiz_format[i]);
-			strcat(buf,tmpbuf);
+			strcat(chars[num_players].namebuf,tmpbuf);
 		    }
 		}
 	    }
@@ -300,22 +325,27 @@ int command_who (object *op, char *params) {
 		    if (settings.who_format[i]=='%') {
 			i++;
 			get_who_escape_code_value(tmpbuf,settings.who_format[i],pl);
-			strcat(buf, tmpbuf);
+			strcat(chars[num_players].namebuf, tmpbuf);
 		    }
 		    else if (settings.who_format[i]=='_')
-		    	strcat(buf," "); /* allow '_' to be used in place of spaces */
+		    	strcat(chars[num_players].namebuf," "); /* allow '_' to be used in place of spaces */
 		    else {
 			sprintf(tmpbuf,"%c",settings.who_format[i]);
-			strcat(buf,tmpbuf);
+			strcat(chars[num_players].namebuf,tmpbuf);
 		    }
 		}
-	    }
-	    
-	    new_draw_info(NDI_UNIQUE, 0, op, buf);
-	    /* reset the buffer */
-	    buf[0]= '\0';
+	    }	    
 	}
     }
+    if (first_player != (player *) NULL)
+    {
+      sprintf(players_str, "Total Players (%d) -- WIZ(%d) AFK(%d)", num_players, num_wiz, num_afk);
+      new_draw_info(NDI_UNIQUE, 0, op, players_str);
+    }
+    qsort (chars, (num_players+1), sizeof(chars_names), name_cmp);
+    for (i=1;i<=num_players;i++)
+	new_draw_info(NDI_UNIQUE, 0, op, chars[i].namebuf);
+    free (chars);    
     return 1;
 }
 
