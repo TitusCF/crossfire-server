@@ -365,36 +365,45 @@ int change_abil(object *op, object *tmp) {
    * found by fix_player.  refop is not a real object */
   memcpy(&refop, op, sizeof(object));
 
-  if(op->type==PLAYER) {
-    if (tmp->type==POTION) {
-      for(j=0;j<NUM_STATS;j++) {
-        i = get_attr_value(&(op->contr->orig_stats),j);
+    if(op->type==PLAYER) {
+	if (tmp->type==POTION) {
+	    potion_max=1;
+	    for(j=0;j<NUM_STATS;j++) {
+		int nstat, ostat;
 
-	/* Check to see if stats are within limits such that this can be
-	 * applied.
-	 */
-        if (((i+flag*get_attr_value(&(tmp->stats),j))<=
-	    (20+tmp->stats.sp + get_attr_value(&(op->arch->clone.stats),j)))
-	    && i>0)
-	{
-            change_attr_value(&(op->contr->orig_stats),j,
-                          flag*get_attr_value(&(tmp->stats),j));
-	    tmp->stats.sp=0;/* Fix it up for super potions */
-	}
-	else {
-	  /* potion is useless - player has already hit the natural maximum */
-	  potion_max = 1;
-	}
-      }
-    /* This section of code ups the characters normal stats also.  I am not
-     * sure if this is strictly necessary, being that fix_player probably
-     * recalculates this anyway.
-     */
-    for(j=0;j<NUM_STATS;j++)
-      change_attr_value(&(op->stats),j,flag*get_attr_value(&(tmp->stats),j));
-    check_stat_bounds(&(op->stats));
-    } /* end of potion handling code */
-  }
+		ostat = get_attr_value(&(op->contr->orig_stats),j);
+		i = get_attr_value(&(tmp->stats),j);
+
+		/* nstat is what the stat will be after use of the potion */
+		nstat = flag*i + ostat;
+
+		/* Do some bounds checking.  While I don't think any
+		 * potions do so right now, there is the potential for potions
+		 * that adjust that stat by more than one point, so we need
+		 * to allow for that.
+		 */
+		if (nstat < 1 && i*flag < 0 ) nstat = 1;
+		else if (nstat > 20 + get_attr_value(&(op->arch->clone.stats),j)) {
+		    nstat =  20 + get_attr_value(&(op->arch->clone.stats),j);
+		}
+		if (nstat != ostat) {
+		    set_attr_value(&(op->contr->orig_stats), j, nstat);
+		    potion_max=0;
+		}
+		else if (i) {
+		    /* potion is useless - player has already hit the natural maximum */
+		    potion_max = 1;
+		}
+	    }
+	    /* This section of code ups the characters normal stats also.  I am not
+	     * sure if this is strictly necessary, being that fix_player probably
+	     * recalculates this anyway.
+	     */
+	    for(j=0;j<NUM_STATS;j++)
+		change_attr_value(&(op->stats),j,flag*get_attr_value(&(tmp->stats),j));
+	    check_stat_bounds(&(op->stats));
+	} /* end of potion handling code */
+    }
 
   /* reset attributes that fix_player doesn't reset since it doesn't search
    * everything to set */

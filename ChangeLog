@@ -17,6 +17,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+common/potion.c: Fix up change_abil() to more properly deal with potions -
+   characters could get 0 stat values.  Also, messages were not being properly
+   displayed.  Patch is slightly modified from one sent in by Bernd Edler.
+MSW 2004-04-05
+
 server/main.c: Add extra checking for valid map coordinates after we grab
    them from the destination map itself - if a map is broken and has
    default enter_ coordinates outside the maps range, this previously
