@@ -17,6 +17,7 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+common/readable.c: Apply patch by Kevin Rudat to add some alchemy book names.
 common/readable.c: Apply patch by Kevin Rudat to fix buffer overrun while
   generating book titles.
 Andreas Kirschbaum 2004-10-09

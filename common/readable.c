@@ -322,7 +322,10 @@ static char *formula_book_name[] =
     "formulary",
     "lab book",
     "lab notes",
-    "recipe book"
+    "recipe book",
+    "experiment record",
+    "work plan",
+    "design notes"
 };
 
 /* this isn't used except for empty books */
