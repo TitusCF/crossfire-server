@@ -3339,6 +3339,17 @@ void fix_auto_apply(mapstruct *m) {
 						m->difficulty,0);
 			}
 		    }
+		    /* This is really temporary - the code at the bottom will
+		     * also set randomitems to null.  The problem is there are bunches
+		     * of maps/players already out there with items that have spells
+		     * which haven't had the randomitems set to null yet.
+		     * MSW 2004-05-13
+		     */
+		    if (tmp->type == WAND || tmp->type == ROD || tmp->type == SCROLL ||
+			tmp->type == HORN || tmp->type == FIREWALL || tmp->type == POTION ||
+			tmp->type == ALTAR)
+			    tmp->randomitems = NULL;
+
 		}
 
 		if(QUERY_FLAG(tmp,FLAG_AUTO_APPLY))
