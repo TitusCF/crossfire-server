@@ -654,6 +654,7 @@ int get_skill_stat1(object *op);
 int get_skill_stat2(object *op);
 int get_skill_stat3(object *op);
 int get_weighted_skill_stats(object *op);
+object *get_skill_from_inventory(object *op, const char *skname);
 /* spell_effect.c */
 void prayer_failure(object *op, int failure, int power);
 void cast_mana_storm(object *op, int lvl);
@@ -802,6 +803,8 @@ void move_player_mover(object *op);
 void move_creator(object *op);
 void move_marker(object *op);
 int process_object(object *op);
+int atnr_is_dragon_enabled(int attacknr);
+void dragon_ability_gain(object *who, int atnr, int level);
 /* timers.c */
 void cftimer_process_timers(void);
 int cftimer_create(int id, long delay, object *ob, int mode);

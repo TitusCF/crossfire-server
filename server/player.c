@@ -465,9 +465,27 @@ void give_initial_items(object *pl,treasurelist *items) {
 
     for (op=pl->inv; op; op=next) {
 	next = op->below;
-
-  	if(op->type==FORCE) { SET_FLAG(op,FLAG_APPLIED);};
-
+	
+	/* Forces get applied per default, unless they have the
+           flag "neutral" set. Sorry but I can't think of a better way */
+  	if(op->type==FORCE && !QUERY_FLAG(op, FLAG_NEUTRAL))
+	  { SET_FLAG(op,FLAG_APPLIED);};
+	
+	/* we never give weapons/armour if these cannot be used
+           by this player due to race restrictions */
+	if (pl->type == PLAYER) {
+	  if ((!QUERY_FLAG(pl, FLAG_USE_ARMOUR) &&
+	      (op->type == ARMOUR || op->type == BOOTS ||
+	       op->type == CLOAK || op->type == HELMET ||
+	       op->type == SHIELD || op->type == GLOVES ||
+	       op->type == BRACERS || op->type == GIRDLE)) ||
+	      (!QUERY_FLAG(pl, FLAG_USE_WEAPON) && op->type == WEAPON)) {
+	    remove_ob (op);
+	    free_object (op);
+	    continue;
+	  }
+	}
+	
   	if(op->type==SPELLBOOK) { /* fix spells for first level spells */
 	    if (strcmp (op->arch->name, "cleric_book") == 0) {
 		if (nrof_start_prayers <= 0) {
@@ -2648,5 +2666,126 @@ int op_on_battleground (object *op, int *x, int *y) {
   return 0;
 }
 
+/*
+ * When a dragon-player gains a new stage of evolution,
+ * he gets some treasure
+ *
+ * attributes:
+ *      object *who        the dragon player
+ *      int atnr           the attack-number of the ability focus
+ *      int level          ability level
+ */
+void dragon_ability_gain(object *who, int atnr, int level) {
+  treasurelist *trlist = NULL;   /* treasurelist */
+  treasure *tr;                  /* treasure */
+  object *tmp;                   /* tmp. object */
+  object *item;                  /* treasure object */
+  char buf[MAX_BUF];             /* tmp. string buffer */
+  int i=0, j=0;
+  
+  /* get the appropriate treasurelist */
+  if (atnr == ATNR_FIRE)
+    trlist = find_treasurelist("dragon_ability_fire");
+  else if (atnr == ATNR_COLD)
+    trlist = find_treasurelist("dragon_ability_cold");
+  else if (atnr == ATNR_ELECTRICITY)
+    trlist = find_treasurelist("dragon_ability_elec");
+  else if (atnr == ATNR_POISON)
+    trlist = find_treasurelist("dragon_ability_poison");
+  
+  if (trlist == NULL || who->type != PLAYER)
+    return;
+  
+  for (i=0, tr = trlist->items; tr != NULL && i<level-1;
+       tr = tr->next, i++);
+  
+  if (tr == NULL || tr->item == NULL) {
+    /* printf("-> no more treasure for %s\n", change_resist_msg[atnr]); */
+    return;
+  }
+  
+  /* everything seems okay - now bring on the gift: */
+  item = &(tr->item->clone);
+  
+  /* grant direct spell */
+  if (item->type == SPELLBOOK) {
+    int spell = look_up_spell_name (item->slaying);
+    if (spell<0 || check_spell_known (who, spell))
+      return;
+    if (item->invisible) {
+      sprintf(buf, "You gained the ability of %s", spells[spell].name);
+      new_draw_info(NDI_UNIQUE|NDI_BLUE, 0, who, buf);
+      do_learn_spell (who, spell, 0);
+      return;
+    }
+  }
+  else if (item->type == SKILL) {
+    if (strcmp(item->title, "clawing") == 0 &&
+	change_skill (who, lookup_skill_by_name("clawing"))) {
+      /* adding new attacktypes to the clawing skill */
+      tmp = who->chosen_skill; /* clawing skill object */
+      
+      if (tmp->type == SKILL && strcmp(tmp->name, "clawing")==0
+	  && !(tmp->attacktype & item->attacktype)) {
+	/* always add physical if there's none */
+	if (tmp->attacktype == 0) tmp->attacktype = AT_PHYSICAL;
+	
+	/* we add the new attacktype to the clawing ability */
+	tmp->attacktype += item->attacktype;
+	
+	if (item->msg != NULL)
+	  new_draw_info(NDI_UNIQUE|NDI_BLUE, 0, who, item->msg);
+      }
+    }
+  }
+  else if (item->type == FORCE) {
+    /* forces in the treasurelist can alter the player's stats */
+    object *skin;
+    /* first get the dragon skin force */
+    for (skin=who->inv; skin!=NULL && strcmp(skin->arch->name, "dragon_skin_force")!=0;
+	 skin=skin->below);
+    if (skin == NULL) return;
+    
+    /* adding new spellpath attunements */
+    if (item->path_attuned > 0 && !(skin->path_attuned & item->path_attuned)) {
+      skin->path_attuned += item->path_attuned; /* add attunement to skin */
+      
+      /* print message */
+      sprintf(buf, "You feel attuned to ");
+      for(i=0, j=0; i<NRSPELLPATHS; i++) {
+        if(item->path_attuned & (1<<i)) {
+	  if (j) 
+            strcat(buf," and ");
+          else 
+            j = 1; 
+          strcat(buf, spellpathnames[i]);
+        }
+      }
+      strcat(buf,".");
+      new_draw_info(NDI_UNIQUE|NDI_BLUE, 0, who, buf);
+    }
+    
+    /* evtl. adding flags: */
+    if(QUERY_FLAG(item, FLAG_XRAYS))
+      SET_FLAG(skin, FLAG_XRAYS);
+    if(QUERY_FLAG(item, FLAG_STEALTH))
+      SET_FLAG(skin, FLAG_STEALTH);
+    if(QUERY_FLAG(item, FLAG_SEE_IN_DARK))
+      SET_FLAG(skin, FLAG_SEE_IN_DARK);
+    
+    /* print message if there is one */
+    if (item->msg != NULL)
+      new_draw_info(NDI_UNIQUE|NDI_BLUE, 0, who, item->msg);
+  }
+  else {
+    /* generate misc. treasure */
+    tmp = arch_to_object (tr->item);
+    sprintf(buf, "You gained %s", query_short_name(tmp));
+    new_draw_info(NDI_UNIQUE|NDI_BLUE, 0, who, buf);
+    tmp = insert_ob_in_ob (tmp, who);
+    if (who->type == PLAYER)
+      esrv_send_item(who, tmp);
+  }
+}
 
 

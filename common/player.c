@@ -167,3 +167,16 @@ object *find_skill(object *op, int skillnr) {
     }
     return skill1;
 }
+
+/* Determine if the attacktype represented by the
+ * specified attack-number is enabled for dragon players.
+ * A dragon player (quetzal) can gain resistances for
+ * all enabled attacktypes.
+ */
+int atnr_is_dragon_enabled(int attacknr) {
+  if (attacknr == ATNR_MAGIC || attacknr == ATNR_FIRE ||
+      attacknr == ATNR_ELECTRICITY || attacknr == ATNR_COLD ||
+      attacknr == ATNR_ACID || attacknr == ATNR_POISON)
+    return 1;
+  return 0;
+}

@@ -68,7 +68,7 @@ char *describe_resistance(object *op, int newline)
 
     buf[0]=0;
     for (tmpvar=0; tmpvar<NROFATTACKS; tmpvar++) {
-       if (op->resist[tmpvar]) {
+       if (op->resist[tmpvar] && (op->type != FLESH || atnr_is_dragon_enabled(tmpvar)==1)) {
 	    if (!newline)
 		sprintf(buf1,"(%s %+d)", resist_plus[tmpvar], op->resist[tmpvar]);
 	    else
@@ -585,6 +585,12 @@ char *describe_item(object *op) {
       if(!need_identify(op) || QUERY_FLAG(op,FLAG_IDENTIFIED) || QUERY_FLAG(op,FLAG_BEEN_APPLIED)) {
 	sprintf(buf,"(food+%d)", op->stats.food);
 	strcat(retbuf, buf);
+	
+	if (op->type == FLESH && op->last_eat>0 && atnr_is_dragon_enabled(op->last_eat)) {
+	  sprintf(buf, "(%s metabolism)", change_resist_msg[op->last_eat]);
+	  strcat(retbuf, buf);
+	}
+	
 	if (!QUERY_FLAG(op,FLAG_CURSED)) {
 	    if (op->stats.hp)
 		strcat(retbuf,"(heals)");
@@ -598,7 +604,7 @@ char *describe_item(object *op) {
 		strcat(retbuf,"(spellpoint depletion)");
 	}
       }
-	break;
+      break;
 
 
     case SKILL:
@@ -798,14 +804,32 @@ char *describe_item(object *op) {
     }
   }
   if(!need_identify(op)||QUERY_FLAG(op,FLAG_IDENTIFIED)||
-     QUERY_FLAG(op,FLAG_MONSTER)) {
-/*    if (op->attacktype != 1)*/
-      DESCRIBE_ABILITY(retbuf, op->attacktype, "Attacks");
-      strcat(retbuf,describe_resistance(op, 0));
+      QUERY_FLAG(op,FLAG_MONSTER)) {
+    
+      /* describe attacktypes */
+      if (op->type == PLAYER && strcmp(op->race, "dragon")==0) {
+	/* for dragon players display the attacktypes from clawing skill */
+	object *tmp;
+	
+	for (tmp=op->inv; tmp!=NULL && !(tmp->type == SKILL &&
+	     strcmp(tmp->name, "clawing")==0); tmp=tmp->below);
+	
+	if (tmp != NULL && tmp->attacktype!=0) {
+	  DESCRIBE_ABILITY(retbuf, tmp->attacktype, "Claws");}
+	else {
+	  DESCRIBE_ABILITY(retbuf, op->attacktype, "Attacks");}
+      }
+      else {
+	DESCRIBE_ABILITY(retbuf, op->attacktype, "Attacks");}
+      
+      /* resistance on flesh is only visible for quetzals */
+      if (op->type != FLESH || QUERY_FLAG(op, FLAG_SEE_INVISIBLE))
+          strcat(retbuf,describe_resistance(op, 0));
       DESCRIBE_PATH(retbuf, op->path_attuned, "Attuned");
       DESCRIBE_PATH(retbuf, op->path_repelled, "Repelled");
       DESCRIBE_PATH(retbuf, op->path_denied, "Denied");
   }
+  
   return retbuf;
 }
 

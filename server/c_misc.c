@@ -975,7 +975,13 @@ int explore_mode() {
 int command_title (object *op, char *params)
 {
     char buf[MAX_BUF];
-
+    
+    /* dragon players cannot change titles */
+    if (op != NULL && op->type == PLAYER && strcmp(op->race, "dragon")==0) {
+        new_draw_info(NDI_UNIQUE, 0, op, "Dragons cannot change titles.");
+        return 1;
+    }
+    
     if(params == NULL) {
 	if(op->contr->own_title[0]=='\0')
 	    sprintf(buf,"Your title is '%s'.", op->contr->title);

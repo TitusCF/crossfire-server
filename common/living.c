@@ -270,7 +270,6 @@ char *short_stat_name[7] = {
   "Str", "Dex", "Con", "Wis", "Cha", "Int","Pow" 
 };
 
-
 /*
  * sets Str/Dex/con/Wis/Cha/Int/Pow in stats to value, depending on
  * what attr is (STR to POW).
@@ -863,7 +862,7 @@ void fix_player(object *op) {
      * since light sources are never applied, need to put check here.
      */
     if (tmp->glow_radius > light) light=tmp->glow_radius;
-
+    
     if(QUERY_FLAG(tmp,FLAG_APPLIED) && tmp->type!=CONTAINER && tmp->type!=CLOSE_CON) {
 	    /* The meaning of stats in skill or experience objects is different -
 	     * we use them solely to link skills to experience, thus it is 
@@ -883,7 +882,7 @@ void fix_player(object *op) {
 	     || (tmp->type == BOOTS)    || (tmp->type == GLOVES)
 	     || (tmp->type == AMULET )  || (tmp->type == GIRDLE)
 	     || (tmp->type == BRACERS ) || (tmp->type == CLOAK) 
-	     || (tmp->type == DISEASE)  || (tmp->type == FORCE) ){
+	     || (tmp->type == DISEASE)  || (tmp->type == FORCE)) {
 	  op->contr->digestion     += tmp->stats.food;
 	  op->contr->gen_hp        += tmp->stats.hp;
 	  op->contr->gen_sp        += tmp->stats.sp;
@@ -1477,20 +1476,132 @@ void add_exp(object *op, int exp) {
     }
 }
 
+/*
+ * set the new dragon name after gaining levels or
+ * changing ability focus (later this can be extended to
+ * eventually change the player's face and animation)
+ *
+ * Note that the title is written to 'own_title' in the
+ * player struct. This should be changed to 'ext_title'
+ * as soon as clients support this!
+ * Please, anyone, write support for 'ext_title'.
+ */
+void set_dragon_name(object *pl, object *abil, object *skin) {
+  int atnr=-1;  /* attacknumber of highest level */
+  int level=0;  /* highest level */
+  int i;
+  
+  /* first, look for the highest level */
+  for(i=0; i<NROFATTACKS; i++) {
+    if (atnr_is_dragon_enabled(i) &&
+	(atnr==-1 || abil->resist[i] > abil->resist[atnr])) {
+      level = abil->resist[i];
+      atnr = i;
+    }
+  }
+  
+  /* now if there are equals at highest level, pick the one with focus,
+     or else at random */
+  if (atnr_is_dragon_enabled(abil->stats.exp) &&
+      abil->resist[abil->stats.exp] >= level)
+    atnr = abil->stats.exp;
+  
+  level = (int)(level/5.);
+  
+  /* now set the new title */
+  if (pl->contr != NULL) {
+    if(level == 0)
+      sprintf(pl->contr->title, "%s hatchling", attacks[atnr]);
+    else if (level == 1)
+      sprintf(pl->contr->title, "%s wyrm", attacks[atnr]);
+     else if (level == 2)
+      sprintf(pl->contr->title, "%s wyvern", attacks[atnr]);
+    else if (level == 3)
+      sprintf(pl->contr->title, "%s dragon", attacks[atnr]);
+    else {
+      /* special titles for extra high resistance! */
+      if (skin->resist[atnr] > 40)
+	sprintf(pl->contr->title, "legendary %s dragon", attacks[atnr]);
+      else if (skin->resist[atnr] > 20)
+	sprintf(pl->contr->title, "ancient %s dragon", attacks[atnr]);
+      else
+	sprintf(pl->contr->title, "big %s dragon", attacks[atnr]);
+    }
+  }
+  
+  sprintf(pl->contr->own_title, "");
+}
+
+/*
+ * This function is called when a dragon-player gains
+ * an overall level. Here, the dragon might gain new abilities
+ * or change the ability-focus.
+ */
+void dragon_level_gain(object *who) {
+  object *abil = NULL;    /* pointer to dragon ability force*/
+  object *skin = NULL;    /* pointer to dragon skin force*/
+  object *tmp = NULL;     /* tmp. object */
+  char buf[MAX_BUF];      /* tmp. string buffer */
+  
+  /* now grab the 'dragon_ability'-forces from the player's inventory */
+  for (tmp=who->inv; tmp!=NULL; tmp=tmp->below) {
+    if (tmp->type == FORCE) {
+      if (strcmp(tmp->arch->name, "dragon_ability_force")==0)
+	abil = tmp;
+      if (strcmp(tmp->arch->name, "dragon_skin_force")==0)
+	skin = tmp;
+    }
+  }
+  /* if the force is missing -> bail out */
+  if (abil == NULL) return;
+  
+  /* The ability_force keeps track of maximum level ever achieved.
+     New abilties can only be gained by surpassing this max level */
+  if (who->level > abil->level) {
+    /* increase our focused ability */
+    abil->resist[abil->stats.exp]++;
+    
+    if (abil->resist[abil->stats.exp]>0 && abil->resist[abil->stats.exp]%5 == 0) {
+      /* time to hand out a new ability-gift */
+      
+      (*dragon_gain_func)(who, abil->stats.exp,
+			       (int)((1+abil->resist[abil->stats.exp])/5.));
+    }
+    
+    if (abil->last_eat > 0 && atnr_is_dragon_enabled(abil->last_eat)) {
+      /* apply new ability focus */
+      sprintf(buf, "Your metabolism now focuses on %s!",
+	      change_resist_msg[abil->last_eat]);
+      (*draw_info_func)(NDI_UNIQUE|NDI_BLUE, 0, who, buf);
+      
+      abil->stats.exp = abil->last_eat;
+      abil->last_eat = 0;
+    }
+    
+    abil->level = who->level;
+  }
+  
+  /* last but not least, set the new title for the dragon */
+  set_dragon_name(who, abil, skin);
+}
+
 /* player_lvl_adj() - for the new exp system. we are concerned with
  * whether the player gets more hp, sp and new levels.
  * -b.t.
  */
-
 void player_lvl_adj(object *who, object *op) {
     char buf[MAX_BUF];
-
+    
     if(!op)        /* when rolling stats */ 
 	op = who;	
  
     if(op->level < MAXLEVEL && op->stats.exp >= level_exp(op->level+1,op->expmul)) {
 	op->level++;
-
+	
+	if (op != NULL && op == who && op->stats.exp > 1 &&
+	    op->type == PLAYER && strcmp(op->race, "dragon")==0)
+	  dragon_level_gain(who);
+	
 	if(who && (who->level < 11) && op->type!=EXPERIENCE) { 
 	    who->contr->levhp[who->level] = die_roll(2, 4, who, PREFER_HIGH)+1;
 	    who->contr->levsp[who->level] = die_roll(2, 3, who, PREFER_HIGH);
@@ -1550,7 +1661,6 @@ void calc_perm_exp(object *op)
 /* adjust_exp() - make sure that we don't exceed max or min set on
  * experience
  */
-
 int adjust_exp(object *op, int exp) {
     int max_exp = MAX_EXPERIENCE;
 

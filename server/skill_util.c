@@ -1592,3 +1592,23 @@ int get_weighted_skill_stats(object *op) {
 
 }
 
+/*
+ * Looks for the skill of specified name in op's inventory.
+ * 
+ * attributes:
+ *      object *op       the object to be searched (most likely a player)
+ *      char *skname     name of the desired skill
+ *
+ * return:
+ *      object *         the skill object if found, otherwise NULL
+ */
+object *get_skill_from_inventory(object *op, const char *skname) {
+  object *tmp;   /* search index */
+  
+  if (op == NULL) return NULL;
+  
+  for (tmp=op->inv; tmp!=NULL; tmp=tmp->below) {
+    if (tmp->type == SKILL && strcmp(tmp->name, skname)==0)
+      return tmp;
+  }
+}

@@ -1048,9 +1048,17 @@ void examine(object *op, object *tmp) {
 	buf[VERY_BIG_BUF-1]=0;
     }
     else {
-	strcpy(buf,"That is ");
+        /* Only quetzals can see the resistances on flesh. To realize
+	   this, we temporarily flag the flesh with SEE_INVISIBLE */
+        if (op->type == PLAYER && tmp->type == FLESH && strcmp(op->race, "dragon") == 0)
+	    SET_FLAG(tmp, FLAG_SEE_INVISIBLE);
+	
+        strcpy(buf,"That is ");
+	
 	strncat(buf, long_desc(tmp), VERY_BIG_BUF-strlen(buf)-1);
 	buf[VERY_BIG_BUF-1]=0;
+	if (op->type == PLAYER && tmp->type == FLESH)
+	    CLEAR_FLAG(tmp, FLAG_SEE_INVISIBLE);
     }
 
     new_draw_info(NDI_UNIQUE, 0,op,buf);

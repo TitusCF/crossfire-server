@@ -1473,7 +1473,10 @@ void fix_flesh_item(object *item, object *donor) {
 	 */
 	for (i=0; i<NROFATTACKS; i++)
 	    item->resist[i] = donor->resist[i]/2;
-
+	
+	/* item inherits donor's level (important for quezals) */
+	item->level = donor->level;
+	
 	/* if donor has some attacktypes, the flesh is poisonous */
 	if(donor->attacktype&AT_POISON)
 	    item->type=POISON;

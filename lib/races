@@ -122,6 +122,7 @@ RACE reptile
   cobra
   serp_priest
   fire_serpent
+  @quetzalcoatl
 RACE slime
   blob
   slime
@@ -138,7 +139,7 @@ RACE unnatural
   golem_necro
 RACE dragon
   generate_dragon
-  @quetzalcoatl
+  @pl_dragon
   dragon
   baby_dragon
   chinese_dragon

@@ -411,6 +411,37 @@ more
   arch god_spelldirect_cause_rabies
 end
 ##############################################################
+# ability-treasure for dragon players
+##############################################################
+treasure dragon_ability_fire
+  arch direct_attune_fire
+  more
+  arch fire_clawing
+  more
+  arch spelldirect_dragonbreath
+end
+treasure dragon_ability_cold
+  arch direct_attune_cold
+  more
+  arch ice_clawing
+  more
+  arch spelldirect_large_icestorm
+end
+treasure dragon_ability_elec
+  arch direct_attune_elec
+  more
+  arch electric_clawing
+  more
+  arch spelldirect_ball_lightning
+  more
+  arch dragon_ability_xrays
+end
+treasure dragon_ability_poison
+  arch spelldirect_poison_cloud
+  more
+  arch poison_clawing
+end
+##############################################################
 #
 # BODY PARTS - 
 #
@@ -3990,6 +4021,21 @@ treasure fireborn
   arch book
   end
 treasure quetzalcoatl_player_items
+  arch skill_levitate
+  more
+  arch skill_clawing
+  more
+  arch ability_fire
+  more
+  arch no_class_face_change
+  more
+  arch skill_spellcasting
+  end
+treasure dragon_player_items
+  arch dragon_skin_force
+  more
+  arch dragon_ability_force
+  more
   arch skill_levitate
   more
   arch skill_clawing
