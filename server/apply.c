@@ -1073,11 +1073,13 @@ static int apply_shop_mat (object *shop_mat, object *op)
 	    op->x += freearr_x[i];
 	    op->y += freearr_y[i];
 	    rv = insert_ob_in_map (op, op->map, shop_mat,0) == NULL;
+	    esrv_map_scroll(&op->contr->socket, freearr_x[i],freearr_y[i]);
+	    op->contr->socket.update_look=1;
+	    op->contr->socket.look_position=0;
 	}
     }
-
-  CLEAR_FLAG (op, FLAG_NO_APPLY);
-  return rv;
+    CLEAR_FLAG (op, FLAG_NO_APPLY);
+    return rv;
 }
 
 static void apply_sign (object *op, object *sign)

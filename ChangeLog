@@ -17,6 +17,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/apply.c: Fix bug in that we weren't calling esrv_map_scroll()
+   when player used a shop map but lacked sufficient funds to pay
+   for his items.
+MSW 2002-05-23
+
 common/item.c, common/utils.c, include/config.h: Add #define NEW_MATERIAL_CODE
    and checks in the other files for this - if this is commented out
    (default), then the new material naming code is disabled - material
