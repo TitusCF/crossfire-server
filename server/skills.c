@@ -1211,7 +1211,7 @@ static int write_scroll (object *pl, object *scroll, object *skill) {
 	}
 	tmp = get_object();
 	copy_object(chosen_spell, tmp);
-	insert_ob_in_ob(newscroll, tmp);
+	insert_ob_in_ob(tmp, newscroll);
 
 	/* wait until finished manipulating the scroll before inserting it */
 	if (newscroll != scroll)

@@ -17,6 +17,14 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Fix writing not inserting correctly item in inventory, and Windows-
+    specific stuff too
+server/skills.c: write_scroll(): Better to insert spell in scroll,
+    and not the other way around
+server/skill_util.c: fix Windows-specific int64 stuff.
+Changelog: fix Mark's 2003 to 2004 :)
+Ryo 2004-01-16
+
 Fix a bunch of crashes observed on metalforge:
 server/player.c: do_hidden_move(): Move call to find skill so that it is
     always called.
@@ -32,7 +40,7 @@ server/spell_util.c: modify caster_level() to always return at least 1.
     repelled to that spellpath.  ok_to_put_more() - Fix to use correct
     map pointer variable.  find_target_for_friendly_spell() - make it
     so it handles tiled maps OK.
-MSW 2003-01-15
+MSW 2004-01-15
 
 common/object.c: fix the monsters on tiled maps bug that I may have 
     mentioned a while ago.  Seems that the server assumed that all 

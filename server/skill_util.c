@@ -646,13 +646,21 @@ void show_skills(object *op) {
 	    buf[40] = 0;
 
 	    if (settings.use_permanent_experience) {
+#ifdef WIN32
+		sprintf(skills[num_skills_found++],"%slvl:%3d (xp:%I64d/%I64d/%d%%)",
+#else
 		sprintf(skills[num_skills_found++],"%slvl:%3d (xp:%lld/%lld/%d%%)",
+#endif
 			 buf,tmp->level,
 			 tmp->stats.exp,
 			 level_exp(tmp->level+1, op->expmul),
 			 clipped_percent(tmp->last_heal,tmp->stats.exp));
 	    } else {
+#ifdef WIN32
+		sprintf(skills[num_skills_found++], "%slvl:%3d (xp:%I64d/%I64d)",
+#else
 		sprintf(skills[num_skills_found++], "%slvl:%3d (xp:%lld/%lld)",
+#endif
 			 buf,tmp->level,
 			 tmp->stats.exp,
 			 level_exp(tmp->level+1, op->expmul));
