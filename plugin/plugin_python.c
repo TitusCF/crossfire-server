@@ -5461,10 +5461,10 @@ MODULEAPI int cmd_customPython(object *op, char *params)
     };
 
     StackActivator[StackPosition]   = op;
-    StackWho[StackPosition]         = op;
-    StackOther[StackPosition]       = op;
+    StackWho[StackPosition]         = NULL;
+    StackOther[StackPosition]       = NULL;
     StackText[StackPosition]        = params;
-    StackReturn[StackPosition]      = 0;
+    StackReturn[StackPosition]      = 1; /* default is "success" */
     Scriptfile = fopen(create_pathname(CustomCommand[NextCustomCommand].script),"r");
     if (Scriptfile == NULL)
     {
