@@ -1,14 +1,21 @@
 Changes in top level CVS tree (please add your changes at the very top of
 the file):
 
-    This one is a suggested fix for the alchemy bug that grants obscene amounts
-    of experience for certain formulas.  Those formulas are the ones that create
-    items with a high fixed level, because those items are pretty worthless
-    otherwise.  Dust of Repelling Undead, for example, is level 30.
-        The fix I implemented here is to base the chance of success largely on the
-	level of the product, so it's very difficult to produce something like Dust
-	of Repelling Undead, and therefore worth the extra experience.  The chance of
-	success is now based on the following factors:
+Change install location of man pages to section 6 instead of section 1 - msw
+
+New man page submitted by Egbert Hinzen that is actually correct and
+accurate as the options now relate to crossfire. - msw
+
+    This one is a suggested fix for the alchemy bug that grants obscene
+    amounts of experience for certain formulas.  Those formulas are the ones
+    that create items with a high fixed level, because those items are
+    pretty worthless otherwise.  Dust of Repelling Undead, for example, is
+    level 30.
+        The fix I implemented here is to base the chance of success largely
+	on the level of the product, so it's very difficult to produce
+	something like Dust of Repelling Undead, and therefore worth the
+	extra experience.  The chance of success is now based on the
+	following factors:
 	1) level of product
 	2) number of ingredients in formula
 	3) rarity of formula as listed in "formulae" data file
