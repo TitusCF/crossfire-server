@@ -108,7 +108,7 @@ int die_roll(int num, int size, object *op, int goodbad) {
 	    ((luck > 0) ? (luck = 1) : (luck = -1));
 	    diff -= luck;
 	    if (diff < 1)
-		return(omin); /*check again*/
+		return(num); /*check again*/
 	    ((goodbad) ? (min += luck) : (diff));
 	    total += MAX(1, MIN(size, (RANDOM()%diff)+min));
 	} else {
