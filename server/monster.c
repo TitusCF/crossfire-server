@@ -746,7 +746,6 @@ int monster_cast_spell(object *head, object *part,object *pl,int dir, rv_vector 
 
 int monster_use_scroll(object *head, object *part,object *pl,int dir, rv_vector *rv) {
     object *scroll;
-    spell *sp;
     object *owner;
     rv_vector	rv1;
 
@@ -778,7 +777,7 @@ int monster_use_scroll(object *head, object *part,object *pl,int dir, rv_vector 
 	return 0;
     }
 
-    if (sp->onself) /* Spell should be cast on caster (ie, heal, strength) */
+    if (spells[scroll->stats.sp].onself) /* Spell should be cast on caster (ie, heal, strength) */
 	dir = 0;
 
     apply_scroll(part, scroll, dir);
