@@ -1,7 +1,8 @@
 
 FILES = Makefile.in add_throw.perl ad2c.script mktable.script \
 	config.sub config.guess metaserver.pl \
-	 crossloop crossloop.pl flushlocks install-sh crossfire-loop.c
+	crossloop crossloop.pl flushlocks install-sh crossfire-loop.c \
+	add_throw.perl.in crossloop.in crossloop.pl.in metaserver.pl.in
 
 prefix = @prefix@
 exec_prefix = @exec_prefix@

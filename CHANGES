@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 CVS changes since last release:
 
+
+------------------------------------------------------------------------------
+Changes for 0.97.0:
+
 MSW 2001/03/18:
 common/init.c: add RESET_LOCATION_TIME initializer to settings structure.
 include/config.h: Add RESET_LOCATION_TIME value.  If nonzero and the save was longer than 

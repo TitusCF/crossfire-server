@@ -984,5 +984,5 @@
  * location.
  */
 
-#define RESET_LOCATION_TIME	15*60
+#define RESET_LOCATION_TIME	0
 

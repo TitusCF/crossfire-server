@@ -40,8 +40,9 @@ INSTALLFILES = $(srcdir)/artifacts $(srcdir)/ban_file $(srcdir)/def_help \
 BININSTALL = $(srcdir)/xpmtopix.pl $(srcdir)/collect.pl $(srcdir)/util.pl
 
 ALLFILES = $(SRCS) README \
-	Makefile.in .collect-stamp  $(INSTALLFILES) $(BININSTALL) settings
-
+	Makefile.in .collect-stamp  $(INSTALLFILES) $(BININSTALL) settings \
+	xpmtopix.pl.in checkarch.pl.in collect.pl.in
+	
 
 FILES_HELP = $(srcdir)/help/apply $(srcdir)/help/bind \
 	$(srcdir)/help/cast $(srcdir)/help/golem $(srcdir)/help/invoke \
