@@ -330,7 +330,7 @@ void give_initial_items(object *pl,treasurelist *items) {
     for (op=pl->inv; op; op=next) {
 	next = op->below;
 	if(op->nrof<2 && op->type!=CONTAINER && op->type!=MONEY && 
-	   !QUERY_FLAG(op,FLAG_IS_THROWN))
+	   op->type!=BOOK && !QUERY_FLAG(op,FLAG_IS_THROWN))
 		SET_FLAG(op,FLAG_STARTEQUIP);
 
         if(op->type == CONTAINER) op->value = 0; /* so you can't sell it for money*/

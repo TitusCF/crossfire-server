@@ -168,7 +168,8 @@ void pray_at_altar(object *pl, object *altar) {
 
 void become_follower (object *op, object *new_god) {
     object *exp_obj = op->chosen_skill->exp_obj;
-
+    int i;
+    
     if(!op||!new_god) return;
 
     if(op->race&&new_god->slaying&&strstr(op->race,new_god->slaying)) { 
@@ -195,8 +196,16 @@ void become_follower (object *op, object *new_god) {
     exp_obj->path_attuned=new_god->path_attuned;
     exp_obj->path_repelled=new_god->path_repelled;
     exp_obj->path_denied=new_god->path_denied;
-    /* This may copy immunities */
+    /* copy god's resistances */
     memcpy(exp_obj->resist, new_god->resist, sizeof(new_god->resist));
+    
+    /* make sure that certain immunities do NOT get passed
+     * to the follower! */
+    for (i=0; i<NROFATTACKS; i++)
+      if (exp_obj->resist[i] > 30 && (i==ATNR_FIRE || i==ATNR_COLD ||
+	  i==ATNR_ELECTRICITY || i==ATNR_POISON))
+	exp_obj->resist[i] = 30;
+    
 #ifdef MORE_PRIEST_GIFTS
     exp_obj->stats.hp= (sint16) new_god->last_heal;  
     exp_obj->stats.sp= (sint16) new_god->last_sp; 
