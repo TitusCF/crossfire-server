@@ -9,4 +9,14 @@ cc test.c room_gen_spiral.c -I../include -lm -o test
 <  stairs up
 C  map center
 *  door
-d  door
+
+
+Layout ideas:
+square spirals (like Mwizard maps)
+nethack
+progressive rooms
+room and corridor
+temple maps
+monster placement
+decor placement
+

@@ -390,7 +390,7 @@ int can_make_wall(char **maze,int dx,int dy,int dir,RMParms *RP) {
 
 
 int make_wall(char **maze,int x, int y, int dir){
-  maze[x][y] = 'd'; /* mark a door */
+  maze[x][y] = '*'; /* mark a door */
   switch(dir) {
   case 0: /* horizontal */
     {
