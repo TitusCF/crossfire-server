@@ -57,7 +57,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define FONTNAME ""
 
 /* Decstations have trouble with fabs()... */
-#define FABS(x) (x<0?-x:x)
+#define FABS(x) ((x)<0?-(x):(x))
 
 #ifdef __NetBSD__
 #include <sys/param.h>
