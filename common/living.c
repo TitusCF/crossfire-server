@@ -1520,9 +1520,9 @@ void set_dragon_name(object *pl, object *abil, object *skin) {
       sprintf(pl->contr->title, "%s dragon", attacks[atnr]);
     else {
       /* special titles for extra high resistance! */
-      if (skin->resist[atnr] > 40)
+      if (skin->resist[atnr] > 80)
 	sprintf(pl->contr->title, "legendary %s dragon", attacks[atnr]);
-      else if (skin->resist[atnr] > 20)
+      else if (skin->resist[atnr] > 50)
 	sprintf(pl->contr->title, "ancient %s dragon", attacks[atnr]);
       else
 	sprintf(pl->contr->title, "big %s dragon", attacks[atnr]);
