@@ -1648,6 +1648,7 @@ void explode_object(object *op)
   /*  op->stats.sp stores the spell which made this object here. */
   tmp = arch_to_object (op->other_arch);
   switch(tmp->type) {
+  case POISONCLOUD:
   case FBALL: {
 
     tmp->stats.dam += SP_level_dam_adjust(op,op,op->stats.sp);
