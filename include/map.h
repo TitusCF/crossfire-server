@@ -156,6 +156,7 @@ typedef struct wmapdef {
     sint8	winddir;	/* direction of wind */
     sint8	sky;		/* sky conditions */
     sint32	avgelev;	/* average elevation */
+    uint32	rainfall;	/* cumulative rainfall */
     uint8 	darkness;	/* indicates level of darkness of map */
     uint8	water;		/* 0-100 percentage of water tiles */
 } weathermap_t;
