@@ -25,19 +25,14 @@
 
     The author can be reached via e-mail to mwedel@scruz.net
 */
+
 #include <global.h>
 #include <arch.h>
 #include <funcpoint.h>
 #include <loader.h>
 
-/* IF TIME_ARCH_LOAD set, does a little timing on the archetype load. */
-#ifdef TIME_ARCH_LOAD
-#ifdef GETTIMEOFDAY_TWO_ARGS
-#define GETTIMEOFDAY(last_time) gettimeofday(last_time, (struct timezone *) NULL);
-#else
-#define GETTIMEOFDAY(last_time) gettimeofday(last_time);
-#endif
-#endif
+/* IF set, does a little timing on the archetype load. */
+#define TIME_ARCH_LOAD 0
 
 static archetype *arch_table[ARCHTABLE];
 int arch_cmp=0;		/* How many strcmp's */
@@ -269,7 +264,7 @@ void load_archetypes() {
     FILE *fp;
     char filename[MAX_BUF];
     int comp;
-#ifdef TIME_ARCH_LOAD
+#if TIME_ARCH_LOAD
     struct timeval tv1,tv2;
 #endif
 
@@ -281,11 +276,11 @@ void load_archetypes() {
     }
     clear_archetable();
     LOG(llevDebug," arch-pass 1...");
-#ifdef TIME_ARCH_LOAD
+#if TIME_ARCH_LOAD
 	GETTIMEOFDAY(&tv1);
 #endif
     first_arch_pass(fp);
-#ifdef TIME_ARCH_LOAD
+#if TIME_ARCH_LOAD
     { int sec, usec;
 	GETTIMEOFDAY(&tv2);
 	sec = tv2.tv_sec - tv1.tv_sec;

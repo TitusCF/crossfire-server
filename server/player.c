@@ -151,15 +151,6 @@ static void get_player(player *p) {
 #ifdef LINKED_SKILL_LIST
     p->ob->sk_list = NULL;
 #endif
-#ifdef ALLOW_SKILLS	  	       
-	p->last_skill_index = 0;
-	for(i=0;i<LAST_MAX_EXP_CAT;i++)
-	{
-		p->last_skill_exp[i] = p->last_skill_id[i] = 0;
-		p->last_skill_level[i] =0;
-		p->last_skill_ob[i] = NULL;
-	}
-#endif	
     if(QUERY_FLAG(op,FLAG_READY_SKILL))
         CLEAR_FLAG(op,FLAG_READY_SKILL); 
     p->socket.update_look=0;
@@ -1300,6 +1291,8 @@ void move_player_attack(object *op, int dir)
 
 	/* IF we found a key, do some extra work */
 	if (key) {
+	    object *container=key->env;
+
 	    play_sound_map(op->map, op->x, op->y, SOUND_OPEN_DOOR);
 	    if(action_makes_visible(op)) make_visible(op);
 	    if(tmp->inv && tmp->inv->type ==RUNE) spring_trap(tmp->inv,op);
@@ -1313,6 +1306,9 @@ void move_player_attack(object *op, int dir)
 	    }
 	    /* Do this after we print the message */
 	    decrease_ob(key); /* Use up one of the keys */
+	    /* Need to update the weight the container the key was in */
+	    if (container != op) 
+		esrv_update_item(UPD_WEIGHT, op, container);
 	    return; /* Nothing more to do below */
 	} else if (tmp->type==LOCKED_DOOR) {
 	    /* Might as well return now - no other way to open this */

@@ -7,8 +7,6 @@
 #ifndef __CEXTRACT__
 #ifdef __STDC__
 
-extern void find_skill_exp_name(object *pl, object *exp, int index);
-
 extern char * cauldron_sound ( void );
 extern void attempt_do_alchemy ( object *caster, object *cauldron );
 extern int content_recipe_value ( object *op );

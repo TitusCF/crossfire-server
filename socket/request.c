@@ -96,7 +96,6 @@ enum {
 
 _setup_map setup_map[] = {
 	{"sound", SETUP_SOUND},
-	{"sexp", SETUP_SKILLEXP},
 	{"",-1} /* end marker */
 };
 
@@ -163,14 +162,6 @@ void SetUp(char *buf, int len, NewSocket *ns)
 					ns->sound = atoi(param);
 					strcat(cmdback, param);
 					break;
-				case SETUP_SKILLEXP:
-#ifdef ALLOW_SKILLS /* new experience system */ 
-					ns->skillexp = atoi(param);
-					strcat(cmdback, param);
-#else
-					strcat(cmdback, "0");
-#endif
-					break;
 				};
 				break;	/* we have found cmd, fetch next from setup buffer */
 				
@@ -200,7 +191,8 @@ void AddMeCmd(char *buf, int len, NewSocket *ns)
 {
     Settings oldsettings;
     oldsettings=settings;
-    if (ns->status != Ns_Add || add_player(ns)) {		
+
+    if (ns->status != Ns_Add || add_player(ns)) {
 	Write_String_To_Socket(ns, "addme_failed",12);
     } else {
 	/* Basically, the add_player copies the socket structure into
@@ -212,7 +204,7 @@ void AddMeCmd(char *buf, int len, NewSocket *ns)
 	socket_info.nconns--;
 	ns->status = Ns_Avail;
     }
-    settings=oldsettings;	
+    settings=oldsettings;
 }
 
 
@@ -404,14 +396,13 @@ void ReplyCmd(char *buf, int len, player *pl)
 void VersionCmd(char *buf, int len,NewSocket *ns)
 {
     char *cp;
-	char version_warning[256];
-		
+
     if (!buf) {
 	LOG(llevError, "CS: received corrupted version command\n");
 	return;
     }
 
-	ns->cs_version = atoi(buf);
+    ns->cs_version = atoi(buf);
     ns->sc_version =  ns->cs_version;
     if (VERSION_CS !=  ns->cs_version) {
 #ifdef ESRV_DEBUG
@@ -428,21 +419,7 @@ void VersionCmd(char *buf, int len,NewSocket *ns)
     }
     cp = strchr(cp+1, ' ');
     if (cp)
-	{
-		LOG(llevDebug,"CS: connection from client of type <%s>\n", cp);
-
-		/* This is first implementation - i skip all beta DX clients with it 
-		 * Add later stuff here for other clients 
-		 */
-
-		if(!strcmp(" CF DX CLIENT", cp)) // these are old dxclients
-		{
-			sprintf(version_warning,"drawinfo %d %s", NDI_RED, "**** VERSION WARNING ****");
-			Write_String_To_Socket(ns, version_warning, strlen(version_warning));
-			sprintf(version_warning,"drawinfo %d %s", NDI_RED, "**** CLIENT IS TO OLD!! UPDATE THE CLIENT!! ****");
-			Write_String_To_Socket(ns, version_warning, strlen(version_warning));
-		}
-	}
+	LOG(llevDebug,"CS: connection from client of type %s\n", cp);
 }
 
 /*
@@ -613,18 +590,7 @@ void esrv_update_stats(player *pl)
     AddIfShort(pl->last_stats.Dex, pl->ob->stats.Dex, CS_STAT_DEX);
     AddIfShort(pl->last_stats.Con, pl->ob->stats.Con, CS_STAT_CON);
     AddIfShort(pl->last_stats.Cha, pl->ob->stats.Cha, CS_STAT_CHA);
-#ifdef ALLOW_SKILLS /* new experience system */ 
-    if(pl->last_stats.exp != pl->ob->stats.exp && pl->socket.skillexp)
-    {
-		int s;
-		for(s=0;s<pl->last_skill_index;s++)
-        {
-			AddIfInt(pl->last_skill_exp[s],pl->last_skill_ob[s]->stats.exp , pl->last_skill_id[s]);
-			AddIfInt(pl->last_skill_level[s],pl->last_skill_ob[s]->level , pl->last_skill_id[s]+1);
-        }
-    }
-#endif    
-	AddIfInt(pl->last_stats.exp, pl->ob->stats.exp, CS_STAT_EXP);
+    AddIfInt(pl->last_stats.exp, pl->ob->stats.exp, CS_STAT_EXP);
     AddIfShort(pl->last_level, pl->ob->level, CS_STAT_LEVEL);
     AddIfShort(pl->last_stats.wc, pl->ob->stats.wc, CS_STAT_WC);
     AddIfShort(pl->last_stats.ac, pl->ob->stats.ac, CS_STAT_AC);
