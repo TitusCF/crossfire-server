@@ -2103,6 +2103,10 @@ SOURCE=..\common\utils.c
 
 # End Source File
 # End Group
+# Begin Source File
+
+SOURCE=..\server\spell_attack.c
+# End Source File
 # End Group
 # Begin Group "Header-Dateien"
 
