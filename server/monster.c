@@ -1338,7 +1338,7 @@ static void dump_messages(msglang *msgs) {
 void communicate(object *op, char *txt) {
   object *npc;
   int i;
-  for(i = 0; i < 24; i++)
+  for(i = 0; i <= SIZEOFFREE2; i++)
     if (!out_of_map(op->map, op->x+freearr_x[i], op->y+freearr_y[i]))
       for(npc = get_map_ob(op->map,op->x+freearr_x[i],op->y+freearr_y[i]);
           npc != NULL; npc = npc->above) {

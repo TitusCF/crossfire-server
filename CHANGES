@@ -18,6 +18,11 @@ else.  With this, include the file(s) that you changed.
 CVS changes since last release:
 
 MSW 2000/12/23:
+include/define.h: Add SIZEOFFREE1 and SIZEOFFREE2 values to use instead of
+    arbitrary constants in the code.
+server/monster.c: change communicate function to use above values.  Before
+    it was stopping one short of the full 2 space array, so one particular
+    space (-1, -2 relative to player) would not hear players speech.
 server/attack.c:  Don't exit hit_player function if damage is reduced to 0
     in magical attacks.  This was preventing face of death and probably a lot
     of effect only spells from working.
