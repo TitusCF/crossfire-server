@@ -17,7 +17,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 CVS changes since last release:
 
+
 MSW 2000/12/10:
+utils/metaserver.pl: Various improvements.  Main one is that tcp
+connections to port 13326 of the metaserver will dump the information
+in a easily parsable format for the client or other applications.
 include/config.h: Set ARCHTABLE size to correct value.
 server/player.c: Have server send update item to client for players face
 	while select class.  Added esrv_new_player in Roll_Again, because

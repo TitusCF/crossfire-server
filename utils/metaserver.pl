@@ -28,11 +28,25 @@ $REMOVE_SERVER=86400;
 $UPDATE_SYNC=300;
 
 socket(SOCKET, PF_INET, SOCK_DGRAM, getprotobyname("udp")) || 
-	die("$0: can not open socket: $OS_ERROR\n");
+	die("$0: can not open udp socket: $OS_ERROR\n");
 bind(SOCKET, sockaddr_in(13326, INADDR_ANY)) ||
 	die("$0: Can not bind to socket: $OS_ERROR\n");
 
+# Socket1 is used for incoming requests - if we get a connection on this,
+# we dump out our data to that socket in an easily parsible form.
+socket(SOCKET1, PF_INET, SOCK_STREAM, getprotobyname("tcp")) || 
+	die("$0: can not open tcp socket: $OS_ERROR\n");
+
+# errors on this not that critical
+setsockopt(SOCKET1, SOL_SOCKET, SO_REUSEADDR, 1);
+
+bind(SOCKET1, sockaddr_in(13326, INADDR_ANY)) ||
+	die("$0: Can not bind to socket: $OS_ERROR\n");
+listen(SOCKET1, 10) || 
+	die("$0: Can not listen on socket: $OS_ERROR\n");
+
 vec($rin, fileno(SOCKET), 1)=1;
+vec($rin, fileno(SOCKET1), 1)=1;
 
 if (open(CACHE,"<$CACHE_FILE")) {
     while (<CACHE>) {
@@ -49,18 +63,40 @@ while (1) {
     $nfound=select($rout=$rin, undef, undef, 60);
     $cur_time=time;
     if ($nfound) {
-	$ipaddr = recv(SOCKET, $data, 256, 0) ||
-	    print STDERR "$0: error on recv call: $OS_ERROR\n";
-	($port, $ip) = sockaddr_in($ipaddr);
-	$host = inet_ntoa $ip;
-	($name, $rest) = split /\|/, $data;
-	if ($name ne "put.your.hostname.here") {
+	if (vec($rout, fileno(SOCKET),1)) {
+	    $ipaddr = recv(SOCKET, $data, 256, 0) ||
+		print STDERR "$0: error on recv call: $OS_ERROR\n";
+	    ($port, $ip) = sockaddr_in($ipaddr);
+	    $host = inet_ntoa $ip;
+	    ($name, $rest) = split /\|/, $data;
+	    if ($name ne "put.your.hostname.here") {
 		$data{$host} = "$host|$cur_time|$data";
+	    }
+	}
+	if (vec($rout, fileno(SOCKET1),1)) {
+	    # This is overly basic - if there are enough servers
+	    # where the output won't fit in the outgoing socket,
+	    # this will block.  However, if we fork, we open
+	    # ourselves up to someone intentionally designing something
+	    # that causes these to block, and then have us fork a huge
+	    # number of process potentially filling up our proc table.
+	    if (accept NEWSOCKET, SOCKET1) {
+		foreach $i (keys %data) {
+		    # Report idle time to client, and not last update
+		    # as we received in seconds since epoch.
+		    ($ip, $time, $rest) = split /\|/, $data{$i}, 3;
+		    $newtime = $cur_time - $time;
+		    print NEWSOCKET "$ip|$newtime|$rest\n";
+		}
+		close(NEWSOCKET);
+	    }
 	}
     }
+
     # Need to generate some files.  This is also where we remove outdated
     # hosts.
     if ($last_sync+$UPDATE_SYNC < $cur_time) {
+	$last_sync = $cur_time;
 	open(CACHE,">$CACHE_FILE");
 	open(HTML,">$HTML_FILE");
 
