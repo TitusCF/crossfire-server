@@ -17,6 +17,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 CVS changes since last release:
 
+server/rune.c: Make sure rune message is newline terminated.  Fix map
+corruption problem.  MSW 2001-05-10
+
 Various improvements to make finding memory leaks easier.
 common/anim.c: Add free_all_anim function
 common/arch.c: Modify free_all_arch to free more data

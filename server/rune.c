@@ -127,10 +127,20 @@ int write_rune(object *op,int dir,int inspell,int level,char *runename) {
 	 * and will thus never detonate. 
 	 */
     } else if (level==-2 || (at=find_archetype(runename))==NULL) {
+	char rune[HUGE_BUF];
+
 	level=0;
 	tmp=get_archetype("rune_mark"); /* this is a rune of marking */
 	at=NULL;
-	tmp->msg = add_string((runename?runename:"There is no message\n"));
+	if (runename) {
+	    strncpy(rune, runename, HUGE_BUF-2);
+	    rune[HUGE_BUF-2] = 0;
+	    strcat(rune, "\n");
+	} else {
+	    /* Not totally efficient, but keeps code simpler */
+	    strcpy(rune, "There is no message\n");
+	}
+	tmp->msg = add_string(rune);
     }
     if(at) tmp=get_archetype(runename);
     tmp->stats.Cha = op->level/2;  /* the invisibility parameter */
