@@ -2974,7 +2974,7 @@ Object Fire
 type 43
 value 3
 path_attuned 2
-path_denied 4
+path_repelled 4
 end
 #
 Allowed talisman
@@ -2983,7 +2983,7 @@ Object Frost
 type 43
 value 3
 path_attuned 4
-path_denied 2
+path_repelled 2
 end
 #
 Allowed talisman
