@@ -17,6 +17,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/spell_effect.c: small patch by Karla Stenger to put player's name
+   in the 'race' field of marking runes. This way, a DM can know who wrote
+   a rune, in case it has some bad vocabulary :)
+Ryo 2004-03-06
+
 server/spell_attack.c: change check_cone_push function to use arch weights.
 move function up for resuability and change to check_spell_knockback
 include/sproto.h: change function name

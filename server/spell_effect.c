@@ -2619,6 +2619,7 @@ int write_mark(object *op, object *spell, char *msg) {
     strncpy(rune, msg, HUGE_BUF-2);
     rune[HUGE_BUF-2] = 0;
     strcat(rune, "\n");
+    tmp->race = add_string (op->name);  /*Save the owner of the rune*/
     tmp->msg = add_string(rune);
     tmp->x = op->x;
     tmp->y = op->y;
