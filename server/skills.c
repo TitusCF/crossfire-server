@@ -1245,6 +1245,7 @@ static int write_scroll (object *pl, object *scroll, object *skill) {
 	esrv_send_item(pl, newscroll);
 	success = calc_skill_exp(pl,newscroll, skill);
 	if(!confused) success *= 2;
+    success = success * skill->level;
 	return success; 
 
     } else { /* Inscription has failed */
