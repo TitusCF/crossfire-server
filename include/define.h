@@ -618,6 +618,8 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define F_SELL		1
 #define F_TRUE		2   /* True value of item, unadjusted */
 #define F_NO_BARGAIN	4   /* combine with F_BUY or F_SELL to disable bargaining calc */
+#define F_IDENTIFIED	8   /* flag to calculate value of identified item */
+#define F_NOT_CURSED	16  /* flag to calculate value of uncursed item */
 
 #define DIRX(xyz)	freearr_x[(xyz)->direction]
 #define DIRY(xyz)	freearr_y[(xyz)->direction]

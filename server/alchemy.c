@@ -60,6 +60,9 @@ static char *cauldron_effect [] = {
 }; 
 
 
+static int is_defined_recipe(const recipe *rp, const object *cauldron, object *caster);
+
+
 /* cauldron_sound() - returns a random selection from cauldron_effect[] */
 
 char * cauldron_sound ( void ) {
@@ -136,6 +139,11 @@ void attempt_do_alchemy(object *caster, object *cauldron) {
 	    ;
 
 	if (rp) { /* if we found a recipe */
+	    uint64 value_ingredients;
+	    uint64 value_item;
+	    object *tmp;
+	    int attempt_shadow_alchemy;
+
 	    ave_chance = fl->total_chance/(float)fl->number;
 	    /* the caster gets an increase in ability based on thier skill lvl */
 	    if (rp->skill != NULL) {
@@ -155,6 +163,13 @@ void attempt_do_alchemy(object *caster, object *cauldron) {
 		return;
 	    }
 
+	    /* determine value of ingredients */
+	    value_ingredients = 0;
+	    for(tmp = cauldron->inv; tmp != NULL; tmp = tmp->below)
+		value_ingredients += query_cost(tmp, NULL, F_TRUE);
+
+	    attempt_shadow_alchemy = !is_defined_recipe(rp, cauldron, caster);
+
 	    /* create the object **FIRST**, then decide whether to keep it.	*/
 	    if ((item=attempt_recipe(caster, cauldron, ability, rp, formula/rp->index)) != NULL) {
 		/*  compute base chance of recipe success */
@@ -168,8 +183,18 @@ void attempt_do_alchemy(object *caster, object *cauldron) {
 		    success_chance, ability, rp->diff, item->level);
 #endif
 
+		value_item = query_cost(item, NULL, F_TRUE|F_IDENTIFIED|F_NOT_CURSED);
+		if(attempt_shadow_alchemy && value_item > value_ingredients) {
+#ifdef ALCHEMY_DEBUG
+#ifndef WIN32
+		    LOG(llevDebug, "Forcing failure for shadow alchemy recipe because price of ingredients (%llu) is less than price of result (%llu).\n", value_ingredients, value_item);
+#else
+		    LOG(llevDebug, "Forcing failure for shadow alchemy recipe because price of ingredients (%I64d) is less than price of result (%I64d).\n", value_ingredients, value_item);
+#endif
+#endif
+		}
 		/* roll the dice */
-		if ((float)(random_roll(0, 101, caster, PREFER_LOW)) <= 100.0 * success_chance) {
+		else if ((float)(random_roll(0, 101, caster, PREFER_LOW)) <= 100.0 * success_chance) {
 		    change_exp(caster, rp->exp, rp->skill, SK_EXP_NONE);
 		    return;
 		}
@@ -640,4 +665,84 @@ int calc_alch_danger(object *caster,object *cauldron, recipe *rp) {
    return danger;
 }
 
+/* is_defined_recipe() - determines if ingredients in a container match the
+ * proper ingredients for a recipe.
+ *
+ * rp is the recipe to check
+ * cauldron is the container that holds the ingredients
+ * returns 1 if the ingredients match the recipe, 0 if not
+ *
+ * This functions tries to find each defined ingredient in the container. It is
+ * the defined recipe iff
+ *  - the number of ingredients of the recipe and in the container is equal
+ *  - all ingredients of the recipe are found in the container
+ *  - the number of batches is the same for all ingredients
+ */
+static int is_defined_recipe(const recipe *rp, const object *cauldron, object *caster)
+{
+    uint32 batches_in_cauldron;
+    const linked_char *ingredient;
+    int number;
+    const object *ob;
 
+    /* check for matching number of ingredients */
+    number = 0;
+    for(ingredient = rp->ingred; ingredient != NULL; ingredient = ingredient->next)
+	number++;
+    for(ob = cauldron->inv; ob != NULL; ob = ob->below)
+	number--;
+    if(number != 0)
+	return 0;
+
+    /* check for matching ingredients */
+    batches_in_cauldron = 0;
+    for(ingredient = rp->ingred; ingredient != NULL; ingredient = ingredient->next) {
+	uint32 nrof;
+	const char *name;
+	int ok;
+
+	/* determine and remove nrof from name */
+	name = ingredient->name;
+	nrof = 0;
+	while(isdigit(*name)) {
+	    nrof = 10*nrof+(*name-'0');
+	    name++;
+	}
+	if(nrof == 0)
+	    nrof = 1;
+	while(*name == ' ')
+	    name++;
+
+	/* find the current ingredient in the cauldron */
+	ok = 0;
+	for(ob = cauldron->inv; ob != NULL; ob = ob->below) {
+	    char name_ob[MAX_BUF];
+	    const char *name2;
+
+	    if(ob->title == NULL)
+		name2 = ob->name;
+	    else {
+		snprintf(name_ob, sizeof(name_ob), "%s %s", ob->name, ob->title);
+		name2 = name_ob;
+	    }
+
+	    if(strcmp(name2, name) == 0) {
+		if(ob->nrof%nrof == 0) {
+		    uint32 batches;
+
+		    batches = ob->nrof/nrof;
+		    if(batches_in_cauldron == 0) {
+			batches_in_cauldron = batches;
+			ok = 1;
+		    } else if(batches_in_cauldron == batches)
+			ok = 1;
+		}
+		break;
+	    }
+	}
+	if(!ok)
+	    return(0);
+    }
+
+    return(1);
+}

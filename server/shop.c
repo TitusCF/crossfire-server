@@ -63,11 +63,15 @@ uint64 query_cost(object *tmp, object *who, int flag) {
     uint64 val;
     int number;	/* used to better calculate value */
     int no_bargain;
+    int identified;
+    int not_cursed;
     float diff;
     float ratio;
 
     no_bargain = flag & F_NO_BARGAIN;
-    flag &= ~F_NO_BARGAIN;
+    identified = flag & F_IDENTIFIED;
+    not_cursed = flag & F_NOT_CURSED;
+    flag &= ~(F_NO_BARGAIN|F_IDENTIFIED|F_NOT_CURSED);
 
     if (tmp->type==MONEY) return (tmp->nrof * tmp->value);
     if (tmp->type==GEM) {
@@ -79,8 +83,8 @@ uint64 query_cost(object *tmp, object *who, int flag) {
     }
     number = tmp->nrof;
     if (number==0) number=1;
-    if (QUERY_FLAG(tmp, FLAG_IDENTIFIED) || !need_identify(tmp)) {
-	if (QUERY_FLAG(tmp, FLAG_CURSED) || QUERY_FLAG(tmp, FLAG_DAMNED))
+    if (QUERY_FLAG(tmp, FLAG_IDENTIFIED) || !need_identify(tmp) || identified) {
+	if (!not_cursed && (QUERY_FLAG(tmp, FLAG_CURSED) || QUERY_FLAG(tmp, FLAG_DAMNED)))
 	    return 0;
 	else
 	    val=tmp->value * number;
@@ -125,7 +129,7 @@ uint64 query_cost(object *tmp, object *who, int flag) {
      * default magical.  This is because the archetype value should have
      * already figured in that value.
      */
-    if((QUERY_FLAG(tmp, FLAG_IDENTIFIED)||!need_identify(tmp)||
+    if((QUERY_FLAG(tmp, FLAG_IDENTIFIED)||!need_identify(tmp)||identified||
 	QUERY_FLAG(tmp, FLAG_BEEN_APPLIED)) &&
         tmp->magic&&(tmp->arch==NULL||!tmp->arch->clone.magic)) {
 	    if(tmp->magic>0)
@@ -142,7 +146,7 @@ uint64 query_cost(object *tmp, object *who, int flag) {
 	 * charges.  the treasure code already sets up the value
 	 * 50 charges is used as the baseline.
 	 */
-	if (QUERY_FLAG(tmp, FLAG_IDENTIFIED) || !need_identify(tmp))
+	if (QUERY_FLAG(tmp, FLAG_IDENTIFIED) || !need_identify(tmp) || identified)
 	    val=(val*tmp->stats.food) / 50;
 	else /* if not identified, presume one charge */
 	    val/=50;
@@ -207,7 +211,7 @@ uint64 query_cost(object *tmp, object *who, int flag) {
 	val=0;
 
     /* Unidentified stuff won't sell for more than 60gp */
-    if(flag==F_SELL && !QUERY_FLAG(tmp, FLAG_IDENTIFIED) && need_identify(tmp)) {
+    if(flag==F_SELL && !QUERY_FLAG(tmp, FLAG_IDENTIFIED) && need_identify(tmp) && !identified) {
 	 val = (val > 600)? 600:val;
     }
     return val;

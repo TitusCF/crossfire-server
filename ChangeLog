@@ -17,6 +17,15 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+include/define.h
+server/shop.c
+   add new flags F_IDENTIFIED and F_NOT_CURSED to query_cost() to pretend
+   the item to be identified/not cursed or damned.
+server/alchemy.c
+   fix possible abuse of shadow alchemy: do not allow the generated items
+   to be more valuable than the ingredients when using alternate recipes.
+Andreas Kirschbaum 2004-08-24
+
 common/map.c: Add extra check to make sure variable is set before calling
    strcmp - this can happen if the map file that is being loaded is
    0 bytes - without this, the server would crash.
