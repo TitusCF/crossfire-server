@@ -1100,8 +1100,13 @@ void move_apply (object *trap, object *victim, object *originator)
 
   /* move_apply() is the most likely candidate for causing unwanted and
    * possibly unlimited recursion. */
-  if (recursion_depth >= 5) {
-    LOG (llevError, "WARNING: move_apply(): aborting recursion "
+  /* The following was changed because it was causing perfeclty correct
+     maps to fail.  1)  it's not an error to recurse:
+     rune detonates, summoning monster.  monster lands on nearby rune.
+     nearby rune detonates.  This sort of recursion is expected and
+     proper.  This code was causing needless crashes. */
+  if (recursion_depth >= 500) { 
+    LOG (llevDebug, "WARNING: move_apply(): aborting recursion "
          "[trap arch %s, name %s; victim arch %s, name %s]\n",
          trap->arch->name, trap->name, victim->arch->name, victim->name);
     return;
