@@ -184,6 +184,9 @@ typedef struct pl {
     uint16	outputs_count;	    /* Print if this count is exceeded */
     object	*mark;		    /* marked object */
     uint32	mark_count;	    /* count of mark object */
+    /* Special DM fields */
+    tag_t*  stack_items;    /* Item stack for patch/dump/... commands */
+    int     stack_position; /* Current stack position, 0 for no item */
 } player;
 
 

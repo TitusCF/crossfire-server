@@ -216,6 +216,7 @@ CommArray_s WizCommands [] = {
   {"banish", command_banish,0.0},
   {"create", command_create,0.0},
   {"debug", command_debug,0.0},
+  {"diff", command_diff, 0.0 },
   {"dump", command_dump,0.0},
   {"dumpbelow", command_dumpbelow,0.0},
   {"dumpfriendlyobjects", command_dumpfriendlyobjects,0.0},
@@ -243,6 +244,9 @@ CommArray_s WizCommands [] = {
   {"set_god", command_setgod, 0.0},
   {"speed", command_speed,0.0},
   {"ssdumptable", command_ssdumptable,0.0},
+  {"stack_list", command_stack_list, 0.0},
+  {"stack_pop", command_stack_pop, 0.0 },
+  {"stack_push", command_stack_push, 0.0 },
   {"stats", command_stats,0.0},
   {"style_info", command_style_map_info, 0.0},	/* Costly command, so make it wiz only */
   {"summon", command_summon,0.0},

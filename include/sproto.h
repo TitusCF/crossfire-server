@@ -291,6 +291,14 @@ int command_forget_spell(object *op, char *params);
 int command_listplugins(object *op, char *params);
 int command_loadplugin(object *op, char *params);
 int command_unloadplugin(object *op, char *params);
+int command_diff( object* op, char* params );
+void dm_stack_pop( player* pl );
+object* dm_stack_peek( player* pl );
+void dm_stack_push( player* pl, tag_t item );
+object* get_dm_object( player* pl, char** params, int* from );
+int command_stack_pop( object* op, char* params );
+int command_stack_push( object* op, char* params );
+int command_stack_list( object* op, char* params );
 /* commands.c */
 void init_commands(void);
 CommFunc find_oldsocket_command(char *cmd);

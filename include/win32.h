@@ -7,7 +7,7 @@
 #define AFX_STDAFX_H__31666CA1_2474_11D5_AE6C_F07569C10000__INCLUDED_
 
 /* Define the version here.  In Unixland, it's defined on the command line now. */
-#define VERSION "1.6.0"
+#define VERSION "1.6.1"
 
 
 #if _MSC_VER > 1000

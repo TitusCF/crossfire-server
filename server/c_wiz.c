@@ -41,6 +41,15 @@
 #include <treasure.h>
 #include <skills.h>
 
+/** Defines for DM item stack **/
+#define STACK_SIZE      50      /* Stack size, static */
+/* Values for 'from' field of get_dm_object */
+#define STACK_FROM_NONE     0   /* Item was not found */
+#define STACK_FROM_TOP      1   /* Item is stack top */
+#define STACK_FROM_STACK    2   /* Item is somewhere in stack */
+#define STACK_FROM_NUMBER   3   /* Item is a number (may be top) */
+
+
 /* Enough of the DM functions seem to need this that I broke
  * it out to a seperate function.  name is the person
  * being saught, rq is who is looking for them.  This
@@ -612,6 +621,9 @@ int command_create (object *op, char *params)
 	if (at_spell)
 	    insert_ob_in_ob(arch_to_object(at_spell), tmp);
 
+    /* Let's put this created item on stack so dm can access it easily. */
+    dm_stack_push( op->contr, tmp->count );
+
 	while (*bp2) {
 	    /* find the first quote */
 	    for (bp3=bp2, gotquote=0, gotspace=0; *bp3 && gotspace < 2; bp3++) {
@@ -792,22 +804,17 @@ int command_skills (object *op, char *params)
 
 int command_dump (object *op, char *params)
 {
-    int i;
-  object *tmp;
+    object *tmp;
+    tmp = get_dm_object( op->contr, &params, NULL );
+    if ( !tmp )
+        return 1;
 
-  if(params!=NULL && !strcmp(params, "me"))
-      tmp=op;
-  else if(params==NULL || !sscanf(params, "%d", &i) ||
-	  (tmp=find_object(i))==NULL) {
-      new_draw_info(NDI_UNIQUE, 0,op,"Dump what object (nr)?");
-      return 1;
-    }
     dump_object(tmp);
     new_draw_info(NDI_UNIQUE, 0, op, errmsg);
     if (QUERY_FLAG(tmp, FLAG_OBJ_ORIGINAL))
 	new_draw_info(NDI_UNIQUE, 0, op, "Object is marked original");
     return 1;
-  }
+}
 
 /* When DM is possessing a monster, flip aggression on and off, to allow
    better motion */
@@ -906,30 +913,21 @@ int command_possess (object *op, char *params)
 
 int command_patch (object *op, char *params)
 {
-    int i;
     char *arg,*arg2;
-    char buf[MAX_BUF];
-  object *tmp;
+    object *tmp;
 
-    tmp=NULL;
-  if(params != NULL) {
-    if(!strncmp(params, "me", 2))
-        tmp=op;
-    else if(sscanf(params, "%d", &i))
-        tmp=find_object(i);
-    else if(sscanf(params, "%s", buf))
-        tmp=find_object_name(buf);
-    }
-    if(tmp==NULL) {
-      new_draw_info(NDI_UNIQUE, 0,op,"Patch what object (nr)?");
+    tmp = get_dm_object( op->contr, &params, NULL );
+    if ( !tmp )
+      /* Player already informed of failure */
       return 1;
-    }
-  arg=strchr(params, ' ');
+
+    /* params set to first value by get_dm_default */
+    arg = params;
     if(arg==NULL) {
       new_draw_info(NDI_UNIQUE, 0,op,"Patch what values?");
       return 1;
     }
-    if((arg2=strchr(++arg,' ')))
+    if((arg2=strchr(arg,' ')))
       arg2++;
     if (settings.real_wiz == FALSE)
 	SET_FLAG(tmp, FLAG_WAS_WIZ); /* To avoid cheating */
@@ -944,10 +942,11 @@ int command_patch (object *op, char *params)
 
 int command_remove (object *op, char *params)
 {
-    int i;
     object *tmp;
+    int from;
 
-    if(params==NULL || !sscanf(params, "%d", &i) || (tmp=find_object(i))==NULL) {
+    tmp = get_dm_object( op->contr, &params, &from );
+    if (!tmp ) {
 	new_draw_info(NDI_UNIQUE, 0,op,"Remove what object (nr)?");
 	return 1;
     }
@@ -956,22 +955,30 @@ int command_remove (object *op, char *params)
 			     query_name(tmp));
 	return 1;
     }
+    if ( from != STACK_FROM_STACK )
+        /* Item is either stack top, or is a number thus is now stack top, let's remove it  */
+        dm_stack_pop( op->contr );
     remove_ob(tmp);
     return 1;
 }
 
 int command_free (object *op, char *params)
 {
-    int i;
-  object *tmp;
+    object *tmp;
+    int from;
 
-  if(params==NULL || !sscanf(params, "%d", &i) || (tmp=find_object(i))==NULL) {
+    tmp = get_dm_object( op->contr, &params, &from );
+
+    if(!tmp) {
       new_draw_info(NDI_UNIQUE, 0,op,"Free what object (nr)?");
       return 1;
     }
+    if ( from != STACK_FROM_STACK )
+        /* Item is either stack top, or is a number thus is now stack top, let's remove it  */
+        dm_stack_pop( op->contr );
     free_object(tmp);
     return 1;
-  }
+}
 
 /* This adds exp to a player.  We now allow adding to a specific skill.
  */
@@ -1430,4 +1437,298 @@ int command_dmhide( object* op, char* params )
     do_wizard_hide( op, 1 );
 
     return 1;
+    }
+
+void dm_stack_pop( player* pl )
+    {
+    if ( !pl->stack_items || !pl->stack_position )
+        {
+        new_draw_info( NDI_UNIQUE, 0, pl->ob, "Empty stack!" );
+        return;
+        }
+
+    pl->stack_position--;
+    new_draw_info_format( NDI_UNIQUE, 0, pl->ob, "Popped item from stack, %d left.", pl->stack_position );
+    }
+
+
+/**
+ * Get current stack top item for player.
+ * Returns NULL if no stacked item.
+ * If stacked item disappeared (freed), remove it.
+ *
+ * Ryo, august 2004
+ */
+object* dm_stack_peek( player* pl )
+    {
+    object* ob;
+
+    if ( !pl->stack_position )
+        {
+        new_draw_info( NDI_UNIQUE, 0, pl->ob, "Empty stack!" );
+        return NULL;
+        }
+
+    ob = find_object( pl->stack_items[ pl->stack_position - 1 ] );
+    if ( !ob )
+        {
+        new_draw_info( NDI_UNIQUE, 0, pl->ob, "Stacked item was removed!" );
+        dm_stack_pop( pl );
+        return NULL;
+        }
+
+    return ob;
+    }
+
+/**
+ * Push specified item on player stack.
+ * Inform player of position.
+ * Initializes variables if needed.
+ */
+void dm_stack_push( player* pl, tag_t item )
+    {
+    if ( !pl->stack_items )
+        {
+        pl->stack_items = ( tag_t* )malloc( sizeof( tag_t ) * STACK_SIZE );
+        memset( pl->stack_items, 0, sizeof( tag_t ) * STACK_SIZE );
+        }
+
+    if ( pl->stack_position == STACK_SIZE )
+        {
+        new_draw_info( NDI_UNIQUE, 0, pl->ob, "Item stack full!" );
+        return;
+        }
+
+    pl->stack_items[ pl->stack_position ] = item;
+    new_draw_info_format( NDI_UNIQUE, 0, pl->ob, "Item stacked as %d.", pl->stack_position );
+    pl->stack_position++;
+    }
+
+/**
+ * Checks 'params' for object code.
+ *
+ * Can be:
+ *  * empty => get current object stack top for player
+ *  * number => get item with that tag, stack it for future use
+ *  * $number => get specified stack item
+ *  * "me" => player himself
+ *
+ * At function exit, params points to first non-object char
+ *
+ * 'from', if not NULL, contains at exit:
+ *  * STACK_FROM_NONE => object not found
+ *  * STACK_FROM_TOP => top item stack, may be NULL if stack was empty
+ *  * STACK_FROM_STACK => item from somewhere in the stack
+ *  * STACK_FROM_NUMBER => item by number, pushed on stack
+ *
+ * Ryo, august 2004
+ */
+object* get_dm_object( player* pl, char** params, int* from )
+    {
+    int item_tag, item_position;
+    object* ob;
+
+    if ( !pl )
+        return NULL;
+
+    if ( ( !params ) || !( *params ) || ( '\0' == **params ) )
+        {
+        if ( from )
+            *from = STACK_FROM_TOP;
+        /* No parameter => get stack item */
+        return dm_stack_peek( pl );
+        }
+
+    /* Let's clean white spaces */
+    while ( **params == ' ' )
+        ( *params )++;
+
+    /* Next case: number => item tag */
+    if ( sscanf( *params, "%d", &item_tag ) )
+        {
+        /* Move parameter to next item */
+        while ( isdigit( **params ) )
+            ( *params )++;
+
+        /* Get item */
+        ob = find_object( item_tag );
+        if ( !ob )
+            {
+            if ( from )
+                *from = STACK_FROM_NONE;
+            new_draw_info_format( NDI_UNIQUE, 0, pl->ob, "No such item %d!", item_tag );
+            return NULL;
+            }
+
+        /* Got one, let's push it on stack */
+        dm_stack_push( pl, item_tag );
+        if ( from )
+            *from = STACK_FROM_NUMBER;
+        return ob;
+        }
+
+    /* Next case: $number => stack item */
+    if ( sscanf( *params, "$%d", &item_position ) )
+        {
+        /* Move parameter to next item */
+        ( *params )++;
+        while ( isdigit( **params ) )
+            ( *params )++;
+        while ( ' ' == ( **params ) )
+            ( *params )++;
+
+        if ( item_position >= pl->stack_position )
+            {
+            if ( from )
+                *from = STACK_FROM_NONE;
+            new_draw_info_format( NDI_UNIQUE, 0, pl->ob, "No such stack item %d!", item_position );
+            return NULL;
+            }
+
+        ob = find_object( pl->stack_items[ item_position ] );
+        if ( !ob )
+            {
+            if ( from )
+                *from = STACK_FROM_NONE;
+            new_draw_info_format( NDI_UNIQUE, 0, pl->ob, "Stack item %d was removed.", item_position );
+            return NULL;
+            }
+
+        if ( from )
+            *from = ( item_position < ( pl->stack_position - 1 ) ) ? STACK_FROM_STACK : STACK_FROM_TOP;
+        return ob;
+        }
+
+    /* Next case: 'me' => return pl->ob */
+    if ( !strncmp( *params, "me", 2 ) )
+        {
+        if ( from )
+            *from = STACK_FROM_NUMBER;
+        dm_stack_push( pl, pl->ob->count );
+        return pl->ob;
+        }
+
+    /* Last case: get stack top */
+    if ( from )
+        *from = STACK_FROM_TOP;
+    return dm_stack_peek( pl );
+    }
+
+/**
+ * Pop the stack top.
+ */
+int command_stack_pop( object* op, char* params )
+    {
+    dm_stack_pop( op->contr );
+    return 0;
+    }
+
+/**
+ * Push specified item on stack.
+ */
+int command_stack_push( object* op, char* params )
+    {
+    object* ob;
+    int from;
+    ob = get_dm_object( op->contr, &params, &from );
+
+    if ( ob && ( from != STACK_FROM_NUMBER ) )
+        /* Object was from stack, need to push it again */
+        dm_stack_push( op->contr, ob->count );
+
+    return 0;
+    }
+
+/**
+ * Displays stack contents.
+ */
+int command_stack_list( object* op, char* params )
+    {
+    int item;
+    object* display;
+    player* pl = op->contr;
+
+    new_draw_info( NDI_UNIQUE,0, op, "Item stack contents: " );
+
+    for ( item = 0; item < pl->stack_position; item++ )
+        {
+        display = find_object( pl->stack_items[ item ] );
+        if ( display )
+            new_draw_info_format( NDI_UNIQUE, 0, op, " %d : %s [%d]", item, display->name, display->count );
+        else
+            /* Item was freed */
+            new_draw_info_format( NDI_UNIQUE, 0, op, " %d : (lost item: %d)", item, pl->stack_items[ item ] );
+        }
+
+    return 0;
+    }
+
+/**
+ * Get a diff of specified items.
+ * Second item is compared to first, and differences displayed.
+ * Note: get_ob_diff works the opposite way (first compared to 2nd),
+ * but it's easier with stack functions to do it this way, so you can do:
+ *  * stack_push <base>
+ *  * stack_push <object to be compared>
+ *  * diff
+ *  * patch xxx <---- applies to object compared to base, easier :)
+ *
+ * Ryo, august 2004
+ */
+int command_diff( object* op, char* params )
+    {
+    object* left, *right, *top;
+    const char* diff;
+    int left_from, right_from;
+
+    top = NULL;
+
+    left = get_dm_object( op->contr, &params, &left_from );
+    if ( !left )
+        {
+        new_draw_info( NDI_UNIQUE, 0, op, "Compare to what item?" );
+        return 0;
+        }
+
+    if ( left_from == STACK_FROM_NUMBER )
+        /* Item was stacked, remove it else right will be the same... */
+        dm_stack_pop( op->contr );
+
+    right = get_dm_object( op->contr, &params, &right_from );
+
+    if ( !right )
+        {
+        new_draw_info( NDI_UNIQUE, 0, op, "Compare what item?" );
+        return 0;
+        }
+
+    new_draw_info( NDI_UNIQUE, 0, op, "Item difference:" );
+
+    if ( ( left_from == STACK_FROM_TOP ) && ( right_from == STACK_FROM_TOP ) )
+        {
+        /* Special case: both items were taken from stack top.
+           Override the behaviour, taking left as item just below top, if exists.
+           See function description for why.
+           Besides, if we don't do anything, compare an item to itself, not really useful.
+         */
+        if ( op->contr->stack_position > 1 )
+            {
+            left = find_object( op->contr->stack_items[ op->contr->stack_position - 2 ] );
+            if ( left )
+                new_draw_info( NDI_UNIQUE, 0, op, "(Note: first item taken from undertop)" );
+            else
+                /* Stupid case: item under top was freed, fallback to stack top */
+                left = right;
+            }
+        }
+
+    diff = get_ob_diff( left, right );
+
+    if ( !diff )
+        {
+        new_draw_info( NDI_UNIQUE, 0, op, "Objects are the same." );
+        return 0;
+        }
+    new_draw_info( NDI_UNIQUE, 0, op, diff );
+    return 0;
     }

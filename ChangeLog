@@ -17,6 +17,24 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Those changes mostly add an item stack for DMs. It makes it easier to dump & patch &
+manipulate items without having to copy numbers all the time.
+Basically, you can use '$x', meaning item at position x on stack. Or even
+omit argument, defaulting to stack top.
+When using an object number, it gets stacked automatically (up to 50 items).
+Also add a 'diff' command, letting the DM see the result of 'get_ob_diff' on items,
+to spot differences easily.
+
+common/player.c: free item stack when freeing player structure.
+include/player.h: add item stack to player structure.
+include/sproto.h: new functions for stack.
+include/win32.h: missed commit for 1.6.1 version.
+server/c_misc.c: push item dumped with 'deumpbelow' on dm stack.
+server/c_wiz.c: add stack functions. Use'em on patch, create, remove, free, and such.
+    Add 'diff' command.
+server/commands.c: add new stack & diff commands.
+Ryo 2004-08-15
+
 server/spell_attack.c: fix mood_change when spell has no attacktype.
     In this case, do a specific saving throw, to ensure a level 1 player
     can't charm a level 125 monster.

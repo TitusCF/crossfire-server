@@ -451,6 +451,8 @@ int command_dumpbelow (object *op, char *params)
   if (op && op->below) {
 	  dump_object(op->below);
 	  new_draw_info(NDI_UNIQUE, 0,op,errmsg);
+      /* Let's push that item on the dm's stack */
+      dm_stack_push( op->contr, op->below->count );
       }
   return 0;
 }

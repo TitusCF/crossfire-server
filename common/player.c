@@ -46,6 +46,8 @@ void free_player(player *pl) {
 	if (!QUERY_FLAG(pl->ob, FLAG_REMOVED)) remove_ob(pl->ob);
 	free_object(pl->ob);
     }
+    /* Clear item stack */
+    free( pl->stack_items );
 
     CFREE(pl);
 }
