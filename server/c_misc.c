@@ -250,8 +250,20 @@ int command_malloc_verify(object *op, char *parms)
 	else
 		new_draw_info(NDI_UNIQUE, 0,op,"Heap checks out OK.");
 	return 1;
-yea	}
+	}
 #endif
+
+typedef struct
+    {
+      char namebuf[MAX_BUF];
+      int login_order;
+    } chars_names;
+
+/*local functon for qsort comparison*/
+int name_cmp (chars_names *c1, chars_names *c2)
+    {
+      return strcasecmp (c1->namebuf, c2->namebuf);
+    }
 
 int command_who (object *op, char *params) {
     player *pl;
@@ -261,17 +273,7 @@ int command_who (object *op, char *params) {
     int num_wiz = 0;
     int num_afk = 0;
     char players_str[MAX_BUF];
-    typedef struct
-    {
-      char namebuf[MAX_BUF];
-      int login_order;
-    } chars_names;
     chars_names *chars = NULL;
-    /*local functon for qsort comparison*/
-    int name_cmp (chars_names *c1, chars_names *c2)
-    {
-      return strcasecmp (c1->namebuf, c2->namebuf);
-    }
     
     /* 
      * The who formats are defined in config to be blank. They should have been
@@ -368,7 +370,7 @@ int command_who (object *op, char *params) {
  * _	a literal underscore
  */
   
-void *get_who_escape_code_value(char *return_val, const char letter, player *pl) {
+void get_who_escape_code_value(char *return_val, const char letter, player *pl) {
     
     switch (letter) {
 	case 'N' :    strcpy(return_val, pl->ob->name);

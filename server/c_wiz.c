@@ -124,8 +124,6 @@ void do_wizard_hide( object* op, int silent_dm )
             "%s has entered the game.",op->name);
         if ( !silent_dm )
             {
-	    /*slight delay to make it look like a person doing it*/
-            sleep (1);
 	    new_draw_info(NDI_UNIQUE | NDI_ALL | NDI_LT_GREEN, 1, NULL,
                 "The Dungeon Master has arrived!");
             }
@@ -142,8 +140,6 @@ void do_wizard_hide( object* op, int silent_dm )
             }
 	new_draw_info_format(NDI_UNIQUE | NDI_ALL | NDI_DK_ORANGE, 5, NULL,
             "%s leaves the game.",op->name);
-        /*slight delay to make it look like a person doing it*/
-	sleep (1);
 	new_draw_info_format(NDI_UNIQUE | NDI_ALL | NDI_DK_ORANGE, 5, NULL,
             "%s left the game.",op->name);
         }
