@@ -981,14 +981,10 @@ int hit_player_attacktype(object *op, object *hitter, int dam,
     if (attacknum == ATNR_INTERNAL) return dam;
     
     if (hitter->slaying) {
-      if(
-	 ((op->race != NULL) && 
-	  strstr(hitter->slaying, op->race)
-	  ) ||
-	 (op->arch && 
-	  (op->arch->name != NULL) && 
+      if(((op->race != NULL) && strstr(hitter->slaying, op->race)) ||
+	 (op->arch && (op->arch->name != NULL) && 
 	  strstr(op->arch->name, hitter->slaying))
-	 ) {
+	 ){
 	doesnt_slay = 0;
 	dam *= 3;
       }
@@ -999,13 +995,9 @@ int hit_player_attacktype(object *op, object *hitter, int dam,
       /* basically:  dam = dam*(100-op->resist[attacknum])/100;
        * in case 0>dam>1, we try to "simulate" a float value-effect */
       dam *= (100-op->resist[attacknum]);
-      if (dam >= 100)
-	dam /= 100;
+      if (dam >= 100) dam /= 100;
       else
 	dam = (dam > (random_roll(0, 99, op, PREFER_LOW))) ? 1 : 0;
-      /* why not simulate for all values?
-       * dam = (dam / 100) + (((dam % 100) > (random_roll(0, 99, op, PREFER_LOW))) ? 1 : 0)
-       */
     }
 
     /* Special hack.  By default, if immune to something, you
@@ -1014,8 +1006,7 @@ int hit_player_attacktype(object *op, object *hitter, int dam,
      * special processing is needed */
     
     if ((op->resist[attacknum] >= 100) && 
-	doesnt_slay && 
-	(attacknum != ATNR_ACID))
+	doesnt_slay && (attacknum != ATNR_ACID))
       return 0;
 
     /* Keep this in order - makes things easier to find */
@@ -1053,36 +1044,17 @@ int hit_player_attacktype(object *op, object *hitter, int dam,
 	    !(rndm(0, (attacknum == ATNR_SLOW?6:3)-1)) &&
 	    ((random_roll(1, 20, op, PREFER_LOW) + 
 	      op->resist[attacknum]/10) < savethrow[level_diff])) {
-	  
-	  switch(attacknum) {
-	    /* Player has been hit by something */
-	  case ATNR_CONFUSION:
-	    confuse_player(op,hitter,dam);
-	    break;
-	  case ATNR_POISON:
-	    poison_player(op,hitter,dam);
-	    break;
-	  case ATNR_SLOW:
-	    slow_player(op,hitter,dam);
-	    break;
-	  case ATNR_PARALYZE:
-	    paralyze_player(op,hitter,dam);
-	    break;
-	  case ATNR_FEAR:
-	    SET_FLAG(op, FLAG_SCARED);
-	    break;
-	  case ATNR_CANCELLATION:
-	    cancellation(op);
-	    break;
-	  case ATNR_DEPLETE:
-	    drain_stat(op);
-	    break;
-	  case ATNR_BLIND:
-	    if(!QUERY_FLAG(op,FLAG_UNDEAD) &&
-		 !QUERY_FLAG(op,FLAG_GENERATOR))
-	      blind_player(op,hitter,dam);
-	    break;
-	  }
+
+	  /* Player has been hit by something */
+	  if (attacknum == ATNR_CONFUSION) confuse_player(op,hitter,dam);
+	  else if (attacknum == ATNR_POISON) poison_player(op,hitter,dam);
+	  else if (attacknum == ATNR_SLOW) slow_player(op,hitter,dam);
+	  else if (attacknum == ATNR_PARALYZE) paralyze_player(op,hitter,dam);
+	  else if (attacknum == ATNR_FEAR) SET_FLAG(op, FLAG_SCARED);
+	  else if (attacknum == ATNR_CANCELLATION) cancellation(op);
+	  else if (attacknum == ATNR_DEPLETE) drain_stat(op);
+	  else if (attacknum == ATNR_BLIND  && !QUERY_FLAG(op,FLAG_UNDEAD) &&
+		   !QUERY_FLAG(op,FLAG_GENERATOR)) blind_player(op,hitter,dam);
 	}
 	dam = 0; /* These are all effects and don't do real damage */
 	} break;
@@ -1097,17 +1069,14 @@ int hit_player_attacktype(object *op, object *hitter, int dam,
 	  {
 	    object *tmp;
 	    for(tmp=op->inv; tmp!=NULL; tmp=tmp->below) {
-
 		if(!QUERY_FLAG(tmp, FLAG_APPLIED) ||
 		   (tmp->resist[ATNR_ACID] >= 10))
 		  /* >= 10% acid res. on itmes will protect these */
 		  continue;
-
 		if(!(tmp->material & M_IRON))
 		  continue;
 		if(tmp->magic < -4) /* Let's stop at -5 */
 		  continue;
-
 		if(tmp->type==RING || 
 		   /* removed boots and gloves from exclusion list in
                       PR */
@@ -1125,13 +1094,12 @@ int hit_player_attacktype(object *op, object *hitter, int dam,
 		  if(op->type == PLAYER) {
 		    /* Make this more visible */
 		    new_draw_info_format(NDI_UNIQUE|NDI_RED,0, op,
-				"The %s's acid corrodes your %s!",
+				 "The %s's acid corrodes your %s!",
 				 query_name(hitter), query_name(tmp));
-		    }
-		    flag = 1;
-		    tmp->magic--;
-		    if(op->type == PLAYER)
-		      esrv_send_item(op, tmp);
+		  flag = 1;
+		  tmp->magic--;
+		  if(op->type == PLAYER)
+		    esrv_send_item(op, tmp);
 		}
 	    }
 	    if(flag)
@@ -1186,8 +1154,8 @@ int hit_player_attacktype(object *op, object *hitter, int dam,
 
 	    /* if undead are not an enemy of your god, you turn them
              * at half strength */
-            if ( ! god || ! god->slaying
-                || strstr (god->slaying, undead_name) == NULL)
+            if (! god || ! god->slaying ||
+		 strstr (god->slaying, undead_name) == NULL)
                 div = 2;
 	    /* Give a bonus if you resist turn undead */
 	    if (op->level * div <
@@ -1200,19 +1168,16 @@ int hit_player_attacktype(object *op, object *hitter, int dam,
                       undead? */
       } break;
     case ATNR_DEATH:
-      {
 	deathstrike_player(op, hitter, &dam);
-      } break;
+	break;
     case ATNR_CHAOS:
-      {
 	LOG(llevError,
 	    "%s was hit by %s with non-specific chaos.\n",
 	    query_name(op),
 	    query_name(hitter));
 	dam = 0;
-      } break;
+	break;
     case ATNR_COUNTERSPELL: 
-      {
 	LOG(llevError,
 	    "%s was hit by %s with counterspell attack.\n",
 	    query_name(op),
@@ -1222,27 +1187,22 @@ int hit_player_attacktype(object *op, object *hitter, int dam,
 	 * seperately and filtered out.  If this does happen,
 	 * Counterspell has no effect on anything but spells, so it
 	 * does no damage. */
-      }  break;
+	break;
       case ATNR_HOLYWORD:
 	{
-	  /* Holyword only affects a limited range of creatures 		*/
-	  /* Affects enemies of your god (*3 for slaying applied above)	*
-	   * Affects undead even if not enemies, unless they are friends	*
-	   * -- DAMN							*/
-	  /*	if ((op->race != NULL && hitter->slaying != NULL && strstr(hitter->slaying,op->race) != NULL) ||
-	   *	    (QUERY_FLAG(op,FLAG_UNDEAD) &&
-	   *	     (hitter->title == NULL ||
-	   *	      (strstr(find_god(determine_god(hitter))->race,undead_name)==NULL)))) {
-	   * This has already been handled by hit_player, no need to check  *
-	   * twice  -- DAMN							*/
+	   /* This has already been handled by hit_player, 
+	    *  no need to check twice  -- DAMN */
+
 	  object *owner = get_owner(hitter)==NULL?hitter:get_owner(hitter);
 	  
 	  /* As with turn undead above, give a bonus on the saving throw */
-	  if((op->level+(op->resist[ATNR_HOLYWORD]/100)) < owner->level+turn_bonus[owner->stats.Wis])
+	  if((op->level+(op->resist[ATNR_HOLYWORD]/100)) <
+	     owner->level+turn_bonus[owner->stats.Wis])
 	    SET_FLAG(op, FLAG_SCARED);
 	} break;
     }
     return dam;
+    }
 }
 
 /* GROS: This code comes from hit_player. It has been made external to
