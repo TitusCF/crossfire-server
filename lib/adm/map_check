@@ -24,7 +24,7 @@ $debug = 1;
 #	ARGUMENT PROCESSING
 #
 # preset options
-$cfdir = "/home/hugin/a/crossfire/cf-installroot";
+$cfdir = "/export/home/crossfire/cf-installroot";
 
 # loop thru arg vector
 while (@ARGV) {
@@ -92,6 +92,10 @@ while ( ($arch,$type) = each(%ARCHDB) ) {
 		# e.g. buttons, handles, gates, ...
 		$CONNECT{$arch} = 1;
 	}
+	if ($type == 85) {
+		$SB{$arch} = 1;
+	}
+
 }
 
 print STDERR "DBG: ...done.\n" if $debug;
@@ -109,8 +113,11 @@ while ($map = pop(@MAPS)) {
 	next if $visited{$map};		# skip if been here before
 	$visited{$map} = 1;		# flag it if not
 
-print STDERR "DBG: visiting $map\n" if $debug;
-#print "visiting $map\n" if $debug;
+	# skip random maps
+	next if ($map =~ m#/!#);
+
+	print STDERR "DBG: visiting $map\n" if $debug;
+	#print "visiting $map\n" if $debug;
 
 	#
 	# side effect: check_map pushes any (legal) exits found on stack
@@ -211,6 +218,7 @@ sub check_map {
 	local($arch,$connected,$slaying,$exit,$x,$y, $rx, $ry);
 	local($lines,$fullmap);
 	local($junk);
+	$depth=0;
 
 	# build full pathname (nb: map path starts with /) and open map file
 	$fullmap = "$mapdir$map";
@@ -220,15 +228,43 @@ sub check_map {
 	$lines = 0;
 
 	while ( <MAP> ) {
+		if (/^tile_path_/) {
+			($junk,$slaying) = split;
+			$_ = "$map $slaying";	# easy matching :-)
+			s@^(/.*/)([^/]*)\s([^\./].*)$@\1\2 \1\3@;
+			s@^(/.*/)([^/]*)\s(\.\./.*)$@\1\2 \1\3@;
+			s@/[^/]*/\.\./@/@g;
+			($junk,$exit) = split;
+			next if $visited{$exit};
+
+			if ( (! -r "$mapdir$exit")  && ( $exit ne "/!") ) {
+				print "ERROR: map $map, arch $arch, line $lines, no such exit $exit ($rx, $ry, to $x, $y)\n";
+				next;
+			}
+			push(@MAPS,$exit);
+		}
+
+
 		$lines++;
 		if (/^arch\s/) {
+			# Note we have to do some checks here - that is because
+			# if an object is inside an object, the value of $arch
+			# is clobbered.
 			($junk,$arch) = split;
+#			if ($SB{$arch}) {
+#				print "WARNING: spellbook found at map $map, line $lines, arch $arch\n";
+#			}
+			if (!defined($ARCHDB{$arch})) {
+				print "FATAL: map $map, line $lines, bad archetype: $arch ($rx, $ry)\n";
+			}
+			$USED{$arch}=1;
 			undef($slaying);
 			undef($x);
 			undef($y);
 			undef($rx);
 			undef($ry);
 			undef($connected);
+			$depth++;
 		}
 		elsif (/^connected\s/) {
 			($junk,$connected) = split;
@@ -253,16 +289,8 @@ sub check_map {
 		}
 
 		next if !/^end$/;	# continue iff not end of arch
+		$depth--;
 
-		#
-		# CHECK 1: valid archetype?
-		#
-		if (!defined($ARCHDB{$arch})) {
-#print STDERR "FATAL: map $map, line $lines, bad archetype: $arch\n";
-print "FATAL: map $map, line $lines, bad archetype: $arch ($rx, $ry)\n";
-			next;
-		}
-		$USED{$arch}=1;
 		#
 		# CHECK 2: connect-arch actually connected?
 		#	NB: if not, that's perfectly legal, but suspicious
@@ -276,6 +304,7 @@ print "FATAL: map $map, line $lines, bad archetype: $arch ($rx, $ry)\n";
 #		}
 
 		next if !$EXITS{$arch};	# continue if not an exit
+		
 
 		#
 		# CHECK 3: exit-type arch, but no path given
@@ -347,4 +376,7 @@ print "ERROR: map $map, arch $arch, line $lines, no such exit $exit ($rx, $ry, t
 	}
 
 	close(MAP);
+	if ($depth != 0) {
+		print "ERROR: map $map, mismatched arch/end, $depth\n";
+	}
 }
