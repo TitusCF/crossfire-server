@@ -1748,25 +1748,22 @@ int apply(object *op, object *tmp, int aflag) {
     decrease_ob(tmp);
     return 1;
   case POISON:
-#if 0
-   /* monsters can now use this */
-    if(op->type!=PLAYER)
-      return 0;
-#endif
     if(QUERY_FLAG(tmp, FLAG_UNPAID)) {
-      new_draw_info(NDI_UNIQUE, 0,op,"You should pay for it first.");
+      if (op->type == PLAYER)
+        new_draw_info(NDI_UNIQUE, 0,op,"You should pay for it first.");
       return 1;
     }
-    play_sound_player_only(op->contr, SOUND_DRINK_POISON,0,0);
-/*    op->stats.hp+=tmp->stats.hp;*/
-    /* I think this is better */
-    LOG(llevDebug,"Trying to poison player for %d hp\n", tmp->stats.hp);
-    hit_player(op, tmp->stats.hp, tmp, AT_POISON);
-    op->stats.food-=op->stats.food/4;
-    if(op->type==PLAYER) {
+    if (op->type == PLAYER) {
+      play_sound_player_only(op->contr, SOUND_DRINK_POISON,0,0);
       new_draw_info(NDI_UNIQUE, 0,op,"Yech!  That tasted poisonous!");
       strcpy(op->contr->killer,"poisonous booze");
     }
+    if (tmp->stats.hp > 0) {
+      LOG(llevDebug,"Trying to poison player/monster for %d hp\n",
+          tmp->stats.hp);
+      hit_player(op, tmp->stats.hp, tmp, AT_POISON);
+    }
+    op->stats.food-=op->stats.food/4;
     decrease_ob(tmp);
     return 1;
   case SAVEBED:

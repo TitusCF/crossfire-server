@@ -725,6 +725,16 @@ last_eat: how many times the sign has been read (only used internally.)
 If food is zero, there is no limit on how many times the sign can be read.
 
 ------------------------------------------------------------------------------
+POISONOUS BOOZE:
+
+stats.hp  Poison player or monster that applies this booze with stats.hp
+          poison damage.
+
+stats.hp must be greater 0 to do damage.  It used to be less than 0 for
+-stats.hp direct damage, but that has changed.  stats.hp <= 0 now means no
+damage at all, just loss of 25% food.
+
+------------------------------------------------------------------------------
 Flags & specifications: (usage: flag value)
 
 Note: the flags are case sensitive.
