@@ -2006,6 +2006,11 @@ int manual_apply (object *op, object *tmp, int aflag)
       return 0;   /* monsters just skip unpaid items */
     }
   }
+  
+  /* monsters mustn't apply random chests */
+  if (op->type != PLAYER && tmp->type == TREASURE)
+    return 0;
+  
 #ifdef PLUGINS
   /* GROS: Handle for plugin trigger event */
   if(tmp->event_hook[EVENT_APPLY] != NULL)
