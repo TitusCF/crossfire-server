@@ -969,11 +969,12 @@ void init_humid_elev()
 		     space < spwtx*spwty); ax++,nx++) {
 		for (ny=0,ay=ty; (ny < spwty && ay < settings.worldmaptilesizey &&
 			 space < spwtx*spwty);
-		     ay++,ny++,space++) {
-		    if (QUERY_FLAG(GET_MAP_OB(m, ax, ay), FLAG_IS_WATER))
-			water++;
-		    elev += GET_MAP_OB(m, ax, ay)->elevation;
-		}
+		     ay++,ny++,space++)
+		    if(GET_MAP_OB(m, ax, ay)){
+		    	if (QUERY_FLAG(GET_MAP_OB(m, ax, ay), FLAG_IS_WATER))
+				water++;
+		    	elev += GET_MAP_OB(m, ax, ay)->elevation;
+		    }
 	    }
 	    delete_map(m);
 
@@ -990,11 +991,12 @@ void init_humid_elev()
 		     space < spwtx*spwty); ax++,nx++) {
 		for (ny=j,ay=MAX(0, ty - (spwty-1)); (ny < spwty && ay <= ty &&
 			 space < spwtx*spwty);
-		     space++,ay++,ny++) {
-		    if (QUERY_FLAG(GET_MAP_OB(m, ax, ay), FLAG_IS_WATER))
-			water++;
-		    elev += GET_MAP_OB(m, ax, ay)->elevation;
-		}
+		     space++,ay++,ny++)
+		    if(GET_MAP_OB(m, ax, ay)){
+		    	if (QUERY_FLAG(GET_MAP_OB(m, ax, ay), FLAG_IS_WATER))
+				water++;
+		    	elev += GET_MAP_OB(m, ax, ay)->elevation;
+			}
 	    }
 	    delete_map(m);
 
@@ -1010,11 +1012,12 @@ void init_humid_elev()
 		     space < spwtx*spwty); ax++,nx++) {
 		for (ny=0,ay=ty; (ny < spwty && ay < settings.worldmaptilesizey &&
 			 space < spwtx*spwty);
-		     ay++,ny++,space++) {
-		    if (QUERY_FLAG(GET_MAP_OB(m, ax, ay), FLAG_IS_WATER))
-			water++;
-		    elev += GET_MAP_OB(m, ax, ay)->elevation;
-		}
+		     ay++,ny++,space++)
+		    if(GET_MAP_OB(m, ax, ay)){
+		    	if (QUERY_FLAG(GET_MAP_OB(m, ax, ay), FLAG_IS_WATER))
+				water++;
+		    	elev += GET_MAP_OB(m, ax, ay)->elevation;
+			}
 	    }
 	    delete_map(m);
 
@@ -1030,11 +1033,12 @@ void init_humid_elev()
 		     space < spwtx*spwty); ax++,nx++) {
 		for (ny=0,ay=MAX(0, ty - (spwty-1)); (ny < spwty && ay <= ty &&
 			 space < spwtx*spwty);
-		     space++,ay++,ny++) {
-		    if (QUERY_FLAG(GET_MAP_OB(m, ax, ay), FLAG_IS_WATER))
-			water++;
-		    elev += GET_MAP_OB(m, ax, ay)->elevation;
-		}
+		     space++,ay++,ny++)
+		    if(GET_MAP_OB(m, ax, ay)){
+		    	if (QUERY_FLAG(GET_MAP_OB(m, ax, ay), FLAG_IS_WATER))
+				water++;
+		    	elev += GET_MAP_OB(m, ax, ay)->elevation;
+			}
 	    }
 	    delete_map(m);
 	    /* jesus thats confusing as all hell */
@@ -1619,11 +1623,11 @@ void let_it_snow(mapstruct *m, int wx, int wy, char *filename)
 			remove_ob(tmp);
 			free_object(tmp);
 			tmp=GET_MAP_OB(m, x, y);
-				if (!strcmp(tmp->arch->name, "mountain")){
+				if (tmp &&(!strcmp(tmp->arch->name, "mountain"))){
 					at = find_archetype("mountain1_rivlets");}
-				else if (!strcmp(tmp->arch->name, "mountain2")){
+				else if ( tmp && (!strcmp(tmp->arch->name, "mountain2"))){
 					at = find_archetype("mountain2_rivlets");}
-				else if (!strcmp(tmp->arch->name, "mountain4")){
+				else if (tmp && (!strcmp(tmp->arch->name, "mountain4"))){
 					at = find_archetype("mountain2_rivlets");}
 				else {at = find_archetype("rain5");}
 			if (at != NULL) {
@@ -1647,13 +1651,13 @@ void let_it_snow(mapstruct *m, int wx, int wy, char *filename)
 			avoid--;
 		}
 		tmp = GET_MAP_OB(m, x, y);
-		if (!strcasecmp(tmp->name, "sea"))
+		if (tmp && (!strcasecmp(tmp->name, "sea")))
 		    avoid++;
-		else if (!strcasecmp(tmp->name, "sea1"))
+		else if (tmp && (!strcasecmp(tmp->name, "sea1")))
 		    avoid++;
-		else if (!strcasecmp(tmp->name, "deep_sea"))
+		else if (tmp && (!strcasecmp(tmp->name, "deep_sea")))
 		    avoid++;
-		else if (!strcasecmp(tmp->name, "shallow_sea"))
+		else if (tmp && (!strcasecmp(tmp->name, "shallow_sea")))
 		    avoid++;
 		if (avoid > 0) {
 		    at = find_archetype("ice");
@@ -1721,11 +1725,11 @@ void singing_in_the_rain(mapstruct *m, int wx, int wy, char *filename)
 	    oldsnow = avoid_weather(&avoid, m, x, y, &gotsnow, 0);
 	    if (!avoid) {
 		tmp=GET_MAP_OB(m, x, y);
-		if (!strcmp(tmp->arch->name, "mountain")){
+		if (tmp && (!strcmp(tmp->arch->name, "mountain"))){
 			at = find_archetype("mountain1_rivlets"); break;}
-		else if (!strcmp(tmp->arch->name, "mountain2")){
+		else if (tmp && (!strcmp(tmp->arch->name, "mountain2"))){
 			at = find_archetype("mountain2_rivlets"); break;}
-		else if (!strcmp(tmp->arch->name, "mountain4")){
+		else if (tmp && (!strcmp(tmp->arch->name, "mountain4"))){
 			at = find_archetype("mountain2_rivlets"); break;}
 		if (sky == SKY_LIGHT_RAIN || sky == SKY_RAIN) {		
 			switch (rndm(0, SKY_HAIL-sky)) {
@@ -1832,7 +1836,7 @@ void singing_in_the_rain(mapstruct *m, int wx, int wy, char *filename)
 		}
 	    }
 	    /* Things evaporate fast in the heat */
-	    if (temp > 8 && sky < SKY_OVERCAST && rndm(temp, 60) > 50) {
+	    if (GET_MAP_OB(m, x, y) && temp > 8 && sky < SKY_OVERCAST && rndm(temp, 60) > 50) {
 		/* evaporate */
 		for (tmp=GET_MAP_OB(m, x, y)->above; tmp; tmp = tmp->above) {
 		    avoid = 0;
@@ -1965,7 +1969,8 @@ void plant_a_garden(mapstruct *m, int wx, int wy, char *filename)
 		    if (temp < weather_grow[i].tempmin ||
 			temp > weather_grow[i].tempmax)
 			continue;
-		    if (GET_MAP_OB(m, x, y)->elevation < weather_grow[i].elevmin ||
+		    if ((!GET_MAP_OB(m, x, y)) ||
+		    	GET_MAP_OB(m, x, y)->elevation < weather_grow[i].elevmin ||
 			GET_MAP_OB(m, x, y)->elevation > weather_grow[i].elevmax)
 			continue;
 		    /* we got this far.. must be a match */
@@ -2039,7 +2044,8 @@ void change_the_world(mapstruct *m, int wx, int wy, char *filename)
 		for (i=0; weather_tile[i].herb != NULL; i++) {
 		    found=0;
 		    doublestack=NULL;
-		    for (tmp=GET_MAP_OB(m, x, y)->above; tmp; tmp = tmp->above) {
+		    if (GET_MAP_OB(m, x, y))
+		      for (tmp=GET_MAP_OB(m, x, y)->above; tmp; tmp = tmp->above) {
 			if (weather_tile[i].tile != NULL)
 			    if (strcmp(tmp->arch->name,
 				       weather_tile[i].tile) == 0) {
@@ -2080,18 +2086,19 @@ void change_the_world(mapstruct *m, int wx, int wy, char *filename)
 		    if (temp < weather_tile[i].tempmin ||
 			temp > weather_tile[i].tempmax)
 			continue;
-		    if (GET_MAP_OB(m, x, y)->elevation < weather_tile[i].elevmin ||
+		    if ( (!GET_MAP_OB(m, x, y)) ||
+		        GET_MAP_OB(m, x, y)->elevation < weather_tile[i].elevmin ||
 			GET_MAP_OB(m, x, y)->elevation > weather_tile[i].elevmax)
 			continue;
 		    /* we got this far.. must be a match */
-		    if (strcmp(GET_MAP_OB(m, x, y)->arch->name,
+		    if (GET_MAP_OB(m, x, y) && strcmp(GET_MAP_OB(m, x, y)->arch->name,
 			       weather_tile[i].herb) == 0)
 			break; /* no sense in doubling up */
 		    at = find_archetype(weather_tile[i].herb);
 		    break;
 		}
 		if (at != NULL) {
-		    if (weather_tile[i].tile != NULL &&
+		    if (weather_tile[i].tile != NULL && GET_MAP_OB(m, x, y) &&
 			strcmp(weather_tile[i].tile,
 			       GET_MAP_OB(m, x, y)->arch->name) != 0)
 			dat = find_archetype(weather_tile[i].tile);
