@@ -1191,6 +1191,7 @@ cast_change_attr(object *op,object *caster,int dir,int spell_type) {
         else { new_draw_info(NDI_UNIQUE, 0,op,"You are no easier to look at."); force->stats.Cha=0; }
 
     break;
+  case SP_IRONWOOD_SKIN:
   case SP_ARMOUR: {
    /* peterm, modified so that it uses level-depend functions */
     force->stats.ac=2+SP_level_dam_adjust(op,caster,spell_type);
@@ -3532,3 +3533,38 @@ void move_peacemaker(object *op) {
 }   
       
     
+int cast_cause_conflict(object *op, object *caster, archetype *spellarch,int type)
+{
+  int i,j;
+  int r;    /*  peterm:  added to make area of effect level dep.  */
+  int level;
+  object *tmp;
+  if(op->type!=PLAYER)
+    return 0;
+  r=5 + SP_level_strength_adjust(op,caster,type);
+  for(i= -r;i<r;i++)
+    for(j= -r;j<r;j++) {
+      if(out_of_map(op->map,op->x+i,op->y+j))
+        continue;
+      tmp=get_map_ob(op->map,op->x+i,op->y+j);
+      while(tmp!=NULL&&(!QUERY_FLAG(tmp, FLAG_ALIVE)||tmp->type==PLAYER))
+        tmp=tmp->above;
+      if(tmp==NULL)
+        continue;
+      if(tmp->head) continue;  /* only hit the head with this one */
+      
+      /* OK, now set the monster on other monsters */
+      level = MAX(1,SK_level(caster)/2);
+      if(RANDOM()%level > tmp->level) {  /* successfully induced conflict */
+	char buf[MAX_BUF];
+	SET_FLAG(tmp,FLAG_BERSERK);
+	if(tmp->name) {
+	  sprintf(buf,"You've clouded %s's mind.  He turns on his friends!",tmp->name); 
+	  new_draw_info(NDI_RED,0,op,buf);
+	}
+      }
+      
+      
+    }
+  return 1;
+}

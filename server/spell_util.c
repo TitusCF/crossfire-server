@@ -380,6 +380,9 @@ if (item == spellNormal && !ability ){
   case SP_L_MANABALL:
     success = fire_arch(op,caster,dir,spellarch[type],type, !ability);
     break;
+  case SP_VITRIOL:
+    success = fire_arch(op,caster,dir,spellarch[type],type,0);
+    break;
   case SP_MASS_CONFUSION:
   case SP_SHOCKWAVE:
   case SP_COLOR_SPRAY:
@@ -517,6 +520,7 @@ if (item == spellNormal && !ability ){
   case SP_CONSTITUTION:
   case SP_CHARISMA:
   case SP_ARMOUR:
+  case SP_IRONWOOD_SKIN:
   case SP_PROT_COLD:
   case SP_PROT_FIRE:
   case SP_PROT_ELEC:
@@ -788,6 +792,10 @@ if (item == spellNormal && !ability ){
   case SP_SANCTUARY:
   case SP_FLAME_AURA:
     success = create_aura(op,caster,spellarch[type],type,0);
+    break;
+  case SP_CONFLICT:
+    success = cast_cause_conflict(op,caster,spellarch[type],type);
+    break;
   }
 
   play_sound_map(op->map, op->x, op->y, SOUND_CAST_SPELL_0 + type);
@@ -1090,6 +1098,7 @@ cast_cone(object *op, object *caster,int dir, int strength, int spell_type,arche
     success=1;
     tmp=arch_to_object(spell_arch);
     set_owner(tmp,op);
+    copy_owner(tmp,op);
     tmp->level = casting_level (caster, spell_type);
     tmp->x=x,tmp->y=y;
 #ifdef MULTIPLE_GODS /* holy word stuff */                
@@ -1116,6 +1125,7 @@ cast_cone(object *op, object *caster,int dir, int strength, int spell_type,arche
       LOG (llevDebug, "cast_cone(): arch %s doesn't have walk_on 1 and "
            "fly_on 1\n", spell_arch->name);
     insert_ob_in_map(tmp,op->map,op);
+    if(tmp->other_arch) cone_drop(tmp);
   }
   return success;
 }
@@ -1637,34 +1647,54 @@ void explode_object(object *op)
    */
   /*  op->stats.sp stores the spell which made this object here. */
   tmp = arch_to_object (op->other_arch);
-  tmp->stats.dam += SP_level_dam_adjust(op,op,op->stats.sp);
-  if(op->attacktype&AT_MAGIC)
-    tmp->attacktype|=AT_MAGIC;
-  copy_owner (tmp, op);
-  if(op->stats.hp)
-    tmp->stats.hp=op->stats.hp;
-  tmp->stats.maxhp=op->count; /* Unique ID */
-  tmp->x = op->x;
-  tmp->y = op->y;
+  switch(tmp->type) {
+  case FBALL: {
+
+    tmp->stats.dam += SP_level_dam_adjust(op,op,op->stats.sp);
+    if(op->attacktype&AT_MAGIC)
+      tmp->attacktype|=AT_MAGIC;
+    copy_owner (tmp, op);
+    if(op->stats.hp)
+      tmp->stats.hp=op->stats.hp;
+    tmp->stats.maxhp=op->count; /* Unique ID */
+    tmp->x = op->x;
+    tmp->y = op->y;
 
 #ifdef MULTIPLE_GODS /* needed for AT_HOLYWORD stuff -b.t. */
-  if(tmp->attacktype&AT_HOLYWORD||tmp->attacktype&AT_GODPOWER) 
-    if ( ! tailor_god_spell (tmp, op)) {
-      remove_ob (op);
-      free_object (op);
-      return;
-    }
+    if(tmp->attacktype&AT_HOLYWORD||tmp->attacktype&AT_GODPOWER) 
+      if ( ! tailor_god_spell (tmp, op)) {
+	remove_ob (op);
+	free_object (op);
+	return;
+      }
 #endif
 
-  /* Prevent recursion */
-  CLEAR_FLAG (op, FLAG_WALK_ON);
-  CLEAR_FLAG (op, FLAG_FLY_ON);
+    /* Prevent recursion */
+    CLEAR_FLAG (op, FLAG_WALK_ON);
+    CLEAR_FLAG (op, FLAG_FLY_ON);
 
-  insert_ob_in_map (tmp, op->map, op);
+    insert_ob_in_map (tmp, op->map, op);
+    break;
+  }
+  case CONE: 
+    {
+      int type = tmp->stats.sp;
+      int level = op->level;
+      if(!type) type = op->stats.sp;
+      copy_owner(tmp,op);
+      cast_cone(op,op,0,SP_PARAMETERS[type].bdur,type,op->other_arch,op->attacktype&AT_MAGIC);
+      /* don't need this anymore. */
+      free_object(tmp);
+      break;
+    }
+  }
+
+  /* remove the firebullet */
   if ( ! was_destroyed (op, op_tag)) {
     remove_ob (op);
     free_object (op);
   }
+    
 }
 
 void check_fired_arch (object *op)

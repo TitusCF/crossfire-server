@@ -67,9 +67,39 @@ object *get_enemy(object *npc) {
   return can_detect_enemy(npc,npc->enemy)?npc->enemy:NULL;
 }
 
+object *find_nearest_living_creature(object *npc) {
+    int i,max=SIZEOFFREE;
+  int nx,ny;
+  int x, y;
+  mapstruct *m;
+  object *tmp;
+
+  x = npc->x;
+  y = npc->y;
+  m = npc->map;
+
+  for(i=(RANDOM()%8)+1;i<max;i++) {
+    nx = x + freearr_x[i];
+    ny = y + freearr_y[i];
+    if(!out_of_map(m,nx,ny)) {
+      tmp=get_map_ob(m,nx,ny);
+      while(tmp!=NULL && !QUERY_FLAG(tmp,FLAG_MONSTER)&&
+	    !QUERY_FLAG(tmp,FLAG_GENERATOR ) && tmp->type!=PLAYER) 
+                tmp=tmp->above;
+      if(tmp!=NULL && can_see_monsterP(m,x,y,i))
+        return tmp;
+    }
+  }
+  return 0;  /* nothing found */
+}
+
+
 object *find_enemy(object *npc) {
   object *tmp=NULL;
-
+  
+  if(QUERY_FLAG(npc,FLAG_BERSERK)) {
+    return find_nearest_living_creature(npc);
+  }
   if ((npc->move_type & HI4) == PETMOVE)
     return get_pet_enemy(npc);
   if((tmp=get_enemy(npc))==NULL)

@@ -422,24 +422,28 @@ PATH_TURNING,"holy_orb",},
    PATH_WOUNDING,"divine_shock"},
 {"windstorm",                   3,3,  0, 10, 0, 0,  0,  1, 0, 1, 0,
  PATH_NULL, "windstorm",},
-{"sanctuary",                 7, 30,  0, 10,  0,  0,  0,  0,  1,  1,  1,
-   PATH_PROT,"sanctuary"},
+{"sanctuary",                 7, 30,  0, 10,  0,  0,  0,  0,  1,  1,  1,  /* 190 */
+   PATH_NULL/*PATH_PROT*/,"sanctuary"},
 {"peace",                 20, 80,  0, 10,  0,  0,  0,  1,  0,  1,  0,
-   PATH_PROT,"peace"},
+   PATH_NULL/*PATH_PROT*/,"peace"},
 {"spiderweb",              4, 10,  0, 10,  0,  0,  0,  1,  0,  1,  0,
-   PATH_CREATE,"spiderweb_spell"},
+   PATH_NULL/*PATH_CREATE*/,"spiderweb_spell"},
 {"conflict",              10, 50,  0, 10,  0,  0,  0,  1,  0,  1,  0,
-   PATH_MIND, "conflict"},
+   PATH_NULL/*PATH_MIND*/, "enchantment"},
 {"rage",                   1,  5,  0, 10,  0,  0,  0,  1,  0,  1,  1,
-   PATH_WOUNDING, "enchantment"},
-{"forked lightning",       5, 15,  0, 10,  0,  0,  0,  1,  0,  1,  0,
-   PATH_ELEC, "forked_lightning"},
+   PATH_NULL/*PATH_WOUNDING*/, "enchantment"},
+{"forked lightning",       5, 15,  0, 10,  0,  0,  0,  1,  0,  1,  0,   /* 195 */
+   PATH_NULL/*PATH_ELEC*/, "forked_lightning"},
 {"poison fog",             5, 15,  0, 10,  0,  0,  0,  1,  0,  1,  0,
-   PATH_ELEC, "poison_fog"},
+   PATH_NULL/*PATH_WOUNDING*/, "poison_fog"},
 {"flaming aura",           1,  5,  0, 10,  0,  0,  0,  0,  1,  1,  1,
-   PATH_FIRE, "flaming_aura"},
+   PATH_NULL/*PATH_DETONATE*/, "flaming_aura"},
 {"vitriol",                5, 15,  0, 10,  0,  0,  0,  0,  1,  1,  1,
-   PATH_FIRE, "vitriol"}
+   PATH_NULL/*PATH_DETONATE*/, "vitriol"},  /* not for people to cast. */
+{"vitriol splash",                5, 15,  0, 10,  0,  0,  0,  0,  1,  1,  1,
+   PATH_NULL/*PATH_DETONATE*/, "vitriol_splash"},  /* not for people to cast. */
+{"ironwood skin",	 1, 8,  0, 20, 3, 2,  8,  1, 1, 1, 1,   /* 200 */
+   PATH_NULL/*PATH_SELF*/, "enchantment",}
 };
 
 /*  peterm:  the following defines the parameters for all the
@@ -660,7 +664,9 @@ spell_parameters SP_PARAMETERS[NROFREALSPELLS] =
 {   10,     16,     3,      0,		24},	/*forked lightning*/      /* 195*/
 {   10,     5,     5,      4,		10},	/*poison fog*/      
 {   6,      100,     25,      4,	20},	/*flame aura*/      
-{   10,     20,     25,      4,		6}	/*vitriol*/      
+{   100,    20,     25,      4,		6},	/*vitriol*/      
+{   40,      5,      4,      40,	15},	/*vitriol splash*/        
+{   0,      0,      5,      4,		8}	/*armour*/               
 };
 
 char *spellpathnames[NRSPELLPATHS] = {

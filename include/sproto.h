@@ -311,6 +311,8 @@ extern int forbid_play ( void );
 extern void do_specials ( void );
 extern int main ( int argc, char **argv );
 extern object *get_enemy ( object *npc );
+object *find_nearest_living_creature(object *npc);
+int can_see_monsterP(mapstruct *m, int x, int y,int dir);
 extern object *find_enemy ( object *npc );
 extern int check_wakeup ( object *op, object *enemy );
 extern int move_randomly ( object *op );
@@ -568,6 +570,8 @@ extern int fire_arch ( object *op, object *caster, int dir, archetype *at, int t
 extern int fire_arch_from_position ( object *op, object *caster, sint16 x, sint16 y, int dir, archetype *at, int type, int magic );
 extern int cast_cone ( object *op, object *caster, int dir, int strength, int spell_type, archetype *spell_arch, int magic );
 extern void move_cone ( object *op );
+extern void cone_drop(object *op);
+int cast_cause_conflict(object *op, object *caster, archetype *spellarch,int type);
 extern void fire_a_ball ( object *op, int dir, int strength );
 extern void explosion ( object *op );
 extern int reflwall ( mapstruct *m, int x, int y );

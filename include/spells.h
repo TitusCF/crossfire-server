@@ -196,7 +196,9 @@ enum spellnrs {
   SP_CONFLICT,          SP_RAGE,
 
   SP_FORKED_LIGHTNING,   SP_POISON_FOG,     SP_FLAME_AURA,            /* 195 */
-  SP_VITRIOL
+  SP_VITRIOL,          SP_VITRIOL_SPLASH,
+  
+  SP_IRONWOOD_SKIN
   
 };
 	

@@ -310,7 +310,7 @@
 
 #define NRSPELLPATHS	20
 
-#define NROFREALSPELLS	199	/* Number of different spells */
+#define NROFREALSPELLS	201	/* Number of different spells */
 
 #define NROFSKILLS  33  /* match to the number of elements in skills[] array */
 
@@ -476,7 +476,9 @@
 				    * to send an upditem when we have not
 				    * actually sent the item.
 				    */
-#define NUM_FLAGS		98 /* Should always be equal to the last
+#define FLAG_BERSERK            99 /* monster will attack closest living
+				      object */
+#define NUM_FLAGS		99 /* Should always be equal to the last
 				    * defined flag */
 
 /* Values can go up to 127 before the size of the flags array in the
