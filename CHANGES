@@ -18,6 +18,19 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+CREDITS, README: Updated to contain my new mailing address.  In reality,
+almost all the files have an out of date address for me, but these
+are probably the ones people will look at most.  msw 3/20/2000
+
+include/Makefile.in: Update files to include material.h - need when
+packing up new releases - msw 3/20/2000
+
+doc/hanbook.ps, doc/spoiler.ps, doc/spoiler-html/spoiler.html:  Rebuilt with
+latest version of crossfire - not sure if there are any content changes, as
+the tools to build the file have been updated on my system, causing many
+changes to the prologue and outputted data. - msw 3/20/2000
+
+
 Change doc/spoiler-html/Makefile.in and doc/playbook-html/Makefile.in to use
 $(datadir) instead of $(C_LIBDIR). Other add AWK and INCDIR lines so that it
 properly builds with autoconf setup. msw 3/19/2000
@@ -4139,4 +4152,3 @@ Have it re-draw the look window when you middle click on something (ie
 	apply) in that window.  This fixes a bug with bags/sacks, of it
 	not updating when an item is used directly from a sack.
 
- Mark Wedel (mark@pyramid.com)

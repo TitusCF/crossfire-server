@@ -1,6 +1,6 @@
 Source:
   crossfire: (try "crossfire -v")
-    Presently maintained by Mark Wedel (mark@pyramid.com)
+    Presently maintained by Mark Wedel (mwedel@scruz.net)
     Original code by Frank Tore Johansen (frankj@ifi.uio.no)
     _Lots_ of additions, improvements, bugfixes, patches, etc, by:
       kjetilho@ifi.uio.no (Kjetil Torgrim Homme)

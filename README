@@ -20,7 +20,7 @@ COMPILING
   (latest known version number of Crossfire that compiled on these
   systems is included in parantheses):
   o PC Compatible, with Linux 2.2 (gcc, glibc) (latest)
-  o Siemens Reliant Unix 5.44 (latest)
+  o Siemens Reliant Unix 5.44 (0.95.4)
   o Solaris 2.6 systems (0.95.1)
   o Silicon Graphics, Irix  6.3 (standard cc) 0.94.0
   o Sun4 with Solaris 2.5 (with gcc) (0.93.7)
@@ -80,7 +80,7 @@ FTP SITES
 
   FTP-sites where you can look for the latest versions are:
 
-    ftp://ftp.pyramid.com:/pub/crossfire (129.214.1.30)
+    ftp://ftp.scruz.net:/users/mwedel/public (165.227.192.254)
     ftp://ftp.ifi.uio.no:/pub/crossfire (129.240.64.44)
     ftp://ftp.real-time.com/pub/games/crossfire (206.10.252.12)
     ftp://ftp.cs.city.ac.uk:/pub/games/crossfire/
@@ -175,7 +175,7 @@ your system to poke around with the code or core dump, I will likely take
 you up on your offer.  If you make such an offer, I will assume that you
 have oberyed whatever usage rules/policies are applicable for your site.
 
-  Mail the bug report to mark@pyramid.com, or crossfire-bugs@ifi.uio.no
+  Mail the bug report to crossfire-bugs@ifi.uio.no
 
 ------------------------------------------------------------------------------
 SUBMITTING PATCHES:  See the doc/programming_guide file.
@@ -226,4 +226,4 @@ COPYRIGHT
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to mark@pyramid.com
+    The author can be reached via e-mail to mwedel@scruznet.com
