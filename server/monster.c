@@ -1338,15 +1338,17 @@ static void dump_messages(msglang *msgs) {
 void communicate(object *op, char *txt) {
   object *npc;
   int i;
+  int flag=1; /*hasn't spoken to a NPC yet*/
   for(i = 0; i <= SIZEOFFREE2; i++)
     if (!out_of_map(op->map, op->x+freearr_x[i], op->y+freearr_y[i]))
       for(npc = get_map_ob(op->map,op->x+freearr_x[i],op->y+freearr_y[i]);
           npc != NULL; npc = npc->above) {
         if (npc->type == MAGIC_EAR)
           (void) talk_to_wall(npc, txt); /* Maybe exit after 1. success? */
-        else
+        else if(flag)  {
           if (talk_to_npc(npc,txt))
-            return; /* Can be crowded */
+            flag=0; /* Can be crowded */
+	}
       }
 }
 
