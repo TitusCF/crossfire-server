@@ -165,6 +165,56 @@ object *find_skill_by_name(object *who, char *name)
     return NULL;
 }
 
+
+/* This returns the skill pointer of the given name (the
+ * one that accumlates exp, has the level, etc).
+ *
+ * It is presumed that the player will be needing to actually
+ * use the skill, so thus if use of the skill requires a skill
+ * tool, this code will equip it.
+ * 
+ * This code is basically the same as find_skill_by_name() above,
+ * but instead a skill name, we search by matching number.
+ * this replaces find_skill.
+ */
+object *find_skill_by_number(object *who, int skillno)
+{
+    object *skill=NULL, *skill_tool=NULL, *tmp;
+
+    if (skillno < 1 || skillno >= NUM_SKILLS) return NULL;
+
+    for (tmp=who->inv; tmp!=NULL; tmp=tmp->below) {
+	if (tmp->type == SKILL && tmp->subtype == skillno) skill = tmp;
+
+	/* Try to find appropriate skilltool.  If the player has one already
+	 * applied, we try to keep using that one.
+	 */
+	else if (tmp->type == SKILL_TOOL && tmp->subtype == skillno) {
+	    if (QUERY_FLAG(tmp, FLAG_APPLIED)) skill_tool = tmp;
+	    else if (!skill_tool || !QUERY_FLAG(skill_tool, FLAG_APPLIED))
+		skill_tool = tmp;
+	}
+    }
+    /* If this is a skill that can be used without a tool, return it */
+    if (skill && QUERY_FLAG(skill, FLAG_CAN_USE_SKILL)) return skill;
+
+    /* Player has a tool to use the skill.  IF not applied, apply it -
+     * if not successful, return null.  If they do have the skill tool
+     * but not the skill itself, give it to them.
+     */
+    if (skill_tool) {
+	if (!QUERY_FLAG(skill_tool, FLAG_APPLIED)) {
+	    if (apply_special(who, skill_tool, 0)) return NULL;
+	}
+	if (!skill) {
+	    skill = give_skill_by_name(who, skill_tool->skill);
+	    link_player_skills(who);
+	}
+	return skill;
+    }
+    return NULL;
+}
+
 /* This changes the objects skill to new_skill.
  * note that this function doesn't always need to get used -
  * you can now add skill exp to the player without the chosen_skill being

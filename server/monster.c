@@ -1748,7 +1748,7 @@ int can_detect_enemy (object *op, object *enemy, rv_vector *rv) {
 	int bonus = (op->level/2) + (op->stats.Int/5);
 
 	if(enemy->type==PLAYER) {
-	    if((sk_hide = find_skill(enemy,SK_HIDING)))
+	    if((sk_hide = find_skill_by_number(enemy,SK_HIDING)))
 		bonus -= sk_hide->level;
 	    else { 
 		LOG(llevError,"can_detect_enemy() got hidden player w/o hiding skill!");

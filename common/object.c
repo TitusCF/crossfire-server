@@ -1842,8 +1842,8 @@ int check_walk_on (object *op, object *originator)
 
 	    diff=(SLOW_PENALTY(tmp)*FABS(op->speed));
 	    if (op->type==PLAYER) {
-		if ((QUERY_FLAG(tmp,FLAG_IS_HILLY) && find_skill(op,SK_CLIMBING)) ||
-		    (QUERY_FLAG(tmp,FLAG_IS_WOODED) && find_skill(op,SK_WOODSMAN)))  {
+		if ((QUERY_FLAG(tmp,FLAG_IS_HILLY) && (*find_skill_by_number_func)(op,SK_CLIMBING)) ||
+		    (QUERY_FLAG(tmp,FLAG_IS_WOODED) && (*find_skill_by_number_func)(op,SK_WOODSMAN)))  {
 			diff=diff/4.0;
 		}
 	    }

@@ -69,7 +69,7 @@ void metaserver_init()
 	memcpy(&sock.sin_addr, hostbn->h_addr, hostbn->h_length);
     }
 #ifdef WIN32 /* ***win32 metaserver_init(): init win32 socket */
-	ioctlsocket(metafd, FIONBIO , &temp);
+    ioctlsocket(metafd, FIONBIO , &temp);
 #else 
     fcntl(metafd, F_SETFL, O_NONBLOCK);
 #endif
@@ -89,11 +89,11 @@ void metaserver_init()
 	}
 
 #ifdef WIN32 /* ***win32 metaserver_init(): gethostbyname! */
-		hostbn = gethostbyname(hostname);
-		if (hostbn != (struct hostent *) NULL) /* quick hack */
-			memcpy(domain, hostbn->h_addr, hostbn->h_length);
+	hostbn = gethostbyname(hostname);
+	if (hostbn != (struct hostent *) NULL) /* quick hack */
+		memcpy(domain, hostbn->h_addr, hostbn->h_length);
 
-		if (hostbn == (struct hostent *) NULL) {
+	if (hostbn == (struct hostent *) NULL) {
 #else
 	if (getdomainname(domain, MAX_BUF-1)) {
 #endif /* win32 */

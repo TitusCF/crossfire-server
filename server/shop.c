@@ -157,7 +157,7 @@ int query_cost(object *tmp, object *who, int flag) {
 
       charisma = who->stats.Cha;  /* used for SK_BARGAINING modification */
 
-      if (find_skill(who,SK_BARGAINING)) {
+      if (find_skill_by_number(who,SK_BARGAINING)) {
 	charisma += (who->level+2)/3;
 	if(charisma>30) charisma = 30;
       }

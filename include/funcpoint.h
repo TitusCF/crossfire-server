@@ -52,6 +52,7 @@ typedef void (*type_func_int_ob_ob)(int, object *, object *);
 typedef void (*type_func_player_int)(player *, int);
 typedef void (*type_func_dragon_gain)(object *who, int atnr, int level);
 typedef void (*type_func_char)(char *);
+typedef object* (*type_ob_func_ob_int)(object *, int);
 
 /*
  * These function-pointers are defined in common/glue.c
@@ -79,5 +80,5 @@ extern void	(*esrv_update_item_func)	(int, object *, object *);
 extern void	(*set_darkness_map_func)	(mapstruct *m);
 extern void     (*dragon_gain_func)             (object *, int, int);
 extern void	(*weather_effect_func)		(char *);
-
+extern object *	(*find_skill_by_number_func)	(object *, int);
 #endif

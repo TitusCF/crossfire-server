@@ -1303,30 +1303,32 @@ int cast_heal(object *op,object *caster, object *spell, int dir) {
 	heal += random_roll(spell->stats.hp, 6, op, PREFER_HIGH) +
 	    spell->stats.hp;
 
-    if (tmp->stats.hp >= tmp->stats.maxhp && heal) {
-	new_draw_info(NDI_UNIQUE, 0,tmp, "Your are already fully healed.");
-    }
-    else {
-	/* See how many points we actually heal.  Instead of messages
-	 * based on type of spell, we instead do messages based
-	 * on amount of damage healed.
-	 */
-	if (heal > (tmp->stats.maxhp - tmp->stats.hp))
-	    heal = tmp->stats.maxhp - tmp->stats.hp;
-	tmp->stats.hp += heal;
-
+    if (heal) {
 	if (tmp->stats.hp >= tmp->stats.maxhp) {
-	    new_draw_info(NDI_UNIQUE, 0,tmp, "You feel just fine!");
-	} else if (heal > 50) {
-	    new_draw_info(NDI_UNIQUE, 0,tmp, "Your wounds close!");
-	} else if (heal > 25) {
-	    new_draw_info(NDI_UNIQUE, 0,tmp, "Your wounds mostly close.");
-	} else if (heal > 10) {
-	    new_draw_info(NDI_UNIQUE, 0,tmp, "Your wounds start to fade.");
-	} else {
-	    new_draw_info(NDI_UNIQUE, 0,tmp, "Your wounds start to close.");
+	    new_draw_info(NDI_UNIQUE, 0,tmp, "Your are already fully healed.");
 	}
-	success=1;
+	else {
+	    /* See how many points we actually heal.  Instead of messages
+	     * based on type of spell, we instead do messages based
+	     * on amount of damage healed.
+	     */
+	    if (heal > (tmp->stats.maxhp - tmp->stats.hp))
+		heal = tmp->stats.maxhp - tmp->stats.hp;
+	    tmp->stats.hp += heal;
+
+	    if (tmp->stats.hp >= tmp->stats.maxhp) {
+		new_draw_info(NDI_UNIQUE, 0,tmp, "You feel just fine!");
+	    } else if (heal > 50) {
+		new_draw_info(NDI_UNIQUE, 0,tmp, "Your wounds close!");
+	    } else if (heal > 25) {
+		new_draw_info(NDI_UNIQUE, 0,tmp, "Your wounds mostly close.");
+	    } else if (heal > 10) {
+		new_draw_info(NDI_UNIQUE, 0,tmp, "Your wounds start to fade.");
+	    } else {
+		new_draw_info(NDI_UNIQUE, 0,tmp, "Your wounds start to close.");
+	    }
+	    success=1;
+	}
     }
     if (spell->attacktype & AT_DISEASE)
 	 if (cure_disease (tmp, op))

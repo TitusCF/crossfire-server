@@ -83,6 +83,7 @@ extern void set_esrv_del_item(type_func_player_int addr);
 extern void set_set_darkness_map(type_func_map addr);
 extern void set_dragon_gain_func(type_func_dragon_gain addr);
 extern void set_weather_effect_func(type_func_char addr);
+extern void set_find_skill_by_number_func(type_ob_func_ob_int addr);
 extern void fatal(int err);
 extern void dummy_function_int(int i);
 extern void dummy_function_int_int(int i, int j);
@@ -93,6 +94,7 @@ extern void dummy_function_ob(object *ob);
 extern void dummy_function_ob2(object *ob, object *ob2);
 extern int dummy_function_ob2int(object *ob, object *ob2);
 extern void dummy_function_ob_int(object *ob, int i);
+extern object *dummy_ob_function_ob_int(object *ob, int i);
 extern void dummy_function_txtnr(char *txt, int nr);
 extern void dummy_draw_info(int a, int b, object *ob, const char *txt);
 extern void dummy_function_mapstr(int a, mapstruct *map, char *str);
@@ -303,7 +305,6 @@ extern void close_and_delete(FILE *fp, int compressed);
 extern void make_path_to_file(char *filename);
 /* player.c */
 extern void free_player(player *pl);
-extern object *find_skill(object *op, int skillnr);
 extern int atnr_is_dragon_enabled(int attacknr);
 extern int is_dragon_pl(object *op);
 /* re-cmp.c */

@@ -57,6 +57,7 @@ type_func_int_ob_ob esrv_update_item_func;
 type_func_map	set_darkness_map_func;
 type_func_dragon_gain dragon_gain_func;
 type_func_char  weather_effect_func;
+type_ob_func_ob_int find_skill_by_number_func;
 
 static char *fatalmsgs[80]={
   "Failed to allocate memory",
@@ -97,6 +98,7 @@ void init_function_pointers() {
   set_darkness_map_func = dummy_function_map;
   dragon_gain_func = dummy_function_dragongain;
   weather_effect_func = dummy_function_char;
+  find_skill_by_number_func = dummy_ob_function_ob_int;
 }
 
 /*
@@ -234,6 +236,11 @@ void set_weather_effect_func(type_func_char addr) {
   weather_effect_func = addr;
 }
 
+void set_find_skill_by_number_func(type_ob_func_ob_int addr) {
+  find_skill_by_number_func = addr;
+}
+
+
 /*
  * fatal() is meant to be called whenever a fatal signal is intercepted.
  * It will call the emergency_save and the clean_tmp_files functions.
@@ -283,6 +290,10 @@ int dummy_function_ob2int(object *ob, object *ob2) {
 }
 
 void dummy_function_ob_int(object *ob, int i) {
+}
+
+object * dummy_ob_function_ob_int(object *ob, int i) {
+    return NULL;
 }
 
 void dummy_function_txtnr(char *txt, int nr) {

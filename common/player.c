@@ -50,21 +50,6 @@ void free_player(player *pl) {
     CFREE(pl);
 }
 
-/* find_skill() - looks for the skill and returns a pointer to it if found */
-
-object *find_skill(object *op, int skillnr) {
-    object *tmp, *skill1=NULL;
-
-    /* *sigh*; we didnt find it. Perhaps because the skill we requested
-     * is an unapplied tool. Lets search entire inventory */
-    for (tmp=op->inv;tmp;tmp=tmp->below) {
-	if(tmp->type==SKILL&&tmp->stats.sp==skillnr) {
-	    if (!tmp->invisible) return tmp;
-	    else skill1=tmp;
-	}
-    }
-    return skill1;
-}
 
 /* Determine if the attacktype represented by the
  * specified attack-number is enabled for dragon players.

@@ -17,6 +17,18 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+common/glue.c, common/object.c, common/player.c, include/funcpoint.h,
+    server/init.c, server/monster.c, server/shop.c, server/skill_util.c:  add
+    find_skill_by_number() function - this replaces find_skill.  Locate new
+    function in skill_util.c, which is more a proper place than
+    common/player.c - this change necessitated adding glue function pointers
+    so the other common files can call it.
+server/spell_effect.c: Fix cast_heal() so if the spell is not one that heals
+    hit points, don't process the code that checks for that and sets
+    a false success value.
+socket/metaserver.c: Clean up formatting - no code changes.
+MSW 2003-10-25
+
 server/apply.c: small fix to apply_spellbook in the rare case when
    the spellbook contains no spell (happens when DM issues a bad
    'create' command for instance :).

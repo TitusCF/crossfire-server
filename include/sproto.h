@@ -641,6 +641,7 @@ int skill_throw(object *op, object *part, int dir, char *params, object *skill);
 void init_skills(void);
 void link_player_skills(object *op);
 object *find_skill_by_name(object *who, char *name);
+object *find_skill_by_number(object *who, int skillno);
 int change_skill(object *who, object *new_skill, int flag);
 void clear_skill(object *who);
 int do_skill(object *op, object *part, object *skill, int dir, char *string);
@@ -760,6 +761,8 @@ void flush_old_maps(void);
 /* time.c */
 void remove_door(object *op);
 void remove_door2(object *op);
+void generate_monster_inv(object *gen);
+void generate_monster_arch(object *gen);
 void generate_monster(object *gen);
 void remove_force(object *op);
 void remove_blindness(object *op);
