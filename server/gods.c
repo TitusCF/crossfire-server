@@ -103,8 +103,9 @@ void pray_at_altar(object *pl, object *altar) {
 	/* Every once in a while, the god decides to checkup on their
 	 * follower, and may intervene to help them out. 
 	 */
-	bonus += pl->stats.luck; /* -- DAMN -- */
-	if((RANDOM()%500-bonus)<0) god_intervention(pl,pl_god);
+	bonus = MAX(1, bonus + MAX(pl->stats.luck, -3)); /* -- DAMN -- */
+	
+	if(((RANDOM()%400)-bonus)<0) god_intervention(pl,pl_god);
  
     } else { /* praying to another god! */
 	int loss = 0,angry=1;
