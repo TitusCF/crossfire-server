@@ -2089,7 +2089,8 @@ static void alchemy_object(object *obj, int *small_nuggets,
 	value=0;
     else if (obj->type==MONEY || obj->type==GEM)
 	value /=3;
-    else if (QUERY_FLAG(obj,FLAG_UNPAID)) value=0;
+    else if (QUERY_FLAG(obj, FLAG_UNPAID))
+	value=0;
     else
 	value *= 0.9;
 
@@ -2171,13 +2172,16 @@ int alchemy(object *op)
 
 	for(tmp=get_map_ob(op->map,x,y);tmp!=NULL;tmp=next) {
           next=tmp->above;
-	  if (tmp->weight>0 && !QUERY_FLAG(tmp, FLAG_NO_PICK)
-	      && !QUERY_FLAG(tmp, FLAG_ALIVE)) {
+	  if (tmp->weight>0 && !QUERY_FLAG(tmp, FLAG_NO_PICK) &&
+	      !QUERY_FLAG(tmp, FLAG_ALIVE) &&
+	      !QUERY_FLAG(tmp, FLAG_IS_CAULDRON)) {
 	    if (tmp->inv) {
-		object *next1,*tmp1;
+		object *next1, *tmp1;
 		for (tmp1 = tmp->inv; tmp1!=NULL; tmp1=next1) {
 		    next1 = tmp1->below;
-		    if (tmp1->weight>0 && !QUERY_FLAG(tmp1, FLAG_NO_PICK) && !QUERY_FLAG(tmp1, FLAG_ALIVE))
+		    if (tmp1->weight>0 && !QUERY_FLAG(tmp1, FLAG_NO_PICK) &&
+			!QUERY_FLAG(tmp1, FLAG_ALIVE) &&
+			!QUERY_FLAG(tmp1, FLAG_IS_CAULDRON))
 		        alchemy_object(tmp1, &small_nuggets, &large_nuggets,
 			   &weight);
 		}
