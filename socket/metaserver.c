@@ -35,10 +35,6 @@
 #include <version.h>
 #include <patchlevel.h>
 
-#ifndef MSG_DONTWAIT
-#define MSG_DONTWAIT O_NONBLOCK
-#endif
-
 static int metafd=-1;
 static struct sockaddr_in sock;
 
@@ -65,6 +61,7 @@ void metaserver_init()
 	}
 	memcpy(&sock.sin_addr, hostbn->h_addr, hostbn->h_length);
     }
+    fcntl(metafd, F_SETFL, O_NONBLOCK);
     if ((metafd=socket(AF_INET, SOCK_DGRAM, 0))==-1) {
 	LOG(llevDebug,"metaserver_init: Unable to create socket, err %d\n", errno);
 	return;
@@ -73,9 +70,6 @@ void metaserver_init()
     sock.sin_port = htons(settings.meta_port);
     if (connect(metafd, &sock, sizeof(sock))<0) {
 	LOG(llevDebug,"metaserver_init: Unable to connect to metaserver, err %d\n", errno);
-	close(metafd);
-	metafd=-1;
-	return;
     }
     /* No hostname specified, so lets try to figure one out */
     if (settings.meta_host[0]==0) {
@@ -110,7 +104,7 @@ void metaserver_update()
 
     sprintf(data,"%s|%d|%s%s|%s", settings.meta_host, num_players, VERSION, PATCH, 
 	    settings.meta_comment);
-    if (sendto(metafd, data, strlen(data), MSG_DONTWAIT, &sock, sizeof(sock))<0) {
+    if (sendto(metafd, data, strlen(data), 0, &sock, sizeof(sock))<0) {
 	LOG(llevDebug,"metaserver_update: sendto failed, err = %d\n", errno);
     }
 }

@@ -15,6 +15,12 @@ changes' is much more useful than 'misc edits' or 'code cleanup'.
 small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
+
+MSW 2000/11/17:
+socket/metaserver.c:  More changes - use fcntl to set O_NONBLOCK.  Don't
+   close socket if connect fails, since with sendto it is not required
+   that the connect works.
+
 PeterM:  2000/11/17
 define.h spells.h spellist.h spell_util.c spell_effect.c:
   windstorm spell implemented.
