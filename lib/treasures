@@ -3456,9 +3456,9 @@ treasure big_wizard
   more
   arch ability_lightning
   more
-  arch ability_cold
+  arch ability_coldspell
   more
-  arch ability_fire
+  arch ability_firespell
   more
   arch ability_missile
   more
