@@ -1120,7 +1120,8 @@ int cast_regenerate_spellpoints(object *op) {
 int
 cast_change_attr(object *op,object *caster,int dir,int spell_type) {
   object *tmp = op;
-  object *force;
+  object *tmp2;
+  object *force=NULL;
   int i;
 
   /* if dir = 99 op defaults to tmp, eat_special_food() requires this. */
@@ -1129,10 +1130,14 @@ cast_change_attr(object *op,object *caster,int dir,int spell_type) {
 
   if(tmp==NULL) return 0;
 
-/*  if((force=present_in_ob(FORCE,tmp))!=NULL)
-    remove_force(force);
-    We should be able to have more than one thing in force! */
-  force=get_archetype("force");
+  /* If we've already got a force of this type, leave. */
+  for(tmp2=op->inv;tmp2!=NULL;tmp2=tmp2->below) 
+    if(tmp2->type==FORCE && tmp2->value == spell_type) {
+      force=tmp2;
+    }
+  if(force==NULL)
+    force=get_archetype("force");
+  force->value = spell_type;  /* mark this force with the originating spell */
   switch(spell_type) {
   case SP_RAGE: 
     {
@@ -1188,6 +1193,8 @@ cast_change_attr(object *op,object *caster,int dir,int spell_type) {
     break;
   case SP_IRONWOOD_SKIN:
   case SP_ARMOUR: {
+    /* armour MAY be used multiple times. */
+    force->value = 0;
     /* With PR code, I wonder if this could get merged in with the other protection spells */
     /* peterm, modified so that it uses level-depend functions */
     force->stats.ac=2+SP_level_dam_adjust(op,caster,spell_type);
