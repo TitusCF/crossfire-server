@@ -837,6 +837,8 @@ void update_sd(object *op, int nrof, int flag)
 	else
 	    spd->title = NULL;
     }
+    if (nrof == 0)
+	nrof++;
     if (flag == F_SELL)
 	spd->sold += nrof;
     else
