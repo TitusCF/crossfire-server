@@ -463,7 +463,7 @@ void doeric_server()
 		    &tmp_exceptions, &socket_info.timeout);
 
     if (pollret==-1) {
-	perror("doeric_serover: error on select");
+	perror("doeric_server: error on select");
 	LOG(llevError,"doeric_server: error on select\n");
 	return;
     }
@@ -483,6 +483,7 @@ void doeric_server()
 	    init_sockets = realloc(init_sockets,sizeof(NewSocket)*(socket_info.nconns+1));
 	    newsocknum = socket_info.allocated_sockets;
 	    socket_info.allocated_sockets++;
+	    init_sockets[newsocknum].status = Ns_Avail;
 	}
 	else {
 	    int j;
