@@ -27,6 +27,8 @@ Bob Tanner ("tanner", tanner@real-time.com) - .spec files
 ? ("hfukui") - ? I think these last two may be read-only access
 ? ("robert") - ?
 Jan Echternach ("jec", jan.echternach@informatik.uni-rostock.de) - bug fixing
+Andreas Vogl ("red_blaze", andi.vogl@gmx.net) - bug fixing, creating maps,
+              maintaining pupland. 
 
 Still active developers:
 Phil Brown (phil@bolthole.com)- Java Client
