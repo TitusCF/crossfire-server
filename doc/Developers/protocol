@@ -1360,6 +1360,8 @@ This area documents changes in the protocol version and what happened between
 them.  Note that this is not a complete list, as the setup command
 is used to control many cases.:
 
+CS version 1022 -> 1023: just to sync version with server
+
 CS version 1021 -> 1022: Client supports sending of verbal image type
 questions.
 
