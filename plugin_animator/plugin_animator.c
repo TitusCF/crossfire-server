@@ -557,15 +557,17 @@ CFParm* triggerEvent(CFParm* PParm)
         case EVENT_PICKUP:
         case EVENT_SAY:
         case EVENT_STOP:
-        case EVENT_TELL:
         case EVENT_TIME:
         case EVENT_THROW:
         case EVENT_TRIGGER:
         case EVENT_CLOSE:
+        case EVENT_TIMER:
             result = HandleEvent(PParm);
             break;
         case EVENT_BORN:
         case EVENT_CRASH:
+        case EVENT_GDEATH:
+        case EVENT_GKILL:
         case EVENT_LOGIN:
         case EVENT_LOGOUT:
         case EVENT_REMOVE:
@@ -574,6 +576,9 @@ CFParm* triggerEvent(CFParm* PParm)
         case EVENT_MAPLEAVE:
         case EVENT_CLOCK:
         case EVENT_MAPRESET:
+        case EVENT_TELL:
+        case EVENT_MUZZLE:
+        case EVENT_KICK:
             result = HandleGlobalEvent(PParm);
             break;
     };
@@ -582,7 +587,7 @@ CFParm* triggerEvent(CFParm* PParm)
 };
 
 /*****************************************************************************/
-/* Handles standard local events.                                            */
+/* Handles standard global events.                                           */
 /*****************************************************************************/
 int HandleGlobalEvent(CFParm* PParm)
 {
@@ -599,6 +604,12 @@ int HandleGlobalEvent(CFParm* PParm)
         case EVENT_BORN:
             StackActivator[StackPosition] = (object *)(PParm->Value[1]);
             break;
+        case EVENT_GDEATH:
+            StackWho[StackPosition] = ((player *)(PParm->Value[1]))->ob;
+            break;
+        case EVENT_GKILL:
+            StackWho[StackPosition] = ((player *)(PParm->Value[1]))->ob;
+            break;
         case EVENT_LOGIN:
             StackActivator[StackPosition] = ((player *)(PParm->Value[1]))->ob;
             StackWho[StackPosition] = ((player *)(PParm->Value[1]))->ob;
@@ -616,6 +627,14 @@ int HandleGlobalEvent(CFParm* PParm)
             StackActivator[StackPosition] = (object *)(PParm->Value[1]);
             StackText[StackPosition] = (char *)(PParm->Value[2]);
             break;
+        case EVENT_MUZZLE:
+            StackActivator[StackPosition] = (object *)(PParm->Value[1]);
+            StackText[StackPosition] = (char *)(PParm->Value[2]);
+            break;
+        case EVENT_KICK:
+            StackActivator[StackPosition] = (object *)(PParm->Value[1]);
+            StackText[StackPosition] = (char *)(PParm->Value[2]);
+            break;
         case EVENT_MAPENTER:
             StackActivator[StackPosition] = (object *)(PParm->Value[1]);
             break;
@@ -627,6 +646,8 @@ int HandleGlobalEvent(CFParm* PParm)
             break;
         case EVENT_MAPRESET:
             StackText[StackPosition] = (char *)(PParm->Value[1]);/* Map name/path */
+            break;
+        case EVENT_TELL:
             break;
     };
     StackPosition--;

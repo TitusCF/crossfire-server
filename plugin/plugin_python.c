@@ -7007,15 +7007,17 @@ MODULEAPI CFParm* triggerEvent(CFParm* PParm)
         case EVENT_PICKUP:
         case EVENT_SAY:
         case EVENT_STOP:
-        case EVENT_TELL:
         case EVENT_TIME:
         case EVENT_THROW:
         case EVENT_TRIGGER:
         case EVENT_CLOSE:
+        case EVENT_TIMER:
             result = HandleEvent(PParm);
             break;
         case EVENT_BORN:
         case EVENT_CRASH:
+        case EVENT_GDEATH:
+        case EVENT_GKILL:
         case EVENT_LOGIN:
         case EVENT_LOGOUT:
         case EVENT_REMOVE:
@@ -7024,6 +7026,7 @@ MODULEAPI CFParm* triggerEvent(CFParm* PParm)
         case EVENT_MAPLEAVE:
         case EVENT_CLOCK:
         case EVENT_MAPRESET:
+        case EVENT_TELL:
         case EVENT_MUZZLE:
         case EVENT_KICK:
             result = HandleGlobalEvent(PParm);
@@ -7056,6 +7059,14 @@ MODULEAPI int HandleGlobalEvent(CFParm* PParm)
         case EVENT_BORN:
             StackActivator[StackPosition] = (object *)(PParm->Value[1]);
             scriptname = "python/events/python_born.py";
+            break;
+        case EVENT_GDEATH:
+            StackWho[StackPosition] = ((player *)(PParm->Value[1]))->ob;
+            scriptname = "python/events/python_gdeath.py";
+            break;
+        case EVENT_GKILL:
+            StackWho[StackPosition] = ((player *)(PParm->Value[1]))->ob;
+            scriptname = "python/events/python_gkill.py";
             break;
         case EVENT_LOGIN:
             StackActivator[StackPosition] = ((player *)(PParm->Value[1]))->ob;
@@ -7102,6 +7113,9 @@ MODULEAPI int HandleGlobalEvent(CFParm* PParm)
         case EVENT_MAPRESET:
             StackText[StackPosition] = (char *)(PParm->Value[1]);/* Map name/path */
             scriptname = "python/events/python_mapreset.py";
+            break;
+        case EVENT_TELL:
+            scriptname = "python/events/python_tell.py";
             break;
     };
 

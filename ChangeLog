@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+plugin/plugin_python.c, plugin_animator/plugin_animator.c: Handle all defined
+   events.
+Andreas Kirschbaum 2005-01-10
+
 server/spell_attack.c: apply patch #1096921 courtesy Salathar.
    Charmed monsters now lose the 'generator' flag, to prevent
    things like mice outbreak in bigworld maps.
