@@ -74,28 +74,17 @@
  * alphabetically.
  *
  * Short list of features, and what to search for:
- * ALCHEMY - enables alchemy code
  * BALANCED_STAT_LOSS - Based death stat depletion on level etc?
- * CASTING_TIME - makes spells take time to cast
  * CS_LOGSTATS - log various new client/server data.
  * DEBUG - more verbose message logging?
- * EXPLORE_MODE - add an explore mode method of play?
  * FULL_RING_DESCRIPTION - makes rings abilities show in inventory window
  * MAP_CLIENT_X, MAP_CLIENT_Y - determines max size client map will receive
  * MAX_TIME - how long an internal tick is in microseconds
  * MANY_CORES - generate core dumps on gross errors instead of continuing?
  * MULTIPLE_GODS - adds numerous gods to the game, with different powers
  * NO_CONE_PROPOGATE - makes cone spells stop at the first monster
- * NOT_PERMADEATH - should death be the final end or not?
  * PARTY_KILL_LOG - stores party kill information
- * REAL_WIZ - changes wiz stuff to be more mudlike.
- * RECYCLE_TMP_MAPS - use tmp maps across multiple runs?
- * RESURRECTION - lets players bring other dead players back to life.
- * SEARCH_ITEMS - let players search for items on the ground
  * SECURE - Allow overriding values with run time flags?
- * SET_TITLE - lets players set their title
- * SIMPLE_EXP - uses simpler experience system
- * SPELL_* - various spell related options
  * STAT_LOSS_ON_DEATH - toggle between stat loss or stat depletion
  * USE_LIGHTING - enable light/darkness & light sources
  * USE_PERMANENT_EXPERIENCE - allow players to accumulate permanent experience?
@@ -103,14 +92,6 @@
  * WATCHDOG - allows use of an external watchdog program
  *
  ***********************************************************************/
-
-/* Enables Brian Thomas's new alchemy code.  Might unbalance the game - lets
- * characters make potions and other special items.
- * 0.94.2 note - I think enough work has been done, and even some maps
- * changed that this really should probably be a standard feature now.
- */
-
-#define ALCHEMY
 
 /* Use balanced stat loss code?
  * This code is a little more merciful with repeated stat loss at lower

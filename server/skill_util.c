@@ -184,7 +184,6 @@ int do_skill (object *op, int dir, char *string) {
       case SK_WOODSMAN:
 	  /* first, we try to find a cauldron, and do the alchemy thing.
 	     failing that, we go and identify stuff. */
-#ifdef ALCHEMY
 	  for (y=op->y-1; y <= op->y+1; y++) {
 	      for (x=op->x-1; x <= op->x+1; x++) {
 		  if (out_of_map(op->map, x, y) || wall(op->map, x, y) ||
@@ -200,7 +199,6 @@ int do_skill (object *op, int dir, char *string) {
 		  }
 	      }
 	  }
-#endif
 	  if (did_alc == 0)
 	      success = skill_ident(op);
 	  break;

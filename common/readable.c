@@ -1561,8 +1561,6 @@ spellpath_msg (int level, int booksize)
 
 
 
-#ifdef ALCHEMY
-
 /* formula_msg() - generate a message detailing the properties
  * of a randomly selected alchemical formula.
  */
@@ -1687,7 +1685,6 @@ void make_formula_book(object *book, int level) {
 	book->msg = add_string(retbuf);
     }
 }
-#endif
 
 
 /* msgfile_msg() - generate a message drawn randomly from a 
@@ -1976,14 +1973,9 @@ tailor_readable_ob (object *book, int msg_type)
 	  strcpy (msgbuf, spellpath_msg (level, book_buf_size));
 	  break;
       case 4:			/* describe an alchemy formula */
-#ifdef ALCHEMY
 	    make_formula_book(book, level);
 	    /* make_formula_book already gives title */
 	    return;
-#else
-	    strcpy (msgbuf, msgfile_msg (level, book_buf_size));
-	    msg_type = 0;
-#endif
 	    break;
       case 5:			/* bits of information about a god */
 	  strcpy (msgbuf, god_info_msg (level, book_buf_size));

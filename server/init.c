@@ -566,7 +566,7 @@ void help() {
     printf("\nThe following are only available in DUMP_SWITCHES was compiled in.\n");
     printf(" -m          Lists out suggested experience for all monsters.\n");
     printf(" -m2         Dumps out abilities.\n");
-    printf(" -m3         Dumps out artificat information.\n");
+    printf(" -m3         Dumps out artifactt information.\n");
     printf(" -m4         Dumps out spell information.\n");
     printf(" -m5         Dumps out skill information.\n");
     printf(" -m6         Dumps out race information.\n");
@@ -586,9 +586,7 @@ void init_beforeplay() {
   init_races();	   /* overwrite race designations using entries in lib/races file */ 
   init_gods();	/* init linked list of gods from archs*/ 
   init_readable();	/* inits useful arrays for readable texts */
-#ifdef ALCHEMY
   init_formulae();  /* If not called before, reads formulae from file */
-#endif
   init_new_exp_system();    /* If not called before, inits experience system */
 
 #ifdef DUMP_SWITCHES
