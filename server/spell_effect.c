@@ -3271,7 +3271,8 @@ int animate_weapon(object *op,object *caster,int dir, archetype *at, int spellnu
        tmp->slaying ? tmp->slaying : "nothing");
 
   /* Determine golem's speed */
-  tmp->speed = ((weapon->last_sp>0.1)?weapon->last_sp:0.1) -
+  /* This formula is apparently broken.  I write a replacement. */
+  /*  tmp->speed = ((weapon->last_sp>0.1)?weapon->last_sp:0.1) -
     (((weapon->last_sp>0.1)?weapon->last_sp:0.1)/
      ( (1.0 * (float)SP_level_dam_adjust(op, caster, spellnum) +
 	1.5 * (float)weapon->stats.Dex +
@@ -3279,7 +3280,11 @@ int animate_weapon(object *op,object *caster,int dir, archetype *at, int spellnu
 	3.0 * (float)magic +
 	5.0 * (float)weapon->stats.exp) )
      * ((float)((tmp->weight>1000)? tmp->weight : 1000)
-	/ ((float)(weapon->weight>1000)? weapon->weight : 1000)));
+     / ((float)(weapon->weight>1000)? weapon->weight : 1000))); */
+
+  /* replacement  */
+  tmp->speed = 0.4 + 0.1 * SP_level_dam_adjust(op,caster,spellnum);
+
   if(tmp->speed > 3.33) tmp->speed = 3.33;
   LOG(llevDebug,"animate_weapon: armour:%d  speed:%f  exp:%d.\n",
       tmp->resist[ATNR_PHYSICAL], tmp->speed, tmp->stats.exp);
