@@ -19,6 +19,11 @@ else.  With this, include the file(s) that you changed.
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ------------------------------------------------------------------------------
 
+server/c_object.c, socket/item.c:  Fixed for long item support.  pick_up_object
+in c_object was overwriting a fixed length string, causing server crashes.
+item.c was not properly terminating plural version of object name, resulting
+in corrupt packets being sent to the client.  MSW 11/2/2000
+
 PeterM:
   ball lightning made stronger, strikes larger area, never
   hits player.
