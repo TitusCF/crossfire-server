@@ -279,7 +279,8 @@ void init_ericserver()
  * of them needs extra valus passed.
  */
 #if defined(__osf__) || defined(hpux) || defined(sgi) || defined(NeXT) || \
-        defined(__sun__) || defined(linux) || defined(SVR4)
+        defined(__sun__) || defined(linux) || defined(SVR4) || defined(__FreeBSD__) || \
+	defined(__OpenBSD__)
     {
 	char tmp =1;
 
