@@ -42,17 +42,31 @@ typedef struct {
 
 #define MAX_NAME 16   /* Max length of character name */
 
+/*
+ * Use of the state-variable in player objects:
+ */
+
+#define ST_PLAYING		0
+#define ST_PLAY_AGAIN		1
+#define ST_ROLL_STAT		2
+#define ST_CHANGE_CLASS 	3
+#define ST_CONFIRM_QUIT 	4
+#define ST_CONFIGURE		5
+#define ST_GET_NAME		6
+#define ST_GET_PASSWORD 	7
+#define ST_CONFIRM_PASSWORD 	8
+#define ST_GET_PARTY_PASSWORD 	10
 
 typedef enum rangetype {
   range_bottom = -1, range_none = 0, range_bow = 1, range_magic = 2,
   range_wand = 3, range_rod = 4, range_scroll = 5, range_horn = 6,
-  range_skill = 7,
 #ifdef ALLOW_SKILLS
-  range_size = 8
+  range_skill = 7,  range_size = 8
 #else
   range_size = 7
 #endif
 } rangetype;
+extern char *range_name[range_size];
 
 typedef struct pl {
   struct pl *next;	      /* Pointer to next player, NULL if this is last */
@@ -78,10 +92,11 @@ typedef struct pl {
   unsigned char prev_keycode; /* Previous command executed */
   unsigned char key_down;     /* Last move-key still held down */
   uint16 mode;			/* Mode of player for pickup. */
-  signed char digestion;      /* Any bonuses/penalties to digestion */
-  signed char gen_hp;         /* Bonuses to regeneration speed of hp */
-  signed char gen_sp;         /* Bonuses to regeneration speed of sp */
-  signed char gen_grace;      /* Bonuses to regeneration speed of grace */
+  signed char digestion;	/* Any bonuses/penalties to digestion */
+  signed char gen_hp;		/* Bonuses to regeneration speed of hp */
+  signed char gen_sp;		/* Bonuses to regeneration speed of sp */
+  signed char gen_sp_armour;	/* Penalty to sp regen from armour */
+  signed char gen_grace;	/* Bonuses to regeneration speed of grace */
   uint32 braced:1;          /* Will not move if braced, only attack */
   uint32 tmp_invis:1;       /* Will invis go away when we attack ? */
   uint32 do_los:1;	      /* If true, update_los() in draw(), and clear */
