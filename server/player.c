@@ -182,7 +182,10 @@ object *get_player(player *p, mapstruct *m) {
     p->last_save_tick = 9999999;
 #endif
     *p->maplevel=0;
-
+    
+    strcpy(p->savebed_map, first_map_path);  /* Init. respawn position */
+    p->bed_x=0, p->bed_y=0;
+    
     op->contr=p; /* this aren't yet in archetype */
     op->speed_left=0.5;
     op->speed=1.0;
@@ -1858,16 +1861,18 @@ void kill_player(object *op)
     }
  
 
- /**************************************/
- /*                                    */
- /* Move the player to the beginning   */
- /* map....                            */
- /*                                    */
- /**************************************/
+ /****************************************/
+ /*                                      */
+ /* Move player to his current respawn-  */
+ /* position (usually last savebed)      */
+ /*                                      */
+ /****************************************/
 
     tmp=get_object();
 
-    EXIT_PATH(tmp) = add_string(first_map_path);
+    EXIT_PATH(tmp) = add_string(op->contr->savebed_map);
+    EXIT_X(tmp) = op->contr->bed_x;
+    EXIT_Y(tmp) = op->contr->bed_y;
     enter_exit(op,tmp);
 
 /* commenting this out seems to fix core dumps on some systems. */

@@ -358,6 +358,9 @@ int save_player(object *op, int flag) {
     fprintf(fp,"map %s\n",op->map->path);
   else
     fprintf(fp,"map %s\n",first_map_path);
+  
+  fprintf(fp,"savebed_map %s\n", pl->savebed_map);
+  fprintf(fp,"bed_x %d\nbed_y %d\n", pl->bed_x, pl->bed_y);
   fprintf(fp,"weapon_sp %f\n",pl->weapon_sp);
   fprintf(fp,"Str %d\n",pl->orig_stats.Str);
   fprintf(fp,"Dex %d\n",pl->orig_stats.Dex);
@@ -575,7 +578,9 @@ void check_login(object *op) {
     pl->orig_stats.Pow=0;
     pl->orig_stats.Wis=0;
     pl->orig_stats.Cha=0;
-
+    strcpy(pl->savebed_map, first_map_path);
+    pl->bed_x=0, pl->bed_y=0;
+    
     /* Loop through the file, loading the rest of the values */
     while (fgets(bufall,MAX_BUF,fp)!=NULL) {
 	sscanf(bufall,"%s %d\n",buf,&value);
@@ -614,7 +619,13 @@ void check_login(object *op) {
 	    pl->outputs_count = value;
         else if (!strcmp(buf,"map"))
 	    sscanf(bufall,"map %s", pl->maplevel);
-        else if (!strcmp(buf,"weapon_sp"))
+        else if (!strcmp(buf,"savebed_map"))
+	    sscanf(bufall,"savebed_map %s", pl->savebed_map);
+	else if (!strcmp(buf,"bed_x"))
+	    pl->bed_x=value;
+	else if (!strcmp(buf,"bed_y"))
+	    pl->bed_y=value;
+	else if (!strcmp(buf,"weapon_sp"))
 	    sscanf(buf,"weapon_sp %f",&pl->weapon_sp);
         else if (!strcmp(buf,"Str"))
 	    pl->orig_stats.Str=value;

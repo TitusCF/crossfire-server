@@ -1638,7 +1638,12 @@ static void apply_savebed (object *player)
     player->contr->count_left=0;
     new_draw_info_format(NDI_UNIQUE | NDI_ALL, 5, player,
 	"%s leaves the game.",player->name);
-
+    
+    /* update respawn position */
+    strcpy(player->contr->savebed_map, player->map->path);
+    player->contr->bed_x = player->x;
+    player->contr->bed_y = player->y;
+    
     strcpy(player->contr->killer,"left");
     check_score(player); /* Always check score */
     (void)save_player(player,0);
