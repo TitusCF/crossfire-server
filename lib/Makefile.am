@@ -66,7 +66,7 @@ dist_wizhelp_DATA = wizhelp/abil wizhelp/addexp \
 	wizhelp/pluglist wizhelp/plugout \
 	wizhelp/printlos wizhelp/remove \
 	wizhelp/reset wizhelp/set_god \
-	wizhelp/shutdown wizhelp/speed \
+	wizhelp/shutdown wizhelp/server_speed \
 	wizhelp/spellreset wizhelp/ssdumptable \
 	wizhelp/style_info wizhelp/summon \
 	wizhelp/teleport wizhelp/time \
