@@ -1158,8 +1158,16 @@ cast_change_attr(object *op,object *caster,int dir,int spell_type) {
   int i;
   
   /* if dir = 99 op defaults to tmp, eat_special_food() requires this. */
-  if(dir!=99)
-     tmp=find_target_for_friendly_spell(op,dir);
+  if(dir!=99) {
+    if (spell_type == SP_CURSE) {
+	tmp=get_pointed_target(op, (dir==0)?op->direction:dir);
+	if (!tmp) {
+	    new_draw_info(NDI_UNIQUE, 0, op, "There is no one in that direction to curse.");
+	}
+    } else {
+	tmp=find_target_for_friendly_spell(op,dir);
+    }
+  }
 
   if(tmp==NULL) return 0;
   
