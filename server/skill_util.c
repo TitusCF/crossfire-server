@@ -1141,7 +1141,7 @@ int change_skill(object *pl, int sk_index) {
  
   if(sk_index<0) { /* bye,bye. We didn't request a valid skill */
 #if 0
-        /* this is confusing to players, get when you unweild a weapon! */
+        /* this is confusing to players, get when you unwield a weapon! */
 	new_draw_info(NDI_UNIQUE, 0,pl,"You can't use an non-existent skill!");
 #endif
 	return 0;
@@ -1241,7 +1241,7 @@ int attack_hth(object *pl, int dir, char *string) {
         CLEAR_FLAG(pl,FLAG_READY_WEAPON);
         fix_player(pl);
         if(pl->type==PLAYER) {
-	    new_draw_info(NDI_UNIQUE, 0,pl,"You unweild your weapon in order to attack.");
+	    new_draw_info(NDI_UNIQUE, 0,pl,"You unwield your weapon in order to attack.");
 	    esrv_update_item(UPD_FLAGS, pl, weapon);
         }
         break;
