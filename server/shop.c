@@ -397,7 +397,7 @@ int pay_for_item(object *op,object *pl) {
  */
 uint64 pay_from_container(object *op, object *pouch, int to_pay) {
     int count, i;
-    uint64 remain;
+    sint64 remain;
     object *tmp, *coin_objs[NUM_COINS], *next;
     archetype *at;
     object *who;
@@ -459,8 +459,7 @@ uint64 pay_from_container(object *op, object *pouch, int to_pay) {
 	} else {
 	    num_coins = coin_objs[i]->nrof;
 	}
-
-	remain -= (uint64)num_coins * (uint64)coin_objs[i]->value;
+	remain -= (sint64) num_coins * (sint64)coin_objs[i]->value;
 	coin_objs[i]->nrof -= num_coins;
 	/* Now start making change.  Start at the coin value
 	 * below the one we just did, and work down to
