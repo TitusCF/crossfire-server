@@ -3167,6 +3167,8 @@ treasure alchemist_class_items
   more
   arch skill_thaumaturgy
   more
+  arch ability_alchemy
+  more
   arch guide_alchemy
   more
   arch cauldron
