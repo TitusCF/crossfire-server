@@ -35,7 +35,7 @@ INSTALLFILES = $(srcdir)/artifacts $(srcdir)/ban_file $(srcdir)/def_help \
 	$(srcdir)/skill_params $(srcdir)/spell_params \
 	$(srcdir)/treasures $(srcdir)/animations $(srcdir)/archetypes \
 	$(srcdir)/bmaps $(srcdir)/bmaps.paths $(srcdir)/crossfire.0 \
-	$(srcdir)/crossfire.1 \
+	$(srcdir)/crossfire.1 $(srcdir)/faces \
 	$(srcdir)/attackmess $(srcdir)/image_info
 
 BININSTALL = $(srcdir)/collect.pl $(srcdir)/util.pl
