@@ -1,0 +1,15 @@
+FILES = items-extract.pl
+
+all::
+
+install::
+
+depend::
+
+archive::
+	@if [ -d $(ARCHIVE)/doc/scripts ]; then set +x; \
+	else (set -x; $(MKDIR) $(ARCHIVE)/doc/scripts); fi
+	$(CP) $(FILES) $(ARCHIVE)/doc/scripts
+
+patchlist::
+	echo $(FILES) > .patchlist

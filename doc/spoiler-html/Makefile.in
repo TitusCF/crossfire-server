@@ -1,8 +1,8 @@
 
 FILES = Makefile.in monster-extract spells-extract stats-extract arm-extract\
 	spoiler.html spoiler.shtml helm-extract mag-extract shield-extract \
-	items-extract makeps.pl empty.pbm bow-extract arche-extract\
-	 weap-extract
+	makeps.pl empty.pbm bow-extract arche-extract\
+	weap-extract
 
 HTML =	monput.html spells.html stats.html weap.html shield.html helmet.html\
  	mag.html arm.html arche.html bow.html version.html weapmag.html
@@ -39,8 +39,8 @@ check_ok: dump_switches
 items: .bmaps in_items makeps.pl items.gif
 	makeps.pl libdir=$(CROSSRC)/lib archdir=$(CROSSRC)/lib/ size=0.4 input=in_items inarch=$(datadir)/archetypes > items
 
-in_items: items-extract $(datadir)/archetypes $(CROSSRC)/common/living.c
-	$(AWK) -v living_c=$(CROSSRC)/common/living.c 		-f items-extract $(datadir)/archetypes > in_items
+in_items: ../scripts/items-extract.pl $(datadir)/archetypes $(CROSSRC)/common/living.c
+	../scripts/items-extract.pl  living_c=$(CROSSRC)/common/living.c $(datadir)/archetypes > in_items
 
 stats.html: .bmaps in_stats makeps.pl stats.gif
 	makeps.pl libdir=$(CROSSRC)/lib archdir=$(CROSSRC)/lib/ size=0.4 input=in_stats inarch=$(datadir)/archetypes > stats.html

@@ -7151,7 +7151,7 @@ _ACEOF
 datadir=${ndatadir}
 localstatedir=${nlocaldir}
 
-ac_config_files="$ac_config_files Makefile crossedit/Makefile crossedit/doc/Makefile crossedit/include/Makefile crossedit/Cnv/Makefile crossedit/bitmaps/Makefile doc/Makefile doc/Developers/Makefile doc/spell-docs/Makefile doc/spoiler/Makefile doc/spoiler-html/Makefile doc/playbook/Makefile doc/playbook-html/Makefile lib/Makefile random_maps/Makefile socket/Makefile server/Makefile include/Makefile utils/Makefile lib/checkarch.pl lib/collect.pl utils/add_throw.perl utils/crossloop utils/crossloop.pl utils/metaserver.pl utils/crossloop.web common/Makefile plugin/Makefile"
+ac_config_files="$ac_config_files Makefile crossedit/Makefile crossedit/doc/Makefile crossedit/include/Makefile crossedit/Cnv/Makefile crossedit/bitmaps/Makefile doc/Makefile doc/Developers/Makefile doc/spell-docs/Makefile doc/spoiler/Makefile doc/spoiler-html/Makefile doc/playbook/Makefile doc/playbook-html/Makefile doc/scripts/Makefile lib/Makefile random_maps/Makefile socket/Makefile server/Makefile include/Makefile utils/Makefile lib/checkarch.pl lib/collect.pl utils/add_throw.perl utils/crossloop utils/crossloop.pl utils/metaserver.pl utils/crossloop.web common/Makefile plugin/Makefile"
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
 # tests run on this system so they can be shared between configure
@@ -7482,6 +7482,7 @@ do
   "doc/spoiler-html/Makefile" ) CONFIG_FILES="$CONFIG_FILES doc/spoiler-html/Makefile" ;;
   "doc/playbook/Makefile" ) CONFIG_FILES="$CONFIG_FILES doc/playbook/Makefile" ;;
   "doc/playbook-html/Makefile" ) CONFIG_FILES="$CONFIG_FILES doc/playbook-html/Makefile" ;;
+  "doc/scripts/Makefile" ) CONFIG_FILES="$CONFIG_FILES doc/scripts/Makefile" ;;
   "lib/Makefile" ) CONFIG_FILES="$CONFIG_FILES lib/Makefile" ;;
   "random_maps/Makefile" ) CONFIG_FILES="$CONFIG_FILES random_maps/Makefile" ;;
   "socket/Makefile" ) CONFIG_FILES="$CONFIG_FILES socket/Makefile" ;;
@@ -7498,7 +7499,7 @@ do
   "common/Makefile" ) CONFIG_FILES="$CONFIG_FILES common/Makefile" ;;
   "plugin/Makefile" ) CONFIG_FILES="$CONFIG_FILES plugin/Makefile" ;;
   "include/autoconf.h" ) CONFIG_HEADERS="$CONFIG_HEADERS include/autoconf.h" ;;
-  *) { { echo "$as_me:7501: error: invalid argument: $ac_config_target" >&5
+  *) { { echo "$as_me:7502: error: invalid argument: $ac_config_target" >&5
 echo "$as_me: error: invalid argument: $ac_config_target" >&2;}
    { (exit 1); exit 1; }; };;
   esac
@@ -7721,7 +7722,7 @@ for as_mkdir_dir in `IFS='/\\'; set X $as_dummy; shift; echo "$@"`; do
       as_incr_dir=$as_incr_dir/$as_mkdir_dir
       test -d "$as_incr_dir" ||
         mkdir "$as_incr_dir" ||
-	{ { echo "$as_me:7724: error: cannot create \"$ac_dir\"" >&5
+	{ { echo "$as_me:7725: error: cannot create \"$ac_dir\"" >&5
 echo "$as_me: error: cannot create \"$ac_dir\"" >&2;}
    { (exit 1); exit 1; }; }
     ;;
@@ -7758,7 +7759,7 @@ esac
   esac
 
   if test x"$ac_file" != x-; then
-    { echo "$as_me:7761: creating $ac_file" >&5
+    { echo "$as_me:7762: creating $ac_file" >&5
 echo "$as_me: creating $ac_file" >&6;}
     rm -f "$ac_file"
   fi
@@ -7776,7 +7777,7 @@ echo "$as_me: creating $ac_file" >&6;}
       -) echo $tmp/stdin ;;
       [\\/$]*)
          # Absolute (can't be DOS-style, as IFS=:)
-         test -f "$f" || { { echo "$as_me:7779: error: cannot find input file: $f" >&5
+         test -f "$f" || { { echo "$as_me:7780: error: cannot find input file: $f" >&5
 echo "$as_me: error: cannot find input file: $f" >&2;}
    { (exit 1); exit 1; }; }
          echo $f;;
@@ -7789,7 +7790,7 @@ echo "$as_me: error: cannot find input file: $f" >&2;}
            echo $srcdir/$f
          else
            # /dev/null tree
-           { { echo "$as_me:7792: error: cannot find input file: $f" >&5
+           { { echo "$as_me:7793: error: cannot find input file: $f" >&5
 echo "$as_me: error: cannot find input file: $f" >&2;}
    { (exit 1); exit 1; }; }
          fi;;
@@ -7850,7 +7851,7 @@ for ac_file in : $CONFIG_HEADERS; do test "x$ac_file" = x: && continue
   * )   ac_file_in=$ac_file.in ;;
   esac
 
-  test x"$ac_file" != x- && { echo "$as_me:7853: creating $ac_file" >&5
+  test x"$ac_file" != x- && { echo "$as_me:7854: creating $ac_file" >&5
 echo "$as_me: creating $ac_file" >&6;}
 
   # First look for the input files in the build tree, otherwise in the
@@ -7861,7 +7862,7 @@ echo "$as_me: creating $ac_file" >&6;}
       -) echo $tmp/stdin ;;
       [\\/$]*)
          # Absolute (can't be DOS-style, as IFS=:)
-         test -f "$f" || { { echo "$as_me:7864: error: cannot find input file: $f" >&5
+         test -f "$f" || { { echo "$as_me:7865: error: cannot find input file: $f" >&5
 echo "$as_me: error: cannot find input file: $f" >&2;}
    { (exit 1); exit 1; }; }
          echo $f;;
@@ -7874,7 +7875,7 @@ echo "$as_me: error: cannot find input file: $f" >&2;}
            echo $srcdir/$f
          else
            # /dev/null tree
-           { { echo "$as_me:7877: error: cannot find input file: $f" >&5
+           { { echo "$as_me:7878: error: cannot find input file: $f" >&5
 echo "$as_me: error: cannot find input file: $f" >&2;}
    { (exit 1); exit 1; }; }
          fi;;
@@ -7991,7 +7992,7 @@ cat >>$CONFIG_STATUS <<\_ACEOF
   rm -f $tmp/in
   if test x"$ac_file" != x-; then
     if cmp -s $ac_file $tmp/config.h 2>/dev/null; then
-      { echo "$as_me:7994: $ac_file is unchanged" >&5
+      { echo "$as_me:7995: $ac_file is unchanged" >&5
 echo "$as_me: $ac_file is unchanged" >&6;}
     else
       ac_dir=`$as_expr X"$ac_file" : 'X\(.*[^/]\)//*[^/][^/]*/*$' \| \
@@ -8018,7 +8019,7 @@ for as_mkdir_dir in `IFS='/\\'; set X $as_dummy; shift; echo "$@"`; do
       as_incr_dir=$as_incr_dir/$as_mkdir_dir
       test -d "$as_incr_dir" ||
         mkdir "$as_incr_dir" ||
-	{ { echo "$as_me:8021: error: cannot create \"$ac_dir\"" >&5
+	{ { echo "$as_me:8022: error: cannot create \"$ac_dir\"" >&5
 echo "$as_me: error: cannot create \"$ac_dir\"" >&2;}
    { (exit 1); exit 1; }; }
     ;;
