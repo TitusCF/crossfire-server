@@ -833,15 +833,10 @@ App AppCreate(XtAppContext appCon,
 
     CnvInitialize(self->shell);
 
-    if (displaymode == Dm_Bitmap)  {
-	pixmaps = ReadBitmaps(self->display);
-    }
-    if (displaymode == Dm_Pixmap) {
-        if (ReadPixmaps(self->display, &pixmaps, &masks, &colormap)) {
+    if (ReadImages(self->display, &pixmaps, &masks, &colormap, displaymode)) {
 	    /* We really should do something better than this */
 	    fprintf(stderr,"Not enough space in colormap - switch colormap.\n");
 /*	    exit(1);*/
-	}
     }
     XtVaSetValues(self->shell, XtNcolormap, colormap, NULL);
 
