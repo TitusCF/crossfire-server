@@ -1128,7 +1128,7 @@ int write_note(object *pl, object *item, char *msg) {
 	  skills[SK_INSCRIPTION].name);
 	return 0;
   }
-  if(strstr(msg,"endmsg")) {
+  if (strcasestr_local(msg, "endmsg")) {
   	new_draw_info(NDI_UNIQUE,0,pl,"Trying to cheat now are we?");
 	return 0;
   }

@@ -288,6 +288,7 @@ extern void save_long(char *buf, char *name, long n);
 extern FILE *open_and_uncompress(char *name, int flag, int *compressed);
 extern void close_and_delete(FILE *fp, int compressed);
 extern void make_path_to_file(char *filename);
+extern char *strcasestr_local(const char *s, char *find);
 /* player.c */
 extern void free_player(player *pl);
 extern object *find_skill(object *op, int skillnr);

@@ -323,6 +323,25 @@ int strcasecmp(char *s1, char*s2)
 }
 #endif
 
+char *strcasestr_local(const char *s, char *find)
+{
+    char c, sc;
+    size_t len;
+
+    if ((c = *find++) != 0) {
+		c = tolower(c);
+        len = strlen(find);
+        do {
+            do {
+                 if ((sc = *s++) == 0)
+                     return NULL;
+            } while (tolower(sc) != c);
+        } while (strncasecmp(s, find, len) != 0);
+        s--;
+     }
+     return (char *)s;
+}
+
 #if !defined(HAVE_SNPRINTF)
 
 int snprintf(char *dest, int max, const char *format, ...)
