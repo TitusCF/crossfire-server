@@ -12,6 +12,7 @@
 default_smoothed.111 sdefault.001
 
 # Data extracted from arch files
+beach.111 beach_S.111
 blake_0.111 empty_S.111
 blake_1.111 empty_S.111
 blake_2.111 empty_S.111
@@ -29,14 +30,19 @@ blake_D.111 empty_S.111
 blake_E.111 empty_S.111
 blake_F.111 empty_S.111
 brush.111 grass_S.111
+cobblesto1.111 empty_S.111
+cobblesto2.111 empty_S.111
 deep_sea.111 deep_sea_S.111
 deep_sea.112 deep_sea_S.112
 deep_sea.113 deep_sea_S.113
 deep_sea.114 deep_sea_S.114
+deep_swamp.111 deep_swamp_S.111
+deep_swamp.112 deep_swamp_S.112
 desert.111 desert_S.111
 dunes.111 dunes_S.111
 evergreens.111 empty_S.111
 evergreens_1.111 empty_S.111
+flagstone.111 empty_S.111
 grass.111 grass_S.111
 grasspond.111 grass_S.111
 hills.111 hills_S.111

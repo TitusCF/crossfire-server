@@ -288,6 +288,7 @@ line:	while(<ARC>) {
             }else{
                 $smoothing{$values[0]}=$values[1]
             }
+            next line;  #smoothface must be excluded from archetype file
         }
 	    print ARCH $_,"\n";
 	}
