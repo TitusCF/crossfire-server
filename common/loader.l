@@ -431,7 +431,10 @@ static void check_loaded_object(object *op) {
 	  ((op->type == POTION || op->type == ALTAR) && op->stats.sp)) && !op->inv)  {
 	object *tmp;
 
-	tmp = get_archetype(spell_mapping[op->stats.sp]);
+	/* Fireall is bizarre in that spell type was stored in dam.  Rest are 'normal'
+	 * in that spell was stored in sp.
+	 */
+	tmp = get_archetype(spell_mapping[op->type == FIREWALL?op->stats.dam:op->stats.sp]);
 	insert_ob_in_ob(tmp, op);
 	op->randomitems = NULL;	/* So another spell isn't created for this object */
     }

@@ -17,6 +17,8 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+common/loader.l, loader.c: Fix firewalls so that their spell is properly
+   initialized - uses 'dam' and not sp for those objects
 server/apply.c: Fix check_weapon_power so that it finds proper wc object.
    Fix unapply_for_ob so that it won't unequip cursed/damned weapons if
    player switches objects.
