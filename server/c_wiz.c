@@ -203,28 +203,33 @@ int command_banish (object *op, char *params)
   
 int command_kick (object *op, char *params)
 {
-  struct pl *pl;
+    struct pl *pl;
 
-  for(pl=first_player;pl!=NULL;pl=pl->next) 
-    if((params==NULL || !strcmp(pl->ob->name,params)) && pl->ob!=op)
-      {
-	object *op;
+    for(pl=first_player;pl!=NULL;pl=pl->next) 
+	if((params==NULL || !strcmp(pl->ob->name,params)) && pl->ob!=op) {
+	    object *op;
+	    int removed=0;
 
-	op=pl->ob;
-	remove_ob(op);
-	op->direction=0;
-	new_draw_info_format(NDI_UNIQUE | NDI_ALL | NDI_RED, 5, op,
+	    op=pl->ob;
+	    if (!QUERY_FLAG(op, FLAG_REMOVED)) {
+		remove_ob(op);
+		removed=1;
+	    }
+	    op->direction=0;
+	    new_draw_info_format(NDI_UNIQUE | NDI_ALL | NDI_RED, 5, op,
 			     "%s is kicked out of the game.",op->name);
-	strcpy(op->contr->killer,"left");
-	check_score(op); /* Always check score */
-	(void)save_player(op,0);
-	op->map->players--;
+	    strcpy(op->contr->killer,"left");
+	    check_score(op); /* Always check score */
+	    if (!removed) {
+		(void)save_player(op,0);
+		op->map->players--;
+	    }
 #if MAP_MAXTIMEOUT
-	op->map->timeout = MAP_TIMEOUT(op->map);
+	    op->map->timeout = MAP_TIMEOUT(op->map);
 #endif
-	pl->socket.status = Ns_Dead;
-      }
-  return 1;
+	    pl->socket.status = Ns_Dead;
+	}
+    return 1;
 }
 
 int command_save_overlay(object *op, char *params)
