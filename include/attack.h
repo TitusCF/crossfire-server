@@ -44,6 +44,20 @@
  */
 
 #define NROFATTACKS		24
+#define NROFATTACKMESS		10
+#define MAXATTACKMESS		20
+
+/* attack message numbers must be less than NROFATTACKMESS */
+
+#define ATM_ARROW	0
+#define ATM_DRAIN	1
+#define ATM_ELEC	2
+#define ATM_COLD	3
+#define ATM_FIRE	4
+#define ATM_BASIC	5
+#define ATM_KARATE	6
+#define ATM_CLAW	7
+#define ATM_PUNCH	8
 
 /* Note that the last ATNR_ should be one less than NROFATTACKS above
  * since the ATNR starts counting at zero.
@@ -111,6 +125,17 @@
  * bug these do get used somehow, might as well make it more easier to notice
  * and not have mystery values appear.
  */
+
+/* attack messages structure */
+typedef struct attackmess {
+  int level;
+  char *buf1;
+  char *buf2;
+  char *buf3;
+} attackmess_t;
+
+EXTERN attackmess_t attack_mess[NROFATTACKMESS][MAXATTACKMESS];
+
 #ifndef INIT_C
 EXTERN int resist_table[];
 EXTERN char *change_resist_msg[NROFATTACKS];

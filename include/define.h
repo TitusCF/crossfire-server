@@ -372,6 +372,17 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define QUERY_FLAG(xyz, p) \
 	((xyz)->flags[p/32] & (1U << (p % 32)))
 
+/* convenience macros to determine what kind of things we are dealing with */
+
+#define IS_LIVE(op) \
+	(op->type == PLAYER || QUERY_FLAG(op, FLAG_MONSTER) || \
+	(QUERY_FLAG(op, FLAG_ALIVE) && !QUERY_FLAG(op, FLAG_GENERATOR) && \
+	!op->type == DOOR))
+
+#define IS_ARROW(op) \
+	(op->type==ARROW || op->type==MMISSILE || op->type==BULLET)
+
+/* the flags */
 
 #define FLAG_ALIVE	 	0 /* Object can fight (or be fought) */
 #define FLAG_WIZ	 	1 /* Object has special privilegies */

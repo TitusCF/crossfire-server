@@ -115,6 +115,7 @@ extern void init_globals(void);
 extern void init_objects(void);
 extern void init_defaults(void);
 extern void init_dynamic(void);
+extern void init_attackmess(void);
 /* item.c */
 extern char *describe_resistance(object *op, int newline);
 extern char *query_weight(object *op);
@@ -368,3 +369,7 @@ extern void free_charlinks(linked_char *lc);
 extern void free_artifact(artifact *at);
 extern void free_artifactlist(artifactlist *al);
 extern void free_all_treasures(void);
+/* utils.c */
+int random_roll(int min, int max, object *op, int goodbad);
+int die_roll(int num, int size, object *op, int goodbad);
+int rndm(int min, int max);
