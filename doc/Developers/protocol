@@ -777,6 +777,86 @@ S->C: map1a <coord1>[darkness1][face1a][face1b][face1c]<coord2>[darkness2][face2
 	support more faces will require more work on the server.
 
 
+S->C: map2 <coord1><len1/type1><data1><len2/type2><data2>...<coord2>
+
+	NOTE: THIS IS ONLY A PROPOSAL.  This is not currently implemented.
+	Mail has been sent to the mailing list
+
+	This is an update of the map1 commands above.  It is meant to be
+	extensible.  It is also meant to incorporate the ideas of the
+	extended map info command.
+
+	All data is in standard binary form.
+
+	The coord value is 16 bites.
+
+	the coord values are length + x + y values.
+	The data represented looks like this:
+
+	first 5 bits: The x coordinate (0-31)
+	next 5 bits: the y coordinate (0-31)
+	last 6 bits: the number of type/data pairs to follow (0-63).  While
+	a limit of 63 data encodings is hard coded, I can't forsee reaching
+	that limit anytime soon - remember, this is the number of type/data
+	pairs that are sent for this space - there could be cases where there
+	are 300 things on the space, but if we are only sending 63 of them
+	this is also fine.
+
+	<len/type> This is a single byte of data.
+	This describes the data that is to follow.
+
+	The top 3 bits (len) denote the number of bytes that follow - it is
+	possible that this is zero, to denote all the relevant information is
+	included in the type.  If this is 7 (all bits set) then the following
+	byte is an additive length value.
+
+	The bottom 5 bits is the type of data - this allows for 31 different
+	types of data (0-31/0x0-0x1f).  The meaning of the data itself depends
+	on what the type is.  List of various types:
+
+	0x0: Denotes this space should be cleared.  Length in this case should
+	also be zero, as there is no data that follows.
+
+	0x1: Darkness information - typically a single byte follows that
+	    denotes how dark the square is.
+
+	0x2: Sound?
+
+	0x10-0x17: Image information - 2 or 3 bytes follow, which is the image
+	    for the particular layer.  Layer 0x10 is the lowest, 0x17 is the
+	    highest.  If 3 bytes follow, the first byte is smoothing
+	    information, followed by 2 bytes for the face.  If only 2 bytes
+	    follow, then this is only the face.  The number of bytes that
+	    follow is determined by the len field above.
+
+	Some notes:
+	
+	Coordinates outside the viewable map may
+	be sent.  In these cases, it means that a big image that extends onto
+	the viewable map is on that space.  For big images, only the bottom
+	right coordinate is sent - this is why it may be off the viewable
+	coordinates.  For such spaces, only the actual big image itself will
+	be sent for that space.
+
+	Note that unless the 0x0 code to clear the space is sent, all
+	operations are considered updates to the space (eg, new image, new
+	light level, etc)
+
+	Relative to the map1/map1a commands, this is more bandwidth intensive -
+	basically, an additional byte is needed for each piece of data sent.
+	Thus, on a 25x25 map, if we presume 1.5 objects/space, this is
+	an extra 940 bytes to send.  OTOH, typically the entire map
+	is not being sent - only those bits that change, so this may not
+	be as costly as that.
+
+	If the player is using smoothing, this may actually save bytes,
+	as the redundant coordinates and type/length information
+	does not need to be sent.  With the map2 command, the mapextend
+	command is deprecated and is not used.
+
+	
+
+
 S->C: map_scroll <dx> <dy>
 	This tells the client to scroll the map dx and dy direction.  dx and
 	dy will typically be -1, 0, or 1, depending on how the player moved.
