@@ -615,3 +615,32 @@ int command_logs (object *op, char *params)
     }
     return 1;
 }
+
+int command_usekeys(object *op, char *params)
+{
+    usekeytype oldtype=op->contr->usekeys;
+    static char *types[]={"inventory", "keyrings", "containers"};
+
+    if (!params) {
+	new_draw_info_format(NDI_UNIQUE, 0, op, "usekeys is set to %s",
+	types[op->contr->usekeys]);
+	return 1;
+    }
+
+    if (!strcmp(params,"inventory")) 
+	op->contr->usekeys=key_inventory;
+    else if (!strcmp(params,"keyrings")) 
+	op->contr->usekeys=keyrings;
+    else if (!strcmp(params,"containers")) 
+	op->contr->usekeys=containers;
+    else {
+	new_draw_info_format(NDI_UNIQUE, 0, op,
+	    "usekeys: Unknown options %s, valid options are inventory, keyrings, containers",
+			     params);
+	return 0;
+    }
+    new_draw_info_format(NDI_UNIQUE, 0, op, "usekeys %s set to %s",
+	(oldtype==op->contr->usekeys?"":"now"),
+	types[op->contr->usekeys]);
+    return 1;
+}

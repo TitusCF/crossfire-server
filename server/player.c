@@ -1099,29 +1099,80 @@ void fire(object *op,int dir) {
   }
 }
 
-/*
- * Finds a matching key for a special door.  This function will descend
- * into keyrings, but not other containers.
+
+
+/* find_key
+ * We try to find a key for the door as passed.  If we find a key
+ * and successfully use it, we return the key, otherwise NULL
+ * This function merges both normal and locked door, since the logic
+ * for both is the same - just the specific key is different.
+ * pl is the player, 
+ * inv is the objects inventory to searched 
+ * door is the door we are trying to match against.
+ * This function can be called recursively to search containers.
  */
 
-object *FindKey(object *Door, object *ob)
+object * find_key(object *pl, object *container, object *door)
 {
-    while (ob!=NULL) {
-	/* Only search/descend into keyrings.  Thus, players can 'hide'
-	 * keys that they don't want auto used in other containers.
-	 */
-	if (ob->type==CONTAINER && ob->race && !strcmp(ob->race,"keys")) {
-	    object *t;
+    object *tmp,*key;
 
-	    t=FindKey(Door,ob->inv);
-	    if (t!=NULL) return t;
-	}
-	else if (ob->type==SPECIAL_KEY && ob->slaying==Door->slaying) {
-	    return ob;
-	}
-	ob=ob->below;
+    /* Should not happen, but sanity checking is never bad */
+    if (container->inv == NULL) return NULL;
+
+    /* First, lets try to find a key in the top level inventory */
+    for (tmp=container->inv; tmp!=NULL; tmp=tmp->below) {
+	if (door->type==DOOR && tmp->type==KEY) break;
+	/* For sanity, we should really check door type, but other stuff 
+	 * (like containers) can be locked with special keys
+	 */
+	if (tmp->slaying && tmp->type==SPECIAL_KEY &&
+	    tmp->slaying==door->slaying) break;
     }
-    return NULL;
+    /* No key found - lets search inventories now */
+    /* If we find and use a key in an inventory, return at that time.
+     * otherwise, if we search all the inventories and still don't find
+     * a key, return
+     */
+    if (!tmp) {
+	for (tmp=container->inv; tmp!=NULL; tmp=tmp->below) {
+	    /* No reason to search empty containers */
+	    if (tmp->type==CONTAINER && tmp->inv) {
+		if ((key=find_key(pl, tmp, door))!=NULL) return key;
+	    }
+	}
+	if (!tmp) return NULL;
+    }
+    /* We get down here if we have found a key.  Now if its in a container,
+     * see if we actually want to use it
+     */
+    if (pl!=container) {
+	/* Only let players use keys in containers */
+	if (!pl->contr) return NULL;
+	/* cases where this fails:
+	 * If we only search the player inventory, return now since we
+	 * are not in the players inventory.
+	 * If the container is not active, return now since only active
+	 * containers can be used.
+	 * If we only search keyrings and the container does not have
+	 * a race/isn't a keyring.
+	 * No checking for all containers - to fall through past here,
+	 * inv must have been an container and must have been active.
+	 *
+	 * Change the color so that the message doesn't disappear with
+	 * all the others.
+	 */
+	if (pl->contr->usekeys == key_inventory ||
+	    !QUERY_FLAG(container, FLAG_APPLIED) ||
+	    (pl->contr->usekeys == keyrings &&
+	     (!container->race || strcmp(container->race, "keys")))
+	      ) {
+	    new_draw_info_format(NDI_UNIQUE|NDI_BROWN, 0, pl, 
+		"The %s in your %s vibrates as you approach the door",
+		query_name(tmp), query_name(container));
+	    return NULL;
+	}
+    }
+    return tmp;
 }
 
 /* This function is just part of a breakup from move_player.
@@ -1170,42 +1221,34 @@ void move_player_attack(object *op, int dir)
     if(tmp->head != NULL)
       tmp = tmp->head;
 
-    /* for 'fragile' forms of invisibiity, eg hidden or invisibility spell, 
-     * any of the following actions, if true,  will make us become seen */
-
-    /* This blocks deals with opening a normal door.  We look for a key,
-     * and if we found one, break the door.  If not, let normal attack
-     * code deal with it.
+    /* If its a door, try to find a use a key.  If we do destroy the door,
+     * might as well return immediately as there is nothing more to do -
+     * otherwise, we fall through to the rest of the code.
      */
-    if (tmp->type==DOOR && tmp->stats.hp>=0) {
-      tmp2=op->inv;
-      while(tmp2!=NULL&&tmp2->type!=KEY) /* Find a key */
-	tmp2=tmp2->below;
+    if ((tmp->type==DOOR && tmp->stats.hp>=0) || (tmp->type==LOCKED_DOOR)) {
+	object *key=find_key(op, op, tmp);
 
-      if(tmp2!=NULL) {	/* we found a key */
-	play_sound_map(op->map, op->x, op->y, SOUND_OPEN_DOOR);
-	decrease_ob(tmp2); /* Use up one of the keys */
-	hit_player(tmp,9999,op,AT_PHYSICAL); /* Break through the door */
-	if(tmp->inv && tmp->inv->type ==RUNE) spring_trap(tmp->inv,op);	
-      }
-      if(action_makes_visible(op)) make_visible(op);
-    }
-
-    /* This area deals with locked doors.  These are doors that require
-     * special keys.
-     */
-
-    if(tmp->type==LOCKED_DOOR) {
-      tmp2=FindKey(tmp,op->inv);
-      if(tmp2) {
-	  new_draw_info_format(NDI_UNIQUE, NDI_BROWN, op, 
-	       "You open the door with the %s", query_short_name(tmp2));
-	  decrease_ob_nr(tmp2, 1); /* Use the key */
-	  remove_door2(tmp); /* remove door without violence ;-) */
-	  play_sound_map(op->map, op->x, op->y, SOUND_OPEN_DOOR);
-      } else if (tmp->msg) /* show door's message if present */
+	/* IF we found a key, do some extra work */
+	if (key) {
+	    play_sound_map(op->map, op->x, op->y, SOUND_OPEN_DOOR);
+	    if(action_makes_visible(op)) make_visible(op);
+	    if(tmp->inv && tmp->inv->type ==RUNE) spring_trap(tmp->inv,op);
+	    if (tmp->type == DOOR) {
+		hit_player(tmp,9999,op,AT_PHYSICAL); /* Break through the door */
+	    }
+	    else if(tmp->type==LOCKED_DOOR) {
+		new_draw_info_format(NDI_UNIQUE, NDI_BROWN, op, 
+				     "You open the door with the %s", query_short_name(key));
+		remove_door2(tmp); /* remove door without violence ;-) */
+	    }
+	    /* Do this after we print the message */
+	    decrease_ob(key); /* Use up one of the keys */
+	    return; /* Nothing more to do below */
+	} else if (tmp->type==LOCKED_DOOR) {
+	    /* Might as well return now - no other way to open this */
 	    new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, op, tmp->msg);
-      if(action_makes_visible(op)) make_visible(op);
+	    return;
+	}
     }
 
     /* The following deals with possibly attacking peaceful

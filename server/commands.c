@@ -112,6 +112,7 @@ CommArray_s Commands[] = {
 #ifdef SET_TITLE
   {"title", command_title,	0.0},
 #endif
+  {"usekeys", command_usekeys,	0.0},
   {"version", command_version,	0.0},
   {"wimpy", command_wimpy,	0.0},
   {"who", command_who,		0.0},

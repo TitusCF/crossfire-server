@@ -54,6 +54,14 @@ typedef enum rangetype {
 #endif
 } rangetype;
 
+
+typedef enum usekeytype {
+    key_inventory=0,
+    keyrings=1,
+    containers=2,
+} usekeytype;
+    
+
 typedef struct pl {
   struct pl *next;	      /* Pointer to next player, NULL if this is last */
   NewSocket socket;	    /* Socket information for this player */
@@ -67,6 +75,7 @@ typedef struct pl {
   unsigned last_known_spell:1;/* What was last updated with draw_stats() */
   rangetype shoottype;	      /* Which range-attack is being used by player */
   rangetype last_shoot;	      /* What was last updated with draw_stats() */
+  usekeytype usekeys;	      /* Method for finding keys for doors */
   sint16 chosen_spell;		/* Type of readied spell */
   sint16 last_spell;		/* What spell draw_stats() last displayed */
   sint16 chosen_item_spell;	/* Type of spell that the item fires */

@@ -18,6 +18,24 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+Key usage change:  Add new command 'usekeys' that specify how keys
+are searched for. The three options are inventory, keyrings, and containers.
+These options apply to both standard keys and special keys.  If the player
+has a key for the door but it is in a container that will not be used,
+print a friendly message of the key name and container name.  Files
+affected:
+help/usekeys: Added describing options
+lib/Makefile.in: Addition of help/usekeys above.
+include/player.h: Add new enumeration and entry into player structure
+include/sproto.h: New function prototype
+server/apply.c: change of Find_Key to new function with slightly 
+	different options
+server/c_misc.c: add function to support 'usekeys command.
+server/commands.c: addition of usekeys command
+server/player.c: rewrite & rename of find_key command, as well as changes
+to move_player_attack
+Mark Wedel 4/21/2000
+
 server/spell_effect.c: create_bomb():  New spell_type parameter, merely
 for consistency with itself and with other spell casting functions.
 - Jan Echternach 4/19/2000

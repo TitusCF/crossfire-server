@@ -814,7 +814,7 @@ int apply_container (object *op, object *sack)
 	}
     } else { /* not applied */
 	if (sack->slaying) { /* it's locked */
-	  tmp = FindKey(sack, op->inv);
+	  tmp = find_key(op, op, sack);
 	  if (tmp) {
 	    sprintf (buf, "You unlock %s with %s.", query_name(sack), query_name(tmp));
 	    SET_FLAG (sack, FLAG_APPLIED);
@@ -890,7 +890,7 @@ int esrv_apply_container (object *op, object *sack)
      */
 
     if (sack->slaying) { /* it's locked */
-      tmp=FindKey(sack, op->inv);
+      tmp=find_key(op, op, sack);
       if (tmp) {
 	new_draw_info_format(NDI_UNIQUE, 0, op, "You unlock %s with %s.", query_name(sack), query_name(tmp));
       } else {
