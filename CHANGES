@@ -1,6 +1,12 @@
 Changes in top level CVS tree (please add your changes at the very top of
 the file):
 
+Change command_cast_spell so that it preserves a return value from
+find_spell.  This re-enables partial spell matching (ie, cast prot
+will show all spells that start with that.) - msw
+
+
+
 ------------------------------------------------------------------------------
 Change for 0.95.4:
 

@@ -727,7 +727,7 @@ int command_cast_spell (object *op, char *params, char command)
 {
     int castnow=0;
     char *cp=NULL;
-    int spnum=-1;  /* number of spell that is being cast */
+    int spnum=-1, spnum2=-1;  /* number of spell that is being cast */
 
     if(!op->contr->nrofknownspells&&!QUERY_FLAG(op, FLAG_WIZ)) {
 	new_draw_info(NDI_UNIQUE, 0,op,"You don't know any spells.");
@@ -765,7 +765,8 @@ int command_cast_spell (object *op, char *params, char command)
          * to the length of each spell name.  If that passes, it assumes that
          * anything after the length of the actual spell name is extra options
          * typed in by the player (ie: marking rune Hello there) */
-	if ( ((spnum = find_spell_byname(op, params, 0)) < 0) && ((spnum = find_spell_byname(op, params, 1)) >= 0) ) {
+	if ( ((spnum2 = spnum = find_spell_byname(op, params, 0)) < 0) && 
+	    ((spnum = find_spell_byname(op, params, 1)) >= 0) ) {
           params[strlen(spells[spnum].name)] = '\0';
           cp = &params[strlen(spells[spnum].name)+1];
           if (strncmp(cp,"of ",3) == 0)
@@ -822,9 +823,9 @@ int command_cast_spell (object *op, char *params, char command)
      */
 
     new_draw_info(NDI_UNIQUE, 0,op,"Cast what spell?  Choose one of:");
-    show_matching_spells(op, (spnum==-2)?params:NULL, 0);
+    show_matching_spells(op, (spnum2==-2)?params:NULL, 0);
     new_draw_info(NDI_UNIQUE,0,op,"");
-    show_matching_spells(op, (spnum==-2)?params:NULL, 1);
+    show_matching_spells(op, (spnum2==-2)?params:NULL, 1);
 
     return 1;
 }
