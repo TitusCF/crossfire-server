@@ -128,11 +128,7 @@ typedef struct pl {
     living	last_stats;	    /* Last stats as sent to client */
     float	last_speed;	    /* Last speed as sent to client */
     sint16	last_resist[NROFATTACKS];	/* last resist values sent to client */
-
-#ifdef USE_SWAP_STATS
     int		Swap_First;	    /* First stat player has selected to swap */
-#endif
-  
     object	*ob;		    /* The object representing the player */
     object	*last_used;	    /* Pointer to object last picked or applied */
     uint32	last_used_id;	    /* Safety measures to be sure it's the same */

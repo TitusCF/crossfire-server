@@ -132,9 +132,7 @@ static player* get_player(player *p) {
     p->outputs_sync=16;		/* Every 2 seconds */
     p->outputs_count=1;		/* Keeps present behaviour */
     p->unapply = unapply_nochoice;
-#ifdef USE_SWAP_STATS
     p->Swap_First = -1;
-#endif
 
 #ifdef AUTOSAVE
     p->last_save_tick = 9999999;
@@ -659,7 +657,6 @@ void roll_stats(object *op) {
 	op->stats.Con+op->stats.Wis+op->stats.Pow+
 	op->stats.Cha;
   } while(sum<82||sum>116);
-#if defined( USE_SWAP_STATS) && defined(SORT_ROLLED_STATS)
 	/* Sort the stats so that rerolling is easier... */
 	{
 	        int             i = 0, j = 0;
@@ -693,7 +690,6 @@ void roll_stats(object *op) {
 	        op->stats.Pow = statsort[5];
 	        op->stats.Cha = statsort[6];
       }
-#endif /* SWAP_STATS */
 
   op->contr->orig_stats.Str=op->stats.Str;
   op->contr->orig_stats.Dex=op->stats.Dex;
@@ -718,16 +714,11 @@ void roll_stats(object *op) {
 void Roll_Again(object *op)
 {
     esrv_new_player(op->contr, 0);
-#ifndef USE_SWAP_STATS
-    send_query(&op->contr->socket,CS_QUERY_SINGLECHAR,"Roll again (y/n)? ");
-#else
     send_query(&op->contr->socket,CS_QUERY_SINGLECHAR,"[y] to roll new stats [n] to use stats\n[1-7] [1-7] to swap stats.\nRoll again (y/n/1-7)?  ");
-#endif /* USE_SWAP_STATS */
 }
 
 void Swap_Stat(object *op,int Swap_Second)
 {
-#ifdef USE_SWAP_STATS
   signed char tmp;
   char buf[MAX_BUF];
 
@@ -766,7 +757,6 @@ void Swap_Stat(object *op,int Swap_Second)
     op->stats.hp=op->stats.maxhp;
     add_exp(op,0);
     op->contr->Swap_First=-1;
-#endif /* USE_SWAP_STATS */
 }
 
 
@@ -783,7 +773,6 @@ int key_roll_stat(object *op, char key)
     char buf[MAX_BUF];
     static sint8 stat_trans[] = {-1, STR, DEX, CON, INT, WIS, POW, CHA};
 
-#ifdef USE_SWAP_STATS
     if (keynum>0 && keynum<=7) {
 	if (op->contr->Swap_First==-1) {
 	    op->contr->Swap_First=stat_trans[keynum];
@@ -796,7 +785,6 @@ int key_roll_stat(object *op, char key)
 	send_query(&op->contr->socket,CS_QUERY_SINGLECHAR,"");
 	return 1;
     }
-#endif
     switch (key) {
 	case 'n':
         case 'N': {
@@ -833,11 +821,7 @@ int key_roll_stat(object *op, char key)
       return 1;
 
      default:
-#ifndef USE_SWAP_STATS
-	  send_query(&op->contr->socket,CS_QUERY_SINGLECHAR,"Yes, No or Quit. Roll again?");
-#else
 	  send_query(&op->contr->socket,CS_QUERY_SINGLECHAR,"Yes, No, Quit or 1-6.  Roll again?");
-#endif /* USE_SWAP_STATS */
 	return 0;
     }
     return 0;

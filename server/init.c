@@ -713,12 +713,6 @@ void compile_info() {
   printf("Use_calloc:\t<false>\n");
 #endif
 
-#ifdef USE_SWAP_STATS
-  printf("Use_swap_stats:\t<true>\n");
-#else
-  printf("Use_swap_stats:\t<false>\n");
-#endif
-
 #ifdef X_EDITOR
   printf("Editor:\t\t%s\n",X_EDITOR);
 #endif
