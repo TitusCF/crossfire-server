@@ -41932,7 +41932,7 @@ static char * dunes_111_xpm[] = {
 "X. .o.oo X...X.o.oo ..X ",
 ". .Xo.o X..X... o.oX....",
 ".... o.XX..X ....o.. ..X"};
-IMAGE 01236 894 ./arch/floor/dung_floor.111
+IMAGE 01236 888 ./arch/floor/dung_floor.111
 /* XPM */
 static char * dung_floor_111_xpm[] = {
 /* width height ncolors chars_per_pixel */
@@ -41941,7 +41941,7 @@ static char * dung_floor_111_xpm[] = {
 " 	c grey60",
 ".	s Dark grey    c grey25",
 "X	s Light grey   c grey50",
-"o	c Light blue",
+"o	c cyan",
 /* pixels */
 "   .X    ..    .X    .XX",
 "...XX....XX....XXX....X.",
