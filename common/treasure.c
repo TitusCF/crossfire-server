@@ -1304,6 +1304,42 @@ void add_abilities(object *op, object *change) {
       free_string(op->script_throw);
     op->script_throw = add_refcount(change->script_throw);
   }
+  /* GROS: Added support for script_str... in artifact file */
+  if (change->script_str_attack) {
+    if (op->script_str_attack)
+      free_string(op->script_str_attack);
+    op->script_str_attack = add_refcount(change->script_str_attack);
+  }
+  if (change->script_str_apply) {
+    if (op->script_str_apply)
+      free_string(op->script_str_apply);
+    op->script_str_apply = add_refcount(change->script_str_apply);
+  }
+  if (change->script_str_drop) {
+    if (op->script_str_drop)
+      free_string(op->script_str_drop);
+    op->script_str_drop = add_refcount(change->script_str_drop);
+  }
+  if (change->script_str_say) {
+    if (op->script_str_say)
+      free_string(op->script_str_say);
+    op->script_str_say = add_refcount(change->script_str_say);
+  }
+  if (change->script_str_trigger) {
+    if (op->script_str_trigger)
+      free_string(op->script_str_trigger);
+    op->script_str_trigger = add_refcount(change->script_str_trigger);
+  }
+  if (change->script_str_time) {
+    if (op->script_str_time)
+      free_string(op->script_str_time);
+    op->script_str_time = add_refcount(change->script_str_time);
+  }
+  if (change->script_str_throw) {
+    if (op->script_str_throw)
+      free_string(op->script_str_throw);
+    op->script_str_throw = add_refcount(change->script_str_throw);
+  }
 
 }
 
