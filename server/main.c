@@ -314,7 +314,7 @@ static void enter_map(object *op, mapstruct *newmap, int x, int y) {
 	    op->contr->golem->x = x + freearr_x[i];
 	    op->contr->golem->y = y + freearr_y[i];
 	    insert_ob_in_map(op->contr->golem, newmap, NULL);
-	    op->contr->golem->direction = find_dir_2(op->contr->golem->x - op->x, op->contr->golem->y - op->y);
+	    op->contr->golem->direction = find_dir_2(op->x - op->contr->golem->x, op->y - op->contr->golem->y);
 	}
     }
     op->direction=0;
