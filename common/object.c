@@ -1299,6 +1299,13 @@ object *insert_ob_in_map (object *op, mapstruct *m, object *originator, int flag
     if(out_of_map(m,op->x,op->y)) {
 	dump_object(op);
 	LOG(llevError,"Trying to insert object outside the map.\n%s\n", errmsg);
+#ifdef MANY_CORES
+	/* Better to catch this here, as otherwise the next use of this object
+	 * is likely to cause a crash.  Better to find out where it is getting
+	 * improperly inserted.
+	 */
+	abort();
+#endif
 	return op;
     }
     if(!QUERY_FLAG(op,FLAG_REMOVED)) {
