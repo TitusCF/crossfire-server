@@ -427,11 +427,11 @@ PATH_TURNING,"holy_orb",},
 {"peace",                 20, 80,  0, 10,  0,  0,  0,  1,  0,  1,  0,
    PATH_PROT,"peace"},
 {"spiderweb",              4, 10,  0, 10,  0,  0,  0,  1,  0,  1,  0,
-   PATH_CREATE,"spiderweb"},
+   PATH_CREATE,"spiderweb_spell"},
 {"conflict",              10, 50,  0, 10,  0,  0,  0,  1,  0,  1,  0,
    PATH_MIND, "conflict"},
 {"rage",                   1,  5,  0, 10,  0,  0,  0,  1,  0,  1,  1,
-   PATH_WOUNDING, "holy_rage"},
+   PATH_WOUNDING, "enchantment"},
 {"forked lightning",       5, 15,  0, 10,  0,  0,  0,  1,  0,  1,  0,
    PATH_ELEC, "forked_lightning"},
 {"poison fog",             5, 15,  0, 10,  0,  0,  0,  1,  0,  1,  0,
@@ -654,7 +654,7 @@ spell_parameters SP_PARAMETERS[NROFREALSPELLS] =
 {   0,      20,     25,      4,		8},	/*windstorm*/      
 {   0,     100,      0,      1,		20},	/*sanctuary*/    /* 190 */     
 {   0,      4,       0,      9,		36},	/*peace*/      
-{   7,      10,     5,       5,		10},	/*spiderweb*/      
+{   0,      10,     0,       5,		50},	/*spiderweb*/      
 {   0,      5,      0,      10,		10},	/*conflict*/      
 {   0,       0,     5,      4,		8},	/*rage*/      
 {   10,     16,     3,      0,		24},	/*forked lightning*/      /* 195*/

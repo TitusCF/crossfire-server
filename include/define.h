@@ -157,6 +157,9 @@
 #define PLAYER_CHANGER  57
 #define BATTLEGROUND    58      /* battleground, by Andreas Vogl */
 
+#define PEACEMAKER       59  /* Object owned by a player which can convert
+			       a monster into a peaceful being incapable of
+			       attack.  */
 #define GEM		60 
 #define FIRECHEST	61 
 #define FIREWALL	62

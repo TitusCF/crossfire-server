@@ -588,6 +588,7 @@ extern int SP_level_strength_adjust ( object *op, object *caster, int spell_type
 extern int SP_level_spellpoint_cost ( object *op, object *caster, int spell_type );
 extern void move_swarm_spell ( object *op );
 extern void move_aura (object *aura);
+extern void move_peacemaker(object *op);
 extern void fire_swarm ( object *op, object *caster, int dir, archetype *swarm_type, int spell_type, int n, int magic );
 extern int look_up_spell_by_name ( object *op, char *spname );
 extern void put_a_monster ( object *op, char *monstername );
