@@ -840,7 +840,10 @@ int cast_create_obj(object *op,object *caster,object *new_op, int dir)
     }
     new_op->x=op->x+freearr_x[dir];
     new_op->y=op->y+freearr_y[dir];
-    insert_ob_in_map(new_op,op->map,op,0);
+    if (dir == 0)
+	insert_ob_in_map(new_op,op->map,op,INS_BELOW_ORIGINATOR);
+    else 
+	insert_ob_in_map(new_op,op->map,op,0);
     return dir;
 }
 
