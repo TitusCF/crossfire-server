@@ -18,11 +18,42 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+c_party.c commands.c daemon.c disease.c gods.c spell_effect.c spell_util.c:
+Cosmetic fixes - updates to rcsid string to include right file name as well as
+updates to mail address and/or additions to top banner.  Mark Wedel 4/13/2000
+
+Various files:  Updated my mailing address to be accurate - Mark Wedel
+4/13/2000
+
+doc/playbook/handbook.idx:  Automatically generated file removed.  This
+is not something normally included in packed up distributions, so no reason
+to have it in CVS - Mark Wedel 4/13/2000
+
+doc/include_html.pl, doc/playbook/make_index.pl, doc/spoiler-html/makeps.pl,
+lib/adm/make_xpm_file.pl:
+
+Change to use /usr/bin/perl instead of /usr/local/bin/perl - real change is to
+find perl in configure.in and call the scripts with that.  Mark Wedel
+4/13/2000
+
+
+server/input.c:  Don't try to calculate spellpoint costs for denied spells,
+because these are undefined and are now causing lots of BUG messages.  Also
+improved formatting: spellpoint costs can be > 99, and don't fill everything
+with zeros, use spaces instead.  Patch by Jan Echternach, applied & checked in
+by Mark Wedel, 4/12/2000
+
+server/skill_util.c:  Fixed some log messages that were lacking a newline at
+the end.  SK_level():  Rewrite of this function to simplify its structure.
+Print error message if we find an invalid level.  Add top copyright/contact
+banner (msw) Patch by Jan Echternach, applied & checked in by Mark Wedel,
+4/12/2000
+
 server/apply.c, server/monster.c:  Fix in apply.c for encounter maps
 so that proper message is generated, and differentiate behaviour if it
 is a floor vs not a floor.  Also, change to both files in that apply_below
 stops at the floor object.  Patch by Jan Echternach, applied & checked in by
-Mark Wedel, 4/11/2000
+Mark Wedel, 4/12/2000
 
 server/apply.c, doc/crossfire.doc:  Fix to prevent server crashes when monster
 applies poison object.  doc file is updated to include accurate information on
