@@ -286,10 +286,11 @@ more
   more
   arch shield_gaea
     chance 5
+  more
+  arch glovesofsun
+    chance 10
 end
 treasure gaea_treasure
-  arch shield_gaea
-    chance 5
   list random_plant
     chance 50
   no
