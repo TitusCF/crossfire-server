@@ -1219,7 +1219,7 @@ void draw_client_map(object *pl)
 	    nx = i;
 	    ny = j;
 	    m = get_map_from_coord(pl->map, &nx, &ny);
-	    if (m && d<=4) {
+	    if (m && d<4) {
 		face = GET_MAP_FACE(m, nx, ny,0);
 		floor2 = GET_MAP_FACE(m, nx, ny,1);
 		floor = GET_MAP_FACE(m, nx, ny,2);
