@@ -92,6 +92,8 @@ typedef struct obj {
   signed short last_eat;	/* How long since we last ate */
   signed short invisible;	/* How much longer the object will be invis */
   unsigned char pick_up;        /* See crossfire.doc */
+  int anim_enemy_dir;       /* special shadow variable: show dir to targeted enemy */
+  int anim_moving_dir;      /* sic: shows moving dir or -1 when object do something else */
   struct obj *owner;  /* Pointer to the object which controls this one */
                       /* Owner should not be referred to directly - */
                       /* get_owner should be used instead. */

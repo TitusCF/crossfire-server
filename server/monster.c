@@ -201,7 +201,7 @@ int move_randomly(object *op) {
 
 int move_monster(object *op) {
     int dir, diff;
-    object  *owner, *enemy, *part;
+    object  *owner, *enemy, *part, *oph=op;
     rv_vector	rv;
 
     /* Monsters not on maps don't do anything.  These monsters are things
@@ -211,7 +211,20 @@ int move_monster(object *op) {
 
     CLEAR_FLAG(op,FLAG_PARALYZED); /* if we are here, we never paralyzed anymore */
 
-    enemy= find_enemy(op, &rv);
+    /* for target facing, we copy this value here for fast access */
+    /* for some reason, rv is not set right for targeted enemy all times */
+    /* so i call it here direct again */
+    if(oph->head)           /* force update the head - one arch one pic */
+        oph = oph->head;
+    oph->anim_enemy_dir = -1;
+    oph->anim_moving_dir = -1;
+    
+    if((enemy= find_enemy(op, &rv)))
+    {
+        get_rangevector(oph, enemy, &rv, 0);
+        oph->anim_enemy_dir = rv.direction;
+    }
+    
 
     if(QUERY_FLAG(op, FLAG_SLEEP)||QUERY_FLAG(op, FLAG_BLIND)
        ||((op->map->darkness>0)&&!QUERY_FLAG(op,FLAG_SEE_IN_DARK)
@@ -1227,6 +1240,12 @@ int move_object(object *op, int dir) {
     int newy = op->y+freearr_y[dir];
     object *tmp;
 
+    /* extended animation stuff */
+    if(op->head)
+        op->head->anim_moving_dir = dir;
+    else
+        op->anim_moving_dir = dir;    
+    
     /* 0.94.2 - we need to set the direction for the new animation code.
      * it uses it to figure out face to use - I can't see it
      * breaking anything, but it might.

@@ -118,8 +118,8 @@ void init_anim() {
     LOG(llevDebug,"done. got (%d)\n", num_animations);
 }
 
-static int anim_compare(Animations *a, Animations *b) {
-    return strcmp(a->name, b->name);
+static int anim_compare(const void *a, const void *b) {
+    return strcmp(((Animations*)a)->name,((Animations*) b)->name);
 }
 
 /* Tries to find the animation id that matches name.  Returns an integer match 
@@ -131,8 +131,13 @@ int find_animation(char *name)
 
     search.name = name;
 
+#ifdef WIN32
     match = (Animations*)bsearch(&search, animations, (num_animations+1), 
-		sizeof(Animations), (int (*)())anim_compare);
+        sizeof(Animations), anim_compare);
+#else
+    match = (Animations*)bsearch(&search, animations, (num_animations+1), 
+        sizeof(Animations), (int (*)())anim_compare);
+#endif
 
 
     if (match) return match->num;
@@ -148,7 +153,8 @@ int find_animation(char *name)
 void animate_object(object *op) {
     int max_state;  /* Max animation state object should be drawn in */
     int base_state; /* starting index # to draw from */
-    int	dir=op->direction;
+    int	dir;
+    register object *oph = op;
 
     if(!op->animation_id || !NUM_ANIMATIONS(op)) {
 	LOG(llevError,"Object lacks animation.\n");
@@ -157,7 +163,13 @@ void animate_object(object *op) {
     }
     ++op->state;    /* increase draw state */
 
-    if (op->head) dir=op->head->direction;
+    /* when we change to "one arch/one png, we must use this also for */
+    /* the code above ... only the head then has an animation */
+    /* which gets updated one time when this is called per tick */
+    if(op->head) /* we want always the head */
+        oph=op->head;
+    
+    dir=oph->direction;
 
     /* If object is turning, then max animation state is half through the
      * animations.  Otherwise, we can use all the animations.
@@ -180,9 +192,41 @@ void animate_object(object *op) {
     }
     else if (NUM_FACINGS(op)==8) {
 	if (dir==0) base_state=0;
-	else base_state = (dir-1)*(NUM_ANIMATIONS(op)/4); 
+	else base_state = (dir-1)*(NUM_ANIMATIONS(op)/8); /* was 4  before - typo? */ 
     }
-
+    /* thats the new extended animation: base_state is */
+    /* 0: we are paralyzed, sleep, etc. */
+    /* 1: we are stading or guarding */
+    /* 2-9: we are attacking in dir+1 */
+    /* 10-17: we are moving in dir+9 */
+    else if (NUM_FACINGS(op)==18) {
+        /* first: test for an effect */
+        if(QUERY_FLAG(oph, FLAG_SLEEP)|| QUERY_FLAG(oph, FLAG_PARALYZED ))
+        {
+            dir = 0;
+        }
+        /* we have targeted an enemy and follow him ? */
+        else if(oph->anim_enemy_dir != -1)
+        {
+            dir = oph->anim_enemy_dir;      /* lets face to the enemy position */
+            if (!dir)   /* special case, same spot will be mapped to other */
+                dir = 4; /* 4 for iso, 5 for flat - do it automatically later */
+            dir++;
+            
+        }
+        else if (oph->anim_moving_dir != -1)/* test of moving */
+        {
+            if(!dir) /* ok, object is going to a position */
+                dir = 1;
+            dir+=9;
+        }
+        else /* if nothing to do: object do nothing */
+        {
+            dir = 1;
+        }
+        base_state = dir*(NUM_ANIMATIONS(op)/18); 
+    }
+    
     /* If beyond drawable states, reset */
     if (op->state>=max_state) op->state=0;
 

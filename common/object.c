@@ -573,6 +573,8 @@ void clear_object(object *op) {
   op->material=op->magic=op->state=op->type=0;
   op->face = blank_face;
 
+  op->anim_enemy_dir = -1;
+  op->anim_moving_dir = -1;
   /* The object should already have been removed from the speed list
    * before this function is called
    */
