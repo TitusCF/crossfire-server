@@ -668,7 +668,10 @@ void drop_object (object *op, object *tmp, long nrof)
 
     tmp->x = op->x;
     tmp->y = op->y;
+
+    esrv_del_item (op->contr, tmp->count);
     insert_ob_in_map(tmp, op->map, op);
+
 
     SET_FLAG (op, FLAG_NO_APPLY);
     remove_ob(op);
@@ -682,7 +685,8 @@ void drop_object (object *op, object *tmp, long nrof)
 		    /* in object.c */
 
 
-    esrv_send_item (op, tmp);
+    op->contr->socket.update_look = 1;
+/*    esrv_send_item (op, tmp);*/
     /* Need to update the weight for the player */
     esrv_send_item (op, op);
 

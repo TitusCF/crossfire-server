@@ -17,6 +17,17 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 CVS changes since last release:
 
+server/c_object.c: drop_object function: send delete item to client as
+   item is dropped.  This fixes a problem of phantom objects in the
+   inventory.  Unrelated change to not call esrv_send_item for objects
+   that are dropped - esrv_draw_look will get called later on and will
+   update this at that time.  MSW 2001/03/16
+
+server/c_object.c: Update the return value for some matches - they
+   function was returning immediately when it got a match, but did not give
+   them a high match value, so searching for 'key ring' used to return a
+   match value of 6 or so on the key ring, but a 14 on a key.
+
 common/object.c: Modify find_free_spot to call arch_out_of_map so that
    it properly deals with multipart objects.
 server/main.c: Fix enter_map so that we first use the golem (and not player)
