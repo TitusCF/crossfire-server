@@ -5,7 +5,7 @@
 # now, this simple makefile should do the job.
 #
 #   Copyright (C) 1992 Frank Tore Johansen
-#   Copyright (C) 1998 Mark Wedel
+#   Copyright (C) 2001 Mark Wedel
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 #   along with this program; if not, write to the Free Software
 #   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #
-#   The author can be reached via e-mail to mark@pyramid.com
+#   The author can be reached via e-mail to mwedel@scruz.net
 
 
 VPATH = @srcdir@
@@ -108,12 +108,9 @@ depend:
 	(cd Cnv; $(MAKE) depend)
 
 proto:
-	cextract +p -P $(INCLUDES)  \
-		-cpp-program="gcc -E -C" \
-		$(SRCS)  > proto.h.bak
-	sed -e "s/#if __STDC__/#ifdef __STDC__/" -e "s/__signed/signed/g" -e "/__inline/d" < proto.h.bak > proto.h
+	cproto -e $(INCLUDES) $(SRCS)  > proto.h.bak
+	mv proto.h.bak proto.h
 	chmod 644 proto.h
-	$(RM) -f proto.h.bak
 
 archive:
 	@if [ ! -d $(ARCHIVE)/crossedit ]; then $(MKDIR) $(ARCHIVE)/crossedit; fi

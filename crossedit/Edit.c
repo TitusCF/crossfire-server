@@ -37,6 +37,155 @@
 #include "Str.h"
 #include "Bitmaps.h"
 
+
+/*
+ * This function relinks all _pointers_ to the objects from
+ * one map to another.
+ * Note: You can _not_ free the objects in the original map
+ * after this function has been called.
+ * (What happened to this function? It no longer copies the pointers! -Frank)
+ * moved to Edit.c from common/map.c since Edit.c is the only file that uses it.
+ */
+
+void copy_map(mapstruct *m1, mapstruct *m2) {
+    int x,y;
+
+    memcpy(m2, m1, sizeof(mapstruct));
+
+    for(x=0;x<MAP_WIDTH(m1)&&x<MAP_WIDTH(m2);x++)
+	for(y=0;y<MAP_HEIGHT(m1)&&y<MAP_HEIGHT(m2);y++) {
+	    SET_MAP_FACE(m2,x,y,GET_MAP_FACE(m1,x,y,0),0);
+	    SET_MAP_FACE(m2,x,y,GET_MAP_FACE(m1,x,y,1),1);
+	    SET_MAP_FACE(m2,x,y,GET_MAP_FACE(m1,x,y,2),2);
+	}
+}
+
+/*
+ * member: copy by translate objects from source to a new map
+ * source: -map
+ * width : width of target map
+ * height: height of target map
+ * dx    : positive translate to right
+ * dy    : positive translate to down
+ */
+mapstruct *MapMoveScrollResize(mapstruct *source, 
+				int width, int height, int dx, int dy) 
+{
+    mapstruct *target;
+    object *obj,*prt; /* PaRT of obj */
+    int x,y,sx = MAP_WIDTH(source), sy = MAP_HEIGHT(source);
+    int linked = 0, link=0;
+
+    if (!width) width = sx;
+    if (!height) height = sy;
+    target = get_empty_map (width, height);
+
+    strncpy (target->path, source->path, BIG_NAME);
+
+    MAP_WIDTH(target) = width;
+    MAP_HEIGHT(target) = height;  
+
+    if(dx < 0) dx += MAP_WIDTH(target);
+    if(dy < 0) dy += MAP_HEIGHT(target);
+
+    for(y=0; y < sy && y < MAP_HEIGHT(target); y++)
+	for(x=0; x < sx && x < MAP_WIDTH(target); x++)
+	    while((obj = get_map_ob(source,x,y)) && !obj->head) {
+		if ((linked = QUERY_FLAG (obj,FLAG_IS_LINKED))) {
+		    link = get_button_value (obj);
+		    remove_button_link (obj);
+		}
+		remove_ob(obj);
+		for(prt = obj; prt; prt = prt->more) {
+		    prt->x += dx;
+		    prt->x %= MAP_WIDTH(target); /* it can be split by edge */
+		    prt->y += dy;           /* designers problem to fix */
+		    prt->y %= MAP_HEIGHT(target);
+		}
+		insert_ob_in_map(obj,target,obj,INS_NO_MERGE | INS_NO_WALK_ON);
+		if (linked)
+		    add_button_link(obj, target, link);
+	    }
+    /*free_all_objects(source);*/
+    free_map (source, 1);
+    delete_map (source);
+    return target;
+}
+
+
+object * MapGetRealObject (mapstruct * emap, int x, int y, int z)
+{
+    object *tmp = MapGetObjectZ (emap, x, y, z);
+    return tmp ? (tmp->head ? tmp->head : tmp) : tmp;
+}
+
+int MapInsertObjectZ(mapstruct *emap,object *o,int x, int y, int z)
+{
+    object *op, *above, *below;
+
+    if (o->more)
+        MapInsertObjectZ (emap,o->more, x, y, z);
+
+    o->x += x;
+    o->y += y;
+    o->map = emap;
+    CLEAR_FLAG(o,FLAG_REMOVED);
+
+    op = get_map_ob (emap, o->x, o->y);
+    if (z < 0) {
+	above = op;
+	below = NULL;
+    } else {
+	while (op && op->above)
+	    op = op->above;
+    
+	above = NULL;
+	below = op;
+	while (op && z-- > 0) {
+	    above = op;
+	    below = op = op->below;
+	}
+    }
+    o->below = below;
+    o->above = above;
+
+    if (above)
+        above->below = o;
+    else {
+	SET_MAP_FACE (emap, o->x, o->y, o->face,0);
+    }
+    if (below)
+        below->above = o;
+    else
+        set_map_ob (emap, o->x, o->y, o);
+    
+    return (0);
+}
+
+int MapObjectOut (mapstruct *target, object *obj, int x, int y) {
+    object *tmp;
+    for(tmp = obj; tmp; tmp = tmp->more)
+        if(out_of_map(target,x + tmp->x,y + tmp->y)) return 1;
+    return 0;
+}
+
+object * MapGetObjectZ (mapstruct * emap, int x, int y, int z)
+{
+    object *op;
+
+    if (!emap || out_of_map (emap, x, y))
+        return (NULL);
+    op = get_map_ob (emap, x, y);
+    while (op && op->above)
+        op = op->above;
+    while (op && z-- > 0)
+        op = op->below;
+    return (op);
+}
+
+
+
+
 /**********************************************************************
  * inner declarations
  **********************************************************************/
@@ -280,6 +429,7 @@ const XRectangle EditRectAll = {
  * privates
  **********************************************************************/
 
+
 /*
  *
  */
@@ -474,7 +624,7 @@ static void draw_add (Edit self, int x, int y)
     if (!self->app->item.wall_map)
 	CnvDie(self->shell,"No Wall map");
 
-    if (self->app->item.wall_map->map_object->x < 16)
+    if (MAP_WIDTH(self->app->item.wall_map) < 16)
 	CnvDie(self->shell,"Wall Map has wrong width\n");
 
     for (i = 0; i < 4; i++)
@@ -493,7 +643,7 @@ static void draw_remove (Edit self, int x, int y)
     if (!self->app->item.wall_map)
 	CnvDie(self->shell,"No Wall map");
 
-    if (self->app->item.wall_map->map_object->x < 16)
+    if (MAP_WIDTH(self->app->item.wall_map) < 16)
 	CnvDie(self->shell,"Wall Map has wrong width\n");
 
     update_wall (self, x, y + 1, 0, 1);
@@ -584,7 +734,7 @@ static void ClearCb (Widget w, XtPointer client, XtPointer call)
 
     debug1("ClearCb() %s\n",self->emap->path);
     if(self->read_only) return;
-    tmp = get_empty_map(self->emap->map_object->x,self->emap->map_object->y);
+    tmp = get_empty_map(MAP_WIDTH(self->emap), MAP_HEIGHT(self->emap));
     copy_map (self->emap, tmp); 
     EdFreeMap(self);
     self->emap = tmp;
@@ -695,8 +845,8 @@ static void EnterCb (Widget w, XtPointer client, XtPointer call)
 	    }
 	    if(!Load(self,loadPath)) return;
 	    if (rect.x == 0 && rect.y == 0) {
-		rect.x = EXIT_X(self->emap->map_object);
-		rect.y = EXIT_Y(self->emap->map_object);
+		rect.x = MAP_ENTER_X(self->emap);
+		rect.y = MAP_ENTER_Y(self->emap);
 	    }
 	    rect.width = rect.height = 0;
 	    AppSelectSet(self->app, self, rect);
@@ -829,16 +979,16 @@ static void ResizeCb (Widget w, XtPointer client, XtPointer call)
 	return;
 
     sprintf (buf, "%dx%d+0+0", 
-	     self->emap->map_object->x, self->emap->map_object->y);
+	     MAP_WIDTH(self->emap), MAP_HEIGHT(self->emap));
     switch (CnvPrompt ("ResizeScroll",
 		       buf, path,"OK",NULL)) {
     case 1:
 	res = XParseGeometry (path, &sx, &sy, &x, &y);
 	
 	if (!(res & WidthValue))
-	    x = self->emap->map_object->x;
+	    x = MAP_WIDTH(self->emap);
 	if (!(res & HeightValue))
-	    y = self->emap->map_object->y;
+	    y = MAP_HEIGHT(self->emap);
 	
 	if (!(res & XValue))
 	    sx = 0;
@@ -867,8 +1017,8 @@ static void StartCb (Widget w, XtPointer client, XtPointer call)
     int width, height;
 
     sprintf (buf, "%dx%d", 
-	     EXIT_X (self->emap->map_object),
-	     EXIT_Y (self->emap->map_object));
+	     MAP_ENTER_X(self->emap),
+	     MAP_ENTER_Y(self->emap));
     switch (CnvPrompt ("Start of map", buf,reply,
 	"OK","Cancel",NULL)) {
     case 1:			/* ok */
@@ -882,8 +1032,8 @@ static void StartCb (Widget w, XtPointer client, XtPointer call)
 	    CnvNotify (buf,"OK",NULL);
 	    return;
 	} else {
-	    EXIT_X(self->emap->map_object) = width;
-	    EXIT_Y(self->emap->map_object) = height;
+	    MAP_ENTER_X(self->emap) = width;
+	    MAP_ENTER_Y(self->emap) = height;
 	    EditModified(self);
 	}
 	EditUpdate(self);
@@ -893,6 +1043,8 @@ static void StartCb (Widget w, XtPointer client, XtPointer call)
     }
 }
 #endif
+
+
 
 /*
  * Edit attributes of the Map
@@ -904,9 +1056,19 @@ static void AttributesCb (Widget w, XtPointer client, XtPointer call)
     debug0("Edit::AttributesCb()\n");
 
     if(!self->mapattr) {
-	self->mapattr = AttrCreate 
-	    ("mapattr", self->app, self->emap->map_object, 
-	     MapDescription, -1, (XtPointer)self);
+	self->mapattr = (Attr)XtMalloc (sizeof(struct _Attr));
+	self->mapattr->op = NULL;
+	self->mapattr->app = self->app;
+	self->mapattr->client = self;
+	self->mapattr->attr = NULL;
+	self->mapattr->desc = MapDescription;
+
+	AppLayout (self->mapattr, self->mapattr->app->shell, "mapattr");
+
+	AttrChange(self->mapattr,self->mapattr->op, -1, self->mapattr->client);
+	self->mapattr->dump = CnvBrowseCreate("dump", self->mapattr->app->shell, NULL);
+	XtPopup(self->mapattr->shell,XtGrabNone);
+	self->mapattr->isup = True;
     } else {
 	AttrDestroy(self->mapattr);
     }
@@ -1116,13 +1278,13 @@ static void Layout(Edit self,Widget parent,Cardinal stacking)
     self->shell = XtVaCreatePopupShell 
       ("edit",topLevelShellWidgetClass, self->app->shell,
        XtNwidth,
-       ((unsigned int)self->emap->map_object->x > self->app->res.mapWidth ?
+       (MAP_WIDTH(self->emap) > self->app->res.mapWidth ?
 	self->app->res.mapWidth * FontSize :
-	self->emap->map_object->x * FontSize ) + 16,/* kludge */
+	MAP_WIDTH(self->emap) * FontSize ) + 16,/* kludge */
        XtNheight,
-       ((unsigned int)self->emap->map_object->y > self->app->res.mapHeight ?
+       (MAP_HEIGHT(self->emap) > self->app->res.mapHeight ?
 	self->app->res.mapHeight * FontSize :
-	self->emap->map_object->y * FontSize ) + 46,/* kludge */
+	MAP_HEIGHT(self->emap) * FontSize ) + 46,/* kludge */
        XtNiconPixmap,bitmaps.edit,
        NULL);
     vbox = XtVaCreateManagedWidget ("vbox", panedWidgetClass,
@@ -1206,8 +1368,6 @@ Edit EditCreate(App app,EditType type,String path)
 
     } else if(path && *path != '\0') {
 	if (!Load(self,path)) return 0;
-	if(!strcmp(self->emap->map_object->name,"map")) /* Yak, no "map" */
-          self->emap->map_object->name = MapNameCreate(path);
     } else {
 	self->emap = get_empty_map(16,16);
 	strcpy (self->emap->path, "/Noname");
@@ -1216,8 +1376,8 @@ Edit EditCreate(App app,EditType type,String path)
     if (!self->emap)
 	return 0;
     
-    if (!self->emap->map_object->msg) {
-	self->emap->map_object->msg = MapMessageCreate (app);
+    if (!self->emap->msg) {
+	self->emap->msg = MapMessageCreate (app);
     }
 
     /*** creating ***/
@@ -1317,7 +1477,7 @@ void EditUpdate(Edit self)
     
     /*** info ***/
     if (self->mapattr)
-	AttrChange (self->mapattr, self->emap->map_object, -1, self);
+	AttrChange (self->mapattr, NULL, -1, self);
 
     /*** toggles ***/
     if(self->type != ClipBoard) {
@@ -1534,15 +1694,15 @@ void EditCopyRectangle(Edit self,Edit src,XRectangle rect,int sx,int sy)
        self->read_only)
 	return;
 
-    if (rect.width > self->emap->map_object->x - sx)
-	rect.width = self->emap->map_object->x - sx;
-    if (rect.width > (unsigned int)src->emap->map_object->x)
-	rect.width = src->emap->map_object->x;
+    if (rect.width > MAP_WIDTH(self->emap) - sx)
+	rect.width = MAP_WIDTH(self->emap) - sx;
+    if (rect.width > MAP_WIDTH(src->emap))
+	rect.width = MAP_WIDTH(src->emap);
 
-    if (rect.height > self->emap->map_object->y - sy)
-	rect.height = self->emap->map_object->y - sy;
-    if (rect.height > (unsigned int)src->emap->map_object->y)
-	rect.height = src->emap->map_object->y;
+    if (rect.height > MAP_HEIGHT(self->emap) - sy)
+	rect.height = MAP_HEIGHT(self->emap);
+    if (rect.height > MAP_HEIGHT(src->emap))
+	rect.height = MAP_HEIGHT(src->emap);
 
     debug2("EditCopyRectangle() %s -> %s\n",EditGetPath(src),
 	  EditGetPath(self));
@@ -1845,4 +2005,3 @@ void EditSetPath(Edit self,String path)
 }
 
 /*** end of Edit.c ***/
-

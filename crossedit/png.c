@@ -138,7 +138,7 @@ again:
 
 
 
-void user_read_data(png_structp png_ptr, png_bytep data, png_size_t length) {
+static void user_read_data(png_structp png_ptr, png_bytep data, png_size_t length) {
     memcpy(data, data_cp + data_start, length);
     data_start += length;
 }

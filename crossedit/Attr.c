@@ -688,7 +688,7 @@ static void AttrVarGetCb(Widget w,XtPointer client,XtPointer call)
  * members
  **********************************************************************/
 
-static void Layout(Attr self,Widget parent, char *name)
+void AppLayout(Attr self,Widget parent, char *name)
 {
     Widget form,view1,pane;
     Widget ok,apply,cancel;
@@ -821,7 +821,7 @@ Attr AttrCreate(char *name, App app, object *ob,
   self->attr = NULL;
 
   self->desc = desc;
-  Layout (self, self->app->shell, name);
+  AppLayout (self, self->app->shell, name);
   AttrChange(self,self->op, flags, self->client);
 
   self->dump = CnvBrowseCreate("dump", self->app->shell, NULL);

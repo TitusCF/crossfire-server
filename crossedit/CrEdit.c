@@ -252,8 +252,8 @@ static void SetSize(Widget w)
 
     /*** determine size to ask for ***/
     if(self->crEdit.map) {
-	request.width = self->crEdit.map->map_object->x * self->crEdit.fontSize;
-	request.height = self->crEdit.map->map_object->y * self->crEdit.fontSize;
+	request.width = MAP_WIDTH(self->crEdit.map) * self->crEdit.fontSize;
+	request.height = MAP_HEIGHT(self->crEdit.map) * self->crEdit.fontSize;
     } else {
 	request.width = self->crEdit.fontSize;
 	request.height = self->crEdit.fontSize;
@@ -415,34 +415,34 @@ static void UpdatePosition (Widget w, int x, int y,Boolean inv)
 	    }
 	}
     } else { /* Normal map drawing routine */
-        New_Face f;
+        New_Face *f;
         if (displaymode==Dm_Pixmap || displaymode==Dm_Png) {
-          f = *(get_map_floor (self->crEdit.map, x, y)->face);
-          FaceDraw (w, self->crEdit.gc, &f,
+          f = GET_MAP_FACE(self->crEdit.map, x, y,2);
+          if (f) FaceDraw (w, self->crEdit.gc, f,
                     x * self->crEdit.fontSize,
                     y * self->crEdit.fontSize);
-          f = *(get_map_floor2 (self->crEdit.map, x, y)->face);
-	  if (f.number != blank_face->number)
-	    FaceDraw (w, self->crEdit.gc, &f,
+          f = GET_MAP_FACE(self->crEdit.map, x, y,1);
+	  if ((f) && f->number != blank_face->number)
+	    FaceDraw (w, self->crEdit.gc, f,
                     x * self->crEdit.fontSize,
                     y * self->crEdit.fontSize);
 	}
 	op=get_map_ob(self->crEdit.map, x, y);
 	while (op && op->above) op=op->above;
-	if (!op) f=*blank_face;
+	if (!op) f=blank_face;
 	else if (QUERY_FLAG(op, FLAG_TEAR_DOWN) && self->crEdit.show_weak_walls)
-		f=new_faces[GET_ANIMATION(op,NUM_ANIMATIONS(op)/2)/2];
+		f=&new_faces[GET_ANIMATION(op,NUM_ANIMATIONS(op)/2)/2];
 
-	else f = *op->face;
+	else f = op->face;
 
 	if (inv  == True) {
-	    int tmp = f.fg;
-	    f.fg = f.bg;
-	    f.bg = tmp;
+	    int tmp = f->fg;
+	    f->fg = f->bg;
+	    f->bg = tmp;
 	}
 	if (displaymode!=Dm_Pixmap || displaymode==Dm_Png ||
-	    f.number != blank_face->number)
-	    FaceDraw (w, self->crEdit.gc, &f, 
+	    f->number != blank_face->number)
+	    FaceDraw (w, self->crEdit.gc, f, 
 		  x * self->crEdit.fontSize, 
 		  y * self->crEdit.fontSize);
     }
@@ -461,10 +461,10 @@ static void DrawRectangle(Widget w,XRectangle area,Boolean inv)
 
     if (!self->crEdit.map) return;
     for (j = area.x; 
-	 j < area.x + area.width &&  j < self->crEdit.map->map_object->x; 
+	 j < area.x + area.width &&  j < MAP_WIDTH(self->crEdit.map); 
 	 j++) {
 	for (i = area.y; 
-	     i < area.y + area.height && i < self->crEdit.map->map_object->y; 
+	     i < area.y + area.height && i < MAP_HEIGHT(self->crEdit.map); 
 	     i++) {
 	    UpdatePosition (w,j,i,inv);
 	}
@@ -487,10 +487,10 @@ static void DrawBorder(Widget w,XSegment seg,Boolean inv)
     x2 = abs(seg.x1 - seg.x2) + x1;
     y2 = abs(seg.y1 - seg.y2) + y1;
 
-    if(x1 > self->crEdit.map->map_object->x ||
-       x2 > self->crEdit.map->map_object->x ||
-       y1 > self->crEdit.map->map_object->y ||
-       y2 > self->crEdit.map->map_object->y) return;
+    if(x1 > MAP_WIDTH(self->crEdit.map) ||
+       x2 > MAP_WIDTH(self->crEdit.map) ||
+       y1 > MAP_HEIGHT(self->crEdit.map) ||
+       y2 > MAP_HEIGHT(self->crEdit.map)) return;
 
     if (inv) {
 	XDrawRectangle (XtDisplay(w), XtWindow(w), 
@@ -669,13 +669,13 @@ static void SelectExpandAc(Widget w, XEvent * event,
     x = event->xbutton.x / self->crEdit.fontSize;
     y = event->xbutton.y / self->crEdit.fontSize;
 
-    if (x >= self->crEdit.map->map_object->x )
-	x = self->crEdit.map->map_object->x - 1;
+    if (x >= MAP_WIDTH(self->crEdit.map) )
+	x = MAP_WIDTH(self->crEdit.map) - 1;
     if (x < 0)
 	x = 0;
 
-    if (y >= self->crEdit.map->map_object->y )
-	y = self->crEdit.map->map_object->y - 1;
+    if (y >= MAP_HEIGHT(self->crEdit.map) )
+	y = MAP_HEIGHT(self->crEdit.map) - 1;
     if (y < 0)
 	y = 0;
 
@@ -704,13 +704,13 @@ static void SelectEndAc(Widget w, XEvent * event,
 
     debug2("SelectEndAc() %dx%d\n",x,y);
 
-    if (x >= self->crEdit.map->map_object->x )
-	x = self->crEdit.map->map_object->x - 1;
+    if (x >= MAP_WIDTH(self->crEdit.map) )
+	x = MAP_WIDTH(self->crEdit.map) - 1;
     if (x < 0)
 	x = 0;
 
-    if (y >= self->crEdit.map->map_object->y )
-	y = self->crEdit.map->map_object->y - 1;
+    if (y >= MAP_HEIGHT(self->crEdit.map) )
+	y = MAP_HEIGHT(self->crEdit.map) - 1;
     if (y < 0)
 	y = 0;
 
@@ -829,8 +829,8 @@ static void ResizeAc (Widget w, XEvent * e, String * argv, Cardinal * argc)
     call.map = self->crEdit.map;
     call.rect.x = 0;
     call.rect.y = 0;
-    call.rect.width = self->crEdit.map->map_object->x;
-    call.rect.height = self->crEdit.map->map_object->y;
+    call.rect.width = MAP_WIDTH(self->crEdit.map);
+    call.rect.height = MAP_HEIGHT(self->crEdit.map);
     call.z = 0;
     if (argv) {
 	if (!strcmp (argv[0], "right")) {
@@ -861,8 +861,8 @@ static void ScrollAc (Widget w, XEvent * e, String * argv, Cardinal * argc)
     call.map = self->crEdit.map;
     call.rect.x = 0;
     call.rect.y = 0;
-    call.rect.width = self->crEdit.map->map_object->x;
-    call.rect.height = self->crEdit.map->map_object->y;
+    call.rect.width = MAP_WIDTH(self->crEdit.map);
+    call.rect.height = MAP_HEIGHT(self->crEdit.map);
     call.z = 0;
 
     /*
