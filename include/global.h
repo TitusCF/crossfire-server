@@ -61,7 +61,6 @@ typedef unsigned short Fontindex;
 /* This blob, in this order, is needed to actually define maps */
 #include "face.h"
 /* Include the basic defines from spells.h */
-#include "spells.h"
 #include "material.h"
 #include "living.h"
 #include "object.h"
