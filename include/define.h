@@ -122,9 +122,9 @@
 #define HORN		35
 #define MONEY		36
 
-/* unused: 37
- * type 37 was GRAVE
- */
+#define CLASS 37  /* object for applying character class modifications to someone */
+
+
 
 #define GRAVESTONE	38
 #define AMULET		39
@@ -154,6 +154,7 @@
 #define MARKER          55 /* inserts an invisible, weightless
 			      force into a player with a specified string. */
 #define HOLY_ALTAR	56
+#define PLAYER_CHANGER  57
 
 #define GEM		60 
 #define FIRECHEST	61 
@@ -280,27 +281,27 @@
 #define AT_BLIND	0x00400000 /* 4194304 thomas@astro.psu.edu */ 
 #define AT_INTERNAL	0x00800000 /* Only used for internal calculations */
 
-#define PATH_NULL	0x00000000
-#define PATH_PROT	0x00000001
-#define PATH_FIRE	0x00000002
-#define PATH_FROST	0x00000004
-#define PATH_ELEC	0x00000008
-#define PATH_MISSILE	0x00000010
-#define PATH_SELF	0x00000020
-#define PATH_SUMMON	0x00000040
-#define PATH_ABJURE	0x00000080
-#define PATH_RESTORE	0x00000100
-#define PATH_DETONATE	0x00000200
-#define PATH_MIND	0x00000400
-#define PATH_CREATE	0x00000800
-#define PATH_TELE	0x00001000
-#define PATH_INFO	0x00002000
-#define PATH_TRANSMUTE	0x00004000
-#define PATH_TRANSFER	0x00008000
-#define PATH_TURNING	0x00010000
-#define PATH_WOUNDING	0x00020000
-#define PATH_DEATH	0x00040000
-#define PATH_LIGHT	0x00080000
+#define PATH_NULL	0x00000000      /* 0 */
+#define PATH_PROT	0x00000001      /* 1 */
+#define PATH_FIRE	0x00000002      /* 2 */
+#define PATH_FROST	0x00000004   /* 4 */
+#define PATH_ELEC	0x00000008      /* 8 */
+#define PATH_MISSILE	0x00000010   /* 16 */
+#define PATH_SELF	0x00000020      /* 32 */
+#define PATH_SUMMON	0x00000040   /* 64 */
+#define PATH_ABJURE	0x00000080  /* 128 */ 
+#define PATH_RESTORE	0x00000100  /* 256 */
+#define PATH_DETONATE	0x00000200  /* 512 */
+#define PATH_MIND	0x00000400    /* 1024 */
+#define PATH_CREATE	0x00000800   /* 2048 */
+#define PATH_TELE	0x00001000     /* 4096 */
+#define PATH_INFO	0x00002000     /* 8192 */
+#define PATH_TRANSMUTE	0x00004000   /* 16384 */
+#define PATH_TRANSFER	0x00008000  /*  32768 */
+#define PATH_TURNING	0x00010000  /* 65536 */
+#define PATH_WOUNDING	0x00020000  /* 131072 */
+#define PATH_DEATH	0x00040000  /* 262144 */
+#define PATH_LIGHT	0x00080000  /* 524288 */
 
 #define NRSPELLPATHS	20
 

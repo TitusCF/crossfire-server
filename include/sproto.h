@@ -377,7 +377,7 @@ extern archetype *get_player_archetype ( archetype* at );
 extern object *get_player ( player *p, mapstruct *m );
 extern object *get_nearest_player ( object *mon );
 extern int path_to_player ( object *mon, object *pl, int mindiff );
-extern void give_initial_items ( object *pl );
+extern void give_initial_items ( object *pl ,treasurelist *items);
 extern void get_name ( object *op );
 extern void get_password ( object *op );
 extern void play_again ( object *op );
@@ -628,7 +628,9 @@ extern void move_firechest ( object *op );
 extern void move_player_mover ( object *op );
 extern void move_creator ( object *op );
 extern void move_marker ( object *op );
+extern void apply_changes_to_player(object *player, object *change);
 extern int process_object ( object *op );
+extern void move_player_changer(object *op);
 
 #endif /* __STDC__ */
 #endif /* __CEXTRACT__ */
