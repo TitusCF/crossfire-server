@@ -1670,7 +1670,8 @@ Boolean EditObjectDelete (Edit self, int x, int y, int z)
     remove_ob (obj);
     free_object (obj);
     /* remove_ob should do this for us */
-    /*update_position (self->emap, x, y);*/
+    /* But it doesnt - ds */
+    update_position (self->emap, x, y);
     return True;
 }
 
