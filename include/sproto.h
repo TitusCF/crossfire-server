@@ -579,7 +579,7 @@ extern void move_cone ( object *op );
 extern void fire_a_ball ( object *op, int dir, int strength );
 extern void explosion ( object *op );
 extern void forklightning ( object *op, object *tmp );
-extern int reflwall ( mapstruct *m, int x, int y );
+extern int reflwall ( mapstruct *m, int x, int y, object *op );
 extern void move_bolt ( object *op );
 extern void move_golem ( object *op );
 extern void control_golem ( object *op, int dir );
