@@ -154,6 +154,13 @@ char **layoutgen(RMParms *RP) {
     /* no doorification */
   }
 
+  if(strstr(RP->layoutstyle,"snake")) {
+    maze = make_snake_layout(RP->Xsize,RP->Ysize,RP->layoutoptions1);
+    RP->map_layout_style = SNAKE_LAYOUT;
+    if(RANDOM()%2) roomify_layout(maze,RP);
+    
+  }
+
   if(maze == 0) /* unknown or unspecified layout type, pick one at random */
     switch(RANDOM()%NROFLAYOUTS) {
     case 0:
@@ -176,7 +183,12 @@ char **layoutgen(RMParms *RP) {
       RP->map_layout_style = ROGUELIKE_LAYOUT;
       /* no doorifying...  done already */
       break;
+    case 4:
+      maze = make_snake_layout(RP->Xsize,RP->Ysize,RP->layoutoptions1);
+      RP->map_layout_style = SNAKE_LAYOUT;
+      if(RANDOM()%2) roomify_layout(maze,RP);
     }
+
 
   maze = symmetrize_layout(maze, RP->symmetry_used,RP);
 

@@ -27,6 +27,7 @@ extern void bottom_right_centered_onion ( char **maze, int xsize, int ysize, int
 extern char **map_gen_spiral ( int xsize, int ysize, int option );
 extern void connect_spirals ( int xsize, int ysize, int sym, char **layout );
 extern char **maze_gen ( int xsize, int ysize, int option, RMParms *RP );
+extern char **make_snake_layout ( int xsize, int ysize, int option );
 extern void make_wall_free_list ( int xsize, int ysize );
 extern void pop_wall_point ( int *x, int *y );
 extern int find_free_point ( char **maze, int *x, int *y, int xc, int yc, int xsize, int ysize );
