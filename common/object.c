@@ -1315,6 +1315,19 @@ void insert_ob_in_map_simple(object *op, mapstruct *m)
   }
   else
     set_map_ob(op->map,op->x,op->y,op);   /* Tell the map that we're here */
+
+  /* build up linked list of light sources in each map. We do
+   * this even for non-dark maps, as down the line we might make
+   * a spell/effect which effects the global light of any map.
+   * -b.t.
+   */
+#ifdef USE_LIGHTING
+        if(op->glow_radius>0&&light_not_listed(op)) {
+		add_light_to_map(op,m);
+		update_all_los(m);
+	} else if(m->darkness&&(op->glow_radius>0||op->lights)) /* a light moved, check los */
+		update_all_los(m);
+#endif 
   
   if(op->type==PLAYER)
     op->contr->do_los=1;

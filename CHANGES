@@ -17,6 +17,10 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+Patch by Jeffry Hantin which fixes glow objects in map.
+insert_ob_in_map_simple now will call the appropriate light updating code.
+Applied by MSW 6/26/2000
+
 server/player.c: check_pick():  Rewrite of this function to consistently
 skip items that can't be picked up, and to only use a single loop over all
 items on the map square.  - Jan Echternach 6/23/2000
