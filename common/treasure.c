@@ -1182,11 +1182,13 @@ void init_artifacts() {
 	cp=buf;
 	while(*cp==' ') /* Skip blanks */
 	    cp++;
- 
+    if (*cp=='\0') continue;
+    
 	if (!strncmp(cp, "Allowed", 7)) {
-	    art=get_empty_artifact();
-
-	    nrofartifacts++;
+		if (art==NULL) {
+		  art=get_empty_artifact();
+		  nrofartifacts++;
+        }
 	    cp = strchr(cp,' ') + 1;
 	    if (!strcmp(cp,"all")) continue;
 
@@ -1219,6 +1221,7 @@ void init_artifacts() {
 	    }
 	    art->next = al->items;
 	    al->items = art;
+		art = NULL;
 	}
 	else
 	    LOG(llevError,"Unkown input in artifact file: %s\n", buf);

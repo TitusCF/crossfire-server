@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/treasure.c: patch from Bernd Edler to enable multiple
+   'allowed' lines in artifacts.
+Ryo 2004-03-12
+
 Those fixes make DMs more 'stealthy' (when hiding/unhiding).
 Also use yet unused colors for player join/leave, and DM join/leave.
 This way those messages appear in a different window in split window
