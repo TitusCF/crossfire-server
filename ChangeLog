@@ -17,26 +17,70 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+  Modified files:
+    TODO common/anim.c common/arch.c common/button.c common/exp.c
+    common/init.c common/item.c common/living.c common/loader.c
+    common/loader.l common/logger.c common/object.c
+    common/re-cmp.c common/readable.c common/recipe.c
+    common/treasure.c doc/Developers/objects
+    doc/Developers/protocol doc/Developers/python
+    doc/Developers/skills doc/Developers/spells
+    include/Makefile.am include/Makefile.in include/attack.h
+    include/config.h include/define.h include/global.h
+    include/includes.h include/libproto.h include/living.h
+    include/map.h include/newclient.h include/newserver.h
+    include/object.h include/player.h include/plugin.h
+    include/skills.h include/sockproto.h include/spells.h
+    include/sproto.h include/timers.h lib/Makefile.am
+    lib/Makefile.in lib/animations lib/archetypes lib/artifacts
+    lib/bmaps lib/bmaps.paths lib/collect.pl.in lib/crossfire.0
+    lib/crossfire.1 lib/faces lib/formulae lib/settings
+    lib/treasures lib/treasures.bld lib/adm/collect_images.pl
+    plugin/plugin_python.c plugin/include/plugin_python.h
+    server/Makefile.am server/Makefile.in server/alchemy.c
+    server/apply.c server/attack.c server/c_misc.c server/c_move.c
+    server/c_object.c server/c_party.c server/c_range.c
+    server/c_wiz.c server/commands.c server/disease.c
+    server/gods.c server/init.c server/login.c server/main.c
+    server/monster.c server/pets.c server/player.c
+    server/plugins.c server/resurrection.c server/rune.c
+    server/shop.c server/skill_util.c server/skills.c
+    server/spell_effect.c server/spell_util.c server/swamp.c
+    server/time.c server/weather.c socket/info.c socket/init.c
+    socket/item.c socket/loop.c socket/lowlevel.c
+    socket/metaserver.c socket/request.c socket/sounds.c
+ Added Files:
+    server/spell_attack.c
+ Removed Files:
+    include/skillist.h lib/skill_params lib/spell_params
+
+    Updated code for skill + spell code.  skills and spells are now objects.
+    tuning these now means changing the archetypes.  New spells can now
+    be added just by making a new archetype.  Lots of code cleanup
+    also done.
+    MSW 2003-09-12
+
+
 TRAPS:
     include/define.h 
 	common/object.c, treasure.c 
-	server/attack.c, skill_util.c, skills.c, rune.c, time.c, player.c, apply.c
-	Established new type traps distinguished from runes.  Traps are 
-	more mechanical in nature, not impacted by detect magic or counterspell
-	(maybe in future once skills are settled out more fine tuning changes in
-	detecting and disarming these too...).  Traps also can now trigger connected 
-	objects if they are detonated.  Migrated traps to new type and made
-	new generic trap archetype for more complex trapping (ye olde red shaded tile...)
-	TM -2003-09-04
+	server/attack.c, skill_util.c, skills.c, rune.c, time.c, player.c,
+	apply.c Established new type traps distinguished from runes.  Traps
+	are more mechanical in nature, not impacted by detect magic or
+	counterspell (maybe in future once skills are settled out more fine
+	tuning changes in detecting and disarming these too...).  Traps also
+	can now trigger connected objects if they are detonated.  Migrated
+	traps to new type and made new generic trap archetype for more complex
+	trapping (ye olde red shaded tile...)  TM -2003-09-04
 	
 	
 friendly_fire:
 	Added friendly_fire to attack.c, called from hit_player.
-	Will put a cap on maxdam that is a percentage (1-100%) of damage (min 1)
-	based on SET_FRIENDLY_FIRE value when players attack in peaceful mode.
-	Changed who, statistics to show this setting better and added help file for peaceful.
-	It would be nice to have a indicator in the client for this as well.
-	TM - 2003-08-25
+	Will put a cap on maxdam that is a percentage (1-100%) of damage (min
+	1) based on SET_FRIENDLY_FIRE value when players attack in peaceful
+	mode.  Changed who, statistics to show this setting better and added
+	help file for peaceful.  It would be nice to have a indicator in the
+	client for this as well.  TM - 2003-08-25
 	
 protocol/doc/code:
 	Changed the way smoothing is done. Switched the smooth 
