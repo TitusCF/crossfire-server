@@ -141,7 +141,7 @@ void cast_magic_storm(object *op, object *tmp, int lvl) {
     tmp->level=SK_level(op);
     tmp->x=op->x;tmp->y=op->y; 
     tmp->stats.hp+=lvl/5;  /* increase the area of destruction */
-    tmp->stats.dam=lvl; /* nasty recoils! */ 
+    tmp->stats.dam=lvl; /* nasty recoils! */
     tmp->stats.maxhp=tmp->count; /*??*/ 
     insert_ob_in_map(tmp,op->map,op); 
 
@@ -732,6 +732,265 @@ int perceive_self(object *op) {
     }
     return 1;
 }
+
+ /* int cast_create_town_portal (object *op, object *caster, int dir)
+  *
+  * This function cast the spell of town portal for op
+  * The spell operates in two passes. During the first one a place
+  * is marked as a destination for the portal. During the second one,
+  * 2 portals are created, one in the position the player cast it and
+  * one in the destination place. The portal are synchronized and 2 forces
+  * are inserted in the player to destruct the portal next time player
+  * creates a new portal pair.
+  * This spell has a side effect that it allows people to meet each other
+  * in a permanent, private,  appartements by making a town portal from it
+  * to the town or another public place. So, check if the map is unique and if
+  * so return an error
+  *
+  * Code by Tchize (david.delbecq@usa.net)
+  */
+ int cast_create_town_portal (object *op, object *caster, int dir)
+   {
+   #define PORTAL_DESTINATION_NAME "Town portal destination"
+   #define PORTAL_ACTIVE_NAME "Existing town portal"
+   object* dummy;
+   object* force;
+   object* old_force;
+   object* current_obj;
+   archetype *perm_portal;
+   char portal_name [1024];
+   char portal_message [1024];
+   char *exitpath;
+   sint16 exitx=15;
+   sint16 exity=15;
+   mapstruct *exitmap;
+   int op_level;
+
+   /* The first thing to do is to check if we have a marked destination
+    * dummy is used to make a check inventory for the force
+    */
+   if (!strncmp(op->map->path, settings.localdir, strlen(settings.localdir)))
+         {
+         new_draw_info(NDI_UNIQUE | NDI_NAVY, 0,op,"You can't cast that here.\n");
+         return 0;
+         }
+   dummy=get_archetype("force");
+   if(dummy == NULL){
+     new_draw_info(NDI_UNIQUE, 0,op,"Oops, program error!");
+     LOG(llevError,"get_object failed (force in cast_create_town_portal for %s!\n",op->name);
+     return 0;
+   }
+   free_string (dummy->name);
+   dummy->name = add_string (PORTAL_DESTINATION_NAME);
+   dummy->stats.hp=0;
+   dummy->slaying = add_string (PORTAL_DESTINATION_NAME);
+   force=check_inv_recursive (op,dummy);
+   if (force==NULL)
+     /* Here we know there is no destination marked up.
+      * We have 2 things to do:
+      * 1. Mark the destination in the player inventory.
+      * 2. Let the player know it worked.
+      */
+     {
+     free_string (dummy->name);
+     dummy->name = add_string (op->map->path);
+     EXIT_X(dummy)= op->x;
+     EXIT_Y(dummy)= op->y;
+     dummy->speed=0.0;
+     update_ob_speed (dummy);
+     insert_ob_in_ob (dummy,op);
+     new_draw_info(NDI_UNIQUE | NDI_NAVY, 0,op,"You fix this place in your mind.\nYou feel you are able to come here from anywhere.");
+     return 1;
+     }
+   free_object (dummy);
+   /* Here we know where the town portal should go to
+    * We should kill any existing portal associated with the player.
+    * Than we should create the 2 portals.
+    * For each of them, we need:
+    *    - To create the portal with the name of the player+destination map
+    *    - set the owner of the town portal
+    *    - To mark the position of the portal in the player's inventory
+    *      for easier destruction. ²
+    *
+    * ² The mark works has follow:
+    *   slaying: Existing town portal
+    *   hp, sp : x & y of the associated portal
+    *   name   : name of the portal
+    *   race   : map the portal is in
+    */
+
+   /* First step: killing existing town portals */
+   dummy=get_archetype("force");
+   if(dummy == NULL){
+     new_draw_info(NDI_UNIQUE, 0,op,"Oops, program error!");
+     LOG(llevError,"get_object failed (force) in cast_create_town_portal for %s!\n",op->name);
+     return 0;
+   }
+   free_string (dummy->name);
+   dummy->name = add_string (portal_name);   /*Usefull for string comparaison later (add_string)*/
+   dummy->stats.hp=0;
+   dummy->slaying = add_string (PORTAL_ACTIVE_NAME);
+   perm_portal = find_archetype ("perm_magic_portal");
+   while ( (old_force=check_inv_recursive (op,dummy)))
+     /* To kill a town portal, we go trough the player's inventory,
+      * for each marked portal in player's inventory,
+      *   -We try load the associated map (if impossible, consider the portal destructed)
+      *   -We find any portal in the specified location.
+      *      If it has the good name, we destruct it.
+      *   -We destruct the force indicating that portal.
+      */
+     {
+     exitpath=add_string (old_force->race);
+     exitx=EXIT_X(old_force);
+     exity=EXIT_Y(old_force);
+     LOG (llevDebug,"Trying to kill a portal in %s (%d,%d)\n",exitpath,exitx,exity);
+     if (!strncmp(exitpath, settings.localdir, strlen(settings.localdir))) exitmap = ready_map_name(exitpath, MAP_PLAYER_UNIQUE);
+     else exitmap = ready_map_name(exitpath, 0);
+     if (exitmap)
+       {
+       current_obj=present_arch (perm_portal,exitmap,exitx,exity);
+       while (current_obj)
+         {
+         if (current_obj->name !=old_force->name)
+           {
+           current_obj=current_obj->above;
+           continue;
+           }
+         remove_ob (current_obj);
+         free_object (current_obj);
+         break;
+         }
+       }
+     remove_ob (old_force);
+     free_object (old_force);
+     LOG (llevDebug,"\n",old_force->name);
+     free_string (exitpath);
+     }
+   free_object (dummy);
+   /* Creating the portals.
+    * The very first thing to do is to ensure
+    * access to the destination map.
+    * If we can't, don't fizzle. Simply warn player.
+    * This ensure player pays his mana for the spell
+    * because HE is responsible of forgotting.
+    */
+   op_level =SK_level (op);
+   if (op_level<15)
+         snprintf (portal_message,1024,"\nAir moves around you and\na huge smell of ammoniac\nrounds you as you pass\nthrough %s's portal\nPouah!\n",op->name);
+   else if (op_level<30)
+         snprintf (portal_message,1024,"\n%s's portal smells ozone.\nYou do a lot of movements and finally pass\nthrough the small hole in the air\n",op->name);
+   else if (op_level<60)
+         snprintf (portal_message,1024,"\nA sort of door opens in the air in front of you,\nshowing you the path to somewhere else.");
+   else snprintf (portal_message,1024,"\nAs you walk on %s's portal, flowers comes\nfrom the ground around you.\nYou feel quiet.",op->name);
+   exitpath=add_string (force->name);
+   exitx=EXIT_X(force);
+   exity=EXIT_Y(force);
+   remove_ob(force); /*Delete the force inside the player*/
+   free_object(force);
+   if (!strncmp(exitpath, settings.localdir, strlen(settings.localdir))) /*Ensure exit map is loaded*/
+     exitmap = ready_map_name(exitpath, MAP_PLAYER_UNIQUE);
+   else
+     exitmap = ready_map_name(exitpath, 0);
+   if (exitmap==NULL) /*If we were unable to load (ex. random map deleted), warn player*/
+     {
+     new_draw_info(NDI_UNIQUE | NDI_NAVY, 0,op,"Something strange happens.\nYou can't remember where to go!?");
+     free_string (exitpath);
+     return 1;
+     }
+   /* Create a portal in front of player
+    * dummy contain the portal and
+    * force contain the track to kill it later
+    */
+   snprintf (portal_name,1024,"%s's portal to %s",op->name,exitpath);
+   dummy=get_archetype ("perm_magic_portal"); /*The portal*/
+   if(dummy == NULL)
+     {
+     new_draw_info(NDI_UNIQUE, 0,op,"Oops, program error!");
+     LOG(llevError,"get_object failed (perm_magic_portal) in cast_create_town_portal for %s!\n",op->name);
+     free_string (exitpath);
+     return 0;
+     }
+   dummy->speed = 0.0;
+   update_ob_speed (dummy);
+   free_string (EXIT_PATH(dummy));
+   EXIT_PATH(dummy) = add_string (exitpath);
+   EXIT_X(dummy)=exitx;
+   EXIT_Y(dummy)=exity;
+   free_string (dummy->name);
+   dummy->name=add_string (portal_name);
+   dummy->msg=add_string (portal_message);
+   CLEAR_FLAG (dummy,FLAG_WALK_ON);
+   CLEAR_FLAG (dummy,FLAG_FLY_ON);
+   dummy->stats.exp=1; /*Set as a 2 ways exit (see manual_apply & is_legal_2ways_exit funcs)*/
+   dummy->race=add_string (op->name);  /*Save the owner of the portal*/
+   cast_create_obj (op, caster, dummy, 0);
+   force=get_archetype("force");              /*The force*/
+   if(force == NULL){
+     new_draw_info(NDI_UNIQUE, 0,op,"Oops, program error!");
+     LOG(llevError,"get_object failed (force) in cast_create_town_portal for %s!\n",op->name);
+     free_string (exitpath);
+     return 0;
+   }
+   force->slaying= add_string (PORTAL_ACTIVE_NAME);
+   force->race=add_string (op->map->path);
+   force->name=add_string (portal_name);
+   EXIT_X(force)=dummy->x;
+   EXIT_Y(force)=dummy->y;
+   force->speed=0.0;
+   update_ob_speed (force);
+   insert_ob_in_ob (force,op);
+   /* Create a portal in the destination map
+    * dummy contain the portal and
+    * force the track to kill it later
+    */
+   snprintf (portal_name,1024,"%s's portal to %s",op->name,op->map->path);
+   dummy=get_archetype ("perm_magic_portal"); /*The portal*/
+   if(dummy == NULL)
+     {
+     new_draw_info(NDI_UNIQUE, 0,op,"Oops, program error!");
+     LOG(llevError,"get_object failed (perm_magic_portal) in cast_create_town_portal for %s!\n",op->name);
+     free_string (exitpath);
+     return 0;
+     }
+   dummy->speed = 0.0;
+   update_ob_speed (dummy);
+   free_string (EXIT_PATH(dummy));
+   EXIT_PATH(dummy) = add_string (op->map->path);
+   EXIT_X(dummy)=op->x;
+   EXIT_Y(dummy)=op->y;
+   free_string (dummy->name);
+   dummy->name=add_string (portal_name);
+   dummy->msg=add_string (portal_message);
+   CLEAR_FLAG (dummy,FLAG_WALK_ON);
+   CLEAR_FLAG (dummy,FLAG_FLY_ON);
+   dummy->x=exitx;
+   dummy->y=exity;
+   dummy->stats.exp=1; /*Set as a 2 ways exit (see manual_apply & is_legal_2ways_exit funcs)*/
+   dummy->race=add_string (op->name);  /*Save the owner of the portal*/
+   insert_ob_in_map(dummy,exitmap,op);
+   force=get_archetype("force");              /*The force*/
+   if(force == NULL){
+     new_draw_info(NDI_UNIQUE, 0,op,"Oops, program error!");
+     LOG(llevError,"get_object failed (force) in cast_create_town_portal for %s!\n",op->name);
+     free_string (exitpath);
+     return 0;
+   }
+   force->slaying= add_string (PORTAL_ACTIVE_NAME);
+   force->race=add_string (exitpath);
+   force->name=add_string (portal_name);
+   EXIT_X(force)=dummy->x;
+   EXIT_Y(force)=dummy->y;
+   force->speed=0.0;
+   update_ob_speed (force);
+   insert_ob_in_ob (force,op);
+   /* Describe the player what happened
+    */
+   new_draw_info(NDI_UNIQUE | NDI_NAVY, 0,op,"You see air moving and showing you the way home.");
+   free_string (exitpath);
+   return 1;
+   #undef PORTAL_DESTINATION_NAME
+   #undef PORTAL_ACTIVE_NAME
+   }
 
 int cast_destruction(object *op, object *caster, int dam, int attacktype) {
   int i,j;

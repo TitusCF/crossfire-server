@@ -48,7 +48,7 @@ typedef struct _msglang {
 
 extern spell spells[NROFREALSPELLS];
 
-#define MIN_MON_RADIUS 3 /* minimum monster detection radius */ 
+#define MIN_MON_RADIUS 3 /* minimum monster detection radius */
 
 object *get_enemy(object *npc) {
   if ((npc->move_type & HI4) == 16) {
@@ -533,7 +533,7 @@ s */
 
 /* monster_use_skill()-implemented 95-04-28 to allow monster skill use.
  * Note that monsters do not need the skills SK_MELEE_WEAPON and
- * SK_MISSILE_WEAPON to make those respective attacks, if we 
+ * SK_MISSILE_WEAPON to make those respective attacks, if we
  * required that we would drastically increase the memory
  * requirements of CF!! 
  *
@@ -1339,15 +1339,25 @@ void communicate(object *op, char *txt) {
         if (npc->type == MAGIC_EAR)
           (void) talk_to_wall(npc, txt); /* Maybe exit after 1. success? */
         else if(flag)  {
-          if (talk_to_npc(npc,txt))
+          if (talk_to_npc(op, npc,txt))
             flag=0; /* Can be crowded */
 	}
       }
 }
 
-int talk_to_npc(object *npc, char *txt) {
+int talk_to_npc(object *op, object *npc, char *txt) {
   msglang *msgs;
   int i,j;
+  /* GROS: Guile script handler */
+  if(npc->script_say != NULL)
+  {
+    guile_call_event(op, npc, NULL, 0, txt,0,0,npc->script_say, SCRIPT_FIX_ALL);
+    return;
+  };
+  if (npc->script_str_say !=NULL)
+  {
+    guile_call_event_str(op,npc,NULL,0,txt,0,0,npc->script_str_say, SCRIPT_FIX_ALL);
+  };
 
   if(npc->msg == NULL || *npc->msg != '@')
     return 0;

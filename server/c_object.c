@@ -51,86 +51,6 @@
 	  last->ob=(NEW);\
           last->id=(COUNT);
 
-/* This is a subset of the parse_id command.  Basically, name can be
- * a string seperated lists of things to match, with certain keywords.
- * pl is the player (only needed to set count properly)
- * op is the item we are trying to match.  Calling function takes care
- * of what action might need to be done and if it is valid
- * (pickup, drop, etc.)  Return NONZERO if we have a match.  A higher
- * value means a better match.  0 means no match.
- *
- * Brief outline of the procedure:
- * We take apart the name variable into the individual components.
- * cases for 'all' and unpaid are pretty obvious.
- * Next, we check for a count (either specified in name, or in the
- * player object.)
- * If count is 1, make a quick check on the name.
- * IF count is >1, we need to make plural name.  Return if match.
- * Last, make a check on the full name.
- */
-int item_matched_string(object *pl, object *op, char *name)
-{
-
-    char *cp, local_name[MAX_BUF];
-    int count,retval=0;
-
-    strcpy(local_name, name);	/* strtok is destructive to name */
-    for (cp=strtok(local_name,","); cp; cp=strtok(NULL,",")) {
-	while (cp[0]==' ') ++cp;	/* get rid of spaces */
-/*	LOG(llevDebug,"Trying to match %s\n", cp);*/
-	/* All is a very generic match - low match value */
-	if (!strcmp(cp,"all")) return 1;
-	/* unpaid is a little more specific */
-	if (!strcmp(cp,"unpaid") && QUERY_FLAG(op,FLAG_UNPAID)) return 2;
-	if (!strcmp(cp,"cursed") && QUERY_FLAG(op,FLAG_KNOWN_CURSED) &&
-	    (QUERY_FLAG(op,FLAG_CURSED) ||QUERY_FLAG(op,FLAG_DAMNED)))
-		return 2;
-	/* Allow for things like '100 arrows' */
-	if ((count=atoi(cp))!=0) {
-	    cp=strchr(cp, ' ');
-	    while (cp && cp[0]==' ') ++cp;	/* get rid of spaces */
-	}
-	else count=pl->contr->count;
-	if (!cp || cp[0]=='\0' || count<0) return 0;
-	/* base name matched - not bad */
-	if (strcasecmp(cp,op->name)==0 && !count) retval=24;
-	else if (count>1) {	/* Need to plurify name for proper match */
-	    char newname[MAX_BUF];
-	    strcpy(newname, op->name);
- 	    if (QUERY_FLAG(op,FLAG_NEED_IE)) {
-		char *cp1=strrchr(newname,'y');
-                if(cp1!=NULL)
-                    *cp1='\0'; /* Strip the 'y' */
-                strcat(newname,"ies");
-	    }
-	    else strcat(newname,"s");
-	    if (!strcasecmp(newname,cp)) {
-		pl->contr->count=count;	/* May not do anything */
-		retval=26;
-	    }
-	}
-	else if (count==1) {
-	    if (!strcasecmp(op->name,cp)) {
-		pl->contr->count=count;	/* May not do anything */
-		retval=26;
-	    }
-	}
-	if (!strcasecmp(cp,query_name(op))) retval=20;
-	else if (!strcasecmp(cp,query_short_name(op))) retval=18;
-	else if (!strcasecmp(cp,query_base_name(op,0))) retval=16;
-	else if (!strcasecmp(cp,query_base_name(op,1))) retval=16;
-	else if (!strncasecmp(cp,query_base_name(op,0),
-		MIN(strlen(cp),strlen(query_base_name(op,0))))) retval=14;
-	else if (!strncasecmp(cp,query_base_name(op,1),
-		MIN(strlen(cp),strlen(query_base_name(op,1))))) retval=14;
-	if (retval) {
-	    pl->contr->count=count;
-	    return retval;
-	}
-    }
-    return 0;
-}
-
 /* Search the inventory of 'pl' for what matches best with params.
  * we use item_matched_string above - this gives us consistent behaviour
  * between many commands.  Return the best match, or NULL if no match.
@@ -523,12 +443,12 @@ void put_object_in_sack (object *op, object *sack, object *tmp, long nrof)
     }
     if (tmp->type == CONTAINER && tmp->inv) {
 
-      /* Eneq(@csd.uu.se): If the object to be dropped is a container 
+      /* Eneq(@csd.uu.se): If the object to be dropped is a container
        * we instead move the contents of that container into the active
-       * container, this is only done if the object has something in it. 
+       * container, this is only done if the object has something in it.
        */
       sack2 = tmp;
-      new_draw_info_format(NDI_UNIQUE, 0,op, "You move the items from %s into %s.", 
+      new_draw_info_format(NDI_UNIQUE, 0,op, "You move the items from %s into %s.",
 		    query_name(tmp), query_name(op->container));
       for (tmp2 = tmp->inv; tmp2; tmp2 = tmp) {
 	  tmp = tmp2->below;
@@ -576,15 +496,15 @@ void put_object_in_sack (object *op, object *sack, object *tmp, long nrof)
     tmp_tag = tmp->count;
     tmp2 = insert_ob_in_ob(tmp, sack);
     new_draw_info(NDI_UNIQUE, 0,op,buf);
-    fix_player(op); /* This is overkill, fix_player() is called somewhere */ 
+    fix_player(op); /* This is overkill, fix_player() is called somewhere */
 		  /* in object.c */
 
     /* If an object merged (and thus, different object), we need to
      * delete the original.
      */
-    if (tmp2 != tmp) 
+    if (tmp2 != tmp)
 	esrv_del_item (op->contr, tmp_tag);
-	    
+
     esrv_send_item (op, tmp2);
     /* update the sacks and players weight */
     esrv_update_item (UPD_WEIGHT, op, sack);
@@ -592,16 +512,16 @@ void put_object_in_sack (object *op, object *sack, object *tmp, long nrof)
 }
 
 /*
- *  This function was part of drop, now is own function. 
+ *  This function was part of drop, now is own function.
  *  Player 'op' tries to drop object 'tmp', if tmp is non zero, then
- *  nrof objects is tried to dropped. 
+ *  nrof objects is tried to dropped.
  * This is used when dropping objects onto the floor.
  */
-void drop_object (object *op, object *tmp, long nrof) 
+void drop_object (object *op, object *tmp, long nrof)
 {
     char buf[MAX_BUF];
     object *floor;
-  
+
     if (QUERY_FLAG(tmp, FLAG_NO_DROP)) {
 #if 0
       /* Eneq(@csd.uu.se): Objects with NO_DROP defined can't be dropped. */
@@ -628,50 +548,69 @@ void drop_object (object *op, object *tmp, long nrof)
 	}
 	/* Tell a client what happened rest of objects.  tmp2 is now the
 	 * original object
-	 */ 
-	if (was_destroyed (tmp2, tmp2_tag))
-	      esrv_del_item (op->contr, tmp2_tag);
-	else
-	      esrv_send_item (op, tmp2);
+	 */
+	 if (op->type == PLAYER)
+	 {
+                if (was_destroyed (tmp2, tmp2_tag))
+                        esrv_del_item (op->contr, tmp2_tag);
+                else
+                        esrv_send_item (op, tmp2);
+	};
     } else
       remove_ob (tmp);
+
+        /* GROS: Added script_drop support */
+        if (tmp->script_drop!=NULL) {
+                printf("Script_drop is %s\n", tmp->script_drop);
+                guile_call_event(op, tmp ,NULL, 0, NULL, 0,0, tmp->script_drop, SCRIPT_FIX_ALL);
+        };
+        if (tmp->script_str_drop!=NULL) {
+                guile_call_event_str(op, tmp ,NULL, 0, NULL, 0,0, tmp->script_str_drop, SCRIPT_FIX_ALL);
+        };
+
 
     if (QUERY_FLAG (tmp, FLAG_STARTEQUIP)) {
       sprintf(buf,"You drop the %s.", query_name(tmp));
       new_draw_info(NDI_UNIQUE, 0,op,buf);
       new_draw_info(NDI_UNIQUE, 0,op,"The gods who lent it to you retrieves it.");
+      if (op->type==PLAYER)
 	esrv_del_item (op->contr, tmp->count);
       free_object(tmp);
       fix_player(op);
       return;
     }
 
-/*  If SAVE_INTERVAL is commented out, we never want to save 
- *  the player here. 
+/*  If SAVE_INTERVAL is commented out, we never want to save
+ *  the player here.
  */
 #ifdef SAVE_INTERVAL
-    if (!QUERY_FLAG(tmp, FLAG_UNPAID) && 
+    if (op->type == PLAYER)
+    {
+    if (!QUERY_FLAG(tmp, FLAG_UNPAID) &&
       (tmp->nrof ? tmp->value * tmp->nrof : tmp->value > 2000))
 #if SAVE_INTERVAL
       if((op->contr->last_save_time + SAVE_INTERVAL) <= time(NULL)) {
 	  save_player(op, 1);
 	  op->contr->last_save_time = time(NULL);
-}
+     }
 #else
 	save_player(op,1); /* To avoid cheating */
+        };
+};
 #endif
 #endif /* SAVE_INTERVAL */
 
 
     floor = get_map_ob (op->map, op->x, op->y);
-    if( floor && floor->type == SHOP_FLOOR && 
+    if( floor && floor->type == SHOP_FLOOR &&
        !QUERY_FLAG(tmp, FLAG_UNPAID) && tmp->type != MONEY)
       sell_item(tmp,op);
 
     tmp->x = op->x;
     tmp->y = op->y;
 
-    esrv_del_item (op->contr, tmp->count);
+    if (op->type == PLAYER)
+        esrv_del_item (op->contr, tmp->count);
     insert_ob_in_map(tmp, op->map, op);
 
 
@@ -683,22 +622,23 @@ void drop_object (object *op, object *tmp, long nrof)
     /* Call this before we update the various windows/players.  At least
      * that we, we know the weight is correct.
      */
-    fix_player(op); /* This is overkill, fix_player() is called somewhere */ 
+    fix_player(op); /* This is overkill, fix_player() is called somewhere */
 		    /* in object.c */
 
-
+    if (op->type == PLAYER)
+    {
     op->contr->socket.update_look = 1;
 /*    esrv_send_item (op, tmp);*/
     /* Need to update the weight for the player */
     esrv_send_item (op, op);
-
+    };
 
 #ifdef USE_LIGHTING
     if(tmp->glow_radius>0) remove_light_from_list(tmp,op);
 #endif
 }
 
-void drop(object *op, object *tmp) 
+void drop(object *op, object *tmp)
 {
     /* Hopeful fix for disappearing objects when dropping from a container -
      * somehow, players get an invisible object in the container, and the
@@ -727,7 +667,7 @@ void drop(object *op, object *tmp)
     if (QUERY_FLAG(tmp, FLAG_INV_LOCKED)) {
       new_draw_info(NDI_UNIQUE, 0,op,"This item is locked");
       return;
-    } 
+    }
     if (QUERY_FLAG(tmp, FLAG_NO_DROP)) {
 #if 0
       /* Eneq(@csd.uu.se): Objects with NO_DROP defined can't be dropped. */
@@ -736,6 +676,8 @@ void drop(object *op, object *tmp)
       return;
     }
 
+    if (op->type == PLAYER)
+    {
     if (op->contr->last_used==tmp && op->contr->last_used_id == tmp->count) {
       object *n=NULL;
       if(tmp->below != NULL)
@@ -748,13 +690,25 @@ void drop(object *op, object *tmp)
       else
 	  op->contr->last_used_id = 0;
     }
+    };
 
     if (op->container) {
-      put_object_in_sack (op, op->container, tmp, op->contr->count);
+        if (op->type == PLAYER)
+        {
+                put_object_in_sack (op, op->container, tmp, op->contr->count);
+        } else {
+                put_object_in_sack(op, op->container, tmp, 0);
+        };
     } else {
-      drop_object (op, tmp, op->contr->count);
+        if (op->type == PLAYER)
+        {
+                drop_object (op, tmp, op->contr->count);
+        } else {
+                drop_object(op,tmp,0);
+        };
     }
-    op->contr->count = 0;
+    if (op->type == PLAYER)
+        op->contr->count = 0;
 }
 
 
@@ -763,7 +717,7 @@ void drop(object *op, object *tmp)
 int command_dropall (object *op, char *params) {
 
   object * curinv, *nextinv;
-  
+
   if(op->inv == NULL) {
     new_draw_info(NDI_UNIQUE, 0,op,"Nothing to drop!");
     return 0;
@@ -867,7 +821,7 @@ int command_dropall (object *op, char *params) {
 
 /* Object op wants to drop object(s) params.  params can be a
  * comma seperated list.
- */    
+ */
 
 int command_drop (object *op, char *params)
 {
@@ -880,7 +834,7 @@ int command_drop (object *op, char *params)
     } else {
 	for (tmp=op->inv; tmp; tmp=next) {
 	    next=tmp->below;
-	    if (QUERY_FLAG(tmp,FLAG_NO_DROP) || 
+	    if (QUERY_FLAG(tmp,FLAG_NO_DROP) ||
 		tmp->invisible) continue;
 	    if (item_matched_string(op,tmp,params)) {
 		drop(op, tmp);
@@ -889,8 +843,11 @@ int command_drop (object *op, char *params)
 	}
 	if (!did_one) new_draw_info(NDI_UNIQUE, 0,op,"Nothing to drop.");
     }
-    op->contr->count=0;
-    op->contr->socket.update_look=1;
+    if (op->type==PLAYER)
+    {
+        op->contr->count=0;
+        op->contr->socket.update_look=1;
+    };
 /*    draw_look(op);*/
     return 0;
 }
@@ -904,7 +861,7 @@ int command_examine (object *op, char *params)
   }
   else {
     object *tmp=find_best_object_match(op,params);
-    if (tmp) 
+    if (tmp)
         examine(op,tmp);
     else
 	    new_draw_info_format(NDI_UNIQUE,0,op,"Could not find an object that matches %s",params);
@@ -914,7 +871,7 @@ int command_examine (object *op, char *params)
 
 /* op should be a player.
  * we return the object the player has marked with the 'mark' command
- * below.  If no match is found (or object has changed), we return 
+ * below.  If no match is found (or object has changed), we return
  * NULL.  We leave it up to the calling function to print messages if
  * nothing is found.
  */

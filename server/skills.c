@@ -822,7 +822,7 @@ int singing(object *pl, int dir) {
 	    if(tmp->level>SK_level(pl)) break;	/* too powerfull */
 	    if(QUERY_FLAG(tmp,FLAG_UNDEAD)) break; /* undead dont listen! */ 
 
-	    if(QUERY_FLAG(tmp,FLAG_UNAGGRESSIVE) /* already calm */ 
+	    if(QUERY_FLAG(tmp,FLAG_UNAGGRESSIVE) /* already calm */
 	       ||QUERY_FLAG(tmp,FLAG_FRIENDLY)) 
 			break;	
 
@@ -936,7 +936,7 @@ int pray (object *pl) {
     if(pl->stats.grace < pl->stats.maxgrace) {
 	pl->stats.grace++;
 	pl->last_grace = -1;
-    } else return 0; 
+    } else return 0;
 
     /* Is this really right?  This will basically increase food
      * consumption, hp & sp regeneration, and everything else that
@@ -1092,21 +1092,32 @@ int write_note(object *pl, object *item, char *msg) {
 	  skills[SK_INSCRIPTION].name);
 	return 0;
   }
+   /* GROS : Handler for books with actions triggered by writing into them */
+   if (item->script_trigger!=NULL)
+   {
+     guile_call_event(pl, item, NULL, 0, msg, 0, 0, item->script_trigger, SCRIPT_FIX_ALL);
+     return strlen(msg);
+   };
+   if (item->script_str_trigger!=NULL)
+   {
+      guile_call_event_str(pl, item, NULL, 0, msg, 0, 0, item->script_str_trigger, SCRIPT_FIX_ALL);
+      return strlen(msg);
+   };
 
-  if(!book_overflow(item->msg,msg,BOOK_BUF)) { /* add msg string to book */ 
-    if(item->msg) { 
+  if(!book_overflow(item->msg,msg,BOOK_BUF)) { /* add msg string to book */
+    if(item->msg) {
       strcpy(buf,item->msg);
       free_string(item->msg);
-    } 
+    }
     strcat(buf,msg);
-    strcat(buf,"\n"); /* new msg needs a LF */ 
+    strcat(buf,"\n"); /* new msg needs a LF */
     if(item->nrof > 1) {
       newBook = get_object();
       copy_object(item, newBook);
       decrease_ob(item);
       esrv_send_item(pl, item);
       newBook->nrof = 1;
-      newBook->msg = add_string(buf); 
+      newBook->msg = add_string(buf);
       newBook = insert_ob_in_ob(newBook, pl);
       esrv_send_item(pl, newBook);
     } else {
@@ -1500,7 +1511,7 @@ void do_throw(object *op, object *toss_item, int dir) {
 
     /* Make a thrown object -- insert real object in a 'carrier' object.
      * If unsuccessfull at making the "thrown_obj", we just reinsert
-     * the original object back into inventory and exit 
+     * the original object back into inventory and exit
      */
     if((toss_item = make_throw_ob(throw_ob)))
 	throw_ob = toss_item;
@@ -1538,7 +1549,7 @@ void do_throw(object *op, object *toss_item, int dir) {
     weight_f = (throw_ob->weight/2000)>MAX_STAT?MAX_STAT:(throw_ob->weight/2000);
     throw_ob->stats.dam += (dam/3) + dam_bonus[weight_f]
         + (throw_ob->weight/15000) - 2;
- 
+
     /* chance of breaking. Proportional to force used and weight of item */
     throw_ob->stats.food = (dam/2) + (throw_ob->weight/60000);
      
@@ -1618,6 +1629,17 @@ void do_throw(object *op, object *toss_item, int dir) {
     /* need to put in a good sound for this */
     play_sound_map(op->map, op->x, op->y, SOUND_THROW_OBJ);
 #endif
+
+/* GROS - Now we can call the associated script_throw event (if any) */
+
+    if (throw_ob->script_throw!=NULL)
+    {
+        guile_call_event(op, throw_ob, NULL, 0, NULL, 0, 0, throw_ob->script_throw, SCRIPT_FIX_ACTIVATOR);
+    };
+    if (throw_ob->script_str_throw!=NULL)
+    {
+        guile_call_event_str(op, throw_ob, NULL, 0, NULL, 0, 0, throw_ob->script_str_throw, SCRIPT_FIX_ACTIVATOR);
+    };
 
 #ifdef DEBUG_THROW
     LOG(llevDebug," pause_f=%d \n",pause_f);

@@ -786,6 +786,9 @@ if (item == spellNormal && !ability ){
   case SP_CONFLICT:
     success = cast_cause_conflict(op,caster,spellarch[type],type);
     break;
+  case SP_TOWN_PORTAL:
+    success= cast_create_town_portal (op,caster,dir);
+    break;
   }
 
   play_sound_map(op->map, op->x, op->y, SOUND_CAST_SPELL_0 + type);

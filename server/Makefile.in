@@ -59,6 +59,9 @@ SRCS = \
 	player.c\
 	resurrection.c\
 	rune.c\
+            script.c\
+            script_spells.c\
+            script_types.c\
 	shop.c\
 	skills.c\
 	skill_util.c\

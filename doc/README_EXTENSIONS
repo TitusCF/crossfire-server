@@ -1,0 +1,27 @@
+UNOFFICIAL CROSSFIRE EXTENSIONS
+-------------------------------
+
+This document lists all 'unofficial' extensions included in this version of Crossfire.
+These extensions may only be found here and are not part of the official Crossfire distribution.
+The actual version of this program is 1.0.0b8 and is based on the official 1.0.0 release.
+
+I - Scripting Extensions.
+-------------------------
+
+Crossfire-1.0.0b8 includes support for a Scripting Language; it is an interpreted language that
+may be used by map designers to create new object behaviors. Some sample maps are provided. See
+the README_SCRIPT for more details. The language used here is Guile, a free implementation of the
+Scheme scripting language (Scheme is a 'dialect' of Lisp).
+
+The author can be contacted at chachkoffyann@usa.net
+
+II - Town Portal Spell
+----------------------
+
+The Town Portal Spell in an implementation of the well-known Diablo spell into the universe of
+Crossfire. Cast it a first time to 'mark' the destination spot. Cast it a second time in a
+different location to open the portal. Cast it a third time to close the currently opened portal and
+'mark' a new location. Only you and players of the same party can use the portal you create.
+
+The author can be contacted at david.delbecq@usa.net
+

@@ -445,8 +445,10 @@ PATH_TURNING,"holy_orb",},
    PATH_DETONATE, "vitriol_splash"},  /* not for people to cast. */
 {"ironwood skin",	 1, 8,  0, 20, 0, 0,  0,  1, 1, 1, 1,   /* 200 */
    PATH_SELF, "enchantment",},
-{"wrathful eye",	 5, 30,  0, 20, 0, 0,  0,  1, 0, 1, 0,   
-   PATH_SELF, "wrathful_eye",}
+{"wrathful eye",	 5, 30,  0, 20, 0, 0,  0,  1, 0, 1, 0,
+   PATH_SELF, "wrathful_eye",},
+{"town portal",	        8, 30, 0, 10, 0, 0,  1,  0, 0, 0, 1,
+ PATH_TELE, "perm_magic_portal",}
 };
 
 /*  peterm:  the following defines the parameters for all the
@@ -478,88 +480,88 @@ spell_parameters SP_PARAMETERS[NROFREALSPELLS] =
 {   8,      16,     3,      0,		24},	/*large lightning*/      
 {   9,      0,      1,      0,		10},	/*magic missile*/        
 {   12,     8,      6,      0,		72},	/*create bomb*/          
-{   8,      75,     1,      1,		15},	/*summon golem*/         
+{   8,      75,     1,      1,		15},	/*summon golem*/
 {   20,     200,    1,      1,		15},	/*summon fire elemental*/   /* 10 */
 {   50,     280,    1,      1,		15},	/*summon earth elemental*/
 {   40,     140,    1,      1,		15},	/*summon water elemental*/
-{   10,     160,    1,      1,		15},	/*summon air elemental*/ 
-{   0,      0,      0,      0,		0},	/*dimension door*/       
-{   0,      32,     0,      1,		0},	/*create earth wall*/    
-{   25,     5,      3,      3,		0},	/*paralyze*/             
-{   4,      6,      3,      5,		9},	/*icestorm*/             
-{   0,      0,      0,      0,		0},	/*magic mapping*/        
+{   10,     160,    1,      1,		15},	/*summon air elemental*/
+{   0,      0,      0,      0,		0},	/*dimension door*/
+{   0,      32,     0,      1,		0},	/*create earth wall*/
+{   25,     5,      3,      3,		0},	/*paralyze*/
+{   4,      6,      3,      5,		9},	/*icestorm*/
+{   0,      0,      0,      0,		0},	/*magic mapping*/
 {   0,      3,      0,      4,		12},	/*turn undead*/ /* wis bonus on bdur*/
 {   5,      4,      0,      3,		12},	/*fear*/ /*cha bonus on bdur */  /*20*/
-{   0,      0,      3,      0,		8},	/*poison cloud*/         
-{   0,      0,      0,      0,		0},	/*wonder*/               
+{   0,      0,      3,      0,		8},	/*poison cloud*/
+{   0,      0,      0,      0,		0},	/*wonder*/
 {   10,     5,      3,      6,		15},	/*destruction*/ /* dam=10+int */
 {   0,      0,      0,      0,		0},	/*perceive self*/
-{   0,      5,      0,      1,		40},	/*word of recall*/       
-{   0,      300,    20,     1,		15},	/*invisible*/            
-{   0,      300,    20,     1,		15},	/*invisible to undead*/  
-{   0,      0,      0,      0,		0},	/*probe*/                
-{   25,     0,      1,      0,		25},	/*large bullet*/         
+{   0,      5,      0,      1,		40},	/*word of recall*/
+{   0,      300,    20,     1,		15},	/*invisible*/
+{   0,      300,    20,     1,		15},	/*invisible to undead*/
+{   0,      0,      0,      0,		0},	/*probe*/
+{   25,     0,      1,      0,		25},	/*large bullet*/
 {   0,      200,    20,     1,		10},	/*improved invisibility*/   /*30*/
 {   6,      2,      3,      5,		7},	/*holy word*/   /* bdur+=turn bonus */
-{   0,      0,      0,      0,		0},	/*minor healing*/        
-{   0,      0,      0,      0,		0},	/*medium healing*/       
-{   0,      0,      0,      0,		0},	/*major healing*/        
-{   0,      0,      0,      0,		0},	/*heal*/                 
-{   100,    0,      1,      0,		10},	/*create food*/          
-{   0,      1,      0,      3,		3},	/*earth to dust*/        
-{   0,      0,      5,      4,		8},	/*armour*/               
-{   0,      0,      0,      4,		0},	/*strength*/             
+{   0,      0,      0,      0,		0},	/*minor healing*/
+{   0,      0,      0,      0,		0},	/*medium healing*/
+{   0,      0,      0,      0,		0},	/*major healing*/
+{   0,      0,      0,      0,		0},	/*heal*/
+{   100,    0,      1,      0,		10},	/*create food*/
+{   0,      1,      0,      3,		3},	/*earth to dust*/
+{   0,      0,      5,      4,		8},	/*armour*/
+{   0,      0,      0,      4,		0},	/*strength*/
 {   0,      0,      0,      4,		0},	/*dexterity*/               /*40*/
-{   0,      0,      0,      4,		0},	/*constitution*/         
-{   0,      0,      0,      4,		0},	/*charisma*/             
-{   4,      260,    3,      1,		8},	/*create fire wall*/     
-{   0,      240,    3,      1,		8},	/*create frost wall*/    
-{   0,      0,      0,      4,		40},	/*protection from cold*/ 
+{   0,      0,      0,      4,		0},	/*constitution*/
+{   0,      0,      0,      4,		0},	/*charisma*/
+{   4,      260,    3,      1,		8},	/*create fire wall*/
+{   0,      240,    3,      1,		8},	/*create frost wall*/
+{   0,      0,      0,      4,		40},	/*protection from cold*/
 {   0,      0,      0,      4,		40},	/*protection from electricity*/
-{   0,      0,      0,      4,		40},	/*protection from fire*/ 
+{   0,      0,      0,      4,		40},	/*protection from fire*/
 {   0,      0,      0,      4,		40},	/*protection from poison*/
-{   0,      0,      0,      4,		40},	/*protection from slow*/ 
+{   0,      0,      0,      4,		40},	/*protection from slow*/
 {   0,      0,      0,      4,		40},	/*protection from paralysis*//*50*/
 {   0,      0,      0,      4,		40},	/*protection from draining*/
 {   0,      0,      0,      4,		40},	/*protection from magic*/
 {   0,      0,      0,      4,		40},	/*protection from attack*/
-{   0,      0,      0,      4,		40},	/*levitate*/             
-{   0,      0,      0,      0,		0},	/*small speedball*/      
-{   0,      0,      0,      0,		0},	/*large speedball*/      
-{   8,      12,     4,      0,		24},	/*hellfire*/             
-{   4,      14,     3,      5,		11},	/*dragonbreath*/         
-{   4,      14,     3,      5,		11},	/*large icestorm*/       
+{   0,      0,      0,      4,		40},	/*levitate*/
+{   0,      0,      0,      0,		0},	/*small speedball*/
+{   0,      0,      0,      0,		0},	/*large speedball*/
+{   8,      12,     4,      0,		24},	/*hellfire*/
+{   4,      14,     3,      5,		11},	/*dragonbreath*/
+{   4,      14,     3,      5,		11},	/*large icestorm*/
 {   0,      0,      0,      0,		0},	/*charging*/                /* 60 */
-{   0,      0,      0,      0,		0},	/*polymorph*/            
-{   0,      0,      0,      0,		0},	/*cancellation*/         
-{   0,      0,      0,      0,		0},	/*confusion*/            
-{   0,      5,      0,      5,		25},	/*mass confusion*/       
-{   0,      0,      0,      0,		0},	/*summon pet monster*/   
-{   5,      5,      0,      4,		20},	/*slow*/                 
+{   0,      0,      0,      0,		0},	/*polymorph*/
+{   0,      0,      0,      0,		0},	/*cancellation*/
+{   0,      0,      0,      0,		0},	/*confusion*/
+{   0,      5,      0,      5,		25},	/*mass confusion*/
+{   0,      0,      0,      0,		0},	/*summon pet monster*/
+{   5,      5,      0,      4,		20},	/*slow*/
 {   0,      0,      0,      0,		0},	/*regenerate spellpoints*/
-{   0,      0,      0,      0,		0},	/*cure poison*/          
+{   0,      0,      0,      0,		0},	/*cure poison*/
 {   0,      0,      0,      4,		40},	/*protection from confusion*/
 {   0,      0,      0,      4,		40},	/*protection from cancellation*/ /*70*/
 {   0,      0,      0,      4,		40},	/*protection from depletion*/
-{   0,      0,      0,      0,		0},	/*alchemy*/              
-{   0,      0,      0,      0,		16},	/*remove curse*/              
-{   0,      0,      0,      0,		30},	/*remove damnation*/              
-{   0,      0,      0,      0,		0},	/*identify*/              
-{   0,      0,      0,      0,		0},	/*detect magic*/              
-{   0,      0,      0,      0,		0},	/*detect monster*/              
-{   0,      0,      0,      0,		0},	/*detect evil*/              
-{   0,      0,      0,      0,		0},	/*detect curse*/              
+{   0,      0,      0,      0,		0},	/*alchemy*/
+{   0,      0,      0,      0,		16},	/*remove curse*/
+{   0,      0,      0,      0,		30},	/*remove damnation*/
+{   0,      0,      0,      0,		0},	/*identify*/
+{   0,      0,      0,      0,		0},	/*detect magic*/
+{   0,      0,      0,      0,		0},	/*detect monster*/
+{   0,      0,      0,      0,		0},	/*detect evil*/
+{   0,      0,      0,      0,		0},	/*detect curse*/
 {   0,      0,      0,      0,		0},	/*heroism */			/*80*/
-{   0,      0,      0,      0,		0},	/*aggravation*/              
-{   10,     9,      3,      0,		30},	/*firebolt*/              
-{   12,     11,     4,      0,		48},	/*frostbolt*/              
-{   10,     18,     3,      5,		25},	/*shockwave*/            
-{   8,      10,     3,      5,		16},	/*color spray*/          
+{   0,      0,      0,      0,		0},	/*aggravation*/
+{   10,     9,      3,      0,		30},	/*firebolt*/
+{   12,     11,     4,      0,		48},	/*frostbolt*/
+{   10,     18,     3,      5,		25},	/*shockwave*/
+{   8,      10,     3,      5,		16},	/*color spray*/
 {   0,      0,      5,      2,		0},	/*haste*/
-{   0,      4,      0,      9,		36},	/*face of death*/        
-{   8,      40,     3,      1,		15},	/*ball lightning*/       
-{   0,      0,      0,      4,		12},	/*meteor swarm*/         
-{   75,     0,      1,      0,		18},	/*comet*/			/*90*/ 
+{   0,      4,      0,      9,		36},	/*face of death*/
+{   8,      40,     3,      1,		15},	/*ball lightning*/
+{   0,      0,      0,      4,		12},	/*meteor swarm*/
+{   75,     0,      1,      0,		18},	/*comet*/			/*90*/
 {   8,      50,     1,      1,		15},	/*mystic fist*/
 {   0,      0,      0,      0,		0},	/*raise dead*/
 {   0,      0,      0,      0,		0},	/*resurrection*/
@@ -599,7 +601,7 @@ spell_parameters SP_PARAMETERS[NROFREALSPELLS] =
 {   0,      0,      0,      0,		0},	/* summon hostile monsters */
 {   0,     100,     0,      1,		20},	/* counterwall */
 {   6,      0,	    1,	    0,		6},	/* cause light wounds */
-{  24,      0,	    1,	    0,		24},	/* cause medium wounds */	/* 130 */ 
+{  24,      0,	    1,	    0,		24},	/* cause medium wounds */	/* 130 */
 {  50,      0,	    1,	    0,		50},	/* cause serious wounds */
 {   0,      0,     0,      3 ,      27},     /*  Charm monster */
 {   0,      4,	    0,      9, 		36},	/* Banishment */
@@ -608,69 +610,70 @@ spell_parameters SP_PARAMETERS[NROFREALSPELLS] =
 {   0,      4,	    0,      9,		36},	/* xray vision */
 {   0,	    0,      0,	    10,		10},    /* pacify */
 {   0,	    0,      0,	   10,		 0},    /* summon fog */
-{   20,     8,     2,      5,		40}, 	/* steambolt*/              
-{   0,      0,     0,      3 ,      	27},    /* command undead */		/* 140 */ 
-{   25,     8,      4,     0,           10},	/* holy orb */ 
-{   50,     300,    1,      1,		15},	/* summon avatar */  
+{   20,     8,     2,      5,		40}, 	/* steambolt*/
+{   0,      0,     0,      3 ,      	27},    /* command undead */		/* 140 */
+{   25,     8,      4,     0,           10},	/* holy orb */
+{   50,     300,    1,      1,		15},	/* summon avatar */
 {   1,	    0,      4,	    4,		10},    /* holy possesion */
 {   1,	    0,      8,	    6,		10},    /* bless */
 {   1,	    0,      8,	    6,		10},    /* curse */
 {   1,	    0,      5,	    6,		10},    /* regeneration */
 {   0,	    0,      0,	    0,		0},    /* consecrate  */
-{   0,      0,      0,      0,		0},	/* summon cult monster*/   
+{   0,      0,      0,      0,		0},	/* summon cult monster*/
 {  100,      0,	    1,	    0,	        50},	/* cause critical wounds */
-{    0,      0,     1,      0,		30},	/* holy wrath */		/* 150 */  
+{    0,      0,     1,      0,		30},	/* holy wrath */		/* 150 */
 {    0,      0,	    1,	    0,	        30}, 	/* finger of retribution */
-{    0,      0,     1,      0,		20},	/* finger of death */   
-{    0,      0,     1,      0,		30},	/* insect plague */   
-{   10,     50,     2,      2,		50},	/* holy servant */   
-{    4,    300,     3,      1,		50},	/* wall of thorns */   
-{    8,     30,     3,      3,		40},	/* staff to snake */   
-{    2,   1000,    20,      1,		10},	/* light */   
-{   10,     50,     2,      2,		50},	/* darkness */   
-{   10,     50,     2,      2,		50},	/* nightfall */  		
-{   10,     50,     2,      2,		50},	/* daylight */     /* 160 */ 
+{    0,      0,     1,      0,		20},	/* finger of death */
+{    0,      0,     1,      0,		30},	/* insect plague */
+{   10,     50,     2,      2,		50},	/* holy servant */
+{    4,    300,     3,      1,		50},	/* wall of thorns */
+{    8,     30,     3,      3,		40},	/* staff to snake */
+{    2,   1000,    20,      1,		10},	/* light */
+{   10,     50,     2,      2,		50},	/* darkness */
+{   10,     50,     2,      2,		50},	/* nightfall */
+{   10,     50,     2,      2,		50},	/* daylight */     /* 160 */
 {    6,      8,     3,      9,          35},    /* sunspear */
 {    1,      5,     9,      6,          15},	/* faery fire */
-{    0,      0,     0,      0,		0},	/* cure blindness */   
-{    0,      4,     0,      5,		30},	/* dark vision */   
+{    0,      0,     0,      0,		0},	/* cure blindness */
+{    0,      4,     0,      5,		30},	/* dark vision */
 {    0,      0,     0,      4,		12},    /* bullet swarm */
 {    0,      0,     0,      4,		12},	/* bullet storm */
 {    0,      0,     0,      4,		12},	/* cause many wounds  */
-{   8,      6,      3,      0,		24},	/*small snowstorm*/       
-{   8,      10,     3,      0,		24},	/*medium snowstorm*/      
-{   8,      14,     4,      0,		32},	/*large snowstorm*/     /* 170 */ 
-{   0,       0,     0,      0,		0},	/*cure disease*/      
-{   0,       0,     1,      1,		24},	/*cause red death*/      
-{   0,       0,     3,      5,		10},	/*cause flu*/      
-{   0,       0,     3,      10,		20},	/*cause black death*/      
-{   0,       0,     1,      1,		10},	/*cause leprosy*/      
-{   0,       0,     1,      4,		10},	/*cause smallpox*/      
-{   0,       0,     1,      5,		24},	/*cause plague*/      
-{   0,       0,     1,      10,		10},	/*cause anthrax*/      
-{   0,       0,     1,      10,		24},	/*cause typhoid*/      
-{	4,	5,	4,	4,	9},	/* mana blast */	/* 180 */ 
+{   8,      6,      3,      0,		24},	/*small snowstorm*/
+{   8,      10,     3,      0,		24},	/*medium snowstorm*/
+{   8,      14,     4,      0,		32},	/*large snowstorm*/     /* 170 */
+{   0,       0,     0,      0,		0},	/*cure disease*/
+{   0,       0,     1,      1,		24},	/*cause red death*/
+{   0,       0,     3,      5,		10},	/*cause flu*/
+{   0,       0,     3,      10,		20},	/*cause black death*/
+{   0,       0,     1,      1,		10},	/*cause leprosy*/
+{   0,       0,     1,      4,		10},	/*cause smallpox*/
+{   0,       0,     1,      5,		24},	/*cause plague*/
+{   0,       0,     1,      10,		10},	/*cause anthrax*/
+{   0,       0,     1,      10,		24},	/*cause typhoid*/
+{	4,	5,	4,	4,	9},	/* mana blast */	/* 180 */
 {	8,	6,	3,	0,	24},	/* small manaball */
 {	8,	10,	3,	0,	24},	/* medium manaball */
 {	8,	14,	4,	0,	32},	/* large manaball */
 {	10,	9,	3,	0,	30},	/* mana bolt */
-{	2,	20,	2,	1,	10},	/* dancing sword */     /* 185 */ 
+{	2,	20,	2,	1,	10},	/* dancing sword */     /* 185 */
 {	2,	20,	2,	1,	20},	/* animate weapon */
-{   0,       0,     3,      5,		10},	/*cause cold*/      
-{   1,      1,     12,      5,		10},	/*divine shock*/      
-{   0,      20,     25,      4,		8},	/*windstorm*/      
-{   0,     100,      0,      1,		20},	/*sanctuary*/    /* 190 */     
-{   0,      4,       0,      9,		36},	/*peace*/      
-{   0,      10,     0,       5,		50},	/*spiderweb*/      
-{   0,      5,      0,      10,		10},	/*conflict*/      
-{   0,       0,     5,      4,		4},	/*rage*/      
+{   0,       0,     3,      5,		10},	/*cause cold*/
+{   1,      1,     12,      5,		10},	/*divine shock*/
+{   0,      20,     25,      4,		8},	/*windstorm*/
+{   0,     100,      0,      1,		20},	/*sanctuary*/    /* 190 */
+{   0,      4,       0,      9,		36},	/*peace*/
+{   0,      10,     0,       5,		50},	/*spiderweb*/
+{   0,      5,      0,      10,		10},	/*conflict*/
+{   0,       0,     5,      4,		4},	/*rage*/
 {   10,     16,     3,      0,		24},	/*forked lightning*/      /* 195*/
-{   10,     5,     5,      4,		10},	/*poison fog*/      
-{   6,      100,     25,      4,	20},	/*flame aura*/      
-{   100,    20,     25,      4,		6},	/*vitriol*/      
-{   40,      5,      4,      40,	10},	/*vitriol splash*/        
-{   0,      0,      5,      4,		6},	/*ironwood skin*/ 
-{   20,      5,    3,      5,		7},	/*wrathful eye*/ 
+{   10,     5,     5,      4,		10},	/*poison fog*/
+{   6,      100,     25,      4,	20},	/*flame aura*/
+{   100,    20,     25,      4,		6},	/*vitriol*/
+{   40,      5,      4,      40,	10},	/*vitriol splash*/
+{   0,      0,      5,      4,		6},	/*ironwood skin*/
+{   20,      5,    3,      5,		7},	/*wrathful eye*/
+{	0,	5,	3,	5,	0},	/*town portal*/
 };
 
 char *spellpathnames[NRSPELLPATHS] = {

@@ -104,7 +104,7 @@ struct Command_Line_Options {
 
 /* The way this system works is pretty simple - parse_args takes
  * the options passed to the program and a pass number.  If an option
- * matches both in name and in pass (and we have enough options), 
+ * matches both in name and in pass (and we have enough options),
  * we call the associated function.  This makes writing a multi
  * pass system very easy, and it is very easy to add in new options.
  */
@@ -304,6 +304,7 @@ void init(int argc, char **argv) {
     fprintf(logfile,"Welcome to CrossFire, v%s\n",VERSION);
     fprintf(logfile,"Copyright (C) 1994 Mark Wedel.\n");
     fprintf(logfile,"Copyright (C) 1992 Frank Tore Johansen.\n");
+    fprintf(logfile, "Warning ! This is an unofficial release !\n");
 
 #ifdef DM_MAIL
     fprintf(logfile,"Maintained locally by: %s\n",DM_MAIL);

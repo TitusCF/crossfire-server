@@ -198,10 +198,10 @@ enum spellnrs {
   SP_FORKED_LIGHTNING,   SP_POISON_FOG,     SP_FLAME_AURA,            /* 195 */
   SP_VITRIOL,          SP_VITRIOL_SPLASH,
   
-  SP_IRONWOOD_SKIN,     SP_WRATHFUL_EYE                             /* 200 */
-  
+  SP_IRONWOOD_SKIN,     SP_WRATHFUL_EYE, SP_TOWN_PORTAL                             /* 200 */
+
 };
-	
+
 #define IS_SUMMON_SPELL(spell) (((spell) > SP_BOMB && (spell) < SP_D_DOOR) \
 	|| ((spell) == SP_MYSTIC_FIST) || ((spell) == SP_SUMMON_AVATAR) \
 	|| ((spell) == SP_HOLY_SERVANT))
@@ -210,7 +210,7 @@ enum spellnrs {
 				((op->path_repelled & s->path) ? 1.25 : 1))
 #define PATH_TIME_MULT(op,spell) (((op->path_attuned & s->path) ? 0.8 : 1) * \
 				((op->path_repelled & s->path) ? 1.25 : 1))
-	
+
 extern char *range_name[range_size];
 extern spell_parameters SP_PARAMETERS[];
 extern char *spellpathnames[NRSPELLPATHS];

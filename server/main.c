@@ -107,6 +107,8 @@ void version(object *op) {
   new_draw_info(NDI_UNIQUE, 0,op,"Mitsuhiro Itakura   [ita@gold.koma.jaeri.go.jp]");
   new_draw_info(NDI_UNIQUE, 0,op,"Hansjoerg Malthaner [hansjoerg.malthaner@danet.de]");
   new_draw_info(NDI_UNIQUE, 0,op,"Mårten Woxberg      [maxmc@telia.com]");
+  new_draw_info(NDI_UNIQUE, 0,op,"Delbecq David       [david.delbecq@usa.net]");
+  new_draw_info(NDI_UNIQUE, 0,op,"Chachkoff Yann      [yann.chachkoff@mailandnews.com]");
   new_draw_info(NDI_UNIQUE, 0,op,"And many more!");
 }
 
@@ -743,7 +745,7 @@ void process_players1(mapstruct *map)
 	    pl->ob->casting--;
 	    pl->ob->start_holding = 1;
 	}
-	/* set spell_state so we can update the range in stats field */ 
+	/* set spell_state so we can update the range in stats field */
 	if ((pl->ob->casting == 0) && (pl->ob->start_holding ==1)){
 	    pl->ob->start_holding = 0;
 	    pl->ob->spell_state = 1;
@@ -1030,20 +1032,29 @@ void do_specials() {
     if (!(pticks % 2521))
 	metaserver_update();    /* 2500 ticks is about 5 minutes */
 
-    if (!(pticks % 5003)) 
+    if (!(pticks % 5003))
 	write_book_archive();
 
-    if (!(pticks % 5009)) 
+    if (!(pticks % 5009))
 	clean_friendly_list();
 
     if (!(pticks % 12503))
       fix_luck();
 }
 
-
-int main(int argc,char **argv)
+/* GROS: This is the new main function, used to start the Guile
+ * subsystem. The "old" main has been renamed to main_crossfire
+ */
+int main(int argc, char **argv)
 {
+  gh_enter(argc, argv, main_crossfire);
+}
 
+/* GROS: Note that the return type had to be changed from int
+ * to void.
+ */
+void main_crossfire(int argc,char **argv)
+{
 #ifdef WIN32 /* ---win32 this sets the win32 from 0d0a to 0a handling */
 	_fmode = _O_BINARY ;
 #endif
@@ -1055,6 +1066,7 @@ int main(int argc,char **argv)
   settings.argc=argc;
   settings.argv=argv;
   init(argc, argv);
+  guile_init_functions();  /* GROS - Init the script interpreter */
 
   for(;;) {
     nroferrors = 0;

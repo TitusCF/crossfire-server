@@ -1349,7 +1349,7 @@ void move_player_attack(object *op, int dir)
 
 	op->contr->has_hit = 1; /* The last action was to hit, so use weapon_sp */
 
-	  skill_attack(tmp, op, 0, NULL); 
+	  skill_attack(tmp, op, 0, NULL);
 	  /* If attacking another player, that player gets automatic
 	   * hitback, and doesn't loose luck either.
 	   */
@@ -1358,7 +1358,7 @@ void move_player_attack(object *op, int dir)
 	  {
 	    short luck = tmp->stats.luck;
 	    tmp->contr->has_hit = 1;
-	    skill_attack(op, tmp, 0, NULL); 
+	    skill_attack(op, tmp, 0, NULL);
 	    tmp->stats.luck = luck;
 	  }
 	  if(action_makes_visible(op)) make_visible(op);
@@ -1391,7 +1391,7 @@ int move_player(object *op,int dir) {
     /* Add special check for newcs players and fire on - this way, the
      * server can handle repeat firing.
      */
-    pick = check_pick(op); 
+    pick = check_pick(op);
     if (op->contr->fire_on || (op->contr->run_on && pick!=0)) {
 	op->direction = dir;
     } else {
@@ -1454,7 +1454,7 @@ int save_life(object *op) {
       sprintf(buf,"Your %s vibrates violently, then evaporates.",
 	      query_name(tmp));
       new_draw_info(NDI_UNIQUE, 0,op,buf);
-      if (op->contr) 
+      if (op->contr)
 	esrv_del_item(op->contr, tmp->count);
       remove_ob(tmp);
       free_object(tmp);
@@ -1482,7 +1482,7 @@ void remove_unpaid_objects(object *op, object *env)
     object *next;
 
     while (op) {
-	next=op->below;	/* Make sure we have a good value, in case 
+	next=op->below;	/* Make sure we have a good value, in case
 			 * we remove object 'op'
 			 */
 	if (QUERY_FLAG(op, FLAG_UNPAID)) {
@@ -1662,10 +1662,11 @@ void kill_player(object *op)
     int lost_a_stat;
     int lose_this_stat;
     int this_stat;
-    
+    int killed_script_rtn; /* GROS: For script return value */
+
     if(save_life(op))
 	return;
-    
+
     /* If player dies on BATTLEGROUND, no stat/exp loss! For Combat-Arenas
      * in cities ONLY!!! It is very important that this doesn't get abused.
      * Look at op_on_battleground() for more info       --AndreasV
@@ -1703,6 +1704,24 @@ void kill_player(object *op)
       op->contr->braced=0;
       return;
     }
+
+/* GROS: Handle the Death script */
+
+  if (op->script_death != NULL)
+  {
+        killed_script_rtn = guile_call_event(NULL, op ,NULL, 0, NULL, 0,0, op->script_death, SCRIPT_FIX_ALL);
+        if (killed_script_rtn)
+                return;
+  }
+  else
+  {
+    if (op->script_str_death != NULL)
+    {
+        killed_script_rtn = guile_call_event_str(NULL, op ,NULL, 0, NULL, 0,0, op->script_str_death, SCRIPT_FIX_ALL);
+        if (killed_script_rtn)
+                return;
+    };
+  };
 
     if(op->stats.food<0) {
 #ifdef EXPLORE_MODE

@@ -26,7 +26,7 @@
 */
 
 
-/* Oct 3, 1995 - Code laid down for initial gods, priest alignment, and 
+/* Oct 3, 1995 - Code laid down for initial gods, priest alignment, and
  * monster race initialization. b.t.
  */
 
@@ -74,6 +74,22 @@ object *find_god(char *name) {
 
 void pray_at_altar(object *pl, object *altar) {
     object *pl_god=find_god(determine_god(pl));
+    int return_pray_script; /* GROS : This is for return value of script */
+
+    /* GROS: We trigger a script-apply event for the altar each time you pray on it */
+    if (altar->script_apply != NULL)
+    {
+      return_pray_script = guile_call_event(pl, altar, NULL, 0, NULL,0,0,altar->script_apply,SCRIPT_FIX_ALL);
+      if (return_pray_script) return;
+    }
+    else
+    {
+      if (altar->script_str_apply != NULL)
+      {
+        return_pray_script = guile_call_event_str(pl, altar, NULL, 0, NULL,0,0,altar->script_str_apply,SCRIPT_FIX_ALL);
+        if (return_pray_script) return;
+      };
+    };
 
     /* If non consecrate altar, don't do anything */
     if (!altar->other_arch) return;
@@ -101,15 +117,15 @@ void pray_at_altar(object *pl, object *altar) {
 	}
 
 	/* Every once in a while, the god decides to checkup on their
-	 * follower, and may intervene to help them out. 
+	 * follower, and may intervene to help them out.
 	 */
 	bonus = MAX(1, bonus + MAX(pl->stats.luck, -3)); /* -- DAMN -- */
-	
+
 	if(((RANDOM()%400)-bonus)<0) god_intervention(pl,pl_god);
- 
+
     } else { /* praying to another god! */
 	int loss = 0,angry=1;
- 
+
 	/* I believe the logic for detecting opposing gods was completely
 	 * broken - I think it should work now.  altar->other_arch
 	 * points to the god of this altar (which we have
@@ -260,17 +276,17 @@ void become_follower (object *op, object *new_god) {
     exp_obj->path_denied=new_god->path_denied;
     /* copy god's resistances */
     memcpy(exp_obj->resist, new_god->resist, sizeof(new_god->resist));
-    
+
     /* make sure that certain immunities do NOT get passed
      * to the follower! */
     for (i=0; i<NROFATTACKS; i++)
       if (exp_obj->resist[i] > 30 && (i==ATNR_FIRE || i==ATNR_COLD ||
 	  i==ATNR_ELECTRICITY || i==ATNR_POISON))
 	exp_obj->resist[i] = 30;
-    
+
 #ifdef MORE_PRIEST_GIFTS
-    exp_obj->stats.hp= (sint16) new_god->last_heal;  
-    exp_obj->stats.sp= (sint16) new_god->last_sp; 
+    exp_obj->stats.hp= (sint16) new_god->last_heal;
+    exp_obj->stats.sp= (sint16) new_god->last_sp;
     exp_obj->stats.grace= (sint16) new_god->last_grace;
     exp_obj->stats.food= (sint16) new_god->last_eat;
     exp_obj->stats.luck= (sint8) new_god->stats.luck;
@@ -282,23 +298,23 @@ void become_follower (object *op, object *new_god) {
     update_priest_flag(new_god,exp_obj,FLAG_MAKE_INVIS);
     update_priest_flag(new_god,exp_obj,FLAG_UNDEAD);
     update_priest_flag(new_god,exp_obj,FLAG_BLIND);
-    update_priest_flag(new_god,exp_obj,FLAG_XRAYS); /* better have this if blind! */ 
+    update_priest_flag(new_god,exp_obj,FLAG_XRAYS); /* better have this if blind! */
 #endif
 
-    new_draw_info_format(NDI_UNIQUE,0,op, 
+    new_draw_info_format(NDI_UNIQUE,0,op,
 	"You are bathed in %s's aura.",new_god->name);
 
 #ifdef MORE_PRIEST_GIFTS
     /* Weapon/armour use are special...handle flag toggles here as this can
      * only happen when gods are worshipped and if the new priest could
      * have used armour/weapons in the first place */
-    update_priest_flag(new_god,exp_obj,FLAG_USE_WEAPON); 
+    update_priest_flag(new_god,exp_obj,FLAG_USE_WEAPON);
     update_priest_flag(new_god,exp_obj,FLAG_USE_ARMOUR);
 
     if(worship_forbids_use(op,exp_obj,FLAG_USE_WEAPON,"weapons"))
 	stop_using_item(op,WEAPON,2);
 
-    if(worship_forbids_use(op,exp_obj,FLAG_USE_ARMOUR,"armour")) { 
+    if(worship_forbids_use(op,exp_obj,FLAG_USE_ARMOUR,"armour")) {
 	stop_using_item(op,ARMOUR,1);
 	stop_using_item(op,HELMET,1);
 	stop_using_item(op,BOOTS,1);
@@ -307,11 +323,11 @@ void become_follower (object *op, object *new_god) {
     }
 #endif
 
-    SET_FLAG(exp_obj,FLAG_APPLIED); 
+    SET_FLAG(exp_obj,FLAG_APPLIED);
     (void) change_abil(op,exp_obj);
 
     check_special_prayers (op, new_god);
-} 
+}
 
 int worship_forbids_use (object *op, object *exp_obj, uint32 flag, char *string) {
 
@@ -333,7 +349,7 @@ void stop_using_item ( object *op, int type, int number ) {
   object *tmp;
 
   for(tmp=op->inv;tmp&&number;tmp=tmp->below)
-    if(tmp->type==type&&QUERY_FLAG(tmp,FLAG_APPLIED)) { 
+    if(tmp->type==type&&QUERY_FLAG(tmp,FLAG_APPLIED)) {
         apply_special (op, tmp, AP_UNAPPLY | AP_IGNORE_CURSE);
 	number--;
     }
@@ -341,21 +357,24 @@ void stop_using_item ( object *op, int type, int number ) {
 
 /* update_priest_flag() - if the god does/doesnt have this flag, we
  * give/remove it from the experience object if it doesnt/does
- * already exist. For players only! 
+ * already exist. For players only!
  */
- 
-void update_priest_flag (object *god, object *exp_ob, uint32 flag) {
 
-    if(QUERY_FLAG(god,flag)&&!QUERY_FLAG(exp_ob,flag))
-        SET_FLAG(exp_ob,flag);
-    else if(QUERY_FLAG(exp_ob,flag)&&!QUERY_FLAG(god,flag))
-        CLEAR_FLAG(exp_ob,flag);
+void update_priest_flag (object *god, object *exp_ob, uint32 flag) {
+/* GROS - Corrected here the 'god flowers' bug. */
+      if(QUERY_FLAG(god,flag)&&!QUERY_FLAG(exp_ob,flag))
+          SET_FLAG(exp_ob,flag);
+      else if(QUERY_FLAG(exp_ob,flag)&&!QUERY_FLAG(god,flag))
+      {
+        if (!(QUERY_FLAG(&(exp_ob->arch->clone),flag)))
+                CLEAR_FLAG(exp_ob,flag);
+      };
 }
 
 
 /* determine_god() - determines if op worships a god. Returns
  * the godname if they do. In the case of an NPC, if they have
- * no god, we give them a random one. -b.t. 
+ * no god, we give them a random one. -b.t.
  */
 
 char *determine_god(object *op) {
@@ -363,7 +382,7 @@ char *determine_god(object *op) {
 
     /* spells */
     if ((op->type == FBULLET || op->type == CONE || op->type == FBALL
-         || op->type == SWARM_SPELL) && op->title) 
+         || op->type == SWARM_SPELL) && op->title)
     {
 	if(lookup_god_by_name(op->title)>=0) return op->title;
     }
@@ -389,15 +408,19 @@ char *determine_god(object *op) {
      */
     if(op->type==PLAYER) {
 	object *tmp;
+        for (tmp=op->inv; tmp!=NULL; tmp=tmp->below)
+        {
+                if (tmp->type == SKILL) /* GROS: This is for the flower's bug */
+                {
+                        if (tmp->exp_obj && tmp->exp_obj->title)
+                        return tmp->exp_obj->title;
+                }
+        }
 
-	for (tmp=op->inv; tmp!=NULL; tmp=tmp->below) {
-	    if (tmp->exp_obj && tmp->exp_obj->title) 
-		return tmp->exp_obj->title;
-	}
     }
-	
+
   return ("none");
-} 
+}
 
 
 archetype *determine_holy_arch (object *god, const char *type)

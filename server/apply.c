@@ -296,7 +296,7 @@ int check_item(object *op,char *item)
   op=op->below;
   while(op!=NULL) {
     if (strcmp(op->arch->name,item)==0){
-	  if (!QUERY_FLAG (op, FLAG_CURSED) && !QUERY_FLAG (op, FLAG_DAMNED) 
+	  if (!QUERY_FLAG (op, FLAG_CURSED) && !QUERY_FLAG (op, FLAG_DAMNED)
              /* Loophole bug? -FD- */ && !QUERY_FLAG (op, FLAG_UNPAID) )
 	    {
 	      if (op->nrof == 0)/* this is necessary for artifact sacrifices --FD-- */
@@ -316,7 +316,7 @@ void eat_item(object *op,char *item)
 
   prev = op;
   op=op->below;
-  
+
   while(op!=NULL) {
     if (strcmp(op->arch->name,item)==0) {
       decrease_ob_nr(op,op->nrof);
@@ -476,7 +476,7 @@ int improve_weapon(object *op,object *improver,object *weapon)
     new_draw_info(NDI_UNIQUE, 0,op,"This weapon cannot be improved any more.");
     return 0;
   }
-  if (QUERY_FLAG(weapon, FLAG_APPLIED) && 
+  if (QUERY_FLAG(weapon, FLAG_APPLIED) &&
       !check_weapon_power(op, weapon->last_eat+1)) {
 	new_draw_info(NDI_UNIQUE, 0,op,"Improving the weapon will make it too");
 	new_draw_info(NDI_UNIQUE, 0,op,"powerful for you to use.  Unready it if you");
@@ -1229,7 +1229,22 @@ void move_apply (object *trap, object *victim, object *originator)
   case TRIGGER_BUTTON:
   case TRIGGER_PEDESTAL:
   case TRIGGER_ALTAR:
-    check_trigger (trap, victim);
+  /* GROS: Handle for script_trigger event */
+    if (trap->script_trigger != NULL)
+    {
+      guile_call_event(victim, trap, NULL, 0, NULL,0,0,trap->script_trigger, SCRIPT_FIX_ALL);
+    }
+    else
+    {
+      if (trap->script_str_trigger != NULL)
+      {
+        guile_call_event_str(victim, trap, NULL, 0, NULL,0,0,trap->script_str_trigger, SCRIPT_FIX_ALL);
+      }
+      else
+      {
+        check_trigger (trap, victim);
+      }
+    };
     goto leave;
 
   case DEEP_SWAMP:
@@ -1237,7 +1252,22 @@ void move_apply (object *trap, object *victim, object *originator)
     goto leave;
 
   case CHECK_INV:
-    check_inv (victim, trap);
+  /* GROS: Handle for script_trigger event */
+    if (trap->script_trigger != NULL)
+    {
+      guile_call_event(victim, trap, NULL, 0, NULL,0,0,trap->script_trigger, SCRIPT_FIX_ALL);
+    }
+    else
+    {
+      if (trap->script_str_trigger != NULL)
+      {
+        guile_call_event_str(victim, trap, NULL, 0, NULL,0,0,trap->script_str_trigger, SCRIPT_FIX_ALL);
+      }
+      else
+      {
+        check_inv (victim, trap);
+      }
+    };
     goto leave;
 
   case HOLE:
@@ -1261,7 +1291,19 @@ void move_apply (object *trap, object *victim, object *originator)
 	 */
 	if (trap->msg && strncmp(EXIT_PATH(trap),"/!",2) && strncmp(EXIT_PATH(trap), "/random/", 8))
 	    new_draw_info (NDI_NAVY, 0, victim, trap->msg);
-	enter_exit (victim, trap);
+      /* GROS: Handle for script_trigger event */
+      if (trap->script_trigger != NULL)
+      {
+        guile_call_event(victim, trap, NULL, 0, NULL,0,0,trap->script_trigger, SCRIPT_FIX_ALL);
+      }
+      else
+      {
+        if (trap->script_str_trigger != NULL)
+        {
+          guile_call_event_str(victim, trap, NULL, 0, NULL,0,0,trap->script_str_trigger, SCRIPT_FIX_ALL);
+        }
+      };
+      enter_exit (victim, trap);
     }
     goto leave;
 
@@ -1294,7 +1336,24 @@ void move_apply (object *trap, object *victim, object *originator)
 
   case RUNE:
     if (trap->level && QUERY_FLAG (victim, FLAG_ALIVE))
-      spring_trap (trap, victim);
+    {
+      /* GROS: Handle for script_trigger event */
+      if (trap->script_trigger != NULL)
+      {
+        guile_call_event(victim, trap, NULL, 0, NULL,0,0,trap->script_trigger, SCRIPT_FIX_ALL);
+      }
+      else
+      {
+        if (trap->script_str_trigger != NULL)
+        {
+          guile_call_event_str(victim, trap, NULL, 0, NULL,0,0,trap->script_str_trigger, SCRIPT_FIX_ALL);
+        }
+        else
+        {
+          spring_trap(trap, victim);
+        }
+      };
+    };
     goto leave;
 
   default:
@@ -1331,7 +1390,7 @@ static void apply_book (object *op, object *tmp)
     }
     lev_diff = tmp->level - (SK_level(op) + 5);
     if ( ! QUERY_FLAG (op, FLAG_WIZ) && lev_diff > 0)
-    { 
+    {
       if (lev_diff < 2)
 	new_draw_info(NDI_UNIQUE, 0,op,"This book is just barely beyond your comprehension.");
       else if (lev_diff < 3)
@@ -1342,17 +1401,31 @@ static void apply_book (object *op, object *tmp)
 	new_draw_info(NDI_UNIQUE, 0,op,"This book is quite a bit beyond your comprehension.");
       else if (lev_diff < 15)
 	new_draw_info(NDI_UNIQUE, 0,op,"This book is way beyond your comprehension.");
-      else 
+      else
 	new_draw_info(NDI_UNIQUE, 0,op,"This book is totally beyond your comprehension.");
       return;
     }
 
     new_draw_info_format (NDI_UNIQUE, 0, op,
                           "You open the %s and start reading.", tmp->name);
-    new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, op, tmp->msg);
 
-    /* gain xp from reading */  
-    if(!QUERY_FLAG(tmp,FLAG_NO_SKILL_IDENT)) { /* only if not read before */ 
+    /* GROS: Handling for reading scripted books */
+    if (tmp->script_apply != NULL)
+    {
+      guile_call_event(op,tmp, NULL, 0, NULL,0,0,tmp->script_apply, SCRIPT_FIX_ALL);
+    }
+    else
+    {
+      if (tmp->script_str_apply != NULL)
+      {
+        guile_call_event_str(op,tmp, NULL, 0, NULL,0,0,tmp->script_str_apply, SCRIPT_FIX_ALL);
+      }
+      else
+        new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, op, tmp->msg);
+    };
+
+    /* gain xp from reading */
+    if(!QUERY_FLAG(tmp,FLAG_NO_SKILL_IDENT)) { /* only if not read before */
       int exp_gain=calc_skill_exp(op,tmp);
       if(!QUERY_FLAG(tmp,FLAG_IDENTIFIED)) {
         /*exp_gain *= 2; because they just identified it too */
@@ -1362,7 +1435,7 @@ static void apply_book (object *op, object *tmp)
         else op->contr->socket.update_look=1;
       }
       add_exp(op,exp_gain);
-      SET_FLAG(tmp,FLAG_NO_SKILL_IDENT); /* so no more xp gained from this book */ 
+      SET_FLAG(tmp,FLAG_NO_SKILL_IDENT); /* so no more xp gained from this book */
     }
 }
 
@@ -1372,11 +1445,11 @@ static void apply_skillscroll (object *op, object *tmp)
   switch ((int) learn_skill (op, tmp))
   {
     case 0:
-      new_draw_info(NDI_UNIQUE, 0,op,"You already possess the knowledge "); 
-      new_draw_info_format(NDI_UNIQUE, 0,op,"held within the %s.\n",query_name(tmp)); 
+      new_draw_info(NDI_UNIQUE, 0,op,"You already possess the knowledge ");
+      new_draw_info_format(NDI_UNIQUE, 0,op,"held within the %s.\n",query_name(tmp));
       return;
 
-    case 1: 
+    case 1:
       new_draw_info_format(NDI_UNIQUE, 0,op,"You succeed in learning %s",
       skills[tmp->stats.sp].name);
       new_draw_info_format(NDI_UNIQUE, 0, op,
@@ -1815,6 +1888,68 @@ extern void apply_poison (object *op, object *tmp)
     decrease_ob(tmp);
 }
 
+   /* is_legal_2ways_exit (object* op, object *exit)
+    * this fonction return true if the exit
+    * is not a 2 ways one or it is 2 ways, valid exit.
+    * A valid 2 way exit means:
+    *   -You can come back (there is another exit at the other side)
+    *   -You are
+    *         ° the owner of the exit
+    *         ° or in the same party as the owner
+    *
+    * Note: a owner in a 2 way exit is saved as the owner's name
+    * in the field exit->name cause the field exit->owner doesn't
+    * survive in the swapping (in fact the whole exit doesn't survive).
+    */
+ int is_legal_2ways_exit (object* op, object *exit)
+   {
+   object * tmp;
+   object * exit_owner;
+   player * pp;
+   mapstruct * exitmap;
+   if (exit->stats.exp!=1) return 1; /*This is not a 2 way, so it is legal*/
+    /* To know if an exit has a correspondant, we look at
+     * all the exits in destination and try to find one with same path as
+     * the current exit's position */
+   if (!strncmp(EXIT_PATH (exit), settings.localdir, strlen(settings.localdir)))
+      exitmap = ready_map_name(EXIT_PATH (exit), MAP_PLAYER_UNIQUE);
+   else exitmap = ready_map_name(EXIT_PATH (exit), 0);
+   if (exitmap)
+     {
+     tmp=get_map_ob (exitmap,EXIT_X(exit),EXIT_Y(exit));
+     if (!tmp) return 0;
+     for ( (tmp=get_map_ob(exitmap,EXIT_X(exit),EXIT_Y(exit)));tmp;tmp=tmp->above)
+       {
+       if (tmp->type!=EXIT) continue;  /*Not an exit*/
+       if (!EXIT_PATH (tmp)) continue; /*Not a valid exit*/
+       if ( (EXIT_X(tmp)!=exit->x) || (EXIT_Y(tmp)!=exit->y)) continue; /*Not in the same place*/
+       if (strcmp(exit->map->path,EXIT_PATH(tmp))!=0) continue; /*Not in the same map*/
+
+       /* From here we have found the exit is valid. However we do
+        * here the check of the exit owner. It is important for the
+        * town portals to prevent strangers from visiting your appartments
+        */
+       if (!exit->race) return 1;  /*No owner, free for all!*/
+       exit_owner=NULL;
+       for (pp=first_player;pp;pp=pp->next)
+         {
+         if (!pp->ob) continue;
+         if (pp->ob->name!=exit->race) continue;
+         exit_owner= pp->ob; /*We found a player which correspond to the player name*/
+         break;
+         }
+       if (!exit_owner) return 0;    /* No more owner*/
+       if (exit_owner->contr==op->contr) return 1;  /*It is your exit*/
+       if  ( exit_owner &&                          /*There is a owner*/
+            (op->contr) &&                          /*A player tries to pass */
+            ( (exit_owner->contr->party_number<=0) || /*No pass if controller has no party*/
+              (exit_owner->contr->party_number!=op->contr->party_number)) ) /* Or not the same as op*/
+           return 0;
+       return 1;
+       }
+     }
+   return 0;
+   }
 
 /* Return value:
  *   0: player or monster can't apply objects of that type
@@ -1830,6 +1965,7 @@ extern void apply_poison (object *op, object *tmp)
 
 int manual_apply (object *op, object *tmp, int aflag)
 {
+  int rtn_script;
   if (QUERY_FLAG (tmp, FLAG_UNPAID) && ! QUERY_FLAG (tmp, FLAG_APPLIED)) {
     if (op->type == PLAYER) {
       new_draw_info (NDI_UNIQUE, 0, op, "You should pay for it first.");
@@ -1838,6 +1974,17 @@ int manual_apply (object *op, object *tmp, int aflag)
       return 0;   /* monsters just skip unpaid items */
     }
   }
+  /* GROS: This is used to handle apply scripts */
+  if (tmp->script_apply!=NULL)
+  {
+    rtn_script = guile_call_event(op,tmp, NULL, aflag, NULL,0,0,tmp->script_apply, SCRIPT_FIX_ALL);
+    if (rtn_script!=0) return;
+  };
+  if (tmp->script_str_apply!=NULL)
+  {
+    rtn_script = guile_call_event_str(op,tmp, NULL, aflag, NULL,0,0,tmp->script_str_apply, SCRIPT_FIX_ALL);
+    if (rtn_script!=0) return;
+  };
 
   switch (tmp->type)
   {
@@ -1862,8 +2009,8 @@ int manual_apply (object *op, object *tmp, int aflag)
   case EXIT:
     if (op->type != PLAYER)
       return 0;
-    if( ! EXIT_PATH (tmp)) {
-      new_draw_info_format(NDI_UNIQUE, 0, op, 
+    if( ! EXIT_PATH (tmp) || !is_legal_2ways_exit(op,tmp)) {
+      new_draw_info_format(NDI_UNIQUE, 0, op,
 	"The %s is closed.",query_name(tmp));
     } else {
 	/* Don't display messages for random maps. */
@@ -1877,7 +2024,7 @@ int manual_apply (object *op, object *tmp, int aflag)
     apply_sign (op, tmp);
     return 1;
 
-  case BOOK: 
+  case BOOK:
     if (op->type == PLAYER) {
       apply_book (op, tmp);
       return 1;
@@ -2135,6 +2282,16 @@ int apply_special (object *who, object *op, int aflags)
   if(op->env!=who)
     return 1;   /* op is not in inventory */
 
+  /* GROS: This is used to handle apply scripts */
+  if (op->script_apply!=NULL)
+  {
+      guile_call_event(who,op, NULL, aflags, NULL,0,0,op->script_apply, SCRIPT_FIX_ALL);
+  };
+  if (op->script_str_apply!=NULL)
+  {
+        guile_call_event_str(who,op, NULL, aflags, NULL,0,0,op->script_str_apply, SCRIPT_FIX_ALL);
+  };
+
   buf[0]='\0';	    /* Needs to be initialized */
   if (QUERY_FLAG(op,FLAG_APPLIED)) {
     /* always apply, so no reason to unapply */
@@ -2151,10 +2308,13 @@ int apply_special (object *who, object *op, int aflags)
     switch(op->type) {
     case WEAPON:
       (void) change_abil (who,op);
-      /* 'unready' melee weapons skill if it is current skill */ 
+      /* 'unready' melee weapons skill if it is current skill */
       (void) check_skill_to_apply(who,op);
-      if(QUERY_FLAG(who,FLAG_READY_WEAPON)) 
-		CLEAR_FLAG(who,FLAG_READY_WEAPON); 
+      if(QUERY_FLAG(who,FLAG_READY_WEAPON))
+		CLEAR_FLAG(who,FLAG_READY_WEAPON);
+      /* GROS: update the current_weapon_script field (used with script_attack for weapons) */
+      who->current_weapon_script = NULL;
+      who->current_weapon = NULL;
       sprintf(buf,"You unwield %s.",query_name(op));
       break;
 
@@ -2262,7 +2422,7 @@ int apply_special (object *who, object *op, int aflags)
       return 1;
     }
     if (!check_weapon_power(who, op->last_eat)) {
-      new_draw_info(NDI_UNIQUE, 0,who,	
+      new_draw_info(NDI_UNIQUE, 0,who,
 		    "That weapon is too powerful for you to use.");
       new_draw_info(NDI_UNIQUE, 0, who,	"It would consume your soul!.");
       if(tmp!=NULL)
@@ -2277,7 +2437,7 @@ int apply_special (object *who, object *op, int aflags)
           (void) insert_ob_in_ob(tmp,who);
 	return 1;
 	}
-	
+
 
     SET_FLAG(op, FLAG_APPLIED);
 
@@ -2288,6 +2448,14 @@ int apply_special (object *who, object *op, int aflags)
          SET_FLAG(who, FLAG_READY_WEAPON);
 
     (void) change_abil (who,op);
+    /* GROS: update the current_weapon_script field (used with script_attack for weapons) */
+    if ((op->script_attack != NULL)|(op->script_str_attack != NULL))
+    {
+        LOG(llevDebug, "Scripting Weapon wielded\n");
+        if (who->current_weapon_script) free_string(who->current_weapon_script);
+        who->current_weapon_script=add_string(query_name(op));
+        who->current_weapon = op;
+    };
     sprintf(buf,"You wield %s.",query_name(op));
     break;
   }

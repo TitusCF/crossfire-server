@@ -314,7 +314,6 @@ extern void cleanup ( void );
 extern void leave ( player *pl, int draw_exit );
 extern int forbid_play ( void );
 extern void do_specials ( void );
-extern int main ( int argc, char **argv );
 extern object *get_enemy ( object *npc );
 extern object *find_nearest_living_creature ( object *npc );
 extern object *find_enemy ( object *npc );
@@ -354,7 +353,7 @@ extern void check_earthwalls ( object *op, int x, int y );
 extern void check_doors ( object *op, int x, int y );
 extern int move_object ( object *op, int dir );
 extern void communicate ( object *op, char *txt );
-extern int talk_to_npc ( object *npc, char *txt );
+extern int talk_to_npc ( object *op, object *npc, char *txt );
 extern int talk_to_wall ( object *npc, char *txt );
 extern object *find_mon_throw_ob ( object *op );
 extern int can_detect_enemy ( object *op, object *enemy );
@@ -533,6 +532,7 @@ extern int fire_cancellation ( object *op, int dir, archetype *at, int magic );
 extern void move_cancellation ( object *op );
 extern void cancellation ( object *op );
 extern int cast_create_missile ( object *op, object *caster, int dir, char *stringarg );
+extern int cast_create_town_portal (object *op, object *caster, int dir);
 extern int alchemy ( object *op );
 extern int remove_curse ( object *op, int type, SpellTypeFrom src );
 extern int cast_identify ( object *op );
@@ -643,6 +643,33 @@ extern void move_player_mover ( object *op );
 extern void move_creator ( object *op );
 extern void move_marker ( object *op );
 extern int process_object ( object *op );
+
+
+/* GROS: Experimental extended alchemy code */
+extern object *find_improvable_object(object *cauldron);
+extern void try_alchemical_improve(object *cauldron, object *target, object *caster);
+
+/* GROS: These two were changed to allow Guile to run */
+extern int main ( int argc, char **argv );
+extern void main_crossfire( int argc, char **argv );
+
+/* GROS: Some new utility functions */
+extern player *find_player(char *name);
+extern archetype *find_archetype_by_object_name(char *name);
+extern object *get_archetype_by_object_name(char *name) ;
+
+extern void guile_init_functions();
+extern void guile_init_type_functions();
+extern void guile_run(char *scriptfile);
+extern object *find_best_weapon_used_match(object *pl, char *params);
+
+/* GROS: New event handlers */
+extern int guile_call_event(object *first, object *second, object *third, int flags, char *text, int dam, int wc, char *scriptname, int fixthem);
+extern int guile_call_event_str(object *first, object *second, object *third, int flags, char *text, int dam, int wc, char *scriptname, int fixthem);
+
+/* GROS: Old event handlers */
+
+extern int guile_use_weapon_script(object *op, object *npc, int base_dam, int base_wc);
 
 #endif /* __STDC__ */
 #endif /* __CEXTRACT__ */

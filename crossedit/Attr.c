@@ -230,7 +230,7 @@ static void getWeightL (object *ob, char *str, XtPointer c) {
 
 /*** brand ***/
 static void getBrand (object *ob, char *str, XtPointer c) {
-    if(!ob->race || !*ob->race) 
+    if(!ob->race || !*ob->race)
 	sprintf(str,NotUsed);
     else
 	sprintf(str,"%s",ob->race);
@@ -413,7 +413,15 @@ char *allowed_variables[] = {
     "can_use_horn", "expmul", "unique", "make_invisible", "is_wooded",
     "is_hilly", "has_ready_skill", "has_ready_weapon", "no_skill_ident",
     "glow_radius", "is_blind", "can_see_in_dark", "is_cauldron",
-    "randomitems", "is_dust", "no_steal", "one_hit",
+    "randomitems", "is_dust", "no_steal", "one_hit","berserk",
+/* GROS - These are hooks for script events */
+    "script_load","script_apply","script_say","script_trigger", "script_time",
+    "script_attack","script_drop", "script_throw", "script_stop", "script_death", "current_weapon_script",
+    "start_script_load", "start_script_apply","start_script_say","start_script_trigger","start_script_time",
+    "start_script_attack","start_script_drop","start_script_throw","start_script_stop", "start_script_death",
+    "end_script_load", "end_script_apply","end_script_say","end_script_trigger","end_script_time",
+    "end_script_attack","end_script_drop","end_script_throw","end_script_stop", "end_script_death",
+
 #ifdef NPC_PROG
     "npc_status", "npc_program", 
 #endif

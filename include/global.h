@@ -310,5 +310,24 @@ extern Settings settings;
 #define GETTIMEOFDAY(last_time) gettimeofday(last_time);
 #endif
 
+/* Gros - The following vars make the 'scriptfire stack', allowing up to 128 recursive
+ * Guile script calls.
+ */
+#define MAX_RECURSIVE_GUILE 128
+EXTERN object *guile_current_activator[MAX_RECURSIVE_GUILE];
+EXTERN object *guile_current_other[MAX_RECURSIVE_GUILE];
+EXTERN object *guile_current_who[MAX_RECURSIVE_GUILE];
+EXTERN char   *guile_current_text[MAX_RECURSIVE_GUILE];
+EXTERN int guile_current_wc[MAX_RECURSIVE_GUILE];
+EXTERN int guile_current_dam[MAX_RECURSIVE_GUILE];
+EXTERN int guile_current_flags[MAX_RECURSIVE_GUILE];
+EXTERN int guile_return_value[MAX_RECURSIVE_GUILE];
+EXTERN int guile_current_quantum[MAX_RECURSIVE_GUILE];
+EXTERN int guile_max_quantum;
+
+/* Those are used when guile_call_event is called (argument fixthem) */
+#define SCRIPT_FIX_ACTIVATOR 2
+#define SCRIPT_FIX_ALL 1
+#define SCRIPT_FIX_NOTHING 0
 
 #endif /* GLOBAL_H */

@@ -540,6 +540,15 @@ object *fix_stopped_arrow (object *op)
 
 static void stop_arrow (object *op)
 {
+    /* GROS - Handling stop event */
+    if (op->script_stop!=NULL)
+    {
+        guile_call_event(NULL, op, NULL, 0, NULL,0,0,op->script_stop, SCRIPT_FIX_NOTHING);
+    };
+    if (op->script_str_stop!=NULL)
+    {
+        guile_call_event_str(NULL, op, NULL, 0, NULL,0,0,op->script_str_stop, SCRIPT_FIX_NOTHING);
+    };
     if (op->inv) {
 	object *payload = op->inv;
 	remove_ob (payload);
@@ -989,6 +998,15 @@ int process_object(object *op) {
     }
     return 1;
   }
+  /* GROS: Executing the script_time event */
+  if (op->script_time!=NULL)
+  {
+        guile_call_event(NULL, op, NULL, 0, NULL,0,0,op->script_time, SCRIPT_FIX_NOTHING);
+  };
+  if (op->script_str_time!=NULL)
+  {
+        guile_call_event_str(NULL, op, NULL, 0, NULL,0,0,op->script_str_time, SCRIPT_FIX_NOTHING);
+  };
   switch(op->type) {
   case ROD:
   case HORN:

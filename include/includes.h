@@ -80,7 +80,7 @@
 #include <unistd.h>
 #endif
 
-#ifdef HAVE_SYS_TIME_H 
+#ifdef HAVE_SYS_TIME_H
 #include <sys/time.h>
 #endif
 
@@ -109,6 +109,12 @@
 #ifndef FALSE
 #define FALSE 0
 #endif
+
+
+/* GROS: Add support for Guile Interpreter */
+#include <guile/gh.h>
+/* GROS: This one contains all declarations for script functions. */
+#include <script.h>
 
 #endif /* INCLUDES_H */
 
