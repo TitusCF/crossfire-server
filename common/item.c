@@ -149,10 +149,10 @@ char *ring_desc (object *op)
 	sprintf(buf+strlen(buf), "(ac%+d)", op->stats.ac);
     if(op->armour)
 	sprintf(buf+strlen(buf), "(armour%+d)", op->armour);
-    if (op->stats.food > 0)
+    if (op->stats.food != 0)
 	sprintf(buf+strlen(buf), "(sustenance%+d)", op->stats.food);
-    else if (op->stats.food < 0)
-	sprintf(buf+strlen(buf), "(hunger%+d)", op->stats.food);
+	 /*    else if (op->stats.food < 0)
+			 sprintf(buf+strlen(buf), "(hunger%+d)", op->stats.food); */
     if(op->stats.grace)
 	sprintf(buf+strlen(buf), "(grace%+d)", op->stats.grace);
     if(op->stats.sp && op->type!=SKILL)
@@ -657,10 +657,10 @@ char *describe_item(object *op) {
           break;
         default:
           if(op->stats.food) {
-            if(op->stats.food>0)
+            if(op->stats.food!=0)
               sprintf(buf,"(sustenance%+d)",op->stats.food);
-            else
-              sprintf(buf,"(hunger%+d)",op->stats.food);
+				/*            else
+								  sprintf(buf,"(hunger%+d)",op->stats.food); */
             strcat(retbuf,buf);
           }
           if(op->stats.grace) {
@@ -679,10 +679,10 @@ char *describe_item(object *op) {
     }
   } else if(op->type == PLAYER) {
     if(op->contr->digestion) {
-      if(op->contr->digestion>0)
+      if(op->contr->digestion!=0)
         sprintf(buf,"(sustenance%+d)",op->contr->digestion);
-      else
-        sprintf(buf,"(hunger%+d)",op->contr->digestion);
+		/*      else
+				  sprintf(buf,"(hunger%+d)",op->contr->digestion); */
       strcat(retbuf,buf);
     }
     if(op->contr->gen_grace) {
