@@ -27,7 +27,7 @@
 */
 
 #ifdef MAKE
-#define Version "0.97.0-2001/03/29"
+#define Version "0.98.0"
 #else
-#define VERSION "0.97.0-2001/03/29"
+#define VERSION "0.98.0"
 #endif
