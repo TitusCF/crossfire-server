@@ -52,6 +52,8 @@ typedef struct _msglang {
 /* checks npc->enemy and returns that enemy if still valid,
  * NULL otherwise.
  * this is map tile aware.
+ * If this returns an enemy, the range vector rv should also be
+ * set to sane values.
  */
 object *check_enemy(object *npc, rv_vector *rv) {
     
@@ -221,10 +223,9 @@ object *find_enemy(object *npc, rv_vector *rv)
         if(!QUERY_FLAG(npc, FLAG_UNAGGRESSIVE) && !QUERY_FLAG(npc, FLAG_FRIENDLY) &&
             !QUERY_FLAG(npc, FLAG_NEUTRAL))
         {
-	    tmp = get_nearest_player(npc);
-
-            if(QUERY_FLAG(npc, FLAG_FRIENDLY)&&tmp)
-    		    tmp = check_enemy(tmp,rv);
+	    npc->enemy = get_nearest_player(npc);
+	    if (npc->enemy) 
+		tmp = check_enemy(npc,rv);
         }
         
     }
@@ -235,6 +236,7 @@ object *find_enemy(object *npc, rv_vector *rv)
 /* Sees if this monster should wake up.
  * Currently, this is only called from move_monster, and
  * if enemy is set, then so should be rv.
+ * returns 1 if the monster should wake up, 0 otherwise.
  */
 
 int check_wakeup(object *op, object *enemy, rv_vector *rv) {

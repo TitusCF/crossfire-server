@@ -17,6 +17,15 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+CHANGES: Update build instructions for the plugin.
+random_maps/square_spiral.c: Fix bug that could cause the search
+   function to go off the edge of the map looking for a clear space.
+   Doesn't happen often, but one crash did happen here.
+server/monster.c: Fix some bugs with monsters and wakeup - remove
+    check for friendly that could never be true, and also fix
+    logic so that monsters will now find the players.
+MSW 2002-09-12
+
 common/button.c:  Fix do_mood_floor() to look at all objects on space for
    something to effect, not just things above the moodfloor.
 server/attack.c: Add missing check to make sure the plugin exists before

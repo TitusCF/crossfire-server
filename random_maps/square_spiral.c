@@ -100,17 +100,17 @@ char **make_square_spiral_layout(int xsize, int ysize,int options) {
     maze[tx-1][ty]='D';/* make a doorway out of this layer */
 
     /* walk left until we find the top-left corner */
-    while(maze[tx-1][ty]) tx--;
+    while((tx>0) && maze[tx-1][ty]) tx--;
 
     make_wall(maze,tx-1,ty,0);     /* make a horizontal wall with a door */
 
     /* walk down until we find the bottom-left corner */
-    while(maze[tx][ty+1]) ty++;
+    while(((ty+1) < ysize) && maze[tx][ty+1] ) ty++;
 
     make_wall(maze,tx,ty+1,1);    /* make a vertical wall with a door */
 
     /* walk rightuntil we find the bottom-right corner */
-    while(maze[tx+1][ty]) tx++;
+    while(((tx + 1) < xsize) && maze[tx+1][ty]) tx++;
     
     make_wall(maze,tx+1,ty,0);   /* make a horizontal wall with a door */
     tx++;  /* set up for next layer. */
