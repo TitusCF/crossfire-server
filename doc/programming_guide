@@ -162,5 +162,5 @@ it just fine.
 8) If you need to send a map, new archetypes, or other new files where
 a diff doesn't make since, a uuencoded tar file will work just fine.
 
-Mail all patches to mwedel@scruz.net
+Mail all patches to crossfire-devel@lists.real-time.com
 
