@@ -17,6 +17,13 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 CVS changes since last release:
 
+MSW 2001/02/06:
+common/porting.c: relocate clean_path from this file to server/main.c
+server/main.c: relocate clean_path from porting.c.  Add unclean_path.
+    Modify enter_unique_exit so it supports relative maps on unique maps.
+    Modify enter_exit so word of recall (or other forcelike fields), work
+    when the return point is a swapped out unique map.
+
 MSW 2001/02/05:
 server/attack.c: Fix blind and paralyze - logic for reducing duration was
    broken, resulting in zero duration for most characters.  It should now

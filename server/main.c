@@ -335,6 +335,47 @@ static void enter_map(object *op, mapstruct *newmap, int x, int y) {
 }
 
 
+/* clean_path takes a path and replaces all / with _
+ * We do a strcpy so that we do not change the original string.
+ */
+char *clean_path(char *file)
+{
+    static char newpath[MAX_BUF],*cp;
+
+    strncpy(newpath, file, MAX_BUF-1);
+    newpath[MAX_BUF-1]='\0';
+    for (cp=newpath; *cp!='\0'; cp++) {
+	if (*cp=='/') *cp='_';
+    }
+    return newpath;
+}
+
+
+/* unclean_path takes a path and replaces all _ with /
+ * This basically undoes clean path.
+ * We do a strcpy so that we do not change the original string.
+ * We are smart enough to start after the last / in case we
+ * are getting passed a string that points to a unique map
+ * path.
+ */
+char *unclean_path(char *src)
+{
+    static char newpath[MAX_BUF],*cp;
+
+    cp=strrchr(src, '/');
+    if (cp)
+	strncpy(newpath, cp+1, MAX_BUF-1);
+    else
+	strncpy(newpath, src, MAX_BUF-1);
+    newpath[MAX_BUF-1]='\0';
+
+    for (cp=newpath; *cp!='\0'; cp++) {
+	if (*cp=='_') *cp='/';
+    }
+    return newpath;
+}
+
+
 /* The player is trying to enter a randomly generated map.  In this case, generate the
  * random map as needed.
  */
@@ -387,16 +428,32 @@ static void enter_unique_map(object *op, object *exit_ob)
     char apartment[HUGE_BUF];
     mapstruct	*newmap;
 
-    sprintf(apartment, "%s/%s/%s/%s", settings.localdir,
+    if (EXIT_PATH(exit_ob)[0]=='/') {
+	sprintf(apartment, "%s/%s/%s/%s", settings.localdir,
 	    settings.playerdir, op->name, clean_path(EXIT_PATH(exit_ob)));
+	newmap = ready_map_name(apartment, MAP_PLAYER_UNIQUE);
+	if (!newmap) {
+	    newmap = load_original_map(create_pathname(EXIT_PATH(exit_ob)), MAP_PLAYER_UNIQUE);
+	    if (newmap) fix_auto_apply(newmap);
+	}
+    } else { /* relative directory */
+	char reldir[HUGE_BUF], tmpc[HUGE_BUF], *cp;
 
-    newmap = ready_map_name(apartment, MAP_PLAYER_UNIQUE);
-    if (!newmap) {
-	/* If here, that map is not in memory, in /tmp, or in the players
-	 * directory, so we need to load the original for the player.
-	 */
-	newmap = load_original_map(create_pathname(EXIT_PATH(exit_ob)), MAP_PLAYER_UNIQUE);
-	if (newmap) fix_auto_apply(newmap);
+	strcpy(reldir, unclean_path(exit_ob->map->path));
+
+	/* Need to copy this over, as clean_path only has one static return buffer */
+	strcpy(tmpc, clean_path(reldir));
+	/* Remove final component, if any */ 
+	if ((cp=strrchr(tmpc, '_'))!=NULL) *cp=0;
+
+	sprintf(apartment, "%s/%s/%s/%s_%s", settings.localdir,
+	    settings.playerdir, op->name, tmpc,
+	    clean_path(EXIT_PATH(exit_ob)));
+	newmap = ready_map_name(apartment, MAP_PLAYER_UNIQUE);
+	if (!newmap) {
+	    newmap = load_original_map(create_pathname(normalize_path(reldir, EXIT_PATH(exit_ob))), MAP_PLAYER_UNIQUE);
+	    if (newmap) fix_auto_apply(newmap);
+	}
     }
 
     if (newmap) {
@@ -456,8 +513,12 @@ void enter_exit(object *op, object *exit_ob) {
 		/* For word of recall and other force objects
 		 * They contain the full pathname of the map to go back to,
 		 * so we don't need to normalize it.
+		 * But we do need to see if it is unique or not 
 		 */
-		newmap = ready_map_name(EXIT_PATH(exit_ob), 0);
+		if (!strncmp(EXIT_PATH(exit_ob), settings.localdir, strlen(settings.localdir)))
+		    newmap = ready_map_name(EXIT_PATH(exit_ob), MAP_PLAYER_UNIQUE);
+		else
+		    newmap = ready_map_name(EXIT_PATH(exit_ob), 0);
 	    }
 	    /* This supports the old behaviour, but it really should not be used.
 	     * I will note for example that with this method, it is impossible to

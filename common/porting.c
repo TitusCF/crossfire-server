@@ -199,21 +199,6 @@ FILE *popen_local(const char *command, const char *type)
  ****************************************************************************/
 
 
-/* clean_path takes a path and replaces all / with _
- * We do a strcpy so that we do not change the original string.
- */
-char *clean_path(char *file)
-{
-    static char newpath[MAX_BUF],*cp;
-
-    strncpy(newpath, file, MAX_BUF-1);
-    newpath[MAX_BUF-1]='\0';
-    for (cp=newpath; *cp!='\0'; cp++) {
-	if (*cp=='/') *cp='_';
-    }
-    return newpath;
-}
-
 
 /*
  * A replacement of strdup(), since it's not defined at some
