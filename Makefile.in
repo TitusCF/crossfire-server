@@ -113,7 +113,7 @@ x_libraries = @x_libraries@
 
 SUBDIRS = common random_maps socket server include lib utils doc plugin crossedit
 
-EXTRA_DIST = CHANGES CREDITS DEVELOPERS License autogen.sh run_win32.bat
+EXTRA_DIST = AUTHORS ChangeLog COPYING DEVELOPERS autogen.sh run_win32.bat
 
 DISTCHECK_CONFIGURE_FLAGS = --localstatedir=$$dc_install_base/var --mandir=$$dc_install_base/man
 subdir = .
@@ -127,9 +127,9 @@ RECURSIVE_TARGETS = info-recursive dvi-recursive install-info-recursive \
 	uninstall-info-recursive all-recursive install-data-recursive \
 	install-exec-recursive installdirs-recursive install-recursive \
 	uninstall-recursive check-recursive installcheck-recursive
-DIST_COMMON = README COPYING ChangeLog INSTALL Makefile.am Makefile.in \
-	TODO acinclude.m4 aclocal.m4 config.guess config.sub configure \
-	configure.ac
+DIST_COMMON = README AUTHORS COPYING ChangeLog INSTALL Makefile.am \
+	Makefile.in NEWS TODO acinclude.m4 aclocal.m4 config.guess \
+	config.sub configure configure.ac
 DIST_SUBDIRS = $(SUBDIRS)
 all: all-recursive
 
