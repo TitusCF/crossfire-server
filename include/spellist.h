@@ -418,7 +418,7 @@ PATH_TURNING,"holy_orb",},
    PATH_TELE, "dancingsword", },
 {"cause cold",                  2, 10, 5, 10, 3, 2,  5,  1, 0, 1, 0,   /* 187 */
    PATH_WOUNDING,"disease_cold"},
-{"divine shock",              1, 3, 0, 10, 0, 0, 5, 1, 0, 1, 0, 
+{"divine shock",              1, 3, 0, 10, 0, 0, 0, 1, 0, 1, 0, 
    PATH_WOUNDING,"divine_shock"},
 {"windstorm",                   3,3,  0, 10, 0, 0,  0,  1, 0, 1, 0,
  PATH_NULL, "windstorm",},
