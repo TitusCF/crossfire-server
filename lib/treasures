@@ -28,6 +28,9 @@ treasure Valriel
   more
   arch god_cure_poison
   more
+  arch god_remove_curse
+    chance 10
+  more
   arch god_remove_damnation
     chance 60
   more
@@ -42,7 +45,9 @@ treasure Valriel
   more
 arch god_grace_limit_medium
 more
-  arch god_spelldirect_defense
+  arch god_spelldirect_sunspear
+  more
+  arch god_spelldirect_daylight
 end
 #############################################################
 # Gorokh - Demon King, Duke of Hell, Temptor and Tormentor
@@ -112,12 +117,11 @@ more
   more
   arch god_spelldirect_cause_many_wounds
   more
-  arch god_spelldirect_cause_black_death
-    chance 10
+  arch god_spelldirect_cause_red_death
   more
 arch god_grace_limit_high
-more
-  arch god_spelldirect_cause_white_death
+  more
+  arch god_spelldirect_cause_black_death
     chance 10
 end
 #############################################################
@@ -163,8 +167,6 @@ more
   more
 arch god_grace_limit_high
 more
-  arch god_spelldirect_retributive_strike
-  more
   list sorig_treasure
     chance 2
 end
@@ -208,8 +210,6 @@ more
 arch god_grace_limit_high
 more
   arch god_spelldirect_retributive_strike
-  more
-  arch god_spelldirect_immolation
 end
 #############################################################
 # Gaea - Goddess of peace, Guardian of life, Mother of nature
@@ -226,6 +226,9 @@ treasure Gaea
   arch god_cure_confusion
   more
   arch god_cure_poison
+  more
+  arch god_remove_curse
+    chance 50
   more
   arch god_remove_damnation
     chance 50
@@ -252,6 +255,10 @@ more
   arch god_spelldirect_remove_damnation
   more
   arch god_spelldirect_nightfall
+  more
+  arch god_spelldirect_sanctuary
+  more
+  arch god_spelldirect_ironwood_skin
   more
   arch god_spelldirect_daylight
   more
@@ -347,6 +354,8 @@ more
     chance 5
   more
   arch god_spelldirect_conflict
+  more
+  arch god_spelldirect_defense
 end
 #############################################################
 # Gnarg - Father of goblins, Lord Troll, Master of poisons,
@@ -379,17 +388,11 @@ more
   arch helmet_gnarg
     chance 5
   more
-  arch god_spelldirect_cause_smallpox
-  more
 arch god_grace_limit_medium
 more
   arch god_spelldirect_poison_fog
   more
-  arch god_spelldirect_cause_red_death
-  more
-arch god_grace_limit_high
-more
-  arch god_spelldirect_cause_white_death
+  arch god_spelldirect_cause_smallpox
 end
 ##############################################################
 #
