@@ -1262,6 +1262,29 @@ static msglang *parse_message(char *msg) {
           *line = '\0';
           if (last != line)
             msgs->keywords[msgnr][keywordnr++] = strdup_local(last);
+	  else {
+	        if (keywordnr<nrofkeywords)
+		{
+		   /* Whoops, Either got || or |\n in @match. Not good */
+		   msgs->keywords[msgnr][keywordnr++] = strdup_local("xxxx");
+		   /* We need to set the string to something sensible to    *
+		    * prevent crashes later. Unfortunately, we can't set to *
+		    * NULL, as that's used to terminate the for loop in     *
+		    * talk_to_npc.  Using xxxx should also help map         *
+		    * developers track down the problem cases.              */
+		   LOG (llevError, "Tried to set a zero length message in parse_message\n");
+		   /* I think this is a error worth reporting at a reasonably *
+		    * high level. When logging gets redone, this should       *
+		    * be something like MAP_ERROR, or whatever gets put in    *
+		    * place. */
+		   if (keywordnr>1)
+			   /* This is purely addtional information, should *
+			    * only be gieb if asked */
+			   LOG(llevDebug, "Msgnr %d, after keyword %s\n",msgnr+1,msgs->keywords[msgnr][keywordnr-2]);
+		   else
+			   LOG(llevDebug, "Msgnr %d, first keyword\n",msgnr+1);
+		}
+	  }
           last = line + 1;
         }
       last = cp;

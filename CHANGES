@@ -20,6 +20,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for 0.95.6:
 
+server/monster.c:  Patch by Neil Muller so that corrupt/bad @match entries
+will not cause the server to crash.  Applied by MSW 6/21/2000
+
 lib/archetypes: rebuilt for 0.95.6
 lib/collect.pl:  Modify to search the archetypes directories in alphabetical
 order - before I believe they were collected in basically inode order.
