@@ -646,27 +646,21 @@ void MarkItem(uint8 *data, int len,player *pl)
  */
 void look_at(object *op,int dx,int dy) {
     object *tmp;
-    int flag=0;
+    int flag=0,x,y;
+    mapstruct *m;
+
 
     if (out_of_map(op->map, op->x+dx, op->y+dy)) return;
-#if 0
-    /* put player back on top */
-    if(op->above!=NULL) {
-	SET_FLAG (op, FLAG_NO_APPLY);
-	remove_ob(op);
-	insert_ob_in_map(op,op->map,NULL);
-	CLEAR_FLAG (op, FLAG_NO_APPLY);
-    }
-    /* find top object to process from */
-    if(dx||dy) 
-	for(tmp=get_map_ob(op->map,op->x+dx,op->y+dy);tmp!=NULL&&tmp->above!=NULL;
+
+    x = op->x + dx;
+    y = op->y + dy;
+
+    m = get_map_from_coord(op->map, &x, &y);
+    if (!m) return;
+
+    for(tmp=get_map_ob(m, x ,y);tmp!=NULL&&tmp->above!=NULL;
 	    tmp=tmp->above);
-    else
-	tmp=op->below;
-#else
-    for(tmp=get_map_ob(op->map,op->x+dx,op->y+dy);tmp!=NULL&&tmp->above!=NULL;
-	    tmp=tmp->above);
-#endif
+
     for ( ; tmp != NULL; tmp=tmp->below ) {
 	 if (tmp->invisible && !QUERY_FLAG(op, FLAG_WIZ)) continue;
 

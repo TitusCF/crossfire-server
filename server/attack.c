@@ -262,6 +262,7 @@ int hit_map(object *op,int dir,int type) {
 
     /* Something could have happened to 'tmp' while 'tmp->below' was processed.
      * For example, 'tmp' was put in an icecube.
+     * This is one of the few cases where on_same_map should not be used.
      */
     if (tmp->map != map || tmp->x != x || tmp->y != y)
       continue;
@@ -352,7 +353,7 @@ static int get_attack_mode (object **target, object **hitter,
     }
     if (QUERY_FLAG (*target, FLAG_REMOVED)
         || QUERY_FLAG (*hitter, FLAG_REMOVED)
-        || (*hitter)->map == NULL || (*hitter)->map != (*target)->map)
+        || (*hitter)->map == NULL || !on_same_map((*hitter), (*target)))
     {
         LOG (llevError, "BUG: hitter (arch %s, name %s) with no relation to "
              "target\n", (*hitter)->arch->name, (*hitter)->name);
@@ -373,7 +374,7 @@ static int abort_attack (object *target, object *hitter, int simple_attack)
         new_mode = 1;
     else if (QUERY_FLAG (hitter, FLAG_REMOVED)
              || QUERY_FLAG (target, FLAG_REMOVED)
-             || hitter->map == NULL || hitter->map != target->map)
+             || hitter->map == NULL || !on_same_map(hitter, target))
         return 1;
     else
         new_mode = 0;
@@ -1162,7 +1163,7 @@ int kill_object(object *op,int dam, object *hitter, int type)
 		add_kill_to_party(no,query_name(hitter),query_name(op),exp);
 #endif
 		for(pl=first_player;pl!=NULL;pl=pl->next) {
-		    if(pl->ob->contr->party_number==no && (pl->ob->map == hitter->map)) {
+		    if(pl->ob->contr->party_number==no && on_same_map(pl->ob, hitter)) {
 			count++;
                         shares+=(pl->ob->level+4);
 		    }
@@ -1172,7 +1173,7 @@ int kill_object(object *op,int dam, object *hitter, int type)
 		else {
 		    int share=exp/shares,given=0,nexp;
 		    for(pl=first_player;pl!=NULL;pl=pl->next) {
-                        if(pl->ob->contr->party_number==no && (pl->ob->map == hitter->map))
+                        if(pl->ob->contr->party_number==no && on_same_map(pl->ob, hitter))
                         {
                                 nexp=(pl->ob->level+4)*share;
                                 add_exp(pl->ob,nexp);
@@ -1671,7 +1672,7 @@ int adj_attackroll (object *hitter, object *target) {
   int adjust=0;
 
   /* safety */
-  if(!target||!hitter||!hitter->map||!target->map||hitter->map!=target->map) {
+  if(!target||!hitter||!hitter->map||!target->map||!on_same_map(hitter,target)) {
     LOG (llevError, "BUG: adj_attackroll(): hitter and target not on same "
          "map\n");
     return 0;

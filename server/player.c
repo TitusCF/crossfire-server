@@ -232,57 +232,82 @@ archetype *get_player_archetype(archetype* at)
 
 
 object *get_nearest_player(object *mon) {
-  object *op = NULL;
-  player *pl = NULL;
-  objectlink *ol;
-  int lastdist,tmp;
+    object *op = NULL;
+    player *pl = NULL;
+    objectlink *ol;
+    int lastdist;
+    rv_vector	rv;
 
-  for(ol=first_friendly_object,lastdist=1000;ol!=NULL;ol=ol->next) {
-    /* We shoult not find free objects on this friendly list, but it
-     * does periodically happen.  Given that, lets deal with it.
-     * While unlikely, it is possible the next object on the friendly
-     * list is also free, so encapsulate this in a while loop.
-     */
-    while (QUERY_FLAG(ol->ob, FLAG_FREED) || !QUERY_FLAG(ol->ob, FLAG_FRIENDLY)) {
-	object *tmp=ol->ob;
-
-	/* Can't do much more other than log the fact, because the object
-	 * itself will have been cleared.
+    for(ol=first_friendly_object,lastdist=1000;ol!=NULL;ol=ol->next) {
+	/* We should not find free objects on this friendly list, but it
+	 * does periodically happen.  Given that, lets deal with it.
+	 * While unlikely, it is possible the next object on the friendly
+	 * list is also free, so encapsulate this in a while loop.
 	 */
-	LOG(llevDebug,"get_nearest_player: Found free/non friendly object on friendly list\n");
-	ol = ol->next;
-	remove_friendly_object(tmp);
-	if (!ol) return op;
-    }
+	while (QUERY_FLAG(ol->ob, FLAG_FREED) || !QUERY_FLAG(ol->ob, FLAG_FRIENDLY)) {
+	    object *tmp=ol->ob;
 
-    /* Remove special check for player from this.  First, it looks to cause
-     * some crashes (ol->ob->contr not set properly?), but secondly, a more
-     * complicated method of state checking would be needed in any case -
-     * as it was, a clever player could type quit, and the function would  
-     * skip them over while waiting for confirmation.
-     */
-    if(!can_detect_enemy(mon,ol->ob)||ol->ob->map!=mon->map)
-      continue;
-    tmp=distance(ol->ob,mon);
-    if(lastdist>tmp) {
-      op=ol->ob;
-      lastdist=tmp;
-    }
-  }
-  for (pl=first_player; pl != NULL; pl=pl->next) {
-    if (pl->ob->map == mon->map && can_detect_enemy(mon, pl->ob)) {
-	tmp=distance(pl->ob,mon);
-	if(lastdist>tmp) {
-	    op=pl->ob;
-	    lastdist=tmp;
+	    /* Can't do much more other than log the fact, because the object
+	     * itself will have been cleared.
+	     */
+	    LOG(llevDebug,"get_nearest_player: Found free/non friendly object on friendly list\n");
+	    ol = ol->next;
+	    remove_friendly_object(tmp);
+	    if (!ol) return op;
+	}
+
+	/* Remove special check for player from this.  First, it looks to cause
+	 * some crashes (ol->ob->contr not set properly?), but secondly, a more
+	 * complicated method of state checking would be needed in any case -
+	 * as it was, a clever player could type quit, and the function would  
+	 * skip them over while waiting for confirmation.
+	 * put checks in for 
+	 */
+	if (!on_same_map(mon,ol->ob) || !can_detect_enemy(mon,ol->ob,&rv))
+		continue;
+
+	if(lastdist>rv.distance) {
+	    op=ol->ob;
+	    lastdist=rv.distance;
 	}
     }
-  }
+    for (pl=first_player; pl != NULL; pl=pl->next) {
+	if (on_same_map(mon, pl->ob)&& can_detect_enemy(mon, pl->ob,&rv)) {
+
+	    if(lastdist>rv.distance) {
+		op=pl->ob;
+		lastdist=rv.distance;
+	    }
+	}
+    }
 #if 0
-  LOG(llevDebug,"get_nearest_player() finds player: %s\n",op?op->name:"(null)");
+    LOG(llevDebug,"get_nearest_player() finds player: %s\n",op?op->name:"(null)");
 #endif
-  return op;
+    return op;
 }
+
+/* I believe this can safely go to 2, 3 is questionable, 4 will likely
+ * result in a monster paths backtracking.  It basically determines how large a 
+ * detour a monster will take from the direction path when looking
+ * for a path to the player.  The values are in the amount of direction
+ * the deviation is
+ */
+#define DETOUR_AMOUNT	2
+
+/* This is used to prevent infinite loops.  Consider a case where the
+ * player is in a chamber (with gate closed), and monsters are outside.
+ * with DETOUR_AMOUNT==2, the function will turn each corner, trying to
+ * find a path into the chamber.  This is a good thing, but since there
+ * is no real path, it will just keep circling the chamber for
+ * ever (this could be a nice effect for monsters, but not for the function
+ * to get stuck in.  I think for the monsters, if max is reached and
+ * we return the first direction the creature could move would result in the
+ * circling behaviour.  Unfortunately, this function is also used to determined
+ * if the creature should cast a spell, so returning a direction in that case
+ * is probably not a good thing.
+ */
+#define MAX_SPACES	50
+
 
 /*
  * Returns the direction to the player, if valid.  Returns 0 otherwise.
@@ -290,54 +315,120 @@ object *get_nearest_player(object *mon) {
  * player and if path is blocked then see if blockage is close enough to player that
  * direction to player is changed (ie zig or zag).  Continue zig zag until either
  * reach player or path is blocked.  Thus, will only return true if there is a free
- * path to player.  Though path may not be a straight line.  Note that it will find
+ * path to player.  Though path may not be a straight line. Note that it will find
  * player hiding along a corridor at right angles to the corridor with the monster.
+ *
+ * Modified by MSW 2001-08-06 to handle tiled maps. Various notes:
+ * 1) With DETOUR_AMOUNT being 2, it should still go and find players hiding
+ * down corriders.  
+ * 2) I think the old code was broken if the first direction the monster
+ * should move was blocked - the code would store the first direction without
+ * verifying that the player can actually move in that direction.  The new
+ * code does not store anything in firstdir until we have verified that the
+ * monster can in fact move one space in that direction.
+ * 3) I'm not sure how good this code will be for moving multipart monsters,
+ * since only simple checks to blocked are being called, which could mean the monster
+ * is blocking itself.
  */
 int path_to_player(object *mon, object *pl,int mindiff) {
-  int dir,x,y,diff;
-  int oldx,oldy,olddir,newdir;
+    rv_vector	rv;
+    int	x,y,lastx,lasty,dir,i,diff, firstdir=0,lastdir, max=MAX_SPACES;
+    mapstruct *m ,*lastmap;
 
-  x=mon->x, y=mon->y;
-  dir=find_dir_2(x-pl->x,y-pl->y);
+    get_rangevector(mon, pl, &rv, 0);
+    if (rv.distance<mindiff) return 0;
 
-  /* diff is how many steps from monster to player */
-  diff= abs(x-pl->x) > abs(y-pl->y) ? abs(x-pl->x) : abs(y-pl->y);
-  if(diff<mindiff) return 0;
+    x=mon->x;
+    y=mon->y;
+    m=mon->map;
+    dir = rv.direction;
+    lastdir = rv.direction;
+    diff = FABS(rv.distance_x)>FABS(rv.distance_y)?FABS(rv.distance_x):FABS(rv.distance_y);
+    /* If we can't solve it within the search distance, return now. */
+    if (diff>max) return 0;
+    while (diff >1 && max>0) {
+	lastx = x;
+	lasty = y;
+	lastmap = m;
+	x = lastx + freearr_x[dir];
+	y = lasty + freearr_y[dir];
 
-  newdir = olddir = dir;
-  oldx = x, oldy=y;
-
-  while( diff>1 ) {
-    for( ; diff>1; diff--) {
-      oldx=x, oldy=y;
-      x+=freearr_x[newdir],y+=freearr_y[newdir];
-      if(blocked(mon->map,x,y)){
-        if (olddir == (newdir=find_dir_2(oldx-pl->x, oldy-pl->y))){
-          if ( (newdir%2) == 0)
-            return 0;
-            /* if heading straight then try diag step towards player.  needed to find
-             * player in a L position compared to monster along corridors.  the 2* and
-			 * RANDOM are to go around a block and find the player behind. */
-          if ((newdir==1) || (newdir==5)) {
-            ( (2*x) > (2*(pl->x+RANDOM()%2)-1) ) ? x-- : x++;
-          } else if((newdir==3) || (newdir==7)) {
-            ( (2*y) > (2*(pl->y+RANDOM()%2)-1) ) ? y-- : y++;
-          }
-          if(blocked(mon->map,x,y))  
-            return 0;        /* path blocked to player */
-          diff = abs(x-pl->x) > abs(y-pl->y) ? abs(x-pl->x) : abs(y-pl->y);
-        } else {        /*have a new direction to try */
-          olddir = newdir, x=oldx, y=oldy;
-          diff = abs(oldx-pl->x) > abs(oldy-pl->y) ? abs(oldx-pl->x) : abs(oldy-pl->y);
-        }
-      }
+	m = get_map_from_coord(m, &x, &y);
+	/* Space is blocked - try changing direction a little */
+	if (blocked(m, x, y) && (m == mon->map && blocked_link(mon, x, y))) {
+	    /* recalculate direction from last good location.  Possible
+	     * we were not traversing ideal location before.
+	     */
+	    get_rangevector_from_mapcoord(lastmap, lastx, lasty, pl, &rv, 0);
+	    if (rv.direction != dir) {
+		/* OK - says direction should be different - lets reset the
+		 * the values so it will try again.
+		 */
+		x = lastx;
+		y = lasty;
+		m = lastmap;
+		dir = rv.direction;
+	    } else {
+		/* direct path is blocked - try taking a side step to
+		 * either the left or right.
+		 * Note increase the values in the loop below to be 
+		 * more than -1/1 respectively will mean the monster takes
+		 * bigger detour.  Have to be careful about these values getting
+		 * too big (3 or maybe 4 or higher) as the monster may just try
+		 * stepping back and forth
+		 */
+		for (i=-DETOUR_AMOUNT; i<=DETOUR_AMOUNT; i++) {
+		    if (i==0) continue;	/* already did this, so skip it */
+		    /* Use lastdir here - otherwise,
+		     * since the direction that the creature should move in
+		     * may change, you could get infinite loops.
+		     * ie, player is northwest, but monster can only
+		     * move west, so it does that.  It goes some distance,
+		     * gets blocked, finds that it should move north,
+		     * can't do that, but now finds it can move east, and
+		     * gets back to its original point.  lastdir contains
+		     * the last direction the creature has successfully
+		     * moved.
+		     */
+		    
+		    x = lastx + freearr_x[absdir(lastdir+i)];
+		    y = lasty + freearr_y[absdir(lastdir+i)];
+		    m = lastmap;
+		    if (!out_of_map(m, x, y)) {
+			m = get_map_from_coord(m, &x, &y);
+			if (!blocked(m, x, y) && (m == mon->map && blocked_link(mon, x, y))) break;
+		    }
+		}
+		/* go through entire loop without finding a valid
+		 * sidestep to take - thus, no valid path.
+		 */
+		if (i==(DETOUR_AMOUNT+1))
+		    return 0;
+		diff--;
+		lastdir=dir;
+		max--;
+		if (!firstdir) firstdir = dir+i;
+	    } /* else check alternate directions */
+	} /* if blocked */
+	else {
+	    /* we moved towards creature, so diff is less */
+	    diff--;
+	    max--;
+	    lastdir=dir;
+	    if (!firstdir) firstdir = dir;
+	}
+	if (diff<=1) {
+	    /* Recalculate diff (distance) because we may not have actually
+	     * headed toward player for entire distance.
+	     */
+	    get_rangevector_from_mapcoord(m, x, y, pl, &rv, 0);
+	    diff = FABS(rv.distance_x)>FABS(rv.distance_y)?FABS(rv.distance_x):FABS(rv.distance_y);
+	}
+	if (diff>max) return 0;
     }
-    /* diff may have headed us all the way down that direction, but not next to the player
-     * so head towards player.  If next to player then will exit while loop */
-    newdir=find_dir_2(x-pl->x, y-pl->y);
-    diff = abs(x-pl->x) > abs(y-pl->y) ? abs(x-pl->x) : abs(y-pl->y);
-  }
-  return dir;
+    /* If we reached the max, didn't find a direction in time */
+    if (!max) return 0;
+    return firstdir;
 }
 
 void give_initial_items(object *pl,treasurelist *items) {
@@ -1211,6 +1302,49 @@ object * find_key(object *pl, object *container, object *door)
     return tmp;
 }
 
+/* moved door processing out of move_player_attack.
+ * returns 1 if player has opened the door with a key
+ * such that the caller should not do anything more,
+ * 0 otherwise
+ */
+static int player_attack_door(object *op, object *door)
+{
+
+    /* If its a door, try to find a use a key.  If we do destroy the door,
+     * might as well return immediately as there is nothing more to do -
+     * otherwise, we fall through to the rest of the code.
+     */
+    object *key=find_key(op, op, door);
+
+    /* IF we found a key, do some extra work */
+    if (key) {
+	object *container=key->env;
+
+	play_sound_map(op->map, op->x, op->y, SOUND_OPEN_DOOR);
+	if(action_makes_visible(op)) make_visible(op);
+	if(door->inv && door->inv->type ==RUNE) spring_trap(door->inv,op);
+	if (door->type == DOOR) {
+	    hit_player(door,9999,op,AT_PHYSICAL); /* Break through the door */
+	}
+	else if(door->type==LOCKED_DOOR) {
+	    new_draw_info_format(NDI_UNIQUE, NDI_BROWN, op, 
+		     "You open the door with the %s", query_short_name(key));
+	    remove_door2(door); /* remove door without violence ;-) */
+	}
+	/* Do this after we print the message */
+	decrease_ob(key); /* Use up one of the keys */
+	/* Need to update the weight the container the key was in */
+	if (container != op) 
+	    esrv_update_item(UPD_WEIGHT, op, container);
+	return 1; /* Nothing more to do below */
+    } else if (door->type==LOCKED_DOOR) {
+	/* Might as well return now - no other way to open this */
+	 new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, op, door->msg);
+	return 1;
+    }
+    return 0;
+}
+
 /* This function is just part of a breakup from move_player.
  * It should keep the code cleaner.
  * When this is called, the players direction has been updated
@@ -1220,147 +1354,112 @@ object * find_key(object *pl, object *container, object *door)
 
 void move_player_attack(object *op, int dir)
 {
-  object *tmp;
-  int nx=freearr_x[dir]+op->x,ny=freearr_y[dir]+op->y;
+    object *tmp;
+    int nx=freearr_x[dir]+op->x,ny=freearr_y[dir]+op->y;
+    mapstruct *m;
 
-
-  /* If braced, or can't move to the square, and it is not out of the
-   * map, attack it.  Note order of if statement is important - don't
-   * want to be calling move_ob if braced, because move_ob will move the
-   * player.  This is a pretty nasty hack, because if we could
-   * move to some space, it then means that if we are braced, we should
-   * do nothing at all.  As it is, if we are braced, we go through
-   * quite a bit of processing.  However, it probably is less than what
-   * move_ob uses.
-   */
-  if ((op->contr->braced || !move_ob(op,dir,op)) &&
-    !out_of_map(op->map,nx,ny)) {
-    
-
-    if ((tmp=get_map_ob(op->map,nx,ny))==NULL) {
-/*	LOG(llevError,"player_move_attack: get_map_ob returns NULL, but player can not more there.\n");*/
-	return;
-    }
-
-    /* Go through all the objects, and stop if we find one of interest. */
-    while (tmp->above!=NULL) {
-      if ((QUERY_FLAG(tmp,FLAG_ALIVE) || QUERY_FLAG(tmp,FLAG_CAN_ROLL)
-	    || tmp->type ==LOCKED_DOOR) && tmp!=op)
-	    break;
-      tmp=tmp->above;
-    }
-    
-    if (tmp==NULL)	/* This happens anytime the player tries to move */
-	return;		/* into a wall */
-
-    if(tmp->head != NULL)
-      tmp = tmp->head;
-
-    /* If its a door, try to find a use a key.  If we do destroy the door,
-     * might as well return immediately as there is nothing more to do -
-     * otherwise, we fall through to the rest of the code.
+    /* If braced, or can't move to the square, and it is not out of the
+     * map, attack it.  Note order of if statement is important - don't
+     * want to be calling move_ob if braced, because move_ob will move the
+     * player.  This is a pretty nasty hack, because if we could
+     * move to some space, it then means that if we are braced, we should
+     * do nothing at all.  As it is, if we are braced, we go through
+     * quite a bit of processing.  However, it probably is less than what
+     * move_ob uses.
      */
-    if ((tmp->type==DOOR && tmp->stats.hp>=0) || (tmp->type==LOCKED_DOOR)) {
-	object *key=find_key(op, op, tmp);
-
-	/* IF we found a key, do some extra work */
-	if (key) {
-	    object *container=key->env;
-
-	    play_sound_map(op->map, op->x, op->y, SOUND_OPEN_DOOR);
-	    if(action_makes_visible(op)) make_visible(op);
-	    if(tmp->inv && tmp->inv->type ==RUNE) spring_trap(tmp->inv,op);
-	    if (tmp->type == DOOR) {
-		hit_player(tmp,9999,op,AT_PHYSICAL); /* Break through the door */
-	    }
-	    else if(tmp->type==LOCKED_DOOR) {
-		new_draw_info_format(NDI_UNIQUE, NDI_BROWN, op, 
-				     "You open the door with the %s", query_short_name(key));
-		remove_door2(tmp); /* remove door without violence ;-) */
-	    }
-	    /* Do this after we print the message */
-	    decrease_ob(key); /* Use up one of the keys */
-	    /* Need to update the weight the container the key was in */
-	    if (container != op) 
-		esrv_update_item(UPD_WEIGHT, op, container);
-	    return; /* Nothing more to do below */
-	} else if (tmp->type==LOCKED_DOOR) {
-	    /* Might as well return now - no other way to open this */
-	    new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, op, tmp->msg);
+    if ((op->contr->braced || !move_ob(op,dir,op)) && !out_of_map(op->map,nx,ny)) {
+	if (OUT_OF_REAL_MAP(op->map, nx, ny)) 
+	    m = get_map_from_coord(op->map, &nx, &ny);
+	else m =op->map;
+    
+	if ((tmp=get_map_ob(m,nx,ny))==NULL) {
+	    /*	LOG(llevError,"player_move_attack: get_map_ob returns NULL, but player can not more there.\n");*/
 	    return;
 	}
-    }
 
-    /* The following deals with possibly attacking peaceful
-     * or frienddly creatures.  Basically, all players are considered
-     * unaggressive.  If the moving player has peaceful set, then the
-     * object should be pushed instead of attacked.  It is assumed that
-     * if you are braced, you will not attack friends accidently,
-     * and thus will not push them.
-     */
-
-    /* If the creature is a pet, push it even if the player is not
-     * peaceful.  Our assumption is the creature is a pet if the
-     * player owns it and it is either friendly or unagressive.
-     */
-    if ((op->type==PLAYER) && get_owner(tmp)==op && 
-	(QUERY_FLAG(tmp,FLAG_UNAGGRESSIVE) ||  QUERY_FLAG(tmp, FLAG_FRIENDLY)))
-    {
-	/* If we're braced, we don't want to switch places with it */
-	if (op->contr->braced) return;
-	play_sound_map(op->map, op->x, op->y, SOUND_PUSH_PLAYER);
-	(void) push_ob(tmp,dir,op);
-	if(op->contr->tmp_invis||op->hide) make_visible(op);
-	return;
-    }
+	/* Go through all the objects, and stop if we find one of interest. */
+	while (tmp->above!=NULL) {
+	    if ((QUERY_FLAG(tmp,FLAG_ALIVE) || QUERY_FLAG(tmp,FLAG_CAN_ROLL)
+		 || tmp->type ==LOCKED_DOOR) && tmp!=op)
+		break;
+	    tmp=tmp->above;
+	}
     
-    if ((tmp->type==PLAYER || tmp->enemy != op) &&
-      (tmp->type==PLAYER || QUERY_FLAG(tmp,FLAG_UNAGGRESSIVE)
-	|| QUERY_FLAG(tmp, FLAG_FRIENDLY)) && (op->contr->peaceful
-	&& !op_on_battleground(op, NULL, NULL)) && (!op->contr->braced)) {
-	  play_sound_map(op->map, op->x, op->y, SOUND_PUSH_PLAYER);
-	  (void) push_ob(tmp,dir,op);
-          if(op->contr->tmp_invis||op->hide) make_visible(op);
+	if (tmp==NULL)		/* This happens anytime the player tries to move */
+	    return;		/* into a wall */
+
+	if(tmp->head != NULL)
+	    tmp = tmp->head;
+
+	if ((tmp->type==DOOR && tmp->stats.hp>=0) || (tmp->type==LOCKED_DOOR))
+	    if (player_attack_door(op, tmp)) return;
+
+	/* The following deals with possibly attacking peaceful
+	 * or frienddly creatures.  Basically, all players are considered
+	 * unaggressive.  If the moving player has peaceful set, then the
+	 * object should be pushed instead of attacked.  It is assumed that
+	 * if you are braced, you will not attack friends accidently,
+	 * and thus will not push them.
+	 */
+
+	/* If the creature is a pet, push it even if the player is not
+	 * peaceful.  Our assumption is the creature is a pet if the
+	 * player owns it and it is either friendly or unagressive.
+	 */
+	if ((op->type==PLAYER) && get_owner(tmp)==op && 
+	    (QUERY_FLAG(tmp,FLAG_UNAGGRESSIVE) ||  QUERY_FLAG(tmp, FLAG_FRIENDLY)))
+	{
+	    /* If we're braced, we don't want to switch places with it */
+	    if (op->contr->braced) return;
+	    play_sound_map(op->map, op->x, op->y, SOUND_PUSH_PLAYER);
+	    (void) push_ob(tmp,dir,op);
+	    if(op->contr->tmp_invis||op->hide) make_visible(op);
+	    return;
+	}
+    
+	if ((tmp->type==PLAYER || tmp->enemy != op) &&
+	    (tmp->type==PLAYER || QUERY_FLAG(tmp,FLAG_UNAGGRESSIVE)
+	     || QUERY_FLAG(tmp, FLAG_FRIENDLY)) && (op->contr->peaceful
+		&& !op_on_battleground(op, NULL, NULL)) && (!op->contr->braced)) {
+	    play_sound_map(op->map, op->x, op->y, SOUND_PUSH_PLAYER);
+	    (void) push_ob(tmp,dir,op);
+	    if(op->contr->tmp_invis||op->hide) make_visible(op);
 	}
 
-      /* If the object is a boulder or other rollable object, then
-       * roll it if not braced.  You can't roll it if you are braced.
-       */
-      else if(QUERY_FLAG(tmp,FLAG_CAN_ROLL)&&(!op->contr->braced)) {
-	  recursive_roll(tmp,dir,op);
-          if(action_makes_visible(op)) make_visible(op);
-
-      }
-
-      /* Any generic living creature.  Including things like doors.
-       * Way it works is like this:  First, it must have some hit points
-       * and be living.  Then, it must be one of the following:
-       * 1) Not a player, 2) A player, but of a different party.  Note
-       * that party_number -1 is no party, so attacks can still happen.
-       */
-
-      else
-	if ((tmp->stats.hp>=0) && QUERY_FLAG(tmp, FLAG_ALIVE) &&
-	((tmp->type!=PLAYER || op->contr->party_number==-1 ||
-	op->contr->party_number!=tmp->contr->party_number))) {
-
-	op->contr->has_hit = 1; /* The last action was to hit, so use weapon_sp */
-
-	  skill_attack(tmp, op, 0, NULL);
-	  /* If attacking another player, that player gets automatic
-	   * hitback, and doesn't loose luck either.
-	   */
-	  if (tmp->type == PLAYER && tmp->stats.hp >= 0 &&
-	     !tmp->contr->has_hit)
-	  {
-	    short luck = tmp->stats.luck;
-	    tmp->contr->has_hit = 1;
-	    skill_attack(op, tmp, 0, NULL);
-	    tmp->stats.luck = luck;
-	  }
-	  if(action_makes_visible(op)) make_visible(op);
+	/* If the object is a boulder or other rollable object, then
+	 * roll it if not braced.  You can't roll it if you are braced.
+	 */
+	else if(QUERY_FLAG(tmp,FLAG_CAN_ROLL)&&(!op->contr->braced)) {
+	    recursive_roll(tmp,dir,op);
+	    if(action_makes_visible(op)) make_visible(op);
 	}
-    }
+
+	/* Any generic living creature.  Including things like doors.
+	 * Way it works is like this:  First, it must have some hit points
+	 * and be living.  Then, it must be one of the following:
+	 * 1) Not a player, 2) A player, but of a different party.  Note
+	 * that party_number -1 is no party, so attacks can still happen.
+	 */
+
+	else if ((tmp->stats.hp>=0) && QUERY_FLAG(tmp, FLAG_ALIVE) &&
+		 ((tmp->type!=PLAYER || op->contr->party_number==-1 ||
+		   op->contr->party_number!=tmp->contr->party_number))) {
+
+	    op->contr->has_hit = 1; /* The last action was to hit, so use weapon_sp */
+
+	    skill_attack(tmp, op, 0, NULL);
+	    /* If attacking another player, that player gets automatic
+	     * hitback, and doesn't loose luck either.
+	     */
+	    if (tmp->type == PLAYER && tmp->stats.hp >= 0 && !tmp->contr->has_hit) {
+		short luck = tmp->stats.luck;
+		tmp->contr->has_hit = 1;
+		skill_attack(op, tmp, 0, NULL);
+		tmp->stats.luck = luck;
+	    }
+	    if(action_makes_visible(op)) make_visible(op);
+	}
+    } /* if player should attack something */
 }
 
 int move_player(object *op,int dir) {
@@ -2200,32 +2299,44 @@ int stand_near_hostile( object *who ) {
  * our backs...on the other hand, does the "facing" direction
  * imply the way your head, or body is facing? Its possible
  * for them to differ. Sigh, this fctn could get a bit more complex.
- * -b.t. */
+ * -b.t. 
+ * This function is now map tiling safe.
+ */
 
 int player_can_view (object *pl,object *op) {
+    rv_vector rv;
+    int dx,dy;
 
-  if(pl->type!=PLAYER) {
-    LOG(llevError,"player_can_view() called for non-player object\n");
-    return -1;
-  }
+    if(pl->type!=PLAYER) {
+	LOG(llevError,"player_can_view() called for non-player object\n");
+	return -1;
+    }
+    if (!pl || !op) return 0;
 
-  if(pl&&op&&pl->map==op->map) { 
+    if(op->head) { op = op->head; }
+    get_rangevector(pl, op, &rv, 0x1);
+
     /* starting with the 'head' part, lets loop
      * through the object and find if it has any
      * part that is in the los array but isnt on 
-     * a blocked los square. */
-    if(op->head) { op = op->head; }
+     * a blocked los square.
+     * we use the archetype to figure out offsets.
+     */
     while(op) {
-      if(pl->y - MAP_CLIENT_Y/2 <= op->y && 
-	 pl->y + MAP_CLIENT_Y/2 >= op->y &&
-         pl->x - MAP_CLIENT_X/2 <= op->x && 
-	 pl->x + MAP_CLIENT_X/2 >= op->x &&
-	 !pl->contr->blocked_los[op->x-pl->x+MAP_CLIENT_X/2][op->y-pl->y+MAP_CLIENT_Y/2] ) 
-        return 1;
-      op = op->more;
+	dx = rv.distance_x + op->arch->clone.x;
+	dy = rv.distance_y + op->arch->clone.y;
+
+	/* only the viewable area the player sees is updated by LOS
+	 * code, so we need to restrict ourselves to that range of values
+	 * for any meaningful values.
+	 */
+	if (FABS(dx) <= (pl->contr->socket.mapx/2) &&
+	    FABS(dy) <= (pl->contr->socket.mapy/2) &&
+	    !pl->contr->blocked_los[dx + (pl->contr->socket.mapx/2)][dy+(pl->contr->socket.mapy/2)] ) 
+	    return 1;
+	op = op->more;
     }
-  }
-  return 0;
+    return 0;
 }
 
 /* routine for both players and monsters. We call this when

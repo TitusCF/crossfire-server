@@ -31,41 +31,65 @@
 #include <sproto.h>
 #endif
 
-object *get_pet_enemy(object * pet){
-  object         *owner, *tmp;
-  int             i;
-  if ((owner = get_owner(pet)) != NULL) {
-    if ((get_enemy(owner)) == pet) {
-      CLEAR_FLAG(pet, FLAG_FRIENDLY);
-      remove_friendly_object(pet);
-      pet->move_type &=~PETMOVE;
-      return owner;
+/* given that 'pet' is a friendly object, this function returns a
+ * monster the pet should attack, NULL if nothing appropriate is
+ * found.  it basically looks for nasty things around the owner
+ * of the pet to attack.
+ * this is now tilemap aware.
+ */
+
+object *get_pet_enemy(object * pet, rv_vector *rv){
+    object *owner, *tmp;
+    int i,x,y;
+    mapstruct *nm;
+
+    if ((owner = get_owner(pet)) != NULL) {
+	/* If the owner has turned on the pet, make the pet
+	 * unfriendly.
+	 */
+	if ((get_enemy(owner,rv)) == pet) {
+	    CLEAR_FLAG(pet, FLAG_FRIENDLY);
+	    remove_friendly_object(pet);
+	    pet->move_type &=~PETMOVE;
+	    return owner;
+	}
+    } else {
+	/* else the owner is no longer around, so the
+	 * pet no longer needs to be friendly.
+	 */
+	CLEAR_FLAG(pet, FLAG_FRIENDLY);
+	remove_friendly_object(pet);
+	pet->move_type &=~PETMOVE;
+	return NULL;
     }
-  } else { /* No point in keeping it friendly  */
-    CLEAR_FLAG(pet, FLAG_FRIENDLY);
-    remove_friendly_object(pet);
-    pet->move_type &=~PETMOVE;
+    /* If they are not on the same map, the pet won't be agressive */
+    if (!on_same_map(pet,owner))
+	return NULL;
+
+    /* We basically look for anything nasty around the owner that this
+     * pet should go and attack.
+     */
+    for (i = 0; i < SIZEOFFREE; i++) {
+	x = owner->x + freearr_x[i];
+	y = owner->y + freearr_y[i];
+	if (out_of_map(owner->map, x, y)) continue;
+	else {
+	    nm = get_map_from_coord(owner->map, &x, &y);
+	    /* Only look on the space if there is something alive there. */
+	    if (GET_MAP_FLAGS(nm, x,y)&P_IS_ALIVE) {
+		for (tmp = get_map_ob(nm, x, y); tmp != NULL; tmp = tmp->above) {
+		    object *tmp2 = tmp->head == NULL?tmp:tmp->head;
+		    if (QUERY_FLAG(tmp2,FLAG_ALIVE) && !QUERY_FLAG(tmp2,FLAG_FRIENDLY)
+			&& !QUERY_FLAG(tmp2,FLAG_UNAGGRESSIVE) &&
+			tmp2 != owner && tmp2->type != PLAYER)
+		    return tmp2;
+		} /* for objects on this space */
+	    } /* if there is something living on this space */
+	} /* this is a valid space on the map */
+    } /* for loop of spaces around the owner */
+
+    /* Didn't find anything - return NULL */
     return NULL;
-  }
-  if (owner->map != pet->map)
-      return NULL;
-  for (i = 0; i < SIZEOFFREE; i++)
-    if (out_of_map(owner->map, owner->x + freearr_x[i],
-                   owner->y + freearr_y[i]))
-       continue;
-    else
-      for (tmp = get_map_ob(owner->map, owner->x + freearr_x[i],
-           owner->y + freearr_y[i]); tmp != NULL; tmp = tmp->above)
-        if (tmp == NULL)
-          continue;
-        else  {
-          object *tmp2 = tmp->head == NULL?tmp:tmp->head;
-          if (QUERY_FLAG(tmp2,FLAG_ALIVE) && !QUERY_FLAG(tmp2,FLAG_FRIENDLY)
-		&& !QUERY_FLAG(tmp2,FLAG_UNAGGRESSIVE) &&
-                 tmp2 != owner && tmp2->type != PLAYER)
-          return tmp2;
-        }
-  return NULL;
 }
 
 void terminate_all_pets(object *owner) {

@@ -294,6 +294,9 @@ int blocks_cleric(mapstruct *m, int x, int y) {
 int blocked(mapstruct *m, int x, int y) {
     if(out_of_map(m,x,y))
 	return 1;
+    if (OUT_OF_REAL_MAP(m,x,y))
+	m=get_map_from_coord(m,&x,&y);
+
     return (GET_MAP_FLAGS(m,x,y) & (P_NO_PASS | P_IS_ALIVE));
 }
 
@@ -309,14 +312,19 @@ int blocked(mapstruct *m, int x, int y) {
 
 int blocked_link(object *ob, int x, int y) {
     object *tmp;
+    mapstruct	*m;
 
     if(out_of_map(ob->map,x,y))
 	return 1;
 
+    if (OUT_OF_REAL_MAP(ob->map,x,y))
+	m=get_map_from_coord(ob->map, &x, &y);
+    else m = ob->map;
+
     /* If space is currently not blocked by anything, no need to
      * go further.  Same logic as blocked_above.
      */
-    if (! (GET_MAP_FLAGS(ob->map, x,y) & (P_NO_PASS | P_IS_ALIVE))) return 0;
+    if (! (GET_MAP_FLAGS(m, x,y) & (P_NO_PASS | P_IS_ALIVE))) return 0;
 
 
     if(ob->head != NULL)
@@ -327,7 +335,7 @@ int blocked_link(object *ob, int x, int y) {
      * true.  If we get through the entire stack, that must mean
      * ob is blocking it, so return 0.
      */
-    for(tmp = GET_MAP_OB(ob->map,x,y); tmp!= NULL; tmp = tmp->above)
+    for(tmp = GET_MAP_OB(m,x,y); tmp!= NULL; tmp = tmp->above)
 	if (QUERY_FLAG(tmp,FLAG_NO_PASS) || (QUERY_FLAG(tmp,FLAG_ALIVE) &&
 					     tmp->head != ob && tmp != ob))
       	return 1;
@@ -346,11 +354,15 @@ int blocked_link(object *ob, int x, int y) {
 
 int blocked_two(object *op, int x,int y) {
     object *tmp;
+    mapstruct *m;
 
     if(out_of_map(op->map,x,y))
 	return 1;
 
-    for(tmp=GET_MAP_OB(op->map,x,y);tmp!=NULL;tmp=tmp->above){
+    m = get_map_from_coord(op->map, &x, &y);
+    if (!m) return 1;
+
+    for(tmp=GET_MAP_OB(m,x,y);tmp!=NULL;tmp=tmp->above){
 
 	/* I broke this into multiple if statements to make it
 	 * clearer.  Logic is the same, and a good compiler will take
@@ -1608,6 +1620,26 @@ void set_map_reset_time(mapstruct *map) {
 #endif
 }
 
+/* this updates the orig_map->tile_map[tile_num] value after loading
+ * the map.  It also takes care of linking back the freshly loaded
+ * maps tile_map values if it tiles back to this one.  It returns
+ * the value of orig_map->tile_map[tile_num].  It really only does this
+ * so that it is easier for calling functions to verify success.
+ */
+
+static mapstruct *load_and_link_tiled_map(mapstruct *orig_map, int tile_num)
+{
+    int dest_tile = (tile_num +2) % 4;
+
+    orig_map->tile_map[tile_num] = ready_map_name(orig_map->tile_path[tile_num], 0);
+
+    /* need to do a strcmp here as the orig_map->path is not a shared string */
+    if (!strcmp(orig_map->tile_map[tile_num]->tile_path[dest_tile], orig_map->path))
+	orig_map->tile_map[tile_num]->tile_map[dest_tile] = orig_map;
+
+    return orig_map->tile_map[tile_num];
+}
+
 /* this returns TRUE if the coordinates (x,y) are out of
  * map m.  This function also takes into account any
  * tiling considerations, loading adjacant maps as needed.
@@ -1635,26 +1667,30 @@ int out_of_map(mapstruct *m, int x, int y)
 
     if (x<0) {
 	if (!m->tile_path[3]) return 1;
-	if (!m->tile_map[3] || m->tile_map[3]->in_memory != MAP_IN_MEMORY)
-	    m->tile_map[3] = ready_map_name(m->tile_path[3], 0);
+	if (!m->tile_map[3] || m->tile_map[3]->in_memory != MAP_IN_MEMORY) {
+	    load_and_link_tiled_map(m, 3);
+	}
 	return (out_of_map(m->tile_map[3], x + MAP_WIDTH(m->tile_map[3]), y));
     }
     if (x>=MAP_WIDTH(m)) {
 	if (!m->tile_path[1]) return 1;
-	if (!m->tile_map[1] || m->tile_map[1]->in_memory != MAP_IN_MEMORY)
-	    m->tile_map[1] = ready_map_name(m->tile_path[1], 0);
+	if (!m->tile_map[1] || m->tile_map[1]->in_memory != MAP_IN_MEMORY) {
+	    load_and_link_tiled_map(m, 1);
+	}
 	return (out_of_map(m->tile_map[1], x - MAP_WIDTH(m), y));
     }
     if (y<0) {
 	if (!m->tile_path[0]) return 1;
-	if (!m->tile_map[0] || m->tile_map[0]->in_memory != MAP_IN_MEMORY)
-	    m->tile_map[0] = ready_map_name(m->tile_path[0], 0);
+	if (!m->tile_map[0] || m->tile_map[0]->in_memory != MAP_IN_MEMORY) {
+	    load_and_link_tiled_map(m, 0);
+	}
 	return (out_of_map(m->tile_map[0], x, y + MAP_HEIGHT(m->tile_map[0])));
     }
     if (y>=MAP_HEIGHT(m)) {
 	if (!m->tile_path[2]) return 1;
-	if (!m->tile_map[2] || m->tile_map[2]->in_memory != MAP_IN_MEMORY)
-	    m->tile_map[2] = ready_map_name(m->tile_path[2], 0);
+	if (!m->tile_map[2] || m->tile_map[2]->in_memory != MAP_IN_MEMORY) {
+	    load_and_link_tiled_map(m, 2);
+	}
 	return (out_of_map(m->tile_map[2], x, y - MAP_HEIGHT(m)));
     }
     return 1;
@@ -1680,30 +1716,171 @@ mapstruct *get_map_from_coord(mapstruct *m, int *x, int *y)
     if (*x<0) {
 	if (!m->tile_path[3]) return NULL;
 	if (!m->tile_map[3] || m->tile_map[3]->in_memory != MAP_IN_MEMORY)
-	    m->tile_map[3] = ready_map_name(m->tile_path[3], 0);
+	    load_and_link_tiled_map(m, 3);
+
 	*x += MAP_WIDTH(m->tile_map[3]);
 	return (get_map_from_coord(m->tile_map[3], x, y));
     }
     if (*x>=MAP_WIDTH(m)) {
 	if (!m->tile_path[1]) return NULL;
 	if (!m->tile_map[1] || m->tile_map[1]->in_memory != MAP_IN_MEMORY)
-	    m->tile_map[1] = ready_map_name(m->tile_path[1], 0);
+	    load_and_link_tiled_map(m, 1);
+
 	*x -= MAP_WIDTH(m);
 	return (get_map_from_coord(m->tile_map[1], x, y));
     }
     if (*y<0) {
 	if (!m->tile_path[0]) return NULL;
 	if (!m->tile_map[0] || m->tile_map[0]->in_memory != MAP_IN_MEMORY)
-	    m->tile_map[0] = ready_map_name(m->tile_path[0], 0);
+	    load_and_link_tiled_map(m, 0);
+
 	*y += MAP_HEIGHT(m->tile_map[0]);
 	return (get_map_from_coord(m->tile_map[0], x, y));
     }
     if (*y>=MAP_HEIGHT(m)) {
 	if (!m->tile_path[2]) return NULL;
 	if (!m->tile_map[2] || m->tile_map[2]->in_memory != MAP_IN_MEMORY)
-	    m->tile_map[2] = ready_map_name(m->tile_path[2], 0);
+	    load_and_link_tiled_map(m, 2);
+
 	*y -= MAP_HEIGHT(m);
 	return (get_map_from_coord(m->tile_map[2], x, y));
     }
     return NULL;    /* Shouldn't get here */
+}
+
+/* From map.c
+ * This is used by get_player to determine where the other
+ * creature is.  get_rangevector takes into account map tiling,
+ * so you just can not look the the map coordinates and get the
+ * righte value.  distance_x/y are distance away, which
+ * can be negativbe.  direction is the crossfire direction scheme
+ * that the creature should head.  part is the part of the
+ * monster that is closest.
+ * 
+ * get_rangevector looks at op1 and op2, and fills in the
+ * structure for op1 to get to op2.
+ * We already trust that the caller has verified that the
+ * two objects are at least on adjacent maps.  If not,
+ * results are not likely to be what is desired.
+ * if the objects are not on maps, results are also likely to
+ * be unexpected
+ *
+ * currently, the only flag supported (0x1) is don't translate for
+ * closest body part.
+ */
+
+void get_rangevector(object *op1, object *op2, rv_vector *retval, int flags)
+{
+    object	*best;
+
+    if (op1->map->tile_map[0] == op2->map) {
+	retval->distance_x = op2->x - op1->x;
+	retval->distance_y = -(op1->y +(MAP_HEIGHT(op2->map)- op2->y));
+
+    }
+    else if (op1->map->tile_map[1] == op2->map) {
+	retval->distance_y = op2->y - op1->y;
+	retval->distance_x = (MAP_WIDTH(op1->map) - op1->x) + op2->x;
+    }
+    else if (op1->map->tile_map[2] == op2->map) {
+	retval->distance_x = op2->x - op1->x;
+	retval->distance_y = (MAP_HEIGHT(op1->map) - op1->y) +op2->y;
+
+    }
+    else if (op1->map->tile_map[3] == op2->map) {
+	retval->distance_y = op2->y - op1->y;
+	retval->distance_x = -(op1->x +(MAP_WIDTH(op2->map)- op2->y));
+    }
+    else if (op1->map == op2->map) {
+	retval->distance_x = op2->x - op1->x;
+	retval->distance_y = op2->y - op1->y;
+
+    }
+    best = op1;
+    /* If this is multipart, find the closest part now */
+    if (flags & 0x1 && op1->more) {
+	object *tmp;
+	int best_distance = retval->distance_x * retval->distance_x +
+		    retval->distance_y * retval->distance_y, tmpi;
+
+	/* we just tkae the offset of the piece to head to figure
+	 * distance instead of doing all that work above again
+	 * since the distance fields we set above are positive in the
+	 * same axis as is used for multipart objects, the simply arithemetic
+	 * below works.
+	 */
+	for (tmp=op1->more; tmp; tmp=tmp->more) {
+	    tmpi = (op1->x - tmp->x + retval->distance_x) * (op1->x - tmp->x + retval->distance_x) +
+		(op1->y - tmp->y + retval->distance_y) * (op1->y - tmp->y + retval->distance_y);
+	    if (tmpi < best_distance) {
+		best_distance = tmpi;
+		best = tmp;
+	    }
+	}
+	if (best != op1) {
+	    retval->distance_x += op1->x - best->x;
+	    retval->distance_y += op1->y - best->y;
+	}
+    }
+    retval->part = best;
+    retval->distance = isqrt(retval->distance_x*retval->distance_x + retval->distance_y*retval->distance_y);
+    retval->direction = find_dir_2(-retval->distance_x, -retval->distance_y);
+}
+
+/* this is basically the same as get_rangevector above, but instead of 
+ * the first parameter being an object, it instead is the map
+ * and x,y coordinates - this is used for path to player - 
+ * since the object is not infact moving but we are trying to traverse
+ * the path, we need this.
+ * flags has no meaning for this function at this time - I kept it in to
+ * be more consistant with the above function and also in case they are needed
+ * for something in the future.  Also, since no object is pasted, the best
+ * field of the rv_vector is set to NULL.
+ */
+
+void get_rangevector_from_mapcoord(mapstruct  *m, int x, int y, object *op2, rv_vector *retval,int flags)
+{
+    if (m->tile_map[0] == op2->map) {
+	retval->distance_x = op2->x - x;
+	retval->distance_y = -(y +(MAP_HEIGHT(op2->map)- op2->y));
+
+    }
+    else if (m->tile_map[1] == op2->map) {
+	retval->distance_y = op2->y - y;
+	retval->distance_x = (MAP_WIDTH(m) - x) + op2->x;
+    }
+    else if (m->tile_map[2] == op2->map) {
+	retval->distance_x = op2->x - x;
+	retval->distance_y = (MAP_HEIGHT(m) - y) +op2->y;
+
+    }
+    else if (m->tile_map[3] == op2->map) {
+	retval->distance_y = op2->y - y;
+	retval->distance_x = -(x +(MAP_WIDTH(op2->map)- op2->y));
+    }
+    else if (m == op2->map) {
+	retval->distance_x = op2->x - x;
+	retval->distance_y = op2->y - y;
+
+    }
+    retval->part = NULL;
+    retval->distance = isqrt(retval->distance_x*retval->distance_x + retval->distance_y*retval->distance_y);
+    retval->direction = find_dir_2(-retval->distance_x, -retval->distance_y);
+}
+
+/* Returns true of op1 and op2 are effectively on the same map
+ * (as related to map tiling).  Note that this looks for a path from
+ * op1 to op2, so if the tiled maps are assymetric and op2 has a path
+ * to op1, this will still return false.
+ * Note we only look one map out to keep the processing simple
+ * and efficient.  This could probably be a macro.
+ * MSW 2001-08-05
+ */
+int on_same_map(object *op1, object *op2)
+{
+    if (op1->map == op2->map || op1->map->tile_map[0] == op2->map ||
+	op1->map->tile_map[1] == op2->map ||
+	op1->map->tile_map[2] == op2->map ||
+	op1->map->tile_map[3] == op2->map) return TRUE;
+    return FALSE;
 }

@@ -217,6 +217,9 @@ extern void update_position(mapstruct *m, int x, int y);
 extern void set_map_reset_time(mapstruct *map);
 extern int out_of_map(mapstruct *m, int x, int y);
 extern mapstruct *get_map_from_coord(mapstruct *m, int *x, int *y);
+extern void get_rangevector(object *op1, object *op2, rv_vector *retval, int flags);
+extern void get_rangevector_from_mapcoord(mapstruct *m, int x, int y, object *op2, rv_vector *retval, int flags);
+extern int on_same_map(object *op1, object *op2);
 /* object.c */
 extern signed long sum_weight(object *op);
 extern object *is_player_inv(object *op);

@@ -87,6 +87,12 @@
 #define SET_MAP_FACE(M,X,Y,C,L) ( (M)->spaces[(X) + (M)->width * (Y)].faces[L] = C )
 #define GET_MAP_FACE(M,X,Y,L) ( (M)->spaces[(X) + (M)->width * (Y)].faces[L]  )
 
+/* You should really know what you are doing before using this - you
+ * should almost always be using out_of_map instead, which takes into account
+ * map tiling.
+ */
+#define OUT_OF_REAL_MAP(M,X,Y) ((X)<0 || (Y)<0 || (X)>=(M)->width || (Y)>=(M)->height)
+
 /* These are used in the MapLook flags element.  They are not used in
  * in the object flags structure.
  */
@@ -161,5 +167,21 @@ typedef struct mapdef {
     char    *tile_path[4];  /* path to adjoining maps */
     struct mapdef *tile_map[4];	/* Next map, linked list */
 } mapstruct;
+
+/* This is used by get_rangevector to determine where the other
+ * creature is.  get_rangevector takes into account map tiling,
+ * so you just can not look the the map coordinates and get the
+ * righte value.  distance_x/y are distance away, which
+ * can be negativbe.  direction is the crossfire direction scheme
+ * that the creature should head.  part is the part of the
+ * monster that is closest.
+ */
+typedef struct rv_vector {
+    int	    distance;
+    int	    distance_x;
+    int	    distance_y;
+    int	    direction;
+    object  *part;
+} rv_vector;
 
 #endif

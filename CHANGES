@@ -18,6 +18,44 @@ else.  With this, include the file(s) that you changed.
 
 Changes for CVS:
 
+Enhancements to make monsters 'do the right thing' with relation
+to tiled maps (ie, will detect players and attack them if on an adjoining
+tiled maps).  This involved a rewrite of path_to_player - I've tested this
+out, and if anything, it seems that monsters may be more aggressive on
+spellcasting.
+++
+common/map.c: blocked modify to make sure it is checking valid coordinate
+   value.  blocked_link,blocked_two modified to translate for tiled maps.
+   Add load_and_link_tiled_map which loads a tiled map and links in all
+   pointers relative to adjoining maps.  out_of_map modified to use
+   this function instead of doing the work itself.  Add get_rangevector
+   function that returns offset, direction, and distance between two
+   objects, taking into account tiled maps.  get_rangevector_from_mapcoord
+   added which is similar to get_rangevector, but takes a map and coordinates
+   instead of a second object.  on_same_map function added which returns
+   true if the two objects are on the same logical (ie tiled) maps.
+doc/crossfire.doc: Add note about what Int does for monsters.
+include/map.h: Add some comments, and add structure for rangevector
+   function return values.
+server/attack.c: add calls to on_same_map instead of doing op->map
+   comparisons.
+server/monster.c: Many functions modified to properly handle tiled
+   maps properly.
+server/pets.c: get_pet_enemy modified to know about tiled maps.
+server/player.c: get_nearest_player modified to know about tiled maps.
+   path_to_player rewritten to know about tiled maps - I think some other 
+   bugs were also fixed in return values.  Split player_attack_door
+   from move_player attack to keep functions a more reasonable size.
+   move_player_attack, player_can_view modified to know about tiled
+   maps.
+server/skills.c: can detect_enemy modified to take another parameter -
+   call in steal updated to pass this parameter.
+server/spell_util.c: ok_to_put_more, can_see_monsterP modified to
+   handle tiled maps properly.
+socket/item.c: look_at modified to return proper results when player
+   looks at something on an adjoining tiled map.
+++ End of checkin
+
 common/object.c:decrease_ob_nr modified to correctly update client when
     player uses item from container that is on the ground (bookshelf for
     example)

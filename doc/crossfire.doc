@@ -547,6 +547,8 @@ Str <xx>                :  reduces the weight of the objects in the container
 ------------------------------------------------------------------------------
 Monsters:
 
+Int: gives monsters a modifying to find hidden/invisible creatures.
+
 Pow: If the creature can cast spells, this is how many spell points
 are regenerated each move.
 

@@ -904,6 +904,9 @@ static int ok_to_put_more(mapstruct *m,int x,int y,object *op,int immune_stop) {
 
     if (out_of_map(m,x,y)) return 0;
 
+    if (OUT_OF_REAL_MAP(m,x,y))
+	m = get_map_from_coord(m,&x,&y);
+
     /* if there is a wall, certainly can't put the spell there.  The blocks
      * view check is historic from the old calling functions - my personal
      * view is that blocks view should not affect spells in any way, but
@@ -1969,25 +1972,30 @@ int reduction_dir[SIZEOFFREE][3] = {
   {24,9,-1}}; /* 48 */
 
 /* Recursive routine to step back and see if we can
-   find a path to that monster that we found.  If not,
-   we don't bother going toward it.  Returns 1 if we
-   can see a direct way to get it.*/
+ * find a path to that monster that we found.  If not,
+ * we don't bother going toward it.  Returns 1 if we
+ * can see a direct way to get it
+ * Modified to be map tile aware -.MSW
+ */
  
 
 int can_see_monsterP(mapstruct *m, int x, int y,int dir) {
-  int dx, dy;  /* delta (dx)  */
+    int dx, dy;  /* delta (dx)  */
 
-  dx = freearr_x[dir];
-  dy = freearr_y[dir];
+    if(dir<0) return 0;  /* exit condition:  invalid direction */
 
-  if(dir<0) return 0;  /* exit condition:  invalid direction */
-  if(wall(m,x + dx,y+dy)) return 0;
+    dx = x + freearr_x[dir];
+    dy = y + freearr_y[dir];
 
-  /* yes, can see. */
-  if(dir < 9) return 1;
-  return can_see_monsterP(m, x, y, reduction_dir[dir][0]) |
-    can_see_monsterP(m,x,y, reduction_dir[dir][1]) |
-    can_see_monsterP(m,x,y, reduction_dir[dir][2]);
+    m = get_map_from_coord(m, &dx, &dy);
+
+    if(wall(m,dx,dy)) return 0;
+
+    /* yes, can see. */
+    if(dir < 9) return 1;
+    return can_see_monsterP(m, x, y, reduction_dir[dir][0]) |
+	can_see_monsterP(m,x,y, reduction_dir[dir][1]) |
+	can_see_monsterP(m,x,y, reduction_dir[dir][2]);
 }
   
   
