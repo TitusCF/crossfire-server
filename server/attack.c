@@ -311,6 +311,7 @@ void attack_message(int dam, int type, object *op, object *hitter) {
         sprintf(buf2, " misses");
 	found++;
     } else if ((hitter->type == DISEASE || hitter->type == SYMPTOM ||
+	hitter->type == POISONING ||
 	(type & AT_POISON && IS_LIVE(op))) && !found) {
         for (i=0; i < MAXATTACKMESS && attack_mess[ATM_SUFFER][i].level != -1;
 	     i++)
@@ -1676,6 +1677,12 @@ void poison_player(object *op, object *hitter, int dam)
           fix_player(op);
           new_draw_info(NDI_UNIQUE, 0,op,"You suddenly feel very ill.");
         }
+	if (hitter->type == PLAYER)
+	    new_draw_info_format(NDI_UNIQUE, 0, hitter, "You poison %s.",
+		op->name);
+	else if (get_owner(hitter) != NULL && hitter->owner->type == PLAYER)
+	    new_draw_info_format(NDI_UNIQUE, 0, hitter->owner,
+		"Your %s poisons %s.", hitter->name, op->name);
       }
       tmp->speed_left=0;
     }
