@@ -473,11 +473,17 @@ treasureone random_knowledge
   arch scroll_thaumaturgy
     chance 9
   more
-# throwing is a native ability
+# throwing is a native ability, but give slight chance for unclassed players
+  arch scroll_throwing
+    chance 1
+  more
   arch scroll_two_handed_weapons
     chance 10
   more
-# use magic is a native ability
+# use magic is a native ability, but give slight chance for unclassed players
+  arch scroll_use_magic_item
+    chance 1
+  more
   arch scroll_woodsman
     chance 10
   end
