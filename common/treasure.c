@@ -733,7 +733,7 @@ void fix_generated_item (object *op, object *creator, int difficulty,
 {
     int was_magic = op->magic, num_enchantments=0, save_item_power, mult;
 
-    if(!creator||creator->type==op->type) creator=op; /*safety & to prevent polymorphed 
+    if(!creator||creator->type==op->type) creator=op; /*safety & to prevent polymorphed
 							* objects giving attributes */ 
 
     /* If we make an artifact, this information will be destroyed */
@@ -1414,6 +1414,21 @@ void add_abilities(object *op, object *change) {
                     evtp = evtp->next;
                 free(evt2);
                 evtp->next = evtn;
+            }
+        }
+        else if (evt2 == NULL)
+        {
+            if (op->events == NULL)
+            {
+                evt2 = (event *)malloc(sizeof(event));
+                op->events = evt2;
+            }
+            else
+            {
+                evtp = op->events;
+                while (evtp->next != NULL)
+                    evtp = evtp->next;
+                evtp->next = (event *)malloc(sizeof(event));
             }
         }
 
