@@ -1,6 +1,14 @@
+Changes in top level CVS tree (please add your changes at the very top of
+the file):
+
+Add flag save information for FLAG_CLIENT_SENT that was otherwise
+missing (loader.l).  This fixes the disappearing archetype bug - msw
+
+
 Fixed buffering bug in lowlevel.c
   --David
 
+------------------------------------------------------------------------------
 Changes from Crossfire 0.95.2 to 0.95.3:
 
 Fixed missing god animations in the archetypes.
