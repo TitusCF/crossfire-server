@@ -602,8 +602,8 @@ int receive_play_again(object *op, char key)
 	op = pl->ob;
 	add_friendly_object(op);
 	op->contr->password[0]='~';
-	FREE_AND_CLEAR(op->name);
-	FREE_AND_CLEAR(op->name_pl);
+	FREE_AND_CLEAR_STR(op->name);
+	FREE_AND_CLEAR_STR(op->name_pl);
 
 	/* Lets put a space in here */
 	new_draw_info(NDI_UNIQUE, 0, op, "\n");

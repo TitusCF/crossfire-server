@@ -59,7 +59,6 @@ typedef unsigned char	uint8;
 typedef signed char	sint8;
 typedef unsigned short Fontindex;
 
-#define DELETE_STRING(__str_)  free_string(__str_);__str_=NULL;
 
 
 /* global stuff used by new skill/experience system -b.t.
@@ -233,11 +232,14 @@ EXTERN char *font_graphic;
  * makes the code a bit cleaner when doing so.
  */
 #define FREE_AND_CLEAR(xyz) {free(xyz); xyz=NULL; }
+#define FREE_AND_CLEAR_STR(xyz) {free_string(xyz); xyz=NULL; }
 
 /* FREE_AND_COPY is for the shared string - it is handy enough
  * to use all over the place.
  */
 #define FREE_AND_COPY(sv,nv) { if (sv) free_string(sv); sv=add_string(nv); }
+
+#define DELETE_STRING(__str_)  free_string(__str_);__str_=NULL;
 
 #ifdef CALLOC
 #undef CALLOC

@@ -628,7 +628,7 @@ int command_applymode(object *op, char *params)
     static char *types[]={"nochoice", "never", "always"};
 
     if (!params) {
-	new_draw_info_format(NDI_UNIQUE, 0, op, "usekeys is set to %s",
+	new_draw_info_format(NDI_UNIQUE, 0, op, "applymode is set to %s",
 	types[op->contr->usekeys]);
 	return 1;
     }

@@ -17,6 +17,14 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+include/global.h: add FREE_AND_CLEAR_STR macro, relocate DELETE_STRING
+   by the other macros.
+server/c_misc.c: Fix string printout in applymode function.
+server/disease.c: Update name_pl in diseases.
+server/player.c: replace FREE_AND_CLEAR with FREE_AND_CLEAR_STR - was
+    freeing data that shouldn't be freed.
+MSW 2002-08-01
+
 Various fixes:
 INSTALL: Update with note about --with-includes configure option.
 common/loader.c, common/loader.l: Add comment about flag_invis_undead
