@@ -12,6 +12,9 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+Fix error in configure.in - was referancing BZIP2, when it should have
+used BZIP - msw 2/7/2000
+
 server/skill_util.c: Fixed spelling of unwield
 configure.in: Update -z checks to not use eval, double quote the variable.
 This seems to be needed on solaris and probably other systems.

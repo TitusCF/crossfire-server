@@ -1610,7 +1610,7 @@ else
 fi
 
 
-if eval test -n "$GZIP" -a -z "$GUNZIP" ; then
+if test -n "$GZIP" -a -z "$GUNZIP" ; then
     echo "Found gzip, but not gunzip - setting GUNZIP to gzip -c";
     GUNZIP="$GZIP -c"
 fi;
@@ -1764,7 +1764,7 @@ if test -n "$BZIP" -a -z "$BUNZIP" ; then
     BUNZIP="$BZIP -c"
 fi;
 
-if test -z "$COMPRESS" -a -z "$GZIP" -a -z "$BZIP2" ; then
+if test -z "$COMPRESS" -a -z "$GZIP" -a -z "$BZIP" ; then
 	echo "Unable to find either compress, bzip2,  or gzip - hope you don't plan on compressing";
 	echo "any files.";
 fi;
