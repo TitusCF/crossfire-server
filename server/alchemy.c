@@ -201,6 +201,7 @@ int content_recipe_value (object *op) {
   char name[MAX_BUF];
   object *tmp=op->inv;
   int tval=0, formula=0;
+  materialtype_t *mt;
 
     while(tmp) {
 	tval=0;
@@ -208,10 +209,14 @@ int content_recipe_value (object *op) {
         if (tmp->title)
 	    sprintf(name, "%s %s", tmp->name, tmp->title);
 	/* strip the materialname out of the name, so alchemy works */
-	if (tmp->materialname && !strncmp(tmp->materialname, tmp->name,
-					 strlen(tmp->materialname))) {
-	    tval = ((strtoint(name) - strtoint(tmp->materialname) -
-		strtoint(" ")) * (tmp->nrof?tmp->nrof:1));
+	if (tmp->materialname && tmp->arch->clone.materialname == NULL &&
+	    (IS_ARMOR(tmp) || IS_WEAPON(tmp))) {
+	    mt = name_to_material(tmp->materialname);
+	    if (mt && !strncmp(mt->description, tmp->name, strlen(mt->description)))
+		tval = ((strtoint(name) - strtoint(mt->description) -
+			 strtoint(" ")) * (tmp->nrof?tmp->nrof:1));
+	    else
+		tval = (strtoint(name) * (tmp->nrof?tmp->nrof:1));
 	} else
 	    tval = (strtoint(name) * (tmp->nrof?tmp->nrof:1));
 #ifdef ALCHEMY_DEBUG
@@ -350,7 +355,8 @@ object * make_item_from_recipe(object *cauldron, recipe *rp) {
             LOG(llevDebug,"  --requested recipe: %s of %s.\n",rp->arch_name,rp->title);
             return (object *) NULL;
 	}
-        give_artifact_abilities(item,art->item);
+	transmute_materialname(item, art->item);
+        give_artifact_abilities(item, art->item);
     }
  
     if(QUERY_FLAG(cauldron,FLAG_CURSED)) SET_FLAG(item,FLAG_CURSED);

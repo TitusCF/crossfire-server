@@ -212,6 +212,37 @@ materialtype_t *name_to_material(char *name)
     return mt;
 }
 
+/* when doing transmutation of objects, we have to recheck the resistances,
+ * as some that did not apply previously, may apply now.
+ */
+
+void transmute_materialname(object *op, object *change)
+{
+    materialtype_t *mt;
+    int j;
+
+    if (op->materialname == NULL)
+	return;
+
+    if (change->materialname != NULL &&
+	strcmp(op->materialname, change->materialname))
+	return;
+
+    if (!IS_ARMOR(op))
+	return;
+
+    mt = name_to_material(op->materialname);
+
+    for (j=0; j < NROFATTACKS; j++)
+	if (op->resist[j] == 0 && change->resist[j] != 0) {
+	    op->resist[j] += mt->mod[j];
+	    if (op->resist[j] > 100)
+		op->resist[j] = 100;
+	    if (op->resist[j] < -100)
+		op->resist[j] = -100;
+	}
+}
+
 /* set the materialname and type for an item */
 void set_materialname(object *op, int difficulty)
 {
@@ -242,10 +273,16 @@ void set_materialname(object *op, int difficulty)
 	if (op->stats.wc && IS_WEAPON(op))
 	    op->stats.wc += lmt->wc;
 	if (IS_ARMOR(op)) {
-	    op->stats.ac += lmt->ac;
+	    if (op->stats.ac)
+		op->stats.ac += lmt->ac;
 	    for (j=0; j < NROFATTACKS; j++)
-		if (op->resist[j] != 0)
+		if (op->resist[j] != 0) {
 		    op->resist[j] += lmt->mod[j];
+		    if (op->resist[j] > 100)
+			op->resist[j] = 100;
+		    if (op->resist[j] < -100)
+			op->resist[j] = -100;
+		}
 	}
 	op->materialname = add_string(lmt->name);
 	/* dont make it unstackable if it doesn't need to be */
