@@ -13,6 +13,7 @@ default_smoothed.111 sdefault.001
 
 # Data extracted from arch files
 beach.111 beach_S.111
+blackmarble.111 empty_S.111
 blake_0.111 empty_S.111
 blake_1.111 empty_S.111
 blake_2.111 empty_S.111
@@ -42,6 +43,7 @@ desert.111 desert_S.111
 dunes.111 dunes_S.111
 evergreens.111 empty_S.111
 evergreens_1.111 empty_S.111
+farmland.111 empty_S.111
 flagstone.111 empty_S.111
 grass.111 grass_S.111
 grasspond.111 grass_S.111
@@ -55,6 +57,7 @@ lava.112 lava_S.112
 lava.113 lava_S.113
 lava.114 lava_S.114
 lava.115 lava_S.115
+marble.111 empty_S.111
 marsh.111 marsh_S.111
 moun_cave1.111 mountain_S.111
 moun_cave2.111 mountain_S.111
@@ -62,7 +65,8 @@ mountain1.111 mountain_S.111
 mountain2.111 mountain_S.111
 mountain4.111 mountain_S.111
 mountain5.111 mountain_S.111
-pstone.111 pstone_1_S.111
+pstone_1.111 pstone_1_S.111
+pstone_2.111 pstone_1_S.111
 sea.111 sea_S.111
 sea.112 sea_S.112
 sea.113 sea_S.113
@@ -72,10 +76,13 @@ shallow_sea.112 shallow_sea_S.112
 shallow_sea.113 shallow_sea_S.113
 shallow_sea.114 shallow_sea_S.114
 steppe.111 steppe_S.111
+stfloor.111 empty_S.111
 swamp.111 swamp_S.111
 tree_1.111 grass_S.111
 tree_2.111 grass_S.111
 treed_hills.111 hills_S.111
+woodfloor.111 empty_S.111
+woodfloor2.111 empty_S.111
 woods_1.111 grass_S.111
 woods_2.111 woods_2_S.111
 woods_3.111 grass_S.111
