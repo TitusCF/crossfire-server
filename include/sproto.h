@@ -610,6 +610,9 @@ int get_payment2(object *pl, object *op);
 int get_payment(object *pl);
 void sell_item(object *op, object *pl);
 void shop_listing(object *op);
+void write_supplydb();
+void read_supplydb();
+void update_sd(object *op, int nrof, int flag);
 /* skills.c */
 int attempt_steal(object *op, object *who);
 int adj_stealchance(object *op, object *victim, int roll);

@@ -31,6 +31,7 @@
 #include <skills.h>
 #include <living.h>
 #include <newclient.h>
+#include <shop.h>
 #ifndef __CEXTRACT__
 #include <sproto.h>
 #endif
@@ -38,6 +39,8 @@
 
 #define NUM_COINS 3	/* number of coin types */
 static char *coins[] = {"platinacoin", "goldcoin", "silvercoin", NULL};
+
+supplydemand_t *supplydemand;
 
 
 /* Added F_TRUE flag to define.h to mean that the price should not
@@ -490,6 +493,7 @@ int get_payment2 (object *pl, object *op) {
 	    CLEAR_FLAG(op, FLAG_UNPAID);
 	    new_draw_info_format(NDI_UNIQUE, 0, op,
 		"You paid %s for %s.",buf,query_name(op));
+	    update_sd(op, op->nrof, F_BUY);
 	    tmp=merge_ob(op,NULL);
 	    if (pl->type == PLAYER) {
 		if (tmp) {      /* it was merged */
@@ -586,6 +590,7 @@ void sell_item(object *op, object *pl) {
           query_name(op));
   SET_FLAG(op, FLAG_UNPAID);
   identify(op);
+  update_sd(op, op->nrof, F_SELL); 
 }
 
 
@@ -724,3 +729,119 @@ void shop_listing(object *op)
     free(items);
 }
 
+static supplydemand_t *get_empty_sd() {
+    supplydemand_t *sd;
+
+    sd = (supplydemand_t *)malloc(sizeof(supplydemand_t));
+    if (sd == NULL)
+	fatal(OUT_OF_MEMORY);
+    sd->name = NULL;
+    sd->title = NULL;
+    sd->value = 0;
+    sd->bought = 0;
+    sd->sold = 0;
+    sd->next = NULL;
+    return sd;
+}
+
+void write_supplydb()
+{
+    char filename[MAX_BUF];
+    FILE *fp;
+    supplydemand_t *spd;;
+
+    sprintf(filename, "%s/supplydb", settings.localdir);
+    if ((fp = fopen(filename, "w")) == NULL) {
+	LOG(llevError, "Cannot open %s for writing\n", filename);
+	return;
+    }
+    for (spd=supplydemand; spd != NULL && spd->next != NULL; spd=spd->next) {
+	fprintf(fp, "name %s\n", spd->name);
+	if (spd->title == NULL)
+	    fprintf(fp, "title NULL\n");
+	else
+	    fprintf(fp, "title %s\n", spd->title);
+	fprintf(fp, "values %u %u %d\n", spd->bought, spd->sold, spd->value);
+    }
+    fclose(fp);
+}
+
+void read_supplydb()
+{
+    char filename[MAX_BUF];
+    char buf[MAX_BUF];
+    char *cp;
+    FILE *fp;
+    supplydemand_t *spd;
+
+    sprintf(filename, "%s/supplydb", settings.localdir);
+    LOG(llevDebug, "Reading supply and demand data from %s...", filename);
+    if ((fp = fopen(filename, "r")) == NULL) {
+	LOG(llevError, "Cannot open %s for reading\n", filename);
+	spd = get_empty_sd();
+	spd->next = NULL;
+	supplydemand = spd;
+	return;
+    }
+    spd = get_empty_sd();
+    supplydemand = spd;
+    while (fscanf(fp, "name %s\n", buf) != EOF) {
+	spd->name = add_string(buf);
+	fgets(buf, MAX_BUF, fp);
+	if ((cp=strrchr(buf, '\n'))!=NULL)
+	    *cp='\0';
+	cp = buf;
+	cp += 6;
+	if (strcmp(cp, "NULL") == 0)
+	    spd->title = NULL;
+	else
+	    spd->title = add_string(cp);
+	fscanf(fp, "values %u %u %d\n", &spd->bought, &spd->sold, &spd->value);
+	spd->next = get_empty_sd();
+	spd = spd->next;
+    }
+    spd->next = NULL;
+    LOG(llevDebug, "Done.\n");
+    fclose(fp);
+}
+
+void update_sd(object *op, int nrof, int flag)
+{
+    supplydemand_t *spd, *npd;
+    int found;
+
+    found = 0;
+    for (spd=supplydemand; spd != NULL && spd->name != NULL; spd=spd->next) {
+	if (op->title == NULL || spd->title == NULL) {
+	    if (strcmp(spd->name, op->name) == 0) {
+		found++;
+		break;
+	    }
+	} else 	if (strcmp(spd->name, op->name) == 0 &&
+	    strcmp(spd->title, op->title) == 0) {
+	    found++;
+	    break;
+	}
+    }
+    if (!found) {
+	spd = get_empty_sd();
+	for (npd=supplydemand; npd->next != NULL; npd=npd->next);
+	npd->next = spd;
+	spd=npd;
+	spd->value = 0;
+	spd->bought = 0;
+	spd->sold = 0;
+	spd->name = add_string(op->name);
+	if (op->title != NULL)
+	    spd->title = add_string(op->title);
+	else
+	    spd->title = NULL;
+    }
+    if (flag == F_SELL)
+	spd->sold += nrof;
+    else
+	spd->bought += nrof;
+    spd->value = (int)(op->value*((float)(spd->bought+1)/(float)(spd->sold+1)));
+    if (spd->value < 1)
+	spd->value = 1;
+}

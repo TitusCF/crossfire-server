@@ -282,6 +282,8 @@ void tick_the_clock()
     todtick++;
     if (todtick%20 == 0)
 	write_todclock();
+    if (todtick%30 == 0)
+	write_supplydb();
     if (settings.dynamiclevel > 0) {
         if (todtick%21 == 0)
 	    write_pressuremap();
