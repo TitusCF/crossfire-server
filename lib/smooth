@@ -3,45 +3,34 @@ default_smoothed.111 sdefault.001
 
 #grasslike smooths
 
-grass.111 sgrass.111
-hole1.111 sgrass.111
+grass.111 S_grass.111
+hole1.111 S_grass.111
 
 # sea need to go higher with empty border for graphical reasons
 # example can be seen in town hall in scorn.
 
-sea.111 sempty.111
-sea.112 sempty.111
-sea.113 sempty.111
-sea.114 sempty.111
+sea.111 S_empty.111
+sea.112 S_empty.111
+sea.113 S_empty.111
+sea.114 S_empty.111
 
 # pictures above need to be redone but switched to existing ones
 # to prevent the ugly default 'not found' smooth picture.
 # Really need someone to draw some of them
-brush.111 sgrass.111
-tree_1.111 sgrass.111
-tree_2.111 sgrass.111
-woods_1.111 sgrass.111
-woods_2.111 sgrass.111
-woods_3.111 sgrass.111
-woods_4.111 sgrass.111
-grasspond.111 sgrass.111
-evergreens.111 sempty.111
-evergreens_2.111 sempty.111
-
-
-#old way. need to clean up in a while
-
-#grass.111 grass_111_smoothed.001 grass_111_smoothed.001 grass_111_smoothed.010 grass_111_smoothed.011 grass_111_smoothed.100 grass_111_smoothed.101 grass_111_smoothed.110 grass_111_smoothed.111
-#brush.111 grass_111_smoothed.001 grass_111_smoothed.001 grass_111_smoothed.010 grass_111_smoothed.011 grass_111_smoothed.100 grass_111_smoothed.101 grass_111_smoothed.110 grass_111_smoothed.111
-#tree_1.111 grass_111_smoothed.001 grass_111_smoothed.001 grass_111_smoothed.010 grass_111_smoothed.011 grass_111_smoothed.100 grass_111_smoothed.101 grass_111_smoothed.110 grass_111_smoothed.111
-#tree_2.111 grass_111_smoothed.001 grass_111_smoothed.001 grass_111_smoothed.010 grass_111_smoothed.011 grass_111_smoothed.100 grass_111_smoothed.101 grass_111_smoothed.110 grass_111_smoothed.111
-#woods_1.111 grass_111_smoothed.001 grass_111_smoothed.001 grass_111_smoothed.010 grass_111_smoothed.011 grass_111_smoothed.100 grass_111_smoothed.101 grass_111_smoothed.110 grass_111_smoothed.111
-#woods_2.111 grass_111_smoothed.001 grass_111_smoothed.001 grass_111_smoothed.010 grass_111_smoothed.011 grass_111_smoothed.100 grass_111_smoothed.101 grass_111_smoothed.110 grass_111_smoothed.111
-#woods_3.111 grass_111_smoothed.001 grass_111_smoothed.001 grass_111_smoothed.010 grass_111_smoothed.011 grass_111_smoothed.100 grass_111_smoothed.101 grass_111_smoothed.110 grass_111_smoothed.111
-#woods_4.111 grass_111_smoothed.001 grass_111_smoothed.001 grass_111_smoothed.010 grass_111_smoothed.011 grass_111_smoothed.100 grass_111_smoothed.101 grass_111_smoothed.110 grass_111_smoothed.111
-#grasspond.111 grass_111_smoothed.001 grass_111_smoothed.001 grass_111_smoothed.010 grass_111_smoothed.011 grass_111_smoothed.100 grass_111_smoothed.101 grass_111_smoothed.110 grass_111_smoothed.111
-#evergreens.111 evergreens_111_smoothed.001 evergreens_111_smoothed.001 evergreens_111_smoothed.010 evergreens_111_smoothed.011 evergreens_111_smoothed.100 evergreens_111_smoothed.101 evergreens_111_smoothed.110 evergreens_111_smoothed.111
-#evergreens_2.111 evergreens_111_smoothed.001 evergreens_111_smoothed.001 evergreens_111_smoothed.010 evergreens_111_smoothed.011 evergreens_111_smoothed.100 evergreens_111_smoothed.101 evergreens_111_smoothed.110 evergreens_111_smoothed.111
-
+brush.111 S_grass.111
+tree_1.111 S_grass.111
+tree_2.111 S_grass.111
+woods_1.111 S_grass.111
+woods_2.111 S_grass.111
+woods_3.111 S_grass.111
+woods_4.111 S_grass.111
+grasspond.111 S_grass.111
+evergreens.111 S_empty.111
+evergreens_2.111 S_empty.111
+mountain.111 S_mountain.111
+marsh.111 S_marsh.111
+desert.111 S_desert.111
+hills.111 S_hills.111
+steppe.111 S_steppe.111
 
 #end
