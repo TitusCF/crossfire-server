@@ -1016,6 +1016,10 @@ SOURCE=..\server\skills.c
 # End Source File
 # Begin Source File
 
+SOURCE=..\server\spell_attack.c
+# End Source File
+# Begin Source File
+
 SOURCE=..\server\spell_effect.c
 
 !IF  "$(CFG)" == "crossfire32 - Win32 FullDebug"
@@ -2103,10 +2107,6 @@ SOURCE=..\common\utils.c
 
 # End Source File
 # End Group
-# Begin Source File
-
-SOURCE=..\server\spell_attack.c
-# End Source File
 # End Group
 # Begin Group "Header-Dateien"
 
