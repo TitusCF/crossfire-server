@@ -379,7 +379,6 @@ void roomify_layout(char **maze,RMParms *RP) {
     }
     if(cx < cy) make_wall(maze,dx,dy,0);
     else make_wall(maze,dx,dy,1);
-    continue;
   }
 }
 
@@ -401,16 +400,18 @@ int can_make_wall(char **maze,int dx,int dy,int dir,RMParms *RP) {
     {
       int y = dy;
       for(i1=dx-1;i1>0;i1--) {
-        int sindex=surround_flag(maze,i1,y,RP);
+        int sindex=surround_flag2(maze,i1,y,RP);
         if(sindex == 1) break;  
         if(sindex != 0) return -1;  /* can't make horiz.  wall here */
+        if(maze[i1][y]!=0) return -1;  /* can't make horiz.  wall here */
         length++;
       }
 	
       for(i1=dx+1;i1<RP->Xsize-1;i1++) {
-        int sindex=surround_flag(maze,i1,y,RP);
+        int sindex=surround_flag2(maze,i1,y,RP);
         if(sindex == 2) break;  
-        if(sindex != 0) return -1;  /* can't make horiz.  wall here */
+        if(sindex != 0) return -1;   /* can't make horiz.  wall here */
+        if(maze[i1][y]!=0) return -1;  /* can't make horiz.  wall here */
         length++;
       }
       return length;
@@ -418,16 +419,18 @@ int can_make_wall(char **maze,int dx,int dy,int dir,RMParms *RP) {
   else {  /* vertical */
     int x = dx;
     for(i1=dy-1;i1>0;i1--) {
-      int sindex=surround_flag(maze,x,i1,RP);
+      int sindex=surround_flag2(maze,x,i1,RP);
       if(sindex == 4) break;  
       if(sindex != 0) return -1;  /* can't make vert. wall here */
+      if(maze[x][i1]!=0) return -1;  /* can't make horiz.  wall here */
       length++;
     }
 	
     for(i1=dy+1;i1<RP->Ysize-1;i1++) {
-      int sindex=surround_flag(maze,x,i1,RP);
+      int sindex=surround_flag2(maze,x,i1,RP);
       if(sindex == 8) break;  
       if(sindex != 0) return -1;  /* can't make verti. wall here */
+      if(maze[x][i1]!=0) return -1;  /* can't make horiz.  wall here */
       length++;
     }
     return length;
