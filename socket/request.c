@@ -1,4 +1,32 @@
 /*
+ * static char *rcsid_init_c =
+ *    "$Id$";
+ */
+
+/*
+    CrossFire, A Multiplayer game for X-windows
+
+    Copyright (C) 2000 Mark Wedel
+    Copyright (C) 1992 Frank Tore Johansen
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+
+    The author can be reached via e-mail to mwedel@scruz.net
+*/
+
+/*
  * This file implements all of the goo on the server side for handling 
  * clients.  It's got a bunch of global variables for keeping track of 
  * each of the clients. 
@@ -307,6 +335,8 @@ void SetFaceMode(char *buf, int len, NewSocket *ns)
 	ns->facemode=Send_Face_Bitmap;
     } else if (mode==CF_FACE_XPM) {
 	ns->facemode=Send_Face_Pixmap;
+    } else if (mode==CF_FACE_PNG) {
+	ns->facemode=Send_Face_Png;
 #ifdef ESRV_DEBUG
     } else {
 	LOG(llevDebug,"SetFaceMode: Invalid mode from client: %d\n", mode);
@@ -602,6 +632,16 @@ void esrv_send_face(NewSocket *ns,short face_num, int nocache)
 	memcpy(sl.buf+sl.len, faces[face_num].data[0], faces[face_num].datalen[0]);
 	memcpy(sl.buf+sl.len, faces[face_num].data[0], 3*24);
 	sl.len += faces[face_num].datalen[0];
+	Send_With_Handling(ns, &sl);
+    }
+    else if (ns->facemode == Send_Face_Png) {
+	strcpy((char*)sl.buf, "image ");
+	sl.len=strlen((char*)sl.buf);
+	SockList_AddInt(&sl, face_num);
+	SockList_AddInt(&sl, faces[face_num].datalen[2]);
+	memcpy(sl.buf+sl.len, faces[face_num].data[2], faces[face_num].datalen[2]);
+	sl.len += faces[face_num].datalen[2];
+/*	LOG(llevDebug,"sending png %d, len %d\n", face_num, faces[face_num].datalen);*/
 	Send_With_Handling(ns, &sl);
     } else {
 	LOG(llevError,"Invalid face send mode on client_num (%d)\n",

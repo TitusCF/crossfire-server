@@ -6,7 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 1994 Mark Wedel
+    Copyright (C) 2000 Mark Wedel
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -23,7 +23,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to mark@pyramid.com
+    The author can be reached via e-mail to mwedel@scruz.net
 
     newserver.h defines various structures and values that are use for the
     new client server communication method.  Values defined here are only
@@ -59,7 +59,8 @@ struct statsinfo {
  * handle some higher level functions.  fd is the actual file descriptor we
  * are using.
  */
-enum FaceSendMode { Send_Face_Pixmap, Send_Face_Bitmap, Send_Face_None};
+enum FaceSendMode { Send_Face_Pixmap, Send_Face_Bitmap, Send_Face_Png, 
+    Send_Face_None};
 
 enum Sock_Status {Ns_Avail, Ns_Add, Ns_Dead, Ns_Old};
 
@@ -123,8 +124,8 @@ typedef struct Socket_Info {
 extern Socket_Info socket_info;
 extern FaceInfo	faces[MAXFACENUM];  /* face information */
 
-#define VERSION_CS 1021
-#define VERSION_SC 1022
+#define VERSION_CS 1022
+#define VERSION_SC 1023
 #define VERSION_INFO "Crossfire Server"
 
 

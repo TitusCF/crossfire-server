@@ -18,6 +18,14 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+lib/crossfire.png: Some floors modified to no longer have transperencies.
+include/newserver.h:  Add Send_Face_Png made, also update versions of
+	the protocol
+include/newclient.h:  Add CF_FACE_PNG constant.
+socket/request.c: Add support for receiving PNG facemode request,
+	ad final logic to send png images to the client.
+Changes by Mark Wedel, 6/2/2000
+
 lib/checkarch.pl:  Check for archetypes with type FIRECHEST but no level.
 - Jan Echternach 5/29/2000
 
