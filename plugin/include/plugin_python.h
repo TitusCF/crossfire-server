@@ -559,6 +559,8 @@ static PyObject* CFSendCustomCommand(PyObject* self, PyObject* args);
 static PyObject* CFGetHumidity(PyObject* self, PyObject* args);
 static PyObject* CFGetTemperature(PyObject* self, PyObject* args);
 static PyObject* CFGetPressure(PyObject* self, PyObject* args);
+static PyObject* CFGetWC(PyObject* self, PyObject* args);
+static PyObject* CFSetWC(PyObject* self, PyObject* args);
 
 /* Setting values - datapaths */
 static PyObject* CFGetMapDir(PyObject* self, PyObject* args);
@@ -820,6 +822,8 @@ static PyMethodDef CFPythonMethods[] =
         {"GetLocalDirectory", CFGetLocalDir, METH_VARARGS},
         {"GetPlayerDirectory", CFGetPlayerDir, METH_VARARGS},
         {"GetDataDirectory", CFGetDataDir, METH_VARARGS},
+        {"GetWC", CFGetWC, METH_VARARGS},
+        {"SetWC", CFSetWC, METH_VARARGS},
 /* Skills wrappers : */
         {"SkillStealing", CFSkillStealing, METH_VARARGS},
         {"SkillLockpicking", CFSkillLockpicking, METH_VARARGS},

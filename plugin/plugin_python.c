@@ -5388,7 +5388,7 @@ static PyObject* CFCanSeeInDark(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   :                                                                  */
 /* Python :                                                                  */
-/* Status : Untested                                                                */
+/* Status : Stable                                                           */
 /*****************************************************************************/
 
 static PyObject* CFGetAC(PyObject* self, PyObject* args)
@@ -5397,6 +5397,19 @@ static PyObject* CFGetAC(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
     return Py_BuildValue("i",WHO->stats.ac);
+};
+
+/*****************************************************************************/
+/* Name   :                                                                  */
+/* Python :                                                                  */
+/* Status : Stable                                                           */
+/*****************************************************************************/
+static PyObject* CFGetWC(PyObject* self, PyObject* args)
+{
+    long whoptr;
+    if (!PyArg_ParseTuple(args,"l",&whoptr))
+        return NULL;
+    return Py_BuildValue("i",WHO->stats.wc);
 };
 
 /*****************************************************************************/
@@ -5655,9 +5668,9 @@ static PyObject* CFSetNickname(PyObject* self, PyObject* args)
 };
 
 /*****************************************************************************/
-/* Name   :                                                                  */
-/* Python :                                                                  */
-/* Status : Untested                                                                */
+/* Name   : CFSetAC                                                          */
+/* Python : SetAC(object, value)                                             */
+/* Status : Untested, AC may not survive fix_player()                        */
 /*****************************************************************************/
 
 static PyObject* CFSetAC(PyObject* self, PyObject* args)
@@ -5672,6 +5685,28 @@ static PyObject* CFSetAC(PyObject* self, PyObject* args)
     if (value<-120) return NULL;
 
     WHO->stats.ac = value;
+    Py_INCREF(Py_None);
+    return Py_None;
+};
+
+/*****************************************************************************/
+/* Name   : CFSetWC                                                          */
+/* Python : SetWC(object, value)                                             */
+/* Status : Untested, WC may not survive fix_player()                        */
+/*****************************************************************************/
+
+static PyObject* CFSetWC(PyObject* self, PyObject* args)
+{
+    int value;
+    long whoptr;
+
+    if (!PyArg_ParseTuple(args,"li",&whoptr,&value))
+        return NULL;
+
+    if (value>120) return NULL;
+    if (value<-120) return NULL;
+
+    WHO->stats.wc = value;
     Py_INCREF(Py_None);
     return Py_None;
 };
