@@ -1721,7 +1721,7 @@ end
 # Cloaks
 #
 Allowed all
-chance 199
+chance 49
 Object Woe
 type 87
 cursed 1
@@ -1737,7 +1737,61 @@ value 5
 end
 #
 Allowed all
-chance 5
+chance 50
+Object Woe
+type 87
+cursed 1
+Str -1
+Con -1
+Dex -1
+Wis -1
+Int -1
+Pow -1
+Cha -1
+luck -1
+value 5
+face cloak_black.111
+stand_still 1
+end
+#
+Allowed all
+chance 50
+Object Woe
+type 87
+cursed 1
+Str -1
+Con -1
+Dex -1
+Wis -1
+Int -1
+Pow -1
+Cha -1
+luck -1
+value 5
+face cloak_red.111
+stand_still 1
+end
+#
+Allowed all
+chance 50
+Object Woe
+type 87
+cursed 1
+Str -1
+Con -1
+Dex -1
+Wis -1
+Int -1
+Pow -1
+Cha -1
+luck -1
+value 5
+face cloak_white.111
+stand_still 1
+end
+#
+Allowed all
+chance 3
 Object Doom
 type 87
 damned 1
@@ -1750,10 +1804,30 @@ Pow -5
 Cha -5
 value 30
 magic 1
+face cloak_lgrey.111
+stand_still 1
 end
 #
 Allowed all
-chance 1
+chance 3
+Object Doom
+type 87
+damned 1
+Str -5
+Con -5
+Dex -5
+Wis -5
+Int -5
+Pow -5
+Cha -5
+value 30
+magic 1
+face cloak_black.111
+stand_still 1
+end
+#
+Allowed all
+chance 2
 Object the Magi
 type 87
 weight 120
@@ -1763,6 +1837,20 @@ sp 2
 value 2000
 material 256
 face cloak_purple.111
+stand_still 1
+end
+#
+Allowed all
+chance 2
+Object Lythander
+type 87
+weight 120
+Pow 2
+sp 1
+resist_confuse 55
+value 2000
+material 256
+face serp_cloak.111
 stand_still 1
 end
 #
@@ -1860,8 +1948,8 @@ difficulty 3
 Object Acid Proofing
 type 87
 value 500
-weight 90
-resist_acid 30
+weight 95
+resist_acid 65
 material 256
 face cloak_black.111
 stand_still 1
@@ -1875,13 +1963,28 @@ type 87
 magic 3
 value 500
 weight 50
-resist_acid 30
 resist_drain 30
 resist_ghosthit 30
 resist_deplete 100
 material 0
 Cha -2
 face cloak_black.111
+stand_still 1
+end
+#
+Allowed all
+chance 1
+difficulty 5
+Object Gorokh
+type 87
+magic 3
+value 5000
+weight 200
+resist_fire 30
+resist_acid 50
+material 0
+Cha -6
+face cloak_red.111
 stand_still 1
 end
 #
