@@ -1191,10 +1191,11 @@ int new_save_map(mapstruct *m, int flag) {
     if (m->winddir) fprintf(fp, "winddir %d\n", m->winddir);
     if (m->sky) fprintf(fp, "sky %d\n", m->sky);
 
-    /* Save any tiling information */
-    for (i=0; i<4; i++)
-	if (m->tile_path[i])
-	    fprintf(fp,"tile_path_%d %s\n", i+1, m->tile_path[i]);
+    /* Save any tiling information, except on overlays */
+    if (flag != 2)
+	for (i=0; i<4; i++)
+	    if (m->tile_path[i])
+	        fprintf(fp,"tile_path_%d %s\n", i+1, m->tile_path[i]);
 
     fprintf(fp,"end\n");
 
