@@ -876,7 +876,7 @@ void monster_apply_below(object *monster) {
   for(tmp=monster->below;tmp!=NULL;tmp=next) {
     next=tmp->below;
     switch (tmp->type) {
-    case HANDLE:
+    case CF_HANDLE:
     case TRIGGER:
       if (monster->will_apply&1)
         manual_apply(monster,tmp,0);

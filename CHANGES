@@ -18,6 +18,15 @@ else.  With this, include the file(s) that you changed.
 
 Changes for CVS:
 
+common/item.c: Add boots and gloves to items which are not magical just
+    because they have resist physical.  This bug resulted in most all boots
+    and gloves being shown as magical, even though they had no special
+    properties.
+socket/request.c: remove some dead code.  Memset entire map cell
+    to zero when scrolling and the map is cells is one that was not in
+    view.  This fixes redraw problems when using large viewable maps.
+MSW 2001-06-11
+
 doc/Protocol: update information for the mapcmd, add map1cmd to
    section of setup commands.
 include/newserver.h,socket/init.c: add map1cmd element to socket structure that

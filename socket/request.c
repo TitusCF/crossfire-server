@@ -1003,15 +1003,9 @@ void draw_client_map1(object *pl)
 		    mask = (ax & 0x3f) << 10 | (ay & 0x3f) << 4;
 		    SockList_AddShort(&sl, mask);
 		    pl->contr->socket.lastmap.cells[ax][ay].count=-1;
-#if 0
-		    pl->contr->socket.lastmap.cells[ax][ay].faces[0] = blank_face->number;
-		    pl->contr->socket.lastmap.cells[ax][ay].faces[1] = blank_face->number;
-		    pl->contr->socket.lastmap.cells[ax][ay].faces[2] = blank_face->number;
-#else
 		    pl->contr->socket.lastmap.cells[ax][ay].faces[0] = 0;
 		    pl->contr->socket.lastmap.cells[ax][ay].faces[1] = 0;
 		    pl->contr->socket.lastmap.cells[ax][ay].faces[2] = 0;
-#endif
 		}
 	    }
 	    else { /* this space is viewable */
@@ -1200,11 +1194,10 @@ void esrv_map_scroll(NewSocket *ns,int dx,int dy)
      (dx,dy), newmap[x][y] = oldmap[x-dx][y-dy] */
     for(x=0;x<ns->mapx;x++) {
 	for(y=0;y<ns->mapy;y++) {
-	    newmap.cells[x][y].count = 0;
-	    if (x+dx < 0 || x+dx >= ns->mapx)
+	    if (x+dx < 0 || x+dx >= ns->mapx || y+dy < 0 || y+dy >= ns->mapy) {
+		memset(&(newmap.cells[x][y]), 0, sizeof(struct MapCell));
 		continue;
-	    if (y+dy < 0 || y+dy >= ns->mapy)
-		continue;
+	    }
 	    memcpy(&(newmap.cells[x][y]),
 		   &(ns->lastmap.cells[x+dx][y+dy]),sizeof(struct MapCell));
 	}

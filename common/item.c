@@ -864,8 +864,8 @@ int is_magical(object *op) {
     /* Physical protection is expected on some item types, so they should
      * not be considered magical.
      */
-    if (op->resist[ATNR_PHYSICAL] && op->type != HELMET && op->type != SHIELD
-	&& op->type != ARMOUR) return 1;
+    if (op->resist[ATNR_PHYSICAL] && op->type != HELMET && op->type != SHIELD &&
+	op->type != BOOTS && op->type != GLOVES && op->type != ARMOUR) return 1;
 	
    /* power crystal, spellbooks, and scrolls are always magical.  */
    if (op->magic || op->type==POWER_CRYSTAL || op->type==SPELLBOOK || 
