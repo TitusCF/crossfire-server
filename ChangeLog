@@ -17,6 +17,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/player.c: Change move_player_attack() so that we look for monsters
+   to attack even after finding a rollable object - there can be non
+   blocking rollable objects with monsters on top - we want to attack
+   the monster, not roll the object.
+MSW 2002-12-03
+
 TODO: Move more items from my mailbox to the TODO list.
 common/living.c: Init item_power in player to zero in fix_player() - 
     bogus results were getting generated as it just kept getting incremented.

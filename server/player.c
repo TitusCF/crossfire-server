@@ -1640,7 +1640,7 @@ static int player_attack_door(object *op, object *door)
 
 void move_player_attack(object *op, int dir)
 {
-    object *tmp;
+    object *tmp, *mon;
     int nx=freearr_x[dir]+op->x,ny=freearr_y[dir]+op->y;
     mapstruct *m;
 
@@ -1665,22 +1665,31 @@ void move_player_attack(object *op, int dir)
 	    return;
 	}
 
-	/* Go through all the objects, and stop if we find one of interest. */
-	while (tmp->above!=NULL) {
-	    if ((QUERY_FLAG(tmp,FLAG_ALIVE) || QUERY_FLAG(tmp,FLAG_CAN_ROLL)
-		 || tmp->type ==LOCKED_DOOR) && tmp!=op)
+	mon = NULL;
+	/* Go through all the objects, and find ones of interest. Only stop if
+	 * we find a monster - that is something we know we want to attack.
+	 * if its a door or barrel (can roll) see if there may be monsters
+	 * on the space
+	 */
+	while (tmp!=NULL) {
+	    if (tmp == op) continue;
+	    if (QUERY_FLAG(tmp,FLAG_ALIVE)) {
+		mon = tmp;
 		break;
+	    }
+	    if (tmp->type==LOCKED_DOOR || QUERY_FLAG(tmp,FLAG_CAN_ROLL))
+		mon = tmp;
 	    tmp=tmp->above;
 	}
     
-	if (tmp==NULL)		/* This happens anytime the player tries to move */
+	if (mon==NULL)		/* This happens anytime the player tries to move */
 	    return;		/* into a wall */
 
-	if(tmp->head != NULL)
-	    tmp = tmp->head;
+	if(mon->head != NULL)
+	    mon = mon->head;
 
-	if ((tmp->type==DOOR && tmp->stats.hp>=0) || (tmp->type==LOCKED_DOOR))
-	    if (player_attack_door(op, tmp)) return;
+	if ((mon->type==DOOR && mon->stats.hp>=0) || (mon->type==LOCKED_DOOR))
+	    if (player_attack_door(op, mon)) return;
 
 	/* The following deals with possibly attacking peaceful
 	 * or frienddly creatures.  Basically, all players are considered
@@ -1694,13 +1703,13 @@ void move_player_attack(object *op, int dir)
 	 * peaceful.  Our assumption is the creature is a pet if the
 	 * player owns it and it is either friendly or unagressive.
 	 */
-	if ((op->type==PLAYER) && get_owner(tmp)==op && 
-	    (QUERY_FLAG(tmp,FLAG_UNAGGRESSIVE) ||  QUERY_FLAG(tmp, FLAG_FRIENDLY)))
+	if ((op->type==PLAYER) && get_owner(mon)==op && 
+	    (QUERY_FLAG(mon,FLAG_UNAGGRESSIVE) ||  QUERY_FLAG(mon, FLAG_FRIENDLY)))
 	{
 	    /* If we're braced, we don't want to switch places with it */
 	    if (op->contr->braced) return;
 	    play_sound_map(op->map, op->x, op->y, SOUND_PUSH_PLAYER);
-	    (void) push_ob(tmp,dir,op);
+	    (void) push_ob(mon,dir,op);
 	    if(op->contr->tmp_invis||op->hide) make_visible(op);
 	    return;
 	}
@@ -1710,13 +1719,12 @@ void move_player_attack(object *op, int dir)
 	 * someone, but put it inside this loop so that you won't
 	 * attack them either.
 	 */
-	if ((tmp->type==PLAYER || tmp->enemy != op) &&
-	    (tmp->type==PLAYER || QUERY_FLAG(tmp,FLAG_UNAGGRESSIVE)
-	     || QUERY_FLAG(tmp, FLAG_FRIENDLY)) && (op->contr->peaceful
-		&& !op_on_battleground(op, NULL, NULL))) {
+	if ((mon->type==PLAYER || mon->enemy != op) &&
+	    (mon->type==PLAYER || QUERY_FLAG(mon,FLAG_UNAGGRESSIVE) || QUERY_FLAG(mon, FLAG_FRIENDLY)) && 
+	    (op->contr->peaceful && !op_on_battleground(op, NULL, NULL))) {
 	    if (!op->contr->braced) {
 		play_sound_map(op->map, op->x, op->y, SOUND_PUSH_PLAYER);
-		(void) push_ob(tmp,dir,op);
+		(void) push_ob(mon,dir,op);
 	    } else {
 		new_draw_info(0, 0,op,"You withhold your attack");
 	    }
@@ -1726,8 +1734,8 @@ void move_player_attack(object *op, int dir)
 	/* If the object is a boulder or other rollable object, then
 	 * roll it if not braced.  You can't roll it if you are braced.
 	 */
-	else if(QUERY_FLAG(tmp,FLAG_CAN_ROLL)&&(!op->contr->braced)) {
-	    recursive_roll(tmp,dir,op);
+	else if(QUERY_FLAG(mon,FLAG_CAN_ROLL)&&(!op->contr->braced)) {
+	    recursive_roll(mon,dir,op);
 	    if(action_makes_visible(op)) make_visible(op);
 	}
 
@@ -1738,21 +1746,21 @@ void move_player_attack(object *op, int dir)
 	 * that party_number -1 is no party, so attacks can still happen.
 	 */
 
-	else if ((tmp->stats.hp>=0) && QUERY_FLAG(tmp, FLAG_ALIVE) &&
-		 ((tmp->type!=PLAYER || op->contr->party_number==-1 ||
-		   op->contr->party_number!=tmp->contr->party_number))) {
+	else if ((mon->stats.hp>=0) && QUERY_FLAG(mon, FLAG_ALIVE) &&
+		 ((mon->type!=PLAYER || op->contr->party_number==-1 ||
+		   op->contr->party_number!=mon->contr->party_number))) {
 
 	    op->contr->has_hit = 1; /* The last action was to hit, so use weapon_sp */
 
-	    skill_attack(tmp, op, 0, NULL);
+	    skill_attack(mon, op, 0, NULL);
 	    /* If attacking another player, that player gets automatic
 	     * hitback, and doesn't loose luck either.
 	     */
-	    if (tmp->type == PLAYER && tmp->stats.hp >= 0 && !tmp->contr->has_hit) {
-		short luck = tmp->stats.luck;
-		tmp->contr->has_hit = 1;
-		skill_attack(op, tmp, 0, NULL);
-		tmp->stats.luck = luck;
+	    if (mon->type == PLAYER && mon->stats.hp >= 0 && !mon->contr->has_hit) {
+		short luck = mon->stats.luck;
+		mon->contr->has_hit = 1;
+		skill_attack(op, mon, 0, NULL);
+		mon->stats.luck = luck;
 	    }
 	    if(action_makes_visible(op)) make_visible(op);
 	}
