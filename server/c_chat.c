@@ -49,7 +49,7 @@ int command_me (object *op, char *params)
 
     if (!params) return 0;
     snprintf(buf, MAX_BUF-1, "%s %s",op->name, params);
-        new_info_map(NDI_GREEN,op->map, buf);
+        new_info_map(NDI_UNIQUE|NDI_BLUE,op->map, buf);
 
     return 0;
 }
