@@ -1327,6 +1327,15 @@ int kill_object(object *op,int dam, object *hitter, int type)
                 (owner!=hitter) ? query_name(hitter) : NULL,
                 (owner!=hitter) ? hitter->type : 0);
 
+	    /* Log players killing other players - makes it easier to detect
+	     * and filter out malicious player killers - that is why the
+	     * ip address is included.
+	     */
+	    if (op->type == PLAYER) 
+		LOG(llevInfo,"PLAYER_KILL_PLAYER: %s (%s) killed %s\n",
+		    owner->name, owner->contr->socket.host, query_name(op));
+
+
 	    /* This appears to be doing primitive filtering to only
 	     * display the more interesting monsters.
 	     */
