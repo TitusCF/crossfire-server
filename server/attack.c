@@ -169,8 +169,16 @@ void save_throw_object(object *op, int type) {
 int hit_map(object *op,int dir,int type) {
   object *tmp,*next=NULL;
   int retflag=0;  /* added this flag..  will return 1 if it hits a monster */
+  tag_t tag;
+
+  if (QUERY_FLAG (op, FLAG_FREED)) {
+    LOG (llevError, "BUG: hit_map(): free object\n");
+    return 0;
+  }
   
   if (op->head) op=op->head;
+
+  tag = op->count;
 
   if (!op->map) {
     LOG(llevDebug,"hit_map called, but %s has no map", op->name);
@@ -214,6 +222,8 @@ int hit_map(object *op,int dir,int type) {
     else if(QUERY_FLAG(tmp,FLAG_ALIVE)) {
       hit_player(tmp,op->stats.dam,op,type);
       retflag |=1;
+      if (was_destroyed (op, tag))
+        break;
     } /* It is possible the object has been relocated to know longer be
        * on the map (ie, in an icecube.)  If we no longer have a map,
        * just ignore.
@@ -697,6 +707,13 @@ int hit_player(object *op,int dam, object *hitter, int type) {
     char buf[MAX_BUF];
     object *old_hitter=NULL; /* this is used in case of servant monsters */ 
     int maxdam=0,ndam,attacktype=1,attacknum,magic=(type & AT_MAGIC);
+    tag_t hitter_tag;
+
+    if (QUERY_FLAG (op, FLAG_FREED) || QUERY_FLAG (hitter, FLAG_FREED)) {
+        LOG (llevError, "BUG: hit_player(): freed object\n");
+        return 0;
+    }
+    hitter_tag = hitter->count;
 
     if(op->head!=NULL) {
 	if(op->head==op) {
@@ -727,18 +744,15 @@ int hit_player(object *op,int dam, object *hitter, int type) {
 	op=op->head;
     }
 
-    if(op->type==DOOR && op->inv && op->inv->type==RUNE)
+    if(op->type==DOOR && op->inv && op->inv->type==RUNE) {
 	spring_trap(op->inv,hitter);
+        if (was_destroyed (hitter, hitter_tag))
+            return 0;
+    }
 
     /* If its already dead, or we're the wizard, don't attack it - no point */
     if(QUERY_FLAG(op,FLAG_WIZ)||!QUERY_FLAG(op,FLAG_ALIVE)||op->stats.hp<0)
 	return 0;
-
-    /* If its already dead, or we're the wizard, don't attack it - no point */
-    if(hitter->name==NULL) {
-	LOG(llevDebug, "hit_player: hitter has no name\n");
-	return 0;
-    }
 
 #ifdef ATTACK_DEBUG
     LOG(llevDebug,"hit player: attacktype %d, dam %d\n", type, dam);

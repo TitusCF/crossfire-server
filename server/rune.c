@@ -185,9 +185,10 @@ void move_rune(object *op) {
 void rune_attack(object *op,object *victim)
 {
     if(victim) {
+         tag_t tag = victim->count;
 	 hit_player(victim,op->stats.dam,op,op->attacktype);
-	 if (QUERY_FLAG (victim, FLAG_FREED))
-		return;
+         if (was_destroyed (victim, tag))
+                return;
 	 /*  if there's a disease in the needle, put it in the player */
 	 if(op->randomitems!=NULL) create_treasure(op->randomitems,op,GT_INVENTORY,
 		(victim->map?victim->map->difficulty:1),0);
@@ -207,22 +208,35 @@ void rune_attack(object *op,object *victim)
 void spring_trap(object *trap,object *victim)
 {  int spell_in_rune;
    object *env;
+   tag_t trap_tag = trap->count;
+
   trap->stats.hp--;  /*decrement detcount */
   /*  get the spell number from the name in the slaying field, and set
       that as the spell to be cast. */
   if((spell_in_rune=look_up_spell_by_name(NULL,trap->slaying))!=-1) trap->stats.sp=spell_in_rune;
   if(victim) if(victim->type==PLAYER) new_draw_info(NDI_UNIQUE, 0,victim,trap->msg);
-  if(!trap->stats.sp) rune_attack(trap,victim); 
-  else {  /*  This is necessary if the trap is inside something else */
+  /*  Flash an image of the trap on the map so the poor sod
+   *   knows what hit him.  */
+  for (env = trap; env->env != NULL; env = env->env)
+    ;
+  trap_show(trap,env);  
+
+  if ( ! trap->stats.sp)
+  {
+    rune_attack(trap,victim); 
+    if (was_destroyed (trap, trap_tag))
+      return;
+  }
+  else
+  {
+    /* This is necessary if the trap is inside something else */
     remove_ob(trap);
     trap->x=victim->x;trap->y=victim->y;
     insert_ob_in_map(trap,victim->map,trap);
+    if (was_destroyed (trap, trap_tag))
+      return;
     cast_spell(trap,trap,trap->direction,trap->stats.sp,1,spellNormal,NULL);
   }
-  /*  Flash an image of the trap on the map so the poor sod
-   *   knows what hit him.  */
-  for(env=trap;env!=NULL&&env->env!=NULL;env=env->env);
-  trap_show(trap,env);  
 
   if(!trap->stats.hp) {
     trap->type=98;  /* make the trap impotent */

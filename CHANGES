@@ -18,6 +18,22 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+* server/attack.c: hit_map(), hit_player(); server/spell_effect.c:
+move_cone(); server/rune.c: spring_trap(); server/spell_util.c:
+move_missile(): Bugfix: Added missing was_destroyed() calls.
+* server/rune.c: spring_trap(): Bugfix: Call trap_show() before the rune
+has a chance to be destroyed.
+* server/attack.c: hit_map(), hit_player(): Check for freed objects
+right at the beginning of the function.  Removed check that hitter has
+a name from hit_player().
+* server/spell_util.c: move_cone(): Bugfix: Remove cone objects in
+inventories from active list, this fixes the cone without map problem when
+a flower was hit with ice and put into an icecube.
+* server/spell_util.c: move_missile(): Bugfix: Don't call hit_map() while
+missile is removed from the map.
+* server/apply.c: manual_apply(): Handle MMISSILE.
+- Jan Echternach 5/26/2000
+
 * server/spell_effect.c: animate_weapon() and server/spell_util.c:
 summon_monster(): Bugfix: Set FLAG_FRIENDLY for friendly objects.
 - Jan Echternach 5/26/2000

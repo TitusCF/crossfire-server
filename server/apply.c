@@ -1093,6 +1093,17 @@ void move_apply (object *trap, object *victim, object *originator)
     apply_altar (trap, victim, originator);
     return;
 
+  case MMISSILE:
+    if (QUERY_FLAG (victim, FLAG_ALIVE)) {
+      tag_t trap_tag = trap->count;
+      hit_player (victim, trap->stats.dam, trap, AT_MAGIC);
+      if ( ! was_destroyed (trap, trap_tag)) {
+          remove_ob (trap);
+          free_object (trap);
+      }
+    }
+    return;
+
   case ARROW:
     if(QUERY_FLAG(victim, FLAG_ALIVE)&&trap->speed) {
       tag_t trap_tag = trap->count;

@@ -1094,6 +1094,14 @@ cast_cone(object *op, object *caster,int dir, int strength, int spell_type,arche
 
 void move_cone(object *op) {
     int i;
+    tag_t tag;
+
+    if (op->env) {
+        /* handle flowers in icecubes */
+        op->speed = 0;
+        update_ob_speed (op);
+        return;
+    }
 
     /* if no map then hit_map will crash so just ignore object */
     if (! op->map) {
@@ -1118,7 +1126,10 @@ void move_cone(object *op) {
     /* Hit map returns 1 if it hits a monster.  If it does, set
      * food to 1, which will stop the cone from progressing.
      */
+    tag = op->count;
     op->stats.food |= hit_map(op,0,op->attacktype);
+    if (was_destroyed (op, tag))
+        return;
 
     if((op->stats.hp-=2)<0) {
 	if(op->stats.exp) {
@@ -1392,25 +1403,37 @@ void control_golem(object *op,int dir) {
 void move_missile(object *op) {
   int i;
   object *owner;
+  sint16 new_x, new_y;
+
+  owner = get_owner(op);
+  if (owner == NULL) {
+    remove_ob(op);
+    free_object(op);
+    return;
+  }
+
+  new_x = op->x + DIRX(op);
+  new_y = op->y + DIRY(op);
+
+  if (blocked (op->map, new_x, new_y)) {
+    tag_t tag = op->count;
+    hit_map (op, op->direction, AT_MAGIC);
+    if ( ! was_destroyed (op, tag)) {
+      remove_ob (op);
+      free_object(op);
+    }
+    return;
+  }
 
   remove_ob(op);
-  owner = get_owner(op);
-  if (owner == (object *) NULL) {
+  if ( ! op->direction || wall (op->map, new_x, new_y)
+      || blocks_view (op->map, new_x, new_y))
+  {
     free_object(op);
     return;
   }
-
-  op->x+=DIRX(op),op->y+=DIRY(op);
-  if(!op->direction||wall(op->map,op->x,op->y)||
-     blocks_view(op->map,op->x,op->y)) {
-    free_object(op);
-    return;
-  }
-  if(blocked(op->map,op->x,op->y)) {
-    hit_map(op,0,AT_MAGIC);
-    free_object(op);
-    return;
-  }
+  op->x = new_x;
+  op->y = new_y;
   i=find_dir(op->map,op->x,op->y,get_owner(op));
   if(i&&i!=op->direction){
     op->direction=absdir(op->direction+((op->direction-i+8)%8<4?-1:1));
