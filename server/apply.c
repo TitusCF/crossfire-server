@@ -610,7 +610,7 @@ int improve_armour(object *op, object *improver, object *armour)
     {
 	int i;
 
-	i = armour->magic * op->level;
+	i = armour->magic * 10;
 	if (i > new_armour) new_armour=i;
 
         new_draw_info_format(NDI_UNIQUE, 0,op,"You need to be level %d", new_armour);

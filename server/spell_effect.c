@@ -1753,7 +1753,6 @@ cast_change_attr(object *op,object *caster,int dir,int spell_type) {
 
 int summon_pet(object *op, int dir, SpellTypeFrom item) {
     int level, number, i;
-    char *monster;
     treasurelist *trlist = NULL;
     treasure *tr, *prevtr = NULL;
 
@@ -2076,27 +2075,27 @@ static object *small, *large;
 static void alchemy_object(object *obj, int *small_nuggets,
 	 int *large_nuggets, int *weight)
 {
-	int	value=query_cost(obj, NULL, F_TRUE);
+    int	value=query_cost(obj, NULL, F_TRUE);
 
-	/* Give half price when we alchemy money (This should hopefully
-	 * make it so that it isn't worth it to alchemy money, sell
-	 * the nuggets, alchemy the gold from that, etc.
-	 * Otherwise, give 9 silver on the gold for other objects,
-	 * so that it would still be more affordable to haul
-	 * the stuff back to town.
-	 */
+    /* Give third price when we alchemy money (This should hopefully
+     * make it so that it isn't worth it to alchemy money, sell
+     * the nuggets, alchemy the gold from that, etc.
+     * Otherwise, give 9 silver on the gold for other objects,
+     * so that it would still be more affordable to haul
+     * the stuff back to town.
+     */
+
     if (QUERY_FLAG(obj, FLAG_UNPAID))
 	value=0;
     else if (obj->type==MONEY || obj->type==GEM)
 	value /=3;
-    else if (QUERY_FLAG(obj, FLAG_UNPAID))
-	value=0;
     else
 	value *= 0.9;
 
     if ((obj->value>0) && rndm(0, 29)) {
 	static int value_store;
 	int count;
+
 	value_store += value;
 	count = value_store / large->value;
 	*large_nuggets += count;
@@ -2125,24 +2124,30 @@ static void alchemy_object(object *obj, int *small_nuggets,
 static void update_map(object *op, int small_nuggets, int large_nuggets,
 	int x, int y)
 {
-	object *tmp;
+    object *tmp;
+    int flag=0;
 
-	if (small_nuggets) {
-		tmp = get_object();
-		copy_object(small, tmp);
-		tmp-> nrof = small_nuggets;
-		tmp->x = x;
-		tmp->y = y;
-		insert_ob_in_map(tmp, op->map, op,0);
-	}
-	if (large_nuggets) {
-		tmp = get_object();
-		copy_object(large, tmp);
-		tmp-> nrof = large_nuggets;
-		tmp->x = x;
-		tmp->y = y;
-		insert_ob_in_map(tmp, op->map, op,0);
-	}
+    /* Put any nuggets below the player, but we can only pass this
+     * flag if we are on the same space as the player 
+     */
+    if (x == op->x && y == op->y) flag = INS_BELOW_ORIGINATOR;
+
+    if (small_nuggets) {
+	tmp = get_object();
+	copy_object(small, tmp);
+	tmp-> nrof = small_nuggets;
+	tmp->x = x;
+	tmp->y = y;
+	insert_ob_in_map(tmp, op->map, op, flag);
+    }
+    if (large_nuggets) {
+	tmp = get_object();
+	copy_object(large, tmp);
+	tmp-> nrof = large_nuggets;
+	tmp->x = x;
+	tmp->y = y;
+	insert_ob_in_map(tmp, op->map, op, flag);
+    }
 }
 
 int alchemy(object *op)
@@ -2150,63 +2155,68 @@ int alchemy(object *op)
     int x,y,weight=0,weight_max,large_nuggets,small_nuggets;
     object *next,*tmp;
 
-  if(op->type!=PLAYER)
-    return 0;
-  /* Put a maximum weight of items that can be alchemied.  Limits the power
-   * some, and also prevents people from alcheming every table/chair/clock
-   * in sight
-   */
-  /* weight_max = 100000 + 50000*op->level; */
-  weight_max = 100000 + 50000*SK_level(op);
-  small=get_archetype("smallnugget"),
-  large=get_archetype("largenugget");
+    if(op->type!=PLAYER)
+	return 0;
 
-  for(y= op->y-1;y<=op->y+1;y++) {
-    for(x= op->x-1;x<=op->x+1;x++) {
-      if(out_of_map(op->map,x,y) || wall(op->map,x,y) ||
-	    blocks_view(op->map,x,y))
-	    continue;
+    /* Put a maximum weight of items that can be alchemied.  Limits the power
+     * some, and also prevents people from alcheming every table/chair/clock
+     * in sight
+     */
+    weight_max = 100000 + 50000*SK_level(op);
+    small=get_archetype("smallnugget"),
+    large=get_archetype("largenugget");
 
-	small_nuggets=0;
-	large_nuggets=0;
+    for(y= op->y-1;y<=op->y+1;y++) {
+	for(x= op->x-1;x<=op->x+1;x++) {
+	    if(out_of_map(op->map,x,y) || wall(op->map,x,y) ||
+	       blocks_view(op->map,x,y))
+		continue;
 
-	for(tmp=get_map_ob(op->map,x,y);tmp!=NULL;tmp=next) {
-          next=tmp->above;
-	  if (tmp->weight>0 && !QUERY_FLAG(tmp, FLAG_NO_PICK) &&
-	      !QUERY_FLAG(tmp, FLAG_ALIVE) &&
-	      !QUERY_FLAG(tmp, FLAG_IS_CAULDRON)) {
-	    if (tmp->inv) {
-		object *next1, *tmp1;
-		for (tmp1 = tmp->inv; tmp1!=NULL; tmp1=next1) {
-		    next1 = tmp1->below;
-		    if (tmp1->weight>0 && !QUERY_FLAG(tmp1, FLAG_NO_PICK) &&
-			!QUERY_FLAG(tmp1, FLAG_ALIVE) &&
-			!QUERY_FLAG(tmp1, FLAG_IS_CAULDRON))
-		        alchemy_object(tmp1, &small_nuggets, &large_nuggets,
-			   &weight);
-		}
-	    }
-	    alchemy_object(tmp, &small_nuggets, &large_nuggets, &weight);
+	    small_nuggets=0;
+	    large_nuggets=0;
+
+	    for(tmp=get_map_ob(op->map,x,y);tmp!=NULL;tmp=next) {
+		next=tmp->above;
+		if (tmp->weight>0 && !QUERY_FLAG(tmp, FLAG_NO_PICK) &&
+		    !QUERY_FLAG(tmp, FLAG_ALIVE) &&
+		    !QUERY_FLAG(tmp, FLAG_IS_CAULDRON)) {
+
+		    if (tmp->inv) {
+			object *next1, *tmp1;
+			for (tmp1 = tmp->inv; tmp1!=NULL; tmp1=next1) {
+			    next1 = tmp1->below;
+			    if (tmp1->weight>0 && !QUERY_FLAG(tmp1, FLAG_NO_PICK) &&
+				!QUERY_FLAG(tmp1, FLAG_ALIVE) &&
+				!QUERY_FLAG(tmp1, FLAG_IS_CAULDRON))
+				alchemy_object(tmp1, &small_nuggets, &large_nuggets,
+					   &weight);
+			}
+		    }
+		    alchemy_object(tmp, &small_nuggets, &large_nuggets, &weight);
 	    
-	    if (weight>weight_max) {
-		update_map(op, small_nuggets, large_nuggets, x, y);
-		free_object(large);
-		free_object(small);
-		return 1;
-	    }
-	  } /* is alchemable object */
-	} /* process all objects on this space */
+		    if (weight>weight_max) {
+			update_map(op, small_nuggets, large_nuggets, x, y);
+			free_object(large);
+			free_object(small);
+			return 1;
+		    }
+		} /* is alchemable object */
+	    } /* process all objects on this space */
 
-/* Insert all the nuggets at one time.  This probably saves time, but
- * it also prevents us from alcheming nuggets that were just created
- * with this spell.
- */
-	update_map(op, small_nuggets, large_nuggets, x, y);
+	    /* Insert all the nuggets at one time.  This probably saves time, but
+	     * it also prevents us from alcheming nuggets that were just created
+	     * with this spell.
+	     */
+	    update_map(op, small_nuggets, large_nuggets, x, y);
+	}
     }
-  }
-  free_object(large);
-  free_object(small);
-  return 1;
+    free_object(large);
+    free_object(small);
+    /* reset this so that if player standing on a big pile of stuff,
+     * it is redrawn properly.
+     */
+    op->contr->socket.look_position = 0;
+    return 1;
 }
 
 int remove_curse(object *op, int type, SpellTypeFrom src) {
@@ -2398,7 +2408,7 @@ int cast_detection(object *op, int type) {
 		    case SP_SHOW_INVIS:
 		    /* Might there be other objects that we can make visibile? */
 		    if (tmp->invisible && (QUERY_FLAG(tmp, FLAG_MONSTER) || 
-			tmp->type==PLAYER && !QUERY_FLAG(tmp, FLAG_WIZ) ||
+			(tmp->type==PLAYER && !QUERY_FLAG(tmp, FLAG_WIZ)) ||
 			tmp->type==CF_HANDLE || 
 			tmp->type==TRAPDOOR || tmp->type==EXIT || tmp->type==HOLE ||
 			tmp->type==BUTTON || tmp->type==TELEPORTER ||

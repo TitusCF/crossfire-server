@@ -1622,9 +1622,8 @@ void singing_in_the_rain(mapstruct *m, int wx, int wy, char *filename)
 		    if (!strcmp(oldsnow->arch->name, at->name))
 			at = NULL;
 		    else {
-			remove_ob(oldsnow);
-			free_object(oldsnow);
 			tmp=GET_MAP_OB(m, x, y);
+			remove_ob(oldsnow);
 			/* clean up the trees we put over the snow */
 			found = 0;
 			doublestack2 = NULL;
@@ -1645,6 +1644,7 @@ void singing_in_the_rain(mapstruct *m, int wx, int wy, char *filename)
 				break;
 			    }
 			}
+			free_object(oldsnow);
 			if (tmp != NULL && doublestack2 != NULL)
 			    if (strcmp(tmp->arch->name, doublestack2) == 0) {
 				remove_ob(tmp);

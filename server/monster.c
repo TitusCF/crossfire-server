@@ -348,6 +348,12 @@ int move_monster(object *op) {
 
 	op->last_heal+= (int)((float)(8*op->stats.Con)/FABS(op->speed));
 	op->stats.hp+=op->last_heal/32; /* causes Con/4 hp/tick */
+
+	/* Try to track down bug of really high hp in mosnters */
+	if (op->stats.hp > op->stats.maxhp) 
+	    LOG(llevDebug,"Creatures hp exceeds in maxhp (%d > %d), last_heal=%d\n",
+		op->stats.hp, op->stats.maxhp, op->last_heal);
+
 	op->last_heal%=32;
 
 	/* So if the monster has gained enough HP that they are no longer afraid */

@@ -796,6 +796,7 @@ void fix_player(object *op) {
     op->path_attuned=op->arch->clone.path_attuned;
     op->path_repelled=op->arch->clone.path_repelled;
     op->path_denied=op->arch->clone.path_denied;
+    op->glow_radius=op->arch->clone.glow_radius;
 
     /* initializing resistances from the values in player/monster's
      * archetype clone
