@@ -17,6 +17,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+common/object.c: Fix insert_ob_in_map so right coordinates and map
+   value are used on GET_MAP_OB call - was using values before changes
+   for tiling were applied.
+MSW 2004-09-02
+
 server/player.c: allow to 'talk' to players with ambiguous names: use a
    perfect match even if other partial matches exist.
 Andreas Kirschbaum 2004-08-30

@@ -1370,7 +1370,7 @@ object *insert_ob_in_map (object *op, mapstruct *m, object *originator, int flag
     /* this has to be done after we translate the coordinates.
      */
     if(op->nrof && !(flag & INS_NO_MERGE)) {
-	for(tmp=GET_MAP_OB(m,op->x,op->y);tmp!=NULL;tmp=tmp->above)
+	for(tmp=GET_MAP_OB(op->map,x,y);tmp!=NULL;tmp=tmp->above)
 	    if (CAN_MERGE(op,tmp)) {
 		op->nrof+=tmp->nrof;
 		remove_ob(tmp);
