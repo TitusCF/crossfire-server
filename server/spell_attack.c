@@ -427,6 +427,10 @@ void explode_bullet(object *op)
 	tmp->stats.dam = op->dam_modifier;
 	tmp->range = op->stats.maxhp;
 	tmp->duration = op->stats.hp;
+	/* Used for spell tracking - just need a unique val for this spell -
+	 * the count of the parent should work fine.
+	 */
+	tmp->stats.maxhp = op->count;
     }
 
     /* Set direction of cone explosion */

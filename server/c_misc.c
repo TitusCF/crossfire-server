@@ -638,6 +638,7 @@ int command_statistics(object *pl, char *params)
 
 int command_fix_me(object *op, char *params)
 {
+    sum_weight(op);
     fix_player(op);
     return 1;
 }

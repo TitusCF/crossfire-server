@@ -17,6 +17,17 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/c_misc.c: Add sum_weight() call to fix_me command so that players
+  weight is properly recalculated.
+server/skills.c: Fix up attempt_steal() so that it doesn't improperly
+  remove object from target when person doing the stealing can't pick
+  it up.
+server/spell_attack.c: Set maxhp properly, so multipled fireballs, etc
+  can be going off at the same time.
+server/spell_effect.c: Fix up cast_create_missile() so more esoteric
+  missiles can be created.
+MSW 2004-05-31
+
 include/sproto.h: new 'dmhide' command.
 server/commands.c: new 'dmhide' command.
 server/c_wiz.c: added 'dmhide' command. Player becomes DM, and 'hide's immediately. Others

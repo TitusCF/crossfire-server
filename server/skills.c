@@ -88,6 +88,9 @@ static int adj_stealchance (object *op, object *victim, int roll) {
  * stealing from (op in attempt_steal), offset by your dexterity and
  * skill at stealing. They may notice your attempt, whether successful
  * or not. 
+ * op is the target (person being pilfered)
+ * who is the person doing the stealing.
+ * skill is the skill object (stealing).
  */
 
 static int attempt_steal(object* op, object* who, object *skill)
@@ -110,6 +113,7 @@ static int attempt_steal(object* op, object* who, object *skill)
 	    return 0;
 	} else /* help npc to detect thief next time by raising its wisdom */ 
 	    op->stats.Wis += (op->stats.Int/5)+1;
+	    if (op->stats.Wis > MAX_STAT) op->stats.Wis = MAX_STAT;
     }
     if (op->type == PLAYER && QUERY_FLAG(op, FLAG_WIZ)) {
 	new_draw_info(NDI_UNIQUE, 0, who, "You can't steal from the dungeon master!\n");
@@ -146,18 +150,25 @@ static int attempt_steal(object* op, object* who, object *skill)
 	if((chance=adj_stealchance(who,op,(stats_value+skill->level * 10 - op->level * 3)))==-1)
 	    return 0;
 	else if (roll < chance ) {
-	    if (op->type == PLAYER)
-		esrv_del_item(op->contr, tmp->count);
+	    tag_t tmp_count = tmp->count;
+
 	    pick_up(who, tmp);
 	    /* need to see if the player actually stole this item -
 	     * if it is in the players inv, assume it is.  This prevents
 	     * abuses where the player can not carry the item, so just
 	     * keeps stealing it over and over.
 	     */
-	    if (who == is_player_inv(tmp)) {
+	    if (was_destroyed(tmp, tmp_count) || tmp->env != op) {
 		/* for players, play_sound: steals item */
 		success = tmp;
 		CLEAR_FLAG(tmp, FLAG_INV_LOCKED);
+
+		/* Don't delete it from target player until we know
+		 * the thief has picked it up.  can't just look at tmp->count,
+		 * as it's possible that it got merged when picked up.
+		 */
+		if (op->type == PLAYER)
+		    esrv_del_item(op->contr, tmp_count);
 	    }
 	    break;
 	}
