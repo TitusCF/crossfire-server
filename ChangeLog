@@ -17,6 +17,44 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+common/regexp.c: Fixed couple flaws in regexp handling.  First, there was an
+   off by one error in the handling of matches (if the match was for example
+   eureca, player could just say eurec, and it would treat that as a valid
+   match).  Second case was that the regular expression logic would not
+   try comparing the rest of the passed in string after a partial match -
+   In the eureca case above, if the passed in string was 'where is eureca',
+   after matching the first e (in where), it then fails to match the
+   next letter and would give up.  It now tries comparing the rest of
+   the passed in string with the regex (so after that failure, it 
+   will try to match 're is eureca'.
+server/apply.c: Add missing 'return 0' to shop_mat code that is needed
+   to prevent unpaid objects from teleporting out of the shop.  Also
+   extend code so that non living objects can't use shop mats.
+server/player.c: Insert force into the player when they die making them
+   immune to any spells on the space they reappear on - this prevents
+   multiple deaths if there is large spell effect going on in the
+   savebed location.  Duration of force should be long enough for most
+   spells to run their course, but no so long that the player can use
+   it for much of an advantage (plus, killing yourself to get such
+   an advantage seems odd, and the force only makes the player immune
+   to the attacktypes currently on the space)
+server/spell_effect.c: Fix spell casting walls (lighting wall,
+   firewall, etc) in that the spell object they cast was not being
+   inserted, resulting in the walls not doing anything.
+MSW 2004-12-28
+
+Applied patch (bug misc/zoo2) by Lalo
+server/time.c: creators can now create multi part objects.
+Applied patch 1086102 by Salathar:
+server/attack.c:  If player kills another player, add (pk) to the death
+   message.
+Applied patch 1086103 by Salathar:
+server/move.c: If player pushes another player, send message to both players
+  that pushed happened.  Previously, when pushing another player, the pusher
+  wouldn't get any notice.
+MSW 2004-12-28
+
+
 Applied patch 1001079 - make alchemy books say what skill & equipment
   is needed - by Kevin Rudat.
 common/readable.c: Update code that generates book title, contents

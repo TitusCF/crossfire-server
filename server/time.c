@@ -1171,29 +1171,63 @@ void move_duplicator(object *op) {
     }
 }
 
-/*  move_creator (by peterm) 
-  it has the creator object create it's other_arch right on top of it.
-  connected:  what will trigger it
-  hp:  how many times it may create before stopping
-  lifesave:  if set, it'll never disappear but will go on creating
-	everytime it's triggered
-  other_arch:  the object to create
+/* move_creator (by peterm) 
+ * it has the creator object create it's other_arch right on top of it.
+ * connected:  what will trigger it
+ * hp:  how many times it may create before stopping
+ * lifesave:  if set, it'll never disappear but will go on creating
+ *    everytime it's triggered
+ * other_arch:  the object to create
+ * Note this can create large objects, however, in that case, it
+ * has to make sure that there is in fact space for the object.
+ * It should really do this for small objects also, but there is
+ * more concern with large objects, most notably a part being placed
+ * outside of the map which would cause the server to crash
 */
 
 void move_creator(object *op) {
-  object *tmp;
-  op->stats.hp--;
-  if(op->stats.hp < 0 && !QUERY_FLAG(op,FLAG_LIFESAVE)) 
-	{ op->stats.hp=-1;return;}
-  tmp=arch_to_object(op->other_arch);
-  if(op->slaying) {
-	 if (tmp->name) free_string (tmp->name);
-	 if (tmp->title) free_string (tmp->title);
-	 tmp->name = add_string(op->slaying);
-	 tmp->title = add_string(op->slaying);
-  }
-  tmp->x=op->x;tmp->y=op->y;tmp->map=op->map;tmp->level=op->level;
-  insert_ob_in_map(tmp,op->map,op,0);
+    object *tmp,*head=NULL,*prev=NULL;
+    archetype *at=op->other_arch;
+
+    op->stats.hp--;
+    if(op->stats.hp < 0 && !QUERY_FLAG(op,FLAG_LIFESAVE)) {
+	op->stats.hp=-1;
+	return;
+    }
+    if (!at) {
+	LOG(llevError,"move_creator: Creatore doesn't have other arch set: %s (%s, %d, %d)\n",
+	    op->name?op->name:"(null)", op->map->path, op->x, op->y);
+	return;
+    }
+    /* Make sure this multipart object fits */
+    if (at->more && arch_blocked(at, op->map, op->x, op->y))
+	return;
+
+    while(at!=NULL) {
+	tmp=arch_to_object(at);
+	tmp->x=op->x+at->clone.x;
+	tmp->y=op->y+at->clone.y;
+	tmp->map=op->map;
+	tmp->level=op->level;
+
+	if(head!=NULL)
+	    tmp->head=head,prev->more=tmp;
+
+	insert_ob_in_map(tmp,op->map,op,0);
+	if (QUERY_FLAG(tmp, FLAG_FREED)) return;
+
+	if(head==NULL)
+	    head=tmp;
+	prev=tmp;
+	at=at->more;
+
+	if(op->slaying) {
+	    if (tmp->name) free_string (tmp->name);
+	    if (tmp->title) free_string (tmp->title);
+	    tmp->name = add_string(op->slaying);
+	    tmp->title = add_string(op->slaying);
+	}
+    }
 }
 
 /* move_marker --peterm@soda.csua.berkeley.edu

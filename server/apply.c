@@ -1137,7 +1137,13 @@ static int apply_shop_mat (object *shop_mat, object *op)
 	    }
 	}
 
-	if (QUERY_FLAG(op, FLAG_UNPAID)) {
+	/* Don't teleport things like spell effects */
+	if (QUERY_FLAG(op, FLAG_NO_PICK)) return 0;
+
+	/* unpaid objects, or non living objects, can't transfer by
+	 * shop mats.  Instead, put it on a nearby space.
+	 */
+	if (QUERY_FLAG(op, FLAG_UNPAID) || !QUERY_FLAG(op, FLAG_ALIVE)) {
 
 	    /* Somebody dropped an unpaid item, just move to an adjacent place. */
 	    int i = find_free_spot (op->arch, op->map, op->x, op->y, 1, 9);
@@ -1145,10 +1151,8 @@ static int apply_shop_mat (object *shop_mat, object *op)
 		rv = transfer_ob (op, op->x + freearr_x[i], op->y + freearr_y[i], 0,
                        shop_mat);
 	    }
+	    return 0;
 	}
-	/* Don't teleport things like spell effects */
-	if (QUERY_FLAG(op, FLAG_NO_PICK)) return 0;
-
 	/* Removed code that checked for multipart objects - it appears that
 	 * the teleport function should be able to handle this just fine.
 	 */

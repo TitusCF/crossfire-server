@@ -1162,6 +1162,9 @@ int magic_wall(object *op,object *caster,int dir,object *spell_ob) {
 	new_draw_info_format(NDI_UNIQUE, 0,op,"Something destroys your %s", name);
 	return 0;
     }
+    /* If this is a spellcasting wall, need to insert the spell object */
+    if (tmp->other_arch && tmp->other_arch->clone.type == SPELL)
+	insert_ob_in_ob(arch_to_object(tmp->other_arch), tmp);
 
     /*  This code causes the wall to extend some distance in
      * each direction, or until an obstruction is encountered. 
@@ -1188,6 +1191,10 @@ int magic_wall(object *op,object *caster,int dir,object *spell_ob) {
 	    tmp2->x = x;
 	    tmp2->y = y;
 	    insert_ob_in_map(tmp2,m,op,0);
+	    /* If this is a spellcasting wall, need to insert the spell object */
+	    if (tmp2->other_arch && tmp2->other_arch->clone.type == SPELL)
+		insert_ob_in_ob(arch_to_object(tmp2->other_arch), tmp2);
+
 	} else posblocked=1;
 
 	x = tmp->x-i*freearr_x[dir2];
@@ -1200,6 +1207,8 @@ int magic_wall(object *op,object *caster,int dir,object *spell_ob) {
 	    tmp2->x = x;
 	    tmp2->y = y;
 	    insert_ob_in_map(tmp2,m,op,0);
+	    if (tmp2->other_arch && tmp2->other_arch->clone.type == SPELL)
+		insert_ob_in_ob(arch_to_object(tmp2->other_arch), tmp2);
 	} else negblocked=1;
     }
 

@@ -469,16 +469,14 @@ int push_ob(object *who, int dir, object *pusher) {
 	return 0;
     }
 
-    /* If we get here, the push succeeded.  Let each now the
-     * status.  I'm not sure if the second statement really needs
-     * to be in an else block - the message is going to a different
-     * player
+    /* If we get here, the push succeeded.
+     * Let everyone know the status.
      */
     if (who->type == PLAYER) {
 	new_draw_info_format(NDI_UNIQUE, 0, who,
 			     "%s pushed you.",pusher->name);
     }
-    else if (QUERY_FLAG(who, FLAG_MONSTER)) {
+    if (pusher->type == PLAYER) {
 	new_draw_info_format(NDI_UNIQUE, 0, pusher,
 		"You pushed %s back.", who->name);
     }

@@ -2414,7 +2414,7 @@ void kill_player(object *op)
     int this_stat;
     int killed_script_rtn; /* GROS: For script return value */
     CFParm CFP;
-    int evtid;
+    int evtid, will_kill_again;
     archetype *at;
     object *tmp;
     event *evt;
@@ -2697,13 +2697,14 @@ void kill_player(object *op)
 
 	/*
 	 * Check to see if the player is in a shop. IF so, then check to see if
-	 * the player has any unpaid items.If so, remove them and put them back
+	 * the player has any unpaid items.  If so, remove them and put them back
 	 * in the map.
 	 */
 
-	tmp= get_map_ob(op->map, op->x, op->y);
-	if (tmp && tmp->type == SHOP_FLOOR) {
-	    remove_unpaid_objects(op->inv, op);
+	for (tmp= get_map_ob(op->map, op->x, op->y); tmp; tmp=tmp->above) {
+	    if (tmp && tmp->type == SHOP_FLOOR) {
+		remove_unpaid_objects(op->inv, op);
+	    }
 	}
  
 
@@ -2716,6 +2717,39 @@ void kill_player(object *op)
 
 	enter_player_savebed(op);
 
+	/* Save the player before inserting the force to reduce
+	 * chance of abuse.
+	 */
+	op->contr->braced=0;
+	save_player(op,1);
+
+	/* it is possible that the player has blown something up
+	 * at his savebed location, and that can have long lasting
+	 * spell effects.  So first see if there is a spell effect
+	 * on the space that might harm the player.
+	 */
+	will_kill_again=0;
+	for (tmp= get_map_ob(op->map, op->x, op->y); tmp; tmp=tmp->above) {
+	    if (tmp->type ==SPELL_EFFECT)
+		will_kill_again|=tmp->attacktype;
+	}
+	if (will_kill_again) {
+	    object *force;
+	    int  at;
+
+	    force=get_archetype(FORCE_NAME);
+	    /* 50 ticks should be enough time for the spell to abate */
+	    force->speed=0.1;
+	    force->speed_left=-5.0;
+	    SET_FLAG(force, FLAG_APPLIED);
+	    for (at=0; at<NROFATTACKS; at++) {
+		if (will_kill_again & (1 << at))
+		    force->resist[at] = 100;
+	    }
+	    insert_ob_in_ob(force, op);
+	    fix_player(op);
+	    
+	}
 	/**************************************/
 	/*                                    */
 	/* Repaint the characters inv, and    */
@@ -2724,8 +2758,6 @@ void kill_player(object *op)
 	/**************************************/
 
 	new_draw_info(NDI_UNIQUE, 0,op,"YOU HAVE DIED.");
-	op->contr->braced=0;
-	save_player(op,1);
 	return;
     } /* NOT_PERMADETH */
     else {

@@ -1355,6 +1355,7 @@ int kill_object(object *op,int dam, object *hitter, int type)
     char buf[MAX_BUF], *skill;
     int maxdam=0;
     int battleg=0;    /* true if op standing on battleground */
+    int pk=0;         /* true if op and what controls hitter are both players*/
     int killed_script_rtn = 0;
     object *owner=NULL;
     int evtid;
@@ -1436,6 +1437,9 @@ int kill_object(object *op,int dam, object *hitter, int type)
 
     /* is the victim (op) standing on battleground? */
     if (op_on_battleground(op, NULL, NULL)) battleg=1;
+    
+    /* is this player killing?*/
+    if (op->type == PLAYER && owner->type == PLAYER) pk=1;
 
     /* Player killed something */
     if(owner->type==PLAYER) {
@@ -1521,12 +1525,12 @@ int kill_object(object *op,int dam, object *hitter, int type)
 
     /* Pet (or spell) killed something. */
     if(owner != hitter ) {
-	(void) sprintf(buf,"%s killed %s with %s%s.",owner->name,
-	       query_name(op),query_name(hitter), battleg? " (duel)":"");
+	(void) sprintf(buf,"%s killed %s with %s%s%s.",owner->name,
+	       query_name(op),query_name(hitter), battleg? " (duel)":"", pk? " (pk)":"");
     }
     else {
-	(void) sprintf(buf,"%s killed %s%s.",hitter->name,op->name,
-	       battleg? " (duel)":"");
+	(void) sprintf(buf,"%s killed %s in hand to hand combat %s%s.",hitter->name,op->name,
+	       battleg? " (duel)":"", pk? " (pk)":"");
     }
     /* These may have been set in the player code section above */
     if (!skop) skop = hitter->chosen_skill;
