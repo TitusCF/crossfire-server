@@ -1,7 +1,8 @@
 WHAT IS CROSSFIRE?
 
   This is a multiplayer graphical arcade and adventure game made for
-  the X-Windows environment.  A windows client is also available.
+  the X-Windows environment.  It runs on a client/server model.
+  The client runs with X11, GTK, or  SDL within a gtk window.
 
   It has certain flavours from other games, especially Gauntlet (TM)
   and Nethack/Moria.

@@ -17,6 +17,13 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+common/arch.c:  Fix bug in item_matched_string which was matching all
+  values (inverse in fact) when passed with count > 1 in matching
+  string - missing ! operator.
+README: Update - remove note about windows client, since it is currently
+  unsupported and could stop working in some future release.
+MSW 2002-07-05
+
 ------------------------------------------------------------------------------
 Changes for 1.3.0:
 

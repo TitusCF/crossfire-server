@@ -6,7 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2000 Mark Wedel
+    Copyright (C) 2002 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -23,7 +23,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to mwedel@scruz.net
+    The authors can be reached via e-mail at crossfire-devel@real-time.com
 */
 
 #include <global.h>
@@ -168,7 +168,7 @@ int item_matched_string(object *pl, object *op, char *name)
 	if (strcasecmp(cp,op->name)==0 && !count) return 4;
 
 	else if (count>1) {	/* Need to plurify name for proper match */
-	    if (strcasecmp(cp,op->name_pl)) {
+	    if (!strcasecmp(cp,op->name_pl)) {
 		pl->contr->count=count;	/* May not do anything */
 		return 6;
 	    }
