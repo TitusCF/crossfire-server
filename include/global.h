@@ -80,6 +80,7 @@ typedef unsigned short Fontindex;
 #include "living.h"
 #include "object.h"
 #include "map.h"
+#include "tod.h"
 
 /* Pull in the socket structure - used in the player structure */
 #include "newserver.h"

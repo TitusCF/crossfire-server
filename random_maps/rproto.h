@@ -87,6 +87,7 @@ extern char **make_snake_layout ( int xsize, int ysize, int options );
 extern void find_top_left_corner ( char **maze, int *cx, int *cy );
 extern char **make_square_spiral_layout ( int xsize, int ysize, int options );
 extern char **expand2x ( char **layout, int xsize, int ysize );
+extern int surround_check2(char **layout,int i,int j,int Xsize, int Ysize);
 
 #endif /* __STDC__ */
 #endif /* __CEXTRACT__ */

@@ -11,6 +11,7 @@
  */ 
 
 #include <global.h>
+#include <sproto.h>
 #ifndef WIN32 /* ---win32 : remove unix headers */
 #include <sys/ioctl.h>
 #endif /* win32 */

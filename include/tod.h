@@ -1,3 +1,8 @@
+/* Copyright 2000 Tim Rightnour */
+
+#ifndef _TOD_H_
+#define _TOD_H_
+
 #define PTICKS_PER_CLOCK	1500
 
 /* game time */
@@ -29,3 +34,4 @@ typedef struct _timeofday {
 
 /* from common/time.c */
 extern void get_tod(timeofday_t *tod);
+#endif /* _TOD_H_ */

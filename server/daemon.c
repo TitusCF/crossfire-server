@@ -53,6 +53,7 @@
 
 
 #include <global.h>
+#include <sproto.h>
 #include <sys/ioctl.h>
 #ifdef hpux
 #include <sys/ptyio.h>

@@ -188,6 +188,7 @@ extern void make_sure_not_seen(object *op);
 /* map.c */
 extern mapstruct *has_been_loaded(char *name);
 extern char *create_pathname(char *name);
+extern char *create_overlay_pathname(char *name);
 extern int check_path(char *name, int prepend_dir);
 extern void dump_map(mapstruct *m);
 extern void dump_all_maps(void);
@@ -341,6 +342,7 @@ extern void ss_dump_statistics(void);
 extern char *ss_dump_table(int what);
 extern int buf_overflow(char *buf1, char *buf2, int bufsize);
 /* time.c */
+extern void print_tod(object *op);
 extern void reset_sleep(void);
 extern void log_time(long process_utime);
 extern int enough_elapsed_time(void);

@@ -639,6 +639,7 @@ int learn_skill(object *pl, object *scroll);
 void show_skills(object *op);
 int use_skill(object *op, char *string);
 int change_skill(object *who, int sk_index);
+int change_skill_to_skill (object *who, object *skill);
 int attack_melee_weapon(object *op, int dir, char *string);
 int attack_hth(object *pl, int dir, char *string);
 int skill_attack(object *tmp, object *pl, int dir, char *string);
@@ -805,6 +806,7 @@ int cftimer_destroy(int id);
 int cftimer_find_free_id(void);
 /* weather.c */
 void tick_the_clock(void);
+void dawn_to_dusk(timeofday_t *tod);
 void set_darkness_map(mapstruct *m);
 void init_weather(void);
 void init_weather(void);
