@@ -563,6 +563,11 @@ void write_map_parameters_to_string(char *buf,RMParms *RP) {
     strcat(buf,small_buf);
   }
 
+  if(RP->expand2x) {
+    sprintf(small_buf,"expand2x %d\n",RP->expand2x);
+    strcat(buf,small_buf);
+  }
+
   if(RP->layoutoptions1) {
     sprintf(small_buf,"layoutoptions1 %d\n",RP->layoutoptions1);
     strcat(buf,small_buf);
