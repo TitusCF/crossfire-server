@@ -142,6 +142,7 @@ void place_fountain_with_specials(mapstruct *map) {
   iy += freearr_y[i];
   potion->face=fountain->face;
   SET_FLAG(potion,FLAG_NO_PICK);
+  SET_FLAG(potion,FLAG_IDENTIFIED);
   potion->name=add_string("fountain");
   potion->x = ix;
   potion->y = iy;
