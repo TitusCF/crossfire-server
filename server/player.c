@@ -671,12 +671,6 @@ int key_roll_stat(object *op, char key)
 
 	    SET_ANIMATION(op, 2);     /* So player faces south */
 	    /* Enter exit adds a player otherwise */
-	    if(op->contr->loading == NULL) {
-		insert_ob_in_map(op,op->map,op);
-	    }
-	    else {
-		op->contr->removed = 0; /* Will insert pl. when map is loaded */
-	    }
 	    add_statbonus(op);
 	    send_query(&op->contr->socket,CS_QUERY_SINGLECHAR,"Now choose a character.\nPress any key to change outlook.\nPress `d' when you're pleased.\n");
 	    op->contr->state = ST_CHANGE_CLASS;

@@ -18,6 +18,16 @@ else.  With this, include the file(s) that you changed.
 CVS changes since last release:
 
 MSW 2001/01/11:
+include/rproto.h: Rebuilt for new random map code.
+server/player.c: remove player insert in key_roll_stat - player is already
+    inserted.
+server/swap.c: When swapping out map, see if it has already reached reset time,
+    and if so, just delete it and not save it.  In flush_old_maps, now have
+    it check for maps that have no timeout set - this sometimes happens when
+    players save/die on maps.
+
+
+MSW 2001/01/11:
 Other than various general cleanups, the main change this code does is
 that style maps (for random maps) get loaded special now - they objects
 they contain are not put on the active list, and they use a private map

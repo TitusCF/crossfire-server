@@ -127,6 +127,18 @@ void swap_map(mapstruct *map) {
   if (!QUERY_FLAG(map->map_object, FLAG_STAND_STILL))
     set_map_reset_time(map);
 
+  /* If it is immediate reset time, don't bother saving it - just get
+   * rid of it right away.
+   */
+  if (map->reset_time <= seconds()) {
+    mapstruct *oldmap = map;
+
+    LOG(llevDebug,"Resetting map %s.\n",map->path);
+    map = map->next;
+    delete_map(oldmap);
+    return;
+  }
+
   if (new_save_map (map, 0) == -1) {
     LOG(llevError, "Failed to swap map %s.\n", map->path);
     /* need to reset the in_memory flag so that delete map will also
@@ -225,7 +237,6 @@ int players_on_map(mapstruct *m) {
  * This is very useful if the tmp-disk is very full.
  */
 void flush_old_maps() {
-#ifdef MAP_RESET /* No need to flush them if there are no resets */
 
   mapstruct *m, *oldmap;
   long sec;
@@ -234,6 +245,14 @@ void flush_old_maps() {
 
   m= first_map;
   while (m) {
+    /* There can be cases (ie death) where a player leaves a map and the timeout
+     * is not set so it isn't swapped out.
+     */
+    if ((m->in_memory == MAP_IN_MEMORY) && (m->timeout==0) &&
+	!players_on_map(m)) {
+	set_map_timeout(m);
+    }
+#ifdef MAP_RESET /* No need to flush them if there are no resets */
     if(m->in_memory != MAP_SWAPPED || m->tmpname == NULL ||
        sec < m->reset_time) {
 	m = m->next;
@@ -245,6 +264,6 @@ void flush_old_maps() {
 	m = m->next;
 	delete_map(oldmap);
     }
-  }
 #endif
+  }
 }
