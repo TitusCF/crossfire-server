@@ -2403,7 +2403,7 @@ void apply_lighter(object *who, object *lighter) {
         if(lighter->last_eat && lighter->stats.food) /* lighter is used up */ 
 	    lighter->stats.food--; 
         else if(lighter->last_eat) {           /* no charges left in lighter */ 
-	     new_draw_info_format(NDI_UNIQUE, 0,who,"You ateempt to light the %s with the %s and nothing happens.", item->name, lighter->name);
+	     new_draw_info_format(NDI_UNIQUE, 0,who,"You attempt to light the %s with the %s and nothing happens.", item->name, lighter->name);
 	     return;
         }
 	nrof=item->nrof;
