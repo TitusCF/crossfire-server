@@ -289,7 +289,9 @@ char *determine_god(object *op) {
     int godnr = -1;
 
     /* spells */
-    if((op->type==FBULLET||op->type==CONE||op->type==FBALL)&&op->title) {
+    if ((op->type == FBULLET || op->type == CONE || op->type == FBALL
+         || op->type == SWARM_SPELL) && op->title) 
+    {
 	if(lookup_god_by_name(op->title)>=0) return op->title;
     }
 
@@ -641,15 +643,18 @@ int tailor_god_spell(object *spellop, object *caster) {
 
     if(caster->type==FBULLET
        ||caster->type==CONE
-       ||caster->type==FBALL) caster_is_spell=1; 
+       ||caster->type==FBALL
+       ||caster->type==SWARM_SPELL) caster_is_spell=1;
 
-    if(!caster_is_spell)
-        if(!god||(spellop->attacktype&AT_HOLYWORD&&!god->race)) {
-          new_draw_info(NDI_UNIQUE, 0, caster,
-            "This prayer is useless unless you worship an appropriate god");
-          free_object(spellop);
-          return 0;
-        }
+    if ( ! god || (spellop->attacktype & AT_HOLYWORD && ! god->race)) {
+        if ( ! caster_is_spell)
+            new_draw_info(NDI_UNIQUE, 0, caster,
+              "This prayer is useless unless you worship an appropriate god");
+        else
+            LOG (llevError, "BUG: tailor_god_spell(): no god\n");
+        free_object(spellop);
+        return 0;
+    }
 
     /* either holy word or godpower attacks will set the slaying field */
     if(spellop->attacktype&AT_HOLYWORD||spellop->attacktype&AT_GODPOWER) { 
@@ -661,10 +666,10 @@ int tailor_god_spell(object *spellop, object *caster) {
     }
 
     /* only the godpower attacktype adds the god's attack onto the spell */
-    if((spellop->attacktype&AT_GODPOWER)&&!caster_is_spell) 
+    if(spellop->attacktype & AT_GODPOWER)
          spellop->attacktype=spellop->attacktype|god->attacktype;
 
-    /* a little cosmetic for fun, we tack on the god's name to the spell */
+    /* tack on the god's name to the spell */
     if(spellop->attacktype&AT_HOLYWORD||spellop->attacktype&AT_GODPOWER) { 
          if(spellop->title) 
 	   free_string(spellop->title);

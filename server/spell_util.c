@@ -976,8 +976,8 @@ int fire_bolt(object *op,object *caster,int dir,int type,int magic) {
     Later added a ball-lightning firing routine.
  * dir is direction, at is spell we are firing.  Type is index of spell
  * array.  If magic is 1, then add magical attacktype to spell.
- * op is the owner of the spell (player who gets exp), caster is the
- * casting object.
+ * op is either the owner of the spell (player who gets exp) or the
+ * casting object owned by the owner.  caster is the casting object.
  */
 
 int fire_arch (object *op, object *caster, int dir, archetype *at, int type,
@@ -1005,7 +1005,10 @@ int fire_arch_from_position (object *op, object *caster, sint16 x, sint16 y,
   tmp->stats.hp=SP_PARAMETERS[type].bdur+SP_level_strength_adjust(op,caster,type);
   tmp->x=x, tmp->y=y;
   tmp->direction=dir;
-  set_owner(tmp,op);
+  if (get_owner (op) != NULL)
+    copy_owner (tmp, op);
+  else
+    set_owner (tmp, op);
   tmp->level = casting_level (caster, type);
 #ifdef MULTIPLE_GODS /* needed for AT_HOLYWORD,AT_GODPOWER stuff */
   if(tmp->attacktype&AT_HOLYWORD||tmp->attacktype&AT_GODPOWER) {
@@ -1413,7 +1416,7 @@ void move_missile(object *op) {
 }
 
 int explode_object(object *op) {
-  object *tmp, *victim, *owner, *env;
+  object *tmp, *victim, *env;
 
   if(out_of_map(op->map,op->x,op->y))  /*  peterm:  check for out of map obj's.*/
     {
@@ -1452,17 +1455,10 @@ int explode_object(object *op) {
    */
 
   /*  op->stats.sp stores the spell which made this object here. */
-  if(op->owner)
-      tmp->stats.dam += SP_level_dam_adjust(op->owner,op->owner,op->stats.sp);
+  tmp->stats.dam += SP_level_dam_adjust(op,op,op->stats.sp);
   if(op->attacktype&AT_MAGIC)
     tmp->attacktype|=AT_MAGIC;
-  if((owner = get_owner(op)) != (object *) NULL) {
-    set_owner(tmp,owner);
-    if(op->chosen_skill && (op->chosen_skill != tmp->chosen_skill)){
-          tmp->exp_obj = op->exp_obj;
-          tmp->chosen_skill = op->chosen_skill;
-    }
-  }
+  copy_owner (tmp, op);
   if(op->stats.hp)
     tmp->stats.hp=op->stats.hp;
   tmp->stats.maxhp=op->count; /* Unique ID */
@@ -1789,9 +1785,8 @@ void move_swarm_spell(object *op)
 {
     sint16 x,y;
     int di;
-    object *owner = get_owner (op);
 
-    if(op->stats.hp == 0 || owner == NULL) {
+    if(op->stats.hp == 0 || get_owner (op) == NULL) {
 	remove_ob(op);
 	free_object(op);
 	return;
@@ -1808,7 +1803,7 @@ void move_swarm_spell(object *op)
    /*  for level dependence, we need to know what spell is fired.  */
    /*  that's stored in op->stats.sp  by fire_swarm  */
    if ( ! wall (op->map, x, y))
-       fire_arch_from_position (owner, op, x, y, op->direction, op->other_arch,
+       fire_arch_from_position (op, op, x, y, op->direction, op->other_arch,
                                 op->stats.sp, op->magic);
 }
 
@@ -1839,6 +1834,13 @@ void fire_swarm (object *op, object *caster, int dir, archetype *swarm_type,
   set_owner(tmp,op);       /* needed so that if swarm elements kill, caster gets xp.*/
   tmp->level=casting_level(caster, spell_type);   /*needed later, to get level dep. right.*/
   tmp->stats.sp=spell_type;  /* needed later, see move_swarm_spell */
+#ifdef MULTIPLE_GODS
+  tmp->attacktype = swarm_type->clone.attacktype;
+  if (tmp->attacktype & AT_HOLYWORD || tmp->attacktype & AT_GODPOWER) {
+    if ( ! tailor_god_spell (tmp, op))
+      return;
+  }
+#endif 
   tmp->magic = magic;
   tmp->stats.hp=n;	    /* n in swarm*/
   tmp->other_arch=swarm_type;  /* the archetype of the things to be fired*/

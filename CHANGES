@@ -18,6 +18,25 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+common/object.c:  Splitted set_owner() into set_owner_simple() and
+set_owner.  copy_owner(): New function.
+server/spell_util.c: explode_object(): Use copy_owner() instead of setting
+skill and experience objects manually.  Bugfix: Don't use op->owner
+directly (fixed by using the caster in call to SP_level_dam_adjust(),
+not the owner, which was wrong anyway).
+server/spell_util.c: fire_arch_from_position(): Use copy_owner() instead
+of set_owner() if 'op' isn't the real owner but only a spell object
+owned by somebody else.
+server/spell_util.c: move_swarm_spell(): Use the swarm spell object as
+the owner in call to fire_arch_from_position(), which now handles this
+case correctly.
+server/spell_util.c: fire_swarm(): Call tailor_god_spell().
+server/gods.c: determine_god(): op->type==SWARM_SPELL is a spell.
+server/gods.c: tailor_god_spell(): op->type==SWARM_SPELL is a spell.
+Always abort function if we couldn't find a god.  Always add god's
+attacktype if the spellop's attacktype has AT_GODPOWER.
+- Jan Echternach 22/5/2000
+
 common/init.c, common/loger.c, include/logger.h, server/init.c:  New
 log level llevInfo which is the new default log level.
 Many other files:  Use llevInfo instead of llevError where appropriate.

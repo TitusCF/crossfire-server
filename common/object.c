@@ -357,14 +357,10 @@ object *get_owner(object *op) {
  * Also checkpoints a backup id-scheme which detects freeing (and reusage)
  * of the owner object.
  * See also get_owner()
- * The real purpose of setting an owner is so we know who kills something
- * so we can properly credit EXP.
  */
 
-void set_owner(object *op, object *owner) {
-
-    if(owner==NULL||op==NULL)
-	return;
+static void set_owner_simple (object *op, object *owner)
+{
     /* next line added to allow objects which own objects */ 
     /* Add a check for ownercounts in here, as I got into an endless loop
      * with the fireball owning a poison cloud which then owned the
@@ -384,24 +380,66 @@ void set_owner(object *op, object *owner) {
 
     op->ownercount=owner->count;
     owner->refcount++;
+}
+
+#ifdef ALLOW_SKILLS
+static void set_skill_pointers (object *op, object *chosen_skill,
+	object *exp_obj)
+{
+    op->chosen_skill = chosen_skill;
+    op->exp_obj = exp_obj;
+
+    /* unfortunately, we can't allow summoned monsters skill use
+     * because we will need the chosen_skill field to pick the
+     * right skill/stat modifiers for calc_skill_exp(). See
+     * hit_player() in server/attack.c -b.t.
+     */
+    CLEAR_FLAG (op, FLAG_CAN_USE_SKILL);
+    CLEAR_FLAG (op, FLAG_READY_SKILL);
+}
+#endif
+
+/*
+ * Sets the owner and sets the skill and exp pointers to owner's current
+ * skill and experience objects.
+ */
+void set_owner (object *op, object *owner)
+{
+    if(owner==NULL||op==NULL)
+	return;
+    set_owner_simple (op, owner);
 
 #ifdef ALLOW_SKILLS /* set the pointers in op to inherit owners skill, exp_obj */ 
-    if(owner->type==PLAYER&&owner->chosen_skill) {
-	op->chosen_skill = owner->chosen_skill;
-	op->exp_obj = owner->chosen_skill->exp_obj;
+    if (owner->type == PLAYER && owner->chosen_skill)
+        set_skill_pointers (op, owner->chosen_skill,
+                            owner->chosen_skill->exp_obj);
+    else if (op->type != PLAYER)
+	CLEAR_FLAG (op, FLAG_READY_SKILL);
+#endif
+}
 
-	    /* unfortunately, we can't allow summoned monsters skill use
-	     * because we will need the chosen_skill field to pick the
-	     * right skill/stat modifiers for calc_skill_exp(). See
-	     * hit_player() in server/attack.c -b.t. 
-	     */
-	if(QUERY_FLAG(op,FLAG_CAN_USE_SKILL))
-	    CLEAR_FLAG(op,FLAG_CAN_USE_SKILL);
-	if(QUERY_FLAG(op,FLAG_READY_SKILL))
-	    CLEAR_FLAG(op,FLAG_READY_SKILL);
+/* Set the owner to clone's current owner and set the skill and experience
+ * objects to clone's objects (typically those objects that where the owner's
+ * current skill and experience objects at the time when clone's owner was
+ * set - not the owner's current skill and experience objects).
+ *
+ * Use this function if player created an object (e.g. fire bullet, swarm
+ * spell), and this object creates further objects whose kills should be
+ * accounted for the player's original skill, even if player has changed
+ * skills meanwhile.
+ */
+void copy_owner (object *op, object *clone)
+{
+    object *owner = get_owner (clone);
+    if (owner == NULL)
+      return;
+    set_owner_simple (op, owner);
 
-    } else if(op->type!=PLAYER && QUERY_FLAG(op,FLAG_READY_SKILL))
-	CLEAR_FLAG(op,FLAG_READY_SKILL);
+#ifdef ALLOW_SKILLS
+    if (clone->chosen_skill)
+        set_skill_pointers (op, clone->chosen_skill, clone->exp_obj);
+    else if (op->type != PLAYER)
+	CLEAR_FLAG (op, FLAG_READY_SKILL);
 #endif
 }
 
