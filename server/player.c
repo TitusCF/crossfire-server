@@ -3076,7 +3076,7 @@ void dragon_ability_gain(object *who, int atnr, int level) {
 	if (check_spell_known (who, item->name))
 	    return;
 
-	new_draw_info_format(NDI_UNIQUE|NDI_BLUE, 0, who, "You gained the ability of %s", item->inv->name);
+	new_draw_info_format(NDI_UNIQUE|NDI_BLUE, 0, who, "You gained the ability of %s", item->name);
 	do_learn_spell (who, item, 0);
 	return;
     }
