@@ -17,6 +17,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/skill_util.c: Fix skills command so that it properly displays
+   percentage of permanent exp.
+server/time.c: Modify move_arrow() so that it removes thrown objects
+   with no inventory.
+MSW 2004-06-22
+
 socket/info.c: Replace sprintf() calls with snprintf() - got metalforge
    crash with apparent buffer overun - going to snprintf should prevent
    the problem in the future.

@@ -658,13 +658,13 @@ void show_skills(object *op) {
 			 buf,tmp->level,
 			 tmp->stats.exp,
 			 level_exp(tmp->level+1, op->expmul),
-			 clipped_percent(tmp->last_heal,tmp->stats.exp));
+			 clipped_percent(tmp->perm_exp,tmp->stats.exp));
 #else
 		sprintf(skills[num_skills_found++],"%slvl:%3d (xp:%lld/%lld/%d%%)",
 			 buf,tmp->level,
 			 tmp->stats.exp,
 			 level_exp(tmp->level+1, op->expmul),
-			 clipped_percent(tmp->last_heal,tmp->stats.exp));
+			 clipped_percent(tmp->perm_exp,tmp->stats.exp));
 #endif
 	    } else {
 #ifdef WIN32

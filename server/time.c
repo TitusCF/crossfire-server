@@ -649,8 +649,19 @@ void move_arrow(object *op) {
 
     /* we need to stop thrown objects at some point. Like here. */ 
     if(op->type==THROWN_OBJ) {
-        if (op->inv == NULL)
+	/* If the object that the THROWN_OBJ encapsulates disappears,
+	 * we need to have this object go away also - otherwise, you get
+	 * left over remnants on the map.  Where this currently happens
+	 * is if the player throws a bomb - the bomb explodes on its own,
+	 * but this object sticks around.  We could handle the cleanup in the
+	 * bomb code, but there are potential other cases where that could happen,
+	 * and it is easy enough to clean it up here.
+	 */
+        if (op->inv == NULL) {
+	    remove_ob(op);
+	    free_object(op);
             return;
+	}
 	if(op->last_sp-- < 0) { 
 	    stop_arrow (op);
 	    return; 
