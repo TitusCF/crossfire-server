@@ -2520,151 +2520,210 @@ int cast_charm_undead(object *op, object *caster,archetype *arch,int spellnum) {
   return 1;
 }
 
-int summon_cult_monsters(object *op, int dir) {
-  objectlink *tobl;
-  object *otmp=NULL,*god = find_god(determine_god(op));
-  int racenr=0, summon_level, number, i;
-  char *race,buf[MAX_BUF];
-  archetype *at = NULL;
-  racelink *list;
+/* Returns a monster (chosen at random) that this particular player (and his
+ * god) find acceptable.  This checks level, races allowed by god, etc
+ * to determine what is acceptable.
+ * This returns NULL if no match was found.
+ */
 
-  /* find deity */
-  if (!god) {
-     new_draw_info(NDI_UNIQUE, 0,op, "You worship no living deity!");
-     return 0;
-  } else if(!god->race) {
-     new_draw_info_format(NDI_UNIQUE, 0,op,
-	"%s has no creatures that you may summon!",god->name);
-     return 0;
-  }
+object *choose_cult_monster(object *pl, object *god, int summon_level) {
+    char buf[MAX_BUF],*race;
+    int racenr, mon_nr,i;
+    racelink *list;
+    objectlink *tobl;
+    object *otmp;
 
-
-  /* now determine the number of races available */
-     sprintf(buf,god->race);
-     race = strtok(buf,","); 
-     while(race) { 
-       racenr++; 
-       race = strtok(NULL,",");  
-     }   
+    /* Determine the number of races available */
+    racenr=0;
+    strcpy(buf,god->race);
+    race = strtok(buf,","); 
+    while(race) { 
+	racenr++; 
+	race = strtok(NULL,",");  
+     }
  
-  /* next, randomly select a race from the aligned_races string */
-     if(racenr>1) { 
-        racenr = RANDOM()%racenr;
-        sprintf(buf,god->race);
+    /* next, randomly select a race from the aligned_races string */
+    if(racenr>1) { 
+	racenr = RANDOM()%racenr;
+	strcpy(buf,god->race);
         race = strtok(buf,",");
         for(i=0;i<racenr;i++) 
 	     race = strtok(NULL,",");
-     } else 
+    } else 
         race = god->race;
 
- /* see if a we can match a race list of monsters  */
-  if((list=find_racelink(race))==NULL) { 
-     new_draw_info_format(NDI_UNIQUE, 0,op,
-	"The spell fails! %s's creatures are beyond",god->name);
-     new_draw_info(NDI_UNIQUE, 0,op,
-        "the range of your summons.");
-     LOG(llevDebug,"summon_cult_monster() requested non-existant aligned race!\n");
-     return 0; 
-  }
 
-  /* the summon level */
-  i=SK_level(op)+op->stats.Wis/10;
-  if (i==0) i=1;
-  summon_level = RANDOM()%i;
-  if(op->path_attuned&PATH_SUMMON) summon_level += 5;
-  if(op->path_repelled&PATH_SUMMON) summon_level -= 5;
+    /* see if a we can match a race list of monsters.  This should not
+     * happen, so graceful recovery isn't really needed, but this sanity
+     * checking is good for cases where the god archetypes mismatch the
+     * race file
+     */
+    if((list=find_racelink(race))==NULL) { 
+	new_draw_info_format(NDI_UNIQUE, 0,pl,
+	    "The spell fails! %s's creatures are beyond",god->name);
+	new_draw_info(NDI_UNIQUE, 0,pl,
+            "the range of your summons.");
+	LOG(llevDebug,"choose_cult_monster() requested non-existant aligned race!\n");
+	return 0; 
+    }
 
-  /* search for an appropritate monster on this race list */ 
-  if(list->member)
+    /* search for an apprplritate monster on this race list */ 
+    mon_nr=0;
     for(tobl=list->member;tobl;tobl=tobl->next) {
-       otmp=tobl->ob;
-       if(!otmp||!QUERY_FLAG(otmp,FLAG_MONSTER)) continue;
-       if(otmp->level<=summon_level&&!(RANDOM()%2)) break;
+	otmp=tobl->ob;
+	if(!otmp||!QUERY_FLAG(otmp,FLAG_MONSTER)) continue;
+	if(otmp->level<=summon_level) mon_nr++;
     }
+    /* If this god has multiple race entries, we should really choose another.
+     * But then we either need to track which ones we have tried, or just
+     * make so many calls to this function, and if we get so many without
+     * a valid entry, assuming nothing is available and quit.
+     */
+    if (!mon_nr) return NULL;
+    mon_nr = RANDOM() % mon_nr;
+    for(tobl=list->member;tobl;tobl=tobl->next) {
+	otmp=tobl->ob;
+	if(!otmp||!QUERY_FLAG(otmp,FLAG_MONSTER)) continue;
+	if(otmp->level<=summon_level && !mon_nr--) return otmp;
+    }
+    /* This should not happen */
+    LOG(llevDebug,"choose_cult_monster() mon_nr was set, but did not find a monster\n");
+    return NULL;
+}
 
-  if(!otmp) {
-    new_draw_info_format(NDI_UNIQUE, 0,op, 
-	"%s fails to send anything.",god->name);
-    return 0;
-  } 
+    
 
-  if(otmp->level>(summon_level/2))
-    number = RANDOM()%2 + 1;
-  else
-    number = RANDOM()%2 + RANDOM()%2 + 2;
-      
-  if (!dir)                               
-    dir = find_free_spot(at, op->map, op->x, op->y, 1, SIZEOFFREE);
-  if((dir==-1) || arch_blocked(at,op->map, op->x + freearr_x[dir], op->y+freearr_y[dir]))
-  {  
-    new_draw_info(NDI_UNIQUE, 0,op, "There is something in the way.");
-    if(op->type == PLAYER)
-      op->contr->count_left = 0;
-    return 0;
-  }
-  for (i = 1; i < number + 1; i++) {
-    object *head = NULL; 
+/* summons a monster - the monster chosen is determined by the god
+ * that is worshiiped.  return 0 on failure, 1 on success
+ */
 
-    /* this allows multisq monsters to be done right */
-    if(!(head = fix_summon_pet( otmp->arch, op, dir, 0))) continue;
+int summon_cult_monsters(object *op, int old_dir) {
+    object *mon,*otmp,*god = find_god(determine_god(op));
+    int tries=0,i,summon_level,number,dir;
+    char buf[MAX_BUF];
 
-    /* now, a little bit of tailoring. If the monster is much lower in 
-     * level than the summon_level, we get a better monster */
+    /* find deity */
+    if (!god) {
+	new_draw_info(NDI_UNIQUE, 0,op, "You worship no living deity!");
+	return 0;
+    } else if(!god->race) {
+	new_draw_info_format(NDI_UNIQUE, 0,op,
+		"%s has no creatures that you may summon!",god->name);
+	return 0;
+    }
+    /* the summon level */
+    i=SK_level(op)+op->stats.Wis/10;
+    if (i==0) i=1;
+    summon_level = RANDOM()%i;
+    if(op->path_attuned&PATH_SUMMON) summon_level += 5;
+    if(op->path_repelled&PATH_SUMMON) summon_level -= 5;
 
-    if((head->level+5)<summon_level) { 
-	int ii;
-	for(ii=summon_level-(head->level)-5;ii>0;ii--) {
-	    switch(RANDOM()%3+1) {
-		case 1:
-	      	   head->stats.wc--;
-		   break;
-		case 2:
-	           head->stats.ac--;
-		   break;
-		case 3:
-	    	   head->stats.dam+=3;
-		   break;
-		default:
-		   break;
-	    }
-	    head->stats.hp+=3;
+    do {
+	/* Need to set dir each time, as it may get clobbered */
+	dir=old_dir;
+	mon=choose_cult_monster(op, god,summon_level);
+	tries++;
+
+	/* As per note in choose_cult_monster, if we have multiple race
+	 * entries, we should really try again.
+	 */
+	if(!mon) {
+	    new_draw_info_format(NDI_UNIQUE, 0,op, 
+		 "%s fails to send anything.",god->name);
+	    return 0;
 	}
-	head->stats.maxhp=head->stats.hp;
-	if(head) { 
-	  object *tmp2;
-          for(tmp2=head;tmp2;tmp2=tmp2->more)
-            if(tmp2->name) {
-	      if(summon_level>30+head->level) 
-                sprintf(buf,"Arch %s of %s",head->name,god->name);
-	      else
-	        sprintf(buf,"%s of %s",head->name,god->name);
-	      free_string(tmp2->name);
-	      tmp2->name=add_string(buf);
+	/* Now lets see if we can find a place for this monster. */
+	if (!dir) 
+	    dir = find_free_spot(mon->arch, op->map, op->x, op->y, 1, SIZEOFFREE);
+
+	/* This only checks for the head of the monster.  We still need
+	 * to check for the body.  But if there is no space for the
+	 * head, trying a different monster won't help, so might as well
+	 * return now.
+	 */
+	if((dir==-1) || arch_blocked(mon->arch,op->map, op->x + freearr_x[dir], op->y+freearr_y[dir])) {
+	    dir= -1;
+	    if (tries == 5) {
+		new_draw_info(NDI_UNIQUE, 0,op, "There is something in the way.");
+		return 0;
+	    }
+	    else continue;  /* Try a different monster */
+	}
+    } while (dir==-1);
+
+    /* Aha - we have found a monster - lets customize it an put it on the
+     * map.
+     */
+
+    if(mon->level>(summon_level/2))
+	number = RANDOM()%2 + 1;
+    else
+	number = RANDOM()%2 + RANDOM()%2 + 2;
+
+    for (i = 1; i < number + 1; i++) {
+	object *head;
+
+	/* this allows multisq monsters to be done right */
+	if(!(head = fix_summon_pet( mon->arch, op, dir, 0))) continue;
+
+	/* now, a little bit of tailoring. If the monster is much lower in 
+	 * level than the summon_level, we get a better monster */
+
+	if((head->level+5)<summon_level) { 
+	    int ii;
+
+	    for(ii=summon_level-(head->level)-5;ii>0;ii--) {
+		switch(RANDOM()%3+1) {
+		    case 1:
+			head->stats.wc--;
+			break;
+		    case 2:
+			head->stats.ac--;
+			break;
+		    case 3:
+			head->stats.dam+=3;
+			break;
+		    default:
+			break;
+		}
+		head->stats.hp+=3;
+	    }
+
+	    head->stats.maxhp=head->stats.hp;
+	    for(otmp=head;otmp;otmp=otmp->more) {
+		if(otmp->name) {
+		    if(summon_level>30+head->level) 
+		    sprintf(buf,"Arch %s of %s",head->name,god->name);
+		    else
+			sprintf(buf,"%s of %s",head->name,god->name);
+
+		    free_string(otmp->name);
+		    otmp->name=add_string(buf);
+		}
+	    }
+	} /* if monster level is much less than character level */
+
+	insert_ob_in_map(head, op->map);
+	if (!QUERY_FLAG(head, FLAG_FREED) && head->randomitems != NULL) {
+	    object *tmp;
+	    create_treasure(head->randomitems,head,GT_INVENTORY,6,0);
+	    for(tmp = head->inv; tmp != NULL; tmp = tmp->below)
+		if(!tmp->nrof)
+		    SET_FLAG(tmp, FLAG_NO_DROP);
+	}
+	dir = absdir(dir + 1);
+	if (arch_blocked(head->arch,op->map, op->x + freearr_x[dir],
+		op->y + freearr_y[dir])) {
+
+	    if (i < number) {
+		new_draw_info(NDI_UNIQUE, 0,op, "There is something in the way,");
+		new_draw_info(NDI_UNIQUE, 0,op, "no more monsters for this casting.");
+		return 1;
 	    }
 	}
-    } 
-
-    insert_ob_in_map(head, op->map);
-    if (!QUERY_FLAG(head, FLAG_FREED) && head->randomitems != NULL) {
-      object *tmp;
-      create_treasure(head->randomitems,head,GT_INVENTORY,6,0);
-      for(tmp = head->inv; tmp != NULL; tmp = tmp->below)
-        if(!tmp->nrof)
-          SET_FLAG(tmp, FLAG_NO_DROP);
-    }
-    dir = absdir(dir + 1);
-    if (arch_blocked(at,op->map, op->x + freearr_x[dir],
-                     op->y + freearr_y[dir]))
-    {
-      if (i < number) {
-        new_draw_info(NDI_UNIQUE, 0,op, "There is something in the way,");
-        new_draw_info(NDI_UNIQUE, 0,op, "no more monsters for this casting.");
-        return 1;
-      }
-    }
-  }    
-  return 1;
-}  
+    } /* Loop to insert all the monster */
+    return 1;
+}
 
 /* summon_avatar() - taken from the code which summons golems. We 
  * cant use because we need to throw in a few extra's here. b.t.
@@ -2797,7 +2856,6 @@ object *fix_summon_pet(archetype *at, object *op, int dir, int type ) {
         head = tmp;
       tmp->x = op->x + freearr_x[dir] + tmp->arch->clone.x;
       tmp->y = op->y + freearr_y[dir] + tmp->arch->clone.y;
-      tmp->map = op->map;
       tmp->map = op->map;
       if(tmp->invisible) tmp->invisible=0;
       if(head != tmp)

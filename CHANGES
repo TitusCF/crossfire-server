@@ -16,6 +16,11 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+Change summon_cult_monster code so that it will no longer summon big monsters
+on top of walls or the player.  Also, if there is not space for a big
+monster, try to find another pet monster that will fit in the space.
+File affected: server/spell_effect.c - msw
+
 Change gorokh.arc to use anim devil instead of anim Lucifer - fixes crash
 when using avatars of gorokh - msw
 
