@@ -34,7 +34,8 @@ int surround_check(char **layout,int i,int j,int Xsize, int Ysize){
 
 
 /* actually make the layout:  we work by a reduction process:
-   first we make everything a well, then we remove areas to make rooms */
+ * first we make everything a wall, then we remove areas to make rooms 
+ */
 
 char **roguelike_layout_gen(int xsize, int ysize, int options) {
   int i,j;
@@ -98,7 +99,19 @@ char **roguelike_layout_gen(int xsize, int ysize, int options) {
   for(walk=Rooms;walk->x!=0;walk++);
   /* back up one */
   walk--;
-  maze[walk->x][walk->y] = '>';
+  if (walk == Rooms) {
+    /* In this case, there is only a single room.  We don't want to
+     * clobber are up exit (above) with a down exit, so put the
+     * other exit one space up/down, depending which is a space
+     * and not a wall.
+     */
+    if (maze[walk->x][walk->y+1] == '.')
+	maze[walk->x][walk->y+1] = '>';
+    else
+	maze[walk->x][walk->y-1] = '>';
+  }
+  else
+    maze[walk->x][walk->y] = '>';
 
   /* convert all the '.' to 0, we're through with the '.' */
   for(i=0;i<xsize;i++)
