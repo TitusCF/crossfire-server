@@ -361,7 +361,7 @@ static void block_until_new_connection()
     struct timeval Timeout;
     fd_set readfs;
 
-    LOG(llevError, "Waiting for connections...\n");
+    LOG(llevInfo, "Waiting for connections...\n");
 
     do {
 	FD_ZERO(&readfs);
@@ -374,7 +374,7 @@ static void block_until_new_connection()
 #else
     fd_set readfs;
 
-    LOG(llevError, "Waiting for connections...\n");
+    LOG(llevInfo, "Waiting for connections...\n");
 
     FD_ZERO(&readfs);
     FD_SET(init_sockets[0].fd, &readfs);

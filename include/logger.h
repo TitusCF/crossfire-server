@@ -29,7 +29,7 @@
 #define LOGGER_H
 
 typedef enum LogLevel {
-  llevError = 0, llevDebug = 1, llevMonster = 2
+  llevError = 0, llevInfo = 1, llevDebug = 2, llevMonster = 3
 } LogLevel;
 
 #endif /* LOGGER_H */

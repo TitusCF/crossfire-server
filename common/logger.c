@@ -34,7 +34,9 @@
  * Logs a message to stderr, or to file, and/or even to socket.
  * Or discards the message if it is of no importanse, and none have
  * asked to hear messages of that logLevel.
- * logLevels can be logError (always printed), llevDebug, and llevMonster.
+ *
+ * See include/logger.h for possible logLevels.  Messages with llevInfo
+ * and llevError are always printed, regardless of debug mode.
  */
 
 void LOG (LogLevel logLevel, char *format, ...)

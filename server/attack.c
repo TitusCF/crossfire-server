@@ -296,7 +296,7 @@ int attack_ob(object *op,object *hitter) {
     if(op->head!=NULL)
 	op=op->head;
     if(op->name==NULL) {
-	if(settings.debug) {
+	if(settings.debug >= llevDebug) {
 	    dump_object(op);
 	    LOG(llevDebug,"Object without name tried to attack.\n%s\n",errmsg);
 	}
@@ -327,7 +327,7 @@ int attack_ob(object *op,object *hitter) {
 	hitter=hitter->head;
 
     if (hitter->name==NULL) {
-	if(settings.debug) {
+	if(settings.debug >= llevDebug) {
 	    dump_object(hitter);
 	    LOG(llevDebug,"Object without name tried to attack.\n%s\n",errmsg);
 	}
@@ -736,8 +736,7 @@ int hit_player(object *op,int dam, object *hitter, int type) {
 
     /* If its already dead, or we're the wizard, don't attack it - no point */
     if(hitter->name==NULL) {
-	if (settings.debug) 
-	    LOG(llevDebug, "hit_player: hitter has no name\n");
+	LOG(llevDebug, "hit_player: hitter has no name\n");
 	return 0;
     }
 

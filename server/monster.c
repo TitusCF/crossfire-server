@@ -1330,7 +1330,7 @@ int talk_to_wall(object *npc, char *txt) {
     return 0;
   if((msgs = parse_message(npc->msg)) == NULL)
     return 0;
-  if(settings.debug)
+  if(settings.debug >= llevDebug)
     dump_messages(msgs);
   for(i=0; msgs->messages[i]; i++)
     for(j=0; msgs->keywords[i][j]; j++)

@@ -543,57 +543,6 @@ void process_active_maps() {
       }
 }
 
-#if 0
-/* process_events has been extended to take a map arguement, and
- * if that is non null, only process objects on that map.  As such,
- * process_map is no longer needed.
- */
-/*
- * process_map(map): works like process_events(), but it only processes
- * objects within the map 'map'.
- */
-
-void process_map(mapstruct *map) {
-  int flag;
-  object *op, *next;
-
-  process_players1(map);
-
-  for(op=objects;op!=NULL;op=next) {
-    if(QUERY_FLAG(op, FLAG_FREED)) { /* Was this object somehow freed as a result of */
-                       /* the actions of the previous object? */ 
-      flag=0;
-      break;
-    }
-    next=op->next;
-
-    if(op->map!=map || op->type == PLAYER)
-      continue;
-
-    if (op->last_anim>=op->anim_speed && op->anim_speed != 0) {
-      animate_object(op);
-      op->last_anim=1;
-    } else op->last_anim++; 
-#ifdef CASTING_TIME
-    if (op->casting > 0){
-      op->casting--;
-    }
-#endif
-    if(op->speed_left>0) {
-      --op->speed_left;
-      if(process_object(op))
-        continue;
-    }
-  }
-/* Now go through all objects and give them new speed */
-  for(op=objects;op!=NULL;op=op->next)
-    if(op->map==map&&op->speed&&op->speed_left<=0)
-      op->speed_left+=op->speed>0?op->speed:-op->speed;
-
-  process_players2(map);
-}
-#endif
-
 /* process_players1 and process_players2 do all the player related stuff.
  * I moved it out of process events and process_map.  This was to some
  * extent for debugging as well as to get a better idea of the time used
@@ -688,75 +637,102 @@ void process_players2(mapstruct *map)
 #define SPEED_DEBUG
 
 
-void process_events(mapstruct *map) {
+void process_events (mapstruct *map)
+{
   object *op, *next;
+  object marker;
 
- process_players1(map);
+  process_players1 (map);
 
- for (op=active_objects; op!=NULL; op=next) {
-    if(QUERY_FLAG(op, FLAG_FREED)) { /* Was this object somehow freed as a result of */
-                       /* the actions of the previous object? */ 
-      LOG(llevDebug,"Free object on list, process_events\n");
-      next=op->active_next;
-	continue; /* If we have a free object, any values it might
-		   * have are likely garbage.  breaking is probabyl
-		   * best, but let as at least continue and hope
-		   * for the best
-		   */
-/*      break;*/
+  /* Put marker object at beginning of active list */
+  marker.active_next = active_objects;
+  if (marker.active_next)
+    marker.active_next->active_prev = &marker;
+  marker.active_prev = NULL;
+  active_objects = &marker;
+ 
+  while (marker.active_next)
+  {
+    op = marker.active_next;
+
+    /* Move marker forward - swap op and marker */
+    op->active_prev = marker.active_prev;
+    if (op->active_prev)
+      op->active_prev->active_next = op;
+    else
+      active_objects = op;
+    marker.active_next = op->active_next;
+    if (marker.active_next)
+      marker.active_next->active_prev = &marker;
+    marker.active_prev = op;
+    op->active_next = &marker;
+
+    /* Now process op */
+    if (QUERY_FLAG (op, FLAG_FREED)) {
+      LOG (llevError, "BUG: process_events(): Free object on list\n");
+      op->speed = 0;
+      update_ob_speed (op);
+      continue;
     }
 
-    next=op->active_next;
+    if ( ! op->speed) {
+      LOG (llevError, "BUG: process_events(): Object %s has no speed, "
+           "but is on active list\n", op->arch->name);
+      update_ob_speed (op);
+      continue;
+    }
 
     if (op->map == NULL && op->env == NULL && op->name &&
-        op->type!=MAP && map==NULL)
+        op->type != MAP && map == NULL)
     {
-      LOG(llevError, "Object without map or inventory: %s (%d)\n",
-              op->name, op->count);
+      LOG (llevError, "BUG: process_events(): Object without map or "
+           "inventory is on active list: %s (%d)\n",
+           op->name, op->count);
+      op->speed = 0;
+      update_ob_speed (op);
       continue;
     }
 
-    if (map!=NULL && op->map!=map)
-	continue;
-
-    if(!op->speed) {
-      /* This is not a real problem, unless it repeats for the the same
-       * object.  IF it just gets printed once, it likely means that that
-       * object was killed/changed by the previous object
-       */
-      LOG(llevDebug, "Object %s has no speed, but is on active list\n",
-	op->arch->name);
+    if (map != NULL && op->map != map)
       continue;
-    }
 
 /* Eneq(@csd.uu.se): Handle archetype-field anim_speed differently when
    it comes to the animation. If we have a value on this we don't animate it
    at speed-events. */
 
-    if (op->anim_speed && op->last_anim>=op->anim_speed) {
-      animate_object(op);
-      op->last_anim=1;
-    } else op->last_anim++; 
-
-    if(op->speed_left>0) {
-      --op->speed_left;
-      process_object(op);
+    if (op->anim_speed && op->last_anim >= op->anim_speed) {
+      animate_object (op);
+      op->last_anim = 1;
+    } else {
+      op->last_anim++;
     }
+
+    if (op->speed_left > 0) {
+      --op->speed_left;
+      process_object (op);
+    }
+
 #ifdef CASTING_TIME
     if (op->casting > 0)
       op->casting--;
 #endif
     if (op->speed_left <= 0)
-	op->speed_left+=(op->speed>0?op->speed:-op->speed);
+      op->speed_left += FABS (op->speed);
   }
 
-  process_players2(map);
+  /* Remove marker object from active list */
+  if (marker.active_prev != NULL)
+    marker.active_prev->active_next = NULL;
+  else
+    active_objects = NULL;
+
+  process_players2 (map);
 }
 
 void clean_tmp_files() {
   mapstruct *m;
 
-  LOG(llevError,"Cleaning up...\n");
+  LOG(llevInfo,"Cleaning up...\n");
 
   /* We save the maps - it may not be intuitive why, but if there are unique
    * items, we need to save the map so they get saved off.  Perhaps we should

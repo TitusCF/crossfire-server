@@ -40,7 +40,7 @@ CSPORT,				/* Client/server port */
 #ifdef DEBUG
   llevDebug,
 #else
-  llevError,
+  llevInfo,
 #endif
 
 0, NULL, 0,    /* dumpvalues, dumparg, daemonmode */

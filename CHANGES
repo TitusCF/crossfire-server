@@ -18,6 +18,18 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+common/init.c, common/loger.c, include/logger.h, server/init.c:  New
+log level llevInfo which is the new default log level.
+Many other files:  Use llevInfo instead of llevError where appropriate.
+Use 'settings.debug >= llevDebug' instead of 'settings.debug'.
+- Jan Echternach 21/5/2000
+
+server/main.c:  Use a marker object to track current position in the list
+of active objects.  Using a pointer didn't work because all objects on
+that list can be removed from it by process_object().  One of the things
+this fixes is bogus "Free object on list" errors.
+- Jan Echternach 21/5/2000
+
 crossedite/Makefile.in:  Modify to use $(MAKE) instead of make when 
 descending into subdirectories - fixes compilation on FreeBSD - MSW 5/17/2000
 

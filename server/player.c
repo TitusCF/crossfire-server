@@ -752,7 +752,7 @@ int key_confirm_quit(object *op, char key)
 #endif /* SET_TITLE */
     if(!QUERY_FLAG(op,FLAG_WAS_WIZ)) {
       sprintf(buf,"%s/%s/%s/%s.pl",settings.localdir,settings.playerdir,op->name,op->name);
-      if(unlink(buf)== -1 && settings.debug)
+      if(unlink(buf)== -1 && settings.debug >= llevDebug)
         perror("crossfire (delete character)");
     }
     play_again(op);

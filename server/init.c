@@ -37,7 +37,7 @@ void set_logfile(char *val) { settings.logfilename=val; }
 void call_version() { version(NULL); exit(0); }
 void showscores() { display_high_score(NULL,9999,NULL); exit(0); }
 void set_debug() { settings.debug=llevDebug; }
-void unset_debug() { settings.debug=llevError; }
+void unset_debug() { settings.debug=llevInfo; }
 void set_mondebug() { settings.debug=llevMonster; }
 void set_dumpmon1() {settings.dumpvalues=1; }
 void set_dumpmon2() {settings.dumpvalues=2; }
@@ -478,17 +478,17 @@ void rec_sigsegv(int i) {
 }
 
 void rec_sigint(int i) {
-  LOG(llevError,"\nSIGINT received.\n");
+  LOG(llevInfo,"\nSIGINT received.\n");
   fatal_signal(0, 1);
 }
 
 void rec_sighup(int i) {
-  LOG(llevError,"\nSIGHUP received\n");
+  LOG(llevInfo,"\nSIGHUP received\n");
   fatal_signal(0, 1);
 }
 
 void rec_sigquit(int i) {
-  LOG(llevError,"\nSIGQUIT received\n");
+  LOG(llevInfo,"\nSIGQUIT received\n");
   fatal_signal(1, 1);
 }
 
@@ -502,7 +502,7 @@ void rec_sigpipe(int i) {
  * dump core.  There is no reason that SIGPIPES should be fatal
  */
 #if 1
-  LOG(llevError,"\nReceived SIGPIPE, ignoring...\n");
+  LOG(llevInfo,"\nReceived SIGPIPE, ignoring...\n");
   signal(SIGPIPE,rec_sigpipe);/* hocky-pux clears signal handlers */
 #else
   LOG(llevError,"\nSIGPIPE received, not ignoring...\n");
@@ -518,7 +518,7 @@ void rec_sigbus(int i) {
 }
 
 void rec_sigterm(int i) {
-  LOG(llevError,"\nSIGTERM received\n");
+  LOG(llevInfo,"\nSIGTERM received\n");
   fatal_signal(0, 1);
 }
 

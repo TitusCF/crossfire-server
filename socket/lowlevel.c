@@ -381,9 +381,8 @@ void write_cs_stats()
     /* If no connections recently, don't both to log anything */
     if (cst_lst.ibytes==0 && cst_lst.obytes==0) return;
 
-    /* It really isn't an error, but I really want it logged in all cases */
     /* CSSTAT is put in so scripts can easily find the line */
-    LOG(llevError, "CSSTAT: %.16s tot %d %d %d %d inc %d %d %d %d\n",
+    LOG(llevInfo, "CSSTAT: %.16s tot %d %d %d %d inc %d %d %d %d\n",
 	ctime(&now), cst_tot.ibytes, cst_tot.obytes, cst_tot.max_conn,
 	now - cst_tot.time_start, cst_lst.ibytes, cst_lst.obytes,
 	cst_lst.max_conn, now - cst_lst.time_start);

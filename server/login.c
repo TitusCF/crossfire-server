@@ -76,7 +76,7 @@ void emergency_save(int flag) {
   }
   LOG(llevError,"\n");
 #else
-  LOG(llevError,"Emergency saves disabled, no save attempted\n");
+  LOG(llevInfo,"Emergency saves disabled, no save attempted\n");
 #endif
   /* If the game is exiting, remove the player locks */
   if (!flag) {
@@ -96,7 +96,7 @@ void delete_character(char *name, int new) {
     char buf[MAX_BUF];
 
     sprintf(buf,"%s/%s/%s.pl",settings.localdir,settings.playerdir,name);
-    if(unlink(buf)== -1 && settings.debug)
+    if(unlink(buf)== -1 && settings.debug >= llevDebug)
 	perror("crossfire (delete character)");
     if (new) {
 	sprintf(buf,"%s/%s/%s",settings.localdir,settings.playerdir,name);
