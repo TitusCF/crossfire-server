@@ -99,8 +99,13 @@ static void copy_score(score *sc1,score *sc2) {
 
 static char *put_score(score *sc) {
   static char buf[MAX_BUF];
+#ifndef WIN32
   sprintf(buf,"%s:%s:%lld:%s:%s:%d:%d:%d",sc->name,sc->title,sc->exp,sc->killer,sc->maplevel,
           sc->maxhp,sc->maxsp,sc->maxgrace);
+#else
+  sprintf(buf,"%s:%s:%I64d:%s:%s:%d:%d:%d",sc->name,sc->title,sc->exp,sc->killer,sc->maplevel,
+          sc->maxhp,sc->maxsp,sc->maxgrace);
+#endif
   return buf;
 }
 
@@ -128,7 +133,11 @@ static score *get_score(char *bp) {
 
   if ((cp = spool(NULL, "score")) == NULL)
     return NULL;
+#ifndef WIN32
   sscanf(cp,"%lld",&sc.exp);
+#else
+  sscanf(cp,"%I64d",&sc.exp);
+#endif
 
   if ((cp = spool(NULL, "killer")) == NULL)
     return NULL;

@@ -1544,12 +1544,20 @@ char *get_ob_diff(object *op,object *op2) {/* I plan to optimize this heavily */
     FAST_SAVE_LONG(fastbuf,"maxgrace ",op->stats.maxgrace,9);
 
   if(op->stats.exp!=op2->stats.exp) {
+#ifndef WIN32
     sprintf(buf2,"%lld\n", op->stats.exp);
+#else
+    sprintf(buf2,"%I64d\n", op->stats.exp);
+#endif
     ADD_STRINGLINE_ENTRY(fastbuf,"exp ", buf2, 4);
   }
 
   if(op->perm_exp!=op2->perm_exp) {
+#ifndef WIN32
     sprintf(buf2,"%lld\n", op->perm_exp);
+#else
+    sprintf(buf2,"%I64d\n", op->perm_exp);
+#endif
     ADD_STRINGLINE_ENTRY(fastbuf,"perm_exp ", buf2, 9);
   }
 

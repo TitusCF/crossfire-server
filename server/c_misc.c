@@ -607,8 +607,13 @@ int command_listen (object *op, char *params)
 int command_statistics(object *pl, char *params)
 {
     if (!pl->contr) return 1;
+#ifndef WIN32
     new_draw_info_format(NDI_UNIQUE, 0, pl,"  Experience: %lld",pl->stats.exp);
     new_draw_info_format(NDI_UNIQUE, 0, pl,"  Next Level: %lld",level_exp(pl->level+1, pl->expmul));
+#else
+    new_draw_info_format(NDI_UNIQUE, 0, pl,"  Experience: %I64d",pl->stats.exp);
+    new_draw_info_format(NDI_UNIQUE, 0, pl,"  Next Level: %I64d",level_exp(pl->level+1, pl->expmul));
+#endif
     new_draw_info(NDI_UNIQUE, 0, pl,       "\nStat       Nat/Real/Max");
 
     new_draw_info_format(NDI_UNIQUE, 0, pl, "Str         %2d/ %3d/%3d",

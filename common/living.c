@@ -1744,12 +1744,16 @@ static void subtract_player_exp(object *op, sint64 exp, char *skill, int flag)
 void change_exp(object *op, sint64 exp, char *skill_name, int flag) {
 
 #ifdef EXP_DEBUG
-    LOG(llevDebug,"chnage_exp() called for %s, exp = %lld\n",query_name(op),exp); 
+#ifndef WIN32
+    LOG(llevDebug,"change_exp() called for %s, exp = %lld\n",query_name(op),exp); 
+#else
+    LOG(llevDebug,"change_exp() called for %s, exp = %I64d\n",query_name(op),exp); 
+#endif
 #endif
 
     /* safety */
     if(!op) { 
-	LOG(llevError,"add_exp() called for null object!\n"); 
+	LOG(llevError,"change_exp() called for null object!\n"); 
 	return; 
     }
 

@@ -1025,8 +1025,13 @@ int command_stats (object *op, char *params)
          sprintf(buf,"Con : %-2d        AC : %-4d  WC  : %d",
                  pl->ob->stats.Con,pl->ob->stats.ac,pl->ob->stats.wc) ;
          new_draw_info(NDI_UNIQUE, 0,op,buf);
+#ifndef WIN32
          sprintf(buf,"Wis : %-2d       EXP : %lld",
                  pl->ob->stats.Wis,pl->ob->stats.exp);
+#else
+         sprintf(buf,"Wis : %-2d       EXP : %I64d",
+                 pl->ob->stats.Wis,pl->ob->stats.exp);
+#endif
          new_draw_info(NDI_UNIQUE, 0,op,buf);
          sprintf(buf,"Cha : %-2d      Food : %d",
                  pl->ob->stats.Cha,pl->ob->stats.food) ;

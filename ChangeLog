@@ -17,6 +17,16 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+common/exp.c
+common/living.c
+common/loader.[cl]
+common/porting.c
+server/c_misc.c
+server/c_wiz.c
+server/hiscore.c
+server/resurrection.c: fixed %lld to %I64d for Windows.
+Ryo 2004-03-26
+
 server/attack.c: Add scare_creature() function, which sets FLAG_SCARED
    and also sets up appropriate enemy.  Clean up some formatting in
    other functions, and fix friendly fire - move it out of the loop for

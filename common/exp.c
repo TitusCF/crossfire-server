@@ -195,8 +195,13 @@ void init_experience()
 	     * the table otherwise is probably in an inconsistent state
 	     */
 	    if (tmpexp <= lastexp) {
+#ifndef WIN32
 		LOG(llevError,"Experience for level %d is lower than previous level (%lld <= %lld)\n",
 		    lastlevel + 1, tmpexp, lastexp);
+#else
+		LOG(llevError,"Experience for level %d is lower than previous level (%I64d <= %I64d)\n",
+		    lastlevel + 1, tmpexp, lastexp);
+#endif
 		exit(1);
 	    }
 	    lastlevel++;

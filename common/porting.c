@@ -453,7 +453,11 @@ void save_long(char *buf, char *name, long n) {
 void save_long_long(char *buf, char *name, sint64 n) {
     char buf2[MAX_BUF];
 
+#ifndef WIN32
     sprintf(buf2,"%s %lld\n", name, n);
+#else
+    sprintf(buf2,"%s %I64d\n", name, n);
+#endif
     strcat(buf,buf2);
 }
 

@@ -118,10 +118,18 @@ static int resurrect_player(object *op,char *playername,object *spell)
 	fgets(buf,255,deadplayer);
 	sscanf(buf,"%s",buf2);
 	if( ! (strcmp(buf2,"exp"))) {
+#ifndef WIN32
 	    sscanf(buf,"%s %lld",buf2,&exp);
+#else
+	    sscanf(buf,"%s %I64d",buf2,&exp);
+#endif
 	    if (spell->stats.exp) {
 		exp-=exp/spell->stats.exp;
+#ifndef WIN32
 		sprintf(buf,"exp %lld\n",exp);
+#else
+		sprintf(buf,"exp %I64d\n",exp);
+#endif
 	    }
 	}
 	if(! (strcmp(buf2,"Con"))) {
