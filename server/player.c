@@ -631,6 +631,8 @@ int key_roll_stat(object *op, char key)
 	    add_statbonus(op);
 	    send_query(&op->contr->socket,CS_QUERY_SINGLECHAR,"Now choose a character.\nPress any key to change outlook.\nPress `d' when you're pleased.\n");
 	    op->contr->state = ST_CHANGE_CLASS;
+	    if (op->msg)
+		new_draw_info(NDI_BLUE, 0, op, op->msg);
 	    return 0;
 	}
      case 'y':
@@ -676,6 +678,11 @@ int key_change_class(object *op, char key)
 	create_treasure(find_treasurelist("starting_wealth"),op, 0, 0, 0);
 
 	op->contr->state=ST_PLAYING;
+
+	if (op->msg) {
+	    free_string(op->msg);
+	    op->msg=NULL;
+	}
 
 	/* We create this now because some of the unique maps will need it
 	 * to save here.
@@ -743,6 +750,8 @@ int key_change_class(object *op, char key)
 	 op->stats.grace=0;
 #endif
     op->contr->last_value= -1;
+    if (op->msg) 
+	new_draw_info(NDI_BLUE, 0, op, op->msg);
     send_query(&op->contr->socket, CS_QUERY_SINGLECHAR,"");
     return 0;
 }

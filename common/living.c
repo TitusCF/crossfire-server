@@ -1096,8 +1096,8 @@ void fix_player(object *op) {
    * 'total resistance = vulnerability from cursed potion'. */
   for (i=0; i<NROFATTACKS; i++) {
     op->resist[i] = prot[i] - vuln[i];
-    if (potion_resist[i] && potion_resist[i] > op->resist[i] ||
-	potion_resist[i] < 0)
+    if (potion_resist[i] && ((potion_resist[i] > op->resist[i]) ||
+	(potion_resist[i] < 0)))
       op->resist[i] = potion_resist[i];
     }
   

@@ -535,35 +535,39 @@ object *find_disease(object *victim) {
 /* do the cure disease stuff, from the spell "cure disease" */
 
 int cure_disease(object *sufferer,object *caster) {
-  object *disease;
-  object *walk;
-  int casting_level;
-  int cure=0;
+    object *disease, *next;
+    int casting_level;
+    int cure=0;
 
-  if(caster) casting_level = caster->level;
-  else casting_level = 1000;  /* if null caster, CURE all.  */
+    if(caster) casting_level = caster->level;
+    else casting_level = 1000;  /* if null caster, CURE all.  */
 
-  for(walk=sufferer->inv;walk;walk=walk->below) {
-	 if(walk->type==DISEASE) {  /* attempt to cure this disease */
-		disease=walk;
-		if(casting_level >= disease->level) /* just cure it */
-		  cure=1;
-		else if( ! (RANDOM() % ( disease->level - casting_level)))
-		  cure=1;
-		else cure = 0;
-		if(cure) {
-		  remove_symptoms(disease);
-		  remove_ob(disease);
-		  if(caster) {
-			 add_exp(caster,disease->stats.exp);
-			 new_draw_info(NDI_UNIQUE,0,caster,"You cure a disease!");
-		  }
-		  free_object(disease);
-		  new_draw_info(NDI_UNIQUE,0,sufferer,"You no longer feel diseased.");
-		}
-														  
-	 }
-  }
+    for(disease=sufferer->inv;disease;disease=next) {
+	next=disease->below;
+
+	if(disease->type==DISEASE) {  /* attempt to cure this disease */
+	    /* If caster lvel is higher than disease level, cure chance
+	     * is automatic.  If lower, then the chance is basically
+	     * 1 in level_diff - if there is a 5 level difference, chance
+	     * is 1 in 5.
+	     */
+	    if ((casting_level >= disease->level) ||
+		 ( ! (RANDOM() % ( disease->level - casting_level)))) {
+
+		    remove_symptoms(disease);
+		    remove_ob(disease);
+		    cure=1;
+		    if(caster) add_exp(caster,disease->stats.exp);
+		    free_object(disease);
+	    }
+	}
+    }
+    if (cure) {
+	/* Only draw these messages once */
+	if (caster)
+	    new_draw_info_format(NDI_UNIQUE,0,caster,"You cure a disease!");
+	new_draw_info(NDI_UNIQUE,0,sufferer,"You no longer feel diseased.");
+    }
   return 1;
 }
 

@@ -17,14 +17,25 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 CVS changes since last release:
 
+MSW 2000/12/16:
+server/player.c: If the player race archetype has a message, print that out.
+	This allows a descriptive message about what the different races will
+	get.  The message is removed from the player once they decide on the
+	race.
+common/living.c:  Add some parens around some PR resistant checks - eliminates
+	warnings from gcc.
+server/disease.c: have cure_disease remove all diseases a player is infected
+	with.  The code suggested it was attempting to do so, and the
+	messages it printed out certainly suggested that the character
+	was disease free.
+
+
 PeterM:  2000/12/14:  Added spiral map layout
 
 PeterM:  2000/12/14:
 Restructuring of the random map code.  Functionally, it
 should be identical.  All global variables moved into the
 functions.
-
-
 
 MSW 2000/12/10:
 utils/metaserver.pl: Various improvements.  Main one is that tcp
