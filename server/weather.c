@@ -165,6 +165,8 @@ void tick_the_clock()
 	    write_gulfstreammap();
 	if (todtick%28 == 0 && settings.fastclock > 0)
 	    write_skymap();
+	if (todtick&29 == 0)
+	    write_rainfallmap();
     }
     get_tod(&tod);
     dawn_to_dusk(&tod);
@@ -176,6 +178,8 @@ void tick_the_clock()
         update_humid();
         init_temperature();
 	compute_sky();
+	if (tod.hour == 0)
+	    process_rain();
     }
     /* perform_weather must follow calculators */
     perform_weather();
@@ -761,10 +765,9 @@ void init_humid_elev()
 		for (ny=0,ay=ty; (ny < spwty && ay < settings.worldmaptilesizey &&
 			 space < spwtx*spwty);
 		     ay++,ny++,space++) {
-		    if (QUERY_FLAG(m->spaces[ax+ay].bottom,
-			    FLAG_IS_WATER))
+		    if (QUERY_FLAG(GET_MAP_OB(m, ax, ay), FLAG_IS_WATER))
 			water++;
-		    elev += m->spaces[ax+ay].bottom->elevation;
+		    elev += GET_MAP_OB(m, ax, ay)->elevation;
 		}
 	    }
 	    delete_map(m);
@@ -783,10 +786,9 @@ void init_humid_elev()
 		for (ny=j,ay=MAX(0, ty - (spwty-1)); (ny < spwty && ay <= ty &&
 			 space < spwtx*spwty);
 		     space++,ay++,ny++) {
-		    if (QUERY_FLAG(m->spaces[ax+ay].bottom,
-			    FLAG_IS_WATER))
+		    if (QUERY_FLAG(GET_MAP_OB(m, ax, ay), FLAG_IS_WATER))
 			water++;
-		    elev += m->spaces[ax+ay].bottom->elevation;
+		    elev += GET_MAP_OB(m, ax, ay)->elevation;
 		}
 	    }
 	    delete_map(m);
@@ -804,10 +806,9 @@ void init_humid_elev()
 		for (ny=0,ay=ty; (ny < spwty && ay < settings.worldmaptilesizey &&
 			 space < spwtx*spwty);
 		     ay++,ny++,space++) {
-		    if (QUERY_FLAG(m->spaces[ax+ay].bottom,
-			    FLAG_IS_WATER))
+		    if (QUERY_FLAG(GET_MAP_OB(m, ax, ay), FLAG_IS_WATER))
 			water++;
-		    elev += m->spaces[ax+ay].bottom->elevation;
+		    elev += GET_MAP_OB(m, ax, ay)->elevation;
 		}
 	    }
 	    delete_map(m);
@@ -825,10 +826,9 @@ void init_humid_elev()
 		for (ny=0,ay=MAX(0, ty - (spwty-1)); (ny < spwty && ay <= ty &&
 			 space < spwtx*spwty);
 		     space++,ay++,ny++) {
-		    if (QUERY_FLAG(m->spaces[ax+ay].bottom,
-			    FLAG_IS_WATER))
+		    if (QUERY_FLAG(GET_MAP_OB(m, ax, ay), FLAG_IS_WATER))
 			water++;
-		    elev += m->spaces[ax+ay].bottom->elevation;
+		    elev += GET_MAP_OB(m, ax, ay)->elevation;
 		}
 	    }
 	    delete_map(m);
@@ -905,6 +905,78 @@ void init_temperature()
 	    temperature_calc(x, y, &tod);
 }
 
+/* rainfall */
+
+void write_rainfallmap()
+{
+    char filename[MAX_BUF];
+    FILE *fp;
+    int x, y;
+
+    sprintf(filename, "%s/rainfallmap", settings.localdir);
+    if ((fp = fopen(filename, "w")) == NULL) {
+	LOG(llevError, "Cannot open %s for writing\n", filename);
+	return;
+    }
+    for (x=0; x < WEATHERMAPTILESX; x++) {
+	for (y=0; y < WEATHERMAPTILESY; y++)
+	    fprintf(fp, "%u ", weathermap[x][y].rainfall);
+	fprintf(fp, "\n");
+    }
+    fclose(fp);
+}
+
+void read_rainfallmap()
+{
+    char filename[MAX_BUF];
+    FILE *fp;
+    int x, y;
+
+    sprintf(filename, "%s/rainfallmap", settings.localdir);
+    LOG(llevDebug, "Reading rainfall data from %s...", filename);
+    if ((fp = fopen(filename, "r")) == NULL) {
+	LOG(llevError, "Cannot open %s for reading\n", filename);
+	init_rainfall();
+	write_rainfallmap();
+	return;
+    }
+    for (x=0; x < WEATHERMAPTILESX; x++) {
+	for (y=0; y < WEATHERMAPTILESY; y++) {
+	    fscanf(fp, "%u ", &weathermap[x][y].rainfall);
+	}
+	fscanf(fp, "\n");
+    }
+    LOG(llevDebug, "Done.\n");
+    fclose(fp);
+}
+
+void init_rainfall()
+{
+    int x, y;
+    int days;
+
+    for (x=0; x < WEATHERMAPTILESX; x++)
+	for (y=0; y < WEATHERMAPTILESY; y++) {
+	    days = todtick / HOURS_PER_DAY;
+	    if (weathermap[x][y].humid < 10)
+		weathermap[x][y].rainfall = days / 20;
+	    else if (weathermap[x][y].humid < 20)
+		weathermap[x][y].rainfall = days / 15;
+	    else if (weathermap[x][y].humid < 30)
+		weathermap[x][y].rainfall = days / 10;
+	    else if (weathermap[x][y].humid < 40)
+		weathermap[x][y].rainfall = days / 5;
+	    else if (weathermap[x][y].humid < 50)
+		weathermap[x][y].rainfall = days / 2;
+	    else if (weathermap[x][y].humid < 60)
+		weathermap[x][y].rainfall = days;
+	    else if (weathermap[x][y].humid < 80)
+		weathermap[x][y].rainfall = days * 2;
+	    else
+		weathermap[x][y].rainfall = days * 3;
+	}
+}
+
 /* END of read/write/init */
 
 
@@ -969,6 +1041,7 @@ void init_weather()
 		case 8: gulf_stream_dir[tx][ty] = 4; break;
 		}
     gulf_stream_start = rndm(GULF_STREAM_WIDTH, WEATHERMAPTILESY-GULF_STREAM_WIDTH);
+    read_rainfallmap();
 
     LOG(llevDebug, "Done reading weathermaps\n");
     sprintf(filename, "%s/wmapcurpos", settings.localdir);
@@ -1024,6 +1097,9 @@ void perform_weather()
     
     /* for now, all we do is decay stuff.  more to come */
     decay_objects(m);
+    weather_effect(filename);
+
+    /* done */
     new_save_map(m, 2); /* write the overlay */
     m->in_memory = MAP_IN_MEMORY; /*reset this*/
     sprintf(filename, "%s/wmapcurpos", settings.localdir);
@@ -1038,6 +1114,179 @@ void perform_weather()
     fprintf(fp, "%d %d", wmperformstartx, wmperformstarty);
     fclose(fp);
 }
+
+/* perform actual effect of weather.  Should be called from perform_weather,
+   or when a map is loaded. (player enter map).  Filename is the name of
+   the map.  The map *must allready be loaded*.
+
+   This is where things like snow, herbs, earthly rototilling, etc should
+   occur.
+*/
+
+void weather_effect(char *filename)
+{
+    mapstruct *m;
+    int wx, wy, x, y;
+
+    /* if the dm shut off weather, go home */
+    if (settings.dynamiclevel < 1)
+	return;
+
+    m = ready_map_name(filename, 0);
+    if (!m->outdoor)
+	return;
+
+    x = 0;
+    y = 0;
+    /* for now, just bail if it's not the worldmap */
+    if (worldmap_to_weathermap(x, y, &wx, &wy, filename) != 0)
+	return;
+
+    if (settings.dynamiclevel < 2)
+	return;
+
+    let_it_snow(m, wx, wy, filename);
+
+}
+
+void let_it_snow(mapstruct *m, int wx, int wy, char *filename)
+{
+    int x, y;
+    int avoid, two, temp, sky;
+    object *ob, *tmp;
+    archetype *at;
+
+    for (x=0; x < settings.worldmaptilesizex; x++) {
+	for (y=0; y < settings.worldmaptilesizey; y++) {
+	    (void)worldmap_to_weathermap(x, y, &wx, &wy, filename);
+	    ob = NULL;
+	    at = NULL;
+	    /* this will definately need tuning */
+	    avoid = 0;
+	    two = 0;
+	    temp = real_world_temperature(x, y, m);
+	    sky = weathermap[wx][wy].sky;
+	    if (temp <= 0 && sky > SKY_OVERCAST && sky < SKY_FOG)
+		sky += 10; /*let it snow*/
+	    for (tmp=GET_MAP_OB(m, x, y); tmp; tmp = tmp->above) {
+		if (!strcasecmp(tmp->name, "snow"))
+		    avoid++;
+		else if (!strcmp(tmp->name, "snow2"))
+		    avoid++;
+		else if (!strcmp(tmp->name, "drifts"))
+		    avoid++;
+		else if (!strcmp(tmp->name, "cforest1"))
+		    avoid++;
+		else if (!strcmp(tmp->name, "sea"))
+		    avoid++;
+		else if (!strcmp(tmp->name, "sea1"))
+		    avoid++;
+		else if (!strcmp(tmp->name, "deep_sea"))
+		    avoid++;
+		else if (!strcmp(tmp->name, "shallow_sea"))
+		    avoid++;
+	    }
+	    if (!avoid) {
+		if (sky >= SKY_LIGHT_SNOW && sky < SKY_HEAVY_SNOW)
+		    at = find_archetype("snow");
+		if (sky >= SKY_HEAVY_SNOW)
+		    at = find_archetype("snow2");
+		if (!strcmp(GET_MAP_OB(m, x, y)->name, "hills") &&
+		    sky >= SKY_LIGHT_SNOW)
+		    at = find_archetype("drifts");
+		if (!strcmp(GET_MAP_OB(m, x, y)->name, "evergreens") &&
+		    sky >= SKY_LIGHT_SNOW)
+		    at = find_archetype("cforest1");
+		if (!strcmp(GET_MAP_OB(m, x, y)->name, "wasteland") &&
+		    sky >= SKY_LIGHT_SNOW)
+		    at = find_archetype("glacier");
+		if (!strcmp(GET_MAP_OB(m, x, y)->name, "evergreen"))
+		    two++;
+		if (!strcmp(GET_MAP_OB(m, x, y)->name, "tree"))
+		    two++;  
+		if (at != NULL) {
+		    ob = get_object();
+		    copy_object(&at->clone, ob);
+		    ob->x = x;
+		    ob->y = y;
+		    insert_ob_in_map(ob, m, ob,
+		        INS_NO_MERGE | INS_NO_WALK_ON | INS_ABOVE_FLOOR_ONLY);
+		    if (two) {
+			if (!strcmp(GET_MAP_OB(m, x, y)->name, "evergreen"))
+			    at = find_archetype("tree5");
+			if (!strcmp(GET_MAP_OB(m, x, y)->name, "tree"))
+			    at = find_archetype("tree3");
+			ob = get_object();
+			copy_object(&at->clone, ob);
+			ob->x = x;
+			ob->y = y;
+			insert_ob_in_map(ob, m, ob,
+			    INS_NO_MERGE | INS_NO_WALK_ON | INS_ON_TOP);
+		    }
+		}
+	    }
+	    if (temp > 8) {
+		/* melt some snow */
+		for (tmp=GET_MAP_OB(m, x, y)->above; tmp; tmp = tmp->above) {
+		    avoid = 0;
+		    if (!strcmp(tmp->name, "snow"))
+			avoid++;
+		    else if (!strcmp(tmp->name, "snow2"))
+			avoid++;
+		    else if (!strcmp(tmp->name, "drifts"))
+			avoid++;
+		    else if (!strcmp(tmp->name, "cforest1"))
+			avoid++;
+		    if (avoid) {
+			remove_ob(tmp);
+			free_object(tmp);
+			tmp=GET_MAP_OB(m, x, y);
+			/* clean up the trees we put over the snow */
+			if (!strcmp(tmp->name, "evergreen"))
+			    tmp = tmp->above;
+			else if (!strcmp(tmp->name, "tree"))
+			    tmp = tmp->above;
+			if (tmp != NULL)
+			    if (strcmp(tmp->name, "tree3") == 0 ||
+			        strcmp(tmp->name, "tree5") == 0) {
+				remove_ob(tmp);
+				free_object(tmp);
+			    }
+			break;
+		    }
+		}
+	    }
+	    /* woo it's cold out */
+	    if (temp < -8) {
+		avoid = 0;
+		for (tmp=GET_MAP_OB(m, x, y); tmp; tmp = tmp->above) {
+		    if (!strcasecmp(tmp->name, "glacier"))
+			avoid--;
+		}
+		tmp = GET_MAP_OB(m, x, y);
+		if (!strcasecmp(tmp->name, "sea"))
+		    avoid++;
+		else if (!strcasecmp(tmp->name, "sea1"))
+		    avoid++;
+		else if (!strcasecmp(tmp->name, "deep_sea"))
+		    avoid++;
+		else if (!strcasecmp(tmp->name, "shallow_sea"))
+		    avoid++;
+		if (avoid > 0) {
+		    at = find_archetype("glacier");
+		    ob = get_object();
+		    copy_object(&at->clone, ob);
+		    ob->x = x;
+		    ob->y = y;
+		    insert_ob_in_map(ob, m, ob,
+			INS_NO_MERGE | INS_NO_WALK_ON | INS_ABOVE_FLOOR_ONLY);
+		}
+	    }
+	}
+    }
+}
+
+
 
 /* provide wx and wy. Will fill in with weathermap coordinates.  Requires
    the current mapname (must be a worldmap), and your coordinates on the
@@ -1209,7 +1458,7 @@ void temperature_calc(int x, int y, timeofday_t *tod)
 /* Compute the real (adjusted) temperature of a given weathermap tile.
    This takes into account the wind, base temp, sunlight, and other fun
    things.  Seasons are automatically handled by moving the equator.
-   Elevation is considered in the base temp.
+   Elevation is partially considered in the base temp.
 */
 
 int real_temperature(int x, int y)
@@ -1236,6 +1485,33 @@ int real_temperature(int x, int y)
     for (i=1; i < weathermap[x][y].windspeed; i+=i)
 	temp--;
 
+    return temp;
+}
+
+/* Given a worldmap name, and x and y on that map, compute the temperature
+   for a specific square.  Used to normalize elevation.
+*/
+
+int real_world_temperature(int x, int y, mapstruct *m)
+{
+    int wx, wy, temp, eleva, elevb;
+
+    worldmap_to_weathermap(x, y, &wx, &wy, m->path);
+    temp = real_temperature(wx, wy);
+    if (weathermap[wx][wy].avgelev < 0)
+	eleva = 0;
+    else
+	eleva = weathermap[x][y].avgelev;
+    elevb = GET_MAP_OB(m, x, y)->elevation;
+    if (elevb < 0)
+	elevb = 0;
+    if (elevb > eleva) {
+	elevb -= eleva;
+	temp -= elevb/1000;
+    } else {
+	elevb = eleva - elevb;
+	temp += elevb/1000;
+    }
     return temp;
 }
 
@@ -1566,3 +1842,20 @@ void compute_sky()
 	}
     }
 }
+
+void process_rain()
+{
+    int x, y, rain;
+
+    for (x=0; x < WEATHERMAPTILESX; x++)
+	for (y=0; y < WEATHERMAPTILESY; y++) {
+	    rain = weathermap[x][y].sky;
+	    if (rain >= SKY_LIGHT_SNOW)
+		rain -= 10;
+	    if (rain > SKY_OVERCAST && rain < SKY_FOG) {
+		rain -= SKY_OVERCAST;
+		weathermap[x][y].rainfall += rain;
+	    }
+	}
+}
+	    
