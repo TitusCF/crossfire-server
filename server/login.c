@@ -706,14 +706,13 @@ void check_login(object *op) {
     CLEAR_FLAG(op, FLAG_NO_FIX_PLAYER);
 
     strncpy(pl->title, op->arch->clone.name,MAX_NAME);
-
+    
     /* If the map where the person was last saved does not exist,
      * restart them on their home-savebed. This is good for when
      * maps change between versions
      * First, we check for partial path, then check to see if the full
      * path (for unique player maps)
      */
-
     if (check_path(pl->maplevel,1)==-1) {
       if (check_path(pl->maplevel,0)==-1) {
 	strcpy(pl->maplevel, pl->savebed_map);
@@ -752,8 +751,21 @@ void check_login(object *op) {
 
     if ( ! legal_range (op, op->contr->shoottype))
         op->contr->shoottype = range_none;
+    
     fix_player (op);
-
+    
+    /* if it's a dragon player, set the correct title here */
+    if (is_dragon_pl(op) && op->inv != NULL) {
+      object *tmp;
+        for (tmp=op->inv; tmp!=NULL; tmp=tmp->below) {
+	    if (tmp->type == FORCE) {
+	        if (strcmp(tmp->arch->name, "dragon_ability_force")==0
+		    && tmp->title != NULL)
+		  strcpy(pl->title, tmp->title);
+	    }
+	}
+    }
+    
     new_draw_info(NDI_UNIQUE, 0,op,"Welcome Back!");
     new_draw_info_format(NDI_UNIQUE | NDI_ALL, 5, NULL,
 	     "%s has entered the game.",pl->ob->name);
