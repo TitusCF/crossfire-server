@@ -1231,7 +1231,7 @@ static PyObject* CFIsCanBePicked(PyObject* self, PyObject* args)
 
     CHECK_OBJ(whoptr);
 
-    return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_NO_PICK));
+    return Py_BuildValue("i",!QUERY_FLAG(WHO,FLAG_NO_PICK));
 };
 
 /*****************************************************************************/
