@@ -1459,7 +1459,11 @@ extern void do_learn_spell (object *op, int spell, int special_prayer)
     op->contr->known_spells[op->contr->nrofknownspells++] = spell;
     if (op->contr->nrofknownspells == 1)
         op->contr->chosen_spell = spell;
-    insert_special_prayer_mark (op, spell);
+    
+    /* For godgiven spells the player gets a reminder-mark inserted,
+       that this spell must be removed on changing cults! */
+    if (special_prayer)
+      insert_special_prayer_mark (op, spell);
 
     new_draw_info_format (NDI_UNIQUE, 0, op, 
             "Type 'bind cast %s", spells[spell].name);
@@ -1479,9 +1483,9 @@ extern void do_forget_spell (object *op, int spell)
         LOG (llevError, "BUG: do_forget_spell(): spell not known\n");
         return;
     }
-
-    new_draw_info_format (NDI_UNIQUE, 0, op, "You lose knowledge of %s.",
-                          spells[spell].name);
+    
+    new_draw_info_format (NDI_UNIQUE|NDI_NAVY, 0, op,
+			  "You lose knowledge of %s.", spells[spell].name);
 
     tmp = find_special_prayer_mark (op, spell);
     if (tmp) {
@@ -1575,7 +1579,7 @@ static void apply_spellbook (object *op, object *tmp)
     } else if(QUERY_FLAG(tmp,FLAG_STARTEQUIP) || RANDOM()%150-(2*SK_level(op)) <
 	learn_spell[spells[tmp->stats.sp].cleric ? op->stats.Wis : op->stats.Int]) {
       new_draw_info(NDI_UNIQUE, 0,op,"You succeed in learning the spell!");
-      do_learn_spell (op, tmp->stats.sp, tmp->stats.Wis);
+      do_learn_spell (op, tmp->stats.sp, 0);
 #ifdef ALLOW_SKILLS /* xp gain to literacy for spell learning */
       if ( ! QUERY_FLAG (tmp, FLAG_STARTEQUIP))
         add_exp(op,calc_skill_exp(op,tmp));

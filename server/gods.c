@@ -140,28 +140,10 @@ void pray_at_altar(object *pl, object *altar) {
 	/* May switch Gods, but its random chance based on our current level
 	 * note it gets harder to swap gods the higher we get */
 	if((angry==1)&&!(RANDOM()%(pl->chosen_skill->exp_obj->level+1))) {
-	    int i;  /* index over known_spells */
-	    int sp;  /*  spell index */
+	  int i;  /* index over known_spells */
+	  int sp;  /*  spell index */
 
-	    become_follower(pl,&altar->other_arch->clone);
-
-	    /* Forget all the special spells from your former God */
-	    for(i=0;i<pl->contr->nrofknownspells;i++)
-		/* Can this ever be false? */
-		if((sp=pl->contr->known_spells[i])>0) {
-		    if(spells[sp].cleric && spells[sp].books == 0) {
-			pl->contr->nrofknownspells--;
-			pl->contr->known_spells[i]=
-			    pl->contr->known_spells[pl->contr->nrofknownspells];
-			new_draw_info_format(NDI_UNIQUE|NDI_NAVY,0,pl,
-				"You lose your knowledge of %s!",spells[sp].name);
-			/* I think we can just do an i-- here and still
-			 * have it work - i=0 is probably excessive */
-			i=0;
-			
-		    } /* if cleric spell not normally found */
-		} /* if ... */
-
+	  become_follower(pl,&altar->other_arch->clone);
 	} /* If angry... switching gods */
     } /* If prayed at altar to other god */
 #endif
