@@ -16,8 +16,10 @@ changes' is much more useful than 'misc edits' or 'code cleanup'.
 4) Whenever making an update, please update this file, no matter how
 small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
-++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ------------------------------------------------------------------------------
+
+server/time.c:  Add call to esrv_update_item to update the face for
+the client after the player chooses a class.  MSW 11/3/2000
 
 server/c_object.c, socket/item.c:  Fixed for long item support.  pick_up_object
 in c_object was overwriting a fixed length string, causing server crashes.

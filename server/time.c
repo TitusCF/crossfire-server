@@ -709,6 +709,7 @@ void move_player_changer(object *op) {
 	  apply_changes_to_player(player,walk);
 	link_player_skills(op->above);
 	esrv_send_inventory(op->above,op->above);
+	esrv_update_item(UPD_FACE, op->above, op->above);
 	enter_exit(op->above,op);
       }
       else
