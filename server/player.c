@@ -1487,10 +1487,12 @@ int save_life(object *op) {
 	op->stats.hp = op->stats.maxhp;
       if(op->stats.food<0)
 	op->stats.food = 999;
+      enter_player_savebed(op); /* bring him home. */
       return 1;
     }
   LOG(llevError,"Error: LIFESAVE set without applied object.\n");
   CLEAR_FLAG(op, FLAG_LIFESAVE);
+  enter_player_savebed(op); /* bring him home. */
   return 0;
 }
 
