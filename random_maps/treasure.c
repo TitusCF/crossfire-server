@@ -533,6 +533,7 @@ void remove_monsters(int x,int y,mapstruct *map) {
 		remove_ob(tmp);
 		free_object(tmp);
 		tmp=get_map_ob(map,x,y);
+                if(tmp==NULL) break;
 	 };
 }
 
