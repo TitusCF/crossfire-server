@@ -929,7 +929,7 @@ treasureone shop_alchemy
   arch water
     chance 10
   more
-  list random_potion
+  list shop_potions
     chance 20
   more
   list containers
