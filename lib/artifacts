@@ -1954,13 +1954,13 @@ start_script_apply
           (begin
             (set-identified (who-am-I) #f)
             (set-cursed (who-am-I) #t)
-            (set-int (who-am-I) (+ 1 (get-dex (who-am-I))))
+            (set-int (who-am-I) (+ 1 (get-int (who-am-I))))
           )
           (if (<= rresult 3)
             (begin
               (set-identified (who-am-I) #f)
               (set-cursed (who-am-I) #t)
-              (set-wis (who-am-I) (+ 1 (get-dex (who-am-I))))
+              (set-wis (who-am-I) (+ 1 (get-wis (who-am-I))))
             )
             (if (>= rresult 99)
               (begin
@@ -1972,13 +1972,13 @@ start_script_apply
                 (begin
                   (set-identified (who-am-I) #f)
                   (set-cursed (who-am-I) #t)
-                  (set-int (who-am-I) (- (get-dex (who-am-I)) 1))
+                  (set-int (who-am-I) (- (get-int (who-am-I)) 1))
                 )
                 (if (>= rresult 97)
                   (begin
                     (set-identified (who-am-I) #f)
                     (set-cursed (who-am-I) #t)
-                    (set-wis (who-am-I) (- (get-dex (who-am-I)) 1))
+                    (set-wis (who-am-I) (- (get-wis (who-am-I)) 1))
                   )
                 )
               )
