@@ -82,6 +82,17 @@ int do_skill (object *op, int dir, char *string) {
   int skill = op->chosen_skill->stats.sp;
 
     switch(skill) {
+	 case SK_LEVITATION:
+		if(QUERY_FLAG(op,FLAG_FLYING)) { 
+		  CLEAR_FLAG(op,FLAG_FLYING);
+		  new_draw_info(NDI_UNIQUE,0,op,"You come to earth.");
+		}
+		else {
+		  SET_FLAG(op,FLAG_FLYING);
+		  new_draw_info(NDI_UNIQUE,0,op,"You rise into the air!.");
+		}
+		  			 
+		break;
       case SK_STEALING:
         success = steal(op, dir);
         break;
