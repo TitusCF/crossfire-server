@@ -117,7 +117,7 @@ void prayer_failure(object *op, int failure,int power)
     new_draw_info(NDI_UNIQUE, 0,op,"Your diety touches your mind!");
     confuse_player(op,op,99);
    }
-  else if (failure <= -60&&failure> -80) /* paralysis */
+  else if (failure <= -60&&failure> -150) /* paralysis */
   {
 #ifdef MULTIPLE_GODS
     new_draw_info_format(NDI_UNIQUE, 0,op,"%s requires you to pray NOW.",godname);
@@ -127,7 +127,7 @@ void prayer_failure(object *op, int failure,int power)
 	 new_draw_info(NDI_UNIQUE, 0,op,"You comply, ignoring all else.");
     paralyze_player(op,op,99);
   }
-  else if (failure <= -80) /* blast the immediate area */
+  else if (failure <= -150) /* blast the immediate area */
   { 
 #ifdef MULTIPLE_GODS
    new_draw_info_format(NDI_UNIQUE, 0,op,"%s smites you!",godname);
