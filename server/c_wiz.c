@@ -125,11 +125,13 @@ int command_shutdown(object *op, char *params)
 	new_draw_info(NDI_UNIQUE,0,op,"Sorry, you can't shutdown the server.");
 	return 1;
     }
-    command_kick(NULL,NULL);
-    while (first_player!=NULL)
-    {
-	leave(first_player,0);
-    }
+    /* We need to give op - command_kick expects it.  however, this means
+     * the op won't get kicked off, so we do it ourselves
+     */
+    command_kick(op,NULL);
+    check_score(op); /* Always check score */
+    (void)save_player(op,0);
+    play_again(op);
     cleanup();
     /* not reached */
     return 1;
@@ -648,11 +650,12 @@ int command_reset (object *op, char *params)
 	 */
 	if (op->map == m ) {
 	    dummy=get_object();
-	    dummy->map = m;
-	    EXIT_X(dummy) = tmp->x;
-	    EXIT_Y(dummy) = tmp->y;
+	    dummy->map = NULL;
+	    EXIT_X(dummy) = op->x;
+	    EXIT_Y(dummy) = op->y;
 	    EXIT_PATH(dummy) = add_string(op->map->path);
 	    remove_ob(op);
+	    op->map = NULL;
 	    tmp=op;
 	}
 	swap_map(m);

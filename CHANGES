@@ -17,6 +17,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 CVS changes since last release:
 
+server/c_wiz.c: fix shutdown and reset_map wizard commands/function
+so they no longer crash the server.  MSW 2001-04-22
+
 server/monster.c: add check to was_destroyed when monster fires an
    arrow.  Call was certainly missing, and appears to be responsible for
    crash.  MSW 2001-04-20
