@@ -17,6 +17,17 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 CVS changes since last release:
 
+MSW 2001/03/04:
+TODO: add re-connecting player to new client if client logs in with
+    right name/password.
+common/init.c: Open up the logfile with the provide filename when given
+    the -log option.
+server/init.c: Make set_logfile a first pass option so the init_library
+    has the right logfile name to work with.
+server/main.c: Fix crash if map has an exit path yet that file does not
+    exist.  Give proper error message.
+
+
 MSW 2001/03/01:
 server/main.c: Modified random_map code so the server will not
      crash if the exit object has no message (and thus variables to set

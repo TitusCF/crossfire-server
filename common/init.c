@@ -35,7 +35,7 @@
  * correspond to.
  */
 struct Settings settings = {
-"logfile",			/* Logfile */
+"",			        /* Logfile */
 CSPORT,				/* Client/server port */
 
 /* Debug level */
@@ -121,7 +121,14 @@ void init_environ() {
  */
 
 void init_globals() {
-    logfile = stderr;
+    if (settings.logfilename[0] == 0) {
+	logfile = stderr;
+    }
+    else if ((logfile=fopen(settings.logfilename, "w"))==NULL) {
+	fprintf(stderr,"Unable to open %s as the logfile - will use stderr instead\n",
+		settings.logfilename);
+	logfile = stderr;
+    }
     exiting = 0;
     first_player=NULL;
     first_friendly_object=NULL;

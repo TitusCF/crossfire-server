@@ -561,6 +561,11 @@ void enter_exit(object *op, object *exit_ob) {
 		else
 		    newmap = ready_map_name(EXIT_PATH(exit_ob), 0);
 	    }
+	    if (!newmap) {
+		new_draw_info_format(NDI_UNIQUE, 0, op, "The %s is closed.", exit_ob->name);
+		return;
+	    }
+
 	    /* This supports the old behaviour, but it really should not be used.
 	     * I will note for example that with this method, it is impossible to
 	     * set 0,0 destination coordinates.  Really, if we want to support
@@ -574,10 +579,7 @@ void enter_exit(object *op, object *exit_ob) {
 		    exit_ob->name?exit_ob->name:"(none)", exit_ob->x, exit_ob->y, 
 		    exit_ob->map?exit_ob->map->path:"(none)");
 	    }
-	    if (newmap) 
-		enter_map(op, newmap, x, y);
-	    else
-		new_draw_info_format(NDI_UNIQUE, 0, op, "The %s is closed.", exit_ob->name);
+	    enter_map(op, newmap, x, y);
 	}
 	/* For exits that cause damages (like pits) */
 	if(exit_ob->stats.dam && op->type==PLAYER)

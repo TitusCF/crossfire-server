@@ -128,11 +128,11 @@ struct Command_Line_Options options[] = {
 {"-uniquedir", 1, 1, set_uniquedir},
 {"-tmpdir", 1, 1, set_tmpdir},
 #endif
+{"-log", 1, 1, set_logfile},
 
 /* Pass 2 functions.  Most of these could probably be in pass 1, 
  * as they don't require much of anything to bet set up.
  */
-{"-log", 1, 2, set_logfile},
 {"-csport", 1, 2, set_csport},
 {"-detach", 0, 2, set_daemon},
 

@@ -21,6 +21,10 @@ don't have an easy fix.
 ------------------------------------------------------------------------------
 Future feature requests
 
+- If player tries to login with same name/password as a character currently
+  active, drop the old connection and associate the player with the new 
+  connection.  Useful if connection is dropped but server hasn't detected
+  it yet.
 - Generalize the code better - split between 'rules' and 'engine'.  The engine
   would be the aspect of loading/saving objects, dealing with maps, and
   basic object support (exits, levers, etc - things useful for any working
