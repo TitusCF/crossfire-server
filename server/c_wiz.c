@@ -108,11 +108,11 @@ int command_kick (object *op, char *params)
 	strcpy(op->contr->killer,"left");
 	check_score(op); /* Always check score */
 	(void)save_player(op,0);
-	play_again(op);
 	op->map->players--;
 #if MAP_MAXTIMEOUT
 	op->map->timeout = MAP_TIMEOUT(op->map);
 #endif
+	play_again(op);
       }
   return 1;
 }

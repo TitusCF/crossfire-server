@@ -580,6 +580,11 @@ void play_again(object *op)
      */
     if (!QUERY_FLAG(op, FLAG_REMOVED)) 
 	remove_ob(op);
+    /* Need to set this to null - otherwise, it could point to garbage,
+     * and draw() doesn't check to see if the player is removed, only if
+     * the map is null or not swapped out.
+     */
+    op->map = NULL;
 }
 
 

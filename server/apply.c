@@ -1973,11 +1973,11 @@ static void apply_savebed (object *pl)
     strcpy(pl->contr->killer,"left");
     check_score(pl); /* Always check score */
     (void)save_player(pl,0);
-    play_again(pl);
     pl->map->players--;
 #if MAP_MAXTIMEOUT 
     MAP_SWAP_TIME(pl->map) = MAP_TIMEOUT(pl->map);
 #endif
+    play_again(pl);
     pl->speed = 0;
     update_ob_speed(pl);
 }
