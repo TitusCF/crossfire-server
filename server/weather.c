@@ -54,6 +54,23 @@ extern weathermap_t **weathermap;
 #define WEATHERMAPTILESX		100
 #define WEATHERMAPTILESY		100
 
+/* sky conditions */
+#define SKY_CLEAR         0
+#define SKY_LIGHTCLOUD    1
+#define SKY_OVERCAST      2
+#define SKY_LIGHT_RAIN    3
+#define SKY_RAIN          4 /* rain -> storm has lightning */
+#define SKY_HEAVY_RAIN    5
+#define SKY_HURRICANE     6
+/* wierd weather 7-12 */
+#define SKY_FOG           7
+#define SKY_HAIL          8
+/* snow */
+#define SKY_LIGHT_SNOW    13 /* add 10 to rain to get snow */
+#define SKY_SNOW          14
+#define SKY_HEAVY_SNOW    15
+#define SKY_BLIZZARD      16
+
 int gulf_stream_speed[GULF_STREAM_WIDTH][WEATHERMAPTILESY];
 int gulf_stream_dir[GULF_STREAM_WIDTH][WEATHERMAPTILESY];
 int gulf_stream_start;
@@ -146,6 +163,8 @@ void tick_the_clock()
 	    write_temperaturemap();
 	if (todtick%27 == 0)
 	    write_gulfstreammap();
+	if (todtick%28 == 0 && settings.fastclock > 0)
+	    write_skymap();
     }
     get_tod(&tod);
     dawn_to_dusk(&tod);
@@ -156,6 +175,7 @@ void tick_the_clock()
 	plot_gulfstream();
         update_humid();
         init_temperature();
+	compute_sky();
     }
     /* perform_weather must follow calculators */
     perform_weather();
@@ -173,6 +193,27 @@ void tick_the_clock()
  * at boot.  If the read function cannot find the appropriate map, it
  * calls the init function, to initialize that map.
  */
+
+/* sky. We never read this map, only write it for debugging purposes */
+
+void write_skymap()
+{
+    char filename[MAX_BUF];
+    FILE *fp;
+    int x, y;
+
+    sprintf(filename, "%s/skymap", settings.localdir);
+    if ((fp = fopen(filename, "w")) == NULL) {
+	LOG(llevError, "Cannot open %s for writing\n", filename);
+	return;
+    }
+    for (x=0; x < WEATHERMAPTILESX; x++) {
+	for (y=0; y < WEATHERMAPTILESY; y++)
+	    fprintf(fp, "%d ", weathermap[x][y].sky);
+	fprintf(fp, "\n");
+    }
+    fclose(fp);
+}
 
 /* pressure */
 
@@ -1192,7 +1233,7 @@ int real_temperature(int x, int y)
     }
 
     /* windchill */
-    for (i=0; i < weathermap[x][y].windspeed; i+=i)
+    for (i=1; i < weathermap[x][y].windspeed; i+=i)
 	temp--;
 
     return temp;
@@ -1431,4 +1472,97 @@ void plot_gulfstream()
     if (gulf_stream_start < 1)
 	gulf_stream_start++;
 
+}
+
+/* let the madness, begin. */
+
+void compute_sky()
+{
+    int x, y;
+    int temp;
+
+    for (x=0; x < WEATHERMAPTILESX; x++) {
+	for (y=0; y < WEATHERMAPTILESY; y++) {
+	    temp = real_temperature(x, y);
+	    if (weathermap[x][y].pressure < 980) {
+		if (weathermap[x][y].humid < 20)
+		    weathermap[x][y].sky = SKY_LIGHTCLOUD;
+		else if (weathermap[x][y].humid < 30)
+		    weathermap[x][y].sky = SKY_OVERCAST;
+		else if (weathermap[x][y].humid < 40)
+		    weathermap[x][y].sky = SKY_LIGHT_RAIN;
+		else if (weathermap[x][y].humid < 55)
+		    weathermap[x][y].sky = SKY_RAIN;
+		else if (weathermap[x][y].humid < 70)
+		    weathermap[x][y].sky = SKY_HEAVY_RAIN;
+		else
+		    weathermap[x][y].sky = SKY_HURRICANE;
+		if (weathermap[x][y].sky < SKY_HURRICANE &&
+		    weathermap[x][y].windspeed > 30)
+		    weathermap[x][y].sky++;
+		if (temp <= 0 && weathermap[x][y].sky > SKY_OVERCAST)
+		    weathermap[x][y].sky += 10; /*let it snow*/
+	    } else if (weathermap[x][y].pressure < 1000) {
+		if (weathermap[x][y].humid < 10)
+		    weathermap[x][y].sky = SKY_CLEAR;
+		else if (weathermap[x][y].humid < 25)
+		    weathermap[x][y].sky = SKY_LIGHTCLOUD;
+		else if (weathermap[x][y].humid < 45)
+		    weathermap[x][y].sky = SKY_OVERCAST;
+		else if (weathermap[x][y].humid < 60)
+		    weathermap[x][y].sky = SKY_LIGHT_RAIN;
+		else if (weathermap[x][y].humid < 75)
+		    weathermap[x][y].sky = SKY_RAIN;
+		else
+		    weathermap[x][y].sky = SKY_HEAVY_RAIN;
+		if (weathermap[x][y].sky < SKY_HURRICANE &&
+		    weathermap[x][y].windspeed > 30)
+		    weathermap[x][y].sky++;
+		if (temp <= 0 && weathermap[x][y].sky > SKY_OVERCAST)
+		    weathermap[x][y].sky += 10; /*let it snow*/
+		if (temp > 0 && temp < 5 && weathermap[x][y].humid > 95 &&
+		    weathermap[x][y].windspeed < 3)
+		    weathermap[x][y].sky = SKY_FOG; /* rare */
+		if (temp > 0 && temp < 5 && weathermap[x][y].humid > 70 &&
+		    weathermap[x][y].windspeed > 35)
+		    weathermap[x][y].sky = SKY_HAIL; /* rare */
+	    } else if (weathermap[x][y].pressure < 1020) {
+		if (weathermap[x][y].humid < 20)
+		    weathermap[x][y].sky = SKY_CLEAR;
+		else if (weathermap[x][y].humid < 30)
+		    weathermap[x][y].sky = SKY_LIGHTCLOUD;
+		else if (weathermap[x][y].humid < 40)
+		    weathermap[x][y].sky = SKY_OVERCAST;
+		else if (weathermap[x][y].humid < 55)
+		    weathermap[x][y].sky = SKY_LIGHT_RAIN;
+		else if (weathermap[x][y].humid < 70)
+		    weathermap[x][y].sky = SKY_RAIN;
+		else
+		    weathermap[x][y].sky = SKY_HEAVY_RAIN;
+		if (weathermap[x][y].sky < SKY_HURRICANE &&
+		    weathermap[x][y].windspeed > 30)
+		    weathermap[x][y].sky++;
+		if (temp <= 0 && weathermap[x][y].sky > SKY_OVERCAST)
+		    weathermap[x][y].sky += 10; /*let it snow*/
+	    } else {
+		if (weathermap[x][y].humid < 35)
+		    weathermap[x][y].sky = SKY_CLEAR;
+		else if (weathermap[x][y].humid < 55)
+		    weathermap[x][y].sky = SKY_LIGHTCLOUD;
+		else if (weathermap[x][y].humid < 70)
+		    weathermap[x][y].sky = SKY_OVERCAST;
+		else if (weathermap[x][y].humid < 85)
+		    weathermap[x][y].sky = SKY_LIGHT_RAIN;
+		else if (weathermap[x][y].humid < 95)
+		    weathermap[x][y].sky = SKY_RAIN;
+		else
+		    weathermap[x][y].sky = SKY_HEAVY_RAIN;
+		if (weathermap[x][y].sky < SKY_HURRICANE &&
+		    weathermap[x][y].windspeed > 30)
+		    weathermap[x][y].sky++;
+		if (temp <= 0 && weathermap[x][y].sky > SKY_OVERCAST)
+		    weathermap[x][y].sky += 10; /*let it snow*/
+	    }
+	}
+    }
 }
