@@ -1163,7 +1163,7 @@ int change_skill (object *who, int sk_index)
     {
         /* optimization for changing skill to current skill */
         if (who->type == PLAYER)
-            who->contr->shoottype == range_skill;
+            who->contr->shoottype = range_skill;
         return 1;
     }
 

@@ -17,6 +17,9 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+server/skill_util.c:  Fix type in change_skill - was doing an == operation
+when it should just have been an =.  MSW 6/13/2000
+
 common/anim.c:  animation_object() - return if object does not have a valid
 animation after logging error.  Before, we logged the error and would
 promptly crash.  MSW 6/13/2000
