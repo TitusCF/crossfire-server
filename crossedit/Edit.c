@@ -474,7 +474,7 @@ static void draw_add (Edit self, int x, int y)
     if (!self->app->item.wall_map)
 	CnvDie(self->shell,"No Wall map");
 
-    if (self->app->item.wall_map->mapx < 16)
+    if (self->app->item.wall_map->map_object->x < 16)
 	CnvDie(self->shell,"Wall Map has wrong width\n");
 
     for (i = 0; i < 4; i++)
@@ -493,7 +493,7 @@ static void draw_remove (Edit self, int x, int y)
     if (!self->app->item.wall_map)
 	CnvDie(self->shell,"No Wall map");
 
-    if (self->app->item.wall_map->mapx < 16)
+    if (self->app->item.wall_map->map_object->x < 16)
 	CnvDie(self->shell,"Wall Map has wrong width\n");
 
     update_wall (self, x, y + 1, 0, 1);
@@ -584,7 +584,7 @@ static void ClearCb (Widget w, XtPointer client, XtPointer call)
 
     debug1("ClearCb() %s\n",self->emap->path);
     if(self->read_only) return;
-    tmp = get_empty_map(self->emap->mapx,self->emap->mapy);
+    tmp = get_empty_map(self->emap->map_object->x,self->emap->map_object->y);
     copy_map (self->emap, tmp); 
     EdFreeMap(self);
     self->emap = tmp;
@@ -829,16 +829,16 @@ static void ResizeCb (Widget w, XtPointer client, XtPointer call)
 	return;
 
     sprintf (buf, "%dx%d+0+0", 
-	     self->emap->mapx, self->emap->mapy);
+	     self->emap->map_object->x, self->emap->map_object->y);
     switch (CnvPrompt ("ResizeScroll",
 		       buf, path,"OK",NULL)) {
     case 1:
 	res = XParseGeometry (path, &sx, &sy, &x, &y);
 	
 	if (!(res & WidthValue))
-	    x = self->emap->mapx;
+	    x = self->emap->map_object->x;
 	if (!(res & HeightValue))
-	    y = self->emap->mapy;
+	    y = self->emap->map_object->y;
 	
 	if (!(res & XValue))
 	    sx = 0;
@@ -1116,13 +1116,13 @@ static void Layout(Edit self,Widget parent,Cardinal stacking)
     self->shell = XtVaCreatePopupShell 
       ("edit",topLevelShellWidgetClass, self->app->shell,
        XtNwidth,
-       ((unsigned int)self->emap->mapx > self->app->res.mapWidth ?
+       ((unsigned int)self->emap->map_object->x > self->app->res.mapWidth ?
 	self->app->res.mapWidth * FontSize :
-	self->emap->mapx * FontSize ) + 16,/* kludge */
+	self->emap->map_object->x * FontSize ) + 16,/* kludge */
        XtNheight,
-       ((unsigned int)self->emap->mapy > self->app->res.mapHeight ?
+       ((unsigned int)self->emap->map_object->y > self->app->res.mapHeight ?
 	self->app->res.mapHeight * FontSize :
-	self->emap->mapy * FontSize ) + 46,/* kludge */
+	self->emap->map_object->y * FontSize ) + 46,/* kludge */
        XtNiconPixmap,bitmaps.edit,
        NULL);
     vbox = XtVaCreateManagedWidget ("vbox", panedWidgetClass,
@@ -1534,15 +1534,15 @@ void EditCopyRectangle(Edit self,Edit src,XRectangle rect,int sx,int sy)
        self->read_only)
 	return;
 
-    if (rect.width > self->emap->mapx - sx)
-	rect.width = self->emap->mapx - sx;
-    if (rect.width > (unsigned int)src->emap->mapx)
-	rect.width = src->emap->mapx;
+    if (rect.width > self->emap->map_object->x - sx)
+	rect.width = self->emap->map_object->x - sx;
+    if (rect.width > (unsigned int)src->emap->map_object->x)
+	rect.width = src->emap->map_object->x;
 
-    if (rect.height > self->emap->mapy - sy)
-	rect.height = self->emap->mapy - sy;
-    if (rect.height > (unsigned int)src->emap->mapy)
-	rect.height = src->emap->mapy;
+    if (rect.height > self->emap->map_object->y - sy)
+	rect.height = self->emap->map_object->y - sy;
+    if (rect.height > (unsigned int)src->emap->map_object->y)
+	rect.height = src->emap->map_object->y;
 
     debug2("EditCopyRectangle() %s -> %s\n",EditGetPath(src),
 	  EditGetPath(self));

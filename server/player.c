@@ -141,8 +141,9 @@ static void get_player(player *p) {
     strncpy(p->title,op->arch->clone.name,MAX_NAME);
     op->race = add_string (op->arch->clone.race);
 
-    (void)memset((void *)op->contr->drawn,'\0',
-	       sizeof(Fontindex)*(WINRIGHT-WINLEFT+1)*(WINLOWER-WINUPPER+1));
+    (void)memset((void *)op->contr->drawn,0,
+	       sizeof(New_Face)* MAP_CLIENT_X * MAP_CLIENT_Y);
+
     for(i=0;i<NROFREALSPELLS;i++)
 	p->known_spells[i]= -1;
     p->nrofknownspells=0;
@@ -2193,9 +2194,11 @@ int player_can_view (object *pl,object *op) {
      * a blocked los square. */
     if(op->head) { op = op->head; }
     while(op) {
-      if(pl->y + WINUPPER <= op->y && pl->y + WINLOWER >= op->y 
-          && pl->x + WINLEFT <= op->x && pl->x + WINRIGHT >= op->x
-          && !pl->contr->blocked_los[op->x-pl->x+5][op->y-pl->y+5] ) 
+      if(pl->y - MAP_CLIENT_Y/2 <= op->y && 
+	 pl->y + MAP_CLIENT_Y/2 >= op->y &&
+         pl->x - MAP_CLIENT_X/2 <= op->x && 
+	 pl->x + MAP_CLIENT_X/2 >= op->x &&
+	 !pl->contr->blocked_los[op->x-pl->x+MAP_CLIENT_X/2][op->y-pl->y+MAP_CLIENT_Y/2] ) 
         return 1;
       op = op->more;
     }

@@ -922,6 +922,8 @@ object *update_position (mapstruct *m, int x, int y) {
 	    }
 	}
     }
+    if (f1.face == floor.face) f1.face = blank_face;
+    if (top.face == f1.face) f1.face = blank_face;
     set_map (m, x, y, &top);
     set_map_floor2(m, x, y, &f1);
     set_map_floor(m,x,y,&floor);

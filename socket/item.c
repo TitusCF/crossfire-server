@@ -716,10 +716,10 @@ void LookAt(char *buf, int len,player *pl)
     }
     dy=atoi(cp);
 
-    if(dx<WINLEFT||dx>WINRIGHT||dy<WINUPPER||dy>WINLOWER)
+    if (FABS(dx)>MAP_CLIENT_X/2 || FABS(dy)>MAP_CLIENT_Y/2)
           return;
 
-    if(pl->blocked_los[dx+5][dy+5])
+    if(pl->blocked_los[dx+MAP_CLIENT_X/2][dy+MAP_CLIENT_Y/2])
           return;
     look_at(pl->ob, dx, dy);
 }

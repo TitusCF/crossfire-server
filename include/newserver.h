@@ -45,7 +45,7 @@ struct MapCell {
 };
 
 struct Map {
-  struct MapCell cells[11][11];
+  struct MapCell cells[MAP_CLIENT_X][MAP_CLIENT_Y];
 };
 
 /* True max is 16383 given current map compaction method */
@@ -100,6 +100,7 @@ typedef struct NewSocket {
     uint32  update_look:1;  /* If true, we need to send the look window */
     uint32  can_write:1;    /* Can we write to this socket? */
     uint16  look_position;  /* start of drawing of look window */
+    uint8   mapx, mapy;	    /* How large a map the client wants */
 
     /* Below here is information only relevant for old sockets */
     char    *comment;	    /* name or listen comment */

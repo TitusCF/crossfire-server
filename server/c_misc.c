@@ -124,7 +124,7 @@ void malloc_info(object *op) {
   for(pl=first_player,players=0;pl!=NULL;pl=pl->next,players++);
   for(m=first_map,nrofmaps=0;m!=NULL;m=m->next,nrofmaps++)
     if(m->in_memory == MAP_IN_MEMORY)
-      mapmem+=m->mapx*m->mapy*(sizeof(object *)+sizeof(MapLook *)*3),
+      mapmem+=m->map_object->x*m->map_object->y*(sizeof(object *)+sizeof(MapLook *)*3),
       nrm++;
   sprintf(errmsg,"Sizeof: object=%ld  player=%ld  map=%ld",
           (long)sizeof(object),(long)sizeof(player),(long)sizeof(mapstruct));
@@ -198,7 +198,7 @@ void current_map_info(object *op) {
 	new_draw_info_format(NDI_UNIQUE, 0, op,
 		"players:%d difficulty:%d size:%dx%d start:%dx%d timeout %ld", 
 		 m->players, m->difficulty, 
-		 m->mapx, m->mapy, 
+		 m->map_object->x, m->map_object->y, 
 		 EXIT_X(m->map_object), EXIT_Y(m->map_object),
 		 MAP_TIMEOUT(m));
 
@@ -1068,9 +1068,9 @@ int command_style_map_info(object *op, char *params)
 
     for (mp = styles; mp!=NULL; mp=mp->next) {
 	maps_used++;
-	mapmem += mp->mapx*mp->mapy*(sizeof(object *)+sizeof(MapLook *)*3) + sizeof(mapstruct);
-	for (x=0; x<mp->mapx; x++) {
-	    for (y=0; y<mp->mapy; y++) {
+	mapmem += mp->map_object->x*mp->map_object->y*(sizeof(object *)+sizeof(MapLook *)*3) + sizeof(mapstruct);
+	for (x=0; x<mp->map_object->x; x++) {
+	    for (y=0; y<mp->map_object->y; y++) {
 		for (tmp=get_map_ob(mp, x, y); tmp!=NULL; tmp=tmp->above) 
 		    objects_used++;
 	    }

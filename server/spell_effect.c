@@ -153,8 +153,8 @@ void aggravate_monsters(object *op) {
 
   spell_effect(SP_AGGRAVATION, op->x, op->y, op->map, op);
 
-  for (i = 0; i < op->map->mapx; i++)
-    for (j = 0; j < op->map->mapy; j++) {
+  for (i = 0; i < op->map->map_object->x; i++)
+    for (j = 0; j < op->map->map_object->y; j++) {
       if (out_of_map(op->map, op->x + i , op->y + j))
         continue;
       for (tmp = get_map_ob(op->map, op->x + i, op->y + j);
@@ -973,7 +973,7 @@ int dimension_door(object *op,int dir) {
 	 * a no magic spot.
 	 */
 	if(blocked(op->map,op->x+freearr_x[dir]*dist, op->y+freearr_y[dir]*dist)){
-	    int x=RANDOM()%op->map->mapx,y=RANDOM()%op->map->mapy;
+	    int x=RANDOM()%op->map->map_object->x,y=RANDOM()%op->map->map_object->y;
 
 	    if(blocked(op->map,x,y) || blocks_magic(op->map,x,y)) {
 		new_draw_info(NDI_UNIQUE, 0,op,"You cast your spell, but nothing happens.\n");
@@ -2072,8 +2072,8 @@ int cast_detection(object *op, int type) {
     return 0;
   }
 
-  for (x = op->x + WINLEFT; x <= op->x + WINRIGHT; x++)
-    for (y = op->y + WINUPPER; y <= op->y + WINLOWER; y++) {
+  for (x = op->x - MAP_CLIENT_X/2; x <= op->x + MAP_CLIENT_X/2; x++)
+    for (y = op->y - MAP_CLIENT_Y/2; y <= op->y + MAP_CLIENT_Y/2; y++) {
       if (out_of_map(op->map, x, y))
         continue;
       done_one = 0;

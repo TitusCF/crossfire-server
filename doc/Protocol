@@ -114,7 +114,7 @@ overflowing), it looks like we just terminate the connection without saving
 (meaning last save takes effect.)  This can certainly be abused the same way
 that currently killing the server (ie, go to treasure chamber, get all the
 treasure, kill server, wait for map to reset, play again, with you starting
-in the treasure chamber.
+in the treasure chamber.)
 
 I don't know if there is a really good way to handle it.  The other method
 would be to save the player back in town.  But this then gets the situation
@@ -258,7 +258,7 @@ C->S: command [count] <txt>
 
     Client sends a command to the server.  Ordinary commands (ie, north,
     west, apply, maps, etc), might be sent, commands with options may be sent
-    (ie, 'invoke create food of booze', 'cast medium fireball'.  There are a
+    (ie, 'invoke create food of booze', 'cast medium fireball').  There are a
     few special commands that can also be sent.
 
     'fire' command is a special case.  The server will handle repeat firing. 
@@ -374,7 +374,7 @@ S->C: item1 <location><tag1><flags1><weight1><face1><name1><anim1>
 	sometime in the future.
 
 	location is where the object is located (0=ground, any other value
-	means is the tag of the object (either player or container).  This
+	means is the tag of the object (either player or container)).  This
 	value is sent as 4 bytes. 
 
 	tag is the item tag - unique for each item (however, a tag might
@@ -559,7 +559,7 @@ S->C: map <ecell1><ecell2>...<255>[<face1><cell1...><face2><cell2...>]
 	space.  Like other data, they are stored MSB first.  The MSB of
 	the last face in a layer has the high bit set.  this makes the max
 	theoretical face number that is supported to 32767 (old code says
-	16383, but that certainly doesn't seem right.)  It would seem that
+	16383, but that certainly does not seem right).  It would seem that
 	a marker of 0xff could be put at the end of a layer, and only cost
 	a byte, but at present, that doesn't seem really important.
 
@@ -579,6 +579,82 @@ S->C: map <ecell1><ecell2>...<255>[<face1><cell1...><face2><cell2...>]
 	data scenario right now is roughly 1100 bytes of data sent (a very
 	unlikely scenario - it assumes 3 images per space and no redundant
 	images.
+
+S->C: map1 <coord1>[darkness1][face1a][face1b][face1c]<coord2>[darkness2][face2a]...
+
+	This is an update of the map command to support large map sizes.
+	The old map command supported a maximum map size of 15x15 -
+	anything larger than that required a new command.
+
+	Given that this larger map now needs 2 bytes for the coordinates -
+	the same as for the images, trying to optimize one vs the other
+	does not makes much sense.
+
+	All data is in standard binary form.
+
+	the coord values are flags + x + y values.  The value itself, but
+	the data represented looks like this:
+	first 6 bits: The x coordinate
+	next 6 bits: the y coordinate
+	last 4 bits: MSB - true if we send darkness
+		     MSB-1 - will send floor face
+		     MSB-2 - will send intermediate face
+		     MSB-3 (aka LSB) - will send top face
+
+	6 bits is enough for 63x63 maps.  For the time being, it should
+	be a safe assumption that we won't be sending anything larger
+	than that.
+
+	Through the use of this bitmasks, any and all of the following values
+	may be optional.  This allows the update of one face on the space
+	without needing to send the others (in the old map command, this is
+	not possible, so as an arrow flies over a space, the floor + arrow
+	needs to get resent - this allows just the arrow to get sent).
+	This should conserve bandwidth when spells are cast (we have an
+	extra byte for the coordinate, but save 2 bytes for the image
+	itself, plus another 2 potential bytes if there is something on the
+	space.)
+
+
+	If all the flag values are 0, this then means the space is considered
+	blocked from view, and should be drawn as black.  This conserves
+	bandwidth for sending blocked spaces, which occur pretty frequently.
+	Once a space is marked as block, if it re-appears within view, the 3
+	layers should be marked is blank.
+
+	For spaces that are empty, one or more of the faces will be sent as
+	blank faces (exactly how many will depend on what was on the floor
+	before - for example, if a floor disappears, then only the floor needs
+	to get updated, but if there was stuff on the floor, then that face
+	will also need to get cleared).  There may be cases where
+	transitioning from the blocked to empty space occurs, in which case
+	the client will send the floor as an empty space.
+
+	The darkness value is a single byte - 0 is pitch black, while 255 is
+	fully illuminated.  It is up to the client to figure out what it wants
+	to do with this (use masking to reduce visibility, or actually do a
+	real light reduction on the image).
+
+	the face values are 16 bit values, as before.  They will be sent
+	in MSB order of the flag (ie, floor, then intermediate, then
+	top, presuming the bit in the flag is set that says that layer
+	is being sent).  Blank faces may get sent if an object disappears -
+	in the example of the flying arrow, for the space the arrow
+	leaves, a blank face will be sent in place of the arrow.  Blank faces
+	will be sent as face 0.
+
+	Note that this implementation is much simpler than the prior one
+	because it now works on spaces rather than layers, and most all the
+	code also works on spaces.
+
+	The downside of this is that this will need to get redone
+	if we want to put more than 3 faces on a space (as we are then
+	out of bits).  It would be trivial to do something different, like
+	send as many faces as desired and just have a marking tag at the
+	end - the problem with this is that if something changes,
+	then once again, you need to send the entire space as there is
+	no way to say 'face xyz has disappeared'.  And in any case, to
+	support more faces will require more work on the server.
 
 S->C: map_scroll <dx> <dy>
 	This tells the client to scroll the map dx and dy direction.  dx and
@@ -643,18 +719,45 @@ C->S: lookat <dx> <dy>
 C->S
 S->C: setup <option1> <value1> <option2> <value2>
 	Client first sends a setup command to the server to request a change
-	in some value (option1).  As of 2001-05-28, the two options
-	supported are sound and sexp (send skill experience).
-	The value is what the client wants these values set to.  In the
-	case of sound and sexp, these are just ints (0/1). but the data in
-	fact can be anything (it is like a mapsize xXy setup may be added
-	which sets the map size to x X y).
-	Upon success, the server send back the setup in the same form the
-	client sent it, confirming that in fact it has taken and set the
-	required value.  If the server gets an option it does not understand,
-	it returns 'FALSE' as the value.  In cases where the option is valid
-	but the parameter is not (out of range), the server should return
-	the closest value that is withing range.
+	in some value (option1).
+
+	The following options are supported:
+
+	sound, sexp (send skill experience).
+	    Set to true if the client wants to get sent this information,
+	    false otherwise.  These are integers in string form (0/1).
+
+	mapsize x X y
+	    Sets the map size to x X y.  Note the spaces here are only for
+	    clarity - there should be no spaces when actually sent (it
+	    should be 11x11 or 25x25).  The default map size unless changed
+            is 11x11.  The minimum map size the server will allow is 9x9
+	    (no technical reason this could be smaller, but I don't think
+	    the game would be smaller).  The maximum map size supported in the
+	    current protocol is 63x63.  However, each server can have its
+ 	    maximum map size sent to most any value.
+
+	    If the client sends a mapsize command out of valid range, the
+	    server will respond with a mapsize with the maximum size
+            the server supports.  Thus, if the client wants to know the maximum
+            map size, it can just do a 'mapsize 0x0' and it will get the
+            maximum size back.
+
+	    The server will only set the mapsize for the client if both x & y values
+	    are valid.  For example, if the maximum map size is 25x25, and the
+	    client sends a 31x23 mapsize request, the mapsize will remain at
+	    11x11 (default) and the server will send back a mapsize 25x25
+	    setup command.
+
+	    When the values are valid, the server will send back a mapsize
+	    XxY setup command.  Note that this is from its parsed values,
+	    so it may not match stringwise with what the client sent, but will
+	    match 0 wise.  For example, the client may send a 'mapsize 025X025'
+	    command, in which case the server will respond with a
+	    'mapsize 25x25' command - the data is functionally the same.
+
+	    While the server in theory supports non square viewing regions,
+            this has not be tested.
 
 	All data in the setup command is in ascii text form.  options and
 	values can not have whitepace - the client and server use whitspace

@@ -217,16 +217,16 @@ EXTERN char *font_graphic;
 #endif
 
 
-#define set_map(M,X,Y,C)	((M)->map[(X)+((M)->mapx*(Y))]=*(C))
-#define get_map(M,X,Y)		(&(M)->map[(X)+((M)->mapx*(Y))])
-#define set_map_ob(M,X,Y,tmp)	((M)->map_ob[(X)+((M)->mapx*(Y))]=(tmp))
-#define get_map_ob(M,X,Y)	((M)->map_ob[(X)+((M)->mapx*(Y))])
-#define out_of_map(M,X,Y)	((X)<0||(X)>=(M)->mapx||(Y)<0||(Y)>=(M)->mapy)
-#define get_map_floor(M,X,Y)	(&(M)->floor[(X)+((M)->mapx*(Y))])
-#define set_map_floor(M,X,Y,C)	((M)->floor[(X)+((M)->mapx*(Y))]=*(C))
+#define set_map(M,X,Y,C)	((M)->map[(X)+((M)->map_object->x*(Y))]=*(C))
+#define get_map(M,X,Y)		(&(M)->map[(X)+((M)->map_object->x*(Y))])
+#define set_map_ob(M,X,Y,tmp)	((M)->map_ob[(X)+((M)->map_object->x*(Y))]=(tmp))
+#define get_map_ob(M,X,Y)	((M)->map_ob[(X)+((M)->map_object->x*(Y))])
+#define out_of_map(M,X,Y)	((X)<0||(X)>=(M)->map_object->x||(Y)<0||(Y)>=(M)->map_object->y)
+#define get_map_floor(M,X,Y)	(&(M)->floor[(X)+((M)->map_object->x*(Y))])
+#define set_map_floor(M,X,Y,C)	((M)->floor[(X)+((M)->map_object->x*(Y))]=*(C))
 
-#define get_map_floor2(M,X,Y)	(&(M)->floor2[(X)+((M)->mapx*(Y))])
-#define set_map_floor2(M,X,Y,C)	((M)->floor2[(X)+((M)->mapx*(Y))]=*(C))
+#define get_map_floor2(M,X,Y)	(&(M)->floor2[(X)+((M)->map_object->x*(Y))])
+#define set_map_floor2(M,X,Y,C)	((M)->floor2[(X)+((M)->map_object->x*(Y))]=*(C))
 
 #define decrease_ob(xyz) decrease_ob_nr(xyz,1)
 

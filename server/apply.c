@@ -2479,8 +2479,8 @@ void fix_auto_apply(mapstruct *m) {
 
   if(m==NULL) return;
 
-  for(x=0;x<m->mapx;x++)
-    for(y=0;y<m->mapy;y++)
+  for(x=0;x<m->map_object->x;x++)
+    for(y=0;y<m->map_object->y;y++)
       for(tmp=get_map_ob(m,x,y);tmp!=NULL;tmp=above) {
         above=tmp->above;
 
@@ -2514,8 +2514,8 @@ void fix_auto_apply(mapstruct *m) {
             create_treasure(tmp->randomitems, tmp, GT_APPLY,
                             m->difficulty,0);
       }
-  for(x=0;x<m->mapx;x++)
-    for(y=0;y<m->mapy;y++)
+  for(x=0;x<m->map_object->x;x++)
+    for(y=0;y<m->map_object->y;y++)
       for(tmp=get_map_ob(m,x,y);tmp!=NULL;tmp=tmp->above)
 	if (tmp->above &&
             (tmp->type == TRIGGER_BUTTON || tmp->type == TRIGGER_PEDESTAL))

@@ -6,7 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 1994 Mark Wedel
+    Copyright (C) 2001 Mark Wedel
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -23,7 +23,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to mark@pyramid.com
+    The author can be reached via e-mail to mwedel@scruz.net
 */
 
 /*  Specials in this file:
@@ -75,10 +75,10 @@ void include_map_in_map(mapstruct *dest_map, mapstruct *in_map,int x, int y) {
   object *new_ob;
   
   /* First, splatter everything in the dest map at the location */
-  nuke_map_region(dest_map,x,y,in_map->mapx,in_map->mapy);
+  nuke_map_region(dest_map,x,y,in_map->map_object->x,in_map->map_object->y);
 		
-  for(i=0;i<in_map->mapx;i++) 
-    for(j=0;j<in_map->mapy;j++) {
+  for(i=0;i<in_map->map_object->x;i++) 
+    for(j=0;j<in_map->map_object->y;j++) {
       for(tmp=get_map_ob(in_map,i,j);tmp!=NULL;tmp=tmp->above) {
         /* don't copy things with multiple squares:  must be dealt with
            specially. */
@@ -101,13 +101,13 @@ int find_spot_for_submap(mapstruct *map,char **layout,int *ix, int *iy,int xsize
   int l,m;
   /* don't even try to place a submap into a map if the big map isn't
      sufficiently large. */
-  if(2*xsize > map->mapx || 2*ysize > map->mapy) return 0;
+  if(2*xsize > map->map_object->x || 2*ysize > map->map_object->y) return 0;
   
   /* search a bit for a completely free spot. */
   for(tries=0;tries<20;tries++) {
     /* pick a random location in the layout */
-    i = RANDOM() % (map->mapx - xsize-2)+1;
-    j = RANDOM() % (map->mapy - ysize-2)+1;
+    i = RANDOM() % (map->map_object->x - xsize-2)+1;
+    j = RANDOM() % (map->map_object->y - ysize-2)+1;
     is_occupied=0;
     for(l=i;l<i + xsize;l++)
       for(m=j;m<j + ysize;m++)
@@ -121,8 +121,8 @@ int find_spot_for_submap(mapstruct *map,char **layout,int *ix, int *iy,int xsize
   if(is_occupied) { /* failure, try a relaxed placer. */
     /* pick a random location in the layout */
     for(tries=0;tries<10;tries++) {
-      i = RANDOM() % (map->mapx - xsize-2)+1;
-      j = RANDOM() % (map->mapy - ysize-2)+1;
+      i = RANDOM() % (map->map_object->x - xsize-2)+1;
+      j = RANDOM() % (map->map_object->y - ysize-2)+1;
       is_occupied=0;
       for(l=i;l<i + xsize;l++)
         for(m=j;m<j + ysize;m++)
@@ -144,8 +144,8 @@ void place_fountain_with_specials(mapstruct *map) {
   object *potion=get_object();
   copy_object(pick_random_object(fountain_style),potion);
   while(i<0 && tries<10) {
-    ix = RANDOM() % (map->mapx -2) +1;
-    iy = RANDOM() % (map->mapx -2) +1;
+    ix = RANDOM() % (map->map_object->x -2) +1;
+    iy = RANDOM() % (map->map_object->x -2) +1;
     i = find_first_free_spot(fountain->arch,map,ix,iy);
     tries++;
   };
@@ -181,8 +181,8 @@ void place_special_exit(mapstruct * map, int hole_type,RMParms *RP) {
   copy_object(pick_random_object(exit_style),the_exit);
 
   while(i<0) {
-    ix = RANDOM() % (map->mapx -2) +1;
-    iy = RANDOM() % (map->mapx -2) +1;
+    ix = RANDOM() % (map->map_object->x -2) +1;
+    iy = RANDOM() % (map->map_object->x -2) +1;
     i = find_first_free_spot(the_exit->arch,map,ix,iy);
   };
   
@@ -254,7 +254,7 @@ void place_specials_in_map(mapstruct *map, char **layout,RMParms *RP) {
     special_map = find_style("/styles/specialmaps",0,RP->difficulty); 
     if(special_map==NULL) return;
 	 
-    if(find_spot_for_submap(map,layout,&ix,&iy,special_map->mapx,special_map->mapy)) 
+    if(find_spot_for_submap(map,layout,&ix,&iy,special_map->map_object->x,special_map->map_object->y)) 
       include_map_in_map(map,special_map,ix,iy);
     break;
   }

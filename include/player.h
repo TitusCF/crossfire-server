@@ -32,14 +32,6 @@ typedef struct {
   uint16 count;			/* How many times we got this message */
 } Output_Buf;
 
-/* These set how many spaces in each direction the viewable map extends 
- * from the player.
- */
-#define WINUPPER (-5)
-#define WINLOWER 5
-#define WINLEFT (-5)
-#define WINRIGHT 5
-
 /* this is already in define.h */
 /*#define MAX_NAME 16*/   /* Max length of character name */
 
@@ -132,19 +124,25 @@ typedef struct pl {
   object *ob;            /* The object representing the player */
   object *last_used;     /* Pointer to object last picked or applied */
   long last_used_id;     /* Safety measures to be sure it's the same */
-  New_Face *drawn[WINRIGHT-WINLEFT+1][WINLOWER-WINUPPER+1]; /* Last displayed */
-  /* Floor the player is standing on */
-  New_Face *floor[WINRIGHT-WINLEFT+1][WINLOWER-WINUPPER+1];
-  int darkmask[WINRIGHT-WINLEFT+1][WINLOWER-WINUPPER+1];
-  New_Face *floor2[WINRIGHT-WINLEFT+1][WINLOWER-WINUPPER+1];
-  sint8 blocked_los[WINRIGHT-WINLEFT+1][WINLOWER-WINUPPER+1];
-  char title[MAX_NAME];
+
+
+  /* As the names suggest, these are how various aspects of the map
+   * look like.  This is basically used to compare what we last
+   * sent to the client so we only send what changed.
+   */
+  New_Face  *drawn[MAP_CLIENT_X][MAP_CLIENT_Y]; /* Last displayed */
+  New_Face  *floor[MAP_CLIENT_X][MAP_CLIENT_Y];
+  New_Face  *floor2[MAP_CLIENT_X][MAP_CLIENT_Y];
+  int	    darkmask[MAP_CLIENT_X][MAP_CLIENT_Y];
+  sint8	    blocked_los[MAP_CLIENT_X][MAP_CLIENT_Y];
+
   
 /* Eneq(@csd.uu.se): Since there is no direct link between characters title and
    his level I figure that it doesn't matter what title he has so I have made
    it possible for him/her to define this in the resources. */
   
   char own_title[MAX_NAME];
+  char title[MAX_NAME];
   
   signed char levhp[11]; /* What the player gained on that level */
   signed char levsp[11];

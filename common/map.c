@@ -221,7 +221,7 @@ void dump_map_lights(mapstruct *m) {
 void dump_map(mapstruct *m) {
   LOG(llevError,"Map %s status: %d.\n",m->path,m->in_memory);
   LOG(llevError,"Size: %dx%d Start: %d,%d\n",
-          m->mapx,m->mapy,
+          m->map_object->x,m->map_object->y,
 	  EXIT_X(m->map_object), EXIT_Y(m->map_object));
   if(m->map_object->msg!=NULL)
     LOG(llevError,"Message:\n%s",m->map_object->msg);
@@ -399,8 +399,8 @@ void refresh_map(mapstruct *m) {
 
   if(m==NULL || m->in_memory != MAP_IN_MEMORY)
     return;
-  for(x=0;x<m->mapx;x++)
-    for(y=0;y<m->mapy;y++) {
+  for(x=0;x<m->map_object->x;x++)
+    for(y=0;y<m->map_object->y;y++) {
 /* Eneq(@csd.uu.se): Hunting down inappropriate objects in the map. The game
    sometime hangs and tries to remove_removed objects etc. */
       for(active=tmp=get_map_ob(m,x,y);tmp!=NULL;tmp=tmp2)
@@ -413,10 +413,10 @@ void refresh_map(mapstruct *m) {
           LOG(llevError,"Crossfire: Found removed object in map.\n");
           active=(tmp->above==NULL?tmp->below:tmp->above);
           if (tmp->below==NULL&&tmp2==NULL)
-            m->map_ob[x+m->mapx*y]=NULL;
+            m->map_ob[x+m->map_object->x*y]=NULL;
           else if (tmp->below==NULL&&tmp2!=NULL) {
             tmp2->below=NULL;
-            m->map_ob[x+m->mapx*y]=tmp2;
+            m->map_ob[x+m->map_object->x*y]=tmp2;
           } else if (tmp->below!=NULL&&tmp2==NULL)
             tmp->below->above=NULL;
           else if (tmp->below!=NULL&&tmp2!=NULL) {
@@ -607,8 +607,8 @@ void save_objects (mapstruct *m, FILE *fp, FILE *fp2) {
     int i, j = 0,unique=0;
     object *op, *tmp, *otmp;
     /* first pass - save one-part objects */
-    for(i = 0; i < m->mapx; i++)
-	for (j = 0; j < m->mapy; j++) {
+    for(i = 0; i < m->map_object->x; i++)
+	for (j = 0; j < m->map_object->y; j++) {
 	    unique=0;
 	    for(op = get_map_ob (m, i, j); op; op = otmp) {
 		otmp = op->above;
@@ -632,8 +632,8 @@ void save_objects (mapstruct *m, FILE *fp, FILE *fp2) {
 	    }
 	}
     /* second pass - save multi-part objects */
-    for(i = 0; i < m->mapx; i++)
-        for (j = 0; j < m->mapy; j++) {
+    for(i = 0; i < m->map_object->x; i++)
+        for (j = 0; j < m->map_object->y; j++) {
 	    unique=0;
             for(op = get_map_ob (m, i, j); op; op = otmp) {
                 otmp = op->above;
@@ -997,16 +997,16 @@ void make_path_to_file (char *filename)
 void clear_map(mapstruct *m) {
     MapLook *aptr, *endptr;
 
-    endptr=m->map+m->mapx*m->mapy;
+    endptr=m->map+m->map_object->x*m->map_object->y;
     for(aptr=m->map; aptr < endptr; ++aptr)
 	*aptr = blank_look;
-    endptr=m->floor+m->mapx*m->mapy;
+    endptr=m->floor+m->map_object->x*m->map_object->y;
     for(aptr=m->floor; aptr < endptr; ++aptr)
 	*aptr = blank_look;
-    endptr=m->floor2+m->mapx*m->mapy;
+    endptr=m->floor2+m->map_object->x*m->map_object->y;
     for(aptr=m->floor2; aptr < endptr; ++aptr)
 	*aptr = blank_look;
-    memset(m->map_ob, 0,sizeof(object *)*m->mapx*m->mapy);
+    memset(m->map_ob, 0,sizeof(object *)*m->map_object->x*m->map_object->y);
 }
 
 /*
@@ -1021,14 +1021,14 @@ void copy_map(mapstruct *m1, mapstruct *m2) {
   int x,y;
 
   strncpy(m2->path,m1->path,BIG_NAME);
-  x = m2->mapx;
-  y = m2->mapy;
+  x = m2->map_object->x;
+  y = m2->map_object->y;
   copy_object (m1->map_object, m2->map_object);
-  m2->mapx = x;
-  m2->mapy = y;  
+  m2->map_object->x = x;
+  m2->map_object->y = y;  
 
-  for(x=0;x<m1->mapx&&x<m2->mapx;x++)
-    for(y=0;y<m1->mapy&&y<m2->mapy;y++) {
+  for(x=0;x<m1->map_object->x&&x<m2->map_object->x;x++)
+    for(y=0;y<m1->map_object->y&&y<m2->map_object->y;y++) {
       set_map(m2,x,y,get_map(m1,x,y));
     }
 }
@@ -1042,8 +1042,8 @@ void relink_objs_offset(mapstruct *m1, mapstruct *m2, int dx, int dy) {
   int x,y;
   object *ob;
 
-  for (x = 0; x < m1->mapx && x < m2->mapx + dx; x++)
-    for (y = 0; y < m1->mapy && y < m2->mapy + dy; y++) {
+  for (x = 0; x < m1->map_object->x && x < m2->map_object->x + dx; x++)
+    for (y = 0; y < m1->map_object->y && y < m2->map_object->y + dy; y++) {
       set_map(m2, x + dx, y + dy, get_map(m1, x, y));
       set_map_ob(m2, x + dx, y + dy, get_map_ob(m1, x, y));
       set_map_ob(m1, x, y, (object *) NULL);
@@ -1084,8 +1084,8 @@ void free_all_objects(mapstruct *m) {
   int i,j;
   object *op;
 
-  for(i=0;i<m->mapx;i++)
-    for(j=0;j<m->mapy;j++) {
+  for(i=0;i<m->map_object->x;i++)
+    for(j=0;j<m->map_object->y;j++) {
       object *previous_obj=NULL;
         while((op=get_map_ob(m,i,j))!=NULL) {
           if (op==previous_obj)
@@ -1119,8 +1119,8 @@ void move_all_objects(mapstruct *m1, mapstruct *m2) {
   int i,j;
   object *op;
 
-  for(i=0;i<m1->mapx&&i<m2->mapx;i++)
-    for(j=0;j<m1->mapy&&j<m2->mapy;j++) {
+  for(i=0;i<m1->map_object->x&&i<m2->map_object->x;i++)
+    for(j=0;j<m1->map_object->y&&j<m2->map_object->y;j++) {
       while((op=get_map_ob(m1,i,j))!=NULL&&op->head==NULL) {
         remove_ob(op);
         op->x=i,op->y=j; /* Not really needed */
@@ -1239,10 +1239,10 @@ void allocate_map(mapstruct *m) {
   if(m->in_memory != MAP_SWAPPED )
     return;
   m->in_memory = MAP_IN_MEMORY;
-  m->map=(MapLook *) CALLOC(m->mapx*m->mapy,sizeof(MapLook));
-  m->floor=(MapLook *) CALLOC(m->mapx*m->mapy,sizeof(MapLook));
-  m->map_ob=(object **) CALLOC(m->mapx*m->mapy,sizeof(object *));
-  m->floor2=(MapLook *) CALLOC(m->mapx*m->mapy,sizeof(MapLook));
+  m->map=(MapLook *) CALLOC(m->map_object->x*m->map_object->y,sizeof(MapLook));
+  m->floor=(MapLook *) CALLOC(m->map_object->x*m->map_object->y,sizeof(MapLook));
+  m->map_ob=(object **) CALLOC(m->map_object->x*m->map_object->y,sizeof(object *));
+  m->floor2=(MapLook *) CALLOC(m->map_object->x*m->map_object->y,sizeof(MapLook));
   if(m->map==NULL||m->map_ob==NULL || m->floor==NULL || m->floor2==NULL)
     fatal(OUT_OF_MEMORY);
 }
@@ -1260,8 +1260,8 @@ mapstruct *get_empty_map (int sizex, int sizey) {
 	    break;
     if (tmp) {
 	m->map_object = ObjectCreateArch (tmp);
-	m->mapx = sizex;
-	m->mapy = sizey;
+	m->map_object->x = sizex;
+	m->map_object->y = sizey;
 	allocate_map (m);
 	clear_map (m);
     } else {
@@ -1396,8 +1396,8 @@ int calculate_difficulty(mapstruct *m) {
 	LOG(llevDebug, "Using stored map difficulty: %d\n", MAP_DIFFICULTY(m));
 	return MAP_DIFFICULTY(m);
   }
-  for(x=0;x<m->mapx;x++)
-    for(y=0;y<m->mapy;y++)
+  for(x=0;x<m->map_object->x;x++)
+    for(y=0;y<m->map_object->y;y++)
       for(op=get_map_ob(m,x,y);op!=NULL;op=op->above) {
         if(QUERY_FLAG(op,FLAG_MONSTER))
           total_exp+=op->stats.exp;
@@ -1409,14 +1409,14 @@ int calculate_difficulty(mapstruct *m) {
         }
       }
 #ifdef NEWCALC
-  (int)exp_pr_sq=((double)1000*total_exp)/(m->mapx*m->mapy+1);
+  (int)exp_pr_sq=((double)1000*total_exp)/(m->map_object->x*m->map_object->y+1);
   for(i=20;i>0;i--)
     if(exp_pr_sq>level_exp(i,1.0)) {
       diff=i;
       break;
     }
 #else
-  exp_pr_sq=((double)1000*total_exp)/(m->mapx*m->mapy+1);
+  exp_pr_sq=((double)1000*total_exp)/(m->map_object->x*m->map_object->y+1);
   diff=20;
   for(i=1;i<20;i++)
     if(exp_pr_sq<=level_exp(i,1.0)) {
@@ -1446,7 +1446,7 @@ mapstruct *MapMoveScrollResize(mapstruct *source,
 {
     mapstruct *target;
     object *obj,*prt; /* PaRT of obj */
-    int x,y,sx = source->mapx, sy = source->mapy;
+    int x,y,sx = source->map_object->x, sy = source->map_object->y;
     int linked = 0, link=0;
 
     if (!width) width = sx;
@@ -1456,14 +1456,14 @@ mapstruct *MapMoveScrollResize(mapstruct *source,
     strncpy (target->path, source->path, BIG_NAME);
 
     copy_object (source->map_object, target->map_object);
-    target->mapx = width;
-    target->mapy = height;  
+    target->map_object->x = width;
+    target->map_object->y = height;  
 
-    if(dx < 0) dx += target->mapx;
-    if(dy < 0) dy += target->mapy;
+    if(dx < 0) dx += target->map_object->x;
+    if(dy < 0) dy += target->map_object->y;
 
-    for(y=0; y < sy && y < target->mapy; y++)
-	for(x=0; x < sx && x < target->mapx; x++)
+    for(y=0; y < sy && y < target->map_object->y; y++)
+	for(x=0; x < sx && x < target->map_object->x; x++)
 	    while((obj = get_map_ob(source,x,y)) && !obj->head) {
 		if ((linked = QUERY_FLAG (obj,FLAG_IS_LINKED))) {
 		    link = get_button_value (obj);
@@ -1472,9 +1472,9 @@ mapstruct *MapMoveScrollResize(mapstruct *source,
 		remove_ob(obj);
 		for(prt = obj; prt; prt = prt->more) {
 		    prt->x += dx;
-		    prt->x %= target->mapx; /* it can be split by edge */
+		    prt->x %= target->map_object->x; /* it can be split by edge */
 		    prt->y += dy;           /* designers problem to fix */
-		    prt->y %= target->mapy;
+		    prt->y %= target->map_object->y;
 		}
 		insert_ob_in_map_simple(obj,target);
 		if (linked)
@@ -1498,18 +1498,18 @@ void MapMoveScroll(mapstruct *target, mapstruct *source, int dx, int dy)
     object *obj,*prt; /* PaRT of obj */
     int x,y;
 
-    if(dx < 0) dx += target->mapx;
-    if(dy < 0) dy += target->mapy;
+    if(dx < 0) dx += target->map_object->x;
+    if(dy < 0) dy += target->map_object->y;
 
-    for(y=0; y < source->mapy && y < target->mapy; y++)
-	for(x=0; x < source->mapx && x < target->mapx; x++)
+    for(y=0; y < source->map_object->y && y < target->map_object->y; y++)
+	for(x=0; x < source->map_object->x && x < target->map_object->x; x++)
 	    while((obj = get_map_ob(source,x,y)) && !obj->head) {
 		remove_ob(obj);
 		for(prt = obj; prt; prt = prt->more) {
 		    prt->x += dx;
-		    prt->x %= target->mapx; /* it can be split by edge */
+		    prt->x %= target->map_object->x; /* it can be split by edge */
 		    prt->y += dy;           /* designers problem to fix */
-		    prt->y %= target->mapy;
+		    prt->y %= target->map_object->y;
 		}
 		insert_ob_in_map_simple(obj,target);
 	    }

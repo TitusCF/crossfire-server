@@ -338,18 +338,18 @@ void magic_mapping_mark(object *pl, char *map_mark, int strength)
 {
   int x, y;
   int xmin = pl->x - strength + 1 < 0 ? 0 : pl->x - strength + 1;
-  int xmax = pl->x + strength - 1 > pl->map->mapx - 1 ? 
-    pl->map->mapx - 1 : pl->x + strength - 1;
+  int xmax = pl->x + strength - 1 > pl->map->map_object->x - 1 ? 
+    pl->map->map_object->x - 1 : pl->x + strength - 1;
   int ymin = pl->y - strength + 1 < 0 ? 0 : pl->y - strength + 1;
-  int ymax = pl->y + strength - 1 > pl->map->mapy - 1 ? 
-    pl->map->mapy - 1 : pl->y + strength - 1;
+  int ymax = pl->y + strength - 1 > pl->map->map_object->y - 1 ? 
+    pl->map->map_object->y - 1 : pl->y + strength - 1;
 
   for (x = xmin; x <= xmax; x++) {
     for (y = ymin; y <= ymax; y++) {
       if (wall(pl->map, x, y) || blocks_view(pl->map, x, y))
-	map_mark[x + pl->map->mapx * y] = 2;
+	map_mark[x + pl->map->map_object->x * y] = 2;
       else {
-	map_mark[x + pl->map->mapx * y] = 1;
+	map_mark[x + pl->map->map_object->x * y] = 1;
 	magic_mapping_mark_recursive(pl, map_mark, x, y);
       }
     }
@@ -373,15 +373,15 @@ void magic_mapping_mark_recursive(object *pl, char *map_mark, int px, int py)
     for (dy = -1; dy <= 1; dy++) {
       x = px + dx;
       y = py + dy;
-      if (x >= 0 && x < pl->map->mapx && y >= 0 && y < pl->map->mapy
-	&& (map_mark[x + pl->map->mapx * y] ==0) ) {
+      if (x >= 0 && x < pl->map->map_object->x && y >= 0 && y < pl->map->map_object->y
+	&& (map_mark[x + pl->map->map_object->x * y] ==0) ) {
             if (blocks_view(pl->map, x, y))
-		map_mark[x + pl->map->mapx * y] = 2;
+		map_mark[x + pl->map->map_object->x * y] = 2;
 	    else {
 		if (wall(pl->map, x, y))
-		    map_mark[x + pl->map->mapx * y] = 2;
+		    map_mark[x + pl->map->map_object->x * y] = 2;
 		else
-		    map_mark[x + pl->map->mapx * y] = 1;
+		    map_mark[x + pl->map->map_object->x * y] = 1;
 		magic_mapping_mark_recursive(pl, map_mark, x, y);
 	    }
 	}
@@ -419,8 +419,8 @@ void magic_mapping_mark_recursive(object *pl, char *map_mark, int px, int py)
 void draw_map(object *pl) 
 {
     int x,y;
-    char *map_mark = (char *) malloc(pl->map->mapx * pl->map->mapy);
-    int xmin = pl->map->mapx, xmax = 0, ymin = pl->map->mapy, ymax = 0;
+    char *map_mark = (char *) malloc(pl->map->map_object->x * pl->map->map_object->y);
+    int xmin = pl->map->map_object->x, xmax = 0, ymin = pl->map->map_object->y, ymax = 0;
     SockList sl;
 
     if (pl->type!=PLAYER) {
@@ -428,11 +428,11 @@ void draw_map(object *pl)
 	return;
     }
     /* First, we figure out what spaces are 'reachable' by the player */
-    memset(map_mark, 0, pl->map->mapx * pl->map->mapy);
+    memset(map_mark, 0, pl->map->map_object->x * pl->map->map_object->y);
     magic_mapping_mark(pl, map_mark, 3);
-    for(x = 0; x < pl->map->mapx; x++) {
-      for(y = 0; y < pl->map->mapy; y++) {
-        if (map_mark[x + pl->map->mapx * y]==1) {
+    for(x = 0; x < pl->map->map_object->x; x++) {
+      for(y = 0; y < pl->map->map_object->y; y++) {
+        if (map_mark[x + pl->map->map_object->x * y]==1) {
 	  xmin = x < xmin ? x : xmin;
 	  xmax = x > xmax ? x : xmax;
 	  ymin = y < ymin ? y : ymin;
@@ -443,11 +443,11 @@ void draw_map(object *pl)
     xmin--;
     xmin = xmin < 0 ? 0 : xmin;
     xmax++;
-    xmax = xmax > pl->map->mapx - 1 ? pl->map->mapx - 1: xmax;
+    xmax = xmax > pl->map->map_object->x - 1 ? pl->map->map_object->x - 1: xmax;
     ymin--;
     ymin = ymin < 0 ? 0 : ymin;
     ymax++;
-    ymax = ymax > pl->map->mapy - 1? pl->map->mapy - 1: ymax;
+    ymax = ymax > pl->map->map_object->y - 1? pl->map->map_object->y - 1: ymax;
 
 
     sl.buf=malloc(MAXSOCKBUF);
@@ -462,7 +462,7 @@ void draw_map(object *pl)
       for (x = xmin; x <= xmax; x++) {
 	    int mark;
 
-	    if ((mark=map_mark[x+pl->map->mapx*y])==0)
+	    if ((mark=map_mark[x+pl->map->map_object->x*y])==0)
 		sl.buf[sl.len++]=0;
 	    else {
 		New_Face *f = get_map(pl->map, x, y)->face;

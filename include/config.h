@@ -81,6 +81,7 @@
  * DEBUG - more verbose message logging?
  * EXPLORE_MODE - add an explore mode method of play?
  * FULL_RING_DESCRIPTION - makes rings abilities show in inventory window
+ * MAP_CLIENT_X, MAP_CLIENT_Y - determines max size client map will receive
  * MAX_TIME - how long an internal tick is in microseconds
  * MANY_CORES - generate core dumps on gross errors instead of continuing?
  * MULTIPLE_GODS - adds numerous gods to the game, with different powers
@@ -236,6 +237,29 @@
 
 #define MANY_CORES
 
+/*
+ * This determines the maximum map size the client can request (and
+ * thus what the server will send to the client.
+ * Client can still request a smaller map size (for bandwidth reasons
+ * or display size of whatever else).
+ * The larger this number, the more cpu time and memory the server will
+ * need to spend to figure this out in addition to bandwidth needs.
+ * The server cpu time should be pretty trivial.
+ * There may be reasons to keep it smaller for the 'classic' crossfire
+ * experience which was 11x11.  Big maps will likely make the same at
+ * least somewhat easier, but client will need to worry about lag
+ * more.
+ * I put support in for non square map updates in the define, but
+ * there very well might be things that break horribly if this is
+ * used.  I figure it is easier to fix that if needed than go back
+ * at the future and have to redo a lot of stuff to support rectangular
+ * maps at that point.
+ *
+ * MSW 2001-05-28
+ */
+
+#define MAP_CLIENT_X	25
+#define MAP_CLIENT_Y	25
 
 /*
  * If you feel the game is too fast or too slow, change MAX_TIME.

@@ -252,8 +252,8 @@ static void SetSize(Widget w)
 
     /*** determine size to ask for ***/
     if(self->crEdit.map) {
-	request.width = self->crEdit.map->mapx * self->crEdit.fontSize;
-	request.height = self->crEdit.map->mapy * self->crEdit.fontSize;
+	request.width = self->crEdit.map->map_object->x * self->crEdit.fontSize;
+	request.height = self->crEdit.map->map_object->y * self->crEdit.fontSize;
     } else {
 	request.width = self->crEdit.fontSize;
 	request.height = self->crEdit.fontSize;
@@ -461,10 +461,10 @@ static void DrawRectangle(Widget w,XRectangle area,Boolean inv)
 
     if (!self->crEdit.map) return;
     for (j = area.x; 
-	 j < area.x + area.width &&  j < self->crEdit.map->mapx; 
+	 j < area.x + area.width &&  j < self->crEdit.map->map_object->x; 
 	 j++) {
 	for (i = area.y; 
-	     i < area.y + area.height && i < self->crEdit.map->mapy; 
+	     i < area.y + area.height && i < self->crEdit.map->map_object->y; 
 	     i++) {
 	    UpdatePosition (w,j,i,inv);
 	}
@@ -487,10 +487,10 @@ static void DrawBorder(Widget w,XSegment seg,Boolean inv)
     x2 = abs(seg.x1 - seg.x2) + x1;
     y2 = abs(seg.y1 - seg.y2) + y1;
 
-    if(x1 > self->crEdit.map->mapx ||
-       x2 > self->crEdit.map->mapx ||
-       y1 > self->crEdit.map->mapy ||
-       y2 > self->crEdit.map->mapy) return;
+    if(x1 > self->crEdit.map->map_object->x ||
+       x2 > self->crEdit.map->map_object->x ||
+       y1 > self->crEdit.map->map_object->y ||
+       y2 > self->crEdit.map->map_object->y) return;
 
     if (inv) {
 	XDrawRectangle (XtDisplay(w), XtWindow(w), 
@@ -669,13 +669,13 @@ static void SelectExpandAc(Widget w, XEvent * event,
     x = event->xbutton.x / self->crEdit.fontSize;
     y = event->xbutton.y / self->crEdit.fontSize;
 
-    if (x >= self->crEdit.map->mapx )
-	x = self->crEdit.map->mapx - 1;
+    if (x >= self->crEdit.map->map_object->x )
+	x = self->crEdit.map->map_object->x - 1;
     if (x < 0)
 	x = 0;
 
-    if (y >= self->crEdit.map->mapy )
-	y = self->crEdit.map->mapy - 1;
+    if (y >= self->crEdit.map->map_object->y )
+	y = self->crEdit.map->map_object->y - 1;
     if (y < 0)
 	y = 0;
 
@@ -704,13 +704,13 @@ static void SelectEndAc(Widget w, XEvent * event,
 
     debug2("SelectEndAc() %dx%d\n",x,y);
 
-    if (x >= self->crEdit.map->mapx )
-	x = self->crEdit.map->mapx - 1;
+    if (x >= self->crEdit.map->map_object->x )
+	x = self->crEdit.map->map_object->x - 1;
     if (x < 0)
 	x = 0;
 
-    if (y >= self->crEdit.map->mapy )
-	y = self->crEdit.map->mapy - 1;
+    if (y >= self->crEdit.map->map_object->y )
+	y = self->crEdit.map->map_object->y - 1;
     if (y < 0)
 	y = 0;
 
@@ -829,8 +829,8 @@ static void ResizeAc (Widget w, XEvent * e, String * argv, Cardinal * argc)
     call.map = self->crEdit.map;
     call.rect.x = 0;
     call.rect.y = 0;
-    call.rect.width = self->crEdit.map->mapx;
-    call.rect.height = self->crEdit.map->mapy;
+    call.rect.width = self->crEdit.map->map_object->x;
+    call.rect.height = self->crEdit.map->map_object->y;
     call.z = 0;
     if (argv) {
 	if (!strcmp (argv[0], "right")) {
@@ -861,8 +861,8 @@ static void ScrollAc (Widget w, XEvent * e, String * argv, Cardinal * argc)
     call.map = self->crEdit.map;
     call.rect.x = 0;
     call.rect.y = 0;
-    call.rect.width = self->crEdit.map->mapx;
-    call.rect.height = self->crEdit.map->mapy;
+    call.rect.width = self->crEdit.map->map_object->x;
+    call.rect.height = self->crEdit.map->map_object->y;
     call.z = 0;
 
     /*

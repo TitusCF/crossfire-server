@@ -121,6 +121,7 @@ void SetUp(char *buf, int len, NewSocket *ns)
 	/* find the next space, and put a null there */
 	for(;buf[s] && buf[s] != ' ';s++) ;
 	buf[s++]=0;
+	while (buf[s] == ' ') s++;
 
 	if(s>=len)
 	    break;
@@ -129,6 +130,7 @@ void SetUp(char *buf, int len, NewSocket *ns)
 
 	for(;buf[s] && buf[s] != ' ';s++) ;
 	buf[s++]=0;
+	while (buf[s] == ' ') s++;
 		
 	strcat(cmdback, " ");
 	strcat(cmdback, cmd);
@@ -141,11 +143,33 @@ void SetUp(char *buf, int len, NewSocket *ns)
 	else if (!strcmp(cmd,"sexp")) {
 	    ns->skillexp = atoi(param);
 	    strcat(cmdback, param);
+	} else if (!strcmp(cmd,"mapsize")) {
+	    int x, y=0;
+	    char tmpbuf[MAX_BUF], *cp;
+
+	    x = atoi(param);
+	    for (cp = param; *cp!=0; cp++)
+		if (*cp == 'x' || *cp == 'X') {
+		    y = atoi(cp+1);
+		    break;
+		}
+	    if (x < 9 || y < 9 || x>MAP_CLIENT_X || y > MAP_CLIENT_Y) {
+		sprintf(tmpbuf," %dx%d", MAP_CLIENT_X, MAP_CLIENT_Y);
+		strcat(cmdback, tmpbuf);
+	    } else {
+		ns->mapx = x;
+		ns->mapy = y;
+		/* better to send back what we are really using and not the
+		 * param as given to us in case it gets parsed differently.
+		 */
+		sprintf(tmpbuf,"%dx%d", x,y);
+		strcat(cmdback, tmpbuf);
+	    }
 	} else {
 	    /* Didn't get a setup command we understood -
 	     * report a failure to the client.
 	     */
-	    strcat(cmdback, " FALSE");
+	    strcat(cmdback, "FALSE");
 	}
     } /* for processing all the setup commands */
     LOG(llevInfo,"SendBack SetupCmd:: %s\n", cmdback);
@@ -773,29 +797,33 @@ void esrv_send_face(NewSocket *ns,short face_num, int nocache)
 static void esrv_map_setbelow(NewSocket *ns, int x,int y,
 			      short face_num, struct Map *newmap)
 {
-  if (x<0||x>10 ||y<0 ||y>10 || face_num < 0 || face_num > MAXFACENUM) {
-    LOG(llevError,"bad user x/y/facenum not in 0..10,0..10,0..%d\n",
+
+    if (x<0 || x>ns->mapx-1 || 
+	y<0 || y>ns->mapy-1 || 
+	face_num < 0 || face_num > MAXFACENUM) {
+
+	LOG(llevError,"bad user x/y/facenum not in 0..10,0..10,0..%d\n",
 	    MAXFACENUM-1);
-    abort();
-  }
-  if(newmap->cells[x][y].count >= MAXMAPCELLFACES) {
-    LOG(llevError,"Too many faces in map cell %d %d\n",x,y);
-    abort();
-  }
-  newmap->cells[x][y].faces[newmap->cells[x][y].count] = face_num;
-  newmap->cells[x][y].count ++;
-  if (ns->faces_sent[face_num] == 0)
-    esrv_send_face(ns,face_num,0);
+	abort();
+    }
+    if(newmap->cells[x][y].count >= MAXMAPCELLFACES) {
+	LOG(llevError,"Too many faces in map cell %d %d\n",x,y);
+	abort();
+    }
+    newmap->cells[x][y].faces[newmap->cells[x][y].count] = face_num;
+    newmap->cells[x][y].count ++;
+    if (ns->faces_sent[face_num] == 0)
+	esrv_send_face(ns,face_num,0);
 }
 
 struct LayerCell {
-  char xy;
+  uint16 xy;
   short face;
 };
 
 struct MapLayer {
   int count;
-  struct LayerCell lcells[121];
+  struct LayerCell lcells[MAP_CLIENT_X * MAP_CLIENT_Y];
 };
 
 static int mapcellchanged(NewSocket *ns,int i,int j, struct Map *newmap)
@@ -822,7 +850,7 @@ static int mapcellchanged(NewSocket *ns,int i,int j, struct Map *newmap)
 static uint8 *compactlayer(NewSocket *ns, unsigned char *cur, int numlayers, 
 			   struct Map *newmap)
 {
-    int i,j,k;
+    int x,y,k;
     int face;
     unsigned char *fcur;
     struct MapLayer layers[MAXMAPCELLFACES];
@@ -830,19 +858,19 @@ static uint8 *compactlayer(NewSocket *ns, unsigned char *cur, int numlayers,
     for(k = 0;k<MAXMAPCELLFACES;k++)
 	layers[k].count = 0;
     fcur = cur;
-    for(i=0;i<11;i++) {
-	for(j=0;j<11;j++) {
-	    if (!mapcellchanged(ns,i,j,newmap))
+    for(x=0;x<ns->mapx;x++) {
+	for(y=0;y<ns->mapy;y++) {
+	    if (!mapcellchanged(ns,x,y,newmap))
 		continue;
-	    if (newmap->cells[i][j].count == 0) {
-		*cur = i*11+j;	    /* mark empty space */
+	    if (newmap->cells[x][y].count == 0) {
+		*cur = x*ns->mapy+y;	    /* mark empty space */
 		cur++;
 		continue;
 	    }
-	    for(k=0;k<newmap->cells[i][j].count;k++) {
-		layers[k].lcells[layers[k].count].xy = i*11+j;
+	    for(k=0;k<newmap->cells[x][y].count;k++) {
+		layers[k].lcells[layers[k].count].xy = x*ns->mapy+y;
 		layers[k].lcells[layers[k].count].face = 
-		    newmap->cells[i][j].faces[k];
+		    newmap->cells[x][y].faces[k];
 		layers[k].count++;
 	    }
 	}
@@ -858,26 +886,26 @@ static uint8 *compactlayer(NewSocket *ns, unsigned char *cur, int numlayers,
 	    break; /* once a layer is entirely empty, no layer below it can
 		have anything in it either */
 	/* Pack by entries in thie layer */
-	for(i=0;i<layers[k].count;) {
+	for(x=0;x<layers[k].count;) {
 	    fcur = cur;
-	    *cur = layers[k].lcells[i].face >> 8;
+	    *cur = layers[k].lcells[x].face >> 8;
 	    cur++;
-	    *cur = layers[k].lcells[i].face & 0xFF;
+	    *cur = layers[k].lcells[x].face & 0xFF;
 	    cur++;
-	    face = layers[k].lcells[i].face;
+	    face = layers[k].lcells[x].face;
 	    /* Now, we back the redundant data into 1 byte xy pairings */
-	    for(j=i;j<layers[k].count;j++) {
-		if (layers[k].lcells[j].face == face) {
-		    *cur = layers[k].lcells[j].xy;
+	    for(y=x;y<layers[k].count;y++) {
+		if (layers[k].lcells[y].face == face) {
+		    *cur = layers[k].lcells[y].xy;
 		    cur++;
-		    layers[k].lcells[j].face = -1;
+		    layers[k].lcells[y].face = -1;
 		}
 	    }
 	    *(cur-1) = *(cur-1) | 128; /* mark for end of xy's; 11*11 < 128 */
 	    /* forward over the now redundant data */
-	    while(i < layers[k].count &&
-		  layers[k].lcells[i].face == -1)
-		i++;
+	    while(x < layers[k].count &&
+		  layers[k].lcells[x].face == -1)
+		x++;
 	}
 	*fcur = *fcur | 128; /* mark for end of faces at this layer */
     }
@@ -917,8 +945,162 @@ static void esrv_map_doneredraw(NewSocket *ns, struct Map *newmap)
 }
 
 
+/* this function uses the new map1 protocol command to send the map
+ * to the client.  It is necessary because the old map command supports
+ * a maximum map size of 15x15.
+ * This function is much simpler than the old one.  This is because
+ * the old function optimized to send as few face identifiers as possible,
+ * at the expense of sending more coordinate location (coordinates were
+ * only 1 byte, faces 2 bytes, so this was a worthwhile savings).  Since
+ * we need 2 bytes for coordinates and 2 bytes for faces, such a trade off
+ * maps no sense.  Instead, we actually really only use 12 bits for coordinates,
+ * and use the other 4 bits for other informatiion.   For full documentation
+ * of what we send, see the doc/Protocol file.
+ * I will describe internally what we do:
+ * the socket->lastmap shows how the map last looked when sent to the client.
+ * in the lastmap structure, there is a cells array, which is set to the
+ * maximum viewable size (As set in config.h).
+ * in the cells, there are faces and a count value.
+ * we use the count value to hold the darkness value.  If -1, then this space
+ *   is not viewable.
+ * we use faces[0] faces[1] faces[2] to hold what the three layers
+ * look like.
+ */
+void draw_client_map1(object *pl)
+{
+    int x,y,ax, ay, d, face_num1,face_num2,face_num3;
+    SockList sl;
+    uint16  mask;
+    New_Face	*face;
 
-/* grabbed out of xio.c - it makes more sense to put it over here. */
+    sl.buf=malloc(MAXSOCKBUF);
+    strcpy((char*)sl.buf,"map1 ");
+    sl.len=strlen((char*)sl.buf);
+
+
+    /* x,y are the real map locations.  ax, ay are viewport relative
+     * locations.
+     */
+    ay=0;
+    for(y=pl->y-pl->contr->socket.mapy/2; y<=pl->y+pl->contr->socket.mapy/2;y++,ay++) {
+	ax=0;
+	for(x=pl->x-pl->contr->socket.mapx/2;x<=pl->x+pl->contr->socket.mapx/2;x++,ax++) {
+	    d =  pl->contr->blocked_los[ax][ay];
+
+	    /* If the coordinates are not valid, or it is too dark to see,
+	     * we tell the client as such
+	     */
+	    if (out_of_map(pl->map, x, y) || d > 3) {
+		/* Was not blocked before, so we need to update client */
+		if (pl->contr->socket.lastmap.cells[ax][ay].count!=-1) {
+		    mask = (ax & 0x3f) << 10 | (ay & 0x3f) << 4;
+		    SockList_AddShort(&sl, mask);
+		    pl->contr->socket.lastmap.cells[ax][ay].count=-1;
+#if 0
+		    pl->contr->socket.lastmap.cells[ax][ay].faces[0] = blank_face->number;
+		    pl->contr->socket.lastmap.cells[ax][ay].faces[1] = blank_face->number;
+		    pl->contr->socket.lastmap.cells[ax][ay].faces[2] = blank_face->number;
+#else
+		    pl->contr->socket.lastmap.cells[ax][ay].faces[0] = 0;
+		    pl->contr->socket.lastmap.cells[ax][ay].faces[1] = 0;
+		    pl->contr->socket.lastmap.cells[ax][ay].faces[2] = 0;
+#endif
+		}
+	    }
+	    else { /* this space is viewable */
+		/* Rather than try to figure out what everything that we might
+		 * need to send is, then form the packet after that,
+		 * we presume that we will in fact form a packet, and update
+		 * the bits by what we do actually send.  If we send nothing,
+		 * we just back out sl.len to the old value, and no harm
+		 * is done.
+		 * I think this is simpler than doing a bunch of checks to see
+		 * what if anything we need to send, setting the bits, then
+		 * doing those checks again to add the real data.
+		 */
+		int oldlen = sl.len;
+		mask = (ax & 0x3f) << 10 | (ay & 0x3f) << 4;
+		SockList_AddShort(&sl, mask);
+
+		/* Darkness changed */
+		if (pl->contr->socket.lastmap.cells[ax][ay].count != d) {
+		    pl->contr->socket.lastmap.cells[ax][ay].count = d;
+		    mask |= 0x8;    /* darkness bit */
+		    /* Protocol defines 255 full bright, 0 full dark.
+		     * We currently don't have that many darkness ranges,
+		     * so we current what limited values we do have.
+		     */
+		    if (d==0) SockList_AddChar(&sl, 255);
+		    else if (d==1) SockList_AddChar(&sl, 191);
+		    else if (d==2) SockList_AddChar(&sl, 127);
+		    else if (d==3) SockList_AddChar(&sl, 63);
+		}
+		/* Check to see if floor face ahs changed */
+		face = get_map_floor(pl->map, x,y)->face;
+		if (face == blank_face) face_num1=0;
+		else face_num1 = face->number;
+
+		if (pl->contr->socket.lastmap.cells[ax][ay].faces[0] != face_num1) {
+		    mask |= 0x4;    /* floor bit */
+		    pl->contr->socket.lastmap.cells[ax][ay].faces[0] = face_num1;
+		    SockList_AddShort(&sl, face_num1);
+		    if (pl->contr->socket.faces_sent[face_num1] == 0)
+			esrv_send_face(&pl->contr->socket,face_num1,0);
+		}
+
+		face = get_map_floor2(pl->map, x,y)->face;
+		if (face == blank_face) face_num2=0;
+		else face_num2 = face->number;
+
+		if (pl->contr->socket.lastmap.cells[ax][ay].faces[1] != face_num2) {
+		    mask |= 0x2;    /* middle bit */
+		    pl->contr->socket.lastmap.cells[ax][ay].faces[1] = face_num2;
+		    SockList_AddShort(&sl, face_num2);
+		    if (pl->contr->socket.faces_sent[face_num2] == 0)
+			esrv_send_face(&pl->contr->socket,face_num2,0);
+		}
+
+		face = get_map(pl->map, x,y)->face;
+		if (face == blank_face) face_num3=0;
+		else face_num3 = face->number;
+
+		if (pl->contr->socket.lastmap.cells[ax][ay].faces[2] != face_num3) {
+		    mask |= 0x1;    /* top bit */
+		    pl->contr->socket.lastmap.cells[ax][ay].faces[2] = face_num3;
+		    SockList_AddShort(&sl, face_num3);
+		    if (pl->contr->socket.faces_sent[face_num3] == 0)
+			esrv_send_face(&pl->contr->socket,face_num3,0);
+		}
+		if ((face_num1 == face_num2 && face_num1 !=0) || 
+		    (face_num2 == face_num3 && face_num2 !=0) || 
+		    (face_num1 == face_num3 && face_num1 !=0)) {
+		    fprintf(stderr,"faces match: %d %d %d\n", face_num1, face_num2, face_num3);
+		}
+
+		/* Lets see if the mask is in fact different.  If, we need to
+		 * update it, if not, we back it out
+		 */
+		if (mask & 0xf) {
+		    /* yep - different. Only need to update the second byte
+		     * because that is the only one that changed.
+		     */
+		    sl.buf[oldlen+1] = mask & 0xff;
+		} else {
+		    /* no change, so just reset the len */
+		    sl.len = oldlen;
+		}
+	    }
+	} /* for x loop */
+    } /* for y loop */
+		    
+    /* Verify that we in fact do need to send this */
+    if (sl.len>strlen("map1 ") || pl->contr->socket.sent_scroll) {
+	Send_With_Handling(&pl->contr->socket, &sl);
+	pl->contr->socket.sent_scroll = 0;
+    }
+    free(sl.buf);
+}
+
 
 void draw_client_map(object *pl)
 {
@@ -940,15 +1122,31 @@ void draw_client_map(object *pl)
     if (pl->map->in_memory!=MAP_IN_MEMORY) return;
     memset(&newmap, 0, sizeof(struct Map));
 
-    if(pl->invisible & (pl->invisible < 50 ? 4 : 1)) {
-	esrv_map_setbelow(&pl->contr->socket,5,5,pl->face->number,&newmap);
+    if (pl->contr->socket.mapx > 15 || pl->contr->socket.mapy > 15) {
+	/* Big maps need a different drawing mechanism to work */
+	draw_client_map1(pl);
+	return;
     }
 
-    for(j=pl->y+WINUPPER;j<=pl->y+WINLOWER;j++) {
-	ay=j-pl->y-WINUPPER;
-	for(i=pl->x+WINLEFT;i<=pl->x+WINRIGHT;i++) {
-	    ax=i-pl->x-WINLEFT;
-	    d =  pl->contr->blocked_los[i+5-pl->x][j+5-pl->y];
+    if(pl->invisible & (pl->invisible < 50 ? 4 : 1)) {
+	esrv_map_setbelow(&pl->contr->socket,pl->contr->socket.mapx/2,
+			  pl->contr->socket.mapy/2,pl->face->number,&newmap);
+    }
+
+    /* j and i are the y and x coordinates of the real map (which is 
+     * basically some number of spaces around the player)
+     * ax and ay are values from within the viewport (ie, 0, 0 is upper
+     * left corner) and are thus disconnected from the map values.
+     */
+    ay=0;
+    for(j=pl->y-pl->contr->socket.mapy/2; j<=pl->y+pl->contr->socket.mapy/2;j++, ay++) {
+	ax=0;
+	for(i=pl->x-pl->contr->socket.mapx/2;i<=pl->x+pl->contr->socket.mapx/2;i++, ax++) {
+
+	    d =  pl->contr->blocked_los[ax][ay];
+	    /* note the out_of_map and d>3 checks are both within the same
+	     * negation check.
+	     */
 	    if (!(out_of_map(pl->map,i,j) || d>3)) {
 		face = get_map(pl->map, i, j)->face;
 		floor = get_map_floor(pl->map, i,j)->face;
@@ -993,12 +1191,12 @@ void esrv_map_scroll(NewSocket *ns,int dx,int dy)
     Write_String_To_Socket(ns, buf, strlen(buf));
     /* the x and y here are coordinates for the new map, i.e. if we moved
      (dx,dy), newmap[x][y] = oldmap[x-dx][y-dy] */
-    for(x=0;x<11;x++) {
-	for(y=0;y<11;y++) {
+    for(x=0;x<ns->mapx;x++) {
+	for(y=0;y<ns->mapy;y++) {
 	    newmap.cells[x][y].count = 0;
-	    if (x+dx < 0 || x+dx >= 11)
+	    if (x+dx < 0 || x+dx >= ns->mapx)
 		continue;
-	    if (y+dy < 0 || y+dy >= 11)
+	    if (y+dy < 0 || y+dy >= ns->mapy)
 		continue;
 	    memcpy(&(newmap.cells[x][y]),
 		   &(ns->lastmap.cells[x+dx][y+dy]),sizeof(struct MapCell));

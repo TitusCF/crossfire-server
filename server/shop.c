@@ -595,12 +595,48 @@ static int shop_sort(const void *a1, const void *a2)
     return strcasecmp(s1->item_sort, s2->item_sort);
 }
 
+void add_shop_item(object *tmp, shopinv *items, int *numitems, int *numallocated)
+{
+    char buf[MAX_BUF];
+
+    if (*numitems==*numallocated) {
+	items=realloc(items, sizeof(shopinv)*(*numallocated+10));
+	*numallocated+=10;
+    }
+    /* clear unpaid flag so that doesn't come up in query
+     * string.  We clear nrof so that we can better sort
+     * the object names.
+     */
+
+    CLEAR_FLAG(tmp, FLAG_UNPAID);
+    items[*numitems].nrof=tmp->nrof;
+    items[*numitems].type=tmp->type;
+
+    switch (tmp->type) {
+	case RING:
+	case AMULET:
+	case BRACERS:
+	case BOOTS:
+	case GLOVES:
+	case GIRDLE:
+	    sprintf(buf,"%s %s",query_base_name(tmp,0),describe_item(tmp));
+	    items[*numitems].item_sort = strdup_local(buf);
+	    sprintf(buf,"%s %s",query_name(tmp),describe_item(tmp));
+	    items[*numitems++].item_real = strdup_local(buf);
+	    break;
+
+	default:
+	    items[*numitems].item_sort = strdup_local(query_base_name(tmp, 0));
+	    items[*numitems++].item_real = strdup_local(query_name(tmp));
+	    break;
+    }
+}
+
 void shop_listing(object *op)
 {
     int i,j,numitems=0,numallocated=0;
-    char *map_mark = (char *) malloc(op->map->mapx * op->map->mapy),
-	buf[MAX_BUF];
-    object	*stack,*tmp,*menu;
+    char *map_mark = (char *) malloc(op->map->map_object->x * op->map->map_object->y);
+    object	*stack;
     shopinv	*items;
 
     /* Should never happen, but just in case a monster does apply a sign */
@@ -608,68 +644,32 @@ void shop_listing(object *op)
 
     new_draw_info(NDI_UNIQUE, 0, op, "\nThe shop contains:");
 
-    memset(map_mark, 0, op->map->mapx * op->map->mapy);
+    memset(map_mark, 0, op->map->map_object->x * op->map->map_object->y);
     magic_mapping_mark(op, map_mark, 3);
     items=malloc(40*sizeof(shopinv));
     numallocated=40;
-    menu=get_object();
 
     /* Find all the appropriate items */
-    for (i=0; i<op->map->mapx; i++) {
-	for (j=0; j<op->map->mapy; j++) {
-	    if (map_mark[i + op->map->mapx * j]) {
+    for (i=0; i<op->map->map_object->x; i++) {
+	for (j=0; j<op->map->map_object->y; j++) {
+	    if (map_mark[i + op->map->map_object->x * j]) {
 		stack  =get_map_ob(op->map,i,j);
+
 		while (stack) {
 		    if (QUERY_FLAG(stack, FLAG_UNPAID)) {
-			tmp=get_object();
-			copy_object(stack, tmp);
-			insert_ob_in_ob(tmp, menu);
+			add_shop_item(stack, items, &numitems, &numallocated);
 		    }
 		    stack = stack->above;
 		}
 	    }
 	}
     }
-    if (menu->inv == NULL) {
+    free(map_mark);
+    if (numitems == 0) {
 	new_draw_info(NDI_UNIQUE, 0, op, "The shop is currently empty.\n");
-	free_object(menu);
-	free(map_mark);
 	free(items);
 	return;
     }
-    for (tmp=menu->inv; tmp!=NULL; tmp=tmp->below) {
-	if (numitems==numallocated) {
-	    items=realloc(items, sizeof(shopinv)*(numallocated+10));
-	    numallocated+=10;
-	}
-	/* clear unpaid flag so that doesn't come up in query
-	 * string.  We clear nrof so that we can better sort
-	 * the object names.
-         */
-	CLEAR_FLAG(tmp, FLAG_UNPAID);
-	items[numitems].nrof=tmp->nrof;
-	items[numitems].type=tmp->type;
-	switch (tmp->type) {
-	    case RING:
-	    case AMULET:
-	    case BRACERS:
-	    case BOOTS:
-	    case GLOVES:
-	    case GIRDLE:
-		sprintf(buf,"%s %s",query_base_name(tmp,0),describe_item(tmp));
-	        items[numitems].item_sort = strdup_local(buf);
-		sprintf(buf,"%s %s",query_name(tmp),describe_item(tmp));
-	        items[numitems++].item_real = strdup_local(buf);
-		break;
-
-	    default:
-	        items[numitems].item_sort = strdup_local(query_base_name(tmp, 0));
-	        items[numitems++].item_real = strdup_local(query_name(tmp));
-		break;
-	}
-    }
-    /* Free_object should also free all the objects in the inventory */
-    free_object(menu);
     qsort(items, numitems, sizeof(shopinv), (int (*)())shop_sort);
 
     for (i=0; i<numitems; i++) {
@@ -677,7 +677,6 @@ void shop_listing(object *op)
 	free(items[i].item_sort);
 	free(items[i].item_real);
     }
-    free(map_mark);
     free(items);
 }
 

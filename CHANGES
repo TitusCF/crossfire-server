@@ -18,6 +18,45 @@ else.  With this, include the file(s) that you changed.
 
 Changes for CVS:
 
+Checkin of code that supports larger map sizes (configurable in
+config.h).
+common/los.c: update los code since it only handled 11x11 maps.  Now
+    uses formulatic approach so any map size should be supported.  This
+    does result in a few more spaces getting blocked around corners,
+    but it doesn't seem that bad - certainly not compared to the ability
+    to have larger viewable maps.
+common/map.c, crossedit/CrEdit.c, crossedit/Edit.c, include/global.h, 
+    include/map.h,random_maps/monster.c,random_maps/special.c,
+    random_maps/standalone.c, server/apply.c,server/c_misc.c,
+    server/spell_effect.c,socket/info.c:
+    change mapx,mapy to what they really point to,
+    as it prevented using those as variable/structure element names.
+common/object.c: update_position - if faces for different layers are
+    duplicate, set the duplicates to be blank to increase client
+    update efficiency.
+doc/Protocol: Add map1 command description, update setup command to
+    describe setting of mapsize.
+include/config.h: add MAP_CLIENT_X/Y to set maximum map size we can
+    send to the client.
+include/newserver.h: add mapx, mapy values to socket structure
+include/player.h: Use MAP_CLIENT_X/Y for sizing arrays that hold
+    map related information in player structure.
+server/player.c: As per player.h above, use appropriate sizing when
+    initializing player stucture.
+server/shop.c: Update mapx,mapy like above, but re-do shop listings code as
+     it was doing a lot more work than necessarily (I think some changes
+     got put in for sorting, and the old object manipulation was never
+     removed when that got done)
+socket/init.c: set default client map size to 11x11 in the socket.
+socket/item.c: LookAt - change checks for position checking (such that
+     you can only look at things in bounds) use max viewable map size.
+socket/request.c: Make setup commands a little more forgiving if there are
+     extra spaces.  Add 'mapsize' command to setup command.  Update
+     old map sending code to use socket map sizes (to support even
+     smaller than normal maps, or 13x13 or 15x15 maps).  add draw_client_map1
+     command which implements the map1 protocol command.
+MSW 2001-06-03
+
 random_maps/treasure.c, wall.c:  fix a problem where hidden doors
 surrounding a treasure could destroy exits.  --PeterM 5/31/2001
 
