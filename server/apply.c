@@ -341,7 +341,7 @@ static void eat_item(object *op,char *item, int nrof)
  */
 int check_weapon_power(object *who, int improvs)
 {
-    int level=who->level;
+    int level=0;
 
     /* The skill system hands out wc and dam bonuses to fighters
      * more generously than the old system (see fix_player). Thus
@@ -351,15 +351,20 @@ int check_weapon_power(object *who, int improvs)
      * using normal level - it is just a matter of play balance.
      */
     if(who->type==PLAYER) { 
-      object *wc_obj=NULL;
+	object *wc_obj=NULL;
 
-      for(wc_obj=who->inv;wc_obj;wc_obj=wc_obj->below)
-	if(wc_obj->type==EXPERIENCE&&wc_obj->stats.Str) break;
-      if(!wc_obj) 
-	LOG(llevError,"Error: Player: %s lacks wc experience object\n",who->name);
-      else
-	level=wc_obj->level; 
+	for(wc_obj=who->inv;wc_obj;wc_obj=wc_obj->below)
+	    if (wc_obj->type == SKILL && IS_COMBAT_SKILL(wc_obj->subtype) && wc_obj->level > level)
+		level  = wc_obj->level;
+
+	if (!level )  {
+	    LOG(llevError,"Error: Player: %s lacks wc experience object\n",who->name);
+	    level = who->level;
+	}
     }
+    else
+	level=who->level;
+
     return (improvs <= ((level/5)+5));
 }
 
@@ -2630,7 +2635,7 @@ int unapply_for_ob(object *who, object *op, int aflags)
         for (tmp=who->inv; tmp; tmp=tmp->below) {
 	    if (QUERY_FLAG(tmp, FLAG_APPLIED) && tmp->type == op->type) {
 		if ((aflags & AP_IGNORE_CURSE) ||  (aflags & AP_PRINT) ||
-		    (!(QUERY_FLAG(tmp, FLAG_CURSED) && !QUERY_FLAG(tmp, FLAG_DAMNED)))) {
+		    (!QUERY_FLAG(tmp, FLAG_CURSED) && !QUERY_FLAG(tmp, FLAG_DAMNED))) {
 		    if (aflags & AP_PRINT) 
 			new_draw_info(NDI_UNIQUE, 0, who, query_name(tmp));
 		    else
