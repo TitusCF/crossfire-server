@@ -105,13 +105,13 @@ all:: archetypes bmaps.paths crossfire.0  animations
 
 
 crossfire.0: bmaps.paths
-	$(srcdir)/adm/collect_images.pl -png
+	@PERL@ $(srcdir)/adm/collect_images.pl -png
 
 .collect-stamp:
 	touch .collect-stamp
 
 collect:
-	perl -I$(srcdir) $(srcdir)/collect.pl $(srcdir)/arch
+	@PERL@ -I$(srcdir) $(srcdir)/collect.pl $(srcdir)/arch
 
 archetypes: .collect-stamp
 	make collect
