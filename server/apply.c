@@ -3261,7 +3261,7 @@ int monster_apply_special (object *who, object *op, int aflags)
  * Generates shop floor's item, and treasures.
  */
 int auto_apply (object *op) {
-    object *tmp = NULL;
+    object *tmp = NULL, *tmp2;
     int i;
 
     switch(op->type) {
@@ -3294,13 +3294,13 @@ int auto_apply (object *op) {
 				op->stats.exp ? (int)op->stats.exp : 
 				op->map == NULL ?  14: op->map->difficulty,0);
 
-	    /* If we generated on object and put it in this object inventory,
+	    /* If we generated an object and put it in this object inventory,
 	     * move it to the parent object as the current object is about
 	     * to disappear.  An example of this item is the random_* stuff
 	     * that is put inside other objects.
 	     */
-	    if (op->inv) {
-		tmp=op->inv;
+	    for (tmp=op->inv; tmp; tmp=tmp2) {
+		tmp2 = tmp->below;
 		remove_ob(tmp);
 		if (op->env) insert_ob_in_ob(tmp, op->env);
 		else free_object(tmp);
@@ -3330,6 +3330,7 @@ void fix_auto_apply(mapstruct *m) {
 	    for(tmp=get_map_ob(m,x,y);tmp!=NULL;tmp=above) {
 		above=tmp->above;
 
+
 		if (tmp->inv) {
 		    object *invtmp, *invnext;
 
@@ -3342,16 +3343,27 @@ void fix_auto_apply(mapstruct *m) {
 				create_treasure(invtmp->randomitems, invtmp, 0,
 						m->difficulty,0);
 			}
+			else if (invtmp && invtmp->arch && 
+				invtmp->type!=TREASURE &&
+				invtmp->type != SPELL && 
+				HAS_RANDOM_ITEMS(invtmp)) {
+				    create_treasure(invtmp->randomitems, invtmp, 0,
+						    m->difficulty,0);
+				/* Need to clear this so that we never try to create 
+				 * treasure again for this object
+				 */
+				invtmp->randomitems = NULL;
+			}
 		    }
 		    /* This is really temporary - the code at the bottom will
 		     * also set randomitems to null.  The problem is there are bunches
 		     * of maps/players already out there with items that have spells
 		     * which haven't had the randomitems set to null yet.
 		     * MSW 2004-05-13
-             *
-             * And if it's a spellbook, it's better to set randomitems to NULL too,
-             * else you get two spells in the book ^_-
-             * Ryo 2004-08-16
+		     *
+		     * And if it's a spellbook, it's better to set randomitems to NULL too,
+		     * else you get two spells in the book ^_-
+		     * Ryo 2004-08-16
 		     */
 		    if (tmp->type == WAND || tmp->type == ROD || tmp->type == SCROLL ||
 			tmp->type == HORN || tmp->type == FIREWALL || tmp->type == POTION ||
@@ -3382,14 +3394,13 @@ void fix_auto_apply(mapstruct *m) {
 		   tmp->type != SPELL && HAS_RANDOM_ITEMS(tmp)) {
 		    create_treasure(tmp->randomitems, tmp, GT_APPLY,
                             m->difficulty,0);
-		    /* Purely debugging - I've seen crashes in monster_should_cast_spell()
-		     * where the monster has a scroll with no inventory - need to figure
-		     * out how that is happening.  Observed that it happens on random
-		     * maps, which should be covered by this code.
-		     */
-		    if (tmp->type == SCROLL && !tmp->inv)
-			LOG(llevError,"fix_auto_apply: create treasure failed to create spell for scroll.\n");
 		    tmp->randomitems = NULL;
+		    /* Treasure has been created for all the inventory, so clear out
+		     * their treasurelists also.
+		     */
+		    for (above=tmp->inv; above; above=above->below)
+			above->randomitems=NULL;
+
 		}
 	    }
 

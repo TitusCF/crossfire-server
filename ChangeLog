@@ -17,6 +17,31 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+common/living.c: Fix exp functions to use the player objects expmul
+   value when determining level gains, and not the skills.  Also,
+   fix bug where players last hp/sp/grace gain I think was being
+   re-rolled when player gained level in skill.
+common/loader.l, loader.c: Add better recording of non existant objects
+  (no archetype for them) in maps.  Also, handle such objects in
+   players inventories properly (which is to just discard them)
+common/map.c: Add better logging about discarded archetypes.  Since the
+   loader now deals with objects without archs in inventories, that
+   code doesn't need to be in the server.
+common/object.c: copy_object() was not properly nulling out the
+   next field in the event object, pointer to event list was also 
+   incorrect, causing events to not be copied properly.
+doc/spoiler-html/spoiler.html: Rebuilt.
+server/apply.c: Apply patch by MT that fixes problem of entire inventory
+   not being copied properly.  Fix problem that objects in creatures
+   were not having any sub treasure created (eg, put a pyro_book in 
+   a monster on the map, and the pyro_book wouldn't have a spell in
+   it) - now we make sure we process inventory objects as well as map
+   objects, creating treasure as needed.
+server/monster.c: Reverse order of cast_spell() and drain_rod() in
+   monster_use_range() - drain_rod() should go first, because
+   case_spell() can in rare cases destroy the rod.
+MSW 2004-10-14
+
 server/c_misc.c: Add natural skin resistances to 'statistics' output for
   dragon players.
 Ryo 2004-10-10

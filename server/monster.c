@@ -934,16 +934,18 @@ int monster_use_range(object *head,object *part,object *pl,int dir)
             /* Success */
             return 1;
             }
-        else if ( wand->type == ROD || wand->type==HORN )
-            {
+        else if ( wand->type == ROD || wand->type==HORN ) {
             /* Found rod/horn, let's use it if possible */
-            at_least_one = 1;
-	        if( wand->stats.hp < MAX( wand->inv->stats.sp, wand->inv->stats.grace ) )
+	    at_least_one = 1;
+	    if( wand->stats.hp < MAX( wand->inv->stats.sp, wand->inv->stats.grace ) )
                 continue;
 
+	    /* drain charge before casting spell - can be a case where the
+	     * spell destroys the monster, and rod, so if done after, results
+	     * in crash.
+	     */
+	    drain_rod_charge( wand );
             cast_spell( head, wand, dir, wand->inv, NULL );
-
-	        drain_rod_charge( wand );
 
             /* Success */
             return 1;

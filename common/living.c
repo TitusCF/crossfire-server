@@ -1528,13 +1528,14 @@ void player_lvl_adj(object *who, object *op) {
     if(!op)        /* when rolling stats */ 
 	op = who;	
  
-    if(op->level < settings.max_level && op->stats.exp >= level_exp(op->level+1,op->expmul)) {
+    if(op->level < settings.max_level && op->stats.exp >= level_exp(op->level+1,who->expmul)) {
 	op->level++;
 	
 	if (op != NULL && op == who && op->stats.exp > 1 && is_dragon_pl(who))
 	  dragon_level_gain(who);
-	
-	if(who && (who->level < 11) && who->type==PLAYER) { 
+
+        /* Only roll these if it is the player (who) that gained the level */
+	if(who && op==who && (who->level < 11) && who->type==PLAYER) { 
 	    who->contr->levhp[who->level] = die_roll(2, 4, who, PREFER_HIGH)+1;
 	    who->contr->levsp[who->level] = die_roll(2, 3, who, PREFER_HIGH);
 	    who->contr->levgrace[who->level]=die_roll(2, 2, who, PREFER_HIGH)-1;
@@ -1549,7 +1550,7 @@ void player_lvl_adj(object *who, object *op) {
 	    if(who) (*draw_info_func)(NDI_UNIQUE|NDI_RED, 0, who,buf);
 	}
 	player_lvl_adj(who,op); /* To increase more levels */
-    } else if (op->level>1 && op->stats.exp<level_exp(op->level,op->expmul)) {
+    } else if (op->level>1 && op->stats.exp<level_exp(op->level,who->expmul)) {
 	op->level--;
 	if(who) fix_player(who);
 	if(op->type!=PLAYER) {

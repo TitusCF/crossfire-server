@@ -617,6 +617,7 @@ void copy_object(object *op2, object *op) {
 	if (evt_new->hook)  add_refcount(evt_new->hook);
 	if (evt_new->plugin)  add_refcount(evt_new->plugin);
 	if (evt_new->options)  add_refcount(evt_new->options);
+	evt_new->next = NULL;
 
 	/* Try to be a little clever here, and store away the
 	 * last event we copied, so that its simpler to update the
@@ -625,7 +626,7 @@ void copy_object(object *op2, object *op) {
 	if (evt2)
 	    evt2->next = evt_new;
 	else
-	    op->events = evt2;
+	    op->events = evt_new;
 
 	evt2 = evt_new;
     }

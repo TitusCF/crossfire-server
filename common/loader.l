@@ -575,12 +575,25 @@ A	.+
 			    strcpy(msgbuf, "");
 			    strcpy(lorebuf, "");
 			    lex_load(tmp, map_flags);
-			    insert_ob_in_ob(tmp,op);
+			    if (tmp->arch) {
+				insert_ob_in_ob(tmp,op);
+			    }
+			    else {
+				LOG(llevDebug,"Discarding object without arch: %s\n", tmp->name?tmp->name:"(null)");
+				free_object(tmp);
+			    }
 			}
 			/* This is the actual archetype definition then */
 			else {
-			    op->arch=find_archetype(yval());
+			    char *yv=yval();
+
+			    op->arch=find_archetype(yv);
 			    if (op->arch!=NULL) copy_object(&op->arch->clone,op);
+			    else if (!arch_init) {
+				if (op->name) free_string(op->name);
+				/* record the name of the broken object */
+				op->name = add_string(yv);
+			    }
 			}
 		    }
 

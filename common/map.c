@@ -463,12 +463,11 @@ void load_objects (mapstruct *m, FILE *fp, int mapflags) {
 	bufstate = LO_REPEAT;
 
 	/* if the archetype for the object is null, means that we
-	 * got an invalid object.  Don't do anythign with it - the game
+	 * got an invalid object.  Don't do anything with it - the game
 	 * or editor will not be able to do anything with it either.
 	 */
 	if (op->arch==NULL) {
-	    if (op->name!=NULL)
-		LOG(llevDebug,"Discarded object %s - invalid archetype.\n",op->name);
+	    LOG(llevDebug,"Discarding object without arch: %s\n", op->name?op->name:"(null)");
 	    continue;
 	}
 
@@ -492,22 +491,7 @@ void load_objects (mapstruct *m, FILE *fp, int mapflags) {
 		insert_ob_in_map(op,m,op,INS_NO_MERGE | INS_NO_WALK_ON | INS_ABOVE_FLOOR_ONLY);
 	    else
 		insert_ob_in_map(op,m,op,INS_NO_MERGE | INS_NO_WALK_ON | INS_ON_TOP);
-	    if (op->inv) {
-		object *invop, *next;
 
-		/* Clear out any objects without archetypes, as they will just cause
-		 * crashes later on.
-		 */
-		for (invop = op->inv; invop; invop=next) {
-		    next = invop->above;
-		    if (!invop->arch) {
-			LOG(llevDebug,"Discarding object without arch: %s\n", invop->name?invop->name:"(null)");
-			remove_ob(invop);
-			free_object(invop);
-		    }
-		}
-		sum_weight(op);
-	    }
 	    prev=op,last_more=op;
 	    break;
 
