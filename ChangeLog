@@ -17,6 +17,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/c_object.c: fixed sack_can_hold for the 'won't fit' cast,
+    missing 'return 0'
+server/gods.c: applied Karla Stenger's patch, making sure 'praying' is
+    applied when becoming fellower of a god
+Ryo 2004-02-08
+
 Changed map-building to work on non-unique maps too.
 server/build_map.c: removed check for unique map.
 Ryo 2004-01-19

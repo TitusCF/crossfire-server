@@ -530,6 +530,7 @@ int sack_can_hold (object *pl, object *sack, object *op, int nrof) {
 	* (100 - sack->stats.Str) / 100  > sack->weight_limit) {
 	new_draw_info_format(NDI_UNIQUE, 0, pl,
 	     "That won't fit in the %s!", query_name(sack));
+    return 0;
     }
     /* All other checks pass, must be OK */
     return 1;
