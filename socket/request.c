@@ -1227,6 +1227,7 @@ void draw_client_map1(object *pl)
 		 */
 
 		oldlen = sl.len;
+#if 0
 		/* First thing we do is blank out this space (clear it)
 		 * if not already done.  If the client is using darkness, and
 		 * this space is at the edge, we also include the darkness.
@@ -1238,7 +1239,9 @@ void draw_client_map1(object *pl)
 			SockList_AddChar(&sl, 0);
 		    }
 		    count = d;
-		} else {
+		} else
+#endif
+		{
 		    SockList_AddShort(&sl, mask);
 		    if (pl->contr->socket.lastmap.cells[ax][ay].count != -1) need_send=1;
 		    count = -1;
@@ -1364,6 +1367,12 @@ void draw_client_map(object *pl)
 	LOG(llevError,"draw_client_map called with non player/non eric-server\n");
 	return;
     }
+
+    if(pl->map == NULL || pl->map->in_memory != MAP_IN_MEMORY) {
+	LOG(llevError,"draw_client_map called with no map/map out of memory\n");
+	return;
+    }
+
 
     /* IF player is just joining the game, he isn't here yet, so the map
      * can get swapped out.  If so, don't try to send them a map.  All will

@@ -72,6 +72,26 @@ object *find_best_object_match(object *pl, char *params)
     }
     return best;
 }
+/* Simlilar to find_best_object_match , but accepts an
+ * additional parameter for apply -u , and apply -a to
+ * only unapply applied , or apply unapplied objects
+ */
+static object *find_best_apply_object_match(object *pl, char *params, enum apply_flag aflag)
+{
+    object *tmp, *best=NULL;
+    int match_val=0,tmpmatch;
+
+    for (tmp=pl->inv; tmp; tmp=tmp->below) {
+	if (tmp->invisible) continue;
+	if ((tmpmatch=item_matched_string(pl, tmp, params))>=match_val) {
+	  if ((aflag==AP_APPLY) && (QUERY_FLAG(tmp,FLAG_APPLIED))) continue;
+	  if ((aflag==AP_UNAPPLY) && (!QUERY_FLAG(tmp,FLAG_APPLIED))) continue;
+	    match_val=tmpmatch;
+	    best=tmp;
+	}
+    }
+    return best;
+}
 
 /*
  * Notes about item creation:
@@ -426,7 +446,7 @@ int command_apply (object *op, char *params)
     }
     while (*params==' ') params++;
 
-    inv=find_best_object_match(op, params);
+    inv=find_best_apply_object_match(op, params, aflag);
     if (inv) {
 	player_apply(op,inv,aflag,0);
     } else

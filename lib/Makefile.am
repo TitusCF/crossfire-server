@@ -28,7 +28,7 @@ pkgconfdir = @pkgconfdir@
 
 dist_noinst_SCRIPTS = collect.pl util.pl checkarch.pl
 dist_pkgdata_DATA = artifacts def_help formulae  messages races \
-	treasures animations archetypes  bmaps bmaps.paths crossfire.0 \
+	treasures animations archetypes  bmaps  crossfire.0 \
 	crossfire.1 faces attackmess image_info materials
 
 CONF_FILES = settings motd dm_file forbid ban_file skill_params  \
@@ -107,7 +107,7 @@ animations: .collect-stamp
 bmaps.paths bmaps: .collect-stamp
 	make collect
 
-install-data-local: archetypes bmaps.paths crossfire.0 faces animations collect.pl util.pl
+install-data-local: archetypes crossfire.0 faces animations collect.pl util.pl
 	@$(NORMAL_INSTALL)
 	$(mkinstalldirs) $(DESTDIR)$(pkgconfdir)
 	for i in $(CONF_FILES); do \

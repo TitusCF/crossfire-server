@@ -17,6 +17,20 @@ If a shop is placed in a random map (special map), the objects below the
 shop wall stick around - normally not much a problem, unless it is placed
 in a glory hole (treasure level), in which case coins are now beneath the wall.
 
+Slaying is sloppy in that it uses strstr.  This, an item that has 'slaying
+giant' (like holyword of mostrai) will kill ants.  strstr matching was most
+likely added to support comma seperated slaying lists (slaying demon,undead).
+However, the code should really insist on exact matching, and if necessary
+break apart the comma seperated list.  Probably best to make something like a
+'does_slay()' function which can be used all over the place (consistent
+behaviour is a good thing).  If performance for this becomes an issue, making
+a slaying a set of pointers could be done (char **slaying), and it gets filled
+in at load time, and at save time, gets filled in the opposite direction.
+However, from a simple basis, a check in does_slay() can be done to see if
+slaying does contain a comma, and if not, just do simple strcmp, and only if
+it does does extra work need to be done. MSW 2003-03-28
+
+
 ------------------------------------------------------------------------------
 Future feature requests
 
@@ -223,22 +237,6 @@ Future feature requests
   can know to use them.  This is no worse than many commercial games which
   give you just a few choices to choose from to continue a conversation.
 - Statues turning into golems when activated (like doors).
-- IDEA: Make spells be objects.  One object for each spell you know.  Same
-  system for the monsters.  For now let the objects be invisible.
-  Then later create a spellbook into which the spells can be "put".
-  Thus knowing a spell consists of having the spell-object in some
-  spellbook.  With this, more properties of the spell (level, cost, etc)
-  from the current array to the spell object.  Alternatively, spellbooks
-  have the spell objects that are then put in the players inventory when
-  the spell is learnt.  scrolls, wands, potions would just be objects with
-  some spell object as an inventory.
-  As a further extension, make general spell casting code, which can look
-  at the spell object and come up with effects.  For example, right now
-  the cones could be pretty generalized - all that is really different
-  is the attack form (could be determined by attack type), area of effect
-  (some other value in the object), damage, spell cast, level, etc.  In
-  other words, the spell objects could pretty much provide all the information
-  needed for some of the more general functions (cast cone, fire_bolt, etc.)
 - Figurine (when a figurine pet dies, it becomes a figurine, and can be reused)
 
 - Ability to aim at targets not in the front row.  This should apply for
@@ -263,6 +261,24 @@ Future feature requests
   purposes, like favorite lists.  The only problem is that when objects
   merge, the correct update of the tag would need to be handled by the
   server and/or client.
+
+- Better sound support - instead of having hardcoded events for sounds (eg,
+  button push, door open, etc), sounds should be tied to objects, with some
+  number of sound events (eg, object active, object destroyed, object moved,
+  objected attacked, repeat forever, random, etc).  Information about how far
+  they can be heard (in spaces) should also be contained.  When a sound is
+  played, then do a simple check to see nearby players, and if one is within
+  potential range, then check for intervening objects (walls).  Walls would
+  have some dampening effect, counting for more spaces (something behind a
+  wall may sound 5 spaces further away.)
+  Exactly how to store the sound information would need to be investigated -
+  the cheapest in terms of memory would be something like how animations are
+  done - have a global array of the sound information.  However, sound
+  information would be tied pretty closely to object types (eg, if the sound
+  info said its used for both apply and destroy, then if some other object
+  used that same info, it'd also get that apply and destroy behaviour).  This
+  is probably good enough - one could make individual sound information
+  sequences for the individual parts if those were needed.
 
 Secondary features:
 

@@ -191,6 +191,7 @@ CommArray_s CommunicationCommands [] = {
   {"think", command_think,		0.0},
   {"cointoss", command_cointoss, 0.0},
   {"orcknuckle", command_orcknuckle, 0.0},
+  {"printlos", command_printlos,0.0},
 };
 
 const int CommunicationCommandSize = sizeof(CommunicationCommands)/ sizeof(CommArray_s);
@@ -234,7 +235,6 @@ CommArray_s WizCommands [] = {
   {"nodm", command_nowiz,0.0},
   {"nowiz", command_nowiz,0.0},
   {"patch", command_patch,0.0},
-  {"printlos", command_printlos,0.0},
   {"remove", command_remove,0.0},
   {"reset", command_reset,0.0},
   {"set_god", command_setgod, 0.0},

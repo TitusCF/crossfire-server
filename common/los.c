@@ -225,7 +225,7 @@ static void check_wall(object *op,int x,int y) {
 
     if(get_map_flags(op->map, NULL, 
 	op->x + x - MAP_CLIENT_X/2, op->y + y - MAP_CLIENT_Y/2, 
-	NULL, NULL) & P_BLOCKSVIEW)
+	NULL, NULL) & (P_BLOCKSVIEW | P_OUT_OF_MAP))
 	set_wall(op,x,y);
 }
 
@@ -261,7 +261,7 @@ void expand_sight(object *op)
 	        !(get_map_flags(op->map,NULL, 
 		op->x-op->contr->socket.mapx/2+x,
 		op->y-op->contr->socket.mapy/2+y,
-		NULL, NULL) & P_BLOCKSVIEW)) {
+		NULL, NULL) & (P_BLOCKSVIEW | P_OUT_OF_MAP))) {
 
 		for(i=1;i<=8;i+=1) {	/* mark all directions */
 		    dx = x + freearr_x[i];

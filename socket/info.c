@@ -258,19 +258,6 @@ void new_info_map(int color, mapstruct *map, char *str) {
 	}
 }
 
-void draw(object *pl) {
-
-    if(pl->map == NULL || pl->map->in_memory != MAP_IN_MEMORY)
-	return;
-
-    if(pl->contr->do_los) {
-	update_los(pl);
-	pl->contr->do_los = 0;
-    }
-
-    draw_client_map(pl);
-}
-
 
 /* This does nothing now.  However, in theory, we should probably send
  * something to the client and let the client figure out how it might want

@@ -13760,7 +13760,7 @@ fi
 done
 
 	if test "x$cf_have_python_h" = "x"  ; then
-		for dir in /usr{,local}/include/python{,2.2,2.1,2.0} ; do
+		for dir in /usr{,/local}/include/python{,2.2,2.1,2.0} ; do
 
 for ac_header in "$dir/Python.h"
 do

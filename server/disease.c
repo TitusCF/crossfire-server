@@ -150,15 +150,18 @@ these are their own object. */
 static int is_susceptible_to_disease(object *victim, object *disease)
 {
     if(!QUERY_FLAG(victim,FLAG_ALIVE)) return 0;
-  if(strstr(disease->race, "*") && !QUERY_FLAG(victim, FLAG_UNDEAD))
-    return 1;
-  if(strstr(disease->race, "undead") && QUERY_FLAG(victim, FLAG_UNDEAD))
-    return 1;
-  if((victim->race && strstr(disease->race, victim->race)) || 
-     strstr(disease->race, victim->name))
-    return 1;
+
+    if(strstr(disease->race, "*") && !QUERY_FLAG(victim, FLAG_UNDEAD))
+	return 1;
+
+    if(strstr(disease->race, "undead") && QUERY_FLAG(victim, FLAG_UNDEAD))
+	return 1;
+
+    if((victim->race && strstr(disease->race, victim->race)) || 
+       strstr(disease->race, victim->name))
+	return 1;
   
-  return 0;
+    return 0;
 }
 
 int move_disease(object *disease) {
@@ -197,18 +200,23 @@ int move_disease(object *disease) {
     return 0;
 }
 
-/* remove any symptoms of disease */
+/* remove any symptoms of disease
+ * Modified by MSW 2003-03-28 do try to find all the symptom the
+ * player may have - I think through some odd interactoins with
+ * disease level and player level and whatnot, a player could get
+ * more than one symtpom to a disease.
+ */
  
 int remove_symptoms(object *disease) {
-  object *symptom;
-  symptom = find_symptom(disease);
-  if(symptom!=NULL) {
-	 object *victim=symptom->env;;
-	 remove_ob(symptom);
-	 free_object(symptom);
-	 if(victim) fix_player(victim);
-  }
-  return 0;
+    object *symptom, *victim;
+
+    while ((symptom = find_symptom(disease)) != NULL) {
+	if (!victim) victim=symptom->env;
+	remove_ob(symptom);
+	free_object(symptom);
+    }
+    if(victim) fix_player(victim);
+    return 0;
 }
 
 /* argument is a disease */
@@ -262,81 +270,94 @@ int check_infection(object *disease) {
 	 undead objects are infectible only if specifically named.
 */
 int infect_object(object *victim, object *disease, int force) {
-  object *tmp;
-  object *new_disease;
+    object *tmp;
+    object *new_disease;
 
-  /* don't infect inanimate objects */
-  if(!QUERY_FLAG(victim,FLAG_MONSTER) && !(victim->type==PLAYER)) return 0;
+    /* don't infect inanimate objects */
+    if(!QUERY_FLAG(victim,FLAG_MONSTER) && !(victim->type==PLAYER)) return 0;
 
-  /* check and see if victim can catch disease:  diseases
-	  are specific */
-  if(!is_susceptible_to_disease(victim, disease)) return 0;
+    /* check and see if victim can catch disease:  diseases
+     *  are specific 
+     */
+    if(!is_susceptible_to_disease(victim, disease)) return 0;
 
-  /* roll the dice on infection before doing the inventory check!  */
-  if(!force && (random_roll(0, 126, victim, PREFER_HIGH) >= disease->stats.wc))
-    return 0;
+    /* roll the dice on infection before doing the inventory check!  */
+    if(!force && (random_roll(0, 126, victim, PREFER_HIGH) >= disease->stats.wc))
+	return 0;
 
-  /* do an immunity check */
-  if(victim->head) tmp = victim->head->inv;
-  else tmp = victim->inv;
+    /* do an immunity check */
+    if(victim->head) tmp = victim->head->inv;
+    else tmp = victim->inv;
 
-  for(/* tmp initialized in if, above */;tmp;tmp=tmp->below) {
-    if(tmp->type == SIGN || tmp->type==DISEASE)  /* possibly an immunity, or diseased*/
-      if(!strcmp(tmp->name,disease->name) && tmp->level >= disease->level)
-	return 0;  /*Immune! */
-  }
-
- 
-  /*  If we've gotten this far, go ahead and infect the victim.  */
-  new_disease = get_object();
-  copy_object(disease,new_disease);
-  new_disease->stats.food=disease->stats.maxgrace;
-  new_disease->value=disease->stats.maxhp;
-  new_disease->stats.wc -= disease->last_grace;  /* self-limiting factor */
-
-  /* Unfortunately, set_owner does the wrong thing to the skills pointers
-	  resulting in exp going into the owners *current* chosen skill. */
-
-  if(get_owner(disease)) {
-    set_owner(new_disease,disease->owner);
-    new_disease->chosen_skill = disease->chosen_skill;
-    new_disease->exp_obj = disease->exp_obj;
-  }
-  else {  /* for diseases which are passed by hitting, set owner and praying skill*/
-    if(disease->env && disease->env->type==PLAYER) {
-      object *player = disease->env;
-
-      new_disease->chosen_skill = find_skill(player,SK_PRAYING);
-
-      /* Not all players have praying.  A side effect here is that
-       * players can infect others with diseases they get from traps,
-       * but that is not likely a big deal.
-       */
-      if (new_disease->chosen_skill) {
-	set_owner(new_disease,player);
-	new_disease->exp_obj = new_disease->chosen_skill->exp_obj;
-      }
+    /* There used to (IMO) be a flaw in the below - it used to be the case
+     * that if level check was done for both immunity and disease. This could
+     * result in a person with multiple afflictions of the same disease
+     * (eg, level 1 cold, level 2 cold, level 3 cold, etc), as long as
+     * they were cast in that same order.  Instead, change it so that
+     * if you diseased, you can't get diseased more.
+     */
+    
+    for(/* tmp initialized in if, above */;tmp;tmp=tmp->below) {
+	if(tmp->type == SIGN && !strcmp(tmp->name,disease->name) && tmp->level >= disease->level)
+		return 0;  /*Immune! */
+	else if (tmp->type==DISEASE && !strcmp(tmp->name,disease->name))
+	    return 0;	/* already diseased */
     }
-  }
 
-  insert_ob_in_ob(new_disease,victim);
-  CLEAR_FLAG(new_disease,FLAG_NO_PASS);
-  if(new_disease->owner && new_disease->owner->type==PLAYER) {
+    /*  If we've gotten this far, go ahead and infect the victim.  */
+    new_disease = get_object();
+    copy_object(disease,new_disease);
+    new_disease->stats.food=disease->stats.maxgrace;
+    new_disease->value=disease->stats.maxhp;
+    new_disease->stats.wc -= disease->last_grace;  /* self-limiting factor */
+
+    /* Unfortunately, set_owner does the wrong thing to the skills pointers
+     *  resulting in exp going into the owners *current* chosen skill. 
+     */
+
+    if(get_owner(disease)) {
+	set_owner(new_disease,disease->owner);
+	new_disease->chosen_skill = disease->chosen_skill;
+	new_disease->exp_obj = disease->exp_obj;
+    }
+    else {  /* for diseases which are passed by hitting, set owner and praying skill*/
+	if(disease->env && disease->env->type==PLAYER) {
+	    object *player = disease->env;
+
+	    new_disease->chosen_skill = find_skill(player,SK_PRAYING);
+
+	    /* Not all players have praying.  A side effect here is that
+	     * players can infect others with diseases they get from traps,
+	     * but that is not likely a big deal.
+	     */
+	    if (new_disease->chosen_skill) {
+		set_owner(new_disease,player);
+		new_disease->exp_obj = new_disease->chosen_skill->exp_obj;
+	    }
+	}
+    }
+
+    insert_ob_in_ob(new_disease,victim);
+    CLEAR_FLAG(new_disease,FLAG_NO_PASS);
+    if(new_disease->owner && new_disease->owner->type==PLAYER) {
 	 char buf[128];
-	 /* if the disease has a title, it has a special infection message */
-	 /* This messages is printed in the form MESSAGE victim */
+	 /* if the disease has a title, it has a special infection message
+	  * This messages is printed in the form MESSAGE victim 
+	  */
 	 if(new_disease->title) 
-	   sprintf(buf,"%s %s!!",disease->title,victim->name);
+	    sprintf(buf,"%s %s!!",disease->title,victim->name);
 	 else
-	   sprintf(buf,"You infect %s with your disease, %s!",victim->name,new_disease->name);
+	    sprintf(buf,"You infect %s with your disease, %s!",victim->name,new_disease->name);
+
 	 if(victim->type == PLAYER)
-	   new_draw_info(NDI_UNIQUE | NDI_RED, 0, new_disease->owner, buf);
+	    new_draw_info(NDI_UNIQUE | NDI_RED, 0, new_disease->owner, buf);
 	 else
-	   new_draw_info(0, 4, new_disease->owner, buf);
-  }
-  if(victim->type==PLAYER) 
+	    new_draw_info(0, 4, new_disease->owner, buf);
+    }
+    if(victim->type==PLAYER) 
 	 new_draw_info(NDI_UNIQUE | NDI_RED,0,victim,"You suddenly feel ill.");
-  return 1;
+
+    return 1;
 
 }
 
@@ -487,39 +508,44 @@ int grant_immunity(object *disease) {
 /*  make the symptom do the nasty things it does  */
 
 int move_symptom(object *symptom) {
-  object *victim = symptom->env;
-  object *new_ob;
-  int sp_reduce;
-  if(victim == NULL || victim->map==NULL) {  /* outside a monster/player, die immediately */
-	 remove_ob(symptom);
-	 free_object(symptom);
-	 return 0;
-  }
-  if(symptom->stats.dam > 0)  hit_player(victim,symptom->stats.dam,symptom,symptom->attacktype);
-  else hit_player(victim,MAX(1,-victim->stats.maxhp * symptom->stats.dam / 100.0),symptom,symptom->attacktype);
-  if(symptom->stats.maxsp>0) sp_reduce = symptom->stats.maxsp;
-  else sp_reduce = MAX(1,victim->stats.maxsp * symptom->stats.maxsp/100.0);
-  victim->stats.sp = MAX(0,victim->stats.sp - sp_reduce);
+    object *victim = symptom->env;
+    object *new_ob;
+    int sp_reduce;
 
-  /* create the symptom "other arch" object and drop it here 
-   * under every part of the monster */
-  /* The victim may well have died. */
-  if(victim->map==NULL) return 0;
-  if(symptom->other_arch) {
-    object *tmp;
-    tmp=victim;
-    if(tmp->head!=NULL) tmp=tmp->head;
-    for(/*tmp initialized above */;tmp!=NULL;tmp=tmp->more) {
-      new_ob = arch_to_object(symptom->other_arch);
-      new_ob->x = tmp->x;
-      new_ob->y = tmp->y;
-      new_ob->map = victim->map;
-      insert_ob_in_map(new_ob,victim->map,victim,0);
+    if(victim == NULL || victim->map==NULL) {  /* outside a monster/player, die immediately */
+	remove_ob(symptom);
+	free_object(symptom);
+	return 0;
     }
-  }
-  new_draw_info(NDI_UNIQUE | NDI_RED,0,victim,symptom->msg);
+
+    if(symptom->stats.dam > 0)  hit_player(victim,symptom->stats.dam,symptom,symptom->attacktype);
+    else hit_player(victim,MAX(1,-victim->stats.maxhp * symptom->stats.dam / 100.0),symptom,symptom->attacktype);
+
+    if(symptom->stats.maxsp>0) sp_reduce = symptom->stats.maxsp;
+    else sp_reduce = MAX(1,victim->stats.maxsp * symptom->stats.maxsp/100.0);
+    victim->stats.sp = MAX(0,victim->stats.sp - sp_reduce);
+
+    /* create the symptom "other arch" object and drop it here 
+     * under every part of the monster
+     * The victim may well have died. 
+     */
+
+    if(victim->map==NULL) return 0;
+    if(symptom->other_arch) {
+	object *tmp;
+	tmp=victim;
+	if(tmp->head!=NULL) tmp=tmp->head;
+	for(/*tmp initialized above */;tmp!=NULL;tmp=tmp->more) {
+	    new_ob = arch_to_object(symptom->other_arch);
+	    new_ob->x = tmp->x;
+	    new_ob->y = tmp->y;
+	    new_ob->map = victim->map;
+	    insert_ob_in_map(new_ob,victim->map,victim,0);
+	}
+    }
+    new_draw_info(NDI_UNIQUE | NDI_RED,0,victim,symptom->msg);
   
-  return 1;
+    return 1;
 }
 
 

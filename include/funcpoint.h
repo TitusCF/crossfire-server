@@ -59,7 +59,6 @@ typedef void (*type_func_char)(char *);
  */
 
 extern void	(*move_apply_func)		(object *, object *, object *);
-extern void	(*draw_func)			(object *);
 extern void	(*draw_info_func)		(int, int, object *, const char *);
 extern void	(*emergency_save_func)		(int);
 extern void	(*fix_auto_apply_func)		(mapstruct *);

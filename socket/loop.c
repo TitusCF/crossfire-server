@@ -635,7 +635,7 @@ void doeric_server()
 		 * sending them whenever they change, and probably just as useful
 		 */
 		esrv_update_stats(pl);
-		draw(pl->ob);
+		draw_client_map(pl->ob);
 		if (pl->socket.update_look) esrv_draw_look(pl->ob);
 	    }
 	}

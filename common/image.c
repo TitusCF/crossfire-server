@@ -185,7 +185,7 @@ static void ReadFaceData()
     fclose(fp);
 }
 
-/* This reads the bmaps.paths file to get all the bitmap names and
+/* This reads the bmaps file to get all the bitmap names and
  * stuff.  It only needs to be done once, because it is player
  * independent (ie, what display the person is on will not make a
  * difference.)

@@ -17,12 +17,25 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
-common/glue.c, include/funcpoint.h: remove draw_func() pointer - no longer
-   needed, so code that sets up pointer removed.
-lib/*: rebuilt - facings added to old player animation information.
-   ruined_temple archetype added.
-server/init.c: remove set_draw() function
-server/player.c: remove call to draw() - socket code takes care of this.
+TODO: Various updates
+aclocal.m4,configure: Update path to find python (fix again)
+common/image.c: Minor update to a ocmment in the code.
+common/los.c: Add missing P_OUT_OF_MAP checks that resulted in some incorrect
+    LOS calcuations.
+include/funcpoint.h: Remove draw_func function pointer.
+lib/Makefile.am, in: Remove bmaps.paths to from being installed or being part
+    of distribution - bmaps.paths is only needed when collecting the image
+lib/*: Rebuilt
+server/c_object.c: Patch by Bernd Edler to have the apply functions take into
+   acount if the item is equipped or not when looking for good matched items.
+server/commands.c: Move printlos to normal commands.  I don't think it reveals
+    any information that is in any way harmful.  And since it dumps the
+    output to the players screen, no concern of it filling up log files.
+    Also, when doing LOS debugging, it is pointless to have it as a DM command
+    because LOS is ignored for DM's.
+server/disease.c: Modify remove_symptoms to remove all symptoms the player
+    may have a disease.  Modify infect_object() to not allow a creature to
+    have more than one instance of the same disease.
 socket/info.c: remove draw() - instead, draw_client_map() can be used,
     as that is most the only thing draw() did anyways.
 socket/loop.c: Update draw() calls to draw_client_map()
@@ -30,6 +43,15 @@ socket/request.c: Remove special handling for darkness==4 cases (first
     space that is in full darkness) - this is extra complications and causes
     display problems.  Update draw_client_map() to include the little bit
     of logic that draw() had that this function did not have.
+MSW 2003-04-01
+
+
+common/glue.c, include/funcpoint.h: remove draw_func() pointer - no longer
+   needed, so code that sets up pointer removed.
+lib/*: rebuilt - facings added to old player animation information.
+   ruined_temple archetype added.
+server/init.c: remove set_draw() function
+server/player.c: remove call to draw() - socket code takes care of this.
 MSW 2003-03-24
 
 server/spell_effect.c: Some code cleanuip to cast_change_attr - mostly
