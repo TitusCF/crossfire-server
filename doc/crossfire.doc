@@ -673,15 +673,29 @@ space periodically, where as pedestals will get triggered the instant
 something is dropped.  The use for pedestals is to add some indeterminate
 time delay (indeterminate since you can never be sure at what point in its
 timing the player will actually drop something on the detector.)  Personally,
-I don't see much if any use for detectors.
+I don't see much if any use for detectors.  (The author of this last sentence
+didn't realize that if you blow a spell over a detector, it may be detected,
+but a pedestal won't notice it.)
 
 slaying   name of the thing the detector is to look for
 speed     time between samples
 connected connected value of detector
 sp        1 if detection sets buttons,
           -1 if detection unsets buttons
+hp	  1 if it is to search through an inventory of an object
+	  sitting over it
 
 
+------------------------------------------------------------------------------
+
+MARKER:    This object inserts a force into a player who stands on it.
+This force does nothing except contain a string in its slaying field
+which can be discovered by a detector.  
+
+slaying	  the code
+speed	  how quickly it will mark something standing on it
+food	  duration of the force it inserts.  If nonzero, the duration
+          is finite:  about 1 food per 10 seconds
 ------------------------------------------------------------------------------
 NOTE ABOUT ALL CONNECTED ITEMS:
 
