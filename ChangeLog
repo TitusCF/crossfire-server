@@ -17,6 +17,18 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+lib/*: different spell for dragons vs players for firebreath - update
+   treasures so monsters use ability version.
+server/gods.c: Add missing call to link_player_skills(), resulting in players
+   having multiple praying skills.
+server/skill_util.c: Change learn_skill() so we don't create a skill pointer
+   for the player if they didn't learn the skill (even if they can't use
+   such a created skill, it is still a bit confusing).  Fix finding of
+   hand to hand skills to make sure the player can in fact use the skill
+   in question.
+MSW 2004-02-22
+
+
 include/define.h,server/shop.c: Apply patch by Bernd Edler that gives
    bargaining experience based on the amount of money a character saves.
    Higher the bargaining skill, the more money they can save.

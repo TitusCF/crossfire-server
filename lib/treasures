@@ -3127,7 +3127,7 @@ treasure dragon
 #  nrof 3
 #  chance 90
 #  more
-  arch spell_dragonbreath
+  arch ability_dragonbreath
     nrof 5
   more
   arch abil_fear
@@ -4111,7 +4111,7 @@ treasure Cwyvern
   more
   arch abil_fear
   more
-  arch spell_dragonbreath
+  arch ability_dragonbreath
     nrof 5
   more
   arch abil_icestorm

@@ -577,16 +577,10 @@ learn_skill (object *pl, object *scroll) {
     for (tmp=pl->inv; tmp!=NULL; tmp=tmp->below)
 	if (tmp->type == SKILL && !strncasecmp(scroll->skill, tmp->skill, strlen(scroll->skill))) break;
 
-    if (!tmp)
-	tmp = give_skill_by_name(pl, scroll->skill);
-
-    if (!tmp) {
-	LOG(llevError,"skill scroll %s does not have valid skill name (%s).\n", scroll->name, scroll->skill);
-	return 2;
-    }
-
     /* player already knows it */
-    if (QUERY_FLAG(tmp, FLAG_CAN_USE_SKILL)) return 0;
+    if (tmp && QUERY_FLAG(tmp, FLAG_CAN_USE_SKILL)) return 0;
+
+
 
     /* now a random change to learn, based on player Int.
      * give bonus based on level - otherwise stupid characters
@@ -594,6 +588,14 @@ learn_skill (object *pl, object *scroll) {
      */
     if(random_roll(0, 99, pl, PREFER_LOW)>(learn_spell[pl->stats.Int] + (pl->level/5)))
 	return 2; /* failure :< */
+
+    if (!tmp)
+	tmp = give_skill_by_name(pl, scroll->skill);
+
+    if (!tmp) {
+	LOG(llevError,"skill scroll %s does not have valid skill name (%s).\n", scroll->name, scroll->skill);
+	return 2;
+    }
 
     SET_FLAG(tmp, FLAG_CAN_USE_SKILL);
     link_player_skills(pl);
@@ -791,7 +793,7 @@ static object *find_best_player_hth_skill(object *op)
 	     * right away - can't get any better than that.
 	     */
 	    for (i=0; i<last_skill; i++) {
-		if (tmp->subtype == unarmed_skills[i]) {
+		if (tmp->subtype == unarmed_skills[i] && QUERY_FLAG(tmp, FLAG_CAN_USE_SKILL)) {
 		    best_skill = tmp;
 		    last_skill = i;
 		    if (i==0) return best_skill;
@@ -841,7 +843,7 @@ static int do_skill_attack(object *tmp, object *op, char *string, object *skill)
 		    skill = find_best_player_hth_skill(op);
 
 		    if (!skill) {
-			new_draw_info(NDI_UNIQUE, 0, op, "You have no unarmed combat skills!");
+			new_draw_info(NDI_BLACK, 0, op, "You have no unarmed combat skills!");
 			return 0;
 		    }
 		}

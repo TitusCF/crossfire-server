@@ -438,9 +438,10 @@ void become_follower (object *op, object *new_god) {
 	 * things are really messed up anyways.
 	 */
 	skop = give_skill_by_name(op, get_archetype_by_type_subtype(SKILL, SK_PRAYING)->clone.skill);
+	link_player_skills(op);
     }
 
-	sk_applied=QUERY_FLAG(skop,FLAG_APPLIED); /* save skill status */
+    sk_applied=QUERY_FLAG(skop,FLAG_APPLIED); /* save skill status */
 
     if(skop->title) { /* get rid of old god */ 
 	new_draw_info_format(NDI_UNIQUE,0,op,
@@ -507,8 +508,8 @@ void become_follower (object *op, object *new_god) {
     SET_FLAG(skop,FLAG_APPLIED);
     (void) change_abil(op,skop);
 
-	/* return to previous skill status */
-	if (!sk_applied) CLEAR_FLAG(skop,FLAG_APPLIED);
+    /* return to previous skill status */
+    if (!sk_applied) CLEAR_FLAG(skop,FLAG_APPLIED);
 
     check_special_prayers (op, new_god);
 }
