@@ -5398,7 +5398,7 @@ MODULEAPI CFParm* removePlugin(CFParm* PParm)
 MODULEAPI CFParm* getPluginProperty(CFParm* PParm)
 {
 
-    double dblval = 0.0;
+    static double dblval = 0.0;
     int i;
     if (PParm!=NULL)
     {

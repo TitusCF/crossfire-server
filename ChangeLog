@@ -17,6 +17,7 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+plugin/plugin_python.c: Do not return a pointer to a variable on the stack.
 server/plugins.c: Fix pointer type mismatch while processing
    CFPython.RegisterCommand.
 plugin/plugin_python.c: Change second parameter of CFPython.CheckMap to use
