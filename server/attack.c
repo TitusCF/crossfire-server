@@ -1350,7 +1350,7 @@ void poison_player(object *op, object *hitter, int dam)
 	 else
 	   tmp->stats.dam = dam;
 
-	set_owner(tmp,hitter);   /*  so we get credit for poisoning kills */
+	copy_owner(tmp,hitter);   /*  so we get credit for poisoning kills */
 	tmp->stats.food+=dam;  /*  more damage, longer poisoning */
 
         if(op->type==PLAYER) {
