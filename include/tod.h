@@ -38,7 +38,7 @@ extern void get_tod(timeofday_t *tod);
 /* weather stuff */
 
 #define POLAR_BASE_TEMP		0	/* C */
-#define EQUATOR_BASE_TEMP	25	/* C */
+#define EQUATOR_BASE_TEMP	30	/* C */
 #define SEASONAL_ADJUST		10	/* polar distance */
 #define GULF_STREAM_WIDTH       3       /* width of gulf stream */
 #define GULF_STREAM_BASE_SPEED  40      /* base speed of gulf stream */
@@ -51,6 +51,14 @@ extern void get_tod(timeofday_t *tod);
 #define PRESSURE_SPIKES			3
 #define PRESSURE_MAX			1040
 #define PRESSURE_MIN			960
+
+/* This is a multiplier for the wind caused by pressure differences.
+ * The type of overal climate you get depends on this.
+ * Too little wind, and the rain hugs the coast.
+ * Too much wind, and there are hurricanes and blizzards everywhere.
+ * 1 is too little.
+ */
+#define WIND_FACTOR  4.0 
 
 /* editing the below might require actual changes to code */
 #define WEATHERMAPTILESX		100
