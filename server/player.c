@@ -155,6 +155,8 @@ static player* get_player(player *p) {
     p->gen_sp_armour=10;
     p->last_speed= -1;
     p->shoottype=range_none;
+    p->bowtype=bow_normal;
+    p->petmode=pet_normal;
     p->listening=9;
     p->last_weapon_sp= -1;
     p->peaceful=1;			/* default peaceful */
@@ -1303,9 +1305,11 @@ int fire_bow(object *op, object *part, int dir)
 {
     object *arrow = NULL, *left, *bow;
     tag_t left_tag, tag;
+    int numtofire, i, wcmod;
+    int ff[3];
 
     if (!dir) {
-	new_draw_info(NDI_UNIQUE, 0,op, "You can't shoot yourself!");
+	new_draw_info(NDI_UNIQUE, 0, op, "You can't shoot yourself!");
 	return 0;
     }
     if (op->type == PLAYER) 
@@ -1324,88 +1328,168 @@ int fire_bow(object *op, object *part, int dir)
 	}
     }
     if( !bow->race ) {
-	new_draw_info_format(NDI_UNIQUE, 0,op, "Your %s is broken.", bow->name);
+	new_draw_info_format(NDI_UNIQUE, 0, op, "Your %s is broken.", bow->name);
 	return 0;
     }
-    if ((arrow=find_arrow(op, bow->race)) == NULL) {
-	if (op->type == PLAYER)
-	    new_draw_info_format(NDI_UNIQUE, 0,op,"You have no %s left.", bow->race);
-	/* FLAG_READY_BOW will get reset if the monsters picks up some arrows */
-	else CLEAR_FLAG(op, FLAG_READY_BOW);
-	return 0;
+
+    if (op->type == PLAYER && op->contr->bowtype >= bow_n &&
+	op->contr->bowtype <= bow_nw) {
+	if (!similar_direction(dir, op->contr->bowtype-2))
+	    wcmod -= 1;
+	dir = op->contr->bowtype-2;
     }
+
     if(wall(op->map,op->x+freearr_x[dir],op->y+freearr_y[dir])) {
 	new_draw_info(NDI_UNIQUE, 0,op,"Something is in the way.");
 	return 0;
     }
-    /* this should not happen, but sometimes does */
-    if (arrow->nrof==0) {
-	remove_ob(arrow);
-	free_object(arrow);
-	return 0;
-    }
-    left = arrow; /* these are arrows left to the player */
-    left_tag = left->count;
-    arrow = get_split_ob(arrow, 1);
-    set_owner(arrow,op);
-    arrow->direction=dir;
-    arrow->x = part->x;
-    arrow->y = part->y;
-    arrow->speed = 1;
+    numtofire = 1;
+    wcmod = 0;
     if (op->type == PLAYER) {
-	op->speed_left = 0.01 - (float) FABS(op->speed) * 100 / bow->stats.sp;
-	fix_player(op);
+	if (op->contr->bowtype == bow_threewide)
+	    numtofire = 3;
+	if (op->contr->bowtype == bow_spreadshot) {
+	    numtofire = 3;
+	    ff[0] = dir;
+	    ff[1] = dir-1;
+	    ff[2] = dir+1;
+	    for (i=1; i<3; i++) {
+		if (ff[i] < 1)
+		    ff[i] = 8;
+		if (ff[i] > 8)
+		    ff[i] = 1;
+	    }
+	}
     }
-    update_ob_speed(arrow);
-    arrow->speed_left = 0;
-    SET_ANIMATION(arrow,dir);
-    arrow->stats.sp = arrow->stats.wc; /* save original wc and dam */
-    arrow->stats.hp = arrow->stats.dam; 
-    arrow->stats.grace = arrow->attacktype;
-    if (arrow->slaying != NULL)
-	arrow->spellarg = strdup(arrow->slaying);
-    /* Note that this was different for monsters - they got their level
-     * added to the damage.  I think the strength bonus is more proper.
-     */
+    for (i=0; i < numtofire; i++) {
+	if (op->type == PLAYER && op->contr->bowtype != bow_normal) {
+	    if (op->contr->bowtype == bow_threewide && i==1 &&
+		(out_of_map(op->map, op->x+rightof_x[dir], op->y+rightof_y[dir]) ||
+		 wall(op->map, op->x+rightof_x[dir], op->y+rightof_y[dir])))
+		continue;
+	    else if (op->contr->bowtype == bow_threewide && i==2 &&
+		(out_of_map(op->map, op->x+leftof_x[dir], op->y+leftof_y[dir]) ||
+		 wall(op->map, op->x+leftof_x[dir], op->y+leftof_y[dir])))
+		continue; 
+	    else if (op->contr->bowtype == bow_spreadshot &&
+		(out_of_map(op->map, op->x+freearr_x[ff[i]], op->x+freearr_y[ff[i]]) ||
+		wall(op->map, op->x+freearr_x[ff[i]], op->x+freearr_y[ff[i]])))
+		continue;
+	}
+	if ((arrow=find_arrow(op, bow->race)) == NULL) {
+	    if (op->type == PLAYER)
+		new_draw_info_format(NDI_UNIQUE, 0, op,
+		    "You have no %s left.", bow->race);
+       /* FLAG_READY_BOW will get reset if the monsters picks up some arrows */
+	    else
+		CLEAR_FLAG(op, FLAG_READY_BOW);
+	    return 0;
+	}
+	/* this should not happen, but sometimes does */
+	if (arrow->nrof==0) {
+	    remove_ob(arrow);
+	    free_object(arrow);
+	    return 0;
+	}
+	left = arrow; /* these are arrows left to the player */
+	left_tag = left->count;
+	arrow = get_split_ob(arrow, 1);
+	if (arrow == NULL) {
+	    new_draw_info_format(NDI_UNIQUE, 0, op, "You have no %s left.",
+		bow->race);
+	    continue;
+	}
+	set_owner(arrow, op);
+	if (op->type == PLAYER && op->contr->bowtype > bow_normal &&
+	    op->contr->bowtype < bow_n) {
+	    if (op->contr->bowtype == bow_threewide) {
+		arrow->direction=dir;
+		if (i==1) {
+		    arrow->x = part->x + rightof_x[dir];
+		    arrow->y = part->y + rightof_y[dir];
+		} else if (i==2) {
+		    arrow->x = part->x + leftof_x[dir];
+		    arrow->y = part->y + leftof_y[dir];
+		} else if (i==0) {
+		    arrow->x = part->x;
+		    arrow->y = part->y;
+		}
+	    } else if (op->contr->bowtype == bow_spreadshot) {
+		arrow->direction=ff[i];
+		arrow->x = part->x;
+		arrow->y = part->y;
+		if (i>0)
+		    wcmod = -5;
+	    }
+	} else {
+	    arrow->direction=dir;
+	    arrow->x = part->x;
+	    arrow->y = part->y;
+	}
+	if (op->type == PLAYER) {
+	    op->speed_left = 0.01 - (float)FABS(op->speed) * 100 /
+		bow->stats.sp;
+	    fix_player(op);
+	}
+	SET_ANIMATION(arrow, arrow->direction);
+	arrow->stats.sp = arrow->stats.wc; /* save original wc and dam */
+	arrow->stats.hp = arrow->stats.dam; 
+	arrow->stats.grace = arrow->attacktype;
+	if (arrow->slaying != NULL)
+	    arrow->spellarg = strdup(arrow->slaying);
+	/* Note that this was different for monsters - they got their level
+	 * added to the damage.  I think the strength bonus is more proper.
+	 */
      
-    arrow->stats.dam += (QUERY_FLAG(bow, FLAG_NO_STRENGTH) ?
-		      0 : dam_bonus[op->stats.Str]) +
-			bow->stats.dam + bow->magic + arrow->magic;
-    if (op->type == PLAYER) {
-	arrow->stats.wc = 20 - bow->magic - arrow->magic - SK_level(op) -
-	    dex_bonus[op->stats.Dex] - thaco_bonus[op->stats.Str] - arrow->stats.wc -
-	    bow->stats.wc;
-	arrow->level = SK_level (op);
-	if (arrow->attacktype == AT_PHYSICAL)
-	    arrow->attacktype |= bow->attacktype;
-	if (bow->slaying != NULL)
-	    arrow->slaying = strdup(bow->slaying);
-    } else {
-	arrow->stats.wc= op->stats.wc - bow->magic - arrow->magic -
-		    arrow->stats.wc;
-	arrow->level = op->level;
-	if (arrow->attacktype == AT_PHYSICAL)
-	    arrow->attacktype |= bow->attacktype;
-	if (bow->slaying != NULL)
-	    arrow->slaying = strdup(bow->slaying);
-    }
+	arrow->stats.dam += (QUERY_FLAG(bow, FLAG_NO_STRENGTH) ?
+	    0 : dam_bonus[op->stats.Str]) +
+	    bow->stats.dam + bow->magic + arrow->magic;
 
-    arrow->map = op->map;
-    SET_FLAG(arrow, FLAG_FLYING);
-    SET_FLAG(arrow, FLAG_FLY_ON);
-    SET_FLAG(arrow, FLAG_WALK_ON);
-    play_sound_map(op->map, op->x, op->y, SOUND_FIRE_ARROW);
-    tag = arrow->count;
-    insert_ob_in_map(arrow,op->map,op,0);
+	/* update the speed */
+	arrow->speed = (float)((QUERY_FLAG(bow, FLAG_NO_STRENGTH) ?
+				   0 : dam_bonus[op->stats.Str]) +
+	    bow->magic + arrow->magic) / 5.0 +
+	    (float)bow->stats.dam / 7.0;
+	if (arrow->speed < 1.0)
+	    arrow->speed = 1.0;
+	update_ob_speed(arrow);
+	arrow->speed_left = 0;
 
-    if (!was_destroyed(arrow, tag))
-	move_arrow(arrow);
+	if (op->type == PLAYER) {
+	    arrow->stats.wc = 20 - bow->magic - arrow->magic - SK_level(op) -
+		dex_bonus[op->stats.Dex] - thaco_bonus[op->stats.Str] -
+		arrow->stats.wc - bow->stats.wc - wcmod;
+	    arrow->level = SK_level (op);
+	    if (arrow->attacktype == AT_PHYSICAL)
+		arrow->attacktype |= bow->attacktype;
+	    if (bow->slaying != NULL)
+		arrow->slaying = strdup(bow->slaying);
+	} else {
+	    arrow->stats.wc= op->stats.wc - bow->magic - arrow->magic -
+		arrow->stats.wc;
+	    arrow->level = op->level;
+	    if (arrow->attacktype == AT_PHYSICAL)
+		arrow->attacktype |= bow->attacktype;
+	    if (bow->slaying != NULL)
+		arrow->slaying = strdup(bow->slaying);
+	}
+	arrow->map = op->map;
+	SET_FLAG(arrow, FLAG_FLYING);
+	SET_FLAG(arrow, FLAG_FLY_ON);
+	SET_FLAG(arrow, FLAG_WALK_ON);
+	play_sound_map(op->map, op->x, op->y, SOUND_FIRE_ARROW);
+	tag = arrow->count;
+	insert_ob_in_map(arrow, op->map, op, 0);
 
-    if (op->type == PLAYER) {
-	if (was_destroyed (left, left_tag))
-	    esrv_del_item(op->contr, left_tag);
-	else
-	    esrv_send_item(op, left);
+	if (!was_destroyed(arrow, tag))
+	    move_arrow(arrow);
+
+	if (op->type == PLAYER) {
+	    if (was_destroyed (left, left_tag))
+		esrv_del_item(op->contr, left_tag);
+	    else
+		esrv_send_item(op, left);
+	}
     }
     return 1;
 }

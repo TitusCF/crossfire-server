@@ -625,6 +625,13 @@ void move_arrow(object *op) {
 	}
     }
 
+    /* if the arrow is moving too slow.. stop it.  0.5 was chosen as lower
+       values look rediculous. */
+    if (op->speed < 0.5 && op->type==ARROW) {
+	stop_arrow(op);
+	return;
+    }
+
     /* Calculate target map square */
     new_x = op->x + DIRX(op);
     new_y = op->y + DIRY(op);
@@ -733,6 +740,10 @@ void move_arrow(object *op) {
     remove_ob (op);
     op->x = new_x;
     op->y = new_y;
+
+    /* decrease the speed as it flies. 0.05 means a standard bow will shoot
+     about 17 squares. Tune as needed. */
+    op->speed -= 0.05;
     insert_ob_in_map (op, op->map, op,0);
 }
 

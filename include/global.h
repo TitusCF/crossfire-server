@@ -206,6 +206,8 @@ EXTERN int num_animations,animations_allocated, bmaps_checksum;
 
 extern int freearr_x[SIZEOFFREE], freearr_y[SIZEOFFREE];
 extern int maxfree[SIZEOFFREE], freedir[SIZEOFFREE];
+extern int rightof_x[9], rightof_y[9];
+extern int leftof_x[9], leftof_y[9];
 
 extern New_Face *blank_face, *empty_face;
 extern New_Face *dark_faces[];

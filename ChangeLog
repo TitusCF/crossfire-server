@@ -17,6 +17,20 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+New Arrow and Pet Code:
+Add bowmode and petmode commands.  Allowing the player to change the firing
+style for bows to one of either threewide, or spreadshot.
+Allow players to change the operating modes of his pet with petmode.  Can be
+either seek and destroy, defend, or normal historical behavior.
+Change bows to impart speed to arrows based on damage and other magical
+plusses.  Damage decays over distance, to stop arrows from flying forever.
+Very fast moving arrows will pierce multiple targets.  An arrow moving at a
+speed greater than 10.0 will go straight through a target, losing 1.0 of
+speed in the process.
+Change magic missile to use spell_find_dir instead of find_dir to stop it
+from flying in a circle and hitting the caster, and to make it stop
+flying into walls to hit creatures behind the walls.
+
 Various bug fixes:
 common/living.c: Reset glow_radius for players, so they stop glowing
    after they snuff out their torch or whatever.

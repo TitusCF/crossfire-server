@@ -333,6 +333,24 @@ int command_weather (object *op, char *params)
     if (worldmap_to_weathermap(op->x, op->y, &wx, &wy, op->map->path) != 0)
 	return 1;
 
+    if (QUERY_FLAG(op, FLAG_WIZ)) {
+	/* dump the weather, Dm style! Yo! */
+	new_draw_info_format(NDI_UNIQUE, 0, op, "Real temp: %d",
+	    real_world_temperature(op->x, op->y, op->map));
+	new_draw_info_format(NDI_UNIQUE, 0, op, "Base temp: %d",
+	    weathermap[wx][wy].temp);
+	new_draw_info_format(NDI_UNIQUE, 0, op, "Humid: %d",
+	    weathermap[wx][wy].humid);
+	new_draw_info_format(NDI_UNIQUE, 0, op, "Wind: dir=%d speed=%d",
+	    weathermap[wx][wy].winddir, weathermap[wx][wy].windspeed);
+	new_draw_info_format(NDI_UNIQUE, 0, op, "Pressure: %d",
+	    weathermap[wx][wy].pressure);
+	new_draw_info_format(NDI_UNIQUE, 0, op, "Avg Elevation: %d",
+	    weathermap[wx][wy].avgelev);
+	new_draw_info_format(NDI_UNIQUE, 0, op, "Rainfall: %d  Water: %d",
+	    weathermap[wx][wy].rainfall, weathermap[wx][wy].water);
+    }
+
     temp = real_world_temperature(op->x, op->y, op->map);
     new_draw_info_format(NDI_UNIQUE, 0, op, "It's currently %d degrees "
 	"Centigrade out.", temp);
@@ -717,6 +735,77 @@ int command_applymode(object *op, char *params)
     new_draw_info_format(NDI_UNIQUE, 0, op, "Applymode %s set to %s",
 	(unapply==op->contr->usekeys?"":"now"),
 	types[op->contr->unapply]);
+    return 1;
+}
+
+int command_bowmode(object *op, char *params)
+{
+    bowtype_t oldtype=op->contr->petmode;
+    static char *types[] =
+	{"normal", "threewide", "spreadshot", "firenorth",
+	 "firene", "fireeast", "firese", "firesouth",
+	 "firesw", "firewest", "firenw"};
+    char buf[MAX_BUF];
+    int i, found;
+
+    if (!params) {
+	new_draw_info_format(NDI_UNIQUE, 0, op, "bowmode is set to %s",
+	types[op->contr->bowtype]);
+	return 1;
+    }
+
+    for (i=0,found=0; i<=bow_nw; i++) {
+	if (!strcmp(params, types[i])) {
+	    found++;
+	    op->contr->bowtype=i;
+	    break;
+	}
+    }
+    if (!found) {
+	sprintf(buf, "bowmode: Unknown options %s, valid options are:", params);
+	for (i=0; i<=bow_nw; i++) {
+	    strcat(buf, " ");
+	    strcat(buf, types[i]);
+	    if (i < bow_nw)
+		strcat(buf, ",");
+	    else
+		strcat(buf, ".");
+	}
+	new_draw_info_format(NDI_UNIQUE, 0, op, buf);
+	return 0;
+    }
+    new_draw_info_format(NDI_UNIQUE, 0, op, "bowmode %s set to %s",
+	(oldtype==op->contr->bowtype?"":"now"),
+	types[op->contr->bowtype]);
+    return 1;
+}
+
+int command_petmode(object *op, char *params)
+{
+    petmode_t oldtype=op->contr->petmode;
+    static char *types[]={"normal", "sad", "defend"};
+
+    if (!params) {
+	new_draw_info_format(NDI_UNIQUE, 0, op, "petmode is set to %s",
+	types[op->contr->petmode]);
+	return 1;
+    }
+
+    if (!strcmp(params,"normal")) 
+	op->contr->petmode=pet_normal;
+    else if (!strcmp(params,"sad")) 
+	op->contr->petmode=pet_sad;
+    else if (!strcmp(params,"defend")) 
+	op->contr->petmode=pet_defend;
+    else {
+	new_draw_info_format(NDI_UNIQUE, 0, op,
+	    "petmode: Unknown options %s, valid options are normal,"
+	    "sad (seek and destroy), defend", params);
+	return 0;
+    }
+    new_draw_info_format(NDI_UNIQUE, 0, op, "petmode %s set to %s",
+	(oldtype==op->contr->petmode?"":"now"),
+	types[op->contr->petmode]);
     return 1;
 }
 

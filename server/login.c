@@ -278,6 +278,8 @@ int save_player(object *op, int flag) {
   fprintf(fp,"listening %d\n",pl->listening);
   fprintf(fp,"spell %d\n",pl->chosen_spell);
   fprintf(fp,"shoottype %d\n",pl->shoottype);
+  fprintf(fp,"bowtype %d\n",pl->bowtype);
+  fprintf(fp,"petmode %d\n",pl->petmode);
   fprintf(fp,"peaceful %d\n",pl->peaceful);
   fprintf(fp,"digestion %d\n",pl->digestion);
   fprintf(fp,"pickup %d\n", pl->mode);
@@ -514,6 +516,10 @@ void check_login(object *op) {
 	    pl->gen_hp=value;
         else if (!strcmp(buf,"shoottype"))
 	    pl->shoottype=(rangetype)value;
+	else if (!strcmp(buf,"bowtype"))
+	    pl->bowtype=(bowtype_t)value;
+	else if (!strcmp(buf,"petmode"))
+	    pl->petmode=(petmode_t)value;
         else if (!strcmp(buf,"gen_sp"))
 	    pl->gen_sp=value;
         else if (!strcmp(buf,"gen_grace"))

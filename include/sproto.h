@@ -162,6 +162,8 @@ int command_fix_me(object *op, char *params);
 int command_players(object *op, char *paramss);
 int command_logs(object *op, char *params);
 int command_applymode(object *op, char *params);
+int command_bowmode(object *op, char *params);
+int command_petmode(object *op, char *params);
 int command_usekeys(object *op, char *params);
 int command_resistances(object *op, char *params);
 int command_help(object *op, char *params);

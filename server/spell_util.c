@@ -1520,7 +1520,7 @@ void control_golem(object *op,int dir) {
 
 void move_missile(object *op) {
   int i;
-  object *owner;
+  object *owner, *tmp;
   sint16 new_x, new_y;
 
   owner = get_owner(op);
@@ -1552,8 +1552,8 @@ void move_missile(object *op) {
   }
   op->x = new_x;
   op->y = new_y;
-  i=find_dir(op->map,op->x,op->y,get_owner(op));
-  if(i&&i!=op->direction){
+  i=spell_find_dir(op->map, op->x, op->y, get_owner(op));
+  if(i > 0 && i != op->direction){
     op->direction=absdir(op->direction+((op->direction-i+8)%8<4?-1:1));
     SET_ANIMATION(op, op->direction);
   }

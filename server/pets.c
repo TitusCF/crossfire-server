@@ -39,8 +39,8 @@
  */
 
 object *get_pet_enemy(object * pet, rv_vector *rv){
-    object *owner, *tmp, *attacker;
-    int i,x,y;
+    object *owner, *tmp, *attacker, *tmp3;
+    int i,j,x,y;
     mapstruct *nm;
     int search_arr[SIZEOFFREE];
 
@@ -84,10 +84,27 @@ object *get_pet_enemy(object * pet, rv_vector *rv){
     }
     get_search_arr(search_arr);
 
+    if (owner->type == PLAYER && owner->contr->petmode > pet_normal) {
+	if (owner->contr->petmode == pet_sad) {
+	    tmp = find_nearest_living_creature(pet);
+	    if (tmp != NULL) {
+		get_rangevector(pet, tmp, rv, 0);
+		if(check_enemy(pet, rv) != NULL)
+                    return tmp;
+                else
+                    pet->enemy = NULL;
+	    }
+	    /* if we got here we have no enemy */
+	    /* we return NULL to avoid heading back to the owner */
+	    pet->enemy = NULL;
+	    return NULL;
+	}
+    }
 
     /* Since the pet has no existing enemy, look for anything nasty 
      * around the owner that it should go and attack.
      */
+    tmp3 = NULL;
     for (i = 0; i < SIZEOFFREE; i++) {
 	x = owner->x + freearr_x[search_arr[i]];
         y = owner->y + freearr_y[search_arr[i]];
@@ -100,32 +117,47 @@ object *get_pet_enemy(object * pet, rv_vector *rv){
 		    object *tmp2 = tmp->head == NULL?tmp:tmp->head;
 		    if (QUERY_FLAG(tmp2,FLAG_ALIVE) && !QUERY_FLAG(tmp2,FLAG_FRIENDLY)
 			&& !QUERY_FLAG(tmp2,FLAG_UNAGGRESSIVE) && tmp2 != pet && 
-			tmp2 != owner && tmp2->type != PLAYER) {
+			tmp2 != owner && tmp2->type != PLAYER &&
+			can_detect_enemy(pet, tmp2, rv)) {
 
-			pet->enemy = tmp2;
-			/* Check to see if this is a valid enemy before committing */
-			if(check_enemy(pet, rv)!=NULL)
-			    return tmp2;
-			else
-			    pet->enemy = NULL;
+			if (!can_see_enemy(pet, tmp2)) {
+			    if (tmp3 != NULL)
+				tmp3 = tmp2;
+			} else {
+			    pet->enemy = tmp2;
+			    if(check_enemy(pet, rv)!=NULL)
+				return tmp2;
+			    else
+				pet->enemy = NULL;
+			}
 		    } /* if this is a valid enemy */
 		} /* for objects on this space */
 	    } /* if there is something living on this space */
 	} /* this is a valid space on the map */
     } /* for loop of spaces around the owner */
 
+    /* fine, we went through the whole loop and didn't find one we could
+       see, take what we have */
+    if (tmp3 != NULL) {
+	pet->enemy = tmp3;
+	if (check_enemy(pet, rv) != NULL)
+	    return tmp3;
+	else
+	    pet->enemy = NULL;
+    }
+
     /* No threat to owner, check to see if the pet has an attacker*/
-    if(attacker)
+    if (attacker)
     {
         /* need to be sure this is the right one! */
-        if(attacker->count == pet->attacked_by_count)
+        if (attacker->count == pet->attacked_by_count)
         {
             /* also need to check to make sure it is not freindly */
    	    /* or otherwise non-hostile, and is an appropriate target */
-            if( !QUERY_FLAG(attacker, FLAG_FRIENDLY) && on_same_map(pet, attacker))
+            if (!QUERY_FLAG(attacker, FLAG_FRIENDLY) && on_same_map(pet, attacker))
 	    {
 	        pet->enemy = attacker;
-		if(check_enemy(pet, rv)!=NULL)
+		if (check_enemy(pet, rv) != NULL)
 		    return attacker;
 		else
 		    pet->enemy = NULL;
@@ -138,30 +170,48 @@ object *get_pet_enemy(object * pet, rv_vector *rv){
      * a pet to danger, then take a few steps back.  This code is basically
      * the same as the code that looks around the owner.
      */
-    for (i = 0; i < SIZEOFFREE; i++) {
-	x = pet->x + freearr_x[search_arr[i]];
-	y = pet->y + freearr_y[search_arr[i]];
-	if (out_of_map(pet->map, x, y)) continue;
-	else {
-	    nm = get_map_from_coord(pet->map, &x, &y);
-	    /* Only look on the space if there is something alive there. */
-	    if (GET_MAP_FLAGS(nm, x,y)&P_IS_ALIVE) {
-		for (tmp = get_map_ob(nm, x, y); tmp != NULL; tmp = tmp->above) {
-		    object *tmp2 = tmp->head == NULL?tmp:tmp->head;
-		    if (QUERY_FLAG(tmp2,FLAG_ALIVE) && !QUERY_FLAG(tmp2,FLAG_FRIENDLY)
-			&& !QUERY_FLAG(tmp2,FLAG_UNAGGRESSIVE) &&
-			tmp2 != pet && tmp2 != owner && tmp2->type != PLAYER)
-		    {
-		        pet->enemy = tmp2;
-		        if(check_enemy(pet, rv)!=NULL)
-		            return tmp2;
-			else
-			    pet->enemy = NULL;
-		    } /* make sure we can get to the bugger */
-		} /* for objects on this space */
-	    } /* if there is something living on this space */
-	} /* this is a valid space on the map */
-    } /* for loop of spaces around the pet */
+    if (owner->type == PLAYER && owner->contr->petmode != pet_defend) {
+	tmp3 = NULL;
+	for (i = 0; i < SIZEOFFREE; i++) {
+	    x = pet->x + freearr_x[search_arr[i]];
+	    y = pet->y + freearr_y[search_arr[i]];
+	    if (out_of_map(pet->map, x, y)) continue;
+	    else {
+		nm = get_map_from_coord(pet->map, &x, &y);
+		/* Only look on the space if there is something alive there. */
+		if (GET_MAP_FLAGS(nm, x,y)&P_IS_ALIVE) {
+		    for (tmp = get_map_ob(nm, x, y); tmp != NULL; tmp = tmp->above) {
+			object *tmp2 = tmp->head == NULL?tmp:tmp->head;
+			if (QUERY_FLAG(tmp2,FLAG_ALIVE) &&
+			    !QUERY_FLAG(tmp2,FLAG_FRIENDLY)
+			    && !QUERY_FLAG(tmp2,FLAG_UNAGGRESSIVE) &&
+			    tmp2 != pet && tmp2 != owner && tmp2->type != PLAYER &&
+			    can_detect_enemy(pet, tmp2, rv))
+			if (!can_see_enemy(pet, tmp2)) {
+			    if (tmp3 != NULL)
+				tmp3 = tmp2;
+			} else {
+			    pet->enemy = tmp2;
+			    if(check_enemy(pet, rv)!=NULL)
+				return tmp2;
+			    else
+				pet->enemy = NULL;
+			} /* make sure we can get to the bugger */
+		    } /* for objects on this space */
+		} /* if there is something living on this space */
+	    } /* this is a valid space on the map */
+	} /* for loop of spaces around the pet */
+    } /* pet in defence mode */
+
+    /* fine, we went through the whole loop and didn't find one we could
+       see, take what we have */
+    if (tmp3 != NULL) {
+	pet->enemy = tmp3;
+	if (check_enemy(pet, rv) != NULL)
+	    return tmp3;
+	else
+	    pet->enemy = NULL;
+    }
 
     /* Didn't find anything - return the owner's enemy or NULL */
     return check_enemy(pet, rv);
@@ -243,7 +293,7 @@ void follow_owner(object *ob, object *owner) {
 
 void pet_move(object * ob)
 {
-    int dir,tag, dx, dy;
+    int dir, tag, dx, dy, i;
     object *ob2, *owner;
     mapstruct *m;
 
@@ -262,7 +312,20 @@ void pet_move(object * ob)
 	return;
     }
     /* Calculate Direction */
-    dir = find_dir_2(ob->x - ob->owner->x, ob->y - ob->owner->y);
+    if (owner->contr->petmode == pet_sad) {
+	/* in S&D mode, if we have no enemy, run randomly about. */
+	for (i=0; i < 15; i++) {
+	    dir = rndm(1, 8);
+	    dx = ob->x + freearr_x[dir];
+	    dy = ob->y + freearr_y[dir];
+	    if (out_of_map(owner->map, dx, dy) || wall(owner->map, dx, dy))
+		continue;
+	    else
+		break;
+	}
+    } else {
+        dir = find_dir_2(ob->x - ob->owner->x, ob->y - ob->owner->y);
+    }
     ob->direction = dir;
 
     tag = ob->count;

@@ -67,7 +67,10 @@ int maxfree[SIZEOFFREE]=
 int freedir[SIZEOFFREE]= {
   0,1,2,3,4,5,6,7,8,1,2,2,2,3,4,4,4,5,6,6,6,7,8,8,8,
   1,2,2,2,2,2,3,4,4,4,4,4,5,6,6,6,6,6,7,8,8,8,8,8};
-
+int rightof_x[9]= {0,  1, -1,  0, -1, -1,  1,  0,  1};
+int rightof_y[9]= {0,  0, -1, -1,  1,  0,  1,  1, -1};
+int leftof_x[9] = {0, -1,  1,  0,  1,  1, -1,  0, -1};
+int leftof_y[9] = {0,  0,  1,  1, -1,  0, -1, -1,  1};
 
 /* Moved this out of define.h and in here, since this is the only file
  * it is used in.  Also, make it an inline function for cleaner

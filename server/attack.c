@@ -865,7 +865,9 @@ object *hit_with_arrow (object *op, object *victim)
     }
 
     /* Missile hit victim */
-    if (hit_something)
+    /* if the speed is > 10, then this is a fast moving arrow, we go straight
+       through the target */
+    if (hit_something && op->speed <= 10.0)
     {
         /* Stop arrow */
         if (container == NULL) {
@@ -896,6 +898,9 @@ object *hit_with_arrow (object *op, object *victim)
         }
         return NULL;
     }
+
+    if (hit_something && op->speed >= 10.0)
+	op->speed -= 1.0;
 
     /* Missile missed victim - reassemble missile */
     if (container) {

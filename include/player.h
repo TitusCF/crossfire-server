@@ -48,6 +48,25 @@ typedef enum rangetype {
     range_size	    = 6
 } rangetype;
 
+typedef enum _bowtype {
+    bow_normal = 0,
+    bow_threewide = 1,
+    bow_spreadshot = 2,
+    bow_n = 3, /* must stay at 3 */
+    bow_ne = 4,
+    bow_e = 5,
+    bow_se = 6,
+    bow_s = 7,
+    bow_sw = 8,
+    bow_w = 9,
+    bow_nw = 10 /* must stay at 10 */
+} bowtype_t;
+
+typedef enum _petmode {
+    pet_normal = 0,
+    pet_sad = 1,
+    pet_defend = 2
+} petmode_t;
 
 typedef enum usekeytype {
     key_inventory=0,
@@ -78,6 +97,8 @@ typedef struct pl {
     sint16	known_spells[NROFREALSPELLS]; /* Spells known by the player */
     uint16	nrofknownspells;    /* Index in the above array */
     rangetype	shoottype;	    /* Which range-attack is being used by player */
+    bowtype_t   bowtype;	    /* which firemode? */
+    petmode_t   petmode;	    /* which petmode? */
     object	*ranges[range_size];/* object for each range.  Set up in fix player.  Note */
 				    /* That not all are used, it is just nice to map this 1:1 */
 				    /* With the range names */

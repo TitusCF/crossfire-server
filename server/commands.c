@@ -108,6 +108,8 @@ CommArray_s Commands[] = {
   {"weather", command_weather,	0.0},
   {"title", command_title,	0.0},
   {"usekeys", command_usekeys,	0.0},
+  {"bowmode", command_bowmode, 0.0},
+  {"petmode", command_petmode, 0.0},
   {"version", command_version,	0.0},
   {"wimpy", command_wimpy,	0.0},
   {"who", command_who,		0.0},
