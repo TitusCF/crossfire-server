@@ -54,7 +54,6 @@
 #define getpid() _getpid()
 #define popen(__a, __b) _popen(__a, __b)
 #define pclose(__a) _pclose(__a)
-#define pid_t int
 
 #define R_OK 6		/* for __access() */
 #define F_OK 6
