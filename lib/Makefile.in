@@ -101,7 +101,7 @@ RM = @RM@
 SHELL = @BOURNE_SHELL@
 
 
-all:: archetypes bmaps.paths crossfire.0  animations
+all:: archetypes bmaps.paths crossfire.0 faces animations
 
 
 crossfire.0: bmaps.paths
@@ -125,7 +125,7 @@ animations: .collect-stamp
 bmaps.paths bmaps: .collect-stamp
 	make collect
 
-install:: archetypes bmaps.paths crossfire.0 animations collect.pl util.pl
+install:: archetypes bmaps.paths crossfire.0 faces animations collect.pl util.pl
 	@if [ ! -d $(datadir) ]; then \
 		$(MKDIR) -p $(datadir); \
 	fi
@@ -183,7 +183,7 @@ distclean:: clean
 	$(RM) -f Makefile checkarch.pl collect.pl
 
 real-clean::
-	$(RM) -f archetypes bmaps .collect-stamp
+	$(RM) -f archetypes bmaps faces .collect-stamp
 
 archive::
 	@if [ -d $(ARCHIVE)/lib ]; then set +x; \
