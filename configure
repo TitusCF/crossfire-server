@@ -14394,7 +14394,7 @@ fi
 done
 
 	if test "x$cf_have_python_h" = "x"  ; then
-		for dir in /usr{,/local}/include/python{,2.2,2.1,2.0} ; do
+		for dir in /usr{,/local}/include/python{,2.3,2.2,2.1,2.0} ; do
 
 for ac_header in "$dir/Python.h"
 do
@@ -14549,7 +14549,7 @@ done
 	if test "x$cf_have_python_h" = "xyes" ; then
 		PYTHON_LIB=""
 
-                for lib in python{,2.2,2.1,2.0} ; do
+                for lib in python{,2.3,2.2,2.1,2.0} ; do
                         as_ac_Lib=`echo "ac_cv_lib_$lib''_PyArg_ParseTuple" | $as_tr_sh`
 echo "$as_me:$LINENO: checking for PyArg_ParseTuple in -l$lib" >&5
 echo $ECHO_N "checking for PyArg_ParseTuple in -l$lib... $ECHO_C" >&6
