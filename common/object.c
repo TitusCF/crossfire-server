@@ -742,13 +742,11 @@ void update_ob_speed(object *op) {
  */
 
 void update_object(object *op) {
-    object *tmp, *player;
+    object *player;
 
     if(op->env!=NULL) {
-	tmp=is_player_inv(op->env);
-	/* If we are in ericserver mode, I think we should send an update
-	 * or something.  Ideally, client should handle animations on its
-	 * own.
+	/* Animation is currently handled by client, so nothing
+	 * to do in this case.
 	 */
 	return;
     }
@@ -756,24 +754,16 @@ void update_object(object *op) {
     /* Can be null if the player has quit but window still exists. */
     if (op->map->map != NULL) {
 	player=update_position (op->map, op->x, op->y);
-	/*
-	 * insert_ob_in_map calls update_ob.  insert_ob_in_map is called with
-	 * the player object anytime he moves - as such, we compare the object
-	 * being updated against the player object so that we don't send
-	 * unnecessary update commands.  Also, the client doesn't do anything
-	 * with the players face anyways.
-	 * As a note - we assume that we get here because the face has changed -
-	 * this might not always be the case, but seems to be a good amount of
-	 * the time, and its easier to do this than track down all the places in
-	 * the code that changes the face.
-	 *
-	 * Add a check so that if the item that is changing is hidden from
-	 * the player (ie, below the floor), we don't send an update to the
-	 * player.
-	 * If update_look has been set, that is going to send all the stuff
-	 * anyways, so no reason to send an update for it
-	 */
 
+	/* Special check here.  If a player is on this space, and the 
+	 * player is not the object that has changed, and the object is
+	 * not normally animated (ie, buttons) and not invisible, mark this
+	 * space to be updated.
+	 */
+	if (player && player!=op &&  op->speed < MIN_ACTIVE_SPEED && !op->invisible) {
+		player->contr->socket.update_look=1;
+	}
+	    
 #if 0
 	if (player && player!=op && !player->contr->socket.update_look) {
 	    player->contr->socket.update_look=1;
