@@ -50,6 +50,7 @@
 void check_spell_knockback(object *op) {
     object *tmp, *tmp2; /* object on the map */
     int weight_move;
+	int frictionmod=2; /*poor man's physics - multipy targets weight by this amount */
 
 	if(! op->weight) { /*shouldn't happen but if cone object has no weight drop out*/
 		/*LOG (llevDebug, "DEBUG: arch weighs nothing");*/
@@ -63,6 +64,10 @@ void check_spell_knockback(object *op) {
     { 
 	int num_sections = 1;
 
+	/* don't move DM */
+	if(QUERY_FLAG(tmp, FLAG_WIZ))
+		return;
+		
 	/* don't move parts of objects */
 	if(tmp->head) continue;
 
@@ -79,7 +84,10 @@ void check_spell_knockback(object *op) {
 	
 	 /* surface area? -tm */
 	
-	if(rndm(0, weight_move-1) > tmp->weight/num_sections) {  /* move it. */
+	if(QUERY_FLAG(tmp, FLAG_FLYING))
+		frictionmod = 1 ; /* flying objects loose the friction modifier */
+	
+	if(rndm(0, weight_move-1) > ((tmp->weight / num_sections) * frictionmod)) {  /* move it. */
 	    /* move_object is really for monsters, but looking at 
 	     * the move_object function, it appears that it should
 	     * also be safe for objects.
