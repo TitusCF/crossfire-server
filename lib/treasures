@@ -4220,15 +4220,33 @@ treasure DK
     end
   end
 treasure Cwyvern
+  list dragon_parts
+    chance 70
+  more
   arch ability_fear
   more
-  arch gem
-  nrof 400
-  chance 80
+  arch ability_dragon
+  more
+  arch ability_cold
+  more
+  arch ability_lightning
+  more
+  arch ability_poison
+  more
+  arch ability_pool_chaos
   more
   arch gem
-  nrof 150
-  chance 80
+    nrof 400
+  more
+  arch gem
+    nrof 150
+    chance 60
+  more
+  arch ring
+    chance 30
+  more
+  arch ring
+    chance 30
   end
 treasure EDK
   arch ability_fire

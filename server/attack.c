@@ -1038,11 +1038,13 @@ int hit_player(object *op,int dam, object *hitter, int type) {
 #endif
 
     if (magic) {
-	dam = dam * (100-op->resist[ATNR_MAGIC])/100;
-	/* Don't do this - many attacktype are effects that don't
-	 * do damage, like deathstrike & confusion.
-	 */
-/*	if (dam == 0) return 0;*/
+      /* basically:  dam = dam*(100-op->resist[attacknum])/100;
+       * in case 0>dam>1, we try to "simulate" a float value-effect */
+      dam = dam*(100-op->resist[ATNR_MAGIC]);
+      if (dam >= 100)
+	dam /= 100;
+      else
+	dam = (dam > (RANDOM()%100)) ? 1 : 0;
     }
 
     /* AT_CHAOS here is a weapon or monster.  Spells are handled by hit_map
