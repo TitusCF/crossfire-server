@@ -157,6 +157,7 @@ typedef struct wmapdef {
     sint8	sky;		/* sky conditions */
     sint32	avgelev;	/* average elevation */
     uint8 	darkness;	/* indicates level of darkness of map */
+    uint8	water;		/* 0-100 percentage of water tiles */
 } weathermap_t;
 
 /* In general, code should always use the macros 

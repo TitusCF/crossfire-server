@@ -546,7 +546,8 @@ error - Your ANSI C compiler should be defining __STDC__;
 				     * decay. */
 #define FLAG_ACTIVATE_ON_PUSH	105 /* connected object is activated when 'pushed' */
 #define FLAG_ACTIVATE_ON_RELEASE 106	/* connected object is activated when 'released' */
-#define NUM_FLAGS		106 /* Should always be equal to the last
+#define FLAG_IS_WATER		107
+#define NUM_FLAGS		107 /* Should always be equal to the last
 				     * defined flag.  If you change this,
 				     * make sure you update the flag_links
 				     * in common/loader.l
