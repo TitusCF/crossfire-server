@@ -1721,7 +1721,7 @@ end
 # Cloaks
 #
 Allowed all
-chance 200
+chance 199
 Object Woe
 type 87
 cursed 1
@@ -1753,6 +1753,20 @@ magic 1
 end
 #
 Allowed all
+chance 1
+Object the Magi
+type 87
+weight 120
+Pow 1
+Wis 1
+sp 2
+value 2000
+material 256
+face cloak_purple.111.png
+stand_still 1
+end
+#
+Allowed all
 chance 50
 difficulty 3
 Object minor protection
@@ -1760,6 +1774,8 @@ weight 120
 type 87
 value 20
 ac 1
+face cloak_lgrey.111.png
+stand_still 1
 end
 #
 Allowed all
@@ -1770,6 +1786,8 @@ weight 125
 type 87
 value 100
 ac 2
+face cloak_white.111.png
+stand_still 1
 end
 #
 Allowed all
@@ -1781,6 +1799,8 @@ weight 130
 value 300
 ac 3
 material 256
+face cloak_white.111.png
+stand_still 1
 end
 #
 Allowed all
@@ -1791,6 +1811,8 @@ type 87
 value 100
 Cha 2
 weight 110
+face cloak_lblue.111.png
+stand_still 1
 end
 #
 Allowed all
@@ -1802,6 +1824,8 @@ weight 135
 value 400
 resist_fire 25
 material 256
+face cloak_lgrey.111.png
+stand_still 1
 end
 #
 Allowed all
@@ -1813,6 +1837,8 @@ weight 140
 value 350
 resist_cold 25
 material 256
+face cloak_red.111.png
+stand_still 1
 end
 #
 Allowed all
@@ -1824,6 +1850,8 @@ weight 140
 value 350
 resist_electricity 25
 material 256
+face cloak_white.111.png
+stand_still 1
 end
 #
 Allowed all
@@ -1835,6 +1863,8 @@ value 500
 weight 90
 resist_acid 30
 material 256
+face cloak_black.111.png
+stand_still 1
 end
 #
 Allowed all
@@ -1851,6 +1881,8 @@ resist_ghosthit 30
 resist_deplete 100
 material 0
 Cha -2
+face cloak_black.111.png
+stand_still 1
 end
 #
 Allowed all
@@ -1868,6 +1900,8 @@ resist_deplete 100
 weight 150
 material 256
 Cha -4
+face cloak_black.111.png
+stand_still 1
 end
 #
 Allowed all
@@ -1888,6 +1922,8 @@ msg
 endmsg
 make_invisible 1
 resist_paralyze -100
+face cloak_trans.112.png
+stand_still 1
 end
 #
 #
