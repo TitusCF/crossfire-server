@@ -1439,7 +1439,7 @@ void dragon_level_gain(object *who) {
     
     if (abil->resist[abil->stats.exp]>0 && abil->resist[abil->stats.exp]%5 == 0) {
       /* time to hand out a new ability-gift */
-      (*dragon_gain_func)(who, abil->stats.exp,
+      (*dragon_gain_func)(who, (int)abil->stats.exp,
 			       (int)((1+abil->resist[abil->stats.exp])/5.));
     }
     
@@ -1649,9 +1649,9 @@ static void add_player_exp(object *op, int exp, char *skill_name, int flag)
  * the 'exp' value passed should be positive - this is the
  * amount that should get subtract from the player.
  */
-int check_exp_loss(object *op, int exp)
+sint64 check_exp_loss(object *op, sint64 exp)
 {
-    int del_exp;
+    sint64 del_exp;
 
     if (exp > op->stats.exp) exp = op->stats.exp;
     if (settings.use_permanent_experience) {
@@ -1662,7 +1662,7 @@ int check_exp_loss(object *op, int exp)
     return exp;
 }
 
-int check_exp_adjust(object *op, int exp)
+sint64 check_exp_adjust(object *op, sint64 exp)
 {
     if (exp<0) return check_exp_loss(op, exp);
     else return MIN(exp, MAX_EXPERIENCE - op->stats.exp);
