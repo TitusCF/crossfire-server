@@ -42,6 +42,19 @@ int command_say (object *op, char *params)
     return 0;
 }
 
+
+int command_me (object *op, char *params)
+{
+    char buf[MAX_BUF];
+
+    if (!params) return 0;
+    snprintf(buf, MAX_BUF-1, "%s %s",op->name, params);
+        new_info_map(NDI_GREEN,op->map, buf);
+
+    return 0;
+}
+
+
 int command_cointoss(object *op, char *params)
 {
     char buf[MAX_BUF];
