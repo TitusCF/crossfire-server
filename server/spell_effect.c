@@ -3433,6 +3433,8 @@ int cast_cause_disease(object *op, object *caster, int dir, archetype *disease_a
 		  }
 		  free_object(disease);
 		}
+	 /* no more infecting through walls. */
+	 if(blocked(op->map,x,y)) return 0;
   }
   new_draw_info(NDI_UNIQUE,0,op,"No one caught anything!");
   return 0;

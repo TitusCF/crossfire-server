@@ -322,7 +322,20 @@ int do_symptoms(object *disease) {
 		if(!is_susceptible_to_disease(victim, disease)) return 0;
 		
 		new_symptom = get_archetype("symptom");
-		new_symptom->stats.dam = disease->stats.dam; 
+
+		/* Something special done with dam.  We want diseases to be more
+			random in what they'll kill, so we'll make the damage they
+		   do random, note, this has a weird effect with progressive diseases.*/
+		if(disease->stats.dam != 0) {
+		  int dam = disease->stats.dam;
+		  /* reduce the damage, on average, 50%, and making things random. */
+		  dam = RANDOM() % dam +1;
+		  if(disease->stats.dam < 0) dam = -dam;
+		  new_symptom->stats.dam = dam;
+		}
+
+
+ 
 		new_symptom->stats.maxsp = disease->stats.maxsp; 
 		new_symptom->stats.food = new_symptom->stats.maxgrace;
 
@@ -337,7 +350,6 @@ int do_symptoms(object *disease) {
 		new_symptom->stats.Int = disease->stats.Int;
 		new_symptom->stats.Pow = disease->stats.Pow;
 		new_symptom->stats.Cha = disease->stats.Cha;
-		new_symptom->stats.dam = disease->stats.dam;
 		new_symptom->stats.sp  = disease->stats.sp;
 		new_symptom->stats.food =disease->last_eat;
 		new_symptom->stats.maxsp = disease->stats.maxsp;
