@@ -293,29 +293,18 @@ void place_exits(mapstruct *map, char **maze,char *exitstyle,int orientation,RMP
    keep things from being dumped on them during the other
    phases of random map generation. */
 void unblock_exits(mapstruct *map, char **maze, RMParms *RP) {
-  int i=1,j=1;
+  int i=0,j=0;
   object *walk;
-  
-  /* clear the down exit */
-  find_in_layout(1,'>',&i,&j,maze,RP);
-  if(i!=-1)  /* found the down exit */
-    for(walk=get_map_ob(map,i,j);walk!=NULL;walk=walk->above) {
-      if(QUERY_FLAG(walk,FLAG_NO_PASS)) {
-        CLEAR_FLAG(walk,FLAG_NO_PASS);
-        update_object(walk);
-      }
-    }
-  
-  
-  /* clear the up exit */
-  find_in_layout(1,'<',&i,&j,maze,RP);
-  if(i!=-1)  /* found the down exit */
-    for(walk=get_map_ob(map,i,j);walk!=NULL;walk=walk->above) {
-      if(QUERY_FLAG(walk,FLAG_NO_PASS)) {
-        CLEAR_FLAG(walk,FLAG_NO_PASS);
-        update_object(walk);
-      }
-    }
 
+  for(i=0;i<RP->Xsize;i++)
+    for(j=0;j<RP->Ysize;j++)
+      if(maze[i][j]=='>' || maze[i][j]=='<') {
+        for(walk=get_map_ob(map,i,j);walk!=NULL;walk=walk->above) {
+          if(QUERY_FLAG(walk,FLAG_NO_PASS)) {
+            CLEAR_FLAG(walk,FLAG_NO_PASS);
+            update_object(walk);
+          }
+        }
+      }
 }
-
+        

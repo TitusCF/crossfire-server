@@ -35,8 +35,17 @@
 #include <rproto.h>
 #include <sproto.h>
 
-
-
+void dump_layout(char **layout,RMParms *RP) {
+ { int i,j;
+  for(i=0;i<RP->Xsize;i++) {
+    for(j=0;j<RP->Ysize;j++) {
+      if(layout[i][j]==0) layout[i][j]=' ';
+      printf("%c",layout[i][j]);
+      if(layout[i][j]==' ') layout[i][j]=0;
+    }
+    printf("\n");
+    }}
+}
 EXTERN FILE *logfile;
 mapstruct *generate_random_map(char *OutFileName, RMParms *RP) {
   char **layout;
@@ -61,15 +70,7 @@ mapstruct *generate_random_map(char *OutFileName, RMParms *RP) {
   /*  rotate the layout randomly */
   layout=rotate_layout(layout,RANDOM()%4,RP);
 #ifdef RMAP_DEBUG
- { int i,j;
-  for(i=0;i<RP->Xsize;i++) {
-    for(j=0;j<RP->Ysize;j++) {
-      if(layout[i][j]==0) layout[i][j]=' ';
-      printf("%c",layout[i][j]);
-      if(layout[i][j]==' ') layout[i][j]=0;
-    }
-    printf("\n");
-    }}
+  dump_layout(layout,RP);
 #endif
   /* allocate the map and set the floor */
   theMap = make_map_floor(layout,RP->floorstyle,RP); 
