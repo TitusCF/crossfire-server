@@ -45,8 +45,59 @@ AC_DEFUN([CF_CHECK_PYTHON],
 		if test "x$PYTHON_LIB" != "x"  ; then
 			AC_CHECK_LIB(pthread, main,  PY_LIBS="$PY_LIBS -lpthread", , $PY_LIBS )
 			AC_CHECK_LIB(util, main,  PY_LIBS="$PY_LIBS -lutil", , $PY_LIBS )
-			$1
+
+			AC_MSG_CHECKING([whether python supports the "L" format specifier])
+			saved_LIBS="$LIBS"
+			LIBS="$LIBS $PYTHON_LIB $PY_LIBS"
+			saved_CFLAGS="$CFLAGS"
+			CFLAGS="$CFLAGS $PY_INCLUDES"
+			AC_TRY_RUN([
+#include <Python.h>
+#include <stdlib.h>
+
+static PyObject *callback(PyObject *self, PyObject *args)
+{
+    long long val;
+
+    if (!PyArg_ParseTuple(args, "L", &val))
+	return NULL;
+    if (val != 1)
+	exit(1);
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
+static PyMethodDef methods[] = {
+    {"callback", callback, METH_VARARGS},
+    {NULL, NULL, 0, NULL},
+};
+
+int main()
+{
+    Py_Initialize();
+    Py_InitModule("test", methods);
+    return(PyRun_SimpleString("import test\ntest.callback(1)\n") != 0);
+}
+				], [
+				AC_MSG_RESULT([yes])
+				], [
+				AC_MSG_RESULT([no])
+				PYTHON_LIB=""
+				PYLIBS=""
+				PY_INCLUDE=""
+				],
+				[
+				AC_MSG_RESULT([skipped because cross compiling])
+				])
+			LIBS="$saved_LIBS"
+			CFLAGS="$saved_CFLAGS"
 		fi
+	fi
+
+	if test "x$PYTHON_LIB" = "x"  ; then
+		$2
+	else
+		$1
 	fi
 
 	AC_SUBST(PYTHON_LIB)
