@@ -33,7 +33,6 @@
 
 #include <global.h>
 #include <version.h>
-#include <patchlevel.h>
 
 static int metafd=-1;
 static struct sockaddr_in sock;
@@ -107,7 +106,7 @@ void metaserver_update()
      */
     for (pl=first_player; pl!=NULL; pl=pl->next) num_players++;
 
-    sprintf(data,"%s|%d|%s%s|%s", settings.meta_host, num_players, VERSION, PATCH, 
+    sprintf(data,"%s|%d|%s|%s", settings.meta_host, num_players, VERSION, 
 	    settings.meta_comment);
     if (sendto(metafd, data, strlen(data), 0, &sock, sizeof(sock))<0) {
 	LOG(llevDebug,"metaserver_update: sendto failed, err = %d\n", errno);

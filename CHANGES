@@ -17,6 +17,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
 MSW 2000/11/25:
+include/patchlevel.h (removed), doc/spell-docs/Makefile (removed),
+include/Makefile.in, include/version.h, server/init.c, server/main.c,
+socket/metaserver.c: remove patchlevel.h - include the patchlevel in the
+ version.h file, update other files to use version as a single string.
+
+MSW 2000/11/25:
 socket/metaserver.c: If on FreeBSD systems, do not attempt to connect to
 the metaserve.  FreeBSD seems to have a problem using sendto on a connected
 soccket.

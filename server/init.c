@@ -299,7 +299,7 @@ void init(int argc, char **argv) {
     init_library();	/* Must be called early */
     load_settings();	/* Load the settings file */
     parse_args(argc, argv, 2);
-    fprintf(logfile,"Welcome to CrossFire, v%s%s\n",VERSION,PATCH);
+    fprintf(logfile,"Welcome to CrossFire, v%s\n",VERSION);
     fprintf(logfile,"Copyright (C) 1994 Mark Wedel.\n");
     fprintf(logfile,"Copyright (C) 1992 Frank Tore Johansen.\n");
 

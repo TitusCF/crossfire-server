@@ -26,10 +26,8 @@
     The author can be reached via e-mail to mwedel@scruz.net
 */
 
-#include "patchlevel.h"
-
 #ifdef MAKE
-#define Version 0.95
+#define Version 0.95.7
 #else
-#define VERSION "0.95"
+#define VERSION "0.95.7"
 #endif

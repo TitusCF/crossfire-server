@@ -55,7 +55,7 @@ void version(object *op) {
   if(op!=NULL)
     clear_win_info(op);
 
-  new_draw_info_format(NDI_UNIQUE, 0, op, "This is Crossfire v%s%s",VERSION,PATCH);
+  new_draw_info_format(NDI_UNIQUE, 0, op, "This is Crossfire v%s",VERSION);
 
 /* If in a socket, don't print out the list of authors.  It confuses the
  * crossclient program.
@@ -127,7 +127,7 @@ void info_keys(object *op) {
 void start_info(object *op) {
   char buf[MAX_BUF];
 
-  sprintf(buf,"Welcome to Crossfire, v%s%s!",VERSION,PATCH);
+  sprintf(buf,"Welcome to Crossfire, v%s!",VERSION);
   new_draw_info(NDI_UNIQUE, 0,op,buf);
   new_draw_info(NDI_UNIQUE, 0,op,"Press `?' for help");
   new_draw_info(NDI_UNIQUE, 0,op," ");
