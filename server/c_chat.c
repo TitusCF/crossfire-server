@@ -97,30 +97,45 @@ int command_orcknuckle(object *op, char *params)
     return 0;
 }
 
-int command_shout (object *op, char *params)
+static int command_tell_all(object *op, char *params, int pri, int color, char *desc)
 {
     int evtid;
     CFParm CFP;
-	if (op->contr->no_shout == 1){
-		new_draw_info(NDI_UNIQUE, 0,op,"You are no longer allowed to shout.");
-		return 1;
-	}else{
-	
-    if (params == NULL) {
-	new_draw_info(NDI_UNIQUE, 0,op,"Shout what?");
+
+    if (op->contr->no_shout == 1){
+	new_draw_info(NDI_UNIQUE, 0,op,"You are no longer allowed to shout or chat.");
+	return 1;
+    } else {
+	if (params == NULL) {
+	    new_draw_info(NDI_UNIQUE, 0,op,"Shout/Chat what?");
+	    return 1;
+	}
+	new_draw_info_format(NDI_UNIQUE | NDI_ALL | color, pri, NULL, 
+		 "%s %s: %s", op->name, desc, params);
+ 
+	/* GROS : Here we handle the SHOUT global event */
+	evtid = EVENT_SHOUT;
+	CFP.Value[0] = (void *)(&evtid);
+	CFP.Value[1] = (void *)(op);
+	CFP.Value[2] = (void *)(params);
+	/* Pass in priority - not sure if the plugin can use it or not */
+	CFP.Value[3] = (void *)(&pri);
+	GlobalEvent(&CFP);
 	return 1;
     }
-    new_draw_info_format(NDI_UNIQUE | NDI_ALL | NDI_RED, 1, NULL, 
-		 "%s shouts: %s", op->name, params);
-    /* GROS : Here we handle the SHOUT global event */
-    evtid = EVENT_SHOUT;
-    CFP.Value[0] = (void *)(&evtid);
-    CFP.Value[1] = (void *)(op);
-    CFP.Value[2] = (void *)(params);
-    GlobalEvent(&CFP);
-    return 1;
-	}
 }
+
+int command_shout (object *op, char *params)
+{
+    return command_tell_all(op, params, 1, NDI_RED, "shouts");
+}
+
+int command_chat (object *op, char *params)
+{
+    return command_tell_all(op, params, 9, NDI_BLUE, "chats");
+}
+
+
 
 int command_tell (object *op, char *params)
 {

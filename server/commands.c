@@ -136,6 +136,7 @@ CommArray_s CommunicationCommands [] = {
   {"reply", command_reply,		0.0},
   {"say", command_say,			0.1},
   {"shout", command_shout,		0.1},
+  {"chat", command_chat,		0.1},
   {"me", command_me,                   0.1},
   {"nod", command_nod,			0.0},
   {"dance", command_dance,		0.0},
@@ -282,6 +283,7 @@ const int Socket_CommandsSize =sizeof(Socket_Commands) / sizeof(CommArray_s);
  */
 CommArray_s Socket2_Commands[] = {
   {"shout", command_shout,	0.1},
+  {"chat", command_chat,	0.1},
   {"tell", command_tell,	0.1},
 };
 
