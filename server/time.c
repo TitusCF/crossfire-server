@@ -6,7 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 1994 Mark Wedel
+    Copyright (C) 2000 Mark Wedel
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -23,7 +23,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to master@rahul.net
+    The author can be reached via e-mail to mwedel@scruz.net
 */
 
 /*
@@ -626,7 +626,7 @@ void move_arrow(object *op) {
  * Modified this routine to allow held objects. b.t. */
 
 void change_object(object *op) { /* Doesn`t handle linked objs yet */
-  object *tmp,*env;
+  object *tmp,*env,*pl;
   int i,j;
 
   if(op->other_arch==NULL) {
@@ -646,7 +646,15 @@ void change_object(object *op) { /* Doesn`t handle linked objs yet */
     tmp->stats.hp=op->stats.hp; /* The only variable it keeps. */
     if(env) {
         tmp->x=env->x,tmp->y=env->y;
-	insert_ob_in_ob(tmp,env);
+	tmp=insert_ob_in_ob(tmp,env);
+	/* If this object is the players inventory, we need to tell the
+	 * client of the change.  Insert_ob_in_map takes care of the
+	 * updating the client, so we don't need to do that below.
+	 */
+	if ((pl=is_player_inv(env))!=NULL) {
+	    esrv_del_item(pl->contr, op->count);
+	    esrv_send_item(pl, tmp);
+	}
     } else {
         j=find_first_free_spot(tmp->arch,op->map,op->x,op->y);
 	if (j==-1)  /* No free spot */

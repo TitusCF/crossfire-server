@@ -17,6 +17,14 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+server/time.c:  Update the change_object function such that if the object
+is in a players inventory, send a delete & send_item for the object that
+has changed (the delete + send_item is necessary due to the ways objects
+change, so we just can't sent a update_item).  This fixes the 'torches
+go dim & then out but client inventory not updated' bug, and likely fixes
+some other problems - I am not sure how many other objects out there
+change.  MSW 7/28/2000
+
 random_maps/treasure.c:  potential crash bug fixed.  Only applied
 when a bad archetype was given as a wallstyle.  I will also put
 in a redundant archetypes fix. --PeterM 7/26/00
