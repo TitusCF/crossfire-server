@@ -454,7 +454,7 @@ int move_ob(object *op, int dir, object *originator);
 int transfer_ob(object *op, int x, int y, int randomly, object *originator);
 int teleport(object *teleporter, uint8 tele_type, object *user);
 void recursive_roll(object *op, int dir, object *pusher);
-int try_fit(object *op, int x, int y);
+int try_fit(object *op, mapstruct *m, int x, int y);
 int roll_ob(object *op, int dir, object *pusher);
 int push_ob(object *who, int dir, object *pusher);
 /* pets.c */
@@ -488,6 +488,8 @@ int key_confirm_quit(object *op, char key);
 void flee_player(object *op);
 int check_pick(object *op);
 object *find_arrow(object *op, char *type);
+object *find_better_arrow(object *op, object *target, char *type, int *better);
+object *pick_arrow_target(object *op, char *type, int dir);
 int fire_bow(object *op, object *part, object *arrow, int dir, int wc_mod, int sx, int sy);
 int player_fire_bow(object *op, int dir);
 void fire_misc_object(object *op, int dir);
@@ -611,9 +613,6 @@ int get_payment2(object *pl, object *op);
 int get_payment(object *pl);
 void sell_item(object *op, object *pl);
 void shop_listing(object *op);
-void write_supplydb();
-void read_supplydb();
-void update_sd(object *op, int nrof, int flag);
 /* skills.c */
 int attempt_steal(object *op, object *who);
 int adj_stealchance(object *op, object *victim, int roll);

@@ -251,12 +251,11 @@ void recursive_roll(object *op,int dir,object *pusher) {
  * This is currently only used for the boulder roll code.
  */
 
-int try_fit (object *op, int x, int y) 
+int try_fit (object *op, mapstruct *m, int x, int y) 
 {
     object *tmp, *more;
     sint16 tx, ty;
     int mflags;
-    mapstruct *m;
 
     if (op->head) 
 	op = op->head;
@@ -264,7 +263,6 @@ int try_fit (object *op, int x, int y)
     for (more = op; more ; more = more->more) {
 	tx = x + more->x - op->x;
 	ty = y + more->y - op->y;
-	m = op->map;
 
 	mflags = get_map_flags(m, &m, tx, ty, &tx, &ty);
 
@@ -327,7 +325,7 @@ int roll_ob(object *op,int dir, object *pusher) {
 	    return 0;
 	}
     }
-    if (try_fit (op, x, y))
+    if (try_fit (op, m, x, y))
 	return 0;
 
     remove_ob(op);

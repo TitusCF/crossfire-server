@@ -17,6 +17,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+include/sproto.h, server/move.c:  Modify try_fit() to take mapstruct parameter
+   for which map we are trying to fit this on - fixes problems with rolling
+   boulders accross map (only function that currently uses this).
+MSW 2003-02-14
+
 common/item.c: make item_power stop showing up in ring short descriptions.
         fix some of the items that were double-displaying materialnames, like
         mithril mithril chainmail.
