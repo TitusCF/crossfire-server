@@ -1629,6 +1629,7 @@ static void apply_spellbook (object *op, object *tmp)
     if (!spell) {
 	LOG(llevError,"apply_spellbook: Book %s has no spell in it!\n", tmp->name);
 	new_draw_info(NDI_UNIQUE, 0,op,"The spellbook symbols make no sense.");
+    return;
     }
     if (spell->level > (skop->level+10)) {
 	new_draw_info(NDI_UNIQUE, 0,op,"You are unable to decipher the strange symbols.");
