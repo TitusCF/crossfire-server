@@ -1425,11 +1425,16 @@ void draw_client_map(object *pl)
      * basically some number of spaces around the player)
      * ax and ay are values from within the viewport (ie, 0, 0 is upper
      * left corner) and are thus disconnected from the map values.
+     * Subtract 1 from the max values so that we properly handle cases where
+     * player has specified an even map.  Otherwise, we try to send them too
+     * much, ie, if mapx is 10, we would try to send from -5 to 5, which is actually
+     * 11 spaces.  Now, we would send from -5 to 4, which is properly.  If mapx is
+     * odd, this still works fine.
      */
     ay=0;
-    for(j=pl->y-pl->contr->socket.mapy/2; j<=pl->y+pl->contr->socket.mapy/2;j++, ay++) {
+    for(j=pl->y-pl->contr->socket.mapy/2; j<=pl->y+(pl->contr->socket.mapy-1)/2;j++, ay++) {
 	ax=0;
-	for(i=pl->x-pl->contr->socket.mapx/2;i<=pl->x+pl->contr->socket.mapx/2;i++, ax++) {
+	for(i=pl->x-pl->contr->socket.mapx/2;i<=pl->x+(pl->contr->socket.mapx-1)/2;i++, ax++) {
 
 	    d =  pl->contr->blocked_los[ax][ay];
 	    /* note the out_of_map and d>3 checks are both within the same

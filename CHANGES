@@ -17,6 +17,19 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+------------------------------------------------------------------------------
+Changes for 1.3.0:
+
+socket/request.c: If players were using the original map command with
+  an even map size, server would try to send too much data to client -
+  checking in server would result in an abort.  Modify code to now properly
+  send right number of spaces.
+lib/Makefile.in: remove extraneous / in front of motd entry in file list.
+include/version.h: Update for version 1.3.0
+Makefile.in: Update for version 1.3.0
+lib/archetypes: rebuilt.
+MSW 2002-07-01
+
 doc updates: Rebuild the doc files, but most of this is fixing some of the
 doc build stuff to correctly working with the new image set naming
 scheme and fixing some bugs.  Some doc is certainly out of date - the

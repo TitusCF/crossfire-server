@@ -38,7 +38,7 @@ INSTALLFILES = $(srcdir)/artifacts $(srcdir)/def_help $(srcdir)/formulae \
 
 # For the checks on the install for this to work, can't have the $(srcdir)
 # stuff.
-INSTALLNEWFILES = settings /motd skill_params spell_params \
+INSTALLNEWFILES = settings motd skill_params spell_params \
 	dm_file forbid ban_file
 
 BININSTALL = $(srcdir)/collect.pl $(srcdir)/util.pl
