@@ -7,7 +7,17 @@ FILES = Makefile.in monster-extract spells-extract stats-extract arm-extract\
 HTML =	monput.html spells.html stats.html weap.html shield.html helmet.html\
  	mag.html arm.html arche.html bow.html version.html weapmag.html
 
-  CROSSBIN = ../../server/crossfire
+CROSSBIN = ../../server/crossfire
+INCDIR = ../../include
+CROSSRC = ../..
+
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+datadir = @datadir@
+localdir = @localstatedir@
+libdir = @libdir@
+AWK = @AWK@
+
 
 spoiler.html:: $(HTML) spoiler.shtml
 	../include_html.pl spoiler.shtml spoiler.html
@@ -22,33 +32,33 @@ $(CROSSBIN):
 check_ok: dump_switches
 	@$(RM) dump_switches
 
-.bmaps: $(C_LIBDIR)/archetypes
+.bmaps: $(datadir)/archetypes
 	$(RM) *.gif
 	touch .bmaps
 
 items: .bmaps in_items makeps items.gif
-	makeps.pl libdir=$(CROSSRC)/lib archdir=$(CROSSRC)/lib/ size=0.4 input=in_items inarch=$(C_LIBDIR)/archetypes > items
+	makeps.pl libdir=$(CROSSRC)/lib archdir=$(CROSSRC)/lib/ size=0.4 input=in_items inarch=$(datadir)/archetypes > items
 
-in_items: items-extract $(C_LIBDIR)/archetypes $(CROSSRC)/common/living.c
-	$(AWK) -v living_c=$(CROSSRC)/common/living.c 		-f items-extract $(C_LIBDIR)/archetypes > in_items
+in_items: items-extract $(datadir)/archetypes $(CROSSRC)/common/living.c
+	$(AWK) -v living_c=$(CROSSRC)/common/living.c 		-f items-extract $(datadir)/archetypes > in_items
 
 stats.html: .bmaps in_stats makeps stats.gif
-	makeps.pl libdir=$(CROSSRC)/lib archdir=$(CROSSRC)/lib/ size=0.4 input=in_stats inarch=$(C_LIBDIR)/archetypes > stats.html
+	makeps.pl libdir=$(CROSSRC)/lib archdir=$(CROSSRC)/lib/ size=0.4 input=in_stats inarch=$(datadir)/archetypes > stats.html
 
-in_stats: stats-extract $(C_LIBDIR)/archetypes $(CROSSRC)/common/living.c
-	$(AWK) -v living_c=$(CROSSRC)/common/living.c 		-f stats-extract $(C_LIBDIR)/archetypes > in_stats
+in_stats: stats-extract $(datadir)/archetypes $(CROSSRC)/common/living.c
+	$(AWK) -v living_c=$(CROSSRC)/common/living.c 		-f stats-extract $(datadir)/archetypes > in_stats
 
 monput.html: .bmaps in_monput makeps monsters.gif
-	makeps.pl libdir=$(CROSSRC)/lib archdir=$(CROSSRC)/lib/ size=0.4 input=in_monput inarch=$(C_LIBDIR)/archetypes > monput.html
+	makeps.pl libdir=$(CROSSRC)/lib archdir=$(CROSSRC)/lib/ size=0.4 input=in_monput inarch=$(datadir)/archetypes > monput.html
 
-in_monput: monster-extract $(CROSSBIN) $(C_LIBDIR)/treasures 		$(C_LIBDIR)/archetypes
+in_monput: monster-extract $(CROSSBIN) $(datadir)/treasures 		$(datadir)/archetypes
 
 	$(CROSSBIN) -m2 |  sort -f | 		$(AWK) -F'|' -f monster-extract > in_monput
 
 spells.html: .bmaps in_spells makeps spells.gif
-	makeps.pl libdir=$(CROSSRC)/lib archdir=$(CROSSRC)/lib/ size=0.4 input=in_spells inarch=$(C_LIBDIR)/archetypes > spells.html
+	makeps.pl libdir=$(CROSSRC)/lib archdir=$(CROSSRC)/lib/ size=0.4 input=in_spells inarch=$(datadir)/archetypes > spells.html
 
-in_spells: spells-extract  $(INCDIR)/spellist.h 		$(CROSSBIN) $(C_LIBDIR)/archetypes
+in_spells: spells-extract  $(INCDIR)/spellist.h 		$(CROSSBIN) $(datadir)/archetypes
 
 	tr -d \" < $(INCDIR)/spellist.h | 		$(AWK) -F, -v crosscmd="$(CROSSBIN) -m4" 			-f spells-extract | sort > in_spells
 

@@ -18,6 +18,10 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+Change doc/spoiler-html/Makefile.in and doc/playbook-html/Makefile.in to use
+$(datadir) instead of $(C_LIBDIR). Other add AWK and INCDIR lines so that it
+properly builds with autoconf setup. msw 3/19/2000
+
 Change spoiler.tex, handbook.tex to build properly with later versions
 of tetex - added language specifier when using the babel package.
 msw 3/19/2000

@@ -11,6 +11,15 @@ FIG = fig/earrow.gif fig/nearrow.gif fig/sarrow.gif fig/swarrow.gif\
 	fig/screen_dia.gif fig/book.gif fig/stairdown.gif fig/stairup.gif
 
 CROSSBIN = ../../server/crossfire
+INCDIR = ../../include
+CROSSRC = ../..
+
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+datadir = @datadir@
+localdir = @localstatedir@
+libdir = @libdir@
+AWK = @AWK@
 
 all::
 
@@ -25,15 +34,15 @@ $(CROSSBIN):
 check_ok: dump_switches
 	@$(RM) dump_switches
 
-.bmaps: $(C_LIBDIR)/archetypes
+.bmaps: $(datadir)/archetypes
 	$(RM) *.gif
 	touch .bmaps
 
 items: .bmaps in_items makeps items.gif
-	$(AWK) -v libdir=$(CROSSRC)/lib -v archdir=$(CROSSRC)/lib/ -v size=0.4 -v input=in_items -f makeps $(C_LIBDIR)/archetypes > items
+	$(AWK) -v libdir=$(CROSSRC)/lib -v archdir=$(CROSSRC)/lib/ -v size=0.4 -v input=in_items -f makeps $(datadir)/archetypes > items
 
-in_items: items-extract $(C_LIBDIR)/archetypes $(CROSSRC)/common/living.c
-	$(AWK) -v living_c=$(CROSSRC)/common/living.c 		-f items-extract $(C_LIBDIR)/archetypes > in_items
+in_items: items-extract $(datadir)/archetypes $(CROSSRC)/common/living.c
+	$(AWK) -v living_c=$(CROSSRC)/common/living.c 		-f items-extract $(datadir)/archetypes > in_items
 
 handbook.html: version.html handbook.shtml
 	../include_html.pl handbook.shtml handbook.html
@@ -44,23 +53,23 @@ chap2.html: bonus.html char.html equip.html skills.html chap2.shtml
 bonus.html:
 	$(AWK) -v living_c=../../common/living.c 	-f bonus-extract > bonus.html
 
-in_char: char-extract $(C_LIBDIR)/archetypes $(CROSSRC)/common/living.c
-	$(AWK) -v living_c=$(CROSSRC)/common/living.c 		-f char-extract $(C_LIBDIR)/archetypes > in_char
+in_char: char-extract $(datadir)/archetypes $(CROSSRC)/common/living.c
+	$(AWK) -v living_c=$(CROSSRC)/common/living.c 		-f char-extract $(datadir)/archetypes > in_char
 
 char.html: .bmaps in_char makeps characters.gif
-	$(AWK) -v libdir=$(CROSSRC)/lib -v archdir=$(CROSSRC)/lib/ -v size=0.4 -v input=in_char -f makeps $(C_LIBDIR)/archetypes > char.html
+	$(AWK) -v libdir=$(CROSSRC)/lib -v archdir=$(CROSSRC)/lib/ -v size=0.4 -v input=in_char -f makeps $(datadir)/archetypes > char.html
 
-in_stats: stats-extract $(C_LIBDIR)/archetypes $(CROSSRC)/common/living.c
-	$(AWK) -v living_c=$(CROSSRC)/common/living.c 		-f stats-extract $(C_LIBDIR)/archetypes > in_stats
+in_stats: stats-extract $(datadir)/archetypes $(CROSSRC)/common/living.c
+	$(AWK) -v living_c=$(CROSSRC)/common/living.c 		-f stats-extract $(datadir)/archetypes > in_stats
 
 stats.html: .bmaps in_stats makeps stats.gif
-	$(AWK) -v libdir=$(CROSSRC)/lib -v archdir=$(CROSSRC)/lib/ -v size=0.4 -v input=in_stats -f makeps $(C_LIBDIR)/archetypes > stats.html
+	$(AWK) -v libdir=$(CROSSRC)/lib -v archdir=$(CROSSRC)/lib/ -v size=0.4 -v input=in_stats -f makeps $(datadir)/archetypes > stats.html
 
 equip.html: in_equip treas2-extract
 	$(AWK) -v eqitems=in_equip -f treas2-extract 	../../lib/treasures > equip.html
 
-in_equip: treas1-extract $(C_LIBDIR)/archetypes $(CROSSRC)/common/living.c
-	$(AWK) -v living_c=$(CROSSRC)/common/living.c 		-f treas1-extract $(C_LIBDIR)/archetypes | sort -d > in_equip
+in_equip: treas1-extract $(datadir)/archetypes $(CROSSRC)/common/living.c
+	$(AWK) -v living_c=$(CROSSRC)/common/living.c 		-f treas1-extract $(datadir)/archetypes | sort -d > in_equip
 
 skills.html: in_equip skills-extract
 	$(AWK) -v eqitems=in_equip -f skills-extract 	../../lib/treasures > skills.html
