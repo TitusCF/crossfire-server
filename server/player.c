@@ -116,7 +116,7 @@ int add_player(NewSocket *ns) {
     p->ob->name = NULL;
     free_object(p->ob);
     p->ob=get_player(p,m);
-    SET_FLAG(p->ob, FLAG_FRIENDLY);
+    CLEAR_FLAG(p->ob, FLAG_FRIENDLY);
     add_friendly_object(p->ob);
 #ifdef MOTD
     display_motd(p->ob);
@@ -237,6 +237,7 @@ object *get_player(player *p, mapstruct *m) {
 
 object *get_nearest_player(object *mon) {
   object *op = NULL;
+  player *pl = NULL;
   objectlink *ol;
   int lastdist,tmp;
 
@@ -270,6 +271,15 @@ object *get_nearest_player(object *mon) {
     if(lastdist>tmp) {
       op=ol->ob;
       lastdist=tmp;
+    }
+  }
+  for (pl=first_player; pl != NULL; pl=pl->next) {
+    if (pl->ob->map == mon->map && can_detect_enemy(mon, pl->ob)) {
+	tmp=distance(pl->ob,mon);
+	if(lastdist>tmp) {
+	    op=pl->ob;
+	    lastdist=tmp;
+	}
     }
   }
 #if 0

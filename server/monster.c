@@ -134,6 +134,10 @@ int check_wakeup(object *op, object *enemy) {
 #endif
   else if(!QUERY_FLAG(op,FLAG_SLEEP)) return 1;
 
+#if 0
+    /* We already have an enemy, so why bother going through all of this?
+     * not only is it inefficient, it seems pretty pointless.
+     */
   for(ol=first_friendly_object;ol!=NULL;ol=ol->next)
     if(ol->ob->map==op->map&&
        (QUERY_FLAG(ol->ob,FLAG_STEALTH)?(abs(ol->ob->x-op->x)<radius/2+1 &&
@@ -144,6 +148,19 @@ int check_wakeup(object *op, object *enemy) {
       CLEAR_FLAG(op,FLAG_SLEEP);
       return 1;
     }
+#else
+    /* enemy should already be on this map, so don't really need to check
+     * for that.
+     */
+    if (enemy) {
+	int dist = distance(op, enemy);
+
+	if (dist < QUERY_FLAG(enemy, FLAG_STEALTH)?(radius/2)+1:radius) {
+	    CLEAR_FLAG(op,FLAG_SLEEP);
+	    return 1;
+	}
+    }
+#endif
   return 0;
 }
 

@@ -792,10 +792,6 @@ void check_login(object *op) {
 	    if(tmp->glow_radius && light_not_listed(tmp)) add_light_to_list(tmp,op);
 	}
     }
-    if (!QUERY_FLAG(op, FLAG_FRIENDLY)) {
-	SET_FLAG(op, FLAG_FRIENDLY);
-	add_friendly_object(op);
-    }
-
+    CLEAR_FLAG(op, FLAG_FRIENDLY);
     return;
 }
