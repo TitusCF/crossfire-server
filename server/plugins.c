@@ -225,161 +225,6 @@ void initOnePlugin(char* pluginfile)
             int tmp = j;
             HookParm.Value[0] = &tmp;
             HookParm.Value[1] = HookList[j];
-            /*switch(j)
-            {
-            case HOOK_NONE:
-                break;
-            case HOOK_LOG:
-                HookParm->Value[1] = &CFWLog;
-                break;
-            case HOOK_NEWINFOMAP:
-                HookParm->Value[1] = &CFWNewInfoMap;
-                break;
-            case HOOK_SPRINGTRAP:
-                HookParm->Value[1] = &CFWSpringTrap;
-                break;
-            case HOOK_CASTSPELL:
-                HookParm->Value[1] = &CFWCastSpell;
-                break;
-            case HOOK_CMDRSKILL:
-                HookParm->Value[1] = &CFWCmdRSkill;
-                break;
-            case HOOK_BECOMEFOLLOWER:
-                HookParm->Value[1] = &CFWBecomeFollower;
-                break;
-            case HOOK_PICKUP:
-                HookParm->Value[1] = &CFWPickup;
-                break;
-            case HOOK_GETMAPOBJECT:
-                HookParm->Value[1] = &CFWGetMapObject;
-                break;
-            case HOOK_ESRVSENDITEM:
-                HookParm->Value[1] = &CFWESRVSendItem;
-                break;
-            case HOOK_FINDPLAYER:
-                HookParm->Value[1] = &CFWFindPlayer;
-                break;
-            case HOOK_MANUALAPPLY:
-                HookParm->Value[1] = &CFWManualApply;
-                break;
-            case HOOK_CMDDROP:
-                HookParm->Value[1] = &CFWCmdDrop;
-                break;
-            case HOOK_CMDTAKE:
-                HookParm->Value[1] = &CFWCmdTake;
-                break;
-            case HOOK_CMDTITLE:
-                HookParm->Value[1] = &CFWCmdTitle;
-                break;
-            case HOOK_TRANSFEROBJECT:
-                HookParm->Value[1] = &CFWTransferObject;
-                break;
-            case HOOK_KILLOBJECT:
-                HookParm->Value[1] = &CFWKillObject;
-                break;
-            case HOOK_LEARNSPELL:
-                HookParm->Value[1] = &CFWDoLearnSpell;
-                break;
-            case HOOK_FORGETSPELL:
-                HookParm->Value[1] = &CFWDoForgetSpell;
-                break;
-            case HOOK_CHECKFORSPELL:
-                HookParm->Value[1] = &CFWCheckSpellKnown;
-                break;
-            case HOOK_ESRVSENDINVENTORY:
-                HookParm->Value[1] = &CFWESRVSendInventory;
-                break;
-            case HOOK_CREATEARTIFACT:
-                HookParm->Value[1] = &CFWCreateArtifact;
-                break;
-            case HOOK_GETARCHETYPE:
-                HookParm->Value[1] = &CFWGetArchetype;
-                break;
-            case HOOK_UPDATESPEED:
-                HookParm->Value[1] = &CFWUpdateSpeed;
-                break;
-            case HOOK_UPDATEOBJECT:
-                HookParm->Value[1] = &CFWUpdateObject;
-                break;
-            case HOOK_FINDANIMATION:
-                HookParm->Value[1] = &CFWFindAnimation;
-                break;
-            case HOOK_GETARCHBYOBJNAME:
-                HookParm->Value[1] = &CFWGetArchetypeByObjectName;
-                break;
-            case HOOK_INSERTOBJECTINMAP:
-                HookParm->Value[1] = &CFWInsertObjectInMap;
-                break;
-            case HOOK_READYMAPNAME:
-                HookParm->Value[1] = &CFWReadyMapName;
-                break;
-            case HOOK_ADDEXP:
-                HookParm->Value[1] = &CFWAddExp;
-                break;
-            case HOOK_DETERMINEGOD:
-                HookParm->Value[1] = &CFWDetermineGod;
-                break;
-            case HOOK_FINDGOD:
-                HookParm->Value[1] = &CFWFindGod;
-                break;
-            case HOOK_DUMPOBJECT:
-                HookParm->Value[1] = &CFWDumpObject;
-                break;
-            case HOOK_LOADOBJECT:
-                HookParm->Value[1] = &CFWLoadObject;
-                break;
-            case HOOK_REGISTEREVENT:
-                HookParm->Value[1] = &RegisterGlobalEvent;
-                break;
-            case HOOK_UNREGISTEREVENT:
-                HookParm->Value[1] = &UnregisterGlobalEvent;
-                break;
-            case HOOK_REMOVEOBJECT:
-                HookParm->Value[1] = &CFWRemoveObject;
-                break;
-            case HOOK_ADDSTRING:
-                HookParm->Value[1] = &CFWAddString;
-                break;
-            case HOOK_ADDREFCOUNT:
-                HookParm->Value[1] = &CFWAddRefcount;
-                break;
-            case HOOK_FREESTRING:
-                HookParm->Value[1] = &CFWFreeString;
-                break;
-            case HOOK_GETFIRSTMAP:
-                HookParm->Value[1] = &CFWGetFirstMap;
-                break;
-            case HOOK_GETFIRSTPLAYER:
-                HookParm->Value[1] = &CFWGetFirstPlayer;
-                break;
-            case HOOK_GETFIRSTARCHETYPE:
-                HookParm->Value[1] = &CFWGetFirstArchetype;
-                break;
-            case HOOK_QUERYCOST:
-                HookParm->Value[1] = &CFWQueryCost;
-                break;
-            case HOOK_QUERYMONEY:
-                HookParm->Value[1] = &CFWQueryMoney;
-                break;
-            case HOOK_PAYFORITEM:
-                HookParm->Value[1] = &CFWPayForItem;
-                break;
-            case HOOK_PAYFORAMOUNT:
-                HookParm->Value[1] = &CFWPayForAmount;
-                break;
-            case HOOK_NEWDRAWINFO:
-                HookParm->Value[1] = &CFWNewDrawInfo;
-                break;
-            case HOOK_MOVEPLAYER:
-                HookParm->Value[1] = &CFWMovePlayer;
-                break;
-            case HOOK_MOVEOBJECT:
-                HookParm->Value[1] = &CFWMoveObject;
-                break;
-            };*/
-
-/*  Serious bug, fix this in all local copies */
-/*            HookParm->dparm = 2044; */
             PlugList[PlugNR].hookfunc(&HookParm);
         };
     };
@@ -543,155 +388,6 @@ void initOnePlugin(char* pluginfile)
                     int tmp = j;
                     HookParm.Value[0] = &tmp;
                     HookParm.Value[1] = HookList[j];
-                    /*switch(j)
-                    {
-                        case HOOK_NONE:
-                            break;
-                        case HOOK_LOG:
-                            HookParm->Value[1] = &CFWLog;
-                            break;
-                        case HOOK_NEWINFOMAP:
-                            HookParm->Value[1] = &CFWNewInfoMap;
-                            break;
-                        case HOOK_SPRINGTRAP:
-                            HookParm->Value[1] = &CFWSpringTrap;
-                            break;
-                        case HOOK_CASTSPELL:
-                            HookParm->Value[1] = &CFWCastSpell;
-                            break;
-                        case HOOK_CMDRSKILL:
-                            HookParm->Value[1] = &CFWCmdRSkill;
-                            break;
-                        case HOOK_BECOMEFOLLOWER:
-                            HookParm->Value[1] = &CFWBecomeFollower;
-                            break;
-                        case HOOK_PICKUP:
-                            HookParm->Value[1] = &CFWPickup;
-                            break;
-                        case HOOK_GETMAPOBJECT:
-                            HookParm->Value[1] = &CFWGetMapObject;
-                            break;
-                        case HOOK_ESRVSENDITEM:
-                            HookParm->Value[1] = &CFWESRVSendItem;
-                            break;
-                        case HOOK_FINDPLAYER:
-                            HookParm->Value[1] = &CFWFindPlayer;
-                            break;
-                        case HOOK_MANUALAPPLY:
-                            HookParm->Value[1] = &CFWManualApply;
-                            break;
-                        case HOOK_CMDDROP:
-                            HookParm->Value[1] = &CFWCmdDrop;
-                            break;
-                        case HOOK_CMDTAKE:
-                            HookParm->Value[1] = &CFWCmdTake;
-                            break;
-                        case HOOK_CMDTITLE:
-                            HookParm->Value[1] = &CFWCmdTitle;
-                            break;
-                        case HOOK_TRANSFEROBJECT:
-                            HookParm->Value[1] = &CFWTransferObject;
-                            break;
-                        case HOOK_KILLOBJECT:
-                            HookParm->Value[1] = &CFWKillObject;
-                            break;
-                        case HOOK_LEARNSPELL:
-                            HookParm->Value[1] = &CFWDoLearnSpell;
-                            break;
-                        case HOOK_FORGETSPELL:
-                            HookParm->Value[1] = &CFWDoForgetSpell;
-                            break;
-                        case HOOK_CHECKFORSPELL:
-                            HookParm->Value[1] = &CFWCheckSpellKnown;
-                            break;
-                        case HOOK_ESRVSENDINVENTORY:
-                            HookParm->Value[1] = &CFWESRVSendInventory;
-                            break;
-                        case HOOK_CREATEARTIFACT:
-                            HookParm->Value[1] = &CFWCreateArtifact;
-                            break;
-                        case HOOK_GETARCHETYPE:
-                            HookParm->Value[1] = &CFWGetArchetype;
-                            break;
-                        case HOOK_UPDATESPEED:
-                            HookParm->Value[1] = &CFWUpdateSpeed;
-                            break;
-                        case HOOK_UPDATEOBJECT:
-                            HookParm->Value[1] = &CFWUpdateObject;
-                            break;
-                        case HOOK_FINDANIMATION:
-                            HookParm->Value[1] = &CFWFindAnimation;
-                            break;
-                        case HOOK_GETARCHBYOBJNAME:
-                            HookParm->Value[1] = &CFWGetArchetypeByObjectName;
-                            break;
-                        case HOOK_INSERTOBJECTINMAP:
-                            HookParm->Value[1] = &CFWInsertObjectInMap;
-                            break;
-                        case HOOK_READYMAPNAME:
-                            HookParm->Value[1] = &CFWReadyMapName;
-                            break;
-                        case HOOK_ADDEXP:
-                            HookParm->Value[1] = &CFWAddExp;
-                            break;
-                        case HOOK_DETERMINEGOD:
-                            HookParm->Value[1] = &CFWDetermineGod;
-                            break;
-                        case HOOK_FINDGOD:
-                            HookParm->Value[1] = &CFWFindGod;
-                            break;
-                        case HOOK_DUMPOBJECT:
-                            HookParm->Value[1] = &CFWDumpObject;
-                            break;
-                        case HOOK_LOADOBJECT:
-                            HookParm->Value[1] = &CFWLoadObject;
-                            break;
-                        case HOOK_REGISTEREVENT:
-                            HookParm->Value[1] = &RegisterGlobalEvent;
-                            break;
-                        case HOOK_UNREGISTEREVENT:
-                            HookParm->Value[1] = &UnregisterGlobalEvent;
-                            break;
-                        case HOOK_REMOVEOBJECT:
-                            HookParm->Value[1] = &CFWRemoveObject;
-                            break;
-                        case HOOK_ADDSTRING:
-                            HookParm->Value[1] = &CFWAddString;
-                            break;
-                        case HOOK_ADDREFCOUNT:
-                            HookParm->Value[1] = &CFWAddRefcount;
-                            break;
-                        case HOOK_FREESTRING:
-                            HookParm->Value[1] = &CFWFreeString;
-                            break;
-                        case HOOK_GETFIRSTMAP:
-                            HookParm->Value[1] = &CFWGetFirstMap;
-                            break;
-                        case HOOK_GETFIRSTPLAYER:
-                            HookParm->Value[1] = &CFWGetFirstPlayer;
-                            break;
-                        case HOOK_GETFIRSTARCHETYPE:
-                            HookParm->Value[1] = &CFWGetFirstArchetype;
-                            break;
-                        case HOOK_QUERYCOST:
-                            HookParm->Value[1] = &CFWQueryCost;
-                            break;
-                        case HOOK_QUERYMONEY:
-                            HookParm->Value[1] = &CFWQueryMoney;
-                            break;
-                        case HOOK_PAYFORITEM:
-                            HookParm->Value[1] = &CFWPayForItem;
-                            break;
-                        case HOOK_PAYFORAMOUNT:
-                            HookParm->Value[1] = &CFWPayForAmount;
-                            break;
-                        case HOOK_NEWDRAWINFO:
-                            HookParm->Value[1] = &CFWNewDrawInfo;
-                            break;
-                        case HOOK_SENDCUSTOMCOMMAND:
-                            HookParm->Value[1] = &CFWSendCustomCommand;
-                            break;
-                    };*/
                     PlugList[PlugNR].hookfunc(&HookParm);
                 };
         };
@@ -768,14 +464,12 @@ CFParm* CFWSpringTrap(CFParm* PParm)
 /* 2 - direction;                                                            */
 /* 3 - spell object                                                          */
 /* 4 - optional args;                                                        */
-/*                                                                           */
 /*****************************************************************************/
 CFParm* CFWCastSpell(CFParm* PParm)
 {
     static int val;
     CFParm *CFP;
     CFP = (CFParm*)(malloc(sizeof(CFParm)));
-    /* int cast_spell(object *op, object *caster,int dir,object *spell_ob, char *stringarg)*/
     val = cast_spell((object *)(PParm->Value[0]),(object *)(PParm->Value[1]),
         *(int*)(PParm->Value[2]), (object*)(PParm->Value[3]),
         (char *)(PParm->Value[4]));
@@ -827,8 +521,9 @@ CFParm* CFWPickup(CFParm* PParm)
 /*****************************************************************************/
 /* pick_up wrapper.                                                          */
 /*****************************************************************************/
-/* 0 - picker object;                                                        */
-/* 1 - picked object.                                                        */
+/* 0 - map                                                                   */
+/* 1 - x position                                                            */
+/* 2 - y position                                                            */
 /*****************************************************************************/
 CFParm* CFWGetMapObject(CFParm* PParm)
 {
@@ -992,7 +687,7 @@ CFParm* CFWKillObject(CFParm* PParm)
 /* do_forget_spell wrapper.                                                  */
 /*****************************************************************************/
 /* 0 - object to affect;                                                     */
-/* 1 - spell index to forget.                                                */
+/* 1 - spell name to forget.                                                 */
 /*****************************************************************************/
 CFParm* CFWDoForgetSpell(CFParm* PParm)
 {
@@ -1024,7 +719,7 @@ CFParm* CFWDoLearnSpell(CFParm* PParm)
 /* check_spell_known wrapper.                                                */
 /*****************************************************************************/
 /* 0 - object to check;                                                      */
-/* 1 - spell index to search.                                                */
+/* 1 - spell name to search.                                                 */
 /*****************************************************************************/
 CFParm* CFWCheckSpellKnown(CFParm* PParm)
 {
@@ -1081,13 +776,12 @@ CFParm* CFWCreateArtifact(CFParm* PParm)
 /*****************************************************************************/
 CFParm* CFWGetArchetype(CFParm* PParm)
 {
-    /*object* get_archetype(char* name); */
     CFParm *CFP;
     object* val;
-    
+
     CFP = (CFParm*)(malloc(sizeof(CFParm)));
     val = get_archetype( (char *)(PParm->Value[0]) );
-    
+
     CFP->Value[0] = (void *)(val);
     return CFP;
 };
@@ -1257,7 +951,6 @@ CFParm* CFWDumpObject(CFParm* PParm)
 {
     CFParm* CFP;
     static char val[10240];
-/*    object* ob; not used */
     CFP = (CFParm*)(malloc(sizeof(CFParm)));
     dump_me((object *)(PParm->Value[0]),val);
     CFP->Value[0] = (void *)(val);
@@ -1291,6 +984,12 @@ CFParm* CFWRemoveObject(CFParm* PParm)
     remove_ob((object *)(PParm->Value[0]));
     return NULL;
 };
+
+/*****************************************************************************/
+/* add_string wrapper.                                                       */
+/*****************************************************************************/
+/* 0 - string to add.                                                        */
+/*****************************************************************************/
 CFParm* CFWAddString(CFParm* PParm)
 {
     CFParm* CFP;
@@ -1301,6 +1000,11 @@ CFParm* CFWAddString(CFParm* PParm)
     return CFP;
 };
 
+/*****************************************************************************/
+/* add_refcount wrapper.                                                     */
+/*****************************************************************************/
+/* 0 - string to increment refcount.                                         */
+/*****************************************************************************/
 CFParm* CFWAddRefcount(CFParm* PParm)
 {
     CFParm* CFP;
@@ -1310,15 +1014,23 @@ CFParm* CFWAddRefcount(CFParm* PParm)
     CFP->Value[0] = (void*) add_refcount (val);
     return CFP;
 };
+
+/*****************************************************************************/
+/* free_string wrapper.                                                      */
+/*****************************************************************************/
+/* 0 - string to free.                                                       */
+/*****************************************************************************/
 CFParm* CFWFreeString(CFParm* PParm)
 {
-/*  CFParm* CFP; not used */
     char* val;
     val = (char *)(PParm->Value[0]);
     free_string (val);
     return NULL;
 };
 
+/*****************************************************************************/
+/* first_map wrapper.                                                        */
+/*****************************************************************************/
 CFParm* CFWGetFirstMap(CFParm* PParm)
 {
     CFParm* CFP;
@@ -1327,6 +1039,9 @@ CFParm* CFWGetFirstMap(CFParm* PParm)
     return CFP;
 };
 
+/*****************************************************************************/
+/* first_player wrapper.                                                     */
+/*****************************************************************************/
 CFParm* CFWGetFirstPlayer(CFParm* PParm)
 {
     CFParm* CFP;
@@ -1335,6 +1050,9 @@ CFParm* CFWGetFirstPlayer(CFParm* PParm)
     return CFP;
 };
 
+/*****************************************************************************/
+/* first_archetype wrapper.                                                  */
+/*****************************************************************************/
 CFParm* CFWGetFirstArchetype(CFParm* PParm)
 {
     CFParm* CFP;
@@ -1342,6 +1060,7 @@ CFParm* CFWGetFirstArchetype(CFParm* PParm)
     CFP->Value[0] = (void*)(first_archetype) ;
     return CFP;
 };
+
 /*****************************************************************************/
 /* query_cost wrapper.                                                       */
 /*****************************************************************************/
@@ -1426,7 +1145,14 @@ CFParm* CFWPayForAmount(CFParm* PParm)
     return CFP;
 };
 
-/*new_draw_info(int flags, int pri, object *pl, const char *buf); */
+/*****************************************************************************/
+/* new_draw_info wrapper.                                                    */
+/*****************************************************************************/
+/* 0 - flags                                                                 */
+/* 1 - pri                                                                   */
+/* 2 - pl                                                                    */
+/* 3 - buf                                                                   */
+/*****************************************************************************/
 CFParm* CFWNewDrawInfo(CFParm* PParm)
 {
     new_draw_info(*(int *)(PParm->Value[0]),
@@ -1435,6 +1161,7 @@ CFParm* CFWNewDrawInfo(CFParm* PParm)
                   (char *)(PParm->Value[3]));
     return NULL;
 };
+
 /*****************************************************************************/
 /* move_player wrapper.                                                      */
 /*****************************************************************************/
@@ -1451,6 +1178,7 @@ CFParm* CFWMovePlayer (CFParm* PParm)
     CFP->Value[0] = (void*) &val;
     return(CFP);
 }
+
 /*****************************************************************************/
 /* move_object wrapper.                                                      */
 /*****************************************************************************/
@@ -1471,15 +1199,28 @@ CFParm* CFWMoveObject (CFParm* PParm)
     return(CFP);
 }
 
+/*****************************************************************************/
+/* send_plugin_custom_message wrapper.                                       */
+/*****************************************************************************/
+/* 0 - player to send command to                                             */
+/* 1 - command to send                                                       */
+/*****************************************************************************/
 CFParm* CFWSendCustomCommand(CFParm* PParm)
 {
     send_plugin_custom_message((object *)(PParm->Value[0]),(char *)(PParm->Value[1]));
     return NULL;
 };
 
+/*****************************************************************************/
+/* cftimer_create wrapper.                                                   */
+/*****************************************************************************/
+/* 0 - id                                                                    */
+/* 1 - delay                                                                 */
+/* 2 - object                                                                */
+/* 3 - mode                                                                  */
+/*****************************************************************************/
 CFParm* CFWCFTimerCreate(CFParm* PParm)
 {
-/*int cftimer_create(int id, long delay, object* ob, int mode) */
     CFParm* CFP;
     static int val;
     CFP = (CFParm*)(malloc(sizeof(CFParm)));
@@ -1491,9 +1232,13 @@ CFParm* CFWCFTimerCreate(CFParm* PParm)
     return CFP;
 };
 
+/*****************************************************************************/
+/* cftimer_destroy wrapper.                                                  */
+/*****************************************************************************/
+/* 0 - id                                                                    */
+/*****************************************************************************/
 CFParm* CFWCFTimerDestroy(CFParm* PParm)
 {
-/*int cftimer_destroy(int id) */
     CFParm* CFP;
     static int val;
     CFP = (CFParm*)(malloc(sizeof(CFParm)));
@@ -1501,6 +1246,7 @@ CFParm* CFWCFTimerDestroy(CFParm* PParm)
     CFP->Value[0] = (void *)(&val);
     return CFP;
 };
+
 /*****************************************************************************/
 /* SET_ANIMATION wrapper.                                                    */
 /*****************************************************************************/
@@ -1518,6 +1264,7 @@ CFParm* CFWSetAnimation (CFParm* PParm)
     update_object(op, UP_OBJ_FACE);
     return(NULL);
 }
+
 /*****************************************************************************/
 /* communicate wrapper.                                                      */
 /*****************************************************************************/
@@ -1537,6 +1284,7 @@ CFParm* CFWCommunicate (CFParm* PParm)
     communicate (op,string);
     return NULL;
 }
+
 /*****************************************************************************/
 /* find_best_object_match wrapper.                                           */
 /*****************************************************************************/
@@ -1555,6 +1303,7 @@ CFParm* CFWFindBestObjectMatch (CFParm* PParm)
 
     return(CFP);
 }
+
 /*****************************************************************************/
 /* player_apply_below wrapper.                                               */
 /*****************************************************************************/
@@ -1567,6 +1316,7 @@ CFParm* CFWApplyBelow (CFParm* PParm)
     player_apply_below (op);
     return NULL;
 }
+
 /*****************************************************************************/
 /* free_object wrapper.                                                      */
 /*****************************************************************************/
@@ -1592,9 +1342,9 @@ CFParm* CFWFixPlayer (CFParm* PParm)
 }
 
 /*****************************************************************************/
-/* free wrapper.                                                      */
+/* free wrapper.                                                             */
 /*****************************************************************************/
-/* 0 - object                                                                */
+/* 0 - pointer                                                               */
 /*****************************************************************************/
 CFParm* CFWFreeMemory(CFParm* PParm)
 {
@@ -1608,7 +1358,7 @@ CFParm* CFWFreeMemory(CFParm* PParm)
 /*****************************************************************************/
 /* 0 - object                                                                */
 /* 1 - type 0 = clone with inventory                                         */
-/*          1 = only duplicate the object without it's content and op->more  */
+/*          1 = only duplicate the object without its content and op->more   */
 /*****************************************************************************/
 CFParm* CFWObjectCreateClone (CFParm* PParm)
 {
@@ -1624,8 +1374,9 @@ CFParm* CFWObjectCreateClone (CFParm* PParm)
         }
     return CFP;
 }
+
 /*****************************************************************************/
-/* Sets a variable in a given object.                                        */
+/* set_variable wrapper -- Sets a variable in a given object.                */
 /*****************************************************************************/
 /* 0 - object to change                                                      */
 /* 1 - string describing the change to make.                                 */
@@ -1636,6 +1387,12 @@ CFParm* CFWSetVariable(CFParm* PParm)
     return NULL;
 }
 
+/*****************************************************************************/
+/* decrease_ob_nr wrapper.                                                   */
+/*****************************************************************************/
+/* 0 - object to change                                                      */
+/* 1 - nrof                                                                  */
+/*****************************************************************************/
 CFParm* CFWDecreaseObjectNR(CFParm* PParm)
 {
     CFParm* CFP=(CFParm*)malloc(sizeof (CFParm));
@@ -1661,10 +1418,6 @@ CFParm* CFWDecreaseObjectNR(CFParm* PParm)
 CFParm* CFWTeleportObject (CFParm* PParm)
 {
     object* current;
-/*    char * mapname; not used
-    int mapx;
-    int mapy;
-    int unique; not used */
     current=get_object();
     EXIT_PATH(current)=add_string ((char*)PParm->Value[1]);
     EXIT_X(current)=*(int*)PParm->Value[2];
@@ -1713,7 +1466,7 @@ CFParm* UnregisterGlobalEvent(CFParm* PParm)
 /* When a specific global event occurs, this function is called.             */
 /* Concerns events: BORN, QUIT, LOGIN, LOGOUT, SHOUT, MUZZLE, KICK for now.  */
 /*****************************************************************************/
-/*                                                                           */
+/* 0 - Number of the event                                                   */
 /*****************************************************************************/
 void GlobalEvent(CFParm *PParm)
 {

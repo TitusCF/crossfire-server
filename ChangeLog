@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+plugin/plugin_python.c, plugin/include/plugin_python.h, server/plugins.c:
+   Fix comments, change whitespace.
+Andreas Kirschbaum 2004-10-19
+
 Fix some bugs I introduced in my last commit.
 common/map.c: Add back in call to sum_weight that got removed when removing
    the object checking code.

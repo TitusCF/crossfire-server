@@ -583,7 +583,7 @@ MODULEAPI int HandleGlobalEvent(CFParm* CFP);
 /* Called to start the Python Interpreter.                                   */
 MODULEAPI void initCFPython();
 
-/* The execution stack. Altough it is quite rare, a script can actually      */
+/* The execution stack. Although it is quite rare, a script can actually     */
 /* trigger another script. The stack is used to keep track of those multiple */
 /* levels of execution. A recursion stack of size 100 shout be sufficient.   */
 /* If for some reason you think it is not enough, simply increase its size.  */
@@ -686,7 +686,7 @@ static PyMethodDef CFPythonMethods[] =
         {"CreatePlayerInfo",CFCreatePlayerInfo,METH_VARARGS},
         {"GetPlayerInfo",CFGetPlayerInfo,METH_VARARGS},
         {"GetNextPlayerInfo",CFGetNextPlayerInfo,METH_VARARGS},
-        
+
         {"CheckInvisibleObjectInside",CFCheckInvisibleInside,METH_VARARGS},
         {"CreateInvisibleObjectInside",CFCreateInvisibleInside,METH_VARARGS},
         {"CreateObjectInside",CFCreateObjectInside,METH_VARARGS},
@@ -1121,4 +1121,5 @@ PythonCmd CustomCommand[NR_CUSTOM_CMD];
 /* not like the use of such a global variable, but it is the most convenient */
 /* way I found to pass the command index to cmd_customPython.                */
 int NextCustomCommand;
+
 #endif /*PLUGIN_PYTHON_H*/
