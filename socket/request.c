@@ -1641,8 +1641,8 @@ void draw_client_map1(object *pl)
         }
         if (esl.len>estartlen) {
             Send_With_Handling(&pl->contr->socket, &esl);
-        free(esl.buf);
         }
+        free(esl.buf);
     }
     if (sl.len>startlen || pl->contr->socket.sent_scroll) {
 	Send_With_Handling(&pl->contr->socket, &sl);
