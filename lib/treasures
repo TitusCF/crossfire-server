@@ -253,21 +253,21 @@ more
   arch god_spelldirect_spiderweb
     chance 20
   more
-arch god_grace_limit_medium
-more
   arch god_spelldirect_wall_of_thorns
   more
-  arch god_spelldirect_raise_dead
-  more
   arch god_spelldirect_insect_plague
+  more
+  arch god_spelldirect_ironwood_skin
+  more
+arch god_grace_limit_medium
+more
+  arch god_spelldirect_raise_dead
   more
   arch god_spelldirect_remove_damnation
   more
   arch god_spelldirect_nightfall
   more
   arch god_spelldirect_sanctuary
-  more
-  arch god_spelldirect_ironwood_skin
   more
   arch god_spelldirect_daylight
   more
