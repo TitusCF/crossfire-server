@@ -1504,8 +1504,8 @@ int cast_change_ability(object *op,object *caster,object *spell_ob, int dir) {
     force->stats.ac = spell_ob->stats.ac;
     force->attacktype = spell_ob->attacktype;
 
-    change_abil(tmp,force);	/* Mostly to display any messages */
     insert_ob_in_ob(force,tmp);
+    change_abil(tmp,force);	/* Mostly to display any messages */
     fix_player(tmp);
     return 1;
 }
