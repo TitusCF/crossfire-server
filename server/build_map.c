@@ -624,11 +624,11 @@ void apply_map_builder( object* player, int dir )
     if ( !player->type == PLAYER )
         return;
 
-    if ( !player->map->unique )
+    /*if ( !player->map->unique )
         {
 	    new_draw_info( NDI_UNIQUE, 0, player, "You can't build outside a unique map." );
 	    return;
-        }
+        }*/
 
     if ( dir == 0 )
         {

@@ -17,6 +17,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Changed map-building to work on non-unique maps too.
+server/build_map.c: removed check for unique map.
+Ryo 2004-01-19
+
+
 Added map-building code. This lets players change unique maps,
     adding & removing walls, doors, stuff like that.
 	New item types BUILDER & MATERIAL. New item flag FLAG_IS_BUILDABLE.
