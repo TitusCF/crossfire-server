@@ -224,7 +224,7 @@ void write_todclock()
     char filename[MAX_BUF];
     FILE *fp;
 
-    sprintf(filename, "%s/clockdata", settings.datadir);
+    sprintf(filename, "%s/clockdata", settings.localdir);
     if ((fp = fopen(filename, "w")) == NULL) {
 	LOG(llevError, "Cannot open %s for writing\n", filename);
 	return;
