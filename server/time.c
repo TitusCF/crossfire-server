@@ -93,7 +93,7 @@ void generate_monster(object *gen) {
     insert_ob_in_map(op,gen->map,gen);
     if (QUERY_FLAG(op, FLAG_FREED)) return;
     if(op->randomitems!=NULL)
-      create_treasure(op->randomitems,op,GT_INVENTORY,
+      create_treasure(op->randomitems,op,GT_APPLY,
                       gen->map->difficulty,0);
     if(head==NULL)
       head=op;

@@ -126,9 +126,6 @@ int turn_bonus[MAX_STAT + 1]={
 int fear_bonus[MAX_STAT + 1]={
   3,3,3,3,2,2,2,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 };
-int learn_prayer_chance[MAX_STAT + 1] = {
-  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,5,10,15,20,30,40,60
-};
 
 /*
    Since this is nowhere defined ...

@@ -525,14 +525,6 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define WEAPON_SPEED(xyz)	(xyz)->last_sp
 
 
-/*
- * Flags to generate_treasures():
- */
-
-#define GT_INVENTORY	0
-#define GT_ENVIRONMENT	1
-#define GT_INVISIBLE	2
-
 /******************************************************************************/
 /* Monster Movements added by kholland@sunlab.cit.cornell.edu                 */
 /******************************************************************************/

@@ -927,7 +927,7 @@ int pray (object *pl) {
     for (tmp=pl->below; tmp!=NULL; tmp=tmp->below) {
 	/* Only if the altar actually belongs to someone do you get special benefits */
 	if(tmp && tmp->type==HOLY_ALTAR && tmp->other_arch) {
-	    sprintf(buf,"You pray over the %s",tmp->name);
+	    sprintf(buf,"You pray over the %s.",tmp->name);
 	    pray_at_altar(pl,tmp);
 	    break;  /* Only pray at one altar */
 	}

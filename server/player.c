@@ -322,27 +322,49 @@ int path_to_player(object *mon, object *pl,int mindiff) {
 
 void give_initial_items(object *pl,treasurelist *items) {
     object *op,*next=NULL;
-    static uint8 start_spells[] = {0, 1, 4, 5, 7,17,168};
-    static uint8 start_prayers[] = {19, 31, 32, 129}; 
+    /* Lets at least use the SP_ values here and not just numbers, like 0, 1, ... */
+
+    int start_spells[] = {SP_BULLET, SP_S_FIREBALL, SP_BURNING_HANDS,
+	SP_S_LIGHTNING, SP_M_MISSILE ,SP_ICESTORM, SP_S_SNOWSTORM};
+    int nrof_start_spells = sizeof start_spells / sizeof start_spells[0];
+
+    int start_prayers[] = {SP_TURN_UNDEAD, SP_HOLY_WORD, SP_MINOR_HEAL,
+	SP_CAUSE_LIGHT};
+    int nrof_start_prayers = sizeof start_prayers / sizeof start_prayers[0];
+    int idx;
+
+
     if(pl->randomitems!=NULL)
-	create_treasure(items,pl,GT_INVENTORY,1,0);
+	create_treasure(items,pl,GT_STARTEQUIP | GT_ONLY_GOOD,1,0);
 
     for (op=pl->inv; op; op=next) {
 	next = op->below;
-	if(op->nrof<2 && op->type!=CONTAINER && op->type!=MONEY && 
-	   op->type!=BOOK && !QUERY_FLAG(op,FLAG_IS_THROWN))
-		SET_FLAG(op,FLAG_STARTEQUIP);
 
-        if(op->type == CONTAINER) op->value = 0; /* so you can't sell it for money*/
-        /* Not marked as starting equipment, so set 0 value. */
-	if (QUERY_FLAG(op,FLAG_IS_THROWN))
-	    op->value=0;
-	if(op->type==FORCE) { SET_FLAG(op,FLAG_APPLIED);};
-	if(op->type==SPELLBOOK) { /* fix spells for first level spells */
-	    if(!strcmp(op->arch->name,"cleric_book")) 
-		op->stats.sp=start_prayers[RANDOM()%(sizeof(start_prayers)/sizeof(uint8))];
-	    else
-		op->stats.sp=start_spells[RANDOM()%sizeof(start_spells)];
+  	if(op->type==FORCE) { SET_FLAG(op,FLAG_APPLIED);};
+
+  	if(op->type==SPELLBOOK) { /* fix spells for first level spells */
+	    if (strcmp (op->arch->name, "cleric_book") == 0) {
+		if (nrof_start_prayers <= 0) {
+		    remove_ob (op);
+		    free_object (op);
+		    continue;
+		}
+		idx = RANDOM() % nrof_start_prayers;
+		op->stats.sp = start_prayers[idx];
+		/* This makes sure the character does not get duplicate spells */
+		start_prayers[idx] = start_prayers[nrof_start_prayers - 1];
+		nrof_start_prayers--;
+	    } else {
+		if (nrof_start_spells <= 0) {
+		    remove_ob (op);
+		    free_object (op);
+		    continue;
+		}
+		idx = RANDOM() % nrof_start_spells;
+		op->stats.sp = start_spells[idx];
+		start_spells[idx] = start_spells[nrof_start_spells - 1];
+		nrof_start_spells--;
+	    }
 	}
 	/* Give starting characters identified, uncursed, and undamned
 	 * items.  Just don't identify gold or silver, or it won't be
@@ -357,14 +379,16 @@ void give_initial_items(object *pl,treasurelist *items) {
 	if(op->type==SKILLSCROLL || op->type==SKILL)  {
 	    remove_ob(op);
 	    free_object(op);
+            continue;
 	}
 #endif
 	if(op->type==ABILITY)  {
 	    pl->contr->known_spells[pl->contr->nrofknownspells++]=op->stats.sp;
 	    remove_ob(op);
 	    free_object(op);
+            continue;
 	}
-    }
+    } /* for loop of objects in player inv */
 }
 
 void get_name(object *op) {

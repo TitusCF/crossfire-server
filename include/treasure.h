@@ -45,6 +45,21 @@
 
 #define DIFFLEVELS 31
 
+
+/*
+ * Flags to generate_treasures():
+ */
+
+enum {
+  GT_ENVIRONMENT = 0x0001,
+  GT_INVISIBLE = 0x0002,
+  GT_STARTEQUIP = 0x0004,
+  GT_APPLY = 0x0008,
+  GT_ONLY_GOOD = 0x0010,
+  GT_UPDATE_INV = 0x0020
+};
+
+
 /*
  * treasure is one element in a linked list, which together consist of a
  * complete treasure-list.  Any arch can point to a treasure-list

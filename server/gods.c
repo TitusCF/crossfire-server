@@ -166,6 +166,64 @@ void pray_at_altar(object *pl, object *altar) {
 #endif
 }
 
+static int get_spell_number (object *op)
+{
+    int spell;
+
+    if (op->slaying && (spell = look_up_spell_name (op->slaying)) >= 0)
+        return spell;
+    else
+        return op->stats.sp;
+}
+
+static void check_special_prayers (object *op, object *god)
+{
+/* Ensure that 'op' doesn't know any special prayers that are not granted
+ * by 'god'.
+ */
+    treasure *tr;
+    object *tmp, *next_tmp;
+    int spell;
+
+    /* Outer loop iterates over all special prayer marks */
+    for (tmp = op->inv; tmp; tmp = next_tmp)
+    {
+        next_tmp = tmp->below;
+
+        if (tmp->type != FORCE || tmp->slaying == NULL
+            || strcmp (tmp->slaying, "special prayer") != 0)
+            continue;
+        spell = tmp->stats.sp;
+
+        if (god->randomitems == NULL) {
+            LOG (llevError, "BUG: check_special_prayers(): %s without "
+                 "randomitems\n", god->name);
+            do_forget_spell (op, spell);
+            continue;
+	}
+
+        /* Inner loop tries to find the special prayer in the god's treasure
+         * list. */
+        for (tr = god->randomitems->items; tr; tr = tr->next)
+        {
+            object *item;
+            if (tr->item == NULL)
+                continue;
+            item = &tr->item->clone;
+
+            if (item->type == SPELLBOOK && get_spell_number (item) == spell)
+            {
+                /* Current god allows this special prayer. */
+                spell = -1;
+                break;
+            }
+        }
+
+        if (spell >= 0)
+            do_forget_spell (op, spell);
+    }
+}
+
 void become_follower (object *op, object *new_god) {
     object *exp_obj = op->chosen_skill->exp_obj;
     int i;
@@ -247,6 +305,8 @@ void become_follower (object *op, object *new_god) {
 
     SET_FLAG(exp_obj,FLAG_APPLIED); 
     (void) change_abil(op,exp_obj);
+
+    check_special_prayers (op, new_god);
 } 
 
 int worship_forbids_use (object *op, object *exp_obj, uint32 flag, char *string) {
@@ -270,7 +330,7 @@ void stop_using_item ( object *op, int type, int number ) {
 
   for(tmp=op->inv;tmp&&number;tmp=tmp->below)
     if(tmp->type==type&&QUERY_FLAG(tmp,FLAG_APPLIED)) { 
-	manual_apply(op,tmp,0); /* this should unapply things properly */ 
+        apply_special (op, tmp, AP_UNAPPLY | AP_IGNORE_CURSE);
 	number--;
     }
 }
@@ -336,252 +396,402 @@ char *determine_god(object *op) {
 } 
 
 
+archetype *determine_holy_arch (object *god, const char *type)
+{
+    treasure *tr;
+
+    if ( ! god || ! god->randomitems) {
+        LOG (llevError, "BUG: determine_holy_arch(): no god or god without "
+             "randomitems\n");
+        return NULL;
+    }
+
+    for (tr = god->randomitems->items; tr != NULL; tr = tr->next) {
+        object *item;
+
+        if ( ! tr->item)
+            continue;
+        item = &tr->item->clone;
+
+        if (item->type == BOOK && item->invisible
+            && strcmp (item->name, type) == 0)
+            return item->other_arch;
+    }
+    return NULL;
+}
+
+
+static int god_removes_curse (object *op, int remove_damnation)
+{
+    object *tmp;
+    int success = 0;
+
+    for (tmp = op->inv; tmp; tmp = tmp->below) {
+        if (QUERY_FLAG (tmp, FLAG_DAMNED) && ! remove_damnation)
+            continue;
+        if (QUERY_FLAG (tmp, FLAG_CURSED) || QUERY_FLAG (tmp, FLAG_DAMNED)) {
+            success = 1;
+            CLEAR_FLAG (tmp, FLAG_DAMNED);
+            CLEAR_FLAG (tmp, FLAG_CURSED);
+            CLEAR_FLAG (tmp, FLAG_KNOWN_CURSED);
+            if (op->type == PLAYER)
+                esrv_send_item (op, tmp);
+        }
+    }
+
+    if (success)
+        new_draw_info (NDI_UNIQUE, 0, op,
+                "You feel like someone is helping you.");
+    return success;
+}
+
+static int follower_level_to_enchantments (int level, int difficulty)
+{
+    if (difficulty < 1) {
+        LOG (llevError, "follower_level_to_enchantments(): "
+             "difficulty %d is invalid\n", difficulty);
+        return 0;
+    }
+
+    if (level <= 20)
+        return level / difficulty;
+    if (level <= 40)
+        return (20 + (level - 20) / 2) / difficulty;
+    return (30 + (level - 40) / 4) / difficulty;
+}
+
+static int god_enchants_weapon (object *op, object *god, object *tr)
+{
+    char buf[MAX_BUF];
+    object *weapon;
+    uint32 attacktype;
+    int tmp;
+
+    for (weapon = op->inv; weapon; weapon = weapon->below)
+        if (weapon->type == WEAPON && QUERY_FLAG (weapon, FLAG_APPLIED))
+            break;
+    if (weapon == NULL || god_examines_item (god, weapon) <= 0)
+        return 0;
+
+    /* First give it a title, so other gods won't touch it */
+    if ( ! weapon->title) {
+        sprintf (buf, "of %s", god->name);
+        weapon->title = add_string (buf);
+        if (op->type == PLAYER) 
+	    esrv_update_item (UPD_NAME, op, weapon);
+        new_draw_info (NDI_UNIQUE, 0, op, "Your weapon quivers as if struck!");
+    }
+
+    /* Allow the weapon to slay enemies */
+    if ( ! weapon->slaying && god->slaying) {
+        weapon->slaying = add_string (god->slaying);
+        new_draw_info_format (NDI_UNIQUE, 0, op,
+                "Your %s now hungers to slay enemies of your god!",
+                weapon->name);
+        return 1;
+    }
+
+    /* Add the gods attacktype */
+    attacktype = (weapon->attacktype == 0) ? AT_PHYSICAL : weapon->attacktype;
+    if ((attacktype & god->attacktype) != god->attacktype) {
+        new_draw_info (NDI_UNIQUE, 0, op, "Your weapon suddenly glows!");
+        weapon->attacktype = attacktype | god->attacktype;
+        return 1;
+    }
+
+    /* Higher magic value */
+    tmp = follower_level_to_enchantments (SK_level (op), tr->level);
+    if (weapon->magic < tmp) {
+        new_draw_info (NDI_UNIQUE, 0, op,
+                "A phosphorescent glow envelops your weapon!");
+        weapon->magic++;
+        if (op->type == PLAYER)
+            esrv_update_item (UPD_NAME, op, weapon);
+        return 1;
+    }
+
+    return 0;
+}
+
+static int same_string (const char *s1, const char *s2)
+{
+    if (s1 == NULL)
+        if (s2 == NULL)
+            return 1;
+        else
+            return 0;
+    else
+        if (s2 == NULL)
+            return 0;
+        else
+            return strcmp (s1, s2) == 0;
+}
+
+static int follower_has_similar_item (object *op, object *item)
+{
+    object *tmp;
+
+    for (tmp = op->inv; tmp != NULL; tmp = tmp->below) {
+        if (tmp->type == item->type
+            && same_string (tmp->name, item->name)
+            && same_string (tmp->title, item->title)
+            && same_string (tmp->msg, item->msg)
+            && same_string (tmp->slaying, item->slaying))
+            return 1;
+        if (tmp->inv && follower_has_similar_item (tmp, item))
+            return 1;
+    }
+    return 0;
+}
+
+static int god_gives_present (object *op, object *god, treasure *tr)
+{
+    object *tmp;
+
+    if (follower_has_similar_item (op, &tr->item->clone))
+        return 0;
+
+    tmp = arch_to_object (tr->item);
+    new_draw_info_format (NDI_UNIQUE, 0, op,
+        "%s lets %s appear in your hands.", god->name, query_short_name (tmp));
+    tmp = insert_ob_in_ob (tmp, op);
+    if (op->type == PLAYER)
+        esrv_send_item (op, tmp);
+    return 1;
+}
+
+
 /* god_intervention() - called from praying() currently. Every
  * once in a while the god will intervene to help the worshiper.
  * Later, this fctn can be used to supply quests, etc for the 
  * priest. -b.t. 
  */
 
-void god_intervention(object *op, object *god) {
-  int level=SK_level(op);
+void god_intervention (object *op, object *god)
+{
+    int level = SK_level (op);
+    treasure *tr;
 
-  /*safety, shouldnt happen */
-  if(!god) return;
-
-  /* lets do some checks of whether we are kosher 
-   * with our god */
-  if(god_examines_priest(op,god)<0) return;
-
-  new_draw_info(NDI_UNIQUE|NDI_UNIQUE,0,op,"You feel a holy presence!");
-
-  /* So, what can we do to help out? We do some minimal checking
-   * of the god's attributes to ensure there is a bit of consistency
-   * between what happens and what the god can do. We do benefits 
-   * in 2 sections. In the first, we check if the god can fix
-   * problems of the priest. In the second, rare boons are given.
-   * In either case, as soon as the god gives a gift, we return */
- 
-
-  /* FIRST SECTION */
-
-  /* Restore the priest to a better state of grace. */ 
-  if(op->stats.grace<0) {
-        new_draw_info(NDI_UNIQUE,0,op,"You are returned to a state of grace.");
-	op->stats.grace=RANDOM()%10;
-	return;
-  } 
-
- /* Heal damage */
-  if(!(god->path_denied&PATH_RESTORE)) { 
-     if(op->stats.hp<op->stats.maxhp) { 
-	op->stats.hp=op->stats.maxhp;
-        new_draw_info(NDI_UNIQUE,0,op,"A white light surrounds and heals you!");
-	return;
-     }
-  }
-
- /* cure confusion? */
-  if(!(god->attacktype&AT_CONFUSION))
-    if(cast_heal(op,0,SP_CURE_CONFUSION)) return;
-
- /* remove poison? */
-  if(!(god->attacktype&AT_POISON))
-    if(cast_heal(op,0,SP_CURE_POISON)) return;
-
- /* Remove cursed/damned items? This is better than the spell, here we
-  * allow unapplied items to be uncursed */
-  if(!(RANDOM()%2)&&!(god->path_denied&PATH_TURNING)) {
-    object *tmp;
-    int success = 0;
-
-    for (tmp = op->inv; tmp; tmp = tmp->below)
-      if (QUERY_FLAG(tmp, FLAG_CURSED)||QUERY_FLAG(tmp, FLAG_DAMNED)) {
-	    success++;
-	    if(QUERY_FLAG(tmp, FLAG_DAMNED)) CLEAR_FLAG(tmp, FLAG_DAMNED);
-	    CLEAR_FLAG(tmp, FLAG_CURSED);
-	    CLEAR_FLAG(tmp, FLAG_KNOWN_CURSED);
-	    esrv_send_item(op, tmp);
-       }  
-    if (op->type==PLAYER&&success) {
-	new_draw_info(NDI_UNIQUE, 0,op, "You feel like someone is helping you.");
-	return;
-    }
-  }
-
-  /* Fix drained stats? */
-  if(!(RANDOM()%2)&&!(god->attacktype&(AT_DRAIN||AT_DEPLETE))) {
-     object *depl;
-     archetype *at;
-
-     if ((at = find_archetype("depletion"))==NULL) {
-        LOG(llevError,"Could not find archetype depletion");
+    if ( ! god || ! god->randomitems) {
+        LOG (llevError, "BUG: god_intervention(): no god or god without "
+             "randomitems\n");
         return;
-     }  
-     depl = present_arch_in_ob(at, op);
-     if (depl!=NULL) {   
-        int i;
-        new_draw_info(NDI_UNIQUE,0,op,"Shimmering light surrounds and restores you!");
-        for (i = 0; i < 7; i++)
-            if (get_attr_value(&depl->stats, i)) {
-              new_draw_info(NDI_UNIQUE,0,op, restore_msg[i]);
+    }
+
+    check_special_prayers (op, god);
+
+    /* lets do some checks of whether we are kosher with our god */
+    if (god_examines_priest (op, god) < 0)
+        return;
+
+    new_draw_info (NDI_UNIQUE, 0, op, "You feel a holy presence!");
+
+    for (tr = god->randomitems->items; tr != NULL; tr = tr->next) {
+        object *item;
+
+        if (tr->chance <= (RANDOM() % 100))
+            continue;
+
+        /* Treasurelist - generate some treasure for the follower */
+        if (tr->name) {
+            treasurelist *tl = find_treasurelist (tr->name);
+            if (tl == NULL)
+                continue;
+            new_draw_info (NDI_UNIQUE, 0, op, "Something appears before your "
+                    "eyes.  You catch it before it falls to the ground.");
+            create_treasure (tl, op, GT_STARTEQUIP | GT_ONLY_GOOD
+                                      | GT_UPDATE_INV, level, 0);
+            return;
+        }
+
+        if ( ! tr->item) {
+            LOG (llevError, "BUG: empty entry in %s's treasure list\n",
+                 god->name);
+            continue;
+        }
+        item = &tr->item->clone;
+
+        /* Grace limit */
+        if (item->type == BOOK && item->invisible
+            && strcmp (item->name, "grace limit") == 0)
+        {
+            if (op->stats.grace < item->stats.grace
+                || op->stats.grace < op->stats.maxgrace)
+            {
+                /* Follower lacks the required grace for the following
+                 * treasure list items. */
+                (void) cast_change_attr (op, op, 0, SP_HOLY_POSSESSION);
+                return;
             }
-	remove_ob(depl);
-	free_object(depl);
-        fix_player(op);
-        return;
-     }
-  }
+            continue;
+        }
+
+        /* Restore grace */
+        if (item->type == BOOK && item->invisible
+            && strcmp (item->name, "restore grace") == 0)
+        {
+            if (op->stats.grace >= 0)
+                continue;
+            op->stats.grace = RANDOM() % 10;
+            new_draw_info (NDI_UNIQUE, 0, op,
+                    "You are returned to a state of grace.");
+            return;
+        }
+
+        /* Heal damage */
+        if (item->type == BOOK && item->invisible
+            && strcmp (item->name, "restore hitpoints") == 0)
+        {
+            if (op->stats.hp >= op->stats.maxhp)
+                continue;
+            new_draw_info (NDI_UNIQUE, 0, op,
+                    "A white light surrounds and heals you!");
+            op->stats.hp = op->stats.maxhp;
+            return;
+        }
+
+        /* Restore spellpoints */
+        if (item->type == BOOK && item->invisible
+            && strcmp (item->name, "restore spellpoints") == 0)
+        {
+            int max = op->stats.maxsp * (item->stats.maxsp / 100.0);
+            /* Restore to 50 .. 100%, if sp < 50% */
+            int new_sp = (RANDOM() % 1000 + 1000) / 2000.0 * max;
+            if (op->stats.sp >= max / 2)
+                continue;
+            new_draw_info (NDI_UNIQUE, 0, op, "A blue lightning strikes "
+                    "your head but doesn't hurt you!");
+            op->stats.sp = new_sp;
+        }
+
+        /* Various heal spells */
+        if (item->type == BOOK && item->invisible
+            && strcmp (item->name, "heal spell") == 0)
+        {
+            if (cast_heal (op, 0, get_spell_number (item)))
+                return;
+            else
+                continue;
+        }
+
+        /* Remove curse */
+        if (item->type == BOOK && item->invisible
+            && strcmp (item->name, "remove curse") == 0)
+        {
+            if (god_removes_curse (op, 0))
+                return;
+            else
+                continue;
+        }
+
+        /* Remove damnation */
+        if (item->type == BOOK && item->invisible
+            && strcmp (item->name, "remove damnation") == 0)
+        {
+            if (god_removes_curse (op, 1))
+                return;
+            else
+                continue;
+        }
+
+        /* Heal depletion */
+        if (item->type == BOOK && item->invisible
+            && strcmp (item->name, "heal depletion") == 0)
+        {
+            object *depl;
+            archetype *at;
+            int i;
+
+            if ((at = find_archetype("depletion")) == NULL) {
+                LOG (llevError, "Could not find archetype depletion.\n");
+                continue;
+            }
+            depl = present_arch_in_ob (at, op);
+            if (depl == NULL)
+                continue;
+            new_draw_info (NDI_UNIQUE, 0, op,
+                    "Shimmering light surrounds and restores you!");
+            for (i = 0; i < 7; i++)
+                if (get_attr_value (&depl->stats, i))
+                    new_draw_info (NDI_UNIQUE, 0, op, restore_msg[i]);
+            remove_ob (depl);
+            free_object (depl);
+            fix_player (op);
+            return;
+        }
   
-  /* Special knowledge of the God? */
-  if((!RANDOM()%10)&&!(god->path_denied&PATH_INFO)) { 
-      if(god->slaying) {
-          new_draw_info_format(NDI_UNIQUE,0,op,
-	    "You are filled with a desire to slay all things which are %s.",
-	    god->slaying);
-	  return;
-      } 
-      if(god->race) {
-          new_draw_info_format(NDI_UNIQUE,0,op,
-	    "You feel a bond with all things which are %s.",
-	    god->race);
-	  return;
-      } 
-  }
+        /* Voices */
+        if (item->type == BOOK && item->invisible
+            && strcmp (item->name, "voice_behind") == 0)
+        {
+            new_draw_info (NDI_UNIQUE, 0, op,
+                    "You hear a voice from behind you, but you don't dare to "
+                    "turn around:");
+            new_draw_info (NDI_WHITE, 0, op, item->msg);
+            return;
+        }
 
-  /* SECOND SECTION */
+        /* Messages */
+        if (item->type == BOOK && item->invisible
+            && strcmp (item->name, "message") == 0)
+        {
+            new_draw_info (NDI_UNIQUE, 0, op, item->msg);
+            return;
+        }
 
-  /* Now, for the special section. If the priest is in a "state of grace"
-   * (ie grace.stats>100&&grace>maxgrace) we get one of the good benefits
-   * else, just a "super-blessing" via "holy possession" spell */
+        /* Enchant weapon */
+        if (item->type == BOOK && item->invisible
+            && strcmp (item->name, "enchant weapon") == 0)
+        {
+            if (god_enchants_weapon (op, god, item))
+                return;
+            else
+                continue;
+        }
 
-  /* blessing via "holy possesion" spell */
-  if((op->stats.grace<80)||(op->stats.grace<op->stats.maxgrace)) {
-     (void) cast_change_attr(op,op,0,SP_HOLY_POSSESSION);
-     return;
-  }
+        /* Spellbooks - works correctly only for prayers */
+        if (item->type == SPELLBOOK)
+        {
+            int spell = get_spell_number (item);
+            if (check_spell_known (op, spell))
+                continue;
+            if (spells[spell].level > level)
+                continue;
+            if (item->invisible) {
+                new_draw_info_format(NDI_UNIQUE, 0, op,
+                        "%s grants you use of a special prayer!", god->name);
+                do_learn_spell (op, spell, 1);
+                return;
+            }
+            if ( ! QUERY_FLAG (item, FLAG_STARTEQUIP)) {
+                LOG (llevError, "BUG: visible spellbook in %s's treasure list "
+                     "lacks FLAG_STARTEQUIP\n", god->name);
+                continue;
+            }
+            if ( ! item->stats.Wis) {
+                LOG (llevError, "BUG: visible spellbook in %s's treasure list "
+                     "doesn't contain a special prayer\n", god->name);
+                continue;
+            }
+            if (god_gives_present (op, god, tr))
+                return;
+            else
+                continue;
+        }
 
-  /* Enchant/bless your weapon upto priest level/5  */
-  if(!(RANDOM()%2)&&QUERY_FLAG(op,FLAG_READY_WEAPON)) {
-    object *weapon=NULL;
+        /* Other gifts */
+        if ( ! item->invisible)
+            if (god_gives_present (op, god, tr))
+                return;
+            else
+                continue;
 
-    for(weapon=op->inv;weapon;weapon=weapon->below) 
-       if(weapon->type==WEAPON&&QUERY_FLAG(weapon,FLAG_APPLIED)) break;
-
-    if(weapon&&god_examines_item(god,weapon)>0) {
-      /* allow the weapon to slay enemies */
-      if(!weapon->slaying&& god->slaying) {
-        char buf[MAX_BUF];
-
-	weapon->slaying = add_string(god->slaying);
-        new_draw_info(NDI_UNIQUE,0,op,"Your weapon quivers as if struck!"); 
-	if(!weapon->title) {
-          new_draw_info_format(NDI_UNIQUE,0,op,
-             "Your %s now hungers to slay enemies of your god!",
-	     weapon->name);
-	  sprintf(buf,"of %s",god->name);
-	  weapon->title=add_string(buf);
-          if(op->type==PLAYER) 
-	    esrv_update_item(UPD_NAME, op, weapon);
-	}
-	return;
-      }
- 
-    /* add the gods attacktype*/
-      if(!(RANDOM()%2)&&!(weapon->attacktype&god->attacktype)) {
-	char buf[MAX_BUF];
-        new_draw_info(NDI_UNIQUE,0,op,"Your weapon suddenly glows!");
-	if (weapon->attacktype==0)
-	    weapon->attacktype = AT_PHYSICAL;
-	weapon->attacktype=weapon->attacktype|god->attacktype;
-
-        if(!weapon->title) {
-          new_draw_info_format(NDI_UNIQUE,0,op,
-             weapon->name);
-          sprintf(buf,"of %s",god->name);
-          weapon->title=add_string(buf);
-	  if(op->type==PLAYER)
-	    esrv_update_item(UPD_NAME, op, weapon);
-          }
-	return;
-      }
-
-    /* higher magic value */
-      if(!(RANDOM()%2)&&weapon->magic<(level/5)) {
-        new_draw_info(NDI_UNIQUE,0,op,
-          "A phosphorescent glow envelops your weapon!");
-        weapon->magic++;
-        if(op->type==PLAYER) 
-	    esrv_update_item(UPD_NAME, op, weapon);
-        return;
-      }
-    }
-  }
-
- /* If they qualify, grant the priest use of a special spell */
- 
-  if(RANDOM() % 100 < learn_prayer_chance[op->stats.Wis]) { 
-
-#define RARE_PRAYER(index) (spells[(index)].books == 0 && \
-  spells[(index)].cleric && spells[(index)].path != PATH_NULL)
-
-    static int rare_prayers = -1;
-    int spell, i;
-
-   /* get number of rare prayers */
-    if (rare_prayers < 0) {
-      for (rare_prayers = i = 0; i < NROFREALSPELLS; i++)
-        if (RARE_PRAYER(i))
-          rare_prayers++;
+        /* else ignore it */
     }
 
-   /*generate a random rare clerical spell*/  
-    spell = RANDOM() % rare_prayers;
-
-   /* find this spell */
-    for (i = 0; i < NROFREALSPELLS; i++) {
-      if (RARE_PRAYER(i)) {
-        if (spell == 0)
-          break;
-        spell--;
-      }
-    }
-    spell = i;
-
-    /* The god will only teach the spell if its not against the nature
-     * of the cult, the priest is high enough in level *and* the priest
-     * doesnt already know it */
-    /* Also, there are some spells which can really disturb playbalance,
-     * to keep these out of player hands, we discard any spell which 
-     * has PATH_NULL.  
-     * (already checked in RARE_PRAYER)
-     */
-    /* Only teach spells of paths this god is attuned to.  Also check	*
-     * that the spell has no repelled or denied paths, in case any	*
-     * multi-path spells come along.  --DAMN				*/
-    if ( (god->path_attuned  & spells[spell].path) &&
-	!(god->path_repelled & spells[spell].path) &&
-	!(god->path_denied   & spells[spell].path) &&
-	 (spells[spell].level <= level) &&
-	 (!check_spell_known(op,spell)) ) { 
-
-    	play_sound_player_only(op->contr, SOUND_LEARN_SPELL,0,0); 
-    	new_draw_info_format(NDI_UNIQUE, 0,op,
-		"%s grants you use of a special prayer!",god->name); 
-    	op->contr->known_spells[op->contr->nrofknownspells++]=spell; 
-    	if(op->contr->nrofknownspells == 1) 
-        	op->contr->chosen_spell=spell; 
-    	new_draw_info_format(NDI_UNIQUE, 0, op, 
-        	"Type 'bind cast %s",spells[spell].name); 
-    	new_draw_info(NDI_UNIQUE, 0,op,"to store the spell in a key."); 
-        return;
-    } 
-
-  } 
-   
-/* Last message, sorry charlie, nothing was given except good vibes :) */
-  new_draw_info(NDI_UNIQUE, 0,op,"You feel rapture."); 
-
+    new_draw_info (NDI_UNIQUE, 0, op, "You feel rapture.");
 }
+
 
 int god_examines_priest (object *op, object *god) {
   int reaction=1;

@@ -571,19 +571,27 @@ int cure_disease(object *sufferer,object *caster) {
   return 1;
 }
 
-/*  reduces disease progression:  reduce_symptoms */
+/* reduces disease progression:  reduce_symptoms 
+ * return true if we actually reduce a disease.
+ */
 
 int reduce_symptoms(object *sufferer, int reduction) {
-  object *walk;
-  for(walk=sufferer->inv;walk;walk=walk->below) {
+    object *walk;
+    int success=0;
+
+    for(walk=sufferer->inv;walk;walk=walk->below) {
 	 if(walk->type==SYMPTOM) {
-		if(walk->value > 0) 
-		  new_draw_info(NDI_UNIQUE,0,sufferer,"Your illness seems less severe.");
+	    if(walk->value > 0) {
+		success=1;
 		walk->value = MAX(0,walk->value - 2*reduction);
-		walk->speed_left = 0;  /* give the disease time to modify this symptom,
-										  and reduce its severity.  */
+		/* give the disease time to modify this symptom,
+		 * and reduce its severity.  */
+		walk->speed_left = 0;
+	    }
 	 }
-  }
-  return 1;
+    }
+    if (success)
+	  new_draw_info(NDI_UNIQUE,0,sufferer,"Your illness seems less severe.");
+    return success;
 }
   

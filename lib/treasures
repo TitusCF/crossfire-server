@@ -10,6 +10,308 @@
 # file
 #
 #
+# Gods - treasures of gods are special.
+#
+treasure Valriel
+  arch valriel_avatar_info
+  more
+  arch valriel_holy_servant_info
+  more
+  arch god_restore_grace
+  more
+  arch god_restore_hitpoints
+  more
+  arch god_cure_confusion
+  more
+  arch god_cure_poison
+  more
+  arch god_remove_damnation
+    chance 50
+  more
+  arch god_remove_depletion
+    chance 50
+  more
+  arch valriel_general_info
+    chance 10
+  more
+  arch god_grace_limit_medium
+  more
+  arch god_enchant_weapon_medium
+    chance 50
+  more
+  arch god_spelldirect_defense
+end
+treasure Gorokh
+  arch gorokh_avatar_info
+  more
+  arch gorokh_holy_servant_info
+  more
+  arch god_restore_grace
+  more
+  arch god_restore_hitpoints
+  more
+  arch god_cure_confusion
+  more
+  arch god_cure_poison
+  more
+  arch god_remove_damnation
+    chance 50
+  more
+  arch god_remove_depletion
+    chance 50
+  more
+  arch gorokh_general_info
+    chance 10
+  more
+  arch god_grace_limit_medium
+  more
+  arch god_enchant_weapon_medium
+    chance 50
+  more
+  arch god_spelldirect_cause_critical_wounds
+  more
+  arch god_spelldirect_cause_smallpox
+  more
+  arch god_spelldirect_cause_many_wounds
+  more
+  arch god_spelldirect_cause_red_death
+  more
+  arch god_spelldirect_finger_of_death
+  more
+  arch god_spelldirect_face_of_death
+  more
+  arch god_spelldirect_retributive_strike
+  more
+  arch god_spelldirect_cause_white_death
+end
+treasure Devourers
+  arch devourers_avatar_info
+  more
+  arch devourers_holy_servant_info
+  more
+  arch god_restore_grace
+  more
+  arch god_cure_confusion
+  more
+  arch god_cure_poison
+  more
+  arch devourers_general_info
+    chance 10
+  more
+  arch god_grace_limit_medium
+  more
+  arch god_enchant_weapon_medium
+    chance 50
+  more
+  arch god_spelldirect_finger_of_death
+  more
+  arch god_spelldirect_face_of_death
+end
+treasure Sorig
+  arch sorig_avatar_info
+  more
+  arch sorig_holy_servant_info
+  more
+  arch god_restore_grace
+  more
+  arch god_restore_hitpoints
+  more
+  arch god_cure_confusion
+  more
+  arch god_cure_poison
+  more
+  arch god_remove_depletion
+    chance 50
+  more
+  arch sorig_general_info
+    chance 10
+  more
+  arch god_grace_limit_medium
+  more
+  arch god_enchant_weapon_medium
+    chance 50
+  more
+  arch god_spelldirect_cause_critical_wounds
+  more
+  arch god_spelldirect_cause_smallpox
+  more
+  arch god_spelldirect_cause_many_wounds
+  more
+  arch god_spelldirect_cause_red_death
+  more
+  arch god_spelldirect_retributive_strike
+  more
+  arch god_spelldirect_cause_white_death
+end
+treasure Ruggilli
+  arch ruggilli_avatar_info
+  more
+  arch ruggilli_holy_servant_info
+  more
+  arch god_restore_grace
+  more
+  arch god_restore_hitpoints
+  more
+  arch god_cure_confusion
+  more
+  arch god_cure_poison
+  more
+  arch god_remove_depletion
+    chance 50
+  more
+  arch ruggilli_general_info
+    chance 10
+  more
+  arch god_grace_limit_medium
+  more
+  arch god_enchant_weapon_medium
+    chance 50
+  more
+  arch god_spelldirect_cause_critical_wounds
+  more
+  arch god_spelldirect_cause_smallpox
+  more
+  arch god_spelldirect_cause_many_wounds
+  more
+  arch god_spelldirect_cause_red_death
+  more
+  arch god_spelldirect_retributive_strike
+  more
+  arch god_spelldirect_cause_white_death
+end
+treasure Gaea
+  arch gaea_avatar_info
+  more
+  arch gaea_holy_servant_info
+  more
+  arch god_restore_grace
+  more
+  arch god_restore_hitpoints
+  more
+  arch god_cure_confusion
+  more
+  arch god_cure_poison
+  more
+  arch god_remove_damnation
+    chance 50
+  more
+  arch god_remove_depletion
+    chance 50
+  more
+  arch gaea_general_info
+    chance 10
+  more
+  arch god_grace_limit_medium
+  more
+  arch god_spelldirect_wall_of_thorns
+  more
+  arch god_spelldirect_raise_dead
+  more
+  arch god_spelldirect_insect_plague
+  more
+  arch god_spelldirect_remove_damnation
+  more
+  arch god_spelldirect_nightfall
+  more
+  arch god_spelldirect_daylight
+  more
+  arch god_spelldirect_resurrection
+  more
+  arch god_spelldirect_reincarnation
+end
+treasure Mostrai
+  arch mostrai_avatar_info
+  more
+  arch mostrai_holy_servant_info
+  more
+  arch god_restore_grace
+  more
+  arch god_restore_hitpoints
+  more
+  arch god_cure_confusion
+  more
+  arch god_cure_poison
+  more
+  arch god_remove_damnation
+    chance 50
+  more
+  arch god_remove_depletion
+    chance 50
+  more
+  arch mostrai_general_info
+    chance 10
+  more
+  arch god_grace_limit_medium
+  more
+  arch god_enchant_weapon_medium
+    chance 50
+  more
+  arch god_spelldirect_wall_of_thorns
+end
+treasure Lythander
+  arch lythander_avatar_info
+  more
+  arch lythander_holy_servant_info
+  more
+  arch god_restore_grace
+  more
+  arch god_restore_hitpoints
+  more
+  arch god_cure_poison
+  more
+  arch god_remove_damnation
+    chance 50
+  more
+  arch god_remove_depletion
+    chance 50
+  more
+  arch lythander_general_info
+    chance 10
+  more
+  arch god_grace_limit_medium
+  more
+  arch god_enchant_weapon_medium
+    chance 50
+end
+treasure Gnarg
+  arch gnarg_avatar_info
+  more
+  arch gnarg_holy_servant_info
+  more
+  arch god_restore_grace
+  more
+  arch god_restore_hitpoints
+  more
+  arch god_cure_confusion
+  more
+  arch god_remove_damnation
+    chance 50
+  more
+  arch god_remove_depletion
+    chance 50
+  more
+  arch gnarg_general_info
+    chance 10
+  more
+  arch god_grace_limit_medium
+  more
+  arch god_enchant_weapon_medium
+    chance 50
+  more
+  arch god_spelldirect_cause_critical_wounds
+  more
+  arch god_spelldirect_cause_smallpox
+  more
+  arch god_spelldirect_cause_many_wounds
+  more
+  arch god_spelldirect_cause_red_death
+  more
+  arch god_spelldirect_retributive_strike
+  more
+  arch god_spelldirect_cause_white_death
+end
+#
+#
 # BODY PARTS - 
 #
 treasureone beholder_parts

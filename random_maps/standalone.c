@@ -6,7 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 1994 Mark Wedel
+    Copyright (C) 2000 Mark Wedel
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -23,7 +23,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to mark@pyramid.com
+    The author can be reached via e-mail to mwedel@scruz.net
 */
 
 
@@ -125,17 +125,17 @@ void fix_auto_apply(mapstruct *m) {
           auto_apply(tmp);
         else if(tmp->type==TREASURE) {
 	  while ((tmp->stats.hp--)>0)
-            create_treasure(tmp->randomitems, tmp, GT_INVENTORY,
+            create_treasure(tmp->randomitems, tmp, 0,
                             m->difficulty,0);
 	}
         if(tmp && tmp->arch && tmp->type!=PLAYER && tmp->type!=TREASURE &&
 	   tmp->randomitems){
 	  if(tmp->type==CONTAINER) {
 	    while ((tmp->stats.hp--)>0)
-	      create_treasure(tmp->randomitems, tmp, GT_INVENTORY,
+	      create_treasure(tmp->randomitems, tmp, 0,
 			      m->difficulty,0);
 	  }
-	  else create_treasure(tmp->randomitems, tmp, GT_INVENTORY,
+	  else create_treasure(tmp->randomitems, tmp, GT_APPLY,
 			      m->difficulty,0);
 	}
       }

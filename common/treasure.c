@@ -7,6 +7,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
+    Copyright (C) 2000 Mark Wedel
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -23,7 +24,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to frankj@ifi.uio.no.
+    The author can be reached via e-mail to mwedel@scruz.net
 */
 
 #define ALLOWED_COMBINATION
@@ -257,12 +258,28 @@ treasurelist *find_treasurelist(char *name) {
  * this is taken into consideration.
  * The second argument specifies for which object the treasure is
  * being generated.
- * If flag isn't GT_ENVIRONMENT, monster_check_apply() is called.
  * If flag is GT_INVISIBLE, only invisible objects are generated (ie, only
  * abilities.  This is used by summon spells, thus no summoned monsters
  * start with equipment, but only their abilities).
  */
 
+
+static void put_treasure (object *op, object *creator, int flags)
+{
+    object *tmp;
+
+    if (flags & GT_ENVIRONMENT) {
+        op->x = creator->x;
+        op->y = creator->y;
+        insert_ob_in_map_simple (op, creator->map);
+    } else {
+        op = insert_ob_in_ob (op, creator);
+        if ((flags & GT_APPLY) && QUERY_FLAG (creator, FLAG_MONSTER))
+            (void) (*monster_check_apply_func) (creator, op);
+        if ((flags & GT_UPDATE_INV) && (tmp = is_player_inv (creator)) != NULL)
+            (*esrv_send_item_func) (tmp, op);
+    }
+}
 
 void create_all_treasures(treasure *t, object *op, int flag, int difficulty, int tries) {
   object *tmp;
@@ -274,19 +291,12 @@ void create_all_treasures(treasure *t, object *op, int flag, int difficulty, int
 	  create_treasure(find_treasurelist(t->name), op, flag, difficulty, tries);
     }
     else {
-      if(t->item->clone.invisible != 0 || flag != GT_INVISIBLE) {
+      if(t->item->clone.invisible != 0 || ! (flag & GT_INVISIBLE)) {
         tmp=arch_to_object(t->item);
         if(t->nrof&&tmp->nrof<=1)
           tmp->nrof = RANDOM()%((int) t->nrof) + 1;
-        fix_generated_item(tmp,op,difficulty,t->magic);
-        if(flag != GT_ENVIRONMENT) {
-	  fix_flesh_item(tmp, op);
-          tmp = insert_ob_in_ob(tmp,op);
-          (void) (*monster_check_apply_func)(op,tmp);
-        } else {
-          tmp->x=op->x,tmp->y=op->y;
-          insert_ob_in_map(tmp,op->map,NULL);
-	}
+        fix_generated_item (tmp, op, difficulty, t->magic, flag);
+        put_treasure (tmp, op, flag);
       }
     }
     if(t->next_yes!=NULL)
@@ -327,15 +337,8 @@ void create_one_treasure(treasurelist *tl, object *op, int flag, int difficulty,
 	object *tmp=arch_to_object(t->item);
         if(t->nrof&&tmp->nrof<=1)
           tmp->nrof = RANDOM()%((int) t->nrof) + 1;
-        fix_generated_item(tmp,op,difficulty,t->magic);
-        if(flag != GT_ENVIRONMENT) {
-	  fix_flesh_item(tmp, op);
-          tmp = insert_ob_in_ob(tmp,op);
-          (void) (*monster_check_apply_func)(op,tmp);
-        } else {
-          tmp->x=op->x,tmp->y=op->y;
-          insert_ob_in_map(tmp,op->map,NULL);
-	}
+        fix_generated_item (tmp, op, difficulty, t->magic, flag);
+        put_treasure (tmp, op, flag);
     }
 }
 
@@ -487,9 +490,12 @@ void set_abs_magic(object *op, int magic) {
  * the given difficulty, and the given max possible bonus.
  */
 
-void set_magic(int difficulty,object *op, int max_magic) {
+static void set_magic (int difficulty, object *op, int max_magic, int flags)
+{
   int i;
   i = magic_from_difficulty(difficulty);
+  if ((flags & GT_ONLY_GOOD) && i < 0)
+      i = -i;
   if(i > max_magic)
     i = max_magic;
   set_abs_magic(op,i);
@@ -647,8 +653,17 @@ int get_magic(int diff) {
  * op->type. Right now, which stuff the creator passes on is object type 
  * dependant. I know this is a spagetti manuever, but is there a cleaner 
  * way to do this? b.t. */
-
-void fix_generated_item(object *op,object *creator,int difficulty, int max_magic) {
+/*
+ * ! (flags & GT_ENVIRONMENT):
+ *     Automatically calls fix_flesh_item().
+ *
+ * flags & FLAG_STARTEQUIP:
+ *     Sets FLAG_STARTEQIUP on item if appropriate, or clears the item's
+ *     value.
+ */
+void fix_generated_item (object *op, object *creator, int difficulty,
+                         int max_magic, int flags)
+{
   int was_magic = op->magic;
 
   if(!creator||creator->type==op->type) creator=op; /*safety & to prevent polymorphed 
@@ -656,11 +671,11 @@ void fix_generated_item(object *op,object *creator,int difficulty, int max_magic
 
   if (difficulty<1) difficulty=1;
   if (op->arch == crown_arch) {
-    set_magic(difficulty>25?30:difficulty+5, op, max_magic);
+    set_magic(difficulty>25?30:difficulty+5, op, max_magic, flags);
     generate_artifact(op,difficulty);
   } else {
     if(!op->magic && max_magic)
-      set_magic(difficulty,op,max_magic);
+      set_magic(difficulty,op,max_magic, flags);
     if ((!was_magic && !(RANDOM()%CHANCE_FOR_ARTIFACT)) || op->type == HORN ||
 	difficulty >= 100000 )
       generate_artifact(op, difficulty);
@@ -715,7 +730,7 @@ void fix_generated_item(object *op,object *creator,int difficulty, int max_magic
       }
       if(op->arch!=ring_arch&&op->arch!=amulet_arch) /* It's a special artefact!*/
         break;
-      if(!(RANDOM()%3))
+      if ( ! (flags & GT_ONLY_GOOD) && ! (RANDOM() % 3))
         SET_FLAG(op, FLAG_CURSED);
       set_ring_bonus(op,QUERY_FLAG(op, FLAG_CURSED)?-DICE2:DICE2);
       if(op->type!=RING) /* Amulets have only one ability */
@@ -764,7 +779,13 @@ void fix_generated_item(object *op,object *creator,int difficulty, int max_magic
       }
       break;
     case SPELLBOOK:
-      if(!strcmp(op->arch->name,"cleric_book")) 
+      if (op->slaying
+          && (op->stats.sp = look_up_spell_name (op->slaying)) >= 0)
+      {
+         free_string (op->slaying);
+         op->slaying = NULL;
+      }
+      else if(!strcmp(op->arch->name,"cleric_book")) 
 	 do { 
 	     do
                op->stats.sp=RANDOM()%NROFREALSPELLS;
@@ -841,10 +862,20 @@ void fix_generated_item(object *op,object *creator,int difficulty, int max_magic
     free_string(op->name);
     op->name = add_string("potion");
     op->level = spells[op->stats.sp].level/2+ RANDOM()%difficulty + RANDOM()%difficulty;
-    if (RANDOM()%2)
+    if ( ! (flags & GT_ONLY_GOOD) && RANDOM() % 2)
       SET_FLAG(op, FLAG_CURSED);
   }
 
+  if (flags & GT_STARTEQUIP) {
+      if (op->nrof < 2 && op->type != CONTAINER
+          && op->type != MONEY && ! QUERY_FLAG (op, FLAG_IS_THROWN))
+          SET_FLAG (op, FLAG_STARTEQUIP);
+      else if (op->type != MONEY)
+          op->value = 0;
+  }
+
+  if ( ! (flags & GT_ENVIRONMENT))
+    fix_flesh_item (op, creator);
 }
 
 /*
@@ -1233,6 +1264,7 @@ void add_abilities(object *op, object *change) {
       free_string(op->msg);
     op->msg = add_refcount(change->msg);
   }
+
 }
 
 static int legal_artifact_combination(object *op, artifact *art) {

@@ -303,6 +303,7 @@ void polymorph_living(object *op) {
         return;
 
     if(op->randomitems != NULL)
+        /* No GT_APPLY here because we'll do it manually. */
 	create_treasure(op->randomitems,op,GT_INVISIBLE,map->difficulty,0);
 
     /* Apply any objects.  This limits it to the first 20 items, which
@@ -376,7 +377,7 @@ void polymorph_item(object *who, object *op) {
 	    }
 	}
 	copy_object(&(at->clone),new_ob);
-	fix_generated_item(new_ob,op,difficulty,FABS(op->magic));
+	fix_generated_item(new_ob,op,difficulty,FABS(op->magic),GT_ENVIRONMENT);
 	++tries;
     } while (new_ob->value > max_value && tries<10);
     if (new_ob->invisible) {
@@ -1032,15 +1033,15 @@ cast_heal(object *op,int dir,int spell_type) {
   object *tmp;
   archetype *at;
   object *poison;
-  int heal=0;
+  int heal = 0, success = 0;
 
   tmp = find_target_for_friendly_spell(op,dir);
 
   if(tmp==NULL) return 0;
   switch(spell_type) {
   case SP_CURE_DISEASE:
-	 heal = 0;
-	 cure_disease(tmp,op);
+	 if (cure_disease (tmp, op))
+           success = 1;
 	 break;
   case SP_MINOR_HEAL:
     heal=(RANDOM()%7)+1;
@@ -1063,6 +1064,7 @@ cast_heal(object *op,int dir,int spell_type) {
     poison=present_arch_in_ob(at,tmp);
 
     if (poison) {
+      success = 1;
       new_draw_info(NDI_UNIQUE, 0,tmp, "Your body feels cleansed");
       poison->stats.food = 1;
     }
@@ -1071,6 +1073,7 @@ cast_heal(object *op,int dir,int spell_type) {
     at=find_archetype("confusion");
     poison=present_arch_in_ob(at,tmp);
     if (poison) {
+      success = 1;
       new_draw_info(NDI_UNIQUE, 0,tmp, "Your mind feels clearer");
       poison->stats.food = 1;
     }
@@ -1079,40 +1082,53 @@ cast_heal(object *op,int dir,int spell_type) {
     at=find_archetype("blindness");
     poison=present_arch_in_ob(at,tmp);
     if (poison) {
+      success = 1;
       new_draw_info(NDI_UNIQUE, 0,tmp,"Your vision begins to return.");
       poison->stats.food = 1;
     }
     break;
   case SP_RESTORATION:  /* does cure poison, cure madness, heal,and removes depletion, food=999. */
-    cast_heal(op,dir,SP_CURE_POISON);
-    cast_heal(op,dir,SP_CURE_CONFUSION);
-	 cast_heal(op,dir,SP_CURE_DISEASE);
-    tmp->stats.food=999;
+    if (cast_heal (op, dir, SP_CURE_POISON))
+      success = 1;
+    if (cast_heal (op, dir, SP_CURE_CONFUSION))
+      success = 1;
+    if (cast_heal (op, dir, SP_CURE_DISEASE))
+      success = 1;
+    if (tmp->stats.food < 999) {
+      success = 1;
+      tmp->stats.food=999;
+    }
 #if 0
     /* Leave removing depletion to the restore potion. */
     at=find_archetype("depletion");
     poison=present_arch_in_ob(at,tmp);
     if (poison) {
+      success = 1;
       new_draw_info(NDI_UNIQUE, 0,tmp, "Your abilities seem to have recovered.");
       remove_ob(poison);
       free_object(poison);
       poison = present_arch_in_ob(at, tmp);
     }
 #endif
-    cast_heal(op,dir,SP_HEAL);  /*  put this one last because
-				    it'll redraw the stats
-				    as a side effect. */
-    return 1;
+    /* Put this one last because it'll redraw the stats as a side effect. */
+    if (cast_heal (op, dir, SP_HEAL))
+        success = 1;
+    return success;
   }
-  reduce_symptoms(tmp,heal);
-  if (tmp->stats.hp==tmp->stats.maxhp)
-    return 0;
-  tmp->stats.hp+=heal;
-  if(tmp->stats.hp>tmp->stats.maxhp)
-    tmp->stats.hp=tmp->stats.maxhp;
+  if (heal > 0) {
+    if (reduce_symptoms (tmp, heal))
+      success = 1;
+    if (tmp->stats.hp < tmp->stats.maxhp) {
+      success = 1;
+      tmp->stats.hp += heal;
+      if (tmp->stats.hp > tmp->stats.maxhp)
+        tmp->stats.hp = tmp->stats.maxhp;
+    }
+  }
 
-  op->speed_left= -FABS(op->speed)*3; /* Freeze them for a short while */
-  return 1;
+  if (success)
+    op->speed_left = -FABS(op->speed)*3; /* Freeze them for a short while */
+  return success;
 }
 
 int cast_regenerate_spellpoints(object *op) {
@@ -1554,7 +1570,7 @@ int summon_pet(object *op, int dir, SpellTypeFrom item) {
     head = insert_ob_in_map (head, op->map, op);
     if (head != NULL && head->randomitems != NULL) {
       object *tmp;
-      create_treasure(head->randomitems,head,GT_INVENTORY,6,0);
+      create_treasure(head->randomitems,head,GT_APPLY,6,0);
       for(tmp = head->inv; tmp != NULL; tmp = tmp->below)
         if(!tmp->nrof)
           SET_FLAG(tmp, FLAG_NO_DROP);
@@ -2785,7 +2801,7 @@ int summon_cult_monsters(object *op, int old_dir) {
 	head = insert_ob_in_map (head, op->map, op);
 	if (head != NULL && head->randomitems != NULL) {
 	    object *tmp;
-	    create_treasure(head->randomitems,head,GT_INVENTORY,6,0);
+	    create_treasure(head->randomitems,head,GT_APPLY,6,0);
 	    for(tmp = head->inv; tmp != NULL; tmp = tmp->below)
 		if(!tmp->nrof)
 		    SET_FLAG(tmp, FLAG_NO_DROP);
@@ -2815,14 +2831,17 @@ int summon_avatar(object *op,object *caster,int dir, archetype *at, int spellnum
   object *god = find_god(determine_god(caster)); 
 
   if(god)
-    at=(spellnum==SP_HOLY_SERVANT)?god->other_arch:god->arch;
+    at = determine_holy_arch (god, (spellnum == SP_HOLY_SERVANT)
+            ? "holy servant" : "avatar");
   else {
       new_draw_info(NDI_UNIQUE, 0,op,"You must worship a god first.");
       return 0; 
   }
-  if(!at) 
+  if ( ! at) {
       new_draw_info_format(NDI_UNIQUE, 0,op,"%s has no %s for you to call."
 	  ,god->name,spellnum==SP_SUMMON_AVATAR?"avatar":"servant");
+      return 0;
+  }
 #endif
 
   /* safety checks... */

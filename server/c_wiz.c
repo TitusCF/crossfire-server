@@ -341,7 +341,7 @@ int command_create (object *op, char *params)
         else
           head = insert_ob_in_ob(head,op);
         if (at->clone.randomitems!=NULL)
-          create_treasure(at->clone.randomitems,head,GT_INVENTORY,
+          create_treasure(at->clone.randomitems,head,GT_APPLY,
                           op->map->difficulty,0);
 	esrv_send_item(op, head);
       }
@@ -774,3 +774,46 @@ int command_invisible (object *op, char *params)
   return 0;
 }
 
+
+static int command_learn_spell_or_prayer (object *op, char *params,
+                                          int special_prayer)
+{
+    int spell;
+
+    if (op->contr == NULL || params == NULL)
+        return 0;
+
+    if ((spell = look_up_spell_name (params)) <= 0) {
+        new_draw_info (NDI_UNIQUE, 0, op, "Unknown spell.");
+        return 1;
+    }
+
+    do_learn_spell (op, spell, special_prayer);
+    return 1;
+}
+
+int command_learn_spell (object *op, char *params)
+{
+    return command_learn_spell_or_prayer (op, params, 0);
+}
+
+int command_learn_special_prayer (object *op, char *params)
+{
+    return command_learn_spell_or_prayer (op, params, 1);
+}
+
+int command_forget_spell (object *op, char *params)
+{
+    int spell;
+
+    if (op->contr == NULL || params == NULL)
+        return 0;
+
+    if ((spell = look_up_spell_name (params)) <= 0) {
+        new_draw_info (NDI_UNIQUE, 0, op, "Unknown spell.");
+        return 1;
+    }
+
+    do_forget_spell (op, spell);
+    return 1;
+}

@@ -17,6 +17,37 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 CVS changes since last release:
 
+MSW 2000/12/26:
+Checkin of Jan's new god intervention code.  I haven't played around with
+it much, but I haven't seen any really obvious problems.
+common/living.c: remove learn_prayer_chance
+common/treasure.c: Various changes to treasure generation - mostly to
+    deal with starting equipment and putting it in the inventory.
+doc/crossfire.doc: Update docs on god intervention.
+include/define.h: GT_... flags removed.
+include/treasure.h: GT_... flags added.  Addition flags added from
+    what was in define.h before.
+lib/archetypes, lib/crossfire.png, lib/treasures: Updated with new
+    archetypes and treasures.
+random_maps/standalone.c,server/rune.c,server/time.c: Calls to 
+    create_treasure updated
+server/apply.c:  New functions for god intervention added, update calls
+     to create_treasure, other god related changes.
+server/c_wiz.c: Calls to create_treasure updated, various functions to
+    allow DM's to learn/unlearn spells added.
+server/commands.c: Various commands added to the wiz set of commands.
+    See commen for c_wiz.c
+server/disease.c: Changes to reduce_symptoms
+server/gods.c: Numerous updates for god intervention code.
+server/player.c: Modifications for starting player equipment.
+server/skill_util.c: Display the god the character worships when they
+     issue the skills command.
+server/skills.c: Minor cosmetic change made to message when praying on altar.
+server/spell_effect.c: Changes related to gods, cure spells, and
+     generation of treasures & items.
+End of MSW 2000/12/26 checkin.
+
+
 MSW 2000/12/23:
 include/define.h: Add SIZEOFFREE1 and SIZEOFFREE2 values to use instead of
     arbitrary constants in the code.

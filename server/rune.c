@@ -6,7 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 1994 Mark Wedel
+    Copyright (C) 2000 Mark Wedel
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -23,7 +23,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to master@rahul.net
+    The author can be reached via e-mail to mwedel@scruz.net
 */
 
 #include <global.h>
@@ -189,7 +189,7 @@ void rune_attack(object *op,object *victim)
          if (was_destroyed (victim, tag))
                 return;
 	 /*  if there's a disease in the needle, put it in the player */
-	 if(op->randomitems!=NULL) create_treasure(op->randomitems,op,GT_INVENTORY,
+	 if(op->randomitems!=NULL) create_treasure(op->randomitems,op,0,
 		(victim->map?victim->map->difficulty:1),0);
 	 if(op->inv && op->inv->type == DISEASE) {
 		object *disease=op->inv;

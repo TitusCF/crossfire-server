@@ -1400,6 +1400,106 @@ static void apply_skillscroll (object *op, object *tmp)
 #endif
 
 
+/* Special prayers are granted by gods and lost when the follower decides
+ * to pray to a different gods.  'Force' objects keep track of which
+ * prayers are special.
+ */
+
+static object *find_special_prayer_mark (object *op, int spell)
+{
+    object *tmp;
+
+    for (tmp = op->inv; tmp; tmp = tmp->below)
+        if (tmp->type == FORCE && tmp->slaying
+            && strcmp (tmp->slaying, "special prayer") == 0
+            && tmp->stats.sp == spell)
+            return tmp;
+    return 0;
+}
+
+static void insert_special_prayer_mark (object *op, int spell)
+{
+    object *force = get_archetype ("force");
+    force->speed = 0;
+    update_ob_speed (force);
+    force->slaying = add_string ("special prayer");
+    force->stats.sp = spell;
+    insert_ob_in_ob (force, op);
+}
+
+extern void do_learn_spell (object *op, int spell, int special_prayer)
+{
+    object *tmp = find_special_prayer_mark (op, spell);
+
+    if (op->type != PLAYER) {
+        LOG (llevError, "BUG: do_forget_spell(): not a player\n");
+        return;
+    }
+
+    /* Upgrade special prayers to normal prayers */
+    if (check_spell_known (op, spell)) {
+        if (special_prayer || ! tmp) {
+            LOG (llevError, "BUG: do_learn_spell(): spell already known, but "
+             "can't upgrade it\n");
+            return;
+        }
+        remove_ob (tmp);
+        free_object (tmp);
+        return;
+    }
+
+    /* Learn new spell/prayer */
+    if (tmp) {
+        LOG (llevError, "BUG: do_learn_spell(): spell unknown, but special "
+             "prayer mark present\n");
+        remove_ob (tmp);
+        free_object (tmp);
+    }
+    play_sound_player_only (op->contr, SOUND_LEARN_SPELL, 0, 0);
+    op->contr->known_spells[op->contr->nrofknownspells++] = spell;
+    if (op->contr->nrofknownspells == 1)
+        op->contr->chosen_spell = spell;
+    insert_special_prayer_mark (op, spell);
+
+    new_draw_info_format (NDI_UNIQUE, 0, op, 
+            "Type 'bind cast %s", spells[spell].name);
+    new_draw_info (NDI_UNIQUE, 0, op, "to store the spell in a key.");
+}
+
+extern void do_forget_spell (object *op, int spell)
+{
+    object *tmp;
+    int i;
+
+    if (op->type != PLAYER) {
+        LOG (llevError, "BUG: do_forget_spell(): not a player\n");
+        return;
+    }
+    if ( ! check_spell_known (op, spell)) {
+        LOG (llevError, "BUG: do_forget_spell(): spell not known\n");
+        return;
+    }
+
+    new_draw_info_format (NDI_UNIQUE, 0, op, "You lose knowledge of %s.",
+                          spells[spell].name);
+
+    tmp = find_special_prayer_mark (op, spell);
+    if (tmp) {
+        remove_ob (tmp);
+        free_object (tmp);
+    }
+
+    for (i = 0; i < op->contr->nrofknownspells; i++)
+    {
+        if (op->contr->known_spells[i] == spell) {
+            op->contr->known_spells[i] =
+                    op->contr->known_spells[--op->contr->nrofknownspells];
+            return;
+        }
+    }
+    LOG (llevError, "BUG: do_forget_spell(): couldn't find spell\n");
+}
+
 static void apply_spellbook (object *op, object *tmp)
 {
     if(QUERY_FLAG(op, FLAG_BLIND)&&!QUERY_FLAG(op,FLAG_WIZ)) {
@@ -1450,7 +1550,9 @@ static void apply_spellbook (object *op, object *tmp)
 	    op->contr->socket.update_look=1;
     }
 
-    if(check_spell_known(op,tmp->stats.sp)) {
+    if (check_spell_known (op, tmp->stats.sp) && (tmp->stats.Wis ||
+        find_special_prayer_mark (op, tmp->stats.sp) == NULL))
+    {
 	new_draw_info(NDI_UNIQUE, 0,op,"You already know that spell.\n");
 	return;
     }
@@ -1472,14 +1574,8 @@ static void apply_spellbook (object *op, object *tmp)
       scroll_failure(op,RANDOM()%(spells[tmp->stats.sp].level+1),spells[tmp->stats.sp].sp);
     } else if(QUERY_FLAG(tmp,FLAG_STARTEQUIP) || RANDOM()%150-(2*SK_level(op)) <
 	learn_spell[spells[tmp->stats.sp].cleric ? op->stats.Wis : op->stats.Int]) {
-      play_sound_player_only(op->contr, SOUND_LEARN_SPELL,0,0);
       new_draw_info(NDI_UNIQUE, 0,op,"You succeed in learning the spell!");
-      op->contr->known_spells[op->contr->nrofknownspells++]=tmp->stats.sp;
-      if(op->contr->nrofknownspells == 1)
-	op->contr->chosen_spell=tmp->stats.sp;
-      new_draw_info_format(NDI_UNIQUE, 0, op, 
-	"Type 'bind cast %s",spells[tmp->stats.sp].name);
-      new_draw_info(NDI_UNIQUE, 0,op,"to store the spell in a key.");
+      do_learn_spell (op, tmp->stats.sp, tmp->stats.Wis);
 #ifdef ALLOW_SKILLS /* xp gain to literacy for spell learning */
       if ( ! QUERY_FLAG (tmp, FLAG_STARTEQUIP))
         add_exp(op,calc_skill_exp(op,tmp));
@@ -2351,7 +2447,7 @@ int auto_apply (object *op) {
 
   case TREASURE:
     while ((op->stats.hp--)>0)
-      create_treasure(op->randomitems, op, op->map?GT_ENVIRONMENT:GT_INVENTORY,
+      create_treasure(op->randomitems, op, op->map?GT_ENVIRONMENT:0,
 	op->stats.exp ? op->stats.exp : 
 	op->map == NULL ?  14: op->map->difficulty,0);
 
@@ -2399,7 +2495,7 @@ void fix_auto_apply(mapstruct *m) {
 		    auto_apply(invtmp);
 		else if(invtmp->type==TREASURE) {
 		    while ((invtmp->stats.hp--)>0)
-			create_treasure(invtmp->randomitems, invtmp, GT_INVENTORY,
+			create_treasure(invtmp->randomitems, invtmp, 0,
                             m->difficulty,0);
 		}
 	    }
@@ -2409,7 +2505,7 @@ void fix_auto_apply(mapstruct *m) {
           auto_apply(tmp);
         else if((tmp->type==TREASURE || (tmp->type==CONTAINER))&&tmp->randomitems) {
 	  while ((tmp->stats.hp--)>0)
-            create_treasure(tmp->randomitems, tmp, GT_INVENTORY,
+            create_treasure(tmp->randomitems, tmp, 0,
                             m->difficulty,0);
 	}
 	else if(tmp->type==TIMED_GATE) {
@@ -2418,7 +2514,7 @@ void fix_auto_apply(mapstruct *m) {
 	}
         if(tmp && tmp->arch && tmp->type!=PLAYER && tmp->type!=TREASURE &&
 	  tmp->randomitems)
-            create_treasure(tmp->randomitems, tmp, GT_INVENTORY,
+            create_treasure(tmp->randomitems, tmp, GT_APPLY,
                             m->difficulty,0);
       }
   for(x=0;x<m->mapx;x++)

@@ -1113,6 +1113,12 @@ void show_skills(object *op) {
 		{
 		  sprintf(Special,"You can handle %d weapon improvements.",tmp_exp->level/5+5);
 		}
+	      if (strcmp(tmp_exp->name,"wisdom")==0)
+		{
+		    char *cp = determine_god(op);
+
+		    sprintf(Special,"You worship %s.", cp?cp:"no god at current time");
+		}
             } else if(i==EXP_NONE) { 
               new_draw_info(NDI_UNIQUE,0,op,"misc.");
 	    } 
