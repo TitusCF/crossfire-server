@@ -2318,20 +2318,31 @@ void fire_swarm (object *op, object *caster, int dir, archetype *swarm_type,
 int create_aura(object *op, object *caster, archetype *aura_arch, int spell_type,
 		 int magic) 
 {
-  object *new_aura = arch_to_object(aura_arch);
-  new_aura->stats.food = SP_PARAMETERS[spell_type].bdur +
+    int refresh=0;
+    object *new_aura;
+
+    new_aura = present_arch_in_ob(aura_arch, op);
+    if (new_aura) refresh=1;
+    else new_aura = arch_to_object(aura_arch);
+
+    new_aura->stats.food = SP_PARAMETERS[spell_type].bdur +
                   10* SP_level_strength_adjust(op,caster,spell_type);
-  new_aura->stats.dam = SP_PARAMETERS[spell_type].bdam
+    new_aura->stats.dam = SP_PARAMETERS[spell_type].bdam
                   +SP_level_dam_adjust(op,caster,spell_type);
-  set_owner(new_aura,op);
-  if(magic) new_aura->attacktype|=AT_MAGIC;
-  if(new_aura->owner) {
-    new_aura->chosen_skill = op->chosen_skill;
-    if(new_aura->chosen_skill) new_aura->exp_obj = op->chosen_skill->exp_obj;
-  }
-  new_aura->level = SK_level(caster);
-  insert_ob_in_ob(new_aura, op);
-  return 1;
+
+    set_owner(new_aura,op);
+    if(magic) new_aura->attacktype|=AT_MAGIC;
+
+    if(new_aura->owner) {
+	new_aura->chosen_skill = op->chosen_skill;
+	if(new_aura->chosen_skill) new_aura->exp_obj = op->chosen_skill->exp_obj;
+    }
+    new_aura->level = SK_level(caster);
+    if (refresh) 
+	new_draw_info(NDI_UNIQUE, 0, op, "You recast the spell while in effect.");
+    else
+	insert_ob_in_ob(new_aura, op);
+    return 1;
 }
 
 /*  look_up_spell_by_name:  peterm

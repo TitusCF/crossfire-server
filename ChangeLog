@@ -17,6 +17,14 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/spell_effect.c: Some code cleanuip to cast_change_attr - mostly
+   to combine the processing of the stat improving spells together.
+   The actual change to playability is that bless and holy possession
+   don't stack if cast multiple times.
+server/spell_util.c: Modify create_aura so that player can't have more than
+    one aura (of the same type) active at a time.
+MSW 2003-03-20
+
 server/apply.c: Change weapon improving code to only use up the number of
     potions that it needs, and not all on the ground.  Required adding
     another arg to eat_item() which is the number of items to consume.
