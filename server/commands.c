@@ -1,4 +1,9 @@
 /*
+ * static char *rcsid_ban_c =
+ *   "$Id$";
+ */
+
+/*
  * Command parser
  */
 
