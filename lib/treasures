@@ -4735,3 +4735,22 @@ treasure giant_worm
   chance 60
   nrof 75
   end
+
+treasure skree
+  arch ability_fear
+  more
+  arch ability_paralyze
+  more
+  arch ability_slow
+  more
+  list skree_bits
+end
+treasure skree_bits
+  arch skreeclaw
+    chance 40
+    nrof 2  
+  more
+  arch skreeeye
+    chance 10
+    nrof 1
+  end
