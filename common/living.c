@@ -784,7 +784,7 @@ void fix_player(object *op) {
   float f,max=9,added_speed=0,bonus_speed=0, sp_tmp,speed_reduce_from_disease=1;
   float M,W,s,D,K,S,M2;
   int weapon_weight=0,weapon_speed=0;
-  int best_wc=0, best_ac=0, wc=0;
+  int best_wc=0, best_ac=0, wc=0, ac=0;
   int prot[NROFATTACKS], vuln[NROFATTACKS], potion_resist[NROFATTACKS];
   object *grace_obj=NULL,*mana_obj=NULL,*hp_obj=NULL,*wc_obj=NULL,*tmp;
   
@@ -850,11 +850,11 @@ void fix_player(object *op) {
   if(!QUERY_FLAG(op,FLAG_USE_ARMOUR) && op->type==PLAYER) {
     /* for players which cannot use armour, they gain AC -1 per 3 levels,
      * plus a small amount of physical resist, those poor suckers. ;) */
-    op->stats.ac=MAX(-10,op->arch->clone.stats.ac - op->level/3);
+    ac=MAX(-10,op->arch->clone.stats.ac - op->level/3);
     prot[ATNR_PHYSICAL] += ((100-prot[AT_PHYSICAL])*(80*op->level/MAXLEVEL))/100;
   }
   else
-    op->stats.ac=op->arch->clone.stats.ac;
+    ac=op->arch->clone.stats.ac;
 
   op->stats.luck=op->arch->clone.stats.luck;
   op->speed = op->arch->clone.speed;
@@ -1021,7 +1021,7 @@ void fix_player(object *op) {
 	    }
 
 	    if(tmp->stats.ac)
-		op->stats.ac-=(tmp->stats.ac+tmp->magic);
+		ac-=(tmp->stats.ac+tmp->magic);
 
 #ifdef SPELL_ENCUMBRANCE
 	    if(op->type==PLAYER) op->contr->encumbrance+=(int)3*tmp->weight/1000;
@@ -1046,13 +1046,13 @@ void fix_player(object *op) {
         if(tmp->stats.dam)
           op->stats.dam+=(tmp->stats.dam+tmp->magic);
         if(tmp->stats.ac)
-          op->stats.ac-=(tmp->stats.ac+tmp->magic);
+          ac-=(tmp->stats.ac+tmp->magic);
         break;
 
       case WEAPON:
         wc-=(tmp->stats.wc+tmp->magic);
         if(tmp->stats.ac&&tmp->stats.ac+tmp->magic>0)
-          op->stats.ac-=tmp->stats.ac+tmp->magic;
+          ac-=tmp->stats.ac+tmp->magic;
         op->stats.dam+=(tmp->stats.dam+tmp->magic);
         weapon_weight=tmp->weight;
         weapon_speed=((int)WEAPON_SPEED(tmp)*2-tmp->magic)/2;
@@ -1081,14 +1081,14 @@ void fix_player(object *op) {
 	}
         if(tmp->stats.ac) {
           if(best_ac<tmp->stats.ac+tmp->magic) {
-            op->stats.ac+=best_ac; /* Remove last bonus */
+            ac+=best_ac; /* Remove last bonus */
             best_ac=tmp->stats.ac+tmp->magic;
           }
           else /* To nullify the below effect */
-            op->stats.ac+=tmp->stats.ac+tmp->magic;
+            ac+=tmp->stats.ac+tmp->magic;
         }
         if(tmp->stats.wc) wc-=(tmp->stats.wc+tmp->magic);
-        if(tmp->stats.ac) op->stats.ac-=(tmp->stats.ac+tmp->magic);
+        if(tmp->stats.ac) ac-=(tmp->stats.ac+tmp->magic);
         if(ARMOUR_SPEED(tmp)&&ARMOUR_SPEED(tmp)/10.0<max)
           max=ARMOUR_SPEED(tmp)/10.0;
         break;
@@ -1194,9 +1194,9 @@ void fix_player(object *op) {
       * grace--PeterM */
 
     if(op->contr->braced)
-      op->stats.ac+=2;
+      ac+=2;
     else
-      op->stats.ac-=dex_bonus[op->stats.Dex];
+      ac-=dex_bonus[op->stats.Dex];
 
    /* In new exp/skills system, wc bonuses are related to 
     * the players level in a relevant exp object (wc_obj)
@@ -1287,6 +1287,10 @@ void fix_player(object *op) {
   if (wc>120) wc=120;
   else if (wc<-120) wc=-120;
   op->stats.wc=wc;
+
+  if (ac>120) ac=120;
+  else if (ac<-120) ac=-120;
+  op->stats.ac=ac;
 
   update_ob_speed(op);
 

@@ -17,6 +17,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 CVS changes since last release:
 
+common/living.c: Fix AC wrapping problem - now limit ac to +/- 120.
+MSW 2001-05-12
+
 include/config.h: Add NO_POLYMORPH feature selection
 include/spellist.h: If NO_POLYMORPH is set, make it so that polymorph will
    not show up in wands/rods
