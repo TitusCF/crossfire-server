@@ -17,6 +17,25 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+doc/Developers/spells: Update type on casting_time - include suggested value
+  for times so that results are hopefully more coherent.
+lib/archetypes, treasures.bld: rebuilt.
+lib/treasures: Change some of the 'spelldirect' types to just the actual spells,
+   so that two seperate archs don't have to be maintained.
+server/c_wiz.c: Add some basic sanity checking to command_remove() so that
+   we don't unnecessarily crash.
+server/skills.c: write_scroll() - have it reset value of the scroll so that
+   the scrolls so inscribed by players have better chance of merging.
+server/spell_attack.c: cast_cone() - if the caster is a trap, have it hit
+   the center space, so that characters who detonate cone traps will get hit
+   by the effects.  Also, reduce range of cone spells if they are going
+   in all directions, compared to being targetted in a speciifc direction.
+server/spell_util.c: cast_spell() - put lower limit on player speed_left value
+   when casting spells - since higher up the calling stack, the player speed
+   is also reduced, we need to set the lower limit here so that the player
+   isn't out of action longer than they should be.
+MSW 2004-02-16
+
 include/map.h: removed unused fields from wmapdef..
 include/object.h: removed unused field from object.h. Changed glow_radius to sint8 to be
    coherent with struct MapSpace.

@@ -905,15 +905,20 @@ int command_patch (object *op, char *params)
 int command_remove (object *op, char *params)
 {
     int i;
-  object *tmp;
+    object *tmp;
 
-  if(params==NULL || !sscanf(params, "%d", &i) || (tmp=find_object(i))==NULL) {
-      new_draw_info(NDI_UNIQUE, 0,op,"Remove what object (nr)?");
-      return 1;
+    if(params==NULL || !sscanf(params, "%d", &i) || (tmp=find_object(i))==NULL) {
+	new_draw_info(NDI_UNIQUE, 0,op,"Remove what object (nr)?");
+	return 1;
+    }
+    if (QUERY_FLAG(tmp, FLAG_REMOVED)) {
+	new_draw_info_format(NDI_UNIQUE, 0,op,"%s is already removed!",
+			     query_name(tmp));
+	return 1;
     }
     remove_ob(tmp);
     return 1;
-  }
+}
 
 int command_free (object *op, char *params)
 {

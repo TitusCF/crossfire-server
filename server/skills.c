@@ -1213,6 +1213,13 @@ static int write_scroll (object *pl, object *scroll, object *skill) {
 	copy_object(chosen_spell, tmp);
 	insert_ob_in_ob(tmp, newscroll);
 
+	/* Same code as from treasure.c - so they can better merge.
+	 * if players want to sell them, so be it.
+	 */
+	newscroll->value =  newscroll->arch->clone.value * newscroll->inv->value * 
+	    (newscroll->level +50) / (newscroll->inv->level + 50);
+	newscroll->stats.exp = newscroll->value/5;
+
 	/* wait until finished manipulating the scroll before inserting it */
 	if (newscroll != scroll)
 	    newscroll=insert_ob_in_ob(newscroll,pl);

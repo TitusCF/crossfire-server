@@ -49,9 +49,26 @@ char *lore: Description of the spell to be put in books, or perhaps even
    the spells within the object, instead of having to maintain seperate
    files.
 
-float casting_time:  How long it takes to cast the spell (was time)
+sint16 casting_time :  How long it takes to cast the spell (was time)
    This is the number of ticks it takes for the player to cast the spell,
    and is thus not a fixed time.
+
+    Suggested casting time values:
+    5: Combat spells (cones, bolts, balls, etc - ones you cast when in
+	danger)
+    10-15: Protection spells, other often cast spells.  Summoning spells
+	would fall into this category, as they are often cast when not
+	in immediate danger.
+    ~25: Detection spells, or other spells done when times are safe.
+	Many ability improvement spells might fall into this category.
+
+    These are only suggestions - they more or less match when the spell will
+    be used and usefulness.  An attack spell that takes forever to cast
+    isn't very useful.  There are really two things to keep in mind - when
+    the spell is cast, and how long the spell itself last.  A long lasting
+    spell can have a longer casting time, simply because it isn't cast
+    that often and will last for a while (thus, smart players won't cast
+    it in combat).
 
 face/anim: If the spells is a generic spell that doesn't have an other_arch
    pointer, this is the face (or animation to use when the spell is

@@ -744,8 +744,21 @@ int cast_cone(object *op, object *caster,int dir, object *spell)
     }
 
     for(i=range_min;i<=range_max;i++) {
-	int x=op->x+freearr_x[absdir(dir+i)],
-	    y=op->y+freearr_y[absdir(dir+i)];
+	int x,y, d;
+
+	/* We can't use absdir here, because it never returns
+	 * 0.  If this is a rune, we want to hit the person on top
+	 * of the trap (d==0).  If it is not a rune, then we don't want
+	 * to hit that person.
+	 */
+	d = dir + i;
+	while (d < 0) d+=8;
+	while (d > 8) d-=8;
+
+	if (caster->type != RUNE && d==0) continue;
+
+	x = op->x+freearr_x[d];
+	y = op->y+freearr_y[d];
 
 	if(get_map_flags(op->map,NULL, x,y, NULL, NULL) & (P_WALL | P_OUT_OF_MAP))
 	    continue;
@@ -769,6 +782,12 @@ int cast_cone(object *op, object *caster,int dir, object *spell)
 	    tmp->stats.sp=i;
 
 	tmp->range=spell->range + SP_level_range_adjust(caster,spell);
+
+	/* If casting it in all directions, it doesn't go as far */
+	if (dir == 0) {
+	    tmp->range /= 4;
+	    if (tmp->range < 2 && spell->range >=2) tmp->range = 2;
+	}
 	tmp->stats.dam=spell->stats.dam + SP_level_dam_adjust(caster,spell);
 	tmp->duration=spell->duration + SP_level_duration_adjust(caster,spell);
 
