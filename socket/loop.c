@@ -110,6 +110,7 @@ static struct NsCmdMapping nscommands[] = {
     { "addme",		AddMeCmd },
     { "setfacemode",	SetFaceMode},
     { "setsound",	SetSound},
+	{ "setup",		SetUp},
     { NULL, NULL}	/* terminator */
 };
 

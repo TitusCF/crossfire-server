@@ -79,6 +79,25 @@
 
 #include "sounds.h"
 
+/* Tis is the table and cmd IDs for the setup cmd.
+ * Add new commands here and include the 'case SETUP_xxx'
+ * to the switch cmd in the SetUp function
+ */
+
+typedef struct _setup_map {
+  char *cmdname;
+  int cmdnr;
+}_setup_map;
+
+enum {		
+	SETUP_SOUND,		/* Parameter: 1= sound cmd will send, 0= no sound cmds */
+	SETUP_SKILLEXP, 	/* Default=0 :: 1= send skill experience, 0= don't */
+};
+
+_setup_map setup_map[] = {
+	{"sound", SETUP_SOUND},
+	{"",-1} /* end marker */
+};
 
 /* This table translates the attack numbers as used within the
  * program to the value we use when sending STATS command to the
@@ -97,6 +116,71 @@ short atnr_cs_stat[NROFATTACKS] = {CS_STAT_RES_PHYS,
     -1 /* Godpower */, CS_STAT_RES_HOLYWORD,
     CS_STAT_RES_BLIND,    -1 /* Blind */
 };
+
+/* This is the Setup cmd - easy first implementation */
+void SetUp(char *buf, int len, NewSocket *ns)
+{
+	register int s, c;
+	register char *cmd, *param;
+	char cmdback[256];
+
+
+	/* run through the cmds of setup
+	 * syntax is setup <cmdname1> <parameter> <cmdname2> <parameter> ...
+	 *
+     * we send the status of the cmd back, or a FALSE is the cmd is the server unknown
+	 * The client then must sort this out
+	 */
+
+	LOG(llevInfo,"Get SetupCmd:: %s\n", buf);
+	strcpy(cmdback,"setup");
+	for(s=0;;)
+	{
+		if(s>=len)	/* ugly, but for secure...*/
+			break;
+		cmd = &buf[s];
+		for(;buf[s] && buf[s] != ' ';s++)
+			;
+		buf[s++]=0;
+		if(s>=len)
+			break;
+		param = &buf[s];
+		for(;buf[s] && buf[s] != ' ';s++)
+			;
+		buf[s++]=0;
+		
+		for(c=0;setup_map[c].cmdnr != -1;c++) /* go through cmd table */
+		{
+			if(!strcmp(setup_map[c].cmdname, cmd) )
+			{
+				strcat(cmdback, " ");
+				strcat(cmdback, cmd);
+				strcat(cmdback, " ");
+				switch(setup_map[c].cmdnr) /* this should be valid all times */ 
+				{
+				case SETUP_SOUND:
+					ns->sound = atoi(param);
+					strcat(cmdback, param);
+					break;
+				};
+				break;	/* we have found cmd, fetch next from setup buffer */
+				
+			}
+		}
+		/* if setup_map[c].cmdnr == -1 here 
+		 * we had found a cmd this server don't know, send a FALSE back - cmd unknown
+		 */
+		if(setup_map[c].cmdnr == -1)
+		{
+			strcat(cmdback, " ");
+			strcat(cmdback, cmd);
+			strcat(cmdback, " FALSE");
+		}
+		
+	}
+	LOG(llevInfo,"SendBack SetupCmd:: %s\n", cmdback);
+	Write_String_To_Socket(ns, cmdback, strlen(cmdback));
+}
 
 /* The client has requested to be added to the game.  This is what
  * takes care of it.  We tell the client how things worked out.
