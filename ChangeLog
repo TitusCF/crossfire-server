@@ -17,11 +17,31 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/main.c: Have process_events display information from dumped object.
+   also, more refinement on checking of object status.
+MSW 2004-05-16
+
 server/build_map.c: change 'player' variable to 'pl', since a player
     structure already exists. Also fix disappearing pedestals on non-unique
     maps (put'em over floor, they are visible but hey, can't have everything :p)
 server/c_wiz.c: fix learn_spell.
 Ryo 2004-05-16
+
+server/main.c: freeing removed objects appeared to have more of a
+  consequence than expected - only remove the object if it was on a map
+  (op->map).  It turns out that the artifact code uses objects that
+  are removed to store what the new object is.
+server/spell_effect.c: Fix cast_create_food() to call 
+    find_archetype_by_object_name() instead of find_archetype().  In this
+    way, players can use invoke without having to know the archetype name.
+server/c_wiz.c: Modify command_banish() to record dm name, player name,
+   and date of command.
+server/acinclude.m4: Patch by acinclude.m4 to add python 2.3 support.
+  Rebuilt files (Makefile.in, aclocal.m4, configure, configure.in).  add
+  config.guess, config.sub since automake now includes them in the Makefile.in
+  file.
+MSW 2004-05-15
+
 
 Added a new item type: ground positioning system (GPS).
 This lets a player know his/her location in the world.
