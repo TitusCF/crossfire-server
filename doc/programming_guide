@@ -153,6 +153,25 @@ spaces to be used (what emacs calls indent-tabs-mode), do this:
 
 set expandtab
 
+12.1) I work on several projects and each uses a different indent format. What 
+      do I do?
+
+Taken from an email from Eric Estabrooks <estabroo@talkware.net>, which is 
+based on info found in the linux kernel.
+
+add to your .emacs
+; linux kernel c mode
+(defun linux-c-mode ()
+   "C mode with adjusted defaults for use with the Linux kernel."
+   (interactive)
+   (c-mode)
+   (c-set-style "K&R")
+   (setq c-basic-offset 8))
+
+; set linux kernel mode for anything in /usr/src/linux*
+(setq auto-mode-alist (cons '("/usr/src/linux.*/.*\\.[ch]$" . linux-c-mode)
+                        auto-mode-alist))
+
 13)
  /*
   * do block
