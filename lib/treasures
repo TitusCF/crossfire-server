@@ -28,6 +28,8 @@ treasure Valriel
   more
   arch god_cure_poison
   more
+  arch valriel_player_glow
+  more
   arch god_remove_curse
     chance 10
   more
