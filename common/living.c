@@ -965,7 +965,8 @@ void fix_player(object *op) {
       op->protected|=tmp->protected;
       op->vulnerable|=tmp->vulnerable;
       if (tmp->type!=BOW) {
-	op->attacktype|=tmp->attacktype;
+		  if(tmp->type != SYMPTOM) 
+			 op->attacktype|=tmp->attacktype;
 /*        if (tmp->attacktype) LOG(llevDebug,"Object %s applied, attacktype=0x%x\n", tmp->name, tmp->attacktype);*/
       }
       op->immune|=tmp->immune;
