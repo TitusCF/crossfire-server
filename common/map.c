@@ -588,7 +588,7 @@ void load_objects (mapstruct *m, FILE *fp, int block) {
 #endif
 	switch(i) {
 	  case LL_NORMAL:
-	    insert_ob_in_map(op,m);
+	    insert_ob_in_map_simple(op,m);
 #if 1
 	    if (op->inv) sum_weight(op);
 #else
@@ -602,7 +602,7 @@ void load_objects (mapstruct *m, FILE *fp, int block) {
 	    break;
 #endif
 	  case LL_MORE:
-	    insert_ob_in_map(op,m);
+	    insert_ob_in_map_simple(op,m);
 	    op->head=prev,last_more->more=op,last_more=op;
 	    break;
 	}
@@ -1179,7 +1179,7 @@ void move_all_objects(mapstruct *m1, mapstruct *m2) {
       while((op=get_map_ob(m1,i,j))!=NULL&&op->head==NULL) {
         remove_ob(op);
         op->x=i,op->y=j; /* Not really needed */
-        insert_ob_in_map(op,m2);
+        insert_ob_in_map_simple(op,m2);
       }
     }
   free_all_objects(m1);
@@ -1395,7 +1395,7 @@ mapstruct *ready_map_name(char *name, int flags) {
      */
 
     /* In case other objects press some buttons down */
-    (*update_buttons_func)(m);
+    update_buttons(m);
 
     return m;
 }
@@ -1526,7 +1526,7 @@ mapstruct *MapMoveScrollResize(mapstruct *source,
 		    prt->y += dy;           /* designers problem to fix */
 		    prt->y %= target->mapy;
 		}
-		insert_ob_in_map(obj,target);
+		insert_ob_in_map_simple(obj,target);
 		if (linked)
 		    add_button_link(obj, target, link);
 	    }
@@ -1561,7 +1561,7 @@ void MapMoveScroll(mapstruct *target, mapstruct *source, int dx, int dy)
 		    prt->y += dy;           /* designers problem to fix */
 		    prt->y %= target->mapy;
 		}
-		insert_ob_in_map(obj,target);
+		insert_ob_in_map_simple(obj,target);
 	    }
     free_all_objects(source);
 }

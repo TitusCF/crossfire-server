@@ -18,6 +18,15 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+common/map.c: Change calls in file to use insert_ob_in_map simple.
+This fixes bugs with buttons not being applied correctly when the map
+is loaded - the cause is that push_button is getting called for the
+button before all the objects the button is linked to have been loaded.
+Then when the map finishes loading, the call to update_button is called
+and they are not in sync.  This change should make loading slightly faster,
+mostly because it does not call check_walk_on during the loading, so that
+buttons don't get pushed/changed around.  Mark Wedel 3/28/2000
+
 server/player.c:  If player is using pickup mode 6, only have them pick up
 the item if they know it is magical.  Prior to change, items would be
 picked up if they are magical, but not if the player knew that, so the code
