@@ -984,14 +984,20 @@ void process_events (mapstruct *map)
 	}
 
 	if (op->speed_left > 0) {
+#if 0
 	    /* I've seen occasional crashes in move_symptom() with it
 	     * crashing because op is removed - add some debugging to
 	     * track if it is removed at this point.
+	     * This unfortunately is a bit too verbose it seems - not sure
+	     * why - I think what happens is a map is freed or something and
+	     * some objects get 'lost' - removed never to be reclaimed.
+	     * removed objects generally shouldn't exist.
 	     */
 	    if (QUERY_FLAG(op, FLAG_REMOVED)) {
 		LOG(llevDebug,"process_events: calling process_object with rmeoved object %s\n",
 		    op->name?op->name:"null");
 	    }
+#endif
 	    --op->speed_left;
 	    process_object (op);
 	    if (was_destroyed (op, tag))

@@ -509,6 +509,10 @@ int fire_arch_from_position (object *op, object *caster, sint16 x, sint16 y,
     if (mflags & P_OUT_OF_MAP) {
 	return 0;
     }
+    if (mflags & P_NO_PASS) {
+	new_draw_info(NDI_UNIQUE, 0, op, "You can't cast the spell on top of a wall!\n");
+	return 0;
+    }
 
     tmp=arch_to_object(spell->other_arch);
 

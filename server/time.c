@@ -1099,7 +1099,7 @@ void move_player_mover(object *op) {
 	    nx = op->x+freearr_x[dir];
 	    ny = op->y+freearr_y[dir];
 	    m = op->map;
-	    if (get_map_flags(m, &m, nx, ny, &nx, &ny) == P_OUT_OF_MAP) {
+	    if (get_map_flags(m, &m, nx, ny, &nx, &ny) & P_OUT_OF_MAP) {
 		LOG(llevError,"move_player_mover: Trying to push player off the map! map=%s (%d, %d)\n",
 		    m->path, op->x, op->y);
 		return ;

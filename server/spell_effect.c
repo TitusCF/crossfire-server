@@ -48,6 +48,13 @@ void cast_magic_storm(object *op, object *tmp, int lvl)
     tmp->y=op->y; 
     tmp->range+=lvl/5;  /* increase the area of destruction */
     tmp->duration+=lvl/5;
+
+    /* Put a cap on duration for this - if the player fails in their
+     * apartment, don't want it to go on so long that it kills them
+     * multiple times.  Also, damge already increases with level,
+     * so don't really need to increase the duration as much either.
+     */
+    if (tmp->duration>=40) tmp->duration=40;
     tmp->stats.dam=lvl; /* nasty recoils! */
     tmp->stats.maxhp=tmp->count; /* tract single parent */ 
     insert_ob_in_map(tmp,op->map,op,0);

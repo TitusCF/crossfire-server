@@ -159,6 +159,11 @@ int check_name(player *me,char *name) {
 	    return 0;
 	}
 
+    if (*name=='\0') {
+	new_draw_info(NDI_UNIQUE, 0,me->ob,"Null names are not allowed.");
+	return 0;
+    }
+
     if(!playername_ok(name)) {
 	new_draw_info(NDI_UNIQUE, 0,me->ob,"That name contains illegal characters.");
 	return 0;

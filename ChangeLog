@@ -17,6 +17,27 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+aclocal.m4, configure: Add check for python 2.4.
+common/re-cmp.c: Fix improper comparison *(str+1) instead of str+1
+server/login.c: don't allow null names.
+server/main.c: Disable logging of removed objects - filling up log
+   files on archmage of all the errors.
+server/player.c: Fix improper initialization of attacktype in
+   for loop.  Give players max grace, sp when they die - also, if they
+   are near starvation, give them a bunch of food.
+server/spell_effect.c: Put cap on duration of godly retribution - it
+   can otherwise last so long that if a player is killed by it at
+   their savebed location, spell could still go on after players
+   temporary immunity ends.  Retribution as increases in damage,
+   so no need to really increase damage and duration to really high
+   amounts.
+server/spell_util.c: In fire_arch_from_position(), and check that
+   player isn't casting spell on top of wall - fixes for many
+   spells, including ball lightning.
+server/time.c: Change comparsion on return of get_map_flags() from
+   == P_OUT_OF_MAP to & P_OUT_OF_MAP - keeps syntax consistent.
+MSW 2005-01-11
+
 plugin/plugin_python.c, plugin_animator/plugin_animator.c,
 plugin_animator/plugin_animator.c: Use script return value set by
    CFPython.SetReturnValue(): access to stack was off by one. Do not return a

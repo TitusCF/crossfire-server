@@ -151,7 +151,7 @@ re_cmp(char *str, char *regexp) {
 	 */
 	if (re_cmp_step(str+1, next_regexp, 1, 0))
 	    return str;
-	else if (str+1 != 0)
+	else if (*(str+1) != 0)
 	    return re_cmp(str+1, regexp);
     }
     return NULL;

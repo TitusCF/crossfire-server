@@ -1378,14 +1378,14 @@ object *find_better_arrow(object *op, object *target, char *type, int *better)
 		    betterby = (arrow->magic + arrow->stats.dam) * 2;
 		}
 	    } else {
-		for (attacknum=0; attacknum < NROFATTACKS;
-		     attacknum++, attacktype = 1<<attacknum)
-		    if (arrow->attacktype & attacktype)
-			if (target->arch->clone.resist[attacknum] < 0)
-			    if (((arrow->magic + arrow->stats.dam)*(100-target->arch->clone.resist[attacknum])/100) > betterby) {
-				tmp = arrow;
-				betterby = (arrow->magic + arrow->stats.dam)*(100-target->arch->clone.resist[attacknum])/100;
-			    }
+		for (attacknum=0; attacknum < NROFATTACKS; attacknum++) {
+		    attacktype = 1<<attacknum;
+		    if ((arrow->attacktype & attacktype) && (target->arch->clone.resist[attacknum]) < 0)
+			if (((arrow->magic + arrow->stats.dam)*(100-target->arch->clone.resist[attacknum])/100) > betterby) {
+			    tmp = arrow;
+			    betterby = (arrow->magic + arrow->stats.dam)*(100-target->arch->clone.resist[attacknum])/100;
+			}
+		}
 		if ((2 + arrow->magic + arrow->stats.dam) > betterby) {
 		    tmp = arrow;
 		    betterby = 2 + arrow->magic + arrow->stats.dam;
@@ -2692,8 +2692,10 @@ void kill_player(object *op)
 	
 	/*add_exp(op, (op->stats.exp * -0.20)); */
 	apply_death_exp_penalty(op);
-	if(op->stats.food < 0) op->stats.food = 900;
+	if(op->stats.food < 100) op->stats.food = 900;
 	op->stats.hp = op->stats.maxhp;
+	op->stats.sp = MAX(op->stats.sp,  op->stats.maxsp);
+	op->stats.grace = MAX(op->stats.grace, op->stats.maxgrace);
 
 	/*
 	 * Check to see if the player is in a shop. IF so, then check to see if
