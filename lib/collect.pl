@@ -68,7 +68,7 @@ sub traverse {
 	    $faces{$name} = $file;
 	    # &warn($file." has no archetype") 
 	    #	if ! -r $dir."/".&basename($file,$faceExt).".arc";
-	} elsif( $file =~ /.*$faceExt.xpm$/) { # FACE
+	} elsif( $file =~ /.*$faceExt.xpm$/ || $file =~ /.$faceExt.png$/ ) { # FACE
 # Empty directive to prevent warnings below
 	} elsif ( $file =~ /.*\.face$/) {	# Face information file
 	    $facesFileNum++;

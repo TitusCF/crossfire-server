@@ -18,6 +18,9 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+lib/collect.pl:  Modify so that it does not complain about png files in the
+arch directory MSW 5/28/2000
+
 common/item.c:  Fix query_short_name - wasn't generating all item names
 properly because of changes made a few days ago - some areas manipulate
 the string being worked on and was not updating the length properly.
