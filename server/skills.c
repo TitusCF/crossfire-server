@@ -917,7 +917,6 @@ int pray (object *pl) {
     if(pl->type!=PLAYER) return 0;
 
     strcpy(buf,"You pray.");
-#ifdef MULTIPLE_GODS
     /* Check all objects - we could stop at floor objects,
      * but if someone buries an altar, I don't see a problem with
      * going through all the objects, and it shouldn't be much slower
@@ -931,7 +930,6 @@ int pray (object *pl) {
 	    break;  /* Only pray at one altar */
 	}
     }
-#endif
 
     new_draw_info(NDI_UNIQUE,0,pl,buf);
      

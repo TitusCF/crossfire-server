@@ -795,10 +795,8 @@ void fix_player(object *op) {
 #ifdef SPELL_ENCUMBRANCE
     op->contr->encumbrance=0;
 #endif
-#ifdef ALLOW_SKILLS
     if(op->chosen_skill&&op->chosen_skill->exp_obj)
        op->chosen_skill->level=op->chosen_skill->exp_obj->level;
-#endif
         op->attacktype=0;    
 	op->contr->digestion = 0;
 	op->contr->gen_hp = 0;
@@ -862,12 +860,11 @@ void fix_player(object *op) {
   for(tmp=op->inv;tmp!=NULL;tmp=tmp->below) 
     if(QUERY_FLAG(tmp,FLAG_APPLIED) && tmp->type!=CONTAINER && tmp->type!=CLOSE_CON) {
       if(op->type==PLAYER
-#ifdef ALLOW_SKILLS /* The meaning of stats in skill or experience objects is different -
-		     * we use them solely to link skills to experience, thus it is 
-		     * inappropriate to allow these applied objects to change stats.
-                     * An exception is exp_wis, containing info about god-properties! */ 
+	    /* The meaning of stats in skill or experience objects is different -
+	     * we use them solely to link skills to experience, thus it is 
+	     * inappropriate to allow these applied objects to change stats.
+             * An exception is exp_wis, containing info about god-properties! */ 
 	 && (tmp->type!=EXPERIENCE || !strcmp(tmp->arch->name, "experience_wis"))
-#endif
       ) {
 	if (tmp->type != POTION) {
 	  for(i=0;i<7;i++)
@@ -959,10 +956,7 @@ void fix_player(object *op) {
       if(QUERY_FLAG(tmp,FLAG_SEE_IN_DARK)) 
 	SET_FLAG(op,FLAG_SEE_IN_DARK);
 
-      if(tmp->stats.exp 
-#ifdef ALLOW_SKILLS /* we get BIG problems w/o this line! */
-	   && tmp->type!=EXPERIENCE
-#endif
+      if(tmp->stats.exp && tmp->type!=EXPERIENCE
       ) {
         if(tmp->stats.exp > 0) {
           added_speed+=(float)tmp->stats.exp/3.0;
@@ -978,7 +972,6 @@ void fix_player(object *op) {
       * experience object which has exp_obj->stats.Str set controls the 
       * wc bonus of the player. -b.t.
       */
-#ifdef ALLOW_SKILLS
       case EXPERIENCE: 
 	if(op->type!=PLAYER)    /* Only players should have these. */ 
 	  LOG(llevError,"Error: %s has exp_obj in invenory\n",op->name); 
@@ -1028,7 +1021,6 @@ void fix_player(object *op) {
 #endif
 	}
 	break;
-#endif /* ALLOW_SKILLS */
       case SHIELD:
 #ifdef SPELL_ENCUMBRANCE
 	if(op->type==PLAYER) op->contr->encumbrance+=(int)tmp->weight/2000;
@@ -1210,7 +1202,6 @@ void fix_player(object *op) {
     * monster bonus the same as before. -b.t.
     */
 
-#ifdef ALLOW_SKILLS
     if(op->type==PLAYER && wc_obj && wc_obj->level>1) { 
       int i;
       wc-=(wc_obj->level+thaco_bonus[op->stats.Str]);
@@ -1222,7 +1213,6 @@ void fix_player(object *op) {
 	    op->stats.dam+=(1+(dam_bonus[op->stats.Str]/5));
       }
     } else 
-#endif /* ALLOW_SKILLS */ 
     wc-=(op->level+thaco_bonus[op->stats.Str]);
 
     op->stats.dam+=dam_bonus[op->stats.Str];
@@ -1333,8 +1323,6 @@ uint32 level_exp(int level,double expmul) {
 	return expmul*(levels[100]+bleep*(level-100));
     }
 }
-
-#ifdef ALLOW_SKILLS /* new experience system */ 
 
 /* add_exp() - new algorithm. Revamped experience gain/loss routine. 
  * Based on the old add_exp() function - but tailored to add experience 
@@ -1472,55 +1460,6 @@ void add_exp(object *op, int exp) {
 	if(op->exp_obj) op->exp_obj = NULL;
     }
 }
-
-#else /*ALLOW_SKILLS */ /* add_exp() - the old exp system */
-
-/*
- * Adds (or subtracts) experience to a living object.  If it is a player,
- * checks for level-gain/loss is done.
- * The routines for gaining/losing levels is also within this function.
- */
-
-void add_exp(object *op,int exp) {
-    char buf[MAX_BUF];
-
-    if (exp > op->stats.exp / 2) {
-	if (op->stats.exp < 100)
-	    exp = 50;
-	else
-	    exp = op->stats.exp / 2;
-    }
-
-    if(op->type==PLAYER && op->contr->braced) exp=exp/5; 
-    /* shuffled some stuff into here  -b.t. */
-    exp = adjust_exp(op,exp);
-
-    if(op->type==PLAYER) {
-	if(op->level < MAXLEVEL && op->stats.exp >= level_exp(op->level+1,op->expmul)) {
-	    op->level++;
-	    if(op->level < 11) {
-
-		op->contr->levhp[op->level] = (int) RANDOM()%4 + (int) RANDOM()%4 + 3;
-		op->contr->levsp[op->level] = (int) RANDOM()%3 + (int) RANDOM()%3 + 2;
-		  op->contr->levgrace[op->level]=(int)RANDOM()%2 + (int) RANDOM()%2 + 1;
-	    }
-	    fix_player(op);
-	    if(op->level>1) {
-		sprintf(buf,"You are now level %d.",op->level);
-		(*draw_info_func)(NDI_UNIQUE, 0, op,buf);
-	    }
-	    add_exp(op,0); /* To increase more levels */
-	} else if(op->level>1&&op->stats.exp<level_exp(op->level,op->expmul)) {
-	    op->level--;
-	    fix_player(op);
-	    sprintf(buf,"You are now level %d.",op->level);
-	    (*draw_info_func)(NDI_UNIQUE, 0, op,buf);
-	    add_exp(op,0); /* To decrease more levels */
-	}
-    }
-}    
-
-#endif /* ALLOW_SKILLS */ 
 
 /* player_lvl_adj() - for the new exp system. we are concerned with
  * whether the player gets more hp, sp and new levels.

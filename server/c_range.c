@@ -195,7 +195,6 @@ int command_cast_spell (object *op, char *params, char command)
 	if (spnum>=0) {
 	    rangetype orig_rangetype=op->contr->shoottype;
 	    op->contr->shoottype=range_magic;
-#ifdef ALLOW_SKILLS 
 	    if(op->type==PLAYER) { 
 		 /* if we don't change to the correct spell numb,
 		  * check_skill_to_fire will be confused as to which
@@ -211,7 +210,7 @@ int command_cast_spell (object *op, char *params, char command)
 		    }
 		op->contr->chosen_spell=orig_spn;
 	    }
-#endif
+
 	    if (castnow) { 
 		int value;
 
@@ -390,16 +389,12 @@ int command_rotateshoottype (object *op, char *params)
 int command_throw (object *op, char *params)
 {
 
-#ifdef ALLOW_SKILLS
    if(!change_skill(op,SK_THROWING))
         return 0;
    else {
         int success = do_skill(op,op->facing,params);
         return success;
    }
-#else
-  return 0;
-#endif
 }
 
 int command_rotatespells (object *op, char *params)

@@ -397,13 +397,6 @@ void give_initial_items(object *pl,treasurelist *items) {
 	    CLEAR_FLAG(op, FLAG_CURSED);
 	    CLEAR_FLAG(op, FLAG_DAMNED);
 	}
-#ifndef ALLOW_SKILLS	/* no reason to start with these if no skills exist! */ 
-	if(op->type==SKILLSCROLL || op->type==SKILL)  {
-	    remove_ob(op);
-	    free_object(op);
-            continue;
-	}
-#endif
 	if(op->type==ABILITY)  {
 	    pl->contr->known_spells[pl->contr->nrofknownspells++]=op->stats.sp;
 	    remove_ob(op);
@@ -562,11 +555,7 @@ void roll_stats(object *op) {
   add_exp(op,0);
   op->stats.sp=op->stats.maxsp;
   op->stats.hp=op->stats.maxhp;
-#ifndef ALLOW_SKILLS /* start grace at maxgrace if no skills */
-  op->stats.grace=op->stats.maxgrace; 
-#else
   op->stats.grace=0;
-#endif
   op->contr->orig_stats=op->stats;
 }
 
@@ -617,11 +606,7 @@ void Swap_Stat(object *op,int Swap_Second)
     op->stats.ac=0;
     add_exp(op,0);
     op->stats.sp=op->stats.maxsp;
-#ifndef ALLOW_SKILLS
-    op->stats.grace=op->stats.maxgrace; 
-#else
     op->stats.grace=0;
-#endif
     op->stats.hp=op->stats.maxhp;
     add_exp(op,0);
     op->contr->Swap_First=-1;
@@ -740,13 +725,9 @@ int key_change_class(object *op, char key)
 #endif
 	start_info(op);
 	CLEAR_FLAG(op, FLAG_WIZ);
-#ifdef ALLOW_SKILLS
 	(void) init_player_exp(op);
-#endif
 	give_initial_items(op,op->randomitems);
-#ifdef ALLOW_SKILLS
 	(void) link_player_skills(op);
-#endif
 	esrv_send_inventory(op, op);
 	return 0;
     }
@@ -779,11 +760,7 @@ int key_change_class(object *op, char key)
     fix_player(op);
     op->stats.hp=op->stats.maxhp;
     op->stats.sp=op->stats.maxsp;
-#ifndef ALLOW_SKILLS
-	 op->stats.grace=op->stats.maxgrace; 
-#else
-	 op->stats.grace=0;
-#endif
+    op->stats.grace=0;
     op->contr->last_value= -1;
     if (op->msg) 
 	new_draw_info(NDI_BLUE, 0, op, op->msg);
@@ -1051,10 +1028,8 @@ void fire(object *op,int dir) {
     * it handles whether cleric or mage spell is requested to be cast. 
     * -b.t. 
     */ 
-#ifdef ALLOW_SKILLS 
   if(op->type==PLAYER) 
 	if(!check_skill_to_fire(op)) return;
-#endif
 
   switch(op->contr->shoottype) {
   case range_none:
@@ -1373,11 +1348,7 @@ void move_player_attack(object *op, int dir)
 
 	op->contr->has_hit = 1; /* The last action was to hit, so use weapon_sp */
 
-#ifdef ALLOW_SKILLS
-            skill_attack(tmp, op, 0, NULL); 
-#else 
-            (void) attack_ob(tmp, op);
-#endif 
+	  skill_attack(tmp, op, 0, NULL); 
 	  /* If attacking another player, that player gets automatic
 	   * hitback, and doesn't loose luck either.
 	   */
@@ -1386,11 +1357,7 @@ void move_player_attack(object *op, int dir)
 	  {
 	    short luck = tmp->stats.luck;
 	    tmp->contr->has_hit = 1;
-#ifdef ALLOW_SKILLS
 	    skill_attack(op, tmp, 0, NULL); 
-#else
-	    (void) attack_ob(op, tmp);
-#endif
 	    tmp->stats.luck = luck;
 	  }
 	  if(action_makes_visible(op)) make_visible(op);
@@ -1596,24 +1563,20 @@ void do_some_living(object *op) {
     /* Regenerate Grace */
     /* I altered this a little - maximum grace is ony achieved through prayer -b.t.*/
     if(--op->last_grace<0) {
-#ifndef ALLOW_SKILLS /* allow regen 'naturally' to only 1/2 maxgrace w/ skills code */ 
-      if(op->stats.grace<op->stats.maxgrace)
-#else
 	if(op->stats.grace<op->stats.maxgrace/2)
-#endif
-	  op->stats.grace++; /* no penalty in food for regaining grace */
-      if(max_grace>1) {
-	over_grace = (gen_grace<20 ? 30 : gen_grace+10)/rate_grace;
-	if (over_grace > 0) {
-	  op->stats.sp += over_grace 
-	    + (RANDOM()%rate_grace > ((gen_grace<20 ? 30 : gen_grace+10)%rate_grace))? -1 : 0;
-	  op->last_grace=0;
+	    op->stats.grace++; /* no penalty in food for regaining grace */
+	if(max_grace>1) {
+	    over_grace = (gen_grace<20 ? 30 : gen_grace+10)/rate_grace;
+	    if (over_grace > 0) {
+		op->stats.sp += over_grace 
+		    + (RANDOM()%rate_grace > ((gen_grace<20 ? 30 : gen_grace+10)%rate_grace))? -1 : 0;
+		op->last_grace=0;
+	    } else {
+		op->last_grace=rate_grace/(gen_grace<20 ? 30 : gen_grace+10);
+	    }
 	} else {
-	  op->last_grace=rate_grace/(gen_grace<20 ? 30 : gen_grace+10);
+	    op->last_grace=rate_grace/(gen_grace<20 ? 30 : gen_grace+10);
 	}
-      } else {
-	op->last_grace=rate_grace/(gen_grace<20 ? 30 : gen_grace+10);
-      }
       /* wearing stuff doesn't detract from grace generation. */
     }
 

@@ -18,6 +18,42 @@ else.  With this, include the file(s) that you changed.
 
 Changes for CVS:
 
+Make ALLOW_SKILLS standard part of game (remove #ifdef's for it)
+Files affected: common/living.c common/object.c common/treasure.c
+    include/config.h include/player.h server/apply.c server/attack.c
+    server/c_move.c server/c_range.c server/c_wiz.c server/commands.c
+    server/init.c server/login.c server/monster.c server/player.c
+    server/rune.c server/skill_util.c server/spell_util.c
+Make MULTIPLE_GODS standards part of game (remove #ifdefs for it)
+Files affected: common/readable.c include/spellist.h include/config.h
+    server/attack.c server/gods.c server/skills.c server/spell_effect.c
+    server/spell_util.c
+doc/Makefile.in, doc/Protocol: Add protocol description file here instead
+   of in the client distribution. 
+include/global.h: Move declaration of MAX_EXP_CAT near top of file
+   so it is set before player.h is included.
+include/newclient.h: Add CS_STAT_SKILL* values for sending skill
+   experience information to client.
+include/newserver.h: Add skillexp value to socket struct which determines
+   if client wants skill experience informatiion.
+include/player.h: Add skill information tracking to player structure
+   so we can easily know when to send updates to client.
+random_maps/expand2x.c: remove unused variable to prevent compiler warnings.
+random_maps/square_spiral.c: Include prototype information on all systems,
+   not just win32 to prevent compiler warnings.
+server/skill_util.c: Initialize skill pointers to make it easier to
+   find skill information when we want to update client.
+socket/init.c: Init socket->skillexp to 0.
+socket/loop.c: Fix indentation of table - whitespace change only
+socket/metaserver.c: Minor fix to prevent compile warnings (on the sprintf
+    that composes the data to send to the metaserver)
+socket/request.c: Redo SetUp function to be more compact and IMO simpler as
+   wll as easier to read (functionality remains the same).
+   VersionCmd modified to warn users of on dxclients (code on MT)
+   StatsCmd added to send skill information if client wants it.
+The sending of skill experience is by MT, rest of the changes by me.
+MSW 2001-05-28
+
 common/readable.c: When making recipe books, give the recipe that they
    are for in the title.  Makes it more worthwhile to buy them.
 lib/treasures.c: Increase the chance of readables in chests some (in fact,

@@ -407,7 +407,6 @@ static void set_owner_simple (object *op, object *owner)
     owner->refcount++;
 }
 
-#ifdef ALLOW_SKILLS
 static void set_skill_pointers (object *op, object *chosen_skill,
 	object *exp_obj)
 {
@@ -422,7 +421,6 @@ static void set_skill_pointers (object *op, object *chosen_skill,
     CLEAR_FLAG (op, FLAG_CAN_USE_SKILL);
     CLEAR_FLAG (op, FLAG_READY_SKILL);
 }
-#endif
 
 
 /*
@@ -435,13 +433,11 @@ void set_owner (object *op, object *owner)
 	return;
     set_owner_simple (op, owner);
 
-#ifdef ALLOW_SKILLS /* set the pointers in op to inherit owners skill, exp_obj */ 
     if (owner->type == PLAYER && owner->chosen_skill)
         set_skill_pointers (op, owner->chosen_skill,
                             owner->chosen_skill->exp_obj);
     else if (op->type != PLAYER)
 	CLEAR_FLAG (op, FLAG_READY_SKILL);
-#endif
 }
 
 /* Set the owner to clone's current owner and set the skill and experience
@@ -461,12 +457,10 @@ void copy_owner (object *op, object *clone)
       return;
     set_owner_simple (op, owner);
 
-#ifdef ALLOW_SKILLS
     if (clone->chosen_skill)
         set_skill_pointers (op, clone->chosen_skill, clone->exp_obj);
     else if (op->type != PLAYER)
 	CLEAR_FLAG (op, FLAG_READY_SKILL);
-#endif
 }
 
 /*

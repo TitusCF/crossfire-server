@@ -16,43 +16,12 @@ a wall.
 #include <global.h>
 #include <time.h>
 
-#ifdef WIN32 /* ---win32: removes a make_wall warning, modul miss prototyp */
 #include <maze_gen.h>
 #include <room_gen.h>
 #include <random_map.h>
-#include <rproto.h>
 #include <sproto.h>
-#endif /* win32 */
+#include <rproto.h>
 
-#if 0
-
-int make_wall(char **maze,int x, int y, int dir){
-  maze[x][y] = 'D'; /* mark a door */
-  switch(dir) {
-  case 0: /* horizontal */
-    {
-      int i1;
-      for(i1 = x-1;maze[i1][y]==0;i1--) 
-        maze[i1][y]='#';
-      for(i1 = x+1;maze[i1][y]==0;i1++)
-        maze[i1][y]='#';
-      break;
-    }
-  case 1: /* vertical */
-    {
-      int i1;
-      for(i1 = y-1;maze[x][i1]==0;i1--) 
-        maze[x][i1]='#';
-      for(i1 = y+1;maze[x][i1]==0;i1++)
-        maze[x][i1]='#';
-      break;
-    }
-  }      
-
-  return 0;
-}
-
-#endif
 
 char **map_gen_onion(int xsize, int ysize, int option, int layers);
 

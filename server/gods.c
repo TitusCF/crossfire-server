@@ -74,9 +74,7 @@ object *find_god(char *name) {
 
 void pray_at_altar(object *pl, object *altar) {
     object *pl_god=find_god(determine_god(pl));
- 
 
-#ifdef MULTIPLE_GODS
     /* If non consecrate altar, don't do anything */
     if (!altar->other_arch) return;
 
@@ -151,7 +149,6 @@ void pray_at_altar(object *pl, object *altar) {
           move_player(pl,absdir(pl->facing + 4)); /* back him off the way he came. */
         } /* didn't successfully change, so forced off altar. */
     } /* If prayed at altar to other god */
-#endif
 }
 
 static int get_spell_number (object *op)

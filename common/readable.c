@@ -1988,12 +1988,7 @@ tailor_readable_ob (object *book, int msg_type)
 #endif
 	    break;
       case 5:			/* bits of information about a god */
-#ifdef MULTIPLE_GODS
 	  strcpy (msgbuf, god_info_msg (level, book_buf_size));
-#else
-	  strcpy (msgbuf, msgfile_msg (level, book_buf_size));
-	  msg_type = 0;
-#endif
 	  break;
       case 0:			/* use info list in lib/ */
       default:

@@ -744,10 +744,8 @@ void check_login(object *op) {
      * sent to the client.
      */
 
-#ifdef ALLOW_SKILLS
     (void) init_player_exp(op);
     (void) link_player_skills(op);
-#endif
 
     if ( ! legal_range (op, op->contr->shoottype))
         op->contr->shoottype = range_none;

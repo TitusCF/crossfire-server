@@ -337,13 +337,8 @@ PATH_TURNING,"holy_orb",},
  PATH_ABJURE, "enchantment",}, 
 /* consecrate spell has no use w/o MULTIPLE_GODS defined. We make book=0 
  * in that case -b.t. */
-#ifdef MULTIPLE_GODS
 {"consecrate",                    4, 35,  0, 50, 0, 0, 1,  1, 0, 1, 0,
  PATH_ABJURE, "enchantment",},
-#else
-{"consecrate",                    4, 35,  0, 50, 0, 0, 0,  1, 0, 1, 0,
- PATH_ABJURE, "enchantment",},
-#endif
 {"summon cult monsters",          3, 12,  0, 10, 0, 0, 2,  1, 0, 1, 0,
  PATH_SUMMON, NULL,},
 {"cause critical wounds",	  7, 25,   0,  5, 0, 0, 0,  1, 0, 1, 0,

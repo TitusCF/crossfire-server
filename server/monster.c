@@ -320,11 +320,9 @@ int move_monster(object *op) {
 	    if(QUERY_FLAG(op,FLAG_READY_HORN)&&!(RANDOM()%5))
 		if(monster_use_horn(op,part,enemy,dir))
 		    return 0;
-#ifdef ALLOW_SKILLS
 	    if(QUERY_FLAG(op,FLAG_READY_SKILL)&&!(RANDOM()%3))
 		if(monster_use_skill(op,part,enemy,dir))
 		    return 0;
-#endif
 	    if(QUERY_FLAG(op,FLAG_READY_BOW)&&!(RANDOM()%2))
 		if(monster_use_bow(op,part,enemy,dir))
 		    return 0;
@@ -416,18 +414,10 @@ int move_monster(object *op) {
 	if(QUERY_FLAG(op,FLAG_RUN_AWAY)) {
 	    signed char tmp = (signed char)((float)part->stats.wc*(float)2);
 	    part->stats.wc+=tmp;
-#ifdef ALLOW_SKILLS
 	    (void)skill_attack(enemy,part,0,NULL);
-#else
-	    (void)attack_ob(enemy,part);
-#endif
 	    part->stats.wc-=tmp;
 	} else
-#ifdef ALLOW_SKILLS
 	    (void)skill_attack(enemy,part,0,NULL);
-#else
-	    (void) attack_ob(enemy,part);
-#endif
     } /* if monster is in attack range */
 
     if(QUERY_FLAG(part,FLAG_FREED))    /* Might be freed by ghost-attack or hit-back */
@@ -541,7 +531,6 @@ s */
   return cast_spell(part,part,dir,sp_typ,ability, spellNormal,NULL);
 }
 
-#ifdef ALLOW_SKILLS
 /* monster_use_skill()-implemented 95-04-28 to allow monster skill use.
  * Note that monsters do not need the skills SK_MELEE_WEAPON and
  * SK_MISSILE_WEAPON to make those respective attacks, if we 
@@ -586,7 +575,6 @@ object *skill, *owner;
   return do_skill(head,dir,NULL);
 }
 
-#endif 
 
 /* For the future: Move this function together with case 3: in fire() */
 
@@ -968,13 +956,11 @@ void monster_check_apply(object *mon, object *item) {
             check_good_armour(mon,item);
       break;
     case SKILL:
-#ifdef ALLOW_SKILLS
       if((flag=QUERY_FLAG(mon,FLAG_CAN_USE_SKILL))) {
         if(!QUERY_FLAG(item,FLAG_APPLIED)) manual_apply(mon,item,0);
         if (item->type==SKILL&&present_in_ob(SKILL,mon)!=NULL)
 	  SET_FLAG(mon, FLAG_READY_SKILL);
       }
-#endif
       break;
     case RING:
       flag=QUERY_FLAG(mon,FLAG_USE_RING);

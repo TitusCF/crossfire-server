@@ -470,10 +470,8 @@ int command_addexp (object *op, char *params)
 {
     char buf[MAX_BUF];
     int i;
-#ifdef ALLOW_SKILLS
-  object *exp_ob,*skill;
-#endif
-  player *pl;
+    object *exp_ob,*skill;
+    player *pl;
 
   if(params==NULL || sscanf(params, "%s %d", buf, &i)!=2) {
        new_draw_info(NDI_UNIQUE, 0,op,"Usage: addexp [who] [how much].");
@@ -493,7 +491,6 @@ int command_addexp (object *op, char *params)
  * 2) added exp doesnt result in exp_ob->stats.exp>MAX_EXP_IN_OBJ 
  */
 
-#ifdef ALLOW_SKILLS
     if((skill = pl->ob->chosen_skill) && ((exp_ob = pl->ob->chosen_skill->exp_obj)
        || link_player_skill(pl->ob, skill))) { 
       i = check_dm_add_exp_to_obj(exp_ob,i);
@@ -503,7 +500,6 @@ int command_addexp (object *op, char *params)
       new_draw_info(NDI_UNIQUE, 0,op,"Player has no associated skill readied.");
       return 1;
     }
-#endif
     pl->ob->stats.exp += i;
     add_exp(pl->ob,0);
 #ifndef REAL_WIZ

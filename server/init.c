@@ -400,9 +400,8 @@ void init_beforeplay() {
 #ifdef ALCHEMY
   init_formulae();  /* If not called before, reads formulae from file */
 #endif
-#ifdef ALLOW_SKILLS
   init_new_exp_system();    /* If not called before, inits experience system */
-#endif
+
 #ifdef DUMP_SWITCHES
   switch(settings.dumpvalues) {
   case 1:

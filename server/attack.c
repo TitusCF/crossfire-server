@@ -776,9 +776,6 @@ int hit_player_attacktype(object *op, object *hitter, int dam,
 
     if (hitter->slaying) {
 	if (((op->race !=NULL && strstr(hitter->slaying,op->race)) ||
-#ifndef MULTIPLE_GODS
-	  (strstr(hitter->slaying, undead_name) && QUERY_FLAG(op,FLAG_UNDEAD)) ||
-#endif
 	  (op->arch && op->arch->name!=NULL && strstr(op->arch->name, hitter->slaying)))) {
 	    does_slay=1;
 	    dam*=3;
@@ -1175,10 +1172,8 @@ int hit_player(object *op,int dam, object *hitter, int type) {
 		if(owner!=hitter) {
 		    (void) sprintf(buf,"You killed %s with %s.",query_name(op)
 				       ,query_name(hitter));
-#ifdef ALLOW_SKILLS
 		    old_hitter = hitter;
 		    owner->exp_obj=hitter->exp_obj; 
-#endif
 		} else {
 			(void) sprintf(buf,"You killed %s.",query_name(op));
 		}
@@ -1197,10 +1192,8 @@ int hit_player(object *op,int dam, object *hitter, int type) {
 	if(get_owner(hitter)!=NULL) {
 	    (void) sprintf(buf,"%s killed %s with %s%s.",hitter->owner->name,
 		query_name(op),query_name(hitter), battleg? " (duel)":"");
-#ifdef ALLOW_SKILLS
 	    old_hitter = hitter;
 	    owner->exp_obj=hitter->exp_obj;
-#endif
 	    hitter=hitter->owner;
 	}
 	else
@@ -1215,7 +1208,6 @@ int hit_player(object *op,int dam, object *hitter, int type) {
 		exp=(exp*(op->level+1))/MAX(hitter->level+1, 1);
 
 /* new exp system in here. Try to insure the right skill is modifying gained exp */ 
-#ifdef ALLOW_SKILLS 
 	    if(hitter->type==PLAYER && !old_hitter) 
 		exp = calc_skill_exp(hitter,op); 
 	    /* case for attack spells, summoned monsters killing */ 
@@ -1226,7 +1218,6 @@ int hit_player(object *op,int dam, object *hitter, int type) {
 		exp = calc_skill_exp(hitter,op); 
 		hitter->chosen_skill = old_skill;
 	    }
-#endif /* ALLOW_SKILLS */
 
 	    /* Really don't give much experience for killing other players */
 	    if (op->type==PLAYER) {

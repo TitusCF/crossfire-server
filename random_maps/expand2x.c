@@ -133,7 +133,6 @@ static void expand_wall(char **newlayout, int i, int j, char **layout,
  */
 static void expand_door(char **newlayout, int i, int j, char **layout,
                         int xsize, int ysize) {
-  char ch;
   int wall_pattern = calc_pattern('#', layout, i, j, xsize, ysize);
   int door_pattern = calc_pattern('D', layout, i, j, xsize, ysize);
   int join_pattern;

@@ -96,48 +96,32 @@ void spell_failure(object *op, int failure,int power)
 
 void prayer_failure(object *op, int failure,int power)
 {  
-#ifdef MULTIPLE_GODS 
-  char *godname;
+    char *godname;
 
-  if(!strcmp((godname=determine_god(op)),"none")) godname="Your spirit";
-#endif 
+    if(!strcmp((godname=determine_god(op)),"none")) godname="Your spirit";
 
-  if(failure<= -20&&failure > -40) /* wonder */
+    if(failure<= -20&&failure > -40) /* wonder */
     {
-#ifdef MULTIPLE_GODS 
-     new_draw_info_format(NDI_UNIQUE, 0,op,"%s gives a sign to renew your faith.",godname);
-#else
-     new_draw_info(NDI_UNIQUE, 0,op,"God gives a sign to renew your faith.");
-#endif
-     cast_cone(op,op,0,10,SP_WOW,spellarch[SP_WOW],0);
+	new_draw_info_format(NDI_UNIQUE, 0,op,"%s gives a sign to renew your faith.",godname);
+	cast_cone(op,op,0,10,SP_WOW,spellarch[SP_WOW],0);
     }
 
-  else if (failure <= -40&&failure > -60) /* confusion */
-   {
-    new_draw_info(NDI_UNIQUE, 0,op,"Your diety touches your mind!");
-    confuse_player(op,op,99);
-   }
-  else if (failure <= -60&&failure> -150) /* paralysis */
-  {
-#ifdef MULTIPLE_GODS
-    new_draw_info_format(NDI_UNIQUE, 0,op,"%s requires you to pray NOW.",godname);
-#else
-    new_draw_info(NDI_UNIQUE, 0,op,"Your god requires you to pray NOW.");
-#endif
-	 new_draw_info(NDI_UNIQUE, 0,op,"You comply, ignoring all else.");
-    paralyze_player(op,op,99);
-  }
-  else if (failure <= -150) /* blast the immediate area */
-  { 
-#ifdef MULTIPLE_GODS
-   new_draw_info_format(NDI_UNIQUE, 0,op,"%s smites you!",godname);
-#else
-   new_draw_info(NDI_UNIQUE, 0,op,"God smites you!");
-#endif
-   
-   cast_magic_storm(op,get_archetype("god_power"), power);
-
-  }
+    else if (failure <= -40&&failure > -60) /* confusion */
+    {
+	new_draw_info(NDI_UNIQUE, 0,op,"Your diety touches your mind!");
+	confuse_player(op,op,99);
+    }
+    else if (failure <= -60&&failure> -150) /* paralysis */
+    {
+	new_draw_info_format(NDI_UNIQUE, 0,op,"%s requires you to pray NOW.",godname);
+	new_draw_info(NDI_UNIQUE, 0,op,"You comply, ignoring all else.");
+	paralyze_player(op,op,99);
+    }
+    else if (failure <= -150) /* blast the immediate area */
+    { 
+	new_draw_info_format(NDI_UNIQUE, 0,op,"%s smites you!",godname);
+	cast_magic_storm(op,get_archetype("god_power"), power);
+    }
 }
 
 /* Should really just replace all calls to cast_mana_storm to call
@@ -1277,7 +1261,6 @@ cast_change_attr(object *op,object *caster,int dir,int spell_type) {
     cast_change_attr(op,caster,dir,SP_CONSTITUTION);
     break;
   case SP_HOLY_POSSESSION: {
-#ifdef MULTIPLE_GODS
     object *god = find_god(determine_god(op));
     int i;
 
@@ -1299,7 +1282,6 @@ cast_change_attr(object *op,object *caster,int dir,int spell_type) {
 	   "You are possessed by the essence of %s!",god->name);
     } else 
         new_draw_info(NDI_UNIQUE, 0,op,"Your blessing seems empty.");
-#endif
     if(tmp!=op && op->type==PLAYER && tmp->type==PLAYER) {
       new_draw_info_format(NDI_UNIQUE, 0, op,
 			   "You bless %s mightily!", tmp->name);
@@ -1313,7 +1295,6 @@ cast_change_attr(object *op,object *caster,int dir,int spell_type) {
     force->stats.hp = 1 + SP_level_dam_adjust(op, caster,SP_REGENERATION);
     break;
   case SP_CURSE: {  
-#ifdef MULTIPLE_GODS
     object *god = find_god(determine_god(op));
     if(god) {
       force->path_repelled|=god->path_repelled;
@@ -1322,14 +1303,13 @@ cast_change_attr(object *op,object *caster,int dir,int spell_type) {
 	"You are a victim of %s's curse!",god->name);
     } else 
         new_draw_info(NDI_UNIQUE, 0,op,"Your curse seems empty.");
-#endif
+
     if(tmp!=op && caster->type==PLAYER)
       new_draw_info_format(NDI_UNIQUE, 0, caster, "You curse %s!",tmp->name);
     force->stats.ac -= SP_level_dam_adjust(op, caster,SP_CURSE); 
     force->stats.wc -= SP_level_dam_adjust(op, caster,SP_CURSE);
     break; } 
   case SP_BLESS: { 
-#ifdef MULTIPLE_GODS
     object *god = find_god(determine_god(op));
     if(god) {
 	int i;
@@ -1347,7 +1327,7 @@ cast_change_attr(object *op,object *caster,int dir,int spell_type) {
 		"You receive the blessing of %s.",god->name);
     } else 
         new_draw_info(NDI_UNIQUE, 0,op,"Your blessing seems empty.");
-#endif
+
     if(tmp!=op && op->type==PLAYER && tmp->type==PLAYER) {
       new_draw_info_format(NDI_UNIQUE, 0, op, "You bless %s.", tmp->name);
       new_draw_info_format(NDI_UNIQUE, 0, tmp, "%s blessed you.", op->name);
@@ -2119,22 +2099,14 @@ int cast_detection(object *op, int type) {
             done_one = (tmp->type == PLAYER);
           break;
         case SP_DETECT_EVIL: { 
-#ifdef MULTIPLE_GODS
 	  done_one = 0;
  	  if(QUERY_FLAG(tmp,FLAG_MONSTER)&&tmp->race) {
 	    object *god=find_god(determine_god(op));
             if(god&&god->slaying&&strstr(god->slaying,tmp->race))
 		done_one = 1;
 	  } 
-#else
-          if (op->type == PLAYER)
-            done_one = (QUERY_FLAG(tmp, FLAG_MONSTER)&&
-		!QUERY_FLAG(tmp, FLAG_UNAGGRESSIVE)&&
-		!QUERY_FLAG(tmp, FLAG_FRIENDLY));
-          else
-            done_one = (tmp->type == PLAYER);
-#endif
-          break; } 
+          break;
+	}
         case SP_SHOW_INVIS:
 	    /* Might there be other objects that we can make visibile? */
 	    if (tmp->invisible && (QUERY_FLAG(tmp, FLAG_MONSTER) || 
@@ -2211,9 +2183,7 @@ int cast_detection(object *op, int type) {
 int cast_pacify(object *op, object *weap, archetype *arch,int spellnum ) {
   int i,r,j; 
   object *tmp,*effect;
-#ifdef MULTIPLE_GODS
   object *god = find_god(determine_god(op));
-#endif
   
   r= 1 + SP_level_strength_adjust(op,weap,SP_PACIFY);
 
@@ -2226,11 +2196,11 @@ int cast_pacify(object *op, object *weap, archetype *arch,int spellnum ) {
         if(!tmp) continue;
         if(tmp->type==PLAYER) continue;
 
-#ifdef MULTIPLE_GODS /* we only go through checking if the monster is not aligned 
+	/* we only go through checking if the monster is not aligned 
 	member, we dont worship a god, or monster has no race */ 
         if(!tmp->race||!god||!god->race
           ||!strstr(god->race,tmp->race)) {
-#endif
+
           if(tmp->resist[ATNR_MAGIC]==100||tmp->resist[ATNR_GODPOWER]==100) continue;
 	/* multiple square monsters only when caster is => level of creature */
           if((tmp->more || tmp->head) && (SK_level(op) < tmp->level)) continue;  
@@ -2238,9 +2208,8 @@ int cast_pacify(object *op, object *weap, archetype *arch,int spellnum ) {
 		if(tmp->race != weap->slaying && tmp->name != weap->slaying) continue;
         /* if(op->level <( (RANDOM()%(2*tmp->level+1))-(op->stats.Cha-10)/2)) continue; */ 
           if(SK_level(op) <( (RANDOM()%(2*tmp->level+1))-(op->stats.Cha-10)/2)) continue;
-#ifdef MULTIPLE_GODS
         }
-#endif
+
         if((effect=get_archetype("detect_magic"))){
                 effect->x = tmp->x;
                 effect->y = tmp->y;
@@ -2846,7 +2815,6 @@ int summon_cult_monsters(object *op, int old_dir) {
  
 int summon_avatar(object *op,object *caster,int dir, archetype *at, int spellnum) {
   object *tmp;
-#ifdef MULTIPLE_GODS
   char buf[MAX_BUF];
   object *god = find_god(determine_god(caster)); 
 
@@ -2862,7 +2830,6 @@ int summon_avatar(object *op,object *caster,int dir, archetype *at, int spellnum
 	  ,god->name,spellnum==SP_SUMMON_AVATAR?"avatar":"servant");
       return 0;
   }
-#endif
 
   /* safety checks... */
   if(op->type==PLAYER)
@@ -2900,7 +2867,7 @@ int summon_avatar(object *op,object *caster,int dir, archetype *at, int spellnum
   if(tmp->stats.dam<0) tmp->stats.dam=127;  /*seen this go negative!*/
   if(tmp->other_arch) tmp->other_arch=NULL;
 
-#ifdef MULTIPLE_GODS /* tailor it to the gods nature */
+  /* tailor it to the gods nature */
   if(tmp) { 
     object *tmp2;
     for(tmp2=tmp;tmp2;tmp2=tmp2->more) { 
@@ -2923,9 +2890,6 @@ int summon_avatar(object *op,object *caster,int dir, archetype *at, int spellnum
   if(god->slaying) tmp->slaying = add_string(god->slaying);
   /* safety, we must allow a god's servants some reasonable attack */
   if(!(tmp->attacktype&AT_PHYSICAL)) tmp->attacktype|=AT_PHYSICAL;
-#else
-  tmp->attacktype|=AT_WEAPONMAGIC;
-#endif
 
   /*  make experience increase in proportion to the strength of 
    *  the summoned creature. */
@@ -3007,7 +2971,6 @@ object *fix_summon_pet(archetype *at, object *op, int dir, int type ) {
 int cast_consecrate(object *op) {
     char buf[MAX_BUF];
 
-#ifdef MULTIPLE_GODS
     object *tmp, *god=find_god(determine_god(op));
 
     if(!god) {
@@ -3043,10 +3006,6 @@ int cast_consecrate(object *op) {
     }
     new_draw_info(NDI_UNIQUE, 0,op,"You are not standing over an altar!");
     return 0;
-#else
-    new_draw_info(NDI_UNIQUE, 0,op,"Nothing happens.");
-    return 0;
-#endif
 }
 
 

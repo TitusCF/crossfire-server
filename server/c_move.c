@@ -109,71 +109,21 @@ int command_stay (object *op, char *params)
 */
 
 int command_search (object *op, char *params) {  
-#ifndef ALLOW_SKILLS
-   object *tmp,*tmp2;
-   int i;
-  /*First we search all around us for runes and traps, which are
-    all type RUNE */
-   for(i=0;i<9;i++) { 
-	/*  Check everything in the square for trapness */
-	if(out_of_map(op->map,op->x + freearr_x[i],op->y + freearr_y[i])) continue;
-	for(tmp = get_map_ob(op->map, op->x + freearr_x[i], op->y +freearr_y[i]);
-	    tmp!=NULL;tmp=tmp->above) 
-	  {
-	    /*  And now we'd better do an inventory traversal of each
-	        of these objects' inventory */
-	    for(tmp2=tmp->inv;tmp2!=NULL;tmp2=tmp2->below) 
-		if(tmp2->type==RUNE) { if(trap_see(op,tmp2)) trap_show(tmp2,tmp); }
-	    if(tmp->type==RUNE) { if(trap_see(op,tmp)) trap_show(tmp,tmp);}
-	    }
-   }
-  return 0;
-#else	/* ALLOW_SKILLS */ 
    if(!change_skill(op,SK_FIND_TRAPS))
         return 0;
    else {
         int success = do_skill(op,0,NULL);
         return success;
    }
-#endif /* ALLOW_SKILLS */ 
 }
 
 int command_disarm (object *op, char *params) {
-#ifndef ALLOW_SKILLS
-  object *tmp,*tmp2;
-  int i;
-
-  /*First we search all around us for runes and traps, which are
-    all type RUNE */
-   for(i=0;i<9;i++) { 
-        if(out_of_map(op->map,op->x + freearr_x[i],op->y + freearr_y[i])) continue;
-	/*  Check everything in the square for trapness */
-	for(tmp = get_map_ob(op->map, op->x + freearr_x[i], op->y +freearr_y[i]);
-	    tmp!=NULL;tmp=tmp->above) 
-	  {
-	    /*  And now we'd better do an inventory traversal of each
-	        of these objects' inventory */
-	    for(tmp2=tmp->inv;tmp2!=NULL;tmp2=tmp2->below) 
-		if(tmp2->type==RUNE&&tmp2->stats.Cha<=1) { 
-			trap_show(tmp2,tmp); 
-			return trap_disarm(op,tmp2,1);
-		}
-	    if(tmp->type==RUNE&&tmp->stats.Cha<=1) { 
-		trap_show(tmp,tmp);
-		return trap_disarm(op,tmp,1);
-	    }
-	  }
-   }
-
-return 0;
-#else
    if(!change_skill(op,SK_REMOVE_TRAP)) 
         return 0;
    else {
         int success = do_skill(op,0,NULL); 
         return success;
    }
-#endif
 }
 
   

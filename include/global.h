@@ -59,6 +59,16 @@ typedef unsigned char	uint8;
 typedef signed char	sint8;
 typedef unsigned short Fontindex;
 
+/* global stuff used by new skill/experience system -b.t.
+ * Needed before player.h
+ */
+#define MAX_EXP_CAT 7 		/* This should be => # of exp obj in the game 
+				 * remember to include the "NULL" exp object  
+			         * EXP_NONE as part of the overall tally. 
+				 */
+#define EXP_NONE (MAX_EXP_CAT - 1)  /* "NULL" exp. object. This is the last 
+				     * experience obj always.*/ 
+
 /* This blob, in this order, is needed to actually define maps */
 #include "face.h"
 /* Include the basic defines from spells.h */
@@ -156,13 +166,6 @@ EXTERN long nroftreasures;		/* Only used in malloc_info() */
 EXTERN long nrofartifacts;		/* Only used in malloc_info() */
 EXTERN long nrofallowedstr;		/* Only used in malloc_info() */
 
-/* global stuff used by new skill/experience system -b.t. */ 
-#define MAX_EXP_CAT 7 		/* This should be => # of exp obj in the game 
-				 * remember to include the "NULL" exp object  
-			         * EXP_NONE as part of the overall tally. 
-				 */
-#define EXP_NONE (MAX_EXP_CAT - 1)  /* "NULL" exp. object. This is the last 
-				     * experience obj always.*/ 
 EXTERN short nrofexpcat;	/* Current number of experience categories in the game */
 EXTERN object *exp_cat[MAX_EXP_CAT];	/* Array of experience objects in the game */ 
 

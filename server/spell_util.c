@@ -43,9 +43,7 @@ extern int sys_nerr;
 
 char *range_name[range_size] = {
   "none", "bow", "magic", "wand", "rod", "scroll", "horn"
-#ifdef ALLOW_SKILLS
 	,"steal"
-#endif
 };
 
 archetype *spellarch[NROFREALSPELLS];
@@ -165,16 +163,12 @@ int check_spell_known (object *op, int spell_type)
 /* Oct 95 - added cosmetic touches for MULTIPLE_GODS hack -b.t. */
 
 int cast_spell(object *op,object *caster,int dir,int type,int ability,SpellTypeFrom item,char *stringarg) {
-#ifdef MULTIPLE_GODS
   char *godname;
-#endif
   spell *s=find_spell(type);
   int success=0,bonus;
   int duration=SP_PARAMETERS[type].bdur;  /*  get the base duration */
 
-#ifdef MULTIPLE_GODS
   if(!strcmp((godname=determine_god(op)),"none")) godname="A random spirit"; 
-#endif
 
   /* It looks like the only properties we ever care about from the casting
    * object (caster) is spell paths and level.
@@ -214,22 +208,13 @@ int cast_spell(object *op,object *caster,int dir,int type,int ability,SpellTypeF
 	   */
 	  if( (RANDOM()%op->stats.Wis) +op->stats.grace -
 		  10*SP_level_spellpoint_cost(op,caster,type)/op->stats.maxgrace >0) {
-#ifdef MULTIPLE_GODS
 			  new_draw_info_format(NDI_UNIQUE, 0,op, 
 				"%s grants your prayer, though you are unworthy.",godname);
-#else
-			  new_draw_info(NDI_UNIQUE, 0,op, 
-				"God grants your prayer, though you are unworthy.");
-#endif
 	  }
 	  else
 	  {
 		  prayer_failure(op,op->stats.grace,SP_level_spellpoint_cost(op,caster,type));
-#ifdef MULTIPLE_GODS
 			  new_draw_info_format(NDI_UNIQUE, 0,op,"%s ignores your prayer.",godname);
-#else
-			  new_draw_info(NDI_UNIQUE, 0,op,"God ignores your prayer.");
-#endif
 		  op->contr->count_left=0;
 			  return 0;
 	  }
@@ -283,11 +268,7 @@ int cast_spell(object *op,object *caster,int dir,int type,int ability,SpellTypeF
     if (op->type!=PLAYER)
       return 0;
     if(s->cleric) 
-#ifdef MULTIPLE_GODS
       new_draw_info_format(NDI_UNIQUE, 0,op,"This ground is unholy!  %s ignores you.",godname);
-#else
-      new_draw_info(NDI_UNIQUE, 0,op,"This ground is unholy!  God ignores you.");
-#endif
     else
     switch(op->contr->shoottype) {
     case range_magic:
@@ -451,11 +432,7 @@ if (item == spellNormal && !ability ){
     success = cast_consecrate(op); 
     break;
   case SP_SUMMON_CULT:
-#ifdef MULTIPLE_GODS
     success = summon_cult_monsters(op,dir);
-#else
-    success = summon_pet(op,dir,item);
-#endif
     break;
   case SP_PET:
     success = summon_pet(op,dir, item);
@@ -1049,13 +1026,14 @@ int fire_arch_from_position (object *op, object *caster, sint16 x, sint16 y,
   else
     set_owner (tmp, op);
   tmp->level = casting_level (caster, type);
-#ifdef MULTIPLE_GODS /* needed for AT_HOLYWORD,AT_GODPOWER stuff */
+
+  /* needed for AT_HOLYWORD,AT_GODPOWER stuff */
   if(tmp->attacktype&AT_HOLYWORD||tmp->attacktype&AT_GODPOWER) {
 	      if(!tailor_god_spell(tmp,op)) return 0; 
-  } else /* Ugly else going across endif */
-#endif 
-  if(magic)
-    tmp->attacktype|=AT_MAGIC;
+  } else {
+    if(magic)
+	tmp->attacktype|=AT_MAGIC;
+  }
   if(QUERY_FLAG(tmp, FLAG_IS_TURNABLE))
     SET_ANIMATION(tmp, dir);
 
@@ -1098,11 +1076,12 @@ cast_cone(object *op, object *caster,int dir, int strength, int spell_type,arche
     copy_owner(tmp,op);
     tmp->level = casting_level (caster, spell_type);
     tmp->x=x,tmp->y=y;
-#ifdef MULTIPLE_GODS /* holy word stuff */                
+
+    /* holy word stuff */                
     if((tmp->attacktype&AT_HOLYWORD)||(tmp->attacktype&AT_GODPOWER)) {
             if(!tailor_god_spell(tmp,op)) return 0;  
     } else /* god/holy word isnt really 'magic' */
-#endif
+
     if(magic)
       tmp->attacktype|=AT_MAGIC;  /* JWI cone attacks should be considered
                                      magical in nature ;) */
@@ -1275,10 +1254,10 @@ void move_cone(object *op) {
 	    /* added to make face of death work,and counterspell */
 	    tmp->level = op->level;
 
-#ifdef MULTIPLE_GODS /* holy word stuff */
+	    /* holy word stuff */
 	    if(tmp->attacktype&AT_HOLYWORD||tmp->attacktype&AT_GODPOWER) 
 		if(!tailor_god_spell(tmp,op)) return;
-#endif
+
 	    tmp->stats.sp=op->stats.sp,tmp->stats.hp=op->stats.hp+1;
 	    tmp->stats.maxhp=op->stats.maxhp;
 	    tmp->stats.dam = op->stats.dam;
@@ -1677,14 +1656,13 @@ void explode_object(object *op)
     tmp->x = op->x;
     tmp->y = op->y;
 
-#ifdef MULTIPLE_GODS /* needed for AT_HOLYWORD stuff -b.t. */
+    /* needed for AT_HOLYWORD stuff -b.t. */
     if(tmp->attacktype&AT_HOLYWORD||tmp->attacktype&AT_GODPOWER) 
       if ( ! tailor_god_spell (tmp, op)) {
 	remove_ob (op);
 	free_object (op);
 	return;
       }
-#endif
 
     /* Prevent recursion */
     CLEAR_FLAG (op, FLAG_WALK_ON);
@@ -2224,13 +2202,11 @@ void fire_swarm (object *op, object *caster, int dir, archetype *swarm_type,
   set_owner(tmp,op);       /* needed so that if swarm elements kill, caster gets xp.*/
   tmp->level=casting_level(caster, spell_type);   /*needed later, to get level dep. right.*/
   tmp->stats.sp=spell_type;  /* needed later, see move_swarm_spell */
-#ifdef MULTIPLE_GODS
   tmp->attacktype = swarm_type->clone.attacktype;
   if (tmp->attacktype & AT_HOLYWORD || tmp->attacktype & AT_GODPOWER) {
     if ( ! tailor_god_spell (tmp, op))
       return;
   }
-#endif 
   tmp->magic = magic;
   tmp->stats.hp=n;	    /* n in swarm*/
   tmp->other_arch=swarm_type;  /* the archetype of the things to be fired*/
@@ -2563,17 +2539,15 @@ object *get_pointed_target(object *op, int dir) {
 
 int cast_smite_spell (object *op, object *caster,int dir, int type) {
    object *effect, *target = get_pointed_target(op,dir);
-#ifdef MULTIPLE_GODS
    object *god = find_god(determine_god(op));
-#endif
 
+    /* if we don't worship a god, or target a creature
+     * of our god, the spell will fail.  
+     */
    if(!target || QUERY_FLAG(target,FLAG_REFL_SPELL)
-#ifdef MULTIPLE_GODS /* if we don't worship a god, or target a creature
-                      * of our god, the spell will fail.  */
       ||!god
       ||(target->title&&!strcmp(target->title,god->name))
       ||(target->race&&strstr(target->race,god->race))
-#endif
    ) {
         new_draw_info(NDI_UNIQUE,0,op,"Your request is unheeded.");
         return 0;
@@ -2586,7 +2560,6 @@ int cast_smite_spell (object *op, object *caster,int dir, int type) {
 
   /* tailor the effect by priest level and worshipped God */
    effect->level = casting_level (caster, type);
-#ifdef MULTIPLE_GODS
    if(effect->attacktype&AT_HOLYWORD||effect->attacktype&AT_GODPOWER) {
         if(tailor_god_spell(effect,op))
            new_draw_info_format(NDI_UNIQUE,0,op,
@@ -2596,7 +2569,6 @@ int cast_smite_spell (object *op, object *caster,int dir, int type) {
            return 0;
 	}
    }
-#endif 
  
    /* size of the area of destruction */
    effect->stats.hp=SP_PARAMETERS[type].bdur +

@@ -344,7 +344,6 @@ int check_weapon_power(object *who, int improvs)
      * Note:  Nothing should break by allowing this ratio to be different or
      * using normal level - it is just a matter of play balance.
      */
-#ifdef ALLOW_SKILLS
     if(who->type==PLAYER) { 
       object *wc_obj=NULL;
 
@@ -356,9 +355,6 @@ int check_weapon_power(object *who, int improvs)
 	level=wc_obj->level; 
     }
     return (improvs <= ((level/5)+5));
-#else
-    return (improvs <= (level+5));
-#endif
 }
 
 /* Returns the object count that of the number of objects found that
@@ -1315,9 +1311,7 @@ void move_apply (object *trap, object *victim, object *originator)
 
 static void apply_book (object *op, object *tmp)
 {
-#ifdef ALLOW_SKILLS
     int lev_diff;
-#endif
 
     if(QUERY_FLAG(op, FLAG_BLIND)&&!QUERY_FLAG(op,FLAG_WIZ)) {
       new_draw_info(NDI_UNIQUE, 0,op,"You are unable to read while blind.");
@@ -1328,7 +1322,8 @@ static void apply_book (object *op, object *tmp)
 	"You open the %s and find it empty.", tmp->name);
       return;
     }
-#ifdef ALLOW_SKILLS /* need a literacy skill to read stuff! */
+
+    /* need a literacy skill to read stuff! */
     if ( ! change_skill(op,SK_LITERACY)) {
       new_draw_info(NDI_UNIQUE, 0,op,
 	"You are unable to decipher the strange symbols.");
@@ -1351,13 +1346,12 @@ static void apply_book (object *op, object *tmp)
 	new_draw_info(NDI_UNIQUE, 0,op,"This book is totally beyond your comprehension.");
       return;
     }
-#endif
 
     new_draw_info_format (NDI_UNIQUE, 0, op,
                           "You open the %s and start reading.", tmp->name);
     new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, op, tmp->msg);
 
-#ifdef ALLOW_SKILLS /* gain xp from reading */  
+    /* gain xp from reading */  
     if(!QUERY_FLAG(tmp,FLAG_NO_SKILL_IDENT)) { /* only if not read before */ 
       int exp_gain=calc_skill_exp(op,tmp);
       if(!QUERY_FLAG(tmp,FLAG_IDENTIFIED)) {
@@ -1370,11 +1364,9 @@ static void apply_book (object *op, object *tmp)
       add_exp(op,exp_gain);
       SET_FLAG(tmp,FLAG_NO_SKILL_IDENT); /* so no more xp gained from this book */ 
     }
-#endif
 }
 
 
-#ifdef ALLOW_SKILLS
 static void apply_skillscroll (object *op, object *tmp)
 {
   switch ((int) learn_skill (op, tmp))
@@ -1401,7 +1393,6 @@ static void apply_skillscroll (object *op, object *tmp)
       return;
     }
 }
-#endif
 
 
 /* Special prayers are granted by gods and lost when the follower decides
@@ -1531,14 +1522,12 @@ static void apply_spellbook (object *op, object *tmp)
        tmp->slaying=NULL;
     }
 
-#ifdef ALLOW_SKILLS 
     /* need a literacy skill to learn spells. Also, having a literacy level
      * lower than the spell will make learning the spell more difficult */
     if ( ! change_skill(op,SK_LITERACY)) {
       new_draw_info(NDI_UNIQUE, 0,op,"You can't read! Your attempt fails.");
       return;
     }
-#endif
     if(tmp->stats.sp < 0 || tmp->stats.sp > NROFREALSPELLS
         || spells[tmp->stats.sp].level>(SK_level(op)+10)) {
       new_draw_info(NDI_UNIQUE, 0,op,"You are unable to decipher the strange symbols.");
@@ -1584,10 +1573,10 @@ static void apply_spellbook (object *op, object *tmp)
 	learn_spell[spells[tmp->stats.sp].cleric ? op->stats.Wis : op->stats.Int]) {
       new_draw_info(NDI_UNIQUE, 0,op,"You succeed in learning the spell!");
       do_learn_spell (op, tmp->stats.sp, 0);
-#ifdef ALLOW_SKILLS /* xp gain to literacy for spell learning */
+
+      /* xp gain to literacy for spell learning */
       if ( ! QUERY_FLAG (tmp, FLAG_STARTEQUIP))
         add_exp(op,calc_skill_exp(op,tmp));
-#endif
     } else {
       play_sound_player_only(op->contr, SOUND_FUMBLE_SPELL,0,0);
       new_draw_info(NDI_UNIQUE, 0,op,"You fail to learn the spell.\n");
@@ -1616,7 +1605,7 @@ static void apply_scroll (object *op, object *tmp)
     }
 
     if(op->type==PLAYER) {
-#ifdef ALLOW_SKILLS /* players need a literacy skill to read stuff! */
+	/* players need a literacy skill to read stuff! */
 	int exp_gain=0;
 
         if ( ! change_skill(op,SK_LITERACY)) {
@@ -1640,8 +1629,6 @@ static void apply_scroll (object *op, object *tmp)
         SET_FLAG(tmp,FLAG_APPLIED);
         (void) check_skill_to_apply(op,tmp);
         CLEAR_FLAG(tmp,FLAG_APPLIED);
-
-#endif/* ALLOW_SKILLS */ 
         old_shoot= op->contr->shoottype;
         old_spell = op->contr->chosen_spell;
         op->contr->shoottype=range_scroll;
@@ -1899,12 +1886,10 @@ int manual_apply (object *op, object *tmp, int aflag)
     }
 
   case SKILLSCROLL:
-#ifdef ALLOW_SKILLS /* calls here shouldnt happen, but to be on safe side put here */ 
     if (op->type == PLAYER) {
       apply_skillscroll (op, tmp);
       return 1;
     }
-#endif
     return 0;
 
   case SPELLBOOK:
@@ -1958,9 +1943,7 @@ int manual_apply (object *op, object *tmp, int aflag)
   case WAND:
   case ROD:
   case HORN:
-#ifdef ALLOW_SKILLS
   case SKILL:
-#endif
   case BOW:
     if (tmp->env != op)
       return 2;   /* not in inventory */
@@ -2168,14 +2151,13 @@ int apply_special (object *who, object *op, int aflags)
     switch(op->type) {
     case WEAPON:
       (void) change_abil (who,op);
-#ifdef ALLOW_SKILLS /* 'unready' melee weapons skill if it is current skill */ 
+      /* 'unready' melee weapons skill if it is current skill */ 
       (void) check_skill_to_apply(who,op);
       if(QUERY_FLAG(who,FLAG_READY_WEAPON)) 
 		CLEAR_FLAG(who,FLAG_READY_WEAPON); 
-#endif
       sprintf(buf,"You unwield %s.",query_name(op));
       break;
-#ifdef ALLOW_SKILLS
+
     case SKILL:         /* allows objects to impart skills */
       if (op != who->chosen_skill) {
           LOG (llevError, "BUG: apply_special(): applied skill is not "
@@ -2199,7 +2181,7 @@ int apply_special (object *who, object *op, int aflags)
       CLEAR_FLAG (who, FLAG_READY_SKILL);
       buf[0] = '\0';
       break;
-#endif
+
     case ARMOUR:
     case HELMET:
     case SHIELD:
@@ -2217,9 +2199,7 @@ int apply_special (object *who, object *op, int aflags)
     case WAND:
     case ROD:
     case HORN:
-#ifdef ALLOW_SKILLS
       (void) check_skill_to_apply(who,op);
-#endif
       sprintf(buf,"You unready %s.",query_name(op));
       if(who->type==PLAYER) {
         who->contr->shoottype = range_none;
@@ -2301,12 +2281,11 @@ int apply_special (object *who, object *op, int aflags)
 
     SET_FLAG(op, FLAG_APPLIED);
 
-#ifdef ALLOW_SKILLS       /*check for melee weapons skill, alter player status.
-			   * Note that we need to call this *before* change_abil */
+	/* check for melee weapons skill, alter player status.
+	 * Note that we need to call this *before* change_abil */
     if(!check_skill_to_apply(who,op)) return 1;
     if(!QUERY_FLAG(who,FLAG_READY_WEAPON))
          SET_FLAG(who, FLAG_READY_WEAPON);
-#endif
 
     (void) change_abil (who,op);
     sprintf(buf,"You wield %s.",query_name(op));
@@ -2333,7 +2312,8 @@ int apply_special (object *who, object *op, int aflags)
     (void) change_abil (who,op);
     sprintf(buf,"You wear %s.",query_name(op));
     break;
-#ifdef ALLOW_SKILLS /* this part is needed for skill-tools */ 
+
+  /* this part is needed for skill-tools */ 
   case SKILL:
     if (who->chosen_skill) {
         LOG (llevError, "BUG: apply_special(): can't apply two skills\n");
@@ -2364,16 +2344,14 @@ int apply_special (object *who, object *op, int aflags)
     SET_FLAG (who, FLAG_READY_SKILL);
     buf[0] = '\0';
     break;
-#endif
 
   case WAND:
   case ROD:
   case HORN:
   case BOW:
-#ifdef ALLOW_SKILLS /* check for skill, alter player status */ 
+    /* check for skill, alter player status */ 
     SET_FLAG(op, FLAG_APPLIED);
     if(!check_skill_to_apply(who,op)) return 1;
-#endif
     new_draw_info_format (NDI_UNIQUE, 0, who, "You ready %s.", query_name(op));
     if(who->type==PLAYER) {
       switch (op->type) {

@@ -79,26 +79,6 @@
 
 #include "sounds.h"
 
-/* Tis is the table and cmd IDs for the setup cmd.
- * Add new commands here and include the 'case SETUP_xxx'
- * to the switch cmd in the SetUp function
- */
-
-typedef struct _setup_map {
-  char *cmdname;
-  int cmdnr;
-}_setup_map;
-
-enum {		
-	SETUP_SOUND,		/* Parameter: 1= sound cmd will send, 0= no sound cmds */
-	SETUP_SKILLEXP, 	/* Default=0 :: 1= send skill experience, 0= don't */
-};
-
-_setup_map setup_map[] = {
-	{"sound", SETUP_SOUND},
-	{"",-1} /* end marker */
-};
-
 /* This table translates the attack numbers as used within the
  * program to the value we use when sending STATS command to the
  * client.  IF a value is -1, then we don't send that to the
@@ -120,66 +100,56 @@ short atnr_cs_stat[NROFATTACKS] = {CS_STAT_RES_PHYS,
 /* This is the Setup cmd - easy first implementation */
 void SetUp(char *buf, int len, NewSocket *ns)
 {
-	register int s, c;
-	register char *cmd, *param;
-	char cmdback[256];
+    int s;
+    char *cmd, *param, cmdback[HUGE_BUF];
 
-
-	/* run through the cmds of setup
-	 * syntax is setup <cmdname1> <parameter> <cmdname2> <parameter> ...
-	 *
+    /* run through the cmds of setup
+     * syntax is setup <cmdname1> <parameter> <cmdname2> <parameter> ...
+     *
      * we send the status of the cmd back, or a FALSE is the cmd is the server unknown
-	 * The client then must sort this out
-	 */
+     * The client then must sort this out
+     */
 
-	LOG(llevInfo,"Get SetupCmd:: %s\n", buf);
-	strcpy(cmdback,"setup");
-	for(s=0;;)
-	{
-		if(s>=len)	/* ugly, but for secure...*/
-			break;
-		cmd = &buf[s];
-		for(;buf[s] && buf[s] != ' ';s++)
-			;
-		buf[s++]=0;
-		if(s>=len)
-			break;
-		param = &buf[s];
-		for(;buf[s] && buf[s] != ' ';s++)
-			;
-		buf[s++]=0;
+    LOG(llevInfo,"Get SetupCmd:: %s\n", buf);
+    strcpy(cmdback,"setup");
+    for(s=0;;) {
+	if(s>=len)	/* ugly, but for secure...*/
+	    break;
+
+	cmd = &buf[s];
+
+	/* find the next space, and put a null there */
+	for(;buf[s] && buf[s] != ' ';s++) ;
+	buf[s++]=0;
+
+	if(s>=len)
+	    break;
+
+	param = &buf[s];
+
+	for(;buf[s] && buf[s] != ' ';s++) ;
+	buf[s++]=0;
 		
-		for(c=0;setup_map[c].cmdnr != -1;c++) /* go through cmd table */
-		{
-			if(!strcmp(setup_map[c].cmdname, cmd) )
-			{
-				strcat(cmdback, " ");
-				strcat(cmdback, cmd);
-				strcat(cmdback, " ");
-				switch(setup_map[c].cmdnr) /* this should be valid all times */ 
-				{
-				case SETUP_SOUND:
-					ns->sound = atoi(param);
-					strcat(cmdback, param);
-					break;
-				};
-				break;	/* we have found cmd, fetch next from setup buffer */
-				
-			}
-		}
-		/* if setup_map[c].cmdnr == -1 here 
-		 * we had found a cmd this server don't know, send a FALSE back - cmd unknown
-		 */
-		if(setup_map[c].cmdnr == -1)
-		{
-			strcat(cmdback, " ");
-			strcat(cmdback, cmd);
-			strcat(cmdback, " FALSE");
-		}
-		
+	strcat(cmdback, " ");
+	strcat(cmdback, cmd);
+	strcat(cmdback, " ");
+
+	if (!strcmp(cmd,"sound")) {
+	    ns->sound = atoi(param);
+	    strcat(cmdback, param);
 	}
-	LOG(llevInfo,"SendBack SetupCmd:: %s\n", cmdback);
-	Write_String_To_Socket(ns, cmdback, strlen(cmdback));
+	else if (!strcmp(cmd,"sexp")) {
+	    ns->skillexp = atoi(param);
+	    strcat(cmdback, param);
+	} else {
+	    /* Didn't get a setup command we understood -
+	     * report a failure to the client.
+	     */
+	    strcat(cmdback, " FALSE");
+	}
+    } /* for processing all the setup commands */
+    LOG(llevInfo,"SendBack SetupCmd:: %s\n", cmdback);
+    Write_String_To_Socket(ns, cmdback, strlen(cmdback));
 }
 
 /* The client has requested to be added to the game.  This is what
@@ -191,8 +161,7 @@ void AddMeCmd(char *buf, int len, NewSocket *ns)
 {
     Settings oldsettings;
     oldsettings=settings;
-
-    if (ns->status != Ns_Add || add_player(ns)) {
+    if (ns->status != Ns_Add || add_player(ns)) {		
 	Write_String_To_Socket(ns, "addme_failed",12);
     } else {
 	/* Basically, the add_player copies the socket structure into
@@ -204,7 +173,7 @@ void AddMeCmd(char *buf, int len, NewSocket *ns)
 	socket_info.nconns--;
 	ns->status = Ns_Avail;
     }
-    settings=oldsettings;
+    settings=oldsettings;	
 }
 
 
@@ -396,7 +365,8 @@ void ReplyCmd(char *buf, int len, player *pl)
 void VersionCmd(char *buf, int len,NewSocket *ns)
 {
     char *cp;
-
+    char version_warning[256];
+		
     if (!buf) {
 	LOG(llevError, "CS: received corrupted version command\n");
 	return;
@@ -418,8 +388,19 @@ void VersionCmd(char *buf, int len,NewSocket *ns)
 #endif
     }
     cp = strchr(cp+1, ' ');
-    if (cp)
-	LOG(llevDebug,"CS: connection from client of type %s\n", cp);
+    if (cp) {
+	LOG(llevDebug,"CS: connection from client of type <%s>\n", cp);
+
+	/* This is first implementation - i skip all beta DX clients with it 
+	 * Add later stuff here for other clients 
+	 */
+
+	if(!strcmp(" CF DX CLIENT", cp)) /* these are old dxclients */
+	{
+	    sprintf(version_warning,"drawinfo %d %s", NDI_RED, "**** VERSION WARNING ****\n**** CLIENT IS TO OLD!! UPDATE THE CLIENT!! ****");
+	    Write_String_To_Socket(ns, version_warning, strlen(version_warning));
+	}
+    }
 }
 
 /*
@@ -584,12 +565,20 @@ void esrv_update_stats(player *pl)
     AddIfShort(pl->last_stats.maxgrace, pl->ob->stats.maxgrace, CS_STAT_MAXGRACE);
     AddIfShort(pl->last_stats.Str, pl->ob->stats.Str, CS_STAT_STR);
     AddIfShort(pl->last_stats.Int, pl->ob->stats.Int, CS_STAT_INT);
-/* added this to allow Pow stat - b.t. */
     AddIfShort(pl->last_stats.Pow, pl->ob->stats.Pow, CS_STAT_POW);
     AddIfShort(pl->last_stats.Wis, pl->ob->stats.Wis, CS_STAT_WIS);
     AddIfShort(pl->last_stats.Dex, pl->ob->stats.Dex, CS_STAT_DEX);
     AddIfShort(pl->last_stats.Con, pl->ob->stats.Con, CS_STAT_CON);
     AddIfShort(pl->last_stats.Cha, pl->ob->stats.Cha, CS_STAT_CHA);
+    if(pl->last_stats.exp != pl->ob->stats.exp && pl->socket.skillexp) 
+    {
+	int s;
+	for(s=0;s<pl->last_skill_index;s++)
+        {
+	    AddIfInt(pl->last_skill_exp[s],pl->last_skill_ob[s]->stats.exp , pl->last_skill_id[s]);
+	    AddIfShort(pl->last_skill_level[s],pl->last_skill_ob[s]->level , pl->last_skill_id[s]+1);
+        }
+    }
     AddIfInt(pl->last_stats.exp, pl->ob->stats.exp, CS_STAT_EXP);
     AddIfShort(pl->last_level, pl->ob->level, CS_STAT_LEVEL);
     AddIfShort(pl->last_stats.wc, pl->ob->stats.wc, CS_STAT_WC);

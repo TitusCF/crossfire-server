@@ -773,9 +773,9 @@ void fix_generated_item (object *op, object *creator, int difficulty,
 	    SET_FLAG(op,FLAG_NO_PICK);
 	if(creator->slaying&&!op->slaying) /* for check_inv floors */
 	    op->slaying = add_string(creator->slaying);
-#ifdef ALLOW_SKILLS /* add exp so reading it gives xp (once)*/
+
+	/* add exp so reading it gives xp (once)*/
         op->stats.exp = op->value>10000?op->value/5:op->value/10;
-#endif
       }
       break;
     case SPELLBOOK:
@@ -801,10 +801,11 @@ void fix_generated_item (object *op, object *creator, int difficulty,
       op->value=(op->value*spells[op->stats.sp].level)/
                  (spells[op->stats.sp].level+4);
       change_book(op,-1);
-#ifdef ALLOW_SKILLS /* add exp so learning gives xp */
+
+      /* add exp so learning gives xp */
       op->level = spells[op->stats.sp].level;
       op->stats.exp = op->value;
-#endif
+
       break;
     case WAND:
       do 
@@ -849,9 +850,10 @@ void fix_generated_item (object *op, object *creator, int difficulty,
       if (op->level<1) op->level=1;
       op->value=(op->value*spells[op->stats.sp].level)/
                  (spells[op->stats.sp].level+4);
-#ifdef ALLOW_SKILLS /* add exp so reading them properly gives xp */ 
+
+      /* add exp so reading them properly gives xp */ 
       op->stats.exp = op->value/5;
-#endif
+
       break;
     case RUNE:
       (*trap_adjust_func)(op,difficulty);

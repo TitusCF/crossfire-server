@@ -121,6 +121,21 @@
 #define CS_STAT_RES_HOLYWORD	116
 #define CS_STAT_RES_BLIND	117
 
+/* Start & end of skill experience + skill level, inclusive. */
+#define CS_STAT_SKILLEXP_START 118
+#define CS_STAT_SKILLEXP_END 129
+#define CS_STAT_SKILLEXP_AGILITY 118
+#define CS_STAT_SKILLEXP_AGLEVEL 119
+#define CS_STAT_SKILLEXP_PERSONAL 120
+#define CS_STAT_SKILLEXP_PELEVEL 121
+#define CS_STAT_SKILLEXP_MENTAL 122
+#define CS_STAT_SKILLEXP_MELEVEL 123
+#define CS_STAT_SKILLEXP_PHYSIQUE 124
+#define CS_STAT_SKILLEXP_PHLEVEL 125
+#define CS_STAT_SKILLEXP_MAGIC 126
+#define CS_STAT_SKILLEXP_MALEVEL 127
+#define CS_STAT_SKILLEXP_WISDOM 128
+#define CS_STAT_SKILLEXP_WILEVEL 129
 
 /* These are used with CS_STAT_FLAGS above to communicate S->C what the
  * server thinks the fireon & runon states are.

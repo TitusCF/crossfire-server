@@ -305,9 +305,6 @@ int dispel_rune(object *op,int dir,int risk)
 int trap_see(object *op,object *trap) {
   char buf[MAX_BUF];
   int chance;
-#ifndef ALLOW_SKILLS 
-  int trapworth=0;  
-#endif
 
   chance = RANDOM()%100;
   
@@ -318,12 +315,6 @@ int trap_see(object *op,object *trap) {
   {
       sprintf(buf,"You spot a %s!",trap->name);
       new_draw_info(NDI_UNIQUE, 0,op,buf);
-
-#ifndef ALLOW_SKILLS /* this stuff is handled by find_trap skill code -b.t. */ 
-      trapworth = trap->stats.Cha * trap->level;
-      if(trap->stats.Cha>1) add_exp(op,trapworth);  /* finding a trap awards exp */
-      trap->stats.Cha=1;  /* unhide the rune/trap */
-#endif
       return 1;
   }
   return 0;
@@ -365,16 +356,9 @@ int trap_disarm(object *disarmer, object *trap, int risk) {
 	    /* If it is your own trap, (or any players trap), don't you don't
 	     * get exp for it.
 	     */
-#ifdef ALLOW_SKILLS 
 	    if (trap->owner && trap->owner->type!=PLAYER && risk)
 		return trapworth;
 	    else return 1; /* give minimal exp and say success */
-#else
-	    if(!trap->owner) add_exp(disarmer,trapworth);
-            else if(trap->owner && trap->owner->type!=PLAYER && risk)
-	      add_exp(disarmer,trapworth);
-	    return 1;
-#endif
         }
     else
         {

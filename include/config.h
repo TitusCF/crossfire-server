@@ -75,7 +75,6 @@
  *
  * Short list of features, and what to search for:
  * ALCHEMY - enables alchemy code
- * ALLOW_SKILLS - enables skills code.
  * BALANCED_STAT_LOSS - Based death stat depletion on level etc?
  * CASTING_TIME - makes spells take time to cast
  * CS_LOGSTATS - log various new client/server data.
@@ -112,21 +111,6 @@
  */
 
 #define ALCHEMY
-
-
-/* Uncommenting the following line allows the new skill code to be used
- * (look at skills.h to see some of the skill names.)  Allowing skills
- * can really change the balance of the game, and thus might be undesirable.
- * A few notes:  The following toggle just makes it so that the player can
- * not use skills (hopefully it will work).  But the skills will still exist,
- * so skills could still be gained with this selected.  In fact, some races
- * start with skills.
- * 0.94.2: This should probably also be standard part of the game.
- */
-
-#define ALLOW_SKILLS
-
-
 
 /* Use balanced stat loss code?
  * This code is a little more merciful with repeated stat loss at lower
@@ -261,14 +245,6 @@
  */
 
 #define MAX_TIME	120000
-
-
-/* Following allows characters to worshsip different gods.  Has no effect
- * if ALLOW_SKILLS (above) is not defined.
- * 0.94.2 - this probably also needs to be standard part of the game.
- */
-
-#define MULTIPLE_GODS
 
 
 /* This is a modification to the cone spells.  If a cone spell hits

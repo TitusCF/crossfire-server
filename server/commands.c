@@ -91,11 +91,9 @@ CommArray_s Commands[] = {
   {"say", command_say,		0.0},
   {"shout", command_shout,	0.0},
   {"shutdown", command_shutdown, 0.0},
-#ifdef ALLOW_SKILLS
   {"skills", command_skills,	0.0},	/* shows player list of skills */
   {"use_skill", command_uskill, 1.0},
   {"ready_skill", command_rskill, 1.0},
-#endif
   {"search",command_search,	1.0},
 #ifdef SEARCH_ITEMS
   {"search-items", command_search_items,	0.0},

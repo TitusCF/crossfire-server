@@ -48,11 +48,7 @@ typedef enum rangetype {
   range_bottom = -1, range_none = 0, range_bow = 1, range_magic = 2,
   range_wand = 3, range_rod = 4, range_scroll = 5, range_horn = 6,
   range_skill = 7,
-#ifdef ALLOW_SKILLS
   range_size = 8
-#else
-  range_size = 7
-#endif
 } rangetype;
 
 
@@ -101,6 +97,12 @@ typedef struct pl {
 #ifdef EXPLORE_MODE
   uint32 explore:1;         /* if True, player is in explore mode */
 #endif
+  sint32  last_skill_index;	       /* this is init from init_player_exp() */
+  object *last_skill_ob[MAX_EXP_CAT];  /* the exp object */
+  sint32  last_skill_exp[MAX_EXP_CAT]; /* shadow register. if != exp. obj update client */
+  sint32  last_skill_level[MAX_EXP_CAT]; /* same for level */
+  sint32  last_skill_id[MAX_EXP_CAT]; /* Thats the CS_STATS_ id for client STATS cmd*/
+
   unsigned char state;
   unsigned char listening; /* Which priority will be used in info_all */
 
