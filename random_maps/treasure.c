@@ -281,7 +281,7 @@ object *find_closest_monster(mapstruct *map,int x,int y,RMParms *RP) {
 	sure a key is placed on both sides of the door.
 */
 	
-void keyplace(mapstruct *map,int x,int y,char *keycode,int door_flag,int n_keys,RMParms *RP) {
+int keyplace(mapstruct *map,int x,int y,char *keycode,int door_flag,int n_keys,RMParms *RP) {
   int i,j;
   int kx,ky;
   object *the_keymaster; /* the monster that gets the key. */
@@ -312,18 +312,26 @@ void keyplace(mapstruct *map,int x,int y,char *keycode,int door_flag,int n_keys,
     /* don't try to keyplace if we're sitting on a blocked square and
        NO_PASS_DOORS is set. */
     if(n_keys==1) {
-      if(wall_blocked(map,x,y)) return;
+      if(wall_blocked(map,x,y)) return 0;
       the_keymaster=find_monster_in_room(map,x,y,RP);
       if(the_keymaster==NULL)  /* if fail, find a spot to drop the key. */
         find_spot_in_room(map,x,y,&kx,&ky,RP);
     }
     else {
+      int sum=0; /* count how many keys we actually place */
       /* I'm lazy, so just try to place in all 4 directions. */
-      keyplace(map,x+1,y,keycode,NO_PASS_DOORS,1,RP);
-      keyplace(map,x,y+1,keycode,NO_PASS_DOORS,1,RP);
-      keyplace(map,x-1,y,keycode,NO_PASS_DOORS,1,RP);
-      keyplace(map,x,y-1,keycode,NO_PASS_DOORS,1,RP);
-      return;
+      sum +=keyplace(map,x+1,y,keycode,NO_PASS_DOORS,1,RP);
+      sum +=keyplace(map,x,y+1,keycode,NO_PASS_DOORS,1,RP);
+      sum +=keyplace(map,x-1,y,keycode,NO_PASS_DOORS,1,RP);
+      sum +=keyplace(map,x,y-1,keycode,NO_PASS_DOORS,1,RP);
+      if(sum < 2) /* we might have made a disconnected map-place more keys. */
+        {  /* diagnoally this time. */
+          keyplace(map,x+1,y+1,keycode,NO_PASS_DOORS,1,RP);
+          keyplace(map,x+1,y-1,keycode,NO_PASS_DOORS,1,RP);
+          keyplace(map,x-1,y+1,keycode,NO_PASS_DOORS,1,RP);
+          keyplace(map,x-1,y-1,keycode,NO_PASS_DOORS,1,RP);
+        }
+      return 1;
     }    
   }
 
@@ -331,10 +339,11 @@ void keyplace(mapstruct *map,int x,int y,char *keycode,int door_flag,int n_keys,
     the_key->x = kx;
     the_key->y = ky; 
     insert_ob_in_map(the_key,map,NULL);
-    return;
+    return 1;
   }
   
   insert_ob_in_ob(the_key,the_keymaster);
+  return 1;
 } 
 
 
