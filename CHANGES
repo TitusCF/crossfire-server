@@ -37,7 +37,7 @@ server/shop.c: Modify shop_listing command usage in query_basename to use
   second option.  It will also generate the singular name, but that is only
   used on sorting, so I don't think it will generally cause any problems.
 include/libproto.h:  rebuilt because query_base_name has an addition opt.
-Mark Wedel 8/13/2000
+Mark Wedel 8/6/2000
 
 include/config.h, include/global.h, common/init.c, common/living.c,
 server/init.c, server/player.c, server/skill_util.c: Add permanent
