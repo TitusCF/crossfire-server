@@ -1424,6 +1424,7 @@ void add_abilities(object *op, object *change) {
 		    while (evtp->next != NULL)
 			evtp = evtp->next;
 		    evtp->next = (event *)malloc(sizeof(event));
+		    evt2 = evtp->next;
 		}
 	    }
 	    evt2->next = NULL;

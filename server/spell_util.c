@@ -689,6 +689,7 @@ void put_a_monster(object *op,char *monstername) {
 	    tmp=arch_to_object(at);
 	    tmp->x=op->x+freearr_x[dir]+at->clone.x;
 	    tmp->y=op->y+freearr_y[dir]+at->clone.y;
+	    tmp->map = op->map;
 	    if (head) {
 		tmp->head=head;
 		prev->more=tmp;
@@ -832,7 +833,6 @@ void prayer_failure(object *op, int failure,int power)
 	tmp = get_archetype(GOD_POWER);
 	new_draw_info_format(NDI_UNIQUE, 0,op,"%s smites you!",godname);
 	cast_magic_storm(op,tmp, power);
-	free_object(tmp);
     }
 }
 
