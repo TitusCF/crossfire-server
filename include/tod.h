@@ -85,4 +85,19 @@ typedef struct _weather_replace {
 	int arch_or_name;
 } weather_replace_t;
 
+typedef struct _weather_grow {
+	char *herb; /* arch name of item to grow */
+	char *tile; /* arch tile to grow on, NULL if anything */
+	int random; /* random factor.  min 1, higher = lower chance of 
+		     * appearance */
+	int rfmin;
+	int rfmax; /* rainfall min/max */
+	int humin;
+	int humax; /* humidity min/max */
+	int tempmin;
+	int tempmax; /* temp min/max */
+	int elevmin;
+	int elevmax; /* elevation min/max */
+} weather_grow_t;
+
 #endif /* _TOD_H_ */

@@ -117,6 +117,18 @@ weather_replace_t weather_replace[] = {
 };
 
 /*
+ * The table below is used to grow things on the map. See include/tod.h for
+ * the meanings of all of the fields.
+ */
+
+weather_grow_t weather_grow[] = {
+    /* herb, tile, random, rfmin, rfmax, humin, humax, tempmin, tempmax, elevmin, elevmax */
+    {"mint", "grass", 10, 14000, 60000, 30, 100, 10, 25, -100, 9999},
+    {"mint", "brush", 8, 14000, 60000, 30, 100, 10, 25, -100, 9999},
+    {NULL, NULL, 1, 0, 0, 0, 0, 0, 0, 0, 0}
+};
+
+/*
  * Set the darkness level for a map.  Requires the map pointer.
  */
 
@@ -1180,6 +1192,11 @@ void weather_effect(char *filename)
     let_it_snow(m, wx, wy, filename);
     singing_in_the_rain(m, wx, wy, filename);
 
+    if (settings.dynamiclevel < 3)
+	return;
+
+    plant_a_garden(m, wx, wy, filename);
+
 }
 
 /*
@@ -1567,6 +1584,95 @@ void singing_in_the_rain(mapstruct *m, int wx, int wy, char *filename)
 			    }
 			break;
 		    }
+		}
+	    }
+	}
+    }
+}
+
+/*
+ * Process growth.  m is the map we are currently processing.  wx and wy are
+ * the weathermap coordinates for the weathermap square we want to work on.
+ * filename is the pathname for the current map.  This should be called from
+ * weather_effect()
+ */
+
+void plant_a_garden(mapstruct *m, int wx, int wy, char *filename)
+{
+    int x, y, i;
+    int avoid, two, temp, sky, gotsnow, found;
+    object *ob, *tmp, *oldherb;
+    archetype *at;
+
+    for (x=0; x < settings.worldmaptilesizex; x++) {
+	for (y=0; y < settings.worldmaptilesizey; y++) {
+	    (void)worldmap_to_weathermap(x, y, &wx, &wy, filename);
+	    ob = NULL;
+	    at = NULL;
+	    avoid = 0;
+	    two = 0;
+	    gotsnow = 0;
+	    temp = real_world_temperature(x, y, m);
+	    sky = weathermap[wx][wy].sky;
+	    (void)avoid_weather(&avoid, m, x, y, &gotsnow);
+	    if (!avoid) {
+		for (i=0; weather_grow[i].herb != NULL; i++) {
+		    for (tmp=GET_MAP_OB(m, x, y); tmp; tmp = tmp->above) {
+			if (strcmp(tmp->arch->name, weather_grow[i].herb) != 0)
+			    continue;
+			/* we found there is a herb here allready */
+			if (weathermap[wx][wy].rainfall < weather_grow[i].rfmin ||
+			    weathermap[wx][wy].rainfall > weather_grow[i].rfmax ||
+			    weathermap[wx][wy].humid < weather_grow[i].humin ||
+			    weathermap[wx][wy].humid > weather_grow[i].humax ||
+			    temp < weather_grow[i].tempmin ||
+			    temp > weather_grow[i].tempmax ||
+			    rndm(0, MIN(weather_grow[i].random/2, 1)) == 0) {
+			    /* the herb does not belong, randomly delete
+			      herbs to prevent overgrowth. */
+			    remove_ob(tmp);
+			    free_object(tmp);
+			    break;
+			}
+		    }
+		    /* add a random factor */
+		    if (rndm(1, weather_grow[i].random) != 1)
+			continue;
+		    /* we look up through two tiles for a matching tile */
+		    if (weather_grow[i].tile != NULL) {
+			if (strcmp(GET_MAP_OB(m, x, y)->arch->name,
+				weather_grow[i].tile) != 0)
+			    if (GET_MAP_OB(m, x, y)->above != NULL) {
+				if (strcmp(GET_MAP_OB(m, x, y)->above->arch->name,
+					   weather_grow[i].tile) != 0)
+				    continue;
+			    } else
+				continue;
+		    }
+		    if (weathermap[wx][wy].rainfall < weather_grow[i].rfmin ||
+			weathermap[wx][wy].rainfall > weather_grow[i].rfmax)
+			continue;
+		    if (weathermap[wx][wy].humid < weather_grow[i].humin ||
+			weathermap[wx][wy].humid > weather_grow[i].humax)
+			continue;
+		    if (temp < weather_grow[i].tempmin ||
+			temp > weather_grow[i].tempmax)
+			continue;
+		    if (GET_MAP_OB(m, x, y)->elevation < weather_grow[i].elevmin ||
+			GET_MAP_OB(m, x, y)->elevation > weather_grow[i].elevmax)
+			continue;
+		    /* we got this far.. must be a match */
+		    at = find_archetype(weather_grow[i].herb);
+		    break;
+		}
+		if (at != NULL) {
+		    ob = get_object();
+		    copy_object(&at->clone, ob);
+		    ob->x = x;
+		    ob->y = y;
+		    SET_FLAG(ob, FLAG_OVERLAY_FLOOR);
+		    insert_ob_in_map(ob, m, ob,
+		        INS_NO_MERGE | INS_NO_WALK_ON | INS_ABOVE_FLOOR_ONLY);
 		}
 	    }
 	}

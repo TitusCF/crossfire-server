@@ -868,4 +868,5 @@ void weather_effect(char *filename);
 object *avoid_weather(int *av, mapstruct *m, int x, int y, int *gs);
 void let_it_snow(mapstruct *m, int wx, int wy, char *filename);
 void singing_in_the_rain(mapstruct *m, int wx, int wy, char *filename);
+void plant_a_garden(mapstruct *m, int wx, int wy, char *filename);
 void process_rain(void);
