@@ -246,12 +246,12 @@ install::
 depend::
 
 clean::
-	$(RM) $(TABLES) $(ICONS)
-	$(RM) items .bmaps in_*
-	$(RM) *.ps *x*.ppm tmp.ppm work.ppm
-	$(RM) handbook.toc handbook.lot handbook.dvi handbook.log handbook.aux
+	$(RM) -f $(TABLES) $(ICONS)
+	$(RM) -f items .bmaps in_*
+	$(RM) -f  *.ps *x*.ppm tmp.ppm work.ppm
+	$(RM) -f handbook.toc handbook.lot handbook.dvi handbook.log handbook.aux handbook.idx
 
-distclean:: 
+distclean:: clean
 	$(RM) -f Makefile
 
 archive::
