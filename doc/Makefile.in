@@ -29,16 +29,14 @@ srcdir = @srcdir@
 RM=@RM@
 BASENAME = @BASENAME@
 
-SUBDIRS = playbook spoiler spell-docs spoiler-html playbook-html
+SUBDIRS = Developers playbook spoiler spell-docs spoiler-html playbook-html
 
-PFILES = Makefile.in Crossedit.doc PlayerStats Protocol RandomMaps.doc \
-	README RunTimeCommands Styles.doc \
-	SurvivalGuide alchemy.doc crossedit.man crossfire.doc crossfire.man \
-	crosslib.doc experience images include_html.pl mapguide \
-	mapmakers_guide_to_runes map-technical metaserver \
-	multigod programming_guide \
-	skills.doc skills_developer.doc spell_params.doc spell-paths \
-	spellcasters_guide_to_runes spells teleporter.doc 
+PFILES = Makefile.in Crossedit.doc PlayerStats \
+	README RunTimeCommands \
+	SurvivalGuide alchemy.doc crossedit.man crossfire.man \
+	experience include_html.pl  metaserver \
+	multigod skills.doc spell_params.doc spell-paths \
+	spellcasters_guide_to_runes spells
 
 FILES = $(PFILES) handbook.ps spoiler.ps
 

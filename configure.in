@@ -250,7 +250,7 @@ localstatedir=${nlocaldir}
 AC_OUTPUT(Makefile
 	crossedit/Makefile crossedit/doc/Makefile crossedit/include/Makefile
 	crossedit/Cnv/Makefile crossedit/bitmaps/Makefile
-	doc/Makefile doc/spell-docs/Makefile
+	doc/Makefile doc/Developers/Makefile doc/spell-docs/Makefile
 	doc/spoiler/Makefile doc/spoiler-html/Makefile
 	doc/playbook/Makefile doc/playbook-html/Makefile
 	lib/Makefile random_maps/Makefile socket/Makefile server/Makefile 

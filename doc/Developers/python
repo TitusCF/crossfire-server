@@ -1,0 +1,294 @@
+THE PYTHON PLUGIN
+=================
+
+How do I hook a script to an object ?
+-------------------------------------
+Use the event_xxx to specify the script to use. The base directory for the
+scripts is the map directory.
+The option field is unused for now.
+The plugin field should be "Python" of course.
+You of course need to write some Python code too... You do as usual, but
+remember to add an "import CFPython" to make all crossfire-specific functions
+available in your scripts.
+
+How do I hook a global event ?
+------------------------------
+Each global event is bound to a specific Python script file. Those files are
+located in the python/ subdirectory of your crossfire map directory. They have
+specific names, too: python_xxx.py, where xxx is the name of the global event
+you want to intercept. For example, a script that should be run each time a
+player logs in ("login" event) should be named python_login.py.
+
+What functions are currently supported ?
+----------------------------------------
+A complete list of those functions is given below.
+Note to Scriptfire users: CFPython implements all the old Scriptfire functions.
+Although the syntax of Python is quite different from Guile, it should not be a
+problem to port your old code.
+
+Last count (10/09/2001) result: 181 functions (not counting the various spells
+and skills wrappers). This of course does not include all the Python functions,
+just the crossfire-specific ones.
+
+In the following, I use the following type naming convention:
+int   : An integer;
+long  : A long;
+object: A crossfire object. (In fact, it is a long).
+string: A character string.
+
+A
+AcquireSpell(object who, int spellid)
+  Makes "who" learn the spell identified by its spellid.
+  Wrappers for all crossfire spellids are available under CFPython.
+  Does not return a value.
+
+ActivateRune(object who, object what)
+  Makes "who" trigger the rune "what".
+  Does not return a value.
+
+Apply(object who, object what, int flags)
+  Makes object "who" do a manual apply on object "what" with the specified
+  flags. Consult the crossfire source code for all available flags.
+  Return value: integer.
+
+B
+BlocksView(object who)
+  Checks if "who" can block the line-of-sight.
+  Return value: integer.
+
+C
+CastAbility(object who, int spellid, int direction, string options)
+  Makes "who" casts a spell, identified by its id, into one direction and with
+  eventually some options (like "create food booze"). The spell is cast as an
+  ability and thus does not use any mana point.
+  Does not return a value.
+
+CheckTrigger(object who, object what)
+  Makes "who" test trigger "what".
+  Does not return a value.
+
+CastSpell(object who, int spellid, int direction, string options)
+  Makes "who" casts a spell, identified by its id, into one direction and with
+  eventually some options (like "create food booze").
+  Does not return a value.
+
+CheckInvisibleInside(object who, string id)
+  Checks for the existence of an invisible object named "id" inside object
+  "who".
+  Return value: The object found, if any.
+
+CreateInvisibleInside()
+CreateObjectInside()
+CheckMap()
+CheckInventory()
+CreateObject()
+CanSeeInvisible()
+CanRoll()
+CanPassThru()
+CanPickUp()
+CanCastSpell()
+CanUseScroll()
+CanUseWand()
+CanUseBow()
+CanUseArmour()
+CanUseWeapon()
+CanUseRing()
+CanUseSkill()
+CanUseRod()
+CanUseHorn()
+CanSeeInDark()
+
+D
+Drop()
+DirectionN()
+DirectionNE()
+DirectionE()
+DirectionSE()
+DirectionS()
+DirectionSW()
+DirectionW()
+DirectionNW()
+DoKnowSpell()
+
+E
+F
+FindPlayer()
+FixObject()
+ForgetSpell()
+
+G
+GetSkillExperience()
+GetMapPath()
+GetMapObject()
+GetMessage()
+GetGod()
+GetWeight()
+GetMap()
+GetNextObject()
+GetPreviousObject()
+GetFirstObjectOnSquare()
+GetQuantity()
+GetExperience()
+GetSpeed()
+GetFood()
+GetGrace()
+GetReturnValue()
+GetDirection()
+GetLastSP()
+GetLastGrace()
+GetAttackType()
+GetDamage()
+GetName()
+GetEventOptions()
+GetEventPlugin()
+GetType()
+GetEventHandler()
+GetIP()
+GetInventory()
+GetInternalName()
+GetAC()
+GetCha()
+GetCon()
+GetDex()
+GetHP()
+GetInt()
+GetPow()
+GetSP()
+GetStr()
+GetWis()
+GetMaxHP()
+GetMaxSP()
+GetXPos()
+GetYPos()
+
+H
+HitBack()
+HasXRays()
+HasStealth()
+HasBeenApplied()
+
+I
+IsOutOfMap()
+IsCanBePicked()
+InsertObjectInside()
+IsInvisible()
+IsAlive()
+IsWiz()
+IsApplied()
+IsUnpaid()
+IsFlying()
+IsMonster()
+IsFriendly()
+IsGenerator()
+IsThrown()
+IsTurnable()
+IsUsedUp()
+IsIdentified()
+IsSplitting()
+IsUndead()
+IsScared()
+IsUnaggressive()
+IsOfType()
+IsRunningAway()
+IsUnique()
+IsFloor()
+IsLifeSaver()
+IsSleeping()
+IsConfused()
+IsCursed()
+IsDamned()
+IsKnownMagical()
+IsKnownCursed()
+IsBlind()
+
+J
+K
+KillObject()
+
+L
+LoadObject()
+
+M
+MatchString()
+Message()
+MakeInvisible()
+
+N
+O
+OnlyAttack()
+
+P
+PickUp()
+
+Q
+R
+ReadyMap()
+ReflectMissiles()
+ReflectSpells()
+RemoveObject()
+RegisterCommand()
+
+S
+SetQuantity()
+SetName()
+SetMessage()
+SetSkillExperience()
+SetCursed()
+SetUnaggressive()
+SetGod()
+SetWeight()
+Say()
+SetInvisible()
+SetSpeed()
+SetFood()
+SetGrace()
+SetReturnValue()
+SetDirection()
+SetLastSP()
+SetLastGrace()
+SetFace()
+SetAttackType()
+SetDamage()
+SetBeenApplied()
+SetIdentified()
+SaveObject()
+SetEventHandler()
+SetEventPlugin()
+SetEventOptions()
+SetPosition()
+SetNickname()
+SetAC()
+SetCha()
+SetCon()
+SetDex()
+SetHP()
+SetInt()
+SetMaxHP()
+SetMaxSP()
+SetPow()
+SetSP()
+SetStr()
+SetWis()
+StandStill()
+
+T
+Take()
+Teleport()
+
+U
+V
+W
+WhoAmI()
+WhoIsActivator()
+WhatIsMessage()
+Write()
+WhoIsOther()
+WasWiz()
+
+X
+Y
+Z
+
+Chachkoff Y.
+
+yann.chachkoff@mailandnews.com
