@@ -39,7 +39,6 @@
 long max_time = MAX_TIME;
 struct timeval last_time;
 
-#ifdef DEBUG_TIME
 #define PBUFLEN 100
 long process_utime_save[PBUFLEN];
 long psaveind;
@@ -48,7 +47,6 @@ long process_min_utime = 999999999;
 long process_tot_mtime;
 long pticks;
 long process_utime_long_count;
-#endif
 
 /* 0.94.1 - change to GETTIMEOFDAY macro - SNI systems only one one option.
  * rather than have complex #ifdefs throughout the file, lets just figure
@@ -70,7 +68,6 @@ long process_utime_long_count;
 void
 reset_sleep()
 {
-#ifdef DEBUG_TIME
   int i;
   for(i = 0; i < PBUFLEN; i++)
     process_utime_save[i] = 0;
@@ -79,7 +76,6 @@ reset_sleep()
   process_min_utime = 999999999;
   process_tot_mtime = 0;
   pticks = 0;
-#endif
 
   (void) GETTIMEOFDAY(&last_time);
 }
@@ -87,7 +83,6 @@ reset_sleep()
 void
 log_time(long process_utime)
 {
-#ifdef DEBUG_TIME
   pticks++;
   if (++psaveind >= PBUFLEN)
     psaveind = 0;
@@ -97,7 +92,6 @@ log_time(long process_utime)
   if (process_utime < process_min_utime)
     process_min_utime = process_utime;
   process_tot_mtime += process_utime/1000;
-#endif
 }
 
 /*
@@ -116,9 +110,7 @@ enough_elapsed_time()
   elapsed_utime = (new_time.tv_sec - last_time.tv_sec) * 1000000 +
                   new_time.tv_usec - last_time.tv_usec;
   if (elapsed_utime > max_time) {
-#ifdef DEBUG_TIME
     log_time(elapsed_utime);
-#endif
     last_time.tv_sec = new_time.tv_sec;
     last_time.tv_usec = new_time.tv_usec;
     return 1;
@@ -152,10 +144,8 @@ sleep_delta()
     sleep_sec +=1;
   }
 
-#ifdef DEBUG_TIME
   log_time((new_time.tv_sec - last_time.tv_sec)*1000000
            + new_time.tv_usec - last_time.tv_usec);
-#endif
 
   if (sleep_sec >= 0 && sleep_usec > 0) {
     static struct timeval sleep_time;
@@ -163,10 +153,8 @@ sleep_delta()
     sleep_time.tv_usec = sleep_usec;
     select(0, NULL, NULL, NULL, &sleep_time);
   }
-#ifdef DEBUG_TIME
   else
     process_utime_long_count++;
-#endif
   /*
    * Set last_time to when we're expected to wake up:
    */
@@ -195,7 +183,6 @@ set_max_time(long t) {
 void
 time_info(object *op)
 {
-#ifdef DEBUG_TIME
   int tot = 0, maxt = 0, mint = 99999999, long_count = 0, i;
 
   (*draw_info_func) (NDI_UNIQUE, 0,op,"Total time:");
@@ -229,9 +216,6 @@ time_info(object *op)
           max_time/1000, long_count,
           100*long_count/(pticks > PBUFLEN ? PBUFLEN : pticks));
   (*draw_info_func) (NDI_UNIQUE, 0,op,errmsg);
-#else
-  (*draw_info_func) (NDI_UNIQUE, 0,op,"Not compiled with time-debug info.");
-#endif
 }
 
 long

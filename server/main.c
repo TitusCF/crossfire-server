@@ -870,29 +870,42 @@ int forbid_play()
 
 /*
  *  do_specials() is a collection of functions to call from time to time.
+ * Modified 2000-1-14 MSW to use the global pticks count to determine how
+ * often to do things.  This will allow us to spred them out more often.
+ * I use prime numbers for the factor count - in that way, it is less likely
+ * these actions will fall on the same tick (compared to say using 500/2500/15000
+ * which would mean on that 15,000 tick count a whole bunch of stuff gets
+ * done).  Of course, there can still be times where multiple specials are
+ * done on the same tick, but that will happen very infrequently 
+ *
+ * I also think this code makes it easier to see how often we really are
+ * doing the various things.
  */
 
-
 void do_specials() {
-  static int special_count = 0, special2 = 0;
-
-  if(++special_count < 500)
-    return;
-  special_count = 0;
-  special2++;
 
 #ifdef WATCHDOG
-  watchdog();
+    if (!(pticks % 503))
+	watchdog();
 #endif
 
-  flush_old_maps();    /* Clears the tmp-files of maps which have reset */
-  if(!(special2%5)) {
-    fix_weight();        /* Hack to fix weightproblems caused by bugs */
-    metaserver_update();    /* 2500 ticks is about 5 minutes */
-    if (!(special2%25))
+    if (!(pticks % 509))
+	flush_old_maps();    /* Clears the tmp-files of maps which have reset */
+
+    if (!(pticks % 2503))
+	fix_weight();        /* Hack to fix weightproblems caused by bugs */
+
+    if (!(pticks % 2521))
+	metaserver_update();    /* 2500 ticks is about 5 minutes */
+
+    if (!(pticks % 5003)) 
+	write_book_archive();
+
+    if (!(pticks % 5009)) 
+	clean_friendly_list();
+
+    if (!(pticks % 12503))
       fix_luck();
-  }
-  if (!(special2%10)) write_book_archive();
 }
 
 /*

@@ -898,7 +898,6 @@
 #define TREASURES	"treasures"
 
 
-#define DEBUG_TIME		/* Enable the 'time command, and it's logs */
 #define MAX_ERRORS	25	/* Bail out if more are received during tick */
 #define STARTMAX        500     /* How big array of objects to start with */
 #define OBJ_EXPAND      100     /* How big steps to use when expanding array */

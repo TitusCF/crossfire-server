@@ -929,7 +929,7 @@ void free_object(object *ob) {
     }
   if(QUERY_FLAG(ob,FLAG_FRIENDLY)) {
     LOG(llevMonster,"Warning: tried to free friendly object.\n");
-    (*remove_friendly_object_func)(ob);
+    remove_friendly_object(ob);
   }
   if(QUERY_FLAG(ob,FLAG_FREED)) {
     dump_object(ob);

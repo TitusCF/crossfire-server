@@ -16,6 +16,30 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 CVS changes since last release:
+
+MSW 2000/01/15:
+Various fixes for friendly object code:
+common/button.c: Add missing call to remove_friendly_object
+common/friend.c: Pretty much completely re-written.  add_friendly_object now
+    checks to make sure the object being added isn't already on the list,
+    remove_friendly_object will remove objects whose tags don't match,
+    and added clean_friendly_list.
+common/object.c:  No reason to use the function pointer to
+    remove_friendly_object since that function is in the lib.
+common/time.c: Make DEBUG_TIME always on (no longer compile time option).
+    other areas use the global var pticks, so if it was turned off, compile
+    would break anyways.
+common/treasuer.c: No longer print debug messages on artifacts created.
+    Cluttered log file making it hard to see more important errors.
+include/config.h: Remove DEBUG_TIME define.
+include/libproto.h: Rebuilt for clean_friendly_list function.
+server/main.c: rewrote do_specials to do things based on pticks variable.
+    This allows various specials to be spread out across multiple ticks
+    easier.  Also, added clean_friendly_function to part of what this does.
+server/skills.c: add missing call to remove_friendly_object.  Also, removed
+    from #if 0 .. #else .. #endif code.
+End of MSW 2000/01/15 checkin.
+
 PeterM 2001/01/08:  Wrathful Eye spell implemented.
 
 MSW 2000/12/26:

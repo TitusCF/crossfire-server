@@ -738,14 +738,10 @@ int use_oratory(object *pl, int dir) {
                 new_draw_info_format(NDI_UNIQUE, 0,pl, 
 			"You convince the %s to follow you instead!\n",
 			query_name(tmp));
-#if 0
-		return calc_skill_exp(pl,tmp);
-#else
 		/* Abuse fix - don't give exp since this can otherwise
 		 * be used by a couple players to gets lots of exp.
 		 */
 		return 0;
-#endif
 	    }
 	} /* Creature was already a pet of someone */
 
@@ -771,6 +767,7 @@ int use_oratory(object *pl, int dir) {
 		  "Your speach angers the %s!\n",query_name(tmp)); 
 	    if(QUERY_FLAG(tmp,FLAG_FRIENDLY)) {
 		CLEAR_FLAG(tmp,FLAG_FRIENDLY);
+		remove_friendly_object(tmp);
 		tmp->move_type = 0; 	/* needed? */ 
 	    }
 	    CLEAR_FLAG(tmp,FLAG_UNAGGRESSIVE);

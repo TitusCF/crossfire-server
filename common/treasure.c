@@ -1302,7 +1302,7 @@ static int legal_artifact_combination(object *op, artifact *art) {
  */
 
 void give_artifact_abilities(object *op, object *artifct) {
-  char new_name[MAX_BUF], identified;
+  char new_name[MAX_BUF];
 
   sprintf(new_name, "of %s", artifct->name);
   if (op->title)
@@ -1310,13 +1310,15 @@ void give_artifact_abilities(object *op, object *artifct) {
   op->title = add_string(new_name);
   add_abilities(op, artifct); /* Give out the bonuses */
 
-#if 1 /* Bit verbose, but keep it here until next time I need it... */
-  identified = QUERY_FLAG(op, FLAG_IDENTIFIED);
-  SET_FLAG(op, FLAG_IDENTIFIED);
-  LOG(llevDebug, "Generated artifact %s %s [%s]\n",
+#if 0 /* Bit verbose, but keep it here until next time I need it... */
+  {
+    char identified = QUERY_FLAG(op, FLAG_IDENTIFIED);
+    SET_FLAG(op, FLAG_IDENTIFIED);
+    LOG(llevDebug, "Generated artifact %s %s [%s]\n",
       op->name, op->title, describe_item(op));
-  if (!identified)
+    if (!identified)
 	  CLEAR_FLAG(op, FLAG_IDENTIFIED);
+  }
 #endif
   return;
 }
