@@ -842,6 +842,8 @@ void animate_bomb(object *op) {
     at = find_archetype(SPLINT);
     if (at) {
 	for(i=1;i<9;i++) {
+	    if (out_of_map(op->map, op->x + freearr_x[i], op->y + freearr_x[i]))
+		continue;
 	    tmp = arch_to_object(at);
 	    tmp->direction = i;
 	    tmp->range = op->range;
