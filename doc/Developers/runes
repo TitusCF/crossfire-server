@@ -32,6 +32,9 @@ slaying		--	name of the spell in the rune, if any.
 			Optional, but if present, overrides sp.
 			recommended for use by mapmakers to ensure portability.
 
+other_arch	--	spell archetype of the spell in the rune, if any.
+			Optional, but if present, overrides sp and slaying.
+
 hp		--	How many times the rune detonates before disappearing
 
 attacktype	--	If there isn't any spell, what attacktype to use 
@@ -51,9 +54,7 @@ mina			with face2 on the square.
 
 direction	--	Direction to cast the spell the rune contains 
 
-Special for Rune of Summoning:
-race		--	What sort of creature to summon
-maxhp		--	How many creatures to summon
+maxhp		--	Number of spells to cast
 
 
 Predefined runes for your convenience:  See the Runes pickmap on the editor
