@@ -1764,32 +1764,37 @@ void blind_player(object *op, object *hitter, int dam)
 void paralyze_player(object *op, object *hitter, int dam) 
 {
     float effect,max;
-    object *tmp;
+    /* object *tmp; */
 
+    /* This is strange stuff... someone knows for what this is
+     * written? Well, i think this can and should be removed 
+    */
 
+    /*
     if((tmp=present(PARAIMAGE,op->map,op->x,op->y))==NULL) {
 	tmp=clone_arch(PARAIMAGE);
 	tmp->x=op->x,tmp->y=op->y;
-	 /*
-	 * This is for a simple visual effect anyway.
-	 */
 	insert_ob_in_map(tmp,op->map,tmp,INS_NO_MERGE | INS_NO_WALK_ON);
     }
+    */
+
     /* Do this as a float - otherwise, rounding might very well reduce this to 0 */
     effect = (float)dam * 3.0 * (100.0 - op->resist[ATNR_PARALYZE]) / 100;
 
     if (effect==0) return;
 
+    SET_FLAG(op,FLAG_PARALYZED); /* we mark this object as paralyzed */ 
+    animate_object(op); /* set the right animation for paralyze when needed */
+    
     op->speed_left-=FABS(op->speed)*effect;
-    tmp->stats.food+=(signed short) effect/op->speed;
+    /* tmp->stats.food+=(signed short) effect/op->speed; */
 
     /* max number of ticks to be affected for. */
     max = (100 - op->resist[ATNR_PARALYZE])/ 2;
+    if (op->speed_left< -(FABS(op->speed)*max))
+        op->speed_left  = (float) -(FABS(op->speed)*max);
 
-    if (op->speed_left< -(FABS(op->speed)*max)) {
-      op->speed_left  = (float) -(FABS(op->speed)*max);
-      tmp->stats.food = (signed short) (max/FABS(op->speed));
-    }
+/*      tmp->stats.food = (signed short) (max/FABS(op->speed)); */
 }
 
 

@@ -424,6 +424,9 @@ error - Your ANSI C compiler should be defining __STDC__;
 /* FLAG_IS_TURNING is no longer used */
 /*#define FLAG_IS_TURNING		23 *//* Object will turn after player */
 
+/* this defines paralyze as spell on player, not onlya effect on speed */
+#define FLAG_PARALYZED      23 /* Object is paralyzed */
+
 #define FLAG_IS_TURNABLE 	24 /* Object can change face with direction */
 #define FLAG_WALK_OFF		25 /* Object is applied when left */
 #define FLAG_FLY_ON		26 /* As WALK_ON, but only with FLAG_FLYING */

@@ -1739,6 +1739,8 @@ int handle_newcs_player(object *op)
     HandleClient(&op->contr->socket, op->contr);
     if (op->speed_left<0) return 0;
 
+    CLEAR_FLAG(op,FLAG_PARALYZED); /* if we are here, we never paralyzed anymore */
+    
     if(op->direction && (op->contr->run_on || op->contr->fire_on)) {
 	/* All move commands take 1 tick, at least for now */
 	op->speed_left--;

@@ -209,6 +209,8 @@ int move_monster(object *op) {
      */
     if (!op->map) return 0;
 
+    CLEAR_FLAG(op,FLAG_PARALYZED); /* if we are here, we never paralyzed anymore */
+
     enemy= find_enemy(op, &rv);
 
     if(QUERY_FLAG(op, FLAG_SLEEP)||QUERY_FLAG(op, FLAG_BLIND)
