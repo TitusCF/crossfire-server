@@ -17,6 +17,19 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+New alchemy code, as discussed on the developer list.  Now recipies include
+two new tags: skill and cauldron.  With skill, you can set which skill
+activates this recipie, and the cauldron, corresponds to the arch name of    
+the facility you will use when creating the item.  In this way, item
+creation is now more generalized than just alchemy, and specific formulae    
+can be written to utilize different skills, or perhaps special formulae
+would require a hard-to-find cauldron.
+
+Functionally, the alchemy, or alchemy-like-skills are now activated by    
+the use_skill command.  The secondary use of the alchemy spell has been
+withdrawn, so now it functions in the way it was originally intended again.
+garbled 2002-11-11
+
 socket/loop.c: add a setting fastclock.  This makes the server's clock run
 *really* fast.  For now, it's good for debugging purposes, but in the
 future it will allow a dm to ravage a world with weather quickly. 
