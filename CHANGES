@@ -18,6 +18,9 @@ else.  With this, include the file(s) that you changed.
 CVS changes since last release:
 
 MSW 2000/12/3:
+crossedit/Attr.c: Add the new resist names to set of variables one can set.
+
+MSW 2000/12/3:
 Misc changes.  Main one is adding PNG support to the editor.
 TODO: Remove outdated things to do (like partial resistance code)
 configure, configure.in, include/autoconf.h.in: Add check for libpng.

@@ -417,6 +417,15 @@ char *allowed_variables[] = {
 #ifdef NPC_PROG
     "npc_status", "npc_program", 
 #endif
+
+    /* Resistances */ "resist_physical", "resist_magic", "resist_fire",
+   "resist_electricity", "resist_cold", "resist_confusion", "resist_acid",
+   "resist_drain", "resist_weaponmagic", "resist_ghosthit", "resist_poison",
+   "resist_slow", "resist_paralyze", "resist_turn_undead", "resist_fear",
+   "resist_cancellation", "resist_deplete", "resist_death", "resist_chaos",
+   "resist_counterspell", "resist_godpower", "resist_holyword",
+   "resist_blind",
+
 };
 
 #define ALLOWED_VARIABLES (sizeof(allowed_variables) / sizeof (char *))
