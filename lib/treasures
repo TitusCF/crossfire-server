@@ -4841,5 +4841,6 @@ treasure skeletalmage
   more
   arch ability_fear
   more
-  arch ability_coldspell
+  arch ability_frostbolt
+    chance 67
 end
