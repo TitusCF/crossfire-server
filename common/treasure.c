@@ -463,6 +463,35 @@ static int difftomagic_list[DIFFLEVELS][MAXMAGIC+1] =
   {  0, 0, 0, 0,100}, /*31*/
 };
 
+/* calculate the appropriate level for wands staves and scrolls.  If
+   retmult is 1, return the multiplier, not the level, for computing value */
+
+int level_for_item(object *op, int difficulty, int retmult)
+{
+    int level, mult, olevel;
+
+    mult = 0;
+    level = spells[op->stats.sp].level;
+    if (SP_PARAMETERS[op->stats.sp].ldam != 0)
+	mult = SP_PARAMETERS[op->stats.sp].ldam;
+    if (SP_PARAMETERS[op->stats.sp].ldur > SP_PARAMETERS[op->stats.sp].ldam &&
+	SP_PARAMETERS[op->stats.sp].ldur != 0)
+	mult = SP_PARAMETERS[op->stats.sp].ldur;
+    if (mult == 0)
+	mult = 5;
+
+    if (retmult)
+	return mult;
+
+    if (difficulty * mult > 100)
+	difficulty = 100/mult;
+    olevel = mult * rndm(1, difficulty);
+
+    if (olevel > level)
+	return olevel;
+    return level;
+}
+
 /*
  * Based upon the specified difficulty and upon the difftomagic_list array,
  * a random magical bonus is returned.  This is used when determine
@@ -702,7 +731,7 @@ int get_magic(int diff) {
 void fix_generated_item (object *op, object *creator, int difficulty,
                          int max_magic, int flags)
 {
-    int was_magic = op->magic, num_enchantments=0, save_item_power;
+    int was_magic = op->magic, num_enchantments=0, save_item_power, mult;
 
     if(!creator||creator->type==op->type) creator=op; /*safety & to prevent polymorphed 
 							* objects giving attributes */ 
@@ -876,7 +905,7 @@ void fix_generated_item (object *op, object *creator, int difficulty,
 
 	    case WAND:
 		do 
-		    op->stats.sp=RANDOM()%NROFREALSPELLS;
+		    op->stats.sp=rndm(0, NROFREALSPELLS-1);
 		while (!spells[op->stats.sp].charges|| spells[op->stats.sp].level>DICESPELL);
 
 		if (spells[op->stats.sp].cleric) {
@@ -887,36 +916,38 @@ void fix_generated_item (object *op, object *creator, int difficulty,
 		    copy_object(&staff_arch->clone, op);
 		    op->stats.sp = i;
 		}
-		op->stats.food=RANDOM()%spells[op->stats.sp].charges+1;
-		op->level = spells[op->stats.sp].level/2+ RANDOM()%difficulty + RANDOM()%difficulty;
-		if (op->level<1) op->level=1;
-		op->value=(op->value*spells[op->stats.sp].level)/ (spells[op->stats.sp].level+4);
+		op->stats.food=rndm(1, spells[op->stats.sp].charges);
+		op->level = level_for_item(op, difficulty, 0);
+		mult = level_for_item(op, difficulty, 1);
+		op->value += ((op->level - spells[op->stats.sp].level)/mult) *
+		    (op->value/(20/mult));
 		break;
 
 	    case ROD:
 		if (op->stats.maxhp)
-		    op->stats.maxhp += RANDOM()%op->stats.maxhp;
+		    op->stats.maxhp += rndm(0, op->stats.maxhp-1);
 		op->stats.hp = op->stats.maxhp;
 		do
-		    op->stats.sp = RANDOM()%NROFREALSPELLS;
+		    op->stats.sp = rndm(0, NROFREALSPELLS-1);
 		while (!spells[op->stats.sp].charges||
 		       spells[op->stats.sp].sp > op->stats.maxhp ||
 		       spells[op->stats.sp].level>DICESPELL);
-
-		op->level = spells[op->stats.sp].level/2+ RANDOM()%difficulty + RANDOM()%difficulty;
-		op->value=(op->value*op->stats.hp*spells[op->stats.sp].level)/
-		    (spells[op->stats.sp].level+4);
+		mult = level_for_item(op, difficulty, 1);
+		op->level = level_for_item(op, difficulty, 0);
+		op->value += ((op->level - spells[op->stats.sp].level)/mult *
+			      op->stats.hp) * (op->value/(20/mult));
 		break;
 
 	    case SCROLL:
 		do
-		    op->stats.sp=RANDOM()%NROFREALSPELLS;
+		    op->stats.sp=rndm(0, NROFREALSPELLS-1);
 		while (!spells[op->stats.sp].scrolls || spells[op->stats.sp].scroll_chance<=RANDOM()%10);
 
-		op->nrof=RANDOM()%spells[op->stats.sp].scrolls+1;
-		op->level = spells[op->stats.sp].level/2+ RANDOM()%difficulty + RANDOM()%difficulty;
-		if (op->level<1) op->level=1;
-		op->value=(op->value*spells[op->stats.sp].level)/ (spells[op->stats.sp].level+4);
+		op->nrof=rndm(1, spells[op->stats.sp].scrolls);
+		mult = level_for_item(op, difficulty, 1);
+		op->level = level_for_item(op, difficulty, 0);
+		op->value += ((op->level - spells[op->stats.sp].level)/mult) *
+		    (op->value/(20/mult));
 
 		/* add exp so reading them properly gives xp */ 
 		op->stats.exp = op->value/5;

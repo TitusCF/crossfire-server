@@ -356,6 +356,7 @@ extern void create_all_treasures(treasure *t, object *op, int flag, int difficul
 extern void create_one_treasure(treasurelist *tl, object *op, int flag, int difficulty, int tries);
 extern void create_treasure(treasurelist *t, object *op, int flag, int difficulty, int tries);
 extern object *generate_treasure(treasurelist *t, int difficulty);
+extern int level_for_item(object *op, int difficulty, int retmult);
 extern int magic_from_difficulty(int difficulty);
 extern void set_abs_magic(object *op, int magic);
 extern void set_ring_bonus(object *op, int bonus);
