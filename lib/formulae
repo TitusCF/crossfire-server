@@ -579,7 +579,7 @@ exp 4500
 yield 5
 skill alchemy
 cauldron cauldron
-ingred 3 pile of gypsum,dread's eye,water of emerald
+ingred 3 pile of gypsum,Dread's eye,water of emerald
 #
 # -- detect magic
 Object show enchantment
@@ -1505,7 +1505,7 @@ trans 1
 yield 1
 skill woodsman
 cauldron tanbench
-ingred cloak,dread's eye,holy symbol,2 potion of power
+ingred cloak,Dread's eye,holy symbol,2 potion of power
 #
 Object Gaea
 arch cloak
@@ -1586,7 +1586,7 @@ trans 1
 yield 1
 skill smithery
 cauldron forge
-ingred elven boots,dread's eye,block of true lead
+ingred elven boots,Dread's eye,block of true lead
 # 
 Object mobility
 arch levitationboots
@@ -1597,7 +1597,7 @@ trans 1
 yield 1
 skill smithery
 cauldron forge
-ingred levitation boots,dread's eye,block of true lead
+ingred levitation boots,Dread's eye,block of true lead
 #
 Object clawing
 arch low_boots
@@ -2461,7 +2461,7 @@ trans 1
 yield 1
 skill smithery
 cauldron forge
-ingred firebrand,3 chinese dragon's steak,chinese dragon's heart,bottle of philosophical oil
+ingred Firebrand,3 chinese dragon's steak,chinese dragon's heart,bottle of philosophical oil
 #
 Object Slay Dragon
 arch frostbrand
@@ -2472,7 +2472,7 @@ trans 1
 yield 1
 skill smithery
 cauldron forge
-ingred frostbrand,3 dragon's steak,dragon's heart,bottle of philosophical oil
+ingred Frostbrand,3 dragon's steak,dragon's heart,bottle of philosophical oil
 #
 Object Glamdri
 arch sabre
