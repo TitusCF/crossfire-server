@@ -390,7 +390,8 @@ void check_stat_bounds(living *stats) {
 int change_abil(object *op, object *tmp) {
   int flag=QUERY_FLAG(tmp,FLAG_APPLIED)?1:-1,i,j,success=0;
   object refop;
-
+  char message[MAX_BUF];
+  
   /* remember what object was like before it was changed.  note that
    * refop is a local copy of op only to be used for detecting changes
    * found by fix_player.  refop is not a real object */
@@ -623,30 +624,25 @@ int change_abil(object *op, object *tmp) {
     else
       (*draw_info_func)(NDI_UNIQUE, 0, op,"You feel your digestion speeding up.");
   }
-    for (i=0; i <NROFATTACKS; i++) {
-	if (i==ATNR_PHYSICAL) continue;	/* Don't display those messages */
-	if (op->resist[i] != refop.resist[i]) {
-	    success=1;
-	    if (op->resist[i]==100) { /* Now immune */
-		(*draw_info_func)(NDI_UNIQUE|NDI_BLUE, 0, op,
-				  resist_change[i][0]);
-	    } else if (refop.resist[i]==100) { /* was immune */
-		(*draw_info_func)(NDI_UNIQUE|NDI_BLUE, 0, op,
-				  resist_change[i][1]);
-	    } else if (op->resist[i] > refop.resist[i]) { /* more resistant */
-		(*draw_info_func)(NDI_UNIQUE|NDI_BLUE, 0, op,
-				  resist_change[i][2]);
 
-	    } else { /* now less resistant - only thing left */
-		(*draw_info_func)(NDI_UNIQUE|NDI_BLUE, 0, op,
-				  resist_change[i][3]);
-
-	    }
-	}
+  /* Messages for changed resistance */
+  for (i=0; i<NROFATTACKS; i++) {
+    if (i==ATNR_PHYSICAL) continue;	/* Don't display about armour */
+    
+    if (op->resist[i] != refop.resist[i]) {
+      success=1;
+      if (op->resist[i] > refop.resist[i])
+	sprintf(message, "Your resistance to %s rises to %d%%.",
+	       change_resist_msg[i], op->resist[i]);
+      else
+	sprintf(message, "Your resistance to %s drops to %d%%.",
+	       change_resist_msg[i], op->resist[i]);
+      
+      (*draw_info_func)(NDI_UNIQUE|NDI_BLUE, 0, op, message);
     }
+  }
 
-
-    if(tmp->type!=EXPERIENCE) {
+     if(tmp->type!=EXPERIENCE) {
 	for (j=0; j<7; j++) {
 	    if ((i=get_attr_value(&(tmp->stats),j))!=0) {
 		success=1;
@@ -790,7 +786,9 @@ void fix_player(object *op) {
   float M,W,s,D,K,S,M2;
   int weapon_weight=0,weapon_speed=0;
   int best_wc=0, best_ac=0, wc=0;
+  int prot[NROFATTACKS], vuln[NROFATTACKS], potion_resist[NROFATTACKS];
   object *grace_obj=NULL,*mana_obj=NULL,*hp_obj=NULL,*wc_obj=NULL,*tmp;
+  
   if(op->type==PLAYER) {
     for(i=0;i<7;i++) {
       set_attr_value(&(op->stats),i,get_attr_value(&(op->contr->orig_stats),i));
@@ -835,8 +833,18 @@ void fix_player(object *op) {
   op->path_repelled=op->arch->clone.path_repelled;
   op->path_denied=op->arch->clone.path_denied;
 
+  /* initializing resistances from the values in player/monster's
+   * archetype clone:  */
   memcpy(&op->resist, &op->arch->clone.resist, sizeof(op->resist));
-
+  
+  for (i=0;i<NROFATTACKS;i++) {
+    if (op->resist[i] > 0)
+      prot[i]= op->resist[i], vuln[i]=0;
+    else
+      vuln[i]= -(op->resist[i]), prot[i]=0;
+    potion_resist[i]=0;
+  }
+  
   wc=op->arch->clone.stats.wc;
   op->stats.dam=op->arch->clone.stats.dam;
 
@@ -888,10 +896,26 @@ void fix_player(object *op) {
 	if(speed_reduce_from_disease ==0) speed_reduce_from_disease = 1;
       }
 
-      for (i=0; i<NROFATTACKS; i++)
-	    if (tmp->resist[i]) 
-		op->resist[i] += ((100-op->resist[i])*tmp->resist[i])/100;
-
+      /* Pos. and neg. protections are counted seperate (-> pro/vuln).
+       * (Negative protections are calculated extactly like positive.)
+       * Resistance from potions are treated special as well. If there's
+       * more than one potion-effect, the bigger prot.-value is taken. */
+      if (tmp->type != POTION) {
+	for (i=0; i<NROFATTACKS; i++) {
+	  if (!strcmp(tmp->arch->name, "force") &&
+	      tmp->resist[i] && tmp->type==POTION_EFFECT) {
+	    if (potion_resist[i])
+	      potion_resist[i] = MAX(potion_resist[i], tmp->resist[i]);
+	    else
+	      potion_resist[i] = tmp->resist[i];
+	  }
+	  else if (tmp->resist[i] > 0) 
+	    prot[i] += ((100-prot[i])*tmp->resist[i])/100;
+	  else if (tmp->resist[i] < 0)
+	    vuln[i] += ((100-vuln[i])*(-tmp->resist[i]))/100;
+	}
+      }
+      
       if (tmp->type!=BOW) {
 		  if(tmp->type != SYMPTOM) 
 			 op->attacktype|=tmp->attacktype;
@@ -1063,7 +1087,19 @@ void fix_player(object *op) {
         break;
       }
     } /* Item is equipped - end of for loop going through items. */
-
+  
+  /* 'total resistance = total protections - total vulnerabilities'.
+   * If there is an uncursed potion in effect, granting more protection
+   * than that, we take: 'total resistance = resistance from potion'.
+   * If there is a cursed (and no uncursed) potion in effect, we take
+   * 'total resistance = vulnerability from cursed potion'. */
+  for (i=0; i<NROFATTACKS; i++) {
+    op->resist[i] = prot[i] - vuln[i];
+    if (potion_resist[i] && potion_resist[i] > op->resist[i] ||
+	potion_resist[i] < 0)
+      op->resist[i] = potion_resist[i];
+    }
+  
   /* awarding hp -- I changed this so that the mean between the 'fighter'
    * level (hp_obj->level) and overall scores are used. The system of hp
    * progression remains unchanged for no skills. b.t.

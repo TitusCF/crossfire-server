@@ -975,6 +975,7 @@ int process_object(object *op) {
     regenerate_rod(op);
     return 1;
   case FORCE:
+  case POTION_EFFECT:
     remove_force(op);
     return 1;
   case BLINDNESS:

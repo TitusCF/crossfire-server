@@ -1127,24 +1127,30 @@ int cast_regenerate_spellpoints(object *op) {
 int
 cast_change_attr(object *op,object *caster,int dir,int spell_type) {
   object *tmp = op;
-  object *tmp2;
+  object *tmp2=NULL;
   object *force=NULL;
+  int is_refresh=0;
+  int atnr=0, path=0;        /* see protection spells */
   int i;
-
+  
   /* if dir = 99 op defaults to tmp, eat_special_food() requires this. */
   if(dir!=99)
      tmp=find_target_for_friendly_spell(op,dir);
 
   if(tmp==NULL) return 0;
-
-  /* If we've already got a force of this type, leave. */
-  for(tmp2=op->inv;tmp2!=NULL;tmp2=tmp2->below) 
+  
+  /* If we've already got a force of this type, don't add a new one. */
+  for(tmp2=tmp->inv;tmp2!=NULL;tmp2=tmp2->below) 
     if(tmp2->type==FORCE && tmp2->value == spell_type) {
-      force=tmp2;
+      force=tmp2;    /* the old effect will be "refreshed" */
+      is_refresh=1;
+      new_draw_info(NDI_UNIQUE, 0, op, "You recast the spell while in effect.");
     }
   if(force==NULL)
     force=get_archetype("force");
   force->value = spell_type;  /* mark this force with the originating spell */
+  
+  i=0;   /* (-> protection spells) */
   switch(spell_type) {
   case SP_RAGE: 
     {
@@ -1238,7 +1244,10 @@ cast_change_attr(object *op,object *caster,int dir,int spell_type) {
 
 	/* Only give out good benefits, not bad */
 	for (i=0; i<NROFATTACKS; i++)
-	    if (god->resist[i]>0) force->resist[i] = god->resist[i];
+	    if (god->resist[i]>0) {
+	      force->resist[i] = god->resist[i];
+	      if (force->resist[i]>95) force->resist[i]=95;
+	    }
 
 	force->path_attuned|=god->path_attuned;
 	new_draw_info_format(NDI_UNIQUE, 0,tmp,
@@ -1279,7 +1288,7 @@ cast_change_attr(object *op,object *caster,int dir,int spell_type) {
 	for (i=0; i<NROFATTACKS; i++)
 	    if (god->resist[i]>0) {
 		force->resist[i] = god->resist[i];
-		if (force->resist[i]>50) force->resist[i]=50;
+		if (force->resist[i]>30) force->resist[i]=30;
 	    }
 	force->path_attuned|=god->path_attuned;
 	new_draw_info_format(NDI_UNIQUE, 0,tmp,
@@ -1294,46 +1303,43 @@ cast_change_attr(object *op,object *caster,int dir,int spell_type) {
   case SP_DARK_VISION:
     SET_FLAG(force,FLAG_SEE_IN_DARK);
     break;
+  /* attacktype-protection spells: */
   case SP_PROT_COLD:
-    force->resist[ATNR_COLD]=50;
-    break;
+    if (!i) atnr=ATNR_COLD, path=PATH_FROST, i=1;
   case SP_PROT_FIRE:
-    force->resist[ATNR_FIRE]=50;
-    break;
+    if (!i) atnr=ATNR_FIRE, path=PATH_FIRE, i=1;
   case SP_PROT_ELEC:
-    force->resist[ATNR_ELECTRICITY]=50;
-    break;
+    if (!i) atnr=ATNR_ELECTRICITY, path=PATH_ELEC, i=1;
   case SP_PROT_POISON:
-    force->resist[ATNR_POISON]=50;
-    break;
+    if (!i) atnr=ATNR_POISON, i=1;
   case SP_PROT_SLOW:
-    force->resist[ATNR_SLOW]=50;
-    break;
+    if (!i) atnr=ATNR_SLOW, i=1;
   case SP_PROT_PARALYZE:
-    force->resist[ATNR_PARALYZE]=50;
-    break;
+    if (!i) atnr=ATNR_PARALYZE, path=PATH_MIND, i=1;
   case SP_PROT_DRAIN:
-    force->resist[ATNR_DRAIN]=50;
-    break;
+    if (!i) atnr=ATNR_DRAIN, path=PATH_DEATH, i=1;
   case SP_PROT_ATTACK:
-    force->resist[ATNR_PHYSICAL]=50;
-    break;
+    if (!i) atnr=ATNR_PHYSICAL, path=PATH_PROT, i=1;
   case SP_PROT_MAGIC:
-    force->resist[ATNR_MAGIC]=50;
-    break;
+    if (!i) atnr=ATNR_MAGIC, i=1;
   case SP_PROT_CONFUSE:
-    force->resist[ATNR_CONFUSION]=50;
-    break;
+    if (!i) atnr=ATNR_CONFUSION, path=PATH_MIND, i=1;
   case SP_PROT_CANCEL:
-    force->resist[ATNR_CANCELLATION]=50;
-    break;
+    if (!i) atnr=ATNR_CANCELLATION, i=1;
   case SP_PROT_DEPLETE:
-    force->resist[ATNR_DEPLETE]=50;
+    if (!i) atnr=ATNR_DEPLETE, path=PATH_DEATH, i=1;
+    
+  /* The amount of prot. granted depends on caster's skill-level and
+   * on attunement to spellpath, if there is a related one: */
+  force->resist[atnr] = (20 + 30*SK_level(caster)/100
+    + ((caster->path_attuned & path) ? 10 : 0)
+    - ((caster->path_repelled & path) ? 10 : 0))
+    / ((caster->path_denied & path) ? 2 : 1);
     break;
   case SP_LEVITATE:
     SET_FLAG(force, FLAG_FLYING);
     break;
-	/*mlee*/
+  /* The following immunity spells are obsolete... -AV */
   case SP_IMMUNE_COLD:
     force->resist[ATNR_COLD]=100;
     break;
@@ -1367,9 +1373,10 @@ cast_change_attr(object *op,object *caster,int dir,int spell_type) {
     /* Don't give them everything, so can't do a simple loop.
      * Added holyword & blind with PR's - they seemed to be 
      * misising before.
+     * Note: These Spells shouldn't be used. Especially not on players! -AV
      */
     if (spell_type == SP_INVULNERABILITY) i=100;
-    else i=50;
+    else i=30;
     force->resist[ATNR_PHYSICAL]=i;
     force->resist[ATNR_MAGIC]=i;
     force->resist[ATNR_FIRE]=i;
@@ -1401,8 +1408,11 @@ cast_change_attr(object *op,object *caster,int dir,int spell_type) {
 
   }
   force->speed_left= -1-SP_level_strength_adjust(op, caster,spell_type)*0.1;
+  
+  if (!is_refresh) {
   SET_FLAG(force, FLAG_APPLIED);
   force = insert_ob_in_ob(force,tmp);
+  }
   change_abil(tmp,force); /* Mostly to display any messages */
   fix_player(tmp);        /* This takes care of some stuff that change_abil() */
 			  /* unfortunately is incapable off. */

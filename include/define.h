@@ -218,7 +218,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define DIRECTOR	112
 #define GIRDLE		113
 #define FORCE		114
-
+#define POTION_EFFECT   115    /* a force, holding the effect of a potion */
 
 /* Eneq(@csd.uu.se): Id for close_container archetype. */
 #define CLOSE_CON	121

@@ -239,6 +239,7 @@ int apply_potion(object *op, object *tmp)
 	if (tmp->resist[i]) {
 	    if (!force) force=get_archetype("force");
 	    memcpy(force->resist, tmp->resist, sizeof(tmp->resist));
+	    force->type=POTION_EFFECT;
 	    break;  /* Only need to find one protection since we copy entire batch */
 	}
     }
@@ -246,7 +247,10 @@ int apply_potion(object *op, object *tmp)
     if (force) {
 	/* cursed items last longer */
 	if(QUERY_FLAG(tmp, FLAG_CURSED) || QUERY_FLAG(tmp, FLAG_DAMNED)) {
-	    force->stats.food*=10;
+	  force->stats.food*=10;
+	  for (i=0; i<NROFATTACKS; i++)
+	    if (force->resist[i] > 0)
+	      force->resist[i] = -force->resist[i];  /* prot => vuln */ 
 	}
 	force->speed_left= -1;
 	force = insert_ob_in_ob(force,op);

@@ -113,7 +113,7 @@
  */
 #ifndef INIT_C
 EXTERN int resist_table[];
-EXTERN char *resist_change[NROFATTACKS][4];
+EXTERN char *change_resist_msg[NROFATTACKS];
 EXTERN char *resist_plus[NROFATTACKS];
 EXTERN char *attacktype_desc[NROFATTACKS];
 EXTERN char *resist_save[NROFATTACKS];
@@ -149,115 +149,17 @@ EXTERN char *resist_plus[NROFATTACKS] = {
 "resist internal"
 };
 
-/* These are the message displayed when a player puts on/takes off an item
- * that gives them some resistance.  These are triples - immune (100),
- * protection (positive) and negative, with the message of when you add
- * and subtract the entry.
- * Index 0 is what you see when you add an immunity.
- * Index 1 is what you see when you remove an immuity.
- * Index 2 is what you see when you gain protective value
- * Index 3 is what you see when you lose protective value.
+/* These are the descriptions of the resistances displayed when a
+ * player puts on/takes off an item. See change_abil() in living.c.
  */
-
-EXTERN char *resist_change[NROFATTACKS][4] = {
-    /* Physical isn't used right now */
-    {"You feel impervious to attack.", "You no longer feel impervious to attack.",
-     "You feel more armoured.", "You feel less armoured."},
-
-    {"You feel immune to magic.",  "You feel less immune to magic.",
-     "You feel more resistant to magic.", "You feel less resistant to magic."},
-
-    {"You feel immune to fire.", "You feel less immune to fire.",
-     "You feel resistant to fire.", "You feel less resistant to fire."},
-
-    {"You feel immune to electricity.", "You feel less immune to electricity.",
-     "You feel more resistant to electricity.", "You feel less resistant to electricity."},
-
-    {"You feel immune to cold.","You feel less immune to cold.",
-	"You feel resistant to cold.", "You feel less resistant to cold."},
-
-    {"Your mind is warded against disruption .", "Your mind is no longer warded against disruption.", 
-	"You feel more resistant to confusion.", "You feel less resistant to confusion."},
-
-    {"You feel immune to acid.",
-	    "You feel less immune to acid.", 
-	    "You feel more resistant to acid.",
-	    "You feel less resistant to acid."
-    },
-
-    {"You feel very full of life.",
-	    "You shiver, everything seems so bleak.",
-	    "You feel more resistant to draining.",
-	    "You feel less resistant to draining."
-    },
-    /* Player shouldn't see these */
-    {"You feel immune to weapon magic.",  
-	"You feel less immune to weapon magic.",
-	"You feel more resistant to weapon magic.", 
-	"You feel less resistant to weapon magic."
-    },
-
-    /* More than just ghosts have ghosthit, but we will
-     * use ghosts as a general term here.
-     */
-    {"You feel immune to ghosts.",  
-	"You feel less immune to ghosts.",
-	"You feel more resistant to ghosts.", 
-	"You feel less resistant to ghosts."
-    },
-    {"You feel immune to poison.",
-	"You feel less immune to poision.",
-	"You feel more resistant to poison.",
-	"You feel less resistant to poison."
-    },
-    {"You feel in sync with time.", /* SLOW */
-	"You feel out of sync with time.",
-	"You feel more in sync with time.",
-	"You feel less in sync with time."
-    },
-    {"You feel very unrestrained.",
-	"You feel more restrained.",
-	"You feel more resistant to paralyzation.",
-	"You feel less resistant to paralyzation."
-    },
-    {"You feel immune to clerical turning",
-	"You feel less immune to clerical turning",
-	"You feel more resistant to clerical turning",
-	"You feel less resistant to clerical turning"
-    },
-    {"You feel extremely brave.",
-	"You feel less brave.",
-	"You feel more resistant to fear.",
-	"You feel less resistant to fear."
-    },
-    {"", "", "", ""},	/* Cancellation - not attainable by players */
-
-    {"You feel immune to depletion.",
-	    "You feel less immune to depletion",
-	    "You feel more resistant to depletion.",
-	    "You feel less resistant to depletion."
-    },
-
-    {"You feel immune to death magic.",
-	    "You feel less immune to death magic",
-	    "You feel more resistant to death magic.",
-	    "You feel less resistant to death magic."
-    },
-    {"", "", "", ""},	/* Chaos - not attainable by players */
-    {"", "", "", ""},	/* Counterspell - not attainable by players */
-    {"", "", "", ""},	/* God Power - not attainable by players */
-    {"You feel immune to the power of holy words",
-	"You feel less immune to the power of holy words",
-	"You feel more resistant to the power of holy words",
-	"You feel less resistant to the power of holy words"
-    },
-    {"You feel immune to blinding",
-	"You feel less immune to blinding",
-	"You feel more resistant to blinding",
-	"You feel less resistant to blinding"
-    },
-    {"", "", "", ""}	/* Internal - not attainable by players */
+EXTERN char *change_resist_msg[NROFATTACKS] = {
+"physical", "magic", "fire", "electricity", "cold", "confusion", "acid",
+"draining", "weapon magic", "ghosts", "poison", "slow", "paralyze",
+"turn undead", "fear", "cancellation", "depletion", "death attacks", "chaos",
+"counterspell", "god power", "holy word", "blinding attacks",
+"internal"
 };
+
 
 /* If you want to weight things so certain resistances show up more often than
  * others, just add more entries in the table for the protections you want to

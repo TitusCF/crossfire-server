@@ -760,11 +760,16 @@ int hit_player_attacktype(object *op, object *hitter, int dam,
 	LOG(llevError, "hit_player_attacktype: Invalid attacknumber passed: %x\n", attacknum);
 	return 0;
     }
-    
+
     if (!attacktype) {
 	LOG(llevError,"hit_player_attacktype called without an attacktype\n");
 	return 0;
     }
+    if (dam < 0) {
+	LOG(llevError,"hit_player_attacktype called with negative damage: %d\n", dam);
+	return 0;
+    }
+    
     /* AT_INTERNAL is supposed to do exactly dam.  Put a case here so
      * people can't mess with that or it otherwise get confused.
      */
@@ -781,14 +786,15 @@ int hit_player_attacktype(object *op, object *hitter, int dam,
 	}
     }
 
-    /* Adjust the damage.  Note that negative values increase damage. */
-    if (op->resist[attacknum]) {
-/*	int oldam=dam;*/
-
-	dam = dam*(100-op->resist[attacknum])/100;
-/*	fprintf(stderr,"Attacknum %d damage reduced from %d to %d, res=%d\n",
-		attacknum, oldam, dam, op->resist[attacknum]);
-*/
+    /* Adjust the damage for resistance. Note that neg. values increase damage. */
+    if (op->resist[attacknum] || 1) {
+      /* basically:  dam = dam*(100-op->resist[attacknum])/100;
+       * in case 0>dam>1, we try to "simulate" a float value-effect */
+      dam = dam*(100-op->resist[attacknum]);
+      if (dam >= 100)
+	dam /= 100;
+      else
+	dam = (dam > (RANDOM()%100)) ? 1 : 0;
     }
 
     /* Special hack.  By default, if immune to something, you shouldn't need

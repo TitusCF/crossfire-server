@@ -2806,7 +2806,7 @@ Allowed balm_generic
 chance 1
 Object aethereality
 type 5
-sp 53
+resist_physical 50
 value 3
 end
 #
@@ -2814,7 +2814,7 @@ Allowed balm_generic
 chance 1
 Object asbestos
 type 5
-sp 47
+resist_fire 50
 value 1
 end
 #
@@ -2822,7 +2822,7 @@ Allowed balm_generic
 chance 1
 Object insulation
 type 5
-sp 46
+resist_electricity 50
 value 1
 end
 #
@@ -2830,7 +2830,7 @@ Allowed balm_generic
 chance 1
 Object warmth
 type 5
-sp 45
+resist_cold 50
 value 1
 end
 #
@@ -2839,14 +2839,14 @@ chance 1
 Object resist confusion
 type 5
 value 1
-sp 69
+resist_confusion 50
 end
 #
 Allowed potion_generic
 chance 1
 Object resist magic
 type 5
-sp 52
+resist_magic 50
 value 3
 end
 #
@@ -2855,14 +2855,14 @@ chance 1
 Object resist draining
 type 5
 value 1
-sp 51
+resist_drain 50
 end
 #
 Allowed potion_generic
 chance 1
 Object resist paralysis
 type 5
-sp 50
+resist_paralyze 50
 value 1
 end
 #
@@ -2870,7 +2870,7 @@ Allowed potion_generic
 chance 1
 Object resist poison
 type 5
-sp 48
+resist_poison 50
 value 1
 end
 #
@@ -2878,7 +2878,7 @@ Allowed potion_generic
 chance 1
 Object resist slow
 type 5
-sp 49
+resist_slow 50
 value 1
 end
 #
@@ -2886,7 +2886,7 @@ Allowed potion_generic
 chance 1
 Object shock immunity
 type 5
-sp 96
+resist_electricity 90
 value 100
 end
 #
@@ -2894,15 +2894,15 @@ Allowed potion_generic
 chance 3
 Object aethereality
 type 5
-sp 103
-value 110
+resist_physical 95
+value 140
 end
 #
 Allowed potion_generic
 chance 1
 Object magic immunity
 type 5
-sp 102
+resist_magic 90
 value 150
 end
 #
