@@ -430,7 +430,7 @@ char *query_base_name(object *op) {
 
 char *describe_item(object *op) {
   char buf[MAX_BUF];
-  static char retbuf[VERY_BIG__BUF];
+  static char retbuf[VERY_BIG_BUF];
 
   retbuf[0]='\0';
   if(QUERY_FLAG(op,FLAG_MONSTER)) {
