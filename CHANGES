@@ -1,6 +1,18 @@
 Changes in top level CVS tree (please add your changes at the very top of
 the file):
 
+------------------------------------------------------------------------------
+Change for 0.95.4:
+
+Add better comment in config.h about the DM_MAIL option - msw.
+
+Fixed doc/spoiler/Makefile.in so it works with autoconf setup.
+
+doc/crossfire.doc: Updated with disease code notes, detector notes.
+
+crossedit:  Fix in edit.c to ensure map objects (mainly is_floor objects)
+are actually removed visually as well as from a pure object standpoint.
+
 Change to save_throw_object:  If object is in players inventory and
 is destroyed, send update to client.  This can happen when trying to
 ignite something in the inventory with flint and steel - msw.
@@ -43,6 +55,8 @@ container even if there should not be.)  The change is in c_object.c - msw
 
 Check that hitter has a valid name before it attacks - fixes some
 crashes (attack.c) - msw
+
+Enhance lib/collect.pl to ignore CVS directories - msw.
 
 
 Improve auto_apply functions so that it will create treasures (random_*
