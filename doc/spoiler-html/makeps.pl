@@ -18,6 +18,8 @@ $, = ' ';		# set output field separator
 $\ = "\n";		# set output record separator
 
 $size=0.4;
+$IMAGE_SIZE=32;		# Size of PNG images
+$BG="\\#ab0945";
 
 # Set colour to 1 if you want colour postscript.
 $colour = 1;
@@ -25,12 +27,13 @@ $colour = 1;
 # appropriately.  IT looks much nicer if you can do it.
 $giftrans = 1;
 
+
 if ($colour) {
-    $xpm2ps = 'xpmtoppm | pnmdepth 255 | ppmtogif';
+    $png2ps = 'echo';
     $ppm2ps = 'pnmdepth 255 | ppmtogif';
 }
 else {
-    $xpm2ps = 'xpmtoppm | pnmdepth 255 | ppmtopgm | pnmtops';
+    $png2ps = 'echo';
     $ppm2ps = 'pnmdepth 255 | ppmtopgm | pnmtops';
 }
 
@@ -148,8 +151,9 @@ if ($interesting) {
     }
 }
 
-system('rm -f work.pbm tmp.pbm');
+system('rm -f work.pbm tmp.pbm empty.pbm');
 # clean up a little
+system("pbmmake -white $IMAGE_SIZE $IMAGE_SIZE > empty.pbm");
 
 # We've created a number of Postscript-files - now we need to
 # patch the filenames and sizes into the TeX-files.
@@ -173,7 +177,7 @@ close(IN);
 sub assemble {
     local($w, $h, $ppm, $buff, $i, $j, $bmap_file, $ps_file) = @_;
 
-    $bmap_file = $archdir.$bmap{$faces{0,0}}.".xpm";
+    $bmap_file = $archdir.$bmap{$faces{0,0}}.".png";
     $ps_file = $faces{0, 0} . '.gif';
     $ps_file =~ s/[_ ]/-/g;
 
@@ -181,12 +185,11 @@ sub assemble {
     $h = $ymax - $ymin + 1;
     if (! -e $ps_file) {
 	if (($w == 1) && ($h == 1)) {
+	    # Maybe ln -s instead?
 	    if ($giftrans) {
-		system("sed 's/[Nn]one/#fafbfc/g' < $bmap_file | $xpm2ps > tmp.gif");
-		system("giftrans -t \\#fafbfc tmp.gif > $ps_file");
-	    }
-	    else {
-		system("sed 's/[Nn]one/white/g' < $bmap_file | $xpm2ps > $ps_file");
+		system("pngtopnm -mix -background $BG $bmap_file | ppmtogif | giftrans -t $BG $ppm > $ps_file");
+	    } else {
+		system("pngtopnm -mix -background $BG $bmap_file | ppmtogif > $ps_file");
 	    }
 	}
 	else {
@@ -207,26 +210,18 @@ sub assemble {
 		for ($j = $ymin; $j <= $ymax; $j++) {
 		    print STDERR
 			 'Processing ' . $bmap{$faces{$i, $j}};
-		    $valx = ($i - $xmin) * 24;
-		    $valy = ($j - $ymin) * 24;
-		    if ($giftrans) {
-			system("sed 's/[Nn]one/#fafbfc/g' < $archdir$bmap{$faces{$i,$j}}.xpm | xpmtoppm > tmp.ppm");
-		    }
-		    else {
-			system("sed 's/[Nn]one/white/g' < $archdir$bmap{$faces{$i,$j}}.xpm | xpmtoppm > tmp.ppm");
-		    }
+		    $valx = ($i - $xmin) * $IMAGE_SIZE;
+		    $valy = ($j - $ymin) * $IMAGE_SIZE;
+#		    print STDERR "pngtopnm -background #ABCD01239876 $archdir$bmap{$faces{$i,$j}}.png > tmp.ppm\n";
+		    system("pngtopnm -mix -background $BG $archdir$bmap{$faces{$i,$j}}.png > tmp.ppm");
 		    system("pnmpaste tmp.ppm $valx $valy $ppm > tmp2.ppm");
 		    rename("tmp2.ppm", $ppm);
 		}
 	    }
 	    if ($giftrans) {
-		system("cat $ppm | $ppm2ps  > tmp.gif");
-		system("giftrans -t \\#fafbfc tmp.gif > $ps_file");
-	    }
-	    else {
-		system("cat $ppm | $ppm2ps > $ps_file");
-
-		;
+		system("ppmtogif $ppm | giftrans -t $BG > $ps_file");
+	    } else {
+		system("ppmtogif $ppm > $ps_file");
 	    }
 	}
     }
