@@ -45,7 +45,7 @@ void put_doors(mapstruct *the_map,char **maze , char *doorstyle, RMParms *RP) {
       if(maze[i][j]=='D') {
 		  int sindex;
 		  object *this_door,*new_door;
-		  sindex = surround_flag2(maze,i,j,RP);
+		  sindex = surround_flag(maze,i,j,RP);
 		  if(sindex==3) 
 			 this_door=pick_random_object(hdoors);
 		  else
