@@ -59,9 +59,9 @@ static void write_map_log()
 	     * Keep using it so that old temp files continue
 	     * to work.
 	     */
-		fprintf(fp,"%s:%s:%ld:0:0:%d:%d:%d\n", map->path, map->tmpname,
+		fprintf(fp,"%s:%s:%ld:0:0:%d:0:%d\n", map->path, map->tmpname,
 		    (map->reset_time==-1 ? -1: map->reset_time-current_time),
-		    map->difficulty, map->do_los,
+		    map->difficulty,
 		    map->darkness);
 	}
     }
