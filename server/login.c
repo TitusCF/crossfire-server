@@ -707,8 +707,8 @@ void check_login(object *op) {
       }
     }
 
-	 /* make sure he's a player--needed because of class change. */
-	 op->type = PLAYER;
+    /* make sure he's a player--needed because of class change. */
+    op->type = PLAYER;
     enter_exit(op,NULL); /* This won't insert the player any longer! */
 
     pl->name_changed=1;
@@ -786,10 +786,15 @@ void check_login(object *op) {
 
     /* the following block of code adds any lights that
        are in the players inventory initially to the map. */
-    { object *tmp;
-    for(tmp=op->inv;tmp!=NULL;tmp=tmp->below) {
-      if(tmp->glow_radius && light_not_listed(tmp)) add_light_to_list(tmp,op);
+    { 
+	object *tmp;
+	for(tmp=op->inv;tmp!=NULL;tmp=tmp->below) {
+	    if(tmp->glow_radius && light_not_listed(tmp)) add_light_to_list(tmp,op);
+	}
     }
+    if (!QUERY_FLAG(op, FLAG_FRIENDLY)) {
+	SET_FLAG(op, FLAG_FRIENDLY);
+	add_friendly_object(op);
     }
 
     return;

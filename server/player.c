@@ -116,6 +116,7 @@ int add_player(NewSocket *ns) {
     p->ob->name = NULL;
     free_object(p->ob);
     p->ob=get_player(p,m);
+    SET_FLAG(p->ob, FLAG_FRIENDLY);
     add_friendly_object(p->ob);
 #ifdef MOTD
     display_motd(p->ob);
@@ -245,13 +246,13 @@ object *get_nearest_player(object *mon) {
      * While unlikely, it is possible the next object on the friendly
      * list is also free, so encapsulate this in a while loop.
      */
-    while (QUERY_FLAG(ol->ob, FLAG_FREED)) {
+    while (QUERY_FLAG(ol->ob, FLAG_FREED) || !QUERY_FLAG(ol->ob, FLAG_FRIENDLY)) {
 	object *tmp=ol->ob;
 
 	/* Can't do much more other than log the fact, because the object
 	 * itself will have been cleared.
 	 */
-	LOG(llevDebug,"get_nearest_player: Found free object on friendly list\n");
+	LOG(llevDebug,"get_nearest_player: Found free/non friendly object on friendly list\n");
 	ol = ol->next;
 	remove_friendly_object(tmp);
 	if (!ol) return op;
