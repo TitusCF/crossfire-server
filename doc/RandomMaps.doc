@@ -88,6 +88,10 @@ Layout Parameters:
 xsize			size of the map:  if not set, random from 10 to 70
 ysize			size of the map:  if not set, random from 10 to 70
 
+expand2x                Do we double the size of the layout?  This has
+                        the effect of increasing the corridor widths by about
+                        2x.  Set it to a non-zero integer if this is desired.
+
 symmetry <sym>		symmetry of the layout:  You can cause the map generator
 			to generate a symmetrical layout by using this flag.
 			symmetry 0   random symmetry
