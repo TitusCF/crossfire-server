@@ -35,7 +35,7 @@
  * correspond to.
  */
 struct Settings settings = {
-"",			        /* Logfile */
+"/var/log/crossfire/logfile",   /* Logfile */
 CSPORT,				/* Client/server port */
 
 /* Debug level */
@@ -217,7 +217,7 @@ void init_globals() {
     if (settings.logfilename[0] == 0) {
 	logfile = stderr;
     }
-    else if ((logfile=fopen(settings.logfilename, "w"))==NULL) {
+    else if ((logfile=fopen(settings.logfilename, "a"))==NULL) {
 	fprintf(stderr,"Unable to open %s as the logfile - will use stderr instead\n",
 		settings.logfilename);
 	logfile = stderr;
