@@ -43,7 +43,8 @@ Sections:
 	J. Mood Floors
 	K. Altars, Triggers, Detectors and other connected items
 	L. Signs
-  	M. POISONOUS BOOZE
+  	M. POISONOUS BOOZ
+	N. Duplicators
 
 5. Flags & specifications for objects
 
@@ -1538,6 +1539,33 @@ stats.hp  Poison player or monster that applies this booze with stats.hp
 stats.hp must be greater 0 to do damage.  It used to be less than 0 for
 -stats.hp direct damage, but that has changed.  stats.hp <= 0 now means no
 damage at all, just loss of 25% food.
+
+N. Duplicators:
+===============
+Duplicators copy or remove objects.  Duplicators are triggered objects.
+
+connected: Connected value for the duplicator.
+other_arch: Archetype that this copies - if the archetype on top of the 
+  duplicator doesn't match this, it isn't copied.  Note that it only
+  matches the archetype - the object can then be further duplicated.  For
+  example, if other_arch is sword, it will duplicate sword +4, different
+  attacktypes, etc, and all of those are duplicated.  But it will not
+  duplicate a dagger for example.
+level: The number of copies to make (1 means no changes).  If set to 0
+  the object is removed.
+
+Example:
+
+arch duplicator
+level 2
+other_arch sword
+connected 5
+end
+
+Where 5 is connected to a lever.  When the lever is pulled, if a sword object
+is on top, its number is doubled.  If there is anything else on top, it is
+unaffected.  If the lever it is connected to is not pulled, it is also
+unaffected.
 
 *******************************************************************************
 5. Flags & specifications: (usage: flag value)
