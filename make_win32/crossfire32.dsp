@@ -418,6 +418,10 @@ SOURCE=..\server\ban.c
 # End Source File
 # Begin Source File
 
+SOURCE=..\server\build_map.c
+# End Source File
+# Begin Source File
+
 SOURCE=..\server\c_chat.c
 
 !IF  "$(CFG)" == "crossfire32 - Win32 FullDebug"
