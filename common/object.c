@@ -2053,6 +2053,25 @@ int find_first_free_spot(archetype *at, mapstruct *m,int x,int y) {
     return -1;
 }
 
+/*
+ * The function permute(arr, begin, end) randomly reorders the array
+ * arr[begin..end-1].
+ */
+static void permute(int *arr, int begin, int end)
+{
+    int i, j, tmp, len;
+
+    len = end-begin;
+    for(i = begin; i < end; i++)
+    {
+	j = begin+RANDOM()%len;
+
+	tmp = arr[i];
+	arr[i] = arr[j];
+	arr[j] = tmp;
+    }
+}
+
 /* new function to make monster searching more efficient, and effective! 
  * This basically returns a randomized array (in the passed pointer) of
  * the spaces to find monsters.  In this way, it won't always look for
@@ -2062,96 +2081,17 @@ int find_first_free_spot(archetype *at, mapstruct *m,int x,int y) {
  */
 void get_search_arr(int *search_arr)
 {
-    int i,j,tmp;
-    int search_nums[SIZEOFFREE]={
-         0, 1, 2, 3, 4, 5, 6, 7, 8, 9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,
-	25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48};
-    
-    /* it is assumed that search_arr is of size SIZEOFFREE = 49 */
-    for (i=0;i<SIZEOFFREE;i++) {
-        if (i>36)
-	{
-	    tmp=(RANDOM()%(49-i))+37;
-	    for(j=37;j<(49-i+37);j++)
-	    {
-	        if(j<=tmp && search_nums[j]==0)
-		    tmp++;
-	    }
-	    *(search_arr+i)=search_nums[tmp];
-	    search_nums[tmp]=0;
-	}
-	else if (i>28)
-	{
-	    tmp=(RANDOM()%(37-i))+29;
-	    for(j=29;j<(37-i+29);j++)
-	    {
-	        if(j<=tmp && search_nums[j]==0)
-		    tmp++;
-	    }
-	    *(search_arr+i)=search_nums[tmp];
-	    search_nums[tmp]=0;
-	}
-	else if (i>20)
-	{
-	    tmp=(RANDOM()%(29-i))+21;
-	    for(j=21;j<(29-i+21);j++)
-	    {
-	        if(j<=tmp && search_nums[j]==0)
-		    tmp++;
-	    }
-	    *(search_arr+i)=search_nums[tmp];
-	    search_nums[tmp]=0;
-	}
-	else if (i>12)
-	{
-	    tmp=(RANDOM()%(21-i))+13;
-	    for(j=13;j<(21-i+13);j++)
-	    {
-	        if(j<=tmp && search_nums[j]==0)
-		    tmp++;
-	    }
-	    *(search_arr+i)=search_nums[tmp];
-	    search_nums[tmp]=0;
-	}
-	else if (i>8)
-	{
-	    tmp=(RANDOM()%(13-i))+9;
-	    for(j=9;j<(13-i+9);j++)
-	    {
-	        if(j<=tmp && search_nums[j]==0)
-		    tmp++;
-	    }
-	    *(search_arr+i)=search_nums[tmp];
-	    search_nums[tmp]=0;
-	}
-	else if (i>4)
-	{
-	    tmp=(RANDOM()%(9-i))+5;
-	    for(j=5;j<(9-i+5);j++)
-	    {
-	        if(j<=tmp && search_nums[j]==0)
-		    tmp++;
-	    }
-	    *(search_arr+i)=search_nums[tmp];
-	    search_nums[tmp]=0;
-	}
-	else if (i>0)
-	{
-	    tmp=(RANDOM()%(5-i))+1;
-	    for(j=1;j<(5-i+1);j++)
-	    {
-	        if(j<=tmp && search_nums[j]==0)
-		    tmp++;
-	    }
-	    *(search_arr+i)=search_nums[tmp];
-	    search_nums[tmp]=0;
-	}
-	else
-	    *search_arr=0;
-	
-    }
-}
+    int i;
 
+    for(i = 0; i < SIZEOFFREE; i++)
+    {
+	search_arr[i] = i;
+    }
+
+    permute(search_arr, 1, SIZEOFFREE1+1);
+    permute(search_arr, SIZEOFFREE1+1, SIZEOFFREE2+1);
+    permute(search_arr, SIZEOFFREE2+1, SIZEOFFREE);
+}
 
 /*
  * find_dir(map, x, y, exclude) will search some close squares in the
