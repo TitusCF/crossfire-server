@@ -212,7 +212,7 @@ void random_encounter(object *pl, object *rnd_ob) {
             tmp->x = 2, tmp->y = i + y*11;
           else
             tmp->x = 31, tmp->y = i + y*11;
-          insert_ob_in_map(tmp, m);
+          insert_ob_in_map(tmp, m, NULL);
         }
         if (y != 1) {
           tmp = get_object();
@@ -221,7 +221,7 @@ void random_encounter(object *pl, object *rnd_ob) {
             tmp->y = 2, tmp->x = i + x*11;
           else
             tmp->y = 31, tmp->x = i + x*11;
-          insert_ob_in_map(tmp, m);
+          insert_ob_in_map(tmp, m, NULL);
         }
       }
     }

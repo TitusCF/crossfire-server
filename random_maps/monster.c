@@ -38,7 +38,7 @@ void	 insert_multisquare_ob_in_map(object *new_obj,mapstruct *map) {
   object *old_seg;
   object *head;
   /* first insert the head */
-  insert_ob_in_map(new_obj,map);
+  insert_ob_in_map(new_obj,map,NULL);
 
   x = new_obj->x;
   y = new_obj->y;

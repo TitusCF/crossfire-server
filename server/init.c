@@ -556,7 +556,7 @@ void setup_library() {
   set_process_active_maps(process_active_maps);
   set_update_buttons(update_buttons);
   set_draw_info(new_draw_info);
-  set_apply(apply);
+  set_move_apply(move_apply);
   set_draw(draw);
   set_monster_check_apply(monster_check_apply);
   set_move_teleporter(move_teleporter);

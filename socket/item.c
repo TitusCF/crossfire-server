@@ -477,7 +477,7 @@ void ApplyCmd(char *buf, int len,player *pl)
 	  pl->ob->name, tag);
 	return;
     }
-    apply (pl->ob, op,0);
+    player_apply (pl->ob, op, 0, 0);
 }
 
 /* Client wants to apply some object.  Lets do so. */
@@ -531,8 +531,10 @@ void look_at(object *op,int dx,int dy) {
 
   if (out_of_map(op->map, op->x+dx, op->y+dy)) return;
   if(op->above!=NULL) {
+    SET_FLAG (op, FLAG_NO_APPLY);
     remove_ob(op);
-    insert_ob_in_map(op,op->map);
+    insert_ob_in_map(op,op->map,NULL);
+    CLEAR_FLAG (op, FLAG_NO_APPLY);
   }
   if(dx||dy) 
     for(tmp=get_map_ob(op->map,op->x+dx,op->y+dy);tmp!=NULL&&tmp->above!=NULL;

@@ -53,7 +53,7 @@ void put_doors(mapstruct *the_map,char **maze , char *doorstyle) {
 		  copy_object(this_door,new_door);
 		  new_door->x = i;
 		  new_door->y = j;
-		  insert_ob_in_map(new_door,the_map);
+		  insert_ob_in_map(new_door,the_map,NULL);
       }
     }
 }

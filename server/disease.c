@@ -421,7 +421,7 @@ int move_symptom(object *symptom) {
 	 new_ob->x = victim->x;
 	 new_ob->y = victim->y;
 	 new_ob->map = victim->map;
-	 insert_ob_in_map(new_ob,victim->map);
+	 insert_ob_in_map(new_ob,victim->map,victim);
   }
   new_draw_info(NDI_UNIQUE | NDI_RED,0,victim,symptom->msg);
   

@@ -524,7 +524,7 @@ int change_abil(object *op, object *tmp) {
         (*draw_info_func)(NDI_UNIQUE, 0, op,"You float a little lower in the air.");
       else {
         (*draw_info_func)(NDI_UNIQUE, 0, op,"You float down to the ground.");
-	check_walk_on(op);
+	check_walk_on (op, op);
       }
     }
   }

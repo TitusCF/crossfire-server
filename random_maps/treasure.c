@@ -227,7 +227,7 @@ object * place_chest(int treasureoptions,int x, int y,mapstruct *map, mapstruct 
   /* actually place the chest. */
   i = find_first_free_spot(the_chest->arch,map,x,y);
   the_chest->x = x+freearr_x[i]; the_chest->y = y+freearr_y[i];
-  insert_ob_in_map(the_chest,map);
+  insert_ob_in_map(the_chest,map,NULL);
   return the_chest;
 }
 
@@ -314,7 +314,7 @@ void keyplace(mapstruct *map,int x,int y,char *keycode,int door_flag,int n_keys)
   if(the_keymaster==NULL) {
     the_key->x = kx;
     the_key->y = ky; 
-    insert_ob_in_map(the_key,map);
+    insert_ob_in_map(the_key,map,NULL);
     return;
   }
   
@@ -559,7 +559,7 @@ object ** surround_by_doors(mapstruct *map,int x,int y,int opts) {
       new_door->x = x + freearr_x[i];
       new_door->y = y + freearr_y[i];
 		remove_monsters(new_door->x,new_door->y,map);
-      insert_ob_in_map(new_door,map);
+      insert_ob_in_map(new_door,map,NULL);
       doorlist[ndoors_made]=new_door;
       ndoors_made++;
     }
@@ -662,7 +662,7 @@ void lock_and_hide_doors(object **doorlist,mapstruct *map,int opts) {
       remove_ob(door);
       free_object(door);
       doorlist[i]=new_door;
-      insert_ob_in_map(new_door,map);
+      insert_ob_in_map(new_door,map,NULL);
       sprintf(keybuf,"%d",RANDOM());
       new_door->slaying = add_string(keybuf);
       keyplace(map,new_door->x,new_door->y,keybuf,NO_PASS_DOORS,2);

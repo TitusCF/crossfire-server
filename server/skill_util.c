@@ -813,6 +813,9 @@ int remove_skill_from_list(object *op, object *skillop) {
  * Returns true if successfull. To be usefull this routine has to
  * be called *after* init_player_exp() and give_initial_items()
  *
+ * fix_player() should be called somewhere after this function because objects
+ * are unapplied here, but fix_player() is not called here.
+ *
  * Aug 95 added feature whereby old player save files will get a
  * (needed) basic assortment of skills (see basic_skill array).
  * 
@@ -833,15 +836,22 @@ int link_player_skills(object *pl) {
 			   "skill_find_traps",
 			   "skill_remove_trap"};
 
-  /* first find all exp and skill objects */
+   /* We're going to unapply all skills */
+   pl->chosen_skill = NULL;
+   CLEAR_FLAG (pl, FLAG_READY_SKILL);
 
+   /* first find all exp and skill objects */
    for(tmp=pl->inv;tmp&&sk_index<100;tmp=tmp->below)
       if(tmp->type==EXPERIENCE) {
            exp_ob[exp_index] = tmp;
            exp_index++;
       } else if (tmp->type==SKILL) {
-	   sk_ob[sk_index]=tmp; 
-	   sk_index++;
+           /* for startup, lets unapply all skills */
+           CLEAR_FLAG (tmp, FLAG_APPLIED);
+           if (tmp->invisible) {
+               sk_ob[sk_index]=tmp; 
+               sk_index++;
+           }
 	   if(!strcmp(tmp->name,skills[SK_USE_MAGIC_ITEM].name)) old_file = 0;
       } 
 
@@ -894,8 +904,6 @@ int link_player_skills(object *pl) {
   }
   /* Ok, create linked list and link the associated skills to exp objects */
    for(i=0;i<sk_index;i++) {
-        /* for startup, lets unapply all skills */
-        if(QUERY_FLAG(sk_ob[i],FLAG_APPLIED)) CLEAR_FLAG(sk_ob[i],FLAG_APPLIED);
 #ifdef LINKED_SKILL_LIST
   	objectlink *obl;
 	obl = (objectlink *) malloc(sizeof(objectlink));
@@ -1136,6 +1144,9 @@ int use_skill(object *op, char *string) {
 /* change_skill() - returns true if we are able to change to the requested
  * skill. Ignore the 'pl' designation, this code is useful for players and
  * monsters.  -bt. thomas@astro.psu.edu
+ *
+ * sk_index == -1 means that old skill should be unapplied, and no new skill
+ * applied.
  */
 
 /* Sept 95. Got rid of nasty strcmp calls in here -b.t.*/
@@ -1144,88 +1155,35 @@ int use_skill(object *op, char *string) {
  * value for the skill rather than a character string. Added find_skill. 
  * -b.t. */
  
-int change_skill(object *pl, int sk_index) {
-  object *tmp; 
+int change_skill (object *who, int sk_index)
+{
+    object *tmp;
 
-  /* unapply old skill, do this before returning */
-  if(pl->chosen_skill) {
-	if(pl->chosen_skill->stats.sp==sk_index  
- 	  && QUERY_FLAG(pl->chosen_skill,FLAG_APPLIED)) { /* already have it prepared */ 
-            if(pl->type==PLAYER) {
-              pl->contr->shoottype = range_skill;
-            }
-	    return 1;	
-	}
-	/* need to do because some skills set path_attuned, slaying, etc */
-        CLEAR_FLAG(pl->chosen_skill,FLAG_APPLIED);
-	(void) change_abil(pl,pl->chosen_skill);
-        if(QUERY_FLAG(pl,FLAG_READY_SKILL))
-            CLEAR_FLAG(pl,FLAG_READY_SKILL);
-	if(!pl->chosen_skill->invisible) /* its a tool, need to unlink it */
-		unlink_skill(pl->chosen_skill);
-        pl->chosen_skill = NULL;
-  }
- 
-  if(sk_index<0) { /* bye,bye. We didn't request a valid skill */
-#if 0
-        /* this is confusing to players, get when you unwield a weapon! */
-	new_draw_info(NDI_UNIQUE, 0,pl,"You can't use an non-existent skill!");
-#endif
-	return 0;
-  }
+    if (who->chosen_skill && who->chosen_skill->stats.sp == sk_index)
+    {
+        /* optimization for changing skill to current skill */
+        if (who->type == PLAYER)
+            who->contr->shoottype == range_skill;
+        return 1;
+    }
 
-  /* ok, look for the requested skill */
-  if((tmp=find_skill(pl,sk_index))) { /* yes, pl does have named skill */
-	    pl->chosen_skill = tmp;
+    if (sk_index >= 0 && sk_index < NROFSKILLS
+        && (tmp = find_skill (who, sk_index)) != NULL)
+    {
+        if (apply_special (who, tmp, AP_APPLY)) {
+            LOG (llevError, "BUG: change_skill(): can't apply new skill\n");
+            return 0;
+        }
+        return 1;
+    }
 
-	    /* Update skill level from exp obj */
-	    if (tmp->exp_obj)
-		 pl->chosen_skill->level=tmp->exp_obj->level;
-
-   	    if(!tmp->invisible&&!QUERY_FLAG(tmp,FLAG_APPLIED)) { /* for tools */ 
-                if(pl->type==PLAYER) {
-                   new_draw_info_format(NDI_UNIQUE, 0, pl,
-                       "You can now use the skill: %s.", skills[sk_index].name);
-                   if(!tmp->exp_obj)
-			   (void) link_player_skill(pl, tmp); 
-	        }
-	    } 
-
-	    if(!QUERY_FLAG(tmp,FLAG_APPLIED))
-                     SET_FLAG(tmp, FLAG_APPLIED);
-            if(!QUERY_FLAG(pl,FLAG_READY_SKILL)) 
-		     SET_FLAG(pl,FLAG_READY_SKILL);
-	    (void) change_abil(pl,tmp);
-            fix_player(pl);
-
-            if(pl->type==PLAYER) {
-                 new_draw_info_format(NDI_UNIQUE, 0,pl, 
-			"Readied skill: %s.",skills[tmp->stats.sp].name);
-                 pl->contr->shoottype = range_skill;
-            }
-            return 1;
-  }       
-
-  if(QUERY_FLAG(pl,FLAG_READY_SKILL))   /* shouldnt happen -b.t. */
-        CLEAR_FLAG(pl, FLAG_READY_SKILL);
-
-  if(pl->type!=PLAYER) return 0;
-
-/* Player stuff for when we didnt ready the requested skill. This can be
- * either because we have requested a non-existent skill or because
- * we selected negative skill index. The 'negative' option mostly occurs 
- * when change_skill is called to silently change player skill to NULL. 
- * For example, unwielding a weapon--change_skill() called from 
- * apply_special().
- */
-
-  if(sk_index>=0 && sk_index<NROFSKILLS)
-     new_draw_info_format(NDI_UNIQUE, 0,pl,"You have no knowledge of %s.",
-	skills[sk_index].name);
-
-  pl->contr->shoottype = range_none;
-
-  return 0;
+    if (who->chosen_skill)
+        if (apply_special (who, who->chosen_skill, AP_UNAPPLY))
+            LOG (llevError, "BUG: change_skill(): can't unapply old skill\n");
+    if (sk_index >= 0)
+        new_draw_info_format (NDI_UNIQUE, 0, who, "You have no knowledge "
+                              "of %s.", skills[sk_index].name);
+    return 0;
 }
 
 /* attack_melee_weapon() - this handles melee weapon attacks -b.t.

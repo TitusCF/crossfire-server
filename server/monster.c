@@ -582,7 +582,7 @@ int monster_use_wand(object *head,object *part,object *pl,int dir) {
     return 0;
   }
   if(wand->stats.food<=0) {
-    apply(head,wand,0);
+    manual_apply(head,wand,0);
     CLEAR_FLAG(head, FLAG_READY_WAND);
     if (wand->arch) {
       CLEAR_FLAG(wand, FLAG_ANIMATE);
@@ -681,7 +681,7 @@ int monster_use_bow(object *head, object *part, object *pl, int dir) {
   }
   if((arrow=find_arrow(head,bow->race)) == NULL) {
     /* Out of arrows */
-    apply(head,bow,0);
+    manual_apply(head,bow,0);
     CLEAR_FLAG(head, FLAG_READY_BOW);
     return 0;
   }
@@ -703,7 +703,7 @@ int monster_use_bow(object *head, object *part, object *pl, int dir) {
   SET_FLAG(arrow, FLAG_FLYING);
   SET_FLAG(arrow, FLAG_FLY_ON);
   SET_FLAG(arrow, FLAG_WALK_ON);
-  insert_ob_in_map(arrow,head->map);
+  insert_ob_in_map(arrow,head->map,head);
   move_arrow(arrow);
   return 1;
 }
@@ -716,13 +716,13 @@ int check_good_weapon(object *who, object *item) {
       break;
   if(other_weap==NULL) /* No other weapons */
     return 1;
-  if (!apply(who,item,0)) {
+  if (monster_apply_special(who,item,0)) {
     LOG(llevMonster,"Can't wield %s(%d).\n",item->name,item->count);
     return 0;
   }
   if(who->stats.dam < prev_dam && !QUERY_FLAG(other_weap,FLAG_FREED)) {
     /* New weapon was worse.  (Note ^: Could have been freed by merging) */
-    if (!apply(who,other_weap,0))
+    if (monster_apply_special(who,other_weap,0))
       LOG(llevMonster,"Can't rewield %s(%d).\n",item->name,item->count);
     return 0;
   }
@@ -738,13 +738,13 @@ int check_good_armour(object *who, object *item) {
       break;
   if (other_armour == NULL) /* No other armour, use the new */
     return 1;
-  if (!apply(who, item,0)) {
+  if (monster_apply_special(who, item,0)) {
     LOG(llevMonster, "Can't take off %s(%d).\n",item->name,item->count);
     return 0;
   }
   if(who->stats.ac < prev_ac && !QUERY_FLAG(other_armour,FLAG_FREED)) {
     /* New armour was worse. *Note ^: Could have been freed by merging) */
-    if (!apply(who, other_armour,0))
+    if (monster_apply_special(who, other_armour,0))
       LOG(llevMonster,"Can't rewear %s(%d).\n", item->name, item->count);
     return 0;
   }
@@ -852,16 +852,17 @@ void monster_apply_below(object *monster) {
     next=tmp->below;
     switch (tmp->type) {
     case HANDLE:
+    case TRIGGER:
       if (monster->will_apply&1)
-        apply(monster,tmp,0);
+        manual_apply(monster,tmp,0);
       break;
     case TREASURE:
       if (monster->will_apply&2)
-        apply(monster,tmp,0);
+        manual_apply(monster,tmp,0);
       break;
     case SCROLL:  /* Ideally, they should wait until they meet a player */
       if (QUERY_FLAG(monster,FLAG_USE_SCROLL))
-        apply(monster,tmp,0); 
+        manual_apply(monster,tmp,0); 
       break;
     }
     if (QUERY_FLAG (tmp, FLAG_IS_FLOOR))
@@ -894,7 +895,7 @@ void monster_check_apply(object *mon, object *item) {
         SET_FLAG(mon, FLAG_READY_BOW);
         LOG(llevMonster,"Found correct bow for arrows.\n");
         if(!QUERY_FLAG(bow, FLAG_APPLIED))
-          apply(mon,bow,0);
+          manual_apply(mon,bow,0);
         break;
       }
   }
@@ -932,7 +933,7 @@ void monster_check_apply(object *mon, object *item) {
     case SKILL:
 #ifdef ALLOW_SKILLS
       if((flag=QUERY_FLAG(mon,FLAG_CAN_USE_SKILL))) {
-        if(!QUERY_FLAG(item,FLAG_APPLIED)) apply(mon,item,0);
+        if(!QUERY_FLAG(item,FLAG_APPLIED)) manual_apply(mon,item,0);
         if (item->type==SKILL&&present_in_ob(SKILL,mon)!=NULL)
 	  SET_FLAG(mon, FLAG_READY_SKILL);
       }
@@ -950,7 +951,7 @@ void monster_check_apply(object *mon, object *item) {
     if (((!(mon->can_apply&32))&&flag) ||((mon->can_apply&32)&&(!flag))) {
         /* &32 reverses behaviour. See global.h */
         if(!QUERY_FLAG(item,FLAG_APPLIED))
-          apply(mon,item,0);
+          manual_apply(mon,item,0);
         if (item->type==BOW&&present_in_ob(item->stats.maxsp,mon)!=NULL)
 	  SET_FLAG(mon, FLAG_READY_BOW);
     }
@@ -1185,7 +1186,7 @@ int move_object(object *op, int dir) {
     for(tmp = op; tmp != NULL; tmp = tmp->more)
 	tmp->x+=freearr_x[dir], tmp->y+=freearr_y[dir];
 
-    insert_ob_in_map(op, op->map);
+    insert_ob_in_map(op, op->map, op);
     return 1;
 }
 
@@ -1406,8 +1407,14 @@ object *find_mon_throw_ob( object *op ) {
     if(tmp->weight>heaviest->weight) heaviest=tmp;
   }
 
-  if(!tmp) tmp=heaviest;
-  else if(QUERY_FLAG(tmp,FLAG_APPLIED)) CLEAR_FLAG(tmp,FLAG_APPLIED);
+  if ( ! tmp)
+    tmp = heaviest;
+  if (tmp && QUERY_FLAG (tmp, FLAG_APPLIED)) {
+    if (monster_apply_special (op, tmp, AP_UNAPPLY)) {
+      LOG (llevError, "BUG: find_mon_throw_ob(): couldn't unapply\n");
+      tmp = NULL;
+    }
+  }
 
 #ifdef DEBUG_THROW
   LOG(llevDebug,"%s chooses to throw: %s (%d)\n",op->name,

@@ -87,7 +87,9 @@ void dump_spells()
     }
 }
 
-void spell_effect(int spell_type, int x, int y, mapstruct *map) {
+void spell_effect (int spell_type, int x, int y, mapstruct *map,
+	object *originator)
+{
 
   if (spellarch[spell_type] != (archetype *) NULL) {
     object *effect = arch_to_object(spellarch[spell_type]);
@@ -95,7 +97,7 @@ void spell_effect(int spell_type, int x, int y, mapstruct *map) {
     effect->x = x;
     effect->y = y;
 
-    insert_ob_in_map(effect, map);
+    insert_ob_in_map(effect, map, originator);
   }
 }
 
@@ -462,7 +464,7 @@ if (item == spellNormal && !ability ){
     break;
   case SP_MAGIC_MAPPING:
     if(op->type==PLAYER) {
-      spell_effect(SP_MAGIC_MAPPING, op->x, op->y, op->map);
+      spell_effect(SP_MAGIC_MAPPING, op->x, op->y, op->map, op);
       draw_map(op);
       success=1;
     }
@@ -798,7 +800,7 @@ int cast_create_obj(object *op,object *caster,object *new_op, int dir)
   }
   new_op->x=op->x+freearr_x[dir];
   new_op->y=op->y+freearr_y[dir];
-  insert_ob_in_map(new_op,op->map);
+  insert_ob_in_map(new_op,op->map,op);
   return dir;
 }
 
@@ -850,7 +852,7 @@ int summon_monster(object *op,object *caster,int dir,archetype *at,int spellnum)
   tmp->speed_left= -1;
   tmp->x=op->x+freearr_x[dir],tmp->y=op->y+freearr_y[dir];
   tmp->direction=dir;
-  insert_ob_in_map(tmp,op->map);
+  insert_ob_in_map(tmp,op->map,op);
   return 1;
 }
 
@@ -966,7 +968,7 @@ int fire_bolt(object *op,object *caster,int dir,int type,int magic) {
     tmp->x=op->x,tmp->y=op->y;
     tmp->direction=absdir(tmp->direction+4);
   }
-  insert_ob_in_map(tmp,op->map);
+  insert_ob_in_map(tmp,op->map,op);
   move_bolt(tmp);
   return 1;
 }
@@ -1023,7 +1025,7 @@ int fire_arch_from_position (object *op, object *caster, sint16 x, sint16 y,
   if(op->type==PLAYER)
     tmp->stats.hp=(op->contr->shootstrength-10)/10+10;
 #endif
-  insert_ob_in_map(tmp,op->map);
+  insert_ob_in_map(tmp,op->map,op);
   /* object was used when it was inserted into the map - don't do anything
    * more
    */
@@ -1078,8 +1080,13 @@ cast_cone(object *op, object *caster,int dir, int strength, int spell_type,arche
     tmp->stats.dam=SP_PARAMETERS[spell_type].bdam +
                   SP_level_dam_adjust(op,caster,spell_type); 
     tmp->stats.maxhp=tmp->count;
-    SET_FLAG(tmp, FLAG_FLYING);
-    insert_ob_in_map(tmp,op->map);
+    if ( ! QUERY_FLAG (tmp, FLAG_FLYING))
+      LOG (llevDebug, "cast_cone(): arch %s doesn't have flying 1\n",
+           spell_arch->name);
+    if ( ! QUERY_FLAG (tmp, FLAG_WALK_ON) || ! QUERY_FLAG (tmp, FLAG_FLY_ON))
+      LOG (llevDebug, "cast_cone(): arch %s doesn't have walk_on 1 and "
+           "fly_on 1\n", spell_arch->name);
+    insert_ob_in_map(tmp,op->map,op);
   }
   return success;
 }
@@ -1135,11 +1142,7 @@ void move_cone(object *op) {
 
 	if(ok_to_put_more(op->map,x,y,op,op->attacktype)) {
 	    object *tmp=arch_to_object(op->arch);
-	    set_owner(tmp,op->owner);
-	    if(op->chosen_skill && (op->chosen_skill != tmp->chosen_skill)){
-		tmp->exp_obj = op->exp_obj;
-		tmp->chosen_skill = op->chosen_skill;
-	    }
+            copy_owner (tmp, op);
 	    tmp->x=x, tmp->y=y;
 
 	    /* added to make face of death work,and counterspell */
@@ -1153,7 +1156,7 @@ void move_cone(object *op) {
 	    tmp->stats.maxhp=op->stats.maxhp;
 	    tmp->stats.dam = op->stats.dam;
 	    tmp->attacktype=op->attacktype;
-	    insert_ob_in_map(tmp,op->map);
+	    insert_ob_in_map(tmp,op->map,op);
 	}
     }
 }
@@ -1171,7 +1174,7 @@ void fire_a_ball(object *op,int dir,int strength) {
   tmp->stats.hp=strength;
   SET_ANIMATION(tmp, dir);
   SET_FLAG(tmp, FLAG_FLYING);
-  insert_ob_in_map(tmp,op->map);
+  insert_ob_in_map(tmp,op->map,op);
   move_fired_arch(tmp);
 }
 
@@ -1187,7 +1190,7 @@ void explosion(object *op) {
   }
   if(op->above!=NULL&&op->above->type!=PLAYER) {
     remove_ob(op);
-    insert_ob_in_map(op,op->map);
+    insert_ob_in_map(op,op->map,op);
   }
   hit_map(op,0,op->attacktype);
   if(op->stats.hp>2&&!op->value) {
@@ -1206,7 +1209,7 @@ void explosion(object *op) {
         tmp->stats.hp--;
         tmp->value=0;
         tmp->x=dx,tmp->y=dy;
-        insert_ob_in_map(tmp,m);
+        insert_ob_in_map(tmp,m,op);
       }
     }
   }
@@ -1279,7 +1282,7 @@ void move_bolt(object *op) {
       tmp->value=0;
       tmp->stats.hp++;
       tmp->x+=DIRX(tmp),tmp->y+=DIRY(tmp);
-      insert_ob_in_map(tmp,op->map);
+      insert_ob_in_map(tmp,op->map,op);
       if (!tmp->stats.food) {
         tmp->stats.food = 1;
         move_bolt(tmp);
@@ -1334,7 +1337,7 @@ void move_golem(object *op) {
      * move_ob (makes recursive calls to other parts) 
      * move_ob returns 0 if the creature was not able to move.
      */
-    if(move_ob(op,op->direction)) return;
+    if(move_ob(op,op->direction,op)) return;
 
     for(tmp=op;tmp;tmp=tmp->more) { 
 	int x=tmp->x+freearr_x[op->direction],y=tmp->y+freearr_y[op->direction];
@@ -1412,7 +1415,7 @@ void move_missile(object *op) {
     op->direction=absdir(op->direction+((op->direction-i+8)%8<4?-1:1));
     SET_ANIMATION(op, op->direction);
   }
-  insert_ob_in_map(op,op->map);
+  insert_ob_in_map(op,op->map,op);
 }
 
 int explode_object(object *op) {
@@ -1474,7 +1477,7 @@ int explode_object(object *op) {
   if (out_of_map(env->map, env->x, env->y))
     free_object(tmp);
   else
-    insert_ob_in_map(tmp,env->map);
+    insert_ob_in_map(tmp,env->map,op);
   free_object(op);
   return 1;
 }
@@ -1498,7 +1501,7 @@ void check_fired_arch(object *op) {
       free_object(op);
       return;
     }
-    insert_ob_in_map(op,op->map);
+    insert_ob_in_map(op,op->map,op);
   }
 }
 
@@ -1511,7 +1514,7 @@ void move_fired_arch(object *op) {
 	object * tmp1=arch_to_object(find_archetype("fire_trail"));
 
         tmp1->x = op->x; tmp1->y = op->y;
-        insert_ob_in_map(tmp1,op->map);
+        insert_ob_in_map(tmp1,op->map,op);
     } /* end addition.  */
 
     op->x+=DIRX(op),op->y+=DIRY(op);
@@ -1524,7 +1527,7 @@ void move_fired_arch(object *op) {
 
     if(reflwall(op->map,op->x,op->y)) {
 	op->direction=absdir(op->direction+4);
-	insert_ob_in_map(op,op->map);
+	insert_ob_in_map(op,op->map,op);
 	update_turn_face(op);
 	return;
     }
@@ -1566,7 +1569,7 @@ void move_fired_arch(object *op) {
 	    return;
 	}
     } /* if space is blocked */
-    insert_ob_in_map(op,op->map);
+    insert_ob_in_map(op,op->map,op);
 }
 
 
@@ -1653,7 +1656,7 @@ void move_ball_lightning(object *op) {
     i=spell_find_dir(op->map,op->x,op->y,get_owner(op));
 
     if(i) op->direction=i;
-    insert_ob_in_map(op,op->map);
+    insert_ob_in_map(op,op->map,op);
 }
 	
 /* raytrace:
@@ -1846,7 +1849,7 @@ void fire_swarm (object *op, object *caster, int dir, archetype *swarm_type,
   tmp->other_arch=swarm_type;  /* the archetype of the things to be fired*/
   tmp->direction=dir; 
   tmp->invisible=1;
-  insert_ob_in_map(tmp,op->map);
+  insert_ob_in_map(tmp,op->map,op);
 }
 
 	    
@@ -1906,7 +1909,7 @@ void put_a_monster(object *op,char *monstername) {
 	    tmp->head=head;
 	    prev->more=tmp;
 	}
-	insert_ob_in_map(tmp,op->map);
+	insert_ob_in_map(tmp,op->map,op);
 	/* If something happens on the insert, don't insert anymore parts */
 	if (QUERY_FLAG(tmp,FLAG_FREED)) break;
 	if (!head) head=tmp;
@@ -1919,7 +1922,7 @@ void put_a_monster(object *op,char *monstername) {
     tmp->map = op->map;
     tmp->x=op->x+freearr_x[dir];
     tmp->y=op->y+freearr_y[dir];
-    insert_ob_in_map(tmp,op->map);
+    insert_ob_in_map(tmp,op->map,op);
     }
 }
 
@@ -2199,7 +2202,7 @@ int cast_smite_spell (object *op, object *caster,int dir, int type) {
  
    /* ok, tell it where to be, and insert! */
    effect->x=target->x;effect->y=target->y;
-   insert_ob_in_map(effect,op->map);
+   insert_ob_in_map(effect,op->map,op);
  
    return 1;
 }

@@ -60,7 +60,7 @@ void enter_pending_objects(mapstruct *map) {
     LOG(llevDebug,"Entering pending %s in %s\n",obl->ob->name,map->path);
     if(obl->ob->type == PLAYER) {
       fix_player(obl->ob);
-      insert_ob_in_map(obl->ob,map);
+      insert_ob_in_map(obl->ob,map,NULL);
     }
     if (obl->ob->arch != NULL && obl->ob->type != PLAYER) {
 	obl->ob->speed = obl->ob->arch->clone.speed;
@@ -70,7 +70,7 @@ void enter_pending_objects(mapstruct *map) {
       follow_owner(obl->ob,owner);
     if(QUERY_FLAG(obl->ob, FLAG_REMOVED)) {
       LOG(llevDebug,"follow_owner didn't help.\n");
-      insert_ob_in_map(obl->ob,map);
+      insert_ob_in_map(obl->ob,map,NULL);
     }
     free(obl);
   }
@@ -199,7 +199,7 @@ void follow_owner(object *ob, object *owner) {
     tmp->x = owner->x + freearr_x[dir]+(tmp->arch==NULL?0:tmp->arch->clone.x);
     tmp->y = owner->y + freearr_y[dir]+(tmp->arch==NULL?0:tmp->arch->clone.y);
   }
-  insert_ob_in_map(ob, owner->map);
+  insert_ob_in_map(ob, owner->map, NULL);
   if (owner->type == PLAYER) /* Uh, I hope this is always true... */
     new_draw_info(NDI_UNIQUE, 0,ob->owner, "Your pet magically appears next to you");
   return;
@@ -226,7 +226,7 @@ void pet_move(object * ob)
   dir = find_dir_2(ob->x - ob->owner->x, ob->y - ob->owner->y);
   ob->direction = dir;
 
-  if (!(move_ob(ob, dir))) {
+  if (!(move_ob(ob, dir,ob))) {
     object *part;
     for(part = ob; part != NULL; part = part->more)
     {
@@ -255,7 +255,7 @@ void pet_move(object * ob)
       }
     }
     dir = absdir(dir + 4 - (RANDOM() %5) - (RANDOM()%5));
-    (void) move_ob(ob, dir);
+    (void) move_ob(ob, dir, ob);
   }
   return;
 }

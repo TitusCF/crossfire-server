@@ -337,7 +337,7 @@ int command_create (object *op, char *params)
           prev=tmp;
         }
         if (QUERY_FLAG(head,FLAG_ALIVE))
-          insert_ob_in_map(head,op->map);
+          insert_ob_in_map(head,op->map,op);
         else
           head = insert_ob_in_ob(head,op);
         if (at->clone.randomitems!=NULL)
@@ -674,7 +674,7 @@ int command_reset (object *op, char *params)
 	    /* sigh - enter exit does not insert object 
 	       if it is removed */
 	    SET_FLAG(tmp, FLAG_NO_APPLY);
-	    insert_ob_in_map(tmp,tmp->map);
+	    insert_ob_in_map(tmp,tmp->map,NULL);
 	    CLEAR_FLAG(tmp, FLAG_NO_APPLY);
 	    free_object(dummy);
 	}

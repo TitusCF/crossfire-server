@@ -87,7 +87,7 @@ int auto_apply (object *op) {
 
     tmp->x=op->x,tmp->y=op->y;
     SET_FLAG(tmp,FLAG_UNPAID);
-    insert_ob_in_map(tmp,op->map);
+    insert_ob_in_map(tmp,op->map,NULL);
     CLEAR_FLAG(op,FLAG_AUTO_APPLY);
     identify(tmp);
     break;
@@ -141,9 +141,7 @@ void fix_auto_apply(mapstruct *m) {
   for(x=0;x<m->mapx;x++)
     for(y=0;y<m->mapy;y++)
       for(tmp=get_map_ob(m,x,y);tmp!=NULL;tmp=tmp->above)
-	if (tmp->type == TRIGGER || tmp->type == TRIGGER_BUTTON ||
-            tmp->type == TRIGGER_PEDESTAL || tmp->type == TRIGGER_ALTAR)
-	  check_trigger(tmp);
+	if (tmp->above
+            && (tmp->type == TRIGGER_BUTTON || tmp->type == TRIGGER_PEDESTAL))
+	  check_trigger(tmp,tmp->above);
 }
-
-

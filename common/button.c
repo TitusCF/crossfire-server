@@ -123,7 +123,7 @@ void push_button(object *op) {
  */
 
 void update_button(object *op) {
-    object *ab,*tmp;
+    object *ab,*tmp,*head;
     int tot,any_down=0, old_value=op->value;
     objectlink *ol;
 
@@ -144,14 +144,13 @@ void update_button(object *op) {
 	} else if (tmp->type == PEDESTAL) {
 	    tmp->value = 0;
 	    for(ab=tmp->above; ab!=NULL; ab=ab->above) {
-		if(ab->head!=NULL)
-		    ab=ab->head;
-		if ( (!QUERY_FLAG(ab,FLAG_FLYING) || 
+		head = ab->head ? ab->head : ab;
+		if ( (!QUERY_FLAG(head,FLAG_FLYING) || 
 		      QUERY_FLAG(tmp,FLAG_FLY_ON)) &&
-		     (ab->race==tmp->slaying ||
-		      ((ab->type==SPECIAL_KEY) && (ab->slaying==tmp->slaying)) || 
+		     (head->race==tmp->slaying ||
+		      ((head->type==SPECIAL_KEY) && (head->slaying==tmp->slaying)) || 
 		      (!strcmp (tmp->slaying, "player") && 
-		       ab->type == PLAYER)))
+		       head->type == PLAYER)))
 			    tmp->value = 1;
 	    }
 	    if(tmp->value)
@@ -220,139 +219,192 @@ void animate_turning(object *op) /* only one part objects */
 #define ARCH_SACRIFICE(xyz) ((xyz)->slaying)
 #define NROF_SACRIFICE(xyz) ((xyz)->stats.food)
 
-/* Returns that object if it meets the sacrifice needs of the altar.
- * If no object meets the needs, return NULL.
+/* Returns true if the sacrifice meets the needs of the altar.
+ *
  * Function put in (0.92.1) so that identify altars won't grab money
  * unnecessarily - we can see if there is sufficient money, see if something
- * needs to be identified, and then remove money if needed. (via check_altar)
- * Check_altar uses this function also.
+ * needs to be identified, and then remove money if needed.
+ *
  * 0.93.4: Linked objects (ie, objects that are connected) can not be
  * sacrificed.  This fixes a bug of trying to put multiple altars/related
  * objects on the same space that take the same sacrifice.
  */
  
-object *check_altar_sacrifice(object *altar)
+int check_altar_sacrifice (object *altar, object *sacrifice)
 {
-  object *op;
-
-  for (op=altar->above; op; op=op->above)
-    if (!QUERY_FLAG(op,FLAG_ALIVE) && !QUERY_FLAG(op,FLAG_IS_LINKED) &&
-	op->type != PLAYER) {
-      if ((ARCH_SACRIFICE(altar) == op->arch->name  ||
-          ARCH_SACRIFICE(altar) == op->name ||
-	  ARCH_SACRIFICE(altar) == op->slaying) 
-	  && NROF_SACRIFICE(altar) <= (op->nrof?op->nrof:1))
-		return op;
-      if (!strcmp(ARCH_SACRIFICE(altar), "money") &&
-	  op->type==MONEY && op->nrof*op->value>=NROF_SACRIFICE(altar))
-		return op;
-    }
-    return NULL;
+  if ( ! QUERY_FLAG (sacrifice, FLAG_ALIVE)
+      && ! QUERY_FLAG (sacrifice, FLAG_IS_LINKED)
+      && sacrifice->type != PLAYER)
+  {
+      if ((ARCH_SACRIFICE(altar) == sacrifice->arch->name ||
+          ARCH_SACRIFICE(altar) == sacrifice->name ||
+	  ARCH_SACRIFICE(altar) == sacrifice->slaying)
+	  && NROF_SACRIFICE(altar) <= (sacrifice->nrof?sacrifice->nrof:1))
+		return 1;
+      if (strcmp (ARCH_SACRIFICE(altar), "money") == 0
+          && sacrifice->type == MONEY
+          && sacrifice->nrof * sacrifice->value >= NROF_SACRIFICE(altar))
+		return 1;
+  }
+  return 0;
 }
 
 
 /*
- * check_altar checks if sacrifice was accepted and removes sacrificed
- * objects. If sacrifice was succeed return 1 else 0  Might be better to
+ * operate_altar checks if sacrifice was accepted and removes sacrificed
+ * objects.  If sacrifice was succeed return 1 else 0.  Might be better to
  * call check_altar_sacrifice (above) than depend on the return value,
- * since check_altar will remove the sacrifice also.
+ * since operate_altar will remove the sacrifice also.
  *
- * Don't really like the name of this functin, operate_altar might be better -
- * we aren't really checking it, since it will remove the sacrifice
+ * If this function returns 1, '*sacrifice' is modified to point to the
+ * remaining sacrifice, or is set to NULL if the sacrifice was used up.
  */
 
-int check_altar (object *altar)
+int operate_altar (object *altar, object **sacrifice)
 {
   object *op;
+
+  if ( ! altar->map) {
+    LOG (llevError, "BUG: operate_altar(): altar has no map\n");
+    return 0;
+  }
 
   if (!altar->slaying || altar->value)
     return 0;
 
-  op=check_altar_sacrifice(altar);
-  if (!op)
+  if ( ! check_altar_sacrifice (altar, *sacrifice))
     return 0;
 
-  /* get_altar_sacrifice should have already verified that enough money
+  /* check_altar_sacrifice should have already verified that enough money
    * has been dropped.
    */
   if (!strcmp(ARCH_SACRIFICE(altar), "money")) {
-	int number=NROF_SACRIFICE(altar)/op->value;
+	int number=NROF_SACRIFICE(altar) / (*sacrifice)->value;
 
 	/* Round up any sacrifices.  Altars don't make change either */
-	if (NROF_SACRIFICE(altar)%op->value) number++;
-	decrease_ob_nr (op, number);
+	if (NROF_SACRIFICE(altar) % (*sacrifice)->value) number++;
+	*sacrifice = decrease_ob_nr (*sacrifice, number);
   }
   else
-    decrease_ob_nr (op, NROF_SACRIFICE(altar));
+    *sacrifice = decrease_ob_nr (*sacrifice, NROF_SACRIFICE(altar));
  
-  for (op = get_map_ob(altar->map,altar->x,altar->y);
-       op && op->type != PLAYER; op=op->above);
-  if (op && altar->msg)
-    (*info_map_func) (NDI_BLACK, op->map, altar->msg);
+  if (altar->msg)
+    (*info_map_func) (NDI_BLACK, altar->map, altar->msg);
   return 1;
 }
 
 void trigger_move (object *op, int state) /* 1 down and 0 up */
 {
     op->stats.wc = state;
-    SET_ANIMATION(op,op->stats.wc);
-    update_object(op);
     if (state) {
-
-	/* Push button now does it all. */
 	use_trigger(op);
-
-	op->speed =  op->arch->clone.speed;
+	op->speed = 1.0 / op->arch->clone.stats.exp;
 	update_ob_speed(op);
 	op->speed_left = -1;
     } else {
+        use_trigger(op);
 	op->speed = 0;
 	update_ob_speed(op);
     }
 }
 
-void check_trigger (object *op) {
+
+/*
+ * cause != NULL: something has moved on top of op
+ *
+ * cause == NULL: nothing has moved, we have been called from
+ * animate_trigger().
+ *
+ * TRIGGER_ALTAR: Returns 1 if 'cause' was destroyed, 0 if not.
+ *
+ * TRIGGER: Returns 1 if handle could be moved, 0 if not.
+ *
+ * TRIGGER_BUTTON, TRIGGER_PEDESTAL: Returns 0.
+ */
+int check_trigger (object *op, object *cause)
+{
   object *tmp;
   int push = 0, tot = 0;
+  int in_movement = op->stats.wc || op->speed;
 
   switch (op->type) {
     case TRIGGER_BUTTON:
     if (op->weight > 0) {
-        for(tmp=op->above; tmp; tmp=tmp->above)
-          if(!QUERY_FLAG(tmp,FLAG_FLYING))
-	    tot += tmp->weight * (tmp->nrof ? tmp->nrof : 1) + tmp->carrying;
+        if (cause) {
+          for (tmp = op->above; tmp; tmp = tmp->above)
+            if ( ! QUERY_FLAG (tmp, FLAG_FLYING))
+	      tot += tmp->weight * (tmp->nrof ? tmp->nrof : 1)
+                     + tmp->carrying;
           if (tot >= op->weight)
             push = 1;
-          if (!push || op->stats.wc == 0)
-	    trigger_move (op, push);
+          if (op->stats.ac == push)
+            return 0;
+          op->stats.ac = push;
+          SET_ANIMATION (op, push);
+          update_object (op);
+          if (in_movement || ! push)
+            return 0;
+        }
+        trigger_move (op, push);
     }
-    return;
+    return 0;
 
     case TRIGGER_PEDESTAL:
-        for(tmp=op->above; tmp; tmp=tmp->above) {
-          if(tmp->head!=NULL)
-            tmp=tmp->head;
-          if ( (!QUERY_FLAG(tmp,FLAG_FLYING) || QUERY_FLAG(op,FLAG_FLY_ON))
-	     && (tmp->race==op->slaying ||
-             (!strcmp (op->slaying, "player") && tmp->type == PLAYER)))
+        if (cause) {
+          for (tmp = op->above; tmp; tmp = tmp->above) {
+            object *head = tmp->head ? tmp->head : tmp;
+            if ((!QUERY_FLAG(head,FLAG_FLYING) || QUERY_FLAG(op,FLAG_FLY_ON))
+	        && (head->race==op->slaying ||
+                (!strcmp (op->slaying, "player") && head->type == PLAYER)))
+              {
                 push = 1;
-	}
-        if (!push || op->stats.wc == 0)
-          trigger_move(op, push);
-        return;
+                break;
+              }
+	  }
+          if (op->stats.ac == push)
+            return 0;
+          op->stats.ac = push;
+          SET_ANIMATION (op, push);
+          update_object(op);
+          if (in_movement || ! push)
+            return 0;
+        }
+        trigger_move (op, push);
+        return 0;
+
     case TRIGGER_ALTAR:
-        if (op->stats.wc  == 0)
-          trigger_move (op,  op->speed == 0 ? check_altar(op) : 0);
-	  return;
+        if (cause) {
+          if (in_movement)
+            return 0;
+          if (operate_altar (op, &cause)) {
+            SET_ANIMATION (op, 1);
+            update_object(op);
+            trigger_move (op, 1);
+            return cause == NULL;
+          } else {
+            return 0;
+          }
+        } else {
+          SET_ANIMATION (op, 0);
+          update_object(op);
+          trigger_move (op, 0);
+        }
+        return 0;
 
     case TRIGGER:
-        if (op->stats.wc == 0)   /* handle-trigger */
-            trigger_move (op, op->speed == 0 ? 1 : 0);
-	return;
+        if (cause) {
+          if (in_movement)
+            return 0;
+          push = 1;
+        }
+        SET_ANIMATION (op, push);
+        update_object(op);
+        trigger_move (op, push);
+	return 1;
 
     default:
 	LOG(llevDebug, "Unknown trigger type: %s (%d)\n", op->name, op->type);
-	
+        return 0;
   }
 }
 

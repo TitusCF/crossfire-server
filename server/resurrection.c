@@ -109,7 +109,7 @@ int cast_raise_dead_spell(object *op,int dir,int spell_type, object * corpseobj)
        if(newob != NULL){
           newob->x = temp->x;
           newob->y = temp->y;
-          insert_ob_in_map( newob, temp->map);
+          insert_ob_in_map( newob, temp->map, op);
        }
 	leveldead=temp->level;
        remove_ob(temp);

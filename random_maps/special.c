@@ -147,8 +147,8 @@ void place_fountain_with_specials(mapstruct *map) {
   potion->material=M_ADAMANT;
   fountain->x = ix;
   fountain->y = iy;
-  insert_ob_in_map(fountain,map);
-  insert_ob_in_map(potion,map);
+  insert_ob_in_map(fountain,map,NULL);
+  insert_ob_in_map(potion,map,NULL);
 
 }
 

@@ -31,7 +31,8 @@
 #include <sproto.h>
 #endif
 
-int move_ob(object *op,int dir) {
+int move_ob (object *op, int dir, object *originator)
+{
   object *tmp=NULL;
   object *tmp_ob=NULL;
 
@@ -96,7 +97,7 @@ int move_ob(object *op,int dir) {
 
     /* Re insert object if we removed it above */
     if(op->more!=NULL && op->head==NULL)
-      insert_ob_in_map(op,op->map);
+      insert_ob_in_map(op,op->map,originator);
     return 0;
   }
 
@@ -119,10 +120,10 @@ int move_ob(object *op,int dir) {
    */
   if(op->more!=NULL) {
     tmp=op->more,op->more=NULL;
-    if(!move_ob(tmp,dir)) {
+    if(!move_ob(tmp,dir,originator)) {
       op->more=tmp;
       if(op->head==NULL)
-        insert_ob_in_map(op,op->map);
+        insert_ob_in_map(op,op->map,originator);
       return 0;
     }
     else op->more=tmp;
@@ -131,7 +132,7 @@ int move_ob(object *op,int dir) {
 
   /* If head of object (or single part object), reinsert into map. */
   if(op->head==NULL)
-    insert_ob_in_map(op,op->map);
+    insert_ob_in_map(op,op->map,originator);
 
   if (op->type==PLAYER) {
     esrv_map_scroll(&op->contr->socket, freearr_x[dir],freearr_y[dir]);
@@ -144,27 +145,46 @@ int move_ob(object *op,int dir) {
 /*
  * transfer_ob(): Move an object (even linked objects) to another spot
  * on the same map.
+ *
+ * Does nothing if there is no free spot.
+ *
+ * randomly: If true, use find_free_spot() to find the destination, otherwise
+ * use find_first_free_spot().
+ *
+ * Return value: 1 if object was destroyed, 0 otherwise.
  */
 
-void transfer_ob(object *op,int x,int y) {
-  int i=find_first_free_spot(op->arch,op->map,x,y);
+int transfer_ob (object *op, int x, int y, int randomly, object *originator)
+{
+  int i;
   object *tmp;
-  if (i==-1) return;	/* No free spot */
+
+  if (randomly)
+    i = find_free_spot (op->arch,op->map,x,y,0,SIZEOFFREE);
+  else
+    i = find_first_free_spot(op->arch,op->map,x,y);
+  if (i==-1)
+    return 0;	/* No free spot */
+
   if(op->head!=NULL)
     op=op->head;
   remove_ob(op);
   for(tmp=op;tmp!=NULL;tmp=tmp->more)
     tmp->x=x+freearr_x[i]+(tmp->arch==NULL?0:tmp->arch->clone.x),
     tmp->y=y+freearr_y[i]+(tmp->arch==NULL?0:tmp->arch->clone.y);
-  insert_ob_in_map(op,op->map);
+  return insert_ob_in_map(op,op->map,originator) == NULL;
 }
 
-void teleport(object *teleporter,unsigned char tele_type) {
+/*
+ * Return value: 1 if object was destroyed, 0 otherwise.
+ */
+int teleport (object *teleporter, unsigned char tele_type, object *originator)
+{
   object *altern[120]; /* Better use c/malloc here in the future */
   int i,j,k,nrofalt=0;
   object *other_teleporter,*teleported=teleporter->above,*tmp;
 
-  if(teleported==NULL) return;
+  if(teleported==NULL) return 0;
   if(teleported->head!=NULL)
     teleported=teleported->head;
   for(i= -5;i<6;i++)
@@ -184,20 +204,20 @@ void teleport(object *teleporter,unsigned char tele_type) {
     }
   if(!nrofalt) {
     LOG(llevError,"No alternative teleporters around!\n");
-    return;
+    return 0;
   }
   other_teleporter=altern[RANDOM()%nrofalt];
   k=find_free_spot(teleported->arch,other_teleporter->map,
                         other_teleporter->x,other_teleporter->y,1,9);
   if (k==-1)
-    return;
+    return 0;
   remove_ob(teleported);
   for(tmp=teleported;tmp!=NULL;tmp=tmp->more)
     tmp->x=other_teleporter->x+freearr_x[k]+
            (tmp->arch==NULL?0:tmp->arch->clone.x),
     tmp->y=other_teleporter->y+freearr_y[k]+
            (tmp->arch==NULL?0:tmp->arch->clone.y);
-  insert_ob_in_map(teleported,other_teleporter->map);
+  return insert_ob_in_map(teleported,other_teleporter->map,originator) == NULL;
 }
 
 void recursive_roll(object *op,int dir,object *pusher) {
@@ -206,7 +226,7 @@ void recursive_roll(object *op,int dir,object *pusher) {
 	"You fail to push the %s.",query_name(op));
     return;
   }
-  (void) move_ob(pusher,dir);
+  (void) move_ob(pusher,dir,pusher);
   new_draw_info_format(NDI_BLACK, 0, pusher,
 	"You roll the %s.",query_name(op));
   return;
@@ -282,7 +302,7 @@ int roll_ob(object *op,int dir, object *pusher) {
     remove_ob(op);
     for(tmp=op; tmp!=NULL; tmp=tmp->more)
 	tmp->x+=freearr_x[dir],tmp->y+=freearr_y[dir];
-    insert_ob_in_map(op,op->map);
+    insert_ob_in_map(op,op->map,pusher);
     return 1;
 }
 
@@ -303,8 +323,8 @@ int push_ob(object *who, int dir, object *pusher) {
     temp = pusher->y;
     pusher->y = who->y;
     who->y = temp;
-    insert_ob_in_map (who,who->map);
-    insert_ob_in_map (pusher,pusher->map);
+    insert_ob_in_map (who,who->map,pusher);
+    insert_ob_in_map (pusher,pusher->map,pusher);
     return 0;
   }
   if(QUERY_FLAG(who,FLAG_UNAGGRESSIVE) && owner != pusher)
@@ -312,7 +332,7 @@ int push_ob(object *who, int dir, object *pusher) {
   str1 = (who->stats.Str>0?who->stats.Str:who->level);
   str2 = (pusher->stats.Str>0?pusher->stats.Str:pusher->level);
   if(QUERY_FLAG(who,FLAG_WIZ) || RANDOM()%(str1/2+1) + str1 >= RANDOM()%(str2/2+1) + str2 ||
-     !move_ob(who,dir))
+     !move_ob(who,dir,pusher))
   {
     if (who ->type == PLAYER) {
       new_draw_info_format(NDI_UNIQUE, 0, who,

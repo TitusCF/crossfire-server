@@ -130,10 +130,10 @@ void place_exits(mapstruct *map, char **maze,char *exitstyle,int orientation) {
 		  random_sign->y = the_exit_up->y+freearr_y[j];
 
 		  random_sign->msg = add_string("This is a random map.\n");
-		  insert_ob_in_map(random_sign,map);
+		  insert_ob_in_map(random_sign,map,NULL);
 		}
 	 }
-	 insert_ob_in_map(the_exit_up,map);
+	 insert_ob_in_map(the_exit_up,map,NULL);
 	 maze[the_exit_up->x][the_exit_up->y]='<';
 	 /* set the starting x,y for this map */
 	 map->map_object->stats.hp=the_exit_up->x;
@@ -175,11 +175,11 @@ void place_exits(mapstruct *map, char **maze,char *exitstyle,int orientation) {
 		  the_exit_back->stats.sp = the_exit_down->y;
 		  the_exit_back->x = EXIT_X(new_map->map_object);
 		  the_exit_back->y = EXIT_Y(new_map->map_object);
-		  insert_ob_in_map(the_exit_back,new_map);
+		  insert_ob_in_map(the_exit_back,new_map,NULL);
 		}
 		else
 		  the_exit_down->slaying = add_string("/!");
-		insert_ob_in_map(the_exit_down,map);
+		insert_ob_in_map(the_exit_down,map,NULL);
 		maze[the_exit_down->x][the_exit_down->y]='>';
 	 }
   }     

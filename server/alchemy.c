@@ -461,7 +461,7 @@ void alchemy_failure_effect(object *op,object *cauldron,recipe *rp,int danger) {
 	   break;
       }
       tmp->x=cauldron->x,tmp->y=cauldron->y;
-      insert_ob_in_map(tmp,op->map);
+      insert_ob_in_map(tmp,op->map,NULL);
       return;
 
   } else if (level<60) {                	/* CREATE MONSTER */

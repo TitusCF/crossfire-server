@@ -42,7 +42,7 @@ type_func_ob	remove_friendly_object_func;
 type_func_void	process_active_maps_func;
 type_func_map	update_buttons_func;
 type_func_int_int_ob_cchar	draw_info_func;
-type_int_func_ob_ob_int	apply_func;
+type_move_apply_func	move_apply_func;
 type_func_ob	draw_func;
 type_func_ob_ob	monster_check_apply_func;
 type_func_void	init_blocksview_players_func;
@@ -78,7 +78,7 @@ void init_function_pointers() {
   process_active_maps_func = dummy_function;
   update_buttons_func = dummy_function_map;
   draw_info_func = dummy_draw_info;
-  apply_func = dummy_int_function_ob_ob_int;
+  move_apply_func = dummy_move_apply_func;
   draw_func = dummy_function_ob;
   monster_check_apply_func = dummy_function_ob2;
   init_blocksview_players_func = dummy_function;
@@ -158,8 +158,8 @@ void set_draw_info(type_func_int_int_ob_cchar addr) {
  * Specify which function to call to apply an object.
  */
 
-void set_apply(type_int_func_ob_ob_int addr) {
-  apply_func = addr;
+void set_move_apply(type_move_apply_func addr) {
+  move_apply_func = addr;
 }
 
 /*
@@ -282,8 +282,7 @@ void dummy_function_mapstr(int a, mapstruct *map, char *str) {
 void dummy_function_int_ob_ob (int n, object *ob, object *ob2) {
 }
 
-int dummy_int_function_ob_ob_int (object *ob, object *ob2, int n) {
-return 0;
+void dummy_move_apply_func (object *ob, object *ob2, object *ob3) {
 }
 
 #endif

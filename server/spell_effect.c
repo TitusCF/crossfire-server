@@ -86,7 +86,7 @@ void spell_failure(object *op, int failure,int power)
 	    else tmp->stats.dam=power; /* nasty recoils! */
 
 	    tmp->stats.maxhp=tmp->count; /*??*/
-	    insert_ob_in_map(tmp,op->map);
+	    insert_ob_in_map(tmp,op->map,NULL);
 	}
     }
 }
@@ -159,7 +159,7 @@ void cast_magic_storm(object *op, object *tmp, int lvl) {
     tmp->stats.hp+=lvl/5;  /* increase the area of destruction */
     tmp->stats.dam=lvl; /* nasty recoils! */ 
     tmp->stats.maxhp=tmp->count; /*??*/ 
-    insert_ob_in_map(tmp,op->map); 
+    insert_ob_in_map(tmp,op->map,op); 
 
 }
 
@@ -167,7 +167,7 @@ void aggravate_monsters(object *op) {
   int i,j;
   object *tmp;
 
-  spell_effect(SP_AGGRAVATION, op->x, op->y, op->map);
+  spell_effect(SP_AGGRAVATION, op->x, op->y, op->map, op);
 
   for (i = 0; i < op->map->mapx; i++)
     for (j = 0; j < op->map->mapy; j++) {
@@ -196,7 +196,7 @@ int recharge(object *op) {
     new_draw_info_format(NDI_UNIQUE, 0, op,
 	"The %s vibrates violently, then explodes!",query_name(wand));
     play_sound_map(op->map, op->x, op->y, SOUND_OB_EXPLODE);
-    spell_effect(SP_DESTRUCTION, op->x, op->y, op->map);
+    spell_effect(SP_DESTRUCTION, op->x, op->y, op->map, op);
     remove_ob(wand);
     free_object(wand);
     return 1;
@@ -269,7 +269,7 @@ void polymorph_living(object *op) {
     for(tmp = op->inv; tmp != NULL; tmp = next) {
 	next = tmp->below;
 	if(QUERY_FLAG(tmp, FLAG_APPLIED))
-	    apply(op,tmp,0);
+	    manual_apply(op,tmp,0);
 	if(tmp->type == ABILITY) {
 	    remove_ob(tmp);
 	    free_object(tmp);
@@ -294,7 +294,7 @@ void polymorph_living(object *op) {
 
     /* Put the new creature on the map */
     op->x = x; op->y = y;
-    insert_ob_in_map(op,map);
+    insert_ob_in_map(op,map,owner);
 
     /* It is possible that there is something on the map that kills
      * the object when inserted.  Unlikely, but worth checking. */
@@ -491,7 +491,7 @@ int cast_polymorph(object *op, int dir) {
 	 */
 	image->stats.food += range;
 	image->speed_left = 0.1;
-	insert_ob_in_map(image,op->map);
+	insert_ob_in_map(image,op->map,op);
     }
     return 1;
 }
@@ -567,7 +567,7 @@ int cast_speedball(object *op, int dir, int type) {
   spb->speed_left= -0.1;
   if(type==SP_LARGE_SPEEDBALL)
     spb->stats.dam=30;
-  insert_ob_in_map(spb,op->map);
+  insert_ob_in_map(spb,op->map,op);
   return 1;
 }
 
@@ -872,7 +872,7 @@ int magic_wall(object *op,object *caster,int dir,int spell_type) {
     return 0;
   }
   tmp->x=op->x+freearr_x[dir],tmp->y=op->y+freearr_y[dir];
-  insert_ob_in_map(tmp,op->map);
+  insert_ob_in_map(tmp,op->map,op);
 
   if (QUERY_FLAG(tmp, FLAG_REMOVED)) {
     new_draw_info(NDI_UNIQUE, 0,op,"Something destroys your wall");
@@ -896,14 +896,14 @@ int magic_wall(object *op,object *caster,int dir,int spell_type) {
 		tmp2 = get_object();
 		copy_object(tmp,tmp2);
 		tmp2->x = x; tmp2->y = y;
-		insert_ob_in_map(tmp2,op->map);
+		insert_ob_in_map(tmp2,op->map,op);
 	 } else posblocked=1;
 	 x = tmp->x-i*freearr_x[dir2]; y = tmp->y-i*freearr_y[dir2];
 	 if(!blocked(op->map,x,y)&&!negblocked) {
 		tmp2 = get_object();
 		copy_object(tmp,tmp2);
 		tmp2->x = x; tmp2->y = y;
-		insert_ob_in_map(tmp2,op->map);
+		insert_ob_in_map(tmp2,op->map,op);
 	 } else negblocked=1;
   }
   }
@@ -959,7 +959,7 @@ int cast_light(object *op,object *caster,int dir) {
   tmp->glow_radius=dam;
   tmp->x=x,tmp->y=y;
   if(tmp->speed<=0) tmp->speed = 0.000001; /* safety */
-  insert_ob_in_map(tmp,op->map);
+  insert_ob_in_map(tmp,op->map,op);
 
   if(op->type==PLAYER) draw(op);
   return 1;
@@ -1003,7 +1003,7 @@ int dimension_door(object *op,int dir) {
 
 	    remove_ob(op);
 	    op->x=x,op->y=y;
-	    insert_ob_in_map(op,op->map);
+	    insert_ob_in_map(op,op->map,op);
 	    draw(op);
 	    return 1;
 	}
@@ -1031,7 +1031,7 @@ int dimension_door(object *op,int dir) {
     /* Actually move the player now */
     remove_ob(op);
     op->x+=freearr_x[dir]*dist,op->y+=freearr_y[dir]*dist;
-    insert_ob_in_map(op,op->map);
+    insert_ob_in_map(op,op->map,op);
     draw(op);
     op->speed_left= -FABS(op->speed)*5; /* Freeze them for a short while */
     return 1;
@@ -1482,7 +1482,7 @@ int summon_pet(object *op, int dir, SpellTypeFrom item) {
       prev = tmp;
     }
     head->direction = dir;
-    insert_ob_in_map(head, op->map);
+    insert_ob_in_map(head, op->map, op);
     if (!QUERY_FLAG(head, FLAG_FREED) && head->randomitems != NULL) {
       object *tmp;
       create_treasure(head->randomitems,head,GT_INVENTORY,6,0);
@@ -1528,7 +1528,7 @@ int create_bomb(object *op,object *caster,int dir,int spell_type,char *name) {
 
   set_owner(tmp,op);
   tmp->x=dx,tmp->y=dy;
-  insert_ob_in_map(tmp,op->map);
+  insert_ob_in_map(tmp,op->map,op);
   return 1;
 }
 
@@ -1545,7 +1545,7 @@ void animate_bomb(object *op) {
 	if (op->type==PLAYER) drop(env,op);
 	else {
 	    remove_ob(op);
-	    insert_ob_in_map(op, env->map);
+	    insert_ob_in_map(op, env->map, op);
 	}
   }
   if (env->map == NULL)
@@ -1581,10 +1581,7 @@ int fire_cancellation(object *op,int dir,archetype *at, int magic) {
     if(op->type==PLAYER)
 	set_owner(tmp,op);
 
-    insert_ob_in_map(tmp,op->map);
-
-    /* It is possible that the object got destroyed by the insert above */
-    if (!QUERY_FLAG(tmp, FLAG_FREED))
+    if ((tmp = insert_ob_in_map(tmp,op->map,op)) != NULL)
 	move_cancellation(tmp);
     return 1;
 }
@@ -1599,11 +1596,11 @@ void move_cancellation(object *op) {
   if(reflwall(op->map,op->x,op->y)) {
 
     op->direction=absdir(op->direction+4);
-    insert_ob_in_map(op,op->map);
+    insert_ob_in_map(op,op->map,op);
     return;
   }
   hit_map(op, 0, op->attacktype);
-  insert_ob_in_map(op,op->map);
+  insert_ob_in_map(op,op->map,op);
 }
 
 void cancellation(object *op)
@@ -1792,7 +1789,7 @@ static void update_map(object *op, int small_nuggets, int large_nuggets,
 		tmp-> nrof = small_nuggets;
 		tmp->x = x;
 		tmp->y = y;
-		insert_ob_in_map(tmp, op->map);
+		insert_ob_in_map(tmp, op->map, op);
 	}
 	if (large_nuggets) {
 		tmp = get_object();
@@ -1800,7 +1797,7 @@ static void update_map(object *op, int small_nuggets, int large_nuggets,
 		tmp-> nrof = large_nuggets;
 		tmp->x = x;
 		tmp->y = y;
-		insert_ob_in_map(tmp, op->map);
+		insert_ob_in_map(tmp, op->map, op);
 	}
 }
 
@@ -1974,7 +1971,7 @@ int cast_identify(object *op) {
   if (!success)
     new_draw_info(NDI_UNIQUE, 0,op, "You can't reach anything unidentified.");
   else {
-    spell_effect(SP_IDENTIFY, op->x, op->y, op->map);
+    spell_effect(SP_IDENTIFY, op->x, op->y, op->map, op);
   }
   return success;
 }
@@ -2065,7 +2062,7 @@ int cast_detection(object *op, int type) {
           object *detect_ob = arch_to_object(detect_arch);
           detect_ob->x = x;
           detect_ob->y = y;
-          insert_ob_in_map(detect_ob, op->map);
+          insert_ob_in_map(detect_ob, op->map, op);
       }
     }
   if ((type == SP_DETECT_MAGIC || type == SP_DETECT_CURSE) &&
@@ -2143,7 +2140,7 @@ int cast_pacify(object *op, object *weap, archetype *arch,int spellnum ) {
         if((effect=get_archetype("detect_magic"))){
                 effect->x = tmp->x;
                 effect->y = tmp->y;
-                insert_ob_in_map(effect,tmp->map);
+                insert_ob_in_map(effect,tmp->map,op);
         }
         SET_FLAG(tmp,FLAG_UNAGGRESSIVE);
   }      
@@ -2181,7 +2178,7 @@ int summon_fog(object *op, object *caster,int dir,int spellnum) {
 				/* that players will garner much exp with */
 				/* this spell */
 #endif
-     insert_ob_in_map(tmp,op->map);
+     insert_ob_in_map(tmp,op->map,op);
   }
 
   return 1;
@@ -2266,7 +2263,7 @@ int create_the_feature(object *op, object *caster,int dir, int spell_effect)
 	free_object(tmp);
 	return 0;
     }
-    insert_ob_in_map(tmp,op->map);
+    insert_ob_in_map(tmp,op->map,op);
     if(QUERY_FLAG(tmp, FLAG_BLOCKSVIEW))
 	update_all_los(op->map);
     if(op->type==PLAYER)
@@ -2474,7 +2471,7 @@ int cast_charm(object *op, object *caster,archetype *arch,int spellnum) {
 	if((effect=get_archetype("detect_magic"))){
 		effect->x = tmp->x;
 		effect->y = tmp->y;
-		insert_ob_in_map(effect,tmp->map);
+		insert_ob_in_map(effect,tmp->map,op);
 	}
 	set_owner(tmp,op);
 	SET_FLAG(tmp,FLAG_MONSTER);
@@ -2512,7 +2509,7 @@ int cast_charm_undead(object *op, object *caster,archetype *arch,int spellnum) {
         if((effect=get_archetype("detect_magic"))){
                 effect->x = tmp->x;
                 effect->y = tmp->y;
-                insert_ob_in_map(effect,tmp->map);
+                insert_ob_in_map(effect,tmp->map,op);
         }
         set_owner(tmp,op);
         SET_FLAG(tmp,FLAG_MONSTER);
@@ -2707,7 +2704,7 @@ int summon_cult_monsters(object *op, int old_dir) {
 	    }
 	} /* if monster level is much less than character level */
 
-	insert_ob_in_map(head, op->map);
+	insert_ob_in_map(head, op->map, op);
 	if (!QUERY_FLAG(head, FLAG_FREED) && head->randomitems != NULL) {
 	    object *tmp;
 	    create_treasure(head->randomitems,head,GT_INVENTORY,6,0);
@@ -2815,7 +2812,7 @@ int summon_avatar(object *op,object *caster,int dir, archetype *at, int spellnum
   tmp->speed_left= -1;
   tmp->x=op->x+freearr_x[dir],tmp->y=op->y+freearr_y[dir];
   tmp->direction=dir;
-  insert_ob_in_map(tmp,op->map);
+  insert_ob_in_map(tmp,op->map,op);
   return 1;
 }
  
@@ -2967,7 +2964,7 @@ int finger_of_death(object *op, object *caster, int dir) {
       }
   }  
 
-  insert_ob_in_map(hitter,op->map); 
+  insert_ob_in_map(hitter,op->map,op); 
  
   return success;
 }
@@ -3204,7 +3201,7 @@ int animate_weapon(object *op,object *caster,int dir, archetype *at, int spellnu
   tmp->speed_left= -1;
   tmp->x=op->x+freearr_x[dir],tmp->y=op->y+freearr_y[dir];
   tmp->direction=dir;
-  insert_ob_in_map(tmp,op->map);
+  insert_ob_in_map(tmp,op->map,op);
   return 1;
 }
 
@@ -3277,7 +3274,7 @@ int cast_faery_fire(object *op,object *caster) {
         if(effect){
                 effect->x = tmp->x;
                 effect->y = tmp->y;
-                insert_ob_in_map(effect,op->map);
+                insert_ob_in_map(effect,op->map,op);
         }
       }
 #endif
@@ -3435,7 +3432,7 @@ int cast_cause_disease(object *op, object *caster, int dir, archetype *disease_a
 			 flash->x = x;
 			 flash->y = y;
 			 flash->map = walk->map;
-			 insert_ob_in_map(flash,walk->map);
+			 insert_ob_in_map(flash,walk->map,op);
 			 return 1;
 		  }
 		  free_object(disease);

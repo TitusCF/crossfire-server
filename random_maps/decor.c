@@ -74,7 +74,7 @@ void put_decor(mapstruct *map,char **maze,char *decorstyle,int decor_option) {
 				this_object->y = y;
 				/* it screws things up if decor can stop people */
 				CLEAR_FLAG(this_object,FLAG_NO_PASS);
-				insert_ob_in_map(this_object,map);
+				insert_ob_in_map(this_object,map,NULL);
 				number_to_place--;
 			 }
 		  else failures++;

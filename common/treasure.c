@@ -285,7 +285,7 @@ void create_all_treasures(treasure *t, object *op, int flag, int difficulty, int
           (void) (*monster_check_apply_func)(op,tmp);
         } else {
           tmp->x=op->x,tmp->y=op->y;
-          insert_ob_in_map(tmp,op->map);
+          insert_ob_in_map(tmp,op->map,NULL);
 	}
       }
     }
@@ -334,7 +334,7 @@ void create_one_treasure(treasurelist *tl, object *op, int flag, int difficulty,
           (void) (*monster_check_apply_func)(op,tmp);
         } else {
           tmp->x=op->x,tmp->y=op->y;
-          insert_ob_in_map(tmp,op->map);
+          insert_ob_in_map(tmp,op->map,NULL);
 	}
     }
 }

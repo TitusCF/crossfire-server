@@ -121,7 +121,11 @@
 #define HELMET		34
 #define HORN		35
 #define MONEY		36
-#define GRAVE		37
+
+/* unused: 37
+ * type 37 was GRAVE
+ */
+
 #define GRAVESTONE	38
 #define AMULET		39
 #define PLAYERMOVER	40
@@ -212,7 +216,10 @@
 #define CONTAINER	122
 #define ARMOUR_IMPROVER 123
 #define WEAPON_IMPROVER 124
-#define MONEY_CHANGER	125
+
+/* unused: 125 - 129
+ * type 125 was MONEY_CHANGER
+ */
 
 #define SKILLSCROLL	130	/* can add a skill to player's inventory -bt.*/
 

@@ -90,7 +90,7 @@ void generate_monster(object *gen) {
     if(head!=NULL)
       op->head=head,prev->more=op;
     if (RANDOM()%10) generate_artifact(op, gen->map->difficulty);
-    insert_ob_in_map(op,gen->map);
+    insert_ob_in_map(op,gen->map,gen);
     if (QUERY_FLAG(op, FLAG_FREED)) return;
     if(op->randomitems!=NULL)
       create_treasure(op->randomitems,op,GT_INVENTORY,
@@ -284,7 +284,7 @@ void move_gate(object *op) { /* 1 = going down, 0 = goind up */
 					     "You are crushed by the %s!",op->name);
 		} else 
 		    /* If the object is not alive, and the object either can
-		     * not be picked up or the object rolls, move the object
+		     * be picked up or the object rolls, move the object
 		     * off the gate.
 		     */
 		    if(!QUERY_FLAG(tmp, FLAG_ALIVE)
@@ -297,7 +297,7 @@ void move_gate(object *op) { /* 1 = going down, 0 = goind up */
 		    if (i!=-1) {
 			remove_ob(tmp);
 			tmp->x+=freearr_x[i],tmp->y+=freearr_y[i];
-			insert_ob_in_map(tmp,op->map);
+			insert_ob_in_map(tmp,op->map,op);
 		    }
 		}
 	    }
@@ -405,10 +405,11 @@ void animate_trigger (object *op)
 {
   if((unsigned char)++op->stats.wc >= NUM_ANIMATIONS(op)) {
     op->stats.wc = 0;
-    check_trigger(op);
+    check_trigger(op,NULL);
+  } else {
+    SET_ANIMATION(op, op->stats.wc);
+    update_object(op);
   }
-  SET_ANIMATION(op, op->stats.wc);
-  update_object(op);
 }
 
 void move_hole(object *op) { /* 1 = opening, 0 = closing */
@@ -422,7 +423,7 @@ void move_hole(object *op) { /* 1 = opening, 0 = closing */
 	    SET_FLAG(op, FLAG_WALK_ON);
 	    for (tmp=op->above; tmp!=NULL; tmp=next) {
 		next=tmp->above;
-		apply(tmp,op,0);
+		move_apply(op,tmp,tmp);
 	    }
 	}
 	SET_ANIMATION(op, op->stats.wc);
@@ -502,7 +503,7 @@ void stop_arrow(object *op,object *tmp) {
 	if (tmp->type== PLAYER)
 	    esrv_send_item (tmp, op);
     } else
-	insert_ob_in_map(op,op->map);
+	insert_ob_in_map(op,op->map,op);
     op->owner=NULL; /* So that stopped arrows will be saved */
 }
 
@@ -589,7 +590,7 @@ void move_arrow(object *op) {
 
     /* Nothing alive?  Insert arrow and return */
     if(tmp==NULL) {
-	insert_ob_in_map(op,op->map);
+	insert_ob_in_map(op,op->map,op);
 	return;
     }
 
@@ -606,7 +607,7 @@ void move_arrow(object *op) {
 		number-=8;
 	    op->face = &new_faces[number];
 	}
-	insert_ob_in_map(op,op->map);
+	insert_ob_in_map(op,op->map,op);
 	return;
     }
 
@@ -618,7 +619,7 @@ void move_arrow(object *op) {
 	 * stop the arrow.
 	 */
 	if(op->direction)
-	    insert_ob_in_map(op,op->map);
+	    insert_ob_in_map(op,op->map,op);
 	else 
 	    stop_arrow(op,NULL);
     }
@@ -656,7 +657,7 @@ void change_object(object *op) { /* Doesn`t handle linked objs yet */
 	    free_object(tmp);
 	else {
 	    tmp->x=op->x+freearr_x[j],tmp->y=op->y+freearr_y[j];
-	    insert_ob_in_map(tmp,op->map);
+	    insert_ob_in_map(tmp,op->map,op);
 	}
     }
   }
@@ -680,9 +681,9 @@ void move_teleporter(object *op) {
         free_object(op);
         return;
       }
-      transfer_ob(op->above,EXIT_X(op),EXIT_Y(op));
+      transfer_ob(op->above,EXIT_X(op),EXIT_Y(op),0,op);
     } else
-      teleport(op,TELEPORTER);
+      teleport(op,TELEPORTER,op);
   }
 }
 
@@ -776,7 +777,7 @@ void move_creator(object *op) {
 	 tmp->title = add_string(op->slaying);
   }
   tmp->x=op->x;tmp->y=op->y;tmp->map=op->map;tmp->level=op->level;
-  insert_ob_in_map(tmp,op->map);
+  insert_ob_in_map(tmp,op->map,op);
 }
 
 /* move_marker --peterm@soda.csua.berkeley.edu
@@ -945,7 +946,7 @@ int process_object(object *op) {
     move_hole(op);
     return 0;
   case DEEP_SWAMP:
-    deep_swamp(op, 0);
+    move_deep_swamp(op);
     return 0;
   case CANCELLATION:
     move_cancellation(op);

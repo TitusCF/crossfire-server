@@ -435,7 +435,7 @@ static int stop_jump(object *pl, int dist, int spaces) {
     /* int load=dist/(pl->speed*spaces); */ 
 
     CLEAR_FLAG(pl,FLAG_FLYING);
-    insert_ob_in_map(pl,pl->map);
+    insert_ob_in_map(pl,pl->map,pl);
     if (pl->type==PLAYER) draw(pl);  
 
     /* pl->speed_left= (int) -FABS((load*8)+1); */ 
@@ -1165,7 +1165,7 @@ int write_scroll (object *pl, object *scroll) {
     if(scroll->stats.sp &&  (RANDOM()%(scroll->level*2+1))>SK_level(pl)) {
          	new_draw_info_format(NDI_UNIQUE,0,pl,
 			"Oops! You accidently read it while trying to write on it.");
-		apply(pl,scroll,0);
+		manual_apply(pl,scroll,0);
 		change_skill(pl,SK_INSCRIPTION);
 		return 0;
     }
@@ -1317,15 +1317,24 @@ object *find_throw_ob( object *op, char *request ) {
         new_draw_info_format(NDI_UNIQUE, 0,op,
           "The %s sticks to your hand!",query_name(tmp));
         tmp = NULL;
-      } else
-        CLEAR_FLAG(tmp,FLAG_APPLIED);
-    }
-    else if (QUERY_FLAG(tmp,FLAG_INV_LOCKED)) {
-	new_draw_info_format(NDI_UNIQUE, 0, op,
-	    "The %s is locked - you can't throw it.", query_name(tmp));
-	tmp=NULL;
+      } else {
+        tag_t tag = tmp->count;
+        player_apply (op, tmp, AP_UNAPPLY, 0);
+        if (was_destroyed (tmp, tag)) {
+          tmp = NULL;
+        } else if (QUERY_FLAG (tmp, FLAG_APPLIED)) {
+          LOG (llevError, "BUG: find_throw_ob(): couldn't unapply\n");
+          tmp = NULL;
+        }
+      }
     }
   }
+
+  if (tmp && QUERY_FLAG (tmp, FLAG_INV_LOCKED)) {
+    LOG (llevError, "BUG: find_throw_ob(): object is locked\n");
+    tmp=NULL;
+  }
+
   return tmp;
 }
 
@@ -1339,7 +1348,11 @@ object *make_throw_ob (object *orig) {
 
   if(orig) {
     toss_item=get_object();
-    CLEAR_FLAG(orig,FLAG_APPLIED);
+    if (QUERY_FLAG (orig, FLAG_APPLIED)) {
+      LOG (llevError, "BUG: make_throw_ob(): ob is applied\n");
+      /* insufficient workaround, but better than nothing */
+      CLEAR_FLAG (orig, FLAG_APPLIED);
+    }
     copy_object(orig,toss_item);
     toss_item->type = THROWN_OBJ;
     CLEAR_FLAG(toss_item,FLAG_CHANGING);
@@ -1433,7 +1446,7 @@ void do_throw(object *op, object *toss_item, int dir) {
 	/* bounces off 'wall', and drops to feet */
 	 remove_ob(throw_ob);
 	 throw_ob->x = op->x; throw_ob->y = op->y;
-	 insert_ob_in_map(throw_ob,op->map);
+	 insert_ob_in_map(throw_ob,op->map,op);
 	if(op->type==PLAYER) {
 	    if(eff_str<=1) {
 		new_draw_info_format(NDI_UNIQUE, 0,op,
@@ -1608,7 +1621,7 @@ void do_throw(object *op, object *toss_item, int dir) {
         throw_ob->last_sp,throw_ob->speed,throw_ob->stats.food);
     LOG(llevDebug,"inserting tossitem (%d) into map\n",throw_ob->count);
 #endif
-    insert_ob_in_map(throw_ob,op->map);
+    insert_ob_in_map(throw_ob,op->map,op);
     move_arrow(throw_ob);
 }
 

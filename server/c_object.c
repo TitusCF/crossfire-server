@@ -198,34 +198,10 @@ int command_rskill ( object *pl, char *params) {
    return change_skill(pl,skillno);
 }
 
-void apply_inventory(object *op) {
-  object *inv;
-  if(op->contr->last_used!=NULL) {
-    inv=op->contr->last_used;
-    if(QUERY_FLAG(inv, FLAG_FREED)||inv->count!=op->contr->last_used_id||
-       inv->env==NULL||(inv->env!=op&&inv->env->env!=op)) {
-      op->contr->last_used=NULL;
-      op->contr->last_used_id=0;
-      apply_inventory(op);
-      return;
-    }
-  } else {
-    for (inv=op->inv; inv && inv->invisible; inv=inv->below) ;
-  }
-  if(inv) {
-    if(!apply(op,inv,0)) {
-      new_draw_info_format(NDI_UNIQUE, 0, op,
-	"I don't know how to apply the %s.",query_name(inv));
-    }
-  } else {
-    new_draw_info(NDI_UNIQUE, 0,op, "You have nothing to apply!");
-  }
-}
-
 int command_apply (object *op, char *params)
 {
   if (!params) {
-    apply_below(op);
+    player_apply_below(op);
     return 0;
   }
   else {
@@ -245,10 +221,7 @@ int command_apply (object *op, char *params)
 
     inv=find_best_object_match(op, params);
     if (inv) {
-	if(!apply(op,inv,aflag)) {
-	  new_draw_info_format(NDI_UNIQUE, 0, op,
-	    "I don't know how to apply the %s.",query_name(inv));
-	}
+	player_apply(op,inv,aflag,0);
     } else
 	  new_draw_info_format(NDI_UNIQUE, 0, op,
 	    "Could not find any match to %s.",params);
@@ -680,10 +653,12 @@ void drop_object (object *op, object *tmp, long nrof)
 
     tmp->x = op->x;
     tmp->y = op->y;
-    insert_ob_in_map(tmp, op->map);
+    insert_ob_in_map(tmp, op->map, op);
 
+    SET_FLAG (op, FLAG_NO_APPLY);
     remove_ob(op);
     insert_ob_in_map_simple(op, op->map);
+    CLEAR_FLAG (op, FLAG_NO_APPLY);
 
     /* Call this before we update the various windows/players.  At least
      * that we, we know the weight is correct.

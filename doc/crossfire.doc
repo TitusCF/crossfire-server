@@ -632,6 +632,12 @@ that they reset after a short amount of time.  Thus, they can be used to
 open a door for a short amount of time.  Triggers use stats.wc as
 a temporary storage value to note activation.
 
+stats.exp is used do determine when the trigger resets.  A smaller value
+means faster reset.
+
+stats.ac is used to store the old value of the condition for TRIGGER_BUTTON
+and TRIGGER_PEDESTAL to trigger only when condition changes from false to true.
+
 TRIGGER_BUTTON: if weight on the button is greater than the weight value
 for the trigger, push a trigger.
 

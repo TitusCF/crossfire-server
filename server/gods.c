@@ -261,7 +261,7 @@ void stop_using_item ( object *op, int type, int number ) {
 
   for(tmp=op->inv;tmp&&number;tmp=tmp->below)
     if(tmp->type==type&&QUERY_FLAG(tmp,FLAG_APPLIED)) { 
-	apply(op,tmp,0); /* this should unapply things properly */ 
+	manual_apply(op,tmp,0); /* this should unapply things properly */ 
 	number--;
     }
 }

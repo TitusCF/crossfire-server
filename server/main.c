@@ -495,7 +495,7 @@ void enter_map(object *op) {
   }
   if(!op->contr->removed) {
     SET_FLAG(op, FLAG_NO_APPLY);
-    insert_ob_in_map(op,op->map);
+    insert_ob_in_map(op,op->map,NULL);
     CLEAR_FLAG(op, FLAG_NO_APPLY);
   }
   op->enemy = NULL;
@@ -641,6 +641,7 @@ void process_events (mapstruct *map)
 {
   object *op, *next;
   object marker;
+  tag_t tag;
 
   process_players1 (map);
 
@@ -654,6 +655,7 @@ void process_events (mapstruct *map)
   while (marker.active_next)
   {
     op = marker.active_next;
+    tag = op->count;
 
     /* Move marker forward - swap op and marker */
     op->active_prev = marker.active_prev;
@@ -710,6 +712,8 @@ void process_events (mapstruct *map)
     if (op->speed_left > 0) {
       --op->speed_left;
       process_object (op);
+      if (was_destroyed (op, tag))
+        continue;
     }
 
 #ifdef CASTING_TIME

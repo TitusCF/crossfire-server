@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/local/bin/perl
 
 require "util.pl";
 
@@ -29,6 +29,8 @@ line:	while(<ARCH>) {
 		$arch = $values[0];
 		$is_alive = 0;
 		$level = 0;
+                $type = 0;
+                $move_apply = 0;
 		$is_not_head = $more;
 		$more = 0;
 		next line;
@@ -39,6 +41,18 @@ line:	while(<ARCH>) {
 		    &warn ("arch $arch is alive, but doesn't have level");
 		    $warnings++;
 		}
+                if ($type == 62 && $level <= 0) {
+                    &warn ("arch $arch is a FIREWALL, but doesn't have level");
+                    $warnings++;
+                }
+                if ($type == 5 && $level <= 0) {
+                    &warn ("arch $arch is a POTION, but doesn't have level");
+                    $warnings++;
+                }
+                if ($move_apply && $type == 0) {
+                    &warn ("arch $arch has walk/fly on/off but doesn't have a type");
+                    $warnings++;
+                }
 		next line;
 	    }
 	    if ($var eq "alive") {
@@ -49,6 +63,16 @@ line:	while(<ARCH>) {
 		$level = $values[0];
 		next line;
 	    }
+            if ($var eq "type") {
+                $type = $values[0];
+                next line;
+            }
+            if ($var eq "walk_on" || $var eq "fly_on" || $var eq "walk_off"
+                || $var eq "fly_off")
+            {
+                $move_apply |= $values[0];
+                next line;
+            }
     }
     &info ("$warnings problems found");
 }

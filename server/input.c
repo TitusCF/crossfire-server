@@ -1161,12 +1161,9 @@ int legal_range(object *op,int r) {
   case range_scroll: /* Use scrolls */
     return 0;
   case range_skill:
-      for (tmp = op->inv; tmp!=NULL; tmp=tmp->below) {
-	  if (tmp->type == SKILL) { 
-	      return 1;
-	  }
-      }
-      op->chosen_skill=NULL;	/* they have lost all skills :) */ 
+    if (op->chosen_skill)
+      return 1;
+    else
       return 0;
   }
   return 0;

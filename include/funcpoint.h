@@ -33,6 +33,7 @@
 /*
  * Some function types
  */
+typedef void (*type_move_apply_func) (object *, object *, object *);
 typedef void (*type_func_int)(int);
 typedef void (*type_func_int_int)(int,int);
 typedef void (*type_func_void)(void);
@@ -48,15 +49,15 @@ typedef void (*type_func_ob_int)(object *, int);
 typedef int (*type_int_func_ob_ob)(object *, object *);
 typedef void (*type_func_char_int)(char *, int);
 typedef void (*type_func_int_ob_ob)(int, object *, object *);
-typedef int (*type_int_func_ob_ob_int)(object *, object *,int);
 typedef void (*type_func_player_int)(player *, int);
+
 
 /*
  * These function-pointers are defined in common/glue.c
  * The functions used to set and initialise them are also there.
  */
 
-extern int	(*apply_func)			(object *, object *, int);
+extern void	(*move_apply_func)		(object *, object *, object *);
 extern void	(*draw_func)			(object *);
 extern void	(*draw_info_func)		(int, int, object *, const char *);
 extern void	(*emergency_save_func)		(int);

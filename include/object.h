@@ -28,6 +28,8 @@
 #ifndef OBJECT_H
 #define OBJECT_H
 
+typedef uint32 tag_t;
+
 typedef struct obj {
 /* These variables are not changed by copy_object(): */
   struct pl *contr;    /* Pointer to the player which control this object */
@@ -51,7 +53,7 @@ typedef struct obj {
   struct obj *head;    /* Points to the main object of a large body */
   struct mapdef *map;  /* Pointer to the map in which this object is present */
 
-  uint32	count;         /* Which nr. of object created this is. */
+  tag_t		count;         /* Which nr. of object created this is. */
   uint16	refcount;	/* How many objects points to this object */
   struct oblnk *sk_list;	/* Pointer to linked list of skill objects for this ob*/
 
@@ -102,7 +104,7 @@ typedef struct obj {
   signed long weight;           /* Attributes of the object */
   signed long carrying;         /* How much weight this object contains */
   uint32 flags[4];		/* various flags */
-  uint32 ownercount;		/* What count the owner had (in case owner */
+  tag_t ownercount;		/* What count the owner had (in case owner */
 				/* has been freed) */
   struct treasureliststruct *randomitems; /* Items to be generated */
 #if 0

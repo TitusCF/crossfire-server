@@ -114,7 +114,7 @@ void save_throw_object(object *op, int type) {
 			    esrv_send_item(env, op);
                    } else { 
                       op->x=x,op->y=y;
-                      insert_ob_in_map(op,m);
+                      insert_ob_in_map(op,m,NULL);
 		   }
 		}
 		return;
@@ -144,7 +144,7 @@ void save_throw_object(object *op, int type) {
                 insert_ob_in_ob(op,env);
 	      } else { 
 		op->x=x,op->y=y;
-	      	insert_ob_in_map(op,m);
+	      	insert_ob_in_map(op,m,NULL);
 	      }
 	}
 	return;
@@ -158,7 +158,7 @@ void save_throw_object(object *op, int type) {
         if ((tmp = present_arch(at,op->map,op->x,op->y)) == NULL) {
           tmp = arch_to_object(at);
           tmp->x=op->x,tmp->y=op->y;
-          insert_ob_in_map(tmp,op->map);
+          insert_ob_in_map(tmp,op->map,NULL);
         }
         remove_ob(op);
         (void) insert_ob_in_ob(op,tmp);
@@ -1040,7 +1040,7 @@ int hit_player(object *op,int dam, object *hitter, int type) {
 		free_object(tmp);
 	    else {
 		tmp->x=op->x+freearr_x[j],tmp->y=op->y+freearr_y[j];
-		insert_ob_in_map(tmp,op->map);
+		insert_ob_in_map(tmp,op->map,NULL);
 	    }
 	}
 	if(friendly)
@@ -1157,7 +1157,7 @@ void paralyze_player(object *op, object *hitter, int dam)
     if((tmp=present(PARAIMAGE,op->map,op->x,op->y))==NULL) {
       tmp=clone_arch(PARAIMAGE);
       tmp->x=op->x,tmp->y=op->y;
-      insert_ob_in_map(tmp,op->map);
+      insert_ob_in_map(tmp,op->map,NULL);
     }
     op->speed_left-=(float)FABS(op->speed)*(dam*3);
     tmp->stats.food+=(signed short) (dam*3)/op->speed;
@@ -1240,7 +1240,7 @@ object *thrown_item_effect( object *hitter, object *victim) {
         break;
       case POISON: /* poison drinks */
         if(QUERY_FLAG(victim,FLAG_ALIVE)&&!QUERY_FLAG(victim,FLAG_UNDEAD)
-	  &&!(victim->immune&AT_POISON)) apply(victim,tmp,0);
+	  &&!(victim->immune&AT_POISON)) apply_poison(victim,tmp);
         break;
       case CONTAINER: 
         /* spill_container(victim,RANDOM()%(hitter->stats.dam+1)); */

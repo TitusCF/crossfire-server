@@ -39,7 +39,8 @@ int apply_power_crystal(object *op, object *crystal) {
   crystal->stats.sp +=power_grab;
   crystal->speed = (float)crystal->stats.sp/(float)crystal->stats.maxsp;
   update_ob_speed(crystal);
-  esrv_update_item(UPD_ANIMSPEED, op, crystal);
+  if (op->type == PLAYER)
+    esrv_update_item(UPD_ANIMSPEED, op, crystal);
 
   return 1;
 }

@@ -702,6 +702,8 @@ void update_ob_speed(object *op) {
 	if (op->active_next || op->active_prev || op==active_objects)
 	    return;
 
+        /* process_events() expects us to insert the object at the beginning
+         * of the list. */
 	op->active_next = active_objects;
 	if (op->active_next!=NULL)
 		op->active_next->active_prev = op;
@@ -929,7 +931,7 @@ void free_object(object *ob) {
           free_object(op);
         else {
           op->x=ob->x,op->y=ob->y;
-          insert_ob_in_map(op,ob->map); /* Insert in same map as the envir */
+          insert_ob_in_map(op,ob->map,NULL); /* Insert in same map as the envir */
         }
         op=tmp;
       }
@@ -940,6 +942,7 @@ void free_object(object *ob) {
   update_ob_speed(ob);
 
   SET_FLAG(ob, FLAG_FREED);
+  ob->count = 0;
   /* First free the object from the used objects list: */
   if(ob->prev==NULL) {
     objects=ob->next;
@@ -1044,6 +1047,8 @@ void sub_weight (object *op, signed long weight) {
 void remove_ob(object *op) {
   object *tmp,*last=NULL;
   object *otmp;
+  tag_t tag;
+  int check_walk_off;
 
   if(QUERY_FLAG(op,FLAG_REMOVED)) {
     dump_object(op);
@@ -1130,6 +1135,10 @@ void remove_ob(object *op) {
       }
     set_map_ob(op->map,op->x,op->y,NULL);           /* No more objects here */
   }
+  if (op->map->in_memory == MAP_SAVING)
+    return;
+  tag = op->count;
+  check_walk_off = ! QUERY_FLAG (op, FLAG_NO_APPLY);
   for(tmp=get_map_ob(op->map,op->x,op->y);tmp!=NULL;tmp=tmp->above) {
     /* No point updating the players look faces if he is the object
      * being removed.
@@ -1145,9 +1154,15 @@ void remove_ob(object *op) {
 	}
 	tmp->contr->socket.update_look=1;
     }
-    if(QUERY_FLAG(op,FLAG_FLYING)?QUERY_FLAG(tmp,FLAG_FLY_OFF):
-      QUERY_FLAG(tmp,FLAG_WALK_OFF))
-        (*apply_func)(op,tmp,0);
+    if (check_walk_off && (QUERY_FLAG (op, FLAG_FLYING) ?
+        QUERY_FLAG (tmp, FLAG_FLY_OFF) : QUERY_FLAG (tmp, FLAG_WALK_OFF)))
+    {
+        move_apply_func (tmp, op, NULL);
+        if (was_destroyed (op, tag)) {
+          LOG (llevError, "BUG: remove_ob(): name %s, archname %s destroyed "
+               "leaving object\n", tmp->name, tmp->arch->name);
+        }
+    }
 
     /* Eneq(@csd.uu.se): Fixed this to skip tmp->above=tmp */
 
@@ -1270,7 +1285,7 @@ void insert_ob_in_map_simple(object *op, mapstruct *m)
        * Simple case, insert new object above tmp.
        */
       if (tmp->above != NULL)
-        LOG(llevError, "insert_ob_in_map: top == tmp && tmp->above != NULL.\n");
+        LOG(llevError, "insert_ob_in_map_simple: top == tmp && tmp->above != NULL.\n");
       else {
         tmp->above = op;
         op->below = tmp;
@@ -1308,33 +1323,47 @@ void insert_ob_in_map_simple(object *op, mapstruct *m)
 }
 
 /*
- * insert_ob_in_map(op, map):
+ * insert_ob_in_map (op, map, originator):
  * This function inserts the object in the two-way linked list
  * which represents what is on a map.
  * The second argument specifies the map, and the x and y variables
  * in the object about to be inserted specifies the position.
+ *
+ * originator: Player, monster or other object that caused 'op' to be inserted
+ * into 'map'.  May be NULL.
+ *
+ * Return value:
+ *   new object if 'op' was merged with other object
+ *   NULL if 'op' was destroyed
+ *   just 'op' otherwise
  */
 
-void insert_ob_in_map(object *op,mapstruct *m) {
+object *insert_ob_in_map (object *op, mapstruct *m, object *originator)
+{
   object *tmp, *top;
 
   if(m==NULL) {
     dump_object(op);
     LOG(llevError,"Trying to insert in null-map!\n%s\n",errmsg);
-    return;
+    return op;
   }
   if(out_of_map(m,op->x,op->y)) {
     dump_object(op);
     LOG(llevError,"Trying to insert object outside the map.\n%s\n", errmsg);
-    return;
+    return op;
   }
   if(!QUERY_FLAG(op,FLAG_REMOVED)) {
     dump_object(op);
     LOG(llevError,"Trying to insert (map) inserted object.\n%s\n", errmsg);
-    return;
+    return op;
   }
   if(op->more!=NULL) {
-    insert_ob_in_map(op->more,m);
+    if (insert_ob_in_map(op->more,m,originator) == NULL) {
+      if ( ! op->head)
+        LOG (llevError, "BUG: insert_ob_in_map(): inserting op->more "
+             "killed op\n");
+      return NULL;
+    }
   }
   CLEAR_FLAG(op,FLAG_REMOVED);
   if(op->nrof)
@@ -1428,23 +1457,15 @@ void insert_ob_in_map(object *op,mapstruct *m) {
   /* Only check this if we are the head of the object */
   if (!op->head) {
       mapstruct *map=op->map;
-      check_walk_on(op);
-      /* check_walk_on() might killed it.  We need to compare maps because
-       * if it was freed and a new map was loaded because it was freed
-       * (sacrifice for altar), the object will get recycled in the new map
-       * and no longer be free.
-       */
-      if(QUERY_FLAG(op,FLAG_FREED) || map!=op->map)
-	return;
+      if (check_walk_on(op, originator))
+        return NULL;
 
       /* If we are a multi part object, lets work our way through the check
-       * walk on's.  See if the object has been freed after each check.
+       * walk on's.
        */
-      for (tmp=op->more; tmp!=NULL; tmp=tmp->more) {
-          check_walk_on(op);
-          if(QUERY_FLAG(op,FLAG_FREED))	/* check_walk_on() killed it */
-		return;
-      }
+      for (tmp=op->more; tmp!=NULL; tmp=tmp->more)
+          if (check_walk_on (op, originator))
+            return NULL;
 
   }
   if(op->type==PLAYER)
@@ -1472,7 +1493,7 @@ void insert_ob_in_map(object *op,mapstruct *m) {
      */
     update_object(op);
 
-
+    return op;
 }
 
 /*
@@ -1515,9 +1536,12 @@ object *get_split_ob(object *orig_ob,int nr) {
  * decrease_ob_nr(object, number) decreases a specified number from
  * the amount of an object.  If the amount reaches 0, the object
  * is subsequently removed and freed.
+ *
+ * Return value: 'op' if something is left, NULL if the amount reached 0
  */
 
-void decrease_ob_nr(object *op,int i) {
+object *decrease_ob_nr(object *op,int i)
+{
   object *tmp;
   
   /* nrof is split out into a long so it is handled ok on 64 bit machines.
@@ -1556,6 +1580,7 @@ void decrease_ob_nr(object *op,int i) {
     }
     remove_ob(op);
     free_object(op);
+    return NULL;
   }
   else
     if(op->env!=NULL) {
@@ -1572,6 +1597,7 @@ void decrease_ob_nr(object *op,int i) {
 	    (*esrv_update_item_func)(UPD_WEIGHT, tmp, tmp);
 	}
     }
+    return op;
 }
 
 /*
@@ -1700,16 +1726,24 @@ object *insert_ob_in_ob(object *op,object *where) {
  * of the object into the map (applying is instantly done).
  * Any speed-modification due to SLOW_MOVE() of other present objects
  * will affect the speed_left of the object.
+ *
+ * originator: Player, monster or other object that caused 'op' to be inserted
+ * into 'map'.  May be NULL.
+ *
+ * Return value: 1 if 'op' was destroyed, 0 otherwise.
  */
  /* 4-21-95 added code to check if appropriate skill was readied - this will
   * permit faster movement by the player through this terrain. -b.t.
   */
 
-void check_walk_on(object *op) {
+int check_walk_on (object *op, object *originator)
+{
     object *tmp;
+    tag_t tag;
 
     if(QUERY_FLAG(op,FLAG_NO_APPLY))
-	return;
+	return 0;
+    tag = op->count;
     for(tmp=op->below;tmp!=NULL;tmp=tmp->below) {
 	if (tmp==tmp->below)	/* if we have a map loop, exit */
 	    break;
@@ -1727,14 +1761,12 @@ void check_walk_on(object *op) {
 	}
 	if(QUERY_FLAG(op,FLAG_FLYING)?QUERY_FLAG(tmp,FLAG_FLY_ON):
 	   QUERY_FLAG(tmp,FLAG_WALK_ON)) {
-	    if((*apply_func)(op,tmp,0)==2)
-		break;
-	    /* IF the object has been destroyed, we want to stop anymore
-	     * processing on it right now.
-	     */
-	    if (QUERY_FLAG(op, FLAG_FREED)) break;
+	    move_apply_func (tmp, op, originator);
+            if (was_destroyed (op, tag))
+              return 1;
 	}
     }
+    return 0;
 }
 
 /*
@@ -2013,6 +2045,13 @@ object *ObjectCreateClone (object *asrc) {
     }
 
     return dst;
+}
+
+int was_destroyed (object *op, tag_t old_tag)
+{
+    /* checking for FLAG_FREED isn't necessary, but makes this function more
+     * robust */
+    return op->count != old_tag || QUERY_FLAG (op, FLAG_FREED);
 }
 
 /*** end of object.c ***/

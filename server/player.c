@@ -613,7 +613,7 @@ int key_roll_stat(object *op, char key)
 	    enter_exit(op,NULL);
 	    /* Enter exit adds a player otherwise */
 	    if(op->contr->loading == NULL) {
-		insert_ob_in_map(op,op->map);
+		insert_ob_in_map(op,op->map,op);
 	    }
 	    else {
 		op->contr->removed = 0; /* Will insert pl. when map is loaded */
@@ -706,7 +706,7 @@ int key_change_class(object *op, char key)
       op->name = name;
       op->x = x;
       op->y = y;
-      insert_ob_in_map (op, op->map);
+      insert_ob_in_map (op, op->map, op);
       strncpy(op->contr->title,op->arch->clone.name,MAX_NAME);
       add_statbonus(op);
       tmp_loop=allowed_class(op);
@@ -780,8 +780,8 @@ void flee_player(object *op) {
   dir=absdir(4+find_dir_2(op->x-op->enemy->x,op->y-op->enemy->y));
   for(diff=0;diff<3;diff++) {
     int m=1-(RANDOM()&2);
-    if(move_ob(op,absdir(dir+diff*m))||
-       (diff==0&&move_ob(op,absdir(dir-diff*m)))) {
+    if(move_ob(op,absdir(dir+diff*m),op)||
+       (diff==0&&move_ob(op,absdir(dir-diff*m),op))) {
       draw(op);
       return;
     }
@@ -966,7 +966,7 @@ static void fire_bow(object *op, int dir)
   SET_FLAG(arrow, FLAG_FLY_ON);
   SET_FLAG(arrow, FLAG_WALK_ON);
   play_sound_map(op->map, op->x, op->y, SOUND_FIRE_ARROW);
-  insert_ob_in_map(arrow,op->map);
+  insert_ob_in_map(arrow,op->map,op);
   move_arrow(arrow);
   if (QUERY_FLAG(left, FLAG_FREED))
       esrv_del_item(op->contr, left->count);
@@ -1197,7 +1197,7 @@ void move_player_attack(object *op, int dir)
    * quite a bit of processing.  However, it probably is less than what
    * move_ob uses.
    */
-  if ((op->contr->braced || !move_ob(op,dir)) &&
+  if ((op->contr->braced || !move_ob(op,dir,op)) &&
     !out_of_map(op->map,nx,ny)) {
     
     op->contr->has_hit = 1; /* The last action was to hit, so use weapon_sp */
@@ -1450,7 +1450,7 @@ void remove_unpaid_objects(object *op, object *env)
 	    remove_ob(op);
 	    op->x = env->x;
 	    op->y = env->y;
-	    insert_ob_in_map(op, env->map);
+	    insert_ob_in_map(op, env->map, NULL);
 	}
 	else if (op->inv) remove_unpaid_objects(op->inv, env);
 	op=next;
@@ -1577,7 +1577,7 @@ void do_some_living(object *op) {
 			  (tmp->type==FOOD||tmp->type==DRINK||tmp->type==POISON))
 			  {
 		new_draw_info(NDI_UNIQUE, 0,op,"You blindly grab for a bite of food.");
-	apply(op,tmp,0);
+	manual_apply(op,tmp,0);
 	if(op->stats.food>=0||op->stats.hp<0)
 	  break;
       }
@@ -1684,7 +1684,7 @@ void kill_player(object *op)
 	        op->contr->killer);
     tmp->msg = add_string(buf);
     tmp->x=op->x,tmp->y=op->y;
-    insert_ob_in_map(tmp,op->map);
+    insert_ob_in_map(tmp,op->map,op);
 
  /**************************************/
  /*                                    */
@@ -1797,7 +1797,7 @@ void kill_player(object *op)
 	    op->name, op->contr->title, op->contr->killer);
     tmp->msg = add_string(buf);
     tmp->x=x,tmp->y=y;
-    insert_ob_in_map(tmp,map);
+    insert_ob_in_map(tmp,map,op);
 #else
     /*  peterm:  added to create a corpse at deathsite.  */
     tmp=arch_to_object(find_archetype("corpse_pl"));
@@ -1811,7 +1811,7 @@ void kill_player(object *op)
 	free_string(tmp->msg);
     tmp->msg = gravestone_text(op);
     SET_FLAG (tmp, FLAG_UNIQUE);
-    insert_ob_in_map(tmp,map);
+    insert_ob_in_map(tmp,map,op);
 #endif
 }
 
@@ -1836,11 +1836,11 @@ void loot_object(object *op) { /* Grab and destroy some treasure */
       if(tmp->nrof>1) {
 	tmp2=get_split_ob(tmp,1+RANDOM()%(tmp->nrof-1));
 	free_object(tmp2);
-	insert_ob_in_map(tmp,op->map);
+	insert_ob_in_map(tmp,op->map,NULL);
       } else
 	free_object(tmp);
     } else
-      insert_ob_in_map(tmp,op->map);
+      insert_ob_in_map(tmp,op->map,NULL);
   }
 }
 
@@ -1857,10 +1857,6 @@ void fix_weight() {
     if(old == sum)
       continue;
     fix_player(pl->ob);
-    /* This will cause a warning when the player first logs in because
-     * we haven't sent the player object yet.  No clean way around it,
-     * and not a big deal, as it only happens once during login.
-     */
     esrv_update_item(UPD_WEIGHT, pl->ob, pl->ob);
     LOG(llevDebug,"Fixed inventory in %s (%d -> %d)\n",
 	pl->ob->name, old, sum);

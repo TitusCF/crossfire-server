@@ -690,7 +690,7 @@ void check_login(object *op) {
 #ifdef AUTOSAVE
     pl->last_save_tick = pticks;
 #endif
-    op->carrying=0;
+    op->carrying = sum_weight (op);
     /* Need to call fix_player now - program modified so that it is not
      * called during the load process (FLAG_NO_FIX_PLAYER set when
      * saved)
@@ -698,13 +698,14 @@ void check_login(object *op) {
      * sent to the client.
      */
 
-    legal_range(op, op->contr->shoottype);
-    fix_weight ();
-
 #ifdef ALLOW_SKILLS
     (void) init_player_exp(op);
     (void) link_player_skills(op);
 #endif
+
+    if ( ! legal_range (op, op->contr->shoottype))
+        op->contr->shoottype = range_none;
+    fix_player (op);
 
     new_draw_info(NDI_UNIQUE, 0,op,"Welcome Back!");
     new_draw_info_format(NDI_UNIQUE | NDI_ALL, 5, NULL, 
@@ -713,7 +714,7 @@ void check_login(object *op) {
     if(pl->loading == NULL) {
 	if(!out_of_map(op->map,x,y))
 	    op->x=x, op->y=y;
-	    insert_ob_in_map(op,op->map);
+	    insert_ob_in_map(op,op->map,op);
     } else {
 	LOG(llevError,"Warning: map was not in memory (%s).\n",
                   op->map->path);
