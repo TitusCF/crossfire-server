@@ -53,9 +53,9 @@ static void esrv_print_msg(NewSocket *ns,int color, const char *str)
     char buf[HUGE_BUF];
 
     if (ns->status == Ns_Old) {
-	sprintf(buf,"%s\n", str);
+	snprintf(buf,HUGE_BUF,"%s\n", str);
     } else {
-	sprintf(buf,"drawinfo %d %s", color, str);
+	snprintf(buf,HUGE_BUF, "drawinfo %d %s", color, str);
     }
 /*    LOG(llevDebug,"sending %s to socket, len=%d", buf, strlen(buf));*/
     Write_String_To_Socket(ns, buf, strlen(buf));
@@ -100,7 +100,7 @@ void flush_output_element(object *pl, Output_Buf *outputs)
     char tbuf[MAX_BUF];
 
     if (outputs->buf==NULL) return;
-    sprintf(tbuf,"%d times %s", outputs->count, outputs->buf);
+    snprintf(tbuf,MAX_BUF, "%d times %s", outputs->count, outputs->buf);
     print_message(NDI_BLACK, pl, tbuf);
     free_string(outputs->buf);
     outputs->buf=NULL;
@@ -230,7 +230,7 @@ void new_draw_info_format(int flags, int pri,object *pl, char *format, ...)
     va_list ap;
     va_start(ap, format);
 
-    vsprintf(buf, format, ap);
+    vsnprintf(buf, HUGE_BUF, format, ap);
 
     va_end(ap);
 
@@ -523,7 +523,7 @@ void draw_magic_map(object *pl)
     }
 
     sl.buf=malloc(MAXSOCKBUF);
-    sprintf((char*)sl.buf,"magicmap %d %d %d %d ", (xmax-xmin+1), (ymax-ymin+1),
+    snprintf((char*)sl.buf, MAXSOCKBUF, "magicmap %d %d %d %d ", (xmax-xmin+1), (ymax-ymin+1),
 	    MAGIC_MAP_HALF - xmin, MAGIC_MAP_HALF - ymin);
     sl.len=strlen((char*)sl.buf);
     
@@ -552,10 +552,10 @@ void Log_Kill(const char *Who,
     char buf[MAX_BUF];
 
     if (With!=NULL) {
-	sprintf(buf,"%s\t%s\t%d\t%s\t%d\n",Who,What,WhatType,With,WithType);
+	snprintf(buf, MAX_BUF, "%s\t%s\t%d\t%s\t%d\n",Who,What,WhatType,With,WithType);
     }
     else {
-	sprintf(buf,"%s\t%s\t%d\n",Who,What,WhatType);
+	snprintf(buf,MAX_BUF, "%s\t%s\t%d\n",Who,What,WhatType);
     }
     len=strlen(buf);
     for(i=1; i<socket_info.allocated_sockets; i++) {
