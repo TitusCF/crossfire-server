@@ -592,6 +592,61 @@ dam 14
 weight 115
 end
 #
+Allowed all
+chance 5
+Object Occidental Mages
+type 15
+magic 2
+value 20
+msg
+  The Ancient School of Occidental Mages created that weapon during
+  the Empire Wars, charging it with their Chaotic Powers.
+endmsg
+start_script_attack
+(define rresult (random 100));
+(if (<= rresult 1)
+  (begin
+    (crossfire-message "Your weapon suddenly seems lighter !")
+    (set-damage (who-am-I) (+ 10 (get-damage (who-am-I))))
+    (set-identified (who-am-I) #f)
+    (set-been-applied (who-am-I) #f)
+  )
+  (if (<= rresult 2)
+    (begin
+      (crossfire-message "Your weapon suddenly seems darker !")
+      (set-damage (who-am-I) (- (get-damage (who-am-I)) 10))
+      (set-identified (who-am-I) #f)
+      (set-been-applied (who-am-I) #f)
+    )
+    (if (<= rresult 3)
+      (begin
+        (crossfire-message "Your weapon suddenly seems to become colder !")
+        (set-attack-type (who-am-I) (+ (attack-type-physical) (attack-type-cold)))
+        (set-identified (who-am-I) #f)
+        (set-been-applied (who-am-I) #f)
+      )
+      (if (<= rresult 4)
+        (begin
+          (crossfire-message "Your weapon suddenly seems to become warmer !")
+          (set-attack-type (who-am-I) (+ (attack-type-physical) (attack-type-fire)))
+          (set-identified (who-am-I) #f)
+          (set-been-applied (who-am-I) #f)
+        )
+        (if (<= rresult 5)
+          (begin
+            (crossfire-message "Your weapons emits sparks !")
+            (set-attack-type (who-am-I) (+ (attack-type-physical) (attack-type-electricity)))
+            (set-identified (who-am-I) #f)
+            (set-been-applied (who-am-I) #f)
+          )
+        )
+      )
+    )
+  )
+)
+end_script_attack
+end
+#
 #
 # Swords (subtype of weapons)
 #
@@ -1873,6 +1928,67 @@ Pow -1
 Cha -1
 luck -1
 value 5
+end
+#
+Allowed all
+chance 15
+Object Occidental Mages
+type 70
+face ring.117
+value 5
+msg
+  The Ancient School of Occidental Mages created that ring during
+  the Empire Wars, charging it with their Chaotic Powers.
+endmsg
+start_script_apply
+  (define rresult (random 100))
+  (if (applied? (who-am-I))
+    (begin
+      (if (<= rresult 1)
+        (begin
+          (set-identified (who-am-I) #f)
+          (set-cursed (who-am-I) #t)
+          (set-dex (who-am-I) (+ 1 (get-dex (who-am-I))))
+        )
+        (if (<= rresult 2)
+          (begin
+            (set-identified (who-am-I) #f)
+            (set-cursed (who-am-I) #t)
+            (set-int (who-am-I) (+ 1 (get-dex (who-am-I))))
+          )
+          (if (<= rresult 3)
+            (begin
+              (set-identified (who-am-I) #f)
+              (set-cursed (who-am-I) #t)
+              (set-wis (who-am-I) (+ 1 (get-dex (who-am-I))))
+            )
+            (if (>= rresult 99)
+              (begin
+                (set-identified (who-am-I) #f)
+                (set-cursed (who-am-I) #t)
+                (set-dex (who-am-I) (- (get-dex (who-am-I)) 1))
+              )
+              (if (>= rresult 98)
+                (begin
+                  (set-identified (who-am-I) #f)
+                  (set-cursed (who-am-I) #t)
+                  (set-int (who-am-I) (- (get-dex (who-am-I)) 1))
+                )
+                (if (>= rresult 97)
+                  (begin
+                    (set-identified (who-am-I) #f)
+                    (set-cursed (who-am-I) #t)
+                    (set-wis (who-am-I) (- (get-dex (who-am-I)) 1))
+                  )
+                )
+              )
+            )
+          )
+        )
+      )
+    )
+  )
+end_script_apply
 end
 #
 # Horns:
