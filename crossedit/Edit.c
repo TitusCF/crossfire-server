@@ -252,7 +252,7 @@ static void getTimeout (object *ob, char *str, XtPointer c) {
 }
 
 static void getReset (object *ob, char *str, XtPointer c) {
-    sprintf(str,"%ld", ob->weight);
+    sprintf(str,"%d", ob->weight);
 }
 
 static void getDarkness (object *ob, char *str, XtPointer c) {
@@ -929,6 +929,7 @@ static char * MapMessageCreate (App self) {
     return strdup_local (buf);
 }
 
+#if 0
 static char * MapNameCreate (String path)
 {
     char name[PATH_MAX+1];
@@ -941,7 +942,7 @@ static char * MapNameCreate (String path)
     if(name[j] == '.') name[j] = 0;
     return strdup_local (&name[i]);
 }
-
+#endif
 /**********************************************************************
  * Options - menu
  **********************************************************************/
