@@ -257,12 +257,10 @@ int command_who (object *op, char *params)
 
 	if (pl->state==ST_PLAYING || pl->state==ST_GET_PARTY_PASSWORD) {
 
-	    /* Any reason one sprintf can't be used?  The are displaying all
-	     * the same informaitn, except one display pl->ob->count.
-	     */
-
 	    if(op == NULL || QUERY_FLAG(op, FLAG_WIZ))
-		(void) sprintf(buf,"%s the %s (@%s) [%s]%s%s (%d)",pl->ob->name,
+		(void) sprintf(buf,"%s the level %d %s (@%s) [%s]%s%s (%d)",
+		       pl->ob->name,
+		       pl->ob->level,
 		       (pl->own_title[0]=='\0'?pl->title:pl->own_title),
 		       pl->socket.host,
 		       pl->ob->map->path,

@@ -2173,11 +2173,11 @@ int humid_tile(int x, int y)
 	    ox = x - 1;
     }
     if (weathermap[x][y].winddir >= 4 && weathermap[x][y].winddir <= 6) {
-	if (y != WEATHERMAPTILESY)
+	if (y < WEATHERMAPTILESY - 1)
 	    oy = y + 1;
     }
     if (weathermap[x][y].winddir >= 2 && weathermap[x][y].winddir <= 4) {
-	if (x != WEATHERMAPTILESX)
+	if (x < WEATHERMAPTILESX - 1)
 	    ox = x + 1;
     }
     humid = (weathermap[x][y].humid * 2 +
