@@ -393,6 +393,20 @@ static PyObject* CFAttackTypeBlind(PyObject* self, PyObject* args)
       return NULL;
   return Py_BuildValue("i",val);
 };
+static PyObject* CFAttackTypeLifeStealing(PyObject* self, PyObject* args)
+{
+    int val = AT_LIFE_STEALING;
+    if (!PyArg_ParseTuple(args,"",NULL))
+        return NULL;
+    return Py_BuildValue("i",val);
+};
+static PyObject* CFAttackTypeDisease(PyObject* self, PyObject* args)
+{
+    int val = AT_DISEASE;
+    if (!PyArg_ParseTuple(args,"",NULL))
+        return NULL;
+    return Py_BuildValue("i",val);
+};
 
 #if 0
 /* These spell numbers have no meaning with the new spell code.

@@ -541,6 +541,8 @@ static PyObject* CFAttackTypeCounterspell(PyObject* self, PyObject* args);
 static PyObject* CFAttackTypeGodpower(PyObject* self, PyObject* args);
 static PyObject* CFAttackTypeHolyWord(PyObject* self, PyObject* args);
 static PyObject* CFAttackTypeBlind(PyObject* self, PyObject* args);
+static PyObject* CFAttackTypeLifeStealing(PyObject* self, PyObject* args);
+static PyObject* CFAttackTypeDisease(PyObject* self, PyObject* args);
 
 static PyObject* CFLoadObject(PyObject* self, PyObject* args);
 static PyObject* CFSaveObject(PyObject* self, PyObject* args);
@@ -1092,6 +1094,8 @@ static PyMethodDef CFPythonMethods[] =
         {"AttackTypeGodpower", CFAttackTypeGodpower, METH_VARARGS},
         {"AttackTypeHolyWord", CFAttackTypeHolyWord, METH_VARARGS},
         {"AttackTypeBlind", CFAttackTypeBlind, METH_VARARGS},
+        {"AttackTypeLifeStealing", CFAttackTypeLifeStealing, METH_VARARGS},
+        {"AttackTypeDisease", CFAttackTypeDisease, METH_VARARGS},
         {NULL, NULL}
 };
 
