@@ -1138,7 +1138,7 @@ int hit_player(object *op,int dam, object *hitter, int type) {
 	    op->speed_left= -0.05;
 	    return maxdam;
 	}
-	if(QUERY_FLAG (op, FLAG_FRIENDLY)) {
+	if(QUERY_FLAG (op, FLAG_FRIENDLY) && op->type != PLAYER) {
 	    remove_friendly_object(op);
 	    if (get_owner (op) != NULL && op->owner->type == PLAYER)
 		op->owner->contr->golem=NULL;
