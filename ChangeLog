@@ -25,6 +25,8 @@ patch 1022942: Random documentation updates
  doc/SurvivalGuide
  doc/Developers/programming_guide
  doc/Developers/protocol
+ lib/settings
+ lib/help/cast
 patch 1022973: Words for numbers in spellbook description
  server/c_object
 Ryo 2004-09-12
