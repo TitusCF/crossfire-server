@@ -31,132 +31,101 @@
 #include <sproto.h>
 #endif
 
+/*
+ * move_object() tries to move object op in the direction "dir".
+ * If it fails (something blocks the passage), it returns 0,
+ * otherwise 1.
+ * This is an improvement from the previous move_ob(), which
+ * removed and inserted objects even if they were unable to move.
+ */
+
+int move_object(object *op, int dir) {
+    return move_ob(op, dir, op);
+}
+
+
 /* object op is trying to move in direction dir.
  * originator is typically the same as op, but
  * can be different if originator is causing op to
  * move (originator is pushing op)
  * returns 0 if the object is not able to move to the
  * desired space, 1 otherwise (in which case we also 
- * move the object accordingly
- */
+ * move the object accordingly.  This function is
+ * very similiar to move_object.
+  */
 int move_ob (object *op, int dir, object *originator)
 {
-    object *tmp_ob=NULL;
+    int newx = op->x+freearr_x[dir];
+    int newy = op->y+freearr_y[dir];
+    object *tmp;
 
     if(op==NULL) {
 	LOG(llevError,"Trying to move NULL.\n");
 	return 0;
     }
-    /* this function should now only be used on the head - it won't call itself
-     * recursively, and people calling us should pass the right part.
+
+    /* Is this space blocked?  Players with wizpass are immune to
+     * this condition.
      */
-    if (op->head) {
-	LOG(llevDebug,"move_ob called with non head object: %s %s (%d,%d)\n",
-	    op->head->name, op->map->name, op->x, op->y);
-	op = op->head;
-    }
+    if(blocked_link(op, newx, newy) &&
+       !QUERY_FLAG(op, FLAG_WIZPASS))
+	return 0;
 
     /* If the space the player is trying to is out of the map,
      * bail now - we know it can't work.
      */
     if (out_of_map(op->map,op->x+freearr_x[dir],op->y+freearr_y[dir])) return 0;
 
+    /* 0.94.2 - we need to set the direction for the new animation code.
+     * it uses it to figure out face to use - I can't see it
+     * breaking anything, but it might.
+     */
+    if(op->more != NULL && !move_ob(op->more, dir, op->more->head))
+	return 0;
 
-    /* Modified these to check for appropriate object anyplace on map
-     * not just the top (stacking is less deterministic now).
-     * also now have it return 0 on both of these cases.  The
-     * monster may be able to move there, but hacking the door or
-     * earthwall was their action this tick.
-     * will_apply should only be set for monsters, so players should
-     * never use this code.  These could probably get collapsed into
-     * one while loop, but that won't really save much code.
-     * MSW 2001-07-19
+    op->direction = dir;
+
+    if(op->will_apply&4)
+	check_earthwalls(op,newx,newy);
+    if(op->will_apply&8)
+	check_doors(op,newx,newy);
+
+    /* 0.94.1 - I got a stack trace that showed it crash with remove_ob trying
+     * to remove a removed object, and this function was the culprit.  A possible
+     * guess I have is that check_doors above ran into a trap, killing the
+     * monster.
+     *
+     * Unfortunately, it doesn't appear that the calling functions of move_object
+     * deal very well with op being killed, so all this might do is just
+     * migrate the problem someplace else.
      */
 
-    if (op->will_apply&4 ) {
-	tmp_ob=get_map_ob(op->map,op->x+freearr_x[dir],op->y+freearr_y[dir]);
-	while(tmp_ob != NULL) {
-	    if (tmp_ob->type == EARTHWALL) {
-		hit_player(tmp_ob,5,op,AT_PHYSICAL); /* Tear down the earthwall */
-		return 0;
-	    }
-            tmp_ob = tmp_ob->above; /* To prevent endless loop */
-	}
-    }
-    if (op->will_apply&8 ) {
-	tmp_ob=get_map_ob(op->map,op->x+freearr_x[dir],op->y+freearr_y[dir]);
-	while(tmp_ob != NULL) {
-	    if (tmp_ob->type == DOOR) {
-		hit_player(tmp_ob,9998,op,AT_PHYSICAL); /* Tear down the door */
-		return 0;
-	    }
-            tmp_ob = tmp_ob->above; /* To prevent endless loop */
-	}
+    if (QUERY_FLAG(op, FLAG_REMOVED)) {
+	LOG(llevDebug,"move_object: monster has been removed - will not process further\n");
+	/* Was not successful, but don't want to try and move again */
+	return 1;
     }
 
-
-    /* Modified logic here.  Split code into one for single part objects
-     * and one for multi part objects.
+    /* If this is a tail portion, just want to tell caller that move is
+     * ok - the caller will deal with actual object removal/insertion
      */
-    if (op->more == NULL) {
-	/* if player does not have wizpass, and the space is blocked and
-	 * blocked two, return 0.  We make calls to both blocked and blocked_two
-	 * because we only want to call blocked_two when necessary (its a costly
-	 * operation), so if the space is not blocked (which is a very cheap 
-	 * operation), we then don't need to call blocked_two
-	 */
-	if (!QUERY_FLAG(op,FLAG_WIZPASS) && 
-	    blocked(op->map,op->x+freearr_x[dir],op->y+freearr_y[dir]) && 
-	    blocked_two(op,op->x+freearr_x[dir],op->y+freearr_y[dir])) return 0;
-
-	/* Else, move this object */
-	remove_ob(op);
-	op->x+=freearr_x[dir];
-	op->y+=freearr_y[dir];
-	insert_ob_in_map(op,op->map,originator,0);
-	/* Currently, assume that players will only be single space objects */
-	if (op->type==PLAYER) {
-	    esrv_map_scroll(&op->contr->socket, freearr_x[dir],freearr_y[dir]);
-	    op->contr->socket.update_look=1;
-	    op->contr->socket.look_position=0;
-	}
+    if(op->head)
 	return 1;
-    } else {
-	/* Multipart object handling.  Its my belief that is more efficient
-	 * to call blocked_link on each space of the monster than needing
-	 * to remove the entire thing and re-insert the entire thing in a case
-	 * where it may not be able to move.  MSW 2001-07-19.
-	 * If any space is blocked by something other than the object
-	 * (which blocked_linked returns), bail out immediately.  Doesn't do
-	 * any good if 3 out of 4 spaces are available.  Note also that
-	 * some logic for single part monsters is not included here - I presume
-	 * that players (and hence wizpass) can only play single space
-	 * objects (poor assumption I know)
-	 */
-	for (tmp_ob = op; tmp_ob != NULL; tmp_ob = tmp_ob->more) {
-	    if (blocked_link(op, tmp_ob->x+freearr_x[dir],tmp_ob->y+freearr_y[dir])) return 0;
 
-	}
-	/* If we got here, it is possible to move this object.  Remove it,
-	 * update the coordinates, and re-insert it.  Note that while
-	 * remove_ob takes care of removing all parts, but we need to
-	 * insert each one by hand.  Also, insert_ob_in_map does special
-	 * processing for the head object - for this to work right,
-	 * we want to insert that last.
-	 */
-	for (tmp_ob = op->more; tmp_ob != NULL; tmp_ob = tmp_ob->more) {
-	    tmp_ob->x+=freearr_x[dir];
-	    tmp_ob->y+=freearr_y[dir];
-	    /* WALK_ON should be handled when head is inserted for all parts.
-	     * lets just make sure of that.
-	     */
-	    insert_ob_in_map(tmp_ob, op->map, originator, INS_NO_WALK_ON);
-	}
-	op->x+=freearr_x[dir];
-	op->y+=freearr_y[dir];
-	insert_ob_in_map(op, op->map, originator, INS_NO_WALK_ON);
-	return 1;
+    remove_ob(op);
+
+    for(tmp = op; tmp != NULL; tmp = tmp->more)
+	tmp->x+=freearr_x[dir], tmp->y+=freearr_y[dir];
+
+    insert_ob_in_map(op, op->map, originator,0);
+
+    /* Hmmm.  Should be possible for multispace players now */
+    if (op->type==PLAYER) {
+	esrv_map_scroll(&op->contr->socket, freearr_x[dir],freearr_y[dir]);
+	op->contr->socket.update_look=1;
+	op->contr->socket.look_position=0;
     }
+
     return 1;	/* this shouldn't be reached */
 }
 
@@ -386,7 +355,7 @@ int push_ob(object *who, int dir, object *pusher) {
 	    pusher->contr->socket.look_position=0;
 	}
 	return 0;
-  }
+    }
 
 
     /* We want ONLY become enemy of evil, unaggressive monster. We must RUN in them */
@@ -410,7 +379,7 @@ int push_ob(object *who, int dir, object *pusher) {
 	}
     }
 
-    /* now, lets test stand still we NEVER can psuh stand_still monsters. */
+    /* now, lets test stand still. we NEVER can push stand_still monsters. */
     if(QUERY_FLAG(who,FLAG_STAND_STILL))
     {
 	new_draw_info_format(NDI_UNIQUE, 0, pusher,
@@ -430,7 +399,7 @@ int push_ob(object *who, int dir, object *pusher) {
     if(QUERY_FLAG(who,FLAG_WIZ) ||
        random_roll(str1, str1/2+str1*2, who, PREFER_HIGH) >= 
        random_roll(str2, str2/2+str2*2, pusher, PREFER_HIGH) ||
-       !move_ob(who,dir,pusher))
+       !move_object(who,dir))
     {
 	if (who ->type == PLAYER) {
 	    new_draw_info_format(NDI_UNIQUE, 0, who,

@@ -60,9 +60,10 @@ object *check_enemy(object *npc, rv_vector *rv) {
      * which CAN attack the owner. */
     if ((npc->move_type & HI4) == PETMOVE)
     {
-        if (npc->owner != NULL)
-	        return npc->enemy = npc->owner->enemy;
-	    else npc->enemy = NULL;
+	if (npc->owner == NULL)
+	    npc->enemy = NULL;
+	else if (npc->enemy == NULL)
+	    npc->enemy = npc->owner->enemy;
     }
 
     /* periodically, a monster mayu change its target.  Also, if the object
@@ -78,14 +79,26 @@ object *check_enemy(object *npc, rv_vector *rv) {
 
     if(npc->enemy)
     {
-	    if (QUERY_FLAG(npc->enemy,FLAG_REMOVED)||QUERY_FLAG(npc->enemy,FLAG_FREED)
-	        || !on_same_map(npc, npc->enemy) ||npc == npc->enemy || 
-            QUERY_FLAG(npc, FLAG_NEUTRAL) || QUERY_FLAG(npc->enemy, FLAG_NEUTRAL) || /* neutral */
-            (QUERY_FLAG(npc, FLAG_FRIENDLY) && QUERY_FLAG(npc->enemy, FLAG_FRIENDLY)) ||
-            (!QUERY_FLAG(npc, FLAG_FRIENDLY) && 
-            (!QUERY_FLAG(npc->enemy, FLAG_FRIENDLY) && npc->enemy->type!=PLAYER)) )        
+	/* I broke these if's apart to better be able to see what
+	 * the grouping checks are.  Code is the same.
+	 */
+	if ( QUERY_FLAG(npc->enemy,FLAG_REMOVED)    ||
+	     QUERY_FLAG(npc->enemy,FLAG_FREED)	    || 
+	     !on_same_map(npc, npc->enemy)	    ||
+	     npc == npc->enemy			    || 
+             QUERY_FLAG(npc, FLAG_NEUTRAL)	    || 
+	     QUERY_FLAG(npc->enemy, FLAG_NEUTRAL))
+		npc->enemy = NULL;
+
+	else if (QUERY_FLAG(npc, FLAG_FRIENDLY) && 
+		 (QUERY_FLAG(npc->enemy, FLAG_FRIENDLY) || 
+		  npc->enemy->type == PLAYER || npc->enemy == npc->owner))
+		    npc->enemy = NULL;
+	    
+	else if (!QUERY_FLAG(npc, FLAG_FRIENDLY) && 
+             (!QUERY_FLAG(npc->enemy, FLAG_FRIENDLY) && npc->enemy->type!=PLAYER))
                 npc->enemy=NULL;
-        }    
+    }
     return can_detect_enemy(npc,npc->enemy,rv)?npc->enemy:NULL;
 }
 
@@ -104,15 +117,19 @@ object *check_enemy(object *npc, rv_vector *rv) {
  * this function is map tile aware.
  */
 object *find_nearest_living_creature(object *npc) {
-    int i,j=0,start;
+    int i;
     int nx,ny;
     mapstruct *m;
     object *tmp;
+    int search_arr[SIZEOFFREE];
 
-    start = (RANDOM()%8)+1;
-    for(i=start;j<SIZEOFFREE;j++, i=(i+1)%SIZEOFFREE) {
-	nx = npc->x + freearr_x[i];
-	ny = npc->y + freearr_y[i];
+    get_search_arr(search_arr);
+    for(i=0;i<SIZEOFFREE;i++) {
+        /* modified to implement smart searching using search_arr
+         * guidance array to determine direction of search order
+         */
+        nx = npc->x + freearr_x[search_arr[i]];
+        ny = npc->y + freearr_y[search_arr[i]];
 	if (out_of_map(npc->map,nx,ny)) continue;
 	m = get_map_from_coord(npc->map, &nx, &ny);
 
@@ -611,9 +628,23 @@ int move_monster(object *op) {
 }
 
 int can_hit(object *ob1,object *ob2, rv_vector *rv) {
+    object *more;
+    rv_vector rv1;
+
     if(QUERY_FLAG(ob1,FLAG_CONFUSED)&&!(RANDOM()%3))
 	return 0;
-    return abs(rv->distance_x)<2&&abs(rv->distance_y)<2;
+
+    if (abs(rv->distance_x)<2&&abs(rv->distance_y)<2) return 1;
+
+    /* check all the parts of ob2 - just because we can't get to
+     * its head doesn't mean we don't want to pound its feet
+     */
+    for (more = ob2->more; more!=NULL; more = more->more) {
+	get_rangevector(ob1, more, &rv1, 0);
+	if (abs(rv1.distance_x)<2&&abs(rv1.distance_y)<2) return 1;
+    }
+    return 0;
+
 }
 
 /* Returns 1 is monster should cast spell sp at an enemy
@@ -1368,77 +1399,23 @@ void rand_move (object *ob) {
 }
 
 void check_earthwalls(object *op, int x, int y) {
-  object *tmp;
-  tmp = get_map_ob(op->map, x, y);
-  if (tmp!= NULL)
-    while(tmp->above != NULL)
-      tmp=tmp->above;
-  if (tmp!= NULL && tmp->type == EARTHWALL)
-    hit_player(tmp,op->stats.dam,op,AT_PHYSICAL);
+    object *tmp;
+    for (tmp = get_map_ob(op->map, x, y); tmp!=NULL; tmp=tmp->above) {
+	if (tmp->type == EARTHWALL) {
+	    hit_player(tmp,op->stats.dam,op,AT_PHYSICAL);
+	    return;
+	}
+    }
 }
 
 void check_doors(object *op, int x, int y) {
-  object *tmp;
-  tmp = get_map_ob(op->map, x, y);
-  if (tmp!= NULL)
-    while(tmp->above != NULL)
-      tmp=tmp->above;
-  if (tmp!= NULL && tmp->type == DOOR)
-    hit_player(tmp,1000,op,AT_PHYSICAL);
-}
-
-/*
- * move_object() tries to move object op in the direction "dir".
- * If it fails (something blocks the passage), it returns 0,
- * otherwise 1.
- * This is an improvement from the previous move_ob(), which
- * removed and inserted objects even if they were unable to move.
- */
-
-int move_object(object *op, int dir) {
-    int newx = op->x+freearr_x[dir];
-    int newy = op->y+freearr_y[dir];
     object *tmp;
-
-    /* 0.94.2 - we need to set the direction for the new animation code.
-     * it uses it to figure out face to use - I can't see it
-     * breaking anything, but it might.
-     */
-    op->direction = dir;
-    if(blocked_link(op, newx, newy)) /* Not all features from blocked_two yet */
-	return 0;                      /* (Not efficient enough yet) */
-    if(op->more != NULL && !move_object(op->more, dir))
-	return 0;
-    if(op->will_apply&4)
-	check_earthwalls(op,newx,newy);
-    if(op->will_apply&8)
-	check_doors(op,newx,newy);
-
-    /* 0.94.1 - I got a stack trace that showed it crash with remove_ob trying
-     * to remove a removed object, and this function was the culprit.  A possible
-     * guess I have is that check_doors above ran into a trap, killing the
-     * monster.
-     *
-     * Unfortunately, it doesn't appear that the calling functions of move_object
-     * deal very well with op being killed, so all this might do is just
-     * migrate the problem someplace else.
-     */
-
-    if (QUERY_FLAG(op, FLAG_REMOVED)) {
-	LOG(llevDebug,"move_object: monster has been removed - will not process further\n");
-	/* Was not successful, but don't want to try and move again */
-	return 1;
+    for (tmp = get_map_ob(op->map, x, y); tmp!=NULL; tmp=tmp->above) {
+	if (tmp->type == DOOR) {
+	    hit_player(tmp,1000,op,AT_PHYSICAL);
+	    return;
+	}
     }
-    if(op->head)
-	return 1;
-
-    remove_ob(op);
-
-    for(tmp = op; tmp != NULL; tmp = tmp->more)
-	tmp->x+=freearr_x[dir], tmp->y+=freearr_y[dir];
-
-    insert_ob_in_map(op, op->map, op,0);
-    return 1;
 }
 
 static void free_messages(msglang *msgs) {

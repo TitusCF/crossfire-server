@@ -276,6 +276,7 @@ extern object *present_arch_in_ob(archetype *at, object *op);
 extern void set_cheat(object *op);
 extern int find_free_spot(archetype *at, mapstruct *m, int x, int y, int start, int stop);
 extern int find_first_free_spot(archetype *at, mapstruct *m, int x, int y);
+extern void get_search_arr(int *search_arr);
 extern int find_dir(mapstruct *m, int x, int y, object *exclude);
 extern int distance(object *ob1, object *ob2);
 extern int find_dir_2(int x, int y);
@@ -298,7 +299,6 @@ extern FILE *open_and_uncompress(char *name, int flag, int *compressed);
 extern void close_and_delete(FILE *fp, int compressed);
 extern void make_path_to_file(char *filename);
 /* player.c */
-extern player *get_player_ob(void);
 extern void free_player(player *pl);
 extern object *find_skill(object *op, int skillnr);
 extern int atnr_is_dragon_enabled(int attacknr);

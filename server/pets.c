@@ -39,9 +39,13 @@
  */
 
 object *get_pet_enemy(object * pet, rv_vector *rv){
-    object *owner, *tmp;
+    object *owner, *tmp, *attacker;
     int i,x,y;
     mapstruct *nm;
+    int search_arr[SIZEOFFREE];
+
+    attacker = pet->attacked_by; /*pointer to attacking enemy*/
+    pet->attacked_by = NULL;     /*clear this, since we are dealing with it*/
 
     if ((owner = get_owner(pet)) != NULL) {
 	/* If the owner has turned on the pet, make the pet
@@ -66,12 +70,27 @@ object *get_pet_enemy(object * pet, rv_vector *rv){
     if (!on_same_map(pet,owner))
 	return NULL;
 
-    /* We basically look for anything nasty around the owner that this
-     * pet should go and attack.
+    /* See if the pet has an existing enemy. If so, don't start a new one*/
+    if((tmp=check_enemy(pet, rv))!=NULL)
+    {
+	if(tmp == owner && !QUERY_FLAG(pet,FLAG_CONFUSED)
+	    && QUERY_FLAG(pet,FLAG_FRIENDLY))
+	    /* without this check, you can actually get pets with
+	     * enemy set to owner! 
+	     */
+            pet->enemy = NULL;
+	else
+	    return tmp;
+    }
+    get_search_arr(search_arr);
+
+
+    /* Since the pet has no existing enemy, look for anything nasty 
+     * around the owner that it should go and attack.
      */
     for (i = 0; i < SIZEOFFREE; i++) {
-	x = owner->x + freearr_x[i];
-	y = owner->y + freearr_y[i];
+	x = owner->x + freearr_x[search_arr[i]];
+        y = owner->y + freearr_y[search_arr[i]];
 	if (out_of_map(owner->map, x, y)) continue;
 	else {
 	    nm = get_map_from_coord(owner->map, &x, &y);
@@ -80,16 +99,72 @@ object *get_pet_enemy(object * pet, rv_vector *rv){
 		for (tmp = get_map_ob(nm, x, y); tmp != NULL; tmp = tmp->above) {
 		    object *tmp2 = tmp->head == NULL?tmp:tmp->head;
 		    if (QUERY_FLAG(tmp2,FLAG_ALIVE) && !QUERY_FLAG(tmp2,FLAG_FRIENDLY)
-			&& !QUERY_FLAG(tmp2,FLAG_UNAGGRESSIVE) &&
-			tmp2 != owner && tmp2->type != PLAYER)
-		    return tmp2;
+			&& !QUERY_FLAG(tmp2,FLAG_UNAGGRESSIVE) && tmp2 != pet && 
+			tmp2 != owner && tmp2->type != PLAYER) {
+
+			pet->enemy = tmp2;
+			/* Check to see if this is a valid enemy before committing */
+			if(check_enemy(pet, rv)!=NULL)
+			    return tmp2;
+			else
+			    pet->enemy = NULL;
+		    } /* if this is a valid enemy */
 		} /* for objects on this space */
 	    } /* if there is something living on this space */
 	} /* this is a valid space on the map */
     } /* for loop of spaces around the owner */
 
-    /* Didn't find anything - return NULL */
-    return NULL;
+    /* No threat to owner, check to see if the pet has an attacker*/
+    if(attacker)
+    {
+        /* need to be sure this is the right one! */
+        if(attacker->count == pet->attacked_by_count)
+        {
+            /* also need to check to make sure it is not freindly */
+   	    /* or otherwise non-hostile, and is an appropriate target */
+            if( !QUERY_FLAG(attacker, FLAG_FRIENDLY) && on_same_map(pet, attacker))
+	    {
+	        pet->enemy = attacker;
+		if(check_enemy(pet, rv)!=NULL)
+		    return attacker;
+		else
+		    pet->enemy = NULL;
+	    }
+        }
+    }
+
+    /* Don't have an attacker or legal enemy, so look for a new one!.
+     * This looks for one around where the pet is.  Thus, you could lead
+     * a pet to danger, then take a few steps back.  This code is basically
+     * the same as the code that looks around the owner.
+     */
+    for (i = 0; i < SIZEOFFREE; i++) {
+	x = pet->x + freearr_x[search_arr[i]];
+	y = pet->y + freearr_y[search_arr[i]];
+	if (out_of_map(pet->map, x, y)) continue;
+	else {
+	    nm = get_map_from_coord(pet->map, &x, &y);
+	    /* Only look on the space if there is something alive there. */
+	    if (GET_MAP_FLAGS(nm, x,y)&P_IS_ALIVE) {
+		for (tmp = get_map_ob(nm, x, y); tmp != NULL; tmp = tmp->above) {
+		    object *tmp2 = tmp->head == NULL?tmp:tmp->head;
+		    if (QUERY_FLAG(tmp2,FLAG_ALIVE) && !QUERY_FLAG(tmp2,FLAG_FRIENDLY)
+			&& !QUERY_FLAG(tmp2,FLAG_UNAGGRESSIVE) &&
+			tmp2 != pet && tmp2 != owner && tmp2->type != PLAYER)
+		    {
+		        pet->enemy = tmp2;
+		        if(check_enemy(pet, rv)!=NULL)
+		            return tmp2;
+			else
+			    pet->enemy = NULL;
+		    } /* make sure we can get to the bugger */
+		} /* for objects on this space */
+	    } /* if there is something living on this space */
+	} /* this is a valid space on the map */
+    } /* for loop of spaces around the pet */
+
+    /* Didn't find anything - return the owner's enemy or NULL */
+    return check_enemy(pet, rv);
 }
 
 void terminate_all_pets(object *owner) {
@@ -190,7 +265,10 @@ void pet_move(object * ob)
     ob->direction = dir;
 
     tag = ob->count;
-    if (!(move_ob(ob, dir,ob))) {
+    /* move_ob returns 0 if the object couldn't move.  If that is the
+     * case, lets do some other work.
+     */
+    if (!(move_ob(ob, dir, ob))) {
 	object *part;
 
 	/* the failed move_ob above may destroy the pet, so check here */
@@ -209,6 +287,10 @@ void pet_move(object * ob)
 		    return;
 		if (get_owner(new_ob) == ob->owner)
 		    break;
+
+		/* Hmm.  Did we try to move into an enemy monster?  If so,
+		 * make it our enemy.
+		 */
 		if (QUERY_FLAG(new_ob,FLAG_ALIVE) && !QUERY_FLAG(ob,FLAG_UNAGGRESSIVE)
 		    && !QUERY_FLAG(new_ob,FLAG_UNAGGRESSIVE) &&
 		    !QUERY_FLAG(new_ob,FLAG_FRIENDLY)) {
@@ -223,6 +305,7 @@ void pet_move(object * ob)
 		}
 	    }
 	}
+	/* Try a different course */
 	dir = absdir(dir + 4 - (RANDOM() %5) - (RANDOM()%5));
 	(void) move_ob(ob, dir, ob);
     }

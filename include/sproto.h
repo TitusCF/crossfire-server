@@ -586,6 +586,7 @@ int trap_see(object *op, object *trap);
 int trap_show(object *trap, object *where);
 int trap_disarm(object *disarmer, object *trap, int risk);
 void trap_adjust(object *trap, int difficulty);
+int cast_generic_rune(object *op, object *caster, int dir, char *stringarg, int type);
 /* shop.c */
 int query_cost(object *tmp, object *who, int flag);
 char *cost_string_from_value(int cost);

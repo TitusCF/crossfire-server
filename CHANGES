@@ -17,6 +17,43 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+This change mostly deals with improving behaviour of pet monstes.
+Most of the code is from K. Reinert - however, I did some code cleanup/
+fixes related to pet monsters, so it is difficult to note where
+each piece of code came from.  One thing this does fix is handling of
+multipart pets - these now work properly.
+common/map.c: Update comment for get_rangevector() - no code change.
+common/object.c: Add get_search_arr() which is used in pet monster code.
+   This returns a semi random scrambling of the freearr array.
+doc/Developers/protocol: Update documentation about map1a protocol command.
+include/libproto.h, include/sproto.h: rebuilt.
+server/attack.c: Have drain attacks return 1 damage so that it is clear
+   that you are actually hitting your opponent.  Otherwise, you would
+   get messages that 'you missed xyz', even though you are draining it.
+   This extra point of damage shouldn't change balance in any significant
+   way.
+server/monster.c: Update hnadling of enemies for pet monsters. It should
+   more intelligently choose the monsters and not switch/clear the
+   enemy field for no reason anymore.  Change find_nearest_living_creature to
+   use the get_search_arr() to more randomly choose direction of target - 
+   before, there was a proclivity to always look in the north direction.
+   Modify can_hit() to look for closes part of enemy - otherwise, monsters
+   may not attack opponents even if they were right next to them because
+   they couldn't get to the enemies head.  Remove move_object from
+   this function - merged with move_ob in move.c
+server/move.c:  Fix move_ob to use 'cleaner' code of move_object, but
+   also have specific features that move_ob had (player handling).
+   Before move_ob didn't handle multipart objects correctly, and the
+   two functions were largely the same.  Now move_object() just calls
+   move_ob - the only difference in the functions is that move_ob()
+   takes 3 parameters instead of 2 of move_object() (added
+   parameter is originator).  I think this should now mean multipart
+   player objects may now work.
+server/pets.c: get_pet_enemy enhanced to be much smarter about
+   selecting/finding things for the pet to attack.
+server/player.c: Remove commented out line of init_beforeplay
+MSW 2002-08-31
+
 server/attack.c: Modify drain attack code so that if some agent of the
 player is doing the drain (eg, avatar, summoned monster, or even spell),
 player gets exp added to his total.  Otherwise, the agent could suck all

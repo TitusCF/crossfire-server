@@ -1912,7 +1912,7 @@ mapstruct *get_map_from_coord(mapstruct *m, int *x, int *y)
  * be unexpected
  *
  * currently, the only flag supported (0x1) is don't translate for
- * closest body part.
+ * closest body part of 'op1'
  */
 
 void get_rangevector(object *op1, object *op2, rv_vector *retval, int flags)
