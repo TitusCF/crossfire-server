@@ -17,6 +17,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+common/treasure.c: add_abilities(): For potions and horns (spell casting
+   objects) convert the other_arch into a spell and put into the object -
+   otherwise, the spell casting object casts the wrong spell.
 common/object.c: Clean up formatting of copy_object.  Only real code change
   is to fix events - copied event data wasn't getting malloc'd, and thus
   when another object of that event was freed, it freed the event data

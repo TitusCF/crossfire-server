@@ -1250,6 +1250,7 @@ void init_artifacts() {
 
 void add_abilities(object *op, object *change) {
     int i,j, tmp;
+
     if (change->face != blank_face) {
 #ifdef TREASURE_VERBOSE
 	LOG(llevDebug, "FACE: %d\n", change->face->number);
@@ -1292,7 +1293,25 @@ void add_abilities(object *op, object *change) {
     op->stats.wc  += change->stats.wc;
     op->stats.ac  += change->stats.ac;
 
-    if (change->other_arch) op->other_arch = change->other_arch;
+    if (change->other_arch) {
+	/* Basically, for horns & potions, the other_arch field is the spell
+	 * to cast.  So convert that to into a spell and put it into
+	 * this object.
+	 */
+	if (op->type == HORN || op->type == POTION) {
+	    object *tmp_obj;
+	    /* Remove any spells this object currently has in it */
+	    while (op->inv) {
+		tmp_obj = op->inv;
+		remove_ob(tmp_obj);
+		free_object(tmp_obj);
+	    }
+	    tmp_obj = arch_to_object(change->other_arch);
+	    insert_ob_in_ob(tmp_obj, op);
+	}
+	/* No harm setting this for potions/horns */
+	op->other_arch = change->other_arch;
+    }
 
     if (change->stats.hp < 0)
 	op->stats.hp = -change->stats.hp;
