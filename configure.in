@@ -52,6 +52,29 @@ AC_PATH_PROG(SED, sed)
 AC_PATH_PROG(RM, rm)
 AC_PATH_PROG(AR, ar)
 AC_PATH_PROG(LATEX, latex)
+AC_PATH_PROG(GZIP, gzip)
+AC_PATH_PROG(GUNZIP, gunzip)
+if eval "test -n $GZIP -a -z $GUNZIP" ; then
+    echo "Found gzip, but not gunzip - setting GUNZIP to gzip -c";
+    GUNZIP="$GZIP -c"
+fi;
+
+if eval "test -z $COMPRESS"; then
+	AC_PATH_PROG(COMPRESS, compress)
+	AC_PATH_PROG(UNCOMPRESS, uncompress)
+fi
+
+AC_PATH_PROG(BZIP, bzip2)
+AC_PATH_PROG(BUNZIP, bunzip2)
+if eval "test -n $BZIP -a -z $BUNZIP" ; then
+    echo "Found bzip2, but not bunzip2 - setting BUNZIP to bzip2 -c";
+    BUNZIP="$BZIP -c"
+fi;
+
+if eval "test -z $COMPRESS -a -z $GZIP -a -z $BZIP2"; then
+	echo "Unable to find either compress, bzip2,  or gzip - hope you don't plan on compressing";
+	echo "any files.";
+fi;
 
 AC_PATH_PROGS(BOURNE_SHELL, sh ksh bash)
 
@@ -185,6 +208,12 @@ AC_DEFINE_UNQUOTED(LIBDIR, "${nlibdir}")
 AC_DEFINE_UNQUOTED(PREFIXDIR, "${nprefix}")
 AC_DEFINE_UNQUOTED(DATADIR, "${ndatadir}")
 AC_DEFINE_UNQUOTED(LOCALDIR, "${nlocaldir}")
+AC_DEFINE_UNQUOTED(COMPRESS,"${COMPRESS}")
+AC_DEFINE_UNQUOTED(UNCOMPRESS,"${UNCOMPRESS}")
+AC_DEFINE_UNQUOTED(GZIP,"${GZIP}")
+AC_DEFINE_UNQUOTED(GUNZIP,"${GUNZIP}")
+AC_DEFINE_UNQUOTED(BZIP,"${BZIP}")
+AC_DEFINE_UNQUOTED(BUNZIP,"${BUNZIP}")
 
 datadir=${ndatadir}
 localstatedir=${nlocaldir}

@@ -36,7 +36,6 @@
 extern spell spells[NROFREALSPELLS];
 extern void sub_weight (object *, signed long);
 extern void add_weight (object *, signed long);
-extern char *uncomp[NROF_COMPRESS_METHODS][3];
 extern char *range_name[range_size];
 extern long pticks;
 

@@ -479,59 +479,25 @@
  * SECTION 2 - Machine/Compiler specific stuff.
  *
  * Short list of items:
- * COMPRESS* - selection of compression programs
+ * COMPRESS_SUFFIX - selection of compression programs
  * O_NDELAY - If you don't have O_NDELAY, uncomment it.
  *
  ***********************************************************************/
 
 /*
- * If you compress your files to save space, please define at least uncompress
- * If you change to some compression program not using ".Z" or ".gz", please
- * define COMPRESS_SUFFIX.  Note though that ".Z" and ".gz" is checked anyway.
- * The program has support built in to handle gzip and compress
- * files, however, the gzip, gunzip, compress and uncompress programs all
- * need to be in the PATH environmental variable for this to work.
- * COMPRESS is the program name to compress the file, UNCOMPRESS to
- * uncompress the file.  if COMPRESS_SUFFIX is not defined, COMPRESS
- * and UNCOMPRESS have no meaning.
+ * If you compress your files to save space, set the COMPRESS_SUFFIX below
+ * to the compression suffix you want (.Z, .gz, .bz2).  The autoconf
+ * should already find the program to use.  If you set the suffix to
+ * something that autoconf did not find, you are likely to have serious
+ * problems, so make sure you have the appropriate compression tool installed
+ * before you set this.  You can look at the autoconf.h file to see
+ * what compression tools it found (search for COMPRESS).
+ * Note that this is used when saving files.  Crossfire will search all
+ * methods when loading a file to see if it finds a match
  */
 
 #ifndef COMPRESS_SUFFIX
 /* #define COMPRESS_SUFFIX ".Z" */
-#endif
-
-/* #define COMPRESS <whatever> */
-/* #define UNCOMPRESS <whatever> */
-
-#ifndef COMPRESS
-#  if defined (linux) || defined(SVR4)
-#    define COMPRESS	"/usr/bin/compress"
-#  else
-#    if defined(sgi)
-#      define COMPRESS	"/usr/bsd/compress"
-#    else
-#      if defined(ultrix) || defined(BSD) || defined(_BSD)
-#        define COMPRESS	"/usr/ucb/compress"
-#      else
-#        define COMPRESS	"/local/bin/compress"
-#      endif
-#    endif
-#  endif
-#endif
-#ifndef UNCOMPRESS
-#  if defined (linux) || defined(SVR4)
-#    define UNCOMPRESS	"/usr/bin/uncompress"
-#  else
-#    if defined(sgi)
-#      define UNCOMPRESS	"/usr/bsd/uncompress"
-#    else
-#      if defined(ultrix) || defined(BSD) || defined(_BSD)
-#        define UNCOMPRESS	"/usr/ucb/uncompress"
-#      else
-#        define UNCOMPRESS	"/local/bin/uncompress"
-#      endif
-#    endif
-#  endif
 #endif
 
 /* If you get a complaint about O_NDELAY not being known/undefined, try

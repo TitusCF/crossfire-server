@@ -78,13 +78,12 @@ extern int nrofallocobjects,nroffreeobjects;
  * The first entry must be NULL - this is what is used for non
  * compressed files.
  */
-char *uncomp[NROF_COMPRESS_METHODS][3] = {
+#define NROF_COMPRESS_METHODS 4
+char *uncomp[4][3] = {
   {NULL, NULL, NULL},
-#ifdef COMPRESS_SUFFIX
-  {COMPRESS_SUFFIX, UNCOMPRESS, COMPRESS},
-#endif
-  {".Z", "uncompress", "compress"},
-  {".gz", "gunzip", "gzip"}
+  {".Z", UNCOMPRESS, COMPRESS},
+  {".gz", GUNZIP, GZIP},
+  {".bz2", BUNZIP, BZIP}
 };
 
 

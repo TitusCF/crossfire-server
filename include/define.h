@@ -237,15 +237,6 @@
 #define SIZEOFFREE 49
 
 /*
- * Number of compression methods depend on whether COMPRESS_SUFFIX is defined.
- */
-#ifdef COMPRESS_SUFFIX
-#define NROF_COMPRESS_METHODS   4
-#else
-#define NROF_COMPRESS_METHODS   3
-#endif
-
-/*
  * Attacktypes:
  * If this ever exceeds 16, rmember to change all the short's in global.h.
  * (Already done, Vick 930307 :)

@@ -212,3 +212,13 @@
 
 /* Define as __inline if that's what the C compiler calls it.  */
 #undef inline
+
+/* Start of definitions for compression information - put in generic
+ * defaults that may work
+ */
+#define COMPRESS "compress"
+#define UNCOMPRESS "uncompress"
+#define GZIP "gzip"
+#define GUNZIP "gunzip"
+#define BZIP "bzip2"
+#define BUNZIP "bunzip2"

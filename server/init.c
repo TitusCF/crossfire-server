@@ -422,8 +422,6 @@ void compile_info() {
   printf("Use checksum:\t<false>\n");
 #endif
   printf("Tmpdir:\t\t%s\n",settings.tmpdir);
-  printf("Compress:\t%s\n",COMPRESS);
-  printf("Uncompress:\t%s\n",UNCOMPRESS);
   printf("Map max timeout:\t%d\n",MAP_MAXTIMEOUT);
 #ifdef MAP_RESET
   printf("Map reset:\t<true>\n");

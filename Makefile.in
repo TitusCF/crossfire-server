@@ -56,6 +56,8 @@ CP = @CP@
 TAR = @TAR@
 RM = @RM@
 BASENAME = @BASENAME@
+GZIP = @GZIP@
+BZIP = @BZIP@
 
 SHELL = /bin/sh
 
@@ -139,8 +141,8 @@ archive:
 		$(TAR) cvfh $(VERSION).tar `$(BASENAME) $(ARCHIVE)`; \
 	)
 	$(CP) $(ARCHIVE)/../$(VERSION).tar .
-	gzip -cv9 $(VERSION).tar > $(VERSION).tar.gz
-	bzip2 -cv --repetitive-best $(VERSION).tar > $(VERSION).tar.bz2
+	$(GZIP) -cv9 $(VERSION).tar > $(VERSION).tar.gz
+	$(BZIP) -cv --repetitive-best $(VERSION).tar > $(VERSION).tar.bz2
 	$(RM) -f $(VERSION).tar
 	$(RM) -rf $(ARCHIVE)/../$(VERSION).tgz $(ARCHIVE) 
 
