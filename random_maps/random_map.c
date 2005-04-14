@@ -61,8 +61,13 @@ mapstruct *generate_random_map(char *OutFileName, RMParms *RP) {
 
     write_map_parameters_to_string(buf, RP);
 
-    if(RP->difficulty==0)
+    if(RP->difficulty==0) {
 	RP->difficulty = RP->dungeon_level; /* use this instead of a map difficulty  */
+	if (RP->difficulty_increase > 0.001) {
+	    RP->difficulty = (int)((float)RP->dungeon_level * RP->difficulty_increase);
+	    if (RP->difficulty < 1) RP->difficulty=1;
+	}
+    }
     else
 	RP->difficulty_given=1;
 
@@ -607,6 +612,11 @@ void write_map_parameters_to_string(char *buf,RMParms *RP) {
     strcat(buf,small_buf);
   }
 
+  if(RP->difficulty_increase != 1.0 ) {
+    sprintf(small_buf,"difficulty_increase %f\n",RP->difficulty_increase);
+    strcat(buf,small_buf);
+  }
+
   sprintf(small_buf,"dungeon_level %d\n",RP->dungeon_level);
   strcat(buf,small_buf);
 
@@ -675,7 +685,8 @@ void write_parameters_to_string(char *buf,
                                 int origin_x_n,
                                 int origin_y_n,
                                 int random_seed_n,
-                                int treasureoptions_n ) 
+                                int treasureoptions_n,
+				float difficulty_increase) 
 {
 
   char small_buf[256];
@@ -761,6 +772,11 @@ void write_parameters_to_string(char *buf,
 
   if(difficulty_n && difficulty_given_n ) {
     sprintf(small_buf,"difficulty %d\n",difficulty_n);
+    strcat(buf,small_buf);
+  }
+
+  if(difficulty_increase > 0.001 ) {
+    sprintf(small_buf,"difficulty_increase %f\n",difficulty_increase);
     strcat(buf,small_buf);
   }
 

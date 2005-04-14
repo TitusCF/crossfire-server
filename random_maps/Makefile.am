@@ -61,10 +61,9 @@ AM_LFLAGS = -Prmap -i
 random_map_LDADD = ../common/libcross.a librandom_map.a
 
 proto:
-	cextract +p -P $(INCLUDES)  \
-		-cpp-program="gcc -E -C" \
-		$(SRCS)  > rproto.h.bak
-	$(SED) -e "s/#if __STDC__/#ifdef __STDC__/" -e "s/__signed/signed/g" -e "/__inline/d" -e "/YY_BUFFER/d" < rproto.h.bak >rproto.h
+	cproto -e -o rproto.h.bak $(CPPFLAGS) -I. $(AM_CPPFLAGS) \
+		`echo $(librandom_map_a_SOURCES) | $(AWK) -v RS=" " '/.c$$/ { print }'`
+	sed -e "s/#if __STDC__/#ifdef __STDC__/" -e "s/__signed/signed/g" -e "/__inline/d" -e "/YY_BUFFER/d" < rproto.h.bak >rproto.h
 	chmod 644 rproto.h
-	$(RM) -f rproto.h.bak
+	rm -f rproto.h.bak
 

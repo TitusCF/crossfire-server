@@ -236,7 +236,7 @@ void place_special_exit(mapstruct * map, int hole_type,RMParms *RP) {
     write_parameters_to_string(buf, g_xsize, g_ysize,RP->wallstyle,RP->floorstyle,mon,
                                  "none",style,decor,"none",RP->exitstyle,0,0,0,
                                  OPT_WALLS_ONLY,0,0,1,RP->dungeon_level,RP->dungeon_level,
-                                 RP->difficulty,RP->difficulty,-1,1,0,0,0,0);
+                                 RP->difficulty,RP->difficulty,-1,1,0,0,0,0, RP->difficulty_increase);
     the_exit->slaying = add_string("/!");
     the_exit->msg = add_string(buf);
 

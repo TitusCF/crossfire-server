@@ -17,6 +17,31 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Random map code improvements - add support for subdirectories in the
+style maps for random maps.  Add difficulty_increase parameter for random
+maps to control how fast they get harder.
+doc/Developers/random-maps: Add notes about difficulty_increase parameter.
+random_maps/Makefile.am: Update proto directive to use cproto, not cextract.
+random_maps/random_map.c: Update to use difficulty_increase when figuring
+   difficulty of maps.  Add code to save it in list of parameters.
+random_maps/random_map.h: Add difficulty_increase field to structure.
+random_maps/reader.l, reader.c: Add code to find difficulty_increase parameter.
+random_maps/rproto.h: rebuilt.
+random_maps/special.c: Pass in difficulty increase to
+   write_parameters_to_string()
+random_maps/style.c: Remove old scandir - replaced by our own load_dir() -
+   necessary because we need to check type of files, which scandir doesn't
+   easily let us do.  Since it is now our own routine, just return
+   array of file names instead of dirent structures.
+MSW 2005-04-13
+
+utils/Makefile.am: Add cfmeta-rrd to list of files to add to distributions
+utils/cfmeta-rrd: Example of sample script that takes data and stores it into
+   rrd file and draws graphs (new file).
+utils/metaserver.pl.in: Add recording of useful stats to external file so they
+   can be processed by other external scripts.
+MSW 2005-04-13
+
 server/shop.c: Pass in player object to pay_from_container() - code was
   trying to deref pouch->contr which was null.  Only occurs when player
   has 2 different money objects of the same type, but 2 crashes observed

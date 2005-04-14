@@ -53,6 +53,7 @@ typedef struct {
   int symmetry;
   int difficulty;
   int difficulty_given;
+  float difficulty_increase;
   int dungeon_level;
   int dungeon_depth;
   int decoroptions;

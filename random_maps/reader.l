@@ -87,6 +87,7 @@ WS	[ \t]*
 ^layoutoptions3{S}  RP->layoutoptions3 = IVAL;
 ^symmetry{S}        RP->symmetry = IVAL;
 ^difficulty{S}        RP->difficulty = IVAL;
+^difficulty_increase{S}        RP->difficulty_increase = FVAL;
 ^decoroptions{S}      RP->decoroptions = IVAL;
 ^exitstyle{S}       strcpy(RP->exitstyle,rmap_yval());
 ^dungeon_level{S}   RP->dungeon_level = IVAL;

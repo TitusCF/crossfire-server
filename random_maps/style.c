@@ -35,118 +35,62 @@
 #include <unistd.h>
 #include "../include/autoconf.h"
 #endif /* win32 */
-#ifndef HAVE_SCANDIR
 
-/* The scandir is grabbed from the gnulibc and modified slightly to remove
- * special gnu libc constructs/error conditions.
+
+/* This is our own version of scandir/select_regular_files/sort.
+ * To support having subdirectories in styles, we need to know
+ * if in fact the directory we read is a subdirectory.  However,
+ * we can't get that through the normal dirent entry.  So
+ * instead, we do our own where we do have the full directory
+ * path so can do stat calls to see if in fact it is a directory.
+ * dir is the name of the director to scan.
+ * namelist is the array of file names returned.  IT needs to be
+ * freed by the caller.
+ * skip_dirs controls our behavioru - if nonzero, we don't
+ * skip any subdirectories - if zero, we store those away,
+ * since there are cases where we want to choose a random
+ * directory. 
  */
-
-/* Copyright (C) 1992, 1993, 1994, 1995, 1996 Free Software Foundation, Inc.
-   This file is part of the GNU C Library.
-
-   The GNU C Library is free software; you can redistribute it and/or
-   modify it under the terms of the GNU Library General Public License as
-   published by the Free Software Foundation; either version 2 of the
-   License, or (at your option) any later version.
-
-   The GNU C Library is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-   Library General Public License for more details.
-
-   You should have received a copy of the GNU Library General Public
-   License along with the GNU C Library; see the file COPYING.LIB.  If not,
-   write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
-   Boston, MA 02111-1307, USA.  */
-
-int alphasort( struct dirent **a, struct dirent **b)
+int load_dir (const char *dir, char ***namelist, int skip_dirs)
 {
-  return strcmp ((*a)->d_name, (*b)->d_name);
-}
+    DIR *dp;
+    struct dirent *d;
+    int entries=0, entry_size=0;
+    char name[NAME_MAX+1], **rn=NULL;
+    struct stat sb;
 
-extern int errno;
+    dp = opendir (dir);
+    if (dp == NULL)
+	return -1;
 
-int
-scandir (dir, namelist, select, cmp)
-     const char *dir;
-     struct dirent ***namelist;
-     int (*select)(struct dirent *);
-     int (*cmp)(const void *, const void *);
-{
-  DIR *dp = opendir (dir);
-  struct dirent **v = NULL;
-  size_t vsize = 0, i;
-  struct dirent *d;
-  int save;
+    while ((d = readdir (dp)) != NULL) {
+	sprintf(name, "%s/%s", dir, d->d_name);
+	if (skip_dirs) {
+	    stat(name, &sb);
+	    if (S_ISDIR(sb.st_mode)) {
+		continue;
+	    }
+	}
 
-  if (dp == NULL)
-    return -1;
+	if (entries == entry_size) {
+	    entry_size+=10;
+	    rn = realloc(rn, sizeof(char*) * entry_size);
+	}
+	rn[entries] = strdup_local(d->d_name);
+	entries++;
 
-  save=errno=0;
-
-  i = 0;
-  while ((d = readdir (dp)) != NULL)
-    if (select == NULL || (*select) (d))
-      {
-
-	if (i == vsize)
-	  {
-	    struct dirent **new;
-	    if (vsize == 0)
-	      vsize = 10;
-	    else
-	      vsize *= 2;
-	    new = (struct dirent **) realloc (v, vsize * sizeof (*v));
-	    if (new == NULL)
-	      {
-	      lose:
-		errno=ENOMEM;
-
-		break;
-	      }
-	    v = new;
-	  }
-
-	/*	dsize = &d->d_name[sizeof(d->d_name)] - (char *) d; */
-	v[i] = (struct dirent *) malloc (d->d_reclen);
-	if (v[i] == NULL)
-	  goto lose;
-
-	memcpy (v[i++], d, d->d_reclen);
-      }
-
-  if (errno != 0)
-    {
-      save = errno;
-      (void) closedir (dp);
-      while (i > 0)
-	free (v[--i]);
-      free (v);
-      errno=save;
-      return -1;
     }
+    (void) closedir (dp);
 
-  (void) closedir (dp);
-  errno=save;
+    qsort(rn, entries, sizeof(char*), (int(*)())strcmp);
 
-  /* Sort the list if we have a comparison function to sort with.  */
-  if (cmp != NULL)
-    qsort (v, i, sizeof (*v), cmp);
-  *namelist = v;
-  return i;
+    *namelist = rn;
+    return entries;
 }
 
-#endif
 
 
 
-/* the warning here is because I've declared it "const", the
-   .h file in linux allows non-const.  */
-int select_regular_files(const struct dirent *the_entry) {
-  if(the_entry->d_name[0]=='.') return 0;
-  if(strstr(the_entry->d_name,"CVS")) return 0;
-  return 1;
-}
   
 /* this function loads and returns the map requested.
  * dirname, for example, is "/styles/wallstyles", stylename, is,
@@ -170,7 +114,7 @@ mapstruct *load_style_map(char *style_name)
 	if (!strcmp(style_name, style_map->path)) return style_map;
     }
     style_map = load_original_map(style_name,MAP_STYLE);
-    /* Remove it from gloabl list, put it on our local list */
+    /* Remove it from global list, put it on our local list */
     if (style_map) {
 	mapstruct *tmp;
 
@@ -192,7 +136,7 @@ mapstruct *find_style(char *dirname,char *stylename,int difficulty) {
     char style_file_full_path[256];
     mapstruct *style_map = NULL;
     struct stat file_stat;
-    int i;
+    int i, only_subdirs=0;
   
     /* if stylename exists, set style_file_path to that file.*/
     if(stylename && strlen(stylename)>0)
@@ -204,39 +148,56 @@ mapstruct *find_style(char *dirname,char *stylename,int difficulty) {
     sprintf(style_file_full_path,"%s/maps%s",settings.datadir,style_file_path);
     stat(style_file_full_path,&file_stat);
 
-
     if(! (S_ISDIR(file_stat.st_mode))) {
 	style_map=load_style_map(style_file_path);
     }
     if(style_map == NULL)  /* maybe we were given a directory! */
     {
-	 struct dirent **namelist;
-	 int n;
-	 char style_dir_full_path[256];
+	char **namelist;
+	int n;
+	char style_dir_full_path[256];
 
-	 /* get the names of all the files in that directory */
-	 sprintf(style_dir_full_path,"%s/maps%s",settings.datadir,style_file_path);
-	 n = scandir(style_dir_full_path,&namelist,select_regular_files,alphasort);
+	/* get the names of all the files in that directory */
+	sprintf(style_dir_full_path,"%s/maps%s",settings.datadir,style_file_path);
 
-	 if(n<=0) return 0; /* nothing to load.  Bye. */
+	/* First, skip subdirectories.  If we don't find anything, then try again
+	 * without skipping subdirs.
+	 */
+	n = load_dir(style_dir_full_path, &namelist, 1);
 
-	 if(difficulty==-1) {  /* pick a random style from this dir. */
-	    strcat(style_file_path,"/");
-	    strcat(style_file_path,namelist[RANDOM()%n]->d_name);
-	    style_map = load_style_map(style_file_path);
-	 }
-	 else {  /* find the map closest in difficulty */
+	if (n<=0) {
+	    n = load_dir(style_dir_full_path, &namelist, 0);
+	    only_subdirs=1;
+	}
+
+	if (n<=0) return 0; /* nothing to load.  Bye. */
+
+	/* Picks a random map.  Note that if this is all directories,
+	 * we know it won't be able to load, so save a few ticks.   
+	 * the door handling checks for this failure and handles
+	 * it properly.
+	 */
+	if(difficulty==-1) {  /* pick a random style from this dir. */
+	    if (only_subdirs)
+		style_map=NULL;
+	    else {
+		strcat(style_file_path,"/");
+		strcat(style_file_path,namelist[RANDOM()%n]);
+		style_map = load_style_map(style_file_path);
+	    }
+	}
+	else {  /* find the map closest in difficulty */
 	    int min_dist=32000,min_index=-1;
 
 	    for(i=0;i<n;i++) {
 		int dist;
-		char *mfile_name = strrchr(namelist[i]->d_name,'_')+1;
+		char *mfile_name = strrchr(namelist[i],'_')+1;
 
 		if((mfile_name-1) == NULL) { /* since there isn't a sequence, */
 		    int q;
 		    /*pick one at random to recurse */
 		    style_map= find_style(style_file_path,
-				 namelist[RANDOM()%n]->d_name,difficulty);
+				 namelist[RANDOM()%n],difficulty);
 		    for (q=0; q<n; q++)
 			free(namelist[q]);
 		    free(namelist);
@@ -252,9 +213,9 @@ mapstruct *find_style(char *dirname,char *stylename,int difficulty) {
 	    /* presumably now we've found the "best" match for the
 		    difficulty. */
 	    strcat(style_file_path,"/");
-	    strcat(style_file_path,namelist[min_index]->d_name);
+	    strcat(style_file_path,namelist[min_index]);
 	    style_map = load_style_map(style_file_path);
-	 }
+	}
 	for (i=0; i<n; i++)
 	    free(namelist[i]);
 	free(namelist);
