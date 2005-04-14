@@ -18,14 +18,23 @@ $HTML_FILE="/var/apache/htdocs/metaserver.html";
 $CACHE_FILE="/var/tmp/meta_xfire.cache";
 
 # We remove a server after $REMOVE_SERVER number of seconds of no updates.
-# 86400 is 1 day - maybe a bit long, but at current time I would like to get
-# a more accurate of number of servers out there.  Also, I can see an
-# established server being down for a while, but I think it is still nice
-# to have that in the listing.
-$REMOVE_SERVER=86400;
+# 600 is 10 minutes - if we haven't gotten an update that fast, the server
+# is almost certainly gone/not available.  This reduces congestion when
+# someone on a dhcp connection keeps running a server and it fills
+# up a bunch of the slots.
+$REMOVE_SERVER=600;
 
 # UPDATE_SYNC determines how often we update the HTML_FILE and CACHE_FILE.
 $UPDATE_SYNC=300;
+
+# For gathering some anonymous statistics. You probably want to use
+# MRTG/RRDTOOL for generating statistics from the file.
+# -- Heikki Hokkanen, 2005-03-26
+my $STATS_FILE="/var/tmp/meta_xfire.stats";
+my $stats_updatehits = 0; # COUNTER
+my $stats_requesthits = 0; # COUNTER
+my $stats_totalplayers = 0; # GAUGE
+my $stats_totalservers = 0; # GAUGE
 
 socket(SOCKET, PF_INET, SOCK_DGRAM, getprotobyname("udp")) || 
 	die("$0: can not open udp socket: $OS_ERROR\n");
@@ -71,6 +80,7 @@ while (1) {
 	    ($name, $rest) = split /\|/, $data;
 	    if ($name ne "put.your.hostname.here") {
 		$data{$host} = "$host|$cur_time|$data";
+		$stats_updatehits++;
 	    }
 	}
 	if (vec($rout, fileno(SOCKET1),1)) {
@@ -89,6 +99,7 @@ while (1) {
 		    print NEWSOCKET "$ip|$newtime|$rest\n";
 		}
 		close(NEWSOCKET);
+		$stats_requesthits++;
 	    }
 	}
     }
@@ -110,7 +121,10 @@ while (1) {
 </tr>
 ';
 
+	$stats_totalplayers = 0;
+	$stats_totalservers = 0;
 	foreach $i (keys %data) {
+		$stats_totalservers++;
 	    ($ip, $time, @rest) = split /\|/, $data{$i};
 	    if ($time+$REMOVE_SERVER<$cur_time) { 
 		delete $data{$i}; 
@@ -120,6 +134,7 @@ while (1) {
 		$gmtime = gmtime($time);
 		print HTML "<tr><td>$i</td><td>$gmtime</td><td>$elapsed</td>";
 		print HTML "<td>$rest[0]</td><td>$rest[1]</td><td>$rest[2]</td><td>$rest[3]</td></tr>\n";
+		$stats_totalplayers += int($rest[2]);
 	    }
 	}
 	$gmtime = gmtime($cur_time);
@@ -134,5 +149,10 @@ All times are in GMT.<p>
 <font size=-2>Last Updated: $gmtime<font size=+2><p>";
 	close(HTML);
 	close(CACHE);
+	
+	open(STATS,">$STATS_FILE");
+	print STATS "$stats_updatehits:$stats_requesthits:$stats_totalservers:$stats_totalplayers\n";
+	close(STATS);
+	
     }
 }
