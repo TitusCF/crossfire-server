@@ -94,7 +94,6 @@ region *get_region_from_string(char *name) {
     region *reg;
     char *substr;
     char *p;
-    sint16 i;
     
     if (name==NULL) {
     	for (reg=first_region;reg->parent!=NULL;reg=reg->parent);

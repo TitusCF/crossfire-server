@@ -17,6 +17,15 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+common/map.c: map pathnames are now const char*, no reason for something else.
+common/region.c: remove unused variable.
+include/libproto.h: update functions definitions.
+include/sproto.h: weathermap_to_worldmap_corner now returns a const char*.
+include/win32.h: define missing NAME_MAX as MAX_BUF.
+server/c_misc.c: remove unused variable. Use const char* when possible.
+server/weather.c: weathermap_to_worldmap_corner now uses const char* as return type.
+Ryo 2005-04-14
+
 Random map code improvements - add support for subdirectories in the
 style maps for random maps.  Add difficulty_increase parameter for random
 maps to control how fast they get harder.

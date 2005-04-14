@@ -119,6 +119,8 @@ typedef struct dirent {
 }dirent;
 
 #define NAMLEN(dirent) strlen((dirent)->d_name)
+/* NAME_MAX does not exist under Win32, so use MAX_BUF. */
+#define NAME_MAX	MAX_BUF
 
 /* typedef DIR - not the same as Unix */
 typedef struct {

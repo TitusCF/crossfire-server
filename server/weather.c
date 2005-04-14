@@ -936,7 +936,7 @@ void init_humid_elev()
 {
     int x, y, tx, ty, nx, ny, ax, ay, j;
     int spwtx, spwty;
-    char *mapname;
+    const char *mapname;
     long int elev;
     int water, space;
     mapstruct *m;
@@ -2281,11 +2281,11 @@ int worldmap_to_weathermap(int x, int y, int *wx, int *wy, mapstruct* m)
  * value is the name of the map that corner resides in.
  */
 
-char *weathermap_to_worldmap_corner(int wx, int wy, int *x, int *y, int dir)
+const char *weathermap_to_worldmap_corner(int wx, int wy, int *x, int *y, int dir)
 {
     int spwtx, spwty;
     int tx, ty, nx, ny;
-    char *mapname;
+	static char mapname[ MAX_BUF ];
     
     spwtx = (settings.worldmaptilesx * settings.worldmaptilesizex) / WEATHERMAPTILESX;
     spwty = (settings.worldmaptilesy * settings.worldmaptilesizey) / WEATHERMAPTILESY;
@@ -2306,12 +2306,11 @@ char *weathermap_to_worldmap_corner(int wx, int wy, int *x, int *y, int dir)
     
     nx = (tx / settings.worldmaptilesizex) + settings.worldmapstartx;
     ny = (ty / settings.worldmaptilesizey) + settings.worldmapstarty;
-    mapname = malloc(sizeof(char) * strlen("world/world_0000_0000"));
-    sprintf(mapname, "world/world_%d_%d", nx, ny);
-    
+    snprintf(mapname, MAX_BUF, "world/world_%d_%d", nx, ny);
+
     *x = tx%settings.worldmaptilesizex;
     *y = ty%settings.worldmaptilesizey;
-    return(mapname);
+    return mapname;
 }
 
 /*

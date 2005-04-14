@@ -260,7 +260,7 @@ typedef struct
     } chars_names;
 
 /*local functon for qsort comparison*/
-int name_cmp (chars_names *c1, chars_names *c2)
+int name_cmp (const chars_names *c1, const chars_names *c2)
     {
       return strcasecmp (c1->namebuf, c2->namebuf);
     }
@@ -273,7 +273,6 @@ int command_who (object *op, char *params) {
     int num_players = 0;
     int num_wiz = 0;
     int num_afk = 0;
-    char players_str[MAX_BUF];
     chars_names *chars = NULL;
     
     /* 

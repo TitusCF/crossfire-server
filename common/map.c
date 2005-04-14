@@ -61,7 +61,7 @@ mapstruct *has_been_loaded (char *name) {
  * it really should be called create_mapname
  */
 
-char *create_pathname (char *name) {
+const char *create_pathname (const char *name) {
     static char buf[MAX_BUF];
 
     /* Why?  having extra / doesn't confuse unix anyplace?  Dependancies
@@ -78,7 +78,7 @@ char *create_pathname (char *name) {
  * same as create_pathname, but for the overlay maps.
  */
 
-char *create_overlay_pathname (char *name) {
+const char *create_overlay_pathname (const char *name) {
     static char buf[MAX_BUF];
 
     /* Why?  having extra / doesn't confuse unix anyplace?  Dependancies
@@ -97,7 +97,7 @@ char *create_overlay_pathname (char *name) {
  * files than full directory structure, but if this is problem it can 
  * be changed.
  */
-static char *create_items_path (char *s) {
+static const char *create_items_path (const char *s) {
     static char buf[MAX_BUF];
     char *t;
     
@@ -132,7 +132,7 @@ static char *create_items_path (char *s) {
  * that seems to be missing the prepend_dir processing
  */
 
-int check_path (char *name, int prepend_dir)
+int check_path (const char *name, int prepend_dir)
 {
     char buf[MAX_BUF];
 #ifndef WIN32
@@ -825,7 +825,7 @@ static int load_map_header(FILE *fp, mapstruct *m)
  *		managed map list.
  */
 
-mapstruct *load_original_map(char *filename, int flags) {
+mapstruct *load_original_map(const char *filename, int flags) {
     FILE *fp;
     mapstruct *m;
     int comp;
@@ -924,7 +924,7 @@ static mapstruct *load_temporary_map(mapstruct *m) {
  * option if we can't find the original map)
  */
 
-mapstruct *load_overlay_map(char *filename, mapstruct *m) {
+mapstruct *load_overlay_map(const char *filename, mapstruct *m) {
     FILE *fp;
     int comp;
     char pathname[MAX_BUF];

@@ -865,7 +865,7 @@ void plant_a_garden(mapstruct *m, int wx, int wy, char *filename);
 void change_the_world(mapstruct *m, int wx, int wy, char *filename);
 void feather_map(mapstruct *m, int wx, int wy, char *filename);
 int worldmap_to_weathermap(int x, int y, int *wx, int *wy, mapstruct *m);
-char *weathermap_to_worldmap_corner(int wx, int wy, int *x, int *y, int dir);
+const char *weathermap_to_worldmap_corner(int wx, int wy, int *x, int *y, int dir);
 int polar_distance(int x, int y, int equator);
 void update_humid(void);
 int humid_tile(int x, int y);
