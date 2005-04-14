@@ -17,6 +17,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/shop.c: Pass in player object to pay_from_container() - code was
+  trying to deref pouch->contr which was null.  Only occurs when player
+  has 2 different money objects of the same type, but 2 crashes observed
+  on metalforge.
+MSW 2005-04-13
+
 socket/image.c: Change esrv_send_face to check for <=0 instead of <0 on face
   number.
 socket/request.c: Change if statement that acted improperly to determine when 
