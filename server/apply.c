@@ -2475,6 +2475,9 @@ int manual_apply (object *op, object *tmp, int aflag)
     apply_positioning_system( op, tmp );
     return 1;
 
+  case ITEM_TRANSFORMER:
+    apply_item_transformer( op, tmp );
+    return 1;
   default:
     return 0;
   }
@@ -3737,4 +3740,90 @@ void apply_positioning_system( object* pl, object* gps )
 
     /* Display location */
     new_draw_info_format( NDI_UNIQUE, 0, pl, "You are at %d:%d.", x, y );
+    }
+
+/**
+ * This handles items of type 'transformer'.
+ * Basically those items, used with a marked item, transform both items into something
+ * else.
+ * "Transformer" item is removed too, unless the level is zero.
+ * Change information is contained in the 'slaying' field of the marked item.
+ * The format is as follow: transformer:[number ]yield[;transformer:...].
+ * This way an item can be transformed in many things, and/or many objects.
+ * The 'slaying' field for transformer is used as verb for the action.
+ * Created item is in the 'other_arch' field.
+ */
+void apply_item_transformer( object* pl, object* transformer )
+    {
+    object* marked;
+    object* new_item;
+    char* find;
+    char* separator;
+    int yield;
+    char got[ MAX_BUF ];
+
+    if ( !pl || !transformer )
+        return;
+    marked = find_marked_object( pl );
+    if ( !marked )
+        {
+        new_draw_info_format( NDI_UNIQUE, 0, pl, "Use the %s with what item?", query_name( transformer ) );
+        return;
+        }
+    if ( !marked->slaying )
+        {
+        new_draw_info_format( NDI_UNIQUE, 0, pl, "You can't use the %s with your %s!", query_name( transformer ), query_name( marked ) );
+        return;
+        }
+    /* check whether they are compatible or not */
+    find = strstr( marked->slaying, transformer->arch->name );
+    if ( !find || ( *( find + strlen( transformer->arch->name ) ) != ':' ) )
+        {
+        new_draw_info_format( NDI_UNIQUE, 0, pl, "You can't use the %s with your %s!", query_name( transformer ), query_name( marked ) );
+        return;
+        }
+    memset( got, 0, MAX_BUF );
+    find += strlen( transformer->arch->name ) + 1;
+    /* Item can be used, now find how many and what it yields */
+    if ( isdigit( *( find ) ) )
+        {
+        yield = atoi( find );
+        if ( yield < 1 )
+            {
+            LOG( llevDebug, "apply_item_transformer: item %s has slaying-yield %d.", query_base_name( marked, 0 ), yield );
+            yield = 1;
+            }
+        }
+    else
+        yield = 1;
+
+    while ( isdigit( *find ) )
+        find++;
+    while ( *find == ' ' )
+        find++;
+    if ( separator = strchr( find, ';' ) )
+        {
+        strncpy( got, find, MIN( separator - find, MAX_BUF ) );
+        }
+    else
+        {
+        strncpy( got, find, MAX_BUF );
+        }
+
+    /* Now create new item, remove used ones when required. */
+    new_item = get_archetype( got );
+    if ( !new_item )
+        {
+        new_draw_info_format( NDI_UNIQUE, 0, pl, "This %s is strange, better to not use it.", query_base_name( marked, 0 ) );
+        return;
+        }
+    new_item->nrof = yield;
+    new_draw_info_format( NDI_UNIQUE, 0, pl, "You %s the %s.", transformer->slaying, query_base_name( marked, 0 ) );
+    insert_ob_in_ob( new_item, pl );
+    esrv_send_inventory( pl, pl );
+    /* Eat up one item */
+    decrease_ob_nr( marked, 1 );
+    /* Eat one transformer if needed */
+    if ( transformer->level )
+        decrease_ob_nr( transformer, 1 );
     }

@@ -1039,7 +1039,7 @@ char *describe_item(object *op, object *owner) {
 	    strcat(retbuf,"(reflect missiles)");
 	if(QUERY_FLAG(op,FLAG_STEALTH))
 	    strcat(retbuf,"(stealth)");
-	if(op->slaying!=NULL) {
+	if(op->slaying!=NULL && op->type != FOOD) {
 	    sprintf(buf,"(slay %s)",op->slaying);
 	    strcat(retbuf,buf);
 	}

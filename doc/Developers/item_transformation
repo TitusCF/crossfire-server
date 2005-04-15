@@ -1,0 +1,28 @@
+This file explains the 'ITEM_TRANSFORMER' (163) item type.
+
+Last update: 2005-04-15.
+
+An item transformer is simply applied, after having marked a 'victim' item.
+If the victim is suitable, it will be transformed into something else.
+
+To make an item transformable, you just have to fill the 'slaying' field.
+The syntax is:
+ slaying slayer:[yield ]new_item[;slayer:[yield ]new_item]*
+
+with [] denoting optional part, and * any number of preceding [].
+
+Example, for object apple:
+ slaying knife:2 half_apple
+
+This means that, when applying a knife (non existing item with type of 163),
+one 'apple' will be transformed into 2 'half_apple'.
+
+Pretty simple, hopefully.
+
+As a special case, the 'transformer' item is removed if its 'level' is non zero.
+
+More complex imaginary example:
+ Object water
+ slaying bowl:full_bowl;paper:wet_paper
+
+if paper and bowl are 'transformer' items.

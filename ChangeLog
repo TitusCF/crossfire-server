@@ -17,6 +17,15 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Those changes add the ability to transform items through 'item_transformer' (163)-type
+ items
+ See doc/Developers/item_transformation for more info.
+common/item.c: don't display 'slaying' field for food.
+include/define.h: add new 'ITEM_TRANSFORMER' type.
+include/sproto.h: add new function 'apply_item_transformer'.
+server/apply.c: new 'apply_item_transformer' function to handle that item type.
+Ryo 2005-04-15
+
 common/map.c: map pathnames are now const char*, no reason for something else.
 common/region.c: remove unused variable.
 include/libproto.h: update functions definitions.
