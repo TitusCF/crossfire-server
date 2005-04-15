@@ -223,6 +223,14 @@ balanced_stat_loss false
 
 use_permanent_experience false
 
+# This is the penalty to luck that is given to a player who kills another
+# player (PK's). The value here is deducted from their luck value, so set this
+# high to discourage PK-ing and zero (or negative) to encourage it.
+# Range is limited to -100 to 100, since this is the value range that the luck 
+# stat can be within. 
+
+pk_luck_penalty 1
+
 # This allows reduced damage against other players when in 
 # peaceful mode.  The value is the percent of damage done
 # compared to normal.  This does not change damage done

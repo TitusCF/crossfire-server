@@ -331,6 +331,7 @@ typedef struct Settings {
     char    *uniquedir;	    /* directory for the unique items */
     char    *tmpdir;	    /* Directory to use for temporary files */
     uint8   stat_loss_on_death;	/* If true, chars lose a random stat when they die */
+    sint16  pk_luck_penalty;    /* Amount by which player luck is reduced if they PK */
     uint8   use_permanent_experience; /* If true, players can gain perm exp */
     uint8   balanced_stat_loss; /* If true, Death stat depletion based on level etc */
     uint8   not_permadeth;  /* if true, death is non-permament */

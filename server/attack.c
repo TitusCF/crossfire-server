@@ -1494,9 +1494,10 @@ int kill_object(object *op,int dam, object *hitter, int type)
 	 * Fix bug in that we were changing the luck of the hitter, not
 	 * player that the object belonged to - so if you killed another player
 	 * with spells, pets, whatever, there was no penalty.
+	 * Changed to make luck penalty configurable in settings.
 	 */
 	if(op->type == PLAYER && owner != op && !battleg)
-	    change_luck(owner, -1);
+	    change_luck(owner, -settings.pk_luck_penalty);
 
 	/* This code below deals with finding the appropriate skill
 	 * to credit exp to.  This is a bit problematic - we should
