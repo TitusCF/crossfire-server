@@ -278,7 +278,7 @@ void dump_alchemy( void ) {
 /* Find a treasure with a matching name.  The 'depth' parameter is
  * only there to prevent infinite loops in treasure lists (a list
  * referencing another list pointing back to the first one). */
-archetype *find_treasure_by_name (treasure *t, char *name, int depth)
+archetype *find_treasure_by_name (treasure *t, const char *name, int depth)
 {
   treasurelist *tl;
   archetype    *at;

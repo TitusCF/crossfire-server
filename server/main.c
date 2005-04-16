@@ -463,7 +463,7 @@ char *clean_path(char *file)
  * are getting passed a string that points to a unique map
  * path.
  */
-char *unclean_path(char *src)
+char *unclean_path(const char *src)
 {
     static char newpath[MAX_BUF],*cp;
 

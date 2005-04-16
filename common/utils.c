@@ -246,7 +246,7 @@ void decay_objects(mapstruct *m)
 
 /* convert materialname to materialtype_t */
 
-materialtype_t *name_to_material(char *name)
+materialtype_t *name_to_material(const char *name)
 {
     materialtype_t *mt, *nmt;
 

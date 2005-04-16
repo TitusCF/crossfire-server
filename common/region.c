@@ -40,7 +40,7 @@
  * message and returns NULL
  * used by the map parsing code. 
  */
-region *get_region_by_name(char *region_name) {
+region *get_region_by_name(const char *region_name) {
     region *reg;
     char *p = strchr(region_name, '\n');
     if (p) *p = '\0';
@@ -90,7 +90,7 @@ char *get_name_of_region_for_map(mapstruct  *m) {
  * If we got a NULL, then just return the top level region
  * 
  */
-region *get_region_from_string(char *name) {
+region *get_region_from_string(const char *name) {
     region *reg;
     char *substr;
     char *p;

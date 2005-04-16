@@ -241,7 +241,7 @@ void load_treasures() {
  * of treasurelists which has been built by load_treasures().
  */
 
-treasurelist *find_treasurelist(char *name) {
+treasurelist *find_treasurelist(const char *name) {
   char *tmp=find_string(name);
   treasurelist *tl;
 

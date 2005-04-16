@@ -17,6 +17,16 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Those changes are just changing char* to const char* in some function prototypes.
+Affected files:
+ common/recipe.c
+ common/region.c
+ common/treasure.c
+ common/utils.c
+ include/libproto.h: match headers.
+ server/main.c
+Ryo 2005-04-16
+
 Those changes add the ability to transform items through 'item_transformer' (163)-type
  items
  See doc/Developers/item_transformation for more info.
