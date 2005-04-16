@@ -138,6 +138,17 @@ will be placed at random in the maze.
 			to the value of dungeon_level and incremeneted with
 			each recursive map.
 
+  'difficulty_increase'	Sets how fast the difficulty increases.  This value
+			is a float - the default value is 1.0.  Reducing
+			This only applies to map without a default
+			difficulty set (but that could change in the
+			future).  For each level of a map, the difficulty
+			is set to depth * difficulty_increase.  Setting
+			this parameter to 0.5 (or other values between 0
+			and 1) is a way to have deep dungeons that do not
+			increase in difficulty all that rapidly.
+
+
   'dungeon_level'	Another way of setting the map difficulty.  This
 			has no relation to the "difficulty" defined in
 			the common/*.c source code.  The effect is to pick
