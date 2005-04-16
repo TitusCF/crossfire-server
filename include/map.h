@@ -214,6 +214,7 @@ typedef struct regiondef {
     char	*longname;	 /* Official title of the region, this might be defined
     				  * to be the same as name*/
     char	*msg;		 /* the description of the region */
+    uint32	counter;	 /* A generic counter for holding temporary data. */
     sint8	fallback;	 /* whether, in the event of a region not existing,
     				  * this should be the one we fall back on as the default */
 } region;

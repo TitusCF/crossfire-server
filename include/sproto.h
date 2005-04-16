@@ -157,6 +157,7 @@ void get_who_escape_code_value(char *return_val, const char letter, player *pl);
 int command_malloc(object *op, char *params);
 int command_mapinfo(object *op, char *params);
 int command_whereami(object *op, char *params);
+int command_whereabouts(object *op, char *params);
 int command_maps(object *op, char *params);
 int command_strings(object *op, char *params);
 int command_sstable(object *op, char *params);

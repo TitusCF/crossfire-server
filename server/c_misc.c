@@ -253,6 +253,43 @@ int command_malloc_verify(object *op, char *parms)
 	}
 #endif
 
+int command_whereabouts(object *op, char *params) {
+
+    region *reg;
+    player *pl;
+    
+    /*
+     * reset the counter on the region, then use it to store the number of
+     * players there.
+     * I don't know how thread-safe this would be, I suspect not very....
+     */
+    for (reg=first_region;reg!=NULL;reg=reg->next) {
+        reg->counter=0;
+    }
+    for (pl=first_player;pl!=NULL;pl=pl->next)
+        if (pl->ob->map!=NULL)
+            get_region_by_map(pl->ob->map)->counter++;
+
+     /* we only want to print out by places with a 'longname' field...*/
+    for (reg=first_region;reg!=NULL;reg=reg->next) {
+	if (reg->longname==NULL && reg->counter>0) {
+	    if(reg->parent !=NULL) {
+		reg->parent->counter+=reg->counter;
+		reg->counter=0;
+	    }
+	    else /*uh oh, we shouldn't be here. */
+		LOG(llevError,"command_whereabouts() Region %s with no longname has no parent", reg->name);
+	}
+    }
+	new_draw_info_format(NDI_UNIQUE, 0,op,
+	"In the world currently there are:");
+	for (reg=first_region;reg!=NULL;reg=reg->next)
+	    if(reg->counter>0)
+		new_draw_info_format(NDI_UNIQUE, 0,op,
+		    "%u players in %s", reg->counter, get_region_longname(reg));
+    return 1;
+}
+
 typedef struct
     {
       char namebuf[MAX_BUF];

@@ -95,6 +95,10 @@ This contains a list of the information about the regions and what the fields me
 *longname
  The title of the region, this should be the full, verbose title, with lots of pompousness
  
+*counter
+ This doesn't really have a fixed meaning, it is just somewhere to count things 
+ (at the moment the number of players)
+ 
 *msg
  The description of the region, think guidebook entry.
  Displayed to provide some background flavour.
@@ -186,6 +190,8 @@ The command mapinfo now returns the region name (not longname, but what is inclu
 
 There is a command whereami that prints the regions name and description.
 
+There is a command whereabouts that shows region names and the number of players there.
+
 who can be given regions as arguments, and only show the players in that region.
 
 *****Known/suspected bugs*****
@@ -198,10 +204,6 @@ or if 'nomore' is missing, or if the 'end' line is missing. These stop the serve
 starting, if it starts, it should be fine afterwards.
 
 *****Future plans*****
-
-short term:
-
-whereiseverybody command, showing region and the number of players there.
 
 medium term:
 
