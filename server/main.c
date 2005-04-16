@@ -481,6 +481,9 @@ char *unclean_path(char *src)
 }
 
 
+/* This function is declared in reader.c */
+int set_random_map_variable(RMParms *rp,char *buf);
+
 /* The player is trying to enter a randomly generated map.  In this case, generate the
  * random map as needed.
  */
