@@ -301,7 +301,7 @@ int has_carried_lights(object *op) {
  
 void expand_lighted_sight(object *op)
 {
-    int x,y,darklevel,ax,ay, basex, basey, mflags, light;
+    int x,y,darklevel,ax,ay, basex, basey, mflags, light, x1, y1;
     mapstruct *m=op->map;
     sint16 nx, ny;
  
@@ -355,7 +355,7 @@ void expand_lighted_sight(object *op)
 	     * spaces around here.
 	     */
 	    light = GET_MAP_LIGHT(m, nx, ny);
-	    if (light) {
+	    if (light != 0) {
 #if 0
 		fprintf(stderr,"expand_lighted_sight: Found light at x=%d, y=%d, basex=%d, basey=%d\n", 
 			x, y, basex, basey);
@@ -367,17 +367,16 @@ void expand_lighted_sight(object *op)
 
 			/* If the space is fully blocked, do nothing.  Otherwise, we
 			 * brighten the space.  The further the light is away from the
-			 * source (basex-x), the less effect it has.  Note that as done
-			 * done now, light dims in effectively a square manner.  for light radius
-			 * as small as they are (4), this probably isn't terrible, but should
-			 * perhaps be fixed.  It wouldn't be hard to creat a lookup table
-			 * (dimming[abs(base-x)][abs(basey-y)]) that is actually calculated
-			 * properly (ie, if the light is +2,+2, the dimming would be
-			 * 3 (2.82 or sqrt(8)) and not 2 like it is right now.
-			 */
-			if(op->contr->blocked_los[ax][ay]!=100)
-			    op->contr->blocked_los[ax][ay]-= (light - 
-							      MAX(abs(basex-ax),abs(basey -ay)));
+ 			 * source (basex-x), the less effect it has.  Though light used
+ 			 * to dim in a square manner, it now dims in a circular manner
+ 			 * using the the pythagorean theorem. glow_radius still 
+			 * represents the radius 
+  			 */
+ 			if(op->contr->blocked_los[ax][ay]!=100) {
+ 				x1 = abs(basex-ax)*abs(basex-ax);
+ 				y1 = abs(basey-ay)*abs(basey-ay);
+ 				op->contr->blocked_los[ax][ay]-= MAX((light - sqrt(x1 + y1)), 0);
+ 			}
 		    } /* for ay */
 		} /* for ax */
 	    } /* if this space is providing light */

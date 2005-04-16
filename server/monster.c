@@ -1881,25 +1881,27 @@ int stand_in_light( object *op) {
 
 
     if(!op) return 0;
-    if(op->glow_radius) return 1;
+    if(op->glow_radius > 0) return 1;
 
     if(op->map) {
-	int x, y;
+	int x, y, x1, y1;
+	
+	
 
-	/* Check the spacs with the max light radius to see if any of them
-	 * have lights, and if the light is bright enough to illuminate
-	 * this object.  Like the los.c logic, this presumes a square
-	 * lighting area.
+	/* Check the spaces with the max light radius to see if any of them
+	 * have lights, and if any of them light the player enough, then return 1.
 	 */
-	for (x = op->x - MAX_LIGHT_RADII; x< op->x + MAX_LIGHT_RADII; x++) {
-	    for (y = op->y - MAX_LIGHT_RADII; y< op->y + MAX_LIGHT_RADII; y++) {
+	for (x = op->x - (2*MAX_LIGHT_RADII); x< op->x + (2*MAX_LIGHT_RADII); x++) {
+	    for (y = op->y - (2*MAX_LIGHT_RADII); y< op->y + (2*MAX_LIGHT_RADII); y++) {
 		m = op->map;
 		nx = x;
 		ny = y;
 
 		if (get_map_flags(m, &m, nx, ny, &nx, &ny) & P_OUT_OF_MAP) continue;
 
-		if (GET_MAP_LIGHT(m, nx, ny) > MAX(abs(x - op->x), abs(y - op->y))) return 1;
+		x1 = abs(x - op->x)*abs(x - op->x);
+		y1 = abs(y - op->y)*abs(y - op->y);
+		if ((int)(sqrt(x1 + y1)) > 0) return 1; 
 	    }
 	}
     }

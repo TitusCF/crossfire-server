@@ -1249,7 +1249,7 @@ void remove_ob(object *op) {
     else
 	update_object(last, UP_OBJ_REMOVE);
 
-    if(QUERY_FLAG(op,FLAG_BLOCKSVIEW)|| (op->glow_radius>0)) 
+    if(QUERY_FLAG(op,FLAG_BLOCKSVIEW)|| (op->glow_radius != 0)) 
 	update_all_los(op->map, op->x, op->y);
 
 }
@@ -1500,7 +1500,7 @@ object *insert_ob_in_map (object *op, mapstruct *m, object *originator, int flag
      * or just updating the P_NEED_UPDATE for spaces within this area
      * of effect may be sufficient.
      */
-    if(MAP_DARKNESS(op->map) && op->glow_radius>0) 
+    if(MAP_DARKNESS(op->map) && (op->glow_radius != 0)) 
 	update_all_los(op->map, op->x, op->y);
 
 
@@ -1785,7 +1785,7 @@ object *insert_ob_in_ob(object *op,object *where) {
   op->ox=0,op->oy=0;
 
   /* reset the light list and los of the players on the map */
-  if(op->glow_radius>0&&where->map)
+  if((op->glow_radius!=0)&&where->map)
   {
 #ifdef DEBUG_LIGHTS
       LOG(llevDebug, " insert_ob_in_ob(): got %s to insert in map/op\n",
