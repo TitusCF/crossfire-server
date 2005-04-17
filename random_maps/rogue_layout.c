@@ -145,8 +145,8 @@ static int roguelike_place_room(Room *Rooms,int xsize, int ysize,int nrooms) {
 
   /* decide on the base x and y sizes */
 
-  x_basesize = (int)(xsize / sqrt(nrooms));
-  y_basesize = (int)(ysize / sqrt(nrooms));
+  x_basesize = xsize / isqrt(nrooms);
+  y_basesize = ysize / isqrt(nrooms);
 
 
   tx = RANDOM() %xsize;

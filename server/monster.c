@@ -1901,7 +1901,7 @@ int stand_in_light( object *op) {
 
 		x1 = abs(x - op->x)*abs(x - op->x);
 		y1 = abs(y - op->y)*abs(y - op->y);
-		if ((int)(sqrt(x1 + y1)) > 0) return 1; 
+		if (isqrt(x1 + y1) > 0) return 1; 
 	    }
 	}
     }

@@ -375,7 +375,8 @@ void expand_lighted_sight(object *op)
  			if(op->contr->blocked_los[ax][ay]!=100) {
  				x1 = abs(basex-ax)*abs(basex-ax);
  				y1 = abs(basey-ay)*abs(basey-ay);
- 				op->contr->blocked_los[ax][ay]-= MAX((light - sqrt(x1 + y1)), 0);
+ 				if (light > 0) op->contr->blocked_los[ax][ay]-= MAX((light - isqrt(x1 + y1)), 0);
+ 				if (light < 0) op->contr->blocked_los[ax][ay]-= MIN((light + isqrt(x1 + y1)), 0);
  			}
 		    } /* for ay */
 		} /* for ax */

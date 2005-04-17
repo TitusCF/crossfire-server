@@ -17,7 +17,20 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
-Those changes are just changing char* to const char* in some function prototypes.
+Various minor bugfixes.
+common/los.c: Patch to fix negative lighting.  Use isqrt instead of sqrt,
+  so we only want integer values anyways.
+include/libproto.h, include/sproto.h: Rebuilt as there were some improperly
+   matching prototypes.
+random_maps/rogue_layout.c: Replace sqrt with isqrt calls.
+server/c_misc.c: Make name_cmp() a static declaration so it won't be put
+   in the sproto.h file.
+server/init.c: Remove /* within comment string.
+server/monster.c: Change sqrt to isqrt
+MSW 2005-04-16
+
+Those changes are just changing char* to const char* in some function
+prototypes.
 Affected files:
  common/recipe.c
  common/region.c
@@ -27,8 +40,8 @@ Affected files:
  server/main.c
 Ryo 2005-04-16
 
-Those changes add the ability to transform items through 'item_transformer' (163)-type
- items
+Those changes add the ability to transform items through 'item_transformer'
+ (163)-type items
  See doc/Developers/item_transformation for more info.
 common/item.c: don't display 'slaying' field for food.
 include/define.h: add new 'ITEM_TRANSFORMER' type.
@@ -42,7 +55,8 @@ include/libproto.h: update functions definitions.
 include/sproto.h: weathermap_to_worldmap_corner now returns a const char*.
 include/win32.h: define missing NAME_MAX as MAX_BUF.
 server/c_misc.c: remove unused variable. Use const char* when possible.
-server/weather.c: weathermap_to_worldmap_corner now uses const char* as return type.
+server/weather.c: weathermap_to_worldmap_corner now uses const char* as
+    return type.
 Ryo 2005-04-14
 
 Random map code improvements - add support for subdirectories in the
@@ -84,7 +98,8 @@ MSW 2005-03-27
 
 include/sproto.h: get_who_escape_code_value is void, not void*.
 server/c_misc.c: move local function outside the function.
-server/c_wiz.c: remove sleep( 1 ) that would cause whole server to sleep one sec.
+server/c_wiz.c: remove sleep( 1 ) that would cause whole server to sleep one
+    sec.
 Ryo 2005-03-23
 
 common/living.c: Allow luck to drop back to zero. Limit bad luck object to

@@ -297,7 +297,7 @@ typedef struct
     } chars_names;
 
 /*local functon for qsort comparison*/
-int name_cmp (const chars_names *c1, const chars_names *c2)
+static int name_cmp (const chars_names *c1, const chars_names *c2)
     {
       return strcasecmp (c1->namebuf, c2->namebuf);
     }
