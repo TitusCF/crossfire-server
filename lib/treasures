@@ -1630,6 +1630,10 @@ treasureone melee_weapons
     magic 4
     chance 5
   more
+  arch shaxe1
+    magic 4
+    chance 1
+  more
   list uncommon_weapons
     chance 10
   end
