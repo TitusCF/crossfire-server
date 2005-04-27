@@ -46,6 +46,7 @@
 
 
 static void change_treasure(treasure *t, object *op); /* overrule default values */
+extern char *spell_mapping[];
 
 /*
  * Initialize global archtype pointers:
@@ -748,9 +749,12 @@ int get_magic(int diff) {
  * ! (flags & GT_ENVIRONMENT):
  *     Automatically calls fix_flesh_item().
  *
- * flags & FLAG_STARTEQUIP:
- *     Sets FLAG_STARTEQIUP on item if appropriate, or clears the item's
- *     value.
+ * flags:
+ *    GT_STARTEQUIP: Sets FLAG_STARTEQIUP on item if appropriate, or clears the item's
+ *      value.
+ *    GT_MINIMAL: Does minimal processing on the object - just enough to make it
+ *	a working object - don't change magic, value, etc, but set it material
+ *      type as appropriate, for objects that need spell objects, set those, etc
  */
 void fix_generated_item (object *op, object *creator, int difficulty,
                          int max_magic, int flags)
@@ -773,47 +777,61 @@ void fix_generated_item (object *op, object *creator, int difficulty,
     }
 
     if (difficulty<1) difficulty=1;
-    if (op->arch == crown_arch) {
-	set_magic(difficulty>25?30:difficulty+5, op, max_magic, flags);
-	num_enchantments = calc_item_power(op, 1);
-	generate_artifact(op,difficulty);
-    } else {
-	if(!op->magic && max_magic)
-	    set_magic(difficulty,op,max_magic, flags);
-	num_enchantments = calc_item_power(op, 1);
-	if ((!was_magic && !(RANDOM()%CHANCE_FOR_ARTIFACT)) || op->type == HORN ||
-	    difficulty >= 999 )
-	generate_artifact(op, difficulty);
-    }
-    /* Object was made an artifact.  Calculate its item_power rating.
-     * the item_power in the object is what the artfiact adds.
-     */
-    if (op->title) {
-	/* if save_item_power is set, then most likely we started with an
-	 * artifact and have added new abilities to it - this is rare, but
-	 * but I have seen things like 'strange rings of fire'.  So just figure
-	 * out the power from the base power plus what this one adds.  Note
-	 * that since item_power is not quite linear, this actually ends up
-	 * being somewhat of a bonus
-	 */
-	if (save_item_power) {
-	    op->item_power = save_item_power + get_power_from_ench(op->item_power);
+    if (!(flags & GT_MINIMAL)) {
+	if (op->arch == crown_arch) {
+	    set_magic(difficulty>25?30:difficulty+5, op, max_magic, flags);
+	    num_enchantments = calc_item_power(op, 1);
+	    generate_artifact(op,difficulty);
 	} else {
-	    op->item_power = get_power_from_ench(op->item_power + num_enchantments);
+	    if(!op->magic && max_magic)
+		set_magic(difficulty,op,max_magic, flags);
+	    num_enchantments = calc_item_power(op, 1);
+	    if ((!was_magic && !(RANDOM()%CHANCE_FOR_ARTIFACT)) || op->type == HORN ||
+		difficulty >= 999 )
+	    generate_artifact(op, difficulty);
 	}
-    } else if (save_item_power) {
-	/* restore the item_power field to the object if we haven't changed it.
-	 * we don't care about num_enchantments - that will basically just
-	 * have calculated some value from the base attributes of the archetype.
+
+	/* Object was made an artifact.  Calculate its item_power rating.
+	 * the item_power in the object is what the artfiact adds.
 	 */
-	op->item_power = save_item_power;
+	if (op->title) {
+	    /* if save_item_power is set, then most likely we started with an
+	     * artifact and have added new abilities to it - this is rare, but
+	     * but I have seen things like 'strange rings of fire'.  So just figure
+	     * out the power from the base power plus what this one adds.  Note
+	     * that since item_power is not quite linear, this actually ends up
+	     * being somewhat of a bonus
+	     */
+	    if (save_item_power) {
+		op->item_power = save_item_power + get_power_from_ench(op->item_power);
+	    } else {
+		op->item_power = get_power_from_ench(op->item_power + num_enchantments);
+	    }
+	} else if (save_item_power) {
+	    /* restore the item_power field to the object if we haven't changed it.
+	     * we don't care about num_enchantments - that will basically just
+	     * have calculated some value from the base attributes of the archetype.
+	     */
+	    op->item_power = save_item_power;
+	}
     }
 
     /* materialtype modifications.  Note we allow this on artifacts. */
 
     set_materialname(op, difficulty, NULL);
 
-    if (!op->title) /* Only modify object if not special */
+    if (flags & GT_MINIMAL) {
+	if (op->type == POTION)
+	    /* Handle healing and magic power potions */
+	    if (op->stats.sp && !op->randomitems) {
+		object *tmp;
+
+		tmp = get_archetype(spell_mapping[op->stats.sp]);
+		insert_ob_in_ob(tmp, op);
+		op->stats.sp=0;
+	    }
+    }
+    else if (!op->title) /* Only modify object if not special */
 	switch(op->type) {
 	    case WEAPON:
 	    case ARMOUR:
@@ -825,7 +843,7 @@ void fix_generated_item (object *op, object *creator, int difficulty,
 		break;
 
 	    case BRACERS:
-		if(!(RANDOM()%(QUERY_FLAG(op, FLAG_CURSED)?5:20))) {
+		if (!(RANDOM()%(QUERY_FLAG(op, FLAG_CURSED)?5:20))) {
 		    set_ring_bonus(op,QUERY_FLAG(op, FLAG_CURSED)?-DICE2:DICE2);
 		    if (!QUERY_FLAG(op, FLAG_CURSED))
 			op->value*=3;
@@ -834,7 +852,6 @@ void fix_generated_item (object *op, object *creator, int difficulty,
 
 	    case POTION: {
 		int too_many_tries=0,is_special=0;
-		extern char *spell_mapping[];
 
 		/* Handle healing and magic power potions */
 		if (op->stats.sp && !op->randomitems) {

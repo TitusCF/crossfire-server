@@ -759,57 +759,64 @@ int improve_armour(object *op, object *improver, object *armour)
 #define CONV_NR(xyz)	(unsigned char) xyz->stats.sp
 #define CONV_NEED(xyz)	(unsigned long) xyz->stats.food
 
+/* Takes one items and makes another.
+ * converter is the object that is doing the conversion.
+ * item is the object that triggered the converter - if it is not
+ * what the converter wants, this will not do anything.
+ */
 int convert_item(object *item, object *converter) {
-  int nr=0;
-  object *tmp;
+    int nr=0;
+    object *tmp;
 
-  /* We make some assumptions - we assume if it takes money as it type,
-   * it wants some amount.  We don't make change (ie, if something costs
-   * 3 gp and player drops a platinum, tough luck)
-   */
-  if (!strcmp(CONV_FROM(converter),"money")) {
-    int cost;
-    nr=(item->nrof*item->value)/CONV_NEED(converter);
-    if (!nr) return 0;
-    cost=nr*CONV_NEED(converter)/item->value;
-    /* take into account rounding errors */
-    if (nr*CONV_NEED(converter)%item->value) cost++;
-    decrease_ob_nr(item, cost);
-  }
-  else {
-    if(item->type==PLAYER||CONV_FROM(converter)!=item->arch->name||
-      (CONV_NEED(converter)&&CONV_NEED(converter)>item->nrof))
-      return 0;
-    if(CONV_NEED(converter)) {
-      nr=item->nrof/CONV_NEED(converter);
-      decrease_ob_nr(item,nr*CONV_NEED(converter));
-    } else {
-      remove_ob(item);
-      free_object(item);
+    /* We make some assumptions - we assume if it takes money as it type,
+     * it wants some amount.  We don't make change (ie, if something costs
+     * 3 gp and player drops a platinum, tough luck)
+     */
+    if (!strcmp(CONV_FROM(converter),"money")) {
+	int cost;
+	nr=(item->nrof*item->value)/CONV_NEED(converter);
+	if (!nr) return 0;
+	cost=nr*CONV_NEED(converter)/item->value;
+	/* take into account rounding errors */
+	if (nr*CONV_NEED(converter)%item->value) cost++;
+	decrease_ob_nr(item, cost);
     }
-  }
-  item=arch_to_object(converter->other_arch);
-  if (!item) {
-    LOG(llevError,"Broken converter %s at %s (%d, %d)\n", 
-	converter->name, converter->map->path, converter->x, converter->y);
-    return 0;
-  }
-  if(CONV_NR(converter))
-    item->nrof=CONV_NR(converter);
-  if(nr)
-    item->nrof*=nr;
-  for(tmp=get_map_ob(converter->map,converter->x,converter->y);
-      tmp!=NULL;
-      tmp=tmp->above) {
-    if(tmp->type==SHOP_FLOOR)
-      break;
-  }
-  if(tmp!=NULL)
-    SET_FLAG(item,FLAG_UNPAID);
-  item->x=converter->x;
-  item->y=converter->y;
-  insert_ob_in_map(item,converter->map,converter,0);
-  return 1;
+    else {
+	if(item->type==PLAYER||CONV_FROM(converter)!=item->arch->name||
+	   (CONV_NEED(converter)&&CONV_NEED(converter)>item->nrof))
+	    return 0;
+
+	if(CONV_NEED(converter)) {
+	    nr=item->nrof/CONV_NEED(converter);
+	    decrease_ob_nr(item,nr*CONV_NEED(converter));
+	} else {
+	    remove_ob(item);
+	    free_object(item);
+	}
+    }
+    item=arch_to_object(converter->other_arch);
+    if (!item) {
+	LOG(llevError,"Broken converter %s at %s (%d, %d)\n", 
+	    converter->name, converter->map->path, converter->x, converter->y);
+	return 0;
+    }
+    fix_generated_item(item, converter, 0, 0, GT_MINIMAL);
+    if(CONV_NR(converter))
+	item->nrof=CONV_NR(converter);
+    if(nr)
+	item->nrof*=nr;
+    for(tmp=get_map_ob(converter->map,converter->x,converter->y);
+	tmp!=NULL;
+	tmp=tmp->above) {
+	if(tmp->type==SHOP_FLOOR)
+	    break;
+    }
+    if(tmp!=NULL)
+	SET_FLAG(item,FLAG_UNPAID);
+    item->x=converter->x;
+    item->y=converter->y;
+    insert_ob_in_map(item,converter->map,converter,0);
+    return 1;
 }
   
 /**
@@ -3801,7 +3808,7 @@ void apply_item_transformer( object* pl, object* transformer )
         find++;
     while ( *find == ' ' )
         find++;
-    if ( separator = strchr( find, ';' ) )
+    if ( (separator = strchr( find, ';' ))!=NULL)
         {
         strncpy( got, find, MIN( separator - find, MAX_BUF ) );
         }

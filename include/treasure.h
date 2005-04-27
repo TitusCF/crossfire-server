@@ -56,7 +56,8 @@ enum {
   GT_STARTEQUIP = 0x0004,
   GT_APPLY = 0x0008,
   GT_ONLY_GOOD = 0x0010,
-  GT_UPDATE_INV = 0x0020
+  GT_UPDATE_INV = 0x0020,
+  GT_MINIMAL = 0x0040	/* Do minimal adjustments */
 };
 
 
