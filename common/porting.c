@@ -78,6 +78,11 @@ char *tempnam_local(char *dir, char *pfx)
     char *f, *name;
     pid_t pid=getpid();
 
+/* HURD does not have a hard limit, but we do */
+#ifndef MAXPATHLEN
+#define MAXPATHLEN 4096
+#endif
+
     if (!(name = (char *) malloc(MAXPATHLEN)))
 	return(NULL);
 
