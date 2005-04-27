@@ -290,7 +290,7 @@ int apply_potion(object *op, object *tmp)
 /**
  * This returns the sum of nrof of item (arch name).
  */
-int check_item(object *op,char *item)
+int check_item(object *op,const char *item)
 {
   int count=0;
 
@@ -415,7 +415,7 @@ static int check_sacrifice(object *op,object *improver)
  * Actually improves the weapon, and tells user.
  */
 int improve_weapon_stat(object *op,object *improver,object *weapon,
-			signed char *stat,int sacrifice_count,char *statname)
+			signed char *stat,int sacrifice_count,const char *statname)
 {
 
   new_draw_info(NDI_UNIQUE,0,op,"Your sacrifice was accepted.");
@@ -1635,7 +1635,7 @@ void do_learn_spell (object *op, object *spell, int special_prayer)
 /**
  * Erases spell from player's inventory.
  */
-void do_forget_spell (object *op, char *spell)
+void do_forget_spell (object *op, const char *spell)
 {
     object *spob;
 

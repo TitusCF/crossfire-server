@@ -25,7 +25,7 @@
 #include <sys/file.h>
 #endif /* win32 */
 
-int checkbanned(char *login, char *host)
+int checkbanned(const char *login, const char *host)
 {
   FILE  *bannedfile;
   char  buf[MAX_BUF];

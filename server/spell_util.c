@@ -329,7 +329,7 @@ int SP_level_range_adjust(object *caster, object *spob)
  * as an existing spell, we presume they know it.
  * returns 1 if they know the spell, 0 if they don't.
  */
-object *check_spell_known (object *op, char *name)
+object *check_spell_known (object *op, const char *name)
 {
     object *spop;
 
@@ -349,7 +349,7 @@ object *check_spell_known (object *op, char *name)
  * exact match, we also return NULL.
  */
 
-object *lookup_spell_by_name(object *op,char *spname) {
+object *lookup_spell_by_name(object *op,const char *spname) {
     object *spob1=NULL, *spob2=NULL, *spob;
     int nummatch=0;
 
