@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/skills.c: Change it so that jeweler skill is used to identify
+   amulets, not alchemy skill.
+MSW 2005-04-27
+
 Apply patch 1190107 so server compiles on HURD.
 common/porting.c: Add define for MAXPATHLEN
 socket/init.c: Add check for __GNU__ for setsockopt()

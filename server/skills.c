@@ -646,7 +646,7 @@ int skill_ident(object *pl, object *skill) {
 
 	case SK_ALCHEMY:
 	    success += do_skill_ident(pl,POTION,skill) + do_skill_ident(pl,POISON,skill)
-		    + do_skill_ident(pl,AMULET,skill) + do_skill_ident(pl,CONTAINER,skill)
+		    + do_skill_ident(pl,CONTAINER,skill)
 		    + do_skill_ident(pl,DRINK,skill) + do_skill_ident(pl,INORGANIC,skill);
 	    break;
 
@@ -656,7 +656,8 @@ int skill_ident(object *pl, object *skill) {
 	    break; 
 
 	case SK_JEWELER:
-	    success += do_skill_ident(pl,GEM,skill) + do_skill_ident(pl,RING,skill);
+	    success += do_skill_ident(pl,GEM,skill) + do_skill_ident(pl,RING,skill) +
+		do_skill_ident(pl,AMULET,skill);
 	    break; 
 
 	case SK_LITERACY:
