@@ -62,7 +62,7 @@
  * single byte in length.  If the data is longer than that byte, it is
  * truncated approprately.
  */
-inline void add_stringlen_to_sockbuf(char *buf, SockList *sl)
+inline void add_stringlen_to_sockbuf(const char *buf, SockList *sl)
 {
     int len;
 

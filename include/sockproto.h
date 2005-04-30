@@ -9,12 +9,12 @@ void send_image_info(NewSocket *ns, char *params);
 void send_image_sums(NewSocket *ns, char *params);
 /* info.c */
 void flush_output_element(object *pl, Output_Buf *outputs);
-void check_output_buffers(object *pl, char *buf);
+void check_output_buffers(object *pl, const char *buf);
 void new_draw_info(int flags, int pri, object *pl, const char *buf);
-void new_draw_info_format(int flags, int pri, object *pl, char *format, ...);
-void new_info_map_except(int color, mapstruct *map, object *op, char *str);
-void new_info_map_except2(int color, mapstruct *map, object *op1, object *op2, char *str);
-void new_info_map(int color, mapstruct *map, char *str);
+void new_draw_info_format(int flags, int pri, object *pl, const char *format, ...);
+void new_info_map_except(int color, mapstruct *map, object *op, const char *str);
+void new_info_map_except2(int color, mapstruct *map, object *op1, object *op2, const char *str);
+void new_info_map(int color, mapstruct *map, const char *str);
 void clear_win_info(object *op);
 void rangetostring(object *pl, char *obuf);
 void set_title(object *pl, char *buf);

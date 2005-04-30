@@ -19,6 +19,12 @@ Changes for CVS:
 
 Change some char* to const char*, when values shouldn't be changed. Changed files:
  * include/sproto.h
+ * socket/info.c
+ * socket/item.c
+Ryo 2005-04-30
+
+Change some char* to const char*, when values shouldn't be changed. Changed files:
+ * include/sproto.h
  * server/apply.c
  * server/ban.c
  * server/spell_util.c

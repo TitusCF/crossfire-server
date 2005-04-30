@@ -122,7 +122,7 @@ void flush_output_element(object *pl, Output_Buf *outputs)
  * and adds message to queue.
  */
 
-void check_output_buffers(object *pl, char *buf)
+void check_output_buffers(object *pl, const char *buf)
 {
     int i, oldest=0;
 
@@ -207,7 +207,7 @@ void new_draw_info(int flags,int pri, object *pl, const char *buf)
 
     if ((flags&NDI_COLOR_MASK)==NDI_BLACK && !(flags &NDI_UNIQUE)) {
 	/* following prints stuff out, as appropriate */
-	check_output_buffers(pl, (char*)buf);
+	check_output_buffers(pl, buf);
     }
     else {
 	print_message(flags&NDI_COLOR_MASK, pl, buf);
@@ -223,7 +223,7 @@ void new_draw_info(int flags,int pri, object *pl, const char *buf)
  * client/server bandwidth (client could keep track of various strings
  */
 
-void new_draw_info_format(int flags, int pri,object *pl, char *format, ...)
+void new_draw_info_format(int flags, int pri,object *pl, const char *format, ...)
 {
     char buf[HUGE_BUF];
 
@@ -241,7 +241,7 @@ void new_draw_info_format(int flags, int pri,object *pl, char *format, ...)
  * Writes to everyone on the map *except* op.  This is useful for emotions.
  */
 
-void new_info_map_except(int color, mapstruct *map, object *op, char *str) {
+void new_info_map_except(int color, mapstruct *map, object *op, const char *str) {
     player *pl;
 
     for(pl = first_player; pl != NULL; pl = pl->next)
@@ -255,7 +255,7 @@ void new_info_map_except(int color, mapstruct *map, object *op, char *str) {
  */
 
 void new_info_map_except2(int color, mapstruct *map, object *op1, object *op2,
-			  char *str) {
+			  const char *str) {
     player *pl;
 
     for(pl = first_player; pl != NULL; pl = pl->next)
@@ -269,7 +269,7 @@ void new_info_map_except2(int color, mapstruct *map, object *op1, object *op2,
  * Writes to everyone on the specified map
  */
 
-void new_info_map(int color, mapstruct *map, char *str) {
+void new_info_map(int color, mapstruct *map, const char *str) {
     player *pl;
 
     for(pl = first_player; pl != NULL; pl = pl->next)
@@ -364,7 +364,7 @@ void rangetostring(object *pl,char *obuf)
 /**
  * Sets player title.
  */
-void set_title(object *pl,char *buf)
+void set_title(object *pl, char *buf)
 {
     /* Eneq(@csd.uu.se): Let players define their own titles. */
     if (pl->contr->own_title[0]=='\0')
