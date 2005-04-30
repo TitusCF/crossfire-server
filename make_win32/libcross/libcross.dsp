@@ -1,25 +1,25 @@
 # Microsoft Developer Studio Project File - Name="libcross" - Package Owner=<4>
 # Microsoft Developer Studio Generated Build File, Format Version 6.00
-# ** NICHT BEARBEITEN **
+# ** DO NOT EDIT **
 
 # TARGTYPE "Win32 (x86) Static Library" 0x0104
 
 CFG=libcross - Win32 FullDebug
-!MESSAGE Dies ist kein gültiges Makefile. Zum Erstellen dieses Projekts mit NMAKE
-!MESSAGE verwenden Sie den Befehl "Makefile exportieren" und führen Sie den Befehl
+!MESSAGE This is not a valid makefile. To build this project using NMAKE,
+!MESSAGE use the Export Makefile command and run
 !MESSAGE 
 !MESSAGE NMAKE /f "libcross.mak".
 !MESSAGE 
-!MESSAGE Sie können beim Ausführen von NMAKE eine Konfiguration angeben
-!MESSAGE durch Definieren des Makros CFG in der Befehlszeile. Zum Beispiel:
+!MESSAGE You can specify a configuration when running NMAKE
+!MESSAGE by defining the macro CFG on the command line. For example:
 !MESSAGE 
 !MESSAGE NMAKE /f "libcross.mak" CFG="libcross - Win32 FullDebug"
 !MESSAGE 
-!MESSAGE Für die Konfiguration stehen zur Auswahl:
+!MESSAGE Possible choices for configuration are:
 !MESSAGE 
-!MESSAGE "libcross - Win32 FullDebug" (basierend auf  "Win32 (x86) Static Library")
-!MESSAGE "libcross - Win32 ReleaseQuit" (basierend auf  "Win32 (x86) Static Library")
-!MESSAGE "libcross - Win32 ReleaseLog" (basierend auf  "Win32 (x86) Static Library")
+!MESSAGE "libcross - Win32 FullDebug" (based on "Win32 (x86) Static Library")
+!MESSAGE "libcross - Win32 ReleaseQuit" (based on "Win32 (x86) Static Library")
+!MESSAGE "libcross - Win32 ReleaseLog" (based on "Win32 (x86) Static Library")
 !MESSAGE 
 
 # Begin Project
@@ -42,7 +42,7 @@ RSC=rc.exe
 # PROP Intermediate_Dir "FullDebug"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /YX /FD /GZ /c
-# ADD CPP /nologo /MDd /W3 /Gm /GX /ZI /Od /I "..\..\include" /I "d:\Python21\include" /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /D "DEBUG" /D "ESRV_DEBUG" /D "PYTHON_PLUGIN_EXPORTS" /YX"libcross.pch" /FD /GZ /c
+# ADD CPP /nologo /MDd /W3 /Gm /GX /ZI /Od /I "..\..\include" /I "d:\Python21\include" /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /D "DEBUG" /D "ESRV_DEBUG" /D "PYTHON_PLUGIN_EXPORTS" /FR /YX"libcross.pch" /FD /GZ /c
 # ADD BASE RSC /l 0x407 /d "_DEBUG"
 # ADD RSC /l 0x407 /d "_DEBUG"
 BSC32=bscmake.exe
