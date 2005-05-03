@@ -1497,7 +1497,7 @@ void dragon_level_gain(object *who) {
  * We return the skill - this makes it easier for calling functions that
  * want to do something with it immediately.
  */
-object *give_skill_by_name(object *op, char *skill_name)
+object *give_skill_by_name(object *op, const char *skill_name)
 {
     object *skill_obj;
 
@@ -1613,7 +1613,7 @@ void calc_perm_exp(object *op)
  * flag is what to do if the player doesn't have the skill:
  */
 
-static void add_player_exp(object *op, sint64 exp, char *skill_name, int flag)
+static void add_player_exp(object *op, sint64 exp, const char *skill_name, int flag)
 {
     object *skill_obj=NULL;
     sint64 limit, exp_to_add;
@@ -1717,7 +1717,7 @@ sint64 check_exp_adjust(object *op, sint64 exp)
  * exp is the amount of exp to subtract - thus, it should be
  * a postive number.
  */
-static void subtract_player_exp(object *op, sint64 exp, char *skill, int flag)
+static void subtract_player_exp(object *op, sint64 exp, const char *skill, int flag)
 {
     float fraction = (float) exp/(float) op->stats.exp;
     object *tmp;
@@ -1757,7 +1757,7 @@ static void subtract_player_exp(object *op, sint64 exp, char *skill, int flag)
  * these last two values are only used for players.
  */
  
-void change_exp(object *op, sint64 exp, char *skill_name, int flag) {
+void change_exp(object *op, sint64 exp, const char *skill_name, int flag) {
 
 #ifdef EXP_DEBUG
 #ifndef WIN32

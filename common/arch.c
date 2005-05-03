@@ -58,7 +58,7 @@ int arch_init;		/* True if doing arch initialization */
  * Return value:
  * - the archetype found or null if nothing was found.
  */
-archetype *find_archetype_by_object_name(char *name) {
+archetype *find_archetype_by_object_name(const char *name) {
     archetype *at;
 
     if (name == NULL)
@@ -76,7 +76,7 @@ archetype *find_archetype_by_object_name(char *name) {
  * against (eg, to only match against skills or only skill objects for example).
  * If type is -1, ew don't match on type.
  */
-object *get_archetype_by_skill_name(char *skill, int type) {
+object *get_archetype_by_skill_name(const char *skill, int type) {
     archetype *at;
 
     if (skill == NULL)
@@ -120,7 +120,7 @@ archetype *get_archetype_by_type_subtype(int type, int subtype) {
  * doesn't malloc it each time - not that this function is used much,
  * but it otherwise had a big memory leak.
  */
-object *get_archetype_by_object_name(char *name) {
+object *get_archetype_by_object_name(const char *name) {
     archetype *at;
     char tmpname[MAX_BUF];
     int i;
@@ -139,7 +139,7 @@ object *get_archetype_by_object_name(char *name) {
 }
 
  /* GROS - find_best_weapon_used_match and item_matched_string moved there */
- object *find_best_weapon_used_match(object *pl, char *params)
+object *find_best_weapon_used_match(object *pl, const char *params)
  {
    object *tmp, *best=NULL;
    int match_val=0,tmpmatch;
@@ -175,7 +175,7 @@ object *get_archetype_by_object_name(char *name) {
   * IF count is >1, we need to make plural name.  Return if match.
   * Last, make a check on the full name.
   */
-int item_matched_string(object *pl, object *op, char *name)
+int item_matched_string(object *pl, object *op, const char *name)
 {
     char *cp, local_name[MAX_BUF];
     int count,retval=0;
@@ -583,7 +583,7 @@ object *arch_to_object(archetype *at) {
  * an object, and never NULL.
  */
 
-object *create_singularity(char *name) {
+object *create_singularity(const char *name) {
   object *op;
   char buf[MAX_BUF];
   sprintf(buf,"singluarity (%s)",name);
@@ -599,7 +599,7 @@ object *create_singularity(char *name) {
  * object containing a copy of the archetype.
  */
 
-object *get_archetype(char *name) {
+object *get_archetype(const char *name) {
   archetype *at;
   at = find_archetype(name);
   if (at == NULL)
@@ -612,10 +612,10 @@ object *get_archetype(char *name) {
  */
 
 unsigned long
-hasharch(char *str, int tablesize) {
+hasharch(const char *str, int tablesize) {
     unsigned long hash = 0;
     int i = 0, rot = 0;
-    char *p;
+    const char *p;
 
     for (p = str; i < MAXSTRING && *p; p++, i++) {
         hash ^= (unsigned long) *p << rot;
@@ -631,7 +631,7 @@ hasharch(char *str, int tablesize) {
  * returns a pointer to the found archetype, otherwise NULL.
  */
 
-archetype *find_archetype(char *name) {
+archetype *find_archetype(const char *name) {
   archetype *at;
   unsigned long index;
 

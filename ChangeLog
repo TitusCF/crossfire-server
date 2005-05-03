@@ -18,6 +18,12 @@ else.  With this, include the file(s) that you changed.
 Changes for CVS:
 
 Change some char* to const char*, when values shouldn't be changed. Changed files:
+ * include/libproto.h
+ * common/arch.c
+ * common/living.c
+Ryo 2005-05-03
+
+Change some char* to const char*, when values shouldn't be changed. Changed files:
  * include/sproto.h
  * socket/info.c
  * socket/item.c
