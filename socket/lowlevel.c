@@ -352,10 +352,13 @@ void Write_To_Socket(NewSocket *ns, unsigned char *buf, int len)
 	LOG(llevDebug,"Write_To_Socket called with dead socket\n");
 	return;
     }
+ 
+#ifndef __GNU__ /* This caused problems on Hurd */
     if (!ns->can_write) {
 	add_to_buffer(ns, buf, len);
 	return;
     }
+#endif
     /* If we manage to write more than we wanted, take it as a bonus */
     while (len>0) {
 
