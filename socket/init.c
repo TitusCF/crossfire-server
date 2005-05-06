@@ -122,6 +122,7 @@ void InitConnection(NewSocket *ns, uint32 from)
     ns->EMI_smooth=0; 
     ns->look_position = 0;
     ns->update_look = 0;
+    ns->has_readable_type = 0;
 
     /* we should really do some checking here - if total clients overflows
      * we need to do something more intelligent, because client id's will start

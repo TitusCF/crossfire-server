@@ -127,8 +127,9 @@ static struct NsCmdMapping nscommands[] = {
     { "setup",		SetUp},
     { "version",	VersionCmd },
     { "toggleextendedinfos", ToggleExtendedInfos}, /*Added: tchize*/
+    { "toggleextendedtext", ToggleExtendedText},   /*Added: tchize*/
     { "asksmooth", AskSmooth},   /*Added: tchize (smoothing technologies)*/ 
-    { NULL, NULL}	/* terminator */
+    { NULL, NULL}	/* terminator (I, II & III)*/
 };
 
 /**

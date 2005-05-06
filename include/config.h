@@ -163,7 +163,7 @@
  */
 #ifndef WIN32			/* ***win32 we set the following stuff in the IDE */
 #ifndef DEBUG
-#define DEBUG
+/*#define DEBUG*/
 #endif
 #endif
 

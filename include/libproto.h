@@ -329,6 +329,7 @@ extern char *god_info_msg(int level, int booksize);
 extern void tailor_readable_ob(object *book, int msg_type);
 extern void free_all_readable(void);
 extern void write_book_archive(void);
+extern readable_message_type* get_readable_message_type(object* readable);
 /* recipe.c */
 extern recipelist *get_formulalist(int i);
 extern void init_formulae(void);
@@ -414,6 +415,7 @@ extern void decay_objects(mapstruct *m);
 extern materialtype_t *name_to_material(const char *name);
 extern void transmute_materialname(object *op, object *change);
 extern void set_materialname(object *op, int difficulty, materialtype_t *nmt);
+extern void strip_media_tag(char *message);
 /* loader.c */
 extern int lex_load(object *op, int map_flags);
 extern void yyrestart(FILE *input_file);

@@ -121,6 +121,9 @@ typedef struct NewSocket {
     uint32  image2:1;	    /* Client wants image2/face2 commands */
     uint32  update_look:1;  /* If true, we need to send the look window */
     uint32  can_write:1;    /* Can we write to this socket? */
+    uint32  has_readable_type:1; /* If true client accept additional text information
+                                    used to arrange text in books, scrolls, or scripted dialogs */
+    uint32  supported_readables; /* each bit is a readable supported by client */                    
     uint32  cs_version, sc_version; /* versions of the client */
     enum MapMode mapmode;   /* Type of map commands the client wants. */
     uint16  look_position;  /* start of drawing of look window */
@@ -130,12 +133,19 @@ typedef struct NewSocket {
     uint32  ext_mapinfos:1;  /* If true client accept additionnal info on maps*/
     /* Below are flags for extedend infos to pass to client 
      * with S->C mapextended command */
-    uint32  EMI_smooth:1;   /* Send smooth in extendmapinfos*/
+    uint32  EMI_smooth:1;   /* Send smooth in extendmapinfos*/    
 
     /* Below here is information only relevant for old sockets */
     char    *comment;	    /* name or listen comment */
     enum Old_Mode old_mode;
 } NewSocket;
+
+
+#define CLIENT_SUPPORT_READABLES(__sockPtr,__type)\
+	( ((__type)>0) &&\
+	  ((__sockPtr)->has_readable_type) && \
+	  ((__sockPtr)->supported_readables & (1<<(__type))) )
+
 
 /* Bitmask for the faces_sent[] array - what
  * portion of the face have we sent?

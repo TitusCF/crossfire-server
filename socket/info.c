@@ -61,6 +61,23 @@ static void esrv_print_msg(NewSocket *ns,int color, const char *str)
     Write_String_To_Socket(ns, buf, strlen(buf));
 }
 
+/**
+ * Draws   an extended message on the client. 
+ * ns      the socket to send message to
+ * color   color informations (used mainly if client does not support message type)
+ * type,
+ * subtype type and subtype of text message
+ * intro   Intro message to send with main message if client does not support the message type
+ * message The main message
+ */
+static void esrv_print_ext_msg(NewSocket *ns,int color,uint8 type, uint8 subtype, const char *message)
+{
+    char buf[HUGE_BUF];
+    snprintf(buf,HUGE_BUF, "drawextinfo %d %hhu %hhu %s", color, type, subtype, message);
+	Write_String_To_Socket(ns, buf, strlen(buf));
+/*    LOG(llevDebug,"sending %s to socket, len=%d", buf, strlen(buf));*/
+
+}
 
 /**
  * Frontend for esrv_print_msg
@@ -237,6 +254,58 @@ void new_draw_info_format(int flags, int pri,object *pl, const char *format, ...
     new_draw_info(flags, pri, pl, buf);
 }
 
+
+void draw_ext_info(
+        int flags, int pri, object *pl, uint8 type, 
+        uint8 subtype, const char* message){
+            
+    char buf[HUGE_BUF];
+    if(!pl || (pl->type!=PLAYER) || (pl->contr==NULL))
+        return;
+        
+    if (pri>=pl->contr->listening) return;
+    if (!CLIENT_SUPPORT_READABLES(&pl->contr->socket,type)){
+        char *buf = (char*)malloc(strlen(message)+1);
+        if (buf==NULL)
+            LOG(llevError,"info::draw_ext_info -> Out of memory!");
+        else{
+            strcpy(buf,message);
+            strip_media_tag(buf);
+            new_draw_info(flags, pri, pl, buf);
+            free(buf);
+        }
+    }else{
+        esrv_print_ext_msg(&pl->contr->socket,flags&NDI_COLOR_MASK,type,subtype,message);
+    }
+}
+
+void draw_ext_info_format(
+        int flags, int pri, object *pl, uint8 type, 
+        uint8 subtype, const char* old_format, 
+        char* new_format, ...){
+            
+    char buf[HUGE_BUF];
+	if(!pl || (pl->type!=PLAYER) || (pl->contr==NULL))
+		return;
+		
+    if (pri>=pl->contr->listening) return;
+	if (!CLIENT_SUPPORT_READABLES(&pl->contr->socket,type)){
+        va_list ap;
+        LOG(llevDebug,"Non supported extension text type for client.\n");
+        va_start(ap, new_format);
+        vsnprintf(buf, HUGE_BUF, old_format, ap);
+        va_end(ap);
+        new_draw_info(flags, pri, pl, buf);
+		return;
+	}else{
+        va_list ap;
+        va_start(ap, new_format);
+        vsnprintf(buf, HUGE_BUF, new_format, ap);
+        va_end(ap);
+        strip_media_tag(buf);
+        esrv_print_ext_msg(&pl->contr->socket,flags&NDI_COLOR_MASK,type,subtype,buf);
+    }
+}
 /**
  * Writes to everyone on the map *except* op.  This is useful for emotions.
  */

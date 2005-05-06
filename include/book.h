@@ -10,7 +10,8 @@
  * Note that the book messages are stored in the msg buf,
  * which is limited by 'HUGE_BUF' in the loader.
  */
- 
+#ifndef BOOK_H
+#define BOOK_H
 #define BOOK_BUF        HUGE_BUF-10
  
 /* if little books arent getting enough text generated, enlarge this */
@@ -25,3 +26,8 @@
 #define BOOKSIZE(xyz)   BASE_BOOK_BUF+((xyz)->weight/10)>BOOK_BUF? \
                                 BOOK_BUF:BASE_BOOK_BUF+((xyz)->weight/10);
 
+typedef struct {
+	uint8 message_type;
+	uint8 message_subtype;
+} readable_message_type;
+#endif

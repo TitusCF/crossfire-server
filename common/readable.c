@@ -451,7 +451,77 @@ static char *book_descrpt[] =
     "transcendental",
     "weathered"
 };
+/* Each line of this array is a readable subtype
+ * Be careful to keep the order. If you add readable subtype, add them
+ * at the bottom of the list. Never delete a subtype because index is used as
+ * subtype paramater in arch files!
+ */
+static readable_message_type readable_message_types[] = 
+{
+	/*subtype 0  */ {0,0},
+                    /* book messages subtypes */
+	/*subtype 1  */ {MSG_TYPE_BOOK, MSG_TYPE_BOOK_CLASP_1},
+                    {MSG_TYPE_BOOK, MSG_TYPE_BOOK_CLASP_2},
+                    {MSG_TYPE_BOOK, MSG_TYPE_BOOK_ELEGANT_1},
+                    {MSG_TYPE_BOOK, MSG_TYPE_BOOK_ELEGANT_2},
+                    {MSG_TYPE_BOOK, MSG_TYPE_BOOK_QUARTO_1},
+                    {MSG_TYPE_BOOK, MSG_TYPE_BOOK_QUARTO_2},
+                    {MSG_TYPE_BOOK, MSG_TYPE_BOOK_SPELL_EVOKER},
+                    {MSG_TYPE_BOOK, MSG_TYPE_BOOK_SPELL_PRAYER},
+                    {MSG_TYPE_BOOK, MSG_TYPE_BOOK_SPELL_PYRO},
+	/*subtype 10 */ {MSG_TYPE_BOOK, MSG_TYPE_BOOK_SPELL_SORCERER},
+                    {MSG_TYPE_BOOK, MSG_TYPE_BOOK_SPELL_SUMMONER},
+                    /* card messages subtypes*/
+                    {MSG_TYPE_CARD, MSG_TYPE_CARD_SIMPLE_1},
+                    {MSG_TYPE_CARD, MSG_TYPE_CARD_SIMPLE_2},
+                    {MSG_TYPE_CARD, MSG_TYPE_CARD_SIMPLE_3},
+                    {MSG_TYPE_CARD, MSG_TYPE_CARD_ELEGANT_1},
+                    {MSG_TYPE_CARD, MSG_TYPE_CARD_ELEGANT_2},
+                    {MSG_TYPE_CARD, MSG_TYPE_CARD_ELEGANT_3},
+                    {MSG_TYPE_CARD, MSG_TYPE_CARD_STRANGE_1},
+                    {MSG_TYPE_CARD, MSG_TYPE_CARD_STRANGE_2},
+	/*subtype 20 */ {MSG_TYPE_CARD, MSG_TYPE_CARD_STRANGE_3},
+                    {MSG_TYPE_CARD, MSG_TYPE_CARD_MONEY_1},
+                    {MSG_TYPE_CARD, MSG_TYPE_CARD_MONEY_2},
+                    {MSG_TYPE_CARD, MSG_TYPE_CARD_MONEY_3},
+                    
+                    /* Paper messages subtypes */
+                    {MSG_TYPE_PAPER, MSG_TYPE_PAPER_NOTE_1},
+                    {MSG_TYPE_PAPER, MSG_TYPE_PAPER_NOTE_2},
+                    {MSG_TYPE_PAPER, MSG_TYPE_PAPER_NOTE_3},
+                    {MSG_TYPE_PAPER, MSG_TYPE_PAPER_LETTER_OLD_1},
+                    {MSG_TYPE_PAPER, MSG_TYPE_PAPER_LETTER_OLD_2},
+                    {MSG_TYPE_PAPER, MSG_TYPE_PAPER_LETTER_NEW_1},
+	/*subtype 30 */ {MSG_TYPE_PAPER, MSG_TYPE_PAPER_LETTER_NEW_2},
+                    {MSG_TYPE_PAPER, MSG_TYPE_PAPER_ENVELOPE_1},
+                    {MSG_TYPE_PAPER, MSG_TYPE_PAPER_ENVELOPE_2},
+                    {MSG_TYPE_PAPER, MSG_TYPE_PAPER_SCROLL_OLD_1},
+                    {MSG_TYPE_PAPER, MSG_TYPE_PAPER_SCROLL_OLD_2},
+                    {MSG_TYPE_PAPER, MSG_TYPE_PAPER_SCROLL_NEW_1},
+                    {MSG_TYPE_PAPER, MSG_TYPE_PAPER_SCROLL_NEW_2},
+                    {MSG_TYPE_PAPER, MSG_TYPE_PAPER_SCROLL_MAGIC},
 
+                    /* road signs messages subtypes */
+                    {MSG_TYPE_SIGN, MSG_TYPE_SIGN_BASIC},
+                    {MSG_TYPE_SIGN, MSG_TYPE_SIGN_DIR_LEFT},
+	/*subtype 40 */ {MSG_TYPE_SIGN, MSG_TYPE_SIGN_DIR_RIGHT},
+                    {MSG_TYPE_SIGN, MSG_TYPE_SIGN_DIR_BOTH},
+
+                    /* stones and monument messages */
+                    {MSG_TYPE_MONUMENT, MSG_TYPE_MONUMENT_STONE_1},
+                    {MSG_TYPE_MONUMENT, MSG_TYPE_MONUMENT_STONE_2},
+                    {MSG_TYPE_MONUMENT, MSG_TYPE_MONUMENT_STONE_3},
+                    {MSG_TYPE_MONUMENT, MSG_TYPE_MONUMENT_STATUE_1},
+                    {MSG_TYPE_MONUMENT, MSG_TYPE_MONUMENT_STATUE_2},
+                    {MSG_TYPE_MONUMENT, MSG_TYPE_MONUMENT_STATUE_3},
+                    {MSG_TYPE_MONUMENT, MSG_TYPE_MONUMENT_GRAVESTONE_1},
+                    {MSG_TYPE_MONUMENT, MSG_TYPE_MONUMENT_GRAVESTONE_2},
+	/*subtype 50 */ {MSG_TYPE_MONUMENT, MSG_TYPE_MONUMENT_GRAVESTONE_3},
+                    {MSG_TYPE_MONUMENT, MSG_TYPE_MONUMENT_WALL_1},
+                    {MSG_TYPE_MONUMENT, MSG_TYPE_MONUMENT_WALL_2},
+                    {MSG_TYPE_MONUMENT, MSG_TYPE_MONUMENT_WALL_3}
+};
+int last_readable_subtype = sizeof(readable_message_types)/sizeof(readable_message_type);
 
 static int max_titles[6] =
 {
@@ -2062,4 +2132,9 @@ write_book_archive (void)
 	  chmod (fname, SAVE_MODE);
       }
 }
-
+readable_message_type* get_readable_message_type(object* readable){
+	uint8 subtype = readable->subtype;
+	if ((subtype<0) || (subtype>last_readable_subtype))
+	    return &(readable_message_types[0]);
+	return &(readable_message_types[subtype]);
+}

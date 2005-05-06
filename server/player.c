@@ -77,24 +77,29 @@ player* find_player_partial_name( char* plname )
 
 void display_motd(object *op) {
     char buf[MAX_BUF];
+    char motd[HUGE_BUF];
     FILE *fp;
     int comp;
+    int size;
     
     sprintf(buf, "%s/%s", settings.confdir, settings.motd);
     if ((fp=open_and_uncompress(buf, 0, &comp)) == NULL) {
 	return;
     }
+    motd[0]='\0';
+    size=0;
     while (fgets(buf, MAX_BUF, fp) != NULL) {
-	char *cp;
-	if( *buf == '#')
+	  char *cp;
+	  if( *buf == '#')
 	    continue;
-	cp=strchr(buf, '\n');
-	if (cp != NULL)
-		*cp='\0';
-	    new_draw_info(NDI_UNIQUE | NDI_GREEN, 0, op, buf);
+	  /*cp=strchr(buf, '\n');    
+      if (cp != NULL)
+        *cp='\0';*/      
+      strncat(motd+size,buf,HUGE_BUF-size);
+      size+=strlen(buf);
     }
+    draw_ext_info(NDI_UNIQUE | NDI_GREEN, 0, op, MSG_TYPE_MOTD, MSG_SUBTYPE_NONE, motd);
     close_and_delete(fp, comp);
-    new_draw_info(NDI_UNIQUE, 0, op, " ");
 }
 
 int playername_ok(char *cp) {

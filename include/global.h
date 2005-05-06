@@ -130,7 +130,8 @@ error correct and send mail to crossfire-devel on how to do this
 
 #include "commands.h"
 
-
+/* pull in book structures */
+#include "book.h"
 /*
  * So far only used when dealing with artifacts.
  * (now used by alchemy and other code too. Nov 95 b.t).

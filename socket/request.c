@@ -232,6 +232,15 @@ void SetUp(char *buf, int len, NewSocket *ns)
         ns->ext_mapinfos = (atoi(param));
 	    sprintf(tmpbuf,"%d", ns->ext_mapinfos);
 	    strcat(cmdback, tmpbuf);
+	} else if (!strcmp(cmd,"extendedTextInfos")) {
+        /* Added by tchize
+         * prepare to use the extended text commands
+         * Client toggle this to non zero to get exttext
+         */
+	    char tmpbuf[20];
+        ns->has_readable_type = (atoi(param));
+	    sprintf(tmpbuf,"%d", ns->has_readable_type);
+	    strcat(cmdback, tmpbuf);
 	} else {
 	    /* Didn't get a setup command we understood -
 	     * report a failure to the client.
@@ -302,6 +311,50 @@ void ToggleExtendedInfos (char *buf, int len, NewSocket *ns){
           strcat (cmdback," ");
           strcat (cmdback,"smoothing");
      }
+     Write_String_To_Socket(ns, cmdback,strlen(cmdback));
+}
+/*
+#define MSG_TYPE_BOOK            1
+#define MSG_TYPE_CARD            2
+#define MSG_TYPE_PAPER           3
+#define MSG_TYPE_SIGN            4
+#define MSG_TYPE_MONUMENT        5
+#define MSG_TYPE_SCRIPTED_DIALOG 6*/
+/** Reply to ExtendedInfos command */
+void ToggleExtendedText (char *buf, int len, NewSocket *ns){
+     char cmdback[MAX_BUF];
+     char temp[10];
+     char command[50];
+     int info,nextinfo,i,flag;
+     cmdback[0]='\0';     
+     nextinfo=0;
+     while (1){
+          /* 1. Extract an info*/
+          info=nextinfo;
+          while ( (info<len) && (buf[info]==' ') ) info++;
+          if (info>=len)
+               break;
+          nextinfo=info+1;
+          while ( (nextinfo<len) && (buf[nextinfo]!=' ') )
+               nextinfo++;  
+          if (nextinfo-info>=49) /*Erroneous info asked*/
+               continue;
+          strncpy (command,&(buf[info]),nextinfo-info);
+          command[nextinfo-info]='\0';
+          /* 2. Interpret info*/
+          i = sscanf(command,"%d",&flag);
+          if ( (i==1) && (i>0) && (i<=MSG_TYPE_LAST))
+              ns->supported_readables|=(1<<flag);
+          /*3. Next info*/
+     }
+     /* Send resulting state */
+     strcpy (cmdback,"ExtendedTextSet");
+     for (i=0;i<=MSG_TYPE_LAST;i++)
+     	if (ns->supported_readables &(1<<i)){
+          strcat (cmdback," ");
+          snprintf(temp,sizeof(temp),"%d",i);
+          strcat (cmdback,temp);
+     	}
      Write_String_To_Socket(ns, cmdback,strlen(cmdback));
 }
 

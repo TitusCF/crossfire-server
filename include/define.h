@@ -905,7 +905,6 @@ enum apply_flag {
  */
 #define WEIGHT(op) (op->nrof?op->weight:op->weight+op->carrying)
 
-#endif /* DEFINE_H */
 
 /* Code fastening defines
  * FAST_STRCAT & FAST_STRNCAT will add buf2__ at position pointed by
@@ -928,3 +927,98 @@ enum apply_flag {
   */
 /*#define FAST_STRNCAT(buf__,buf2__,size__) {memcpy (buf__,buf2__,size__);buf__+=size__;\
  if (size__!=strlen(buf2__)) printf ("Error, bad length for %s\n",buf2__);}*/
+
+ 
+ 
+ 
+ 
+ 
+ 
+/*
+ * Warning!
+ * If you add message types here, don't forget
+ * to keep the client up to date too!
+ */
+ 
+  
+/* message types */
+#define MSG_TYPE_BOOK            1
+#define MSG_TYPE_CARD            2
+#define MSG_TYPE_PAPER           3
+#define MSG_TYPE_SIGN            4
+#define MSG_TYPE_MONUMENT        5
+#define MSG_TYPE_SCRIPTED_DIALOG 6
+#define MSG_TYPE_MOTD            7
+#define MSG_TYPE_LAST            8
+
+#define MSG_SUBTYPE_NONE         0
+
+/* book messages subtypes */
+#define MSG_TYPE_BOOK_CLASP_1    1
+#define MSG_TYPE_BOOK_CLASP_2    2
+#define MSG_TYPE_BOOK_ELEGANT_1  3
+#define MSG_TYPE_BOOK_ELEGANT_2  4
+#define MSG_TYPE_BOOK_QUARTO_1   5
+#define MSG_TYPE_BOOK_QUARTO_2   6
+#define MSG_TYPE_BOOK_SPELL_EVOKER    8
+#define MSG_TYPE_BOOK_SPELL_PRAYER    9
+#define MSG_TYPE_BOOK_SPELL_PYRO      10
+#define MSG_TYPE_BOOK_SPELL_SORCERER  11
+#define MSG_TYPE_BOOK_SPELL_SUMMONER  12
+
+/* card messages subtypes*/
+#define MSG_TYPE_CARD_SIMPLE_1    1
+#define MSG_TYPE_CARD_SIMPLE_2    2
+#define MSG_TYPE_CARD_SIMPLE_3    3
+#define MSG_TYPE_CARD_ELEGANT_1   4
+#define MSG_TYPE_CARD_ELEGANT_2   5
+#define MSG_TYPE_CARD_ELEGANT_3   6
+#define MSG_TYPE_CARD_STRANGE_1   7
+#define MSG_TYPE_CARD_STRANGE_2   8
+#define MSG_TYPE_CARD_STRANGE_3   9
+#define MSG_TYPE_CARD_MONEY_1     10
+#define MSG_TYPE_CARD_MONEY_2     11
+#define MSG_TYPE_CARD_MONEY_3     12
+
+/* Paper messages subtypes */
+#define MSG_TYPE_PAPER_NOTE_1       1
+#define MSG_TYPE_PAPER_NOTE_2       2
+#define MSG_TYPE_PAPER_NOTE_3       3
+#define MSG_TYPE_PAPER_LETTER_OLD_1 4
+#define MSG_TYPE_PAPER_LETTER_OLD_2 5
+#define MSG_TYPE_PAPER_LETTER_NEW_1 6
+#define MSG_TYPE_PAPER_LETTER_NEW_2 7
+#define MSG_TYPE_PAPER_ENVELOPE_1   8
+#define MSG_TYPE_PAPER_ENVELOPE_2   9
+#define MSG_TYPE_PAPER_SCROLL_OLD_1 10
+#define MSG_TYPE_PAPER_SCROLL_OLD_2 11
+#define MSG_TYPE_PAPER_SCROLL_NEW_1 12
+#define MSG_TYPE_PAPER_SCROLL_NEW_2 13
+#define MSG_TYPE_PAPER_SCROLL_MAGIC 14
+
+/* road signs messages subtypes */
+#define MSG_TYPE_SIGN_BASIC         1
+#define MSG_TYPE_SIGN_DIR_LEFT      2
+#define MSG_TYPE_SIGN_DIR_RIGHT     3
+#define MSG_TYPE_SIGN_DIR_BOTH      4
+
+/* stones and monument messages */
+#define MSG_TYPE_MONUMENT_STONE_1      1
+#define MSG_TYPE_MONUMENT_STONE_2      2
+#define MSG_TYPE_MONUMENT_STONE_3      3
+#define MSG_TYPE_MONUMENT_STATUE_1     4
+#define MSG_TYPE_MONUMENT_STATUE_2     5
+#define MSG_TYPE_MONUMENT_STATUE_3     6
+#define MSG_TYPE_MONUMENT_GRAVESTONE_1 7
+#define MSG_TYPE_MONUMENT_GRAVESTONE_2 8
+#define MSG_TYPE_MONUMENT_GRAVESTONE_3 9
+#define MSG_TYPE_MONUMENT_WALL_1       10
+#define MSG_TYPE_MONUMENT_WALL_2       11
+#define MSG_TYPE_MONUMENT_WALL_3       12
+
+/* dialog messsage */
+#define MSG_TYPE_DIALOG_NPC            1 /*A message from the npc*/
+#define MSG_TYPE_DIALOG_ANSWER         2 /*One of possible answers*/
+#define MSG_TYPE_DIALOG_ANSWER_COUNT   3 /*Number of possible answers*/
+
+#endif /* DEFINE_H */

@@ -920,6 +920,7 @@ void rec_sigpipe(int i) {
  * be looked at later on, and maybe fix the problem that caused it to
  * dump core.  There is no reason that SIGPIPES should be fatal
  */
+  LOG(llevError,"\nSIGPIPE--------------\n------------\n--------\n---\n");
 #if 1 && !defined(WIN32) /* ***win32: we don't want send SIGPIPE */
   LOG(llevInfo,"\nReceived SIGPIPE, ignoring...\n");
   signal(SIGPIPE,rec_sigpipe);/* hocky-pux clears signal handlers */
@@ -958,6 +959,7 @@ void init_signals() {
 #ifndef DEBUG
   signal(SIGQUIT,rec_sigquit);
   signal(SIGSEGV,rec_sigsegv);
+  LOG(llevInfo,"\n---------registering SIGPIPE\n");
   signal(SIGPIPE,rec_sigpipe);
 #ifdef SIGBUS
   signal(SIGBUS,rec_sigbus);

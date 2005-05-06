@@ -1,4 +1,4 @@
-Updated 1-5-97 by Mark Wedel:
+Updated $Date$ by $Author$:
 
 Outline:
 
@@ -335,6 +335,66 @@ S->C: query <flags> [text]
 	be multi line, delimited by newlines.  Client should handle this
 	appropriately.
 
+C->S: toggleextendedtext <type>
+	Ask the server to send extended text information for a given type.
+	type is the decimal representation of an int.
+	Currently supported/reserved values for types are described in drawextinfo
+
+S->C: ExtendedTextSet <type1> <type2> .... <typen>
+	Tell client what actually are the extended infos server may
+	send to the client when this is needed. All those infos will
+	be related to the map and send through mapextended command.
+	Each string represent an info which is enabled. Look
+	at toggleextendedinfos and drawextinfo for details.
+
+S->C: drawextinfo <color> <type> <subtype> message
+	Tell the client to draw specific text.  Color are specified
+	in newclient.h, and is sent as a string.  The client is free to do
+	whatever it wants with the color information (it may very well ignore it.)
+	
+	color   same as color infor from S->C drawinfo
+	type    is an int in decimal representation, giving the type of message
+	subtype is an int in decimal representation, giving subtype 
+	        (flavor) of message.  
+	message is a string representation of textual message. content of message may
+	        very well vary depending on the type.
+	
+	The server will never send a message to a client with a message type not
+	requested at setup by a toggleextendedinfo. Client is however encouraged to handle 
+	those case to catch bugs in protocols which may arise in future.
+	
+	It is possible a client handles a given message type but not a given subtype.
+	The server does not care about the client subtype (flavors) and, so, client
+	should have a 'generic representation' for each supported type, which will be
+	used when a given subtype is not supported. The type are made a way subtypes 
+	can be considered as just visual variations (eg a scroll,a card, a letter
+	and a book will share the same type)
+	
+	Values for types and description:
+		0	reserved
+		1	books
+		       books contains media tags in their body (TODO: document media tags)
+		       message has the form <title>\n<body>
+		       subtype represent the style of book.
+		       MSG_TYPE_BOOK_CLASP_1    1
+               MSG_TYPE_BOOK_CLASP_2    2
+               MSG_TYPE_BOOK_ELEGANT_1  3
+               MSG_TYPE_BOOK_ELEGANT_2  4
+               MSG_TYPE_BOOK_QUARTO_1   5
+               MSG_TYPE_BOOK_QUARTO_2   6
+               MSG_TYPE_BOOK_SPELL_EVOKER    8
+               MSG_TYPE_BOOK_SPELL_PRAYER    9
+               MSG_TYPE_BOOK_SPELL_PYRO      10
+               MSG_TYPE_BOOK_SPELL_SORCERER  11
+               MSG_TYPE_BOOK_SPELL_SUMMONER  12
+		2	cards
+		3	papers
+		4	signs
+		5	monuments
+		6	scripted dialogs
+		7   motd
+		       no subtype, content of message is the media tag enabled motd
+
 ******************************************************************************
 ITEM MANIPULATION RELATED COMMANDS
 
@@ -590,7 +650,7 @@ C->S: askface <num>
 	num is a plaintext integer.
 
 S->C: smooth <facenbr><smoothpic>
-	All parameters are short in in binary form (2 bytes each)
+	All parameters are short int in binary form (2 bytes each)
 	This command informs the client on how to smooth a face, when it will need it.
 	Following are the facenbr of the picture involved in the
 	smoothing algorithm. See doc on smoothing on how to use them.
@@ -895,7 +955,7 @@ S->C: ExtendedInfoSet <string1> <string2> .... <stringn>
 	be related to the map and send through mapextended command.
 	Each string represent an info which is enabled. Look
 	at toggleextendedinfos and mapextended for details.
-
+	
 S->C: mapextended <what><length><coord1>[data1a][data1b][data1c]<coord2>...
 	This command is send from server when there is at least
 	1 ExtendedInfo activated using toggleextendedinfos and
@@ -1097,6 +1157,11 @@ S->C: setup <option1> <value1> <option2> <value2>
 		Toggle sending from server of extended map informations.
 		What lies in this extended info depended on what extended
 		infos the client asked. See ToggleExtendedInfos command for details.
+
+	extendedTextInfos (0/1)
+		Toggle sending from server of extended text informations.
+		What lies in this extended info depended on what extended
+		infos the client asked. See toggleextendedtext command for details.
 
 	All data in the setup command is in ascii text form.  options and
 	values can not have whitepace - the client and server use whitspace

@@ -362,3 +362,26 @@ void set_materialname(object *op, int difficulty, materialtype_t *nmt)
 	}
     }
 }
+
+/*
+ * Strip out the media tags from a String.
+ * Warning the input string will contain the result string
+ */
+void strip_media_tag(char *message){
+    int in_tag=0;
+    char* dest;
+    char* src;
+    src=dest=message;
+    while (*src!='\0'){
+        if (*src=='['){
+            in_tag=1;
+        } else if (in_tag && (*src==']'))
+            in_tag=0;
+        else if (!in_tag){
+            *dest=*src;
+            dest++;
+        }
+        src++;
+    }
+    *dest='\0';
+}

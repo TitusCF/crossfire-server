@@ -1522,12 +1522,12 @@ static void apply_book (object *op, object *tmp)
 	return;
     }
 
-    new_draw_info_format (NDI_UNIQUE, 0, op,
-                          "You open the %s and start reading.", tmp->name);
 
     /* GROS: Handle for plugin trigger event */
     if ((evt = find_event(tmp, EVENT_APPLY)) != NULL)
     {
+        new_draw_info_format (NDI_UNIQUE, 0, op,
+                      "You open the %s and start reading.", tmp->name);
         CFParm CFP;
         int k, l, m;
         uint32 n;
@@ -1549,8 +1549,18 @@ static void apply_book (object *op, object *tmp)
         if (findPlugin(evt->plugin)>=0)
             ((PlugList[findPlugin(evt->plugin)].eventfunc) (&CFP));
     }
-    else
-        new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, op, tmp->msg);
+    else{
+    	char buf[HUGE_BUF];
+        char nicebuf[HUGE_BUF];
+    	snprintf(buf,HUGE_BUF,"You open the %s and start reading.\n%s", tmp->name, tmp->msg);
+        snprintf(nicebuf,HUGE_BUF,"%s\n%s", long_desc(tmp,op), tmp->msg);
+    	readable_message_type* msgType = get_readable_message_type(tmp);
+    	draw_ext_info_format(NDI_UNIQUE | NDI_NAVY, 0, op,
+                msgType->message_type, msgType->message_subtype,
+                "You open the %s and start reading.\n%s", 
+                "%s\n%s",
+                long_desc(tmp,op), tmp->msg);
+    }
 
     /* gain xp from reading */
     if(!QUERY_FLAG(tmp,FLAG_NO_SKILL_IDENT)) { /* only if not read before */
