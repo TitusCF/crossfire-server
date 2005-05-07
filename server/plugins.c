@@ -49,7 +49,6 @@
 #endif
 
 #include <plugproto.h>
-
 CFPlugin PlugList[32];
 int PlugNR = 0;
 
@@ -263,7 +262,7 @@ void removeOnePlugin(char *id)
 
 #else
 
-#ifndef HAVE_SCANDIR
+#ifndef HAVE_ALPHASORT
 
 extern int alphasort( struct dirent **a, struct dirent **b);
 #endif

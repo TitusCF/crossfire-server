@@ -69,6 +69,11 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define MAX(x,y) ((x)>(y)?(x):(y))
 #endif
 
+/*NAME_MAX used by random maps may not be defined on pure ansi systems*/
+#ifndef NAME_MAX
+#define NAME_MAX 255
+#endif
+
 /* MAX3 is basically like MAX, but instead does 3 values. */
 #ifndef MAX3
 #define MAX3(x,y, z) (MAX(x, MAX(y,z)))

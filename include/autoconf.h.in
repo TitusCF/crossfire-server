@@ -18,6 +18,9 @@
 /* Path to the gzip binary */
 #undef GZIP
 
+/* Define if you have the alphasort() function declaration. */
+#undef HAVE_ALPHASORT
+
 /* Define to 1 if you have the <arpa/inet.h> header file. */
 #undef HAVE_ARPA_INET_H
 

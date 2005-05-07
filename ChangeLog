@@ -17,6 +17,15 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Corrected code to compile under -ansi gcc flag:
+ * correction of some non posix compatible calls around scandir 
+ * changing configure to detect the absence of 'alphasort' prototype
+ * converted some '//' comment to /**/ one
+ * reran automake1.8/autoconf2.50/autheader2.50
+Note even it it compiles with -ansi -pedantic, it still need cleanup to
+get 64 bits experience code working!
+Tchize 2005/05/07
+
 Applied Casper1's patch [ #1193516 ] for Hurd support.
  * socket/lowlevel.c: #ifdef some code part that won't work.
 Change some char* to const char*, when values shouldn't be changed. Changed files:

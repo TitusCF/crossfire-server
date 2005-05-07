@@ -1409,7 +1409,7 @@ object *avoid_weather(int *av, mapstruct *m, int x, int y, int *gs, int grow)
 		    !(tmp->material & M_ICE || tmp->material & M_LIQUID))
 		    gotsnow++;
 	    for (i=0; growth_avoids[i].name != NULL; i++) {
-		//if (!strcmp(tmp->arch->name, growth_avoids[i].name)) {
+		/*if (!strcmp(tmp->arch->name, growth_avoids[i].name)) {*/
 		if (tmp->arch== growth_avoids[i].what) {
 		    avoid++;
 		    break;
@@ -1425,7 +1425,7 @@ object *avoid_weather(int *av, mapstruct *m, int x, int y, int *gs, int grow)
     } else {
 	for (tmp=GET_MAP_OB(m, x, y); tmp; tmp = tmp->above) {
 	    for (i=0; weather_avoids[i].name != NULL; i++) {
-		//if (!strcmp(tmp->arch->name, weather_avoids[i].name)) {
+		/*if (!strcmp(tmp->arch->name, weather_avoids[i].name)) {*/
 		if (tmp->arch == weather_avoids[i].what) {
 		    if (weather_avoids[i].snow == 1)
 			gotsnow++;
@@ -1499,7 +1499,7 @@ void let_it_snow(mapstruct *m, int wx, int wy, char *filename)
 	    two = 0;
 	    gotsnow = 0;
 	    nodstk = 0;
-	    //temp = real_world_temperature(x, y, m);
+	    /*temp = real_world_temperature(x, y, m);*/
 		temp = weathermap[wx][wy].realtemp;
 	    sky = weathermap[wx][wy].sky;
 	    if (temp <= 0 && sky > SKY_OVERCAST && sky < SKY_FOG)
@@ -1716,7 +1716,7 @@ void singing_in_the_rain(mapstruct *m, int wx, int wy, char *filename)
 	    two = 0;
 	    gotsnow = 0;
 	    nodstk = 0;
-	    //temp = real_world_temperature(x, y, m);
+	    /*temp = real_world_temperature(x, y, m);*/
 		temp = weathermap[wx][wy].realtemp;
 	    sky = weathermap[wx][wy].sky;
 	    /* it's probably allready snowing */
@@ -1916,7 +1916,7 @@ void plant_a_garden(mapstruct *m, int wx, int wy, char *filename)
 	    avoid = 0;
 	    two = 0;
 	    gotsnow = 0;
-	    //temp = real_world_temperature(x, y, m);
+	    /*temp = real_world_temperature(x, y, m);*/
 		temp = weathermap[wx][wy].realtemp;
 	    sky = weathermap[wx][wy].sky;
 	    (void)avoid_weather(&avoid, m, x, y, &gotsnow, 1);
@@ -2036,7 +2036,7 @@ void change_the_world(mapstruct *m, int wx, int wy, char *filename)
 	    avoid = 0;
 	    two = 0;
 	    gotsnow = 0;
-	    //temp = real_world_temperature(x, y, m);
+	    /*temp = real_world_temperature(x, y, m);*/
 		temp = weathermap[wx][wy].realtemp;
 	    sky = weathermap[wx][wy].sky;
 	    (void)avoid_weather(&avoid, m, x, y, &gotsnow, 1);
@@ -2233,7 +2233,7 @@ void feather_map(mapstruct *m, int wx, int wy, char *filename)
    map.  returns -1 if you give it something it can't figure out. 0 normally.
 */
 
-//int worldmap_to_weathermap(int x, int y, int *wx, int *wy, char *filename)
+/*int worldmap_to_weathermap(int x, int y, int *wx, int *wy, char *filename)*/
 int worldmap_to_weathermap(int x, int y, int *wx, int *wy, mapstruct* m)
 {
     int spwtx, spwty;
@@ -2464,7 +2464,7 @@ int real_world_temperature(int x, int y, mapstruct *m)
 {
     int wx, wy, temp, eleva, elevb;
     object *op;
-	//printf ("real_world_temperature: worldmaptoweathermap : %s\n",m->path);
+	/*printf ("real_world_temperature: worldmaptoweathermap : %s\n",m->path);*/
     worldmap_to_weathermap(x, y, &wx, &wy, /*m->path*/m);
     temp = real_temperature(wx, wy);
     if (weathermap[wx][wy].avgelev < 0)
@@ -2976,8 +2976,8 @@ void write_weather_images()
 		pixels[3 * x + (1 * WEATHERMAPTILESX * 3 + BLUE)]  = speed;
 	    } else {
 		speed = (speed - realmaxwind) * realscalewind;
-//		if (speed < 100)
-//		    speed = 100;
+/*		if (speed < 100)*/
+/*		    speed = 100;*/
 		pixels[3 * x + (1 * WEATHERMAPTILESX * 3 + RED)]   = speed;
 		pixels[3 * x + (1 * WEATHERMAPTILESX * 3 + GREEN)] = 0;
 		pixels[3 * x + (1 * WEATHERMAPTILESX * 3 + BLUE)]  = 0;

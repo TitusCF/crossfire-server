@@ -185,7 +185,7 @@ int create_savedir_if_needed(char *savedir)
     return 0;
   } else {
     stat(savedir, buf);
-    if ((buf->st_mode & S_IFDIR) == 0)
+    if (!S_ISDIR(buf->st_mode))
       if (mkdir(savedir, SAVE_DIR_MODE))
 	{
 	perror("Unable to create player savedir,");

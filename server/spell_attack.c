@@ -1442,7 +1442,7 @@ int mood_change(object *op, object *caster, object *spell) {
             {
             if ( head->level > level ) continue;
             if ( random_roll( 0, 100, caster, PREFER_LOW ) >= ( 20 + MIN( 50, 2 * ( level - head->level ) ) ) )
-                // Failed, no effect
+                /* Failed, no effect */
                 continue;
             }
 

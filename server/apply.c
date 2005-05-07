@@ -1550,10 +1550,6 @@ static void apply_book (object *op, object *tmp)
             ((PlugList[findPlugin(evt->plugin)].eventfunc) (&CFP));
     }
     else{
-    	char buf[HUGE_BUF];
-        char nicebuf[HUGE_BUF];
-    	snprintf(buf,HUGE_BUF,"You open the %s and start reading.\n%s", tmp->name, tmp->msg);
-        snprintf(nicebuf,HUGE_BUF,"%s\n%s", long_desc(tmp,op), tmp->msg);
     	readable_message_type* msgType = get_readable_message_type(tmp);
     	draw_ext_info_format(NDI_UNIQUE | NDI_NAVY, 0, op,
                 msgType->message_type, msgType->message_subtype,

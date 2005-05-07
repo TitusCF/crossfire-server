@@ -148,6 +148,19 @@ AC_FUNC_STRFTIME
 AC_FUNC_VPRINTF
 AC_CHECK_FUNCS(gettimeofday mkdir mktime rmdir select socket strcspn strerror strspn strstr strtol strcasecmp strncasecmp snprintf setsid srandom getdtablesize srand48 srand sysconf scandir)
 
+dnl alphasort can not be added to AC_CHECK_FUNCS because 
+AC_MSG_CHECKING(checking if alphasort is defined)
+  AC_TRY_COMPILE([#include <dirent.h>], [alphasort;],
+    ac_cv_func_alphasort=yes, ac_cv_func_alphasort=no)
+  if test "$ac_cv_func_alphasort" = yes; then
+    AC_DEFINE(HAVE_ALPHASORT, 1, [Define if you have the alphasort() function declaration.])
+    AC_MSG_RESULT(yes)
+  else
+    AC_MSG_RESULT(no)
+  fi
+
+
+
 AC_MSG_CHECKING(how many args gettimeofday uses)
 AC_CACHE_VAL(ac_cv_gettimeofday_args,
  [AC_TRY_COMPILE([#include <sys/time.h>
@@ -155,11 +168,16 @@ AC_CACHE_VAL(ac_cv_gettimeofday_args,
 	[struct timeval tv; struct timezone tzp;
 	gettimeofday(&tv, &tzp);],
 	[ac_gettimeofday_args=2],
-	[AC_TRY_COMPILE([#include <sys/time.h>
+		[AC_TRY_COMPILE([#include <sys/time.h>
 		#include <unistd.h>],
-		[struct timeval tv; gettimeofday(&tv);],
-		[ac_gettimeofday_args=1],
-		[ac_gettimeofday_args=0])])
+		[struct timeval tv; 
+		gettimeofday(&tv, NULL);],
+		[ac_gettimeofday_args=2],
+		[AC_TRY_COMPILE([#include <sys/time.h>
+			#include <unistd.h>],
+			[struct timeval tv; gettimeofday(&tv);],
+			[ac_gettimeofday_args=1],
+			[ac_gettimeofday_args=0])])])
   ac_cv_gettimeofday_args=$ac_gettimeofday_args])
 
 ac_gettimeofday_args=$ac_cv_gettimeofday_args

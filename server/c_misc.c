@@ -890,7 +890,10 @@ int command_players(object *op, char *paramss)
 
 		strcpy(t,Entry->d_name);
 		if (stat(buf,&Stat)==0) {
-		    if ((Stat.st_mode & S_IFMT)==S_IFDIR) {
+		    /* This was not posix compatible
+             * if ((Stat.st_mode & S_IFMT)==S_IFDIR) {
+             */
+            if (S_ISDIR(Stat.st_mode)){
 			char buf2[MAX_BUF];
 			struct tm *tm=localtime(&Stat.st_mtime);
 			sprintf(buf2,"%s\t%04d %02d %02d %02d %02d %02d",
