@@ -455,6 +455,10 @@ SOURCE=..\..\common\recipe.c
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\common\region.c
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\common\shstr.c
 
 !IF  "$(CFG)" == "libcross - Win32 FullDebug"

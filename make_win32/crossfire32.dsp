@@ -1363,6 +1363,7 @@ SOURCE=..\random_maps\reader.c
 !IF  "$(CFG)" == "crossfire32 - Win32 FullDebug"
 
 # PROP Intermediate_Dir "FullDebug\random_maps"
+# ADD CPP /D "YY_NO_UNISTD_H"
 
 !ELSEIF  "$(CFG)" == "crossfire32 - Win32 ReleaseQuit"
 
