@@ -1374,6 +1374,7 @@ SOURCE=..\random_maps\reader.c
 
 # PROP BASE Intermediate_Dir "Win32_ReleaseNormal\random_maps"
 # PROP Intermediate_Dir "ReleaseLog\random_maps"
+# ADD CPP /D "YY_NO_UNISTD_H"
 
 !ENDIF 
 
