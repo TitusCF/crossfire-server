@@ -1526,11 +1526,11 @@ static void apply_book (object *op, object *tmp)
     /* GROS: Handle for plugin trigger event */
     if ((evt = find_event(tmp, EVENT_APPLY)) != NULL)
     {
-        new_draw_info_format (NDI_UNIQUE, 0, op,
-                      "You open the %s and start reading.", tmp->name);
         CFParm CFP;
         int k, l, m;
         uint32 n;
+        new_draw_info_format (NDI_UNIQUE, 0, op,
+                      "You open the %s and start reading.", tmp->name);
         k = EVENT_APPLY;
         l = SCRIPT_FIX_ALL;
         m = 0;

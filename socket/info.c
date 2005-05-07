@@ -259,7 +259,6 @@ void draw_ext_info(
         int flags, int pri, object *pl, uint8 type, 
         uint8 subtype, const char* message){
             
-    char buf[HUGE_BUF];
     if(!pl || (pl->type!=PLAYER) || (pl->contr==NULL))
         return;
         

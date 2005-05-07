@@ -17,6 +17,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Fixed compilation issue.
+server/apply.c: can't declare a variable after some function call.
+socket/info.c: removed unused variable.
+Ryo 2005/05/07
+
 Corrected code to compile under -ansi gcc flag:
  * correction of some non posix compatible calls around scandir 
  * changing configure to detect the absence of 'alphasort' prototype
