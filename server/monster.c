@@ -770,11 +770,11 @@ int monster_cast_spell(object *head, object *part,object *pl,int dir, rv_vector 
 	    return 0;
 	}
 	if (spell_item->type == SPELLBOOK) {
+	    if (!spell_item->inv) {
+		LOG(llevError,"spellbook %s does not contain a spell?\n", spell_item->name);
+		return 0;
+	    }
 	    spell_item=spell_item->inv;
-	    if (spell_item->inv) {
-		LOG(llevError,"spellbook %s does contain a spell?\n", spell_item->name);
-	    } else
-		spell_item=spell_item->inv;
 	}
     }
     else

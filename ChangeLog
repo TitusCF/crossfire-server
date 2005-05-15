@@ -17,6 +17,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/monster.c: Fix monsters to cast spells from spellbooks.
+Andreas Kirschbaum 2005-05-15
+
 Fixed compilation issue.
 server/apply.c: can't declare a variable after some function call.
 socket/info.c: removed unused variable.
