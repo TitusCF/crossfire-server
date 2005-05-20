@@ -1417,7 +1417,22 @@ CFParm* CFWTeleportObject (CFParm* PParm)
     EXIT_X(current)=*(int*)PParm->Value[2];
     EXIT_Y(current)=*(int*)PParm->Value[3];
     if (*(int*)PParm->Value[4]) SET_FLAG(current,FLAG_UNIQUE);
-    if (PParm->Value[5]) current->msg=add_string ((char*)PParm->Value[5]);
+    if (PParm->Value[5]) {
+	char *txt = PParm->Value[5];
+	char *tmp = NULL;
+
+	/* ensure trailing '\n' */
+	int len = strlen(txt);
+	if (len == 0 || txt[len-1] != '\n') {
+	    tmp = malloc(len+2);
+	    sprintf(tmp, "%s\n", txt);
+	    txt = tmp;
+	}
+
+	current->msg = add_string (txt);
+
+	free(tmp);
+    }
     enter_exit ((object*) PParm->Value[0],current);
     free_object (current);
     return NULL;

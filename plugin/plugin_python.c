@@ -944,14 +944,28 @@ static PyObject* CFSetMessage(PyObject* self, PyObject* args)
 {
     char *txt;
     long whoptr;
+    int len;
+    char *tmp = NULL;
+
     if (!PyArg_ParseTuple(args,"ls",&whoptr, &txt))
         return NULL;
 
     CHECK_OBJ(whoptr);
 
+    /* ensure trailing '\n' */
+    len = strlen(txt);
+    if (len == 0 || txt[len-1] != '\n') {
+	tmp = malloc(len+2);
+	sprintf(tmp, "%s\n", txt);
+	txt = tmp;
+    }
+
     if (WHO->msg != NULL)
         free_string(WHO->msg);
     WHO->msg = add_string(txt);
+
+    free(tmp);
+
     Py_INCREF(Py_None);
     return Py_None;
 };

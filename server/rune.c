@@ -137,7 +137,7 @@ int write_rune(object *op,object *caster, object *spell, int dir,char *runename)
 	rune = rune_spell;
     } else {
 	rune = get_archetype(GENERIC_RUNE);
-	sprintf(buf,"You set off a rune of %s",rune_spell->name);
+	sprintf(buf,"You set off a rune of %s\n",rune_spell->name);
 	rune->msg=add_string(buf);
 	tmp = get_object();
 	copy_object(rune_spell, tmp);

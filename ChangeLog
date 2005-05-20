@@ -17,6 +17,15 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Ensure that object->msg always has a trailing \n character. This is necessary
+to prevent corrupted map files.
+plugin/plugin_python.c: Add trailing \n to message set by
+   CFPython.SetMessage() if not already present.
+server/plugins.c: Add trailing \n to message set by HOOK_TELEPORTOBJECT if not
+   already present.
+server/rune.c: Add trailing \n to rune messages.
+Andreas Kirschbaum 2005-05-21
+
 Apply qal21's patch [ #1205421 ]: Implement new Python functions:
 GetArchType, GetFacing, GetLevel.
 plugin/plugin_python.c, plugin/include/plugin_python.h: Add new functions.
