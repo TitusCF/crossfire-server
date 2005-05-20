@@ -197,5 +197,12 @@ This fiery volcano rose up from the mountains one day.  It is inhabited by a
 strange race of fire creatures who seem friendly, but very competitive.
 endmsg
 end
+region azumauindo
+parent world
+longname The shogunate of Azumauindo
+msg
+A hidden civilization, at the far east of the world.
+endmsg
+end
 nomore
 
