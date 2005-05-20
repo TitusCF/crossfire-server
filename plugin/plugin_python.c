@@ -1645,6 +1645,23 @@ static PyObject* CFGetFood(PyObject* self, PyObject* args)
 };
 
 /*****************************************************************************/
+/* Name   : CFGetLevel                                                        */
+/* Python : CFPython.GetLevel(object)                                         */
+/*****************************************************************************/
+static PyObject* CFGetLevel(PyObject* self, PyObject* args)
+{
+    long whoptr;
+
+    if (!PyArg_ParseTuple(args,"l",&whoptr))
+        return NULL;
+
+    CHECK_OBJ(whoptr);
+
+    return Py_BuildValue("i",WHO->level);
+};
+
+
+/*****************************************************************************/
 /* Name   : CFSetFood                                                        */
 /* Python : CFPython.SetFood(object, value)                                  */
 /*****************************************************************************/
@@ -1751,6 +1768,22 @@ static PyObject* CFGetDirection(PyObject* self, PyObject* args)
     CHECK_OBJ(whoptr);
 
     return Py_BuildValue("i",WHO->direction);
+};
+
+/*****************************************************************************/
+/* Name   : CFGetFacing                                                   */
+/* Python : CFPython.GetFacing(object)                                    */
+/*****************************************************************************/
+static PyObject* CFGetFacing(PyObject* self, PyObject* args)
+{
+    long whoptr;
+
+    if (!PyArg_ParseTuple(args,"l",&whoptr))
+        return NULL;
+
+    CHECK_OBJ(whoptr);
+
+    return Py_BuildValue("i",WHO->facing);
 };
 
 /*****************************************************************************/
@@ -4488,6 +4521,21 @@ static PyObject* CFGetInternalName(PyObject* self, PyObject* args)
     CHECK_OBJ(whoptr);
 
     return Py_BuildValue("s",WHO->name != NULL ? WHO->name : "");
+};
+
+/*****************************************************************************/
+/* Name   : CFGetArchType                                                */
+/* Python : CFPython.GetArchType(object)                                 */
+/*****************************************************************************/
+static PyObject* CFGetArchType(PyObject* self, PyObject* args)
+{
+    long whoptr;
+    if (!PyArg_ParseTuple(args,"l",&whoptr))
+        return NULL;
+
+    CHECK_OBJ(whoptr);
+
+    return Py_BuildValue("s",WHO->arch->name != NULL ? WHO->arch->name : "");
 };
 
 /*****************************************************************************/

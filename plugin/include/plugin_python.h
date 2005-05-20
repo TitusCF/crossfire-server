@@ -138,11 +138,13 @@ static PyObject* CFSetGrace(PyObject* self, PyObject* args);
 static PyObject* CFGetReturnValue(PyObject* self, PyObject* args);
 static PyObject* CFSetReturnValue(PyObject* self, PyObject* args);
 static PyObject* CFGetDirection(PyObject* self, PyObject* args);
+static PyObject* CFGetFacing(PyObject* self, PyObject* args);
 static PyObject* CFSetDirection(PyObject* self, PyObject* args);
 static PyObject* CFGetLastSP(PyObject* self, PyObject* args);
 static PyObject* CFSetLastSP(PyObject* self, PyObject* args);
 static PyObject* CFGetLastGrace(PyObject* self, PyObject* args);
 static PyObject* CFSetLastGrace(PyObject* self, PyObject* args);
+static PyObject* CFGetLevel(PyObject* self, PyObject* args);
 static PyObject* CFFixObject(PyObject* self, PyObject* args);
 static PyObject* CFSetFace(PyObject* self, PyObject* args);
 static PyObject* CFGetAttackType(PyObject* self, PyObject* args);
@@ -267,6 +269,7 @@ static PyObject* CFSetEventOptions(PyObject* self, PyObject* args);
 static PyObject* CFGetIP(PyObject* self, PyObject* args);
 static PyObject* CFGetInventory(PyObject* self, PyObject* args);
 static PyObject* CFGetInternalName(PyObject* self, PyObject* args);
+static PyObject* CFGetArchType(PyObject* self, PyObject* args);
 static PyObject* CFSetVariable(PyObject* self, PyObject* args);
 static PyObject* CFDecreaseObjectNr(PyObject* self, PyObject* args);
 
@@ -423,11 +426,13 @@ static PyMethodDef CFPythonMethods[] =
         {"GetReturnValue",CFGetReturnValue,METH_VARARGS},
         {"SetReturnValue",CFSetReturnValue,METH_VARARGS},
         {"GetDirection",CFGetDirection,METH_VARARGS},
+        {"GetFacing",CFGetFacing,METH_VARARGS},
         {"SetDirection",CFSetDirection,METH_VARARGS},
         {"GetLastSP",CFGetLastSP,METH_VARARGS},
         {"SetLastSP",CFSetLastSP,METH_VARARGS},
         {"GetLastGrace",CFGetLastGrace,METH_VARARGS},
         {"SetLastGrace",CFSetLastGrace,METH_VARARGS},
+        {"GetLevel",CFGetLevel,METH_VARARGS},
         {"FixObject",CFFixObject,METH_VARARGS},
         {"SetFace",CFSetFace,METH_VARARGS},
         {"GetAttackType",CFGetAttackType,METH_VARARGS},
@@ -558,6 +563,7 @@ static PyMethodDef CFPythonMethods[] =
         {"GetIP",CFGetIP,METH_VARARGS},
         {"GetInventory",CFGetInventory,METH_VARARGS},
         {"GetInternalName",CFGetInternalName,METH_VARARGS},
+        {"GetArchType",CFGetArchType,METH_VARARGS},
         {"RegisterCommand",CFRegisterCommand,METH_VARARGS},
         {"GetValue",CFGetValue,METH_VARARGS},
         {"SetValue",CFSetValue,METH_VARARGS},

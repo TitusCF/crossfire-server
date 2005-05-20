@@ -384,6 +384,10 @@ GetAC(object who)
   Get the Armor Class coefficient associated with the given object.
   Returns the armor class coefficient as an integer.
 
+GetArchType(object who)
+  Get the archtype name of an object.
+  Returns the archtype as a string.
+
 GetAttackType(object who)
   Determine the attack type of an object.
   Returns the attack type as an integer.
@@ -415,7 +419,7 @@ GetDexterity(object who)
   Returns the dexterity value as an integer.
 
 GetDirection(object who)
-  Determine the direction an turnable object 'who' is currently facing. Use
+  Determine the direction an turnable object 'who' is currently moving. Use
   IsTurnable(who) to determine if an object is turnable.
   Returns the direction as an integer.
 
@@ -440,6 +444,12 @@ GetEventPlugin(object who, int event)
 GetExperience(object who)
   Get the amount of experience associated with the object.
   Returns the event options as a long.
+
+GetFacing(object who)
+  Determine the direction an turnable object 'who' is currently facing. It
+  is similar to GetDirection except it works for non-moving objects too. See
+  GetDirection for details.
+  Returns the direction as an integer.
 
 GetFirstObjectOnSquare(map map, int x, int y)
   Get the first object at position (x,y) in the map 'map'. Use
@@ -494,6 +504,10 @@ GetLastGrace(object who)
 GetLastSP(object who)
   Get the last_sp parameter value associated with the given object.
   Returns the last_sp value as an integer.
+
+GetLevel(object who)
+  Get the level of a given object.
+  Returns the level as an integer.
 
 GetLocalDirectory()
   Return the name of the base directory containing the Crossfire read-write
@@ -1009,7 +1023,7 @@ SetDexterity(object obj, int value)
   Throws an exception if the value is less than -30 or higher than 30.
 
 SetDirection(object who, int dir)
-  Set the direction 'who' is currently facing.
+  Set the direction 'who' is currently moving.
   Does not return a value.
 
 SetEventHandler(object who, int event, string script)
