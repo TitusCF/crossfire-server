@@ -2674,6 +2674,7 @@ void kill_player(object *op)
 	tmp=arch_to_object(find_archetype("gravestone"));
 	sprintf(buf,"%s's gravestone",op->name);
 	FREE_AND_COPY(tmp->name, buf);
+	sprintf(buf,"%s's gravestones",op->name);
 	FREE_AND_COPY(tmp->name_pl, buf);
 	sprintf(buf,"RIP\nHere rests the hero %s the %s,\n"
 	        "who was killed\n"
