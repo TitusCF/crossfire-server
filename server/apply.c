@@ -774,6 +774,10 @@ int convert_item(object *item, object *converter) {
      */
     if (!strcmp(CONV_FROM(converter),"money")) {
 	int cost;
+
+	if(item->type!=MONEY)
+	    return 0;
+
 	nr=(item->nrof*item->value)/CONV_NEED(converter);
 	if (!nr) return 0;
 	cost=nr*CONV_NEED(converter)/item->value;
