@@ -12,7 +12,7 @@ void flush_output_element(object *pl, Output_Buf *outputs);
 void check_output_buffers(object *pl, const char *buf);
 void new_draw_info(int flags, int pri, object *pl, const char *buf);
 void new_draw_info_format(int flags, int pri, object *pl, const char *format, ...);
-void draw_ext_info(int flags, int pri, object *pl, uint8 type, uint8 subtype, const char* message);
+void draw_ext_info(int flags, int pri, object *pl, uint8 type, uint8 subtype, const char* message,const char* oldmessage);
 void draw_ext_info_format(int flags, int pri, object *pl, uint8 type, uint8 subtype, const char* old_format, char* new_format, ...);
 void new_info_map_except(int color, mapstruct *map, object *op, const char *str);
 void new_info_map_except2(int color, mapstruct *map, object *op1, object *op2, const char *str);

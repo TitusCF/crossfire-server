@@ -965,11 +965,11 @@ enum apply_flag {
 #define MSG_TYPE_BOOK_ELEGANT_2  4
 #define MSG_TYPE_BOOK_QUARTO_1   5
 #define MSG_TYPE_BOOK_QUARTO_2   6
-#define MSG_TYPE_BOOK_SPELL_EVOKER    8
-#define MSG_TYPE_BOOK_SPELL_PRAYER    9
-#define MSG_TYPE_BOOK_SPELL_PYRO      10
-#define MSG_TYPE_BOOK_SPELL_SORCERER  11
-#define MSG_TYPE_BOOK_SPELL_SUMMONER  12
+#define MSG_TYPE_BOOK_SPELL_EVOKER    7
+#define MSG_TYPE_BOOK_SPELL_PRAYER    8
+#define MSG_TYPE_BOOK_SPELL_PYRO      9
+#define MSG_TYPE_BOOK_SPELL_SORCERER  10
+#define MSG_TYPE_BOOK_SPELL_SUMMONER  11
 
 /* card messages subtypes*/
 #define MSG_TYPE_CARD_SIMPLE_1    1
@@ -1021,9 +1021,13 @@ enum apply_flag {
 #define MSG_TYPE_MONUMENT_WALL_2       11
 #define MSG_TYPE_MONUMENT_WALL_3       12
 
+/*some readable flags*/
+
 /* dialog messsage */
 #define MSG_TYPE_DIALOG_NPC            1 /*A message from the npc*/
 #define MSG_TYPE_DIALOG_ANSWER         2 /*One of possible answers*/
 #define MSG_TYPE_DIALOG_ANSWER_COUNT   3 /*Number of possible answers*/
+
+
 
 #endif /* DEFINE_H */

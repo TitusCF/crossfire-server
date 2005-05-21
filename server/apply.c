@@ -1212,8 +1212,10 @@ static int apply_shop_mat (object *shop_mat, object *op)
 /**
  * Handles applying a sign.
  */
-static void apply_sign (object *op, object *sign)
+static void apply_sign (object *op, object *sign, int autoapply)
 {
+    readable_message_type* msgType;
+    char newbuf[HUGE_BUF];
     if (sign->msg == NULL) {
         new_draw_info (NDI_UNIQUE, 0, op, "Nothing is written on it.");
         return;
@@ -1243,8 +1245,9 @@ static void apply_sign (object *op, object *sign)
                        "You are unable to read while blind.");
         return;
     }
-
-    new_draw_info (NDI_UNIQUE | NDI_NAVY, 0, op, sign->msg);
+    msgType=get_readable_message_type(sign);
+    snprintf(newbuf,sizeof(newbuf),"%hhu %s", autoapply?1:0,sign->msg);
+    draw_ext_info(NDI_UNIQUE | NDI_NAVY, 0, op, msgType->message_type, msgType->message_subtype, newbuf, sign->msg);
 }
 
 
@@ -1454,7 +1457,7 @@ void move_apply (object *trap, object *victim, object *originator)
   case SIGN:
     if (victim->type != PLAYER && trap->stats.food > 0)
       goto leave; /* monsters musn't apply magic_mouths with counters */
-    apply_sign (victim, trap);
+    apply_sign (victim, trap, 1);
     goto leave;
 
   case CONTAINER:
@@ -2345,7 +2348,7 @@ int manual_apply (object *op, object *tmp, int aflag)
     return 1;
 
   case SIGN:
-    apply_sign (op, tmp);
+    apply_sign (op, tmp, 0);
     return 1;
 
   case BOOK:

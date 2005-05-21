@@ -98,7 +98,7 @@ void display_motd(object *op) {
       strncat(motd+size,buf,HUGE_BUF-size);
       size+=strlen(buf);
     }
-    draw_ext_info(NDI_UNIQUE | NDI_GREEN, 0, op, MSG_TYPE_MOTD, MSG_SUBTYPE_NONE, motd);
+    draw_ext_info(NDI_UNIQUE | NDI_GREEN, 0, op, MSG_TYPE_MOTD, MSG_SUBTYPE_NONE, motd, NULL);
     close_and_delete(fp, comp);
 }
 

@@ -257,18 +257,18 @@ void new_draw_info_format(int flags, int pri,object *pl, const char *format, ...
 
 void draw_ext_info(
         int flags, int pri, object *pl, uint8 type, 
-        uint8 subtype, const char* message){
+        uint8 subtype, const char* message, const char* oldmessage){
             
     if(!pl || (pl->type!=PLAYER) || (pl->contr==NULL))
         return;
         
     if (pri>=pl->contr->listening) return;
     if (!CLIENT_SUPPORT_READABLES(&pl->contr->socket,type)){
-        char *buf = (char*)malloc(strlen(message)+1);
+        char *buf = (char*)malloc(strlen(oldmessage==NULL?message:oldmessage)+1);
         if (buf==NULL)
             LOG(llevError,"info::draw_ext_info -> Out of memory!");
         else{
-            strcpy(buf,message);
+            strcpy(buf,oldmessage==NULL?message:oldmessage);
             strip_media_tag(buf);
             new_draw_info(flags, pri, pl, buf);
             free(buf);
