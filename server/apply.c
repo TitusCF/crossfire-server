@@ -2663,6 +2663,8 @@ static int unapply_special (object *who, object *op, int aflags)
 	    tmp2->above = op->above;
 	    tmp2->stats.food = op->stats.food;
 	    CLEAR_FLAG(tmp2, FLAG_APPLIED);
+	    if (QUERY_FLAG(op, FLAG_INV_LOCKED))
+		SET_FLAG(tmp2, FLAG_INV_LOCKED);
 	    if (who->type == PLAYER)
 		esrv_del_item(who->contr, (tag_t)op->count);
 	    remove_ob(op);
@@ -3145,6 +3147,8 @@ int apply_special (object *who, object *op, int aflags)
 	    tmp2 = arch_to_object(op->other_arch);
 	    tmp2->stats.food = op->stats.food;
 	    SET_FLAG(tmp2, FLAG_APPLIED);
+	    if (QUERY_FLAG(op, FLAG_INV_LOCKED))
+		SET_FLAG(tmp2, FLAG_INV_LOCKED);
 	    insert_ob_in_ob(tmp2, who);
 
 	    /* Remove the old lantern */
