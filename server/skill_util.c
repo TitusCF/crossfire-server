@@ -609,7 +609,7 @@ learn_skill (object *pl, object *scroll) {
 
 /* Gives a percentage clipped to 0% -> 100% of a/b. */
 /* Probably belongs in some global utils-type file? */
-static int clipped_percent(int a, int b)
+static int clipped_percent(sint64 a, sint64 b)
 {
   int rv;
 

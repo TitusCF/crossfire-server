@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/skill_util.c: Print correct permanent experience ratio for experience
+   values >2 billion.
+Andreas Kirschbaum 2005-05-22
+
 server/apply.c: Do not unlock LAMP items when turning them on or off.
 server/apply.c: Fix CONVERTER items with slaying "money" to trigger for MONEY
    items only.
