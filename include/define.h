@@ -954,7 +954,8 @@ enum apply_flag {
 #define MSG_TYPE_MONUMENT        5
 #define MSG_TYPE_SCRIPTED_DIALOG 6
 #define MSG_TYPE_MOTD            7
-#define MSG_TYPE_LAST            8
+#define MSG_TYPE_ADMIN           8
+#define MSG_TYPE_LAST            9
 
 #define MSG_SUBTYPE_NONE         0
 
@@ -1028,6 +1029,8 @@ enum apply_flag {
 #define MSG_TYPE_DIALOG_ANSWER         2 /*One of possible answers*/
 #define MSG_TYPE_DIALOG_ANSWER_COUNT   3 /*Number of possible answers*/
 
-
+/* admin messages */
+#define MSG_TYPE_ADMIN_RULES           1
+#define MSG_TYPE_ADMIN_NEWS            2
 
 #endif /* DEFINE_H */

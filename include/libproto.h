@@ -416,6 +416,8 @@ extern materialtype_t *name_to_material(const char *name);
 extern void transmute_materialname(object *op, object *change);
 extern void set_materialname(object *op, int difficulty, materialtype_t *nmt);
 extern void strip_media_tag(char *message);
+extern char* strrstr(const char* haystack, const char* needle);
+extern void strip_endline(char* buf);
 /* loader.c */
 extern int lex_load(object *op, int map_flags);
 extern void yyrestart(FILE *input_file);

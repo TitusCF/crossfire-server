@@ -89,16 +89,78 @@ void display_motd(object *op) {
     motd[0]='\0';
     size=0;
     while (fgets(buf, MAX_BUF, fp) != NULL) {
-	  char *cp;
 	  if( *buf == '#')
 	    continue;
-	  /*cp=strchr(buf, '\n');    
-      if (cp != NULL)
-        *cp='\0';*/      
       strncat(motd+size,buf,HUGE_BUF-size);
       size+=strlen(buf);
     }
     draw_ext_info(NDI_UNIQUE | NDI_GREEN, 0, op, MSG_TYPE_MOTD, MSG_SUBTYPE_NONE, motd, NULL);
+    close_and_delete(fp, comp);
+}
+
+void send_rules(object *op) {
+    char buf[MAX_BUF];
+    char rules[HUGE_BUF];
+    FILE *fp;
+    int comp;
+    int size;
+    
+    sprintf(buf, "%s/%s", settings.confdir, settings.rules);
+    if ((fp=open_and_uncompress(buf, 0, &comp)) == NULL) {
+    return;
+    }
+    rules[0]='\0';
+    size=0;
+    while (fgets(buf, MAX_BUF, fp) != NULL) {
+      if( *buf == '#')
+        continue;   
+      strncat(rules+size,buf,HUGE_BUF-size);
+      size+=strlen(buf);
+    }
+    draw_ext_info(NDI_UNIQUE | NDI_GREEN, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_RULES, rules, NULL);
+    close_and_delete(fp, comp);
+}
+
+void send_news(object *op) {
+    char buf[MAX_BUF];
+    char news[HUGE_BUF];
+    char subject[MAX_BUF];
+    FILE *fp;
+    int comp;
+    int size;
+    
+    sprintf(buf, "%s/%s", settings.confdir, settings.news);
+    if ((fp=open_and_uncompress(buf, 0, &comp)) == NULL)
+        return;
+    news[0]='\0';
+    subject[0]='\0';
+    size=0;
+    while (fgets(buf, MAX_BUF, fp) != NULL) {
+      if( *buf == '#')
+        continue; 
+      if ( *buf =='%'){ /* send one news */
+          if (size>0)
+              draw_ext_info_format(NDI_UNIQUE | NDI_GREEN, 0, op, 
+                  MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_NEWS,
+                  "!! informations: %s\n%s",
+                  "%s\n%s",
+                  subject, news); /*send previously read news*/
+          strcpy(subject,buf+1);
+          strip_endline(subject);
+          size=0;
+          news[0]='\0';
+      }
+      else{
+          strncat(news+size,buf,HUGE_BUF-size);
+          size+=strlen(buf);
+      }
+    }
+    
+    draw_ext_info_format(NDI_UNIQUE | NDI_GREEN, 0, op, 
+        MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_NEWS,
+        "!! informations: %s\n%s\n",
+        "%s\n%s",
+        subject, news);
     close_and_delete(fp, comp);
 }
 
@@ -262,6 +324,8 @@ int add_player(NewSocket *ns) {
 
     CLEAR_FLAG(p->ob, FLAG_FRIENDLY);
     add_friendly_object(p->ob);
+    send_rules(p->ob);
+    send_news(p->ob);
     display_motd(p->ob);
     get_name(p->ob);
     return 0;

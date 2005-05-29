@@ -385,3 +385,22 @@ void strip_media_tag(char *message){
     }
     *dest='\0';
 }
+
+char* strrstr(const char* haystack, const char* needle){
+    const char* lastneedle;
+    lastneedle=NULL;
+    while(haystack=strstr(haystack,needle)){
+        lastneedle=haystack;
+        haystack++;
+    }
+    return lastneedle;
+        
+}
+#define EOL_SIZE (sizeof("\n")-1)
+void strip_endline(char* buf){
+    if (strlen(buf)<sizeof("\n")){
+        return;  
+    }
+    if (!strcmp(buf+strlen(buf)-EOL_SIZE,"\n"))
+        buf[strlen(buf)-EOL_SIZE]='\0';    
+}

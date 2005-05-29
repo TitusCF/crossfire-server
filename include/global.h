@@ -352,6 +352,8 @@ typedef struct Settings {
     char    who_format[MAX_BUF]; /* The format that the who command should use */
     char    who_wiz_format[MAX_BUF]; /* The format that the who command should use when called by a dm*/
     char    motd[MAX_BUF];    /* name of the motd file */
+    char    *rules;           /* name of rules file*/
+    char    *news;            /* name of news file*/
     char    dm_mail[MAX_BUF]; /* DM's Email address */
 
     /* The meta_ is information for the metaserver.  These are set in 

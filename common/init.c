@@ -74,6 +74,8 @@ SET_FRIENDLY_FIRE,
 "", /* Who format specifier */
 "", /* who wiz format specifier */
 MOTD,
+"rules",
+"news",
 "",		/* DM_MAIL */
 0,		/* This and the next 3 values are metaserver values */
 "",
