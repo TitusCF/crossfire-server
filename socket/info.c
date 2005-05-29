@@ -438,7 +438,7 @@ void set_title(object *pl, char *buf)
     if (pl->contr->own_title[0]=='\0')
 	sprintf(buf,"Player: %s the %s",pl->name,pl->contr->title);
     else
-	sprintf(buf,"Player: %s the %s",pl->name,pl->contr->own_title);
+	sprintf(buf,"Player: %s %s",pl->name,pl->contr->own_title);
 }
 
 

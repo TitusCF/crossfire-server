@@ -319,9 +319,9 @@ int command_who (object *op, char *params) {
      * new formats have been specified, and if not we will use the old defaults.
      */
     if (!strcmp(settings.who_format,"")) 
-    	strcpy(settings.who_format, "%N_the_%t%h%d%n[%m]");
+    	strcpy(settings.who_format, "%N_%T%t%h%d%n[%m]");
     if (!strcmp(settings.who_wiz_format,"")) 
-    	strcpy(settings.who_wiz_format, "%N_the_%t%h%d%nLevel %l [%m](@%i)(%c)");
+    	strcpy(settings.who_wiz_format, "%N_%T%t%h%d%nLevel %l [%m](@%i)(%c)");
     if (op == NULL || QUERY_FLAG(op, FLAG_WIZ))
     	format=settings.who_wiz_format;
     else
@@ -401,6 +401,7 @@ void display_who_entry(object *op, player *pl, char *format) {
  * the values are:
  * N	Name of character
  * t	title of character
+ * T    the optional "the " sequence value (depend if player has own_title or not)
  * c	count
  * n	newline
  * h	[Hostile] if character is hostile, nothing otherwise
@@ -423,6 +424,11 @@ void get_who_escape_code_value(char *return_val, const char letter, player *pl) 
 		          break;
 	case 't' :    strcpy(return_val,(pl->own_title[0]=='\0'?pl->title:pl->own_title));
 			  break;
+    case 'T' :    if (pl->own_title[0]=='\0')
+                      strcpy(return_val,"the ");
+                  else
+                      *return_val='\0';
+              break;
 	case 'c' :    sprintf(return_val,"%d",pl->ob->count);
 			  break;
 	case 'n' :    strcpy(return_val, "\n\0"); 
