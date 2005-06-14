@@ -570,7 +570,7 @@ int change_abil(object *op, object *tmp) {
   }
   if(tmp->stats.luck) {
     success=1;
-    if(flag>0) {
+    if(flag*tmp->stats.luck>0) {
       (*draw_info_func)(NDI_UNIQUE, 0, op,"You feel more lucky.");
     } else {
       (*draw_info_func)(NDI_UNIQUE, 0, op,"You feel less lucky.");
