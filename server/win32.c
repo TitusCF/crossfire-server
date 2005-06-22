@@ -163,9 +163,14 @@ void rewinddir(DIR *dir_Info)
 
   Those functions are called while init is still being done, so no logging available.
 
+  Not useful for plugins, though.
+
  */
 
 int bRunning;
+
+#ifndef PYTHON_PLUGIN_EXPORTS
+
 SERVICE_STATUS m_ServiceStatus;
 SERVICE_STATUS_HANDLE m_ServiceStatusHandle;
 #define SERVICE_NAME        "Crossfire"
@@ -333,3 +338,4 @@ void service_handle( )
 	StartServiceCtrlDispatcher( DispatchTable );
     exit( 0 );
     }
+#endif /* PYTHON_PLUGIN_EXPORTS */
