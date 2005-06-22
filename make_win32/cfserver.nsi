@@ -85,6 +85,15 @@ Section "Crossfire Server (required)" cf
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Crossfire Server" "DisplayName" "Crossfire Server (remove only)"
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Crossfire Server" "UninstallString" "$INSTDIR\Uninst.exe"
   WriteUninstaller "Uninst.exe"
+
+  ;Ask about Windows service
+  MessageBox MB_YESNO|MB_ICONQUESTION "Register Crossfire server as a Windows service?" /SD IDYES IDNO dont_install
+
+        ;Install service
+        DetailPrint "Registering service..."
+        ExecWait '"$INSTDIR\Crossfire32.exe" -regsrv'
+        
+  dont_install:
 SectionEnd
 
 Section "Python plugin" py
@@ -108,6 +117,9 @@ UninstallText "This will uninstall Crossfire Server from your system"
 
 Section "un.Crossfire Server" un_cf
   SectionIn RO
+  ;Unregister service if it was installed
+  ExecWait '"$INSTDIR\Crossfire32.exe" -unregsrv'
+
   ;Delete Files
   Delete "$INSTDIR\crossfire32.exe"
   Delete "$INSTDIR\python24.dll"
