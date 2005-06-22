@@ -123,6 +123,13 @@ struct Command_Line_Options options[] = {
 {"-tmpdir", 1, 1, set_tmpdir},
 {"-log", 1, 1, set_logfile},
 
+#ifdef WIN32
+/* Windows service stuff */
+{"-regsrv", 0, 1, service_register},
+{"-unregsrv", 0, 1, service_unregister},
+{"-srv", 0, 1, service_handle},
+#endif
+
 /* Pass 2 functions.  Most of these could probably be in pass 1, 
  * as they don't require much of anything to bet set up.
  */

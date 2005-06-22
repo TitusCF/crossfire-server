@@ -158,3 +158,178 @@ void rewinddir(DIR *dir_Info)
 	dir_Info->handle = handle;
 	free(filespec);
 }
+
+/* Service-related stuff
+
+  Those functions are called while init is still being done, so no logging available.
+
+ */
+
+int bRunning;
+SERVICE_STATUS m_ServiceStatus;
+SERVICE_STATUS_HANDLE m_ServiceStatusHandle;
+#define SERVICE_NAME        "Crossfire"
+#define SERVICE_DISPLAY     "Crossfire server"
+#define SERVICE_DESCRIPTION "Crossfire is a multiplayer online RPG game."
+
+#include <winsvc.h>
+
+void service_register( )
+    {
+	char strDir[ 1024 ];
+	HANDLE schSCManager,schService;
+    char* strDescription = SERVICE_DESCRIPTION;
+
+	GetModuleFileName( NULL, strDir, 1024 );
+
+	schSCManager = OpenSCManager( NULL,NULL,SC_MANAGER_ALL_ACCESS );
+ 
+	if (schSCManager == NULL)
+        {
+        printf( "openscmanager failed" );
+		exit( 1 );
+        }
+
+    schService = CreateService(schSCManager, SERVICE_NAME, SERVICE_DISPLAY,           // service name to display 
+        SERVICE_ALL_ACCESS,        // desired access 
+        SERVICE_WIN32_OWN_PROCESS, // service type 
+        SERVICE_DEMAND_START,      // start type 
+        SERVICE_ERROR_NORMAL,      // error control type 
+        strDir,        // service's binary 
+        NULL,                      // no load ordering group 
+        NULL,                      // no tag identifier 
+        NULL,                      // no dependencies 
+        NULL,                      // LocalSystem account 
+        NULL);                     // no password 
+ 
+    if (schService == NULL) 
+        {
+        printf( "createservice failed" );
+        exit( 1 );
+        }
+
+    ChangeServiceConfig2( schService, SERVICE_CONFIG_DESCRIPTION, &strDescription );
+
+    CloseServiceHandle(schService);
+    CloseServiceHandle( schSCManager );
+    exit( 0 );
+    }
+
+void service_unregister( )
+    {
+	HANDLE schSCManager;
+	SC_HANDLE hService;
+
+	schSCManager = OpenSCManager(NULL,NULL,SC_MANAGER_ALL_ACCESS);
+ 
+	if (schSCManager == NULL)
+        {
+        printf( "open failed" );
+		exit( 1 );
+        }
+
+	hService=OpenService(schSCManager, SERVICE_NAME, SERVICE_ALL_ACCESS);
+
+	if (hService == NULL) 
+        {
+        printf( "openservice failed" );
+		exit( 1 );
+        }
+
+	if(DeleteService(hService)==0)
+        {
+        printf( "Delete failed" );
+		exit( 1 );
+        }
+
+	if(CloseServiceHandle(hService)==0)
+        {
+        printf( "close failed" );
+		exit( 1 );
+        }
+
+    if ( !CloseServiceHandle( schSCManager ) )
+        {
+        printf( "close schSCManager failed" );
+        exit( 1 );
+        }
+
+    exit( 0 );
+    }
+
+void WINAPI ServiceCtrlHandler(DWORD Opcode)
+    {
+    switch(Opcode) 
+        {
+        case SERVICE_CONTROL_PAUSE: 
+            m_ServiceStatus.dwCurrentState = SERVICE_PAUSED; 
+            break; 
+ 
+        case SERVICE_CONTROL_CONTINUE: 
+            m_ServiceStatus.dwCurrentState = SERVICE_RUNNING; 
+            break; 
+
+        case SERVICE_CONTROL_STOP: 
+            m_ServiceStatus.dwWin32ExitCode = 0; 
+            m_ServiceStatus.dwCurrentState  = SERVICE_STOPPED; 
+            m_ServiceStatus.dwCheckPoint    = 0; 
+            m_ServiceStatus.dwWaitHint      = 0; 
+ 
+            SetServiceStatus (m_ServiceStatusHandle,&m_ServiceStatus);
+
+			bRunning = 0;
+
+            LOG( llevInfo, "Service stopped.\n" );
+
+			break;
+ 
+        case SERVICE_CONTROL_INTERROGATE: 
+            break; 
+        }      
+    return; 
+    }
+
+extern int main( int argc, char** argv );
+
+void WINAPI ServiceMain(DWORD argc, LPTSTR *argv)
+    {
+	char strDir[ 1024 ];
+    char* strSlash;
+
+	GetModuleFileName( NULL, strDir, 1024 );
+    strSlash = strrchr( strDir, '\\' );
+    if ( strSlash )
+        *strSlash = '\0';
+    chdir( strDir );
+
+    m_ServiceStatus.dwServiceType        = SERVICE_WIN32; 
+    m_ServiceStatus.dwCurrentState       = SERVICE_START_PENDING; 
+    m_ServiceStatus.dwControlsAccepted   = SERVICE_ACCEPT_STOP; 
+    m_ServiceStatus.dwWin32ExitCode      = 0; 
+    m_ServiceStatus.dwServiceSpecificExitCode = 0; 
+    m_ServiceStatus.dwCheckPoint         = 0; 
+    m_ServiceStatus.dwWaitHint           = 0; 
+ 
+    m_ServiceStatusHandle = RegisterServiceCtrlHandler( SERVICE_NAME, ServiceCtrlHandler );
+    if (m_ServiceStatusHandle == (SERVICE_STATUS_HANDLE)0) 
+        { 
+        return; 
+        }     
+
+    m_ServiceStatus.dwCurrentState       = SERVICE_RUNNING; 
+    m_ServiceStatus.dwCheckPoint         = 0; 
+    m_ServiceStatus.dwWaitHint           = 0;  
+    SetServiceStatus (m_ServiceStatusHandle, &m_ServiceStatus);
+
+    bRunning = 1;
+    main( 0, NULL );
+
+    return;
+    }
+
+void service_handle( )
+    {
+    SERVICE_TABLE_ENTRY DispatchTable[ ] = { { SERVICE_NAME, ServiceMain },{ NULL, NULL } };  
+	StartServiceCtrlDispatcher( DispatchTable );
+    exit( 0 );
+    }

@@ -17,6 +17,14 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Server can now be used as a Windows server, with command-line options
+ -regsrv (register server and exit), -unregsrv (unregister server and exit)
+ and -srv (should not be used directly, for the service control manager call).
+server/init.c: add command-line options.
+server/main.c: loop is no more infinite under Windows. Save and clean after it, too.
+server/win32.c: add service routines.
+Ryo 2005-06-22
+
 common/living.c: Print correct message when (un-)wearing items with negative
    luck.
 Andreas Kirschbaum 2005-06-14

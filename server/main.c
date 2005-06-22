@@ -1211,7 +1211,8 @@ int main(int argc, char **argv)
   int evtid;
   CFParm CFP;
 #ifdef WIN32 /* ---win32 this sets the win32 from 0d0a to 0a handling */
-	_fmode = _O_BINARY ;
+    _fmode = _O_BINARY ;
+    bRunning = 1;
 #endif
 
 #ifdef DEBUG_MALLOC_LEVEL
@@ -1222,7 +1223,12 @@ int main(int argc, char **argv)
   settings.argv=argv;
   init(argc, argv);
   initPlugins();        /* GROS - Init the Plugins */
+#ifdef WIN32
+  while ( bRunning )
+      {
+#else
   for(;;) {
+#endif 
     nroferrors = 0;
 
     doeric_server();
@@ -1237,5 +1243,7 @@ int main(int argc, char **argv)
 
     sleep_delta();	/* Slepp proper amount of time before next tick */
   }
+  emergency_save( 0 );
+  cleanup( );
   return 0;
 }
