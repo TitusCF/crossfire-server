@@ -17,6 +17,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+lib/settings: Turn of fastclock as default option.
+socket/loop.c: Change behaviour of metaserver/flushmaps/watchdog
+   calls if fastclock is set - don't do those any faster than normal.
+MSW 2005-06-22
+
 Server can now be used as a Windows server, with command-line options
  -regsrv (register server and exit), -unregsrv (unregister server and exit)
  and -srv (should not be used directly, for the service control manager call).

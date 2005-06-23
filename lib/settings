@@ -40,7 +40,7 @@ worldmaptilesizey 50
 # which could be a lenghtly process.
 
 dynamiclevel 0
-fastclock 1
+fastclock 0
 
 # item_power_factor is the relation of how the players equipped item_power
 # total relates to there overall level.  If 1.0, then sum of the characters

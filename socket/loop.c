@@ -451,24 +451,38 @@ static void block_until_new_connection()
 	cycles++;
 	if (cycles%2 == 0)
 	    tick_the_clock();
-	if (cycles == 7) {
-	    metaserver_update();
-	    cycles=1;
-	}
+
 	FD_ZERO(&readfs);
 	FD_SET((uint32)init_sockets[0].fd, &readfs);
+
+	/* If fastclock is set, we need to seriously slow down the updates
+	 * to the metaserver as well as watchdog.  Do same for flush_old_maps() -
+	 * that is time sensitive, so there is no good reason to call it 2000 times
+	 * a second.
+	 */
 	if (settings.fastclock > 0) {
+#ifdef WATCHDOG
+	    if (cycles % 120000 == 0) {
+		watchdog();
+		flush_old_maps();
+	    }
+#endif
+	    if (cycles == 720000) {
+		metaserver_update();
+		cycles=1;
+	    }
 	    Timeout.tv_sec=0;
 	    Timeout.tv_usec=50;
 	} else {
 	    Timeout.tv_sec=60;
 	    Timeout.tv_usec=0;
+	    if (cycles == 7) {
+		metaserver_update();
+		cycles=1;
+	    }
+	    flush_old_maps();
 	}
-#ifdef WATCHDOG
-	watchdog();
-#endif
-	flush_old_maps();
-	}
+    }
     while (select(socket_info.max_filedescriptor, &readfs, NULL, NULL, &Timeout)==0);
 
     reset_sleep(); /* Or the game would go too fast */
