@@ -1,4 +1,4 @@
-#!@PERL@
+#!/usr/bin/perl
 # $Id$
 
 # Copyright 2000 by Mark Wedel.
@@ -26,6 +26,11 @@ $REMOVE_SERVER=600;
 
 # UPDATE_SYNC determines how often we update the HTML_FILE and CACHE_FILE.
 $UPDATE_SYNC=300;
+
+# IP_INTERVAL is how often (in seconds) same IP can request metaserver
+# info.  This is to prevent DOS attacks.
+
+$IP_INTERVAL=5;
 
 # For gathering some anonymous statistics. You probably want to use
 # MRTG/RRDTOOL for generating statistics from the file.
@@ -90,16 +95,23 @@ while (1) {
 	    # ourselves up to someone intentionally designing something
 	    # that causes these to block, and then have us fork a huge
 	    # number of process potentially filling up our proc table.
-	    if (accept NEWSOCKET, SOCKET1) {
-		foreach $i (keys %data) {
-		    # Report idle time to client, and not last update
-		    # as we received in seconds since epoch.
-		    ($ip, $time, $rest) = split /\|/, $data{$i}, 3;
-		    $newtime = $cur_time - $time;
-		    print NEWSOCKET "$ip|$newtime|$rest\n";
+	    if ($ipaddr=accept NEWSOCKET, SOCKET1) {
+		($port, $ip ) = sockaddr_in( $ipaddr );
+		$dq = join('.',unpack('C4', $ip));
+		if ($ip_times{$dq} > time) {
+		    close(NEWSOCKET);
+ 		} else {
+		    $ip_times{$dq} = time + $IP_INTERVAL;
+		    foreach $i (keys %data) {
+		        # Report idle time to client, and not last update
+		    	# as we received in seconds since epoch.
+			($ip, $time, $rest) = split /\|/, $data{$i}, 3;
+		    	$newtime = $cur_time - $time;
+		    	print NEWSOCKET "$ip|$newtime|$rest\n";
+		    }
+		    close(NEWSOCKET);
+		    $stats_requesthits++;
 		}
-		close(NEWSOCKET);
-		$stats_requesthits++;
 	    }
 	}
     }

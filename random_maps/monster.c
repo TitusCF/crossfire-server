@@ -69,6 +69,7 @@ void place_monsters(mapstruct *map, char *monsterstyle, int difficulty,RMParms *
   int failed_placements;
   sint64 exp_per_sq, total_experience;
   int number_monsters=0;
+  archetype *at;
 
   sprintf(styledirname,"%s","/styles/monsterstyles");
   style_map = find_style(styledirname,monsterstyle,difficulty);
@@ -96,7 +97,8 @@ void place_monsters(mapstruct *map, char *monsterstyle, int difficulty,RMParms *
 	 new_monster->y = y;
 	 insert_multisquare_ob_in_map(new_monster,map);
 	 total_experience+= this_monster->stats.exp;
-	 number_monsters++;
+	 for(at = new_monster->arch; at != NULL; at = at->more)
+	     number_monsters++;
 	 RP->total_map_hp+=new_monster->stats.hp;  /*  a global count */
     }
     else {
