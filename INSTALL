@@ -1,155 +1,231 @@
-Directions for installation:
+Installation Instructions
+*************************
 
-Note: Crossfire uses a great deal of floating point, and expects the syntax
-to be 'x.y'.  In some environments, the language may be dfferent, so that
-the format for floats is 'x,y' or something similar.  If this is the
-situation for you, you need to change your environment so that floats are in
-the 'x.y' format.
+Copyright (C) 1994, 1995, 1996, 1999, 2000, 2001, 2002, 2004 Free
+Software Foundation, Inc.
 
-1) You need to meet the following requirements:
-  A) 3 to 5 Megabytes of free disk space for object files (note that
-  uncompress map files will take a lot more)
-  B) A compiler that understands ANSI.
+This file is free documentation; the Free Software Foundation gives
+unlimited permission to copy, distribute and modify it.
 
-  If you don't meet both these requirements, you will be unable to proceed
-  further.
+Basic Installation
+==================
 
-2) Run the 'configure' script.  You will need to supply a -prefix=path
-   for the program to install into unless you want the files in
-   /usr/games/crossfire.
+These are generic installation instructions.
 
-   By default, it will create a var, share, bin & man directory in the path
-   provided.  share, bin, and man can in theory be read-only, var needs
-   to be read/write.  There are many files in the share directory, so
-   I don't suggest it be shared with other programs.
+   The `configure' shell script attempts to guess correct values for
+various system-dependent variables used during compilation.  It uses
+those values to create a `Makefile' in each directory of the package.
+It may also create one or more `.h' files containing system-dependent
+definitions.  Finally, it creates a shell script `config.status' that
+you can run in the future to recreate the current configuration, and a
+file `config.log' containing compiler output (useful mainly for
+debugging `configure').
 
-   The standard configure options can be given to specify a location
-   (--prefix=/path, --datadir=/path, --bindir, --localstatedir and --mandir).
-   are: --prefix=/usr/games/crossfire, --datadir=/usr/games/crossfire/share
-   --bindir=/usr/games/crossfire/bin, and --mandir=/usr/games/crossfire/man,
-   --localstatedir=/usr/games/crossfire/var
+   It can also use an optional file (typically called `config.cache'
+and enabled with `--cache-file=config.cache' or simply `-C') that saves
+the results of its tests to speed up reconfiguring.  (Caching is
+disabled by default to prevent problems with accidental use of stale
+cache files.)
 
-   Note that the default bin and man directories are fairly non standard
-   and are usually not searched by the standard PATH and MANPATH
-   environmental variables.  It may be desirable to set these to a more
-   standard location.  There is no requirement that all the subdirectories
-   fall into the same overall directory structure (bin could be /usr/bin,
-   man could be /usr/local/man, datadir /usr/games/crossfire, and 
-   localstatedir could be /var/crossfire.
+   If you need to do unusual things to compile the package, please try
+to figure out how `configure' could check whether to do them, and mail
+diffs or instructions to the address given in the `README' so they can
+be considered for the next release.  If you are using the cache, and at
+some point `config.cache' contains results you don't want to keep, you
+may remove or edit it.
 
-   If you plan to run multiple crossfire servers, all directories except the
-   localstatedir can be shared between all the servers.  localstatedir
-   should be unique to each server.  This will cause each server to have
-   their own unique player files as well as highscore.  You can try using a
-   common localstatedir, but there is no guarantee it will work, and any
-   problems reported related to such a configuration are likely to be
-   ignored.
+   The file `configure.ac' (or `configure.in') is used to create
+`configure' by a program called `autoconf'.  You only need
+`configure.ac' if you want to change it or regenerate `configure' using
+a newer version of `autoconf'.
 
-   All file paths should start with '/'.  Don't use relative filepaths.
+The simplest way to compile this package is:
 
-   The configure step should create all the necesary makefiles.  Look
-   at the output and note any errors - if you get errors during the
-   configure stage, there is little point in going further
+  1. `cd' to the directory containing the package's source code and type
+     `./configure' to configure the package for your system.  If you're
+     using `csh' on an old version of System V, you might need to type
+     `sh ./configure' instead to prevent `csh' from trying to execute
+     `configure' itself.
 
-   If you want the python plugin support, you will likely need to
-   add the --with-includes=-I/usr/include/pythonX.Y, where X.Y will vary
-   depending on the version of python installed on your system.
+     Running `configure' takes awhile.  While running, it prints some
+     messages telling which features it is checking for.
 
-3) Edit include/config.h.
-   Most options should be fairly well commented.
-   The default config.h file has pretty sane values, and can be used unchanged.
+  2. Type `make' to compile the package.
 
-4) Compile the program:  type 'make'.  It should take a little while.  If you
-   get errors that abort the compile, copy them down (either using cut and
-   paste, or redirect the output of the compile to a file), and send those to
-   the bug alias (crossfire-devel@listserv.real-time.com), along with what
-   machine type & OS you are using.  Also, include the compile line with its
-   various options.  A message saying 'it failed to compile main.c' tells me
-   little, and I can not fix problems with that little detail.
+  3. Optionally, type `make check' to run any self-tests that come with
+     the package.
 
-5) Install the program by running 'make install'
+  4. Type `make install' to install the programs and any data files and
+     documentation.
 
-6) Crossfire requires maps installed into the directory specified by
-   --datadir (or the default).  Maps are a seperate distribution available on
-   the ftp server.  The maps can be unpacked directly into the location
-   specified by --datadir.  All the map files need to be readable by which
-   ever uid is running the server - if multiple people will be running
-   servers, the map permissions may need to get updated.
+  5. You can remove the program binaries and object files from the
+     source code directory by typing `make clean'.  To also remove the
+     files that `configure' created (so you can compile the package for
+     a different kind of computer), type `make distclean'.  There is
+     also a `make maintainer-clean' target, but that is intended mainly
+     for the package's developers.  If you use it, you may have to get
+     all sorts of other programs in order to regenerate files that came
+     with the distribution.
 
-7) It might be useful to edit "share/crossfire/motd" (MessageOfToDay) file.
+Compilers and Options
+=====================
 
-8) If you want your server to be publically advertised to interested
-    players, edit the share/crossfire/settings file.  The metaserver host
-    and port are accurate - your host and comment should be updated.
+Some systems require unusual options for compilation or linking that the
+`configure' script does not know about.  Run `./configure --help' for
+details on some of the pertinent environment variables.
 
-9) By default, the installation process assumes that only one user id
-    will actually be used to run the game, and directory and file permissions
-    are set as such.  If multiple users will run the game, permissions on
-    many files will need to be updated (lib/bookarch, lib/unique_items,
-    lib/players, lib/temp.maps, and perhaps other).
+   You can give `configure' initial values for configuration parameters
+by setting variables in the command line or in the environment.  Here
+is an example:
 
-++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-COMMON PROBLEMS:
+     ./configure CC=c89 CFLAGS=-O2 LIBS=-lposix
 
-P) The server complains that ../lib/unique-items/??? does not exist, and
-the game crashes shortly there after.
+   *Note Defining Variables::, for more details.
 
-S) Just create the directory.  It should be created by the make install
-process, however, if installing by hand, it may be missing. 
-------------------------------------------------------------------------------
-P) It can't find the file stdarg.h, and thus the compile fails.
+Compiling For Multiple Architectures
+====================================
 
-S) If using gcc, stdarg.h should be installed as part of the normal
-installation (with fixincludes).  If it is missing, gcc was not installed
-correctly.
+You can compile the package for more than one kind of computer at the
+same time, by placing the object files for each architecture in their
+own directory.  To do this, you must use a version of `make' that
+supports the `VPATH' variable, such as GNU `make'.  `cd' to the
+directory where you want the object files and executables to go and run
+the `configure' script.  `configure' automatically checks for the
+source code in the directory that `configure' is in and in `..'.
 
-It is also possible that you are using an old version of gcc that does not
-have stdarg as part of its include files.  Newer versions have this
-file.
+   If you have to use a `make' that does not support the `VPATH'
+variable, you have to compile the package for one architecture at a
+time in the source code directory.  After you have installed the
+package for one architecture, use `make distclean' before reconfiguring
+for another architecture.
 
-If not using gcc, stdarg.h should be provided by your vendor - if you lack
-this file, you are probably lacking an ANSI-C compiler.
+Installation Names
+==================
 
-------------------------------------------------------------------------------
+By default, `make install' will install the package's files in
+`/usr/local/bin', `/usr/local/man', etc.  You can specify an
+installation prefix other than `/usr/local' by giving `configure' the
+option `--prefix=PREFIX'.
 
-P) I am using Openwindows (or perhaps other windowing system), and
-during the compiling of crossedit, it complains about it not being
-able to find some header files, like Xaw/Panner.h
+   You can specify separate installation prefixes for
+architecture-specific files and architecture-independent files.  If you
+give `configure' the option `--exec-prefix=PREFIX', the package will
+use PREFIX as the prefix for installing programs and libraries.
+Documentation and other data files will still use the regular prefix.
 
-S) This is a problem in Openwindows 2, in which those header files
-are not included (I don't think the library is either).  The only solution
-is to upgrade to another windowing system (X11R5, X11R6, or Openwindows
-3).
+   In addition, if you use an unusual directory layout you can give
+options like `--bindir=DIR' to specify different values for particular
+kinds of files.  Run `configure --help' for a list of the directories
+you can set and what kinds of files go in them.
 
-The other solution is just to not compile crossedit.  It is not needed
-to play the game, only to edit/create maps.  To do this, you remove
-the crossedit entry from the SUBDIRS line, and go back to stage
-3 of the make process (where you make all the Makefiles).
+   If the package supports it, you can cause programs to be installed
+with an extra prefix or suffix on their names by giving `configure' the
+option `--program-prefix=PREFIX' or `--program-suffix=SUFFIX'.
 
-------------------------------------------------------------------------------
-P) I can not save characters.
+Optional Features
+=================
 
-S) 
-1) The player save directory was not created.  make install will create
-this directory, but if you did not use make install, this could be the
-problem.  You can create the directory by hand by doing
-'mkdir LIBDIR/players', where LIBDIR is the library directory
-that you set in crosssite.def
+Some packages pay attention to `--enable-FEATURE' options to
+`configure', where FEATURE indicates an optional part of the package.
+They may also pay attention to `--with-PACKAGE' options, where PACKAGE
+is something like `gnu-as' or `x' (for the X Window System).  The
+`README' should mention any `--enable-' and `--with-' options that the
+package recognizes.
 
-2) The save directory's permissions are not set properly for the uid/gid
-that crossfire is running under.  Situtation that may have caused
-this is that 'mark' installed the program, but 'frank' is running
-the program, either at the shell prompt, or because the program
-has been chmod u+s with frank's id.
+   For packages that use the X Window System, `configure' can usually
+find the X include and library files automatically, but if it doesn't,
+you can use the `configure' options `--x-includes=DIR' and
+`--x-libraries=DIR' to specify their locations.
 
-------------------------------------------------------------------------------
-P) I have problems compiling on HP/UX systems.
+Specifying the System Type
+==========================
 
-S) Use gcc - the standard cc with HP/UX apparantly will not compile
-crossfire correctly.
+There may be some features `configure' cannot figure out automatically,
+but needs to determine by the type of machine the package will run on.
+Usually, assuming the package is built to be run on the _same_
+architectures, `configure' can figure that out, but if it prints a
+message saying it cannot guess the machine type, give it the
+`--build=TYPE' option.  TYPE can either be a short name for the system
+type, such as `sun4', or a canonical name which has the form:
 
-------------------------------------------------------------------------------
-Other problems?  See the section REPORTING BUGS in the README file.  Follow
-all instructions there when submitting a bug report.  If you do not, and
-provide insufficient information for me to help out, I will likely just mail
-you back telling you to follow those instructions.
+     CPU-COMPANY-SYSTEM
+
+where SYSTEM can have one of these forms:
+
+     OS KERNEL-OS
+
+   See the file `config.sub' for the possible values of each field.  If
+`config.sub' isn't included in this package, then this package doesn't
+need to know the machine type.
+
+   If you are _building_ compiler tools for cross-compiling, you should
+use the `--target=TYPE' option to select the type of system they will
+produce code for.
+
+   If you want to _use_ a cross compiler, that generates code for a
+platform different from the build platform, you should specify the
+"host" platform (i.e., that on which the generated programs will
+eventually be run) with `--host=TYPE'.
+
+Sharing Defaults
+================
+
+If you want to set default values for `configure' scripts to share, you
+can create a site shell script called `config.site' that gives default
+values for variables like `CC', `cache_file', and `prefix'.
+`configure' looks for `PREFIX/share/config.site' if it exists, then
+`PREFIX/etc/config.site' if it exists.  Or, you can set the
+`CONFIG_SITE' environment variable to the location of the site script.
+A warning: not all `configure' scripts look for a site script.
+
+Defining Variables
+==================
+
+Variables not defined in a site shell script can be set in the
+environment passed to `configure'.  However, some packages may run
+configure again during the build, and the customized values of these
+variables may be lost.  In order to avoid this problem, you should set
+them in the `configure' command line, using `VAR=value'.  For example:
+
+     ./configure CC=/usr/local2/bin/gcc
+
+will cause the specified gcc to be used as the C compiler (unless it is
+overridden in the site shell script).
+
+`configure' Invocation
+======================
+
+`configure' recognizes the following options to control how it operates.
+
+`--help'
+`-h'
+     Print a summary of the options to `configure', and exit.
+
+`--version'
+`-V'
+     Print the version of Autoconf used to generate the `configure'
+     script, and exit.
+
+`--cache-file=FILE'
+     Enable the cache: use and save the results of the tests in FILE,
+     traditionally `config.cache'.  FILE defaults to `/dev/null' to
+     disable caching.
+
+`--config-cache'
+`-C'
+     Alias for `--cache-file=config.cache'.
+
+`--quiet'
+`--silent'
+`-q'
+     Do not print messages saying which checks are being made.  To
+     suppress all normal output, redirect it to `/dev/null' (any error
+     messages will still be shown).
+
+`--srcdir=DIR'
+     Look for the package's source code in directory DIR.  Usually
+     `configure' can determine that directory automatically.
+
+`configure' also accepts some other, not widely useful, options.  Run
+`configure --help' for more details.
+

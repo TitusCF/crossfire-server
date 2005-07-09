@@ -17,6 +17,26 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Add a --with-python option to configure.  Also, update the python
+detection script to check for 2.5 (not out yet, but might as well be prepared.)
+Will try to commit files in proper order so that dependency checking is correct
+and it won't try to rebuild makefiles or other files.
+--
+acinclude: Updated checks for --with-python
+aclocal.m4: updated
+configure.ac,configure: Updated checks for --with-python
+config.sub, config.guess - update to latest versions
+INSTALL: Updated build directions
+MSW 2005-07-08
+
+lib/Makefile.am, lib/Makefile.in: Remove map_check from normal distribution
+   due to different license on file.
+random_maps/monster.c: Reduce monster density on random maps - take into account
+   size of monsters when calculating density.
+utils/metaserver.pl.in: At a timeout value that limits how often clients can
+   ask for metaserver info.
+MSW 2005-07-08
+
 lib/settings: Turn of fastclock as default option.
 socket/loop.c: Change behaviour of metaserver/flushmaps/watchdog
    calls if fastclock is set - don't do those any faster than normal.
