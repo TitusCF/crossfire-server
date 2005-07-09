@@ -17,8 +17,8 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
-configure.ac, configure, aclocal.m4: Add AM_MAINTAINER_MODE macro to
-   configure.ac - this should hopefully supress auto regeneration of
+configure.ac, configure, aclocal.m4, Makefile.in: Add AM_MAINTAINER_MODE
+   macro to configure.ac - this should hopefully supress auto regeneration of
    makefiles.in
 MSW 2005-07-08
 
