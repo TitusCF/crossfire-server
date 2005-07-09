@@ -35,6 +35,10 @@ AC_PROG_AWK
 AC_ARG_ENABLE(dmalloc, [ --enable-dmalloc    Use the dmalloc library if available, may prevent plugins from working],
 	use_dmalloc=yes, use_dmalloc=no)
 
+AC_ARG_WITH(python, [  --with-python=dir       Directory to look for python headers/library (default=standard system location)	],
+			PYTHON_HOME="$withval")
+
+
 dnl check for some other programs
 AC_PATH_PROG(LATEX, latex)
 AC_PATH_PROG(GZIP, gzip)
