@@ -609,7 +609,7 @@ static void load_settings()
 	    sint16 val = atoi(cp);
 
 	    if (val < -100 || val >100)
-		LOG(llevError, "load_settings: pk_luck_penalty must be between -10 and 10"
+		LOG(llevError, "load_settings: pk_luck_penalty must be between -100 and 100"
 		    ", %d is invalid\n", val);
 	    else
 		settings.pk_luck_penalty = val;

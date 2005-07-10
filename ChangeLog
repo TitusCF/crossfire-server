@@ -17,6 +17,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/init.c: Fix error message.
+Andreas Kirschbaum 2005-07-10
+
 configure.ac, configure, aclocal.m4, Makefile.in: Add AM_MAINTAINER_MODE
    macro to configure.ac - this should hopefully supress auto regeneration of
    makefiles.in
