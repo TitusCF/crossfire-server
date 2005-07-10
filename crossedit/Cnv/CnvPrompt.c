@@ -109,6 +109,7 @@ int CnvPrompt(String msg,String def,String ans,...)
     i = CnvPromptSelect;
     CnvPromptSelect = 0;
     strncpy(ans,CnvPromptString,CnvPromptMax);
+    ans[CnvPromptMax] = '\0';
     return i;
 }
 

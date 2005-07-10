@@ -111,6 +111,7 @@ struct dirent *readdir(DIR * dp)
 	dp->offset++;
 
 	strncpy(dp->dent.d_name, dp->fileinfo.name, _MAX_FNAME);
+	dp->dent.d_name[_MAX_FNAME] = '\0';
 	dp->dent.d_ino = 1;
   /* reclen is used as meaning the length of the whole record */
 	dp->dent.d_reclen = strlen(dp->dent.d_name) + sizeof(char) + sizeof(dp->dent.d_ino) + sizeof(dp->dent.d_reclen) + sizeof(dp->dent.d_off);

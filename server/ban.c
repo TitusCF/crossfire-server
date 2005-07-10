@@ -71,6 +71,7 @@ int checkbanned(const char *login, const char *host)
     strncpy(log_buf, line_buf, num1); /* copy login name into log_buf */
     log_buf[num1] = '\0';
     strncpy(host_buf, indexpos + 1, 64); /* copy host name into host_buf */
+    host_buf[63] = '\0';
     /* Cut off any extra spaces on the host buffer */
     indexpos = host_buf;
     while (!isspace(*indexpos))

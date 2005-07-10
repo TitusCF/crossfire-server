@@ -271,12 +271,15 @@ void check_score(object *op) {
 	return;
     }
     strncpy(new_score.name,op->name,BIG_NAME);
+    new_score.name[BIG_NAME-1] = '\0';
     strncpy(new_score.title,op->contr->own_title,BIG_NAME);
     if(new_score.title[0]=='\0')
 	strncpy(new_score.title,op->contr->title,BIG_NAME);
+    new_score.title[BIG_NAME-1] = '\0';
     strncpy(new_score.killer,op->contr->killer,BIG_NAME);
     if(new_score.killer[0]=='\0')
 	strcpy(new_score.killer,"a dungeon collapse");
+    new_score.killer[BIG_NAME-1] = '\0';
     new_score.exp=op->stats.exp;
     if(op->map == NULL)
 	*new_score.maplevel = '\0';
@@ -358,6 +361,7 @@ void display_high_score(object *op,int max, char *match) {
 	 * mw - 2-12-97
 	 */
 	strncpy(buf,scorebuf,MAX_BUF);
+	buf[MAX_BUF-1] = '\0';
 	cp=buf;
 	while (strlen(cp)> maxchar) {
 	    bp = cp+maxchar-1;

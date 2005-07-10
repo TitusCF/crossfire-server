@@ -17,6 +17,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/{login.c, player.c}: Fix buffer overflow with pl->title. Based on patch
+   by Scott Kullberg.
+crossedit/{Edit.c, Cnv/CnvPrompt.c}, server/{ban.c, hiscore.c, login.c,
+player.c, shop.c, win32.c}: Properly terminate destination string of strncpy
+   with '\0'.
 server/init.c: Fix error message.
 Andreas Kirschbaum 2005-07-10
 

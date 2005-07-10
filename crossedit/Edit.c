@@ -80,7 +80,8 @@ mapstruct *MapMoveScrollResize(mapstruct *source,
     if (!height) height = sy;
     target = get_empty_map (width, height);
 
-    strncpy (target->path, source->path, BIG_NAME);
+    strncpy (target->path, source->path, sizeof(target->path)-1);
+    target->path[sizeof(target->path)-1] = '\0';
 
     MAP_WIDTH(target) = width;
     MAP_HEIGHT(target) = height;  
@@ -937,6 +938,7 @@ static char * MapNameCreate (String path)
     int i,j;
 
     strncpy(name,path,PATH_MAX);
+    name[PATH_MAX] = '\0';
     for(i = strlen(name)-1; i && name[i] != '/';i--);
     i++;
     for(j = i; name[j] && name[j] != '.';j++);

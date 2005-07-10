@@ -258,7 +258,8 @@ static player* get_player(player *p) {
     p->explore=0;
 	p->no_shout=0;			/* default can shout */
 
-    strncpy(p->title,op->arch->clone.name,MAX_NAME);
+    strncpy(p->title, op->arch->clone.name, sizeof(p->title)-1);
+    p->title[sizeof(p->title)-1] = '\0';
     op->race = add_string (op->arch->clone.race);
 
     CLEAR_FLAG(op,FLAG_READY_SKILL); 
@@ -1012,7 +1013,8 @@ int key_change_class(object *op, char key)
 	op->y = y;
 	SET_ANIMATION(op, 2);    /* So player faces south */
 	insert_ob_in_map (op, op->map, op,0);
-	strncpy(op->contr->title,op->arch->clone.name,MAX_NAME);
+	strncpy(op->contr->title, op->arch->clone.name, sizeof(op->contr->title)-1);
+	op->contr->title[sizeof(op->contr->title)-1] = '\0';
 	add_statbonus(op);
 	tmp_loop=allowed_class(op);
     }

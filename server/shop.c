@@ -527,6 +527,7 @@ int get_payment(object *pl, object *op) {
    
     if(op!=NULL&&QUERY_FLAG(op,FLAG_UNPAID)) {
         strncpy(buf,query_cost_string(op,pl,F_BUY),MAX_BUF);
+        buf[MAX_BUF-1] = '\0';
         if(!pay_for_item(op,pl)) {
             uint64 i=query_cost(op,pl,F_BUY) - query_money(pl);
 	    CLEAR_FLAG(op, FLAG_UNPAID);
