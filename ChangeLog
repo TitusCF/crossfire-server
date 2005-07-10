@@ -17,6 +17,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Those changes introduce party spells. Casted spell should be defined through 'other_arch'
+ field. Note that this needs through testing to make sure it works as intended.
+include/spells.h: new spell type, 'party spell'.
+server/spell_util.c: new spell type, party spell.
+Ryo 2005-07-10
+
 server/{login.c, player.c}: Fix buffer overflow with pl->title. Based on patch
    by Scott Kullberg.
 crossedit/{Edit.c, Cnv/CnvPrompt.c}, server/{ban.c, hiscore.c, login.c,

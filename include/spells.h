@@ -128,6 +128,7 @@ extern char *spellpathnames[NRSPELLPATHS];
 #define SP_CAUSE_DISEASE    45
 #define SP_AURA		    46
 #define SP_TOWN_PORTAL	    47
+#define SP_PARTY_SPELL      48
 
 /* Potion subtypes */
 #define POT_SPELL	    1

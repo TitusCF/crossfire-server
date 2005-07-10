@@ -907,6 +907,36 @@ void spell_failure(object *op, int failure,int power, object *skill)
     }
 }
 
+int cast_party_spell(object *op, object *caster,int dir,object *spell_ob, char *stringarg)
+    {
+    int success;
+    player *pl;
+    object *spell;
+
+    if ( !spell_ob->other_arch )
+        {
+        LOG( llevError, "cast_party_spell: empty other arch\n" );
+        return 0;
+        }
+    spell = arch_to_object( spell_ob->other_arch );
+
+    /* Always cast spell on caster */
+    success = cast_spell( op, caster, dir, spell, stringarg );
+
+    if ( caster->contr->party_number == -1 )
+        {
+        remove_ob( spell );
+        return success;
+        }
+    for( pl=first_player; pl!=NULL; pl=pl->next )
+        if( ( pl->ob->contr->party_number == caster->contr->party_number ) && ( pl->ob->map == caster->map ) )
+            {
+            cast_spell( pl->ob, caster, pl->ob->facing, spell, stringarg );
+            }
+    remove_ob( spell );
+    return success;
+    }
+
 /* This is where the main dispatch when someone casts a spell.
  *
  * op is the creature that is owner of the object that is casting the spell -
@@ -1354,6 +1384,9 @@ int cast_spell(object *op, object *caster,int dir,object *spell_ob, char *string
 	case SP_TOWN_PORTAL:
 	    success= cast_create_town_portal (op,caster,spell_ob, dir);
 	    break;
+
+    case SP_PARTY_SPELL:
+        success = cast_party_spell( op, caster, dir, spell_ob, stringarg );
 
 	default:
 	    LOG(llevError,"cast_spell: Unhandled spell subtype %d\n",
