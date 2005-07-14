@@ -205,6 +205,7 @@ int command_wimpy(object *op, char *params);
 int command_brace(object *op, char *params);
 int command_style_map_info(object *op, char *params);
 int command_kill_pets(object *op, char *params);
+int command_quests(object *op, char *params);
 /* c_move.c */
 int command_east(object *op, char *params);
 int command_north(object *op, char *params);
@@ -481,7 +482,7 @@ void check_earthwalls(object *op, mapstruct *m, int x, int y);
 void check_doors(object *op, mapstruct *m, int x, int y);
 void communicate(object *op, char *txt);
 int talk_to_npc(object *op, object *npc, char *txt);
-int talk_to_wall(object *npc, char *txt);
+int talk_to_wall(object *pl, object *npc, char *txt);
 object *find_mon_throw_ob(object *op);
 int can_detect_enemy(object *op, object *enemy, rv_vector *rv);
 int stand_in_light(object *op);

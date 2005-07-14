@@ -309,6 +309,15 @@ extern void make_path_to_file(char *filename);
 extern void free_player(player *pl);
 extern int atnr_is_dragon_enabled(int attacknr);
 extern int is_dragon_pl(object *op);
+/* quest.c */
+extern int quest_is_same_quest( const char* slaying1, const char* slaying2 );
+extern int quest_marker_compatible( object* marker, object* player );
+extern void quest_clear_markers( object* marker, object* player );
+extern char* quest_message_check( char* message, object* pl );
+extern const char* quest_get_name( object* marker );
+extern int quest_is_quest_marker( object* marker );
+extern int quest_is_start( const char* slaying );
+extern int quest_is_end( const char* slaying );
 /* re-cmp.c */
 extern char *re_cmp(char *str, char *regexp);
 /* readable.c */

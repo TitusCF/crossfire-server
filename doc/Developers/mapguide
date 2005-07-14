@@ -181,6 +181,9 @@ loops that go for over typically bring the game to a halt, as the
 objects just multiply and the game consumes more and more cpu time.
 
 
+13) Read the 'quests' file to learn how to manage quests.
+
+
 ------------------------------------------------------------------------------
 The following are various suggestions for making good or interesting
 maps.  A map that does not need to follow all these hints to be accepted,

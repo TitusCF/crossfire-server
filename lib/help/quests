@@ -1,0 +1,8 @@
+The quests command lists the
+quests you are doing or have completed.
+
+Parameters are:
+* nothing: displays current quests.
+* finished: displays finished quests;
+* xxx: displays details for quests (finished
+ or not) with name containing xxx

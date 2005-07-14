@@ -1255,7 +1255,7 @@ void move_marker(object *op) {
   for(tmp=get_map_ob(op->map,op->x,op->y);tmp!=NULL;tmp=tmp->above) {
 	 
 
-    if(tmp->type == PLAYER) { /* we've got someone to MARK */
+    if(tmp->type == PLAYER && quest_marker_compatible( op, tmp ) ) { /* we've got someone to MARK */
 
 		/* remove an old force with a slaying field == op->name */
       for(tmp2=tmp->inv;tmp2 !=NULL; tmp2=tmp2->below) {
@@ -1283,6 +1283,9 @@ void move_marker(object *op) {
 		  update_ob_speed (force);
 		  /* put in the lock code */
 		  force->slaying = add_string(op->slaying);
+          if ( op->lore )
+              force->lore = add_string( op->lore );
+          quest_clear_markers( op, tmp );
 		  insert_ob_in_ob(force,tmp);
 		  if(op->msg)
 		    new_draw_info(NDI_UNIQUE|NDI_NAVY,0,tmp,op->msg);

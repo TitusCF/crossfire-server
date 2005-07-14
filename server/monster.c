@@ -1500,8 +1500,9 @@ void check_doors(object *op, mapstruct *m, int x, int y) {
  * match in 'match', and returns the portion of the message.  This
  * returned portion is in a malloc'd buf that should be freed.
  * Returns NULL if no match is found.
+ * The player is passed too, so that quest-related messages can be checked too.
  */
-static char *find_matching_message(char *msg, char *match)
+static char *find_matching_message(object* pl, char *msg, char *match)
 {
     char *cp=msg, *cp1, *cp2, regex[MAX_BUF], *cp3, gotmatch=0;
 
@@ -1540,17 +1541,18 @@ static char *find_matching_message(char *msg, char *match)
 		    }
 		}
 	    }
-	    if (gotmatch) {
+	    if (gotmatch && ( cp2 = quest_message_check( cp2 + 1, pl ) ) ) {
 		if (cp1) {
-		    cp3 = malloc(cp1 - cp2 + 1);
-		    strncpy(cp3, cp2+1, cp1 - cp2);
-		    cp3[cp1 - cp2] = 0;
+		    cp3 = malloc(cp1 - cp2);
+		    strncpy(cp3, cp2, cp1 - cp2 - 1);
+		    cp3[cp1 - cp2 - 1] = 0;
 		}
 		else {	/* if no next match, just want the rest of the string */
-		    cp3 = strdup_local(cp2 + 1);
+		    cp3 = strdup_local(cp2);
 		}
-		return cp3;
+        return cp3;
 	    }
+        gotmatch = 0;
 	    if (cp1) cp = cp1 + 1;
 	    else return NULL;
 	}
@@ -1594,7 +1596,7 @@ void communicate(object *op, char *txt) {
 
 	for(npc = get_map_ob(mp,x,y); npc != NULL; npc = npc->above) {
 	    if (npc->type == MAGIC_EAR) {
-		(void) talk_to_wall(npc, txt); /* Maybe exit after 1. success? */
+		(void) talk_to_wall(op, npc, txt); /* Maybe exit after 1. success? */
 		if (orig_map != op->map) {
 		    LOG(llevDebug,"Warning: Forced to swap out very recent map - MAX_OBJECTS should probably be increased\n");
 		    return;
@@ -1671,7 +1673,7 @@ int talk_to_npc(object *op, object *npc, char *txt) {
     if(npc->msg == NULL || *npc->msg != '@')
 	return 0;
 
-    cp = find_matching_message(npc->msg, txt);
+    cp = find_matching_message(op, npc->msg, txt );
     if (cp) {
         sprintf(buf,"%s says:",query_name(npc));
 	new_info_map(NDI_NAVY|NDI_UNIQUE, npc->map,buf);
@@ -1682,13 +1684,13 @@ int talk_to_npc(object *op, object *npc, char *txt) {
     return 0;
 }
 
-int talk_to_wall(object *npc, char *txt) {
+int talk_to_wall(object* pl, object *npc, char *txt) {
     char *cp;
 
     if(npc->msg == NULL || *npc->msg != '@')
 	return 0;
 
-    cp = find_matching_message(npc->msg, txt);
+    cp = find_matching_message(pl, npc->msg, txt);
     if (!cp)
 	return 0;
 

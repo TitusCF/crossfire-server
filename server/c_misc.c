@@ -1547,3 +1547,83 @@ int command_kill_pets(object *op, char *params)
     new_draw_info(NDI_UNIQUE, 0, op, "Your pets have been killed.");
     return 0;
 }
+
+/**
+ * Displays all non start/end tags for specified quest.
+ **/
+static void display_quest_details( object* pl, object* quest )
+    {
+    object* item;
+
+    new_draw_info_format( NDI_WHITE, 0, pl, "Quest: %s\n%s\n",
+        quest_get_name( quest ),
+        quest->lore ? quest->lore : "(no description available)" );
+
+    for ( item = pl->inv; item; item = item->below )
+        {
+        if ( ( item != quest )
+            && ( quest_is_quest_marker( item ) )
+            && ( quest_is_same_quest( quest->slaying, item->slaying ) )
+            && ( item->lore ) )
+            {
+            new_draw_info( NDI_WHITE, 0, pl, item->lore );
+            new_draw_info( NDI_WHITE, 0, pl, "------\n" );
+            }
+        }
+    }
+
+/**
+ * Displays quest informations to player.
+ * Acceptable parameters:
+ *  * finished => finished quests only
+ *  * <name> => only this particular quest, finished or not, with details
+ *  * nothing => all current quests
+ *
+ * For current quests, will display either the lore of the non start tags,
+ *  or the lore of start tag if no other tag.
+ **/
+int command_quests( object *pl, char *params )
+    {
+    object* item;
+
+    if ( params && !strcmp( params, "finished" ) )
+        {
+        new_draw_info( NDI_WHITE, 0, pl, "Completed quests:\n" );
+        for ( item = pl->inv; item; item = item->below )
+            {
+            if ( quest_is_quest_marker( item ) && quest_is_end( item->slaying ) )
+                {
+                new_draw_info( NDI_WHITE, 0, pl, quest_get_name( item ) );
+                new_draw_info( NDI_WHITE, 0, pl, "\n" );
+                }
+            }
+        return 1;
+        }
+
+    if ( params )
+        {
+        for ( item = pl->inv; item; item = item->below )
+            {
+            if ( quest_is_quest_marker( item )
+                && strstr( quest_get_name( item ), params ) )
+                {
+                display_quest_details( pl, item );
+                }
+            }
+        return 1;
+        }
+
+    /* Display current quests */
+    new_draw_info( NDI_WHITE, 0, pl, "Current quests:\n" );
+    for ( item = pl->inv; item; item = item->below )
+        {
+        if ( quest_is_quest_marker( item )
+            && quest_is_start( item->slaying ) )
+            {
+            new_draw_info( NDI_WHITE, 0, pl, quest_get_name( item ) );
+            new_draw_info( NDI_WHITE, 0, pl, "\n" );
+            }
+        }
+
+    return 1;
+    }

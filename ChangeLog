@@ -17,6 +17,22 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Those changes implement a quest tracking system. Check the doc/quests document for more info.
+common/quest.c: new file with a few quests-related functions.
+doc/Developers/mapguide: point to quests file for instructions on quests.
+doc/Developers/quests: new file with instructions on how to use quests,
+ and implementation details.
+doc/Developers/README: added quests file.
+include/libproto.h: new functions in quest.c.
+include/quest.h: new file with a few defines for quests.
+include/sproto.h: new function command_quest, update talk_to_wall definition.
+lib/help/quests: new help file for quests command.
+server/c_misc: new command_quests function.
+server/commands.c: link command_quests to "quests".
+server/monster.c: update talk_to_wall and talk_to_npc to check for quests.
+server/time.c: modify marker behaviour to handle quests.
+Ryo 2005-07-14
+
 common/{button.c, treasure.c, utils.c}, server/{c_wiz.c, login.c, shop.c,
 skill_util.c, spell_effect.c}, socket/{image.c, item.c}: Fix printf like
    format specifiers. At least one of them fixes a means to crash the server.
