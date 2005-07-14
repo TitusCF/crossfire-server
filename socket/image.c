@@ -456,7 +456,7 @@ void send_image_sums(NewSocket *ns, char *params)
      * support.
      */
     if (sl.len > MAXSOCKBUF) {
-	LOG(llevError,"send_image_send: buffer overrun, %s > %s\n", sl.len, MAXSOCKBUF);
+	LOG(llevError,"send_image_send: buffer overrun, %d > %d\n", sl.len, MAXSOCKBUF);
 	abort();
     }
     Send_With_Handling(ns, &sl);

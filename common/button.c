@@ -213,7 +213,7 @@ void update_buttons(mapstruct *m) {
   for (obp = m->buttons; obp; obp = obp->next)
     for (ol = obp->link; ol; ol = ol->next) {
       if (!ol->ob || ol->ob->count != ol->id) {
-        LOG(llevError, "Internal error in update_button (%s (%dx%d):%d, connected %d ).\n",
+        LOG(llevError, "Internal error in update_button (%s (%dx%d):%d, connected %ld).\n",
 	    ol->ob?ol->ob->name:"null",
 	    ol->ob?ol->ob->x:-1,
 	    ol->ob?ol->ob->y:-1,

@@ -97,7 +97,7 @@ int command_loadtest(object *op, char *params){
 		return 0;
 	if (strncmp (params,"TRUE",4))
 		return 0;
-	new_draw_info_format(NDI_UNIQUE, 0, op,"gogogo",params);
+	new_draw_info_format(NDI_UNIQUE, 0, op,"gogogo");
 	for (x=0; x<settings.worldmaptilesx; x++)
 	for (y=0; y<settings.worldmaptilesy; y++){
 		sprintf (buf,"/world/world_%d_%d",x+settings.worldmapstartx,y+settings.worldmapstarty);

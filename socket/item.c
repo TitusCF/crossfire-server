@@ -618,7 +618,7 @@ void ExamineCmd(char *buf, int len,player *pl)
     object *op = esrv_get_ob_from_count(pl->ob, tag);
 
     if (!op) {
-	LOG(llevDebug, "Player '%s' tried examine the unknown object (%d)\n",
+	LOG(llevDebug, "Player '%s' tried examine the unknown object (%ld)\n",
 	    pl->ob->name, tag);
 	return;
     }

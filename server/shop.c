@@ -639,7 +639,11 @@ void sell_item(object *op, object *pl) {
     }
 
     if (i!=0) 
-	LOG(llevError,"Warning - payment not zero: %d\n", i);
+#ifndef WIN32
+	LOG(llevError,"Warning - payment not zero: %llu\n", i);
+#else
+	LOG(llevError,"Warning - payment not zero: %I64u\n", i);
+#endif
 
     new_draw_info_format(NDI_UNIQUE, 0, pl,
 	"You receive %s for %s.",query_cost_string(op,pl,1),

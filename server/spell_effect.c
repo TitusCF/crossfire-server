@@ -445,7 +445,8 @@ int cast_create_missile(object *op, object *caster,object *spell, int dir, char 
 
 	    if (!al) {
 		free_object(missile);
-		new_draw_info_format(NDI_UNIQUE, 0, op ,"No such object %ss of %s", stringarg);
+		new_draw_info_format(NDI_UNIQUE, 0, op ,"No such object %ss of %s", missile_name,
+				     stringarg);
 		return 0;
 	    }
 	    if (al->item->slaying) {
@@ -961,7 +962,7 @@ int cast_create_town_portal (object *op, object *caster, object *spell, int dir)
 	}
 	remove_ob (old_force);
 	free_object (old_force);
-	LOG (llevDebug,"\n",old_force->name);
+	LOG (llevDebug,"\n");
     }
     free_object (dummy);
 

@@ -69,7 +69,7 @@ void init_skills() {
 	if (at->clone.type == SKILL) {
 	    if (skill_names[at->clone.subtype] != NULL) {
 		LOG(llevError, "init_skills: multiple skill using same subtype %d, %s, %s\n",
-		    skill_names[at->clone.subtype], at->clone.skill);
+		    at->clone.subtype, skill_names[at->clone.subtype], at->clone.skill);
 	    } else {
 		skill_names[at->clone.subtype] = add_refcount(at->clone.skill);
 	    }

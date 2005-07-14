@@ -162,7 +162,7 @@ static void check_treasurelist(treasure *t, treasurelist *tl)
     if (t->item==NULL && t->name==NULL)
 	LOG(llevError,"Treasurelist %s has element with no name or archetype\n", tl->name);
     if (t->chance>=100 && t->next_yes && (t->next || t->next_no))
-	LOG(llevError,"Treasurelist %s has element that has 100% generation, next_yes field as well as next or next_no\n",
+	LOG(llevError,"Treasurelist %s has element that has 100%% generation, next_yes field as well as next or next_no\n",
 		tl->name);
     /* find_treasurelist will print out its own error message */
     if (t->name && strcmp(t->name,"NONE"))

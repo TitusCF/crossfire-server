@@ -94,7 +94,11 @@ sint64 random_roll64(sint64 min, sint64 max, object *op, int goodbad) {
     ((diff > 2) ? (base = 20) : (base = 50)); /* d2 and d3 are corner cases */
 
     if (max < 1 || diff < 1) {
-      LOG(llevError, "Calling random_roll with min=%d max=%d\n", min, max);
+#ifndef WIN32
+      LOG(llevError, "Calling random_roll with min=%lld max=%lld\n", min, max);
+#else
+      LOG(llevError, "Calling random_roll with min=%I64d max=%I64d\n", min, max);
+#endif
       return(min); /* avoids a float exception */
     }
 

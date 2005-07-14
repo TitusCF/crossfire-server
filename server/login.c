@@ -447,7 +447,7 @@ void check_login(object *op) {
     } else {
 	elapsed_save_time = time(NULL) - statbuf.st_mtime;
 	if (elapsed_save_time<0) {
-	    LOG(llevError,"Player file %s was saved in the future? (%d time)\n", elapsed_save_time);
+	    LOG(llevError,"Player file %s was saved in the future? (%d time)\n", filename, elapsed_save_time);
 	    elapsed_save_time=0;
 	}
     }
