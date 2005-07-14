@@ -1977,6 +1977,10 @@ SOURCE=..\common\porting.c
 # End Source File
 # Begin Source File
 
+SOURCE=..\common\quest.c
+# End Source File
+# Begin Source File
+
 SOURCE="..\common\re-cmp.c"
 
 !IF  "$(CFG)" == "crossfire32 - Win32 FullDebug"
@@ -2513,6 +2517,10 @@ SOURCE=..\include\plugproto.h
 
 !ENDIF 
 
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\quest.h
 # End Source File
 # Begin Source File
 
