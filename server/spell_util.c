@@ -929,7 +929,7 @@ int cast_party_spell(object *op, object *caster,int dir,object *spell_ob, char *
         return success;
         }
     for( pl=first_player; pl!=NULL; pl=pl->next )
-        if( ( pl->ob->contr->party_number == caster->contr->party_number ) && ( pl->ob->map == caster->map ) )
+        if( ( pl->ob->contr->party_number == caster->contr->party_number ) && ( on_same_map( pl->ob, caster ) ) )
             {
             cast_spell( pl->ob, caster, pl->ob->facing, spell, stringarg );
             }

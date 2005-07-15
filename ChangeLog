@@ -17,6 +17,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/spell_util.c: use on_same_map instead of checking directly map pointers.
+Ryo 2005-07-15
+
 Those changes implement a quest tracking system. Check the doc/quests document for more info.
 common/quest.c: new file with a few quests-related functions.
 doc/Developers/mapguide: point to quests file for instructions on quests.
