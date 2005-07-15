@@ -22,6 +22,8 @@ defined as external, and should be implemented (even as dummy) by all programs.
 Affected files:
  common/arch.c button.c glue.c init.c item.c living.c logger.c los.c map.c object.c
   time.c treasure.c
+ crossedit/stubs.c: new file with dummy functions.
+ crossedit/Makefile.[in|am]: add this new file.
  include/funcpoint.h libproto.h sproto.h
  random_maps/standalone.c: add dummy functions for those externals.
  server/init.c: remove obsolete setup_library()
