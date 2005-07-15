@@ -1,9 +1,9 @@
 Microsoft Developer Studio Workspace File, Format Version 6.00
-# WARNUNG: DIESE ARBEITSBEREICHSDATEI DARF NICHT BEARBEITET ODER GELÖSCHT WERDEN!
+# WARNING: DO NOT EDIT OR DELETE THIS WORKSPACE FILE!
 
 ###############################################################################
 
-Project: "crossfire32"=.\crossfire32.dsp - Package Owner=<4>
+Project: "crossfire32"=".\crossfire32.dsp" - Package Owner=<4>
 
 Package=<5>
 {{{
@@ -15,7 +15,7 @@ Package=<4>
 
 ###############################################################################
 
-Project: "libcross"=.\libcross\libcross.dsp - Package Owner=<4>
+Project: "plugin_python"=".\plugin_python\plugin_python.dsp" - Package Owner=<4>
 
 Package=<5>
 {{{
@@ -23,27 +23,6 @@ Package=<5>
 
 Package=<4>
 {{{
-    Begin Project Dependency
-    Project_Dep_Name crossfire32
-    End Project Dependency
-}}}
-
-###############################################################################
-
-Project: "plugin_python"=.\plugin_python\plugin_python.dsp - Package Owner=<4>
-
-Package=<5>
-{{{
-}}}
-
-Package=<4>
-{{{
-    Begin Project Dependency
-    Project_Dep_Name libcross
-    End Project Dependency
-    Begin Project Dependency
-    Project_Dep_Name crossfire32
-    End Project Dependency
 }}}
 
 ###############################################################################
