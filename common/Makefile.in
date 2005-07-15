@@ -83,7 +83,7 @@ am_libcross_a_OBJECTS = anim.$(OBJEXT) arch.$(OBJEXT) button.$(OBJEXT) \
 	info.$(OBJEXT) image.$(OBJEXT) init.$(OBJEXT) item.$(OBJEXT) \
 	links.$(OBJEXT) living.$(OBJEXT) loader.$(OBJEXT) \
 	logger.$(OBJEXT) los.$(OBJEXT) map.$(OBJEXT) object.$(OBJEXT) \
-	porting.$(OBJEXT) player.$(OBJEXT) re-cmp.$(OBJEXT) \
+	porting.$(OBJEXT) player.$(OBJEXT) quest.$(OBJEXT) re-cmp.$(OBJEXT) \
 	readable.$(OBJEXT) recipe.$(OBJEXT) region.$(OBJEXT) \
 	shstr.$(OBJEXT) time.$(OBJEXT) treasure.$(OBJEXT) \
 	utils.$(OBJEXT)
@@ -260,6 +260,7 @@ libcross_a_SOURCES = \
 	object.c\
 	porting.c\
 	player.c\
+	quest.c\
 	re-cmp.c\
 	readable.c\
 	recipe.c\
