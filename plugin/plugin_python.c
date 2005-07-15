@@ -78,6 +78,27 @@ static void PyFixPlayer( object* pl )
     PlugHooks[ HOOK_FIXPLAYER ]( &lCFR );
     }
 
+static char* PyAddString( char* str )
+    {
+    CFParm lCFR;
+    CFParm* CFR;
+    char* ret;
+    lCFR.Value[ 0 ] = str;
+    CFR = PlugHooks[ HOOK_ADDSTRING ]( &lCFR );
+    ret = CFR->Value[ 0 ];
+    PyFreeMemory( CFR );
+    return ret;
+    }
+
+static void PyFreeString( char* str )
+    {
+    CFParm lCFR;
+    lCFR.Value[ 0 ] = str;
+    PlugHooks[ HOOK_FREESTRING ]( &lCFR );
+    }
+
+#define PyDeleteString( __str__ ) PyFreeString( __str__ ); __str__ = NULL
+
 /* Set up an Python exception object.
  */
 static void set_exception(const char *fmt, ...)
@@ -961,8 +982,8 @@ static PyObject* CFSetMessage(PyObject* self, PyObject* args)
     }
 
     if (WHO->msg != NULL)
-        free_string(WHO->msg);
-    WHO->msg = add_string(txt);
+        PyFreeString(WHO->msg);
+    WHO->msg = PyAddString(txt);
 
     free(tmp);
 
@@ -1017,7 +1038,7 @@ static PyObject* CFSetGod(PyObject* self, PyObject* args)
 
     CHECK_OBJ(whoptr);
 
-    prayname = add_string("praying");
+    prayname = PyAddString("praying");
 
     GCFP1.Value[0] = (void *)(WHO);
     GCFP1.Value[1] = (void *)(prayname);
@@ -1032,7 +1053,7 @@ static PyObject* CFSetGod(PyObject* self, PyObject* args)
     if (tmp == NULL)
     {
         set_exception("illegal god name %s", txt);
-        free_string(prayname);
+        PyFreeString(prayname);
         return NULL;
     }
 
@@ -1044,7 +1065,7 @@ static PyObject* CFSetGod(PyObject* self, PyObject* args)
         (PlugHooks[HOOK_BECOMEFOLLOWER])(&GCFP2);
     PyFreeMemory( CFR );
 
-    free_string(prayname);
+    PyFreeString(prayname);
 
     Py_INCREF(Py_None);
     return Py_None;
@@ -2405,8 +2426,8 @@ static PyObject* CFCreateInvisibleObjectInside(PyObject* self, PyObject* args)
     (PlugHooks[HOOK_UPDATESPEED])(&GCFP);
 
     if (myob->slaying != NULL)
-        DELETE_STRING(myob->slaying);
-    myob->slaying = add_string(txt);
+        PyDeleteString(myob->slaying);
+    myob->slaying = PyAddString(txt);
     myob = insert_ob_in_ob(myob, where);
 
     GCFP.Value[0] = (void *)(where);
@@ -2591,13 +2612,13 @@ static PyObject* CFSetName(PyObject* self, PyObject* args)
     if (txt_pl == NULL)
         txt_pl = txt;
     if (WHO->name != NULL)
-        DELETE_STRING(WHO->name);
+        PyDeleteString(WHO->name);
     if (strcmp(txt, ""))
-        WHO->name = add_string(txt);
+        WHO->name = PyAddString(txt);
     if (WHO->name_pl != NULL)
-        DELETE_STRING(WHO->name_pl);
+        PyDeleteString(WHO->name_pl);
     if (strcmp(txt_pl, ""))
-        WHO->name_pl = add_string(txt_pl);
+        WHO->name_pl = PyAddString(txt_pl);
     Py_INCREF(Py_None);
     return Py_None;
 };
@@ -2639,9 +2660,9 @@ static PyObject* CFSetTitle(PyObject* self, PyObject* args)
     CHECK_OBJ(whoptr);
 
     if (WHO->title != NULL)
-        DELETE_STRING(WHO->title);
+        PyDeleteString(WHO->title);
     if(txt && strcmp(txt,""))
-        WHO->title = add_string(txt);
+        WHO->title = PyAddString(txt);
     Py_INCREF(Py_None);
     return Py_None;
 };
@@ -2676,9 +2697,9 @@ static PyObject* CFSetSlaying(PyObject* self, PyObject* args)
     CHECK_OBJ(whoptr);
 
     if (WHO->slaying != NULL)
-        DELETE_STRING(WHO->slaying);
+        PyDeleteString(WHO->slaying);
     if(txt && strcmp(txt,""))
-        WHO->slaying = add_string(txt);
+        WHO->slaying = PyAddString(txt);
     Py_INCREF(Py_None);
     return Py_None;
 };
@@ -2736,6 +2757,9 @@ static PyObject* CFRemoveObject(PyObject* self, PyObject* args)
     myob = (object *)(whoptr);
     GCFP.Value[0] = (void *)(myob);
     (PlugHooks[HOOK_REMOVEOBJECT])(&GCFP);
+
+    if ( StackWho[ StackPosition ] == whoptr )
+        StackWho[ StackPosition ] = NULL;
 
     if (StackActivator[StackPosition] != NULL && StackActivator[StackPosition]->type == PLAYER)
     {
@@ -3820,8 +3844,8 @@ static PyObject* CFSetNickname(PyObject* self, PyObject* args)
     else
     {
         if (WHO->title != NULL)
-            DELETE_STRING(WHO->title);
-        WHO->title = add_string(newnick);
+            PyDeleteString(WHO->title);
+        WHO->title = PyAddString(newnick);
         if (WHO->env != NULL)
         {
             if (WHO->env->type == PLAYER)
@@ -4319,8 +4343,8 @@ static PyObject* CFSetEventHandler(PyObject* self, PyObject* args)
     }
 
     if (evt->hook != NULL)
-        DELETE_STRING(evt->hook);
-    evt->hook = add_string(scriptname);
+        PyDeleteString(evt->hook);
+    evt->hook = PyAddString(scriptname);
 
     Py_INCREF(Py_None);
     return Py_None;
@@ -4376,8 +4400,8 @@ static PyObject* CFSetEventPlugin(PyObject* self, PyObject* args)
     }
 
     if (evt->plugin != NULL)
-        DELETE_STRING(evt->plugin);
-    evt->plugin = add_string(scriptname);
+        PyDeleteString(evt->plugin);
+    evt->plugin = PyAddString(scriptname);
 
     Py_INCREF(Py_None);
     return Py_None;
@@ -4432,8 +4456,8 @@ static PyObject* CFSetEventOptions(PyObject* self, PyObject* args)
     }
 
     if (evt->options != NULL)
-        DELETE_STRING(evt->options);
-    evt->options = add_string(scriptname);
+        PyDeleteString(evt->options);
+    evt->options = PyAddString(scriptname);
 
     Py_INCREF(Py_None);
     return Py_None;
@@ -5240,8 +5264,8 @@ MODULEAPI CFParm* initPlugin(CFParm* PParm)
     Py_Initialize();
     initCFPython();
     printf( "[Done]\n");
-    GCFP.Value[0] = (void *) add_string(PLUGIN_NAME);
-    GCFP.Value[1] = (void *) add_string(PLUGIN_VERSION);
+    GCFP.Value[0] = (void *) (PLUGIN_NAME);
+    GCFP.Value[1] = (void *) (PLUGIN_VERSION);
     return &GCFP;
 };
 
@@ -5361,7 +5385,7 @@ MODULEAPI CFParm* postinitPlugin(CFParm* PParm)
 
     printf( "PYTHON - Start postinitPlugin.\n");
 
-    GCFP.Value[1] = (void *)(add_string(PLUGIN_NAME));
+    GCFP.Value[1] = (void *)(PyAddString(PLUGIN_NAME));
     i = EVENT_BORN;
     GCFP.Value[0] = (void *)(&i);
     (PlugHooks[HOOK_REGISTEREVENT])(&GCFP);

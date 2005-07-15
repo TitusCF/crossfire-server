@@ -17,6 +17,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+plugin/plugin_python.c: (add|free)_string should *not* be called directly under Win32.
+ Therefore let's use the hooks. Also, when removing an object, better check it's not the
+ current object (CFPython.RemoveObject(CFPython.WhoAmI()) anyone?).
+Ryo 2005-07-15
+
 server/spell_util.c: use on_same_map instead of checking directly map pointers.
 Ryo 2005-07-15
 
