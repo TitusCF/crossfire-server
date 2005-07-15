@@ -17,8 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/c_party.c: Make party passwords with a length of 8 characters work
+   again.
 lib/artifacts: Fix type of lockpicks of quality/high quality.
-Andreas Kischbaum 2005-07-15
+Andreas Kirschbaum 2005-07-15
 
 Those commits remove the dependency on the plugin towards the library. All functions
  used from the plugin are hooked, instead of being called directly. This fixes bugs
