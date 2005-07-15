@@ -3426,7 +3426,7 @@ end
 Allowed lockpicks
 chance 100
 Object quality
-type 43
+type 74
 value 5
 Dex 1
 end
@@ -3434,7 +3434,7 @@ end
 Allowed lockpicks
 chance 30
 Object high quality
-type 43
+type 74
 value 10
 Dex 3
 end
