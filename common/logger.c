@@ -69,7 +69,7 @@ void LOG (LogLevel logLevel, const char *format, ...)
       logLevel == llevError && ++nroferrors > MAX_ERRORS) {
     exiting = 1;
     if (!trying_emergency_save)
-      (*emergency_save_func) (0);
+      emergency_save(0);
   }
   va_end(ap);
 }

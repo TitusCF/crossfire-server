@@ -694,7 +694,6 @@ void init(int argc, char **argv) {
 
     init_startup();	/* Write (C), check shutdown/forbid files */
     init_signals();	/* Sets up signal interceptions */
-    setup_library();	/* Set up callback function pointers */
     init_commands();	/* Sort command tables */
     read_map_log();	/* Load up the old temp map files */
     init_skills();
@@ -974,36 +973,6 @@ void init_signals() {
   signal(SIGTERM,rec_sigterm);
 #endif
 #endif /* win32 */
-}
-
-/*
- * init_library: Set up the function pointers which will point
- * back from the library into the server.
- */
-void setup_library() {
-  set_emergency_save(emergency_save);
-  set_clean_tmp_files(clean_tmp_files);
-  set_fix_auto_apply(fix_auto_apply);
-  set_remove_friendly_object(remove_friendly_object);
-  set_process_active_maps(process_active_maps);
-  set_update_buttons(update_buttons);
-  set_draw_info(new_draw_info);
-  set_move_apply(move_apply);
-  set_monster_check_apply(monster_check_apply);
-  set_move_teleporter(move_teleporter);
-  set_move_firewall(move_firewall);
-  set_move_creator(move_creator);
-  set_move_trigger_marker(move_marker);
-  set_move_duplicator(move_duplicator);
-  set_trap_adjust(trap_adjust);
-  set_esrv_send_item(esrv_send_item);
-  set_esrv_del_item(esrv_del_item);
-  set_esrv_update_item(esrv_update_item);
-  set_info_map(new_info_map);
-  set_set_darkness_map(set_darkness_map);
-  set_dragon_gain_func(dragon_ability_gain);
-  set_weather_effect_func(weather_effect);
-  set_find_skill_by_number_func(find_skill_by_number);
 }
 
 /* init_races() - reads the races file in the lib/ directory, then

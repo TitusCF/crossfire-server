@@ -1219,6 +1219,6 @@ void identify(object *op) {
 	    /* A lot of the values can change from an update - might as well send
 	     * it all.
 	     */
-	    esrv_send_item_func(pl, op);
+	    esrv_send_item(pl, op);
     }
 }

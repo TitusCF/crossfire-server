@@ -425,32 +425,32 @@ int change_abil(object *op, object *tmp) {
   if(tmp->attacktype & AT_CONFUSION && tmp->type != BOW) {
     success=1;
     if(flag>0)
-      (*draw_info_func)(NDI_UNIQUE, 0, op,"Your hands begin to glow red.");
+      new_draw_info(NDI_UNIQUE, 0, op,"Your hands begin to glow red.");
     else
-      (*draw_info_func)(NDI_UNIQUE, 0, op,"Your hands stop glowing red.");
+      new_draw_info(NDI_UNIQUE, 0, op,"Your hands stop glowing red.");
   }
   if ( QUERY_FLAG(op,FLAG_LIFESAVE) != QUERY_FLAG(&refop,FLAG_LIFESAVE)){
     success=1;
     if(flag>0) {
-      (*draw_info_func)(NDI_UNIQUE, 0, op,"You feel very protected.");
+      new_draw_info(NDI_UNIQUE, 0, op,"You feel very protected.");
     } else {
-      (*draw_info_func)(NDI_UNIQUE, 0, op,"You don't feel protected anymore.");
+      new_draw_info(NDI_UNIQUE, 0, op,"You don't feel protected anymore.");
     }
   }
   if ( QUERY_FLAG(op,FLAG_REFL_MISSILE) != QUERY_FLAG(&refop,FLAG_REFL_MISSILE)){
     success=1;
     if(flag>0) {
-      (*draw_info_func)(NDI_UNIQUE, 0, op,"A magic force shimmers around you.");
+      new_draw_info(NDI_UNIQUE, 0, op,"A magic force shimmers around you.");
     } else {
-      (*draw_info_func)(NDI_UNIQUE, 0, op,"The magic force fades away.");
+      new_draw_info(NDI_UNIQUE, 0, op,"The magic force fades away.");
     }
   }
   if ( QUERY_FLAG(op,FLAG_REFL_SPELL) != QUERY_FLAG(&refop,FLAG_REFL_SPELL)){
     success=1;
     if(flag>0) {
-      (*draw_info_func)(NDI_UNIQUE, 0, op,"You feel more safe now, somehow.");
+      new_draw_info(NDI_UNIQUE, 0, op,"You feel more safe now, somehow.");
     } else {
-      (*draw_info_func)(NDI_UNIQUE, 0, op,"Suddenly you feel less safe, somehow.");
+      new_draw_info(NDI_UNIQUE, 0, op,"Suddenly you feel less safe, somehow.");
     }
   }
   if(QUERY_FLAG(tmp,FLAG_FLYING)) {
@@ -458,9 +458,9 @@ int change_abil(object *op, object *tmp) {
       success=1;
       /* if were already flying then now flying higher */
       if ( QUERY_FLAG(op,FLAG_FLYING) == QUERY_FLAG(&refop,FLAG_FLYING))
-        (*draw_info_func)(NDI_UNIQUE, 0, op,"You float a little higher in the air.");
+        new_draw_info(NDI_UNIQUE, 0, op,"You float a little higher in the air.");
       else {
-        (*draw_info_func)(NDI_UNIQUE, 0, op,"You start to float in the air!.");
+        new_draw_info(NDI_UNIQUE, 0, op,"You start to float in the air!.");
         SET_FLAG(op,FLAG_FLYING);
         if(op->speed>1)
           op->speed=1;
@@ -469,9 +469,9 @@ int change_abil(object *op, object *tmp) {
       success=1;
       /* if were already flying then now flying lower */
       if ( QUERY_FLAG(op,FLAG_FLYING) == QUERY_FLAG(&refop,FLAG_FLYING))
-        (*draw_info_func)(NDI_UNIQUE, 0, op,"You float a little lower in the air.");
+        new_draw_info(NDI_UNIQUE, 0, op,"You float a little lower in the air.");
       else {
-        (*draw_info_func)(NDI_UNIQUE, 0, op,"You float down to the ground.");
+        new_draw_info(NDI_UNIQUE, 0, op,"You float down to the ground.");
 	check_walk_on (op, op);
       }
     }
@@ -485,29 +485,29 @@ int change_abil(object *op, object *tmp) {
       if(flag>0) {
         if(op->race) free_string(op->race); 
 	op->race=add_string("undead");
-        (*draw_info_func)(NDI_UNIQUE, 0, op,"Your lifeforce drains away!");
+        new_draw_info(NDI_UNIQUE, 0, op,"Your lifeforce drains away!");
       } else {
         if(op->race) free_string(op->race); 
         if(op->arch->clone.race) 
 	   op->race=add_string(op->arch->clone.race);  
-        (*draw_info_func)(NDI_UNIQUE, 0, op,"Your lifeforce returns!");
+        new_draw_info(NDI_UNIQUE, 0, op,"Your lifeforce returns!");
       }
     }
 
   if ( QUERY_FLAG(op,FLAG_STEALTH) != QUERY_FLAG(&refop,FLAG_STEALTH)){
     success=1;
     if(flag>0) {
-      (*draw_info_func)(NDI_UNIQUE, 0, op,"You walk more quietly.");
+      new_draw_info(NDI_UNIQUE, 0, op,"You walk more quietly.");
     } else {
-      (*draw_info_func)(NDI_UNIQUE, 0, op,"You walk more noisily.");
+      new_draw_info(NDI_UNIQUE, 0, op,"You walk more noisily.");
     }
   }
   if ( QUERY_FLAG(op,FLAG_MAKE_INVIS) != QUERY_FLAG(&refop,FLAG_MAKE_INVIS)){
     success=1;
     if(flag>0) {
-      (*draw_info_func)(NDI_UNIQUE, 0, op,"You become transparent.");
+      new_draw_info(NDI_UNIQUE, 0, op,"You become transparent.");
     } else {
-      (*draw_info_func)(NDI_UNIQUE, 0, op,"You can see yourself.");
+      new_draw_info(NDI_UNIQUE, 0, op,"You can see yourself.");
     }
   }
   /* blinded you can tell if more blinded since blinded player has minimal
@@ -516,18 +516,18 @@ int change_abil(object *op, object *tmp) {
     success=1;
     if(flag>0) {
       if(QUERY_FLAG(op,FLAG_WIZ))
-        (*draw_info_func)(NDI_UNIQUE, 0, op,"Your mortal self is blinded.");
+        new_draw_info(NDI_UNIQUE, 0, op,"Your mortal self is blinded.");
       else { 
-        (*draw_info_func)(NDI_UNIQUE, 0, op,"You are blinded.");
+        new_draw_info(NDI_UNIQUE, 0, op,"You are blinded.");
         SET_FLAG(op,FLAG_BLIND);
         if(op->type==PLAYER)
           op->contr->do_los=1;
       }  
     } else {
       if(QUERY_FLAG(op,FLAG_WIZ))
-        (*draw_info_func)(NDI_UNIQUE, 0, op,"Your mortal self can now see again.");
+        new_draw_info(NDI_UNIQUE, 0, op,"Your mortal self can now see again.");
       else {
-        (*draw_info_func)(NDI_UNIQUE, 0, op,"Your vision returns.");
+        new_draw_info(NDI_UNIQUE, 0, op,"Your vision returns.");
         CLEAR_FLAG(op,FLAG_BLIND);
         if(op->type==PLAYER)
           op->contr->do_los=1;
@@ -538,11 +538,11 @@ int change_abil(object *op, object *tmp) {
   if ( QUERY_FLAG(op,FLAG_SEE_IN_DARK) != QUERY_FLAG(&refop,FLAG_SEE_IN_DARK)){
     success=1;
     if(flag>0) {
-        (*draw_info_func)(NDI_UNIQUE, 0, op,"Your vision is better in the dark.");
+        new_draw_info(NDI_UNIQUE, 0, op,"Your vision is better in the dark.");
         if(op->type==PLAYER)
           op->contr->do_los=1;
     } else {
-        (*draw_info_func)(NDI_UNIQUE, 0, op,"You see less well in the dark.");
+        new_draw_info(NDI_UNIQUE, 0, op,"You see less well in the dark.");
         if(op->type==PLAYER)
           op->contr->do_los=1;
     }  
@@ -552,17 +552,17 @@ int change_abil(object *op, object *tmp) {
     success=1;
     if(flag>0) {
       if(QUERY_FLAG(op,FLAG_WIZ))
-        (*draw_info_func)(NDI_UNIQUE, 0, op,"Your vision becomes a little clearer.");
+        new_draw_info(NDI_UNIQUE, 0, op,"Your vision becomes a little clearer.");
       else {
-        (*draw_info_func)(NDI_UNIQUE, 0, op,"Everything becomes transparent.");
+        new_draw_info(NDI_UNIQUE, 0, op,"Everything becomes transparent.");
         if(op->type==PLAYER)
           op->contr->do_los=1;
       }
     } else {
       if(QUERY_FLAG(op,FLAG_WIZ))
-        (*draw_info_func)(NDI_UNIQUE, 0, op,"Your vision becomes a bit out of focus.");
+        new_draw_info(NDI_UNIQUE, 0, op,"Your vision becomes a bit out of focus.");
       else {
-        (*draw_info_func)(NDI_UNIQUE, 0, op,"Everything suddenly looks very solid.");
+        new_draw_info(NDI_UNIQUE, 0, op,"Everything suddenly looks very solid.");
         if(op->type==PLAYER)
           op->contr->do_los=1;
       }
@@ -571,39 +571,39 @@ int change_abil(object *op, object *tmp) {
   if(tmp->stats.luck) {
     success=1;
     if(flag*tmp->stats.luck>0) {
-      (*draw_info_func)(NDI_UNIQUE, 0, op,"You feel more lucky.");
+      new_draw_info(NDI_UNIQUE, 0, op,"You feel more lucky.");
     } else {
-      (*draw_info_func)(NDI_UNIQUE, 0, op,"You feel less lucky.");
+      new_draw_info(NDI_UNIQUE, 0, op,"You feel less lucky.");
     }
   }
   if(tmp->stats.hp && op->type==PLAYER) {
     success=1;
     if(flag*tmp->stats.hp>0)
-      (*draw_info_func)(NDI_UNIQUE, 0, op,"You feel much more healthy!");
+      new_draw_info(NDI_UNIQUE, 0, op,"You feel much more healthy!");
     else
-      (*draw_info_func)(NDI_UNIQUE, 0, op,"You feel much less healthy!");
+      new_draw_info(NDI_UNIQUE, 0, op,"You feel much less healthy!");
   }
   if(tmp->stats.sp && op->type==PLAYER && tmp->type!=SKILL) {
     success=1;
     if(flag*tmp->stats.sp>0)
-      (*draw_info_func)(NDI_UNIQUE, 0, op,"You feel one with the powers of magic!");
+      new_draw_info(NDI_UNIQUE, 0, op,"You feel one with the powers of magic!");
     else
-      (*draw_info_func)(NDI_UNIQUE, 0, op,"You suddenly feel very mundane.");
+      new_draw_info(NDI_UNIQUE, 0, op,"You suddenly feel very mundane.");
   }
   /* for the future when artifacts set this -b.t. */
   if(tmp->stats.grace && op->type==PLAYER) {
     success=1;
      if(flag*tmp->stats.grace>0)
-      (*draw_info_func)(NDI_UNIQUE, 0, op,"You feel closer to your god!");
+      new_draw_info(NDI_UNIQUE, 0, op,"You feel closer to your god!");
     else 
-      (*draw_info_func)(NDI_UNIQUE, 0, op,"You suddenly feel less holy.");
+      new_draw_info(NDI_UNIQUE, 0, op,"You suddenly feel less holy.");
   } 
   if(tmp->stats.food && op->type==PLAYER) {
     success=1;
     if(tmp->stats.food*flag>0)
-      (*draw_info_func)(NDI_UNIQUE, 0, op,"You feel your digestion slowing down.");
+      new_draw_info(NDI_UNIQUE, 0, op,"You feel your digestion slowing down.");
     else
-      (*draw_info_func)(NDI_UNIQUE, 0, op,"You feel your digestion speeding up.");
+      new_draw_info(NDI_UNIQUE, 0, op,"You feel your digestion speeding up.");
   }
 
   /* Messages for changed resistance */
@@ -619,7 +619,7 @@ int change_abil(object *op, object *tmp) {
 	sprintf(message, "Your resistance to %s drops to %d%%.",
 	       change_resist_msg[i], op->resist[i]);
       
-      (*draw_info_func)(NDI_UNIQUE|NDI_BLUE, 0, op, message);
+      new_draw_info(NDI_UNIQUE|NDI_BLUE, 0, op, message);
     }
   }
 
@@ -628,9 +628,9 @@ int change_abil(object *op, object *tmp) {
 	    if ((i=get_attr_value(&(tmp->stats),j))!=0) {
 		success=1;
 		if (i * flag > 0)
-		    (*draw_info_func)(NDI_UNIQUE, 0, op, gain_msg[j]);
+		    new_draw_info(NDI_UNIQUE, 0, op, gain_msg[j]);
 		else
-		    (*draw_info_func)(NDI_UNIQUE, 0, op, lose_msg[j]);
+		    new_draw_info(NDI_UNIQUE, 0, op, lose_msg[j]);
 	    }
 	}
     }
@@ -663,7 +663,7 @@ void drain_specific_stat(object *op, int deplete_stats) {
     }
   }
 
-  (*draw_info_func)(NDI_UNIQUE, 0, op, drain_msg[deplete_stats]);
+  new_draw_info(NDI_UNIQUE, 0, op, drain_msg[deplete_stats]);
   change_attr_value(&tmp->stats, deplete_stats, -1);
   fix_player(op);
 }
@@ -1470,7 +1470,7 @@ void dragon_level_gain(object *who) {
 
 	if (abil->resist[abil->stats.exp]>0 && abil->resist[abil->stats.exp]%5 == 0) {
 	    /* time to hand out a new ability-gift */
-	    (*dragon_gain_func)(who, (int)abil->stats.exp,
+	    dragon_ability_gain(who, (int)abil->stats.exp,
 			       (int)((1+abil->resist[abil->stats.exp])/5.));
 	}
     
@@ -1478,7 +1478,7 @@ void dragon_level_gain(object *who) {
 	    /* apply new ability focus */
 	    sprintf(buf, "Your metabolism now focuses on %s!",
 		    change_resist_msg[abil->last_eat]);
-	    (*draw_info_func)(NDI_UNIQUE|NDI_BLUE, 0, who, buf);
+	    new_draw_info(NDI_UNIQUE|NDI_BLUE, 0, who, buf);
       
 	    abil->stats.exp = abil->last_eat;
 	    abil->last_eat = 0;
@@ -1553,7 +1553,7 @@ void player_lvl_adj(object *who, object *op) {
 		sprintf(buf,"You are now level %d in the %s skill.",op->level,op->name);
 	    else
 		sprintf(buf,"You are now level %d.",op->level);
-	    if(who) (*draw_info_func)(NDI_UNIQUE|NDI_RED, 0, who,buf);
+	    if(who) new_draw_info(NDI_UNIQUE|NDI_RED, 0, who,buf);
 	}
 	player_lvl_adj(who,op); /* To increase more levels */
     } else if (op->level>1 && op->stats.exp<level_exp(op->level,who->expmul)) {
@@ -1561,7 +1561,7 @@ void player_lvl_adj(object *who, object *op) {
 	if(who) fix_player(who);
 	if(op->type!=PLAYER) {
 	    sprintf(buf,"You are now level %d in the %s skill.",op->level,op->name);
-	    if(who) (*draw_info_func)(NDI_UNIQUE|NDI_RED, 0, who,buf);
+	    if(who) new_draw_info(NDI_UNIQUE|NDI_RED, 0, who,buf);
 	}
 	player_lvl_adj(who,op); /* To decrease more levels */
     }

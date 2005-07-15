@@ -824,7 +824,10 @@ static PyObject* CFCheckTrigger(PyObject* self, PyObject* args)
     CHECK_OBJ(whoptr);
     CHECK_OBJ(whatptr);
 
-    check_trigger(WHAT,WHO);
+    GCFP.Value[ 0 ] = ( void* )whoptr;
+    GCFP.Value[ 1 ] = ( void* )whatptr;
+
+    PlugHooks[ HOOK_CHECKTRIGGER ]( &GCFP );
 
     Py_INCREF(Py_None);
     return Py_None;

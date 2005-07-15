@@ -291,9 +291,9 @@ static void put_treasure (object *op, object *creator, int flags)
     } else {
         op = insert_ob_in_ob (op, creator);
         if ((flags & GT_APPLY) && QUERY_FLAG (creator, FLAG_MONSTER))
-            (void) (*monster_check_apply_func) (creator, op);
+            monster_check_apply(creator, op);
         if ((flags & GT_UPDATE_INV) && (tmp = is_player_inv (creator)) != NULL)
-            (*esrv_send_item_func) (tmp, op);
+            esrv_send_item(tmp, op);
     }
 }
 
@@ -1008,11 +1008,11 @@ void fix_generated_item (object *op, object *creator, int difficulty,
 		break;
 
 	    case RUNE:
-		(*trap_adjust_func)(op,difficulty);
+		trap_adjust(op,difficulty);
 		break;
 		
 		case TRAP:
-		(*trap_adjust_func)(op,difficulty);
+		trap_adjust(op,difficulty);
 		break;
 	} /* switch type */
 

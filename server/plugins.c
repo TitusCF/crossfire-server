@@ -1439,6 +1439,18 @@ CFParm* CFWTeleportObject (CFParm* PParm)
 }
 
 /*****************************************************************************/
+/* check_trigger wrapper.                                                    */
+/*****************************************************************************/
+/* 0 - item to check                                                         */
+/* 1 - cause                                                                 */
+/*****************************************************************************/
+CFParm* CFWCFCheckTrigger(CFParm* PParm)
+{
+    check_trigger( ( object* )( PParm->Value[ 0 ] ), ( object* )( PParm->Value[ 1 ] ) );
+    return NULL;
+};
+
+/*****************************************************************************/
 /* The following is not really a wrapper like the others are.                */
 /* It is in fact used to allow the plugin to request the global events it    */
 /* wants to be aware of. All events can be seen as global; on the contrary,  */

@@ -570,14 +570,14 @@ void print_los(object *op) {
 	sprintf(buf2,"%2d",x);
 	strcat(buf,buf2);
     }
-    (*draw_info_func)(NDI_UNIQUE, 0, op, buf);
+    new_draw_info(NDI_UNIQUE, 0, op, buf);
     for(y=0;y<op->contr->socket.mapy;y++) {
 	sprintf(buf,"%2d:",y);
 	for(x=0;x<op->contr->socket.mapx;x++) {
 	    sprintf(buf2," %1d",op->contr->blocked_los[x][y]);
 	    strcat(buf,buf2);
 	}
-	(*draw_info_func)(NDI_UNIQUE, 0, op, buf);
+	new_draw_info(NDI_UNIQUE, 0, op, buf);
     }
 }
 

@@ -17,6 +17,20 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Those commits remove the whole "glue/callback" logic. Instead functions are just
+defined as external, and should be implemented (even as dummy) by all programs.
+Affected files:
+ common/arch.c button.c glue.c init.c item.c living.c logger.c los.c map.c object.c
+  time.c treasure.c
+ include/funcpoint.h libproto.h sproto.h
+ server/init.c: remove obsolete setup_library()
+
+Added a wrapper function for check_trigger from plugins.
+ include/plugin.h: new function
+ server/plugins.c: crapper for check_trigger.
+
+Ryo 2005-07-15
+
 plugin/plugin_python.c: (add|free)_string should *not* be called directly under Win32.
  Therefore let's use the hooks. Also, when removing an object, better check it's not the
  current object (CFPython.RemoveObject(CFPython.WhoAmI()) anyone?).

@@ -885,7 +885,7 @@ static mapstruct *load_temporary_map(mapstruct *m) {
 	delete_map(m);
         m = load_original_map(buf, 0);
 	if(m==NULL) return NULL;
-	(*fix_auto_apply_func)(m); /* Chests which open as default */
+	fix_auto_apply(m); /* Chests which open as default */
 	return m;
     }
 
@@ -896,7 +896,7 @@ static mapstruct *load_temporary_map(mapstruct *m) {
 	delete_map(m);
         m = load_original_map(buf, 0);
 	if(m==NULL) return NULL;
-	(*fix_auto_apply_func)(m); /* Chests which open as default */
+	fix_auto_apply(m); /* Chests which open as default */
 	return m;
     }
     
@@ -1349,7 +1349,7 @@ mapstruct *ready_map_name(char *name, int flags) {
 	if (!(m = load_original_map(name, (flags & MAP_PLAYER_UNIQUE))))
 	    return (NULL);
 
-	(*fix_auto_apply_func)(m); /* Chests which open as default */
+	fix_auto_apply(m); /* Chests which open as default */
 
 	/* If a player unique map, no extra unique object file to load.
 	 * if from the editor, likewise.
@@ -1391,9 +1391,9 @@ mapstruct *ready_map_name(char *name, int flags) {
     /* In case other objects press some buttons down */
     update_buttons(m);
     if (m->outdoor)
-	(*set_darkness_map_func)(m);
+	    set_darkness_map(m);
     /* run the weather over this map */
-    (*weather_effect_func)(name);
+    weather_effect(name);
     return m;
 }
 
@@ -1493,9 +1493,9 @@ int change_map_light(mapstruct *m, int change) {
 
     /* inform all players on the map */
     if (change>0) 
-	(info_map_func)(NDI_BLACK, m,"It becomes darker.");
+	    new_info_map(NDI_BLACK, m,"It becomes darker.");
     else
-	(info_map_func)(NDI_BLACK, m,"It becomes brighter.");
+	    new_info_map(NDI_BLACK, m,"It becomes brighter.");
 
     /* Do extra checking.  since m->darkness is a unsigned value,
      * we need to be extra careful about negative values.

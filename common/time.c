@@ -255,7 +255,7 @@ print_tod(object *op)
     ((tod.hour % 14 == 0) ? 14 : ((tod.hour)%14)),
     ((tod.hour >= 14) ? "pm" : "am"),
     weekdays[tod.dayofweek]);
-  (*draw_info_func) (NDI_UNIQUE, 0,op,errmsg);
+  new_draw_info(NDI_UNIQUE, 0,op,errmsg);
 
   day = tod.day + 1;
   if (day == 1 || ((day % 10) == 1 && day > 20))
@@ -268,10 +268,10 @@ print_tod(object *op)
     suf = "th";
   sprintf(errmsg, "The %d%s Day of the %s, Year %d", day, suf,
     month_name[tod.month], tod.year+1);
-  (*draw_info_func) (NDI_UNIQUE, 0,op,errmsg);
+  new_draw_info(NDI_UNIQUE, 0,op,errmsg);
 
   sprintf(errmsg, "Time of Year: %s", season_name[tod.season]);
-  (*draw_info_func) (NDI_UNIQUE, 0,op,errmsg);
+  new_draw_info(NDI_UNIQUE, 0,op,errmsg);
 }
 
 void
@@ -283,21 +283,21 @@ time_info(object *op)
   if (!QUERY_FLAG(op,FLAG_WIZ))
     return;
 
-  (*draw_info_func) (NDI_UNIQUE, 0,op,"Total time:");
+  new_draw_info (NDI_UNIQUE, 0,op,"Total time:");
   sprintf(errmsg,"ticks=%ld  time=%ld.%2ld",
           pticks, process_tot_mtime/1000, process_tot_mtime%1000);
-  (*draw_info_func) (NDI_UNIQUE, 0,op,errmsg);
+  new_draw_info (NDI_UNIQUE, 0,op,errmsg);
   sprintf(errmsg,"avg time=%ldms  max time=%ldms  min time=%ldms",
           process_tot_mtime/pticks, process_max_utime/1000,
           process_min_utime/1000);
-  (*draw_info_func) (NDI_UNIQUE, 0,op,errmsg);
+  new_draw_info (NDI_UNIQUE, 0,op,errmsg);
   sprintf(errmsg,"ticks longer than max time (%ldms) = %ld (%ld%%)",
           max_time/1000,
           process_utime_long_count, 100*process_utime_long_count/pticks);
-  (*draw_info_func) (NDI_UNIQUE, 0,op,errmsg);
+  new_draw_info (NDI_UNIQUE, 0,op,errmsg);
 
   sprintf(errmsg,"Time last %ld ticks:", pticks > PBUFLEN ? PBUFLEN : pticks);
-  (*draw_info_func) (NDI_UNIQUE, 0,op,errmsg);
+  new_draw_info (NDI_UNIQUE, 0,op,errmsg);
 
   for (i = 0; i < (pticks > PBUFLEN ? PBUFLEN : pticks); i++) {
     tot += process_utime_save[i];
@@ -309,11 +309,11 @@ time_info(object *op)
   sprintf(errmsg,"avg time=%ldms  max time=%dms  min time=%dms",
           tot/(pticks > PBUFLEN ? PBUFLEN : pticks)/1000, maxt/1000,
           mint/1000);
-  (*draw_info_func) (NDI_UNIQUE, 0,op,errmsg);
+  new_draw_info (NDI_UNIQUE, 0,op,errmsg);
   sprintf(errmsg,"ticks longer than max time (%ldms) = %d (%ld%%)",
           max_time/1000, long_count,
           100*long_count/(pticks > PBUFLEN ? PBUFLEN : pticks));
-  (*draw_info_func) (NDI_UNIQUE, 0,op,errmsg);
+  new_draw_info (NDI_UNIQUE, 0,op,errmsg);
 }
 
 long

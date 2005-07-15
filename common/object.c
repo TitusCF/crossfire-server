@@ -1223,7 +1223,7 @@ void remove_ob(object *op) {
 	if (check_walk_off && (QUERY_FLAG (op, FLAG_FLYING) ?
 	    QUERY_FLAG (tmp, FLAG_FLY_OFF) : QUERY_FLAG (tmp, FLAG_WALK_OFF))) {
 	    
-	    move_apply_func (tmp, op, NULL);
+	    move_apply(tmp, op, NULL);
 	    if (was_destroyed (op, tag)) {
 		LOG (llevError, "BUG: remove_ob(): name %s, archname %s destroyed "
 		     "leaving object\n", tmp->name, tmp->arch->name);
@@ -1651,13 +1651,13 @@ object *decrease_ob_nr (object *op, int i)
             sub_weight (op->env, op->weight * i);
             op->nrof -= i;
             if (tmp) {
-                (*esrv_send_item_func) (tmp, op);
+                esrv_send_item(tmp, op);
             }
         } else {
             remove_ob (op);
             op->nrof = 0;
             if (tmp) {
-                (*esrv_del_item_func) (tmp->contr, op->count);
+                esrv_del_item(tmp->contr, op->count);
             }
         }
     }
@@ -1675,9 +1675,9 @@ object *decrease_ob_nr (object *op, int i)
         for (tmp = above; tmp != NULL; tmp = tmp->above)
             if (tmp->type == PLAYER) {
                 if (op->nrof)
-                    (*esrv_send_item_func) (tmp, op);
+                    esrv_send_item(tmp, op);
                 else
-                    (*esrv_del_item_func) (tmp->contr, op->count);
+                    esrv_del_item(tmp->contr, op->count);
             }
     }
 
@@ -1859,8 +1859,8 @@ int check_walk_on (object *op, object *originator)
 
 	    diff=(SLOW_PENALTY(tmp)*FABS(op->speed));
 	    if (op->type==PLAYER) {
-		if ((QUERY_FLAG(tmp,FLAG_IS_HILLY) && (*find_skill_by_number_func)(op,SK_CLIMBING)) ||
-		    (QUERY_FLAG(tmp,FLAG_IS_WOODED) && (*find_skill_by_number_func)(op,SK_WOODSMAN)))  {
+		if ((QUERY_FLAG(tmp,FLAG_IS_HILLY) && find_skill_by_number(op,SK_CLIMBING)) ||
+		    (QUERY_FLAG(tmp,FLAG_IS_WOODED) && find_skill_by_number(op,SK_WOODSMAN)))  {
 			diff=diff/4.0;
 		}
 	    }
@@ -1868,7 +1868,7 @@ int check_walk_on (object *op, object *originator)
 	}
 	if(QUERY_FLAG(op,FLAG_FLYING)?QUERY_FLAG(tmp,FLAG_FLY_ON):
 	   QUERY_FLAG(tmp,FLAG_WALK_ON)) {
-	    move_apply_func (tmp, op, originator);
+	    move_apply(tmp, op, originator);
             if (was_destroyed (op, tag))
               return 1;
 	    /* what the person/creature stepped onto has moved the object

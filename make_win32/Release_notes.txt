@@ -1,13 +1,12 @@
 Release notes for Crossfire Server (Windows), January, 27th, 2005
 ----------------------------------------------------------------
 
-This is official version 1.7.0 of the server.
+This is snapshot version 1.7.0 May, 21st, 2005 of the server.
 
 --------------------------------------------------------------
 For complete changes, see the Changelog file included with the software. Major
-changes since last release: Numerous bug fixes, including fixing some compile problems
-on some systems. DM improvements. New objects. All in all, there isn't any really major
-changes, but lots of minor ones.
+changes since last release: Numerous bug fixes, regions system, new archetypes,
+new sign/messages interface.
 --------------------------------------------------------------
 
 Once you have installed the server, you MUST download a map set.

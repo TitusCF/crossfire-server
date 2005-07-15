@@ -176,7 +176,6 @@ static void init_emergency_mappath()
 void init_library() {
     init_environ();
     init_globals();
-    init_function_pointers();
     init_hash_table();
     init_objects();
     init_vars();

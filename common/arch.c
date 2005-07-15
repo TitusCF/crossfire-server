@@ -281,7 +281,7 @@ void init_archetypes() { /* called from add_player() and edit() */
 
 void arch_info(object *op) {
   sprintf(errmsg,"%d searches and %d strcmp()'s",arch_search,arch_cmp);
-  (*draw_info_func)(NDI_BLACK, 0, op,errmsg);
+  new_draw_info(NDI_BLACK, 0, op,errmsg);
 }
 
 /*

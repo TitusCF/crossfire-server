@@ -406,7 +406,6 @@ void rec_sigbus(int i);
 void rec_sigterm(int i);
 void fatal_signal(int make_core, int close_sockets);
 void init_signals(void);
-void setup_library(void);
 void init_races(void);
 void dump_races(void);
 void add_to_racelist(char *race_name, object *op);

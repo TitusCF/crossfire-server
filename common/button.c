@@ -81,7 +81,7 @@ void push_button(object *op) {
 
 	    case SIGN:
 		if (!tmp->stats.food || tmp->last_eat < tmp->stats.food) {
-		    (*info_map_func)(NDI_UNIQUE | NDI_NAVY,tmp->map,tmp->msg);
+		    new_info_map(NDI_UNIQUE | NDI_NAVY,tmp->map,tmp->msg);
 		    if (tmp->stats.food) tmp->last_eat++;
 		}
 	    break;
@@ -123,7 +123,7 @@ void push_button(object *op) {
 
 	    case DIRECTOR:
 	    case FIREWALL:
-		if(!QUERY_FLAG(tmp,FLAG_ANIMATE)&&tmp->type==FIREWALL) (*move_firewall_func)(tmp);
+		if(!QUERY_FLAG(tmp,FLAG_ANIMATE)&&tmp->type==FIREWALL) move_firewall(tmp);
 		else {
 		    if ((tmp->stats.sp += tmp->stats.maxsp) > 8) /* next direction */
 			tmp->stats.sp = ((tmp->stats.sp-1)%8)+1;
@@ -132,19 +132,19 @@ void push_button(object *op) {
 		break;
 
 	    case TELEPORTER:
-		(*move_teleporter_func)(tmp);
+		move_teleporter(tmp);
 		break;
 
 	    case CREATOR:
-		(*move_creator_func)(tmp);
+		move_creator(tmp);
 		break;
 		
 		case TRIGGER_MARKER:
-		(*move_trigger_marker_func)(tmp);
+		move_marker(tmp);
 		break;
 
 	    case DUPLICATOR:
-		(*move_duplicator_func)(tmp);
+		move_duplicator(tmp);
 		break;
 	}
     }
@@ -323,7 +323,7 @@ int operate_altar (object *altar, object **sacrifice)
     *sacrifice = decrease_ob_nr (*sacrifice, NROF_SACRIFICE(altar));
  
   if (altar->msg)
-    (*info_map_func) (NDI_BLACK, altar->map, altar->msg);
+    new_info_map(NDI_BLACK, altar->map, altar->msg);
   return 1;
 }
 
