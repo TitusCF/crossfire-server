@@ -99,8 +99,145 @@ static void PyFreeString( char* str )
 
 #define PyDeleteString( __str__ ) PyFreeString( __str__ ); __str__ = NULL
 
-/* Set up an Python exception object.
- */
+static char* PyQueryName( object* ob )
+    {
+    CFParm* CFR;
+    char* name;
+    GCFP.Value[ 0 ] = ( void* )ob;
+    CFR = PlugHooks[ HOOK_QUERYNAME ]( &GCFP );
+    name = ( char* )CFR->Value[ 0 ];
+    PyFreeMemory( CFR );
+    return name;
+    }
+
+static char* PyQueryBaseName( object* ob, int plural )
+    {
+    CFParm* CFR;
+    char* name;
+    GCFP.Value[ 0 ] = ( void* )ob;
+    GCFP.Value[ 1 ] = ( void* )&plural;
+    CFR = PlugHooks[ HOOK_QUERYNAME ]( &GCFP );
+    name = ( char* )CFR->Value[ 0 ];
+    PyFreeMemory( CFR );
+    return name;
+    }
+
+static object* PyInsertObInOb( object* ob, object* where )
+    {
+    CFParm lCFR;
+    CFParm* CFR;
+    object* ret;
+    lCFR.Value[ 0 ] = ( void* )ob;
+    lCFR.Value[ 1 ] = ( void* )where;
+    CFR = PlugHooks[ HOOK_INSERTOBINOB ]( &lCFR );
+    ret = ( object* )CFR->Value[ 0 ];
+    PyFreeMemory( CFR );
+    return ret;
+    }
+
+static Settings* PyGetSettings( )
+    {
+    static Settings* local = NULL;
+    if ( !local )
+        {
+        CFParm* CFR = PlugHooks[ HOOK_GETSETTINGS ]( NULL );
+        local = ( Settings* )CFR->Value[ 0 ];
+        PyFreeMemory( CFR );
+        }
+    return local;
+    }
+
+static int PyGetMapFlags( mapstruct *oldmap, mapstruct **newmap, sint16 x, sint16 y, sint16 *nx, sint16 *ny)
+    {
+    CFParm lCFR;
+    CFParm* CFR;
+    int val;
+
+    CFR = PlugHooks[ HOOK_GETMAPFLAGS ]( &lCFR );
+    val = *( int* )CFR->Value[ 0 ];
+    if ( newmap )
+        *newmap = ( mapstruct* )CFR->Value[ 1 ];
+    if ( nx )
+        *nx = *( sint16* )CFR->Value[ 2 ];
+    if ( ny )
+        *ny = *( sint16* )CFR->Value[ 3 ];
+    PyFreeMemory( CFR );
+    return val;
+    }
+
+static object* PyPresentArchByName( const char* name, mapstruct* map, int nx, int ny )
+    {
+    object* ob;
+    CFParm lCFR;
+    CFParm* CFR;
+    lCFR.Value[ 0 ] = ( void* )name;
+    lCFR.Value[ 1 ] = ( void* )map;
+    lCFR.Value[ 2 ] = ( void* )&nx;
+    lCFR.Value[ 3 ] = ( void* )&ny;
+    CFR = PlugHooks[ HOOK_PRESENTARCHBYNAME ]( &lCFR );
+    ob = ( object* )CFR->Value[ 0 ];
+    PyFreeMemory( CFR );
+    return ob;
+    }
+
+static object* PyPresentArchNameInOb( const char* name, object* ob )
+    {
+    CFParm lCFR;
+    CFParm* CFR;
+    lCFR.Value[ 0 ] = ( void* )name;
+    lCFR.Value[ 1 ] = ( void* )ob;
+    CFR = PlugHooks[ HOOK_PRESENTARCHNAMEINOB ]( &lCFR );
+    ob = ( object* )CFR->Value[ 0 ];
+    PyFreeMemory( CFR );
+    return ob;
+    }
+
+static char* PyStrdupLocal( const char* str )
+    {
+    CFParm lCFR;
+    CFParm* CFR;
+    char* dup;
+    lCFR.Value[ 0 ] = ( void* )str;
+    CFR = PlugHooks[ HOOK_STRDUPLOCAL ]( &lCFR );
+    dup = ( char* )CFR->Value[ 0 ];
+    PyFreeMemory( CFR );
+    return dup;
+    }
+
+static const char* PyCreatePathname( const char* str )
+    {
+    CFParm lCFR;
+    CFParm* CFR;
+    const char* dup;
+    lCFR.Value[ 0 ] = ( void* )str;
+    CFR = PlugHooks[ HOOK_CREATEPATHNAME ]( &lCFR );
+    dup = ( const char* )CFR->Value[ 0 ];
+    PyFreeMemory( CFR );
+    return dup;
+    }
+
+static void PyUpdateObSpeed( object* ob )
+    {
+    CFParm lCFR;
+    lCFR.Value[ 0 ] = ( void* )ob;
+    PlugHooks[ HOOK_UPDATEOBSPEED ]( &lCFR );
+    }
+
+static char* PyReCmp( char* str, char* regex )
+    {
+    CFParm lCFR;
+    CFParm* CFR;
+    char* ret;
+
+    lCFR.Value[ 0 ] = ( void* )str;
+    lCFR.Value[ 1 ] = ( void* )regex;
+    CFR = PlugHooks[ HOOK_RECMP ]( &lCFR );
+    ret = ( char* )CFR->Value[ 0 ];
+    PyFreeMemory( CFR );
+    return ret;
+    }
+
+/* Set up an Python exception object. */
 static void set_exception(const char *fmt, ...)
 {
     char buf[1024];
@@ -111,6 +248,17 @@ static void set_exception(const char *fmt, ...)
     va_end(arg);
 
     PyErr_SetString(PyExc_ValueError, buf);
+}
+
+event* find_event(object* op, int etype)
+{
+    event *found;
+    for(found=op->events;found!=NULL;found=found->next)
+    {
+        if (found->type == etype)
+            return found;
+    }
+    return NULL;
 }
 
 /* Create an object. The parameter name may be an object name ("writing pen")
@@ -130,7 +278,7 @@ static object *create_object(char *name)
     ob = CFR->Value[0];
     PyFreeMemory(CFR);
 
-    if(strncmp(query_name(ob), "singluarity", 11) == 0)
+    if(strncmp(PyQueryName(ob), "singluarity", 11) == 0)
     {
         /* Object name failed, try archetype name. */
 
@@ -141,7 +289,7 @@ static object *create_object(char *name)
         ob = CFR->Value[0];
         PyFreeMemory(CFR);
 
-        if(strncmp(query_name(ob), "singluarity", 11) == 0)
+        if(strncmp(PyQueryName(ob), "singluarity", 11) == 0)
         {
             PyFreeObject(ob);
             set_exception("object '%s' does not exist", name);
@@ -155,7 +303,7 @@ static object *create_object(char *name)
 
         /* Object name found, try adding artifact suffixes. */
 
-        obname = query_base_name(ob, 0);
+        obname = PyQueryBaseName( ob, 0 );
 
         /* Sanity check: obname should be a prefix of name. */
         if(strncmp(name, obname, strlen(obname)) != 0)
@@ -680,7 +828,7 @@ static PyObject* CFSetSkillExperience(PyObject* self, PyObject* args)
         };
     };
 
-    set_exception("%s does not know the skill %s", query_name(WHO), skill);
+    set_exception("%s does not know the skill %s", PyQueryName(WHO), skill);
     return NULL;
 };
 
@@ -724,7 +872,7 @@ static PyObject* CFMatchString(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"ss",&premiere,&seconde))
         return NULL;
 
-    result = re_cmp(premiere, seconde);
+    result = PyReCmp( premiere, seconde );
     if (result != NULL)
     {
         return Py_BuildValue("i",1);
@@ -883,7 +1031,7 @@ static PyObject* CFCastAbility(PyObject* self, PyObject* args)
     spell_ob = CFR->Value[0];
     PyFreeMemory( CFR );
 
-    if (strncmp(query_name(spell_ob), "singluarity", 11) == 0)
+    if (strncmp(PyQueryName(spell_ob), "singluarity", 11) == 0)
     {
         /* spell object does not exist */
         PyFreeObject(spell_ob);
@@ -1139,6 +1287,7 @@ static PyObject* CFTeleport(PyObject* self, PyObject* args)
     long where;
     int x, y;
     int val;
+    CFParm* CFP;
 
     if (!PyArg_ParseTuple(args,"llii",&whoptr,&where,&x,&y))
         return NULL;
@@ -1146,34 +1295,19 @@ static PyObject* CFTeleport(PyObject* self, PyObject* args)
     CHECK_OBJ(whoptr);
     CHECK_MAP(where);
 
-    if ((out_of_map((mapstruct*)(where),x,y))==0)
-    {
-        int k;
-        object *tmp;
-        k = find_first_free_spot(WHO->arch,(mapstruct*)(where),x,y);
-        if (k==-1)
-        {
-            set_exception("no free spot found");
-            return NULL;
-        }
+    GCFP.Value[0] = (void *)(WHO);
+    GCFP.Value[1] = (void *)((mapstruct *)(where));
+    GCFP.Value[2] = ( void* )&x;
+    GCFP.Value[3] = ( void* )&y;
+    CFP = (PlugHooks[HOOK_TELEPORTOBJECT])(&GCFP);
 
-        GCFP.Value[0] = (void *)(WHO);
-        (PlugHooks[HOOK_REMOVEOBJECT])(&GCFP);
+    val = *( int* )CFP->Value[ 0 ];
+    if ( 1 == val )
+        set_exception( "can't find free spot" );
+    else if ( 2 == val )
+        set_exception( "out of map" );
 
-        for(tmp=WHO;tmp!=NULL;tmp=tmp->more)
-            tmp->x=x+freearr_x[k]+(tmp->arch==NULL?0:tmp->arch->clone.x),
-            tmp->y=y+freearr_y[k]+(tmp->arch==NULL?0:tmp->arch->clone.y);
-
-        val = 0;
-        GCFP.Value[0] = (void *)(WHO);
-        GCFP.Value[1] = (void *)((mapstruct *)(where));
-        GCFP.Value[2] = NULL;
-        GCFP.Value[3] = (void *)(&val);
-        PyFreeMemory( (PlugHooks[HOOK_INSERTOBJECTINMAP])(&GCFP) );
-    };
-
-    Py_INCREF(Py_None);
-    return Py_None;
+    return Py_BuildValue("i",val);
 };
 
 /*****************************************************************************/
@@ -1184,13 +1318,22 @@ static PyObject* CFIsOutOfMap(PyObject* self, PyObject* args)
 {
     long whoptr;
     int x, y;
+    CFParm* CFP;
+    int val;
 
     if (!PyArg_ParseTuple(args,"lii",&whoptr,&x,&y))
         return NULL;
 
     CHECK_OBJ(whoptr);
 
-    return Py_BuildValue("i", out_of_map(WHO->map,x,y));
+    GCFP.Value[ 0 ] = ( void* )whoptr;
+    GCFP.Value[ 1 ] = ( void* )&x;
+    GCFP.Value[ 2 ] = ( void* )&y;
+    CFP = PlugHooks[ HOOK_OUTOFMAP ]( &GCFP );
+    val = *( int* )( CFP->Value[ 0 ] );
+    PyFreeMemory( CFP );
+
+    return Py_BuildValue("i", val );
 };
 
 /*****************************************************************************/
@@ -1390,7 +1533,8 @@ static PyObject* CFInsertObjectInside(PyObject* self, PyObject* args)
         GCFP.Value[0] = (void *)(myob);
         (PlugHooks[HOOK_REMOVEOBJECT])(&GCFP);
     }
-    myob = insert_ob_in_ob(myob, WHERE);
+
+    myob = PyInsertObInOb( myob, WHERE );
     if (WHERE->type == PLAYER)
     {
         GCFP.Value[0] = (void *)(WHERE);
@@ -1572,14 +1716,17 @@ static PyObject* CFSay(PyObject* self, PyObject* args)
     char *message;
     char *buf;
     int val;
+    char* name;
 
     if (!PyArg_ParseTuple(args,"ls",&whoptr,&message))
         return NULL;
 
     CHECK_OBJ(whoptr);
 
-    buf = (char *)(malloc(sizeof(char)*(strlen(message)+strlen(query_name(WHO))+20)));
-    sprintf(buf, "%s says: %s", query_name(WHO),message);
+    name = PyQueryName( WHO );
+
+    buf = (char *)(malloc(sizeof(char)*(strlen(message)+strlen(name)+20)));
+    sprintf(buf, "%s says: %s", name,message);
     val = NDI_NAVY|NDI_UNIQUE;
     GCFP.Value[0] = (void *)(&val);
     GCFP.Value[1] = (void *)(WHO->map);
@@ -1838,8 +1985,10 @@ static PyObject* CFSetDirection(PyObject* self, PyObject* args)
 
     CHECK_OBJ(whoptr);
 
-    WHO->direction = value;
-    SET_ANIMATION(WHO, WHO->direction);
+    GCFP.Value[ 0 ] = &whoptr;
+    GCFP.Value[ 1 ] = &value;
+    PlugHooks[ HOOK_SETDIRECTION ]( &GCFP );
+
     Py_INCREF(Py_None);
     return Py_None;
 };
@@ -2117,7 +2266,7 @@ static PyObject* CFKillObject(PyObject* self, PyObject* args)
 
     WHAT->speed = 0;
     WHAT->speed_left = 0.0;
-    update_ob_speed(WHAT);
+    PyUpdateObSpeed(WHAT);
 
     if(QUERY_FLAG(WHAT,FLAG_REMOVED))
     {
@@ -2418,7 +2567,7 @@ static PyObject* CFCreateInvisibleObjectInside(PyObject* self, PyObject* args)
     myob = (object *)(CFR->Value[0]);
     PyFreeMemory( CFR );
 
-    if(strncmp(query_name(myob), "singluarity", 11) == 0)
+    if(strncmp(PyQueryName(myob), "singluarity", 11) == 0)
     {
         PyFreeObject(myob);
         set_exception("can't find archetype 'force'");
@@ -2431,7 +2580,8 @@ static PyObject* CFCreateInvisibleObjectInside(PyObject* self, PyObject* args)
     if (myob->slaying != NULL)
         PyDeleteString(myob->slaying);
     myob->slaying = PyAddString(txt);
-    myob = insert_ob_in_ob(myob, where);
+
+    myob = PyInsertObInOb( myob, where );
 
     GCFP.Value[0] = (void *)(where);
     GCFP.Value[1] = (void *)(myob);
@@ -2462,7 +2612,8 @@ static PyObject* CFCreateObjectInside(PyObject* self, PyObject* args)
     if (myob == NULL)
         return NULL;
 
-    myob = insert_ob_in_ob(myob, where);
+    myob = PyInsertObInOb( myob, where );
+
     if (where->type == PLAYER)
     {
         GCFP.Value[0] = (void *)(where);
@@ -2510,15 +2661,12 @@ static PyObject* CFCheckMap(PyObject* self, PyObject* args)
             return Py_BuildValue("l",(long)0);
     }
 
-    mflags = get_map_flags(map, &map, x, y, &nx, &ny);
+    mflags = PyGetMapFlags(map, &map, ( sint16 )x, ( sint16 )y, &nx, &ny);
     if (mflags & P_OUT_OF_MAP)
         return Py_BuildValue("l",(long)0);
 
-    foundob = present_arch(
-        find_archetype(what),
-        map,
-        nx, ny
-    );
+    foundob = PyPresentArchByName( what, map, nx, ny );
+
     return Py_BuildValue("l",(long)(foundob));
 };
 
@@ -2563,13 +2711,13 @@ static PyObject* CFCheckInventory(PyObject* self, PyObject* args)
 
     CHECK_OBJ(whoptr);
 
-    foundob = present_arch_in_ob(find_archetype(whatstr),WHO);
+    foundob = PyPresentArchNameInOb( whatstr, WHO );
     if (foundob != NULL)
         return Py_BuildValue("l",(long)(foundob));
 
     for(tmp = WHO->inv; tmp; tmp = tmp->below)
     {
-        if (!strncmp(query_name(tmp),whatstr,strlen(whatstr)))
+        if (!strncmp(PyQueryName(tmp),whatstr,strlen(whatstr)))
         {
             return Py_BuildValue("l",(long)(tmp));
         };
@@ -4614,8 +4762,8 @@ static PyObject* CFRegisterCommand(PyObject* self, PyObject* args)
     {
         if (CustomCommand[i].name == NULL)
         {
-            CustomCommand[i].name = strdup_local(cmdname);
-            CustomCommand[i].script = strdup_local(scriptname);
+            CustomCommand[i].name = PyStrdupLocal(cmdname);
+            CustomCommand[i].script = PyStrdupLocal(scriptname);
             CustomCommand[i].speed = cmdspeed;
             i = NR_CUSTOM_CMD;
         }
@@ -4939,7 +5087,7 @@ static PyObject* CFGetMapDir(PyObject* self, PyObject* args)
 {
     if (!PyArg_ParseTuple(args,"",NULL))
         return NULL;
-    return Py_BuildValue("s",settings.mapdir);
+    return Py_BuildValue("s",PyGetSettings( )->mapdir);
 }
 
 /*****************************************************************************/
@@ -4950,7 +5098,7 @@ static PyObject* CFGetUniqueDir(PyObject* self, PyObject* args)
 {
     if (!PyArg_ParseTuple(args,"",NULL))
         return NULL;
-    return Py_BuildValue("s",settings.uniquedir);
+    return Py_BuildValue("s",PyGetSettings( )->uniquedir);
 }
 
 /*****************************************************************************/
@@ -4961,7 +5109,7 @@ static PyObject* CFGetTempDir(PyObject* self, PyObject* args)
 {
     if (!PyArg_ParseTuple(args,"",NULL))
         return NULL;
-    return Py_BuildValue("s",settings.tmpdir);
+    return Py_BuildValue("s",PyGetSettings( )->tmpdir);
 }
 
 /*****************************************************************************/
@@ -4972,7 +5120,7 @@ static PyObject* CFGetConfigurationDir(PyObject* self, PyObject* args)
 {
     if (!PyArg_ParseTuple(args,"",NULL))
         return NULL;
-    return Py_BuildValue("s",settings.confdir);
+    return Py_BuildValue("s",PyGetSettings( )->confdir);
 }
 
 /*****************************************************************************/
@@ -4983,7 +5131,7 @@ static PyObject* CFGetDataDir(PyObject* self, PyObject* args)
 {
     if (!PyArg_ParseTuple(args,"",NULL))
         return NULL;
-    return Py_BuildValue("s",settings.datadir);
+    return Py_BuildValue("s",PyGetSettings( )->datadir);
 }
 
 /*****************************************************************************/
@@ -4994,7 +5142,7 @@ static PyObject* CFGetLocalDir(PyObject* self, PyObject* args)
 {
     if (!PyArg_ParseTuple(args,"",NULL))
         return NULL;
-    return Py_BuildValue("s",settings.localdir);
+    return Py_BuildValue("s",PyGetSettings( )->localdir);
 }
 
 /*****************************************************************************/
@@ -5005,7 +5153,7 @@ static PyObject* CFGetPlayerDir(PyObject* self, PyObject* args)
 {
     if (!PyArg_ParseTuple(args,"",NULL))
         return NULL;
-    return Py_BuildValue("s",settings.playerdir);
+    return Py_BuildValue("s",PyGetSettings( )->playerdir);
 }
 
 /*****************************************************************************/
@@ -5184,7 +5332,7 @@ MODULEAPI int HandleGlobalEvent(CFParm* PParm)
     };
 
     if (scriptname != NULL) {
-        filename = create_pathname(scriptname);
+        filename = PyCreatePathname(scriptname);
 
         Scriptfile = fopen(filename,"r");
         if (Scriptfile != NULL) {
@@ -5222,14 +5370,14 @@ MODULEAPI int HandleEvent(CFParm* PParm)
     StackParm4[StackPosition]       = *(int *)(PParm->Value[8]);
     StackReturn[StackPosition]      = 0;
     /* RunPythonScript(scriptname); */
-    Scriptfile = fopen(create_pathname((char *)(PParm->Value[9])),"r");
+    Scriptfile = fopen(PyCreatePathname((char *)(PParm->Value[9])),"r");
     if (Scriptfile == NULL)
     {
         printf( "PYTHON - The Script file %s can't be opened\n",(char *)(PParm->Value[9]));
         StackPosition--;
         return 0;
     };
-    PyRun_SimpleFile(Scriptfile, create_pathname((char *)(PParm->Value[9])));
+    PyRun_SimpleFile(Scriptfile, PyCreatePathname((char *)(PParm->Value[9])));
     fclose(Scriptfile);
 
 #ifdef PYTHON_DEBUG
@@ -5342,14 +5490,14 @@ MODULEAPI int cmd_customPython(object *op, char *params)
     StackOther[StackPosition]       = NULL;
     StackText[StackPosition]        = params;
     StackReturn[StackPosition]      = 1; /* default is "success" */
-    Scriptfile = fopen(create_pathname(CustomCommand[NextCustomCommand].script),"r");
+    Scriptfile = fopen(PyCreatePathname(CustomCommand[NextCustomCommand].script),"r");
     if (Scriptfile == NULL)
     {
         printf( "PYTHON - The Script file %s can't be opened\n",CustomCommand[NextCustomCommand].script);
         StackPosition--;
         return 0;
     };
-    PyRun_SimpleFile(Scriptfile, create_pathname(CustomCommand[NextCustomCommand].script));
+    PyRun_SimpleFile(Scriptfile, PyCreatePathname(CustomCommand[NextCustomCommand].script));
     fclose(Scriptfile);
     StackPosition--;
     return StackReturn[StackPosition+1];
@@ -5387,6 +5535,18 @@ MODULEAPI CFParm* postinitPlugin(CFParm* PParm)
     /* for extended logging facilities.                  */
 
     printf( "PYTHON - Start postinitPlugin.\n");
+
+    if (allocate_stack())
+    {
+        const char* filename = PyCreatePathname("python/events/python_init.py");
+        FILE* scriptfile = fopen(filename, "r");
+        if (scriptfile != NULL)
+        {
+            PyRun_SimpleFile(scriptfile, filename);
+            fclose(scriptfile);
+        }
+        StackPosition--;
+    }
 
     GCFP.Value[1] = (void *)(PyAddString(PLUGIN_NAME));
     i = EVENT_BORN;
@@ -5448,8 +5608,6 @@ MODULEAPI void initCFPython()
 {
         PyObject *m, *d;
         int i;
-        FILE *scriptfile;
-        const char *filename;
 
         printf( "PYTHON - Start initCFPython.\n");
 
@@ -5463,16 +5621,4 @@ MODULEAPI void initCFPython()
             CustomCommand[i].script = NULL;
             CustomCommand[i].speed  = 0.0;
         };
-
-        if (allocate_stack())
-        {
-            filename = create_pathname("python/events/python_init.py");
-            scriptfile = fopen(filename, "r");
-            if (scriptfile != NULL)
-            {
-                PyRun_SimpleFile(scriptfile, filename);
-                fclose(scriptfile);
-            }
-            StackPosition--;
-        }
 };

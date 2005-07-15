@@ -66,7 +66,21 @@ f_plugin HookList[NR_OF_HOOKS] =
     CFWSetVariable,
     CFWDecreaseObjectNR,
     CFWFreeMemory,
-    CFWFixPlayer
+    CFWFixPlayer,
+    CFWCheckTrigger,
+    CFWOutOfMap,
+    CFWQueryName,
+    CFWQueryBaseName,
+    CFWInsertObInOb,
+    CFWGetMapFlags,
+    CFWGetSettings,
+    CFWPresentArchByName,
+    CFWStrdupLocal,
+    CFWReCmp,
+    CFWCreatePathname,
+    CFWUpdateObSpeed,
+    CFWPresentArchNameInOb,
+    CFWSetDirection
 };
 
 #endif /*PLUGPROTO_H_*/

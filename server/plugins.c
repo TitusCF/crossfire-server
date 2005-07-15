@@ -1403,39 +1403,50 @@ CFParm* CFWDecreaseObjectNR(CFParm* PParm)
 /* teleport an object to another map                                         */
 /*****************************************************************************/
 /* 0 - object                                                                */
-/* 1 - mapname we use for destination                                        */
+/* 1 - map structure                                                         */
 /* 2 - mapx                                                                  */
 /* 3 - mapy                                                                  */
-/* 4 - unique?                                                               */
-/* 5 - msg (used for random maps entering. May be NULL)                      */
+/* return value:                                                             */
+/*  0: ok                                                                    */
+/*  1: can't find a free spot                                                */
+/*  2: out of map                                                            */
 /*****************************************************************************/
 CFParm* CFWTeleportObject (CFParm* PParm)
 {
-    object* current;
-    current=get_object();
-    EXIT_PATH(current)=add_string ((char*)PParm->Value[1]);
-    EXIT_X(current)=*(int*)PParm->Value[2];
-    EXIT_Y(current)=*(int*)PParm->Value[3];
-    if (*(int*)PParm->Value[4]) SET_FLAG(current,FLAG_UNIQUE);
-    if (PParm->Value[5]) {
-	char *txt = PParm->Value[5];
-	char *tmp = NULL;
+    mapstruct* map;
+    int x, y;
+    object* who;
+    CFParm* CFP=(CFParm*)malloc(sizeof (CFParm));
+    static int result;
 
-	/* ensure trailing '\n' */
-	int len = strlen(txt);
-	if (len == 0 || txt[len-1] != '\n') {
-	    tmp = malloc(len+2);
-	    sprintf(tmp, "%s\n", txt);
-	    txt = tmp;
-	}
+    who = ( object* )PParm->Value[ 0 ];
+    map = ( mapstruct* )PParm->Value[ 1 ];
+    x = *( int* )PParm->Value[ 2 ];
+    y = *( int* )PParm->Value[ 3 ];
 
-	current->msg = add_string (txt);
+    CFP->Value[ 0 ] = (void *)&result;
+    if ( ( out_of_map( map,x,y ) ) == 0 )
+    {
+        int k;
+        object *tmp;
+        k = find_first_free_spot(who->arch,map,x,y);
+        if (k==-1)
+        {
+            result = 1;
+            return CFP;
+        }
 
-	free(tmp);
-    }
-    enter_exit ((object*) PParm->Value[0],current);
-    free_object (current);
-    return NULL;
+        remove_ob( who );
+
+        for(tmp=who;tmp!=NULL;tmp=tmp->more)
+            tmp->x=x+freearr_x[k]+(tmp->arch==NULL?0:tmp->arch->clone.x),
+            tmp->y=y+freearr_y[k]+(tmp->arch==NULL?0:tmp->arch->clone.y);
+
+        insert_ob_in_map( who, map, NULL, 0 );
+        result = 0;
+    };
+
+    return CFP;
 }
 
 /*****************************************************************************/
@@ -1444,11 +1455,152 @@ CFParm* CFWTeleportObject (CFParm* PParm)
 /* 0 - item to check                                                         */
 /* 1 - cause                                                                 */
 /*****************************************************************************/
-CFParm* CFWCFCheckTrigger(CFParm* PParm)
+CFParm* CFWCheckTrigger(CFParm* PParm)
 {
     check_trigger( ( object* )( PParm->Value[ 0 ] ), ( object* )( PParm->Value[ 1 ] ) );
     return NULL;
 };
+
+/*****************************************************************************/
+/* out_of_map wrapper.                                                       */
+/*****************************************************************************/
+/* 0 - map                                                                   */
+/* 1 - x                                                                     */
+/* 2 - y                                                                     */
+/*****************************************************************************/
+CFParm* CFWOutOfMap(CFParm* PParm)
+{
+    static int val;
+    CFParm* CFP = (CFParm*)malloc(sizeof (CFParm));
+    val = out_of_map( ( mapstruct* )PParm->Value[ 0 ], *( int* )PParm->Value[ 1 ], *( int* )PParm->Value[ 2 ] );
+    CFP->Value[ 0 ] = ( void* )&val;
+    return CFP;
+};
+
+/*****************************************************************************/
+/* query_name wrapper.                                                       */
+/*****************************************************************************/
+/* 0 - item                                                                   */
+/*****************************************************************************/
+CFParm* CFWQueryName(CFParm* PParm)
+{
+    CFParm* CFP = (CFParm*)malloc(sizeof (CFParm));
+    CFP->Value[ 0 ] = query_name( ( object* )PParm->Value[ 0 ] );
+    return CFP;
+};
+
+/*****************************************************************************/
+/* query_base_name wrapper.                                                  */
+/*****************************************************************************/
+/* 0 - item                                                                  */
+/* 1 - plural                                                                */
+/*****************************************************************************/
+CFParm* CFWQueryBaseName(CFParm* PParm)
+{
+    CFParm* CFP = (CFParm*)malloc(sizeof (CFParm));
+    CFP->Value[ 0 ] = query_base_name( ( object* )PParm->Value[ 0 ], *( int* )PParm->Value[ 1 ] );
+    return CFP;
+};
+
+/*****************************************************************************/
+/* insert_ob_ino_b wrapper.                                                  */
+/*****************************************************************************/
+/* 0 - item                                                                  */
+/* 1 - plural                                                                */
+/*****************************************************************************/
+CFParm* CFWInsertObInOb(CFParm* PParm)
+{
+    CFParm* CFP = (CFParm*)malloc(sizeof (CFParm));
+    CFP->Value[ 0 ] = ( void* )insert_ob_in_ob( ( object* )PParm->Value[ 0 ], ( object* )PParm->Value[ 1 ] );
+    return CFP;
+};
+
+/*****************************************************************************/
+/* Returns the settings variable.                                            */
+/*****************************************************************************/
+/* no parameter                                                              */
+/*****************************************************************************/
+CFParm* CFWGetSettings(CFParm* PParm)
+{
+    CFParm* CFP = (CFParm*)malloc(sizeof (CFParm));
+    CFP->Value[ 0 ] = ( void* )&settings;
+    return CFP;
+};
+
+
+CFParm* CFWGetMapFlags(CFParm* PParm)
+    {
+    static sint16 nx, ny;
+    static mapstruct* newmap;
+    static val;
+    CFParm* CFP = (CFParm*)malloc(sizeof (CFParm));
+
+    val = get_map_flags(
+        ( mapstruct* )PParm->Value[ 0 ],
+        &newmap,
+        *( sint16* )PParm->Value[ 1 ],
+        *( sint16* )PParm->Value[ 2 ],
+        &nx,
+        &ny );
+
+    CFP->Value[ 0 ] = ( void* )&val;
+    CFP->Value[ 1 ] = ( void* )&newmap;
+    CFP->Value[ 2 ] = ( void* )&nx;
+    CFP->Value[ 3 ] = ( void* )&ny;
+    return CFP;
+    }
+
+CFParm* CFWReCmp(CFParm* PParm)
+    {
+    CFParm* CFP = (CFParm*)malloc(sizeof (CFParm));
+    CFP->Value[ 0 ] = ( void* )re_cmp( PParm->Value[ 0 ], PParm->Value[ 1 ] );
+    return CFP;
+    }
+
+CFParm* CFWStrdupLocal(CFParm* PParm)
+    {
+    CFParm* CFP = (CFParm*)malloc(sizeof (CFParm));
+    CFP->Value[ 0 ] = strdup_local( ( char* )PParm->Value[ 0 ] );
+    return CFP;
+    }
+
+CFParm* CFWCreatePathname(CFParm* PParm)
+    {
+    CFParm* CFP = (CFParm*)malloc(sizeof (CFParm));
+    CFP->Value[ 0 ] = ( void* )create_pathname( ( char* )PParm->Value[ 0 ] );
+    return CFP;
+    }
+
+CFParm* CFWUpdateObSpeed(CFParm* PParm)
+    {
+    update_ob_speed( ( object* )PParm->Value[ 0 ] );
+    return NULL;
+    }
+
+CFParm* CFWPresentArchByName(CFParm* PParm)
+    {
+    int x, y;
+    CFParm* CFP = (CFParm*)malloc(sizeof (CFParm));
+    x = *( int* )PParm->Value[ 2 ];
+    y = *( int* )PParm->Value[ 1 ];
+    CFP->Value[ 0 ] = ( void* )present_arch( find_archetype( ( const char* )PParm->Value[ 0 ] ), ( mapstruct* )PParm->Value[ 1 ], x, y );
+    return CFP;
+    }
+
+CFParm* CFWPresentArchNameInOb(CFParm* PParm)
+    {
+    CFParm* CFP = (CFParm*)malloc(sizeof (CFParm));
+    CFP->Value[ 0 ] = present_arch_in_ob( find_archetype( PParm->Value[ 0 ] ), PParm->Value[ 1 ] );
+    return CFP;
+    }
+
+CFParm* CFWSetDirection(CFParm* PParm)
+    {
+    object* who = ( object* )PParm->Value[ 0 ];
+    who->direction = ( char )PParm->Value[ 1 ];
+    SET_ANIMATION(who, who->direction);
+    return NULL;
+    }
 
 /*****************************************************************************/
 /* The following is not really a wrapper like the others are.                */

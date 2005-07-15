@@ -160,7 +160,20 @@
 #define HOOK_FREEMEMORY          62
 #define HOOK_FIXPLAYER           63
 #define HOOK_CHECKTRIGGER        64
-#define NR_OF_HOOKS             65
+#define HOOK_OUTOFMAP            65
+#define HOOK_QUERYNAME           66
+#define HOOK_QUERYBASENAME       67
+#define HOOK_INSERTOBINOB        68
+#define HOOK_GETMAPFLAGS         69
+#define HOOK_GETSETTINGS         70
+#define HOOK_PRESENTARCHBYNAME   71
+#define HOOK_STRDUPLOCAL         72
+#define HOOK_RECMP               73
+#define HOOK_CREATEPATHNAME      74
+#define HOOK_UPDATEOBSPEED       75
+#define HOOK_PRESENTARCHNAMEINOB 76
+#define HOOK_SETDIRECTION        77
+#define NR_OF_HOOKS             78
 
 /*****************************************************************************/
 /* CFParm is the data type used to pass informations between the server and  */

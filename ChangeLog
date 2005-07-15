@@ -17,6 +17,17 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Those commits remove the dependency on the plugin towards the library. All functions
+ used from the plugin are hooked, instead of being called directly. This fixes bugs
+ under Windows, and simplifies compilation. Also, many new callbacks were defined.
+Affected files:
+ include/plugin.h plugproto.h sproto.h
+ plugin/plugin_python.c
+ server/plugins.c
+Note that at some point some functions could be moved out of plugin_python and put in
+ plugin_general to be shared between different plugins.
+Ryo 2005-07-15
+
 Those commits remove the whole "glue/callback" logic. Instead functions are just
 defined as external, and should be implemented (even as dummy) by all programs.
 Affected files:
