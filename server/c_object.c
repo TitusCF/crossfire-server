@@ -1604,114 +1604,105 @@ void inventory(object *op,object *inv) {
   }
 }
 
+static void display_new_pickup( object* op )
+    {
+    int i = op->contr->mode;
+
+    if(!(i & PU_NEWMODE)) return;
+
+    new_draw_info_format(NDI_UNIQUE, 0,op,"%d NEWMODE",i & PU_NEWMODE?1:0);
+    new_draw_info_format(NDI_UNIQUE, 0,op,"%d DEBUG",i & PU_DEBUG?1:0);
+    new_draw_info_format(NDI_UNIQUE, 0,op,"%d INHIBIT",i & PU_INHIBIT?1:0);
+    new_draw_info_format(NDI_UNIQUE, 0,op,"%d STOP",i & PU_STOP?1:0);
+
+    new_draw_info_format(NDI_UNIQUE, 0,op,"%d <= x pickup weight/value RATIO (0==off)",(i & PU_RATIO)*5);
+
+    new_draw_info_format(NDI_UNIQUE, 0,op,"%d FOOD",i & PU_FOOD?1:0);
+    new_draw_info_format(NDI_UNIQUE, 0,op,"%d DRINK",i & PU_DRINK?1:0);
+    new_draw_info_format(NDI_UNIQUE, 0,op,"%d VALUABLES",i & PU_VALUABLES?1:0);
+
+    new_draw_info_format(NDI_UNIQUE, 0,op,"%d BOW",i & PU_BOW?1:0);
+    new_draw_info_format(NDI_UNIQUE, 0,op,"%d ARROW",i & PU_ARROW?1:0);
+
+    new_draw_info_format(NDI_UNIQUE, 0,op,"%d HELMET",i & PU_HELMET?1:0);
+    new_draw_info_format(NDI_UNIQUE, 0,op,"%d SHIELD",i & PU_SHIELD?1:0);
+    new_draw_info_format(NDI_UNIQUE, 0,op,"%d ARMOUR",i & PU_ARMOUR?1:0);
+
+    new_draw_info_format(NDI_UNIQUE, 0,op,"%d BOOTS",i & PU_BOOTS?1:0);
+    new_draw_info_format(NDI_UNIQUE, 0,op,"%d GLOVES",i & PU_GLOVES?1:0);
+    new_draw_info_format(NDI_UNIQUE, 0,op,"%d CLOAK",i & PU_CLOAK?1:0);
+    new_draw_info_format(NDI_UNIQUE, 0,op,"%d KEY",i & PU_KEY?1:0);
+
+    new_draw_info_format(NDI_UNIQUE, 0,op,"%d MISSILEWEAPON",i & PU_MISSILEWEAPON?1:0);
+    new_draw_info_format(NDI_UNIQUE, 0,op,"%d ALLWEAPON",i & PU_ALLWEAPON?1:0);
+    new_draw_info_format(NDI_UNIQUE, 0,op,"%d MAGICAL",i & PU_MAGICAL?1:0);
+    new_draw_info_format(NDI_UNIQUE, 0,op,"%d POTION",i & PU_POTION?1:0);
+
+    new_draw_info_format(NDI_UNIQUE, 0,op,"%d SPELLBOOK",i & PU_SPELLBOOK?1:0);
+    new_draw_info_format(NDI_UNIQUE, 0,op,"%d SKILLSCROLL",i & PU_SKILLSCROLL?1:0);
+    new_draw_info_format(NDI_UNIQUE, 0,op,"%d READABLES",i & PU_READABLES?1:0);
+    new_draw_info_format(NDI_UNIQUE, 0,op,"%d MAGICDEVICE", i & PU_MAGIC_DEVICE?1:0);
+
+    new_draw_info_format(NDI_UNIQUE, 0,op,"");
+    }
 
 int command_pickup (object *op, char *params)
 {
   uint32 i;
-  char putstring[128];
+  static const char* names[ ] = {
+      "debug", "inhibit", "stop", "food", "drink", "valuables", "bow", "arrow", "helmet",
+      "shield", "armour", "boots", "gloves", "cloak", "key", "missile", "allweapon",
+      "magical", "potion", "spellbook", "skillscroll", "readables", "magicdevice", NULL };
+  static uint32 modes[ ] = {
+      PU_DEBUG, PU_INHIBIT, PU_STOP, PU_FOOD, PU_DRINK, PU_VALUABLES, PU_BOW, PU_ARROW, PU_HELMET,
+      PU_SHIELD, PU_ARMOUR, PU_BOOTS, PU_GLOVES, PU_CLOAK, PU_KEY, PU_MISSILEWEAPON, PU_ALLWEAPON,
+      PU_MAGICAL, PU_POTION, PU_SPELLBOOK, PU_SKILLSCROLL, PU_READABLES, PU_MAGIC_DEVICE, 0 };
 
   if(!params) {
     /* if the new mode is used, just print the settings */
-    /* yes, a GOTO is ugly, but its simpple and should stay until this
-     * mode is cleanly integrated and the old one deprecated */
     if(op->contr->mode & PU_NEWMODE) 
     {
-      i=op->contr->mode;
-      goto NEWPICKUP;
+        display_new_pickup( op );
+        return 1;
     }
     if(1)fprintf(stderr,"command_pickup: !params\n");
     set_pickup_mode(op, (op->contr->mode > 6)? 0: op->contr->mode+1);
     return 0;
   }
-  if(params==NULL || !sscanf(params, "%ud", &i) || i<0 ) {
+
+  while ( *params == ' ' && *params )
+      params++;
+
+  if ( *params == '+' || *params == '-' )
+      {
+      int mode;
+      for ( mode = 0; names[ mode ]; mode++ )
+          {
+          if ( !strcmp( names[ mode ], params + 1 ) )
+              {
+              i = op->contr->mode;
+              if ( !( i & PU_NEWMODE ) )
+                  i = PU_NEWMODE;
+              if ( *params == '+' )
+                  i = i | modes[ mode ];
+              else
+                  i = i & ~modes[ mode ];
+              op->contr->mode = i;
+              display_new_pickup( op );
+              return 1;
+              }
+          }
+      new_draw_info_format( NDI_UNIQUE, 0, op, "Pickup: invalid item %s\n", params );
+      return 1;
+      }
+
+  if(!sscanf(params, "%ud", &i) || i<0 ) {
     if(1)fprintf(stderr,"command_pickup: params==NULL\n");
     new_draw_info(NDI_UNIQUE, 0,op,"Usage: pickup <0-7> or <value_density> .");
     return 1;
   }
   set_pickup_mode(op,i);
-
-/* To me, all this output is meaningless - it certainly is not
- * humanly readable, and if anything will create more questions/bugs
- * as people will ask 'what does this strange message mean'.
- */
-
-#if 0
-  sprintf(putstring,"command_pickup: set_pickup_mode\ndec %u, 0x%x", i, i);
-  new_draw_info(NDI_UNIQUE, 0,op,putstring);
-  sprintf(putstring,"0b");
-
-  for(j=0;j<32;j++) 
-  {
-    strcat(putstring,((i>>(31-j))&0x01)?"1":"0");
-    if(!((j+1)%4))strcat(putstring," ");
-  }
-  new_draw_info(NDI_UNIQUE, 0,op,putstring);
-#endif
-
-NEWPICKUP:
-#if 1
-  if(!(i & PU_NEWMODE)) return 1;
-
-  sprintf(putstring,"%d NEWMODE",i & PU_NEWMODE?1:0);
-  new_draw_info(NDI_UNIQUE, 0,op,putstring);
-  sprintf(putstring,"%d DEBUG",i & PU_DEBUG?1:0);
-  new_draw_info(NDI_UNIQUE, 0,op,putstring);
-  sprintf(putstring,"%d INHIBIT",i & PU_INHIBIT?1:0);
-  new_draw_info(NDI_UNIQUE, 0,op,putstring);
-  sprintf(putstring,"%d STOP",i & PU_STOP?1:0);
-  new_draw_info(NDI_UNIQUE, 0,op,putstring);
-
-  sprintf(putstring,"%d <= x pickup weight/value RATIO (0==off)",(i & PU_RATIO)*5);
-  new_draw_info(NDI_UNIQUE, 0,op,putstring);
-
-  sprintf(putstring,"%d FOOD",i & PU_FOOD?1:0);
-  new_draw_info(NDI_UNIQUE, 0,op,putstring);
-  sprintf(putstring,"%d DRINK",i & PU_DRINK?1:0);
-  new_draw_info(NDI_UNIQUE, 0,op,putstring);
-  sprintf(putstring,"%d VALUABLES",i & PU_VALUABLES?1:0);
-  new_draw_info(NDI_UNIQUE, 0,op,putstring);
-
-  sprintf(putstring,"%d BOW",i & PU_BOW?1:0);
-  new_draw_info(NDI_UNIQUE, 0,op,putstring);
-  sprintf(putstring,"%d ARROW",i & PU_ARROW?1:0);
-  new_draw_info(NDI_UNIQUE, 0,op,putstring);
-
-  sprintf(putstring,"%d HELMET",i & PU_HELMET?1:0);
-  new_draw_info(NDI_UNIQUE, 0,op,putstring);
-  sprintf(putstring,"%d SHIELD",i & PU_SHIELD?1:0);
-  new_draw_info(NDI_UNIQUE, 0,op,putstring);
-  sprintf(putstring,"%d ARMOUR",i & PU_ARMOUR?1:0);
-  new_draw_info(NDI_UNIQUE, 0,op,putstring);
-
-  sprintf(putstring,"%d BOOTS",i & PU_BOOTS?1:0);
-  new_draw_info(NDI_UNIQUE, 0,op,putstring);
-  sprintf(putstring,"%d GLOVES",i & PU_GLOVES?1:0);
-  new_draw_info(NDI_UNIQUE, 0,op,putstring);
-  sprintf(putstring,"%d CLOAK",i & PU_CLOAK?1:0);
-  new_draw_info(NDI_UNIQUE, 0,op,putstring);
-  sprintf(putstring,"%d KEY",i & PU_KEY?1:0);
-  new_draw_info(NDI_UNIQUE, 0,op,putstring);
-
-  sprintf(putstring,"%d MISSILEWEAPON",i & PU_MISSILEWEAPON?1:0);
-  new_draw_info(NDI_UNIQUE, 0,op,putstring);
-  sprintf(putstring,"%d ALLWEAPON",i & PU_ALLWEAPON?1:0);
-  new_draw_info(NDI_UNIQUE, 0,op,putstring);
-  sprintf(putstring,"%d MAGICAL",i & PU_MAGICAL?1:0);
-  new_draw_info(NDI_UNIQUE, 0,op,putstring);
-  sprintf(putstring,"%d POTION",i & PU_POTION?1:0);
-  new_draw_info(NDI_UNIQUE, 0,op,putstring);
-
-  sprintf(putstring,"%d SPELLBOOK",i & PU_SPELLBOOK?1:0);
-  new_draw_info(NDI_UNIQUE, 0,op,putstring);
-  sprintf(putstring,"%d SKILLSCROLL",i & PU_SKILLSCROLL?1:0);
-  new_draw_info(NDI_UNIQUE, 0,op,putstring);
-  sprintf(putstring,"%d READABLES",i & PU_READABLES?1:0);
-  new_draw_info(NDI_UNIQUE, 0,op,putstring);
-  sprintf(putstring, "%d MAGICDEVICE", i & PU_MAGIC_DEVICE?1:0);
-  new_draw_info(NDI_UNIQUE, 0,op,putstring);
-
-  new_draw_info(NDI_UNIQUE, 0,op,"");
-#endif
+  display_new_pickup( op );
 
   return 1;
 }

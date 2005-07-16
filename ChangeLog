@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/c_object.c: Improved pickup. You can now do pickup +bow, or pickup -shield.
+ Much simpler then fiddling with sums of 2^x values.
+Ryo 2005-07-15
+
 server/c_party.c: Make party passwords with a length of 8 characters work
    again.
 lib/artifacts: Fix type of lockpicks of quality/high quality.
