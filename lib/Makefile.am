@@ -37,22 +37,26 @@ EXTRA_DIST = README .collect-stamp $(CONF_FILES) treasures treasures.bld
 
 helpdir=$(pkgdatadir)/help
 dist_help_DATA = help/apply help/applymode \
-	help/bind help/brace \
+	help/bind help/bowmode help/brace \
 	help/cast help/drop help/dropall \
 	help/golem help/invoke \
 	help/keys help/killpets \
-	help/mark help/melee \
+	help/listen \
+	help/mark help/melee help/mode \
 	help/mouse help/move \
 	help/output \
 	help/output-count help/output-sync \
-	help/party help/pickup \
-	help/quit help/range help/rename help/save \
+	help/party help/peaceful \
+	help/petmode help/pickup help/quests \
+	help/quit help/range help/rename \
+	help/save help/shout \
 	help/sort_inventory help/spells \
 	help/statistics help/take help/traps \
 	help/unbind help/usekeys
 
 wizhelpdir=$(pkgdatadir)/wizhelp
 dist_wizhelp_DATA = wizhelp/abil wizhelp/addexp \
+	wizhelp/banish \
 	wizhelp/create wizhelp/debug \
 	wizhelp/dump wizhelp/dumpallarchtypes \
 	wizhelp/dumpallmaps wizhelp/dumpallobjects \
@@ -60,16 +64,20 @@ dist_wizhelp_DATA = wizhelp/abil wizhelp/addexp \
 	wizhelp/forget_spell wizhelp/free \
 	wizhelp/goto wizhelp/hide wizhelp/invisible \
 	wizhelp/kick wizhelp/learn_special_prayer \
-	wizhelp/learn_spell wizhelp/nodm \
+	wizhelp/learn_spell wizhelp/mon_aggr \
+	wizhelp/nodm \
 	wizhelp/nowiz wizhelp/overlay_save \
 	wizhelp/patch wizhelp/plugin \
 	wizhelp/pluglist wizhelp/plugout \
+	wizhelp/possess \
 	wizhelp/printlos wizhelp/remove \
 	wizhelp/reset wizhelp/set_god \
 	wizhelp/shutdown wizhelp/server_speed \
+	wizhelp/speed \
 	wizhelp/spellreset wizhelp/ssdumptable \
 	wizhelp/style_info wizhelp/summon \
 	wizhelp/teleport wizhelp/time \
+	wizhelp/toggle_shout \
 	wizhelp/who wizhelp/wizhelp \
 	wizhelp/wizpass
 
