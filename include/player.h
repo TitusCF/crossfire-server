@@ -67,7 +67,8 @@ typedef enum _bowtype {
 typedef enum _petmode {
     pet_normal = 0,
     pet_sad = 1,
-    pet_defend = 2
+    pet_defend = 2,
+    pet_arena = 3
 } petmode_t;
 
 typedef enum usekeytype {

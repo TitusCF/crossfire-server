@@ -1018,7 +1018,7 @@ int command_bowmode(object *op, char *params)
 int command_petmode(object *op, char *params)
 {
     petmode_t oldtype=op->contr->petmode;
-    static char *types[]={"normal", "sad", "defend"};
+    static char *types[]={"normal", "sad", "defend", "arena"};
 
     if (!params) {
 	new_draw_info_format(NDI_UNIQUE, 0, op, "petmode is set to %s",
@@ -1032,10 +1032,12 @@ int command_petmode(object *op, char *params)
 	op->contr->petmode=pet_sad;
     else if (!strcmp(params,"defend")) 
 	op->contr->petmode=pet_defend;
+    else if (!strcmp(params,"arena")) 
+	op->contr->petmode=pet_arena;
     else {
 	new_draw_info_format(NDI_UNIQUE, 0, op,
 	    "petmode: Unknown options %s, valid options are normal,"
-	    "sad (seek and destroy), defend", params);
+	    "sad (seek and destroy), defend, arena", params);
 	return 0;
     }
     new_draw_info_format(NDI_UNIQUE, 0, op, "petmode %s set to %s",

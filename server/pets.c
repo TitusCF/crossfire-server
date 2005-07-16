@@ -115,9 +115,25 @@ object *get_pet_enemy(object * pet, rv_vector *rv){
 	    for (tmp = get_map_ob(nm, x, y); tmp != NULL; tmp = tmp->above) {
 		object *tmp2 = tmp->head == NULL?tmp:tmp->head;
 
-		if (QUERY_FLAG(tmp2,FLAG_ALIVE) && !QUERY_FLAG(tmp2,FLAG_FRIENDLY)
-		    && !QUERY_FLAG(tmp2,FLAG_UNAGGRESSIVE) && tmp2 != pet && 
-		    tmp2 != owner && tmp2->type != PLAYER &&
+		if (QUERY_FLAG(tmp2,FLAG_ALIVE) && (
+			!QUERY_FLAG(tmp2, FLAG_FRIENDLY) || (
+				op_on_battleground(pet, NULL, NULL) && 
+				op_on_battleground(owner, NULL, NULL) && 
+				op_on_battleground(tmp2, NULL, NULL) && 
+				(owner->contr->petmode == pet_arena) && !(
+					(tmp2->owner->contr->party_number == 
+						owner->contr->party_number) && 
+					(owner->contr->party_number > 0))))
+		    && !QUERY_FLAG(tmp2,FLAG_UNAGGRESSIVE) &&
+		    tmp2 != pet && tmp2 != owner && (
+		    	(tmp2->type != PLAYER) || (
+				op_on_battleground(pet, NULL, NULL) && 
+				op_on_battleground(owner, NULL, NULL) && 
+				op_on_battleground(tmp2, NULL, NULL) && 
+				(owner->contr->petmode == pet_arena) && !(
+					(tmp2->contr->party_number == 
+						owner->contr->party_number) && 
+					(owner->contr->party_number > 0)))) &&
 		    can_detect_enemy(pet, tmp2, rv)) {
 
 			if (!can_see_enemy(pet, tmp2)) {
@@ -179,11 +195,25 @@ object *get_pet_enemy(object * pet, rv_vector *rv){
 	    if (get_map_flags(nm, &nm, x,y, &x, &y) & P_IS_ALIVE) {
 		for (tmp = get_map_ob(nm, x, y); tmp != NULL; tmp = tmp->above) {
 		    object *tmp2 = tmp->head == NULL?tmp:tmp->head;
-
-		    if (QUERY_FLAG(tmp2,FLAG_ALIVE) &&
-			!QUERY_FLAG(tmp2,FLAG_FRIENDLY)
+		    if (QUERY_FLAG(tmp2,FLAG_ALIVE) && (
+				!QUERY_FLAG(tmp2, FLAG_FRIENDLY) || (
+					op_on_battleground(pet, NULL, NULL) && 
+					op_on_battleground(owner, NULL, NULL) && 
+					op_on_battleground(tmp2, NULL, NULL) && 
+					(owner->contr->petmode == pet_arena) && !(
+						(tmp2->owner->contr->party_number == 
+							owner->contr->party_number) && 
+						(owner->contr->party_number > 0))))
 			&& !QUERY_FLAG(tmp2,FLAG_UNAGGRESSIVE) &&
-			tmp2 != pet && tmp2 != owner && tmp2->type != PLAYER &&
+			tmp2 != pet && tmp2 != owner && (
+				(tmp2->type != PLAYER) || (
+					op_on_battleground(pet, NULL, NULL) && 
+					op_on_battleground(owner, NULL, NULL) && 
+					op_on_battleground(tmp2, NULL, NULL) && 
+					(owner->contr->petmode == pet_arena) && !(
+						(tmp2->contr->party_number == 
+							owner->contr->party_number) && 
+						(owner->contr->party_number > 0)))) &&
 			can_detect_enemy(pet, tmp2, rv)) {
 
 			    if (!can_see_enemy(pet, tmp2)) {
