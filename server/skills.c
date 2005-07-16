@@ -441,7 +441,8 @@ static int attempt_jump (object *pl, int dir, int spaces, object *skill) {
 
 	for(tmp=get_map_ob(m, x, y); tmp;tmp=tmp->above) { 
 	    /* Jump into creature */ 
-	    if(QUERY_FLAG(tmp,FLAG_MONSTER) || tmp->type==PLAYER ) {   
+	    if(QUERY_FLAG(tmp, FLAG_MONSTER)
+	    || (tmp->type==PLAYER && (!QUERY_FLAG(tmp, FLAG_WIZ) || !tmp->contr->hidden))) {
 		new_draw_info_format(NDI_UNIQUE, 0,pl,"You jump into %s%s.", 
 		    tmp->type == PLAYER ? "" : "the ", tmp->name);
 		if(tmp->type!=PLAYER || 
