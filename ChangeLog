@@ -17,6 +17,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/c_misc.c: Remove superfluous trailing '\0' from strings.
+Andreas Kirschbaum 2005-07-15
+
 server/{c_misc.c, monster.c, pets.c}, include/player.h: Add new "arena"
    petmode which allows pets to attack players and other pets while in the
    arena.

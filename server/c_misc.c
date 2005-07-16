@@ -431,7 +431,7 @@ void get_who_escape_code_value(char *return_val, const char letter, player *pl) 
               break;
 	case 'c' :    sprintf(return_val,"%d",pl->ob->count);
 			  break;
-	case 'n' :    strcpy(return_val, "\n\0"); 
+	case 'n' :    strcpy(return_val, "\n"); 
 		          break;
 	case 'h' :    strcpy(return_val,pl->peaceful?"":" [Hostile]");
 			  break;
@@ -451,9 +451,9 @@ void get_who_escape_code_value(char *return_val, const char letter, player *pl) 
 			  break;
 	case 'i' :    strcpy(return_val,pl->socket.host);
 			  break;
-	case '%' :    strcpy(return_val, "%\0"); 
+	case '%' :    strcpy(return_val, "%"); 
 		          break;
-	case '_' :    strcpy(return_val, "_\0"); 
+	case '_' :    strcpy(return_val, "_"); 
 		          break;
     }
 
