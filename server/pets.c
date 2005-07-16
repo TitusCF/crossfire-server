@@ -768,7 +768,7 @@ object *choose_cult_monster(object *pl, object *god, int summon_level) {
 	new_draw_info_format(NDI_UNIQUE, 0,pl,
 	    "The spell fails! %s's creatures are beyond the range of your summons",
 	     god->name);
-	LOG(llevDebug,"choose_cult_monster() requested non-existant aligned race!\n");
+	LOG(llevDebug,"choose_cult_monster() requested non-existent aligned race!\n");
 	return 0; 
     }
 

@@ -109,7 +109,7 @@ static int resurrect_player(object *op,char *playername,object *spell)
     if(! (liveplayer=fopen(newname,"w"))) {
 	new_draw_info_format(NDI_UNIQUE, 0, op,
 		"The soul of %s cannot be re-embodied at the moment.",playername);
-	LOG(llevError,"Cannot write player in ressurect_player!\n");
+	LOG(llevError,"Cannot write player in resurrect_player!\n");
 	fclose(deadplayer);
 	return 0;
     }

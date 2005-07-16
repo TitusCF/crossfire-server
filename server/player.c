@@ -348,7 +348,7 @@ archetype *get_player_archetype(archetype* at)
 	if(at->clone.type==PLAYER)
 	    return at;
 	if (at == start) {
-	    LOG (llevError, "No Player achetypes\n");
+	    LOG (llevError, "No Player archetypes\n");
 	    exit (-1);
 	}
     }

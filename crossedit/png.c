@@ -121,7 +121,7 @@ again:
 	}
 	else {
 #if 0
-	    fprintf(stderr,"Unable to allocate color %d %d %d, %d colors alloced, will use closenss value %d\n",
+	    fprintf(stderr,"Unable to allocate color %d %d %d, %d colors alloced, will use closeness value %d\n",
 		    red, green, blue, colors_alloced, closeness);
 #endif
 	    colors_alloced = colormap_size;	/* Colormap is exhausted */

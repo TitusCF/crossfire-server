@@ -1283,7 +1283,7 @@ int command_help (object *op, char *params)
    * No_help -escape
    */
  nohelp:
-  sprintf(line, "No help availble on '%s'", params);
+  sprintf(line, "No help available on '%s'", params);
   new_draw_info(NDI_UNIQUE, 0,op, line);
   return 0;
 }

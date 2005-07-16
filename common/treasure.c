@@ -1256,7 +1256,7 @@ void init_artifacts() {
 		art = NULL;
 	}
 	else
-	    LOG(llevError,"Unkown input in artifact file: %s\n", buf);
+	    LOG(llevError,"Unknown input in artifact file: %s\n", buf);
     }
 
     close_and_delete(fp, comp);

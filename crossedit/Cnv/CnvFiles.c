@@ -96,7 +96,7 @@ Widget CnvFilesRescan(CnvFiles self,String name,Widget parent,
   /*** can read directory ? ***/
   pathcpy(self->directory,directory);
   if(access(self->directory,R_OK | X_OK) == -1) {
-    Malfunction(self,"has no acces");
+    Malfunction(self,"has no access");
     return NULL;
   }
 

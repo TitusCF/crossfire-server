@@ -856,11 +856,11 @@ int command_mon_aggr (object *op, char *params)
     if (op->enemy || !QUERY_FLAG(op, FLAG_UNAGGRESSIVE)) {
 	op->enemy = NULL;
 	SET_FLAG(op, FLAG_UNAGGRESSIVE);
-	new_draw_info(NDI_UNIQUE, 0, op, "Agression turned OFF");
+	new_draw_info(NDI_UNIQUE, 0, op, "Aggression turned OFF");
     } else {
 	CLEAR_FLAG(op, FLAG_FRIENDLY);
 	CLEAR_FLAG(op, FLAG_UNAGGRESSIVE);
-	new_draw_info(NDI_UNIQUE, 0, op, "Agression turned ON");
+	new_draw_info(NDI_UNIQUE, 0, op, "Aggression turned ON");
     }
     return 1;
 }
@@ -891,7 +891,7 @@ int command_possess (object *op, char *params)
     }
     if (victim==op) {
 	new_draw_info(NDI_UNIQUE, 0, op, "As insane as you are, I cannot "
-		      "allow you to posess yourself.");
+		      "allow you to possess yourself.");
 	return 1;
     }
 

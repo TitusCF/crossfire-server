@@ -363,7 +363,7 @@ static void load_settings()
 	    } else if (!strcasecmp(cp,"off") || !strcasecmp(cp,"false")) {
 		settings.meta_on=FALSE;
 	    } else {
-		LOG(llevError,"load_settings: Unkown value for metaserver_notification: %s\n",
+		LOG(llevError,"load_settings: Unknown value for metaserver_notification: %s\n",
 		    cp);
 	    }
 	} else if (!strcasecmp(buf,"metaserver_server")) {
@@ -397,7 +397,7 @@ static void load_settings()
 	    int size = atoi(cp);
 
 	    if (size < 0)
-		LOG(llevError, "load_settings: worldmapstartx must be at least"
+		LOG(llevError, "load_settings: worldmapstartx must be at least "
 		    "0, %d is invalid\n", size);
 	    else
 		settings.worldmapstartx = size;
@@ -405,7 +405,7 @@ static void load_settings()
 	    int size = atoi(cp);
 
 	    if (size < 0)
-		LOG(llevError, "load_settings: worldmapstarty must be at least"
+		LOG(llevError, "load_settings: worldmapstarty must be at least "
 		    "0, %d is invalid\n", size);
 	    else
 		settings.worldmapstarty = size;
@@ -413,7 +413,7 @@ static void load_settings()
 	    int size = atoi(cp);
 
 	    if (size < 1)
-		LOG(llevError, "load_settings: worldmaptilesx must be greater"
+		LOG(llevError, "load_settings: worldmaptilesx must be greater "
 		    "than 1, %d is invalid\n", size);
 	    else
 		settings.worldmaptilesx = size;
@@ -421,7 +421,7 @@ static void load_settings()
 	    int size = atoi(cp);
 
 	    if (size < 1)
-		LOG(llevError, "load_settings: worldmaptilesy must be greater"
+		LOG(llevError, "load_settings: worldmaptilesy must be greater "
 		    "than 1, %d is invalid\n", size);
 	    else
 		settings.worldmaptilesy = size;
@@ -429,7 +429,7 @@ static void load_settings()
 	    int size = atoi(cp);
 
 	    if (size < 1)
-		LOG(llevError, "load_settings: worldmaptilesizex must be"
+		LOG(llevError, "load_settings: worldmaptilesizex must be "
 		    "greater than 1, %d is invalid\n", size);
 	    else
 		settings.worldmaptilesizex = size;
@@ -437,7 +437,7 @@ static void load_settings()
 	    int size = atoi(cp);
 
 	    if (size < 1)
-		LOG(llevError, "load_settings: worldmaptilesizey must be"
+		LOG(llevError, "load_settings: worldmaptilesizey must be "
 		    "greater than 1, %d is invalid\n", size);
 	    else
 		settings.worldmaptilesizey = size;
@@ -445,7 +445,7 @@ static void load_settings()
 	    int lev = atoi(cp);
 
 	    if (lev < 0)
-		LOG(llevError, "load_settings: dynamiclevel must be"
+		LOG(llevError, "load_settings: dynamiclevel must be "
 		    "at least 0, %d is invalid\n", lev);
 	    else
 		settings.dynamiclevel = lev;
@@ -463,7 +463,7 @@ static void load_settings()
 	    } else if (!strcasecmp(cp, "off") || !strcasecmp(cp, "false")) {
 		settings.not_permadeth=FALSE;
 	    } else {
-		LOG(llevError, "load_settings: Unkown value for not_permadeth"
+		LOG(llevError, "load_settings: Unknown value for not_permadeth"
 		    ": %s\n", cp);
 	    }
 	} else if (!strcasecmp(buf, "resurrection")) {
@@ -472,7 +472,7 @@ static void load_settings()
 	    } else if (!strcasecmp(cp, "off") || !strcasecmp(cp, "false")) {
 		settings.resurrection=FALSE;
 	    } else {
-		LOG(llevError, "load_settings: Unkown value for resurrection"
+		LOG(llevError, "load_settings: Unknown value for resurrection"
 		    ": %s\n", cp);
 	    }
 	} else if (!strcasecmp(buf, "set_title")) {
@@ -481,7 +481,7 @@ static void load_settings()
 	    } else if (!strcasecmp(cp, "off") || !strcasecmp(cp, "false")) {
 		settings.set_title=FALSE;
 	    } else {
-		LOG(llevError, "load_settings: Unkown value for set_title"
+		LOG(llevError, "load_settings: Unknown value for set_title"
 		    ": %s\n", cp);
 	    }
 	} else if (!strcasecmp(buf, "search_items")) {
@@ -490,7 +490,7 @@ static void load_settings()
 	    } else if (!strcasecmp(cp, "off") || !strcasecmp(cp, "false")) {
 		settings.search_items=FALSE;
 	    } else {
-		LOG(llevError, "load_settings: Unkown value for search_items"
+		LOG(llevError, "load_settings: Unknown value for search_items"
 		    ": %s\n", cp);
 	    }
 	} else if (!strcasecmp(buf, "spell_encumbrance")) {
@@ -499,7 +499,7 @@ static void load_settings()
 	    } else if (!strcasecmp(cp, "off") || !strcasecmp(cp, "false")) {
 		settings.spell_encumbrance=FALSE;
 	    } else {
-		LOG(llevError, "load_settings: Unkown value for "
+		LOG(llevError, "load_settings: Unknown value for "
 		    "spell_encumbrance: %s\n", cp);
 	    }
 	} else if (!strcasecmp(buf, "spell_failure_effects")) {
@@ -508,7 +508,7 @@ static void load_settings()
 	    } else if (!strcasecmp(cp, "off") || !strcasecmp(cp, "false")) {
 		settings.spell_failure_effects=FALSE;
 	    } else {
-		LOG(llevError, "load_settings: Unkown value for"
+		LOG(llevError, "load_settings: Unknown value for "
 		    "spell_failure_effects: %s\n", cp);
 	    }
 	} else if (!strcasecmp(buf, "casting_time")) {
@@ -517,7 +517,7 @@ static void load_settings()
 	    } else if (!strcasecmp(cp, "off") || !strcasecmp(cp, "false")) {
 		settings.casting_time=FALSE;
 	    } else {
-		LOG(llevError, "load_settings: Unkown value for"
+		LOG(llevError, "load_settings: Unknown value for "
 		    "casting_time: %s\n", cp);
 	    }
 	} else if (!strcasecmp(buf, "real_wiz")) {
@@ -526,7 +526,7 @@ static void load_settings()
 	    } else if (!strcasecmp(cp, "off") || !strcasecmp(cp, "false")) {
 		settings.real_wiz=FALSE;
 	    } else {
-		LOG(llevError, "load_settings: Unkown value for"
+		LOG(llevError, "load_settings: Unknown value for "
 		    "real_wiz: %s\n", cp);
 	    }
 	} else if (!strcasecmp(buf, "recycle_tmp_maps")) {
@@ -535,7 +535,7 @@ static void load_settings()
 	    } else if (!strcasecmp(cp, "off") || !strcasecmp(cp, "false")) {
 		settings.recycle_tmp_maps=FALSE;
 	    } else {
-		LOG(llevError, "load_settings: Unkown value for"
+		LOG(llevError, "load_settings: Unknown value for "
 		    "recycle_tmp_maps: %s\n", cp);
 	    }
 	} else if (!strcasecmp(buf, "explore_mode")) {
@@ -544,7 +544,7 @@ static void load_settings()
 	    } else if (!strcasecmp(cp, "off") || !strcasecmp(cp, "false")) {
 		settings.explore_mode=FALSE;
 	    } else {
-		LOG(llevError, "load_settings: Unkown value for"
+		LOG(llevError, "load_settings: Unknown value for "
 		    "explore_mode: %s\n", cp);
 	    }
 	} else if (!strcasecmp(buf,"who_format")) {
@@ -559,7 +559,7 @@ static void load_settings()
 	    } else if (!strcasecmp(cp, "off") || !strcasecmp(cp, "false")) {
 		settings.spellpoint_level_depend=FALSE;
 	    } else {
-		LOG(llevError, "load_settings: Unkown value for"
+		LOG(llevError, "load_settings: Unknown value for "
 		    "spellpoint_level_depend: %s\n", cp);
 	    }
 	} else if (!strcasecmp(buf, "stat_loss_on_death")) {
@@ -568,7 +568,7 @@ static void load_settings()
 	    } else if (!strcasecmp(cp, "off") || !strcasecmp(cp, "false")) {
 		settings.stat_loss_on_death=FALSE;
 	    } else {
-		LOG(llevError, "load_settings: Unkown value for"
+		LOG(llevError, "load_settings: Unknown value for "
 		    "stat_loss_on_death: %s\n", cp);
 	    }
 	} else if (!strcasecmp(buf, "use_permanent_experience")) {
@@ -577,7 +577,7 @@ static void load_settings()
 	    } else if (!strcasecmp(cp, "off") || !strcasecmp(cp, "false")) {
 		settings.use_permanent_experience=FALSE;
 	    } else {
-		LOG(llevError, "load_settings: Unkown value for"
+		LOG(llevError, "load_settings: Unknown value for "
 		    "use_permanent_experience: %s\n", cp);
 	    }
 	} else if (!strcasecmp(buf, "balanced_stat_loss")) {
@@ -586,7 +586,7 @@ static void load_settings()
 	    } else if (!strcasecmp(cp, "off") || !strcasecmp(cp, "false")) {
 		settings.balanced_stat_loss=FALSE;
 	    } else {
-		LOG(llevError, "load_settings: Unkown value for"
+		LOG(llevError, "load_settings: Unknown value for "
 		    "balanced_stat_loss: %s\n", cp);
 	    }
 	} else if (!strcasecmp(buf,"simple_exp")) {
@@ -595,13 +595,13 @@ static void load_settings()
 	    } else if (!strcasecmp(cp,"off") || !strcasecmp(cp,"false")) {
 		settings.simple_exp=FALSE;
 	    } else {
-		LOG(llevError,"load_settings: Unkown value for simple_exp: %s\n",
+		LOG(llevError,"load_settings: Unknown value for simple_exp: %s\n",
 		    cp);
 	    }
 	} else if (!strcasecmp(buf, "item_power_factor")) {
 	    float tmp = atof(cp);
 	    if (tmp < 0)
-		LOG(llevError, "load_settings: item_power_factor must be a postive number (%f < 0)\n",
+		LOG(llevError, "load_settings: item_power_factor must be a positive number (%f < 0)\n",
 		    tmp);
 	    else
 		settings.item_power_factor = tmp;
@@ -746,7 +746,7 @@ void help() {
     printf(" -tmpdir     Sets the directory for temporary files (mostly maps.)\n");
     printf(" -m          Lists out suggested experience for all monsters.\n");
     printf(" -m2         Dumps out abilities.\n");
-    printf(" -m3         Dumps out artifactt information.\n");
+    printf(" -m3         Dumps out artifact information.\n");
     printf(" -m4         Dumps out spell information.\n");
     printf(" -m5         Dumps out skill information.\n");
     printf(" -m6         Dumps out race information.\n");
@@ -885,7 +885,7 @@ void compile_info() {
   exit(0);
 #else
   execl("/bin/uname", "uname", "-a", NULL);
-  LOG(llevError, "Oops, should't have gotten here.\n");
+  LOG(llevError, "Oops, shouldn't have gotten here.\n");
   perror("execl");
   exit(-1);
 #endif

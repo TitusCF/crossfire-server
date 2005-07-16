@@ -131,7 +131,7 @@ void attempt_do_alchemy(object *caster, object *cauldron) {
 			rp->arch_name, formula/rp->index);
 #endif
 		attempt_recipe(caster, cauldron, ability, rp, formula/rp->index);
-	    } else LOG(llevDebug, "WIZ couldnt find formula for ingredients.\n"); 
+	    } else LOG(llevDebug, "WIZ couldn't find formula for ingredients.\n"); 
 	    return;
 	} /* End of WIZ alchemy */
 

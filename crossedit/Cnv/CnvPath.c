@@ -450,7 +450,7 @@ Boolean CnvPathNoWrite(Widget w, String path)
       CnvNotify (buf,Continue,NULL);
       break;
     case ENOENT:
-      sprintf (buf, "%s does noit exist", path);
+      sprintf (buf, "%s does not exist", path);
       CnvNotify (buf,Continue,NULL);
       break;
     case EIO:

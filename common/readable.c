@@ -1288,7 +1288,7 @@ get_random_mon (int level)
 
     if (i == 0)
       {
-	  LOG (llevError, "get_random_mon() couldnt return monster for level %d\n",
+	  LOG (llevError, "get_random_mon() couldn't return monster for level %d\n",
 	       level);
 	  return NULL;
       }
@@ -1608,7 +1608,7 @@ void make_formula_book(object *book, int level) {
 
     if (fl->total_chance == 0)
       {
-	book->msg = add_string(" <indescipherable text>\n");
+	book->msg = add_string(" <indecipherable text>\n");
 	new_text_name(book, 4);
 	add_author(book,4);
 	return;
@@ -1623,7 +1623,7 @@ void make_formula_book(object *book, int level) {
     }
 
     if (!formula) {
-	book->msg = add_string(" <indescipherable text>\n");
+	book->msg = add_string(" <indecipherable text>\n");
 	new_text_name(book, 4);
 	add_author(book,4);
 	

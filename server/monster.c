@@ -160,7 +160,7 @@ object *find_nearest_living_creature(object *npc) {
                 tmp=tmp->above;
 
 	    if (!tmp) {
-		LOG(llevDebug,"find_nearest_living_creature: map %s (%d,%d) has is_alive set but did not find a mosnter?\n",
+		LOG(llevDebug,"find_nearest_living_creature: map %s (%d,%d) has is_alive set but did not find a monster?\n",
 		    m->path, nx, ny);
 	    }
 	    else {
@@ -1958,7 +1958,7 @@ int can_see_enemy (object *op, object *enemy) {
 	    if(enemy->hide) { 
 		make_visible(enemy);
 		new_draw_info(NDI_UNIQUE,0, enemy,
-			      "Your light reveals your hidding spot!");
+			      "Your light reveals your hiding spot!");
 	    }
 	    return 1;
 	} else if (enemy->hide) return 0; 

@@ -17,6 +17,14 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+common/{map.c, readable.c, treasure.c}, 
+crossedit/{Attr.c, png.c, Cnv/{CnvFiles.c, CnvPath.c}}, 
+plugin_animator/plugin_animator.c, 
+plugin_logger/maps.c, 
+server/{alchemy.c, c_misc.c, c_wiz.c, init.c, main.c, monster.c, pets.c,
+player.c, resurrection.c, rune.c, skills.c, spell_effect.c, time.c,
+weather.c}:
+   Fix spelling errors in string constants.
 server/c_misc.c: Remove superfluous trailing '\0' from strings.
 Andreas Kirschbaum 2005-07-15
 

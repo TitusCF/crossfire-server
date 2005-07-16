@@ -757,7 +757,7 @@ int use_oratory(object *pl, int dir, object *skill) {
     if(QUERY_FLAG(tmp,FLAG_FRIENDLY)&&(tmp->move_type==PETMOVE)){  
 	if(get_owner(tmp)==pl) {
 	    new_draw_info(NDI_UNIQUE, 0,pl, 
-		      "Your follower loves your speach.\n");
+		      "Your follower loves your speech.\n");
 	    return 0;
 	} else if (skill->level > tmp->level) {
 	    /* you steal the follower.  Perhaps we should really look at the
@@ -795,7 +795,7 @@ int use_oratory(object *pl, int dir, object *skill) {
     /* Charm failed.  Creature may be angry now */
     else if((skill->level+((pl->stats.Cha-10)/2)) < random_roll(1, 2*tmp->level, pl, PREFER_LOW)) {
 	new_draw_info_format(NDI_UNIQUE, 0,pl, 
-		  "Your speach angers the %s!\n",query_name(tmp)); 
+		  "Your speech angers the %s!\n",query_name(tmp)); 
 	if(QUERY_FLAG(tmp,FLAG_FRIENDLY)) {
 	    CLEAR_FLAG(tmp,FLAG_FRIENDLY);
 	    remove_friendly_object(tmp);

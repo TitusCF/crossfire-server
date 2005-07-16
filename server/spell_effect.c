@@ -429,7 +429,7 @@ int cast_create_missile(object *op, object *caster,object *spell, int dir, char 
     missile_plus = spell->stats.dam  + SP_level_dam_adjust(caster, spell);
 
     if (find_archetype(missile_name)==NULL) {
-	LOG(llevDebug, "Cast create_missile: could not find archtype %s\n", 
+	LOG(llevDebug, "Cast create_missile: could not find archetype %s\n", 
 	    missile_name);
 	return 0;
     }
@@ -1350,7 +1350,7 @@ int cast_heal(object *op,object *caster, object *spell, int dir) {
 
     if (heal) {
 	if (tmp->stats.hp >= tmp->stats.maxhp) {
-	    new_draw_info(NDI_UNIQUE, 0,tmp, "Your are already fully healed.");
+	    new_draw_info(NDI_UNIQUE, 0,tmp, "You are already fully healed.");
 	}
 	else {
 	    /* See how many points we actually heal.  Instead of messages
@@ -2256,7 +2256,7 @@ int cast_consecrate(object *op, object *caster, object *spell) {
 
 	    if(tmp->level > caster_level(caster, spell)) {
 		new_draw_info_format(NDI_UNIQUE, 0,op,
-		    "You are not poweful enough to reconsecrate the %s", tmp->name);
+		    "You are not powerful enough to reconsecrate the %s", tmp->name);
 		return 0;
 	    } else {
 		/* If we got here, we are consecrating an altar */

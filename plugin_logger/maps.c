@@ -229,7 +229,7 @@ int map_alter (char* mappath){
     char update[MAX_BUF];
     char buffer[MAX_BUF];
     int precision;
-    printf ("\t[CROSSFIRE LOGGER] ALtering %s\n",mappath);
+    printf ("\t[CROSSFIRE LOGGER] Altering %s\n",mappath);
     if ( (!strncmp ("/random/",mappath,strlen("/random/"))) ||
          (!strncmp (LOCALDIR,mappath,strlen(LOCALDIR)))    )
         return 0;

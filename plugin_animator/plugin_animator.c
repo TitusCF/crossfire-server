@@ -278,7 +278,7 @@ int start_animation (object* who,object* activator,char* file, char* options)
         }
     if (buffer[0]=='\0')
         {
-        printf ("Errors occured during parsing of animation file\n");
+        printf ("Errors occurred during parsing of animation file\n");
         return 0;
         }
     if (!(current_anim=create_animation()))

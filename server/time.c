@@ -1205,7 +1205,7 @@ void move_creator(object *op) {
 	return;
     }
     if (!at) {
-	LOG(llevError,"move_creator: Creatore doesn't have other arch set: %s (%s, %d, %d)\n",
+	LOG(llevError,"move_creator: Creator doesn't have other arch set: %s (%s, %d, %d)\n",
 	    op->name?op->name:"(null)", op->map->path, op->x, op->y);
 	return;
     }

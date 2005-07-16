@@ -1082,7 +1082,7 @@ void read_temperaturemap()
     int x, y;
 
     sprintf(filename, "%s/temperaturemap", settings.localdir);
-    LOG(llevDebug, "Reading teperature data from %s...", filename);
+    LOG(llevDebug, "Reading temperature data from %s...", filename);
     if ((fp = fopen(filename, "r")) == NULL) {
 	LOG(llevError, "Cannot open %s for reading\n", filename);
 	init_temperature();

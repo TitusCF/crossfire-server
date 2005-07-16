@@ -609,7 +609,7 @@ void allocate_map(mapstruct *m) {
      * that is their poor assumption.
      */
     if (m->spaces) {
-	LOG(llevError,"allocate_map callled with already allocated map (%s)\n", m->path);
+	LOG(llevError,"allocate_map called with already allocated map (%s)\n", m->path);
 	free(m->spaces);
     }
 

@@ -393,7 +393,7 @@ int trap_disarm(object *disarmer, object *trap, int risk, object *skill) {
 	   +5 - disarmer->stats.Dex/2))-1), disarmer, PREFER_LOW)))
         {
             new_draw_info_format(NDI_UNIQUE, 0,disarmer,
-                    "You successfuly disarm the %s!",trap->name);
+                    "You successfully disarm the %s!",trap->name);
             destroy_object(trap);
 	    /* If it is your own trap, (or any players trap), don't you don't
 	     * get exp for it.

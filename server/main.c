@@ -997,7 +997,7 @@ void process_events (mapstruct *map)
 	     * removed objects generally shouldn't exist.
 	     */
 	    if (QUERY_FLAG(op, FLAG_REMOVED)) {
-		LOG(llevDebug,"process_events: calling process_object with rmeoved object %s\n",
+		LOG(llevDebug,"process_events: calling process_object with removed object %s\n",
 		    op->name?op->name:"null");
 	    }
 #endif
