@@ -3117,10 +3117,9 @@ int stand_near_hostile( object *who ) {
 		return 1;
 	    else if(tmp->type==PLAYER)
 	    {
-	      /*don't let a hidden DM prevent you from hiding*/
-	      if ( (QUERY_FLAG(tmp, FLAG_WIZ)) && (tmp->contr->hidden==1) )
-	        return 0;
-	      return 1;
+		/*don't let a hidden DM prevent you from hiding*/
+		if(!QUERY_FLAG(tmp, FLAG_WIZ) || tmp->contr->hidden == 0)
+		    return 1;
 	    }  
 	}
     }

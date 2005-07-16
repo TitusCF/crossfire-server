@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/player.c: Ignore hidden DM in stand_near_hostile(). Formerly it always
+   returned false if a hidden DM was present.
+Andreas Kirschbaum 2005-07-15
+
 server/c_object.c: Improved pickup. You can now do pickup +bow, or pickup -shield.
  Much simpler then fiddling with sums of 2^x values.
 Ryo 2005-07-15
