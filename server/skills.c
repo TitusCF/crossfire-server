@@ -259,6 +259,8 @@ int steal(object* op, int dir, object *skill)
        */ 
       if (tmp->head) tmp=tmp->head;
       if(tmp->type!=PLAYER&&!QUERY_FLAG(tmp, FLAG_MONSTER)) continue;
+      /* do not reveal hidden DMs */
+      if (tmp->type == PLAYER && QUERY_FLAG(tmp, FLAG_WIZ) && tmp->contr->hidden) continue;
       if (attempt_steal(tmp, op, skill)) {
 	  if(tmp->type==PLAYER) /* no xp for stealing from another player */
 	    return 0;
