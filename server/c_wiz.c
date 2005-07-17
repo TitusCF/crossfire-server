@@ -465,7 +465,7 @@ int command_summon (object *op, char *params)
     pl = get_other_player_from_name(op, params);
     if (!pl) return 1;
 
-    i=find_free_spot(op->arch,op->map,op->x,op->y,1,8);
+    i=find_free_spot(op->arch,op->map,op->x,op->y,1,9);
     if (i==-1) {
 	new_draw_info(NDI_UNIQUE, 0, op, "Can not find a free spot to place summoned player.");
 	return 1;
@@ -501,7 +501,7 @@ int command_teleport (object *op, char *params) {
     pl = get_other_player_from_name(op, params);
     if (!pl) return 1;
 
-   i = find_free_spot(pl->ob->arch, pl->ob->map, pl->ob->x, pl->ob->y, 1, 8);
+   i = find_free_spot(pl->ob->arch, pl->ob->map, pl->ob->x, pl->ob->y, 1, 9);
    if (i==-1) {
       new_draw_info(NDI_UNIQUE, 0, op, "Can not find a free spot to teleport to.");
       return 1;

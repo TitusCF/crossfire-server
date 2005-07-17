@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/c_wiz: Allow the summon and teleport commands to place the summoned
+   player/DM north-west of DM/player.
+Andreas Kirschbaum 2005-07-17
+
 Use const char* instead of char* when possible. Remove unused variables in weather code.
 Affected files:
  common/map.c region.c utils.c
