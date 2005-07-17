@@ -752,7 +752,8 @@ int improve_armour(object *op, object *improver, object *armour)
 
 
 /*
- * convert_item() returns 1 if anything was converted, otherwise 0
+ * convert_item() returns 1 if anything was converted, 0 if the item was not
+ * what the converter wants, -1 if the converter is broken.
  */
 #define CONV_FROM(xyz)	xyz->slaying
 #define CONV_TO(xyz)	xyz->other_arch
@@ -767,6 +768,17 @@ int improve_armour(object *op, object *improver, object *armour)
 int convert_item(object *item, object *converter) {
     int nr=0;
     object *tmp;
+    int is_in_shop;
+    int price_in;
+    int price_out;
+
+    for(tmp = get_map_ob(converter->map, converter->x, converter->y);
+	tmp != NULL;
+	tmp = tmp->above) {
+	if(tmp->type == SHOP_FLOOR)
+	    break;
+    }
+    is_in_shop = (tmp != NULL);
 
     /* We make some assumptions - we assume if it takes money as it type,
      * it wants some amount.  We don't make change (ie, if something costs
@@ -784,6 +796,8 @@ int convert_item(object *item, object *converter) {
 	/* take into account rounding errors */
 	if (nr*CONV_NEED(converter)%item->value) cost++;
 	decrease_ob_nr(item, cost);
+
+	price_in = cost*item->value;
     }
     else {
 	if(item->type==PLAYER||CONV_FROM(converter)!=item->arch->name||
@@ -793,7 +807,9 @@ int convert_item(object *item, object *converter) {
 	if(CONV_NEED(converter)) {
 	    nr=item->nrof/CONV_NEED(converter);
 	    decrease_ob_nr(item,nr*CONV_NEED(converter));
+	    price_in = nr*CONV_NEED(converter)*item->value;
 	} else {
+	    price_in = item->value;
 	    remove_ob(item);
 	    free_object(item);
 	}
@@ -809,14 +825,15 @@ int convert_item(object *item, object *converter) {
 	item->nrof=CONV_NR(converter);
     if(nr)
 	item->nrof*=nr;
-    for(tmp=get_map_ob(converter->map,converter->x,converter->y);
-	tmp!=NULL;
-	tmp=tmp->above) {
-	if(tmp->type==SHOP_FLOOR)
-	    break;
-    }
-    if(tmp!=NULL)
+    if(is_in_shop)
 	SET_FLAG(item,FLAG_UNPAID);
+    else if(price_in < item->nrof*item->value) {
+	LOG(llevError, "Broken converter %s at %s (%d, %d) in value %d, out value %d\n",
+	    converter->name, converter->map->path, converter->x, converter->y, price_in,
+	    item->nrof*item->value);
+	free_object(item);
+	return -1;
+    }
     item->x=converter->x;
     item->y=converter->y;
     insert_ob_in_map(item,converter->map,converter,0);
@@ -1399,7 +1416,18 @@ void move_apply (object *trap, object *victim, object *originator)
     }
 
   case CONVERTER:
-    convert_item (victim, trap);
+    if (convert_item (victim, trap) < 0) {
+	object *op;
+
+	new_draw_info_format(NDI_UNIQUE, 0, originator, "The %s seems to be broken!", query_name(trap));
+
+	op = get_archetype("burnout");
+	if (op != NULL) {
+	    op->x = trap->x;
+	    op->y = trap->y;
+	    insert_ob_in_map(op, trap->map, trap, 0);
+	}
+    }
     goto leave;
 
   case TRIGGER_BUTTON:
