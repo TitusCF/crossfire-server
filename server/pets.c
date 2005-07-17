@@ -308,7 +308,7 @@ void follow_owner(object *ob, object *owner) {
 	return;
     }
     dir = find_free_spot(ob->arch, owner->map,
-                       owner->x, owner->y, 1, SIZEOFFREE+1);
+                       owner->x, owner->y, 1, SIZEOFFREE);
 
     if (dir==-1) {
 	LOG(llevMonster,"No space for pet to follow, freeing %s.\n",ob->name);
