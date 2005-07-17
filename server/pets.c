@@ -117,6 +117,7 @@ object *get_pet_enemy(object * pet, rv_vector *rv){
 
 		if (QUERY_FLAG(tmp2,FLAG_ALIVE) && (
 			!QUERY_FLAG(tmp2, FLAG_FRIENDLY) || (
+				(owner != tmp2->owner) &&
 				op_on_battleground(pet, NULL, NULL) && 
 				op_on_battleground(owner, NULL, NULL) && 
 				op_on_battleground(tmp2, NULL, NULL) && 
@@ -197,6 +198,7 @@ object *get_pet_enemy(object * pet, rv_vector *rv){
 		    object *tmp2 = tmp->head == NULL?tmp:tmp->head;
 		    if (QUERY_FLAG(tmp2,FLAG_ALIVE) && (
 				!QUERY_FLAG(tmp2, FLAG_FRIENDLY) || (
+					(owner != tmp2->owner) &&
 					op_on_battleground(pet, NULL, NULL) && 
 					op_on_battleground(owner, NULL, NULL) && 
 					op_on_battleground(tmp2, NULL, NULL) && 

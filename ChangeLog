@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/{monster.c, pets.c}: Fixed bug in previous commit of arena petmode
+   that cause pets that should be friendly to eachother to fight.
+Alex Schultz 2005-07-16
+
 common/{map.c, readable.c, treasure.c}, 
 crossedit/{Attr.c, png.c, Cnv/{CnvFiles.c, CnvPath.c}}, 
 plugin_animator/plugin_animator.c, 

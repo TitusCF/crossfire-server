@@ -82,13 +82,14 @@ object *check_enemy(object *npc, rv_vector *rv) {
 
   	else if (QUERY_FLAG(npc, FLAG_FRIENDLY) && (
  		 	(QUERY_FLAG(npc->enemy, FLAG_FRIENDLY) && !(
+				 (npc->owner != npc->enemy->owner) &&
  				 op_on_battleground(npc, NULL, NULL) && 
- 					 op_on_battleground(npc->owner, NULL, NULL) && 
- 					 op_on_battleground(npc->enemy, NULL, NULL) && 
- 					 (npc->owner->contr->petmode == pet_arena) && !(
- 						 (npc->enemy->owner->contr->party_number == 
-						 	npc->owner->contr->party_number) && 
- 		 				 (npc->owner->contr->party_number > 0)))) || 
+ 				 op_on_battleground(npc->owner, NULL, NULL) && 
+ 				 op_on_battleground(npc->enemy, NULL, NULL) && 
+ 				 (npc->owner->contr->petmode == pet_arena) && !(
+ 					 (npc->enemy->owner->contr->party_number == 
+					 	npc->owner->contr->party_number) && 
+ 		 			 (npc->owner->contr->party_number > 0)))) || 
  		 	((npc->enemy->type == PLAYER) && !(
  				 op_on_battleground(npc, NULL, NULL) && 
  					 op_on_battleground(npc->owner, NULL, NULL) && 
