@@ -770,7 +770,6 @@ int convert_item(object *item, object *converter) {
     object *tmp;
     int is_in_shop;
     int price_in;
-    int price_out;
 
     for(tmp = get_map_ob(converter->map, converter->x, converter->y);
 	tmp != NULL;
