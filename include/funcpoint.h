@@ -86,7 +86,7 @@ extern void	esrv_del_item(player *, int);
 extern void	esrv_update_item(int, object *, object *);
 extern void	set_darkness_map(mapstruct *m);
 extern void dragon_ability_gain(object *, int, int);
-extern void	weather_effect(char *);
+extern void	weather_effect(const char *);
 extern object *	find_skill_by_number(object *, int);
 
 #endif

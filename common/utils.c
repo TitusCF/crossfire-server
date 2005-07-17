@@ -390,7 +390,7 @@ void strip_media_tag(char *message){
     *dest='\0';
 }
 
-char* strrstr(const char* haystack, const char* needle){
+const char* strrstr(const char* haystack, const char* needle){
     const char* lastneedle;
     lastneedle=NULL;
     while(haystack=strstr(haystack,needle)){

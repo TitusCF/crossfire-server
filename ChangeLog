@@ -17,6 +17,14 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Use const char* instead of char* when possible. Remove unused variables in weather code.
+Affected files:
+ common/map.c region.c utils.c
+ crossedit/stubs.c
+ include/funcpoint.h libproto.h sproto.h
+ random_maps/standalone.c
+ server/weather.c 
+
 server/apply.c: Make converters that increase value non-functional.
 Andreas Kirschbaum 2005-07-17
 

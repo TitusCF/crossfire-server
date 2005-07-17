@@ -1346,7 +1346,7 @@ void perform_weather()
  * occur.
  */
 
-void weather_effect(char *filename)
+void weather_effect(const char *filename)
 {
     mapstruct *m;
     int wx, wy, x, y;
@@ -1362,23 +1362,23 @@ void weather_effect(char *filename)
     x = 0;
     y = 0;
     /* for now, just bail if it's not the worldmap */
-    if (worldmap_to_weathermap(x, y, &wx, &wy, /*filename*/ m) != 0)
+    if (worldmap_to_weathermap(x, y, &wx, &wy, m) != 0)
 	return;
 	/*First, calculate temperature*/
 	calculate_temperature(m, wx, wy);
     /* we change the world first, if needed */
     if (settings.dynamiclevel >= 5) {
-	change_the_world(m, wx, wy, filename);
+	change_the_world(m, wx, wy);
     }
     if (settings.dynamiclevel >= 2) {
-	let_it_snow(m, wx, wy, filename);
-	singing_in_the_rain(m, wx, wy, filename);
+	let_it_snow(m, wx, wy);
+	singing_in_the_rain(m, wx, wy);
 	}
     /*    if (settings.dynamiclevel >= 4) {
 	    feather_map(m, wx, wy, filename);
 	    }*/
     if (settings.dynamiclevel >= 3) {
-	plant_a_garden(m, wx, wy, filename);
+	plant_a_garden(m, wx, wy);
     }
 }
 
@@ -1462,7 +1462,7 @@ void calculate_temperature(mapstruct *m, int wx, int wy){
  * weather_effect()
  */
 
-void let_it_snow(mapstruct *m, int wx, int wy, char *filename)
+void let_it_snow(mapstruct *m, int wx, int wy)
 {
     int x, y, i;
     int nx, ny, j, d;
@@ -1491,7 +1491,7 @@ void let_it_snow(mapstruct *m, int wx, int wy, char *filename)
 		y = ny;
 	    }
 	    /* we use the unjittered coordinates */
-	    (void)worldmap_to_weathermap(nx, ny, &wx, &wy, /*filename*/ m);
+	    (void)worldmap_to_weathermap(nx, ny, &wx, &wy, m);
 	    ob = NULL;
 	    at = NULL;
 	    /* this will definately need tuning */
@@ -1680,7 +1680,7 @@ void let_it_snow(mapstruct *m, int wx, int wy, char *filename)
  * weather_effect()
  */
 
-void singing_in_the_rain(mapstruct *m, int wx, int wy, char *filename)
+void singing_in_the_rain(mapstruct *m, int wx, int wy)
 {
     int x, y, i;
     int nx, ny, d, j;
@@ -1709,7 +1709,7 @@ void singing_in_the_rain(mapstruct *m, int wx, int wy, char *filename)
 		y = ny;
 	    }
 	    /* we use the unjittered coordinates */
-	    (void)worldmap_to_weathermap(nx, ny, &wx, &wy, /*filename*/m);
+	    (void)worldmap_to_weathermap(nx, ny, &wx, &wy, m);
 	    ob = NULL;
 	    at = NULL;
 	    avoid = 0;
@@ -1900,7 +1900,7 @@ void singing_in_the_rain(mapstruct *m, int wx, int wy, char *filename)
  * weather_effect()
  */
 
-void plant_a_garden(mapstruct *m, int wx, int wy, char *filename)
+void plant_a_garden(mapstruct *m, int wx, int wy)
 {
     int x, y, i;
     int avoid, two, temp, sky, gotsnow, found, days;
@@ -1910,7 +1910,7 @@ void plant_a_garden(mapstruct *m, int wx, int wy, char *filename)
     days = todtick / HOURS_PER_DAY;
     for (x=0; x < settings.worldmaptilesizex; x++) {
 	for (y=0; y < settings.worldmaptilesizey; y++) {
-	    (void)worldmap_to_weathermap(x, y, &wx, &wy, /*filename*/m);
+	    (void)worldmap_to_weathermap(x, y, &wx, &wy, m);
 	    ob = NULL;
 	    at = NULL;
 	    avoid = 0;
@@ -1996,11 +1996,10 @@ void plant_a_garden(mapstruct *m, int wx, int wy, char *filename)
  * Process worldmap regrowth.  m is the map we are currently processing.
  * wx and wy are
  * the weathermap coordinates for the weathermap square we want to work on.
- * filename is the pathname for the current map.  This should be called from
- * weather_effect()
+ * This should be called from weather_effect()
  */
 
-void change_the_world(mapstruct *m, int wx, int wy, char *filename)
+void change_the_world(mapstruct *m, int wx, int wy)
 {
     int x, y, i;
     int nx, ny, j, d;
@@ -2029,7 +2028,7 @@ void change_the_world(mapstruct *m, int wx, int wy, char *filename)
 		y = ny;
 	    }
 	    /* we use the unjittered coordinates */
-	    (void)worldmap_to_weathermap(nx, ny, &wx, &wy, /*filename*/m);
+	    (void)worldmap_to_weathermap(nx, ny, &wx, &wy, m);
 	    ob = NULL;
 	    at = NULL;
 	    dat = NULL;
@@ -2133,11 +2132,10 @@ void change_the_world(mapstruct *m, int wx, int wy, char *filename)
  * Reduce the blockiness of the maps. m is the map we are currently processing.
  * wx and wy are
  * the weathermap coordinates for the weathermap square we want to work on.
- * filename is the pathname for the current map.  This should be called from
- * weather_effect()
+ * This should be called from weather_effect()
  */
 
-void feather_map(mapstruct *m, int wx, int wy, char *filename)
+void feather_map(mapstruct *m, int wx, int wy)
 {
     int x, y, i, nx, ny, j;
     int avoid, two, gotsnow, nodstk;
@@ -2146,7 +2144,7 @@ void feather_map(mapstruct *m, int wx, int wy, char *filename)
 
     for (x=0; x < settings.worldmaptilesizex; x++) {
 	for (y=0; y < settings.worldmaptilesizey; y++) {
-	    (void)worldmap_to_weathermap(x, y, &wx, &wy, /*filename*/m);
+	    (void)worldmap_to_weathermap(x, y, &wx, &wy, m);
 	    ob = NULL;
 	    at = NULL;
 	    avoid = 0;
@@ -2233,7 +2231,6 @@ void feather_map(mapstruct *m, int wx, int wy, char *filename)
    map.  returns -1 if you give it something it can't figure out. 0 normally.
 */
 
-/*int worldmap_to_weathermap(int x, int y, int *wx, int *wy, char *filename)*/
 int worldmap_to_weathermap(int x, int y, int *wx, int *wy, mapstruct* m)
 {
     int spwtx, spwty;

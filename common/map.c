@@ -43,7 +43,7 @@ extern int nrofallocobjects,nroffreeobjects;
  * return NULL if no match is found.
  */
 
-mapstruct *has_been_loaded (char *name) {
+mapstruct *has_been_loaded (const char *name) {
     mapstruct *map;
 
     if (!name || !*name) 
@@ -1310,7 +1310,7 @@ void delete_map(mapstruct *m) {
  * Returns a pointer to the given map.
  */
 
-mapstruct *ready_map_name(char *name, int flags) {
+mapstruct *ready_map_name(const char *name, int flags) {
     mapstruct *m;
 
     if (!name)

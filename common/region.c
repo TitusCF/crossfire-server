@@ -68,7 +68,7 @@ region *get_region_by_map(mapstruct *m) {
  * the map code.
  */
 
-char *get_name_of_region_for_map(mapstruct  *m) {
+const char *get_name_of_region_for_map(mapstruct  *m) {
 	region *reg;
 	if (m->region!=NULL) return m->region->name;
 	for (reg=first_region;reg!=NULL;reg=reg->next) {
@@ -162,7 +162,7 @@ int region_is_child_of_region(region *child, region *r) {
  * 3. return a obviously wrong string if we can't get a longname, this should
  *    never happen. We also log a debug message.
  */
-char *get_region_longname(region *r) {
+const char *get_region_longname(region *r) {
     
     if (r->longname!=NULL) 
     	return r->longname;
@@ -174,7 +174,7 @@ char *get_region_longname(region *r) {
     }
 }
 
-char *get_region_msg(region *r) {
+const char *get_region_msg(region *r) {
     if (r->msg!=NULL) 
     	return r->msg;
     else if(r->parent!=NULL)
