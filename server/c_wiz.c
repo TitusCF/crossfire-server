@@ -1450,11 +1450,19 @@ int command_loadplugin(object *op, char *params)
 {
     char buf[MAX_BUF];
 
+    if (params == NULL) {
+	new_draw_info(NDI_UNIQUE, 0, op, "Load which plugin?");
+	return 1;
+    }
+
     strcpy(buf,LIBDIR);
     strcat(buf,"/plugins/");
     strcat(buf,params);
     printf("Requested plugin file is %s\n", buf);
-    initOnePlugin(buf);
+    if (initOnePlugin(buf) == 0)
+        new_draw_info(NDI_UNIQUE, 0, op, "Plugin successfully loaded.");
+    else
+        new_draw_info(NDI_UNIQUE, 0, op, "Could not load plugin.");
     return 1;
 }
 /* GROS */
@@ -1463,7 +1471,15 @@ int command_loadplugin(object *op, char *params)
 /* are not loaded.                                                           */
 int command_unloadplugin(object *op, char *params)
 {
-    removeOnePlugin(params);
+    if (params == NULL) {
+	new_draw_info(NDI_UNIQUE, 0, op, "Remove which plugin?");
+	return 1;
+    }
+
+    if (removeOnePlugin(params) == 0)
+        new_draw_info(NDI_UNIQUE, 0, op, "Plugin successfully removed.");
+    else
+        new_draw_info(NDI_UNIQUE, 0, op, "Could not remove plugin.");
     return 1;
 }
 

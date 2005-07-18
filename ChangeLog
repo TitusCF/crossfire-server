@@ -17,6 +17,15 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/plugins.c: Merge mostly identical code from #ifdef WIN32 and #else
+   blocks. Use opendir/readdir/closedir instead scandir for Unix because WIN32
+   probably does not have these functions. Prevent loading one plugin multiple
+   times.
+include/sproto.h: Update prototypes for plugin functions.
+server/c_wiz.c: Add success/failure messages to plugin and plugout commands.
+   Do not crash due to missing parameter.
+Andreas Kirschbaum 2005-07-18
+
 server/pets: Fix off-by-one error in follow_owner().
 server/c_wiz: Allow the summon and teleport commands to place the summoned
    player/DM north-west of DM/player.
