@@ -17,6 +17,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+include/win32.h: add PLUGIN_SUFFIX definition.
+Ryo 2005-07-18
+
 server/plugins.c: Merge mostly identical code from #ifdef WIN32 and #else
    blocks. Use opendir/readdir/closedir instead scandir for Unix because WIN32
    probably does not have these functions. Prevent loading one plugin multiple
@@ -38,6 +41,7 @@ Affected files:
  include/funcpoint.h libproto.h sproto.h
  random_maps/standalone.c
  server/weather.c 
+Ryo 2005-07-17
 
 server/apply.c: Make converters that increase value non-functional.
 Andreas Kirschbaum 2005-07-17

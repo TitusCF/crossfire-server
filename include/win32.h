@@ -109,6 +109,9 @@
 #define BZIP "/usr/bin/bzip2"
 #define BUNZIP "/usr/bin/bunzip2"
 
+/* Suffix for libraries */
+#define PLUGIN_SUFFIX   ".dll"
+
 /* struct dirent - same as Unix */
 
 typedef struct dirent {
@@ -141,4 +144,6 @@ extern int strcasecmp(const char *s1, const char*s2);
 extern void service_register( );
 extern void service_unregister( );
 extern void service_handle( );
+
+/* For Win32 service */
 extern int bRunning;
