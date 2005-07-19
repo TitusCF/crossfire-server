@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/apply.c: Properly terminate destination string with '\0' in
+   apply_item_transformer(). Avoid clearing the string buffer multiple times.
+Andreas Kirschbaum 2005-07-20
+
 doc/Developers/item_transformation: fixed documentation.
 server/apply.c: remove incorrect comment. Item transformer uses food for max use.
 Replaced some hardcoded values with define. Modified files:

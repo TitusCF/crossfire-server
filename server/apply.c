@@ -3811,6 +3811,7 @@ void apply_item_transformer( object* pl, object* transformer )
     char* separator;
     int yield;
     char got[ MAX_BUF ];
+    int len;
 
     if ( !pl || !transformer )
         return;
@@ -3832,7 +3833,6 @@ void apply_item_transformer( object* pl, object* transformer )
         new_draw_info_format( NDI_UNIQUE, 0, pl, "You can't use the %s with your %s!", query_name( transformer ), query_name( marked ) );
         return;
         }
-    memset( got, 0, MAX_BUF );
     find += strlen( transformer->arch->name ) + 1;
     /* Item can be used, now find how many and what it yields */
     if ( isdigit( *( find ) ) )
@@ -3851,14 +3851,19 @@ void apply_item_transformer( object* pl, object* transformer )
         find++;
     while ( *find == ' ' )
         find++;
+    memset( got, 0, MAX_BUF );
     if ( (separator = strchr( find, ';' ))!=NULL)
         {
-        strncpy( got, find, MIN( separator - find, MAX_BUF ) );
+	len = separator - find;
         }
     else
         {
-        strncpy( got, find, MAX_BUF );
+	len = strlen(find);
         }
+    if ( len > MAX_BUF-1)
+	len = MAX_BUF-1;
+    strcpy( got, find );
+    got[len] = '\0';
 
     /* Now create new item, remove used ones when required. */
     new_item = get_archetype( got );
