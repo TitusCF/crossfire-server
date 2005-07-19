@@ -1,6 +1,6 @@
 This file explains the 'ITEM_TRANSFORMER' (163) item type.
 
-Last update: 2005-04-15.
+Last update: 2005-07-19.
 
 An item transformer is simply applied, after having marked a 'victim' item.
 If the victim is suitable, it will be transformed into something else.
@@ -19,7 +19,8 @@ one 'apple' will be transformed into 2 'half_apple'.
 
 Pretty simple, hopefully.
 
-As a special case, the 'transformer' item is removed if its 'level' is non zero.
+Transformer uses food value to count how many times it can be used. 0 denotes
+unlimited uses.
 
 The 'slaying' field of the 'transformer' is a verb used to construct a message.
 

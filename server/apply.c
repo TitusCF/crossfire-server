@@ -238,7 +238,7 @@ int apply_potion(object *op, object *tmp)
     force=NULL;
     for (i=0; i<NROFATTACKS; i++) {
 	if (tmp->resist[i]) {
-	    if (!force) force=get_archetype("force");
+	    if (!force) force=get_archetype(FORCE_NAME);
 	    memcpy(force->resist, tmp->resist, sizeof(tmp->resist));
 	    force->type=POTION_EFFECT;
 	    break;  /* Only need to find one protection since we copy entire batch */
@@ -3797,12 +3797,11 @@ void apply_positioning_system( object* pl, object* gps )
  * This handles items of type 'transformer'.
  * Basically those items, used with a marked item, transform both items into something
  * else.
- * "Transformer" item is removed too, unless the level is zero.
+ * "Transformer" item has food decreased by 1, removed if 0 (0 at start means illimited)..
  * Change information is contained in the 'slaying' field of the marked item.
  * The format is as follow: transformer:[number ]yield[;transformer:...].
  * This way an item can be transformed in many things, and/or many objects.
  * The 'slaying' field for transformer is used as verb for the action.
- * Created item is in the 'other_arch' field.
  */
 void apply_item_transformer( object* pl, object* transformer )
     {
@@ -3875,6 +3874,7 @@ void apply_item_transformer( object* pl, object* transformer )
     /* Eat up one item */
     decrease_ob_nr( marked, 1 );
     /* Eat one transformer if needed */
-    if ( transformer->level )
-        decrease_ob_nr( transformer, 1 );
+    if ( transformer->stats.food )
+        if ( --transformer->stats.food == 0 )
+            decrease_ob_nr( transformer, 1 );
     }

@@ -278,7 +278,7 @@ static object *create_object(char *name)
     ob = CFR->Value[0];
     PyFreeMemory(CFR);
 
-    if(strncmp(PyQueryName(ob), "singluarity", 11) == 0)
+    if(strncmp(PyQueryName(ob), ARCH_SINGULARITY, ARCH_SINGULARITY_LEN) == 0)
     {
         /* Object name failed, try archetype name. */
 
@@ -289,7 +289,7 @@ static object *create_object(char *name)
         ob = CFR->Value[0];
         PyFreeMemory(CFR);
 
-        if(strncmp(PyQueryName(ob), "singluarity", 11) == 0)
+        if(strncmp(PyQueryName(ob), ARCH_SINGULARITY, ARCH_SINGULARITY_LEN) == 0)
         {
             PyFreeObject(ob);
             set_exception("object '%s' does not exist", name);
@@ -1031,7 +1031,7 @@ static PyObject* CFCastAbility(PyObject* self, PyObject* args)
     spell_ob = CFR->Value[0];
     PyFreeMemory( CFR );
 
-    if (strncmp(PyQueryName(spell_ob), "singluarity", 11) == 0)
+    if (strncmp(PyQueryName(spell_ob), ARCH_SINGULARITY, ARCH_SINGULARITY_LEN) == 0)
     {
         /* spell object does not exist */
         PyFreeObject(spell_ob);
@@ -2560,14 +2560,14 @@ static PyObject* CFCreateInvisibleObjectInside(PyObject* self, PyObject* args)
 
     where = (object *)(whereptr);
 
-    strcpy(txt2,"force");
+    strcpy(txt2,FORCE_NAME);
 
     GCFP.Value[0] = (void *)(txt2);
     CFR = (PlugHooks[HOOK_GETARCHETYPE])(&GCFP);
     myob = (object *)(CFR->Value[0]);
     PyFreeMemory( CFR );
 
-    if(strncmp(PyQueryName(myob), "singluarity", 11) == 0)
+    if(strncmp(PyQueryName(myob), ARCH_SINGULARITY, ARCH_SINGULARITY_LEN) == 0)
     {
         PyFreeObject(myob);
         set_exception("can't find archetype 'force'");

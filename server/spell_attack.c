@@ -1158,7 +1158,7 @@ void move_missile(object *op) {
  * Destruction
  ****************************************************************************/
 /* make_object_glow() - currently only makes living objects glow.
- * we do this by creating a "force" and inserting it in the 
+ * we do this by creating a force and inserting it in the 
  * object. if time is 0, the object glows permanently. To truely
  * make this work for non-living objects, we would have to 
  * give them the capability to have an inventory. b.t.
@@ -1171,7 +1171,7 @@ int make_object_glow(object *op, int radius, int time) {
     if(op->path_denied&PATH_LIGHT) 
 	return 0;
 
-    tmp=get_archetype("force");
+    tmp=get_archetype(FORCE_NAME);
     tmp->speed = 0.01;
     tmp->stats.food = time;
     SET_FLAG(tmp, FLAG_IS_USED_UP);
@@ -1299,7 +1299,7 @@ int cast_curse(object *op, object *caster, object *spell_ob, int dir) {
     }
 
     if(force==NULL) {
-	force=get_archetype("force");
+	force=get_archetype(FORCE_NAME);
 	force->subtype = FORCE_CHANGE_ABILITY;
 	free_string(force->name);
 	if (spell_ob->race) 
@@ -1881,7 +1881,7 @@ int cast_cause_disease(object *op, object *caster, object *spell, int dir) {
 			 new_draw_info_format(NDI_UNIQUE, 0, op, "You inflict %s on %s!",disease->name,walk->name);
 
 			 free_object(disease); /* don't need this one anymore */
-			 flash=get_archetype("detect_magic");
+			 flash=get_archetype(ARCH_DETECT_MAGIC);
 			 flash->x = x;
 			 flash->y = y;
 			 flash->map = walk->map;

@@ -1999,7 +1999,7 @@ void confuse_player(object *op, object *hitter, int dam)
     
     tmp = present_in_ob_by_name(FORCE,"confusion", op);
     if(!tmp) {
-	tmp = get_archetype("force");
+	tmp = get_archetype(FORCE_NAME);
 	tmp = insert_ob_in_ob(tmp,op);
     }
     

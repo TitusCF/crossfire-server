@@ -586,7 +586,7 @@ object *arch_to_object(archetype *at) {
 object *create_singularity(const char *name) {
   object *op;
   char buf[MAX_BUF];
-  sprintf(buf,"singluarity (%s)",name);
+  sprintf(buf,"%s (%s)",ARCH_SINGULARITY,name);
   op = get_object();
   op->name = add_string(buf);
   op->name_pl = add_string(buf);

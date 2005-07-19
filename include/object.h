@@ -305,4 +305,8 @@ extern int nroffreeobjects;
 #define INS_ON_TOP		0x0008
 #define INS_BELOW_ORIGINATOR	0x0010
 
+#define ARCH_SINGULARITY        "singularity"
+#define ARCH_SINGULARITY_LEN    11
+#define ARCH_DETECT_MAGIC       "detect_magic"
+
 #endif

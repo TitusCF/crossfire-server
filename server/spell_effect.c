@@ -734,7 +734,7 @@ int cast_word_of_recall(object *op, object *caster, object *spell_ob) {
     if(op->type!=PLAYER)
 	return 0;
 
-    dummy=get_archetype("force");
+    dummy=get_archetype(FORCE_NAME);
     if(dummy == NULL){
 	new_draw_info(NDI_UNIQUE, 0,op,"Oops, program error!");
 	LOG(llevError,"cast_word_of_recall: get_archetype(force) failed!\n");
@@ -1472,7 +1472,7 @@ int cast_change_ability(object *op,object *caster,object *spell_ob, int dir) {
 	}
     }
     if(force==NULL) {
-	force=get_archetype("force");
+	force=get_archetype(FORCE_NAME);
 	force->subtype = FORCE_CHANGE_ABILITY;
 	free_string(force->name);
 	if (spell_ob->race) 
@@ -1587,7 +1587,7 @@ int cast_bless(object *op,object *caster,object *spell_ob, int dir) {
 	}
     }
     if(force==NULL) {
-	force=get_archetype("force");
+	force=get_archetype(FORCE_NAME);
 	force->subtype = FORCE_CHANGE_ABILITY;
 	free_string(force->name);
 	if (spell_ob->race) 
