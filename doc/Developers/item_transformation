@@ -21,6 +21,8 @@ Pretty simple, hopefully.
 
 As a special case, the 'transformer' item is removed if its 'level' is non zero.
 
+The 'slaying' field of the 'transformer' is a verb used to construct a message.
+
 More complex imaginary example:
  Object water
  slaying bowl:full_bowl;paper:wet_paper
