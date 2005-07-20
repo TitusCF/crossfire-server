@@ -17,6 +17,8 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+lib/Makefile.am, lib/Makefile.in, lib/help/whereabouts: Add help for
+   whereabouts command.
 server/apply.c: Properly terminate destination string with '\0' in
    apply_item_transformer(). Avoid clearing the string buffer multiple times.
 Andreas Kirschbaum 2005-07-20

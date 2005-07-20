@@ -52,7 +52,8 @@ dist_help_DATA = help/apply help/applymode \
 	help/save help/shout \
 	help/sort_inventory help/spells \
 	help/statistics help/take help/traps \
-	help/unbind help/usekeys
+	help/unbind help/usekeys \
+	help/whereabouts
 
 wizhelpdir=$(pkgdatadir)/wizhelp
 dist_wizhelp_DATA = wizhelp/abil wizhelp/addexp \
