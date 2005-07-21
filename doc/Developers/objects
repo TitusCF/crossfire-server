@@ -482,6 +482,11 @@ Goodbye!
 @match *
 What did you say?
 
+
+As a special case, if the line just after match is 'quest xxx', then
+the NPC will only display the text (without the quote line) if the player
+is currently doing indicated quest. See also 'quests' document.
+
 Obviously this feature can be expanded extensively, so expect it
 to evolve till the next version.
 
@@ -1505,6 +1510,10 @@ speed	  how quickly it will mark something standing on it
 food	  duration of the force it inserts.  If nonzero, the duration
           is finite:  about 1 food per 10 seconds
 name	  slaying field of a force to remove.
+
+
+See also the 'quests' file for special values on slaying field.
+
 ------------------------------------------------------------------------------
 NOTE ABOUT ALL CONNECTED ITEMS:
 
@@ -1693,6 +1702,7 @@ pass_thru <1>           set if O can be passed thru by objects <below>.
 can_pass_thru <1>       set if O can pass thru objects <above>
 pick_up <value>         Which items monster will pick up (see pickup (above))
 
+is_buildable <1>        set if items can be built on top of this O.
 
 *******************************************************************************
 6. TREASURES (and Abilities)
@@ -1723,7 +1733,7 @@ And the format for an item is:
   end (or "more", if this is not the last element)
 
 If "magic" or "nrof" is omitted, it is set to 0.
-If "chance" is ommitted, it is set to 100%.
+If "chance" is omitted, it is set to 100%.
 "yes" tells what can be generated if this item was generated.
 "no" tells what can be generated if this item was not generated.
 "yes" and "no" can of course be omitted.
