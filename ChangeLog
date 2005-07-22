@@ -17,6 +17,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+socket/init.c: settings values to 0 before using'em works better, usually ^_-
+Ryo 2005-07-22
+
 random_maps/random_map.h: Add prototype for set_random_map_variable().
 server/main.c: Remove prototype for set_random_map_variable().
 lib/Makefile.am, lib/Makefile.in, lib/help/whereabouts: Add help for
