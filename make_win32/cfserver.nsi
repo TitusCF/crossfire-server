@@ -92,6 +92,7 @@ Section "Crossfire Server (required)" cf
         ;Install service
         DetailPrint "Registering service..."
         ExecWait '"$INSTDIR\Crossfire32.exe" -regsrv'
+        WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Crossfire Server" "ServiceInstalled" "1"
         
   dont_install:
 SectionEnd
@@ -118,7 +119,9 @@ UninstallText "This will uninstall Crossfire Server from your system"
 Section "un.Crossfire Server" un_cf
   SectionIn RO
   ;Unregister service if it was installed
-  ExecWait '"$INSTDIR\Crossfire32.exe" -unregsrv'
+  ReadRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Crossfire Server" "ServiceInstalled"
+  StrCmp $0 "" 0 +2
+        ExecWait '"$INSTDIR\Crossfire32.exe" -unregsrv'
 
   ;Delete Files
   Delete "$INSTDIR\crossfire32.exe"
