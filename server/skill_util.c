@@ -906,7 +906,7 @@ static int do_skill_attack(object *tmp, object *op, char *string, object *skill)
  
     /* print appropriate  messages to the player */
  
-    if(success && string!=NULL) {
+    if(success && string!=NULL && tmp && !QUERY_FLAG(tmp,FLAG_FREED)) {
 	if(op->type==PLAYER)
 	    new_draw_info_format(NDI_UNIQUE, 0,op,
 		 "You %s %s!",string,query_name(tmp));
