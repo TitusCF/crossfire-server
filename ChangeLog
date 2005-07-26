@@ -17,6 +17,17 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+The following changes prevent spells in player's inventories from being
+damaged by casting spells, using skills, or praying.
+server/attack.c: Limit cancellation and acid attacks to visible objects only.
+server/gods.c: Limit god granted remove curse/damnation to visible objects
+   only.
+server/skills.c: Limit the skills sense curse and sense magic to visible
+   objects only.
+server/spell_effect.c: Limit the spells detect curse and detect magic to
+   visible objects only.
+Andreas Kirschbaum 2005-07-26
+
 server/skill_util.c: don't try to send a message if monster killed/removed.
 Ryo 2005-07-23
 

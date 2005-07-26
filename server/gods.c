@@ -643,6 +643,8 @@ static int god_removes_curse (object *op, int remove_damnation)
     int success = 0;
 
     for (tmp = op->inv; tmp; tmp = tmp->below) {
+	if (tmp->invisible)
+	    continue;
         if (QUERY_FLAG (tmp, FLAG_DAMNED) && ! remove_damnation)
             continue;
         if (QUERY_FLAG (tmp, FLAG_CURSED) || QUERY_FLAG (tmp, FLAG_DAMNED)) {

@@ -2059,7 +2059,7 @@ int cast_detection(object *op, object *caster, object *spell, object *skill) {
     if (QUERY_FLAG(spell, FLAG_KNOWN_CURSED) || QUERY_FLAG(spell, FLAG_KNOWN_MAGICAL)) {
 	done_one = 0;
 	for (tmp = op->inv; tmp; tmp = tmp->below) {
-	    if (!QUERY_FLAG(tmp, FLAG_IDENTIFIED)) {
+	    if (!tmp->invisible && !QUERY_FLAG(tmp, FLAG_IDENTIFIED)) {
 		if (QUERY_FLAG(spell, FLAG_KNOWN_MAGICAL) && 
 		    is_magical(tmp) && !QUERY_FLAG(tmp,FLAG_KNOWN_MAGICAL)) {
 			SET_FLAG(tmp,FLAG_KNOWN_MAGICAL);

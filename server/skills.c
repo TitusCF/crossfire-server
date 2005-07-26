@@ -524,7 +524,8 @@ static int do_skill_detect_curse(object *pl, object *skill) {
     int success=0;
  
     for(tmp=pl->inv;tmp;tmp=tmp->below)
-	if (!QUERY_FLAG(tmp,FLAG_IDENTIFIED) && !QUERY_FLAG(tmp,FLAG_KNOWN_CURSED)
+	if (!tmp->invisible
+            && !QUERY_FLAG(tmp,FLAG_IDENTIFIED) && !QUERY_FLAG(tmp,FLAG_KNOWN_CURSED)
             && (QUERY_FLAG(tmp,FLAG_CURSED) || QUERY_FLAG(tmp,FLAG_DAMNED)) &&
 	    tmp->item_power < skill->level) {
 		SET_FLAG(tmp,FLAG_KNOWN_CURSED);
@@ -552,7 +553,8 @@ static int do_skill_detect_magic(object *pl, object *skill) {
     int success=0;
 
     for(tmp=pl->inv;tmp;tmp=tmp->below)
-        if(!QUERY_FLAG(tmp,FLAG_IDENTIFIED) && !QUERY_FLAG(tmp,FLAG_KNOWN_MAGICAL)
+        if(!tmp->invisible
+	    && !QUERY_FLAG(tmp,FLAG_IDENTIFIED) && !QUERY_FLAG(tmp,FLAG_KNOWN_MAGICAL)
 	    && (is_magical(tmp)) && tmp->item_power < skill->level) { 
             	SET_FLAG(tmp,FLAG_KNOWN_MAGICAL);
 		esrv_update_item(UPD_FLAGS, pl, tmp);

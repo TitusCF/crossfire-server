@@ -48,6 +48,9 @@ typedef struct att_msg_str {
 void cancellation(object *op)
 {
     object *tmp;
+
+    if (op->invisible)
+	return;
    
     if (QUERY_FLAG (op, FLAG_ALIVE) || op->type == CONTAINER  || op->type == THROWN_OBJ) {
 	/* Recur through the inventory */
@@ -1159,6 +1162,8 @@ int hit_player_attacktype(object *op, object *hitter, int dam,
 	  {
 	    object *tmp;
 	    for(tmp=op->inv; tmp!=NULL; tmp=tmp->below) {
+		if(tmp->invisible)
+		  continue;
 		if(!QUERY_FLAG(tmp, FLAG_APPLIED) ||
 		   (tmp->resist[ATNR_ACID] >= 10))
 		  /* >= 10% acid res. on itmes will protect these */
