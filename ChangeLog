@@ -17,6 +17,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/skills.c: use correct sp/grace for inscription.
+Ryo 2005-07-27
+
 The following changes prevent spells in player's inventories from being
 damaged by casting spells, using skills, or praying.
 server/attack.c: Limit cancellation and acid attacks to visible objects only.

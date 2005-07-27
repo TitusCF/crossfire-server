@@ -1174,13 +1174,13 @@ static int write_scroll (object *pl, object *scroll, object *skill) {
 	      "You need a spell readied in order to inscribe!"); 
 	return 0; 
     }
-    if(chosen_spell->stats.grace > pl->stats.grace) {
+    if(SP_level_spellpoint_cost(pl,chosen_spell,SPELL_GRACE) > pl->stats.grace) {
        	new_draw_info_format(NDI_UNIQUE,0,pl,
 	     "You don't have enough grace to write a scroll of %s.", 
 			     chosen_spell->name);
 	return 0;
     }
-    if(chosen_spell->stats.sp > pl->stats.sp) {
+    if(SP_level_spellpoint_cost(pl,chosen_spell,SPELL_MANA) > pl->stats.sp) {
        	new_draw_info_format(NDI_UNIQUE,0,pl,
 	     "You don't have enough mana to write a scroll of %s.", 
 			     chosen_spell->name);
@@ -1203,8 +1203,8 @@ static int write_scroll (object *pl, object *scroll, object *skill) {
     if(QUERY_FLAG(pl,FLAG_CONFUSED)) confused = 1;
 
     /* Lost mana/grace no matter what */
-    pl->stats.grace-=chosen_spell->stats.grace;
-    pl->stats.sp-=chosen_spell->stats.sp;
+    pl->stats.grace-=SP_level_spellpoint_cost(pl,chosen_spell,SPELL_GRACE);
+    pl->stats.sp-=SP_level_spellpoint_cost(pl,chosen_spell,SPELL_MANA);
 
     if (random_roll(0, chosen_spell->level*4-1, pl, PREFER_LOW) < skill->level) {
 	if (scroll->nrof > 1) {
