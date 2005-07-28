@@ -115,27 +115,13 @@ object *get_pet_enemy(object * pet, rv_vector *rv){
 	    for (tmp = get_map_ob(nm, x, y); tmp != NULL; tmp = tmp->above) {
 		object *tmp2 = tmp->head == NULL?tmp:tmp->head;
 
-		if (QUERY_FLAG(tmp2,FLAG_ALIVE) && (
-			!QUERY_FLAG(tmp2, FLAG_FRIENDLY) || (
-				(owner != tmp2->owner) &&
-				op_on_battleground(pet, NULL, NULL) && 
-				op_on_battleground(owner, NULL, NULL) && 
-				op_on_battleground(tmp2, NULL, NULL) && 
-				(owner->contr->petmode == pet_arena) && !(
-					(tmp2->owner->contr->party_number == 
-						owner->contr->party_number) && 
-					(owner->contr->party_number > 0))))
-		    && !QUERY_FLAG(tmp2,FLAG_UNAGGRESSIVE) &&
-		    tmp2 != pet && tmp2 != owner && (
-		    	(tmp2->type != PLAYER) || (
-				op_on_battleground(pet, NULL, NULL) && 
-				op_on_battleground(owner, NULL, NULL) && 
-				op_on_battleground(tmp2, NULL, NULL) && 
-				(owner->contr->petmode == pet_arena) && !(
-					(tmp2->contr->party_number == 
-						owner->contr->party_number) && 
-					(owner->contr->party_number > 0)))) &&
-		    can_detect_enemy(pet, tmp2, rv)) {
+	    if (QUERY_FLAG(tmp2,FLAG_ALIVE) && ((
+				!QUERY_FLAG(tmp2, FLAG_FRIENDLY) &&
+				(tmp2->type != PLAYER)) || 
+			should_arena_attack(pet, owner, tmp2))
+		&& !QUERY_FLAG(tmp2,FLAG_UNAGGRESSIVE) &&
+		tmp2 != pet && tmp2 != owner && 
+		can_detect_enemy(pet, tmp2, rv)) {
 
 			if (!can_see_enemy(pet, tmp2)) {
 			    if (tmp3 != NULL)
@@ -196,26 +182,12 @@ object *get_pet_enemy(object * pet, rv_vector *rv){
 	    if (get_map_flags(nm, &nm, x,y, &x, &y) & P_IS_ALIVE) {
 		for (tmp = get_map_ob(nm, x, y); tmp != NULL; tmp = tmp->above) {
 		    object *tmp2 = tmp->head == NULL?tmp:tmp->head;
-		    if (QUERY_FLAG(tmp2,FLAG_ALIVE) && (
-				!QUERY_FLAG(tmp2, FLAG_FRIENDLY) || (
-					(owner != tmp2->owner) &&
-					op_on_battleground(pet, NULL, NULL) && 
-					op_on_battleground(owner, NULL, NULL) && 
-					op_on_battleground(tmp2, NULL, NULL) && 
-					(owner->contr->petmode == pet_arena) && !(
-						(tmp2->owner->contr->party_number == 
-							owner->contr->party_number) && 
-						(owner->contr->party_number > 0))))
+		    if (QUERY_FLAG(tmp2,FLAG_ALIVE) && ((
+					!QUERY_FLAG(tmp2, FLAG_FRIENDLY) && 
+					(tmp2->type != PLAYER)) || 
+				should_arena_attack(pet, owner, tmp2))
 			&& !QUERY_FLAG(tmp2,FLAG_UNAGGRESSIVE) &&
-			tmp2 != pet && tmp2 != owner && (
-				(tmp2->type != PLAYER) || (
-					op_on_battleground(pet, NULL, NULL) && 
-					op_on_battleground(owner, NULL, NULL) && 
-					op_on_battleground(tmp2, NULL, NULL) && 
-					(owner->contr->petmode == pet_arena) && !(
-						(tmp2->contr->party_number == 
-							owner->contr->party_number) && 
-						(owner->contr->party_number > 0)))) &&
+			tmp2 != pet && tmp2 != owner && 
 			can_detect_enemy(pet, tmp2, rv)) {
 
 			    if (!can_see_enemy(pet, tmp2)) {
@@ -954,5 +926,75 @@ int summon_object(object *op, object *caster, object *spell_ob, int dir)
     } /* for i < nrof */
     return 1;
 }
-		    
 
+/* recursively look through the owner property of objects until the real owner
+is found */
+object *get_real_owner(object *ob) {
+	object *realowner = ob;
+	while(realowner->owner != 0)
+	{
+		realowner = realowner->owner;
+	}
+	return realowner;
+}
+		    
+/* determines if checks so pets don't attack players or other pets should be
+overruled by the arena petmode */
+int should_arena_attack(object *pet,object *owner,object *target) {
+	object *rowner, *towner;
+	
+	/* get the owners of itself and the target, this is to deal with pets of
+	pets */
+	rowner = get_real_owner(owner);
+	if (target->type != PLAYER) {
+		towner = get_real_owner(target);
+	} else {
+		towner = 0;	
+	}
+	
+	/* if the pet has now owner, exit with error */
+	if (!(rowner)) {
+		LOG(llevError,"Pet has no owner.\n");
+		return 0;
+	}
+
+	/* if the target is not a player, and has no owner, we shouldn't be here
+	*/
+	if (!(towner) && (target->type != PLAYER)) {
+		LOG(llevError,"Target is not a player but has no owner. We should not be here.\n");
+		return 0;
+	}
+	
+	/* make sure that the owner is a player */
+	if (rowner->type != PLAYER) return 0;
+	
+	/* abort if the petmode is not arena */
+	if (rowner->contr->petmode != pet_arena) return 0;
+	
+	/* abort if the pet, it's owner, or the target is not on battleground*/
+	if (!(op_on_battleground(pet, NULL, NULL) && 
+	     op_on_battleground(pet, NULL, NULL) && 
+	     op_on_battleground(pet, NULL, NULL)))
+	     return 0;
+	
+	/* if the target is a monster, make sure it's owner is not the same */	
+	if ((target->type != PLAYER) && (rowner == towner)) return 0;
+
+	/* check if the target is a player which affects how it will handle
+	parties */
+	if (target->type != PLAYER) {
+		/* if the target is owned by a player make sure than make sure
+		it's not in the same party */
+		if ((towner->type == PLAYER) && (rowner->contr->party_number > 0)) {
+			if (rowner->contr->party_number == towner->contr->party_number) return 0;
+		}
+	} else {
+		/* if the target is a player make sure than make sure it's not
+		in the same party */
+		if (rowner->contr->party_number > 0){
+			if (rowner->contr->party_number == target->contr->party_number) return 0;
+		}
+	}
+	
+	return 1;
+}

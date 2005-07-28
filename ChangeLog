@@ -17,6 +17,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/{monster.c, pets.c}: Fix bugs in arena petmode and clean up most of
+   it's logic into it's own function.
+lib/help/petmode: Document the arena petmode in the "help petmode" output.
+Alex Schultz 2005-07-28
+
 server/skills.c: use correct sp/grace for inscription.
 Ryo 2005-07-27
 
