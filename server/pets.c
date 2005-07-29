@@ -931,6 +931,9 @@ int summon_object(object *op, object *caster, object *spell_ob, int dir)
 is found */
 object *get_real_owner(object *ob) {
 	object *realowner = ob;
+	
+	if (realowner == 0) return 0;
+	
 	while(realowner->owner != 0)
 	{
 		realowner = realowner->owner;
@@ -943,6 +946,9 @@ overruled by the arena petmode */
 int should_arena_attack(object *pet,object *owner,object *target) {
 	object *rowner, *towner;
 	
+	/* exit if the target, pet, or owner is null. */
+	if ((target == 0) || (pet == 0) || (owner ==0)) return 0;
+		
 	/* get the owners of itself and the target, this is to deal with pets of
 	pets */
 	rowner = get_real_owner(owner);
