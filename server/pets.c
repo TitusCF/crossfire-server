@@ -932,9 +932,9 @@ is found */
 object *get_real_owner(object *ob) {
 	object *realowner = ob;
 	
-	if (realowner == 0) return 0;
+	if (realowner == NULL) return 0;
 	
-	while(realowner->owner != 0)
+	while(realowner->owner != NULL)
 	{
 		realowner = realowner->owner;
 	}
@@ -947,7 +947,7 @@ int should_arena_attack(object *pet,object *owner,object *target) {
 	object *rowner, *towner;
 	
 	/* exit if the target, pet, or owner is null. */
-	if ((target == 0) || (pet == 0) || (owner ==0)) return 0;
+	if ((target == NULL) || (pet == NULL) || (owner == NULL)) return 0;
 		
 	/* get the owners of itself and the target, this is to deal with pets of
 	pets */
@@ -959,14 +959,14 @@ int should_arena_attack(object *pet,object *owner,object *target) {
 	}
 	
 	/* if the pet has now owner, exit with error */
-	if (!(rowner)) {
+	if (rowner == NULL) {
 		LOG(llevError,"Pet has no owner.\n");
 		return 0;
 	}
 
 	/* if the target is not a player, and has no owner, we shouldn't be here
 	*/
-	if (!(towner) && (target->type != PLAYER)) {
+	if ((towner == NULL) && (target->type != PLAYER)) {
 		LOG(llevError,"Target is not a player but has no owner. We should not be here.\n");
 		return 0;
 	}
@@ -979,8 +979,8 @@ int should_arena_attack(object *pet,object *owner,object *target) {
 	
 	/* abort if the pet, it's owner, or the target is not on battleground*/
 	if (!(op_on_battleground(pet, NULL, NULL) && 
-	     op_on_battleground(pet, NULL, NULL) && 
-	     op_on_battleground(pet, NULL, NULL)))
+	     op_on_battleground(owner, NULL, NULL) && 
+	     op_on_battleground(target, NULL, NULL)))
 	     return 0;
 	
 	/* if the target is a monster, make sure it's owner is not the same */	
