@@ -17,7 +17,8 @@ map-technical: Technical aspect of maps - fields in the map header (and
 mapguide: Do's and Don'ts when making new maps.
 objects: Explains the different fields/values for the objects, as well as
   breakdowns for a some specific objects (was crossfire.doc)
-plugins: Describes the various events that plugins can be connected to.
+plugins: Describes technical information, and the various events that plugins
+ can be connected to.
 programming_guide: Hints, style guide, and directions for coders as well
   as information on sending in patches.
 protocol: Describes the client/server protocol.

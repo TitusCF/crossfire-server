@@ -1,3 +1,23 @@
+Plugin support
+==============
+
+Crossfire can be extended through plugins. It's basically a library file, that gets loaded
+at server initialization.
+A plugin can be hooked to different events, either related to an object or global ones.
+(see list later on).
+
+File include/plugin.h contains all definitions a plugin needs to hook to the server.
+This should be enough to write plugins.
+The best way to find what you need to write is to check this file. You can also check the
+Python plugin (plugin/plugin_python.c) which is the most advanced one.
+
+All functions the plugin can access are defined as HOOK_xxx, events are EVENT_xxx.
+Check CFW* functions in server/plugins.c for all exported functions and what they do.
+
+Important: a plugin should *never* directly call malloc, free, or any function
+manipulating memory if the memory needs to be given to server. This breaks Windows
+compatibility. Hooks are provided in case of need.
+
 List of supported events.
 =========================
 
