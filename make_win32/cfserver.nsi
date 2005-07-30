@@ -63,8 +63,10 @@ Section "Crossfire Server (required)" cf
   File "..\lib\materials"
   File "..\lib\messages"
   File "..\lib\motd"
+  File "..\lib\news"
   File "..\lib\races"
   File "..\lib\regions"
+  File "..\lib\rules"
   File "..\lib\settings"
   File "..\lib\smooth"
   File "..\lib\animations"
@@ -194,7 +196,7 @@ Section -un.final_clean
   IfFileExists "$INSTDIR\UninstMaps.exe" maps no_maps
 
 maps:
-    MessageBox MB_YESNO|MB_ICONQUESTION "Maps found. Remove them?" IDNO no_maps
+    MessageBox MB_YESNO|MB_ICONQUESTION "Do you want to also remove the maps?" IDNO no_maps
     
     Banner::Show /NOUNLOAD /set 76 "Please wait" "Uninstalling maps..."
 

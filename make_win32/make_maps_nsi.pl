@@ -137,6 +137,10 @@ sub handleFind
     print NSI "  File \"" . $foundFile . "\"\n";
     # Remove statement
     $remove = "  Delete \"$currentinstdir\\$base\"\n" . $remove;
+    if ( $foundFile =~ /.*py$/ )
+      {
+      $remove = "  Delete \"$currentinstdir\\" . $base . "c\"\n" . $remove;
+      }
     }
   }
 
