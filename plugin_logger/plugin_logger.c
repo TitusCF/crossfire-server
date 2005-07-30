@@ -37,6 +37,72 @@ f_plugin PlugHooks[1024];
 FILE* logging_file=NULL;
 static CFParm GCFP;
 
+/*****************************************************************************/
+/* The Plugin Management Part.                                               */
+/* Most of the functions below should exist in any CF plugin. They are used  */
+/* to glue the plugin to the server core. All functions follow the same      */
+/* declaration scheme (taking a CFParm* arg, returning a CFParm) to make the */
+/* plugin interface as general as possible. And since the loading of modules */
+/* isn't time-critical, it is never a problem. It could also make using      */
+/* programming languages other than C to write plugins a little easier, but  */
+/* this has yet to be proven.                                                */
+/*****************************************************************************/
+
+static void hook_free_memory(CFParm* CFR)
+{
+    GCFP.Value[0]=CFR;
+    PlugHooks[HOOK_FREEMEMORY](&GCFP);
+}
+
+char* hook_add_string (char* text){
+    CFParm* result;
+    char* val;
+    GCFP.Value[0]=(void*)text;
+    result=(PlugHooks[HOOK_ADDSTRING])(&GCFP);
+    val=(char*)result->Value[0];
+    hook_free_memory (result);
+    return val;
+}
+
+char* hook_add_refcount (char* text){
+    CFParm* result;
+    char* val;
+    GCFP.Value[0]=(void*)text;
+    result=(PlugHooks[HOOK_ADDREFCOUNT])(&GCFP);
+    val=(char*)result->Value[0];
+    hook_free_memory (result);
+    return val;
+}
+
+void hook_free_string (char* text){
+    GCFP.Value[0]=(void*)text;
+    (PlugHooks[HOOK_FREESTRING])(&GCFP);
+    return ;
+}
+
+static char* hook_query_name( object* ob )
+    {
+    CFParm* CFR;
+    char* name;
+    GCFP.Value[ 0 ] = ( void* )ob;
+    CFR = PlugHooks[ HOOK_QUERYNAME ]( &GCFP );
+    name = ( char* )CFR->Value[ 0 ];
+    hook_free_memory( CFR );
+    return name;
+    }
+
+static char* hook_query_short_name( object* ob, int plural )
+    {
+    CFParm* CFR;
+    char* name;
+    GCFP.Value[ 0 ] = ( void* )ob;
+    GCFP.Value[ 1 ] = ( void* )&plural;
+    CFR = PlugHooks[ HOOK_QUERYBASENAME ]( &GCFP );
+    name = ( char* )CFR->Value[ 0 ];
+    hook_free_memory( CFR );
+    return name;
+    }
+
 void log2file (char* text2log)
 {
     time_t t = time(NULL);
@@ -399,7 +465,7 @@ char* takescreenshoot(object* op)
                 for(tmp=get_map_ob(op->map,x,y);tmp!=NULL&&tmp->above!=NULL;
                     tmp=tmp->above);
                 for ( ; tmp != NULL; tmp=tmp->below ) {
-                    fprintf (screenshoot,"%s|",query_name(tmp));
+                    fprintf (screenshoot,"%s|",hook_query_name(tmp));
                     if (QUERY_FLAG(tmp, FLAG_IS_FLOOR))          /* don't continue under the floor */
                         break;
                 }
@@ -445,7 +511,7 @@ char* saveinventory (object* op, char* id)
         fprintf (inventoryshoot,"[%s%s] %s\n",
                  what->face->name,
                  QUERY_FLAG(what,FLAG_APPLIED)?"|Active":"",
-                 query_short_name(what));
+                 hook_query_short_name(what,0));
     }
     fclose (inventoryshoot);
     return filename;
@@ -725,49 +791,6 @@ void doclock (void){
 
 
 /*****************************************************************************/
-/* The Plugin Management Part.                                               */
-/* Most of the functions below should exist in any CF plugin. They are used  */
-/* to glue the plugin to the server core. All functions follow the same      */
-/* declaration scheme (taking a CFParm* arg, returning a CFParm) to make the */
-/* plugin interface as general as possible. And since the loading of modules */
-/* isn't time-critical, it is never a problem. It could also make using      */
-/* programming languages other than C to write plugins a little easier, but  */
-/* this has yet to be proven.                                                */
-/*****************************************************************************/
-
-static void hook_free_memory(CFParm* CFR)
-{
-    GCFP.Value[0]=CFR;
-    PlugHooks[HOOK_FREEMEMORY](&GCFP);
-}
-
-char* hook_add_string (char* text){
-    CFParm* result;
-    char* val;
-    GCFP.Value[0]=(void*)text;
-    result=(PlugHooks[HOOK_ADDSTRING])(&GCFP);
-    val=(char*)result->Value[0];
-    hook_free_memory (result);
-    return val;
-}
-
-char* hook_add_refcount (char* text){
-    CFParm* result;
-    char* val;
-    GCFP.Value[0]=(void*)text;
-    result=(PlugHooks[HOOK_ADDREFCOUNT])(&GCFP);
-    val=(char*)result->Value[0];
-    hook_free_memory (result);
-    return val;
-}
-
-void hook_free_string (char* text){
-    GCFP.Value[0]=(void*)text;
-    (PlugHooks[HOOK_FREESTRING])(&GCFP);
-    return ;
-}
-
-/*****************************************************************************/
 /* Called whenever a Hook Function needs to be connected to the plugin.      */
 /*****************************************************************************/
 CFParm* registerHook(CFParm* PParm)
@@ -881,14 +904,10 @@ CFParm* triggerEvent(CFParm* PParm)
 /*****************************************************************************/
 CFParm* initPlugin(CFParm* PParm)
 {
-    char buf[MAX_BUF];
-    char buf2[MAX_BUF];
     printf("\tCrossfire logger facility at load...\n");
     connect_database();
-    strcpy(buf,log_plugin_ident);
-    strcpy(buf2,log_plugin_string);
-    GCFP.Value[0] = (void *)(add_string(buf));
-    GCFP.Value[1] = (void *)(add_string(buf2));
+    GCFP.Value[0] = (void *)(log_plugin_ident);
+    GCFP.Value[1] = (void *)(log_plugin_string);
     return &GCFP;
 };
 
@@ -930,7 +949,7 @@ CFParm* postinitPlugin(CFParm* PParm)
     struct mapdef* map;
     struct pl* po;
 
-    GCFP.Value[1] = (void *)(add_string(log_plugin_ident));
+    GCFP.Value[1] = (void *)(hook_add_string(log_plugin_ident));
     i = EVENT_BORN;
     GCFP.Value[0]=(void*)(&i);
     (PlugHooks[HOOK_REGISTEREVENT])(&GCFP);
