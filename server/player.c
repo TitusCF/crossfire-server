@@ -113,7 +113,12 @@ void send_rules(object *op) {
     size=0;
     while (fgets(buf, MAX_BUF, fp) != NULL) {
       if( *buf == '#')
-        continue;   
+        continue;
+      if (size + strlen(buf)>=HUGE_BUF)
+          {
+          LOG(llevDebug, "Warning, rules size is > %d bytes.\n", HUGE_BUF);
+          break;
+          }
       strncat(rules+size,buf,HUGE_BUF-size);
       size+=strlen(buf);
     }
@@ -151,6 +156,11 @@ void send_news(object *op) {
           news[0]='\0';
       }
       else{
+          if (size + strlen(buf)>=HUGE_BUF)
+              {
+              LOG(llevDebug, "Warning, one news item has size > %d bytes.\n", HUGE_BUF);
+              break;
+              }
           strncat(news+size,buf,HUGE_BUF-size);
           size+=strlen(buf);
       }

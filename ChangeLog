@@ -17,6 +17,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/player.c: fix crash when news or rules > HUGE_BUF.
+Ryo 2005-07-29
+
 server/{monster.c, pets.c}: Fix bugs in arena petmode and clean up most of
    it's logic into it's own function.
 lib/help/petmode: Document the arena petmode in the "help petmode" output.
