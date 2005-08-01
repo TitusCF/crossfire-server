@@ -932,11 +932,11 @@ is found */
 object *get_real_owner(object *ob) {
 	object *realowner = ob;
 	
-	if (realowner == NULL) return 0;
+	if (realowner == NULL) return NULL;
 	
-	while(realowner->owner != NULL)
+	while(get_owner(realowner) != NULL)
 	{
-		realowner = realowner->owner;
+		realowner = get_owner(realowner);
 	}
 	return realowner;
 }
