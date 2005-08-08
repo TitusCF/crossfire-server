@@ -17,6 +17,14 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+include/config.h: Make DEBUG default - appears last commit changed this
+   as unrelated to actual changes in place.
+include/sproto.h: Rebuild
+server/player.c: fire_bow() - add checks for wall/out of map.  fire_bow()
+   wasn't using right coordinates on check, which caused problems in
+   threewide mode at edge of maps.
+MSW 2005-08-07
+
 plugin_logger/plugin_logger.c: make it compile under Win32.
 Ryo 2005-07-30
 

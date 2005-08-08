@@ -1558,11 +1558,11 @@ object *pick_arrow_target(object *op, char *type, int dir)
  * player fire modes.
  */
 int fire_bow(object *op, object *part, object *arrow, int dir, int wc_mod,
-             int sx, int sy)
+             sint16 sx, sint16 sy)
 {
     object *left, *bow;
     tag_t left_tag, tag;
-    int bowspeed;
+    int bowspeed, mflags;
 
     if (!dir) {
 	new_draw_info(NDI_UNIQUE, 0, op, "You can't shoot yourself!");
@@ -1607,10 +1607,12 @@ int fire_bow(object *op, object *part, object *arrow, int dir, int wc_mod,
 	    return 0;
 	}
     }
-
-    if(get_map_flags(op->map,NULL, op->x+freearr_x[dir],op->y+freearr_y[dir], NULL, NULL) &
-       P_WALL) {
+    mflags = get_map_flags(op->map,NULL, sx, sy, &sx, &sy);
+    if ( mflags &  P_WALL) {
 	new_draw_info(NDI_UNIQUE, 0,op,"Something is in the way.");
+	return 0;
+    }
+    if (mflags & P_OUT_OF_MAP) {
 	return 0;
     }
 
