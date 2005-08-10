@@ -308,5 +308,6 @@ extern int nroffreeobjects;
 #define ARCH_SINGULARITY        "singularity"
 #define ARCH_SINGULARITY_LEN    11
 #define ARCH_DETECT_MAGIC       "detect_magic"
+#define ARCH_DEPLETION          "depletion"
 
 #endif

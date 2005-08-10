@@ -650,7 +650,7 @@ void drain_specific_stat(object *op, int deplete_stats) {
   object *tmp;
   archetype *at;
 
-  at = find_archetype("depletion");
+  at = find_archetype(ARCH_DEPLETION);
   if (!at) {
     LOG(llevError, "Couldn't find archetype depletion.\n");
     return;

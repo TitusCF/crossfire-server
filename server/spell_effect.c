@@ -799,7 +799,7 @@ int cast_wonder(object *op, object *caster, int dir, object *spell_ob) {
 
 int perceive_self(object *op) {
     char *cp=describe_item(op, op), buf[MAX_BUF];
-    archetype *at=find_archetype("depletion");
+    archetype *at=find_archetype(ARCH_DEPLETION);
     object *tmp;
     int i;
 

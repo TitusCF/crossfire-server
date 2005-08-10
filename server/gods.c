@@ -890,7 +890,7 @@ void god_intervention (object *op, object *god, object *skill)
             archetype *at;
             int i;
 
-            if ((at = find_archetype("depletion")) == NULL) {
+            if ((at = find_archetype(ARCH_DEPLETION)) == NULL) {
                 LOG (llevError, "Could not find archetype depletion.\n");
                 continue;
             }

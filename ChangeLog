@@ -17,6 +17,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Replaced "depletion" by ARCH_DEPLETION (defined in object.h). Affected files:
+ common/living.c
+ include/object.h
+ server/apply.c gods.c spell_effect.c
+Ryo 2005-08-10
+
 server/player.c: Set map for arrow as returned by get_map_flags -
    otherwise when firing at edge of tiled maps, arrows could end up
    in wrong place.
