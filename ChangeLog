@@ -17,6 +17,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/player.c: Set map for arrow as returned by get_map_flags -
+   otherwise when firing at edge of tiled maps, arrows could end up
+   in wrong place.
+MSW 2005-08-09
+
 include/config.h: Make DEBUG default - appears last commit changed this
    as unrelated to actual changes in place.
 include/sproto.h: Rebuild

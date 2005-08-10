@@ -1563,6 +1563,7 @@ int fire_bow(object *op, object *part, object *arrow, int dir, int wc_mod,
     object *left, *bow;
     tag_t left_tag, tag;
     int bowspeed, mflags;
+    mapstruct	*m;
 
     if (!dir) {
 	new_draw_info(NDI_UNIQUE, 0, op, "You can't shoot yourself!");
@@ -1607,7 +1608,7 @@ int fire_bow(object *op, object *part, object *arrow, int dir, int wc_mod,
 	    return 0;
 	}
     }
-    mflags = get_map_flags(op->map,NULL, sx, sy, &sx, &sy);
+    mflags = get_map_flags(op->map,&m, sx, sy, &sx, &sy);
     if ( mflags &  P_WALL) {
 	new_draw_info(NDI_UNIQUE, 0,op,"Something is in the way.");
 	return 0;
@@ -1689,13 +1690,13 @@ int fire_bow(object *op, object *part, object *arrow, int dir, int wc_mod,
     if (bow->slaying != NULL)
 	arrow->slaying = add_string(bow->slaying);
 
-    arrow->map = op->map;
+    arrow->map = m;
     SET_FLAG(arrow, FLAG_FLYING);
     SET_FLAG(arrow, FLAG_FLY_ON);
     SET_FLAG(arrow, FLAG_WALK_ON);
     play_sound_map(op->map, op->x, op->y, SOUND_FIRE_ARROW);
     tag = arrow->count;
-    insert_ob_in_map(arrow, op->map, op, 0);
+    insert_ob_in_map(arrow, m, op, 0);
 
     if (!was_destroyed(arrow, tag))
 	move_arrow(arrow);
