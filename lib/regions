@@ -204,5 +204,12 @@ msg
 A hidden civilization, at the far east of the world.
 endmsg
 end
+region dream
+parent world
+longname City de Clouds
+msg
+Describe City de Clouds
+endmsg
+end
 nomore
 
