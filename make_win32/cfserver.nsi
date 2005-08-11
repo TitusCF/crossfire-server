@@ -129,7 +129,7 @@ Section "un.Crossfire Server" un_cf
   SectionIn RO
   ;Unregister service if it was installed
   ReadRegStr $0 HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Crossfire Server" "ServiceInstalled"
-  StrCmp $0 "" 0 +2
+  StrCmp $0 "1" 0 +2
         ExecWait '"$INSTDIR\Crossfire32.exe" -unregsrv'
 
   ;Delete Files
