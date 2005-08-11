@@ -1,12 +1,12 @@
-Release notes for Crossfire Server (Windows), January, 27th, 2005
+Release notes for Crossfire Server (Windows), August, 11th, 2005
 ----------------------------------------------------------------
 
-This is snapshot version 1.7.0 May, 21st, 2005 of the server.
+This is version 1.8.0 of the Crossfire server.
 
 --------------------------------------------------------------
 For complete changes, see the Changelog file included with the software. Major
 changes since last release: Numerous bug fixes, regions system, new archetypes,
-new sign/messages interface.
+new sign/messages interface, server can be run as a regular Windows service.
 --------------------------------------------------------------
 
 Once you have installed the server, you MUST download a map set.
@@ -51,9 +51,9 @@ Move'em to share/maps of where you installed Crossfire Server.
 WARNING: server has only been tested with 'bigworld' maps. Small world
 maps are not supported anymore.
 
-Known issues
-------------
-* Python plugin support seems weird. Casino (Goth's tavern) work, but not mail.
+Fixed issues since previous release
+-----------------------------------
+* Python plugin should work again.
 
 Troubleshooting
 ---------------

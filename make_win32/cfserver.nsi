@@ -1,7 +1,14 @@
 !include "MUI.nsh"
 
 ;Title Of Your Application
-Name "Crossfire Server 1.7.0"
+Name "Crossfire Server 1.8.0"
+
+VIAddVersionKey "ProductName" "Crossfire server installer"
+VIAddVersionKey "Comments" "Website: http://crossfire.real-time.com"
+VIAddVersionKey "FileDescription" "Crossfire server installer"
+VIAddVersionKey "FileVersion" "1.8.0"
+VIAddVersionKey "LegalCopyright" "Crossfire is released under the GPL."
+VIProductVersion "1.8.0.0"
 
 ;Do A CRC Check
 CRCCheck On
@@ -100,8 +107,6 @@ Section "Crossfire Server (required)" cf
 SectionEnd
 
 Section "Python plugin" py
-  SetOutPath $INSTDIR
-  File "c:\winnt\system32\python24.dll"
   SetOutPath $INSTDIR\share\plugins
   File "plugin_python\ReleaseLog\plugin_python.dll"
 SectionEnd
@@ -111,6 +116,8 @@ Section "Menu Shortcuts" menus
   SetOutPath $INSTDIR
   CreateDirectory "$SMPROGRAMS\Crossfire Server"
   CreateShortCut "$SMPROGRAMS\Crossfire Server\Crossfire Server.lnk" "$INSTDIR\crossfire32.exe" "" "$INSTDIR\crossfire32.exe" 0
+  CreateShortCut "$SMPROGRAMS\Crossfire Server\Install as Windows service.lnk" "$INSTDIR\crossfire32.exe" "-regsrv" "$INSTDIR\crossfire32.exe" 0
+  CreateShortCut "$SMPROGRAMS\Crossfire Server\Uninstall Windows service.lnk" "$INSTDIR\crossfire32.exe" "-unregsrv" "$INSTDIR\crossfire32.exe" 0
   CreateShortCut "$SMPROGRAMS\Crossfire Server\Release notes.lnk" "$INSTDIR\Release_notes.txt"
   CreateShortCut "$SMPROGRAMS\Crossfire Server\Changelog.lnk" "$INSTDIR\Changelog.rtf"
   CreateShortCut "$SMPROGRAMS\Crossfire Server\Uninstall.lnk" "$INSTDIR\uninst.exe" "" "$INSTDIR\uninst.exe" 0
@@ -127,7 +134,6 @@ Section "un.Crossfire Server" un_cf
 
   ;Delete Files
   Delete "$INSTDIR\crossfire32.exe"
-  Delete "$INSTDIR\python24.dll"
   Delete "$INSTDIR\Changelog.rtf"
   Delete "$INSTDIR\Share\plugins\python21.dll"
   Delete "$INSTDIR\Release_notes.txt"

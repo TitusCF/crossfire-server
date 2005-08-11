@@ -2793,6 +2793,18 @@ SOURCE=..\include\xdir.h
 
 # End Source File
 # End Group
+# Begin Group "resources"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\crossfire.rc
+# End Source File
+# Begin Source File
+
+SOURCE=.\resource.h
+# End Source File
+# End Group
 # Begin Source File
 
 SOURCE=..\ChangeLog
