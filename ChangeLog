@@ -17,6 +17,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Make random maps take the region of the map creates them. Affected files:
+ random_maps/{random_maps.h, random_maps.c}
+ server/main.c
+Brendan Lally 2005-08-11
+
 ------------------------------------------------------------------------------
 Changes for 1.8.0:
 

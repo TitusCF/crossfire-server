@@ -102,6 +102,9 @@ mapstruct *generate_random_map(char *OutFileName, RMParms *RP) {
     /* set the name of the map. */
     strcpy(theMap->path,OutFileName);
 
+    /* set region */
+    theMap->region=RP->region;
+    
     make_map_walls(theMap,layout,RP->wallstyle,RP);
 
     put_doors(theMap,layout,RP->doorstyle,RP);

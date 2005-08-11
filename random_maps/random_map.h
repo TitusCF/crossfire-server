@@ -65,6 +65,7 @@ typedef struct {
   int map_layout_style;
   int treasureoptions;
   int symmetry_used;
+  region *region;
 } RMParms;
 
 int load_parameters(FILE *fp, int bufstate,RMParms *RP);

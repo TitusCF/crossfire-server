@@ -495,6 +495,7 @@ static void enter_random_map(object *pl, object *exit_ob)
     memset(&rp, 0, sizeof(RMParms));
     rp.Xsize=-1;
     rp.Ysize=-1;
+    rp.region=get_region_by_map(exit_ob->map);
     if (exit_ob->msg) set_random_map_variable(&rp,exit_ob->msg);
     rp.origin_x = exit_ob->x;
     rp.origin_y = exit_ob->y;
