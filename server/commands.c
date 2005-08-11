@@ -103,6 +103,7 @@ CommArray_s Commands[] = {
   {"ready_skill", command_rskill, 1.0},
   {"search",command_search,	1.0},
   {"search-items", command_search_items,	0.0},
+  {"showpets", command_showpets,	1.0},
   {"statistics", command_statistics,	0.0},
   {"strings", command_strings,	0.0},
   {"take", command_take,	1.0},

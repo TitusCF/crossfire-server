@@ -17,6 +17,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Add a new command 'showpets' to give a numbered list of the pets that a player
+controls. These numbers can be passed to showpets to give more detail about one
+pet, or they can be passed to killpets to control which pets are killed.
+Also allow killpets to take a name as an argument. Affected files:
+ include/sproto.h
+ server/{c_misc.c, commands.c}
 Make random maps take the region of the map creates them. Affected files:
  random_maps/{random_maps.h, random_maps.c}
  server/main.c

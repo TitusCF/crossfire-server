@@ -1046,6 +1046,46 @@ int command_petmode(object *op, char *params)
     return 1;
 }
 
+int command_showpets(object *op, char *params)
+{
+    objectlink *obl, *next;
+    int counter=0, target=0;
+    int have_shown_pet=0;
+    if (params !=NULL) target= atoi(params);
+    for (obl = first_friendly_object; obl != NULL; obl = next) {
+    	object *ob = obl->ob;
+    	next = obl->next;
+    	if (get_owner(ob) == op) {
+	    if (target ==0) {
+	    	if (counter==0)
+		    new_draw_info(NDI_UNIQUE, 0, op, "Pets:");	
+		new_draw_info_format(NDI_UNIQUE, 0, op, "%d  %s - level %d", ++counter, ob->name, ob->level );
+	    }	
+	    else if (!have_shown_pet && ++counter==target) {
+	    	new_draw_info_format(NDI_UNIQUE, 0, op, "level %d %s", ob->level, ob->name);
+		new_draw_info_format(NDI_UNIQUE, 0, op, "%d/%d HP, %d/%d SP",
+		    ob->stats.hp, ob->stats.maxhp, ob->stats.sp, ob->stats.maxsp);
+		/* this is not a nice way to do this, it should be made to be more like the statistics command */
+		new_draw_info_format(NDI_UNIQUE, 0, op, "Str %d", ob->stats.Str);
+		new_draw_info_format(NDI_UNIQUE, 0, op, "Dex %d", ob->stats.Dex);
+		new_draw_info_format(NDI_UNIQUE, 0, op, "Con %d", ob->stats.Con);
+		new_draw_info_format(NDI_UNIQUE, 0, op, "Int %d", ob->stats.Int);
+		new_draw_info_format(NDI_UNIQUE, 0, op, "Wis %d", ob->stats.Wis);
+		new_draw_info_format(NDI_UNIQUE, 0, op, "Cha %d", ob->stats.Cha);
+		new_draw_info_format(NDI_UNIQUE, 0, op, "Pow %d", ob->stats.Pow);
+		new_draw_info_format(NDI_UNIQUE, 0, op, "wc %d  damage %d ac %d ", 
+		    ob->stats.wc, ob->stats.dam, ob->stats.ac);
+		have_shown_pet=1;
+	    }
+	}
+    }
+    if (counter == 0) 
+    	new_draw_info(NDI_UNIQUE, 0, op, "you have no pets.");
+    else if (target !=0 && have_shown_pet==0)
+    	new_draw_info(NDI_UNIQUE, 0, op, "no such pet.");
+    return 0;
+}
+
 int command_usekeys(object *op, char *params)
 {
     usekeytype oldtype=op->contr->usekeys;
@@ -1545,8 +1585,31 @@ int command_style_map_info(object *op, char *params)
 
 int command_kill_pets(object *op, char *params)
 {
-    terminate_all_pets(op);
-    new_draw_info(NDI_UNIQUE, 0, op, "Your pets have been killed.");
+    objectlink *obl, *next;
+    int target, counter=0, removecount=0;
+    if (params == NULL) { 
+    	terminate_all_pets(op);
+	new_draw_info(NDI_UNIQUE, 0, op, "Your pets have been killed.");
+    }
+    else {
+	int target = atoi(params);
+	for(obl = first_friendly_object; obl != NULL; obl = next) {
+	    object *ob = obl->ob;
+	    next = obl->next;
+	    if (get_owner(ob) == op)
+	    	if (++counter==target || (target==0 && !strcasecmp(ob->name, params)))  {
+		if (!QUERY_FLAG(ob, FLAG_REMOVED))
+		    remove_ob(ob);
+		remove_friendly_object(ob);
+		free_object(ob);
+		removecount++;
+            }
+	}
+	if (removecount!=0) 
+	    new_draw_info_format(NDI_UNIQUE, 0, op, "killed %d pets.\n", removecount);
+	else
+	    new_draw_info(NDI_UNIQUE, 0, op, "Couldn't find any suitable pets to kill.\n");
+    }
     return 0;
 }
 
