@@ -17,6 +17,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+NPCs instead of being given a random god are for preference given the god that 
+likes their race. If one can't be found, then we fall back to a random god.
+Affected files:
+server/gods.c include/sproto.h
+Brendan Lally 2005-08-12
+
 String fields in structures using add_string are now const char*. Functions in
  shstr (add_refcount, add_string, free_string, ...) now take/return const char*.
 More argument replacing from char* to const char*.

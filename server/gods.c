@@ -77,11 +77,14 @@ object *find_god(const char *name) {
 /**
  * Determines if op worships a god.
  * Returns the godname if they do or "none" if they have no god.
- * In the case of an NPC, if they have no god, we give them a random one. -b.t.
+ * In the case of an NPC, if they have no god, we try and guess 
+ * who they should worship based on their race. If that fails we 
+ * give them a random one.
  */
 
 const char *determine_god(object *op) {
     int godnr = -1;
+    const char *godname;
 
     /* spells */
     if ((op->type == SPELL || op->type == SPELL_EFFECT) &&
@@ -91,15 +94,23 @@ const char *determine_god(object *op) {
     }
 
     if(op->type!= PLAYER && QUERY_FLAG(op,FLAG_ALIVE)) {
+	
 	if(!op->title) {
-	    godlink *gl=first_god;
+	    if (op->race !=NULL) 
+		godname=get_god_for_race(op->race);
+		if (godname!=NULL) {
+		    op->title = add_string(godname);
+		}
+	    else {
+	        godlink *gl=first_god;
 
-	    godnr = rndm(1, gl->id);
-	    while(gl) {
-		if(gl->id==godnr) break;
-		gl=gl->next;
+		godnr = rndm(1, gl->id);
+		while(gl) {
+		    if(gl->id==godnr) break;
+		    gl=gl->next;
+		}
+		op->title = add_string(gl->name);
 	    }
-	    op->title = add_string(gl->name);
 	}
 	return op->title;
     }
@@ -1045,7 +1056,25 @@ int get_god(object *priest) {
   return godnr;
 }
 
+/**
+ * Returns a string that is the name of the god that should be natively worshipped by a 
+ * creature of who has race *race
+ * if we can't find a god that is appropriate, we return NULL
+ */
+const char *get_god_for_race(const char *race) {
+    godlink *gl=first_god;
+    const char *godname=NULL;
 
+    if (race == NULL) return NULL;
+    while(gl) {
+	if (!strcasecmp(gl->arch->clone.race, race)) {
+	    godname=gl->name;
+	    break;
+	}
+	gl=gl->next;
+    }
+    return godname;
+}
 /**
  * Changes the attributes of cone, smite, and ball spells as needed by the code.
  * Returns false if there was no race to assign to the slaying field of the spell, but

@@ -361,6 +361,7 @@ void god_intervention(object *op, object *god, object *skill);
 int god_examines_priest(object *op, object *god);
 int god_examines_item(object *god, object *item);
 int get_god(object *priest);
+const char *get_god_for_race(const char *race);
 int tailor_god_spell(object *spellop, object *caster);
 /* init.c */
 void set_logfile(char *val);
