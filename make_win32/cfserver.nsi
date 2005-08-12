@@ -75,6 +75,7 @@ Section "Crossfire Server (required)" cf
   File "..\lib\regions"
   File "..\lib\rules"
   File "..\lib\settings"
+  File "..\lib\showpets"
   File "..\lib\smooth"
   File "..\lib\animations"
   File /oname=treasures "..\lib\treasures.bld"
@@ -162,6 +163,7 @@ Section "un.Crossfire Server" un_cf
   Delete "$INSTDIR\Share\rules"
   Delete "$INSTDIR\Share\settings"
   Delete "$INSTDIR\Share\smooth"
+  Delete "$INSTDIR\Share\showpets"
   Delete "$INSTDIR\Share\animations"
   
   ;Delete help files
