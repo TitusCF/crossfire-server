@@ -412,7 +412,7 @@ int cast_polymorph(object *op, object *caster, object *spell_ob, int dir) {
  * create nonnmagic arrows, or even -1, etc...
  */
 
-int cast_create_missile(object *op, object *caster,object *spell, int dir, char *stringarg)
+int cast_create_missile(object *op, object *caster,object *spell, int dir, const char *stringarg)
 {
     int missile_plus=0, bonus_plus=0;
     char *missile_name;
@@ -494,7 +494,7 @@ int cast_create_missile(object *op, object *caster,object *spell, int dir, char 
 
 /*  allows the choice of what sort of food object to make.
  *  If stringarg is NULL, it will create food dependent on level  --PeterM*/
-int cast_create_food(object *op,object *caster, object *spell_ob, int dir, char *stringarg)
+int cast_create_food(object *op,object *caster, object *spell_ob, int dir, const char *stringarg)
 {
     int food_value;
     archetype *at=NULL;
@@ -2641,7 +2641,7 @@ void move_peacemaker(object *op) {
  * There really isn't any adjustments we make.
  */
 
-int write_mark(object *op, object *spell, char *msg) {
+int write_mark(object *op, object *spell, const char *msg) {
     char rune[HUGE_BUF];
     object *tmp;
 

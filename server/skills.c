@@ -1076,7 +1076,7 @@ void meditate (object *pl, object *skill) {
  * ordinary 'books' (anything that is type BOOK). b.t.
  */
 
-static int write_note(object *pl, object *item, char *msg, object *skill) {
+static int write_note(object *pl, object *item, const char *msg, object *skill) {
     char buf[BOOK_BUF]; 
     object *newBook = NULL;
     event *evt;
@@ -1107,7 +1107,7 @@ static int write_note(object *pl, object *item, char *msg, object *skill) {
 	CFP.Value[1] = pl;
 	CFP.Value[2] = item;
 	CFP.Value[3] = NULL;
-	CFP.Value[4] = msg;
+	CFP.Value[4] = ( void* )msg;
 	CFP.Value[5] = &n;
 	CFP.Value[6] = &m;
 	CFP.Value[7] = &m;
@@ -1278,9 +1278,9 @@ static int write_scroll (object *pl, object *scroll, object *skill) {
 }
 
 /* write_on_item() - wrapper for write_note and write_scroll */
-int write_on_item (object *pl,char *params, object *skill) {
+int write_on_item (object *pl,const char *params, object *skill) {
     object *item;
-    char *string=params;
+    const char *string=params;
     int msgtype;
     archetype *skat;
 
@@ -1340,7 +1340,7 @@ int write_on_item (object *pl,char *params, object *skill) {
  * 'throwable' (ie not applied cursed obj, worn, etc).
  */
 
-static object *find_throw_ob( object *op, char *request ) {
+static object *find_throw_ob( object *op, const char *request ) {
     object *tmp;
    
     if(!op) { /* safety */
@@ -1682,7 +1682,7 @@ static int do_throw(object *op, object *part, object *toss_item, int dir, object
     return 1;
 }
 
-int skill_throw (object *op, object *part, int dir, char *params, object *skill) {
+int skill_throw (object *op, object *part, int dir, const char *params, object *skill) {
     object *throw_ob;
 
     if(op->type==PLAYER) 

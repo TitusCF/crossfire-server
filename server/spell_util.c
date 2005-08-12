@@ -43,7 +43,7 @@ extern char *spell_mapping[];
  * the spell must be of this skill, it can be NULL in which case all
  * matching spells are used.
  */
-object *find_random_spell_in_ob(object *ob, char *skill)
+object *find_random_spell_in_ob(object *ob, const char *skill)
 {
     int k=0,s;
     object *tmp;
@@ -677,7 +677,7 @@ int spell_find_dir(mapstruct *m, int x, int y, object *exclude) {
  * also deals with multipart monsters properly.
  */
 
-void put_a_monster(object *op,char *monstername) {
+void put_a_monster(object *op,const char *monstername) {
     object *tmp,*head=NULL,*prev=NULL;
     archetype *at;
     int dir;
@@ -737,7 +737,7 @@ void put_a_monster(object *op,char *monstername) {
  * players part (alchemy, reincarnation, etc)
  */
 
-int summon_hostile_monsters(object *op,int n,char *monstername){
+int summon_hostile_monsters(object *op,int n,const char *monstername){
     int i;
     for(i=0;i<n;i++)
 	put_a_monster(op,monstername);
@@ -814,7 +814,7 @@ void shuffle_attack(object *op,int change_face)
 
 void prayer_failure(object *op, int failure,int power)
 {  
-    char *godname;
+    const char *godname;
     object *tmp;
 
     if(!strcmp((godname=determine_god(op)),"none")) godname="Your spirit";
@@ -967,7 +967,7 @@ int cast_party_spell(object *op, object *caster,int dir,object *spell_ob, char *
 
 int cast_spell(object *op, object *caster,int dir,object *spell_ob, char *stringarg) {
 
-    char *godname;
+    const char *godname;
     int success=0,mflags, cast_level=0, old_shoottype;
     object *skill=NULL;
 

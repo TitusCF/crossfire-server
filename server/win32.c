@@ -187,6 +187,7 @@ void service_register( )
     char* strDescription = SERVICE_DESCRIPTION;
 
 	GetModuleFileName( NULL, strDir, 1024 );
+    strcat( strDir, " -srv" );
 
 	schSCManager = OpenSCManager( NULL,NULL,SC_MANAGER_ALL_ACCESS );
  

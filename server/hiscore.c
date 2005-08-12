@@ -323,7 +323,7 @@ void check_score(object *op) {
  * to match to.
  */
 
-void display_high_score(object *op,int max, char *match) {
+void display_high_score(object *op,int max, const char *match) {
     FILE *fp;
     char buf[MAX_BUF],*scorebuf, *bp, *cp;
     int i=0,j=0,maxchar=80,comp;

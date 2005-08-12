@@ -443,7 +443,7 @@ void set_map_timeout(mapstruct *oldmap)
 /* clean_path takes a path and replaces all / with _
  * We do a strcpy so that we do not change the original string.
  */
-char *clean_path(char *file)
+char *clean_path(const char *file)
 {
     static char newpath[MAX_BUF],*cp;
 

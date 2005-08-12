@@ -1055,7 +1055,7 @@ void dump_races()
     fprintf(stderr,"\n");
 }
 
-void add_to_racelist (char *race_name, object *op) {
+void add_to_racelist (const char *race_name, object *op) {
   racelink *race;
  
   if(!op||!race_name) return;
@@ -1089,7 +1089,7 @@ racelink * get_racelist ( ) {
   return list;
 }
  
-racelink * find_racelink( char *name ) {
+racelink * find_racelink( const char *name ) {
   racelink *test=NULL;
  
   if(name&&first_race)

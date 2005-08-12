@@ -245,7 +245,7 @@ static archetype *find_next_coin(uint64 c, int *cointype) {
  * time is to add a higher denomination (mithril piece with
  * 10,000 silver or something)
  */
-char *cost_string_from_value(uint64 cost)
+const char *cost_string_from_value(uint64 cost)
 {
     static char buf[MAX_BUF];
     archetype *coin, *next_coin;
@@ -305,7 +305,7 @@ char *cost_string_from_value(uint64 cost)
     return buf;
 }
 
-char *query_cost_string(object *tmp,object *who,int flag) {
+const char *query_cost_string(object *tmp,object *who,int flag) {
     return cost_string_from_value(query_cost(tmp,who,flag));
 }
 

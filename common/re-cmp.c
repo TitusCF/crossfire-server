@@ -36,11 +36,11 @@
 
 /*   P r o t o t y p e s
  */
-char *re_cmp(char *, char *);
-static Boolean re_cmp_step(char *, char *, int, int);
+const char *re_cmp(const char *, const char *);
+static Boolean re_cmp_step(const char *, const char *, int, int);
 static void re_init(void);
 static Boolean re_match_token(uchar, selection *);
-static char *re_get_token(selection *, char *);
+static const char *re_get_token(selection *, const char *);
 #ifdef DEBUG2
 static void re_dump_sel(selection *);
 #endif
@@ -49,7 +49,7 @@ static void re_dump_sel(selection *);
  */
 static Boolean		re_init_done = False;
 static selection	*re_token[RE_TOKEN_MAX];
-static char		*re_substr[RE_TOKEN_MAX];
+static const char	*re_substr[RE_TOKEN_MAX];
 static unsigned int	re_token_depth;
 
 /*   E x t e r n a l   f u n c t i o n
@@ -59,9 +59,9 @@ static unsigned int	re_token_depth;
  * Return values: NULL - no match or error in regexp.
  *                pointer to beginning of matching string
  */
-char *
-re_cmp(char *str, char *regexp) {
-    char *next_regexp;
+const char *
+re_cmp(const char *str, const char *regexp) {
+    const char *next_regexp;
     Boolean once = False;
     Boolean matched;
 
@@ -161,13 +161,13 @@ re_cmp(char *str, char *regexp) {
  */
 
 static Boolean
-re_cmp_step(char *str, char *regexp, int slot, int matches) {
+re_cmp_step(const char *str, const char *regexp, int slot, int matches) {
     /* str	- string to match
      * regexp	- pattern
      * slot	- number of the token which under consideration
      * matches	- how many times the token has matched
      */
-    char *next_regexp;
+    const char *next_regexp;
     Boolean matched;
 
 #ifdef DEBUG
@@ -275,8 +275,8 @@ re_match_token(uchar c, selection *sel) {
  * Return values: NULL	syntax error
  *                pointer to first character past token.
  */
-static char *
-re_get_token(selection *sel, char *regexp) {
+static const char *
+re_get_token(selection *sel, const char *regexp) {
 
 #ifdef SAFE_CHECKS
 #   define exit_if_null	if (*regexp == 0) return NULL

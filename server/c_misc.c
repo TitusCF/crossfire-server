@@ -372,7 +372,7 @@ int command_who (object *op, char *params) {
 }
 
 /* Display a line of 'who' to op, about pl, using the formatting specified by format */
-void display_who_entry(object *op, player *pl, char *format) {
+void display_who_entry(object *op, player *pl, const char *format) {
     char tmpbuf[MAX_BUF];
     char outbuf[MAX_BUF];
     sint16 i;
@@ -743,7 +743,7 @@ int command_version (object *op, char *params)
 #ifndef BUG_LOG
 #define BUG_LOG "bug_log"
 #endif
-void bug_report(char * reportstring){
+void bug_report(const char * reportstring){
   FILE * fp;
   if((fp = fopen( BUG_LOG , "a")) != NULL){
       fprintf(fp,"%s\n", reportstring);
@@ -1329,7 +1329,7 @@ int command_help (object *op, char *params)
 }
 
 
-int onoff_value(char *line)
+int onoff_value(const char *line)
 {
   int i;
 
@@ -1586,7 +1586,7 @@ int command_style_map_info(object *op, char *params)
 int command_kill_pets(object *op, char *params)
 {
     objectlink *obl, *next;
-    int target, counter=0, removecount=0;
+    int counter=0, removecount=0;
     if (params == NULL) { 
     	terminate_all_pets(op);
 	new_draw_info(NDI_UNIQUE, 0, op, "Your pets have been killed.");

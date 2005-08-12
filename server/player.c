@@ -40,7 +40,7 @@
 #include <skills.h>
 #include <newclient.h>
 
-player *find_player(char *plname)
+player *find_player(const char *plname)
 {
   player *pl;
   for(pl=first_player;pl!=NULL;pl=pl->next)
@@ -51,7 +51,7 @@ player *find_player(char *plname)
   return NULL;
 }
 
-player* find_player_partial_name( char* plname )
+player* find_player_partial_name( const char* plname )
     {
     player* pl;
     player* found = NULL;
@@ -174,7 +174,7 @@ void send_news(object *op) {
     close_and_delete(fp, comp);
 }
 
-int playername_ok(char *cp) {
+int playername_ok(const char *cp) {
     /* Don't allow - or _ as first character in the name */
     if (*cp == '-' || *cp == '_') return 0;
 
@@ -1417,7 +1417,7 @@ int check_pick(object *op) {
  *  in the right type container (quiver). Pointer to the 
  *  found object is returned.
  */
-object *find_arrow(object *op, char *type)
+object *find_arrow(object *op, const char *type)
 {
     object *tmp = NULL;
 
@@ -1437,7 +1437,7 @@ object *find_arrow(object *op, char *type)
  * the hall.  Failing that it does it's best to pick the highest plus arrow.
  */
 
-object *find_better_arrow(object *op, object *target, char *type, int *better)
+object *find_better_arrow(object *op, object *target, const char *type, int *better)
 {
     object *tmp = NULL, *arrow, *ntmp;
     int attacknum, attacktype, betterby=0, i;
@@ -1499,7 +1499,7 @@ object *find_better_arrow(object *op, object *target, char *type, int *better)
  * dir = fire direction
  */
 
-object *pick_arrow_target(object *op, char *type, int dir)
+object *pick_arrow_target(object *op, const char *type, int dir)
 {
     object *tmp = NULL;
     mapstruct *m;
@@ -2737,7 +2737,7 @@ void kill_player(object *op)
 	    {
 		/* determine_god() seems to not work sometimes... why is this?
 		   Should I be using something else? GD */
-		char *god = determine_god(op);
+		const char *god = determine_god(op);
 		if (god && (strcmp(god, "none")))
 		    new_draw_info_format(NDI_UNIQUE, 0, op, "For a brief "
 			"moment you feel the holy presence of %s protecting"

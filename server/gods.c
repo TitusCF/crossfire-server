@@ -45,7 +45,7 @@
 /**
  * Returns the id of specified god.
  */
-int lookup_god_by_name(char *name) {
+int lookup_god_by_name(const char *name) {
     int godnr=-1,nmlen = strlen(name);
  
     if(name && strcmp(name,"none")) { 
@@ -61,7 +61,7 @@ int lookup_god_by_name(char *name) {
 /**
  * Returns pointer to specified god's object through pntr_to_god_obj..
  */
-object *find_god(char *name) {
+object *find_god(const char *name) {
     object *god=NULL;
 
     if(name) { 
@@ -80,7 +80,7 @@ object *find_god(char *name) {
  * In the case of an NPC, if they have no god, we give them a random one. -b.t.
  */
 
-char *determine_god(object *op) {
+const char *determine_god(object *op) {
     int godnr = -1;
 
     /* spells */
@@ -555,7 +555,7 @@ void become_follower (object *op, object *new_god) {
  * string is the string to print out.
  */
 
-int worship_forbids_use (object *op, object *exp_obj, uint32 flag, char *string) {
+int worship_forbids_use (object *op, object *exp_obj, uint32 flag, const char *string) {
 
   if(QUERY_FLAG(&op->arch->clone,flag))
     if(QUERY_FLAG(op,flag)!=QUERY_FLAG(exp_obj,flag)) {

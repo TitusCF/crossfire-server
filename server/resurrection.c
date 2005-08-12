@@ -159,7 +159,7 @@ static int resurrect_player(object *op,char *playername,object *spell)
  * dir  --  direction the spell is cast
  * corpseobj - corpse to raise - can be null, in which case this function will find it
  */
-int cast_raise_dead_spell(object *op, object *caster, object *spell, int dir, char *arg)
+int cast_raise_dead_spell(object *op, object *caster, object *spell, int dir, const char *arg)
 {
     object *temp, *newob;
     char name_to_resurrect[MAX_BUF];
@@ -268,7 +268,7 @@ void dead_player(object *op)
 
 
 
-void dead_character(char *name) {
+void dead_character(const char *name) {
     char buf[MAX_BUF];
     char buf2[MAX_BUF];
 
@@ -283,7 +283,7 @@ void dead_character(char *name) {
 }
 
 
-int dead_player_exists(char *name) {
+int dead_player_exists(const char *name) {
     char buf[MAX_BUF];
 
     sprintf(buf,"%s/%s/%s/%s",settings.localdir,settings.playerdir,name, name);

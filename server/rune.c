@@ -51,7 +51,7 @@
  *		a rune of marking 
  */
 
-int write_rune(object *op,object *caster, object *spell, int dir,char *runename) { 
+int write_rune(object *op,object *caster, object *spell, int dir, const char *runename) { 
     object *tmp, *rune_spell, *rune;
     char buf[MAX_BUF];
     mapstruct *m;

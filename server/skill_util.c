@@ -121,7 +121,7 @@ void link_player_skills(object *op)
  * use the skill, so thus if use of the skill requires a skill
  * tool, this code will equip it.
  */
-object *find_skill_by_name(object *who, char *name)
+object *find_skill_by_name(object *who, const char *name)
 {
     object *skill=NULL, *skill_tool=NULL, *tmp;
 
@@ -284,7 +284,7 @@ void clear_skill(object *who)
  * It returns 0 if no skill was used.
  */
 
-int do_skill (object *op, object *part, object *skill, int dir, char *string) {
+int do_skill (object *op, object *part, object *skill, int dir, const char *string) {
     int success=0, exp=0;
     int did_alc = 0;
     object *tmp, *next;
@@ -639,7 +639,8 @@ static int clipped_percent(sint64 a, sint64 b)
  
 void show_skills(object *op) {
     object *tmp=NULL;
-    char buf[MAX_BUF], *cp;
+    char buf[MAX_BUF];
+    const char *cp;
     int i,num_skills_found=0;
     static char *periods="........................................";
     /* Need to have a pointer and use strdup for qsort to work properly */
@@ -819,7 +820,7 @@ static object *find_best_player_hth_skill(object *op)
  * the damage.
  */
  
-static int do_skill_attack(object *tmp, object *op, char *string, object *skill) {
+static int do_skill_attack(object *tmp, object *op, const char *string, object *skill) {
     int success; 
 
    /* For Players only: if there is no ready weapon, and no "attack" skill
@@ -930,7 +931,7 @@ static int do_skill_attack(object *tmp, object *op, char *string, object *skill)
  * Initial implementation by -bt thomas@astro.psu.edu
  */
  
-int skill_attack (object *tmp, object *pl, int dir, char *string, object *skill) {
+int skill_attack (object *tmp, object *pl, int dir, const char *string, object *skill) {
     sint16 tx,ty;
     mapstruct *m;
     int mflags;
@@ -980,7 +981,7 @@ int skill_attack (object *tmp, object *pl, int dir, char *string, object *skill)
  * function skill_attack() we actually attack.
  */
 
-int attack_hth(object *pl, int dir, char *string, object *skill) {
+int attack_hth(object *pl, int dir, const char *string, object *skill) {
     object *enemy=NULL,*weapon;
 
     if(QUERY_FLAG(pl, FLAG_READY_WEAPON))
@@ -1010,7 +1011,7 @@ int attack_hth(object *pl, int dir, char *string, object *skill) {
  * weapon type.
  */
 
-int attack_melee_weapon(object *op, int dir, char *string, object *skill) {
+int attack_melee_weapon(object *op, int dir, const char *string, object *skill) {
 
     if(!QUERY_FLAG(op, FLAG_READY_WEAPON)) {
 	if(op->type==PLAYER)

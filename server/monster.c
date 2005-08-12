@@ -1505,9 +1505,10 @@ void check_doors(object *op, mapstruct *m, int x, int y) {
  * Returns NULL if no match is found.
  * The player is passed too, so that quest-related messages can be checked too.
  */
-static char *find_matching_message(object* pl, char *msg, char *match)
+static char *find_matching_message(object* pl, const char *msg, const char *match)
 {
-    char *cp=msg, *cp1, *cp2, regex[MAX_BUF], *cp3, gotmatch=0;
+    const char *cp=msg, *cp1, *cp2;
+    char *cp3, regex[MAX_BUF], gotmatch=0;
 
     while (1) {
 	if (strncmp(cp, "@match ", 7)) {
@@ -1621,7 +1622,7 @@ void communicate(object *op, char *txt) {
     }
 }
 
-int talk_to_npc(object *op, object *npc, char *txt) {
+int talk_to_npc(object *op, object *npc, const char *txt) {
     object *cobj;
     CFParm CFP;
     int k, l, m;
@@ -1637,7 +1638,7 @@ int talk_to_npc(object *op, object *npc, char *txt) {
     n = 0;
     CFP.Value[0] = &k;
     CFP.Value[1] = op;
-    CFP.Value[4] = txt;
+    CFP.Value[4] = (void*)txt;
     CFP.Value[5] = &n;
     CFP.Value[6] = &m;
     CFP.Value[7] = &m;
@@ -1687,7 +1688,7 @@ int talk_to_npc(object *op, object *npc, char *txt) {
     return 0;
 }
 
-int talk_to_wall(object* pl, object *npc, char *txt) {
+int talk_to_wall(object* pl, object *npc, const char *txt) {
     char *cp;
 
     if(npc->msg == NULL || *npc->msg != '@')

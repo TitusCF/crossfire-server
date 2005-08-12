@@ -402,7 +402,7 @@ ss_dump_table(int what) {
  */
 
 int 
-buf_overflow (char *buf1, char *buf2, int bufsize)
+buf_overflow (const char *buf1, const char *buf2, int bufsize)
 {
     int     len1 = 0, len2 = 0;
 

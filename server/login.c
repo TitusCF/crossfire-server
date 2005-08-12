@@ -90,7 +90,7 @@ void emergency_save(int flag) {
  * style directory, otherwise, just delete the old style playfile
  * (needed for transition)
  */
-void delete_character(char *name, int new) {
+void delete_character(const char *name, int new) {
     char buf[MAX_BUF];
 
     sprintf(buf,"%s/%s/%s.pl",settings.localdir,settings.playerdir,name);
@@ -108,7 +108,7 @@ void delete_character(char *name, int new) {
  * 2 if incorrect password.
  */
 
-int verify_player(char *name, char *password)
+int verify_player(const char *name, char *password)
 {
     char buf[MAX_BUF];
     int comp;
@@ -150,7 +150,7 @@ int verify_player(char *name, char *password)
  * We return 0 if the name is in use/bad, 1 if it is OK to use this name.
  */
 
-int check_name(player *me,char *name) {
+int check_name(player *me,const char *name) {
     player *pl;
 
     for(pl=first_player;pl!=NULL;pl=pl->next)
@@ -394,7 +394,7 @@ int save_player(object *op, int flag) {
   return 1;
 }
 
-void copy_file(char *filename, FILE *fpout) {
+void copy_file(const char *filename, FILE *fpout) {
   FILE *fp;
   char buf[MAX_BUF];
   if((fp = fopen(filename,"r")) == NULL)

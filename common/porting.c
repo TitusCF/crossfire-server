@@ -73,9 +73,9 @@ static unsigned int curtmp = 0;
  * at some unix variants.
  */
 
-char *tempnam_local(char *dir, char *pfx)
+char *tempnam_local(const char *dir, const char *pfx)
 {
-    char *f, *name;
+    char *name;
     pid_t pid=getpid();
 
 /* HURD does not have a hard limit, but we do */
@@ -94,12 +94,12 @@ char *tempnam_local(char *dir, char *pfx)
      * already exists - if so, we'll just keep looking - eventually we should
      * find one that is free.
      */
-    if ((f = (char *)dir)!=NULL) {
+    if (dir!=NULL) {
 	do {
 #ifdef HAVE_SNPRINTF
-	    (void)snprintf(name, MAXPATHLEN, "%s/%s%hx.%d", f, pfx, pid, curtmp);
+	    (void)snprintf(name, MAXPATHLEN, "%s/%s%hx.%d", dir, pfx, pid, curtmp);
 #else
-	    (void)sprintf(name,"%s/%s%hx%d", f, pfx, pid, curtmp);
+	    (void)sprintf(name,"%s/%s%hx%d", dir, pfx, pid, curtmp);
 #endif
 	    curtmp++;
 	} while (access(name, F_OK)!=-1);
@@ -221,7 +221,7 @@ FILE *popen_local(const char *command, const char *type)
  * A replacement of strdup(), since it's not defined at some
  * unix variants.
  */
-char *strdup_local(char *str) {
+char *strdup_local(const char *str) {
   char *c=(char *)malloc(sizeof(char)*(strlen(str)+1));
   strcpy(c,str);
   return c;

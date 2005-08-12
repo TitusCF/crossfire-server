@@ -1365,7 +1365,7 @@ int command_invisible (object *op, char *params)
  * Returns NULL if 0 or more than one spell matches.
  * Used for wizard's learn spell/prayer.
  */
-object* get_spell_by_name( char* spell_name )
+object* get_spell_by_name( const char* spell_name )
     {
     archetype* ar;
     archetype* found;

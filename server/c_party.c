@@ -35,7 +35,7 @@
 static partylist * firstparty=NULL; /* Keeps track of first party in list */
 static partylist * lastparty=NULL; /*Keeps track of last party in list */
 
-partylist * form_party(object *op, char *params, partylist * firstparty, partylist * lastparty) {
+partylist * form_party(object *op, const char *params, partylist * firstparty, partylist * lastparty) {
 
     partylist * newparty;
     int nextpartyid;

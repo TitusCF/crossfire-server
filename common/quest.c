@@ -99,8 +99,8 @@ int quest_is_end( const char* slaying )
 
 static int quest_has_start( object* marker, object* pl )
     {
-    char* start;
-    char* end;
+    const char* start;
+    const char* end;
     object* item;
     start = marker->slaying + strlen( QUEST_START );
     end = strrchr( start, ' ' );
@@ -209,9 +209,9 @@ void quest_clear_markers( object* marker, object* pl )
  *  * NULL if message linked to quest and player isn't at right step.
  *  * first char of real message, line after the 'quest xxx xxx' line.
  **/
-char* quest_message_check( char* message, object* pl )
+const char* quest_message_check( const char* message, object* pl )
     {
-    char *end1, *end2, *nl;
+    const char *end1, *end2, *nl;
     char buf[ MAX_BUF ];
     object *item;
     if ( !message || strncmp( message, QUEST_MARKER, strlen( QUEST_MARKER ) ) )

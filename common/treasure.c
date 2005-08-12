@@ -1108,7 +1108,7 @@ void dump_artifacts() {
 /*
  * For debugging purposes.  Dumps all treasures recursively (see below).
  */
-void dump_monster_treasure_rec (char *name, treasure *t, int depth)
+void dump_monster_treasure_rec (const char *name, treasure *t, int depth)
 {
   treasurelist *tl;
   int           i;
@@ -1160,7 +1160,7 @@ void dump_monster_treasure_rec (char *name, treasure *t, int depth)
  * Created originally by Raphael Quinet for debugging the alchemy code.
  */
 
-void dump_monster_treasure (char *name)
+void dump_monster_treasure (const char *name)
 {
   archetype *at;
   int        found;

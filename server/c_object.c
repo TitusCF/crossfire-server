@@ -58,7 +58,7 @@
  * we use item_matched_string above - this gives us consistent behaviour
  * between many commands.  Return the best match, or NULL if no match.
  */
-object *find_best_object_match(object *pl, char *params)
+object *find_best_object_match(object *pl, const char *params)
 {
     object *tmp, *best=NULL;
     int match_val=0,tmpmatch;

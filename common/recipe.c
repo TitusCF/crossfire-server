@@ -324,7 +324,7 @@ archetype *find_treasure_by_name (treasure *t, const char *name, int depth)
  * (e.g. sage & c_sage) or if only one of the monsters generates the
  * body parts that we are looking for (e.g. big_dragon and
  * big_dragon_worthless). */
-long find_ingred_cost (char *name)
+long find_ingred_cost (const char *name)
 {
   archetype    *at;
   archetype    *at2;
@@ -496,8 +496,8 @@ void dump_alchemy_costs (void)
 	     num_errors);
 }
 
-char * ingred_name (char *name) {
-  char *cp=name;
+const char * ingred_name (const char *name) {
+  const char *cp=name;
  
   if(atoi(cp)) cp = strchr(cp,' ') + 1;
   return cp;
@@ -508,8 +508,8 @@ char * ingred_name (char *name) {
  * ASCII values in buf (times prepended integers).
  */
 
-int strtoint (char *buf) {
-  char *cp = ingred_name(buf);
+int strtoint (const char *buf) {
+  const char *cp = ingred_name(buf);
   int val=0, len=strlen(cp), mult=numb_ingred(buf);
 
   while (len) { 
@@ -535,7 +535,7 @@ artifact * locate_recipe_artifact(recipe *rp) {
    return art;
 }
 
-int numb_ingred (char *buf) {
+int numb_ingred (const char *buf) {
   int numb;
 
   if((numb=atoi(buf))) return numb;

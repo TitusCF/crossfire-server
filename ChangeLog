@@ -17,6 +17,16 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Arguments are now const char* instead of char* when available. This ensures
+the variable is not changed in random places.
+Affected files:
+ common/porting.c quest.c readable.c recipe.c re-cmp.c shstr.c treasure.c
+ include/libproto.h sproto.h win32.h
+ server/c_misc.c c_object.c c_party.c c_wiz.c egoitem.c gods.c hiscore.c init.c login.c
+  main.c monster.c player.c resurrection.c rune.c shop.c skill_util.c skills.c
+  spell_effect.c spell_util.c win32.c
+Ryo 2005-08-12
+
 Add help for showpets, and update help for killpets
  lib/help/{showpets, killpets}
 Add a new command 'showpets' to give a numbered list of the pets that a player

@@ -648,7 +648,7 @@ strtoktolin (char *buf1, char *buf2)
 }
 
 int 
-book_overflow (char *buf1, char *buf2, int booksize)
+book_overflow (const char *buf1, const char *buf2, int booksize)
 {
 
     if (buf_overflow (buf1, buf2, BOOK_BUF - 2)		/* 2 less so always room for trailing \n */
