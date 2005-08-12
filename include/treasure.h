@@ -71,9 +71,9 @@ enum {
  */
 
 typedef struct _change_arch {
-    char *name;              /* is != NULL, copy this over the original arch name */
-    char *title;             /* is != NULL, copy this over the original arch name */
-    char *slaying;           /* is != NULL, copy this over the original arch name */
+    const char *name;              /* is != NULL, copy this over the original arch name */
+    const char *title;             /* is != NULL, copy this over the original arch name */
+    const char *slaying;           /* is != NULL, copy this over the original arch name */
 } _change_arch;
 
 
@@ -86,7 +86,7 @@ typedef struct _change_arch {
 
 typedef struct treasurestruct {
   struct archt *item;		    /* Which item this link can be */
-  char *name;			    /* If non null, name of list to use
+  const char *name;			    /* If non null, name of list to use
 				       instead */
   struct treasurestruct *next;	    /* Next treasure-item in a linked list */
   struct treasurestruct *next_yes;  /* If this item was generated, use */
@@ -105,7 +105,7 @@ typedef struct treasurestruct {
 
 
 typedef struct treasureliststruct {
-  char *name;				/* Usually monster-name/combination */
+  const char *name;				/* Usually monster-name/combination */
   sint16 total_chance;			/* If non-zero, only 1 item on this
 					 * list should be generated.  The
 					 * total_chance contains the sum of

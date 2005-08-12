@@ -137,7 +137,7 @@ error correct and send mail to crossfire-devel on how to do this
  * (now used by alchemy and other code too. Nov 95 b.t).
  */
 typedef struct linked_char {
-  char *name;
+  const char *name;
   struct linked_char *next;
 } linked_char;
 
@@ -222,7 +222,7 @@ EXTERN long ob_count;
  * Used in treasure.c
  */
 EXTERN archetype *ring_arch,*amulet_arch,*staff_arch,*crown_arch;
-EXTERN char *undead_name;	/* Used in hit_player() in main.c */
+EXTERN const char *undead_name;	/* Used in hit_player() in main.c */
 
 EXTERN Animations *animations;
 EXTERN int num_animations,animations_allocated, bmaps_checksum;

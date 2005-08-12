@@ -34,7 +34,7 @@
 typedef struct new_face_struct {
     uint16	number;		/* This is the image id.  It should be the */
 				/* same value as its position in the array */
-    char	*name;
+    const char	*name;
     uint8	visibility;
     uint8	magicmap;	/* Color to show this in magic map */
 } New_Face;
@@ -46,7 +46,7 @@ typedef struct map_look_struct {
 
 
 typedef struct {
-    char *name;             /* Name of the animation sequence */
+    const char *name;             /* Name of the animation sequence */
     uint8 num_animations;   /* How many different faces to animate */
     uint8 facings;          /* How many facings (1,2,4,8) */
     Fontindex *faces;       /* The different animations */

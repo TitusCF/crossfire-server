@@ -114,7 +114,7 @@
 
 
 
-extern char *skill_names[NUM_SKILLS];
+extern const char *skill_names[NUM_SKILLS];
 
 #ifdef WANT_UNARMED_SKILLS
 /* Table of unarmed attack skills.  Terminated by -1.  This

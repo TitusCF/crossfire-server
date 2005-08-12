@@ -1,7 +1,7 @@
 /* 'recipe' and 'recipelist' are used by the alchemy code */
 typedef struct recipestruct {
-    char *title;       /* distinguishing name of product */
-    char *arch_name;   /* the archetype of the final product made */
+    const char *title;       /* distinguishing name of product */
+    const char *arch_name;   /* the archetype of the final product made */
     int chance;        /* chance that recipe for this item will appear
 		        * in an alchemical grimore */
     int diff;	       /* alchemical dfficulty level */
@@ -12,9 +12,9 @@ typedef struct recipestruct {
     int yield;         /* The maximum number of items produced by the recipe */
     linked_char *ingred; /* comma delimited list of ingredients */
     struct recipestruct *next;
-    char *keycode;     /* keycode needed to use the recipe */
-    char *skill;       /* skill name used to make this recipe */
-    char *cauldron;    /* the arch of the cauldron/workbench used to house the
+    const char *keycode;     /* keycode needed to use the recipe */
+    const char *skill;       /* skill name used to make this recipe */
+    const char *cauldron;    /* the arch of the cauldron/workbench used to house the
 			* formulae. */
 } recipe;
 

@@ -144,7 +144,8 @@ void esrv_draw_look(object *pl)
     object *tmp, *last;
     int flags, got_one=0,anim_speed, start_look=0, end_look=0, len;
     SockList sl;
-    char buf[MAX_BUF], *item_p,item_n[MAX_BUF];
+    char buf[MAX_BUF], item_n[MAX_BUF];
+    const char *item_p;
 
     if (!pl->contr->socket.update_look) {
 	LOG(llevDebug,"esrv_draw_look called when update_look was not set\n");
@@ -289,7 +290,8 @@ void esrv_send_inventory(object *pl, object *op)
     object *tmp;
     int flags, got_one=0, anim_speed, len;
     SockList sl;
-    char item_n[MAX_BUF], *item_p;
+    char item_n[MAX_BUF];
+    const char *item_p;
     
     sl.buf=malloc(MAXSOCKBUF);
 
@@ -429,7 +431,8 @@ void esrv_update_item(int flags, object *pl, object *op)
     }
     if (flags & UPD_NAME) {
 	int len;
-	char *item_p, item_n[MAX_BUF];
+	const char *item_p;
+    char item_n[MAX_BUF];
 
   if (!op->custom_name) {
 	  strncpy(item_n,query_base_name(op, 0),127);
@@ -481,7 +484,8 @@ void esrv_send_item(object *pl, object*op)
 {
     int anim_speed, len;
     SockList sl;
-    char item_n[MAX_BUF], *item_p;
+    char item_n[MAX_BUF];
+    const char *item_p;
     
     /* If this is not the player object, do some more checks */
     if (op!=pl) {

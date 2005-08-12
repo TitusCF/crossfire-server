@@ -132,7 +132,7 @@ int find_animation(char *name)
     search.name = name;
 
     match = (Animations*)bsearch(&search, animations, (num_animations+1), 
-		sizeof(Animations), (int (*)())anim_compare);
+		sizeof(Animations), (int (*)(const void*, const void*))anim_compare);
 
 
     if (match) return match->num;

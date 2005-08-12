@@ -743,7 +743,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 /* Simple function we use below to keep adding to the same string
  * but also make sure we don't overwrite that string.
  */
-static inline void safe_strcat(char *dest, char *orig, int *curlen, int maxlen)
+static inline void safe_strcat(char *dest, const char *orig, int *curlen, int maxlen)
 {
     if (*curlen == (maxlen-1)) return;
     strncpy(dest+*curlen, orig, maxlen-*curlen-1);

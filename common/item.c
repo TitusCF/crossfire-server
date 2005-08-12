@@ -371,7 +371,7 @@ char *ring_desc (object *op)
  * query_short_name(object) is similar to query_name, but doesn't 
  * contain any information about object status (worn/cursed/etc.)
  */
-char *query_short_name(object *op) 
+const char *query_short_name(object *op) 
 {
     static char buf[HUGE_BUF];
     char buf2[HUGE_BUF];
@@ -548,7 +548,7 @@ char *query_name(object *op) {
  * and sending to client.
  * If plural is set, we generate the plural name of this.
  */
-char *query_base_name(object *op, int plural) {
+const char *query_base_name(object *op, int plural) {
     static char buf[MAX_BUF], buf2[MAX_BUF];
     int len;
     materialtype_t *mt;

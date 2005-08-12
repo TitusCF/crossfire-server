@@ -707,7 +707,8 @@ int summon_golem(object *op,object *caster,int dir,object *spob) {
  */
 
 object *choose_cult_monster(object *pl, object *god, int summon_level) {
-    char buf[MAX_BUF],*race;
+    char buf[MAX_BUF];
+    const char *race;
     int racenr, mon_nr,i;
     racelink *list;
     objectlink *tobl;

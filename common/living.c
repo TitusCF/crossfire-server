@@ -181,7 +181,7 @@ static int savethrow[MAX_SAVE_LEVEL+1]={
    1, 1, 1, 1, 1, 1, 1, 1, 1, 1
 };
 
-char *attacks[NROFATTACKS] = {
+const char *attacks[NROFATTACKS] = {
   "physical", "magical", "fire", "electricity", "cold", "confusion",
   "acid", "drain", "weaponmagic", "ghosthit", "poison", "slow",
   "paralyze", "turn undead", "fear", "cancellation", "depletion", "death",
@@ -189,7 +189,7 @@ char *attacks[NROFATTACKS] = {
   "life stealing"
 };
 
-static char *drain_msg[NUM_STATS] = {
+static const char *drain_msg[NUM_STATS] = {
   "Oh no! You are weakened!",
   "You're feeling clumsy!",
   "You feel less healthy",
@@ -198,7 +198,7 @@ static char *drain_msg[NUM_STATS] = {
   "Watch out, your mind is going!", 
   "Your spirit feels drained!"
 };
-char *restore_msg[NUM_STATS] = {
+const char *restore_msg[NUM_STATS] = {
   "You feel your strength return.",
   "You feel your agility return.",
   "You feel your health return.",
@@ -207,7 +207,7 @@ char *restore_msg[NUM_STATS] = {
   "You feel your memory return.", 
   "You feel your spirits return."
 };
-char *gain_msg[NUM_STATS] = {
+const char *gain_msg[NUM_STATS] = {
 	"You feel stronger.",
 	"You feel more agile.",
 	"You feel healthy.",
@@ -216,7 +216,7 @@ char *gain_msg[NUM_STATS] = {
 	"You feel smarter.", 
 	"You feel more potent."
 };
-char *lose_msg[NUM_STATS] = {
+const char *lose_msg[NUM_STATS] = {
 	"You feel weaker!",
 	"You feel clumsy!",
 	"You feel less healthy!",
@@ -226,11 +226,11 @@ char *lose_msg[NUM_STATS] = {
 	"You feel less potent!"
 };
 
-char *statname[NUM_STATS] = {
+const char *statname[NUM_STATS] = {
   "strength", "dexterity", "constitution", "wisdom", "charisma", "intelligence","power" 
 };
 
-char *short_stat_name[NUM_STATS] = {
+const char *short_stat_name[NUM_STATS] = {
   "Str", "Dex", "Con", "Wis", "Cha", "Int","Pow" 
 };
 

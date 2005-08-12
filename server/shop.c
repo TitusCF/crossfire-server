@@ -769,7 +769,7 @@ void shop_listing(object *op)
 	free(items);
 	return;
     }
-    qsort(items, numitems, sizeof(shopinv), (int (*)())shop_sort);
+    qsort(items, numitems, sizeof(shopinv), (int (*)(const void*, const void*))shop_sort);
 
     for (i=0; i<numitems; i++) {
 	/* Collapse items of the same name together */

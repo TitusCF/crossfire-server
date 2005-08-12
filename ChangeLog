@@ -17,6 +17,28 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+String fields in structures using add_string are now const char*. Functions in
+ shstr (add_refcount, add_string, free_string, ...) now take/return const char*.
+More argument replacing from char* to const char*.
+Fixed a potential string corruption in recipe.c (when dumping) and readable.c (was
+ using strtok on a add_string-ed string, when strtok changes argument).
+Fixed a few type mismatch on qsort calls.
+Global char arrays (messages and such) are const char* too.
+Removed unused typedefs / structures.
+
+Affected files:
+ common/anim.c image.c info.c item.c living.c object.c quest.c readable.c recipe.c
+  shstr.c treasure.c
+ include/arch.h commands.h define.h face.h funcpoint.h global.h god.h libproto.h
+  living.h map.h material.h object.h player.h race.h recipe.h skills.h sproto.h treasure.h
+ random_maps/random_map.h reader.[cl] style.c
+ server/apply.c attack.c c_object.c c_range.c c_wiz.c gods.c
+  main.c monster.c pets.c player.c plugins.c resurrection.c shop.c skill_util.c skills.c
+  spell_attack.c spell_effect.c time.c timers.c
+ socket/item.c
+
+Ryo 2005-08-12
+
 Arguments are now const char* instead of char* when available. This ensures
 the variable is not changed in random places.
 Affected files:

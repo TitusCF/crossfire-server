@@ -49,7 +49,7 @@
 typedef int (*CommFunc)(object *op, char *params);
 
 typedef struct {		/* global list's structure */
-  char *name;
+  const char *name;
   CommFunc func;
   float	time;			/* How long it takes to execute this command */
 } CommArray_s;

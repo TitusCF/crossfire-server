@@ -284,7 +284,7 @@ int ReadBmapNames () {
 
     nrofpixmaps++;
 
-    qsort (xbm, nrofbmaps, sizeof(struct bmappair), (int (*)())compar);
+    qsort (xbm, nrofbmaps, sizeof(struct bmappair), (int (*)(const void*, const void*))compar);
 
     ReadFaceData();
 
@@ -351,7 +351,7 @@ int FindFace (char *name, int error) {
 
     tmp.name = name;
     bp = (struct bmappair *)bsearch 
-	(&tmp, xbm, nroffiles, sizeof(struct bmappair), (int (*)())compar);
+	(&tmp, xbm, nroffiles, sizeof(struct bmappair), (int (*)(const void*, const void*))compar);
 
     return bp ? bp->number : error;
 }
@@ -426,7 +426,7 @@ int ReadSmooth () {
     fclose(fp);
 
     LOG(llevDebug,"done (got %d smooth entries)\n",nrofsmooth);
-    qsort (smooth, nrofsmooth, sizeof(struct smoothing), (int (*)())compar_smooth);
+    qsort (smooth, nrofsmooth, sizeof(struct smoothing), (int (*)(const void*, const void*))compar_smooth);
     return nrofsmooth;
 }
 
@@ -435,7 +435,7 @@ int FindSmooth (uint16 face, uint16* smoothed) {
 
     tmp.id = face;
     bp = (struct smoothing *)bsearch 
-        (&tmp, smooth, nrofsmooth, sizeof(struct smoothing), (int (*)())compar_smooth);
+        (&tmp, smooth, nrofsmooth, sizeof(struct smoothing), (int (*)(const void*, const void*))compar_smooth);
     (*smoothed)=0;
     if (bp)
          (*smoothed)=bp->smooth;

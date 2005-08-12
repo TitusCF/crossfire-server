@@ -52,7 +52,7 @@
 #include <living.h>     /* for defs of STR,CON,DEX,etc. -b.t.*/
 #include <spells.h>
 
-char *skill_names[NUM_SKILLS];
+const char *skill_names[NUM_SKILLS];
 
 /* init_skills basically just sets up the skill_names table
  * above.  The index into the array is set up by the
@@ -696,7 +696,7 @@ void show_skills(object *op) {
 
     clear_win_info(op);
     new_draw_info(NDI_UNIQUE, 0,op,"Player skills:");
-    if (num_skills_found > 1) qsort(skills, num_skills_found, MAX_BUF, (int (*)())strcmp);
+    if (num_skills_found > 1) qsort(skills, num_skills_found, MAX_BUF, (int (*)(const void*, const void*))strcmp);
 
     for (i=0; i<num_skills_found; i++) {
 	new_draw_info(NDI_UNIQUE, 0, op, skills[i]);
@@ -720,7 +720,7 @@ void show_skills(object *op) {
  * our own find_skill_by_name so we can try to do better string matching.
  */
 
-int use_skill(object *op, char *string) {
+int use_skill(object *op, const char *string) {
     object *skop;
     int len;
 

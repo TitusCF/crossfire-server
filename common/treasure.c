@@ -243,7 +243,7 @@ void load_treasures() {
  */
 
 treasurelist *find_treasurelist(const char *name) {
-  char *tmp=find_string(name);
+  const char *tmp=find_string(name);
   treasurelist *tl;
 
   /* Special cases - randomitems of none is to override default.  If
@@ -1502,7 +1502,7 @@ void add_abilities(object *op, object *change) {
 static int legal_artifact_combination(object *op, artifact *art) {
   int neg, success = 0;
   linked_char *tmp;
-  char *name;
+  const char *name;
 
   if (art->allowed == (linked_char *) NULL)
     return 1; /* Ie, "all" */

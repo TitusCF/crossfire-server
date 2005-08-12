@@ -1202,7 +1202,7 @@ int cast_destruction(object *op, object *caster, object *spell_ob) {
     sint16 sx,sy;
     mapstruct *m;
     object *tmp;
-    char *skill;
+    const char *skill;
 
     range = spell_ob->range + SP_level_range_adjust(caster, spell_ob);
     dam = spell_ob->stats.dam + SP_level_dam_adjust(caster, spell_ob);
@@ -1365,7 +1365,7 @@ int mood_change(object *op, object *caster, object *spell) {
     int done_one, range, mflags, level, at, best_at;
     sint16 x, y, nx, ny;
     mapstruct	*m;
-    char *race;
+    const char *race;
 
     /* We precompute some values here so that we don't have to keep
      * doing it over and over again.

@@ -569,7 +569,7 @@ void dragon_ability_gain(object *who, int atnr, int level);
 /* plugins.c */
 CommArray_s *find_plugin_command(char *cmd, object *op);
 void displayPluginsList(object *op);
-int findPlugin(char *id);
+int findPlugin(const char *id);
 int initPlugins(void);
 int initOnePlugin(char *pluginfile);
 int removeOnePlugin(char *id);
@@ -703,7 +703,7 @@ int do_skill(object *op, object *part, object *skill, int dir, const char *strin
 int calc_skill_exp(object *who, object *op, object *skill);
 int learn_skill(object *pl, object *scroll);
 void show_skills(object *op);
-int use_skill(object *op, char *string);
+int use_skill(object *op, const char *string);
 int skill_attack(object *tmp, object *pl, int dir, const char *string, object *skill);
 int attack_hth(object *pl, int dir, const char *string, object *skill);
 int attack_melee_weapon(object *op, int dir, const char *string, object *skill);

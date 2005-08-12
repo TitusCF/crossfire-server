@@ -438,11 +438,11 @@ int command_rskill ( object *pl, char *params) {
  * and replaced with those.
  */
 int command_search (object *op, char *params) {
-    return command_uskill(op, skill_names[SK_FIND_TRAPS]);
+    return use_skill(op, skill_names[SK_FIND_TRAPS]);
 }
 
 int command_disarm (object *op, char *params) {
-    return command_uskill(op, skill_names[SK_DISARM_TRAPS]);
+    return use_skill(op, skill_names[SK_DISARM_TRAPS]);
 }
 
 
@@ -965,8 +965,8 @@ void drop_object (object *op, object *tmp, uint32 nrof)
         CFP.Value[6] = &m;
         CFP.Value[7] = &m;
         CFP.Value[8] = &l;
-        CFP.Value[9] = evt->hook;
-        CFP.Value[10]= evt->options;
+        CFP.Value[9] = (void*)evt->hook;
+        CFP.Value[10]= (void*)evt->options;
         if (findPlugin(evt->plugin)>=0)
         {
           CFR = ((PlugList[findPlugin(evt->plugin)].eventfunc) (&CFP));

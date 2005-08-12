@@ -45,7 +45,7 @@
  */
 #define NO_STAT_VAL 99    /* needed by skills code -b.t. */
 
-extern char *attacks[NROFATTACKS];
+extern const char *attacks[NROFATTACKS];
 
 extern float cha_bonus[MAX_STAT + 1];
 extern int dex_bonus[MAX_STAT + 1];
@@ -54,10 +54,10 @@ extern int turn_bonus[MAX_STAT + 1];
 extern int max_carry[MAX_STAT + 1];
 extern int dam_bonus[MAX_STAT + 1];
 extern int learn_spell[];
-extern char *restore_msg[NUM_STATS];
-extern char *statname[NUM_STATS];
-extern char *short_stat_name[NUM_STATS];
-extern char *lose_msg[NUM_STATS];
+extern const char *restore_msg[NUM_STATS];
+extern const char *statname[NUM_STATS];
+extern const char *short_stat_name[NUM_STATS];
+extern const char *lose_msg[NUM_STATS];
 extern float speed_bonus[MAX_STAT + 1];
 extern uint32 weight_limit[MAX_STAT + 1];
 extern int cleric_chance[MAX_STAT + 1];

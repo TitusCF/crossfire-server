@@ -125,8 +125,8 @@ static int quest_has_start( object* marker, object* pl )
 
 static int quest_has_end( object* marker, object* pl )
     {
-    char* start;
-    char* end;
+    const char* start;
+    const char* end;
     object* item;
     start = marker->slaying + strlen( QUEST_START );
     end = strrchr( start, ' ' );
@@ -248,7 +248,7 @@ const char* quest_get_name( object* marker )
     {
     static char buf[ 2 ][ MAX_BUF ];
     static int index_buf = 0;
-    char *start, *end;
+    const char *start, *end;
 
     start = strchr( marker->slaying, ' ' );
     end = strrchr( marker->slaying, ' ' );

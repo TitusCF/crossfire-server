@@ -120,6 +120,6 @@ the numerical values matter so don't change them. */
     from 0 to x, centered at x/2 */
 #define BC_RANDOM(x) ((int) ((RANDOM() % (x)+RANDOM()%(x)+RANDOM()%(x))/3.))
 
-int set_random_map_variable(RMParms *rp,char *buf);
+int set_random_map_variable(RMParms *rp,const char *buf);
 
 #endif

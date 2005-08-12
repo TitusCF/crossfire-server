@@ -1273,7 +1273,7 @@ int command_nowiz (object *op, char *params) /* 'noadm' is alias */
  * for socket users to become DM - in that case, it will check for the players
  * character name.
  */
-static int checkdm(object *op, char *pl_name, char *pl_passwd, char *pl_host)
+static int checkdm(object *op, const char *pl_name, const char *pl_passwd, const char *pl_host)
 {
   FILE  *dmfile;
   char  buf[MAX_BUF];

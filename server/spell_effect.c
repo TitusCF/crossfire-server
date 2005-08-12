@@ -415,7 +415,7 @@ int cast_polymorph(object *op, object *caster, object *spell_ob, int dir) {
 int cast_create_missile(object *op, object *caster,object *spell, int dir, const char *stringarg)
 {
     int missile_plus=0, bonus_plus=0;
-    char *missile_name;
+    const char *missile_name;
     object *tmp, *missile;
     tag_t tag;
 
@@ -1093,7 +1093,7 @@ int magic_wall(object *op,object *caster,int dir,object *spell_ob) {
     int i,posblocked,negblocked, maxrange;
     sint16 x, y;
     mapstruct *m;
-    char *name;
+    const char *name;
     archetype *at;
 
     if(!dir) {

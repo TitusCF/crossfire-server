@@ -228,9 +228,10 @@ void dump_alchemy( void ) {
 	num_ingred, num_ingred>1?"s.":".",fl->number,fl->total_chance);
     for (formula=fl->items; formula!=NULL; formula=formula->next) {
       artifact *art=NULL;
-      char buf[MAX_BUF], *string;
-      
-      string=strtok(formula->arch_name,",");
+      char buf[MAX_BUF], *string, *dup;
+
+      dup = strdup_local(formula->arch_name);
+      string=strtok(dup,",");
       while(string) { 
 	if(find_archetype(string)!=NULL) { 
           art = locate_recipe_artifact(formula);
@@ -268,6 +269,7 @@ void dump_alchemy( void ) {
 		formula->title); 
 	string = strtok(NULL,",");
       }
+      free(dup);
     }  
   fprintf(logfile,"\n");
   fl = fl->next;
@@ -424,9 +426,10 @@ void dump_alchemy_costs (void)
     for (formula = fl->items; formula != NULL; formula = formula->next) {
       artifact *art=NULL;
       archetype *at=NULL;
-      char buf[MAX_BUF], *string;
+      char buf[MAX_BUF], *string, *dup;
       
-      string = strtok (formula->arch_name, ",");
+      dup = strdup_local(formula->arch_name);
+      string = strtok (dup, ",");
       while (string) {
 	if ((at = find_archetype (string)) != NULL) {
           art = locate_recipe_artifact (formula);
@@ -486,6 +489,7 @@ void dump_alchemy_costs (void)
 	      formula->title); 
 	string = strtok (NULL, ",");
       }
+      free(dup);
     }
   fprintf (logfile,"\n");
   fl = fl->next;

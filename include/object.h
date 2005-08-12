@@ -46,9 +46,9 @@ extern Body_Locations body_locations[NUM_BODY_LOCATIONS];
 typedef struct _event
 {
     int type;
-    char *hook;
-    char *plugin;
-    char *options;
+    const char *hook;
+    const char *plugin;
+    const char *options;
     struct _event *next;
 } event;
 
@@ -108,15 +108,15 @@ typedef struct obj {
      * copy_object to do so.  Everything below here also gets cleared
      * by clear_object()
      */
-    char	*name;		/* The name of the object, obviously... */
-    char	*name_pl;	/* The plural name of the object */
-    char	*title;		/* Of foo, etc */
-    char	*race;		/* human, goblin, dragon, etc */
-    char	*slaying;	/* Which race to do double damage to */
+    const char	*name;		/* The name of the object, obviously... */
+    const char	*name_pl;	/* The plural name of the object */
+    const char	*title;		/* Of foo, etc */
+    const char	*race;		/* human, goblin, dragon, etc */
+    const char	*slaying;	/* Which race to do double damage to */
 				/* If this is an exit, this is the filename */
-    char	*skill;		/* Name of the skill this object uses/grants */
-    char	*msg;		/* If this is a book/sign/magic mouth/etc */
-    char	*lore;		/* Obscure information about this object, */
+    const char	*skill;		/* Name of the skill this object uses/grants */
+    const char	*msg;		/* If this is a book/sign/magic mouth/etc */
+    const char	*lore;		/* Obscure information about this object, */
 				/* To get put into books and the like. */
 
     sint16	x,y;		/* Position in the map for this object */
@@ -138,7 +138,7 @@ typedef struct obj {
     uint32	path_repelled;	/* Paths the object is repelled from */
     uint32	path_denied; 	/* Paths the object is denied access to */
     uint16	material;      	/* What materials this object consist of */
-    char 	*materialname;  /* specific material name */
+    const char 	*materialname;  /* specific material name */
     sint8	magic;		/* Any magical bonuses to this item */
     uint8	state;          /* How the object was last drawn (animation) */
     sint32	value;		/* How much money it is worth (or contains) */
@@ -160,7 +160,7 @@ typedef struct obj {
     sint8	glow_radius;	/* indicates the glow radius of the object */
     living	stats;		/* Str, Con, Dex, etc */
     sint64	perm_exp;	/* Permanent exp */
-    char	*current_weapon_script;  /* The script of the currently used weapon. Executed */
+    const char	*current_weapon_script;  /* The script of the currently used weapon. Executed */
 				/* each time the object attacks something */
     struct obj	*current_weapon;   /* Pointer to the weapon currently used */
     uint32	weapontype;	/* type of weapon */
@@ -217,7 +217,7 @@ typedef struct obj {
     uint8	smoothlevel;    /* how to smooth this square around*/
     event   *events;
 
-    char  *custom_name; /* Custom name assigned by player */
+    const char  *custom_name; /* Custom name assigned by player */
 
 } object;
 
@@ -243,7 +243,7 @@ typedef struct oblinkpt { /* Used to link together several object links */
  */
 
 typedef struct archt {
-    char *name;		    /* More definite name, like "generate_kobold" */
+    const char *name;		    /* More definite name, like "generate_kobold" */
     struct archt *next;	    /* Next archetype in a linked list */
     struct archt *head;	    /* The main part of a linked object */
     struct archt *more;	    /* Next part of a linked object */

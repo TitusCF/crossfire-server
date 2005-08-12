@@ -217,7 +217,7 @@ void enter_player_savebed(object *op)
 }
 
 
-static char *normalize_path (char *src, char *dst) {
+static const char *normalize_path (const char *src, const char *dst) {
     char *p, *q;
     char buf[HUGE_BUF];
     static char path[HUGE_BUF];

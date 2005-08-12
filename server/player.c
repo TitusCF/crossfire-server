@@ -694,7 +694,7 @@ int receive_play_again(object *op, char key)
     }
     else if(key=='a'||key=='A') {
 	player *pl = op->contr;
-	char *name = op->name;
+	const char *name = op->name;
 
 	add_refcount(name);
 	remove_friendly_object(op);
@@ -1008,7 +1008,7 @@ int key_change_class(object *op, char key)
 
     tmp_loop = 0;
     while(!tmp_loop) {
-	char *name = add_string (op->name);
+	const char *name = add_string (op->name);
 	int x = op->x, y = op->y;
 	remove_statbonus(op);
 	remove_ob (op);
@@ -2592,8 +2592,8 @@ void kill_player(object *op)
     CFP.Value[6] = &m;
     CFP.Value[7] = &m;
     CFP.Value[8] = &l;
-    CFP.Value[9] = evt->hook;
-    CFP.Value[10]= evt->options;
+    CFP.Value[9] = (void*)evt->hook;
+    CFP.Value[10]= (void*)evt->options;
     if (findPlugin(evt->plugin)>=0)
     {
         CFR = (PlugList[findPlugin(evt->plugin)].eventfunc) (&CFP);

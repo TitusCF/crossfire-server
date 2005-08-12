@@ -165,7 +165,7 @@ int load_parameters(FILE *fp, int bufstate,RMParms *RP) {
  * This function appears to be used in only 2 places - in crossedit to
  * override values and in c_wiz to mutate values.
  */
-int set_random_map_variable(RMParms *rp,char *buf) {
+int set_random_map_variable(RMParms *rp,const char *buf) {
     YY_BUFFER_STATE  yybufstate;
     int retval;
 

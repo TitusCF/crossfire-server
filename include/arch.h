@@ -24,13 +24,3 @@
 
     The author can be reached via e-mail to mark@pyramid.com.
 */
-
-#define ARCH_CACHE_SIZE 20
-
-typedef struct arch_recent_struct {
-  char *name; /* Don't use add_ref or similar functions on this */
-  archetype *arch;
-} arch_recent;
-
-arch_recent arch_cache[ARCH_CACHE_SIZE];
-int last_arch_cache=0;

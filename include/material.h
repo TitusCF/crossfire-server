@@ -49,8 +49,8 @@
 								   materialname */
 
 typedef struct _materialtype {
-    char	*name;
-	char 	*description;
+    const char	*name;
+	const char 	*description;
     int		material;
     sint8	save[NROFATTACKS];
     sint8	mod[NROFATTACKS];

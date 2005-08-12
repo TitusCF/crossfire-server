@@ -31,31 +31,6 @@
 #define FUNCPOINT_H
 
 /*
- * Some function types
- */
-
-typedef void (*type_move_apply_func) (object *, object *, object *);
-typedef void (*type_func_int)(int);
-typedef void (*type_func_int_int)(int,int);
-typedef void (*type_func_void)(void);
-typedef void (*type_func_map)(mapstruct *);
-typedef void (*type_func_map_char)(mapstruct *, char *);
-typedef void (*type_func_int_map_char)(int, mapstruct *, char *);
-typedef void (*type_func_ob)(object *);
-typedef void (*type_func_ob_char)(object *, char *);
-typedef void (*type_func_ob_cchar)(object *, const char *);
-typedef void (*type_func_int_int_ob_cchar)(int, int, object *, const char *);
-typedef void (*type_func_ob_ob)(object *, object *);
-typedef void (*type_func_ob_int)(object *, int);
-typedef int (*type_int_func_ob_ob)(object *, object *);
-typedef void (*type_func_char_int)(char *, int);
-typedef void (*type_func_int_ob_ob)(int, object *, object *);
-typedef void (*type_func_player_int)(player *, int);
-typedef void (*type_func_dragon_gain)(object *who, int atnr, int level);
-typedef void (*type_func_char)(char *);
-typedef object* (*type_ob_func_ob_int)(object *, int);
-
-/*
  * These function-pointers are defined in common/glue.c
  * The functions used to set and initialise them are also there.
  *
@@ -74,7 +49,6 @@ extern void	monster_check_apply(object *, object *);
 extern void	process_active_maps();
 extern void	remove_friendly_object(object *);
 extern void	update_buttons(mapstruct *);
-extern void	info_map(int, mapstruct *, char *);
 extern void	move_teleporter(object *);
 extern void	move_firewall(object *);
 extern void	move_creator(object *);

@@ -466,8 +466,10 @@ int move_monster(object *op) {
      */
     if ( (op->race != NULL)&& strcmp(op->race,"doppleganger") == 0)
     {
-	op->face = enemy->face; 
-	strcpy(op->name,enemy->name);
+	op->face = enemy->face;
+    if (op->name)
+        free_string(op->name);
+	add_refcount(op->name = enemy->name);
     }
 
     /* Calculate range information for closest body part - this
@@ -1649,8 +1651,8 @@ int talk_to_npc(object *op, object *npc, const char *txt) {
     {
 	CFP.Value[2] = npc;
 	CFP.Value[3] = NULL;
-	CFP.Value[9] = evt->hook;
-	CFP.Value[10]= evt->options;
+	CFP.Value[9] = (void*)evt->hook;
+	CFP.Value[10]= (void*)evt->options;
 	if (findPlugin(evt->plugin)>=0)
 	{
 	    ((PlugList[findPlugin(evt->plugin)].eventfunc) (&CFP));
@@ -1665,8 +1667,8 @@ int talk_to_npc(object *op, object *npc, const char *txt) {
         {
             CFP.Value[2] = cobj;
             CFP.Value[3] = npc;
-            CFP.Value[9] = evt->hook;
-            CFP.Value[10]= evt->options;
+            CFP.Value[9] = (void*)evt->hook;
+            CFP.Value[10]= (void*)evt->options;
             if (findPlugin(evt->plugin)>=0)
             {
                 ((PlugList[findPlugin(evt->plugin)].eventfunc) (&CFP));

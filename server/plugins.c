@@ -105,7 +105,7 @@ void displayPluginsList(object *op)
 /* Returns the position of the plugin in the list if a matching one was found*/
 /* or -1 if no correct plugin was detected.                                  */
 /*****************************************************************************/
-int findPlugin(char* id)
+int findPlugin(const char* id)
 {
     int i;
     for(i=0; i<PlugNR; i++)
@@ -846,7 +846,7 @@ CFParm* CFWDetermineGod(CFParm* PParm)
     CFParm* CFP;
     char* val;
     CFP = (CFParm*)(malloc(sizeof(CFParm)));
-    val = determine_god(
+    val = (char*)determine_god(
         (object *)(PParm->Value[0])
     );
     CFP->Value[0] = (void *)(val);
@@ -1427,7 +1427,7 @@ CFParm* CFWQueryName(CFParm* PParm)
 CFParm* CFWQueryBaseName(CFParm* PParm)
 {
     CFParm* CFP = (CFParm*)malloc(sizeof (CFParm));
-    CFP->Value[ 0 ] = query_base_name( ( object* )PParm->Value[ 0 ], *( int* )PParm->Value[ 1 ] );
+    CFP->Value[ 0 ] = (char*)query_base_name( ( object* )PParm->Value[ 0 ], *( int* )PParm->Value[ 1 ] );
     return CFP;
 };
 

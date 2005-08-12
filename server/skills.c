@@ -1112,8 +1112,8 @@ static int write_note(object *pl, object *item, const char *msg, object *skill) 
 	CFP.Value[6] = &m;
 	CFP.Value[7] = &m;
 	CFP.Value[8] = &l;
-	CFP.Value[9] = evt->hook;
-	CFP.Value[10]= evt->options;
+	CFP.Value[9] = (void*)evt->hook;
+	CFP.Value[10]= (void*)evt->options;
 	if (findPlugin(evt->plugin)>=0) {
 	    ((PlugList[findPlugin(evt->plugin)].eventfunc) (&CFP));
 	    return strlen(msg);
@@ -1665,8 +1665,8 @@ static int do_throw(object *op, object *part, object *toss_item, int dir, object
         CFP.Value[6] = &m;
         CFP.Value[7] = &m;
         CFP.Value[8] = &l;
-        CFP.Value[9] = evt->hook;
-        CFP.Value[10]= evt->options;
+        CFP.Value[9] = (void*)evt->hook;
+        CFP.Value[10]= (void*)evt->options;
         if (findPlugin(evt->plugin)>=0)
             ((PlugList[findPlugin(evt->plugin)].eventfunc) (&CFP));
     }

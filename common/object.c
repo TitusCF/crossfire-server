@@ -345,7 +345,7 @@ object *find_object(int i) {
  */
 
 object *find_object_name(char *str) {
-  char *name=add_string(str);
+  const char *name=add_string(str);
   object *op;
   for(op=objects;op!=NULL;op=op->next)
     if(op->name==name)

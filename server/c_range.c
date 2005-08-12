@@ -104,7 +104,7 @@ static void show_matching_spells(object *op, char *params)
 	 * string.  given the code above, this is always
 	 * the case.
 	 */
-	qsort(spell_sort, num_found, MAX_BUF, (int (*)())strcmp);
+	qsort(spell_sort, num_found, MAX_BUF, (int (*)(const void*, const void*))strcmp);
 	strcpy(tmp,"asdfg");	/* Dummy string so initial compare fails */
 	for (i=0; i<num_found; i++) {
 	    /* Different skill name, so print banner */

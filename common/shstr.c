@@ -103,7 +103,7 @@ new_shared_string(const char *str) {
  *      - pointer to string identical to str
  */
 
-char *
+const char *
 add_string(const char *str) {
     shared_string *ss;
     int ind;
@@ -197,15 +197,18 @@ add_string(const char *str) {
  *      - str
  */
 
-char *
-add_refcount(char *str) {
+const char *
+add_refcount(const char *str) {
     GATHER(add_ref_stats.calls);
     ++(SS(str)->refcount);
     /* This function should be declared 
      *    const char *add_refcount(const char *)
      * Unfortunately, that would require changing a lot of structs
+     *
+     *   Yup, many changes, but may have make some bugs more visible :)
+     *   -- Ryo 2005-08-12
      */
-    return str;
+    return (char*)str;
 }
 
 /*
@@ -229,7 +232,7 @@ query_refcount(const char *str) {
  *      - pointer to identical string or NULL
  */
 
-char *
+const char *
 find_string(const char *str) {
     shared_string *ss;
     int ind;
@@ -276,7 +279,7 @@ find_string(const char *str) {
  */
 
 void
-free_string(char *str) {
+free_string(const char *str) {
     shared_string *ss;
 
     GATHER(free_stats.calls);
@@ -356,7 +359,7 @@ ss_dump_statistics() {
  *      - a string or NULL
  */
 
-char *
+const char *
 ss_dump_table(int what) {
     static char totals[80];
     int entries = 0, refs = 0, links = 0;

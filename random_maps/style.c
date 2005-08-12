@@ -82,7 +82,7 @@ int load_dir (const char *dir, char ***namelist, int skip_dirs)
     }
     (void) closedir (dp);
 
-    qsort(rn, entries, sizeof(char*), (int(*)())strcmp);
+    qsort(rn, entries, sizeof(char*), (int(*)(const void*, const void*))strcmp);
 
     *namelist = rn;
     return entries;

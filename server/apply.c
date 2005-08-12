@@ -319,7 +319,7 @@ int check_item(object *op,const char *item)
  * really used to determine what space to look at.
  * Modified to only eat 'nrof' of objects.
  */
-static void eat_item(object *op,char *item, int nrof)
+static void eat_item(object *op,const char *item, int nrof)
 {
     object *prev;
 
@@ -1015,8 +1015,8 @@ int esrv_apply_container (object *op, object *sack)
 		CFP.Value[6] = &m;
 		CFP.Value[7] = &m;
 		CFP.Value[8] = &l;
-		CFP.Value[9] = evt->hook;
-		CFP.Value[10]= evt->options;
+		CFP.Value[9] = (void*)evt->hook;
+		CFP.Value[10]= (void*)evt->options;
 		if (findPlugin(evt->plugin)>=0)
 		{
 			CFR = (PlugList[findPlugin(evt->plugin)].eventfunc) (&CFP);
@@ -1316,8 +1316,8 @@ void move_apply (object *trap, object *victim, object *originator)
     CFP.Value[6] = &m;
     CFP.Value[7] = &m;
     CFP.Value[8] = &l;
-    CFP.Value[9] = evt->hook;
-    CFP.Value[10]= evt->options;
+    CFP.Value[9] = (void*)evt->hook;
+    CFP.Value[10]= (void*)evt->options;
     if (findPlugin(evt->plugin)>=0)
     {
       CFR = (PlugList[findPlugin(evt->plugin)].eventfunc) (&CFP);
@@ -1578,8 +1578,8 @@ static void apply_book (object *op, object *tmp)
         CFP.Value[6] = &m;
         CFP.Value[7] = &m;
         CFP.Value[8] = &l;
-        CFP.Value[9] = evt->hook;
-        CFP.Value[10]= evt->options;
+        CFP.Value[9] = (void*)evt->hook;
+        CFP.Value[10]= (void*)evt->options;
         if (findPlugin(evt->plugin)>=0)
             ((PlugList[findPlugin(evt->plugin)].eventfunc) (&CFP));
     }
@@ -2331,8 +2331,8 @@ int manual_apply (object *op, object *tmp, int aflag)
     CFP.Value[6] = &m;
     CFP.Value[7] = &m;
     CFP.Value[8] = &l;
-    CFP.Value[9] = evt->hook;
-    CFP.Value[10]= evt->options;
+    CFP.Value[9] = (void*)evt->hook;
+    CFP.Value[10]= (void*)evt->options;
     if (findPlugin(evt->plugin)>=0)
     {
         CFR = (PlugList[findPlugin(evt->plugin)].eventfunc) (&CFP);

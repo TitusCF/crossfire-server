@@ -162,7 +162,7 @@ void save_throw_object (object *op, int type, object *originator)
 	 */ 
 	if(type&(AT_FIRE|AT_ELECTRICITY)
            &&op->other_arch&&op->glow_radius) { 
-		char *arch=op->other_arch->name;
+		const char *arch=op->other_arch->name;
 
 		op = decrease_ob_nr (op, 1);
                 if (op)
@@ -637,7 +637,7 @@ static int attack_ob_simple (object *op, object *hitter, int base_dam,
 {
     int simple_attack, roll, dam=0;
     uint32 type;
-    char *op_name = NULL;
+    const char *op_name = NULL;
     tag_t op_tag, hitter_tag;
     event *evt;
 
@@ -662,8 +662,8 @@ static int attack_ob_simple (object *op, object *hitter, int base_dam,
         CFP.Value[6] = &base_dam;
         CFP.Value[7] = &base_wc;
         CFP.Value[8] = &l;
-        CFP.Value[9] = evt->hook;
-        CFP.Value[10]= evt->options;
+        CFP.Value[9] = (void*)evt->hook;
+        CFP.Value[10]= (void*)evt->options;
         if (findPlugin(evt->plugin)>=0)
             ((PlugList[findPlugin(evt->plugin)].eventfunc) (&CFP));
     }
@@ -690,8 +690,8 @@ static int attack_ob_simple (object *op, object *hitter, int base_dam,
                 CFP.Value[6] = &base_dam;
                 CFP.Value[7] = &base_wc;
                 CFP.Value[8] = &l;
-                CFP.Value[9] = evt->hook;
-                CFP.Value[10]= evt->options;
+                CFP.Value[9] = (void*)evt->hook;
+                CFP.Value[10]= (void*)evt->options;
 		if (findPlugin(evt->plugin)>=0)
 		    (PlugList[findPlugin(evt->plugin)].eventfunc) (&CFP);
             }
@@ -915,8 +915,8 @@ object *hit_with_arrow (object *op, object *victim)
         CFP.Value[6] = &(op->stats.dam);
         CFP.Value[7] = &(op->stats.wc);
         CFP.Value[8] = &l;
-        CFP.Value[9] = evt->hook;
-        CFP.Value[10]= evt->options;
+        CFP.Value[9] = (void*)evt->hook;
+        CFP.Value[10]= (void*)evt->options;
         if (findPlugin(evt->plugin)>=0)
         {
             CFR = (PlugList[findPlugin(evt->plugin)].eventfunc) (&CFP);
@@ -1360,7 +1360,8 @@ int hit_player_attacktype(object *op, object *hitter, int dam,
  */
 int kill_object(object *op,int dam, object *hitter, int type)
 {
-    char buf[MAX_BUF], *skill;
+    char buf[MAX_BUF];
+    const char *skill;
     int maxdam=0;
     int battleg=0;    /* true if op standing on battleground */
     int pk=0;         /* true if op and what controls hitter are both players*/
@@ -1393,8 +1394,8 @@ int kill_object(object *op,int dam, object *hitter, int type)
         CFP.Value[6] = &m;
         CFP.Value[7] = &m;
         CFP.Value[8] = &l;
-        CFP.Value[9] = evt->hook;
-        CFP.Value[10]= evt->options;
+        CFP.Value[9] = (void*)evt->hook;
+        CFP.Value[10]= (void*)evt->options;
         if (findPlugin(evt->plugin)>=0)
         {
             CFR =(PlugList[findPlugin(evt->plugin)].eventfunc) (&CFP);

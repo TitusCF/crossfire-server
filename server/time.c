@@ -614,8 +614,8 @@ static void stop_arrow (object *op)
         CFP.Value[6] = &m;
         CFP.Value[7] = &m;
         CFP.Value[8] = &l;
-        CFP.Value[9] = evt->hook;
-        CFP.Value[10]= evt->options;
+        CFP.Value[9] = (void*)evt->hook;
+        CFP.Value[10]= (void*)evt->options;
         if (findPlugin(evt->plugin)>=0)
             ((PlugList[findPlugin(evt->plugin)].eventfunc) (&CFP));
     }
@@ -895,8 +895,8 @@ void move_teleporter(object *op) {
 		CFP.Value[6] = &m;
 		CFP.Value[7] = &m;
 		CFP.Value[8] = &l;
-		CFP.Value[9] = evt->hook;
-		CFP.Value[10]= evt->options;
+		CFP.Value[9] = (void*)evt->hook;
+		CFP.Value[10]= (void*)evt->options;
 		if (findPlugin(evt->plugin)>=0) {
 		    CFR = (PlugList[findPlugin(evt->plugin)].eventfunc) (&CFP);
 		    rtn_script = *(int *)(CFR->Value[0]);
@@ -937,8 +937,8 @@ void move_teleporter(object *op) {
 		CFP.Value[6] = &m;
 		CFP.Value[7] = &m;
 		CFP.Value[8] = &l;
-		CFP.Value[9] = evt->hook;
-		CFP.Value[10]= evt->options;
+		CFP.Value[9] = (void*)evt->hook;
+		CFP.Value[10]= (void*)evt->options;
 		if (findPlugin(evt->plugin)>=0)
 		{
 			CFR = (PlugList[findPlugin(evt->plugin)].eventfunc) (&CFP);
@@ -970,8 +970,8 @@ void move_teleporter(object *op) {
 	    CFP.Value[6] = &m;
 	    CFP.Value[7] = &m;
 	    CFP.Value[8] = &l;
-	    CFP.Value[9] = evt->hook;
-	    CFP.Value[10]= evt->options;
+	    CFP.Value[9] = (void*)evt->hook;
+	    CFP.Value[10]= (void*)evt->options;
 	    if (findPlugin(evt->plugin)>=0) {
 		CFR = (PlugList[findPlugin(evt->plugin)].eventfunc) (&CFP);
 		rtn_script = *(int *)(CFR->Value[0]);
@@ -1022,8 +1022,8 @@ void move_player_changer(object *op) {
 	    CFP.Value[6] = &m;
 	    CFP.Value[7] = &m;
 	    CFP.Value[8] = &l;
-	    CFP.Value[9] = evt->hook;
-	    CFP.Value[10]= evt->options;
+	    CFP.Value[9] = (void*)evt->hook;
+	    CFP.Value[10]= (void*)evt->options;
 	    if (findPlugin(evt->plugin)>=0) {
 		CFR = (PlugList[findPlugin(evt->plugin)].eventfunc) (&CFP);
 		rtn_script = *(int *)(CFR->Value[0]);
@@ -1362,8 +1362,8 @@ int process_object(object *op) {
 	CFP.Value[6] = &m;
 	CFP.Value[7] = &m;
 	CFP.Value[8] = &l;
-	CFP.Value[9] = evt->hook;
-	CFP.Value[10]= evt->options;
+	CFP.Value[9] = (void*)evt->hook;
+	CFP.Value[10]= (void*)evt->options;
 	if (findPlugin(evt->plugin)>=0)
 	    ((PlugList[findPlugin(evt->plugin)].eventfunc) (&CFP));
     }

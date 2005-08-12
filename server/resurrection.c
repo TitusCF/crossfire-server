@@ -57,7 +57,7 @@ static int resurrect_player(object *op,char *playername,object *spell)
     char path[MAX_BUF];
     char buf[MAX_BUF];
     char buf2[MAX_BUF];
-    char *race=NULL;
+    const char *race=NULL;
     sint64 exp;
     int Con;
 
