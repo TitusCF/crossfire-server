@@ -17,6 +17,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/gods.c: Add missing braces around body of if statement.
+Andreas Kirschbaum 2005-08-14
+
 NPCs instead of being given a random god are for preference given the god that 
 likes their race. If one can't be found, then we fall back to a random god.
 Affected files:

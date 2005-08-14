@@ -96,11 +96,12 @@ const char *determine_god(object *op) {
     if(op->type!= PLAYER && QUERY_FLAG(op,FLAG_ALIVE)) {
 	
 	if(!op->title) {
-	    if (op->race !=NULL) 
+	    if (op->race !=NULL) {
 		godname=get_god_for_race(op->race);
 		if (godname!=NULL) {
 		    op->title = add_string(godname);
 		}
+	    }
 	    else {
 	        godlink *gl=first_god;
 
