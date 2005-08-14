@@ -95,6 +95,7 @@ const char *determine_god(object *op) {
 
     if(op->type!= PLAYER && QUERY_FLAG(op,FLAG_ALIVE)) {
 	
+	/* find a god based on race */
 	if(!op->title) {
 	    if (op->race !=NULL) {
 		godname=get_god_for_race(op->race);
@@ -102,17 +103,20 @@ const char *determine_god(object *op) {
 		    op->title = add_string(godname);
 		}
 	    }
-	    else {
-	        godlink *gl=first_god;
-
-		godnr = rndm(1, gl->id);
-		while(gl) {
-		    if(gl->id==godnr) break;
-		    gl=gl->next;
-		}
-		op->title = add_string(gl->name);
-	    }
 	}
+
+	/* find a random god */
+	if(!op->title) {
+	    godlink *gl = first_god;
+
+	    godnr = rndm(1, gl->id);
+	    while(gl) {
+		if(gl->id == godnr) break;
+		gl=gl->next;
+	    }
+	    op->title = add_string(gl->name);
+	}
+
 	return op->title;
     }
 
