@@ -17,6 +17,7 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+lib/Makefile.am, lib/Makefile.in: Actually install help file for showpets.
 common/living.c, include/living.h: Make global arrays really const.
 Andreas Kirschbaum 2005-08-15
 
