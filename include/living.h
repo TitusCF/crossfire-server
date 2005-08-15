@@ -45,23 +45,23 @@
  */
 #define NO_STAT_VAL 99    /* needed by skills code -b.t. */
 
-extern const char *attacks[NROFATTACKS];
+extern const char *const attacks[NROFATTACKS];
 
-extern float cha_bonus[MAX_STAT + 1];
-extern int dex_bonus[MAX_STAT + 1];
-extern int thaco_bonus[MAX_STAT + 1];
-extern int turn_bonus[MAX_STAT + 1];
-extern int max_carry[MAX_STAT + 1];
-extern int dam_bonus[MAX_STAT + 1];
-extern int learn_spell[];
-extern const char *restore_msg[NUM_STATS];
-extern const char *statname[NUM_STATS];
-extern const char *short_stat_name[NUM_STATS];
-extern const char *lose_msg[NUM_STATS];
-extern float speed_bonus[MAX_STAT + 1];
-extern uint32 weight_limit[MAX_STAT + 1];
-extern int cleric_chance[MAX_STAT + 1];
-extern int fear_bonus[MAX_STAT + 1];
+extern const float cha_bonus[MAX_STAT + 1];
+extern const int dex_bonus[MAX_STAT + 1];
+extern const int thaco_bonus[MAX_STAT + 1];
+extern const int turn_bonus[MAX_STAT + 1];
+extern const int max_carry[MAX_STAT + 1];
+extern const int dam_bonus[MAX_STAT + 1];
+extern const int learn_spell[];
+extern const char *const restore_msg[NUM_STATS];
+extern const char *const statname[NUM_STATS];
+extern const char *const short_stat_name[NUM_STATS];
+extern const char *const lose_msg[NUM_STATS];
+extern const float speed_bonus[MAX_STAT + 1];
+extern const uint32 weight_limit[MAX_STAT + 1];
+extern const int cleric_chance[MAX_STAT + 1];
+extern const int fear_bonus[MAX_STAT + 1];
 
 typedef struct liv { /* Mostly used by "alive" objects */
   sint8		Str,Dex,Con,Wis,Cha,Int,Pow;

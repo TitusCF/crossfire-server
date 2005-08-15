@@ -35,7 +35,7 @@
  */
 #define ADD_EXP(exptotal, exp) {exptotal += exp; if (exptotal > MAX_EXPERIENCE) exptotal = MAX_EXPERIENCE; }
 
-static int con_bonus[MAX_STAT + 1]={
+static const int con_bonus[MAX_STAT + 1]={
   -6,-5,-4,-3,-2,-1,-1,0,0,0,0,1,2,3,4,5,6,7,8,9,10,12,14,16,18,20,
   22,25,30,40,50
 };
@@ -44,12 +44,12 @@ static int con_bonus[MAX_STAT + 1]={
  * because Pow can now be the stat that controls spellpoint
  * advancement. -b.t.
  */
-static int sp_bonus[MAX_STAT + 1]={
+static const int sp_bonus[MAX_STAT + 1]={
   -10,-10,-9,-8,-7,-6,-5,-4,-3,-2,-1,0,1,2,3,4,5,6,7,8,9,10,12,15,20,25,
   30,40,50,70,100
 };
 
-static int grace_bonus[MAX_STAT +1] = {
+static const int grace_bonus[MAX_STAT +1] = {
     -10,-10,-9,-8,-7,-6,-5,-4,-3,-2,-1,0,1,2,3,4,5,6,7,8,9,10,12,15,20,25,
   30,40,50,70,100
 };
@@ -70,18 +70,18 @@ static int grace_bonus[MAX_STAT +1] = {
  * it is 1-diff
  */
 
-float cha_bonus[MAX_STAT + 1]={10.0, 10.0, 9.0, 8.0, 7.0, 6.0, /*<-5*/
+const float cha_bonus[MAX_STAT + 1]={10.0, 10.0, 9.0, 8.0, 7.0, 6.0, /*<-5*/
     5.0, 4.5, 4.0, 3.5, 3.0, /*<-10*/ 2.9, 2.8, 2.7, 2.6, 2.5, /*<-15*/
     2.4, 2.3, 2.2, 2.1, 2.0, /*<-20*/ 1.95, 1.90, 1.85, 1.80, 1.75, /*25 */
     1.70, 1.65, 1.60, 1.55, 1.50 /*30 */
 };
 
-int dex_bonus[MAX_STAT + 1]={
+const int dex_bonus[MAX_STAT + 1]={
   -4,-3,-2,-2,-1,-1,-1,0,0,0,0,0,0,0,1,1,1,2,2,2,3,3,3,4,4,4,5,5,6,6,7
 };
 
 /* speed_bonus uses dex as its stat */
-float speed_bonus[MAX_STAT + 1]={
+const float speed_bonus[MAX_STAT + 1]={
   -0.4, -0.4, -0.3, -0.3, -0.2, -0.2, -0.2, -0.1, -0.1, -0.1, -0.05, 0, 0, 0,
   0.05, 0.1, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.8, 1.0, 1.2, 1.4,
   1.6, 1.8, 2.0, 2.5, 3.0
@@ -90,15 +90,16 @@ float speed_bonus[MAX_STAT + 1]={
 /* dam_bonus, thaco_bonus, max_carry, weight limit all are based on
  * strength.
  */
-int dam_bonus[MAX_STAT + 1]={
+const int dam_bonus[MAX_STAT + 1]={
   -2,-2,-2,-1,-1,-1,0,0,0,0,0,0,1,1,1,2,2,2,3,3,3,4,4,5,5,6,6,7,8,10,15
 };
-int thaco_bonus[MAX_STAT + 1]={
+
+const int thaco_bonus[MAX_STAT + 1]={
   -2,-2,-1,-1,0,0,0,0,0,0,0,0,0,0,1,1,1,2,2,2,3,3,3,4,4,5,5,6,7,8,10
 };
 
 /* Max you can carry before you start getting extra speed penalties */
-int max_carry[MAX_STAT + 1]={
+const int max_carry[MAX_STAT + 1]={
   2,4,7,11,16,22,29,37,46,56,67,79,92,106,121,137,154,172,191,211,232,254,277,
   301,326,352,400,450,500,600,1000
 };
@@ -110,7 +111,7 @@ int max_carry[MAX_STAT + 1]={
  * before, you need to start someplace.
  */
 
-uint32 weight_limit[MAX_STAT+ 1] = {
+const uint32 weight_limit[MAX_STAT+ 1] = {
     200000,  /* 0 */
     250000,300000,350000,400000,500000,	    /* 5*/
     600000,700000,800000,900000,1000000,    /* 10 */
@@ -120,17 +121,20 @@ uint32 weight_limit[MAX_STAT+ 1] = {
     3250000,3500000,3750000,4000000,4500000  /*30 */ 
 };
 
-int learn_spell[MAX_STAT + 1]={
+const int learn_spell[MAX_STAT + 1]={
   0,0,0,1,2,4,8,12,16,25,36,45,55,65,70,75,80,85,90,95,100,100,100,100,100,
   100,100,100,100,100,100
 };
-int cleric_chance[MAX_STAT + 1]={
+
+const int cleric_chance[MAX_STAT + 1]={
   100,100,100,100,90,80,70,60,50,40,35,30,25,20,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0,0
 };
-int turn_bonus[MAX_STAT + 1]={
+
+const int turn_bonus[MAX_STAT + 1]={
   -1,-1,-1,-1,-1,-1,-1,-1,0,0,0,1,1,1,2,2,2,3,3,3,4,4,5,5,6,7,8,9,10,12,15
 };
-int fear_bonus[MAX_STAT + 1]={
+
+const int fear_bonus[MAX_STAT + 1]={
   3,3,3,3,2,2,2,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 };
 
@@ -171,7 +175,7 @@ extern sint64 *levels;
  * for safety, savethrow should not be accessed directly anymore,
  * and instead did_make_save should be used instead.
  */
-static int savethrow[MAX_SAVE_LEVEL+1]={
+static const int savethrow[MAX_SAVE_LEVEL+1]={
   18,
   18,17,16,15,14,14,13,13,12,12,12,11,11,11,11,10,10,10,10, 9,
    9, 9, 9, 9, 8, 8, 8, 8, 8, 8, 7, 7, 7, 7, 7, 7, 7, 6, 6, 6,
@@ -181,7 +185,7 @@ static int savethrow[MAX_SAVE_LEVEL+1]={
    1, 1, 1, 1, 1, 1, 1, 1, 1, 1
 };
 
-const char *attacks[NROFATTACKS] = {
+const char *const attacks[NROFATTACKS] = {
   "physical", "magical", "fire", "electricity", "cold", "confusion",
   "acid", "drain", "weaponmagic", "ghosthit", "poison", "slow",
   "paralyze", "turn undead", "fear", "cancellation", "depletion", "death",
@@ -189,7 +193,7 @@ const char *attacks[NROFATTACKS] = {
   "life stealing"
 };
 
-static const char *drain_msg[NUM_STATS] = {
+static const char *const drain_msg[NUM_STATS] = {
   "Oh no! You are weakened!",
   "You're feeling clumsy!",
   "You feel less healthy",
@@ -198,7 +202,7 @@ static const char *drain_msg[NUM_STATS] = {
   "Watch out, your mind is going!", 
   "Your spirit feels drained!"
 };
-const char *restore_msg[NUM_STATS] = {
+const char *const restore_msg[NUM_STATS] = {
   "You feel your strength return.",
   "You feel your agility return.",
   "You feel your health return.",
@@ -207,7 +211,7 @@ const char *restore_msg[NUM_STATS] = {
   "You feel your memory return.", 
   "You feel your spirits return."
 };
-const char *gain_msg[NUM_STATS] = {
+const char *const gain_msg[NUM_STATS] = {
 	"You feel stronger.",
 	"You feel more agile.",
 	"You feel healthy.",
@@ -216,7 +220,7 @@ const char *gain_msg[NUM_STATS] = {
 	"You feel smarter.", 
 	"You feel more potent."
 };
-const char *lose_msg[NUM_STATS] = {
+const char *const lose_msg[NUM_STATS] = {
 	"You feel weaker!",
 	"You feel clumsy!",
 	"You feel less healthy!",
@@ -226,11 +230,11 @@ const char *lose_msg[NUM_STATS] = {
 	"You feel less potent!"
 };
 
-const char *statname[NUM_STATS] = {
+const char *const statname[NUM_STATS] = {
   "strength", "dexterity", "constitution", "wisdom", "charisma", "intelligence","power" 
 };
 
-const char *short_stat_name[NUM_STATS] = {
+const char *const short_stat_name[NUM_STATS] = {
   "Str", "Dex", "Con", "Wis", "Cha", "Int","Pow" 
 };
 
