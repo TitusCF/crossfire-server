@@ -1677,6 +1677,7 @@ see_invisible <1>       set if O can see invisible player.
 can_roll <1>            set if O can be rolled.
 is_turnable <1>         set if O can be turned 'automagically'
 
+is_lightable <1>	set if O is something like a lantern that can be lit 
 is_used_up <1>          bizarre. O is used up after created, eg an explosion.
 identified <1>          true if the item has been identified.
 reflecting <1>          set if O is reflective.

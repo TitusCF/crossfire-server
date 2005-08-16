@@ -750,6 +750,7 @@ A	.+
 		    }
 ^was_wiz{S}  	    SET_OR_CLEAR_FLAG(op, FLAG_WAS_WIZ, IVAL);
 ^no_fix_player{S}   SET_OR_CLEAR_FLAG(op, FLAG_NO_FIX_PLAYER, IVAL);
+^is_lightable{S}    SET_OR_CLEAR_FLAG(op, FLAG_IS_LIGHTABLE, IVAL);
 ^tear_down{S}	    SET_OR_CLEAR_FLAG(op, FLAG_TEAR_DOWN, IVAL);
 ^luck{S}  	    op->stats.luck = IVAL;
 ^run_away{S}	    op->run_away = IVAL;
@@ -1314,7 +1315,7 @@ static char *flag_names[NUM_FLAGS+1] = {
 "changing", "splitting", "hitback", "startequip",
 "blocksview", "undead", "scared", "unaggressive",
 "reflect_missile", "reflect_spell",                             /* 40 */
-"no_magic", "no_fix_player", NULL, "tear_down", "run_away",
+"no_magic", "no_fix_player", "is_lightable", "tear_down", "run_away",
 "pass_thru", "can_pass_thru", "pick_up", "unique", "no_drop",   /* 50 */
  NULL, "can_cast_spell", "can_use_scroll", "can_use_range",
 "can_use_bow",  "can_use_armour", "can_use_weapon",

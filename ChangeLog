@@ -17,6 +17,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/attack.c, include/define.h, common/loader.l doc/Developers/objects:
+Add a flag FLAG_IS_LIGHTABLE, to make lightable objects such as lanterns
+able to work again
+lib/archetypes: recollect archs
+Brendan Lally 2005-08-16
+
 server/build_map.c: Add support for buildable signs, and magic mouths/ears.
 Alex Schultz 2005-08-15
 

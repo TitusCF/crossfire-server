@@ -161,7 +161,7 @@ void save_throw_object (object *op, int type, object *originator)
 	 * So forget lighting magical swords on fire with this!) -b.t.
 	 */ 
 	if(type&(AT_FIRE|AT_ELECTRICITY)
-           &&op->other_arch&&op->glow_radius) { 
+           &&op->other_arch&&QUERY_FLAG(op, FLAG_IS_LIGHTABLE)) { 
 		const char *arch=op->other_arch->name;
 
 		op = decrease_ob_nr (op, 1);
