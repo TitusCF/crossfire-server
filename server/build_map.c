@@ -32,6 +32,40 @@
 #include <tod.h>
 #include <sproto.h>
 
+static object* get_connection_rune( object* pl, short x, short y );
+static object* get_msg_book( object* pl, short x, short y );
+static int adjust_sign_msg( object* pl, short x, short y, object* tmp );
+
+/**
+ *  Check if objects on a square interfere with building
+ */
+int can_build_over( struct mapdef* map, object* tmp, short x, short y)
+    {
+    object* ob;
+    
+    ob = GET_MAP_OB( map, x, y );
+    while ( ob )
+        {
+	/* if ob is not a marking rune or floor, then check special cases */
+	if ( strcmp( ob->arch->name, "rune_mark" ) && ob->type != FLOOR )
+	    {
+            switch ( tmp->type )
+                {
+	        case SIGN:
+	        case MAGIC_EAR:
+		    /* Allow signs and magic ears to be built on books */
+	            if ( ob->type != BOOK ) {
+		        return 0; } 
+                    break;
+                default:
+                    return 0;
+                }
+            }
+        ob = ob->above;
+	}
+    return 1;
+    }
+
 /**
  *  Erases marking runes at specified location
  */
@@ -95,9 +129,7 @@ int find_or_create_connection_for_map( object* pl, short x, short y )
     object* force;
     int connected;
 
-    rune = GET_MAP_OB( pl->map, x, y );
-    while ( rune && ( ( rune->type != SIGN ) || ( strcmp( rune->arch->name, "rune_mark" ) ) ) )
-        rune = rune->above;
+    rune = get_connection_rune( pl, x, y );
 
     if ( !rune )
         {
@@ -134,6 +166,32 @@ int find_or_create_connection_for_map( object* pl, short x, short y )
 
     /* Found the force, everything's easy. */
     return force->path_attuned;
+    }
+    
+/**
+ * Returns the marking rune on the square, for purposes of building connections
+ */
+static object* get_connection_rune( object* pl, short x, short y )
+    {
+    object* rune;
+    
+    rune = GET_MAP_OB( pl->map, x, y );
+    while ( rune && ( ( rune->type != SIGN ) || ( strcmp( rune->arch->name, "rune_mark" ) ) ) )
+        rune = rune->above;
+    return rune;
+    }
+    
+/**
+ * Returns the book/scroll on the current square, for purposes of building
+ */
+static object* get_msg_book( object* pl, short x, short y )
+    {
+    object* book;
+    
+    book = GET_MAP_OB( pl->map, x, y );
+    while ( book && ( book->type != BOOK ) )
+        book = book->above;
+    return book;
     }
 
 /**
@@ -500,20 +558,20 @@ void apply_builder_item( object* pl, object* item, short x, short y )
         new_draw_info( NDI_UNIQUE, 0, pl, "This square has no floor, you can't build here." );
         return;
         }
-
-    if ( ( floor->above ) && ( strcmp( floor->above->arch->name, "rune_mark" ) ) )
-        /* Floor has something on top, and it isn't a marking rune */
-        {
-        new_draw_info( NDI_UNIQUE, 0, pl, "You can't build here." );
-        return;
-        }
-
     /* Create item, set flag, insert in map */
     arch = find_archetype( item->slaying );
     if ( !arch )
         return;
 
     tmp = arch_to_object( arch );
+    
+    if ( ( floor->above ) && ( !can_build_over(pl->map, tmp, x, y) ) )
+        /* Floor has something on top that interferes with building */
+        {
+        new_draw_info( NDI_UNIQUE, 0, pl, "You can't build here." );
+        return;
+        }
+    
     SET_FLAG( tmp, FLAG_IS_BUILDABLE );
     SET_FLAG( tmp, FLAG_NO_PICK );
 
@@ -524,7 +582,6 @@ void apply_builder_item( object* pl, object* item, short x, short y )
     insert_flag = INS_ABOVE_FLOOR_ONLY;
 
     connected = 0;
-
     switch( tmp->type )
         {
         case DOOR:
@@ -534,17 +591,33 @@ void apply_builder_item( object* pl, object* item, short x, short y )
         case TIMED_GATE:
         case PEDESTAL:
         case CF_HANDLE:
-            /* Those items require a valid connection */
-            connected = find_or_create_connection_for_map( pl, x, y );
-            if ( connected == -1 )
-                {
-                /* Player already informed of failure by the previous function */
-                free_object( tmp );
-                return;
-                }
-            /* Remove marking rune */
-            remove_marking_runes( pl->map, x, y );
+	case MAGIC_EAR:
+	case SIGN:
+	    /* Signs don't need a connection, but but magic mouths do. */
+	    if (get_connection_rune( pl, x, y ) && (tmp->type != SIGN || 
+	    !strcmp( tmp->arch->name, "magic_mouth" )))
+	        {
+                connected = find_or_create_connection_for_map( pl, x, y );
+                if ( connected == -1 )
+                    {
+                    /* Player already informed of failure by the previous function */
+                    free_object( tmp );
+                    return;
+                    }
+                /* Remove marking rune */
+                remove_marking_runes( pl->map, x, y );
+		}
         }
+	
+    /* For magic mouths/ears, and signs, take the msg from a book of scroll */	
+    if ((tmp->type == SIGN) || (tmp->type == MAGIC_EAR))
+        {
+	if (adjust_sign_msg( pl, x, y, tmp ) == -1)
+	    {
+            free_object( tmp );
+            return;
+	    }
+	}
 
     insert_ob_in_map_at( tmp, pl->map, floor, insert_flag, x, y );
     if ( connected != 0 )
@@ -600,8 +673,11 @@ void apply_builder_remove( object* pl, int dir )
         case DETECTOR:
         case PEDESTAL:
         case CF_HANDLE:
+        case MAGIC_EAR:
+        case SIGN:
             /* Special case: must unconnect */
-            remove_button_link( item );
+	    if (QUERY_FLAG(item,FLAG_IS_LINKED))
+                remove_button_link( item );
 
             /* Fall through */
 
@@ -623,6 +699,7 @@ void apply_map_builder( object* pl, int dir )
     {
     object* builder;
     object* tmp;
+    object* tmp2;
     short x, y;
 
     if ( !pl->type == PLAYER )
@@ -664,13 +741,20 @@ void apply_map_builder( object* pl, int dir )
         new_draw_info( NDI_UNIQUE, 0, pl, "You'd better not build here, it looks weird." );
         return;
         }
-
+    tmp2 = find_marked_object( pl );
     while ( tmp )
         {
-        if ( !QUERY_FLAG( tmp, FLAG_IS_BUILDABLE ) && ( ( tmp->type != SIGN ) || ( strcmp( tmp->arch->name, "rune_mark" ) ) ) )
+        if ( !QUERY_FLAG( tmp, FLAG_IS_BUILDABLE ) && ( ( tmp->type != SIGN )
+	|| ( strcmp( tmp->arch->name, "rune_mark" ) ) ) )
             {
-	        new_draw_info( NDI_UNIQUE, 0, pl, "You can't build here." );
-	        return;
+	        /* The item building function already has it's own special
+		 * checks for this
+		 */
+	        if ((!tmp2) || (tmp2->subtype != ST_MAT_ITEM ))
+		    {
+	            new_draw_info( NDI_UNIQUE, 0, pl, "You can't build here." );
+	            return;
+		    }
             }
         tmp = tmp->above;
         }
@@ -691,7 +775,7 @@ void apply_map_builder( object* pl, int dir )
          * Find marked item to build, call specific function
          */
         {
-        tmp = find_marked_object( pl );
+        tmp = tmp2;
         if ( !tmp )
             {
 	        new_draw_info( NDI_UNIQUE, 0, pl, "You need to mark raw materials to use." );
@@ -728,4 +812,45 @@ void apply_map_builder( object* pl, int dir )
     /* Here, it means the builder has an invalid type */
     new_draw_info( NDI_UNIQUE, 0, pl, "Don't know how to apply this tool, sorry." );
     LOG( llevError, "apply_map_builder: invalid builder subtype %d\n", builder->subtype );
+    }
+    
+/**
+ * Make the built object inherit the msg of books that are used with it.
+ * For objects already invisible (i.e. magic mouths & ears), also make it
+ * it inherit the face and the name with "talking " prepended.
+ */
+static int adjust_sign_msg( object* pl, short x, short y, object* tmp )
+    {
+    object* book;
+    char buf[MAX_BUF];
+    int namelen;
+
+    book = get_msg_book( pl, x, y );
+    if ( !book )
+        {
+	new_draw_info( NDI_UNIQUE, 0, pl, "You need to put a book or scroll with the message." );
+	return -1;
+	}
+	
+    tmp->msg = book->msg;
+    add_refcount( tmp->msg );
+    
+    if (tmp->invisible)
+        {
+	if(book->custom_name != NULL)
+	    {
+	    snprintf(buf, sizeof(buf), "talking %s", book->custom_name);
+	    } else {
+	    snprintf(buf, sizeof(buf), "talking %s", book->name);
+	    }
+	if ( tmp->name )
+	    free_string( tmp->name );
+	tmp->name = add_string( buf );
+	
+	tmp->face = book->face;
+	tmp->invisible = 0;
+        }
+    remove_ob( book );
+    free_object( book );
+    return 0;
     }
