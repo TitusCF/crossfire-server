@@ -187,6 +187,8 @@ void esrv_draw_look(object *pl)
     }
 
     for (last=NULL; tmp!=last; tmp=tmp->below) {
+	object *head;
+
 	if (QUERY_FLAG(tmp, FLAG_IS_FLOOR) && !last) {
 	    last = tmp->below;  /* assumes double floor mode */
 	    if (last && QUERY_FLAG(last, FLAG_IS_FLOOR))
@@ -212,34 +214,35 @@ void esrv_draw_look(object *pl)
 		    SockList_AddShort(&sl, 0);
 		break;
 	    }
+	    if (tmp->head) head = tmp->head;
+	    else head = tmp;
 
-	    flags = query_flags (tmp);
-	    if (QUERY_FLAG(tmp, FLAG_NO_PICK))
+	    flags = query_flags (head);
+	    if (QUERY_FLAG(head, FLAG_NO_PICK))
 		flags |=  F_NOPICK;
-	    if (!(pl->contr->socket.faces_sent[tmp->face->number] & NS_FACESENT_FACE))
-		esrv_send_face(&pl->contr->socket, tmp->face->number,0);
+	    if (!(pl->contr->socket.faces_sent[head->face->number] & NS_FACESENT_FACE))
+		esrv_send_face(&pl->contr->socket, head->face->number,0);
 
-	    if (QUERY_FLAG(tmp,FLAG_ANIMATE) && 
-			   !pl->contr->socket.anims_sent[tmp->animation_id])
-		esrv_send_animation(&pl->contr->socket, tmp->animation_id);
+	    if (QUERY_FLAG(head,FLAG_ANIMATE) && 
+			   !pl->contr->socket.anims_sent[head->animation_id])
+		esrv_send_animation(&pl->contr->socket, head->animation_id);
 
-	    SockList_AddInt(&sl, tmp->count);
+	    SockList_AddInt(&sl, head->count);
 	    SockList_AddInt(&sl, flags);
-	    SockList_AddInt(&sl, QUERY_FLAG(tmp, FLAG_NO_PICK) ? -1 : WEIGHT(tmp));
-	    SockList_AddInt(&sl, tmp->face->number);
+	    SockList_AddInt(&sl, QUERY_FLAG(head, FLAG_NO_PICK) ? -1 : WEIGHT(head));
+	    SockList_AddInt(&sl, head->face->number);
 
-      if (!tmp->custom_name) {
-	      strncpy(item_n,query_base_name(tmp, 0),127);
-	      item_n[127]=0;
-	      len=strlen(item_n);
-	      item_p=query_base_name(tmp, 1);
-      }
-      else {
-        strncpy(item_n,tmp->custom_name,127);
-	      item_n[127]=0;
-	      len=strlen(item_n);
-	      item_p=tmp->custom_name;
-      }
+	    if (!head->custom_name) {
+		strncpy(item_n,query_base_name(head, 0),127);
+		item_n[127]=0;
+		len=strlen(item_n);
+		item_p=query_base_name(head, 1);
+	    } else {
+		strncpy(item_n,head->custom_name,127);
+		item_n[127]=0;
+		len=strlen(item_n);
+		item_p=head->custom_name;
+	    }
 	    strncpy(item_n+len+1, item_p, 127);
 	    item_n[254]=0;
 	    len += strlen(item_n+1+len) + 1;
@@ -247,24 +250,24 @@ void esrv_draw_look(object *pl)
 	    memcpy(sl.buf+sl.len, item_n, len);
 	    sl.len += len;
 
-	    SockList_AddShort(&sl,tmp->animation_id);
+	    SockList_AddShort(&sl,head->animation_id);
 	    anim_speed=0;
-	    if (QUERY_FLAG(tmp,FLAG_ANIMATE)) {
-		if (tmp->anim_speed) anim_speed=tmp->anim_speed;
+	    if (QUERY_FLAG(head,FLAG_ANIMATE)) {
+		if (head->anim_speed) anim_speed=head->anim_speed;
 		else {
-		    if (FABS(tmp->speed)<0.001) anim_speed=255;
-		    else if (FABS(tmp->speed)>=1.0) anim_speed=1;
-		    else anim_speed = (int) (1.0/FABS(tmp->speed));
+		    if (FABS(head->speed)<0.001) anim_speed=255;
+		    else if (FABS(head->speed)>=1.0) anim_speed=1;
+		    else anim_speed = (int) (1.0/FABS(head->speed));
 		}
 		if (anim_speed>255) anim_speed=255;
 	    }
 	    SockList_AddChar(&sl, (char) anim_speed);
-	    SockList_AddInt(&sl, tmp->nrof);
+	    SockList_AddInt(&sl, head->nrof);
 
 	    if (pl->contr->socket.itemcmd == 2)
-		SockList_AddShort(&sl, tmp->client_type);
+		SockList_AddShort(&sl, head->client_type);
 
-	    SET_FLAG(tmp, FLAG_CLIENT_SENT);
+	    SET_FLAG(head, FLAG_CLIENT_SENT);
 	    got_one++;
 
 	    if (sl.len > (MAXSOCKBUF-MAXITEMLEN)) {
@@ -274,7 +277,7 @@ void esrv_draw_look(object *pl)
 		SockList_AddInt(&sl, 0);
 		got_one=0;
 	    }
-	}
+	} /* If LOOK_OBJ() */
     }
     if (got_one)
 	Send_With_Handling(&pl->contr->socket, &sl);
@@ -305,32 +308,36 @@ void esrv_send_inventory(object *pl, object *op)
     SockList_AddInt(&sl, op->count);
     
     for (tmp=op->inv; tmp; tmp=tmp->below) {
-	if (LOOK_OBJ(tmp)) {
-	    flags = query_flags (tmp);
-	    if (QUERY_FLAG(tmp, FLAG_NO_PICK))
+	object *head;
+
+	if (tmp->head) head = tmp->head;
+	else head = tmp;
+
+	if (LOOK_OBJ(head)) {
+	    flags = query_flags (head);
+	    if (QUERY_FLAG(head, FLAG_NO_PICK))
 		flags |=  F_NOPICK;
-	    if (!(pl->contr->socket.faces_sent[tmp->face->number] & NS_FACESENT_FACE))
-		esrv_send_face(&pl->contr->socket, tmp->face->number,0);
-	    if (QUERY_FLAG(tmp,FLAG_ANIMATE) && 
-			   !pl->contr->socket.anims_sent[tmp->animation_id])
-		esrv_send_animation(&pl->contr->socket, tmp->animation_id);
-	    SockList_AddInt(&sl, tmp->count);
+	    if (!(pl->contr->socket.faces_sent[head->face->number] & NS_FACESENT_FACE))
+		esrv_send_face(&pl->contr->socket, head->face->number,0);
+	    if (QUERY_FLAG(head,FLAG_ANIMATE) && 
+			   !pl->contr->socket.anims_sent[head->animation_id])
+		esrv_send_animation(&pl->contr->socket, head->animation_id);
+	    SockList_AddInt(&sl, head->count);
 	    SockList_AddInt(&sl, flags);
-	    SockList_AddInt(&sl, QUERY_FLAG(tmp, FLAG_NO_PICK) ? -1 : WEIGHT(tmp));
-	    SockList_AddInt(&sl, tmp->face->number);
+	    SockList_AddInt(&sl, QUERY_FLAG(head, FLAG_NO_PICK) ? -1 : WEIGHT(head));
+	    SockList_AddInt(&sl, head->face->number);
         
-      if (!tmp->custom_name) {
-	      strncpy(item_n,query_base_name(tmp, 0),127);
-	      item_n[127]=0;
-	      len=strlen(item_n);
-	      item_p=query_base_name(tmp, 1);
-      }
-      else {
-        strncpy(item_n,tmp->custom_name,127);
-	      item_n[127]=0;
-	      len=strlen(item_n);
-	      item_p=tmp->custom_name;
-      }
+	    if (!head->custom_name) {
+		strncpy(item_n,query_base_name(head, 0),127);
+		item_n[127]=0;
+		len=strlen(item_n);
+		item_p=query_base_name(head, 1);
+	    } else {
+		strncpy(item_n,head->custom_name,127);
+		item_n[127]=0;
+		len=strlen(item_n);
+		item_p=head->custom_name;
+	    }
 	    strncpy(item_n+len+1, item_p, 127);
 	    item_n[254]=0;
 	    len += strlen(item_n+1+len) + 1;
@@ -338,22 +345,22 @@ void esrv_send_inventory(object *pl, object *op)
 	    memcpy(sl.buf+sl.len, item_n, len);
 	    sl.len += len;
 
-	    SockList_AddShort(&sl,tmp->animation_id);
+	    SockList_AddShort(&sl,head->animation_id);
 	    anim_speed=0;
-	    if (QUERY_FLAG(tmp,FLAG_ANIMATE)) {
-		if (tmp->anim_speed) anim_speed=tmp->anim_speed;
+	    if (QUERY_FLAG(head,FLAG_ANIMATE)) {
+		if (head->anim_speed) anim_speed=head->anim_speed;
 		else {
-		    if (FABS(tmp->speed)<0.001) anim_speed=255;
-		    else if (FABS(tmp->speed)>=1.0) anim_speed=1;
-		    else anim_speed = (int) (1.0/FABS(tmp->speed));
+		    if (FABS(head->speed)<0.001) anim_speed=255;
+		    else if (FABS(head->speed)>=1.0) anim_speed=1;
+		    else anim_speed = (int) (1.0/FABS(head->speed));
 		}
 		if (anim_speed>255) anim_speed=255;
 	    }
 	    SockList_AddChar(&sl, (char)anim_speed);
-	    SockList_AddInt(&sl, tmp->nrof);
+	    SockList_AddInt(&sl, head->nrof);
 	    if (pl->contr->socket.itemcmd == 2)
-		SockList_AddShort(&sl, tmp->client_type);
-	    SET_FLAG(tmp, FLAG_CLIENT_SENT);
+		SockList_AddShort(&sl, head->client_type);
+	    SET_FLAG(head, FLAG_CLIENT_SENT);
 	    got_one++;
 
 	    /* IT is possible for players to accumulate a huge amount of
@@ -367,7 +374,7 @@ void esrv_send_inventory(object *pl, object *op)
 		SockList_AddInt(&sl, op->count);
 		got_one=0;
 	    }
-	}
+	} /* If LOOK_OBJ() */
     }
     if (got_one)
 	Send_With_Handling(&pl->contr->socket, &sl);
@@ -408,6 +415,9 @@ void esrv_update_item(int flags, object *pl, object *op)
     sl.len=strlen((char*)sl.buf);
 
     SockList_AddChar(&sl, (char) flags);
+
+    if (op->head) op=op->head;
+
     SockList_AddInt(&sl, op->count);
 
     if (flags & UPD_LOCATION)
@@ -434,18 +444,18 @@ void esrv_update_item(int flags, object *pl, object *op)
 	const char *item_p;
     char item_n[MAX_BUF];
 
-  if (!op->custom_name) {
-	  strncpy(item_n,query_base_name(op, 0),127);
-	  item_n[127]=0;
-	  len=strlen(item_n);
-	  item_p=query_base_name(op, 1);
-  }
-  else {
-    strncpy(item_n,op->custom_name,127);
-	  item_n[127]=0;
-	  len=strlen(item_n);
-	  item_p=op->custom_name;
-  }
+	if (!op->custom_name) {
+	    strncpy(item_n,query_base_name(op, 0),127);
+	    item_n[127]=0;
+	    len=strlen(item_n);
+	    item_p=query_base_name(op, 1);
+	}
+	else {
+	    strncpy(item_n,op->custom_name,127);
+	    item_n[127]=0;
+	    len=strlen(item_n);
+	    item_p=op->custom_name;
+	}
 
 	strncpy(item_n+len+1, item_p, 127);
 	item_n[254]=0;
@@ -506,6 +516,8 @@ void esrv_send_item(object *pl, object*op)
     sprintf((char*)sl.buf,"item%d ", pl->contr->socket.itemcmd);
     sl.len=strlen((char*)sl.buf);
 
+    if (op->head) op=op->head;
+
     SockList_AddInt(&sl, op->env? op->env->count:0);
 
     if (!(pl->contr->socket.faces_sent[op->face->number] & NS_FACESENT_FACE))
@@ -520,15 +532,15 @@ void esrv_send_item(object *pl, object*op)
     SockList_AddInt(&sl, op->face->number);
     
     if(!op->custom_name) {
-      strncpy(item_n,query_base_name(op, 0),127);
-      item_n[127]=0;
-      len=strlen(item_n);
-      item_p=query_base_name(op, 1);
+	strncpy(item_n,query_base_name(op, 0),127);
+	item_n[127]=0;
+	len=strlen(item_n);
+	item_p=query_base_name(op, 1);
     } else {
-      strncpy(item_n,op->custom_name,127);
-	    item_n[127]=0;
-	    len=strlen(item_n);
-	    item_p=op->custom_name;
+	strncpy(item_n,op->custom_name,127);
+	item_n[127]=0;
+	len=strlen(item_n);
+	item_p=op->custom_name;
     }
     strncpy(item_n+len+1, item_p, 127);
     item_n[254]=0;

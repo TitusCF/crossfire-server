@@ -617,7 +617,7 @@ In the list below, the number in parenthese corresponds to the number in
 define.h file.  At the top of each group of items, the range is given.  It is
 intentional in most cases to leave the first entry of a range blank - this
 gives room to place really important items of a type at the top.  Note that
-only items the player may be able to pick up actually need types.
+only items the player may be able to pick up or apply actually need types.
 
 Note in most cases, the artifact type items are at the top of a group listing.
 This is done for artifact items that already have a different face/name,
@@ -774,7 +774,18 @@ Client Type	Notes
 8020		ice cubes
 8021        transforming items
 
-
+25000-25999	Non-inventory items, stuff stuck to the floor, that can be applied.
+25011		Town portal (66)
+25012		Exits, doors, buildings - much more mundane exits (66)
+		Note to arch writers; only need to set the client_type on
+		the head (this is the case for all other properties as
+		well).
+25021		Ordinary signs (98), Shop Inventory (150)
+25031		Imperial Post Office postboxes
+25041		Slot machines
+25042		Trigger (27), levers (93)
+25091		Bed to reality (106)
+ 
 D. editable field (editable)
 =============================
 
