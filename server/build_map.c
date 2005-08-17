@@ -32,10 +32,6 @@
 #include <tod.h>
 #include <sproto.h>
 
-static object* get_connection_rune( object* pl, short x, short y );
-static object* get_msg_book( object* pl, short x, short y );
-static int adjust_sign_msg( object* pl, short x, short y, object* tmp );
-
 /**
  *  Check if objects on a square interfere with building
  */
@@ -57,7 +53,15 @@ int can_build_over( struct mapdef* map, object* tmp, short x, short y)
 	            if ( ob->type != BOOK ) {
 		        return 0; } 
                     break;
-                default:
+		case BUTTON:
+	        case DETECTOR:
+                case PEDESTAL:
+                case CF_HANDLE:
+		    /* Allow buttons and levers to be built under gates */
+	            if ( ob->type != GATE && ob->type != DOOR ) {
+		        return 0; } 
+                    break;
+		default:
                     return 0;
                 }
             }
@@ -123,13 +127,13 @@ int find_unused_connected_value( struct mapdef* map )
  * If found, returns the connection value associated
  * else searches a new connection value, and adds the force to the player.
  */
-int find_or_create_connection_for_map( object* pl, short x, short y )
+int find_or_create_connection_for_map( object* pl, short x, short y, object* rune )
     {
-    object* rune;
     object* force;
     int connected;
 
-    rune = get_connection_rune( pl, x, y );
+    if ( !rune )
+        rune = get_connection_rune( pl, x, y );
 
     if ( !rune )
         {
@@ -171,7 +175,7 @@ int find_or_create_connection_for_map( object* pl, short x, short y )
 /**
  * Returns the marking rune on the square, for purposes of building connections
  */
-static object* get_connection_rune( object* pl, short x, short y )
+object* get_connection_rune( object* pl, short x, short y )
     {
     object* rune;
     
@@ -184,7 +188,7 @@ static object* get_connection_rune( object* pl, short x, short y )
 /**
  * Returns the book/scroll on the current square, for purposes of building
  */
-static object* get_msg_book( object* pl, short x, short y )
+object* get_msg_book( object* pl, short x, short y )
     {
     object* book;
     
@@ -540,6 +544,7 @@ void apply_builder_item( object* pl, object* item, short x, short y )
     struct archt* arch;
     int insert_flag;
     object* floor;
+    object* con_rune;
     int connected;
 
     /* Find floor */
@@ -594,19 +599,19 @@ void apply_builder_item( object* pl, object* item, short x, short y )
 	case MAGIC_EAR:
 	case SIGN:
 	    /* Signs don't need a connection, but but magic mouths do. */
-	    if (get_connection_rune( pl, x, y ) && (tmp->type != SIGN || 
-	    !strcmp( tmp->arch->name, "magic_mouth" )))
-	        {
-                connected = find_or_create_connection_for_map( pl, x, y );
-                if ( connected == -1 )
-                    {
-                    /* Player already informed of failure by the previous function */
-                    free_object( tmp );
-                    return;
-                    }
-                /* Remove marking rune */
-                remove_marking_runes( pl->map, x, y );
-		}
+	    if (tmp->type == SIGN && strcmp( tmp->arch->name, "magic_mouth" ))
+	        break;
+	    con_rune = get_connection_rune( pl, x, y );
+	    connected = find_or_create_connection_for_map( pl, x, y, con_rune );
+            if ( connected == -1 )
+                {
+                /* Player already informed of failure by the previous function */
+                free_object( tmp );
+                return;
+                }
+            /* Remove marking rune */
+            remove_ob( con_rune );
+            free_object( con_rune );
         }
 	
     /* For magic mouths/ears, and signs, take the msg from a book of scroll */	
@@ -819,10 +824,11 @@ void apply_map_builder( object* pl, int dir )
  * For objects already invisible (i.e. magic mouths & ears), also make it
  * it inherit the face and the name with "talking " prepended.
  */
-static int adjust_sign_msg( object* pl, short x, short y, object* tmp )
+int adjust_sign_msg( object* pl, short x, short y, object* tmp )
     {
     object* book;
     char buf[MAX_BUF];
+    char buf2[MAX_BUF];
     int namelen;
 
     book = get_msg_book( pl, x, y );
@@ -846,6 +852,14 @@ static int adjust_sign_msg( object* pl, short x, short y, object* tmp )
 	if ( tmp->name )
 	    free_string( tmp->name );
 	tmp->name = add_string( buf );
+	
+	if(book->name_pl != NULL)
+	    {
+	    snprintf(buf2, sizeof(buf2), "talking %s", book->name_pl);
+	    if ( tmp->name_pl )
+                free_string( tmp->name_pl );
+            tmp->name_pl = add_string( buf2 );
+	    }
 	
 	tmp->face = book->face;
 	tmp->invisible = 0;

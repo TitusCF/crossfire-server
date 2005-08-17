@@ -70,9 +70,12 @@ int is_aimed_missile(object *op);
 /* ban.c */
 int checkbanned(const char *login, const char *host);
 /* build_map.c */
+object* get_connection_rune( object* pl, short x, short y );
+object* get_msg_book( object* pl, short x, short y );
+int adjust_sign_msg( object* pl, short x, short y, object* tmp );
 void remove_marking_runes(struct mapdef *map, short x, short y);
 int find_unused_connected_value(struct mapdef *map);
-int find_or_create_connection_for_map(object *pl, short x, short y);
+int find_or_create_connection_for_map(object* pl, short x, short y, object* rune);
 object *get_wall(struct mapdef *map, int x, int y);
 void fix_walls(struct mapdef *map, int x, int y);
 void apply_builder_floor(object *pl, object *material, short x, short y);
