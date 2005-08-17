@@ -339,10 +339,10 @@ void expand_lighted_sight(object *op)
      * value) than to recalculate them down below.
      */
     for (x=(op->x - op->contr->socket.mapx/2 - MAX_LIGHT_RADII), basex=-MAX_LIGHT_RADII;
-      x < (op->x + op->contr->socket.mapx/2 + MAX_LIGHT_RADII); x++, basex++) {
+      x <= (op->x + op->contr->socket.mapx/2 + MAX_LIGHT_RADII); x++, basex++) {
 
 	for (y=(op->y - op->contr->socket.mapy/2 - MAX_LIGHT_RADII), basey=-MAX_LIGHT_RADII;
-	  y < (op->y + op->contr->socket.mapy/2 + MAX_LIGHT_RADII); y++, basey++) {
+	  y <= (op->y + op->contr->socket.mapy/2 + MAX_LIGHT_RADII); y++, basey++) {
 	    m = op->map;
 	    nx = x;
 	    ny = y;
@@ -360,9 +360,9 @@ void expand_lighted_sight(object *op)
 		fprintf(stderr,"expand_lighted_sight: Found light at x=%d, y=%d, basex=%d, basey=%d\n", 
 			x, y, basex, basey);
 #endif
-		for (ax=basex - light; ax<basex+light; ax++) {
+		for (ax=basex - light; ax<=basex+light; ax++) {
 		    if (ax<0 || ax>=op->contr->socket.mapx) continue;
-		    for (ay=basey - light; ay<basey+light; ay++) {
+		    for (ay=basey - light; ay<=basey+light; ay++) {
 			if (ay<0 || ay>=op->contr->socket.mapy) continue;
 
 			/* If the space is fully blocked, do nothing.  Otherwise, we

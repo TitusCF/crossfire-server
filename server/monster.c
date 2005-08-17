@@ -1899,8 +1899,8 @@ int stand_in_light( object *op) {
 	/* Check the spaces with the max light radius to see if any of them
 	 * have lights, and if any of them light the player enough, then return 1.
 	 */
-	for (x = op->x - MAX_LIGHT_RADII; x< op->x + MAX_LIGHT_RADII; x++) {
-	    for (y = op->y - MAX_LIGHT_RADII; y< op->y + MAX_LIGHT_RADII; y++) {
+	for (x = op->x - MAX_LIGHT_RADII; x <= op->x + MAX_LIGHT_RADII; x++) {
+	    for (y = op->y - MAX_LIGHT_RADII; y <= op->y + MAX_LIGHT_RADII; y++) {
 		m = op->map;
 		nx = x;
 		ny = y;
