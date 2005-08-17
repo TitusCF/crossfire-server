@@ -343,7 +343,7 @@ void ToggleExtendedText (char *buf, int len, NewSocket *ns){
           command[nextinfo-info]='\0';
           /* 2. Interpret info*/
           i = sscanf(command,"%d",&flag);
-          if ( (i==1) && (i>0) && (i<=MSG_TYPE_LAST))
+          if ( (i==1) && (flag>0) && (flag<=MSG_TYPE_LAST))
               ns->supported_readables|=(1<<flag);
           /*3. Next info*/
      }

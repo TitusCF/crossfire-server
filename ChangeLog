@@ -17,6 +17,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+socket/request.c: Fix range checking of toggleextendedtext parameters.
+Andreas Kirschbaum 2005-08-17
+
 The following fix code that basically does "for(x = pos-5; x < pos+5; x++)".
 This is not correct because it includes "pos-5" but not "pos+5".
 common/los.c: Make lighted distance equal in all directions.
