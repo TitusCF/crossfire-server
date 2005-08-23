@@ -52,6 +52,23 @@ typedef struct _event
     struct _event *next;
 } event;
 
+/*
+ * Each object (this also means archetypes!) could have a few of these
+ * "dangling" from it; this could also end up containing 'parse errors'.
+ *
+ * key and value are shared-strings.
+ *
+ * Please use get_ob_key_value(), set_ob_key_value() from object.c rather than
+ * accessing the list directly.
+ * Exception is if you want to walk this list for some reason.
+ */
+typedef struct _key_value {
+    const char * key;
+    const char * value;
+    struct _key_value * next;
+} key_value;
+
+
 /* Definition for WILL_APPLY values.  Replaces having harcoded values
  * sprinkled in the code.  Note that some of these also replace fields
  * that were in the can_apply area.  What is the point of having both
@@ -68,6 +85,10 @@ typedef struct _event
  * copy_object copies everything over beyond 'name' using memcpy.
  * Thus, values that need to be copied need to be located beyond that
  * point.
+ *
+ * However, if you're keeping a pointer of some sort, you probably
+ * don't just want it copied, so you'll need to add to common/object.c,
+ * e.g. copy-object
  *
  * I've tried to clean up this structure a bit (in terms of formatting)
  * by making it more consistent.  I've also tried to locate some of the fields
@@ -218,6 +239,7 @@ typedef struct obj {
     event   *events;
 
     const char  *custom_name; /* Custom name assigned by player */
+    key_value *key_values; /* Fields not explictly known by the loader. */
 
 } object;
 

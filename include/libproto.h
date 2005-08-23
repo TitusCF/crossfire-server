@@ -248,6 +248,10 @@ extern object *ObjectCreateClone(object *asrc);
 extern int was_destroyed(object *op, tag_t old_tag);
 extern object *load_object_str(char *obstr);
 extern object *find_obj_by_type_subtype(object *who, int type, int subtype);
+extern key_value *get_ob_key_link(object *ob, const char *key);
+extern const char *get_ob_key_value(object *op, const char *const key);
+extern int set_ob_key_value_s(object *op, const char *canonical_key, const char *value, int add_key);
+extern int set_ob_key_value(object *op, const char *key, const char *value, int add_key);
 /* porting.c */
 extern char *tempnam_local(const char *dir, const char *pfx);
 extern void remove_directory(const char *path);
@@ -268,14 +272,14 @@ extern void free_player(player *pl);
 extern int atnr_is_dragon_enabled(int attacknr);
 extern int is_dragon_pl(object *op);
 /* quest.c */
-extern int quest_is_same_quest( const char* slaying1, const char* slaying2 );
-extern int quest_marker_compatible( object* marker, object* player );
-extern void quest_clear_markers( object* marker, object* player );
-extern const char* quest_message_check( const char* message, object* pl );
-extern const char* quest_get_name( object* marker );
-extern int quest_is_quest_marker( object* marker );
-extern int quest_is_start( const char* slaying );
-extern int quest_is_end( const char* slaying );
+extern int quest_is_same_quest(const char *slaying1, const char *slaying2);
+extern int quest_is_quest_marker(object *marker);
+extern int quest_is_start(const char *slaying);
+extern int quest_is_end(const char *slaying);
+extern int quest_marker_compatible(object *marker, object *pl);
+extern void quest_clear_markers(object *marker, object *pl);
+extern const char *quest_message_check(const char *message, object *pl);
+extern const char *quest_get_name(object *marker);
 /* re-cmp.c */
 extern const char *re_cmp(const char *str, const char *regexp);
 /* readable.c */
@@ -296,7 +300,7 @@ extern const char *god_info_msg(int level, int booksize);
 extern void tailor_readable_ob(object *book, int msg_type);
 extern void free_all_readable(void);
 extern void write_book_archive(void);
-extern readable_message_type* get_readable_message_type(object* readable);
+extern readable_message_type *get_readable_message_type(object *readable);
 /* recipe.c */
 extern recipelist *get_formulalist(int i);
 extern void init_formulae(void);
@@ -383,8 +387,8 @@ extern materialtype_t *name_to_material(const char *name);
 extern void transmute_materialname(object *op, object *change);
 extern void set_materialname(object *op, int difficulty, materialtype_t *nmt);
 extern void strip_media_tag(char *message);
-extern const char* strrstr(const char* haystack, const char* needle);
-extern void strip_endline(char* buf);
+extern const char *strrstr(const char *haystack, const char *needle);
+extern void strip_endline(char *buf);
 /* loader.c */
 extern int lex_load(object *op, int map_flags);
 extern void yyrestart(FILE *input_file);

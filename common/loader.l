@@ -467,6 +467,71 @@ static void check_loaded_object(object *op) {
 
 }
 
+/* This extracts the key/value from the yytext field -
+ * calls set_ob_key_value() to actually set the value.
+ * Function basically has to find spaces, strip out extra,
+ * etc.  strchr doesn't work as good because could also
+ * be tabs.
+ */
+static void add_key_value(object * op) {
+    char * key = NULL;
+    char * value = NULL;
+    char * cp;
+    char * end;
+    
+    /* First, skip over leading whitespace. */
+    for (cp = yytext; isspace(*cp); cp++) { ; }
+    
+    key = cp;
+
+    /* Now look for the end of the key/field name. */
+    for (; !isspace(*cp); cp++) {
+        if (*cp == '\0') {
+            /* Oops, ran out of string! Set the key with an empty value. */
+            set_ob_key_value(op, key, NULL, TRUE);
+            return;
+        }
+    }
+    
+    if (*cp == '\0') {
+        set_ob_key_value(op, key, NULL, TRUE);
+        return;    
+    }
+    
+    /* Chop off the key, and start at the next character. */
+    *cp = '\0';
+    cp++;
+    if (*cp == '\0') {
+        /* Was followed by one space? */
+        set_ob_key_value(op, key, NULL, TRUE);
+        return;    
+    }
+    
+    /* Now looking for the value. Skip over whitespace. */
+    for (; isspace(*cp); cp++) {
+        if (*cp == '\0') {
+            /* Guess not. */
+            set_ob_key_value(op, key, NULL, TRUE);
+            return;
+        }
+    }
+    
+    value = cp;
+    
+    /* Got last character before null and strip
+     * off tailing whitespace
+     */
+    for (end = value + (strlen(cp)-1); isspace(*end); end--) {
+	if (end == value) {
+	    /* *blink blink* Still no value? */
+	    set_ob_key_value(op, key, NULL, TRUE);
+	    return;
+	}
+	*end='\0';
+    }
+    set_ob_key_value(op, key, value, TRUE);    
+}
+
 
 %}
 
@@ -1175,7 +1240,7 @@ A	.+
 
 <<EOF>>			{/* If we got an error, return the error.  Otherwise, return that we got EOF */
 			    if (lex_error!=0) return lex_error; else return LL_EOF;}
-.*			{ yyerror( "Unrecognized string"); lex_error= -1; }
+.*			{ add_key_value(op); }
 %%
 
 
@@ -1462,9 +1527,35 @@ char *get_ob_diff(object *op,object *op2) {/* I plan to optimize this heavily */
 #endif
   event *etmp;
   event *etmp2;
+  key_value * my_field;
+  key_value * arch_field;
 
   buf[0]='\0';
   fastbuf=PREPARE_FASTCAT(buf);
+
+  /* This saves the key/value lists.  We do it first so that any
+   * keys that match field names will be overwritten by the loader.
+   */
+  for (my_field = op->key_values; my_field != NULL; my_field = my_field->next) {
+      /* Find the field in the opposing member. */
+      arch_field = get_ob_key_link(op2, my_field->key);
+      
+      /* If there's no partnering field, or it's got a different value, save our field. */
+      if (arch_field == NULL || my_field->value != arch_field->value) {
+          FAST_STRCAT(fastbuf, my_field->key);
+          FAST_STRNCAT(fastbuf, " ", 1);
+	  /* If this is null, then saving it as a space should
+	   * cause it to be null again.
+	   */
+	  if (my_field->value) FAST_STRCAT(fastbuf, my_field->value);
+          FAST_STRNCAT(fastbuf, "\n", eol_size);
+      }
+  }
+  /* We don't need to worry about the arch's extra fields - they
+   * will get taken care of the copy_object function.
+   */
+
+
   if(op->name && op->name!=op2->name) {
     ADD_STRINGLINE_ENTRY(fastbuf,"name ",op->name,5);
   }

@@ -68,11 +68,50 @@ int freedir[SIZEOFFREE]= {
   0,1,2,3,4,5,6,7,8,1,2,2,2,3,4,4,4,5,6,6,6,7,8,8,8,
   1,2,2,2,2,2,3,4,4,4,4,4,5,6,6,6,6,6,7,8,8,8,8,8};
 
-/* Moved this out of define.h and in here, since this is the only file
- * it is used in.  Also, make it an inline function for cleaner
- * design.
- *
- * Function examines the 2 objects given to it, and returns true if
+
+/* Returns TRUE if every key_values in wants has a partner with the same value in has. */
+static int compare_ob_value_lists_one(object * wants, object * has) {
+    key_value * wants_field;
+    
+    /* n-squared behaviour (see get_ob_key_link()), but I'm hoping both
+     * objects with lists are rare, and lists stay short. If not, use a
+     * different structure or at least keep the lists sorted... 
+     */
+    
+    /* For each field in wants, */
+    for (wants_field = wants->key_values; wants_field != NULL; wants_field = wants_field->next) {
+        key_value * has_field;
+        
+        /* Look for a field in has with the same key. */
+        has_field = get_ob_key_link(has, wants_field->key);
+        
+        if (has_field == NULL) {
+            /* No field with that name. */
+            return FALSE;
+        }
+        
+        /* Found the matching field. */
+        if (has_field->value != wants_field->value) {
+            /* Values don't match, so this half of the comparison is false. */
+            return FALSE;
+        } 
+        
+        /* If we get here, we found a match. Now for the next field in wants. */
+    }
+    
+    /* If we get here, every field in wants has a matching field in has. */
+    return TRUE;
+}
+
+/* Returns TRUE if ob1 has the same key_values as ob2. */
+static int compare_ob_value_lists(object * ob1, object * ob2) {
+    /* However, there may be fields in has which aren't partnered in wants,
+     * so we need to run the comparison *twice*. :(
+     */
+    return compare_ob_value_lists_one(ob1, ob2) && compare_ob_value_lists_one(ob2, ob1);
+}
+
+/* Function examines the 2 objects given to it, and returns true if
  * they can be merged together.
  *
  * Note that this function appears a lot longer than the macro it
@@ -160,6 +199,16 @@ int CAN_MERGE(object *ob1, object *ob2) {
      */
     if (QUERY_FLAG(ob1, FLAG_APPLIED) || QUERY_FLAG(ob2, FLAG_APPLIED))
 	return 0;
+
+    if (ob1->key_values != NULL || ob2->key_values != NULL) {
+        /* At least one of these has key_values. */
+        if ((ob1->key_values == NULL) != (ob2->key_values == NULL)) {
+            /* One has fields, but the other one doesn't. */
+            return 0;
+        } else {
+            return compare_ob_value_lists(ob1, ob2);
+        }
+    }
 
     switch (ob1->type) {
 	case SCROLL:
@@ -481,6 +530,30 @@ void reset_object(object *op) {
     op->events=NULL;
     clear_object(op);
 }
+
+/* Zero the key_values on op, decrementing the shared-string
+ * refcounts and freeing the links. 
+ */
+static void free_key_values(object * op) {
+    key_value * i;
+    key_value * next = NULL;
+    
+    if (op->key_values == NULL) return;
+    
+    for (i = op->key_values; i != NULL; i = next) {
+        /* Store next *first*. */
+        next = i->next; 
+        
+	if (i->key) FREE_AND_CLEAR_STR(i->key);
+	if (i->value) FREE_AND_CLEAR_STR(i->value);
+        i->next = NULL;
+        free(i);
+    }
+    
+    op->key_values = NULL;
+}
+
+
 /*
  * clear_object() frees everything allocated by an object, and also
  * clears all variables and flags to default settings.
@@ -507,6 +580,7 @@ void clear_object(object *op) {
     }
     op->events = NULL;
 
+    free_key_values(op);
 
     /* the memset will clear all these values for us, but we need
      * to reduce the refcount on them.
@@ -566,6 +640,8 @@ void copy_object(object *op2, object *op) {
     int is_freed=QUERY_FLAG(op,FLAG_FREED),is_removed=QUERY_FLAG(op,FLAG_REMOVED);
     event *evt, *evt2, *evt_new;
 
+    /* Decrement the refcounts, but don't bother zeroing the fields;
+    they'll be overwritten by memcpy. */
     if(op->name!=NULL)			free_string(op->name);
     if(op->name_pl!=NULL)		free_string(op->name_pl);
     if(op->title!=NULL)			free_string(op->title);
@@ -589,6 +665,9 @@ void copy_object(object *op2, object *op) {
     }
     op->events = NULL;
 
+    free_key_values(op);
+
+    /* op is the destination, op2 is the source. */
     (void) memcpy((void *)((char *) op +offsetof(object,name)),
                 (void *)((char *) op2+offsetof(object,name)),
                 sizeof(object)-offsetof(object, name));
@@ -629,6 +708,33 @@ void copy_object(object *op2, object *op) {
 	    op->events = evt_new;
 
 	evt2 = evt_new;
+    }
+    /* Copy over key_values, if any. */
+    if (op2->key_values != NULL) {
+	key_value * tail = NULL;
+	key_value * i;
+
+	op->key_values = NULL;
+
+	for (i = op2->key_values; i != NULL; i = i->next) {
+	    key_value * new_link = malloc(sizeof(key_value));
+
+	    new_link->next = NULL;
+	    new_link->key = add_refcount(i->key);
+	    if (i->value) 
+		new_link->value = add_refcount(i->value);
+	    else
+		new_link->value = NULL;
+
+	    /* Try and be clever here, too. */
+	    if (op->key_values == NULL) {
+		op->key_values = new_link;
+		tail = new_link;
+	    } else {
+		tail->next = new_link;
+		tail = new_link;
+	    }
+	}
     }
 	
     update_ob_speed(op);
@@ -998,6 +1104,10 @@ void free_object(object *ob) {
     if(ob->lore!=NULL)	    FREE_AND_CLEAR_STR(ob->lore);
     if(ob->msg!=NULL)	    FREE_AND_CLEAR_STR(ob->msg);
     if(ob->materialname!=NULL) FREE_AND_CLEAR_STR(ob->materialname);
+
+    
+    /* Why aren't events freed? */
+    free_key_values(ob);
 
 #if 0 /* MEMORY_DEBUG*/
     /* This is a nice idea.  Unfortunately, a lot of the code in crossfire
@@ -2415,3 +2525,155 @@ object *find_obj_by_type_subtype(object *who, int type, int subtype)
     return NULL;
 }
 
+/* If ob has a field named key, return the link from the list,
+ * otherwise return NULL. 
+ *
+ * key must be a passed in shared string - otherwise, this won't
+ * do the desired thing.
+ */
+key_value * get_ob_key_link(object * ob, const char * key) {
+    key_value * link;
+    
+    for (link = ob->key_values; link != NULL; link = link->next) {
+        if (link->key == key) {
+            return link;
+        }
+    }
+    
+    return NULL;
+}  
+
+/* 
+ * Returns the value of op has an extra_field for key, or NULL.
+ *
+ * The argument doesn't need to be a shared string.
+ *
+ * The returned string is shared.
+ */
+const char * get_ob_key_value(object * op, const char * const key) {
+    key_value * link;
+    const char * canonical_key;
+    
+    canonical_key = find_string(key);
+    
+    if (canonical_key == NULL) {
+        /* 1. There being a field named key on any object
+         *    implies there'd be a shared string to find.
+         * 2. Since there isn't, no object has this field.
+         * 3. Therefore, *this* object doesn't have this field.
+         */
+        return NULL;
+    }
+
+    /* This is copied from get_ob_key_link() above -
+     * only 4 lines, and saves the function call overhead.
+     */
+    for (link = op->key_values; link != NULL; link = link->next) {
+        if (link->key == key) {
+            return link->value;
+        }
+    }
+    return NULL;
+}
+
+
+/*
+ * Updates the canonical_key in op to value.
+ *
+ * canonical_key is a shared string (value doesn't have to be).
+ *
+ * Unless add_key is TRUE, it won't add fields, only change the value of existing
+ * keys.
+ *
+ * Returns TRUE on success.
+ */
+int set_ob_key_value_s(object * op, const char * canonical_key, const char * value, int add_key) {
+    key_value * field = NULL, *last=NULL;
+    
+    LOG(llevDebug, "set_ob_value_s: '%s' '%s' %d\n", canonical_key, value, add_key);
+
+    for (field=op->key_values; field != NULL; field=field->next) {
+	if (field->key != canonical_key) {
+	    last = field;
+	    continue;
+	}
+    
+	if (field->value) FREE_AND_CLEAR_STR(field->value);
+	if (value) 
+	    field->value = add_string(value);
+	else {
+	    /* Basically, if the archetype has this key set,
+	     * we need to store the null value so when we save
+	     * it, we save the empty value so that when we load,
+	     * we get this value back again.
+	     */
+	    if (get_ob_key_link(&op->arch->clone, canonical_key))
+		field->value = NULL;
+	    else {
+		/* Delete this link */
+		if (field->key) FREE_AND_CLEAR_STR(field->key);
+		if (field->value) FREE_AND_CLEAR_STR(field->value);
+		if (last) last->next = field->next;
+		else op->key_values = field->next;
+		free(field);
+	    }
+	}
+        return TRUE;
+    }
+    /* IF we get here, key doesn't exist */
+
+    /* No field, we'll have to add it. */
+    
+    if (!add_key) {
+        return FALSE;
+    }
+    /* There isn't any good reason to store a null
+     * value in the key/value list.  If the archetype has
+     * this key, then we should also have it, so shouldn't
+     * be here.  If user wants to store empty strings,
+     * should pass in ""
+     */
+    if (value == NULL) return TRUE;
+    
+    field = malloc(sizeof(key_value));
+    
+    field->key = add_refcount(canonical_key);
+    field->value = add_string(value);
+    /* Usual prepend-addition. */
+    field->next = op->key_values;
+    op->key_values = field;
+    
+    return TRUE;
+}
+
+/*
+ * Updates the key in op to value.
+ *
+ * Unless add_key is TRUE, it won't add fields, only change the value of existing
+ * keys.
+ *
+ * Returns TRUE on success.
+ */
+int set_ob_key_value(object * op, const char * key, const char * value, int add_key) {
+    const char * canonical_key = NULL;
+    int floating_ref = FALSE;
+    int ret;
+    
+    /* HACK This mess is to make sure set_ob_value() passes a shared string
+     * to get_ob_key_link(), without leaving a leaked refcount. 
+     */
+    
+    canonical_key = find_string(key);
+    if (canonical_key == NULL) {
+        canonical_key = add_string(key);
+        floating_ref = TRUE;
+    }
+    
+    ret = set_ob_key_value_s(op, canonical_key, value, add_key);
+    
+    if (floating_ref) {
+        free_string(canonical_key);
+    }
+    
+    return ret;
+}
