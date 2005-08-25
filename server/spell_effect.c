@@ -374,7 +374,7 @@ int cast_polymorph(object *op, object *caster, object *spell_ob, int dir) {
 	m = op->map;
 	mflags = get_map_flags(m, &m, x, y, &x, &y);
 
-	if (mflags & (P_WALL | P_NO_MAGIC))
+	if (mflags & (P_WALL | P_NO_MAGIC | P_OUT_OF_MAP))
 	    break;
 
 	/* Get the top most object */

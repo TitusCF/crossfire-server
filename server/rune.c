@@ -314,6 +314,7 @@ int dispel_rune(object *op,object *caster, object *spell, object *skill, int dir
      */
     if (mflags & P_OUT_OF_MAP) {
 	new_draw_info(NDI_UNIQUE, 0,op,"There's nothing there!");
+	return 0;
     }
 
     for(tmp=get_map_ob(m,x, y); tmp!=NULL;  tmp=tmp->above)  {

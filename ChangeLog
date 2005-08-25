@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/rune.c: Fix crash if casting disarm out of map bounds.
+server/spell_effect.c: Fix crash if casting polymorph out of map bounds.
+Andreas Kirschbaum 2005-08-25
+
 Apply patch 1200555 - addition of key/value lists which allows arbitrary
 storing of data in objects - see doc/Developers/key-value for more
 information
