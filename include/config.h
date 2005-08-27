@@ -421,7 +421,7 @@
  * will override the time value set in the map, if that time is longer than
  * MAP_MAXRESET.  This value is in seconds.  If you are low on space on the
  * TMPDIR device, set this value to somethign small.  The default
- * value in the map object is 7200 (2 hours)
+ * value in the map object is MAP_DEFAULTRESET (given in seconds.)
  * I personally like 1 hour myself, for solo play.  It is long enough that
  * maps won't be resetting as a solve a quest, but short enough that some
  * maps (like shops and inns) will be reset during the time I play.
@@ -429,7 +429,10 @@
  * in the map archetype.
  */
 
+/* Maximum time to reset. */
 #define MAP_MAXRESET	7200
+/* Default time to reset. */
+#define MAP_DEFAULTRESET       7200
 
 /*
  * MAX_OBJECTS is no hard limit.  If this limit is exceeded, crossfire

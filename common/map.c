@@ -585,11 +585,10 @@ mapstruct *get_linked_map() {
      */
     MAP_WIDTH(map)=16;
     MAP_HEIGHT(map)=16;
-    MAP_RESET_TIMEOUT(map)=7200;
+    MAP_RESET_TIMEOUT(map)=0;
     MAP_TIMEOUT(map)=300;
-    /* Gah - these should really have a zero default! */
-    MAP_ENTER_X(map)=1;
-    MAP_ENTER_Y(map)=1;
+    MAP_ENTER_X(map)=0;
+    MAP_ENTER_Y(map)=0;
 	/*set part to -1 indicating conversion to weather map not yet done*/
 	MAP_WORLDPARTX(map)=-1;
 	MAP_WORLDPARTY(map)=-1;
@@ -1686,10 +1685,14 @@ void update_position (mapstruct *m, int x, int y) {
 
 
 void set_map_reset_time(mapstruct *map) {
-    if (MAP_RESET_TIMEOUT(map)>MAP_MAXRESET)
-        MAP_WHEN_RESET(map) = seconds() + MAP_MAXRESET;
-    else
-    MAP_WHEN_RESET(map) = seconds() + MAP_RESET_TIMEOUT (map);
+    int timeout;
+
+    timeout = MAP_RESET_TIMEOUT(map);
+    if (timeout <= 0)
+        timeout = MAP_DEFAULTRESET;
+    if (timeout >= MAP_MAXRESET)
+        timeout = MAP_MAXRESET;
+    MAP_WHEN_RESET(map) = seconds()+timeout;
 }
 
 /* this updates the orig_map->tile_map[tile_num] value after loading

@@ -31,7 +31,8 @@ name in the map structure.
 'reset_timeout', was 'weight': stores the number of seconds that need
    to elapse before this map will be reset.  Ie, if 1800, it means this
    map expires after 30 minutes.  This value is not modified once loaded -
-   instead reset_time is used to track this.
+   instead reset_time is used to track this.  The value 0 means to use
+   a default timeout (MAP_DEFAULTRESET).
 
 'swap_time', was 'value': This controls how many ticks must elapse
     after the map has not been used before it gets swapped out.
