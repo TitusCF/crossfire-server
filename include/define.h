@@ -882,7 +882,7 @@ enum apply_flag {
  *
  * 0.93.3: It looks like linux has random (previously, it was set below
  * to use rand).  Perhaps old version of linux lack rand?  IF you run into
- * problems, add || defined(linux) the #if immediately below.
+ * problems, add || defined(__linux__) the #if immediately below.
  *
  * 0.94.2 - you probably shouldn't need to change any of the rand stuff
  * here.

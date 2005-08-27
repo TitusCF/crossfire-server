@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+socket/init.c: Make setsockopt(REUSEADDR) work if using gcc in Ansi C mode on
+   Linux.
+Andreas Kirschbaum 2005-08-28
+
 common/map.c: Change default values for reset_timeout, enter_x, and enter_y
    map headers to zero. In set_map_reset_time() use MAP_DEFAULTRESET if
    reset_timeout is zero. This change prevents crossedit from adding these
