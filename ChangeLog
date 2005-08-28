@@ -17,6 +17,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Add patch #1274385 by Kevin Rudat to make crossedit draw floors on tiles with
+items.
+crossedit/CrEdit.c: Add call to update_position() in UpdatePosition().
+Andreas Kirschbaum 2005-08-28
+
 Add patch #1271417 by Kevin Rudat to stop crossedit losing regions. Patch is
 slightly modified to properly handle all map fields.
 crossedit/Edit.c: Copy all map fields in MapMoveScrollResize(). Do not add a

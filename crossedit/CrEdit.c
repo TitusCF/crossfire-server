@@ -401,6 +401,11 @@ static void UpdatePosition (Widget w, int x, int y,Boolean inv)
 	}
     } else { /* Normal map drawing routine */
         New_Face *f;
+
+        if (GET_MAP_FLAGS(self->crEdit.map, x, y) & P_NEED_UPDATE) {
+            update_position(self->crEdit.map, x, y);
+        }
+
         if (displaymode==Dm_Png) {
           f = GET_MAP_FACE(self->crEdit.map, x, y,2);
           if (f) FaceDraw (w, self->crEdit.gc, f,
