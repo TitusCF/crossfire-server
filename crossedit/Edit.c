@@ -75,19 +75,62 @@ mapstruct *MapMoveScrollResize(mapstruct *source,
     object *obj,*prt; /* PaRT of obj */
     int x,y,sx = MAP_WIDTH(source), sy = MAP_HEIGHT(source);
     int linked = 0, link=0;
+    int i;
 
     if (!width) width = sx;
     if (!height) height = sy;
     target = get_empty_map (width, height);
 
-    strncpy (target->path, source->path, sizeof(target->path)-1);
-    target->path[sizeof(target->path)-1] = '\0';
-
-    MAP_WIDTH(target) = width;
-    MAP_HEIGHT(target) = height;  
-
     if(dx < 0) dx += MAP_WIDTH(target);
     if(dy < 0) dy += MAP_HEIGHT(target);
+
+    /*
+     * Copy the map-headers from source to target.
+     *
+     * The name, msg and tiling paths are allocated for
+     * each map (see map.c::load_map_header()). Copy
+     * the pointer, then NULL the pointer in source so
+     * the strings aren't freed.
+     *
+     * Statements below in the order the fields appear
+     * in map.h.
+     */
+
+#define MOVE_AND_CLEAR(to, from) to = from; from = NULL;
+    strncpy (target->path, source->path, HUGE_BUF - 1);
+    target->path[HUGE_BUF - 1] = '\0';    
+    MOVE_AND_CLEAR(target->tmpname, source->tmpname);    
+    MOVE_AND_CLEAR(target->name, source->name);    
+    target->region = source->region;
+    MAP_WHEN_RESET(target) = MAP_WHEN_RESET(source);
+    MAP_RESET_TIMEOUT(target) = MAP_RESET_TIMEOUT(source);
+    target->fixed_resettime = source->fixed_resettime;
+    target->unique = source->unique;
+    MAP_NOSMOOTH(target) = MAP_NOSMOOTH(source);
+    MAP_TIMEOUT(target) = MAP_TIMEOUT(source);
+    MAP_SWAP_TIME(target) = MAP_SWAP_TIME(source);
+    /* fields players/in_memory not copied */
+    target->compressed = source->compressed;
+    MAP_DIFFICULTY(target) = MAP_DIFFICULTY(source);    
+    MAP_DARKNESS(target) = MAP_DARKNESS(source);
+    MAP_WIDTH(target) = width;
+    MAP_HEIGHT(target) = height;  
+    MAP_ENTER_X(target) = (MAP_ENTER_X(source) + dx) % width;
+    MAP_ENTER_Y(target) = (MAP_ENTER_Y(source) + dy) % height;
+    target->outdoor = MAP_OUTDOORS(source);     
+    MAP_TEMP(target) = MAP_TEMP(source);
+    MAP_PRESSURE(target) = MAP_PRESSURE(source);
+    MAP_HUMID(target) = MAP_HUMID(source);
+    MAP_WINDSPEED(target) = MAP_WINDSPEED(source);
+    MAP_WINDDIRECTION(target) = MAP_WINDDIRECTION(source);
+    MAP_SKYCOND(target) = MAP_SKYCOND(source);
+    /* fields wpartx/wparty not copied */
+    MOVE_AND_CLEAR(target->msg, source->msg)
+    /* Tiling paths. */
+    for (i = 0; i < 4; i++) { 
+        MOVE_AND_CLEAR(target->tile_path[i], source->tile_path[i]);
+    }    
+#undef MOVE_AND_CLEAR    
 
     for(y=0; y < sy && y < MAP_HEIGHT(target); y++)
 	for(x=0; x < sx && x < MAP_WIDTH(target); x++)
@@ -1370,20 +1413,23 @@ Edit EditCreate(App app,EditType type,String path)
 	    self->emap = get_empty_map(MapMinWidth,MapMinHeight);
 	strcpy (self->emap->path, "/ClipBoard");
 
+	if (!self->emap->msg) {
+	    self->emap->msg = MapMessageCreate (app);
+	}
     } else if(path && *path != '\0') {
 	if (!Load(self,path)) return 0;
     } else {
 	self->emap = get_empty_map(16,16);
 	strcpy (self->emap->path, "/Noname");
+
+	if (!self->emap->msg) {
+	    self->emap->msg = MapMessageCreate (app);
+	}
     }
     
     if (!self->emap)
 	return 0;
     
-    if (!self->emap->msg) {
-	self->emap->msg = MapMessageCreate (app);
-    }
-
     /*** creating ***/
     Layout(self,self->app->shell,0);
     EditUnmodified(self);

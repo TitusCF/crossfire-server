@@ -96,6 +96,7 @@ int main (int argc, char **argv, char **env)
     /* crossfire init */
     init_globals();
     init_library ();
+    init_regions();
     init_archetypes ();
     editor = TRUE;
 #if 0

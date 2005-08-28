@@ -17,6 +17,13 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Add patch #1271417 by Kevin Rudat to stop crossedit losing regions. Patch is
+slightly modified to properly handle all map fields.
+crossedit/Edit.c: Copy all map fields in MapMoveScrollResize(). Do not add a
+   msg header to already existing maps.
+crossedit/crossedit.c: Call init_regions() at program initialization.
+Andreas Kirschbaum 2005-08-28
+
 socket/init.c: Make setsockopt(REUSEADDR) work if using gcc in Ansi C mode on
    Linux.
 Andreas Kirschbaum 2005-08-28
