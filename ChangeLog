@@ -17,6 +17,13 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Fix bug #1059537 (Chainmail mutations):
+common/loader.l: Remove code that "fixes" broken item names by removing a
+   leading material name. This effectively renames "mithril chainmails" into
+   "chainmails".
+common/loader.c: Rebuilt.
+Andreas Kirschbaum 2005-08-29
+
 Fix player weapon speed/speed.  There are a few bugs this fixes:
 1) when player hit something, a has_hit field was set to true, to denote
    they hit something and to use weapon speed. However, this was only
