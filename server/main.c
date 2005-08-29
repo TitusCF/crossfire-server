@@ -874,16 +874,21 @@ void process_players2(mapstruct *map)
 	    if (pl->ob->map!=map) continue;
 	}
 
-	if(pl->has_hit) {
-	    float hit_speed = pl->ob->speed/pl->weapon_sp - pl->ob->speed;
+	/* The code that did weapon_sp handling here was out of place -
+	 * this isn't called until after the player has finished there
+	 * actions, and is thus out of place.  All we do here is bounds
+	 * checking.
+	 */
+	if (pl->has_hit) {
+	    if (pl->ob->speed_left > pl->weapon_sp) pl->ob->speed_left = pl->weapon_sp;
 
-	    if (hit_speed<pl->ob->speed) hit_speed = pl->ob->speed;
+	    /* This needs to be here - if the player is running, we need to
+	     * clear this each tick, but new commands are not being received
+	     * so execute_newserver_command() is never called
+	     */
+	    pl->has_hit=0;
 
-	    pl->ob->speed_left+=hit_speed;
-	    /* This could happen if the player still has left over speed */
-	    if (pl->ob->speed_left>hit_speed) pl->ob->speed_left=hit_speed;
-	}
-	else if (pl->ob->speed_left>pl->ob->speed)
+	} else if (pl->ob->speed_left>pl->ob->speed)
 	    pl->ob->speed_left = pl->ob->speed;
     }
 }

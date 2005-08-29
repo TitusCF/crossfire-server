@@ -2100,7 +2100,16 @@ void move_player_attack(object *op, int dir)
 		 ((mon->type!=PLAYER || op->contr->party_number==-1 ||
 		   op->contr->party_number!=mon->contr->party_number))) {
 
-	    op->contr->has_hit = 1; /* The last action was to hit, so use weapon_sp */
+	    /* If the player hasn't hit something this tick, and does
+	     * so, give them speed boost based on weapon speed.  Doing
+	     * it here is better than process_players2, which basically
+	     * incurred a 1 tick offset.
+	     */
+	    if (!op->contr->has_hit) {
+		op->speed_left += op->speed / op->contr->weapon_sp;
+
+		op->contr->has_hit = 1; /* The last action was to hit, so use weapon_sp */
+	    }
 
 	    skill_attack(mon, op, 0, NULL, NULL);
 
@@ -2221,6 +2230,7 @@ int handle_newcs_player(object *op)
     if(op->direction && (op->contr->run_on || op->contr->fire_on)) {
 	/* All move commands take 1 tick, at least for now */
 	op->speed_left--;
+
 	/* Instead of all the stuff below, let move_player take care
 	 * of it.  Also, some of the skill stuff is only put in
 	 * there, as well as the confusion stuff.

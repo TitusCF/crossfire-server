@@ -17,6 +17,22 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Fix player weapon speed/speed.  There are a few bugs this fixes:
+1) when player hit something, a has_hit field was set to true, to denote
+   they hit something and to use weapon speed. However, this was only
+   cleared when player issued a command.  Thus, if you are running 
+   and hit something, you'd continue at weapon_speed pace until you
+   needed to change direction.
+2) Because has_hit was used, this basically put in a 1 tick lag - you'd hit
+   something, but not until objects were processed and speed given would
+   you get your extra speed.  Likewise, after you killed something, you'd
+   get your burst of speed for the next tick also.
+--
+server/main.c: Clear has_hit, change function to only do bounds checking,
+   not actually do weapon_speed adjustments.
+server/player.c:  Give player speed boost when they hit something.
+MSW 2005-08-28
+
 Add patch #1274385 by Kevin Rudat to make crossedit draw floors on tiles with
 items.
 crossedit/CrEdit.c: Add call to update_position() in UpdatePosition().
