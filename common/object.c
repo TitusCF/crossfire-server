@@ -2649,8 +2649,9 @@ int set_ob_key_value_s(object * op, const char * canonical_key, const char * val
 /*
  * Updates the key in op to value.
  *
- * Unless add_key is TRUE, it won't add fields, only change the value of existing
- * keys.
+ * If add_key is FALSE, this will only update existing keys,
+ * and not add new ones.
+ * In general, should be little reason FALSE is ever passed in for add_key
  *
  * Returns TRUE on success.
  */
