@@ -2079,6 +2079,50 @@ int cast_detection(object *op, object *caster, object *spell, object *skill) {
 }
 
 
+/**
+ * Checks if victim has overcharged mana. caster_level is the caster's (skill)
+ * level whos spell did cause the overcharge.
+ */
+static void charge_mana_effect(object *victim, int caster_level)
+{
+    new_draw_info_format(NDI_UNIQUE, 0, victim, "victim=%s caster_level=%d", victim->name, caster_level);
+
+    /* Prevent explosions for objects without mana. Without this check, doors
+     * will explode, too.
+     */
+    if (victim->stats.maxsp <= 0)
+        return;
+
+    new_draw_info(NDI_UNIQUE, 0, victim, "You feel energy course through you.");
+
+    if (victim->stats.sp >= victim->stats.maxsp*2) {
+        object *tmp;
+
+        new_draw_info(NDI_UNIQUE, 0, victim, "Your head explodes!");
+
+        /* Explodes a fireball centered at player */
+        tmp = get_archetype(EXPLODING_FIREBALL);
+        tmp->dam_modifier = random_roll(1, caster_level, victim, PREFER_LOW)/5+1;
+        tmp->stats.maxhp = random_roll(1, caster_level, victim, PREFER_LOW)/10+2;
+        tmp->x = victim->x;
+        tmp->y = victim->y;
+        insert_ob_in_map(tmp, victim->map, NULL, 0);
+        victim->stats.sp = 2*victim->stats.maxsp;
+    }
+    else if (victim->stats.sp >= victim->stats.maxsp*1.88) {
+        new_draw_info(NDI_UNIQUE, NDI_ORANGE, victim, "You feel like your head is going to explode.");
+    }
+    else if (victim->stats.sp >= victim->stats.maxsp*1.66) {
+        new_draw_info(NDI_UNIQUE, 0, victim, "You get a splitting headache!");
+    }
+    else if (victim->stats.sp >= victim->stats.maxsp*1.5) {
+        new_draw_info(NDI_UNIQUE, 0, victim, "Chaos fills your world.");
+        confuse_player(victim, victim, 99);
+    }
+    else if (victim->stats.sp >= victim->stats.maxsp*1.25) {
+        new_draw_info(NDI_UNIQUE, 0, victim, "You start hearing voices.");
+    }
+}
 
 /* cast_transfer
  * This spell transfers sp from the player to another person.
@@ -2099,7 +2143,7 @@ int cast_transfer(object *op,object *caster, object *spell, int dir) {
 
     if (!(mflags & P_OUT_OF_MAP) && mflags & P_IS_ALIVE) {
 	for(plyr=get_map_ob(m, x, y); plyr!=NULL; plyr=plyr->above)
-	    if(QUERY_FLAG(plyr, FLAG_ALIVE))
+	    if (plyr != op && QUERY_FLAG(plyr, FLAG_ALIVE))
 		break;
     }
 
@@ -2109,7 +2153,7 @@ int cast_transfer(object *op,object *caster, object *spell, int dir) {
      */
     if(plyr==NULL)
         for(plyr=get_map_ob(op->map,op->x,op->y); plyr!=NULL; plyr=plyr->above)
-	    if(QUERY_FLAG(plyr,FLAG_ALIVE))
+	    if (plyr != op && QUERY_FLAG(plyr, FLAG_ALIVE))
 		break;
 
     if (!plyr) {
@@ -2119,49 +2163,26 @@ int cast_transfer(object *op,object *caster, object *spell, int dir) {
     /* give sp */
     if(spell->stats.dam > 0) {
 	plyr->stats.sp += spell->stats.dam + SP_level_dam_adjust(caster, spell);
-
-	new_draw_info(NDI_UNIQUE, 0,plyr,"You feel energy course through you.");
-
-	if(plyr->stats.sp>=plyr->stats.maxsp*2) {
-	    object *tmp;
-
-            new_draw_info(NDI_UNIQUE, 0,plyr,"Your head explodes!");
-
-	    /* Explodes a fireball centered at player */
-	    tmp = get_archetype(EXPLODING_FIREBALL);
-	    tmp->dam_modifier=random_roll(1, op->level, op, PREFER_LOW)/5+1;
-	    tmp->stats.maxhp=random_roll(1, op->level, op, PREFER_LOW)/10+2;
-	    tmp->x = plyr->x;
-	    tmp->y = plyr->y;
-	    insert_ob_in_map(tmp, plyr->map, NULL, 0);
-	    plyr->stats.sp = 2*plyr->stats.maxsp;
-        }
-        else if(plyr->stats.sp>=plyr->stats.maxsp*1.88)
-            new_draw_info(NDI_UNIQUE, NDI_ORANGE,plyr,"You feel like your head is going to explode.");
-        else if(plyr->stats.sp>=plyr->stats.maxsp*1.66)
-            new_draw_info(NDI_UNIQUE, 0,plyr, "You get a splitting headache!");
-        else if(plyr->stats.sp>=plyr->stats.maxsp*1.5) {
-            new_draw_info(NDI_UNIQUE, 0,plyr,"Chaos fills your world.");
-	    confuse_player(op,op,99);
-	}
-        else if(plyr->stats.sp>=plyr->stats.maxsp*1.25)
-            new_draw_info(NDI_UNIQUE, 0,plyr,"You start hearing voices.");
+	charge_mana_effect(plyr, caster_level(caster, spell));
         return 1;
     }
     /* suck sp away.  Can't suck sp from yourself */
     else if (op != plyr) {
 	/* old dragin magic used floats.  easier to just use ints and divide by 100 */
 
-	int rate = -spell->stats.dam + SP_level_dam_adjust(caster, spell), sucked=0;
+	int rate = -spell->stats.dam + SP_level_dam_adjust(caster, spell), sucked;
 
 	if (rate > 95) rate=95;
 
 	sucked = (plyr->stats.sp * rate) / 100;
 	plyr->stats.sp -= sucked;
-	/* Player doesn't get full credit */
 	if (QUERY_FLAG(op, FLAG_ALIVE)) {
+	    /* Player doesn't get full credit */
 	    sucked = (sucked * rate) / 100;
 	    op->stats.sp += sucked;
+	    if (sucked > 0) {
+		charge_mana_effect(op, caster_level(caster, spell));
+	    }
 	}
 	return 1;
     }

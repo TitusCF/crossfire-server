@@ -17,6 +17,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Fix bug #1256173 (Magic drain not exploding head):
+server/spell_effect.c: Prevent mana transfer to/from caster himself; also
+   create fireball for overcharges resulting from sucking mana.
+Andreas Kirschbaum 2005-08-30
+
 Fix bug #1059537 (Chainmail mutations):
 common/loader.l: Remove code that "fixes" broken item names by removing a
    leading material name. This effectively renames "mithril chainmails" into
