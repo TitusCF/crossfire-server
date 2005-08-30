@@ -380,12 +380,13 @@ static void UpdatePosition (Widget w, int x, int y,Boolean inv)
 	    yb = diff + y * self->crEdit.fontSize - 1;
 
 	    while (op) {
-		New_Face f;
-		if (QUERY_FLAG(op, FLAG_TEAR_DOWN) && self->crEdit.show_weak_walls)
-		    f=new_faces[GET_ANIMATION(op,
-			NUM_ANIMATIONS(op)/2)];
-		else f = *op->face;
-		FaceDraw (w, self->crEdit.gc, &f, xb, yb);
+		if (QUERY_FLAG(op, FLAG_TEAR_DOWN) && self->crEdit.show_weak_walls) {
+		    New_Face * f;
+		    f = &new_faces[GET_ANIMATION(op,NUM_ANIMATIONS(op)/2)];
+		    DrawFacePart(w, self->crEdit.gc, f, xb, yb, 0, 0);
+		} else {
+		    DrawPartObject(w, self->crEdit.gc, op, xb, yb);
+		}
 
 		if (HAS_COLOUR(w)) {
 		    XSetForeground(XtDisplay(w), self->crEdit.gc, 
@@ -407,33 +408,40 @@ static void UpdatePosition (Widget w, int x, int y,Boolean inv)
         }
 
         if (displaymode==Dm_Png) {
-          f = GET_MAP_FACE(self->crEdit.map, x, y,2);
-          if (f) FaceDraw (w, self->crEdit.gc, f,
+          op = GET_MAP_FACE_OBJ(self->crEdit.map, x, y, 2);
+          if (op != NULL)
+              DrawPartObject(w, self->crEdit.gc, op,
                     x * self->crEdit.fontSize,
                     y * self->crEdit.fontSize);
-          f = GET_MAP_FACE(self->crEdit.map, x, y,1);
-	  if ((f) && f->number != blank_face->number)
-	    FaceDraw (w, self->crEdit.gc, f,
+          op = GET_MAP_FACE_OBJ(self->crEdit.map, x, y, 1);
+          if (op != NULL && op->face->number != blank_face->number)
+              DrawPartObject(w, self->crEdit.gc, op,
                     x * self->crEdit.fontSize,
                     y * self->crEdit.fontSize);
-          f = GET_MAP_FACE(self->crEdit.map, x, y,0);
-	  if ((f) && f->number != blank_face->number)
-	    FaceDraw (w, self->crEdit.gc, f,
+          op = GET_MAP_FACE_OBJ(self->crEdit.map, x, y, 0);
+          if (op != NULL && op->face->number != blank_face->number)
+              DrawPartObject(w, self->crEdit.gc, op,
                     x * self->crEdit.fontSize,
                     y * self->crEdit.fontSize);
 	}
 	op=get_map_ob(self->crEdit.map, x, y);
 	while (op && op->above) op=op->above;
-	if (!op) f=blank_face;
-	else if (QUERY_FLAG(op, FLAG_TEAR_DOWN) && self->crEdit.show_weak_walls)
-		f=&new_faces[GET_ANIMATION(op,NUM_ANIMATIONS(op)/2)/2];
+	if (op == NULL) {
+	    ; /* Paint nothing */
+	} else if (QUERY_FLAG(op, FLAG_TEAR_DOWN) && self->crEdit.show_weak_walls) {
+            f = &new_faces[GET_ANIMATION(op, NUM_ANIMATIONS(op)/2)];
 
-	else f = op->face;
-
-	if (displaymode==Dm_Png || f->number != blank_face->number)
-	    FaceDraw (w, self->crEdit.gc, f, 
-		  x * self->crEdit.fontSize, 
-		  y * self->crEdit.fontSize);
+            if (displaymode == Dm_Png || f->number != blank_face->number)
+                DrawFacePart (w, self->crEdit.gc, f,
+                    x * self->crEdit.fontSize,
+                    y * self->crEdit.fontSize,
+                    0, 0);
+        } else {
+            if (displaymode == Dm_Png || op->face->number != blank_face->number)
+                DrawPartObject (w, self->crEdit.gc, op,
+                    x * self->crEdit.fontSize,
+                    y * self->crEdit.fontSize);
+        }
     }
     return;
 }

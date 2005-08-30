@@ -17,6 +17,16 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Add (slightly reformatted) patch #1276121 (Crossedit: handle big faces) by
+   Kevin Rudat:
+crossedit/CrEdit.c: UpdatePosition(): Use new drawing subroutines.
+crossedit/CrFace.c: DrawObject(): Use new drawing subroutine.
+crossedit/CrList.c: Redisplay(): Use new drawing subroutine.
+crossedit/CrUtil.c, crossedit/CrUtil.h: Remove FaceDraw(), add DrawFacePart()
+   and DrawPartObject().
+crossedit/png.c: Upload the whole image, not just the top-left corner.
+Andreas Kirschbaum 2005-08-30
+
 Fix bug #1256173 (Magic drain not exploding head):
 server/spell_effect.c: Prevent mana transfer to/from caster himself; also
    create fireball for overcharges resulting from sucking mana.

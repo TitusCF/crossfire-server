@@ -439,7 +439,7 @@ int png_to_xpixmap(Display *display, Drawable draw, char *data, int len,
 	}
     }
 
-    XPutImage(display, *pix, gc, ximage, 0, 0, 0, 0, 32, 32);
+    XPutImage(display, *pix, gc, ximage, 0, 0, 0, 0, *width, *height);
     if (has_alpha)
 	XFreeGC(display, gc_alpha);
     XFreeGC(display, gc);

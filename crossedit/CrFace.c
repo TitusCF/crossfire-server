@@ -83,7 +83,7 @@ static int DrawObject(Widget wd, int x, int y, object * tmp)
     if (!tmp)
 	tmp = &empty_archetype->clone;
 
-    FaceDraw (wd, w->crFace.gc, tmp->face, x * FontSize, y * FontSize);
+    DrawPartObject(wd, w->crFace.gc, tmp, x * FontSize, y * FontSize);
     return (0);
 }
 

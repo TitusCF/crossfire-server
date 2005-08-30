@@ -307,7 +307,7 @@ static void Redisplay(Widget w,XEvent *event,Region region)
     for (y = rect.y; node && (!region || rect.height--); y++) {
 	debug2 ("%s Drawing %s\n", self->core.name,node->name);
 	/*DrawObject(w,0,y,node);*/
-	FaceDraw (w, self->crList.gc, node->face, 0, y * FontSize);
+	DrawFacePart(w, self->crList.gc, node->face, 0, y * FontSize, 0, 0);
 	XDrawString(XtDisplay(w),XtWindow(w),
 		    self->crList.normal_GC 
 		    /*DefaultGCOfScreen(XtScreen(w))*/,
