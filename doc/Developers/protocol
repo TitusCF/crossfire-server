@@ -757,14 +757,14 @@ S->C: map1a <coord1>[darkness1][face1a][face1b][face1c]<coord2>[darkness2][face2
 	to get updated, but if there was stuff on the floor, then that face
 	will also need to get cleared).  There may be cases where
 	transitioning from the blocked to empty space occurs, in which case
-	the client will send the floor as an empty space.
+	the server will send the floor as an empty space.
 
 	The darkness value is a single byte - 0 is pitch black, while 255 is
 	fully illuminated.  It is up to the client to figure out what it wants
 	to do with this (use masking to reduce visibility, or actually do a
 	real light reduction on the image).
 
-	the face values are 16 bit values, as before.  They will be sent
+	The face values are 16 bit values, as before.  They will be sent
 	in MSB order of the flag (ie, floor, then intermediate, then
 	top, presuming the bit in the flag is set that says that layer
 	is being sent).  Blank faces may get sent if an object disappears -
@@ -811,13 +811,13 @@ S->C: map1a <coord1>[darkness1][face1a][face1b][face1c]<coord2>[darkness2][face2
 	(starting from upper left) will be used.
 
 	The server does remember the heads for out of normal map bounds.
-	However, these values are not shifted when the map scrolls.  Taking
-	the example of an image at 27,20 above, if the player moves to the
-	east, the server will send the map scroll command, send the face at
-	26,20, and send either a clear or update for 27,20.  When the player
+	However, these values are not shifted but cleared when the map scrolls.
+	Taking the example of an image at 27,20 above, if the player moves to
+	the east, the server will send the map scroll command, send the face at
+	26,20, and send neither a clear nor update for 27,20.  When the player
 	moves east again, the image is now on the normal map at 25,20, and
-	will once again get sent, and a delete for 26,20 will be sent.
-	Similarly, if the object was a living object and was partially off the
+	will once again get sent, no delete for 26,20 will be sent.
+	OTOH, if the object was a living object and was partially off the
 	map when killed, an update removing that face for the object it was
 	standing on will be sent by the server.
 		
@@ -927,6 +927,10 @@ C->S: mapredraw
 	Requests that the server resend the entire map to the client -
 	can be useful if the client or client player knows that the map
 	is out of date/corrupted.
+
+S->C: newmap
+	This tells the client to clear the map state. This command will be sent
+	only if negotiated by the newmapcmd option.
 
 S->C: magicmap <width> <height> <px> <py> <data>
 	This gives the client information from a magic map command.
@@ -1140,8 +1144,8 @@ S->C: setup <option1> <value1> <option2> <value2>
 	newmapcmd (0/1)
 	    This tells the server if the client understands the newmap
 	    protocol command.  This is used by the client in the fog
-	    of war mode to clear the old data when the player changes
-	    maps.
+	    of war mode to receive newmap commands from the server each time
+	    the player changes maps.
 
 	facecache (0/1)
 	    Determines if the client is caching images (1) or wants the

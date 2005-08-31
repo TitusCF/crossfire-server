@@ -54,7 +54,7 @@ struct MapCell {
  * some structures, as well as determining how far
  * we should look for the heads of big images.
  */
-#define MAX_HEAD_OFFSET	    6
+#define MAX_HEAD_OFFSET	    8
 
 #define MAX_CLIENT_X (MAP_CLIENT_X + MAX_HEAD_OFFSET)
 #define MAX_CLIENT_Y (MAP_CLIENT_Y + MAX_HEAD_OFFSET)

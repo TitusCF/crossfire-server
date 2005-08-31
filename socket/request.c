@@ -653,18 +653,27 @@ void SetSound(char *buf, int len, NewSocket *ns)
 
 void MapRedrawCmd(char *buff, int len, player *pl)
 {
+/* This function is currently disabled; just clearing the map state results in
+ * display errors. It should clear the cache and send a newmap command.
+ * Unfortunately this solution does not work because some client versions send
+ * a mapredraw command after receiving a newmap command.
+ */
+#if 0
     /* Okay, this is MAJOR UGLY. but the only way I know how to
      * clear the "cache"
      */
     memset(&pl->socket.lastmap, 0, sizeof(struct Map));
     draw_client_map(pl->ob);
+#endif
 }
 
 /** Newmap command */
 void MapNewmapCmd( player *pl)
 {
-    if( pl->socket.newmapcmd == 1)
+    if( pl->socket.newmapcmd == 1) {
+        memset(&pl->socket.lastmap, 0, sizeof(pl->socket.lastmap));
         Write_String_To_Socket( &pl->socket, "newmap", 6);
+    }
 }
 
 
@@ -1082,7 +1091,7 @@ static void map_clearcell(struct MapCell *cell, int face0, int face1, int face2,
     cell->faces[2] = face2;
 }
 
-#define MAX_HEAD_POS	31
+#define MAX_HEAD_POS	MAX(MAX_CLIENT_X, MAX_CLIENT_Y)
 #define MAX_LAYERS	3
 
 /* Using a global really isn't a good approach, but saves the over head of
@@ -1095,8 +1104,8 @@ static void map_clearcell(struct MapCell *cell, int face0, int face1, int face2,
 static object  *heads[MAX_HEAD_POS * MAX_HEAD_POS * MAX_LAYERS];
 
 /**
- * Returns true of any of the heads for this
- * space is set.  Returns 0 if all are blank - this is used
+ * Returns true if any of the heads for this
+ * space is set.  Returns false if all are blank - this is used
  * for empty space checking.
  */
 static inline int have_head(int ax, int ay) {
@@ -1131,13 +1140,6 @@ static inline int check_head(SockList *sl, NewSocket *ns, int ax, int ay, int la
 	ns->lastmap.cells[ax][ay].faces[layer] = face_num;
 	return 1;
     }
-    /* We know, for now, that check_head is only called on blocked or otherwise
-     * out of view spaces.  So if there is no head object, clear
-     * the last look for this layer - this sort of replaces the need to
-     * call map_clearcell.
-     */
-    if (face_num ==0 && ns->lastmap.cells[ax][ay].faces[layer] != 0)
-	ns->lastmap.cells[ax][ay].faces[layer] = 0;
 
     return 0;   /* No change */
 }
@@ -1185,15 +1187,14 @@ static inline int update_space(SockList *sl, NewSocket *ns, mapstruct  *mp, int 
      * otherwise send the image as this layer, eg, either it matches
      * the head value, or is not multipart.
      */
-    if (head) {
+    if (head && !head->more) {
 	for (i=0; i<MAP_LAYERS; i++) {
 	    ob = GET_MAP_FACE_OBJ(mp, mx, my, i);
 	    if (!ob) continue;
 
 	    if (ob->head) ob=ob->head;
 
-	    if (ob->face == head->face &&
-		(ob == head && !ob->more)) {
+	    if (ob == head) {
 		    heads[(sy * MAX_HEAD_POS + sx) * MAX_LAYERS + layer] = NULL;
 		    head = NULL;
 		    break;
@@ -1254,6 +1255,7 @@ static inline int update_space(SockList *sl, NewSocket *ns, mapstruct  *mp, int 
 	    if (bx < sx || by < sy) {
 		LOG(llevError,"update_space: bx (%d) or by (%d) is less than sx (%d) or sy (%d)\n",
 		    bx, by, sx, sy);
+		face_num = 0;
 	    }
 	    /* single part object, multipart object with non merged faces,
 	     * of multipart object already at lower right.
@@ -1284,8 +1286,7 @@ static inline int update_space(SockList *sl, NewSocket *ns, mapstruct  *mp, int 
 		/* First, try to put the new head on the same layer.  If that is used up,
 		 * then find another layer.
 		 */
-		if (heads[(by * MAX_HEAD_POS + bx) * MAX_LAYERS + layer] == NULL ||
-		    heads[(by * MAX_HEAD_POS + bx) * MAX_LAYERS + layer] == head) {
+		if (heads[(by * MAX_HEAD_POS + bx) * MAX_LAYERS + layer] == NULL) {
 			heads[(by * MAX_HEAD_POS + bx) * MAX_LAYERS + layer] = head;
 		} else for (i=0; i<MAX_LAYERS; i++) {
 		    if (heads[(by * MAX_HEAD_POS + bx) * MAX_LAYERS + i] == NULL ||
@@ -1325,7 +1326,7 @@ static inline int update_space(SockList *sl, NewSocket *ns, mapstruct  *mp, int 
      * we already sent for a lower layer.  In that case, don't send
      * this one.
      */
-    if (face_num && layer<MAP_LAYERS && ns->lastmap.cells[sx][sy].faces[layer+1] == face_num) {
+    if (face_num && layer+1<MAP_LAYERS && ns->lastmap.cells[sx][sy].faces[layer+1] == face_num) {
 	face_num = 0;
     }
 
@@ -1364,14 +1365,8 @@ static inline int update_space(SockList *sl, NewSocket *ns, mapstruct  *mp, int 
 
 static inline int update_smooth(SockList *sl, NewSocket *ns, mapstruct  *mp, int mx, int my, int sx, int sy, int layer)
 {
-    object *ob, *head;
+    object *ob;
     int smoothlevel; /* old face_num;*/
-
-    /* If there is a multipart object stored away, treat that as more important.
-     * If not, then do the normal processing.
-     */
-    ob=NULL;
-    head = heads[(sy * MAX_HEAD_POS + sx) * MAX_LAYERS + layer];
 
     ob = GET_MAP_FACE_OBJ(mp, mx, my, layer);
 
@@ -1598,6 +1593,12 @@ void draw_client_map1(object *pl)
 		    pl->contr->socket.lastmap.cells[ax][ay].count = count;
 
 		} else {
+		    struct MapCell *cell = &pl->contr->socket.lastmap.cells[ax][ay];
+		    /* properly clear a previously sent big face */
+		    if(cell->faces[0] != 0
+		    || cell->faces[1] != 0
+		    || cell->faces[2] != 0)
+			need_send = 1;
 		    map_clearcell(&pl->contr->socket.lastmap.cells[ax][ay], 0, 0, 0, count);
 		}
 
@@ -1747,17 +1748,12 @@ void draw_client_map(object *pl)
 	return;
     }
 
-    if(pl->map == NULL || pl->map->in_memory != MAP_IN_MEMORY) {
-	LOG(llevError,"draw_client_map called with no map/map out of memory\n");
-	return;
-    }
-
-
     /* IF player is just joining the game, he isn't here yet, so the map
      * can get swapped out.  If so, don't try to send them a map.  All will
      * be OK once they really log in.
      */
     if (pl->map==NULL || pl->map->in_memory!=MAP_IN_MEMORY) return;
+
     memset(&newmap, 0, sizeof(struct Map));
 
     for(j = (pl->y - pl->contr->socket.mapy/2) ; j < (pl->y + (pl->contr->socket.mapy+1)/2); j++) {
@@ -1881,7 +1877,12 @@ void esrv_map_scroll(NewSocket *ns,int dx,int dy)
      */
     for(x=0; x<mx; x++) {
 	for(y=0; y<my; y++) {
-	    if ((x+dx) < 0 || (x+dx) >= ns->mapx || (y+dy) < 0 || (y + dy) >= ns->mapy) {
+	    if(x >= ns->mapx || y >= ns->mapy) {
+		/* clear cells outside the viewable area */
+		memset(&newmap.cells[x][y], 0, sizeof(struct MapCell));
+	    }
+	    else if ((x+dx) < 0 || (x+dx) >= ns->mapx || (y+dy) < 0 || (y + dy) >= ns->mapy) {
+		/* clear newly visible tiles within the viewable area */
 		memset(&(newmap.cells[x][y]), 0, sizeof(struct MapCell));
 	    }
 	    else {
@@ -1892,6 +1893,10 @@ void esrv_map_scroll(NewSocket *ns,int dx,int dy)
     }
 
     memcpy(&(ns->lastmap), &newmap,sizeof(struct Map));
+
+    /* Make sure that the next "map1" command will be sent (even if it is
+     * empty).
+     */
     ns->sent_scroll = 1;
 }
 

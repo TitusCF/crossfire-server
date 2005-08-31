@@ -17,6 +17,24 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Fix bug #1102991 (Duplicate grapical display of the same monster):
+doc/Developers/protocol: Change semantics of map_scroll command to what the
+   server actually does: big faces outside the viewable area are cleared. Add
+   newmap command.
+include/newserver.h: Increase MAX_HEAD_OFFSET to 8 (the size of a Greater
+   Demon).
+socket/request.c:
+   MapRedrawCmd(): Disable mapredraw command; it is now just ignored.
+   MapNewmapCmd(): Clear map state before sending newmap command.
+   check_head(): Remove redundant code.
+   update_space(): Move invariant condition out of loop to speed it up. Fix
+      uninitialized variable. Remove redundant condition. Fix off-by-one array
+      access.
+   update_smooth(): Remove unused code. Properly send cleared big faces.
+   draw_client_map(): Remove duplicate check. Properly clear newly visible
+      area when scrolling the map.
+Andreas Kirschbaum 2005-08-31
+
 Add (slightly reformatted) patch #1276121 (Crossedit: handle big faces) by
    Kevin Rudat:
 crossedit/CrEdit.c: UpdatePosition(): Use new drawing subroutines.
