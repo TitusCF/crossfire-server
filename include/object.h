@@ -314,6 +314,9 @@ extern int nroffreeobjects;
  *     beneath the player, but not actually above it.  Note - the
  *     map and x,y coordinates for the object to be inserted must
  *     match the originator.
+ * INS_MAP_LOAD: disable lots of checkings done at insertion to
+ *     speed up map loading process, as we assume the ordering in
+ *     loaded map is correct.
  *
  * Note that INS_BELOW_ORIGINATOR, INS_ON_TOP, INS_ABOVE_FLOOR_ONLY
  * are mutually exclusive.  The behaviour for passing more than one
@@ -326,6 +329,7 @@ extern int nroffreeobjects;
 #define INS_NO_WALK_ON		0x0004
 #define INS_ON_TOP		0x0008
 #define INS_BELOW_ORIGINATOR	0x0010
+#define INS_MAP_LOAD		0x0020
 
 #define ARCH_SINGULARITY        "singularity"
 #define ARCH_SINGULARITY_LEN    11

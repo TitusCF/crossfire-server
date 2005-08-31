@@ -457,7 +457,7 @@ static void link_multipart_objects(mapstruct *m)
  */
 
 void load_objects (mapstruct *m, FILE *fp, int mapflags) {
-    int i,bufstate=LO_NEWFILE;
+    int i,j,bufstate=LO_NEWFILE;
     int unique;
     object *op, *prev=NULL,*last_more=NULL, *otmp, *ootmp;;
 
@@ -481,7 +481,7 @@ void load_objects (mapstruct *m, FILE *fp, int mapflags) {
 	}
 
 	/* check for unique items, or unique squares */
-	unique = 0;
+	/* TODO DISPLACE unique = 0;
 	for (otmp = get_map_ob(m, op->x, op->y); otmp; otmp = ootmp) {
 	    ootmp = otmp->above;
 	    if (QUERY_FLAG(otmp, FLAG_UNIQUE))
@@ -490,16 +490,16 @@ void load_objects (mapstruct *m, FILE *fp, int mapflags) {
 	if (QUERY_FLAG(op, FLAG_UNIQUE) || QUERY_FLAG(op, FLAG_OBJ_SAVE_ON_OVL))
 	    unique = 1;
 	if (!(mapflags & (MAP_OVERLAY|MAP_PLAYER_UNIQUE) || unique))
-	   SET_FLAG(op, FLAG_OBJ_ORIGINAL);
+	   SET_FLAG(op, FLAG_OBJ_ORIGINAL);*/
 
 	switch(i) {
 	  case LL_NORMAL:
 	    /* if we are loading an overlay, put the floors on the bottom */
 	    if ((QUERY_FLAG(op, FLAG_IS_FLOOR) ||
 		 QUERY_FLAG(op, FLAG_OVERLAY_FLOOR)) && mapflags & MAP_OVERLAY)
-		insert_ob_in_map(op,m,op,INS_NO_MERGE | INS_NO_WALK_ON | INS_ABOVE_FLOOR_ONLY);
+		insert_ob_in_map(op,m,op,INS_NO_MERGE | INS_NO_WALK_ON | INS_ABOVE_FLOOR_ONLY | INS_MAP_LOAD);
 	    else
-		insert_ob_in_map(op,m,op,INS_NO_MERGE | INS_NO_WALK_ON | INS_ON_TOP);
+		insert_ob_in_map(op,m,op,INS_NO_MERGE | INS_NO_WALK_ON | INS_ON_TOP | INS_MAP_LOAD);
 
 	    if (op->inv)
 		sum_weight(op);
@@ -517,6 +517,17 @@ void load_objects (mapstruct *m, FILE *fp, int mapflags) {
 	}
 	op=get_object();
         op->map = m;
+    }
+    for (i=0;i<m->width;i++){
+    	for (j=0;j<m->height;j++){
+	    /* check for unique items, or unique squares */
+	    for (otmp = get_map_ob(m, i, j); otmp; otmp = otmp->above) {
+	        if (QUERY_FLAG(otmp, FLAG_UNIQUE) || QUERY_FLAG(otmp, FLAG_OBJ_SAVE_ON_OVL))
+		    unique = 1;
+		if (!(mapflags & (MAP_OVERLAY|MAP_PLAYER_UNIQUE) || unique))
+		    SET_FLAG(otmp, FLAG_OBJ_ORIGINAL);
+	    }
+	}
     }
     free_object(op);
     link_multipart_objects(m);

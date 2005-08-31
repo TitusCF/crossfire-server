@@ -399,7 +399,13 @@ error - Your ANSI C compiler should be defining __STDC__;
 	((xyz)->flags[p/32] &= ~(1U << (p % 32)))
 #define QUERY_FLAG(xyz, p) \
 	((xyz)->flags[p/32] & (1U << (p % 32)))
-
+#define COMPARE_FLAGS(p,q) \
+	(                                            \
+		((p)->flags[0] == (q)->flags[0]) &&  \
+		((p)->flags[1] == (q)->flags[1]) &&  \
+		((p)->flags[2] == (q)->flags[2]) &&  \
+		((p)->flags[3] == (q)->flags[3])     \
+	)
 /* convenience macros to determine what kind of things we are dealing with */
 
 #define IS_WEAPON(op) \

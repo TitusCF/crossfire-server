@@ -1497,6 +1497,8 @@ char *get_ob_diff(object *op,object *op2) {/* I plan to optimize this heavily */
  * NEVER touch buf between PREPARE_FASTCAT(buf) and
  * FINISH_FASTCAT(buf)
  */
+  static int already_run = 0;
+  static int flag_lens[NUM_FLAGS];
   static char buf2[HUGE_BUF];
   static char buf[HUGE_BUF];
   char* fastbuf;
@@ -1513,6 +1515,12 @@ char *get_ob_diff(object *op,object *op2) {/* I plan to optimize this heavily */
   key_value * my_field;
   key_value * arch_field;
 
+  /*first init this function if first call*/
+  if (!already_run){
+      for (i=0;i<NUM_FLAGS;i++)
+          flag_lens[i]=flag_names[i]?strlen(flag_names[i]):0; /* some flags may be null? :/*/
+      already_run=1;
+  }
   buf[0]='\0';
   fastbuf=PREPARE_FASTCAT(buf);
 
@@ -1799,11 +1807,12 @@ char *get_ob_diff(object *op,object *op2) {/* I plan to optimize this heavily */
 	FAST_SAVE_LONG(fastbuf,"gen_sp_armour ",op->gen_sp_armour,14);
     }
 
-  for (tmp=0; tmp <= NUM_FLAGS; tmp++) {
-    if (flag_names[tmp] && (QUERY_FLAG(op, tmp) != QUERY_FLAG(op2, tmp))) {
-	ADD_STRINGLINE_ENTRY(fastbuf,flag_names[tmp],QUERY_FLAG(op, tmp)?" 1":" 0",strlen(flag_names[tmp]));
-    }
-  }
+  if (!COMPARE_FLAGS(op,op2))
+    for (tmp=0; tmp <= NUM_FLAGS; tmp++) {
+      if (flag_names[tmp] && (QUERY_FLAG(op, tmp) != QUERY_FLAG(op2, tmp))) {
+	ADD_STRINGLINE_ENTRY(fastbuf,flag_names[tmp],QUERY_FLAG(op, tmp)?" 1":" 0",flag_lens[tmp]);
+      }
+    }    
   /* The old code was buggy - it would lose custom SLOW_PENALTY if the archetype
    * had a different slow_penalty (eg, when saving, it would also reset to the
    * archetype value.

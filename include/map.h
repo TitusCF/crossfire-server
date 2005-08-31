@@ -109,10 +109,12 @@
 #define SET_MAP_LIGHT(M,X,Y,L)	( (M)->spaces[(X) + (M)->width * (Y)].light = L )
 
 #define GET_MAP_OB(M,X,Y)	( (M)->spaces[(X) + (M)->width * (Y)].bottom )
+#define GET_MAP_TOP(M,X,Y)	( (M)->spaces[(X) + (M)->width * (Y)].top )
 /* legacy */
 #define get_map_ob		GET_MAP_OB
 
 #define SET_MAP_OB(M,X,Y,tmp)	( (M)->spaces[(X) + (M)->width * (Y)].bottom = (tmp) )
+#define SET_MAP_TOP(M,X,Y,tmp)	( (M)->spaces[(X) + (M)->width * (Y)].top = (tmp) )
 #define set_map_ob SET_MAP_OB
 
 #define SET_MAP_FACE(M,X,Y,C,L) ( (M)->spaces[(X) + (M)->width * (Y)].faces[L] = C )
@@ -162,6 +164,7 @@
 
 typedef struct MapSpace {
     object	*bottom;	/* lowest object on this space */
+    object	*top;		/* Highest object on this space */
     New_Face	*faces[MAP_LAYERS];	/* faces for the 3 layers */
     object	*faces_obj[MAP_LAYERS];	/* face objects for the 3 layers */
     uint8	flags;		/* flags about this space (see the P_ values above) */

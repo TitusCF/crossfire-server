@@ -1289,7 +1289,9 @@ void remove_ob(object *op) {
     /* link the object above us */
     if (op->above)
 	op->above->below=op->below;
-
+    else
+	SET_MAP_TOP(m,x,y,op->below); /* we were top, set new top */
+    
     /* Relink the object below us, if there is one */
     if(op->below) {
 	op->below->above=op->above;
@@ -1504,7 +1506,7 @@ object *insert_ob_in_map (object *op, mapstruct *m, object *originator, int flag
     if (!QUERY_FLAG(op, FLAG_ALIVE))
 	CLEAR_FLAG(op, FLAG_NO_STEAL);
 
-    if (flag & INS_BELOW_ORIGINATOR) {
+    if (flag & INS_BELOW_ORIGINATOR) { 
 	if (originator->map != op->map || originator->x != op->x ||
 	    originator->y != op->y) {
 	    LOG(llevError,"insert_ob_in_map called with INS_BELOW_ORIGINATOR when originator not on same space!\n");
@@ -1514,10 +1516,11 @@ object *insert_ob_in_map (object *op, mapstruct *m, object *originator, int flag
 	op->below = originator->below;
 	if (op->below) op->below->above = op;
 	else SET_MAP_OB(op->map, op->x, op->y, op);
+	/* since *below* originator, no need to update top */
 	originator->below = op;
     } else {
 	/* If there are other objects, then */
-	if((top=GET_MAP_OB(op->map,op->x,op->y))!=NULL) {
+	if((! (flag & INS_MAP_LOAD)) && ((top=GET_MAP_OB(op->map,op->x,op->y))!=NULL)) {
 	    object *last=NULL;
 	    /*
 	     * If there are multiple objects on this space, we do some trickier handling.
@@ -1570,7 +1573,8 @@ object *insert_ob_in_map (object *op, mapstruct *m, object *originator, int flag
 		if (last && last->below && last != floor) top=last->below;
 	    }
 	} /* If objects on this space */
-
+	if (flag & INS_MAP_LOAD)
+		top = GET_MAP_TOP(op->map,op->x,op->y);
 	if (flag & INS_ABOVE_FLOOR_ONLY) top = floor;
 
 	/* Top is the object that our object (op) is going to get inserted above.
@@ -1588,6 +1592,8 @@ object *insert_ob_in_map (object *op, mapstruct *m, object *originator, int flag
 	    op->below = top;
 	    top->above = op;
 	}
+	if (op->above==NULL)
+	    SET_MAP_TOP(op->map,op->x, op->y, op);
     } /* else not INS_BELOW_ORIGINATOR */
 
     if(op->type==PLAYER)
@@ -1596,10 +1602,11 @@ object *insert_ob_in_map (object *op, mapstruct *m, object *originator, int flag
     /* If we have a floor, we know the player, if any, will be above
      * it, so save a few ticks and start from there.
      */
-    for(tmp=floor?floor:GET_MAP_OB(op->map,op->x,op->y);tmp!=NULL;tmp=tmp->above) {
-	if (tmp->type == PLAYER)
-	    tmp->contr->socket.update_look=1;
-    }
+    if (!(flag |INS_MAP_LOAD))
+    	for(tmp=floor?floor:GET_MAP_OB(op->map,op->x,op->y);tmp!=NULL;tmp=tmp->above) {
+		if (tmp->type == PLAYER)
+	    	tmp->contr->socket.update_look=1;
+    	}
 
     /* If this object glows, it may affect lighting conditions that are
      * visible to others on this map.  But update_all_los is really
