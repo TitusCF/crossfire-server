@@ -17,6 +17,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+common/object.c: Fix update of player's ground view in insert_ob_in_map().
+   Previously the ground view was not updated after applying exits or after
+   being hit by a spell.
+Andreas Kirschbaum 2005-09-03
+
 Fix bug #1102991 (Duplicate grapical display of the same monster):
 doc/Developers/protocol: Change semantics of map_scroll command to what the
    server actually does: big faces outside the viewable area are cleared. Add

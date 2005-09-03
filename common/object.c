@@ -1602,7 +1602,7 @@ object *insert_ob_in_map (object *op, mapstruct *m, object *originator, int flag
     /* If we have a floor, we know the player, if any, will be above
      * it, so save a few ticks and start from there.
      */
-    if (!(flag |INS_MAP_LOAD))
+    if (!(flag & INS_MAP_LOAD))
     	for(tmp=floor?floor:GET_MAP_OB(op->map,op->x,op->y);tmp!=NULL;tmp=tmp->above) {
 		if (tmp->type == PLAYER)
 	    	tmp->contr->socket.update_look=1;
