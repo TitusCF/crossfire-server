@@ -273,7 +273,8 @@ int check_altar_sacrifice (object *altar, object *sacrifice)
   {
       if ((ARCH_SACRIFICE(altar) == sacrifice->arch->name ||
           ARCH_SACRIFICE(altar) == sacrifice->name ||
-	  ARCH_SACRIFICE(altar) == sacrifice->slaying)
+	  ARCH_SACRIFICE(altar) == sacrifice->slaying ||
+	  (!strcmp(ARCH_SACRIFICE(altar),query_base_name(sacrifice,0))))
 	  && NROF_SACRIFICE(altar) <= (sacrifice->nrof?sacrifice->nrof:1))
 		return 1;
       if (strcmp (ARCH_SACRIFICE(altar), "money") == 0
