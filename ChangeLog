@@ -41,6 +41,11 @@ socket/request.c:
       area when scrolling the map.
 Andreas Kirschbaum 2005-08-31
 
+common/{loader.l, map.c, object.c}, include/{define.h, map.h, object.h}:
+   Accelerate map loading (a lot) and map saving (a bit) codes to improve map
+   transition experience.
+common/loader.c: Rebuilt.
+
 Add (slightly reformatted) patch #1276121 (Crossedit: handle big faces) by
    Kevin Rudat:
 crossedit/CrEdit.c: UpdatePosition(): Use new drawing subroutines.
