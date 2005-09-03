@@ -17,6 +17,7 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+socket/item.c: Make selecting objects from ground view work again.
 common/object.c: Fix update of player's ground view in insert_ob_in_map().
    Previously the ground view was not updated after applying exits or after
    being hit by a spell.

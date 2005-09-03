@@ -617,7 +617,9 @@ object *esrv_get_ob_from_count(object *pl, tag_t count)
 		    return tmp;
 
     for(op = get_map_ob (pl->map, pl->x, pl->y); op; op = op->above)
-	if (op->count == count)
+	if (op->head != NULL && op->head->count == count)
+	    return op;
+	else if (op->count == count)
 	    return op;
 	else if (op->type == CONTAINER && pl->container == op)
 	    for(tmp = op->inv; tmp; tmp = tmp->below)
@@ -634,7 +636,7 @@ void ExamineCmd(char *buf, int len,player *pl)
     object *op = esrv_get_ob_from_count(pl->ob, tag);
 
     if (!op) {
-	LOG(llevDebug, "Player '%s' tried examine the unknown object (%ld)\n",
+	LOG(llevDebug, "Player '%s' tried to examine the unknown object (%ld)\n",
 	    pl->ob->name, tag);
 	return;
     }
@@ -660,7 +662,7 @@ void ApplyCmd(char *buf, int len,player *pl)
     }
 
     if (!op) {
-	LOG(llevDebug, "Player '%s' tried apply the unknown object (%d)\n",
+	LOG(llevDebug, "Player '%s' tried to apply the unknown object (%d)\n",
 	  pl->ob->name, tag);
 	return;
     }
