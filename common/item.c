@@ -824,7 +824,6 @@ char *describe_item(object *op, object *owner) {
 	strcpy(retbuf,"(unidentified)");
 	identified = 0;
     }
-
     switch(op->type) {
 	case BOW:
 	case ARROW:
@@ -843,6 +842,32 @@ char *describe_item(object *op, object *owner) {
 	case SKILL_TOOL:
 	    break;  /* We have more information to do below this switch */
 
+	case POWER_CRYSTAL:
+	    if (op->stats.maxsp>1000){ /*higher capacity crystals*/
+	        i = (op->stats.maxsp%100)/10;
+	        if (i)
+	            snprintf(buf,MAX_BUF,"(capacity %d.%dk). It is ",op->stats.maxsp/100,i);
+                else
+	            snprintf(buf,MAX_BUF,"(capacity %dk). It is ",op->stats.maxsp/100);
+	    }else
+	        snprintf(buf,MAX_BUF,"(capacity %d). It is ",op->stats.maxsp);
+	    strcat(retbuf,buf);
+	    i = (op->stats.sp*10)/op->stats.maxsp;
+	    if (op->stats.sp==0)
+	        strcat(retbuf,"empty.");
+	    else if (i==0)
+	        strcat(retbuf,"almost empty.");
+	    else if (i<3)
+	        strcat(retbuf,"partially filled.");
+	    else if (i<6)
+	        strcat(retbuf,"half full.");
+	    else if (i<9)
+	        strcat(retbuf,"well charged.");
+	    else if (op->stats.sp == op->stats.maxsp)
+	        strcat(retbuf,"fully charged.");
+	    else
+	        strcat(retbuf,"almost full.");
+	    break;
 	case FOOD:
 	case FLESH:
 	case DRINK:

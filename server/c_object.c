@@ -1398,6 +1398,7 @@ char *long_desc(object *tmp, object *pl) {
 	case DRINK:
 	case FLESH:
 	case SKILL_TOOL:
+	case POWER_CRYSTAL:
 	    if(*(cp=describe_item(tmp, pl))!='\0') {
 		int len;
 
