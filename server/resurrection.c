@@ -260,9 +260,8 @@ void dead_player(object *op)
     strcpy(newname,filename);
     strcat(newname,".dead");
 
-    if(!rename(filename,newname)) {
-	perror(filename);
-	perror(newname);
+    if(rename(filename,newname) != 0) {
+	LOG(llevError, "Cannot rename dead player's file %s into %s: %s\n", filename, newname, strerror_local(errno));
     }
 }
 
@@ -277,8 +276,7 @@ void dead_character(const char *name) {
     strcpy(buf2,buf);
     strcat(buf,".dead");
     if(rename(buf2,buf)== -1){
-	LOG(llevDebug, "Crossfire character rename to dead: %s --", buf);
-	perror("rename()");
+	LOG(llevError, "Cannot rename dead player's file %s into %s: %s\n", buf2, buf, strerror_local(errno));
     }
 }
 

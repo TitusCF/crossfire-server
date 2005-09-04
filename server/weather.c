@@ -2249,7 +2249,7 @@ int worldmap_to_weathermap(int x, int y, int *wx, int *wy, mapstruct* m)
 	  fx < settings.worldmapstartx ||
       fy > settings.worldmapstarty + settings.worldmaptilesy ||
 	  fy < settings.worldmapstarty){
-		printf ("worldmap_to_weathermap(%s)\n",filename);
+		LOG(llevDebug, "worldmap_to_weathermap(%s)\n", filename);
     	sscanf(filename, "world/world_%d_%d", &fx, &fy);
 		MAP_WORLDPARTX(m)=fx;
     	MAP_WORLDPARTY(m)=fy;
@@ -2461,7 +2461,7 @@ int real_world_temperature(int x, int y, mapstruct *m)
 {
     int wx, wy, temp, eleva, elevb;
     object *op;
-	/*printf ("real_world_temperature: worldmaptoweathermap : %s\n",m->path);*/
+	/*LOG(llevDebug, "real_world_temperature: worldmaptoweathermap : %s\n",m->path);*/
     worldmap_to_weathermap(x, y, &wx, &wy, /*m->path*/m);
     temp = real_temperature(wx, wy);
     if (weathermap[wx][wy].avgelev < 0)

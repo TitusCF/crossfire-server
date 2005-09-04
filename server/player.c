@@ -3300,7 +3300,7 @@ void dragon_ability_gain(object *who, int atnr, int level) {
 	 tr = tr->next, i++);
   
     if (tr == NULL || tr->item == NULL) {
-	/* printf("-> no more treasure for %s\n", change_resist_msg[atnr]); */
+	/* LOG(llevDebug, "-> no more treasure for %s\n", change_resist_msg[atnr]); */
 	return;
     }
   

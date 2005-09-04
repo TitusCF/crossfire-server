@@ -545,7 +545,7 @@ int magic_from_difficulty(int difficulty)
     LOG(llevError,"Warning, table for difficulty %d bad.\n",difficulty);
     loop=0;
   }
-/*  printf("Chose magic %d for difficulty %d\n",loop,difficulty);*/
+/*  LOG(llevDebug, "Chose magic %d for difficulty %d\n", loop, difficulty);*/
   return (RANDOM()%3)?loop:-loop;
 }
 

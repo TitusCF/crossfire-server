@@ -17,6 +17,15 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+common/{anim.c, image.c, los.c, map.c, porting.c, treasure.c},
+include/define.h, random_maps/treasure.c, 
+server/{apply.c, c_misc.c, c_object.c, c_wiz.c, commands.c, daemon.c,
+hiscore.c, init.c, login.c, player.c, plugins.c, resurrection.c, weather.c},
+socket/{init.c, item.c, loop.c, lowlevel.c}: Use LOG() for error messages and
+   debug output instead of stdout/stderr. Include filename in error messages.
+server/resurrection.c: Fix error message in read_player().
+Andreas Kirschbaum 2005-09-04
+
 socket/item.c: Make selecting objects from ground view work again.
 common/object.c: Fix update of player's ground view in insert_ob_in_map().
    Previously the ground view was not updated after applying exits or after

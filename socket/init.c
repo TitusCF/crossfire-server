@@ -218,8 +218,7 @@ void init_ericserver()
     }
     init_sockets[0].fd = socket(PF_INET, SOCK_STREAM, protox->p_proto);
     if (init_sockets[0].fd == -1) {
-	perror("Error create new client server socket.");
-	LOG(llevError, "Error creating socket on port\n");
+	LOG(llevError, "Cannot create socket: %s\n", strerror_local(errno));
 	exit(-1);
     }
     insock.sin_family = AF_INET;
@@ -230,8 +229,7 @@ void init_ericserver()
     linger_opt.l_linger = 0;
     if(setsockopt(init_sockets[0].fd,SOL_SOCKET,SO_LINGER,(char *) &linger_opt,
        sizeof(struct linger))) {
-	perror("error on setsockopt LINGER");
-	LOG(llevError, "Error on setsockopt LINGER\n");
+	LOG(llevError, "Cannot setsockopt(SO_LINGER): %s\n", strerror_local(errno));
     }
 /* Would be nice to have an autoconf check for this.  It appears that
  * these functions are both using the same calling syntax, just one
@@ -250,20 +248,17 @@ void init_ericserver()
 #endif
 
 	if(setsockopt(init_sockets[0].fd,SOL_SOCKET,SO_REUSEADDR, &tmp, sizeof(tmp))) {
-	    perror("error on setsockopt REUSEADDR");
-	    LOG(llevError,"error on setsockopt REUSEADDR\n");
+	    LOG(llevError, "Cannot setsockopt(SO_REUSEADDR): %s\n", strerror_local(errno));
 	}
     }
 #else
     if(setsockopt(init_sockets[0].fd,SOL_SOCKET,SO_REUSEADDR,(char *)NULL,0)) {
-	perror("error on setsockopt REUSEADDR");
-	LOG(llevError,"error on setsockopt REUSEADDR\n");
+	LOG(llevError, "Cannot setsockopt(SO_REUSEADDR): %s\n", strerror_local(errno));
     }
 #endif
 
     if (bind(init_sockets[0].fd,(struct sockaddr *)&insock,sizeof(insock)) == (-1)) {
-	perror("error on bind command");
-	LOG(llevError,"error on bind command\n");
+	LOG(llevError, "Cannot bind socket to port %d: %s\n", ntohs(insock.sin_port), strerror_local(errno));
 #ifdef WIN32 /* ***win32: close() -> closesocket() */
 	shutdown(init_sockets[0].fd,SD_BOTH);
 	closesocket(init_sockets[0].fd);
@@ -273,8 +268,7 @@ void init_ericserver()
 	exit(-1);
     }
     if (listen(init_sockets[0].fd,5) == (-1))  {
-	perror("error on listen");
-	LOG(llevError,"error on listen\n");
+	LOG(llevError, "Cannot listen on socket: %s\n", strerror_local(errno));
 #ifdef WIN32 /* ***win32: close() -> closesocket() */
 	shutdown(init_sockets[0].fd,SD_BOTH);
 	closesocket(init_sockets[0].fd);

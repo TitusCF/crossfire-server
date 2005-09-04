@@ -74,7 +74,7 @@ void set_csport(char *val)
 #ifndef WIN32 /* ***win32: set_csport: we remove csport error secure check here, do this later */
     if (settings.csport<=0 || settings.csport>32765 ||
 	(settings.csport<1024 && getuid()!=0)) {
-	fprintf(stderr,"%d is an invalid csport number.\n",settings.csport);
+	LOG(llevError, "%d is an invalid csport number.\n", settings.csport);
 	exit(1);
     }
 #endif /* win32 */
@@ -885,8 +885,7 @@ void compile_info() {
   exit(0);
 #else
   execl("/bin/uname", "uname", "-a", NULL);
-  LOG(llevError, "Oops, shouldn't have gotten here.\n");
-  perror("execl");
+  LOG(llevError, "Oops, shouldn't have gotten here: execl(/bin/uname) failed: %s\n", strerror_local(errno));
   exit(-1);
 #endif
 }
@@ -994,7 +993,8 @@ void init_races () {
   sprintf(fname,"%s/races",settings.datadir);
   LOG(llevDebug, "Reading races from %s...",fname);
   if(! (file=fopen(fname,"r"))) {
-        perror(fname); return;
+    LOG(llevError, "Cannot open races file %s: %s\n", fname, strerror_local(errno));
+    return;
   }
 
   while(fgets(buf,MAX_BUF,file)!=NULL) {

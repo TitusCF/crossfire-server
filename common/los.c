@@ -72,7 +72,7 @@ void set_block(int x,int y,int bx, int by) {
     block[x][y].y[index]=by;
     block[x][y].index++;
 #ifdef LOS_DEBUG
-    fprintf(stderr,"setblock: added %d %d -> %d %d (%d)\n", x, y, bx, by,
+    LOG(llevDebug, "setblock: added %d %d -> %d %d (%d)\n", x, y, bx, by,
 	    block[x][y].index);
 #endif
 }
@@ -177,7 +177,7 @@ static void set_wall(object *op,int x,int y) {
 	if (ax < 0 || ax>=op->contr->socket.mapx ||
 	    ay < 0 || ay>=op->contr->socket.mapy) continue;
 #if 0
-	fprintf(stderr,"blocked %d %d -> %d %d\n",
+	LOG(llevDebug, "blocked %d %d -> %d %d\n",
 		dx, dy, ax, ay);
 #endif
 	/* we need to adjust to the fact that the socket
@@ -212,7 +212,7 @@ static void check_wall(object *op,int x,int y) {
 	return;
 
 #if 0
-    fprintf(stderr,"check_wall, ax,ay=%d, %d  x,y = %d, %d  blocksview = %d, %d\n",
+    LOG(llevDebug, "check_wall, ax,ay=%d, %d  x,y = %d, %d  blocksview = %d, %d\n",
 	    ax, ay, x, y, op->x + x - MAP_CLIENT_X/2, op->y + y - MAP_CLIENT_Y/2);
 #endif
 
@@ -357,7 +357,7 @@ void expand_lighted_sight(object *op)
 	    light = GET_MAP_LIGHT(m, nx, ny);
 	    if (light != 0) {
 #if 0
-		fprintf(stderr,"expand_lighted_sight: Found light at x=%d, y=%d, basex=%d, basey=%d\n", 
+		LOG(llevDebug, "expand_lighted_sight: Found light at x=%d, y=%d, basex=%d, basey=%d\n", 
 			x, y, basex, basey);
 #endif
 		for (ax=basex - light; ax<=basex+light; ax++) {

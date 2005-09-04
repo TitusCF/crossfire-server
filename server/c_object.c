@@ -715,7 +715,7 @@ void pick_up(object *op,object *alt)
 	alt = op;
     }
 #ifdef PICKUP_DEBUG
-    printf ("Pick_up(): %s picks %s (%d) and inserts it %s.\n",op->name, tmp->name,  op->contr->count, alt->name);
+    LOG(llevDebug, "Pick_up(): %s picks %s (%d) and inserts it %s.\n", op->name, tmp->name,  op->contr->count, alt->name);
 #endif
 
     /* startequip items are not allowed to be put into containers: */
@@ -1666,7 +1666,7 @@ int command_pickup (object *op, char *params)
         display_new_pickup( op );
         return 1;
     }
-    if(1)fprintf(stderr,"command_pickup: !params\n");
+    if(1) LOG(llevDebug, "command_pickup: !params\n");
     set_pickup_mode(op, (op->contr->mode > 6)? 0: op->contr->mode+1);
     return 0;
   }
@@ -1698,7 +1698,7 @@ int command_pickup (object *op, char *params)
       }
 
   if(!sscanf(params, "%ud", &i) || i<0 ) {
-    if(1)fprintf(stderr,"command_pickup: params==NULL\n");
+    if(1) LOG(llevDebug, "command_pickup: params==NULL\n");
     new_draw_info(NDI_UNIQUE, 0,op,"Usage: pickup <0-7> or <value_density> .");
     return 1;
   }

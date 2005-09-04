@@ -94,8 +94,8 @@ void delete_character(const char *name, int new) {
     char buf[MAX_BUF];
 
     sprintf(buf,"%s/%s/%s.pl",settings.localdir,settings.playerdir,name);
-    if(unlink(buf)== -1 && settings.debug >= llevDebug)
-	perror("crossfire (delete character)");
+    if(unlink(buf)== -1)
+	LOG(llevDebug, "Cannot delete character file %s: %s\n", buf, strerror_local(errno));
     if (new) {
 	sprintf(buf,"%s/%s/%s",settings.localdir,settings.playerdir,name);
 	/* this effectively does an rm -rf on the directory */
@@ -181,15 +181,14 @@ int create_savedir_if_needed(char *savedir)
   struct stat *buf;
 
   if ((buf = (struct stat *) malloc(sizeof(struct stat))) == NULL) {
-    perror("Unable to save playerfile... out of memory.");
+    LOG(llevError, "Unable to save playerfile... out of memory.\n");
     return 0;
   } else {
     stat(savedir, buf);
     if (!S_ISDIR(buf->st_mode))
       if (mkdir(savedir, SAVE_DIR_MODE))
 	{
-	perror("Unable to create player savedir,");
-	perror(savedir);
+	LOG(llevError, "Unable to create player savedir %s: %s\n", savedir, strerror_local(errno));
 	return 0;
       }
     free(buf);

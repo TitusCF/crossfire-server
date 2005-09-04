@@ -362,12 +362,12 @@ static CommFunc find_command(char *cmd)
   asp =(CommArray_s *)bsearch((void *)&dummy,
 			      (void *)Commands, CommandsSize,
 			      sizeof(CommArray_s), compare_A);
-  printf("Getting asp for command string %s\n", cmd);
+  LOG(llevDebug, "Getting asp for command string %s\n", cmd);
   if (asp)
     return asp->func;
   else
   {
-    printf("Now we are here\n");
+    LOG(llevDebug, "Now we are here\n");
     asp =(CommArray_s *)bsearch((void *)&dummy,
       (void *)CommunicationCommands, CommunicationCommandSize,
       sizeof(CommArray_s), compare_A);
@@ -471,7 +471,7 @@ int parse_command(object *op, char *str) {
   int i;
   /* if it's a keybinding command, ignore semicolons */
   if(strstr(str,"bind")) return parse_string(op,str);
-printf("parsin command '%s'\n",str);
+  LOG(llevDebug, "parsin command '%s'\n", str);
   /* If on a socket, you can not do complex commands. */
   if(op && (tmp=strchr(str,';'))!=NULL)  /* we've found a ';' do the 1st and recurse */
 	 {

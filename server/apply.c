@@ -1339,7 +1339,7 @@ void move_apply (object *trap, object *victim, object *originator)
 	 * getting permanently paralyzed.
 	 */
 	if (victim->speed_left<-50.0) victim->speed_left=-50.0;
-/*	fprintf(stderr,"apply, playermove, player speed_left=%f\n", victim->speed_left);*/
+/*	LOG(llevDebug, "apply, playermove, player speed_left=%f\n", victim->speed_left);*/
     }
     goto leave;
 
@@ -2029,7 +2029,7 @@ int dragon_eat_flesh(object *op, object *meal) {
   
   op->stats.food = MIN(999, op->stats.food + meal->stats.food);
   
-  /*printf("-> player: %d, flesh: %d\n", op->level, meal->level);*/
+  /*LOG(llevDebug, "-> player: %d, flesh: %d\n", op->level, meal->level);*/
   
   /* on to the interesting part: chances for adding resistance */
   for (i=0; i<NROFATTACKS; i++) {
@@ -2068,7 +2068,7 @@ int dragon_eat_flesh(object *op, object *meal) {
       
       if (chance >= 0.01 ) totalchance *= 1 - chance/100;
       
-      /*printf("   %s: bonus %.1f, chance %.1f\n", attacks[i], bonus, chance);*/
+      /*LOG(llevDebug, "   %s: bonus %.1f, chance %.1f\n", attacks[i], bonus, chance);*/
     }
   }
   

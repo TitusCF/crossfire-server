@@ -801,7 +801,7 @@ void esrv_move_object (object *pl, tag_t to, tag_t tag, long nrof)
     }
 
     if (!to) {	/* drop it to the ground */
-/*	printf ("Drop it on the ground.\n");*/
+/*	LOG(llevDebug, "Drop it on the ground.\n");*/
 
 	if (op->map && !op->env) {
 /*	    LOG(llevDebug,"Dropping object to ground that is already on ground\n");*/

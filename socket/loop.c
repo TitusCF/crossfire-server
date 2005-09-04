@@ -193,7 +193,7 @@ void Handle_Oldsocket(NewSocket *ns)
 
 	if (stat<0 && errno != EAGAIN && errno !=EWOULDBLOCK) {
 #endif	
-	    perror("Handle_Oldsocket got an error.");
+	    LOG(llevError, "Cannot read from socket: %s\n", strerror_local(errno));
 	    ns->status = Ns_Dead;
 	    return;
 	}
@@ -562,8 +562,7 @@ void doeric_server()
 		    &tmp_exceptions, &socket_info.timeout);
 
     if (pollret==-1) {
-	perror("doeric_server: error on select");
-	LOG(llevError,"doeric_server: error on select\n");
+	LOG(llevError, "select failed: %s\n", strerror_local(errno));
 	return;
     }
 
@@ -596,8 +595,7 @@ void doeric_server()
 	}
 	init_sockets[newsocknum].fd=accept(init_sockets[0].fd, (struct sockaddr *)&addr, &addrlen);
 	if (init_sockets[newsocknum].fd==-1) {
-	    perror("doeric_server: error on accept");
-	    LOG(llevError,"doeric_server: error on accept\n");
+	    LOG(llevError, "accept failed: %s\n", strerror_local(errno));
 	}
 	else {
 	    InitConnection(&init_sockets[newsocknum],ntohl(addr.sin_addr.s_addr));

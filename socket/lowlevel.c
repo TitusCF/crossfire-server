@@ -144,15 +144,13 @@ int SockList_ReadPacket(int fd, SockList *sl, int len)
 			LOG(llevDebug,"Connection closed by client\n");
 		else
 		{
-			perror("ReadPacket got an error."); /* ***win32 <- for what is this instead of log? */
 			LOG(llevDebug,"ReadPacket got error %d, returning 0\n",WSAGetLastError());
 		}
 		return -1;	/* kick this user! */
 	    }
 #else
 	if (errno != EAGAIN && errno !=EWOULDBLOCK) {
-		perror("ReadPacket got an error.");
-		LOG(llevDebug,"ReadPacket got error %d, returning 0\n",errno);
+		LOG(llevDebug, "ReadPacket got error %s, returning 0\n", strerror_local(errno));
 	    }
 #endif
 	    return 0;	/*Error */
@@ -201,15 +199,13 @@ int SockList_ReadPacket(int fd, SockList *sl, int len)
 			LOG(llevDebug,"Connection closed by client\n");
 		else
 		{
-			perror("ReadPacket got an error.");
 			LOG(llevDebug,"ReadPacket got error %d, returning 0\n",WSAGetLastError());
 		}
 		return -1;	/* kick this user! */
 	    }
 #else
 	if (errno != EAGAIN && errno !=EWOULDBLOCK) {
-		perror("ReadPacket got an error.");
-		LOG(llevDebug,"ReadPacket got error %d, returning 0\n",errno);
+		LOG(llevDebug, "ReadPacket got error %s, returning 0\n", strerror_local(errno));
 	    }
 #endif
 	    return 0;	/*Error */

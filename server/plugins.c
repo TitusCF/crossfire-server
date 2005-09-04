@@ -73,7 +73,7 @@ CommArray_s *find_plugin_command(char *cmd, object *op)
             RTNCmd.name = (char *)(RTNValue->Value[0]);
             RTNCmd.func = (CommFunc)(RTNValue->Value[1]);
             RTNCmd.time = *(double *)(RTNValue->Value[2]);
-            printf("RTNCMD: name %s, time %f\n", RTNCmd.name, RTNCmd.time);
+            LOG(llevDebug, "RTNCMD: name %s, time %f\n", RTNCmd.name, RTNCmd.time);
             return &RTNCmd;
         };
     };

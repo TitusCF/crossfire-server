@@ -749,7 +749,7 @@ void bug_report(const char * reportstring){
       fprintf(fp,"%s\n", reportstring);
       fclose(fp);
   } else {
-      perror(BUG_LOG);
+      LOG(llevError, "Cannot write bugs file %s: %s\n", BUG_LOG, strerror_local(errno));
   }
 }
 
@@ -1238,8 +1238,7 @@ int command_help (object *op, char *params)
   if (!params) {
     sprintf(filename, "%s/def_help", settings.datadir);
     if ((fp=fopen(filename, "r")) == NULL) {
-      LOG(llevError, "Can't open %s\n", filename);
-      perror("Can't read default help");
+      LOG(llevError, "Cannot open help file %s: %s\n", filename, strerror_local(errno));
       return 0;
     }
     while (fgets(line, MAX_BUF, fp)) {
@@ -1303,8 +1302,7 @@ int command_help (object *op, char *params)
    * Found that. Just cat it to screen.
    */
   if ((fp=fopen(filename, "r")) == NULL) {
-    LOG(llevError, "Can't open %s\n", filename);
-    perror("Can't read helpfile");
+    LOG(llevError, "Cannot open help file %s: %s\n", filename, strerror_local(errno));
     return 0;
       }
   sprintf(line, "Help about '%s'", params);

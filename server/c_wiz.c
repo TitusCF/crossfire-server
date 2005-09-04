@@ -1458,7 +1458,7 @@ int command_loadplugin(object *op, char *params)
     strcpy(buf,LIBDIR);
     strcat(buf,"/plugins/");
     strcat(buf,params);
-    printf("Requested plugin file is %s\n", buf);
+    LOG(llevDebug, "Requested plugin file is %s\n", buf);
     if (initOnePlugin(buf) == 0)
         new_draw_info(NDI_UNIQUE, 0, op, "Plugin successfully loaded.");
     else

@@ -635,7 +635,7 @@ void find_doors_in_room_recursive(char **layout,mapstruct *map,int x,int y,objec
       doorlist[*ndoors]=door;
       if(*ndoors>254) /* eek!  out of memory */
         {
-          printf("find_doors_in_room_recursive:Too many doors for memory allocated!\n");
+          LOG(llevError, "find_doors_in_room_recursive:Too many doors for memory allocated!\n");
           return;
         }
       *ndoors=*ndoors+1;

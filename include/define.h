@@ -937,7 +937,7 @@ enum apply_flag {
   * But use as debug only (loses all speed gained by those macros)
   */
 /*#define FAST_STRNCAT(buf__,buf2__,size__) {memcpy (buf__,buf2__,size__);buf__+=size__;\
- if (size__!=strlen(buf2__)) printf ("Error, bad length for %s\n",buf2__);}*/
+ if (size__!=strlen(buf2__)) LOG(llevError, "Error, bad length for %s\n",buf2__);}*/
 
  
  

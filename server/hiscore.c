@@ -220,7 +220,7 @@ static score *add_score(score *new_score) {
   if(!flag&&nrofscores<HIGHSCORE_LENGTH)
     copy_score(new_score,&pscore[nrofscores++]);
   if((fp=fopen(filename,"w"))==NULL) {
-    perror("Can't write to highscore-list.\n");
+    LOG(llevError, "Cannot write to highscore file %s: %s\n", filename, strerror_local(errno));
     return NULL;
   }
   for(i=0;i<nrofscores;i++) {
@@ -331,7 +331,7 @@ void display_high_score(object *op,int max, const char *match) {
 
     sprintf(buf,"%s/%s",settings.localdir,HIGHSCORE);
     if((fp=open_and_uncompress(buf,0,&comp))==NULL) {
-	perror("Can't open highscore file");
+	LOG(llevError, "Cannot open highscore file %s: %s\n", buf, strerror_local(errno));
 	if(op!=NULL)
 	    new_draw_info(NDI_UNIQUE, 0,op,"There is no highscore file.");
 	return;
@@ -368,7 +368,7 @@ void display_high_score(object *op,int max, const char *match) {
 	    while (*bp != ' ' && bp>cp) bp--;
 	    *bp='\0';
 	    if (op == NULL) {
-		printf("%s\n",cp);
+		LOG(llevDebug, "%s\n", cp);
 	    }
 	    else {
 		new_draw_info(NDI_UNIQUE, 0,op,cp);
@@ -378,7 +378,7 @@ void display_high_score(object *op,int max, const char *match) {
 	    i++;
 	}
 	if(op == NULL) 
-		printf("%s\n",buf);
+		LOG(llevDebug, "%s\n", buf);
 	else
 		new_draw_info(NDI_UNIQUE, 0,op,buf);
     }
