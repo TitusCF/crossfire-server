@@ -480,17 +480,6 @@ void load_objects (mapstruct *m, FILE *fp, int mapflags) {
 	    continue;
 	}
 
-	/* check for unique items, or unique squares */
-	/* TODO DISPLACE unique = 0;
-	for (otmp = get_map_ob(m, op->x, op->y); otmp; otmp = ootmp) {
-	    ootmp = otmp->above;
-	    if (QUERY_FLAG(otmp, FLAG_UNIQUE))
-		unique = 1;
-	}
-	if (QUERY_FLAG(op, FLAG_UNIQUE) || QUERY_FLAG(op, FLAG_OBJ_SAVE_ON_OVL))
-	    unique = 1;
-	if (!(mapflags & (MAP_OVERLAY|MAP_PLAYER_UNIQUE) || unique))
-	   SET_FLAG(op, FLAG_OBJ_ORIGINAL);*/
 
 	switch(i) {
 	  case LL_NORMAL:
@@ -520,6 +509,7 @@ void load_objects (mapstruct *m, FILE *fp, int mapflags) {
     }
     for (i=0;i<m->width;i++){
     	for (j=0;j<m->height;j++){
+            unique =0;
 	    /* check for unique items, or unique squares */
 	    for (otmp = get_map_ob(m, i, j); otmp; otmp = otmp->above) {
 	        if (QUERY_FLAG(otmp, FLAG_UNIQUE) || QUERY_FLAG(otmp, FLAG_OBJ_SAVE_ON_OVL))
