@@ -1155,6 +1155,7 @@ int monster_can_pick(object *monster, object *item) {
 
 	case SCROLL:
 	    flag = QUERY_FLAG(monster,FLAG_USE_SCROLL);
+	    break;
 
 	case BOW:
 	case ARROW:

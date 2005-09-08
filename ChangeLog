@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/monster.c: Add missing "break" statement in monster_can_pick(). It did
+   prevent some monsters from picking up scrolls.
+Andreas Kirschbaum 2005-09-08
+
 common/{anim.c, image.c, los.c, map.c, porting.c, treasure.c},
 include/define.h, random_maps/treasure.c, 
 server/{apply.c, c_misc.c, c_object.c, c_wiz.c, commands.c, daemon.c,
