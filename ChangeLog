@@ -17,6 +17,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/monster.c: Set FLAG_READY_SKILL in monster_check_apply() for monsters
+   with skills. This fixes hill giants and trolls not throwing boulders
+   anymore.
 server/monster.c: Add missing "break" statement in monster_can_pick(). It did
    prevent some monsters from picking up scrolls.
 Andreas Kirschbaum 2005-09-08

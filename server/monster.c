@@ -1285,12 +1285,11 @@ void monster_check_apply(object *mon, object *item) {
     else if ( item->type == SKILL )
         {
         /*
-         * Ryo 2004-05-08
-         * skills are specials: monsters must have the 'FLAG_CAN_USE_SKILL' flag set,
+         * skills are specials: monsters must have the 'FLAG_READY_SKILL' flag set,
          * else they can't use the skill...
          * Skills also don't need to get applied, so return now.
          */
-        SET_FLAG( item, FLAG_CAN_USE_SKILL );
+        SET_FLAG(mon, FLAG_READY_SKILL);
         return;
         }
 
