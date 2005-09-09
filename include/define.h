@@ -492,7 +492,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define FLAG_PICK_UP		48 /* Can pick up */
 #define FLAG_UNIQUE		49 /* Item is really unique (UNIQUE_ITEMS) */
 #define FLAG_NO_DROP		50 /* Object can't be dropped */
-/* #define FLAG_NO_PRETEXT	51 Not used No text is added before name. */
+#define FLAG_WIZCAST		51 /* The wizard can cast spells in no-magic area */
 #define FLAG_CAST_SPELL		52 /* (Monster) can learn and cast spells */
 #define FLAG_USE_SCROLL		53 /* (Monster) can read scroll */
 #define FLAG_USE_RANGE		54 /* (Monster) can apply and use range items */

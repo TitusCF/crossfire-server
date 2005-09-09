@@ -374,6 +374,7 @@ void animate_one (CFanimation* animation, long int milliseconds)
         if (animation->verbose)
             printf ("Setting wizard flags\n");
         SET_FLAG (animation->victim,FLAG_WIZPASS);
+        SET_FLAG (animation->victim,FLAG_WIZCAST);
         SET_FLAG (animation->victim,FLAG_WIZ);
         }
     GCFP.Value[0]=animation->victim;
@@ -393,6 +394,7 @@ void animate_one (CFanimation* animation, long int milliseconds)
         if (!animation->nextmovement) break;
         }
     CLEAR_FLAG (animation->victim,FLAG_WIZPASS);
+    CLEAR_FLAG (animation->victim,FLAG_WIZCAST);
     CLEAR_FLAG (animation->victim,FLAG_WIZ);
 }
 

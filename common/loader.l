@@ -790,10 +790,12 @@ A	.+
 			    SET_FLAG(op, FLAG_WIZ);
 			    SET_FLAG(op, FLAG_WAS_WIZ);
 			    SET_FLAG(op, FLAG_WIZPASS);
+			    SET_FLAG(op, FLAG_WIZCAST);
 			}
 			else {
 			    CLEAR_FLAG(op, FLAG_WIZ);
 			    CLEAR_FLAG(op, FLAG_WIZPASS);
+			    CLEAR_FLAG(op, FLAG_WIZCAST);
 			}
 		    }
 ^was_wiz{S}  	    SET_OR_CLEAR_FLAG(op, FLAG_WAS_WIZ, IVAL);

@@ -172,6 +172,7 @@ int command_hiscore(object *op, char *params);
 int command_debug(object *op, char *params);
 int command_dumpbelow(object *op, char *params);
 int command_wizpass(object *op, char *params);
+int command_wizcast(object *op, char *params);
 int command_dumpallobjects(object *op, char *params);
 int command_dumpfriendlyobjects(object *op, char *params);
 int command_dumpallarchetypes(object *op, char *params);

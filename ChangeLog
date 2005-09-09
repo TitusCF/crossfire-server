@@ -17,6 +17,23 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Allow a DM to cast spells and prayers in no-magic/no-prayer areas. Add new
+command "wizcast" to toggle this setting.
+common/loader.l: Set/reset FLAG_WIZCAST for flag "wiz".
+common/loader.c: Rebuilt
+include/define.h: Add new flag FLAG_WIZCAST; remove unused flag
+   FLAG_NO_PRETEXT.
+lib/Makefile.am: Add new help file for wizcast.
+lib/Makefile.in: Rebuilt.
+plugin_animator/plugin_animator.c: Set/reset FLAG_WIZCAST in animate_one().
+server/apply.c: Always allow FLAG_WIZCAST to enchant weapons and armour.
+server/c_misc.c: Add new function command_wizcast().
+server/c_wiz.c: Set/reset FLAG_WIZCAST when entering/leaving DM mode.
+server/commands.c: Add "wizcast" command.
+server/spell_effect.c: Always allow FLAG_WIZCAST to use the spell probe.
+server/spell_util.c: Always allow FLAG_WIZCAST to cast spells and prayers.
+Andreas Kirschbaum 2005-09-09
+
 server/monster.c: Set FLAG_READY_SKILL in monster_check_apply() for monsters
    with skills. This fixes hill giants and trolls not throwing boulders
    anymore.

@@ -37,6 +37,7 @@ stats <player>
 style_info
 summon <player>
 time
+wizcast [<on_off>]
 wizpass
 who
 

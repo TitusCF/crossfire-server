@@ -572,7 +572,7 @@ int probe(object *op, object *caster, object *spell_ob, int dir) {
 
 	if (mflags & P_OUT_OF_MAP) break;
 
-	if (mflags & P_NO_MAGIC) {
+	if (!QUERY_FLAG(op, FLAG_WIZCAST) && (mflags & P_NO_MAGIC)) {
 	    new_draw_info(NDI_UNIQUE, 0,op,"Something blocks your magic.");
 	    return 0;
 	}

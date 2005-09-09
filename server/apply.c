@@ -630,7 +630,7 @@ int check_improve_weapon (object *op, object *tmp)
 
     if(op->type!=PLAYER)
       return 0;
-    if (get_map_flags(op->map,NULL, op->x,op->y, NULL, NULL) & P_NO_MAGIC) {
+    if (!QUERY_FLAG(op, FLAG_WIZCAST) && (get_map_flags(op->map, NULL, op->x, op->y, NULL, NULL) & P_NO_MAGIC)) {
 	new_draw_info(NDI_UNIQUE, 0,op,"Something blocks the magic of the scroll.");
 	return 0;
     }
@@ -2170,7 +2170,7 @@ static void apply_armour_improver (object *op, object *tmp)
 {
     object *armor;
 
-    if (get_map_flags(op->map,NULL, op->x,op->y,NULL, NULL) & P_NO_MAGIC) {
+    if (!QUERY_FLAG(op, FLAG_WIZCAST) && (get_map_flags(op->map, NULL, op->x, op->y, NULL, NULL) & P_NO_MAGIC)) {
         new_draw_info(NDI_UNIQUE, 0,op,"Something blocks the magic of the scroll.");
         return;
     }

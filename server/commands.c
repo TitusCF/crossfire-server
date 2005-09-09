@@ -260,6 +260,7 @@ CommArray_s WizCommands [] = {
   {"teleport", command_teleport,0.0},
   {"toggle_shout", command_toggle_shout,0.0},
   {"wizpass", command_wizpass,0.0},
+  {"wizcast", command_wizcast,0.0},
   {"overlay_save", command_save_overlay, 0.0},
 /*  {"possess", command_possess, 0.0}, */
   {"mon_aggr", command_mon_aggr, 0.0},

@@ -1250,6 +1250,7 @@ int command_nowiz (object *op, char *params) /* 'noadm' is alias */
     {
     CLEAR_FLAG(op, FLAG_WIZ);
     CLEAR_FLAG(op, FLAG_WIZPASS);
+    CLEAR_FLAG(op, FLAG_WIZCAST);
     CLEAR_FLAG(op, FLAG_FLYING);
     if (settings.real_wiz == TRUE)
         CLEAR_FLAG(op, FLAG_WAS_WIZ);
@@ -1320,6 +1321,7 @@ int do_wizard_dm( object* op, char* params, int silent )
       SET_FLAG(op, FLAG_WIZ);
       SET_FLAG(op, FLAG_WAS_WIZ);
       SET_FLAG(op, FLAG_WIZPASS);
+      SET_FLAG(op, FLAG_WIZCAST);
       new_draw_info(NDI_UNIQUE, 0,op, "Ok, you are the Dungeon Master!");
       SET_FLAG(op, FLAG_FLYING);
       clear_los(op);

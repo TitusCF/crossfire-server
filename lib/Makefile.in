@@ -276,7 +276,7 @@ dist_wizhelp_DATA = wizhelp/abil wizhelp/addexp \
 	wizhelp/style_info wizhelp/summon \
 	wizhelp/teleport wizhelp/time \
 	wizhelp/toggle_shout \
-	wizhelp/who wizhelp/wizhelp \
+	wizhelp/who wizhelp/wizcast wizhelp/wizhelp \
 	wizhelp/wizpass
 
 admdir = $(pkgdatadir)/adm

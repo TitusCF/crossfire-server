@@ -688,6 +688,28 @@ int command_wizpass (object *op, char *params)
   return 0;
 }
 
+int command_wizcast (object *op, char *params)
+{
+  int i;
+
+  if (!op)
+    return 0;
+
+  if (!params)
+    i = (QUERY_FLAG(op, FLAG_WIZCAST)) ? 0 : 1;
+  else
+    i = onoff_value(params);
+
+  if (i) {
+    new_draw_info(NDI_UNIQUE, 0, op, "You can now cast spells anywhere.");
+    SET_FLAG(op, FLAG_WIZCAST);
+  } else {
+    new_draw_info(NDI_UNIQUE, 0, op, "You now cannot cast spells in no-magic areas.");
+    CLEAR_FLAG(op, FLAG_WIZCAST);
+  }
+  return 0;
+}
+
 int command_dumpallobjects (object *op, char *params)
 {
         dump_all_objects();
