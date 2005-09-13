@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Make untriggered TIMED_GATEs work again.
+server/apply.c: Clear object speed only for connected objects.
+Andreas Kirschbaum 2005-09-13
+
 This change is mostly cosmetic and a preparation for the new movement
 type code.  Basically, it just changes the old object movement_type
 field to attack_movement.  This makes sense because that is what that

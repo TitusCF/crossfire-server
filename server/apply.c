@@ -3450,8 +3450,11 @@ void fix_auto_apply(mapstruct *m) {
 		    tmp->randomitems = NULL;
 		}
 		else if(tmp->type==TIMED_GATE) {
-		    tmp->speed = 0;
-		    update_ob_speed(tmp);
+		    object *head = tmp->head != NULL ? tmp->head : tmp;
+		    if (QUERY_FLAG(head, FLAG_IS_LINKED)) {
+			tmp->speed = 0;
+			update_ob_speed(tmp);
+		    }
 		}
 		/* This function can be called everytime a map is loaded, even when
 		 * swapping back in.  As such, we don't want to create the treasure
