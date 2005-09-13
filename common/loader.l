@@ -880,7 +880,7 @@ A	.+
 ^has_ready_wand{S}	SET_OR_CLEAR_FLAG(op, FLAG_READY_RANGE, IVAL);
 ^can_use_wand{S}	SET_OR_CLEAR_FLAG(op, FLAG_USE_RANGE, IVAL);
 
-^attack_movement{S} op->move_type = IVAL;
+^attack_movement{S} op->attack_movement = IVAL;
 ^move_state{S}	    op->move_status = IVAL;
 ^confused{S}	    SET_OR_CLEAR_FLAG(op, FLAG_CONFUSED, IVAL);
 ^stealth{S}	    SET_OR_CLEAR_FLAG(op, FLAG_STEALTH, IVAL);
@@ -1690,8 +1690,8 @@ char *get_ob_diff(object *op,object *op2) {/* I plan to optimize this heavily */
   }
   if(op->move_status != op2->move_status)
     FAST_SAVE_LONG(fastbuf,"move_state ",op->move_status,11);
-  if(op->move_type != op2->move_type)
-    FAST_SAVE_LONG(fastbuf,"attack_movement ",op->move_type,16);
+  if(op->attack_movement != op2->attack_movement)
+    FAST_SAVE_LONG(fastbuf,"attack_movement ",op->attack_movement,16);
   if(op->nrof!=op2->nrof)
     FAST_SAVE_LONG(fastbuf,"nrof ",op->nrof,5);
   if(op->level!=op2->level)

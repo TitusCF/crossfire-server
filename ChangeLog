@@ -17,6 +17,26 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+This change is mostly cosmetic and a preparation for the new movement
+type code.  Basically, it just changes the old object movement_type
+field to attack_movement.  This makes sense because that is what that
+field is called in saved and loaded objects/archetypes, and thus
+frees up that name for the new movement code.
+--
+common/button.c: field name change
+common/loader.{cl}: field name change
+doc/Developers/objects: Add section on new movement types, update old
+   documentation to note it is attack_movement and not movement_type
+   field that is important.
+include/object.h: field name change.
+server/attack.c: field name change.
+server/monster.c: field name change
+server/pets.c: field name change
+server/skills.c: field name change.
+server/spell_attack.c: field name change
+server/spell_effect.c: field name change
+MSW 2005-09-12
+
 Allow a DM to cast spells and prayers in no-magic/no-prayer areas. Add new
 command "wizcast" to toggle this setting.
 common/loader.l: Set/reset FLAG_WIZCAST for flag "wiz".

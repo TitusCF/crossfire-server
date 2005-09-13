@@ -48,7 +48,7 @@ object *check_enemy(object *npc, rv_vector *rv) {
     /* if this is pet, let him attack the same enemy as his owner
      * TODO: when there is no ower enemy, try to find a target,
      * which CAN attack the owner. */
-    if ((npc->move_type & HI4) == PETMOVE)
+    if ((npc->attack_movement & HI4) == PETMOVE)
     {
 	if (npc->owner == NULL)
 	    npc->enemy = NULL;
@@ -192,7 +192,7 @@ object *find_enemy(object *npc, rv_vector *rv)
      */
 
     /* pet move */
-    if ((npc->move_type & HI4) == PETMOVE) {
+    if ((npc->attack_movement & HI4) == PETMOVE) {
         tmp= get_pet_enemy(npc,rv);
 	if (tmp) get_rangevector(npc, tmp, rv, 0);
 	return tmp;
@@ -399,9 +399,9 @@ int move_monster(object *op) {
 	 * stand still and a movement type set.
 	 */
         if(!QUERY_FLAG(op, FLAG_STAND_STILL))  {
-            if (op->move_type & HI4)
+            if (op->attack_movement & HI4)
             {
-                switch (op->move_type & HI4) {
+                switch (op->attack_movement & HI4) {
 		    case (PETMOVE):
 			pet_move (op);
 			break;
@@ -535,9 +535,9 @@ int move_monster(object *op) {
     if(QUERY_FLAG(op,FLAG_CONFUSED))
 	dir = absdir(dir + RANDOM()%3 + RANDOM()%3 - 2);
 
-    if ((op->move_type & LO4) && !QUERY_FLAG(op, FLAG_SCARED)) 
+    if ((op->attack_movement & LO4) && !QUERY_FLAG(op, FLAG_SCARED)) 
     {        
-	switch (op->move_type & LO4) {
+	switch (op->attack_movement & LO4) {
 	    case DISTATT:
 		dir = dist_att (dir,op,enemy,part,&rv);
 		break;
@@ -567,7 +567,7 @@ int move_monster(object *op) {
 		break;
 
 	    default:
-		LOG(llevDebug,"Illegal low mon-move: %d\n",op->move_type & LO4);
+		LOG(llevDebug,"Illegal low mon-move: %d\n",op->attack_movement & LO4);
 	}
     }
 

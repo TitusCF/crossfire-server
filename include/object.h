@@ -206,7 +206,7 @@ typedef struct obj {
     /* changes made by kholland@sunlab.cit.cornell.edu */
     /* allows different movement patterns for attackers */
     sint32	move_status;	/* What stage in attack mode */
-    uint16	move_type;	/* What kind of attack movement */
+    uint16	attack_movement;/* What kind of attack movement */
     uint8	will_apply;     /* See crossfire.doc */
     struct obj	*spellitem;	/* Spell ability monster is choosing to use */
     double	expmul;		/* needed experience = (calc_exp*expmul) - means some */

@@ -1901,7 +1901,7 @@ int hit_player(object *op,int dam, object *hitter, int type) {
 	    if (friendly) {
 		SET_FLAG(tmp, FLAG_FRIENDLY);
 		add_friendly_object(tmp);
-		tmp->move_type = PETMOVE;
+		tmp->attack_movement = PETMOVE;
 		if (owner!=NULL)
 		    set_owner(tmp,owner);
 	    }

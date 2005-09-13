@@ -28,6 +28,7 @@ Sections:
 	H. Body Location
 	I. Meaning of certain attributes for certain items:
 	J. Lore
+	K. Movement types
 
 4. SPECIAL OBJECTS
 
@@ -222,7 +223,7 @@ Set the variable attack_movement to one of the below (cut from define.h):
 #define DISTHIT  7 /* attack from a distance if hit as recommended by Frank */
 #define WAIT2    8 /* monster does not try to move towards player if far    */
                    /* maintains comfortable distance                        */
-#define PETMOVE 16 /* if the upper four bits of move_type / attack_movement */
+#define PETMOVE 16 /* if the upper four bits of attack_movement 	    */
                    /* are set to this number, the monster follows a player  */
                    /* until the owner calls it back or off                  */
                    /* player followed denoted by 0b->owner                  */
@@ -230,7 +231,7 @@ Set the variable attack_movement to one of the below (cut from define.h):
                    /* attacking, and will continue to do so until the owner */
                    /* calls off the monster - a key command will be         */
                    /* inserted to do so                                     */
-#define CIRCLE1 32 /* if the upper four bits of move_type / attack_movement */
+#define CIRCLE1 32 /* if the upper four bits of attack_movement             */
                    /* are set to this number, the monster will move in a    */
                    /* circle until it is attacked, or the enemy field is    */
                    /* set, this is good for non-aggressive monsters and NPC */
@@ -1078,6 +1079,77 @@ should contain background information on the object, or other somewhat general
 details about the object.  It will be put into books, possibly used by npc's
 and other places where general knowledge should be presented.
 
+K. MOVEMENT TYPES
+============================================================
+
+The movement types (MOVE_..) is a bitmask that determines which method
+of locomotion the object is using, and is also used to determine what
+types of movement the space blocks.  From define.h:
+
+#define MOVE_WALK       0x1     /* Object walks */
+#define MOVE_FLY_LOW    0x2     /* Low flying object */
+#define MOVE_FLY_HIGH   0x4     /* High flying object */
+#define MOVE_SWIM       0x8     /* Swimming object */
+
+The fields in the object themselves:
+
+move_type: Bitmask of above values which determines what form of movement
+  this object uses.  For objects equipped by player/monster, move_type grants
+  that movement.
+
+  Note that move_type of MOVE_FLY (0x2) replaces FLAG_FLYING.
+
+  In general, creatures will only have 1 movement type active at a time.
+
+move_block: Represents what movement types are unable to pass this space.
+  If the creature has multiple movement types, they may still be able
+  to pass the space.  For example, a player has MOVE_WALK | MOVE_FLY.
+  He tries to move onto a space that blocks MOVE_WALK - not a problem,
+  a he just flies over.
+
+move_on/move_off: Take bitmasks - represents for what movement types
+  this object is activated on.  Replaces the walk/fly_on/off values
+
+move_slow: Like move_block, but represents what movement types are slowed
+  on this space.  Note that it is not possible to specifiy different 
+  penalties for different movement types in the same object.  However,
+  multiple objects with different move_slow values (and penalties) can
+  be put on the same space.  This replaced FLAG_SLOW_MOVE, which is
+  converted to only slow down walking movement
+
+move_slow_penalty (was slow_move) - how much the player is slowed down.
+  This value is a float (before it was an int converted to a float
+  at load time).  It is basically how much slower (percentage wise)
+  the player moves through this terrain.  A value of 0 is basically
+  a non operation.  A value of 0.5 means it takes 50% longer to move
+  through the space.
+
+  Certain terrain has skills which reduce the slow penalty (woodsmen
+  in forest for example).  As of this writing, the penalty is reduced
+  to 1/4 of what it would be.  Eg, a move_slow_penalty of 1.0 would
+  say it takes twice as long to move through the space.  If the player
+  has appropriate skill, it would now only take that player 25%
+  longer to move through the space.
+
+move_state/move_status: This is unrelated to this movement code - it is
+  used for monster attack_movement information.  it is only noted here
+  since it starts with the move_ prefix.
+
+msg/endmsg:  If an object has move_block of move_slow and that affects
+  the player movement, the objects message will be printed to the player -
+  thus things like 'The jungle slows you down' or 'The wall is in the way'
+  will be printed.  Various hints can be contained in the messages.
+
+Load/Save behaviour and backward compatability:
+The loader knows about certain old flags (walk_on, blocked, etc) and
+sets up the appropriate bitmasks.  When data is saved, it is saved
+as the move_... with actual bitmasks.
+
+Special player notes:
+Player can only pick up items if MOVE_WALK is set (this may need
+to be expanded down the road).  Basic idea is that if you are flying,
+can't reach the ground, if swimming, don't really have any free hands
+to grab anything.
 
 ******************************************************************************
 4. SPECIAL OBJECTS
@@ -1625,7 +1697,6 @@ last_eat  <no>          Internal use (for consuming food)
 speed     <no>          speed of O.  A negative number means that speed_left
                         will be randomized when the object is loaded.
 speed_left <no>         speed of O remaining, internal.
-slow_move <no>          Slow-down factor for player walking on this O.
 face <bmap no>           bitmap first drawn for O.
 Str,Dex,Con,
 Wis,Cha,Int <no>        default ability for O.

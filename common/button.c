@@ -596,7 +596,7 @@ void do_mood_floor(object *op, object *op2) {
 		if(QUERY_FLAG(tmp, FLAG_FRIENDLY)) { 
 			CLEAR_FLAG(tmp, FLAG_FRIENDLY);
 			remove_friendly_object(tmp);
-			tmp->move_type = 0;
+			tmp->attack_movement = 0;
 			/* lots of checks here, but want to make sure we don't
 			 * dereference a null value
 			 */
@@ -636,7 +636,7 @@ void do_mood_floor(object *op, object *op2) {
 		tmp->stats.exp = 0;
 		SET_FLAG(tmp, FLAG_FRIENDLY);
                 add_friendly_object (tmp);
-		tmp->move_type = PETMOVE;
+		tmp->attack_movement = PETMOVE;
 		break;		
 
 	  default:

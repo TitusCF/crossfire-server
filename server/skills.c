@@ -756,7 +756,7 @@ int use_oratory(object *pl, int dir, object *skill) {
     }
 
     /* it's already allied! */ 
-    if(QUERY_FLAG(tmp,FLAG_FRIENDLY)&&(tmp->move_type==PETMOVE)){  
+    if(QUERY_FLAG(tmp,FLAG_FRIENDLY)&&(tmp->attack_movement==PETMOVE)){  
 	if(get_owner(tmp)==pl) {
 	    new_draw_info(NDI_UNIQUE, 0,pl, 
 		      "Your follower loves your speech.\n");
@@ -791,7 +791,7 @@ int use_oratory(object *pl, int dir, object *skill) {
 	tmp->stats.exp = 0;
 	add_friendly_object(tmp);
 	SET_FLAG(tmp,FLAG_FRIENDLY);
-	tmp->move_type = PETMOVE;
+	tmp->attack_movement = PETMOVE;
 	return calc_skill_exp(pl,tmp, skill);
     }
     /* Charm failed.  Creature may be angry now */
@@ -801,7 +801,7 @@ int use_oratory(object *pl, int dir, object *skill) {
 	if(QUERY_FLAG(tmp,FLAG_FRIENDLY)) {
 	    CLEAR_FLAG(tmp,FLAG_FRIENDLY);
 	    remove_friendly_object(tmp);
-	    tmp->move_type = 0; 	/* needed? */ 
+	    tmp->attack_movement = 0; 	/* needed? */ 
 	}
 	CLEAR_FLAG(tmp,FLAG_UNAGGRESSIVE);
     }

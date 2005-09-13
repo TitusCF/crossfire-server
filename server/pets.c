@@ -55,7 +55,7 @@ object *get_pet_enemy(object * pet, rv_vector *rv){
 	if ((check_enemy(owner,rv)) == pet) {
 	    CLEAR_FLAG(pet, FLAG_FRIENDLY);
 	    remove_friendly_object(pet);
-	    pet->move_type &=~PETMOVE;
+	    pet->attack_movement &=~PETMOVE;
 	    return owner;
 	}
     } else {
@@ -64,7 +64,7 @@ object *get_pet_enemy(object * pet, rv_vector *rv){
 	 */
 	CLEAR_FLAG(pet, FLAG_FRIENDLY);
 	remove_friendly_object(pet);
-	pet->move_type &=~PETMOVE;
+	pet->attack_movement &=~PETMOVE;
 	return NULL;
     }
     /* If they are not on the same map, the pet won't be agressive */
@@ -422,14 +422,14 @@ object *fix_summon_pet(archetype *at, object *op, int dir, int is_golem ) {
 		    object *owner = get_owner(op);
 		    if(owner != NULL) {/* For now, we transfer ownership */
 			set_owner(tmp,owner);
-			tmp->move_type = PETMOVE;
+			tmp->attack_movement = PETMOVE;
 			add_friendly_object(tmp);
 			SET_FLAG(tmp, FLAG_FRIENDLY);
 		    }
 		}
 	    }
 	    if(op->type!=PLAYER || !is_golem) { 
-		tmp->move_type = PETMOVE;
+		tmp->attack_movement = PETMOVE;
 		tmp->speed_left = -1;
 		tmp->type = 0;
 		tmp->enemy = op->enemy; 
@@ -630,7 +630,7 @@ int summon_golem(object *op,object *caster,int dir,object *spob) {
 	    object *owner = get_owner(op);
 	    if (owner != NULL) { /* For now, we transfer ownership */
 		set_owner (tmp, owner);
-		tmp->move_type = PETMOVE;
+		tmp->attack_movement = PETMOVE;
 		add_friendly_object (tmp);
 		SET_FLAG (tmp, FLAG_FRIENDLY);
 	    }
@@ -888,8 +888,8 @@ int summon_object(object *op, object *caster, object *spell_ob, int dir)
 			    SET_FLAG(tmp, FLAG_FRIENDLY);
 			    add_friendly_object(tmp);
 			    tmp->stats.exp = 0;
-			    if (spell_ob->move_type) 
-				tmp->move_type = spell_ob->move_type;
+			    if (spell_ob->attack_movement) 
+				tmp->attack_movement = spell_ob->attack_movement;
 			    if (get_owner(op))
 				set_owner(tmp, get_owner(op));
 			}

@@ -189,7 +189,7 @@ void polymorph_living(object *op) {
 	set_owner(op,owner);
     if (friendly) {
 	SET_FLAG(op, FLAG_FRIENDLY);
-	op->move_type = PETMOVE;
+	op->attack_movement = PETMOVE;
 	add_friendly_object(op);
     }
 
@@ -2645,7 +2645,7 @@ void move_peacemaker(object *op) {
 	    victim->stats.grace = 0;
 	    victim->stats.Pow = 0;
 #endif
-	    victim->move_type = RANDO2;
+	    victim->attack_movement = RANDO2;
 	    SET_FLAG(victim,FLAG_UNAGGRESSIVE);
 	    SET_FLAG(victim,FLAG_RUN_AWAY);
 	    SET_FLAG(victim,FLAG_RANDOM_MOVE);

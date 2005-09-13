@@ -1480,7 +1480,7 @@ int mood_change(object *op, object *caster, object *spell) {
         set_owner(head, op);
 		set_spell_skill(op, caster, spell, head);
 		add_friendly_object(head);
-		head->move_type = PETMOVE;
+		head->attack_movement = PETMOVE;
 		done_one = 1;
 		change_exp(op, head->stats.exp / 2, spell->skill, SK_EXP_ADD_SKILL);
 		head->stats.exp = 0;
