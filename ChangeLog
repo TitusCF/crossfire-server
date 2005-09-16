@@ -17,6 +17,14 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Allow directors/movers to specify a specific arch/name/race.
+include/sproto.h: Add should_director_abort to here.
+server/{apply.c, time.c}: Add should_director_abort for the logic code
+    for this change, and add checks for it in director/mover code.
+doc/Developers/objects: Add documentation for directors including this
+    change, and update mover documentation.
+Alex Schultz 2005-09-15
+
 Make untriggered TIMED_GATEs work again.
 server/apply.c: Clear object speed only for connected objects.
 Andreas Kirschbaum 2005-09-13

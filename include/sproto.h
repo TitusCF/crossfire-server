@@ -11,6 +11,7 @@ void alchemy_failure_effect(object *op, object *cauldron, recipe *rp, int danger
 void remove_contents(object *first_ob, object *save_item);
 int calc_alch_danger(object *caster, object *cauldron, recipe *rp);
 /* apply.c */
+int should_director_abort(object *op, object *victim);
 int apply_potion(object *op, object *tmp);
 int check_item(object *op, const char *item);
 int check_weapon_power(object *who, int improvs);

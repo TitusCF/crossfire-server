@@ -39,13 +39,14 @@ Sections:
 	E. BOWS & ARROWS -missile weapons
 	F. Creators -object creating objects
 	G. Player Movers
-	H. Magical Walls  -walls that cast spells
-	I. Containers
-	J. Mood Floors
-	K. Altars, Triggers, Detectors and other connected items
-	L. Signs
-  	M. POISONOUS BOOZ
-	N. Duplicators
+	H. Directors
+	I. Magical Walls  -walls that cast spells
+	J. Containers
+	K. Mood Floors
+	L. Altars, Triggers, Detectors and other connected items
+	M. Signs
+  	N. POISONOUS BOOZ
+	O. Duplicators
 
 5. Flags & specifications for objects
 
@@ -1372,14 +1373,50 @@ if lifesave is set.  default is not set.
 hp:  if lifesave is set, the number of times (-1) it will move a player
   (i.e., it will move someone hp+1 times before it vanishes.). default
   0
+  
+subtype: a bitmask that specifies which of arch, name, and race affect the
+         race and slaying flags. If unspecified (or zero), all will be searched.
+	 The LSB is arch, the next bit is name, and the third bit is for race.
+	 Table for the lazy:
+           subtype 1: only arch
+	   subtype 2: only name
+           subtype 3: arch or name
+	   subtype 4: only race
+           subtype 5: arch or race
+	   subtype 6: name or race
+           subtype 7: all three
+
+race: only affect objects with a arch/name/race matching this.
+
+slaying: don't affect objects with a arch/name/race matching this.
 
 Note from Mark:  Player Movers and Directors are seperate objects, even
 though they look and act similar.  Directors only do spells/missiles,
 however, while player movers only do living creatures (depending on how it
 is set)
 
+H. Directors
+============
+Directors are objects that change the direcion of objects moving through the
+air such as spells and missiles. As in the noted in the section on player
+movers, they act similar, however in constrast they only affect spells,
+missiles, or other flying projectiles.
 
-H. Magical Walls  --  walls that cast spells
+Here are the various fields:
+
+sp:  the direction--if unset (0) motion is random.
+
+subtype: a bitmask that specifies which of arch, name, and race affect the
+         race and slaying flags. If unspecified (or zero), all will be searched.
+	 See the section above on playermovers for what subtypes mean what.
+
+race: only affect objects with a arch/name/race matching this.
+
+slaying: don't affect objects with a arch/name/race matching this.
+
+
+
+I. Magical Walls  --  walls that cast spells
 ============================================
 Magical walls are like other walls, except every now and then,
 they fire spells.
@@ -1436,7 +1473,7 @@ connected	either rotate the wall or trigger it.  If triggering,
 
 
 
-I. Containers
+J. Containers
 =============
 container <xxx>         :  the maximum weight the container can hold
 			  (stored internally in weight_limit)
@@ -1445,7 +1482,7 @@ Str <xx>                :  reduces the weight of the objects in the container
                            0 == no reduction,   100 = weightless
 
 
-J. Mood Floors
+K. Mood Floors
 ==============
 ("Brian Thomas" <thomas@astro.psu.edu>)
 last_sp field is used to determine what will happen to the monster
@@ -1461,7 +1498,7 @@ when the floor is activated:
                                 is not enabled for continous operation
 
 
-K. Altars, Triggers, Detectors and other connected items:
+L. Altars, Triggers, Detectors and other connected items:
 =========================================================
 Note: This is not quite complete documentation, but is correct as far
 as it goes (0.92.1)
@@ -1615,7 +1652,7 @@ Thus, when the spikes are activated, they push the boulder to the other
 space, that then activates whatever is desired.
 
 
-L. Signs:
+M. Signs:
 ========
 msg: what to print when applied.
 food: how many times the sign can be read.
@@ -1624,7 +1661,7 @@ last_eat: how many times the sign has been read (only used internally.)
 If food is zero, there is no limit on how many times the sign can be read.
 
 
-M. POISONOUS BOOZE:
+N. POISONOUS BOOZE:
 ==================
 stats.hp  Poison player or monster that applies this booze with stats.hp
           poison damage.
@@ -1633,7 +1670,7 @@ stats.hp must be greater 0 to do damage.  It used to be less than 0 for
 -stats.hp direct damage, but that has changed.  stats.hp <= 0 now means no
 damage at all, just loss of 25% food.
 
-N. Duplicators:
+O. Duplicators:
 ===============
 Duplicators copy or remove objects.  Duplicators are triggered objects.
 

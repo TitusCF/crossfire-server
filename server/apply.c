@@ -42,6 +42,53 @@
 #include <math.h>
 
 /**
+ * Check if op should abort moving victim because of it's race or slaying.
+ */
+int should_director_abort(object *op, object *victim)
+{
+   int arch_flag, name_flag, race_flag;
+   /* Get flags to determine what of arch, name, and race should be checked.
+    * This is stored in subtype, and is a bitmask, the LSB is the arch flag,
+    * the next is the name flag, and the last is the race flag. Also note,
+    * if subtype is set to zero, that also goes to defaults of all affecting
+    * it. Examples:
+    * subtype 1: only arch
+    * subtype 3: arch or name
+    * subtype 5: arch or race
+    * subtype 7: all three
+    */
+   if (op->subtype)
+   {
+     arch_flag = (op->subtype & 1);
+     name_flag = (op->subtype & 2);
+     race_flag = (op->subtype & 4);
+   } else {
+     arch_flag = 1;
+     name_flag = 1;
+     race_flag = 1;
+   }
+   /* If the director has race set, only affect objects with a arch, 
+    * name or race that matches.
+    */
+   if ( (op->race) && 
+     ((!(victim->arch && arch_flag && victim->arch->name) || strcmp(op->race, victim->arch->name))) &&
+     ((!(victim->name && name_flag) || strcmp(op->race, victim->name))) &&
+     ((!(victim->race && race_flag) || strcmp(op->race, victim->race))) ) {
+     return 1;
+   }
+    /* If the director has slaying set, only affect objects where none
+     * of arch, name, or race match.
+     */
+   if ( (op->slaying) && (
+     ((victim->arch && arch_flag && victim->arch->name && !strcmp(op->slaying, victim->arch->name))) ||
+     ((victim->name && name_flag && !strcmp(op->slaying, victim->name))) ||
+     ((victim->race && race_flag && !strcmp(op->slaying, victim->race)))) ) {
+     return 1;
+   }
+   return 0;
+}
+
+/**
  * This handles a player dropping money on an altar to identify stuff.
  * It'll identify marked item, if none all items up to dropped money.
  * Return value: 1 if money was destroyed, 0 if not.
@@ -1328,7 +1375,7 @@ void move_apply (object *trap, object *victim, object *originator)
   switch (trap->type)
   {
   case PLAYERMOVER:
-    if (trap->attacktype && (trap->level || victim->type!=PLAYER)) {
+    if (trap->attacktype && (trap->level || victim->type!=PLAYER) && !should_director_abort(trap, victim)) {
 	if (!trap->stats.maxsp) trap->stats.maxsp=2.0;
 	/* Is this correct?  From the docs, it doesn't look like it
 	 * should be divided by trap->speed
@@ -1351,7 +1398,7 @@ void move_apply (object *trap, object *victim, object *originator)
     goto leave;
 
   case DIRECTOR:
-    if(victim->direction) {
+    if(victim->direction && !should_director_abort(trap, victim)) {
       victim->direction=trap->stats.sp;
       update_turn_face(victim);
     }

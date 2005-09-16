@@ -1114,6 +1114,8 @@ void move_player_mover(object *op) {
 		    m->path, op->x, op->y);
 		return ;
 	    }
+	    
+	    if (should_director_abort(op, victim)) return ;
 
 	    for(nextmover=get_map_ob(m,nx, ny); nextmover !=NULL; nextmover=nextmover->above) {
 		if(nextmover->type == PLAYERMOVER) 
