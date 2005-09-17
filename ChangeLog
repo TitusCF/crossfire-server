@@ -17,6 +17,13 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Update client inventory view for players dieing in a shop with unpaid items in
+inventory.
+--
+server/player.c: Send removed item to client in remove_unpaid_objects(). Do
+   not call remove_unpaid_objects() multiple times in kill_player().
+Andreas Kirschbaum 2005-09-17
+
 Allow directors/movers to specify a specific arch/name/race.
 include/sproto.h: Add should_director_abort to here.
 server/{apply.c, time.c}: Add should_director_abort for the logic code

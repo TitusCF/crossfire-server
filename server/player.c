@@ -2289,6 +2289,8 @@ void remove_unpaid_objects(object *op, object *env)
 	    remove_ob(op);
 	    op->x = env->x;
 	    op->y = env->y;
+	    if (env->type == PLAYER)
+		esrv_del_item(env->contr, op->count);
 	    insert_ob_in_map(op, env->map, NULL,0);
 	}
 	else if (op->inv) remove_unpaid_objects(op->inv, env);
@@ -2815,8 +2817,9 @@ void kill_player(object *op)
 	 */
 
 	for (tmp= get_map_ob(op->map, op->x, op->y); tmp; tmp=tmp->above) {
-	    if (tmp && tmp->type == SHOP_FLOOR) {
+	    if (tmp->type == SHOP_FLOOR) {
 		remove_unpaid_objects(op->inv, op);
+		break;
 	    }
 	}
  
