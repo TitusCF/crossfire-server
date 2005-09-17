@@ -2085,7 +2085,6 @@ int cast_detection(object *op, object *caster, object *spell, object *skill) {
  */
 static void charge_mana_effect(object *victim, int caster_level)
 {
-    new_draw_info_format(NDI_UNIQUE, 0, victim, "victim=%s caster_level=%d", victim->name, caster_level);
 
     /* Prevent explosions for objects without mana. Without this check, doors
      * will explode, too.
