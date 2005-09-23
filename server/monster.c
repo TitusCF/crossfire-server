@@ -332,7 +332,7 @@ int move_monster(object *op) {
 	monster_apply_below(op); /* Check for items to apply below */
 
     /*  generate hp, if applicable */
-    if(op->stats.Con&&op->stats.hp<op->stats.maxhp) {
+    if(op->stats.Con > 0 && op->stats.hp < op->stats.maxhp) {
 
 	/* last heal is in funny units.  Dividing by speed puts
 	 * the regeneration rate on a basis of time instead of
@@ -365,7 +365,7 @@ int move_monster(object *op) {
     }
 
     /* generate sp, if applicable */
-    if(op->stats.Pow&&op->stats.sp<op->stats.maxsp) {
+    if(op->stats.Pow > 0 && op->stats.sp < op->stats.maxsp) {
 
 	/*  last_sp is in funny units.  Dividing by speed puts
          * the regeneration rate on a basis of time instead of

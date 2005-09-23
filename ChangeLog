@@ -17,6 +17,13 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Fix bug #744327 ('immortal' monsters): Prevent monsters from loosing hp or sp
+if they have negative Con/Pow. For hp, this made some monsters unkillable
+because they eventually had negative hp.
+--
+server/monster.c: In move_monster() do gain hp/sp only if Con/Pow is positive.
+Andreas Kirschbaum 2005-09-24
+
 Update client inventory view for players dieing in a shop with unpaid items in
 inventory.
 --
