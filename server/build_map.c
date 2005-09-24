@@ -829,7 +829,6 @@ int adjust_sign_msg( object* pl, short x, short y, object* tmp )
     object* book;
     char buf[MAX_BUF];
     char buf2[MAX_BUF];
-    int namelen;
 
     book = get_msg_book( pl, x, y );
     if ( !book )

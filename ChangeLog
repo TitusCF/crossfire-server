@@ -17,10 +17,13 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/build_map.c: remove unused variable.
+--
 Commit patch #1194964 (party obsoletion) by cavesomething.
 Affected files:
  include/player.h sproto.h
- server/attack.c c_party.c login.c main.c player.c skill_util.c skills.c
+ server/apply.c attack.c c_party.c login.c main.c pets.c player.c
+  skill_util.c skills.c spell_util.c
 --
 include/win32.h: turn off harmless warning.
 Ryo 2005-08-24
