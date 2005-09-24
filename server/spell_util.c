@@ -923,13 +923,13 @@ int cast_party_spell(object *op, object *caster,int dir,object *spell_ob, char *
     /* Always cast spell on caster */
     success = cast_spell( op, caster, dir, spell, stringarg );
 
-    if ( caster->contr->party_number == -1 )
+    if ( caster->contr->party == NULL )
         {
         remove_ob( spell );
         return success;
         }
     for( pl=first_player; pl!=NULL; pl=pl->next )
-        if( ( pl->ob->contr->party_number == caster->contr->party_number ) && ( on_same_map( pl->ob, caster ) ) )
+        if( ( pl->ob->contr->party == caster->contr->party ) && ( on_same_map( pl->ob, caster ) ) )
             {
             cast_spell( pl->ob, caster, pl->ob->facing, spell, stringarg );
             }

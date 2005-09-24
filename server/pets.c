@@ -992,14 +992,14 @@ int should_arena_attack(object *pet,object *owner,object *target) {
 	if (target->type != PLAYER) {
 		/* if the target is owned by a player make sure than make sure
 		it's not in the same party */
-		if ((towner->type == PLAYER) && (rowner->contr->party_number > 0)) {
-			if (rowner->contr->party_number == towner->contr->party_number) return 0;
+		if ((towner->type == PLAYER) && (rowner->contr->party != NULL)) {
+			if (rowner->contr->party == towner->contr->party) return 0;
 		}
 	} else {
 		/* if the target is a player make sure than make sure it's not
 		in the same party */
-		if (rowner->contr->party_number > 0){
-			if (rowner->contr->party_number == target->contr->party_number) return 0;
+		if (rowner->contr->party != NULL){
+			if (rowner->contr->party == target->contr->party) return 0;
 		}
 	}
 	
