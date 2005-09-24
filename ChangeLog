@@ -17,6 +17,14 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Commit patch #1194964 (party obsoletion) by cavesomething.
+Affected files:
+ include/player.h sproto.h
+ server/attack.c c_party.c login.c main.c player.c skill_util.c skills.c
+--
+include/win32.h: turn off harmless warning.
+Ryo 2005-08-24
+
 Fix bug #744327 ('immortal' monsters): Prevent monsters from loosing hp or sp
 if they have negative Con/Pow. For hp, this made some monsters unkillable
 because they eventually had negative hp.

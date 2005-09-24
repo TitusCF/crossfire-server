@@ -1205,6 +1205,9 @@ void do_specials() {
     if (!(pticks % 5009))
 	clean_friendly_list();
 
+    if (!(pticks % 5011))
+	obsolete_parties();
+
     if (!(pticks % 12503))
       fix_luck();
 }

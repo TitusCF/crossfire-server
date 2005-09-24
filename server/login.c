@@ -478,7 +478,7 @@ void check_login(object *op) {
 #ifdef SAVE_INTERVAL
     pl->last_save_time=time(NULL);
 #endif /* SAVE_INTERVAL */
-    pl->party_number = (-1);
+    pl->party = NULL;
     if (settings.search_items == TRUE)
 	pl->search_str[0]='\0';
     pl->name_changed=1;

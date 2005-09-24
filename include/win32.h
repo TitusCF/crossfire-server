@@ -9,6 +9,7 @@
 /* Define the version here.  In Unixland, it's defined on the command line now. */
 #define VERSION "1.8.0"
 
+#pragma warning(disable: 4761) /* integral size mismatch in argument; conversion supplied */
 
 #if _MSC_VER > 1000
 #pragma once

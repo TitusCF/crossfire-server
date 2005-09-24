@@ -89,6 +89,24 @@ typedef enum unapplymode {
 			    /* to control which of these will be unapplied. */
 } unapplymode;
 
+/* not really the player, but tied pretty closely */  
+typedef struct party_struct {
+    sint16 partyid;
+    char * partyleader;
+    char passwd[9];
+    struct party_struct *next;
+    char *partyname;
+
+#ifdef PARTY_KILL_LOG
+    struct party_kill {
+	char killer[MAX_NAME+1],dead[MAX_NAME+1];
+	sint64 exp;
+    } party_kills[PARTY_KILL_LOG];
+#endif
+    sint64 total_exp;
+    uint32  kills;
+} partylist;
+
 typedef struct pl {
     struct pl	*next;		    /* Pointer to next player, NULL if this is last */
     NewSocket	socket;		    /* Socket information for this player */
@@ -173,8 +191,8 @@ typedef struct pl {
 #ifdef AUTOSAVE
     uint32	last_save_tick;
 #endif
-    sint16    party_number;	    /* Party number this player is part of */
-    sint16    party_number_to_join; /* used when player wants to join a party */
+    partylist    *party;	    /* Party this player is part of */
+    partylist    *party_to_join; /* used when player wants to join a party */
 				    /* but we will have to get password first */
 				    /* so we have to remember which party to */
 				    /* join */
@@ -189,22 +207,3 @@ typedef struct pl {
     tag_t*  stack_items;    /* Item stack for patch/dump/... commands */
     int     stack_position; /* Current stack position, 0 for no item */
 } player;
-
-
-/* not really the player, but tied pretty closely */  
-typedef struct party_struct {
-    sint16 partyid;
-    char * partyleader;
-    char passwd[9];
-    struct party_struct *next;
-    char *partyname;
-
-#ifdef PARTY_KILL_LOG
-    struct party_kill {
-	char killer[MAX_NAME+1],dead[MAX_NAME+1];
-	sint64 exp;
-    } party_kills[PARTY_KILL_LOG];
-#endif
-    sint64 total_exp;
-    uint32  kills;
-} partylist;

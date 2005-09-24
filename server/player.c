@@ -232,7 +232,7 @@ static player* get_player(player *p) {
     /* There are some elements we want initialized to non zero value -
      * we deal with that below this point.
      */
-    p->party_number=-1;
+    p->party=NULL;
     p->outputs_sync=16;		/* Every 2 seconds */
     p->outputs_count=1;		/* Keeps present behaviour */
     p->unapply = unapply_nochoice;
@@ -729,7 +729,7 @@ void confirm_password(object *op) {
 void get_party_password(object *op, int partyid) {
   op->contr->write_buf[0]='\0';
   op->contr->state=ST_GET_PARTY_PASSWORD;
-  op->contr->party_number_to_join = partyid;
+  op->contr->party_to_join = find_party_struct(partyid);
   send_query(&op->contr->socket, CS_QUERY_HIDEINPUT, "What is the password?\n:");
 }
 
@@ -1065,7 +1065,7 @@ int key_confirm_quit(object *op, char key)
 
     strcpy(op->contr->killer,"quit");
     check_score(op);
-    op->contr->party_number=(-1);
+    op->contr->party=NULL;
     if (settings.set_title == TRUE)
 	op->contr->own_title[0]='\0';
 
@@ -2097,8 +2097,8 @@ void move_player_attack(object *op, int dir)
 	 */
 
 	else if ((mon->stats.hp>=0) && QUERY_FLAG(mon, FLAG_ALIVE) &&
-		 ((mon->type!=PLAYER || op->contr->party_number==-1 ||
-		   op->contr->party_number!=mon->contr->party_number))) {
+ 		 ((mon->type!=PLAYER || op->contr->party==NULL ||
+ 		   op->contr->party!=mon->contr->party))) {
 
 	    /* If the player hasn't hit something this tick, and does
 	     * so, give them speed boost based on weapon speed.  Doing
@@ -2881,7 +2881,7 @@ void kill_player(object *op)
 	 * should probably be embedded in an else statement.
 	 */
 
-	op->contr->party_number=(-1);
+	op->contr->party=NULL;
 	if (settings.set_title == TRUE)
 	    op->contr->own_title[0]='\0';
 	new_draw_info(NDI_UNIQUE|NDI_ALL, 0,NULL, buf);

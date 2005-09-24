@@ -446,9 +446,9 @@ static int attempt_jump (object *pl, int dir, int spaces, object *skill) {
 		new_draw_info_format(NDI_UNIQUE, 0,pl,"You jump into %s%s.", 
 		    tmp->type == PLAYER ? "" : "the ", tmp->name);
 		if(tmp->type!=PLAYER || 
-		   (pl->type==PLAYER && pl->contr->party_number==-1) ||
+		   (pl->type==PLAYER && pl->contr->party==NULL) ||
 		   (pl->type==PLAYER && tmp->type==PLAYER &&
-		    pl->contr->party_number!=tmp->contr->party_number)) 
+		    pl->contr->party!=tmp->contr->party)) 
 			exp = skill_attack(tmp,pl,pl->facing,"kicked", skill); /* pl makes an attack */ 
 		stop_jump(pl,i,spaces);
 		return exp;  /* note that calc_skill_exp() is already called by skill_attack() */ 

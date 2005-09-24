@@ -38,7 +38,9 @@ static partylist * lastparty=NULL; /*Keeps track of last party in list */
 partylist * form_party(object *op, const char *params, partylist * firstparty, partylist * lastparty) {
 
     partylist * newparty;
+    int player_count;
     int nextpartyid;
+    player *pl;
 
     if(firstparty == NULL) {
         nextpartyid = 1;
@@ -58,9 +60,94 @@ partylist * form_party(object *op, const char *params, partylist * firstparty, p
     newparty->partyleader = strdup_local(op->name);
     if(firstparty != NULL)
         lastparty->next = newparty;
+    /* 
+     * The player might already be a member of a party, if so, he will be leaving
+     * it, so check if there are any other members and if not, delete the party
+     */
+    player_count=0; 
+    if (op->contr->party!=NULL) {
+    	for (pl=first_player;pl->next!=NULL;pl=pl->next) {
+	    if (pl->party==op->contr->party && op->contr!=pl)
+	    	player_count++;
+	}
+	if (player_count == 0)
+	    remove_party(op->contr->party);
+    }
     new_draw_info_format(NDI_UNIQUE, 0, op,
-	"You have formed party: %s",newparty->partyname);
+	"You have formed party: %s",newparty->partyname);	
+    op->contr->party=newparty;
     return newparty;
+}
+
+int remove_party(partylist *target_party) {
+    partylist *tmpparty;
+    partylist *previousparty;
+    partylist *nextparty;
+    player *pl;
+    
+    if (firstparty==NULL) {
+	LOG(llevDebug, "couldn't remove party %s from party list, no firstparty defined",
+	    target_party->partyname);
+	return 1;
+    }
+    for (pl=first_player;pl!=NULL;pl=pl->next)
+	if (pl->party==target_party) pl->party=NULL;
+    
+    /* special case-ism for parties at the beginning and end of the list */
+    if (target_party==firstparty) {
+	firstparty=firstparty->next;
+	free(target_party->passwd);
+	#ifdef PARTY_KILL_LOG
+	    free(target_party->party_kills);
+	#endif
+	free(target_party);
+	for (tmpparty=firstparty->next;tmpparty->next!=NULL;tmpparty->next)
+	    tmpparty->partyid--;
+	return 0; 
+    }
+    else if (target_party == lastparty) {
+	for (tmpparty=firstparty;tmpparty->next!=NULL;tmpparty->next) {
+	    if (tmpparty->next=target_party) {
+		lastparty=tmpparty;
+		free(target_party->passwd);
+		#ifdef PARTY_KILL_LOG
+		    free(target_party->party_kills);
+		#endif
+		free(target_party); 
+		return 0;
+	    }
+	}
+    }
+    for (tmpparty=firstparty;tmpparty->next!=NULL;tmpparty->next)
+	if (tmpparty->next == target_party)
+	    previousparty=tmpparty;
+	    nextparty=tmpparty->next->next; 
+	    /* this should be safe, because we already dealt with the lastparty case */
+	    
+	    previousparty->next=nextparty;
+	    for (tmpparty=nextparty->next;tmpparty->next!=NULL;tmpparty->next)
+	    	tmpparty->partyid--;
+	    free(target_party->passwd);
+		#ifdef PARTY_KILL_LOG
+		    free(target_party->party_kills);
+		#endif
+		free(target_party); 
+	    return 0;
+}
+
+/* Remove unused parties, this could be made to scale a lot better. */
+void obsolete_parties() {
+    int player_count;
+    player *pl;
+    partylist *party;
+
+    for (party=firstparty; party->next==NULL; party=party->next) {
+    player_count=0; 
+	for (pl=first_player;pl->next!=NULL;pl=pl->next)
+	    if (pl->party==party) player_count++;
+	if (player_count == 0)
+	    remove_party(party);
+    }
 }
 
 char * find_party(int partynumber, partylist * party) {
@@ -120,7 +207,7 @@ int confirm_party_password(object *op) {
 
   tmppartylist = firstparty;
   while(tmppartylist != NULL) {
-    if(op->contr->party_number_to_join == tmppartylist->partyid) {
+     if(op->contr->party_to_join->partyid == tmppartylist->partyid) {
         if(strcmp(op->contr->write_buf+1,tmppartylist->passwd) == 0)
           return 0;
         else
@@ -134,10 +221,10 @@ int confirm_party_password(object *op) {
 void receive_party_password(object *op, char k) {
  
   if(confirm_party_password(op) == 0) {
-    partylist* joined_party = find_party_struct( op->contr->party_number_to_join );
+    partylist* joined_party = op->contr->party_to_join;
     char buf[ MAX_BUF ];
-    op->contr->party_number = op->contr->party_number_to_join;
-    op->contr->party_number_to_join = (-1);
+    op->contr->party = op->contr->party_to_join;
+    op->contr->party_to_join = NULL;
     new_draw_info_format(NDI_UNIQUE, 0,op,
 	"You have joined party: %s\n",joined_party->partyname);
     snprintf( buf, MAX_BUF, "%s joins party %s", op->name, joined_party->partyname );
@@ -147,7 +234,7 @@ void receive_party_password(object *op, char k) {
   }
   else {
     new_draw_info(NDI_UNIQUE, 0,op,"You entered the wrong password");
-    op->contr->party_number_to_join = (-1);
+    op->contr->party_to_join = NULL;
     op->contr->state = ST_PLAYING;
     return;
   }
@@ -156,9 +243,8 @@ void receive_party_password(object *op, char k) {
 void send_party_message(object *op,char *msg)
 {
   player *pl;
-  int no=op->contr->party_number;
   for(pl=first_player;pl!=NULL;pl=pl->next)
-    if(pl->ob->contr->party_number==no && pl->ob!=op)
+    if(pl->ob->contr->party==op->contr->party && pl->ob!=op)
 	new_draw_info(NDI_WHITE, 0, pl->ob, msg);
 }
 
@@ -177,16 +263,16 @@ int command_gsay(object *op, char *params)
 int command_party (object *op, char *params)
 {
   char buf[MAX_BUF];
-  partylist * tmpparty; /* For iterating over linked list */
-  char * currentparty; /* For iterating over linked list */
+  partylist * tmpparty;  /* For iterating over linked list */
+  char * currentparty; 	 /* For iterating over linked list */
 
   if(params == NULL) {
-        if(op->contr->party_number<=0) {
+        if(op->contr->party==NULL) {
           new_draw_info(NDI_UNIQUE, 0,op,"You are not a member of any party.");
           new_draw_info(NDI_UNIQUE, 0,op,"For help try: party help");
         }
         else {
-          currentparty = find_party(op->contr->party_number,firstparty);
+          currentparty = op->contr->party->partyname;
 	  new_draw_info_format(NDI_UNIQUE, 0, op,
 		"You are a member of party %s.", currentparty);
         }
@@ -215,12 +301,12 @@ int command_party (object *op, char *params)
       char buffer[80];
       float exp;
 
-      if(op->contr->party_number<=0)
+      if(op->contr->party==NULL)
 	{
 	  new_draw_info(NDI_UNIQUE, 0,op,"You are not a member of any party.");
 	  return 1;
 	}
-      tmpparty = find_party_struct(op->contr->party_number);
+      tmpparty = op->contr->party;
       if(!tmpparty->kills)
 	{
 	  new_draw_info(NDI_UNIQUE,0,op,"You haven't killed anything yet.");
@@ -259,13 +345,13 @@ int command_party (object *op, char *params)
 #endif /* PARTY_KILL_LOG */
   if(strncmp(params, "say ", 4)==0)
     {
-         if(op->contr->party_number<=0)
+         if(op->contr->party==NULL)
             {
               new_draw_info(NDI_UNIQUE, 0,op,"You are not a member of any party.");
               return 1;
             }
          params += 4;
-         currentparty = find_party(op->contr->party_number,firstparty);
+         currentparty = op->contr->party->partyname;
          snprintf(buf,MAX_BUF-1, "[%s] %s says: %s", currentparty, op->name, params);
          send_party_message(op,buf);
          new_draw_info_format(NDI_WHITE, 0,op,"[%s] You say: %s", currentparty, params);
@@ -310,30 +396,32 @@ int command_party (object *op, char *params)
   } /* form */
 
   if(strcmp(params, "leave")==0) {
-    if(op->contr->party_number<=0)
+    int player_count;
+    player *pl;
+    if(op->contr->party==NULL)
       {
         new_draw_info(NDI_UNIQUE, 0,op,"You are not a member of any party.");
         return 1;
       }
-    currentparty = find_party(op->contr->party_number,firstparty);
+    currentparty = op->contr->party->partyname;
     new_draw_info_format(NDI_UNIQUE, 0, op,
 	"You leave party %s.",currentparty);
     sprintf(buf,"%s leaves party %s.",op->name,currentparty);
     send_party_message(op,buf);
-    op->contr->party_number=-1;
+    op->contr->party=NULL;
     return 1;
   }
   if(strcmp(params, "who")==0) {
     player *pl;
-    int no=op->contr->party_number;
-    if(no<=0) {
+    int no=op->contr->party->partyid;
+    if(op->contr->party==NULL) {
       new_draw_info(NDI_UNIQUE, 0,op,"You are not a member of any party.");
       return 1;
     }
     new_draw_info_format(NDI_UNIQUE, 0, op,
 	"Members of party: %s.",find_party(no,firstparty));
     for(pl=first_player;pl!=NULL;pl=pl->next)
-      if(pl->ob->contr->party_number==no) {
+      if(pl->ob->contr->party==op->contr->party) {
 	  if (settings.set_title == TRUE) {
 	      if(pl->ob->contr->own_title[0]!='\0')
 		  sprintf(buf,"%3d %s the %s",
@@ -354,7 +442,7 @@ int command_party (object *op, char *params)
 
     params += 7;
 
-    if(op->contr->party_number <= 0) {
+    if(op->contr->party == NULL) {
       new_draw_info(NDI_UNIQUE, 0,op,"You are not a member of a party");
       return 1;
     }
@@ -366,7 +454,7 @@ int command_party (object *op, char *params)
 
     tmplist = firstparty;
     while(tmplist != NULL) {
-      if(tmplist->partyid == op->contr->party_number) {
+      if(tmplist == op->contr->party) {
         strcpy(tmplist->passwd,params);
 	    new_draw_info_format(NDI_UNIQUE, 0, op,
 		    "The password for party %s is %s", tmplist->partyname,tmplist->passwd);
@@ -421,7 +509,7 @@ int command_party (object *op, char *params)
         return 1;
       }
       else {
-        if(op->contr->party_number == firstparty->partyid) {
+        if(op->contr->party == firstparty) {
 	  new_draw_info_format(NDI_UNIQUE, 0, op,
 		"You are already in party: %s"
                   ,firstparty->partyname);
@@ -429,8 +517,8 @@ int command_party (object *op, char *params)
         }
         /* found party player wants to join */
         if(firstparty->passwd[0] == '\0') {
-          op->contr->party_number = firstparty->partyid;
-    	  new_draw_info_format(NDI_UNIQUE, 0, op,
+          op->contr->party = firstparty;
+	  new_draw_info_format(NDI_UNIQUE, 0, op,
 	    	"You have joined party: %s",firstparty->partyname);
           snprintf( buf, MAX_BUF, "%s joins party %s", op->name, firstparty->partyname );
           send_party_message( op, buf );
@@ -446,7 +534,7 @@ int command_party (object *op, char *params)
     tmpparty = firstparty;
     while(tmpparty != NULL) {
       if(strcmp(tmpparty->partyname,params) == 0) {
-        if(op->contr->party_number == tmpparty->partyid) {
+        if(op->contr->party == tmpparty) {
 	  new_draw_info_format(NDI_UNIQUE, 0, op,
 		"You are already a member of party: %s"
                   ,tmpparty->partyname);
@@ -456,7 +544,7 @@ int command_party (object *op, char *params)
           if(tmpparty->passwd[0] == '\0') {
             new_draw_info_format(NDI_UNIQUE, 0, op,
 		        "You have joined party: %s",tmpparty->partyname);
-            op->contr->party_number = tmpparty->partyid;
+            op->contr->party = tmpparty;
             snprintf( buf, MAX_BUF, "%s joins party %s", op->name, tmpparty->partyname );
             send_party_message( op, buf );
             return 0;
@@ -490,5 +578,3 @@ int command_party (object *op, char *params)
 #endif
   return 1;
 }
-
-

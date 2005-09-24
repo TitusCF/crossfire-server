@@ -959,8 +959,8 @@ int skill_attack (object *tmp, object *pl, int dir, const char *string, object *
 	       || QUERY_FLAG(tmp, FLAG_CAN_ROLL)
 	       || tmp->type==LOCKED_DOOR ) {
 		/* Don't attack party members */
-                if((pl->type==PLAYER && tmp->type==PLAYER) && (pl->contr->party_number!=-1
-                       && pl->contr->party_number==tmp->contr->party_number))
+                if((pl->type==PLAYER && tmp->type==PLAYER) && (pl->contr->party!=NULL
+                       && pl->contr->party==tmp->contr->party))
                                 return 0;
                 break;
 	    }

@@ -266,6 +266,7 @@ void receive_party_password(object *op, char k);
 void send_party_message(object *op, char *msg);
 int command_gsay(object *op, char *params);
 int command_party(object *op, char *params);
+void obsolete_parties();
 /* c_range.c */
 int command_invoke(object *op, char *params);
 int command_cast(object *op, char *params);
