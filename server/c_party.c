@@ -35,31 +35,25 @@
 static partylist * firstparty=NULL; /* Keeps track of first party in list */
 static partylist * lastparty=NULL; /*Keeps track of last party in list */
 
-partylist * form_party(object *op, const char *params, partylist * firstparty, partylist * lastparty) {
+/* Forms the party struct for a party called 'params'. it is the responsibility
+ * of the caller to ensure that the name is unique, and that it is placed in the 
+ * main party list correctly */
+static partylist *form_party(object *op, const char *params, partylist *firstparty, partylist *lastparty) {
 
     partylist * newparty;
     int player_count;
-    int nextpartyid;
     player *pl;
 
-    if(firstparty == NULL) {
-        nextpartyid = 1;
-    } else {
-        nextpartyid = lastparty->partyid;
-        nextpartyid++;
-    }
-
     newparty = (partylist *)malloc(sizeof(partylist));
-    newparty->partyid = nextpartyid;
     newparty->partyname = strdup_local(params);
     newparty->total_exp=0;
     newparty->kills=0;
-
     newparty->passwd[0] = '\0';
     newparty->next = NULL;
     newparty->partyleader = strdup_local(op->name);
-    if(firstparty != NULL)
+    if(firstparty && lastparty)
         lastparty->next = newparty;
+    else firstparty=newparty;
     /* 
      * The player might already be a member of a party, if so, he will be leaving
      * it, so check if there are any other members and if not, delete the party
@@ -70,7 +64,7 @@ partylist * form_party(object *op, const char *params, partylist * firstparty, p
 	    if (pl->party==op->contr->party && op->contr!=pl)
 	    	player_count++;
 	}
-	if (player_count == 0)
+	if (player_count <= 0)
 	    remove_party(op->contr->party);
     }
     new_draw_info_format(NDI_UNIQUE, 0, op,
@@ -86,7 +80,7 @@ int remove_party(partylist *target_party) {
     player *pl;
     
     if (firstparty==NULL) {
-	LOG(llevDebug, "couldn't remove party %s from party list, no firstparty defined",
+	LOG(llevError, "remove_party(): I was asked to remove party %s, but no parties are defined",
 	    target_party->partyname);
 	return 1;
     }
@@ -96,43 +90,34 @@ int remove_party(partylist *target_party) {
     /* special case-ism for parties at the beginning and end of the list */
     if (target_party==firstparty) {
 	firstparty=firstparty->next;
-	free(target_party->passwd);
-	#ifdef PARTY_KILL_LOG
-	    free(target_party->party_kills);
-	#endif
+	if (target_party->partyleader) free(target_party->partyleader);
+	if (target_party->partyname) free(target_party->partyname);
 	free(target_party);
-	for (tmpparty=firstparty->next;tmpparty->next!=NULL;tmpparty->next)
-	    tmpparty->partyid--;
 	return 0; 
     }
     else if (target_party == lastparty) {
 	for (tmpparty=firstparty;tmpparty->next!=NULL;tmpparty->next) {
 	    if (tmpparty->next=target_party) {
 		lastparty=tmpparty;
-		free(target_party->passwd);
-		#ifdef PARTY_KILL_LOG
-		    free(target_party->party_kills);
-		#endif
+		if (target_party->partyleader) free(target_party->partyleader);
+		if (target_party->partyname) free(target_party->partyname);
 		free(target_party); 
 		return 0;
 	    }
 	}
     }
     for (tmpparty=firstparty;tmpparty->next!=NULL;tmpparty->next)
-	if (tmpparty->next == target_party)
+	if (tmpparty->next == target_party) {
 	    previousparty=tmpparty;
 	    nextparty=tmpparty->next->next; 
 	    /* this should be safe, because we already dealt with the lastparty case */
-	    
+	
 	    previousparty->next=nextparty;
-	    for (tmpparty=nextparty->next;tmpparty->next!=NULL;tmpparty->next)
-	    	tmpparty->partyid--;
-	    free(target_party->passwd);
-		#ifdef PARTY_KILL_LOG
-		    free(target_party->party_kills);
-		#endif
-		free(target_party); 
+	    if (target_party->partyleader) free(target_party->partyleader);
+	    if (target_party->partyname) free(target_party->partyname);
+	    free(target_party); 
 	    return 0;
+	}
 }
 
 /* Remove unused parties, this could be made to scale a lot better. */
@@ -141,8 +126,9 @@ void obsolete_parties() {
     player *pl;
     partylist *party;
 
+    if (!firstparty) return; /* we can't obsolete parties if there aren't any */
     for (party=firstparty; party->next==NULL; party=party->next) {
-    player_count=0; 
+	player_count=0; 
 	for (pl=first_player;pl->next!=NULL;pl=pl->next)
 	    if (pl->party==party) player_count++;
 	if (player_count == 0)
@@ -150,38 +136,11 @@ void obsolete_parties() {
     }
 }
 
-char * find_party(int partynumber, partylist * party) {
-
-    while(party != NULL) {
-        if(party->partyid == partynumber)
-            return party->partyname;
-        else
-            party = party->next;
-    }
-    return NULL;
-}
-
-partylist *find_party_struct(int partynumber)
-{
-  partylist *party;
-
-  party=firstparty;
-  while(party!=NULL)
-    {
-      if(party->partyid==partynumber) return party;
-      else
-	party=party->next;
-    }
-  return NULL;
-}
-
 #ifdef PARTY_KILL_LOG
-void add_kill_to_party(int numb,char *killer,char *dead,long exp)
+void add_kill_to_party(partylist *party, char *killer, char *dead, long exp)
 {
-  partylist *party;
   int i,pos;
 
-  party=find_party_struct(numb);
   if(party==NULL) return;
   if(party->kills>=PARTY_KILL_LOG)
     {
@@ -203,19 +162,17 @@ void add_kill_to_party(int numb,char *killer,char *dead,long exp)
 #endif
 
 int confirm_party_password(object *op) {
-  partylist * tmppartylist;
-
-  tmppartylist = firstparty;
-  while(tmppartylist != NULL) {
-     if(op->contr->party_to_join->partyid == tmppartylist->partyid) {
-        if(strcmp(op->contr->write_buf+1,tmppartylist->passwd) == 0)
-          return 0;
-        else
-          return 1;
-    }
+    partylist *tmppartylist;
+    for(tmppartylist = firstparty; tmppartylist != NULL;tmppartylist = tmppartylist->next) {
+	if(!strcmp(op->contr->party_to_join->partyname, tmppartylist->partyname)) {
+            if(strcmp(op->contr->write_buf+1,tmppartylist->passwd) == 0)
+          	return 0;
+	    else
+		return 1;
+	}
     tmppartylist = tmppartylist->next;
-  }
-  return 1;
+    }
+    return 1;
 }
 
 void receive_party_password(object *op, char k) {
@@ -413,13 +370,13 @@ int command_party (object *op, char *params)
   }
   if(strcmp(params, "who")==0) {
     player *pl;
-    int no=op->contr->party->partyid;
+    tmpparty = op->contr->party;
     if(op->contr->party==NULL) {
       new_draw_info(NDI_UNIQUE, 0,op,"You are not a member of any party.");
       return 1;
     }
     new_draw_info_format(NDI_UNIQUE, 0, op,
-	"Members of party: %s.",find_party(no,firstparty));
+	"Members of party: %s.", op->contr->party->partyname);
     for(pl=first_player;pl!=NULL;pl=pl->next)
       if(pl->ob->contr->party==op->contr->party) {
 	  if (settings.set_title == TRUE) {
@@ -525,7 +482,7 @@ int command_party (object *op, char *params)
           return 0;
         }
         else {
-          get_party_password(op,firstparty->partyid);
+          get_party_password(op,firstparty);
           return 0;
         }
       }
@@ -550,7 +507,7 @@ int command_party (object *op, char *params)
             return 0;
           }
           else {
-            get_party_password(op, tmpparty->partyid);
+            get_party_password(op, tmpparty);
             return 0;
           }
         }

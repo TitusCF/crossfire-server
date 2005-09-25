@@ -726,11 +726,15 @@ void confirm_password(object *op) {
     send_query(&op->contr->socket, CS_QUERY_HIDEINPUT, "Please type your password again.\n:");
 }
 
-void get_party_password(object *op, int partyid) {
-  op->contr->write_buf[0]='\0';
-  op->contr->state=ST_GET_PARTY_PASSWORD;
-  op->contr->party_to_join = find_party_struct(partyid);
-  send_query(&op->contr->socket, CS_QUERY_HIDEINPUT, "What is the password?\n:");
+void get_party_password(object *op, partylist *party) {
+    if (party == NULL) {
+	LOG(llevError, "get_party_password(): tried to make player %s join a NULL party", op->name);
+	return;
+    }
+    op->contr->write_buf[0]='\0';
+    op->contr->state=ST_GET_PARTY_PASSWORD;
+    op->contr->party_to_join = party;
+    send_query(&op->contr->socket, CS_QUERY_HIDEINPUT, "What is the password?\n:");
 }
 
 

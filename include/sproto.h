@@ -258,9 +258,6 @@ void set_pickup_mode(object *op, int i);
 int command_search_items(object *op, char *params);
 int command_rename_item(object *op, char *params);
 /* c_party.c */
-partylist *form_party(object *op, const char *params, partylist *firstparty, partylist *lastparty);
-char *find_party(int partynumber, partylist *party);
-partylist *find_party_struct(int partynumber);
 int confirm_party_password(object *op);
 void receive_party_password(object *op, char k);
 void send_party_message(object *op, char *msg);
@@ -534,7 +531,7 @@ void get_password(object *op);
 void play_again(object *op);
 int receive_play_again(object *op, char key);
 void confirm_password(object *op);
-void get_party_password(object *op, int partyid);
+void get_party_password(object *op, partylist *party);
 int roll_stat(void);
 void roll_stats(object *op);
 void Roll_Again(object *op);

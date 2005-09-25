@@ -1587,12 +1587,12 @@ int kill_object(object *op,int dam, object *hitter, int type)
 
 	    player *pl;
 
-	    int no=owner->contr->party->partyid;
+	    partylist *party=owner->contr->party;
 #ifdef PARTY_KILL_LOG
-	    add_kill_to_party(no,query_name(owner),query_name(op),exp);
+	    add_kill_to_party(party, query_name(owner), query_name(op), exp);
 #endif
 	    for(pl=first_player;pl!=NULL;pl=pl->next) {
-		if(pl->ob->contr->party->partyid==no && on_same_map(pl->ob, owner)) {
+		if(party && pl->ob->contr->party==party && on_same_map(pl->ob, owner)) {
 		    count++;
 		    shares+=(pl->ob->level+4);
 		}
@@ -1602,7 +1602,7 @@ int kill_object(object *op,int dam, object *hitter, int type)
 	    else {
 		int share=exp/shares,given=0,nexp;
 		for(pl=first_player;pl!=NULL;pl=pl->next) {
-		    if(pl->ob->contr->party->partyid==no && on_same_map(pl->ob, owner)) {
+		    if(party && pl->ob->contr->party==party && on_same_map(pl->ob, owner)) {
 			nexp=(pl->ob->level+4)*share;
 			change_exp(pl->ob,nexp, skill, SK_EXP_TOTAL);
 			given+=nexp;

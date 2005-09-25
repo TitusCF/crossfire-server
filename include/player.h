@@ -91,7 +91,6 @@ typedef enum unapplymode {
 
 /* not really the player, but tied pretty closely */  
 typedef struct party_struct {
-    sint16 partyid;
     char * partyleader;
     char passwd[9];
     struct party_struct *next;
