@@ -28,7 +28,7 @@
 
 /*
  This file handles quest-related functions.
- Quests are stored in marker items.
+ Quests are stored in specific items of type QUEST.
 */
 
 #include <global.h>
@@ -39,11 +39,15 @@
 #include <ctype.h>
 #include "quest.h"
 
+#define QUEST_NAME( op ) op->name_pl
+#define TASK_NAME( op ) op->custom_name
+
+/*
 int quest_is_same_quest( const char* slaying1, const char* slaying2 )
     {
     char *start1, *start2, *end1, *end2;
 
-    /* Sanity check */
+    /* Sanity check *
     if ( !slaying1 )
         {
         LOG( llevError, "quest_is_same_quest: slaying1 invalid.\n" );
@@ -65,38 +69,36 @@ int quest_is_same_quest( const char* slaying1, const char* slaying2 )
         return 0;
     return 1;
     }
-
-int quest_is_quest_marker( object* marker )
+*/
+int quest_is_quest_marker( object* marker, int task )
     {
-    if ( marker->type != MARKER && marker->type != FORCE )
+    if ( marker->type != QUEST )
         return 0;
-    if ( !marker->slaying || strncmp( marker->slaying, QUEST_MARKER, strlen( QUEST_MARKER ) ) )
+    if ( task && !TASK_NAME(marker) )
+        return 0;
+    if ( !task && TASK_NAME(marker) )
         return 0;
     return 1;
     }
 
-int quest_is_start( const char* slaying )
+int quest_is_in_progress( object* marker, int task )
     {
-    const char* str;
-    if ( !slaying || ( strlen( slaying ) < ( strlen( QUEST_MARKER ) + strlen( QUEST_START ) ) ) )
-        return 0;
-    str = strrstr( slaying, QUEST_START );
-    if ( !str || ( ( size_t )( str - slaying ) < strlen( slaying ) - strlen( QUEST_START ) ) )
+    if ( marker->subtype != QUEST_IN_PROGRESS )
         return 0;
     return 1;
     }
 
-int quest_is_end( const char* slaying )
+int quest_is_completed( object* marker, int task )
     {
-    const char* str;
-    if ( !slaying || ( strlen( slaying ) < ( strlen( QUEST_MARKER ) + strlen( QUEST_END ) ) ) )
+    if ( marker->type != QUEST )
         return 0;
-    str = strrstr( slaying, QUEST_END );
-    if ( !str || ( ( size_t )( str - slaying ) < strlen( slaying ) - strlen( QUEST_END ) ) )
+    if ( task && ( !marker->subtype != QUEST_DONE_TASK ) )
+        return 0;
+    if ( !task && ( marker->subtype != QUEST_DONE_QUEST ) )
         return 0;
     return 1;
     }
-
+/*
 static int quest_has_start( object* marker, object* pl )
     {
     const char* start;
@@ -151,7 +153,7 @@ static int quest_has_end( object* marker, object* pl )
 
 /**
  * Checks if the marker is a quest one, and if so if compatible with the player's current quests.
- **/
+ **
 int quest_marker_compatible( object* marker, object* pl )
     {
     if ( !quest_is_quest_marker( marker ) )
@@ -160,10 +162,10 @@ int quest_marker_compatible( object* marker, object* pl )
     if ( quest_is_start( marker->slaying ) )
         {
         if ( quest_has_end( marker, pl ) )
-            /* Can't restart a quest */
+            /* Can't restart a quest *
             return 0;
         if ( quest_has_start( marker, pl ) )
-            /* Can't restart a quest already started */
+            /* Can't restart a quest already started *
             return 0;
         return 1;
         }
@@ -176,17 +178,17 @@ int quest_marker_compatible( object* marker, object* pl )
         return 1;
         }
 
-    /* Neither a start or end, seek a start */
+    /* Neither a start or end, seek a start *
     if ( quest_has_start( marker, pl ) )
         return 1;
 
-    /* No start, or an end => can't */
+    /* No start, or an end => can't *
     return 0;
     }
 
 /**
  * Clears other quest markers if required.
- **/
+ **
 void quest_clear_markers( object* marker, object* pl )
     {
     object *item;
@@ -208,7 +210,7 @@ void quest_clear_markers( object* marker, object* pl )
  *  * message if message not linked to quest
  *  * NULL if message linked to quest and player isn't at right step.
  *  * first char of real message, line after the 'quest xxx xxx' line.
- **/
+ **
 const char* quest_message_check( const char* message, object* pl )
     {
     const char *end1, *end2, *nl;
@@ -243,19 +245,241 @@ const char* quest_message_check( const char* message, object* pl )
         }
     return NULL;
     }
-
+*/
 const char* quest_get_name( object* marker )
     {
-    static char buf[ 2 ][ MAX_BUF ];
-    static int index_buf = 0;
-    const char *start, *end;
-
-    start = strchr( marker->slaying, ' ' );
-    end = strrchr( marker->slaying, ' ' );
-
-    index_buf = 1 - index_buf;
-
-    strncpy( buf[ index_buf ], start + 1, end - start - 1 );
-
-    return buf[ index_buf ];
+    if ( marker->type != QUEST )
+        return NULL;
+    if ( TASK_NAME(marker) )
+        return TASK_NAME(marker);
+    return QUEST_NAME(marker);
     }
+
+object* quest_get_player_quest( object* pl, const char* name, const char* name_pl )
+{
+    object* quest;
+    for ( quest = pl->inv; quest; quest = quest->below )
+        if ( quest->type == QUEST &&
+            QUEST_NAME(quest) == name && TASK_NAME(quest) == name_pl )
+            return quest;
+
+    return NULL;
+}
+
+object* quest_get_override( object* ob, object* pl )
+{
+    object *in_ob, *in_pl;
+    if ( !ob->inv )
+        return NULL;
+    for ( in_ob = ob->inv; in_ob; in_ob = in_ob->below )
+    {
+        if ( in_ob->type == QUEST && in_ob->subtype == QUEST_OVERRIDE )
+        {
+            in_pl = quest_get_player_quest( pl, QUEST_NAME(in_ob), TASK_NAME(in_ob) );
+            if ( in_pl )
+                return in_ob;
+        }
+    }
+    return NULL;
+}
+
+const char* quest_get_override_slaying( object* ob, object* pl )
+{
+    object* quest;
+    quest = quest_get_override( ob, pl );
+    if ( quest )
+        return quest->slaying;
+    return ob->slaying;
+}
+
+const char* quest_get_override_msg( object* ob, object* pl )
+{
+    object* quest;
+    quest = quest_get_override( ob, pl );
+    if ( quest )
+        return quest->msg;
+    return ob->msg;
+}
+/*
+static int quest_objects_match( object* first, object* second )
+{
+    if ( !first || !second )
+        return 0;
+    if ( first->name != second->name )
+        return 0;
+    if ( first->name_pl && first->name_pl != second->name_pl )
+        return 0;
+    return 1;
+}
+*/
+static void quest_remove_marker(object* item, const char* name, const char* name_pl, int type)
+{
+    object* test;
+    for ( test = item->inv; test; test = test->below )
+    {
+        if ( ( test->type == QUEST ) && ( test->subtype == type ) && ( QUEST_NAME(test) == name ) && ( !name_pl || TASK_NAME(test) == name_pl ) )
+        {
+            remove_ob(test);
+            return;
+        }
+    }
+}
+
+void quest_apply_items( object* wrapper, player* pl )
+{
+    object* item;
+    object* qm;
+    for ( item = wrapper->inv; item; item = item->below )
+    {
+        if ( item->type == QUEST )
+        {
+            switch ( item->subtype )
+            {
+            case QUEST_START_QUEST:
+                if ( quest_get_player_quest( pl->ob, QUEST_NAME(item), NULL ) )
+                    return;
+                qm = get_archetype("quest_in_progress");
+                FREE_AND_COPY(QUEST_NAME(qm), QUEST_NAME(item));
+                if ( item->lore )
+                {
+                    FREE_AND_COPY(qm->lore, item->lore);
+                    new_draw_info(NDI_UNIQUE, 0, pl->ob, item->lore);
+                }
+                insert_ob_in_ob(qm, pl->ob);
+                break;
+            case QUEST_END_QUEST:
+                if ( !quest_get_player_quest( pl->ob, QUEST_NAME(item), NULL ) )
+                    return;
+                qm = get_archetype("quest_done_quest");
+                FREE_AND_COPY(QUEST_NAME(qm), QUEST_NAME(item));
+                if ( item->lore )
+                {
+                    FREE_AND_COPY(qm->lore, item->lore);
+                    new_draw_info(NDI_UNIQUE, 0, pl->ob, item->lore);
+                }
+                quest_remove_marker(pl->ob, QUEST_NAME(item), NULL, QUEST_IN_PROGRESS);
+                insert_ob_in_ob(qm, pl->ob);
+                break;
+            case QUEST_START_TASK:
+                if ( quest_get_player_quest( pl->ob, QUEST_NAME(item), TASK_NAME(item) ) )
+                    return;
+                qm = get_archetype("quest_in_progress");
+                FREE_AND_COPY(QUEST_NAME(qm), QUEST_NAME(item));
+                FREE_AND_COPY(TASK_NAME(qm), TASK_NAME(item));
+                if ( item->lore )
+                {
+                    FREE_AND_COPY(qm->lore, item->lore);
+                    new_draw_info(NDI_UNIQUE, 0, pl->ob, item->lore);
+                }
+                insert_ob_in_ob(qm, pl->ob);
+                break;
+            case QUEST_END_TASK:
+                if ( !quest_get_player_quest( pl->ob, QUEST_NAME(item), TASK_NAME(item) ) )
+                    return;
+                qm = get_archetype("quest_done_task");
+                FREE_AND_COPY(QUEST_NAME(qm), QUEST_NAME(item));
+                FREE_AND_COPY(TASK_NAME(qm), TASK_NAME(item));
+                if ( item->lore )
+                {
+                    FREE_AND_COPY(qm->lore, item->lore);
+                    new_draw_info(NDI_UNIQUE, 0, pl->ob, item->lore);
+                }
+                quest_remove_marker(pl->ob, QUEST_NAME(item), TASK_NAME(item), QUEST_IN_PROGRESS);
+                insert_ob_in_ob(qm, pl->ob);
+                break;
+            }
+        }
+    }
+}
+
+/**
+ * Returns 0 if no matching quest, 1 if anything matched.
+ **/
+int quest_on_activate( object* ob, player*pl )
+{
+    object* in_item;
+
+    for ( in_item = ob->inv; in_item; in_item = in_item->below )
+    {
+        if ( ( in_item->type == QUEST ) && ( in_item->subtype == QUEST_ON_ACTIVATE ) )
+        {
+            quest_apply_items( in_item, pl );
+            return 1;
+        }
+    }
+    return 0;
+}
+
+/**
+ * NS :not started
+ * S  :started
+ * D  :done
+ * SD :started or done
+ * Q  :quest
+ * T  :task
+ **/
+#define QCT_QNS     1
+#define QCT_QS      2
+#define QCT_QS_TNS  3
+#define QCT_QS_TS   4
+#define QCT_QS_TD   5
+#define QCT_QS_TSD  6
+#define QCT_QSD     7
+#define QCT_QD      8
+
+int quest_is_override_compatible(object *marker, object* pl)
+{
+    object* test;
+    if ( marker->type != QUEST || marker->subtype != QUEST_OVERRIDE )
+        return 0;
+    switch ( marker->stats.hp )
+    {
+        case QCT_QNS:
+            if ( quest_get_player_quest( pl, QUEST_NAME(marker), NULL ) == NULL )
+                return 1;
+            return 0;
+        case QCT_QS:
+            test = quest_get_player_quest( pl, QUEST_NAME(marker), NULL );
+            if ( !test )
+                return 0;
+            if ( quest_is_completed( test, 0 ) )
+                return 0;
+            return 1;
+        case QCT_QS_TNS:
+            test = quest_get_player_quest( pl, QUEST_NAME(marker), TASK_NAME(marker) );
+            if ( !test )
+                if ( quest_get_player_quest( pl, QUEST_NAME(marker), NULL ) )
+                    return 1;
+            return 0;
+        case QCT_QS_TS:
+            test = quest_get_player_quest( pl, QUEST_NAME(marker), TASK_NAME(marker) );
+            if ( !test )
+                return 0;
+            if ( quest_is_completed( test, 1 ) )
+                return 0;
+            return 1;
+        case QCT_QS_TD:
+            test = quest_get_player_quest( pl, QUEST_NAME(marker), TASK_NAME(marker) );
+            if ( !test )
+                return 0;
+            if ( quest_is_completed( test, 1 ) )
+                return 1;
+            return 0;
+        case QCT_QS_TSD:
+            test = quest_get_player_quest( pl, QUEST_NAME(marker), TASK_NAME(marker) );
+            if ( !test )
+                return 0;
+            return 1;
+        case QCT_QSD:
+            test = quest_get_player_quest( pl, QUEST_NAME(marker), NULL );
+            if ( !test )
+                return 0;
+            return 1;
+        case QCT_QD:
+            test = quest_get_player_quest( pl, QUEST_NAME(marker), NULL );
+            if ( !test || !quest_is_completed( test, 0 ) )
+                return 0;
+            return 1;
+    };
+    return 1;
+}

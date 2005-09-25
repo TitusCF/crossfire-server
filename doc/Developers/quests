@@ -1,55 +1,18 @@
 This guide explains how to manage quests for player.
-At the end, technical details are given if you want to tackle this.
 
 A new command, 'quests', has been added to let players see quests they are doing or have done.
-It is not possible (unless specially made map to remove force) to do a quest twice.
+It is not possible (unless specially made map to remove item) to do a quest twice.
 Quests can have multiple paths and/or solutions.
 
-Quests are managed through forces in player inventory, so you need markers to create those.
+Quests are managed through items in player inventory, inserted when needed.
 
-The slaying field for a quest-related force/marker should be:
-   quest <quest name> <tag>
-with
- <quest name>: whatever you want, including spaces. This is the name displayed in the 'quests'
-   output
- <tag>: free tag, one word (no space), defining the quest state. There are 2 special tags
-   'start' and 'end' detailed later on.
+<being rewritten>
 
-Markers for quests will only create the force if the 'quest xxx start' tag is present (with
-the exception of the start tag, of course).
-
-Using those forces, you can simply put detectors or inventory checkers to enable player to enter
-a room at a certain point during quest.
-
-You can modify NPC or magic ear matching dialogs to take quests into account. Add a 'quest
-<quest name> <tag>' line just after the 'match @' line. This will ignore the line (and thus not
-activate an ear) if the player does not have this tag.
-
-You can add a 'lore' field to quest-related forces. This will be displayed in the quests details.
-
-'start' tag means the quest starts. It should *not* be removed manually, as 'quests' uses it
-to list quests.
-
-'end' tag means the quest has been completed. Applying it removes all other tags related to this
-quest, including the start one.
-
-You can put a speed on quest forces, to force player to complete within a certain timeframe
-(regular force expiration). Note that if the 'start' force disappears, quest will not be displayed
-anymore in 'quests' even if some other forces are present.
-
-A quest can't normally be restarted by a player. The only way to restart it is to remove (through
-detectors) the 'end' force, making the player not having done the quest yet.
-
-
-------------------------------------------------------
-Technical details.
-
-Quests are simple forces, with their slaying field in the format 'quest <name> <tag>'.
-
-'quest', 'start' and 'end' values are defined in quest.h for easy modification.
-
-The 'find_matching_message' function in monster.c has been tweaked to take into account the
-'quest' line after the match one. It therefore takes the player's object, to check forces.
-'talk_to_npc' and 'talk_to_wall' have been modified accordingly.
-
-'move_marker' function has been modified to take into account the 'quest' tag.
+Basics:
+* name_pl = internal quest name
+* custom_name = internal task name
+* add a "quest_override" to npc/magic ear, set its slaying and name_pl/custom_name
+  and fill in message with match. hp determines condition (quest not started, ..., see
+  quest.c for details)
+* in that quest_override add quest_[start|end]_[quest|task] with revelant fields set
+* ending a quest/task removes the start marker

@@ -288,6 +288,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define MATERIAL            161 /* Material for building */
 #define GPS                 162 /* Ground positionning system */
 #define ITEM_TRANSFORMER    163 /* Transforming one item with another */
+#define QUEST               164 /* See below for subtypes */
 /* END TYPE DEFINE */
 
 /* Subtypes for BUILDER */
@@ -298,6 +299,17 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define ST_MAT_FLOOR    1 /* Floor */
 #define ST_MAT_WALL     2 /* Wall */
 #define ST_MAT_ITEM     3 /* All other items, including doors & such */
+
+/* Subtypes for QUEST  */
+#define QUEST_IN_PROGRESS   1
+#define QUEST_DONE_QUEST    2
+#define QUEST_DONE_TASK     3
+#define QUEST_START_QUEST   4
+#define QUEST_END_QUEST     5
+#define QUEST_START_TASK    6
+#define QUEST_END_TASK      7
+#define QUEST_OVERRIDE      8
+#define QUEST_ON_ACTIVATE   9
 
 /* definitions for weapontypes */
 

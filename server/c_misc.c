@@ -1643,7 +1643,7 @@ static void display_quest_details( object* pl, object* quest )
     new_draw_info_format( NDI_WHITE, 0, pl, "Quest: %s\n%s\n",
         quest_get_name( quest ),
         quest->lore ? quest->lore : "(no description available)" );
-
+/*
     for ( item = pl->inv; item; item = item->below )
         {
         if ( ( item != quest )
@@ -1655,6 +1655,7 @@ static void display_quest_details( object* pl, object* quest )
             new_draw_info( NDI_WHITE, 0, pl, "------\n" );
             }
         }
+     */
     }
 
 /**
@@ -1676,9 +1677,9 @@ int command_quests( object *pl, char *params )
         new_draw_info( NDI_WHITE, 0, pl, "Completed quests:\n" );
         for ( item = pl->inv; item; item = item->below )
             {
-            if ( quest_is_quest_marker( item ) && quest_is_end( item->slaying ) )
+            if ( quest_is_quest_marker( item, 0 ) )
                 {
-                new_draw_info( NDI_WHITE, 0, pl, quest_get_name( item ) );
+                new_draw_info( NDI_WHITE, 0, pl, item->name );
                 new_draw_info( NDI_WHITE, 0, pl, "\n" );
                 }
             }
@@ -1689,8 +1690,8 @@ int command_quests( object *pl, char *params )
         {
         for ( item = pl->inv; item; item = item->below )
             {
-            if ( quest_is_quest_marker( item )
-                && strstr( quest_get_name( item ), params ) )
+            if ( quest_is_quest_marker( item, 0 )
+                && !strcmp( quest_get_name( item ), params ) )
                 {
                 display_quest_details( pl, item );
                 }
@@ -1698,17 +1699,16 @@ int command_quests( object *pl, char *params )
         return 1;
         }
 
-    /* Display current quests */
+    /*Display current quests */
     new_draw_info( NDI_WHITE, 0, pl, "Current quests:\n" );
     for ( item = pl->inv; item; item = item->below )
         {
-        if ( quest_is_quest_marker( item )
-            && quest_is_start( item->slaying ) )
+        if ( quest_is_quest_marker( item, 0 )
+            && quest_is_in_progress( item, 0 ) )
             {
             new_draw_info( NDI_WHITE, 0, pl, quest_get_name( item ) );
             new_draw_info( NDI_WHITE, 0, pl, "\n" );
             }
         }
-
     return 1;
     }

@@ -272,14 +272,21 @@ extern void free_player(player *pl);
 extern int atnr_is_dragon_enabled(int attacknr);
 extern int is_dragon_pl(object *op);
 /* quest.c */
-extern int quest_is_same_quest(const char *slaying1, const char *slaying2);
-extern int quest_is_quest_marker(object *marker);
-extern int quest_is_start(const char *slaying);
-extern int quest_is_end(const char *slaying);
-extern int quest_marker_compatible(object *marker, object *pl);
+/*extern int quest_is_same_quest(const char *slaying1, const char *slaying2);
+*/extern int quest_is_quest_marker(object *marker, int task);
+extern int quest_is_override_compatible(object *marker, object* pl);
+extern int quest_is_in_progress(object* marker, int task);
+extern int quest_is_completed(object* marker, int task);
+/*extern int quest_marker_compatible(object *marker, object *pl);
 extern void quest_clear_markers(object *marker, object *pl);
 extern const char *quest_message_check(const char *message, object *pl);
-extern const char *quest_get_name(object *marker);
+*/extern const char *quest_get_name(object *marker);
+extern object* quest_get_player_quest( object* pl, const char* name, const char* name_pl );
+extern void quest_apply_items( object* wrapper, player* pl );
+/*object* quest_get_override( object* ob, object* pl );
+const char* quest_get_override_slaying( object* ob, object* pl );
+const char* quest_get_override_msg( object* ob, object* pl );
+int quest_on_activate( object* ob, player*pl );*/
 /* re-cmp.c */
 extern const char *re_cmp(const char *str, const char *regexp);
 /* readable.c */

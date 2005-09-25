@@ -17,6 +17,18 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Changed quest behaviour, now uses its own archetypes. Can change npc/magic ear
+ text based on quest status.
+Warning: not totally tested. Quest start/end works, rest needs some tweaks & fixes.
+common/quest.c: new functions, some cleaning.
+doc/Developers/quest: update (partially).
+include/define.h: new item types.
+include/libproto.h: new definitions.
+server/c_misc.c: update.
+server/monster.c: take into account quest overrides.
+server/time.c: markers now start/end tasks if needed.
+Ryo 2009-09-25
+
 server/c_party.c - fix another party list corruption bug, and a couple of
 possible infinite loops
 Brendan Lally 2005-09-25

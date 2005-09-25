@@ -1547,14 +1547,14 @@ static char *find_matching_message(object* pl, const char *msg, const char *matc
 		    }
 		}
 	    }
-	    if (gotmatch && ( cp2 = quest_message_check( cp2 + 1, pl ) ) ) {
+	    if (gotmatch) {
 		if (cp1) {
-		    cp3 = malloc(cp1 - cp2);
-		    strncpy(cp3, cp2, cp1 - cp2 - 1);
-		    cp3[cp1 - cp2 - 1] = 0;
+		    cp3 = malloc(cp1 - cp2 + 1);
+		    strncpy(cp3, cp2+1, cp1 - cp2);
+		    cp3[cp1 - cp2] = 0;
 		}
 		else {	/* if no next match, just want the rest of the string */
-		    cp3 = strdup_local(cp2);
+		    cp3 = strdup_local(cp2+1);
 		}
         return cp3;
 	    }
@@ -1624,12 +1624,31 @@ void communicate(object *op, char *txt) {
     }
 }
 
+static int do_talk_npc(object* op, object* npc, object* override, const char* txt)
+{
+    char* cp;
+    char buf[MAX_BUF];
+
+    if(override->msg == NULL || *override->msg != '@')
+	return 0;
+
+    cp = find_matching_message(op, override->msg, txt);
+    if (cp) {
+        sprintf(buf,"%s says:",query_name(npc));
+	    new_info_map(NDI_NAVY|NDI_UNIQUE, npc->map,buf);
+	    new_info_map(NDI_NAVY | NDI_UNIQUE, npc->map, cp);
+        quest_apply_items(override,op->contr);
+	    free(cp);
+        return 1;
+    }
+    return 0;
+}
+
 int talk_to_npc(object *op, object *npc, const char *txt) {
     object *cobj;
     CFParm CFP;
     int k, l, m;
     uint32 n;
-    char *cp, buf[MAX_BUF];
     event *evt;
 
     /* Move this commone area up here - shouldn't cost much extra cpu
@@ -1676,34 +1695,42 @@ int talk_to_npc(object *op, object *npc, const char *txt) {
             }
 	}
     }
-    if(npc->msg == NULL || *npc->msg != '@')
-	return 0;
+    for ( cobj = npc->inv; cobj; cobj = cobj->below )
+        if ( quest_is_override_compatible( cobj, op ) )
+            if ( do_talk_npc( op, npc, cobj, txt ) )
+                return 1;
 
-    cp = find_matching_message(op, npc->msg, txt );
-    if (cp) {
-        sprintf(buf,"%s says:",query_name(npc));
-	new_info_map(NDI_NAVY|NDI_UNIQUE, npc->map,buf);
-	new_info_map(NDI_NAVY | NDI_UNIQUE, npc->map, cp);
-	free(cp);
-        return 1;
-    }
-    return 0;
+    return do_talk_npc( op, npc, npc, txt );
 }
 
-int talk_to_wall(object* pl, object *npc, const char *txt) {
-    char *cp;
-
-    if(npc->msg == NULL || *npc->msg != '@')
+static int do_talk_wall(object* pl, object* npc, object* override, const char* txt)
+{
+    char* cp;
+    if(override->msg == NULL || *override->msg != '@')
 	return 0;
 
-    cp = find_matching_message(pl, npc->msg, txt);
+    cp = find_matching_message(pl, override->msg, txt);
     if (!cp)
 	return 0;
 
     new_info_map(NDI_NAVY | NDI_UNIQUE, npc->map,cp);
     use_trigger(npc);
+    quest_apply_items(npc, pl->contr);
     free(cp);
+
     return 1;
+}
+
+int talk_to_wall(object* pl, object *npc, const char *txt) {
+
+    object* inv;
+
+    for ( inv = npc->inv; inv; inv = inv->below)
+        if ( quest_is_override_compatible(inv, pl ) )
+            if ( do_talk_wall( pl, npc, inv, txt ) )
+                return 1;
+
+    return do_talk_wall( pl, npc, npc, txt );;
 }
 
 /* find_mon_throw_ob() - modeled on find_throw_ob
