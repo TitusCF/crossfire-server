@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/c_party.c - fix another party list corruption bug, and a couple of
+possible infinite loops
+Brendan Lally 2005-09-25
+
 Clean some compilation warnings.
  common/map.c: remove unused variable.
  common/readable.c: strlen returns size_t.
