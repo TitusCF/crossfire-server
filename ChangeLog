@@ -17,6 +17,16 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+include/player.h sproto.h
+server/attack.c c_party.c player.c
+Fix several bugs in patch #1194964, including one that caused segfaults
+one that corrupted the party list, and one that broke party password recognition
+remove partyid from the party struct - use party pointers instead
+remove functions find_party() and find_party_struct() - no longer needed or used.
+make form_party a local function - it is only used by the party form command, 
+and can't easy be used safely elsewhere.
+Brendan Lally 2005-08-25
+
 server/build_map.c: remove unused variable.
 --
 Commit patch #1194964 (party obsoletion) by cavesomething.
