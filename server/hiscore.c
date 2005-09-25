@@ -324,9 +324,10 @@ void check_score(object *op) {
  */
 
 void display_high_score(object *op,int max, const char *match) {
+    const size_t maxchar = 80;
     FILE *fp;
     char buf[MAX_BUF],*scorebuf, *bp, *cp;
-    int i=0,j=0,maxchar=80,comp;
+    int i=0,j=0,comp;
     score *sc;
 
     sprintf(buf,"%s/%s",settings.localdir,HIGHSCORE);

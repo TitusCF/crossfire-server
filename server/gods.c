@@ -46,7 +46,8 @@
  * Returns the id of specified god.
  */
 int lookup_god_by_name(const char *name) {
-    int godnr=-1,nmlen = strlen(name);
+    int godnr=-1;
+    size_t nmlen = strlen(name);
  
     if(name && strcmp(name,"none")) { 
 	godlink *gl;

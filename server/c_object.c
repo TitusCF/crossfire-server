@@ -1783,7 +1783,7 @@ int command_rename_item(object *op, char *params)
 
   object *item=NULL;
   char *closebrace;
-  int counter;
+  size_t counter;
 
 	if (params) {
     /* Let's skip white spaces */

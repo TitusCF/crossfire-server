@@ -246,7 +246,7 @@ typedef struct obj {
 typedef struct oblnk { /* Used to link together several objects */
   object *ob;
   struct oblnk *next;
-  int id;
+  tag_t id;
 } objectlink;
 
 typedef struct oblinkpt { /* Used to link together several object links */

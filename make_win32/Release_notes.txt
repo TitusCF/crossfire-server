@@ -1,12 +1,13 @@
-Release notes for Crossfire Server (Windows), August, 11th, 2005
-----------------------------------------------------------------
+Release notes for Crossfire Server (Windows), September, 18th, 2005
+-------------------------------------------------------------------
 
-This is version 1.8.0 of the Crossfire server.
+This is version 1.8.0 snapshot of the Crossfire server.
 
 --------------------------------------------------------------
 For complete changes, see the Changelog file included with the software. Major
-changes since last release: Numerous bug fixes, regions system, new archetypes,
-new sign/messages interface, server can be run as a regular Windows service.
+changes since last release: can now build signs and magic mouths/ears, fix speed
+issues, improved map loading speed, new command wizcast (DM only), allow
+directors and movers to only affect certain items.
 --------------------------------------------------------------
 
 Once you have installed the server, you MUST download a map set.
@@ -22,8 +23,7 @@ Launch it, point to where you installed Crossfire Server, install.
 2) Grab map set from official SourceForge page.
 
 The following sets are available:
-* small world maps, http://prdownloads.sourceforge.net/crossfire/crossfire-1.5.0.maps-small.tar.gz?download
-* big world maps, at http://prdownloads.sourceforge.net/crossfire/crossfire-1.5.0.maps-big.tar.gz?download
+* big world maps, at http://sourceforge.net/project/showfiles.php?group_id=13833&package_id=15918
 
 Note: you need Winzip, ZipGenius, UltimateZip or equivalent to unzip the files.
 Note: Make SURE that this tool will NOT convert Unix newline to Windows, else it will NOT work.
@@ -51,9 +51,9 @@ Move'em to share/maps of where you installed Crossfire Server.
 WARNING: server has only been tested with 'bigworld' maps. Small world
 maps are not supported anymore.
 
-Fixed issues since previous release
------------------------------------
-* Python plugin should work again.
+Fixed Windows issues since previous release
+-------------------------------------------
+* (none)
 
 Troubleshooting
 ---------------

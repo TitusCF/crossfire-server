@@ -17,6 +17,19 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Clean some compilation warnings.
+ common/map.c: remove unused variable.
+ common/readable.c: strlen returns size_t.
+ include/object.h: objectlink id should be tag_t since it's the item's "count" field.
+ server/c_misc.c: strlen returns size_t.
+ server/c_object.c: strlen returns size_t.
+ server/c_party.c: remove_party returns void, value not used anyway. Fordward declaration.
+ server/c_wiz.c: settings.worldmaptiles[x|y] is uint32.
+ server/gods.c: strlen returns size_t.
+ server/hiscore.c: maxchar is const.
+ server/skill_util.c: strlen_returns size_t.
+Ryo 2005-09-25
+
 include/player.h sproto.h
 server/attack.c c_party.c player.c
 Fix several bugs in patch #1194964, including one that caused segfaults
@@ -25,7 +38,7 @@ remove partyid from the party struct - use party pointers instead
 remove functions find_party() and find_party_struct() - no longer needed or used.
 make form_party a local function - it is only used by the party form command, 
 and can't easy be used safely elsewhere.
-Brendan Lally 2005-08-25
+Brendan Lally 2005-09-25
 
 server/build_map.c: remove unused variable.
 --
@@ -36,7 +49,7 @@ Affected files:
   skill_util.c skills.c spell_util.c
 --
 include/win32.h: turn off harmless warning.
-Ryo 2005-08-24
+Ryo 2005-09-24
 
 Fix bug #744327 ('immortal' monsters): Prevent monsters from loosing hp or sp
 if they have negative Con/Pow. For hp, this made some monsters unkillable

@@ -35,6 +35,8 @@
 static partylist * firstparty=NULL; /* Keeps track of first party in list */
 static partylist * lastparty=NULL; /*Keeps track of last party in list */
 
+void remove_party(partylist *target_party);
+
 /* Forms the party struct for a party called 'params'. it is the responsibility
  * of the caller to ensure that the name is unique, and that it is placed in the 
  * main party list correctly */
@@ -73,7 +75,7 @@ static partylist *form_party(object *op, const char *params, partylist *firstpar
     return newparty;
 }
 
-int remove_party(partylist *target_party) {
+void remove_party(partylist *target_party) {
     partylist *tmpparty;
     partylist *previousparty;
     partylist *nextparty;
@@ -82,7 +84,7 @@ int remove_party(partylist *target_party) {
     if (firstparty==NULL) {
 	LOG(llevError, "remove_party(): I was asked to remove party %s, but no parties are defined",
 	    target_party->partyname);
-	return 1;
+	return;
     }
     for (pl=first_player;pl!=NULL;pl=pl->next)
 	if (pl->party==target_party) pl->party=NULL;
@@ -93,7 +95,7 @@ int remove_party(partylist *target_party) {
 	if (target_party->partyleader) free(target_party->partyleader);
 	if (target_party->partyname) free(target_party->partyname);
 	free(target_party);
-	return 0; 
+	return; 
     }
     else if (target_party == lastparty) {
 	for (tmpparty=firstparty;tmpparty->next!=NULL;tmpparty->next) {
@@ -102,7 +104,7 @@ int remove_party(partylist *target_party) {
 		if (target_party->partyleader) free(target_party->partyleader);
 		if (target_party->partyname) free(target_party->partyname);
 		free(target_party); 
-		return 0;
+		return;
 	    }
 	}
     }
@@ -116,7 +118,7 @@ int remove_party(partylist *target_party) {
 	    if (target_party->partyleader) free(target_party->partyleader);
 	    if (target_party->partyname) free(target_party->partyname);
 	    free(target_party); 
-	    return 0;
+	    return;
 	}
 }
 
@@ -353,8 +355,6 @@ int command_party (object *op, char *params)
   } /* form */
 
   if(strcmp(params, "leave")==0) {
-    int player_count;
-    player *pl;
     if(op->contr->party==NULL)
       {
         new_draw_info(NDI_UNIQUE, 0,op,"You are not a member of any party.");

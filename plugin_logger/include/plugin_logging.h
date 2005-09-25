@@ -28,7 +28,7 @@
 #define logging_filename "what_happened.log"
 
 #include <plugin.h>
-#include <autoconf.h>
+//#include <autoconf.h>
 //#include <skills.h>
 #define plugin_logging_h
 #define log_plugin_ident "crossfire_logger"
@@ -64,10 +64,10 @@ extern CFParm* PlugProps;
 extern f_plugin PlugHooks[1024];
 
 /* The declarations for the plugin interface. Every plugin should have those.*/
-CFParm* registerHook(CFParm* PParm);
-CFParm* triggerEvent(CFParm* PParm);
-CFParm* initPlugin(CFParm* PParm);
-CFParm* postinitPlugin(CFParm* PParm);
-CFParm* removePlugin(CFParm* PParm);
+MODULEAPI CFParm* registerHook(CFParm* PParm);
+MODULEAPI CFParm* triggerEvent(CFParm* PParm);
+MODULEAPI CFParm* initPlugin(CFParm* PParm);
+MODULEAPI CFParm* postinitPlugin(CFParm* PParm);
+MODULEAPI CFParm* removePlugin(CFParm* PParm);
 #endif
 

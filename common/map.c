@@ -459,7 +459,7 @@ static void link_multipart_objects(mapstruct *m)
 void load_objects (mapstruct *m, FILE *fp, int mapflags) {
     int i,j,bufstate=LO_NEWFILE;
     int unique;
-    object *op, *prev=NULL,*last_more=NULL, *otmp, *ootmp;;
+    object *op, *prev=NULL,*last_more=NULL, *otmp;
 
     op=get_object();
     op->map = m; /* To handle buttons correctly */

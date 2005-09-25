@@ -84,7 +84,7 @@ static player *get_other_player_from_name(object *op, char *name)
 
 
 int command_loadtest(object *op, char *params){
-	int x,y;
+	uint32 x,y;
 	char buf[1024];
 	/*This command will stress server*/
 	new_draw_info(NDI_UNIQUE, 0,op, "loadtest will stress server through teleporting");

@@ -375,7 +375,7 @@ int command_who (object *op, char *params) {
 void display_who_entry(object *op, player *pl, const char *format) {
     char tmpbuf[MAX_BUF];
     char outbuf[MAX_BUF];
-    sint16 i;
+    size_t i;
     outbuf[0]='\0'; /* we strcat to this, so reset it here. */
     if (pl==NULL) {
     	LOG(llevError,"display_who_entry(): I was passed a null player");

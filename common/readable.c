@@ -1769,7 +1769,8 @@ god_info_msg (int level, int booksize)
     static char retbuf[BOOK_BUF];
     const char   *name = NULL;
     char buf[BOOK_BUF];
-    int     i, introlen;
+    int     i;
+    size_t  introlen;
     object *god = pntr_to_god_obj (get_rand_god ());
 
     if (!god)

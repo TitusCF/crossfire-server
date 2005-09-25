@@ -722,7 +722,7 @@ void show_skills(object *op) {
 
 int use_skill(object *op, const char *string) {
     object *skop;
-    int len;
+    size_t len;
 
     if (!string) return 0;
 

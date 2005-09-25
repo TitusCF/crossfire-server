@@ -1,7 +1,7 @@
 !include "MUI.nsh"
 
 ;Title Of Your Application
-Name "Crossfire Server 1.8.0"
+Name "Crossfire Server 1.8.0 snapshot"
 
 VIAddVersionKey "ProductName" "Crossfire server installer"
 VIAddVersionKey "Comments" "Website: http://crossfire.real-time.com"
@@ -12,6 +12,7 @@ VIProductVersion "1.8.0.0"
 
 ;Do A CRC Check
 CRCCheck On
+SetCompressor /SOLID lzma
 
 ;Output File Name
 OutFile "CrossfireServer.exe"
@@ -75,7 +76,6 @@ Section "Crossfire Server (required)" cf
   File "..\lib\regions"
   File "..\lib\rules"
   File "..\lib\settings"
-  File "..\lib\showpets"
   File "..\lib\smooth"
   File "..\lib\animations"
   File /oname=treasures "..\lib\treasures.bld"
@@ -163,7 +163,6 @@ Section "un.Crossfire Server" un_cf
   Delete "$INSTDIR\Share\rules"
   Delete "$INSTDIR\Share\settings"
   Delete "$INSTDIR\Share\smooth"
-  Delete "$INSTDIR\Share\showpets"
   Delete "$INSTDIR\Share\animations"
   
   ;Delete help files
