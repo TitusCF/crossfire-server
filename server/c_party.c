@@ -40,11 +40,9 @@ void remove_party(partylist *target_party);
 /* Forms the party struct for a party called 'params'. it is the responsibility
  * of the caller to ensure that the name is unique, and that it is placed in the 
  * main party list correctly */
-static partylist *form_party(object *op, const char *params, partylist *firstparty, partylist *lastparty) {
+static partylist *form_party(object *op, const char *params) {
 
     partylist * newparty;
-    int player_count;
-    player *pl;
 
     newparty = (partylist *)malloc(sizeof(partylist));
     newparty->partyname = strdup_local(params);
@@ -53,22 +51,6 @@ static partylist *form_party(object *op, const char *params, partylist *firstpar
     newparty->passwd[0] = '\0';
     newparty->next = NULL;
     newparty->partyleader = strdup_local(op->name);
-    if(firstparty && lastparty)
-        lastparty->next = newparty;
-    else firstparty=newparty;
-    /* 
-     * The player might already be a member of a party, if so, he will be leaving
-     * it, so check if there are any other members and if not, delete the party
-     */
-    player_count=0; 
-    if (op->contr->party!=NULL) {
-    	for (pl=first_player;pl->next!=NULL;pl=pl->next) {
-	    if (pl->party==op->contr->party && op->contr!=pl)
-	    	player_count++;
-	}
-	if (player_count <= 0)
-	    remove_party(op->contr->party);
-    }
     new_draw_info_format(NDI_UNIQUE, 0, op,
 	"You have formed party: %s",newparty->partyname);	
     op->contr->party=newparty;
@@ -98,7 +80,7 @@ void remove_party(partylist *target_party) {
 	return; 
     }
     else if (target_party == lastparty) {
-	for (tmpparty=firstparty;tmpparty->next!=NULL;tmpparty->next) {
+	for (tmpparty=firstparty;tmpparty->next!=NULL;tmpparty=tmpparty->next) {
 	    if (tmpparty->next=target_party) {
 		lastparty=tmpparty;
 		if (target_party->partyleader) free(target_party->partyleader);
@@ -108,7 +90,7 @@ void remove_party(partylist *target_party) {
 	    }
 	}
     }
-    for (tmpparty=firstparty;tmpparty->next!=NULL;tmpparty->next)
+    for (tmpparty=firstparty;tmpparty->next!=NULL;tmpparty=tmpparty->next)
 	if (tmpparty->next == target_party) {
 	    previousparty=tmpparty;
 	    nextparty=tmpparty->next->next; 
@@ -222,7 +204,7 @@ int command_gsay(object *op, char *params)
 int command_party (object *op, char *params)
 {
   char buf[MAX_BUF];
-  partylist * tmpparty;  /* For iterating over linked list */
+  partylist *tmpparty, *oldparty;  /* For iterating over linked list */
   char * currentparty; 	 /* For iterating over linked list */
 
   if(params == NULL) {
@@ -318,39 +300,39 @@ int command_party (object *op, char *params)
     }
 
   if(strncmp(params, "form ",5) == 0) {
+    int player_count;
+    player *pl;
 
     params += 5;
-
-    if(firstparty == NULL) {
-      firstparty = form_party(op, params, firstparty, lastparty);
-      lastparty = firstparty;
-      return 0;
-    }
-    else
-      tmpparty = firstparty->next;
-
-    if(tmpparty == NULL) {
-      if(strcmp(firstparty->partyname, params) != 0) {
-        lastparty = form_party(op, params, firstparty, lastparty);
-        return 0;
-      }
-      else {
-	new_draw_info_format(NDI_UNIQUE, 0,op,
+    if (op->contr->party) oldparty = op->contr->party;
+ 
+    if (firstparty) {
+	for (tmpparty = firstparty; tmpparty != NULL;tmpparty = tmpparty->next) {
+	    if (!strcmp(tmpparty->partyname, params)) {
+		new_draw_info_format(NDI_UNIQUE, 0,op,
 		"The party %s already exists, pick another name",params);
-        return 1;
-      }
+        	return 1;
+	    }
+	}
+    lastparty->next=form_party(op, params);
+    lastparty = lastparty->next;
     }
-    tmpparty=firstparty;
-    while(tmpparty != NULL) {
-      if(strcmp(tmpparty->partyname,params) == 0) {
-        new_draw_info_format(NDI_UNIQUE, 0, op,
-		"The party %s already exists, pick a new name",params);
-        return 1;
-      }
-      tmpparty = tmpparty->next;
+    else {
+	firstparty=form_party(op, params);
+	lastparty=firstparty;
     }
-
-    lastparty = form_party(op, params, firstparty, lastparty);
+    /* 
+     * The player might have previously been a member of a party, if so, he will be leaving
+     * it, so check if there are any other members and if not, delete the party
+     */
+    player_count=0; 
+    if (oldparty) {
+    	for (pl=first_player;pl->next!=NULL;pl=pl->next) {
+	    if (pl->party==oldparty) player_count++;
+	}
+	if (player_count == 0)
+	    remove_party(oldparty);
+    }
     return 0;
   } /* form */
 
