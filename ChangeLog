@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/spell_effect.c: In recharge() verify that the object to charge is in
+   fact a wand or staff.
+Andreas Kirschbaum 2005-09-27
+
 Changed quest behaviour, now uses its own archetypes. Can change npc/magic ear
  text based on quest status.
 Warning: not totally tested. Quest start/end works, rest needs some tweaks & fixes.

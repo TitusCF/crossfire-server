@@ -67,7 +67,7 @@ int recharge(object *op, object *caster, object *spell_ob) {
     int ncharges;
 
     wand = find_marked_object(op);
-    if(wand == NULL) {
+    if(wand == NULL || wand->type != WAND) {
 	new_draw_info(NDI_UNIQUE, 0, op, "You need to mark the wand you want to recharge.");
 	return 0;
     }
