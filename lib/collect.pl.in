@@ -278,11 +278,11 @@ line:	while(<ARC>) {
       if ($var eq "attacktype") {
        $at = 0;
        foreach $t ( @values ) {
-        if ( $t =~ /\d+/ ) {
-         $at += $t;
+        if ( $t =~ /^\d+$/ ) {
+         $at |= $t;
         } else {
          if ( defined( $attacktype{ $t } ) ) {
-          $at += $attacktype{ $t };
+          $at |= $attacktype{ $t };
           } else {
           &warn($arch . " has invalid attacktype " . $t);
           }
