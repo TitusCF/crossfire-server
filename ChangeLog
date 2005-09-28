@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+lib/collect.pl.in: can now use lines like "attacktype fire electricity poison" instead
+ of hard to remember numbers. Numbers are still supported, you can even mix both.
+Ryo 2005-09-28
+
 server/spell_effect.c: In recharge() verify that the object to charge is in
    fact a wand or staff.
 Andreas Kirschbaum 2005-09-27
