@@ -1347,11 +1347,13 @@ CFParm* CFWTeleportObject (CFParm* PParm)
     object* who;
     CFParm* CFP=(CFParm*)malloc(sizeof (CFParm));
     static int result;
+    object* env;
 
     who = ( object* )PParm->Value[ 0 ];
     map = ( mapstruct* )PParm->Value[ 1 ];
     x = *( int* )PParm->Value[ 2 ];
     y = *( int* )PParm->Value[ 3 ];
+    env = who->env;
 
     CFP->Value[ 0 ] = (void *)&result;
     if ( ( out_of_map( map,x,y ) ) == 0 )
@@ -1373,6 +1375,8 @@ CFParm* CFWTeleportObject (CFParm* PParm)
 
         insert_ob_in_map( who, map, NULL, 0 );
         result = 0;
+        if ( env->type == PLAYER && env->contr )
+            esrv_del_item(env->contr,who->count);
     };
 
     return CFP;

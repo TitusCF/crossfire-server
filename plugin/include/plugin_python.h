@@ -105,11 +105,13 @@ static PyObject* CFGetMessage(PyObject* self, PyObject* args);
 static PyObject* CFGetGod(PyObject* self, PyObject* args);
 static PyObject* CFSetGod(PyObject* self, PyObject* args);
 static PyObject* CFSetWeight(PyObject* self, PyObject* args);
+static PyObject* CFSetWeightLimit(PyObject* self, PyObject* args);
 static PyObject* CFReadyMap(PyObject* self, PyObject* args);
 static PyObject* CFTeleport(PyObject* self, PyObject* args);
 static PyObject* CFIsOutOfMap(PyObject* self, PyObject* args);
 static PyObject* CFPickUp(PyObject* self, PyObject* args);
 static PyObject* CFGetWeight(PyObject* self, PyObject* args);
+static PyObject* CFGetWeightLimit(PyObject* self, PyObject* args);
 static PyObject* CFIsCanBePicked(PyObject* self, PyObject* args);
 static PyObject* CFGetMap(PyObject* self, PyObject* args);
 static PyObject* CFGetNextObject(PyObject* self, PyObject* args);
@@ -397,11 +399,13 @@ static PyMethodDef CFPythonMethods[] =
         {"GetGod", CFGetGod, METH_VARARGS},
         {"SetGod", CFSetGod, METH_VARARGS},
         {"SetWeight", CFSetWeight, METH_VARARGS},
+        {"SetWeightLimit", CFSetWeightLimit, METH_VARARGS},
         {"ReadyMap", CFReadyMap, METH_VARARGS},
         {"Teleport", CFTeleport, METH_VARARGS},
         {"IsOutOfMap", CFIsOutOfMap, METH_VARARGS},
         {"PickUp", CFPickUp, METH_VARARGS},
         {"GetWeight", CFGetWeight, METH_VARARGS},
+        {"GetWeightLimit", CFGetWeightLimit, METH_VARARGS},
         {"IsCanBePicked", CFIsCanBePicked, METH_VARARGS},
         {"GetMap", CFGetMap, METH_VARARGS},
         {"GetNextObject", CFGetNextObject, METH_VARARGS},

@@ -1254,6 +1254,37 @@ static PyObject* CFSetWeight(PyObject* self, PyObject* args)
 };
 
 /*****************************************************************************/
+/* Name   : CFSetWeightLimit                                                 */
+/* Python : CFPython.SetWeightLimit(object,value)                            */
+/*****************************************************************************/
+static PyObject* CFSetWeightLimit(PyObject* self, PyObject* args)
+{
+    long whoptr;
+    long value;
+
+    if (!PyArg_ParseTuple(args,"ll",&whoptr,&value))
+        return NULL;
+
+    CHECK_OBJ(whoptr);
+    /* I used an arbitrary bound of 1000000000 here */
+    if (value > 1000000000)
+    {
+        set_exception("weight must not exceed 1000000000");
+        return NULL;
+    }
+    else if (value < 0)
+    {
+        set_exception("weight must not be negative");
+        return NULL;
+    };
+
+    WHO->weight_limit = value;
+
+    Py_INCREF(Py_None);
+    return Py_None;
+};
+
+/*****************************************************************************/
 /* Name   : CFReadyMap                                                       */
 /* Python : CFPython.ReadyMap(name)                                          */
 /*****************************************************************************/
@@ -1375,6 +1406,21 @@ static PyObject* CFGetWeight(PyObject* self, PyObject* args)
     return Py_BuildValue("l",WHO->weight);
 };
 
+/*****************************************************************************/
+/* Name   : CFGetWeightLimit                                                 */
+/* Python : CFPython.GetWeightLimit(object)                                  */
+/*****************************************************************************/
+static PyObject* CFGetWeightLimit(PyObject* self, PyObject* args)
+{
+    long whoptr;
+
+    if (!PyArg_ParseTuple(args,"l",&whoptr))
+        return NULL;
+
+    CHECK_OBJ(whoptr);
+
+    return Py_BuildValue("l",WHO->weight_limit);
+};
 
 /*****************************************************************************/
 /* Name   : CFIsCanBePicked                                                  */
