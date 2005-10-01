@@ -1825,7 +1825,7 @@ void fire(object *op,int dir) {
 	    return;
 
 	case range_magic: /* Casting spells */
-	    spellcost=cast_spell(op,op,dir,op->contr->ranges[range_magic],NULL);
+        spellcost=(cast_spell(op,op,dir,op->contr->ranges[range_magic],op->contr->spellparam[0]?op->contr->spellparam:NULL));
 	    return;
 
 	case range_misc:

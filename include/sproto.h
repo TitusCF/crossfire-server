@@ -511,7 +511,7 @@ void move_golem(object *op);
 void control_golem(object *op, int dir);
 int summon_golem(object *op, object *caster, int dir, object *spob);
 object *choose_cult_monster(object *pl, object *god, int summon_level);
-int summon_object(object *op, object *caster, object *spell_ob, int dir);
+int summon_object(object *op, object *caster, object *spell_ob, int dir, const char *stringarg);
 object *get_real_owner(object *ob);
 int should_arena_attack(object *pet, object *owner, object *target);
 /* player.c */

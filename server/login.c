@@ -491,6 +491,7 @@ void check_login(object *op) {
     pl->orig_stats.Cha=0;
     strcpy(pl->savebed_map, first_map_path);
     pl->bed_x=0, pl->bed_y=0;
+    pl->spellparam[0] = '\0';
     
     /* Loop through the file, loading the rest of the values */
     while (fgets(bufall,MAX_BUF,fp)!=NULL) {

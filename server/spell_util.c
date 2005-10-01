@@ -1283,7 +1283,7 @@ int cast_spell(object *op, object *caster,int dir,object *spell_ob, char *string
 	    break;
 
 	case SP_SUMMON_MONSTER:
-	    success = summon_object(op,caster,spell_ob, dir);
+	    success = summon_object(op,caster,spell_ob, dir,stringarg);
 	    break;
 
 	case SP_CHARGING:

@@ -114,6 +114,7 @@ typedef struct pl {
     char	savebed_map[MAX_BUF];  /* map where player will respawn after death */
     sint16	bed_x, bed_y;	    /* x,y - coordinates of respawn (savebed) */
     rangetype	shoottype;	    /* Which range-attack is being used by player */
+    char	spellparam[MAX_BUF];	/* What param to add to spells */
     bowtype_t   bowtype;	    /* which firemode? */
     petmode_t   petmode;	    /* which petmode? */
     object	*ranges[range_size];/* object for each range.  Set up in fix player.  Note */

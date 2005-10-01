@@ -175,6 +175,12 @@ int command_cast_spell (object *op, char *params, char command)
 	    } else {
 		op->contr->ranges[range_magic] = spob;
 		op->contr->shoottype = range_magic;
+		if(cp != NULL) {
+		  strncpy(op->contr->spellparam, cp, MAX_BUF);
+		  op->contr->spellparam[MAX_BUF-1] = '\0';
+		} else {
+		  op->contr->spellparam[0] = '\0';
+		}
 		new_draw_info_format(NDI_UNIQUE, 0, op,
 			"You ready the spell %s", spob->name);
 	    }

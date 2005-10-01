@@ -775,7 +775,7 @@ object *choose_cult_monster(object *pl, object *god, int summon_level) {
 
 
 
-int summon_object(object *op, object *caster, object *spell_ob, int dir)
+int summon_object(object *op, object *caster, object *spell_ob, int dir, const char *stringarg)
 {
     sint16 x,y, nrof=1, i;
     archetype *summon_arch;
@@ -793,6 +793,7 @@ int summon_object(object *op, object *caster, object *spell_ob, int dir)
 	for (tr=spell_ob->randomitems->items; tr; tr=tr->next) {
 	    if (level < tr->magic) break;
 	    lasttr = tr;
+	    if(stringarg && !strcmp(tr->item->name,stringarg)) break;
 	    if (tr->next == NULL || tr->next->item == NULL) break;
 	}
 	if (!lasttr) {

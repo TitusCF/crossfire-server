@@ -17,6 +17,14 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Apply patches courtesy quisar.
+ #1307880 Allow to add a param to the cast command
+ #1306987 Allow to summon lower level pet monsters
+Modified files:
+ include/player.h sproto.h
+ server/c_range.c login.c pets.c player.c spell_util.c
+Ryo 2005-10-01
+
 common/button.c: explicit cast of stats.food to uint32 when used as sacrifice count.
 common/image.c: strlen returns size_t. Remove unused FindFaceName.
 common/object.c: obj::count is tag_t. Can't decrease item's nrof by a negative value.
