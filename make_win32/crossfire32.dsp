@@ -1363,7 +1363,7 @@ SOURCE=..\random_maps\reader.c
 !IF  "$(CFG)" == "crossfire32 - Win32 FullDebug"
 
 # PROP Intermediate_Dir "FullDebug\random_maps"
-# ADD CPP /D "YY_NO_UNISTD_H"
+# ADD CPP /D "YY_NO_UNISTD_H" /D "YY_USE_CONST"
 
 !ELSEIF  "$(CFG)" == "crossfire32 - Win32 ReleaseQuit"
 
@@ -1374,7 +1374,7 @@ SOURCE=..\random_maps\reader.c
 
 # PROP BASE Intermediate_Dir "Win32_ReleaseNormal\random_maps"
 # PROP Intermediate_Dir "ReleaseLog\random_maps"
-# ADD CPP /D "YY_NO_UNISTD_H"
+# ADD CPP /D "YY_NO_UNISTD_H" /D "YY_USE_CONST"
 
 !ENDIF 
 
@@ -1839,7 +1839,7 @@ SOURCE=..\common\loader.c
 !IF  "$(CFG)" == "crossfire32 - Win32 FullDebug"
 
 # PROP Intermediate_Dir "FullDebug\common"
-# ADD CPP /D "YY_NO_UNISTD_H"
+# ADD CPP /D "YY_NO_UNISTD_H" /D "YY_USE_CONST"
 
 !ELSEIF  "$(CFG)" == "crossfire32 - Win32 ReleaseQuit"
 
@@ -1850,7 +1850,7 @@ SOURCE=..\common\loader.c
 !ELSEIF  "$(CFG)" == "crossfire32 - Win32 ReleaseLog"
 
 # PROP Intermediate_Dir "ReleaseLog\common"
-# ADD CPP /D "YY_NO_UNISTD_H"
+# ADD CPP /D "YY_NO_UNISTD_H" /D "YY_USE_CONST"
 
 !ENDIF 
 
