@@ -170,8 +170,8 @@ int move_disease(object *disease) {
      */
 
     if(disease->env==NULL) { /* we're outside of someone */
-	disease->value--;
-	if(disease->value<=0) {
+	if ( disease->stats.maxhp > 0 ) disease->value--;
+	if(disease->value==0) {
 	    remove_ob(disease);
 	    free_object(disease);
 	    return 1;
