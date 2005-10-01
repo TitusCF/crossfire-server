@@ -17,6 +17,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/disease.c: check for value <= 0 as some diseases get dumped on a map
+ with value == 0 (negative values will eventually underflox, but it'll take time).
+
 Apply patches courtesy quisar.
  #1307880 Allow to add a param to the cast command
  #1306987 Allow to summon lower level pet monsters

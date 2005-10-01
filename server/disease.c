@@ -166,12 +166,12 @@ static int is_susceptible_to_disease(object *victim, object *disease)
 
 int move_disease(object *disease) {
     /*  first task is to determine if the disease is inside or outside of someone.
-     * If outside, we decrement 'hp' until we're gone. 
+     * If outside, we decrement 'value' until we're gone. 
      */
 
     if(disease->env==NULL) { /* we're outside of someone */
 	disease->value--;
-	if(disease->value==0) {
+	if(disease->value<=0) {
 	    remove_ob(disease);
 	    free_object(disease);
 	    return 1;
