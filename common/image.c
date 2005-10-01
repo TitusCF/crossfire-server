@@ -209,6 +209,7 @@ int ReadBmapNames () {
     char buf[MAX_BUF], *p, *q;
     FILE *fp;
     int value, nrofbmaps = 0, i;
+    size_t l;
 
     bmaps_checksum=0;
     sprintf (buf,"%s/bmaps", settings.datadir);
@@ -253,9 +254,9 @@ int ReadBmapNames () {
 	ROTATE_RIGHT(bmaps_checksum);
 	bmaps_checksum += (value >> 8) & 0xff;
 	bmaps_checksum &= 0xffffffff;
-	for (i=0; i<strlen(q); i++) {
+	for (l=0; l<strlen(q); l++) {
 	    ROTATE_RIGHT(bmaps_checksum);
-	    bmaps_checksum += q[i];
+	    bmaps_checksum += q[l];
 	    bmaps_checksum &= 0xffffffff;
 	}
 	
@@ -353,31 +354,7 @@ int FindFace (char *name, int error) {
 
     return bp ? bp->number : error;
 }
-/* According to docs, faces are saved in an array
- * The number associated with each face is it's
- * position in the array. Right, this should
- * be easy to convert a facenumber to a facename.
- * Hope this is so. Tchize
- * Damn, this is not, have to work around a little. Tchize
- */
-char* FindFaceName (int facenbr, char* error) {
-    int i=0;
-    if ( (facenbr>=nroffiles) ||(facenbr<0)) 
-        return error;
-    /*xbm[facenbr] is 'near' the face we are seeking*/
-    if (xbm[facenbr].number==facenbr)
-        return xbm[facenbr].name;
-    for (i=1;;i++){
-        if ( ((facenbr-i)<0) && ((facenbr+i)>nroffiles))
-            return error;
-        if (xbm[facenbr-i].number==facenbr){
-            return xbm[facenbr-i].name;
-        }
-        if (xbm[facenbr+i].number==facenbr){
-            return xbm[facenbr+i].name;
-        }
-    }
-}
+
 /* Reads the smooth file to know how to smooth datas.
  * the smooth file if made of 2 elements lines.
  * lines starting with # are comment

@@ -379,7 +379,7 @@ object *get_nearest_part(object *op,object *pl) {
  * Returns the object which has the count-variable equal to the argument.
  */
 
-object *find_object(int i) {
+object *find_object(tag_t i) {
   object *op;
   for(op=objects;op!=NULL;op=op->next)
     if(op->count==i)
@@ -1730,7 +1730,7 @@ object *get_split_ob(object *orig_ob, uint32 nr) {
  * Return value: 'op' if something is left, NULL if the amount reached 0
  */
 
-object *decrease_ob_nr (object *op, int i)
+object *decrease_ob_nr (object *op, uint32 i)
 {
     object *tmp;
     player *pl;

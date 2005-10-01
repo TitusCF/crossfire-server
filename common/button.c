@@ -252,7 +252,7 @@ void animate_turning(object *op) /* only one part objects */
 }
 
 #define ARCH_SACRIFICE(xyz) ((xyz)->slaying)
-#define NROF_SACRIFICE(xyz) ((xyz)->stats.food)
+#define NROF_SACRIFICE(xyz) ((uint32)(xyz)->stats.food)
 
 /* Returns true if the sacrifice meets the needs of the altar.
  *

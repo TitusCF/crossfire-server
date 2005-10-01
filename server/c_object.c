@@ -502,7 +502,7 @@ int command_apply (object *op, char *params)
  * certain number of objects to drop, so we can pass that number, and
  * not need to use split_ob and stuff.
  */
-int sack_can_hold (object *pl, object *sack, object *op, int nrof) {
+int sack_can_hold (object *pl, object *sack, object *op, uint32 nrof) {
 
     if (! QUERY_FLAG (sack, FLAG_APPLIED)) {
 	new_draw_info_format(NDI_UNIQUE, 0, pl, 
@@ -813,7 +813,7 @@ int command_take (object *op, char *params)
  *  Player 'op' tries to put object 'tmp' into sack 'sack', 
  *  if nrof is non zero, then nrof objects is tried to put into sack. 
  */
-void put_object_in_sack (object *op, object *sack, object *tmp, long nrof) 
+void put_object_in_sack (object *op, object *sack, object *tmp, uint32 nrof) 
 {
     tag_t tmp_tag, tmp2_tag;
     object *tmp2, *sack2;

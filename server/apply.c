@@ -366,7 +366,7 @@ int check_item(object *op,const char *item)
  * really used to determine what space to look at.
  * Modified to only eat 'nrof' of objects.
  */
-static void eat_item(object *op,const char *item, int nrof)
+static void eat_item(object *op,const char *item, uint32 nrof)
 {
     object *prev;
 
@@ -816,7 +816,7 @@ int convert_item(object *item, object *converter) {
     int nr=0;
     object *tmp;
     int is_in_shop;
-    int price_in;
+    uint32 price_in;
 
     for(tmp = get_map_ob(converter->map, converter->x, converter->y);
 	tmp != NULL;
@@ -3606,7 +3606,9 @@ void eat_special_food(object *who, object *food) {
 
 void apply_lighter(object *who, object *lighter) {
     object *item;
-    int count,nrof, is_player_env=0;
+    int is_player_env=0;
+    uint32 nrof;
+    tag_t count;
     char item_name[MAX_BUF];
 
     item=find_marked_object(who);

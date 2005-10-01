@@ -1638,7 +1638,7 @@ int command_kill_pets(object *op, char *params)
  **/
 static void display_quest_details( object* pl, object* quest )
     {
-    object* item;
+/*    object* item; */
 
     new_draw_info_format( NDI_WHITE, 0, pl, "Quest: %s\n%s\n",
         quest_get_name( quest ),

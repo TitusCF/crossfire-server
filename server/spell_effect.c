@@ -1227,7 +1227,8 @@ int magic_wall(object *op,object *caster,int dir,object *spell_ob) {
 }
 
 int dimension_door(object *op,object *caster, object *spob, int dir) {
-    int dist, maxdist, mflags;
+    uint32 dist, maxdist;
+    int mflags;
 
     if(op->type!=PLAYER)
 	return 0;

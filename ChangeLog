@@ -17,6 +17,21 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+common/button.c: explicit cast of stats.food to uint32 when used as sacrifice count.
+common/image.c: strlen returns size_t. Remove unused FindFaceName.
+common/object.c: obj::count is tag_t. Can't decrease item's nrof by a negative value.
+include/libproto.h: fix prototypes.
+include/player.h: weight and weight_limit are sint32, so last_ should be the same.
+include/sproto.h: nrof is uint32, not int.
+server/apply.c: nrof is uint32, can't eat a negative number of items. obj::count is tag_t.
+server/c_misc.c: remove unused variable.
+server/c_object.c: use uint32 instead of int to specify number of items to drop/put.
+server/plugins.c: strlen returns size_t.
+server/spell_effect.c: distances are uint32 and not int.
+socket/loop.c: remove now obsolete cast of -1 to uint32 for last_weight.
+socket/request.c: explicit cast of weight_limit to sint32 when comparing to last_weight.
+Ryo 2005-10-01
+
 plugin/plugin_python.c: added CF[SG]etWeightLimit.
 plugin/include/plugin_python.h: function prototypes.
 server/plugins.c: update player inventory if item teleporter from that.

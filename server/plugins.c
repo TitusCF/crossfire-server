@@ -172,7 +172,7 @@ int initPlugins(void)
 {
     struct dirent *currentfile;
     DIR *plugdir;
-    int l;
+    size_t l;
     char buf[MAX_BUF];
     char buf2[MAX_BUF];
     int result;

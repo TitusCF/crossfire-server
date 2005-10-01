@@ -671,7 +671,7 @@ void doeric_server()
 		 * sending them whenever they change, and probably just as useful
 		 */
 		esrv_update_stats(pl);
-		if (pl->last_weight != (uint32)-1 && pl->last_weight != WEIGHT(pl->ob)) {
+		if (pl->last_weight != -1 && pl->last_weight != WEIGHT(pl->ob)) {
 		    esrv_update_item(UPD_WEIGHT, pl->ob, pl->ob);
 		    if(pl->last_weight != WEIGHT(pl->ob))
 			LOG(llevError, "esrv_update_item(UPD_WEIGHT) did not set player weight: is %lu, should be %lu\n", (unsigned long)pl->last_weight, WEIGHT(pl->ob));

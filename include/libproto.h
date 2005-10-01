@@ -77,7 +77,6 @@ extern void bitstostring(long bits, int num, char *str);
 extern char find_color(char *name);
 extern int ReadBmapNames(void);
 extern int FindFace(char *name, int error);
-extern char *FindFaceName(int facenbr, char *error);
 extern int ReadSmooth(void);
 extern int FindSmooth(uint16 face, uint16 *smoothed);
 extern void free_all_images(void);
@@ -195,7 +194,7 @@ extern void dump_object(object *op);
 extern void dump_me(object *op, char *outstr);
 extern void dump_all_objects(void);
 extern object *get_nearest_part(object *op, object *pl);
-extern object *find_object(int i);
+extern object *find_object(tag_t i);
 extern object *find_object_name(char *str);
 extern void free_all_object_data(void);
 extern object *get_owner(object *op);
@@ -222,7 +221,7 @@ extern object *insert_ob_in_map_at(object *op, mapstruct *m, object *originator,
 extern object *insert_ob_in_map(object *op, mapstruct *m, object *originator, int flag);
 extern void replace_insert_ob_in_map(char *arch_string, object *op);
 extern object *get_split_ob(object *orig_ob, uint32 nr);
-extern object *decrease_ob_nr(object *op, int i);
+extern object *decrease_ob_nr(object *op, uint32 i);
 extern void add_weight(object *op, signed long weight);
 extern object *insert_ob_in_ob(object *op, object *where);
 extern int check_walk_on(object *op, object *originator);
@@ -285,8 +284,8 @@ extern object* quest_get_player_quest( object* pl, const char* name, const char*
 extern void quest_apply_items( object* wrapper, player* pl );
 /*object* quest_get_override( object* ob, object* pl );
 const char* quest_get_override_slaying( object* ob, object* pl );
-const char* quest_get_override_msg( object* ob, object* pl );
-int quest_on_activate( object* ob, player*pl );*/
+const char* quest_get_override_msg( object* ob, object* pl );*/
+int quest_on_activate( object* ob, player*pl );
 /* re-cmp.c */
 extern const char *re_cmp(const char *str, const char *regexp);
 /* readable.c */
