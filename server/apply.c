@@ -1190,6 +1190,7 @@ static int apply_altar (object *altar, object *sacrifice, object *originator)
 static int apply_shop_mat (object *shop_mat, object *op)
 {
     int rv = 0;
+    double opinion;
     object *tmp, *next;
 
     SET_FLAG (op,FLAG_NO_APPLY);   /* prevent loops */
@@ -1246,7 +1247,15 @@ static int apply_shop_mat (object *shop_mat, object *op)
 	 */
 	else if ( ! rv && (tmp = get_map_ob (op->map, op->x, op->y)) != NULL
 		   && tmp->type != SHOP_FLOOR) {
-	    new_draw_info (NDI_UNIQUE, 0, op, "Thank you for visiting our shop.");
+	    opinion = shopkeeper_approval(op->map, op);
+	    if ( opinion > 0.9)
+		new_draw_info (NDI_UNIQUE, 0, op, "The shopkeeper gives you a friendly wave.");
+	    else if ( opinion > 0.75)
+		new_draw_info (NDI_UNIQUE, 0, op, "The shopkeeper waves to you.");
+	    else if ( opinion > 0.5)
+		new_draw_info (NDI_UNIQUE, 0, op, "The shopkeeper ignores you.");
+	    else
+		new_draw_info (NDI_UNIQUE, 0, op, "The shopkeeper glares at you with contempt.");
 	}
     }
     else {

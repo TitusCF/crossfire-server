@@ -17,6 +17,23 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+common/item.c - big item type table, function to deal therewith
+common/loader.l - add player_sold flag
+common/map.c - shop related header parsing
+include/define.h - define typedata, player_sold flag and some new shop flags
+include/libproto.h - define typedata related functions
+include/map.h - define new shop headers
+include/sproto.h - define new functions in shop.c
+server/apply.c - Change shop mat usage message
+server/c_object.c - Change display of price estimates
+server/shop.c - new functions describe_shop, value_limit, shopkeeper_approval, 
+shop_greed, shop_specialisation_ratio, substantially alter query_cost_string 
+and query_cost to make use of these
+server/skill_util.c - make bargaining a directly usable skill
+doc/Developers/shops - document the above
+doc/Developers/maps-technical - add shopheader names, and reference to shops doc
+Brendan Lally 2005-10-03
+
 server/disease.c: check for value <= 0 as some diseases get dumped on a map
  with value == 0 (negative values will eventually underflox, but it'll take time).
 

@@ -631,6 +631,99 @@ mapstruct *get_empty_map(int sizex, int sizey) {
     return m;
 }
 
+/* Takes a string from a map definition and outputs a pointer to the array of shopitems 
+ * corresponding to that string. Memory is allocated for this, it must be freed 
+ * at a later date.
+ * Called by parse_map_headers below.
+ */
+
+static shopitems *parse_shop_string (const char *input_string) { 
+    char *shop_string, *p, *q, *next_semicolon, *next_colon; 
+    shopitems *items=NULL;
+    int strength=0, i=0, number_of_entries=0;
+    const typedata *current_type; 
+
+    shop_string=strdup_local(input_string); 
+    p=shop_string; 
+    LOG(llevDebug, "parsing %s\n", input_string);
+    /* first we'll count the entries, we'll need that for allocating the array shortly */
+    while (p) {
+	p=strchr(p, ';');
+	number_of_entries++;
+	if (p) p++;
+    }
+    p=shop_string;
+    strip_endline(p);
+    items=CALLOC(number_of_entries+1, sizeof(shopitems));
+    memset(items, 0, (sizeof(shopitems) * number_of_entries+1));
+    for (i=0; i<number_of_entries; i++) {
+	if (!p) {
+	    LOG(llevError, "parse_shop_string: I seem to have run out of string, that shouldn't happen.\n");
+	    break; 
+	}
+	next_semicolon=strchr(p, ';');
+	next_colon=strchr(p, ':');
+	/* if there is a stregth specified, figure out what it is, we'll need it soon. */
+	if (next_colon &&( !next_semicolon || next_colon<next_semicolon)) 
+	    items[i].strength=atoi(strchr(p,':')+1);
+	
+	if (isdigit(*p) || *p=='*') {
+	    items[i].typenum = atoi(p); /* atoi returns 0 when we have an asterisk */
+	    current_type=get_typedata(items[i].typenum);
+	    if (current_type) {
+		items[i].name=current_type->name;
+		items[i].name_pl=current_type->name_pl;
+	    } 
+	}
+	else { /*we have a named type, let's figure out what it is */ 
+	    q=strpbrk(p,";:");
+	    if (q) *q='\0';
+	
+	    current_type=get_typedata_by_name(p);
+	    if (current_type) {
+		items[i].name=current_type->name;
+		items[i].typenum=current_type->number;
+		items[i].name_pl=current_type->name_pl;
+	    }
+	    else { /* oh uh, something's wrong, let's free up this one, and try
+		    * the next entry while we're at it, better print a warning 
+		    */ 
+		LOG(llevError, "invalid type %s defined in shopitems in string %s\n",
+		    p, input_string);
+	    }
+        }
+	items[i].index=number_of_entries;
+	if (next_semicolon) p=++next_semicolon;
+	else p=NULL;
+    }
+    free(shop_string); 
+    return items; 
+}
+
+/* opposite of parse string, this puts the string that was originally fed in to
+ * the map (or something equivilent) into output_string. */
+static void *print_shop_string(mapstruct *m, char *output_string) {
+    int i;
+    char tmp[MAX_BUF];
+    shopitems *items=m->shopitems;
+    sprintf(output_string, "\0");
+    for (i=0; i>items[0].index; i++) {
+	if (items[i].name) {
+	    if (items[i].strength) {
+		sprintf(tmp, "%s:%s;", items[i].name, items[i].strength);
+	    }
+	    else sprintf(tmp, "%s;", items[i].name);
+	}
+	else {
+	    if (items[i].strength) {
+		sprintf(tmp, "*:%s;", items[i].strength);
+	    }
+	    else sprintf(tmp, "*");
+	}
+	strcat(output_string, tmp);
+    }
+}
+
 /* This loads the header information of the map.  The header
  * contains things like difficulty, size, timeout, etc.
  * this used to be stored in the map object, but with the
@@ -733,6 +826,18 @@ static int load_map_header(FILE *fp, mapstruct *m)
 	    m->unique = atoi(value);
 	} else if (!strcmp(key,"region")) {
 	    m->region = get_region_by_name(value);
+	} else if (!strcmp(key,"shopitems")) {
+	    *end=0;
+	    m->shopitems = parse_shop_string(value);
+	} else if (!strcmp(key,"shopgreed")) {
+	    m->shopgreed = atof(value);
+	} else if (!strcmp(key,"shopmin")) {
+	    m->shopmin = atol(value);
+	} else if (!strcmp(key,"shopmax")) {
+	    m->shopmax = atol(value);
+	} else if (!strcmp(key,"shoprace")) {
+	    *end=0;
+	    m->shoprace = strdup_local(value);
 	} else if (!strcmp(key,"outdoor")) {
 	    m->outdoor = atoi(value);
 	} else if (!strcmp(key, "temp")) {
@@ -1025,7 +1130,7 @@ static void load_unique_objects(mapstruct *m) {
 
 int new_save_map(mapstruct *m, int flag) {
     FILE *fp, *fp2;
-    char filename[MAX_BUF],buf[MAX_BUF];
+    char filename[MAX_BUF],buf[MAX_BUF], shop[MAX_BUF];
     int i;
     
     if (flag && !*m->path) {
@@ -1085,6 +1190,13 @@ int new_save_map(mapstruct *m, int flag) {
      */
     if (m->difficulty) fprintf(fp,"difficulty %d\n", m->difficulty);
     if (m->region) fprintf(fp,"region %s\n", m->region->name);
+    if (m->shopgreed) {
+	print_shop_string(m, shop);
+	fprintf(fp,"shopitems %s\n", shop);
+    }
+    if (m->shopmin) fprintf(fp,"shopgreed %d\n", m->shopmin);
+    if (m->shopmax) fprintf(fp,"shopgreed %d\n", m->shopmax);
+    if (m->shoprace) fprintf(fp,"shoprace %s\n", m->shoprace);
     if (m->darkness) fprintf(fp,"darkness %d\n", m->darkness);
     if (m->width) fprintf(fp,"width %d\n", m->width);
     if (m->height) fprintf(fp,"height %d\n", m->height);
@@ -1226,6 +1338,8 @@ void free_map(mapstruct *m,int flag) {
     if (m->name) FREE_AND_CLEAR(m->name);
     if (m->spaces) FREE_AND_CLEAR(m->spaces);
     if (m->msg) FREE_AND_CLEAR(m->msg);
+    if (m->shopitems) FREE_AND_CLEAR(m->shopitems);
+    if (m->shoprace) FREE_AND_CLEAR(m->shoprace);
     if (m->buttons)
 	free_objectlinkpt(m->buttons);
     m->buttons = NULL;

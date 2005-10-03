@@ -66,6 +66,9 @@ tile_path_<x> - Used with map tiling.  <x> is a number, 1 is north,
 	in that direction.  See the section below for more information about
 	map tiling.
 
+'shopitems', 'shopgreed', 'shoprace', 'shopmin', 'shopmax' - the type of thing 
+	the shop trades in, see doc/Developers/shops for more details
+
 'temp'  - The base temperature in farenhiet for this map.  The temperature
 	is modified by the season and weather conditions.  In a map without
 	weather effects, this temperature will be used as the static

@@ -425,12 +425,15 @@ int do_skill (object *op, object *part, object *skill, int dir, const char *stri
 	    success = pray(op, skill);
 	    break;
 
+	case SK_BARGAINING:
+	    success = describe_shop(op);
+	    break;
+
 	case SK_SORCERY:
 	case SK_EVOCATION:
 	case SK_PYROMANCY:
 	case SK_SUMMONING:
 	case SK_CLIMBING:
-	case SK_BARGAINING:
 	    new_draw_info(NDI_UNIQUE, 0,op,"This skill is already in effect.");
 	    break;
 

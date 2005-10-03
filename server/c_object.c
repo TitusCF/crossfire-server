@@ -617,7 +617,7 @@ static void pick_up_object (object *pl, object *op, object *tmp, int nrof)
     }
     if(QUERY_FLAG(tmp, FLAG_UNPAID))
 	(void) sprintf(buf,"%s will cost you %s.", query_name(tmp),
-		query_cost_string(tmp,pl,F_BUY));
+		query_cost_string(tmp,pl,F_BUY | F_SHOP));
     else
 	(void) sprintf(buf,"You pick up the %s.", query_name(tmp));
     new_draw_info(NDI_UNIQUE, 0,pl,buf);
@@ -1510,14 +1510,21 @@ void examine(object *op, object *tmp) {
 	new_draw_info(NDI_UNIQUE, 0,op,buf);
     }
 
-    if(tmp->value && !QUERY_FLAG(tmp, FLAG_STARTEQUIP) && !QUERY_FLAG(tmp, FLAG_NO_PICK)) {
-	if(QUERY_FLAG(tmp, FLAG_UNPAID))
-	    sprintf(buf,"%s would cost you %s.",
-		    tmp->nrof>1?"They":"It",query_cost_string(tmp,op,F_BUY));
-	else
-	    sprintf(buf,"You would get %s for %s.",
-		    query_cost_string(tmp,op,F_SELL), tmp->nrof>1?"them":"it");
+    if (tmp->value && !QUERY_FLAG(tmp, FLAG_STARTEQUIP) && !QUERY_FLAG(tmp, FLAG_NO_PICK)) {
+    	object *floor;
+    	sprintf(buf,"You reckon %s worth %s.",
+		    tmp->nrof>1?"they are":"it is",query_cost_string(tmp,op,F_SELL | F_APPROX));
 	new_draw_info(NDI_UNIQUE, 0,op,buf);
+	floor = get_map_ob (op->map, op->x, op->y);
+	if (floor && floor->type == SHOP_FLOOR) {
+	    if(QUERY_FLAG(tmp, FLAG_UNPAID))
+	    	sprintf(buf,"%s would cost you %s.",
+		    tmp->nrof>1?"They":"It",query_cost_string(tmp,op,F_BUY | F_SHOP));
+	    else
+	    	sprintf(buf,"You are offered %s for %s.",
+		    query_cost_string(tmp,op,F_SELL+F_SHOP), tmp->nrof>1?"them":"it");
+	    new_draw_info(NDI_UNIQUE, 0,op,buf);
+	}
     }
 
     if(QUERY_FLAG(tmp, FLAG_MONSTER))

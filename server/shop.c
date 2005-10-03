@@ -34,10 +34,24 @@
 #ifndef __CEXTRACT__
 #include <sproto.h>
 #endif
+#include <math.h>
 
+/* this is a measure of how effective store specialisation is. A general store
+ * will offer this proportion of the 'maximum' price, a specialised store will
+ * offer a range of prices around it such that the maximum price is always one
+ * therefore making this number higher, makes specialisation less effective. 
+ * setting this value above 1 or to a negative value would have interesting,
+ * (though not useful) effects.
+ */
+#define SPECIALISATION_EFFECT 0.5
+
+/* price a shopkeeper will give to someone they disapprove of.*/
+#define DISAPPROVAL_RATIO 0.2 
+
+/* price a shopkeeper will give someone they neither like nor dislike */
+#define NEUTRAL_RATIO 0.8
 
 static uint64 pay_from_container(object *pl, object *pouch, uint64 to_pay);
-
 
 #define NUM_COINS 3	/* number of coin types */
 static char *coins[] = {"platinacoin", "goldcoin", "silvercoin", NULL};
@@ -50,6 +64,13 @@ static char *coins[] = {"platinacoin", "goldcoin", "silvercoin", NULL};
  * by charisma done at that time).  NULL could have been passed as the
  * who parameter, but then the adjustment for expensive items (>10000)
  * would not be done.
+ *
+ * Added F_APPROX flag, which means that the price returned should be wrong by
+ * an amount related to the player's bargaining skill.
+ *
+ * Added F_SHOP flag to mean that the specialisation of the shop on the player's 
+ * current map should be taken into account when determining the price. Shops that
+ * specialise in what is being traded will give better prices than those that do not. 
  *
  * CF 0.91.4 - This function got changed around a bit.  Now the
  * number of object is multiplied by the value early on.  This fixes problems
@@ -65,14 +86,18 @@ uint64 query_cost(object *tmp, object *who, int flag) {
     int no_bargain;
     int identified;
     int not_cursed;
+    int approximate;
+    int shop;
     float diff;
     float ratio;
 
     no_bargain = flag & F_NO_BARGAIN;
     identified = flag & F_IDENTIFIED;
     not_cursed = flag & F_NOT_CURSED;
-    flag &= ~(F_NO_BARGAIN|F_IDENTIFIED|F_NOT_CURSED);
-
+    approximate = flag & F_APPROX;
+    shop = flag & F_SHOP;
+    flag &= ~(F_NO_BARGAIN|F_IDENTIFIED|F_NOT_CURSED|F_APPROX|F_SHOP);
+ 
     if (tmp->type==MONEY) return (tmp->nrof * tmp->value);
     if (tmp->type==GEM) {
 	if (flag==F_TRUE) return (tmp->nrof * tmp->value);
@@ -153,12 +178,8 @@ uint64 query_cost(object *tmp, object *who, int flag) {
     }
 
     /* Limit amount of money you can get for really great items. */
-    if (flag==F_TRUE || flag==F_SELL) {
-	if (val/number>10000) {
-	    val=8000+isqrt(val/number)*20;
-	    val *= number;
-	}
-    }
+    if (flag==F_TRUE || flag==F_SELL)
+	val=value_limit(val, number, who->map, shop);
 
     /* This modification is for bargaining skill.
      * Now only players with max level in bargaining
@@ -169,27 +190,44 @@ uint64 query_cost(object *tmp, object *who, int flag) {
 
     if (who!=NULL && who->type==PLAYER) {
 	int lev_bargain = 0;
+	int lev_identify = 0;
+	int idskill1=0;
+	int idskill2=0;
+	const typedata *tmptype;
 
 	/* ratio determines how much of the price modification
 	 * will come from the basic stat charisma
 	 * the rest will come from the level in bargaining skill
 	 */
 	ratio = 0.5;
+	tmptype=get_typedata(tmp->type);
 
 	if (find_skill_by_number(who,SK_BARGAINING)) {
 	    lev_bargain = find_skill_by_number(who,SK_BARGAINING)->level;
 	}
+	if (tmptype) {
+	    if (idskill1=tmptype->identifyskill) {
+		idskill2=tmptype->identifyskill2;
+		if (find_skill_by_number(who,idskill1)) {
+		    lev_identify = find_skill_by_number(who,idskill1)->level;
+	    }
+	    if (idskill2 && find_skill_by_number(who,idskill2)) {
+	    	lev_identify += find_skill_by_number(who,idskill2)->level;
+	   	}
+	    }
+	}
+	else LOG(llevError, "Query_cost: item %s hasn't got a valid type\n", tmp->name);
 	if ( !no_bargain && (lev_bargain>0) )
 	    diff = (0.8 - 0.6*((lev_bargain+settings.max_level*0.05)
                          /(settings.max_level*1.05)));
 	else
 	    diff = 0.8;
-
+	    
 	diff *= 1-ratio;
-
+	
 	/* Diff is now a float between 0.2 and 0.8 */
 	diff+=(cha_bonus[who->stats.Cha]-1)/(1+cha_bonus[who->stats.Cha])*ratio;
-
+	
 	/* we need to multiply these by 4.0 to keep buy costs roughly the same
 	 * (otherwise, you could buy a potion of charisma for around 400 pp.
 	 * Arguable, the costs in the archetypes should be updated to better
@@ -200,8 +238,19 @@ uint64 query_cost(object *tmp, object *who, int flag) {
 	else if (flag==F_SELL)
           val=(4*val*(long)(1000*(1-diff)))/1000;
 	else val *=4;
+	
+	 /* If we are approximating, then the value returned should be allowed to be wrong
+	  * however merely using a random number each time will not be sufficiant, as then
+	  * multiple examinations would give different answers, so we'll use the count
+	  * instead. By taking the sine of the count, a value between -1 and 1 is 
+	  * generated, we then divide by the square root of the bargaining skill and the 
+	  * appropriate identification skills, so that higher level players get better estimates.
+	  * (we need a +1 there in case we would otherwise be dividing by zero.
+	  */
+	if (approximate) 
+	    val = val + (sint64)(val*(sin(tmp->count)/sqrt(lev_bargain+lev_identify*2+1.0)));
     }
-
+   
     /* I don't think this should really happen - if it does, it indicates and
      * overflow of diff above.  That shoudl only happen if
      * we are selling objects - in that case, the person just
@@ -213,6 +262,40 @@ uint64 query_cost(object *tmp, object *who, int flag) {
     /* Unidentified stuff won't sell for more than 60gp */
     if(flag==F_SELL && !QUERY_FLAG(tmp, FLAG_IDENTIFIED) && need_identify(tmp) && !identified) {
 	 val = (val > 600)? 600:val;
+    }
+    
+    /* if we are in a shop, check how the type of shop should affect the price */
+    if (shop) {
+	if (flag==F_SELL) 
+	    val=val*shop_specialisation_ratio(tmp, who->map)*shopkeeper_approval(who->map, who)
+		/shop_greed(who->map);
+	else if (flag==F_BUY) {
+	/* 
+	 * when buying, if the item was sold by another player, it is ok to
+	 * let the item be sold cheaper, according to the specialisation of
+	 * the shop. If a player sold an item here, then his sale price was
+	 * multiplied by the specialisation ratio, to do the same to the buy 
+	 * price will not generate extra money. However, the 
+	 * same is not true of generated items, these have to /divide/ by the 
+	 * specialisation, so that the price is never less than what they could
+	 * be sold for (otherwise players could camp map resets to make money).
+	 * In game terms, a non-specialist shop, might not recognise the true 
+	 * value of the items they sell (much like how people sometimes find 
+	 * antiques in a junk shop in real life).
+	 */
+	    if (QUERY_FLAG(tmp, FLAG_PLAYER_SOLD))
+		val=val*shop_greed(who->map)*shop_specialisation_ratio(tmp, who->map)
+		    /shopkeeper_approval(who->map, who);
+	    else
+		val=val*shop_greed(who->map)
+		    /(shop_specialisation_ratio(tmp, who->map)*shopkeeper_approval(who->map, who));
+	}
+	/* we will also have an extra 0-5% variation between shops of the same type 
+	 * for valuable items (below a value of 50 this effect wouldn't be very 
+	 * pointful, and could give fun with rounding.
+	 */
+	if(who->map->path!=NULL && val > 50)
+	    val=val+0.05*val*cos(tmp->count+strlen(who->map->path));
     }
     return val;
 }
@@ -306,7 +389,53 @@ const char *cost_string_from_value(uint64 cost)
 }
 
 const char *query_cost_string(object *tmp,object *who,int flag) {
-    return cost_string_from_value(query_cost(tmp,who,flag));
+    uint64 real_value = query_cost(tmp,who,flag);
+    int idskill1=0;
+    int idskill2=0;
+    const typedata *tmptype;
+
+    tmptype=get_typedata(tmp->type);
+    if (tmptype) {
+	idskill1=tmptype->identifyskill;
+	idskill2=tmptype->identifyskill2;
+    }
+
+    /* we show an approximate price if
+     * 1) we are approximating
+     * 2) there either is no id skill(s) for the item, or we don't have them
+     * 3) we don't have bargaining skill either
+     */
+    if (flag & F_APPROX) {
+	if (!idskill1 || !find_skill_by_number(who, idskill1)) {
+	    if (!idskill2 || !find_skill_by_number(who, idskill2)) {
+		if (!find_skill_by_number(who,SK_BARGAINING)) {
+		    static char buf[MAX_BUF];
+		    int num, cointype = 0;
+		    archetype *coin = find_next_coin(real_value, &cointype);
+	
+		    if (coin == NULL) return "nothing";
+	
+		    num = real_value / coin->clone.value;
+		    if (num == 1)
+	    		sprintf(buf, "about one %s", coin->clone.name);
+		    else if (num < 5)
+	    		sprintf(buf, "a few %s", coin->clone.name_pl);
+		    else if (num < 10)
+	    		sprintf(buf, "several %s", coin->clone.name_pl);
+		    else if (num < 25)
+	    		sprintf(buf, "a moderate amount of %s", coin->clone.name_pl);
+		    else if (num < 100)
+	    		sprintf(buf, "lots of %s", coin->clone.name_pl);
+		    else if (num < 1000)
+	    		sprintf(buf, "a great many %s", coin->clone.name_pl);
+		    else 
+	    		sprintf(buf, "a vast quantity of %s", coin->clone.name_pl);
+		    return buf;
+	        }
+	    }
+	}
+    }
+    return cost_string_from_value(real_value);
 }
 
 /* This function finds out how much money the player is carrying,
@@ -361,7 +490,7 @@ int pay_for_amount(uint64 to_pay,object *pl) {
  * of the price was paid from.
  */
 int pay_for_item(object *op,object *pl) {
-    uint64 to_pay = query_cost(op,pl,F_BUY);
+    uint64 to_pay = query_cost(op,pl,F_BUY | F_SHOP);
     object *pouch;
     uint64 saved_money;
 
@@ -372,7 +501,7 @@ int pay_for_item(object *op,object *pl) {
      * without bargaining skill.
      * This determins the amount of exp (if any) gained for bargaining.
      */
-    saved_money = query_cost(op,pl,F_BUY | F_NO_BARGAIN) - to_pay;
+    saved_money = query_cost(op,pl,F_BUY | F_NO_BARGAIN | F_SHOP) - to_pay;
 
     if (saved_money > 0)
       change_exp(pl,saved_money,"bargaining",SK_EXP_NONE);
@@ -526,10 +655,10 @@ int get_payment(object *pl, object *op) {
         return 0;
    
     if(op!=NULL&&QUERY_FLAG(op,FLAG_UNPAID)) {
-        strncpy(buf,query_cost_string(op,pl,F_BUY),MAX_BUF);
+        strncpy(buf,query_cost_string(op,pl,F_BUY | F_SHOP),MAX_BUF);
         buf[MAX_BUF-1] = '\0';
         if(!pay_for_item(op,pl)) {
-            uint64 i=query_cost(op,pl,F_BUY) - query_money(pl);
+            uint64 i=query_cost(op,pl,F_BUY | F_SHOP) - query_money(pl);
 	    CLEAR_FLAG(op, FLAG_UNPAID);
 	    new_draw_info_format(NDI_UNIQUE, 0, pl,
 		"You lack %s to buy %s.", cost_string_from_value(i),
@@ -541,6 +670,7 @@ int get_payment(object *pl, object *op) {
 	    tag_t c = op->count;
 
 	    CLEAR_FLAG(op, FLAG_UNPAID);
+	    CLEAR_FLAG(op, FLAG_PLAYER_SOLD);
 	    new_draw_info_format(NDI_UNIQUE, 0, op,
 		"You paid %s for %s.",buf,query_name(op));
 	    tmp=merge_ob(op,NULL);
@@ -565,7 +695,7 @@ int get_payment(object *pl, object *op) {
  * remaining coins in character's inventory.
  */
 void sell_item(object *op, object *pl) {
-    uint64 i=query_cost(op,pl,F_SELL), extra_gain;
+    uint64 i=query_cost(op,pl,F_SELL | F_SHOP), extra_gain;
     int count;
     object *tmp, *pouch;
     archetype *at;
@@ -584,8 +714,10 @@ void sell_item(object *op, object *pl) {
 	/* Even if the character doesn't get anything for it, it may still be
 	 * worth something.  If so, make it unpaid
 	 */
-	if (op->value)
+	if (op->value) {
 	    SET_FLAG(op, FLAG_UNPAID);
+	    SET_FLAG(op, FLAG_PLAYER_SOLD);
+	}
 	identify(op);
 	return;
     }
@@ -595,7 +727,7 @@ void sell_item(object *op, object *pl) {
      * This determins the amount of exp (if any) gained for bargaining.
      * exp/10 -> 1 for each gold coin
      */
-    extra_gain = i - query_cost(op,pl,F_SELL | F_NO_BARGAIN);
+    extra_gain = i - query_cost(op,pl,F_SELL | F_NO_BARGAIN | F_SHOP);
 
     if (extra_gain > 0)
 	change_exp(pl,extra_gain/10,"bargaining",SK_EXP_NONE);
@@ -646,13 +778,155 @@ void sell_item(object *op, object *pl) {
 #endif
 
     new_draw_info_format(NDI_UNIQUE, 0, pl,
-	"You receive %s for %s.",query_cost_string(op,pl,1),
+	"You receive %s for %s.",query_cost_string(op,pl,F_SELL | F_SHOP),
           query_name(op));
     SET_FLAG(op, FLAG_UNPAID);
     identify(op);
 }
 
+/* returns a double that is the ratio of the price that a shop will offer for
+ * item based on the shops specialisation. Does not take account of greed, 
+ * returned value is between (2*SPECIALISATION_EFFECT-1) and 1 and in any 
+ * event is never less than 0.001 (calling functions divide by it)
+ */
+double shop_specialisation_ratio(object *item, mapstruct *map) {
+    shopitems *items=map->shopitems;
+    double ratio = SPECIALISATION_EFFECT, likedness=0.001;
+    int i;
 
+    if (item==NULL) { 
+	LOG(llevError, "shop_specialisation_ratio: passed a NULL item for map %s", map->path);
+	return 0;
+    }
+    if (map->shopitems) {
+	for (i=0; i<items[0].index; i++)
+	    if (items[i].typenum==item->type || (!items[i].typenum && likedness == 0.001)) 
+		likedness = items[i].strength/100.0;
+    }
+    if (likedness > 1.0) { /* someone has been rather silly with the map headers. */
+	LOG(llevDebug, "shop_specialisation ratio: item type %d on map %s is above 100%%\n", 
+	    item->type, map->path);
+	likedness = 1.0; 
+    }
+    if (likedness < -1.0) {
+	LOG(llevDebug, "shop_specialisation ratio: item type %d on map %s is below -100%%\n", 
+	    item->type, map->path);
+	likedness = -1.0; 
+    }
+    ratio = ratio + (1.0-ratio) * likedness;
+    if (ratio <= 0) ratio=0.001; /* negative prices could be interesting, but not very helpful */
+    return ratio;
+}
+
+/*returns the greed of the shop on map, or 1 if it isn't specified. */
+double shop_greed(mapstruct *map) {
+    double greed=1.0;
+    if (map->shopgreed)
+	return map->shopgreed;
+    return greed;
+}
+
+/* Returns a double based on how much the shopkeeper approves of the player.
+ * this is based on the race of the shopkeeper and that of the player.
+ */
+double shopkeeper_approval(mapstruct *map, object *player) {
+    double approval=1.0;
+
+    if (map->shoprace) {
+	approval=NEUTRAL_RATIO;
+        if (player->race && !strcmp(player->race, map->shoprace)) approval = 1.0;
+    }
+    return approval;
+}
+
+/* limit the value of items based on the wealth of the shop. If the item is close
+ * to the maximum value a shop will offer, we start to reduce it, if the item is 
+ * below the minimum value the shop is prepared to trade in, then we don't 
+ * want it and offer nothing.
+ * 
+ */
+uint64 value_limit(uint64 val, int quantity, mapstruct *map, int isshop) {
+    uint64 newval, unit_price;
+    unit_price=val/quantity;
+    newval=unit_price;
+    if (isshop) {
+	if (map->shopmin && unit_price < map->shopmin) return 0;
+	else if (map->shopmax && unit_price > map->shopmax/2)
+	    newval=MIN((map->shopmax/2)+isqrt(unit_price-map->shopmax/2), map->shopmax);
+	else if (unit_price>10000)
+    	    newval=8000+isqrt(unit_price)*20;
+    }
+    newval *= quantity;
+    return newval;
+}
+
+/* gives a desciption of the shop on their current map to the player op. */
+int describe_shop(object *op) {
+    mapstruct *map = op->map;
+    /*shopitems *items=map->shopitems;*/
+    int pos=0, i;
+    double opinion=0;
+    char *p, tmp[MAX_BUF]="\0", tradesin[MAX_BUF];
+    if (op->type != PLAYER) return 0;
+
+    /*check if there is a shop specified for this map */
+    if (map->shopitems || map->shopgreed || map->shoprace || map->shopmin || map->shopmax) {
+	new_draw_info(NDI_UNIQUE,0,op,"From looking at the nearby shop you determine that it trades in:");
+	if (map->shopitems) {
+	    for (i=0; i < map->shopitems[0].index; i++) {
+		if (map->shopitems[i].name && map->shopitems[i].strength > 10) {
+		    snprintf(tmp+pos, sizeof(tmp)-pos, "%s, ", map->shopitems[i].name_pl);
+		    pos += strlen(tmp+pos);
+		}
+	    }
+	}
+	if (!pos) strcat(tmp, "a little of everything.");
+
+	/* if we have multiple entries we need to change the second from last comma 
+	 * for an 'and', in any event we need to remove the trailing comma first. */
+	p=strrchr(tmp, ',');
+	if (p) *p='\0';
+
+	p=strrchr(tmp, ',');
+	if (p) { 
+	    *p='\0';
+	    strcpy(tradesin, tmp);
+	    p++;
+	    strcat(tradesin, " and");
+	    strcat(tradesin, p);
+	}
+	else strcpy(tradesin, tmp);
+	new_draw_info_format(NDI_UNIQUE, 0, op, "%s.", tradesin);
+	
+	if (map->shopmax)
+	    new_draw_info_format(NDI_UNIQUE,0,op,"It won't trade for items above %s.",
+		cost_string_from_value(map->shopmax));
+	if (map->shopmin)
+	    new_draw_info_format(NDI_UNIQUE,0,op,"It won't trade in items worth less than %s.",
+		cost_string_from_value(map->shopmin));
+	if (map->shopgreed) {
+	    if (map->shopgreed >2.0)
+		new_draw_info(NDI_UNIQUE,0,op,"It tends to overcharge massively.");
+	    else if (map->shopgreed >1.5)
+		new_draw_info(NDI_UNIQUE,0,op,"It tends to overcharge substantially.");
+	    else if (map->shopgreed >1.1)
+		new_draw_info(NDI_UNIQUE,0,op,"It tends to overcharge slightly.");
+	    else if (map->shopgreed <0.9)
+		new_draw_info(NDI_UNIQUE,0,op,"It tends to undercharge.");
+	}
+	if (map->shoprace) {
+	    opinion=shopkeeper_approval(map, op);
+	    if (opinion > 0.8) 
+		new_draw_info(NDI_UNIQUE,0,op,"You think the shopkeeper likes you.");
+	    else if (opinion > 0.5)
+		new_draw_info(NDI_UNIQUE,0,op,"The shopkeeper seems unconcerned by you.");
+	    else
+		new_draw_info(NDI_UNIQUE,0,op,"The shopkeeper seems to have taken a dislike to you.");
+	}
+    }
+    else new_draw_info(NDI_UNIQUE,0,op,"There is no shop nearby.");
+
+}
 typedef struct shopinv {
     char	*item_sort;
     char	*item_real;

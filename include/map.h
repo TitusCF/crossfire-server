@@ -222,6 +222,16 @@ typedef struct regiondef {
     				  * this should be the one we fall back on as the default */
 } region;
 
+
+typedef struct shopitem {
+    const char *name;     /* name of the item in question, null if it is the default item */
+    const char *name_pl;  /* plural name */
+    int typenum;    /* itemtype number we need to match 0 if it is the default price*/
+    sint8 strength; /* the degree of specialisation the shop has in this item, 
+		     * as a percentage from -100 to 100 */
+    int index;      /* being the size of the shopitems array.*/
+} shopitems;
+
 /* In general, code should always use the macros 
  * above (or functions in map.c) to access many of the 
  * values in the map structure.  Failure to do this will
@@ -270,6 +280,11 @@ typedef struct mapdef {
     sint8     winddir;   /* direction of wind */
     sint8     sky;	/* sky conditions */
     int     wpartx,wparty; /*Highly fasten conversion between worldmap and weathermap*/
+    shopitems   *shopitems; /* a semi-colon seperated list of item-types the map's shop will trade in */
+    char    *shoprace;  /* the preffered race of the local shopkeeper */
+    double  shopgreed;  /* how much our shopkeeper overcharges */
+    uint64  shopmin;    /* minimum price a shop will trade for */
+    uint64  shopmax;    /* maximum price a shop will offer */
     char    *msg;	/* Message map creator may have left */
     char    *tile_path[4];  /* path to adjoining maps */
     struct mapdef *tile_map[4];	/* Next map, linked list */

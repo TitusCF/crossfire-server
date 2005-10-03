@@ -92,6 +92,139 @@ static char levelnumbers_10[11][20] = {
   "seventieth","eightieth","ninetieth"
 };
 
+/* The following is a large table of item types, the fields are:
+ * item number, item name, item name (plural), and two numbers that are the skills
+ * used to identify them. Anytime a new item type is added or removed, this list
+ * should be altered to reflect that. The defines for the numerical values are in 
+ * define.h 
+ */
+static const typedata item_types[] = {
+{PLAYER, "player", "players", 0, 0},
+{ROD, "rod", "rods", SK_THAUMATURGY, 0},
+{TREASURE, "treasure", "treasure", 0, 0},
+{POTION, "potion", "potions", SK_ALCHEMY, 0},
+{FOOD, "food", "food", SK_WOODSMAN, 0},
+{POISON, "poison", "poisons", SK_ALCHEMY, 0},
+{BOOK, "book", "books", SK_LITERACY, 0},
+{CLOCK, "clock", "clocks", 0, 0},
+{LIGHTNING, "lightning", "lightning", 0, 0},
+{ARROW, "arrow", "arrows", SK_BOWYER, 0},
+{BOW, "bow", "bows", SK_BOWYER, 0},
+{WEAPON, "weapon", "weapons", SK_SMITHERY, 0},
+{ARMOUR, "armour", "armour", SK_SMITHERY, 0},
+{PEDESTAL, "pedestal", "pedestals", 0, 0},
+{ALTAR, "altar", "altars", 0, 0},
+{CONFUSION, "confusion", "confusions", 0, 0},
+{LOCKED_DOOR, "locked door", "locked doors", 0, 0},
+{SPECIAL_KEY, "special key", "special keys", 0, 0},
+{MAP, "map", "maps", 0, 0},
+{DOOR, "door", "doors", 0, 0},
+{KEY, "key", "keys", 0, 0},
+{TIMED_GATE, "timed_gate", "timed_gates", 0, 0},
+{TRIGGER, "trigger", "triggers", 0, 0},
+{GRIMREAPER, "grimreaper", "grimreapers", 0, 0},
+{MAGIC_EAR, "magic ear", "magic ears", 0, 0},
+{TRIGGER_BUTTON, "trigger button", "trigger buttons", 0, 0},
+{TRIGGER_ALTAR, "trigger altar", "trigger altars", 0, 0},
+{TRIGGER_PEDESTAL, "trigger pedestal", "trigger pedestals", 0, 0},
+{SHIELD, "shield", "shields", SK_SMITHERY, 0},
+{HELMET, "helmet", "helmets", SK_SMITHERY, 0},
+{HORN, "horn", "horns", SK_THAUMATURGY, 0},
+{MONEY, "money", "money", 0, 0},
+{CLASS, "class", "classes", 0, 0},
+{GRAVESTONE, "gravestone", "gravestones", 0, 0},
+{AMULET, "amulet", "amulets", SK_JEWELER, 0},
+{PLAYERMOVER, "player mover", "player movers", 0, 0},
+{TELEPORTER, "teleporter", "teleporters", 0, 0},
+{CREATOR, "creator", "creators", 0, 0},
+{SKILL, "skill", "skills", 0, 0},
+{EXPERIENCE, "experience", "experience", 0, 0},
+{EARTHWALL, "earthwall", "earthwalls", 0, 0},
+{GOLEM, "golem", "golems", 0, 0},
+{THROWN_OBJ, "projectile", "projectiles", 0, 0},
+{BLINDNESS, "blindness", "blindness", 0, 0},
+{GOD, "god", "gods", 0, 0},
+{DETECTOR, "detector", "detectors", 0, 0},
+{TRIGGER_MARKER, "trigger marker", "trigger markers", 0, 0},
+{DEAD_OBJECT, "dead object", "dead objects", 0, 0},
+{DRINK, "drink", "drinks", SK_WOODSMAN, SK_ALCHEMY},
+{MARKER, "marker", "markers", 0, 0},
+{HOLY_ALTAR, "holy altar", "holy altars", 0, 0},
+{PLAYER_CHANGER, "player changer", "player changers", 0, 0},
+{BATTLEGROUND, "battleground", "battlegrounds", 0, 0},
+{PEACEMAKER, "peacemaker", "peacemakers", 0, 0},
+{GEM, "gem", "gems", SK_JEWELER, 0},
+{FIREWALL, "firewall", "firewalls", 0, 0},
+{ANVIL, "anvil", "anvils", 0, 0},
+{CHECK_INV, "inventory checker", "inventory checkers", 0, 0},
+{MOOD_FLOOR, "mood floor", "mood floors", 0, 0},
+{EXIT, "exit", "exits", 0, 0},
+{ENCOUNTER, "encounter", "encounters", 0, 0},
+{SHOP_FLOOR, "shop floor", "shop floors", 0, 0},
+{SHOP_MAT, "shop mat", "shop mats", 0, 0},
+{RING, "ring", "rings", SK_JEWELER, 0},
+{FLOOR, "floor", "floors", 0, 0},
+{FLESH, "flesh", "flesh", SK_WOODSMAN, 0},
+{INORGANIC, "inorganic", "inorganics", SK_ALCHEMY, 0},
+{SKILL_TOOL, "skill tool", "skill tools", 0, 0},
+{LIGHTER, "lighter", "lighters", 0, 0},
+{TRAP_PART, "trap part", "trap parts", 0, 0},
+{WALL, "wall", "walls", 0, 0},
+{LIGHT_SOURCE, "light source", "light sources", 0, 0},
+{MISC_OBJECT, "bric-a-brac", "bric-a-brac", 0, 0},
+{MONSTER, "monster", "monsters", 0, 0},
+{SPAWN_GENERATOR, "monster generator", "monster generators", 0, 0},
+{LAMP, "lamp", "lamps", 0, 0},
+{DUPLICATOR, "duplicator", "duplicators", 0, 0},
+{TOOL, "tool", "tools", 0, 0},
+{SPELLBOOK, "spellbook", "spellbooks", SK_LITERACY, 0},
+{BUILDFAC, "building facility", "building facilities", 0, 0},
+{CLOAK, "cloak", "cloaks", SK_SMITHERY, 0},
+{SPINNER, "spinner", "spinners", 0, 0},
+{GATE, "gate", "gates", 0, 0},
+{BUTTON, "button", "buttons", 0, 0},
+{CF_HANDLE, "cf handle", "cf handles", 0, 0},
+{HOLE, "hole", "holes", 0, 0},
+{TRAPDOOR, "trapdoor", "trapdoors", 0, 0},
+{SIGN, "sign", "signs", 0, 0},
+{BOOTS, "boots", "boots", SK_SMITHERY, 0},
+{GLOVES, "gloves", "glovess", SK_SMITHERY, 0},
+{SPELL, "spell", "spells", 0, 0},
+{SPELL_EFFECT, "spell effect", "spell effects", 0, 0},
+{CONVERTER, "converter", "converters", 0, 0},
+{BRACERS, "bracers", "bracers", SK_SMITHERY, 0},
+{POISONING, "poisoning", "poisonings", 0, 0},
+{SAVEBED, "savebed", "savebeds", 0, 0},
+{POISONCLOUD, "poison cloud", "poison clouds", 0, 0},
+{FIREHOLES, "fireholes", "fireholes", 0, 0},
+{WAND, "wand", "wands", SK_THAUMATURGY, 0},
+{SCROLL, "scroll", "scrolls", SK_LITERACY, 0},
+{DIRECTOR, "director", "directors", 0, 0},
+{GIRDLE, "girdle", "girdles", SK_SMITHERY, 0},
+{FORCE, "force", "forces", 0, 0},
+{POTION_EFFECT, "potion effect", "potion effects", 0, 0},
+{CLOSE_CON, "closed container", "closed container", 0, 0},
+{CONTAINER, "container", "containers", SK_ALCHEMY, 0},
+{ARMOUR_IMPROVER, "armour improver", "armour improvers", 0, 0},
+{WEAPON_IMPROVER, "weapon improver", "weapon improvers", 0, 0},
+{SKILLSCROLL, "skillscroll", "skillscrolls", 0, 0},
+{DEEP_SWAMP, "deep swamp", "deep swamps", 0, 0},
+{IDENTIFY_ALTAR, "identify altar", "identify altars", 0, 0},
+{MENU, "inventory list", "inventory lists", 0, 0},
+{RUNE, "rune", "runes", 0, 0},
+{TRAP, "trap", "traps", 0, 0},
+{POWER_CRYSTAL, "power_crystal", "power_crystals", 0, 0},
+{CORPSE, "corpse", "corpses", 0, 0},
+{DISEASE, "disease", "diseases", 0, 0},
+{SYMPTOM, "symptom", "symptoms", 0, 0},
+{BUILDER, "item builder", "item builders", 0, 0},
+{MATERIAL, "building material", "building materials", 0, 0},
+{GPS, "ground positioning system", "ground positioning systems", 0, 0},
+{ITEM_TRANSFORMER, "item_transformer", "item_transformers", 0, 0},
+};
+
+const int item_types_size=sizeof(item_types)/sizeof(*item_types);
+
 /*
 materialtype material[NROFMATERIALS] = {
   *  		  P  M  F  E  C  C  A  D  W  G  P S P T F  C D D C C G H B  I *
@@ -209,6 +342,33 @@ int calc_item_power(object *op, int flag)
 
 }
 
+/* returns the typedata that has a number equal to itemtype, if there 
+ * isn't one, returns NULL */
+
+const typedata *get_typedata(int itemtype) {
+    int i;
+    for (i=0;i<item_types_size;i++) 
+	if (item_types[i].number==itemtype) return &item_types[i];
+    return NULL;
+}
+
+/* returns the typedata that has a name equal to itemtype, if there 
+ * isn't one, return the plural name that matches, if there still isn't
+ * one return NULL */
+
+const typedata *get_typedata_by_name(const char *name) {
+    int i;
+    for (i=0;i<item_types_size;i++) 
+	if (!strcmp(item_types[i].name, name)) return &item_types[i];
+    for (i=0;i<item_types_size;i++) 
+	if (!strcmp(item_types[i].name_pl, name)) {
+	    LOG(llevInfo, 
+		"get_typedata_by_name: I have been sent the plural %s, the singular form %s is preffered\n",
+		name, item_types[i].name);
+	    return &item_types[i];
+	}
+    return NULL;
+}
 /* describe_resistance generates the visible naming for resistances.
  * returns a static array of the description.  This can return
  * a big buffer.

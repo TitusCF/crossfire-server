@@ -114,6 +114,7 @@ error - Your ANSI C compiler should be defining __STDC__;
  * the monster type, that can not be handled by any of the numerous
  * flags
  * Also, if you add new entries, try and fill up the holes in this list.
+ * Additionally, when you add a new entry, include it in the table in item.c
  */
 
 /* type 0 will be undefined and shows a non valid type information */
@@ -323,6 +324,16 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define WEAP_CRUSH	7  /* big hammers, flails */
 #define WEAP_BLUD	8  /* bludgeoning, club, stick */
 
+typedef struct typedata {
+    int number;
+    const char *name; 
+    const char *name_pl;
+    int identifyskill;
+    int identifyskill2;
+} typedata;
+
+extern const int ItemTypesSize;
+extern typedata ItemTypes[];
 
 /* definitions for detailed pickup descriptions.
  *   The objective is to define intelligent groups of items that the
@@ -467,7 +478,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define FLAG_IS_THROWN		17 /* Object is designed to be thrown. */
 #define FLAG_AUTO_APPLY		18 /* Will be applied when created */
 #define FLAG_TREASURE		19 /* Will generate treasure when applied */
-/*#define FLAG_INVIS_UNDEAD	20 *//* Player is invisible to undead */
+#define FLAG_PLAYER_SOLD	20 /* Object was sold to a shop by a player. */
 #define FLAG_SEE_INVISIBLE 	21 /* Will see invisible player */
 #define FLAG_CAN_ROLL		22 /* Object can be rolled */
 #define FLAG_OVERLAY_FLOOR	23 /* Object is an overlay floor */
@@ -648,6 +659,8 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define F_NO_BARGAIN	4   /* combine with F_BUY or F_SELL to disable bargaining calc */
 #define F_IDENTIFIED	8   /* flag to calculate value of identified item */
 #define F_NOT_CURSED	16  /* flag to calculate value of uncursed item */
+#define F_APPROX	32  /* flag to give a guess of item value */
+#define F_SHOP		64  /* consider the effect that the shop that the player is in has */
 
 #define DIRX(xyz)	freearr_x[(xyz)->direction]
 #define DIRY(xyz)	freearr_y[(xyz)->direction]

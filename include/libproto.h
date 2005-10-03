@@ -93,6 +93,8 @@ extern void init_attackmess(void);
 /* item.c */
 extern int get_power_from_ench(int ench);
 extern int calc_item_power(object *op, int flag);
+extern const typedata *get_typedata(int itemtype);
+extern const typedata *get_typedata_by_name(const char *name);
 extern char *describe_resistance(object *op, int newline);
 extern char *query_weight(object *op);
 extern char *get_levelnumber(int i);

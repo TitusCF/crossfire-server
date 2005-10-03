@@ -1358,7 +1358,7 @@ static char *flag_names[NUM_FLAGS+1] = {
 "alive", "wiz", NULL, NULL, "was_wiz", "applied", "unpaid",
 "can_use_shield", "no_pick", "walk_on", "no_pass",              /* 10 */
 "is_animated", NULL, "flying", "monster", "friendly", "generator",
-"is_thrown", "auto_apply", "treasure", NULL /*invis_undead*/,   /* 20 */
+"is_thrown", "auto_apply", "treasure", "player sold",   /* 20 */
 "see_invisible", "can_roll", "overlay_floor",
 "is_turnable", "walk_off", "fly_on",
 "fly_off", "is_used_up", "identified", "reflecting",            /* 30 */

@@ -679,6 +679,11 @@ uint64 query_money(object *op);
 int pay_for_amount(uint64 to_pay, object *pl);
 int pay_for_item(object *op, object *pl);
 int get_payment(object *pl, object *op);
+double shop_specialisation_ratio(object *op, mapstruct *map);
+double shop_greed(mapstruct *map);
+uint64 value_limit(uint64 val, int quantity, mapstruct *map, int isshop);
+int describe_shop(object *op);
+double shopkeeper_approval(mapstruct *map, object *player);
 void sell_item(object *op, object *pl);
 void shop_listing(object *op);
 /* skills.c */
