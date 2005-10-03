@@ -17,6 +17,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+common/map.c - fix an inequality in for loop - not sure if this actually
+fixes anything of note, but the previous form was definatly wrong.
+
 common/item.c - big item type table, function to deal therewith
 common/loader.l - add player_sold flag
 common/map.c - shop related header parsing

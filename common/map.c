@@ -707,7 +707,7 @@ static void *print_shop_string(mapstruct *m, char *output_string) {
     char tmp[MAX_BUF];
     shopitems *items=m->shopitems;
     sprintf(output_string, "\0");
-    for (i=0; i>items[0].index; i++) {
+    for (i=0; i<items[0].index; i++) {
 	if (items[i].name) {
 	    if (items[i].strength) {
 		sprintf(tmp, "%s:%s;", items[i].name, items[i].strength);
