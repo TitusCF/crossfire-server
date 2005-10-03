@@ -742,6 +742,14 @@ treasureone random_armour
     magic 3
     chance 3
   more
+  arch high_boots_b
+    magic 3
+    chance 1
+  more
+  arch high_boots_w
+    magic 3
+    chance 1
+  more
   arch tunic
     magic 3
     chance 1
@@ -749,6 +757,14 @@ treasureone random_armour
   arch gloves
     magic 2
     chance 2
+  more
+  arch gloves_b
+    magic 2
+    chance 1
+  more
+  arch gloves_w
+    magic 2
+    chance 1
   more
   arch lapron
     magic 1
@@ -1465,6 +1481,10 @@ treasureone throw_weapons
     nrof 4
     chance 15
   more
+  arch t_star1
+    magic 4
+    chance 5
+  more
   arch trident
     magic 3
     nrof 3
@@ -1502,6 +1522,10 @@ treasureone melee_weapons
     chance 5
   more
   arch b_sword_1
+    magic 4
+    chance 5
+  more
+  arch b_axe1
     magic 4
     chance 5
   more
@@ -1630,12 +1654,52 @@ treasureone melee_weapons
     magic 4
     chance 5
   more
+  list uncommon_weapons
+    chance 10
+  more
+  list rare_weapons
+    chance 1
+  end
+treasureone rare_weapons
+  arch brdaxe1
+    magic 4
+    chance 5
+  more 
+  arch sflail1
+    magic 4
+    chance 2
+  more
+  arch dhaxe1
+    magic 4
+    chance 2
+  more
   arch shaxe1
+    magic 4
+    chance 2
+  more
+  arch dhaxe2
+    magic 6
+    chance 1
+  more
+  arch sai1
     magic 4
     chance 1
   more
-  list uncommon_weapons
-    chance 10
+  arch sai2
+    magic 4
+    chance 1
+  more
+  arch kama1
+    magic 4
+    chance 1
+  more
+  arch kama2
+    magic 4
+    chance 1
+  more
+  arch vlongsword
+   magic 4
+   chance 2
   end
 treasureone uncommon_weapons
   arch katana_1
@@ -1661,6 +1725,18 @@ treasureone uncommon_weapons
   arch stake
     magic 2
     chance 5
+  more
+  arch scythe1
+    magic 4
+    chance 2
+  more
+  arch sickle1
+    magic 4
+    chance 2
+  more  
+  arch t_star1
+    magic 4
+    chance 3
   more
   arch trident
     magic 3
