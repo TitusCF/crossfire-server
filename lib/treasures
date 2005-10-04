@@ -2217,6 +2217,9 @@ treasureone shop_potions
   arch potion_heroism
     chance 10
   more
+  arch vial_poison
+    chance 1
+  more
   list list14
     chance 10
   end
