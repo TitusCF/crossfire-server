@@ -2834,6 +2834,40 @@ weight 200
 nrof 4
 end
 #
+Allowed amethyst
+chance 60
+Object great value
+face pretty_amethyst.111
+stand_still 1
+value 10
+type 60
+weight 110
+end
+# 
+Allowed amethyst
+chance 20
+difficulty 3
+Object exceptional beauty
+face pretty_amethyst.111
+value 100
+stand_still 1
+type 60
+weight 130
+nrof 4
+end
+#
+Allowed amethyst
+chance 5
+difficulty 5
+Object flawless beauty
+face pretty_amethyst.111
+value 1000
+stand_still 1
+type 60
+weight 200
+nrof 4
+end
+#
 #
 #Amulets!
 #
