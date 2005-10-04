@@ -248,7 +248,7 @@ uint64 query_cost(object *tmp, object *who, int flag) {
 	  * (we need a +1 there in case we would otherwise be dividing by zero.
 	  */
 	if (approximate) 
-	    val = val + (sint64)(val*(sin(tmp->count)/sqrt(lev_bargain+lev_identify*2+1.0)));
+	    val = (sint64)val + (sint64)((sint64)val*(sin(tmp->count)/sqrt(lev_bargain+lev_identify*2+1.0)));
     }
    
     /* I don't think this should really happen - if it does, it indicates and
@@ -267,7 +267,7 @@ uint64 query_cost(object *tmp, object *who, int flag) {
     /* if we are in a shop, check how the type of shop should affect the price */
     if (shop) {
 	if (flag==F_SELL) 
-	    val=val*shop_specialisation_ratio(tmp, who->map)*shopkeeper_approval(who->map, who)
+	    val=(sint64)val*shop_specialisation_ratio(tmp, who->map)*shopkeeper_approval(who->map, who)
 		/shop_greed(who->map);
 	else if (flag==F_BUY) {
 	/* 
@@ -284,10 +284,10 @@ uint64 query_cost(object *tmp, object *who, int flag) {
 	 * antiques in a junk shop in real life).
 	 */
 	    if (QUERY_FLAG(tmp, FLAG_PLAYER_SOLD))
-		val=val*shop_greed(who->map)*shop_specialisation_ratio(tmp, who->map)
+		val=(sint64)val*shop_greed(who->map)*shop_specialisation_ratio(tmp, who->map)
 		    /shopkeeper_approval(who->map, who);
 	    else
-		val=val*shop_greed(who->map)
+		val=(sint64)val*shop_greed(who->map)
 		    /(shop_specialisation_ratio(tmp, who->map)*shopkeeper_approval(who->map, who));
 	}
 	/* we will also have an extra 0-5% variation between shops of the same type 
@@ -295,7 +295,7 @@ uint64 query_cost(object *tmp, object *who, int flag) {
 	 * pointful, and could give fun with rounding.
 	 */
 	if(who->map->path!=NULL && val > 50)
-	    val=val+0.05*val*cos(tmp->count+strlen(who->map->path));
+	    val=(sint64)val+0.05*(sint64)val*cos(tmp->count+strlen(who->map->path));
     }
     return val;
 }
@@ -934,6 +934,7 @@ int describe_shop(object *op) {
     }
     else new_draw_info(NDI_UNIQUE,0,op,"There is no shop nearby.");
 
+    return 1;
 }
 typedef struct shopinv {
     char	*item_sort;
