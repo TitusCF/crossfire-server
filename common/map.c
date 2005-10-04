@@ -1194,8 +1194,8 @@ int new_save_map(mapstruct *m, int flag) {
 	fprintf(fp,"shopitems %s\n", shop);
     }
     if (m->shopgreed) fprintf(fp,"shopgreed %f\n", m->shopgreed);
-    if (m->shopmin) fprintf(fp,"shopgreed %d\n", m->shopmin);
-    if (m->shopmax) fprintf(fp,"shopgreed %d\n", m->shopmax);
+    if (m->shopmin) fprintf(fp,"shopmin %d\n", m->shopmin);
+    if (m->shopmax) fprintf(fp,"shopmax %d\n", m->shopmax);
     if (m->shoprace) fprintf(fp,"shoprace %s\n", m->shoprace);
     if (m->darkness) fprintf(fp,"darkness %d\n", m->darkness);
     if (m->width) fprintf(fp,"width %d\n", m->width);
