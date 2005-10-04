@@ -17,6 +17,8 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+common/map.c - /actually/ fix pointer issue
+
 common/map.c - fix potential issue with NULL pointer
 Brendan Lally 2005-10-04
 

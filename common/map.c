@@ -705,18 +705,17 @@ static shopitems *parse_shop_string (const char *input_string) {
 static void *print_shop_string(mapstruct *m, char *output_string) {
     int i;
     char tmp[MAX_BUF];
-    shopitems *items=m->shopitems;
     sprintf(output_string, "\0");
-    for (i=0; i<items[0].index; i++) {
-	if (items[i].name) {
-	    if (items[i].strength) {
-		sprintf(tmp, "%s:%s;", items[i].name, items[i].strength);
+    for (i=0; i< m->shopitems[0].index; i++) {
+	if (m->shopitems[i].typenum) {
+	    if (m->shopitems[i].strength) {
+		sprintf(tmp, "%s:%d;", m->shopitems[i].name, m->shopitems[i].strength);
 	    }
-	    else sprintf(tmp, "%s;", items[i].name);
+	    else sprintf(tmp, "%s;", m->shopitems[i].name);
 	}
 	else {
-	    if (items[i].strength) {
-		sprintf(tmp, "*:%s;", items[i].strength);
+	    if (m->shopitems[i].strength) {
+		sprintf(tmp, "*:%d;", m->shopitems[i].strength);
 	    }
 	    else sprintf(tmp, "*");
 	}
