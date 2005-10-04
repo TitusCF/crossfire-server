@@ -1124,6 +1124,14 @@ treasureone random_gem
   arch emerald
     chance 5
     nrof 4
+  more
+  arch amethyst
+    chance 1
+    nrof 8
+  more
+  arch amethyst
+    chance 1
+    nrof 3
   end
 treasureone starting_wealth
   arch goldcoin
