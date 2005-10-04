@@ -17,6 +17,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+common/map.c - fix potential issue with NULL pointer
+Brendan Lally 2005-10-04
+
 common/map.c - fix an inequality in for loop - not sure if this actually
 fixes anything of note, but the previous form was definatly wrong.
 
