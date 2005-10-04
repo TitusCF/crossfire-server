@@ -798,6 +798,14 @@ double shop_specialisation_ratio(object *item, mapstruct *map) {
 	LOG(llevError, "shop_specialisation_ratio: passed a NULL item for map %s", map->path);
 	return 0;
     }
+    if (!item->type) {
+	LOG(llevError, "shop_specialisation_ratio: passed an item with an invalid type");
+	/* 
+	 * I'm not really sure what the /right/ thing to do here is, these types of 
+	 * item shouldn't exist anyway, but returning the ratio is probably the best bet.." 
+	 */
+	return ratio;
+    }
     if (map->shopitems) {
 	for (i=0; i<items[0].index; i++)
 	    if (items[i].typenum==item->type || (!items[i].typenum && likedness == 0.001)) 
