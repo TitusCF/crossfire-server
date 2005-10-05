@@ -17,6 +17,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+common/treasure.c - prevent crashes with some broken treasure lists.
+Brendan Lally 2005-10-05
+
 server/shop.c: convert val to sint64 - compilation issues with Win32. Checked with
  patch author that it's fine.
 Ryo 2005-10-04

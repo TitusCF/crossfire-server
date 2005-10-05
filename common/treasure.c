@@ -382,8 +382,9 @@ void create_one_treasure(treasurelist *tl, object *op, int flag, int difficulty,
 	    create_one_treasure(tl, op, flag, difficulty, tries);
 	return;
     }
-    if(t->item->clone.invisible != 0 || flag != GT_INVISIBLE) {
+    if((t->item && t->item->clone.invisible != 0) || flag != GT_INVISIBLE) {
 	object *tmp=arch_to_object(t->item);
+	if (!tmp) return;
         if(t->nrof && tmp->nrof<=1)
           tmp->nrof = RANDOM()%((int) t->nrof) + 1;
         fix_generated_item (tmp, op, difficulty, t->magic, flag);
