@@ -338,21 +338,14 @@ int move_monster(object *op) {
 	 * the regeneration rate on a basis of time instead of
 	 * #moves the monster makes.  The scaling by 8 is
 	 * to capture 8th's of a hp fraction regens 
+	 *
+	 * Cast to sint32 before comparing to maxhp since otherwise an (sint16)
+	 * overflow might produce monsters with negative hp.
 	 */
 
 	op->last_heal+= (int)((float)(8*op->stats.Con)/FABS(op->speed));
-	op->stats.hp+=op->last_heal/32; /* causes Con/4 hp/tick */
+	op->stats.hp = MIN((sint32)op->stats.hp+op->last_heal/32, op->stats.maxhp); /* causes Con/4 hp/tick */
 	op->last_heal%=32;
-
-	/* After putting the debug in, turns out quite a few monsters
-	 * end up with hp higher than they should have - in most cases,
-	 * this is just a few (53 instead of 50)  But I also say cases
-	 * where the difference was much greater (450 vs 250, 1057 vs 500, etc)
-	 * so putting in this sanity check is probably a good thing no
-	 * matter what.
-	 */
-	if (op->stats.hp > op->stats.maxhp)
-	    op->stats.hp = op->stats.maxhp;
 
 	/* So if the monster has gained enough HP that they are no longer afraid */
 	if (QUERY_FLAG(op,FLAG_RUN_AWAY) &&
@@ -371,13 +364,14 @@ int move_monster(object *op) {
          * the regeneration rate on a basis of time instead of
          * #moves the monster makes.  The scaling by 8 is
          * to capture 8th's of a sp fraction regens 
+	 *
+	 * Cast to sint32 before comparing to maxhp since otherwise an (sint16)
+	 * overflow might produce monsters with negative sp.
 	 */
 
 	op->last_sp+= (int)((float)(8*op->stats.Pow)/FABS(op->speed));
-	op->stats.sp+=op->last_sp/128;  /* causes Pow/16 sp/tick */
+	op->stats.sp = MIN(op->stats.sp+op->last_sp/128, op->stats.maxsp);  /* causes Pow/16 sp/tick */
 	op->last_sp%=128;
-	if(op->stats.sp>op->stats.maxsp)
-	    op->stats.sp=op->stats.maxsp;
     }
 
     /* this should probably get modified by many more values.

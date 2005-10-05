@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/monster.c: In move_monster() prevent hp/sp overflows for monsters with
+   very high maxhp/maxsp and very high regeneration rates.
+Andreas Kirschbaum 2005-10-05
+
 common/treasure.c - prevent crashes with some broken treasure lists.
 Brendan Lally 2005-10-05
 
