@@ -52,6 +52,7 @@
 #define NEUTRAL_RATIO 0.8
 
 static uint64 pay_from_container(object *pl, object *pouch, uint64 to_pay);
+static uint64 value_limit(uint64 val, int quantity, object *who, int isshop);
 
 #define NUM_COINS 3	/* number of coin types */
 static char *coins[] = {"platinacoin", "goldcoin", "silvercoin", NULL};
@@ -178,8 +179,8 @@ uint64 query_cost(object *tmp, object *who, int flag) {
     }
 
     /* Limit amount of money you can get for really great items. */
-    if ((flag==F_TRUE || flag==F_SELL) && who)
-	val=value_limit(val, number, who->map, shop);
+    if (flag==F_TRUE || flag==F_SELL)
+	val=value_limit(val, number, who, shop);
 
     /* This modification is for bargaining skill.
      * Now only players with max level in bargaining
@@ -850,14 +851,24 @@ double shopkeeper_approval(mapstruct *map, object *player) {
 /* limit the value of items based on the wealth of the shop. If the item is close
  * to the maximum value a shop will offer, we start to reduce it, if the item is 
  * below the minimum value the shop is prepared to trade in, then we don't 
- * want it and offer nothing.
+ * want it and offer nothing. If it isn't a shop, check whether we should do generic
+ * value reduction.
  * 
  */
-uint64 value_limit(uint64 val, int quantity, mapstruct *map, int isshop) {
+static uint64 value_limit(uint64 val, int quantity, object *who, int isshop) {
     uint64 newval, unit_price;
     unit_price=val/quantity;
     newval=unit_price;
-    if (isshop) {
+    mapstruct *map;
+    if (!isshop || !who) {
+	newval=8000+isqrt(unit_price)*20;
+    }	
+    else {
+	if (!who->map) {
+	    LOG(llevError, "value_limit: asked shop price for ob %s on NULL map", who->name);
+	    return val;
+	}
+	map=who->map;
 	if (map->shopmin && unit_price < map->shopmin) return 0;
 	else if (map->shopmax && unit_price > map->shopmax/2)
 	    newval=MIN((map->shopmax/2)+isqrt(unit_price-map->shopmax/2), map->shopmax);
