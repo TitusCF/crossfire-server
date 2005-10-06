@@ -531,7 +531,6 @@ int prepare_weapon(object *op, object *improver, object *weapon)
 	    weapon->name,weapon->level);
 
     sprintf(buf,"%s's %s",op->name,weapon->name);
-    free_string(weapon->name);
     FREE_AND_COPY(weapon->name, buf);
     FREE_AND_COPY(weapon->name_pl, buf);
     weapon->nrof=0;  /*  prevents preparing n weapons in the same

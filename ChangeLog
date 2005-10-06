@@ -17,6 +17,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/apply.c: In prepare_weapon() do not lose a reference to the item name.
+Andreas Kirschbaum 2005-10-06
+
 include/sproto.h, server/shop.c - make value_limit static, change its
 arguments to add some checking for NULL pointers
 Brendan Lally 2005-10-06
