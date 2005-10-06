@@ -178,7 +178,7 @@ uint64 query_cost(object *tmp, object *who, int flag) {
     }
 
     /* Limit amount of money you can get for really great items. */
-    if (flag==F_TRUE || flag==F_SELL)
+    if ((flag==F_TRUE || flag==F_SELL) && who)
 	val=value_limit(val, number, who->map, shop);
 
     /* This modification is for bargaining skill.
@@ -265,7 +265,7 @@ uint64 query_cost(object *tmp, object *who, int flag) {
     }
     
     /* if we are in a shop, check how the type of shop should affect the price */
-    if (shop) {
+    if (shop && who) {
 	if (flag==F_SELL) 
 	    val=(sint64)val*shop_specialisation_ratio(tmp, who->map)*shopkeeper_approval(who->map, who)
 		/shop_greed(who->map);
