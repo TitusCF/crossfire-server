@@ -857,9 +857,9 @@ double shopkeeper_approval(mapstruct *map, object *player) {
  */
 static uint64 value_limit(uint64 val, int quantity, object *who, int isshop) {
     uint64 newval, unit_price;
+    mapstruct *map;
     unit_price=val/quantity;
     newval=unit_price;
-    mapstruct *map;
     if (!isshop || !who) {
 	newval=8000+isqrt(unit_price)*20;
     }	
