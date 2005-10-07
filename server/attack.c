@@ -24,6 +24,7 @@
 
     The authors can be reached via e-mail to crossfire-devel@real-time.com
 */
+#include <assert.h>
 #include <global.h>
 #include <living.h>
 #include <material.h>
@@ -238,10 +239,11 @@ void save_throw_object (object *op, int type, object *originator)
 /* Object op is hitting the map.
  * op is going in direction 'dir'
  * type is the attacktype of the object.
+ * full_hit is set if monster area does not matter.
  * returns 1 if it hits something, 0 otherwise.
  */
 
-int hit_map(object *op,int dir,int type) {
+int hit_map(object *op, int dir, int type, int full_hit) {
     object *tmp, *next;
     mapstruct *map;
     sint16 x, y;
@@ -333,7 +335,7 @@ int hit_map(object *op,int dir,int type) {
 	    continue;
 
 	if (QUERY_FLAG (tmp, FLAG_ALIVE)) {
-	    hit_player(tmp,op->stats.dam,op,type);
+	    hit_player(tmp,op->stats.dam,op,type,full_hit);
 	    retflag |=1;
 	    if (was_destroyed (op, op_tag))
 		break;
@@ -796,7 +798,7 @@ static int attack_ob_simple (object *op, object *hitter, int base_dam,
 	    if (op->attacktype & AT_ACID && hitter->type==PLAYER)
 		new_draw_info(NDI_UNIQUE, 0,hitter,"You are splashed by acid!\n");
 	    hit_player(hitter, random_roll(0, (op->stats.dam), hitter,
-				      PREFER_LOW),op, op->attacktype);
+				      PREFER_LOW),op, op->attacktype, 1);
 	    if (was_destroyed (op, op_tag)
                 || was_destroyed (hitter, hitter_tag)
                 || abort_attack (op, hitter, simple_attack))
@@ -807,7 +809,7 @@ static int attack_ob_simple (object *op, object *hitter, int base_dam,
 	 * types in its area, so remove it from here.
 	 */
 	dam=hit_player(op, random_roll(1, hitdam, hitter, PREFER_HIGH),
-		       hitter, type);
+		       hitter, type, 1);
 	if (was_destroyed (op, op_tag) || was_destroyed (hitter, hitter_tag)
             || abort_attack (op, hitter, simple_attack))
 	    goto leave;
@@ -1679,7 +1681,8 @@ int friendly_fire(object *op, object *hitter){
 
 /* This isn't used just for players, but in fact most objects.
  * op is the object to be hit, dam is the amount of damage, hitter
- * is what is hitting the object, and type is the attacktype.
+ * is what is hitting the object, type is the attacktype, and
+ * full_hit is set if monster area does not matter.
  * dam is base damage - protections/vulnerabilities/slaying matches can
  * modify it.
  */
@@ -1687,7 +1690,7 @@ int friendly_fire(object *op, object *hitter){
   /* Oct 95 - altered the following slightly for MULTIPLE_GODS hack
    * which needs new attacktype AT_HOLYWORD to work . b.t. */
 
-int hit_player(object *op,int dam, object *hitter, int type) {
+int hit_player(object *op,int dam, object *hitter, int type, int full_hit) {
     int maxdam=0, ndam=0, attacktype=1, magic=(type & AT_MAGIC);
     int maxattacktype, attacknum;
     int body_attack = op && op->head;   /* Did we hit op's head? */
@@ -1824,6 +1827,23 @@ int hit_player(object *op,int dam, object *hitter, int type) {
 #endif
     }
 
+    if (!full_hit) {
+	archetype *at;
+	int area;
+	int remainder;
+
+	area = 0;
+	for(at = op->arch; at != NULL; at = at->more)
+	    area++;
+	assert(area > 0);
+
+	/* basically: maxdam /= area; we try to "simulate" a float
+	   value-effect */
+	remainder = 100*(maxdam%area)/area;
+	maxdam /= area;
+	if (RANDOM()%100 < remainder)
+	    maxdam++;
+    }
 
 #ifdef ATTACK_DEBUG
     LOG(llevDebug,"Attacktype %d did %d damage\n", type, maxdam);

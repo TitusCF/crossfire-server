@@ -197,7 +197,7 @@ void rune_attack(object *op,object *victim)
 {
     if(victim) {
          tag_t tag = victim->count;
-	 hit_player(victim,op->stats.dam,op,op->attacktype);
+	 hit_player(victim,op->stats.dam,op,op->attacktype,1);
          if (was_destroyed (victim, tag))
                 return;
 	 /*  if there's a disease in the needle, put it in the player */
@@ -210,7 +210,7 @@ void rune_attack(object *op,object *victim)
 		free_object(disease);
 	 }
     }
-    else  hit_map(op,0,op->attacktype);
+    else  hit_map(op,0,op->attacktype,1);
 }
 
 /*  This function generalizes attacks by runes/traps.  This ought to make

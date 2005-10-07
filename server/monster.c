@@ -1473,7 +1473,7 @@ void check_earthwalls(object *op, mapstruct *m, int x, int y) {
     object *tmp;
     for (tmp = get_map_ob(m, x, y); tmp!=NULL; tmp=tmp->above) {
 	if (tmp->type == EARTHWALL) {
-	    hit_player(tmp,op->stats.dam,op,AT_PHYSICAL);
+	    hit_player(tmp,op->stats.dam,op,AT_PHYSICAL,1);
 	    return;
 	}
     }
@@ -1483,7 +1483,7 @@ void check_doors(object *op, mapstruct *m, int x, int y) {
     object *tmp;
     for (tmp = get_map_ob(m, x, y); tmp!=NULL; tmp=tmp->above) {
 	if (tmp->type == DOOR) {
-	    hit_player(tmp,1000,op,AT_PHYSICAL);
+	    hit_player(tmp,1000,op,AT_PHYSICAL,1);
 	    return;
 	}
     }

@@ -886,7 +886,7 @@ void spell_failure(object *op, int failure,int power, object *skill)
 	/* Safety check to make sure we don't get any mana storms in scorn */
 	if (get_map_flags(op->map, NULL, op->x, op->y, NULL, NULL) & P_NO_MAGIC) {
 	    new_draw_info(NDI_UNIQUE, 0, op, "The magic warps and you are turned inside out!");
-	    hit_player(op,9998,op,AT_INTERNAL);
+	    hit_player(op,9998,op,AT_INTERNAL,1);
 
 	} else {
 	    new_draw_info(NDI_UNIQUE, 0,op,"You lose control of the mana!  The uncontrolled magic blasts you!");
@@ -1489,13 +1489,13 @@ void apply_spell_effect(object *spell, object *victim)
     switch (spell->subtype) {
 	case SP_CONE:
 	    if (QUERY_FLAG(victim, FLAG_ALIVE) && spell->speed && spell->attacktype)
-		hit_player(victim, spell->stats.dam, spell, spell->attacktype);
+		hit_player(victim, spell->stats.dam, spell, spell->attacktype, 0);
 	    break;
 
 	case SP_MAGIC_MISSILE:
 	    if (QUERY_FLAG (victim, FLAG_ALIVE)) {
 		tag_t spell_tag = spell->count;
-		hit_player (victim, spell->stats.dam, spell, spell->attacktype);
+		hit_player (victim, spell->stats.dam, spell, spell->attacktype, 1);
 		if ( ! was_destroyed (spell, spell_tag)) {
 		    remove_ob (spell);
 		    free_object (spell);
@@ -1505,7 +1505,7 @@ void apply_spell_effect(object *spell, object *victim)
 
 	case SP_MOVING_BALL:
 	    if (QUERY_FLAG (victim, FLAG_ALIVE))
-		hit_player (victim, spell->stats.dam, spell, spell->attacktype);
+		hit_player (victim, spell->stats.dam, spell, spell->attacktype, 1);
 	    else if (victim->material || victim->materialname)
 		save_throw_object (victim, spell->attacktype, spell);
 	    break;

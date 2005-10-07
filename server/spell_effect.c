@@ -700,7 +700,7 @@ int cast_earth_to_dust(object *op,object *caster, object *spell_ob) {
 		for(tmp=get_map_ob(m, sx, sy);tmp!=NULL;tmp=next) {
 		    next=tmp->above;
 		    if(tmp&&QUERY_FLAG(tmp, FLAG_TEAR_DOWN))
-			hit_player(tmp,9998,op,AT_PHYSICAL);
+			hit_player(tmp,9998,op,AT_PHYSICAL,0);
 		}
 	    }
 	}
@@ -2596,7 +2596,7 @@ void move_aura(object *aura) {
 	ny = aura->y + freearr_y[i];
 	mflags = get_map_flags(env->map, NULL, nx, ny, NULL, NULL);
 	if ((mflags & (P_WALL | P_OUT_OF_MAP)) == 0) {
-	    hit_map(aura,i,aura->attacktype);
+	    hit_map(aura,i,aura->attacktype,0);
 	    if(aura->other_arch) {
 		object *new_ob;
 

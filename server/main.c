@@ -669,7 +669,7 @@ void enter_exit(object *op, object *exit_ob) {
 		     * random maps use this or not.
 		     */
 		    if(exit_ob->stats.dam && op->type==PLAYER)
-			hit_player(op,exit_ob->stats.dam,exit_ob,exit_ob->attacktype);
+			hit_player(op,exit_ob->stats.dam,exit_ob,exit_ob->attacktype,1);
 		    return;
 		}
 	    } else {
@@ -725,7 +725,7 @@ void enter_exit(object *op, object *exit_ob) {
 	}
 	/* For exits that cause damages (like pits) */
 	if(exit_ob->stats.dam && op->type==PLAYER)
-	    hit_player(op,exit_ob->stats.dam,exit_ob,exit_ob->attacktype);
+	    hit_player(op,exit_ob->stats.dam,exit_ob,exit_ob->attacktype,1);
     } else {
 	int flags = 0;
 	mapstruct *newmap;

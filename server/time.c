@@ -233,7 +233,7 @@ void poison_more(object *op) {
   }
   (void)hit_player(op->env,
                    op->stats.dam,
-                   op,AT_INTERNAL);
+                   op,AT_INTERNAL,1);
 }
 
 
@@ -318,7 +318,7 @@ void move_gate(object *op) { /* 1 = going down, 0 = goind up */
 
 	    if(tmp!=NULL) {
 		if(QUERY_FLAG(tmp, FLAG_ALIVE)) {
-		    hit_player(tmp, random_roll(1, op->stats.dam, tmp, PREFER_LOW), op, AT_PHYSICAL);
+		    hit_player(tmp, random_roll(1, op->stats.dam, tmp, PREFER_LOW), op, AT_PHYSICAL, 1);
 		    if(tmp->type==PLAYER) 
 			new_draw_info_format(NDI_UNIQUE, 0, tmp,
 					     "You are crushed by the %s!",op->name);
@@ -1428,7 +1428,7 @@ int process_object(object *op) {
 	    return 0;
 
 	case EARTHWALL:
-	    hit_player(op, 2, op, AT_PHYSICAL);
+	    hit_player(op, 2, op, AT_PHYSICAL, 1);
 	    return 0;
 
 	case FIREWALL:

@@ -169,7 +169,7 @@ void move_bolt(object *op) {
 	free_object(op);
 	return;
     }
-    hit_map(op,0,op->attacktype);
+    hit_map(op,0,op->attacktype,1);
 	
     if(!op->direction)
 	return;
@@ -329,7 +329,7 @@ void explosion(object *op) {
 	free_object(op);
 	return;
     }
-    hit_map(op,0,op->attacktype);
+    hit_map(op,0,op->attacktype,0);
 
     if(op->range>0) {
 	for(i=1;i<9;i++) {
@@ -393,7 +393,7 @@ void explode_bullet(object *op)
     }
 
     if (op->attacktype) {
-	hit_map (op, 0, op->attacktype);
+	hit_map (op, 0, op->attacktype, 1);
 	if (was_destroyed (op, op_tag))
 	    return;
     }
@@ -479,7 +479,7 @@ void check_bullet(object *op)
     {
         if (QUERY_FLAG (tmp, FLAG_ALIVE)) {
             tmp_tag = tmp->count;
-            dam = hit_player (tmp, op->stats.dam, op, op->attacktype);
+            dam = hit_player (tmp, op->stats.dam, op, op->attacktype, 1);
             if (was_destroyed (op, op_tag) || ! was_destroyed (tmp, tmp_tag)
                 || (op->stats.dam -= dam) < 0)
             {
@@ -677,7 +677,7 @@ void move_cone(object *op) {
 
     /* lava saves it's life, but not yours  :) */
     if (QUERY_FLAG(op, FLAG_LIFESAVE)) {
-	hit_map(op,0,op->attacktype);
+	hit_map(op,0,op->attacktype,0);
 	return;
     }
 
@@ -694,7 +694,7 @@ void move_cone(object *op) {
 #endif
 
     tag = op->count;
-    hit_map(op,0,op->attacktype);
+    hit_map(op,0,op->attacktype,0);
 
     /* Check to see if we should push anything.
      * Spell objects with weight push whatever they encounter to some
@@ -1128,7 +1128,7 @@ void move_missile(object *op) {
 
     if (mflags & P_BLOCKED) {
 	tag_t tag = op->count;
-	hit_map (op, op->direction, AT_MAGIC);
+	hit_map (op, op->direction, AT_MAGIC, 1);
 	/* Basically, missile only hits one thing then goes away.
 	 * we need to remove it if someone hasn't already done so.
 	 */
@@ -1239,7 +1239,7 @@ int cast_destruction(object *op, object *caster, object *spell_ob) {
 		    if ((friendly && !QUERY_FLAG(tmp, FLAG_FRIENDLY) && tmp->type!=PLAYER) ||
 		       (!friendly && (QUERY_FLAG(tmp, FLAG_FRIENDLY) || tmp->type==PLAYER))) {
 			if (spell_ob->subtype == SP_DESTRUCTION) {
-			    hit_player(tmp,dam,op,spell_ob->attacktype);
+			    hit_player(tmp,dam,op,spell_ob->attacktype,0);
 			    if (spell_ob->other_arch) {
 				tmp = arch_to_object(spell_ob->other_arch);
 				tmp->x = sx;
@@ -1576,7 +1576,7 @@ void move_ball_spell(object *op) {
 
 	if((mflags & P_IS_ALIVE) && (!owner || owner->x!=hx || owner->y!=hy || owner->map != m)) {
 	    if(j) op->stats.dam = dam_save/2;
-	    hit_map(op,j,op->attacktype);
+	    hit_map(op,j,op->attacktype,1);
 
 	}
 	if(!(mflags & P_WALL) && op->other_arch) { /* insert the other arch */
@@ -1750,7 +1750,7 @@ int cast_light(object *op,object *caster,object *spell, int dir) {
 	    if(QUERY_FLAG(target,FLAG_MONSTER)) {
 		/* oky doky. got a target monster. Lets make a blinding attack */
 		if(target->head) target = target->head;
-		(void) hit_player(target,dam,op,spell->attacktype);
+		(void) hit_player(target,dam,op,spell->attacktype,1);
 		return 1; /* one success only! */
 	    }
     }

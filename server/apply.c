@@ -2259,7 +2259,7 @@ extern void apply_poison (object *op, object *tmp)
     if (tmp->stats.hp > 0) {
       LOG(llevDebug,"Trying to poison player/monster for %d hp\n",
           tmp->stats.hp);
-      hit_player(op, tmp->stats.hp, tmp, AT_POISON);
+      hit_player(op, tmp->stats.hp, tmp, AT_POISON, 1);
     }
     op->stats.food-=op->stats.food/4;
     decrease_ob(tmp);
@@ -3581,7 +3581,7 @@ void eat_special_food(object *who, object *food) {
     if(food->stats.hp!=0) {
 	if(QUERY_FLAG(food, FLAG_CURSED)) { 
 	    strcpy(who->contr->killer,food->name);
-	    hit_player(who, food->stats.hp, food, AT_POISON);
+	    hit_player(who, food->stats.hp, food, AT_POISON, 1);
 	    new_draw_info(NDI_UNIQUE, 0,who,"Eck!...that was poisonous!");
 	} else { 
 	    if(food->stats.hp>0) 
