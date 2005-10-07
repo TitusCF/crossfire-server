@@ -1691,8 +1691,7 @@ object *get_split_ob(object *orig_ob, uint32 nr) {
             orig_ob->nrof?orig_ob->nrof:1, orig_ob->name);
 	return NULL;
     }
-    newob=get_object();
-    copy_object(orig_ob,newob);
+    newob = object_create_clone(orig_ob);
     if((orig_ob->nrof-=nr)<1) {
 	if ( ! is_removed)
             remove_ob(orig_ob);
@@ -1709,15 +1708,6 @@ object *get_split_ob(object *orig_ob, uint32 nr) {
 	}
     }
     newob->nrof=nr;
-
-    /* Need to preserve spell information for multiple objects, eg,
-     * books.
-     */
-    if (orig_ob->inv && orig_ob->inv->type == SPELL) {
-	object *tmp = get_object();
-	copy_object(orig_ob->inv, tmp);
-	insert_ob_in_ob(tmp, newob);
-    }
 
     return newob;
 }

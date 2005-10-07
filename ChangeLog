@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+common/object.c: Use object_create_clone in get_split_ob; Fixes things inside
+   of objects disappearing when throwing.
+Alex Schultz 2005-10-7
+
 Make damage done by area spells not depend on monster size.
 include/sproto.h, server/attack.c: Add additional parameter "full_hit" to
    hit_map() and hit_player(). If set, do full damage, if unset scale down by
