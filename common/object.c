@@ -1022,9 +1022,15 @@ void update_object(object *op, int action) {
  * free objects.  The IS_FREED() flag is set in the object.
  * The object must have been removed by remove_ob() first for
  * this function to succeed.
+ *
+ * If free_inventory is set, free inventory as well. Else drop items in
+ * inventory to the ground.
  */
 
 void free_object(object *ob) {
+    free_object2(ob, 0);
+}
+void free_object2(object *ob, int free_inventory) {
     object *tmp,*op;
 
     if (!QUERY_FLAG(ob,FLAG_REMOVED)) {
@@ -1044,18 +1050,18 @@ void free_object(object *ob) {
 	return;
     }
     if(ob->more!=NULL) {
-	free_object(ob->more);
+	free_object2(ob->more, free_inventory);
 	ob->more=NULL;
     }
     if (ob->inv) {
-	if (ob->map==NULL || ob->map->in_memory!=MAP_IN_MEMORY ||
+	if (free_inventory || ob->map==NULL || ob->map->in_memory!=MAP_IN_MEMORY ||
 	    (get_map_flags(ob->map, NULL, ob->x, ob->y, NULL, NULL) & P_NO_PASS))
 	{
 	    op=ob->inv;
 	    while(op!=NULL) {
 		tmp=op->below;
 		remove_ob(op);
-		free_object(op);
+		free_object2(op, free_inventory);
 		op=tmp;
 	    }
 	}
@@ -1695,7 +1701,7 @@ object *get_split_ob(object *orig_ob, uint32 nr) {
     if((orig_ob->nrof-=nr)<1) {
 	if ( ! is_removed)
             remove_ob(orig_ob);
-	free_object(orig_ob);
+	free_object2(orig_ob, 1);
     }
     else if ( ! is_removed) {
 	if(orig_ob->env!=NULL)

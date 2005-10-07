@@ -17,6 +17,14 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Prevent objects from losing inventory when thrown.
+include/libproto.h, common/object.c: Add new parameter "free_inventory" to
+   free_object(). Is set, free inventory as well instead of dropping it on the
+   ground.
+common/object.c: In get_split_ob() prevent inventory of splitted object to be
+   dropped.
+Andreas Kirschbaum 2005-10-07
+
 common/object.c: Use object_create_clone in get_split_ob; Fixes things inside
    of objects disappearing when throwing.
 Alex Schultz 2005-10-7
