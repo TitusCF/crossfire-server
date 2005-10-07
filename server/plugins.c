@@ -1277,7 +1277,7 @@ CFParm* CFWFreeMemory(CFParm* PParm)
 }
 
 /*****************************************************************************/
-/* ObjectCreateClone object_copy wrapper.                                    */
+/* object_create_clone object_copy wrapper.                                  */
 /*****************************************************************************/
 /* 0 - object                                                                */
 /* 1 - type 0 = clone with inventory                                         */
@@ -1287,7 +1287,7 @@ CFParm* CFWObjectCreateClone (CFParm* PParm)
 {
     CFParm* CFP=(CFParm*)malloc(sizeof (CFParm));
     if (*(int*)PParm->Value[1]==0)
-        CFP->Value[0]=ObjectCreateClone ((object*)PParm->Value[0]);
+        CFP->Value[0]=object_create_clone ((object*)PParm->Value[0]);
     else if (*(int*)PParm->Value[1]==1)
         {
         object* tmp;

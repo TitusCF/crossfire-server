@@ -597,7 +597,7 @@ static void EditInsertArch (Edit self, int x, int y, int i, archetype * at)
         debug("Out of Map\n");
         return;
     }
-    op = ObjectCreateArch (at);
+    op = object_create_arch (at);
     if (op) {
         MapInsertObjectZ(emap,op,x,y,i);
         /*debug3 ("Inserting %s %d %d\n", op->name, op->x, op->y);*/
@@ -1907,7 +1907,7 @@ object *EditCloneInsert (Edit self,object *obj,int x, int y, int z)
     int button_value;
 
     /*** create & insert ***/
-    if ((op = ObjectCreateClone(obj))) {
+    if ((op = object_create_clone(obj))) {
 	/*** object do not fit ***/
 	if(!MapObjectOut(self->emap,op,x,y)) {
 	    MapInsertObjectZ (self->emap, op, x, y, z);

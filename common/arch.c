@@ -710,7 +710,7 @@ object *clone_arch(int type) {
  * member: make instance from class
  */
 
-object *ObjectCreateArch (archetype * at)
+object *object_create_arch (archetype * at)
 {
     object *op, *prev = NULL, *head = NULL;
 

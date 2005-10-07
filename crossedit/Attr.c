@@ -572,7 +572,7 @@ static void InsertCb(Widget w,XtPointer client,XtPointer call)
 
     if((obj = AppItemGetObject(self->app)) && AttrGetObject(self)) {
 	debug1("Attr-InsertCb() %s\n",obj->name);
-	(void) insert_ob_in_ob(ObjectCreateClone(obj),AttrGetObject(self));
+	(void) insert_ob_in_ob(object_create_clone(obj),AttrGetObject(self));
     }
 }
 

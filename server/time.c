@@ -112,7 +112,7 @@ void generate_monster_inv(object *gen) {
     i=find_free_spot(op->arch,gen->map,gen->x,gen->y,1,9);
     if (i==-1)
         return;
-    head=ObjectCreateClone(op);
+    head=object_create_clone(op);
     CLEAR_FLAG(head, FLAG_IS_A_TEMPLATE);
     unflag_inv (head,FLAG_IS_A_TEMPLATE);
     if (rndm(0, 9))

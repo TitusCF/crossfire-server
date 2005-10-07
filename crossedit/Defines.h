@@ -52,10 +52,8 @@ extern object *MapGetRealObject (Map, int, int, int);
 #if 0
 extern void MapInsertObjectZ(Map,object *, int, int, int);
 #endif
-extern int ObjectGetForeground(object *);
-extern int ObjectGetBackground(object *);
 extern void  InitializeColors (Display *dpy);
-extern object *ObjectCreateArch (archetype *);
+extern object *object_create_arch (archetype *);
 
 extern XColor discolor[];
 

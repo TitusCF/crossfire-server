@@ -30,7 +30,7 @@ extern archetype *find_archetype(const char *name);
 extern void add_arch(archetype *at);
 extern archetype *type_to_archetype(int type);
 extern object *clone_arch(int type);
-extern object *ObjectCreateArch(archetype *at);
+extern object *object_create_arch(archetype *at);
 /* button.c */
 extern void push_button(object *op);
 extern void update_button(object *op);
@@ -245,7 +245,7 @@ extern int absdir(int d);
 extern int dirdiff(int dir1, int dir2);
 extern int can_see_monsterP(mapstruct *m, int x, int y, int dir);
 extern int can_pick(object *who, object *item);
-extern object *ObjectCreateClone(object *asrc);
+extern object *object_create_clone(object *asrc);
 extern int was_destroyed(object *op, tag_t old_tag);
 extern object *load_object_str(char *obstr);
 extern object *find_obj_by_type_subtype(object *who, int type, int subtype);

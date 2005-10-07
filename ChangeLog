@@ -17,6 +17,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+common/{arch.c, object.c}, crossedit/{Attr.c, Defines.h, Edit.c},
+include/libproto.h, server/{plugins.c, time.c}: Rename functions with
+   mixed-case names to lower case only.
+crossedit/Defines.h: Remove prototypes for nonexisting functions.
+Andreas Kirschbaum 2005-10-07
+
 server/apply.c: In prepare_weapon() do not lose a reference to the item name.
 Andreas Kirschbaum 2005-10-06
 
