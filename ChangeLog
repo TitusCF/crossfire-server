@@ -17,6 +17,16 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Added GetMarkedItem to Python, cleaned compilation warnings.
+ plugin/plugin_python.c
+ plugin/include/plugin_python.h
+
+Moved gps code to Python script, thus cleaning relevant code from server core.
+ common/item.c: remove item description.
+ include/define.h: remove gps define.
+ server/apply.c: remove gps function.
+Ryo 2005-10-08
+
 Prevent objects from losing inventory when thrown.
 include/libproto.h, common/object.c: Add new parameter "free_inventory" to
    free_object(). Is set, free inventory as well instead of dropping it on the

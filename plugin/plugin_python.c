@@ -78,22 +78,22 @@ static void PyFixPlayer( object* pl )
     PlugHooks[ HOOK_FIXPLAYER ]( &lCFR );
     }
 
-static char* PyAddString( char* str )
+static char* PyAddString( const char* str )
     {
     CFParm lCFR;
     CFParm* CFR;
     char* ret;
-    lCFR.Value[ 0 ] = str;
+    lCFR.Value[ 0 ] = (void*)str;
     CFR = PlugHooks[ HOOK_ADDSTRING ]( &lCFR );
     ret = CFR->Value[ 0 ];
     PyFreeMemory( CFR );
     return ret;
     }
 
-static void PyFreeString( char* str )
+static void PyFreeString( const char* str )
     {
     CFParm lCFR;
-    lCFR.Value[ 0 ] = str;
+    lCFR.Value[ 0 ] = (void*)str;
     PlugHooks[ HOOK_FREESTRING ]( &lCFR );
     }
 
@@ -5125,6 +5125,39 @@ static PyObject* CFDecreaseObjectNr(PyObject* self, PyObject* args)
     return Py_BuildValue("l", (long)ob);
 }
 
+static PyObject* CFGetMarkedItem(PyObject* self, PyObject* args)
+{
+    long whoptr;
+    object* tmp;
+
+    if (!PyArg_ParseTuple(args,"l",&whoptr))
+        return NULL;
+
+    CHECK_OBJ(whoptr);
+
+    /* Copied from server/c_object.c */
+    if (!WHO || !WHO->contr) return NULL;
+    if (!WHO->contr->mark) {
+        Py_INCREF(Py_None);
+        return Py_None;
+    }
+    for (tmp=WHO->inv; tmp; tmp=tmp->below) {
+	    if (tmp->invisible) continue;
+	    if (tmp == WHO->contr->mark) {
+	        if (tmp->count == WHO->contr->mark_count)
+		        return Py_BuildValue("l", (long)tmp);
+	        else {
+    		    WHO->contr->mark=NULL;
+	    	    WHO->contr->mark_count=0;
+                Py_INCREF(Py_None);
+                return Py_None;
+    	    }
+    	}
+    }
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
 /*****************************************************************************/
 /* Name    : CFGetMapDir                                                     */
 /* Python  : CFPython.GetMapDirectory()                                      */
@@ -5301,7 +5334,7 @@ MODULEAPI int HandleGlobalEvent(CFParm* PParm)
 {
     FILE* Scriptfile;
     char *scriptname;
-    char *filename;
+    const char *filename;
 
     if (!allocate_stack())
     {

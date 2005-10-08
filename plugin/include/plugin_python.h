@@ -274,6 +274,7 @@ static PyObject* CFGetInternalName(PyObject* self, PyObject* args);
 static PyObject* CFGetArchType(PyObject* self, PyObject* args);
 static PyObject* CFSetVariable(PyObject* self, PyObject* args);
 static PyObject* CFDecreaseObjectNr(PyObject* self, PyObject* args);
+static PyObject* CFGetMarkedItem(PyObject* self, PyObject* args);
 
 static PyObject* CFAttackTypePhysical(PyObject* self, PyObject* args);
 static PyObject* CFAttackTypeMagic(PyObject* self, PyObject* args);
@@ -599,6 +600,7 @@ static PyMethodDef CFPythonMethods[] =
         {"SetWC", CFSetWC, METH_VARARGS},
         {"SetVariable", CFSetVariable, METH_VARARGS},
         {"DecreaseObjectNr", CFDecreaseObjectNr, METH_VARARGS},
+        {"GetMarkedItem",CFGetMarkedItem, METH_VARARGS},
 /* Attack Types Wrappers */
         {"AttackTypePhysical", CFAttackTypePhysical, METH_VARARGS},
         {"AttackTypeMagic", CFAttackTypeMagic, METH_VARARGS},
