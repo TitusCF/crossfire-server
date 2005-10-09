@@ -17,6 +17,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+common/object.c: use canonical_key instead of key, else == always fails.
+server/apply.c: drop "on_use_yield" item if required when applying potion, food or poison.
+ This lets players get empty bottles/vials/... when using potions.
+Ryo 2005-10-09
+
 Added GetMarkedItem to Python, cleaned compilation warnings.
  plugin/plugin_python.c
  plugin/include/plugin_python.h

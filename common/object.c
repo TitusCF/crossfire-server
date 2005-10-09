@@ -2572,7 +2572,7 @@ const char * get_ob_key_value(object * op, const char * const key) {
      * only 4 lines, and saves the function call overhead.
      */
     for (link = op->key_values; link != NULL; link = link->next) {
-        if (link->key == key) {
+        if (link->key == canonical_key) {
             return link->value;
         }
     }

@@ -153,6 +153,31 @@ static int apply_id_altar (object *money, object *altar, object *pl)
 }
 
 /**
+ * This checks whether the object has a "on_use_yield" field, and if so generated and drops
+ * matching item.
+ **/
+static void handle_apply_yield(object* tmp)
+{
+    const char* yield;
+    if (yield = get_ob_key_value(tmp,"on_use_yield"))
+    {
+        object* drop = get_archetype(yield);
+        if (tmp->env)
+        {
+            drop = insert_ob_in_ob(drop,tmp->env);
+            if (tmp->env->type == PLAYER)
+                esrv_send_item(tmp->env,drop);
+        }
+        else
+        {
+            drop->x = tmp->x;
+            drop->y = tmp->y;
+            insert_ob_in_map(drop,tmp->map,tmp,INS_BELOW_ORIGINATOR);
+        }
+    }
+}
+
+/**
  * Handles applying a potion.
  */
 int apply_potion(object *op, object *tmp)
@@ -164,6 +189,8 @@ int apply_potion(object *op, object *tmp)
       if (!QUERY_FLAG(tmp, FLAG_IDENTIFIED))
         identify(tmp);
     }
+
+    handle_apply_yield(tmp);
 
     /* Potion of restoration - only for players */
     if (op->type==PLAYER&&(tmp->attacktype & AT_DEPLETE)) {
@@ -2028,6 +2055,7 @@ static void apply_food (object *op, object *tmp)
 	  eat_special_food(op,tmp);
       }
     }
+    handle_apply_yield(tmp);
     decrease_ob(tmp);
 }
 
@@ -2262,6 +2290,7 @@ extern void apply_poison (object *op, object *tmp)
       hit_player(op, tmp->stats.hp, tmp, AT_POISON, 1);
     }
     op->stats.food-=op->stats.food/4;
+    handle_apply_yield(tmp);
     decrease_ob(tmp);
 }
 
