@@ -154,7 +154,7 @@ static int is_susceptible_to_disease(object *victim, object *disease)
     if(strstr(disease->race, "*") && !QUERY_FLAG(victim, FLAG_UNDEAD))
 	return 1;
 
-    if(strstr(disease->race, "undead") && QUERY_FLAG(victim, FLAG_UNDEAD))
+    if((disease->race == undead_name) && QUERY_FLAG(victim, FLAG_UNDEAD))
 	return 1;
 
     if((victim->race && strstr(disease->race, victim->race)) || 
@@ -398,7 +398,7 @@ int do_symptoms(object *disease) {
 		    return 0;  /*Immune! */
 	}
 		
-	new_symptom = get_archetype("symptom");
+	new_symptom = get_archetype(ARCH_SYMPTOM);
 
 	/* Something special done with dam.  We want diseases to be more
 	 * random in what they'll kill, so we'll make the damage they
