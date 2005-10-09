@@ -48,6 +48,8 @@ blake_C.111 empty_S.111
 blake_D.111 empty_S.111
 blake_E.111 empty_S.111
 blake_F.111 empty_S.111
+bluemarble.111 empty_S.111
+bluemarblemedium.111 empty_S.111
 brush.111 grass_S.111
 cmarsh.111 empty_S.111
 cobblesto1.111 empty_S.111
@@ -97,6 +99,8 @@ grassbrown.111 empty_S.111
 grassdark.111 empty_S.111
 grassmedium.111 empty_S.111
 grasspond.111 grass_S.111
+gray-white-h-marble.111 empty_S.111
+gray-white-h-marble.112 empty_S.111
 graymarble.111 empty_S.111
 green-beige-c-marble.111 empty_S.111
 green-beige-c-marble.112 empty_S.111
@@ -106,7 +110,11 @@ green-white-c-marble.111 empty_S.111
 green-white-c-marble.112 empty_S.111
 green-white-c-marble.113 empty_S.111
 green-white-c-marble.114 empty_S.111
+green-white-h-marble.111 empty_S.111
+green-white-h-marble.112 empty_S.111
 greenmarble.111 empty_S.111
+greenmarblelight.111 empty_S.111
+greenmarblemedium.111 empty_S.111
 hills.111 hills_S.111
 hillsrocky.111 hillsrocky_S.111
 hole1.111 grass_S.111
@@ -120,6 +128,7 @@ lava.112 lava_S.112
 lava.113 lava_S.113
 lava.114 lava_S.114
 lava.115 lava_S.115
+lightgreenmarble.111 empty_S.111
 lightmagent-green-p-marble.111 empty_S.111
 lightmagent-green-p-marble.112 empty_S.111
 lightmagent-green-p-marble.113 empty_S.111
@@ -129,7 +138,10 @@ lightmagent-green-p-marble.122 empty_S.111
 lightmagent-green-p-marble.123 empty_S.111
 lightmagent-green-p-marble.124 empty_S.111
 lightmagentamarble.111 empty_S.111
+magentamarble.111 empty_S.111
+magentamarblemedium.111 empty_S.111
 marble.111 empty_S.111
+marble_blgr.111 empty_S.111
 marsh.111 marsh_S.111
 medium.111 empty_S.111
 moun_cave1.111 mountain_S.111
@@ -138,6 +150,10 @@ mountain1.111 mountain_S.111
 mountain2.111 mountain_S.111
 mountain4.111 mountain_S.111
 mountain5.111 mountain_S.111
+oil_sea.111 oil_sea_S.111
+oil_sea.112 oil_sea_S.112
+oil_sea.113 oil_sea_S.113
+oil_sea.114 oil_sea_S.114
 pink-beige-c-marble.111 empty_S.111
 pink-beige-c-marble.112 empty_S.111
 pink-beige-c-marble.113 empty_S.111
@@ -154,6 +170,9 @@ shallow_sea.111 shallow_sea_S.111
 shallow_sea.112 shallow_sea_S.112
 shallow_sea.113 shallow_sea_S.113
 shallow_sea.114 shallow_sea_S.114
+slate_b.111 empty_S.111
+slate_r.111 empty_S.111
+slate_w.111 empty_S.111
 smallstone.111 empty_S.111
 snow.111 empty_S.111
 snow2.111 empty_S.111
@@ -171,6 +190,8 @@ white-beige-c-marble.111 empty_S.111
 white-beige-c-marble.112 empty_S.111
 white-beige-c-marble.113 empty_S.111
 white-beige-c-marble.114 empty_S.111
+white-gray-h-marble.111 empty_S.111
+white-gray-h-marble.112 empty_S.111
 white-gray-x-marble.111 empty_S.111
 white-gray-x-marble.112 empty_S.111
 white-gray-x-marble.113 empty_S.111
@@ -184,6 +205,8 @@ white-green-c-marble.111 empty_S.111
 white-green-c-marble.112 empty_S.111
 white-green-c-marble.113 empty_S.111
 white-green-c-marble.114 empty_S.111
+white-green-h-marble.111 empty_S.111
+white-green-h-marble.112 empty_S.111
 white-green-x-marble.111 empty_S.111
 white-green-x-marble.112 empty_S.111
 white-green-x-marble.113 empty_S.111
