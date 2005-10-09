@@ -1664,7 +1664,7 @@ treasureone rare_weapons
   arch brdaxe1
     magic 4
     chance 5
-  more 
+  more
   arch sflail1
     magic 4
     chance 2
@@ -1733,7 +1733,7 @@ treasureone uncommon_weapons
   arch sickle1
     magic 4
     chance 2
-  more  
+  more
   arch t_star1
     magic 4
     chance 3
