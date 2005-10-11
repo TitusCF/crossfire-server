@@ -17,6 +17,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/c_party.c: fix a couple of loops that could crash under certain circumstances
+Brendan Lally 2005-10-11
+
 common/object.c: use canonical_key instead of key, else == always fails.
 server/apply.c: drop "on_use_yield" item if required when applying potion, food or poison.
  This lets players get empty bottles/vials/... when using potions.

@@ -111,9 +111,9 @@ void obsolete_parties() {
     partylist *party;
 
     if (!firstparty) return; /* we can't obsolete parties if there aren't any */
-    for (party=firstparty; party->next==NULL; party=party->next) {
+    for (party=firstparty; party!=NULL; party=party->next) {
 	player_count=0; 
-	for (pl=first_player;pl->next!=NULL;pl=pl->next)
+	for (pl=first_player;pl!=NULL;pl=pl->next)
 	    if (pl->party==party) player_count++;
 	if (player_count == 0)
 	    remove_party(party);
