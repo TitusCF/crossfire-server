@@ -81,11 +81,12 @@ void remove_party(partylist *target_party) {
     }
     else if (target_party == lastparty) {
 	for (tmpparty=firstparty;tmpparty->next!=NULL;tmpparty=tmpparty->next) {
-	    if (tmpparty->next=target_party) {
+	    if (tmpparty->next==target_party) {
 		lastparty=tmpparty;
 		if (target_party->partyleader) free(target_party->partyleader);
 		if (target_party->partyname) free(target_party->partyname);
 		free(target_party); 
+		lastparty->next=NULL;
 		return;
 	    }
 	}
