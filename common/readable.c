@@ -2138,7 +2138,7 @@ write_book_archive (void)
 }
 readable_message_type* get_readable_message_type(object* readable){
 	uint8 subtype = readable->subtype;
-	if ((subtype<0) || (subtype>last_readable_subtype))
+	if (subtype>last_readable_subtype)
 	    return &(readable_message_types[0]);
 	return &(readable_message_types[subtype]);
 }
