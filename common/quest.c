@@ -42,12 +42,12 @@
 #define QUEST_NAME( op ) op->name_pl
 #define TASK_NAME( op ) op->custom_name
 
-/*
+#if 0
 int quest_is_same_quest( const char* slaying1, const char* slaying2 )
     {
     char *start1, *start2, *end1, *end2;
 
-    /* Sanity check *
+    /* Sanity check */
     if ( !slaying1 )
         {
         LOG( llevError, "quest_is_same_quest: slaying1 invalid.\n" );
@@ -69,7 +69,8 @@ int quest_is_same_quest( const char* slaying1, const char* slaying2 )
         return 0;
     return 1;
     }
-*/
+#endif
+
 int quest_is_quest_marker( object* marker, int task )
     {
     if ( marker->type != QUEST )
@@ -98,7 +99,8 @@ int quest_is_completed( object* marker, int task )
         return 0;
     return 1;
     }
-/*
+
+#if 0
 static int quest_has_start( object* marker, object* pl )
     {
     const char* start;
@@ -153,7 +155,7 @@ static int quest_has_end( object* marker, object* pl )
 
 /**
  * Checks if the marker is a quest one, and if so if compatible with the player's current quests.
- **
+ **/
 int quest_marker_compatible( object* marker, object* pl )
     {
     if ( !quest_is_quest_marker( marker ) )
@@ -162,10 +164,10 @@ int quest_marker_compatible( object* marker, object* pl )
     if ( quest_is_start( marker->slaying ) )
         {
         if ( quest_has_end( marker, pl ) )
-            /* Can't restart a quest *
+            /* Can't restart a quest */
             return 0;
         if ( quest_has_start( marker, pl ) )
-            /* Can't restart a quest already started *
+            /* Can't restart a quest already started */
             return 0;
         return 1;
         }
@@ -178,17 +180,17 @@ int quest_marker_compatible( object* marker, object* pl )
         return 1;
         }
 
-    /* Neither a start or end, seek a start *
+    /* Neither a start or end, seek a start */
     if ( quest_has_start( marker, pl ) )
         return 1;
 
-    /* No start, or an end => can't *
+    /* No start, or an end => can't */
     return 0;
     }
 
 /**
  * Clears other quest markers if required.
- **
+ **/
 void quest_clear_markers( object* marker, object* pl )
     {
     object *item;
@@ -210,7 +212,7 @@ void quest_clear_markers( object* marker, object* pl )
  *  * message if message not linked to quest
  *  * NULL if message linked to quest and player isn't at right step.
  *  * first char of real message, line after the 'quest xxx xxx' line.
- **
+ **/
 const char* quest_message_check( const char* message, object* pl )
     {
     const char *end1, *end2, *nl;
@@ -245,7 +247,8 @@ const char* quest_message_check( const char* message, object* pl )
         }
     return NULL;
     }
-*/
+#endif
+
 const char* quest_get_name( object* marker )
     {
     if ( marker->type != QUEST )
