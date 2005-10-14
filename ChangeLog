@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/c_wiz.c: make reset command show the names of other players on the
+map when it fails.
+Brendan Lally 2005-10-14
+
 server/c_party.c: fix another obscure party crash bug
 Brendan Lally 2005-10-12
 

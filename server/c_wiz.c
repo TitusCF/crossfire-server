@@ -1235,13 +1235,23 @@ int command_reset (object *op, char *params)
 	}
 	return 1;
     } else {
+	player *pl;
+	int playercount=0;
 	/* Need to re-insert player if swap failed for some reason */
 	if (tmp) {
 	    insert_ob_in_map(op, m, NULL,0);
 	    free_object(dummy);
 	}
-	new_draw_info(NDI_UNIQUE, 0,op,"Reset failed, couldn't swap map.\n");
-	new_draw_info(NDI_UNIQUE, 0,op,"Probably another player is on the map\n");
+	new_draw_info(NDI_UNIQUE, 0,op,
+	    "Reset failed, couldn't swap map, the following players are on it:");
+	for (pl=first_player; pl!=NULL; pl=pl->next) {
+	    if (pl->ob->map == m && pl->ob != op) {
+		new_draw_info_format(NDI_UNIQUE, 0, op, "%s", pl->ob->name);
+		playercount++;
+	    }
+	}
+	if (!playercount) new_draw_info(NDI_UNIQUE, 0, op, 
+		"hmm, I don't see any other players on this map, something else is the problem.");
 	return 1;
     }
 }
