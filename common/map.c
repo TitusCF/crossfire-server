@@ -702,7 +702,7 @@ static shopitems *parse_shop_string (const char *input_string) {
 
 /* opposite of parse string, this puts the string that was originally fed in to
  * the map (or something equivilent) into output_string. */
-static void *print_shop_string(mapstruct *m, char *output_string) {
+static void print_shop_string(mapstruct *m, char *output_string) {
     int i;
     char tmp[MAX_BUF];
     sprintf(output_string, "\0");
