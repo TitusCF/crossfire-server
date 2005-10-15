@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+include/{global.h, sproto.h, config.h}, server/init.c, common/init.c, lib/Makefile.in:
+   Add directory in preparation for template (where the template can optionally be 
+   from the random map generator) maps.
+
 server/c_wiz.c: make reset command show the names of other players on the
 map when it fails.
 Brendan Lally 2005-10-14
