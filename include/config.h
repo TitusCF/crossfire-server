@@ -597,6 +597,7 @@
  */
 
 #define MAPDIR		"maps"
+#define TEMPLATE_DIR	"template-maps"
 #define ARCHETYPES	"archetypes"
 #define REGIONS	"regions"
 #define HIGHSCORE	"highscore"

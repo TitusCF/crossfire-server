@@ -330,6 +330,7 @@ typedef struct Settings {
     char    *regions;       /* name of the regions file - libdir is prepended */
     char    *treasures;	    /* location of the treasures file. */
     char    *uniquedir;	    /* directory for the unique items */
+    char    *templatedir;   /* directory for the template map */
     char    *tmpdir;	    /* Directory to use for temporary files */
     uint8   stat_loss_on_death;	/* If true, chars lose a random stat when they die */
     sint16  pk_luck_penalty;    /* Amount by which player luck is reduced if they PK */

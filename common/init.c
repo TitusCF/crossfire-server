@@ -52,7 +52,8 @@ CONFDIR,
 DATADIR, 
 LOCALDIR,
 PLAYERDIR, MAPDIR, ARCHETYPES,REGIONS,TREASURES, 
-UNIQUE_DIR, TMPDIR,
+UNIQUE_DIR, TEMPLATE_DIR,
+TMPDIR,
 STAT_LOSS_ON_DEATH,
 PK_LUCK_PENALTY,
 USE_PERMANENT_EXPERIENCE,
@@ -213,6 +214,8 @@ void init_environ() {
     if (cp) settings.treasures=cp;
     cp=getenv("CROSSFIRE_UNIQUEDIR");
     if (cp) settings.uniquedir=cp;
+    cp=getenv("CROSSFIRE_TEMPLATEDIR");
+    if (cp) settings.templatedir=cp;
     cp=getenv("CROSSFIRE_TMPDIR");
     if (cp) settings.tmpdir=cp;
 }

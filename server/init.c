@@ -60,6 +60,7 @@ void set_archetypes(char *path) { settings.archetypes=path; }
 void set_regions(char *path) { settings.regions=path; }
 void set_treasures(char *path) { settings.treasures=path; }
 void set_uniquedir(char *path) { settings.uniquedir=path; }
+void set_templatedir(char *path) { settings.templatedir=path; }
 void set_playerdir(char *path) { settings.playerdir=path; }
 void set_tmpdir(char *path) { settings.tmpdir=path; }
 
@@ -120,6 +121,7 @@ struct Command_Line_Options options[] = {
 {"-playerdir", 1, 1, set_playerdir},
 {"-treasures", 1, 1, set_treasures},
 {"-uniquedir", 1, 1, set_uniquedir},
+{"-templatedir", 1, 1, set_templatedir},
 {"-tmpdir", 1, 1, set_tmpdir},
 {"-log", 1, 1, set_logfile},
 
@@ -741,6 +743,7 @@ void help() {
     printf(" -arch       Sets the archetype file to use.\n");
     printf(" -regions    Sets the regions file to use.\n");
     printf(" -playerdir  Sets the directory for the player files.\n");
+    printf(" -templatedir Sets the directory for template generate maps.\n");
     printf(" -treasures	 Sets the treasures file to use.\n");
     printf(" -uniquedir  Sets the unique items/maps directory.\n");
     printf(" -tmpdir     Sets the directory for temporary files (mostly maps.)\n");

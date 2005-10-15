@@ -392,6 +392,7 @@ void set_archetypes(char *path);
 void set_regions(char *path);
 void set_treasures(char *path);
 void set_uniquedir(char *path);
+void set_templatedir(char *path);
 void set_playerdir(char *path);
 void set_tmpdir(char *path);
 void showscoresparm(char *data);
