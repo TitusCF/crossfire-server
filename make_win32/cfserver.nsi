@@ -88,6 +88,7 @@ Section "Crossfire Server (required)" cf
   CreateDirectory $INSTDIR\tmp
   CreateDirectory $INSTDIR\var
   CreateDirectory $INSTDIR\var\players
+  CreateDirectory $INSTDIR\var\template-maps
   CreateDirectory $INSTDIR\var\unique-items
   CreateDirectory $INSTDIR\var\datafiles
 
@@ -191,8 +192,9 @@ SectionEnd
 
 Section "un.Player files and unique maps data" un_pl
   ;Remove player data section
-  MessageBox MB_YESNO|MB_ICONEXCLAMATION "Warning, this will remove all player files, and player data!$\rAre you sure?" IDNO skip
+  MessageBox MB_YESNO|MB_ICONEXCLAMATION "Warning, this will remove all player files, player data, and template maps!$\rAre you sure?" IDNO skip
   RmDir /r "$INSTDIR\var\players"
+  RmDir /r "$INSTDIR\var\template-map"
   RmDir /r "$INSTDIR\var\unique-items"
   RmDir /r "$INSTDIR\var\datafiles"
   skip:

@@ -9,6 +9,7 @@ md tmp
 md var
 md var\players
 md var\unique-items
+md var\template-maps
 md share
 md share\help
 md share\plugins
