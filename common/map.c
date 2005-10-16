@@ -92,6 +92,23 @@ const char *create_overlay_pathname (const char *name) {
 }
 
 /*
+ * same as create_pathname, but for the template maps.
+ */
+
+const char *create_template_pathname (const char *name) {
+    static char buf[MAX_BUF];
+
+    /* Why?  having extra / doesn't confuse unix anyplace?  Dependancies
+     * someplace else in the code? msw 2-17-97
+     */
+    if (*name == '/')
+      sprintf (buf, "%s/%s%s", settings.localdir, settings.templatedir, name);
+    else
+      sprintf (buf, "%s/%s/%s", settings.localdir, settings.templatedir, name);
+    return (buf);
+}
+
+/*
  * This makes absolute path to the itemfile where unique objects
  * will be saved. Converts '/' to '@'. I think it's essier maintain
  * files than full directory structure, but if this is problem it can 
@@ -823,6 +840,8 @@ static int load_map_header(FILE *fp, mapstruct *m)
 	    m->fixed_resettime = atoi(value);
 	} else if (!strcmp(key,"unique")) {
 	    m->unique = atoi(value);
+	} else if (!strcmp(key,"template")) {
+	    m->template = atoi(value);
 	} else if (!strcmp(key,"region")) {
 	    m->region = get_region_by_name(value);
 	} else if (!strcmp(key,"shopitems")) {
@@ -1137,8 +1156,8 @@ int new_save_map(mapstruct *m, int flag) {
 	return -1;
     }
     
-    if (flag || (m->unique)) {
-	if (!m->unique) { /* flag is set */
+    if (flag || (m->unique) || (m->template)) {
+	if (!m->unique && !m->template) { /* flag is set */
 	    if (flag == 2)
 		strcpy(filename, create_overlay_pathname(m->path));
 	    else
@@ -1164,7 +1183,7 @@ int new_save_map(mapstruct *m, int flag) {
     m->in_memory = MAP_SAVING;
 
     /* Compress if it isn't a temporary save.  Do compress if unique */
-    if (m->compressed && (m->unique || flag)) {
+    if (m->compressed && (m->unique || m->template || flag)) {
 	char buf[MAX_BUF];
 	strcpy(buf, uncomp[m->compressed][2]);
 	strcat(buf, " > ");
@@ -1204,6 +1223,7 @@ int new_save_map(mapstruct *m, int flag) {
     if (m->enter_y) fprintf(fp,"enter_y %d\n", m->enter_y);
     if (m->msg) fprintf(fp,"msg\n%sendmsg\n", m->msg);
     if (m->unique) fprintf(fp,"unique %d\n", m->unique);
+    if (m->template) fprintf(fp,"template %d\n", m->template);
     if (m->outdoor) fprintf(fp,"outdoor %d\n", m->outdoor);
     if (m->temp) fprintf(fp, "temp %d\n", m->temp);
     if (m->pressure) fprintf(fp, "pressure %d\n", m->pressure);
@@ -1227,7 +1247,7 @@ int new_save_map(mapstruct *m, int flag) {
      * player)
      */
     fp2 = fp; /* save unique items into fp2 */
-    if ((flag == 0 || flag == 2) && !m->unique) {
+    if ((flag == 0 || flag == 2) && !m->unique && !m->template) {
 	sprintf (buf,"%s.v00",create_items_path (m->path));
 	if ((fp2 = fopen (buf, "w")) == NULL) {
 	    LOG(llevError, "Can't open unique items file %s\n", buf);
@@ -1249,7 +1269,7 @@ int new_save_map(mapstruct *m, int flag) {
 	save_objects(m, fp, fp, 0);
     }
 
-    if (m->compressed && (m->unique || flag))
+    if (m->compressed && (m->unique || m->template || flag))
 	pclose(fp);
     else
 	fclose(fp);

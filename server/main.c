@@ -542,6 +542,50 @@ static void enter_random_map(object *pl, object *exit_ob)
     }
 }
 
+/* The player is trying to enter a randomly generated template map.  In this
+ * case, generate the map as needed.
+ */
+
+static void enter_random_template_map(object *pl, object *exit_ob)
+{
+    mapstruct *new_map;
+    char *cp;
+    const char *new_map_name;
+    static int reference_number = 0;
+    RMParms rp;
+    new_map_name = create_template_pathname(clean_path((const char*)(EXIT_PATH(exit_ob))+3));
+
+    new_map = ready_map_name(new_map_name, MAP_PLAYER_UNIQUE);
+    if (!new_map) {
+	memset(&rp, 0, sizeof(RMParms));
+	rp.Xsize=-1;
+	rp.Ysize=-1;
+	rp.region=get_region_by_map(exit_ob->map);
+	if (exit_ob->msg) set_random_map_variable(&rp,exit_ob->msg);
+	rp.origin_x = exit_ob->x;
+	rp.origin_y = exit_ob->y;
+	strcpy(rp.origin_map, pl->map->path);
+	
+	/* now to generate the actual map. */
+	new_map=(mapstruct *)generate_random_map(new_map_name,&rp);
+    }
+
+
+    /* Update the exit_ob so it now points directly at the newly created
+     * random maps.  Not that it is likely to happen, but it does mean that a
+     * exit in a unique map leading to a random map will not work properly.
+     * It also means that if the created random map gets reset before
+     * the exit leading to it, that the exit will no longer work.
+     */
+    if(new_map) {
+	int x, y;
+	x=EXIT_X(exit_ob) = MAP_ENTER_X(new_map);
+	y=EXIT_Y(exit_ob) = MAP_ENTER_Y(new_map);
+	new_map->template = 1;
+	enter_map(pl, new_map, 	x, y);
+    }
+}
+
 
 /* Code to enter/detect a character entering a unique map.
  */
@@ -637,7 +681,10 @@ void enter_exit(object *op, object *exit_ob) {
     if (exit_ob){ 
 
 	/* check to see if we make a randomly generated map */
-	if(EXIT_PATH(exit_ob)&&EXIT_PATH(exit_ob)[1]=='!') {
+	if(EXIT_PATH(exit_ob)&&EXIT_PATH(exit_ob)[1]=='@' && EXIT_PATH(exit_ob)[2]=='!') {
+	    enter_random_template_map(op, exit_ob);
+	}
+	else if(EXIT_PATH(exit_ob)&&EXIT_PATH(exit_ob)[1]=='!') {
 	    enter_random_map(op, exit_ob);
 	}
 	else if (QUERY_FLAG(exit_ob, FLAG_UNIQUE)) {
