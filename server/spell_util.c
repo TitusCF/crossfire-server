@@ -1271,7 +1271,7 @@ int cast_spell(object *op, object *caster,int dir,object *spell_ob, char *string
 	    break;
 
 	case SP_CHANGE_ABILITY:
-	    success = cast_change_ability(op,caster,spell_ob, dir);
+	    success = cast_change_ability(op,caster,spell_ob, dir, 0);
 	    break;
 
 	case SP_BLESS:

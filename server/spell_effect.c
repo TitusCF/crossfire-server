@@ -734,6 +734,12 @@ int cast_word_of_recall(object *op, object *caster, object *spell_ob) {
     if(op->type!=PLAYER)
 	return 0;
 
+    if (find_obj_by_type_subtype(op,SPELL_EFFECT, SP_WORD_OF_RECALL))
+    {
+        new_draw_info(NDI_UNIQUE, 0, op, "You feel a force starting to build up inside you." );
+        return 1;
+    }
+
     dummy=get_archetype(FORCE_NAME);
     if(dummy == NULL){
 	new_draw_info(NDI_UNIQUE, 0,op,"Oops, program error!");
@@ -1443,7 +1449,7 @@ static char *no_gain_msgs[NUM_STATS] = {
 "no pow"
 };
 
-int cast_change_ability(object *op,object *caster,object *spell_ob, int dir) {
+int cast_change_ability(object *op,object *caster,object *spell_ob, int dir, int silent) {
     object *tmp, *tmp2=NULL;
     object *force=NULL;
     int i;
@@ -1465,10 +1471,11 @@ int cast_change_ability(object *op,object *caster,object *spell_ob, int dir) {
 		break;
 	    }
 	    else if (spell_ob->race && spell_ob->race == tmp2->name) {
-		new_draw_info_format(NDI_UNIQUE, 0, op,
-		    "You can not cast %s while %s is in effect",
-		    spell_ob->name, tmp2->name_pl);
-		return 0;
+            if ( !silent )
+		        new_draw_info_format(NDI_UNIQUE, 0, op,
+		            "You can not cast %s while %s is in effect",
+		            spell_ob->name, tmp2->name_pl);
+		    return 0;
 	    }
 	}
     }

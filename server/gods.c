@@ -818,9 +818,9 @@ void god_intervention (object *op, object *god, object *skill)
                 /* Follower lacks the required grace for the following
                  * treasure list items. */
 
-		tmp = get_archetype(HOLY_POSSESSION);
-                (void) cast_change_ability(op, op, tmp, 0);
-		free_object(tmp);
+		        tmp = get_archetype(HOLY_POSSESSION);
+                cast_change_ability(op, op, tmp, 0, 1);
+		        free_object(tmp);
                 return;
             }
             continue;

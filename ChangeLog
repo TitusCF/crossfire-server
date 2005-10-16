@@ -17,6 +17,13 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+include/sproto.h: fix cast_change_ability definition.
+server/gods.c: fix cast_change_ability to hide the 'can't recast' message.
+server/spell_effect.c: don't stack word of recall forces. Add a 'silent' parameter
+ to cast_change_ability to not display 'can't recast xx while xx is in effect'
+server/spell_util.c: fix cast_change_ability call.
+Ryo 2005-10-16
+
 include/{global.h, sproto.h, config.h}, server/init.c, common/init.c, lib/Makefile.in:
    Add directory in preparation for template (where the template can optionally be 
    from the random map generator) maps.

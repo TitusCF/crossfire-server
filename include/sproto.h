@@ -765,7 +765,7 @@ int cast_create_town_portal(object *op, object *caster, object *spell, int dir);
 int magic_wall(object *op, object *caster, int dir, object *spell_ob);
 int dimension_door(object *op, object *caster, object *spob, int dir);
 int cast_heal(object *op, object *caster, object *spell, int dir);
-int cast_change_ability(object *op, object *caster, object *spell_ob, int dir);
+int cast_change_ability(object *op, object *caster, object *spell_ob, int dir, int silent);
 int cast_bless(object *op, object *caster, object *spell_ob, int dir);
 int alchemy(object *op, object *caster, object *spell_ob);
 int remove_curse(object *op, object *caster, object *spell);
