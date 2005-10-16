@@ -59,8 +59,13 @@ void dump_abilities() {
     }
 
     ch = describe_item(&at->clone, NULL);
+#ifndef WIN32
     printf("%-16s|%6lld|%4d|%3d|%s|%s|%s\n",at->clone.name,at->clone.stats.exp,
            at->clone.stats.hp,at->clone.stats.ac,ch,at->name,gen_name);
+#else
+    printf("%-16s|%6I64d|%4d|%3d|%s|%s|%s\n",at->clone.name,at->clone.stats.exp,
+           at->clone.stats.hp,at->clone.stats.ac,ch,at->name,gen_name);
+#endif
   }
 }
 
@@ -71,7 +76,7 @@ void dump_abilities() {
 void print_monsters() {
     archetype *at;
     object *op;
-    char   attbuf[32];
+    char   attbuf[34];
     int i;
 
     printf("               |     |   |    |    |      attack       |                        resistances                                                                       |\n");
