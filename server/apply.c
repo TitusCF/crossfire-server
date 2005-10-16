@@ -43,6 +43,7 @@
 
 /**
  * Check if op should abort moving victim because of it's race or slaying.
+ * Returns 1 if it should abort, returns 0 if it should continue.
  */
 int should_director_abort(object *op, object *victim)
 {
