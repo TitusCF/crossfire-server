@@ -109,8 +109,21 @@ Section "Crossfire Server (required)" cf
 SectionEnd
 
 Section "Python plugin" py
+  DetailPrint "Checking for Python24.dll..."
+  GetDllVersion "Python24.dll" $R0 $R1
+  IntOp $R2 $R0 / 0x00010000
+  IntOp $R3 $R0 & 0x0000FFFF
+  IntCmp $R2 2 0 wrong
+  IntCmp $R3 4 0 wrong
+  DetailPrint "   found"
+  Goto ok
+wrong:
+  MessageBox MB_YESNO|MB_ICONQUESTION "Couldn't find Python24.dll. Make sure Python is installed, and that Python24.dll is in your PATH.$\rServer may fail to start if this DLL is not found.$\rInstall plugin anyway?" /SD IDNO IDNO end
+  DetailPrint "  install anyway."
+ok:
   SetOutPath $INSTDIR\share\plugins
   File "plugin_python\ReleaseLog\plugin_python.dll"
+end:
 SectionEnd
 
 Section "Menu Shortcuts" menus
@@ -194,7 +207,7 @@ Section "un.Player files and unique maps data" un_pl
   ;Remove player data section
   MessageBox MB_YESNO|MB_ICONEXCLAMATION "Warning, this will remove all player files, player data, and template maps!$\rAre you sure?" IDNO skip
   RmDir /r "$INSTDIR\var\players"
-  RmDir /r "$INSTDIR\var\template-map"
+  RmDir /r "$INSTDIR\var\template-maps"
   RmDir /r "$INSTDIR\var\unique-items"
   RmDir /r "$INSTDIR\var\datafiles"
   skip:

@@ -1,13 +1,18 @@
-Release notes for Crossfire Server (Windows), September, 18th, 2005
--------------------------------------------------------------------
+Release notes for Crossfire Server (Windows), October, 15th, 2005
+-----------------------------------------------------------------
 
 This is version 1.8.0 snapshot of the Crossfire server.
 
 --------------------------------------------------------------
 For complete changes, see the Changelog file included with the software. Major
-changes since last release: can now build signs and magic mouths/ears, fix speed
-issues, improved map loading speed, new command wizcast (DM only), allow
-directors and movers to only affect certain items.
+changes since last snapsho:
+* fix unkillable monsters if negative hp.
+* party obsoletion.
+* added CF[SG]etWeightLimit to Python functions.
+* can now use 'cast spell argument' and argument is kept when actually casting.
+* item's price is now only estimated. Bargaining gives a better estimation.
+* shops specialize in certain items, thus giving more for those.
+* DM reset command now says which players prevent a map reset.
 --------------------------------------------------------------
 
 Once you have installed the server, you MUST download a map set.
