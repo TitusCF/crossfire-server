@@ -17,6 +17,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/{main.c, swap.c}, common/map.c, include/{libproto.h, map.h}: Add support 
+   for random template maps (still need to document, and still need to add support
+   for template maps created from non-random templates)
+Alex Schultz 2005-10-16
+
 common/info.c: fix -m1 crashing (34 chars, not 32!), and -m2 crashing under Win32.
 include/sproto.h: fix cast_change_ability definition.
 server/gods.c: fix cast_change_ability to hide the 'can't recast' message.
