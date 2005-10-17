@@ -408,3 +408,39 @@ void strip_endline(char* buf){
     if (!strcmp(buf+strlen(buf)-EOL_SIZE,"\n"))
         buf[strlen(buf)-EOL_SIZE]='\0';    
 }
+
+/**
+ * Replace in string src all occurrences of key by replacement. The resulting
+ * string is put into result; at most resultsize characters (including the
+ * terminating null character) will be written to result.
+ */
+void replace(const char *src, const char *key, const char *replacement, char *result, size_t resultsize)
+{
+	size_t resultlen;
+	size_t keylen;
+
+	/* special case to prevent infinite loop if key==replacement=="" */
+	if(strcmp(key, replacement) == 0)
+	{
+		snprintf(result, resultsize, "%s", src);
+		return;
+	}
+
+	keylen = strlen(key);
+
+	resultlen = 0;
+	while(*src != '\0' && resultlen+1 < resultsize)
+	{
+		if(strncmp(src, key, keylen) == 0)
+		{
+			snprintf(result+resultlen, resultsize-resultlen, "%s", replacement);
+			resultlen += strlen(result+resultlen);
+			src += keylen;
+		}
+		else
+		{
+			result[resultlen++] = *src++;
+		}
+	}
+	result[resultlen] = '\0';
+}
