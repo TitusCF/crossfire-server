@@ -19,6 +19,7 @@ Changes for CVS:
 
 server/main.c: Template Maps: Allow %x, %y, and %n in the path to respectively be
    replaced with, the x coord, the y coord, and the parent map name.
+Alex Schultz 2005-10-18
 
 server/{main.c, swap.c}, common/map.c, include/{libproto.h, map.h}: Add support 
    for random template maps (still need to document, and still need to add support
