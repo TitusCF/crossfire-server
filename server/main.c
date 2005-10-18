@@ -549,11 +549,29 @@ static void enter_random_map(object *pl, object *exit_ob)
 static void enter_random_template_map(object *pl, object *exit_ob)
 {
     mapstruct *new_map;
-    char *cp;
+    char *cp, tmpnum[32], resultname[HUGE_BUF], tmpstring[HUGE_BUF];
     const char *new_map_name;
     static int reference_number = 0;
     RMParms rp;
-    new_map_name = create_template_pathname(clean_path((const char*)(EXIT_PATH(exit_ob))+3));
+    
+    sprintf(tmpnum ,"%d", exit_ob->x);
+    printf("x=%s\n", tmpnum);
+    
+    replace((EXIT_PATH(exit_ob)+3), "%x", tmpnum, resultname,  sizeof(resultname));
+    printf("1=%s\n", resultname);
+    
+    sprintf(tmpnum ,"%d", exit_ob->y);
+    printf("y=%s\n", tmpnum);
+    
+    sprintf(tmpstring, "%s", resultname);
+    replace(tmpstring, "%y", tmpnum, resultname,  sizeof(resultname));
+    printf("2=%s\n", resultname);
+    
+    sprintf(tmpstring, "%s", resultname);
+    replace(tmpstring, "%n", exit_ob->map->name, resultname,  sizeof(resultname));
+    printf("3=%s\n", resultname);
+    
+    new_map_name = create_template_pathname(resultname);
 
     new_map = ready_map_name(new_map_name, MAP_PLAYER_UNIQUE);
     if (!new_map) {

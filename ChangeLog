@@ -17,6 +17,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/main.c: Template Maps: Allow %x, %y, and %n in the path to respectively be
+   replaced with, the x coord, the y coord, and the parent map name.
+
 server/{main.c, swap.c}, common/map.c, include/{libproto.h, map.h}: Add support 
    for random template maps (still need to document, and still need to add support
    for template maps created from non-random templates)
