@@ -1,8 +1,8 @@
 /* cfpython.c */
-void *getPluginProperty(int *type, ...);
-int postInitPlugin(void);
-void *globalEventListener(int *type, ...);
-void *eventListener(int *type, ...);
-int closePlugin(void);
-int runPluginCommand(object* op, char* params);
+CF_PLUGIN void * getPluginProperty(int *type, ...);
+CF_PLUGIN int postInitPlugin(void);
+CF_PLUGIN void *globalEventListener(int *type, ...);
+CF_PLUGIN void *eventListener(int *type, ...);
+CF_PLUGIN int closePlugin(void);
+CF_PLUGIN int runPluginCommand(object* op, char* params);
 PyObject *Crossfire_Object_wrap(object *what);

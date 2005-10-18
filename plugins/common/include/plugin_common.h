@@ -28,6 +28,12 @@
 #ifndef PLUGIN_COMMON_H
 #define PLUGIN_COMMON_H
 
+#ifdef WIN32
+#define CF_PLUGIN __declspec(dllexport)
+#else
+#define CF_PLUGIN
+#endif
+
 #include <plugin.h>
 
 extern int cf_init_plugin( f_plug_api getHooks );

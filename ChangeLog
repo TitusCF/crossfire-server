@@ -17,6 +17,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+plugins/common/include/plugin_common.h: add CF_PLUGIN macro.
+plugins/cfpython/cfpython.c: add CF_PLUGIN to exported functions.
+plugins/cfpython/include/cfpython_proto.h: fix prototypes.
+Ryo 2005-10-19
+
 server/main.c: Template Maps: Allow %x, %y, and %n in the path to respectively be
    replaced with, the x coord, the y coord, and the parent map name.
 Alex Schultz 2005-10-18
