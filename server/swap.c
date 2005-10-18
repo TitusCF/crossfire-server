@@ -125,8 +125,6 @@ void read_map_log()
 
 void swap_map(mapstruct *map) {
     player *pl;
-    int evtid;
-    CFParm CFP;
 
     if(map->in_memory != MAP_IN_MEMORY) {
 	LOG(llevError,"Tried to swap out map which was not in memory.\n");
@@ -153,11 +151,8 @@ void swap_map(mapstruct *map) {
 	mapstruct *oldmap = map;
 
 	LOG(llevDebug,"Resetting map %s.\n",map->path);
-	/* GROS : Here we handle the MAPRESET global event */
-	evtid = EVENT_MAPRESET;
-	CFP.Value[0] = (void *)(&evtid);
-	CFP.Value[1] = (void *)(map->path);
-	GlobalEvent(&CFP);
+        /* Lauwenmark : Here we handle the MAPRESET global event */
+        execute_global_event(EVENT_MAPRESET, map->path);
 	map = map->next;
 	delete_map(oldmap);
 	return;
@@ -264,8 +259,6 @@ void flush_old_maps() {
 
     mapstruct *m, *oldmap;
     long sec;
-    int evtid;
-    CFParm CFP;
     sec = seconds();
 
     m= first_map;
@@ -300,11 +293,8 @@ void flush_old_maps() {
 	}
 	else {
 	    LOG(llevDebug,"Resetting map %s.\n",m->path);
-	    /* GROS : Here we handle the MAPRESET global event */
-	    evtid = EVENT_MAPRESET;
-	    CFP.Value[0] = (void *)(&evtid);
-	    CFP.Value[1] = (void *)(m->path);
-	    GlobalEvent(&CFP);
+            /* Lauwenmark : Here we handle the MAPRESET global event */
+            execute_global_event(EVENT_MAPRESET, m->path);
 	clean_tmp_map(m);
 	oldmap = m;
 	m = m->next;

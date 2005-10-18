@@ -594,31 +594,8 @@ object *fix_stopped_arrow (object *op)
 
 static void stop_arrow (object *op)
 {
-    event *evt;
-    /* GROS: Handle for plugin stop event */
-    if ((evt = find_event(op, EVENT_STOP)) != NULL)
-    {
-        CFParm CFP;
-        int k, l, m;
-        uint32 n;
-        k = EVENT_STOP;
-        l = SCRIPT_FIX_NOTHING;
-        m = 0;
-        n = 0;
-        CFP.Value[0] = &k;
-        CFP.Value[1] = NULL;
-        CFP.Value[2] = op;
-        CFP.Value[3] = NULL;
-        CFP.Value[4] = NULL;
-        CFP.Value[5] = &n;
-        CFP.Value[6] = &m;
-        CFP.Value[7] = &m;
-        CFP.Value[8] = &l;
-        CFP.Value[9] = (void*)evt->hook;
-        CFP.Value[10]= (void*)evt->options;
-        if (findPlugin(evt->plugin)>=0)
-            ((PlugList[findPlugin(evt->plugin)].eventfunc) (&CFP));
-    }
+    /* Lauwenmark: Handle for plugin stop event */
+    execute_event(op, EVENT_STOP,NULL,NULL,NULL,SCRIPT_FIX_NOTHING);
     if (op->inv) {
 	object *payload = op->inv;
 	remove_ob (payload);
@@ -854,7 +831,6 @@ void change_object(object *op) { /* Doesn`t handle linked objs yet */
 
 void move_teleporter(object *op) {
     object *tmp, *head=op;
-    event *evt;
 
     /* if this is a multipart teleporter, handle the other parts
      * The check for speed isn't strictly needed - basically, if
@@ -875,34 +851,9 @@ void move_teleporter(object *op) {
 
     if(EXIT_PATH(head)) {
 	if(op->above->type==PLAYER) {
-	    /* GROS: Handle for plugin TRIGGER event */
-	    if ((evt = find_event(op, EVENT_TRIGGER)) != NULL) {
-		CFParm CFP;
-		CFParm* CFR;
-		int k, l, m;
-		uint32 n;
-		int rtn_script = 0;
-		m = 0;
-		n = 0;
-		k = EVENT_TRIGGER;
-		l = SCRIPT_FIX_ALL;
-		CFP.Value[0] = &k;
-		CFP.Value[1] = op;
-		CFP.Value[2] = op->above;
-		CFP.Value[3] = NULL;
-		CFP.Value[4] = NULL;
-		CFP.Value[5] = &n;
-		CFP.Value[6] = &m;
-		CFP.Value[7] = &m;
-		CFP.Value[8] = &l;
-		CFP.Value[9] = (void*)evt->hook;
-		CFP.Value[10]= (void*)evt->options;
-		if (findPlugin(evt->plugin)>=0) {
-		    CFR = (PlugList[findPlugin(evt->plugin)].eventfunc) (&CFP);
-		    rtn_script = *(int *)(CFR->Value[0]);
-		}
-		if (rtn_script!=0) return;
-	    }
+            /* Lauwenmark: Handle for plugin TRIGGER event */
+            if (execute_event(op, EVENT_TRIGGER,op->above,NULL,NULL,SCRIPT_FIX_ALL) != 0)
+                return;
 	    enter_exit(op->above, head);
 	}
 	else
@@ -916,68 +867,16 @@ void move_teleporter(object *op) {
 	    free_object(head);
 	    return;
 	}
-	/* GROS: Handle for plugin TRIGGER event */
-	if ((evt = find_event(op, EVENT_TRIGGER)) != NULL)
-	{
-		CFParm CFP;
-		CFParm* CFR;
-		int k, l, m;
-		uint32 n;
-		int rtn_script = 0;
-		m = 0;
-		n = 0;
-		k = EVENT_TRIGGER;
-		l = SCRIPT_FIX_ALL;
-		CFP.Value[0] = &k;
-		CFP.Value[1] = op;
-		CFP.Value[2] = op->above;
-		CFP.Value[3] = NULL;
-		CFP.Value[4] = NULL;
-		CFP.Value[5] = &n;
-		CFP.Value[6] = &m;
-		CFP.Value[7] = &m;
-		CFP.Value[8] = &l;
-		CFP.Value[9] = (void*)evt->hook;
-		CFP.Value[10]= (void*)evt->options;
-		if (findPlugin(evt->plugin)>=0)
-		{
-			CFR = (PlugList[findPlugin(evt->plugin)].eventfunc) (&CFP);
-			rtn_script = *(int *)(CFR->Value[0]);
-		}
-		if (rtn_script!=0) return;
-	}
+        /* Lauwenmark: Handle for plugin TRIGGER event */
+        if (execute_event(op, EVENT_TRIGGER,op->above,NULL,NULL,SCRIPT_FIX_ALL)!= 0)
+        return;
 	transfer_ob(tmp,EXIT_X(head),EXIT_Y(head),0,head);
     }
     else {
 	/* Random teleporter */
-	/* GROS: Handle for plugin TRIGGER event */
-        if ((evt = find_event(op, EVENT_TRIGGER)) != NULL) {
-	    CFParm CFP;
-	    CFParm* CFR;
-	    int k, l, m;
-	    uint32 n;
-	    int rtn_script = 0;
-	    m = 0;
-	    n = 0;
-	    k = EVENT_TRIGGER;
-	    l = SCRIPT_FIX_ALL;
-	    CFP.Value[0] = &k;
-	    CFP.Value[1] = op;
-	    CFP.Value[2] = op->above;
-	    CFP.Value[3] = NULL;
-	    CFP.Value[4] = NULL;
-	    CFP.Value[5] = &n;
-	    CFP.Value[6] = &m;
-	    CFP.Value[7] = &m;
-	    CFP.Value[8] = &l;
-	    CFP.Value[9] = (void*)evt->hook;
-	    CFP.Value[10]= (void*)evt->options;
-	    if (findPlugin(evt->plugin)>=0) {
-		CFR = (PlugList[findPlugin(evt->plugin)].eventfunc) (&CFP);
-		rtn_script = *(int *)(CFR->Value[0]);
-	    }
-	    if (rtn_script!=0) return;
-	}
+        /* Lauwenmark: Handle for plugin TRIGGER event */
+        if (execute_event(op, EVENT_TRIGGER,op->above,NULL,NULL,SCRIPT_FIX_ALL)!= 0)
+            return;
 	teleport(head, TELEPORTER, tmp);
     }
 }
@@ -992,7 +891,6 @@ void move_teleporter(object *op) {
 void move_player_changer(object *op) {
     object *player;
     object *walk;
-    event *evt;
     char c;
 
     if (!op->above || !EXIT_PATH(op)) return;
@@ -1001,36 +899,9 @@ void move_player_changer(object *op) {
      * needs to be on top.
      */
     if(op->above->type==PLAYER) {
-	/* GROS: Handle for plugin TRIGGER event */
-	if ((evt = find_event(op, EVENT_TRIGGER)) != NULL) {
-	    CFParm CFP;
-	    CFParm* CFR;
-	    int k, l, m;
-	    uint32 n;
-	    int rtn_script = 0;
-
-	    m = 0;
-	    n = 0;
-	    k = EVENT_TRIGGER;
-	    l = SCRIPT_FIX_NOTHING;
-	    CFP.Value[0] = &k;
-	    CFP.Value[1] = op;
-	    CFP.Value[2] = op->above;
-	    CFP.Value[3] = NULL;
-	    CFP.Value[4] = NULL;
-	    CFP.Value[5] = &n;
-	    CFP.Value[6] = &m;
-	    CFP.Value[7] = &m;
-	    CFP.Value[8] = &l;
-	    CFP.Value[9] = (void*)evt->hook;
-	    CFP.Value[10]= (void*)evt->options;
-	    if (findPlugin(evt->plugin)>=0) {
-		CFR = (PlugList[findPlugin(evt->plugin)].eventfunc) (&CFP);
-		rtn_script = *(int *)(CFR->Value[0]);
-	    }
-	    if (rtn_script!=0) return;
-	} /* if event tied to this */
-
+        /* Lauwenmark: Handle for plugin TRIGGER event */
+        if (execute_event(op, EVENT_TRIGGER,op->above,NULL,NULL,SCRIPT_FIX_NOTHING)!=0)
+            return;
 	player=op->above;
 	for(walk=op->inv;walk!=NULL;walk=walk->below)
 	    apply_changes_to_player(player,walk);
@@ -1047,7 +918,8 @@ void move_player_changer(object *op) {
 	    player->contr->bed_y = EXIT_Y(op);
 	}
 	else
-	    LOG(llevDebug, "WARNING: destination '%s' in player_changer must be an absolute path!\n",
+            LOG(llevDebug,
+                "WARNING: destination '%s' in player_changer must be an absolute path!\n",
 		EXIT_PATH(op));
 	
 	enter_exit(op->above,op);
@@ -1310,7 +1182,6 @@ void move_marker(object *op) {
 }
  
 int process_object(object *op) {
-    event *evt;
 
     if(QUERY_FLAG(op, FLAG_MONSTER))
 	if(move_monster(op) || QUERY_FLAG(op, FLAG_FREED)) 
@@ -1347,30 +1218,8 @@ int process_object(object *op) {
 	}
 	return 1;
     }
-    /* GROS: Handle for plugin time event */
-    if ((evt = find_event(op, EVENT_TIME)) != NULL)
-    {
-	CFParm CFP;
-	int k, l, m;
-	uint32 n;
-	k = EVENT_TIME;
-	l = SCRIPT_FIX_NOTHING;
-	m = 0;
-	n = 0;
-	CFP.Value[0] = &k;
-	CFP.Value[1] = NULL;
-	CFP.Value[2] = op;
-	CFP.Value[3] = NULL;
-	CFP.Value[4] = NULL;
-	CFP.Value[5] = &n;
-	CFP.Value[6] = &m;
-	CFP.Value[7] = &m;
-	CFP.Value[8] = &l;
-	CFP.Value[9] = (void*)evt->hook;
-	CFP.Value[10]= (void*)evt->options;
-	if (findPlugin(evt->plugin)>=0)
-	    ((PlugList[findPlugin(evt->plugin)].eventfunc) (&CFP));
-    }
+    /* Lauwenmark: Handle for plugin time event */
+    execute_event(op, EVENT_TIME,NULL,NULL,NULL,SCRIPT_FIX_NOTHING);
     switch(op->type) {
 	case SPELL_EFFECT:
 	    move_spell_effect(op);

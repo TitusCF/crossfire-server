@@ -954,8 +954,6 @@ int key_roll_stat(object *op, char key)
 int key_change_class(object *op, char key)
 {
       int tmp_loop;
-    int evtid;
-    CFParm CFP;
 
     if(key=='q'||key=='Q') {
       remove_ob(op);
@@ -969,18 +967,11 @@ int key_change_class(object *op, char key)
 	esrv_new_player(op->contr, op->weight+op->carrying);
 	create_treasure(find_treasurelist("starting_wealth"),op, 0, 0, 0);
 
-	/* GROS : Here we handle the BORN global event */
-	evtid = EVENT_BORN;
-	CFP.Value[0] = (void *)(&evtid);
-	CFP.Value[1] = (void *)(op);
-	GlobalEvent(&CFP);
+        /* Lauwenmark : Here we handle the BORN global event */
+        execute_global_event(EVENT_BORN, op);
 
-	/* GROS : We then generate a LOGIN event */
-	evtid = EVENT_LOGIN;
-	CFP.Value[0] = (void *)(&evtid);
-	CFP.Value[1] = (void *)(op->contr);
-	CFP.Value[2] = (void *)(op->contr->socket.host);
-	GlobalEvent(&CFP);
+        /* Lauwenmark : We then generate a LOGIN event */
+        execute_global_event(EVENT_LOGIN, op->contr, op->contr->socket.host);
 	op->contr->state=ST_PLAYING;
 
 	if (op->msg) {
@@ -1047,8 +1038,6 @@ int key_change_class(object *op, char key)
 int key_confirm_quit(object *op, char key)
 {
     char buf[MAX_BUF];
-    CFParm CFP;
-    int evtid;
 
     if(key!='y'&&key!='Y'&&key!='q'&&key!='Q') {
 	op->contr->state=ST_PLAYING;
@@ -1056,11 +1045,8 @@ int key_confirm_quit(object *op, char key)
 	return 1;
     }
 
-    /* GROS : Here we handle the REMOVE global event */
-    evtid = EVENT_REMOVE;
-    CFP.Value[0] = (void *)(&evtid);
-    CFP.Value[1] = (void *)(op);
-    GlobalEvent(&CFP);
+    /* Lauwenmark : Here we handle the REMOVE global event */
+    execute_global_event(EVENT_REMOVE, op);
     terminate_all_pets(op);
     leave_map(op);
     op->direction=0;
@@ -2526,12 +2512,9 @@ void kill_player(object *op)
     int lost_a_stat;
     int lose_this_stat;
     int this_stat;
-    int killed_script_rtn; /* GROS: For script return value */
-    CFParm CFP;
-    int evtid, will_kill_again;
+    int will_kill_again;
     archetype *at;
     object *tmp;
-    event *evt;
 
     if(save_life(op))
 	return;
@@ -2570,7 +2553,8 @@ void kill_player(object *op)
       
 	/* create a bodypart-trophy to make the winner happy */
 	tmp=arch_to_object(find_archetype("finger"));
-	if (tmp != NULL) {
+        if (tmp != NULL)
+        {
 	    sprintf(buf,"%s's finger",op->name);
 	    tmp->name = add_string(buf);
 	    sprintf(buf,"  This finger has been cut off %s\n"
@@ -2589,43 +2573,13 @@ void kill_player(object *op)
 	op->contr->braced=0;
 	return;
     }
-/* GROS: Handle for plugin death event */
-  if ((evt = find_event(op, EVENT_DEATH)) != NULL)
-  {
-    CFParm* CFR;
-    int k, l, m;
-    uint32 n;
-    k = EVENT_DEATH;
-    l = SCRIPT_FIX_ALL;
-    m = 0;
-    n = 0;
-    CFP.Value[0] = &k;
-    CFP.Value[1] = NULL;
-    CFP.Value[2] = op;
-    CFP.Value[3] = NULL;
-    CFP.Value[4] = NULL;
-    CFP.Value[5] = &n;
-    CFP.Value[6] = &m;
-    CFP.Value[7] = &m;
-    CFP.Value[8] = &l;
-    CFP.Value[9] = (void*)evt->hook;
-    CFP.Value[10]= (void*)evt->options;
-    if (findPlugin(evt->plugin)>=0)
-    {
-        CFR = (PlugList[findPlugin(evt->plugin)].eventfunc) (&CFP);
-        killed_script_rtn = *(int *)(CFR->Value[0]);
-        free(CFR);
-        if (killed_script_rtn)
-            return;
-    }
-  }
 
-  /* GROS: Handle for the global death event */
-  evtid = EVENT_GDEATH;
-  CFP.Value[0] = (void *)(&evtid);
-  CFP.Value[1] = NULL;
-  CFP.Value[2] = (void *)(op);
-  GlobalEvent(&CFP);
+    /* Lauwenmark: Handle for plugin death event */
+    if (execute_event(op, EVENT_DEATH,NULL,NULL,NULL,SCRIPT_FIX_ALL) != 0)
+            return;
+
+    /* Lauwenmark: Handle for the global death event */
+        execute_global_event(EVENT_PLAYER_DEATH, op);
     if(op->stats.food<0) {
 	if (op->contr->explore) {
 	    new_draw_info(NDI_UNIQUE, 0,op,"You would have starved, but you are");

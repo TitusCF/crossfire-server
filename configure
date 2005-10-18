@@ -28033,7 +28033,7 @@ fi
 echo "$as_me: No Python found. Python plugin will not be built." >&6;}
 
 	else
-		PLUGIN_PYTHON="plugin_python.la"
+		PLUGIN_PYTHON="cfpython.la"
 	fi
 
 
@@ -28056,7 +28056,7 @@ fi
 
 
 
-                                                                                                                                                                                                                                                                                                                                ac_config_files="$ac_config_files Makefile crossedit/Makefile crossedit/doc/Makefile crossedit/include/Makefile crossedit/Cnv/Makefile crossedit/bitmaps/Makefile doc/Makefile doc/Developers/Makefile doc/spell-docs/Makefile doc/spoiler/Makefile doc/spoiler-html/Makefile doc/playbook/Makefile doc/playbook-html/Makefile doc/scripts/Makefile lib/Makefile random_maps/Makefile socket/Makefile server/Makefile include/Makefile utils/Makefile lib/checkarch.pl lib/collect.pl utils/add_throw.perl utils/crossloop.tmpl utils/crossloop.pl.tmpl utils/metaserver.pl utils/crossloop.web utils/scores.pl utils/player_dl.pl common/Makefile plugin/Makefile devel/Makefile"
+                                                                                                                                                                                                                                                                                                                                          ac_config_files="$ac_config_files Makefile crossedit/Makefile crossedit/doc/Makefile crossedit/include/Makefile crossedit/Cnv/Makefile crossedit/bitmaps/Makefile doc/Makefile doc/Developers/Makefile doc/spell-docs/Makefile doc/spoiler/Makefile doc/spoiler-html/Makefile doc/playbook/Makefile doc/playbook-html/Makefile doc/scripts/Makefile lib/Makefile random_maps/Makefile socket/Makefile server/Makefile include/Makefile utils/Makefile lib/checkarch.pl lib/collect.pl utils/add_throw.perl utils/crossloop.tmpl utils/crossloop.pl.tmpl utils/metaserver.pl utils/crossloop.web utils/scores.pl utils/player_dl.pl common/Makefile plugins/Makefile plugins/cfpython/Makefile devel/Makefile"
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
 # tests run on this system so they can be shared between configure
@@ -28678,7 +28678,8 @@ do
   "utils/scores.pl" ) CONFIG_FILES="$CONFIG_FILES utils/scores.pl" ;;
   "utils/player_dl.pl" ) CONFIG_FILES="$CONFIG_FILES utils/player_dl.pl" ;;
   "common/Makefile" ) CONFIG_FILES="$CONFIG_FILES common/Makefile" ;;
-  "plugin/Makefile" ) CONFIG_FILES="$CONFIG_FILES plugin/Makefile" ;;
+  "plugins/Makefile" ) CONFIG_FILES="$CONFIG_FILES plugins/Makefile" ;;
+  "plugins/cfpython/Makefile" ) CONFIG_FILES="$CONFIG_FILES plugins/cfpython/Makefile" ;;
   "devel/Makefile" ) CONFIG_FILES="$CONFIG_FILES devel/Makefile" ;;
   "depfiles" ) CONFIG_COMMANDS="$CONFIG_COMMANDS depfiles" ;;
   "include/autoconf.h" ) CONFIG_HEADERS="$CONFIG_HEADERS include/autoconf.h" ;;

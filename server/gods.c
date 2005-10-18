@@ -240,39 +240,10 @@ static int god_gives_present (object *op, object *god, treasure *tr)
  */
 void pray_at_altar(object *pl, object *altar, object *skill) {
     object *pl_god=find_god(determine_god(pl));
-    int return_pray_script; /* GROS : This is for return value of script */
-    event *evt;
 
-    /* GROS: Handle for plugin altar-parying (apply) event */
-    if ((evt = find_event(altar, EVENT_APPLY)) != NULL)
-    {
-        CFParm CFP;
-        CFParm* CFR;
-        int k, l, m;
-        uint32 n;
-        k = EVENT_APPLY;
-        l = SCRIPT_FIX_ALL;
-        m = 0;
-        n = 0;
-        CFP.Value[0] = &k;
-        CFP.Value[1] = pl;
-        CFP.Value[2] = altar;
-        CFP.Value[3] = NULL;
-        CFP.Value[4] = NULL;
-        CFP.Value[5] = &n;
-        CFP.Value[6] = &m;
-        CFP.Value[7] = &m;
-        CFP.Value[8] = &l;
-        CFP.Value[9] = (void*)evt->hook;
-        CFP.Value[10]= (void*)evt->options;
-        if (findPlugin(evt->plugin)>=0)
-        {
-            CFR = (PlugList[findPlugin(evt->plugin)].eventfunc) (&CFP);
-            return_pray_script = *(int *)(CFR->Value[0]);
-            free(CFR);
-            if (return_pray_script) return;
-        }
-    }
+    /* Lauwenmark: Handle for plugin altar-parying (apply) event */
+    if (execute_event(altar, EVENT_APPLY,pl,NULL,NULL,SCRIPT_FIX_ALL)!=0)
+        return;
 
     /* If non consecrate altar, don't do anything */
     if (!altar->other_arch) return;
@@ -282,7 +253,8 @@ void pray_at_altar(object *pl, object *altar, object *skill) {
 	become_follower(pl,&altar->other_arch->clone);
 	return;
 
-    } else if(!strcmp(pl_god->name,altar->other_arch->clone.name)) { 	/* pray at your gods altar */
+    } else if(!strcmp(pl_god->name,altar->other_arch->clone.name)) {
+        /* pray at your gods altar */
 	int bonus = (pl->stats.Wis+skill->level)/10;
 
 	/* we can get neg grace up faster */
@@ -315,7 +287,8 @@ void pray_at_altar(object *pl, object *altar, object *skill) {
 	 * is the opposing god - we need to verify that exists before
 	 * using its values.
 	 */
-	if(pl_god->other_arch && (altar->other_arch->name==pl_god->other_arch->name)) {
+        if(pl_god->other_arch &&
+           (altar->other_arch->name==pl_god->other_arch->name)) {
 	    angry=2;
 	    if(random_roll(0, skill->level+2, pl, PREFER_LOW)-5 > 0) {
 		object *tmp;

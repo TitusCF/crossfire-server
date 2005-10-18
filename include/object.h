@@ -287,7 +287,7 @@ extern int nroffreeobjects;
 /* This returns TRUE if the object is somethign that
  * should be displayed in the look window
  */
-#define LOOK_OBJ(ob) (!ob->invisible && ob->type!=PLAYER)
+#define LOOK_OBJ(ob) (!ob->invisible && ob->type!=PLAYER && ob->type!=EVENT_CONNECTOR)
 
 /* Used by update_object to know if the object being passed is
  * being added or removed.

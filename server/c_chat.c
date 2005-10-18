@@ -99,9 +99,6 @@ int command_orcknuckle(object *op, char *params)
 
 static int command_tell_all(object *op, char *params, int pri, int color, char *desc)
 {
-    int evtid;
-    CFParm CFP;
-
     if (op->contr->no_shout == 1){
 	new_draw_info(NDI_UNIQUE, 0,op,"You are no longer allowed to shout or chat.");
 	return 1;
@@ -113,14 +110,8 @@ static int command_tell_all(object *op, char *params, int pri, int color, char *
 	new_draw_info_format(NDI_UNIQUE | NDI_ALL | color, pri, NULL, 
 		 "%s %s: %s", op->name, desc, params);
  
-	/* GROS : Here we handle the SHOUT global event */
-	evtid = EVENT_SHOUT;
-	CFP.Value[0] = (void *)(&evtid);
-	CFP.Value[1] = (void *)(op);
-	CFP.Value[2] = (void *)(params);
-	/* Pass in priority - not sure if the plugin can use it or not */
-	CFP.Value[3] = (void *)(&pri);
-	GlobalEvent(&CFP);
+        /* Lauwenmark : Here we handle the SHOUT global event */
+        execute_global_event(EVENT_SHOUT,op,params,pri);
 	return 1;
     }
 }

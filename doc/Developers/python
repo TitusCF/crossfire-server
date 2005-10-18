@@ -1,21 +1,75 @@
-THE PYTHON PLUGIN
-=================
+THE PYTHON PLUGIN, VERSION 2.0
+===============================
+
+What is the Python Plugin ?
+---------------------------
+It is a plugin part of the Crossfire server that allows map-makers to create
+object behaviors using Python scripts instead of having to hardcode them in C.
+
+
+Converting from CFPython 0.x and 1.0
+------------------------------------
+A lot of things have changed which hopefully make your Python coder's life a
+little more comfortable.
+
+1. The library name is now "Crossfire", instead of the previous "CFPython". No,
+   that's not to annoy you without purpose. It will force you to think about
+   reading your old Python code and make the necessary conversions.
+2. Objects and Maps are now wrapped into Python objects. It means that instead
+   of writing "CFPython.Teleport(object,map,x,y)", you'll now have to write
+   "object.Teleport(map,x,y)". It is somewhat more logical and contributes to
+   cleaner Python code.
+3. The plugin event hook mechanism is now based on event objects contained in
+   WhoAmI's inventory.
+
+To make the transition as easy as possible, most functions of CFPython were
+converted using the following rules:
+- If the function was a getter/setter of an object or map attribute, it is now
+  available as a Python object attribute.
+  Examples: print CFPython.GetDamage(object) --> print object.Damage
+            CFPython.SetDamage(object, value) --> object.Damage = value
+- If the function was an action performed by an object/a map, or related to a
+  specific object/map, it is now available as a Python object method.
+  Examples: CFPython.Take(object, what) --> object.Take(what)
+            CFPython.CheckMap(what, map, x, y) --> map.Check(what,x,y)
+
+Only a few methods/attributes have changed names (this is the case for the seven
+base attributes STR,DEX,CON,INT,WIS,POW,CHA for example).
+
+Note that although it may seem that converting your old scripts to the new
+format will be a huge job, it is rather straightforward in most cases. It only
+took me an afternoon to convert and test all the scripts supplied with the
+default map set, and I wasn't even their original author.
+
 
 How do I hook a script to an object?
 ------------------------------------
 
-The field event_xxx connects a script to an object. It will be executed
-whenever the event "xxx" occurs. The base directory for the script is the map
-directory. The option field value is available to the script through the
-function GetEventOptions(). The plugin field should be "Python".
+There are special archetypes named event_xxx available. You need to put those in
+the inventory of the objects to which you want to connect your script.
 
-For example, to intercept the event "say":
-  event_say /python/script-for-say.py
-  event_say_plugin Python
-  event_say_options Option string
+Some fields of the event_xxx archetypes have a special meaning:
+
+- name: all parameters you want to pass to the scripts should go there;
+- title: this is the plugin identifier. For the Python plugin, it is "Python"
+         (without the quotes);
+- slaying: the name of the script file to execute when the event is triggered.
+        Note that this name is relative to the map base directory.
+
+Example:
+
+arch event_apply
+name parms
+title Python
+slaying test.py
+end
+
+The event will be triggered when the container object is applied and will run
+share/crossfire/maps/test.py, passing "parms" as a parameter string to the
+script.
 
 You of course need to write some Python code too... You do as usual, but
-remember to add an "import CFPython" to make all crossfire-specific functions
+remember to add an "import Crossfire" to make all crossfire-specific functions
 available in your script.
 
 
@@ -46,32 +100,68 @@ object: A crossfire object. (In fact, it is a long).
 map   : A crossfire map. (In fact, it is a long).
 string: A character string.
 
-A
-AcquireSpell(object who, object spell)
-  Make 'who' learn the spell identified by a spell object.
+1. Global Methods
++++++++++++++++++
+
+Those are provided by the Crossfire library directly, so to call them, you have
+to write something like: Crossfire.Method().
+
+ConfigDirectory()    (1.x name: GetConfigurationDirectory())
+  Return the name of the base directory containing Crossfire configuration
+  files.
+  Returns the directory name as a string.
+
+DirectionN()
+  Wrapper for the North direction.
+  Return value: an integer representing the direction.
+
+DirectionNE()
+  Wrapper for the North-East direction.
+  Return value: an integer representing the direction.
+
+DirectionE()
+  Wrapper for the East direction.
+  Return value: an integer representing the direction.
+
+DirectionSE()
+  Wrapper for the South-East direction.
+  Return value: an integer representing the direction.
+
+DirectionS()
+  Wrapper for the South direction.
+  Return value: an integer representing the direction.
+
+DirectionSW()
+  Wrapper for the South-West direction.
+  Return value: an integer representing the direction.
+
+DirectionW()
+  Wrapper for the West direction.
+  Return value: an integer representing the direction.
+
+DirectionNW()
+  Wrapper for the North-West direction.
+  Return value: an integer representing the direction.
+
+2. Object-Specific Methods
+++++++++++++++++++++++++++
+
+Those are provided by the Python object wrapper.
+
+ActivateRune(object activator)
+  Trigger the rune. Note that both the rune and its activator must be in the
+  same or in adjacent tiles of the same map.
   Does not return a value.
 
   Example:
-    who = CFPython.WhoIsActivator()
-    spell = CFPython.CreateObject("spell_large_fireball", (0, 0))
-    CFPython.AcquireSpell(who, spell)
-    CFPython.RemoveObject(spell)
+    who = Crossfire.WhoIsActivator()
+    rune = who.Map.CreateObject("rune_burning_hands", who.X, who.Y)
+    rune.ActivateRune(who)
 
-ActivateRune(object who, object rune)
-  Make 'who' trigger the rune. Note that both objects must be in the same or in
-  adjacent tiles of the same map.
-  Does not return a value.
-
-  Example:
-    who = CFPython.WhoIsActivator()
-    pos = (CFPython.GetXPosition(who)+1, CFPython.GetYPosition(who))
-    rune = CFPython.CreateObject("rune_burning_hands", pos)
-    CFPython.ActivateRune(who, rune)
-
-Apply(object who, object what, int flags)
-  Make an object 'who' apply an object 'what'. The applying object can be a
+Apply(object what, int flags)
+  Make the object apply an object 'what'. The applying object can be a
   player or a monster. The applied object need not be on the same tile as
-  'who'. 'what' specifies how to apply the object:
+  the applier. 'flags' specifies how to apply the object:
    - 0=toggle (apply/unapply) the object
    - 1=always apply the object
    - 2=always unapply the object
@@ -86,24 +176,116 @@ Apply(object who, object what, int flags)
    - 2=objects of that type can't be applied if not in inventory
 
   Example:
-    who = CFPython.WhoIsActivator()
-    pos = (CFPython.GetXPosition(who), CFPython.GetYPosition(who))
+    who = Crossfire.WhoIsActivator()
 
-    # create and apply a trigger object
-    trigger = CFPython.CreateObject("trigger", pos)
-    result = CFPython.Apply(who, trigger, 0); # returns 1
+# create and apply a trigger object
+    trigger = who.Map.CreateObject("trigger", who.X, who.Y)
+    result = who.Apply(trigger, 0); # returns 1
 
-    # create and apply an amulet
-    food = CFPython.CreateObject("amulet of sustenance", pos)
-    result = CFPython.Apply(who, food, 0); # returns 2
+# create and apply an amulet
+    food = who.Map.CreateObject("amulet of sustenance", who.X, who.Y)
+    result = who.Apply(food, 0); # returns 2
 
-    # create and apply/unapply a cursed shield
-    shield = CFPython.CreateObjectInside("small shield", who)
-    CFPython.SetCursed(shield, 1);
-    result = CFPython.Apply(who, shield, 1); # returns 1
-    result = CFPython.Apply(who, shield, 2); # returns 1 (it does not unapply the item)
-    result = CFPython.Apply(who, shield, 2|32); # returns 1
+# create and apply/unapply a cursed shield
+    shield = who.CreateObject("small shield")
+    shield.Cursed = 1;
+    result = who.Apply(shield, 1); # returns 1
+    result = who.Apply(shield, 2); # returns 1 (it does not unapply the item)
+    result = who.Apply(shield, 2|32); # returns 1
 
+LearnSpell(object spell)   (1.x name: AcquireSpell)
+  Learn the spell identified by a spell object.
+  Does not return a value.
+
+  Example:
+    who = Crossfire.WhoIsActivator()
+    spell = Crossfire.CreateObjectByName("spell_large_fireball")
+    who.LearnSpell(spell)
+    spell.Remove()
+
+Say(message text)
+  Say 'text'.
+  Does not return a value.
+
+3. Object-Specific Attributes
++++++++++++++++++++++++++++++
+
+CanCastSpell
+  Test if the object can cast spells.
+  Return value: test result as an integer - 0 if and only if false.
+
+CanPassThru
+  Test if the object has the 'pass through' ability.
+  Return value: test result as an integer - 0 if and only if false.
+
+CanPickUp
+  Test if the object can pick up stuff.
+  Return value: test result as an integer - 0 if and only if false.
+
+CanRoll
+  Test if the object can roll.
+  Return value: test result as an integer - 0 if and only if false.
+
+CanSeeInDark
+  Test if object has got infravision capabilities.
+  Return value: test result as an integer - 0 if and only if false.
+
+CanSeeInvisible
+  Test if the object can see invisible things.
+  Return value: test result as an integer - 0 if and only if false.
+
+CanUseArmour
+  Test if the object can wear armor.
+  Return value: test result as an integer - 0 if and only if false.
+
+CanUseBow
+  Test if the object can use a bow.
+  Return value: test result as an integer - 0 if and only if false.
+
+CanUseHorn
+  Test if the object can use a horn (and other musical instruments).
+  Return value: test result as an integer - 0 if and only if false.
+
+CanUseRing
+  Test if the object can use rings.
+  Return value: test result as an integer - 0 if and only if false.
+
+CanUseRod
+  Test if the object can use magical rods.
+  Return value: test result as an integer - 0 if and only if false.
+
+CanUseScroll
+  Test if the object can read scrolls.
+  Return value: test result as an integer - 0 if and only if false.
+
+CanUseSkill
+  Test if the object can use skills.
+  Return value: test result as an integer - 0 if and only if false.
+
+CanUseWand
+  Test if the object can use a magical wand.
+  Return value: test result as an integer - 0 if and only if false.
+
+CanUseWeapon
+  Test if the object can use a weapon.
+  Return value: test result as an integer - 0 if and only if false.
+
+
+4. Map-Specific Methods
++++++++++++++++++++++++
+
+Those are provided by the Python map wrapper.
+
+5. Map-Specific Attributes
+++++++++++++++++++++++++++
+
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+TODO: Finish converting the 1.x docs.
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
+A
 AttackTypeXxx()
   Wrapper for attack type Xxx. Possible values for Xxx are: Acid Blind
   Cancellation Chaos Cold Confusion Counterspell Death Depletion Disease Drain
@@ -117,65 +299,6 @@ BlocksView(object obj)
   Return value: test result as in integer - 0 if and only if false.
 
 C
-CanCastSpell(object obj)
-  Test if the object 'obj' can cast spells.
-  Return value: test result as an integer - 0 if and only if false.
-
-CanPassThru(object obj)
-  Test if the object 'obj' has the 'pass through' ability.
-  Return value: test result as an integer - 0 if and only if false.
-
-CanPickUp(object who)
-  Test if the object 'who' can be pick up stuff.
-  Return value: test result as an integer - 0 if and only if false.
-
-CanRoll(object who)
-  Test if the object 'who' can roll.
-  Return value: test result as an integer - 0 if and only if false.
-
-CanSeeInDark(object who)
-  Test if object 'who' has got infravision capabilities.
-  Return value: test result as an integer - 0 if and only if false.
-
-CanSeeInvisible(object who)
-  Test if the object 'who' can see invisible things.
-  Return value: test result as an integer - 0 if and only if false.
-
-CanUseArmour(object who)
-  Test if object 'who' can wear armor.
-  Return value: test result as an integer - 0 if and only if false.
-
-CanUseBow(object who)
-  Test if object 'who' can use a bow.
-  Return value: test result as an integer - 0 if and only if false.
-
-CanUseHorn(object who)
-  Test if object 'who' can use a horn (and other musical instruments).
-  Return value: test result as an integer - 0 if and only if false.
-
-CanUseRing(object who)
-  Test if object 'who' can use rings.
-  Return value: test result as an integer - 0 if and only if false.
-
-CanUseRod(object who)
-  Test if object 'who' can use magical rods.
-  Return value: test result as an integer - 0 if and only if false.
-
-CanUseScroll(object who)
-  Test if object 'who' can read scrolls.
-  Return value: test result as an integer - 0 if and only if false.
-
-CanUseSkill(object who)
-  Test if object 'who' can use skills.
-  Return value: test result as an integer - 0 if and only if false.
-
-CanUseWand(object who)
-  Test if object 'who' can use a magical wand.
-  Return value: test result as an integer - 0 if and only if false.
-
-CanUseWeapon(object who)
-  Test if object 'who' can use a weapon.
-  Return value: test result as an integer - 0 if and only if false.
 
 CastAbility(object who, object caster, string spell, int direction, string
   options)
@@ -311,38 +434,6 @@ DecreaseObjectNr(object ob, int nrof)
   Return value: the object ob if some items are still remaining or 0 if all
   objects are removed.
 
-DirectionN()
-  Wrapper for the North direction.
-  Return value: an integer representing the direction.
-
-DirectionNE()
-  Wrapper for the North-East direction.
-  Return value: an integer representing the direction.
-
-DirectionE()
-  Wrapper for the East direction.
-  Return value: an integer representing the direction.
-
-DirectionSE()
-  Wrapper for the South-East direction.
-  Return value: an integer representing the direction.
-
-DirectionS()
-  Wrapper for the South direction.
-  Return value: an integer representing the direction.
-
-DirectionSW()
-  Wrapper for the South-West direction.
-  Return value: an integer representing the direction.
-
-DirectionW()
-  Wrapper for the West direction.
-  Return value: an integer representing the direction.
-
-DirectionNW()
-  Wrapper for the North-West direction.
-  Return value: an integer representing the direction.
-
 DoKnowSpell(object who, string spell)
   Check if 'who' knows the spell by the name of 'spell'.
   Returns the spell object if 'who' knows the spell or 0 if not.
@@ -395,11 +486,6 @@ GetAttackType(object who)
 GetCharisma(object who)
   Get the Charisma value of the given object.
   Returns the charisma value as an integer.
-
-GetConfigurationDirectory()
-  Return the name of the base directory containing Crossfire configuration
-  files.
-  Returns the directory name as a string.
 
 GetConstitution(object who)
   Get the Constitution value of the given object.
@@ -950,14 +1036,7 @@ RemoveObject(object obj)
   they are dropped to the ground.
 
 S
-SaveObject(object obj)
-  Convert an object into its string representation. Use LoadObject() to
-  reconstruct the object.
-  Returns the string representation.
 
-Say(object who, message text)
-  Make 'who' say 'text'.
-  Does not return a value.
 
 SendCustomCommand(object player, string cmd)
   Send 'cmd' to the crossfire client of 'player'. Consult the crossfire
@@ -1025,28 +1104,6 @@ SetDexterity(object obj, int value)
 SetDirection(object who, int dir)
   Set the direction 'who' is currently moving.
   Does not return a value.
-
-SetEventHandler(object who, int event, string script)
-  Change the event handler (the script file name) of 'who' for the event number
-  'event' to 'script'. The parameter 'event' should be a value returned by
-  EventXxx(). Does not return a value.
-
-  Note: This function cannot add a new event handler to an object without one.
-
-SetEventOptions(object who, int event, string options)
-  Change the event options of 'who' for the event number 'event' to 'options'.
-  The parameter 'event' should be a value returned by EventXxx().
-  Does not return a value.
-
-  Note: This function cannot add a new event handler to an object without one.
-
-SetEventPlugin(object who, int event, string plugin)
-  Change the event plugin name of 'who' for the event number 'event' to
-  'plugin'. The parameter 'event' should be a value returned by EventXxx().
-  The Python plugin has the plugin name "Python".
-  Does not return a value.
-
-  Note: This function cannot add a new event handler to an object without one.
 
 SetFace(object obj, string anim)
   Set the face of an object 'obj' to 'anim'. 'anim' is an animation name.

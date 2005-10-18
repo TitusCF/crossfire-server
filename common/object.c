@@ -527,7 +527,6 @@ void reset_object(object *op) {
     op->materialname = NULL;
     op->lore = NULL;
     op->current_weapon_script = NULL;
-    op->events=NULL;
     clear_object(op);
 }
 
@@ -609,6 +608,7 @@ void clear_object(object *op) {
     op->below=NULL;
     op->above=NULL;
     op->inv=NULL;
+    op->events=NULL;
     op->container=NULL;
     op->env=NULL;
     op->more=NULL;

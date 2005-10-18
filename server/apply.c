@@ -1047,14 +1047,13 @@ int apply_container (object *op, object *sack)
 
 int esrv_apply_container (object *op, object *sack)
 {
-    event *evt;
     object *tmp=op->container;
-
     if(op->type!=PLAYER)
 	return 0; /* This might change */
 
     if (sack==NULL || sack->type != CONTAINER) {
-	LOG (llevError, "esrv_apply_container: %s is not container!\n",sack?sack->name:"NULL");
+        LOG (llevError,
+             "esrv_apply_container: %s is not container!\n",sack?sack->name:"NULL");
 	return 0;
     }
 
@@ -1068,36 +1067,9 @@ int esrv_apply_container (object *op, object *sack)
 	    CLEAR_FLAG (op->container, FLAG_WALK_OFF);
 	    CLEAR_FLAG (op->container, FLAG_FLY_OFF);
 	}
-	/* GROS: Handle for plugin close event */
-    if ((evt = find_event(tmp, EVENT_CLOSE)) != NULL)
-	{
-		CFParm CFP;
-		CFParm* CFR;
-		int k, l, m;
-		uint32 n;
-		int rtn_script = 0;
-		m = 0;
-		n = 0;
-		k = EVENT_CLOSE;
-		l = SCRIPT_FIX_ALL;
-		CFP.Value[0] = &k;
-		CFP.Value[1] = op;
-		CFP.Value[2] = tmp;
-		CFP.Value[3] = NULL;
-		CFP.Value[4] = NULL;
-		CFP.Value[5] = &n;
-		CFP.Value[6] = &m;
-		CFP.Value[7] = &m;
-		CFP.Value[8] = &l;
-		CFP.Value[9] = (void*)evt->hook;
-		CFP.Value[10]= (void*)evt->options;
-		if (findPlugin(evt->plugin)>=0)
-		{
-			CFR = (PlugList[findPlugin(evt->plugin)].eventfunc) (&CFP);
-			rtn_script = *(int *)(CFR->Value[0]);
-			if (rtn_script!=0) return 1;
-		}
-	}
+        /* Lauwenmark: Handle for plugin close event */
+        if (execute_event(tmp, EVENT_CLOSE,op,NULL,NULL,SCRIPT_FIX_ALL)!=0)
+            return 1;
 	new_draw_info_format(NDI_UNIQUE, 0, op, "You close %s.",
 		      query_name(op->container));
 	CLEAR_FLAG(op->container, FLAG_APPLIED);
@@ -1361,8 +1333,6 @@ static void apply_sign (object *op, object *sign, int autoapply)
 void move_apply (object *trap, object *victim, object *originator)
 {
   static int recursion_depth = 0;
-  event *evt;
-
   /* move_apply() is the most likely candidate for causing unwanted and
    * possibly unlimited recursion. */
   /* The following was changed because it was causing perfeclty correct
@@ -1377,41 +1347,16 @@ void move_apply (object *trap, object *victim, object *originator)
     return;
   }
   recursion_depth++;
-  if (trap->head) trap=trap->head;
-  /* GROS: Handle for plugin close event */
-  if ((evt = find_event(trap, EVENT_TRIGGER))!=NULL)
-  {
-    CFParm CFP;
-    CFParm* CFR;
-    int k, l, m;
-    uint32 n;
-    int rtn_script = 0;
-    m = 0;
-    n = 0;
-    k = EVENT_TRIGGER;
-    l = SCRIPT_FIX_ALL;
-    CFP.Value[0] = &k;
-    CFP.Value[1] = trap;
-    CFP.Value[2] = originator;
-    CFP.Value[3] = victim;
-    CFP.Value[4] = NULL;
-    CFP.Value[5] = &n;
-    CFP.Value[6] = &m;
-    CFP.Value[7] = &m;
-    CFP.Value[8] = &l;
-    CFP.Value[9] = (void*)evt->hook;
-    CFP.Value[10]= (void*)evt->options;
-    if (findPlugin(evt->plugin)>=0)
-    {
-      CFR = (PlugList[findPlugin(evt->plugin)].eventfunc) (&CFP);
-      rtn_script = *(int *)(CFR->Value[0]);
-      if (rtn_script!=0) return;
-    }
-  }
+    if (trap->head)
+        trap=trap->head;
+    /* Lauwenmark: Handle for plugin trigger event */
+    if (execute_event(trap, EVENT_TRIGGER,originator,victim,NULL,SCRIPT_FIX_ALL)!=0)
+        return;
   switch (trap->type)
   {
   case PLAYERMOVER:
-    if (trap->attacktype && (trap->level || victim->type!=PLAYER) && !should_director_abort(trap, victim)) {
+            if (trap->attacktype && (trap->level || victim->type!=PLAYER) &&
+                !should_director_abort(trap, victim)) {
 	if (!trap->stats.maxsp) trap->stats.maxsp=2.0;
 	/* Is this correct?  From the docs, it doesn't look like it
 	 * should be divided by trap->speed
@@ -1422,7 +1367,8 @@ void move_apply (object *trap, object *victim, object *originator)
 	 * getting permanently paralyzed.
 	 */
 	if (victim->speed_left<-50.0) victim->speed_left=-50.0;
-/*	LOG(llevDebug, "apply, playermove, player speed_left=%f\n", victim->speed_left);*/
+                /*	LOG(llevDebug, "apply, playermove, player speed_left=%f\n",
+                 victim->speed_left);*/
     }
     goto leave;
 
@@ -1455,13 +1401,13 @@ void move_apply (object *trap, object *victim, object *originator)
       goto leave;
     /* fallthrough */
   case ARROW:
-
       /* bad bug: monster throw a object, make a step forwards, step on object ,
        * trigger this here and get hit by own missile - and will be own enemy.
        * Victim then is his own enemy and will start to kill herself (this is
        * removed) but we have not synced victim and his missile. To avoid senseless
        * action, we avoid hits here */
-      if ((QUERY_FLAG (victim, FLAG_ALIVE) && trap->speed) && trap->owner != victim)
+            if ((QUERY_FLAG (victim, FLAG_ALIVE) && trap->speed) &&
+                 trap->owner != victim)
       hit_with_arrow (trap, victim);
     goto leave;
 
@@ -1501,7 +1447,9 @@ void move_apply (object *trap, object *victim, object *originator)
     if (convert_item (victim, trap) < 0) {
 	object *op;
 
-	new_draw_info_format(NDI_UNIQUE, 0, originator, "The %s seems to be broken!", query_name(trap));
+                new_draw_info_format(NDI_UNIQUE, 0, originator,
+                                     "The %s seems to be broken!",
+                                     query_name(trap));
 
 	op = get_archetype("burnout");
 	if (op != NULL) {
@@ -1545,7 +1493,8 @@ void move_apply (object *trap, object *victim, object *originator)
 	/* Basically, don't show exits leading to random maps the
 	 * players output.
 	 */
-	if (trap->msg && strncmp(EXIT_PATH(trap),"/!",2) && strncmp(EXIT_PATH(trap), "/random/", 8))
+                if (trap->msg && strncmp(EXIT_PATH(trap),"/!",2)
+                    && strncmp(EXIT_PATH(trap), "/random/", 8))
 	    new_draw_info (NDI_NAVY, 0, victim, trap->msg);
       enter_exit (victim, trap);
     }
@@ -1580,9 +1529,7 @@ void move_apply (object *trap, object *victim, object *originator)
   case RUNE:
   case TRAP:
     if (trap->level && QUERY_FLAG (victim, FLAG_ALIVE))
-    {
         spring_trap(trap, victim);
-    };
     goto leave;
 
   default:
@@ -1603,7 +1550,6 @@ static void apply_book (object *op, object *tmp)
 {
     int lev_diff;
     object *skill_ob;
-    event *evt;
 
     if(QUERY_FLAG(op, FLAG_BLIND)&&!QUERY_FLAG(op,FLAG_WIZ)) {
       new_draw_info(NDI_UNIQUE, 0,op,"You are unable to read while blind.");
@@ -1640,8 +1586,11 @@ static void apply_book (object *op, object *tmp)
     }
 
 
-    /* GROS: Handle for plugin trigger event */
-    if ((evt = find_event(tmp, EVENT_APPLY)) != NULL)
+    /* Lauwenmark: Handle for plugin book event */
+    /*printf("Book apply: %s\n", tmp->name);
+    execute_event(tmp, EVENT_APPLY,op,NULL,SCRIPT_FIX_ALL);
+    printf("Book applied: %s\n", tmp->name);*/
+    /*if ((evt = find_event(tmp, EVENT_APPLY)) != NULL)
     {
         CFParm CFP;
         int k, l, m;
@@ -1666,7 +1615,7 @@ static void apply_book (object *op, object *tmp)
         if (findPlugin(evt->plugin)>=0)
             ((PlugList[findPlugin(evt->plugin)].eventfunc) (&CFP));
     }
-    else{
+    else*/{
     	readable_message_type* msgType = get_readable_message_type(tmp);
     	draw_ext_info_format(NDI_UNIQUE | NDI_NAVY, 0, op,
                 msgType->message_type, msgType->message_subtype,
@@ -2378,9 +2327,6 @@ int is_legal_2ways_exit (object* op, object *exit)
 
 int manual_apply (object *op, object *tmp, int aflag)
 {
-  int rtn_script;
-  event *evt;
-
   if (tmp->head) tmp=tmp->head;
 
   if (QUERY_FLAG (tmp, FLAG_UNPAID) && ! QUERY_FLAG (tmp, FLAG_APPLIED)) {
@@ -2396,35 +2342,9 @@ int manual_apply (object *op, object *tmp, int aflag)
   if (op->type != PLAYER && tmp->type == TREASURE)
     return 0;
 
-  /* GROS: Handle for plugin trigger event */
-  if ((evt = find_event(tmp, EVENT_APPLY)) != NULL)
-  {
-    CFParm CFP;
-    CFParm* CFR;
-    int k, l, m;
-    uint32 n;
-    m = 0;
-    n = aflag;
-    k = EVENT_APPLY;
-    l = SCRIPT_FIX_ALL;
-    CFP.Value[0] = &k;
-    CFP.Value[1] = op;
-    CFP.Value[2] = tmp;
-    CFP.Value[3] = NULL;
-    CFP.Value[4] = NULL;
-    CFP.Value[5] = &n;
-    CFP.Value[6] = &m;
-    CFP.Value[7] = &m;
-    CFP.Value[8] = &l;
-    CFP.Value[9] = (void*)evt->hook;
-    CFP.Value[10]= (void*)evt->options;
-    if (findPlugin(evt->plugin)>=0)
-    {
-        CFR = (PlugList[findPlugin(evt->plugin)].eventfunc) (&CFP);
-        rtn_script = *(int *)(CFR->Value[0]);
-        if (rtn_script!=0) return 1;
-    }
-  }
+    /* Lauwenmark: Handle for plugin apply event */
+    if (execute_event(tmp, EVENT_APPLY,op,NULL,NULL,SCRIPT_FIX_ALL)!=0)
+        return 1;
   switch (tmp->type)
   {
   case CF_HANDLE:
@@ -2449,11 +2369,12 @@ int manual_apply (object *op, object *tmp, int aflag)
     if (op->type != PLAYER)
       return 0;
     if( ! EXIT_PATH (tmp) || !is_legal_2ways_exit(op,tmp)) {
-      new_draw_info_format(NDI_UNIQUE, 0, op,
-	"The %s is closed.",query_name(tmp));
+            new_draw_info_format(NDI_UNIQUE, 0, op, "The %s is closed.",
+                                 query_name(tmp));
     } else {
 	/* Don't display messages for random maps. */
-	if (tmp->msg && strncmp(EXIT_PATH(tmp),"/!",2) && strncmp(EXIT_PATH(tmp), "/random/", 8))
+            if (tmp->msg && strncmp(EXIT_PATH(tmp),"/!",2) &&
+                strncmp(EXIT_PATH(tmp), "/random/", 8))
 	    new_draw_info (NDI_NAVY, 0, op, tmp->msg);
 	enter_exit(op,tmp);
     }
@@ -2493,7 +2414,7 @@ int manual_apply (object *op, object *tmp, int aflag)
     (void) apply_potion(op, tmp);
     return 1;
 
-/* Eneq(@csd.uu.se): Handle apply on containers. */
+    /* Eneq(@csd.uu.se): Handle apply on containers. */
   case CLOSE_CON:
     if (op->type==PLAYER)
       (void) esrv_apply_container (op, tmp->env);
@@ -3108,7 +3029,6 @@ int apply_special (object *who, object *op, int aflags)
 {
     int basic_flag = aflags & AP_BASIC_FLAGS;
     object *tmp, *tmp2, *skop=NULL;
-    event *evt;
     int i;
 
     if(who==NULL) {
@@ -3222,12 +3142,12 @@ int apply_special (object *who, object *op, int aflags)
 
 	    (void) change_abil (who,op);
 	    /* GROS: update the current_weapon_script field (used with EVENT_ATTACK for weapons) */
-        if ((evt = find_event(op, EVENT_ATTACK)) != NULL) {
+        /*if ((evt = find_event(op, EVENT_ATTACK)) != NULL) {
 		LOG(llevDebug, "Scripting Weapon wielded\n");
 		if (who->current_weapon_script) free_string(who->current_weapon_script);
 		who->current_weapon_script=add_string(query_name(op));
 	    }
-	    who->current_weapon = op;
+     who->current_weapon = op;*/
 	    break;
 
 	case ARMOUR:

@@ -1640,60 +1640,26 @@ static int do_talk_npc(object* op, object* npc, object* override, const char* tx
 
 int talk_to_npc(object *op, object *npc, const char *txt) {
     object *cobj;
-    CFParm CFP;
     int k, l, m;
     uint32 n;
-    event *evt;
 
     /* Move this commone area up here - shouldn't cost much extra cpu
      * time, and makes the function more readable */
-    k = EVENT_SAY;
-    l = SCRIPT_FIX_ALL;
-    m = 0;
-    n = 0;
-    CFP.Value[0] = &k;
-    CFP.Value[1] = op;
-    CFP.Value[4] = (void*)txt;
-    CFP.Value[5] = &n;
-    CFP.Value[6] = &m;
-    CFP.Value[7] = &m;
-    CFP.Value[8] = &l;
-
-    /* GROS: Handle for plugin say event */
-    if ((evt = find_event(npc, EVENT_SAY))!=NULL)
-    {
-	CFP.Value[2] = npc;
-	CFP.Value[3] = NULL;
-	CFP.Value[9] = (void*)evt->hook;
-	CFP.Value[10]= (void*)evt->options;
-	if (findPlugin(evt->plugin)>=0)
-	{
-	    ((PlugList[findPlugin(evt->plugin)].eventfunc) (&CFP));
+    /* Lauwenmark: Handle for plugin say event */
+    if (op==npc) return 0;
+    if (execute_event(npc, EVENT_SAY,op,NULL,txt,SCRIPT_FIX_ALL)!=0)
 	    return 0;
-	}
-    }
-    /* GROS - Here we let the objects inside inventories hear and answer, too. */
+    /* Lauwenmark - Here we let the objects inside inventories hear and answer, too. */
     /* This allows the existence of "intelligent" weapons you can discuss with */
     for(cobj=npc->inv;cobj!=NULL; cobj = cobj->below)
     {
-        if ((evt = find_event(cobj, EVENT_SAY)) != NULL)
-        {
-            CFP.Value[2] = cobj;
-            CFP.Value[3] = npc;
-            CFP.Value[9] = (void*)evt->hook;
-            CFP.Value[10]= (void*)evt->options;
-            if (findPlugin(evt->plugin)>=0)
-            {
-                ((PlugList[findPlugin(evt->plugin)].eventfunc) (&CFP));
+        if (execute_event(cobj, EVENT_SAY,npc,NULL,txt,SCRIPT_FIX_ALL)!=0)
                 return 0;
             }
-	}
-    }
     for ( cobj = npc->inv; cobj; cobj = cobj->below )
         if ( quest_is_override_compatible( cobj, op ) )
             if ( do_talk_npc( op, npc, cobj, txt ) )
                 return 1;
-
     return do_talk_npc( op, npc, npc, txt );
 }
 

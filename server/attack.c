@@ -646,59 +646,21 @@ static int attack_ob_simple (object *op, object *hitter, int base_dam,
     if (get_attack_mode (&op, &hitter, &simple_attack))
         goto error;
 
-    /* GROS: Handle for plugin attack event */
-    if ((evt = find_event(op, EVENT_ATTACK)) != NULL)
-    {
-        CFParm CFP;
-        int k, l;
-        uint32 n;
-        k = EVENT_ATTACK;
-        l = SCRIPT_FIX_ALL;
-        n = 0;
-        CFP.Value[0] = &k;
-        CFP.Value[1] = hitter;
-        CFP.Value[2] = hitter;
-        CFP.Value[3] = op;
-        CFP.Value[4] = NULL;
-        CFP.Value[5] = &n;
-        CFP.Value[6] = &base_dam;
-        CFP.Value[7] = &base_wc;
-        CFP.Value[8] = &l;
-        CFP.Value[9] = (void*)evt->hook;
-        CFP.Value[10]= (void*)evt->options;
-        if (findPlugin(evt->plugin)>=0)
-            ((PlugList[findPlugin(evt->plugin)].eventfunc) (&CFP));
-    }
-    /* GROS: This is used to handle script_weapons with weapons. Only used for players */
+    /* Lauwenmark: Handle for plugin attack event */
+    execute_event(op, EVENT_ATTACK,hitter,hitter,NULL,SCRIPT_FIX_ALL);
+
+    /* Lauwenmark: This is used to handle script_weapons with weapons.
+     * Only used for players.
+     */
     if (hitter->type==PLAYER)
     {
         if (hitter->current_weapon != NULL)
         {
-            /* GROS: Handle for plugin attack event */
-            if ((evt = find_event(hitter->current_weapon, EVENT_ATTACK)) != NULL)
-            {
-                CFParm CFP;
-                int k, l;
-                uint32 n;
-                n = 0;
-                k = EVENT_ATTACK;
-                l = SCRIPT_FIX_ALL;
-                CFP.Value[0] = &k;
-                CFP.Value[1] = hitter;
-                CFP.Value[2] = hitter->current_weapon;
-                CFP.Value[3] = op;
-                CFP.Value[4] = NULL;
-                CFP.Value[5] = &n;
-                CFP.Value[6] = &base_dam;
-                CFP.Value[7] = &base_wc;
-                CFP.Value[8] = &l;
-                CFP.Value[9] = (void*)evt->hook;
-                CFP.Value[10]= (void*)evt->options;
-		if (findPlugin(evt->plugin)>=0)
-		    (PlugList[findPlugin(evt->plugin)].eventfunc) (&CFP);
+            /* Lauwenmark: Handle for plugin attack event */
+            execute_event(hitter, EVENT_ATTACK,hitter->current_weapon,
+                          op,NULL,SCRIPT_FIX_ALL);
+        }
             }
-        };
-    };
     op_tag = op->count;
     hitter_tag = hitter->count;
 
@@ -876,7 +838,6 @@ object *hit_with_arrow (object *op, object *victim)
     int sretval = 0; /* GROS - Needed for script return value */
     tag_t victim_tag, hitter_tag;
     sint16 victim_x, victim_y;
-    event *evt;
 
     /* Disassemble missile */
     if (op->inv) {
@@ -898,34 +859,8 @@ object *hit_with_arrow (object *op, object *victim)
     victim_y = victim->y;
     victim_tag = victim->count;
     hitter_tag = hitter->count;
-    /* GROS: Handling plugin attack event for thrown items */
-    if ((evt = find_event(op, EVENT_ATTACK)) != NULL)
-    {
-        CFParm CFP;
-        CFParm* CFR;
-        int k, l;
-        uint32 n;
-        k = EVENT_ATTACK;
-        l = SCRIPT_FIX_ALL;
-        n = 0;
-        CFP.Value[0] = &k;
-        CFP.Value[1] = hitter;
-        CFP.Value[2] = op;
-        CFP.Value[3] = victim;
-        CFP.Value[4] = NULL;
-        CFP.Value[5] = &n;
-        CFP.Value[6] = &(op->stats.dam);
-        CFP.Value[7] = &(op->stats.wc);
-        CFP.Value[8] = &l;
-        CFP.Value[9] = (void*)evt->hook;
-        CFP.Value[10]= (void*)evt->options;
-        if (findPlugin(evt->plugin)>=0)
-        {
-            CFR = (PlugList[findPlugin(evt->plugin)].eventfunc) (&CFP);
-            sretval = *(int *)(CFR->Value[0]);
-        }
-    }
-    else
+    /* Lauwenmark: Handling plugin attack event for thrown items */
+    if (execute_event(op, EVENT_ATTACK,hitter,victim,NULL,SCRIPT_FIX_ALL) == 0)
         hit_something = attack_ob_simple (victim, hitter, op->stats.dam,
                                         op->stats.wc);
 
@@ -1369,49 +1304,17 @@ int kill_object(object *op,int dam, object *hitter, int type)
     int pk=0;         /* true if op and what controls hitter are both players*/
     int killed_script_rtn = 0;
     object *owner=NULL;
-    int evtid;
-    CFParm CFP;
     object *skop=NULL;
-    event *evt;
 
     if (op->stats.hp>=0)
 	return -1;
 
-    /* GROS: Handle for plugin death event */
-    if ((evt = find_event(op, EVENT_DEATH)) != NULL)
-    {
-        CFParm* CFR;
-        int k, l, m;
-        uint32 n;
-        k = EVENT_DEATH;
-        l = SCRIPT_FIX_ALL;
-        m = 0;
-        n = type;
-        CFP.Value[0] = &k;
-        CFP.Value[1] = hitter;
-        CFP.Value[2] = op;
-        CFP.Value[3] = NULL;
-        CFP.Value[4] = NULL;
-        CFP.Value[5] = &n;
-        CFP.Value[6] = &m;
-        CFP.Value[7] = &m;
-        CFP.Value[8] = &l;
-        CFP.Value[9] = (void*)evt->hook;
-        CFP.Value[10]= (void*)evt->options;
-        if (findPlugin(evt->plugin)>=0)
-        {
-            CFR =(PlugList[findPlugin(evt->plugin)].eventfunc) (&CFP);
-            killed_script_rtn = *(int *)(CFR->Value[0]);
-            if (killed_script_rtn)
+    /* Lauwenmark: Handle for plugin death event */
+    if (execute_event(op, EVENT_DEATH,hitter,NULL,NULL,SCRIPT_FIX_ALL)!=0)
                 return 0;
-        }
-    }
-    /* GROS: Handle for the global kill event */
-    evtid = EVENT_GKILL;
-    CFP.Value[0] = (void *)(&evtid);
-    CFP.Value[1] = (void *)(hitter);
-    CFP.Value[2] = (void *)(op);
-    GlobalEvent(&CFP);
+    /* Lauwenmark: Handle for the global kill event */
+    execute_global_event(EVENT_GKILL, op, hitter);
+
     /* maxdam needs to be the amount of damage it took to kill
      * this creature.  The function(s) that call us have already
      * adjusted the creatures HP total, so that is negative.

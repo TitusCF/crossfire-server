@@ -290,8 +290,6 @@ void leave_map(object *op)
  */
 static void enter_map(object *op, mapstruct *newmap, int x, int y) {
     mapstruct *oldmap = op->map;
-    int evtid;
-    CFParm CFP;
 
     if (out_of_map(newmap, x, y)) {
 	LOG(llevError,"enter_map: supplied coordinates are not within the map! (%s: %d, %d)\n",
@@ -338,23 +336,17 @@ static void enter_map(object *op, mapstruct *newmap, int x, int y) {
 	remove_ob(op);
     if (op->map!=NULL)
     {
-    	/* GROS : Here we handle the MAPLEAVE global event */
-    	evtid = EVENT_MAPLEAVE;
-    	CFP.Value[0] = (void *)(&evtid);
-    	CFP.Value[1] = (void *)(op);
-    	GlobalEvent(&CFP);
-    };
+        /* Lauwenmark : Here we handle the MAPLEAVE global event */
+        execute_global_event(EVENT_MAPLEAVE, op);
+    }
     /* remove_ob clears these so they must be reset after the remove_ob call */
     op->x = x;
     op->y = y;
     op->map = newmap;
     insert_ob_in_map(op,op->map,NULL,INS_NO_WALK_ON);
 
-    /* GROS : Here we handle the MAPENTER global event */
-    evtid = EVENT_MAPENTER;
-    CFP.Value[0] = (void *)(&evtid);
-    CFP.Value[1] = (void *)(op);
-    GlobalEvent(&CFP);
+    /* Lauwenmark : Here we handle the MAPENTER global event */
+    execute_global_event(EVENT_MAPENTER, op);
 
     if (!op->contr->hidden)
 	newmap->players++;
@@ -688,7 +680,6 @@ static void enter_unique_map(object *op, object *exit_ob)
 void enter_exit(object *op, object *exit_ob) {
     #define PORTAL_DESTINATION_NAME "Town portal destination" /* this one should really be in a header file */
     object *tmp;
-
     /* It may be nice to support other creatures moving across
      * exits, but right now a lot of the code looks at op->contr,
      * so thta is an RFE.
@@ -748,7 +739,8 @@ void enter_exit(object *op, object *exit_ob) {
 		else
 		    newmap = ready_map_name(EXIT_PATH(exit_ob), 0);
 	    }
-	    if (!newmap) {
+            if (!newmap)
+            {
 		new_draw_info_format(NDI_UNIQUE, 0, op, "The %s is closed.", exit_ob->name);
 		return;
 	    }
@@ -810,8 +802,11 @@ void enter_exit(object *op, object *exit_ob) {
 	 * us.
 	 */
 	newmap = ready_map_name(op->contr->maplevel, flags);
-	if (!newmap) {
-	    LOG(llevError,"enter_exit: Pathname to map does not exist! (%s)\n", op->contr->maplevel);
+        if (!newmap)
+        {
+            LOG(llevError,
+                "enter_exit: Pathname to map does not exist! (%s)\n",
+                op->contr->maplevel);
 	    newmap = ready_map_name(settings.emergency_mapname, 0);
 	    op->x = settings.emergency_x;
 	    op->y = settings.emergency_y;
@@ -1146,8 +1141,6 @@ void cleanup()
 
 void leave(player *pl, int draw_exit) {
     char buf[MAX_BUF];
-    int evtid;
-    CFParm CFP;
 
     if (pl!=NULL) {
 	/* We do this so that the socket handling routine can do the final
@@ -1156,13 +1149,9 @@ void leave(player *pl, int draw_exit) {
 	 */
         if (draw_exit==0)
         {
-            /* GROS : Here we handle the LOGOUT global event */
-            evtid = EVENT_LOGOUT;
-            CFP.Value[0] = (void *)(&evtid);
-            CFP.Value[1] = (void *)(pl);
-            CFP.Value[2] = (void *)(pl->socket.host);
-            GlobalEvent(&CFP);
-        };
+            /* Lauwenmark : Here we handle the LOGOUT global event */
+            execute_global_event(EVENT_LOGOUT, pl, pl->socket.host);
+        }
 	pl->socket.status=Ns_Dead;
 	LOG(llevInfo,"LOGOUT: Player named %s from ip %s\n", pl->ob->name,
 	    pl->socket.host);
@@ -1279,8 +1268,6 @@ void do_specials() {
 
 int main(int argc, char **argv)
 {
-  int evtid;
-  CFParm CFP;
 #ifdef WIN32 /* ---win32 this sets the win32 from 0d0a to 0a handling */
     _fmode = _O_BINARY ;
     bRunning = 1;
@@ -1305,10 +1292,8 @@ int main(int argc, char **argv)
     doeric_server();
     process_events(NULL);    /* "do" something with objects with speed */
     cftimer_process_timers();/* Process the crossfire Timers */    
-    /* GROS : Here we handle the CLOCK global event */
-    evtid = EVENT_CLOCK;
-    CFP.Value[0] = (void *)(&evtid);
-    GlobalEvent(&CFP);
+    /* Lauwenmark : Here we handle the CLOCK global event */
+    execute_global_event(EVENT_CLOCK);
     check_active_maps(); /* Removes unused maps after a certain timeout */
     do_specials();       /* Routines called from time to time. */
 

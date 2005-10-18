@@ -137,3 +137,17 @@ void clean_friendly_list() {
 	LOG(llevDebug,"clean_friendly_list: Removed %d bogus links\n", count);
 }
 
+/* Checks if the given object is already in the friendly list or not
+ * Lauwenmark - 31/07/05
+ */
+int is_friendly(object* op)
+{
+    objectlink *ol;
+
+    for(ol=first_friendly_object;ol!=NULL;ol=ol->next)
+        if (ol->ob == op)
+            return 1;
+
+    return 0;
+}
+

@@ -5,7 +5,7 @@ AC_INIT([crossfire], [1.8.0], [crossfire-devel@listserv.real-time.com])
 AC_CONFIG_AUX_DIR(utils)
 AC_CONFIG_SRCDIR([server/main.c])
 AM_INIT_AUTOMAKE
-AM_CONFIG_HEADER([include/autoconf.h])
+AM_CONFIG_HEADER(include/autoconf.h)
 
 AM_MAINTAINER_MODE
 
@@ -225,7 +225,7 @@ if test "x$cf_have_libdl" = "xyes" ; then
 	###############
 	# Python plugin
 	CF_CHECK_PYTHON(
-		[PLUGIN_PYTHON="plugin_python.la"],
+		[PLUGIN_PYTHON="cfpython.la"],
 		[AC_MSG_NOTICE([No Python found. Python plugin will not be built.])]
 	)
 	dnl *** Put other plugins configuration code here ***
@@ -246,5 +246,5 @@ AC_OUTPUT([Makefile
 	include/Makefile utils/Makefile lib/checkarch.pl
 	lib/collect.pl utils/add_throw.perl utils/crossloop.tmpl utils/crossloop.pl.tmpl
 	utils/metaserver.pl utils/crossloop.web utils/scores.pl utils/player_dl.pl
-	common/Makefile plugin/Makefile devel/Makefile
+	common/Makefile plugins/Makefile plugins/cfpython/Makefile plugins/cfanim/Makefile devel/Makefile
 	 ])

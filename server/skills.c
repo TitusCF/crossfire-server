@@ -1079,7 +1079,6 @@ void meditate (object *pl, object *skill) {
 static int write_note(object *pl, object *item, const char *msg, object *skill) {
     char buf[BOOK_BUF]; 
     object *newBook = NULL;
-    event *evt;
 
     /* a pair of sanity checks */
     if(!item||item->type!=BOOK) return 0;
@@ -1094,31 +1093,10 @@ static int write_note(object *pl, object *item, const char *msg, object *skill) 
 	new_draw_info(NDI_UNIQUE,0,pl,"Trying to cheat now are we?");
 	return 0;
     }
-    /* GROS: Handle for plugin book writing (trigger) event */
-    if ((evt = find_event(item, EVENT_TRIGGER)) != NULL) {
-	CFParm CFP;
-	int k, l, m;
-	uint32 n;
-	k = EVENT_TRIGGER;
-	l = SCRIPT_FIX_ALL;
-	m = 0;
-	n = 0;
-	CFP.Value[0] = &k;
-	CFP.Value[1] = pl;
-	CFP.Value[2] = item;
-	CFP.Value[3] = NULL;
-	CFP.Value[4] = ( void* )msg;
-	CFP.Value[5] = &n;
-	CFP.Value[6] = &m;
-	CFP.Value[7] = &m;
-	CFP.Value[8] = &l;
-	CFP.Value[9] = (void*)evt->hook;
-	CFP.Value[10]= (void*)evt->options;
-	if (findPlugin(evt->plugin)>=0) {
-	    ((PlugList[findPlugin(evt->plugin)].eventfunc) (&CFP));
+
+    /* Lauwenmark: Handle for plugin book writing (trigger) event */
+    if (execute_event(item, EVENT_TRIGGER,pl,NULL,msg,SCRIPT_FIX_ALL)!=0)
 	    return strlen(msg);
-	}
-    }
 
     buf[0] = 0;
     if(!book_overflow(item->msg,msg,BOOK_BUF)) { /* add msg string to book */
@@ -1140,13 +1118,18 @@ static int write_note(object *pl, object *item, const char *msg, object *skill) 
 	} else {
 	    if (item->msg) free_string(item->msg);
 	    item->msg=add_string(buf); 
-	    /* This shouldn't be necessary - the object hasn't changed in any visible way */
-/*	    esrv_send_item(pl, item);*/
+            /* This shouldn't be necessary - the object hasn't changed in any
+             * visible way
+             */
+            /*	    esrv_send_item(pl, item);*/
 	}
-	new_draw_info_format(NDI_UNIQUE,0,pl, "You write in the %s.",query_short_name(item));
+        new_draw_info_format(NDI_UNIQUE,0,pl, "You write in the %s.",
+                             query_short_name(item));
 	return strlen(msg);
     } else
-	new_draw_info_format(NDI_UNIQUE,0,pl, "Your message won't fit in the %s!",query_short_name(item)); 
+        new_draw_info_format(NDI_UNIQUE,0,pl,
+                             "Your message won't fit in the %s!",
+                             query_short_name(item));
 
     return 0;
 }
@@ -1424,7 +1407,6 @@ static int do_throw(object *op, object *part, object *toss_item, int dir, object
     tag_t left_tag;
     int eff_str = 0,maxc,str=op->stats.Str,dam=0;
     int pause_f,weight_f=0;
-    event *evt;
     float str_factor=1.0,load_factor=1.0,item_factor=1.0;
 
     if(throw_ob==NULL) {
@@ -1646,30 +1628,8 @@ static int do_throw(object *op, object *part, object *toss_item, int dir, object
     /* need to put in a good sound for this */
     play_sound_map(op->map, op->x, op->y, SOUND_THROW_OBJ);
 #endif
-/* GROS - Now we can call the associated script_throw event (if any) */
-    if ((evt = find_event(throw_ob, EVENT_THROW)) != NULL)
-    {
-        CFParm CFP;
-        int k, l, m;
-        uint32 n;
-        k = EVENT_THROW;
-        l = SCRIPT_FIX_ACTIVATOR;
-        m = 0;
-        n = 0;
-        CFP.Value[0] = &k;
-        CFP.Value[1] = op;
-        CFP.Value[2] = throw_ob;
-        CFP.Value[3] = NULL;
-        CFP.Value[4] = NULL;
-        CFP.Value[5] = &n;
-        CFP.Value[6] = &m;
-        CFP.Value[7] = &m;
-        CFP.Value[8] = &l;
-        CFP.Value[9] = (void*)evt->hook;
-        CFP.Value[10]= (void*)evt->options;
-        if (findPlugin(evt->plugin)>=0)
-            ((PlugList[findPlugin(evt->plugin)].eventfunc) (&CFP));
-    }
+/* Lauwenmark - Now we can call the associated script_throw event (if any) */
+    execute_event(throw_ob, EVENT_THROW,op,NULL,NULL,SCRIPT_FIX_ACTIVATOR);
 #ifdef DEBUG_THROW
     LOG(llevDebug," pause_f=%d \n",pause_f);
     LOG(llevDebug," %s stats: wc=%d dam=%d dist=%d spd=%f break=%d\n",

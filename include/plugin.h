@@ -71,7 +71,7 @@
 #define EVENT_BORN     13 /* A new character has been created.               */
 #define EVENT_CLOCK    14 /* Global time event.                              */
 #define EVENT_CRASH    15 /* Triggered when the server crashes. Not recursive*/
-#define EVENT_GDEATH   16 /* Global Death event                              */
+#define EVENT_PLAYER_DEATH  16 /* Global Death event                         */
 #define EVENT_GKILL    17 /* Triggered when anything got killed by anyone.   */
 #define EVENT_LOGIN    18 /* Player login.                                   */
 #define EVENT_LOGOUT   19 /* Player logout.                                  */
@@ -86,137 +86,189 @@
 
 #define NR_EVENTS 28
 
-/*****************************************************************************/
-/* Hook codes. A hook is a function pointer passed from the server to the    */
-/* plugin, so the plugin can call a server/crosslib functionality. Some may  */
-/* call them "callbacks", although I don't like that term, which is too      */
-/* closely bound to C and pointers.                                          */
-/* I didn't add comments for all those hooks, but it should be quite easy to */
-/* find out to what function they are pointing at. Also consult the plugins.c*/
-/* source file in the server subdirectory to see the hook "wrappers".        */
-/*****************************************************************************/
-#define HOOK_NONE               0
-#define HOOK_LOG                1
-#define HOOK_NEWINFOMAP         2
-#define HOOK_SPRINGTRAP         3
-#define HOOK_CASTSPELL          4
-#define HOOK_CMDRSKILL          5
-#define HOOK_BECOMEFOLLOWER     6
-#define HOOK_PICKUP             7
-#define HOOK_GETMAPOBJECT       8
-#define HOOK_ESRVSENDITEM       9
-#define HOOK_FINDPLAYER         10
-#define HOOK_MANUALAPPLY        11
-#define HOOK_CMDDROP            12
-#define HOOK_CMDTAKE            13
-#define HOOK_CMDTITLE           14
-#define HOOK_TRANSFEROBJECT     15
-#define HOOK_KILLOBJECT         16
-#define HOOK_LEARNSPELL         17
-#define HOOK_FORGETSPELL        18
-#define HOOK_CHECKFORSPELL      19
-#define HOOK_ESRVSENDINVENTORY  20
-#define HOOK_CREATEARTIFACT     21
-#define HOOK_GETARCHETYPE       22
-#define HOOK_UPDATESPEED        23
-#define HOOK_UPDATEOBJECT       24
-#define HOOK_FINDANIMATION      25
-#define HOOK_GETARCHBYOBJNAME   26
-#define HOOK_INSERTOBJECTINMAP  27
-#define HOOK_READYMAPNAME       28
-#define HOOK_ADDEXP             29
-#define HOOK_DETERMINEGOD       30
-#define HOOK_FINDGOD            31
-#define HOOK_REGISTEREVENT      32
-#define HOOK_UNREGISTEREVENT    33
-#define HOOK_DUMPOBJECT         34
-#define HOOK_LOADOBJECT         35
-#define HOOK_REMOVEOBJECT       36
-#define HOOK_ADDSTRING          37
-#define HOOK_FREESTRING         38
-#define HOOK_ADDREFCOUNT        39
-#define HOOK_GETFIRSTMAP        40
-#define HOOK_GETFIRSTPLAYER     41
-#define HOOK_GETFIRSTARCHETYPE  42
-#define HOOK_QUERYCOST          43
-#define HOOK_QUERYMONEY         44
-#define HOOK_PAYFORITEM         45
-#define HOOK_PAYFORAMOUNT       46
-#define HOOK_NEWDRAWINFO        47
-#define HOOK_SENDCUSTOMCOMMAND  48
-#define HOOK_CFTIMERCREATE      49
-#define HOOK_CFTIMERDESTROY     50
-#define HOOK_MOVEPLAYER         51
-#define HOOK_MOVEOBJECT         52
-#define HOOK_SETANIMATION        53
-#define HOOK_COMMUNICATE         54
-#define HOOK_FINDBESTOBJECTMATCH 55
-#define HOOK_APPLYBELOW          56
-#define HOOK_FREEOBJECT          57
-#define HOOK_CLONEOBJECT         58
-#define HOOK_TELEPORTOBJECT      59
-#define HOOK_SETVARIABLE         60
-#define HOOK_DECREASEOBJECTNR    61
-#define HOOK_FREEMEMORY          62
-#define HOOK_FIXPLAYER           63
-#define HOOK_CHECKTRIGGER        64
-#define HOOK_OUTOFMAP            65
-#define HOOK_QUERYNAME           66
-#define HOOK_QUERYBASENAME       67
-#define HOOK_INSERTOBINOB        68
-#define HOOK_GETMAPFLAGS         69
-#define HOOK_GETSETTINGS         70
-#define HOOK_PRESENTARCHBYNAME   71
-#define HOOK_STRDUPLOCAL         72
-#define HOOK_RECMP               73
-#define HOOK_CREATEPATHNAME      74
-#define HOOK_UPDATEOBSPEED       75
-#define HOOK_PRESENTARCHNAMEINOB 76
-#define HOOK_SETDIRECTION        77
-#define NR_OF_HOOKS             78
+#include <stdarg.h>
 
-/*****************************************************************************/
-/* CFParm is the data type used to pass informations between the server and  */
-/* the plugins. Using CFParm allows a greater flexibility, at the cost of a  */
-/* "manual" function parameters handling and the need of "wrapper" functions.*/
-/* Each CFParm can contain up to 15 different values, stored as (void *).    */
-/*****************************************************************************/
-typedef struct _CFParm
-{
-    int     Type[15];   /* Currently unused, but may prove useful later.     */
-    void*   Value[15];  /* The values contained in the CFParm structure.     */
-} CFParm;
+#define CFAPI_NONE    0
+#define CFAPI_INT     1
+#define CFAPI_LONG    2
+#define CFAPI_CHAR    3
+#define CFAPI_STRING  4
+#define CFAPI_POBJECT 5
+#define CFAPI_PMAP    6
+#define CFAPI_FLOAT   7
+#define CFAPI_DOUBLE  8
+#define CFAPI_PARCH   9
+#define CFAPI_FUNC    10
+#define CFAPI_PPLAYER 11
 
+typedef void* (*f_plug_api) (int* type, ...);
+typedef int   (*f_plug_postinit) ();
+typedef int   (*f_plug_init)(const char* iversion, f_plug_api gethooksptr);
 
-/*****************************************************************************/
-/* Generic plugin function prototype. All hook functions follow this.        */
-/*****************************************************************************/
-typedef CFParm* (*f_plugin) (CFParm* PParm);
-
-/*****************************************************************************/
-/* CFPlugin contains all pertinent informations about one plugin. The server */
-/* maintains a list of CFPlugins in memory. Note that the library pointer is */
-/* a (void *) in general, but a HMODULE under Win32, due to the specific DLL */
-/* management.                                                               */
-/*****************************************************************************/
 #ifndef WIN32
 #define LIBPTRTYPE void*
 #else
 #define LIBPTRTYPE HMODULE
 #endif
-typedef struct _CFPlugin
+
+typedef struct _crossfire_plugin
 {
-    f_plugin        eventfunc;          /* Event Handler function            */
-    f_plugin        initfunc;           /* Plugin Initialization function.   */
-    f_plugin        pinitfunc;          /* Plugin Post-Init. function.       */
-    f_plugin        endfunc;            /* Plugin Closing function.          */
-    f_plugin        hookfunc;           /* Plugin CF-funct. hooker function  */
-    f_plugin        propfunc;           /* Plugin getProperty function       */
+    f_plug_api      eventfunc;          /* Event Handler function            */
+    f_plug_api      propfunc;           /* Plugin getProperty function       */
+    f_plug_postinit closefunc;          /* Plugin Termination function       */
     LIBPTRTYPE      libptr;             /* Pointer to the plugin library     */
     char            id[MAX_BUF];        /* Plugin identification string      */
     char            fullname[MAX_BUF];  /* Plugin full name                  */
-    int             gevent[NR_EVENTS];  /* Global events registered          */
-} CFPlugin;
+    f_plug_api      gevent[NR_EVENTS];  /* Global events registered          */
+    struct _crossfire_plugin *next;
+    struct _crossfire_plugin *prev;
+} crossfire_plugin;
+
+extern int plugin_number;
+extern crossfire_plugin* plugins_list;
+
+#ifdef WIN32
+
+#define plugins_dlopen(fname) LoadLibrary(fname)
+#define plugins_dlclose(lib) FreeLibrary(lib)
+#define plugins_dlsym(lib,name) GetProcAddress(lib,name)
+
+#else /*WIN32 */
+
+#define plugins_dlopen(fname) dlopen(fname,RTLD_NOW|RTLD_GLOBAL)
+#define plugins_dlclose(lib) dlclose(lib)
+#define plugins_dlsym(lib,name) dlsym(lib,name)
+#define plugins_dlerror() dlerror()
+#endif /* WIN32 */
+
+
+/* OBJECT-RELATED HOOKS */
+
+#define CFAPI_OBJECT_PROP_OB_ABOVE          1
+#define CFAPI_OBJECT_PROP_OB_BELOW          2
+#define CFAPI_OBJECT_PROP_NEXT_ACTIVE_OB    3
+#define CFAPI_OBJECT_PROP_PREV_ACTIVE_OB    4
+#define CFAPI_OBJECT_PROP_INVENTORY         5
+#define CFAPI_OBJECT_PROP_ENVIRONMENT       6
+#define CFAPI_OBJECT_PROP_HEAD              7
+#define CFAPI_OBJECT_PROP_CONTAINER         8
+#define CFAPI_OBJECT_PROP_MAP               9
+#define CFAPI_OBJECT_PROP_COUNT             10
+#define CFAPI_OBJECT_PROP_REFCOUNT          11
+#define CFAPI_OBJECT_PROP_NAME              12
+#define CFAPI_OBJECT_PROP_NAME_PLURAL       13
+#define CFAPI_OBJECT_PROP_TITLE             14
+#define CFAPI_OBJECT_PROP_RACE              15
+#define CFAPI_OBJECT_PROP_SLAYING           16
+#define CFAPI_OBJECT_PROP_SKILL             17
+#define CFAPI_OBJECT_PROP_MESSAGE           18
+#define CFAPI_OBJECT_PROP_LORE              19
+#define CFAPI_OBJECT_PROP_X                 20
+#define CFAPI_OBJECT_PROP_Y                 21
+#define CFAPI_OBJECT_PROP_SPEED             22
+#define CFAPI_OBJECT_PROP_SPEED_LEFT        23
+#define CFAPI_OBJECT_PROP_NROF              24
+#define CFAPI_OBJECT_PROP_DIRECTION         25
+#define CFAPI_OBJECT_PROP_FACING            26
+#define CFAPI_OBJECT_PROP_TYPE              27
+#define CFAPI_OBJECT_PROP_SUBTYPE           28
+#define CFAPI_OBJECT_PROP_CLIENT_TYPE       29
+#define CFAPI_OBJECT_PROP_RESIST            30
+#define CFAPI_OBJECT_PROP_ATTACK_TYPE       31
+#define CFAPI_OBJECT_PROP_PATH_ATTUNED      32
+#define CFAPI_OBJECT_PROP_PATH_REPELLED     33
+#define CFAPI_OBJECT_PROP_PATH_DENIED       34
+#define CFAPI_OBJECT_PROP_MATERIAL          35
+#define CFAPI_OBJECT_PROP_MATERIAL_NAME     36
+#define CFAPI_OBJECT_PROP_MAGIC             37
+#define CFAPI_OBJECT_PROP_VALUE             38
+#define CFAPI_OBJECT_PROP_LEVEL             39
+#define CFAPI_OBJECT_PROP_LAST_HEAL         40
+#define CFAPI_OBJECT_PROP_LAST_SP           41
+#define CFAPI_OBJECT_PROP_LAST_GRACE        42
+#define CFAPI_OBJECT_PROP_LAST_EAT          43
+#define CFAPI_OBJECT_PROP_INVISIBLE_TIME    44
+#define CFAPI_OBJECT_PROP_PICK_UP           45
+#define CFAPI_OBJECT_PROP_ITEM_POWER        46
+#define CFAPI_OBJECT_PROP_GEN_SP_ARMOUR     47
+#define CFAPI_OBJECT_PROP_WEIGHT            48
+#define CFAPI_OBJECT_PROP_WEIGHT_LIMIT      49
+#define CFAPI_OBJECT_PROP_CARRYING          50
+#define CFAPI_OBJECT_PROP_GLOW_RADIUS       51
+#define CFAPI_OBJECT_PROP_PERM_EXP          52
+#define CFAPI_OBJECT_PROP_CURRENT_WEAPON    53
+#define CFAPI_OBJECT_PROP_ENEMY             54
+#define CFAPI_OBJECT_PROP_ATTACKED_BY       55
+#define CFAPI_OBJECT_PROP_RUN_AWAY          56
+#define CFAPI_OBJECT_PROP_CHOSEN_SKILL      57
+#define CFAPI_OBJECT_PROP_HIDDEN            58
+#define CFAPI_OBJECT_PROP_MOVE_STATUS       59
+#define CFAPI_OBJECT_PROP_MOVE_TYPE         60
+#define CFAPI_OBJECT_PROP_SPELL_ITEM        61
+#define CFAPI_OBJECT_PROP_EXP_MULTIPLIER    62
+#define CFAPI_OBJECT_PROP_ARCHETYPE         63
+#define CFAPI_OBJECT_PROP_OTHER_ARCH        64
+#define CFAPI_OBJECT_PROP_CUSTOM_NAME       65
+#define CFAPI_OBJECT_PROP_ANIM_SPEED        66
+#define CFAPI_OBJECT_PROP_FRIENDLY          67
+#define CFAPI_OBJECT_PROP_SHORT_NAME        68
+#define CFAPI_OBJECT_PROP_BASE_NAME         69
+#define CFAPI_OBJECT_PROP_MAGICAL           70
+#define CFAPI_OBJECT_PROP_LUCK              71
+#define CFAPI_OBJECT_PROP_EXP               72
+#define CFAPI_OBJECT_PROP_OWNER             73
+#define CFAPI_OBJECT_PROP_PRESENT           74
+#define CFAPI_OBJECT_PROP_CHEATER           75
+#define CFAPI_OBJECT_PROP_MERGEABLE         76
+#define CFAPI_OBJECT_PROP_PICKABLE          77
+#define CFAPI_OBJECT_PROP_FLAGS             78
+#define CFAPI_OBJECT_PROP_STR               79
+#define CFAPI_OBJECT_PROP_DEX               80
+#define CFAPI_OBJECT_PROP_CON               81
+#define CFAPI_OBJECT_PROP_WIS               82
+#define CFAPI_OBJECT_PROP_INT               83
+#define CFAPI_OBJECT_PROP_POW               84
+#define CFAPI_OBJECT_PROP_CHA               85
+#define CFAPI_OBJECT_PROP_WC                86
+#define CFAPI_OBJECT_PROP_AC                87
+#define CFAPI_OBJECT_PROP_HP                88
+#define CFAPI_OBJECT_PROP_SP                89
+#define CFAPI_OBJECT_PROP_GP                90
+#define CFAPI_OBJECT_PROP_FP                91
+#define CFAPI_OBJECT_PROP_MAXHP             92
+#define CFAPI_OBJECT_PROP_MAXSP             93
+#define CFAPI_OBJECT_PROP_MAXGP             94
+#define CFAPI_OBJECT_PROP_DAM               95
+#define CFAPI_OBJECT_PROP_GOD               96
+#define CFAPI_OBJECT_PROP_ARCH_NAME         97
+#define CFAPI_OBJECT_PROP_INVISIBLE         98
+#define CFAPI_OBJECT_PROP_FACE              99
+#define CFAPI_OBJECT_ANIMATION              100
+#define CFAPI_PLAYER_PROP_IP                150
+
+#define CFAPI_MAP_PROP_FLAGS                0
+#define CFAPI_MAP_PROP_DIFFICULTY           1
+#define CFAPI_MAP_PROP_PATH                 2
+#define CFAPI_MAP_PROP_TMPNAME              3
+#define CFAPI_MAP_PROP_NAME                 4
+#define CFAPI_MAP_PROP_RESET_TIME           5
+#define CFAPI_MAP_PROP_RESET_TIMEOUT        6
+#define CFAPI_MAP_PROP_PLAYERS              7
+#define CFAPI_MAP_PROP_LIGHT                8
+#define CFAPI_MAP_PROP_DARKNESS             9
+#define CFAPI_MAP_PROP_WIDTH                10
+#define CFAPI_MAP_PROP_HEIGHT               11
+#define CFAPI_MAP_PROP_ENTER_X              12
+#define CFAPI_MAP_PROP_ENTER_Y              13
+#define CFAPI_MAP_PROP_TEMPERATURE          14
+#define CFAPI_MAP_PROP_PRESSURE             15
+#define CFAPI_MAP_PROP_HUMIDITY             16
+#define CFAPI_MAP_PROP_WINDSPEED            17
+#define CFAPI_MAP_PROP_WINDDIR              18
+#define CFAPI_MAP_PROP_SKY                  19
+#define CFAPI_MAP_PROP_WPARTX               20
+#define CFAPI_MAP_PROP_WPARTY               21
+#define CFAPI_MAP_PROP_MESSAGE              22
 
 /*****************************************************************************/
 /* Exportable functions. Any plugin should define all those.                 */
@@ -226,15 +278,18 @@ typedef struct _CFPlugin
 /* registerHook      is used to transmit hook pointers from server to plugin.*/
 /* triggerEvent      is called whenever an event occurs.                     */
 /*****************************************************************************/
-extern MODULEAPI CFParm* initPlugin(CFParm* PParm);
+/*extern MODULEAPI CFParm* initPlugin(CFParm* PParm);
 extern MODULEAPI CFParm* endPlugin(CFParm* PParm);
 extern MODULEAPI CFParm* getPluginProperty(CFParm* PParm);
 extern MODULEAPI CFParm* registerHook(CFParm* PParm);
 extern MODULEAPI CFParm* triggerEvent(CFParm* PParm);
+*/
 
-
-/* Table of all loaded plugins */
-extern CFPlugin PlugList[32];
-extern int PlugNR;
+typedef struct _hook_entry
+{
+    f_plug_api func;
+    int fid;
+    char fname[256];
+} hook_entry;
 
 #endif /*PLUGIN_H_*/

@@ -260,7 +260,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define GIRDLE		            113
 #define FORCE		            114
 #define POTION_EFFECT		    115    /* a force, holding the effect of a potion */
-
+#define EVENT_CONNECTOR             116    /* Lauwenmark: an invisible object holding a plugin event hook */
 #define CLOSE_CON	            121    /* Eneq(@csd.uu.se): Id for close_container archetype. */
 #define CONTAINER	            122
 #define ARMOUR_IMPROVER		    123

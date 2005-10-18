@@ -414,8 +414,6 @@ void check_login(object *op) {
     int correct = 0;
     time_t    elapsed_save_time=0;
     struct stat	statbuf;
-    CFParm CFP;
-    int evtid;
 
     strcpy (pl->maplevel,first_map_path);
 
@@ -602,7 +600,6 @@ void check_login(object *op) {
 		LOG(llevDebug, "Error: unknown spell (%s)\n",cp);
 #endif
 	}
-	/* Remove confkeys, pushkey support - very old */
     } /* End of loop loading the character file */
     leave_map(op);
     op->speed=0;
@@ -681,12 +678,9 @@ void check_login(object *op) {
     new_draw_info(NDI_UNIQUE, 0,op,"Welcome Back!");
     new_draw_info_format(NDI_UNIQUE | NDI_ALL | NDI_DK_ORANGE, 5, NULL,
 	     "%s has entered the game.",pl->ob->name);
-    /* GROS : Here we handle the LOGIN global event */
-    evtid = EVENT_LOGIN;
-    CFP.Value[0] = (void *)(&evtid);
-    CFP.Value[1] = (void *)(pl);
-    CFP.Value[2] = (void *)(pl->socket.host);
-    GlobalEvent(&CFP);
+
+    /* Lauwenmark : Here we handle the LOGIN global event */
+    execute_global_event(EVENT_LOGIN, pl, pl->socket.host);
     op->contr->socket.update_look=1;
     /* If the player should be dead, call kill_player for them
      * Only check for hp - if player lacks food, let the normal

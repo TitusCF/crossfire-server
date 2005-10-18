@@ -244,24 +244,17 @@ int command_banish (object *op, char *params) {
 int command_kick (object *op, char *params)
 {
     struct pl *pl;
-    int evtid;
-    CFParm CFP;
 	
     for(pl=first_player;pl!=NULL;pl=pl->next) 
+    {
 	if((params==NULL || !strcmp(pl->ob->name,params)) && pl->ob!=op) {
 	    object *op;
 	    int removed=0;
 
 	    op=pl->ob;
 	    if (!QUERY_FLAG(op, FLAG_REMOVED)) {
-			
 		/* Avion : Here we handle the KICK global event */
-		evtid = EVENT_KICK;
-    	CFP.Value[0] = (void *)(&evtid);
-    	CFP.Value[1] = (void *)(op);
-    	CFP.Value[2] = (void *)(params);
-    	GlobalEvent(&CFP);
-			
+                execute_global_event(EVENT_KICK,op,params);
 		remove_ob(op);
 		removed=1;
 	    }
@@ -282,8 +275,7 @@ int command_kick (object *op, char *params)
 	    if (op->map) op->map->timeout = MAP_TIMEOUT(op->map);
 #endif
 	    pl->socket.status = Ns_Dead;
-		
-		
+        }
 	}
     return 1;
 }
@@ -293,7 +285,8 @@ int command_save_overlay(object *op, char *params)
     if (!op)
 	return(0);
 
-    if (op!=NULL && !QUERY_FLAG(op, FLAG_WIZ)) {
+    if (op!=NULL && !QUERY_FLAG(op, FLAG_WIZ))
+    {
 	new_draw_info(NDI_UNIQUE, 0, op,
 	    "Sorry, you can't force an overlay save.");
 	return(1);
@@ -313,8 +306,6 @@ AKA the MUZZLE command
 int command_toggle_shout(object *op, char *params)
 {
 	player *pl;
-	int evtid;
-    CFParm CFP;
 	
 	if (!params) {
          new_draw_info(NDI_UNIQUE, 0,op,"Usage: toggle_shout <player>.");
@@ -332,11 +323,7 @@ int command_toggle_shout(object *op, char *params)
 			 "You muzzle %s.", pl->ob->name);
 		
 		/* Avion : Here we handle the MUZZLE global event */
-		evtid = EVENT_MUZZLE;
-    	CFP.Value[0] = (void *)(&evtid);
-    	CFP.Value[1] = (void *)(pl->ob);
-    	CFP.Value[2] = (void *)(params);
-    	GlobalEvent(&CFP);
+        execute_global_event(EVENT_MUZZLE,pl->ob,params);
 		
 		return 1;
 	}else{
@@ -347,7 +334,6 @@ int command_toggle_shout(object *op, char *params)
 			 "You remove %s's muzzle.", pl->ob->name);
 		return 1;
 	}
-	
 }
 
 int command_shutdown(object *op, char *params)
@@ -1447,14 +1433,14 @@ int command_forget_spell (object *op, char *params)
     do_forget_spell (op, params);
     return 1;
 }
-/* GROS */
+/* Lauwenmark */
 /* Lists all plugins currently loaded with their IDs and full names.         */
 int command_listplugins(object *op, char *params)
 {
-    displayPluginsList(op);
+    plugins_display_list(op);
     return 1;
 }
-/* GROS */
+/* Lauwenmark */
 /* Loads the given plugin. The DM specifies the name of the library to load  */
 /* (no pathname is needed). Do not ever attempt to load the same plugin more */
 /* than once at a time, or bad things could happen.                          */
@@ -1471,13 +1457,13 @@ int command_loadplugin(object *op, char *params)
     strcat(buf,"/plugins/");
     strcat(buf,params);
     LOG(llevDebug, "Requested plugin file is %s\n", buf);
-    if (initOnePlugin(buf) == 0)
+    if (plugins_init_plugin(buf) == 0)
         new_draw_info(NDI_UNIQUE, 0, op, "Plugin successfully loaded.");
     else
         new_draw_info(NDI_UNIQUE, 0, op, "Could not load plugin.");
     return 1;
 }
-/* GROS */
+/* Lauwenmark */
 /* Unloads the given plugin. The DM specified the ID of the library to       */
 /* unload. Note that some things may behave strangely if the correct plugins */
 /* are not loaded.                                                           */
@@ -1488,7 +1474,7 @@ int command_unloadplugin(object *op, char *params)
 	return 1;
     }
 
-    if (removeOnePlugin(params) == 0)
+    if (plugins_remove_plugin(params) == 0)
         new_draw_info(NDI_UNIQUE, 0, op, "Plugin successfully removed.");
     else
         new_draw_info(NDI_UNIQUE, 0, op, "Could not remove plugin.");

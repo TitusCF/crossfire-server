@@ -909,7 +909,6 @@ void drop_object (object *op, object *tmp, uint32 nrof)
 {
     char buf[MAX_BUF];
     object *floor;
-    event *evt;
 
     if (QUERY_FLAG(tmp, FLAG_NO_DROP)) {
 #if 0
@@ -944,36 +943,13 @@ void drop_object (object *op, object *tmp, uint32 nrof)
                         esrv_del_item (op->contr, tmp2_tag);
                 else
                         esrv_send_item (op, tmp2);
-	};
+        }
     } else
       remove_ob (tmp);
-      /* GROS: Handle for plugin drop event */
-      if ((evt = find_event(tmp, EVENT_DROP)) != NULL)
-      {
-        CFParm CFP;
-        CFParm *CFR;
-        int k, l, m, rtn_script;
-        m = 0;
-        k = EVENT_DROP;
-        l = SCRIPT_FIX_ALL;
-        CFP.Value[0] = &k;
-        CFP.Value[1] = op;
-        CFP.Value[2] = tmp;
-        CFP.Value[3] = NULL;
-        CFP.Value[4] = NULL;
-        CFP.Value[5] = &nrof;
-        CFP.Value[6] = &m;
-        CFP.Value[7] = &m;
-        CFP.Value[8] = &l;
-        CFP.Value[9] = (void*)evt->hook;
-        CFP.Value[10]= (void*)evt->options;
-        if (findPlugin(evt->plugin)>=0)
-        {
-          CFR = ((PlugList[findPlugin(evt->plugin)].eventfunc) (&CFP));
-          rtn_script = *(int *)(CFR->Value[0]);
-          if (rtn_script!=0) return;
-        }
-      }
+    /* Lauwenmark: Handle for plugin drop event */
+    if (execute_event(tmp, EVENT_DROP,op,NULL,NULL,SCRIPT_FIX_ALL)!= 0)
+        return;
+
     if (QUERY_FLAG (tmp, FLAG_STARTEQUIP)) {
       sprintf(buf,"You drop the %s.", query_name(tmp));
       new_draw_info(NDI_UNIQUE, 0,op,buf);
