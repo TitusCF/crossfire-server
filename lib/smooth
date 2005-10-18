@@ -48,6 +48,10 @@ blake_C.111 empty_S.111
 blake_D.111 empty_S.111
 blake_E.111 empty_S.111
 blake_F.111 empty_S.111
+blood_sea.111 blood_sea_S.111
+blood_sea.112 blood_sea_S.112
+blood_sea.113 blood_sea_S.113
+blood_sea.114 blood_sea_S.114
 bluemarble.111 empty_S.111
 bluemarblemedium.111 empty_S.111
 brush.111 grass_S.111
@@ -59,6 +63,9 @@ cyan-beige-c-marble.111 empty_S.111
 cyan-beige-c-marble.112 empty_S.111
 cyan-beige-c-marble.113 empty_S.111
 cyan-beige-c-marble.114 empty_S.111
+cyanbrush.111 cyangrass_S.111
+cyangrass.111 cyangrass_S.111
+cyangrasspond.111 cyangrass_S.111
 cyanmarble.111 empty_S.111
 darkforest.111 darkforest_S.111
 deep_sea.111 deep_sea_S.111
