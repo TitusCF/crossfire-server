@@ -682,6 +682,7 @@ CF_PLUGIN int postInitPlugin()
 {
     int hooktype = 1;
     int rtype = 0;
+    FILE*   scriptfile;
 
     printf("CFPython 2.0a post init\n");
     registerGlobalEvent =   gethook(&rtype,hooktype,"cfapi_system_register_global_event");
@@ -705,6 +706,14 @@ CF_PLUGIN int postInitPlugin()
     registerGlobalEvent(NULL,EVENT_TELL,PLUGIN_NAME,globalEventListener);
     registerGlobalEvent(NULL,EVENT_MUZZLE,PLUGIN_NAME,globalEventListener);
     registerGlobalEvent(NULL,EVENT_KICK,PLUGIN_NAME,globalEventListener);
+
+    scriptfile = fopen(cf_get_maps_directory("python/events/python_init.py"),"r");
+    if (scriptfile != NULL)
+    {
+        PyRun_SimpleFile(scriptfile, cf_get_maps_directory("python/events/python_init.py"));
+        fclose(scriptfile);
+    }
+
     return 0;
 }
 
@@ -740,14 +749,12 @@ CF_PLUGIN void* globalEventListener(int* type, ...)
             context->activator = Crossfire_Object_wrap(op);
             strcpy(context->script,cf_get_maps_directory("python/events/python_born.py"));
             cfob = (Crossfire_Object*)context->activator;
-            printf("- Player Born: %s\n", cfob->obj->name);
             break;
         case EVENT_PLAYER_DEATH:
             op = va_arg(args, object*);
             context->who = Crossfire_Object_wrap(op);
             strcpy(context->script,cf_get_maps_directory("python/events/python_player_death.py"));
             cfob = (Crossfire_Object*)context->who;
-            printf("- Player GDeath: %s\n", cfob->obj->name);
             break;
         case EVENT_GKILL:
             op = va_arg(args, object*);
@@ -755,7 +762,6 @@ CF_PLUGIN void* globalEventListener(int* type, ...)
             context->activator = Crossfire_Object_wrap(op);
             strcpy(context->script,cf_get_maps_directory("python/events/python_gkill.py"));
             cfob = (Crossfire_Object*)context->who;
-            printf("- Player GKill: %s\n", cfob->obj->name);
             break;
         case EVENT_LOGIN:
             pl = va_arg(args, player*);
@@ -765,7 +771,6 @@ CF_PLUGIN void* globalEventListener(int* type, ...)
                 strcpy(context->message,buf);
             strcpy(context->script,cf_get_maps_directory("python/events/python_login.py"));
             cfpl = (Crossfire_Player*)context->activator;
-            printf("- Player Login: %s\n", cfpl->obj->name);
             break;
         case EVENT_LOGOUT:
             pl = va_arg(args, player*);
@@ -775,14 +780,12 @@ CF_PLUGIN void* globalEventListener(int* type, ...)
                 strcpy(context->message,buf);
             strcpy(context->script,cf_get_maps_directory("python/events/python_logout.py"));
             cfpl = (Crossfire_Player*)context->activator;
-            printf("- Player Logout: %s\n", cfpl->obj->name);
             break;
         case EVENT_REMOVE:
             op = va_arg(args, object*);
             context->activator = Crossfire_Object_wrap(op);
             strcpy(context->script,cf_get_maps_directory("python/events/python_remove.py"));
             cfob = (Crossfire_Object*)context->activator;
-            printf("- Player Remove: %s\n", cfob->obj->name);
             break;
         case EVENT_SHOUT:
             op = va_arg(args, object*);
@@ -792,7 +795,6 @@ CF_PLUGIN void* globalEventListener(int* type, ...)
                 strcpy(context->message,buf);
             strcpy(context->script,cf_get_maps_directory("python/events/python_shout.py"));
             cfob = (Crossfire_Object*)context->activator;
-            printf("- Player Shout: %s\n", cfob->obj->name);
             break;
         case EVENT_MUZZLE:
             op = va_arg(args, object*);
@@ -802,7 +804,6 @@ CF_PLUGIN void* globalEventListener(int* type, ...)
                 strcpy(context->message,buf);
             strcpy(context->script,cf_get_maps_directory("python/events/python_muzzle.py"));
             cfob = (Crossfire_Object*)context->activator;
-            printf("- Player Muzzle: %s\n", cfob->obj->name);
             break;
         case EVENT_KICK:
             op = va_arg(args, object*);
@@ -812,21 +813,18 @@ CF_PLUGIN void* globalEventListener(int* type, ...)
                 strcpy(context->message,buf);
             strcpy(context->script,cf_get_maps_directory("python/events/python_kick.py"));
             cfob = (Crossfire_Object*)context->activator;
-            printf("- Player Kick: %s\n", cfob->obj->name);
             break;
         case EVENT_MAPENTER:
             op = va_arg(args, object*);
             context->activator = Crossfire_Object_wrap(op);
             strcpy(context->script,cf_get_maps_directory("python/events/python_mapenter.py"));
             cfob = (Crossfire_Object*)context->activator;
-            printf("- Player Mapenter: %s\n", cfob->obj->name);
             break;
         case EVENT_MAPLEAVE:
             op = va_arg(args, object*);
             context->activator = Crossfire_Object_wrap(op);
             strcpy(context->script,cf_get_maps_directory("python/events/python_mapleave.py"));
             cfob = (Crossfire_Object*)context->activator;
-            printf("- Player Mapleave: %s\n", cfob->obj->name);
             break;
         case EVENT_CLOCK:
             strcpy(context->script,cf_get_maps_directory("python/events/python_clock.py"));
@@ -848,7 +846,6 @@ CF_PLUGIN void* globalEventListener(int* type, ...)
     Py_XINCREF(context->activator);
     Py_XINCREF(context->third);
 
-    printf("- Script file : %s\n", context->script);
     scriptfile = fopen(context->script,"r");
     if (scriptfile == NULL)
     {
