@@ -1019,8 +1019,6 @@ void* globalEventListener(int* type, ...)
 
     va_start(args, type);
     context->event_code = va_arg(args, int);
-    printf("****** Global event listener called ***********\n");
-    printf("- Event code: %d\n", context->event_code);
 
     context->message[0]=0;
 
@@ -1103,7 +1101,6 @@ void* globalEventListener(int* type, ...)
     context = popContext();
     rv = context->returnvalue;
     free(context);
-    printf("*********** Execution complete ****************\n");
 
     return &rv;
 }
