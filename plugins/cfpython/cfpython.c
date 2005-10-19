@@ -519,7 +519,7 @@ static PyObject* registerCommand(PyObject* self, PyObject* args)
             CustomCommand[i].name = cf_strdup_local(cmdname);
             CustomCommand[i].script = cf_strdup_local(scriptname);
             CustomCommand[i].speed = cmdspeed;
-            i = NR_CUSTOM_CMD;
+            break;
         }
     };
 
@@ -596,7 +596,6 @@ CF_PLUGIN void* getPluginProperty(int* type, ...)
 
     va_start(args, type);
     propname = va_arg(args, char *);
-    printf("Property name: %s\n", propname);
 
     if(!strcmp(propname,"command?"))
     {
@@ -610,7 +609,6 @@ CF_PLUGIN void* getPluginProperty(int* type, ...)
             {
                 if (!strcmp(CustomCommand[i].name,cmdname))
                 {
-                    printf( "PYTHON - Running command %s\n",CustomCommand[i].name);
                     rtn_cmd.name = CustomCommand[i].name;
                     rtn_cmd.time = (float)CustomCommand[i].speed;
                     rtn_cmd.func = runPluginCommand;
@@ -661,7 +659,6 @@ CF_PLUGIN int runPluginCommand(object* op, char* params)
 
     Py_XINCREF(context->who);
 
-    printf("Custom Command Script called:%s (%p)\n", context->script, context);
     scriptfile = fopen(context->script,"r");
     if (scriptfile == NULL)
     {
@@ -726,8 +723,6 @@ CF_PLUGIN void* globalEventListener(int* type, ...)
 
     va_start(args, type);
     context->event_code = va_arg(args, int);
-    printf("****** Global event listener called ***********\n");
-    printf("- Event code: %d\n", context->event_code);
 
     context->message[0]=0;
 
@@ -766,7 +761,7 @@ CF_PLUGIN void* globalEventListener(int* type, ...)
             pl = va_arg(args, player*);
             context->activator = Crossfire_Object_wrap(pl->ob);
             buf = va_arg(args, char*);
-            if (buf !=0)
+            if (buf !=NULL)
                 strcpy(context->message,buf);
             strcpy(context->script,cf_get_maps_directory("python/events/python_login.py"));
             cfpl = (Crossfire_Player*)context->activator;
@@ -776,7 +771,7 @@ CF_PLUGIN void* globalEventListener(int* type, ...)
             pl = va_arg(args, player*);
             context->activator = Crossfire_Object_wrap(pl->ob);
             buf = va_arg(args, char*);
-            if (buf !=0)
+            if (buf !=NULL)
                 strcpy(context->message,buf);
             strcpy(context->script,cf_get_maps_directory("python/events/python_logout.py"));
             cfpl = (Crossfire_Player*)context->activator;
@@ -793,7 +788,7 @@ CF_PLUGIN void* globalEventListener(int* type, ...)
             op = va_arg(args, object*);
             context->activator = Crossfire_Object_wrap(op);
             buf = va_arg(args, char*);
-            if (buf !=0)
+            if (buf !=NULL)
                 strcpy(context->message,buf);
             strcpy(context->script,cf_get_maps_directory("python/events/python_shout.py"));
             cfob = (Crossfire_Object*)context->activator;
@@ -803,7 +798,7 @@ CF_PLUGIN void* globalEventListener(int* type, ...)
             op = va_arg(args, object*);
             context->activator = Crossfire_Object_wrap(op);
             buf = va_arg(args, char*);
-            if (buf !=0)
+            if (buf !=NULL)
                 strcpy(context->message,buf);
             strcpy(context->script,cf_get_maps_directory("python/events/python_muzzle.py"));
             cfob = (Crossfire_Object*)context->activator;
@@ -813,7 +808,7 @@ CF_PLUGIN void* globalEventListener(int* type, ...)
             op = va_arg(args, object*);
             context->activator = Crossfire_Object_wrap(op);
             buf = va_arg(args, char*);
-            if (buf !=0)
+            if (buf !=NULL)
                 strcpy(context->message,buf);
             strcpy(context->script,cf_get_maps_directory("python/events/python_kick.py"));
             cfob = (Crossfire_Object*)context->activator;
@@ -838,7 +833,7 @@ CF_PLUGIN void* globalEventListener(int* type, ...)
             break;
         case EVENT_MAPRESET:
             buf = va_arg(args, char*);
-            if (buf !=0)
+            if (buf !=NULL)
                 strcpy(context->message,buf);
             strcpy(context->script,cf_get_maps_directory("python/events/python_mapreset.py"));
             break;
@@ -869,7 +864,6 @@ CF_PLUGIN void* globalEventListener(int* type, ...)
     Py_XDECREF(context->activator);
     Py_XDECREF(context->third);*/
     free(context);
-    printf("*********** Execution complete ****************\n");
 
     return &rv;
 }
@@ -905,9 +899,6 @@ CF_PLUGIN void* eventListener(int* type, ...)
     Py_XINCREF(context->third);
 
     va_end(args);
-    printf("Event listener called: %i\n", context->event_code);
-    printf("1.eventListener: Context script:%s (%p)\n", context->script, context);
-    printf("Message: %s\n", context->message);
     scriptfile = fopen(context->script,"r");
     if (scriptfile == NULL)
     {
@@ -923,7 +914,6 @@ CF_PLUGIN void* eventListener(int* type, ...)
     Py_XDECREF(context->activator);
     Py_XDECREF(context->third);*/
     free(context);
-    printf("Execution complete");
     return &rv;
 }
 

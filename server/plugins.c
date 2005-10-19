@@ -45,7 +45,7 @@
 
 #define NR_OF_HOOKS 70
 
-hook_entry plug_hooks[NR_OF_HOOKS] =
+static const hook_entry plug_hooks[NR_OF_HOOKS] =
 {
     {cfapi_system_add_string,       0, "cfapi_system_add_string"},
     {cfapi_system_register_global_event,   1, "cfapi_system_register_global_event"},
@@ -210,7 +210,7 @@ int execute_global_event(int eventcode, ...)
             for(cp=plugins_list; cp != NULL; cp=cp->next)
             {
                 if (cp->gevent[eventcode]!=NULL)
-                    cp->gevent[eventcode](&rt,eventcode,op);
+                    cp->gevent[eventcode](&rt,eventcode);
             }
             break;
         case EVENT_CRASH:
@@ -310,7 +310,7 @@ int execute_global_event(int eventcode, ...)
             for(cp=plugins_list; cp != NULL; cp=cp->next)
             {
                 if (cp->gevent[eventcode]!=NULL)
-                    cp->gevent[eventcode](&rt,eventcode,NULL);
+                    cp->gevent[eventcode](&rt,eventcode);
             }
             break;
         case EVENT_MUZZLE:
@@ -338,7 +338,7 @@ int execute_global_event(int eventcode, ...)
     return 0;
 }
 
-int plugins_init_plugin(char* libfile)
+int plugins_init_plugin(const char* libfile)
 {
     LIBPTRTYPE ptr;
     f_plug_init      initfunc;
@@ -473,7 +473,7 @@ void* cfapi_get_hooks(int* type, ...)
     return rv;
 }
 
-int plugins_remove_plugin(char* id)
+int plugins_remove_plugin(const char* id)
 {
     crossfire_plugin* cp;
 
@@ -552,10 +552,7 @@ void plugins_display_list(object *op)
 
     for(cp=plugins_list; cp != NULL; cp=cp->next)
     {
-        strcpy(buf, cp->id);
-        strcat(buf, ", ");
-        strcat(buf, cp->fullname);
-        new_draw_info (NDI_UNIQUE, 0, op, buf);
+        new_draw_info_format (NDI_UNIQUE, 0, op, "%s, %s", cp->id, cp->fullname);
     }
 }
 
@@ -788,7 +785,6 @@ void* cfapi_map_create_path(int* type, ...)
     int ctype;
     const char* str;
     char* rv;
-    printf("create_map_path\n");
     va_start(args,type);
 
     ctype = va_arg(args, int);
@@ -798,7 +794,6 @@ void* cfapi_map_create_path(int* type, ...)
     switch (ctype)
     {
         case 0:
-            printf("create_map_path:%s\n",str);
             rv = (char*)create_pathname(str);
             break;
         case 1:
@@ -1182,7 +1177,7 @@ void* cfapi_object_move(int* type, ...)
             pl  = va_arg(args, player*);
             direction = va_arg(args, int);
             va_end(args);
-            rv = move_player(pl, direction);
+            rv = move_player(pl->ob, direction);
             break;
     }
     *type = CFAPI_INT;
@@ -1576,7 +1571,6 @@ void* cfapi_object_get_property(int* type, ...)
         case CFAPI_OBJECT_PROP_MERGEABLE         :
         {
             object* op2;
-            ri = 0;
             op2 = va_arg(args, object*);
             ri = CAN_MERGE(op,op2);
             rv = &ri;
@@ -1695,6 +1689,7 @@ void* cfapi_object_get_property(int* type, ...)
         case CFAPI_OBJECT_PROP_ARCH_NAME:
             rv = (char*)op->arch->name;
             *type = CFAPI_STRING;
+            break;
         case CFAPI_PLAYER_PROP_IP     :
             rv = op->contr->socket.host;
             *type = CFAPI_STRING;
@@ -2329,11 +2324,7 @@ void* cfapi_object_create(int* type, ...)
             object* op;
             sval = va_arg(args, char*);
 
-            printf("Object creation: name=%s\n", sval);
-
             op = get_archetype_by_object_name(sval);
-
-            printf("op found: %p\n", op);
 
             if (strncmp(query_name(op),ARCH_SINGULARITY, ARCH_SINGULARITY_LEN)==0)
             {
@@ -2524,7 +2515,7 @@ void* cfapi_object_check_inventory(int* type, ...)
         }
     else
     {
-        ret = check_inv_recursive(op,op);
+        ret = check_inv_recursive(op,op2);
         *type = CFAPI_POBJECT;
     }
 
@@ -2738,7 +2729,6 @@ void* cfapi_object_transfer(int* type,...)
     va_start(args, type);
     op = va_arg(args, object*);
     ttype = va_arg(args, int);
-    printf("Transfer in progress\n");
     switch (ttype)
     {
         case 0:

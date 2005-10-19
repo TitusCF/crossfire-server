@@ -156,6 +156,11 @@ static PyObject* Map_CreateObject(Crossfire_Map* map, PyObject* args)
     if (!PyArg_ParseTuple(args,"sii",&txt,&x,&y))
         return NULL;
     op = cf_create_object_by_name(txt);
+    if (op == NULL)
+    {
+        Py_INCREF(Py_None);
+        return Py_None;
+    }
     cf_map_insert_object(map->map,op,x,y);
     return Crossfire_Object_wrap(op);
 }
@@ -225,7 +230,6 @@ PyObject *Crossfire_Map_wrap(mapstruct *what)
     wrapper = PyObject_NEW(Crossfire_Map, &Crossfire_MapType);
     if(wrapper != NULL)
         wrapper->map = what;
-    printf("Wrapping map: %s\n", wrapper->map->name);
     return (PyObject *)wrapper;
 }
 

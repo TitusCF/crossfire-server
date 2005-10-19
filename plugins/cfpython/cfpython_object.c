@@ -564,9 +564,7 @@ static int Object_SetMap(Crossfire_Object* whoptr, PyObject* value, void* closur
     if (!PyArg_Parse(value,"O",&val))
         return -1;
 
-    printf("Map before: %p\n", whoptr->obj->map);
     cf_object_change_map(whoptr->obj, -1, -1, val->map);
-    printf("Map after: %p\n", whoptr->obj->map);
     return 0;
 }
 static int Object_SetSlaying(Crossfire_Object* whoptr, PyObject* value, void* closure)
@@ -907,11 +905,7 @@ static int Object_SetPickable(Crossfire_Object* whoptr, PyObject* value, void* c
     if (!PyArg_Parse(value,"i",&val))
         return -1;
 
-    if (val == 0)
-        val = 1;
-    else
-        val = 0;
-    cf_object_set_flag(whoptr->obj, FLAG_NO_PICK, val);
+    cf_object_set_flag(whoptr->obj, FLAG_NO_PICK, !val);
     return 0;
 }
 static int Object_SetInvisible(Crossfire_Object* whoptr, PyObject* value, void* closure)
@@ -1637,7 +1631,6 @@ PyObject *Crossfire_Object_wrap(object *what)
         plwrap = PyObject_NEW(Crossfire_Player, &Crossfire_PlayerType);
         if(plwrap != NULL)
             plwrap->obj = what;
-        printf("Player Wrapping: %s\n", plwrap->obj->name);
         return (PyObject *)plwrap;
     }
     else
@@ -1645,7 +1638,6 @@ PyObject *Crossfire_Object_wrap(object *what)
         wrapper = PyObject_NEW(Crossfire_Object, &Crossfire_ObjectType);
         if(wrapper != NULL)
             wrapper->obj = what;
-        printf("Wrapping: %s\n", wrapper->obj->name);
         return (PyObject *)wrapper;
     }
 }

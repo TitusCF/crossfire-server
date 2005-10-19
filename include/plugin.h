@@ -102,7 +102,7 @@
 #define CFAPI_PPLAYER 11
 
 typedef void* (*f_plug_api) (int* type, ...);
-typedef int   (*f_plug_postinit) ();
+typedef int   (*f_plug_postinit) (void);
 typedef int   (*f_plug_init)(const char* iversion, f_plug_api gethooksptr);
 
 #ifndef WIN32
