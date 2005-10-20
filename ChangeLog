@@ -17,10 +17,29 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+plugins/cfpython/{Makefile.in, Makefile.am}, plugins/cfpython/include/cfpython.h:
+   Corrected improper regeneration of the function prototypes using
+   "make proto" for the cfpython plugin.
+Gros 2005-10-20
+
+plugins/cfpython/{cfpython.c, cfpython_object.c, cfpython_map.c},
+plugins/cfanim/cfanim.c, plugins/common/plugin_common.c, server/plugins.c:
+   Added support for execution of python_init.py upon initialization of cfpython.
+   Reduced the console spam produced by various leftover debugging messages.
+Gros 2005-10-19
+
 plugins/common/include/plugin_common.h: add CF_PLUGIN macro.
 plugins/cfpython/cfpython.c: add CF_PLUGIN to exported functions.
 plugins/cfpython/include/cfpython_proto.h: fix prototypes.
 Ryo 2005-10-19
+
+plugin/*, plugin_logger/*, plugin_anim/*, plugins/*,
+server/{apply.c, attack.c, c_chat.c, c_object.c, c_wiz.c, gods.c, main.c,
+monster.c, player.c, skills.c, swap.c, time.c, timers.c}, include/{plugin.h,
+sproto.h}: Replaced the old plugin interface by the 2.0 one. 
+   Upgraded the Python and Animator ones to the new interface. 
+   Removed obsolete Logger plugin.
+Gros 2005-10-19
 
 server/main.c: Template Maps: Allow %x, %y, and %n in the path to respectively be
    replaced with, the x coord, the y coord, and the parent map name.
