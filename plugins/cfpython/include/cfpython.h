@@ -29,10 +29,8 @@
 #define PLUGIN_PYTHON_H
 
 /* First the required header files - only the CF module interface and Python */
-#ifndef __CEXTRACT__
 #include <Python.h>
 #include <plugin.h>
-#endif
 
 #undef MODULEAPI
 #ifdef WIN32
@@ -52,7 +50,6 @@
 #include <plugin_common.h>
 #include <cfpython_object.h>
 #include <cfpython_map.h>
-#include <cfpython_proto.h>
 
 typedef struct _cfpcontext
 {
@@ -84,5 +81,6 @@ typedef struct PythonCmdStruct
 /* This plugin allows up to 1024 custom commands.                            */
 #define NR_CUSTOM_CMD 1024
 PythonCmd CustomCommand[NR_CUSTOM_CMD];
+#include <cfpython_proto.h>
 
 #endif /* PLUGIN_PYTHON_H */
