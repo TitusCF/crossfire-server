@@ -630,6 +630,58 @@ static uint64 pay_from_container(object *pl, object *pouch, uint64 to_pay) {
     return(remain);
 }
 
+/* Checks all unpaid items in op's inventory, adds up all the money they
+ * have, and checks that they can actually afford what they want to buy.
+ * Returns 1 if they can, and 0 if they can't. also prints an appropriate message 
+ * to the player
+ */
+
+int can_pay(object *pl) {
+    int unpaid_count = 0, i;
+    uint64 unpaid_price = 0;
+    uint64 player_wealth = query_money(pl);
+    object *item;
+    uint32 coincount[NUM_COINS];
+    if (!pl || pl->type != PLAYER) {
+	LOG(llevError, "can_pay(): called against something that isn't a player");
+	return 0;
+    }
+    for (i=0; i< NUM_COINS; i++) coincount[i] = 0; 
+    for (item = pl->inv;item;) {
+	if QUERY_FLAG(item, FLAG_UNPAID) {
+	    unpaid_count++;
+	    unpaid_price += query_cost(item, pl, F_BUY | F_SHOP);
+	}
+	/* merely converting the player's monetary wealth won't do, if we did that, 
+	 * we could print the wrong numbers for the coins, so we count the money instead 
+	 */
+	for (i=0; i< NUM_COINS; i++) 
+	    if (!strcmp(coins[i], item->arch->name)) 
+		coincount[i] += item->nrof;
+	if (item->inv) item = item->inv; 
+	else if (item->below) item = item->below;
+	else item = NULL; 
+    }
+    if (unpaid_price > player_wealth) {
+	char buf[MAX_BUF], coinbuf[MAX_BUF];
+	int denominations = 0;
+	sprintf(buf, "You have %d unpaid items that would cost you %s, but you only have", 
+	    unpaid_count, cost_string_from_value(unpaid_price));
+	for (i=0; i< NUM_COINS; i++) {
+	    if (coincount[i] > 0 && coins[i]) {
+		denominations++;
+		sprintf(coinbuf, " %d %s,", coincount[i], find_archetype(coins[i])->clone.name_pl);
+		strcat (buf, coinbuf);
+	    }
+	}
+	if (denominations > 1) make_list_like(buf);
+	new_draw_info(NDI_UNIQUE, 0, pl, buf);
+	return 0;
+    }
+    else return 1;
+}
+
+
 /* Better get_payment, descends containers looking for
  * unpaid items, and pays for them.
  * returns 0 if the player still has unpaid items.
@@ -885,7 +937,7 @@ int describe_shop(object *op) {
     /*shopitems *items=map->shopitems;*/
     int pos=0, i;
     double opinion=0;
-    char *p, tmp[MAX_BUF]="\0", tradesin[MAX_BUF];
+    char *p, tmp[MAX_BUF]="\0";
     if (op->type != PLAYER) return 0;
 
     /*check if there is a shop specified for this map */
@@ -901,21 +953,9 @@ int describe_shop(object *op) {
 	}
 	if (!pos) strcat(tmp, "a little of everything.");
 
-	/* if we have multiple entries we need to change the second from last comma 
-	 * for an 'and', in any event we need to remove the trailing comma first. */
-	p=strrchr(tmp, ',');
-	if (p) *p='\0';
-
-	p=strrchr(tmp, ',');
-	if (p) { 
-	    *p='\0';
-	    strcpy(tradesin, tmp);
-	    p++;
-	    strcat(tradesin, " and");
-	    strcat(tradesin, p);
-	}
-	else strcpy(tradesin, tmp);
-	new_draw_info_format(NDI_UNIQUE, 0, op, "%s.", tradesin);
+	/* format the string into a list */
+	make_list_like(tmp);
+	new_draw_info_format(NDI_UNIQUE, 0, op, "%s", tmp);
 	
 	if (map->shopmax)
 	    new_draw_info_format(NDI_UNIQUE,0,op,"It won't trade for items above %s.",

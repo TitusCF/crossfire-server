@@ -17,6 +17,14 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+common/item.c - fix spelling mistake
+common/utils.c include/libproto.h - new function make_list_like that takes a 
+   string of comma deliminated words, and puts an and in the right place.
+include/sproto.h server/apply.c server/shop.c -new function can_pay - checks
+   that a player can pay for every unpaid item that they are holding before
+   starting to purchase them.
+Brendan Lally 2005-10-21
+
 plugins/cfpython/{Makefile.in, Makefile.am}, plugins/cfpython/include/cfpython.h:
    Corrected improper regeneration of the function prototypes using
    "make proto" for the cfpython plugin.

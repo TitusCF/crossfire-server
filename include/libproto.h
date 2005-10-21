@@ -397,6 +397,7 @@ extern void strip_media_tag(char *message);
 extern const char *strrstr(const char *haystack, const char *needle);
 extern void replace(const char *src, const char *key, const char *replacement, char *result, size_t resultsize);
 extern void strip_endline(char *buf);
+extern void make_list_like(char *input);
 /* loader.c */
 extern int lex_load(object *op, int map_flags);
 extern void yyrestart(FILE *input_file);

@@ -1235,7 +1235,8 @@ static int apply_shop_mat (object *shop_mat, object *op)
 	rv = teleport (shop_mat, SHOP_MAT, op);
     }
     /* immediate block below is only used for players */
-    else if (get_payment (op, op->inv)) {
+    else if (can_pay(op)) {
+	get_payment (op, op->inv);
 	rv = teleport (shop_mat, SHOP_MAT, op);
 	if (shop_mat->msg) {
 	    new_draw_info (NDI_UNIQUE, 0, op, shop_mat->msg);

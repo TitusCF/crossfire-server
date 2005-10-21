@@ -676,6 +676,7 @@ const char *query_cost_string(object *tmp, object *who, int flag);
 uint64 query_money(object *op);
 int pay_for_amount(uint64 to_pay, object *pl);
 int pay_for_item(object *op, object *pl);
+int can_pay(object *pl);
 int get_payment(object *pl, object *op);
 void sell_item(object *op, object *pl);
 double shop_specialisation_ratio(object *item, mapstruct *map);

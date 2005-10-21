@@ -444,3 +444,35 @@ void replace(const char *src, const char *key, const char *replacement, char *re
 	}
 	result[resultlen] = '\0';
 }
+
+/**
+ * Taking a string as an argument, mutate it into a string that looks like a list.
+ * a 'list' for the purposes here, is a string of items, seperated by commas, except
+ * for the last entry, which has an 'and' before it, and a full stop (period) after it.
+ * This function will also strip all trailing non alphanumeric characters.
+ * It does not insert an oxford comma.
+ */
+
+void make_list_like(char *input) {
+    char *p, tmp[MAX_BUF];
+    int i;
+    if (!input || strlen(input) > MAX_BUF-5) return; 
+    /* bad stuff would happen if we continued here, the -5 is to make space for ' and ' */
+
+    strncpy(tmp, input, MAX_BUF-5);
+    /*trim all trailing commas, spaces etc.*/
+    for (i=strlen(tmp); !isalnum(tmp[i]) && i >= 0; i--) 
+	tmp[i]='\0';
+    strcat(tmp, ".");
+
+    p=strrchr(tmp, ',');
+    if (p) { 
+	*p='\0';
+	strcpy(input, tmp);
+	p++;
+	strcat(input, " and");
+	strcat(input, p);
+    }
+    else strcpy(input, tmp);
+    return;
+}

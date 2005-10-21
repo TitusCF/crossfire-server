@@ -188,7 +188,7 @@ static const typedata item_types[] = {
 {TRAPDOOR, "trapdoor", "trapdoors", 0, 0},
 {SIGN, "sign", "signs", 0, 0},
 {BOOTS, "boots", "boots", SK_SMITHERY, 0},
-{GLOVES, "gloves", "glovess", SK_SMITHERY, 0},
+{GLOVES, "gloves", "gloves", SK_SMITHERY, 0},
 {SPELL, "spell", "spells", 0, 0},
 {SPELL_EFFECT, "spell effect", "spell effects", 0, 0},
 {CONVERTER, "converter", "converters", 0, 0},
