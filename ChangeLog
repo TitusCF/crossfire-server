@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Make shout command work in old socket emulation mode.
+common/commands.c: Sort all command arrays in init_commands().
+Andreas Kirschbaum 2005-10-23
+
 common/item.c - fix spelling mistake
 common/utils.c include/libproto.h - new function make_list_like that takes a 
    string of comma deliminated words, and puts an and in the right place.

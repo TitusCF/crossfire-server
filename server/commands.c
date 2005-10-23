@@ -304,10 +304,12 @@ static int compare_A(const void *a, const void *b)
 
 void init_commands()
 {
-  qsort((char *)Commands, CommandsSize, sizeof(CommArray_s), compare_A);
-  qsort((char *)CommunicationCommands, CommunicationCommandSize, sizeof(CommArray_s), compare_A);
-  qsort((char *)WizCommands, WizCommandsSize, sizeof(CommArray_s), compare_A);
-  qsort((char *)NewServerCommands, NewServerCommandSize, sizeof(CommArray_s), compare_A);
+  qsort(Commands, CommandsSize, sizeof(CommArray_s), compare_A);
+  qsort(CommunicationCommands, CommunicationCommandSize, sizeof(CommArray_s), compare_A);
+  qsort(NewServerCommands, NewServerCommandSize, sizeof(CommArray_s), compare_A);
+  qsort(WizCommands, WizCommandsSize, sizeof(CommArray_s), compare_A);
+  qsort(Socket_Commands, Socket_CommandsSize, sizeof(CommArray_s), compare_A);
+  qsort(Socket2_Commands, Socket2_CommandsSize, sizeof(CommArray_s), compare_A);
 }
 
 #ifndef tolower
