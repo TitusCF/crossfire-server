@@ -54,8 +54,7 @@ static struct bmappair *xbm=NULL;
 /* Following can just as easily be pointers, but 
  * it is easier to keep them like this.
  */
-New_Face *blank_face, *dark_faces[3], *potion_face, *empty_face,
-    *smooth_face;
+New_Face *blank_face, *dark_faces[3], *empty_face, *smooth_face;
 
 
 /* nroffiles is the actual number of bitmaps defined.
@@ -301,8 +300,6 @@ int ReadBmapNames () {
     dark_faces[0] = &new_faces[FindFace (DARK_FACE1_NAME,0)];
     dark_faces[1] = &new_faces[FindFace (DARK_FACE2_NAME,0)];
     dark_faces[2] = &new_faces[FindFace (DARK_FACE3_NAME,0)];
-
-    potion_face  = &new_faces[FindFace(POTION_FACE_NAME,0)];
 
     smooth_face = &new_faces[FindFace(SMOOTH_FACE_NAME,0)];
 
