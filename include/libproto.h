@@ -75,8 +75,7 @@ extern void dump_abilities(void);
 extern void print_monsters(void);
 extern void bitstostring(long bits, int num, char *str);
 /* image.c */
-extern char find_color(char *name);
-extern int ReadBmapNames(void);
+extern void ReadBmapNames(void);
 extern int FindFace(char *name, int error);
 extern int ReadSmooth(void);
 extern int FindSmooth(uint16 face, uint16 *smoothed);

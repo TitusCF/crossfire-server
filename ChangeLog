@@ -17,6 +17,17 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Code improvements:
+common/image.c: Declare some variables and functions as static or const; add
+   safeguards while loading config files; remove support for numeric face
+   names (no active archetype or map does use it); in free_all_images()
+   deallocate memory allocated for smoothing.
+crossedit/xutil.c: Remove assignment to nrofpixmaps since ReadBmapNames()
+   already sets this variable.
+include/{global.h, libproto.h, loader.h}: Remove now static variables and
+   functions.
+Andreas Kirschbaum 2005-10-24
+
 common/readable.c: Fix out of bounds access to max_titles[] in
    init_book_archive().
 common/image.c, include/define.h, include/global.h: Remove unused variables

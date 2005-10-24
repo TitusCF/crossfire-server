@@ -38,4 +38,4 @@
 #define LO_NEWFILE  2
 #define	LO_NOREAD   3
 
-extern int nroffiles, nrofpixmaps;
+extern int nrofpixmaps;

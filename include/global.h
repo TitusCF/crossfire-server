@@ -163,11 +163,6 @@ typedef struct linked_char {
  * GLOBAL VARIABLES:							     *
  *****************************************************************************/
 
-
-#define NUM_COLORS		13
-
-extern char *colorname[NUM_COLORS];
-
 extern New_Face *new_faces;
 
 /*

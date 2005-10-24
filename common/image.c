@@ -58,31 +58,40 @@ New_Face *blank_face, *dark_faces[3], *empty_face, *smooth_face;
 
 
 /* nroffiles is the actual number of bitmaps defined.
- * nrofpixmaps is the higest numbers bitmap that is loaded.  With
+ * nrofpixmaps is the number of bitmaps loaded.  With
  * the automatic generation of the bmaps file, this is now equal
  * to nroffiles.
  *
  * The xbm array (which contains name and number information, and
- * is then sorted) contains nroffiles+1 entries.  the xbm_names
+ * is then sorted) contains nroffiles entries.  the xbm_names
  * array (which is used for converting the numeric face to
- * a name) contains nrofpixmaps+1 entries.
+ * a name) contains nrofpixmaps entries.
  */
-int nroffiles = 0, nrofpixmaps=0;
+static int nroffiles = 0;
+int nrofpixmaps = 0;
 
+/**
+ * id is the face to smooth, smooth is the 16x2 face used to smooth id.
+ */
 struct smoothing {
     uint16 id;
     uint16 smooth;
 };
 
+/**
+ * Contains all defined smoothing entries. smooth is an array of nrofsmooth
+ * entries. It is sorted by smooth[].id.
+ */
 static struct smoothing *smooth=NULL;
 int nrofsmooth=0;
+
 /* the only thing this table is used for now is to
  * translate the colorname in the magicmap field of the
  * face into a numeric index that is then sent to the
  * client for magic map commands.  The order of this table
  * must match that of the NDI colors in include/newclient.h.
  */
-char *colorname[NUM_COLORS] = {
+static const char *const colorname[] = {
 "black",		/* 0  */
 "white",		/* 1  */
 "blue",			/* 2  */
@@ -114,14 +123,11 @@ static int compar_smooth (struct smoothing *a, struct smoothing *b) {
  * Returns the matching color in the coloralias if found,
  * 0 otherwise.  Note that 0 will actually be black, so there is no
  * way the calling function can tell if an error occurred or not
- *
- * CF 0.91.7: relocated from loader.c file - this perhaps can be
- * declared static.
  */
 
-char find_color(char *name) {
-  int i;
-  for(i=0;i<NUM_COLORS;i++)
+static uint8 find_color(const char *name) {
+  uint8 i;
+  for(i=0;i<sizeof(colorname)/sizeof(*colorname);i++)
     if(!strcmp(name,colorname[i]))
       return i;
   LOG(llevError,"Unknown color: %s\n",name);
@@ -131,7 +137,6 @@ char find_color(char *name) {
 /* This reads the lib/faces file, getting color and visibility information.
  * it is called by ReadBmapNames.
  */
-
 
 static void ReadFaceData()
 {
@@ -198,7 +203,7 @@ static void ReadFaceData()
  * difference.)
  */
 
-int ReadBmapNames () {
+void ReadBmapNames () {
     char buf[MAX_BUF], *p, *q;
     FILE *fp;
     int value, nrofbmaps = 0, i;
@@ -218,10 +223,10 @@ int ReadBmapNames () {
 	    nrofbmaps++;
     rewind(fp);
     
-    xbm = (struct bmappair *) malloc(sizeof(struct bmappair) * (nrofbmaps + 1));
-    memset (xbm, 0, sizeof (struct bmappair) * (nrofbmaps + 1));
+    xbm = (struct bmappair *) malloc(sizeof(struct bmappair) * nrofbmaps);
+    memset (xbm, 0, sizeof (struct bmappair) * nrofbmaps);
     
-    while(fgets (buf, MAX_BUF, fp)!=NULL) {
+    while(nroffiles < nrofbmaps && fgets (buf, MAX_BUF, fp) != NULL) {
 	if (*buf == '#')
 	    continue;
 	
@@ -252,19 +257,18 @@ int ReadBmapNames () {
 	    bmaps_checksum += q[l];
 	    bmaps_checksum &= 0xffffffff;
 	}
-	
 
 	xbm[nroffiles].number = value;
 	nroffiles++;
-	if(value > nrofpixmaps)
-	    nrofpixmaps = value;
+	if(value >= nrofpixmaps)
+	    nrofpixmaps = value+1;
     }
     fclose(fp);
 
     LOG(llevDebug,"done (got %d/%d/%d)\n",nrofpixmaps,nrofbmaps,nroffiles);
 
-    new_faces = (New_Face *)malloc(sizeof(New_Face) * (nrofpixmaps+1));
-    for (i = 0; i <= nrofpixmaps; i++) {
+    new_faces = (New_Face *)malloc(sizeof(New_Face) * nrofpixmaps);
+    for (i = 0; i < nrofpixmaps; i++) {
 	new_faces[i].name = "";
 	new_faces[i].number = i;
 	new_faces[i].visibility=0;
@@ -274,9 +278,7 @@ int ReadBmapNames () {
 	new_faces[xbm[i].number].name = xbm[i].name;
     }
 
-    nrofpixmaps++;
-
-    qsort (xbm, nrofbmaps, sizeof(struct bmappair), (int (*)(const void*, const void*))compar);
+    qsort (xbm, nroffiles, sizeof(struct bmappair), (int (*)(const void*, const void*))compar);
 
     ReadFaceData();
 
@@ -302,8 +304,6 @@ int ReadBmapNames () {
     dark_faces[2] = &new_faces[FindFace (DARK_FACE3_NAME,0)];
 
     smooth_face = &new_faces[FindFace(SMOOTH_FACE_NAME,0)];
-
-    return nrofpixmaps;
 }
 
 /* This returns an the face number of face 'name'.  Number is constant
@@ -320,19 +320,8 @@ int ReadBmapNames () {
  * from the server)
  */
 int FindFace (char *name, int error) {
-    int i;
     struct bmappair *bp, tmp;
     char *p;
-
-
-    /* Using actual numbers for faces is a very bad idea.  This is because
-     * each time the archetype file is rebuilt, all the face numbers
-     * change.
-     */
-    if ((i = atoi(name))) {
-	LOG(llevError,"Warning: Integer face name used: %s\n", name);
-	return i;
-    }
 
     if ((p = strchr (name, '\n')))
 	*p = '\0';
@@ -373,7 +362,7 @@ int ReadSmooth () {
     smooth = (struct smoothing *) malloc(sizeof(struct smoothing) * (smoothcount));
     memset (smooth, 0, sizeof (struct smoothing) * (smoothcount));
 
-    while(fgets (buf, MAX_BUF, fp)!=NULL) {
+    while(nrofsmooth < smoothcount && fgets (buf, MAX_BUF, fp)!=NULL) {
         if (*buf == '#')
             continue;
         p=strchr(buf,' ');
@@ -393,6 +382,15 @@ int ReadSmooth () {
     return nrofsmooth;
 }
 
+/**
+ * Find the smooth face for a given face.
+ *
+ * @param face the face to find the smoothing face for
+ *
+ * @param smoothed return value: set to smooth face
+ *
+ * @return 1=smooth face found, 0=no smooth face found
+ */
 int FindSmooth (uint16 face, uint16* smoothed) {
     struct smoothing *bp, tmp;
 
@@ -405,6 +403,9 @@ int FindSmooth (uint16 face, uint16* smoothed) {
     return bp ? 1 : 0;
 }
 
+/**
+ * Deallocates memory allocated by ReadBmapNames() and ReadSmooth().
+ */
 void free_all_images()
 {
     int i;
@@ -413,4 +414,5 @@ void free_all_images()
 	free(xbm[i].name);
     free(xbm);
     free(new_faces);
+    free(smooth);
 }
