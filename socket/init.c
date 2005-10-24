@@ -57,6 +57,7 @@
 #ifdef HAVE_ARPA_INET_H
 #include <arpa/inet.h>
 #endif
+#include <loader.h>
 #include <newserver.h>
 
 Socket_Info socket_info;
@@ -138,7 +139,7 @@ void InitConnection(NewSocket *ns, uint32 from)
      */
     memset( ns->inbuf.buf, 0, sizeof( unsigned char ) * MAXSOCKBUF );
     memset(&ns->lastmap,0,sizeof(struct Map));
-    memset(&ns->faces_sent,0,sizeof(ns->faces_sent));
+    memset(ns->faces_sent, 0, nrofpixmaps*sizeof(*ns->faces_sent));
     memset(&ns->anims_sent,0,sizeof(ns->anims_sent));
     memset(&ns->stats,0,sizeof(struct statsinfo));
     /* Do this so we don't send a face command for the client for
@@ -209,6 +210,7 @@ void init_ericserver()
     LOG(llevDebug,"Initialize new client/server data\n");
     socket_info.nconns = 1;
     init_sockets = malloc(sizeof(NewSocket));
+    init_sockets[0].faces_sent = NULL; /* unused */
     socket_info.allocated_sockets=1;
 
     protox = getprotobyname("tcp");

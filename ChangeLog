@@ -17,6 +17,16 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+The archetypes now contain more than MAXFACENUM (5000) faces. The following
+changes remove the fixed limit of the number of faces. The server now
+allocates enough memory to handle all defined faces.
+include/newserver.h: Remove MAXFACENUM since it is not used anymore. Change
+   NewSocket.faces_sent from array into pointer.
+socket/{init.c, loop.c}: Allocate/initialize NewSocket.faces_sent.
+socket/request.c: Remove safeguard/error message since it depends on
+   MAXFACENUM.
+Andreas Kirschbaum 2005-10-24
+
 Code improvements:
 common/image.c: Declare some variables and functions as static or const; add
    safeguards while loading config files; remove support for numeric face

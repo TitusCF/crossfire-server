@@ -61,6 +61,7 @@
 #include <arpa/inet.h>
 #endif
 
+#include <loader.h>
 #include <newserver.h>
 
 /*****************************************************************************
@@ -582,6 +583,8 @@ void doeric_server()
 	    if (!init_sockets) fatal(OUT_OF_MEMORY);
 	    newsocknum = socket_info.allocated_sockets;
 	    socket_info.allocated_sockets++;
+	    init_sockets[newsocknum].faces_sent = malloc(nrofpixmaps*sizeof(*init_sockets[newsocknum].faces_sent));
+	    if (!init_sockets[newsocknum].faces_sent) fatal(OUT_OF_MEMORY);
 	    init_sockets[newsocknum].status = Ns_Avail;
 	}
 	else {

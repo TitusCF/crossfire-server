@@ -932,15 +932,6 @@ void esrv_send_animation(NewSocket *ns, short anim_num)
 static void esrv_map_setbelow(NewSocket *ns, int x,int y,
 			      short face_num, struct Map *newmap)
 {
-
-    if (x<0 || x>ns->mapx-1 || 
-	y<0 || y>ns->mapy-1 || 
-	face_num < 0 || face_num > MAXFACENUM) {
-
-	LOG(llevError,"bad user x/y/facenum not in 0..10,0..10,0..%d\n",
-	    MAXFACENUM-1);
-	abort();
-    }
     if(newmap->cells[x][y].count >= MAP_LAYERS) {
 	LOG(llevError,"Too many faces in map cell %d %d\n",x,y);
 	return;

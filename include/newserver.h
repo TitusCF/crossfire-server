@@ -64,7 +64,6 @@ struct Map {
 };
 
 /* True max is 16383 given current map compaction method */
-#define MAXFACENUM  5000
 #define MAXANIMNUM  2000
 
 struct statsinfo {
@@ -103,7 +102,7 @@ typedef struct NewSocket {
     enum Sock_Status status;
     int fd;
     struct Map lastmap;
-    uint8 faces_sent[MAXFACENUM];   /* This is a bitmap on sent face status */
+    uint8 *faces_sent;      /* This is a bitmap on sent face status; it has nrofpixmaps entries */
     uint8 anims_sent[MAXANIMNUM];
     struct statsinfo stats;
     /* If we get an incomplete packet, this is used to hold the data. */
