@@ -166,7 +166,7 @@ static PyMethodDef CFPythonMethods[] = {
 CFPContext* context_stack;
 CFPContext* current_context;
 static int current_command = -999;
-O2F
+
 static PyObject* registerGEvent(PyObject* self, PyObject* args)
 {
     int eventcode;
