@@ -51,12 +51,6 @@ struct bmappair {
 
 static struct bmappair *xbm=NULL;
 
-/* only used in loader.c, to go from the numeric image id (which is
- * used throughout the program) backto the standard name.
- */
-
-MapLook blank_look;
-
 /* Following can just as easily be pointers, but 
  * it is easier to keep them like this.
  */
@@ -300,8 +294,6 @@ int ReadBmapNames () {
      * be done - it could easily create confusion.
      */
     blank_face = &new_faces[FindFace(BLANK_FACE_NAME, 0)];
-    blank_look.face = blank_face;
-    blank_look.flags = 0;
     blank_face->magicmap = find_color ("khaki") | FACE_FLOOR;
 
     empty_face = &new_faces[FindFace(EMPTY_FACE_NAME, 0)];

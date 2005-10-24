@@ -17,6 +17,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+common/image.c, include/global.h: Remove unused variable blank_look.
+Andreas Kirschbaum 2005-10-24
+
 Make shout command work in old socket emulation mode.
 common/commands.c: Sort all command arrays in init_commands().
 Andreas Kirschbaum 2005-10-23
