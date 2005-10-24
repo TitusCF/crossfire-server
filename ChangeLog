@@ -17,6 +17,8 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+common/readable.c: Fix out of bounds access to max_titles[] in
+   init_book_archive().
 common/image.c, include/define.h, include/global.h: Remove unused variables
    potion_face and POTION_FACE_NAME.
 common/image.c, include/global.h: Remove unused variable blank_look.

@@ -810,7 +810,7 @@ init_book_archive (void)
 	    }
 	  LOG (llevDebug, " book archives(used/avail): ");
 	  bl = booklist;
-	  while (bl && max_titles[i])
+	  while (bl && i < sizeof(max_titles)/sizeof(*max_titles))
 	    {
 		LOG (llevDebug, "(%d/%d)", bl->number, max_titles[i]);
 		bl = bl->next;
