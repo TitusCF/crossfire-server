@@ -166,7 +166,7 @@ static PyMethodDef CFPythonMethods[] = {
 CFPContext* context_stack;
 CFPContext* current_context;
 static int current_command = -999;
-
+O2F
 static PyObject* registerGEvent(PyObject* self, PyObject* args)
 {
     int eventcode;
@@ -645,7 +645,7 @@ CF_PLUGIN int runPluginCommand(object* op, char* params)
         printf("Illegal call of runPluginCommand, call find_plugin_command first.\n");
         return 1;
     }
-    strcpy(buf, cf_get_maps_directory(CustomCommand[i].name));
+    strcpy(buf, cf_get_maps_directory(CustomCommand[current_command].name));
     strcat(buf, ".py");
 
     context = malloc(sizeof(CFPContext));
