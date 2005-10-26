@@ -40,7 +40,7 @@ cfpython_la_CPSOURCES = cfpython.c\
 	cfpython_map.c
 
 cfpython_la_LIBADD = @PYTHON_LIB@ @PY_LIBS@
-cfpython_la_LDFLAGS = -module -avoid-version
+cfpython_la_LDFLAGS = -module -avoid-version -Xlinker -export-dynamic -rdynamic -Xlinker -Bsymbolic
 AM_CPPFLAGS = -I$(srcdir)/include -I../common/include -I$(top_srcdir)/include @PY_INCLUDES@
 
 proto:

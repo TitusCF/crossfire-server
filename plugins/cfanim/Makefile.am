@@ -30,7 +30,7 @@ cfanim_la_SOURCES = cfanim.c\
 	../common/plugin_common.c
 
 cfanim_la_LIBADD =
-cfanim_la_LDFLAGS = -module -avoid-version
+cfanim_la_LDFLAGS = -module -avoid-version -Xlinker -export-dynamic -rdynamic -Xlinker -Bsymbolic
 AM_CPPFLAGS = -I$(srcdir)/include -I../common/include -I$(top_srcdir)/include
 
 proto:
