@@ -1787,6 +1787,8 @@ void* cfapi_object_set_property(int* type, ...)
                 break;
             case CFAPI_OBJECT_PROP_NROF              :
                 iarg = va_arg(args, int);
+                if (iarg < 0)
+                    iarg = 0;
                 if (op->nrof > iarg)
                     decrease_ob_nr(op,op->nrof-iarg);
                 else

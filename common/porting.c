@@ -408,22 +408,10 @@ int n;
  */
 
 char *ltostr10(signed long n) {
-  static char buf[10];
-  char *cp=buf+9;
-  long flag;
-
-  *cp='\0';
-  if(n<0)
-    flag= n = -n;
-  else
-    flag=0;
-  do {
-    *(--cp) = '0'+n%10;
-    n/=10;
-  } while(n);
-  if(flag)
-    *(--cp)='-';
-  return cp;
+  static char buf[12]; /* maximum size is n=-2 billion, i.e. 11 characters+1
+			  character for the trailing nul character */
+  snprintf(buf, sizeof(buf), "%ld", n);
+  return buf;
 }
 char *doubletostr10(double v){
   static char tbuf[200];

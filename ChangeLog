@@ -17,6 +17,24 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Prevent problems (crashes) for large item piles. Now limit nrof to less than
+2^31.
+--
+common/object.c: In CAN_MERGE() pretend that the objects are not mergeable if
+   the nrof sum would overflow.
+common/porting.c: Fix buffer overflow for large numbers in ltostr10(). Also
+   make n=1L<<31 work correctly.
+plugins/cfpython/cfpython_object.c: In Object_SetQuantity() raise an exception
+   for negative nrof values.
+plugins/common/plugin_common.c: Reject negative nrof values in
+   cf_object_set_nrof().
+plugins/cfanim/include/cfanim_proto.h, plugins/common/include/plugin_common.h:
+   Update prototype.
+server/plugins.c: Treat negative nrof as nrof=0 when setting
+   CFAPI_OBJECT_PROP_NROF property.
+server/time.c: In move_duplicator() limit nrof of created items.
+Andreas Kirschbaum 2005-10-29
+
 Fix compiler warnings. Most changes do not change the program (remove unused
 variables, convert "if(x = y)" into "x = y; if(x)"); a few actually fix
 (possible) problems (fix uninitialized variables, fix printf format

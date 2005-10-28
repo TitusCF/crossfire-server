@@ -817,7 +817,11 @@ static int Object_SetQuantity(Crossfire_Object* whoptr, PyObject* value, void* c
     if (!PyArg_Parse(value,"i",&val))
         return -1;
 
-    cf_object_set_int_property(whoptr->obj, CFAPI_OBJECT_PROP_NROF, val);
+    if (cf_object_set_nrof(whoptr->obj, val) != 0) {
+        PyErr_SetString(PyExc_TypeError, "Invalid quantity");
+        return -1;
+    }
+
 /*    cf_fix_object(whoptr->obj);*/
     return 0;
 }

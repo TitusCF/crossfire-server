@@ -483,10 +483,18 @@ int cf_object_get_weight( object* ob )
     return *( int* )cfapiObject_get_property( &val, ob, CFAPI_OBJECT_PROP_WEIGHT );
 }
 
-void cf_object_set_nrof( object* ob, int nrof )
+/**
+ * @return -1=nrof is invalid, 0=nrof is ok#
+ */
+int cf_object_set_nrof( object* ob, int nrof )
 {
     int val;
+
+    if (nrof < 0)
+        return -1;
+
     cfapiObject_set_property( &val, ob, CFAPI_OBJECT_PROP_NROF, nrof );
+    return 0;
 }
 
 int cf_object_get_nrof( object* ob )

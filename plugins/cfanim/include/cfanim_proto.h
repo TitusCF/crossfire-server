@@ -104,7 +104,7 @@ object *cf_insert_ob_in_ob(object *ob, object *where);
 const char *cf_object_get_msg(object *ob);
 void cf_object_set_weight(object *ob, int weight);
 int cf_object_get_weight(object *ob);
-void cf_object_set_nrof(object *ob, int nrof);
+int cf_object_set_nrof(object *ob, int nrof);
 int cf_object_get_nrof(object *ob);
 int cf_object_get_flag(object *ob, int flag);
 void cf_object_set_flag(object *ob, int flag, int value);

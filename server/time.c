@@ -1044,11 +1044,14 @@ void move_duplicator(object *op) {
 	return;
     for (tmp=op->above; tmp != NULL; tmp=tmp->above) {
 	if (strcmp(op->other_arch->name, tmp->arch->name) == 0) {
-	    if (op->level == 0) {
+	    if (op->level <= 0) {
 		remove_ob(tmp);
 		free_object(tmp);
 	    } else {
-		tmp->nrof *= op->level;
+		uint64 new_nrof = (uint64)tmp->nrof*op->level;
+		if (new_nrof >= 1UL<<31)
+		    new_nrof = 1UL<<31;
+		tmp->nrof = new_nrof;
 	    }
 	    break;
 	}

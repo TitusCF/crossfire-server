@@ -137,6 +137,13 @@ int CAN_MERGE(object *ob1, object *ob2) {
     if (!QUERY_FLAG(ob1,FLAG_ANIMATE) && FABS((ob1)->speed) > MIN_ACTIVE_SPEED)
 	return 0;
 
+    /* Do not merge objects if nrof would overflow. We use 1UL<<31 since that
+     * value could not be stored in a sint32 (which unfortunately sometimes is
+     * used to store nrof).
+     */
+    if (ob1->nrof+ob2->nrof >= 1UL<<31)
+	return 0;
+
     /* This is really a spellbook check - really, we should
      * check all objects in the inventory.
      */
