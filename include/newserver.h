@@ -102,7 +102,8 @@ typedef struct NewSocket {
     enum Sock_Status status;
     int fd;
     struct Map lastmap;
-    uint8 *faces_sent;      /* This is a bitmap on sent face status; it has nrofpixmaps entries */
+    size_t faces_sent_len;  /* This is the number of elements allocated in faces_sent[] */
+    uint8 *faces_sent;      /* This is a bitmap on sent face status */
     uint8 anims_sent[MAXANIMNUM];
     struct statsinfo stats;
     /* If we get an incomplete packet, this is used to hold the data. */

@@ -49,6 +49,8 @@ void free_player(player *pl) {
     /* Clear item stack */
     if (pl->stack_items) free( pl->stack_items );
 
+    free(pl->socket.faces_sent);
+
     CFREE(pl);
 }
 

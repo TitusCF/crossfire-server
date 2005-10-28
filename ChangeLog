@@ -17,6 +17,16 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Fixes my previous commit. Should now properly allocate/deallocate the
+faces_sent array.
+--
+common/player.c: Free faces_sent in free_player().
+include/newserver.h: Add field faces_sent_len to NewSocket struct.
+server/player.c: Allocate and copy faces_sent in add_player().
+socket/init.c: Use faces_sent_len in InitConnection().
+socket/loop.c: Initialize faces_sent_len in doeric_server().
+Andreas Kirschbaum 2005-10-28
+
 The archetypes now contain more than MAXFACENUM (5000) faces. The following
 changes remove the fixed limit of the number of faces. The server now
 allocates enough memory to handle all defined faces.

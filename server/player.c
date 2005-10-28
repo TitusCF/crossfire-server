@@ -326,6 +326,10 @@ int add_player(NewSocket *ns) {
 
     p=get_player(NULL);
     memcpy(&p->socket, ns, sizeof(NewSocket));
+    p->socket.faces_sent = malloc(p->socket.faces_sent_len*sizeof(*p->socket.faces_sent));
+    if(p->socket.faces_sent == NULL)
+	fatal(OUT_OF_MEMORY);
+    memcpy(p->socket.faces_sent, ns->faces_sent, p->socket.faces_sent_len*sizeof(*p->socket.faces_sent));
     /* Needed because the socket we just copied over needs to be cleared.
      * Note that this can result in a client reset if there is partial data
      * on the uncoming socket.
