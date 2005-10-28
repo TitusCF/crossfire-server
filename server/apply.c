@@ -160,7 +160,9 @@ static int apply_id_altar (object *money, object *altar, object *pl)
 static void handle_apply_yield(object* tmp)
 {
     const char* yield;
-    if (yield = get_ob_key_value(tmp,"on_use_yield"))
+
+    yield = get_ob_key_value(tmp,"on_use_yield");
+    if (yield != NULL)
     {
         object* drop = get_archetype(yield);
         if (tmp->env)

@@ -163,7 +163,8 @@ struct Command_Line_Options options[] = {
  */
 static void parse_args(int argc, char *argv[], int pass)
 {
-    int i, on_arg=1;
+    size_t i;
+    int on_arg=1;
 
     while (on_arg<argc) {
 	for (i=0; i<sizeof(options)/sizeof(struct Command_Line_Options); i++) {

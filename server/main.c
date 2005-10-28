@@ -541,9 +541,8 @@ static void enter_random_map(object *pl, object *exit_ob)
 static void enter_random_template_map(object *pl, object *exit_ob)
 {
     mapstruct *new_map;
-    char *cp, tmpnum[32], resultname[HUGE_BUF], tmpstring[HUGE_BUF];
+    char tmpnum[32], resultname[HUGE_BUF], tmpstring[HUGE_BUF];
     const char *new_map_name;
-    static int reference_number = 0;
     RMParms rp;
     
     sprintf(tmpnum ,"%d", exit_ob->x);

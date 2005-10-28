@@ -59,8 +59,8 @@ char **roguelike_layout_gen(int xsize, int ysize, int options) {
     for(i=1;i<xsize-1;i++)
       for(j=1;j<ysize-1;j++)
         maze[i][j]=0;
-    maze[i/2][j/2]='>';
-    maze[i/2][j/2+1]='<';
+    maze[(xsize-1)/2][(ysize-1)/2]='>';
+    maze[(xsize-1)/2][(ysize-1)/2+1]='<';
     return maze;
   }
 
@@ -80,8 +80,8 @@ char **roguelike_layout_gen(int xsize, int ysize, int options) {
     for(i=1;i<xsize-1;i++)
       for(j=1;j<ysize-1;j++)
         maze[i][j]=0;
-    maze[i/2][j/2]='>';
-    maze[i/2][j/2+1]='<';
+    maze[(xsize-1)/2][(ysize-1)/2]='>';
+    maze[(xsize-1)/2][(ysize-1)/2+1]='<';
     free(Rooms);
     return maze;
   }
@@ -215,11 +215,13 @@ static void roguelike_make_rooms(Room *Rooms,char **maze, int options) {
       break;
     default:
       making_circle = ((RANDOM()%3 == 0)? 1:0);
-      if(walk->sx < walk->sy)
-        R = walk->sx/2;
-      else
-        R = walk->sy/2;
+      break;
     }
+
+    if(walk->sx < walk->sy)
+      R = walk->sx/2;
+    else
+      R = walk->sy/2;
 
   /* enscribe a rectangle */
     for(i=walk->ax;i<walk->zx;i++)

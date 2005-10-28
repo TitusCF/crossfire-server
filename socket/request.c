@@ -651,7 +651,7 @@ void SetSound(char *buf, int len, NewSocket *ns)
 
 /** client wants the map resent */
 
-void MapRedrawCmd(char *buff, int len, player *pl)
+void MapRedrawCmd(char *buf, int len, player *pl)
 {
 /* This function is currently disabled; just clearing the map state results in
  * display errors. It should clear the cache and send a newmap command.
@@ -1457,6 +1457,11 @@ void draw_client_map1(object *pl)
         eentrysize=getExtendedMapInfoSize(&(pl->contr->socket));
         SockList_AddChar(&esl, eentrysize);
         estartlen = esl.len;
+    } else {
+        /* suppress compiler warnings */
+        ewhatstart = 0;
+        ewhatflag = 0;
+        estartlen = 0;
     }
     /* Init data to zero */
     memset(heads, 0, sizeof(object *) * MAX_HEAD_POS * MAX_HEAD_POS * MAX_LAYERS);

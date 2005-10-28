@@ -306,6 +306,7 @@ int command_party (object *op, char *params)
 
     params += 5;
     if (op->contr->party) oldparty = op->contr->party;
+    else oldparty = NULL;
  
     if (firstparty) {
 	for (tmpparty = firstparty; tmpparty != NULL;tmpparty = tmpparty->next) {

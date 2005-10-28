@@ -614,7 +614,8 @@ object *get_archetype(const char *name) {
 unsigned long
 hasharch(const char *str, int tablesize) {
     unsigned long hash = 0;
-    int i = 0, rot = 0;
+    int i = 0;
+    unsigned rot = 0;
     const char *p;
 
     for (p = str; i < MAXSTRING && *p; p++, i++) {

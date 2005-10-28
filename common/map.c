@@ -657,7 +657,7 @@ mapstruct *get_empty_map(int sizex, int sizey) {
 static shopitems *parse_shop_string (const char *input_string) { 
     char *shop_string, *p, *q, *next_semicolon, *next_colon; 
     shopitems *items=NULL;
-    int strength=0, i=0, number_of_entries=0;
+    int i=0, number_of_entries=0;
     const typedata *current_type; 
 
     shop_string=strdup_local(input_string); 
@@ -722,7 +722,7 @@ static shopitems *parse_shop_string (const char *input_string) {
 static void print_shop_string(mapstruct *m, char *output_string) {
     int i;
     char tmp[MAX_BUF];
-    sprintf(output_string, "\0");
+    strcpy(output_string, "");
     for (i=0; i< m->shopitems[0].index; i++) {
 	if (m->shopitems[i].typenum) {
 	    if (m->shopitems[i].strength) {
@@ -1213,8 +1213,13 @@ int new_save_map(mapstruct *m, int flag) {
 	fprintf(fp,"shopitems %s\n", shop);
     }
     if (m->shopgreed) fprintf(fp,"shopgreed %f\n", m->shopgreed);
-    if (m->shopmin) fprintf(fp,"shopmin %d\n", m->shopmin);
-    if (m->shopmax) fprintf(fp,"shopmax %d\n", m->shopmax);
+#ifndef WIN32
+    if (m->shopmin) fprintf(fp,"shopmin %llu\n", m->shopmin);
+    if (m->shopmax) fprintf(fp,"shopmax %llu\n", m->shopmax);
+#else
+    if (m->shopmin) fprintf(fp,"shopmin %I64u\n", m->shopmin);
+    if (m->shopmax) fprintf(fp,"shopmax %I64u\n", m->shopmax);
+#endif
     if (m->shoprace) fprintf(fp,"shoprace %s\n", m->shoprace);
     if (m->darkness) fprintf(fp,"darkness %d\n", m->darkness);
     if (m->width) fprintf(fp,"width %d\n", m->width);
@@ -1666,6 +1671,10 @@ void update_position (mapstruct *m, int x, int y) {
     middle=blank_face;
     top=blank_face;
     floor=blank_face;
+
+    middle_obj = NULL;
+    top_obj = NULL;
+    floor_obj = NULL;
 
     for (tmp = get_map_ob (m, x, y); tmp; last = tmp, tmp = tmp->above) {
 

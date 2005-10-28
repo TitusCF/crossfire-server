@@ -160,7 +160,7 @@ static PyMethodDef CFPythonMethods[] = {
     {"RegisterCommand",     registerCommand,        METH_VARARGS},
     {"RegisterGlobalEvent", registerGEvent,         METH_VARARGS},
     {"UnregisterGlobalEvent",unregisterGEvent,      METH_VARARGS},
-    {NULL, NULL}
+    {NULL, NULL, 0}
 };
 
 CFPContext* context_stack;
@@ -535,7 +535,6 @@ void initContextStack()
 
 void pushContext(CFPContext* context)
 {
-    CFPContext* stack_context;
     if (current_context == NULL)
     {
         context_stack = context;
@@ -638,7 +637,6 @@ CF_PLUGIN int runPluginCommand(object* op, char* params)
     char         buf[1024];
     CFPContext*  context;
     static int rv = 0;
-    int i;
 
     if (current_command < -999)
     {

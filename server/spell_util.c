@@ -971,7 +971,7 @@ int cast_spell(object *op, object *caster,int dir,object *spell_ob, char *string
     int success=0,mflags, cast_level=0, old_shoottype;
     object *skill=NULL;
 
-    if (op->contr) old_shoottype = op->contr->shoottype;
+    old_shoottype = op->contr ? op->contr->shoottype : 0;
 
     if (!spell_ob) {
 	LOG(llevError,"cast_spell: null spell object passed\n");

@@ -641,7 +641,6 @@ static int attack_ob_simple (object *op, object *hitter, int base_dam,
     uint32 type;
     const char *op_name = NULL;
     tag_t op_tag, hitter_tag;
-    event *evt;
 
     if (get_attack_mode (&op, &hitter, &simple_attack))
         goto error;
@@ -835,7 +834,6 @@ object *hit_with_arrow (object *op, object *victim)
 {
     object *container, *hitter;
     int hit_something;
-    int sretval = 0; /* GROS - Needed for script return value */
     tag_t victim_tag, hitter_tag;
     sint16 victim_x, victim_y;
 
@@ -993,8 +991,8 @@ int hit_player_attacktype(object *op, object *hitter, int dam,
     int doesnt_slay = 1;
 
     /* Catch anyone that may be trying to send us a bitmask instead of the number */
-    if ((attacknum >= NROFATTACKS) || (attacknum < 0)) {
-	LOG(llevError, "hit_player_attacktype: Invalid attacknumber passed: %x\n", attacknum);
+    if (attacknum >= NROFATTACKS) {
+	LOG(llevError, "hit_player_attacktype: Invalid attacknumber passed: %u\n", attacknum);
 	return 0;
     }
     
@@ -1302,7 +1300,6 @@ int kill_object(object *op,int dam, object *hitter, int type)
     int maxdam=0;
     int battleg=0;    /* true if op standing on battleground */
     int pk=0;         /* true if op and what controls hitter are both players*/
-    int killed_script_rtn = 0;
     object *owner=NULL;
     object *skop=NULL;
 
@@ -1438,7 +1435,9 @@ int kill_object(object *op,int dam, object *hitter, int type)
 		}
 	}
     } /* Was it a player that hit somethign */
-
+    else {
+	skill = NULL;
+    }
 
     /* Pet (or spell) killed something. */
     if(owner != hitter ) {

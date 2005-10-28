@@ -332,7 +332,7 @@ CnvPath CnvPathCreate(String name,String root,String dir)
  */
 void CnvPathDestroy(CnvPath self)
 {
-  int i;
+  Cardinal i;
   debug("CnvPathDestroy()\n");
 
   for(i=0;i<self->dirNro;i++) XtFree(self->dirTable[i]);

@@ -169,8 +169,8 @@ const char *get_region_longname(region *r) {
     else if(r->parent!=NULL)
     	return get_region_longname(r->parent);
     else {
-    	return "no name can be found for the current region";
     	LOG(llevDebug,"NOTICE region %s has no parent and no longname.\n", r->name);
+    	return "no name can be found for the current region";
     }
 }
 
@@ -180,8 +180,8 @@ const char *get_region_msg(region *r) {
     else if(r->parent!=NULL)
     	return get_region_msg(r->parent);
     else {
-    	return "no description can be found for the current region";
     	LOG(llevDebug,"NOTICE region %s has no parent and no msg.\n", r->name);
+    	return "no description can be found for the current region";
     }
 }
 
@@ -241,6 +241,8 @@ void parse_regions(FILE *fp) {
     
     char buf[HUGE_BUF], msgbuf[HUGE_BUF], *key=NULL, *value, *end;
     int msgpos=0;
+
+    new = NULL;
     while (fgets(buf, HUGE_BUF-1, fp)!=NULL) {
 	buf[HUGE_BUF-1] = 0;
 	key = buf;
@@ -317,6 +319,7 @@ void parse_regions(FILE *fp) {
 	    
 	    if (reg==NULL) first_region=new;
 	    else reg->next=new;	
+	    new = NULL;
 	}
 	else if (!strcmp(key,"nomore")) {
 	/* we have reached the end of the region specs....*/

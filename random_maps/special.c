@@ -225,6 +225,11 @@ void place_special_exit(mapstruct * map, int hole_type,RMParms *RP) {
 		mon = "none";
 		break;
 	    }
+
+	default:  /* undefined */
+	    LOG(llevError, "place_special_exit: undefined hole type %d\n", hole_type);
+	    return;
+	    break;
     }
 
     /* Need to be at least this size, otherwise the load

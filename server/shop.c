@@ -207,7 +207,8 @@ uint64 query_cost(object *tmp, object *who, int flag) {
 	    lev_bargain = find_skill_by_number(who,SK_BARGAINING)->level;
 	}
 	if (tmptype) {
-	    if (idskill1=tmptype->identifyskill) {
+	    idskill1=tmptype->identifyskill;
+	    if (idskill1) {
 		idskill2=tmptype->identifyskill2;
 		if (find_skill_by_number(who,idskill1)) {
 		    lev_identify = find_skill_by_number(who,idskill1)->level;
@@ -257,7 +258,7 @@ uint64 query_cost(object *tmp, object *who, int flag) {
      * we are selling objects - in that case, the person just
      * gets no money.
      */
-    if(val<0)
+    if((sint64)val<0)
 	val=0;
 
     /* Unidentified stuff won't sell for more than 60gp */
@@ -937,7 +938,7 @@ int describe_shop(object *op) {
     /*shopitems *items=map->shopitems;*/
     int pos=0, i;
     double opinion=0;
-    char *p, tmp[MAX_BUF]="\0";
+    char tmp[MAX_BUF]="\0";
     if (op->type != PLAYER) return 0;
 
     /*check if there is a shop specified for this map */

@@ -231,7 +231,7 @@ signed long sum_weight(object *op) {
   for(sum = 0, inv = op->inv; inv != NULL; inv = inv->below) {
     if (inv->inv)
 	sum_weight(inv);
-    sum += inv->carrying + (inv->nrof ? inv->weight * inv->nrof : inv->weight);
+    sum += inv->carrying + inv->weight * (inv->nrof ? inv->nrof : 1);
   }
   if (op->type == CONTAINER && op->stats.Str)
     sum = (sum * (100 - op->stats.Str))/100;

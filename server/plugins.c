@@ -439,7 +439,6 @@ void* cfapi_get_hooks(int* type, ...)
     int fid;
     f_plug_api rv;
     int i;
-    *type = CFAPI_NONE;
 
     va_start(args,type);
     request_type = va_arg(args, int);
@@ -460,13 +459,19 @@ void* cfapi_get_hooks(int* type, ...)
     else /* by name */
     {
         buf = va_arg(args, char*);
+        rv = NULL;
         for(i=0; i<NR_OF_HOOKS; i++)
         {
             if (!strcmp(buf, plug_hooks[i].fname))
             {
                 rv = plug_hooks[i].func;
                 *type = CFAPI_FUNC;
+        	break;
             }
+        }
+        if (rv == NULL)
+        {
+            *type = CFAPI_NONE;
         }
     }
     va_end(args);
@@ -540,8 +545,6 @@ crossfire_plugin* plugins_find_plugin(const char* id)
 /*****************************************************************************/
 void plugins_display_list(object *op)
 {
-    char buf[MAX_BUF];
-    int i;
     crossfire_plugin* cp;
 
     new_draw_info (NDI_UNIQUE, 0, op, "List of loaded plugins:");
@@ -617,6 +620,7 @@ void* cfapi_system_unregister_global_event(int *type, ...)
     cp->gevent[eventcode] = NULL;
 
     va_end(args);
+    return NULL;
 }
 
 void* cfapi_system_add_string(int *type, ...)
@@ -670,8 +674,6 @@ void* cfapi_system_re_cmp(int* type, ...)
 {
     va_list args;
     char* rv;
-    char* name;
-    int prepend_dir;
     const char* str;
     const char* regexp;
 
@@ -690,7 +692,6 @@ void* cfapi_system_re_cmp(int* type, ...)
 void* cfapi_system_directory(int* type, ...)
 {
     va_list args;
-    char* rv;
     int dirtype;
 
     va_start(args,type);
@@ -724,6 +725,9 @@ void* cfapi_system_directory(int* type, ...)
         return settings.datadir;
         break;
     }
+
+    *type = CFAPI_NONE;
+    return NULL;
 }
 
 
@@ -760,6 +764,11 @@ void* cfapi_map_get_map(int* type, ...)
             nx = va_arg(args, int);
             ny = va_arg(args, int);
             rv = get_map_from_coord(m, &nx,&ny);
+            break;
+        default:
+            *type = CFAPI_NONE;
+            va_end(args);
+            return NULL;
             break;
     }
     va_end(args);
@@ -802,6 +811,10 @@ void* cfapi_map_create_path(int* type, ...)
         /*case 2:
             rv = create_items_path(str);
             break;*/
+        default:
+            rv = NULL;
+            *type = CFAPI_NONE;
+            break;
     }
     va_end(args);
     return rv;
@@ -2276,6 +2289,7 @@ void* cfapi_object_find(int* type, ...)
     object* op;
     va_start(args,type);
 
+    *type = CFAPI_POBJECT;
     ftype = va_arg(args, int);
     switch (ftype)
     {
@@ -2297,11 +2311,14 @@ void* cfapi_object_find(int* type, ...)
             op = va_arg(args, object*);
             rv = is_player_inv(op);
             break;
+        default:
+            rv = NULL;
+            *type = CFAPI_NONE;
+            break;
     }
 
     va_end(args);
 
-    *type = CFAPI_POBJECT;
     return rv;
 }
 void* cfapi_object_create(int* type, ...)
@@ -2342,6 +2359,12 @@ void* cfapi_object_create(int* type, ...)
             va_end(args);
             return op;
         }
+            break;
+
+        default:
+            *type = CFAPI_NONE;
+            va_end(args);
+            return NULL;
             break;
     }
 }
@@ -2764,6 +2787,11 @@ void* cfapi_object_transfer(int* type,...)
             *type = CFAPI_INT;
             return &rv;
             break;
+
+        default:
+            *type = CFAPI_NONE;
+            return NULL;
+            break;
         }
 }
 
@@ -2775,6 +2803,7 @@ void* cfapi_object_find_archetype_inside(int* type,...)
     va_list args;
     object* rv;
 
+    *type = CFAPI_POBJECT;
     va_start(args, type);
     op = va_arg(args, object*);
     critera = va_arg(args, int);
@@ -2799,11 +2828,15 @@ void* cfapi_object_find_archetype_inside(int* type,...)
             }
             break;
         default:
+            rv = NULL;
             break;
     }
     va_end(args);
 
-    *type = CFAPI_POBJECT;
+    if (rv == NULL)
+    {
+        *type = CFAPI_NONE;
+    }
     return rv;
 }
 
@@ -2865,7 +2898,6 @@ void* cfapi_object_say(int* type,...)
 }
 void* cfapi_object_speak(int* type,...)
 {
-    static int rv;
     object* op;
     char* msg;
     va_list args;
@@ -3017,7 +3049,7 @@ int initPlugins(void)
 {
     struct dirent *currentfile;
     DIR *plugdir;
-    int l;
+    size_t l;
     char buf[MAX_BUF];
     char buf2[MAX_BUF];
     int result;

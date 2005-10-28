@@ -526,7 +526,7 @@ int playername_ok(const char *cp);
 int add_player(NewSocket *ns);
 archetype *get_player_archetype(archetype *at);
 object *get_nearest_player(object *mon);
-int path_to_player(object *mon, object *pl, int mindiff);
+int path_to_player(object *mon, object *pl, unsigned mindiff);
 void give_initial_items(object *pl, treasurelist *items);
 void get_name(object *op);
 void get_password(object *op);

@@ -381,7 +381,7 @@ AttrDef AttrDescription[] = {
     {"WeightL",	        TypeString, getWeightL,		putWeightL},
     {"Brand",	        TypeString, getBrand,		putBrand},
 	 {"Makes",  TypeString, getMakes, putMakes},  /* other_arch */
-    {NULL,		0,		0}
+    {NULL,		0,		0,		NULL}
 };
 
 char *allowed_variables[] = {
@@ -995,7 +995,8 @@ void AttrApply(Attr self)
     String str,var;
     object *ob;
     char buf[BUFSIZ];
-    int len, i, mask,set_all=1;
+    int len, mask,set_all=1;
+    size_t i;
 
     /* check out, that object exist */
     if(!self->op) {

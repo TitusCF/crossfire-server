@@ -1073,7 +1073,7 @@ void monster_check_pickup(object *monster) {
 
     for(tmp=monster->below;tmp!=NULL;tmp=next) {
 	next=tmp->below;
-	if (next) next_tag = next->count;
+	next_tag = next ? next->count : 0;
 	if (monster_can_pick(monster,tmp)) {
 	    remove_ob(tmp);
 	    tmp = insert_ob_in_ob(tmp,monster);
@@ -1640,8 +1640,6 @@ static int do_talk_npc(object* op, object* npc, object* override, const char* tx
 
 int talk_to_npc(object *op, object *npc, const char *txt) {
     object *cobj;
-    int k, l, m;
-    uint32 n;
 
     /* Move this commone area up here - shouldn't cost much extra cpu
      * time, and makes the function more readable */

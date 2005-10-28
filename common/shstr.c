@@ -58,7 +58,8 @@ init_hash_table() {
 static int
 hashstr(const char *str) {
     unsigned long hash = 0;
-    int i = 0, rot = 0;
+    int i = 0;
+    unsigned rot = 0;
     const char *p;
 
     GATHER(hash_stats.calls);

@@ -373,7 +373,7 @@ object *get_nearest_player(object *mon) {
     object *op = NULL;
     player *pl = NULL;
     objectlink *ol;
-    int lastdist;
+    unsigned lastdist;
     rv_vector	rv;
 
     for(ol=first_friendly_object,lastdist=1000;ol!=NULL;ol=ol->next) {
@@ -468,7 +468,7 @@ object *get_nearest_player(object *mon) {
  * since only simple checks to blocked are being called, which could mean the monster
  * is blocking itself.
  */
-int path_to_player(object *mon, object *pl,int mindiff) {
+int path_to_player(object *mon, object *pl, unsigned mindiff) {
     rv_vector	rv;
     sint16  x,y;
     int lastx,lasty,dir,i,diff, firstdir=0,lastdir, max=MAX_SPACES, mflags;
@@ -1644,7 +1644,7 @@ int fire_bow(object *op, object *part, object *arrow, int dir, int wc_mod,
     arrow->stats.hp = arrow->stats.dam; 
     arrow->stats.grace = arrow->attacktype;
     if (arrow->slaying != NULL)
-	arrow->spellarg = strdup(arrow->slaying);
+	arrow->spellarg = strdup_local(arrow->slaying);
 
     /* Note that this was different for monsters - they got their level
      * added to the damage.  I think the strength bonus is more proper.

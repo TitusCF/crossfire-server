@@ -17,6 +17,23 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Fix compiler warnings. Most changes do not change the program (remove unused
+variables, convert "if(x = y)" into "x = y; if(x)"); a few actually fix
+(possible) problems (fix uninitialized variables, fix printf format
+specifiers, fix mismatches between signed and unsigned variables, add missing
+return and default statements).
+--
+Affected files:
+common/{arch.c,init.c,item.c,map.c,object.c,re-cmp.c,readable.c,region.c,
+shstr.c}, crossedit/{Attr.c,Edit.c,Cnv/CnvPath.c}, include/sproto.h,
+plugins/cfanim/cfanim.c, plugins/cfpython/{cfpython.c,cfpython_object.c},
+plugins/cfpython/include/{cfpython_map_private.h,cfpython_object_private.h},
+random_maps/{rogue_layout.c,special.c,square_spiral.c},
+server/{apply.c,attack.c,build_map.c,c_misc.c,c_object.c,c_party.c,init.c,
+main.c,monster.c,pets.c,player.c,plugins.c,shop.c,skill_util.c,spell_util.c,
+weather.c}, socket/{loop.c,request.c}
+Andreas Kirschbaum 2005-10-28
+
 Fixes my previous commit. Should now properly allocate/deallocate the
 faces_sent array.
 --

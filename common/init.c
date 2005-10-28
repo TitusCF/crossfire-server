@@ -421,9 +421,9 @@ void init_attackmess(){
 	    attack_mess[mess][level].level = atoi(buf);
 	    p = strtok(NULL, "=");
 	    if (p != NULL)
-	        attack_mess[mess][level].buf1 = strdup(p);
+	        attack_mess[mess][level].buf1 = strdup_local(p);
 	    else
-	      attack_mess[mess][level].buf1 = strdup("");
+	      attack_mess[mess][level].buf1 = strdup_local("");
 	    mode = 2;
 	    continue;
 	} else if (mode==2) {
@@ -431,9 +431,9 @@ void init_attackmess(){
 	    attack_mess[mess][level].level = atoi(buf);
 	    p = strtok(NULL, "=");
 	    if (p != NULL)
-	        attack_mess[mess][level].buf2 = strdup(p);
+	        attack_mess[mess][level].buf2 = strdup_local(p);
 	    else
-	        attack_mess[mess][level].buf2 = strdup("");
+	        attack_mess[mess][level].buf2 = strdup_local("");
 	    mode = 3;
 	    continue;
 	} else if (mode==3) {
@@ -441,9 +441,9 @@ void init_attackmess(){
 	    attack_mess[mess][level].level = atoi(buf);
 	    p = strtok(NULL, "=");
 	    if (p != NULL)
-	        attack_mess[mess][level].buf3 = strdup(p);
+	        attack_mess[mess][level].buf3 = strdup_local(p);
 	    else
-	        attack_mess[mess][level].buf3 = strdup("");
+	        attack_mess[mess][level].buf3 = strdup_local("");
 	    mode = 1;
 	    level++;
 	    total++;

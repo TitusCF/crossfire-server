@@ -838,7 +838,8 @@ static void EnterCb (Widget w, XtPointer client, XtPointer call)
     Edit self = (Edit) client;
     object *obj = NULL, *tmp;
     char buf[BUFSIZ];
-    char *path,loadPath[PATH_MAX+1];
+    char loadPath[PATH_MAX+1];
+    const char *path;
     XRectangle rect;
     
     /*** find object ***/

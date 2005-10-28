@@ -83,6 +83,7 @@ char **make_square_spiral_layout(int xsize, int ysize,int options) {
   char **maze = map_gen_onion(xsize,ysize,OPT_CENTERED | OPT_NO_DOORS,0);
 
   /* find the layout center.  */
+  cx = 0; cy = 0;
   for(i=0;i<xsize;i++)
     for(j=0;j<ysize;j++) {
       if(maze[i][j]=='C' ) {

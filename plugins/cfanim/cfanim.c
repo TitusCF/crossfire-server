@@ -39,7 +39,6 @@ f_plug_api reCmp;
 
 CFPContext* context_stack;
 CFPContext* current_context;
-static int current_command = -999;
 CFanimation *first_animation=NULL;
 
 int get_dir_from_name (char*name)
@@ -274,7 +273,7 @@ long int initghosted (char* name, char* parameters, struct CFmovement_struct* mo
 int runghosted(struct CFanimation_struct* animation, long int id, void* parameters)
 {
     object* corpse;
-    int val;
+
     if ( (id && animation->ghosted) ||
           (!id && !animation->ghosted) )
         runghosted(animation, !id, parameters);
@@ -355,7 +354,6 @@ long int initteleport (char* name, char* parameters, struct CFmovement_struct* m
 }
 int runteleport(struct CFanimation_struct* animation, long int id, void* parameters)
 {
-    int val=0;
     teleport_params* teleport=(teleport_params*)parameters;
     if (!parameters)
         return 0;
@@ -837,12 +835,12 @@ int start_animation (object* who,object* activator,char* file, char* options)
 void animate_one(CFanimation* animation, long int milliseconds)
 {
     CFmovement* current;
-    int val;
+
     if (animation->time_representation==time_second)
         animation->tick_left+=milliseconds;
     else animation->tick_left++;
     if (animation->verbose)
-        printf("CFAnim: Ticking %s for %s. Tickleft is %d\n",
+        printf("CFAnim: Ticking %s for %s. Tickleft is %ld\n",
                animation->name,animation->victim->name,animation->tick_left);
     if (animation->invisible)
         animation->victim->invisible=10;
@@ -927,7 +925,6 @@ void initContextStack()
 
 void pushContext(CFPContext* context)
 {
-    CFPContext* stack_context;
     if (current_context == NULL)
     {
         context_stack = context;
@@ -956,7 +953,7 @@ CFPContext* popContext()
 int initPlugin(const char* iversion, f_plug_api gethooksptr)
 {
     gethook = gethooksptr;
-    int i;
+
     printf("CFAnim 2.0a init\n");
 
     /* Place your initialization code here */
@@ -967,7 +964,7 @@ void* getPluginProperty(int* type, ...)
 {
     va_list args;
     char* propname;
-    int i;
+
     va_start(args, type);
     propname = va_arg(args, char *);
     printf("Property name: %s\n", propname);
@@ -1015,7 +1012,6 @@ void* globalEventListener(int* type, ...)
     context = malloc(sizeof(CFPContext));
     char* buf;
     player* pl;
-    object* op;
 
     va_start(args, type);
     context->event_code = va_arg(args, int);

@@ -758,7 +758,9 @@ init_book_archive (void)
 
     if ((fp = open_and_uncompress (fname, 0, &comp)) != NULL)
       {
-	  int     i = 0, value, type = 0;
+	  int value, type = 0;
+	  size_t i;
+
 	  while (fgets (buf, MAX_BUF, fp) != NULL)
 	    {
 		if (*buf == '#')
@@ -809,12 +811,9 @@ init_book_archive (void)
 		  }
 	    }
 	  LOG (llevDebug, " book archives(used/avail): ");
-	  bl = booklist;
-	  while (bl && i < sizeof(max_titles)/sizeof(*max_titles))
+	  for (bl = booklist, i = 0; bl != NULL && i < sizeof(max_titles)/sizeof(*max_titles); bl = bl->next, i++)
 	    {
 		LOG (llevDebug, "(%d/%d)", bl->number, max_titles[i]);
-		bl = bl->next;
-		i++;
 	    }
 	  LOG (llevDebug, "\n");
 	  close_and_delete (fp, comp);

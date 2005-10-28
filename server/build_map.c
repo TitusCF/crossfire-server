@@ -351,7 +351,6 @@ void apply_builder_floor(object* pl, object* material, short x, short y )
     {
     object* tmp, *above;
     object* above_floor; /* Item above floor, if any */
-    char has_floor = 0;
     struct archt* new_floor;
     struct archt* new_wall;
     int i, xt, yt, floor_removed;

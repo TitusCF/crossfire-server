@@ -1482,7 +1482,7 @@ void examine(object *op, object *tmp) {
 
     if(tmp->weight) {
 	sprintf(buf,tmp->nrof>1?"They weigh %3.3f kg.":"It weighs %3.3f kg.",
-            (tmp->nrof?tmp->weight*tmp->nrof:tmp->weight)/1000.0);
+            tmp->weight*(tmp->nrof?tmp->nrof:1)/1000.0);
 	new_draw_info(NDI_UNIQUE, 0,op,buf);
     }
 
@@ -1680,7 +1680,7 @@ int command_pickup (object *op, char *params)
       return 1;
       }
 
-  if(!sscanf(params, "%ud", &i) || i<0 ) {
+  if(sscanf(params, "%u", &i) != 1) {
     if(1) LOG(llevDebug, "command_pickup: params==NULL\n");
     new_draw_info(NDI_UNIQUE, 0,op,"Usage: pickup <0-7> or <value_density> .");
     return 1;

@@ -834,7 +834,7 @@ static int do_skill_attack(object *tmp, object *op, const char *string, object *
     */
     if(op->type==PLAYER) {
 	if (!QUERY_FLAG(op,FLAG_READY_WEAPON)) {
-	    int i;
+	    size_t i;
 
 	    if (!skill) {
 		/* See if the players chosen skill is a combat skill, and use

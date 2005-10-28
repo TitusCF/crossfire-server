@@ -847,6 +847,8 @@ int summon_object(object *op, object *caster, object *spell_ob, int dir, const c
 	else
 	nrof =  die_roll(2, 2, op, PREFER_HIGH);
 	summon_arch = mon->arch;
+    } else {
+	summon_arch = NULL;
     }
 
     if (spell_ob->stats.dam)
@@ -863,6 +865,9 @@ int summon_object(object *op, object *caster, object *spell_ob, int dir, const c
     if (dir > 0) {
 	x = op->x + freearr_x[dir];
 	y = op->y + freearr_y[dir];
+    } else {
+	x = 0;
+	y = 0;
     }
 
     if (dir == -1 || arch_blocked(summon_arch, op->map, x, y)){

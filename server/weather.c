@@ -94,7 +94,7 @@ weather_avoids_t weather_avoids[] = {
     {"shallow_sea", 0, NULL},
     {"lava", 0, NULL},
     {"permanent_lava", 0, NULL},
-    {NULL, 0}
+    {NULL, 0, NULL}
 }; 
 
 /*
@@ -236,7 +236,7 @@ weather_grow_t weather_tile[] = {
     {"earth", NULL, 1, 0.1, 0.9, 20, 80, -30, 30, 0, 4999, 0}, /* tundra */
     {"swamp", NULL, 1, 1.0, 9.9, 50, 100, -30, 10, 0, 4000, 0},/* cold marsh */
     {"earth", NULL, 1, 0.0, 99.9, 0, 100, -99, 99, 0, 99999, 0}, /* debug */
-    {NULL, NULL, 1, 0.0, 0.0, 0, 0, 0, 0, 0, 0}
+    {NULL, NULL, 1, 0.0, 0.0, 0, 0, 0, 0, 0, 0, 0}
 };
 
 /* This stuff is for creating the images. */
@@ -2594,6 +2594,8 @@ void smooth_wind()
     int minp;
 
     /* skip the outer squares.. it makes handling alot easier */
+    dx = 0;
+    dy = 0;
     for (x=1; x < WEATHERMAPTILESX-1; x++)
 	for (y=1; y < WEATHERMAPTILESY-1; y++) {
 	    minp = PRESSURE_MAX + 1;

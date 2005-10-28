@@ -30,7 +30,6 @@
 
 static PyObject* Player_GetIP(Crossfire_Player* whoptr, void* closure)
 {
-    int type;
     return Py_BuildValue("s",( char* )cf_player_get_ip(whoptr->obj));
 }
 static PyObject* Crossfire_Player_Message( Crossfire_Player* who, PyObject* args )
@@ -50,13 +49,11 @@ static PyObject* Crossfire_Player_Message( Crossfire_Player* who, PyObject* args
 /* Object properties. Get and maybe set. */
 static PyObject* Object_GetName(Crossfire_Object* whoptr, void* closure)
 {
-    int type;
     return Py_BuildValue("s",( char* )cf_query_name(whoptr->obj));
 }
 
 static PyObject* Object_GetTitle(Crossfire_Object* whoptr, void* closure)
 {
-    int type;
     return Py_BuildValue("s",( char* )cf_object_get_property( whoptr->obj, CFAPI_OBJECT_PROP_TITLE ));
 }
 
@@ -69,127 +66,106 @@ static PyObject* Object_GetMap(Crossfire_Object* whoptr, void* closure)
 
 static PyObject* Object_GetCha(Crossfire_Object* whoptr, void* closure)
 {
-    int type;
     return Py_BuildValue("i",*( int* )cf_object_get_property( whoptr->obj, CFAPI_OBJECT_PROP_CHA));
 }
 
 static PyObject* Object_GetCon(Crossfire_Object* whoptr, void* closure)
 {
-    int type;
     return Py_BuildValue("i",*( int* )cf_object_get_property( whoptr->obj, CFAPI_OBJECT_PROP_CON));
 }
 
 static PyObject* Object_GetDex(Crossfire_Object* whoptr, void* closure)
 {
-    int type;
     return Py_BuildValue("i",*( int* )cf_object_get_property( whoptr->obj, CFAPI_OBJECT_PROP_DEX));
 }
 
 static PyObject* Object_GetInt(Crossfire_Object* whoptr, void* closure)
 {
-    int type;
     return Py_BuildValue("i",*( int* )cf_object_get_property( whoptr->obj, CFAPI_OBJECT_PROP_INT));
 }
 
 static PyObject* Object_GetPow(Crossfire_Object* whoptr, void* closure)
 {
-    int type;
     return Py_BuildValue("i",*( int* )cf_object_get_property( whoptr->obj, CFAPI_OBJECT_PROP_POW));
 }
 
 static PyObject* Object_GetStr(Crossfire_Object* whoptr, void* closure)
 {
-    int type;
     return Py_BuildValue("i",*( int* )cf_object_get_property( whoptr->obj, CFAPI_OBJECT_PROP_STR));
 }
 
 static PyObject* Object_GetWis(Crossfire_Object* whoptr, void* closure)
 {
-    int type;
     return Py_BuildValue("i",*( int* )cf_object_get_property( whoptr->obj, CFAPI_OBJECT_PROP_WIS));
 }
 
 static PyObject* Object_GetHP(Crossfire_Object* whoptr, void* closure)
 {
-    int type;
     return Py_BuildValue("i",*( int* )cf_object_get_property( whoptr->obj, CFAPI_OBJECT_PROP_HP));
 }
 
 static PyObject* Object_GetMaxHP(Crossfire_Object* whoptr, void* closure)
 {
-    int type;
     return Py_BuildValue("i",*( int* )cf_object_get_property( whoptr->obj, CFAPI_OBJECT_PROP_MAXHP));
 }
 
 static PyObject* Object_GetSP(Crossfire_Object* whoptr, void* closure)
 {
-    int type;
     return Py_BuildValue("i",*( int* )cf_object_get_property( whoptr->obj, CFAPI_OBJECT_PROP_SP));
 }
 
 static PyObject* Object_GetMaxSP(Crossfire_Object* whoptr, void* closure)
 {
-    int type;
     return Py_BuildValue("i",*( int* )cf_object_get_property( whoptr->obj, CFAPI_OBJECT_PROP_MAXSP));
 }
 
 static PyObject* Object_GetGrace(Crossfire_Object* whoptr, void* closure)
 {
-    int type;
     return Py_BuildValue("i",*( int* )cf_object_get_property( whoptr->obj, CFAPI_OBJECT_PROP_GP));
 }
 
 static PyObject* Object_GetMaxGrace(Crossfire_Object* whoptr, void* closure)
 {
-    int type;
     return Py_BuildValue("i",*( int* )cf_object_get_property( whoptr->obj, CFAPI_OBJECT_PROP_MAXGP));
 }
 
 static PyObject* Object_GetFood(Crossfire_Object* whoptr, void* closure)
 {
-    int type;
     return Py_BuildValue("i",*( int* )cf_object_get_property( whoptr->obj, CFAPI_OBJECT_PROP_FP));
 }
 
 static PyObject* Object_GetAC(Crossfire_Object* whoptr, void* closure)
 {
-    int type;
     return Py_BuildValue("i",*( int* )cf_object_get_property( whoptr->obj, CFAPI_OBJECT_PROP_AC));
 }
 
 static PyObject* Object_GetWC(Crossfire_Object* whoptr, void* closure)
 {
-    int type;
     return Py_BuildValue("i",*( int* )cf_object_get_property( whoptr->obj, CFAPI_OBJECT_PROP_WC));
 }
 
 static PyObject* Object_GetDam(Crossfire_Object* whoptr, void* closure)
 {
-    int type;
     return Py_BuildValue("i",*( int* )cf_object_get_property( whoptr->obj, CFAPI_OBJECT_PROP_DAM));
 }
 
 static PyObject* Object_GetLuck(Crossfire_Object* whoptr, void* closure)
 {
-    int type;
     return Py_BuildValue("i",*( int* )cf_object_get_property( whoptr->obj, CFAPI_OBJECT_PROP_LUCK));
 }
 
 static PyObject* Object_GetMessage(Crossfire_Object* whoptr, void* closure)
 {
-    int type;
     return Py_BuildValue("s",( char* )cf_object_get_property( whoptr->obj, CFAPI_OBJECT_PROP_MESSAGE));
 }
 
 static PyObject* Object_GetExp(Crossfire_Object* whoptr, void* closure)
 {
-    int type;
     return Py_BuildValue("L",*( sint64* )cf_object_get_property( whoptr->obj, CFAPI_OBJECT_PROP_EXP));
 }
 
 static PyObject* Object_GetSlaying(Crossfire_Object* whoptr, void* closure)
 {
-    int type;
     return Py_BuildValue("s",( char* )cf_object_get_property( whoptr->obj, CFAPI_OBJECT_PROP_SLAYING));
 }
 static PyObject* Object_GetCursed(Crossfire_Object* whoptr, void* closure)
@@ -1298,7 +1274,6 @@ static PyObject* Crossfire_Object_ActivateRune( Crossfire_Object* who, PyObject*
 {
     object* trap;
     object* victim;
-    int result;
     Crossfire_Object* pcause;
 
     if (!PyArg_ParseTuple(args,"O",&pcause))
@@ -1349,7 +1324,6 @@ static PyObject* Crossfire_Object_Speak( Crossfire_Object* who, PyObject* args )
 static PyObject* Crossfire_Object_Reposition( Crossfire_Object* who, PyObject* args )
 {
     int x, y;
-    int result;
 
     if (!PyArg_ParseTuple(args,"ii",&x,&y))
         return NULL;
@@ -1366,7 +1340,7 @@ static PyObject* Crossfire_Object_QueryName( Crossfire_Object* who, PyObject* ar
 
 static PyObject* Crossfire_Object_GetResist( Crossfire_Object* who, PyObject* args )
 {
-    int resist, type;
+    int resist;
     if ( !PyArg_ParseTuple( args, "l", &resist ) )
         return NULL;
     if ( ( resist < 0 ) || ( resist >= NROFATTACKS ) )
@@ -1402,7 +1376,6 @@ static PyObject* Crossfire_Object_LearnSpell( Crossfire_Object* who, PyObject* a
 {
 
     Crossfire_Object* pspell;
-    int i = 0;
 
     if (!PyArg_ParseTuple(args,"O",&pspell))
         return NULL;
@@ -1508,7 +1481,6 @@ static PyObject* Crossfire_Object_WriteKey( Crossfire_Object* who, PyObject* arg
 static PyObject* Crossfire_Object_CheckInventory( Crossfire_Object* who, PyObject* args )
 {
     char* whatstr;
-    object* tmp;
     object* foundob;
 
     if (!PyArg_ParseTuple(args,"s",&whatstr))
@@ -1557,7 +1529,6 @@ static PyObject* Crossfire_Object_CheckArchInventory( Crossfire_Object* who, PyO
 static PyObject* Crossfire_Object_GetOutOfMap(Crossfire_Object* who, PyObject* args)
 {
     int x, y;
-    int val;
 
     if (!PyArg_ParseTuple(args,"ii",&x,&y))
         return NULL;

@@ -364,7 +364,7 @@ int command_who (object *op, char *params) {
 	    new_draw_info_format(NDI_UNIQUE, 0, op, "Total Players in %s (%d) -- WIZ(%d) AFK(%d)", 
       	    	reg->longname, num_players, num_wiz, num_afk);
     }
-    qsort (chars, num_players, sizeof(chars_names), name_cmp);
+    qsort (chars, num_players, sizeof(chars_names), (int (*)(const void *, const void *))name_cmp);
     for (i=0;i<num_players;i++)
 	display_who_entry(op, find_player(chars[i].namebuf), format);
     free(chars);    

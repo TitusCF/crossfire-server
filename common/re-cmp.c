@@ -37,7 +37,7 @@
 /*   P r o t o t y p e s
  */
 const char *re_cmp(const char *, const char *);
-static Boolean re_cmp_step(const char *, const char *, int, int);
+static Boolean re_cmp_step(const char *, const char *, unsigned, int);
 static void re_init(void);
 static Boolean re_match_token(uchar, selection *);
 static const char *re_get_token(selection *, const char *);
@@ -85,6 +85,7 @@ re_cmp(const char *str, const char *regexp) {
     re_token_depth = 0;
     re_substr[0] = next_regexp;
 
+    matched = False;
     while (*str != '\0' && !(matched = re_match_token(*str, re_token[0])))
 	str++;
     
@@ -161,7 +162,7 @@ re_cmp(const char *str, const char *regexp) {
  */
 
 static Boolean
-re_cmp_step(const char *str, const char *regexp, int slot, int matches) {
+re_cmp_step(const char *str, const char *regexp, unsigned slot, int matches) {
     /* str	- string to match
      * regexp	- pattern
      * slot	- number of the token which under consideration
@@ -171,7 +172,7 @@ re_cmp_step(const char *str, const char *regexp, int slot, int matches) {
     Boolean matched;
 
 #ifdef DEBUG
-/*    fprintf(stderr, "['%s', '%s', %d, %d]\n", str, regexp, slot, matches);*/
+/*    fprintf(stderr, "['%s', '%s', %u, %d]\n", str, regexp, slot, matches);*/
 #endif
 
     if (*regexp == 0) {

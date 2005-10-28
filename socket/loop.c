@@ -115,7 +115,7 @@ static struct PlCmdMapping plcommands[] = {
     { "lock",		(func_uint8_int_pl)LockItem,	1},
     { "mark",		(func_uint8_int_pl)MarkItem,	1},
     { "mapredraw",	MapRedrawCmd,	0},	/* Added: phil */
-    { NULL, NULL}	/* terminator */
+    { NULL, NULL, 0}	/* terminator */
 };
 
 /** Face-related commands */
@@ -502,7 +502,7 @@ void doeric_server()
     int i, pollret;
     fd_set tmp_read, tmp_exceptions, tmp_write;
     struct sockaddr_in addr;
-    int addrlen=sizeof(struct sockaddr);
+    socklen_t addrlen=sizeof(struct sockaddr);
     player *pl, *next;
 
 #ifdef CS_LOGSTATS
