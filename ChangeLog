@@ -17,6 +17,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Fix part of bug #1236244 (Exp from scrolls): reading a scroll of charm
+monsters now gives exp for use magic item, not summoning.
+--
+server/spell_attack.c: Use skill from scroll, not from spell.
+Andreas Kirschbaum 2005-10-29
+
 include/config.h: DEBUG just been defined, no need to define it again.
 include/win32.h: typedef for socklen_t.
 random_maps/random_map.c: generate_random_map can use a const char*.
