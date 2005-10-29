@@ -134,7 +134,9 @@ typedef struct {
 	struct dirent dent;			/* the dirent to return */
 } DIR;
 
-typedef int socklen_t;	/* Doesn't exist, just a plain int. */
+#ifndef socklen_t
+#define socklen_t int /* Doesn't exist, just a plain int */
+#endif
 
 /* Function prototypes */
 extern int gettimeofday(struct timeval *time_Info, struct timezone *timezone_Info);
