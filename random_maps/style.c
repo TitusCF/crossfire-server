@@ -37,6 +37,14 @@
 #endif /* win32 */
 
 
+static int pointer_strcmp(const void *p1, const void *p2)
+{
+    const char *s1 = *(const char **)p1;
+    const char *s2 = *(const char **)p2;
+
+    return(strcmp(s1, s2));
+}
+
 /* This is our own version of scandir/select_regular_files/sort.
  * To support having subdirectories in styles, we need to know
  * if in fact the directory we read is a subdirectory.  However,
@@ -82,7 +90,7 @@ int load_dir (const char *dir, char ***namelist, int skip_dirs)
     }
     (void) closedir (dp);
 
-    qsort(rn, entries, sizeof(char*), (int(*)(const void*, const void*))strcmp);
+    qsort(rn, entries, sizeof(char*), pointer_strcmp);
 
     *namelist = rn;
     return entries;
