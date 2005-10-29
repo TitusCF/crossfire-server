@@ -217,7 +217,7 @@ int execute_global_event(int eventcode, ...)
             for(cp=plugins_list; cp != NULL; cp=cp->next)
             {
                 if (cp->gevent[eventcode]!=NULL)
-                    cp->gevent[eventcode](&rt,eventcode,op);
+                    cp->gevent[eventcode](&rt,eventcode);
             }
             break;
         case EVENT_PLAYER_DEATH:

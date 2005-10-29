@@ -7,7 +7,7 @@
 #define AFX_STDAFX_H__31666CA1_2474_11D5_AE6C_F07569C10000__INCLUDED_
 
 /* Define the version here.  In Unixland, it's defined on the command line now. */
-#define VERSION "1.8.0"
+#define VERSION "1.8.0 snapshot"
 
 #pragma warning(disable: 4761) /* integral size mismatch in argument; conversion supplied */
 
@@ -133,6 +133,8 @@ typedef struct {
 	char *dir;					/* the dir we are reading */
 	struct dirent dent;			/* the dirent to return */
 } DIR;
+
+typedef int socklen_t;	/* Doesn't exist, just a plain int. */
 
 /* Function prototypes */
 extern int gettimeofday(struct timeval *time_Info, struct timezone *timezone_Info);

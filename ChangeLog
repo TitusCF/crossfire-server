@@ -17,6 +17,15 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+include/config.h: DEBUG just been defined, no need to define it again.
+include/win32.h: typedef for socklen_t.
+random_maps/random_map.c: generate_random_map can use a const char*.
+random_maps/rproto.h: fix generate_random_map definition.
+server/plugins.c: EVENT_CRASH doesn't really need a parameter, especially if
+ not initialized :)
+Ryo 2005-10-29
+
+
 Prevent problems (crashes) for large item piles. Now limit nrof to less than
 2^31.
 --

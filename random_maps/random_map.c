@@ -48,7 +48,7 @@ void dump_layout(char **layout,RMParms *RP) {
     printf("\n");
 }
 EXTERN FILE *logfile;
-mapstruct *generate_random_map(char *OutFileName, RMParms *RP) {
+mapstruct *generate_random_map(const char *OutFileName, RMParms *RP) {
     char **layout, buf[HUGE_BUF];
     mapstruct *theMap;
     int i;

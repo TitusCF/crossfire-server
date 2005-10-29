@@ -166,7 +166,6 @@
 #define DEBUG
 #endif
 #endif
-#define DEBUG
 /*
  * This option creates more core files.  In some areas, there are certain
  * checks done to try and make the program more stable (ie, check
