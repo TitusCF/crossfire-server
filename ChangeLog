@@ -21,10 +21,12 @@ random_maps/style.c: Pass correct sorting function to qsort(): the sorted
    array contains pointers to strings, not strings.
 Andreas Kirschbaum 2005-10-29
 
-Fix part of bug #1236244 (Exp from scrolls): reading a scroll of charm
-monsters now gives exp for use magic item, not summoning.
+Fix bug #1236244 (Exp from scrolls): reading a scroll of charm monsters or
+meteor swarm now gives exp for use magic item, not summoning or pyromancy.
 --
-server/spell_attack.c: Use skill from scroll, not from spell.
+server/spell_attack.c: In mood_change() use skill from scroll, not from spell.
+   In move_swarm_spell() use the spell "owner" as the object casting the
+   spell.
 Andreas Kirschbaum 2005-10-29
 
 include/config.h: DEBUG just been defined, no need to define it again.

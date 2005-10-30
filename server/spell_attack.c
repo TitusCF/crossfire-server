@@ -1616,8 +1616,10 @@ void move_swarm_spell(object *op)
     static int diagonal_adjust[10] = { -3, -2, -2, -1, 0, 0, 1, 2, 2, 3 };
     sint16 target_x, target_y, origin_x, origin_y;
     int basedir, adjustdir;
+    object *owner;
 
-    if(op->duration == 0 || get_owner (op) == NULL) {
+    owner = get_owner(op);
+    if(op->duration == 0 || owner == NULL) {
 	remove_ob(op);
 	free_object(op);
 	return;
@@ -1664,9 +1666,9 @@ void move_swarm_spell(object *op)
 
 	/* Bullet spells have a bunch more customization that needs to be done */
 	if (op->spell->subtype == SP_BULLET)
-	    fire_bullet(op, op, basedir, op->spell);
+	    fire_bullet(owner, op, basedir, op->spell);
 	else if (op->spell->subtype == SP_MAGIC_MISSILE)
-	    fire_arch_from_position (op, op, origin_x, origin_y, basedir, op->spell);
+	    fire_arch_from_position (owner, op, origin_x, origin_y, basedir, op->spell);
     }
 }
 
