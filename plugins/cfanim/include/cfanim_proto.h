@@ -112,7 +112,7 @@ object *cf_object_insert_in_ob(object *ob, object *where);
 object *cf_map_insert_object_there(mapstruct *where, object *op, object *originator, int flags);
 object *cf_map_insert_object(mapstruct *where, object *op, int x, int y);
 int cf_object_teleport(object *op, mapstruct *map, int x, int y);
-object *cf_map_present_arch_by_name(object *what, mapstruct *map, int nx, int ny);
+object *cf_map_present_arch_by_name(const char *what, mapstruct *map, int nx, int ny);
 void cf_object_update(object *op, int flags);
 void cf_object_pickup(object *op, object *what);
 char *cf_strdup_local(char *txt);
