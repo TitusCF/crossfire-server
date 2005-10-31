@@ -764,8 +764,36 @@ int command_create (object *op, char *params)
 		}
 		prev=dup;
 	    }
-	    if (QUERY_FLAG(head, FLAG_ALIVE))
-		insert_ob_in_map(head, op->map, op, 0);
+		if (QUERY_FLAG(head, FLAG_ALIVE)) {
+			object* check = head;
+			int size_x = 0;
+			int size_y = 0;
+			while (check)
+			{
+				size_x = max(size_x, check->arch->clone.x);
+				size_y = max(size_y, check->arch->clone.y);
+				check = check->more;
+			}
+			if (out_of_map(op->map,head->x + size_x, head->y + size_y))
+			{
+				if ((head->x < size_x) || (head->y < size_y))
+				{
+					dm_stack_pop(op->contr);
+					free_object(head);
+					new_draw_info(NDI_UNIQUE, 0, op,"Object too big to insert in map, or wrong position.");
+					free_object(tmp);
+					return 1;
+				}
+				check = head;
+				while ( check )
+				{
+					check->x -= size_x;
+					check->y -= size_y;
+					check = check->more;
+				}
+			}
+			insert_ob_in_map(head, op->map, op, 0);
+		}
 	    else
 		head = insert_ob_in_ob(head, op);
 
@@ -968,6 +996,10 @@ int command_remove (object *op, char *params)
 	new_draw_info(NDI_UNIQUE, 0,op,"Remove what object (nr)?");
 	return 1;
     }
+	if (tmp->type == PLAYER) {
+		new_draw_info(NDI_UNIQUE, 0,op,"Unable to remove a player!");
+		return 1;
+	}
     if (QUERY_FLAG(tmp, FLAG_REMOVED)) {
 	new_draw_info_format(NDI_UNIQUE, 0,op,"%s is already removed!",
 			     query_name(tmp));
