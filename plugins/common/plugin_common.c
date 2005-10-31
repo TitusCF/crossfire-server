@@ -547,10 +547,10 @@ int cf_object_teleport( object* op, mapstruct* map, int x, int y )
     int val;
     return *( int* )cfapiObject_teleport( &val, op, map, x, y );
 }
-object* cf_map_present_arch_by_name(object* what, mapstruct* map, int nx, int ny)
+object* cf_map_present_arch_by_name(const char* str, mapstruct* map, int nx, int ny)
 {
     int val;
-    return (object*)cfapiMap_present_arch_by_name(&val, what,map,nx,ny);
+    return (object*)cfapiMap_present_arch_by_name(&val, str,map,nx,ny);
 }
 void cf_object_update( object* op, int flags)
 {

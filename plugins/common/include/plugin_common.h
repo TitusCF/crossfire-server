@@ -97,7 +97,7 @@ extern object*      cf_create_object_by_name( const char* name );
 extern object*      cf_map_insert_object(mapstruct* where, object* op, int x, int y);
 extern int          cf_object_change_map(object* op, int x, int y, mapstruct* map);
 extern int          cf_object_teleport( object* ob, mapstruct* map, int x, int y );
-extern object*      cf_map_present_arch_by_name(object* what, mapstruct* map, int nx, int ny);
+extern object*      cf_map_present_arch_by_name(const char* str, mapstruct* map, int nx, int ny);
 extern void         cf_object_update( object* op, int flags);
 extern void         cf_object_pickup( object* op, object* what);
 extern int          cf_map_get_flags( mapstruct* map, mapstruct** nmap, sint16 x, sint16 y, sint16* nx, sint16* ny );
