@@ -317,7 +317,7 @@ extern long find_ingred_cost(const char *name);
 extern void dump_alchemy_costs(void);
 extern const char *ingred_name(const char *name);
 extern int strtoint(const char *buf);
-extern artifact *locate_recipe_artifact(recipe *rp);
+extern artifact *locate_recipe_artifact(recipe *rp, size_t idx);
 extern int numb_ingred(const char *buf);
 extern recipelist *get_random_recipelist(void);
 extern recipe *get_random_recipe(recipelist *rpl);

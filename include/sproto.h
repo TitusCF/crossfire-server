@@ -6,7 +6,7 @@ int numb_ob_inside(object *op);
 object *attempt_recipe(object *caster, object *cauldron, int ability, recipe *rp, int nbatches);
 void adjust_product(object *item, int lvl, int yield);
 object *make_item_from_recipe(object *cauldron, recipe *rp);
-object *find_transmution_ob(object *first_ingred, recipe *rp);
+object *find_transmution_ob(object *first_ingred, recipe *rp, size_t *rp_arch_index, int create_item);
 void alchemy_failure_effect(object *op, object *cauldron, recipe *rp, int danger);
 void remove_contents(object *first_ob, object *save_item);
 int calc_alch_danger(object *caster, object *cauldron, recipe *rp);

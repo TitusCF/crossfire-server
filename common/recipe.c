@@ -24,6 +24,8 @@
 #include <object.h>
 #include <ctype.h>
 
+static void build_stringlist(const char *str, char ***result_list, size_t *result_size);
+
 static recipelist *formulalist;
 
 static recipelist *init_recipelist() {
@@ -49,6 +51,7 @@ static recipe *get_empty_formula() {
   t->exp=0;
   t->keycode = 0;
   t->title = NULL;
+  t->arch_names = 0;
   t->arch_name = NULL;
   t->skill = NULL;
   t->cauldron = NULL;
@@ -74,21 +77,24 @@ recipelist * get_formulalist ( int i ) {
  * and archetype. */
 
 static int check_recipe(recipe *rp) {
+    size_t i;
+    int result;
 
-    if(find_archetype(rp->arch_name)!=NULL) { 
-          artifact *art=locate_recipe_artifact(rp);
-          if (!art && strcmp(rp->title,"NONE")) {
-		LOG(llevError,"\n WARNING: Formula %s of %s has no artifact.\n",
-                rp->arch_name,rp->title); 
-		return 0;
-	  }
-    } else { 
-           LOG(llevError,"\n WARNING: Can't find archetype:%s for formula:%s\n", 
-                rp->arch_name,rp->title); 
-	   return 0;
+    result = 1;
+    for (i = 0; i < rp->arch_names; i++) {
+        if (find_archetype(rp->arch_name[i]) != NULL) { 
+            artifact *art = locate_recipe_artifact(rp, i);
+            if (!art && strcmp(rp->title, "NONE") != 0) {
+                LOG(llevError,"\nWARNING: Formula %s of %s has no artifact.\n", rp->arch_name[i], rp->title); 
+                result = 0;
+            }
+        } else { 
+            LOG(llevError,"\nWARNING: Can't find archetype %s for formula %s\n", rp->arch_name[i], rp->title); 
+            result = 0;
+        }
     }
    
-    return 1;
+    return result;
 }
 
 
@@ -170,7 +176,7 @@ void init_formulae() {
       formula->next = fl->items; 
       fl->items = formula;
     } else if (!strncmp(cp, "arch",4)) { 
-        formula->arch_name = add_string(strchr(cp,' ')+1);
+        build_stringlist(strchr(cp, ' ')+1, &formula->arch_name, &formula->arch_names);
         (void) check_recipe(formula);
     } else if (!strncmp(cp, "skill", 5)) {
 	formula->skill = add_string(strchr(cp, ' ')+1);
@@ -205,7 +211,7 @@ void check_formulae( void ) {
         if(check->index==formula->index) { 
           LOG(llevError," ERROR: On %d ingred list: ", numb);
           LOG(llevError, "Formulae [%s] of %s and [%s] of %s have matching index id (%d)\n",
-            formula->arch_name,formula->title,check->arch_name,check->title,formula->index);
+            formula->arch_name[0],formula->title,check->arch_name[0],check->title,formula->index);
         }
     numb++;
   }
@@ -228,13 +234,13 @@ void dump_alchemy( void ) {
 	num_ingred, num_ingred>1?"s.":".",fl->number,fl->total_chance);
     for (formula=fl->items; formula!=NULL; formula=formula->next) {
       artifact *art=NULL;
-      char buf[MAX_BUF], *string, *dup;
+      char buf[MAX_BUF];
+      size_t i;
 
-      dup = strdup_local(formula->arch_name);
-      string=strtok(dup,",");
-      while(string) { 
+      for (i = 0; i < formula->arch_names; i++) {
+        const char *string = formula->arch_name[i];
 	if(find_archetype(string)!=NULL) { 
-          art = locate_recipe_artifact(formula);
+          art = locate_recipe_artifact(formula, i);
           if (!art && strcmp(formula->title,"NONE")) 
 		LOG(llevError,"Formula %s has no artifact\n",formula->title);
 	  else {
@@ -267,9 +273,7 @@ void dump_alchemy( void ) {
 	} else 
 	   LOG(llevError,"Can't find archetype:%s for formula %s\n", string,
 		formula->title); 
-	string = strtok(NULL,",");
       }
-      free(dup);
     }  
   fprintf(logfile,"\n");
   fl = fl->next;
@@ -426,13 +430,13 @@ void dump_alchemy_costs (void)
     for (formula = fl->items; formula != NULL; formula = formula->next) {
       artifact *art=NULL;
       archetype *at=NULL;
-      char buf[MAX_BUF], *string, *dup;
-      
-      dup = strdup_local(formula->arch_name);
-      string = strtok (dup, ",");
-      while (string) {
+      char buf[MAX_BUF];
+      size_t i;
+
+      for (i = 0; i < formula->arch_names; i++) {
+        const char *string = formula->arch_name[i];
 	if ((at = find_archetype (string)) != NULL) {
-          art = locate_recipe_artifact (formula);
+          art = locate_recipe_artifact (formula, i);
           if (!art && strcmp (formula->title,"NONE")) 
 	    LOG (llevError, "Formula %s has no artifact\n", formula->title);
 	  else
@@ -487,9 +491,7 @@ void dump_alchemy_costs (void)
 	else 
 	  LOG(llevError, "Can't find archetype:%s for formula %s\n", string,
 	      formula->title); 
-	string = strtok (NULL, ",");
       }
-      free(dup);
     }
   fprintf (logfile,"\n");
   fl = fl->next;
@@ -523,8 +525,8 @@ int strtoint (const char *buf) {
   return val*mult;
 }
 
-artifact * locate_recipe_artifact(recipe *rp) {
-   object *item=get_archetype(rp->arch_name);
+artifact * locate_recipe_artifact(recipe *rp, size_t idx) {
+   object *item=get_archetype(rp->arch_name[idx]);
    artifactlist *at=NULL;
    artifact *art=NULL;
 
@@ -600,8 +602,8 @@ void free_all_recipes()
 	for (formula=fl->items; formula!=NULL; formula=next) {
 	    next=formula->next;
       
-	    if (formula->arch_name)
-		free_string(formula->arch_name);
+	    free(formula->arch_name[0]);
+	    free(formula->arch_name);
 	    if (formula->title)
 		free_string(formula->title);
 	    if (formula->skill)
@@ -616,5 +618,42 @@ void free_all_recipes()
 	    free(formula);
 	}
 	free(fl);
+    }
+}
+
+/**
+ * Split a comma separated string list into words.
+ *
+ * @param str the string to split
+ *
+ * @param result_list pointer to return value for the newly created list; the
+ * caller is responsible for freeing both *result_list and **result_list.
+ *
+ * @param result_size pointer to return value for the size of the newly
+ * created list
+ */
+static void build_stringlist(const char *str, char ***result_list, size_t *result_size)
+{
+    char *dup;
+    char *p;
+    size_t size;
+    size_t i;
+
+    dup = strdup_local(str);
+    if (dup == NULL)
+        fatal(OUT_OF_MEMORY);
+
+    size = 0;
+    for (p = strtok(dup, ","); p != NULL; p = strtok(NULL, ","))
+        size++;
+
+    *result_list = malloc(size*sizeof(*result_list));
+    if (*result_list == NULL)
+        fatal(OUT_OF_MEMORY);
+    *result_size = size;
+
+    for (i = 0; i < size; i++) {
+        (*result_list)[i] = dup;
+        dup = dup+strlen(dup)+1;
     }
 }

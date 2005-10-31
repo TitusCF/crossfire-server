@@ -17,6 +17,26 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Fix bug #1102975 (Bronze items not keeping their + in alchemy): the problem
+was that a formula for full_helmet did exist but not for b_full_helmet. Since
+both helmet's names are "full helmet", the recipe was selected even if using
+the ingredient b_full_helmet. This fix adds new formulae for alternative
+archetypes with the same name as the base object, and makes the server code
+select the matching formula from multiple arch names in the "arch" field.
+--
+common/readable.c: Use new fields to build messages.
+common/recipe.c: Make alchemy work for recipes with multiple base archetypes.
+include/{libproto.h,sproto.h}: Update prototype.
+include/recipe.h: Split string field arch_name into string list fields
+   arch_name and arch_names.
+lib/formulae: Add archetype names to formulae for all items with same name as
+   the base object. Also fix a few name mismatches that prevent any object
+   from matching, and change transmution formulae to normal formulae where
+   base name does not match archetype name.
+server/alchemy.c: Disable debugging code. Make alchemy work for recipes with
+   multiple base archetypes.
+Andreas Kirschbaum 2005-10-31
+
 server/c_wiz.c: Don't crash on "create" a living thing that has some part
  out of the map. Forbid removing a 'PLAYER' object.
 Ryo 2005-10-31

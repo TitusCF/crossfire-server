@@ -37,10 +37,14 @@
 #include <spells.h>
 
 /** define this for some helpful debuging information */
+#if 0
 #define ALCHEMY_DEBUG
+#endif
 
 /** define this for loads of (marginal) debuging information */
+#if 0
 #define EXTREME_ALCHEMY_DEBUG
+#endif
 
 /** Random cauldrons effects */
 static char *cauldron_effect [] = { 
@@ -62,6 +66,7 @@ static char *cauldron_effect [] = {
 
 
 static int is_defined_recipe(const recipe *rp, const object *cauldron, object *caster);
+static recipe *find_recipe(recipelist *fl, int formula, object *ingredients);
 
 
 /** Returns a random selection from cauldron_effect[] */
@@ -113,22 +118,15 @@ void attempt_do_alchemy(object *caster, object *cauldron) {
     numb=numb_ob_inside(cauldron);
     if ((fl=get_formulalist(numb))) {
         if (QUERY_FLAG(caster, FLAG_WIZ)) { 
-	    rp=fl->items;
-	    while (rp && (formula % rp->index)!=0) {
-#ifdef EXTREME_ALCHEMY_DEBUG
-		LOG(llevDebug, " found list %d formula: %s of %s (%d)\n", numb,
-		    rp->arch_name, rp->title, rp->index);
-#endif
-	    	rp=rp->next;
-	    }
-	    if (rp) {
+	    rp = find_recipe(fl, formula, cauldron->inv);
+	    if (rp != NULL) {
 #ifdef ALCHEMY_DEBUG
 		if(strcmp(rp->title, "NONE"))
 		    LOG(llevDebug, "WIZ got formula: %s of %s\n",
-			rp->arch_name, rp->title);
+			rp->arch_name[0], rp->title);
 		else 
 		    LOG(llevDebug, "WIZ got formula: %s (nbatches:%d)\n",
-			rp->arch_name, formula/rp->index);
+			rp->arch_name[0], formula/rp->index);
 #endif
 		attempt_recipe(caster, cauldron, ability, rp, formula/rp->index);
 	    } else LOG(llevDebug, "WIZ couldn't find formula for ingredients.\n"); 
@@ -136,10 +134,8 @@ void attempt_do_alchemy(object *caster, object *cauldron) {
 	} /* End of WIZ alchemy */
 
 	/* find the recipe */
-	for (rp = fl->items;rp!=NULL && (formula % rp->index)!=0;rp=rp->next)
-	    ;
-
-	if (rp) { /* if we found a recipe */
+	rp = find_recipe(fl, formula, cauldron->inv);
+	if (rp != NULL) {
 	    uint64 value_ingredients;
 	    uint64 value_item;
 	    object *tmp;
@@ -347,25 +343,32 @@ void adjust_product(object *item, int lvl, int yield) {
 
 /**
  * Using a list of items and a recipe to make an artifact.
+ *
+ * @param cauldron the cauldron (including the ingredients) used to make the item
+ *
+ * @param rp the recipe to make the artifact from
+ *
+ * @return the newly created object, NULL if something failed
  */
 
 object * make_item_from_recipe(object *cauldron, recipe *rp) {
   artifact *art=NULL;
   object *item=NULL;
+    size_t rp_arch_index;
  
     if(rp==NULL) return (object *) NULL;
 
     /* Find the appropriate object to transform...*/
-    if((item=find_transmution_ob(cauldron->inv,rp))==NULL) {
+    if((item=find_transmution_ob(cauldron->inv, rp, &rp_arch_index, 1))==NULL) {
         LOG(llevDebug,"make_alchemy_item(): failed to create alchemical object.\n");
         return (object *) NULL;
     }
  
     /* Find the appropriate artifact template...*/
     if(strcmp(rp->title,"NONE")) { 
-        if((art=locate_recipe_artifact(rp))==NULL) {
+        if((art=locate_recipe_artifact(rp, rp_arch_index))==NULL) {
             LOG(llevError,"make_alchemy_item(): failed to locate recipe artifact.\n");
-            LOG(llevDebug,"  --requested recipe: %s of %s.\n",rp->arch_name,rp->title);
+            LOG(llevDebug,"  --requested recipe: %s of %s.\n",rp->arch_name[0],rp->title);
             return (object *) NULL;
 	}
 	transmute_materialname(item, art->item);
@@ -382,27 +385,44 @@ object * make_item_from_recipe(object *cauldron, recipe *rp) {
 /**
  * Looks through the ingredient list. If we find a
  * suitable object in it - we will use that to make the requested artifact.
- * Otherwise the code returns a 'generic' item. -b.t.
+ * Otherwise the code returns a 'generic' item if create_item is set. -b.t.
+ *
+ * @param rp_arch_index pointer to return value; set to arch index for recipe;
+ * set to zero if not using a transmution formula
  */
  
-object * find_transmution_ob ( object *first_ingred, recipe *rp) {
+object * find_transmution_ob ( object *first_ingred, recipe *rp, size_t *rp_arch_index, int create_item) {
    object *item=NULL;
  
+   *rp_arch_index = 0;
+
    if(rp->transmute) /* look for matching ingredient/prod archs */ 
-        for(item=first_ingred;item;item=item->below)
-            if(!strcmp(item->arch->name,rp->arch_name)) break; 
+        for(item=first_ingred;item;item=item->below) {
+            size_t i;
+
+            for (i = 0; i < rp->arch_names; i++) {
+                if(strcmp(item->arch->name, rp->arch_name[i]) == 0) {
+                    *rp_arch_index = i;
+                    break;
+                }
+            }
+            if (i < rp->arch_names)
+                break;
+        }
  
     /* failed, create a fresh object. Note no nrof>1 because that would
      * allow players to create massive amounts of artifacts easily */
-   if(!item||item->nrof>1)
-        item=get_archetype(rp->arch_name);
+    if(create_item && (!item || item->nrof > 1)) {
+        *rp_arch_index = RANDOM()%rp->arch_names;
+        item = get_archetype(rp->arch_name[*rp_arch_index]);
+    }
 
 #ifdef ALCHEMY_DEBUG
-   LOG(llevDebug,"recipe calls for%stransmution.\n",rp->transmute?" ":" no ");
-   if(strcmp(item->arch->name,rp->arch_name))
-       LOG(llevDebug,"WARNING: recipe calls for arch: %s\n",rp->arch_name);
-   LOG(llevDebug," find_transmutable_ob(): returns arch %s(sp:%d)\n",
-	    item->arch->name,item->stats.sp);
+    LOG(llevDebug,"recipe calls for%stransmution.\n",rp->transmute?" ":" no ");
+    if (item != NULL) {
+        LOG(llevDebug," find_transmutable_ob(): returns arch %s(sp:%d)\n",
+            item->arch->name,item->stats.sp);
+    }
 #endif
  
    return item;
@@ -586,7 +606,7 @@ void alchemy_failure_effect(object *op,object *cauldron,recipe *rp,int danger) {
   	 * to be made (rather than only those on the given
 	 * formulalist) */
 	if(!rp) rp=get_random_recipe((recipelist *) NULL);
-	if(rp && (tmp=get_archetype(rp->arch_name))) { 
+	if(rp && (tmp=get_archetype(rp->arch_name[RANDOM()%rp->arch_names]))) { 
 	    generate_artifact(tmp,random_roll(1, op->level/2+1, op, PREFER_HIGH)+1);
 	    if((tmp=insert_ob_in_ob(tmp,cauldron))) { 
 		remove_contents(cauldron->inv,tmp);
@@ -759,4 +779,78 @@ static int is_defined_recipe(const recipe *rp, const object *cauldron, object *c
     }
 
     return(1);
+}
+
+/**
+ * Find a recipe from a recipe list that matches the given formula. If there
+ * is more than one matching recipe, it selects a random one. If at least one
+ * transmuting recipe matches, it only considers matching transmuting recipes.
+ *
+ * @return one matching recipe, or NULL if no recipe matches
+ */
+static recipe *find_recipe(recipelist *fl, int formula, object *ingredients)
+{
+    recipe *rp;
+    recipe *result;       /* winning recipe, or NULL if no recipe found */
+    int recipes_matching; /* total number of matching recipes so far */
+    int transmute_found;  /* records whether a transmuting recipe was found so far */
+    size_t rp_arch_index;
+
+#ifdef EXTREME_ALCHEMY_DEBUG
+    LOG(llevDebug, "looking for formula %d:\n", formula);
+#endif
+    result = NULL;
+    recipes_matching = 0;
+    transmute_found = 0;
+    for (rp = fl->items; rp != NULL; rp = rp->next) {
+        /* check if recipe matches at all */
+        if (formula%rp->index != 0) {
+#ifdef EXTREME_ALCHEMY_DEBUG
+            LOG(llevDebug, " formula %s of %s (%d) does not match\n", rp->arch_name[0], rp->title, rp->index);
+#endif
+            continue;
+        }
+
+        if (rp->transmute && find_transmution_ob(ingredients, rp, &rp_arch_index, 0) != NULL) {
+#ifdef EXTREME_ALCHEMY_DEBUG
+            LOG(llevDebug, " formula %s of %s (%d) is a matching transmuting formula\n", rp->arch_name[rp_arch_index], rp->title, rp->index);
+#endif
+            /* transmution recipe with matching base ingredient */
+            if (!transmute_found) {
+                transmute_found = 1;
+                recipes_matching = 0;
+            }
+        } else if (transmute_found) {
+#ifdef EXTREME_ALCHEMY_DEBUG
+            LOG(llevDebug, " formula %s of %s (%d) matches but is not a matching transmuting formula\n", rp->arch_name[0], rp->title, rp->index);
+#endif
+            /* "normal" recipe found after previous transmution recipe => ignore this recipe */
+            continue;
+        }
+#ifdef EXTREME_ALCHEMY_DEBUG
+        else {
+            LOG(llevDebug, " formula %s of %s (%d) matches\n", rp->arch_name[0], rp->title, rp->index);
+        }
+#endif
+
+        if (rndm(0, recipes_matching) == 0)
+            result = rp;
+
+        recipes_matching++;
+    }
+
+    if (result == NULL) {
+#ifdef ALCHEMY_DEBUG
+        LOG(llevDebug, "couldn't find formula for ingredients.\n"); 
+#endif
+        return NULL;
+    }
+
+#ifdef ALCHEMY_DEBUG
+    if(strcmp(result->title, "NONE") != 0)
+        LOG(llevDebug, "got formula: %s of %s (nbatches:%d)\n", result->arch_name[0], result->title, formula/result->index);
+    else 
+        LOG(llevDebug, "got formula: %s (nbatches:%d)\n", result->arch_name[0], formula/result->index);
+#endif
+    return result;
 }

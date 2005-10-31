@@ -1,7 +1,8 @@
 /* 'recipe' and 'recipelist' are used by the alchemy code */
 typedef struct recipestruct {
-    const char *title;       /* distinguishing name of product */
-    const char *arch_name;   /* the archetype of the final product made */
+    const char *title; /* distinguishing name of product */
+    size_t arch_names; /* the size of the arch_name[] array */
+    char **arch_name;  /* the possible archetypes of the final product made */
     int chance;        /* chance that recipe for this item will appear
 		        * in an alchemical grimore */
     int diff;	       /* alchemical dfficulty level */

@@ -1592,7 +1592,7 @@ spellpath_msg (int level, int booksize)
  */
 
 void make_formula_book(object *book, int level) {
-    char retbuf[BOOK_BUF], title[MAX_BUF], *dup = NULL;
+    char retbuf[BOOK_BUF], title[MAX_BUF];
     recipelist *fl;
     recipe *formula = NULL;
     int     chance;
@@ -1621,7 +1621,7 @@ void make_formula_book(object *book, int level) {
 	    break;
     }
 
-    if (!formula) {
+    if (!formula || formula->arch_names <= 0) {
 	book->msg = add_string(" <indecipherable text>\n");
 	new_text_name(book, 4);
 	add_author(book,4);
@@ -1631,28 +1631,12 @@ void make_formula_book(object *book, int level) {
 	 * of information on the booklevel and the spellevel
 	 * of the formula. */
 
-	const char   *op_name = NULL;
+	const char   *op_name = formula->arch_name[RANDOM()%formula->arch_names];
 	archetype *at;
-	int     nindex = nstrtok (formula->arch_name, ",");
 
 	/* preamble */
 	sprintf(retbuf, "Herein is described a project using %s: \n", 
 		 formula->skill?formula->skill:"an unknown skill");
-
-	/* construct name of object to be made */
-	if (nindex > 1)
-	{
-	    int     rnum = RANDOM () % nindex;
-        dup = strdup_local(formula->arch_name);
-	    op_name = strtok (dup, ",");
-	    while (rnum)
-	    {
-		op_name = strtok (NULL, ",");
-		rnum--;
-	    }
-	}
-	else
-	    op_name = formula->arch_name;
 
 	if ((at = find_archetype (op_name)) != (archetype *) NULL)
 	    op_name = at->clone.name;
@@ -1719,7 +1703,6 @@ void make_formula_book(object *book, int level) {
 	if (book->msg) free_string(book->msg);
 	book->msg = add_string(retbuf);
     }
-    free(dup);
 }
 
 
