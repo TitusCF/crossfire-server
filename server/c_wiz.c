@@ -770,8 +770,8 @@ int command_create (object *op, char *params)
 			int size_y = 0;
 			while (check)
 			{
-				size_x = max(size_x, check->arch->clone.x);
-				size_y = max(size_y, check->arch->clone.y);
+				size_x = MAX(size_x, check->arch->clone.x);
+				size_y = MAX(size_y, check->arch->clone.y);
 				check = check->more;
 			}
 			if (out_of_map(op->map,head->x + size_x, head->y + size_y))
