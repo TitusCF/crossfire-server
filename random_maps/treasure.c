@@ -176,6 +176,8 @@ object * place_chest(int treasureoptions,int x, int y,mapstruct *map, mapstruct 
 
   /* first, find a place to put the chest. */
   i = find_first_free_spot(find_archetype("chest"),map,x,y);
+  if (i == -1)
+    return NULL;
   xl = x + freearr_x[i]; yl = y +  freearr_y[i];
 
   /* if the placement is blocked, return a fail. */
