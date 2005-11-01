@@ -117,4 +117,14 @@ extern f_plug_api cfapi_object_set_property;
 extern f_plug_api cfapi_object_apply;
 extern f_plug_api cfapi_object_remove;
 
+#ifdef WIN32
+
+struct timezone {
+	int tz_minuteswest;
+	int tz_dsttime;
+};
+int gettimeofday(struct timeval *time_Info, struct timezone *timezone_Info);
+
+#endif
+
 #endif /* PLUGIN_COMMON_H */
