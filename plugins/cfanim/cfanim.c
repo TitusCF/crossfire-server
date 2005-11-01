@@ -950,7 +950,7 @@ CFPContext* popContext()
         return NULL;
 }
 
-int initPlugin(const char* iversion, f_plug_api gethooksptr)
+CF_PLUGIN int initPlugin(const char* iversion, f_plug_api gethooksptr)
 {
     gethook = gethooksptr;
 
@@ -960,14 +960,13 @@ int initPlugin(const char* iversion, f_plug_api gethooksptr)
     return 0;
 }
 
-void* getPluginProperty(int* type, ...)
+CF_PLUGIN void* getPluginProperty(int* type, ...)
 {
     va_list args;
     char* propname;
 
     va_start(args, type);
     propname = va_arg(args, char *);
-    printf("Property name: %s\n", propname);
 
     if (!strcmp(propname, "Identification"))
     {
@@ -982,17 +981,17 @@ void* getPluginProperty(int* type, ...)
     return NULL;
 }
 
-int runPluginCommand(object* op, char* params)
+CF_PLUGIN int runPluginCommand(object* op, char* params)
 {
     return -1;
 }
 
-int postInitPlugin()
+CF_PLUGIN int postInitPlugin()
 {
     int hooktype = 1;
     int rtype = 0;
 
-    printf("Template 2.0a post init\n");
+    printf("CFAnim 2.0a post init\n");
     registerGlobalEvent =   gethook(&rtype,hooktype,"cfapi_system_register_global_event");
     unregisterGlobalEvent = gethook(&rtype,hooktype,"cfapi_system_unregister_global_event");
     systemDirectory       = gethook(&rtype,hooktype,"cfapi_system_directory");
@@ -1004,14 +1003,14 @@ int postInitPlugin()
     return 0;
 }
 
-void* globalEventListener(int* type, ...)
+CF_PLUGIN void* globalEventListener(int* type, ...)
 {
     va_list args;
     static int rv=0;
     CFPContext* context;
-    context = malloc(sizeof(CFPContext));
     char* buf;
     player* pl;
+    context = malloc(sizeof(CFPContext));
 
     va_start(args, type);
     context->event_code = va_arg(args, int);
@@ -1101,7 +1100,7 @@ void* globalEventListener(int* type, ...)
     return &rv;
 }
 
-void* eventListener(int* type, ...)
+CF_PLUGIN void* eventListener(int* type, ...)
 {
     static int rv=0;
     va_list args;
@@ -1144,7 +1143,7 @@ void* eventListener(int* type, ...)
     return &rv;
 }
 
-int   closePlugin()
+CF_PLUGIN int   closePlugin()
 {
     printf("CFAnim 2.0a closing\n");
     return 0;

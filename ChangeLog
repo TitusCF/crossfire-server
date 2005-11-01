@@ -17,8 +17,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
-plugins/common/plugin_common.c: add gettimeofday for WIN32.
-plugins/common/include/plugin_common.h: add gettimeofday for WIN32.
+plugins/cfanim/cfanim.c: remove printf for properties. Export functions for DLL
+ for Win32.
+plugins/cfanim/cfanim.h: remove obsolete definitions (see plugin_common.h).
+plugins/cfanim/cfanim_proto.h: fix definition for exported functions.
+plugins/common/plugin_common.c: add gettimeofday for Win32.
+plugins/common/include/plugin_common.h: add gettimeofday for Win32.
 Ryo 2005-11-01
 
 server/plugins.c: Print error message for event_xxx objects with missing or

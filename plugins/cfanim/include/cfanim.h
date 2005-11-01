@@ -35,18 +35,6 @@
 #include <plugin.h>
 #endif
 
-#undef MODULEAPI
-#ifdef WIN32
-#ifdef PYTHON_PLUGIN_EXPORTS
-#define MODULEAPI __declspec(dllexport)
-#else
-#define MODULEAPI __declspec(dllimport)
-#endif
-
-#else
-#define MODULEAPI
-#endif
-
 #include <plugin_common.h>
 enum time_enum {time_second, time_tick};
 struct CFanimation_struct;
