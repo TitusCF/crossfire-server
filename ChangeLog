@@ -17,6 +17,13 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Fix bug #815620 (CFPython.SetQuantity() doesn't update client): now notifies
+   the client after changing nrof and/or weight.
+--
+server/plugins.c: Re-calculate player's weight and send item change
+   notifications in cfapi_object_set_property().
+Andreas Kirschbaum 2005-11-01
+
 Improve newpickup command: add new flag PU_NOT_CURSED to ignore cursed items.
 --
 include/define.h: Add flag #define.

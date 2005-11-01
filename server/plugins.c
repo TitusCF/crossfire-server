@@ -1813,9 +1813,9 @@ void* cfapi_object_set_property(int* type, ...)
                 iarg = va_arg(args, int);
                 if (iarg < 0)
                     iarg = 0;
-                if (op->nrof > iarg)
+                if (op->nrof > (uint32)iarg)
                     decrease_ob_nr(op,op->nrof-iarg);
-                else
+                else if (op->nrof < (uint32)iarg)
                 {
                     object* tmp;
                     player *pl;
@@ -1829,6 +1829,10 @@ void* cfapi_object_set_property(int* type, ...)
                                 if (pl->ob->container == op->env) break;
                             if (pl) tmp=pl->ob;
                             else tmp=NULL;
+                        }
+                        else {
+                            sum_weight(tmp);
+                            fix_player(tmp);
                         }
                         if (tmp)
                             esrv_send_item(tmp, op);
@@ -1926,7 +1930,36 @@ void* cfapi_object_set_property(int* type, ...)
                 break;
             case CFAPI_OBJECT_PROP_WEIGHT            :
                 iarg = va_arg(args, int);
-                op->weight = iarg;
+                if (op->weight != iarg) {
+                    object* tmp;
+                    player *pl;
+                    op->weight = iarg;
+                    if (op->env != NULL)
+                    {
+                        tmp = is_player_inv(op->env);
+                        if (!tmp)
+                        {
+                            for (pl=first_player; pl; pl=pl->next)
+                                if (pl->ob->container == op->env) break;
+                            if (pl) tmp=pl->ob;
+                            else tmp=NULL;
+                        }
+                        else {
+                            sum_weight(tmp);
+                            fix_player(tmp);
+                        }
+                        if (tmp)
+                            esrv_send_item(tmp, op);
+                    }
+                    else
+                    {
+                        object *above = op->above;
+
+                        for (tmp = above; tmp != NULL; tmp = tmp->above)
+                            if (tmp->type == PLAYER)
+                                esrv_send_item(tmp, op);
+                    }
+                }
                 break;
             case CFAPI_OBJECT_PROP_WEIGHT_LIMIT      :
                 iarg = va_arg(args, int);
