@@ -159,21 +159,45 @@ int execute_event(object* op, int eventcode, object* activator, object* third, c
             if (third != NULL)
                 LOG(llevDebug, " - Other object  :%s\n",third->name);
             LOG(llevDebug, " - Event code    :%d\n",tmp->subtype);
-            LOG(llevDebug, " - Event plugin  :%s\n",tmp->title);
-            LOG(llevDebug, " - Event hook    :%s\n",tmp->slaying);
-            LOG(llevDebug, " - Event options :%s\n",tmp->name);
-            plugin = plugins_find_plugin(tmp->title);
-            if (plugin != NULL)
+            if (tmp->title != NULL)
+                LOG(llevDebug, " - Event plugin  :%s\n", tmp->title);
+            if (tmp->slaying != NULL)
+                LOG(llevDebug, " - Event hook    :%s\n", tmp->slaying);
+            if (tmp->name != NULL)
+                LOG(llevDebug, " - Event options :%s\n", tmp->name);
+
+            if (tmp->title == NULL)
             {
-                int rvt=0;
-                rv = *(int*)(plugin->eventfunc(
-                        &rvt,op,eventcode,activator,third,message,fix,tmp->slaying, tmp->name));
-                return rv;
+                object *env = object_get_env_recursive(tmp);
+                LOG(llevError, "Event object without title at %d/%d in map %s\n", env->x, env->y, env->map->name);
+                remove_ob(tmp);
+                free_object(tmp);
+            }
+            else if (tmp->slaying == NULL)
+            {
+                object *env = object_get_env_recursive(tmp);
+                LOG(llevError, "Event object without slaying at %d/%d in map %s\n", env->x, env->y, env->map->name);
+                remove_ob(tmp);
+                free_object(tmp);
             }
             else
             {
-                LOG(llevError, "The requested plugin doesn't exist: %s",tmp->title);
-                return 0;
+                plugin = plugins_find_plugin(tmp->title);
+                if (plugin == NULL)
+                {
+                    object *env = object_get_env_recursive(tmp);
+                    LOG(llevError, "The requested plugin doesn't exit: %s at %d/%d in map %s\n", tmp->title, env->x, env->y, env->map->name);
+                    remove_ob(tmp);
+                    free_object(tmp);
+                }
+                else
+                {
+                    int rvt = 0;
+                    int *rv;
+
+                    rv = plugin->eventfunc(&rvt, op, eventcode, activator, third, message, fix, tmp->slaying, tmp->name);
+                    return *rv;
+                }
             }
         }
     }

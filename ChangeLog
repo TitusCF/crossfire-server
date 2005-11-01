@@ -17,6 +17,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/plugins.c: Print error message for event_xxx objects with missing or
+   invalid parameters. Also remove the affected object to prevent multiple
+   error messages.
+Andreas Kirschbaum 2005-11-01
+
 Add new function object_get_env_recursive() to find the outermost environment
 object for a given object.
 --
