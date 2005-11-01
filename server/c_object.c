@@ -1627,6 +1627,8 @@ static void display_new_pickup( object* op )
     new_draw_info_format(NDI_UNIQUE, 0,op,"%d READABLES",i & PU_READABLES?1:0);
     new_draw_info_format(NDI_UNIQUE, 0,op,"%d MAGICDEVICE", i & PU_MAGIC_DEVICE?1:0);
 
+    new_draw_info_format(NDI_UNIQUE, 0,op,"%d NOT CURSED", i & PU_NOT_CURSED?1:0);
+
     new_draw_info_format(NDI_UNIQUE, 0,op,"");
     }
 
@@ -1636,11 +1638,11 @@ int command_pickup (object *op, char *params)
   static const char* names[ ] = {
       "debug", "inhibit", "stop", "food", "drink", "valuables", "bow", "arrow", "helmet",
       "shield", "armour", "boots", "gloves", "cloak", "key", "missile", "allweapon",
-      "magical", "potion", "spellbook", "skillscroll", "readables", "magicdevice", NULL };
+      "magical", "potion", "spellbook", "skillscroll", "readables", "magicdevice", "notcursed", NULL };
   static uint32 modes[ ] = {
       PU_DEBUG, PU_INHIBIT, PU_STOP, PU_FOOD, PU_DRINK, PU_VALUABLES, PU_BOW, PU_ARROW, PU_HELMET,
       PU_SHIELD, PU_ARMOUR, PU_BOOTS, PU_GLOVES, PU_CLOAK, PU_KEY, PU_MISSILEWEAPON, PU_ALLWEAPON,
-      PU_MAGICAL, PU_POTION, PU_SPELLBOOK, PU_SKILLSCROLL, PU_READABLES, PU_MAGIC_DEVICE, 0 };
+      PU_MAGICAL, PU_POTION, PU_SPELLBOOK, PU_SKILLSCROLL, PU_READABLES, PU_MAGIC_DEVICE, PU_NOT_CURSED, 0 };
 
   if(!params) {
     /* if the new mode is used, just print the settings */

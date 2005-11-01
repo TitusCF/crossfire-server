@@ -17,6 +17,13 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Improve newpickup command: add new flag PU_NOT_CURSED to ignore cursed items.
+--
+include/define.h: Add flag #define.
+server/c_object.c: Add "notcursed" option to pickup command.
+server/player.c: Respect new flag in check_pickup().
+Andreas Kirschbaum 2005-11-01
+
 plugins/cfanim/cfanim.c: remove printf for properties. Export functions for DLL
  for Win32.
 plugins/cfanim/cfanim.h: remove obsolete definitions (see plugin_common.h).

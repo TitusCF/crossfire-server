@@ -1284,6 +1284,9 @@ int check_pick(object *op) {
       /* prevent us from turning into auto-thieves :) */
       if (QUERY_FLAG (tmp, FLAG_UNPAID)) continue;
 
+      /* ignore known cursed objects */
+      if (QUERY_FLAG (tmp, FLAG_KNOWN_CURSED) && op->contr->mode & PU_NOT_CURSED) continue;
+
       /* all food and drink if desired */
       /* question: don't pick up known-poisonous stuff? */
       if(op->contr->mode & PU_FOOD)
