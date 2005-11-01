@@ -15,6 +15,21 @@ Package=<4>
 
 ###############################################################################
 
+Project: "plugin_animator"=".\plugin_anim\plugin_anim.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name plugin_common
+    End Project Dependency
+}}}
+
+###############################################################################
+
 Project: "plugin_common"=".\plugin_common\plugin_common.dsp" - Package Owner=<4>
 
 Package=<5>

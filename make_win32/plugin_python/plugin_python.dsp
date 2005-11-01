@@ -43,7 +43,7 @@ RSC=rc.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MTd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "PLUGIN_PYTHON_EXPORTS" /YX /FD /GZ /c
-# ADD CPP /nologo /MDd /W3 /Gm /GX /ZI /Od /I "..\..\include" /I "..\..\plugin\include" /I "C:\Program Files\Python 2.4\include" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "PYTHON_PLUGIN_EXPORTS" /FR /YX"plugin.pch" /FD /GZ /c
+# ADD CPP /nologo /MDd /W3 /Gm /GX /ZI /Od /I "C:\Program Files\Python 2.4\include" /I "../../plugins/cfpython/include" /I "../../plugins/common/include" /I "../../include" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "PYTHON_PLUGIN_EXPORTS" /FR /YX"plugin.pch" /FD /GZ /c
 # ADD BASE MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x407 /d "_DEBUG"
@@ -53,7 +53,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /dll /debug /machine:I386 /pdbtype:sept
-# ADD LINK32 winmm.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /dll /debug /machine:I386 /pdbtype:sept /libpath:"c:\program files\python 2.4\libs"
+# ADD LINK32 winmm.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib plugin_common.lib /nologo /dll /debug /machine:I386 /pdbtype:sept /libpath:"c:\program files\python 2.4\libs" /libpath:"../plugin_common/fulldebug"
 # Begin Special Build Tool
 SOURCE="$(InputPath)"
 PostBuild_Cmds=copy FullDebug\plugin_python.dll ..\..\share\plugins\*.*
@@ -73,7 +73,7 @@ PostBuild_Cmds=copy FullDebug\plugin_python.dll ..\..\share\plugins\*.*
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MT /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "PLUGIN_PYTHON_EXPORTS" /YX /FD /c
-# ADD CPP /nologo /MD /W3 /GX /O2 /I "..\..\include" /I "..\..\plugin\include" /I "C:\Program Files\Python 2.4\include" /D "_WINDOWS" /D "_USRDLL" /D "PYTHON_PLUGIN_EXPORTS" /D "WIN32" /D "NDEBUG" /D "_MBCS" /FR /YX"plugin.pch" /FD /c
+# ADD CPP /nologo /MD /W3 /GX /O2 /I "C:\Program Files\Python 2.4\include" /I "../../plugins/cfpython/include" /I "../../plugins/common/include" /I "../../include" /D "_WINDOWS" /D "_USRDLL" /D "PYTHON_PLUGIN_EXPORTS" /D "WIN32" /D "NDEBUG" /D "_MBCS" /FR /YX"plugin.pch" /FD /c
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x407 /d "NDEBUG"
@@ -100,7 +100,15 @@ PostBuild_Cmds=copy ReleaseLog\plugin_python.dll ..\..\share\plugins\*.*
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 # Begin Source File
 
-SOURCE=..\..\plugin\plugin_python.c
+SOURCE=..\..\plugins\cfpython\cfpython.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\plugins\cfpython\cfpython_map.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\plugins\cfpython\cfpython_object.c
 # End Source File
 # End Group
 # Begin Group "Header-Dateien"
@@ -108,7 +116,27 @@ SOURCE=..\..\plugin\plugin_python.c
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
 # Begin Source File
 
-SOURCE=..\..\plugin\include\plugin_python.h
+SOURCE=..\..\plugins\cfpython\include\cfpython.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\plugins\cfpython\include\cfpython_map.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\plugins\cfpython\include\cfpython_map_private.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\plugins\cfpython\include\cfpython_object.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\plugins\cfpython\include\cfpython_object_private.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\plugins\cfpython\include\cfpython_proto.h
 # End Source File
 # End Group
 # End Target
