@@ -3062,6 +3062,8 @@ treasure monk_class_items
   arch skill_praying
   more
   arch skill_sense_curse
+  more
+  arch monk_no_use_weapon
   end
 treasure monk
   list basic_skills

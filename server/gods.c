@@ -513,8 +513,13 @@ void become_follower (object *op, object *new_god) {
 
     /* Weapon/armour use are special...handle flag toggles here as this can
      * only happen when gods are worshipped and if the new priest could
-     * have used armour/weapons in the first place */
-    update_priest_flag(new_god,skop,FLAG_USE_WEAPON);
+     * have used armour/weapons in the first place.
+     *
+     * This also can happen for monks which cannot use weapons. In this case
+     * do not allow to use weapons even if the god otherwise would allow it.
+     */
+    if (!present_in_ob_by_name(FORCE, "no weapon force", op))
+	update_priest_flag(new_god,skop,FLAG_USE_WEAPON);
     update_priest_flag(new_god,skop,FLAG_USE_ARMOUR);
 
     if(worship_forbids_use(op,skop,FLAG_USE_WEAPON,"weapons"))

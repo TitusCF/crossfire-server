@@ -17,6 +17,16 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Fix bug #1082534 (monks with weapons): Now monks properly are denied from
+using weapons. Only newly created monks are affected since it now relies on a
+force named "no weapon force" in the player's inventory. The problem was that
+become_follower() assumed it was the only means do allow/disallow weapon use.
+--
+server/gods.c: Do not let the god allow using weapons if a "no weapon force"
+   object is present in the player's inventory.
+lib/treasures: add force to monk's treasure list.
+Andreas Kirschbaum 2005-11-01
+
 Fix bug #815620 (CFPython.SetQuantity() doesn't update client): now notifies
    the client after changing nrof and/or weight.
 --
