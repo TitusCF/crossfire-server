@@ -17,6 +17,14 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+General cleanup of weather code.
+--
+server/weather: Declare many functions and variables as "static", add
+   prototypes for affected functions. Declare some variables as "const".
+include/sproto.h: Remove prototypes for now static functions.
+include/tod.h: Add "const" to strings.
+Andreas Kirschbaum 2005-11-01
+
 Fix bug #1102975 (Bronze items not keeping their + in alchemy): the problem
 was that a formula for full_helmet did exist but not for b_full_helmet. Since
 both helmet's names are "full helmet", the recipe was selected even if using

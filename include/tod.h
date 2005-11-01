@@ -82,21 +82,21 @@ extern void get_tod(timeofday_t *tod);
 #define SKY_BLIZZARD      16
 
 typedef struct _weather_avoids {
-	char *name;
+	const char *name;
 	int snow;
 	archetype *what; /*inited from name, faste to compare arch pointers than strings*/
 } weather_avoids_t;
 
 typedef struct _weather_replace {
-	char *tile;
-	char *special_snow;
-	char *doublestack_arch;
+	const char *tile;
+	const char *special_snow;
+	const char *doublestack_arch;
 	int arch_or_name;
 } weather_replace_t;
 
 typedef struct _weather_grow {
-	char *herb; /* arch name of item to grow */
-	char *tile; /* arch tile to grow on, NULL if anything */
+	const char *herb; /* arch name of item to grow */
+	const char *tile; /* arch tile to grow on, NULL if anything */
 	int random; /* random factor.  min 1, higher = lower chance of
 		     * appearance */
 	float rfmin;
