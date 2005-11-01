@@ -126,6 +126,11 @@ ok:
 end:
 SectionEnd
 
+Section /o "Animator plugin" anim
+  SetOutPath $INSTDIR\share\plugins
+  File "plugin_anim\ReleaseLog\plugin_animator.dll"
+SectionEnd
+
 Section "Menu Shortcuts" menus
   ;Add Shortcuts
   SetOutPath $INSTDIR
@@ -248,6 +253,7 @@ SectionEnd
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
   !insertmacro MUI_DESCRIPTION_TEXT ${cf} "Crossfire Server (required)."
   !insertmacro MUI_DESCRIPTION_TEXT ${py} "Python plugin support. Enables post office and a few goodies. Python required."
+  !insertmacro MUI_DESCRIPTION_TEXT ${anim} "Animator plugin support. Experimental, use at your own risk!"
   !insertmacro MUI_DESCRIPTION_TEXT ${menus} "Insert icons in Start Menu."
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
 
