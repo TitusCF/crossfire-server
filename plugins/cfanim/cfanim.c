@@ -157,7 +157,7 @@ int runwizard(struct CFanimation_struct* animation, long int id, void* parameter
 long int initsay (char* name, char* parameters, struct CFmovement_struct* move_entity)
 {
     if (parameters)
-        move_entity->parameters=strdup_local (parameters);
+        move_entity->parameters=cf_strdup_local (parameters);
     else
         move_entity->parameters=NULL;
     printf ("CFAnim: init say: parameters: %p\n",parameters);
@@ -219,7 +219,7 @@ int runapplyobject(struct CFanimation_struct* animation, long int id, void* para
 
 long int initdropobject (char* name, char* parameters, struct CFmovement_struct* move_entity)
 {
-    move_entity->parameters=parameters?strdup_local(parameters):NULL;
+    move_entity->parameters=parameters?cf_strdup_local(parameters):NULL;
     return 1;
 }
 int rundropobject(struct CFanimation_struct* animation, long int id, void* parameters)
@@ -346,7 +346,7 @@ long int initteleport (char* name, char* parameters, struct CFmovement_struct* m
     if (mapname[0]=='\0')
         return 0;
     teleport=(teleport_params*)malloc (sizeof(teleport_params));
-    teleport->mapname=strdup_local (mapname);
+    teleport->mapname=cf_strdup_local (mapname);
     teleport->mapx=mapx;
     teleport->mapy=mapy;
     move_entity->parameters=teleport;
@@ -365,7 +365,7 @@ int runteleport(struct CFanimation_struct* animation, long int id, void* paramet
 
 long int initnotice (char* name, char* parameters, struct CFmovement_struct* move_entity)
 {
-    move_entity->parameters=parameters?strdup_local(parameters):NULL;
+    move_entity->parameters=parameters?cf_strdup_local(parameters):NULL;
     return 1;
 }
 int runnotice(struct CFanimation_struct* animation, long int id, void* parameters)
@@ -655,10 +655,10 @@ int start_animation (object* who,object* activator,char* file, char* options)
     int     errors_found=0;
     CFanimation* current_anim;
 
-    fichier = fopen(create_pathname(file),"r");
+    fichier = fopen(cf_get_maps_directory(file),"r");
     if (fichier == NULL)
     {
-        printf("CFAnim: Unable to open %s\n", create_pathname(file));
+        printf("CFAnim: Unable to open %s\n", cf_get_maps_directory(file));
         return 0;
     }
     while (fgets(buffer,HUGE_BUF,fichier))
@@ -689,7 +689,7 @@ int start_animation (object* who,object* activator,char* file, char* options)
             {
                 if (*value=='"') value++;
                 if (value[strlen(value)-1] == '"') value[strlen(value)-1]='\0';
-                name=strdup_local (value);
+                name=cf_strdup_local (value);
             }
             else if (!strcmp (variable,"victimtype"))
             {
@@ -772,14 +772,14 @@ int start_animation (object* who,object* activator,char* file, char* options)
             }
             else if (!strcmp(variable,"animation"))
             {
-                animationitem=strdup_local(value);
+                animationitem=cf_strdup_local(value);
             }
             else errors_found=1;
         }
     }
     if (buffer[0]=='\0')
     {
-        printf ("CFAnim: Errors occurred during the parsing of %s\n", create_pathname(file));
+        printf ("CFAnim: Errors occurred during the parsing of %s\n", cf_get_maps_directory(file));
         return 0;
     }
     if (!(current_anim=create_animation()))
