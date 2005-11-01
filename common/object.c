@@ -247,6 +247,15 @@ signed long sum_weight(object *op) {
   return sum;
 }
 
+/**
+ * Return the outermost environment object for a given object.
+ */
+
+object *object_get_env_recursive (object *op) {
+    while (op->env != NULL)
+        op = op->env;
+    return op;
+}
 
 /*
  * Eneq(@csd.uu.se): Since we can have items buried in a character we need

@@ -374,7 +374,8 @@ void explode_bullet(object *op)
 
     if (op->env) {
 	object *env;
-	for (env = op; env->env != NULL; env = env->env) ;
+
+	env = object_get_env_recursive(op);
 	if (env->map == NULL || out_of_map (env->map, env->x, env->y)) {
 	    LOG (llevError, "BUG: explode_bullet(): env out of map\n");
 	    remove_ob (op);
@@ -877,7 +878,7 @@ void animate_bomb(object *op) {
     if(op->state!=NUM_ANIMATIONS(op)-1)
 	return;
 
-    for(env=op;env->env!=NULL;env=env->env);
+    env = object_get_env_recursive(op);
 
     if (op->env) {
         if (env->map == NULL)

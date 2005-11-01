@@ -191,6 +191,7 @@ extern int on_same_map(object *op1, object *op2);
 /* object.c */
 extern int CAN_MERGE(object *ob1, object *ob2);
 extern signed long sum_weight(object *op);
+extern object *object_get_env_recursive (object *op);
 extern object *is_player_inv(object *op);
 extern void dump_object2(object *op);
 extern void dump_object(object *op);

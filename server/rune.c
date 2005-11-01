@@ -246,7 +246,7 @@ void spring_trap(object *trap,object *victim)
     /*  Flash an image of the trap on the map so the poor sod
      *   knows what hit him.  
      */
-    for (env = trap; env->env != NULL; env = env->env) ;
+    env = object_get_env_recursive(trap);
 
     /* If the victim is not next to this trap, don't set it off.
      * players shouldn't get hit by firing arrows at a door for example.
