@@ -17,6 +17,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/build_map.c: test FLAG_IS_FLOOR too, type == FLOOR is not always enough.
+Ryo 2005-11-05
+
 server/shop.c: In value_limit() return the unmodified item price if not in a
    shop or not for a player.
 Andreas Kirschbaum 2005-11-05

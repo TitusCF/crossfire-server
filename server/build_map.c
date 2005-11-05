@@ -379,7 +379,7 @@ void apply_builder_floor(object* pl, object* material, short x, short y )
                 free_object( tmp );
                 sprintf( message, "You destroy the wall and redo the floor." );
                 }
-            else if ( FLOOR == tmp->type )
+            else if ( ( FLOOR == tmp->type ) || ( QUERY_FLAG(tmp, FLAG_IS_FLOOR ) ) )
                 {
                 remove_ob( tmp );
                 free_object( tmp );
@@ -407,6 +407,7 @@ void apply_builder_floor(object* pl, object* material, short x, short y )
     tmp = arch_to_object( new_floor );
     SET_FLAG( tmp, FLAG_IS_BUILDABLE );
     SET_FLAG( tmp, FLAG_UNIQUE );
+	SET_FLAG( tmp, FLAG_IS_FLOOR );
     tmp->type = FLOOR;
     insert_ob_in_map_at( tmp, pl->map, above_floor, above_floor ? INS_BELOW_ORIGINATOR : INS_ON_TOP, x, y );
 
@@ -554,7 +555,7 @@ void apply_builder_item( object* pl, object* item, short x, short y )
         return;
         }
 
-    while ( floor && ( floor->type != FLOOR ) )
+    while ( floor && ( floor->type != FLOOR ) && ( !QUERY_FLAG( floor, FLAG_IS_FLOOR ) ) )
         floor = floor->above;
 
     if ( !floor )
@@ -654,7 +655,7 @@ void apply_builder_remove( object* pl, int dir )
         return;
         }
 
-    if ( item->type == FLOOR )
+    if ( item->type == FLOOR || QUERY_FLAG(item,FLAG_IS_FLOOR) )
         item = item->above;
 
     if ( !item )
