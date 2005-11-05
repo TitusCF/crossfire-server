@@ -103,6 +103,8 @@ static PyObject* getWhoIsThird(PyObject* self, PyObject* args);
 static PyObject* getWhatIsMessage(PyObject* self, PyObject* args);
 static PyObject* getScriptName(PyObject* self, PyObject* args);
 static PyObject* getScriptParameters(PyObject* self, PyObject* args);
+static PyObject* getPrivateDictionary(PyObject* self, PyObject* args);
+static PyObject* getSharedDictionary(PyObject* self, PyObject* args);
 static PyObject* registerCommand(PyObject* self, PyObject* args);
 static PyObject* registerGEvent(PyObject* self, PyObject* args);
 static PyObject* unregisterGEvent(PyObject* self, PyObject* args);
@@ -157,6 +159,8 @@ static PyMethodDef CFPythonMethods[] = {
     {"PluginVersion",       getCFPythonVersion,     METH_VARARGS},
     {"CreateObject",        createCFObject,         METH_VARARGS},
     {"CreateObjectByName",  createCFObjectByName,   METH_VARARGS},
+    {"GetPrivateDictionary",  getPrivateDictionary,   METH_VARARGS},
+    {"GetSharedDictionary",  getSharedDictionary,   METH_VARARGS},
     {"RegisterCommand",     registerCommand,        METH_VARARGS},
     {"RegisterGlobalEvent", registerGEvent,         METH_VARARGS},
     {"UnregisterGlobalEvent",unregisterGEvent,      METH_VARARGS},
@@ -166,6 +170,8 @@ static PyMethodDef CFPythonMethods[] = {
 CFPContext* context_stack;
 CFPContext* current_context;
 static int current_command = -999;
+static PyObject* shared_data = NULL;
+static PyObject* private_data = NULL;
 
 static PyObject* registerGEvent(PyObject* self, PyObject* args)
 {
@@ -481,6 +487,34 @@ static PyObject* getScriptParameters(PyObject* self, PyObject* args)
         return NULL;
     return Py_BuildValue("s", current_context->options);
 }
+
+static PyObject* getPrivateDictionary(PyObject* self, PyObject* args)
+{
+	PyObject* data;
+
+    if (!PyArg_ParseTuple(args,"",NULL))
+        return NULL;
+
+	data = PyDict_GetItemString(private_data,current_context->script);
+	if (!data)
+	{
+		data = PyDict_New();
+		PyDict_SetItemString(private_data,current_context->script,data);
+		Py_DECREF(data);
+	}
+	Py_INCREF(data);
+	return data;
+}
+
+static PyObject* getSharedDictionary(PyObject* self, PyObject* args)
+{
+    if (!PyArg_ParseTuple(args,"",NULL))
+        return NULL;
+
+	Py_INCREF(shared_data);
+	return shared_data;
+}
+
 static PyObject* registerCommand(PyObject* self, PyObject* args)
 {
     char *cmdname;
@@ -579,6 +613,8 @@ CF_PLUGIN int initPlugin(const char* iversion, f_plug_api gethooksptr)
         CustomCommand[i].script = NULL;
         CustomCommand[i].speed  = 0.0;
     }
+	private_data = PyDict_New();
+	shared_data = PyDict_New();
     return 0;
 }
 
