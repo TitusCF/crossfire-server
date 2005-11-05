@@ -912,11 +912,12 @@ static uint64 value_limit(uint64 val, int quantity, object *who, int isshop) {
     uint64 newval, unit_price;
     mapstruct *map;
     unit_price=val/quantity;
-    newval=unit_price;
     if (!isshop || !who) {
-	newval=8000+isqrt(unit_price)*20;
-    }	
-    else {
+	if (unit_price > 10000)
+	    newval=8000+isqrt(unit_price)*20;
+	else
+	    newval=unit_price;
+    } else {
 	if (!who->map) {
 	    LOG(llevError, "value_limit: asked shop price for ob %s on NULL map", who->name);
 	    return val;
@@ -927,6 +928,8 @@ static uint64 value_limit(uint64 val, int quantity, object *who, int isshop) {
 	    newval=MIN((map->shopmax/2)+isqrt(unit_price-map->shopmax/2), map->shopmax);
 	else if (unit_price>10000)
     	    newval=8000+isqrt(unit_price)*20;
+	else
+	    newval=unit_price;
     }
     newval *= quantity;
     return newval;
