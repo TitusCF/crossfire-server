@@ -17,6 +17,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+lib/wizhelp/reset: document use of '.' as an argument
+Brendan Lally 2005-11-05
+
 random_maps/treasure.c: Fix out-of-bounds array access if place_chest() cannot
    find a free spot to place a new chest.
 Andreas Kirschbaum 2005-11-01
