@@ -222,6 +222,8 @@ static PyObject* Crossfire_Object_CreateInside(Crossfire_Object* who, PyObject* 
 static PyObject* Crossfire_Object_ReadKey(Crossfire_Object* who, PyObject* args);
 static PyObject* Crossfire_Object_WriteKey(Crossfire_Object* who, PyObject* args);
 
+static int Crossfire_Object_InternalCompare(Crossfire_Object* left, Crossfire_Object* right);
+
 static PyObject* Crossfire_Object_Long( PyObject* obj );
 static PyObject* Crossfire_Object_Int( PyObject* obj );
 static PyObject *Crossfire_Object_new(PyTypeObject *type, PyObject *args, PyObject *kwds);
@@ -398,7 +400,7 @@ PyTypeObject Crossfire_ObjectType = {
             0,                         /* tp_print*/
             0,                         /* tp_getattr*/
             0,                         /* tp_setattr*/
-            0,                         /* tp_compare*/
+            (cmpfunc)Crossfire_Object_InternalCompare,                         /* tp_compare*/
             0,                         /* tp_repr*/
             ObjectConvert,             /* tp_as_number*/
             0,                         /* tp_as_sequence*/

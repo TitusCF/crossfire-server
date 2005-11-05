@@ -53,6 +53,8 @@ static PyObject* Map_GetFirstObjectAt(Crossfire_Map* map, PyObject* args);
 static PyObject* Map_CreateObject(Crossfire_Map* map, PyObject* args);
 static PyObject* Map_Check(Crossfire_Map* map, PyObject* args);
 
+static int Map_InternalCompare(Crossfire_Map* left, Crossfire_Map* right);
+
 static PyObject* Crossfire_Map_Long( PyObject* obj );
 static PyObject* Crossfire_Map_Int( PyObject* obj );
 static PyObject *Crossfire_Map_new(PyTypeObject *type, PyObject *args, PyObject *kwds);
@@ -127,7 +129,7 @@ PyTypeObject Crossfire_MapType = {
             0,                         /* tp_print*/
             0,                         /* tp_getattr*/
             0,                         /* tp_setattr*/
-            0,                         /* tp_compare*/
+            (cmpfunc)Map_InternalCompare,                         /* tp_compare*/
             0,                         /* tp_repr*/
             MapConvert,                /* tp_as_number*/
             0,                         /* tp_as_sequence*/

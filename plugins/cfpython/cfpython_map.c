@@ -191,6 +191,11 @@ static PyObject* Map_Check(Crossfire_Map* map, PyObject* args)
     return Crossfire_Object_wrap(foundob);
 }
 
+static int Map_InternalCompare(Crossfire_Map* left, Crossfire_Map* right)
+{
+	return (int)left->map - (int)right->map;
+}
+
 /* Legacy code: convert to long so that non-object functions work correctly */
 static PyObject* Crossfire_Map_Long( PyObject* obj )
 {

@@ -1553,6 +1553,12 @@ static PyObject* Crossfire_Object_CreateInside(Crossfire_Object* who, PyObject* 
     return Crossfire_Object_wrap(myob);
 
 }
+
+static int Crossfire_Object_InternalCompare(Crossfire_Object* left, Crossfire_Object* right)
+{
+	return ((int)left->obj - (int)right->obj);
+}
+
 /* Legacy code: convert to long so that non-object functions work correctly */
 static PyObject* Crossfire_Object_Long( PyObject* obj )
 {

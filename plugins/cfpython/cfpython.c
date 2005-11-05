@@ -152,8 +152,8 @@ static PyMethodDef CFPythonMethods[] = {
     {"ReadyMap",            readyMap,               METH_VARARGS},
     {"FindPlayer",          findPlayer,             METH_VARARGS},
     {"MatchString",         matchString,            METH_VARARGS},
-    {"getReturnValue",      getReturnValue,         METH_VARARGS},
-    {"setReturnValue",      setReturnValue,         METH_VARARGS},
+    {"GetReturnValue",      getReturnValue,         METH_VARARGS},
+    {"SetReturnValue",      setReturnValue,         METH_VARARGS},
     {"PluginVersion",       getCFPythonVersion,     METH_VARARGS},
     {"CreateObject",        createCFObject,         METH_VARARGS},
     {"CreateObjectByName",  createCFObjectByName,   METH_VARARGS},
@@ -471,16 +471,12 @@ static PyObject* getWhatIsMessage(PyObject* self, PyObject* args)
 }
 static PyObject* getScriptName(PyObject* self, PyObject* args)
 {
-    char* buf;
-
     if (!PyArg_ParseTuple(args,"",NULL))
         return NULL;
     return Py_BuildValue("s", current_context->script);
 }
 static PyObject* getScriptParameters(PyObject* self, PyObject* args)
 {
-    char* buf;
-
     if (!PyArg_ParseTuple(args,"",NULL))
         return NULL;
     return Py_BuildValue("s", current_context->options);
