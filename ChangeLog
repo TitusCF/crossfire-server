@@ -17,6 +17,8 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+aclocal.m4, configure, utils/config.guess, utils/config.sub, utils/ltmain.sh,
+*Makefile.in, plugins/cfanim/Makefile, plugins/Makefile: Rebuilt.
 lib/Makefile.am: Add template-maps to list of directories to create while
    install.
 Andreas Kirschbaum 2005-11-05
