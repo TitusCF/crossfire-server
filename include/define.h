@@ -380,7 +380,7 @@ extern typedata ItemTypes[];
 /* Instead of using arbitrary constants for indexing the
  * freearr, add these values.  <= SIZEOFFREE1 will get you
  * within 1 space.  <= SIZEOFFREE2 wll get you withing 
- * 2 spaces, and the entire array (<= SIZEOFFREE) is 
+ * 2 spaces, and the entire array (< SIZEOFFREE) is 
  * three spaces
  */
 #define SIZEOFFREE1 8

@@ -316,7 +316,7 @@ static void enter_map(object *op, mapstruct *newmap, int x, int y) {
 	if (i==-1) {
 	    i = find_free_spot(op->arch,newmap, x, y, 1, SIZEOFFREE2+1);
 	    if (i==-1)
-		i = find_free_spot(op->arch,newmap, x, y, 1, SIZEOFFREE+1);
+		i = find_free_spot(op->arch,newmap, x, y, 1, SIZEOFFREE);
 	}
 	if (i != -1 ) {
 	    x += freearr_x[i];
@@ -362,7 +362,7 @@ static void enter_map(object *op, mapstruct *newmap, int x, int y) {
     /* Update any golems */
     if(op->type == PLAYER && op->contr->ranges[range_golem] != NULL) {
 	int i = find_free_spot(op->contr->ranges[range_golem]->arch,newmap,
-			       x, y, 1, SIZEOFFREE+1);
+			       x, y, 1, SIZEOFFREE);
 
 	remove_ob(op->contr->ranges[range_golem]);
 	if (i==-1) {
