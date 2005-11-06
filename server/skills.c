@@ -1408,6 +1408,7 @@ static int do_throw(object *op, object *part, object *toss_item, int dir, object
     int eff_str = 0,maxc,str=op->stats.Str,dam=0;
     int pause_f,weight_f=0;
     float str_factor=1.0,load_factor=1.0,item_factor=1.0;
+    tag_t tag;
 
     if(throw_ob==NULL) {
 	if(op->type==PLAYER) {
@@ -1637,8 +1638,10 @@ static int do_throw(object *op, object *part, object *toss_item, int dir, object
         throw_ob->last_sp,throw_ob->speed,throw_ob->stats.food);
     LOG(llevDebug,"inserting tossitem (%d) into map\n",throw_ob->count);
 #endif
+    tag = throw_ob->count;
     insert_ob_in_map(throw_ob,part->map,op,0);
-    move_arrow(throw_ob);
+    if (!was_destroyed (throw_ob, tag))
+        move_arrow(throw_ob);
     return 1;
 }
 
