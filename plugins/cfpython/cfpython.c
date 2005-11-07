@@ -600,6 +600,8 @@ CF_PLUGIN int initPlugin(const char* iversion, f_plug_api gethooksptr)
     Py_Initialize();
     Crossfire_ObjectType.tp_new = PyType_GenericNew;
     PyType_Ready(&Crossfire_ObjectType);
+    PyType_Ready(&Crossfire_MapType);
+    PyType_Ready(&Crossfire_PlayerType);
 
     m = Py_InitModule("Crossfire", CFPythonMethods);
     d = PyModule_GetDict(m);

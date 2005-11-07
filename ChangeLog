@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+plugins/cfpython/cfpython.c: Add missing 'PyType_Ready' calls for map and player,
+ failure to do so crashes with Python objects destructors set to 0.
+Ryo 2005-11-07
+
 server/spell_effect.c: fix WoR not executing on cursed ground with WIZCAST set.
 Ryo 2005-11-06
 
