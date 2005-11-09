@@ -1340,6 +1340,8 @@ void* cfapi_object_get_property(int* type, ...)
             break;
         case CFAPI_OBJECT_PROP_MESSAGE           :
             rv = (char*)op->msg;
+            if (rv == NULL)
+                rv = "";
             *type = CFAPI_STRING;
             break;
         case CFAPI_OBJECT_PROP_LORE              :
