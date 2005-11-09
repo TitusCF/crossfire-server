@@ -142,6 +142,40 @@ static const char *plugins_dlerror()
 }
 #endif /* WIN32 */
 
+/**
+ * Notify clients about a changed object.
+ *
+ * @param op the object that has changed
+ */
+static void send_changed_object(object *op)
+{
+    object* tmp;
+    player *pl;
+
+    if (op->env != NULL)
+    {
+        tmp = is_player_inv(op->env);
+        if (!tmp)
+        {
+            for (pl = first_player; pl; pl = pl->next)
+                if (pl->ob->container == op->env)
+                    break;
+            if (pl)
+                tmp = pl->ob;
+            else
+                tmp = NULL;
+        }
+        if (tmp)
+            esrv_send_item(tmp, op);
+    }
+    else
+    {
+        for (tmp = op->above; tmp != NULL; tmp = tmp->above)
+            if (tmp->type == PLAYER)
+                esrv_send_item(tmp, op);
+    }
+}
+
 int execute_event(object* op, int eventcode, object* activator, object* third, const char* message, int fix)
 {
     object *tmp, *next;
@@ -1774,10 +1808,12 @@ void* cfapi_object_set_property(int* type, ...)
             case CFAPI_OBJECT_PROP_NAME              :
                 sarg = va_arg(args, char*);
                 FREE_AND_COPY(op->name, sarg);
+                send_changed_object(op);
                 break;
             case CFAPI_OBJECT_PROP_NAME_PLURAL       :
                 sarg = va_arg(args, char*);
                 FREE_AND_COPY(op->name_pl, sarg);
+                send_changed_object(op);
                 break;
             case CFAPI_OBJECT_PROP_TITLE             :
                 sarg = va_arg(args, char*);
@@ -2010,6 +2046,7 @@ void* cfapi_object_set_property(int* type, ...)
             case CFAPI_OBJECT_PROP_CUSTOM_NAME       :
                 sarg = va_arg(args, char*);
                 FREE_AND_COPY(op->custom_name, sarg);
+                send_changed_object(op);
                 break;
             case CFAPI_OBJECT_PROP_ANIM_SPEED        :
                 iarg = va_arg(args, int);
