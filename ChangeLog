@@ -17,6 +17,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/shop.c: When we are counting unpaid items and their values, to check
+if a player may leave a shop, make certain that we count all of them, and
+don't stop when we have dropped into a container (such as a spellbook)
+Brendan Lally 2005-11-09
+
 plugins/cfpython/cfpython.c: Add missing 'PyType_Ready' calls for map and player,
  failure to do so crashes with Python objects destructors set to 0.
 Ryo 2005-11-07

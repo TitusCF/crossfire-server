@@ -661,6 +661,7 @@ int can_pay(object *pl) {
 		coincount[i] += item->nrof;
 	if (item->inv) item = item->inv; 
 	else if (item->below) item = item->below;
+	else if (item->env && item->env != pl && item->env->below) item = item->env->below;
 	else item = NULL; 
     }
     if (unpaid_price > player_wealth) {
