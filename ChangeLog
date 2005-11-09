@@ -17,6 +17,18 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Implement new functions for the Python plugin: Object.WeightLimit,
+Object.InsertInto(Object).
+--
+plugins/cfanim/include/cfanim_proto.h, plugins/common/include/plugin_common.h:
+   Add prototypes.
+plugins/cfpython/cfpython_object.c: Add callback functions for new Python
+   functions.
+plugins/cfpython/include/cfpython_object_private.h: Add prototypes for
+   callback functions. Add callback functions to Python object descriptors.
+plugins/common/plugin_common.c: Add missing helper functions.
+Andreas Kirschbaum 2005-11-09
+
 server/shop.c: When we are counting unpaid items and their values, to check
 if a player may leave a shop, make certain that we count all of them, and
 don't stop when we have dropped into a container (such as a spellbook)

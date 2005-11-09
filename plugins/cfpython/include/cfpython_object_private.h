@@ -52,6 +52,7 @@ static PyObject* Object_GetSlaying(Crossfire_Object* whoptr, void* closure);
 static PyObject* Object_GetCursed(Crossfire_Object* whoptr, void* closure);
 static PyObject* Object_GetDamned(Crossfire_Object* whoptr, void* closure);
 static PyObject* Object_GetWeight(Crossfire_Object* whoptr, void* closure);
+static PyObject* Object_GetWeightLimit(Crossfire_Object* whoptr, void* closure);
 static PyObject* Object_GetAbove(Crossfire_Object* whoptr, void* closure);
 static PyObject* Object_GetBelow(Crossfire_Object* whoptr, void* closure);
 static PyObject* Object_GetInventory(Crossfire_Object* whoptr, void* closure);
@@ -150,6 +151,7 @@ static int Object_SetFood(Crossfire_Object* whoptr, PyObject* value, void* closu
 static int Object_SetAC(Crossfire_Object* whoptr, PyObject* value, void* closure);
 static int Object_SetWC(Crossfire_Object* whoptr, PyObject* value, void* closure);
 static int Object_SetWeight(Crossfire_Object* whoptr, PyObject* value, void* closure);
+static int Object_SetWeightLimit(Crossfire_Object* whoptr, PyObject* value, void* closure);
 static int Object_SetDirection(Crossfire_Object* whoptr, PyObject* value, void* closure);
 static int Object_SetFacing(Crossfire_Object* whoptr, PyObject* value, void* closure);
 static int Object_SetGod(Crossfire_Object* whoptr, PyObject* value, void* closure);
@@ -219,6 +221,7 @@ static PyObject* Crossfire_Object_CheckInventory( Crossfire_Object* who, PyObjec
 static PyObject* Crossfire_Object_CheckArchInventory( Crossfire_Object* who, PyObject* args );
 static PyObject* Crossfire_Object_GetOutOfMap(Crossfire_Object* whoptr, PyObject* args);
 static PyObject* Crossfire_Object_CreateInside(Crossfire_Object* who, PyObject* args);
+static PyObject* Crossfire_Object_InsertInto(Crossfire_Object* who, PyObject* args);
 static PyObject* Crossfire_Object_ReadKey(Crossfire_Object* who, PyObject* args);
 static PyObject* Crossfire_Object_WriteKey(Crossfire_Object* who, PyObject* args);
 
@@ -257,6 +260,7 @@ static PyGetSetDef Object_getseters[] = {
     { "Cursed",     (getter)Object_GetCursed,   (setter)Object_SetCursed, NULL, NULL },
     { "Damned",     (getter)Object_GetDamned,   (setter)Object_SetDamned, NULL, NULL },
     { "Weight",     (getter)Object_GetWeight,   (setter)Object_SetWeight, NULL, NULL },
+    { "WeightLimit",(getter)Object_GetWeightLimit,(setter)Object_SetWeightLimit, NULL, NULL },
     { "Above",      (getter)Object_GetAbove,    NULL, NULL, NULL },
     { "Below",      (getter)Object_GetBelow,    NULL, NULL, NULL },
     { "Inventory",  (getter)Object_GetInventory,NULL, NULL, NULL },
@@ -358,6 +362,7 @@ static PyMethodDef ObjectMethods[] = {
     { "CheckArchInventory", (PyCFunction)Crossfire_Object_CheckArchInventory,METH_VARARGS},
     { "OutOfMap",       (PyCFunction)Crossfire_Object_GetOutOfMap,  METH_VARARGS},
     { "CreateObject",   (PyCFunction)Crossfire_Object_CreateInside, METH_VARARGS},
+    { "InsertInto",     (PyCFunction)Crossfire_Object_InsertInto,   METH_VARARGS},
     { "ReadKey",        (PyCFunction)Crossfire_Object_ReadKey,      METH_VARARGS},
     { "WriteKey",       (PyCFunction)Crossfire_Object_WriteKey,     METH_VARARGS},
     {NULL, NULL, 0}

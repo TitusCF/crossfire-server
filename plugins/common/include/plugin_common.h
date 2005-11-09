@@ -52,6 +52,8 @@ extern object*      cf_insert_ob_in_ob( object* ob, object* where );
 extern const char*  cf_object_get_msg( object* );
 extern void         cf_object_set_weight( object* ob, int weight );
 extern int          cf_object_get_weight( object* ob );
+extern void         cf_object_set_weight_limit( object* ob, int weight );
+extern int          cf_object_get_weight_limit( object* ob );
 extern int          cf_object_set_nrof( object*, int nrof );
 extern int          cf_object_get_nrof( object* );
 extern int          cf_object_get_flag( object* ob, int flag );

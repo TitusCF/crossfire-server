@@ -477,10 +477,24 @@ void cf_object_set_weight( object* ob, int weight )
     cfapiObject_set_property( &val, ob, CFAPI_OBJECT_PROP_WEIGHT, weight );
 }
 
+void cf_object_set_weight_limit( object* ob, int weight_limit )
+{
+    int val;
+    cfapiObject_set_property( &val, ob, CFAPI_OBJECT_PROP_WEIGHT_LIMIT, weight_limit );
+}
+
 int cf_object_get_weight( object* ob )
 {
     int val;
     return *( int* )cfapiObject_get_property( &val, ob, CFAPI_OBJECT_PROP_WEIGHT );
+}
+
+int cf_object_get_weight_limit( object* ob )
+{
+    int val;
+    int *dummy;
+    dummy = cfapiObject_get_property( &val, ob, CFAPI_OBJECT_PROP_WEIGHT_LIMIT );
+    return *dummy;
 }
 
 /**

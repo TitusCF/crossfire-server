@@ -180,6 +180,10 @@ static PyObject* Object_GetWeight(Crossfire_Object* whoptr, void* closure)
 {
     return Py_BuildValue("i", *(int*)cf_object_get_property(whoptr->obj, CFAPI_OBJECT_PROP_WEIGHT));
 }
+static PyObject* Object_GetWeightLimit(Crossfire_Object* whoptr, void* closure)
+{
+    return Py_BuildValue("i", *(int*)cf_object_get_property(whoptr->obj, CFAPI_OBJECT_PROP_WEIGHT_LIMIT));
+}
 static PyObject* Object_GetAbove(Crossfire_Object* whoptr, void* closure)
 {
     object* op;
@@ -767,6 +771,16 @@ static int Object_SetWeight(Crossfire_Object* whoptr, PyObject* value, void* clo
         return -1;
 
     cf_object_set_int_property(whoptr->obj, CFAPI_OBJECT_PROP_WEIGHT, val);
+    return 0;
+}
+static int Object_SetWeightLimit(Crossfire_Object* whoptr, PyObject* value, void* closure)
+{
+    int val;
+
+    if (!PyArg_Parse(value,"i",&val))
+        return -1;
+
+    cf_object_set_int_property(whoptr->obj, CFAPI_OBJECT_PROP_WEIGHT_LIMIT, val);
     return 0;
 }
 static int Object_SetDirection(Crossfire_Object* whoptr, PyObject* value, void* closure)
@@ -1552,6 +1566,18 @@ static PyObject* Crossfire_Object_CreateInside(Crossfire_Object* who, PyObject* 
 
     return Crossfire_Object_wrap(myob);
 
+}
+static PyObject* Crossfire_Object_InsertInto(Crossfire_Object* who, PyObject* args)
+{
+    Crossfire_Object* op;
+    object* myob;
+
+    if (!PyArg_ParseTuple(args,"O",&op))
+        return NULL;
+
+    myob = cf_object_insert_in_ob(who->obj, op->obj);
+
+    return Crossfire_Object_wrap(myob);
 }
 
 static int Crossfire_Object_InternalCompare(Crossfire_Object* left, Crossfire_Object* right)
