@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+include/sproto.h, server/monster.c: Declare parameter of communicate() as
+   "const".
+Andreas Kirschbaum 2005-11-09
+
 Implement new functions for the Python plugin: Object.WeightLimit,
 Object.InsertInto(Object).
 --

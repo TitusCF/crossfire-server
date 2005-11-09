@@ -486,7 +486,7 @@ void pace2_moveh(object *ob);
 void rand_move(object *ob);
 void check_earthwalls(object *op, mapstruct *m, int x, int y);
 void check_doors(object *op, mapstruct *m, int x, int y);
-void communicate(object *op, char *txt);
+void communicate(object *op, const char *txt);
 int talk_to_npc(object *op, object *npc, const char *txt);
 int talk_to_wall(object *pl, object *npc, const char *txt);
 object *find_mon_throw_ob(object *op);

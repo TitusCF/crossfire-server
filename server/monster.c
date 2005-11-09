@@ -1578,7 +1578,7 @@ static char *find_matching_message(object* pl, const char *msg, const char *matc
  * the conversation would continue on the new map, which probably isn't
  * what is really wanted either.
  */
-void communicate(object *op, char *txt) {
+void communicate(object *op, const char *txt) {
     object *npc;
     int i, mflags;
     sint16 x, y;
