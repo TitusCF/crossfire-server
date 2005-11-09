@@ -26,6 +26,7 @@
 /*  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.                */
 /*                                                                           */ /*****************************************************************************/
 static PyObject* Object_GetName(Crossfire_Object* whoptr, void* closure);
+static PyObject* Object_GetNamePl(Crossfire_Object* whoptr, void* closure);
 static PyObject* Object_GetTitle(Crossfire_Object* whoptr, void* closure);
 static PyObject* Object_GetMap(Crossfire_Object* whoptr, void* closure);
 static PyObject* Object_GetCha(Crossfire_Object* whoptr, void* closure);
@@ -128,6 +129,7 @@ static PyObject* Object_GetArchName(Crossfire_Object* whoptr, void* closure);
 
 static int Object_SetMessage(Crossfire_Object* whoptr, PyObject* value, void* closure);
 static int Object_SetName(Crossfire_Object* whoptr, PyObject* value, void* closure);
+static int Object_SetNamePl(Crossfire_Object* whoptr, PyObject* value, void* closure);
 static int Object_SetTitle(Crossfire_Object* whoptr, PyObject* value, void* closure);
 static int Object_SetMap(Crossfire_Object* whoptr, PyObject* value, void* closure);
 static int Object_SetSlaying(Crossfire_Object* whoptr, PyObject* value, void* closure);
@@ -234,6 +236,7 @@ static PyObject *Crossfire_Object_new(PyTypeObject *type, PyObject *args, PyObje
 /* Python binding */
 static PyGetSetDef Object_getseters[] = {
     { "Name",       (getter)Object_GetName,     (setter)Object_SetName, NULL, NULL },
+    { "NamePl",     (getter)Object_GetNamePl,   (setter)Object_SetNamePl, NULL, NULL },
     { "Title",      (getter)Object_GetTitle,    (setter)Object_SetTitle, NULL, NULL },
     { "Map",        (getter)Object_GetMap,      (setter)Object_SetMap, NULL, NULL },
     { "Cha",        (getter)Object_GetCha,      (setter)Object_SetCha, NULL, NULL },

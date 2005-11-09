@@ -52,6 +52,11 @@ static PyObject* Object_GetName(Crossfire_Object* whoptr, void* closure)
     return Py_BuildValue("s",( char* )cf_query_name(whoptr->obj));
 }
 
+static PyObject* Object_GetNamePl(Crossfire_Object* whoptr, void* closure)
+{
+    return Py_BuildValue("s",( char* )cf_query_name_pl(whoptr->obj));
+}
+
 static PyObject* Object_GetTitle(Crossfire_Object* whoptr, void* closure)
 {
     return Py_BuildValue("s",( char* )cf_object_get_property( whoptr->obj, CFAPI_OBJECT_PROP_TITLE ));
@@ -516,6 +521,26 @@ static int Object_SetName(Crossfire_Object* whoptr, PyObject* value, void* closu
         return -1;
 
     cf_object_set_string_property(whoptr->obj, CFAPI_OBJECT_PROP_NAME, val);
+    cf_object_set_string_property(whoptr->obj, CFAPI_OBJECT_PROP_NAME_PLURAL, val);
+    return 0;
+}
+static int Object_SetNamePl(Crossfire_Object* whoptr, PyObject* value, void* closure)
+{
+    char* val;
+    if (value==NULL)
+    {
+        PyErr_SetString(PyExc_TypeError, "Cannot delete the NamePl attribute");
+        return -1;
+    }
+    if (!PyString_Check(value))
+    {
+        PyErr_SetString(PyExc_TypeError, "The NamePl attribute must be a string");
+        return -1;
+    }
+    if (!PyArg_Parse(value,"s",&val))
+        return -1;
+
+    cf_object_set_string_property(whoptr->obj, CFAPI_OBJECT_PROP_NAME_PLURAL, val);
     return 0;
 }
 static int Object_SetTitle(Crossfire_Object* whoptr, PyObject* value, void* closure)

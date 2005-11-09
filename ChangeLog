@@ -25,7 +25,8 @@ include/sproto.h, server/monster.c: Declare parameter of communicate() as
 Andreas Kirschbaum 2005-11-09
 
 Implement new functions for the Python plugin: Object.WeightLimit,
-Object.InsertInto(Object).
+Object.InsertInto(Object), Object.NamePl. Change Object.Name to set both name
+and name_pl. This should prevents scripts from failing to set name_pl.
 --
 plugins/cfanim/include/cfanim_proto.h, plugins/common/include/plugin_common.h:
    Add prototypes.

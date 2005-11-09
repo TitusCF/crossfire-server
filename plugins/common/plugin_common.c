@@ -453,6 +453,12 @@ char* cf_query_name( object* ob )
     return cfapiObject_get_property( &val, ob, CFAPI_OBJECT_PROP_NAME );
 }
 
+char* cf_query_name_pl( object* ob )
+{
+    int val;
+    return cfapiObject_get_property( &val, ob, CFAPI_OBJECT_PROP_NAME_PLURAL );
+}
+
 char* cf_query_base_name( object* ob, int plural )
 {
     int val;

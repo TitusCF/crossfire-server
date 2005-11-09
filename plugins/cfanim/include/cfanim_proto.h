@@ -99,6 +99,7 @@ void cf_fix_object(object *pl);
 char *cf_add_string(char *str);
 void cf_free_string(char *str);
 char *cf_query_name(object *ob);
+char *cf_query_name_pl(object *ob);
 char *cf_query_base_name(object *ob, int plural);
 object *cf_insert_ob_in_ob(object *ob, object *where);
 const char *cf_object_get_msg(object *ob);
