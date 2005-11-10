@@ -17,6 +17,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/plugins.c: Properly update client view after removing objects.
+Andreas Kirschbaum 2005-11-10
+
 server/plugins.c: Properly update client view after changing object names.
 server/plugins.c: Return an empty string if an object has no message. This
    makes Object.Message() always return a string object, which removes the

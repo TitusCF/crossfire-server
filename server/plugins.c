@@ -176,6 +176,38 @@ static void send_changed_object(object *op)
     }
 }
 
+/**
+ * Notify clients about a removed object.
+ *
+ * @param op the object about to be removed from its environment; it must still
+ * be present in its environment
+ */
+static void send_removed_object(object *op)
+{
+    object* tmp;
+    player *pl;
+
+    if (op->env == NULL)
+    {
+        /* no action necessary: remove_ob() notifies the client */
+        return;
+    }
+
+    tmp = is_player_inv(op->env);
+    if (!tmp)
+    {
+        for (pl = first_player; pl; pl = pl->next)
+            if (pl->ob->container == op->env)
+                break;
+        if (pl)
+            tmp = pl->ob;
+        else
+            tmp = NULL;
+    }
+    if (tmp)
+        esrv_del_item(tmp->contr, op->count);
+}
+
 int execute_event(object* op, int eventcode, object* activator, object* third, const char* message, int fix)
 {
     object *tmp, *next;
@@ -204,6 +236,7 @@ int execute_event(object* op, int eventcode, object* activator, object* third, c
             {
                 object *env = object_get_env_recursive(tmp);
                 LOG(llevError, "Event object without title at %d/%d in map %s\n", env->x, env->y, env->map->name);
+                send_removed_object(tmp);
                 remove_ob(tmp);
                 free_object(tmp);
             }
@@ -211,6 +244,7 @@ int execute_event(object* op, int eventcode, object* activator, object* third, c
             {
                 object *env = object_get_env_recursive(tmp);
                 LOG(llevError, "Event object without slaying at %d/%d in map %s\n", env->x, env->y, env->map->name);
+                send_removed_object(tmp);
                 remove_ob(tmp);
                 free_object(tmp);
             }
@@ -221,6 +255,7 @@ int execute_event(object* op, int eventcode, object* activator, object* third, c
                 {
                     object *env = object_get_env_recursive(tmp);
                     LOG(llevError, "The requested plugin doesn't exit: %s at %d/%d in map %s\n", tmp->title, env->x, env->y, env->map->name);
+                    send_removed_object(tmp);
                     remove_ob(tmp);
                     free_object(tmp);
                 }
@@ -2329,6 +2364,7 @@ void* cfapi_object_remove(int* type, ...)
 
     va_end(args);
 
+    send_removed_object(op);
     remove_ob(op);
     *type = CFAPI_NONE;
     return NULL;
@@ -3084,6 +3120,7 @@ void* cfapi_object_teleport(int *type, ...)
             return &result;
         }
 
+        send_removed_object(who);
         remove_ob( who );
 
         for(tmp=who;tmp!=NULL;tmp=tmp->more)
