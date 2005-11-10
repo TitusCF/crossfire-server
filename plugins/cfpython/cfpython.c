@@ -599,6 +599,8 @@ CF_PLUGIN int initPlugin(const char* iversion, f_plug_api gethooksptr)
 
     Py_Initialize();
     Crossfire_ObjectType.tp_new = PyType_GenericNew;
+    Crossfire_MapType.tp_new    = PyType_GenericNew;
+    Crossfire_PlayerType.tp_new = PyType_GenericNew;
     PyType_Ready(&Crossfire_ObjectType);
     PyType_Ready(&Crossfire_MapType);
     PyType_Ready(&Crossfire_PlayerType);
@@ -606,7 +608,13 @@ CF_PLUGIN int initPlugin(const char* iversion, f_plug_api gethooksptr)
     m = Py_InitModule("Crossfire", CFPythonMethods);
     d = PyModule_GetDict(m);
     Py_INCREF(&Crossfire_ObjectType);
+    Py_INCREF(&Crossfire_MapType);
+    Py_INCREF(&Crossfire_PlayerType);
+
     PyModule_AddObject(m, "Object", (PyObject*)&Crossfire_ObjectType);
+    PyModule_AddObject(m, "Map", (PyObject*)&Crossfire_MapType);
+    PyModule_AddObject(m, "Player", (PyObject*)&Crossfire_PlayerType);
+
     CFPythonError = PyErr_NewException("Crossfire.error",NULL,NULL);
     PyDict_SetItemString(d,"error",CFPythonError);
     for (i=0;i<NR_CUSTOM_CMD;i++)
@@ -702,9 +710,9 @@ CF_PLUGIN int runPluginCommand(object* op, char* params)
     fclose(scriptfile);
     context = popContext();
     rv = context->returnvalue;
-    /*Py_XDECREF(context->who);
+    Py_XDECREF(context->who);
     Py_XDECREF(context->activator);
-    Py_XDECREF(context->third);*/
+    Py_XDECREF(context->third);
     free(context);
     printf("Execution complete");
     return rv;
@@ -889,9 +897,9 @@ CF_PLUGIN void* globalEventListener(int* type, ...)
     fclose(scriptfile);
     context = popContext();
     rv = context->returnvalue;
-    /*Py_XDECREF(context->who);
+    Py_XDECREF(context->who);
     Py_XDECREF(context->activator);
-    Py_XDECREF(context->third);*/
+    Py_XDECREF(context->third);
     free(context);
 
     return &rv;
@@ -939,9 +947,9 @@ CF_PLUGIN void* eventListener(int* type, ...)
     fclose(scriptfile);
     context = popContext();
     rv = context->returnvalue;
-    /*Py_XDECREF(context->who);
+    Py_XDECREF(context->who);
     Py_XDECREF(context->activator);
-    Py_XDECREF(context->third);*/
+    Py_XDECREF(context->third);
     free(context);
     return &rv;
 }
@@ -949,6 +957,7 @@ CF_PLUGIN void* eventListener(int* type, ...)
 CF_PLUGIN int   closePlugin()
 {
     printf("CFPython 2.0a closing\n");
+    Py_Finalize();
     return 0;
 }
 
