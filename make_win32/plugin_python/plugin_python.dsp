@@ -139,5 +139,17 @@ SOURCE=..\..\plugins\cfpython\include\cfpython_object_private.h
 SOURCE=..\..\plugins\cfpython\include\cfpython_proto.h
 # End Source File
 # End Group
+# Begin Group "resources"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\plugin_python.rc
+# End Source File
+# Begin Source File
+
+SOURCE=.\resource.h
+# End Source File
+# End Group
 # End Target
 # End Project
