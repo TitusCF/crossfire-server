@@ -375,6 +375,7 @@ extern typedata ItemTypes[];
 #define PU_MAGIC_DEVICE		0x00800000
 
 #define PU_NOT_CURSED		0x01000000
+#define PU_JEWELS		0x02000000
 
 
 /* Instead of using arbitrary constants for indexing the

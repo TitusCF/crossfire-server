@@ -1327,6 +1327,11 @@ int check_pick(object *op) {
 	{ pick_up(op, tmp); if(0)fprintf(stderr,"MONEY/GEM\n"); continue; }
       }
 
+      /* rings & amulets - talismans seems to be typed AMULET */
+    if(op->contr->mode & PU_JEWELS)
+       if (tmp->type == RING || tmp->type == AMULET)
+       { pick_up(op, tmp); if(0)fprintf(stderr,"JEWELS\n"); continue; }
+
       /* bows and arrows. Bows are good for selling! */
       if(op->contr->mode & PU_BOW)
 	if (tmp->type == BOW) 
