@@ -266,7 +266,7 @@ int get_map_flags(mapstruct *oldmap, mapstruct **newmap, sint16 x, sint16 y, sin
 
 
 /*
- * Returns true if the given coordinate is blocked by the
+ * Returns true if the given coordinate is blocked except by the
  * object passed is not blocking.  This is used with 
  * multipart monsters - if we want to see if a 2x2 monster
  * can move 1 space to the left, we don't want its own area
@@ -280,13 +280,13 @@ int get_map_flags(mapstruct *oldmap, mapstruct **newmap, sint16 x, sint16 y, sin
 
 int blocked_link(object *ob, mapstruct *m, int sx, int sy) {
     object *tmp;
-    int mflags;
+    int mflags, blocked;
 
     /* Make sure the coordinates are valid - they should be, as caller should
      * have already checked this.
      */
     if (OUT_OF_REAL_MAP(m, sx, sy)) {
-	LOG(llevError,"blocked_link: Past map, x, y coordinates outside of map\n");
+	LOG(llevError,"blocked_link: Passed map, x, y coordinates outside of map\n");
 	return 1;
     }
 
@@ -295,11 +295,13 @@ int blocked_link(object *ob, mapstruct *m, int sx, int sy) {
      */
     mflags = m->spaces[sx + m->width * sy].flags;
 
+    blocked = GET_MAP_MOVE_BLOCK(m, sx, sy);
+
     /* If space is currently not blocked by anything, no need to
      * go further.  Not true for players - all sorts of special
      * things we need to do for players.
      */
-    if (ob->type != PLAYER && ! (mflags & (P_NO_PASS | P_IS_ALIVE))) return 0;
+    if (ob->type != PLAYER && ! (mflags & P_IS_ALIVE) && (blocked==0)) return 0;
 
 
     if(ob->head != NULL)
@@ -313,7 +315,7 @@ int blocked_link(object *ob, mapstruct *m, int sx, int sy) {
     for(tmp = GET_MAP_OB(m,sx,sy); tmp!= NULL; tmp = tmp->above) {
 
 	/* This must be before the checks below.  Code for inventory checkers. */
-	if (tmp->type==CHECK_INV && QUERY_FLAG(tmp,FLAG_NO_PASS)) {
+	if (tmp->type==CHECK_INV && OB_MOVE_BLOCK(ob, tmp)) {
 	    /* If last_sp is set, the player/monster needs an object,
 	     * so we check for it.  If they don't have it, they can't
 	     * pass through this space.
@@ -340,7 +342,7 @@ int blocked_link(object *ob, mapstruct *m, int sx, int sy) {
 	     * second - if a monster, can't move there, unles it is a 
 	     * hidden dm
 	     */
-	    if (QUERY_FLAG(tmp,FLAG_NO_PASS)) return 1;
+	    if (OB_MOVE_BLOCK(ob, tmp)) return 1;
 	    if (QUERY_FLAG(tmp,FLAG_ALIVE) && tmp->head != ob && tmp != ob && 
 		tmp->type != DOOR && !(QUERY_FLAG(tmp,FLAG_WIZ) && tmp->contr->hidden))
 			return 1;
@@ -352,10 +354,10 @@ int blocked_link(object *ob, mapstruct *m, int sx, int sy) {
 
 
 /*
- * Returns true if the given archetype can't fit in the given spot.
+ * Returns true if the given object can't fit in the given spot.
  * This is meant for multi space objects - for single space objecs,
- * just calling get_map_flags and checking the P_BLOCKED is
- * sufficient.  This function goes through all the parts of the
+ * just calling get_map_blocked and checking that against movement type
+ * of object. This function goes through all the parts of the
  * multipart object and makes sure they can be inserted.
  *
  * While this doesn't call out of map, the get_map_flags does.
@@ -372,19 +374,38 @@ int blocked_link(object *ob, mapstruct *m, int sx, int sy) {
  * in return codes - since the object is multispace - if
  * we did return values, what do you return if half the object
  * is one map, half on another.
+ *
+ * Note this used to be arch_blocked, but with new movement
+ * code, we need to have actual object to check its move_type
+ * against the move_block values.
  */
 
-int arch_blocked(archetype *at,mapstruct *m,sint16 x,sint16 y) {
+int ob_blocked(object *ob,mapstruct *m,sint16 x,sint16 y) {
     archetype *tmp;
     int flag;
+    mapstruct *m1;
+    sint16  sx, sy;
 
-    if(at==NULL)
-	return get_map_flags(m,NULL, x,y, NULL, NULL) & (P_BLOCKED | P_OUT_OF_MAP);
+    if(ob==NULL) {
+	flag= get_map_flags(m,&m1, x,y, &sx, &sy);
+	if (flag & P_OUT_OF_MAP) return P_OUT_OF_MAP;
 
-    for(tmp=at;tmp!=NULL;tmp=tmp->more) {
-	flag = get_map_flags(m, NULL, x+tmp->clone.x,y+tmp->clone.y, NULL, NULL);
-	if (flag & (P_BLOCKED | P_OUT_OF_MAP))
-	    return (flag & (P_BLOCKED | P_OUT_OF_MAP));
+	/* don't have object, so don't know what types would block */
+	return(GET_MAP_MOVE_BLOCK(m1, sx, sy));
+    }
+
+    for(tmp=ob->arch; tmp!=NULL;tmp=tmp->more) {
+	flag = get_map_flags(m, &m1, x+tmp->clone.x,y+tmp->clone.y, &sx, &sy);
+
+	if (flag & P_OUT_OF_MAP) return P_OUT_OF_MAP;
+
+	/* Note it is intentional that we check ob - the movement type of the
+	 * head of the object should correspond for the entire object.
+	 */
+
+	if ((ob->move_type & GET_MAP_MOVE_BLOCK(m1, sx, sy)) == ob->move_type) return
+	    AB_NO_PASS;
+
     }
     return 0;
 }
@@ -1660,6 +1681,7 @@ void update_position (mapstruct *m, int x, int y) {
     uint8 flags = 0, oldflags, light=0, anywhere=0;
     New_Face *top,*floor, *middle;
     object *top_obj, *floor_obj, *middle_obj;
+    MoveType	move_block=0, move_slow=0, move_on=0, move_off=0;
 
     oldflags = GET_MAP_FLAGS(m,x,y);
     if (!(oldflags & P_NEED_UPDATE)) {
@@ -1728,10 +1750,13 @@ void update_position (mapstruct *m, int x, int y) {
 	    exit (-1);
 	}
       
+	move_slow |= tmp->move_slow;
+	move_block |= tmp->move_block;
+	move_on |= tmp->move_on;
+	move_off |= tmp->move_off;
+
 	if (QUERY_FLAG(tmp,FLAG_ALIVE))
 	    flags |= P_IS_ALIVE;
-	if (QUERY_FLAG(tmp,FLAG_NO_PASS))
-	    flags |= P_NO_PASS;
 	if (QUERY_FLAG(tmp,FLAG_NO_MAGIC))
 	    flags |= P_NO_MAGIC;
 	if (QUERY_FLAG(tmp,FLAG_DAMNED))
@@ -1752,6 +1777,10 @@ void update_position (mapstruct *m, int x, int y) {
             (oldflags & ~P_NEED_UPDATE), flags);
     }
     SET_MAP_FLAGS(m, x, y, flags);
+    SET_MAP_MOVE_BLOCK(m, x, y, move_block);
+    SET_MAP_MOVE_ON(m, x, y, move_on);
+    SET_MAP_MOVE_OFF(m, x, y, move_off);
+    SET_MAP_MOVE_SLOW(m, x, y, move_slow);
 
     /* At this point, we have a floor face (if there is a floor),
      * and the floor is set - we are not going to touch it at

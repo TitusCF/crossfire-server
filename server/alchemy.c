@@ -475,7 +475,7 @@ void alchemy_failure_effect(object *op,object *cauldron,recipe *rp,int danger) {
 	    item=insert_ob_in_ob(tmp,cauldron);
 	    CLEAR_FLAG(tmp,FLAG_CAN_ROLL);
 	    CLEAR_FLAG(tmp,FLAG_NO_PICK);
-	    CLEAR_FLAG(tmp,FLAG_NO_PASS);
+	    tmp->move_block = 0;
 	}
 	remove_contents(cauldron->inv,item);
 	new_draw_info_format(NDI_UNIQUE,0,op, 

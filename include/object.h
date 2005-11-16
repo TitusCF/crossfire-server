@@ -236,6 +236,14 @@ typedef struct obj {
     uint8	last_anim;	/* last sequence used to draw face */
     sint32	elevation;	/* elevation of this terrain - not currently used */
     uint8	smoothlevel;    /* how to smooth this square around*/
+
+    MoveType   move_type;	/* Type of movement this object uses */
+    MoveType   move_block;	/* What movement types this blocks */
+    MoveType   move_on;		/* Move types affected moving on to this space */
+    MoveType   move_off;	/* Move types affected moving off this space */
+    MoveType   move_slow;	/* Movement types this slows down */
+    float   move_slow_penalty;	/* How much this slows down the object */
+
     event   *events;
 
     const char  *custom_name; /* Custom name assigned by player */

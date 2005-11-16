@@ -6,7 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2002 Mark Wedel & Crossfire Development Team
+    Copyright (C) 2002-2005 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -121,7 +121,19 @@
 #define GET_MAP_FACE(M,X,Y,L) ( (M)->spaces[(X) + (M)->width * (Y)].faces[L]  )
 
 #define SET_MAP_FACE_OBJ(M,X,Y,C,L) ( (M)->spaces[(X) + (M)->width * (Y)].faces_obj[L] = C )
-#define GET_MAP_FACE_OBJ(M,X,Y,L) ( (M)->spaces[(X) + (M)->width * (Y)].faces_obj[L]  )
+#define GET_MAP_FACE_OBJ(M,X,Y,L)   ( (M)->spaces[(X) + (M)->width * (Y)].faces_obj[L]  )
+
+#define GET_MAP_MOVE_BLOCK(M,X,Y)   ( (M)->spaces[(X) + (M)->width * (Y)].move_block )
+#define SET_MAP_MOVE_BLOCK(M,X,Y,C) ( (M)->spaces[(X) + (M)->width * (Y)].move_block = C )
+
+#define GET_MAP_MOVE_SLOW(M,X,Y)    ( (M)->spaces[(X) + (M)->width * (Y)].move_slow )
+#define SET_MAP_MOVE_SLOW(M,X,Y,C)  ( (M)->spaces[(X) + (M)->width * (Y)].move_slow = C )
+
+#define GET_MAP_MOVE_ON(M,X,Y)      ( (M)->spaces[(X) + (M)->width * (Y)].move_on )
+#define SET_MAP_MOVE_ON(M,X,Y,C)    ( (M)->spaces[(X) + (M)->width * (Y)].move_on = C )
+
+#define GET_MAP_MOVE_OFF(M,X,Y)      ( (M)->spaces[(X) + (M)->width * (Y)].move_off )
+#define SET_MAP_MOVE_OFF(M,X,Y,C)    ( (M)->spaces[(X) + (M)->width * (Y)].move_off = C )
 
 /* You should really know what you are doing before using this - you
  * should almost always be using out_of_map instead, which takes into account
@@ -135,7 +147,15 @@
 
 #define P_BLOCKSVIEW	0x01
 #define P_NO_MAGIC      0x02	/* Spells (some) can't pass this object */
-#define P_NO_PASS       0x04	/* Nothing can pass (wall() is true) */
+
+/* AB_NO_PASS is used for arch_blocked() return value.  It needs
+ * to be here to make sure the bits don't match with anything.
+ * Changed name to have AB_ prefix just to make sure no one
+ * is using the P_NO_PASS.  AB_.. should only be used for
+ * arch_blocked and functions that examine the return value.
+ */
+
+#define AB_NO_PASS       0x04
 /*#define P_PASS_THRU     0x08	*//* */
 #define P_IS_ALIVE      0x10	/* something alive is on this space */
 #define P_NO_CLERIC     0x20	/* no clerical spells cast here */
@@ -151,8 +171,14 @@
  */
 #define P_OUT_OF_MAP	0x100	/* This space is outside the map */
 #define	P_NEW_MAP	0x200	/* Coordinates passed result in a new tiled map  */
+
+#if 0
+/* These go away with new movement code - can't do such simplistic
+ * checks anymore
+ */
 #define P_BLOCKED	(P_NO_PASS | P_IS_ALIVE)    /* convenience macro */
 #define P_WALL		P_NO_PASS   /* Just to match naming of wall function */
+#endif
 
 /* Can't use MapCell as that is used in newserver.h
  * Instead of having numerous arrays that have information on a
@@ -169,6 +195,10 @@ typedef struct MapSpace {
     object	*faces_obj[MAP_LAYERS];	/* face objects for the 3 layers */
     uint8	flags;		/* flags about this space (see the P_ values above) */
     sint8	light;		/* How much light this space provides */
+    MoveType	move_block;	/* What movement types this space blocks */
+    MoveType	move_slow;	/* What movement types this space slows */
+    MoveType	move_on;	/* What movement types are activated */
+    MoveType	move_off;	/* What movement types are activated */
 } MapSpace;
 
 /*

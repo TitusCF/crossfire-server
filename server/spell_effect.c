@@ -341,7 +341,7 @@ void polymorph(object *op, object *who) {
      */
     if(op->type == 0 || op->arch == NULL || 
        QUERY_FLAG(op,FLAG_NO_PICK) 
-       || QUERY_FLAG(op, FLAG_NO_PASS) || op->type == TREASURE)
+       || op->move_block || op->type == TREASURE)
 	return;
 
     tmp = rndm(0, 7);
@@ -374,7 +374,10 @@ int cast_polymorph(object *op, object *caster, object *spell_ob, int dir) {
 	m = op->map;
 	mflags = get_map_flags(m, &m, x, y, &x, &y);
 
-	if (mflags & (P_WALL | P_NO_MAGIC | P_OUT_OF_MAP))
+	if (mflags & (P_NO_MAGIC | P_OUT_OF_MAP))
+	    break;
+
+	if (GET_MAP_MOVE_BLOCK(m, x, y) & MOVE_FLY_LOW)
 	    break;
 
 	/* Get the top most object */
@@ -674,7 +677,7 @@ int cast_invisible(object *op, object *caster, object *spell_ob) {
     return 1;
 }
 
-/* earth to dust spell.  Basically destroys earthwalsl in the area.
+/* earth to dust spell.  Basically destroys earthwalls in the area.
  */
 int cast_earth_to_dust(object *op,object *caster, object *spell_ob) {
     object *tmp, *next;
@@ -695,8 +698,13 @@ int cast_earth_to_dust(object *op,object *caster, object *spell_ob) {
 	    mflags = get_map_flags(m, &m, sx, sy, &sx, &sy);
 
 	    if (mflags & P_OUT_OF_MAP) continue;
-	    /* If the space doesn't block, no wall here to remove */
-	    if (mflags & P_BLOCKED) {
+
+	    /* If the space doesn't block, no wall here to remove
+	     * Don't care too much what it blocks - this allows for
+	     * any sort of earthwall/airwall/waterwall, etc
+	     * type effects.
+	     */
+	    if (GET_MAP_MOVE_BLOCK(m, sx, sy)) {
 		for(tmp=get_map_ob(m, sx, sy);tmp!=NULL;tmp=next) {
 		    next=tmp->above;
 		    if(tmp&&QUERY_FLAG(tmp, FLAG_TEAR_DOWN))
@@ -1112,8 +1120,9 @@ int magic_wall(object *op,object *caster,int dir,object *spell_ob) {
     }
     m = op->map;
 
-    if ((QUERY_FLAG(spell_ob, FLAG_NO_PASS) || x != op->x || y != op->y) &&
-	get_map_flags(m, &m, x, y, &x, &y) & (P_OUT_OF_MAP | P_BLOCKED)) {
+    if ((spell_ob->move_block || x != op->x || y != op->y) &&
+      (get_map_flags(m, &m, x, y, &x, &y) & P_OUT_OF_MAP ||
+      ((spell_ob->move_block & GET_MAP_MOVE_BLOCK(m, x, y)) == spell_ob->move_block))) {
 	new_draw_info(NDI_UNIQUE, 0,op,"Something is in the way.");
 	return 0;
     }
@@ -1199,7 +1208,9 @@ int magic_wall(object *op,object *caster,int dir,object *spell_ob) {
 	y = tmp->y+i*freearr_y[dir2];
 	m = tmp->map;
 
-	if(!(get_map_flags(m, &m, x, y, &x, &y) & (P_OUT_OF_MAP | P_BLOCKED)) && !posblocked) {
+	if(!(get_map_flags(m, &m, x, y, &x, &y) & P_OUT_OF_MAP) && 
+	  ((tmp->move_block & GET_MAP_MOVE_BLOCK(m, x, y)) != tmp->move_block) && 
+	  !posblocked) {
 	    tmp2 = get_object();
 	    copy_object(tmp,tmp2);
 	    tmp2->x = x;
@@ -1215,7 +1226,9 @@ int magic_wall(object *op,object *caster,int dir,object *spell_ob) {
 	y = tmp->y-i*freearr_y[dir2];
 	m = tmp->map;
 
-	if(!(get_map_flags(m, &m, x, y, &x, &y) & (P_OUT_OF_MAP | P_BLOCKED)) && !negblocked) {
+	if(!(get_map_flags(m, &m, x, y, &x, &y) & P_OUT_OF_MAP) && 
+	  ((tmp->move_block & GET_MAP_MOVE_BLOCK(m, x, y)) != tmp->move_block) && 
+	  !negblocked) {
 	    tmp2 = get_object();
 	    copy_object(tmp,tmp2);
 	    tmp2->x = x;
@@ -1234,7 +1247,9 @@ int magic_wall(object *op,object *caster,int dir,object *spell_ob) {
 
 int dimension_door(object *op,object *caster, object *spob, int dir) {
     uint32 dist, maxdist;
-    int mflags;
+    int  mflags;
+    mapstruct *m;
+    sint16  sx, sy;
 
     if(op->type!=PLAYER)
 	return 0;
@@ -1257,12 +1272,14 @@ int dimension_door(object *op,object *caster, object *spob, int dir) {
 	}
 
 	for(dist=0;dist<op->contr->count; dist++) {
-	    mflags = get_map_flags(op->map, NULL, 
+	    mflags = get_map_flags(op->map, &m, 
 		op->x+freearr_x[dir]*(dist+1), op->y+freearr_y[dir]*(dist+1),
-		NULL, NULL);
+		&sx, &sy);
 
-	    if ((mflags & (P_NO_MAGIC | P_OUT_OF_MAP)) ||
-		((mflags & P_NO_PASS) && (mflags & P_BLOCKSVIEW))) break;
+	    if (mflags & (P_NO_MAGIC | P_OUT_OF_MAP)) break;
+
+	    if ((mflags & P_BLOCKSVIEW) && 
+	      OB_TYPE_MOVE_BLOCK(op, GET_MAP_MOVE_BLOCK(m, sx, sy))) break;
 	}
 
 	if(dist<op->contr->count) {
@@ -1279,9 +1296,10 @@ int dimension_door(object *op,object *caster, object *spob, int dir) {
 	 * lots of other maps that protect areas with no magic, but the
 	 * areas themselves don't contain no magic spaces.
 	 */
-	if(get_map_flags(op->map, NULL, 
-	    op->x+freearr_x[dir]*dist, op->y+freearr_y[dir]*dist,
-	    NULL, NULL) & P_BLOCKED) {
+	/* This call here is really just to normalize the coordinates */
+	get_map_flags(op->map, &m,op->x+freearr_x[dir]*dist, op->y+freearr_y[dir]*dist,
+	    &sx, &sy);
+	if (OB_TYPE_MOVE_BLOCK(op, GET_MAP_MOVE_BLOCK(m, sx, sy))) {
 		new_draw_info(NDI_UNIQUE, 0,op,"You cast your spell, but nothing happens.\n");
 		return 1; /* Maybe the penalty should be more severe... */
 	}
@@ -1292,26 +1310,29 @@ int dimension_door(object *op,object *caster, object *spob, int dir) {
 	 */
 
 	for(dist=0; dist < maxdist; dist++) {
-	    mflags = get_map_flags(op->map, NULL, 
+	    mflags = get_map_flags(op->map, &m, 
 		op->x+freearr_x[dir] * (dist+1), 
 	        op->y+freearr_y[dir] * (dist+1),
-	        NULL, NULL);
-	    if ((mflags & (P_NO_MAGIC | P_OUT_OF_MAP)) ||
-		((mflags & P_NO_PASS) && (mflags & P_BLOCKSVIEW))) {
-		break;
-	    }
+	        &sx, &sy);
+
+	    if (mflags & (P_NO_MAGIC | P_OUT_OF_MAP)) break;
+
+	    if ((mflags & P_BLOCKSVIEW) && 
+	      OB_TYPE_MOVE_BLOCK(op, GET_MAP_MOVE_BLOCK(m, sx, sy))) break;
+
 	}
 
 	/* If the destination is blocked, keep backing up until we
 	 * find a place for the player.
 	 */
-	for(;dist>0; dist--)
-	    if ((get_map_flags(op->map,NULL, 
-	      op->x+freearr_x[dir]*dist,
-	      op->y+freearr_y[dir]*dist,
-	      NULL, NULL) & (P_BLOCKED | P_OUT_OF_MAP)) ==0) 
-		break;
+	for(;dist>0; dist--) {
+	    if (get_map_flags(op->map, &m,op->x+freearr_x[dir]*dist, op->y+freearr_y[dir]*dist,
+			  &sx, &sy) & P_OUT_OF_MAP) continue;
 
+
+	    if (!OB_TYPE_MOVE_BLOCK(op, GET_MAP_MOVE_BLOCK(m, sx, sy))) break;
+
+	}
 	if(!dist) {
 	    new_draw_info(NDI_UNIQUE, 0,op,"Your spell failed!\n");
 	    return 0;
@@ -1536,9 +1557,8 @@ int cast_change_ability(object *op,object *caster,object *spell_ob, int dir, int
 	    }
 	}
     }
-  
-    if (QUERY_FLAG(spell_ob, FLAG_FLYING))
-	SET_FLAG(force, FLAG_FLYING);
+
+    force->move_type = spell_ob->move_type;
 
     if (QUERY_FLAG(spell_ob, FLAG_SEE_IN_DARK))
 	SET_FLAG(force, FLAG_SEE_IN_DARK);
@@ -1785,7 +1805,14 @@ int alchemy(object *op, object *caster, object *spell_ob)
 
 	    mflags = get_map_flags(mp, &mp, nx, ny, &nx, &ny);
 
-	    if(mflags & (P_OUT_OF_MAP | P_WALL | P_NO_MAGIC))
+	    if(mflags & (P_OUT_OF_MAP | P_NO_MAGIC))
+		continue;
+
+	    /* Treat alchemy a little differently - most spell effects
+	     * use fly as the movement type - for alchemy, consider it
+	     * ground level effect.
+	     */
+	    if (GET_MAP_MOVE_BLOCK(mp, nx, ny) & MOVE_WALK)
 		continue;
 
 	    small_nuggets=0;
@@ -2346,7 +2373,8 @@ int animate_weapon(object *op,object *caster,object *spell, int dir) {
     y = op->y+freearr_y[dir];
 
     /* if there's no place to put the golem, abort */
-    if((dir==-1) || (get_map_flags(m, &m, x, y, &x, &y) & (P_BLOCKED | P_OUT_OF_MAP))) {
+    if((dir==-1) || (get_map_flags(m, &m, x, y, &x, &y) &  P_OUT_OF_MAP) ||
+      ((spell->other_arch->clone.move_type & GET_MAP_MOVE_BLOCK(m, x, y)) == spell->other_arch->clone.move_type)) {
 	new_draw_info(NDI_UNIQUE, 0,op,"There is something in the way.");
 	return 0;
     }
@@ -2569,6 +2597,7 @@ int create_aura(object *op, object *caster, object *spell)
 void move_aura(object *aura) {
     int i, mflags;
     object *env;
+    mapstruct *m;
 
     /* auras belong in inventories */
     env = aura->env;
@@ -2601,16 +2630,22 @@ void move_aura(object *aura) {
 	sint16 nx, ny;
 	nx = aura->x + freearr_x[i];
 	ny = aura->y + freearr_y[i];
-	mflags = get_map_flags(env->map, NULL, nx, ny, NULL, NULL);
-	if ((mflags & (P_WALL | P_OUT_OF_MAP)) == 0) {
+	mflags = get_map_flags(env->map, &m, nx, ny, &nx, &ny);
+
+	/* Consider the movement tyep of the person with the aura as
+	 * movement type of the aura.  Eg, if the player is flying, the aura
+	 * is flying also, if player is walking, it is on the ground, etc.
+	 */
+	if (!(mflags & P_OUT_OF_MAP) && !(OB_TYPE_MOVE_BLOCK(env, GET_MAP_MOVE_BLOCK(m, nx, ny)))) {
 	    hit_map(aura,i,aura->attacktype,0);
+
 	    if(aura->other_arch) {
 		object *new_ob;
 
 		new_ob = arch_to_object(aura->other_arch);
 		new_ob->x = nx;
 		new_ob->y = ny;
-		insert_ob_in_map(new_ob,env->map,aura,0);
+		insert_ob_in_map(new_ob,m,aura,0);
 	    }
 	}
     }
@@ -2695,4 +2730,3 @@ int write_mark(object *op, object *spell, const char *msg) {
     insert_ob_in_map(tmp, op->map, op, INS_BELOW_ORIGINATOR);
     return 1;
 }
-

@@ -196,7 +196,13 @@ int CAN_MERGE(object *ob1, object *ob2) {
 	(ob1->client_type != ob2->client_type) ||
 	(ob1->materialname != ob2->materialname) ||
 	(ob1->lore != ob2->lore) ||
-	(ob1->subtype != ob2->subtype)
+	(ob1->subtype != ob2->subtype) ||
+	(ob1->move_type != ob2->move_type) ||
+	(ob1->move_block != ob2->move_block) ||
+	(ob1->move_on != ob2->move_on) ||
+	(ob1->move_off != ob2->move_off) ||
+	(ob1->move_slow != ob2->move_slow) ||
+	(ob1->move_slow_penalty != ob2->move_slow_penalty) 
 	) 
 	    return 0;
 
@@ -961,6 +967,7 @@ void remove_from_active_list(object *op)
 
 void update_object(object *op, int action) {
     int update_now=0, flags;
+    MoveType	move_on, move_off, move_block, move_slow;
     
     if (op == NULL) {
         /* this should never happen */
@@ -992,6 +999,10 @@ void update_object(object *op, int action) {
     
     flags = GET_MAP_FLAGS(op->map, op->x, op->y);
     SET_MAP_FLAGS(op->map, op->x, op->y, flags | P_NEED_UPDATE);
+    move_slow = GET_MAP_MOVE_SLOW(op->map, op->x, op->y);
+    move_on = GET_MAP_MOVE_ON(op->map, op->x, op->y);
+    move_block = GET_MAP_MOVE_BLOCK(op->map, op->x, op->y);
+    move_off = GET_MAP_MOVE_OFF(op->map, op->x, op->y);
 
     if (action == UP_OBJ_INSERT) {
         if (QUERY_FLAG(op, FLAG_BLOCKSVIEW) && !(flags & P_BLOCKSVIEW))
@@ -1003,11 +1014,13 @@ void update_object(object *op, int action) {
         if (QUERY_FLAG(op, FLAG_DAMNED) && !(flags & P_NO_CLERIC))
             update_now=1;
 
-        if (QUERY_FLAG(op, FLAG_NO_PASS) && !(flags & P_NO_PASS))
-            update_now=1;
-
         if (QUERY_FLAG(op, FLAG_ALIVE) && !(flags & P_IS_ALIVE))
             update_now=1;
+
+	if ((move_on | op->move_on) != move_on) update_now=1;
+	if ((move_off | op->move_off) != move_off) update_now=1;
+	if ((move_block | op->move_block) != move_block) update_now=1;
+	if ((move_slow | op->move_slow) != move_slow) update_now=1;
     } 
     /* if the object is being removed, we can't make intelligent
      * decisions, because remove_ob can't really pass the object
@@ -1070,8 +1083,12 @@ void free_object2(object *ob, int free_inventory) {
 	ob->more=NULL;
     }
     if (ob->inv) {
+	/* Only if the space blocks everything do we not process -
+	 * if some form of movemnt is allowed, let objects
+	 * drop on that space.
+	 */
 	if (free_inventory || ob->map==NULL || ob->map->in_memory!=MAP_IN_MEMORY ||
-	    (get_map_flags(ob->map, NULL, ob->x, ob->y, NULL, NULL) & P_NO_PASS))
+	    (GET_MAP_MOVE_BLOCK(ob->map, ob->x, ob->y) != MOVE_ALL)) 
 	{
 	    op=ob->inv;
 	    while(op!=NULL) {
@@ -1354,9 +1371,10 @@ void remove_ob(object *op) {
 	    }
 	    tmp->contr->socket.update_look=1;
 	}
-	if (check_walk_off && (QUERY_FLAG (op, FLAG_FLYING) ?
-	    QUERY_FLAG (tmp, FLAG_FLY_OFF) : QUERY_FLAG (tmp, FLAG_WALK_OFF))) {
-	    
+	/* See if player moving off should effect something */
+	if (check_walk_off && ((op->move_type & tmp->move_off) &&
+	      (op->move_type & ~tmp->move_off & ~tmp->move_block)==0)) {
+
 	    move_apply(tmp, op, NULL);
 	    if (was_destroyed (op, tag)) {
 		LOG (llevError, "BUG: remove_ob(): name %s, archname %s destroyed "
@@ -1560,7 +1578,8 @@ object *insert_ob_in_map (object *op, mapstruct *m, object *originator, int flag
 	    while (top != NULL) {
 		if (QUERY_FLAG(top, FLAG_IS_FLOOR) ||
 		    QUERY_FLAG(top, FLAG_OVERLAY_FLOOR)) floor = top;
-		if (QUERY_FLAG(top, FLAG_NO_PICK) && QUERY_FLAG(top, FLAG_FLYING)) {
+		if (QUERY_FLAG(top, FLAG_NO_PICK) && 
+		  (top->move_type & (MOVE_FLY_LOW |MOVE_FLY_HIGH))) {
 		    /* We insert above top, so we want this object below this */
 		    top=top->below;
 		    break;
@@ -1650,8 +1669,8 @@ object *insert_ob_in_map (object *op, mapstruct *m, object *originator, int flag
     /* Don't know if moving this to the end will break anything.  However,
      * we want to have update_look set above before calling this.
      *
-     * check_walk_on() must be after this because code called from
-     * check_walk_on() depends on correct map flags (so functions like
+     * check_move_on() must be after this because code called from
+     * check_move_on() depends on correct map flags (so functions like
      * blocked() and wall() work properly), and these flags are updated by
      * update_object().
      */
@@ -1659,14 +1678,14 @@ object *insert_ob_in_map (object *op, mapstruct *m, object *originator, int flag
     /* if this is not the head or flag has been passed, don't check walk on status */
 
     if (!(flag & INS_NO_WALK_ON) && !op->head) {
-        if (check_walk_on(op, originator))
+        if (check_move_on(op, originator))
 	    return NULL;
 
         /* If we are a multi part object, lets work our way through the check
          * walk on's.
          */
         for (tmp=op->more; tmp!=NULL; tmp=tmp->more)
-            if (check_walk_on (tmp, originator))
+            if (check_move_on (tmp, originator))
 		return NULL;
     }
     return op;
@@ -1937,9 +1956,10 @@ object *insert_ob_in_ob(object *op,object *where) {
 }
 
 /*
- * Checks if any objects which has the WALK_ON() (or FLY_ON() if the
- * object is flying) flag set, will be auto-applied by the insertion
- * of the object into the map (applying is instantly done).
+ * Checks if any objects has a move_type that matches objects
+ * that effect this object on this space.  Call apply() to process
+ * these events.
+ *
  * Any speed-modification due to SLOW_MOVE() of other present objects
  * will affect the speed_left of the object.
  *
@@ -1956,37 +1976,67 @@ object *insert_ob_in_ob(object *op,object *where) {
  * on top.
  */
 
-int check_walk_on (object *op, object *originator)
+int check_move_on (object *op, object *originator)
 {
     object *tmp;
     tag_t tag;
     mapstruct *m=op->map;
     int x=op->x, y=op->y;
+    MoveType	move_on, move_slow, move_block;
 
     if(QUERY_FLAG(op,FLAG_NO_APPLY))
 	return 0;
 
     tag = op->count;
 
+    move_on = GET_MAP_MOVE_ON(op->map, op->x, op->y);
+    move_slow = GET_MAP_MOVE_SLOW(op->map, op->x, op->y);
+    move_block = GET_MAP_MOVE_BLOCK(op->map, op->x, op->y);
+
+    /* if nothing on this space will slow op down or be applied,
+     * no need to do checking below.    have to make sure move_type
+     * is set, as lots of objects don't have it set - we treat that
+     * as walking.
+     */
+    if (op->move_type && !(op->move_type & move_on) && !(op->move_type & move_slow))
+	return 0;
+
+    /* This is basically inverse logic of that below - basically,
+     * if the object can avoid the move on or slow move, they do so,
+     * but can't do it if the alternate movement they are using is
+     * blocked.  Logic on this seems confusing, but does seem correct.
+     */
+    if ((op->move_type & ~move_on & ~move_block) != 0 &&
+	(op->move_type & ~move_slow & ~move_block) != 0) return 0;
+
     /* The objects have to be checked from top to bottom.
-     * Hence, we first go to the top: */
+     * Hence, we first go to the top: 
+     */
+
     for (tmp=GET_MAP_OB(op->map, op->x, op->y); tmp!=NULL &&
 	 tmp->above!=NULL; tmp=tmp->above) {
 	/* Trim the search when we find the first other spell effect 
 	 * this helps performance so that if a space has 50 spell objects,
 	 * we don't need to check all of them.
 	 */
-	if (QUERY_FLAG(tmp, FLAG_FLYING) && QUERY_FLAG(tmp, FLAG_NO_PICK)) break;
+	if ((tmp->move_type & MOVE_FLY_LOW) && QUERY_FLAG(tmp, FLAG_NO_PICK)) break;
     }
-    
     for(;tmp!=NULL; tmp=tmp->below) {
 	if (tmp == op) continue;    /* Can't apply yourself */
 
-	/* Slow down creatures moving over rough terrain */
-	if(QUERY_FLAG(tmp,FLAG_SLOW_MOVE)&&!QUERY_FLAG(op,FLAG_FLYING)) {
+	/* Check to see if one of the movement types should be slowed down.
+	 * Second check makes sure that the movement types not being slowed
+	 * (~slow_move) is not blocked on this space - just because the
+	 * space doesn't slow down swimming (for example), if you can't actually
+	 * swim on that space, can't use it to avoid the penalty.
+	 */
+	if ((!op->move_type && tmp->move_slow & MOVE_WALK) ||
+	   ((op->move_type & tmp->move_slow) &&
+	    (op->move_type & ~tmp->move_slow & ~tmp->move_block)==0)) {
+
 	    float diff;
 
-	    diff=(SLOW_PENALTY(tmp)*FABS(op->speed));
+	    diff= tmp->move_slow_penalty * FABS(op->speed);
 	    if (op->type==PLAYER) {
 		if ((QUERY_FLAG(tmp,FLAG_IS_HILLY) && find_skill_by_number(op,SK_CLIMBING)) ||
 		    (QUERY_FLAG(tmp,FLAG_IS_WOODED) && find_skill_by_number(op,SK_WOODSMAN)))  {
@@ -1995,16 +2045,21 @@ int check_walk_on (object *op, object *originator)
 	    }
 	    op->speed_left -= diff;
 	}
-	if(QUERY_FLAG(op,FLAG_FLYING)?QUERY_FLAG(tmp,FLAG_FLY_ON):
-	   QUERY_FLAG(tmp,FLAG_WALK_ON)) {
+
+	/* Basically same logic as above, except now for actual apply. */
+	if ((!op->move_type && tmp->move_on & MOVE_WALK) ||
+	    ((op->move_type & tmp->move_on) &&
+	    (op->move_type & ~tmp->move_on & ~tmp->move_block)==0)) {
+
 	    move_apply(tmp, op, originator);
             if (was_destroyed (op, tag))
-              return 1;
-	    /* what the person/creature stepped onto has moved the object
-	     * someplace new.  Don't process any further - if we did,
-	     * have a feeling strange problems would result.
-	     */
-	    if (op->map != m || op->x != x || op->y != y) return 0;
+		return 1;
+
+		/* what the person/creature stepped onto has moved the object
+		 * someplace new.  Don't process any further - if we did,
+		 * have a feeling strange problems would result.
+		 */
+		if (op->map != m || op->x != x || op->y != y) return 0;
 	}
     }
     return 0;
@@ -2134,9 +2189,9 @@ void set_cheat(object *op) {
 }
 
 /*
- * find_free_spot(archetype, map, x, y, start, stop) will search for
+ * find_free_spot(object, map, x, y, start, stop) will search for
  * a spot at the given map and coordinates which will be able to contain
- * the given archetype.  start and stop specifies how many squares
+ * the given object.  start and stop specifies how many squares
  * to search (see the freearr_x/y[] definition).
  * It returns a random choice among the alternatives found.
  * start and stop are where to start relative to the free_arr array (1,9
@@ -2148,16 +2203,22 @@ void set_cheat(object *op) {
  * Note2: This function does correctly handle tiled maps, but does not
  * inform the caller.  However, insert_ob_in_map will update as
  * necessary, so the caller shouldn't need to do any special work.
+ * Note - updated to take an object instead of archetype - this is necessary
+ * because arch_blocked (now ob_blocked) needs to know the movement type
+ * to know if the space in question will block the object.  We can't use
+ * the archetype because that isn't correct if the monster has been 
+ * customized, changed states, etc.
  */
 
-int find_free_spot(archetype *at, mapstruct *m,int x,int y,int start,int stop) {
+int find_free_spot(object *ob, mapstruct *m,int x,int y,int start,int stop) {
     int i,index=0, flag;
     static int altern[SIZEOFFREE];
 
     for(i=start;i<stop;i++) {
-	flag = arch_blocked(at,m,x+freearr_x[i],y+freearr_y[i]);
+	flag = ob_blocked(ob,m,x+freearr_x[i],y+freearr_y[i]);
 	if(!flag)
 	    altern[index++]=i;
+
 	/* Basically, if we find a wall on a space, we cut down the search size.
 	 * In this way, we won't return spaces that are on another side of a wall.
 	 * This mostly work, but it cuts down the search size in all directions - 
@@ -2166,7 +2227,7 @@ int find_free_spot(archetype *at, mapstruct *m,int x,int y,int start,int stop) {
 	 * to only the spaces immediately surrounding the target area, and
 	 * won't look 2 spaces south of the target space.
 	 */
-	else if ((flag & P_NO_PASS) &&  maxfree[i]<stop)
+	else if ((flag & AB_NO_PASS) && maxfree[i]<stop)
 	    stop=maxfree[i];
     }
     if(!index) return -1;
@@ -2180,10 +2241,10 @@ int find_free_spot(archetype *at, mapstruct *m,int x,int y,int start,int stop) {
  * Changed 0.93.2: Have it return -1 if there is no free spot available.
  */
 
-int find_first_free_spot(archetype *at, mapstruct *m,int x,int y) {
+int find_first_free_spot(object *ob, mapstruct *m,int x,int y) {
     int i;
     for(i=0;i<SIZEOFFREE;i++) {
-	if(!arch_blocked(at,m,x+freearr_x[i],y+freearr_y[i]))
+	if(!ob_blocked(ob,m,x+freearr_x[i],y+freearr_y[i]))
 	    return i;
     }
     return -1;
@@ -2236,6 +2297,10 @@ void get_search_arr(int *search_arr)
  * live objects.
  * It returns the direction toward the first/closest live object if finds
  * any, otherwise 0.
+ * Perhaps incorrectly, but I'm making the assumption that exclude
+ * is actually want is going to try and move there.  We need this info
+ * because we have to know what movement the thing looking to move
+ * there is capable of.
  */
 
 int find_dir(mapstruct *m, int x, int y, object *exclude) {
@@ -2243,9 +2308,15 @@ int find_dir(mapstruct *m, int x, int y, object *exclude) {
     sint16 nx, ny;
     object *tmp;
     mapstruct *mp;
+    MoveType	blocked, move_type;
 
-    if (exclude && exclude->head)
+    if (exclude && exclude->head) {
 	exclude = exclude->head;
+	move_type = exclude->move_type;
+    } else {
+	/* If we don't have anything, presume it can use all movement types. */
+	move_type=MOVE_ALL;
+    }
 
     for(i=1;i<max;i++) {
 	mp = m;
@@ -2254,7 +2325,9 @@ int find_dir(mapstruct *m, int x, int y, object *exclude) {
 
 	mflags = get_map_flags(m, &mp, nx, ny, &nx, &ny);
 
-	if (mflags & P_WALL)
+	blocked = GET_MAP_MOVE_BLOCK(mp, nx, ny);
+
+	if ((move_type & blocked) == move_type)
 	    max=maxfree[i];
 	else if (mflags & P_IS_ALIVE) {
 	    for (tmp=GET_MAP_OB(mp,nx,ny); tmp!= NULL; tmp=tmp->above) {
@@ -2419,7 +2492,14 @@ int can_see_monsterP(mapstruct *m, int x, int y,int dir) {
 
     mflags = get_map_flags(m, &m, dx, dy, &dx, &dy);
 
-    if (mflags & (P_OUT_OF_MAP | P_WALL)) return 0;
+    /* This functional arguably was incorrect before - it was
+     * checking for P_WALL - that was basically seeing if
+     * we could move to the monster - this is being more
+     * literal on if we can see it.  To know if we can actually
+     * move to the monster, we'd need the monster passed in or
+     * at least its move type.
+     */
+    if (mflags & (P_OUT_OF_MAP | P_BLOCKSVIEW)) return 0;
 
     /* yes, can see. */
     if(dir < 9) return 1;

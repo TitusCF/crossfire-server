@@ -3,21 +3,45 @@
  *   "$Id$";
  */
 
+/*
+    CrossFire, A Multiplayer game for X-windows
+
+    Copyright (C) 2005 Mark Wedel & Crossfire Development Team
+    Copyright (C) 1992 Frank Tore Johansen
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+
+    The authors can be reached via e-mail at crossfire-devel@real-time.com
+*/
+
 #include <global.h>
 #ifndef __CEXTRACT__
 #include <sproto.h>
 #endif
 
+/* Note this code is very specialized for swamps, in terms of the messages
+ * as well as handling of move types.
+ */
+
 void walk_on_deep_swamp (object *op, object *victim)
 {
-  if (victim->type == PLAYER && ! QUERY_FLAG (victim, FLAG_FLYING)
-      && victim->stats.hp >= 0)
-  {
-	new_draw_info (NDI_UNIQUE, 0, victim, "You are down to your knees "
-                       "in the swamp.");
+    if (victim->type == PLAYER && victim->stats.hp >= 0 && !(victim->move_type & MOVE_FLYING)) {
+	new_draw_info (NDI_UNIQUE, 0, victim, "You are down to your knees in the swamp.");
 	op->stats.food = 1;
-	victim->speed_left -= SLOW_PENALTY(op);
-  }
+	victim->speed_left -= op->move_slow_penalty;
+    }
 }
 
 void move_deep_swamp (object *op)
@@ -27,7 +51,7 @@ void move_deep_swamp (object *op)
 
     while(above) {
 	nabove = above->above;
-	if (above->type == PLAYER && !QUERY_FLAG(above, FLAG_FLYING) && above->stats.hp >= 0) {
+	if (above->type == PLAYER && !(above->move_type & MOVE_FLYING) && above->stats.hp >= 0) {
 	    if (op->stats.food < 1) {
 		LOG (llevDebug, "move_deep_swamp(): player is here, but state is "
 		     "%d\n", op->stats.food);
@@ -40,7 +64,7 @@ void move_deep_swamp (object *op)
 			new_draw_info(NDI_UNIQUE, 0,above, 
 				      "You are down to your waist in the wet swamp.");
 			op->stats.food = 2;
-			above->speed_left -= SLOW_PENALTY(op);
+			above->speed_left -= op->move_slow_penalty;
 		    }
 		    break;
 
@@ -51,7 +75,7 @@ void move_deep_swamp (object *op)
 			op->stats.food = 3;
 			strcpy(above->contr->killer,"drowning in a swamp");
 			above->stats.hp--;
-			above->speed_left -= SLOW_PENALTY(op);
+			above->speed_left -= op->move_slow_penalty;
 		    }
 		    break;
 
@@ -77,7 +101,7 @@ void move_deep_swamp (object *op)
 		    }
 		    break;
 	    }
-	} else if (!QUERY_FLAG(above, FLAG_ALIVE) && !QUERY_FLAG(above, FLAG_FLYING)) {
+	} else if (!QUERY_FLAG(above, FLAG_ALIVE) && !(above->move_type & MOVE_FLYING)) {
 	    if (rndm(0, 2) == 0) decrease_ob(above);
 	}
 	above = nabove;

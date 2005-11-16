@@ -3113,7 +3113,7 @@ void* cfapi_object_teleport(int *type, ...)
     {
         int k;
         object *tmp;
-        k = find_first_free_spot(who->arch,map,x,y);
+        k = find_first_free_spot(who,map,x,y);
         if (k==-1)
         {
             result = 1;

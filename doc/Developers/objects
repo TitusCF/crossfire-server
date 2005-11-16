@@ -1090,7 +1090,13 @@ types of movement the space blocks.  From define.h:
 #define MOVE_WALK       0x1     /* Object walks */
 #define MOVE_FLY_LOW    0x2     /* Low flying object */
 #define MOVE_FLY_HIGH   0x4     /* High flying object */
+#define MOVE_FLYING	0x6	/* combo of fly_low and fly_high for easier checking */
 #define MOVE_SWIM       0x8     /* Swimming object */
+#define MOVE_ALL        0xf;    /* Mask of all movement types */
+
+MOVE_ALL may change in the future - it is mask for all movement types -
+used for 'no_pass' - it sets move_block to MOVE_ALL, other places that
+check for all movement types may also use this value.
 
 The fields in the object themselves:
 
@@ -1123,7 +1129,8 @@ move_slow_penalty (was slow_move) - how much the player is slowed down.
   at load time).  It is basically how much slower (percentage wise)
   the player moves through this terrain.  A value of 0 is basically
   a non operation.  A value of 0.5 means it takes 50% longer to move
-  through the space.
+  through the space.  The old values were all positive ints.  Basically,
+  it effectively was how many ticks the player is slowed down by.
 
   Certain terrain has skills which reduce the slow penalty (woodsmen
   in forest for example).  As of this writing, the penalty is reduced
@@ -1131,6 +1138,11 @@ move_slow_penalty (was slow_move) - how much the player is slowed down.
   say it takes twice as long to move through the space.  If the player
   has appropriate skill, it would now only take that player 25%
   longer to move through the space.
+
+  Note 2:  The old slow_move is loaded and converted into move_slow_penalty.
+  The old SLOW_PENALTY and SET_SLOW_PENALTY macros divided/multiplied
+  the result by 1000, so were basically a non operation.  Since it is now
+  just stored as a float, conversion macros are not needed or used.
 
 move_state/move_status: This is unrelated to this movement code - it is
   used for monster attack_movement information.  it is only noted here
@@ -1140,6 +1152,26 @@ msg/endmsg:  If an object has move_block of move_slow and that affects
   the player movement, the objects message will be printed to the player -
   thus things like 'The jungle slows you down' or 'The wall is in the way'
   will be printed.  Various hints can be contained in the messages.
+
+move_status: Not related to this code - noted here since it has the move_
+   prefix.   This is used to track monsters state of the attack_movement
+   variable.  It is worth noting that move_type was changed to 
+   attack_movement - this matches the name in the archetype, but is
+   a name change in the object field.
+
+Obsoleted fields:
+This change of logic has resulted in the following fields no longer
+being used:
+FLAG_WALK_ON -> move_on
+FLAG_NO_PASS -> move_block
+FLAG_SLOW_MOVE -> move_slow
+FLAG_FLYING -> move_type
+FLAG_WALK_OFF -> move_off
+FLAG_FLY_ON -> move_on
+FLAG_FLY_OFF -> move_off
+FLAG_PASS_THRU -> was unused, would be move_type
+FLAG_CAN_PASS_THRU -> was unused, would be move_type
+
 
 Load/Save behaviour and backward compatability:
 The loader knows about certain old flags (walk_on, blocked, etc) and
@@ -1359,7 +1391,8 @@ maxsp:  the number of moves that the paralysis will rob the player of,
         if unset, and attacktype is nonzero, this becomes 2.  By default,
 	it is zero.
 
-maxhp:  if nonzero, flying objects will be moved also (default 0)
+move_type: What movement types this mover moves (replaces maxhp to denote
+	flying creatures)
 
 speed:  how fast a chain of these will move a player along (default -0.2)
 

@@ -471,7 +471,7 @@ object *get_nearest_player(object *mon) {
 int path_to_player(object *mon, object *pl, unsigned mindiff) {
     rv_vector	rv;
     sint16  x,y;
-    int lastx,lasty,dir,i,diff, firstdir=0,lastdir, max=MAX_SPACES, mflags;
+    int lastx,lasty,dir,i,diff, firstdir=0,lastdir, max=MAX_SPACES, mflags, blocked;
     mapstruct *m ,*lastmap;
 
     get_rangevector(mon, pl, &rv, 0);
@@ -494,9 +494,11 @@ int path_to_player(object *mon, object *pl, unsigned mindiff) {
 	y = lasty + freearr_y[dir];
 	
 	mflags = get_map_flags(m, &m, x, y, &x, &y);
+	blocked = GET_MAP_MOVE_BLOCK(m, x, y);
 
 	/* Space is blocked - try changing direction a little */
-	if ((mflags & (P_BLOCKED | P_OUT_OF_MAP)) && (m == mon->map && blocked_link(mon, m, x, y))) {
+	if ((mflags & P_OUT_OF_MAP) || ((OB_TYPE_MOVE_BLOCK(mon, blocked))
+	   && (m == mon->map && blocked_link(mon, m, x, y)))) {
 	    /* recalculate direction from last good location.  Possible
 	     * we were not traversing ideal location before.
 	     */
@@ -536,8 +538,11 @@ int path_to_player(object *mon, object *pl, unsigned mindiff) {
 		    y = lasty + freearr_y[absdir(lastdir+i)];
 		    m = lastmap;
 		    mflags = get_map_flags(m, &m, x, y, &x, &y);
-		    if (!(mflags & (P_OUT_OF_MAP | P_BLOCKED)) &&
-			(m == mon->map && blocked_link(mon, m, x, y))) break;
+		    if (mflags & P_OUT_OF_MAP) continue;
+		    blocked = GET_MAP_MOVE_BLOCK(m, x, y);
+		    if (OB_TYPE_MOVE_BLOCK(mon, blocked)) continue;
+
+		    if (m == mon->map && blocked_link(mon, m, x, y)) break;
 		}
 		/* go through entire loop without finding a valid
 		 * sidestep to take - thus, no valid path.
@@ -1143,7 +1148,7 @@ int check_pick(object *op) {
 
 
   /* if you're flying, you cna't pick up anything */
-  if (QUERY_FLAG (op, FLAG_FLYING))
+  if (op->move_type & MOVE_FLYING)
     return 1;
 
   op_tag = op->count;
@@ -1525,8 +1530,13 @@ object *pick_arrow_target(object *op, const char *type, int dir)
 	x += freearr_x[dir];
 	y += freearr_y[dir];
 	mflags = get_map_flags(m, &m, x, y, &x, &y);
-	if (mflags & P_OUT_OF_MAP || mflags & P_WALL ||
-	    mflags & P_BLOCKSVIEW) {
+	if (mflags & P_OUT_OF_MAP || mflags & P_BLOCKSVIEW) {
+	    tmp = NULL;
+	    break;
+	} else if (GET_MAP_MOVE_BLOCK(m, x, y) == MOVE_FLY_LOW) {
+	    /* This block presumes arrows and the like are MOVE_FLY_SLOW -
+	     * perhaps a bad assumption.
+	     */
 	    tmp = NULL;
 	    break;
 	}
@@ -1610,12 +1620,12 @@ int fire_bow(object *op, object *part, object *arrow, int dir, int wc_mod,
 	    return 0;
 	}
     }
-    mflags = get_map_flags(op->map,&m, sx, sy, &sx, &sy);
-    if ( mflags &  P_WALL) {
-	new_draw_info(NDI_UNIQUE, 0,op,"Something is in the way.");
+    mflags = get_map_flags(op->map, &m, sx, sy, &sx, &sy);
+    if (mflags & P_OUT_OF_MAP) {
 	return 0;
     }
-    if (mflags & P_OUT_OF_MAP) {
+    if (GET_MAP_MOVE_BLOCK(m, sx, sy) == MOVE_FLY_LOW) {
+	new_draw_info(NDI_UNIQUE, 0,op,"Something is in the way.");
 	return 0;
     }
 
@@ -1673,7 +1683,6 @@ int fire_bow(object *op, object *part, object *arrow, int dir, int wc_mod,
     update_ob_speed(arrow);
     arrow->speed_left = 0;
 
-
     if (op->type == PLAYER) {
 	arrow->stats.wc = 20 - bow->magic - arrow->magic - 
 	    (op->chosen_skill?op->chosen_skill->level:op->level) -
@@ -1693,9 +1702,9 @@ int fire_bow(object *op, object *part, object *arrow, int dir, int wc_mod,
 	arrow->slaying = add_string(bow->slaying);
 
     arrow->map = m;
-    SET_FLAG(arrow, FLAG_FLYING);
-    SET_FLAG(arrow, FLAG_FLY_ON);
-    SET_FLAG(arrow, FLAG_WALK_ON);
+    arrow->move_type = MOVE_FLY_LOW;
+    arrow->move_on = MOVE_FLY_LOW | MOVE_WALK;
+
     play_sound_map(op->map, op->x, op->y, SOUND_FIRE_ARROW);
     tag = arrow->count;
     insert_ob_in_map(arrow, m, op, 0);
@@ -3105,7 +3114,8 @@ int stand_near_hostile( object *who ) {
 	/* space must be blocked if there is a monster.  If not
 	 * blocked, don't need to check this space.
 	 */
-	if (mflags & P_OUT_OF_MAP || !(mflags & P_BLOCKED)) continue;
+	if (mflags & P_OUT_OF_MAP) continue;
+	if (OB_TYPE_MOVE_BLOCK(who, GET_MAP_MOVE_BLOCK(m, x, y))) continue;
     
 	for(tmp=get_map_ob(m,x,y);tmp;tmp=tmp->above) {
 	    if((player||friendly)

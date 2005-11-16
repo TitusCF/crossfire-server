@@ -155,9 +155,9 @@ int transfer_ob (object *op, int x, int y, int randomly, object *originator)
     object *tmp;
 
     if (randomly)
-	i = find_free_spot (op->arch,op->map,x,y,0,SIZEOFFREE);
+	i = find_free_spot (op,op->map,x,y,0,SIZEOFFREE);
     else
-	i = find_first_free_spot(op->arch,op->map,x,y);
+	i = find_first_free_spot(op,op->map,x,y);
 
     if (i==-1)
 	return 0;	/* No free spot */
@@ -192,6 +192,8 @@ int teleport (object *teleporter, uint8 tele_type, object *user)
     object *altern[120]; /* Better use c/malloc here in the future */
     int i,j,k,nrofalt=0;
     object *other_teleporter, *tmp;
+    mapstruct *m;
+    sint16  sx, sy;
 
     if(user==NULL) return 0;
     if(user->head!=NULL)
@@ -225,7 +227,7 @@ int teleport (object *teleporter, uint8 tele_type, object *user)
     }
 
     other_teleporter=altern[RANDOM()%nrofalt];
-    k=find_free_spot(user->arch,other_teleporter->map,
+    k=find_free_spot(user,other_teleporter->map,
                         other_teleporter->x,other_teleporter->y,1,9);
 
     /* if k==-1, unable to find a free spot.  If this is shop
@@ -238,10 +240,13 @@ int teleport (object *teleporter, uint8 tele_type, object *user)
     if (k==-1) {
 	if (tele_type == SHOP_MAT && user->type == PLAYER) {
 	    for (k=1; k<9; k++) {
-		if (!(get_map_flags(other_teleporter->map, NULL, 
+		if (get_map_flags(other_teleporter->map, &m, 
 			other_teleporter->x + freearr_x[k],
-			other_teleporter->y + freearr_y[k], NULL,NULL) &
-		      (P_NO_PASS | P_OUT_OF_MAP))) break;
+			other_teleporter->y + freearr_y[k], &sx,&sy) &
+			P_OUT_OF_MAP) continue;
+
+		if (!OB_TYPE_MOVE_BLOCK(user, GET_MAP_MOVE_BLOCK(m, sx, sy))) break;
+
 	    }
 	    if (k==9) {
 		LOG(llevError,"Shop mat %s (%d, %d) is in solid rock?\n",
@@ -284,6 +289,7 @@ void recursive_roll(object *op,int dir,object *pusher) {
  *
  * very new version handles also multipart objects
  * This is currently only used for the boulder roll code.
+ * Returns 1 if object does not fit, 0 if it does.
  */
 
 int try_fit (object *op, mapstruct *m, int x, int y) 
@@ -312,10 +318,8 @@ int try_fit (object *op, mapstruct *m, int x, int y)
 	    if ((QUERY_FLAG(tmp,FLAG_ALIVE) && tmp->type!=DOOR))
 		return 1;
 
-	    if (QUERY_FLAG(tmp,FLAG_NO_PASS) && 
-		(!QUERY_FLAG(tmp,FLAG_PASS_THRU) ||
-		 !QUERY_FLAG(more,FLAG_CAN_PASS_THRU)))
-		return 1;
+	    if (OB_MOVE_BLOCK(op, tmp)) return 1;
+
 	}
     }
     return 0;
@@ -332,6 +336,7 @@ int roll_ob(object *op,int dir, object *pusher) {
     sint16 x, y;
     int flags;
     mapstruct *m;
+    MoveType	move_block;
 
     if (op->head) 
 	op = op->head;
@@ -350,14 +355,14 @@ int roll_ob(object *op,int dir, object *pusher) {
     if (flags & (P_OUT_OF_MAP | P_IS_ALIVE))
 	return 0;
 
-    
+    move_block = GET_MAP_MOVE_BLOCK(m, x, y);
 
     /* If the target space is not blocked, no need to look at the objects on it */
-    if (flags & P_BLOCKED) {
+    if ((op->move_type & move_block) == op->move_type) {
 	for (tmp=get_map_ob(m, x, y); tmp!=NULL; tmp=tmp->above) {
 	if (tmp->head == op)
 	    continue;
-	if (QUERY_FLAG(tmp,FLAG_NO_PASS) && !roll_ob(tmp,dir,pusher))
+	if (OB_MOVE_BLOCK(op, tmp) && !roll_ob(tmp,dir,pusher))
 	    return 0;
 	}
     }

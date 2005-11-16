@@ -6,7 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2003 Mark Wedel & Crossfire Development Team
+    Copyright (C) 2003-2005 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -469,11 +469,11 @@ extern typedata ItemTypes[];
 #define FLAG_USE_SHIELD		7 /* Can this creature use a shield? */
 
 #define FLAG_NO_PICK	 	8 /* Object can't be picked up */
-#define FLAG_WALK_ON	 	9 /* Applied when it's walked upon */
-#define FLAG_NO_PASS		10 /* Nothing can pass (wall() is true) */
+/*#define FLAG_WALK_ON	 	9*//*  Applied when it's walked upon */
+/*#define FLAG_NO_PASS		10*//* Nothing can pass (wall() is true) */
 #define FLAG_ANIMATE		11 /* The object looks at archetype for faces */
-#define FLAG_SLOW_MOVE		12 /* Uses the stats.exp/1000 to slow down */
-#define FLAG_FLYING		13 /* Not affected by WALK_ON or SLOW_MOVE) */
+/*#define FLAG_SLOW_MOVE	12*//* Uses the stats.exp/1000 to slow down */
+/*#define FLAG_FLYING		13*//* Not affected by WALK_ON or SLOW_MOVE) */
 #define FLAG_MONSTER		14 /* Will attack players */
 #define FLAG_FRIENDLY		15 /* Will help players */
 
@@ -486,9 +486,9 @@ extern typedata ItemTypes[];
 #define FLAG_CAN_ROLL		22 /* Object can be rolled */
 #define FLAG_OVERLAY_FLOOR	23 /* Object is an overlay floor */
 #define FLAG_IS_TURNABLE 	24 /* Object can change face with direction */
-#define FLAG_WALK_OFF		25 /* Object is applied when left */
-#define FLAG_FLY_ON		26 /* As WALK_ON, but only with FLAG_FLYING */
-#define FLAG_FLY_OFF		27 /* As WALK_OFF, but only with FLAG_FLYING */
+/*#define FLAG_WALK_OFF		25*//* Object is applied when left */
+/*#define FLAG_FLY_ON		26*//* As WALK_ON, but only with FLAG_FLYING */
+/*#define FLAG_FLY_OFF		27*//* As WALK_OFF, but only with FLAG_FLYING */
 #define FLAG_IS_USED_UP		28 /* When (--food<0) the object will exit */
 #define FLAG_IDENTIFIED		29 /* Player knows full info about item */
 #define FLAG_REFLECTING		30 /* Object reflects from walls (lightning) */
@@ -511,9 +511,9 @@ extern typedata ItemTypes[];
 #define FLAG_TEAR_DOWN		44 /* at->faces[hp*animations/maxhp] at hit */
 #define FLAG_RUN_AWAY		45 /* Object runs away from nearest player \
 				      but can still attack at a distance */
-#define FLAG_PASS_THRU		46 /* Objects with can_pass_thru can pass \
+/*#define FLAG_PASS_THRU	46*/ /* Objects with can_pass_thru can pass \
 				      thru this object as if it wasn't there */
-#define FLAG_CAN_PASS_THRU	47 /* Can pass thru... */
+/*#define FLAG_CAN_PASS_THRU	47*/ /* Can pass thru... */
 
 #define FLAG_PICK_UP		48 /* Can pick up */
 #define FLAG_UNIQUE		49 /* Item is really unique (UNIQUE_ITEMS) */
@@ -612,8 +612,55 @@ extern typedata ItemTypes[];
 
 #define NROFNEWOBJS(xyz)	((xyz)->stats.food)
 
+#if 0
+/* These should no longer be needed - access move_slow_penalty
+ * directly.
+ */
 #define SLOW_PENALTY(xyz)   ((xyz)->stats.exp)/1000.0
 #define SET_SLOW_PENALTY(xyz,fl)	(xyz)->stats.exp=(fl)*1000
+#endif
+
+/* If you add new movement types, you may need to update
+ * describe_item() so properly describe those types.
+ * change_abil() probably should be updated also.
+ */
+#define MOVE_WALK	0x1	/* Object walks */
+#define MOVE_FLY_LOW	0x2	/* Low flying object */
+#define MOVE_FLY_HIGH	0x4	/* High flying object */
+#define	MOVE_FLYING	0x6	/* Combo of fly_low and fly_high */
+#define MOVE_SWIM	0x8	/* Swimming object */
+#define MOVE_ALL	0xf	/* Mask of all movement types */
+
+/* the normal assumption is that objects are walking/flying.
+ * So often we don't want to block movement, but still don't want
+ * to allow all types (swimming is rather specialized) - I also
+ * expect as more movement types show up, this is likely to get
+ * updated.  Basically, this is the default for spaces that allow
+ * movement - anything but swimming right now.  If you really
+ * want nothing at all, then can always set move_block to 0
+ */
+#define MOVE_BLOCK_DEFAULT  MOVE_SWIM
+
+/* typdef here to define type large enough to hold bitmask of
+ * all movement types.  Make one declaration so easy to update.
+ * uint8 is defined yet, so just use what that would define it
+ * at anyways.
+ */
+typedef unsigned char	MoveType;
+
+/* Basic macro to see if ob2 blocks ob1 from moving onto this space.
+ * Basically, ob2 has to block all of ob1 movement types.
+ */
+#define OB_MOVE_BLOCK(ob1, ob2) \
+    ((ob1->move_type & ob2->move_block) == ob1->move_type)
+
+/* Basic macro to see if if ob1 can not move onto a space based
+ * on the 'type' move_block parameter
+ */
+#define OB_TYPE_MOVE_BLOCK(ob1, type) \
+    ((ob1->move_type & type) == ob1->move_type)
+
+
 #define SET_GENERATE_TYPE(xyz,va)	(xyz)->stats.sp=(va)
 #define GENERATE_TYPE(xyz)	((xyz)->stats.sp)
 #define GENERATE_SPEED(xyz)	((xyz)->stats.maxsp) /* if(!RANDOM()%<speed>) */

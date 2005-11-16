@@ -438,6 +438,9 @@ static void check_loaded_object(object *op) {
 	    LOG(llevDebug,"Monster %s has hp set higher than maxhp (%d>%d)\n",
 		op->name,
 		op->stats.hp, op->stats.maxhp);
+
+	/* The archs just need to be updated for this */
+	if (op->move_type ==0) op->move_type = MOVE_WALK;
     }
     if ((QUERY_FLAG(op,FLAG_GENERATOR)) && QUERY_FLAG(op,FLAG_CONTENT_ON_GEN)){
         /* Generator will duplicate it's content as part of the
@@ -446,6 +449,23 @@ static void check_loaded_object(object *op) {
          * the living (a demonlord shouldn't cast from inside generator!)
          */
         flag_inv(op,FLAG_IS_A_TEMPLATE);
+    }
+
+    /* Handle player movers.  We use move_type for player movers
+     * because they operate on their own time (move_on
+     * would potentially cause them to be triggered when someone steps
+     * on them).  If move_type is set, presume person knows what they
+     * are doing, otherwise, set move_type based on maxhp value.
+     */
+    if (op->type == PLAYERMOVER) {
+	if (!op->move_type) {
+	    if (op->stats.maxhp) {
+		op->move_type = MOVE_ALL;
+		op->stats.maxhp=0;
+	    } else {
+		op->move_type = MOVE_WALK;
+	    }
+	}
     }
 
 }
@@ -677,8 +697,8 @@ A	.+
 			}
 		    }
 ^speed_left{S}    op->speed_left = FVAL;
-^slow_move{S}	    {	SET_SLOW_PENALTY(op,FVAL);
-			SET_FLAG(op, FLAG_SLOW_MOVE);
+^slow_move{S}	    {	op->move_slow |= MOVE_WALK;
+			op->move_slow_penalty = FVAL;
 		    }
 ^title{S}	    {	char *y=yval();
 			if (*y=='\0') LOG(llevError,"Title without value.\n");
@@ -735,14 +755,28 @@ A	.+
 ^unpaid{S}	    SET_OR_CLEAR_FLAG(op, FLAG_UNPAID, IVAL);
 ^need_an{S}	    { /* not used - just ignore */ }
 ^need_ie{S}	    { /* not used - jsut ignore */ }
-^no_pick{S}	    SET_OR_CLEAR_FLAG(op, FLAG_NO_PICK, IVAL);
-^no_pass{S}	    SET_OR_CLEAR_FLAG(op, FLAG_NO_PASS, IVAL);
 ^is_animated{S}	    SET_OR_CLEAR_FLAG(op, FLAG_ANIMATE, IVAL);
-^walk_on{S}	    SET_OR_CLEAR_FLAG(op, FLAG_WALK_ON, IVAL);
-^walk_off{S}	    SET_OR_CLEAR_FLAG(op, FLAG_WALK_OFF, IVAL);
-^fly_on{S}	    SET_OR_CLEAR_FLAG(op, FLAG_FLY_ON, IVAL);
-^fly_off{S}	    SET_OR_CLEAR_FLAG(op, FLAG_FLY_OFF, IVAL);
-^flying{S}	    SET_OR_CLEAR_FLAG(op, FLAG_FLYING, IVAL);
+^no_pick{S}	    SET_OR_CLEAR_FLAG(op, FLAG_NO_PICK, IVAL);
+
+%{ /* These are all legacy - any new objects should use the move_ .. values */ 
+%}
+^no_pass{S}	    { if (IVAL) op->move_block = MOVE_ALL; else op->move_block=0; }
+^walk_on{S}	    { if (IVAL) op->move_on |= MOVE_WALK; else op->move_on &= ~MOVE_WALK; }
+^walk_off{S}	    { if (IVAL) op->move_off |= MOVE_WALK; else op->move_off &= ~MOVE_WALK; }
+^fly_on{S}	    { if (IVAL) op->move_on |= MOVE_FLY_LOW; else op->move_on &= ~MOVE_FLY_LOW; }
+^fly_off{S}	    { if (IVAL) op->move_off |= MOVE_FLY_LOW; else op->move_off &= ~MOVE_FLY_LOW; }
+^flying{S}	    { if (IVAL) op->move_type |= MOVE_FLY_LOW; else op->move_type &= ~MOVE_FLY_LOW; }
+
+%{ /* These are the new values */ 
+%}
+^move_block{S}	    op->move_block = IVAL;
+^move_type{S}	    op->move_type = IVAL;
+^move_on{S}	    op->move_on = IVAL;
+^move_off{S}	    op->move_off = IVAL;
+^move_slow{S}	    op->move_slow = IVAL;
+^move_slow_penalty{S}	    op->move_slow_penalty = FVAL;
+
+
 ^monster{S}	    SET_OR_CLEAR_FLAG(op, FLAG_MONSTER, IVAL);
 ^neutral{S}	    SET_OR_CLEAR_FLAG(op, FLAG_NEUTRAL, IVAL);
 ^no_attack{S}	    SET_OR_CLEAR_FLAG(op, FLAG_NO_ATTACK, IVAL);
@@ -804,8 +838,6 @@ A	.+
 ^tear_down{S}	    SET_OR_CLEAR_FLAG(op, FLAG_TEAR_DOWN, IVAL);
 ^luck{S}  	    op->stats.luck = IVAL;
 ^run_away{S}	    op->run_away = IVAL;
-^pass_thru{S}	    SET_OR_CLEAR_FLAG(op, FLAG_PASS_THRU, IVAL);
-^can_pass_thru{S}   SET_OR_CLEAR_FLAG(op, FLAG_CAN_PASS_THRU, IVAL);
 ^pick_up{S}	    op->pick_up = IVAL;
 ^item_power{S}	    op->item_power = IVAL;
 ^gen_sp_armour{S}   op->gen_sp_armour = IVAL;
@@ -1356,18 +1388,20 @@ int set_variable(object *op,char *buf) {
  */
 static char *flag_names[NUM_FLAGS+1] = {
 "alive", "wiz", NULL, NULL, "was_wiz", "applied", "unpaid",
-"can_use_shield", "no_pick", "walk_on", "no_pass",              /* 10 */
-"is_animated", NULL, "flying", "monster", "friendly", "generator",
+"can_use_shield", "no_pick", NULL /* walk_on*/, NULL /* no_pass */, /* 10 */
+"is_animated", NULL /* slow_move */, 
+NULL /* flying */, "monster", "friendly", "generator",
 "is_thrown", "auto_apply", "treasure", "player sold",   /* 20 */
 "see_invisible", "can_roll", "overlay_floor",
-"is_turnable", "walk_off", "fly_on",
-"fly_off", "is_used_up", "identified", "reflecting",            /* 30 */
+"is_turnable", NULL /* walk_off */, NULL /* fly_on */,
+NULL /*fly_off*/, "is_used_up", "identified", "reflecting",	/* 30 */
 "changing", "splitting", "hitback", "startequip",
 "blocksview", "undead", "scared", "unaggressive",
 "reflect_missile", "reflect_spell",                             /* 40 */
-"no_magic", "no_fix_player", "is_lightable", "tear_down", "run_away",
-"pass_thru", "can_pass_thru", "pick_up", "unique", "no_drop",   /* 50 */
- NULL, "can_cast_spell", "can_use_scroll", "can_use_range",
+"no_magic", "no_fix_player", "is_lightable", "tear_down", 
+"run_away", NULL /*pass_thru */, NULL /*can_pass_thru*/, 
+"pick_up", "unique", "no_drop",					/* 50 */
+NULL /* wizcast*/, "can_cast_spell", "can_use_scroll", "can_use_range",
 "can_use_bow",  "can_use_armour", "can_use_weapon",
 "can_use_ring", "has_ready_range", "has_ready_bow",             /* 60 */
 "xrays", NULL, "is_floor", "lifesave", "no_strength", "sleep",
@@ -1809,33 +1843,49 @@ char *get_ob_diff(object *op,object *op2) {/* I plan to optimize this heavily */
 	FAST_SAVE_LONG(fastbuf,"gen_sp_armour ",op->gen_sp_armour,14);
     }
 
-  if (!COMPARE_FLAGS(op,op2))
-    for (tmp=0; tmp <= NUM_FLAGS; tmp++) {
-      if (flag_names[tmp] && (QUERY_FLAG(op, tmp) != QUERY_FLAG(op2, tmp))) {
-	ADD_STRINGLINE_ENTRY(fastbuf,flag_names[tmp],QUERY_FLAG(op, tmp)?" 1":" 0",flag_lens[tmp]);
-      }
-    }    
-  /* The old code was buggy - it would lose custom SLOW_PENALTY if the archetype
-   * had a different slow_penalty (eg, when saving, it would also reset to the
-   * archetype value.
-   */
-  if (QUERY_FLAG(op, FLAG_SLOW_MOVE)) {
-    if (!QUERY_FLAG(op2, FLAG_SLOW_MOVE) || SLOW_PENALTY(op) != SLOW_PENALTY(op2)) {
-	FAST_SAVE_DOUBLE(fastbuf,"slow_move ",SLOW_PENALTY(op),10);
+    if (op->move_type != op2->move_type) {
+	FAST_SAVE_LONG(fastbuf,"move_type ",op->move_type,10);
     }
-  }
 
-  /* Save body locations */
-  for (i=0; i<NUM_BODY_LOCATIONS; i++) {
-    if (op->body_info[i] != op2->body_info[i]) {
-	FAST_STRCAT(fastbuf,body_locations[i].save_name);
-    FAST_SAVE_LONG(fastbuf," ",op->body_info[i],1);
+    if (op->move_block != op2->move_block) {
+	FAST_SAVE_LONG(fastbuf,"move_block ",op->move_block,11);
     }
-  }
-  FINISH_FASTCAT(fastbuf);
-  if(buf[0]=='\0')/*did not cat anything...*/
-    return NULL;
-  return buf;
+
+    if (op->move_on != op2->move_on) {
+	FAST_SAVE_LONG(fastbuf,"move_on ",op->move_on,8);
+    }
+
+    if (op->move_off != op2->move_off) {
+	FAST_SAVE_LONG(fastbuf,"move_off ",op->move_off,9);
+    }
+    if (op->move_slow != op2->move_slow) {
+	FAST_SAVE_LONG(fastbuf,"move_slow ",op->move_slow,10);
+    }
+
+    if (op->move_slow_penalty != op2->move_slow_penalty) {
+	FAST_SAVE_LONG(fastbuf,"move_slow_penalty ",op->move_slow_penalty,18);
+    }
+
+    if (!COMPARE_FLAGS(op,op2)) {
+	for (tmp=0; tmp <= NUM_FLAGS; tmp++) {
+	    if (flag_names[tmp] && (QUERY_FLAG(op, tmp) != QUERY_FLAG(op2, tmp))) {
+		ADD_STRINGLINE_ENTRY(fastbuf,flag_names[tmp],QUERY_FLAG(op, tmp)?" 1":" 0",flag_lens[tmp]);
+	    }
+	}
+    }
+
+    /* Save body locations */
+    for (i=0; i<NUM_BODY_LOCATIONS; i++) {
+	if (op->body_info[i] != op2->body_info[i]) {
+	    FAST_STRCAT(fastbuf,body_locations[i].save_name);
+	    FAST_SAVE_LONG(fastbuf," ",op->body_info[i],1);
+	}
+    }
+    FINISH_FASTCAT(fastbuf);
+    if(buf[0]=='\0') /*did not cat anything...*/
+	return NULL;
+
+    return buf;
 }
 
 /*
@@ -1946,9 +1996,3 @@ event* find_event(object* op, int etype)
     }
     return NULL;
 }
-
-
-
-
-
-

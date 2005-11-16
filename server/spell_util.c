@@ -413,8 +413,12 @@ int reflwall(mapstruct *m,int x,int y, object *sp_op) {
  */
 int cast_create_obj(object *op,object *caster,object *new_op, int dir)
 {
+    mapstruct *m;
+    sint16  sx, sy;
+
     if(dir &&
-       (get_map_flags(op->map,NULL, op->x+freearr_x[dir],op->y+freearr_y[dir], NULL, NULL) & (P_BLOCKED | P_OUT_OF_MAP))) {
+      ((get_map_flags(op->map, &m, op->x+freearr_x[dir],op->y+freearr_y[dir], &sx, &sy) & P_OUT_OF_MAP) ||
+      OB_TYPE_MOVE_BLOCK(op, GET_MAP_MOVE_BLOCK(m, sx, sy)))) {
 	new_draw_info(NDI_UNIQUE, 0,op,"Something is in the way.");
 	new_draw_info(NDI_UNIQUE, 0,op,"You cast it at your feet.");
 	dir = 0;
@@ -447,7 +451,7 @@ int ok_to_put_more(mapstruct *m,sint16 x,sint16 y,object *op,int immune_stop) {
 
     if (mflags & P_OUT_OF_MAP) return 0;
 
-    if(mflags & P_WALL) return 0;
+    if (OB_TYPE_MOVE_BLOCK(op, GET_MAP_MOVE_BLOCK(mp, x, y))) return 0;
 
     for(tmp=get_map_ob(mp,x,y);tmp!=NULL;tmp=tmp->above) {
 	/* If there is a counterspell on the space, and this
@@ -509,15 +513,18 @@ int fire_arch_from_position (object *op, object *caster, sint16 x, sint16 y,
     if (mflags & P_OUT_OF_MAP) {
 	return 0;
     }
-    if (mflags & P_NO_PASS) {
-	new_draw_info(NDI_UNIQUE, 0, op, "You can't cast the spell on top of a wall!\n");
-	return 0;
-    }
 
     tmp=arch_to_object(spell->other_arch);
 
     if(tmp==NULL)
 	return 0;
+
+    if (OB_TYPE_MOVE_BLOCK(tmp, GET_MAP_MOVE_BLOCK(m, x, y))) {
+	new_draw_info(NDI_UNIQUE, 0, op, "You can't cast the spell on top of a wall!\n");
+	free_object(tmp);
+	return 0;
+    }
+
 
 
     tmp->stats.dam=spell->stats.dam+SP_level_dam_adjust(caster,spell);
@@ -690,7 +697,7 @@ void put_a_monster(object *op,const char *monstername) {
      * first we check the closest square for free squares 
      */
 
-    dir=find_first_free_spot(at,op->map,op->x,op->y);
+    dir=find_first_free_spot(&at->clone,op->map,op->x,op->y);
     if(dir!=-1) {
 	/* This is basically grabbed for generate monster.  Fixed 971225 to
 	 * insert multipart monsters properly
@@ -1511,4 +1518,3 @@ void apply_spell_effect(object *spell, object *victim)
 	    break;
     }
 }
-

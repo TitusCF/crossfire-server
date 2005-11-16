@@ -67,24 +67,31 @@ int surround_flag2(char **layout,int i,int j,RMParms *RP){
 }
 
 
-/* like surround_flag, except it checks  a map, not a layout. */
+/* like surround_flag, except it checks  a map, not a layout.
+ * Since this is part of the random map code, presumption
+ * is that this is not a tiled map.
+ * What is considered blocking and not is somewhat hard coded.
+ */
 int surround_flag3(mapstruct *map,sint16 i,sint16 j,RMParms *RP){
-  /* 1 =  blocked to left,
-	  2 = blocked to right,
-	  4 = blocked above
-	  8 = blocked below */
-  int surround_index = 0;
+    /*
+     * 1 =  blocked to left,
+     * 2 = blocked to right,
+     * 4 = blocked above
+     * 8 = blocked below 
+     */
 
-  if((i > 0) && (get_map_flags(map,NULL, i-1,j, NULL, NULL) & P_BLOCKED))
-    surround_index |=1;
-  if((i < RP->Xsize-1) && (get_map_flags(map,NULL, i+1,j, NULL, NULL) & P_BLOCKED))
-    surround_index |=2;
-  if((j > 0) && (get_map_flags(map, NULL, i,j-1, NULL, NULL) & P_BLOCKED))
-    surround_index |=4;
-  if((j < RP->Ysize-1) && (get_map_flags(map,NULL, i,j+1, NULL, NULL) & P_BLOCKED))
-    surround_index |=8;
+    int surround_index = 0;
 
-  return surround_index;
+    if((i > 0) && (GET_MAP_MOVE_BLOCK(map, i-1,j) & ~MOVE_BLOCK_DEFAULT))
+	surround_index |=1;
+    if((i < RP->Xsize-1) && (GET_MAP_MOVE_BLOCK(map, i+1,j) & ~MOVE_BLOCK_DEFAULT))
+	surround_index |=2;
+    if((j > 0) && (GET_MAP_MOVE_BLOCK(map, i,j-1) & ~MOVE_BLOCK_DEFAULT))
+	surround_index |=4;
+    if((j < RP->Ysize-1) && (GET_MAP_MOVE_BLOCK(map,i,j+1) & ~MOVE_BLOCK_DEFAULT))
+	surround_index |=8;
+
+    return surround_index;
 }
 
 /* like surround_flag2, except it checks  a map, not a layout. */
@@ -142,7 +149,7 @@ void make_map_walls(mapstruct *map,char **layout, char *w_style,RMParms *RP) {
 				thiswall=arch_to_object(the_wall->arch);
 		    thiswall->x = i;
 		    thiswall->y = j;
-		    SET_FLAG(thiswall,FLAG_NO_PASS); /* make SURE it's a wall */
+		    thiswall->move_block = MOVE_ALL;
 		    insert_ob_in_map(thiswall,map,thiswall,INS_NO_MERGE | INS_NO_WALK_ON);
 		}
 	    }
@@ -243,113 +250,120 @@ object *pick_joined_wall(object *the_wall,char **layout,int i,int j,RMParms *RP)
   
 
 /* this takes a map, and changes an existing wall to match what's blocked
-around it, counting only doors and walls as blocked.  If insert_flag is
-1, it will go ahead and insert the wall into the map.  If not, it
-will only return the wall which would belong there, and doesn't
-remove anything.  It depends on the
-global, previously-set variable, "wall_name"  */
+ * around it, counting only doors and walls as blocked.  If insert_flag is
+ * 1, it will go ahead and insert the wall into the map.  If not, it
+ * will only return the wall which would belong there, and doesn't
+ * remove anything.  It depends on the
+ * global, previously-set variable, "wall_name"  
+ */
 
 object * retrofit_joined_wall(mapstruct *the_map,int i,int j,int insert_flag,RMParms *RP) {
-  /* 1 = wall to left,
-	  2 = wall to right,
-	  4 = wall above
-	  8 = wall below */
-  int surround_index=0;
-  int l;
-  object *the_wall=0;
-  object *new_wall=0;
-  archetype * wall_arch=0;
+    /* 1 = wall to left,
+     * 2 = wall to right,
+     * 4 = wall above
+     * 8 = wall below 
+     */
+    int surround_index=0;
+    int l;
+    object *the_wall=0;
+    object *new_wall=0;
+    archetype * wall_arch=0;
 
-  /* first find the wall */
-  for(the_wall = get_map_ob(the_map,i,j);the_wall!=NULL;the_wall=the_wall->above)
-    if(QUERY_FLAG(the_wall,FLAG_NO_PASS) && the_wall->type!=EXIT && the_wall->type!=TELEPORTER) break;
+    /* first find the wall */
+    for(the_wall = get_map_ob(the_map,i,j);the_wall!=NULL;the_wall=the_wall->above)
+	if ((the_wall->move_type & MOVE_WALK) && the_wall->type!=EXIT && the_wall->type!=TELEPORTER)
+	    break;
 
   
-  /* if what we found is a door, don't remove it, set the_wall to NULL to
-	  signal that later. */
-  if(the_wall && (the_wall->type==DOOR || the_wall->type==LOCKED_DOOR) ) {
-    the_wall=NULL;
-	 /* if we're not supposed to insert a new wall where there wasn't one, 
-		 we've gotta leave. */
-    if(insert_flag==0) return 0;
-  }
-  else if(the_wall==NULL) return NULL;
-
-  /* canonicalize the wall name */
-  for(l=0;l<64;l++) {
-	 if(RP->wall_name[l]=='_') {
-		RP->wall_name[l] = 0;
-		break;
-	 }
-  }
-
-  surround_index = surround_flag4(the_map,i,j,RP);
-  switch(surround_index) {
-  case 0:
-	 strcat(RP->wall_name,"_0");
-	 break;
-  case 1:
-	 strcat(RP->wall_name,"_1_3");
-	 break;
-  case 2:
-	 strcat(RP->wall_name,"_1_4");
-	 break;
-  case 3:
-	 strcat(RP->wall_name,"_2_1_2");
-	 break;
-  case 4:
-	 strcat(RP->wall_name,"_1_2");
-	 break;
-  case 5:
-	 strcat(RP->wall_name,"_2_2_4");
-	 break;
-  case 6:
-	 strcat(RP->wall_name,"_2_2_1");
-	 break;
-  case 7:
-	 strcat(RP->wall_name,"_3_1");
-	 break;
-  case 8:
-	 strcat(RP->wall_name,"_1_1");
-	 break;
-  case 9:
-	 strcat(RP->wall_name,"_2_2_3");
-	 break;
-  case 10:
-	 strcat(RP->wall_name,"_2_2_2");
-	 break;
-  case 11:
-	 strcat(RP->wall_name,"_3_3");
-	 break;
-  case 12:
-	 strcat(RP->wall_name,"_2_1_1");
-	 break;
-  case 13:
-	 strcat(RP->wall_name,"_3_4");
-	 break;
-  case 14:
-	 strcat(RP->wall_name,"_3_2");
-	 break;
-  case 15:
-	 strcat(RP->wall_name,"_4");
-	 break;
-  }
-  wall_arch = find_archetype(RP->wall_name);
-  if(wall_arch!=NULL) {
-    new_wall=arch_to_object(wall_arch);
-    new_wall->x = i;
-    new_wall->y = j;
-    if(the_wall && the_wall->map) {
-      remove_ob(the_wall);
-      free_object(the_wall);
+    /* if what we found is a door, don't remove it, set the_wall to NULL to
+     * signal that later. 
+     */
+    if(the_wall && (the_wall->type==DOOR || the_wall->type==LOCKED_DOOR) ) {
+	the_wall=NULL;
+	/* if we're not supposed to insert a new wall where there wasn't one, 
+	 * we've gotta leave. 
+	 */
+	if(insert_flag==0) return 0;
     }
-    SET_FLAG(new_wall,FLAG_NO_PASS); /* make SURE it's a wall */
-    insert_ob_in_map(new_wall,the_map,new_wall,INS_NO_MERGE | INS_NO_WALK_ON);
-  }
-  else
-    nroferrors--;  /* it's OK not to find an arch. */
-  return new_wall;
-    
+    else if(the_wall==NULL) return NULL;
+
+    /* canonicalize the wall name */
+    for(l=0;l<64;l++) {
+	if(RP->wall_name[l]=='_') {
+	    RP->wall_name[l] = 0;
+	    break;
+	}
+    }
+
+    surround_index = surround_flag4(the_map,i,j,RP);
+    /* This would be a lot cleaner to just us a lookup table,
+     * eg, wall_suffix[surround_index]
+     */
+    switch(surround_index) {
+	case 0:
+	    strcat(RP->wall_name,"_0");
+	    break;
+	case 1:
+	    strcat(RP->wall_name,"_1_3");
+	    break;
+	case 2:
+	    strcat(RP->wall_name,"_1_4");
+	    break;
+	case 3:
+	    strcat(RP->wall_name,"_2_1_2");
+	    break;
+	case 4:
+	    strcat(RP->wall_name,"_1_2");
+	    break;
+	case 5:
+	    strcat(RP->wall_name,"_2_2_4");
+	    break;
+	case 6:
+	    strcat(RP->wall_name,"_2_2_1");
+	    break;
+	case 7:
+	    strcat(RP->wall_name,"_3_1");
+	    break;
+	case 8:
+	    strcat(RP->wall_name,"_1_1");
+	    break;
+	case 9:
+	    strcat(RP->wall_name,"_2_2_3");
+	    break;
+	case 10:
+	    strcat(RP->wall_name,"_2_2_2");
+	    break;
+	case 11:
+	    strcat(RP->wall_name,"_3_3");
+	    break;
+	case 12:
+	    strcat(RP->wall_name,"_2_1_1");
+	    break;
+	case 13:
+	    strcat(RP->wall_name,"_3_4");
+	    break;
+	case 14:
+	    strcat(RP->wall_name,"_3_2");
+	    break;
+	case 15:
+	    strcat(RP->wall_name,"_4");
+	    break;
+    }
+    wall_arch = find_archetype(RP->wall_name);
+    if(wall_arch!=NULL) {
+	new_wall=arch_to_object(wall_arch);
+	new_wall->x = i;
+	new_wall->y = j;
+	if(the_wall && the_wall->map) {
+	    remove_ob(the_wall);
+	    free_object(the_wall);
+	}
+	the_wall->move_block = MOVE_ALL;
+	insert_ob_in_map(new_wall,the_map,new_wall,INS_NO_MERGE | INS_NO_WALK_ON);
+    }
+    else
+	nroferrors--;  /* it's OK not to find an arch. */
+    return new_wall;
 }
   
 

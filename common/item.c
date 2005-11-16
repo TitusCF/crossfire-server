@@ -840,8 +840,6 @@ static char *describe_monster(object *op) {
     }
     if(QUERY_FLAG(op,FLAG_UNDEAD))
 	strcat(retbuf,"(undead)");
-    if(QUERY_FLAG(op,FLAG_CAN_PASS_THRU))
-	strcat(retbuf,"(pass through doors)");
     if(QUERY_FLAG(op,FLAG_SEE_INVISIBLE))
 	strcat(retbuf,"(see invisible)");
     if(QUERY_FLAG(op,FLAG_USE_WEAPON))
@@ -1128,10 +1126,20 @@ char *describe_item(object *op, object *owner) {
 	}
 	if(QUERY_FLAG(op,FLAG_XRAYS))
 	    strcat(retbuf,"(xray-vision)");
-	if(QUERY_FLAG(op,FLAG_FLYING))
-	    strcat(retbuf,"(levitate)");
 	if(QUERY_FLAG(op,FLAG_SEE_IN_DARK))
 	    strcat(retbuf,"(infravision)");
+
+	/* levitate was what is was before, so we'll keep it */
+	if (op->move_type & MOVE_FLY_LOW)
+	    strcat(retbuf,"(levitate)");
+
+	if (op->move_type & MOVE_FLY_HIGH)
+	    strcat(retbuf,"(fly)");
+
+	if (op->move_type & MOVE_SWIM)
+	    strcat(retbuf,"(swim)");
+
+	/* walking is presumed as 'normal', so doesn't need mentioning */
 
 	if(op->item_power) {
 	    sprintf(buf,"(item_power %+d)",op->item_power);
@@ -1266,9 +1274,9 @@ int is_magical(object *op) {
 		 return 1;
 
     /* Check for stealty, speed, flying, or just plain magic in the boots */
+    /* Presume any boots that hvae a move_type are special. */
     if (op->type== BOOTS && 
-	(QUERY_FLAG(op, FLAG_STEALTH) || QUERY_FLAG(op, FLAG_FLYING) ||
-	 op->stats.exp))
+	((QUERY_FLAG(op, FLAG_STEALTH) || op->move_type ||  op->stats.exp)))
 		return 1;
 
     /* Take care of amulet/shield that reflects spells/missiles */

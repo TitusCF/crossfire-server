@@ -298,7 +298,8 @@ static PyObject* Object_GetUnpaid(Crossfire_Object* whoptr, void* closure)
 }
 static PyObject* Object_GetFlying(Crossfire_Object* whoptr, void* closure)
 {
-    return Py_BuildValue("i",cf_object_get_flag(whoptr->obj, FLAG_FLYING));
+    /* FIXME */
+    /*return Py_BuildValue("i",cf_object_get_flag(whoptr->obj, FLAG_FLYING));*/
 }
 static PyObject* Object_GetMonster(Crossfire_Object* whoptr, void* closure)
 {
@@ -434,7 +435,8 @@ static PyObject* Object_GetCanPickUp(Crossfire_Object* whoptr, void* closure)
 }
 static PyObject* Object_GetCanPassThru(Crossfire_Object* whoptr, void* closure)
 {
-    return Py_BuildValue("i",cf_object_get_flag(whoptr->obj, FLAG_CAN_PASS_THRU));
+    /* FIXME */
+    /*return Py_BuildValue("i",cf_object_get_flag(whoptr->obj, FLAG_CAN_PASS_THRU));*/
 }
 static PyObject* Object_GetRunAway(Crossfire_Object* whoptr, void* closure)
 {
@@ -943,8 +945,8 @@ static int Object_SetFlying(Crossfire_Object* whoptr, PyObject* value, void* clo
 
     if (!PyArg_Parse(value,"i",&val))
         return -1;
-
-    cf_object_set_flag(whoptr->obj, FLAG_FLYING, val);
+    /* FIXME */
+    /*cf_object_set_flag(whoptr->obj, FLAG_FLYING, val);*/
     return 0;
 }
 static int Object_SetUnpaid(Crossfire_Object* whoptr, PyObject* value, void* closure)
@@ -1133,8 +1135,8 @@ static int Object_SetCanPassThru(Crossfire_Object* whoptr, PyObject* value, void
 
     if (!PyArg_Parse(value,"i",&val))
         return -1;
-
-    cf_object_set_flag(whoptr->obj, FLAG_CAN_PASS_THRU, val);
+    /* FIXME */
+    /*cf_object_set_flag(whoptr->obj, FLAG_CAN_PASS_THRU, val);*/
     return 0;
 }
 static int Object_SetRunAway(Crossfire_Object* whoptr, PyObject* value, void* closure)

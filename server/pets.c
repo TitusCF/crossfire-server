@@ -279,7 +279,7 @@ void follow_owner(object *ob, object *owner) {
 	LOG(llevError,"Owner of the pet not on a map in memory!?\n");
 	return;
     }
-    dir = find_free_spot(ob->arch, owner->map,
+    dir = find_free_spot(ob, owner->map,
                        owner->x, owner->y, 1, SIZEOFFREE);
 
     if (dir==-1) {
@@ -328,7 +328,10 @@ void pet_move(object * ob)
 	    dir = rndm(1, 8);
 	    dx = ob->x + freearr_x[dir];
 	    dy = ob->y + freearr_y[dir];
-	    if (get_map_flags(owner->map, NULL, dx, dy, NULL, NULL) & (P_WALL | P_OUT_OF_MAP))
+	    m = ob->map;
+	    if (get_map_flags(ob->map, &m, dx, dy, &dx, &dy) & P_OUT_OF_MAP)
+		continue;
+	    else if (OB_TYPE_MOVE_BLOCK(ob, GET_MAP_MOVE_BLOCK(m, dx, dy)))
 		continue;
 	    else
 		break;
@@ -606,7 +609,7 @@ int summon_golem(object *op,object *caster,int dir,object *spob) {
     if(!dir)
 	dir=find_free_spot(NULL,op->map,op->x,op->y,1,9);
 
-    if ((dir==-1) || arch_blocked(at, op->map, op->x + freearr_x[dir], op->y + freearr_y[dir])) {
+    if ((dir==-1) || ob_blocked(&at->clone, op->map, op->x + freearr_x[dir], op->y + freearr_y[dir])) {
 	new_draw_info(NDI_UNIQUE, 0,op,"There is something in the way.");
 	return 0;
     }
@@ -833,8 +836,8 @@ int summon_object(object *op, object *caster, object *spell_ob, int dir, const c
 	    }
 	    ndir = dir;
 	    if (!ndir)
-		ndir = find_free_spot(mon->arch, op->map, op->x, op->y, 1, SIZEOFFREE);
-	    if (ndir == -1 || arch_blocked(mon->arch,op->map, op->x + freearr_x[ndir], op->y+freearr_y[ndir])) {
+		ndir = find_free_spot(mon, op->map, op->x, op->y, 1, SIZEOFFREE);
+	    if (ndir == -1 || ob_blocked(mon,op->map, op->x + freearr_x[ndir], op->y+freearr_y[ndir])) {
 		ndir=-1;
 		if (++tries == 5) {
 		    new_draw_info(NDI_UNIQUE, 0,op, "There is something in the way.");
@@ -860,7 +863,7 @@ int summon_object(object *op, object *caster, object *spell_ob, int dir, const c
     }
 
     if (!dir)
-	dir = find_free_spot(summon_arch, op->map, op->x, op->y, 1, SIZEOFFREE);
+	dir = find_free_spot(&summon_arch->clone, op->map, op->x, op->y, 1, SIZEOFFREE);
 
     if (dir > 0) {
 	x = op->x + freearr_x[dir];
@@ -870,7 +873,7 @@ int summon_object(object *op, object *caster, object *spell_ob, int dir, const c
 	y = 0;
     }
 
-    if (dir == -1 || arch_blocked(summon_arch, op->map, x, y)){
+    if (dir == -1 || ob_blocked(&summon_arch->clone, op->map, x, y)){
 	new_draw_info(NDI_UNIQUE, 0, op, "There is something in the way.");
 	return 0;
     }
@@ -923,7 +926,7 @@ int summon_object(object *op, object *caster, object *spell_ob, int dir, const c
 		if (!tmp->nrof) SET_FLAG(tmp, FLAG_NO_DROP);
 	}
 	dir = absdir(dir + 1);
-	if (arch_blocked(summon_arch, op->map, op->x + freearr_x[dir], op->y + freearr_y[dir])) {
+	if (ob_blocked(&summon_arch->clone, op->map, op->x + freearr_x[dir], op->y + freearr_y[dir])) {
 	    if (i < nrof) {
 		new_draw_info(NDI_UNIQUE, 0,op, "There is something in the way,");
 		new_draw_info(NDI_UNIQUE, 0,op, "No more pets for this casting.");

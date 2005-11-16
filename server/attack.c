@@ -226,7 +226,12 @@ void save_throw_object (object *op, int type, object *originator)
         if ((tmp = present_arch(at,op->map,op->x,op->y)) == NULL) {
 	    tmp = arch_to_object(at);
 	    tmp->x=op->x,tmp->y=op->y;
-	    SET_SLOW_PENALTY(tmp, 0);
+	    /* This was in the old (pre new movement code) -
+	     * icecubes have slow_move set to 1 - don't want
+	     * that for ones we create.
+	     */
+	    tmp->move_slow_penalty=0;
+	    tmp->move_slow=0;
 	    insert_ob_in_map(tmp,op->map,originator,0);
         }
         if ( ! QUERY_FLAG (op, FLAG_REMOVED))
@@ -343,10 +348,12 @@ int hit_map(object *op, int dir, int type, int full_hit) {
 	/* Here we are potentially destroying an object.  If the object has
 	 * NO_PASS set, it is also immune - you can't destroy walls.  Note 
 	 * that weak walls have is_alive set, which prevent objects from
-	 * passing over/through them.
+	 * passing over/through them.  We don't care what type of movement
+	 * the wall blocks - if it blocks any type of movement, can't be
+	 * destroyed right now.
 	 */
 	else if ((tmp->material || tmp->materialname) && op->stats.dam > 0 &&
-		   !QUERY_FLAG(tmp, FLAG_NO_PASS)) {
+		   tmp->move_block) {
 	    save_throw_object(tmp,type,op);
 	    if (was_destroyed (op, op_tag))
 		break;
@@ -897,10 +904,14 @@ object *hit_with_arrow (object *op, object *victim)
              && stick_arrow (hitter, victim))
             return NULL;
 
-        /* Else try to put arrow on victim's map square */
-        if ((victim_x != hitter->x || victim_y != hitter->y)
-            && !(get_map_flags(hitter->map, NULL, victim_x, victim_y, NULL, NULL) & P_WALL))
-	{
+        /* Else try to put arrow on victim's map square
+	 * remove check for P_WALL here.  If the arrow got to this
+	 * space, that is good enough - with the new movement code,
+	 * there is now the potential for lots of spaces where something
+	 * can fly over but not otherwise move over.  What is the correct
+	 * way to handle those otherwise?
+	 */
+        if (victim_x != hitter->x || victim_y != hitter->y) {
             remove_ob (hitter);
             hitter->x = victim_x;
             hitter->y = victim_y;
@@ -961,7 +972,7 @@ void tear_down_wall(object *op)
 	} else { /* The last face was not blank, leave an image */
 	    CLEAR_FLAG(op, FLAG_BLOCKSVIEW);
 	    update_all_los(op->map, op->x, op->y);
-	    CLEAR_FLAG(op, FLAG_NO_PASS);
+	    op->move_block = 0;
 	    CLEAR_FLAG(op, FLAG_ALIVE);
 	}
     }
@@ -1829,7 +1840,7 @@ int hit_player(object *op,int dam, object *hitter, int type, int full_hit) {
 	    }
 	    if (unaggressive)
 		SET_FLAG(tmp, FLAG_UNAGGRESSIVE);
-	    j=find_first_free_spot(tmp->arch,op->map,op->x,op->y);
+	    j=find_first_free_spot(tmp,op->map,op->x,op->y);
 	    if (j==-1) /* No spot to put this monster */
 		free_object(tmp);
 	    else {
@@ -2144,7 +2155,7 @@ int adj_attackroll (object *hitter, object *target) {
     adjust -= 3;
 
   /* if we attack at a different 'altitude' its harder */
-  if(QUERY_FLAG(attacker,FLAG_FLYING)!=QUERY_FLAG(target,FLAG_FLYING))
+  if((attacker->move_type & target->move_type)==0)
     adjust -= 2;
 
 #if 0
@@ -2172,7 +2183,7 @@ int is_aimed_missile ( object *op) {
     /* I broke what used to be one big if into a few nested
      * ones so that figuring out the logic is at least possible.
      */
-    if (op && QUERY_FLAG(op,FLAG_FLYING)) {
+    if (op && (op->move_type & MOVE_FLYING)) {
 	if (op->type==ARROW || op->type==THROWN_OBJ)
 	    return 1;
 	else if (op->type==SPELL_EFFECT && (op->subtype == SP_BULLET ||

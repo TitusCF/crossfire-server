@@ -17,6 +17,28 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Commit for new blocking code.  Not going to dictate all the changes -
+but will outline the broad points.  Note also that the
+doc/Developers/objects is updated and goes into more details also.
+- check for P_WALL no longer used - instead, need to use GET_MAP_MOVE_BLCOK
+  and check against movement type of objects.
+- arch_blocked() changed to ob_blocked(), now takes object.  Needed because
+  just looking at archetype move_ values is no longer sufficient.
+- find_first_free_spot() changed to take object, since it just calls
+  arch_blocked()
+- FLAG_FLYING removed, now in move type.
+- walk_on/walk_off/fly_on/fly_off removed - now based on move_on and
+  move_off fields.
+- Map space structure extended to hold the move_on/move_off, etc
+  values so that we can shortcut some processing by not having to
+  check every object on the space when something enters it if
+  move_on isn't set.
+- archetypes recollected - boulders needed move_walk to properly trigger
+  buttons.
+- Note that the new plugin code has to be fixed up for the new movement
+  code.  Look for FIXME in plugins/cfpython/cfpython_object.c
+MSW 2005-11-15
+
 Apply patch 1352485 newpickup rings/amulets courtesy anonymous user.
 include/define.h: add PU_JEWELS
 server/c_object.c: handle new type.

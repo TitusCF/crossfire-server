@@ -146,7 +146,7 @@ void place_fountain_with_specials(mapstruct *map) {
   while(i<0 && tries<10) {
     ix = RANDOM() % (MAP_WIDTH(map) -2) +1;
     iy = RANDOM() % (MAP_HEIGHT(map) -2) +1;
-    i = find_first_free_spot(fountain->arch,map,ix,iy);
+    i = find_first_free_spot(fountain,map,ix,iy);
     tries++;
   };
   if(i==-1) {  /* can't place fountain */
@@ -185,7 +185,7 @@ void place_special_exit(mapstruct * map, int hole_type,RMParms *RP) {
     while(i<0) {
 	ix = RANDOM() % (MAP_WIDTH(map) -2) +1;
 	iy = RANDOM() % (MAP_HEIGHT(map) -2) +1;
-	i = find_first_free_spot(the_exit->arch,map,ix,iy);
+	i = find_first_free_spot(the_exit,map,ix,iy);
     }
   
     ix += freearr_x[i];

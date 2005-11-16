@@ -451,7 +451,7 @@ int command_summon (object *op, char *params)
     pl = get_other_player_from_name(op, params);
     if (!pl) return 1;
 
-    i=find_free_spot(op->arch,op->map,op->x,op->y,1,9);
+    i=find_free_spot(op,op->map,op->x,op->y,1,9);
     if (i==-1) {
 	new_draw_info(NDI_UNIQUE, 0, op, "Can not find a free spot to place summoned player.");
 	return 1;
@@ -487,7 +487,7 @@ int command_teleport (object *op, char *params) {
     pl = get_other_player_from_name(op, params);
     if (!pl) return 1;
 
-   i = find_free_spot(pl->ob->arch, pl->ob->map, pl->ob->x, pl->ob->y, 1, 9);
+   i = find_free_spot(pl->ob, pl->ob->map, pl->ob->x, pl->ob->y, 1, 9);
    if (i==-1) {
       new_draw_info(NDI_UNIQUE, 0, op, "Can not find a free spot to teleport to.");
       return 1;
@@ -1279,7 +1279,7 @@ int command_nowiz (object *op, char *params) /* 'noadm' is alias */
     CLEAR_FLAG(op, FLAG_WIZ);
     CLEAR_FLAG(op, FLAG_WIZPASS);
     CLEAR_FLAG(op, FLAG_WIZCAST);
-    CLEAR_FLAG(op, FLAG_FLYING);
+
     if (settings.real_wiz == TRUE)
         CLEAR_FLAG(op, FLAG_WAS_WIZ);
     if ( op->contr->hidden )
@@ -1333,39 +1333,42 @@ static int checkdm(object *op, const char *pl_name, const char *pl_passwd, const
   return (0);
 }
 
-int do_wizard_dm( object* op, char* params, int silent )
-    {
+int do_wizard_dm( object* op, char* params, int silent ) {
+
     if ( !op->contr )
         return 0;
 
-    if ( QUERY_FLAG( op, FLAG_WIZ ) )
-        {
+    if ( QUERY_FLAG( op, FLAG_WIZ ) ) {
         new_draw_info( NDI_UNIQUE, 0, op, "You are already the Dungeon Master!" );
-        return 0;
-        }
+	return 0;
+    }
 
     if (checkdm(op, op->name,
 		(params?params:"*"), op->contr->socket.host)) {
-      SET_FLAG(op, FLAG_WIZ);
-      SET_FLAG(op, FLAG_WAS_WIZ);
-      SET_FLAG(op, FLAG_WIZPASS);
-      SET_FLAG(op, FLAG_WIZCAST);
-      new_draw_info(NDI_UNIQUE, 0,op, "Ok, you are the Dungeon Master!");
-      SET_FLAG(op, FLAG_FLYING);
-      clear_los(op);
-      op->contr->write_buf[0] ='\0';
+	SET_FLAG(op, FLAG_WIZ);
+	SET_FLAG(op, FLAG_WAS_WIZ);
+	SET_FLAG(op, FLAG_WIZPASS);
+	SET_FLAG(op, FLAG_WIZCAST);
+	new_draw_info(NDI_UNIQUE, 0,op, "Ok, you are the Dungeon Master!");
+	/* Remove setting flying here - that won't work, because next
+	 * fix_player() is called that will get cleared - proper solution
+	 * is probably something like a wiz_force which gives that and any
+	 * other desired abilities.
+	 */
+	clear_los(op);
+	op->contr->write_buf[0] ='\0';
 
-      if ( !silent )
-        new_draw_info(NDI_UNIQUE | NDI_ALL | NDI_LT_GREEN, 1, NULL,
-  	    "The Dungeon Master has arrived!");
+	if ( !silent )
+	    new_draw_info(NDI_UNIQUE | NDI_ALL | NDI_LT_GREEN, 1, NULL,
+			  "The Dungeon Master has arrived!");
 
-      return 1;
+	return 1;
     } else {
-      new_draw_info(NDI_UNIQUE, 0,op, "Sorry Pal, I don't think so.");
-      op->contr->write_buf[0] ='\0';
-      return 0;
+	new_draw_info(NDI_UNIQUE, 0,op, "Sorry Pal, I don't think so.");
+	op->contr->write_buf[0] ='\0';
+	return 0;
     }
-    }
+}
 
 /* Actual command to perhaps become dm.  Changed aroun a bit in version 0.92.2
  * - allow people on sockets to become dm, and allow better dm file

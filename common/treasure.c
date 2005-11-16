@@ -1300,6 +1300,7 @@ void add_abilities(object *op, object *change) {
     op->path_attuned |= change->path_attuned;
     op->path_repelled |= change->path_repelled;
     op->path_denied |= change->path_denied;
+    op->move_type |= change->move_type;
     op->stats.luck += change->stats.luck;
 
     if (QUERY_FLAG(change,FLAG_CURSED))	    SET_FLAG(op, FLAG_CURSED);
@@ -1311,7 +1312,6 @@ void add_abilities(object *op, object *change) {
     if (QUERY_FLAG(change,FLAG_LIFESAVE))	SET_FLAG(op,FLAG_LIFESAVE);
     if (QUERY_FLAG(change,FLAG_REFL_SPELL))	SET_FLAG(op,FLAG_REFL_SPELL);
     if (QUERY_FLAG(change,FLAG_STEALTH))	SET_FLAG(op,FLAG_STEALTH);
-    if (QUERY_FLAG(change,FLAG_FLYING))		SET_FLAG(op,FLAG_FLYING);
     if (QUERY_FLAG(change,FLAG_XRAYS))		SET_FLAG(op,FLAG_XRAYS);
     if (QUERY_FLAG(change,FLAG_BLIND))		SET_FLAG(op,FLAG_BLIND);
     if (QUERY_FLAG(change,FLAG_SEE_IN_DARK))    SET_FLAG(op,FLAG_SEE_IN_DARK);

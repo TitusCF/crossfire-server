@@ -557,7 +557,7 @@ static void pick_up_object (object *pl, object *op, object *tmp, int nrof)
      * (sack, luggage, etc), tmp->env->env then points to the player (nested 
      * containers not allowed as of now)
      */
-    if(QUERY_FLAG(pl, FLAG_FLYING) && !QUERY_FLAG(pl, FLAG_WIZ) && 
+    if((pl->move_type & MOVE_FLYING) && !QUERY_FLAG(pl, FLAG_WIZ) && 
        is_player_inv(tmp)!=pl) {
 	new_draw_info(NDI_UNIQUE, 0,pl, "You are levitating, you can't reach the ground!");
 	return;
@@ -1514,7 +1514,7 @@ void examine(object *op, object *tmp) {
      * types - especially if the first entry is a match
      */
     if(tmp->msg && tmp->type != EXIT && tmp->type != BOOK && 
-       tmp->type != CORPSE && !QUERY_FLAG(tmp, FLAG_WALK_ON) && 
+       tmp->type != CORPSE && !tmp->move_on && 
        strncasecmp(tmp->msg, "@match",7)) {
 
 	/* This is just a hack so when identifying hte items, we print

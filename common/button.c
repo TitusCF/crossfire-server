@@ -171,8 +171,22 @@ void update_button(object *op) {
 	tmp = ol->ob;
 	if (tmp->type==BUTTON) {
 	    for(ab=tmp->above,tot=0;ab!=NULL;ab=ab->above)
-		if(!QUERY_FLAG(ab,FLAG_FLYING)) /* Why was nrof removed? */
+		/* Bug? The pedestal code below looks for the head of
+		 * the object, this bit doesn't.  I'd think we should check
+		 * for head here also.  Maybe it also makese sense to 
+		 * make the for ab=tmp->above loop common, and alter
+		 * behaviour based on object within that loop?
+		 */
+
+		/* Basically, if the move_type matches that on what the
+		 * button wants, we count it.  The second check is so that
+		 * objects don't move (swords, etc) will count.  Note that
+		 * this means that more work is needed to make buttons
+		 * that are only triggered by flying objects.
+		 */
+		if ((ab->move_type & tmp->move_on) || ab->move_type==0 ) 
 		    tot+=ab->weight*(ab->nrof?ab->nrof:1)+ab->carrying;
+
 	    tmp->value=(tot>=tmp->weight)?1:0;
 	    if(tmp->value)
 		any_down=1;
@@ -180,8 +194,8 @@ void update_button(object *op) {
 	    tmp->value = 0;
 	    for(ab=tmp->above; ab!=NULL; ab=ab->above) {
 		head = ab->head ? ab->head : ab;
-		if ( (!QUERY_FLAG(head,FLAG_FLYING) || 
-		      QUERY_FLAG(tmp,FLAG_FLY_ON)) &&
+		/* Same note regarding move_type for buttons above apply here. */
+		if  ( ((head->move_type & tmp->move_on) || ab->move_type==0) &&
 		     (head->race==tmp->slaying ||
 		      ((head->type==SPECIAL_KEY) && (head->slaying==tmp->slaying)) || 
 		      (!strcmp (tmp->slaying, "player") && 
@@ -361,114 +375,126 @@ void trigger_move (object *op, int state) /* 1 down and 0 up */
  */
 int check_trigger (object *op, object *cause)
 {
-  object *tmp;
-  int push = 0, tot = 0;
-  int in_movement = op->stats.wc || op->speed;
+    object *tmp;
+    int push = 0, tot = 0;
+    int in_movement = op->stats.wc || op->speed;
 
-  switch (op->type) {
-    case TRIGGER_BUTTON:
-    if (op->weight > 0) {
-        if (cause) {
-          for (tmp = op->above; tmp; tmp = tmp->above)
-            if ( ! QUERY_FLAG (tmp, FLAG_FLYING))
-	      tot += tmp->weight * (tmp->nrof ? tmp->nrof : 1)
-                     + tmp->carrying;
-          if (tot >= op->weight)
-            push = 1;
-          if (op->stats.ac == push)
-            return 0;
-          op->stats.ac = push;
-          SET_ANIMATION (op, push);
-          update_object (op, UP_OBJ_FACE);
-          if (in_movement || ! push)
-            return 0;
-        }
-        trigger_move (op, push);
-    }
-    return 0;
+    switch (op->type) {
+	case TRIGGER_BUTTON:
+	    if (op->weight > 0) {
+		if (cause) {
+		    for (tmp = op->above; tmp; tmp = tmp->above)
+			/* Comment reproduced from update_buttons(): */
+			/* Basically, if the move_type matches that on what the
+			 * button wants, we count it.  The second check is so that
+			 * objects that don't move (swords, etc) will count.  Note that
+			 * this means that more work is needed to make buttons
+			 * that are only triggered by flying objects.
+			 */
 
-    case TRIGGER_PEDESTAL:
-        if (cause) {
-          for (tmp = op->above; tmp; tmp = tmp->above) {
-            object *head = tmp->head ? tmp->head : tmp;
-            if ((!QUERY_FLAG(head,FLAG_FLYING) || QUERY_FLAG(op,FLAG_FLY_ON))
-	        && (head->race==op->slaying ||
-                (!strcmp (op->slaying, "player") && head->type == PLAYER)))
-              {
-                push = 1;
-                break;
-              }
-	  }
-          if (op->stats.ac == push)
-            return 0;
-          op->stats.ac = push;
-          SET_ANIMATION (op, push);
-          update_object(op,UP_OBJ_FACE);
-          if (in_movement || ! push)
-            return 0;
-        }
-        trigger_move (op, push);
-        return 0;
+			if ((tmp->move_type & op->move_on) || tmp->move_type==0) {
+			    tot += tmp->weight * (tmp->nrof ? tmp->nrof : 1)
+				+ tmp->carrying;
+			}
+		    if (tot >= op->weight)
+		    push = 1;
+		    if (op->stats.ac == push)
+			return 0;
+		    op->stats.ac = push;
+		    SET_ANIMATION (op, push);
+		    update_object (op, UP_OBJ_FACE);
+		    if (in_movement || ! push)
+			return 0;
+		}
+		trigger_move (op, push);
+	    }
+	    return 0;
 
-    case TRIGGER_ALTAR:
-        if (cause) {
-          if (in_movement)
-            return 0;
-          if (operate_altar (op, &cause)) {
-            SET_ANIMATION (op, 1);
-            update_object(op,UP_OBJ_FACE);
+	case TRIGGER_PEDESTAL:
+	    if (cause) {
+		for (tmp = op->above; tmp; tmp = tmp->above) {
+		    object *head = tmp->head ? tmp->head : tmp;
+
+		    /* See comment in TRIGGER_BUTTON about move_types */
+		    if (((head->move_type & op->move_on) || head->move_type==0)
+		      && (head->race==op->slaying ||
+		      (!strcmp (op->slaying, "player") && head->type == PLAYER))) {
+			push = 1;
+			break;
+		    }
+		}
+		if (op->stats.ac == push)
+		    return 0;
+		op->stats.ac = push;
+		SET_ANIMATION (op, push);
+		update_object(op,UP_OBJ_FACE);
+		if (in_movement || ! push)
+		    return 0;
+	    }
+	    trigger_move (op, push);
+	    return 0;
+
+	case TRIGGER_ALTAR:
+	    if (cause) {
+		if (in_movement)
+		    return 0;
+		if (operate_altar (op, &cause)) {
+		    SET_ANIMATION (op, 1);
+		    update_object(op,UP_OBJ_FACE);
 	    
-	    if (op->last_sp >= 0) {
-	      trigger_move (op, 1);
-	      if (op->last_sp > 0)
-		op->last_sp = -op->last_sp;
-	    }
-	    else {
-	      /* for trigger altar with last_sp, the ON/OFF
-		 status (-> +/- value) is "simulated": */
-	      op->value = !op->value;
-	      trigger_move (op, 1);
-	      op->last_sp = -op->last_sp;
-	      op->value = !op->value;
-	    }
-            return cause == NULL;
-          } else {
-            return 0;
-          }
-        } else {
-          SET_ANIMATION (op, 0);
-          update_object(op,UP_OBJ_FACE);
+		    if (op->last_sp >= 0) {
+			trigger_move (op, 1);
+			if (op->last_sp > 0)
+			op->last_sp = -op->last_sp;
+		    }
+		    else {
+			/* for trigger altar with last_sp, the ON/OFF
+			 * status (-> +/- value) is "simulated": 
+			 */
+			op->value = !op->value;
+			trigger_move (op, 1);
+			op->last_sp = -op->last_sp;
+			op->value = !op->value;
+		    }
+		    return cause == NULL;
+		} else {
+		    return 0;
+		}
+	    } else {
+		SET_ANIMATION (op, 0);
+		update_object(op,UP_OBJ_FACE);
 	  
-          /* If trigger_altar has "last_sp > 0" set on the map,
-             it will push the connected value only once per sacrifice.
-             Otherwise (default), the connected value will be
-             pushed twice: First by sacrifice, second by reset! -AV */
-          if (!op->last_sp)
-            trigger_move (op, 0);
-          else {
-            op->stats.wc = 0;
-            op->value = !op->value;
-            op->speed = 0;
-            update_ob_speed(op);
-          }
-        }
-        return 0;
+		/* If trigger_altar has "last_sp > 0" set on the map,
+		 * it will push the connected value only once per sacrifice.
+		 * Otherwise (default), the connected value will be
+		 * pushed twice: First by sacrifice, second by reset! -AV 
+		 */
+		if (!op->last_sp)
+		    trigger_move (op, 0);
+		else {
+		    op->stats.wc = 0;
+		    op->value = !op->value;
+		    op->speed = 0;
+		    update_ob_speed(op);
+		}
+	    }
+	    return 0;
 
-    case TRIGGER:
-        if (cause) {
-          if (in_movement)
-            return 0;
-          push = 1;
-        }
-        SET_ANIMATION (op, push);
-        update_object(op,UP_OBJ_FACE);
-        trigger_move (op, push);
-	return 1;
+	case TRIGGER:
+	    if (cause) {
+		if (in_movement)
+		    return 0;
+		push = 1;
+	    }
+	    SET_ANIMATION (op, push);
+	    update_object(op,UP_OBJ_FACE);
+	    trigger_move (op, push);
+	    return 1;
 
-    default:
-	LOG(llevDebug, "Unknown trigger type: %s (%d)\n", op->name, op->type);
-        return 0;
-  }
+	default:
+	    LOG(llevDebug, "Unknown trigger type: %s (%d)\n", op->name, op->type);
+	    return 0;
+    }
 }
 
 void add_button_link(object *button, mapstruct *map, int connected) {

@@ -304,7 +304,7 @@ static void enter_map(object *op, mapstruct *newmap, int x, int y) {
 	}
     }
     /* try to find a spot for the player */
-    if (arch_blocked(op->arch, newmap, x, y)) {	/* First choice blocked */
+    if (ob_blocked(op, newmap, x, y)) {	/* First choice blocked */
 	/* We try to find a spot for the player, starting closest in.
 	 * We could use find_first_free_spot, but that doesn't randomize it at all,
 	 * So for example, if the north space is free, you would always end up there even
@@ -312,11 +312,11 @@ static void enter_map(object *op, mapstruct *newmap, int x, int y) {
 	 * Note that for the second and third calls, we could start at a position other
 	 * than one, but then we could end up on the other side of walls and so forth.
 	 */
-	int i = find_free_spot(op->arch,newmap, x, y, 1, SIZEOFFREE1+1);
+	int i = find_free_spot(op,newmap, x, y, 1, SIZEOFFREE1+1);
 	if (i==-1) {
-	    i = find_free_spot(op->arch,newmap, x, y, 1, SIZEOFFREE2+1);
+	    i = find_free_spot(op,newmap, x, y, 1, SIZEOFFREE2+1);
 	    if (i==-1)
-		i = find_free_spot(op->arch,newmap, x, y, 1, SIZEOFFREE);
+		i = find_free_spot(op,newmap, x, y, 1, SIZEOFFREE);
 	}
 	if (i != -1 ) {
 	    x += freearr_x[i];
@@ -361,9 +361,8 @@ static void enter_map(object *op, mapstruct *newmap, int x, int y) {
 
     /* Update any golems */
     if(op->type == PLAYER && op->contr->ranges[range_golem] != NULL) {
-	int i = find_free_spot(op->contr->ranges[range_golem]->arch,newmap,
+	int i = find_free_spot(op->contr->ranges[range_golem],newmap,
 			       x, y, 1, SIZEOFFREE);
-
 	remove_ob(op->contr->ranges[range_golem]);
 	if (i==-1) {
 	    remove_friendly_object(op->contr->ranges[range_golem]);

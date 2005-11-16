@@ -218,7 +218,8 @@ void place_exits(mapstruct *map, char **maze,char *exitstyle,int orientation,RMP
       }
     }
     /* Block the exit so things don't get dumped on top of it. */
-    SET_FLAG(the_exit_up,FLAG_NO_PASS);
+    the_exit_up->move_block = MOVE_ALL;
+
     insert_ob_in_map(the_exit_up,map,NULL,0);
     maze[the_exit_up->x][the_exit_up->y]='<';
 
@@ -252,7 +253,7 @@ void place_exits(mapstruct *map, char **maze,char *exitstyle,int orientation,RMP
     if(downx==-1) find_in_layout(0,0,&downx,&downy,maze,RP);
     if(the_exit_down) {
       char buf[2048];
-      i = find_first_free_spot(the_exit_down->arch,map,downx,downy);
+      i = find_first_free_spot(the_exit_down, map, downx, downy);
       the_exit_down->x = downx + freearr_x[i];
       the_exit_down->y = downy + freearr_y[i];
       RP->origin_x = the_exit_down->x;
@@ -311,7 +312,7 @@ void place_exits(mapstruct *map, char **maze,char *exitstyle,int orientation,RMP
       else 
         the_exit_down->slaying = add_string("/!");
       /* Block the exit so things don't get dumped on top of it. */
-      SET_FLAG(the_exit_down,FLAG_NO_PASS);
+      the_exit_down->move_block = MOVE_ALL;
       insert_ob_in_map(the_exit_down,map,NULL,0);
       maze[the_exit_down->x][the_exit_down->y]='>';
     }
@@ -332,8 +333,8 @@ void unblock_exits(mapstruct *map, char **maze, RMParms *RP) {
     for(j=0;j<RP->Ysize;j++)
       if(maze[i][j]=='>' || maze[i][j]=='<') {
         for(walk=get_map_ob(map,i,j);walk!=NULL;walk=walk->above) {
-          if(QUERY_FLAG(walk,FLAG_NO_PASS) && walk->type != LOCKED_DOOR) {
-            CLEAR_FLAG(walk,FLAG_NO_PASS);
+          if(walk->move_type == MOVE_ALL && walk->type != LOCKED_DOOR) {
+	    walk->move_type = MOVE_BLOCK_DEFAULT;
             update_object(walk,UP_OBJ_CHANGE);
           }
         }

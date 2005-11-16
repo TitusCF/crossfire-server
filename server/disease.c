@@ -336,7 +336,10 @@ int infect_object(object *victim, object *disease, int force) {
     }
 
     insert_ob_in_ob(new_disease,victim);
-    CLEAR_FLAG(new_disease,FLAG_NO_PASS);
+    /* This appears to be a horrible case of overloading 'NO_PASS'
+     * for meaning in the diseases.
+     */
+    new_disease->move_block = 0;
     if(new_disease->owner && new_disease->owner->type==PLAYER) {
 	 char buf[128];
 	 /* if the disease has a title, it has a special infection message
@@ -445,7 +448,7 @@ int do_symptoms(object *disease) {
 	    if (new_symptom->skill) free_string(new_symptom->skill);
 	    if (disease->skill) new_symptom->skill = add_refcount(disease->skill);
 	}
-	CLEAR_FLAG(new_symptom,FLAG_NO_PASS);
+	new_symptom->move_block=0;
 	insert_ob_in_ob(new_symptom,victim);
 	return 1;
     }
@@ -500,7 +503,7 @@ int grant_immunity(object *disease) {
   immunity = get_archetype("immunity");
   immunity->name = add_string(disease->name);
   immunity->level = disease->level;
-  CLEAR_FLAG(immunity,FLAG_NO_PASS);
+  immunity->move_block = 0;
   insert_ob_in_ob(immunity,disease->env);
   return 1;
 

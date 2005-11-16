@@ -109,7 +109,7 @@ void generate_monster_inv(object *gen) {
     qty=rndm(0,qty-1);
     for (op=gen->inv;qty;qty--)
         op=op->below;
-    i=find_free_spot(op->arch,gen->map,gen->x,gen->y,1,9);
+    i=find_free_spot(op,gen->map,gen->x,gen->y,1,9);
     if (i==-1)
         return;
     head=object_create_clone(op);
@@ -141,7 +141,7 @@ void generate_monster_arch(object *gen) {
 	LOG(llevError,"Generator (%s) not on a map?\n", gen->name);
 	return;
     }
-    i=find_free_spot(at,gen->map,gen->x,gen->y,1,9);
+    i=find_free_spot(&at->clone,gen->map,gen->x,gen->y,1,9);
     if (i==-1) return;
     while(at!=NULL) {
 	op=arch_to_object(at);
@@ -260,7 +260,7 @@ void move_gate(object *op) { /* 1 = going down, 0 = goind up */
 	    }
 	}
 	if((int)op->stats.wc < (NUM_ANIMATIONS(op)/2+1)) {
-	    CLEAR_FLAG(op, FLAG_NO_PASS);
+	    op->move_block = 0;
 	    CLEAR_FLAG(op, FLAG_BLOCKSVIEW);
 	    update_all_los(op->map, op->x, op->y);
 	}
@@ -331,7 +331,7 @@ void move_gate(object *op) { /* 1 = going down, 0 = goind up */
 			&& (!QUERY_FLAG(tmp, FLAG_NO_PICK)
 			   ||QUERY_FLAG(tmp,FLAG_CAN_ROLL))) {
 		    /* If it has speed, it should move itself, otherwise: */
-		    int i=find_free_spot(tmp->arch,op->map,op->x,op->y,1,9);
+		    int i=find_free_spot(tmp,op->map,op->x,op->y,1,9);
 
 		    /* If there is a free spot, move the object someplace */
 		    if (i!=-1) {
@@ -353,7 +353,7 @@ void move_gate(object *op) { /* 1 = going down, 0 = goind up */
 	    if(tmp) {
 		    op->stats.food=1;
 	    } else {
-		SET_FLAG(op, FLAG_NO_PASS);    /* The coast is clear, block the way */
+		op->move_block = MOVE_ALL;
 		if(!op->arch->clone.stats.ac)
 		    SET_FLAG(op, FLAG_BLOCKSVIEW);
 		update_all_los(op->map, op->x, op->y);
@@ -460,7 +460,9 @@ void move_hole(object *op) { /* 1 = opening, 0 = closing */
 	    op->stats.wc=0;
 	    op->speed = 0;
 	    update_ob_speed(op);
-	    SET_FLAG(op, FLAG_WALK_ON);
+
+	    /* Hard coding this makes sense for holes I suppose */
+	    op->move_on = MOVE_WALK;
 	    for (tmp=op->above; tmp!=NULL; tmp=next) {
 		next=tmp->above;
 		move_apply(op,tmp,tmp);
@@ -471,7 +473,8 @@ void move_hole(object *op) { /* 1 = opening, 0 = closing */
 	return;
     }
     /* We're closing */
-    CLEAR_FLAG(op, FLAG_WALK_ON);
+    op->move_on = 0;
+
     op->stats.wc++;
     if((int)op->stats.wc >= NUM_ANIMATIONS(op))
 	op->stats.wc=NUM_ANIMATIONS(op)-1;
@@ -551,9 +554,8 @@ object *fix_stopped_arrow (object *op)
     }
 
     op->direction=0;
-    CLEAR_FLAG(op, FLAG_WALK_ON);
-    CLEAR_FLAG(op, FLAG_FLY_ON);
-    CLEAR_FLAG(op, FLAG_FLYING);
+    op->move_on=0;
+    op->move_type=0;
     op->speed = 0;
     update_ob_speed(op);
     op->stats.wc = op->stats.sp;
@@ -709,7 +711,9 @@ void move_arrow(object *op) {
     } /* if there is something alive on this space */
 
 
-    if (mflags & P_WALL) {
+    if (OB_TYPE_MOVE_BLOCK(op, GET_MAP_MOVE_BLOCK(m, new_x, new_y))) {
+	int retry=0;
+
 	/* if the object doesn't reflect, stop the arrow from moving
 	 * note that this code will now catch cases where a monster is
 	 * on a wall but has reflecting - the arrow won't reflect.
@@ -719,22 +723,30 @@ void move_arrow(object *op) {
 	if(!QUERY_FLAG(op, FLAG_REFLECTING) || !(rndm(0, 19))) {
 	    stop_arrow (op);
 	    return;
-	} else {    /* object is reflected */
+	} else {
 	    /* If one of the major directions (n,s,e,w), just reverse it */
 	    if(op->direction&1) {
 		op->direction=absdir(op->direction+4);
-	    } else {
-		/* The below is just logic for figuring out what direction
-		 * the object should now take.
-		 */
-	
-		int left, right;
+		retry=1;
+	    }
+	    /* There were two blocks with identical code -
+	     * use this retry here to make this one block
+	     * that did the same thing.
+	     */
+	    while (retry<2) {
+		int left, right, mflags;
+		mapstruct *m1;
+		sint16	x1, y1;
 
+		retry++;
 
-		left= get_map_flags(op->map,NULL, op->x+freearr_x[absdir(op->direction-1)],
-		       op->y+freearr_y[absdir(op->direction-1)], NULL, NULL) & P_WALL;
-		right=get_map_flags(op->map,NULL, op->x+freearr_x[absdir(op->direction+1)],
-		   op->y+freearr_y[absdir(op->direction+1)], NULL, NULL) & P_WALL;
+		get_map_flags(op->map,&m1, op->x+freearr_x[absdir(op->direction-1)],
+		       op->y+freearr_y[absdir(op->direction-1)], &x1, &y1);
+		left = OB_TYPE_MOVE_BLOCK(op, (GET_MAP_MOVE_BLOCK(m1, x1, y1)));
+
+		get_map_flags(op->map,&m1, op->x+freearr_x[absdir(op->direction+1)],
+		   op->y+freearr_y[absdir(op->direction+1)], &x1, &y1);
+		right = OB_TYPE_MOVE_BLOCK(op, (GET_MAP_MOVE_BLOCK(m1, x1, y1)));
 
 		if(left==right)
 		    op->direction=absdir(op->direction+4);
@@ -742,24 +754,22 @@ void move_arrow(object *op) {
 		    op->direction=absdir(op->direction+2);
 		else if(right)
 		    op->direction=absdir(op->direction-2);
+
+		mflags = get_map_flags(op->map,&m1, op->x+DIRX(op),op->y+DIRY(op), &x1, &y1);
+
+		/* If this space is not out of the map and not blocked, valid space -
+		 * don't need to retry again.
+		 */
+		if (!(mflags & P_OUT_OF_MAP) && 
+		  !OB_TYPE_MOVE_BLOCK(op, GET_MAP_MOVE_BLOCK(m1, x1, y1))) break;
+
 	    }
-	    /* Is the new direction also a wall?  If show, shuffle again */
-	    if(get_map_flags(op->map,NULL, op->x+DIRX(op),op->y+DIRY(op), NULL, NULL) & P_WALL) {
-		int left, right;
-
-		left= get_map_flags(op->map,NULL, op->x+freearr_x[absdir(op->direction-1)],
-			 op->y+freearr_y[absdir(op->direction-1)], NULL, NULL) & P_WALL;
-		right = get_map_flags(op->map,NULL, op->x+freearr_x[absdir(op->direction+1)],
-		     op->y+freearr_y[absdir(op->direction+1)], NULL, NULL) & P_WALL;
-
-		if(!left)
-		    op->direction=absdir(op->direction-1);
-		else if(!right)
-		    op->direction=absdir(op->direction+1);
-		else {		/* is this possible? */
-		    stop_arrow (op);
-		    return;
-		}
+	    /* Couldn't find a direction to move the arrow to - just
+	     * top it from moving.
+	     */
+	    if (retry==2) {
+		stop_arrow (op);
+		return;
 	    }
 	    /* update object image for new facing */
 	    /* many thrown objects *don't* have more than one face */
@@ -817,7 +827,7 @@ void change_object(object *op) { /* Doesn`t handle linked objs yet */
 	    esrv_send_item(pl, tmp);
 	}
     } else {
-        j=find_first_free_spot(tmp->arch,op->map,op->x,op->y);
+        j=find_first_free_spot(tmp,op->map,op->x,op->y);
 	if (j==-1)  /* No free spot */
 	    free_object(tmp);
 	else {
@@ -951,14 +961,13 @@ void move_firewall(object *op) {
 
 /*  move_player_mover:  this function takes a "player mover" as an
  * argument, and performs the function of a player mover, which is:
-
+ *
  * a player mover finds any players that are sitting on it.  It
  * moves them in the op->stats.sp direction.  speed is how often it'll move.
  * If attacktype is nonzero it will paralyze the player.  If lifesave is set,
  * it'll dissapear after hp+1 moves.  If hp is set and attacktype is set,
  * it'll paralyze the victim for hp*his speed/op->speed
-
-*/
+ */
 void move_player_mover(object *op) {
     object *victim, *nextmover;
     int dir = op->stats.sp;
@@ -969,7 +978,7 @@ void move_player_mover(object *op) {
     if (!dir) dir=rndm(1, 8);
 
     for(victim=get_map_ob(op->map,op->x,op->y); victim !=NULL; victim=victim->above) {
-	if(QUERY_FLAG(victim, FLAG_ALIVE)&& (!(QUERY_FLAG(victim,FLAG_FLYING))||op->stats.maxhp)) {
+	if(QUERY_FLAG(victim, FLAG_ALIVE) && (victim->move_type & op->move_type)) {
 
 	    if (victim->head) victim = victim->head;
 
@@ -1087,7 +1096,7 @@ void move_creator(object *op) {
 	return;
     }
     /* Make sure this multipart object fits */
-    if (at->more && arch_blocked(at, op->map, op->x, op->y))
+    if (at->more && ob_blocked(&at->clone, op->map, op->x, op->y))
 	return;
 
     while(at!=NULL) {

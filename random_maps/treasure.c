@@ -56,11 +56,12 @@
  */
 
 int wall_blocked(mapstruct *m, int x, int y) {
-  int r;
-  if(OUT_OF_REAL_MAP(m,x,y))
-    return 1;
-  r = GET_MAP_FLAGS(m,x,y) & (P_NO_PASS );
-  return r;
+    int r;
+
+    if(OUT_OF_REAL_MAP(m,x,y))
+	return 1;
+    r = GET_MAP_MOVE_BLOCK(m,x,y) & ~MOVE_BLOCK_DEFAULT;
+    return r;
 }
 
 /* place treasures in the map, given the 
@@ -174,23 +175,20 @@ object * place_chest(int treasureoptions,int x, int y,mapstruct *map, mapstruct 
   object *the_chest;
   int i,xl,yl;
 
+  the_chest = get_archetype("chest");  /* was "chest_2" */
+
   /* first, find a place to put the chest. */
-  i = find_first_free_spot(find_archetype("chest"),map,x,y);
-  if (i == -1)
+  i = find_first_free_spot(the_chest,map,x,y);
+  if (i == -1) {
+    free_object(the_chest);
     return NULL;
+  }
   xl = x + freearr_x[i]; yl = y +  freearr_y[i];
 
   /* if the placement is blocked, return a fail. */
   if(wall_blocked(map,xl,yl)) return 0;
   
   
-  /* use the nicer container-chests for multiple treasures...  Allows locking. */
-  if(n_treasures > 1) 
-    the_chest = get_archetype("chest");  /* was "chest_2" */
-  else
-    the_chest = get_archetype("chest");
-
-
   /* put the treasures in the chest. */
   /*  if(style_map) { */
   if(0) {  /* don't use treasure style maps for now!  */
@@ -312,7 +310,7 @@ int keyplace(mapstruct *map,int x,int y,char *keycode,int door_flag,int n_keys,R
       for(tries = 0; tries < 15 && freeindex == -1; tries++) {
 	kx = (RANDOM()%(RP->Xsize-2))+1;
 	ky = (RANDOM()%(RP->Ysize-2))+1;
-	freeindex = find_first_free_spot(the_key->arch,map,kx,ky);
+	freeindex = find_first_free_spot(the_key,map,kx,ky);
       }
       if(freeindex != -1) {
 	kx += freearr_x[freeindex];
@@ -545,7 +543,7 @@ void find_enclosed_spot(mapstruct *map, int *cx, int *cy,RMParms *RP) {
     }
   }
   /* give up and return the closest free spot. */
-  i = find_first_free_spot(find_archetype("chest"),map,x,y);
+  i = find_first_free_spot(&find_archetype("chest")->clone,map,x,y);
   if(i!=-1&&i<SIZEOFFREE) {
     *cx = x +freearr_x[i];
     *cy = y +freearr_y[i];

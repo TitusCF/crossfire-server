@@ -306,14 +306,20 @@ int do_skill (object *op, object *part, object *skill, int dir, const char *stri
 
     switch(skill->subtype) {
 	case SK_LEVITATION:
-	    if(QUERY_FLAG(op,FLAG_FLYING)) { 
-		CLEAR_FLAG(op,FLAG_FLYING);
+	    /* Not 100% sure if this will work with new movement code -
+	     * the levitation skill has move_type for flying, so when
+	     * equipped, that should transfer to player, when not,
+	     * shouldn't.
+	     */
+	    if(QUERY_FLAG(skill,FLAG_APPLIED)) { 
+		CLEAR_FLAG(skill,FLAG_APPLIED);
 		new_draw_info(NDI_UNIQUE,0,op,"You come to earth.");
 	    }
 	    else {
-		SET_FLAG(op,FLAG_FLYING);
+		SET_FLAG(skill,FLAG_APPLIED);
 		new_draw_info(NDI_UNIQUE,0,op,"You rise into the air!.");
 	    }
+	    fix_player(op);
 	    success=1;
 	    break;
 
@@ -954,8 +960,9 @@ int skill_attack (object *tmp, object *pl, int dir, const char *string, object *
 
 	mflags = get_map_flags(m, &m, tx, ty, &tx, &ty);
 	if (mflags & P_OUT_OF_MAP) return 0;
+
 	/* space must be blocked for there to be anything interesting to do */
-	if (!(mflags & P_BLOCKED)) return 0;
+	if (!OB_TYPE_MOVE_BLOCK(pl, GET_MAP_MOVE_BLOCK(m, tx,ty))) return 0;
 
 	for(tmp=get_map_ob(m, tx, ty); tmp; tmp=tmp->above)
 	    if((QUERY_FLAG(tmp,FLAG_ALIVE) && tmp->stats.hp>=0)
@@ -1024,4 +1031,3 @@ int attack_melee_weapon(object *op, int dir, const char *string, object *skill) 
     return skill_attack(NULL,op,dir,string, skill);
 
 }
-

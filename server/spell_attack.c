@@ -84,7 +84,7 @@ void check_spell_knockback(object *op) {
 	
 	 /* surface area? -tm */
 	
-	if(QUERY_FLAG(tmp, FLAG_FLYING))
+	if (tmp->move_type & MOVE_FLYING)
 		frictionmod = 1 ; /* flying objects loose the friction modifier */
 	
 	if(rndm(0, weight_move-1) > ((tmp->weight / num_sections) * frictionmod)) {  /* move it. */
@@ -114,6 +114,8 @@ void check_spell_knockback(object *op) {
 void forklightning(object *op, object *tmp) {
     int new_dir=1;  /* direction or -1 for left, +1 for right 0 if no new bolt */
     int t_dir; /* stores temporary dir calculation */
+    mapstruct *m;
+    sint16  sx,sy;
 
     /* pick a fork direction.  tmp->stats.Con is the left bias
      * i.e., the chance in 100 of forking LEFT
@@ -127,8 +129,11 @@ void forklightning(object *op, object *tmp) {
     /* check the new dir for a wall and in the map*/
     t_dir = absdir(tmp->direction + new_dir);
 
-    if(get_map_flags(tmp->map,NULL, tmp->x + freearr_x[t_dir],tmp->y + freearr_y[t_dir],
-		     NULL, NULL) & (P_WALL | P_OUT_OF_MAP))
+    if(get_map_flags(tmp->map,&m, tmp->x + freearr_x[t_dir],tmp->y + freearr_y[t_dir],
+		     &sx, &sy) & P_OUT_OF_MAP)
+	 new_dir = 0;
+
+    if (OB_TYPE_MOVE_BLOCK(tmp, GET_MAP_MOVE_BLOCK(m, sx, sy)))
 	 new_dir = 0;
 
     if(new_dir) { /* OK, we made a fork */
@@ -189,7 +194,8 @@ void move_bolt(object *op) {
 	 * on the space.  So only call reflwall if we think the data it returns
 	 * will be useful.
 	 */
-	if ((mflags & P_WALL) || ((mflags & P_IS_ALIVE) && reflwall(m, x, y, op))) {
+	if (OB_TYPE_MOVE_BLOCK(op, GET_MAP_MOVE_BLOCK(m, x, y)) || 
+	  ((mflags & P_IS_ALIVE) && reflwall(m, x, y, op))) {
 
 	    if(!QUERY_FLAG(op, FLAG_REFLECTING))
 		return;
@@ -207,11 +213,14 @@ void move_bolt(object *op) {
 	    else {
 		int left, right;
 
-		left = get_map_flags(op->map, NULL, op->x+freearr_x[absdir(op->direction-1)],
-			       op->y+freearr_y[absdir(op->direction-1)], NULL, NULL) & P_WALL;
+		get_map_flags(op->map, &m, op->x+freearr_x[absdir(op->direction-1)],
+			       op->y+freearr_y[absdir(op->direction-1)], &x, &y);
 
-		right = get_map_flags(op->map,NULL, op->x+freearr_x[absdir(op->direction+1)],
-                              op->y+freearr_y[absdir(op->direction+1)], NULL, NULL) & P_WALL;
+		left = OB_TYPE_MOVE_BLOCK(op, GET_MAP_MOVE_BLOCK(m, x, y));
+
+		get_map_flags(op->map, &m, op->x+freearr_x[absdir(op->direction+1)],
+                              op->y+freearr_y[absdir(op->direction+1)], &x, &y);
+		right = OB_TYPE_MOVE_BLOCK(op, GET_MAP_MOVE_BLOCK(m, x, y));
 
 		if(left==right)
 		    op->direction=absdir(op->direction+4);
@@ -292,7 +301,7 @@ int fire_bolt(object *op,object *caster,int dir,object *spob, object *skill) {
 	free_object(tmp);
 	return 0;
     }
-    if (mflags & P_WALL) {
+    if (OB_TYPE_MOVE_BLOCK(tmp, GET_MAP_MOVE_BLOCK(tmp->map, tmp->x, tmp->y))) {
 	if(!QUERY_FLAG(tmp, FLAG_REFLECTING)) {
 	    free_object(tmp);
 	    return 0;
@@ -439,8 +448,7 @@ void explode_bullet(object *op)
 	tmp->stats.sp = op->direction;
 
     /* Prevent recursion */
-    CLEAR_FLAG (op, FLAG_WALK_ON);
-    CLEAR_FLAG (op, FLAG_FLY_ON);
+    op->move_on = 0;
 
     insert_ob_in_map(tmp, op->map, op, 0);
     /* remove the firebullet */
@@ -461,10 +469,12 @@ void check_bullet(object *op)
     tag_t op_tag = op->count, tmp_tag;
     object *tmp;
     int dam, mflags;
+    mapstruct *m;
+    sint16 sx, sy;
 
-    mflags = get_map_flags(op->map, NULL, op->x, op->y, NULL, NULL);
+    mflags = get_map_flags(op->map,&m, op->x, op->y, &sx, &sy);
 
-    if ( ! (mflags & (P_BLOCKED)))
+    if ( !OB_TYPE_MOVE_BLOCK(op, GET_MAP_MOVE_BLOCK(m, sx, sy)))
         return;
 
     if (op->other_arch) {
@@ -542,7 +552,7 @@ void move_bullet(object *op)
         return;
     }
 
-    if ( ! op->direction || (mflags & P_WALL)) {
+    if ( ! op->direction || OB_TYPE_MOVE_BLOCK(op, GET_MAP_MOVE_BLOCK(m, new_x, new_y))) {
         if (op->other_arch) {
             explode_bullet (op);
         } else {
@@ -617,7 +627,7 @@ int fire_bullet(object *op,object *caster,int dir,object *spob) {
 	free_object(tmp);
 	return 0;
     }
-    if (mflags & P_WALL) {
+    if (OB_TYPE_MOVE_BLOCK(tmp, GET_MAP_MOVE_BLOCK(tmp->map, tmp->x, tmp->y))) {
 	if(!QUERY_FLAG(tmp, FLAG_REFLECTING)) {
 	    free_object(tmp);
 	    return 0;
@@ -752,6 +762,9 @@ int cast_cone(object *op, object *caster,int dir, object *spell)
 {
     object *tmp;
     int i,success=0,range_min= -1,range_max=1;
+    mapstruct *m;
+    sint16  sx, sy;
+    MoveType	movetype;
 
     if (!spell->other_arch) return 0;
 
@@ -766,6 +779,12 @@ int cast_cone(object *op, object *caster,int dir, object *spell)
 	range_min= 0;
 	range_max=8;
     }
+
+    /* Need to know what the movetype of the object we are about
+     * to create is, so we can know if the space we are about to
+     * insert it into is blocked.
+     */
+    movetype = spell->other_arch->clone.move_type;
 
     for(i=range_min;i<=range_max;i++) {
 	sint16 x,y, d;
@@ -794,7 +813,10 @@ int cast_cone(object *op, object *caster,int dir, object *spell)
 	x = op->x+freearr_x[d];
 	y = op->y+freearr_y[d];
 
-	if(get_map_flags(op->map,NULL, x,y, NULL, NULL) & (P_WALL | P_OUT_OF_MAP))
+	if(get_map_flags(op->map, &m, x,y, &sx, &sy) & P_OUT_OF_MAP)
+	    continue;
+
+	if ((movetype & GET_MAP_MOVE_BLOCK(m, sx, sy)) == movetype)
 	    continue;
 
 	success=1;
@@ -838,17 +860,16 @@ int cast_cone(object *op, object *caster,int dir, object *spell)
 	}
 
 
-	if ( ! QUERY_FLAG (tmp, FLAG_FLYING))
+	if ( !(tmp->move_type & MOVE_FLY_LOW))
 	    LOG (llevDebug, "cast_cone(): arch %s doesn't have flying 1\n",
 		 spell->other_arch->name);
 
-	if (( ! QUERY_FLAG (tmp, FLAG_WALK_ON) || ! QUERY_FLAG (tmp, FLAG_FLY_ON))
-	    && tmp->stats.dam) {
+	if (!tmp->move_on && tmp->stats.dam) {
 	    LOG (llevDebug, 
-		 "cast_cone(): arch %s doesn't have walk_on 1 and fly_on 1\n", 
+		 "cast_cone(): arch %s doesn't have move_on set\n", 
 		 spell->other_arch->name);
 	}
-	insert_ob_in_map(tmp,op->map,op,0);
+	insert_ob_in_map(tmp,m,op,0);
 
 	/* This is used for tracking spells so that one effect doesn't hit
 	 * a single space too many times.
@@ -929,10 +950,12 @@ void animate_bomb(object *op) {
 int create_bomb(object *op,object *caster,int dir, object *spell) {
 
     object *tmp;
-
+    int mflags;
     sint16 dx=op->x+freearr_x[dir], dy=op->y+freearr_y[dir];
+    mapstruct *m;
 
-    if(get_map_flags(op->map,NULL, dx,dy, NULL,NULL) & (P_OUT_OF_MAP | P_WALL)) {
+    mflags = get_map_flags(op->map, &m, dx,dy, &dx,&dy);
+    if ((mflags & P_OUT_OF_MAP) || (GET_MAP_MOVE_BLOCK(m, dx, dy) & MOVE_WALK)) {
 	new_draw_info(NDI_UNIQUE, 0,op,"There is something in the way.");
 	return 0;
     }
@@ -948,7 +971,7 @@ int create_bomb(object *op,object *caster,int dir, object *spell) {
     set_spell_skill(op, caster, spell, tmp);
     tmp->x=dx;
     tmp->y=dy;
-    insert_ob_in_map(tmp,op->map,op,0);
+    insert_ob_in_map(tmp,m,op,0);
     return 1;
 }
 
@@ -982,9 +1005,11 @@ object *get_pointed_target(object *op, int dir, int range, int type) {
 	mp = op->map;
 	mflags = get_map_flags(op->map, &mp, x, y, &x, &y);
 
-	if (mflags & (P_OUT_OF_MAP | P_WALL)) return NULL;
+	if (mflags & P_OUT_OF_MAP)  return NULL;
 	if ((type & SPELL_MANA) && (mflags & P_NO_MAGIC)) return NULL;
 	if ((type & SPELL_GRACE) && (mflags & P_NO_CLERIC)) return NULL;
+	if (GET_MAP_MOVE_BLOCK(mp, x, y) & MOVE_FLY_LOW) return NULL;
+
 	if (mflags & P_IS_ALIVE) {
 	    for(target=get_map_ob(mp,x,y); target; target=target->above) {
 		if(QUERY_FLAG(target->head?target->head:target,FLAG_MONSTER)) {
@@ -1103,6 +1128,7 @@ void move_missile(object *op) {
     int i, mflags;
     object *owner;
     sint16 new_x, new_y;
+    mapstruct *m;
 
     if (op->range-- <=0) {
 	remove_ob(op);
@@ -1125,9 +1151,9 @@ void move_missile(object *op) {
     new_x = op->x + DIRX(op);
     new_y = op->y + DIRY(op);
 
-    mflags = get_map_flags(op->map, NULL, new_x, new_y, NULL, NULL);
+    mflags = get_map_flags(op->map, &m, new_x, new_y, &new_x, &new_y);
 
-    if (mflags & P_BLOCKED) {
+    if (OB_TYPE_MOVE_BLOCK(op, GET_MAP_MOVE_BLOCK(m, new_x, new_y))) {
 	tag_t tag = op->count;
 	hit_map (op, op->direction, AT_MAGIC, 1);
 	/* Basically, missile only hits one thing then goes away.
@@ -1141,12 +1167,13 @@ void move_missile(object *op) {
     }
 
     remove_ob(op);
-    if ( ! op->direction || (mflags & (P_WALL | P_OUT_OF_MAP))) {
+    if ( ! op->direction || (mflags & P_OUT_OF_MAP)) {
 	free_object(op);
 	return;
     }
     op->x = new_x;
     op->y = new_y;
+    op->map = m;
     i=spell_find_dir(op->map, op->x, op->y, get_owner(op));
     if(i > 0 && i != op->direction){
 	op->direction=i;
@@ -1509,7 +1536,7 @@ int mood_change(object *op, object *caster, object *spell) {
 
 void move_ball_spell(object *op) {
     int i,j,dam_save,dir, mflags;
-    sint16 nx,ny;
+    sint16 nx,ny, hx, hy;
     object *owner;
     mapstruct *m;
 
@@ -1537,7 +1564,8 @@ void move_ball_spell(object *op) {
 
 	nx = op->x + freearr_x[tmpdir];
 	ny = op->y + freearr_y[tmpdir];
-	if ( ! (get_map_flags(op->map, NULL, nx, ny, NULL, NULL) & (P_WALL | P_OUT_OF_MAP))) {
+	if ( ! (get_map_flags(op->map, &m, nx, ny, &nx, &ny) & P_OUT_OF_MAP) &&
+	    !(OB_TYPE_MOVE_BLOCK(op, GET_MAP_MOVE_BLOCK(m, nx, ny)))) {
 	    dir = tmpdir;
 	    break;
 	}
@@ -1545,12 +1573,13 @@ void move_ball_spell(object *op) {
     if (dir == 0) {
 	nx = op->x;
 	ny = op->y;
+	m = op->map;
     }
 
     remove_ob(op);
     op->y=ny;
     op->x=nx;
-    insert_ob_in_map(op,op->map,op,0);
+    insert_ob_in_map(op,m,op,0);
 	 
     dam_save = op->stats.dam;  /* save the original dam: we do halfdam on 
                                 surrounding squares */
@@ -1560,7 +1589,6 @@ void move_ball_spell(object *op) {
      * the surround spaces.
      */
     for(j=0;j<9;j++) {
-	sint16 hx,hy;  /* hit these squares */
 	object *new_ob;
 
 	hx = nx+freearr_x[j];
@@ -1575,12 +1603,14 @@ void move_ball_spell(object *op) {
 	 * of the map either.
 	 */
 
-	if((mflags & P_IS_ALIVE) && (!owner || owner->x!=hx || owner->y!=hy || owner->map != m)) {
+	if((mflags & P_IS_ALIVE) && (!owner || owner->x!=hx || owner->y!=hy || !on_same_map(owner,op))) {
 	    if(j) op->stats.dam = dam_save/2;
 	    hit_map(op,j,op->attacktype,1);
 
 	}
-	if(!(mflags & P_WALL) && op->other_arch) { /* insert the other arch */
+
+	/* insert the other arch */
+	if(op->other_arch && !(OB_TYPE_MOVE_BLOCK(op, GET_MAP_MOVE_BLOCK(m, hx, hy)))) {
 	    new_ob = arch_to_object(op->other_arch);
 	    new_ob->x = hx;
 	    new_ob->y = hy;
@@ -1595,7 +1625,8 @@ void move_ball_spell(object *op) {
 
     if(i>=0) { /* we have a preferred direction!  */
 	/* pick another direction if the preferred dir is blocked. */
-	if(get_map_flags(op->map,NULL, nx + freearr_x[i], ny + freearr_y[i],NULL,NULL) & P_WALL) {
+	if (get_map_flags(op->map,&m, nx + freearr_x[i], ny + freearr_y[i],&hx,&hy) & P_OUT_OF_MAP ||
+	   OB_TYPE_MOVE_BLOCK(op, GET_MAP_MOVE_BLOCK(m, hx, hy))) {
 	    i= absdir(i + rndm(0, 2) -1);  /* -1, 0, +1 */
 	}
 	op->direction=i;
@@ -1617,6 +1648,7 @@ void move_swarm_spell(object *op)
     static int diagonal_adjust[10] = { -3, -2, -2, -1, 0, 0, 1, 2, 2, 3 };
     sint16 target_x, target_y, origin_x, origin_y;
     int basedir, adjustdir;
+    mapstruct *m;
     object *owner;
 
     owner = get_owner(op);
@@ -1663,7 +1695,8 @@ void move_swarm_spell(object *op)
      */
     
     if (op->spell && op->spell->type == SPELL && 
-	!(get_map_flags(op->map, NULL, target_x, target_y, NULL, NULL) & (P_WALL | P_OUT_OF_MAP))) {
+	!(get_map_flags(op->map, &m, target_x, target_y, &target_x, &target_y) & P_OUT_OF_MAP) &&
+	!(OB_TYPE_MOVE_BLOCK(op->spell, GET_MAP_MOVE_BLOCK(m, target_x, target_y)))) {
 
 	/* Bullet spells have a bunch more customization that needs to be done */
 	if (op->spell->subtype == SP_BULLET)
@@ -1759,7 +1792,7 @@ int cast_light(object *op,object *caster,object *spell, int dir) {
     }
 
     /* no live target, perhaps a wall is in the way? */
-    if(mflags & P_BLOCKED) {
+    if (OB_TYPE_MOVE_BLOCK(op, GET_MAP_MOVE_BLOCK(m, x, y))) {
 	new_draw_info(NDI_UNIQUE, 0,op,"Something is in the way.");
 	return 0;
     }
@@ -1821,8 +1854,8 @@ int cast_cause_disease(object *op, object *caster, object *spell, int dir) {
 
 	if (mflags & P_OUT_OF_MAP) return 0;
 
-	/* don't go through walls */
-	if (mflags & P_NO_PASS) return 0;
+	/* don't go through walls - presume diseases are airborne */
+	if (GET_MAP_MOVE_BLOCK(m, x, y) &  MOVE_FLY_LOW) return 0;
 
 	/* Only bother looking on this space if there is something living here */
 	if (mflags & P_IS_ALIVE) {

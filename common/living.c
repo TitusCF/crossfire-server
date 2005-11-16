@@ -346,6 +346,13 @@ void check_stat_bounds(living *stats) {
 
 #define ORIG_S(xyz,abc)	(op->contr->orig_stats.abc)
 
+/* Rather than having a whole bunch of if (flag) new_draw.. else new_draw,
+ * make this macro to clean those up.  Not usuable outside change_abil
+ * function since some of the values passed to new_draw_info are hardcoded.
+ */
+#define DIFF_MSG(flag, msg1, msg2) \
+    new_draw_info(NDI_UNIQUE, 0, op, (flag>0)?msg1:msg2);
+
 /* return 1 if we sucessfully changed a stat, 0 if nothing was changed. */
 /* flag is set to 1 if we are applying the object, -1 if we are removing
  * the object.
@@ -359,15 +366,16 @@ void check_stat_bounds(living *stats) {
  * that gives them that ability.
  */
 int change_abil(object *op, object *tmp) {
-  int flag=QUERY_FLAG(tmp,FLAG_APPLIED)?1:-1,i,j,success=0;
-  object refop;
-  char message[MAX_BUF];
-  int potion_max=0;
+    int flag=QUERY_FLAG(tmp,FLAG_APPLIED)?1:-1,i,j,success=0;
+    object refop;
+    char message[MAX_BUF];
+    int potion_max=0;
   
-  /* remember what object was like before it was changed.  note that
-   * refop is a local copy of op only to be used for detecting changes
-   * found by fix_player.  refop is not a real object */
-  memcpy(&refop, op, sizeof(object));
+    /* remember what object was like before it was changed.  note that
+     * refop is a local copy of op only to be used for detecting changes
+     * found by fix_player.  refop is not a real object 
+     */
+    memcpy(&refop, op, sizeof(object));
 
     if(op->type==PLAYER) {
 	if (tmp->type==POTION) {
@@ -409,232 +417,214 @@ int change_abil(object *op, object *tmp) {
 	} /* end of potion handling code */
     }
 
-  /* reset attributes that fix_player doesn't reset since it doesn't search
-   * everything to set */
-  if(flag == -1)
-    op->attacktype&=~tmp->attacktype,
-    op->path_attuned&=~tmp->path_attuned,
-    op->path_repelled&=~tmp->path_repelled,
-    op->path_denied&=~tmp->path_denied;
-
-  /* call fix_player since op object could have whatever attribute due
-   * to multiple items.  if fix_player always has to be called after
-   * change_ability then might as well call it from here
-   */
-  fix_player(op);
-
-  /* Fix player won't add the bows ability to the player, so don't
-   * print out message if this is a bow.
-   */
-  if(tmp->attacktype & AT_CONFUSION && tmp->type != BOW) {
-    success=1;
-    if(flag>0)
-      new_draw_info(NDI_UNIQUE, 0, op,"Your hands begin to glow red.");
-    else
-      new_draw_info(NDI_UNIQUE, 0, op,"Your hands stop glowing red.");
-  }
-  if ( QUERY_FLAG(op,FLAG_LIFESAVE) != QUERY_FLAG(&refop,FLAG_LIFESAVE)){
-    success=1;
-    if(flag>0) {
-      new_draw_info(NDI_UNIQUE, 0, op,"You feel very protected.");
-    } else {
-      new_draw_info(NDI_UNIQUE, 0, op,"You don't feel protected anymore.");
-    }
-  }
-  if ( QUERY_FLAG(op,FLAG_REFL_MISSILE) != QUERY_FLAG(&refop,FLAG_REFL_MISSILE)){
-    success=1;
-    if(flag>0) {
-      new_draw_info(NDI_UNIQUE, 0, op,"A magic force shimmers around you.");
-    } else {
-      new_draw_info(NDI_UNIQUE, 0, op,"The magic force fades away.");
-    }
-  }
-  if ( QUERY_FLAG(op,FLAG_REFL_SPELL) != QUERY_FLAG(&refop,FLAG_REFL_SPELL)){
-    success=1;
-    if(flag>0) {
-      new_draw_info(NDI_UNIQUE, 0, op,"You feel more safe now, somehow.");
-    } else {
-      new_draw_info(NDI_UNIQUE, 0, op,"Suddenly you feel less safe, somehow.");
-    }
-  }
-  if(QUERY_FLAG(tmp,FLAG_FLYING)) {
-    if(flag>0) {
-      success=1;
-      /* if were already flying then now flying higher */
-      if ( QUERY_FLAG(op,FLAG_FLYING) == QUERY_FLAG(&refop,FLAG_FLYING))
-        new_draw_info(NDI_UNIQUE, 0, op,"You float a little higher in the air.");
-      else {
-        new_draw_info(NDI_UNIQUE, 0, op,"You start to float in the air!.");
-        SET_FLAG(op,FLAG_FLYING);
-        if(op->speed>1)
-          op->speed=1;
-      }
-    } else {
-      success=1;
-      /* if were already flying then now flying lower */
-      if ( QUERY_FLAG(op,FLAG_FLYING) == QUERY_FLAG(&refop,FLAG_FLYING))
-        new_draw_info(NDI_UNIQUE, 0, op,"You float a little lower in the air.");
-      else {
-        new_draw_info(NDI_UNIQUE, 0, op,"You float down to the ground.");
-	check_walk_on (op, op);
-      }
-    }
-  }
-
-  /* becoming UNDEAD... a special treatment for this flag. Only those not
-   * originally undead may change their status */ 
-  if(!QUERY_FLAG(&op->arch->clone,FLAG_UNDEAD)) 
-    if ( QUERY_FLAG(op,FLAG_UNDEAD) != QUERY_FLAG(&refop,FLAG_UNDEAD)) {
-      success=1;
-      if(flag>0) {
-        if(op->race) free_string(op->race); 
-	op->race=add_string("undead");
-        new_draw_info(NDI_UNIQUE, 0, op,"Your lifeforce drains away!");
-      } else {
-        if(op->race) free_string(op->race); 
-        if(op->arch->clone.race) 
-	   op->race=add_string(op->arch->clone.race);  
-        new_draw_info(NDI_UNIQUE, 0, op,"Your lifeforce returns!");
-      }
+    /* reset attributes that fix_player doesn't reset since it doesn't search
+     * everything to set 
+     */
+    if(flag == -1) {
+	op->attacktype&=~tmp->attacktype;
+	op->path_attuned&=~tmp->path_attuned;
+	op->path_repelled&=~tmp->path_repelled;
+	op->path_denied&=~tmp->path_denied;
+	/* Presuming here that creatures only have move_type,
+	 * and not the other move_ fields.
+	 */
+	op->move_type &= ~tmp->move_type;
     }
 
-  if ( QUERY_FLAG(op,FLAG_STEALTH) != QUERY_FLAG(&refop,FLAG_STEALTH)){
-    success=1;
-    if(flag>0) {
-      new_draw_info(NDI_UNIQUE, 0, op,"You walk more quietly.");
-    } else {
-      new_draw_info(NDI_UNIQUE, 0, op,"You walk more noisily.");
+    /* call fix_player since op object could have whatever attribute due
+     * to multiple items.  if fix_player always has to be called after
+     * change_ability then might as well call it from here
+     */
+    fix_player(op);
+
+    /* Fix player won't add the bows ability to the player, so don't
+     * print out message if this is a bow.
+     */
+    if(tmp->attacktype & AT_CONFUSION && tmp->type != BOW) {
+	success=1;
+	DIFF_MSG(flag, "Your hands begin to glow red.",
+		 "Your hands stop glowing red.");
     }
-  }
-  if ( QUERY_FLAG(op,FLAG_MAKE_INVIS) != QUERY_FLAG(&refop,FLAG_MAKE_INVIS)){
-    success=1;
-    if(flag>0) {
-      new_draw_info(NDI_UNIQUE, 0, op,"You become transparent.");
-    } else {
-      new_draw_info(NDI_UNIQUE, 0, op,"You can see yourself.");
+    if ( QUERY_FLAG(op,FLAG_LIFESAVE) != QUERY_FLAG(&refop,FLAG_LIFESAVE)){
+	success=1;
+	DIFF_MSG(flag, "You feel very protected.", 
+		 "You don't feel protected anymore.");
     }
-  }
-  /* blinded you can tell if more blinded since blinded player has minimal
-   * vision */
-  if(QUERY_FLAG(tmp,FLAG_BLIND)) {
-    success=1;
-    if(flag>0) {
-      if(QUERY_FLAG(op,FLAG_WIZ))
-        new_draw_info(NDI_UNIQUE, 0, op,"Your mortal self is blinded.");
-      else { 
-        new_draw_info(NDI_UNIQUE, 0, op,"You are blinded.");
-        SET_FLAG(op,FLAG_BLIND);
+    if ( QUERY_FLAG(op,FLAG_REFL_MISSILE) != QUERY_FLAG(&refop,FLAG_REFL_MISSILE)){
+	success=1;
+	DIFF_MSG(flag, "A magic force shimmers around you.",
+		 "The magic force fades away.");
+    }
+    if ( QUERY_FLAG(op,FLAG_REFL_SPELL) != QUERY_FLAG(&refop,FLAG_REFL_SPELL)){
+	success=1;
+	DIFF_MSG(flag, "You feel more safe now, somehow.",
+		 "Suddenly you feel less safe, somehow.");
+    }
+    /* movement type has changed.  We don't care about cases where
+     * user has multiple items giving the same type appled like we
+     * used to - that is more work than what we gain, plus messages
+     * can be misleading (a little higher could be miscontrued from
+     * from fly high)
+     */
+    if (tmp->move_type && op->move_type != refop.move_type) {
+	success=1;
+
+	/* MOVE_FLY_HIGH trumps MOVE_FLY_LOW - changing your move_fly_low
+	 * status doesn't make a difference if you are flying high
+	 */
+	if (tmp->move_type & MOVE_FLY_LOW && !(op->move_type & MOVE_FLY_HIGH)) {
+	    DIFF_MSG(flag, "You start to float in the air!.", "You float down to the ground.");
+	}
+
+	if (tmp->move_type & MOVE_FLY_HIGH) {
+	    /* double conditional - second case covers if you have move_fly_low -
+	     * in that case, you don't actually land
+	     */
+	    DIFF_MSG(flag, "You soar into the air air!.", 
+		     (op->move_type&MOVE_FLY_LOW ? "You fly lower in the air":
+		      "You float down to the ground."));
+	}
+	if (tmp->move_type & MOVE_SWIM)
+	    DIFF_MSG(flag,"You feel ready for a swim", "You no longer feel like swimming");
+
+	/* Changing move status may mean you are affected by things you weren't before */
+	check_move_on(op, op);
+    }
+
+    /* becoming UNDEAD... a special treatment for this flag. Only those not
+     * originally undead may change their status 
+     */ 
+    if(!QUERY_FLAG(&op->arch->clone,FLAG_UNDEAD)) 
+	if ( QUERY_FLAG(op,FLAG_UNDEAD) != QUERY_FLAG(&refop,FLAG_UNDEAD)) {
+	    success=1;
+	    if(flag>0) {
+		if(op->race) free_string(op->race); 
+		op->race=add_string("undead");
+		new_draw_info(NDI_UNIQUE, 0, op,"Your lifeforce drains away!");
+	    } else {
+		if(op->race) free_string(op->race); 
+		if(op->arch->clone.race) 
+		    op->race=add_string(op->arch->clone.race);  
+		else
+		    op->race = NULL;
+		new_draw_info(NDI_UNIQUE, 0, op,"Your lifeforce returns!");
+	    }
+	}
+
+    if ( QUERY_FLAG(op,FLAG_STEALTH) != QUERY_FLAG(&refop,FLAG_STEALTH)){
+	success=1;
+	DIFF_MSG(flag, "You walk more quietly.", "You walk more noisily.");
+    }
+    if ( QUERY_FLAG(op,FLAG_MAKE_INVIS) != QUERY_FLAG(&refop,FLAG_MAKE_INVIS)){
+	success=1;
+	DIFF_MSG(flag, "You become transparent.", "You can see yourself.");
+    }
+    /* blinded you can tell if more blinded since blinded player has minimal
+     * vision 
+     */
+    if(QUERY_FLAG(tmp,FLAG_BLIND)) {
+	success=1;
+	if(flag>0) {
+	    if(QUERY_FLAG(op,FLAG_WIZ))
+		new_draw_info(NDI_UNIQUE, 0, op,"Your mortal self is blinded.");
+	    else { 
+		new_draw_info(NDI_UNIQUE, 0, op,"You are blinded.");
+		SET_FLAG(op,FLAG_BLIND);
+		if(op->type==PLAYER)
+		    op->contr->do_los=1;
+	    }
+	} else {
+	    if(QUERY_FLAG(op,FLAG_WIZ))
+		new_draw_info(NDI_UNIQUE, 0, op,"Your mortal self can now see again.");
+	    else {
+		new_draw_info(NDI_UNIQUE, 0, op,"Your vision returns.");
+		CLEAR_FLAG(op,FLAG_BLIND);
+		if(op->type==PLAYER)
+		    op->contr->do_los=1;
+	    }
+	}
+    }
+
+    if ( QUERY_FLAG(op,FLAG_SEE_IN_DARK) != QUERY_FLAG(&refop,FLAG_SEE_IN_DARK)){
+	success=1;
         if(op->type==PLAYER)
-          op->contr->do_los=1;
-      }  
-    } else {
-      if(QUERY_FLAG(op,FLAG_WIZ))
-        new_draw_info(NDI_UNIQUE, 0, op,"Your mortal self can now see again.");
-      else {
-        new_draw_info(NDI_UNIQUE, 0, op,"Your vision returns.");
-        CLEAR_FLAG(op,FLAG_BLIND);
-        if(op->type==PLAYER)
-          op->contr->do_los=1;
-      }  
-    }  
-  }
-
-  if ( QUERY_FLAG(op,FLAG_SEE_IN_DARK) != QUERY_FLAG(&refop,FLAG_SEE_IN_DARK)){
-    success=1;
-    if(flag>0) {
-        new_draw_info(NDI_UNIQUE, 0, op,"Your vision is better in the dark.");
-        if(op->type==PLAYER)
-          op->contr->do_los=1;
-    } else {
-        new_draw_info(NDI_UNIQUE, 0, op,"You see less well in the dark.");
-        if(op->type==PLAYER)
-          op->contr->do_los=1;
-    }  
-  }  
-
-  if ( QUERY_FLAG(op,FLAG_XRAYS) != QUERY_FLAG(&refop,FLAG_XRAYS)){
-    success=1;
-    if(flag>0) {
-      if(QUERY_FLAG(op,FLAG_WIZ))
-        new_draw_info(NDI_UNIQUE, 0, op,"Your vision becomes a little clearer.");
-      else {
-        new_draw_info(NDI_UNIQUE, 0, op,"Everything becomes transparent.");
-        if(op->type==PLAYER)
-          op->contr->do_los=1;
-      }
-    } else {
-      if(QUERY_FLAG(op,FLAG_WIZ))
-        new_draw_info(NDI_UNIQUE, 0, op,"Your vision becomes a bit out of focus.");
-      else {
-        new_draw_info(NDI_UNIQUE, 0, op,"Everything suddenly looks very solid.");
-        if(op->type==PLAYER)
-          op->contr->do_los=1;
-      }
+	    op->contr->do_los=1;
+	DIFF_MSG(flag, "Your vision is better in the dark.", "You see less well in the dark.");
     }
-  }
-  if(tmp->stats.luck) {
-    success=1;
-    if(flag*tmp->stats.luck>0) {
-      new_draw_info(NDI_UNIQUE, 0, op,"You feel more lucky.");
-    } else {
-      new_draw_info(NDI_UNIQUE, 0, op,"You feel less lucky.");
-    }
-  }
-  if(tmp->stats.hp && op->type==PLAYER) {
-    success=1;
-    if(flag*tmp->stats.hp>0)
-      new_draw_info(NDI_UNIQUE, 0, op,"You feel much more healthy!");
-    else
-      new_draw_info(NDI_UNIQUE, 0, op,"You feel much less healthy!");
-  }
-  if(tmp->stats.sp && op->type==PLAYER && tmp->type!=SKILL) {
-    success=1;
-    if(flag*tmp->stats.sp>0)
-      new_draw_info(NDI_UNIQUE, 0, op,"You feel one with the powers of magic!");
-    else
-      new_draw_info(NDI_UNIQUE, 0, op,"You suddenly feel very mundane.");
-  }
-  /* for the future when artifacts set this -b.t. */
-  if(tmp->stats.grace && op->type==PLAYER) {
-    success=1;
-     if(flag*tmp->stats.grace>0)
-      new_draw_info(NDI_UNIQUE, 0, op,"You feel closer to your god!");
-    else 
-      new_draw_info(NDI_UNIQUE, 0, op,"You suddenly feel less holy.");
-  } 
-  if(tmp->stats.food && op->type==PLAYER) {
-    success=1;
-    if(tmp->stats.food*flag>0)
-      new_draw_info(NDI_UNIQUE, 0, op,"You feel your digestion slowing down.");
-    else
-      new_draw_info(NDI_UNIQUE, 0, op,"You feel your digestion speeding up.");
-  }
 
-  /* Messages for changed resistance */
-  for (i=0; i<NROFATTACKS; i++) {
-    if (i==ATNR_PHYSICAL) continue;	/* Don't display about armour */
+    if ( QUERY_FLAG(op,FLAG_XRAYS) != QUERY_FLAG(&refop,FLAG_XRAYS)){
+	success=1;
+	if(flag>0) {
+	    if(QUERY_FLAG(op,FLAG_WIZ))
+		new_draw_info(NDI_UNIQUE, 0, op,"Your vision becomes a little clearer.");
+	    else {
+		new_draw_info(NDI_UNIQUE, 0, op,"Everything becomes transparent.");
+		if(op->type==PLAYER)
+		    op->contr->do_los=1;
+	    }
+	} else {
+	    if(QUERY_FLAG(op,FLAG_WIZ))
+		new_draw_info(NDI_UNIQUE, 0, op,"Your vision becomes a bit out of focus.");
+	    else {
+		new_draw_info(NDI_UNIQUE, 0, op,"Everything suddenly looks very solid.");
+		if(op->type==PLAYER)
+		    op->contr->do_los=1;
+	    }
+	}
+    }
+
+    if(tmp->stats.luck) {
+	success=1;
+	DIFF_MSG(flag*tmp->stats.luck, "You feel more lucky.", "You feel less lucky.");
+    }
+
+    if(tmp->stats.hp && op->type==PLAYER) {
+	success=1;
+	DIFF_MSG(flag*tmp->stats.hp, "You feel much more healthy!",
+		 "You feel much less healthy!");
+    }
+
+    if(tmp->stats.sp && op->type==PLAYER && tmp->type!=SKILL) {
+	success=1;
+	DIFF_MSG(flag*tmp->stats.sp, "You feel one with the powers of magic!",
+		 "You suddenly feel very mundane.");
+    }
+
+    /* for the future when artifacts set this -b.t. */
+    if(tmp->stats.grace && op->type==PLAYER) {
+	success=1;
+	DIFF_MSG(flag*tmp->stats.grace, "You feel closer to your god!", 
+		 "You suddenly feel less holy.");
+    }
+
+    if(tmp->stats.food && op->type==PLAYER) {
+	success=1;
+	DIFF_MSG(flag*tmp->stats.food, "You feel your digestion slowing down.", 
+		 "You feel your digestion speeding up.");
+    }
+
+    /* Messages for changed resistance */
+    for (i=0; i<NROFATTACKS; i++) {
+	if (i==ATNR_PHYSICAL) continue;	/* Don't display about armour */
     
-    if (op->resist[i] != refop.resist[i]) {
-      success=1;
-      if (op->resist[i] > refop.resist[i])
-	sprintf(message, "Your resistance to %s rises to %d%%.",
-	       change_resist_msg[i], op->resist[i]);
-      else
-	sprintf(message, "Your resistance to %s drops to %d%%.",
-	       change_resist_msg[i], op->resist[i]);
+	if (op->resist[i] != refop.resist[i]) {
+	    success=1;
+	    if (op->resist[i] > refop.resist[i])
+		sprintf(message, "Your resistance to %s rises to %d%%.",
+			change_resist_msg[i], op->resist[i]);
+	    else
+		sprintf(message, "Your resistance to %s drops to %d%%.",
+			change_resist_msg[i], op->resist[i]);
       
-      new_draw_info(NDI_UNIQUE|NDI_BLUE, 0, op, message);
+	    new_draw_info(NDI_UNIQUE|NDI_BLUE, 0, op, message);
+	}
     }
-  }
 
-     if(tmp->type!=EXPERIENCE && !potion_max) {
+    if(tmp->type!=EXPERIENCE && !potion_max) {
 	for (j=0; j<NUM_STATS; j++) {
 	    if ((i=get_attr_value(&(tmp->stats),j))!=0) {
 		success=1;
-		if (i * flag > 0)
-		    new_draw_info(NDI_UNIQUE, 0, op, gain_msg[j]);
-		else
-		    new_draw_info(NDI_UNIQUE, 0, op, lose_msg[j]);
+		DIFF_MSG(i * flag, gain_msg[j], lose_msg[j]);
 	    }
 	}
     }
@@ -814,8 +804,6 @@ void fix_player(object *op) {
 	op->slaying=NULL;
     }
     if(!QUERY_FLAG(op,FLAG_WIZ)) {
-        if ( ! QUERY_FLAG (&op->arch->clone, FLAG_FLYING))
-	    CLEAR_FLAG(op, FLAG_FLYING);
 	CLEAR_FLAG(op, FLAG_XRAYS);
 	CLEAR_FLAG(op, FLAG_MAKE_INVIS);
     }
@@ -836,6 +824,7 @@ void fix_player(object *op) {
     op->path_repelled=op->arch->clone.path_repelled;
     op->path_denied=op->arch->clone.path_denied;
     op->glow_radius=op->arch->clone.glow_radius;
+    op->move_type = op->arch->clone.move_type;
     op->chosen_skill = NULL;
 
     /* initializing resistances from the values in player/monster's
@@ -986,6 +975,7 @@ void fix_player(object *op) {
 	    op->path_repelled|=tmp->path_repelled;
 	    op->path_denied|=tmp->path_denied;
 	    op->stats.luck+=tmp->stats.luck;
+	    op->move_type |= tmp->move_type;
 
 	    if(QUERY_FLAG(tmp,FLAG_LIFESAVE))       SET_FLAG(op,FLAG_LIFESAVE);
 	    if(QUERY_FLAG(tmp,FLAG_REFL_SPELL))	    SET_FLAG(op,FLAG_REFL_SPELL);
@@ -1001,12 +991,6 @@ void fix_player(object *op) {
 	    if(QUERY_FLAG(tmp,FLAG_MAKE_INVIS)) {
 		SET_FLAG(op,FLAG_MAKE_INVIS); 
 		op->invisible=1;
-	    }
-
-	    if(QUERY_FLAG(tmp,FLAG_FLYING)) {
-		SET_FLAG(op,FLAG_FLYING);
-		if(!QUERY_FLAG(op,FLAG_WIZ))
-		    max=1;
 	    }
 
 	    if(tmp->stats.exp && tmp->type!=SKILL) {
@@ -1364,6 +1348,15 @@ void fix_player(object *op) {
     if (ac>120) ac=120;
     else if (ac<-120) ac=-120;
     op->stats.ac=ac;
+
+    /* if for some reason the creature doesn't have any move type,
+     * give them walking as a default.
+     * The second case is a special case - to more closely mimic the
+     * old behaviour - if your flying, your not walking - just
+     * one or the other.
+     */
+    if (op->move_type == 0) op->move_type = MOVE_WALK;
+    else if (op->move_type & (MOVE_FLY_LOW | MOVE_FLY_HIGH)) op->move_type &= ~MOVE_WALK;
 
     update_ob_speed(op);
 }

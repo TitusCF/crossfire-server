@@ -76,7 +76,7 @@ void put_decor(mapstruct *map,char **maze,char *decorstyle,int decor_option,RMPa
 				this_object->x = x;
 				this_object->y = y;
 				/* it screws things up if decor can stop people */
-				CLEAR_FLAG(this_object,FLAG_NO_PASS);
+				this_object->move_block = MOVE_BLOCK_DEFAULT;
 				insert_ob_in_map(this_object,map,NULL,0);
 				number_to_place--;
 			 }
@@ -96,7 +96,7 @@ void put_decor(mapstruct *map,char **maze,char *decorstyle,int decor_option,RMPa
 				this_object->x = i;
 				this_object->y = j;
 				/* it screws things up if decor can stop people */
-				CLEAR_FLAG(this_object,FLAG_NO_PASS);
+				this_object->move_block = MOVE_BLOCK_DEFAULT;
 				insert_ob_in_map(this_object,map,NULL,0);
 			 }
 		  }

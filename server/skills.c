@@ -232,6 +232,7 @@ int steal(object* op, int dir, object *skill)
     object *tmp, *next;
     sint16 x, y;
     mapstruct *m;
+    int mflags;
 
     x = op->x + freearr_x[dir];
     y = op->y + freearr_y[dir];
@@ -242,9 +243,16 @@ int steal(object* op, int dir, object *skill)
     }
 
     m = op->map;
-    if(get_map_flags(m, &m ,x,y, &x, &y) & (P_WALL | P_OUT_OF_MAP)) {
+    mflags = get_map_flags(m, &m ,x,y, &x, &y);
+    /* Out of map - can't do it.  If nothing alive on this space,
+     * don't need to look any further.
+     */
+    if ((mflags & P_OUT_OF_MAP) || !(mflags & P_IS_ALIVE))
 	return 0;
-    }
+
+    /* If player can't move onto the space, can't steal from it. */
+    if (OB_TYPE_MOVE_BLOCK(op, GET_MAP_MOVE_BLOCK(m, x, y)))
+	return 0;
 
     /* Find the topmost object at this spot */
     for(tmp = get_map_ob(m,x,y);
@@ -253,19 +261,21 @@ int steal(object* op, int dir, object *skill)
 
     /* For all the stacked objects at this point, attempt a steal */
     for(; tmp != NULL; tmp = next) {
-      next = tmp->below;
-      /* Minor hack--for multi square beings - make sure we get 
-       * the 'head' coz 'tail' objects have no inventory! - b.t. 
-       */ 
-      if (tmp->head) tmp=tmp->head;
-      if(tmp->type!=PLAYER&&!QUERY_FLAG(tmp, FLAG_MONSTER)) continue;
-      /* do not reveal hidden DMs */
-      if (tmp->type == PLAYER && QUERY_FLAG(tmp, FLAG_WIZ) && tmp->contr->hidden) continue;
-      if (attempt_steal(tmp, op, skill)) {
-	  if(tmp->type==PLAYER) /* no xp for stealing from another player */
-	    return 0;
-	  else return (calc_skill_exp(op,tmp, skill));
-      }
+	next = tmp->below;
+	/* Minor hack--for multi square beings - make sure we get 
+	 * the 'head' coz 'tail' objects have no inventory! - b.t. 
+	 */ 
+	if (tmp->head) tmp=tmp->head;
+
+	if(tmp->type!=PLAYER && !QUERY_FLAG(tmp, FLAG_MONSTER)) continue;
+
+	/* do not reveal hidden DMs */
+	if (tmp->type == PLAYER && QUERY_FLAG(tmp, FLAG_WIZ) && tmp->contr->hidden) continue;
+	if (attempt_steal(tmp, op, skill)) {
+	    if (tmp->type==PLAYER) /* no xp for stealing from another player */
+		return 0;
+	    else return (calc_skill_exp(op,tmp, skill));
+	}
     }
     return 0;
 }
@@ -321,7 +331,7 @@ int pick_lock(object *pl, int dir, object *skill)
 	return 0;
     }
 
-    if (!QUERY_FLAG(tmp, FLAG_NO_PASS)) {
+    if (!tmp->move_block) {
 	new_draw_info(NDI_UNIQUE, 0,pl,"The door has no lock!");
 	return 0;
     }
@@ -402,7 +412,7 @@ int hide(object *op, object *skill) {
  * of jumping.
  */
 static void stop_jump(object *pl, int dist, int spaces) {
-    CLEAR_FLAG(pl,FLAG_FLYING);
+    fix_player(pl);
     insert_ob_in_map(pl,pl->map,pl,0);
 }
 
@@ -421,7 +431,14 @@ static int attempt_jump (object *pl, int dir, int spaces, object *skill) {
      */ 
 
     remove_ob(pl);
-    SET_FLAG(pl,FLAG_FLYING);
+
+    /* 
+     * I don't think this is actually needed - all the movement
+     * code is handled in this function, and I don't see anyplace
+     * that cares about the move_type being flying.
+     */
+    pl->move_type |= MOVE_FLY_LOW;
+
     for(i=0;i<=spaces;i++) { 
 	x = pl->x + dx;
 	y = pl->y + dy;
@@ -433,7 +450,7 @@ static int attempt_jump (object *pl, int dir, int spaces, object *skill) {
 	    (void) stop_jump(pl,i,spaces);
 	    return 0;
 	}
-	if (mflags & P_WALL) {
+	if (OB_TYPE_MOVE_BLOCK(pl, GET_MAP_MOVE_BLOCK(m, x, y))) {
 	    new_draw_info(NDI_UNIQUE, 0,pl,"Your jump is blocked.");
 	    stop_jump(pl,i,spaces);
 	    return 0;
@@ -457,7 +474,7 @@ static int attempt_jump (object *pl, int dir, int spaces, object *skill) {
 	     * we should get the effects - after all, the player is
 	     * effectively flying.
 	     */
-	    if(QUERY_FLAG(tmp, FLAG_FLY_ON)) { 
+	    if (tmp->move_on & MOVE_FLY_LOW) { 
 		pl->x = x;
 		pl->y = y;
 		pl->map = m;
@@ -1406,8 +1423,10 @@ static int do_throw(object *op, object *part, object *toss_item, int dir, object
     object *throw_ob=toss_item, *left=NULL;
     tag_t left_tag;
     int eff_str = 0,maxc,str=op->stats.Str,dam=0;
-    int pause_f,weight_f=0;
+    int pause_f,weight_f=0, mflags;
     float str_factor=1.0,load_factor=1.0,item_factor=1.0;
+    mapstruct *m;
+    sint16  sx, sy;
     tag_t tag;
 
     if(throw_ob==NULL) {
@@ -1463,11 +1482,13 @@ static int do_throw(object *op, object *part, object *toss_item, int dir, object
 #endif
 
     /* 3 things here prevent a throw, you aimed at your feet, you
-     * have no effective throwing strength, or you threw at a wall
-     */ 
-    if(!dir || (eff_str <= 1) ||
-	get_map_flags(part->map,NULL,
-		      part->x+freearr_x[dir],part->y+freearr_y[dir],NULL,NULL) & (P_WALL | P_OUT_OF_MAP)) {
+     * have no effective throwing strength, or you threw at something
+     * that flying objects can't get through.
+     */
+    mflags = get_map_flags(part->map,&m, part->x+freearr_x[dir],part->y+freearr_y[dir],&sx,&sy);
+
+    if(!dir || (eff_str <= 1) || (mflags & P_OUT_OF_MAP) ||
+       (GET_MAP_MOVE_BLOCK(m, sx, sy) & MOVE_FLY_LOW)) {
 
 	/* bounces off 'wall', and drops to feet */
 	remove_ob(throw_ob);
@@ -1622,9 +1643,9 @@ static int do_throw(object *op, object *part, object *toss_item, int dir, object
     throw_ob->speed_left = 0;
     throw_ob->map = part->map;
 
-    SET_FLAG(throw_ob, FLAG_FLYING);
-    SET_FLAG(throw_ob, FLAG_FLY_ON);
-    SET_FLAG(throw_ob, FLAG_WALK_ON);
+    throw_ob->move_type = MOVE_FLY_LOW;
+    throw_ob->move_on = MOVE_FLY_LOW | MOVE_WALK;
+
 #if 0
     /* need to put in a good sound for this */
     play_sound_map(op->map, op->x, op->y, SOUND_THROW_OBJ);
@@ -1655,4 +1676,3 @@ int skill_throw (object *op, object *part, int dir, const char *params, object *
 
     return do_throw(op,part, throw_ob,dir, skill);
 }
-
