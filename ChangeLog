@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/shop.c: adjust minimum value that shop_specialisation_ratio can
+return to 0.1. This should stop some prices being exceptionally high.
+Brendan Lally 2005-11-19
+
 Commit for new blocking code.  Not going to dictate all the changes -
 but will outline the broad points.  Note also that the
 doc/Developers/objects is updated and goes into more details also.

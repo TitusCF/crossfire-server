@@ -842,7 +842,7 @@ void sell_item(object *op, object *pl) {
 /* returns a double that is the ratio of the price that a shop will offer for
  * item based on the shops specialisation. Does not take account of greed, 
  * returned value is between (2*SPECIALISATION_EFFECT-1) and 1 and in any 
- * event is never less than 0.001 (calling functions divide by it)
+ * event is never less than 0.1 (calling functions divide by it)
  */
 double shop_specialisation_ratio(object *item, mapstruct *map) {
     shopitems *items=map->shopitems;
@@ -877,7 +877,7 @@ double shop_specialisation_ratio(object *item, mapstruct *map) {
 	likedness = -1.0; 
     }
     ratio = ratio + (1.0-ratio) * likedness;
-    if (ratio <= 0) ratio=0.001; /* negative prices could be interesting, but not very helpful */
+    if (ratio <= 0.1) ratio=0.1; /* if the ratio were much lower than this, we would get silly prices */
     return ratio;
 }
 
