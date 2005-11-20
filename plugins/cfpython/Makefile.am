@@ -31,11 +31,13 @@ else
 plugin_LTLIBRARIES = 
 endif
 cfpython_la_SOURCES = cfpython.c\
+	cfpython_archetype.c\
 	cfpython_object.c\
 	cfpython_map.c\
 	../common/plugin_common.c
 
 cfpython_la_CPSOURCES = cfpython.c\
+	cfpython_archetype.c\
 	cfpython_object.c\
 	cfpython_map.c
 
