@@ -24,64 +24,59 @@
 /*  You should have received a copy of the GNU General Public License        */
 /*  along with this program; if not, write to the Free Software              */
 /*  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.                */
-/*                                                                           */ /*****************************************************************************/
-#ifndef PLUGIN_PYTHON_H
-#define PLUGIN_PYTHON_H
+/*                                                                           */
+/*****************************************************************************/
 
-/* First the required header files - only the CF module interface and Python */
-#include <Python.h>
-#include <plugin.h>
+#include <cfpython.h>
+#include <cfpython_archetype_private.h>
 
-#undef MODULEAPI
-#ifdef WIN32
-#ifdef PYTHON_PLUGIN_EXPORTS
-#define MODULEAPI __declspec(dllexport)
-#else
-#define MODULEAPI __declspec(dllimport)
-#endif
-
-#else
-#define MODULEAPI
-#endif
-
-#define PLUGIN_NAME    "Python"
-#define PLUGIN_VERSION "CFPython Plugin 2.0a13 (Fido)"
-
-#include <plugin_common.h>
-#include <cfpython_object.h>
-#include <cfpython_map.h>
-#include <cfpython_archetype.h>
-
-typedef struct _cfpcontext
+static PyObject* Crossfire_Archetype_GetName( Crossfire_Archetype* whoptr, void* closure)
 {
-    struct _cfpcontext* down;
-    PyObject*   who;
-    PyObject*   activator;
-    PyObject*   third;
-    char        message[1024];
-    int         fix;
-    int         event_code;
-    char        script[1024];
-    char        options[1024];
-    int         returnvalue;
-    int         parms[5];
-} CFPContext;
+	return Py_BuildValue("s",cf_archetype_get_name(whoptr->arch));
+}
 
-extern f_plug_api gethook;
-extern CFPContext* context_stack;
-extern CFPContext* current_context;
-
-/* This structure is used to define one python-implemented crossfire command.*/
-typedef struct PythonCmdStruct
+static PyObject* Crossfire_Archetype_GetNext( Crossfire_Archetype* who, PyObject* args )
 {
-    char *name;    /* The name of the command, as known in the game.         */
-    char *script;  /* The name of the script file to bind.                   */
-    double speed;  /* The speed of the command execution.                    */
-} PythonCmd;
+	return Crossfire_Archetype_wrap(cf_archetype_get_next(who->arch));
+}
 
-/* This plugin allows up to 1024 custom commands.                            */
-#define NR_CUSTOM_CMD 1024
-PythonCmd CustomCommand[NR_CUSTOM_CMD];
-#include <cfpython_proto.h>
+static PyObject* Crossfire_Archetype_GetMore( Crossfire_Archetype* who, PyObject* args )
+{
+	return Crossfire_Archetype_wrap(cf_archetype_get_more(who->arch));
+}
 
-#endif /* PLUGIN_PYTHON_H */
+static PyObject* Crossfire_Archetype_GetHead( Crossfire_Archetype* who, PyObject* args )
+{
+	return Crossfire_Archetype_wrap(cf_archetype_get_head(who->arch));
+}
+
+static PyObject* Crossfire_Archetype_GetClone( Crossfire_Archetype* who, PyObject* args )
+{
+	return Crossfire_Object_wrap(cf_archetype_get_clone(who->arch));
+}
+
+static PyObject* Crossfire_Archetype_GetNewObject( Crossfire_Archetype* who, PyObject* args )
+{
+	return Crossfire_Object_wrap(cf_create_object_by_name(cf_archetype_get_name(who->arch)));
+}
+
+PyObject *Crossfire_Archetype_wrap(archetype *what)
+{
+    Crossfire_Archetype *wrapper;
+
+    /* return None if no object was to be wrapped */
+    if(what == NULL) {
+        Py_INCREF(Py_None);
+        return Py_None;
+    }
+
+    wrapper = PyObject_NEW(Crossfire_Archetype, &Crossfire_ArchetypeType);
+    if(wrapper != NULL)
+        wrapper->arch = what;
+    return (PyObject *)wrapper;
+}
+
+static int Crossfire_Archetype_InternalCompare(Crossfire_Archetype* left, Crossfire_Archetype* right)
+{
+	return ((int)left->arch - (int)right->arch);
+}

@@ -43,7 +43,7 @@
 #include <sproto.h>
 #endif
 
-#define NR_OF_HOOKS 70
+#define NR_OF_HOOKS 73
 
 static const hook_entry plug_hooks[NR_OF_HOOKS] =
 {
@@ -116,7 +116,9 @@ static const hook_entry plug_hooks[NR_OF_HOOKS] =
     {cfapi_object_speak,            66, "cfapi_object_speak"},
     {cfapi_object_pickup,           67, "cfapi_object_pickup"},
     {cfapi_object_move,             68, "cfapi_object_move"},
-    {cfapi_object_apply_below,      69, "cfapi_object_apply_below"}
+    {cfapi_object_apply_below,      69, "cfapi_object_apply_below"},
+	{cfapi_archetype_get_first,     70, "cfapi_archetype_get_first"},
+	{cfapi_archetype_get_property,  71, "cfapi_archetype_get_property"},
 };
 int plugin_number = 0;
 crossfire_plugin* plugins_list = NULL;
@@ -858,6 +860,9 @@ void* cfapi_map_get_map(int* type, ...)
             ny = va_arg(args, int);
             rv = get_map_from_coord(m, &nx,&ny);
             break;
+		case 3:
+			rv = first_map;
+			break;
         default:
             *type = CFAPI_NONE;
             va_end(args);
@@ -1087,6 +1092,11 @@ void* cfapi_map_get_map_property(int* type, ...)
             va_end(args);
             return buf;
             break;
+		case CFAPI_MAP_PROP_NEXT:
+			map = va_arg(args, mapstruct*);
+			*type = CFAPI_PMAP;
+			va_end(args);
+			return map->next;
         default:
             *type = CFAPI_NONE;
             va_end(args);
@@ -1837,7 +1847,7 @@ void* cfapi_object_set_property(int* type, ...)
     property = va_arg(args, int);
     rv = NULL;
 
-    if (op != NULL)
+    if (op != NULL && (!op->arch || (op != &op->arch->clone)))
         switch (property)
         {
             case CFAPI_OBJECT_PROP_NAME              :
@@ -3148,6 +3158,58 @@ void* cfapi_object_pickup(int *type, ...)
     *type = CFAPI_NONE;
     return NULL;
 }
+
+/* Archetype-related functions */
+void* cfapi_archetype_get_first(int* type, ...)
+{
+	va_list args;
+	va_start(args, type);
+	va_end(args);
+	*type = CFAPI_PARCH;
+	return first_archetype;
+}
+
+void* cfapi_archetype_get_property(int* type, ...)
+{
+	archetype* arch;
+	int prop;
+	va_list args;
+	void* rv;
+
+	va_start(args, type);
+	arch = va_arg(args, archetype*);
+	prop = va_arg(args, int);
+	switch (prop)
+	{
+		case CFAPI_ARCH_PROP_NAME:
+			*type = CFAPI_STRING;
+			rv = (void*)arch->name;
+			break;
+		case CFAPI_ARCH_PROP_NEXT:
+			*type = CFAPI_PARCH;
+			rv = arch->next;
+			break;
+		case CFAPI_ARCH_PROP_HEAD:
+			*type = CFAPI_PARCH;
+			rv = arch->head;
+			break;
+		case CFAPI_ARCH_PROP_MORE:
+			*type = CFAPI_PARCH;
+			rv = arch->more;
+			break;
+		case CFAPI_ARCH_PROP_CLONE:
+			*type = CFAPI_POBJECT;
+			rv = &arch->clone;
+			break;
+		default:
+			*type = CFAPI_NONE;
+			rv = NULL;
+			break;
+	}
+	va_end(args);
+	return rv;
+}
+
 /*****************************************************************************/
 /* NEW PLUGIN STUFF ENDS HERE                                                */
 /*****************************************************************************/

@@ -105,6 +105,8 @@ static PyObject* getScriptName(PyObject* self, PyObject* args);
 static PyObject* getScriptParameters(PyObject* self, PyObject* args);
 static PyObject* getPrivateDictionary(PyObject* self, PyObject* args);
 static PyObject* getSharedDictionary(PyObject* self, PyObject* args);
+static PyObject* getArchetypes(PyObject* self, PyObject* args);
+static PyObject* getMaps(PyObject* self, PyObject* args);
 static PyObject* registerCommand(PyObject* self, PyObject* args);
 static PyObject* registerGEvent(PyObject* self, PyObject* args);
 static PyObject* unregisterGEvent(PyObject* self, PyObject* args);
@@ -161,6 +163,8 @@ static PyMethodDef CFPythonMethods[] = {
     {"CreateObjectByName",  createCFObjectByName,   METH_VARARGS},
     {"GetPrivateDictionary",  getPrivateDictionary,   METH_VARARGS},
     {"GetSharedDictionary",  getSharedDictionary,   METH_VARARGS},
+    {"GetArchetypes",       getArchetypes,          METH_VARARGS},
+    {"GetMaps",             getMaps,                METH_VARARGS},
     {"RegisterCommand",     registerCommand,        METH_VARARGS},
     {"RegisterGlobalEvent", registerGEvent,         METH_VARARGS},
     {"UnregisterGlobalEvent",unregisterGEvent,      METH_VARARGS},
@@ -469,8 +473,7 @@ static PyObject* getWhatIsMessage(PyObject* self, PyObject* args)
 
     if (current_context->message == NULL)
     {
-        Py_INCREF(Py_None);
-        return Py_None;
+        return Py_BuildValue("");
     }
     else
         return Py_BuildValue("s",current_context->message);
@@ -513,6 +516,36 @@ static PyObject* getSharedDictionary(PyObject* self, PyObject* args)
 
 	Py_INCREF(shared_data);
 	return shared_data;
+}
+
+static PyObject* getArchetypes(PyObject* self, PyObject* args)
+{
+	PyObject* list;
+	archetype* arch;
+
+	list = PyList_New(0);
+	arch = cf_archetype_get_first();
+	while (arch)
+	{
+		PyList_Append(list,Crossfire_Archetype_wrap(arch));
+		arch = cf_archetype_get_next(arch);
+	}
+	return list;
+}
+
+static PyObject* getMaps(PyObject* self, PyObject* args)
+{
+	PyObject* list;
+	mapstruct* map;
+
+	list = PyList_New(0);
+	map = cf_map_get_first();
+	while (map)
+	{
+		PyList_Append(list,Crossfire_Map_wrap(map));
+		map = cf_map_get_property(map,CFAPI_MAP_PROP_NEXT);
+	}
+	return list;
 }
 
 static PyObject* registerCommand(PyObject* self, PyObject* args)
@@ -601,19 +634,23 @@ CF_PLUGIN int initPlugin(const char* iversion, f_plug_api gethooksptr)
     Crossfire_ObjectType.tp_new = PyType_GenericNew;
     Crossfire_MapType.tp_new    = PyType_GenericNew;
     Crossfire_PlayerType.tp_new = PyType_GenericNew;
+	Crossfire_ArchetypeType.tp_new = PyType_GenericNew;
     PyType_Ready(&Crossfire_ObjectType);
     PyType_Ready(&Crossfire_MapType);
     PyType_Ready(&Crossfire_PlayerType);
+	PyType_Ready(&Crossfire_ArchetypeType);
 
     m = Py_InitModule("Crossfire", CFPythonMethods);
     d = PyModule_GetDict(m);
     Py_INCREF(&Crossfire_ObjectType);
     Py_INCREF(&Crossfire_MapType);
     Py_INCREF(&Crossfire_PlayerType);
+	Py_INCREF(&Crossfire_ArchetypeType);
 
     PyModule_AddObject(m, "Object", (PyObject*)&Crossfire_ObjectType);
     PyModule_AddObject(m, "Map", (PyObject*)&Crossfire_MapType);
     PyModule_AddObject(m, "Player", (PyObject*)&Crossfire_PlayerType);
+	PyModule_AddObject(m, "Archetype", (PyObject*)&Crossfire_ArchetypeType);
 
     CFPythonError = PyErr_NewException("Crossfire.error",NULL,NULL);
     PyDict_SetItemString(d,"error",CFPythonError);

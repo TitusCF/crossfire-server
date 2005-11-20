@@ -1523,6 +1523,13 @@ static PyObject* Crossfire_Object_WriteKey( Crossfire_Object* who, PyObject* arg
     Py_INCREF(Py_None);
     return Py_None;
 }
+static PyObject* Crossfire_Object_Archetype(Crossfire_Object* who, PyObject* args)
+{
+    if (!PyArg_ParseTuple(args,""))
+        return NULL;
+	return Crossfire_Archetype_wrap(cf_object_get_property(who->obj, CFAPI_OBJECT_PROP_ARCHETYPE));
+}
+
 static PyObject* Crossfire_Object_CheckInventory( Crossfire_Object* who, PyObject* args )
 {
     char* whatstr;

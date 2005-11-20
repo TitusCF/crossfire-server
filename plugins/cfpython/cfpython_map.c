@@ -30,7 +30,7 @@
 
 static PyObject* Map_GetDifficulty(Crossfire_Map* whoptr, void* closure)
 {
-    return Py_BuildValue("i", cf_map_get_property(whoptr->map, CFAPI_MAP_PROP_DIFFICULTY));
+    return Py_BuildValue("i", *(int*)cf_map_get_property(whoptr->map, CFAPI_MAP_PROP_DIFFICULTY));
 }
 static PyObject* Map_GetPath(Crossfire_Map* whoptr, void* closure)
 {
@@ -46,23 +46,23 @@ static PyObject* Map_GetName(Crossfire_Map* whoptr, void* closure)
 }
 static PyObject* Map_GetResetTime(Crossfire_Map* whoptr, void* closure)
 {
-    return Py_BuildValue("i", cf_map_get_property(whoptr->map, CFAPI_MAP_PROP_RESET_TIME));
+    return Py_BuildValue("i", *(int*)cf_map_get_property(whoptr->map, CFAPI_MAP_PROP_RESET_TIME));
 }
 static PyObject* Map_GetResetTimeout(Crossfire_Map* whoptr, void* closure)
 {
-    return Py_BuildValue("i", cf_map_get_property(whoptr->map, CFAPI_MAP_PROP_RESET_TIMEOUT));
+    return Py_BuildValue("i", *(int*)cf_map_get_property(whoptr->map, CFAPI_MAP_PROP_RESET_TIMEOUT));
 }
 static PyObject* Map_GetPlayers(Crossfire_Map* whoptr, void* closure)
 {
-    return Py_BuildValue("i", cf_map_get_property(whoptr->map, CFAPI_MAP_PROP_PLAYERS));
+    return Py_BuildValue("i", *(int*)cf_map_get_property(whoptr->map, CFAPI_MAP_PROP_PLAYERS));
 }
 static PyObject* Map_GetLight(Crossfire_Map* whoptr, void* closure)
 {
-    return Py_BuildValue("i", cf_map_get_property(whoptr->map, CFAPI_MAP_PROP_LIGHT));
+    return Py_BuildValue("i", *(int*)cf_map_get_property(whoptr->map, CFAPI_MAP_PROP_LIGHT));
 }
 static PyObject* Map_GetDarkness(Crossfire_Map* whoptr, void* closure)
 {
-    return Py_BuildValue("i", cf_map_get_property(whoptr->map, CFAPI_MAP_PROP_DARKNESS));
+    return Py_BuildValue("i", *(int*)cf_map_get_property(whoptr->map, CFAPI_MAP_PROP_DARKNESS));
 }
 static PyObject* Map_GetWidth(Crossfire_Map* whoptr, void* closure)
 {
@@ -78,7 +78,7 @@ static PyObject* Map_GetEnterX(Crossfire_Map* whoptr, void* closure)
 }
 static PyObject* Map_GetEnterY(Crossfire_Map* whoptr, void* closure)
 {
-    return Py_BuildValue("i", cf_map_get_property(whoptr->map, CFAPI_MAP_PROP_ENTER_Y));
+    return Py_BuildValue("i", *(int*)cf_map_get_property(whoptr->map, CFAPI_MAP_PROP_ENTER_Y));
 }
 static PyObject* Map_GetTemperature(Crossfire_Map* whoptr, void* closure)
 {
@@ -98,19 +98,19 @@ static PyObject* Map_GetWindSpeed(Crossfire_Map* whoptr, void* closure)
 }
 static PyObject* Map_GetWindDir(Crossfire_Map* whoptr, void* closure)
 {
-    return Py_BuildValue("i", cf_map_get_property(whoptr->map, CFAPI_MAP_PROP_WINDDIR));
+    return Py_BuildValue("i", *(int*)cf_map_get_property(whoptr->map, CFAPI_MAP_PROP_WINDDIR));
 }
 static PyObject* Map_GetSky(Crossfire_Map* whoptr, void* closure)
 {
-    return Py_BuildValue("i", cf_map_get_property(whoptr->map, CFAPI_MAP_PROP_SKY));
+    return Py_BuildValue("i", *(int*)cf_map_get_property(whoptr->map, CFAPI_MAP_PROP_SKY));
 }
 static PyObject* Map_GetWPartX(Crossfire_Map* whoptr, void* closure)
 {
-    return Py_BuildValue("i", cf_map_get_property(whoptr->map, CFAPI_MAP_PROP_WPARTX));
+    return Py_BuildValue("i", *(int*)cf_map_get_property(whoptr->map, CFAPI_MAP_PROP_WPARTX));
 }
 static PyObject* Map_GetWPartY(Crossfire_Map* whoptr, void* closure)
 {
-    return Py_BuildValue("i", cf_map_get_property(whoptr->map, CFAPI_MAP_PROP_WPARTY));
+    return Py_BuildValue("i", *(int*)cf_map_get_property(whoptr->map, CFAPI_MAP_PROP_WPARTY));
 }
 static PyObject* Map_GetMessage(Crossfire_Map* whoptr, void* closure)
 {
@@ -139,14 +139,7 @@ static PyObject* Map_GetFirstObjectAt(Crossfire_Map* map, PyObject* args)
         return NULL;
 
     val = cf_map_get_object_at(map->map,x,y);
-
-    if (val != NULL)
-        return Crossfire_Object_wrap(val);
-    else
-    {
-        Py_INCREF(Py_None);
-        return Py_None;
-    }
+    return Crossfire_Object_wrap(val);
 }
 static PyObject* Map_CreateObject(Crossfire_Map* map, PyObject* args)
 {
@@ -189,6 +182,10 @@ static PyObject* Map_Check(Crossfire_Map* map, PyObject* args)
     }
     foundob = cf_map_present_arch_by_name(what, map->map, nx, ny);
     return Crossfire_Object_wrap(foundob);
+}
+static PyObject* Map_Next(Crossfire_Map* map, PyObject* args)
+{
+	return Crossfire_Map_wrap(cf_map_get_property(map->map,CFAPI_MAP_PROP_NEXT));
 }
 
 static int Map_InternalCompare(Crossfire_Map* left, Crossfire_Map* right)

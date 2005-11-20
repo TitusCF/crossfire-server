@@ -650,6 +650,8 @@ void *cfapi_object_teleport(int *type, ...);
 void* cfapi_object_pickup(int *type, ...);
 void* cfapi_object_move(int* type, ...);
 void* cfapi_object_apply_below(int* type, ...);
+void* cfapi_archetype_get_first(int* type, ...);
+void* cfapi_archetype_get_property(int* type, ...);
 
 CommArray_s *find_plugin_command(char *cmd, object *op);
 int initPlugins(void);

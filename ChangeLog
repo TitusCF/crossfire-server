@@ -17,6 +17,20 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Plugins can now get archetypes. Added a check in cfapi_object_set_property to
+ prevent changing archtypes.
+Fixed some Python bugs related to map properties.
+Added Crossfire.GetArchetypes and Crossfire.GetMaps to get all archetypes/maps.
+Modified files:
+ include/plugin.h sproto.h
+ plugins/cfpython/include: cfpython.h cfpython_map_private.h cfpython_object_private.h
+ plugins/cfpython/cfpython.c cfpython_map.c cfpython_object.c
+ server/plugins.c
+New files:
+ plugins/cfpython/include/cfpython_archetype.h cfpython_archetype_private.h
+ plugins/cfpython/cfpython_archetype.c
+Ryo 2005-11-20
+
 server/shop.c: adjust minimum value that shop_specialisation_ratio can
 return to 0.1. This should stop some prices being exceptionally high.
 Brendan Lally 2005-11-19

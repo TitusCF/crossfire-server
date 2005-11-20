@@ -269,6 +269,13 @@ extern crossfire_plugin* plugins_list;
 #define CFAPI_MAP_PROP_WPARTX               20
 #define CFAPI_MAP_PROP_WPARTY               21
 #define CFAPI_MAP_PROP_MESSAGE              22
+#define CFAPI_MAP_PROP_NEXT                 23
+
+#define CFAPI_ARCH_PROP_NAME				0
+#define CFAPI_ARCH_PROP_NEXT				1
+#define CFAPI_ARCH_PROP_HEAD				2
+#define CFAPI_ARCH_PROP_MORE				3
+#define CFAPI_ARCH_PROP_CLONE				4
 
 /*****************************************************************************/
 /* Exportable functions. Any plugin should define all those.                 */

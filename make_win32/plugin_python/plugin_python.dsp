@@ -104,6 +104,10 @@ SOURCE=..\..\plugins\cfpython\cfpython.c
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\plugins\cfpython\cfpython_archetype.c
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\plugins\cfpython\cfpython_map.c
 # End Source File
 # Begin Source File
@@ -117,6 +121,14 @@ SOURCE=..\..\plugins\cfpython\cfpython_object.c
 # Begin Source File
 
 SOURCE=..\..\plugins\cfpython\include\cfpython.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\plugins\cfpython\include\cfpython_archetype.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\plugins\cfpython\include\cfpython_archetype_private.h
 # End Source File
 # Begin Source File
 
