@@ -17,6 +17,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+plugins/cfpython/Makefile.in: rebuilt.
+Andreas Kirschbaum 2005-11-23
+
 Plugins can now get archetypes. Added a check in cfapi_object_set_property to
  prevent changing archtypes.
 Fixed some Python bugs related to map properties.

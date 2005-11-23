@@ -85,8 +85,8 @@ am__installdirs = "$(DESTDIR)$(plugindir)"
 pluginLTLIBRARIES_INSTALL = $(INSTALL)
 LTLIBRARIES = $(plugin_LTLIBRARIES)
 cfpython_la_DEPENDENCIES =
-am_cfpython_la_OBJECTS = cfpython.lo cfpython_object.lo \
-	cfpython_map.lo plugin_common.lo cfpython_archetype.lo
+am_cfpython_la_OBJECTS = cfpython.lo cfpython_archetype.lo \
+	cfpython_object.lo cfpython_map.lo plugin_common.lo
 cfpython_la_OBJECTS = $(am_cfpython_la_OBJECTS)
 @PYTHON_PLUGIN_TRUE@am_cfpython_la_rpath = -rpath $(plugindir)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)/include
