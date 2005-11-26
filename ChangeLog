@@ -17,6 +17,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+plugins/cfpython/cfpython_map.c: use wrappers instead of direct property access.
+plugins/common/include/plugin_common.h: new wrappers for maps.
+plugins/common/plugin_common.c: new wrappers for maps.
+Ryo 2005-11-26
+
 plugins/cfpython/Makefile.in: rebuilt.
 Andreas Kirschbaum 2005-11-23
 

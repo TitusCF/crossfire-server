@@ -98,6 +98,8 @@ static f_plug_api cfapiObject_get_key = NULL;
 static f_plug_api cfapiObject_set_key = NULL;
 static f_plug_api cfapiObject_move = NULL;
 static f_plug_api cfapiObject_apply_below = NULL;
+static f_plug_api cfapiArchetype_get_first = NULL;
+static f_plug_api cfapiArchetype_get_property = NULL;
 
 #define GET_HOOK( x, y, z ) \
     { \
@@ -105,7 +107,6 @@ static f_plug_api cfapiObject_apply_below = NULL;
     if ( z != CFAPI_FUNC ) {\
         printf( "unable to find hook %s!\n", y ); return 0; \
     } }
-
 
 int cf_init_plugin( f_plug_api getHooks )
 {
@@ -174,6 +175,8 @@ int cf_init_plugin( f_plug_api getHooks )
     GET_HOOK( cfapiObject_set_key, "cfapi_object_set_key", z );
     GET_HOOK( cfapiObject_move, "cfapi_object_move", z );
     GET_HOOK( cfapiObject_apply_below, "cfapi_object_apply_below", z );
+    GET_HOOK( cfapiArchetype_get_first, "cfapi_archetype_get_first", z );
+    GET_HOOK( cfapiArchetype_get_property, "cfapi_archetype_get_property", z );
     return 1;
 }
 
@@ -342,6 +345,11 @@ mapstruct* cf_map_get_map( char* name )
 {
     int val;
     return cfapiMap_get_map( &val, 1, name, 0);
+}
+mapstruct*   cf_map_get_first()
+{
+    int val;
+    return cfapiMap_get_map( &val, 3);
 }
 int cf_object_query_money( object* op)
 {
@@ -572,6 +580,102 @@ object* cf_map_present_arch_by_name(const char* str, mapstruct* map, int nx, int
     int val;
     return (object*)cfapiMap_present_arch_by_name(&val, str,map,nx,ny);
 }
+
+static int cf_get_map_int_property(mapstruct* map, int property)
+{
+	int type;
+	void* rv;
+	rv = cfapiMap_get_property(&type, property, map);
+	if ( !rv || type != CFAPI_INT )
+		return PLUGIN_ERROR_INT;
+	return *(int*)rv;
+}
+
+int cf_map_get_difficulty(mapstruct* map)
+{
+	return cf_get_map_int_property(map,CFAPI_MAP_PROP_DIFFICULTY);
+}
+
+int cf_map_get_reset_time(mapstruct* map)
+{
+	return cf_get_map_int_property(map,CFAPI_MAP_PROP_RESET_TIME);
+}
+
+int cf_map_get_reset_timeout(mapstruct* map)
+{
+	return cf_get_map_int_property(map,CFAPI_MAP_PROP_RESET_TIMEOUT);
+}
+
+int cf_map_get_players(mapstruct* map)
+{
+	return cf_get_map_int_property(map,CFAPI_MAP_PROP_PLAYERS);
+}
+
+int cf_map_get_darkness(mapstruct* map)
+{
+	return cf_get_map_int_property(map,CFAPI_MAP_PROP_DARKNESS);
+}
+
+int cf_map_get_width(mapstruct* map)
+{
+	return cf_get_map_int_property(map,CFAPI_MAP_PROP_WIDTH);
+}
+
+int cf_map_get_height(mapstruct* map)
+{
+	return cf_get_map_int_property(map,CFAPI_MAP_PROP_HEIGHT);
+}
+
+int cf_map_get_enter_x(mapstruct* map)
+{
+	return cf_get_map_int_property(map,CFAPI_MAP_PROP_ENTER_X);
+}
+
+int cf_map_get_enter_y(mapstruct* map)
+{
+	return cf_get_map_int_property(map,CFAPI_MAP_PROP_ENTER_Y);
+}
+
+int cf_map_get_temperature(mapstruct* map)
+{
+	return cf_get_map_int_property(map,CFAPI_MAP_PROP_TEMPERATURE);
+}
+
+int cf_map_get_pressure(mapstruct* map)
+{
+	return cf_get_map_int_property(map,CFAPI_MAP_PROP_PRESSURE);
+}
+
+int cf_map_get_humidity(mapstruct* map)
+{
+	return cf_get_map_int_property(map,CFAPI_MAP_PROP_HUMIDITY);
+}
+
+int cf_map_get_windspeed(mapstruct* map)
+{
+	return cf_get_map_int_property(map,CFAPI_MAP_PROP_WINDSPEED);
+}
+
+int cf_map_get_winddir(mapstruct* map)
+{
+	return cf_get_map_int_property(map,CFAPI_MAP_PROP_WINDDIR);
+}
+
+int cf_map_get_sky(mapstruct* map)
+{
+	return cf_get_map_int_property(map,CFAPI_MAP_PROP_SKY);
+}
+
+int cf_map_get_wpartx(mapstruct* map)
+{
+	return cf_get_map_int_property(map,CFAPI_MAP_PROP_WPARTX);
+}
+
+int cf_map_get_wparty(mapstruct* map)
+{
+	return cf_get_map_int_property(map,CFAPI_MAP_PROP_WPARTY);
+}
+
 void cf_object_update( object* op, int flags)
 {
     int val;
@@ -606,6 +710,42 @@ void cf_object_set_key(object* op, char* keyname, char* value)
 {
     int val;
     cfapiObject_set_key(&val, op, keyname, value);
+}
+
+archetype*cf_archetype_get_first()
+{
+    int val;
+    return cfapiArchetype_get_first(&val);
+}
+
+const char*  cf_archetype_get_name(archetype* arch)
+{
+    int val;
+    return cfapiArchetype_get_property(&val, arch, CFAPI_ARCH_PROP_NAME);
+}
+
+archetype* cf_archetype_get_next(archetype* arch)
+{
+    int val;
+    return cfapiArchetype_get_property(&val, arch, CFAPI_ARCH_PROP_NEXT);
+}
+
+archetype* cf_archetype_get_more(archetype* arch)
+{
+    int val;
+    return cfapiArchetype_get_property(&val, arch, CFAPI_ARCH_PROP_MORE);
+}
+
+archetype* cf_archetype_get_head(archetype* arch)
+{
+    int val;
+    return cfapiArchetype_get_property(&val, arch, CFAPI_ARCH_PROP_HEAD);
+}
+
+object* cf_archetype_get_clone(archetype* arch)
+{
+    int val;
+    return cfapiArchetype_get_property(&val, arch, CFAPI_ARCH_PROP_CLONE);
 }
 
 #ifdef WIN32
