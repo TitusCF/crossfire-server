@@ -73,7 +73,8 @@ PostBuild_Cmds=copy FullDebug\plugin_python.dll ..\..\share\plugins\*.*
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MT /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "PLUGIN_PYTHON_EXPORTS" /YX /FD /c
-# ADD CPP /nologo /MD /W3 /GX /O2 /I "C:\Program Files\Python 2.4\include" /I "../../plugins/cfpython/include" /I "../../plugins/common/include" /I "../../include" /D "_WINDOWS" /D "_USRDLL" /D "PYTHON_PLUGIN_EXPORTS" /D "WIN32" /D "NDEBUG" /D "_MBCS" /FR /YX"plugin.pch" /FD /c
+# ADD CPP /nologo /MD /W3 /GX /O2 /I "C:\Program Files\Python 2.4\include" /I "../../plugins/cfpython/include" /I "../../plugins/common/include" /I "../../include" /D "_WINDOWS" /D "_USRDLL" /D "PYTHON_PLUGIN_EXPORTS" /D "WIN32" /D "NDEBUG" /D "_MBCS" /YX"plugin.pch" /FD /c
+# SUBTRACT CPP /Fr
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x407 /d "NDEBUG"

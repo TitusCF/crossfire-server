@@ -86,6 +86,15 @@ LIB32=link.exe -lib
 # Begin Source File
 
 SOURCE=..\..\plugins\common\plugin_common.c
+
+!IF  "$(CFG)" == "plugin_common - Win32 FullDebug"
+
+# ADD CPP /FR
+
+!ELSEIF  "$(CFG)" == "plugin_common - Win32 ReleaseLog"
+
+!ENDIF 
+
 # End Source File
 # End Group
 # Begin Group "Header Files"

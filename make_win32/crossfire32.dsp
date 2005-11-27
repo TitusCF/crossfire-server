@@ -1839,7 +1839,7 @@ SOURCE=..\common\loader.c
 !IF  "$(CFG)" == "crossfire32 - Win32 FullDebug"
 
 # PROP Intermediate_Dir "FullDebug\common"
-# ADD CPP /D "YY_NO_UNISTD_H" /D "YY_USE_CONST"
+# ADD CPP /D "YY_NO_UNISTD_H" /D "YY_USE_CONST" /D "YY_NEVER_INTERACTIVE"
 
 !ELSEIF  "$(CFG)" == "crossfire32 - Win32 ReleaseQuit"
 
@@ -1850,7 +1850,7 @@ SOURCE=..\common\loader.c
 !ELSEIF  "$(CFG)" == "crossfire32 - Win32 ReleaseLog"
 
 # PROP Intermediate_Dir "ReleaseLog\common"
-# ADD CPP /D "YY_NO_UNISTD_H" /D "YY_USE_CONST"
+# ADD CPP /D "YY_NO_UNISTD_H" /D "YY_USE_CONST" /D "YY_NEVER_INTERACTIVE"
 
 !ENDIF 
 
@@ -2816,6 +2816,10 @@ SOURCE=..\common\loader.l
 # Begin Source File
 
 SOURCE=..\random_maps\reader.l
+# End Source File
+# Begin Source File
+
+SOURCE=..\share\settings
 # End Source File
 # End Target
 # End Project
