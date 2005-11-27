@@ -711,7 +711,7 @@ void clear_skill(object *who);
 int do_skill(object *op, object *part, object *skill, int dir, const char *string);
 int calc_skill_exp(object *who, object *op, object *skill);
 int learn_skill(object *pl, object *scroll);
-void show_skills(object *op);
+void show_skills(object *op, const char* search);
 int use_skill(object *op, const char *string);
 int skill_attack(object *tmp, object *pl, int dir, const char *string, object *skill);
 int attack_hth(object *pl, int dir, const char *string, object *skill);

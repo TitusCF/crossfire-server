@@ -17,6 +17,14 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Basically added a parameter to 'skills' command to filter skills. And one char/const char* fix.
+common/anim.c: use const char* for find_animation.
+include/libproto.h: find_animation uses a const char*.
+include/sproto.h: fix prototype.
+server/c_wiz.c: send parameter to show_skills.
+server/skill_util.c: add search parameter to show_skills command.
+Ryo 2005-11-27
+
 plugins/cfpython/cfpython_map.c: use wrappers instead of direct property access.
 plugins/common/include/plugin_common.h: new wrappers for maps.
 plugins/common/plugin_common.c: new wrappers for maps.

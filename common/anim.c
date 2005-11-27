@@ -124,7 +124,7 @@ static int anim_compare(Animations *a, Animations *b) {
 /* Tries to find the animation id that matches name.  Returns an integer match 
  * 0 if no match found (animation 0 is initialized as the 'bug' face
  */
-int find_animation(char *name)
+int find_animation(const char *name)
 {
     Animations search, *match;
 

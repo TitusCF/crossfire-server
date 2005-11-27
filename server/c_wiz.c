@@ -844,7 +844,7 @@ int command_inventory (object *op, char *params)
 
 int command_skills (object *op, char *params)
 {
- 	show_skills(op);
+ 	show_skills(op, params);
  	return 0;
 }
 

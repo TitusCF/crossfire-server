@@ -646,7 +646,7 @@ static int clipped_percent(sint64 a, sint64 b)
  * simpler.
  */
  
-void show_skills(object *op) {
+void show_skills(object *op, const char* search) {
     object *tmp=NULL;
     char buf[MAX_BUF];
     const char *cp;
@@ -658,6 +658,7 @@ void show_skills(object *op) {
 
     for (tmp=op->inv; tmp!=NULL; tmp=tmp->below) {
 	if (tmp->type == SKILL) {
+		if ( search && strstr(tmp->name,search)==NULL ) continue;
 	    /* Basically want to fill this out to 40 spaces with periods */
 	    sprintf(buf,"%s%s", tmp->name, periods);
 	    buf[40] = 0;

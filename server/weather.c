@@ -429,7 +429,7 @@ void tick_the_clock(void)
     /* perform_weather must follow calculators */
     perform_weather();
 	if (settings.dynamiclevel > 0) {
-		write_weather_images();
+/*		write_weather_images();*/
 		spin_globe();
 	}
 }
@@ -1358,6 +1358,9 @@ static void perform_weather(void)
 	wmperformstartx++;
     if (wmperformstarty == settings.worldmaptilesy)
 	wmperformstartx = wmperformstarty = 0;
+
+	wmperformstartx = 3;
+	wmperformstarty = 27;
     
     sprintf(filename, "world/world_%d_%d",
 	wmperformstartx+settings.worldmapstartx,
@@ -1601,6 +1604,9 @@ static void let_it_snow(mapstruct *m, int wx, int wy)
 		    if (!strcmp(oldsnow->arch->name, at->name))
 			at = NULL;
 		    else {
+				if (!strcmp(oldsnow->name,"grass")) {
+					LOG(llevError,"grass");
+				}
 			remove_ob(oldsnow);
 			free_object(oldsnow);
 			tmp=GET_MAP_OB(m, x, y);
@@ -1627,6 +1633,9 @@ static void let_it_snow(mapstruct *m, int wx, int wy)
 			}
 			if (tmp != NULL && doublestack2 != NULL)
 			    if (strcmp(tmp->arch->name, doublestack2) == 0) {
+					if (!strcmp(tmp->name,"grass")) {
+					LOG(llevError,"grass");
+				}
 				remove_ob(tmp);
 				free_object(tmp);
 			    }
@@ -1670,6 +1679,9 @@ static void let_it_snow(mapstruct *m, int wx, int wy)
 		    }
 		    if (avoid) {
 			/* replace snow with a big puddle */
+				if (!strcmp(tmp->name,"grass")) {
+					LOG(llevError,"grass");
+				}
 			remove_ob(tmp);
 			free_object(tmp);
 			tmp=GET_MAP_OB(m, x, y);
@@ -1834,6 +1846,9 @@ static void singing_in_the_rain(mapstruct *m, int wx, int wy)
 			at = NULL;
 		    else {
 			tmp=GET_MAP_OB(m, x, y);
+			if (!strcmp(oldsnow->name,"grass")) {
+					LOG(llevError,"grass");
+				}
 			remove_ob(oldsnow);
 			/* clean up the trees we put over the snow */
 			found = 0;
@@ -1858,6 +1873,9 @@ static void singing_in_the_rain(mapstruct *m, int wx, int wy)
 			free_object(oldsnow);
 			if (tmp != NULL && doublestack2 != NULL)
 			    if (strcmp(tmp->arch->name, doublestack2) == 0) {
+					if (!strcmp(tmp->name,"grass")) {
+					LOG(llevError,"grass");
+				}
 				remove_ob(tmp);
 				free_object(tmp);
 			    }
@@ -1870,6 +1888,10 @@ static void singing_in_the_rain(mapstruct *m, int wx, int wy)
 		    ob->y = y;
 		    SET_FLAG(ob, FLAG_OVERLAY_FLOOR);
 		    ob->material = M_LIQUID;
+			if ( x == 10 && y == 10 )
+			{
+				x = x;
+			}
 		    insert_ob_in_map(ob, m, ob,
 		        INS_NO_MERGE | INS_NO_WALK_ON | INS_ABOVE_FLOOR_ONLY);
 		    if (two) {
@@ -1879,6 +1901,10 @@ static void singing_in_the_rain(mapstruct *m, int wx, int wy)
 			    copy_object(&at->clone, ob);
 			    ob->x = x;
 			    ob->y = y;
+				if ( x == 10 && y == 10 )
+				{
+					x = x;
+				}
 			    insert_ob_in_map(ob, m, ob,
 				INS_NO_MERGE | INS_NO_WALK_ON | INS_ON_TOP);
 			}
@@ -1905,6 +1931,9 @@ static void singing_in_the_rain(mapstruct *m, int wx, int wy)
 			else if (!strcmp(tmp->arch->name, "mountain2_rivlets"))
 			avoid++;
 		    if (avoid) {
+			if (!strcmp(tmp->name,"grass")) {
+					LOG(llevError,"grass");
+				}
 			remove_ob(tmp);
 			free_object(tmp);
 			if (weathermap[wx][wy].humid < 100 && rndm(0, 50) == 0)
@@ -1932,6 +1961,9 @@ static void singing_in_the_rain(mapstruct *m, int wx, int wy)
 			}
 			if (tmp != NULL && doublestack2 != NULL)
 			    if (strcmp(tmp->arch->name, doublestack2) == 0) {
+				if (!strcmp(tmp->name,"grass")) {
+					LOG(llevError,"grass");
+				}
 				remove_ob(tmp);
 				free_object(tmp);
 			    }
@@ -1987,7 +2019,10 @@ static void plant_a_garden(mapstruct *m, int wx, int wy)
 			    rndm(0, MIN(weather_grow[i].random/2, 1)) == 0) {
 			    /* the herb does not belong, randomly delete
 			      herbs to prevent overgrowth. */
-			    remove_ob(tmp);
+			    if (!strcmp(tmp->name,"grass")) {
+					LOG(llevError,"grass");
+				}
+				remove_ob(tmp);
 			    free_object(tmp);
 			    break;
 			}
@@ -2109,10 +2144,16 @@ static void change_the_world(mapstruct *m, int wx, int wy)
 			    weathermap[wx][wy].humid > weather_tile[i].humax ||
 			    temp < weather_tile[i].tempmin ||
 			    temp > weather_tile[i].tempmax) {
+				if (!strcmp(tmp->name,"grass") && tmp->x == 10 && tmp->y == 10) {
+					LOG(llevError,"grass");
+				}
 			    remove_ob(tmp);
 			    free_object(tmp);
 			    if (doublestack) {
-				remove_ob(doublestack);
+				if (!strcmp(doublestack->name,"grass")) {
+					LOG(llevError,"grass");
+				}
+					remove_ob(doublestack);
 				free_object(doublestack);
 			    }
 			    break;
