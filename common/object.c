@@ -1088,7 +1088,7 @@ void free_object2(object *ob, int free_inventory) {
 	 * drop on that space.
 	 */
 	if (free_inventory || ob->map==NULL || ob->map->in_memory!=MAP_IN_MEMORY ||
-	    (GET_MAP_MOVE_BLOCK(ob->map, ob->x, ob->y) != MOVE_ALL)) 
+	    (GET_MAP_MOVE_BLOCK(ob->map, ob->x, ob->y) == MOVE_ALL)) 
 	{
 	    op=ob->inv;
 	    while(op!=NULL) {

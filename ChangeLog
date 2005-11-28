@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+common/object.c: Fix wrong comparision operator in free_object2() to make
+   monsters drop loot again.
+Andreas Kirschbaum 2005-11-28
+
 Basically added a parameter to 'skills' command to filter skills. And one char/const char* fix.
 common/anim.c: use const char* for find_animation.
 include/libproto.h: find_animation uses a const char*.
