@@ -656,9 +656,12 @@ typedef unsigned char	MoveType;
 
 /* Basic macro to see if if ob1 can not move onto a space based
  * on the 'type' move_block parameter
+ * Add check - if type is 0, don't stop anything from moving
+ * onto it.
+ * 
  */
 #define OB_TYPE_MOVE_BLOCK(ob1, type) \
-    ((ob1->move_type & type) == ob1->move_type)
+    ( (type != 0) && (ob1->move_type & type) == ob1->move_type)
 
 
 #define SET_GENERATE_TYPE(xyz,va)	(xyz)->stats.sp=(va)

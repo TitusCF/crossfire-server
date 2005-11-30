@@ -17,6 +17,13 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+common/map.c: Replace code with OB_TYPE_MOVE_BLOCK - effectively same as what
+  it was.
+include/define.h: Update OB_TYPE_MOVE_BLOCK so that spaces that don't block
+  any type of movement doesn't block objects that also don't have movement.
+  This fixes cases of gates not pushing objects off them.
+MSW 2005-11-29
+
 common/object.c: Fix wrong comparision operator in free_object2() to make
    monsters drop loot again.
 Andreas Kirschbaum 2005-11-28

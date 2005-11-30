@@ -403,8 +403,8 @@ int ob_blocked(object *ob,mapstruct *m,sint16 x,sint16 y) {
 	 * head of the object should correspond for the entire object.
 	 */
 
-	if ((ob->move_type & GET_MAP_MOVE_BLOCK(m1, sx, sy)) == ob->move_type) return
-	    AB_NO_PASS;
+	if (OB_TYPE_MOVE_BLOCK(ob, GET_MAP_MOVE_BLOCK(m1, sx, sy))) 
+	    return AB_NO_PASS;
 
     }
     return 0;
