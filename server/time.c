@@ -857,7 +857,7 @@ void move_teleporter(object *op) {
 	if (!QUERY_FLAG(tmp, FLAG_IS_FLOOR)) break;
 
     /* If nothing above us to move, nothing to do */
-    if (!tmp) return;
+    if (!tmp || QUERY_FLAG(tmp, FLAG_WIZPASS)) return;
 
     if(EXIT_PATH(head)) {
 	if(op->above->type==PLAYER) {
@@ -978,7 +978,7 @@ void move_player_mover(object *op) {
     if (!dir) dir=rndm(1, 8);
 
     for(victim=get_map_ob(op->map,op->x,op->y); victim !=NULL; victim=victim->above) {
-	if(QUERY_FLAG(victim, FLAG_ALIVE) && (victim->move_type & op->move_type)) {
+	if(QUERY_FLAG(victim, FLAG_ALIVE) && !QUERY_FLAG(victim, FLAG_WIZPASS) && (victim->move_type & op->move_type)) {
 
 	    if (victim->head) victim = victim->head;
 

@@ -17,6 +17,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+common/time.c: In move_teleporter() and move_player_mover() do not affect DMs
+   if FLAG_WIZPASS is set.
+common/object.c: In check_move_on() do not affect DMs if FLAG_WIZPASS is set.
+   This prevents DMs from triggering traps when walking over them.
+Andreas Kirschbaum 2005-11-30
+
 common/map.c: Replace code with OB_TYPE_MOVE_BLOCK - effectively same as what
   it was.
 include/define.h: Update OB_TYPE_MOVE_BLOCK so that spaces that don't block

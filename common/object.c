@@ -1984,6 +1984,9 @@ int check_move_on (object *op, object *originator)
     int x=op->x, y=op->y;
     MoveType	move_on, move_slow, move_block;
 
+    if (QUERY_FLAG(op, FLAG_WIZPASS))
+	return 0;
+
     if(QUERY_FLAG(op,FLAG_NO_APPLY))
 	return 0;
 
