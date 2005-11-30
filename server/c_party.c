@@ -155,7 +155,6 @@ int confirm_party_password(object *op) {
 	    else
 		return 1;
 	}
-    tmppartylist = tmppartylist->next;
     }
     return 1;
 }

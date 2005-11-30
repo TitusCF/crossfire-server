@@ -22,6 +22,9 @@ common/map.c: Replace code with OB_TYPE_MOVE_BLOCK - effectively same as what
 include/define.h: Update OB_TYPE_MOVE_BLOCK so that spaces that don't block
   any type of movement doesn't block objects that also don't have movement.
   This fixes cases of gates not pushing objects off them.
+server/c_party.c: Remove double use of ->next pointer/loop in 
+    confirm_party_password() - fixes crash and likely makes setting party
+    password work more reliably.
 MSW 2005-11-29
 
 common/object.c: Fix wrong comparision operator in free_object2() to make
