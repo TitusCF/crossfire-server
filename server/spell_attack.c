@@ -505,11 +505,10 @@ void check_bullet(object *op)
 }
 
 
-/* move_fired_arch: This should really be called move_bullet,
- * because it is only really applicable to bullets, and not
- * all fired arches (eg, bolts).
- * Basically, we move 'op' one square, and if it hits something,
- * call check_fired_arch
+/* Basically, we move 'op' one square, and if it hits something,
+ * call check_bullet.
+ * This function is only applicable to bullets, but not to all
+ * fired arches (eg, bolts).
  */
 
 void move_bullet(object *op)
