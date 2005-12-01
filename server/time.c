@@ -978,7 +978,8 @@ void move_player_mover(object *op) {
     if (!dir) dir=rndm(1, 8);
 
     for(victim=get_map_ob(op->map,op->x,op->y); victim !=NULL; victim=victim->above) {
-	if(QUERY_FLAG(victim, FLAG_ALIVE) && !QUERY_FLAG(victim, FLAG_WIZPASS) && (victim->move_type & op->move_type)) {
+	if(QUERY_FLAG(victim, FLAG_ALIVE) && !QUERY_FLAG(victim, FLAG_WIZPASS) && 
+	   (victim->move_type & op->move_type || !victim->move_type)) {
 
 	    if (victim->head) victim = victim->head;
 

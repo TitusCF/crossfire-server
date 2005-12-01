@@ -474,7 +474,7 @@ void check_bullet(object *op)
 
     mflags = get_map_flags(op->map,&m, op->x, op->y, &sx, &sy);
 
-    if ( !OB_TYPE_MOVE_BLOCK(op, GET_MAP_MOVE_BLOCK(m, sx, sy)))
+    if (!(mflags & P_IS_ALIVE) &&  !OB_TYPE_MOVE_BLOCK(op, GET_MAP_MOVE_BLOCK(m, sx, sy)))
         return;
 
     if (op->other_arch) {
@@ -1152,7 +1152,7 @@ void move_missile(object *op) {
 
     mflags = get_map_flags(op->map, &m, new_x, new_y, &new_x, &new_y);
 
-    if (OB_TYPE_MOVE_BLOCK(op, GET_MAP_MOVE_BLOCK(m, new_x, new_y))) {
+    if ((mflags & P_IS_ALIVE) || OB_TYPE_MOVE_BLOCK(op, GET_MAP_MOVE_BLOCK(m, new_x, new_y))) {
 	tag_t tag = op->count;
 	hit_map (op, op->direction, AT_MAGIC, 1);
 	/* Basically, missile only hits one thing then goes away.
