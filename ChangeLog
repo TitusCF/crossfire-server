@@ -17,6 +17,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/apply.c: In move_apply() properly decrement recursion counter.
+Andreas Kirschbaum 2005-12-02
+
 server/spell_attack.c: Add some missing P_IS_ALIVE checks - these weren't
   needed in the past because living objects would block movement -
   with new movement code, isn't always the case.

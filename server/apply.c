@@ -1349,7 +1349,7 @@ void move_apply (object *trap, object *victim, object *originator)
 
     /* Lauwenmark: Handle for plugin trigger event */
     if (execute_event(trap, EVENT_TRIGGER,originator,victim,NULL,SCRIPT_FIX_ALL)!=0)
-        return;
+        goto leave;
 
     switch (trap->type) {
 	case PLAYERMOVER:
