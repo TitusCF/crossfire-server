@@ -452,18 +452,36 @@ static PyObject* getWhoAmI(PyObject* self, PyObject* args)
 {
     if (!PyArg_ParseTuple(args,"",NULL))
         return NULL;
+	if (!current_context->who)
+	{
+		Py_INCREF(Py_None);
+		return Py_None;
+	}
+	Py_INCREF(current_context->who);
     return current_context->who;
 }
 static PyObject* getWhoIsActivator(PyObject* self, PyObject* args)
 {
     if (!PyArg_ParseTuple(args,"",NULL))
         return NULL;
+	if (!current_context->activator)
+	{
+		Py_INCREF(Py_None);
+		return Py_None;
+	}
+	Py_INCREF(current_context->activator);
     return current_context->activator;
 }
 static PyObject* getWhoIsThird(PyObject* self, PyObject* args)
 {
     if (!PyArg_ParseTuple(args,"",NULL))
         return NULL;
+	if (!current_context->third)
+	{
+		Py_INCREF(Py_None);
+		return Py_None;
+	}
+	Py_INCREF(current_context->third);
     return current_context->third;
 }
 static PyObject* getWhatIsMessage(PyObject* self, PyObject* args)
@@ -919,10 +937,6 @@ CF_PLUGIN void* globalEventListener(int* type, ...)
     va_end(args);
     context->returnvalue = 0;
 
-    Py_XINCREF(context->who);
-    Py_XINCREF(context->activator);
-    Py_XINCREF(context->third);
-
     scriptfile = fopen(context->script,"r");
     if (scriptfile == NULL)
     {
@@ -967,10 +981,6 @@ CF_PLUGIN void* eventListener(int* type, ...)
     strcpy(context->script,cf_get_maps_directory(va_arg(args, char*)));
     strcpy(context->options,va_arg(args, char*));
     context->returnvalue = 0;
-
-    Py_XINCREF(context->who);
-    Py_XINCREF(context->activator);
-    Py_XINCREF(context->third);
 
     va_end(args);
     scriptfile = fopen(context->script,"r");

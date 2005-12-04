@@ -17,6 +17,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+plugins/cfpython/cfpython.c: fix invalid reference management. Don't return NULL but Py_None.
+Ryo 2005-12-04
+
 Fix bug #1372194 (stairways now block movement).
 --
 random_maps/exit.c: In unblock_exits() check correct field move_block to find
