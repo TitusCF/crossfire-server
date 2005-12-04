@@ -136,6 +136,7 @@ extern int          cf_map_get_wparty(mapstruct* map);
 
 /* Players */
 extern char*        cf_player_get_ip(object* op);
+extern object*      cf_player_get_marked_item(object* op);
 extern player*      cf_player_find(char* txt);
 extern void         cf_player_message(object* op, char* txt, int flags);
 extern object*      cf_player_send_inventory(object* op);

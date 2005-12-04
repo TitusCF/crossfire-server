@@ -32,6 +32,10 @@ static PyObject* Player_GetIP(Crossfire_Player* whoptr, void* closure)
 {
     return Py_BuildValue("s",( char* )cf_player_get_ip(whoptr->obj));
 }
+static PyObject* Player_GetMarkedItem(Crossfire_Player* whoptr, void* closure)
+{
+    return Crossfire_Object_wrap(cf_player_get_marked_item(whoptr->obj));
+}
 static PyObject* Crossfire_Player_Message( Crossfire_Player* who, PyObject* args )
 {
     char* message;

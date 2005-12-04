@@ -1812,6 +1812,10 @@ void* cfapi_object_get_property(int* type, ...)
             rv = op->contr->socket.host;
             *type = CFAPI_STRING;
             break;
+        case CFAPI_PLAYER_PROP_MARKED_ITEM:
+            rv = find_marked_object(op);
+            *type = CFAPI_POBJECT;
+            break;
         case CFAPI_OBJECT_PROP_INVISIBLE:
             ri = op->invisible;
             rv = &ri;

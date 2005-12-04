@@ -447,10 +447,12 @@ PyTypeObject Crossfire_ObjectType = {
 
 
 static PyObject* Player_GetIP(Crossfire_Player* whoptr, void* closure);
+static PyObject* Player_GetMarkedItem(Crossfire_Player* whoptr, void* closure);
 static PyObject* Crossfire_Player_Message( Crossfire_Player* who, PyObject* args );
 
 static PyGetSetDef Player_getseters[] = {
-    { "IP",       (getter)Player_GetIP,     NULL, NULL, NULL },
+    { "IP",            (getter)Player_GetIP,            NULL, NULL, NULL },
+	{ "MarkedItem",    (getter)Player_GetMarkedItem,    NULL, NULL, NULL },
     { NULL, NULL, NULL, NULL, NULL }
 };
 

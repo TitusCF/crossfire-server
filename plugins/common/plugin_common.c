@@ -341,6 +341,11 @@ char* cf_player_get_ip(object* op)
     int val;
     return cfapiObject_get_property(&val, op, CFAPI_PLAYER_PROP_IP);
 }
+object* cf_player_get_marked_item(object* op)
+{
+    int val;
+    return cfapiObject_get_property(&val, op, CFAPI_PLAYER_PROP_MARKED_ITEM);
+}
 mapstruct* cf_map_get_map( char* name )
 {
     int val;
