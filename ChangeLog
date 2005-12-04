@@ -17,6 +17,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Fix bug #1372194 (stairways now block movement).
+--
+random_maps/exit.c: In unblock_exits() check correct field move_block to find
+   blocking exits.
+Andreas Kirschbaum 2005-12-03
+
 server/apply.c: In move_apply() properly decrement recursion counter.
 Andreas Kirschbaum 2005-12-02
 

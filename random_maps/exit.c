@@ -333,8 +333,8 @@ void unblock_exits(mapstruct *map, char **maze, RMParms *RP) {
     for(j=0;j<RP->Ysize;j++)
       if(maze[i][j]=='>' || maze[i][j]=='<') {
         for(walk=get_map_ob(map,i,j);walk!=NULL;walk=walk->above) {
-          if(walk->move_type == MOVE_ALL && walk->type != LOCKED_DOOR) {
-	    walk->move_type = MOVE_BLOCK_DEFAULT;
+          if(walk->move_block == MOVE_ALL && walk->type != LOCKED_DOOR) {
+	    walk->move_block = MOVE_BLOCK_DEFAULT;
             update_object(walk,UP_OBJ_CHANGE);
           }
         }
