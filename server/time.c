@@ -1082,48 +1082,52 @@ void move_duplicator(object *op) {
  * outside of the map which would cause the server to crash
 */
 
-void move_creator(object *op) {
-    object *tmp,*head=NULL,*prev=NULL;
-    archetype *at=op->other_arch;
+void move_creator(object *creator) {
+    object *new_ob;
 
-    op->stats.hp--;
-    if(op->stats.hp < 0 && !QUERY_FLAG(op,FLAG_LIFESAVE)) {
-	op->stats.hp=-1;
+    if(!QUERY_FLAG(creator, FLAG_LIFESAVE) && --creator->stats.hp < 0) {
+	creator->stats.hp=-1;
 	return;
     }
-    if (!at) {
-	LOG(llevError,"move_creator: Creator doesn't have other arch set: %s (%s, %d, %d)\n",
-	    op->name?op->name:"(null)", op->map->path, op->x, op->y);
-	return;
-    }
-    /* Make sure this multipart object fits */
-    if (at->more && ob_blocked(&at->clone, op->map, op->x, op->y))
-	return;
 
-    while(at!=NULL) {
-	tmp=arch_to_object(at);
-	tmp->x=op->x+at->clone.x;
-	tmp->y=op->y+at->clone.y;
-	tmp->map=op->map;
-	tmp->level=op->level;
+    if (creator->inv != NULL) {
+	object *ob;
+	int i;
+	object *ob_to_copy;
 
-	if(head!=NULL)
-	    tmp->head=head,prev->more=tmp;
-
-	insert_ob_in_map(tmp,op->map,op,0);
-	if (QUERY_FLAG(tmp, FLAG_FREED)) return;
-
-	if(head==NULL)
-	    head=tmp;
-	prev=tmp;
-	at=at->more;
-
-	if(op->slaying) {
-	    if (tmp->name) free_string (tmp->name);
-	    if (tmp->title) free_string (tmp->title);
-	    tmp->name = add_string(op->slaying);
-	    tmp->title = add_string(op->slaying);
+	/* select random object from inventory to copy */
+	ob_to_copy = creator->inv;
+	for (ob = creator->inv->below, i = 1; ob != NULL; ob = ob->below, i++) {
+	    if (rndm(0, i) == 0) {
+		ob_to_copy = ob;
+	    }
 	}
+	new_ob = object_create_clone(ob_to_copy);
+	CLEAR_FLAG(new_ob, FLAG_IS_A_TEMPLATE);
+	unflag_inv(new_ob, FLAG_IS_A_TEMPLATE);
+    } else {
+	if (creator->other_arch == NULL) {
+	    LOG(llevError,"move_creator: Creator doesn't have other arch set: %s (%s, %d, %d)\n", creator->name ? creator->name : "(null)", creator->map->path, creator->x, creator->y);
+	    return;
+	}
+
+	new_ob = object_create_arch(creator->other_arch);
+	fix_generated_item(new_ob, creator, 0, 0, GT_MINIMAL);
+    }
+
+    /* Make sure this multipart object fits */
+    if (new_ob->arch->more && ob_blocked(new_ob, creator->map, creator->x, creator->y)) {
+	free_object(new_ob);
+	return;
+    }
+
+    insert_ob_in_map_at(new_ob, creator->map, creator, 0, creator->x, creator->y);
+    if (QUERY_FLAG(new_ob, FLAG_FREED))
+	return;
+
+    if (creator->slaying) {
+	FREE_AND_COPY(new_ob->name, creator->slaying);
+	FREE_AND_COPY(new_ob->title, creator->slaying);
     }
 }
 
@@ -1195,6 +1199,8 @@ void move_marker(object *op) {
 }
  
 int process_object(object *op) {
+    if (QUERY_FLAG(op, FLAG_IS_A_TEMPLATE))
+	return 0;
 
     if(QUERY_FLAG(op, FLAG_MONSTER))
 	if(move_monster(op) || QUERY_FLAG(op, FLAG_FREED)) 

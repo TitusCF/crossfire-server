@@ -1505,7 +1505,15 @@ object *insert_ob_in_map (object *op, mapstruct *m, object *originator, int flag
     }
     if(op->more!=NULL) {
 	/* The part may be on a different map. */
-	if (insert_ob_in_map(op->more,op->more->map,originator,flag) == NULL) {
+
+	object *more = op->more;
+
+	/* Debugging information so you can see the last coordinates this object had */
+	more->ox = more->x;
+	more->oy = more->y;
+	more->map = get_map_from_coord(m, &more->x, &more->y);
+
+	if (insert_ob_in_map(more, more->map, originator, flag) == NULL) {
 	    if ( ! op->head)
 		LOG (llevError, "BUG: insert_ob_in_map(): inserting op->more killed op\n");
 	    return NULL;

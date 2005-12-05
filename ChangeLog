@@ -17,6 +17,21 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Fix bug #1173563 (Creator created Bombs malfunction): Creators and Converters
+now copy items from inventory. Fallback (for empty inventory) is the old
+behavior to create the new item from other_arch. If the inventory contains more
+than one item, a random one is picked.
+--
+common/loader.l: Mark inventory of CREATOR and CONVERTER as
+   FLAG_CONTENT_ON_GEN.
+common/object.c: Update x/y/map for non-head parts to make inserting multipart
+   objects via insert_ob_in_ob_at() work.
+server/apply.c: In convert_item() consider inventory for item to create.
+server/time.c: In move_creator() consider inventory for item to create. In
+   process_object() ignore item flagged as FLAG_IS_A_TEMPLATE. (Otherwise
+   bombs in inventories would explode prematurely.)
+Andreas Kirschbaum 2005-12-05
+
 New plugin property for player: marked item, added Python wrapper.
 Modified files:
  include/plugin.h

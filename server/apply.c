@@ -889,13 +889,32 @@ int convert_item(object *item, object *converter) {
 	    free_object(item);
 	}
     }
-    item=arch_to_object(converter->other_arch);
-    if (!item) {
-	LOG(llevError,"Broken converter %s at %s (%d, %d)\n", 
-	    converter->name, converter->map->path, converter->x, converter->y);
-	return 0;
+
+    if (converter->inv != NULL) {
+	object *ob;
+	int i;
+	object *ob_to_copy;
+
+	/* select random object from inventory to copy */
+	ob_to_copy = converter->inv;
+	for (ob = converter->inv->below, i = 1; ob != NULL; ob = ob->below, i++) {
+	    if (rndm(0, i) == 0) {
+		ob_to_copy = ob;
+	    }
+	}
+	item = object_create_clone(ob_to_copy);
+	CLEAR_FLAG(item, FLAG_IS_A_TEMPLATE);
+	unflag_inv(item, FLAG_IS_A_TEMPLATE);
+    } else {
+	if (converter->other_arch == NULL) {
+	    LOG(llevError,"move_creator: Converter doesn't have other arch set: %s (%s, %d, %d)\n", converter->name ? converter->name : "(null)", converter->map->path, converter->x, converter->y);
+	    return -1;
+	}
+
+	item = object_create_arch(converter->other_arch);
+	fix_generated_item(item, converter, 0, 0, GT_MINIMAL);
     }
-    fix_generated_item(item, converter, 0, 0, GT_MINIMAL);
+
     if(CONV_NR(converter))
 	item->nrof=CONV_NR(converter);
     if(nr)
@@ -903,15 +922,13 @@ int convert_item(object *item, object *converter) {
     if(is_in_shop)
 	SET_FLAG(item,FLAG_UNPAID);
     else if(price_in < item->nrof*item->value) {
-	LOG(llevError, "Broken converter %s at %s (%d, %d) in value %d, out value %d\n",
+	LOG(llevError, "Broken converter %s at %s (%d, %d) in value %d, out value %d for %s\n",
 	    converter->name, converter->map->path, converter->x, converter->y, price_in,
-	    item->nrof*item->value);
+	    item->nrof*item->value, item->name);
 	free_object(item);
 	return -1;
     }
-    item->x=converter->x;
-    item->y=converter->y;
-    insert_ob_in_map(item,converter->map,converter,0);
+    insert_ob_in_map_at(item, converter->map, converter, 0, converter->x, converter->y);
     return 1;
 }
   
