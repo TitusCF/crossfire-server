@@ -24,6 +24,7 @@ than one item, a random one is picked.
 --
 common/loader.l: Mark inventory of CREATOR and CONVERTER as
    FLAG_CONTENT_ON_GEN.
+common/loader.c: Rebuilt.
 common/object.c: Update x/y/map for non-head parts to make inserting multipart
    objects via insert_ob_in_ob_at() work.
 server/apply.c: In convert_item() consider inventory for item to create.
