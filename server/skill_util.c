@@ -58,7 +58,7 @@ const char *skill_names[NUM_SKILLS];
  * above.  The index into the array is set up by the
  * subtypes.
  */
-void init_skills() {
+void init_skills(void) {
     int i;
     archetype *at;
 

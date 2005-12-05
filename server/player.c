@@ -748,7 +748,7 @@ void get_party_password(object *op, partylist *party) {
 
 
 /* This rolls four 1-6 rolls and sums the best 3 of the 4. */
-int roll_stat() {
+int roll_stat(void) {
     int a[4],i,j,k;
 
     for(i=0;i<4;i++)
@@ -2954,7 +2954,7 @@ void loot_object(object *op) { /* Grab and destroy some treasure */
  * was changed.
  */
 
-void fix_weight() {
+void fix_weight(void) {
   player *pl;
   for (pl = first_player; pl != NULL; pl = pl->next) {
     int old = pl->ob->carrying, sum = sum_weight(pl->ob);
@@ -2966,7 +2966,7 @@ void fix_weight() {
   }
 }
 
-void fix_luck() {
+void fix_luck(void) {
   player *pl;
   for (pl = first_player; pl != NULL; pl = pl->next)
     if (!pl->ob->contr->state)

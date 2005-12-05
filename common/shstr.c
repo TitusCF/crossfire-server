@@ -44,7 +44,7 @@ static shared_string *hash_table[TABLESIZE];
  */
 
 void
-init_hash_table() {
+init_hash_table(void) {
     /* A static object should be zeroed out always */
 #if !defined(__STDC__)
     (void) memset((void *)hash_table, 0, TABLESIZE * sizeof(shared_string *));
@@ -326,7 +326,7 @@ extern char errmsg[];
  */
 
 void
-ss_dump_statistics() {
+ss_dump_statistics(void) {
     static char line[80];
 
     sprintf(errmsg, "%-13s %6s %6s %6s %6s %6s\n", 

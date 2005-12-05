@@ -92,7 +92,7 @@ extern object*      cf_object_present_archname_inside(object* op, char* whatstr)
 extern void         cf_object_apply(object* op, object* author, int flags);
 extern void         cf_object_remove(object* op);
 extern void         cf_object_free(object* op);
-extern object*      cf_create_object();
+extern object*      cf_create_object(void);
 extern object*      cf_create_object_by_name( const char* name );
 extern int          cf_object_change_map(object* op, int x, int y, mapstruct* map);
 extern int          cf_object_teleport( object* ob, mapstruct* map, int x, int y );
@@ -109,7 +109,7 @@ extern object*      cf_object_clone(object* op, int clonetype);
 extern void*        cf_map_get_property(mapstruct* map, int propcode);
 extern void*        cf_map_set_int_property(mapstruct* map, int propcode, int value);
 extern mapstruct*   cf_map_get_map( char* name );
-extern mapstruct*   cf_map_get_first();
+extern mapstruct*   cf_map_get_first(void);
 extern void         cf_map_message(mapstruct* m, char* msg, int color);
 extern object*      cf_map_get_object_at(mapstruct* m, int x, int y);
 extern object*      cf_map_insert_object(mapstruct* where, object* op, int x, int y);
@@ -143,7 +143,7 @@ extern object*      cf_player_send_inventory(object* op);
 extern void         cf_player_move(player* pl, int dir);
 
 /* Archetypes */
-extern archetype*	cf_archetype_get_first();
+extern archetype*	cf_archetype_get_first(void);
 extern const char*  cf_archetype_get_name(archetype* arch);
 extern archetype*   cf_archetype_get_next(archetype* arch);
 extern archetype*   cf_archetype_get_more(archetype* arch);

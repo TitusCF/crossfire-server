@@ -70,7 +70,7 @@ void init_archetype_pointers() {
  * Allocate and return the pointer to an empty treasurelist structure.
  */
 
-static treasurelist *get_empty_treasurelist() {
+static treasurelist *get_empty_treasurelist(void) {
   treasurelist *tl = (treasurelist *) malloc(sizeof(treasurelist));
   if(tl==NULL)
     fatal(OUT_OF_MEMORY);
@@ -82,7 +82,7 @@ static treasurelist *get_empty_treasurelist() {
  * Allocate and return the pointer to an empty treasure structure.
  */
 
-static treasure *get_empty_treasure() {
+static treasure *get_empty_treasure(void) {
   treasure *t = (treasure *) calloc(1,sizeof(treasure));
   if(t==NULL)
     fatal(OUT_OF_MEMORY);
@@ -178,7 +178,7 @@ static void check_treasurelist(treasure *t, treasurelist *tl)
  * Each treasure is parsed with the help of load_treasure().
  */
 
-void load_treasures() {
+void load_treasures(void) {
     FILE *fp;
     char filename[MAX_BUF], buf[MAX_BUF], name[MAX_BUF];
     treasurelist *previous=NULL;
@@ -1041,7 +1041,7 @@ void fix_generated_item (object *op, object *creator, int difficulty,
  * Allocate and return the pointer to an empty artifactlist structure.
  */
 
-static artifactlist *get_empty_artifactlist() {
+static artifactlist *get_empty_artifactlist(void) {
   artifactlist *tl = (artifactlist *) malloc(sizeof(artifactlist));
   if(tl==NULL)
     fatal(OUT_OF_MEMORY);
@@ -1055,7 +1055,7 @@ static artifactlist *get_empty_artifactlist() {
  * Allocate and return the pointer to an empty artifact structure.
  */
 
-static artifact *get_empty_artifact() {
+static artifact *get_empty_artifact(void) {
   artifact *t = (artifact *) malloc(sizeof(artifact));
   if(t==NULL)
     fatal(OUT_OF_MEMORY);
@@ -1084,7 +1084,7 @@ artifactlist *find_artifactlist(int type) {
  * For debugging purposes.  Dumps all tables.
  */
 
-void dump_artifacts() {
+void dump_artifacts(void) {
   artifactlist *al;
   artifact *art;
   linked_char *next;
@@ -1189,7 +1189,7 @@ void dump_monster_treasure (const char *name)
  * Builds up the lists of artifacts from the file in the libdir.
  */
 
-void init_artifacts() {
+void init_artifacts(void) {
     static int has_been_inited=0;
     FILE *fp;
     char filename[MAX_BUF], buf[HUGE_BUF], *cp, *next;
@@ -1718,7 +1718,7 @@ void free_artifactlist(artifactlist *al)
     }
 }
 
-void free_all_treasures() {
+void free_all_treasures(void) {
 treasurelist *tl, *next;
 
 

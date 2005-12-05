@@ -1466,7 +1466,7 @@ void receive_player_password(object *op,char k) {
 }
 
 
-int explore_mode() {
+int explore_mode(void) {
     player *pl;
 
     if (settings.explore_mode == TRUE) {

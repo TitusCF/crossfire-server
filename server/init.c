@@ -36,22 +36,22 @@
 weathermap_t **weathermap;
 
 void set_logfile(char *val) { settings.logfilename=val; }
-void call_version() { version(NULL); exit(0); }
-void showscores() { display_high_score(NULL,9999,NULL); exit(0); }
-void set_debug() { settings.debug=llevDebug; }
-void unset_debug() { settings.debug=llevInfo; }
-void set_mondebug() { settings.debug=llevMonster; }
-void set_dumpmon1() {settings.dumpvalues=1; }
-void set_dumpmon2() {settings.dumpvalues=2; }
-void set_dumpmon3() {settings.dumpvalues=3; }
-void set_dumpmon4() {settings.dumpvalues=4; }
-void set_dumpmon5() {settings.dumpvalues=5; }
-void set_dumpmon6() {settings.dumpvalues=6; }
-void set_dumpmon7() {settings.dumpvalues=7; }
-void set_dumpmon8() {settings.dumpvalues=8; }
-void set_dumpmon9() {settings.dumpvalues=9; }
+void call_version(void) { version(NULL); exit(0); }
+void showscores(void) { display_high_score(NULL,9999,NULL); exit(0); }
+void set_debug(void) { settings.debug=llevDebug; }
+void unset_debug(void) { settings.debug=llevInfo; }
+void set_mondebug(void) { settings.debug=llevMonster; }
+void set_dumpmon1(void) {settings.dumpvalues=1; }
+void set_dumpmon2(void) {settings.dumpvalues=2; }
+void set_dumpmon3(void) {settings.dumpvalues=3; }
+void set_dumpmon4(void) {settings.dumpvalues=4; }
+void set_dumpmon5(void) {settings.dumpvalues=5; }
+void set_dumpmon6(void) {settings.dumpvalues=6; }
+void set_dumpmon7(void) {settings.dumpvalues=7; }
+void set_dumpmon8(void) {settings.dumpvalues=8; }
+void set_dumpmon9(void) {settings.dumpvalues=9; }
 void set_dumpmont(char *name) {settings.dumpvalues=10; settings.dumparg=name; }
-void set_daemon() {settings.daemonmode=1; }
+void set_daemon(void) {settings.daemonmode=1; }
 void set_datadir(char *path) { settings.datadir=path; }
 void set_confdir(char *path) { settings.confdir=path; }
 void set_localdir(char *path) { settings.localdir=path; }
@@ -206,7 +206,7 @@ static void parse_args(int argc, char *argv[], int pass)
 
 materialtype_t *materialt;
 
-static materialtype_t *get_empty_mat() {
+static materialtype_t *get_empty_mat(void) {
     materialtype_t *mt;
     int i;
 
@@ -232,7 +232,7 @@ static materialtype_t *get_empty_mat() {
     return mt;
 }
 
-static void load_materials()
+static void load_materials(void)
 {
     char buf[MAX_BUF], filename[MAX_BUF], *cp, *next;
     FILE *fp;
@@ -326,7 +326,7 @@ static void load_materials()
  * be here or in the common directory - but since only the server needs this
  * information, having it here probably makes more sense.
  */
-static void load_settings()
+static void load_settings(void)
 {
     char buf[MAX_BUF],*cp;
     int	has_val,comp;
@@ -715,12 +715,12 @@ void init(int argc, char **argv) {
     init_done=1;
 }
 
-void usage() {
+void usage(void) {
   (void) fprintf(logfile,
 	"Usage: crossfire [-h] [-<flags>]...\n");
 }
 
-void help() {
+void help(void) {
 /* The information in usage is redundant with what is given below, so why call it? */
 /*    usage();*/
     printf("Flags:\n");
@@ -761,7 +761,7 @@ void help() {
     exit(0);
 }
 
-void init_beforeplay() {
+void init_beforeplay(void) {
   init_archetypes(); /* If not called before, reads all archetypes from file */
   init_artifacts();  /* If not called before, reads all artifacts from file */
   init_spells();     /* If not called before, links archtypes used by spells */
@@ -805,7 +805,7 @@ void init_beforeplay() {
   }
 }
 
-void init_startup() {
+void init_startup(void) {
   char buf[MAX_BUF];
   FILE *fp;
   int comp;
@@ -832,7 +832,7 @@ void init_startup() {
  * at compile time.
  */
 
-void compile_info() {
+void compile_info(void) {
   int i=0;
   printf("Non-standard include files:\n");
 #if !defined (__STRICT_ANSI__) || defined (__sun__)
@@ -961,7 +961,7 @@ void fatal_signal(int make_core, int close_sockets) {
   exit(0);
 }
 
-void init_signals() {
+void init_signals(void) {
 #ifndef WIN32 /* init_signals() remove signals */
   signal(SIGHUP,rec_sighup);
   signal(SIGINT,rec_sigint);
@@ -984,7 +984,7 @@ void init_signals() {
  * putting together lists of creatures, etc that belong to gods.
  */
  
-void init_races () {
+void init_races (void) {
   FILE *file;
   char race[MAX_BUF], fname[MAX_BUF], buf[MAX_BUF], *cp, variable[MAX_BUF];
   archetype *mon=NULL;
@@ -1047,7 +1047,7 @@ void init_races () {
     LOG(llevDebug,"done.\n");
 }
 
-void dump_races()
+void dump_races(void)
 { 
     racelink *list;
     objectlink *tmp;

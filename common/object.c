@@ -372,7 +372,7 @@ void dump_me(object *op, char *outstr)
  * All objects are dumped to stderr (or alternate logfile, if in server-mode)
  */
 
-void dump_all_objects() {
+void dump_all_objects(void) {
   object *op;
   for(op=objects;op!=NULL;op=op->next) {
     dump_object(op);
@@ -425,7 +425,7 @@ object *find_object_name(char *str) {
   return op;
 }
 
-void free_all_object_data() {
+void free_all_object_data(void) {
 #ifdef MEMORY_DEBUG
     object *op, *next;
 
@@ -767,7 +767,7 @@ void copy_object(object *op2, object *op) {
  * It is called from get_object() if the unused list is empty.
  */
 
-void expand_objects() {
+void expand_objects(void) {
   int i;
   object *new;
   new = (object *) CALLOC(OBJ_EXPAND,sizeof(object));
@@ -801,7 +801,7 @@ void expand_objects() {
  * If there are no free objects, expand_objects() is called to get more.
  */
 
-object *get_object() {
+object *get_object(void) {
   object *op;
 
   if(free_objects==NULL) {
@@ -1176,7 +1176,7 @@ void free_object2(object *ob, int free_inventory) {
  * count_free() returns the number of objects on the list of free objects.
  */
 
-int count_free() {
+int count_free(void) {
   int i=0;
   object *tmp=free_objects;
   while(tmp!=NULL)
@@ -1188,7 +1188,7 @@ int count_free() {
  * count_used() returns the number of objects on the list of used objects.
  */
 
-int count_used() {
+int count_used(void) {
   int i=0;
   object *tmp=objects;
   while(tmp!=NULL)
@@ -1200,7 +1200,7 @@ int count_used() {
  * count_active() returns the number of objects on the list of active objects.
  */
 
-int count_active() {
+int count_active(void) {
   int i=0;
   object *tmp=active_objects;
   while(tmp!=NULL)

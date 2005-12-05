@@ -149,7 +149,7 @@ int has_ability(object *ob) {
  * are errors, the table is likely in an inconsistent
  * state.
  */
-void init_experience()
+void init_experience(void)
 {
     char buf[MAX_BUF], *cp;
     int lastlevel=0, comp;
@@ -231,7 +231,7 @@ void init_experience()
  * format of the exp_table is correct.
  */
 
-void dump_experience()
+void dump_experience(void)
 {
     int i;
 

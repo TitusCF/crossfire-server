@@ -191,7 +191,7 @@ const char *get_region_msg(region *r) {
  * functions).
  * Then initialises treasures by calling load_treasures().
  */
-void init_regions() {
+void init_regions(void) {
     FILE *fp;
     char filename[MAX_BUF];
     int comp;
@@ -218,7 +218,7 @@ void init_regions() {
  * often.... 
  */
 
-region *get_region_struct() {
+region *get_region_struct(void) {
   
     region *new;
 
@@ -334,7 +334,7 @@ void parse_regions(FILE *fp) {
 	LOG(llevError, "Got premature eof on regions file!\n");
 }
 
-void assign_region_parents() {
+void assign_region_parents(void) {
     region *reg;
     uint32 parent_count=0;
     uint32 region_count=0;

@@ -228,7 +228,7 @@ void dump_map(mapstruct *m) {
  * dump_map on each one.
  */
 
-void dump_all_maps() {
+void dump_all_maps(void) {
     mapstruct *m;
     for(m=first_map;m!=NULL;m=m->next) {
 	dump_map(m);
@@ -605,7 +605,7 @@ void save_objects (mapstruct *m, FILE *fp, FILE *fp2, int flag) {
  * used anyways.  MSW 2001-07-01
  */
 
-mapstruct *get_linked_map() {
+mapstruct *get_linked_map(void) {
     mapstruct *map=(mapstruct *) calloc(1,sizeof(mapstruct));
     mapstruct *mp;
 
@@ -1617,7 +1617,7 @@ void clean_tmp_map(mapstruct *m) {
   (void) unlink(m->tmpname);
 }
 
-void free_all_maps()
+void free_all_maps(void)
 {
     int real_maps=0;
 

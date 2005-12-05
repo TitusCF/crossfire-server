@@ -28,7 +28,7 @@ static void build_stringlist(const char *str, char ***result_list, size_t *resul
 
 static recipelist *formulalist;
 
-static recipelist *init_recipelist() {
+static recipelist *init_recipelist(void) {
   recipelist *tl = (recipelist *) malloc(sizeof(recipelist));
   if(tl==NULL)
     fatal(OUT_OF_MEMORY);
@@ -39,7 +39,7 @@ static recipelist *init_recipelist() {
   return tl;
 }
 
-static recipe *get_empty_formula() {
+static recipe *get_empty_formula(void) {
   recipe *t = (recipe *) malloc(sizeof(recipe));
   if(t==NULL)
     fatal(OUT_OF_MEMORY);
@@ -103,7 +103,7 @@ static int check_recipe(recipe *rp) {
  * the libdir. -b.t. 
  */
  
-void init_formulae() {
+void init_formulae(void) {
   static int has_been_done=0;
   FILE *fp;
   char filename[MAX_BUF], buf[MAX_BUF], *cp, *next;
@@ -589,7 +589,7 @@ recipe * get_random_recipe ( recipelist *rpl ) {
   return rp;
 }
 
-void free_all_recipes()
+void free_all_recipes(void)
 {
     recipelist *fl=formulalist,*flnext;
     recipe *formula=NULL,*next;

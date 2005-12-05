@@ -264,7 +264,7 @@ int item_matched_string(object *pl, object *op, const char *name)
  * Then the blocksview[] array is initialised.
  */
 
-void init_archetypes() { /* called from add_player() and edit() */
+void init_archetypes(void) { /* called from add_player() and edit() */
   if(first_archetype!=NULL) /* Only do this once */
     return;
   arch_init = 1;
@@ -288,7 +288,7 @@ void arch_info(object *op) {
  * Initialise the hashtable used by the archetypes.
  */
 
-void clear_archetable() {
+void clear_archetable(void) {
   memset((void *) arch_table,0,ARCHTABLE*sizeof(archetype *));
 }
 
@@ -296,7 +296,7 @@ void clear_archetable() {
  * An alternative way to init the hashtable which is slower, but _works_...
  */
 
-void init_archetable() {
+void init_archetable(void) {
   archetype *at;
   LOG(llevDebug," Setting up archetable...");
   for(at=first_archetype;at!=NULL;at=(at->more==NULL)?at->next:at->more)
@@ -318,7 +318,7 @@ void dump_arch(archetype *at) {
  * this with the O key.
  */
 
-void dump_all_archetypes() {
+void dump_all_archetypes(void) {
   archetype *at;
   for(at=first_archetype;at!=NULL;at=(at->more==NULL)?at->next:at->more) {
     dump_arch(at);
@@ -326,7 +326,7 @@ void dump_all_archetypes() {
   }
 }
 
-void free_all_archs()
+void free_all_archs(void)
 {
     archetype *at, *next;
     int i=0,f=0;
@@ -351,7 +351,7 @@ void free_all_archs()
  * Allocates, initialises and returns the pointer to an archetype structure.
  */
 
-archetype *get_archetype_struct() {
+archetype *get_archetype_struct(void) {
   archetype *new;
 
   new=(archetype *)CALLOC(1,sizeof(archetype));
@@ -490,7 +490,7 @@ void second_arch_pass(FILE *fp) {
 }
 
 #ifdef DEBUG
-void check_generators() {
+void check_generators(void) {
   archetype *at;
   for(at=first_archetype;at!=NULL;at=at->next)
     if(QUERY_FLAG(&at->clone,FLAG_GENERATOR)&&at->clone.other_arch==NULL)
@@ -506,7 +506,7 @@ void check_generators() {
  * Then initialises treasures by calling load_treasures().
  */
 
-void load_archetypes() {
+void load_archetypes(void) {
     FILE *fp;
     char filename[MAX_BUF];
     int comp;

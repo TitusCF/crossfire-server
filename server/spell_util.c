@@ -88,7 +88,7 @@ void set_spell_skill(object *op, object *caster, object *spob, object *dest)
  * all the spells to catch simple errors.  To use it all the time
  * will result in it spitting out messages that aren't really errors.
  */
-void init_spells() {
+void init_spells(void) {
 #ifdef SPELL_DEBUG
     static int init_spells_done = 0;
     int i;
@@ -126,7 +126,7 @@ void init_spells() {
  * not sure what this would be used for, as the data seems pretty
  * minimal, but easy enough to keep around.
  */
-void dump_spells()
+void dump_spells(void)
 {
     archetype *at;
 

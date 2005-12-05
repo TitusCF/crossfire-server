@@ -17,6 +17,14 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Apply patch #1371956 (code cleanup patch) by Stefan Huehner: fix old-style
+function declarations and prototypes to proper Ansi C syntax. This patch
+allows the compiler to check function arguments and also removes some warnings
+when compiling with -Wstrict-prototypes.
+--
+All affected files: Convert "void foo()" into "void foo(void)".
+Andreas Kirschbaum 2005-12-06
+
 Fix bug #1173563 (Creator created Bombs malfunction): Creators and Converters
 now copy items from inventory. Fallback (for empty inventory) is the old
 behavior to create the new item from other_arch. If the inventory contains more

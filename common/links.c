@@ -32,7 +32,7 @@
  * a pointer to it.
  */
 
-objectlink *get_objectlink() {
+objectlink *get_objectlink(void) {
   objectlink *ol=(objectlink *)CALLOC(1,sizeof(objectlink));
   ol->ob=NULL;
   ol->next=NULL;
@@ -45,7 +45,7 @@ objectlink *get_objectlink() {
  * a pointer to it.
  */
 
-oblinkpt *get_objectlinkpt() {
+oblinkpt *get_objectlinkpt(void) {
   oblinkpt *obp = (oblinkpt *) malloc(sizeof(oblinkpt));
   obp->link = NULL;
   obp->next = NULL;

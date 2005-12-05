@@ -87,7 +87,7 @@ void set_block(int x,int y,int bx, int by) {
  * sightline.
  */
 
-void init_block() {
+void init_block(void) {
     int x,y, dx, dy, i;
     static int block_x[3] = {-1, -1, 0}, block_y[3] = {-1, 0, -1};
 

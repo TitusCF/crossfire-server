@@ -540,7 +540,7 @@ static int max_titles[6] =
  *****************************************************************************/
 
 static titlelist *
-get_empty_booklist ()
+get_empty_booklist (void)
 {
     titlelist *bl = (titlelist *) malloc (sizeof (titlelist));
     if (bl == NULL)
@@ -552,7 +552,7 @@ get_empty_booklist ()
 }
 
 static title  *
-get_empty_book ()
+get_empty_book (void)
 {
     title  *t = (title *) malloc (sizeof (title));
     if (t == NULL)
@@ -2027,7 +2027,7 @@ tailor_readable_ob (object *book, int msg_type)
  *****************************************************************************/
 
 void 
-free_all_readable ()
+free_all_readable (void)
 {
     titlelist *tlist, *tnext;
     title  *title1, *titlenext;

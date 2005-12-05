@@ -828,7 +828,7 @@ void enter_exit(object *op, object *exit_ob) {
  *
  */
 
-void process_active_maps() {
+void process_active_maps(void) {
   mapstruct *map;
 
 
@@ -1082,7 +1082,7 @@ void process_events (mapstruct *map)
     process_players2 (map);
 }
 
-void clean_tmp_files() {
+void clean_tmp_files(void) {
   mapstruct *m, *next;
 
   LOG(llevInfo,"Cleaning up...\n");
@@ -1114,7 +1114,7 @@ void clean_tmp_files() {
 }
 
 /* clean up everything before exiting */
-void cleanup()
+void cleanup(void)
 {
     LOG(llevDebug,"Cleanup called.  freeing data.\n");
     clean_tmp_files();
@@ -1172,7 +1172,7 @@ void leave(player *pl, int draw_exit) {
 	    new_draw_info(NDI_UNIQUE | NDI_ALL | NDI_DK_ORANGE, 5, NULL, buf);
 }
 
-int forbid_play()
+int forbid_play(void)
 {
 #if !defined(_IBMR2) && !defined(___IBMR2) && defined(PERM_FILE)
     char buf[MAX_BUF], day[MAX_BUF];
@@ -1232,7 +1232,7 @@ int forbid_play()
 
 extern unsigned long todtick;
 
-void do_specials() {
+void do_specials(void) {
 
 #ifdef WATCHDOG
     if (!(pticks % 503))

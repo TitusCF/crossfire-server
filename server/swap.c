@@ -35,7 +35,7 @@
 /* This writes out information on all the temporary maps.  It is called by
  * swap_map below.
  */
-static void write_map_log() 
+static void write_map_log(void) 
 {
     FILE *fp;
     mapstruct *map;
@@ -67,7 +67,7 @@ static void write_map_log()
     fclose(fp);
 }
 
-void read_map_log() 
+void read_map_log(void) 
 {
     FILE *fp;
     mapstruct *map;
@@ -173,7 +173,7 @@ void swap_map(mapstruct *map) {
 	write_map_log();
 }
 
-void check_active_maps() {
+void check_active_maps(void) {
     mapstruct *map, *next;
 
     for(map=first_map;map!=NULL;map=next) {
@@ -255,7 +255,7 @@ int players_on_map(mapstruct *m, int show_all) {
  * they are visited.
  * This is very useful if the tmp-disk is very full.
  */
-void flush_old_maps() {
+void flush_old_maps(void) {
 
     mapstruct *m, *oldmap;
     long sec;

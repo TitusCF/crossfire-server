@@ -37,7 +37,7 @@
  * Dump to standard out the abilities of all monsters.
  */
 
-void dump_abilities() {
+void dump_abilities(void) {
   archetype *at;
   for(at = first_archetype; at; at=at->next) {
     char *ch;
@@ -73,7 +73,7 @@ void dump_abilities() {
  * As dump_abilities(), but with an alternative way of output.
  */
 
-void print_monsters() {
+void print_monsters(void) {
     archetype *at;
     object *op;
     char   attbuf[34];

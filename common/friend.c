@@ -101,7 +101,7 @@ void remove_friendly_object(object *op) {
  * Dumps all friendly objects.  Invoked in DM-mode with the G key.
  */
 
-void dump_friendly_objects() {
+void dump_friendly_objects(void) {
     objectlink *ol;
 
     for(ol=first_friendly_object;ol!=NULL;ol=ol->next)
@@ -112,7 +112,7 @@ void dump_friendly_objects() {
  * It traverses the friendly list removing objects that should not be here
  * (ie, do not have friendly flag set, freed, etc)
  */
-void clean_friendly_list() {
+void clean_friendly_list(void) {
     objectlink *this, *prev=NULL, *next;
     int count=0;
 

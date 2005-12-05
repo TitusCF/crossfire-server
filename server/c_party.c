@@ -106,7 +106,7 @@ void remove_party(partylist *target_party) {
 }
 
 /* Remove unused parties, this could be made to scale a lot better. */
-void obsolete_parties() {
+void obsolete_parties(void) {
     int player_count;
     player *pl;
     partylist *party;

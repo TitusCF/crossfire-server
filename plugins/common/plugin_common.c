@@ -351,7 +351,7 @@ mapstruct* cf_map_get_map( char* name )
     int val;
     return cfapiMap_get_map( &val, 1, name, 0);
 }
-mapstruct*   cf_map_get_first()
+mapstruct*   cf_map_get_first(void)
 {
     int val;
     return cfapiMap_get_map( &val, 3);

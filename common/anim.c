@@ -31,7 +31,7 @@
 #include <global.h>
 #include <stdio.h>
 
-void free_all_anim() {
+void free_all_anim(void) {
     int i;
 
     for (i=0; i<=num_animations; i++) {
@@ -41,7 +41,7 @@ void free_all_anim() {
     free(animations);
 }
 
-void init_anim() {
+void init_anim(void) {
     char buf[MAX_BUF];
     FILE *fp;
     static int anim_init=0;

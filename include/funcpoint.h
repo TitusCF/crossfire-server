@@ -42,11 +42,11 @@
 extern void	move_apply(object *, object *, object *);
 extern void	draw_info(int, int, object *, const char *);
 extern void	emergency_save(int);
-extern void	clean_tmp_files();
+extern void	clean_tmp_files(void);
 extern void	fix_auto_apply(mapstruct *);
-extern void	init_blocksview_players();
+extern void	init_blocksview_players(void);
 extern void	monster_check_apply(object *, object *);
-extern void	process_active_maps();
+extern void	process_active_maps(void);
 extern void	remove_friendly_object(object *);
 extern void	update_buttons(mapstruct *);
 extern void	move_teleporter(object *);

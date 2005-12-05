@@ -130,7 +130,7 @@ char *spellpathnames[NRSPELLPATHS] = {
  * this could not be re-loaded during play, but it seems
  * like there should be little reason to do that.
  */
-static void init_emergency_mappath()
+static void init_emergency_mappath(void)
 {
     char filename[MAX_BUF], tmpbuf[MAX_BUF];
     FILE    *fp;
@@ -174,7 +174,7 @@ static void init_emergency_mappath()
  * init_hash_table if you are doing any object loading.
  */
 
-void init_library() {
+void init_library(void) {
     init_environ();
     init_globals();
     init_hash_table();
@@ -197,7 +197,7 @@ void init_library() {
  * it needs to be called very early, since command line options should
  * overwrite these if specified.
  */
-void init_environ() {
+void init_environ(void) {
     char *cp;
 
     cp=getenv("CROSSFIRE_LIBDIR");
@@ -226,7 +226,7 @@ void init_environ() {
  * Might use environment-variables as default for some of them.
  */
 
-void init_globals() {
+void init_globals(void) {
     if (settings.logfilename[0] == 0) {
 	logfile = stderr;
     }
@@ -264,7 +264,7 @@ void init_globals() {
  * Called by init_library();
  */
 
-void init_objects() {
+void init_objects(void) {
   int i;
 /* Initialize all objects: */
   objects=NULL;
@@ -296,13 +296,13 @@ void init_objects() {
  * Called by init_library().
  */
 
-void init_defaults() {
+void init_defaults(void) {
   editor=0;
   nroferrors=0;
 }
 
 
-void init_dynamic () {
+void init_dynamic (void) {
     archetype *at = first_archetype;
     while (at) {
 	if (at->clone.type == MAP && EXIT_PATH (&at->clone)) {
@@ -322,7 +322,7 @@ unsigned long todtick;
  * reset every time the server reboots.
  */
 
-void write_todclock()
+void write_todclock(void)
 {
     char filename[MAX_BUF];
     FILE *fp;
@@ -341,7 +341,7 @@ void write_todclock()
  * Called by init_library().
  */
 
-void init_clocks()
+void init_clocks(void)
 {
     char filename[MAX_BUF];
     FILE *fp;
@@ -372,7 +372,7 @@ void init_clocks()
 
 attackmess_t attack_mess[NROFATTACKMESS][MAXATTACKMESS];
 
-void init_attackmess(){
+void init_attackmess(void){
     char buf[MAX_BUF];
     char filename[MAX_BUF];
     char *cp, *p;

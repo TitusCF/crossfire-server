@@ -435,7 +435,7 @@ void watchdog(void)
 extern unsigned long todtick;
 
 /** Waits for new connection */
-static void block_until_new_connection()
+static void block_until_new_connection(void)
 {
 
     struct timeval Timeout;
@@ -497,7 +497,7 @@ static void block_until_new_connection()
  * There are 2 lists we need to look through - init_sockets is a list
  * 
  */
-void doeric_server()
+void doeric_server(void)
 {
     int i, pollret;
     fd_set tmp_read, tmp_exceptions, tmp_write;

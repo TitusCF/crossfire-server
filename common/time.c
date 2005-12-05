@@ -96,7 +96,7 @@ const char *month_name[MONTHS_PER_YEAR] = {
  */
 
 void
-reset_sleep()
+reset_sleep(void)
 {
   int i;
   for(i = 0; i < PBUFLEN; i++)
@@ -130,7 +130,7 @@ log_time(long process_utime)
  */
 
 int
-enough_elapsed_time()
+enough_elapsed_time(void)
 {
   static struct timeval new_time;
   long elapsed_utime;
@@ -154,7 +154,7 @@ enough_elapsed_time()
  */
 
 void
-sleep_delta()
+sleep_delta(void)
 {
   static struct timeval new_time;
   long sleep_sec, sleep_usec;
@@ -317,7 +317,7 @@ time_info(object *op)
 }
 
 long
-seconds()
+seconds(void)
 {
   struct timeval now;
 

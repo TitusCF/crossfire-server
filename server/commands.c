@@ -302,7 +302,7 @@ static int compare_A(const void *a, const void *b)
   return strcmp(((CommArray_s *)a)->name, ((CommArray_s *)b)->name);
 }
 
-void init_commands()
+void init_commands(void)
 {
   qsort(Commands, CommandsSize, sizeof(CommArray_s), compare_A);
   qsort(CommunicationCommands, CommunicationCommandSize, sizeof(CommArray_s), compare_A);

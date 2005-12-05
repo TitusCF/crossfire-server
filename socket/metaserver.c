@@ -54,7 +54,7 @@ static struct sockaddr_in sock;
  * set to -1.  We use this instead of messing with the settings.meta_on so that
  * that can be examined to at least see what the user was trying to do.
  */
-void metaserver_init()
+void metaserver_init(void)
 {
 
 #ifdef WIN32 /* ***win32 metaserver_init(): init win32 socket */
@@ -117,7 +117,7 @@ void metaserver_init()
 /**
  * Updates our info in the metaserver
  */
-void metaserver_update()
+void metaserver_update(void)
 {
     char data[MAX_BUF], num_players=0;
     player *pl;

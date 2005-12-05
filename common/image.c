@@ -138,7 +138,7 @@ static uint8 find_color(const char *name) {
  * it is called by ReadBmapNames.
  */
 
-static void ReadFaceData()
+static void ReadFaceData(void)
 {
     char buf[MAX_BUF], *cp;
     New_Face *on_face=NULL;
@@ -203,7 +203,7 @@ static void ReadFaceData()
  * difference.)
  */
 
-void ReadBmapNames () {
+void ReadBmapNames (void) {
     char buf[MAX_BUF], *p, *q;
     FILE *fp;
     int value, nrofbmaps = 0, i;
@@ -340,7 +340,7 @@ int FindFace (char *name, int error) {
  * the next element is the 16x2 faces picture
  * used for smoothing
  */
-int ReadSmooth () {
+int ReadSmooth (void) {
     char buf[MAX_BUF], *p, *q;
     FILE *fp;
     int smoothcount = 0;
@@ -406,7 +406,7 @@ int FindSmooth (uint16 face, uint16* smoothed) {
 /**
  * Deallocates memory allocated by ReadBmapNames() and ReadSmooth().
  */
-void free_all_images()
+void free_all_images(void)
 {
     int i;
 

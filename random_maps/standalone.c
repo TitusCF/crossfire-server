@@ -73,7 +73,7 @@ int main(int argc, char *argv[]) {
   exit(0);
 }
 
-void set_map_timeout() {}   /* doesn't need to do anything */
+void set_map_timeout(void) {}   /* doesn't need to do anything */
 
 #include <global.h>
 
@@ -204,7 +204,7 @@ void emergency_save( int x )
     {
     }
  
-void clean_tmp_files( )
+void clean_tmp_files( void )
     {
     }
  

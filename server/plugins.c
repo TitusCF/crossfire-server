@@ -128,7 +128,7 @@ crossfire_plugin* plugins_list = NULL;
 /*****************************************************************************/
 
 #ifdef WIN32
-static const char *plugins_dlerror()
+static const char *plugins_dlerror(void)
 {
     static char buf[256];
     DWORD err;

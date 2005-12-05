@@ -79,7 +79,7 @@ int is_valid_faceset(int fsn)
 /**
  * Frees all faceset information
  */
-void free_socket_images()
+void free_socket_images(void)
 {
     int num,q;
 
@@ -173,7 +173,7 @@ static void check_faceset_fallback(int faceset, int togo)
  * to do such.
  */
 
-void read_client_images()
+void read_client_images(void)
 {
     char filename[400];
     char buf[HUGE_BUF];

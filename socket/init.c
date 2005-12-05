@@ -169,7 +169,7 @@ void InitConnection(NewSocket *ns, uint32 from)
 
 
 /** This sets up the socket and reads all the image information into memory. */
-void init_ericserver()
+void init_ericserver(void)
 {
     struct sockaddr_in	insock;
     struct protoent  *protox;
@@ -290,7 +290,7 @@ void init_ericserver()
  ******************************************************************************/
 
 /** Free's all the memory that ericserver allocates. */
-void free_all_newserver()
+void free_all_newserver(void)
 {  
     LOG(llevDebug,"Freeing all new client/server information.\n");
     free_socket_images();

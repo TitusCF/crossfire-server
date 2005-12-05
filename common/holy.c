@@ -7,7 +7,7 @@
 #include <living.h>
 #include <spells.h>
 
-static godlink *init_godslist() {
+static godlink *init_godslist(void) {
     godlink *gl = (godlink *) malloc(sizeof(godlink));
     if(gl==NULL)
       fatal(OUT_OF_MEMORY);
@@ -23,7 +23,7 @@ static godlink *init_godslist() {
 /* init_gods() - this takes a look at all of the archetypes to find
  * the objects which correspond to the GODS (type GOD) */
    
-void init_gods () {
+void init_gods (void) {
   archetype *at=NULL;
    
   LOG(llevDebug, "Initializing gods...");
@@ -110,7 +110,7 @@ object *pntr_to_god_obj(godlink *godlnk) {
   return god;
 }
 
-void free_all_god() {
+void free_all_god(void) {
     godlink *god, *godnext;
 
     LOG(llevDebug,"Freeing god information\n");
@@ -122,7 +122,7 @@ void free_all_god() {
 }
 
 
-void dump_gods() {
+void dump_gods(void) {
     godlink *glist;
   
     fprintf(stderr,"\n");

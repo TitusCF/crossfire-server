@@ -432,7 +432,7 @@ static int compareAnims (const void *a, const void *b)
     return strcmp ( ((CFanimationHook*)a)->name,((CFanimationHook*)b)->name);
 }
 
-void prepare_commands ()
+void prepare_commands (void)
 {
     qsort (animationbox,animationcount,sizeof (CFanimationHook),compareAnims);
     ordered_commands=1;
@@ -591,7 +591,7 @@ int is_animated_player (object* pl)
 /*
  * return a new animation pointer inserted in the list of animations
  */
-CFanimation* create_animation()
+CFanimation* create_animation(void)
 {
     CFanimation* new;
     CFanimation* current;
@@ -872,7 +872,7 @@ void animate_one(CFanimation* animation, long int milliseconds)
     cf_object_set_flag(animation->victim, FLAG_WIZ,0);
 }
 
-void animate()
+void animate(void)
 {
     CFanimation* current;
     CFanimation* next;
@@ -917,7 +917,7 @@ void animate()
 
 
 
-void initContextStack()
+void initContextStack(void)
 {
     current_context = NULL;
     context_stack = NULL;
@@ -986,7 +986,7 @@ CF_PLUGIN int runPluginCommand(object* op, char* params)
     return -1;
 }
 
-CF_PLUGIN int postInitPlugin()
+CF_PLUGIN int postInitPlugin(void)
 {
     int hooktype = 1;
     int rtype = 0;
