@@ -1444,6 +1444,14 @@ void receive_player_password(object *op,char k) {
     return;
   }
   new_draw_info(NDI_UNIQUE, 0,op,"          "); /* To hide the password better */
+
+  if (checkbanned(op->name, op->contr->socket.host)) {
+    LOG(llevInfo, "Banned player tried to add: [%s@%s]\n", op->name, op->contr->socket.host);
+    new_draw_info(NDI_UNIQUE|NDI_RED, 0, op, "You are not allowed to play.");
+    get_name(op);
+    return;
+  }
+
   if(op->contr->state==ST_CONFIRM_PASSWORD) {
     if(!check_password(op->contr->write_buf+1,op->contr->password)) {
       new_draw_info(NDI_UNIQUE, 0,op,"The passwords did not match.");

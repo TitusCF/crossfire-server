@@ -24,7 +24,7 @@ void magic_mapping_mark(object *pl, char *map_mark, int strength);
 void draw_magic_map(object *pl);
 void Log_Kill(const char *Who, const char *What, int WhatType, const char *With, int WithType);
 /* init.c */
-void InitConnection(NewSocket *ns, uint32 from);
+void InitConnection(NewSocket *ns, const char *from_ip);
 void init_ericserver(void);
 void free_all_newserver(void);
 void free_newsocket(NewSocket *ns);

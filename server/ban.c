@@ -25,6 +25,15 @@
 #include <sys/file.h>
 #endif /* win32 */
 
+/**
+ * Check if a player and/or host is banned.
+ *
+ * @param login the player name to check; NULL to check only the host name
+ *
+ * @param host the host name to check
+ *
+ * @return 1=player/host is banned; 0=player/host is not banned
+ */
 int checkbanned(const char *login, const char *host)
 {
   FILE  *bannedfile;
@@ -85,7 +94,7 @@ int checkbanned(const char *login, const char *host)
     if(*log_buf=='*')
 
       Hits=1;
-    else if (!strcmp(login, log_buf))
+    else if (login != NULL && strcmp(login, log_buf) == 0)
       Hits=1;
     if(Hits==1)
       {

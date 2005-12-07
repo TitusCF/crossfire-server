@@ -67,7 +67,7 @@ NewSocket *init_sockets;
  * socket setup is handled elsewhere.  We do send a version to the
  * client.
  */
-void InitConnection(NewSocket *ns, uint32 from)
+void InitConnection(NewSocket *ns, const char *from_ip)
 {
     SockList sl;
     unsigned char buf[256];
@@ -152,9 +152,7 @@ void InitConnection(NewSocket *ns, uint32 from)
     ns->can_write=1;
 
     ns->sent_scroll=0;
-    sprintf((char*)buf,"%d.%d.%d.%d",
-          (from>>24)&255, (from>>16)&255, (from>>8)&255, from&255);
-    ns->host=strdup_local((char*)buf);
+    ns->host=strdup_local(from_ip);
     sprintf((char*)buf, "version %d %d %s\n", VERSION_CS,VERSION_SC, VERSION_INFO);
     sl.buf=buf;
     sl.len=strlen((char*)buf);

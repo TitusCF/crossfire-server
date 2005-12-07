@@ -311,18 +311,6 @@ static void set_first_map(object *op)
 
 int add_player(NewSocket *ns) {
     player *p;
-    char *defname = "nobody";
-
-    /* Check for banned players and sites.  usename is no longer accurate,
-     * (can't get it over sockets), so all we really have to go on is
-     * the host.
-     */
-
-    if (checkbanned (defname, ns->host)){
-	fprintf (logfile, "Banned player tried to add. [%s@%s]\n", defname, ns->host);
-	fflush (logfile);
-	return 0;
-    }
 
     p=get_player(NULL);
     memcpy(&p->socket, ns, sizeof(NewSocket));

@@ -17,6 +17,20 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Apply modified patch #1293774 (Kick banned hosts at once) by Thomas Equeter:
+disconnect new connection for banned host right after connecting. Also add
+support for user name in ban files.
+--
+lib/ban_file: Update comments and examples to new syntax.
+server/ban.c: Allow a NULL user name to check for host name only.
+server/c_misc.c: In receive_player_password() check for banned user name.
+server/player.c: In add_player() remove check for banned host - this was
+   already done if we reach this state.
+socket/init.c, include/sockproto.h: Pass ip address as a string.
+socket/loop.c: In doeric_server() check for banned host after a new connection
+   was accepted.
+Andreas Kirschbaum 2005-12-07
+
 Apply patch #1371956 (code cleanup patch) by Stefan Huehner: fix old-style
 function declarations and prototypes to proper Ansi C syntax. This patch
 allows the compiler to check function arguments and also removes some warnings

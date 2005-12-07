@@ -602,8 +602,24 @@ void doeric_server(void)
 	    LOG(llevError, "accept failed: %s\n", strerror_local(errno));
 	}
 	else {
-	    InitConnection(&init_sockets[newsocknum],ntohl(addr.sin_addr.s_addr));
-	    socket_info.nconns++;
+	    char buf[MAX_BUF];
+	    long ip;
+	    NewSocket *ns;
+
+	    ns = &init_sockets[newsocknum];
+
+	    ip = ntohl(addr.sin_addr.s_addr);
+	    sprintf(buf, "%ld.%ld.%ld.%ld", (ip>>24)&255, (ip>>16)&255, (ip>>8)&255, ip&255);
+
+	    if (checkbanned(NULL, buf)) {
+		LOG(llevInfo, "Banned host tried to connect: [%s]\n", buf);
+		close(init_sockets[newsocknum].fd);
+		init_sockets[newsocknum].fd = -1;
+	    }
+	    else {
+		InitConnection(ns, buf);
+		socket_info.nconns++;
+	    }
 	}
     }
 
