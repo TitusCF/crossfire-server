@@ -17,6 +17,13 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Apply slightly modified patch #1293744 (Inversed ban entries) by Thomas
+Equeter.
+--
+server/ban.c: In checkbanned() recognize '~' prefix to allow entries. Also fix
+   possible buffer overflow.
+Andreas Kirschbaum 2005-12-07
+
 Apply modified patch #1293774 (Kick banned hosts at once) by Thomas Equeter:
 disconnect new connection for banned host right after connecting. Also add
 support for user name in ban files.

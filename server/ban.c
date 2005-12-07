@@ -38,12 +38,18 @@ int checkbanned(const char *login, const char *host)
 {
   FILE  *bannedfile;
   char  buf[MAX_BUF];
-  char  log_buf[64], host_buf[64], line_buf[160];
+  char  log_buf0[160], host_buf[64], line_buf[160];
   char  *indexpos;
   int   num1;
   int   Hits=0;                 /* Hits==2 means we're banned */
   int	loop=0;
   
+  /* Inverse ban feature: if a line is prefixed by a ~, then we will
+   * immediately return "check passed" if it matches. This allow to ban
+   * a network, but let a part of it still connect.
+   */
+  int   inverse_ban = 0;
+
  while (loop < 2) {	/* have to check both ban files now */
 
 		/* First time through look for BANFILE */
@@ -69,6 +75,11 @@ int checkbanned(const char *login, const char *host)
 	/* Do the actual work here checking for banned IPs */
   
   while(fgets(line_buf, 160, bannedfile) != NULL) {
+    char *log_buf = log_buf0;
+
+    inverse_ban = 0;
+    Hits = 0;
+
     /* Split line up */
     if((*line_buf=='#')||(*line_buf=='\n'))
       continue;
@@ -87,10 +98,16 @@ int checkbanned(const char *login, const char *host)
       indexpos++;
     *indexpos = '\0';
 
+    if (*log_buf == '~') {
+      log_buf++;
+      inverse_ban = 1;
+    }
+
     /*
       LOG (llevDebug, "Login: <%s>; host: <%s>\n", login, host);
       LOG (llevDebug, "    Checking Banned <%s> and <%s>.\n",log_buf,host_buf);
     */
+
     if(*log_buf=='*')
 
       Hits=1;
@@ -117,7 +134,7 @@ int checkbanned(const char *login, const char *host)
   }
   fclose(bannedfile);
   if(Hits>=2)
-    return(1);
+    return(!inverse_ban);
   loop++;  
  }
 	return(0);
