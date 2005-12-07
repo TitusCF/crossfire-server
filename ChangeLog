@@ -17,6 +17,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/apply.c: In player_apply() do not consider DM PLAYERs to be DM-created
+   items. This prevents the server from destroying the player object (and
+   crashing shortly afterwards).
+Andreas Kirschbaum 2005-12-07
+
 Apply slightly modified patch #1293744 (Inversed ban entries) by Thomas
 Equeter.
 --

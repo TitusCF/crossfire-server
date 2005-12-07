@@ -2579,7 +2579,10 @@ int player_apply (object *pl, object *op, int aflag, int quiet)
 	}
     }
 
-    if (QUERY_FLAG (op, FLAG_WAS_WIZ) && ! QUERY_FLAG (pl, FLAG_WAS_WIZ))
+    /* Check for PLAYER to avoid a DM to disappear in a puff of smoke if
+     * applied.
+     */
+    if (op->type != PLAYER && QUERY_FLAG (op, FLAG_WAS_WIZ) && ! QUERY_FLAG (pl, FLAG_WAS_WIZ))
     {
         play_sound_map (pl->map, pl->x, pl->y, SOUND_OB_EVAPORATE);
         new_draw_info (NDI_UNIQUE, 0, pl, "The object disappears in a puff "
