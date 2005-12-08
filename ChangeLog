@@ -17,6 +17,17 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Remove a strange feature of normalize_path(): it did convert the path
+"<path1>//<path2>" into "/<path2>". Also add a stand-alone application for
+regression testing this function, and fix a few issues with ".." in path name.
+--
+common/path.c: New file containing the modified implementation and the
+   stand-alone application.
+include/path.h: Prototypes for path.c.
+server/main.c: Remove implementation; call renamed function.
+common/Makefile.am, include/Makefile.am: Add new files.
+Andreas Kirschbaum 2005-12-08
+
 server/ban.c: General cleanup - whitespace changes, rename variable names.
    Should not affect function.
 server/apply.c: In player_apply() do not consider DM PLAYERs to be DM-created

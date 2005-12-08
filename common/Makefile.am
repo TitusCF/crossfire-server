@@ -44,6 +44,7 @@ libcross_a_SOURCES = \
 	los.c\
 	map.c\
 	object.c\
+	path.c\
 	porting.c\
 	player.c\
 	quest.c\

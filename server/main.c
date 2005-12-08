@@ -48,6 +48,7 @@
 
 #include <../random_maps/random_map.h>
 #include <../random_maps/rproto.h>
+#include "path.h"
 
 static char days[7][4] = {
   "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
@@ -214,53 +215,6 @@ void enter_player_savebed(object *op)
 	enter_exit(op,tmp);
     }
     free_object(tmp);
-}
-
-
-static const char *normalize_path (const char *src, const char *dst) {
-    char *p, *q;
-    char buf[HUGE_BUF];
-    static char path[HUGE_BUF];
-
-    /* LOG(llevDebug,"path before normalization >%s<>%s<\n", src, dst); */
-
-    if (*dst == '/') {
-	strcpy (buf, dst);
-
-    } else {
-	strcpy (buf, src);
-	if ((p = strrchr (buf, '/')))
-	    p[1] = '\0';
-	else
-	    strcpy (buf, "/");
-	strcat (buf, dst);
-    }
-
-    q = p = buf;
-    while ((q = strstr (q, "//")))
-	p = ++q;
-
-    *path = '\0';
-    q = path;
-    p = strtok (p, "/");
-    while (p) {
-	if (!strcmp (p, "..")) {
-	    q = strrchr (path, '/');
-	    if (q)
-		*q = '\0';
-	    else {
-		*path = '\0';
-		LOG (llevError, "Illegal path.\n");
-	    }
-	} else {
-	    strcat (path, "/");
-	    strcat (path, p);
-	}
-	p = strtok (NULL, "/");
-    }
-    /* LOG(llevDebug,"path after normalization >%s<\n", path); */
-
-    return (path);
 }
 
 /* All this really is is a glorified remove_object that also updates
@@ -628,7 +582,7 @@ static void enter_unique_map(object *op, object *exit_ob)
 
 	    newmap = ready_map_name(apartment, MAP_PLAYER_UNIQUE);
 	    if (!newmap) {
-		newmap = load_original_map(create_pathname(normalize_path(reldir, EXIT_PATH(exit_ob))), MAP_PLAYER_UNIQUE);
+		newmap = load_original_map(create_pathname(path_combine_and_normalize(reldir, EXIT_PATH(exit_ob))), MAP_PLAYER_UNIQUE);
 		if (newmap) fix_auto_apply(newmap);
 	    }
 	}
@@ -638,10 +592,10 @@ static void enter_unique_map(object *op, object *exit_ob)
 	     */
 	    sprintf(apartment, "%s/%s/%s/%s", settings.localdir,
 		    settings.playerdir, op->name, 
-		    clean_path(normalize_path(exit_ob->map->path, EXIT_PATH(exit_ob))));
+		    clean_path(path_combine_and_normalize(exit_ob->map->path, EXIT_PATH(exit_ob))));
 	    newmap = ready_map_name(apartment, MAP_PLAYER_UNIQUE);
 	    if (!newmap) {
-		newmap = ready_map_name(normalize_path(exit_ob->map->path, EXIT_PATH(exit_ob)), 0);
+		newmap = ready_map_name(path_combine_and_normalize(exit_ob->map->path, EXIT_PATH(exit_ob)), 0);
 		if (newmap) fix_auto_apply(newmap);
 	    }
 	}
@@ -703,7 +657,7 @@ void enter_exit(object *op, object *exit_ob) {
 	     */
 	    mapstruct	*newmap;
 	    if (exit_ob->map) {
-		newmap = ready_map_name(normalize_path(exit_ob->map->path, EXIT_PATH(exit_ob)), 0);
+		newmap = ready_map_name(path_combine_and_normalize(exit_ob->map->path, EXIT_PATH(exit_ob)), 0);
 		/* Random map was previously generated, but is no longer about.  Lets generate a new
 		 * map.
 		 */
@@ -768,12 +722,12 @@ void enter_exit(object *op, object *exit_ob) {
                 free_object(tmp);
               }
  
-              strcpy(op->contr->savebed_map, normalize_path(exit_ob->map->path, EXIT_PATH(exit_ob)));
+              strcpy(op->contr->savebed_map, path_combine_and_normalize(exit_ob->map->path, EXIT_PATH(exit_ob)));
               op->contr->bed_x = EXIT_X(exit_ob), op->contr->bed_y = EXIT_Y(exit_ob);
               save_player(op, 1);
               /* LOG(llevDebug,"enter_exit: Taking damned exit %s to (%d,%d) on map %s\n",
                * exit_ob->name?exit_ob->name:"(none)", exit_ob->x, exit_ob->y,  
-               * normalize_path(exit_ob->map->path, EXIT_PATH(exit_ob))); */
+               * path_combine_and_normalize(exit_ob->map->path, EXIT_PATH(exit_ob))); */
             }
 
 	    enter_map(op, newmap, x, y);
