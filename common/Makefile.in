@@ -83,10 +83,10 @@ am_libcross_a_OBJECTS = anim.$(OBJEXT) arch.$(OBJEXT) button.$(OBJEXT) \
 	info.$(OBJEXT) image.$(OBJEXT) init.$(OBJEXT) item.$(OBJEXT) \
 	links.$(OBJEXT) living.$(OBJEXT) loader.$(OBJEXT) \
 	logger.$(OBJEXT) los.$(OBJEXT) map.$(OBJEXT) object.$(OBJEXT) \
-	porting.$(OBJEXT) player.$(OBJEXT) quest.$(OBJEXT) \
-	re-cmp.$(OBJEXT) readable.$(OBJEXT) recipe.$(OBJEXT) \
-	region.$(OBJEXT) shstr.$(OBJEXT) time.$(OBJEXT) \
-	treasure.$(OBJEXT) utils.$(OBJEXT)
+	path.$(OBJEXT) porting.$(OBJEXT) player.$(OBJEXT) \
+	quest.$(OBJEXT) re-cmp.$(OBJEXT) readable.$(OBJEXT) \
+	recipe.$(OBJEXT) region.$(OBJEXT) shstr.$(OBJEXT) \
+	time.$(OBJEXT) treasure.$(OBJEXT) utils.$(OBJEXT)
 libcross_a_OBJECTS = $(am_libcross_a_OBJECTS)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)/include
 depcomp = $(SHELL) $(top_srcdir)/utils/depcomp
@@ -258,6 +258,7 @@ libcross_a_SOURCES = \
 	los.c\
 	map.c\
 	object.c\
+	path.c\
 	porting.c\
 	player.c\
 	quest.c\
@@ -340,6 +341,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/los.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/map.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/object.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/path.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/player.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/porting.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/quest.Po@am__quote@

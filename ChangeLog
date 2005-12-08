@@ -26,6 +26,7 @@ common/path.c: New file containing the modified implementation and the
 include/path.h: Prototypes for path.c.
 server/main.c: Remove implementation; call renamed function.
 common/Makefile.am, include/Makefile.am: Add new files.
+common/Makefile.in, include/Makefile.in: Rebuilt.
 Andreas Kirschbaum 2005-12-08
 
 server/ban.c: General cleanup - whitespace changes, rename variable names.
