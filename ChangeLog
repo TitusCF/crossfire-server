@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+common/path.c: add missing global.h include.
+make_win32/crossfire32.dsp: add path.c and some headers.
+Ryo 2005-12-09
+
 Apply slightly modified first part of patch #1275563 (Crossedit: fix map
 attributes window): make the map attributes dialogs work again.
 --

@@ -1937,6 +1937,10 @@ SOURCE=..\common\object.c
 # End Source File
 # Begin Source File
 
+SOURCE=..\common\path.c
+# End Source File
+# Begin Source File
+
 SOURCE=..\common\player.c
 
 !IF  "$(CFG)" == "crossfire32 - Win32 FullDebug"
@@ -2475,6 +2479,10 @@ SOURCE=..\include\object.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\include\path.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\include\player.h
 
 !IF  "$(CFG)" == "crossfire32 - Win32 FullDebug"
@@ -2731,6 +2739,10 @@ SOURCE=..\include\sproto.h
 
 !ENDIF 
 
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\tod.h
 # End Source File
 # Begin Source File
 

@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <stdio.h>
 #include <string.h>
+#include <global.h>
 
 #include "define.h"
 #include "path.h"
