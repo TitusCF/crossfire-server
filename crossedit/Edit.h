@@ -16,7 +16,7 @@ typedef enum _EditType {
 struct _Edit{
     struct _Edit *next;   /* in list of editors */
     App app;              /* in this application context */
-    Attr mapattr;         /* map attributes */
+    MapAttr mapattr;      /* map attributes */
     Widget w;		  /* mapEditor widget */
     Widget view;	  /* viewport of mapEditor */
     Widget shell;	  /* shell widget of map */
@@ -33,7 +33,7 @@ struct _Edit{
 #endif
 	Widget refresh;
 	Widget read_only;
-	Widget show_weak_walls;
+	Widget weak_walls;
 	Widget overwrite;
 	Widget auto_choose;
 	Widget stacking;

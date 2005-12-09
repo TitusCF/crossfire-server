@@ -32,8 +32,11 @@
 #include "CrEdit.h"
 
 #include "Cnv.h"
+/* HACK Make sure we know how big CnvPromptMax is. */
+#include "Cnv/config.h"
 #include "App.h"
 #include "Attr.h"
+#include "MapAttr.h"
 #include "Str.h"
 #include "Bitmaps.h"
 
@@ -256,210 +259,6 @@ static void EditInsertArch (Edit self, int x, int y, int i, archetype * at);
 
 object *EditCloneInsert (Edit self,object *obj,int x, int y, int z);
 Boolean EditObjectDelete (Edit self, int x, int y, int z);
-
-/*
- * getValue functions
- *
- */
-
-static void getX (object *ob, char *str, XtPointer c) {
-    sprintf(str,"%d",EXIT_X(ob));
-}
-
-static void getY (object *ob, char *str, XtPointer c) {
-    sprintf(str,"%d",EXIT_Y(ob));
-}
-
-static void getWidth (object *ob, char *str, XtPointer c) {
-    sprintf(str,"%d",ob->x);
-}
-
-static void getHeight (object *ob, char *str, XtPointer c) {
-    sprintf(str,"%d",ob->y);
-}
-
-static void getPath (object *ob, char *str, XtPointer c) {
-    Edit edit = (Edit)c;
-    strcpy (str, edit->emap->path);
-}
-
-static void getStacking (object *ob, char *str, XtPointer c) {
-    Cardinal stacking;
-    Edit edit = (Edit)c;
-
-    XtVaGetValues (edit->w, XtNstacking, &stacking, NULL);
-    sprintf (str, "%d", stacking);
-}
-
-static void getTimeout (object *ob, char *str, XtPointer c) {
-    sprintf(str,"%d", ob->value);
-}
-
-static void getReset (object *ob, char *str, XtPointer c) {
-    sprintf(str,"%d", ob->weight);
-}
-
-static void getDarkness (object *ob, char *str, XtPointer c) {
-    sprintf(str,"%d", ob->invisible);
-}
-
-static void getDifficulty (object *ob, char *str, XtPointer c) {
-    sprintf(str,"%d", ob->level);
-}
-
-static void getOverwrite (object *ob, char *str, XtPointer c) {
-    Edit edit = (Edit)c;
-    *str = edit->overwrite ? ~0 : 0;
-}
-
-static void getChoose (object *ob, char *str, XtPointer c) {
-    Edit edit = (Edit)c;
-    *str = edit->auto_choose ? ~0 : 0;
-}
-
-static void getReadOnly (object *ob, char *str, XtPointer c) {
-    Edit edit = (Edit)c;
-    *str = edit->read_only ? ~0 : 0;
-}
-
-static void getNoReset (object *ob, char *str, XtPointer c) {
-    *str = (QUERY_FLAG(ob, FLAG_STAND_STILL))? ~0 : 0;
-}
-
-static void getShowWeakWalls(object *ob, char *str, XtPointer c) {
-    Cardinal weak_walls;
-    Edit edit = (Edit)c;
-
-    XtVaGetValues (edit->w, XtNshow_weak_walls, &weak_walls, NULL);
-    *str= weak_walls ? ~0 : 0;
-}
-
-/*
- * putValue functions
- *
- */
-
-static int new_x, new_y;
-
-
-/*** coord ***/
-static void putX (object *ob, char *str, XtPointer c) {
-    EXIT_X(ob) = atoi(str);
-}
-
-static void putY (object *ob, char *str, XtPointer c) {
-    EXIT_Y(ob) = atoi(str);
-}
-
-/*** path ***/
-static void putPath (object *ob, char *str, XtPointer c) {
-    Edit edit = (Edit)c;
-    strcpy (edit->emap->path, str);
-}
-
-/*** size ***/
-static void putWidth (object *ob, char *str, XtPointer c) {
-    new_x = atoi(str);
-}
-static void putHeight (object *ob, char *str, XtPointer c) {
-    new_y = atoi(str);
-}
-
-static void putStacking (object *ob, char *str, XtPointer c) {
-    Edit edit = (Edit)c;
-    int stacking = atoi(str);
-
-    if (stacking > 48) {
-	CnvNotify ("Illegal space","Ok",NULL);
-	return;
-    }
-    XtVaSetValues(edit->w,XtNstacking,stacking,NULL);
-}
-
-static void putOverwrite (object *ob, char *str, XtPointer c) {
-    Edit edit = (Edit)c;
-    edit->overwrite = *str;
-}
-
-static void putReadOnly (object *ob, char *str, XtPointer c) {
-    Edit edit = (Edit)c;
-    edit->read_only = *str;
-
-
-    /* kludge */
-    /* this function will be called last in this list */
-    if (new_y != ob->y || new_x != ob->x) {
-	/* update map window */
-	EditResizeScroll (edit, new_x, new_y, 0, 0);
-    } else {
-	EditUpdate (edit);
-    }
-}
-
-static void putChoose (object *ob, char *str, XtPointer c) {
-    Edit edit = (Edit)c;
-    edit->auto_choose = *str;
-}
-
-static void putTimeout (object *ob, char *str, XtPointer c) {
-    ob->value = atoi(str);
-}
-
-static void putReset (object *ob, char *str, XtPointer c) {
-    ob->weight = atoi(str);
-}
-
-static void putDarkness (object *ob, char *str, XtPointer c) {
-    ob->invisible = atoi(str);
-}
-
-static void putDifficulty (object *ob, char *str, XtPointer c) {
-    ob->level = atoi(str);
-}
-
-static void putNoReset(object *ob, char *str, XtPointer c) {
-	if (*str) SET_FLAG(ob,FLAG_STAND_STILL);
-	else CLEAR_FLAG(ob, FLAG_STAND_STILL);
-}
-
-static void putShowWeakWalls (object *ob, char *str, XtPointer c) {
-    Edit edit = (Edit)c;
-    Cardinal weak_walls;
-
-    if (*str) weak_walls=1;
-    else weak_walls=0;
-
-    XtVaSetValues(edit->w,XtNshow_weak_walls,weak_walls,NULL);
-}
-
-
-/**********************************************************************
- * tags
- **********************************************************************/
-
-static AttrDef MapDescription[] = {
-    {"Path",		TypeString, getPath,		putPath},
-    {"Start X",		TypeString, getX,		putX},
-    {"Start Y",		TypeString, getY,		putY},
-    {"Width",		TypeString, getWidth,		putWidth},
-    {"Height",		TypeString, getHeight,		putHeight},
-    {"Stacking",	TypeString, getStacking,	putStacking},
-    {"Timeout",		TypeString, getTimeout,		putTimeout},
-    {"Reset",		TypeString, getReset,		putReset},
-    {"Difficulty",	TypeString, getDifficulty,	putDifficulty},
-    {"Darkness",	TypeString, getDarkness,	putDarkness},
-    {"FixedReset",	TypeToggle, getNoReset,		putNoReset},
-    {"Show Weak Walls",	TypeToggle, getShowWeakWalls,	putShowWeakWalls},
-    /* Make sure the ReadOnly is the last thing on the list, otherwise
-     * things won't work properly.
-     */
-    {"ReadOnly",	TypeToggle, getReadOnly,	putReadOnly},
-    {NULL,		TypeString, 0,			0},
-    {"Overwrite",	TypeToggle, getOverwrite,	putOverwrite},
-    {"Choose",		TypeToggle, getChoose,		putChoose},
-    {NULL,		0, 0,				0}
-};
-
 
 /*
  * to all refresh  
@@ -1103,24 +902,11 @@ static void AttributesCb (Widget w, XtPointer client, XtPointer call)
 	
     debug0("Edit::AttributesCb()\n");
 
-    if(!self->mapattr) {
-	self->mapattr = (Attr)XtMalloc (sizeof(struct _Attr));
-	self->mapattr->op = NULL;
-	self->mapattr->app = self->app;
-	self->mapattr->client = self;
-	self->mapattr->attr = NULL;
-	self->mapattr->desc = MapDescription;
-
-	AppLayout (self->mapattr, self->mapattr->app->shell, "mapattr");
-
-	AttrChange(self->mapattr,self->mapattr->op, -1, self->mapattr->client);
-	self->mapattr->dump = CnvBrowseCreate("dump", self->mapattr->app->shell, NULL);
-	XtPopup(self->mapattr->shell,XtGrabNone);
-	self->mapattr->isup = True;
+    if (self->mapattr == NULL) {
+        self->mapattr = MapAttrCreate(self->emap, self->app, self);
     } else {
-	AttrDestroy(self->mapattr);
+	MapAttrDestroy(self->mapattr);
     }
-    return;
 }
 
 /* 
@@ -1177,6 +963,55 @@ static void ToggleAutoCb (Widget w, XtPointer client, XtPointer call)
   debug ("CbEditToggleAuto()\n");
 }
 
+/* 
+ * callback: Toggle showing weak walls
+ */
+static void ToggleWeakCb (Widget w, XtPointer client, XtPointer call)
+{
+    Edit self = (Edit)client;
+    Cardinal weak_walls;
+  
+    XtVaGetValues(self->w, XtNshow_weak_walls, &weak_walls, NULL);
+    XtVaSetValues(self->w, XtNshow_weak_walls, !weak_walls, NULL);
+
+    EditUpdate(self);
+    debug("CbEditToggleWeak()\n");
+}
+
+/*
+ * callback: Adjust stacking size
+ */
+static void SetStackingCb(Widget w, XtPointer client, XtPointer call)
+{
+    char buf[MAX_BUF];
+    char retbuf[CnvPromptMax+1];
+    Edit self = (Edit)client;
+    Cardinal stacking;
+    int ret;
+    
+    XtVaGetValues(self->w, XtNstacking, &stacking, NULL);
+    
+    snprintf(buf, sizeof(buf), "%d", stacking);
+    
+    ret = CnvPrompt("Set stacking (0 = off)", buf, retbuf, "OK", "Cancel", NULL);
+        
+    if (ret != 1)
+        return;
+    
+    stacking = atoi(retbuf);
+    
+    debug2("SetStackingCb %s %d\n", retbuf, stacking);
+
+    /* TODO How did they come up with this magic number? */
+    if (stacking > 48) {
+        CnvNotify("Illegal space", "Ok", NULL);
+        return;
+    }
+    XtVaSetValues(self->w, XtNstacking, stacking, NULL);
+
+    EditUpdate(self);
+} 
+
 static Widget OptionMenu(String name,Edit self,Widget parent)
 {
     Widget shell,refresh, use;
@@ -1206,6 +1041,14 @@ static Widget OptionMenu(String name,Edit self,Widget parent)
 	("autoChoose", smeBSBObjectClass, shell, NULL);
     XtAddCallback (self->iw.auto_choose,
 		   XtNcallback,ToggleAutoCb, (XtPointer) self);
+    self->iw.weak_walls = XtVaCreateManagedWidget 
+	("weakWalls", smeBSBObjectClass, shell, NULL);
+    XtAddCallback (self->iw.weak_walls,
+		   XtNcallback,ToggleWeakCb, (XtPointer) self);
+    self->iw.stacking = XtVaCreateManagedWidget 
+	("sparse", smeBSBObjectClass, shell, NULL);
+    XtAddCallback (self->iw.stacking,
+		   XtNcallback,SetStackingCb, (XtPointer) self);
 
     return shell;
 }
@@ -1406,7 +1249,8 @@ Edit EditCreate(App app,EditType type,String path)
     self->emap = NULL;
     self->type = type;
     self->overwrite = 0;
-    self->mapattr = 0;
+    self->mapattr = NULL;
+    self->modified = False;
 
     /*** load or create map ***/
     if (type == ClipBoard) {
@@ -1489,7 +1333,7 @@ void EditDestroy(Edit self)
     }
     /*** outer coonections ***/
     if (self->mapattr) {
-	AttrDestroy (self->mapattr);
+	MapAttrDestroy(self->mapattr);
     }
     if (self->app->attr && self->app->attr->op &&
 	self->app->attr->op->map == self->emap) {
@@ -1517,7 +1361,7 @@ void EditUpdate(Edit self)
     if(!(self && self->shell && self->emap)) return;
 
     /*** map title ***/
-    sprintf(buf,
+    snprintf(buf, sizeof(buf),
 	    "Edit %s %s",
 	    self->emap->path,
 	    self->modified ? "*" : "");
@@ -1527,11 +1371,14 @@ void EditUpdate(Edit self)
 		  NULL);
     
     /*** info ***/
-    if (self->mapattr)
-	AttrChange (self->mapattr, NULL, -1, self);
+    if (self->mapattr != NULL)
+	MapAttrChange(self->mapattr, self->emap);
 
     /*** toggles ***/
     if(self->type != ClipBoard) {
+        Cardinal weak_walls;
+        Cardinal stacking;
+    
 #if 0
 	XtVaSetValues 
 	    (self->iw.read_only,
@@ -1543,6 +1390,18 @@ void EditUpdate(Edit self)
 	XtVaSetValues 
 	    (self->iw.auto_choose, 
 	     XtNleftBitmap, self->auto_choose ? bitmaps.mark : None, 
+	     NULL);
+        
+	XtVaGetValues(self->w, XtNshow_weak_walls, &weak_walls, NULL);
+	XtVaSetValues 
+	    (self->iw.weak_walls, 
+	     XtNleftBitmap, weak_walls ? bitmaps.mark : None, 
+	     NULL);
+
+	XtVaGetValues(self->w, XtNstacking, &stacking, NULL);
+	XtVaSetValues 
+	    (self->iw.stacking, 
+	     XtNleftBitmap, (stacking != 0) ? bitmaps.mark : None, 
 	     NULL);
     }
     /*** map area ***/

@@ -28,6 +28,7 @@ bin_PROGRAMS = crossedit
 crossedit_SOURCES = \
 	crossedit.c \
 	Attr.c \
+	MapAttr.c \
 	CrFace.c \
 	CrEdit.c \
 	CrList.c \
@@ -50,6 +51,7 @@ crossedit_SOURCES = \
 	Bitmaps.h \
 	Str.h \
 	Attr.h \
+	MapAttr.h \
 	Crossedit.ad.h \
 	Defines.h  \
 	proto.h

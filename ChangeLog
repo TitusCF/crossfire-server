@@ -17,6 +17,20 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Apply slightly modified first part of patch #1275563 (Crossedit: fix map
+attributes window): make the map attributes dialogs work again.
+--
+crossedit/Attr.c: Remove code to handle map attributes dialogs.
+crossedit/Crossedit.ad, crossedit/Crossedit.ad.h: Update X11 resources.
+crossedit/Defines.h: Add typedef for MapAttr.
+crossedit/{Edit.c,Edit.h}: Remove/update code to handle map attributes
+   dialogs.
+crossedit/Makefile.am: Add new files MapAttr.c and MapAttr.h.
+crossedit/{MapAttr.c,MapAttr.h}: New functions containing code to handle the
+   main map attributes dialog.
+crossedit/Cnv/CnvPrompt.c: Convert CnvPromptStr into char array.
+Andreas Kirschbaum 2005-12-09
+
 Remove a strange feature of normalize_path(): it did convert the path
 "<path1>//<path2>" into "/<path2>". Also add a stand-alone application for
 regression testing this function, and fix a few issues with ".." in path name.

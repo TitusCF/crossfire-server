@@ -105,6 +105,7 @@ Crossedit*Text*font: *-lucidatypewriter-medium-r-normal-*-12-*-*-*-*-*-*-*
 *overWrite.label:	Overwrite
 *autoChoose.label:	Choose
 *sparse.label:		Stacking
+*weakWalls.label:	Weak Walls
 *attributes.label:	Attributes
 *cut.label:		Cut
 *copy.label:		Copy
@@ -221,27 +222,16 @@ Crossedit*CrFace*background:	DarkSeaGreen
 *mapattr*Box.borderWidth: 0
 *mapattr*view.width: 300
 *mapattr*view.height: 220
-*mapattr*view*label.width: 70
-*mapattr*view*value.width: 198
+*mapattr*view*label.width: 100
+*mapattr*view*value.width: 168
 *mapattr*view*value.translations: #override \
   <Key>Return: beginning-of-line()\n
 *mapattr*view*Box.hSpace: 3
 *mapattr*view*Box.vSpace: 1
-*mapattr*face.width: 96
-*mapattr*face.height: 24
 *mapattr*msg.width:  300
 *mapattr*msg.height: 76
 *mapattr*msg.autoFill: True
 *mapattr*msg.scrollVertical: always
-*mapattr*inventory.width: 198
-*mapattr*inventory.height: 24
-*mapattr*inventory.allowVert: True
-*mapattr*inventory.forceBars: True
-*mapattr*exact.width: 96
-*mapattr*vars.width: 60
-*mapattr*var.width: 234
-*mapattr*var.translations: #override \
-  <Key>Return: beginning-of-line()\n
 *mapattr*ok.width: 96
 *mapattr*apply.width: 96
 *mapattr*cancel.width: 96

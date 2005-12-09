@@ -38,6 +38,7 @@ extern int FontSize;
 typedef struct _Edit *Edit;
 typedef struct _App *App;
 typedef struct _Attr *Attr;
+typedef struct _MapAttr *MapAttr;
 
 typedef struct mapdef *Map;
 

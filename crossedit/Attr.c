@@ -944,7 +944,6 @@ static void AttrReset(Attr self)
  */
 void AttrDestroy(Attr self)
 {
-    Edit tmp;
     Attr tmp2;
 
     if (self->attr)
@@ -959,29 +958,21 @@ void AttrDestroy(Attr self)
      * here we find out to what part this window belongs to.
      * it may be:
      *  - Attr of Look in App
-     *  - MapAttr in Edit
      *  - Attr of other Attr (inventory)
      */
     
     if (self == self->app->attr)
 	self->app->attr = NULL;
     else {
-	for (tmp = self->app->edit; tmp; tmp = tmp->next)
-	    if (self == tmp->mapattr) {
-		tmp->mapattr = NULL;
+	for (tmp2 = self->app->attr; tmp2; tmp2 = tmp2->attr)
+	    if (self == tmp2->attr) {
+		tmp2->attr = NULL;
 		break;
 	    }
-	if (!tmp) {
-	    for (tmp2 = self->app->attr; tmp2; tmp2 = tmp2->attr)
-		if (self == tmp2->attr) {
-		    tmp2->attr = NULL;
-		    break;
-		}
 #ifdef DEBUG
-	    if (!tmp2)
-		debug0 ("Cannot find origin of Attr!!\n");
+	if (!tmp2)
+	    debug0 ("Cannot find origin of Attr!!\n");
 #endif
-	} 
     }
     XtFree((char*)self);
 }

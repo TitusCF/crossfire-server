@@ -1,6 +1,7 @@
 #include <Cnv.h>
 #include <Ansi.h>
 #include <Xaw.h>
+#include "debug.h" /* debug1 */
 
 /**********************************************************************
  * prompt
@@ -8,7 +9,7 @@
 
 static int CnvPromptSelect = 0;
 static int CnvPromptActionFlag = 0;
-static char *CnvPromptString;
+static char CnvPromptString[CnvPromptMax+1];
 static Widget CnvPromptWidgetText;
 static void CnvPromptCb (Widget w, XtPointer client, XtPointer call);
 
@@ -33,7 +34,10 @@ XtActionsRec CnvPromptActionTable[] = {
 static void CnvPromptCb (Widget w, XtPointer client, XtPointer call)
 {
     CnvPromptSelect = (int) client;	/* set cardinal */
-    XtVaGetValues (CnvPromptWidgetText, XtNstring, &CnvPromptString, NULL);
+    char *t;
+    XtVaGetValues(CnvPromptWidgetText, XtNstring, &t, NULL);
+    
+    snprintf(CnvPromptString, sizeof(CnvPromptString), "%s", t);
 
     XtDestroyWidget (CnvGetShell (w));
 }
@@ -44,6 +48,8 @@ int CnvPrompt(String msg,String def,String ans,...)
     Widget shell,cont,sign,use = NULL;
     int i;
     String str;
+
+    CnvPromptString[0] = '\0';
 
     if (!CnvPromptActionFlag) {
 	XtAppContext a = XtWidgetToApplicationContext (cnv->shell);
@@ -87,6 +93,11 @@ int CnvPrompt(String msg,String def,String ans,...)
 	 XtNwidth,336,
 	 NULL);
     
+    /* Put the cursor at the end of the line. */
+    XtVaSetValues(CnvPromptWidgetText, 
+        XtNinsertPosition, strlen(def),
+        NULL);
+    
     XtInstallAllAccelerators(cont,cont);
     
     /*** button-list ***/
@@ -108,6 +119,8 @@ int CnvPrompt(String msg,String def,String ans,...)
     }
     i = CnvPromptSelect;
     CnvPromptSelect = 0;
+    
+    debug1("CnvPrompt '%s'\n", CnvPromptString);
     strncpy(ans,CnvPromptString,CnvPromptMax);
     ans[CnvPromptMax] = '\0';
     return i;
