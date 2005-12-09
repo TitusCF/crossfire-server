@@ -80,8 +80,8 @@ am__installdirs = "$(DESTDIR)$(bindir)"
 binPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
 PROGRAMS = $(bin_PROGRAMS)
 am_crossedit_OBJECTS = crossedit.$(OBJEXT) Attr.$(OBJEXT) \
-	CrFace.$(OBJEXT) CrEdit.$(OBJEXT) CrList.$(OBJEXT) \
-	CrUtil.$(OBJEXT) Edit.$(OBJEXT) App.$(OBJEXT) \
+	MapAttr.$(OBJEXT) CrFace.$(OBJEXT) CrEdit.$(OBJEXT) \
+	CrList.$(OBJEXT) CrUtil.$(OBJEXT) Edit.$(OBJEXT) App.$(OBJEXT) \
 	Bitmaps.$(OBJEXT) Str.$(OBJEXT) xutil.$(OBJEXT) \
 	stubs.$(OBJEXT)
 crossedit_OBJECTS = $(am_crossedit_OBJECTS)
@@ -247,6 +247,7 @@ x_libraries = @x_libraries@
 crossedit_SOURCES = \
 	crossedit.c \
 	Attr.c \
+	MapAttr.c \
 	CrFace.c \
 	CrEdit.c \
 	CrList.c \
@@ -269,6 +270,7 @@ crossedit_SOURCES = \
 	Bitmaps.h \
 	Str.h \
 	Attr.h \
+	MapAttr.h \
 	Crossedit.ad.h \
 	Defines.h  \
 	proto.h
@@ -360,6 +362,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CrList.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CrUtil.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Edit.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/MapAttr.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Str.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/crossedit.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stubs.Po@am__quote@

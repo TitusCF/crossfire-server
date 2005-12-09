@@ -26,6 +26,7 @@ crossedit/Defines.h: Add typedef for MapAttr.
 crossedit/{Edit.c,Edit.h}: Remove/update code to handle map attributes
    dialogs.
 crossedit/Makefile.am: Add new files MapAttr.c and MapAttr.h.
+crossedit/Makefile.in: Rebuilt.
 crossedit/{MapAttr.c,MapAttr.h}: New functions containing code to handle the
    main map attributes dialog.
 crossedit/Cnv/CnvPrompt.c: Convert CnvPromptStr into char array.
