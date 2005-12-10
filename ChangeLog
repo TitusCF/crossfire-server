@@ -38,7 +38,7 @@ make_win32/crossfire32.dsp: add path.c and some headers.
 Ryo 2005-12-09
 
 Apply slightly modified first part of patch #1275563 (Crossedit: fix map
-attributes window): make the map attributes dialogs work again.
+attributes window) by Kevin Rudat: make the map attributes dialogs work again.
 --
 crossedit/Attr.c: Remove code to handle map attributes dialogs.
 crossedit/Crossedit.ad, crossedit/Crossedit.ad.h: Update X11 resources.
