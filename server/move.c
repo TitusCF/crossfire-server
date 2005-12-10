@@ -61,13 +61,13 @@ int move_ob (object *op, int dir, object *originator)
     mapstruct *m;
     int mflags;
 
-    m = op->map;
-    mflags = get_map_flags(m, &m, newx, newy, &newx, &newy);
-
     if(op==NULL) {
 	LOG(llevError,"Trying to move NULL.\n");
 	return 0;
     }
+
+    m = op->map;
+    mflags = get_map_flags(m, &m, newx, newy, &newx, &newy);
 
     /* If the space the player is trying to is out of the map,
      * bail now - we know it can't work.

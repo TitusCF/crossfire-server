@@ -17,6 +17,8 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/move.c: In move_ob() print error message instead of crashing: check
+   passed arguments before accessing them.
 common/object.c, server/{pets.c,player.c,spell_attack.c,time.c},
 socket/request.c: Properly check for P_OUT_OF_MAP after calling
    get_map_flags().
