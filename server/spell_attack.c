@@ -212,15 +212,21 @@ void move_bolt(object *op) {
 		op->direction=absdir(op->direction+4);
 	    else {
 		int left, right;
+		int mflags;
 
-		get_map_flags(op->map, &m, op->x+freearr_x[absdir(op->direction-1)],
+		/* Need to check for P_OUT_OF_MAP: if the bolt is tavelling
+		 * over a corner in a tiled map, it is possible that
+		 * op->direction is within an adjacent map but either
+		 * op->direction-1 or op->direction+1 does not exist.
+		 */
+		mflags = get_map_flags(op->map, &m, op->x+freearr_x[absdir(op->direction-1)],
 			       op->y+freearr_y[absdir(op->direction-1)], &x, &y);
 
-		left = OB_TYPE_MOVE_BLOCK(op, GET_MAP_MOVE_BLOCK(m, x, y));
+		left = (mflags & P_OUT_OF_MAP) ? 0 : OB_TYPE_MOVE_BLOCK(op, GET_MAP_MOVE_BLOCK(m, x, y));
 
-		get_map_flags(op->map, &m, op->x+freearr_x[absdir(op->direction+1)],
+		mflags = get_map_flags(op->map, &m, op->x+freearr_x[absdir(op->direction+1)],
                               op->y+freearr_y[absdir(op->direction+1)], &x, &y);
-		right = OB_TYPE_MOVE_BLOCK(op, GET_MAP_MOVE_BLOCK(m, x, y));
+		right = (mflags & P_OUT_OF_MAP) ? 0 : OB_TYPE_MOVE_BLOCK(op, GET_MAP_MOVE_BLOCK(m, x, y));
 
 		if(left==right)
 		    op->direction=absdir(op->direction+4);
@@ -1152,7 +1158,8 @@ void move_missile(object *op) {
 
     mflags = get_map_flags(op->map, &m, new_x, new_y, &new_x, &new_y);
 
-    if ((mflags & P_IS_ALIVE) || OB_TYPE_MOVE_BLOCK(op, GET_MAP_MOVE_BLOCK(m, new_x, new_y))) {
+    if (!(mflags & P_OUT_OF_MAP) &&
+	((mflags & P_IS_ALIVE) || OB_TYPE_MOVE_BLOCK(op, GET_MAP_MOVE_BLOCK(m, new_x, new_y)))) {
 	tag_t tag = op->count;
 	hit_map (op, op->direction, AT_MAGIC, 1);
 	/* Basically, missile only hits one thing then goes away.

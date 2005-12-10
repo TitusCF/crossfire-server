@@ -482,7 +482,7 @@ int path_to_player(object *mon, object *pl, unsigned mindiff) {
 	y = lasty + freearr_y[dir];
 	
 	mflags = get_map_flags(m, &m, x, y, &x, &y);
-	blocked = GET_MAP_MOVE_BLOCK(m, x, y);
+	blocked = (mflags & P_OUT_OF_MAP) ? MOVE_ALL : GET_MAP_MOVE_BLOCK(m, x, y);
 
 	/* Space is blocked - try changing direction a little */
 	if ((mflags & P_OUT_OF_MAP) || ((OB_TYPE_MOVE_BLOCK(mon, blocked))

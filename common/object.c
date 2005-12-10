@@ -2335,18 +2335,24 @@ int find_dir(mapstruct *m, int x, int y, object *exclude) {
 	ny = y + freearr_y[i];
 
 	mflags = get_map_flags(m, &mp, nx, ny, &nx, &ny);
+	if (mflags & P_OUT_OF_MAP) {
+	    max = maxfree[i];
+	} else {
+	    blocked = GET_MAP_MOVE_BLOCK(mp, nx, ny);
 
-	blocked = GET_MAP_MOVE_BLOCK(mp, nx, ny);
-
-	if ((move_type & blocked) == move_type)
-	    max=maxfree[i];
-	else if (mflags & P_IS_ALIVE) {
-	    for (tmp=GET_MAP_OB(mp,nx,ny); tmp!= NULL; tmp=tmp->above) {
-		if ((QUERY_FLAG(tmp,FLAG_MONSTER) ||  tmp->type==PLAYER) &&
-		    (tmp != exclude ||(tmp->head && tmp->head != exclude))) break;
+	    if ((move_type & blocked) == move_type) {
+		max=maxfree[i];
+	    } else if (mflags & P_IS_ALIVE) {
+		for (tmp=GET_MAP_OB(mp,nx,ny); tmp!= NULL; tmp=tmp->above) {
+		    if ((QUERY_FLAG(tmp,FLAG_MONSTER) ||  tmp->type==PLAYER) &&
+			(tmp != exclude ||(tmp->head && tmp->head != exclude))) {
+			break;
+		    }
+		}
+		if(tmp) {
+		    return freedir[i];
+		}
 	    }
-	    if(tmp)
-		return freedir[i];
 	}
     }
     return 0;

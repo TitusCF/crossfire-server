@@ -1758,6 +1758,8 @@ void draw_client_map(object *pl)
 	    ay=j;
 	    m = pl->map;
 	    mflags = get_map_flags(m, &m, ax, ay, &ax, &ay);
+	    if (mflags & P_OUT_OF_MAP)
+		continue;
 	    if (mflags & P_NEED_UPDATE)
 		update_position(m, ax, ay);
 	    /* If a map is visible to the player, we don't want to swap it out

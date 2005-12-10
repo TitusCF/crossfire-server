@@ -740,13 +740,18 @@ void move_arrow(object *op) {
 
 		retry++;
 
-		get_map_flags(op->map,&m1, op->x+freearr_x[absdir(op->direction-1)],
+		/* Need to check for P_OUT_OF_MAP: if the arrow is tavelling
+		 * over a corner in a tiled map, it is possible that
+		 * op->direction is within an adjacent map but either
+		 * op->direction-1 or op->direction+1 does not exist.
+		 */
+		mflags = get_map_flags(op->map,&m1, op->x+freearr_x[absdir(op->direction-1)],
 		       op->y+freearr_y[absdir(op->direction-1)], &x1, &y1);
-		left = OB_TYPE_MOVE_BLOCK(op, (GET_MAP_MOVE_BLOCK(m1, x1, y1)));
+		left = (mflags & P_OUT_OF_MAP) ? 0 : OB_TYPE_MOVE_BLOCK(op, (GET_MAP_MOVE_BLOCK(m1, x1, y1)));
 
-		get_map_flags(op->map,&m1, op->x+freearr_x[absdir(op->direction+1)],
+		mflags = get_map_flags(op->map,&m1, op->x+freearr_x[absdir(op->direction+1)],
 		   op->y+freearr_y[absdir(op->direction+1)], &x1, &y1);
-		right = OB_TYPE_MOVE_BLOCK(op, (GET_MAP_MOVE_BLOCK(m1, x1, y1)));
+		right = (mflags & P_OUT_OF_MAP) ? 0 : OB_TYPE_MOVE_BLOCK(op, (GET_MAP_MOVE_BLOCK(m1, x1, y1)));
 
 		if(left==right)
 		    op->direction=absdir(op->direction+4);

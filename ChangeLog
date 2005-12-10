@@ -17,6 +17,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+common/object.c, server/{pets.c,player.c,spell_attack.c,time.c},
+socket/request.c: Properly check for P_OUT_OF_MAP after calling
+   get_map_flags().
+Andreas Kirschbaum 2005-12-10
+
 common/path.c: add missing global.h include.
 make_win32/crossfire32.dsp: add path.c and some headers.
 Ryo 2005-12-09

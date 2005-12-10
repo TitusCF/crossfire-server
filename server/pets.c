@@ -44,6 +44,7 @@ object *get_pet_enemy(object * pet, rv_vector *rv){
     sint16 x,y;
     mapstruct *nm;
     int search_arr[SIZEOFFREE];
+    int mflags;
 
     attacker = pet->attacked_by; /*pointer to attacking enemy*/
     pet->attacked_by = NULL;     /*clear this, since we are dealing with it*/
@@ -111,7 +112,8 @@ object *get_pet_enemy(object * pet, rv_vector *rv){
         y = owner->y + freearr_y[search_arr[i]];
 	nm = owner->map;
 	/* Only look on the space if there is something alive there. */
-	if (get_map_flags(nm, &nm, x, y, &x, &y) & P_IS_ALIVE) {
+	mflags = get_map_flags(nm, &nm, x, y, &x, &y);
+	if (!(mflags & P_OUT_OF_MAP) && mflags & P_IS_ALIVE) {
 	    for (tmp = get_map_ob(nm, x, y); tmp != NULL; tmp = tmp->above) {
 		object *tmp2 = tmp->head == NULL?tmp:tmp->head;
 
@@ -179,7 +181,8 @@ object *get_pet_enemy(object * pet, rv_vector *rv){
 	    y = pet->y + freearr_y[search_arr[i]];
 	    nm = pet->map;
 	    /* Only look on the space if there is something alive there. */
-	    if (get_map_flags(nm, &nm, x,y, &x, &y) & P_IS_ALIVE) {
+	    mflags = get_map_flags(nm, &nm, x,y, &x, &y);
+	    if (!(mflags & P_OUT_OF_MAP) && mflags & P_IS_ALIVE) {
 		for (tmp = get_map_ob(nm, x, y); tmp != NULL; tmp = tmp->above) {
 		    object *tmp2 = tmp->head == NULL?tmp:tmp->head;
 		    if (QUERY_FLAG(tmp2,FLAG_ALIVE) && ((
