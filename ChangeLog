@@ -17,6 +17,15 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Apply modified second part of patch #1275563 (Crossedit: fix map attributes
+window) by Kevin Rudat: let crossedit save/load tiling paths as the mapmaker
+entered them, rather than saving the normalized version.
+--
+common/map.c: Delay path normalization from map loading time
+   (load_map_header()) to access time (load_and_link_tiled_map()) if running
+   as editor.
+Andreas Kirschbaum 2005-12-11
+
 server/move.c: In move_ob() print error message instead of crashing: check
    passed arguments before accessing them.
 common/object.c, server/{pets.c,player.c,spell_attack.c,time.c},

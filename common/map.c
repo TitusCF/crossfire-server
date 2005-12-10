@@ -35,6 +35,9 @@
 #include <unistd.h>
 #endif /* win32 */
 
+#include "path.h"
+
+
 extern int nrofallocobjects,nroffreeobjects;
 
 
@@ -901,49 +904,39 @@ static int load_map_header(FILE *fp, mapstruct *m)
 		LOG(llevError,"load_map_header: tile location %d out of bounds (%s)\n",
 		    tile, m->path);
 	    } else {
+	        char *path;
+
 		*end = 0;
+
 		if (m->tile_path[tile-1]) {
 		    LOG(llevError,"load_map_header: tile location %d duplicated (%s)\n",
 			tile, m->path);
 		    free(m->tile_path[tile-1]);
+		    m->tile_path[tile-1] = NULL;
 		}
-		/* This is sort of broken.  IF we don't normalize the path,
-		 * the editor will die when it gets a multipart object that
-		 * spans map.  However, if we do this, then the tile_paths
-		 * get changed because we normalize them - the normalized paths
-		 * may not be terrible, but not ideal either.	
-		 */
-#if 0
-		if (!editor) {
-#else
-		{
-#endif
-		    if (check_path(value, 1)==-1) {
-			int i;
-			/* Need to try and normalize the path.  msgbuf is safe to use,
-			 * as that is all read in at one time.
-			 */
-			strcpy(msgbuf, m->path);
-			for (i=0; msgbuf[i]!=0; i++)
-			    if (msgbuf[i] == '/') end = msgbuf + i;
-			if (!end) {
-			    LOG(llevError,"get_map_header: Can not normalize tile path %s %s\n",
-				m->path, value);
-			    value = NULL;
-			} else {
-			    strcpy(end+1, value);
-			    if (check_path(msgbuf,1)==-1) {
-				LOG(llevError,"get_map_header: Can not normalize tile path %s %s\n",
-				    m->path, value);
-				value = NULL;
-			    } else
-				value = msgbuf;
-			}
-		    } /* if unable to load path as given */
-		} /* if not editor */
-		if (value)
+
+		if (check_path(value, 1) != -1) {
+		    /* The unadorned path works. */
+		    path = value;
+		} else {
+		    /* Try again; it could be a relative exit. */
+
+		    path = path_combine_and_normalize(m->path, value);
+
+                    if (check_path(path, 1) == -1) {
+                        LOG(llevError, "get_map_header: Bad tile path %s %s\n", m->path, value);
+                        path = NULL;
+		    }
+		}
+
+		if (editor) {
+		    /* Use the value as in the file. */
 		    m->tile_path[tile-1] = strdup_local(value);
-	    }
+		} else if (path != NULL) {
+		    /* Use the normalized value. */
+		    m->tile_path[tile-1] = strdup_local(path);
+		}
+	    } /* end if tile direction (in)valid */
 	}
 	else if (!strcmp(key,"end")) break;
 	else {
@@ -1877,7 +1870,12 @@ static mapstruct *load_and_link_tiled_map(mapstruct *orig_map, int tile_num)
 {
     int dest_tile = (tile_num +2) % 4;
 
-    orig_map->tile_map[tile_num] = ready_map_name(orig_map->tile_path[tile_num], 0);
+    if (editor) {
+        char *path = path_combine_and_normalize(orig_map->path, orig_map->tile_path[tile_num]);
+        orig_map->tile_map[tile_num] = ready_map_name(path, 0);
+    } else {
+        orig_map->tile_map[tile_num] = ready_map_name(orig_map->tile_path[tile_num], 0);
+    }
 
     /* need to do a strcmp here as the orig_map->path is not a shared string */
     if (orig_map->tile_map[tile_num]->tile_path[dest_tile] &&
