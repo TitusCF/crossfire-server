@@ -790,7 +790,9 @@ static int load_map_header(FILE *fp, mapstruct *m)
 	value = strchr(key, ' ');
 	if (!value) {
 	    end = strchr(key, '\n');
-	    *end=0;
+	    if (end != NULL) {
+		*end = 0;
+	    }
 	} else {
 	    *value = 0;
 	    value++;
