@@ -794,8 +794,15 @@ static int load_map_header(FILE *fp, mapstruct *m)
 	} else {
 	    *value = 0;
 	    value++;
-	    while (isspace(*value)) value++;
 	    end = strchr(value, '\n');
+	    while (isspace(*value)) {
+		value++;
+		if (*value == '\0' || value == end) {
+		    /* Nothing but spaces. */
+		    value = NULL;
+		    break;
+		}
+	    }
 	}
 	if (!end) {
 	    LOG(llevError, "Error loading map header - did not find a newline - perhaps file is truncated?  Buf=%s\n",
@@ -813,17 +820,13 @@ static int load_map_header(FILE *fp, mapstruct *m)
 	 * value could be NULL!  It would be easy enough to just point
 	 * this to "" to prevent cores, but that would let more errors slide
 	 * through.
+	 *
+	 * First check for entries that do not use the value parameter, then
+	 * validate that value is given and check for the remaining entries
+	 * that use the parameter.
 	 */
 
-	if (!strcmp(key, "arch")) {
-	    /* This is an oddity, but not something we care about much. */
-	    if (strcmp(value,"map\n")) 
-		LOG(llevError,"loading map and got a non 'arch map' line(%s %s)?\n",key,value);
-	}
-	else if (!strcmp(key,"name")) {
-	    *end=0;
-	    m->name = strdup_local(value);
-	} else if (!strcmp(key,"msg")) {
+	if (!strcmp(key,"msg")) {
 	    while (fgets(buf, HUGE_BUF-1, fp)!=NULL) {
 		if (!strcmp(buf,"endmsg\n")) break;
 		else {
@@ -839,6 +842,21 @@ static int load_map_header(FILE *fp, mapstruct *m)
 	     */
 	    if (msgpos != 0)
 		m->msg = strdup_local(msgbuf);
+	}
+	else if (!strcmp(key,"end")) {
+	    break;
+	}
+	else if (value == NULL) {
+	    LOG(llevError, "Got '%s' line without parameter in map header\n", key);
+	}
+	else if (!strcmp(key, "arch")) {
+	    /* This is an oddity, but not something we care about much. */
+	    if (strcmp(value,"map\n")) 
+		LOG(llevError,"loading map and got a non 'arch map' line(%s %s)?\n",key,value);
+	}
+	else if (!strcmp(key,"name")) {
+	    *end=0;
+	    m->name = strdup_local(value);
 	}
 	/* first strcmp value on these are old names supported
 	 * for compatibility reasons.  The new values (second) are
@@ -938,7 +956,6 @@ static int load_map_header(FILE *fp, mapstruct *m)
 		}
 	    } /* end if tile direction (in)valid */
 	}
-	else if (!strcmp(key,"end")) break;
 	else {
 	    LOG(llevError,"Got unknown value in map header: %s %s\n", key, value);
 	}

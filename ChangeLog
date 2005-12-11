@@ -17,6 +17,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Prevent the map loader from crashing when loading maps with incorrect headers.
+Changes are based on patch #1275563 by Kevin Rudat.
+--
+common/map.c: Do not dereference NULL value for map headers without parameter.
+Andreas Kirschbaum 2005-12-11
+
 Apply modified second part of patch #1275563 (Crossedit: fix map attributes
 window) by Kevin Rudat: let crossedit save/load tiling paths as the mapmaker
 entered them, rather than saving the normalized version.
