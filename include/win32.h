@@ -95,6 +95,9 @@
 #define S_IRUSR 0000004
 #endif
 
+#define WIFEXITED(x)    1
+#define WEXITSTATUS(x)  x
+
 /* Location of read-only machine independent data */
 #define DATADIR "share"
 #define LIBDIR "share"

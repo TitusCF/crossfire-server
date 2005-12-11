@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Fix Windows compilation after Andreas's changes.
+include/win32.h: define WIFEXITED and WEXITSTATUS.
+Ryo 2005-12-11
+
 Fix buffer overflows which can be triggered remotely.
 --
 common/porting.c: Re-implement open_and_uncompress(). The new implementation
