@@ -17,6 +17,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+lib/collect.pl.in: General cleanup - just whitespace changes.
+Andreas Kirschbaum 2005-12-11
+
 Prevent the map loader from crashing when loading maps with incorrect headers.
 Changes are based on patch #1275563 by Kevin Rudat.
 --
