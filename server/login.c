@@ -114,7 +114,17 @@ int verify_player(const char *name, char *password)
     int comp;
     FILE *fp;
 
-    sprintf(buf,"%s/%s/%s/%s.pl",settings.localdir,settings.playerdir,name,name);
+    if (strpbrk(name, "/.\\") != NULL) {
+	LOG(llevError, "Username contains illegal characters: %s\n", name);
+	return 1;
+    }
+
+    snprintf(buf, sizeof(buf), "%s/%s/%s/%s.pl", settings.localdir, settings.playerdir, name, name);
+    if (strlen(buf) >= sizeof(buf)-1) {
+	LOG(llevError, "Username too long: %s\n", name);
+	return 1;
+    }
+
     if ((fp=open_and_uncompress(buf,0,&comp))==NULL) return 1;
 
     /* Read in the file until we find the password line.  Our logic could

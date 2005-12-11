@@ -183,6 +183,11 @@ void Handle_Oldsocket(NewSocket *ns)
      * or no more characters to read.
      */
     do {
+	if (ns->inbuf.len >= MAXSOCKBUF-1) {
+	    ns->status = Ns_Dead;
+	    LOG(llevDebug, "Old input socket sent too much data without newline\n");
+	    return;
+	}
 #ifdef WIN32 /* ***win32: change oldsocket read() to recv() */
 		stat = recv(ns->fd, ns->inbuf.buf + ns->inbuf.len, 1,0);
 
@@ -199,11 +204,6 @@ void Handle_Oldsocket(NewSocket *ns)
 	    return;
 	}
 	if (stat == 0) return;
-	if (stat == MAXSOCKBUF-1) {
-	    ns->status = Ns_Dead;
-	    LOG(llevDebug, "Old input socket sent too much data without newline\n");
-	    return;
-	}
     } while (ns->inbuf.buf[ns->inbuf.len++]!='\n');
 
     ns->inbuf.buf[ns->inbuf.len]=0;
@@ -229,10 +229,10 @@ void Handle_Oldsocket(NewSocket *ns)
 	return;
     }
     if (!strcasecmp(ns->inbuf.buf, "listen")) {
-	if (ns->comment) free(ns->comment);
 	if (cp) {
 	    char *buf="Socket switched to listen mode\n";
 
+	    free(ns->comment);
 	    ns->comment = strdup_local(cp);
 	    ns->old_mode = Old_Listen;
 	    cs_write_string(ns, buf, strlen(buf));
@@ -257,7 +257,7 @@ void Handle_Oldsocket(NewSocket *ns)
 
 	if (!verify_player(cp, cp1)) {
 	    char *buf="Welcome back\n";
-	    if (ns->comment) free(ns->comment);
+	    free(ns->comment);
 	    ns->comment = strdup_local(cp);
 	    ns->old_mode = Old_Player;
 	    cs_write_string(ns, buf, strlen(buf));
@@ -274,7 +274,7 @@ void Handle_Oldsocket(NewSocket *ns)
 	command = find_oldsocket_command2(ns->inbuf.buf);
     }
     if (!command) {
-	sprintf(buf,"Could not find command: %s\n", ns->inbuf.buf);
+	snprintf(buf, sizeof(buf), "Could not find command: %s\n", ns->inbuf.buf);
 	cs_write_string(ns, buf, strlen(buf));
 	return;
     }

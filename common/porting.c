@@ -40,6 +40,7 @@
 #else
 #include <ctype.h>
 #include <sys/stat.h>
+#include <sys/wait.h>
 
 #include <sys/param.h>
 #include <stdio.h>
@@ -468,93 +469,126 @@ char *uncomp[NROF_COMPRESS_METHODS][3] = {
 };
 
 
-/*
- * open_and_uncompress() first searches for the original filename.
- * if it exist, then it opens it and returns the file-pointer.
- * if not, it does two things depending on the flag.  If the flag
- * is set, it tries to create the original file by uncompressing a .Z file.
- * If the flag is not set, it creates a pipe that is used for
- * reading the file (NOTE - you can not use fseek on pipes)
+/**
+ * Open and possibly uncompress a file.
  *
- * The compressed pointer is set to nonzero if the file is
- * compressed (and thus,  fp is actually a pipe.)  It returns 0
- * if it is a normal file
+ * @param ext the extension if the file is compressed.
  *
- * (Note, the COMPRESS_SUFFIX is used instead of ".Z", thus it can easily
- * be changed in the config file.)
+ * @param uncompressor the command to uncompress the file if the file is
+ * compressed.
+ *
+ * @param name the base file name without compression extension
+ *
+ * @param flag only used for compressed files: if set, uncompress and open the
+ * file; if unset, uncompress the file via pipe
+ *
+ * @param *compressed set to zero if the file was uncompressed
  */
+static FILE *open_and_uncompress_file(const char *ext, const char *uncompressor, const char *name, int flag, int *compressed) {
+    struct stat st;
+    char buf[MAX_BUF];
+    char buf2[MAX_BUF];
+    int ret;
 
-FILE *open_and_uncompress(const char *name,int flag, int *compressed) {
-  FILE *fp;
-  char buf[MAX_BUF],buf2[MAX_BUF], *bufend;
-  int try_once = 0;
-
-  strcpy(buf, name);
-  bufend = buf + strlen(buf);
-
-/*  LOG(llevDebug, "open_and_uncompress(%s)\n", name);
-*/
-
-  /* strip off any compression prefixes that may exist */
-  for (*compressed = 0; *compressed < NROF_COMPRESS_METHODS; (*compressed)++) {
-    if ((uncomp[*compressed][0]) &&
-      (!strcmp(uncomp[*compressed][0], bufend - strlen(uncomp[*compressed][0])))) {
-	buf[strlen(buf) - strlen(uncomp[*compressed][0])] = '\0';
-	bufend = buf + strlen(buf);
+    if (ext == NULL) {
+        ext = "";
     }
-  }
-  for (*compressed = 0; *compressed < NROF_COMPRESS_METHODS; (*compressed)++) {
-    struct stat statbuf;
 
-    if (uncomp[*compressed][0])
-        strcpy(bufend, uncomp[*compressed][0]);
-    if (stat(buf, &statbuf)) {
-
-/*      LOG(llevDebug, "Failed to stat %s\n", buf);
-*/
-      continue;
+    if (strlen(name)+strlen(ext) >= sizeof(buf)) {
+        errno = ENAMETOOLONG; /* File name too long */
+        return NULL;
     }
-/*    LOG(llevDebug, "Found file %s\n", buf);
-*/
-    if (uncomp[*compressed][0]) {
-      strcpy(buf2, uncomp[*compressed][1]);
-      strcat(buf2, " < ");
-      strcat(buf2, buf);
-      if (flag) {
-        int i;
-        if (try_once) {
-          LOG(llevError, "Failed to open %s after decompression.\n", name);
-          return NULL;
+    sprintf(buf, "%s%s", name, ext);
+
+    if (stat(buf, &st) != 0) {
+        return NULL;
+    }
+
+    if (!S_ISREG(st.st_mode)) {
+        errno = EISDIR;         /* Not a regular file */
+        return NULL;
+    }
+
+    if (uncompressor == NULL) {
+        /* open without uncompression */
+
+        return fopen(buf, "r");
+    }
+
+    /* The file name buf (and its substring name) is passed as an argument to a
+     * shell command, therefore check for characters that could confuse the
+     * shell.
+     */
+    if (strpbrk(buf, "'\\\r\n") != NULL) {
+        errno = ENOENT;         /* Pretend the file does not exist */
+        return NULL;
+    }
+
+    if (!flag) {
+        /* uncompress via pipe */
+
+        if (strlen(uncompressor)+4+strlen(buf)+1 >= sizeof(buf2)) {
+            errno = ENAMETOOLONG;       /* File name too long */
+            return NULL;
         }
-        try_once = 1;
-        strcat(buf2, " > ");
-        strcat(buf2, name);
-        LOG(llevDebug, "system(%s)\n", buf2);
-        if ((i=system(buf2))) {
-          LOG(llevError, "system(%s) returned %d\n", buf2, i);
-          return NULL;
-        }
-        unlink(buf);		/* Delete the original */
-        *compressed = '\0';	/* Restart the loop from the beginning */
-        chmod(name, statbuf.st_mode);
-        continue;
-      }
-      if ((fp = popen(buf2, "r")) != NULL)
-        return fp;
-    } else if((fp=fopen(name,"r"))!=NULL) {
-      struct stat statbuf;
-      if (fstat (fileno (fp), &statbuf) || ! S_ISREG (statbuf.st_mode)) {
-        LOG (llevDebug, "Can't open %s - not a regular file\n", name);
-        (void) fclose (fp);
+        sprintf(buf2, "%s < '%s'", uncompressor, buf);
+
+        return popen(buf2, "r");
+    }
+
+    /* remove compression from file, then open file */
+
+    if (stat(name, &st) == 0 && !S_ISREG(st.st_mode)) {
         errno = EISDIR;
         return NULL;
-      }
-      return fp;
     }
-  }
-  /* Let the caller print an error if it wants to */
-/*  LOG(llevDebug, "Can't open %s\n", name);*/
-  return NULL;
+
+    if (strlen(uncompressor)+4+strlen(buf)+5+strlen(name)+1 >= sizeof(buf2)) {
+        errno = ENAMETOOLONG;   /* File name too long */
+        return NULL;
+    }
+    sprintf(buf2, "%s < '%s' > '%s'", uncompressor, buf, name);
+
+    ret = system(buf2);
+    if (!WIFEXITED(ret) || WEXITSTATUS(ret) != 0) {
+        LOG(llevError, "system(%s) returned %d\n", buf2, ret);
+        errno = ENOENT;
+        return NULL;
+    }
+
+    unlink(buf);                /* Delete the original */
+    *compressed = 0;            /* Change to "uncompressed file" */
+    chmod(name, st.st_mode);    /* Copy access mode from compressed file */
+
+    return fopen(name, "r");
+}
+
+/**
+ * open_and_uncompress() first searches for the original filename. If it exist,
+ * then it opens it and returns the file-pointer.
+ *
+ * If not, it does two things depending on the flag. If the flag is set, it
+ * tries to create the original file by appending a compression suffix to name
+ * and uncompressing it. If the flag is not set, it creates a pipe that is used
+ * for reading the file (NOTE - you can not use fseek on pipes).
+ *
+ * The compressed pointer is set to nonzero if the file is compressed (and
+ * thus, fp is actually a pipe.) It returns 0 if it is a normal file.
+ */
+FILE *open_and_uncompress(const char *name, int flag, int *compressed) {
+    size_t i;
+    FILE *fp;
+
+    for (i = 0; i < NROF_COMPRESS_METHODS; i++) {
+        *compressed = i;
+        fp = open_and_uncompress_file(uncomp[i][0], uncomp[i][1], name, flag, compressed);
+        if (fp != NULL) {
+            return fp;
+        }
+    }
+
+    errno = ENOENT;
+    return NULL;
 }
 
 /*

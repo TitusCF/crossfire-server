@@ -17,6 +17,18 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Fix buffer overflows which can be triggered remotely.
+--
+common/porting.c: Re-implement open_and_uncompress(). The new implementation
+   should not contain any buffer overflows anymore. It also fixes possible
+   exploits due to funny characters in file names.
+plugins/cfpython/cfpython.c: Use snprintf() to truncate long strings.
+server/login.c: Reject invalid user names.
+socket/loop.c: Make overflow detection work while reading from socket.
+   Properly re-allocate memory for listen command. Fix buffer overflow for too
+   long command names.
+Andreas Kirschbaum 2005-12-11
+
 lib/collect.pl.in: General cleanup - just whitespace changes.
 Andreas Kirschbaum 2005-12-11
 
