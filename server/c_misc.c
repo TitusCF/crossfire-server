@@ -865,28 +865,6 @@ int command_statistics(object *pl, char *params)
 	pl->contr->orig_stats.Cha, pl->stats.Cha, 20+pl->arch->clone.stats.Cha);
     new_draw_info_format(NDI_UNIQUE, 0, pl, "\nAttack Mode: %s",pl->contr->peaceful? "Peaceful":"Hostile");
 
-    /* If dragon player, let's display natural resistances */
-    if ( is_dragon_pl( pl ) )
-        {
-        int attack;
-        object* tmp;
-        for ( tmp = pl->inv; tmp != NULL; tmp = tmp->below )
-            {
-            if ( ( tmp->type == FORCE ) && ( strcmp( tmp->arch->name, "dragon_skin_force" )== 0 ) )
-                {
-                new_draw_info( NDI_UNIQUE, 0, pl, "\nNatural skin resistances:" );
-                for ( attack = 0; attack < NROFATTACKS; attack++ )
-                    {
-                    if ( atnr_is_dragon_enabled( attack ) )
-                        {
-                        new_draw_info_format( NDI_UNIQUE, 0, pl, "%s: %d", change_resist_msg[ attack ], tmp->resist[ attack ] );
-                        }
-                    }
-                break;
-                }
-            }
-        }
-
    /* Can't think of anything else to print right now */
    return 0;
 }
@@ -1149,7 +1127,30 @@ int command_resistances(object *op, char *params)
 	new_draw_info_format(NDI_UNIQUE, 0, op, "%-20s %+5d", 
 		attacktype_desc[i], op->resist[i]);
     }
-  return 0;
+
+    /* If dragon player, let's display natural resistances */
+    if ( is_dragon_pl( op ) )
+        {
+        int attack;
+        object* tmp;
+        for ( tmp = op->inv; tmp != NULL; tmp = tmp->below )
+            {
+            if ( ( tmp->type == FORCE ) && ( strcmp( tmp->arch->name, "dragon_skin_force" )== 0 ) )
+                {
+                new_draw_info( NDI_UNIQUE, 0, op, "\nNatural skin resistances:" );
+                for ( attack = 0; attack < NROFATTACKS; attack++ )
+                    {
+                    if ( atnr_is_dragon_enabled( attack ) )
+                        {
+                        new_draw_info_format( NDI_UNIQUE, 0, op, "%s: %d", change_resist_msg[ attack ], tmp->resist[ attack ] );
+                        }
+                    }
+                break;
+                }
+            }
+        }
+
+return 0;
 }
 /*
  * Actual commands.
@@ -1687,7 +1688,7 @@ int command_quests( object *pl, char *params )
             {
             if ( quest_is_quest_marker( item, 0 ) )
                 {
-                new_draw_info( NDI_WHITE, 0, pl, item->name );
+                new_draw_info( NDI_WHITE, 0, pl, quest_get_name( item ) );
                 new_draw_info( NDI_WHITE, 0, pl, "\n" );
                 }
             }
