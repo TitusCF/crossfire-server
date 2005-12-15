@@ -353,7 +353,7 @@ int hit_map(object *op, int dir, int type, int full_hit) {
 	 * destroyed right now.
 	 */
 	else if ((tmp->material || tmp->materialname) && op->stats.dam > 0 &&
-		   tmp->move_block) {
+		   !tmp->move_block) {
 	    save_throw_object(tmp,type,op);
 	    if (was_destroyed (op, op_tag))
 		break;
