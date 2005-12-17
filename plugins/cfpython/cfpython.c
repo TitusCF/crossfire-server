@@ -670,10 +670,12 @@ CF_PLUGIN int initPlugin(const char* iversion, f_plug_api gethooksptr)
     Crossfire_MapType.tp_new    = PyType_GenericNew;
     Crossfire_PlayerType.tp_new = PyType_GenericNew;
 	Crossfire_ArchetypeType.tp_new = PyType_GenericNew;
+	Crossfire_PartyType.tp_new = PyType_GenericNew;
     PyType_Ready(&Crossfire_ObjectType);
     PyType_Ready(&Crossfire_MapType);
     PyType_Ready(&Crossfire_PlayerType);
 	PyType_Ready(&Crossfire_ArchetypeType);
+	PyType_Ready(&Crossfire_PartyType);
 
     m = Py_InitModule("Crossfire", CFPythonMethods);
     d = PyModule_GetDict(m);
@@ -681,11 +683,13 @@ CF_PLUGIN int initPlugin(const char* iversion, f_plug_api gethooksptr)
     Py_INCREF(&Crossfire_MapType);
     Py_INCREF(&Crossfire_PlayerType);
 	Py_INCREF(&Crossfire_ArchetypeType);
+	Py_INCREF(&Crossfire_PartyType);
 
     PyModule_AddObject(m, "Object", (PyObject*)&Crossfire_ObjectType);
     PyModule_AddObject(m, "Map", (PyObject*)&Crossfire_MapType);
     PyModule_AddObject(m, "Player", (PyObject*)&Crossfire_PlayerType);
 	PyModule_AddObject(m, "Archetype", (PyObject*)&Crossfire_ArchetypeType);
+	PyModule_AddObject(m, "Party", (PyObject*)&Crossfire_PartyType);
 
     CFPythonError = PyErr_NewException("Crossfire.error",NULL,NULL);
     PyDict_SetItemString(d,"error",CFPythonError);
