@@ -3262,18 +3262,19 @@ void* cfapi_party_get_property(int* type, ...)
         case CFAPI_PARTY_PROP_PASSWORD:
             *type = CFAPI_STRING;
             rv = (void*)party->passwd;
+            break;
 		case CFAPI_PARTY_PROP_PLAYER:
-			*type = CFAPI_PPLAYER;
-			obarg = va_arg(args, object*);
-			pl = ( obarg ? obarg->contr : first_player );
-			rv = NULL;
-			for (; pl != NULL; pl = pl->next)
-				if (pl->ob->contr->party == party)
-				{
-					rv = (void*)pl;
-					break;
-				}
-			break;
+            *type = CFAPI_PPLAYER;
+            obarg = va_arg(args, object*);
+            pl = ( obarg ? obarg->contr : first_player );
+            rv = NULL;
+            for (; pl != NULL; pl = pl->next)
+                if (pl->ob->contr->party == party)
+                {
+                    rv = (void*)pl;
+                    break;
+                }
+            break;
         default:
             *type = CFAPI_NONE;
             rv = NULL;
