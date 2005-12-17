@@ -115,6 +115,10 @@ SOURCE=..\..\plugins\cfpython\cfpython_map.c
 
 SOURCE=..\..\plugins\cfpython\cfpython_object.c
 # End Source File
+# Begin Source File
+
+SOURCE=..\..\plugins\cfpython\cfpython_party.c
+# End Source File
 # End Group
 # Begin Group "Header-Dateien"
 
@@ -146,6 +150,14 @@ SOURCE=..\..\plugins\cfpython\include\cfpython_object.h
 # Begin Source File
 
 SOURCE=..\..\plugins\cfpython\include\cfpython_object_private.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\plugins\cfpython\include\cfpython_party.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\plugins\cfpython\include\cfpython_party_private.h
 # End Source File
 # Begin Source File
 
