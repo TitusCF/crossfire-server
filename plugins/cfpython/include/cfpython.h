@@ -51,6 +51,7 @@
 #include <cfpython_object.h>
 #include <cfpython_map.h>
 #include <cfpython_archetype.h>
+#include <cfpython_party.h>
 
 typedef struct _cfpcontext
 {

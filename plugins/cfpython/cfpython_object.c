@@ -36,6 +36,14 @@ static PyObject* Player_GetMarkedItem(Crossfire_Player* whoptr, void* closure)
 {
     return Crossfire_Object_wrap(cf_player_get_marked_item(whoptr->obj));
 }
+static int Player_SetMarkedItem(Crossfire_Player* whoptr, PyObject* value, void* closure)
+{
+	Crossfire_Object* ob;
+    if (!PyArg_Parse(value,"O!",&Crossfire_ObjectType,&ob))
+        return -1;
+	cf_player_set_marked_item(whoptr->obj,ob->obj);
+	return 0;
+}
 static PyObject* Crossfire_Player_Message( Crossfire_Player* who, PyObject* args )
 {
     char* message;
@@ -48,7 +56,18 @@ static PyObject* Crossfire_Player_Message( Crossfire_Player* who, PyObject* args
     Py_INCREF(Py_None);
     return Py_None;
 }
-
+static PyObject* Player_GetParty(Crossfire_Player* whoptr, void* closure)
+{
+    return Crossfire_Party_wrap(cf_player_get_party(whoptr->obj));
+}
+static int Player_SetParty(Crossfire_Player* whoptr, PyObject* value, void* closure)
+{
+	Crossfire_Party* ob;
+    if (!PyArg_Parse(value,"O!",&Crossfire_PartyType,&ob))
+        return -1;
+	cf_player_set_party(whoptr->obj,ob->party);
+	return 0;
+}
 
 /* Object properties. Get and maybe set. */
 static PyObject* Object_GetName(Crossfire_Object* whoptr, void* closure)

@@ -100,6 +100,7 @@ static f_plug_api cfapiObject_move = NULL;
 static f_plug_api cfapiObject_apply_below = NULL;
 static f_plug_api cfapiArchetype_get_first = NULL;
 static f_plug_api cfapiArchetype_get_property = NULL;
+static f_plug_api cfapiParty_get_property = NULL;
 
 #define GET_HOOK( x, y, z ) \
     { \
@@ -177,6 +178,7 @@ int cf_init_plugin( f_plug_api getHooks )
     GET_HOOK( cfapiObject_apply_below, "cfapi_object_apply_below", z );
     GET_HOOK( cfapiArchetype_get_first, "cfapi_archetype_get_first", z );
     GET_HOOK( cfapiArchetype_get_property, "cfapi_archetype_get_property", z );
+    GET_HOOK( cfapiParty_get_property, "cfapi_party_get_property", z );
     return 1;
 }
 
@@ -346,6 +348,22 @@ object* cf_player_get_marked_item(object* op)
     int val;
     return cfapiObject_get_property(&val, op, CFAPI_PLAYER_PROP_MARKED_ITEM);
 }
+void cf_player_set_marked_item(object* op, object* ob)
+{
+	int val;
+	cfapiObject_set_property(&val, op, CFAPI_PLAYER_PROP_MARKED_ITEM, ob);
+}
+partylist* cf_player_get_party(object* op)
+{
+	int val;
+	return cfapiObject_get_property(&val, op, CFAPI_PLAYER_PROP_PARTY);
+}
+void cf_player_set_party(object* op, partylist* party)
+{
+	int val;
+	cfapiObject_set_property(&val, op, CFAPI_PLAYER_PROP_PARTY, party);
+}
+
 mapstruct* cf_map_get_map( char* name )
 {
     int val;
@@ -717,6 +735,7 @@ void cf_object_set_key(object* op, char* keyname, char* value)
     cfapiObject_set_key(&val, op, keyname, value);
 }
 
+/* Archetype-related functions */
 archetype*cf_archetype_get_first()
 {
     int val;
@@ -751,6 +770,43 @@ object* cf_archetype_get_clone(archetype* arch)
 {
     int val;
     return cfapiArchetype_get_property(&val, arch, CFAPI_ARCH_PROP_CLONE);
+}
+
+/* Party-related functions */
+partylist* cf_party_get_first(void)
+{
+	int val;
+	return cfapiParty_get_property(&val, NULL, CFAPI_PARTY_PROP_NEXT);
+}
+
+const char* cf_party_get_name(partylist* party)
+{
+	int val;
+	return cfapiParty_get_property(&val, party, CFAPI_PARTY_PROP_NAME);
+}
+
+partylist* cf_party_get_next(partylist* party)
+{
+	int val;
+	return cfapiParty_get_property(&val, party, CFAPI_PARTY_PROP_NEXT);
+}
+
+const char* cf_party_get_password(partylist* party)
+{
+	int val;
+	return cfapiParty_get_property(&val, party, CFAPI_PARTY_PROP_PASSWORD);
+}
+
+player* cf_party_get_first_player(partylist* party)
+{
+	int val;
+	return cfapiParty_get_property(&val, party, CFAPI_PARTY_PROP_PLAYER, NULL);
+}
+
+player* cf_party_get_next_player(partylist* party, player* op)
+{
+	int val;
+	return cfapiParty_get_property(&val, party, CFAPI_PARTY_PROP_PLAYER, op);
 }
 
 #ifdef WIN32

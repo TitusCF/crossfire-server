@@ -448,11 +448,15 @@ PyTypeObject Crossfire_ObjectType = {
 
 static PyObject* Player_GetIP(Crossfire_Player* whoptr, void* closure);
 static PyObject* Player_GetMarkedItem(Crossfire_Player* whoptr, void* closure);
+static int Player_SetMarkedItem(Crossfire_Player* whoptr, PyObject* value, void* closure);
 static PyObject* Crossfire_Player_Message( Crossfire_Player* who, PyObject* args );
+static PyObject* Player_GetParty(Crossfire_Player* whoptr, void* closure);
+static int Player_SetParty(Crossfire_Player* whoptr, PyObject* value, void* closure);
 
 static PyGetSetDef Player_getseters[] = {
     { "IP",            (getter)Player_GetIP,            NULL, NULL, NULL },
-	{ "MarkedItem",    (getter)Player_GetMarkedItem,    NULL, NULL, NULL },
+	{ "MarkedItem",    (getter)Player_GetMarkedItem,    (setter)Player_SetMarkedItem, NULL, NULL },
+	{ "Party",         (getter)Player_GetParty,         (setter)Player_SetParty,      NULL, NULL },
     { NULL, NULL, NULL, NULL, NULL }
 };
 

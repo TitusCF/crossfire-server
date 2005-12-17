@@ -100,6 +100,7 @@
 #define CFAPI_PARCH   9
 #define CFAPI_FUNC    10
 #define CFAPI_PPLAYER 11
+#define CFAPI_PPARTY  12
 
 typedef void* (*f_plug_api) (int* type, ...);
 typedef int   (*f_plug_postinit) (void);
@@ -246,6 +247,7 @@ extern crossfire_plugin* plugins_list;
 #define CFAPI_OBJECT_ANIMATION              100
 #define CFAPI_PLAYER_PROP_IP                150
 #define CFAPI_PLAYER_PROP_MARKED_ITEM       151
+#define CFAPI_PLAYER_PROP_PARTY             152
 
 #define CFAPI_MAP_PROP_FLAGS                0
 #define CFAPI_MAP_PROP_DIFFICULTY           1
@@ -277,6 +279,11 @@ extern crossfire_plugin* plugins_list;
 #define CFAPI_ARCH_PROP_HEAD				2
 #define CFAPI_ARCH_PROP_MORE				3
 #define CFAPI_ARCH_PROP_CLONE				4
+
+#define CFAPI_PARTY_PROP_NAME               0
+#define CFAPI_PARTY_PROP_NEXT               1
+#define CFAPI_PARTY_PROP_PASSWORD           2
+#define CFAPI_PARTY_PROP_PLAYER             3
 
 /*****************************************************************************/
 /* Exportable functions. Any plugin should define all those.                 */

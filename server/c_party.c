@@ -35,6 +35,11 @@
 static partylist * firstparty=NULL; /* Keeps track of first party in list */
 static partylist * lastparty=NULL; /*Keeps track of last party in list */
 
+partylist* get_firstparty()
+{
+	return firstparty;
+}
+
 void remove_party(partylist *target_party);
 
 /* Forms the party struct for a party called 'params'. it is the responsibility
@@ -110,14 +115,16 @@ void obsolete_parties(void) {
     int player_count;
     player *pl;
     partylist *party;
+	partylist* next = NULL;
 
     if (!firstparty) return; /* we can't obsolete parties if there aren't any */
-    for (party=firstparty; party!=NULL; party=party->next) {
-	player_count=0; 
-	for (pl=first_player;pl!=NULL;pl=pl->next)
-	    if (pl->party==party) player_count++;
-	if (player_count == 0)
-	    remove_party(party);
+    for (party=firstparty; party!=NULL; party=next) {
+        next = party->next;
+	    player_count=0; 
+	    for (pl=first_player;pl!=NULL;pl=pl->next)
+	        if (pl->party==party) player_count++;
+	            if (player_count == 0)
+	                remove_party(party);
     }
 }
 

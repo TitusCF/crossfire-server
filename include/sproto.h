@@ -258,6 +258,7 @@ void set_pickup_mode(object *op, int i);
 int command_search_items(object *op, char *params);
 int command_rename_item(object *op, char *params);
 /* c_party.c */
+partylist* get_firstparty();
 void remove_party(partylist *target_party);
 void obsolete_parties(void);
 int confirm_party_password(object *op);
@@ -652,6 +653,7 @@ void* cfapi_object_move(int* type, ...);
 void* cfapi_object_apply_below(int* type, ...);
 void* cfapi_archetype_get_first(int* type, ...);
 void* cfapi_archetype_get_property(int* type, ...);
+void* cfapi_party_get_property(int* type, ...);
 
 CommArray_s *find_plugin_command(char *cmd, object *op);
 int initPlugins(void);

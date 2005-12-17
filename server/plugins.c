@@ -119,6 +119,7 @@ static const hook_entry plug_hooks[NR_OF_HOOKS] =
     {cfapi_object_apply_below,      69, "cfapi_object_apply_below"},
 	{cfapi_archetype_get_first,     70, "cfapi_archetype_get_first"},
 	{cfapi_archetype_get_property,  71, "cfapi_archetype_get_property"},
+	{cfapi_party_get_property,      72, "cfapi_party_get_property"},
 };
 int plugin_number = 0;
 crossfire_plugin* plugins_list = NULL;
@@ -1808,14 +1809,6 @@ void* cfapi_object_get_property(int* type, ...)
             rv = (char*)op->arch->name;
             *type = CFAPI_STRING;
             break;
-        case CFAPI_PLAYER_PROP_IP     :
-            rv = op->contr->socket.host;
-            *type = CFAPI_STRING;
-            break;
-        case CFAPI_PLAYER_PROP_MARKED_ITEM:
-            rv = find_marked_object(op);
-            *type = CFAPI_POBJECT;
-            break;
         case CFAPI_OBJECT_PROP_INVISIBLE:
             ri = op->invisible;
             rv = &ri;
@@ -1825,6 +1818,18 @@ void* cfapi_object_get_property(int* type, ...)
             ri = op->animation_id;
             rv = &ri;
             *type = CFAPI_INT;
+            break;
+        case CFAPI_PLAYER_PROP_IP     :
+            rv = op->contr->socket.host;
+            *type = CFAPI_STRING;
+            break;
+        case CFAPI_PLAYER_PROP_MARKED_ITEM:
+            rv = find_marked_object(op);
+            *type = CFAPI_POBJECT;
+            break;
+        case CFAPI_PLAYER_PROP_PARTY:
+            rv = (op->contr ? op->contr->party : NULL);
+            *type = CFAPI_PPARTY;
             break;
         default:
             *type = CFAPI_NONE;
@@ -1845,6 +1850,7 @@ void* cfapi_object_set_property(int* type, ...)
     object* op;
     int property;
     void* rv;
+	partylist* partyarg;
     va_start(args,type);
 
     op = va_arg(args, object*);
@@ -2220,6 +2226,22 @@ void* cfapi_object_set_property(int* type, ...)
                     SET_ANIMATION(op,iarg);
                 }
                 update_object(op, UP_OBJ_FACE);
+                break;
+            case CFAPI_PLAYER_PROP_MARKED_ITEM:
+                if (op->contr)
+                {
+                    oparg = va_arg(args, object*);
+                    op->contr->mark = oparg;
+                    if (oparg)
+                        op->contr->mark_count = oparg->count;
+                }
+                break;
+            case CFAPI_PLAYER_PROP_PARTY:
+                if (op->contr)
+                {
+                    partyarg = va_arg(args, partylist*);
+                    op->contr->party = partyarg;
+                }
                 break;
             default:
                 *type = CFAPI_NONE;
@@ -3212,6 +3234,53 @@ void* cfapi_archetype_get_property(int* type, ...)
 	}
 	va_end(args);
 	return rv;
+}
+
+/* Party-related functions */
+void* cfapi_party_get_property(int* type, ...)
+{
+    partylist* party;
+    int prop;
+    va_list args;
+    void* rv;
+	object* obarg;
+    player* pl;
+
+    va_start(args, type);
+    party = va_arg(args, partylist*);
+    prop = va_arg(args, int);
+    switch (prop)
+    {
+        case CFAPI_PARTY_PROP_NAME:
+            *type = CFAPI_STRING;
+            rv = (void*)party->partyname;
+            break;
+        case CFAPI_PARTY_PROP_NEXT:
+            *type = CFAPI_PPARTY;
+            rv = (party?party->next:get_firstparty());
+            break;
+        case CFAPI_PARTY_PROP_PASSWORD:
+            *type = CFAPI_STRING;
+            rv = (void*)party->passwd;
+		case CFAPI_PARTY_PROP_PLAYER:
+			*type = CFAPI_PPLAYER;
+			obarg = va_arg(args, object*);
+			pl = ( obarg ? obarg->contr : first_player );
+			rv = NULL;
+			for (; pl != NULL; pl = pl->next)
+				if (pl->ob->contr->party == party)
+				{
+					rv = (void*)pl;
+					break;
+				}
+			break;
+        default:
+            *type = CFAPI_NONE;
+            rv = NULL;
+            break;
+    }
+    va_end(args);
+    return rv;
 }
 
 /*****************************************************************************/

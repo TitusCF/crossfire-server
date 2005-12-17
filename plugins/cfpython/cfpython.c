@@ -107,6 +107,7 @@ static PyObject* getPrivateDictionary(PyObject* self, PyObject* args);
 static PyObject* getSharedDictionary(PyObject* self, PyObject* args);
 static PyObject* getArchetypes(PyObject* self, PyObject* args);
 static PyObject* getMaps(PyObject* self, PyObject* args);
+static PyObject* getParties(PyObject* self, PyObject* args);
 static PyObject* registerCommand(PyObject* self, PyObject* args);
 static PyObject* registerGEvent(PyObject* self, PyObject* args);
 static PyObject* unregisterGEvent(PyObject* self, PyObject* args);
@@ -165,6 +166,7 @@ static PyMethodDef CFPythonMethods[] = {
     {"GetSharedDictionary",  getSharedDictionary,   METH_VARARGS},
     {"GetArchetypes",       getArchetypes,          METH_VARARGS},
     {"GetMaps",             getMaps,                METH_VARARGS},
+    {"GetParties",          getParties,             METH_VARARGS},
     {"RegisterCommand",     registerCommand,        METH_VARARGS},
     {"RegisterGlobalEvent", registerGEvent,         METH_VARARGS},
     {"UnregisterGlobalEvent",unregisterGEvent,      METH_VARARGS},
@@ -562,6 +564,21 @@ static PyObject* getMaps(PyObject* self, PyObject* args)
 	{
 		PyList_Append(list,Crossfire_Map_wrap(map));
 		map = cf_map_get_property(map,CFAPI_MAP_PROP_NEXT);
+	}
+	return list;
+}
+
+static PyObject* getParties(PyObject* self, PyObject* args)
+{
+	PyObject* list;
+	partylist* party;
+
+	list = PyList_New(0);
+	party = cf_party_get_first();
+	while (party)
+	{
+		PyList_Append(list,Crossfire_Party_wrap(party));
+		party = cf_party_get_next(party);
 	}
 	return list;
 }
