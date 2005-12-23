@@ -274,7 +274,15 @@ int steal(object* op, int dir, object *skill)
 	if (attempt_steal(tmp, op, skill)) {
 	    if (tmp->type==PLAYER) /* no xp for stealing from another player */
 		return 0;
-	    else return (calc_skill_exp(op,tmp, skill));
+
+	    /* no xp for stealing from pets (of players) */
+	    if (QUERY_FLAG(tmp, FLAG_FRIENDLY) && tmp->attack_movement == PETMOVE) {
+		object *owner = get_owner(tmp);
+		if (owner != NULL && owner->type == PLAYER)
+		    return 0;
+	    }
+
+	    return (calc_skill_exp(op,tmp, skill));
 	}
     }
     return 0;

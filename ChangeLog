@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/skills.c: In steal() do not give exp for stealing from pets since this
+   can be exploited to gain exp over and over.
+Andreas Kirschbaum 2005-12-23
+
 server/c_party.c: fix crash with party obsolescence (->next on freed item). Added
  get_firstparty() to get firstparty private var needed for plugin.
 
