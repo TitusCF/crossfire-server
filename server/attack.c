@@ -1456,8 +1456,9 @@ int kill_object(object *op,int dam, object *hitter, int type)
 	       query_name(op),query_name(hitter), battleg? " (duel)":"", pk? " (pk)":"");
     }
     else {
-	(void) sprintf(buf,"%s killed %s in hand to hand combat %s%s.",hitter->name,op->name,
-	       battleg? " (duel)":"", pk? " (pk)":"");
+	(void) sprintf(buf,"%s killed %s%s%s%s.",hitter->name,op->name,
+	       (QUERY_FLAG(hitter, FLAG_MONSTER)) || hitter->type == PLAYER ?
+	       " in hand to hand combat":"", battleg? " (duel)":"", pk? " (pk)":"");
     }
     /* These may have been set in the player code section above */
     if (!skop) skop = hitter->chosen_skill;

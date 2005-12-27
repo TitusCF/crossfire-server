@@ -17,6 +17,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Applied patch #1383359 (Fix death message) courtesy Anton Oussik
+( https://sourceforge.net/tracker/index.php?func=detail&aid=1383359&group_id=13833&atid=313833 )
+ server/attack.c
+Ryo 2005-12-27
+
 server/skills.c: In steal() do not give exp for stealing from pets since this
    can be exploited to gain exp over and over.
 Andreas Kirschbaum 2005-12-23
