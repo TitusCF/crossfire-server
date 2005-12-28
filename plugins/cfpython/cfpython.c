@@ -52,7 +52,8 @@
 /*  You should have received a copy of the GNU General Public License        */
 /*  along with this program; if not, write to the Free Software              */
 /*  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.                */
-/*                                                                           */ /*****************************************************************************/
+/*                                                                           */
+/*****************************************************************************/
 
 /* First let's include the header file needed                                */
 
@@ -658,10 +659,24 @@ CFPContext* popContext()
         return NULL;
 }
 
+void freeContext(CFPContext* context)
+{
+    Py_XDECREF(context->who);
+    Py_XDECREF(context->activator);
+    Py_XDECREF(context->third);
+    free(context);
+}
+
 static int do_script(CFPContext* context)
 {
     FILE*   scriptfile;
+    PyObject* built;
     PyObject* dict;
+#if 0
+    PyObject* list;
+    PyObject* ret;
+    int item;
+#endif
 
     scriptfile = fopen(context->script,"r");
     if (scriptfile == NULL)
@@ -671,12 +686,27 @@ static int do_script(CFPContext* context)
     }
     pushContext(context);
     dict = PyDict_New();
-    PyDict_SetItemString(dict, "__builtins__", PyEval_GetBuiltins());
-    PyRun_File(scriptfile, context->script, Py_file_input, dict, dict);
+    built = PyEval_GetBuiltins();
+    PyDict_SetItemString(dict, "__builtins__", built);
+    Py_XDECREF(built);
+    ret = PyRun_File(scriptfile, context->script, Py_file_input, dict, dict);
     if (PyErr_Occurred())
     {
         PyErr_Print();
     }
+    Py_XDECREF(ret);
+#if 0
+    printf( "cfpython - %d items in heap\n", PyDict_Size(dict));
+    list = PyDict_Values(dict);
+    for (item = PyList_Size(list) - 1; item >= 0; item--)
+    {
+        dict = PyList_GET_ITEM(list,item);
+        ret = PyObject_Str(dict);
+        printf(" ref %s = %d\n",PyString_AsString(ret),dict->ob_refcnt);
+        Py_XDECREF(ret);
+    }
+    Py_DECREF(list);
+#endif
     Py_DECREF(dict);
     fclose(scriptfile);
     return 1;
@@ -797,20 +827,15 @@ CF_PLUGIN int runPluginCommand(object* op, char* params)
     snprintf(context->options, sizeof(context->options), "%s", params);
     context->returnvalue = 1; /* Default is "command successful" */
 
-    Py_XINCREF(context->who);
-
     if (!do_script(context))
     {
-        free(context);
+        freeContext(context);
         return rv;
     }
 
     context = popContext();
     rv = context->returnvalue;
-    Py_XDECREF(context->who);
-    Py_XDECREF(context->activator);
-    Py_XDECREF(context->third);
-    free(context);
+    freeContext(context);
     printf("Execution complete");
     return rv;
 }
@@ -982,16 +1007,13 @@ CF_PLUGIN void* globalEventListener(int* type, ...)
 
     if (!do_script(context))
     {
-        free(context);
+        freeContext(context);
         return &rv;
     }
 
     context = popContext();
     rv = context->returnvalue;
-    Py_XDECREF(context->who);
-    Py_XDECREF(context->activator);
-    Py_XDECREF(context->third);
-    free(context);
+    freeContext(context);
 
     return &rv;
 }
@@ -1027,16 +1049,13 @@ CF_PLUGIN void* eventListener(int* type, ...)
 
     if (!do_script(context))
     {
-        free(context);
+        freeContext(context);
         return &rv;
     }
 
     context = popContext();
     rv = context->returnvalue;
-    Py_XDECREF(context->who);
-    Py_XDECREF(context->activator);
-    Py_XDECREF(context->third);
-    free(context);
+    freeContext(context);
     return &rv;
 }
 
