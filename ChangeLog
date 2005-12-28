@@ -17,6 +17,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Changed the way Python scripts are called. Now script don't share variables anymore.
+ Fix a memory leak.
+ plugins/cfpython/cfpython.c
+Ryo 2005-12-28
+
 Applied patch #1383359 (Fix death message) courtesy Anton Oussik
 ( https://sourceforge.net/tracker/index.php?func=detail&aid=1383359&group_id=13833&atid=313833 )
  server/attack.c

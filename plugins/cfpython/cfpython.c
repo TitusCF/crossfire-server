@@ -658,6 +658,30 @@ CFPContext* popContext()
         return NULL;
 }
 
+static int do_script(CFPContext* context)
+{
+    FILE*   scriptfile;
+    PyObject* dict;
+
+    scriptfile = fopen(context->script,"r");
+    if (scriptfile == NULL)
+    {
+        printf( "cfpython - The Script file %s can't be opened\n",context->script);
+        return 0;
+    }
+    pushContext(context);
+    dict = PyDict_New();
+    PyDict_SetItemString(dict, "__builtins__", PyEval_GetBuiltins());
+    PyRun_File(scriptfile, context->script, Py_file_input, dict, dict);
+    if (PyErr_Occurred())
+    {
+        PyErr_Print();
+    }
+    Py_DECREF(dict);
+    fclose(scriptfile);
+    return 1;
+}
+
 CF_PLUGIN int initPlugin(const char* iversion, f_plug_api gethooksptr)
 {
     PyObject *m, *d;
@@ -751,10 +775,11 @@ CF_PLUGIN void* getPluginProperty(int* type, ...)
 
 CF_PLUGIN int runPluginCommand(object* op, char* params)
 {
-    FILE*        scriptfile;
     char         buf[1024];
     CFPContext*  context;
     static int rv = 0;
+
+	rv = 0;
 
     if (current_command < -999)
     {
@@ -774,15 +799,12 @@ CF_PLUGIN int runPluginCommand(object* op, char* params)
 
     Py_XINCREF(context->who);
 
-    scriptfile = fopen(context->script,"r");
-    if (scriptfile == NULL)
+    if (!do_script(context))
     {
-        printf( "cfpython - The Script file %s can't be opened\n",context->script);
+        free(context);
         return rv;
     }
-    pushContext(context);
-    PyRun_SimpleFile(scriptfile, context->script);
-    fclose(scriptfile);
+
     context = popContext();
     rv = context->returnvalue;
     Py_XDECREF(context->who);
@@ -836,7 +858,6 @@ CF_PLUGIN void* globalEventListener(int* type, ...)
 {
     va_list args;
     static int rv=0;
-    FILE*   scriptfile;
     CFPContext* context;
     Crossfire_Player* cfpl;
     Crossfire_Object* cfob;
@@ -844,6 +865,8 @@ CF_PLUGIN void* globalEventListener(int* type, ...)
     player* pl;
     object* op;
     context = malloc(sizeof(CFPContext));
+
+	rv = 0;
 
     va_start(args, type);
     context->event_code = va_arg(args, int);
@@ -957,15 +980,12 @@ CF_PLUGIN void* globalEventListener(int* type, ...)
     va_end(args);
     context->returnvalue = 0;
 
-    scriptfile = fopen(context->script,"r");
-    if (scriptfile == NULL)
+    if (!do_script(context))
     {
-        printf( "cfpython - The Script file %s can't be opened\n",context->script);
+        free(context);
         return &rv;
     }
-    pushContext(context);
-    PyRun_SimpleFile(scriptfile, context->script);
-    fclose(scriptfile);
+
     context = popContext();
     rv = context->returnvalue;
     Py_XDECREF(context->who);
@@ -981,8 +1001,9 @@ CF_PLUGIN void* eventListener(int* type, ...)
     static int rv=0;
     va_list args;
     char* buf;
-    FILE*   scriptfile;
     CFPContext* context;
+
+	rv = 0;
 
     context = malloc(sizeof(CFPContext));
 
@@ -1003,15 +1024,13 @@ CF_PLUGIN void* eventListener(int* type, ...)
     context->returnvalue = 0;
 
     va_end(args);
-    scriptfile = fopen(context->script,"r");
-    if (scriptfile == NULL)
+
+    if (!do_script(context))
     {
-        printf( "cfpython - The Script file %s can't be opened\n",context->script);
+        free(context);
         return &rv;
     }
-    pushContext(context);
-    PyRun_SimpleFile(scriptfile, context->script);
-    fclose(scriptfile);
+
     context = popContext();
     rv = context->returnvalue;
     Py_XDECREF(context->who);
