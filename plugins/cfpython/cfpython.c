@@ -667,7 +667,7 @@ void freeContext(CFPContext* context)
     free(context);
 }
 
-static int do_script(CFPContext* context)
+static int do_script(CFPContext* context,int silent)
 {
     FILE*   scriptfile;
     PyObject* built;
@@ -681,7 +681,8 @@ static int do_script(CFPContext* context)
     scriptfile = fopen(context->script,"r");
     if (scriptfile == NULL)
     {
-        printf( "cfpython - The Script file %s can't be opened\n",context->script);
+        if (!silent)
+            printf( "cfpython - The Script file %s can't be opened\n",context->script);
         return 0;
     }
     pushContext(context);
@@ -827,7 +828,7 @@ CF_PLUGIN int runPluginCommand(object* op, char* params)
     snprintf(context->options, sizeof(context->options), "%s", params);
     context->returnvalue = 1; /* Default is "command successful" */
 
-    if (!do_script(context))
+    if (!do_script(context,0))
     {
         freeContext(context);
         return rv;
@@ -1005,7 +1006,7 @@ CF_PLUGIN void* globalEventListener(int* type, ...)
     va_end(args);
     context->returnvalue = 0;
 
-    if (!do_script(context))
+    if (!do_script(context,1))
     {
         freeContext(context);
         return &rv;
@@ -1047,7 +1048,7 @@ CF_PLUGIN void* eventListener(int* type, ...)
 
     va_end(args);
 
-    if (!do_script(context))
+    if (!do_script(context,0))
     {
         freeContext(context);
         return &rv;

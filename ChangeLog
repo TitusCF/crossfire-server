@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Don't print "file not found" for global events.
+ plugins/cfpython/cfpython.c
+Ryo 2005-12-31
+
 Changed the way Python scripts are called. Now script don't share variables anymore.
  Fix a memory leak.
  plugins/cfpython/cfpython.c
