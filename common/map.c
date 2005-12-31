@@ -401,6 +401,7 @@ int ob_blocked(object *ob,mapstruct *m,sint16 x,sint16 y) {
 	flag = get_map_flags(m, &m1, x+tmp->clone.x,y+tmp->clone.y, &sx, &sy);
 
 	if (flag & P_OUT_OF_MAP) return P_OUT_OF_MAP;
+	if (flag & P_IS_ALIVE) return P_IS_ALIVE;
 
 	/* Note it is intentional that we check ob - the movement type of the
 	 * head of the object should correspond for the entire object.
