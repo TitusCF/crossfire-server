@@ -672,9 +672,9 @@ static int do_script(CFPContext* context)
     FILE*   scriptfile;
     PyObject* built;
     PyObject* dict;
+    PyObject* ret;
 #if 0
     PyObject* list;
-    PyObject* ret;
     int item;
 #endif
 
