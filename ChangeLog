@@ -17,6 +17,13 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Make EXITs affect DM players again.
+--
+common/object.c: In check_move_on() ignore only slow movement penalties for
+   DMs.
+server/apply.c: In move_apply() ignore anything but EXITs for DM players.
+Andreas Kirschbaum 2006-01-01
+
 Make forked lightning correctly traverse tiled maps.
 --
 server/spell_attack.c: In forklightning() insert forked part into correct map.

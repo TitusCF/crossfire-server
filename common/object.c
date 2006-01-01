@@ -1992,9 +1992,6 @@ int check_move_on (object *op, object *originator)
     int x=op->x, y=op->y;
     MoveType	move_on, move_slow, move_block;
 
-    if (QUERY_FLAG(op, FLAG_WIZPASS))
-	return 0;
-
     if(QUERY_FLAG(op,FLAG_NO_APPLY))
 	return 0;
 
@@ -2041,20 +2038,22 @@ int check_move_on (object *op, object *originator)
 	 * space doesn't slow down swimming (for example), if you can't actually
 	 * swim on that space, can't use it to avoid the penalty.
 	 */
-	if ((!op->move_type && tmp->move_slow & MOVE_WALK) ||
-	   ((op->move_type & tmp->move_slow) &&
-	    (op->move_type & ~tmp->move_slow & ~tmp->move_block)==0)) {
+	if (!QUERY_FLAG(op, FLAG_WIZPASS)) {
+	    if ((!op->move_type && tmp->move_slow & MOVE_WALK) ||
+		((op->move_type & tmp->move_slow) &&
+		(op->move_type & ~tmp->move_slow & ~tmp->move_block) == 0)) {
 
-	    float diff;
+		float diff;
 
-	    diff= tmp->move_slow_penalty * FABS(op->speed);
-	    if (op->type==PLAYER) {
-		if ((QUERY_FLAG(tmp,FLAG_IS_HILLY) && find_skill_by_number(op,SK_CLIMBING)) ||
-		    (QUERY_FLAG(tmp,FLAG_IS_WOODED) && find_skill_by_number(op,SK_WOODSMAN)))  {
-			diff=diff/4.0;
+		diff = tmp->move_slow_penalty*FABS(op->speed);
+		if (op->type == PLAYER) {
+		    if ((QUERY_FLAG(tmp, FLAG_IS_HILLY) && find_skill_by_number(op, SK_CLIMBING)) ||
+			(QUERY_FLAG(tmp, FLAG_IS_WOODED) && find_skill_by_number(op, SK_WOODSMAN))) {
+			diff /= 4.0;
+		    }
 		}
+		op->speed_left -= diff;
 	    }
-	    op->speed_left -= diff;
 	}
 
 	/* Basically same logic as above, except now for actual apply. */

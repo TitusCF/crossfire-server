@@ -1346,6 +1346,11 @@ static void apply_sign (object *op, object *sign, int autoapply)
 void move_apply (object *trap, object *victim, object *originator)
 {
   static int recursion_depth = 0;
+
+  /* Only exits affect DMs. */
+  if (QUERY_FLAG(victim, FLAG_WIZPASS) && trap->type != EXIT)
+    return;
+
   /* move_apply() is the most likely candidate for causing unwanted and
    * possibly unlimited recursion. 
    */
