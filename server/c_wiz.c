@@ -1426,48 +1426,110 @@ int command_invisible(object *op, char *params) {
  * Returns spell object (from archetypes) by name.
  * Returns NULL if 0 or more than one spell matches.
  * Used for wizard's learn spell/prayer.
+ *
+ * op is the player issuing the command.
+ *
+ * Ignores archetypes "spelldirect_xxx" since these archetypes are not used
+ * anymore (but may still be present in some player's inventories and thus
+ * cannot be removed). We have to ignore them here since they have the same
+ * name than other "spell_xxx" archetypes and would always conflict.
  */
-object *get_spell_by_name(const char *spell_name) {
+static object *get_spell_by_name(object *op, const char *spell_name) {
     archetype *ar;
     archetype *found;
-    size_t length;
+    int conflict_found;
+    size_t spell_name_length;
 
+    /* First check for full name matches. */
+    conflict_found = 0;
     found = NULL;
-    length = strlen(spell_name);
-
     for (ar = first_archetype; ar != NULL; ar = ar->next) {
         if (ar->clone.type != SPELL)
             continue;
 
-        if (strlen(ar->clone.name) < length)
+        if (strncmp(ar->name, "spelldirect_", 12) == 0)
             continue;
 
-        if (!strncmp(ar->clone.name, spell_name, length)) {
-            if (found)
-                /* Already had one, >1 match, return NULL. */
-                return NULL;
+        if (strcmp(ar->clone.name, spell_name) != 0)
+            continue;
 
-            found = ar;
+        if (found != NULL) {
+            if (!conflict_found) {
+                conflict_found = 1;
+                new_draw_info_format(NDI_UNIQUE, 0, op, "More than one archetype matches the spell name %s:", spell_name);
+                new_draw_info_format(NDI_UNIQUE, 0, op, "- %s", found->name);
+            }
+            new_draw_info_format(NDI_UNIQUE, 0, op, "- %s", ar->name);
+            continue;
         }
+
+        found = ar;
     }
 
-    if (!found)
+    /* No match if more more than one archetype matches. */
+    if (conflict_found)
         return NULL;
 
-    return arch_to_object(found);
+    /* Return if exactly one archetype matches. */
+    if (found != NULL)
+        return arch_to_object(found);
+
+    /* No full match found: now check for partial matches. */
+    spell_name_length = strlen(spell_name);
+    conflict_found = 0;
+    found = NULL;
+    for (ar = first_archetype; ar != NULL; ar = ar->next) {
+        if (ar->clone.type != SPELL)
+            continue;
+
+        if (strncmp(ar->name, "spelldirect_", 12) == 0)
+            continue;
+
+        if (strncmp(ar->clone.name, spell_name, spell_name_length) != 0)
+            continue;
+
+        if (found != NULL) {
+            if (!conflict_found) {
+                conflict_found = 1;
+                new_draw_info_format(NDI_UNIQUE, 0, op, "More than one spell matches %s:", spell_name);
+                new_draw_info_format(NDI_UNIQUE, 0, op, "- %s", found->clone.name);
+            }
+            new_draw_info_format(NDI_UNIQUE, 0, op, "- %s", ar->clone.name);
+            continue;
+        }
+
+        found = ar;
+    }
+
+    /* No match if more more than one archetype matches. */
+    if (conflict_found)
+        return NULL;
+
+    /* Return if exactly one archetype matches. */
+    if (found != NULL)
+        return arch_to_object(found);
+
+    /* No spell found: just print an error message. */
+    new_draw_info_format(NDI_UNIQUE, 0, op, "The spell %s does not exist.", spell_name);
+    return NULL;
 }
 
 static int command_learn_spell_or_prayer(object *op, char *params,
                                          int special_prayer) {
     object *tmp;
 
-    if (op->contr == NULL || params == NULL)
+    if (op->contr == NULL || params == NULL) {
+        new_draw_info(NDI_UNIQUE, 0, op, "Which spell do you want to learn?");
         return 0;
+    }
 
-    tmp = get_spell_by_name(params);
-    if (!tmp) {
-        new_draw_info_format(NDI_UNIQUE, 0, op,
-            "Could not find a spell by name of %s\n", params);
+    tmp = get_spell_by_name(op, params);
+    if (tmp == NULL) {
+        return 0;
+    }
+
+    if (check_spell_known(op, tmp->name)) {
+        new_draw_info_format(NDI_UNIQUE, 0, op, "You already know the spell %s.", tmp->name);
         return 0;
     }
 
@@ -1487,10 +1549,20 @@ int command_learn_special_prayer(object *op, char *params)
 
 int command_forget_spell(object *op, char *params)
 {
-    if (op->contr == NULL || params == NULL)
-        return 0;
+    object *spell;
 
-    do_forget_spell(op, params);
+    if (op->contr == NULL || params == NULL) {
+        new_draw_info(NDI_UNIQUE, 0, op, "Which spell do you want to forget?");
+        return 0;
+    }
+
+    spell = lookup_spell_by_name(op, params);
+    if (spell == NULL) {
+        new_draw_info_format(NDI_UNIQUE, 0, op, "You do not know the spell %s.", params);
+        return 0;
+    }
+
+    do_forget_spell(op, spell->name);
     return 1;
 }
 

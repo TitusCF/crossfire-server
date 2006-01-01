@@ -17,6 +17,17 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Improve the commands learn_spell and forget_spell: now these commands accept
+partial spell names and print sensible error messages if they fail.
+--
+include/sproto.h: Remove prototype for now static function.
+lib/wizhelp/{forget_spell,learn_special_prayer,learn_spell}: Update help files.
+server/c_wiz.c: Add parameter op to get_spell_by_name() for printing error
+   messages to op. Allow partial matches for spell name. In
+   command_learn_spell_or_prayer() and command_forget_spell() report an error
+   to the player instead of an error message to the server log file.
+Andreas Kirschbaum 2006-01-01
+
 Fix reference-related crashes.
  plugins/cfpython/cfpython.c
 Ryo 2006-01-01

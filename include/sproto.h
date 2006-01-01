@@ -307,7 +307,6 @@ int command_nowiz(object *op, char *params);
 int do_wizard_dm(object *op, char *params, int silent);
 int command_dm(object *op, char *params);
 int command_invisible(object *op, char *params);
-object *get_spell_by_name(const char *spell_name);
 int command_learn_spell(object *op, char *params);
 int command_learn_special_prayer(object *op, char *params);
 int command_forget_spell(object *op, char *params);
