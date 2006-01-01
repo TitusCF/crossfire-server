@@ -3380,3 +3380,20 @@ void dragon_ability_gain(object *who, int atnr, int level) {
 	    esrv_send_item(who, tmp);
     }
 }
+
+/**
+ * Unready an object for a player. This function does nothing if the object was
+ * not readied.
+ */
+void player_unready_range_ob(player *pl, object *ob) {
+    rangetype i;
+
+    for (i = 0; i < range_size; i++) {
+        if (pl->ranges[i] == ob) {
+            pl->ranges[i] = NULL;
+            if (pl->shoottype == i) {
+                pl->shoottype = range_none;
+            }
+        }
+    }
+}

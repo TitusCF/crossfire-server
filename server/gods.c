@@ -382,6 +382,7 @@ static void check_special_prayers (object *op, object *god)
 	     */
 	    new_draw_info_format (NDI_UNIQUE|NDI_NAVY, 0, op,
                           "You lose knowledge of %s.", tmp->name);
+	    player_unready_range_ob(op->contr, tmp);
 	    remove_ob(tmp);
 	    free_object(tmp);
 	}
@@ -416,6 +417,7 @@ void become_follower (object *op, object *new_god) {
 	    if (item->type == SPELL)
 		new_draw_info_format(NDI_UNIQUE|NDI_NAVY, 0, op,
 			"You lose knowledge of %s.", item->name);
+	    player_unready_range_ob(op->contr, item);
 	    remove_ob(item);
 	    free_object(item);
 	}

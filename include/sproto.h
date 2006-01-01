@@ -572,6 +572,7 @@ int player_can_view(object *pl, object *op);
 int action_makes_visible(object *op);
 int op_on_battleground(object *op, int *x, int *y);
 void dragon_ability_gain(object *who, int atnr, int level);
+void player_unready_range_ob(player *pl, object *ob);
 /* plugins.c */
 int execute_event(object *op, int eventcode, object *activator, object *third, const char *message, int fix);
 int execute_global_event(int eventcode, ...);

@@ -1749,6 +1749,7 @@ void do_forget_spell (object *op, const char *spell)
     
     new_draw_info_format (NDI_UNIQUE|NDI_NAVY, 0, op,
 			  "You lose knowledge of %s.", spell);
+    player_unready_range_ob(op->contr, spob);
     remove_ob(spob);
     free_object(spob);
 }

@@ -17,6 +17,15 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Properly unready forgotten spells. Prevents crashing the server if casting a
+forgotten spell.
+--
+include/sproto.h: Add new prototype.
+server/{apply.c,gods.c}: Call player_remove_range_ob() when forgetting a
+   spell.
+server/player.c: Add player_remove_range_ob() to unready a given object.
+Andreas Kirschbaum 2006-01-01
+
 Improve the commands learn_spell and forget_spell: now these commands accept
 partial spell names and print sensible error messages if they fail.
 --
