@@ -670,7 +670,6 @@ void freeContext(CFPContext* context)
 static int do_script(CFPContext* context,int silent)
 {
     FILE*   scriptfile;
-    PyObject* built;
     PyObject* dict;
     PyObject* ret;
 #if 0
@@ -687,9 +686,7 @@ static int do_script(CFPContext* context,int silent)
     }
     pushContext(context);
     dict = PyDict_New();
-    built = PyEval_GetBuiltins();
-    PyDict_SetItemString(dict, "__builtins__", built);
-    Py_XDECREF(built);
+    PyDict_SetItemString(dict, "__builtins__", PyEval_GetBuiltins());
     ret = PyRun_File(scriptfile, context->script, Py_file_input, dict, dict);
     if (PyErr_Occurred())
     {
@@ -823,6 +820,8 @@ CF_PLUGIN int runPluginCommand(object* op, char* params)
     context->message[0]=0;
 
     context->who         = Crossfire_Object_wrap(op);
+    context->activator   = NULL;
+    context->third       = NULL;
     context->fix         = 0;
     snprintf(context->script, sizeof(context->script), "%s", buf);
     snprintf(context->options, sizeof(context->options), "%s", params);

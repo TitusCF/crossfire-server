@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Fix reference-related crashes.
+ plugins/cfpython/cfpython.c
+Ryo 2006-01-01
+
 Apply modified patch #1391648 (FIX: new movement code and generators) by Lalo
 Martins. This fixes bugs #1383398, #1383392, #1375643, #1372035, #1370409; all
 bugs are related to objects stacking which should not stack.
