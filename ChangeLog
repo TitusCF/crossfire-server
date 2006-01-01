@@ -17,6 +17,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Make forked lightning correctly traverse tiled maps.
+--
+server/spell_attack.c: In forklightning() insert forked part into correct map.
+Andreas Kirschbaum 2006-01-01
+
 Properly unready forgotten spells. Prevents crashing the server if casting a
 forgotten spell.
 --

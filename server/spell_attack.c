@@ -148,13 +148,13 @@ void forklightning(object *op, object *tmp) {
 	new_bolt->speed_left = -0.1;
 	new_bolt->direction = t_dir;
 	new_bolt->duration++;
-	new_bolt->x+=DIRX(new_bolt);
-	new_bolt->y+=DIRY(new_bolt);
+	new_bolt->x=sx;
+	new_bolt->y=sy;
 	new_bolt->stats.dam /= 2;  /* reduce daughter bolt damage */
 	new_bolt->stats.dam++;
 	tmp->stats.dam /= 2;  /* reduce father bolt damage */
 	tmp->stats.dam++;
-	new_bolt = insert_ob_in_map(new_bolt,op->map,op,0);
+	new_bolt = insert_ob_in_map(new_bolt,m,op,0);
 	update_turn_face(new_bolt);
     }
 }
