@@ -189,11 +189,10 @@ int command_cast_spell (object *op, char *params, char command)
     } /* params supplied */
 
     /* We get here if cast was given without options or we could not find
-     * the requested spell.  List all the spells the player knows (if
-     * spnum = -1) or spells matching params if spnum=-2
+     * the requested spell.  List all the spells the player knows.
      */
     new_draw_info(NDI_UNIQUE, 0,op,"Cast what spell?  Choose one of:");
-    show_matching_spells(op, params?params:NULL);
+    show_matching_spells(op, params);
     return 1;
 }
 
