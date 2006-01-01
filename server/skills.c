@@ -1356,12 +1356,26 @@ static object *find_throw_ob( object *op, const char *request ) {
 	return (object *) NULL;
     }
 
+    /* prefer marked item */
+    tmp = find_marked_object(op);
+    if (tmp != NULL) {
+        /* can't toss invisible or inv-locked items */
+        if (tmp->invisible || QUERY_FLAG(tmp, FLAG_INV_LOCKED)) {
+            tmp = NULL;
+        }
+    }
+
     /* look through the inventory */
-    for(tmp=op->inv;tmp;tmp=tmp->below) {
-       /* can't toss invisible or inv-locked items */
-	if(tmp->invisible||QUERY_FLAG(tmp,FLAG_INV_LOCKED)) continue;
-	if(!request || !strcmp(query_name(tmp),request) || !strcmp(tmp->name,request))
-	    break;
+    if (tmp == NULL) {
+        for (tmp = op->inv; tmp != NULL; tmp = tmp->below) {
+            /* can't toss invisible or inv-locked items */
+            if (tmp->invisible || QUERY_FLAG(tmp, FLAG_INV_LOCKED))
+                continue;
+            if (!request
+            || !strcmp(query_name(tmp), request)
+            || !strcmp(tmp->name, request))
+                break;
+        }
     }
  
     /* this should prevent us from throwing away

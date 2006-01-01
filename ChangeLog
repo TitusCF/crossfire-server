@@ -17,6 +17,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Prefer marked item when throwing objects.
+--
+server/skills.c: In find_throw_ob() prefer marked item.
+Andreas Kirschbaum 2006-01-01
+
 Make EXITs affect DM players again.
 --
 common/object.c: In check_move_on() ignore only slow movement penalties for
