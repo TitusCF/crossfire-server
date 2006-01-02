@@ -1121,7 +1121,7 @@ int magic_wall(object *op,object *caster,int dir,object *spell_ob) {
     m = op->map;
 
     if ((spell_ob->move_block || x != op->x || y != op->y) &&
-      (get_map_flags(m, &m, x, y, &x, &y) & P_OUT_OF_MAP ||
+      (get_map_flags(m, &m, x, y, &x, &y) & (P_OUT_OF_MAP|P_IS_ALIVE) ||
       ((spell_ob->move_block & GET_MAP_MOVE_BLOCK(m, x, y)) == spell_ob->move_block))) {
 	new_draw_info(NDI_UNIQUE, 0,op,"Something is in the way.");
 	return 0;
@@ -1208,8 +1208,8 @@ int magic_wall(object *op,object *caster,int dir,object *spell_ob) {
 	y = tmp->y+i*freearr_y[dir2];
 	m = tmp->map;
 
-	if(!(get_map_flags(m, &m, x, y, &x, &y) & P_OUT_OF_MAP) && 
-	  ((tmp->move_block & GET_MAP_MOVE_BLOCK(m, x, y)) != tmp->move_block) && 
+	if(!(get_map_flags(m, &m, x, y, &x, &y) & (P_OUT_OF_MAP|P_IS_ALIVE)) &&
+	  ((spell_ob->move_block & GET_MAP_MOVE_BLOCK(m, x, y)) != spell_ob->move_block) &&
 	  !posblocked) {
 	    tmp2 = get_object();
 	    copy_object(tmp,tmp2);
@@ -1226,8 +1226,8 @@ int magic_wall(object *op,object *caster,int dir,object *spell_ob) {
 	y = tmp->y-i*freearr_y[dir2];
 	m = tmp->map;
 
-	if(!(get_map_flags(m, &m, x, y, &x, &y) & P_OUT_OF_MAP) && 
-	  ((tmp->move_block & GET_MAP_MOVE_BLOCK(m, x, y)) != tmp->move_block) && 
+	if(!(get_map_flags(m, &m, x, y, &x, &y) & (P_OUT_OF_MAP|P_IS_ALIVE)) &&
+	  ((spell_ob->move_block & GET_MAP_MOVE_BLOCK(m, x, y)) != spell_ob->move_block) &&
 	  !negblocked) {
 	    tmp2 = get_object();
 	    copy_object(tmp,tmp2);

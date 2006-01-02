@@ -17,9 +17,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/spell_effect.c: Apply patch 1394861 - fixes magic walls.  In conjuction
+  with archetype changes, look at the spell object (and not created wall)
+  to see if it blocks.
 server/c_chat.c: Apply patch 1389113 - orcknuckle messages appear in
    same window.
-MSW 2006-01-02
+MSW 2006-01-01
 
 Prefer marked item when throwing objects.
 --
