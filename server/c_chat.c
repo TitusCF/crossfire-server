@@ -93,7 +93,7 @@ int command_orcknuckle(object *op, char *params)
     snprintf(buf, MAX_BUF-1, "You roll %s, %s, %s, %s!",
 	orcknuckle[i], orcknuckle[j], orcknuckle[k], orcknuckle[l]);
     new_draw_info(NDI_UNIQUE, 0, op, buf);
-    new_info_map_except(NDI_WHITE, op->map, op, buf2);
+    new_info_map_except(NDI_UNIQUE, op->map, op, buf2);
     return 0;
 }
 
