@@ -1315,7 +1315,9 @@ static void apply_sign (object *op, object *sign, int autoapply)
 		new_draw_info (NDI_UNIQUE, 0, op, "You cannot read it anymore.");
 	    return;
 	}
-	sign->last_eat++;
+
+	if (!QUERY_FLAG(op, FLAG_WIZPASS))
+	    sign->last_eat++;
     }
 
     /* Sign or magic mouth?  Do we need to see it, or does it talk to us?
@@ -1348,7 +1350,7 @@ void move_apply (object *trap, object *victim, object *originator)
   static int recursion_depth = 0;
 
   /* Only exits affect DMs. */
-  if (QUERY_FLAG(victim, FLAG_WIZPASS) && trap->type != EXIT)
+  if (QUERY_FLAG(victim, FLAG_WIZPASS) && trap->type != EXIT && trap->type != SIGN)
     return;
 
   /* move_apply() is the most likely candidate for causing unwanted and
