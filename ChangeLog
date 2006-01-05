@@ -17,6 +17,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/main.c: Template maps: Impliment using fixed maps as templates.
+Alex Schultz 2006-01-06
+
 Make SIGNs (including Magic Mouths) trigger for DMs again. Does not reduce the
 counter if in 'wizpass mode.
 --
