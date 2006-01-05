@@ -504,6 +504,14 @@ static void enter_fixed_template_map(object *pl, object *exit_ob)
      */
     strcpy(exitpath, (EXIT_PATH(exit_ob)+2));
     sourcemap = strchr(exitpath, *"!");
+    if (!sourcemap) {
+	new_draw_info_format(NDI_UNIQUE, 0, pl, "The %s is closed.", exit_ob->name);
+	/* Should only occur when no source map is set.
+	 */
+	LOG(llevError,"enter_fixed_template_map: Exit %s (%d,%d) on map %s has no source template.\n",
+		    exit_ob->name, exit_ob->x, exit_ob->y, exit_ob->map->path);
+        return;
+    }
     *sourcemap++ = '\0';
     
     sprintf(tmpnum ,"%d", exit_ob->x);
@@ -527,7 +535,7 @@ static void enter_fixed_template_map(object *pl, object *exit_ob)
         if (new_map) fix_auto_apply(new_map);
     }
     
-    if(new_map) {
+    if (new_map) {
         /* set the path of the map to where it should be
          * so we don't just save over the source map.
          */
@@ -538,7 +546,7 @@ static void enter_fixed_template_map(object *pl, object *exit_ob)
 	new_draw_info_format(NDI_UNIQUE, 0, pl, "The %s is closed.", exit_ob->name);
 	/* Should only occur when an invalid source map is set.
 	 */
-	LOG(llevDebug,"enter_fixed_template_map: Exit %s (%d,%d) on map %s is leads no where.\n",
+	LOG(llevDebug,"enter_fixed_template_map: Exit %s (%d,%d) on map %s leads no where.\n",
 		    exit_ob->name, exit_ob->x, exit_ob->y, exit_ob->map->path);
     }
 }
