@@ -487,6 +487,63 @@ static void enter_random_map(object *pl, object *exit_ob)
     }
 }
 
+/* The player is trying to enter a non-randomly generated template map.  In this
+ * case, use a map file for a template
+ */
+
+static void enter_fixed_template_map(object *pl, object *exit_ob)
+{
+    mapstruct *new_map;
+    char tmpnum[32], exitpath[HUGE_BUF], resultname[HUGE_BUF], tmpstring[HUGE_BUF], *sourcemap;
+    const char *new_map_name;
+    RMParms rp;
+    
+    /* Split the exit path string into two parts, one
+     * for where to store the map, and one for were
+     * to generate the map from.
+     */
+    strcpy(exitpath, (EXIT_PATH(exit_ob)+2));
+    sourcemap = strchr(exitpath, *"!");
+    *sourcemap++ = '\0';
+    
+    sprintf(tmpnum ,"%d", exit_ob->x);
+    replace(exitpath, "%x", tmpnum, resultname,  sizeof(resultname));
+    
+    sprintf(tmpnum ,"%d", exit_ob->y);
+    sprintf(tmpstring, "%s", resultname);
+    replace(tmpstring, "%y", tmpnum, resultname,  sizeof(resultname));
+    
+    sprintf(tmpstring, "%s", resultname);
+    replace(tmpstring, "%n", exit_ob->map->name, resultname,  sizeof(resultname));
+    
+    new_map_name = create_template_pathname(resultname);
+
+    /* Attempt to load the map, if unable to, then
+     * create the map from the template.
+     */
+    new_map = ready_map_name(new_map_name, MAP_PLAYER_UNIQUE);
+    if (!new_map) {
+        new_map = load_original_map(create_pathname(sourcemap), MAP_PLAYER_UNIQUE);
+        if (new_map) fix_auto_apply(new_map);
+    }
+    
+    if(new_map) {
+        /* set the path of the map to where it should be
+         * so we don't just save over the source map.
+         */
+        strcpy(new_map->path, new_map_name);
+	new_map->template = 1;
+        enter_map(pl, new_map, EXIT_X(exit_ob), EXIT_Y(exit_ob));
+    } else {
+	new_draw_info_format(NDI_UNIQUE, 0, pl, "The %s is closed.", exit_ob->name);
+	/* Should only occur when an invalid source map is set.
+	 */
+	LOG(llevDebug,"enter_fixed_template_map: Exit %s (%d,%d) on map %s is leads no where.\n",
+		    exit_ob->name, exit_ob->x, exit_ob->y, exit_ob->map->path);
+    }
+}
+
+
 /* The player is trying to enter a randomly generated template map.  In this
  * case, generate the map as needed.
  */
@@ -499,21 +556,14 @@ static void enter_random_template_map(object *pl, object *exit_ob)
     RMParms rp;
     
     sprintf(tmpnum ,"%d", exit_ob->x);
-    printf("x=%s\n", tmpnum);
-    
     replace((EXIT_PATH(exit_ob)+3), "%x", tmpnum, resultname,  sizeof(resultname));
-    printf("1=%s\n", resultname);
     
     sprintf(tmpnum ,"%d", exit_ob->y);
-    printf("y=%s\n", tmpnum);
-    
     sprintf(tmpstring, "%s", resultname);
     replace(tmpstring, "%y", tmpnum, resultname,  sizeof(resultname));
-    printf("2=%s\n", resultname);
     
     sprintf(tmpstring, "%s", resultname);
     replace(tmpstring, "%n", exit_ob->map->name, resultname,  sizeof(resultname));
-    printf("3=%s\n", resultname);
     
     new_map_name = create_template_pathname(resultname);
 
@@ -641,10 +691,17 @@ void enter_exit(object *op, object *exit_ob) {
     /* First, lets figure out what map the player is going to go to */
     if (exit_ob){ 
 
-	/* check to see if we make a randomly generated map */
-	if(EXIT_PATH(exit_ob)&&EXIT_PATH(exit_ob)[1]=='@' && EXIT_PATH(exit_ob)[2]=='!') {
-	    enter_random_template_map(op, exit_ob);
+	/* check to see if we make a template map */
+	if(EXIT_PATH(exit_ob)&&EXIT_PATH(exit_ob)[1]=='@') {
+            if (EXIT_PATH(exit_ob)[2]=='!') {
+               	/* generate a template map randomly */
+                enter_random_template_map(op, exit_ob);
+            } else {
+               	/* generate a template map from a fixed template */
+                enter_fixed_template_map(op, exit_ob);
+            }
 	}
+       	/* check to see if we make a randomly generated map */
 	else if(EXIT_PATH(exit_ob)&&EXIT_PATH(exit_ob)[1]=='!') {
 	    enter_random_map(op, exit_ob);
 	}
