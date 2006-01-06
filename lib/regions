@@ -206,9 +206,33 @@ endmsg
 end
 region dream
 parent world
+longname Life is but a dream?
+msg
+You do not know if you are awake or still dreaming
+endmsg
+end
+region citydeclouds
+parent dream
 longname City de Clouds
 msg
-Describe City de Clouds
+A wonderous city resting on the clouds, it could not possibly exist...
+endmsg
+end
+region theabyss
+parent dream
+longname The Abyss
+msg
+Where the damned lay in torment for eternity. There is no forgiveness. Welcome
+to hell.
+endmsg
+end
+region dis
+parent theabyss
+longname The City of Dis
+msg
+Long forgotten, here lies the eternal city of hell. It was never made nor shall
+it be unmade. It was here and always will be, the damned have their city and no
+enjoyment to them will it ever surrender.
 endmsg
 end
 nomore
