@@ -1890,7 +1890,9 @@ static mapstruct *load_and_link_tiled_map(mapstruct *orig_map, int tile_num)
 {
     int dest_tile = (tile_num +2) % 4;
 
-    if (editor) {
+    /* Tile paths can be reletive unless the orig_map is unique.
+     */
+    if (!orig_map->unique) {
         char *path = path_combine_and_normalize(orig_map->path, orig_map->tile_path[tile_num]);
         orig_map->tile_map[tile_num] = ready_map_name(path, 0);
     } else {
