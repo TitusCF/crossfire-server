@@ -235,5 +235,55 @@ it be unmade. It was here and always will be, the damned have their city and no
 enjoyment to them will it ever surrender.
 endmsg
 end
+region kingdomofsaints
+parent dream
+longname The Kingdom of Saints
+msg
+A kingdom where pagan worship is outlawed and magic scorned. Dispite this there is said to
+be much advanced knowlege known to it, outside the realms of sorcery and superstition.
+The kingdom has a severe shortage of gold and thus prefers outsiders to pay debts in the metal,
+however it is rich in iron and copper ore, aswell as emeralds, though it's emerald production
+has recently sharply decreased due to an unknown reason.
+endmsg
+end
+region kingdomofsaintsborder
+parent kingdomofsaints
+longname The Kingdom of Saints Border
+msg
+A kingdom where pagan worship is outlawed and magic scorned. Dispite this there is said to
+be much advanced knowlege known to it, outside the realms of sorcery and superstition. To the
+east of here lies the Valley of Gehennom. To the north and south is unknown wilderness.
+endmsg
+end
+region stjohns
+parent kingdomofsaints
+longname The Town of St. John's
+msg
+The seat of justice for the Kingdom of Saints and the town closest to the border. This town
+once sent to the capital, St. Bartholomew, vast riches in the green gem. It's mine now lays
+vacant due to an unknown malady. 
+endmsg
+end
+region strose
+parent kingdomofsaints
+longname The Town of St. Rose
+msg
+A small town in the Kingdom of Saints dwarfed to the east by the copper mountains. 
+Its main production is livestock. 
+endmsg
+end
+region stbartholomew
+parent kingdomofsaints
+longname Town of St.Bartholomew
+msg
+The town of St. Bartholomew is the capital of the Kingdom of Saints.
+Situated between two mountain ranges rich in iron and copper ore St.
+Bartholomew is well protected and well supplied with minerals useful
+in wartime production. St. Bartholomew boasts a world class
+bank, a well stocked libary, and one of the only two power generation 
+plants in existance, as well as the only working centerfuge throughout the
+explored world.
+endmsg
+end
 nomore
 
