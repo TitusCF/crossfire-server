@@ -514,6 +514,16 @@ static void enter_fixed_template_map(object *pl, object *exit_ob)
     }
     *sourcemap++ = '\0';
     
+    /* If we are not coming from a template map, we can use reletive directories
+     * for the map to generate from.
+     */
+    if (!exit_ob->map->template) {
+        sourcemap = path_combine_and_normalize(exit_ob->map->path, sourcemap);
+    }
+    
+    /* Do replacement of %x, %y, and %n to the x coord of the exit, the y coord
+     * of the exit, and the name of the map the exit is on, respectively.
+     */
     sprintf(tmpnum ,"%d", exit_ob->x);
     replace(exitpath, "%x", tmpnum, resultname,  sizeof(resultname));
     
@@ -524,8 +534,15 @@ static void enter_fixed_template_map(object *pl, object *exit_ob)
     sprintf(tmpstring, "%s", resultname);
     replace(tmpstring, "%n", exit_ob->map->name, resultname,  sizeof(resultname));
     
-    new_map_name = create_template_pathname(resultname);
-
+    /* If we are coming from another template map, use reletive paths unless 
+     * indicated otherwise.
+     */
+    if (exit_ob->map->template && (resultname[0] != '/')) {
+        new_map_name = path_combine_and_normalize(exit_ob->map->path, resultname);
+    } else {
+        new_map_name = create_template_pathname(resultname);
+    }
+    
     /* Attempt to load the map, if unable to, then
      * create the map from the template.
      */
@@ -563,6 +580,9 @@ static void enter_random_template_map(object *pl, object *exit_ob)
     const char *new_map_name;
     RMParms rp;
     
+    /* Do replacement of %x, %y, and %n to the x coord of the exit, the y coord
+     * of the exit, and the name of the map the exit is on, respectively.
+     */
     sprintf(tmpnum ,"%d", exit_ob->x);
     replace((EXIT_PATH(exit_ob)+3), "%x", tmpnum, resultname,  sizeof(resultname));
     
@@ -573,7 +593,14 @@ static void enter_random_template_map(object *pl, object *exit_ob)
     sprintf(tmpstring, "%s", resultname);
     replace(tmpstring, "%n", exit_ob->map->name, resultname,  sizeof(resultname));
     
-    new_map_name = create_template_pathname(resultname);
+    /* If we are coming from another template map, use reletive paths unless 
+     * indicated otherwise.
+     */
+    if (exit_ob->map->template && (resultname[0] != '/')) {
+        new_map_name = path_combine_and_normalize(exit_ob->map->path, resultname);
+    } else {
+        new_map_name = create_template_pathname(resultname);
+    }
 
     new_map = ready_map_name(new_map_name, MAP_PLAYER_UNIQUE);
     if (!new_map) {

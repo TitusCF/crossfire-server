@@ -17,7 +17,8 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
-server/main.c: Template maps: Impliment using fixed maps as templates.
+server/main.c: Template maps: Impliment using fixed maps as templates, and
+  improve reletive path support for them.
 Alex Schultz 2006-01-06
 
 Make SIGNs (including Magic Mouths) trigger for DMs again. Does not reduce the
