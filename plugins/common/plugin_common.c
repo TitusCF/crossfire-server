@@ -101,6 +101,7 @@ static f_plug_api cfapiObject_apply_below = NULL;
 static f_plug_api cfapiArchetype_get_first = NULL;
 static f_plug_api cfapiArchetype_get_property = NULL;
 static f_plug_api cfapiParty_get_property = NULL;
+static f_plug_api cfapiRegion_get_property = NULL;
 
 #define GET_HOOK( x, y, z ) \
     { \
@@ -179,6 +180,7 @@ int cf_init_plugin( f_plug_api getHooks )
     GET_HOOK( cfapiArchetype_get_first, "cfapi_archetype_get_first", z );
     GET_HOOK( cfapiArchetype_get_property, "cfapi_archetype_get_property", z );
     GET_HOOK( cfapiParty_get_property, "cfapi_party_get_property", z );
+    GET_HOOK( cfapiRegion_get_property, "cfapi_region_get_property", z );
     return 1;
 }
 
@@ -807,6 +809,42 @@ player* cf_party_get_next_player(partylist* party, player* op)
 {
 	int val;
 	return cfapiParty_get_property(&val, party, CFAPI_PARTY_PROP_PLAYER, op);
+}
+
+region* cf_region_get_first(void)
+{
+	int val;
+	return cfapiRegion_get_property(&val, NULL, CFAPI_REGION_PROP_NEXT);
+}
+
+const char* cf_region_get_name(region* reg)
+{
+	int val;
+	return cfapiRegion_get_property(&val, reg, CFAPI_REGION_PROP_NAME);
+}
+
+region* cf_region_get_next(region* reg)
+{
+	int val;
+	return cfapiRegion_get_property(&val, reg, CFAPI_REGION_PROP_NEXT);
+}
+
+region* cf_region_get_parent(region* reg)
+{
+	int val;
+	return cfapiRegion_get_property(&val, reg, CFAPI_REGION_PROP_PARENT);
+}
+
+const char* cf_region_get_longname(region* reg)
+{
+	int val;
+	return cfapiRegion_get_property(&val, reg, CFAPI_REGION_PROP_LONGNAME);
+}
+
+const char* cf_region_get_message(region* reg)
+{
+	int val;
+	return cfapiRegion_get_property(&val, reg, CFAPI_REGION_PROP_MESSAGE);
 }
 
 #ifdef WIN32

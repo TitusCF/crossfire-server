@@ -47,6 +47,7 @@ static PyObject* Map_GetSky(Crossfire_Map* whoptr, void* closure);
 static PyObject* Map_GetWPartX(Crossfire_Map* whoptr, void* closure);
 static PyObject* Map_GetWPartY(Crossfire_Map* whoptr, void* closure);
 static PyObject* Map_GetMessage(Crossfire_Map* whoptr, void* closure);
+static PyObject* Map_GetRegion(Crossfire_Map* whoptr, void* closure);
 
 static PyObject* Map_Message(Crossfire_Map* map, PyObject* args);
 static PyObject* Map_GetFirstObjectAt(Crossfire_Map* map, PyObject* args);
@@ -84,6 +85,7 @@ static PyGetSetDef Map_getseters[] = {
     {"WPartX",          (getter)Map_GetWPartX,      NULL, NULL, NULL },
     {"WPartY",          (getter)Map_GetWPartY,      NULL, NULL, NULL },
     {"Message",         (getter)Map_GetMessage,     NULL, NULL, NULL },
+    {"Region",          (getter)Map_GetRegion,     NULL, NULL, NULL },
     { NULL, NULL, NULL, NULL, NULL }
 };
 

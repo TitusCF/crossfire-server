@@ -126,6 +126,7 @@ static PyObject* Object_GetMoney(Crossfire_Object* whoptr, void* closure);
 static PyObject* Object_GetType(Crossfire_Object* whoptr, void* closure);
 static PyObject* Object_GetValue(Crossfire_Object* whoptr, void* closure);
 static PyObject* Object_GetArchName(Crossfire_Object* whoptr, void* closure);
+static PyObject* Object_GetArchetype(Crossfire_Object* whoptr, void* closure);
 
 static int Object_SetMessage(Crossfire_Object* whoptr, PyObject* value, void* closure);
 static int Object_SetName(Crossfire_Object* whoptr, PyObject* value, void* closure);
@@ -226,7 +227,6 @@ static PyObject* Crossfire_Object_CreateInside(Crossfire_Object* who, PyObject* 
 static PyObject* Crossfire_Object_InsertInto(Crossfire_Object* who, PyObject* args);
 static PyObject* Crossfire_Object_ReadKey(Crossfire_Object* who, PyObject* args);
 static PyObject* Crossfire_Object_WriteKey(Crossfire_Object* who, PyObject* args);
-static PyObject* Crossfire_Object_Archetype(Crossfire_Object* who, PyObject* args);
 
 static int Crossfire_Object_InternalCompare(Crossfire_Object* left, Crossfire_Object* right);
 
@@ -337,6 +337,7 @@ static PyGetSetDef Object_getseters[] = {
     { "Type",           (getter)Object_GetType,         NULL ,NULL, NULL },
     { "Value",          (getter)Object_GetValue,        (setter)Object_SetValue ,NULL, NULL },
     { "ArchName",       (getter)Object_GetArchName,     NULL ,NULL, NULL },
+    { "Archetype",      (getter)Object_GetArchetype,    NULL ,NULL, NULL },
     { NULL, NULL, NULL, NULL, NULL }
 };
 
@@ -369,7 +370,6 @@ static PyMethodDef ObjectMethods[] = {
     { "InsertInto",     (PyCFunction)Crossfire_Object_InsertInto,   METH_VARARGS},
     { "ReadKey",        (PyCFunction)Crossfire_Object_ReadKey,      METH_VARARGS},
     { "WriteKey",       (PyCFunction)Crossfire_Object_WriteKey,     METH_VARARGS},
-    { "Archetype",       (PyCFunction)Crossfire_Object_Archetype,     METH_VARARGS},
     {NULL, NULL, 0}
 };
 

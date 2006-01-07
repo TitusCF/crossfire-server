@@ -161,6 +161,14 @@ extern const char*  cf_party_get_password(partylist* party);
 extern player*      cf_party_get_first_player(partylist* party);
 extern player*      cf_party_get_next_player(partylist* party, player* op);
 
+/* Regions */
+extern region*      cf_region_get_first(void);
+extern const char*  cf_region_get_name(region* reg);
+extern region*      cf_region_get_next(region* reg);
+extern region*      cf_region_get_parent(region* reg);
+extern const char*  cf_region_get_longname(region* reg);
+extern const char*  cf_region_get_message(region* reg);
+
 /* temp */
 extern f_plug_api cfapi_object_get_property;
 extern f_plug_api cfapi_object_set_property;

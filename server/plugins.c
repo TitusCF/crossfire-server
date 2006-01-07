@@ -43,7 +43,7 @@
 #include <sproto.h>
 #endif
 
-#define NR_OF_HOOKS 73
+#define NR_OF_HOOKS 74
 
 static const hook_entry plug_hooks[NR_OF_HOOKS] =
 {
@@ -120,6 +120,7 @@ static const hook_entry plug_hooks[NR_OF_HOOKS] =
 	{cfapi_archetype_get_first,     70, "cfapi_archetype_get_first"},
 	{cfapi_archetype_get_property,  71, "cfapi_archetype_get_property"},
 	{cfapi_party_get_property,      72, "cfapi_party_get_property"},
+	{cfapi_region_get_property,     73, "cfapi_region_get_property"},
 };
 int plugin_number = 0;
 crossfire_plugin* plugins_list = NULL;
@@ -1098,6 +1099,11 @@ void* cfapi_map_get_map_property(int* type, ...)
 			*type = CFAPI_PMAP;
 			va_end(args);
 			return map->next;
+		case CFAPI_MAP_PROP_REGION:
+			map = va_arg(args, mapstruct*);
+			*type = CFAPI_PREGION;
+			va_end(args);
+			return get_region_by_map(map);
         default:
             *type = CFAPI_NONE;
             va_end(args);
@@ -3274,6 +3280,48 @@ void* cfapi_party_get_property(int* type, ...)
                     rv = (void*)pl;
                     break;
                 }
+            break;
+        default:
+            *type = CFAPI_NONE;
+            rv = NULL;
+            break;
+    }
+    va_end(args);
+    return rv;
+}
+
+/* Regions-related functions */
+void* cfapi_region_get_property(int* type, ...)
+{
+    region* reg;
+    int prop;
+    va_list args;
+    void* rv;
+
+    va_start(args, type);
+    reg = va_arg(args, region*);
+    prop = va_arg(args, int);
+    switch (prop)
+    {
+        case CFAPI_REGION_PROP_NAME:
+            *type = CFAPI_STRING;
+            rv = (void*)reg->name;
+            break;
+        case CFAPI_REGION_PROP_NEXT:
+            *type = CFAPI_PREGION;
+            rv = (reg?reg->next:first_region);
+            break;
+        case CFAPI_REGION_PROP_PARENT:
+            *type = CFAPI_PREGION;
+            rv = (void*)reg->parent;
+            break;
+        case CFAPI_REGION_PROP_LONGNAME:
+            *type = CFAPI_STRING;
+            rv = (void*)reg->longname;
+            break;
+        case CFAPI_REGION_PROP_MESSAGE:
+            *type = CFAPI_STRING;
+            rv = (void*)reg->msg;
             break;
         default:
             *type = CFAPI_NONE;

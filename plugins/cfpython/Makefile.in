@@ -86,7 +86,8 @@ pluginLTLIBRARIES_INSTALL = $(INSTALL)
 LTLIBRARIES = $(plugin_LTLIBRARIES)
 cfpython_la_DEPENDENCIES =
 am_cfpython_la_OBJECTS = cfpython.lo cfpython_archetype.lo \
-	cfpython_object.lo cfpython_map.lo cfpython_party.lo plugin_common.lo
+	cfpython_object.lo cfpython_map.lo cfpython_party.lo \
+	cfpython_region.lo plugin_common.lo
 cfpython_la_OBJECTS = $(am_cfpython_la_OBJECTS)
 @PYTHON_PLUGIN_TRUE@am_cfpython_la_rpath = -rpath $(plugindir)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)/include
@@ -247,12 +248,14 @@ cfpython_la_SOURCES = cfpython.c\
 	cfpython_object.c\
 	cfpython_map.c\
 	cfpython_party.c\
+	cfpython_region.c\
 	../common/plugin_common.c
 
 cfpython_la_CPSOURCES = cfpython.c\
 	cfpython_archetype.c\
 	cfpython_object.c\
 	cfpython_party.c\
+	cfpython_region.c\
 	cfpython_map.c
 
 cfpython_la_LIBADD = @PYTHON_LIB@ @PY_LIBS@
@@ -332,6 +335,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cfpython_map.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cfpython_object.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cfpython_party.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cfpython_region.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/plugin_common.Plo@am__quote@
 
 .c.o:

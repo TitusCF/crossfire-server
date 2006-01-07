@@ -509,6 +509,11 @@ static PyObject* Object_GetArchName(Crossfire_Object* whoptr, void* closure)
 {
     return Py_BuildValue("s",cf_object_get_property(whoptr->obj, CFAPI_OBJECT_PROP_ARCH_NAME));
 }
+static PyObject* Object_GetArchetype(Crossfire_Object* whoptr, void* closure)
+{
+	return Crossfire_Archetype_wrap(cf_object_get_property(whoptr->obj, CFAPI_OBJECT_PROP_ARCHETYPE));
+}
+
 
 static int Object_SetMessage(Crossfire_Object* whoptr, PyObject* value, void* closure)
 {
@@ -1546,13 +1551,6 @@ static PyObject* Crossfire_Object_WriteKey( Crossfire_Object* who, PyObject* arg
     Py_INCREF(Py_None);
     return Py_None;
 }
-static PyObject* Crossfire_Object_Archetype(Crossfire_Object* who, PyObject* args)
-{
-    if (!PyArg_ParseTuple(args,""))
-        return NULL;
-	return Crossfire_Archetype_wrap(cf_object_get_property(who->obj, CFAPI_OBJECT_PROP_ARCHETYPE));
-}
-
 static PyObject* Crossfire_Object_CheckInventory( Crossfire_Object* who, PyObject* args )
 {
     char* whatstr;

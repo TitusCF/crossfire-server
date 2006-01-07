@@ -117,6 +117,11 @@ static PyObject* Map_GetMessage(Crossfire_Map* whoptr, void* closure)
     return Py_BuildValue("s", cf_map_get_property(whoptr->map, CFAPI_MAP_PROP_MESSAGE));
 }
 
+static PyObject* Map_GetRegion(Crossfire_Map* whoptr, void* closure)
+{
+    return Crossfire_Region_wrap(cf_map_get_property(whoptr->map,CFAPI_MAP_PROP_REGION));
+}
+
 static PyObject* Map_Message(Crossfire_Map* map, PyObject* args)
 {
     int   color = NDI_BLUE|NDI_UNIQUE;

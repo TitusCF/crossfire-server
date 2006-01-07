@@ -24,66 +24,54 @@
 /*  You should have received a copy of the GNU General Public License        */
 /*  along with this program; if not, write to the Free Software              */
 /*  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.                */
-/*                                                                           */ /*****************************************************************************/
-#ifndef PLUGIN_PYTHON_H
-#define PLUGIN_PYTHON_H
+/*                                                                           */
+/*****************************************************************************/
 
-/* First the required header files - only the CF module interface and Python */
-#include <Python.h>
-#include <plugin.h>
+#include <cfpython.h>
+#include <cfpython_region_private.h>
 
-#undef MODULEAPI
-#ifdef WIN32
-#ifdef PYTHON_PLUGIN_EXPORTS
-#define MODULEAPI __declspec(dllexport)
-#else
-#define MODULEAPI __declspec(dllimport)
-#endif
-
-#else
-#define MODULEAPI
-#endif
-
-#define PLUGIN_NAME    "Python"
-#define PLUGIN_VERSION "CFPython Plugin 2.0a13 (Fido)"
-
-#include <plugin_common.h>
-#include <cfpython_object.h>
-#include <cfpython_map.h>
-#include <cfpython_archetype.h>
-#include <cfpython_party.h>
-#include <cfpython_region.h>
-
-typedef struct _cfpcontext
+static PyObject* Crossfire_Region_GetName(Crossfire_Region* regionptr, void* closure)
 {
-    struct _cfpcontext* down;
-    PyObject*   who;
-    PyObject*   activator;
-    PyObject*   third;
-    char        message[1024];
-    int         fix;
-    int         event_code;
-    char        script[1024];
-    char        options[1024];
-    int         returnvalue;
-    int         parms[5];
-} CFPContext;
+	return Py_BuildValue("s",cf_region_get_name(regionptr->reg));
+}
 
-extern f_plug_api gethook;
-extern CFPContext* context_stack;
-extern CFPContext* current_context;
-
-/* This structure is used to define one python-implemented crossfire command.*/
-typedef struct PythonCmdStruct
+static PyObject* Crossfire_Region_GetLongname(Crossfire_Region* regionptr, void* closure)
 {
-    char *name;    /* The name of the command, as known in the game.         */
-    char *script;  /* The name of the script file to bind.                   */
-    double speed;  /* The speed of the command execution.                    */
-} PythonCmd;
+	return Py_BuildValue("s",cf_region_get_longname(regionptr->reg));
+}
 
-/* This plugin allows up to 1024 custom commands.                            */
-#define NR_CUSTOM_CMD 1024
-PythonCmd CustomCommand[NR_CUSTOM_CMD];
-#include <cfpython_proto.h>
+static PyObject* Crossfire_Region_GetMessage(Crossfire_Region* regionptr, void* closure)
+{
+	return Py_BuildValue("s",cf_region_get_message(regionptr->reg));
+}
 
-#endif /* PLUGIN_PYTHON_H */
+static PyObject* Crossfire_Region_GetNext( Crossfire_Region* party, PyObject* args )
+{
+	return Crossfire_Region_wrap(cf_region_get_next(party->reg));
+}
+
+static PyObject* Crossfire_Region_GetParent( Crossfire_Region* party, PyObject* args )
+{
+	return Crossfire_Region_wrap(cf_region_get_parent(party->reg));
+}
+
+PyObject *Crossfire_Region_wrap(region *what)
+{
+    Crossfire_Region *wrapper;
+
+    /* return None if no object was to be wrapped */
+    if(what == NULL) {
+        Py_INCREF(Py_None);
+        return Py_None;
+    }
+
+    wrapper = PyObject_NEW(Crossfire_Region, &Crossfire_RegionType);
+    if(wrapper != NULL)
+        wrapper->reg = what;
+    return (PyObject *)wrapper;
+}
+
+static int Crossfire_Region_InternalCompare(Crossfire_Region* left, Crossfire_Region* right)
+{
+	return ((int)left->reg - (int)right->reg);
+}

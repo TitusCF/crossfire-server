@@ -109,6 +109,7 @@ static PyObject* getSharedDictionary(PyObject* self, PyObject* args);
 static PyObject* getArchetypes(PyObject* self, PyObject* args);
 static PyObject* getMaps(PyObject* self, PyObject* args);
 static PyObject* getParties(PyObject* self, PyObject* args);
+static PyObject* getRegions(PyObject* self, PyObject* args);
 static PyObject* registerCommand(PyObject* self, PyObject* args);
 static PyObject* registerGEvent(PyObject* self, PyObject* args);
 static PyObject* unregisterGEvent(PyObject* self, PyObject* args);
@@ -168,6 +169,7 @@ static PyMethodDef CFPythonMethods[] = {
     {"GetArchetypes",       getArchetypes,          METH_VARARGS},
     {"GetMaps",             getMaps,                METH_VARARGS},
     {"GetParties",          getParties,             METH_VARARGS},
+    {"GetRegions",          getRegions,             METH_VARARGS},
     {"RegisterCommand",     registerCommand,        METH_VARARGS},
     {"RegisterGlobalEvent", registerGEvent,         METH_VARARGS},
     {"UnregisterGlobalEvent",unregisterGEvent,      METH_VARARGS},
@@ -584,6 +586,21 @@ static PyObject* getParties(PyObject* self, PyObject* args)
 	return list;
 }
 
+static PyObject* getRegions(PyObject* self, PyObject* args)
+{
+	PyObject* list;
+	region* reg;
+
+	list = PyList_New(0);
+	reg = cf_region_get_first();
+	while (reg)
+	{
+		PyList_Append(list,Crossfire_Region_wrap(reg));
+		reg = cf_region_get_next(reg);
+	}
+	return list;
+}
+
 static PyObject* registerCommand(PyObject* self, PyObject* args)
 {
     char *cmdname;
@@ -723,11 +740,13 @@ CF_PLUGIN int initPlugin(const char* iversion, f_plug_api gethooksptr)
     Crossfire_PlayerType.tp_new = PyType_GenericNew;
 	Crossfire_ArchetypeType.tp_new = PyType_GenericNew;
 	Crossfire_PartyType.tp_new = PyType_GenericNew;
+	Crossfire_RegionType.tp_new = PyType_GenericNew;
     PyType_Ready(&Crossfire_ObjectType);
     PyType_Ready(&Crossfire_MapType);
     PyType_Ready(&Crossfire_PlayerType);
 	PyType_Ready(&Crossfire_ArchetypeType);
 	PyType_Ready(&Crossfire_PartyType);
+	PyType_Ready(&Crossfire_RegionType);
 
     m = Py_InitModule("Crossfire", CFPythonMethods);
     d = PyModule_GetDict(m);
@@ -736,12 +755,14 @@ CF_PLUGIN int initPlugin(const char* iversion, f_plug_api gethooksptr)
     Py_INCREF(&Crossfire_PlayerType);
 	Py_INCREF(&Crossfire_ArchetypeType);
 	Py_INCREF(&Crossfire_PartyType);
+	Py_INCREF(&Crossfire_RegionType);
 
     PyModule_AddObject(m, "Object", (PyObject*)&Crossfire_ObjectType);
     PyModule_AddObject(m, "Map", (PyObject*)&Crossfire_MapType);
     PyModule_AddObject(m, "Player", (PyObject*)&Crossfire_PlayerType);
 	PyModule_AddObject(m, "Archetype", (PyObject*)&Crossfire_ArchetypeType);
 	PyModule_AddObject(m, "Party", (PyObject*)&Crossfire_PartyType);
+	PyModule_AddObject(m, "Region", (PyObject*)&Crossfire_RegionType);
 
     CFPythonError = PyErr_NewException("Crossfire.error",NULL,NULL);
     PyDict_SetItemString(d,"error",CFPythonError);
