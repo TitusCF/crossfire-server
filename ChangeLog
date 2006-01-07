@@ -17,6 +17,8 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+common/{item.c,treasure.c}, server/{apply.c,gods.c,spell_effect.c}: Use named
+   constants instead of numbers.
 server/monster.c: Use correct field name in move_monster().
 Andreas Kirschbaum 2006-01-07
 

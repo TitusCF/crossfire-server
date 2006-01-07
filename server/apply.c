@@ -212,7 +212,7 @@ int apply_potion(object *op, object *tmp)
 	}
 	depl = present_arch_in_ob(at, op);
 	if (depl!=NULL) {
-	    for (i = 0; i < 7; i++)
+	    for (i = 0; i < NUM_STATS; i++)
 		if (get_attr_value(&depl->stats, i)) {
 		    new_draw_info(NDI_UNIQUE,0,op, restore_msg[i]);
 		}
@@ -3718,7 +3718,7 @@ void apply_changes_to_player(object *pl, object *change) {
 	     * tries to randomly reassign the excess stat
 	     */
 	    int i,j;
-	    for(i=0;i<7;i++) {
+	    for(i=0;i<NUM_STATS;i++) {
 		sint8 stat=get_attr_value(stats,i);
 		int race_bonus = get_attr_value(&(pl->arch->clone.stats),i);
 		stat += get_attr_value(ns,i);

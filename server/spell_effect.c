@@ -831,7 +831,7 @@ int perceive_self(object *op) {
 	new_draw_info(NDI_UNIQUE, 0,op,"You have:");
 	new_draw_info(NDI_UNIQUE, 0,op,cp);
 	if (tmp!=NULL) {
-	    for (i=0; i<7; i++) {
+	    for (i=0; i<NUM_STATS; i++) {
 		if (get_attr_value(&tmp->stats, i)<0) {
 		    new_draw_info_format(NDI_UNIQUE, 0,op, 
 			 "Your %s is depleted by %d", statname[i],

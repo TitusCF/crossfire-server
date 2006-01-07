@@ -1293,7 +1293,7 @@ void add_abilities(object *op, object *change) {
 #endif
 	op->face = change->face;
     }
-    for (i = 0; i < 7; i++)
+    for (i = 0; i < NUM_STATS; i++)
 	change_attr_value(&(op->stats), i, get_attr_value(&(change->stats), i));
 
     op->attacktype |= change->attacktype;

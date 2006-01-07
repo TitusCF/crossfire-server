@@ -474,7 +474,7 @@ char *ring_desc (object *op)
     if (! QUERY_FLAG(op, FLAG_IDENTIFIED))
 	return buf;
 
-    for (attr=0; attr<7; attr++) {
+    for (attr=0; attr<NUM_STATS; attr++) {
 	if ((val=get_attr_value(&(op->stats),attr))!=0) {
 	    sprintf (buf+strlen(buf), "(%s%+d)", short_stat_name[attr], val);
 	}
@@ -1074,7 +1074,7 @@ char *describe_item(object *op, object *owner) {
     if (identified || QUERY_FLAG(op,FLAG_BEEN_APPLIED)) {
 	int attr,val;
 
-	for (attr=0; attr<7; attr++) {
+	for (attr=0; attr<NUM_STATS; attr++) {
 	    if ((val=get_attr_value(&(op->stats),attr))!=0) {
 		sprintf(buf, "(%s%+d)", short_stat_name[attr], val);
 		strcat(retbuf,buf);
@@ -1313,7 +1313,7 @@ int is_magical(object *op) {
 	    return 1;
 
     /* Check to see if it increases/decreases any stats */
-    for (i=0; i<7; i++) 
+    for (i=0; i<NUM_STATS; i++) 
 	    if (get_attr_value(&(op->stats),i)!=0) return 1;
 
     /* If it doesn't fall into any of the above categories, must
