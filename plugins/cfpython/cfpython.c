@@ -923,6 +923,7 @@ CF_PLUGIN void* globalEventListener(int* type, ...)
     context->activator   = NULL;
     context->third       = NULL;
     rv = context->returnvalue = 0;
+    snprintf(context->script, sizeof(context->script), "%s", cf_get_maps_directory("python/events/python_event.py"));
     switch(context->event_code)
     {
         case EVENT_CRASH:
@@ -931,20 +932,19 @@ CF_PLUGIN void* globalEventListener(int* type, ...)
         case EVENT_BORN:
             op = va_arg(args, object*);
             context->activator = Crossfire_Object_wrap(op);
-            snprintf(context->script, sizeof(context->script), "%s", cf_get_maps_directory("python/events/python_born.py"));
             cfob = (Crossfire_Object*)context->activator;
             break;
         case EVENT_PLAYER_DEATH:
             op = va_arg(args, object*);
             context->who = Crossfire_Object_wrap(op);
-            snprintf(context->script, sizeof(context->script), "%s", cf_get_maps_directory("python/events/python_player_death.py"));
+			snprintf(context->options,sizeof(context->options),"death");
             cfob = (Crossfire_Object*)context->who;
             break;
         case EVENT_GKILL:
             op = va_arg(args, object*);
             context->who = Crossfire_Object_wrap(op);
             context->activator = Crossfire_Object_wrap(op);
-            snprintf(context->script, sizeof(context->script), "%s", cf_get_maps_directory("python/events/python_gkill.py"));
+			snprintf(context->options,sizeof(context->options),"gkill");
             cfob = (Crossfire_Object*)context->who;
             break;
         case EVENT_LOGIN:
@@ -953,7 +953,7 @@ CF_PLUGIN void* globalEventListener(int* type, ...)
             buf = va_arg(args, char*);
             if (buf !=NULL)
                 snprintf(context->message, sizeof(context->message), "%s", buf);
-            snprintf(context->script, sizeof(context->script), "%s", cf_get_maps_directory("python/events/python_login.py"));
+			snprintf(context->options,sizeof(context->options),"login");
             cfpl = (Crossfire_Player*)context->activator;
             break;
         case EVENT_LOGOUT:
@@ -962,13 +962,13 @@ CF_PLUGIN void* globalEventListener(int* type, ...)
             buf = va_arg(args, char*);
             if (buf !=NULL)
                 snprintf(context->message, sizeof(context->message), "%s", buf);
-            snprintf(context->script, sizeof(context->script), "%s", cf_get_maps_directory("python/events/python_logout.py"));
+			snprintf(context->options,sizeof(context->options),"logout");
             cfpl = (Crossfire_Player*)context->activator;
             break;
         case EVENT_REMOVE:
             op = va_arg(args, object*);
             context->activator = Crossfire_Object_wrap(op);
-            snprintf(context->script, sizeof(context->script), "%s", cf_get_maps_directory("python/events/python_remove.py"));
+			snprintf(context->options,sizeof(context->options),"remove");
             cfob = (Crossfire_Object*)context->activator;
             break;
         case EVENT_SHOUT:
@@ -977,7 +977,7 @@ CF_PLUGIN void* globalEventListener(int* type, ...)
             buf = va_arg(args, char*);
             if (buf !=NULL)
                 snprintf(context->message, sizeof(context->message), "%s", buf);
-            snprintf(context->script, sizeof(context->script), "%s", cf_get_maps_directory("python/events/python_shout.py"));
+			snprintf(context->options,sizeof(context->options),"shout");
             cfob = (Crossfire_Object*)context->activator;
             break;
         case EVENT_MUZZLE:
@@ -986,7 +986,7 @@ CF_PLUGIN void* globalEventListener(int* type, ...)
             buf = va_arg(args, char*);
             if (buf !=NULL)
                 snprintf(context->message, sizeof(context->message), "%s", buf);
-            snprintf(context->script, sizeof(context->script), "%s", cf_get_maps_directory("python/events/python_muzzle.py"));
+			snprintf(context->options,sizeof(context->options),"muzzle");
             cfob = (Crossfire_Object*)context->activator;
             break;
         case EVENT_KICK:
@@ -995,32 +995,32 @@ CF_PLUGIN void* globalEventListener(int* type, ...)
             buf = va_arg(args, char*);
             if (buf !=NULL)
                 snprintf(context->message, sizeof(context->message), "%s", buf);
-            snprintf(context->script, sizeof(context->script), "%s", cf_get_maps_directory("python/events/python_kick.py"));
+			snprintf(context->options,sizeof(context->options),"kick");
             cfob = (Crossfire_Object*)context->activator;
             break;
         case EVENT_MAPENTER:
             op = va_arg(args, object*);
             context->activator = Crossfire_Object_wrap(op);
-            snprintf(context->script, sizeof(context->script), "%s", cf_get_maps_directory("python/events/python_mapenter.py"));
+			snprintf(context->options,sizeof(context->options),"mapenter");
             cfob = (Crossfire_Object*)context->activator;
             break;
         case EVENT_MAPLEAVE:
             op = va_arg(args, object*);
             context->activator = Crossfire_Object_wrap(op);
-            snprintf(context->script, sizeof(context->script), "%s", cf_get_maps_directory("python/events/python_mapleave.py"));
+			snprintf(context->options,sizeof(context->options),"mapleave");
             cfob = (Crossfire_Object*)context->activator;
             break;
         case EVENT_CLOCK:
-            snprintf(context->script, sizeof(context->script), "%s", cf_get_maps_directory("python/events/python_clock.py"));
+			snprintf(context->options,sizeof(context->options),"clock");
             break;
         case EVENT_MAPRESET:
             buf = va_arg(args, char*);
             if (buf !=NULL)
                 snprintf(context->message, sizeof(context->message), "%s", buf);
-            snprintf(context->script, sizeof(context->script), "%s", cf_get_maps_directory("python/events/python_mapreset.py"));
+			snprintf(context->options,sizeof(context->options),"mapreset");
             break;
         case EVENT_TELL:
-            snprintf(context->script, sizeof(context->script), "%s", cf_get_maps_directory("python/events/python_tell.py"));
+			snprintf(context->options,sizeof(context->options),"tell");
             break;
     }
     va_end(args);

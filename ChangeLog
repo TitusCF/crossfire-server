@@ -17,6 +17,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Global event Python scripts now are in subdirectories. This makes it easier to
+ distribute "Python packages". Modified file:
+  plugins/cfpython/cfpython.c
+Ryo 2006-01-07
+
 common/{item.c,treasure.c}, server/{apply.c,gods.c,spell_effect.c}: Use named
    constants instead of numbers.
 server/monster.c: Use correct field name in move_monster().
