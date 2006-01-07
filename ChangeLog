@@ -17,6 +17,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Summon pets less often to the owner on tiled maps.
+--
+server/pets.c: In remove_all_pets() and pet_move() use on_same_map() to check
+   whether the pet is too far away.
+Andreas Kirschbaum 2006-01-07
+
 Change meaning of "items are on same map": for tiled maps now two objects are
 also considered to be on the same map if they are on diagonally adjacent maps.
 This solves the issue that a pet can be only one tile away from the owner but

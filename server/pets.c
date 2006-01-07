@@ -253,7 +253,7 @@ void remove_all_pets(mapstruct *map) {
   for(obl = first_friendly_object; obl != NULL; obl = next) {
     next = obl->next;
     if(obl->ob->type != PLAYER && QUERY_FLAG(obl->ob,FLAG_FRIENDLY) &&
-       (owner = get_owner(obl->ob)) != NULL && owner->map != obl->ob->map)
+       (owner = get_owner(obl->ob)) != NULL && !on_same_map(owner, obl->ob))
     {
 	/* follow owner checks map status for us */
 	follow_owner(obl->ob,owner);
@@ -320,7 +320,7 @@ void pet_move(object * ob)
     }
 
     /* move monster into the owners map if not in the same map */
-    if (ob->map != owner->map) {
+    if (!on_same_map(ob, owner)) {
 	follow_owner(ob, owner);
 	return;
     }
