@@ -762,7 +762,7 @@ typedef unsigned char	MoveType;
 #define DISTHIT  7 /* attack from a distance if hit as recommended by Frank */
 #define WAIT2    8 /* monster does not try to move towards player if far    */
                    /* maintains comfortable distance                        */
-#define PETMOVE 16 /* if the upper four bits of move_type / attack_movement */
+#define PETMOVE 16 /* if the upper four bits of attack_movement             */
                    /* are set to this number, the monster follows a player  */
                    /* until the owner calls it back or off                  */
                    /* player followed denoted by 0b->owner                  */
