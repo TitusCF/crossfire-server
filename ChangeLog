@@ -17,6 +17,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/monster.c: Use correct field name in move_monster().
+Andreas Kirschbaum 2006-01-07
+
 Summon pets less often to the owner on tiled maps.
 --
 server/pets.c: In remove_all_pets() and pet_move() use on_same_map() to check

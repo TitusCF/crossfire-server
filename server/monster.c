@@ -442,7 +442,7 @@ int move_monster(object *op) {
     } /* no enemy */
 
     /* We have an enemy.  Block immediately below is for pets */
-    if((op->type&HI4) == PETMOVE && (owner = get_owner(op)) != NULL && !on_same_map(op,owner))
+    if((op->attack_movement&HI4) == PETMOVE && (owner = get_owner(op)) != NULL && !on_same_map(op,owner))
     {
 	follow_owner(op, owner);
 	/* If the pet was unable to follow the owner, free it */
