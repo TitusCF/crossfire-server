@@ -57,9 +57,10 @@ int move_ob (object *op, int dir, object *originator)
 {
     sint16 newx = op->x+freearr_x[dir];
     sint16 newy = op->y+freearr_y[dir];
-    object *tmp;
+    object *tmp, *tmp_clone;
     mapstruct *m;
     int mflags;
+    int ox, oy;
 
     if(op==NULL) {
 	LOG(llevError,"Trying to move NULL.\n");
@@ -120,8 +121,12 @@ int move_ob (object *op, int dir, object *originator)
 
     remove_ob(op);
 
-    for(tmp = op; tmp != NULL; tmp = tmp->more)
-	tmp->x+=freearr_x[dir], tmp->y+=freearr_y[dir];
+    ox = op->x+freearr_x[dir];
+    oy = op->y+freearr_y[dir];
+    for(tmp = op, tmp_clone = &op->arch->clone; tmp != NULL; tmp = tmp->more, tmp_clone = tmp_clone->more) {
+	tmp->x = ox+tmp_clone->x;
+	tmp->y = oy+tmp_clone->y;
+    }
 
     /* insert_ob_in_map will deal with any tiling issues */
     insert_ob_in_map(op, op->map, originator,0);

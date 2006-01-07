@@ -829,7 +829,8 @@ int cast_cone(object *op, object *caster,int dir, object *spell)
 	set_owner(tmp,op);
 	set_spell_skill(op, caster, spell, tmp);
 	tmp->level = caster_level (caster, spell);
-	tmp->x=x,tmp->y=y;
+	tmp->x = sx;
+	tmp->y = sy;
 	tmp->attacktype=spell->attacktype;
 
 	/* holy word stuff */                

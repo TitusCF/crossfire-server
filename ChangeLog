@@ -17,6 +17,14 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Fix issues with map tiling.
+--
+server/move.c: In move_ob() make sure inserting multi-part objects into tiled
+   maps work.
+server/spell_attack.c: In cast_cone() insert spell effect at correct position
+   for tiled maps.
+Andreas Kirschbaum 2006-01-07
+
 common/map.c: Allow map tiling paths to be reletive.
 server/main.c: Template maps: Impliment using fixed maps as templates, and
   improve reletive path support for them.
