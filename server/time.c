@@ -865,11 +865,11 @@ void move_teleporter(object *op) {
     if (!tmp || QUERY_FLAG(tmp, FLAG_WIZPASS)) return;
 
     if(EXIT_PATH(head)) {
-	if(op->above->type==PLAYER) {
+	if(tmp->type==PLAYER) {
             /* Lauwenmark: Handle for plugin TRIGGER event */
-            if (execute_event(op, EVENT_TRIGGER,op->above,NULL,NULL,SCRIPT_FIX_ALL) != 0)
+            if (execute_event(op, EVENT_TRIGGER, tmp, NULL, NULL, SCRIPT_FIX_ALL) != 0)
                 return;
-	    enter_exit(op->above, head);
+	    enter_exit(tmp, head);
 	}
 	else
 	    /* Currently only players can transfer maps */
@@ -883,14 +883,14 @@ void move_teleporter(object *op) {
 	    return;
 	}
         /* Lauwenmark: Handle for plugin TRIGGER event */
-        if (execute_event(op, EVENT_TRIGGER,op->above,NULL,NULL,SCRIPT_FIX_ALL)!= 0)
+        if (execute_event(op, EVENT_TRIGGER, tmp, NULL, NULL, SCRIPT_FIX_ALL) != 0)
         return;
 	transfer_ob(tmp,EXIT_X(head),EXIT_Y(head),0,head);
     }
     else {
 	/* Random teleporter */
         /* Lauwenmark: Handle for plugin TRIGGER event */
-        if (execute_event(op, EVENT_TRIGGER,op->above,NULL,NULL,SCRIPT_FIX_ALL)!= 0)
+        if (execute_event(op, EVENT_TRIGGER, tmp, NULL, NULL, SCRIPT_FIX_ALL) != 0)
             return;
 	teleport(head, TELEPORTER, tmp);
     }

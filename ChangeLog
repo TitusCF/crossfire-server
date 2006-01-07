@@ -17,6 +17,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Make teleporters hidden below the floor work again.
+--
+server/time.c: In move_teleporter() use object above floor instead above
+   teleporter to operate one.
+Andreas Kirschbaum 2006-01-07
+
 Fix issues with map tiling.
 --
 server/move.c: In move_ob() make sure inserting multi-part objects into tiled
