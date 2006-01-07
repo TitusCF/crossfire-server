@@ -2140,14 +2140,42 @@ void get_rangevector_from_mapcoord(mapstruct  *m, int x, int y, object *op2, rv_
  */
 int on_same_map(object *op1, object *op2)
 {
+    mapstruct *tmp;
+
     /* If the object isn't on a map, can't be on the same map, now can it?
      * this check also prevents crashes below.
      */
     if (op1->map == NULL || op2->map == NULL) return FALSE;
 
-    if (op1->map == op2->map || op1->map->tile_map[0] == op2->map ||
-	op1->map->tile_map[1] == op2->map ||
-	op1->map->tile_map[2] == op2->map ||
-	op1->map->tile_map[3] == op2->map) return TRUE;
+    /* on same map? */
+    if (op1->map == op2->map) return TRUE;
+
+    /* on adjacent map? */
+    if (op1->map->tile_map[0] == op2->map) return TRUE;
+    if (op1->map->tile_map[1] == op2->map) return TRUE;
+    if (op1->map->tile_map[2] == op2->map) return TRUE;
+    if (op1->map->tile_map[3] == op2->map) return TRUE;
+    
+    /* on diagonally adjacent map? */
+    tmp = op1->map->tile_map[0];
+    if (tmp != NULL) {
+        if (tmp->tile_map[1] == op2->map || tmp->tile_map[3] == op2->map) return TRUE;
+    }
+
+    tmp = op1->map->tile_map[1];
+    if (tmp != NULL) {
+        if (tmp->tile_map[0] == op2->map || tmp->tile_map[2] == op2->map) return TRUE;
+    }
+
+    tmp = op1->map->tile_map[2];
+    if (tmp != NULL) {
+        if (tmp->tile_map[1] == op2->map || tmp->tile_map[3] == op2->map) return TRUE;
+    }
+
+    tmp = op1->map->tile_map[3];
+    if (tmp != NULL) {
+        if (tmp->tile_map[0] == op2->map || tmp->tile_map[2] == op2->map) return TRUE;
+    }
+
     return FALSE;
 }

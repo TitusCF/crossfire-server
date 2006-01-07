@@ -17,6 +17,14 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Change meaning of "items are on same map": for tiled maps now two objects are
+also considered to be on the same map if they are on diagonally adjacent maps.
+This solves the issue that a pet can be only one tile away from the owner but
+still considered not to be on the same map.
+--
+common/map.c: In on_same_map() also consider diagonally adjacent maps.
+Andreas Kirschbaum 2006-01-07
+
 Added regions support for plugins. Affected files:
  include/plugin.h sproto.h
  server/plugins.c
