@@ -191,20 +191,20 @@ object * place_chest(int treasureoptions,int x, int y,mapstruct *map, mapstruct 
   
   /* put the treasures in the chest. */
   /*  if(style_map) { */
-  if(0) {  /* don't use treasure style maps for now!  */
-    int ti;
-    /* if treasurestyle lists a treasure list, use it. */
-    treasurelist *tlist=find_treasurelist(RP->treasurestyle);
-    if(tlist!=NULL)
-      for(ti=0;ti<n_treasures;ti++) {  /* use the treasure list */
-        object *new_treasure=pick_random_object(style_map);
-        insert_ob_in_ob(arch_to_object(new_treasure->arch),the_chest);
-      }
-    else { /* use the style map */
-      the_chest->randomitems=tlist;
-      the_chest->stats.hp = n_treasures;
+#if 0 /* don't use treasure style maps for now!  */
+  int ti;
+  /* if treasurestyle lists a treasure list, use it. */
+  treasurelist *tlist=find_treasurelist(RP->treasurestyle);
+  if(tlist!=NULL)
+    for(ti=0;ti<n_treasures;ti++) {  /* use the treasure list */
+      object *new_treasure=pick_random_object(style_map);
+      insert_ob_in_ob(arch_to_object(new_treasure->arch),the_chest);
     }
+  else { /* use the style map */
+    the_chest->randomitems=tlist;
+    the_chest->stats.hp = n_treasures;
   }
+#endif
   else { /* neither style_map no treasure list given */
     treasurelist *tlist=find_treasurelist("chest");
     the_chest->randomitems=tlist;
