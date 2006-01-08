@@ -877,8 +877,9 @@ void update_ob_speed(object *op) {
 	LOG(llevError,"Object %s is freed but has speed.\n", op->name);
 #ifdef MANY_CORES
 	abort();
-#endif
+#else
 	op->speed = 0;
+#endif
     }
     if (arch_init) {
 	return;

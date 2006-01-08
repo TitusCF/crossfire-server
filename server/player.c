@@ -1392,13 +1392,15 @@ int check_pick(object *op) {
 	if ((query_cost(tmp, op, F_TRUE)*100 / (tmp->weight * MAX(tmp->nrof, 1))) >= wvratio)
 	{
 	  pick_up(op, tmp);
-	  if(0)fprintf(stderr,"HIGH WEIGHT/VALUE [");
+#if 0
+	  fprintf(stderr,"HIGH WEIGHT/VALUE [");
 	  if(tmp->name!=NULL) {
-	    if(0)fprintf(stderr,"%s", tmp->name);
+	    fprintf(stderr,"%s", tmp->name);
 	  }
-	  else if(0)fprintf(stderr,"%s",tmp->arch->name);
-	  if(0)fprintf(stderr,",%d] = ", tmp->type);
-	  if(0)fprintf(stderr,"%d\n",(int)(query_cost(tmp,op,F_TRUE)*100 / (tmp->weight * MAX(tmp->nrof,1))));
+	  else fprintf(stderr,"%s",tmp->arch->name);
+	  fprintf(stderr,",%d] = ", tmp->type);
+	  fprintf(stderr,"%d\n",(int)(query_cost(tmp,op,F_TRUE)*100 / (tmp->weight * MAX(tmp->nrof,1))));
+#endif
 	  continue;
 	}
       }
