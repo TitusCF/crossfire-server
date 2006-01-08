@@ -164,7 +164,7 @@ static PyMethodDef CFPythonMethods[] = {
     {"PluginVersion",       getCFPythonVersion,     METH_VARARGS},
     {"CreateObject",        createCFObject,         METH_VARARGS},
     {"CreateObjectByName",  createCFObjectByName,   METH_VARARGS},
-    {"GetPrivateDictionary",  getPrivateDictionary,   METH_VARARGS},
+    {"GetPrivateDictionary", getPrivateDictionary,  METH_VARARGS},
     {"GetSharedDictionary",  getSharedDictionary,   METH_VARARGS},
     {"GetArchetypes",       getArchetypes,          METH_VARARGS},
     {"GetMaps",             getMaps,                METH_VARARGS},
@@ -185,10 +185,10 @@ static PyObject* private_data = NULL;
 static PyObject* registerGEvent(PyObject* self, PyObject* args)
 {
     int eventcode;
-    if (!PyArg_ParseTuple(args,"i",&eventcode))
+    if (!PyArg_ParseTuple(args, "i", &eventcode))
         return NULL;
 
-    registerGlobalEvent(NULL,eventcode,PLUGIN_NAME,globalEventListener);
+    registerGlobalEvent(NULL, eventcode, PLUGIN_NAME, globalEventListener);
 
     Py_INCREF(Py_None);
     return Py_None;
@@ -196,10 +196,10 @@ static PyObject* registerGEvent(PyObject* self, PyObject* args)
 static PyObject* unregisterGEvent(PyObject* self, PyObject* args)
 {
     int eventcode;
-    if (!PyArg_ParseTuple(args,"i",&eventcode))
+    if (!PyArg_ParseTuple(args, "i", &eventcode))
         return NULL;
 
-    unregisterGlobalEvent(NULL,EVENT_TELL,PLUGIN_NAME);
+    unregisterGlobalEvent(NULL, EVENT_TELL, PLUGIN_NAME);
 
     Py_INCREF(Py_None);
     return Py_None;
@@ -210,8 +210,7 @@ static PyObject* createCFObject(PyObject* self, PyObject* args)
     object* op;
     op = cf_create_object();
 
-    if (op == NULL)
-    {
+    if (op == NULL) {
         Py_INCREF(Py_None);
         return Py_None;
     }
@@ -222,13 +221,12 @@ static PyObject* createCFObjectByName(PyObject* self, PyObject* args)
     char* obname;
     object* op;
 
-    if (!PyArg_ParseTuple(args,"s",&obname))
+    if (!PyArg_ParseTuple(args, "s", &obname))
         return NULL;
 
     op = cf_create_object_by_name(obname);
 
-    if (op == NULL)
-    {
+    if (op == NULL) {
         Py_INCREF(Py_None);
         return Py_None;
     }
@@ -236,21 +234,21 @@ static PyObject* createCFObjectByName(PyObject* self, PyObject* args)
 }
 static PyObject* getCFPythonVersion(PyObject* self, PyObject* args)
 {
-    int i=2044;
-    if (!PyArg_ParseTuple(args,"",NULL))
+    int i = 2044;
+    if (!PyArg_ParseTuple(args, "", NULL))
         return NULL;
-    return Py_BuildValue("i",i);
+    return Py_BuildValue("i", i);
 }
 static PyObject* getReturnValue(PyObject* self, PyObject* args)
 {
-    if (!PyArg_ParseTuple(args,"",NULL))
+    if (!PyArg_ParseTuple(args, "", NULL))
         return NULL;
     return Py_BuildValue("i", current_context->returnvalue);
 }
 static PyObject* setReturnValue(PyObject* self, PyObject* args)
 {
     int i;
-    if (!PyArg_ParseTuple(args,"i",&i))
+    if (!PyArg_ParseTuple(args, "i", &i))
         return NULL;
     current_context->returnvalue = i;
     Py_INCREF(Py_None);
@@ -262,29 +260,28 @@ static PyObject* matchString(PyObject* self, PyObject* args)
     char *seconde;
     char *result;
     int val;
-    if (!PyArg_ParseTuple(args,"ss",&premiere,&seconde))
+    if (!PyArg_ParseTuple(args, "ss", &premiere, &seconde))
         return NULL;
 
     result = reCmp( &val, premiere, seconde );
     if (result != NULL)
-        return Py_BuildValue("i",1);
+        return Py_BuildValue("i", 1);
     else
-        return Py_BuildValue("i",0);
+        return Py_BuildValue("i", 0);
 }
 static PyObject* findPlayer(PyObject* self, PyObject* args)
 {
     player *foundpl;
     char* txt;
 
-    if (!PyArg_ParseTuple(args,"s",&txt))
+    if (!PyArg_ParseTuple(args, "s", &txt))
         return NULL;
 
     foundpl = cf_player_find(txt);
 
-    if (foundpl!=NULL)
-        return Py_BuildValue("O",Crossfire_Object_wrap(foundpl->ob));
-    else
-    {
+    if (foundpl != NULL)
+        return Py_BuildValue("O", Crossfire_Object_wrap(foundpl->ob));
+    else {
         Py_INCREF(Py_None);
         return Py_None;
     }
@@ -294,13 +291,12 @@ static PyObject* readyMap(PyObject* self, PyObject* args)
     char* mapname;
     mapstruct* map;
 
-    if (!PyArg_ParseTuple(args,"s",&mapname))
+    if (!PyArg_ParseTuple(args, "s", &mapname))
         return NULL;
 
     map = cf_map_get_map(mapname);
 
-    if (map == NULL)
-    {
+    if (map == NULL) {
         Py_INCREF(Py_None);
         return Py_None;
     }
@@ -308,297 +304,287 @@ static PyObject* readyMap(PyObject* self, PyObject* args)
 }
 static PyObject* getCostFlagTrue(PyObject* self, PyObject* args)
 {
-    int i=F_TRUE;
-    if (!PyArg_ParseTuple(args,"",NULL))
+    int i = F_TRUE;
+    if (!PyArg_ParseTuple(args, "", NULL))
         return NULL;
-    return Py_BuildValue("i",i);
+    return Py_BuildValue("i", i);
 }
 static PyObject* getCostFlagBuy(PyObject* self, PyObject* args)
 {
-    int i=F_BUY;
-    if (!PyArg_ParseTuple(args,"",NULL))
+    int i = F_BUY;
+    if (!PyArg_ParseTuple(args, "", NULL))
         return NULL;
-    return Py_BuildValue("i",i);
+    return Py_BuildValue("i", i);
 }
 static PyObject* getCostFlagSell(PyObject* self, PyObject* args)
 {
-    int i=F_SELL;
-    if (!PyArg_ParseTuple(args,"",NULL))
+    int i = F_SELL;
+    if (!PyArg_ParseTuple(args, "", NULL))
         return NULL;
-    return Py_BuildValue("i",i);
+    return Py_BuildValue("i", i);
 }
 static PyObject* getCostFlagNoBargain(PyObject* self, PyObject* args)
 {
-    int i=F_NO_BARGAIN;
-    if (!PyArg_ParseTuple(args,"",NULL))
+    int i = F_NO_BARGAIN;
+    if (!PyArg_ParseTuple(args, "", NULL))
         return NULL;
-    return Py_BuildValue("i",i);
+    return Py_BuildValue("i", i);
 }
 static PyObject* getCostFlagIdentified(PyObject* self, PyObject* args)
 {
-    int i=F_IDENTIFIED;
-    if (!PyArg_ParseTuple(args,"",NULL))
+    int i = F_IDENTIFIED;
+    if (!PyArg_ParseTuple(args, "", NULL))
         return NULL;
-    return Py_BuildValue("i",i);
+    return Py_BuildValue("i", i);
 }
 static PyObject* getCostFlagNotCursed(PyObject* self, PyObject* args)
 {
-    int i=F_NOT_CURSED;
-    if (!PyArg_ParseTuple(args,"",NULL))
+    int i = F_NOT_CURSED;
+    if (!PyArg_ParseTuple(args, "", NULL))
         return NULL;
-    return Py_BuildValue("i",i);
+    return Py_BuildValue("i", i);
 }
 static PyObject* getDirectionNorthEast(PyObject* self, PyObject* args)
 {
-    int i=2;
-    if (!PyArg_ParseTuple(args,"",NULL))
+    int i = 2;
+    if (!PyArg_ParseTuple(args, "", NULL))
         return NULL;
-    return Py_BuildValue("i",i);
+    return Py_BuildValue("i", i);
 }
 static PyObject* getDirectionEast(PyObject* self, PyObject* args)
 {
-    int i=3;
-    if (!PyArg_ParseTuple(args,"",NULL))
+    int i = 3;
+    if (!PyArg_ParseTuple(args, "", NULL))
         return NULL;
-    return Py_BuildValue("i",i);
+    return Py_BuildValue("i", i);
 }
 static PyObject* getDirectionSouthEast(PyObject* self, PyObject* args)
 {
-    int i=4;
-    if (!PyArg_ParseTuple(args,"",NULL))
+    int i = 4;
+    if (!PyArg_ParseTuple(args, "", NULL))
         return NULL;
-    return Py_BuildValue("i",i);
+    return Py_BuildValue("i", i);
 }
 static PyObject* getDirectionSouth(PyObject* self, PyObject* args)
 {
-    int i=5;
-    if (!PyArg_ParseTuple(args,"",NULL))
+    int i = 5;
+    if (!PyArg_ParseTuple(args, "", NULL))
         return NULL;
-    return Py_BuildValue("i",i);
+    return Py_BuildValue("i", i);
 }
 static PyObject* getDirectionSouthWest(PyObject* self, PyObject* args)
 {
-    int i=6;
-    if (!PyArg_ParseTuple(args,"",NULL))
+    int i = 6;
+    if (!PyArg_ParseTuple(args, "", NULL))
         return NULL;
-    return Py_BuildValue("i",i);
+    return Py_BuildValue("i", i);
 }
 static PyObject* getDirectionWest(PyObject* self, PyObject* args)
 {
-    int i=7;
-    if (!PyArg_ParseTuple(args,"",NULL))
+    int i = 7;
+    if (!PyArg_ParseTuple(args, "", NULL))
         return NULL;
-    return Py_BuildValue("i",i);
+    return Py_BuildValue("i", i);
 }
 static PyObject* getDirectionNorthWest(PyObject* self, PyObject* args)
 {
-    int i=8;
-    if (!PyArg_ParseTuple(args,"",NULL))
+    int i = 8;
+    if (!PyArg_ParseTuple(args, "", NULL))
         return NULL;
-    return Py_BuildValue("i",i);
+    return Py_BuildValue("i", i);
 }
 static PyObject* getDirectionNorth(PyObject* self, PyObject* args)
 {
-    int i=1;
-    if (!PyArg_ParseTuple(args,"",NULL))
+    int i = 1;
+    if (!PyArg_ParseTuple(args, "", NULL))
         return NULL;
-    return Py_BuildValue("i",i);
+    return Py_BuildValue("i", i);
 }
 static PyObject* getMapDirectory(PyObject* self, PyObject* args)
 {
     int rv;
-    if (!PyArg_ParseTuple(args,"",NULL))
+    if (!PyArg_ParseTuple(args, "", NULL))
         return NULL;
-    return Py_BuildValue("s", systemDirectory(&rv,0));
+    return Py_BuildValue("s", systemDirectory(&rv, 0));
 }
 static PyObject* getUniqueDirectory(PyObject* self, PyObject* args)
 {
     int rv;
-    if (!PyArg_ParseTuple(args,"",NULL))
+    if (!PyArg_ParseTuple(args, "", NULL))
         return NULL;
-    return Py_BuildValue("s", systemDirectory(&rv,1));
+    return Py_BuildValue("s", systemDirectory(&rv, 1));
 }
 static PyObject* getTempDirectory(PyObject* self, PyObject* args)
 {
     int rv;
-    if (!PyArg_ParseTuple(args,"",NULL))
+    if (!PyArg_ParseTuple(args, "", NULL))
         return NULL;
-    return Py_BuildValue("s", systemDirectory(&rv,2));
+    return Py_BuildValue("s", systemDirectory(&rv, 2));
 }
 static PyObject* getConfigDirectory(PyObject* self, PyObject* args)
 {
     int rv;
-    if (!PyArg_ParseTuple(args,"",NULL))
+    if (!PyArg_ParseTuple(args, "", NULL))
         return NULL;
-    return Py_BuildValue("s", systemDirectory(&rv,3));
+    return Py_BuildValue("s", systemDirectory(&rv, 3));
 }
 static PyObject* getLocalDirectory(PyObject* self, PyObject* args)
 {
     int rv;
-    if (!PyArg_ParseTuple(args,"",NULL))
+    if (!PyArg_ParseTuple(args, "", NULL))
         return NULL;
-    return Py_BuildValue("s", systemDirectory(&rv,4));
+    return Py_BuildValue("s", systemDirectory(&rv, 4));
 }
 static PyObject* getPlayerDirectory(PyObject* self, PyObject* args)
 {
     int rv;
-    if (!PyArg_ParseTuple(args,"",NULL))
+    if (!PyArg_ParseTuple(args, "", NULL))
         return NULL;
-    return Py_BuildValue("s", systemDirectory(&rv,5));
+    return Py_BuildValue("s", systemDirectory(&rv, 5));
 }
 static PyObject* getDataDirectory(PyObject* self, PyObject* args)
 {
     int rv;
-    if (!PyArg_ParseTuple(args,"",NULL))
+    if (!PyArg_ParseTuple(args, "", NULL))
         return NULL;
-    return Py_BuildValue("s", systemDirectory(&rv,6));
+    return Py_BuildValue("s", systemDirectory(&rv, 6));
 }
 static PyObject* getWhoAmI(PyObject* self, PyObject* args)
 {
-    if (!PyArg_ParseTuple(args,"",NULL))
+    if (!PyArg_ParseTuple(args, "", NULL))
         return NULL;
-	if (!current_context->who)
-	{
-		Py_INCREF(Py_None);
-		return Py_None;
-	}
-	Py_INCREF(current_context->who);
+    if (!current_context->who) {
+        Py_INCREF(Py_None);
+        return Py_None;
+    }
+    Py_INCREF(current_context->who);
     return current_context->who;
 }
 static PyObject* getWhoIsActivator(PyObject* self, PyObject* args)
 {
-    if (!PyArg_ParseTuple(args,"",NULL))
+    if (!PyArg_ParseTuple(args, "", NULL))
         return NULL;
-	if (!current_context->activator)
-	{
-		Py_INCREF(Py_None);
-		return Py_None;
-	}
-	Py_INCREF(current_context->activator);
+    if (!current_context->activator) {
+        Py_INCREF(Py_None);
+        return Py_None;
+    }
+    Py_INCREF(current_context->activator);
     return current_context->activator;
 }
 static PyObject* getWhoIsThird(PyObject* self, PyObject* args)
 {
-    if (!PyArg_ParseTuple(args,"",NULL))
+    if (!PyArg_ParseTuple(args, "", NULL))
         return NULL;
-	if (!current_context->third)
-	{
-		Py_INCREF(Py_None);
-		return Py_None;
-	}
-	Py_INCREF(current_context->third);
+    if (!current_context->third) {
+        Py_INCREF(Py_None);
+        return Py_None;
+    }
+    Py_INCREF(current_context->third);
     return current_context->third;
 }
 static PyObject* getWhatIsMessage(PyObject* self, PyObject* args)
 {
-    if (!PyArg_ParseTuple(args,"",NULL))
+    if (!PyArg_ParseTuple(args, "", NULL))
         return NULL;
 
     if (current_context->message == NULL)
-    {
         return Py_BuildValue("");
-    }
     else
-        return Py_BuildValue("s",current_context->message);
+        return Py_BuildValue("s", current_context->message);
 }
 static PyObject* getScriptName(PyObject* self, PyObject* args)
 {
-    if (!PyArg_ParseTuple(args,"",NULL))
+    if (!PyArg_ParseTuple(args, "", NULL))
         return NULL;
     return Py_BuildValue("s", current_context->script);
 }
 static PyObject* getScriptParameters(PyObject* self, PyObject* args)
 {
-    if (!PyArg_ParseTuple(args,"",NULL))
+    if (!PyArg_ParseTuple(args, "", NULL))
         return NULL;
     return Py_BuildValue("s", current_context->options);
 }
 
 static PyObject* getPrivateDictionary(PyObject* self, PyObject* args)
 {
-	PyObject* data;
+    PyObject* data;
 
-    if (!PyArg_ParseTuple(args,"",NULL))
+    if (!PyArg_ParseTuple(args, "", NULL))
         return NULL;
 
-	data = PyDict_GetItemString(private_data,current_context->script);
-	if (!data)
-	{
-		data = PyDict_New();
-		PyDict_SetItemString(private_data,current_context->script,data);
-		Py_DECREF(data);
-	}
-	Py_INCREF(data);
-	return data;
+    data = PyDict_GetItemString(private_data, current_context->script);
+    if (!data) {
+        data = PyDict_New();
+        PyDict_SetItemString(private_data, current_context->script, data);
+        Py_DECREF(data);
+    }
+    Py_INCREF(data);
+    return data;
 }
 
 static PyObject* getSharedDictionary(PyObject* self, PyObject* args)
 {
-    if (!PyArg_ParseTuple(args,"",NULL))
+    if (!PyArg_ParseTuple(args, "", NULL))
         return NULL;
 
-	Py_INCREF(shared_data);
-	return shared_data;
+    Py_INCREF(shared_data);
+    return shared_data;
 }
 
 static PyObject* getArchetypes(PyObject* self, PyObject* args)
 {
-	PyObject* list;
-	archetype* arch;
+    PyObject* list;
+    archetype* arch;
 
-	list = PyList_New(0);
-	arch = cf_archetype_get_first();
-	while (arch)
-	{
-		PyList_Append(list,Crossfire_Archetype_wrap(arch));
-		arch = cf_archetype_get_next(arch);
-	}
-	return list;
+    list = PyList_New(0);
+    arch = cf_archetype_get_first();
+    while (arch) {
+        PyList_Append(list, Crossfire_Archetype_wrap(arch));
+        arch = cf_archetype_get_next(arch);
+    }
+    return list;
 }
 
 static PyObject* getMaps(PyObject* self, PyObject* args)
 {
-	PyObject* list;
-	mapstruct* map;
+    PyObject* list;
+    mapstruct* map;
 
-	list = PyList_New(0);
-	map = cf_map_get_first();
-	while (map)
-	{
-		PyList_Append(list,Crossfire_Map_wrap(map));
-		map = cf_map_get_property(map,CFAPI_MAP_PROP_NEXT);
-	}
-	return list;
+    list = PyList_New(0);
+    map = cf_map_get_first();
+    while (map) {
+        PyList_Append(list, Crossfire_Map_wrap(map));
+        map = cf_map_get_property(map, CFAPI_MAP_PROP_NEXT);
+    }
+    return list;
 }
 
 static PyObject* getParties(PyObject* self, PyObject* args)
 {
-	PyObject* list;
-	partylist* party;
+    PyObject* list;
+    partylist* party;
 
-	list = PyList_New(0);
-	party = cf_party_get_first();
-	while (party)
-	{
-		PyList_Append(list,Crossfire_Party_wrap(party));
-		party = cf_party_get_next(party);
-	}
-	return list;
+    list = PyList_New(0);
+    party = cf_party_get_first();
+    while (party) {
+        PyList_Append(list, Crossfire_Party_wrap(party));
+        party = cf_party_get_next(party);
+    }
+    return list;
 }
 
 static PyObject* getRegions(PyObject* self, PyObject* args)
 {
-	PyObject* list;
-	region* reg;
+    PyObject *list;
+    region *reg;
 
-	list = PyList_New(0);
-	reg = cf_region_get_first();
-	while (reg)
-	{
-		PyList_Append(list,Crossfire_Region_wrap(reg));
-		reg = cf_region_get_next(reg);
-	}
-	return list;
+    list = PyList_New(0);
+    reg = cf_region_get_first();
+    while (reg) {
+        PyList_Append(list, Crossfire_Region_wrap(reg));
+        reg = cf_region_get_next(reg);
+   }
+   return list;
 }
 
 static PyObject* registerCommand(PyObject* self, PyObject* args)
@@ -608,30 +594,24 @@ static PyObject* registerCommand(PyObject* self, PyObject* args)
     double cmdspeed;
     int i;
 
-    if (!PyArg_ParseTuple(args, "ssd",&cmdname,&scriptname,&cmdspeed))
+    if (!PyArg_ParseTuple(args, "ssd", &cmdname, &scriptname, &cmdspeed))
         return NULL;
 
-    if (cmdspeed < 0)
-    {
+    if (cmdspeed < 0) {
         set_exception("speed must not be negative");
         return NULL;
     }
 
-    for (i=0;i<NR_CUSTOM_CMD;i++)
-    {
-        if (CustomCommand[i].name != NULL)
-        {
-            if (!strcmp(CustomCommand[i].name,cmdname))
-            {
+    for (i = 0; i < NR_CUSTOM_CMD; i++) {
+        if (CustomCommand[i].name != NULL) {
+            if (!strcmp(CustomCommand[i].name, cmdname)) {
                 set_exception("command '%s' is already registered", cmdname);
                 return NULL;
             }
         }
     }
-    for (i=0;i<NR_CUSTOM_CMD;i++)
-    {
-        if (CustomCommand[i].name == NULL)
-        {
+    for (i = 0; i < NR_CUSTOM_CMD; i++) {
+        if (CustomCommand[i].name == NULL) {
             CustomCommand[i].name = cf_strdup_local(cmdname);
             CustomCommand[i].script = cf_strdup_local(scriptname);
             CustomCommand[i].speed = cmdspeed;
@@ -651,13 +631,10 @@ void initContextStack()
 
 void pushContext(CFPContext* context)
 {
-    if (current_context == NULL)
-    {
+    if (current_context == NULL) {
         context_stack = context;
         context->down = NULL;
-    }
-    else
-    {
+    } else {
         context->down = current_context;
     }
     current_context = context;
@@ -666,8 +643,7 @@ void pushContext(CFPContext* context)
 CFPContext* popContext()
 {
     CFPContext* oldcontext;
-    if (current_context != NULL)
-    {
+    if (current_context != NULL) {
         oldcontext = current_context;
         current_context = current_context->down;
         return oldcontext;
@@ -684,7 +660,7 @@ void freeContext(CFPContext* context)
     free(context);
 }
 
-static int do_script(CFPContext* context,int silent)
+static int do_script(CFPContext* context, int silent)
 {
     FILE*   scriptfile;
     PyObject* dict;
@@ -694,30 +670,27 @@ static int do_script(CFPContext* context,int silent)
     int item;
 #endif
 
-    scriptfile = fopen(context->script,"r");
-    if (scriptfile == NULL)
-    {
+    scriptfile = fopen(context->script, "r");
+    if (scriptfile == NULL) {
         if (!silent)
-            printf( "cfpython - The Script file %s can't be opened\n",context->script);
+            printf( "cfpython - The Script file %s can't be opened\n", context->script);
         return 0;
     }
     pushContext(context);
     dict = PyDict_New();
     PyDict_SetItemString(dict, "__builtins__", PyEval_GetBuiltins());
     ret = PyRun_File(scriptfile, context->script, Py_file_input, dict, dict);
-    if (PyErr_Occurred())
-    {
+    if (PyErr_Occurred()) {
         PyErr_Print();
     }
     Py_XDECREF(ret);
 #if 0
     printf( "cfpython - %d items in heap\n", PyDict_Size(dict));
     list = PyDict_Values(dict);
-    for (item = PyList_Size(list) - 1; item >= 0; item--)
-    {
-        dict = PyList_GET_ITEM(list,item);
+    for (item = PyList_Size(list) - 1; item >= 0; item--) {
+        dict = PyList_GET_ITEM(list, item);
         ret = PyObject_Str(dict);
-        printf(" ref %s = %d\n",PyString_AsString(ret),dict->ob_refcnt);
+        printf(" ref %s = %d\n", PyString_AsString(ret), dict->ob_refcnt);
         Py_XDECREF(ret);
     }
     Py_DECREF(list);
@@ -738,42 +711,41 @@ CF_PLUGIN int initPlugin(const char* iversion, f_plug_api gethooksptr)
     Crossfire_ObjectType.tp_new = PyType_GenericNew;
     Crossfire_MapType.tp_new    = PyType_GenericNew;
     Crossfire_PlayerType.tp_new = PyType_GenericNew;
-	Crossfire_ArchetypeType.tp_new = PyType_GenericNew;
-	Crossfire_PartyType.tp_new = PyType_GenericNew;
-	Crossfire_RegionType.tp_new = PyType_GenericNew;
+    Crossfire_ArchetypeType.tp_new = PyType_GenericNew;
+    Crossfire_PartyType.tp_new = PyType_GenericNew;
+    Crossfire_RegionType.tp_new = PyType_GenericNew;
     PyType_Ready(&Crossfire_ObjectType);
     PyType_Ready(&Crossfire_MapType);
     PyType_Ready(&Crossfire_PlayerType);
-	PyType_Ready(&Crossfire_ArchetypeType);
-	PyType_Ready(&Crossfire_PartyType);
-	PyType_Ready(&Crossfire_RegionType);
+    PyType_Ready(&Crossfire_ArchetypeType);
+    PyType_Ready(&Crossfire_PartyType);
+    PyType_Ready(&Crossfire_RegionType);
 
     m = Py_InitModule("Crossfire", CFPythonMethods);
     d = PyModule_GetDict(m);
     Py_INCREF(&Crossfire_ObjectType);
     Py_INCREF(&Crossfire_MapType);
     Py_INCREF(&Crossfire_PlayerType);
-	Py_INCREF(&Crossfire_ArchetypeType);
-	Py_INCREF(&Crossfire_PartyType);
-	Py_INCREF(&Crossfire_RegionType);
+    Py_INCREF(&Crossfire_ArchetypeType);
+    Py_INCREF(&Crossfire_PartyType);
+    Py_INCREF(&Crossfire_RegionType);
 
     PyModule_AddObject(m, "Object", (PyObject*)&Crossfire_ObjectType);
     PyModule_AddObject(m, "Map", (PyObject*)&Crossfire_MapType);
     PyModule_AddObject(m, "Player", (PyObject*)&Crossfire_PlayerType);
-	PyModule_AddObject(m, "Archetype", (PyObject*)&Crossfire_ArchetypeType);
-	PyModule_AddObject(m, "Party", (PyObject*)&Crossfire_PartyType);
-	PyModule_AddObject(m, "Region", (PyObject*)&Crossfire_RegionType);
+    PyModule_AddObject(m, "Archetype", (PyObject*)&Crossfire_ArchetypeType);
+    PyModule_AddObject(m, "Party", (PyObject*)&Crossfire_PartyType);
+    PyModule_AddObject(m, "Region", (PyObject*)&Crossfire_RegionType);
 
-    CFPythonError = PyErr_NewException("Crossfire.error",NULL,NULL);
-    PyDict_SetItemString(d,"error",CFPythonError);
-    for (i=0;i<NR_CUSTOM_CMD;i++)
-    {
+    CFPythonError = PyErr_NewException("Crossfire.error", NULL, NULL);
+    PyDict_SetItemString(d, "error", CFPythonError);
+    for (i = 0; i < NR_CUSTOM_CMD; i++) {
         CustomCommand[i].name   = NULL;
         CustomCommand[i].script = NULL;
         CustomCommand[i].speed  = 0.0;
     }
-	private_data = PyDict_New();
-	shared_data = PyDict_New();
+    private_data = PyDict_New();
+    shared_data = PyDict_New();
     return 0;
 }
 
@@ -787,18 +759,14 @@ CF_PLUGIN void* getPluginProperty(int* type, ...)
     va_start(args, type);
     propname = va_arg(args, char *);
 
-    if(!strcmp(propname,"command?"))
-    {
+    if (!strcmp(propname, "command?")) {
         char* cmdname;
         cmdname = va_arg(args, char *);
         va_end(args);
 
-        for (i=0;i<NR_CUSTOM_CMD;i++)
-        {
-            if (CustomCommand[i].name != NULL)
-            {
-                if (!strcmp(CustomCommand[i].name,cmdname))
-                {
+        for (i = 0; i < NR_CUSTOM_CMD; i++) {
+            if (CustomCommand[i].name != NULL) {
+                if (!strcmp(CustomCommand[i].name, cmdname)) {
                     rtn_cmd.name = CustomCommand[i].name;
                     rtn_cmd.time = (float)CustomCommand[i].speed;
                     rtn_cmd.func = runPluginCommand;
@@ -808,14 +776,10 @@ CF_PLUGIN void* getPluginProperty(int* type, ...)
             }
         }
         return NULL;
-    }
-    else if (!strcmp(propname, "Identification"))
-    {
+    } else if (!strcmp(propname, "Identification")) {
         va_end(args);
         return PLUGIN_NAME;
-    }
-    else if (!strcmp(propname, "FullName"))
-    {
+    } else if (!strcmp(propname, "FullName")) {
         va_end(args);
         return PLUGIN_VERSION;
     }
@@ -828,17 +792,16 @@ CF_PLUGIN int runPluginCommand(object* op, char* params)
     CFPContext*  context;
     static int rv = 0;
 
-	rv = 0;
+    rv = 0;
 
-    if (current_command < -999)
-    {
+    if (current_command < -999) {
         printf("Illegal call of runPluginCommand, call find_plugin_command first.\n");
         return 1;
     }
     snprintf(buf, sizeof(buf), "%s.py", cf_get_maps_directory(CustomCommand[current_command].name));
 
     context = malloc(sizeof(CFPContext));
-    context->message[0]=0;
+    context->message[0] = 0;
 
     context->who         = Crossfire_Object_wrap(op);
     context->activator   = NULL;
@@ -848,8 +811,7 @@ CF_PLUGIN int runPluginCommand(object* op, char* params)
     snprintf(context->options, sizeof(context->options), "%s", params);
     context->returnvalue = 1; /* Default is "command successful" */
 
-    if (!do_script(context,0))
-    {
+    if (!do_script(context, 0)) {
         freeContext(context);
         return rv;
     }
@@ -868,31 +830,30 @@ CF_PLUGIN int postInitPlugin()
     FILE*   scriptfile;
 
     printf("CFPython 2.0a post init\n");
-    registerGlobalEvent =   gethook(&rtype,hooktype,"cfapi_system_register_global_event");
-    unregisterGlobalEvent = gethook(&rtype,hooktype,"cfapi_system_unregister_global_event");
-    systemDirectory       = gethook(&rtype,hooktype,"cfapi_system_directory");
-    reCmp                 = gethook(&rtype,hooktype,"cfapi_system_re_cmp");
+    registerGlobalEvent =   gethook(&rtype, hooktype, "cfapi_system_register_global_event");
+    unregisterGlobalEvent = gethook(&rtype, hooktype, "cfapi_system_unregister_global_event");
+    systemDirectory       = gethook(&rtype, hooktype, "cfapi_system_directory");
+    reCmp                 = gethook(&rtype, hooktype, "cfapi_system_re_cmp");
     cf_init_plugin( gethook );
     initContextStack();
-    registerGlobalEvent(NULL,EVENT_BORN,PLUGIN_NAME,globalEventListener);
-    /*registerGlobalEvent(NULL,EVENT_CLOCK,PLUGIN_NAME,globalEventListener);*/
-    /*registerGlobalEvent(NULL,EVENT_CRASH,PLUGIN_NAME,globalEventListener);*/
-    registerGlobalEvent(NULL,EVENT_PLAYER_DEATH,PLUGIN_NAME,globalEventListener);
-    registerGlobalEvent(NULL,EVENT_GKILL,PLUGIN_NAME,globalEventListener);
-    registerGlobalEvent(NULL,EVENT_LOGIN,PLUGIN_NAME,globalEventListener);
-    registerGlobalEvent(NULL,EVENT_LOGOUT,PLUGIN_NAME,globalEventListener);
-    registerGlobalEvent(NULL,EVENT_MAPENTER,PLUGIN_NAME,globalEventListener);
-    registerGlobalEvent(NULL,EVENT_MAPLEAVE,PLUGIN_NAME,globalEventListener);
-    registerGlobalEvent(NULL,EVENT_MAPRESET,PLUGIN_NAME,globalEventListener);
-    registerGlobalEvent(NULL,EVENT_REMOVE,PLUGIN_NAME,globalEventListener);
-    registerGlobalEvent(NULL,EVENT_SHOUT,PLUGIN_NAME,globalEventListener);
-    registerGlobalEvent(NULL,EVENT_TELL,PLUGIN_NAME,globalEventListener);
-    registerGlobalEvent(NULL,EVENT_MUZZLE,PLUGIN_NAME,globalEventListener);
-    registerGlobalEvent(NULL,EVENT_KICK,PLUGIN_NAME,globalEventListener);
+    registerGlobalEvent(NULL, EVENT_BORN, PLUGIN_NAME, globalEventListener);
+    /*registerGlobalEvent(NULL, EVENT_CLOCK, PLUGIN_NAME, globalEventListener);*/
+    /*registerGlobalEvent(NULL, EVENT_CRASH, PLUGIN_NAME, globalEventListener);*/
+    registerGlobalEvent(NULL, EVENT_PLAYER_DEATH, PLUGIN_NAME, globalEventListener);
+    registerGlobalEvent(NULL, EVENT_GKILL, PLUGIN_NAME, globalEventListener);
+    registerGlobalEvent(NULL, EVENT_LOGIN, PLUGIN_NAME, globalEventListener);
+    registerGlobalEvent(NULL, EVENT_LOGOUT, PLUGIN_NAME, globalEventListener);
+    registerGlobalEvent(NULL, EVENT_MAPENTER, PLUGIN_NAME, globalEventListener);
+    registerGlobalEvent(NULL, EVENT_MAPLEAVE, PLUGIN_NAME, globalEventListener);
+    registerGlobalEvent(NULL, EVENT_MAPRESET, PLUGIN_NAME, globalEventListener);
+    registerGlobalEvent(NULL, EVENT_REMOVE, PLUGIN_NAME, globalEventListener);
+    registerGlobalEvent(NULL, EVENT_SHOUT, PLUGIN_NAME, globalEventListener);
+    registerGlobalEvent(NULL, EVENT_TELL, PLUGIN_NAME, globalEventListener);
+    registerGlobalEvent(NULL, EVENT_MUZZLE, PLUGIN_NAME, globalEventListener);
+    registerGlobalEvent(NULL, EVENT_KICK, PLUGIN_NAME, globalEventListener);
 
-    scriptfile = fopen(cf_get_maps_directory("python/events/python_init.py"),"r");
-    if (scriptfile != NULL)
-    {
+    scriptfile = fopen(cf_get_maps_directory("python/events/python_init.py"), "r");
+    if (scriptfile != NULL) {
         PyRun_SimpleFile(scriptfile, cf_get_maps_directory("python/events/python_init.py"));
         fclose(scriptfile);
     }
@@ -903,7 +864,7 @@ CF_PLUGIN int postInitPlugin()
 CF_PLUGIN void* globalEventListener(int* type, ...)
 {
     va_list args;
-    static int rv=0;
+    static int rv = 0;
     CFPContext* context;
     Crossfire_Player* cfpl;
     Crossfire_Object* cfob;
@@ -912,12 +873,12 @@ CF_PLUGIN void* globalEventListener(int* type, ...)
     object* op;
     context = malloc(sizeof(CFPContext));
 
-	rv = 0;
+    rv = 0;
 
     va_start(args, type);
     context->event_code = va_arg(args, int);
 
-    context->message[0]=0;
+    context->message[0] = 0;
 
     context->who         = NULL;
     context->activator   = NULL;
@@ -925,111 +886,109 @@ CF_PLUGIN void* globalEventListener(int* type, ...)
     rv = context->returnvalue = 0;
     snprintf(context->script, sizeof(context->script), "%s", cf_get_maps_directory("python/events/python_event.py"));
     strcpy(context->options, "");
-    switch(context->event_code)
-    {
+    switch(context->event_code) {
         case EVENT_CRASH:
             printf( "Unimplemented for now\n");
             break;
         case EVENT_BORN:
             op = va_arg(args, object*);
             context->activator = Crossfire_Object_wrap(op);
-			snprintf(context->options,sizeof(context->options),"born");
+            snprintf(context->options, sizeof(context->options), "born");
             cfob = (Crossfire_Object*)context->activator;
             break;
         case EVENT_PLAYER_DEATH:
             op = va_arg(args, object*);
             context->who = Crossfire_Object_wrap(op);
-			snprintf(context->options,sizeof(context->options),"death");
+            snprintf(context->options, sizeof(context->options), "death");
             cfob = (Crossfire_Object*)context->who;
             break;
         case EVENT_GKILL:
             op = va_arg(args, object*);
             context->who = Crossfire_Object_wrap(op);
             context->activator = Crossfire_Object_wrap(op);
-			snprintf(context->options,sizeof(context->options),"gkill");
+            snprintf(context->options, sizeof(context->options), "gkill");
             cfob = (Crossfire_Object*)context->who;
             break;
         case EVENT_LOGIN:
             pl = va_arg(args, player*);
             context->activator = Crossfire_Object_wrap(pl->ob);
             buf = va_arg(args, char*);
-            if (buf !=NULL)
+            if (buf != NULL)
                 snprintf(context->message, sizeof(context->message), "%s", buf);
-			snprintf(context->options,sizeof(context->options),"login");
+            snprintf(context->options, sizeof(context->options), "login");
             cfpl = (Crossfire_Player*)context->activator;
             break;
         case EVENT_LOGOUT:
             pl = va_arg(args, player*);
             context->activator = Crossfire_Object_wrap(pl->ob);
             buf = va_arg(args, char*);
-            if (buf !=NULL)
+            if (buf != NULL)
                 snprintf(context->message, sizeof(context->message), "%s", buf);
-			snprintf(context->options,sizeof(context->options),"logout");
+            snprintf(context->options, sizeof(context->options), "logout");
             cfpl = (Crossfire_Player*)context->activator;
             break;
         case EVENT_REMOVE:
             op = va_arg(args, object*);
             context->activator = Crossfire_Object_wrap(op);
-			snprintf(context->options,sizeof(context->options),"remove");
+            snprintf(context->options, sizeof(context->options), "remove");
             cfob = (Crossfire_Object*)context->activator;
             break;
         case EVENT_SHOUT:
             op = va_arg(args, object*);
             context->activator = Crossfire_Object_wrap(op);
             buf = va_arg(args, char*);
-            if (buf !=NULL)
+            if (buf != NULL)
                 snprintf(context->message, sizeof(context->message), "%s", buf);
-			snprintf(context->options,sizeof(context->options),"shout");
+            snprintf(context->options, sizeof(context->options), "shout");
             cfob = (Crossfire_Object*)context->activator;
             break;
         case EVENT_MUZZLE:
             op = va_arg(args, object*);
             context->activator = Crossfire_Object_wrap(op);
             buf = va_arg(args, char*);
-            if (buf !=NULL)
+            if (buf != NULL)
                 snprintf(context->message, sizeof(context->message), "%s", buf);
-			snprintf(context->options,sizeof(context->options),"muzzle");
+            snprintf(context->options, sizeof(context->options), "muzzle");
             cfob = (Crossfire_Object*)context->activator;
             break;
         case EVENT_KICK:
             op = va_arg(args, object*);
             context->activator = Crossfire_Object_wrap(op);
             buf = va_arg(args, char*);
-            if (buf !=NULL)
+            if (buf != NULL)
                 snprintf(context->message, sizeof(context->message), "%s", buf);
-			snprintf(context->options,sizeof(context->options),"kick");
+            snprintf(context->options, sizeof(context->options), "kick");
             cfob = (Crossfire_Object*)context->activator;
             break;
         case EVENT_MAPENTER:
             op = va_arg(args, object*);
             context->activator = Crossfire_Object_wrap(op);
-			snprintf(context->options,sizeof(context->options),"mapenter");
+            snprintf(context->options, sizeof(context->options), "mapenter");
             cfob = (Crossfire_Object*)context->activator;
             break;
         case EVENT_MAPLEAVE:
             op = va_arg(args, object*);
             context->activator = Crossfire_Object_wrap(op);
-			snprintf(context->options,sizeof(context->options),"mapleave");
+            snprintf(context->options, sizeof(context->options), "mapleave");
             cfob = (Crossfire_Object*)context->activator;
             break;
         case EVENT_CLOCK:
-			snprintf(context->options,sizeof(context->options),"clock");
+            snprintf(context->options, sizeof(context->options), "clock");
             break;
         case EVENT_MAPRESET:
             buf = va_arg(args, char*);
-            if (buf !=NULL)
+            if (buf != NULL)
                 snprintf(context->message, sizeof(context->message), "%s", buf);
-			snprintf(context->options,sizeof(context->options),"mapreset");
+            snprintf(context->options, sizeof(context->options), "mapreset");
             break;
         case EVENT_TELL:
-			snprintf(context->options,sizeof(context->options),"tell");
+            snprintf(context->options, sizeof(context->options), "tell");
             break;
     }
     va_end(args);
     context->returnvalue = 0;
 
-    if (!do_script(context,1))
-    {
+    if (!do_script(context, 1)) {
         freeContext(context);
         return &rv;
     }
@@ -1043,25 +1002,25 @@ CF_PLUGIN void* globalEventListener(int* type, ...)
 
 CF_PLUGIN void* eventListener(int* type, ...)
 {
-    static int rv=0;
+    static int rv = 0;
     va_list args;
     char* buf;
     CFPContext* context;
 
-	rv = 0;
+    rv = 0;
 
     context = malloc(sizeof(CFPContext));
 
-    context->message[0]=0;
+    context->message[0] = 0;
 
-    va_start(args,type);
+    va_start(args, type);
 
     context->who         = Crossfire_Object_wrap(va_arg(args, object*));
-    context->event_code  = va_arg(args,int);
+    context->event_code  = va_arg(args, int);
     context->activator   = Crossfire_Object_wrap(va_arg(args, object*));
     context->third       = Crossfire_Object_wrap(va_arg(args, object*));
     buf = va_arg(args, char*);
-    if (buf !=0)
+    if (buf != NULL)
         snprintf(context->message, sizeof(context->message), "%s", buf);
     context->fix         = va_arg(args, int);
     snprintf(context->script, sizeof(context->script), "%s", cf_get_maps_directory(va_arg(args, char*)));
@@ -1070,8 +1029,7 @@ CF_PLUGIN void* eventListener(int* type, ...)
 
     va_end(args);
 
-    if (!do_script(context,0))
-    {
+    if (!do_script(context, 0)) {
         freeContext(context);
         return &rv;
     }
@@ -1088,4 +1046,3 @@ CF_PLUGIN int   closePlugin()
     Py_Finalize();
     return 0;
 }
-
