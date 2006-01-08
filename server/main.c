@@ -469,7 +469,7 @@ static void enter_random_map(object *pl, object *exit_ob)
     sprintf(newmap_name,"/random/%s%04d",cp+1, reference_number++);
 
     /* now to generate the actual map. */
-    new_map=(mapstruct *)generate_random_map(newmap_name,&rp);
+    new_map=generate_random_map(newmap_name,&rp);
 
     /* Update the exit_ob so it now points directly at the newly created
      * random maps.  Not that it is likely to happen, but it does mean that a
@@ -496,14 +496,13 @@ static void enter_fixed_template_map(object *pl, object *exit_ob)
     mapstruct *new_map;
     char tmpnum[32], exitpath[HUGE_BUF], resultname[HUGE_BUF], tmpstring[HUGE_BUF], *sourcemap;
     const char *new_map_name;
-    RMParms rp;
     
     /* Split the exit path string into two parts, one
      * for where to store the map, and one for were
      * to generate the map from.
      */
-    strcpy(exitpath, (EXIT_PATH(exit_ob)+2));
-    sourcemap = strchr(exitpath, *"!");
+    snprintf(exitpath, sizeof(exitpath), "%s", EXIT_PATH(exit_ob)+2);
+    sourcemap = strchr(exitpath, '!');
     if (!sourcemap) {
 	new_draw_info_format(NDI_UNIQUE, 0, pl, "The %s is closed.", exit_ob->name);
 	/* Should only occur when no source map is set.
@@ -584,7 +583,7 @@ static void enter_random_template_map(object *pl, object *exit_ob)
      * of the exit, and the name of the map the exit is on, respectively.
      */
     sprintf(tmpnum ,"%d", exit_ob->x);
-    replace((EXIT_PATH(exit_ob)+3), "%x", tmpnum, resultname,  sizeof(resultname));
+    replace(EXIT_PATH(exit_ob)+3, "%x", tmpnum, resultname,  sizeof(resultname));
     
     sprintf(tmpnum ,"%d", exit_ob->y);
     sprintf(tmpstring, "%s", resultname);
@@ -614,7 +613,7 @@ static void enter_random_template_map(object *pl, object *exit_ob)
 	strcpy(rp.origin_map, pl->map->path);
 	
 	/* now to generate the actual map. */
-	new_map=(mapstruct *)generate_random_map(new_map_name,&rp);
+	new_map=generate_random_map(new_map_name,&rp);
     }
 
 

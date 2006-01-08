@@ -17,6 +17,7 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/main.c: Make code more readable; use snprintf where appropriate.
 crossedit/Cnv/CnvPrompt.c: Make file compilable with Ansi C89 compiler.
 Andreas Kirschbaum 2006-01-08
 
