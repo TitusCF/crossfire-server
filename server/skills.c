@@ -47,7 +47,7 @@ static int adj_stealchance (object *op, object *victim, int roll) {
     if(op->type==PLAYER && op->body_used[BODY_ARMS] <=0 &&
        op->body_info[BODY_ARMS]) {
 	new_draw_info(NDI_UNIQUE, 0,op,"But you have no free hands to steal with!");
-	roll=-1;
+	return -1;
     }
 
     /* ADJUSTMENTS */
@@ -180,8 +180,8 @@ static int attempt_steal(object* op, object* who, object *skill)
     } /* for loop looking for an item */
 
     if (!tmp) {
-	new_draw_info_format(NDI_UNIQUE, 0, who, "The %s has nothing you can steal!",
-			     query_name(op));
+	new_draw_info_format(NDI_UNIQUE, 0, who, "%s%s has nothing you can steal!",
+			     op->type == PLAYER ? "" : "The ", query_name(op));
 	return 0;
     }
 

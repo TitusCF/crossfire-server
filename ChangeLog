@@ -30,6 +30,7 @@ server/skills.c: In attempt_steal() prevent stealing from PLAYER if option is
    set.
 Andreas Kirschbaum 2006-01-08
 
+server/skills.c: Fix/improve feedback messages for stealing skill.
 plugins/cfpython/cfpython.c, server/plugins.c: Just whitespace changes to make
    it conform to programming_guide.
 plugins/cfpython/cfpython.c: Make sure context->options always is initialized.
