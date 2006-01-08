@@ -268,3 +268,6 @@ set_friendly_fire 5
 #armor_weight_linear     TRUE
 #armor_speed_improvement 10
 #armor_speed_linear      TRUE
+
+# disable stealing from other players
+no_player_stealing       TRUE

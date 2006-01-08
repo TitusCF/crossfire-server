@@ -380,6 +380,7 @@ typedef struct Settings {
     uint8   armor_weight_linear;  /* If 1, weight reduction is linear, else exponantiel */
     int     armor_speed_improvement;    /* Speed improvement */
     uint8   armor_speed_linear;         /* If 1, speed improvement is linear, else exponantiel */
+    uint8   no_player_stealing;     /* If 1, can not steal from other players */
 } Settings;
 
 extern Settings settings;

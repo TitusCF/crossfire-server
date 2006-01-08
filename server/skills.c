@@ -119,6 +119,11 @@ static int attempt_steal(object* op, object* who, object *skill)
 	new_draw_info(NDI_UNIQUE, 0, who, "You can't steal from the dungeon master!\n");
 	return 0;
     }
+    if(op->type == PLAYER && who->type == PLAYER && settings.no_player_stealing) {
+      new_draw_info(NDI_UNIQUE, 0, who, "You can't steal from other players!\n");
+      return 0;
+    }
+
 
     /* Ok then, go thru their inventory, stealing */
     for(tmp = op->inv; tmp != NULL; tmp = next) {

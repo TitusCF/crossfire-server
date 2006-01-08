@@ -333,6 +333,8 @@ static void load_settings(void)
     FILE    *fp;
 
     sprintf(buf,"%s/settings",settings.confdir);
+    settings.no_player_stealing = TRUE;
+
     /* We don't require a settings file at current time, but down the road,
      * there will probably be so many values that not having a settings file
      * will not be a good thing.
@@ -658,6 +660,15 @@ static void load_settings(void)
 		settings.armor_speed_linear = FALSE;
 	    } else {
 		LOG(llevError, "load_settings: unknown value for armor_speed_linear: %s\n", cp);
+        }
+
+    } else if ( !strcasecmp( buf, "no_player_stealing" ) ) {
+	    if (!strcasecmp(cp, "on") || !strcasecmp(cp, "true")) {
+		settings.no_player_stealing = TRUE;
+	    } else if (!strcasecmp(cp, "off") || !strcasecmp(cp, "false")) {
+		settings.no_player_stealing = FALSE;
+	    } else {
+		LOG(llevError, "load_settings: unknown value for no_player_stealing: %s\n", cp);
         }
 
     } else {

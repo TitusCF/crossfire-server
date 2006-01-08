@@ -56,3 +56,4 @@ use_permanent_experience	if set, player may gain permanent
 				experience: false
 balanced_stat_loss	if set, death stat depletion is balanced by 
 			level. False
+no_player_stealing	if set, players cannot steal from other players. False

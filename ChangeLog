@@ -17,6 +17,19 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Apply modified patch #1396303 (add setting to disable stealing from players)
+by Terry Brown. It adds a new option "no_player_stealing" to the settings
+file. If set, it prevents players from stealing from other players. It
+defaults to ON.
+--
+doc/settings: Add documentation for new setting.
+include/global.h: Add new field to settings structure.
+lib/settings: Add new option no_player_stealing.
+server/init.c: In load_settings() recognizes the new option.
+server/skills.c: In attempt_steal() prevent stealing from PLAYER if option is
+   set.
+Andreas Kirschbaum 2006-01-08
+
 plugins/cfpython/cfpython.c, server/plugins.c: Just whitespace changes to make
    it conform to programming_guide.
 plugins/cfpython/cfpython.c: Make sure context->options always is initialized.
