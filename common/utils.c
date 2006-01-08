@@ -335,7 +335,7 @@ void set_materialname(object *op, int difficulty, materialtype_t *nmt)
 #ifndef NEW_MATERIAL_CODE
 	op->materialname = add_string(lmt->name);
 	return;
-#endif
+#else
 
 	if (op->stats.dam && IS_WEAPON(op)) {
 	    op->stats.dam += lmt->damage;
@@ -364,6 +364,7 @@ void set_materialname(object *op, int difficulty, materialtype_t *nmt)
 	    op->weight = (op->weight * lmt->weight)/100;
 	    op->value = (op->value * lmt->value)/100;
 	}
+#endif
     }
 }
 
