@@ -924,6 +924,7 @@ CF_PLUGIN void* globalEventListener(int* type, ...)
     context->third       = NULL;
     rv = context->returnvalue = 0;
     snprintf(context->script, sizeof(context->script), "%s", cf_get_maps_directory("python/events/python_event.py"));
+    strcpy(context->options, "");
     switch(context->event_code)
     {
         case EVENT_CRASH:
