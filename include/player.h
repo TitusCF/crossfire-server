@@ -74,7 +74,7 @@ typedef enum _petmode {
 typedef enum usekeytype {
     key_inventory=0,
     keyrings=1,
-    containers=2,
+    containers=2
 } usekeytype;
 
 /* This is used to control what to do when we need to unapply
@@ -83,7 +83,7 @@ typedef enum usekeytype {
 typedef enum unapplymode {
     unapply_nochoice=0,	    /* Will unapply objects when there no choice to unapply */
     unapply_never=1,	    /* will not unapply objects automatically */
-    unapply_always=2,	    /* Will unapply whatever is necessary - this goes beyond */
+    unapply_always=2	    /* Will unapply whatever is necessary - this goes beyond */
 			    /* no choice - if there are multiple ojbect of the same type */
 			    /* that need to be unapplied, there is no way for the player */
 			    /* to control which of these will be unapplied. */
