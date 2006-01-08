@@ -92,7 +92,8 @@ ARMOR_MAX_ENCHANT,
 ARMOR_WEIGHT_REDUCTION,
 ARMOR_WEIGHT_LINEAR,
 ARMOR_SPEED_IMPROVEMENT,
-ARMOR_SPEED_LINEAR
+ARMOR_SPEED_LINEAR,
+1, /* no_player_stealing */
 };
 
 /* perhaps not the best place for this, but needs to be

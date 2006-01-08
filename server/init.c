@@ -333,7 +333,6 @@ static void load_settings(void)
     FILE    *fp;
 
     sprintf(buf,"%s/settings",settings.confdir);
-    settings.no_player_stealing = TRUE;
 
     /* We don't require a settings file at current time, but down the road,
      * there will probably be so many values that not having a settings file
