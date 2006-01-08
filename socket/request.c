@@ -148,10 +148,6 @@ void SetUp(char *buf, int len, NewSocket *ns)
 	    ns->sound = atoi(param);
 	    strcat(cmdback, param);
 	}
-	else if (!strcmp(cmd,"ext2")) {
-	    ns->ext2 = atoi(param);
-	    strcat(cmdback, param);
-	}
 	else if (!strcmp(cmd,"exp64")) {
 	    ns->exp64 = atoi(param);
 	    strcat(cmdback, param);
@@ -535,8 +531,6 @@ void ReplyCmd(char *buf, int len, player *pl)
      * function then does not try to do additional input.
      */
     sprintf(pl->write_buf,":%s", (char*)buf);
-
-    pl->socket.ext_title_flag = 2; /* funny hack: we want the class info in old title function */
 
     /* this avoids any hacking here */
     

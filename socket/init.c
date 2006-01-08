@@ -106,8 +106,6 @@ void InitConnection(NewSocket *ns, const char *from_ip)
     ns->facecache = 0;
     ns->image2 = 0;
     ns->sound = 0;
-    ns->ext2 = 0;
-    ns->ext_title_flag = 1;
     ns->exp64 = 0;
     ns->mapmode = Map0Cmd;
     ns->darkness = 1;

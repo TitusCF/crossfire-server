@@ -30,6 +30,8 @@ server/skills.c: In attempt_steal() prevent stealing from PLAYER if option is
    set.
 Andreas Kirschbaum 2006-01-08
 
+include/newserver.h, socket/{init.c,request.c}: Remove unused fields ext2 and
+   ext_title_flag from NewSocket structure.
 server/skills.c: Fix/improve feedback messages for stealing skill.
 plugins/cfpython/cfpython.c, server/plugins.c: Just whitespace changes to make
    it conform to programming_guide.
