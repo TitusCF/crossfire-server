@@ -932,6 +932,7 @@ CF_PLUGIN void* globalEventListener(int* type, ...)
         case EVENT_BORN:
             op = va_arg(args, object*);
             context->activator = Crossfire_Object_wrap(op);
+			snprintf(context->options,sizeof(context->options),"born");
             cfob = (Crossfire_Object*)context->activator;
             break;
         case EVENT_PLAYER_DEATH:
