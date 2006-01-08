@@ -17,6 +17,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+crossedit/Cnv/CnvPrompt.c: Make file compilable with Ansi C89 compiler.
+Andreas Kirschbaum 2006-01-08
+
 Global event Python scripts now are in subdirectories. This makes it easier to
  distribute "Python packages". Modified file:
   plugins/cfpython/cfpython.c

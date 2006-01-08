@@ -33,8 +33,8 @@ XtActionsRec CnvPromptActionTable[] = {
  */
 static void CnvPromptCb (Widget w, XtPointer client, XtPointer call)
 {
-    CnvPromptSelect = (int) client;	/* set cardinal */
     char *t;
+    CnvPromptSelect = (int) client;	/* set cardinal */
     XtVaGetValues(CnvPromptWidgetText, XtNstring, &t, NULL);
     
     snprintf(CnvPromptString, sizeof(CnvPromptString), "%s", t);
