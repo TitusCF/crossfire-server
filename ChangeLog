@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/c_range.c: allow cast/invoke and prepare commands to take item tags
+   as well as spell names
+Brendan Lally 2006-01-09
+
 Apply modified patch #1396303 (add setting to disable stealing from players)
 by Terry Brown. It adds a new option "no_player_stealing" to the settings
 file. If set, it prevents players from stealing from other players. It

@@ -149,9 +149,12 @@ int command_cast_spell (object *op, char *params, char command)
     }
 
     if(params!=NULL) {
-	spob = lookup_spell_by_name(op, params);
+	int i = 0;
+	if (i = atoi(params)) 
+	    for (spob = op->inv; spob && spob->count != i; spob=spob->below);
+	else spob = lookup_spell_by_name(op, params);
 
-	if (spob) {
+	if (spob && spob->type == SPELL) {
 	    /* Now grab any extra data, if there is any.  Forward pass
 	     * any 'of' delimiter
 	     */
