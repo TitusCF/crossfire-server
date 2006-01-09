@@ -92,6 +92,10 @@ void draw_client_map(object *pl);
 void esrv_map_scroll(NewSocket *ns, int dx, int dy);
 void send_plugin_custom_message(object *pl, char *buf);
 void send_skill_info(NewSocket *ns, char *params);
+void send_spell_paths (NewSocket *ns, char *params);
+void esrv_update_spells(player *pl);
+void esrv_remove_spell(player *pl, object *spell);
+void esrv_add_spells(player *pl, object *spell);
 /* sounds.c */
 void play_sound_player_only(player *pl, short soundnum, sint8 x, sint8 y);
 void play_sound_map(mapstruct *map, int x, int y, short sound_num);

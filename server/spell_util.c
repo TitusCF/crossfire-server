@@ -233,7 +233,7 @@ int caster_level(object *caster, object *spell)
  * mana.  In that case, we return which ever value is higher.
  */
 
-int SP_level_spellpoint_cost(object *caster, object *spell, int flags)
+sint16 SP_level_spellpoint_cost(object *caster, object *spell, int flags)
 {
     int sp, grace, level = caster_level(caster, spell);
 

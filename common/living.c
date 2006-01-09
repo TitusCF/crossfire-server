@@ -1359,6 +1359,11 @@ void fix_player(object *op) {
     else if (op->move_type & (MOVE_FLY_LOW | MOVE_FLY_HIGH)) op->move_type &= ~MOVE_WALK;
 
     update_ob_speed(op);
+
+    /* It is quite possible that a player's spell costing might have changed,
+     * so we will check that now.
+     */
+    if (op->type == PLAYER) esrv_update_spells(op->contr);
 }
 
 /*
@@ -1562,9 +1567,9 @@ void player_lvl_adj(object *who, object *op) {
 	}
 	player_lvl_adj(who,op); /* To decrease more levels */
     }
+    /* check if the spell data has changed */
+    esrv_update_spells(who->contr);
 }
-
-
 
 /*
  * Returns how much experience is needed for a player to become

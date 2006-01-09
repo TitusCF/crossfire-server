@@ -164,6 +164,7 @@ void RequestInfo(char *buf, int len, NewSocket *ns)
     if (!strcmp(buf, "image_info")) send_image_info(ns, params);
     else if (!strcmp(buf,"image_sums")) send_image_sums(ns, params);
     else if (!strcmp(buf,"skill_info")) send_skill_info(ns, params);
+    else if (!strcmp(buf,"spell_paths")) send_spell_paths(ns, params);
     else Write_String_To_Socket(ns, bigbuf, len);
 }
 

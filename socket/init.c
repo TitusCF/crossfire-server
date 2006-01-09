@@ -107,6 +107,7 @@ void InitConnection(NewSocket *ns, const char *from_ip)
     ns->image2 = 0;
     ns->sound = 0;
     ns->exp64 = 0;
+    ns->monitor_spells = 0;
     ns->mapmode = Map0Cmd;
     ns->darkness = 1;
     ns->status = Ns_Add;

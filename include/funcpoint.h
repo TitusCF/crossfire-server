@@ -58,6 +58,7 @@ extern void trap_adjust(object *, int);
 extern void	esrv_send_item(object *, object *);
 extern void	esrv_del_item(player *, int);
 extern void	esrv_update_item(int, object *, object *);
+extern void	esrv_update_spells(player *);
 extern void	set_darkness_map(mapstruct *m);
 extern void dragon_ability_gain(object *, int, int);
 extern void	weather_effect(const char *);

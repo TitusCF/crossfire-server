@@ -99,6 +99,9 @@
 #define CS_STAT_FLAGS	25
 #define CS_STAT_WEIGHT_LIM	26
 #define CS_STAT_EXP64	28
+#define CS_STAT_SPELL_ATTUNE	29
+#define CS_STAT_SPELL_REPEL	30
+#define CS_STAT_SPELL_DENY	31
 
 /* Start & end of resistances, inclusive. */
 #define CS_STAT_RESIST_START	100
@@ -224,6 +227,11 @@ enum {a_none, a_readied, a_wielded, a_worn, a_active, a_applied};
 #define UPD_ANIM	0x20
 #define UPD_ANIMSPEED	0x40
 #define UPD_NROF	0x80
+
+/* The flag values sent by the updspell command */
+#define UPD_SP_MANA	0x01
+#define UPD_SP_GRACE	0x02
+#define UPD_SP_DAMAGE	0x04
 
 #define SOUND_NORMAL	0
 #define SOUND_SPELL	1

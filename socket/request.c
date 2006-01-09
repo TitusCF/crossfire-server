@@ -151,7 +151,10 @@ void SetUp(char *buf, int len, NewSocket *ns)
 	else if (!strcmp(cmd,"exp64")) {
 	    ns->exp64 = atoi(param);
 	    strcat(cmdback, param);
-	} else if (!strcmp(cmd,"darkness")) {
+	} else if (!strcmp(cmd, "spellmon")) {
+	    ns->monitor_spells = atoi(param);
+	    strcat(cmdback, param);
+	}  else if (!strcmp(cmd,"darkness")) {
 	    ns->darkness = atoi(param);
 	    strcat(cmdback, param);
 	} else if (!strcmp(cmd,"map1cmd")) {
@@ -829,7 +832,11 @@ void esrv_update_stats(player *pl)
 	    AddIfShort(pl->last_resist[i], pl->ob->resist[i], ( char )atnr_cs_stat[i]);
 	}
     }
- 
+    if (pl->socket.monitor_spells) {
+	AddIfInt(pl->last_path_attuned, pl->ob->path_attuned, CS_STAT_SPELL_ATTUNE);
+	AddIfInt(pl->last_path_repelled, pl->ob->path_repelled, CS_STAT_SPELL_REPEL);
+	AddIfInt(pl->last_path_denied, pl->ob->path_denied, CS_STAT_SPELL_DENY);
+    }
     rangetostring(pl->ob, buf); /* we want use the new fire & run system in new client */
     AddIfString(pl->socket.stats.range, buf, CS_STAT_RANGE);
     set_title(pl->ob, buf);
@@ -1925,3 +1932,174 @@ void send_skill_info(NewSocket *ns, char *params)
     Send_With_Handling(ns, &sl);
     free(sl.buf);
 }
+
+/**
+ * This sends the spell path to name mapping.  We ignore
+ * the params - we always send the same info no matter what.
+ */
+void send_spell_paths (NewSocket *ns, char *params) {
+    SockList sl;
+    int i;
+
+    sl.buf = malloc(MAXSOCKBUF);
+    strcpy(sl.buf,"replyinfo spell_paths\n");
+    for(i=0; i<NRSPELLPATHS; i++)
+	sprintf(sl.buf + strlen(sl.buf), "%d:%s\n", 1<<i, spellpathnames[i]);
+    sl.len = strlen(sl.buf);
+    if (sl.len > MAXSOCKBUF) {
+	LOG(llevError,"Buffer overflow in send_spell_paths!\n");
+	fatal(0);
+    }
+    Send_With_Handling(ns, &sl);
+    free(sl.buf);
+}
+
+/**
+ * This looks for any spells the player may have that have changed their stats.
+ * it then sends an updspell packet for each spell that has changed in this way
+ */
+void esrv_update_spells(player *pl) {
+    SockList sl;
+    int flags=0;
+    object *spell;
+    if (!pl->socket.monitor_spells) return;
+    for (spell=pl->ob->inv; spell!=NULL; spell=spell->below) {
+	if (spell->type == SPELL) {
+	    /* check if we need to update it*/
+	    if (spell->last_sp != SP_level_spellpoint_cost(pl->ob, spell, SPELL_MANA)) {
+		spell->last_sp = SP_level_spellpoint_cost(pl->ob, spell, SPELL_MANA);
+		flags |= UPD_SP_MANA;
+	    }
+	    if (spell->last_grace != SP_level_spellpoint_cost(pl->ob, spell, SPELL_GRACE)) {
+		spell->last_grace = SP_level_spellpoint_cost(pl->ob, spell, SPELL_GRACE);
+		flags |= UPD_SP_GRACE;
+	    }
+	    if (spell->last_eat != spell->stats.dam+SP_level_dam_adjust(pl->ob, spell)) {
+		spell->last_eat = spell->stats.dam+SP_level_dam_adjust(pl->ob, spell);
+		flags |= UPD_SP_DAMAGE;
+	    }
+	    if (flags !=0) {
+		sl.buf = malloc(MAXSOCKBUF);
+		strcpy(sl.buf,"updspell ");
+		sl.len=strlen((char*)sl.buf);
+		SockList_AddChar(&sl, flags);
+		SockList_AddInt(&sl, spell->count);
+		if (flags & UPD_SP_MANA) SockList_AddShort(&sl, spell->last_sp);
+		if (flags & UPD_SP_GRACE) SockList_AddShort(&sl, spell->last_grace);
+		if (flags & UPD_SP_DAMAGE) SockList_AddShort(&sl, spell->last_eat);
+		flags = 0;
+		Send_With_Handling(&pl->socket, &sl);
+		free(sl.buf);
+	    }
+	}
+    }
+}
+
+void esrv_remove_spell(player *pl, object *spell) {
+    if (!pl->socket.monitor_spells) return;
+    if (!pl || !spell || spell->env != pl->ob) {
+	LOG(llevError, "Invalid call to esrv_remove_spell");
+	return;
+    }
+    SockList sl;
+    sl.buf = malloc(MAXSOCKBUF);
+    strcpy(sl.buf,"delspell ");
+    sl.len=strlen((char*)sl.buf);
+    SockList_AddInt(&sl, spell->count);
+    Send_With_Handling(&pl->socket, &sl);
+    free(sl.buf);
+}
+
+/* appends the spell *spell to the Socklist we will send the data to. */
+static void append_spell (player *pl, SockList *sl, object *spell) {
+    int len, i, skill=0;
+
+    if (spell->type != SPELL) return;
+    if (!(spell->name)) {
+        LOG(llevError, "item number %d is a spell with no name.\n", spell->count);
+        return;
+    }
+    SockList_AddInt(sl, spell->count);
+    SockList_AddShort(sl, spell->level);
+    SockList_AddShort(sl, spell->casting_time);
+    /* store costs and damage in the object struct, to compare to later */
+    spell->last_sp = SP_level_spellpoint_cost(pl->ob, spell, SPELL_MANA);
+    spell->last_grace = SP_level_spellpoint_cost(pl->ob, spell, SPELL_GRACE);
+    spell->last_eat = spell->stats.dam+SP_level_dam_adjust(pl->ob, spell);
+    /* send the current values */
+    SockList_AddShort(sl, spell->last_sp);
+    SockList_AddShort(sl, spell->last_grace);
+    SockList_AddShort(sl, spell->last_eat);
+
+    /* figure out which skill it uses */
+    for (i=1; i< NUM_SKILLS; i++)
+	if (!strcmp(spell->skill, skill_names[i])) {
+	    skill = i+CS_STAT_SKILLINFO; 
+	    break;
+	}
+    skill = i+CS_STAT_SKILLINFO; 
+    SockList_AddChar(sl, skill);
+
+    SockList_AddInt(sl, spell->path_attuned);
+    SockList_AddInt(sl, (spell->face)?spell->face->number:0);
+
+    len = strlen(spell->name);
+    SockList_AddChar(sl, (char)len);
+    memcpy(sl->buf+sl->len, spell->name, len);
+    sl->len+=len;
+
+    if (!spell->msg) {
+	SockList_AddShort(sl, 0);
+    }
+    else {
+	len = strlen(spell->msg);
+	SockList_AddShort(sl, len);
+	memcpy(sl->buf+sl->len, spell->msg, len);
+	sl->len+=len;
+    }
+}
+
+/**
+ * This tells the client to add the spell *ob, if *ob is NULL, then add 
+ * all spells in the player's inventory.
+ */
+void esrv_add_spells(player *pl, object *spell) {
+    SockList sl;
+    if (!pl) {
+	LOG(llevError, "esrv_add_spells, tried to add a spell to a NULL player");
+	return;
+    }
+    if (!pl->socket.monitor_spells) return;
+    sl.buf = malloc(MAXSOCKBUF);
+    strcpy(sl.buf,"addspell ");
+    sl.len=strlen((char*)sl.buf);
+    if (!spell) {
+	for (spell=pl->ob->inv; spell!=NULL; spell=spell->below) {
+	    /* were we to simply keep appending data here, we could exceed 
+	     * MAXSOCKBUF if the player has enough spells to add, we know that
+	     * append_spells will always append 19 data bytes, plus 4 length
+             * bytes and 3 strings (because that is the spec) so we need to
+             * check that the length of those 3 strings, plus the 23 bytes, 
+             * won't take us over the length limit for the socket, if it does,
+             * we need to send what we already have, and restart packet formation 
+             */
+	    if (sl.len > (MAXSOCKBUF - (22 + strlen(spell->name) + 
+				spell->name_pl?strlen(spell->name_pl):0 + 
+				spell->msg?strlen(spell->msg):0))) {
+		Send_With_Handling(&pl->socket, &sl);
+		strcpy(sl.buf,"addspell ");
+		sl.len=strlen((char*)sl.buf);
+	    }
+	    append_spell(pl, &sl, spell);
+	}
+    }
+    else append_spell(pl, &sl, spell);
+    if (sl.len > MAXSOCKBUF) {
+	LOG(llevError,"Buffer overflow in send_spell_list!\n");
+	fatal(0);
+    }
+    /* finally, we can send the packet */
+    Send_With_Handling(&pl->socket, &sl);
+    free(sl.buf);
+}
+

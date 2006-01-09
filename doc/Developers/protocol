@@ -521,6 +521,84 @@ S->C delinv <tag>
 	only affects the inventory of the object.  To fully delete a
 	container object, a delinv followed by a delitem should be issued.
 
+S->C addspell <tag1> <level1> <casting time1> <mana1> <grace1> <damage1> <skill>
+	<path1> <name1> <display name1> <message1> <spell2 ....>
+	Tells the client to add the spell(s) listed to the list of spells 
+	the client knows about. This will be sent at login, and again whenever
+	new spells are sent.
+
+	The fields are;
+	<tag> - (4 bytes - int) The ID number for the spell item. This is 
+		going to be unique, for each spell and will be used to refer 
+		to it henceforth. The string form of this should also be
+		appended to the cast/invoke commands in order to cast the spell.
+	
+	<level> (2 bytes, signed int)
+		The level of the spell.
+
+	<casting time> (2 bytes, signed int)
+		The time it will take to cast the spell, in server ticks.
+
+	<mana>	(2 bytes, signed int)
+		The mana cost to cast the spell (may be zero)
+
+	<grace> (2 bytes, signed int)
+		The grace cost to cast the spell (may be zero)
+
+	<damage> (2 bytes, signed int)
+		The current damage done by the spell. Note that the meaning of
+		this number is to a large part spell dependent, what damage it
+		actually does will depend on how the spell works.
+
+	<skill> (1 byte, unsigned int)
+		The skill that the spell uses to be cast, if zero, no skill is
+		used in the casting of this spell.
+		The numbers are the same as for request_info skill_info
+
+	<path>  (4 bytes, unsigned integer)
+		The path that the spell belongs to.
+		The client should determine the effect of this by comparing 
+		these values to both the spell_paths request_info data and the
+		stats info concerning attunement/repulsion, etc.
+
+	<face>  (4 bytes, signed int) 
+		The number of the face that corresponds to the spell, the client
+		can request this facenumber if they want to show a graphical spell
+		representation.
+
+	<name> (1 (non-zero) length byte, followed by that many bytes of ascii text)
+		This is a name to identify the spell, which the client can use
+		for display purposes, it should /NOT/ be used with the 'cast' 
+		command, whilst it might work, no such guarentee is made by the
+		server. - Use tag instead.
+	
+	<message> (2 length bytes (which may be zero) followed by that many 
+		bytes of ascii text)
+		The description of the spell. Note that this has an extra length
+		byte because the messages may well be longer than 256 bytes in 
+		length.
+	
+S->C updspell <flags><tag><vals>+
+
+	This updates some spell (of tag) with new values. The flags are 1 byte
+	and determine which values have been updated, and should be re-read. 
+	Not all fields may be updated by this command, only those that can be
+	changed.
+
+	If new fields are added in future, they will extend the flags bitmask
+	and the order will remain the LSB order of the flags - that is, the 
+	value associated with bit 1 set is sent first, then bit 2, etc.
+
+	The format of the values is same as the addspell command above.
+
+	Only one spell can be updated with the updspell command.  A spell
+	command should have been sent by the server before an updspell
+	command is set.
+
+S->C delspell <tag>
+	Tells the client to remove its information about the spell Tag is a 4 
+	byte value, the same as the one sent when the spell was added.
+
 ******************************************************************************
 COMMANDS RELATING TO THE PLAYER OBJECT/STATS
 
@@ -552,6 +630,9 @@ S->C: stats <stat1><val1><stat2><val2>...
 	-skill experience:  this is only set if exp64 is set.  This is sent
 	 as the skill level, followed by the skill exp (thus, 9 bytes + 
 	 the stat type byte)
+
+	-spell paths: if spellmon is set in setup, the bitmask of attuned, 
+	 repelled and denied paths is sent. These are all 32bits
 
 ******************************************************************************
 COMMANDS RELATING TO IMAGE INFORMATION TRANSMISSION
@@ -1167,6 +1248,10 @@ S->C: setup <option1> <value1> <option2> <value2>
 		What lies in this extended info depended on what extended
 		infos the client asked. See toggleextendedtext command for details.
 
+	spellmon (0/1)
+	    If set to 1 the client has indicated that it wishes to be
+	    sent the spell list and updated when it changes.
+
 	All data in the setup command is in ascii text form.  options and
 	values can not have whitepace - the client and server use whitspace
 	to split the options and values.
@@ -1307,10 +1392,19 @@ S->C: replyinfo <info_type>[options]<data>
 	142:hiding
 	143:smithery
 
-	
-	
+    spell_paths (no parameters)
+	This returns a list of all spell paths in the game, along with the
+	number associated with them. This should be used to parse spell_path
+	data in the stats command. The number is a bitmask but is sent as a 
+	decimal value.
 
+	All data is sent in text format. Format is:
 	
+	number:name
+	
+	eg
+	
+	16:missiles
 
 ------------------------------------------------------------------------------
 

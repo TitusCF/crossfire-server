@@ -790,7 +790,7 @@ void dump_spells(void);
 void spell_effect(object *spob, int x, int y, mapstruct *map, object *originator);
 int min_casting_level(object *caster, object *spell);
 int caster_level(object *caster, object *spell);
-int SP_level_spellpoint_cost(object *caster, object *spell, int flags);
+sint16 SP_level_spellpoint_cost(object *caster, object *spell, int flags);
 int SP_level_dam_adjust(object *caster, object *spob);
 int SP_level_duration_adjust(object *caster, object *spob);
 int SP_level_range_adjust(object *caster, object *spob);

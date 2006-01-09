@@ -148,7 +148,7 @@ typedef struct pl {
     uint32	peaceful:1;	    /* If set, won't attack friendly creatures */
     uint32	hidden:1;	    /* If True, player (DM) is hidden from view */
     uint32	explore:1;	    /* if True, player is in explore mode */
-	uint32  no_shout:1;		/* if True, player is *not* able to use shout command */
+    uint32	no_shout:1;	    /* if True, player is *not* able to use shout command */
 
     object	*last_skill_ob[NUM_SKILLS];	/* the exp object */
     sint64	last_skill_exp[NUM_SKILLS];	/* shadow register. if != exp. obj update client */
@@ -158,6 +158,9 @@ typedef struct pl {
     uint16	last_flags;	    /* fire/run on flags for last tick */
     sint32	last_weight;	    /* Last weight as sent to client; -1 means do not send weight */
     sint32	last_weight_limit;  /* Last weight limit transmitted to client */
+    uint32	last_path_attuned;  /* Last spell attunment sent to client */
+    uint32	last_path_repelled; /* Last spell repelled sent to client */
+    uint32	last_path_denied;   /* Last spell denied sent to client */
     living	orig_stats;	    /* Permanent real stats of player */
     living	last_stats;	    /* Last stats as sent to client */
     float	last_speed;	    /* Last speed as sent to client */

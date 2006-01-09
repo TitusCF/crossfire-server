@@ -121,6 +121,7 @@ typedef struct NewSocket {
     uint32  can_write:1;    /* Can we write to this socket? */
     uint32  has_readable_type:1; /* If true client accept additional text information
                                     used to arrange text in books, scrolls, or scripted dialogs */
+    uint32  monitor_spells:1; /* Client wishes to be informed when their spell list changes */
     uint32  supported_readables; /* each bit is a readable supported by client */                    
     uint32  cs_version, sc_version; /* versions of the client */
     enum MapMode mapmode;   /* Type of map commands the client wants. */
