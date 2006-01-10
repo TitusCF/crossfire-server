@@ -17,6 +17,27 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/c_range.c: allow spells cast by number to also have options passed to
+   them
+Changelog: Commit the changelog entry for the last commit.
+Brendan Lally 2006-01-10
+
+ Spell listing support:
+ allow 'spell_paths' to be sent to requestinfo, reply with number:path
+ change return type of SP_level_spellpoint_cost to sint16
+ add spellmon as a setup value, if it is set;
+  send path attunement/repulsion/denial in stats
+  send data about spells in addspell packets
+  send updates to that data
+ Affected files:
+ common/living.c
+ crossedit/stubs.c
+ doc/Developers/protocol
+ include/funcpoint.h, newclient.h, newserver.h, player.h, sockproto.h,
+sproto.h
+ random_maps/standalone.c
+ server/apply.c, login.c, spell_util.c, init.c, loop.c, request.c
+ --
 server/c_range.c: allow cast/invoke and prepare commands to take item tags
    as well as spell names
 Brendan Lally 2006-01-09

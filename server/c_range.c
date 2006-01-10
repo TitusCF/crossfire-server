@@ -149,16 +149,24 @@ int command_cast_spell (object *op, char *params, char command)
     }
 
     if(params!=NULL) {
-	int i = 0;
-	if (i = atoi(params)) 
-	    for (spob = op->inv; spob && spob->count != i; spob=spob->below);
+	int spellnumber = 0;
+	if (spellnumber = atoi(params)) 
+	    for (spob = op->inv; spob && spob->count != spellnumber; spob=spob->below);
 	else spob = lookup_spell_by_name(op, params);
 
 	if (spob && spob->type == SPELL) {
 	    /* Now grab any extra data, if there is any.  Forward pass
 	     * any 'of' delimiter
 	     */
-	    if (strlen(params) > strlen(spob->name)) {
+	    if (spellnumber) {
+		/* if we passed a number, the options start at the second word */
+		cp = strchr(params, ' ');
+		if (cp) {
+		    cp++;
+		    if (!strncmp(cp, "of ", 3)) cp+=3;
+		}
+	    }
+	    else if (strlen(params) > strlen(spob->name)) {
 		cp = params + strlen(spob->name);
 		*cp = 0;
 		cp++;
