@@ -57,10 +57,9 @@ int move_ob (object *op, int dir, object *originator)
 {
     sint16 newx = op->x+freearr_x[dir];
     sint16 newy = op->y+freearr_y[dir];
-    object *tmp, *tmp_clone;
+    object *tmp;
     mapstruct *m;
     int mflags;
-    int ox, oy;
 
     if(op==NULL) {
 	LOG(llevError,"Trying to move NULL.\n");
@@ -121,15 +120,18 @@ int move_ob (object *op, int dir, object *originator)
 
     remove_ob(op);
 
-    ox = op->x+freearr_x[dir];
-    oy = op->y+freearr_y[dir];
-    for(tmp = op, tmp_clone = &op->arch->clone; tmp != NULL; tmp = tmp->more, tmp_clone = tmp_clone->more) {
-	tmp->x = ox+tmp_clone->x;
-	tmp->y = oy+tmp_clone->y;
+    /* we already have newx, newy, and m, so lets use them.
+     * In addition, this fixes potential crashes, because multipart object was
+     * on edge of map, +=x, +=y doesn't make correct coordinates.
+     */
+    for(tmp = op; tmp != NULL; tmp = tmp->more) {
+	tmp->x = newx + tmp->arch->clone.x;
+	tmp->y = newy + tmp->arch->clone.y;
+	tmp->map = m;
     }
 
     /* insert_ob_in_map will deal with any tiling issues */
-    insert_ob_in_map(op, op->map, originator,0);
+    insert_ob_in_map(op, m, originator,0);
 
     /* Hmmm.  Should be possible for multispace players now */
     if (op->type==PLAYER) {
