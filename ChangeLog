@@ -17,6 +17,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/c_object.c: stop rename crashing if there is no name to rename to
+   when object is passed by number
+--
 server/c_object.c: allow the rename command to take tag of the item to be
    renamed, so that clients can form rename commands properly.
 Brendan Lally 2006-01-11

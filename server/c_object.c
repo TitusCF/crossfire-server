@@ -1783,8 +1783,7 @@ int command_rename_item(object *op, char *params)
 	    new_draw_info(NDI_UNIQUE,0,op,"Tried to rename an invalid item.");
 	    return 1;
 	}
-	params = strchr(params, ' ');
-	if (params) params++;
+	while(isdigit(*params) || ' '==*params) params++;
     }
     else if ('<'==*params) {
       /* Got old name, let's get it & find appropriate matching item */
