@@ -1767,17 +1767,26 @@ int command_search_items (object *op, char *params)
 int command_rename_item(object *op, char *params)
 {
   char buf[VERY_BIG_BUF];
-
+  int itemnumber;
   object *item=NULL;
   char *closebrace;
   size_t counter;
 
-	if (params) {
+  if (params) {
     /* Let's skip white spaces */
     while(' '==*params) params++;
 
     /* Checking the first part */
-    if ('<'==*params) {
+    if (itemnumber = atoi(params)) {
+	for (item=op->inv; item && ((item->count != itemnumber) || item->invisible); item=item->below);
+	if (!item) {
+	    new_draw_info(NDI_UNIQUE,0,op,"Tried to rename an invalid item.");
+	    return 1;
+	}
+	params = strchr(params, ' ');
+	if (params) params++;
+    }
+    else if ('<'==*params) {
       /* Got old name, let's get it & find appropriate matching item */
       closebrace=strchr(params,'>');
       if(!closebrace) {
