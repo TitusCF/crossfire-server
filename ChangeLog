@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+socket/request.c: In ReplyCmd() make sure the reply does not cause a buffer
+   overflow.
+Andreas Kirschbaum 2006-01-13
+
 socket/request.c: add some better checks in addspell packet formation, fix a
    crash bug.
 Brendan Lally 2006-01-13

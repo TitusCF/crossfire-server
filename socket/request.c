@@ -533,7 +533,7 @@ void ReplyCmd(char *buf, int len, player *pl)
      * think it was the carriage return that was entered, and the
      * function then does not try to do additional input.
      */
-    sprintf(pl->write_buf,":%s", (char*)buf);
+    snprintf(pl->write_buf, sizeof(pl->write_buf), ":%s", buf);
 
     /* this avoids any hacking here */
     
