@@ -2015,7 +2015,6 @@ void esrv_remove_spell(player *pl, object *spell) {
 static void append_spell (player *pl, SockList *sl, object *spell) {
     int len, i, skill=0;
 
-    if (spell->type != SPELL) return;
     if (!(spell->name)) {
         LOG(llevError, "item number %d is a spell with no name.\n", spell->count);
         return;
@@ -2089,8 +2088,9 @@ void esrv_add_spells(player *pl, object *spell) {
 	     * is hundreds of bytes off, so correcting 22 vs 26 doesn't seem
 	     * like it will fix this
 	     */
+	    if (spell->type != SPELL) continue;
 	    if (sl.len > (MAXSOCKBUF - (26 + strlen(spell->name) + 
-				spell->msg?strlen(spell->msg):0))) {
+				(spell->msg?strlen(spell->msg):0)))) {
 		Send_With_Handling(&pl->socket, &sl);
 		strcpy(sl.buf,"addspell ");
 		sl.len=strlen((char*)sl.buf);
@@ -2098,9 +2098,13 @@ void esrv_add_spells(player *pl, object *spell) {
 	    append_spell(pl, &sl, spell);
 	}
     }
+    else if (spell->type != SPELL) {
+	LOG(llevError, "Asked to send a non-spell object as a spell");
+	return;
+    }
     else append_spell(pl, &sl, spell);
     if (sl.len > MAXSOCKBUF) {
-	LOG(llevError,"Buffer overflow in send_spell_list!\n");
+	LOG(llevError,"Buffer overflow in esrv_add_spells!\n");
 	fatal(0);
     }
     /* finally, we can send the packet */
