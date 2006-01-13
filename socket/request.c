@@ -2084,8 +2084,12 @@ void esrv_add_spells(player *pl, object *spell) {
              * won't take us over the length limit for the socket, if it does,
              * we need to send what we already have, and restart packet formation 
              */
-	    if (sl.len > (MAXSOCKBUF - (22 + strlen(spell->name) + 
-				spell->name_pl?strlen(spell->name_pl):0 + 
+	    /* Seeing crashes by overflowed buffers.  Quick arithemetic seems
+	     * to show add_spell is 26 bytes + 2 strings.  However, the overun
+	     * is hundreds of bytes off, so correcting 22 vs 26 doesn't seem
+	     * like it will fix this
+	     */
+	    if (sl.len > (MAXSOCKBUF - (26 + strlen(spell->name) + 
 				spell->msg?strlen(spell->msg):0))) {
 		Send_With_Handling(&pl->socket, &sl);
 		strcpy(sl.buf,"addspell ");
