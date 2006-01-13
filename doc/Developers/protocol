@@ -1182,8 +1182,8 @@ S->C: setup <option1> <value1> <option2> <value2>
 	   using the map1cmd due to the map size.
 
 	darkness (0/1 value):
-	    If set to 1 (default), the client will send darkness information
-	    in the map protocol commands.  If 0, the client will not
+	    If set to 1 (default), the server will send darkness information
+	    in the map protocol commands.  If 0, the server will not
 	    include darkness, thus saving a minor amount of bandwidth.
 	    Since the client is free to ignore the darkness information,
 	    this does not allow the client to cheat.  In the case of the
