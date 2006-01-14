@@ -119,6 +119,10 @@ SOURCE=..\..\plugins\cfpython\cfpython_object.c
 
 SOURCE=..\..\plugins\cfpython\cfpython_party.c
 # End Source File
+# Begin Source File
+
+SOURCE=..\..\plugins\cfpython\cfpython_region.c
+# End Source File
 # End Group
 # Begin Group "Header-Dateien"
 
@@ -162,6 +166,14 @@ SOURCE=..\..\plugins\cfpython\include\cfpython_party_private.h
 # Begin Source File
 
 SOURCE=..\..\plugins\cfpython\include\cfpython_proto.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\plugins\cfpython\include\cfpython_region.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\plugins\cfpython\include\cfpython_region_private.h
 # End Source File
 # End Group
 # Begin Group "resources"
