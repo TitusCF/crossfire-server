@@ -3532,8 +3532,9 @@ CommArray_s *find_plugin_command(char *cmd, object *op)
         return NULL;
 
     for (cp = plugins_list; cp != NULL; cp = cp->next) {
-        rtn_cmd = cp->propfunc(&i, "command?");
-        return rtn_cmd;
+        rtn_cmd = cp->propfunc(&i, "command?", cmd);
+        if (rtn_cmd)
+            return rtn_cmd;
     }
     return NULL;
 }

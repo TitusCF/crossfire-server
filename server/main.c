@@ -1192,8 +1192,6 @@ void leave(player *pl, int draw_exit) {
 	 */
         if (draw_exit==0)
         {
-            /* Lauwenmark : Here we handle the LOGOUT global event */
-            execute_global_event(EVENT_LOGOUT, pl, pl->socket.host);
         }
 	pl->socket.status=Ns_Dead;
 	LOG(llevInfo,"LOGOUT: Player named %s from ip %s\n", pl->ob->name,

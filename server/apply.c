@@ -2208,6 +2208,10 @@ static void apply_savebed (object *pl)
       new_draw_info(NDI_UNIQUE, 0,pl,"Since you have cheated you can't save.");
       return;
     }
+
+    /* Lauwenmark : Here we handle the LOGOUT global event */
+    execute_global_event(EVENT_LOGOUT, pl->contr, pl->contr->socket.host);
+
     /* Need to call terminate_all_pets()  before we remove the player ob */
     terminate_all_pets(pl);
     remove_ob(pl);

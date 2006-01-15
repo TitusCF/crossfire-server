@@ -752,16 +752,16 @@ CF_PLUGIN int initPlugin(const char* iversion, f_plug_api gethooksptr)
 CF_PLUGIN void* getPluginProperty(int* type, ...)
 {
     va_list args;
-    char* propname;
+    const char* propname;
     int i;
     static CommArray_s rtn_cmd;
 
     va_start(args, type);
-    propname = va_arg(args, char *);
+    propname = va_arg(args, const char *);
 
     if (!strcmp(propname, "command?")) {
-        char* cmdname;
-        cmdname = va_arg(args, char *);
+        const char* cmdname;
+        cmdname = va_arg(args, const char *);
         va_end(args);
 
         for (i = 0; i < NR_CUSTOM_CMD; i++) {
@@ -794,11 +794,11 @@ CF_PLUGIN int runPluginCommand(object* op, char* params)
 
     rv = 0;
 
-    if (current_command < -999) {
+    if (current_command < 0) {
         printf("Illegal call of runPluginCommand, call find_plugin_command first.\n");
         return 1;
     }
-    snprintf(buf, sizeof(buf), "%s.py", cf_get_maps_directory(CustomCommand[current_command].name));
+    snprintf(buf, sizeof(buf), "%s.py", cf_get_maps_directory(CustomCommand[current_command].script));
 
     context = malloc(sizeof(CFPContext));
     context->message[0] = 0;
@@ -811,6 +811,8 @@ CF_PLUGIN int runPluginCommand(object* op, char* params)
     snprintf(context->options, sizeof(context->options), "%s", params);
     context->returnvalue = 1; /* Default is "command successful" */
 
+    current_command = -999;
+
     if (!do_script(context, 0)) {
         freeContext(context);
         return rv;
@@ -819,7 +821,7 @@ CF_PLUGIN int runPluginCommand(object* op, char* params)
     context = popContext();
     rv = context->returnvalue;
     freeContext(context);
-    printf("Execution complete");
+/*    printf("Execution complete"); */
     return rv;
 }
 

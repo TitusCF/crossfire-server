@@ -17,6 +17,16 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Custom commands-related fixes.
+plugins/cfpython/cfpython.c: fix custom command handling.
+server/plugins.c: try all plugins for custom commands.
+-----
+Moved the global event 'LOGOUT' from when player actually disconnects to when
+ player logs out and is asked whether to play again or not.
+Modified files:
+ server/apply.c main.c
+Ryo 2006-01-15
+
 socket/request.c: In ReplyCmd() make sure the reply does not cause a buffer
    overflow.
 Andreas Kirschbaum 2006-01-13
