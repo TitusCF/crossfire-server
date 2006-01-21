@@ -45,31 +45,40 @@ print "Output: $output\n";
 open( NSI, ">".$output.".nsi" );
 
 # Let's write the header
+print NSI "!include \"MUI.nsh\"
+Name \"Crossfire Server - $mapset\"
 
-print NSI ";Application title\n";
-print NSI "Name \"Crossfire Server - $mapset\"\n";
-print NSI "\n";
-print NSI ";Do A CRC Check\n";
-print NSI "CRCCheck On\n";
-print NSI "\n";
-print NSI ";Output File Name\n";
-print NSI "OutFile \"$output.exe\"\n";
-print NSI "\n";
-print NSI ";License Page Introduction\n";
-print NSI "LicenseText \"You must agree to this license before installing.\"\n";
-print NSI "\n";
-print NSI ";License Data\n";
-print NSI "LicenseData \"..\\COPYING\"\n";
-print NSI "\n";
-print NSI ";The Default Installation Directory\n";
-print NSI "InstallDir \"\$PROGRAMFILES\\Crossfire Server\"\n";
-print NSI "\n";
-print NSI ";The text to prompt the user to enter a directory\n";
-print NSI "DirText \"Please select the folder below\"\n";
-print NSI "\n";
-print NSI "CompletedText \"Installation complete\"\n";
-print NSI "\n";
-print NSI "Section \"Install\"\n";
+CRCCheck On
+
+OutFile \"$output.exe\"
+
+InstallDir \"\$PROGRAMFILES\\Crossfire Server\"
+
+!define MUI_ABORTWARNING
+
+!insertmacro MUI_PAGE_WELCOME
+!insertmacro MUI_PAGE_LICENSE \"..\\COPYING\"
+!insertmacro MUI_PAGE_COMPONENTS
+!insertmacro MUI_PAGE_DIRECTORY
+!insertmacro MUI_PAGE_INSTFILES
+!insertmacro MUI_PAGE_FINISH
+
+!insertmacro MUI_UNPAGE_WELCOME
+!insertmacro MUI_UNPAGE_COMPONENTS
+!insertmacro MUI_UNPAGE_INSTFILES
+!insertmacro MUI_UNPAGE_FINISH
+
+!insertmacro MUI_LANGUAGE \"English\"
+
+DirText \"Please select the folder below\"
+
+CompletedText \"Installation complete\"
+
+UninstallText \"This will uninstall Crossfire Server $mapset from your system\"
+
+SetOverwrite IfNewer
+
+";
 
 my $startdir = $ARGV[ 1 ];
 chdir( $startdir );
@@ -79,31 +88,52 @@ my $currentdir = "";
 my $currentinstdir = "";
 
 my $outdir = "\$INSTDIR\\share\\maps";
-
+my $data = "";
 my $remove = "";
-my $remove = "";
+my $mode = 0;
 
 print "Startdir: $startdir\n";
 
 find( \&handleFind, $startdir );
 
-# Some reg keys for uninstall
-print NSI "  WriteRegStr HKLM \"Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Crossfire Server $mapset\" \"DisplayName\" \"Crossfire Server $mapset (remove only)\"\n";
-print NSI "  WriteRegStr HKLM \"Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Crossfire Server $mapset\" \"UninstallString\" \"\$INSTDIR\\UninstMaps.exe\"\n";
-print NSI "  WriteUninstaller \"UninstMaps.exe\"\n";
+print NSI "Section \"$mapset\" maps
+  SectionIn RO
+$data
+  WriteRegStr HKLM \"Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Crossfire Server $mapset\" \"DisplayName\" \"Crossfire Server $mapset (remove only)\"
+  WriteRegStr HKLM \"Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Crossfire Server $mapset\" \"UninstallString\" \"\$INSTDIR\\UninstMaps.exe\"
+  WriteUninstaller \"UninstMaps.exe\"
+SectionEnd
+";
 
-# Finish: the remove statements
-print NSI "SectionEnd\n";
-print NSI "\n";
-print NSI "UninstallText \"This will uninstall Crossfire Server $mapset from your system\"\n";
-print NSI "\n";
-print NSI "Section Uninstall\n";
-print NSI "$remove";
-print NSI "  Delete \"\$INSTDIR\\UninstMaps.exe\"\n";
-print NSI "  DeleteRegKey HKEY_LOCAL_MACHINE \"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Crossfire Server $mapset\"\n";
-print NSI "SectionEnd\n";
+print NSI "
 
-print "Terminé.\n";
+Section \"un.$mapset\"
+$remove
+  Delete \"\$INSTDIR\\UninstMaps.exe\"
+  DeleteRegKey HKEY_LOCAL_MACHINE \"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Crossfire Server $mapset\"
+SectionEnd
+
+";
+
+#Unlinked maps
+do_maps( "Unlinked maps", "unlinked", 1 );
+
+# test maps
+do_maps( "Test maps", "test", 2 );
+
+# Python scripts
+do_maps( "Python scripts", "python", 3 );
+
+print NSI "
+!insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
+  !insertmacro MUI_DESCRIPTION_TEXT \${maps} \"The main game maps. Required.\"
+  !insertmacro MUI_DESCRIPTION_TEXT \${unlinked} \"Maps that can't be accessed from the main maps.\"
+  !insertmacro MUI_DESCRIPTION_TEXT \${test} \"Game test maps.\"
+  !insertmacro MUI_DESCRIPTION_TEXT \${python} \"Python scripts. Require the server to have the Python plugin installed.\"
+!insertmacro MUI_FUNCTION_DESCRIPTION_END
+";
+
+print "Done.\n";
 
 exit;
 
@@ -113,7 +143,14 @@ sub handleFind
   my $foundFile = $File::Find::name;
   my $dir = $File::Find::dir;
   if ($dir =~ m/\/CVS$/) { return 1; }
+  if (($mode != 1) && ($dir =~ m/$startdir\/unlinked/ )) { return 1; }
+  if (($mode != 2) && ($dir =~ m/$startdir\/test/ )) { return 1; }
+  if (($mode != 3) && ($dir =~ m/$startdir\/python/ )) { return 1; }
   if ($foundFile =~ m/\/CVS$/) { return 1; }
+  if ($foundFile =~ m/\.pyc$/) { return 1; }
+
+  # Temp
+#  if (( $mode == 0 ) && ($dir !=~ m/\/world\// )) { return 1; }
   
     if ($currentdir ne $dir)
       {
@@ -124,8 +161,8 @@ sub handleFind
 
       $currentinstdir = $outdir.$dir;
       
-      print NSI "  CreateDirectory \"$currentinstdir\"\n";
-      print NSI "  SetOutPath \"$currentinstdir\"\n";
+      $data .= "  CreateDirectory \"$currentinstdir\"\n";
+      $data .= "  SetOutPath \"$currentinstdir\"\n";
       
       # Remove statement
       $remove = "  RmDir \"$currentinstdir\"\n" . $remove;
@@ -134,7 +171,7 @@ sub handleFind
   if (!(-d $foundFile))
     {
     $foundFile =~ s/\//\\/gi;
-    print NSI "  File \"" . $foundFile . "\"\n";
+    $data .= "  File \"" . $foundFile . "\"\n";
     # Remove statement
     $remove = "  Delete \"$currentinstdir\\$base\"\n" . $remove;
     if ( $foundFile =~ /.*py$/ )
@@ -151,3 +188,27 @@ sub help( )
   exit;
   }
 
+sub do_maps( )
+  {
+  my $name = shift( );
+  my $path = shift( );
+  my $m = shift( );
+
+  $data = "";
+  $remove = "";
+  $mode = $m;
+  print "$name from " . $startdir . "/$path/\n";
+
+  find( \&handleFind, $startdir . "/$path/" );
+
+  print NSI "Section \"$name\" $path
+$data
+SectionEnd
+
+Section \"un.$name\"
+$remove
+SectionEnd
+
+";
+
+  }
