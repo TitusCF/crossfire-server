@@ -269,5 +269,6 @@ set_friendly_fire 5
 #armor_speed_improvement 10
 #armor_speed_linear      TRUE
 
-# disable stealing from other players
+# disable stealing from other players, if you wish to enable stealing from other players
+# then replace the below with: no_player_stealing FALSE
 no_player_stealing       TRUE
