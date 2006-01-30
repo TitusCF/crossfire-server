@@ -443,7 +443,8 @@ S->C: item2 <location><tag1><flags1><weight1><face1><name1><anim1>
 	<animspeed1><nrof1><type1><object2....>
 
 	Sends item information to the client.  All parameters are sent as 4
-	bytes ints.
+	byte ints, except for name, anim, animspeed and (in the case of the 
+	item2 command) type.
 
 	The item1 command is an extension of the item command.  It includes
 	additional fields.  It has replaced the item command, which is no
@@ -493,7 +494,7 @@ S->C: item2 <location><tag1><flags1><weight1><face1><name1><anim1>
 	type: A numeric type id for the item.  The only meaining of this
 	value is really for sorting - all armors will have type values
 	the same or near that each other.  The client is free to ignore
-	this.
+	this. This value is 2 bytes.
 
 S->C: upditem <flags><tag><vals>+
 
@@ -1180,6 +1181,12 @@ S->C: setup <option1> <value1> <option2> <value2>
 	   and the client does a 'setup map1cmd 0', the server will
 	   send back a 'setup map1cmd 1' because it will still end up
 	   using the map1cmd due to the map size.
+
+	itemcmd (1/2):
+	    Defines the revision of the item command that will be used to send
+	    information about objects. If set to 1 (the default) item1 commands
+	    will be sent. If set to 2, item2 commands will be sent. This may in
+	    future accept extra values beyond these two. 
 
 	darkness (0/1 value):
 	    If set to 1 (default), the server will send darkness information

@@ -256,13 +256,27 @@ void Handle_Oldsocket(NewSocket *ns)
 	    return;
 	}
 
-	if (!verify_player(cp, cp1)) {
+	if (verify_player(cp, cp1)==0) {
 	    char *buf="Welcome back\n";
 	    free(ns->comment);
 	    ns->comment = strdup_local(cp);
 	    ns->old_mode = Old_Player;
 	    cs_write_string(ns, buf, strlen(buf));
 	}
+	else if (verify_player(cp, cp1)==2) {
+	    ns->password_fails++;
+	    if (ns->password_fails >= MAX_PASSWORD_FAILURES) {
+		char *buf="You failed to log in too many times, you will now be kicked.\n";
+		LOG(llevInfo, "A player connecting from %s in oldsocketmode has been dropped for password failure\n",
+		    ns->host); 
+		cs_write_string(ns, buf, strlen(buf));
+		ns->status = Ns_Dead;
+	    }
+	    else {
+		char *buf="Could not login you in.  Check your name and password.\n";
+		cs_write_string(ns, buf, strlen(buf));
+	    }
+	}	
 	else {
 	    char *buf="Could not login you in.  Check your name and password.\n";
 	    cs_write_string(ns, buf, strlen(buf));

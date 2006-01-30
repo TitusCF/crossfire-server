@@ -149,6 +149,7 @@ void InitConnection(NewSocket *ns, const char *from_ip)
     ns->outputbuffer.start=0;
     ns->outputbuffer.len=0;
     ns->can_write=1;
+    ns->password_fails = 0;
 
     ns->sent_scroll=0;
     ns->host=strdup_local(from_ip);

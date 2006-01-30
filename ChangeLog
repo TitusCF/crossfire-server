@@ -17,6 +17,13 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+include/newserver.h, server/login.c, socket/init.c, socket/loop.c:
+   drop any connection that fails to login successfully after
+   MAX_PASSWORD_FAILURES attempts (defaults to 5)
+doc/Developers/protocol: document properly the byte counts of item flags,
+   and include documentation of the itemcmd setup option.
+Brendan Lally 2006-01-30
+
 Custom commands-related fixes.
 plugins/cfpython/cfpython.c: fix custom command handling.
 server/plugins.c: try all plugins for custom commands.

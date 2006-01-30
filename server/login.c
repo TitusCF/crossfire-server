@@ -479,7 +479,15 @@ void check_login(object *op) {
 	new_draw_info(NDI_UNIQUE, 0,op," ");
 	FREE_AND_COPY(op->name, "noname");
 	FREE_AND_COPY(op->name_pl, "noname");
-	get_name(op);
+	op->contr->socket.password_fails++;
+	if (op->contr->socket.password_fails >= MAX_PASSWORD_FAILURES) {
+	    new_draw_info(NDI_UNIQUE, 0,op,
+		"You gave an incorrect password too many times, you will now be dropped from the server.");
+	    LOG(llevInfo, "A player connecting from %s has been dropped for password failure\n", 
+		op->contr->socket.host);
+	    op->contr->socket.status = Ns_Dead; /* the socket loop should handle the rest for us */
+	}
+	else get_name(op);
 	return;	    /* Once again, rest of code just loads the char */
     }
 

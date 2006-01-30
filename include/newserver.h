@@ -98,6 +98,9 @@ typedef struct Buffer {
     int	    len;
 } Buffer;
 
+/* how many times we are allowed to give the wrong password before being kicked. */
+#define MAX_PASSWORD_FAILURES 5 
+
 typedef struct NewSocket {
     enum Sock_Status status;
     int fd;
@@ -109,6 +112,7 @@ typedef struct NewSocket {
     /* If we get an incomplete packet, this is used to hold the data. */
     SockList	inbuf;
     char    *host;	    /* Which host it is connected from (ip address)*/
+    uint8   password_fails; /* how many times the player has failed to give the right password */
     Buffer  outputbuffer;   /* For undeliverable data */
     uint32  facecache:1;    /* If true, client is caching images */
     uint32  sent_scroll:1;
