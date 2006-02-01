@@ -76,8 +76,12 @@ def arch2xml(root,filename,xsl_file='cfarches.xsl'):
                             xml.write('%s' %(tag))
                     elif len(xp)>1:
                             tag = string.lower(xp[0])
-                            str = string.join(xp[1:])
-                            xml.write('     <%s>%s</%s>\n' %(tag,str,tag))	
+                            if (tag[0] == "#"):
+                                str = string.join(xp)[1:]
+                                xml.write('     <comment>%s</comment>\n' %(str))
+                            else:
+                                str = string.join(xp[1:])
+                                xml.write('     <%s>%s</%s>\n' %(tag,str,tag))	
             xml.write('\n</arch>\n')
             arc.close()
     xml.write('\n</ARCHES>')
