@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/c_misc.c: fix bug 1413239 Server crash with "who" command output
+using null map names
+Brendan Lally 2006-02-03
+
 include/newserver.h, server/login.c, socket/init.c, socket/loop.c:
    drop any connection that fails to login successfully after
    MAX_PASSWORD_FAILURES attempts (defaults to 5)

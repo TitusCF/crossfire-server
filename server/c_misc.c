@@ -443,7 +443,7 @@ void get_who_escape_code_value(char *return_val, const char letter, player *pl) 
 			  break;
 	case 'm' :    strcpy(return_val,pl->ob->map->path);
 		 	  break;
-	case 'M' :    strcpy(return_val,pl->ob->map->name);
+	case 'M' :    strcpy(return_val,pl->ob->map->name?pl->ob->map->name:"Untitled");
 			  break;		
 	case 'r' :    strcpy(return_val,get_name_of_region_for_map(pl->ob->map));
 			  break;
