@@ -17,6 +17,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Fix attack messages containing random characters.
+--
+server/attack.c: In attack_message() always initialize variables.
+Andreas Kirschbaum 2006-02-03
+
 server/c_misc.c: fix bug 1413239 Server crash with "who" command output
 using null map names
 Brendan Lally 2006-02-03

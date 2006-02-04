@@ -391,7 +391,8 @@ void attack_message(int dam, int type, object *op, object *hitter) {
 	(type & AT_POISON && IS_LIVE(op))) && !found) {
         for (i=0; i < MAXATTACKMESS && attack_mess[ATM_SUFFER][i].level != -1;
 	     i++)
-	    if (dam < attack_mess[ATM_SUFFER][i].level) {
+	    if (dam < attack_mess[ATM_SUFFER][i].level
+	    || attack_mess[ATM_SUFFER][i+1].level == -1) {
 	        sprintf(buf1, "%s %s%s", attack_mess[ATM_SUFFER][i].buf1,
 			op->name, attack_mess[ATM_SUFFER][i].buf2);
 		sprintf(buf2, "%s", attack_mess[ATM_SUFFER][i].buf3);
@@ -401,7 +402,8 @@ void attack_message(int dam, int type, object *op, object *hitter) {
     } else if (op->type == DOOR && !found) {
         for (i=0; i < MAXATTACKMESS && attack_mess[ATM_DOOR][i].level != -1;
 	     i++)
-	    if (dam < attack_mess[ATM_DOOR][i].level) {
+	    if (dam < attack_mess[ATM_DOOR][i].level
+	    || attack_mess[ATM_DOOR][i+1].level == -1) {
 	        sprintf(buf1, "%s %s%s", attack_mess[ATM_DOOR][i].buf1,
 			op->name, attack_mess[ATM_DOOR][i].buf2);
 		sprintf(buf2, "%s", attack_mess[ATM_DOOR][i].buf3);
@@ -412,7 +414,8 @@ void attack_message(int dam, int type, object *op, object *hitter) {
         if (USING_SKILL(hitter, SK_KARATE)) {
           for (i=0; i < MAXATTACKMESS && attack_mess[ATM_KARATE][i].level != -1;
 	       i++)
-	      if (dam < attack_mess[ATM_KARATE][i].level) {
+	      if (dam < attack_mess[ATM_KARATE][i].level
+	      || attack_mess[ATM_KARATE][i+1].level == -1) {
 	          sprintf(buf1, "%s %s%s", attack_mess[ATM_KARATE][i].buf1,
 			  op->name, attack_mess[ATM_KARATE][i].buf2);
 		  sprintf(buf2, "%s", attack_mess[ATM_KARATE][i].buf3);
@@ -422,7 +425,8 @@ void attack_message(int dam, int type, object *op, object *hitter) {
 	} else if (USING_SKILL(hitter, SK_CLAWING)) {
           for (i=0; i < MAXATTACKMESS && attack_mess[ATM_CLAW][i].level != -1;
 	       i++)
-	      if (dam < attack_mess[ATM_CLAW][i].level) {
+	      if (dam < attack_mess[ATM_CLAW][i].level
+	      || attack_mess[ATM_CLAW][i+1].level == -1) {
 	          sprintf(buf1, "%s %s%s", attack_mess[ATM_CLAW][i].buf1,
 			  op->name, attack_mess[ATM_CLAW][i].buf2);
 		  sprintf(buf2, "%s", attack_mess[ATM_CLAW][i].buf3);
@@ -432,7 +436,8 @@ void attack_message(int dam, int type, object *op, object *hitter) {
 	} else if (USING_SKILL(hitter, SK_PUNCHING)) {
           for (i=0; i < MAXATTACKMESS && attack_mess[ATM_PUNCH][i].level != -1;
 	       i++)
-	      if (dam < attack_mess[ATM_PUNCH][i].level) {
+	      if (dam < attack_mess[ATM_PUNCH][i].level
+	      || attack_mess[ATM_PUNCH][i+1].level == -1) {
 	          sprintf(buf1, "%s %s%s", attack_mess[ATM_PUNCH][i].buf1,
 			  op->name, attack_mess[ATM_PUNCH][i].buf2);
 		  sprintf(buf2, "%s", attack_mess[ATM_PUNCH][i].buf3);
@@ -441,52 +446,63 @@ void attack_message(int dam, int type, object *op, object *hitter) {
 	      }
 	}
     }
-    if (IS_ARROW(hitter) && (type == AT_PHYSICAL || type == AT_MAGIC) &&
-	!found) {
+    if (found) {
+	/* done */
+    } else if (IS_ARROW(hitter) && (type == AT_PHYSICAL || type == AT_MAGIC)) {
         sprintf(buf1, "hit"); /* just in case */
         for (i=0; i < MAXATTACKMESS; i++)
-	    if (dam < attack_mess[ATM_ARROW][i].level) {
+	    if (dam < attack_mess[ATM_ARROW][i].level
+	    || attack_mess[ATM_ARROW][i+1].level == -1) {
 	        sprintf(buf2, "%s", attack_mess[ATM_ARROW][i].buf3);
+		found++;
 		break;
 	    }
-    } else if (type & AT_DRAIN && IS_LIVE(op) && !found) {
+    } else if (type & AT_DRAIN && IS_LIVE(op)) {
       /* drain is first, because some items have multiple attypes */
         for (i=0; i < MAXATTACKMESS && attack_mess[ATM_DRAIN][i].level != -1;
 	     i++)
-	    if (dam < attack_mess[ATM_DRAIN][i].level) {
+	    if (dam < attack_mess[ATM_DRAIN][i].level
+	    || attack_mess[ATM_DRAIN][i+1].level == -1) {
 	        sprintf(buf1, "%s %s%s", attack_mess[ATM_DRAIN][i].buf1,
 			op->name, attack_mess[ATM_DRAIN][i].buf2);
 		sprintf(buf2, "%s", attack_mess[ATM_DRAIN][i].buf3);
+		found++;
 		break;
 	    }
-    } else if (type & AT_ELECTRICITY && IS_LIVE(op) && !found) {
+    } else if (type & AT_ELECTRICITY && IS_LIVE(op)) {
         for (i=0; i < MAXATTACKMESS && attack_mess[ATM_ELEC][i].level != -1;
 	     i++)
-	    if (dam < attack_mess[ATM_ELEC][i].level) {
+	    if (dam < attack_mess[ATM_ELEC][i].level
+	    || attack_mess[ATM_ELEC][i+1].level == -1) {
 	        sprintf(buf1, "%s %s%s", attack_mess[ATM_ELEC][i].buf1,
 			op->name, attack_mess[ATM_ELEC][i].buf2);
 		sprintf(buf2, "%s", attack_mess[ATM_ELEC][i].buf3);
+		found++;
 		break;
 	    }
-    } else if (type & AT_COLD && IS_LIVE(op) && !found) {
+    } else if (type & AT_COLD && IS_LIVE(op)) {
         for (i=0; i < MAXATTACKMESS && attack_mess[ATM_COLD][i].level != -1;
 	     i++)
-	    if (dam < attack_mess[ATM_COLD][i].level) {
+	    if (dam < attack_mess[ATM_COLD][i].level
+	    || attack_mess[ATM_COLD][i+1].level == -1) {
 	        sprintf(buf1, "%s %s%s", attack_mess[ATM_COLD][i].buf1,
 			op->name, attack_mess[ATM_COLD][i].buf2);
 		sprintf(buf2, "%s", attack_mess[ATM_COLD][i].buf3);
+		found++;
 		break;
 	    }
-    } else if (type & AT_FIRE && !found) {
+    } else if (type & AT_FIRE) {
         for (i=0; i < MAXATTACKMESS && attack_mess[ATM_FIRE][i].level != -1;
 	     i++)
-	    if (dam < attack_mess[ATM_FIRE][i].level) {
+	    if (dam < attack_mess[ATM_FIRE][i].level
+	    || attack_mess[ATM_FIRE][i+1].level == -1) {
 	        sprintf(buf1, "%s %s%s", attack_mess[ATM_FIRE][i].buf1,
 			op->name, attack_mess[ATM_FIRE][i].buf2);
 		sprintf(buf2, "%s", attack_mess[ATM_FIRE][i].buf3);
+		found++;
 		break;
 	    }
-    } else if (hitter->current_weapon != NULL && !found) {
+    } else if (hitter->current_weapon != NULL) {
 	int mtype;
 	switch (hitter->current_weapon->weapontype) {
 	    case WEAP_HIT: mtype = ATM_BASIC; break;
@@ -502,21 +518,30 @@ void attack_message(int dam, int type, object *op, object *hitter) {
 	}
         for (i=0; i < MAXATTACKMESS && attack_mess[mtype][i].level != -1;
 	     i++)
-	    if (dam < attack_mess[mtype][i].level) {
+	    if (dam < attack_mess[mtype][i].level
+	    || attack_mess[mtype][i+1].level == -1) {
 	        sprintf(buf1, "%s %s%s", attack_mess[mtype][i].buf1,
 			op->name, attack_mess[mtype][i].buf2);
 		sprintf(buf2, "%s", attack_mess[mtype][i].buf3);
+		found++;
 		break;
 	    }
-    } else if (!found){
+    } else {
         for (i=0; i < MAXATTACKMESS && attack_mess[ATM_BASIC][i].level != -1;
 	     i++)
-	    if (dam < attack_mess[ATM_BASIC][i].level) {
+	    if (dam < attack_mess[ATM_BASIC][i].level
+	    || attack_mess[ATM_BASIC][i+1].level == -1) {
 	        sprintf(buf1, "%s %s%s", attack_mess[ATM_BASIC][i].buf1,
 			op->name, attack_mess[ATM_BASIC][i].buf2);
 		sprintf(buf2, "%s", attack_mess[ATM_BASIC][i].buf3);
+		found++;
 		break;
 	    }
+    }
+
+    if (!found) {
+	sprintf(buf1, "hit");
+	sprintf(buf2, "hits");
     }
 
     /* bail out if a monster is casting spells */
