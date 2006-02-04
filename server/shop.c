@@ -644,7 +644,7 @@ int can_pay(object *pl) {
     object *item;
     uint32 coincount[NUM_COINS];
     if (!pl || pl->type != PLAYER) {
-	LOG(llevError, "can_pay(): called against something that isn't a player");
+	LOG(llevError, "can_pay(): called against something that isn't a player\n");
 	return 0;
     }
     for (i=0; i< NUM_COINS; i++) coincount[i] = 0; 
@@ -850,11 +850,11 @@ double shop_specialisation_ratio(object *item, mapstruct *map) {
     int i;
 
     if (item==NULL) { 
-	LOG(llevError, "shop_specialisation_ratio: passed a NULL item for map %s", map->path);
+	LOG(llevError, "shop_specialisation_ratio: passed a NULL item for map %s\n", map->path);
 	return 0;
     }
     if (!item->type) {
-	LOG(llevError, "shop_specialisation_ratio: passed an item with an invalid type");
+	LOG(llevError, "shop_specialisation_ratio: passed an item with an invalid type\n");
 	/* 
 	 * I'm not really sure what the /right/ thing to do here is, these types of 
 	 * item shouldn't exist anyway, but returning the ratio is probably the best bet.." 
@@ -920,7 +920,7 @@ static uint64 value_limit(uint64 val, int quantity, object *who, int isshop) {
 	    newval=unit_price;
     } else {
 	if (!who->map) {
-	    LOG(llevError, "value_limit: asked shop price for ob %s on NULL map", who->name);
+	    LOG(llevError, "value_limit: asked shop price for ob %s on NULL map\n", who->name);
 	    return val;
 	}
 	map=who->map;
