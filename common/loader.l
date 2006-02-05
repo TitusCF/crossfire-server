@@ -1547,6 +1547,10 @@ static char* get_string_move_type(MoveType mt)
 
     /* Quick check, and probably fairly common */
     if (mt == MOVE_ALL) return retbuf_all;
+    if (mt == 0) {
+	strcpy(retbuf,"0");
+	return retbuf;
+    }
 
     /* We basically slide the bits down.  Why look at MOVE_ALL?
      * because we may want to return a string like 'all -swim',
