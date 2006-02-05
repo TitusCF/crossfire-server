@@ -2356,8 +2356,8 @@ int is_legal_2ways_exit (object* op, object *exit)
  *
  * Return value:
  *   0: player or monster can't apply objects of that type
- *   2: objects of that type can't be applied if not in inventory
  *   1: has been applied, or there was an error applying the object
+ *   2: objects of that type can't be applied if not in inventory
  *
  * op is the object that is causing object to be applied, tmp is the object
  * being applied.
@@ -2368,209 +2368,212 @@ int is_legal_2ways_exit (object* op, object *exit)
 
 int manual_apply (object *op, object *tmp, int aflag)
 {
-  if (tmp->head) tmp=tmp->head;
+    if (tmp->head) tmp=tmp->head;
 
-  if (QUERY_FLAG (tmp, FLAG_UNPAID) && ! QUERY_FLAG (tmp, FLAG_APPLIED)) {
-    if (op->type == PLAYER) {
-      new_draw_info (NDI_UNIQUE, 0, op, "You should pay for it first.");
-      return 1;
-    } else {
-      return 0;   /* monsters just skip unpaid items */
+    if (QUERY_FLAG (tmp, FLAG_UNPAID) && ! QUERY_FLAG (tmp, FLAG_APPLIED)) {
+	if (op->type == PLAYER) {
+	    new_draw_info (NDI_UNIQUE, 0, op, "You should pay for it first.");
+	    return 1;
+	} else {
+	    return 0;   /* monsters just skip unpaid items */
+	}
     }
-  }
 
-  /* monsters mustn't apply random chests, nor magic_mouths with a counter */
-  if (op->type != PLAYER && tmp->type == TREASURE)
-    return 0;
 
     /* Lauwenmark: Handle for plugin apply event */
     if (execute_event(tmp, EVENT_APPLY,op,NULL,NULL,SCRIPT_FIX_ALL)!=0)
         return 1;
-  switch (tmp->type)
-  {
-  case CF_HANDLE:
-    new_draw_info(NDI_UNIQUE, 0,op,"You turn the handle.");
-    play_sound_map(op->map, op->x, op->y, SOUND_TURN_HANDLE);
-    tmp->value=tmp->value?0:1;
-    SET_ANIMATION(tmp, tmp->value);
-    update_object(tmp,UP_OBJ_FACE);
-    push_button(tmp);
-    return 1;
 
-  case TRIGGER:
-    if (check_trigger (tmp, op)) {
-        new_draw_info (NDI_UNIQUE, 0, op, "You turn the handle.");
-        play_sound_map (tmp->map, tmp->x, tmp->y, SOUND_TURN_HANDLE);
-    } else {
-        new_draw_info (NDI_UNIQUE, 0, op, "The handle doesn't move.");
-    }
-    return 1;
+    switch (tmp->type) {
 
-  case EXIT:
-    if (op->type != PLAYER)
-      return 0;
-    if( ! EXIT_PATH (tmp) || !is_legal_2ways_exit(op,tmp)) {
-            new_draw_info_format(NDI_UNIQUE, 0, op, "The %s is closed.",
+	case CF_HANDLE:
+	    new_draw_info(NDI_UNIQUE, 0,op,"You turn the handle.");
+	    play_sound_map(op->map, op->x, op->y, SOUND_TURN_HANDLE);
+	    tmp->value=tmp->value?0:1;
+	    SET_ANIMATION(tmp, tmp->value);
+	    update_object(tmp,UP_OBJ_FACE);
+	    push_button(tmp);
+	    return 1;
+
+	case TRIGGER:
+	    if (check_trigger (tmp, op)) {
+		new_draw_info (NDI_UNIQUE, 0, op, "You turn the handle.");
+		play_sound_map (tmp->map, tmp->x, tmp->y, SOUND_TURN_HANDLE);
+	    } else {
+		new_draw_info (NDI_UNIQUE, 0, op, "The handle doesn't move.");
+	    }
+	    return 1;
+
+	case EXIT:
+	    if (op->type != PLAYER)
+		return 0;
+	    if( ! EXIT_PATH (tmp) || !is_legal_2ways_exit(op,tmp)) {
+		new_draw_info_format(NDI_UNIQUE, 0, op, "The %s is closed.",
                                  query_name(tmp));
-    } else {
-	/* Don't display messages for random maps. */
-            if (tmp->msg && strncmp(EXIT_PATH(tmp),"/!",2) &&
-                strncmp(EXIT_PATH(tmp), "/random/", 8))
-	    new_draw_info (NDI_NAVY, 0, op, tmp->msg);
-	enter_exit(op,tmp);
+	    } else {
+		/* Don't display messages for random maps. */
+		if (tmp->msg && strncmp(EXIT_PATH(tmp),"/!",2) &&
+		    strncmp(EXIT_PATH(tmp), "/random/", 8))
+		new_draw_info (NDI_NAVY, 0, op, tmp->msg);
+		enter_exit(op,tmp);
+	    }
+	    return 1;
+
+	case SIGN:
+	    apply_sign (op, tmp, 0);
+	    return 1;
+
+	case BOOK:
+	    if (op->type == PLAYER) {
+		apply_book (op, tmp);
+		return 1;
+	    } else {
+		return 0;
+	    }
+
+	case SKILLSCROLL:
+	    if (op->type == PLAYER) {
+		apply_skillscroll (op, tmp);
+		return 1;
+	    }
+	    return 0;
+
+	case SPELLBOOK:
+	    if (op->type == PLAYER) {
+		apply_spellbook (op, tmp);
+		return 1;
+	    }
+	    return 0;
+
+	case SCROLL:
+	    apply_scroll (op, tmp, 0);
+	    return 1;
+
+	case POTION:
+	    (void) apply_potion(op, tmp);
+	    return 1;
+
+	/* Eneq(@csd.uu.se): Handle apply on containers. */
+	case CLOSE_CON:
+	    if (op->type==PLAYER)
+		(void) esrv_apply_container (op, tmp->env);
+	    else
+		(void) apply_container (op, tmp->env);
+	    return 1;
+
+	case CONTAINER:
+	    if (op->type==PLAYER)
+		(void) esrv_apply_container (op, tmp);
+	    else
+		(void) apply_container (op, tmp);
+	    return 1;
+
+	case TREASURE:
+	    if (op->type == PLAYER) {
+		apply_treasure (op, tmp);
+		return 1;
+	    } else {
+		return 0;
+	    }
+
+	case WEAPON:
+	case ARMOUR:
+	case BOOTS:
+	case GLOVES:
+	case AMULET:
+	case GIRDLE:
+	case BRACERS:
+	case SHIELD:
+	case HELMET:
+	case RING:
+	case CLOAK:
+	case WAND:
+	case ROD:
+	case HORN:
+	case SKILL:
+	case BOW:
+	case LAMP:
+	case BUILDER:
+	case SKILL_TOOL:
+	    if (tmp->env != op)
+		return 2;   /* not in inventory */
+	    (void) apply_special (op, tmp, aflag);
+	    return 1;
+
+	case DRINK:
+	case FOOD:
+	case FLESH:
+	    apply_food (op, tmp);
+	    return 1;
+
+	case POISON:
+	    apply_poison (op, tmp);
+	    return 1;
+
+	case SAVEBED:
+	    if (op->type == PLAYER) {
+		apply_savebed (op);
+		return 1;
+	    } else {
+		return 0;
+	    }
+
+	case ARMOUR_IMPROVER:
+	    if (op->type == PLAYER) {
+		apply_armour_improver (op, tmp);
+		return 1;
+	    } else {
+		return 0;
+	    }
+
+	case WEAPON_IMPROVER:
+	    (void) check_improve_weapon(op, tmp);
+	    return 1;
+
+	case CLOCK:
+	    if (op->type == PLAYER) {
+		char buf[MAX_BUF];
+		timeofday_t tod;
+
+		get_tod(&tod);
+		sprintf(buf, "It is %d minute%s past %d o'clock %s",
+			tod.minute+1, ((tod.minute+1 < 2) ? "" : "s"),
+			((tod.hour % 14 == 0) ? 14 : ((tod.hour)%14)),
+			((tod.hour >= 14) ? "pm" : "am"));
+		play_sound_player_only(op->contr, SOUND_CLOCK,0,0);
+		new_draw_info(NDI_UNIQUE, 0,op, buf);
+		return 1;
+	    } else {
+		return 0;
+	    }
+
+	case MENU: 
+	    if (op->type == PLAYER) {
+		shop_listing (op);
+		return 1;
+	    } else {
+		return 0;
+	    }
+
+	case POWER_CRYSTAL:
+	    apply_power_crystal(op,tmp);  /*  see egoitem.c */
+	    return 1;
+
+	case LIGHTER:		/* for lighting torches/lanterns/etc */ 
+	    if (op->type == PLAYER) {
+		apply_lighter(op,tmp);
+		return 1;
+	    } else {
+		return 0;
+	    }
+
+	case ITEM_TRANSFORMER:
+	    apply_item_transformer( op, tmp );
+	    return 1;
+
+	default:
+	    return 0;
     }
-    return 1;
-
-  case SIGN:
-    apply_sign (op, tmp, 0);
-    return 1;
-
-  case BOOK:
-    if (op->type == PLAYER) {
-      apply_book (op, tmp);
-      return 1;
-    } else {
-      return 0;
-    }
-
-  case SKILLSCROLL:
-    if (op->type == PLAYER) {
-      apply_skillscroll (op, tmp);
-      return 1;
-    }
-    return 0;
-
-  case SPELLBOOK:
-    if (op->type == PLAYER) {
-      apply_spellbook (op, tmp);
-      return 1;
-    }
-    return 0;
-
-  case SCROLL:
-    apply_scroll (op, tmp, 0);
-    return 1;
-
-  case POTION:
-    (void) apply_potion(op, tmp);
-    return 1;
-
-    /* Eneq(@csd.uu.se): Handle apply on containers. */
-  case CLOSE_CON:
-    if (op->type==PLAYER)
-      (void) esrv_apply_container (op, tmp->env);
-    else
-      (void) apply_container (op, tmp->env);
-    return 1;
-
-  case CONTAINER:
-    if (op->type==PLAYER)
-      (void) esrv_apply_container (op, tmp);
-    else
-      (void) apply_container (op, tmp);
-    return 1;
-
-  case TREASURE:
-    apply_treasure (op, tmp);
-    return 1;
-
-  case WEAPON:
-  case ARMOUR:
-  case BOOTS:
-  case GLOVES:
-  case AMULET:
-  case GIRDLE:
-  case BRACERS:
-  case SHIELD:
-  case HELMET:
-  case RING:
-  case CLOAK:
-  case WAND:
-  case ROD:
-  case HORN:
-  case SKILL:
-  case BOW:
-  case LAMP:
-  case BUILDER:
-  case SKILL_TOOL:
-    if (tmp->env != op)
-      return 2;   /* not in inventory */
-    (void) apply_special (op, tmp, aflag);
-    return 1;
-
-  case DRINK:
-  case FOOD:
-  case FLESH:
-    apply_food (op, tmp);
-    return 1;
-
-  case POISON:
-    apply_poison (op, tmp);
-    return 1;
-
-  case SAVEBED:
-    if (op->type == PLAYER) {
-      apply_savebed (op);
-      return 1;
-    } else {
-      return 0;
-    }
-
-  case ARMOUR_IMPROVER:
-    if (op->type == PLAYER) {
-      apply_armour_improver (op, tmp);
-      return 1;
-    } else {
-      return 0;
-    }
-
-  case WEAPON_IMPROVER:
-    (void) check_improve_weapon(op, tmp);
-    return 1;
-
-  case CLOCK:
-    if (op->type == PLAYER) {
-	char buf[MAX_BUF];
-	timeofday_t tod;
-
-	get_tod(&tod);
-	sprintf(buf, "It is %d minute%s past %d o'clock %s",
-	  tod.minute+1, ((tod.minute+1 < 2) ? "" : "s"),
-	  ((tod.hour % 14 == 0) ? 14 : ((tod.hour)%14)),
-	  ((tod.hour >= 14) ? "pm" : "am"));
-	play_sound_player_only(op->contr, SOUND_CLOCK,0,0);
-	new_draw_info(NDI_UNIQUE, 0,op, buf);
-	return 1;
-    } else {
-        return 0;
-    }
-
-  case MENU: 
-    if (op->type == PLAYER) {
-      shop_listing (op);
-      return 1;
-    } else {
-      return 0;
-    }
-
-  case POWER_CRYSTAL:
-    apply_power_crystal(op,tmp);  /*  see egoitem.c */
-    return 1;
-
-  case LIGHTER:		/* for lighting torches/lanterns/etc */ 
-    if (op->type == PLAYER) {
-      apply_lighter(op,tmp);
-      return 1;
-    } else {
-      return 0;
-    }
-
-  case ITEM_TRANSFORMER:
-    apply_item_transformer( op, tmp );
-    return 1;
-  default:
-    return 0;
-  }
 }
 
 
