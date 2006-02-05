@@ -1146,61 +1146,63 @@ void move_creator(object *creator) {
    unless hp was zero to start with, in which case it is infinite.*/
 
 void move_marker(object *op) {
-  object *tmp,*tmp2;
+    object *tmp,*tmp2;
   
-  for(tmp=get_map_ob(op->map,op->x,op->y);tmp!=NULL;tmp=tmp->above) {
-	 
+    for(tmp=get_map_ob(op->map,op->x,op->y);tmp!=NULL;tmp=tmp->above) {
+	if(tmp->type == PLAYER) { /* we've got someone to MARK */
 
-    if(tmp->type == PLAYER) { /* we've got someone to MARK */
+	    if ( quest_on_activate(op, tmp->contr) )
+		return;
 
-        if ( quest_on_activate(op, tmp->contr) )
-            return;
+	    /* remove an old force with a slaying field == op->name */
+	    for(tmp2=tmp->inv;tmp2 !=NULL; tmp2=tmp2->below) {
+		if(tmp2->type == FORCE && tmp2->slaying && !strcmp(tmp2->slaying,op->name)) break;
+	    }
 
-		/* remove an old force with a slaying field == op->name */
-      for(tmp2=tmp->inv;tmp2 !=NULL; tmp2=tmp2->below) {
-		  if(tmp2->type == FORCE && tmp2->slaying && !strcmp(tmp2->slaying,op->name)) break;
-      }
-		if(tmp2) {
-		  remove_ob(tmp2);
-		  free_object(tmp2);
-		}
+	    if(tmp2) {
+		remove_ob(tmp2);
+		free_object(tmp2);
+	    }
 
-      /* cycle through his inventory to look for the MARK we want to place */
-      for(tmp2=tmp->inv;tmp2 !=NULL; tmp2=tmp2->below) {
-		  if(tmp2->type == FORCE && tmp2->slaying && !strcmp(tmp2->slaying,op->slaying)) break;
-      }
+	    /* cycle through his inventory to look for the MARK we want to 
+	     * place 
+	     */
+	    for(tmp2=tmp->inv;tmp2 !=NULL; tmp2=tmp2->below) {
+		if(tmp2->type == FORCE && tmp2->slaying && !strcmp(tmp2->slaying,op->slaying)) break;
+	    }
       
-      /* if we didn't find our own MARK */
-      if(tmp2==NULL) {
-	         
-		  object *force = get_archetype(FORCE_NAME);
-		  force->speed = 0;
-		  if(op->stats.food) {
-			 force->speed = 0.01;
-			 force->speed_left = -op->stats.food;
-		  }
-		  update_ob_speed (force);
-		  /* put in the lock code */
-		  force->slaying = add_string(op->slaying);
-          if ( op->lore )
-              force->lore = add_string( op->lore );
-		  insert_ob_in_ob(force,tmp);
-		  if(op->msg)
+	    /* if we didn't find our own MARK */
+	    if(tmp2==NULL) {
+		object *force = get_archetype(FORCE_NAME);
+
+		force->speed = 0;
+		if(op->stats.food) {
+		    force->speed = 0.01;
+		    force->speed_left = -op->stats.food;
+		}
+		update_ob_speed (force);
+		/* put in the lock code */
+		force->slaying = add_string(op->slaying);
+
+		if ( op->lore )
+		    force->lore = add_string( op->lore );
+
+		insert_ob_in_ob(force,tmp);
+		if(op->msg)
 		    new_draw_info(NDI_UNIQUE|NDI_NAVY,0,tmp,op->msg);
-		  if(op->stats.hp > 0) { 
+
+		if(op->stats.hp > 0) { 
 		    op->stats.hp--;
 		    if(op->stats.hp==0) {
-		      /* marker expires--granted mark number limit */
-		      remove_ob(op);
-		      free_object(op);
-		      return;
+			/* marker expires--granted mark number limit */
+			remove_ob(op);
+			free_object(op);
+			return;
 		    }
-		  }
-      }
-
-    }
-
-  }
+		}
+	    } /* if tmp2 == NULL */
+	} /* if tmp->type == PLAYER */
+    } /* For all objects on this space */
 }
  
 int process_object(object *op) {
