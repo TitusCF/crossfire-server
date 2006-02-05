@@ -199,6 +199,7 @@ int CAN_MERGE(object *ob1, object *ob2) {
 	(ob1->subtype != ob2->subtype) ||
 	(ob1->move_type != ob2->move_type) ||
 	(ob1->move_block != ob2->move_block) ||
+	(ob1->move_allow != ob2->move_allow) ||
 	(ob1->move_on != ob2->move_on) ||
 	(ob1->move_off != ob2->move_off) ||
 	(ob1->move_slow != ob2->move_slow) ||
@@ -1020,7 +1021,11 @@ void update_object(object *op, int action) {
 
 	if ((move_on | op->move_on) != move_on) update_now=1;
 	if ((move_off | op->move_off) != move_off) update_now=1;
-	if ((move_block | op->move_block) != move_block) update_now=1;
+	/* This isn't perfect, but I don't expect a lot of objects to
+	 * to have move_allow right now.    
+	 */
+	if (((move_block | op->move_block) & ~op->move_allow) != move_block) 
+	    update_now=1;
 	if ((move_slow | op->move_slow) != move_slow) update_now=1;
     } 
     /* if the object is being removed, we can't make intelligent

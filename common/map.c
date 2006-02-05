@@ -306,6 +306,14 @@ int blocked_link(object *ob, mapstruct *m, int sx, int sy) {
      */
     if (ob->type != PLAYER && ! (mflags & P_IS_ALIVE) && (blocked==0)) return 0;
 
+    /* if there isn't anytyhing alive on this space, and this space isn't
+     * otherwise blocked, we can return now.  Only if there is a living
+     * creature do we need to investigate if it is part of this creature
+     * or another.  Likewise, only if something is blocking us do we
+     * need to investigate if there is a special circumstance that would
+     * let the player through (inventory checkers for example)
+     */
+    if (!(mflags & P_IS_ALIVE) && !OB_TYPE_MOVE_BLOCK(ob, blocked)) return 0;
 
     if(ob->head != NULL)
 	ob=ob->head;
@@ -1694,7 +1702,7 @@ void update_position (mapstruct *m, int x, int y) {
     uint8 flags = 0, oldflags, light=0, anywhere=0;
     New_Face *top,*floor, *middle;
     object *top_obj, *floor_obj, *middle_obj;
-    MoveType	move_block=0, move_slow=0, move_on=0, move_off=0;
+    MoveType	move_block=0, move_slow=0, move_on=0, move_off=0, move_allow=0;
 
     oldflags = GET_MAP_FLAGS(m,x,y);
     if (!(oldflags & P_NEED_UPDATE)) {
@@ -1767,6 +1775,7 @@ void update_position (mapstruct *m, int x, int y) {
 	move_block |= tmp->move_block;
 	move_on |= tmp->move_on;
 	move_off |= tmp->move_off;
+	move_allow |= tmp->move_allow;
 
 	if (QUERY_FLAG(tmp,FLAG_ALIVE))
 	    flags |= P_IS_ALIVE;
@@ -1790,7 +1799,7 @@ void update_position (mapstruct *m, int x, int y) {
             (oldflags & ~P_NEED_UPDATE), flags);
     }
     SET_MAP_FLAGS(m, x, y, flags);
-    SET_MAP_MOVE_BLOCK(m, x, y, move_block);
+    SET_MAP_MOVE_BLOCK(m, x, y, move_block & ~move_allow);
     SET_MAP_MOVE_ON(m, x, y, move_on);
     SET_MAP_MOVE_OFF(m, x, y, move_off);
     SET_MAP_MOVE_SLOW(m, x, y, move_slow);

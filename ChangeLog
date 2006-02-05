@@ -17,6 +17,31 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+movement type changes.  Add move_allow field to explicitly allow certain
+movement types on spaces.  Add suppport for using string names instead
+of numeric values to specify the MOVE_ values.  Add code so when saving
+data out, use string names instead of numeric value.
+---
+common/loader.l: Remove save_double(), as it isn't used by any code.
+   Add set_move() to set movement types from strings.  
+   Add get_string_move_type, which takes integer movement type and
+   returns a string.  Update load and save code to use these functions
+   respectively.
+common/map.c: Change blocked_link() so that we only examine all the objects
+   on a space if there is something alive on the space or space is otherwise
+   blocked.  There is no reason to examine all the objects on the space if
+   the object in question can move onto it.
+   Modify update_position() to use the move_allow field to clear bits
+   in the move_block field.
+common/object.c:  Add check in CAN_MERGE for move_allow.  Add check for
+   move_allow in update_object to see if we should update the space or
+   not.
+doc/Developers/objects: Update Movement code section to note use of using
+   strings to set movement types.  Add note about move_allow.  Section
+   about Transports added, but code isn't there yet.
+include/object.h: Add move_allow to object structure.
+MSW 2006-02-04
+
 Fix attack messages containing random characters.
 --
 server/attack.c: In attack_message() always initialize variables.

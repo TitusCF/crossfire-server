@@ -239,6 +239,7 @@ typedef struct obj {
 
     MoveType   move_type;	/* Type of movement this object uses */
     MoveType   move_block;	/* What movement types this blocks */
+    MoveType   move_allow;	/* What movement types explicitly allowd */
     MoveType   move_on;		/* Move types affected moving on to this space */
     MoveType   move_off;	/* Move types affected moving off this space */
     MoveType   move_slow;	/* Movement types this slows down */

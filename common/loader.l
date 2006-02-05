@@ -45,6 +45,9 @@ static int lex_error;
 static char msgbuf[HUGE_BUF];
 static char lorebuf[HUGE_BUF];
 
+/* Maps the MOVE_* values to names */
+static char *move_name[] = {"walk", "fly_low", "fly_high", "swim", NULL};
+
 /* This table is only necessary to convert objects that existed before the
  * spell object conversion to the new object.  It was not practical
  * to go through every mapping looking for every potion, rod, wand, etc
@@ -537,6 +540,52 @@ static void add_key_value(object * op) {
     set_ob_key_value(op, key, value, TRUE);    
 }
 
+static void set_move(MoveType *mt, char *params) {
+    char *str;
+    int i, negate;
+
+    if (isdigit(*params)) {
+	*mt = atoi(params);
+    } else {
+	*mt=0;
+	for (str=strtok(params, " "); str; str=strtok(NULL, " ")) {
+	    negate=0;
+	    if (!strcasecmp(str, "all"))
+		*mt |= MOVE_ALL;
+	    else {
+		if (*str=='-') {
+		    negate = 1;
+		    str++;
+		}
+		for (i=0; move_name[i] != NULL; i++)  {
+		    if (!strcasecmp(move_name[i], str)) {
+			if (negate) {
+			    *mt &= ~(1<<i);
+			} else {
+			    *mt |= (1<<i);
+			}
+			break;
+		    }
+		}
+		if (move_name[i] == NULL) {
+		    /* fly is a special case - covers both fly_low and
+		     * fly_high - since it doesn't match to a specific
+		     * single bit, have to special case it.
+		     */
+		    if (!strcasecmp(str,"flying")) {
+			if (negate) {
+			    *mt &= ~MOVE_FLYING;
+			} else {
+			    *mt |= MOVE_FLYING;
+			}
+		    } else {
+			LOG(llevDebug, "common/loader.l: set_move - unknown move string '%s'\n", str);
+		    }
+		}
+	    } /* Else not all move types */
+	} /* for strtok */
+    } /* Else not a numeric value */
+}
 
 %}
 
@@ -771,11 +820,12 @@ A	.+
 
 %{ /* These are the new values */ 
 %}
-^move_block{S}	    op->move_block = IVAL;
-^move_type{S}	    op->move_type = IVAL;
-^move_on{S}	    op->move_on = IVAL;
-^move_off{S}	    op->move_off = IVAL;
-^move_slow{S}	    op->move_slow = IVAL;
+^move_block{S}	    set_move(&op->move_block, yval());
+^move_allow{S}	    set_move(&op->move_allow, yval());
+^move_type{S}	    set_move(&op->move_type, yval());
+^move_on{S}	    set_move(&op->move_on, yval());
+^move_off{S}	    set_move(&op->move_off, yval());
+^move_slow{S}	    set_move(&op->move_slow, yval());
 ^move_slow_penalty{S}	    op->move_slow_penalty = FVAL;
 
 
@@ -1422,14 +1472,6 @@ NULL
 };
 
 
-void save_double(char *buf,char *name,double v)
-{
-  char tbuf[200];
-
-  sprintf(tbuf,"%s %f\n",name,v);
-  strcat(buf,tbuf);
-}
-
 /*
  * Initialises the array of variable-names.  Needed before any
  * objects can be loaded.  Called by init_library().
@@ -1493,6 +1535,42 @@ static genericname plgoptions[13]=
     {"event_close_options ",20},
     {"event_timer_options ",20}
 };
+
+/* This returns a string of the integer movement type */
+static char* get_string_move_type(MoveType mt)
+{
+    static char	retbuf[MAX_BUF], retbuf_all[MAX_BUF];
+    int i, all_count=0, count;
+
+    strcpy(retbuf,"");
+    strcpy(retbuf_all," all");
+
+    /* Quick check, and probably fairly common */
+    if (mt == MOVE_ALL) return retbuf_all;
+
+    /* We basically slide the bits down.  Why look at MOVE_ALL?
+     * because we may want to return a string like 'all -swim',
+     * and if we just looked at mt, we couldn't get that.
+     */
+    for (i=MOVE_ALL, count=0; i!=0; i >>= 1, count++) {
+	if (mt & (1<<count)) {
+	    strcat(retbuf, " ");
+	    strcat(retbuf, move_name[count]);
+	} else {
+	    strcat(retbuf_all, " -");
+	    strcat(retbuf_all, move_name[count]);
+	    all_count++;
+	}
+    }
+    /* Basically, if there is a single negation, return it, eg
+     * 'all -swim'.  But more than that, just return the
+     * enumerated values.  It doesn't make sense to return
+     * 'all -walk -fly_low' - it is shorter to return 'fly_high swim'
+     */
+    if (all_count <=1) return retbuf_all;
+    else return retbuf;
+}
+    
 
 /*
  * Returns a pointer to a static string which contains all variables
@@ -1845,23 +1923,46 @@ char *get_ob_diff(object *op,object *op2) {/* I plan to optimize this heavily */
 	FAST_SAVE_LONG(fastbuf,"gen_sp_armour ",op->gen_sp_armour,14);
     }
 
+    /* I've kept the old int move type saving code commented out.
+     * In an ideal world, we'd know if we want to do a quick
+     * save (say to a temp map, where we don't care about strings),
+     * or a slower save/dm dump, where printing out strings is handy.
+     */
     if (op->move_type != op2->move_type) {
-	FAST_SAVE_LONG(fastbuf,"move_type ",op->move_type,10);
+	/*FAST_SAVE_LONG(fastbuf,"move_type ",op->move_type,10)*/
+	ADD_STRINGLINE_ENTRY(fastbuf,"move_type  ",
+			     get_string_move_type(op->move_type),
+			     10);
     }
-
     if (op->move_block != op2->move_block) {
-	FAST_SAVE_LONG(fastbuf,"move_block ",op->move_block,11);
+	/*FAST_SAVE_LONG(fastbuf,"move_block ",op->move_block,11)*/
+	ADD_STRINGLINE_ENTRY(fastbuf,"move_block  ",
+			     get_string_move_type(op->move_block),
+			     11);
     }
-
+    if (op->move_allow != op2->move_allow) {
+	/*FAST_SAVE_LONG(fastbuf,"move_allow ",op->move_allow,11);*/
+	ADD_STRINGLINE_ENTRY(fastbuf,"move_allow  ",
+			     get_string_move_type(op->move_allow),
+			     11);
+    }
     if (op->move_on != op2->move_on) {
-	FAST_SAVE_LONG(fastbuf,"move_on ",op->move_on,8);
+	/*FAST_SAVE_LONG(fastbuf,"move_on ",op->move_on,8);*/
+	ADD_STRINGLINE_ENTRY(fastbuf,"move_on  ",
+			     get_string_move_type(op->move_on),
+			     8);
     }
-
     if (op->move_off != op2->move_off) {
-	FAST_SAVE_LONG(fastbuf,"move_off ",op->move_off,9);
+	/*FAST_SAVE_LONG(fastbuf,"move_off ",op->move_off,9);*/
+	ADD_STRINGLINE_ENTRY(fastbuf,"move_off  ",
+			     get_string_move_type(op->move_off),
+			     9);
     }
     if (op->move_slow != op2->move_slow) {
-	FAST_SAVE_LONG(fastbuf,"move_slow ",op->move_slow,10);
+	/*FAST_SAVE_LONG(fastbuf,"move_slow ",op->move_slow,10);*/
+	ADD_STRINGLINE_ENTRY(fastbuf,"move_slow  ",
+			     get_string_move_type(op->move_slow),
+			     10);
     }
 
     if (op->move_slow_penalty != op2->move_slow_penalty) {

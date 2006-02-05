@@ -47,6 +47,7 @@ Sections:
 	M. Signs
   	N. POISONOUS BOOZ
 	O. Duplicators
+	P. Transports
 
 5. Flags & specifications for objects
 
@@ -1092,12 +1093,54 @@ types of movement the space blocks.  From define.h:
 #define MOVE_FLY_HIGH   0x4     /* High flying object */
 #define MOVE_FLYING	0x6	/* combo of fly_low and fly_high for easier checking */
 #define MOVE_SWIM       0x8     /* Swimming object */
-#define MOVE_ALL        0xf;    /* Mask of all movement types */
+#define MOVE_ALL        0xf    /* Mask of all movement types */
 
 MOVE_ALL may change in the future - it is mask for all movement types -
 used for 'no_pass' - it sets move_block to MOVE_ALL, other places that
 check for all movement types may also use this value.
 
+It is possible to use string names instead of the numeric bitmask in
+the move_fields below.  It is strongly encouraged that the string names be
+used for improved readability.  In addition, using string names, especially
+'all', will result in easier maintability in the future.  For example, if you
+specify 'move_block 15' right now, that is equivalant of all.  However, if new
+move types are added, using a numeric option will not block the new movement
+types, where if 'move_block all' was used, it continue to block everything.
+
+The string names are same as the MOVE_ defines, but with the MOVE_ portion
+removed, eg, 'walk', 'fly_low', 'fly_high', etc.  Multiple types can be
+listed, seperated by a space.  In addition, a - (minus) can precede the name,
+which means to negate that type.  These are all equivalant:
+
+move_block 6
+move_block fly_low fly_low
+move_block flying			(special symbolic name)
+move_block all -swim -walk
+
+Note the order when using the -(negation) is important - the string is parsed
+left to right.  This is not equivalant to the above:
+
+move_block -swim -walk all
+
+Because it will clear the swim and walk flags, and then set the flags to all.
+
+Also, using only negation is not allowed - you can not do:
+
+move_block -walk
+
+To indicate you want to remove only the walk blocking from the archetype -
+you must include a positive indicator.
+
+For all practical purposes, using negation only makes sense if using the
+keyword 'all'.  However, if more movement types are added, with symbolic names
+that include several movement types (eg, MOVE_LAND), using the negation with
+those names may make sense.
+
+Be aware that when the field is saved out, it may not be saved exactly as it
+was specified in the load file.  This is because the server converts the
+string to an int at load time, then converts it back to a string.
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 The fields in the object themselves:
 
 move_type: Bitmask of above values which determines what form of movement
@@ -1113,6 +1156,11 @@ move_block: Represents what movement types are unable to pass this space.
   to pass the space.  For example, a player has MOVE_WALK | MOVE_FLY.
   He tries to move onto a space that blocks MOVE_WALK - not a problem,
   a he just flies over.
+
+move_allow: This overrides move_block - basically, this allows movement
+  of the specific type on the space, regardless of move_block of other
+  objects on the space.  This is most useful to set on objects that
+  should temporary change the characteristics of the space.
 
 move_on/move_off: Take bitmasks - represents for what movement types
   this object is activated on.  Replaces the walk/fly_on/off values
@@ -1729,6 +1777,90 @@ Where 5 is connected to a lever.  When the lever is pulled, if a sword object
 is on top, its number is doubled.  If there is anything else on top, it is
 unaffected.  If the lever it is connected to is not pulled, it is also
 unaffected.
+
+P. Transports:
+==============
+
+Tranports are objects that help the player move.  These should not be confused
+with EXITS, which instaneously transport a player from one map to another.
+
+Instead, tranports may let the player move faster, give them move types they
+don't have, etc.  A simple example of this would a horse.  It doesn't let the
+player move anyplace he normally couldn't go, but lets him get there faster.
+Ships would be another case - the player normally can't move accross water,
+but with a ship, he can.
+
+Meaning of various object attributes (KV means the value is stored in the
+key/value list, and thus the get_ob_key_value() and set_ob_key_value()
+routines need to be used.
+
+move_type   	The move type this object has.
+move_allow	Normal meanings - useful for things like boats so people
+		can actually get on the boat.
+speed 		How fast the object moves
+weight_limit 	How much this object can carry.
+weight_speed_ratio (KV)
+		This value is taken as a percentage which is multiplied
+		against against the weight this object is carrying (the
+		player) - this is then divided by weight_limit to determine
+		the effective loading to determine effective object speed, eg:
+
+		speed = base_speed - (base_speed * pl->weight *
+			weight_speed_ratio) / (weight_limit * 100)
+
+		Thus, if weight_factor is 0, this object will move the same
+		speed no matter how loaded it is.  If it is 100, then
+		if the transport is fully loaded, it moves at a crawl.
+		In a sense, this somewhat mimics the player movement
+		speed.  Large transports, like boats, should likely be
+		largely unaffected by weight (maybe have this value at
+		10), where something like a horse would have a relatively high
+		value.
+
+base_speed(KV)	This is only needed if weight_speed_ratio is set - it is used
+		to know what the base speed to use in the calculation (since
+		speed is getting clobbered).  If this is not set and
+		weight_speed_ratio is set, the archetypes speed will be used.
+
+passenger_limit(KV)
+		How many players this transport can hold.  Thus, boats can 
+		transport a party (this being set to 6) while horses could
+		only transport a single person.  If this is not set, a default
+		of 1 will be used.
+
+face_full
+		It may be desirable to have different faces to denote what
+		the tranport looks like if someone is on it vs not (mounted
+		horse vs just a horse).  This is used to denote what it will
+		look like when loaded.  If the tranport becomes empty, it will
+		fall back to the archetype face.
+
+anim_full	Like face_full above, but for animated objects.
+
+Usage/implementation details:
+To activate a transport, the player will stop onto it and 'board' it.  When this
+is done, the transports op->contr will point to the player, and a
+pl->transport pointer will be set up.  An 'unboard' command will be needed
+to leave the transport (thoughts on a better way to deal with this?)
+I don't think apply will work because that will be needed to get stuff in/out
+of it like a container.
+
+For transports that hold multiple people, the first person to apply the
+transport becomes the captain.  It is this person that decides where the
+transport goes.
+
+Transports to some extent will appear as containers - thus you could load
+stuff onto(into) the transport without having to be able to carry it all -
+imagine wagons that carry 10,000.
+
+When aboard a transport, the player will be in the inventory of the transport.
+Thus, the players movement/speed doesn't play any role.  In this
+implementation, transports don't attack or defend, and thus don't take damage.
+If something damages items on the space (say spikes), it will damage the 
+player(s) and not the transport.  Thus, transports can't be used to avoid
+traps and the like.
+
+ Thoughts/questions?
 
 *******************************************************************************
 5. Flags & specifications: (usage: flag value)
