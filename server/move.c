@@ -125,9 +125,9 @@ int move_ob (object *op, int dir, object *originator)
      * on edge of map, +=x, +=y doesn't make correct coordinates.
      */
     for(tmp = op; tmp != NULL; tmp = tmp->more) {
-	tmp->x = newx + tmp->arch->clone.x;
-	tmp->y = newy + tmp->arch->clone.y;
-	tmp->map = m;
+	tmp->x += freearr_x[dir];
+	tmp->y += freearr_y[dir];
+	tmp->map =  get_map_from_coord(tmp->map, &tmp->x, &tmp->y);
     }
 
     /* insert_ob_in_map will deal with any tiling issues */
@@ -138,6 +138,21 @@ int move_ob (object *op, int dir, object *originator)
 	esrv_map_scroll(&op->contr->socket, freearr_x[dir],freearr_y[dir]);
 	op->contr->socket.update_look=1;
 	op->contr->socket.look_position=0;
+    }
+    else if (op->type == TRANSPORT) {
+	object *pl;
+
+	for (pl=op->inv; pl; pl=pl->below) {
+	    if (pl->type == PLAYER) {
+		pl->contr->do_los=1;
+		pl->map = op->map;
+		pl->x = op->x;
+		pl->y = op->y;
+		esrv_map_scroll(&pl->contr->socket, freearr_x[dir],freearr_y[dir]);
+		pl->contr->socket.update_look=1;
+		pl->contr->socket.look_position=0;
+	    }
+	}
     }
 
     return 1;	/* this shouldn't be reached */

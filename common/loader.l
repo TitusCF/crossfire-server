@@ -46,7 +46,8 @@ static char msgbuf[HUGE_BUF];
 static char lorebuf[HUGE_BUF];
 
 /* Maps the MOVE_* values to names */
-static char *move_name[] = {"walk", "fly_low", "fly_high", "swim", NULL};
+static char *move_name[] = {"walk", "fly_low", "fly_high", "swim", "boat",
+    NULL};
 
 /* This table is only necessary to convert objects that existed before the
  * spell object conversion to the new object.  It was not practical

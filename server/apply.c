@@ -41,6 +41,156 @@
 /* need math lib for double-precision and pow() in dragon_eat_flesh() */
 #include <math.h>
 
+/* Can transport hold object op?
+ * This is a pretty trivial function,
+ * but in the future, possible transport may have more restrictions
+ * or weight reduction like containers
+ */
+int transport_can_hold(object *transport, object *op, int nrof)
+{
+    if ((op->weight *nrof + transport->carrying) > transport->weight_limit)
+	return 0;
+    else
+	return 1;
+}
+
+
+/*
+ * Player is trying to use a transport.  This returns same values as
+ * manual_apply() does.  This function basically checks to see if
+ * the player can use the transport, and if so, sets up the appropriate
+ * pointers.
+ */
+int apply_transport(object *pl, object *transport, int aflag) {
+
+    /* Only players can use transports right now */
+    if (pl->type != PLAYER) return 0;
+
+    /* If player is currently on a transport but not this transport, they need
+     * to exit first.  Perhaps transport to transport transfers should be
+     * allowed.
+     */
+    if (pl->contr->transport && pl->contr->transport != transport) {
+	new_draw_info_format(NDI_UNIQUE, 0, pl,
+		"You must exit %s before you can board %s.",
+			     query_name(pl->contr->transport), 
+			     query_name(transport));
+	return 1;
+    }
+
+    /* player is currently on a transport.  This must mean he
+     * wants to exit.
+     */
+    if (pl->contr->transport) {
+	object *old_transport = pl->contr->transport, *inv;
+
+	/* Should we print a message if the player only wants to
+	 * apply?
+	 */
+	if (aflag & AP_APPLY) return 1;
+	new_draw_info_format(NDI_UNIQUE, 0, pl,
+		"You disembark from %s.",
+			     query_name(old_transport));
+	remove_ob(pl);
+	pl->map = old_transport->map;
+	pl->x = old_transport->x;
+	pl->y = old_transport->y;
+	if (pl->contr->transport == old_transport->contr)
+	    old_transport->contr = NULL;
+
+	pl->contr->transport = NULL;
+	insert_ob_in_map(pl, pl->map, pl, 0);
+	sum_weight(old_transport);
+
+	/* Possible for more than one player to be using a transport.
+	 * if that is the case, we don't want to reset the face, as the
+	 * transport is still occupied.
+	 */
+	for (inv=old_transport->inv; inv; inv=inv->below)
+	    if (inv->type == PLAYER) break;
+	if (!inv) {
+	    old_transport->face = old_transport->arch->clone.face;
+	    old_transport->animation_id = old_transport->arch->clone.animation_id;
+	}
+	return 1;
+    } 
+    else {
+	/* player is trying to board a transport */
+	int pc=0, p_limit;
+	object *inv;
+	const char *kv;
+
+	if (aflag & AP_UNAPPLY) return 1;
+
+	/* Can this transport hold the weight of this player? */
+	if (!transport_can_hold(transport, pl, 1)) {
+	    new_draw_info_format(NDI_UNIQUE, 0, pl,
+		"The %s is unable to hold your weight!",
+			     query_name(transport));
+	    return 1;
+	}
+
+	/* Does this transport have space for more players? */
+	for (inv=transport->inv; inv; inv=inv->below) {
+	    if (inv->type == PLAYER) pc++;
+	}
+	kv = get_ob_key_value(transport, "passenger_limit");
+	if (!kv) p_limit=1;
+	else p_limit = atoi(kv);
+	if (pc >= p_limit) {
+	    new_draw_info_format(NDI_UNIQUE, 0, pl,
+		"The %s does not have space for any more people",
+			     query_name(transport));
+	    return 1;
+	}
+
+	/* Everything checks out OK - player can get on the transport */
+	pl->contr->transport = transport;
+	if (!transport->contr) transport->contr = pl->contr;
+	remove_ob(pl);
+	insert_ob_in_ob(pl, transport);
+	sum_weight(transport);
+	pl->map = transport->map;
+	pl->x = transport->x;
+	pl->y = transport->y;
+
+	/* Might need to update face, animation info */
+	if (!pc) {
+	    const char *str;
+
+	    str = get_ob_key_value(transport, "face_full");
+	    if (str)
+		transport->face = &new_faces[FindFace(str, 
+					      transport->face->number)];
+	    str = get_ob_key_value(transport, "anim_full");
+	    if (str)
+		transport->animation_id = find_animation(str);
+	}
+
+	/* Does speed of this object change based on weight? */
+	kv = get_ob_key_value(transport, "weight_speed_ratio");
+	if (kv) {
+	    int wsr = atoi(kv);
+	    float base_speed;
+
+	    kv = get_ob_key_value(transport, "base_speed");
+	    if (kv) base_speed = atof(kv);
+	    else base_speed = transport->arch->clone.speed;
+
+	    transport->speed = base_speed - (base_speed * transport->carrying * 
+			     wsr) / (transport->weight_limit * 100);
+
+	    /* Put some limits on min/max speeds */
+	    if (transport->speed < 0.10) transport->speed = 0.10;
+	    if (transport->speed > 1.0) transport->speed = 1.0;
+	}
+    } /* else if player is boarding the transport */
+
+    return 1;
+}
+
+	
+
 /**
  * Check if op should abort moving victim because of it's race or slaying.
  * Returns 1 if it should abort, returns 0 if it should continue.
@@ -2386,6 +2536,9 @@ int manual_apply (object *op, object *tmp, int aflag)
 
     switch (tmp->type) {
 
+	case TRANSPORT:
+	    return apply_transport(op, tmp, aflag);
+
 	case CF_HANDLE:
 	    new_draw_info(NDI_UNIQUE, 0,op,"You turn the handle.");
 	    play_sound_map(op->map, op->x, op->y, SOUND_TURN_HANDLE);
@@ -2636,6 +2789,11 @@ void player_apply_below (object *pl)
 {
     object *tmp, *next;
     int floors;
+
+    if (pl->contr->transport && pl->contr->transport->type == TRANSPORT) {
+	apply_transport(pl, pl->contr->transport, 0);
+	return;
+    }
 
     /* If using a container, set the starting item to be the top
      * item in the container.  Otherwise, use the map.

@@ -139,7 +139,7 @@ typedef struct pl {
     /* Try to put all the bitfields together - saves some small amount of memory */
     uint32	braced:1;	    /* Will not move if braced, only attack */
     uint32	tmp_invis:1;	    /* Will invis go away when we attack ? */
-    const char	*invis_race;/* What race invisible to? */
+    const char	*invis_race;	    /* What race invisible to? */
     uint32	do_los:1;	    /* If true, need to call update_los() in draw(), and clear */
     uint32	fire_on:1;	    /* Player should fire object, not move */
     uint32	run_on:1;	    /* Player should keep moving in dir until run is off */
@@ -206,6 +206,7 @@ typedef struct pl {
     uint16	outputs_count;	    /* Print if this count is exceeded */
     object	*mark;		    /* marked object */
     uint32	mark_count;	    /* count of mark object */
+    object	*transport;	    /* transport the player is in */
     /* Special DM fields */
     tag_t*  stack_items;    /* Item stack for patch/dump/... commands */
     int     stack_position; /* Current stack position, 0 for no item */

@@ -1738,18 +1738,24 @@ void draw_client_map(object *pl)
     New_Face	*floor2;
     int d, mflags;
     struct Map	newmap;
-    mapstruct	*m;
+    mapstruct	*m, *pm;
 
     if (pl->type != PLAYER) {
 	LOG(llevError,"draw_client_map called with non player/non eric-server\n");
 	return;
     }
 
-    /* IF player is just joining the game, he isn't here yet, so the map
+    if (pl->contr->transport) {
+	pm = pl->contr->transport->map;
+    }
+    else
+	pm = pl->map;
+
+    /* If player is just joining the game, he isn't here yet, so the map
      * can get swapped out.  If so, don't try to send them a map.  All will
      * be OK once they really log in.
      */
-    if (pl->map==NULL || pl->map->in_memory!=MAP_IN_MEMORY) return;
+    if (pm==NULL || pm->in_memory!=MAP_IN_MEMORY) return;
 
     memset(&newmap, 0, sizeof(struct Map));
 
@@ -1757,7 +1763,7 @@ void draw_client_map(object *pl)
         for(i = (pl->x - pl->contr->socket.mapx/2) ; i < (pl->x + (pl->contr->socket.mapx+1)/2); i++) {
 	    ax=i;
 	    ay=j;
-	    m = pl->map;
+	    m = pm;
 	    mflags = get_map_flags(m, &m, ax, ay, &ax, &ay);
 	    if (mflags & P_OUT_OF_MAP)
 		continue;
@@ -1809,7 +1815,7 @@ void draw_client_map(object *pl)
 	     */
 	    nx = i;
 	    ny = j;
-	    m = get_map_from_coord(pl->map, &nx, &ny);
+	    m = get_map_from_coord(pm, &nx, &ny);
 	    if (m && d<4) {
 		face = GET_MAP_FACE(m, nx, ny,0);
 		floor2 = GET_MAP_FACE(m, nx, ny,1);

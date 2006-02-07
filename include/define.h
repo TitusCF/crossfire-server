@@ -120,7 +120,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 /* type 0 will be undefined and shows a non valid type information */
 
 #define PLAYER		            1
-/*#define BULLET		    2 */ 
+#define TRANSPORT		    2	/* see doc/Developers/objects */
 #define ROD		            3
 #define TREASURE	            4
 #define POTION		            5
@@ -629,7 +629,8 @@ extern typedata ItemTypes[];
 #define MOVE_FLY_HIGH	0x4	/* High flying object */
 #define	MOVE_FLYING	0x6	/* Combo of fly_low and fly_high */
 #define MOVE_SWIM	0x8	/* Swimming object */
-#define MOVE_ALL	0xf	/* Mask of all movement types */
+#define MOVE_BOAT	0x10	/* Boats/sailing */
+#define MOVE_ALL	0x1f	/* Mask of all movement types */
 
 /* the normal assumption is that objects are walking/flying.
  * So often we don't want to block movement, but still don't want

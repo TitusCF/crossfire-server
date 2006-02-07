@@ -133,6 +133,70 @@ unsigned int query_flags (object *op)
     return flags;
 }
 
+/* Used in the send_look to put object head into SockList
+ * sl for socket ns.  Need socket to know if we need to send
+ * animation of face to the client.
+ */
+static void add_object_to_socklist(NewSocket *ns, SockList *sl, object *head)
+{
+    int flags, len, anim_speed;
+    char item_n[MAX_BUF];
+    const char *item_p;
+
+    flags = query_flags (head);
+    if (QUERY_FLAG(head, FLAG_NO_PICK))
+	flags |=  F_NOPICK;
+
+    if (!(ns->faces_sent[head->face->number] & NS_FACESENT_FACE))
+	esrv_send_face(ns, head->face->number,0);
+
+    if (QUERY_FLAG(head,FLAG_ANIMATE) && !ns->anims_sent[head->animation_id])
+	esrv_send_animation(ns, head->animation_id);
+
+    SockList_AddInt(sl, head->count);
+    SockList_AddInt(sl, flags);
+    SockList_AddInt(sl, QUERY_FLAG(head, FLAG_NO_PICK) ? -1 : WEIGHT(head));
+    SockList_AddInt(sl, head->face->number);
+
+    if (!head->custom_name) {
+	strncpy(item_n,query_base_name(head, 0),127);
+	item_n[127]=0;
+	len=strlen(item_n);
+	item_p=query_base_name(head, 1);
+    } else {
+	strncpy(item_n,head->custom_name,127);
+	item_n[127]=0;
+	len=strlen(item_n);
+	item_p=head->custom_name;
+    }
+    strncpy(item_n+len+1, item_p, 127);
+    item_n[254]=0;
+    len += strlen(item_n+1+len) + 1;
+    SockList_AddChar(sl, (char ) len);
+    memcpy(sl->buf+sl->len, item_n, len);
+    sl->len += len;
+
+    SockList_AddShort(sl,head->animation_id);
+    anim_speed=0;
+    if (QUERY_FLAG(head,FLAG_ANIMATE)) {
+	if (head->anim_speed) anim_speed=head->anim_speed;
+	else {
+	    if (FABS(head->speed)<0.001) anim_speed=255;
+	    else if (FABS(head->speed)>=1.0) anim_speed=1;
+	    else anim_speed = (int) (1.0/FABS(head->speed));
+	}
+	if (anim_speed>255) anim_speed=255;
+    }
+    SockList_AddChar(sl, (char) anim_speed);
+    SockList_AddInt(sl, head->nrof);
+
+    if (ns->itemcmd == 2)
+	SockList_AddShort(sl, head->client_type);
+
+    SET_FLAG(head, FLAG_CLIENT_SENT);
+}
+
+
 /**
  * Send the look window.  Don't need to do animations here 
  * This sends all the faces to the client, not just updates.  This is
@@ -142,10 +206,9 @@ unsigned int query_flags (object *op)
 void esrv_draw_look(object *pl)
 {
     object *tmp, *last;
-    int flags, got_one=0,anim_speed, start_look=0, end_look=0, len;
+    int got_one=0,start_look=0, end_look=0;
     SockList sl;
-    char buf[MAX_BUF], item_n[MAX_BUF];
-    const char *item_p;
+    char buf[MAX_BUF];
 
     if (!pl->contr->socket.update_look) {
 	LOG(llevDebug,"esrv_draw_look called when update_look was not set\n");
@@ -158,8 +221,10 @@ void esrv_draw_look(object *pl)
        pl->map->in_memory != MAP_IN_MEMORY || out_of_map(pl->map,pl->x,pl->y))
 	    return;
 
-    for (tmp=get_map_ob(pl->map,pl->x,pl->y); tmp && tmp->above;tmp=tmp->above)
-	; 
+    if (pl->contr->transport)
+	for (tmp=pl->contr->transport->inv; tmp && tmp->above;tmp=tmp->above) ;
+    else
+	for (tmp=get_map_ob(pl->map,pl->x,pl->y); tmp && tmp->above;tmp=tmp->above) ;
 
     sl.buf=malloc(MAXSOCKBUF);
 
@@ -184,6 +249,11 @@ void esrv_draw_look(object *pl)
 	SockList_AddInt(&sl, 0);
 	if (pl->contr->socket.itemcmd == 2)
 	    SockList_AddShort(&sl, 0);
+    }
+
+    if (pl->contr->transport) {
+	add_object_to_socklist(&pl->contr->socket, &sl, pl->contr->transport);
+	got_one++;
     }
 
     for (last=NULL; tmp!=last; tmp=tmp->below) {
@@ -217,57 +287,7 @@ void esrv_draw_look(object *pl)
 	    if (tmp->head) head = tmp->head;
 	    else head = tmp;
 
-	    flags = query_flags (head);
-	    if (QUERY_FLAG(head, FLAG_NO_PICK))
-		flags |=  F_NOPICK;
-	    if (!(pl->contr->socket.faces_sent[head->face->number] & NS_FACESENT_FACE))
-		esrv_send_face(&pl->contr->socket, head->face->number,0);
-
-	    if (QUERY_FLAG(head,FLAG_ANIMATE) && 
-			   !pl->contr->socket.anims_sent[head->animation_id])
-		esrv_send_animation(&pl->contr->socket, head->animation_id);
-
-	    SockList_AddInt(&sl, head->count);
-	    SockList_AddInt(&sl, flags);
-	    SockList_AddInt(&sl, QUERY_FLAG(head, FLAG_NO_PICK) ? -1 : WEIGHT(head));
-	    SockList_AddInt(&sl, head->face->number);
-
-	    if (!head->custom_name) {
-		strncpy(item_n,query_base_name(head, 0),127);
-		item_n[127]=0;
-		len=strlen(item_n);
-		item_p=query_base_name(head, 1);
-	    } else {
-		strncpy(item_n,head->custom_name,127);
-		item_n[127]=0;
-		len=strlen(item_n);
-		item_p=head->custom_name;
-	    }
-	    strncpy(item_n+len+1, item_p, 127);
-	    item_n[254]=0;
-	    len += strlen(item_n+1+len) + 1;
-	    SockList_AddChar(&sl, (char ) len);
-	    memcpy(sl.buf+sl.len, item_n, len);
-	    sl.len += len;
-
-	    SockList_AddShort(&sl,head->animation_id);
-	    anim_speed=0;
-	    if (QUERY_FLAG(head,FLAG_ANIMATE)) {
-		if (head->anim_speed) anim_speed=head->anim_speed;
-		else {
-		    if (FABS(head->speed)<0.001) anim_speed=255;
-		    else if (FABS(head->speed)>=1.0) anim_speed=1;
-		    else anim_speed = (int) (1.0/FABS(head->speed));
-		}
-		if (anim_speed>255) anim_speed=255;
-	    }
-	    SockList_AddChar(&sl, (char) anim_speed);
-	    SockList_AddInt(&sl, head->nrof);
-
-	    if (pl->contr->socket.itemcmd == 2)
-		SockList_AddShort(&sl, head->client_type);
-
-	    SET_FLAG(head, FLAG_CLIENT_SENT);
+	    add_object_to_socklist(&pl->contr->socket, &sl, head);
 	    got_one++;
 
 	    if (sl.len > (MAXSOCKBUF-MAXITEMLEN)) {
@@ -291,10 +311,8 @@ void esrv_draw_look(object *pl)
 void esrv_send_inventory(object *pl, object *op)
 {
     object *tmp;
-    int flags, got_one=0, anim_speed, len;
+    int got_one=0;
     SockList sl;
-    char item_n[MAX_BUF];
-    const char *item_p;
     
     sl.buf=malloc(MAXSOCKBUF);
 
@@ -314,53 +332,8 @@ void esrv_send_inventory(object *pl, object *op)
 	else head = tmp;
 
 	if (LOOK_OBJ(head)) {
-	    flags = query_flags (head);
-	    if (QUERY_FLAG(head, FLAG_NO_PICK))
-		flags |=  F_NOPICK;
-	    if (!(pl->contr->socket.faces_sent[head->face->number] & NS_FACESENT_FACE))
-		esrv_send_face(&pl->contr->socket, head->face->number,0);
-	    if (QUERY_FLAG(head,FLAG_ANIMATE) && 
-			   !pl->contr->socket.anims_sent[head->animation_id])
-		esrv_send_animation(&pl->contr->socket, head->animation_id);
-	    SockList_AddInt(&sl, head->count);
-	    SockList_AddInt(&sl, flags);
-	    SockList_AddInt(&sl, QUERY_FLAG(head, FLAG_NO_PICK) ? -1 : WEIGHT(head));
-	    SockList_AddInt(&sl, head->face->number);
+	    add_object_to_socklist(&pl->contr->socket, &sl, head);
         
-	    if (!head->custom_name) {
-		strncpy(item_n,query_base_name(head, 0),127);
-		item_n[127]=0;
-		len=strlen(item_n);
-		item_p=query_base_name(head, 1);
-	    } else {
-		strncpy(item_n,head->custom_name,127);
-		item_n[127]=0;
-		len=strlen(item_n);
-		item_p=head->custom_name;
-	    }
-	    strncpy(item_n+len+1, item_p, 127);
-	    item_n[254]=0;
-	    len += strlen(item_n+1+len) + 1;
-	    SockList_AddChar(&sl, (char) len);
-	    memcpy(sl.buf+sl.len, item_n, len);
-	    sl.len += len;
-
-	    SockList_AddShort(&sl,head->animation_id);
-	    anim_speed=0;
-	    if (QUERY_FLAG(head,FLAG_ANIMATE)) {
-		if (head->anim_speed) anim_speed=head->anim_speed;
-		else {
-		    if (FABS(head->speed)<0.001) anim_speed=255;
-		    else if (FABS(head->speed)>=1.0) anim_speed=1;
-		    else anim_speed = (int) (1.0/FABS(head->speed));
-		}
-		if (anim_speed>255) anim_speed=255;
-	    }
-	    SockList_AddChar(&sl, (char)anim_speed);
-	    SockList_AddInt(&sl, head->nrof);
-	    if (pl->contr->socket.itemcmd == 2)
-		SockList_AddShort(&sl, head->client_type);
-	    SET_FLAG(head, FLAG_CLIENT_SENT);
 	    got_one++;
 
 	    /* IT is possible for players to accumulate a huge amount of
@@ -428,7 +401,13 @@ void esrv_update_item(int flags, object *pl, object *op)
 
     if (flags & UPD_WEIGHT) {
 	sint32 weight = WEIGHT(op);
-	SockList_AddInt(&sl, weight);
+
+	/* TRANSPORTS are odd - they sort of look like containers, yet can't be
+	 * picked up.  So we don't to send the weight, as it is odd that you see
+	 * weight sometimes and not other (the draw_look won't send it
+	 * for example.
+	 */
+	SockList_AddInt(&sl,  QUERY_FLAG(op, FLAG_NO_PICK) ? -1 : weight);
 	if (pl == op) {
 	    op->contr->last_weight = weight;
 	}
@@ -492,10 +471,7 @@ void esrv_update_item(int flags, object *pl, object *op)
  */
 void esrv_send_item(object *pl, object*op)
 {
-    int anim_speed, len;
     SockList sl;
-    char item_n[MAX_BUF];
-    const char *item_p;
     
     /* If this is not the player object, do some more checks */
     if (op!=pl) {
@@ -520,50 +496,7 @@ void esrv_send_item(object *pl, object*op)
 
     SockList_AddInt(&sl, op->env? op->env->count:0);
 
-    if (!(pl->contr->socket.faces_sent[op->face->number] & NS_FACESENT_FACE))
-	esrv_send_face(&pl->contr->socket, op->face->number,0);
-    if (op->env && QUERY_FLAG(op,FLAG_ANIMATE) &&
-	   !pl->contr->socket.anims_sent[op->animation_id])
-	esrv_send_animation(&pl->contr->socket, op->animation_id);
-
-    SockList_AddInt(&sl, op->count);
-    SockList_AddInt(&sl, query_flags(op));
-    SockList_AddInt(&sl, WEIGHT(op));
-    SockList_AddInt(&sl, op->face->number);
-    
-    if(!op->custom_name) {
-	strncpy(item_n,query_base_name(op, 0),127);
-	item_n[127]=0;
-	len=strlen(item_n);
-	item_p=query_base_name(op, 1);
-    } else {
-	strncpy(item_n,op->custom_name,127);
-	item_n[127]=0;
-	len=strlen(item_n);
-	item_p=op->custom_name;
-    }
-    strncpy(item_n+len+1, item_p, 127);
-    item_n[254]=0;
-    len += strlen(item_n+1+len) + 1;
-    SockList_AddChar(&sl, (char)len);
-    memcpy(sl.buf+sl.len, item_n, len);
-    sl.len += len;
-
-    SockList_AddShort(&sl,op->animation_id);
-    anim_speed=0;
-    if (QUERY_FLAG(op,FLAG_ANIMATE)) {
-	if (op->anim_speed) anim_speed=op->anim_speed;
-        else {
-	    if (FABS(op->speed)<0.001) anim_speed=255;
-            else if (FABS(op->speed)>=1.0) anim_speed=1;
-            else anim_speed = (int) (1.0/FABS(op->speed));
-	}
-        if (anim_speed>255) anim_speed=255;
-    }
-    SockList_AddChar(&sl, (char)anim_speed);
-    SockList_AddInt(&sl, op->nrof);
-    if (pl->contr->socket.itemcmd == 2)
-	SockList_AddShort(&sl, op->client_type);
+    add_object_to_socklist(&pl->contr->socket, &sl, op);
 
     Send_With_Handling(&pl->contr->socket, &sl);
     SET_FLAG(op, FLAG_CLIENT_SENT);
@@ -625,6 +558,12 @@ object *esrv_get_ob_from_count(object *pl, tag_t count)
 	    for(tmp = op->inv; tmp; tmp = tmp->below)
 		if (tmp->count == count)
 		    return tmp;
+
+    if (pl->contr->transport) {
+	for(tmp = pl->contr->transport->inv; tmp; tmp = tmp->below)
+	    if (tmp->count == count)
+		return tmp;
+    }
     return NULL;
 }
 
@@ -795,12 +734,15 @@ void esrv_move_object (object *pl, tag_t to, tag_t tag, long nrof)
 
     op = esrv_get_ob_from_count(pl, tag);
     if (!op) {
-	LOG(llevDebug, "Player '%s' tried to move the unknown object (%ld)\n",
+	LOG(llevDebug, "Player '%s' tried to move an unknown object (%ld)\n",
 	    pl->name, tag);
 	return;
     }
 
-    if (!to) {	/* drop it to the ground */
+    /* If on a transport, you don't drop to the ground - you drop to the
+     * transport.
+     */
+    if (!to && !pl->contr->transport) {	/* drop it to the ground */
 /*	LOG(llevDebug, "Drop it on the ground.\n");*/
 
 	if (op->map && !op->env) {
@@ -831,20 +773,27 @@ void esrv_move_object (object *pl, tag_t to, tag_t tag, long nrof)
 	return ;
     }
     /* If not dropped or picked up, we are putting it into a sack */
-    env = esrv_get_ob_from_count(pl, to);
-    if (!env) {
-      LOG(llevDebug, 
-	  "Player '%s' tried to move object to the unknown location (%d)\n",
-	  pl->name, to);
-      return;
-    }
-    /* put_object_in_sack presumes that necessary sanity checking
-     * has already been done (eg, it can be picked up and fits in
-     * in a sack, so check for those things.  We should also check
-     * an make sure env is in fact a container for that matter.
-     */
-    if (env->type == CONTAINER && can_pick(pl, op) && sack_can_hold(pl, env, op, nrof)) {
-	put_object_in_sack (pl, env, op, nrof);
+    if (pl->contr->transport) {
+	if (can_pick(pl, op) && transport_can_hold(pl->contr->transport, op, nrof)) {
+	    put_object_in_sack (pl, pl->contr->transport, op, nrof);
+	}
+    } else {
+	env = esrv_get_ob_from_count(pl, to);
+	if (!env) {
+	    LOG(llevDebug, 
+		"Player '%s' tried to move object to the unknown location (%d)\n",
+		pl->name, to);
+	    return;
+	}
+	/* put_object_in_sack presumes that necessary sanity checking
+	 * has already been done (eg, it can be picked up and fits in
+	 * in a sack, so check for those things.  We should also check
+	 * an make sure env is in fact a container for that matter.
+	 */
+	if (env->type == CONTAINER
+	    && can_pick(pl, op) && sack_can_hold(pl, env, op, nrof)) {
+	    put_object_in_sack (pl, env, op, nrof);
+	}
     }
 }
 

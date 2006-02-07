@@ -17,6 +17,48 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Code that adds transports.  Transports are described more in detail in
+docs/Developers/objects.
+---
+loader.l: Add new move type ('boat').  Update move_name field to be aware of
+  this type.
+common/object.c: Unrelated to transport, but more apparant with transports -
+  fix bug with insert_ob_in_map() and multipart objects - we now only
+  try to fix up map and coordinates if the provided coordinates are
+  out of the map.  Before, function would always use the passed
+  map for multipart objects, which is incorrect if we have already
+  set valid coordinates.
+doc/Developers/objects: Update notes for TRANSPORTS.  Update move
+  information to include MOVE_BOAT.
+include/define.h: Add type TRANSPORT.  Add MOVE_BOAT.
+include/player.h: Add transport field to player structure.
+include/sproto.h: rebuilt.
+server/apply.c: Add code to handle applying of transports.  Update
+  apply_below to apply transport if player is on one.
+server/attack.c: Update hit_map() to look for transports, and hit any
+  players with the damage.
+server/c_object.c: Update put_object_in_sack() to also handle TRANSPORTS
+  so that code can be re-used.
+server/move.c:  Fix handling of multipart objects in move_object() -
+  old code didn't work right with multipart objects moving along seams
+  of tiled maps.  Add code to move_ob() to update player map position
+  for all players in a moving transport.
+server/player.c: Update move_player_attack() too check of player is
+  in tranport, and use that for map and location information.  Update
+  move_player() to handle speed related issues with transports.
+server/time.c: Add code to credit time back to TRANSPORT objects since
+  we remove time in move_player() for TRANSPORTS.
+socket/item.c: Add add_object_to_socklist() so that same code isn't
+  reproduced in 3 different places in the file.  Update draw_look()
+  to handle transports - send transport object itself, then objects
+  in transport.  Update esrv_send_inventory() and esrv_send_item()
+  to use add_object_to_socklist().  Update esrv_get_ob_from_count() to look
+  for objects in transport if player is in transport.
+socket/loop.c: Remove checking of pl->map status, since draw_client_map()
+  does that, and we need to handle if the player is in a transport.
+socket/request.c: Handle map drawing if player is in a transport.
+MSW 2006-02-06
+
 movement type changes.  Add move_allow field to explicitly allow certain
 movement types on spaces.  Add suppport for using string names instead
 of numeric values to specify the MOVE_ values.  Add code so when saving

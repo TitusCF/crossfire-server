@@ -1247,6 +1247,15 @@ int process_object(object *op) {
     /* Lauwenmark: Handle for plugin time event */
     execute_event(op, EVENT_TIME,NULL,NULL,NULL,SCRIPT_FIX_NOTHING);
     switch(op->type) {
+	case TRANSPORT:
+	    /* Transports are directed by players - thus, there
+	     * speed is reduced when the player moves them about.
+	     * So give them back there speed here, since process_objects()
+	     * has decremented it.
+	     */
+	    if (op->speed_left < 0.0) op->speed_left += 1.0;
+	    return 1;
+
 	case SPELL_EFFECT:
 	    move_spell_effect(op);
 	    return 1;

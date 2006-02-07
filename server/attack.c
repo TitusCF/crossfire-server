@@ -339,6 +339,16 @@ int hit_map(object *op, int dir, int type, int full_hit) {
 	if (tmp->map != map || tmp->x != x || tmp->y != y)
 	    continue;
 
+	/* Need to hit everyone in the transport with this spell */
+	if (tmp->type == TRANSPORT) {
+	    object *pl;
+
+	    for (pl=tmp->inv; pl; pl=pl->below) {
+		if (pl->type == PLAYER)
+		    hit_player(pl,op->stats.dam,op,type,full_hit);
+	    }
+	}
+
 	if (QUERY_FLAG (tmp, FLAG_ALIVE)) {
 	    hit_player(tmp,op->stats.dam,op,type,full_hit);
 	    retflag |=1;

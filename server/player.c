@@ -1985,12 +1985,17 @@ static int player_attack_door(object *op, object *door)
 
 void move_player_attack(object *op, int dir)
 {
-    object *tmp, *mon;
-    sint16 nx=freearr_x[dir]+op->x,ny=freearr_y[dir]+op->y;
+    object *tmp, *mon, *tpl;
+    sint16 nx, ny;
     int on_battleground;
     mapstruct *m;
 
-    on_battleground = op_on_battleground(op, NULL, NULL);
+    if (op->contr->transport) tpl = op->contr->transport;
+    else tpl = op;
+    nx=freearr_x[dir]+tpl->x;
+    ny=freearr_y[dir]+tpl->y;
+
+    on_battleground = op_on_battleground(tpl, NULL, NULL);
 
     /* If braced, or can't move to the square, and it is not out of the
      * map, attack it.  Note order of if statement is important - don't
@@ -2001,12 +2006,12 @@ void move_player_attack(object *op, int dir)
      * quite a bit of processing.  However, it probably is less than what
      * move_ob uses.
      */
-    if ((op->contr->braced || !move_ob(op,dir,op)) && !out_of_map(op->map,nx,ny)) {
-	if (OUT_OF_REAL_MAP(op->map, nx, ny)) {
-	    m = get_map_from_coord(op->map, &nx, &ny);
+    if ((op->contr->braced || !move_ob(tpl,dir,tpl)) && !out_of_map(tpl->map,nx,ny)) {
+	if (OUT_OF_REAL_MAP(tpl->map, nx, ny)) {
+	    m = get_map_from_coord(tpl->map, &nx, &ny);
 	    if (!m) return; /* Don't think this should happen */
 	}
-	else m =op->map;
+	else m =tpl->map;
     
 	if ((tmp=get_map_ob(m,nx,ny))==NULL) {
 	    /*	LOG(llevError,"player_move_attack: get_map_ob returns NULL, but player can not more there.\n");*/
@@ -2059,7 +2064,7 @@ void move_player_attack(object *op, int dir)
 	{
 	    /* If we're braced, we don't want to switch places with it */
 	    if (op->contr->braced) return;
-	    play_sound_map(op->map, op->x, op->y, SOUND_PUSH_PLAYER);
+	    play_sound_map(tpl->map, tpl->x, tpl->y, SOUND_PUSH_PLAYER);
 	    (void) push_ob(mon,dir,op);
 	    if(op->contr->tmp_invis||op->hide) make_visible(op);
 	    return;
@@ -2074,7 +2079,7 @@ void move_player_attack(object *op, int dir)
 	    (mon->type==PLAYER || QUERY_FLAG(mon,FLAG_UNAGGRESSIVE) || QUERY_FLAG(mon, FLAG_FRIENDLY)) && 
 	    (op->contr->peaceful && !on_battleground)) {
 	    if (!op->contr->braced) {
-		play_sound_map(op->map, op->x, op->y, SOUND_PUSH_PLAYER);
+		play_sound_map(tpl->map, tpl->x, tpl->y, SOUND_PUSH_PLAYER);
 		(void) push_ob(mon,dir,op);
 	    } else {
 		new_draw_info(0, 0,op,"You withhold your attack");
@@ -2133,8 +2138,9 @@ void move_player_attack(object *op, int dir)
 
 int move_player(object *op,int dir) {
     int pick;
+    object *transport = op->contr->transport;
 
-    if(op->map == NULL || op->map->in_memory != MAP_IN_MEMORY)
+    if(!transport && (op->map == NULL || op->map->in_memory != MAP_IN_MEMORY))
 	return 0;
 
     /* Sanity check: make sure dir is valid */
@@ -2149,7 +2155,30 @@ int move_player(object *op,int dir) {
 
     op->facing = dir;
 
-    if(op->hide) do_hidden_move(op);
+    if(!transport && op->hide) do_hidden_move(op);
+
+    if (transport) {
+	/* transport->contr is set up for the person in charge of the boat.
+	 * if that isn't this person, he can't steer it, etc
+	 */
+	if (transport->contr != op->contr) return 0;
+
+	/* Transport can't move.  But update dir so it at least
+	 * will point in the same direction if player is running.
+	 */
+	if (transport->speed_left < 0.0) {
+	    transport->direction = dir;
+	    op->direction = dir;
+	    return 0;
+	}
+	/* Remove transport speed.  Give player just a little speed -
+	 * enough so that they will get an action again quickly.
+	 * 
+	 */
+	transport->speed_left -= 1.0;
+	if (op->speed_left < 0.0) op->speed_left = -0.01;
+	    
+    }
 
     if(op->contr->fire_on) {
 	fire(op,dir);
@@ -2171,7 +2200,7 @@ int move_player(object *op,int dir) {
      * get reset to zero.  This allows for full animation capabilities
      * for players.
      */
-    animate_object(op, op->facing);
+    if (!transport) animate_object(op, op->facing);
     return 0;
 }
 

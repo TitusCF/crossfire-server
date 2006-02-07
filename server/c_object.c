@@ -812,6 +812,8 @@ int command_take (object *op, char *params)
  *  This function was part of drop, now is own function. 
  *  Player 'op' tries to put object 'tmp' into sack 'sack', 
  *  if nrof is non zero, then nrof objects is tried to put into sack. 
+ * Note that the 'sack' in question can now be a transport,
+ * so this function isn't named very good anymore.
  */
 void put_object_in_sack (object *op, object *sack, object *tmp, uint32 nrof) 
 {
@@ -820,45 +822,50 @@ void put_object_in_sack (object *op, object *sack, object *tmp, uint32 nrof)
     char buf[MAX_BUF];
 
     if (sack==tmp) return;	/* Can't put an object in itself */
-    if (sack->type != CONTAINER) {
-      new_draw_info_format(NDI_UNIQUE, 0,op,
-	"The %s is not a container.", query_name(sack));
-      return;
+    if (sack->type != CONTAINER && sack->type != TRANSPORT) {
+	new_draw_info_format(NDI_UNIQUE, 0,op,
+		     "The %s is not a container.", query_name(sack));
+	return;
     }
     if (QUERY_FLAG(tmp,FLAG_STARTEQUIP)) {
-      new_draw_info_format(NDI_UNIQUE, 0,op,
-	"You cannot put the %s in the container.", query_name(tmp));
-      return;
+	new_draw_info_format(NDI_UNIQUE, 0,op,
+	     "You cannot put the %s in the %s.", query_name(tmp),
+			   query_name(sack));
+	return;
     }
     if (tmp->type == CONTAINER && tmp->inv) {
 
-      /* Eneq(@csd.uu.se): If the object to be dropped is a container
-       * we instead move the contents of that container into the active
-       * container, this is only done if the object has something in it.
-       */
-      sack2 = tmp;
-      new_draw_info_format(NDI_UNIQUE, 0,op, "You move the items from %s into %s.",
-		    query_name(tmp), query_name(op->container));
-      for (tmp2 = tmp->inv; tmp2; tmp2 = tmp) {
-	  tmp = tmp2->below;
-	if (sack_can_hold(op, op->container, tmp2,tmp2->nrof))
-	  put_object_in_sack (op, sack, tmp2, 0);
-	else {
-	  sprintf(buf,"Your %s fills up.", query_name(op->container));
-	  new_draw_info(NDI_UNIQUE, 0,op, buf);
-	  break;
+	/* Eneq(@csd.uu.se): If the object to be dropped is a container
+	 * we instead move the contents of that container into the active
+	 * container, this is only done if the object has something in it.
+	 */
+	sack2 = tmp;
+	new_draw_info_format(NDI_UNIQUE, 0,op, "You move the items from %s into %s.",
+		    query_name(tmp), query_name(sack));
+	for (tmp2 = tmp->inv; tmp2; tmp2 = tmp) {
+	    tmp = tmp2->below;
+	    if ((sack->type == CONTAINER && sack_can_hold(op, op->container, tmp2,tmp2->nrof)) ||
+		(sack->type == TRANSPORT && transport_can_hold(sack, tmp2, tmp2->nrof))) {
+		    put_object_in_sack (op, sack, tmp2, 0);
+	    } else {
+		sprintf(buf,"Your %s fills up.", query_name(sack));
+		new_draw_info(NDI_UNIQUE, 0,op, buf);
+		break;
+	    }
 	}
-      }
-      esrv_update_item (UPD_WEIGHT, op, sack2);
-      return;
+	esrv_update_item (UPD_WEIGHT, op, sack2);
+	return;
     }
 
-    if (! sack_can_hold (op, sack, tmp,(nrof?nrof:tmp->nrof)))
-      return;
+    /* Don't worry about this for containers - our caller should have
+     * already checked this.
+     */
+    if ((sack->type == CONTAINER) && !sack_can_hold (op, sack, tmp,(nrof?nrof:tmp->nrof)))
+	return;
 
     if(QUERY_FLAG(tmp, FLAG_APPLIED)) {
-      if (apply_special (op, tmp, AP_UNAPPLY | AP_NO_MERGE))
-          return;
+	if (apply_special (op, tmp, AP_UNAPPLY | AP_NO_MERGE))
+	    return;
     }
 
     /* we want to put some portion of the item into the container */
@@ -879,12 +886,10 @@ void put_object_in_sack (object *op, object *sack, object *tmp, uint32 nrof)
     } else
 	remove_ob(tmp);
 
-    sprintf(buf, "You put the %s in ", query_name(tmp));
-    strcat (buf, query_name(sack));
-    strcat (buf, ".");
+    new_draw_info_format(NDI_UNIQUE, 0,op, "You put the %s in %s.",
+		  query_name(tmp), query_name(sack));
     tmp_tag = tmp->count;
     tmp2 = insert_ob_in_ob(tmp, sack);
-    new_draw_info(NDI_UNIQUE, 0,op,buf);
     fix_player(op); /* This is overkill, fix_player() is called somewhere */
 		  /* in object.c */
 
@@ -895,8 +900,18 @@ void put_object_in_sack (object *op, object *sack, object *tmp, uint32 nrof)
 	esrv_del_item (op->contr, tmp_tag);
 
     esrv_send_item (op, tmp2);
-    /* update the sacks weight */
-    esrv_update_item (UPD_WEIGHT, op, sack);
+
+    /* If a transport, need to update all the players in the transport
+     * the view of what is in it.
+     */
+    if (sack->type == TRANSPORT) {
+	for (tmp=sack->inv; tmp; tmp=tmp->below) {
+	    if (tmp->type == PLAYER) tmp->contr->socket.update_look=1;
+	}
+    } else {
+	/* update the sacks weight */
+	esrv_update_item (UPD_WEIGHT, op, sack);
+    }
 }
 
 /*
@@ -946,6 +961,7 @@ void drop_object (object *op, object *tmp, uint32 nrof)
         }
     } else
       remove_ob (tmp);
+
     /* Lauwenmark: Handle for plugin drop event */
     if (execute_event(tmp, EVENT_DROP,op,NULL,NULL,SCRIPT_FIX_ALL)!= 0)
         return;
@@ -1004,10 +1020,9 @@ void drop_object (object *op, object *tmp, uint32 nrof)
 
     if (op->type == PLAYER)
     {
-    op->contr->socket.update_look = 1;
-/*    esrv_send_item (op, tmp);*/
-    /* Need to update the weight for the player */
-    esrv_send_item (op, op);
+	op->contr->socket.update_look = 1;
+	/* Need to update the weight for the player */
+	esrv_send_item (op, op);
     }
 }
 
@@ -1777,7 +1792,7 @@ int command_rename_item(object *op, char *params)
     while(' '==*params) params++;
 
     /* Checking the first part */
-    if (itemnumber = atoi(params)) {
+    if ((itemnumber = atoi(params))!=0) {
 	for (item=op->inv; item && ((item->count != itemnumber) || item->invisible); item=item->below);
 	if (!item) {
 	    new_draw_info(NDI_UNIQUE,0,op,"Tried to rename an invalid item.");

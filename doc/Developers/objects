@@ -1093,7 +1093,8 @@ types of movement the space blocks.  From define.h:
 #define MOVE_FLY_HIGH   0x4     /* High flying object */
 #define MOVE_FLYING	0x6	/* combo of fly_low and fly_high for easier checking */
 #define MOVE_SWIM       0x8     /* Swimming object */
-#define MOVE_ALL        0xf    /* Mask of all movement types */
+#define MOVE_BOAT	0x10	/* Boats/sailing */
+#define MOVE_ALL        0x1f    /* Mask of all movement types */
 
 MOVE_ALL may change in the future - it is mask for all movement types -
 used for 'no_pass' - it sets move_block to MOVE_ALL, other places that
@@ -1838,29 +1839,32 @@ face_full
 anim_full	Like face_full above, but for animated objects.
 
 Usage/implementation details:
-To activate a transport, the player will stop onto it and 'board' it.  When this
-is done, the transports op->contr will point to the player, and a
-pl->transport pointer will be set up.  An 'unboard' command will be needed
-to leave the transport (thoughts on a better way to deal with this?)
-I don't think apply will work because that will be needed to get stuff in/out
-of it like a container.
+To activate a transport, the player will apply it just like any other object.
+When this is done, the pl->contr->transport will point to the transport.
+If the player is the first to board it, then transport->contr will point to the
+player.  The player is placed into the inventory of the transport.
 
-For transports that hold multiple people, the first person to apply the
-transport becomes the captain.  It is this person that decides where the
-transport goes.
+When on the transport, the player will see other objects on the transport.
+When the player issues a map command, if they are the 'captain', the
+tranport moves as directed.  If not, the move command is ignored.  Note
+that players on the transport can issue other commands (say, cast, etc).
 
-Transports to some extent will appear as containers - thus you could load
-stuff onto(into) the transport without having to be able to carry it all -
-imagine wagons that carry 10,000.
+Some special handling is done relating the player and transport speed so that
+transport speed is used.  IF the transport doesn't have speed to move,
+the move command is ignored.  The player speed_left is set to -0.01 when
+on the transport - in this way, the player will get actions and not limit
+transport speed.
 
 When aboard a transport, the player will be in the inventory of the transport.
-Thus, the players movement/speed doesn't play any role.  In this
-implementation, transports don't attack or defend, and thus don't take damage.
-If something damages items on the space (say spikes), it will damage the 
-player(s) and not the transport.  Thus, transports can't be used to avoid
-traps and the like.
+The player can see other objects in the transport.  If the player drops an
+item, it is placed into the transport inventory, and not the map.
 
- Thoughts/questions?
+When hit_map() hits the transport, we examine look for all players in the
+transport and damage them as appropriate.  Note that items are not
+damaged.
+
+As of this writing, transports are non living creatures, and thus can't
+be damaged.
 
 *******************************************************************************
 5. Flags & specifications: (usage: flag value)

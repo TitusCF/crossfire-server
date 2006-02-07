@@ -1514,10 +1514,22 @@ object *insert_ob_in_map (object *op, mapstruct *m, object *originator, int flag
 
 	object *more = op->more;
 
-	/* Debugging information so you can see the last coordinates this object had */
-	more->ox = more->x;
-	more->oy = more->y;
-	more->map = get_map_from_coord(m, &more->x, &more->y);
+	/* We really need the caller to normalize coordinates - if
+	 * we set the map, that doesn't work if the location is within
+	 * a map and this is straddling an edge.  So only if coordinate
+	 * is clear wrong do we normalize it.
+	 */
+	if (OUT_OF_REAL_MAP(more->map, more->x, more->y)) {
+	    /* Debugging information so you can see the last coordinates this object had */
+	    more->ox = more->x;
+	    more->oy = more->y;
+	    more->map = get_map_from_coord(m, &more->x, &more->y);
+	} else if (!more->map) {
+	    /* For backwards compatibility - when not dealing with tiled maps,
+	     * more->map should always point to the parent.
+	     */
+	    more->map = m;
+	}
 
 	if (insert_ob_in_map(more, more->map, originator, flag) == NULL) {
 	    if ( ! op->head)
