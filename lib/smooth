@@ -173,6 +173,7 @@ quicksilver_sea.111 quicksilver_sea_S.111
 quicksilver_sea.112 quicksilver_sea_S.112
 quicksilver_sea.113 quicksilver_sea_S.113
 quicksilver_sea.114 quicksilver_sea_S.114
+redmarble.111 empty_S.111
 sea.111 sea_S.111
 sea.112 sea_S.112
 sea.113 sea_S.113
@@ -227,6 +228,14 @@ white-green-x-marble.116 empty_S.111
 white-green-x-marble.117 empty_S.111
 white-green-x-marble.118 empty_S.111
 white-green-x-marble.119 empty_S.111
+white-pink-c-marble.111 empty_S.111
+white-pink-c-marble.112 empty_S.111
+white-pink-c-marble.113 empty_S.111
+white-pink-c-marble.114 empty_S.111
+white-red-c-marble.111 empty_S.111
+white-red-c-marble.112 empty_S.111
+white-red-c-marble.113 empty_S.111
+white-red-c-marble.114 empty_S.111
 woodfloor.111 empty_S.111
 woodfloor2.111 empty_S.111
 woods_1.111 sgrass_S.111
