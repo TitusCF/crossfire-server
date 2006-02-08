@@ -17,6 +17,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/main.c: Modify enter_exit() to see if player is in a transport,
+  and if so, remove him.  Can happen if player uses word of recall
+  while in a transport.
+MSW 2006-02-07
+
 Regional jails.
 ---
 common/region.c, include/libproto.h, map.h: parse jail entries, new function

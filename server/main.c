@@ -722,6 +722,9 @@ void enter_exit(object *op, object *exit_ob) {
      */
     if (op->type != PLAYER) return;
 
+    /* Need to remove player from transport */
+    if (op->contr->transport) apply_transport(op, op->contr->transport, AP_UNAPPLY);
+
     /* First, lets figure out what map the player is going to go to */
     if (exit_ob){ 
 
