@@ -236,6 +236,7 @@ CommArray_s WizCommands [] = {
   {"freeze", command_freeze,0.0},
   {"goto", command_goto,0.0},
   {"hide", command_hide,0.0},
+  {"insert_into", command_insert_into,0.0},
   {"invisible", command_invisible,0.0},
   {"kick", command_kick, 0.0},
   {"learn_special_prayer", command_learn_special_prayer, 0.0},

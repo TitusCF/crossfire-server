@@ -1944,3 +1944,70 @@ int command_diff(object *op, char *params) {
     new_draw_info(NDI_UNIQUE, 0, op, diff);
     return 0;
 }
+
+int command_insert_into(object* op, char *params)
+{
+    object *left, *right, *inserted;
+    const char *diff;
+    int left_from, right_from;
+
+    left = get_dm_object(op->contr, &params, &left_from);
+    if (!left) {
+        new_draw_info(NDI_UNIQUE, 0, op, "Insert into what object?");
+        return 0;
+    }
+
+    if (left_from == STACK_FROM_NUMBER)
+        /* Item was stacked, remove it else right will be the same... */
+        dm_stack_pop(op->contr);
+
+    right = get_dm_object(op->contr, &params, &right_from);
+
+    if (!right) {
+        new_draw_info(NDI_UNIQUE, 0, op, "Insert what item?");
+        return 0;
+    }
+
+    if (left_from == STACK_FROM_TOP && right_from == STACK_FROM_TOP) {
+        /*
+        * Special case: both items were taken from stack top.
+        * Override the behaviour, taking left as item just below top, if exists.
+        * See function description for why.
+        * Besides, can't insert an item into itself.
+        */
+        if (op->contr->stack_position > 1) {
+            left = find_object(op->contr->stack_items[op->contr->stack_position-2]);
+            if (left)
+                new_draw_info(NDI_UNIQUE, 0, op, "(Note: item to insert into taken from undertop)");
+            else
+                /* Stupid case: item under top was freed, fallback to stack top */
+                left = right;
+        }
+    }
+
+    if (left == right)
+    {
+        new_draw_info(NDI_UNIQUE, 0, op, "Can't insert an object into itself!");
+        return 0;
+    }
+
+    if (right->type == PLAYER)
+    {
+        new_draw_info(NDI_UNIQUE, 0, op, "Can't insert a player into something!");
+        return 0;
+    }
+
+    if (!QUERY_FLAG(right,FLAG_REMOVED))
+        remove_ob(right);
+    inserted = insert_ob_in_ob(right,left);
+    if (left->type == PLAYER)
+        if (inserted == right)
+            esrv_send_item(left,right);
+        else
+            esrv_update_item(UPD_WEIGHT|UPD_NAME|UPD_NROF,left,inserted);
+
+        new_draw_info_format(NDI_UNIQUE, 0, op, "Inserted %s in %s", query_name(inserted),query_name(left));
+
+    return 0;
+
+}
