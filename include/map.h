@@ -250,6 +250,8 @@ typedef struct regiondef {
     uint32	counter;	 /* A generic counter for holding temporary data. */
     sint8	fallback;	 /* whether, in the event of a region not existing,
     				  * this should be the one we fall back on as the default */
+    char	*jailmap;        /*where a player that is arrested in this region should be imprisoned.*/
+    sint16	jailx, jaily;	 /* The coodinates in jailmap to which the player should be sent. */
 } region;
 
 

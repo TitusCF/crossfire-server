@@ -445,6 +445,30 @@ int command_freeze(object *op, char *params) {
     return 0;
 }
 
+int command_arrest(object *op, char *params) {
+    object *dummy;
+    player *pl;
+    if (!op) return 0;
+    if(params==NULL) {
+         new_draw_info(NDI_UNIQUE, 0,op,"Usage: arrest <player>.");
+         return 1;
+    }
+    pl = get_other_player_from_name(op, params);
+    if (!pl) return 1;
+    dummy=get_jail_exit(pl->ob);
+    if (!dummy) {
+	/* we have nowhere to send the prisoner....*/
+	new_draw_info(NDI_UNIQUE, 0,op,"can't jail player, there is no map to hold them");
+	return 0;
+    }
+    enter_exit(pl->ob, dummy);
+    free_object(dummy);
+    new_draw_info(NDI_UNIQUE, 0,pl->ob,"You have been arrested.");
+    new_draw_info(NDI_UNIQUE, 0,op,"OK.");
+    LOG(llevInfo, "Player %s arrested by %s\n", pl->ob->name, op->name);
+    return 1;
+}
+
 int command_summon(object *op, char *params) {
     int i;
     object *dummy;

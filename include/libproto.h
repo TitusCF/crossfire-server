@@ -330,6 +330,7 @@ extern const char *get_name_of_region_for_map(mapstruct *m);
 extern region *get_region_from_string(const char *name);
 extern int region_is_child_of_region(region *child, region *r);
 extern const char *get_region_longname(region *r);
+extern object *get_jail_exit(object *op);
 extern const char *get_region_msg(region *r);
 extern void init_regions(void);
 extern region *get_region_struct(void);

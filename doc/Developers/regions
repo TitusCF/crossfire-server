@@ -108,6 +108,13 @@ This contains a list of the information about the regions and what the fields me
  One region should have this set, so that the map can still be assigned a region
  until such time the map creator learns to spell.
 
+*jailmap
+ The path to the map that a player who is arrested in this region (or any
+ subregion hereof) will go to
+
+*jailx, jaily
+ The x and y coordinates on the jailmap the player will go to.
+
 *****Sample Regions file entry*****
 
 region scorn
@@ -147,6 +154,9 @@ source code to see what they /are/ doing....
 
 extern char *get_region_longname(region *r);
 	returns the longname that the region should use
+
+extern object *get_jail_exit(object *op);
+	returns an object through which the player op should enter to be jailed.
 
 extern char *get_region_msg(region *r);
 	returns the description of the region.
@@ -195,9 +205,6 @@ There is a command whereabouts that shows region names and the number of players
 who can be given regions as arguments, and only show the players in that region.
 
 *****Known/suspected bugs*****
-
-Random maps probably don't get their regions set properly (though I am not quite sure what
- 'properly' should be here).
 
 The region parser is not particularly robust, it dies if the 'endmsg' line is missing, 
 or if 'nomore' is missing, or if the 'end' line is missing. These stop the server from

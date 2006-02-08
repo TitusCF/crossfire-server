@@ -185,6 +185,35 @@ const char *get_region_msg(region *r) {
     }
 }
 
+/** Returns an object which is an exit through which the player represented by op should be
+ *  sent in order to be imprisoned. If there is no suitable place to which an exit can be 
+ *  constructed, then NULL will be returned. The caller is responsible for freeing the object
+ *  created by this function.
+ */
+object *get_jail_exit(object *op) {
+    region *reg;
+    object *exit;
+    if (op->type != PLAYER) {
+	LOG(llevError, "region.c: get_jail_exit called against non-player object.\n");
+	return NULL;
+    }
+    reg=get_region_by_map(op->map);
+    while (reg!=NULL) {
+	if (reg->jailmap) {
+	    exit=get_object();
+	    EXIT_PATH(exit)=add_string(reg->jailmap);
+	    /* damned exits reset savebed and remove teleports, so the prisoner can't escape */
+	    SET_FLAG(exit, FLAG_DAMNED);
+	    EXIT_X(exit) = reg->jailx;
+	    EXIT_Y(exit) = reg->jaily;
+	    return exit;
+	}
+	else reg=reg->parent;
+    }
+    LOG(llevDebug,"No suitable jailmap for region %s was found.\n", reg->name);
+    return NULL;
+}
+
 /*
  * First initialises the archtype hash-table (init_archetable()).
  * Reads and parses the archetype file (with the first and second-pass
@@ -289,6 +318,18 @@ void parse_regions(FILE *fp) {
 	else if (!strcmp(key,"longname")) {
 	    *end=0;
 	    new->longname = strdup_local(value);
+	}
+	else if (!strcmp(key,"jail")) {
+	    /* jail entries are of the form: /path/to/map x y */
+	    char path[MAX_BUF];
+	    int x,y;
+	    if (sscanf(value, "%[^ ] %d %d\n", path, &x, &y) != 3) {
+		LOG(llevError, "region.c: malformated regions entry: jail %s\n", value);
+		continue;
+	    }
+	    new->jailmap = strdup_local(path);
+	    new->jailx = x;
+	    new->jaily = y;
 	}
 	else if (!strcmp(key,"msg")) {
 	    while (fgets(buf, HUGE_BUF-1, fp)!=NULL) {

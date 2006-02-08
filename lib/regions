@@ -12,6 +12,7 @@ endmsg
 end
 region world
 longname The World.
+jail /scorn/misc/jail 15 1
 msg
 If you are seeing this, someone goofed, you should never see this message.
 endmsg
@@ -95,6 +96,7 @@ end
 region navar
 parent world
 longname The Kingdom of Navar
+jail /navar_city/jail/jail 16 1
 msg
 Straddling the corner of the Imperial highway as it turns North near the 
 Eastern border of the known world, and surrounded by dangerous territory,

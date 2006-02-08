@@ -17,6 +17,16 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Regional jails.
+---
+common/region.c, include/libproto.h, map.h: parse jail entries, new function
+  get_jail_exit to return the exit to the local jail.
+doc/Developers/regions: update
+server/c_wiz.c, commands.c, include/sproto.h: add dm command, command_arrest
+  to jail players in the correct location.
+lib/regions: add scorn and navar jails.
+Brendan Lally 2006/02/08
+
 Code that adds transports.  Transports are described more in detail in
 docs/Developers/objects.
 ---
