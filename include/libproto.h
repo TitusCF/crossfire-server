@@ -5,6 +5,7 @@ extern int find_animation(const char *name);
 extern void animate_object(object *op, int dir);
 /* arch.c */
 extern archetype *find_archetype_by_object_name(const char *name);
+extern archetype *find_archetype_by_object_type_name(int type, const char *name);
 extern object *get_archetype_by_skill_name(const char *skill, int type);
 extern archetype *get_archetype_by_type_subtype(int type, int subtype);
 extern object *get_archetype_by_object_name(const char *name);

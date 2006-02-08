@@ -17,6 +17,16 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Make create food spell work for all FOOD/DRINK objects. It used to fail for
+objects where another object with the same name but type POISON does exist.
+---
+common/arch.c: Add new function find_archetype_by_object_type_name() to find
+   an archetype by item type and item name.
+include/libproto.h: Add new prototype.
+server/spell_effect.c: In cast_create_food() only search for objects of type
+   FOOD or DRINK.
+Andreas Kirschbaum 2006-02-09
+
 server/main.c: Modify enter_exit() to see if player is in a transport,
   and if so, remove him.  Can happen if player uses word of recall
   while in a transport.

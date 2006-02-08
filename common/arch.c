@@ -71,6 +71,25 @@ archetype *find_archetype_by_object_name(const char *name) {
     return NULL;
 }
 
+/**
+ * This function retrieves an archetype by type and name that appears during
+ * the game. It is basically the same as find_archetype_by_object_name()
+ * except that it considers only items of the given type.
+ */
+archetype *find_archetype_by_object_type_name(int type, const char *name) {
+    archetype *at;
+
+    if (name == NULL)
+        return NULL;
+
+    for (at = first_archetype; at != NULL; at = at->next) {
+        if (at->clone.type == type && strcmp(at->clone.name, name) == 0)
+            return at;
+    }
+
+    return NULL;
+}
+
 /* This is a lot like the above function.  Instead, we are trying to match
  * the arch->skill values.  type is the type of object to match
  * against (eg, to only match against skills or only skill objects for example).
