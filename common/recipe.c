@@ -76,7 +76,7 @@ recipelist * get_formulalist ( int i ) {
 /* check_recipe() - makes sure we actually have the requested artifact 
  * and archetype. */
 
-static int check_recipe(recipe *rp) {
+static int check_recipe(const recipe *rp) {
     size_t i;
     int result;
 
@@ -284,7 +284,7 @@ void dump_alchemy( void ) {
 /* Find a treasure with a matching name.  The 'depth' parameter is
  * only there to prevent infinite loops in treasure lists (a list
  * referencing another list pointing back to the first one). */
-archetype *find_treasure_by_name (treasure *t, const char *name, int depth)
+archetype *find_treasure_by_name (const treasure *t, const char *name, int depth)
 {
   treasurelist *tl;
   archetype    *at;
@@ -525,7 +525,7 @@ int strtoint (const char *buf) {
   return val*mult;
 }
 
-artifact * locate_recipe_artifact(recipe *rp, size_t idx) {
+artifact * locate_recipe_artifact(const recipe *rp, size_t idx) {
    object *item=get_archetype(rp->arch_name[idx]);
    artifactlist *at=NULL;
    artifact *art=NULL;

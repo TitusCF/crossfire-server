@@ -70,7 +70,7 @@ int freedir[SIZEOFFREE]= {
 
 
 /* Returns TRUE if every key_values in wants has a partner with the same value in has. */
-static int compare_ob_value_lists_one(object * wants, object * has) {
+static int compare_ob_value_lists_one(const object * wants, const object * has) {
     key_value * wants_field;
     
     /* n-squared behaviour (see get_ob_key_link()), but I'm hoping both
@@ -104,7 +104,7 @@ static int compare_ob_value_lists_one(object * wants, object * has) {
 }
 
 /* Returns TRUE if ob1 has the same key_values as ob2. */
-static int compare_ob_value_lists(object * ob1, object * ob2) {
+static int compare_ob_value_lists(const object * ob1, const object * ob2) {
     /* However, there may be fields in has which aren't partnered in wants,
      * so we need to run the comparison *twice*. :(
      */
@@ -387,7 +387,7 @@ void dump_all_objects(void) {
  * If it's not a multi-object, it is returned.
  */
 
-object *get_nearest_part(object *op,object *pl) {
+object *get_nearest_part(object *op, const object *pl) {
   object *tmp,*closest;
   int last_dist,i;
   if(op->more==NULL)
@@ -416,7 +416,7 @@ object *find_object(tag_t i) {
  * Enables features like "patch <name-of-other-player> food 999"
  */
 
-object *find_object_name(char *str) {
+object *find_object_name(const char *str) {
   const char *name=add_string(str);
   object *op;
   for(op=objects;op!=NULL;op=op->next)
@@ -1721,7 +1721,7 @@ object *insert_ob_in_map (object *op, mapstruct *m, object *originator, int flag
  *  finds an object of its own type, it'll remove that one first. 
  *  op is the object to insert it under:  supplies x and the map.
  */
-void replace_insert_ob_in_map(char *arch_string, object *op) {
+void replace_insert_ob_in_map(const char *arch_string, object *op) {
     object *tmp;
     object *tmp1;
 
@@ -2099,7 +2099,7 @@ int check_move_on (object *op, object *originator)
  * The first matching object is returned, or NULL if none.
  */
 
-object *present_arch(archetype *at, mapstruct *m, int x, int y) {
+object *present_arch(const archetype *at, mapstruct *m, int x, int y) {
   object *tmp;
   if(m==NULL || out_of_map(m,x,y)) {
     LOG(llevError,"Present_arch called outside map.\n");
@@ -2135,7 +2135,7 @@ object *present(unsigned char type,mapstruct *m, int x,int y) {
  * The first matching object is returned, or NULL if none.
  */
 
-object *present_in_ob(unsigned char type,object *op) {
+object *present_in_ob(unsigned char type, const object *op) {
   object *tmp;
   for(tmp=op->inv;tmp!=NULL;tmp=tmp->below)
     if(tmp->type==type)
@@ -2158,7 +2158,7 @@ object *present_in_ob(unsigned char type,object *op) {
  * to be unique.
  */
 
-object *present_in_ob_by_name(int type, char *str,object *op) {
+object *present_in_ob_by_name(int type, const char *str, const object *op) {
     object *tmp;
 
     for(tmp=op->inv; tmp!=NULL; tmp=tmp->below) {
@@ -2174,7 +2174,7 @@ object *present_in_ob_by_name(int type, char *str,object *op) {
  * The first matching object is returned, or NULL if none.
  */
 
-object *present_arch_in_ob(archetype *at, object *op)  {
+object *present_arch_in_ob(const archetype *at, const object *op)  {
   object *tmp;
   for(tmp=op->inv;tmp!=NULL;tmp=tmp->below)
     if( tmp->arch == at)
@@ -2238,7 +2238,7 @@ void set_cheat(object *op) {
  * customized, changed states, etc.
  */
 
-int find_free_spot(object *ob, mapstruct *m,int x,int y,int start,int stop) {
+int find_free_spot(const object *ob, mapstruct *m,int x,int y,int start,int stop) {
     int i,index=0, flag;
     static int altern[SIZEOFFREE];
 
@@ -2269,7 +2269,7 @@ int find_free_spot(object *ob, mapstruct *m,int x,int y,int start,int stop) {
  * Changed 0.93.2: Have it return -1 if there is no free spot available.
  */
 
-int find_first_free_spot(object *ob, mapstruct *m,int x,int y) {
+int find_first_free_spot(const object *ob, mapstruct *m,int x,int y) {
     int i;
     for(i=0;i<SIZEOFFREE;i++) {
 	if(!ob_blocked(ob,m,x+freearr_x[i],y+freearr_y[i]))
@@ -2380,7 +2380,7 @@ int find_dir(mapstruct *m, int x, int y, object *exclude) {
  * distance between the two given objects.
  */
 
-int distance(object *ob1,object *ob2) {
+int distance(const object *ob1, const object *ob2) {
   int i;
   i= (ob1->x - ob2->x)*(ob1->x - ob2->x)+
          (ob1->y - ob2->y)*(ob1->y - ob2->y);
@@ -2555,7 +2555,7 @@ int can_see_monsterP(mapstruct *m, int x, int y,int dir) {
  * Add a check so we can't pick up invisible objects (0.93.8)
  */
 
-int can_pick(object *who,object *item) {
+int can_pick(const object *who, const object *item) {
   return /*QUERY_FLAG(who,FLAG_WIZ)||*/
          (item->weight>0&&!QUERY_FLAG(item,FLAG_NO_PICK)&&
 	 !QUERY_FLAG(item,FLAG_ALIVE)&&!item->invisible &&
@@ -2600,7 +2600,7 @@ object *object_create_clone (object *asrc) {
 }
 
 /* return true if the object was destroyed, 0 otherwise */
-int was_destroyed (object *op, tag_t old_tag)
+int was_destroyed (const object *op, tag_t old_tag)
 {
     /* checking for FLAG_FREED isn't necessary, but makes this function more
      * robust */
@@ -2614,7 +2614,7 @@ int was_destroyed (object *op, tag_t old_tag)
 /* Remember not to use load_object_str in a time-critical situation.         */
 /* Also remember that multiparts objects are not supported for now.          */
 
-object* load_object_str(char *obstr)
+object* load_object_str(const char *obstr)
 {
     object *op;
     FILE *tempfile;
@@ -2648,7 +2648,7 @@ object* load_object_str(char *obstr)
  * has the same type and subtype match.
  * returns NULL if no match.
  */
-object *find_obj_by_type_subtype(object *who, int type, int subtype)
+object *find_obj_by_type_subtype(const object *who, int type, int subtype)
 {
     object *tmp;
 
@@ -2664,7 +2664,7 @@ object *find_obj_by_type_subtype(object *who, int type, int subtype)
  * key must be a passed in shared string - otherwise, this won't
  * do the desired thing.
  */
-key_value * get_ob_key_link(object * ob, const char * key) {
+key_value * get_ob_key_link(const object * ob, const char * key) {
     key_value * link;
     
     for (link = ob->key_values; link != NULL; link = link->next) {
@@ -2683,7 +2683,7 @@ key_value * get_ob_key_link(object * ob, const char * key) {
  *
  * The returned string is shared.
  */
-const char * get_ob_key_value(object * op, const char * const key) {
+const char * get_ob_key_value(const object * op, const char * const key) {
     key_value * link;
     const char * canonical_key;
     

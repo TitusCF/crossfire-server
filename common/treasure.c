@@ -157,7 +157,7 @@ static treasure *load_treasure(FILE *fp, int *line) {
 /* recursived checks the linked list.  Treasurelist is passed only
  * so that the treasure name can be printed out
  */
-static void check_treasurelist(treasure *t, treasurelist *tl)
+static void check_treasurelist(const treasure *t, const treasurelist *tl)
 {
     if (t->item==NULL && t->name==NULL)
 	LOG(llevError,"Treasurelist %s has element with no name or archetype\n", tl->name);
@@ -485,7 +485,7 @@ static int difftomagic_list[DIFFLEVELS][MAXMAGIC+1] =
  * This code presumes that op has had its spell object created (in op->inv)
  */
 
-int level_for_item(object *op, int difficulty, int retmult)
+int level_for_item(const object *op, int difficulty, int retmult)
 {
     int level, mult, olevel;
 

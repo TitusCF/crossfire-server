@@ -279,7 +279,7 @@ void animate_turning(object *op) /* only one part objects */
  * objects on the same space that take the same sacrifice.
  */
  
-int check_altar_sacrifice (object *altar, object *sacrifice)
+int check_altar_sacrifice (const object *altar, const object *sacrifice)
 {
   if ( ! QUERY_FLAG (sacrifice, FLAG_ALIVE)
       && ! QUERY_FLAG (sacrifice, FLAG_IS_LINKED)
@@ -564,7 +564,7 @@ void remove_button_link(object *op) {
  * Return the first objectlink in the objects linked to this one
  */
 
-objectlink *get_button_links(object *button) {
+objectlink *get_button_links(const object *button) {
   oblinkpt *obp;
   objectlink *ol;
 
@@ -581,7 +581,7 @@ objectlink *get_button_links(object *button) {
  * Made as a separate function to increase efficiency
  */
 
-int get_button_value(object *button) {
+int get_button_value(const object *button) {
   oblinkpt *obp;
   objectlink *ol;
 
@@ -678,7 +678,7 @@ void do_mood_floor(object *op, object *op2) {
  *		hp = match object type (excpt type '0'== PLAYER)
  */
 
-object * check_inv_recursive(object *op, object *trig)
+object * check_inv_recursive(object *op, const object *trig)
 {
     object *tmp,*ret=NULL;
 
@@ -729,7 +729,7 @@ object *match;
  * map.  All it really does it much sure the object id link that is set
  * matches what the object has.
  */
-void verify_button_links(mapstruct *map) {
+void verify_button_links(const mapstruct *map) {
     oblinkpt *obp;
     objectlink *ol;
 

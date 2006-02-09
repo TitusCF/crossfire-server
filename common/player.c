@@ -72,7 +72,7 @@ int atnr_is_dragon_enabled(int attacknr) {
  * returns true if the adressed object 'ob' is a player
  * of the dragon race.
  */
-int is_dragon_pl(object* op) {
+int is_dragon_pl(const object* op) {
   if (op != NULL && op->type == PLAYER && op->arch != NULL
       && op->arch->clone.race != NULL &&
       strcmp(op->arch->clone.race, "dragon")==0)

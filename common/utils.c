@@ -49,7 +49,7 @@
  * not the recipient (ie, the poor slob getting hit). [garbled 20010916]
  */
 
-int random_roll(int min, int max, object *op, int goodbad) {
+int random_roll(int min, int max, const object *op, int goodbad) {
     int omin, diff, luck, base, ran;
 
     omin = min;
@@ -85,7 +85,7 @@ int random_roll(int min, int max, object *op, int goodbad) {
  * for exp loss calculations for players changing religions.
  */
 
-sint64 random_roll64(sint64 min, sint64 max, object *op, int goodbad) {
+sint64 random_roll64(sint64 min, sint64 max, const object *op, int goodbad) {
     sint64 omin, diff, luck, ran;
     int base;
 
@@ -134,7 +134,7 @@ sint64 random_roll64(sint64 min, sint64 max, object *op, int goodbad) {
  * The args are num D size (ie 4d6)  [garbled 20010916]
  */
 
-int die_roll(int num, int size, object *op, int goodbad) {
+int die_roll(int num, int size, const object *op, int goodbad) {
     int min, diff, luck, total, i, gotlucky, base, ran;
 
     diff = size;
@@ -268,7 +268,7 @@ materialtype_t *name_to_material(const char *name)
  * as some that did not apply previously, may apply now.
  */
 
-void transmute_materialname(object *op, object *change)
+void transmute_materialname(object *op, const object *change)
 {
     materialtype_t *mt;
     int j;

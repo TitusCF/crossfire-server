@@ -895,7 +895,7 @@ init_readable (void)
  */
 
 static title  *
-find_title (object *book, int msgtype)
+find_title (const object *book, int msgtype)
 {
     title  *t = NULL;
     titlelist *tl = get_titlelist (msgtype);
@@ -1029,7 +1029,7 @@ add_author (object *op, int msgtype)
  */
 
 static int 
-unique_book (object *book, int msgtype)
+unique_book (const object *book, int msgtype)
 {
     title  *test;
 
@@ -1049,7 +1049,7 @@ unique_book (object *book, int msgtype)
 /* add_book_to_list() */
 
 static void 
-add_book_to_list (object *book, int msgtype)
+add_book_to_list (const object *book, int msgtype)
 {
     titlelist *tl = get_titlelist (msgtype);
     title  *t;
@@ -1311,7 +1311,7 @@ get_random_mon (int level)
  */
 
 char   *
-mon_desc (object *mon)
+mon_desc (const object *mon)
 {
     static char retbuf[HUGE_BUF];
 

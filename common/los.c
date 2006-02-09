@@ -292,7 +292,7 @@ void expand_sight(object *op)
  * check the op->glow_radius instead of calling this.
  */
 
-int has_carried_lights(object *op) {
+int has_carried_lights(const object *op) {
     /* op may glow! */
     if(op->glow_radius>0) return 1;
 
@@ -494,7 +494,7 @@ void update_all_map_los(mapstruct *map) {
  * map is the map that changed, x and y are the coordinates.
  */
 
-void update_all_los(mapstruct *map, int x, int y) {
+void update_all_los(const mapstruct *map, int x, int y) {
     player *pl;
 
     for(pl=first_player;pl!=NULL;pl=pl->next) {
@@ -586,7 +586,7 @@ void print_los(object *op) {
  * check if any players are nearby, and edit their LOS array.
  */
 
-void make_sure_seen(object *op) {
+void make_sure_seen(const object *op) {
     player *pl;
 
     for (pl = first_player; pl; pl = pl->next)
@@ -605,7 +605,7 @@ void make_sure_seen(object *op) {
  * players within its range
  */
 
-void make_sure_not_seen(object *op) { 
+void make_sure_not_seen(const object *op) { 
     player *pl;
     for (pl = first_player; pl; pl = pl->next)
 	if (pl->ob->map == op->map &&

@@ -71,7 +71,7 @@ int quest_is_same_quest( const char* slaying1, const char* slaying2 )
     }
 #endif
 
-int quest_is_quest_marker( object* marker, int task )
+int quest_is_quest_marker( const object* marker, int task )
     {
     if ( marker->type != QUEST )
         return 0;
@@ -82,14 +82,14 @@ int quest_is_quest_marker( object* marker, int task )
     return 1;
     }
 
-int quest_is_in_progress( object* marker, int task )
+int quest_is_in_progress( const object* marker, int task )
     {
     if ( marker->subtype != QUEST_IN_PROGRESS )
         return 0;
     return 1;
     }
 
-int quest_is_completed( object* marker, int task )
+int quest_is_completed( const object* marker, int task )
     {
     if ( marker->type != QUEST )
         return 0;
@@ -249,7 +249,7 @@ const char* quest_message_check( const char* message, object* pl )
     }
 #endif
 
-const char* quest_get_name( object* marker )
+const char* quest_get_name( const object* marker )
     {
     if ( marker->type != QUEST )
         return NULL;
@@ -258,7 +258,7 @@ const char* quest_get_name( object* marker )
     return QUEST_NAME(marker);
     }
 
-object* quest_get_player_quest( object* pl, const char* name, const char* name_pl )
+object* quest_get_player_quest( const object* pl, const char* name, const char* name_pl )
 {
     object* quest;
     for ( quest = pl->inv; quest; quest = quest->below )
@@ -269,7 +269,7 @@ object* quest_get_player_quest( object* pl, const char* name, const char* name_p
     return NULL;
 }
 
-object* quest_get_override( object* ob, object* pl )
+object* quest_get_override( const object* ob, const object* pl )
 {
     object *in_ob, *in_pl;
     if ( !ob->inv )
@@ -286,7 +286,7 @@ object* quest_get_override( object* ob, object* pl )
     return NULL;
 }
 
-const char* quest_get_override_slaying( object* ob, object* pl )
+const char* quest_get_override_slaying( const object* ob, const object* pl )
 {
     object* quest;
     quest = quest_get_override( ob, pl );
@@ -295,7 +295,7 @@ const char* quest_get_override_slaying( object* ob, object* pl )
     return ob->slaying;
 }
 
-const char* quest_get_override_msg( object* ob, object* pl )
+const char* quest_get_override_msg( const object* ob, const object* pl )
 {
     object* quest;
     quest = quest_get_override( ob, pl );
@@ -430,7 +430,7 @@ int quest_on_activate( object* ob, player*pl )
 #define QCT_QSD     7
 #define QCT_QD      8
 
-int quest_is_override_compatible(object *marker, object* pl)
+int quest_is_override_compatible(const object *marker, const object* pl)
 {
     object* test;
     if ( marker->type != QUEST || marker->subtype != QUEST_OVERRIDE )

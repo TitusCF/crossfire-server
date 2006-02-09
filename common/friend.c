@@ -140,7 +140,7 @@ void clean_friendly_list(void) {
 /* Checks if the given object is already in the friendly list or not
  * Lauwenmark - 31/07/05
  */
-int is_friendly(object* op)
+int is_friendly(const object* op)
 {
     objectlink *ol;
 

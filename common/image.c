@@ -107,10 +107,10 @@ static const char *const colorname[] = {
 "khaki"			/* 12 */ 
 };
 
-static int compar (struct bmappair *a, struct bmappair *b) {
+static int compar (const struct bmappair *a, const struct bmappair *b) {
     return strcmp (a->name, b->name);
 }
-static int compar_smooth (struct smoothing *a, struct smoothing *b) {
+static int compar_smooth (const struct smoothing *a, const struct smoothing *b) {
     if (a->id<b->id)
         return -1;
     if (b->id<a->id)

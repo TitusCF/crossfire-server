@@ -209,7 +209,7 @@ int check_path (const char *name, int prepend_dir)
  * necessary to make sure the information is in fact logged.
  */
 
-void dump_map(mapstruct *m) {
+void dump_map(const mapstruct *m) {
     LOG(llevError,"Map %s status: %d.\n",m->path,m->in_memory);
     LOG(llevError,"Size: %dx%d Start: %d,%d\n",
 	MAP_WIDTH(m), MAP_HEIGHT(m),
@@ -391,7 +391,7 @@ int blocked_link(object *ob, mapstruct *m, int sx, int sy) {
  * against the move_block values.
  */
 
-int ob_blocked(object *ob,mapstruct *m,sint16 x,sint16 y) {
+int ob_blocked(const object *ob,mapstruct *m,sint16 x,sint16 y) {
     archetype *tmp;
     int flag;
     mapstruct *m1;

@@ -117,7 +117,7 @@ void init_anim(void) {
     LOG(llevDebug,"done. got (%d)\n", num_animations);
 }
 
-static int anim_compare(Animations *a, Animations *b) {
+static int anim_compare(const Animations *a, const Animations *b) {
     return strcmp(a->name, b->name);
 }
 

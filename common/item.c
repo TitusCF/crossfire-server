@@ -277,7 +277,7 @@ int get_power_from_ench(int ench)
  * If flag is 1, we return the number of enchantment, and not the
  * the power.  This is used in the treasure code.
  */
-int calc_item_power(object *op, int flag)
+int calc_item_power(const object *op, int flag)
 {
     int i, tmp, enc;
 
@@ -374,7 +374,7 @@ const typedata *get_typedata_by_name(const char *name) {
  * if newline is true, we don't put parens around the description
  * but do put a newline at the end.  Useful when dumping to files
  */
-char *describe_resistance(object *op, int newline)
+char *describe_resistance(const object *op, int newline)
 {
     static char buf[VERY_BIG_BUF];
     char    buf1[VERY_BIG_BUF];
@@ -401,7 +401,7 @@ char *describe_resistance(object *op, int newline)
  * The buffer will be overwritten by the next call to query_weight().
  */
 
-char *query_weight(object *op) {
+char *query_weight(const object *op) {
   static char buf[10];
   sint32 i=(op->nrof?op->nrof:1)*op->weight+op->carrying;
 
@@ -464,7 +464,7 @@ char *get_number(int i) {
 /* Aug 95 modified this slightly so that Skill tools don't have magic bonus
  * from stats.sp - b.t.
  */
-char *ring_desc (object *op) 
+char *ring_desc (const object *op) 
 {
     static char buf[VERY_BIG_BUF];
     int attr, val,len;
@@ -530,7 +530,7 @@ char *ring_desc (object *op)
  * query_short_name(object) is similar to query_name, but doesn't 
  * contain any information about object status (worn/cursed/etc.)
  */
-const char *query_short_name(object *op) 
+const char *query_short_name(const object *op) 
 {
     static char buf[HUGE_BUF];
     char buf2[HUGE_BUF];
@@ -604,7 +604,7 @@ const char *query_short_name(object *op)
  * use several names much easier (don't need to store them to temp variables.)
  *
  */
-char *query_name(object *op) {
+char *query_name(const object *op) {
     static char buf[5][HUGE_BUF];
     static int use_buf=0;
     int len=0;
@@ -707,7 +707,7 @@ char *query_name(object *op) {
  * and sending to client.
  * If plural is set, we generate the plural name of this.
  */
-const char *query_base_name(object *op, int plural) {
+const char *query_base_name(const object *op, int plural) {
     static char buf[MAX_BUF], buf2[MAX_BUF];
     int len;
     materialtype_t *mt;
@@ -797,7 +797,7 @@ const char *query_base_name(object *op, int plural) {
  * in a static buffer.
  */
 
-static char *describe_monster(object *op) {
+static char *describe_monster(const object *op) {
     char buf[MAX_BUF];
     static char retbuf[VERY_BIG_BUF];
     int i;
@@ -964,7 +964,7 @@ static char *describe_monster(object *op) {
  * item (eg, debug dump or the like)
  */
 
-char *describe_item(object *op, object *owner) {
+char *describe_item(const object *op, object *owner) {
     char buf[MAX_BUF];
     static char retbuf[VERY_BIG_BUF];
     int identified,i;
@@ -1256,7 +1256,7 @@ char *describe_item(object *op, object *owner) {
  * should be marked as magical.
  */
 
-int is_magical(object *op) {
+int is_magical(const object *op) {
     int i;
 
     /* living creatures are considered non magical */
@@ -1327,7 +1327,7 @@ int is_magical(object *op) {
  * should need it.
  */
 
-int need_identify(object *op) {
+int need_identify(const object *op) {
     switch(op->type) {
 	case RING:
 	case WAND:

@@ -310,7 +310,7 @@ change_attr_value(living *stats,int attr,sint8 value) {
  */
 
 sint8
-get_attr_value(living *stats,int attr) {
+get_attr_value(const living *stats,int attr) {
   switch(attr) {
   case STR:
     return(stats->Str);
@@ -1374,7 +1374,7 @@ void fix_player(object *op) {
  * false otherwise.
  */
 
-int allowed_class(object *op) {
+int allowed_class(const object *op) {
   return op->stats.Dex>0&&op->stats.Str>0&&op->stats.Con>0&&
          op->stats.Int>0&&op->stats.Wis>0&&op->stats.Pow>0&&
 	 op->stats.Cha>0;
@@ -1390,7 +1390,7 @@ int allowed_class(object *op) {
  * as soon as clients support this!
  * Please, anyone, write support for 'ext_title'.
  */
-void set_dragon_name(object *pl, object *abil, object *skin) {
+void set_dragon_name(object *pl, const object *abil, const object *skin) {
   int atnr=-1;  /* attacknumber of highest level */
   int level=0;  /* highest level */
   int i;
@@ -1687,7 +1687,7 @@ static void add_player_exp(object *op, sint64 exp, const char *skill_name, int f
  * the 'exp' value passed should be positive - this is the
  * amount that should get subtract from the player.
  */
-sint64 check_exp_loss(object *op, sint64 exp)
+sint64 check_exp_loss(const object *op, sint64 exp)
 {
     sint64 del_exp;
 
@@ -1700,7 +1700,7 @@ sint64 check_exp_loss(object *op, sint64 exp)
     return exp;
 }
 
-sint64 check_exp_adjust(object *op, sint64 exp)
+sint64 check_exp_adjust(const object *op, sint64 exp)
 {
     if (exp<0) return check_exp_loss(op, exp);
     else return MIN(exp, MAX_EXPERIENCE - op->stats.exp);
@@ -1858,7 +1858,7 @@ void apply_death_exp_penalty(object *op) {
  * resistance to particular attacktype.
  * Returns 1 if op makes his save, 0 if he failed
  */
-int did_make_save(object *op, int level, int bonus)
+int did_make_save(const object *op, int level, int bonus)
 {
     if (level > MAX_SAVE_LEVEL) level = MAX_SAVE_LEVEL;
 

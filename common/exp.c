@@ -90,7 +90,7 @@ float exp_prot_mult[NROFATTACKS+2] = {
  * and not anyplace in the code.
  */
 	
-int new_exp(object *ob) {
+int new_exp(const object *ob) {
   double	att_mult, prot_mult, spec_mult;
   double	exp;
   int		i;
@@ -134,7 +134,7 @@ int new_exp(object *ob) {
  * Returns true if the monster specified has any innate abilities.
  */
 
-int has_ability(object *ob) {
+int has_ability(const object *ob) {
     object *tmp;
 
     for(tmp=ob->inv;tmp!=NULL;tmp=tmp->below)
