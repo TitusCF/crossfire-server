@@ -2019,6 +2019,63 @@ mapstruct *get_map_from_coord(mapstruct *m, sint16 *x, sint16 *y)
     return NULL;    /* Shouldn't get here */
 }
 
+/**
+ * Return whether map2 is adjacent to map1. If so, store the distance from
+ * map1 to map2 in dx/dy.
+ */
+static int adjacent_map (mapstruct *map1, mapstruct *map2, int *dx, int *dy) {
+    if (!map1 || !map2)
+        return 0;
+
+    if (map1 == map2) {
+        *dx = 0;
+        *dy = 0;
+
+    } else if (map1->tile_map[0] == map2) { /* up */
+        *dx = 0;
+        *dy = -MAP_HEIGHT(map2);
+    } else if (map1->tile_map[1] == map2) { /* right */
+        *dx = MAP_WIDTH(map1);
+        *dy = 0;
+    } else if (map1->tile_map[2] == map2) { /* down */
+        *dx = 0;
+        *dy = MAP_HEIGHT(map1);
+    } else if (map1->tile_map[3] == map2) { /* left */
+        *dx = -MAP_WIDTH(map2);
+        *dy = 0;
+
+    } else if (map1->tile_map[0] && map1->tile_map[0]->tile_map[1] == map2) { /* up right */
+        *dx = MAP_WIDTH(map1->tile_map[0]);
+        *dy = -MAP_HEIGHT(map1->tile_map[0]);
+    } else if (map1->tile_map[0] && map1->tile_map[0]->tile_map[3] == map2) { /* up left */
+        *dx = -MAP_WIDTH(map2);
+        *dy = -MAP_HEIGHT(map1->tile_map[0]);
+    } else if (map1->tile_map[1] && map1->tile_map[1]->tile_map[0] == map2) { /* right up */
+        *dx = MAP_WIDTH(map1);
+        *dy = -MAP_HEIGHT(map2);
+    } else if (map1->tile_map[1] && map1->tile_map[1]->tile_map[2] == map2) { /* right down */
+        *dx = MAP_WIDTH(map1);
+        *dy = MAP_HEIGHT(map1->tile_map[1]);
+    } else if (map1->tile_map[2] && map1->tile_map[2]->tile_map[1] == map2) { /* down right */
+        *dx = MAP_WIDTH(map1->tile_map[2]);
+        *dy = MAP_HEIGHT(map1);
+    } else if (map1->tile_map[2] && map1->tile_map[2]->tile_map[3] == map2) { /* down left */
+        *dx = -MAP_WIDTH(map2);
+        *dy = MAP_HEIGHT(map1);
+    } else if (map1->tile_map[3] && map1->tile_map[3]->tile_map[0] == map2) { /* left up */
+        *dx = -MAP_WIDTH(map1->tile_map[3]);
+        *dy = -MAP_HEIGHT(map2);
+    } else if (map1->tile_map[3] && map1->tile_map[3]->tile_map[2] == map2) { /* left down */
+        *dx = -MAP_WIDTH(map1->tile_map[3]);
+        *dy = MAP_HEIGHT(map1->tile_map[3]);
+
+    } else { /* not "adjacent" enough */
+        return 0;
+    }
+
+    return 1;
+}
+
 /* From map.c
  * This is used by get_player to determine where the other
  * creature is.  get_rangevector takes into account map tiling,
@@ -2040,62 +2097,50 @@ mapstruct *get_map_from_coord(mapstruct *m, sint16 *x, sint16 *y)
  * closest body part of 'op1'
  */
 
-void get_rangevector(object *op1, object *op2, rv_vector *retval, int flags)
-{
-    object	*best;
+void get_rangevector(object *op1, object *op2, rv_vector *retval, int flags) {
+    if (!adjacent_map(op1->map, op2->map, &retval->distance_x, &retval->distance_y)) {
+        /* be conservative and fill in _some_ data */
+        retval->distance   = 100000;
+        retval->distance_x = 32767;
+        retval->distance_y = 32767;
+        retval->direction  = 0;
+        retval->part       = 0;
+    } else {
+        object *best;
 
-    if (op1->map->tile_map[0] == op2->map) {
-	retval->distance_x = op2->x - op1->x;
-	retval->distance_y = -(op1->y +(MAP_HEIGHT(op2->map)- op2->y));
+        retval->distance_x += op2->x-op1->x;
+        retval->distance_y += op2->y-op1->y;
 
-    }
-    else if (op1->map->tile_map[1] == op2->map) {
-	retval->distance_y = op2->y - op1->y;
-	retval->distance_x = (MAP_WIDTH(op1->map) - op1->x) + op2->x;
-    }
-    else if (op1->map->tile_map[2] == op2->map) {
-	retval->distance_x = op2->x - op1->x;
-	retval->distance_y = (MAP_HEIGHT(op1->map) - op1->y) +op2->y;
+        best = op1;
+        /* If this is multipart, find the closest part now */
+        if (!(flags&0x1) && op1->more) {
+            object *tmp;
+            int best_distance = retval->distance_x*retval->distance_x+
+                                retval->distance_y*retval->distance_y, tmpi;
 
+            /* we just take the offset of the piece to head to figure
+             * distance instead of doing all that work above again
+             * since the distance fields we set above are positive in the
+             * same axis as is used for multipart objects, the simply arithmetic
+             * below works.
+             */
+            for (tmp = op1->more; tmp != NULL; tmp = tmp->more) {
+                tmpi = (op1->x-tmp->x+retval->distance_x)*(op1->x-tmp->x+retval->distance_x)+
+                       (op1->y-tmp->y+retval->distance_y)*(op1->y-tmp->y+retval->distance_y);
+                if (tmpi < best_distance) {
+                    best_distance = tmpi;
+                    best = tmp;
+                }
+            }
+            if (best != op1) {
+                retval->distance_x += op1->x-best->x;
+                retval->distance_y += op1->y-best->y;
+            }
+        }
+        retval->part = best;
+        retval->distance = isqrt(retval->distance_x*retval->distance_x+retval->distance_y*retval->distance_y);
+        retval->direction = find_dir_2(-retval->distance_x, -retval->distance_y);
     }
-    else if (op1->map->tile_map[3] == op2->map) {
-	retval->distance_y = op2->y - op1->y;
-	retval->distance_x = -(op1->x +(MAP_WIDTH(op2->map)- op2->x));
-    }
-    else if (op1->map == op2->map) {
-	retval->distance_x = op2->x - op1->x;
-	retval->distance_y = op2->y - op1->y;
-
-    }
-    best = op1;
-    /* If this is multipart, find the closest part now */
-    if (!(flags & 0x1) && op1->more) {
-	object *tmp;
-	int best_distance = retval->distance_x * retval->distance_x +
-		    retval->distance_y * retval->distance_y, tmpi;
-
-	/* we just tkae the offset of the piece to head to figure
-	 * distance instead of doing all that work above again
-	 * since the distance fields we set above are positive in the
-	 * same axis as is used for multipart objects, the simply arithemetic
-	 * below works.
-	 */
-	for (tmp=op1->more; tmp; tmp=tmp->more) {
-	    tmpi = (op1->x - tmp->x + retval->distance_x) * (op1->x - tmp->x + retval->distance_x) +
-		(op1->y - tmp->y + retval->distance_y) * (op1->y - tmp->y + retval->distance_y);
-	    if (tmpi < best_distance) {
-		best_distance = tmpi;
-		best = tmp;
-	    }
-	}
-	if (best != op1) {
-	    retval->distance_x += op1->x - best->x;
-	    retval->distance_y += op1->y - best->y;
-	}
-    }
-    retval->part = best;
-    retval->distance = isqrt(retval->distance_x*retval->distance_x + retval->distance_y*retval->distance_y);
-    retval->direction = find_dir_2(-retval->distance_x, -retval->distance_y);
 }
 
 /* this is basically the same as get_rangevector above, but instead of 
@@ -2109,34 +2154,22 @@ void get_rangevector(object *op1, object *op2, rv_vector *retval, int flags)
  * field of the rv_vector is set to NULL.
  */
 
-void get_rangevector_from_mapcoord(mapstruct  *m, int x, int y, object *op2, rv_vector *retval,int flags)
-{
-    if (m->tile_map[0] == op2->map) {
-	retval->distance_x = op2->x - x;
-	retval->distance_y = -(y +(MAP_HEIGHT(op2->map)- op2->y));
+void get_rangevector_from_mapcoord(mapstruct  *m, int x, int y, object *op2, rv_vector *retval, int flags) {
+    if (!adjacent_map(m, op2->map, &retval->distance_x, &retval->distance_y)) {
+        /* be conservative and fill in _some_ data */
+        retval->distance   = 100000;
+        retval->distance_x = 32767;
+        retval->distance_y = 32767;
+        retval->direction  = 0;
+        retval->part       = 0;
+    } else {
+	retval->distance_x += op2->x-x;
+	retval->distance_y += op2->y-y;
 
+        retval->part = NULL;
+        retval->distance = isqrt(retval->distance_x*retval->distance_x+retval->distance_y*retval->distance_y);
+        retval->direction = find_dir_2(-retval->distance_x, -retval->distance_y);
     }
-    else if (m->tile_map[1] == op2->map) {
-	retval->distance_y = op2->y - y;
-	retval->distance_x = (MAP_WIDTH(m) - x) + op2->x;
-    }
-    else if (m->tile_map[2] == op2->map) {
-	retval->distance_x = op2->x - x;
-	retval->distance_y = (MAP_HEIGHT(m) - y) +op2->y;
-
-    }
-    else if (m->tile_map[3] == op2->map) {
-	retval->distance_y = op2->y - y;
-	retval->distance_x = -(x +(MAP_WIDTH(op2->map)- op2->y));
-    }
-    else if (m == op2->map) {
-	retval->distance_x = op2->x - x;
-	retval->distance_y = op2->y - y;
-
-    }
-    retval->part = NULL;
-    retval->distance = isqrt(retval->distance_x*retval->distance_x + retval->distance_y*retval->distance_y);
-    retval->direction = find_dir_2(-retval->distance_x, -retval->distance_y);
 }
 
 /* Returns true of op1 and op2 are effectively on the same map
@@ -2147,44 +2180,8 @@ void get_rangevector_from_mapcoord(mapstruct  *m, int x, int y, object *op2, rv_
  * and efficient.  This could probably be a macro.
  * MSW 2001-08-05
  */
-int on_same_map(object *op1, object *op2)
-{
-    mapstruct *tmp;
+int on_same_map(object *op1, object *op2) {
+    int dx, dy;
 
-    /* If the object isn't on a map, can't be on the same map, now can it?
-     * this check also prevents crashes below.
-     */
-    if (op1->map == NULL || op2->map == NULL) return FALSE;
-
-    /* on same map? */
-    if (op1->map == op2->map) return TRUE;
-
-    /* on adjacent map? */
-    if (op1->map->tile_map[0] == op2->map) return TRUE;
-    if (op1->map->tile_map[1] == op2->map) return TRUE;
-    if (op1->map->tile_map[2] == op2->map) return TRUE;
-    if (op1->map->tile_map[3] == op2->map) return TRUE;
-    
-    /* on diagonally adjacent map? */
-    tmp = op1->map->tile_map[0];
-    if (tmp != NULL) {
-        if (tmp->tile_map[1] == op2->map || tmp->tile_map[3] == op2->map) return TRUE;
-    }
-
-    tmp = op1->map->tile_map[1];
-    if (tmp != NULL) {
-        if (tmp->tile_map[0] == op2->map || tmp->tile_map[2] == op2->map) return TRUE;
-    }
-
-    tmp = op1->map->tile_map[2];
-    if (tmp != NULL) {
-        if (tmp->tile_map[1] == op2->map || tmp->tile_map[3] == op2->map) return TRUE;
-    }
-
-    tmp = op1->map->tile_map[3];
-    if (tmp != NULL) {
-        if (tmp->tile_map[0] == op2->map || tmp->tile_map[2] == op2->map) return TRUE;
-    }
-
-    return FALSE;
+    return adjacent_map(op1->map, op2->map, &dx, &dy);
 }

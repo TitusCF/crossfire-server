@@ -17,6 +17,14 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Apply modified patch by Pippijn van Steenhoven to fix get_rangevector
+functions on tiled maps.
+---
+server/map.c: Add helper function adjacent_map() to check if two maps are
+   adjacent. Modify get_rangevector(), get_rangevector_from_mapcoord(), and
+   on_same_map() to use this function.
+Andreas Kirschbaum 2006-02-09
+
 server/player.c: make a player's starting items be locked, so that they
 can't accidentally drop and lose them without unlocking them first.
 Brendan Lally 2006-02-09
