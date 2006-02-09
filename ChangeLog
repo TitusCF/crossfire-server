@@ -19,7 +19,7 @@ Changes for CVS:
 
 Apply modified patch by Pippijn van Steenhoven to fix get_rangevector
 functions on tiled maps.
----
+
 server/map.c: Add helper function adjacent_map() to check if two maps are
    adjacent. Modify get_rangevector(), get_rangevector_from_mapcoord(), and
    on_same_map() to use this function.
@@ -46,6 +46,13 @@ include/libproto.h: Add new prototype.
 server/spell_effect.c: In cast_create_food() only search for objects of type
    FOOD or DRINK.
 Andreas Kirschbaum 2006-02-09
+
+Added a "insert_into" command for DMs, to easily put items in other items.
+Modified filse:
+ include/sproto.h
+ server/c_wiz.c 
+ server/commands.c
+Ryo 2006-02-08
 
 server/main.c: Modify enter_exit() to see if player is in a transport,
   and if so, remove him.  Can happen if player uses word of recall

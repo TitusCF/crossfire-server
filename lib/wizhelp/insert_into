@@ -1,0 +1,4 @@
+syntax: insert_into <item> <item>
+notes: this will insert the 2nd item
+in the first.
+2nd can't be a player.
