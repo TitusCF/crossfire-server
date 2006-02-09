@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/player.c: make a player's starting items be locked, so that they
+can't accidentally drop and lose them without unlocking them first.
+Brendan Lally 2006-02-09
+
 Apply patch #1427979 (code-cleanup: add const, fix warnings) by Stefan
 Huehner.
 ---

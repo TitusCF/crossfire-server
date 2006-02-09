@@ -636,11 +636,13 @@ void give_initial_items(object *pl,treasurelist *items) {
 	    free_object(op);
             continue;
 	}
-	if(op->type==SKILL)  {
+	else if(op->type==SKILL)  {
 	    SET_FLAG(op, FLAG_CAN_USE_SKILL);
 	    op->stats.exp = 0;
 	    op->level = 1;
 	}
+	/* lock all 'normal items by default */
+	else SET_FLAG(op, FLAG_INV_LOCKED);
     } /* for loop of objects in player inv */
 
     /* Need to set up the skill pointers */
