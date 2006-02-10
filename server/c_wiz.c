@@ -1175,6 +1175,9 @@ int command_stats(object *op, char *params) {
             sprintf(buf, "Con : %-2d        AC : %-4d  WC  : %d",
                 pl->ob->stats.Con, pl->ob->stats.ac, pl->ob->stats.wc) ;
             new_draw_info(NDI_UNIQUE, 0, op, buf);
+            sprintf(buf, "Int : %-2d    Damage : %d",
+                pl->ob->stats.Int, pl->ob->stats.dam);
+            new_draw_info(NDI_UNIQUE, 0, op, buf);
 #ifndef WIN32
             sprintf(buf, "Wis : %-2d       EXP : %lld",
                 pl->ob->stats.Wis, pl->ob->stats.exp);
@@ -1183,13 +1186,11 @@ int command_stats(object *op, char *params) {
                 pl->ob->stats.Wis, pl->ob->stats.exp);
 #endif
             new_draw_info(NDI_UNIQUE, 0, op, buf);
-            sprintf(buf, "Cha : %-2d      Food : %d",
-                pl->ob->stats.Cha, pl->ob->stats.food);
-            new_draw_info(NDI_UNIQUE, 0, op, buf);
-            sprintf(buf, "Int : %-2d    Damage : %d",
-                pl->ob->stats.Int, pl->ob->stats.dam);
             sprintf(buf, "Pow : %-2d    Grace : %d",
                 pl->ob->stats.Pow, pl->ob->stats.grace);
+            new_draw_info(NDI_UNIQUE, 0, op, buf);
+            sprintf(buf, "Cha : %-2d      Food : %d",
+                pl->ob->stats.Cha, pl->ob->stats.food);
             new_draw_info(NDI_UNIQUE, 0, op, buf);
             break;
         }
