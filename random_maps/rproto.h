@@ -43,7 +43,7 @@ extern void insert_multisquare_ob_in_map(object *new_obj, mapstruct *map);
 extern void place_monsters(mapstruct *map, char *monsterstyle, int difficulty, RMParms *RP);
 /* door.c */
 extern int surround_check2(char **layout, int i, int j, int Xsize, int Ysize);
-extern void put_doors(mapstruct *the_map, char **maze, char *doorstyle, RMParms *RP);
+extern void put_doors(mapstruct *the_map, char **maze, const char *doorstyle, RMParms *RP);
 /* decor.c */
 extern int obj_count_in_map(mapstruct *map, int x, int y);
 extern void put_decor(mapstruct *map, char **maze, char *decorstyle, int decor_option, RMParms *RP);
@@ -78,7 +78,7 @@ extern void place_specials_in_map(mapstruct *map, char **layout, RMParms *RP);
 /* style.c */
 extern int load_dir(const char *dir, char ***namelist, int skip_dirs);
 extern mapstruct *load_style_map(char *style_name);
-extern mapstruct *find_style(char *dirname, char *stylename, int difficulty);
+extern mapstruct *find_style(const char *dirname, const char *stylename, int difficulty);
 extern object *pick_random_object(mapstruct *style);
 extern void free_style_maps(void);
 /* rogue_layout.c */

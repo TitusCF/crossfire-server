@@ -80,13 +80,13 @@
 typedef void (*func_uint8_int_ns) (char*, int, NewSocket *);
 
 struct NsCmdMapping {
-    char *cmdname;
+    const char *cmdname;
     func_uint8_int_ns  cmdproc;
 };
 
 typedef void (*func_uint8_int_pl)(char*, int, player *);
 struct PlCmdMapping {
-    char *cmdname;
+    const char *cmdname;
     func_uint8_int_pl cmdproc;
     uint8   flag;
 };

@@ -34,6 +34,8 @@
 /* IF set, does a little timing on the archetype load. */
 #define TIME_ARCH_LOAD 0
 
+static void add_arch(archetype *at);
+
 static archetype *arch_table[ARCHTABLE];
 int arch_cmp=0;		/* How many strcmp's */
 int arch_search=0;	/* How many searches */
@@ -679,7 +681,7 @@ archetype *find_archetype(const char *name) {
  * Adds an archetype to the hashtable.
  */
 
-void add_arch(archetype *at) {
+static void add_arch(archetype *at) {
   int index=hasharch(at->name, ARCHTABLE),org_index=index;
   for(;;) {
     if(arch_table[index]==NULL) {

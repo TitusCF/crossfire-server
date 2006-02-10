@@ -171,7 +171,7 @@ void fix_auto_apply(mapstruct *m) {
  * Ryo 2005-07-15
  **/
  
-void new_draw_info(int a, int b, object *ob, const char *txt)
+void new_draw_info(int a, int b, const object *ob, const char *txt)
     {
     fprintf(logfile, "%s\n", txt);
     }

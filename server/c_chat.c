@@ -74,7 +74,7 @@ int command_cointoss(object *op, char *params)
     return 0;
 }
 
-char *orcknuckle[7] = {"none", "beholder", "ghost", "knight",
+static const char* const orcknuckle[7] = {"none", "beholder", "ghost", "knight",
 		       "princess", "dragon", "orc"};
 
 int command_orcknuckle(object *op, char *params)

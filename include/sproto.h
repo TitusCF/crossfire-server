@@ -1,5 +1,4 @@
 /* alchemy.c */
-char *cauldron_sound(void);
 void attempt_do_alchemy(object *caster, object *cauldron);
 int content_recipe_value(object *op);
 int numb_ob_inside(object *op);
@@ -523,9 +522,9 @@ int should_arena_attack(object *pet, object *owner, object *target);
 /* player.c */
 player *find_player(const char *plname);
 player *find_player_partial_name(const char *plname);
-void display_motd(object *op);
-void send_rules(object *op);
-void send_news(object *op);
+void display_motd(const object *op);
+void send_rules(const object *op);
+void send_news(const object *op);
 int playername_ok(const char *cp);
 int add_player(NewSocket *ns);
 archetype *get_player_archetype(archetype *at);
@@ -678,19 +677,16 @@ int trap_show(object *trap, object *where);
 int trap_disarm(object *disarmer, object *trap, int risk, object *skill);
 void trap_adjust(object *trap, int difficulty);
 /* shop.c */
-uint64 query_cost(object *tmp, object *who, int flag);
-const char *cost_string_from_value(uint64 cost);
-const char *query_cost_string(object *tmp, object *who, int flag);
-uint64 query_money(object *op);
+double shopkeeper_approval(const mapstruct *map, const object *player);
+uint64 query_cost(const object *tmp, object *who, int flag);
+const char *query_cost_string(const object *tmp, object *who, int flag);
+uint64 query_money(const object *op);
 int pay_for_amount(uint64 to_pay, object *pl);
 int pay_for_item(object *op, object *pl);
 int can_pay(object *pl);
 int get_payment(object *pl, object *op);
 void sell_item(object *op, object *pl);
-double shop_specialisation_ratio(object *item, mapstruct *map);
-double shop_greed(mapstruct *map);
-double shopkeeper_approval(mapstruct *map, object *player);
-int describe_shop(object *op);
+int describe_shop(const object *op);
 void shop_listing(object *op);
 /* skills.c */
 int steal(object *op, int dir, object *skill);

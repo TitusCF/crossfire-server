@@ -55,7 +55,7 @@
 				((op->path_repelled & spell->path_attuned) ? 1.25 : 1))
 
 #define NRSPELLPATHS	20
-extern char *spellpathnames[NRSPELLPATHS];
+extern const char* const spellpathnames[NRSPELLPATHS];
 
 /* The only place this is really used is to allocate an array
  * when printing out the spells the player knows. 

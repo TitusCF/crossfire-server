@@ -9,7 +9,7 @@ void fix_auto_apply(mapstruct * m)
 {
 }
 
-void new_draw_info(int a, int b, object *ob, const char *txt)
+void new_draw_info(int a, int b, const object *ob, const char *txt)
     {
     fprintf(logfile, "%s\n", txt);
     }

@@ -246,7 +246,7 @@ void
 print_tod(object *op)
 {
   timeofday_t tod;
-  char *suf;
+  const char *suf;
   int day;
 
   get_tod(&tod);

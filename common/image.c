@@ -319,14 +319,14 @@ void ReadBmapNames (void) {
  * (needed in client, so that it will know to request that image
  * from the server)
  */
-int FindFace (char *name, int error) {
+int FindFace (const char *name, int error) {
     struct bmappair *bp, tmp;
     char *p;
 
     if ((p = strchr (name, '\n')))
 	*p = '\0';
 
-    tmp.name = name;
+    tmp.name = (char *)name;
     bp = (struct bmappair *)bsearch 
 	(&tmp, xbm, nroffiles, sizeof(struct bmappair), (int (*)(const void*, const void*))compar);
 

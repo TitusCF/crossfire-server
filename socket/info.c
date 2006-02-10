@@ -90,7 +90,7 @@ static void esrv_print_ext_msg(NewSocket *ns,int color,uint8 type, uint8 subtype
  * Else sends message to player via esrv_print_msg
  */
 
-static void print_message(int colr, object *pl,const char *tmp) {
+static void print_message(int colr, const object *pl, const char *tmp) {
 
   if(tmp == (char *) NULL) {
     tmp="[NULL]";
@@ -112,7 +112,7 @@ static void print_message(int colr, object *pl,const char *tmp) {
  * and clears the string.
  */
 
-void flush_output_element(object *pl, Output_Buf *outputs)
+void flush_output_element(const object *pl, Output_Buf *outputs)
 {
     char tbuf[MAX_BUF];
 
@@ -139,7 +139,7 @@ void flush_output_element(object *pl, Output_Buf *outputs)
  * and adds message to queue.
  */
 
-void check_output_buffers(object *pl, const char *buf)
+static void check_output_buffers(const object *pl, const char *buf)
 {
     int i, oldest=0;
 
@@ -194,7 +194,7 @@ void check_output_buffers(object *pl, const char *buf)
  *
  */
 
-void new_draw_info(int flags,int pri, object *pl, const char *buf)
+void new_draw_info(int flags, int pri, const object *pl, const char *buf)
 {
 
     if (flags & NDI_ALL) {
@@ -240,7 +240,7 @@ void new_draw_info(int flags,int pri, object *pl, const char *buf)
  * client/server bandwidth (client could keep track of various strings
  */
 
-void new_draw_info_format(int flags, int pri,object *pl, const char *format, ...)
+void new_draw_info_format(int flags, int pri, const object *pl, const char *format, ...)
 {
     char buf[HUGE_BUF];
 
@@ -256,7 +256,7 @@ void new_draw_info_format(int flags, int pri,object *pl, const char *format, ...
 
 
 void draw_ext_info(
-        int flags, int pri, object *pl, uint8 type, 
+        int flags, int pri, const object *pl, uint8 type, 
         uint8 subtype, const char* message, const char* oldmessage){
             
     if(!pl || (pl->type!=PLAYER) || (pl->contr==NULL))
@@ -279,7 +279,7 @@ void draw_ext_info(
 }
 
 void draw_ext_info_format(
-        int flags, int pri, object *pl, uint8 type, 
+        int flags, int pri, const object *pl, uint8 type, 
         uint8 subtype, const char* old_format, 
         char* new_format, ...){
             

@@ -1461,7 +1461,7 @@ int cast_heal(object *op,object *caster, object *spell, int dir) {
  * right now that icnrease wis/int/pow on a temp basis, so no
  * good comments for those.
  */
-static char *no_gain_msgs[NUM_STATS] = {
+static const char* const no_gain_msgs[NUM_STATS] = {
 "You grow no stronger.",
 "You grow no more agile.",
 "You don't feel any healthier.",

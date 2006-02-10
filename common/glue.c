@@ -38,7 +38,7 @@
  * Ryo 2005-07-15
  */
 
-static char *fatalmsgs[80]={
+static const char* const fatalmsgs[80]={
   "Failed to allocate memory",
   "Failed repeatedly to load maps",
   "Hashtable for archetypes is too small",

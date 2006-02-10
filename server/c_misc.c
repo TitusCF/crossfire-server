@@ -947,7 +947,7 @@ int command_logs (object *op, char *params)
 int command_applymode(object *op, char *params)
 {
     unapplymode unapply = op->contr->unapply;
-    static char *types[]={"nochoice", "never", "always"};
+    static const char* const types[]={"nochoice", "never", "always"};
 
     if (!params) {
 	new_draw_info_format(NDI_UNIQUE, 0, op, "applymode is set to %s",
@@ -976,7 +976,7 @@ int command_applymode(object *op, char *params)
 int command_bowmode(object *op, char *params)
 {
     bowtype_t oldtype=op->contr->bowtype;
-    static char *types[] =
+    static const char* const types[] =
 	{"normal", "threewide", "spreadshot", "firenorth",
 	 "firene", "fireeast", "firese", "firesouth",
 	 "firesw", "firewest", "firenw", "bestarrow"};
@@ -1018,7 +1018,7 @@ int command_bowmode(object *op, char *params)
 int command_petmode(object *op, char *params)
 {
     petmode_t oldtype=op->contr->petmode;
-    static char *types[]={"normal", "sad", "defend", "arena"};
+    static const char* const types[]={"normal", "sad", "defend", "arena"};
 
     if (!params) {
 	new_draw_info_format(NDI_UNIQUE, 0, op, "petmode is set to %s",
@@ -1089,7 +1089,7 @@ int command_showpets(object *op, char *params)
 int command_usekeys(object *op, char *params)
 {
     usekeytype oldtype=op->contr->usekeys;
-    static char *types[]={"inventory", "keyrings", "containers"};
+    static const char* const types[]={"inventory", "keyrings", "containers"};
 
     if (!params) {
 	new_draw_info_format(NDI_UNIQUE, 0, op, "usekeys is set to %s",

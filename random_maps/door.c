@@ -44,7 +44,7 @@ int surround_check2(char **layout,int i,int j,int Xsize, int Ysize){
   return surround_index;
 }
 
-void put_doors(mapstruct *the_map, char **maze, char *doorstyle, RMParms *RP) {
+void put_doors(mapstruct *the_map, char **maze, const char *doorstyle, RMParms *RP) {
 	int i,j;
 	mapstruct *vdoors;
 	mapstruct *hdoors;

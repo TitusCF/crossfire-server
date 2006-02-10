@@ -100,7 +100,7 @@ typedef struct titleliststruct {
 
 typedef struct namebytype
   {
-      char   *name;		/* generic name to call artifacts of this type */
+      const char *name;		/* generic name to call artifacts of this type */
       int     type;		/* matching type */
   }
 arttypename;
@@ -154,7 +154,7 @@ static uint32 spellpathdef[NRSPELLPATHS] =
     PATH_LIGHT
 };
 
-static char *path_book_name[] =
+static const char* const path_book_name[] =
 {
     "codex",
     "compendium",
@@ -164,7 +164,7 @@ static char *path_book_name[] =
 };
 
 /* used by spellpath texts */
-static char *path_author[] =
+static const char* const path_author[] =
 {
     "aether",
     "astral byways",
@@ -209,7 +209,7 @@ static arttypename art_name_array[] =
     {"Body Armour", ARMOUR}
 };
 
-static char *art_book_name[] =
+static const char* const art_book_name[] =
 {
     "collection",
     "file",
@@ -225,7 +225,7 @@ static char *art_book_name[] =
 };
 
 /* used by artifact texts */
-static char *art_author[] =
+static const char* const art_author[] =
 {
     "ancient things",
     "artifacts",
@@ -240,7 +240,7 @@ static char *art_author[] =
  * Monster book information
  */
 
-static char *mon_book_name[] =
+static const char* const mon_book_name[] =
 {
     "beastuary",
     "catalog",
@@ -259,7 +259,7 @@ static char *mon_book_name[] =
 
 
 /* used by monster beastuary texts */
-static char *mon_author[] =
+static const char* const mon_author[] =
 {
     "beasts",
     "creatures",
@@ -280,7 +280,7 @@ static char *mon_author[] =
  * God book information
  */
 
-static char *gods_book_name[] =
+static const char* const gods_book_name[] =
 {
     "devotional",
     "devout notes",
@@ -295,7 +295,7 @@ static char *gods_book_name[] =
 };
 
 /* used by gods texts */
-static char *gods_author[] =
+static const char* const gods_author[] =
 {
     "cults",
     "joy",
@@ -316,7 +316,7 @@ static char *gods_author[] =
  * Alchemy (formula) information
  */
 
-static char *formula_book_name[] =
+static const char* const formula_book_name[] =
 {
     "cookbook",
     "formulary",
@@ -329,7 +329,7 @@ static char *formula_book_name[] =
 };
 
 /* this isn't used except for empty books */
-static char *formula_author[] =
+static const char* const formula_author[] =
 {
     "Albertus Magnus",
     "alchemy",
@@ -352,7 +352,7 @@ static char *formula_author[] =
  */
 
 /* used by msg file and 'generic' books */
-static char *light_book_name[] =
+static const char* const light_book_name[] =
 {
     "calendar",
     "datebook",
@@ -369,7 +369,7 @@ static char *light_book_name[] =
     "transcript"
 };
 
-static char *heavy_book_name[] =
+static const char* const heavy_book_name[] =
 {
     "catalog",
     "compendium",
@@ -384,7 +384,7 @@ static char *heavy_book_name[] =
 
 
 /* used by 'generic' books */
-static char *book_author[] =
+static const char* const book_author[] =
 {
     "Abdulah",
     "Al'hezred",
@@ -430,7 +430,7 @@ static char *book_author[] =
     "Zagy"
 };
 
-static char *book_descrpt[] =
+static const char* const book_descrpt[] =
 {
     "ancient",
     "cryptic",

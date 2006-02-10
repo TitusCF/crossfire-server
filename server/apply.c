@@ -813,27 +813,27 @@ int improve_weapon(object *op,object *improver,object *weapon)
    case IMPROVE_STR:
     return improve_weapon_stat(op,improver,weapon,
                                (signed char *) &(weapon->stats.Str),
-			       1,(char *) "strength");
+			       1, "strength");
    case IMPROVE_DEX:
     return improve_weapon_stat(op,improver,weapon,
                                (signed char *) &(weapon->stats.Dex),
-			       1,(char *) "dexterity");
+			       1, "dexterity");
    case IMPROVE_CON:
     return improve_weapon_stat(op,improver,weapon,
                                (signed char *) &(weapon->stats.Con),
-			       1,(char *) "constitution");
+			       1, "constitution");
    case IMPROVE_WIS:
     return improve_weapon_stat(op,improver,weapon,
                                (signed char *) &(weapon->stats.Wis),
-			       1,(char *) "wisdom");
+			       1, "wisdom");
    case IMPROVE_CHA:
     return improve_weapon_stat(op,improver,weapon,
                                (signed char *) &(weapon->stats.Cha),
-			       1,(char *) "charisma");
+			       1, "charisma");
    case IMPROVE_INT:
     return improve_weapon_stat(op,improver,weapon,
                                (signed char *) &(weapon->stats.Int),
-			       1,(char *) "intelligence");
+			       1, "intelligence");
    case IMPROVE_POW:
     return improve_weapon_stat(op,improver,weapon,
                                (signed char *) &(weapon->stats.Pow),

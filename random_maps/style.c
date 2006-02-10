@@ -139,7 +139,7 @@ mapstruct *load_style_map(char *style_name)
     return style_map;
 }
 
-mapstruct *find_style(char *dirname,char *stylename,int difficulty) {
+mapstruct *find_style(const char *dirname,const char *stylename,int difficulty) {
     char style_file_path[256];
     char style_file_full_path[256];
     mapstruct *style_map = NULL;

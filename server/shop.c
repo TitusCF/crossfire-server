@@ -52,10 +52,12 @@
 #define NEUTRAL_RATIO 0.8
 
 static uint64 pay_from_container(object *pl, object *pouch, uint64 to_pay);
-static uint64 value_limit(uint64 val, int quantity, object *who, int isshop);
+static uint64 value_limit(uint64 val, int quantity, const object *who, int isshop);
+static double shop_specialisation_ratio(const object *item, const mapstruct *map);
+static double shop_greed(const mapstruct *map);
 
 #define NUM_COINS 3	/* number of coin types */
-static char *coins[] = {"platinacoin", "goldcoin", "silvercoin", NULL};
+static const char* const coins[] = {"platinacoin", "goldcoin", "silvercoin", NULL};
 
 /* Added F_TRUE flag to define.h to mean that the price should not
  * be adjusted by players charisma. With F_TRUE, it returns the amount
@@ -81,7 +83,7 @@ static char *coins[] = {"platinacoin", "goldcoin", "silvercoin", NULL};
  *
  * Mark Wedel (mwedel@pyramid.com)
  */
-uint64 query_cost(object *tmp, object *who, int flag) {
+uint64 query_cost(const object *tmp, object *who, int flag) {
     uint64 val;
     int number;	/* used to better calculate value */
     int no_bargain;
@@ -330,7 +332,7 @@ static archetype *find_next_coin(uint64 c, int *cointype) {
  * time is to add a higher denomination (mithril piece with
  * 10,000 silver or something)
  */
-const char *cost_string_from_value(uint64 cost)
+static const char *cost_string_from_value(uint64 cost)
 {
     static char buf[MAX_BUF];
     archetype *coin, *next_coin;
@@ -390,7 +392,7 @@ const char *cost_string_from_value(uint64 cost)
     return buf;
 }
 
-const char *query_cost_string(object *tmp,object *who,int flag) {
+const char *query_cost_string(const object *tmp,object *who,int flag) {
     uint64 real_value = query_cost(tmp,who,flag);
     int idskill1=0;
     int idskill2=0;
@@ -443,7 +445,7 @@ const char *query_cost_string(object *tmp,object *who,int flag) {
 /* This function finds out how much money the player is carrying,
  * including what is in containers.
  */
-uint64 query_money(object *op) {
+uint64 query_money(const object *op) {
     object *tmp;
     uint64 total=0;
 
@@ -844,7 +846,7 @@ void sell_item(object *op, object *pl) {
  * returned value is between (2*SPECIALISATION_EFFECT-1) and 1 and in any 
  * event is never less than 0.1 (calling functions divide by it)
  */
-double shop_specialisation_ratio(object *item, mapstruct *map) {
+static double shop_specialisation_ratio(const object *item, const mapstruct *map) {
     shopitems *items=map->shopitems;
     double ratio = SPECIALISATION_EFFECT, likedness=0.001;
     int i;
@@ -882,7 +884,7 @@ double shop_specialisation_ratio(object *item, mapstruct *map) {
 }
 
 /*returns the greed of the shop on map, or 1 if it isn't specified. */
-double shop_greed(mapstruct *map) {
+static double shop_greed(const mapstruct *map) {
     double greed=1.0;
     if (map->shopgreed)
 	return map->shopgreed;
@@ -892,7 +894,7 @@ double shop_greed(mapstruct *map) {
 /* Returns a double based on how much the shopkeeper approves of the player.
  * this is based on the race of the shopkeeper and that of the player.
  */
-double shopkeeper_approval(mapstruct *map, object *player) {
+double shopkeeper_approval(const mapstruct *map, const object *player) {
     double approval=1.0;
 
     if (map->shoprace) {
@@ -909,7 +911,7 @@ double shopkeeper_approval(mapstruct *map, object *player) {
  * value reduction.
  * 
  */
-static uint64 value_limit(uint64 val, int quantity, object *who, int isshop) {
+static uint64 value_limit(uint64 val, int quantity, const object *who, int isshop) {
     uint64 newval, unit_price;
     mapstruct *map;
     unit_price=val/quantity;
@@ -937,7 +939,7 @@ static uint64 value_limit(uint64 val, int quantity, object *who, int isshop) {
 }
 
 /* gives a desciption of the shop on their current map to the player op. */
-int describe_shop(object *op) {
+int describe_shop(const object *op) {
     mapstruct *map = op->map;
     /*shopitems *items=map->shopitems;*/
     int pos=0, i;

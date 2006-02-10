@@ -8,12 +8,11 @@ void esrv_send_face(NewSocket *ns, short face_num, int nocache);
 void send_image_info(NewSocket *ns, char *params);
 void send_image_sums(NewSocket *ns, char *params);
 /* info.c */
-void flush_output_element(object *pl, Output_Buf *outputs);
-void check_output_buffers(object *pl, const char *buf);
-void new_draw_info(int flags, int pri, object *pl, const char *buf);
-void new_draw_info_format(int flags, int pri, object *pl, const char *format, ...);
-void draw_ext_info(int flags, int pri, object *pl, uint8 type, uint8 subtype, const char* message,const char* oldmessage);
-void draw_ext_info_format(int flags, int pri, object *pl, uint8 type, uint8 subtype, const char* old_format, char* new_format, ...);
+void flush_output_element(const object *pl, Output_Buf *outputs);
+void new_draw_info(int flags, int pri, const object *pl, const char *buf);
+void new_draw_info_format(int flags, int pri, const object *pl, const char *format, ...);
+void draw_ext_info(int flags, int pri, const object *pl, uint8 type, uint8 subtype, const char* message,const char* oldmessage);
+void draw_ext_info_format(int flags, int pri, const object *pl, uint8 type, uint8 subtype, const char* old_format, char* new_format, ...);
 void new_info_map_except(int color, mapstruct *map, object *op, const char *str);
 void new_info_map_except2(int color, mapstruct *map, object *op1, object *op2, const char *str);
 void new_info_map(int color, mapstruct *map, const char *str);

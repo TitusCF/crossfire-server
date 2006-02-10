@@ -364,7 +364,7 @@ void ToggleExtendedText (char *buf, int len, NewSocket *ns){
  * if we know the client wants it, might as well push it to the
  * client.
  */
-void SendSmooth(NewSocket *ns, uint16 face) {
+static void SendSmooth(NewSocket *ns, uint16 face) {
      uint16 smoothface;
      uint8 reply[MAX_BUF];
      SockList sl;

@@ -85,7 +85,7 @@ void set_csport(char *val)
  * also my program, no problem.
  */
 struct Command_Line_Options {
-    char    *cmd_option;    /* how it is called on the command line */
+    const char *cmd_option; /* how it is called on the command line */
     uint8   num_args;	    /* Number or args it takes */
     uint8   pass;           /* What pass this should be processed on. */
     void    (*func)();      /* function to call when we match this.

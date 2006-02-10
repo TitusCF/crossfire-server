@@ -47,7 +47,7 @@
 #endif
 
 /** Random cauldrons effects */
-static char *cauldron_effect [] = { 
+static const char* const cauldron_effect [] = { 
  "vibrates briefly",
  "produces a cloud of steam",
  "emits bright flames",
@@ -70,7 +70,7 @@ static recipe *find_recipe(recipelist *fl, int formula, object *ingredients);
 
 
 /** Returns a random selection from cauldron_effect[] */
-char * cauldron_sound ( void ) {
+static const char *cauldron_sound(void) {
   int size=sizeof(cauldron_effect)/sizeof(char *);
 
   return cauldron_effect[rndm(0, size-1)]; 

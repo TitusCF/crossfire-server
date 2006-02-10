@@ -100,7 +100,7 @@ ARMOR_SPEED_LINEAR,
  * in some file in the common area so that standalone
  * programs, like the random map generator, can be built.
  */
-char *spellpathnames[NRSPELLPATHS] = {
+const char* const spellpathnames[NRSPELLPATHS] = {
  "Protection",
  "Fire",
  "Frost",

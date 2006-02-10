@@ -17,6 +17,18 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Apply slightly modified patch #1428309 (code-cleanup: const, static) by
+Stefan Huehner: add const/static to functions/variables. Remove some type
+casts.
+---
+Affected files: common/{arch.c,glue.c,image.c,init.c,readable.c,time.c},
+crossedit/stubs.c
+include/{attack.h,libproto.h,object.h,sockproto.h,spells.h,sproto.h},
+random_maps/{door.c,rproto.h,standalone.c,style.c},
+server/{alchemy.c,apply.c,c_chat.c,c_misc.c,init.c,player.c,shop.c,spell_effect.c},
+socket/{info.c,loop.c,request.c}
+Andreas Kirschbaum
+
 server/c_wiz.c: make dm stats command print Int and damage. Rearrange output
    to match the stat ordering.
 lib/wizhelp/stats: document the stats command
@@ -25,7 +37,7 @@ Brendan Lally 2006-02-10
 
 Apply modified patch by Pippijn van Steenhoven to fix get_rangevector
 functions on tiled maps.
-
+---
 server/map.c: Add helper function adjacent_map() to check if two maps are
    adjacent. Modify get_rangevector(), get_rangevector_from_mapcoord(), and
    on_same_map() to use this function.

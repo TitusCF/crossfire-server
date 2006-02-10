@@ -28,7 +28,6 @@ extern object *create_singularity(const char *name);
 extern object *get_archetype(const char *name);
 extern unsigned long hasharch(const char *str, int tablesize);
 extern archetype *find_archetype(const char *name);
-extern void add_arch(archetype *at);
 extern archetype *type_to_archetype(int type);
 extern object *clone_arch(int type);
 extern object *object_create_arch(archetype *at);
@@ -77,7 +76,7 @@ extern void print_monsters(void);
 extern void bitstostring(long bits, int num, char *str);
 /* image.c */
 extern void ReadBmapNames(void);
-extern int FindFace(char *name, int error);
+extern int FindFace(const char *name, int error);
 extern int ReadSmooth(void);
 extern int FindSmooth(uint16 face, uint16 *smoothed);
 extern void free_all_images(void);

@@ -75,7 +75,7 @@ player* find_player_partial_name( const char* plname )
     return found;
     }
 
-void display_motd(object *op) {
+void display_motd(const object *op) {
     char buf[MAX_BUF];
     char motd[HUGE_BUF];
     FILE *fp;
@@ -98,7 +98,7 @@ void display_motd(object *op) {
     close_and_delete(fp, comp);
 }
 
-void send_rules(object *op) {
+void send_rules(const object *op) {
     char buf[MAX_BUF];
     char rules[HUGE_BUF];
     FILE *fp;
@@ -126,7 +126,7 @@ void send_rules(object *op) {
     close_and_delete(fp, comp);
 }
 
-void send_news(object *op) {
+void send_news(const object *op) {
     char buf[MAX_BUF];
     char news[HUGE_BUF];
     char subject[MAX_BUF];
