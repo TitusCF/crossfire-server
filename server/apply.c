@@ -2047,9 +2047,6 @@ void apply_scroll (object *op, object *tmp, int dir)
 	return;
     }
 
-    if (!QUERY_FLAG(tmp, FLAG_IDENTIFIED)) 
-	identify(tmp);
-
     if (!tmp->inv || tmp->inv->type != SPELL) {
         new_draw_info (NDI_UNIQUE, 0, op,
                        "The scroll just doesn't make sense!");
@@ -2074,6 +2071,9 @@ void apply_scroll (object *op, object *tmp, int dir)
 	if((exp_gain = calc_skill_exp(op,tmp, skop)))
 	    change_exp(op,exp_gain, skop->skill, 0);
     }
+
+    if (!QUERY_FLAG(tmp, FLAG_IDENTIFIED)) 
+	identify(tmp);
 
     new_draw_info_format(NDI_BLACK, 0, op,
 		     "The scroll of %s turns to dust.", tmp->inv->name);
