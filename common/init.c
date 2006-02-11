@@ -236,6 +236,9 @@ void init_globals(void) {
 		settings.logfilename);
 	logfile = stderr;
     }
+    else {
+	setvbuf(logfile, NULL, _IOLBF, 0);
+    }
     exiting = 0;
     first_player=NULL;
     first_friendly_object=NULL;

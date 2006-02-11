@@ -17,6 +17,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Apply modified patch #1428048 (make the log line buffered) by Marc Lehmann.
+---
+common/init.c: In init_globals() switch the log file to line buffer mode.
+Andreas Kirschbaum 2006-02-11
+
 server/apply.c: In apply_scroll() do not identify the scroll if the player
    lacks the literacy skill.
 Andreas Kirschbaum 2006-02-10
