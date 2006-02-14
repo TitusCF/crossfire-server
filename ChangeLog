@@ -17,6 +17,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Swamps don't affect DMs anymore. Also, swamps don't remove items with
+FLAG_IS_FLOOR or FLAG_IS_OVERLAY_FLOOR.
+ server/weather.c
+Ryo 2006-02-14
+
 Apply modified patch #1428048 (make the log line buffered) by Marc Lehmann.
 ---
 common/init.c: In init_globals() switch the log file to line buffer mode.
