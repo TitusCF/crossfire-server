@@ -195,7 +195,7 @@ static PyObject* Map_Next(Crossfire_Map* map, PyObject* args)
 
 static int Map_InternalCompare(Crossfire_Map* left, Crossfire_Map* right)
 {
-	return (int)left->map - (int)right->map;
+	return left->map < right->map ? -1 : ( left->map == right->map ? 0 : 1 );
 }
 
 /* Legacy code: convert to long so that non-object functions work correctly */

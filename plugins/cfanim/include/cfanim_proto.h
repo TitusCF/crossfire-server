@@ -52,7 +52,7 @@ int cf_init_plugin(f_plug_api getHooks);
 void *cf_map_get_property(mapstruct *map, int propcode);
 void *cf_map_set_int_property(mapstruct *map, int propcode, int value);
 void *cf_object_get_property(object *op, int propcode);
-int cf_object_get_resistance(object *op, int rtype);
+sint16 cf_object_get_resistance(object *op, int rtype);
 void *cf_object_set_int_property(object *op, int propcode, int value);
 void *cf_object_set_long_property(object *op, int propcode, long value);
 void *cf_object_set_string_property(object *op, int propcode, char *value);

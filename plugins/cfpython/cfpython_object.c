@@ -1420,7 +1420,7 @@ static PyObject* Crossfire_Object_GetResist( Crossfire_Object* who, PyObject* ar
     {
         return Py_BuildValue("l",0);
     }
-    return Py_BuildValue("i",*( sint16* )cf_object_get_resistance( who->obj, resist));
+    return Py_BuildValue("i",cf_object_get_resistance( who->obj, resist));
 }
 static PyObject* Crossfire_Object_QueryCost( Crossfire_Object* who, PyObject* args )
 {
@@ -1637,7 +1637,7 @@ static PyObject* Crossfire_Object_InsertInto(Crossfire_Object* who, PyObject* ar
 
 static int Crossfire_Object_InternalCompare(Crossfire_Object* left, Crossfire_Object* right)
 {
-	return ((int)left->obj - (int)right->obj);
+	return (left->obj < right->obj ? -1 : ( left->obj == right->obj ? 0 : 1 ) );
 }
 
 /* Legacy code: convert to long so that non-object functions work correctly */

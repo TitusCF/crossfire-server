@@ -20,6 +20,17 @@ Changes for CVS:
 Swamps don't affect DMs anymore. Also, swamps don't remove items with
 FLAG_IS_FLOOR or FLAG_IS_OVERLAY_FLOOR.
  server/swamp.c
+----
+Fixes to plugin system. Added "SINT16" as return type.
+ server/plugins.c: resistances are sint16, not int.
+ plugins/cfanim/include/cfanim_proto.h: fix cf_object_get_resistance declaration.
+ plugins/cfpython/cfpython_archetype.c: fix comparison function, which should return 0 or +-1.
+ plugins/cfpython/cfpython_map.c: fix comparison function.
+ plugins/cfpython/cfpython_object.c: fix broken GetResist, fix comparison function.
+ plugins/cfpython/cfpython_party.c: fix comparison function.
+ plugins/cfpython/cfpython_region.c: fix comparison function.
+ plugins/common/plugin_common.c: object resistances are sint16.
+ plugins/common/include/plugin_common.h: object resistances are sint16.
 Ryo 2006-02-14
 
 Apply modified patch #1428048 (make the log line buffered) by Marc Lehmann.

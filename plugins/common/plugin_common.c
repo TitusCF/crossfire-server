@@ -202,10 +202,10 @@ void* cf_object_get_property(object* op, int propcode)
     int val;
     return cfapiObject_get_property(&val, op, propcode);
 }
-int cf_object_get_resistance(object* op, int rtype)
+sint16 cf_object_get_resistance(object* op, int rtype)
 {
     int val;
-    return *(int*)cfapiObject_get_property(&val, op, CFAPI_OBJECT_PROP_RESIST, rtype);
+    return *(sint16*)cfapiObject_get_property(&val, op, CFAPI_OBJECT_PROP_RESIST, rtype);
 }
 /* Should get replaced by tons of more explicit wrappers */
 void* cf_object_set_int_property(object* op, int propcode, int value)

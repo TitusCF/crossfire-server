@@ -32,32 +32,32 @@
 
 static PyObject* Crossfire_Party_GetName( Crossfire_Party* partyptr, void* closure)
 {
-	return Py_BuildValue("s",cf_party_get_name(partyptr->party));
+    return Py_BuildValue("s",cf_party_get_name(partyptr->party));
 }
 
 static PyObject* Crossfire_Party_GetPassword( Crossfire_Party* partyptr, void* closure)
 {
-	return Py_BuildValue("s",cf_party_get_password(partyptr->party));
+    return Py_BuildValue("s",cf_party_get_password(partyptr->party));
 }
 
 static PyObject* Crossfire_Party_GetNext( Crossfire_Party* party, PyObject* args )
 {
-	return Crossfire_Party_wrap(cf_party_get_next(party->party));
+    return Crossfire_Party_wrap(cf_party_get_next(party->party));
 }
 
 static PyObject* Crossfire_Party_GetPlayers( Crossfire_Party* party, PyObject* args )
 {
-	PyObject* list;
-	player* pl;
+    PyObject* list;
+    player* pl;
 
-	list = PyList_New(0);
-	pl = cf_party_get_first_player(party->party);
-	while (pl)
-	{
-		PyList_Append(list,Crossfire_Object_wrap(pl->ob));
-		pl = cf_party_get_next_player(party->party,pl);
-	}
-	return list;
+    list = PyList_New(0);
+    pl = cf_party_get_first_player(party->party);
+    while (pl)
+    {
+        PyList_Append(list,Crossfire_Object_wrap(pl->ob));
+        pl = cf_party_get_next_player(party->party,pl);
+    }
+    return list;
 }
 
 PyObject *Crossfire_Party_wrap(partylist *what)
@@ -78,5 +78,5 @@ PyObject *Crossfire_Party_wrap(partylist *what)
 
 static int Crossfire_Party_InternalCompare(Crossfire_Party* left, Crossfire_Party* right)
 {
-	return ((int)left->party - (int)right->party);
+    return (left->party < right->party ? -1 : ( left->party == right->party ? 0 : 1 ) );
 }

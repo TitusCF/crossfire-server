@@ -73,5 +73,5 @@ PyObject *Crossfire_Region_wrap(region *what)
 
 static int Crossfire_Region_InternalCompare(Crossfire_Region* left, Crossfire_Region* right)
 {
-	return ((int)left->reg - (int)right->reg);
+	return (left->reg < right->reg ? -1 : ( left->reg == right->reg ? 0 : 1 ) );
 }

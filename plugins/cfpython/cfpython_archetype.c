@@ -78,5 +78,5 @@ PyObject *Crossfire_Archetype_wrap(archetype *what)
 
 static int Crossfire_Archetype_InternalCompare(Crossfire_Archetype* left, Crossfire_Archetype* right)
 {
-	return ((int)left->arch - (int)right->arch);
+	return (left->arch < right->arch ? -1 : ( left->arch == right->arch ? 0 : 1 ) );
 }
