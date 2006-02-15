@@ -17,6 +17,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Commit forgotten file for yesterday, which have the CFAPI_INT16 define...
+ include/plugin.h
+ server/plugins.c
+Ryo 2006-02-15
+
 Minor bugfixes:
 server/apply.c: Fix apply_transport ->contr checks to actually
   check against correct values.
