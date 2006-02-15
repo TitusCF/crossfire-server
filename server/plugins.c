@@ -1508,7 +1508,7 @@ void* cfapi_object_get_property(int* type, ...)
                 idx = va_arg(args, int);
                 rv = &op->resist[idx];
             }
-            *type = CFAPI_INT16;
+            *type = CFAPI_INT;
             break;
 
         case CFAPI_OBJECT_PROP_ATTACK_TYPE:

@@ -95,7 +95,7 @@ int apply_transport(object *pl, object *transport, int aflag) {
 	pl->map = old_transport->map;
 	pl->x = old_transport->x;
 	pl->y = old_transport->y;
-	if (pl->contr->transport == old_transport->contr)
+	if (pl->contr == old_transport->contr)
 	    old_transport->contr = NULL;
 
 	pl->contr->transport = NULL;

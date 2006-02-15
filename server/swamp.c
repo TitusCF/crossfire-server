@@ -51,7 +51,7 @@ void move_deep_swamp (object *op)
 
     while(above) {
 	nabove = above->above;
-    if (above->type == PLAYER && !(above->move_type & MOVE_FLYING) && above->stats.hp >= 0 && !QUERY_FLAG(above,FLAG_WIZ)) {
+	if (above->type == PLAYER && !(above->move_type & MOVE_FLYING) && above->stats.hp >= 0 && !QUERY_FLAG(above,FLAG_WIZ)) {
 	    if (op->stats.food < 1) {
 		LOG (llevDebug, "move_deep_swamp(): player is here, but state is "
 		     "%d\n", op->stats.food);
@@ -101,7 +101,9 @@ void move_deep_swamp (object *op)
 		    }
 		    break;
 	    }
-    } else if (!QUERY_FLAG(above, FLAG_ALIVE) && !(above->move_type & MOVE_FLYING) && !(QUERY_FLAG(above,FLAG_IS_FLOOR)) && !(QUERY_FLAG(above,FLAG_OVERLAY_FLOOR))) {
+	} else if (!QUERY_FLAG(above, FLAG_ALIVE) && !(above->move_type & MOVE_FLYING) && 
+		   !(QUERY_FLAG(above,FLAG_IS_FLOOR)) && !(QUERY_FLAG(above,FLAG_OVERLAY_FLOOR)) &&
+		   !(QUERY_FLAG(above, FLAG_NO_PICK))) {
 	    if (rndm(0, 2) == 0) decrease_ob(above);
 	}
 	above = nabove;

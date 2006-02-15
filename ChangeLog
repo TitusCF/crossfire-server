@@ -17,6 +17,16 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Minor bugfixes:
+server/apply.c: Fix apply_transport ->contr checks to actually
+  check against correct values.
+server/plugins.c: Replace CFAPI_INT16 with CFAPI_INT - there is no
+  declaration anyplace for CFAPI_INT16 so compiles fails.
+server/swamp.c: Fix swamp code so that only objects that can be
+  picked up disappear - this way, transports don't disappear into
+  oblivion.
+MSW 2006-02-15
+
 Swamps don't affect DMs anymore. Also, swamps don't remove items with
 FLAG_IS_FLOOR or FLAG_IS_OVERLAY_FLOOR.
  server/swamp.c
