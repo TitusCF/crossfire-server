@@ -21,6 +21,7 @@ Apply patch #1433271 (code-cleanup) by Stefan Huehner: Add const and static.
 ---
 Affected files: common/{loader.l,los.c,map.c}, include/{libproto.h,sproto.h},
 plugins/cfanim/{cfanim.c,include/cfanim.h}, server/{apply.c,skill_util.c}
+common/loader.c: Rebuilt.
 Andreas Kirschbaum 2006-02-17
 
 common/map.c: Modify ob_blocked() to properly handly objects with a 0
