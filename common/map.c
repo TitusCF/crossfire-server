@@ -411,10 +411,16 @@ int ob_blocked(const object *ob,mapstruct *m,sint16 x,sint16 y) {
 	if (flag & P_OUT_OF_MAP) return P_OUT_OF_MAP;
 	if (flag & P_IS_ALIVE) return P_IS_ALIVE;
 
+	/* find_first_free_spot() calls this function.  However, often
+	 * ob doesn't have any move type (when used to place exits)
+         * so the AND operation in OB_TYPE_MOVE_BLOCK doesn't work.
+	 */
+
+	if (ob->move_type == 0 && GET_MAP_MOVE_BLOCK(m1, sx, sy) != MOVE_ALL) continue;
+
 	/* Note it is intentional that we check ob - the movement type of the
 	 * head of the object should correspond for the entire object.
 	 */
-
 	if (OB_TYPE_MOVE_BLOCK(ob, GET_MAP_MOVE_BLOCK(m1, sx, sy))) 
 	    return AB_NO_PASS;
 
