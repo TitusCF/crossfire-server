@@ -49,6 +49,8 @@ typedef struct blstr {
 
 blocks block[MAP_CLIENT_X][MAP_CLIENT_Y];
 
+static void expand_lighted_sight(object *op);
+
 /*
  * Used to initialise the array used by the LOS routines.
  * What this sets if that x,y blocks the view of bx,by
@@ -59,7 +61,7 @@ blocks block[MAP_CLIENT_X][MAP_CLIENT_Y];
  * be blocked.
  */
 
-void set_block(int x,int y,int bx, int by) {
+static void set_block(int x, int y, int bx, int by) {
     int index=block[x][y].index,i;
 
     /* Due to flipping, we may get duplicates - better safe than sorry.
@@ -251,7 +253,7 @@ void clear_los(object *op) {
  * This is somewhat suboptimal, would be better to improve the formula.
  */
 
-void expand_sight(object *op) 
+static void expand_sight(object *op) 
 {
     int i,x,y, dx, dy;
 
@@ -299,7 +301,7 @@ int has_carried_lights(const object *op) {
     return 0;
 }
  
-void expand_lighted_sight(object *op)
+static void expand_lighted_sight(object *op)
 {
     int x,y,darklevel,ax,ay, basex, basey, mflags, light, x1, y1;
     mapstruct *m=op->map;
@@ -411,7 +413,7 @@ void expand_lighted_sight(object *op)
  * really need for any reasonable game play.
  */
 
-void blinded_sight (object *op) {
+static void blinded_sight(object *op) {
     int x,y;
 
     for (x = 0; x < op->contr->socket.mapx; x++)

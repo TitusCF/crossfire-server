@@ -69,7 +69,7 @@ typedef struct CFanimation_struct
 } CFanimation;
 typedef struct
 {
-    char* name;
+    const char *name;
     CFAnimInitFunc funcinit;
     CFAnimRunFunc funcrun;
 } CFanimationHook;

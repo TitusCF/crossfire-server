@@ -139,13 +139,9 @@ extern int did_make_save(const object *op, int level, int bonus);
 /* logger.c */
 extern void LOG(LogLevel logLevel, const char *format, ...);
 /* los.c */
-extern void set_block(int x, int y, int bx, int by);
 extern void init_block(void);
 extern void clear_los(object *op);
-extern void expand_sight(object *op);
 extern int has_carried_lights(const object *op);
-extern void expand_lighted_sight(object *op);
-extern void blinded_sight(object *op);
 extern void update_los(object *op);
 extern void update_all_map_los(mapstruct *map);
 extern void update_all_los(const mapstruct *map, int x, int y);
@@ -186,8 +182,8 @@ extern void set_map_reset_time(mapstruct *map);
 extern int out_of_map(mapstruct *m, int x, int y);
 extern mapstruct *get_map_from_coord(mapstruct *m, sint16 *x, sint16 *y);
 extern void get_rangevector(object *op1, object *op2, rv_vector *retval, int flags);
-extern void get_rangevector_from_mapcoord(mapstruct *m, int x, int y, object *op2, rv_vector *retval, int flags);
-extern int on_same_map(object *op1, object *op2);
+extern void get_rangevector_from_mapcoord(const mapstruct *m, int x, int y, const object *op2, rv_vector *retval, int flags);
+extern int on_same_map(const object *op1, const object *op2);
 /* object.c */
 extern int CAN_MERGE(object *ob1, object *ob2);
 extern signed long sum_weight(object *op);

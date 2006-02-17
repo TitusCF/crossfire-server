@@ -438,7 +438,7 @@ void prepare_commands (void)
     ordered_commands=1;
 }
 
-CFanimationHook* get_command (char* command)
+static CFanimationHook *get_command(char *command)
 {
     CFanimationHook dummy;
     dummy.name=command;
@@ -449,7 +449,7 @@ CFanimationHook* get_command (char* command)
                       sizeof(CFanimationHook), compareAnims);
 }
 
-CFmovement* parse_animation_block (char* buffer, size_t buffer_size,FILE* fichier, CFanimation* parent)
+static CFmovement *parse_animation_block(char *buffer, size_t buffer_size, FILE *fichier, CFanimation *parent)
 {
     CFmovement* first=NULL;
     CFmovement* current=NULL;
@@ -591,7 +591,7 @@ int is_animated_player (object* pl)
 /*
  * return a new animation pointer inserted in the list of animations
  */
-CFanimation* create_animation(void)
+static CFanimation *create_animation(void)
 {
     CFanimation* new;
     CFanimation* current;
@@ -832,7 +832,7 @@ int start_animation (object* who,object* activator,char* file, char* options)
     fclose (fichier);
     return 1;
 }
-void animate_one(CFanimation* animation, long int milliseconds)
+static void animate_one(CFanimation *animation, long int milliseconds)
 {
     CFmovement* current;
 

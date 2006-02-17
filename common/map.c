@@ -2029,7 +2029,7 @@ mapstruct *get_map_from_coord(mapstruct *m, sint16 *x, sint16 *y)
  * Return whether map2 is adjacent to map1. If so, store the distance from
  * map1 to map2 in dx/dy.
  */
-static int adjacent_map (mapstruct *map1, mapstruct *map2, int *dx, int *dy) {
+static int adjacent_map(const mapstruct *map1, const mapstruct *map2, int *dx, int *dy) {
     if (!map1 || !map2)
         return 0;
 
@@ -2160,7 +2160,7 @@ void get_rangevector(object *op1, object *op2, rv_vector *retval, int flags) {
  * field of the rv_vector is set to NULL.
  */
 
-void get_rangevector_from_mapcoord(mapstruct  *m, int x, int y, object *op2, rv_vector *retval, int flags) {
+void get_rangevector_from_mapcoord(const mapstruct *m, int x, int y, const object *op2, rv_vector *retval, int flags) {
     if (!adjacent_map(m, op2->map, &retval->distance_x, &retval->distance_y)) {
         /* be conservative and fill in _some_ data */
         retval->distance   = 100000;
@@ -2186,7 +2186,7 @@ void get_rangevector_from_mapcoord(mapstruct  *m, int x, int y, object *op2, rv_
  * and efficient.  This could probably be a macro.
  * MSW 2001-08-05
  */
-int on_same_map(object *op1, object *op2) {
+int on_same_map(const object *op1, const object *op2) {
     int dx, dy;
 
     return adjacent_map(op1->map, op2->map, &dx, &dy);

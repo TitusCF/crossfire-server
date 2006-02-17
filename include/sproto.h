@@ -10,12 +10,10 @@ void alchemy_failure_effect(object *op, object *cauldron, recipe *rp, int danger
 void remove_contents(object *first_ob, object *save_item);
 int calc_alch_danger(object *caster, object *cauldron, recipe *rp);
 /* apply.c */
-int transport_can_hold(object *transport, object *op, int nrof);
+int transport_can_hold(const object *transport, const object *op, int nrof);
 int apply_transport(object *pl, object *transport, int aflag);
 int should_director_abort(object *op, object *victim);
 int apply_potion(object *op, object *tmp);
-int check_item(object *op, const char *item);
-int check_weapon_power(object *who, int improvs);
 int improve_weapon_stat(object *op, object *improver, object *weapon, signed char *stat, int sacrifice_count, const char *statname);
 int prepare_weapon(object *op, object *improver, object *weapon);
 int improve_weapon(object *op, object *improver, object *weapon);
@@ -286,9 +284,9 @@ int command_save_overlay(object *op, char *params);
 int command_toggle_shout(object *op, char *params);
 int command_shutdown(object *op, char *params);
 int command_goto(object *op, char *params);
-int command_arrest(object *op, char *params);
 int command_generate(object *op, char *params);
 int command_freeze(object *op, char *params);
+int command_arrest(object *op, char *params);
 int command_summon(object *op, char *params);
 int command_teleport(object *op, char *params);
 int command_create(object *op, char *params);

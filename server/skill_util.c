@@ -651,7 +651,7 @@ void show_skills(object *op, const char* search) {
     char buf[MAX_BUF];
     const char *cp;
     int i,num_skills_found=0;
-    static char *periods="........................................";
+    static const char *const periods = "........................................";
     /* Need to have a pointer and use strdup for qsort to work properly */
     char skills[NUM_SKILLS][MAX_BUF];
 

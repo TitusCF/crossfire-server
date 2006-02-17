@@ -17,6 +17,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Apply patch #1433271 (code-cleanup) by Stefan Huehner: Add const and static.
+---
+Affected files: common/{loader.l,los.c,map.c}, include/{libproto.h,sproto.h},
+plugins/cfanim/{cfanim.c,include/cfanim.h}, server/{apply.c,skill_util.c}
+Andreas Kirschbaum 2006-02-17
+
 common/map.c: Modify ob_blocked() to properly handly objects with a 0
    ob->move_type.  Fixes infinite loop from random map code when trying
    to place exits.

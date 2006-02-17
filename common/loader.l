@@ -46,7 +46,7 @@ static char msgbuf[HUGE_BUF];
 static char lorebuf[HUGE_BUF];
 
 /* Maps the MOVE_* values to names */
-static char *move_name[] = {"walk", "fly_low", "fly_high", "swim", "boat",
+static const char *const move_name[] = {"walk", "fly_low", "fly_high", "swim", "boat",
     NULL};
 
 /* This table is only necessary to convert objects that existed before the
@@ -59,7 +59,7 @@ static char *move_name[] = {"walk", "fly_low", "fly_high", "swim", "boat",
  * NULL entries in this table are valid - to denote objects that should
  * not be updated for whatever reason.
  */
-char *spell_mapping[] = {
+const char *const spell_mapping[] = {
 "spell_magic_bullet",		/* 0 */
 "spell_small_fireball",		/* 1 */
 "spell_medium_fireball",	/* 2 */
@@ -1439,7 +1439,7 @@ int set_variable(object *op,char *buf) {
  * the 15'th element of this array should match that name.
  * If an entry is NULL, that is a flag not to loaded/saved.
  */
-static char *flag_names[NUM_FLAGS+1] = {
+static const char *const flag_names[NUM_FLAGS+1] = {
 "alive", "wiz", NULL, NULL, "was_wiz", "applied", "unpaid",
 "can_use_shield", "no_pick", NULL /* walk_on*/, NULL /* no_pass */, /* 10 */
 "is_animated", NULL /* slow_move */, 
@@ -1483,7 +1483,7 @@ void init_vars() {
 
 /*For get_ob_diff speed reason*/
 typedef struct {
-    char* name;
+    const char *name;
     int   length;
 }genericname;
 static genericname evtnames[13]=

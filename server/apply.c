@@ -46,7 +46,7 @@
  * but in the future, possible transport may have more restrictions
  * or weight reduction like containers
  */
-int transport_can_hold(object *transport, object *op, int nrof)
+int transport_can_hold(const object *transport, const object *op, int nrof)
 {
     if ((op->weight *nrof + transport->carrying) > transport->weight_limit)
 	return 0;
@@ -517,7 +517,7 @@ int apply_potion(object *op, object *tmp)
 /**
  * This returns the sum of nrof of item (arch name).
  */
-int check_item(object *op,const char *item)
+static int check_item(object *op, const char *item)
 {
   int count=0;
 
@@ -576,7 +576,7 @@ static void eat_item(object *op,const char *item, uint32 nrof)
  * increased value to see if the object is usuable.
  * we return 1 (true) if the player can use the weapon.
  */
-int check_weapon_power(object *who, int improvs)
+static int check_weapon_power(const object *who, int improvs)
 {
 /* Old code is below (commented out).  Basically, since weapons are the only
  * object players really have any control to improve, it's a bit harsh to
@@ -619,7 +619,7 @@ int check_weapon_power(object *who, int improvs)
  * Returns how many items of type improver->slaying there are under op.
  * Will display a message if none found, and 1 if improver->slaying is NULL.
  */
-static int check_sacrifice(object *op,object *improver)
+static int check_sacrifice(object *op, const object *improver)
 {
     int count=0;
 
@@ -837,7 +837,7 @@ int improve_weapon(object *op,object *improver,object *weapon)
    case IMPROVE_POW:
     return improve_weapon_stat(op,improver,weapon,
                                (signed char *) &(weapon->stats.Pow),
-                               1,(char *) "power");
+                               1, "power");
    default:
     new_draw_info(NDI_UNIQUE, 0,op,"Unknown improvement type.");
   }
