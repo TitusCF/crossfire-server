@@ -154,9 +154,8 @@ mapstruct *find_style(const char *dirname,const char *stylename,int difficulty) 
 
     /* is what we were given a directory, or a file? */
     sprintf(style_file_full_path,"%s/maps%s",settings.datadir,style_file_path);
-    stat(style_file_full_path,&file_stat);
-
-    if(! (S_ISDIR(file_stat.st_mode))) {
+    if (stat(style_file_full_path, &file_stat) == 0
+    && !S_ISDIR(file_stat.st_mode)) {
 	style_map=load_style_map(style_file_path);
     }
     if(style_map == NULL)  /* maybe we were given a directory! */

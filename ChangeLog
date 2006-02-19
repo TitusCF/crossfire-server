@@ -17,6 +17,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+random_maps/style.c: In find_style() fix access to uninitialized variable.
+Andreas Kirschbaum 2006-02-19
+
 Prevent crossedit from stripping out 'maplore' map header field.
 ---
 common/map.c: Add code to load/save/dump maplore information.
