@@ -1298,9 +1298,9 @@ int dimension_door(object *op,object *caster, object *spob, int dir) {
 	 * areas themselves don't contain no magic spaces.
 	 */
 	/* This call here is really just to normalize the coordinates */
-	get_map_flags(op->map, &m,op->x+freearr_x[dir]*dist, op->y+freearr_y[dir]*dist,
+	mflags = get_map_flags(op->map, &m,op->x+freearr_x[dir]*dist, op->y+freearr_y[dir]*dist,
 	    &sx, &sy);
-	if (OB_TYPE_MOVE_BLOCK(op, GET_MAP_MOVE_BLOCK(m, sx, sy))) {
+	if (mflags&P_IS_ALIVE || OB_TYPE_MOVE_BLOCK(op, GET_MAP_MOVE_BLOCK(m, sx, sy))) {
 		new_draw_info(NDI_UNIQUE, 0,op,"You cast your spell, but nothing happens.\n");
 		return 1; /* Maybe the penalty should be more severe... */
 	}
@@ -1328,7 +1328,7 @@ int dimension_door(object *op,object *caster, object *spob, int dir) {
 	 */
 	for(;dist>0; dist--) {
 	    if (get_map_flags(op->map, &m,op->x+freearr_x[dir]*dist, op->y+freearr_y[dir]*dist,
-			  &sx, &sy) & P_OUT_OF_MAP) continue;
+			  &sx, &sy) & (P_OUT_OF_MAP|P_IS_ALIVE)) continue;
 
 
 	    if (!OB_TYPE_MOVE_BLOCK(op, GET_MAP_MOVE_BLOCK(m, sx, sy))) break;
