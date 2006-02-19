@@ -218,6 +218,9 @@ void dump_map(const mapstruct *m) {
     if(m->msg!=NULL)
 	LOG(llevError,"Message:\n%s",m->msg);
 
+    if(m->maplore!=NULL)
+	LOG(llevError,"Lore:\n%s",m->maplore);
+
     if(m->tmpname!=NULL)
 	LOG(llevError,"Tmpname: %s\n",m->tmpname);
 
@@ -794,8 +797,9 @@ static void print_shop_string(mapstruct *m, char *output_string) {
 
 static int load_map_header(FILE *fp, mapstruct *m)
 {
-    char buf[HUGE_BUF], msgbuf[HUGE_BUF], *key=NULL, *value, *end;
+    char buf[HUGE_BUF], msgbuf[HUGE_BUF], maplorebuf[HUGE_BUF], *key=NULL, *value, *end;
     int msgpos=0;
+    int maplorepos=0;
 
     while (fgets(buf, HUGE_BUF-1, fp)!=NULL) {
 	buf[HUGE_BUF-1] = 0;
@@ -859,6 +863,18 @@ static int load_map_header(FILE *fp, mapstruct *m)
 	     */
 	    if (msgpos != 0)
 		m->msg = strdup_local(msgbuf);
+	}
+	else if (!strcmp(key,"maplore")) {
+	    while (fgets(buf, HUGE_BUF-1, fp)!=NULL) {
+		if (!strcmp(buf,"endmaplore\n")) break;
+		else {
+		    /* slightly more efficient than strcat */
+		    strcpy(maplorebuf+maplorepos, buf);
+		    maplorepos += strlen(buf);
+		}
+	    }
+	    if (maplorepos != 0)
+		m->maplore = strdup_local(maplorebuf);
 	}
 	else if (!strcmp(key,"end")) {
 	    break;
@@ -1275,6 +1291,7 @@ int new_save_map(mapstruct *m, int flag) {
     if (m->enter_x) fprintf(fp,"enter_x %d\n", m->enter_x);
     if (m->enter_y) fprintf(fp,"enter_y %d\n", m->enter_y);
     if (m->msg) fprintf(fp,"msg\n%sendmsg\n", m->msg);
+    if (m->maplore) fprintf(fp,"maplore\n%sendmaplore\n", m->maplore);
     if (m->unique) fprintf(fp,"unique %d\n", m->unique);
     if (m->template) fprintf(fp,"template %d\n", m->template);
     if (m->outdoor) fprintf(fp,"outdoor %d\n", m->outdoor);
@@ -1411,6 +1428,7 @@ void free_map(mapstruct *m,int flag) {
     if (m->name) FREE_AND_CLEAR(m->name);
     if (m->spaces) FREE_AND_CLEAR(m->spaces);
     if (m->msg) FREE_AND_CLEAR(m->msg);
+    if (m->maplore) FREE_AND_CLEAR(m->maplore);
     if (m->shopitems) FREE_AND_CLEAR(m->shopitems);
     if (m->shoprace) FREE_AND_CLEAR(m->shoprace);
     if (m->buttons)

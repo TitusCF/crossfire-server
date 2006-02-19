@@ -319,6 +319,7 @@ typedef struct mapdef {
     uint64  shopmin;    /* minimum price a shop will trade for */
     uint64  shopmax;    /* maximum price a shop will offer */
     char    *msg;	/* Message map creator may have left */
+    char    *maplore;	/* Map lore information */
     char    *tile_path[4];  /* path to adjoining maps */
     struct mapdef *tile_map[4];	/* Next map, linked list */
 } mapstruct;
