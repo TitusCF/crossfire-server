@@ -2019,8 +2019,7 @@ void esrv_remove_spell(player *pl, object *spell) {
 
 /* appends the spell *spell to the Socklist we will send the data to. */
 static void append_spell (player *pl, SockList *sl, object *spell) {
-    int len, i=0, skill=-CS_STAT_SKILLINFO; 
-    /* we set skill to that value so that in the null case, the value sent is zero */
+    int len, i, skill=0; 
 
     if (!(spell->name)) {
         LOG(llevError, "item number %d is a spell with no name.\n", spell->count);
@@ -2046,7 +2045,6 @@ static void append_spell (player *pl, SockList *sl, object *spell) {
 		break;
 	    }
     }
-    skill = i+CS_STAT_SKILLINFO; 
     SockList_AddChar(sl, skill);
 
     SockList_AddInt(sl, spell->path_attuned);
