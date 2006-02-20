@@ -45,21 +45,25 @@ you may use crossedit to modify the style maps, or create new ones.
 			the walls in the map will be of this type.  The walls
 			are modified on insertion so that players cannot go
 			through them:  this is expected for walls, but 
-			the random map generator makes sure of it.
+			the random map generator makes sure of it. A <style>
+                        of "none" causes no walls or doors to be generated.
 
   doorstyle <style>	Load /styles/doorstyles/<style> and pick a random
-			doortype from that style for the random map.
+			doortype from that style for the random map. A <style>
+                        of "none" causes no doors to generated.
 
   exitstyle <style>	Put one or two exits in the map, one leading back
 			to the map where we entered from (origin_map,
 			origin_x, origin_y), and, if appropriate, one leading
-			to another, harder, random map.
+			to another, harder, random map. A style of "none"
+                        causes no exits to be generated.
 
   decorstyle <style>	Load /styles/decorstyles/<style> and pick the decor
 			objects from that style to insert in the map.  Decor
 			objects are modified on insertion so that they do
 			NOT block movement, regardless of the archetype.
-			They are placed randomly.
+			They are placed randomly. A style of "none" causes no
+                        decor objects to be generated.
 
   monsterstyle <style>  Load /styles/monsterstyles/<style>, if it exists.
 			If it doesn't exist, then it will look for a directory
@@ -69,7 +73,8 @@ you may use crossedit to modify the style maps, or create new ones.
 			dungeon_level.  Monster objects are copied from the
 			style map, so you may form style maps with modified 
 			monsters which are weaker or stronger than the default 
-			archetype.
+			archetype.A style of "none" causes no monsters to be
+                        generated.
 
   treasurestyle <style> (Special) If the style name chosen is contained in
 			the lib/treasures file, it will use that for making

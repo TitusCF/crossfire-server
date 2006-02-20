@@ -17,6 +17,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+random_maps/random_map.c: Cause the random map generator to skip certain
+    elements if the style is set to "none".
+doc/Developers/random-maps: Document above change
+Alex Schultz 2006-02-20
+
 socket/request.c: Don't crash on trying to send a spell which doesn't have an
    associated skill
 Brendan Lally 2006-02-20

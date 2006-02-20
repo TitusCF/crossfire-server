@@ -105,22 +105,36 @@ mapstruct *generate_random_map(const char *OutFileName, RMParms *RP) {
     /* set region */
     theMap->region=RP->region;
     
-    make_map_walls(theMap,layout,RP->wallstyle,RP);
+    /* create walls unless the wallstyle is "none" */
+    if (strcmp (RP->wallstyle, "none")) {
+        make_map_walls(theMap,layout,RP->wallstyle,RP);
+        
+        /* place doors unless doorstyle or wallstyle is "none"*/
+        if (strcmp (RP->doorstyle, "none"))
+        put_doors(theMap,layout,RP->doorstyle,RP);
+        
+    }
 
-    put_doors(theMap,layout,RP->doorstyle,RP);
-
-    place_exits(theMap,layout,RP->exitstyle,RP->orientation,RP);
+    /* create exits unless the exitstyle is "none" */
+    if (strcmp (RP->exitstyle, "none"))
+        place_exits(theMap,layout,RP->exitstyle,RP->orientation,RP);
 
     place_specials_in_map(theMap,layout,RP);
 
-    place_monsters(theMap,RP->monsterstyle,RP->difficulty,RP);
+    /* create monsters unless the monsterstyle is "none" */
+    if (strcmp (RP->monsterstyle, "none"))
+        place_monsters(theMap,RP->monsterstyle,RP->difficulty,RP);
 
     /* treasures needs to have a proper difficulty set for the map. */
     theMap->difficulty=calculate_difficulty(theMap);
 
-    place_treasure(theMap,layout,RP->treasurestyle,RP->treasureoptions,RP);
+    /* create treasure unless the treasurestyle is "none" */
+    if (strcmp (RP->treasurestyle, "none"))
+        place_treasure(theMap,layout,RP->treasurestyle,RP->treasureoptions,RP);
 
-    put_decor(theMap,layout,RP->decorstyle,RP->decoroptions,RP);
+    /* create decor unless the decorstyle is "none" */
+    if (strcmp (RP->decorstyle, "none"))
+        put_decor(theMap,layout,RP->decorstyle,RP->decoroptions,RP);
 
     /* generate treasures, etc. */
     fix_auto_apply(theMap);
