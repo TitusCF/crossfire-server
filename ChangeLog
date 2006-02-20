@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+socket/request.c: Don't crash on trying to send a spell which doesn't have an
+   associated skill
+Brendan Lally 2006-02-20
+
 Do not allow to dimension door into monsters or earthwalls.
 ---
 server/spell_effect.c: In dimension_door() do not allow destinations that are
