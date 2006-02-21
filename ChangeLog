@@ -19,6 +19,7 @@ Changes for CVS:
 
 lib/collect.pl.in: Fix generation of 'editor_folder' field. It did not work
    too well for .arc files in deep subdirs.
+lib/{archetypes,bmaps.paths,crossfire.0}: Rebuilt.
 Andreas Kirschbaum 2006-02-21
 
 random_maps/random_map.c: Cause the random map generator to skip certain
