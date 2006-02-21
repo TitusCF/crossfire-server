@@ -67,7 +67,7 @@ $attacktype{ 'disease' } = ( 1 << 25 );
 
 &info("writing ...$archetypes");
 open(ARCH,">".$archetypes) || &die("cannot open ".$archetypes);
-&archsOut;
+&archsOut($root);
 close(ARCH);
 
 
@@ -219,11 +219,18 @@ sub storeFaceInfo {
 
 
 sub archsOut {
+    local($dir) = shift;
+
     foreach $arch (@archs) {
+	# Assume the filename $arch begins with $dir. Assign the first path
+	# name component after $dir to $pathto.
+	if($arch =~ /^\Q$dir\E\/([^\/]+)\/.*[.]arc$/) {
+	    $pathto = $1;
+	} else {
+	    &warn("cannot determine editor_folder from arch '$arch'");
+	    $pathto = "";
+	}
 	open(ARC,$arch) || &die("cannot open ".$arch);
-	$pathto = $arch;
-	$pathto =~ s@[^/]*/@@;
-	$pathto =~ s@[a-z]*/(.*)/.*arc@$1@;
 line:	while(<ARC>) {
 	    chop;
 	    ($var,@values) = split;
@@ -265,7 +272,7 @@ line:	while(<ARC>) {
 		next line;
 	    }
 	    if ($var eq "end") {
-		print ARCH "editor_folder $pathto\n";
+		print ARCH "editor_folder $pathto\n" if $pathto ne "";
 	    }
 	    if ($var eq "visibility") {
 		$lvis = $values[0];
