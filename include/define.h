@@ -137,7 +137,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define ARMOUR		            16
 #define PEDESTAL	            17
 #define ALTAR		            18
-#define CONFUSION	            19
+/*#define CONFUSION	            19 */
 #define LOCKED_DOOR	            20
 #define SPECIAL_KEY	            21
 #define MAP		            22

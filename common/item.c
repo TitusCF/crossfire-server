@@ -114,7 +114,6 @@ static const typedata item_types[] = {
 {ARMOUR, "armour", "armour", SK_SMITHERY, 0},
 {PEDESTAL, "pedestal", "pedestals", 0, 0},
 {ALTAR, "altar", "altars", 0, 0},
-{CONFUSION, "confusion", "confusions", 0, 0},
 {LOCKED_DOOR, "locked door", "locked doors", 0, 0},
 {SPECIAL_KEY, "special key", "special keys", 0, 0},
 {MAP, "map", "maps", 0, 0},
