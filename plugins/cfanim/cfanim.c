@@ -24,7 +24,8 @@
 /*  You should have received a copy of the GNU General Public License        */
 /*  along with this program; if not, write to the Free Software              */
 /*  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.                */
-/*                                                                           */ /*****************************************************************************/
+/*                                                                           */ 
+/*****************************************************************************/
 
 /* First let's include the header file needed                                */
 
@@ -69,7 +70,7 @@ int runmovement(struct CFanimation_struct* animation, long int id, void* paramet
     if (op->type==PLAYER)
         cf_player_move(op->contr,dir);
     else
-        cf_object_move(op,op,dir);
+        cf_object_move(op,dir,op);
     return 1;
 }
 

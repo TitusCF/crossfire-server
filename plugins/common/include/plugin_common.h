@@ -24,7 +24,8 @@
 /*  You should have received a copy of the GNU General Public License        */
 /*  along with this program; if not, write to the Free Software              */
 /*  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.                */
-/*                                                                           */ /*****************************************************************************/
+/*                                                                           */
+/*****************************************************************************/
 #ifndef PLUGIN_COMMON_H
 #define PLUGIN_COMMON_H
 
@@ -101,7 +102,7 @@ extern void         cf_object_pickup( object* op, object* what);
 extern char*        cf_object_get_key(object* op, char* keyname);
 extern void         cf_object_set_key(object* op, char* keyname, char* value);
 extern sint16       cf_object_get_resistance(object* op, int rtype);
-extern void         cf_object_move(object* op, object*originator, int dir);
+extern void         cf_object_move(object* op, int dir, object*originator);
 extern void         cf_object_apply_below(object* op);
 extern object*      cf_object_clone(object* op, int clonetype);
 

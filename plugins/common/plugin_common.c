@@ -31,7 +31,8 @@
 /*  You should have received a copy of the GNU General Public License        */
 /*  along with this program; if not, write to the Free Software              */
 /*  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.                */
-/*                                                                           */ /*****************************************************************************/
+/*                                                                           */
+/*****************************************************************************/
 #include <plugin_common.h>
 
 static f_plug_api cfapiSystem_add_string = NULL;
@@ -230,10 +231,10 @@ void cf_player_move(player* pl, int dir)
     int val;
     cfapiObject_move(&val,1,pl,dir);
 }
-void cf_object_move(object* op, object*originator, int dir)
+void cf_object_move(object* op, int dir, object*originator)
 {
     int val;
-    cfapiObject_move(&val,0,op,originator,dir);
+    cfapiObject_move(&val,0,op,dir,originator);
 }
 object* cf_player_send_inventory(object* op)
 {
