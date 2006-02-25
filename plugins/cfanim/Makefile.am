@@ -24,14 +24,15 @@
 #   The author can be reached via e-mail to mwedel@sonic.net
 
 plugindir=$(pkglibdir)/plugins
-noinst_HEADERS = include/cfanim.h	../common/include/plugin_common.h
 plugin_LTLIBRARIES = cfanim.la
 cfanim_la_SOURCES = cfanim.c\
 	../common/plugin_common.c
 
+SUBDIRS=include
+
 cfanim_la_LIBADD =
 cfanim_la_LDFLAGS = -module -avoid-version -Xlinker -export-dynamic -rdynamic -Xlinker -Bsymbolic
-AM_CPPFLAGS = -I$(srcdir)/include -I../common/include -I$(top_srcdir)/include
+AM_CPPFLAGS = -I$(srcdir)/include -I$(srcdir)/../common/include -I$(top_srcdir)/include
 
 proto:
 	cproto -D__CEXTRACT__ -o include/cfanim_proto.h $(CPPFLAGS) $(AM_CPPFLAGS) \

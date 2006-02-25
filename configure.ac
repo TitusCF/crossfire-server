@@ -246,5 +246,9 @@ AC_OUTPUT([Makefile
 	include/Makefile utils/Makefile lib/checkarch.pl
 	lib/collect.pl utils/add_throw.perl utils/crossloop.tmpl utils/crossloop.pl.tmpl
 	utils/metaserver.pl utils/crossloop.web utils/scores.pl utils/player_dl.pl
-	common/Makefile plugins/Makefile plugins/cfpython/Makefile plugins/cfanim/Makefile devel/Makefile
+	common/Makefile plugins/Makefile plugins/cfpython/Makefile 
+	plugins/cfpython/include/Makefile plugins/cfanim/Makefile 
+	plugins/cfanim/include/Makefile
+	plugins/common/Makefile plugins/common/include/Makefile
+	devel/Makefile
 	 ])

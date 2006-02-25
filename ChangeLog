@@ -17,6 +17,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+*/Makefile{in.am}: Fix plugin makefiles so that 'make distcheck' works.  Using
+  relative path names for files to include in distribution does not work -
+  need to have a makefile in each directory.
+configure{.ac}: Updated as result of new Makefiles.
+MSW 2006-02-24
+
 Apply patch #1428057 courtesy Pippijn van Steenhoven: fix to a crashing bug in plugins
 (incoherent order of parameters).
 Also use plugin_common.h in CFAnim instead of having separate definitions.

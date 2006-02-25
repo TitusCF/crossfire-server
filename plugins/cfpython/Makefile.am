@@ -24,7 +24,9 @@
 #   The author can be reached via e-mail to mwedel@sonic.net
 
 plugindir=$(pkglibdir)/plugins
-noinst_HEADERS = include/cfpython.h	../common/include/plugin_common.h
+
+SUBDIRS = include
+
 if PYTHON_PLUGIN
 plugin_LTLIBRARIES = cfpython.la
 else
@@ -47,7 +49,7 @@ cfpython_la_CPSOURCES = cfpython.c\
 
 cfpython_la_LIBADD = @PYTHON_LIB@ @PY_LIBS@
 cfpython_la_LDFLAGS = -module -avoid-version -Xlinker -export-dynamic -rdynamic -Xlinker -Bsymbolic
-AM_CPPFLAGS = -I$(srcdir)/include -I../common/include -I$(top_srcdir)/include @PY_INCLUDES@
+AM_CPPFLAGS = -I$(srcdir)/include -I$(top_srcdir)/plugins/common/include -I$(top_srcdir)/include @PY_INCLUDES@
 
 proto:
 	cproto -D__CEXTRACT__ -o include/cfpython_proto.h $(CPPFLAGS) $(AM_CPPFLAGS) \
