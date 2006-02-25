@@ -1,12 +1,13 @@
-The main purpose of this file is to try to reduce duplicate effort,
-and to know who worked on what.
+Current projects (and people working on them) can be found at:
+http://wiki.metalforge.net/doku.php/dev_todo
 
-If you have CVS access and are doing work/plan to do work, please update
-this file accordingly.  A brief description of what you plan to do
-is useful, so others working in that area can know who to contact.
+Current list of developers with CVS access can be found at:
+http://sourceforge.net/project/admin/userperms.php?group_id=13833
 
-The following people have CVS access:
-Mark Wedel ("cvs", mwedel@scruz.net) - core maintainer, handles patches
+The list below are people that have worked on crossfire and things
+they have worked on.  Some are still active, some are not:
+------------------------------------------------------------------------------
+Mark Wedel ("cvs", mwedel@sonic.net) - core maintainer, handles patches
 	submitted by those not having CVS access, investigates bugs,
 	and future long term developement.
 Peter Mardahl <"peterm", peterm@eecs.berkeley.edu> runes, new spells, changing
@@ -20,12 +21,9 @@ Raphael Quinet ("quinet", Raphael Quinet) - sounds (originally using rplay),
 Frank Tore Johansen ("ftj", frankj@osc.no) - misc.
 Kjetil Torgrim Homme ("kjetilho", kjetilho@ifi.uio.no)
 David Sundqvist ("azzi") - images
-Steve Fink ("sfink") - ?
 ? ("dragonm",  dragonm@absolut.tegris.com) - Client/server
 John Cater ("cater", john.cater@eng.monash.edu.au) - Maps, navar etc, bug fixing
 Bob Tanner ("tanner", tanner@real-time.com) - .spec files
-? ("hfukui") - ? I think these last two may be read-only access
-? ("robert") - ?
 Jan Echternach ("jec", jan.echternach@informatik.uni-rostock.de) - bug fixing
 Andreas Vogl ("red_blaze", andi.vogl@gmx.net) - bug fixing, creating maps,
               maintaining pupland. 
@@ -44,14 +42,7 @@ Nicolas Weeger ("Ryo", nicolas.weeger@laposte.net) - some work on Win32 port,
 David Seikel ("onefang", won_fang@yahoo.com.au) - bug fixing, weather tweaking,
 	weather god, visualisations, large forest, ice castle and ant farm 
 	maps.
-
-
-Still active developers:
 Phil Brown (phil@bolthole.com)- Java Client
-
- The following poeple have contributed a lot to Crossfire in the past,
-but presently I believe they are not currently working on crossfire.
-
 Brian Thomas (thomas@astro.psu.edu)- Skills, alchemy, altars
 Tyler Van Gorder <tvangod@ecst.csuchico.edu> added color stuff,
 	interested in working on client side (user interface)
@@ -62,36 +53,4 @@ Rupert G. Goldie <rgg@aaii.oz.au> testing under Purify, new spells,
 	works with Peter Mardahl
 "Eric A. Anderson" <eanders+@CMU.EDU> - general bug fixing
 Michael Martin (martinm@millner.bevc.blacksburg.va.us) - Java client
-
-From: Mark Wedel <mwedel@scruz.net>
-X-Mailer: Mozilla 4.76 [en] (X11; U; Linux 2.2.14 i686)
-To: "crossfire-devel@lists.real-time.com"
- <crossfire-devel@lists.real-time.com>
-Subject: [CF-Devel] CVS repository moved.
-Date: Thu, 22 Feb 2001 21:21:31 -0800
-
- The cvs repository is now installed on sourceforge.
-
- If you do not have any changes in your checked out tree, the easiest thing to
-do is just do a new checkout.  See http://sourceforge.net/cvs/?group_id=13833
-for information on setup.
-
- If you want to reparent your tree, do the following:
-
-1) Create a /tmp/Root file with the new repository information.  The contents
-ofmine looks like:
-:ext:mwedel@cvs.sourceforge.net:/cvsroot/crossfire
-
- Everything but the login name (mwedel) should be the same for anyone else.
-
-2) Update all the Root entries in your cvs tree.  To do that, run
-find . -name Root -exec cp /tmp/Root {} \;
-This is best run from the the relevant directory (arch, crossfire, maps,
-client).  IF you have all those and nothing checked out in a common directory,
-you could run it from there.
-
-3) Update the repository information.  Use the perl script I provide - its
-useage is update_rp <dirname> - if run from the parent dir, it would be arch,
-crossfire, maps, client, as above.  If withing the arch, ... dirs, then just
-use.
 

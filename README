@@ -2,7 +2,8 @@ WHAT IS CROSSFIRE?
 
   This is a multiplayer graphical arcade and adventure game made for
   the X-Windows environment.  It runs on a client/server model.
-  The client runs with X11, GTK, or  SDL within a gtk window.
+  The client runs with X11, GTK, or  SDL within a gtk window.  A
+  windows client is available, and a java client is under development.
 
   It has certain flavours from other games, especially Gauntlet (TM)
   and Nethack/Moria.
@@ -39,21 +40,22 @@ USAGE
   To run your own server, you need to make the crossfire binaries and install
   them, and then run the crossfire program.  This now creates a server which
   you/other people can connect to.  The map files will need to get downloaded
-  and installed for the server to run properly.  If you plan to run a long
-  term server, you should use one of the scripts provided that will re-run
-  crossfire if it dies for some reason.
+  and installed for the server to run properly.  The maps should be
+  unpacked in the $(TARGET)/share/crossfire directory - after unpacking,
+  you should have a $(TARGET)/share/crossfire/maps directory.
+
+  If you plan to run a long term server, you should use one of the scripts
+  provided that will re-run crossfire if it dies for some reason.
 
 MAILING LIST
 
   For the latest subscription for crossfire mailing lists, go to:
-  http://crossfire.real-time.com/Website_Index/Mailing_Lists/mailing_lists.jhtml
+  http://crossfire.real-time.com/mailinglists/index.html
 
   From there you should be able to subscribe/unsubscribe any of the mailing
-  lists.  The mailing lists based off the ifi.uio.no host are being
-  discontinued.
-
-  An archive of old messages can be found at 
-  http://www.real-time.com/maillists/rte/crossfire
+  lists.  Links to archives of the mailing lists can be found there, as well
+  as at:
+  http://gmane.org/find.php?list=crossfire
 
 
 FTP SITES
@@ -70,9 +72,6 @@ FTP SITES
 	http://sourceforge.net/cvs/?group_id=13833
 
 
-    If you are looking for a windows/NT client, look at:
-	http://mids.student.utwente.nl/%7Emichtoen/crossfire/
-
 WEB SITES:
 
   The following web addresses have crossfire information that you may find
@@ -87,22 +86,16 @@ REPORTING BUGS
   First, check the INSTALL file for common problems, and see if yours is
   mentioned.
 
-  The mailing list is where present development work and bugs are typically
-  discussed.  If you want to know what is happening with crossfire, join the
-  list and please ask there.
-
-  I will likely delete mail messages of the following sort:
-  1) Bug reports of failed installation when the installation instructions
-     were not followed.
-  2) Bug reports that contain so little information that it tells me nothing
-     more than the fact that there is a bug.
-  3) Bugs in which the solution has already been answered in the INSTALL
-     file.
+  Bugs should be filed at the sourceforge web site:
+        http://sourceforge.net/cvs/?group_id=13833
 
   When reporting bugs, make sure you include the following:
+  o If you have a sourceforge login, make sure you are logged in.  In this
+    way, if there are questions about the bug, you will be notified about
+    the request for more information.
   o What version of crossfire did you use?
-  o What type of computer did you use?
-  o What release of the operating system did it have?
+  o What type of computer did you use (CPU type)
+  o What is the version of the OS?
   o What windowing system are you using (Ie, openwindows, X11R6, etc)
   o What compiler (and its version) did you use (ie, gcc, acc, etc)?
   o Which flags did you give it?
@@ -114,22 +107,19 @@ REPORTING BUGS
     - Give a description of what you did before the bug occured.  The better
 	detailed the description, the better chance I have of figuring
 	out where the bug happened, or how I can recreate the bug.
-  o If you managed to compile Crossfire, include the output of
-    "crossfire -o".
+    - If possible, a stack trace from gdb (or other debugger) is very
+      helpful.
 
-  Lack of any of this information in a bug report can make that bug report
-useless.  Also, if you have a bug, make sure you are using the latest
-version.  If you report a bug that has since been fixed, you are not likely
-to get any help.
+The more information provided, the better chance of the bug being fixed in
+a timely fashion.
 
 Further debugging informatiion can be found at
 http://crossfire.real-time.com/debugging_tips.html
 
-  Mail the bug report to crossfire-devel@listserv.real-time.com
-
 ------------------------------------------------------------------------------
 SUBMITTING PATCHES:  See the doc/programming_guide file.
-
+   The patches should be submitted to the patch tracker on sourceforge:
+        http://sourceforge.net/cvs/?group_id=13833
 
 PUBLIC SERVERS:
 
@@ -143,7 +133,7 @@ COPYRIGHT
     Don't get scared by the below, it's included just for "safety" reasons 8)
     (Don't want anyone to start selling the game)
 
-    Copyright (C) 2000 Mark Wedel
+    Copyright (C) 2000,2006 Mark Wedel
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -160,4 +150,4 @@ COPYRIGHT
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to mwedel@scruz.net
+    The author can be reached via e-mail to crossfire-devel@real-time.com
