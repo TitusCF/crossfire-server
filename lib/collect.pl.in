@@ -222,9 +222,9 @@ sub archsOut {
     local($dir) = shift;
 
     foreach $arch (@archs) {
-	# Assume the filename $arch begins with $dir. Assign the first path
-	# name component after $dir to $pathto.
-	if($arch =~ /^\Q$dir\E\/([^\/]+)\/.*[.]arc$/) {
+	# Assume the filename $arch begins with $dir. Assign all path name
+	# components after $dir to $pathto.
+	if($arch =~ /^\Q$dir\E\/(.*)\/[^\/]*[.]arc$/) {
 	    $pathto = $1;
 	} else {
 	    &warn("cannot determine editor_folder from arch '$arch'");
