@@ -22,6 +22,7 @@ Changes for 1.9.0:
 
 lib/collect.pl.in: Again fix generation of 'editor_folder' field to make
    sub-folder selection work again.
+lib/archetypes: Rebuilt.
 Andreas Kirschbaum 2006-02-26
 
 */Makefile{in.am}: Fix plugin makefiles so that 'make distcheck' works.  Using
