@@ -142,7 +142,7 @@ lib/wizhelp/stats: document the stats command
 lib/Makefile.am lib/Makefile.in: install the new help file
 Brendan Lally 2006-02-10
 
-Apply modified patch by Pippijn van Steenhoven to fix get_rangevector
+Apply modified patch by Marc Alexander Lehmann to fix get_rangevector
 functions on tiled maps.
 ---
 server/map.c: Add helper function adjacent_map() to check if two maps are
