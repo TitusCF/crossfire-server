@@ -1,14 +1,14 @@
 !include "MUI.nsh"
 
 ;Title Of Your Application
-Name "Crossfire Server 1.8.0 snapshot"
+Name "Crossfire Server 1.9.0"
 
 VIAddVersionKey "ProductName" "Crossfire server installer"
 VIAddVersionKey "Comments" "Website: http://crossfire.real-time.com"
 VIAddVersionKey "FileDescription" "Crossfire server installer"
-VIAddVersionKey "FileVersion" "1.8.0"
+VIAddVersionKey "FileVersion" "1.9.0"
 VIAddVersionKey "LegalCopyright" "Crossfire is released under the GPL."
-VIProductVersion "1.8.0.0"
+VIProductVersion "1.9.0.0"
 
 ;Do A CRC Check
 CRCCheck On
