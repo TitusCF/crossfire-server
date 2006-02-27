@@ -1547,7 +1547,7 @@ static char* get_string_move_type(MoveType mt)
     strcpy(retbuf_all," all");
 
     /* Quick check, and probably fairly common */
-    if (mt == MOVE_ALL) return retbuf_all;
+    if (mt == MOVE_ALL) return retbuf_all+1;
     if (mt == 0) {
 	strcpy(retbuf,"0");
 	return retbuf;
@@ -1572,8 +1572,8 @@ static char* get_string_move_type(MoveType mt)
      * enumerated values.  It doesn't make sense to return
      * 'all -walk -fly_low' - it is shorter to return 'fly_high swim'
      */
-    if (all_count <=1) return retbuf_all;
-    else return retbuf;
+    if (all_count <=1) return retbuf_all+1;
+    else return retbuf+1;
 }
     
 
@@ -1769,18 +1769,18 @@ char *get_ob_diff(object *op,object *op2) {/* I plan to optimize this heavily */
 
   if(op->stats.exp!=op2->stats.exp) {
 #ifndef WIN32
-    sprintf(buf2,"%lld\n", op->stats.exp);
+    sprintf(buf2,"%lld", op->stats.exp);
 #else
-    sprintf(buf2,"%I64d\n", op->stats.exp);
+    sprintf(buf2,"%I64d", op->stats.exp);
 #endif
     ADD_STRINGLINE_ENTRY(fastbuf,"exp ", buf2, 4);
   }
 
   if(op->perm_exp!=op2->perm_exp) {
 #ifndef WIN32
-    sprintf(buf2,"%lld\n", op->perm_exp);
+    sprintf(buf2,"%lld", op->perm_exp);
 #else
-    sprintf(buf2,"%I64d\n", op->perm_exp);
+    sprintf(buf2,"%I64d", op->perm_exp);
 #endif
     ADD_STRINGLINE_ENTRY(fastbuf,"perm_exp ", buf2, 9);
   }
@@ -1935,37 +1935,37 @@ char *get_ob_diff(object *op,object *op2) {/* I plan to optimize this heavily */
      */
     if (op->move_type != op2->move_type) {
 	/*FAST_SAVE_LONG(fastbuf,"move_type ",op->move_type,10)*/
-	ADD_STRINGLINE_ENTRY(fastbuf,"move_type  ",
+	ADD_STRINGLINE_ENTRY(fastbuf,"move_type ",
 			     get_string_move_type(op->move_type),
 			     10);
     }
     if (op->move_block != op2->move_block) {
 	/*FAST_SAVE_LONG(fastbuf,"move_block ",op->move_block,11)*/
-	ADD_STRINGLINE_ENTRY(fastbuf,"move_block  ",
+	ADD_STRINGLINE_ENTRY(fastbuf,"move_block ",
 			     get_string_move_type(op->move_block),
 			     11);
     }
     if (op->move_allow != op2->move_allow) {
 	/*FAST_SAVE_LONG(fastbuf,"move_allow ",op->move_allow,11);*/
-	ADD_STRINGLINE_ENTRY(fastbuf,"move_allow  ",
+	ADD_STRINGLINE_ENTRY(fastbuf,"move_allow ",
 			     get_string_move_type(op->move_allow),
 			     11);
     }
     if (op->move_on != op2->move_on) {
 	/*FAST_SAVE_LONG(fastbuf,"move_on ",op->move_on,8);*/
-	ADD_STRINGLINE_ENTRY(fastbuf,"move_on  ",
+	ADD_STRINGLINE_ENTRY(fastbuf,"move_on ",
 			     get_string_move_type(op->move_on),
 			     8);
     }
     if (op->move_off != op2->move_off) {
 	/*FAST_SAVE_LONG(fastbuf,"move_off ",op->move_off,9);*/
-	ADD_STRINGLINE_ENTRY(fastbuf,"move_off  ",
+	ADD_STRINGLINE_ENTRY(fastbuf,"move_off ",
 			     get_string_move_type(op->move_off),
 			     9);
     }
     if (op->move_slow != op2->move_slow) {
 	/*FAST_SAVE_LONG(fastbuf,"move_slow ",op->move_slow,10);*/
-	ADD_STRINGLINE_ENTRY(fastbuf,"move_slow  ",
+	ADD_STRINGLINE_ENTRY(fastbuf,"move_slow ",
 			     get_string_move_type(op->move_slow),
 			     10);
     }
