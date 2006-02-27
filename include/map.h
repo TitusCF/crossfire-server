@@ -274,7 +274,6 @@ typedef struct shopitem {
  */
 typedef struct mapdef {
     struct mapdef *next;	/* Next map, linked list */
-    char path[HUGE_BUF];	/* Filename of the map */
     char *tmpname;	/* Name of temporary file */
     char *name;		/* Name of map as given by its creator */
     region *region;	/* What jurisdiction in the game world this map is ruled by 
@@ -322,6 +321,7 @@ typedef struct mapdef {
     char    *maplore;	/* Map lore information */
     char    *tile_path[4];  /* path to adjoining maps */
     struct mapdef *tile_map[4];	/* Next map, linked list */
+    char path[HUGE_BUF];	/* Filename of the map */
 } mapstruct;
 
 /* This is used by get_rangevector to determine where the other

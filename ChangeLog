@@ -17,6 +17,14 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Apply patch by Marc Alexander Lehmann to improve server performance.
+---
+include/map.h: Move path field to end of struct. Since this field was huge it
+   pushed all other fields to large offsets in the struct. Moving it to the
+   end of the struct mapdef should not break anything but will improve
+   performance and reduce the server code by >3500 bytes.
+Andreas Kirschbaum 2006-02-27
+
 ------------------------------------------------------------------------------
 Changes for 1.9.0:
 
