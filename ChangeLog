@@ -18,6 +18,7 @@ else.  With this, include the file(s) that you changed.
 Changes for CVS:
 
 common/loader.l: Prevent excess whitespace while saving objects.
+common/loader.c: Rebuilt.
 Andreas Kirschbaum 2006-02-27
 
 Apply patch by Marc Alexander Lehmann to improve server performance.
