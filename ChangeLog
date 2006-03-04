@@ -17,6 +17,15 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Apply modified parts of patch #1439490 (Fix in random map generation) by CF
+Development Team Schmorp.de <crossfire@schmorp.de>.
+---
+random_maps/exit.c: In place_exits() check for a valid exit path before
+   dereferencing it.
+random_maps/treasure.c: In find_closest_monster() include monsters at map
+   border. In find_enclosed_spot() prevent access to out of map tiles.
+Andreas Kirschbaum 2006-03-04
+
 Apply patch #1436833 (Patch for forked lightning crash at map borders) by CF
 Development Team Schmorp.de <crossfire@schmorp.de>.
 ---

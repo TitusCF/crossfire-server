@@ -289,7 +289,7 @@ void place_exits(mapstruct *map, char **maze,char *exitstyle,int orientation,RMP
 	     * would require keeping a 'next' pointer, ad free_object kills tmp, which
 	     * breaks the for loop.
 	     */
-	    if (tmp->type == EXIT && !strncmp(EXIT_PATH(tmp),"/random/", 8)) {
+	    if (tmp->type == EXIT && EXIT_PATH(tmp) && !strncmp(EXIT_PATH(tmp),"/random/", 8)) {
 		remove_ob(tmp);
 		free_object(tmp);
 		break;

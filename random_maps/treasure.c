@@ -257,7 +257,7 @@ object *find_closest_monster(mapstruct *map,int x,int y,RMParms *RP) {
     lx=x+freearr_x[i];
     ly=y+freearr_y[i];
     /* boundscheck */
-    if(lx > 0 && ly > 0 && lx < RP->Xsize && ly < RP->Ysize)
+    if(lx >= 0 && ly >= 0 && lx < RP->Xsize && ly < RP->Ysize)
       /* don't bother searching this square unless the map says life exists.*/
       if(GET_MAP_FLAGS(map,lx,ly) & P_IS_ALIVE) {
         object *the_monster=get_map_ob(map,lx,ly);
@@ -504,7 +504,7 @@ void find_enclosed_spot(mapstruct *map, int *cx, int *cy,RMParms *RP) {
   int i;
   x = *cx;y=*cy;
 
-  for(i=0;i<SIZEOFFREE;i++) {
+  for(i=0;i<=SIZEOFFREE1;i++) {
     int lx,ly,sindex;
     lx = x +freearr_x[i];
     ly = y +freearr_y[i];
@@ -518,7 +518,7 @@ void find_enclosed_spot(mapstruct *map, int *cx, int *cy,RMParms *RP) {
 
   /* OK, if we got here, we're obviously someplace where there's no enclosed
      spots--try to find someplace which is 2x enclosed.  */
-  for(i=0;i<SIZEOFFREE;i++) {
+  for(i=0;i<=SIZEOFFREE1;i++) {
     int lx,ly,sindex;
     lx = x +freearr_x[i];
     ly = y +freearr_y[i];
@@ -531,7 +531,7 @@ void find_enclosed_spot(mapstruct *map, int *cx, int *cy,RMParms *RP) {
   }
 
   /* settle for one surround point */
-  for(i=0;i<SIZEOFFREE;i++) {
+  for(i=0;i<=SIZEOFFREE1;i++) {
     int lx,ly,sindex;
     lx = x +freearr_x[i];
     ly = y +freearr_y[i];
@@ -544,9 +544,10 @@ void find_enclosed_spot(mapstruct *map, int *cx, int *cy,RMParms *RP) {
   }
   /* give up and return the closest free spot. */
   i = find_first_free_spot(&find_archetype("chest")->clone,map,x,y);
-  if(i!=-1&&i<SIZEOFFREE) {
+  if(i!=-1&&i<=SIZEOFFREE1) {
     *cx = x +freearr_x[i];
     *cy = y +freearr_y[i];
+    return;
   }
   /* indicate failure */
   *cx=*cy=-1;
