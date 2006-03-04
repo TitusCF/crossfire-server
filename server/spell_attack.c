@@ -131,32 +131,31 @@ void forklightning(object *op, object *tmp) {
 
     if(get_map_flags(tmp->map,&m, tmp->x + freearr_x[t_dir],tmp->y + freearr_y[t_dir],
 		     &sx, &sy) & P_OUT_OF_MAP)
-	 new_dir = 0;
+	return;
 
     if (OB_TYPE_MOVE_BLOCK(tmp, GET_MAP_MOVE_BLOCK(m, sx, sy)))
-	 new_dir = 0;
+	return;
 
-    if(new_dir) { /* OK, we made a fork */
-	object *new_bolt = get_object();
+    /* OK, we made a fork */
+    object *new_bolt = get_object();
 
-	copy_object(tmp,new_bolt);
+    copy_object(tmp,new_bolt);
 
-	/* reduce chances of subsequent forking */
-	new_bolt->stats.Dex -= 10;  
-	tmp->stats.Dex -= 10;  /* less forks from main bolt too */
-	new_bolt->stats.Con += 25 * new_dir; /* adjust the left bias */
-	new_bolt->speed_left = -0.1;
-	new_bolt->direction = t_dir;
-	new_bolt->duration++;
-	new_bolt->x=sx;
-	new_bolt->y=sy;
-	new_bolt->stats.dam /= 2;  /* reduce daughter bolt damage */
-	new_bolt->stats.dam++;
-	tmp->stats.dam /= 2;  /* reduce father bolt damage */
-	tmp->stats.dam++;
-	new_bolt = insert_ob_in_map(new_bolt,m,op,0);
-	update_turn_face(new_bolt);
-    }
+    /* reduce chances of subsequent forking */
+    new_bolt->stats.Dex -= 10;  
+    tmp->stats.Dex -= 10;  /* less forks from main bolt too */
+    new_bolt->stats.Con += 25 * new_dir; /* adjust the left bias */
+    new_bolt->speed_left = -0.1;
+    new_bolt->direction = t_dir;
+    new_bolt->duration++;
+    new_bolt->x=sx;
+    new_bolt->y=sy;
+    new_bolt->stats.dam /= 2;  /* reduce daughter bolt damage */
+    new_bolt->stats.dam++;
+    tmp->stats.dam /= 2;  /* reduce father bolt damage */
+    tmp->stats.dam++;
+    new_bolt = insert_ob_in_map(new_bolt,m,op,0);
+    update_turn_face(new_bolt);
 }
 
 /* move_bolt: moves bolt 'op'.  Basically, it just advances a space,

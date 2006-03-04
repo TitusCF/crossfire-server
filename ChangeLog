@@ -17,6 +17,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Apply patch #1436833 (Patch for forked lightning crash at map borders) by CF
+Development Team Schmorp.de <crossfire@schmorp.de>.
+---
+server/spell_attack.c: In forklightning() prevent access to out of map tiles.
+Andreas Kirschbaum 2006-03-04
+
 common/loader.l: Prevent excess whitespace while saving objects.
 common/loader.c: Rebuilt.
 Andreas Kirschbaum 2006-02-27
