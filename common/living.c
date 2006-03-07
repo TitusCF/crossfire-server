@@ -1593,8 +1593,10 @@ void calc_perm_exp(object *op)
 {
     int p_exp_min;
     
-    /* Ensure that our permanent experience minimum is met. */
-    p_exp_min = (int)(PERM_EXP_MINIMUM_RATIO * (float)(op->stats.exp));
+    /* Ensure that our permanent experience minimum is met.
+     * permenent_exp_ratio is an integer percentage, we divide by 100 
+     * to get the fraction   */
+    p_exp_min = (int)(settings.permanent_exp_ratio * (float)(op->stats.exp)/100);
 
     if (op->perm_exp < p_exp_min)
         op->perm_exp = p_exp_min;
@@ -1660,7 +1662,7 @@ static void add_player_exp(object *op, sint64 exp, const char *skill_name, int f
     if (exp_to_add > limit) exp_to_add=limit;
 
     ADD_EXP(op->stats.exp, (float) exp_to_add * (skill_obj? skill_obj->expmul:1));
-    if (settings.use_permanent_experience) {
+    if (settings.permanent_exp_ratio) {
 	ADD_EXP(op->perm_exp, (float) exp_to_add * PERM_EXP_GAIN_RATIO * (skill_obj? skill_obj->expmul:1));
 	calc_perm_exp(op);
     }
@@ -1671,7 +1673,7 @@ static void add_player_exp(object *op, sint64 exp, const char *skill_name, int f
 	limit=(levels[skill_obj->level+1]-levels[skill_obj->level])/2;
 	if (exp_to_add > limit) exp_to_add=limit;
 	ADD_EXP(skill_obj->stats.exp, exp_to_add);
-	if (settings.use_permanent_experience) {
+	if (settings.permanent_exp_ratio) {
 	    skill_obj->perm_exp += exp_to_add * PERM_EXP_GAIN_RATIO;
 	    calc_perm_exp(skill_obj);
 	}
@@ -1692,7 +1694,7 @@ sint64 check_exp_loss(const object *op, sint64 exp)
     sint64 del_exp;
 
     if (exp > op->stats.exp) exp = op->stats.exp;
-    if (settings.use_permanent_experience) {
+    if (settings.permanent_exp_ratio) {
 	del_exp = (op->stats.exp - op->perm_exp) * PERM_EXP_MAX_LOSS_RATIO;
 	if (del_exp < 0) del_exp = 0;
 	if (exp > del_exp) exp=del_exp;
@@ -1813,39 +1815,40 @@ void change_exp(object *op, sint64 exp, const char *skill_name, int flag) {
     }
 }
 
-/* Applies a death penalty experience.  20% or 3 levels, whichever is
- *  less experience lost. 
+/* Applies a death penalty experience, the size of this is defined by the 
+ * settings death_penalty_percentage and death_penalty_levels, and by the
+ * amount of permenent experience, whichever gives the lowest loss.
  */
 
 void apply_death_exp_penalty(object *op) {
     object *tmp;
     sint64 loss;
-    sint64 loss_20p;  /* 20 percent experience loss */
-    sint64 loss_3l;   /* 3 level experience loss */
+    sint64 percentage_loss;  /* defined by the setting 'death_penalty_percent' */
+    sint64 level_loss;   /* defined by the setting 'death_penalty_levels */
 
     for(tmp=op->inv;tmp;tmp=tmp->below)
 	if(tmp->type==SKILL && tmp->stats.exp) { 
 
-	    loss_20p = tmp->stats.exp * 0.20;
-	    loss_3l = tmp->stats.exp - levels[MAX(0,tmp->level -3)];
+	    percentage_loss = tmp->stats.exp * settings.death_penalty_ratio/100;
+	    level_loss = tmp->stats.exp - levels[MAX(0,tmp->level - settings.death_penalty_level)];
 
 	    /* With the revised exp system, you can get cases where
-	     * losing 3 levels would still require that you have more
-	     * exp than you current have - this is true if the levels
+	     * losing several levels would still require that you have more
+	     * exp than you currently have - this is true if the levels
 	     * tables is a lot harder.
 	     */
-	    if (loss_3l < 0) loss_3l = 0;
+	    if (level_loss < 0) level_loss = 0;
 
-	    loss = check_exp_loss(tmp, MIN(loss_3l, loss_20p));
+	    loss = check_exp_loss(tmp, MIN(level_loss, percentage_loss));
 
 	    tmp->stats.exp -= loss;
 	    player_lvl_adj(op,tmp);
 	}
 
-    loss_20p = op->stats.exp * 0.20;
-    loss_3l = op->stats.exp - levels[MAX(0,op->level -3)];
-    if (loss_3l < 0) loss_3l = 0;
-    loss = check_exp_loss(op, MIN(loss_3l, loss_20p));
+    percentage_loss = op->stats.exp * settings.death_penalty_ratio/100;
+    level_loss = op->stats.exp - levels[MAX(0,op->level - settings.death_penalty_level)];
+    if (level_loss < 0) level_loss = 0;
+    loss = check_exp_loss(op, MIN(level_loss, percentage_loss));
 
     op->stats.exp -= loss;
     player_lvl_adj(op,NULL);

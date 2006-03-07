@@ -118,7 +118,9 @@
    Simply the defaults. */
 
 #define BALANCED_STAT_LOSS FALSE
-#define USE_PERMANENT_EXPERIENCE FALSE
+#define PERMANENT_EXPERIENCE_RATIO 25
+#define DEATH_PENALTY_RATIO 20
+#define DEATH_PENALTY_LEVEL 3
 #define SET_TITLE TRUE
 #define SIMPLE_EXP TRUE
 #define SPELLPOINT_LEVEL_DEPEND TRUE
@@ -227,29 +229,21 @@
 #define PARTY_KILL_LOG 20
 */
 
-/* Use permanent experience code?
- * This code allows players to build up a small amount of 'permanent
- * experience' which reduces the effect of large experience drains, such as
- * death. This makes multiple frequent deaths less devastating, and also
- * ensures that any character will make some gradual progress even if they
- * die all of the time.
- * A nice option if your keep dying due to massive client/server lags despite
- * playing well... or you like to swim well outside of your depth. :)
- *
- * The PERM_EXP values adjust the behaviour of this option - if
- * USE_PERMAMENT_EXPERIENCE if off, these values have no meaning.  If it
- * is on, the minimum ratio is the minimum amount of permanent exp relative
- * to the total exp in the skill (ie, at a default of .25, if you had 100
- * experience, at least 25 of it would be permanent).  The gain ratio
- * is how much of experienced experience goes to the permanent value.
- * This does not detract from total exp gain (ie, if you gained 100 exp,
- * 100 would go to the skill total and 10 to the permanent value).
- * the loss ratio is the maximum amount of experience that can be lost
- * in any one hit - this is calculated as total exp - perm exp * loss ratio.
+/*
+ * The PERM_EXP values adjust the behaviour of permenent experience. - if
+ * the setting permanent_experience_percentage is zero, these values have 
+ * no meaning. The value in the settings file is the percentage of the 
+ * experience that is permenent, the rest could be lost on death. When dying,
+ * the greatest amount of non-permenent exp it is possible to lose at one time
+ * is PERM_EXP_MAX_LOSS_RATIO  - this is calculated as 
+ * total exp - perm exp * loss ratio. The gain ratio is how much of experienced 
+ * experience goes to the permanent value. This does not detract from total 
+ * exp gain (ie, if you gained 100 exp, 100 would go to the skill total and 
+ * 10 to the permanent value). 
  *
  * A few thoughts on these default value (by MSW)
  * gain ratio is pretty much meaningless until exp has been lost, as until
- * that poin, the minimum ratio will be used.
+ * that poin, the value in the settings file will be used.
  * It is also impossible for the exp to actually be reduced to the permanent
  * exp ratio - since the loss ratio is .5, it will just get closer and
  * closer.  However, after about half a dozen hits, pretty much all the
@@ -258,7 +252,6 @@
  */
 /* GD */
 
-#define PERM_EXP_MINIMUM_RATIO        0.25f
 #define PERM_EXP_GAIN_RATIO           0.10f
 #define PERM_EXP_MAX_LOSS_RATIO       0.50f
 

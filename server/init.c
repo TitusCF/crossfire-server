@@ -576,15 +576,30 @@ static void load_settings(void)
 		    "stat_loss_on_death: %s\n", cp);
 	    }
 	} else if (!strcasecmp(buf, "use_permanent_experience")) {
-	    if (!strcasecmp(cp, "on") || !strcasecmp(cp, "true")) {
-		settings.use_permanent_experience=TRUE;
-	    } else if (!strcasecmp(cp, "off") || !strcasecmp(cp, "false")) {
-		settings.use_permanent_experience=FALSE;
-	    } else {
-		LOG(llevError, "load_settings: Unknown value for "
-		    "use_permanent_experience: %s\n", cp);
-	    }
-	} else if (!strcasecmp(buf, "balanced_stat_loss")) {
+	    LOG(llevError, "use_permanent_experience is deprecated, use"
+		"permenent_experience_percentage instead\n");
+	} else if (!strcasecmp(buf, "permanent_experience_percentage")) {
+	    int val = atoi(cp);
+	      if (val < 0 || val >100)
+		LOG(llevError, "load_settings: permenent_experience_percentage"
+		    "must be between 0 and 100, %d is invalid\n", val);
+	    else
+		settings.permanent_exp_ratio = val;
+	} else if (!strcasecmp(buf, "death_penalty_percentage")) {
+	    int val = atoi(cp);
+	      if (val < 0 || val >100)
+		LOG(llevError, "load_settings: death_penalty_percentage"
+		    "must be between 0 and 100, %d is invalid\n", val);
+	    else
+		settings.death_penalty_ratio = val;
+	} else if (!strcasecmp(buf, "death_penalty_levels")) {
+	    int val = atoi(cp);
+	      if (val < 0 || val > 255)
+		LOG(llevError, "load_settings: death_penalty_levels"
+		    "can not be negative, %d is invalid\n", val);
+	    else
+		settings.death_penalty_level = val;
+	}else if (!strcasecmp(buf, "balanced_stat_loss")) {
 	    if (!strcasecmp(cp, "on") || !strcasecmp(cp, "true")) {
 		settings.balanced_stat_loss=TRUE;
 	    } else if (!strcasecmp(cp, "off") || !strcasecmp(cp, "false")) {

@@ -663,7 +663,7 @@ void show_skills(object *op, const char* search) {
 	    sprintf(buf,"%s%s", tmp->name, periods);
 	    buf[40] = 0;
 
-	    if (settings.use_permanent_experience) {
+	    if (settings.permanent_exp_ratio) {
 #ifdef WIN32
 		sprintf(skills[num_skills_found++],"%slvl:%3d (xp:%I64d/%I64d/%d%%)",
 			 buf,tmp->level,

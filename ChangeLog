@@ -17,6 +17,17 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Add settings permanent_experience_percentage, death_penalty_percentage and
+death_penalty_levels to the settings file.
+---
+common/living.c: don't hardcode exp calculations
+common/init.c, include/config.h, lib/settings: set defaults for new  values
+doc/settings: document new values
+include/global.h: change settings struct to hold the new values
+server/init.c: parse new values in the settings file.
+server/skill_util.c: reference new value
+Brendan Lally 2006-03-07
+
 Apply modified parts of patch #1439490 (Fix in random map generation) by CF
 Development Team Schmorp.de <crossfire@schmorp.de>.
 ---

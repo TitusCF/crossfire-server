@@ -37,7 +37,7 @@ worldmaptilesizey 50
 # and want to run weather.  Differnet values increase the amount of dynamism from 
 # weather to growth to erosion.  (see documents for more info).
 # If dynamiclevel is not 0, first run of the server will generate the weather maps
-# which could be a lenghtly process.
+# which could be a lengthy process.
 
 dynamiclevel 0
 fastclock 0
@@ -69,7 +69,7 @@ item_power_factor 1.0
 # %M	the map name of the map the character is currently on
 # %r	the short region name (as shown by mapinfo)
 # %R	the formal region title.(as shown by whereami)
-# %i	player's ip adress
+# %i	player's ip address
 # %%	a literal %
 # %_	a literal underscore
 #
@@ -80,7 +80,7 @@ item_power_factor 1.0
 who_format %N %T%t%h%d%n[%m]
 who_wiz_format %N %T%t%h%d%nLevel %l [%m](@%i)(%c)
 
-# See notes for most of thse in include/config.h
+# See notes for most of these in include/config.h
 
 # dm_mail your_email@addr.here
 
@@ -121,7 +121,7 @@ search_items true
 
 spell_encumbrance true
 
-# spell_failure_effects only has meaing if spell_encumbrance is true.
+# spell_failure_effects only has meaning if spell_encumbrance is true.
 # What it does, is that when the player fails a spell, various effects
 # will happen (player is paralyzed, confused, wonder spell is cast, etc.)
 # I disabled it because I think it would make life much too hazardous
@@ -130,7 +130,7 @@ spell_encumbrance true
 # confused/paralyzed/other effects often.  High level casters would
 # be mostly unaffected, since they would be casting spells that are
 # below their level.
-# Note-  it seems that you still get some failur effects even with this
+# Note-  it seems that you still get some failure effects even with this
 # not defined - most notably when reading scrolls and fail to read
 # them properly.
 #
@@ -200,11 +200,11 @@ explore_mode false
 
 stat_loss_on_death false
 
-# This makes repeated stat loss at lower levels more mercifull. Basically,
+# This makes repeated stat loss at lower levels more merciful. Basically,
 # the more stats you have lost, the less likely that
 # you will lose more. Additionally, lower level characters are shown
 # a lot more mercy (there are caps on how much of a stat you can lose too).
-# On the nasty side, if you are higher level, you can lose mutiple stats
+# On the nasty side, if you are higher level, you can lose multiple stats
 # _at_once_ and are shown less mercy when you die. But when you're higher
 # level, it is much easier to buy back your stats with potions.
 # Turn this on if you want death-based stat loss to be more merciful
@@ -214,15 +214,26 @@ stat_loss_on_death false
 
 balanced_stat_loss false
 
-# This allows players to build up a small amount of 'permanent
-# experience' which reduces the effect of large experience drains, such as
-# death. This makes multiple frequent deaths less devastating, and also
-# ensures that any character will make some gradual progress even if they
-# die all of the time.
-# A nice option if your keep dying due to massive client/server lags despite
-# playing well... or you like to swim well outside of your depth. :)
+# This defines how much of a player's experience should be 'permanent' and
+# not able to be lost on death. A high value makes multiple frequent deaths
+# less devastating, and also ensures that any character will make some 
+# gradual progress even if they die all of the time. This value is the minimum
+# amount of a player's exp that can ever be 'permanent' so setting this to 0
+# would allow all exp to be lost, and setting it to 100 would stop exp loss
+# entirely (the same effect would be achieved by setting the two 
+# death_penalty settings below to 0).
 
-use_permanent_experience false
+permanent_experience_percentage 25
+
+# When a player dies, they lose a proportion of their experience, which is 
+# defined by the following two values. They will lose either 
+# death_penalty_percentage% of their experience, or no more than 
+# death_penalty_levels levels, or half of their non-permenent experience, 
+# whichever is the least of these. Note that this is calculated per-skill,
+# so which method is used could vary for different skills.
+
+death_penalty_percentage 20
+death_penalty_levels 3
 
 # This is the penalty to luck that is given to a player who kills another
 # player (PK's). The value here is deducted from their luck value, so set this

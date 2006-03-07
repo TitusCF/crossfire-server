@@ -40,7 +40,7 @@ fastclock Make the timeclock run ultra-fast.  Debugging use usually.
 dm_mail 	add your email address here.
 not_permadeth 	usually true.  If false, death is the final end.
 resurrection 	usually false.  If death is permament, can you be ressurected?
-set_title 	can players set thier titles?  true
+set_title 	can players set their titles?  true
 search_items 	can players search through thier items?  true
 spell_encumbrance	Does wieght of armor affect spells?  true
 spell_failure_effects	If you fumble, does it hurt alot?  false
@@ -52,8 +52,12 @@ recycle_tmp_maps	Do the same maps allways reappear?  false.  Not
 spellpoint_level_depend	Do spell costs go up as level increases?  true
 explore_mode		Can players enter explore mode?  false
 stat_loss_on_death	if set, player loses stat when they die.  false
-use_permanent_experience	if set, player may gain permanent 
-				experience: false
+permanent_experience_percentage This percentage of the player's exp will be
+				'permanent' and not lost on death: 25
+death_penalty_percentage	The amount of exp a player can lose on
+				death: 20
+death_penalty_levels		The maximum number of levels a player could
+				lose from dying: 3
 balanced_stat_loss	if set, death stat depletion is balanced by 
 			level. False
 no_player_stealing	if set, players cannot steal from other players. False

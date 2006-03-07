@@ -328,7 +328,9 @@ typedef struct Settings {
     char    *tmpdir;	    /* Directory to use for temporary files */
     uint8   stat_loss_on_death;	/* If true, chars lose a random stat when they die */
     sint16  pk_luck_penalty;    /* Amount by which player luck is reduced if they PK */
-    uint8   use_permanent_experience; /* If true, players can gain perm exp */
+    uint8   permanent_exp_ratio; /* how much exp should be 'permenant' and unable to be lost*/
+    uint8   death_penalty_ratio; /* how much exp should be lost at death */
+    uint8   death_penalty_level; /* how many levels worth of exp may be lost on one death */
     uint8   balanced_stat_loss; /* If true, Death stat depletion based on level etc */
     uint8   not_permadeth;  /* if true, death is non-permament */
     uint8   simple_exp;	    /* If true, use the simple experience system */
@@ -338,7 +340,7 @@ typedef struct Settings {
     uint8   search_items;   /* search_items command */
     uint8   spell_encumbrance; /* encumbrance effects spells */
     uint8   spell_failure_effects; /* nasty backlash to spell failures */
-	uint16	set_friendly_fire;	/* Percent of damage done by peaceful player vs player damage */
+    uint16  set_friendly_fire;	/* Percent of damage done by peaceful player vs player damage */
     uint8   casting_time;   /* it takes awhile to cast a spell */
     uint8   real_wiz;       /* use mud-like wizards */
     uint8   recycle_tmp_maps; /* re-use tmp maps. */
