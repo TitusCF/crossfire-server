@@ -17,6 +17,13 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Fix possible exploit with shadow alchemy. Also improve the alchemy spell to
+yield more nuggets.
+---
+server/shop.c: In query_cost() apply the hack (to multiply non-GEM/non-MONEY
+   values by four) also if no player object is present.
+Andreas Kirschbaum 2006-03-07
+
 Add settings permanent_experience_percentage, death_penalty_percentage and
 death_penalty_levels to the settings file.
 ---

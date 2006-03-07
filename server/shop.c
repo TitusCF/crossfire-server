@@ -184,6 +184,13 @@ uint64 query_cost(const object *tmp, object *who, int flag) {
     if (flag==F_TRUE || flag==F_SELL)
 	val=value_limit(val, number, who, shop);
 
+    /* we need to multiply these by 4.0 to keep buy costs roughly the same
+     * (otherwise, you could buy a potion of charisma for around 400 pp.
+     * Arguable, the costs in the archetypes should be updated to better
+     * reflect values (potion charisma list for 1250 gold)
+     */
+    val *= 4;
+
     /* This modification is for bargaining skill.
      * Now only players with max level in bargaining
      * AND Cha = 30 will get optimal price.
@@ -232,16 +239,10 @@ uint64 query_cost(const object *tmp, object *who, int flag) {
 	/* Diff is now a float between 0.2 and 0.8 */
 	diff+=(cha_bonus[who->stats.Cha]-1)/(1+cha_bonus[who->stats.Cha])*ratio;
 	
-	/* we need to multiply these by 4.0 to keep buy costs roughly the same
-	 * (otherwise, you could buy a potion of charisma for around 400 pp.
-	 * Arguable, the costs in the archetypes should be updated to better
-	 * reflect values (potion charisma list for 1250 gold)
-	 */
 	if(flag==F_BUY)
-          val=(4*val*(long)(1000*(1+diff)))/1000;
+          val=(val*(long)(1000*(1+diff)))/1000;
 	else if (flag==F_SELL)
-          val=(4*val*(long)(1000*(1-diff)))/1000;
-	else val *=4;
+          val=(val*(long)(1000*(1-diff)))/1000;
 	
 	 /* If we are approximating, then the value returned should be allowed to be wrong
 	  * however merely using a random number each time will not be sufficiant, as then
