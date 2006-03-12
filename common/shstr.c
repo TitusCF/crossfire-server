@@ -222,7 +222,7 @@ add_refcount(const char *str) {
 
 int
 query_refcount(const char *str) {
-    return SS(str)->refcount;
+    return (SS(str)->refcount) & ~TOPBIT;
 }
 
 /*
