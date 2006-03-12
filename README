@@ -62,7 +62,7 @@ FTP SITES
 
   FTP-sites where you can look for the latest versions are:
 
-    ftp://ftp.sourceforge.net/pub/sourceforge/crossfire
+    http://prdownloads.sourceforge.net/crossfire/
     ftp://ftp.real-time.com/pub/games/crossfire
 
   Changes made since the latest release can be found at the CVS
