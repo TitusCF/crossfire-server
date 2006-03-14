@@ -17,6 +17,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/skills.c: fix merging bug with inscription
+Ryo 2006-03-14
+
 Fix bug/exploit in setup command.  We were strcat'ing back data provided
 by the client.
 ---

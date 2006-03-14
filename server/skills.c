@@ -1261,8 +1261,13 @@ static int write_scroll (object *pl, object *scroll, object *skill) {
 	newscroll->stats.exp = newscroll->value/5;
 
 	/* wait until finished manipulating the scroll before inserting it */
-	if (newscroll != scroll)
-	    newscroll=insert_ob_in_ob(newscroll,pl);
+	if (newscroll == scroll)
+    {
+        /* Remove to correctly merge with other items which may exist in inventory */
+        remove_ob(newscroll);
+        esrv_del_item(pl->contr,newscroll->count);
+    }
+	newscroll=insert_ob_in_ob(newscroll,pl);
 	esrv_send_item(pl, newscroll);
 	success = calc_skill_exp(pl,newscroll, skill);
 	if(!confused) success *= 2;
