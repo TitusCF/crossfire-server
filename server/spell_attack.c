@@ -116,6 +116,7 @@ void forklightning(object *op, object *tmp) {
     int t_dir; /* stores temporary dir calculation */
     mapstruct *m;
     sint16  sx,sy;
+    object *new_bolt;
 
     /* pick a fork direction.  tmp->stats.Con is the left bias
      * i.e., the chance in 100 of forking LEFT
@@ -137,7 +138,7 @@ void forklightning(object *op, object *tmp) {
 	return;
 
     /* OK, we made a fork */
-    object *new_bolt = get_object();
+    new_bolt = get_object();
 
     copy_object(tmp,new_bolt);
 
