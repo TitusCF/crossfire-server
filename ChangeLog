@@ -17,6 +17,15 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Fix bug/exploit in setup command.  We were strcat'ing back data provided
+by the client.
+---
+socket/request.c: Modify SetUp() to use safe_strcat() - eliminates buffer
+   overflow issues.  Add some char* casts to spell/skill requestinfo
+   to eliminate compiler warnings.  Add IP address to log for incoming
+   connections.
+MSW 2006-03-13
+
 Fix possible exploit with shadow alchemy. Also improve the alchemy spell to
 yield more nuggets.
 ---
