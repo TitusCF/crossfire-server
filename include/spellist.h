@@ -27,6 +27,9 @@
 
 #include "spells.h"
 
+#if 0
+All those variables aren't used anymore.
+
 spell spells[NROFREALSPELLS]={
 /* name,lvl,sp,charges,time,scrolls[nr,chance],book-chance,rng,defensive,cleric,self
    path, other arch*/
@@ -686,7 +689,9 @@ spell_parameters SP_PARAMETERS[NROFREALSPELLS] =
 {   0,       0,     1,      1,		12},	/*cause rabies*/
 };
 
-char *spellpathnames[NRSPELLPATHS] = {
+#endif /* 0 */
+
+const char *spellpathnames[NRSPELLPATHS] = {
  "Protection",
  "Fire",
  "Frost",
