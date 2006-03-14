@@ -54,43 +54,36 @@
 	  last->ob=(NEW);\
           last->id=(COUNT);
 
-/* Search the inventory of 'pl' for what matches best with params.
+/**
+ * Search the inventory of 'pl' for what matches best with params.
  * we use item_matched_string above - this gives us consistent behaviour
  * between many commands.  Return the best match, or NULL if no match.
- */
-object *find_best_object_match(object *pl, const char *params)
+ * aflag is used with apply -u , and apply -a to
+ * only unapply applied, or apply unapplied objects
+ **/
+static object *find_best_apply_object_match(object *pl, const char *params, enum apply_flag aflag)
 {
     object *tmp, *best=NULL;
     int match_val=0,tmpmatch;
 
     for (tmp=pl->inv; tmp; tmp=tmp->below) {
-	if (tmp->invisible) continue;
-	if ((tmpmatch=item_matched_string(pl, tmp, params))>match_val) {
-	    match_val=tmpmatch;
-	    best=tmp;
-	}
+        if (tmp->invisible) continue;
+        if ((tmpmatch=item_matched_string(pl, tmp, params))>match_val) {
+            if ((aflag==AP_APPLY) && (QUERY_FLAG(tmp,FLAG_APPLIED))) continue;
+            if ((aflag==AP_UNAPPLY) && (!QUERY_FLAG(tmp,FLAG_APPLIED))) continue;
+            match_val=tmpmatch;
+            best=tmp;
+        }
     }
     return best;
 }
-/* Simlilar to find_best_object_match , but accepts an
- * additional parameter for apply -u , and apply -a to
- * only unapply applied , or apply unapplied objects
- */
-static object *find_best_apply_object_match(object *pl, char *params, enum apply_flag aflag)
-{
-    object *tmp, *best=NULL;
-    int match_val=0,tmpmatch;
 
-    for (tmp=pl->inv; tmp; tmp=tmp->below) {
-	if (tmp->invisible) continue;
-	if ((tmpmatch=item_matched_string(pl, tmp, params))>match_val) {
-	  if ((aflag==AP_APPLY) && (QUERY_FLAG(tmp,FLAG_APPLIED))) continue;
-	  if ((aflag==AP_UNAPPLY) && (!QUERY_FLAG(tmp,FLAG_APPLIED))) continue;
-	    match_val=tmpmatch;
-	    best=tmp;
-	}
-    }
-    return best;
+/**
+ * Shortcut to find_best_apply_object_match(pl, params, AF_NULL);
+ **/
+object *find_best_object_match(object *pl, const char *params)
+{
+    return find_best_apply_object_match(pl, params, AP_NULL);
 }
 
 /*
