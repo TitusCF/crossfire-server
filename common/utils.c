@@ -284,6 +284,10 @@ void transmute_materialname(object *op, const object *change)
 	return;
 
     mt = name_to_material(op->materialname);
+    if (!mt) {
+        LOG(llevError, "archetype '%s>%s' uses nonexistent material '%s'\n", op->arch->name, op->name, op->materialname);
+        return;
+    }
 
     for (j=0; j < NROFATTACKS; j++)
 	if (op->resist[j] == 0 && change->resist[j] != 0) {

@@ -17,7 +17,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
-server/skills.c: fix merging bug with inscription
+common/utils.c: apply patch #1445892 (transmute_materialname crash) courtesy
+ the cf.schmorp.de development team.
+server/skills.c: fix merging bug with inscription.
 Ryo 2006-03-14
 
 Fix bug/exploit in setup command.  We were strcat'ing back data provided
