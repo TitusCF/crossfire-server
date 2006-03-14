@@ -123,6 +123,7 @@ void InitConnection(NewSocket *ns, const char *from_ip)
     ns->update_look = 0;
     ns->has_readable_type = 0;
     ns->supported_readables = 0;
+    ns->monitor_spells = 0;
 
     /* we should really do some checking here - if total clients overflows
      * we need to do something more intelligent, because client id's will start
