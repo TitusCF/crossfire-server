@@ -1246,10 +1246,12 @@ void monster_check_apply(object *mon, object *item) {
     /* Eating food gets hp back */
     else if (item->type == FOOD && mon->will_apply & WILL_APPLY_FOOD) flag=1;
     else if (item->type == SCROLL && QUERY_FLAG(mon, FLAG_USE_SCROLL)) {
-	if (monster_should_cast_spell(mon, item->inv))
-	    SET_FLAG(mon, FLAG_READY_SCROLL);
-	/* Don't use it right now */
-	return;
+        if (!item->inv)
+            LOG(llevDebug,"Monster %d having scroll %d with empty inventory!", mon->count, item->count);
+        else if (monster_should_cast_spell(mon, item->inv))
+            SET_FLAG(mon, FLAG_READY_SCROLL);
+        /* Don't use it right now */
+        return;
     }
     else if (item->type == WEAPON) flag = check_good_weapon(mon,item);
     else if (IS_ARMOR(item)) flag = check_good_armour(mon,item);

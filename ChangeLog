@@ -21,6 +21,8 @@ common/utils.c: apply patch #1445892 (transmute_materialname crash) courtesy
  the cf.schmorp.de development team.
 server/c_object.c: merge find_best_apply_object_match and find_best_object_match
  which are really the same.
+server/monster.c: fix a monster/scroll related crash, based on patch #1447242 by
+ the cf.schmorp.de development team.
 server/skills.c: fix merging bug with inscription.
 Ryo 2006-03-14
 
