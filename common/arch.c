@@ -636,16 +636,22 @@ unsigned long
 hasharch(const char *str, int tablesize) {
     unsigned long hash = 0;
     int i = 0;
-    unsigned rot = 0;
-    const char *p;
+    const unsigned char *p;
 
+    /* use the one-at-a-time hash function, which supposedly is
+     * better than the djb2-like one used by perl5.005, but
+     * certainly is better then the bug used here before.
+     * see http://burtleburtle.net/bob/hash/doobs.html
+     */
     for (p = str; i < MAXSTRING && *p; p++, i++) {
-        hash ^= (unsigned long) *p << rot;
-        rot += 2;
-        if (rot >= (sizeof(long) - sizeof(char)) * 8)
-            rot = 0;
+        hash += *p;
+        hash += hash << 10;
+        hash ^= hash >>  6;
     }
-    return (hash % tablesize);
+    hash += hash <<  3;
+    hash ^= hash >> 11;
+    hash += hash << 15;
+    return hash % tablesize;
 }
 
 /*

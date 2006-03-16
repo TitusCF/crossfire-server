@@ -17,6 +17,15 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Apply patch #1450408 (Improved hash table) by cf.schmorp.de development team.
+The new hash function seems to produce fewer collisions than the previous
+function. This especially holds for strings that share a common prefix: the
+old function did use only a small fraction of the available slots; the new
+function uses all slots with a fairly equal distribution.
+---
+common/arch.c: Replace algorithmn implemented in hasharch().
+Andreas Kirschbaum 2006-03-16
+
 Apply patch #1439143 (code-cleanup: crossedit) by Stefan Huehner: Remove
 unused code, add static/const where appropriate.
 ---
