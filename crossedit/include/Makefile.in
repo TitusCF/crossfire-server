@@ -211,7 +211,7 @@ target_alias = @target_alias@
 x_includes = @x_includes@
 x_libraries = @x_libraries@
 EXTRA_DIST = README
-noinst_HEADERS = Ansi.h X11.h debug.h Makefile.in Posix.h README Xaw.h util.h
+noinst_HEADERS = Ansi.h X11.h debug.h Makefile.in Posix.h README Xaw.h
 all: all-am
 
 .SUFFIXES:

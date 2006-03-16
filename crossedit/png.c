@@ -73,7 +73,7 @@ struct Pngx_Color_Values {
  * png loading took about 140 seconds, of which 60 seconds of that
  * was in XAllocColor calls.
  */
-long pngx_find_color(Display *display, Colormap *cmap, int red, int green, int blue)
+static long pngx_find_color(Display *display, Colormap *cmap, int red, int green, int blue)
 {
 
     int i, closeness=0xffffff, close_entry=-1, tmpclose;

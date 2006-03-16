@@ -17,6 +17,15 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Apply patch #1439143 (code-cleanup: crossedit) by Stefan Huehner: Remove
+unused code, add static/const where appropriate.
+---
+Affected files:
+crossedit/{App.c,App.h,Attr.c,CrEdit.c,CrFace.c,CrList.c,CrUtil.c,Defines.h},
+crossedit/{Edit.c,Str.h,crossedit.c,png.c,proto.h,xutil.c,Cnv/Cnv.h},
+crossedit/include/{Makefile.am,Makefile.in,util.h}
+Andreas Kirschbaum 2006-03-16
+
 common/utils.c: apply patch #1445892 (transmute_materialname crash) courtesy
  the cf.schmorp.de development team.
 include/spellist.h: disable big unused arrays, legacy of spell code.

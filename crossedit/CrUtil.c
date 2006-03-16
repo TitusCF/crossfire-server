@@ -7,7 +7,6 @@
 
 extern    Pixmap *pixmaps;       /* list of pixmaps */
 extern    Pixmap *masks;       /* list of pixmaps */
-extern XChar2b fontindex_to_XChar2b ( Fontindex s );
 
 
 

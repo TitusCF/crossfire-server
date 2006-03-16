@@ -38,7 +38,7 @@
  * menu
  */ 
 typedef struct CnvMenuRec {
-    char *label;
+    const char *label;
     void (*func) (Widget, XtPointer, XtPointer);
 } CnvMenuRec;
 extern Widget CnvMenu(String, Widget,CnvMenuRec[], XtPointer);

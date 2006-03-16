@@ -18,7 +18,7 @@ static XtResource resources[] = {
 };
 #undef Offset
 
-static void ClassInitialize();
+static void ClassInitialize(void);
 static void Initialize(Widget req,Widget new,Arg args[],Cardinal *num);
 static void Destroy(Widget w);
 static void Resize(Widget w);
@@ -131,7 +131,7 @@ static void GetSize(Widget w,Dimension *width,Dimension *height)
  * members
  **********************************************************************/
 
-static void ClassInitialize()
+static void ClassInitialize(void)
 {
   debug0 ("ClassInitialize()\n");
 }

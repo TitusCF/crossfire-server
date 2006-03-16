@@ -136,7 +136,7 @@ static XtResource resources[] = {
  **********************************************************************/
 
 static void UpdatePosition (Widget w, int x, int y,Boolean inv);
-static void ClassInitialize();
+static void ClassInitialize(void);
 static void Initialize(Widget req,Widget new,Arg args[],Cardinal *num);
 static void Destroy(Widget w);
 static void Resize(Widget w);
@@ -939,7 +939,7 @@ static void MoveAc (Widget w, XEvent * e, String * argv, Cardinal * argc)
  * members
  **********************************************************************/
 
-static void ClassInitialize() 
+static void ClassInitialize(void)
 {
     debug0("CrEdit-ClassInitialize()\n");
 

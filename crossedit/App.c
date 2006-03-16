@@ -36,7 +36,6 @@
 #include "Bitmaps.h"
 #include "App.h"
 #include "debug.h"
-#include "util.h"
 
 #include <proto.h>
 
@@ -46,7 +45,7 @@ int FontSize;		/* Size of font (really images) */
 #define E_EDITABLE   (E_MONSTER | E_EXIT | E_TREASURE | E_BACKGROUND | \
                      E_DOOR | E_SPECIAL | E_SHOP | E_NORMAL | E_FALSE_WALL)
 
-ArchFlagsRec archFlags[] = {
+static ArchFlagsRec archFlags[] = {
     { 0, "toggle",	E_EDITABLE },
     { 0, "monster",	E_MONSTER },
     { 0, "exit",	E_EXIT },
@@ -68,13 +67,17 @@ ArchFlagsRec archFlags[] = {
  * plaah: where to put these ???
  * 0.91.9 - moved to start of file - needed for ReadPixmaps function.
  */
-XColor exactcolor, discolor[13];
+XColor discolor[13];
 Colormap colormap=(Colormap)NULL;
 
 
 /**********************************************************************
  * private
  **********************************************************************/
+
+static void AppDestroy(App self);
+static Edit AppEditInsert(App self,String path,EditType type);
+static void AppEditAttach(App self,Edit edit);
 
 #if 0
 static void AbsToCr(App self,String abs)
@@ -820,9 +823,6 @@ App AppCreate(XtAppContext appCon,
 	 resources, resourcesNum, 
 	 NULL, 0);
 
-    /*** images & colors ***/
-    InitializeColors(XtDisplay(self->shell));
-
     /* Default */
     displaymode=Dm_Png;
     FontSize=32;
@@ -855,7 +855,7 @@ App AppCreate(XtAppContext appCon,
 /*
  * member: vanish application
  */
-void AppDestroy(App self)
+static void AppDestroy(App self)
 {
     Edit edit;
     Edit temp;
@@ -1009,15 +1009,10 @@ void AppItemSet (App self, Edit edit,object *obj,int wallSet)
 
 
 
-void  InitializeColors (Display *dpy)
-{
-    return; /* this function does nothing anymore */
-}
-
 /*
  * member: add editor
  */
-Edit AppEditInsert(App self,String path,EditType type)
+static Edit AppEditInsert(App self,String path,EditType type)
 {
     Edit edit;
     Edit editor;
@@ -1055,7 +1050,7 @@ Edit AppEditInsert(App self,String path,EditType type)
 /*
  * attach Edit to App environment
  */
-void AppEditAttach(App self,Edit edit)
+static void AppEditAttach(App self,Edit edit)
 {
     debug1("AppEditAttach() %s\n",EditGetPath(edit));
     /*** attach edit to list ***/

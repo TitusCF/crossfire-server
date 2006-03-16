@@ -33,7 +33,7 @@
 
 typedef struct {
     Widget w;
-    char *name;
+    const char *name;
     unsigned long flags;
 }   ArchFlagsRec;
 
@@ -120,15 +120,10 @@ extern Pixmap *pixmaps;       /* list of pixmaps */
  * Function interface
  */
 extern App AppCreate ( XtAppContext appCon, String displayString, XtResource resources[], Cardinal resourcesNum, XrmOptionDescRec *options, Cardinal optionsNum, int *argc, char *argv[] );
-extern void AppDestroy ( App self );
 extern void AppUpdate ( App self );
 extern void AppSelectSet ( App self, Edit edit, XRectangle rect );
 extern void AppSelectUnset ( App self );
 extern void AppItemSet ( App self, Edit edit, object *obj, int wallSet );
-extern char PixelFromAlias ( char *name );
-extern void InitializeColors ( Display *dpy );
-extern Edit AppEditInsert ( App self, String path, EditType type );
-extern void AppEditAttach ( App self, Edit edit );
 extern void AppEditDeattach ( App self, Edit edit );
 
 #endif /* _App_h */

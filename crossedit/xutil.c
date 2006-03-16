@@ -42,23 +42,6 @@
 #include <funcpoint.h>
 #include <loader.h>
 
-/*
- * Converts between Fontindex and XChar2b types.
- * Used in global.h, for draw_face (in face, FontindextoXChars 
- * is defined to this function name
- */
-
-XChar2b fontindex_to_XChar2b(Fontindex s)
-{
-  XChar2b c;
-
-  c.byte1 = s/256;
-  c.byte2 = s%256;
-
-  return c;
-}
-
-
 #define IMAGE_BUF 65536
 
 /*

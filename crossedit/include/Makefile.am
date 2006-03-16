@@ -24,4 +24,4 @@
 #   The author can be reached via e-mail to mark@pyramid.com
 
 EXTRA_DIST = README
-noinst_HEADERS = Ansi.h X11.h debug.h Makefile.in Posix.h README Xaw.h util.h
+noinst_HEADERS = Ansi.h X11.h debug.h Makefile.in Posix.h README Xaw.h

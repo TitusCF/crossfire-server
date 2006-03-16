@@ -42,7 +42,7 @@ static XtResource resources[] = {
  * declarations
  **********************************************************************/
 
-static void ClassInitialize();
+static void ClassInitialize(void);
 static void Initialize(Widget req,Widget new,Arg args[],Cardinal *num);
 static void Destroy(Widget w);
 static void Resize(Widget w);
@@ -167,7 +167,7 @@ static void SetSize(Widget w)
  * y       : index
  * return  : 
  */
-CrListNode GetYNode (Widget w, int y)
+static CrListNode GetYNode (Widget w, int y)
 {
     CrListWidget self = (CrListWidget)w;
     CrListNode node = NULL;
@@ -187,7 +187,7 @@ CrListNode GetYNode (Widget w, int y)
 }
 
 /* hmm */
-CrListCall GetYCall (Widget w, int y)
+static CrListCall GetYCall (Widget w, int y)
 {
     CrListNode node = GetYNode (w, y);
     static struct _CrListCall ret;
@@ -246,7 +246,7 @@ static void Delete(Widget new,XEvent *e,String *argv,Cardinal *argc)
  * members
  **********************************************************************/
 
-static void ClassInitialize()
+static void ClassInitialize(void)
 {
     debug0("CrList-ClassInitialize()\n");
 }

@@ -58,18 +58,18 @@ static XrmOptionDescRec options[] = {
 
 }; 
 
-String fallback_resources[] = {
+static String fallback_resources[] = {
 #include <Crossedit.ad.h>
     NULL
 };
 
 enum DisplayMode displaymode=Dm_Png;
 
-void EditDirtyAc(Widget w, XEvent * event, String * argv, Cardinal * argc) {
+static void EditDirtyAc(Widget w, XEvent * event, String * argv, Cardinal * argc) {
     debug0 ("EditDirtyAc\n");
 }
 
-void Nop(Widget w, XEvent * event, String * argv, Cardinal * argc) {}
+static void Nop(Widget w, XEvent * event, String * argv, Cardinal * argc) {}
 XtActionsRec mainActions[] = {
   {"Nop", Nop},
   {"EditKey", EditDirtyAc},

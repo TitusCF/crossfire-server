@@ -48,26 +48,9 @@ extern enum DisplayMode displaymode;
 
 /* temporary kludge */
 
-extern object *MapGetObjectZ (Map, int, int, int);
-extern object *MapGetRealObject (Map, int, int, int);
-#if 0
-extern void MapInsertObjectZ(Map,object *, int, int, int);
-#endif
-extern void  InitializeColors (Display *dpy);
-extern object *object_create_arch (archetype *);
-
 extern XColor discolor[];
 
 void CrEditSelect(Widget w,XRectangle rect);
-
-#define XDRAWIMAGESTRING(disp,win,gc,x,y,str,len) \
-XDrawImageString16(disp,win,gc,x,y,str,len)
-#define FontindexToXChar(s) fontindex_to_XChar2b(s)
-#define XCharToFontindex(s) ((Fontindex) ((s).byte1*256 +  (s).byte2))
-
-#ifndef XChar2b
-typedef XChar2b XChar; 
-#endif
 
 enum DisplayMode {Dm_Png};
 

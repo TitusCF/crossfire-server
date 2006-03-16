@@ -40,6 +40,8 @@
 #include "Str.h"
 #include "Bitmaps.h"
 
+#include "libproto.h"
+#include "proto.h"
 
 /*
  * This function relinks all _pointers_ to the objects from
@@ -50,7 +52,7 @@
  * moved to Edit.c from common/map.c since Edit.c is the only file that uses it.
  */
 
-void copy_map(mapstruct *m1, mapstruct *m2) {
+static void copy_map(mapstruct *m1, mapstruct *m2) {
     int x,y;
 
     memcpy(m2, m1, sizeof(mapstruct));
@@ -71,7 +73,7 @@ void copy_map(mapstruct *m1, mapstruct *m2) {
  * dx    : positive translate to right
  * dy    : positive translate to down
  */
-mapstruct *MapMoveScrollResize(mapstruct *source, 
+static mapstruct *MapMoveScrollResize(mapstruct *source, 
 				int width, int height, int dx, int dy) 
 {
     mapstruct *target;
@@ -160,13 +162,13 @@ mapstruct *MapMoveScrollResize(mapstruct *source,
 }
 
 
-object * MapGetRealObject (mapstruct * emap, int x, int y, int z)
+static object * MapGetRealObject (mapstruct * emap, int x, int y, int z)
 {
     object *tmp = MapGetObjectZ (emap, x, y, z);
     return tmp ? (tmp->head ? tmp->head : tmp) : tmp;
 }
 
-int MapInsertObjectZ(mapstruct *emap,object *o,int x, int y, int z)
+static int MapInsertObjectZ(mapstruct *emap,object *o,int x, int y, int z)
 {
     object *op, *above, *below;
 
@@ -209,7 +211,7 @@ int MapInsertObjectZ(mapstruct *emap,object *o,int x, int y, int z)
     return (0);
 }
 
-int MapObjectOut (mapstruct *target, object *obj, int x, int y) {
+static int MapObjectOut (mapstruct *target, object *obj, int x, int y) {
     object *tmp;
     for(tmp = obj; tmp; tmp = tmp->more)
         if(OUT_OF_REAL_MAP(target,x + tmp->x,y + tmp->y)) return 1;

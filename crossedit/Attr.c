@@ -691,7 +691,7 @@ static void AttrVarGetCb(Widget w,XtPointer client,XtPointer call)
  * members
  **********************************************************************/
 
-void AppLayout(Attr self,Widget parent, char *name)
+static void AppLayout(Attr self,Widget parent, char *name)
 {
     Widget form,view1,pane;
     Widget ok,apply,cancel;
