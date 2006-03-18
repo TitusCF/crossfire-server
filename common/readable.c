@@ -1400,8 +1400,7 @@ mon_info_msg (int level, int booksize)
  * of 1-6 artifacts drawn sequentially from the artifact list.
  */
 
-char   *
-artifact_msg (int level, int booksize)
+static const char *artifact_msg (int level, int booksize)
 {
     artifactlist *al = NULL;
     artifact *art;

@@ -40,7 +40,7 @@
 
 static int compare_A(const void *a, const void *b)
 {
-    return strcmp(((command_array_struct *)a)->name, ((command_array_struct *)b)->name);
+    return strcmp(((const command_array_struct *)a)->name, ((const command_array_struct *)b)->name);
 }
 
 static command_array_struct *find_command_element(char *cmd, command_array_struct *commarray,

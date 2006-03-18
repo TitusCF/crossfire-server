@@ -384,7 +384,7 @@ AttrDef AttrDescription[] = {
     {NULL,		0,		0,		NULL}
 };
 
-char *allowed_variables[] = {
+static char *allowed_variables[] = {
 
     "name", "race", "slaying", "other_arch", "last_heal", "last_sp",
     "last_eat", "speed", "speed_left", "slow_move", "face", "Str", "Dex",

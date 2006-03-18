@@ -202,14 +202,7 @@ const char *
 add_refcount(const char *str) {
     GATHER(add_ref_stats.calls);
     ++(SS(str)->refcount);
-    /* This function should be declared 
-     *    const char *add_refcount(const char *)
-     * Unfortunately, that would require changing a lot of structs
-     *
-     *   Yup, many changes, but may have make some bugs more visible :)
-     *   -- Ryo 2005-08-12
-     */
-    return (char*)str;
+    return str;
 }
 
 /*

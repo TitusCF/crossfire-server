@@ -2121,7 +2121,7 @@ static int adjacent_map(const mapstruct *map1, const mapstruct *map2, int *dx, i
  * closest body part of 'op1'
  */
 
-void get_rangevector(object *op1, object *op2, rv_vector *retval, int flags) {
+void get_rangevector(object *op1, const object *op2, rv_vector *retval, int flags) {
     if (!adjacent_map(op1->map, op2->map, &retval->distance_x, &retval->distance_y)) {
         /* be conservative and fill in _some_ data */
         retval->distance   = 100000;

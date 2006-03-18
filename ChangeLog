@@ -17,9 +17,18 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Use const when possible. Patch courtesy Stefan Huehner.
+ common/item.c map.c porting.c readable.c shstr.c utils.c
+ crossedit/Attr.c CrEdit.c
+ include/libproto.h
+ random_maps/rproto.h treasure.c
+ server/c_new.c commands.c
+Ryo 2006-03-18
+
 Removed unused header file version.h.
  include/version.h: removed.
  include/win32.h: don't include that file.
+Ryo 2006-03-18
 
 Add 'add_key' parameter to object.set_key for plugins.
  plugins/common/include/plugin_common.h

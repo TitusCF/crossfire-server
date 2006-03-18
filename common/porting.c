@@ -433,7 +433,7 @@ char *doubletostr10(double v){
  *                                                             Tchize
  */
 
-void save_long(char *buf, char *name, long n) {
+void save_long(char *buf, const char *name, long n) {
     char buf2[MAX_BUF];
     strcpy(buf2,name);
     strcat(buf2," ");
@@ -461,7 +461,7 @@ void save_long_long(char *buf, char *name, sint64 n) {
  * The first entry must be NULL - this is what is used for non
  * compressed files.
  */
-char *uncomp[NROF_COMPRESS_METHODS][3] = {
+const char *uncomp[NROF_COMPRESS_METHODS][3] = {
     {NULL, NULL, NULL},
     {".Z", UNCOMPRESS, COMPRESS},
     {".gz", GUNZIP, GZIP},

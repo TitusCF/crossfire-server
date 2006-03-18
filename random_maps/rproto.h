@@ -63,8 +63,6 @@ extern void find_spot_in_room_recursive(char **layout, int x, int y, RMParms *RP
 extern void find_spot_in_room(mapstruct *map, int x, int y, int *kx, int *ky, RMParms *RP);
 extern void find_enclosed_spot(mapstruct *map, int *cx, int *cy, RMParms *RP);
 extern void remove_monsters(int x, int y, mapstruct *map);
-extern object **surround_by_doors(mapstruct *map, char **layout, int x, int y, int opts);
-extern object *door_in_square(mapstruct *map, int x, int y);
 extern void find_doors_in_room_recursive(char **layout, mapstruct *map, int x, int y, object **doorlist, int *ndoors, RMParms *RP);
 extern object **find_doors_in_room(mapstruct *map, int x, int y, RMParms *RP);
 extern void lock_and_hide_doors(object **doorlist, mapstruct *map, int opts, RMParms *RP);

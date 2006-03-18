@@ -171,7 +171,7 @@ static void SelectEndAc ( Widget w, XEvent * e,
 static void FeedAc ( Widget w, XEvent * e, 
 		    String * argv, Cardinal * argc );
 
-XtActionsRec actions[] = {
+static XtActionsRec actions[] = {
   {"Insert", InsertAc},
   {"SelectBegin", SelectBeginAc},
   {"SelectExpand", SelectExpandAc},

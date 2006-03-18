@@ -301,7 +301,7 @@ const int Socket2_CommandsSize =sizeof(Socket2_Commands) / sizeof(command_array_
 
 static int compare_A(const void *a, const void *b)
 {
-    return strcmp(((command_array_struct *)a)->name, ((command_array_struct *)b)->name);
+    return strcmp(((const command_array_struct *)a)->name, ((const command_array_struct *)b)->name);
 }
 
 void init_commands(void)

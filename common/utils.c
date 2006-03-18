@@ -303,7 +303,6 @@ void transmute_materialname(object *op, const object *change)
 void set_materialname(object *op, int difficulty, materialtype_t *nmt)
 {
     materialtype_t *mt, *lmt;
-    int j;
 
     if (op->materialname != NULL)
 	return;

@@ -49,6 +49,7 @@
 #define NO_PASS_DOORS 0
 #define PASS_DOORS 1
 
+static object ** surround_by_doors(mapstruct *map,char **layout,int x,int y,int opts);
 
 /* returns true if square x,y has P_NO_PASS set, which is true for walls
  * and doors but not monsters.
@@ -572,7 +573,7 @@ void remove_monsters(int x,int y,mapstruct *map) {
 	 a chest.  It only goes as far as the 8 squares surrounding, and
 	 it'll remove any monsters it finds.*/
 
-object ** surround_by_doors(mapstruct *map,char **layout,int x,int y,int opts) {
+static object ** surround_by_doors(mapstruct *map,char **layout,int x,int y,int opts) {
   int i;
   char *doors[2];
   object **doorlist;
@@ -609,7 +610,7 @@ object ** surround_by_doors(mapstruct *map,char **layout,int x,int y,int opts) {
 
 
 /* returns the first door in this square, or NULL if there isn't a door. */
-object *door_in_square(mapstruct *map,int x,int y) {
+static object *door_in_square(mapstruct *map,int x,int y) {
   object *tmp;
   for(tmp=get_map_ob(map,x,y);tmp!=NULL;tmp=tmp->above) 
     if(tmp->type == DOOR || tmp->type== LOCKED_DOOR) return tmp;

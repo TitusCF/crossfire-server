@@ -377,7 +377,7 @@ char *describe_resistance(const object *op, int newline)
  * The buffer will be overwritten by the next call to query_weight().
  */
 
-char *query_weight(const object *op) {
+const char *query_weight(const object *op) {
   static char buf[10];
   sint32 i=(op->nrof?op->nrof:1)*op->weight+op->carrying;
 
@@ -440,7 +440,7 @@ char *get_number(int i) {
  * Aug 95 modified this slightly so that Skill tools don't have magic bonus
  * from stats.sp - b.t.
  */
-char *ring_desc (const object *op) 
+static const char *ring_desc (const object *op) 
 {
     static char buf[VERY_BIG_BUF];
     int attr, val,len;
@@ -552,7 +552,7 @@ const char *query_short_name(const object *op)
       case RING:
 	if (!op->title) {
 	    /* If ring has a title, full description isn't so useful */ 
-	    char *s = ring_desc(op);
+	    const char *s = ring_desc(op);
 	    if (s[0]) {
 		safe_strcat (buf, " ", &len, HUGE_BUF);
 		safe_strcat(buf, s, &len, HUGE_BUF);
@@ -750,7 +750,7 @@ const char *query_base_name(const object *op, int plural) {
       case RING:
 	if (!op->title) {
 	    /* If ring has a title, full description isn't so useful */ 
-	    char *s = ring_desc(op);
+	    const char *s = ring_desc(op);
 	    if (s[0]) {
 		safe_strcat (buf, " ", &len, MAX_BUF);
 		safe_strcat (buf, s, &len, MAX_BUF);
